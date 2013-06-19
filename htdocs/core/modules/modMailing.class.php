@@ -27,141 +27,138 @@
 
 include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 
-
 /**
  *	Classe de description et activation du module Mailing
  */
 class modMailing extends DolibarrModules
 {
 
-	/**
-	 *   Constructor. Define names, constants, directories, boxes, permissions
-	 *
-	 *   @param      DoliDB		$db      Database handler
-	 */
-	function __construct($db)
-	{
-		$this->db = $db;
-		$this->numero = 22;
+    /**
+     *   Constructor. Define names, constants, directories, boxes, permissions
+     *
+     *   @param      DoliDB		$db      Database handler
+     */
+    public function __construct($db)
+    {
+        $this->db = $db;
+        $this->numero = 22;
 
-		$this->family = "technic";
-		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
-		$this->name = preg_replace('/^mod/i','',get_class($this));
-		$this->description = "Gestion des EMailings";
-		$this->version = 'dolibarr';    // 'experimental' or 'dolibarr' or version
-		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
-		$this->special = 0;
-		$this->picto='email';
+        $this->family = "technic";
+        // Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
+        $this->name = preg_replace('/^mod/i','',get_class($this));
+        $this->description = "Gestion des EMailings";
+        $this->version = 'dolibarr';    // 'experimental' or 'dolibarr' or version
+        $this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
+        $this->special = 0;
+        $this->picto='email';
 
-		// Data directories to create when module is enabled
-		$this->dirs = array("/mailing/temp");
+        // Data directories to create when module is enabled
+        $this->dirs = array("/mailing/temp");
 
-		// Dependances
-		$this->depends = array();
-		$this->requiredby = array();
-		$this->langfiles = array("mails");
+        // Dependances
+        $this->depends = array();
+        $this->requiredby = array();
+        $this->langfiles = array("mails");
 
-		// Config pages
-		$this->config_page_url = array("mailing.php");
+        // Config pages
+        $this->config_page_url = array("mailing.php");
 
-		// Constantes
-		$this->const = array();
+        // Constantes
+        $this->const = array();
 
-		// Boites
-		$this->boxes = array();
+        // Boites
+        $this->boxes = array();
 
-		// Permissions
-		$this->rights = array();
-		$this->rights_class = 'mailing';
-		$r=0;
+        // Permissions
+        $this->rights = array();
+        $this->rights_class = 'mailing';
+        $r=0;
 
-		$r++;
-		$this->rights[$r][0] = 221; // id de la permission
-		$this->rights[$r][1] = 'Consulter les mailings'; // libelle de la permission
-		$this->rights[$r][2] = 'r'; // type de la permission (deprecie a ce jour)
-		$this->rights[$r][3] = 1; // La permission est-elle une permission par defaut
-		$this->rights[$r][4] = 'lire';
+        $r++;
+        $this->rights[$r][0] = 221; // id de la permission
+        $this->rights[$r][1] = 'Consulter les mailings'; // libelle de la permission
+        $this->rights[$r][2] = 'r'; // type de la permission (deprecie a ce jour)
+        $this->rights[$r][3] = 1; // La permission est-elle une permission par defaut
+        $this->rights[$r][4] = 'lire';
 
-		$r++;
-		$this->rights[$r][0] = 222;
-		$this->rights[$r][1] = 'Creer/modifier les mailings (sujet, destinataires...)';
-		$this->rights[$r][2] = 'w';
-		$this->rights[$r][3] = 0;
-		$this->rights[$r][4] = 'creer';
+        $r++;
+        $this->rights[$r][0] = 222;
+        $this->rights[$r][1] = 'Creer/modifier les mailings (sujet, destinataires...)';
+        $this->rights[$r][2] = 'w';
+        $this->rights[$r][3] = 0;
+        $this->rights[$r][4] = 'creer';
 
-		$r++;
-		$this->rights[$r][0] = 223;
-		$this->rights[$r][1] = 'Valider les mailings (permet leur envoi)';
-		$this->rights[$r][2] = 'w';
-		$this->rights[$r][3] = 0;
-		$this->rights[$r][4] = 'valider';
+        $r++;
+        $this->rights[$r][0] = 223;
+        $this->rights[$r][1] = 'Valider les mailings (permet leur envoi)';
+        $this->rights[$r][2] = 'w';
+        $this->rights[$r][3] = 0;
+        $this->rights[$r][4] = 'valider';
 
-		$r++;
-		$this->rights[$r][0] = 229;
-		$this->rights[$r][1] = 'Supprimer les mailings';
-		$this->rights[$r][2] = 'd';
-		$this->rights[$r][3] = 0;
-		$this->rights[$r][4] = 'supprimer';
+        $r++;
+        $this->rights[$r][0] = 229;
+        $this->rights[$r][1] = 'Supprimer les mailings';
+        $this->rights[$r][2] = 'd';
+        $this->rights[$r][3] = 0;
+        $this->rights[$r][4] = 'supprimer';
 
-		$r++;
-		$this->rights[$r][0] = 237;
-		$this->rights[$r][1] = 'View recipients and info';
-		$this->rights[$r][2] = 'r';
-		$this->rights[$r][3] = 0;
-		$this->rights[$r][4] = 'mailing_advance';		// Visible if option MAIN_USE_ADVANCED_PERMS is on
-		$this->rights[$r][5] = 'recipient';
+        $r++;
+        $this->rights[$r][0] = 237;
+        $this->rights[$r][1] = 'View recipients and info';
+        $this->rights[$r][2] = 'r';
+        $this->rights[$r][3] = 0;
+        $this->rights[$r][4] = 'mailing_advance';		// Visible if option MAIN_USE_ADVANCED_PERMS is on
+        $this->rights[$r][5] = 'recipient';
 
-		$r++;
-		$this->rights[$r][0] = 238;
-		$this->rights[$r][1] = 'Manually send mailings';
-		$this->rights[$r][2] = 'w';
-		$this->rights[$r][3] = 0;
-		$this->rights[$r][4] = 'mailing_advance';		// Visible if option MAIN_USE_ADVANCED_PERMS is on
-		$this->rights[$r][5] = 'send';
+        $r++;
+        $this->rights[$r][0] = 238;
+        $this->rights[$r][1] = 'Manually send mailings';
+        $this->rights[$r][2] = 'w';
+        $this->rights[$r][3] = 0;
+        $this->rights[$r][4] = 'mailing_advance';		// Visible if option MAIN_USE_ADVANCED_PERMS is on
+        $this->rights[$r][5] = 'send';
 
-		$r++;
-		$this->rights[$r][0] = 239;
-		$this->rights[$r][1] = 'Delete mailings after validation and/or sent';
-		$this->rights[$r][2] = 'd';
-		$this->rights[$r][3] = 0;
-		$this->rights[$r][4] = 'mailing_advance';		// Visible if option MAIN_USE_ADVANCED_PERMS is on
-		$this->rights[$r][5] = 'delete';
+        $r++;
+        $this->rights[$r][0] = 239;
+        $this->rights[$r][1] = 'Delete mailings after validation and/or sent';
+        $this->rights[$r][2] = 'd';
+        $this->rights[$r][3] = 0;
+        $this->rights[$r][4] = 'mailing_advance';		// Visible if option MAIN_USE_ADVANCED_PERMS is on
+        $this->rights[$r][5] = 'delete';
 
-	}
-
-
-	/**
-	 *		Function called when module is enabled.
-	 *		The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
-	 *		It also creates data directories
-	 *
-     *      @param      string	$options    Options when enabling module ('', 'noboxes')
-	 *      @return     int             	1 if OK, 0 if KO
-	 */
-	function init($options='')
-	{
-		// Permissions
-		$this->remove($options);
-
-		$sql = array();
-
-		return $this->_init($sql,$options);
-	}
+    }
 
     /**
-	 *		Function called when module is disabled.
-	 *      Remove from database constants, boxes and permissions from Dolibarr database.
-	 *		Data directories are not deleted
-	 *
+     *		Function called when module is enabled.
+     *		The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
+     *		It also creates data directories
+     *
      *      @param      string	$options    Options when enabling module ('', 'noboxes')
-	 *      @return     int             	1 if OK, 0 if KO
+     *      @return     int             	1 if OK, 0 if KO
      */
-    function remove($options='')
+    public function init($options='')
     {
-		$sql = array();
+        // Permissions
+        $this->remove($options);
 
-		return $this->_remove($sql,$options);
+        $sql = array();
+
+        return $this->_init($sql,$options);
+    }
+
+    /**
+     *		Function called when module is disabled.
+     *      Remove from database constants, boxes and permissions from Dolibarr database.
+     *		Data directories are not deleted
+     *
+     *      @param      string	$options    Options when enabling module ('', 'noboxes')
+     *      @return     int             	1 if OK, 0 if KO
+     */
+    public function remove($options='')
+    {
+        $sql = array();
+
+        return $this->_remove($sql,$options);
     }
 
 }
-?>

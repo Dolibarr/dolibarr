@@ -21,8 +21,6 @@
  *  \brief          Library for printipp functions
  */
 
-
-
 /**
  *  Define head array for tabs of printipp tools setup pages
  *
@@ -57,5 +55,3 @@ function printippadmin_prepare_head()
 
     return $head;
 }
-
-?>

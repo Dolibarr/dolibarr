@@ -32,7 +32,6 @@ if (! $user->admin) accessforbidden();
 
 if (GETPOST('msg','alpha')) $message='<div class="error">'.GETPOST('msg','alpha').'</div>';
 
-
 $urldolibarr='http://www.dolibarr.org/downloads/';
 $urldolibarrmodules='http://www.dolistore.com/';
 $urldolibarrthemes='http://www.dolistore.com/';
@@ -44,51 +43,41 @@ $dolibarrdataroot=preg_replace('/([\\/]+)$/i','',DOL_DATA_ROOT);
  *	Actions
  */
 
-if (GETPOST('action','alpha')=='install')
-{
-	$error=0;
+if (GETPOST('action','alpha')=='install') {
+    $error=0;
 
-	$original_file=basename($_FILES["fileinstall"]["name"]);
-	$newfile=$conf->admin->dir_temp.'/'.$original_file.'/'.$original_file;
+    $original_file=basename($_FILES["fileinstall"]["name"]);
+    $newfile=$conf->admin->dir_temp.'/'.$original_file.'/'.$original_file;
 
-	if (! $original_file)
-	{
-		$langs->load("Error");
-		$mesg = '<div class="warning">'.$langs->trans("ErrorFileRequired").'</div>';
-		$error++;
-	}
-	else
-	{
-		if (! preg_match('/\.zip/i',$original_file))
-		{
-			$langs->load("errors");
-			$mesg = '<div class="error">'.$langs->trans("ErrorFileMustBeADolibarrPackage",$original_file).'</div>';
-			$error++;
-		}
-	}
+    if (! $original_file) {
+        $langs->load("Error");
+        $mesg = '<div class="warning">'.$langs->trans("ErrorFileRequired").'</div>';
+        $error++;
+    } else {
+        if (! preg_match('/\.zip/i',$original_file)) {
+            $langs->load("errors");
+            $mesg = '<div class="error">'.$langs->trans("ErrorFileMustBeADolibarrPackage",$original_file).'</div>';
+            $error++;
+        }
+    }
 
-	if (! $error)
-	{
-		@dol_delete_dir_recursive($conf->admin->dir_temp.'/'.$original_file);
-		dol_mkdir($conf->admin->dir_temp.'/'.$original_file);
+    if (! $error) {
+        @dol_delete_dir_recursive($conf->admin->dir_temp.'/'.$original_file);
+        dol_mkdir($conf->admin->dir_temp.'/'.$original_file);
 
-		$result=dol_move_uploaded_file($_FILES['fileinstall']['tmp_name'],$newfile,1,0,$_FILES['fileinstall']['error']);
-		if ($result > 0)
-		{
-			$documentrootalt=DOL_DOCUMENT_ROOT_ALT;
-			$result=dol_uncompress($newfile,$documentrootalt);
-			if (! empty($result['error']))
-			{
-				$langs->load("errors");
-				$mesg = '<div class="error">'.$langs->trans($result['error'],$original_file).'</div>';
+        $result=dol_move_uploaded_file($_FILES['fileinstall']['tmp_name'],$newfile,1,0,$_FILES['fileinstall']['error']);
+        if ($result > 0) {
+            $documentrootalt=DOL_DOCUMENT_ROOT_ALT;
+            $result=dol_uncompress($newfile,$documentrootalt);
+            if (! empty($result['error'])) {
+                $langs->load("errors");
+                $mesg = '<div class="error">'.$langs->trans($result['error'],$original_file).'</div>';
 
-			}
-			else
-			{
-				$mesg = '<div class="ok">'.$langs->trans("SetupIsReadyForUse").'</div>';
-			}
-		}
-	}
+            } else {
+                $mesg = '<div class="ok">'.$langs->trans("SetupIsReadyForUse").'</div>';
+            }
+        }
+    }
 }
 
 /*
@@ -139,39 +128,30 @@ print '<b>'.$langs->trans("StepNb",2).'</b>: ';
 print $langs->trans("DownloadPackageFromWebSite",$fullurl).'<br>';
 print '<b>'.$langs->trans("StepNb",3).'</b>: ';
 print $langs->trans("UnpackPackageInDolibarrRoot",$dolibarrroot).'<br>';
-if (! empty($conf->global->MAIN_ONLINE_INSTALL_MODULE))
-{
-	if ($dirins_ok && $dirins != 'DOL_DOCUMENT_ROOT_ALT')
-	{
-		print '<form enctype="multipart/form-data" method="POST" class="noborder" action="'.$_SERVER["PHP_SELF"].'" name="forminstall">';
-		print '<input type="hidden" name="action" value="install">';
-		print $langs->trans("YouCanSubmitFile").' <input type="file" name="fileinstall"> ';
-		print '<input type="submit" name="'.dol_escape_htmltag($langs->trans("Send")).'" class="button">';
-		print '</form>';
-	}
-	else
-	{
-		$message=info_admin($langs->trans("NotExistsDirect").$langs->trans("InfDirAlt").$langs->trans("InfDirExample"));
-		print $message;
-	}
-}
-else
-{
-	print '<b>'.$langs->trans("StepNb",4).'</b>: ';
-	print $langs->trans("SetupIsReadyForUse").'<br>';
+if (! empty($conf->global->MAIN_ONLINE_INSTALL_MODULE)) {
+    if ($dirins_ok && $dirins != 'DOL_DOCUMENT_ROOT_ALT') {
+        print '<form enctype="multipart/form-data" method="POST" class="noborder" action="'.$_SERVER["PHP_SELF"].'" name="forminstall">';
+        print '<input type="hidden" name="action" value="install">';
+        print $langs->trans("YouCanSubmitFile").' <input type="file" name="fileinstall"> ';
+        print '<input type="submit" name="'.dol_escape_htmltag($langs->trans("Send")).'" class="button">';
+        print '</form>';
+    } else {
+        $message=info_admin($langs->trans("NotExistsDirect").$langs->trans("InfDirAlt").$langs->trans("InfDirExample"));
+        print $message;
+    }
+} else {
+    print '<b>'.$langs->trans("StepNb",4).'</b>: ';
+    print $langs->trans("SetupIsReadyForUse").'<br>';
 }
 print '</form>';
 
-if (! empty($result['return']))
-{
-	print '<br>';
+if (! empty($result['return'])) {
+    print '<br>';
 
-	foreach($result['return'] as $value)
-	{
-		echo $value.'<br>';
-	}
+    foreach ($result['return'] as $value) {
+        echo $value.'<br>';
+    }
 }
 
 llxFooter();
 $db->close();
-?>

@@ -44,75 +44,61 @@ top_httphead();
 //print '<!-- Ajax page called with url '.$_SERVER["PHP_SELF"].'?'.$_SERVER["QUERY_STRING"].' -->'."\n";
 
 // Load original field value
-if (! empty($field) && ! empty($element) && ! empty($table_element) && ! empty($fk_element))
-{
-	$ext_element	= GETPOST('ext_element','alpha');
-	$field			= substr($field, 8); // remove prefix val_
-	$type			= GETPOST('type','alpha');
-	$loadmethod		= (GETPOST('loadmethod','alpha') ? GETPOST('loadmethod','alpha') : 'getValueFrom');
+if (! empty($field) && ! empty($element) && ! empty($table_element) && ! empty($fk_element)) {
+    $ext_element	= GETPOST('ext_element','alpha');
+    $field			= substr($field, 8); // remove prefix val_
+    $type			= GETPOST('type','alpha');
+    $loadmethod		= (GETPOST('loadmethod','alpha') ? GETPOST('loadmethod','alpha') : 'getValueFrom');
 
-	if ($element != 'order_supplier' && $element != 'invoice_supplier' && preg_match('/^([^_]+)_([^_]+)/i',$element,$regs))
-	{
-		$element = $regs[1];
-		$subelement = $regs[2];
-	}
+    if ($element != 'order_supplier' && $element != 'invoice_supplier' && preg_match('/^([^_]+)_([^_]+)/i',$element,$regs)) {
+        $element = $regs[1];
+        $subelement = $regs[2];
+    }
 
-	if ($element == 'propal') $element = 'propale';
-	else if ($element == 'fichinter') $element = 'ficheinter';
-	else if ($element == 'product') $element = 'produit';
-	else if ($element == 'member') $element = 'adherent';
-	else if ($element == 'order_supplier') {
-		$element = 'fournisseur';
-		$subelement = 'commande';
-	}
-	else if ($element == 'invoice_supplier') {
-		$element = 'fournisseur';
-		$subelement = 'facture';
-	}
+    if ($element == 'propal') $element = 'propale';
+    else if ($element == 'fichinter') $element = 'ficheinter';
+    else if ($element == 'product') $element = 'produit';
+    else if ($element == 'member') $element = 'adherent';
+    else if ($element == 'order_supplier') {
+        $element = 'fournisseur';
+        $subelement = 'commande';
+    } elseif ($element == 'invoice_supplier') {
+        $element = 'fournisseur';
+        $subelement = 'facture';
+    }
 
-	if ($user->rights->$element->lire || $user->rights->$element->read
-	|| (isset($subelement) && ($user->rights->$element->$subelement->lire || $user->rights->$element->$subelement->read))
-	|| ($element == 'payment' && $user->rights->facture->lire)
-	|| ($element == 'payment_supplier' && $user->rights->fournisseur->facture->lire))
-	{
-		if ($type == 'select')
-		{
-			$methodname	= 'load_cache_'.$loadmethod;
-			$cachename = 'cache_'.GETPOST('loadmethod','alpha');
+    if ($user->rights->$element->lire || $user->rights->$element->read
+    || (isset($subelement) && ($user->rights->$element->$subelement->lire || $user->rights->$element->$subelement->read))
+    || ($element == 'payment' && $user->rights->facture->lire)
+    || ($element == 'payment_supplier' && $user->rights->fournisseur->facture->lire))
+    {
+        if ($type == 'select') {
+            $methodname	= 'load_cache_'.$loadmethod;
+            $cachename = 'cache_'.GETPOST('loadmethod','alpha');
 
-			$form = new Form($db);
-			if (method_exists($form, $methodname))
-			{
-				$ret = $form->$methodname();
-				if ($ret > 0) echo json_encode($form->$cachename);
-			}
-			else if (! empty($ext_element))
-			{
-				$module = $subelement = $ext_element;
-				if (preg_match('/^([^_]+)_([^_]+)/i',$ext_element,$regs))
-				{
-					$module = $regs[1];
-					$subelement = $regs[2];
-				}
+            $form = new Form($db);
+            if (method_exists($form, $methodname)) {
+                $ret = $form->$methodname();
+                if ($ret > 0) echo json_encode($form->$cachename);
+            } elseif (! empty($ext_element)) {
+                $module = $subelement = $ext_element;
+                if (preg_match('/^([^_]+)_([^_]+)/i',$ext_element,$regs)) {
+                    $module = $regs[1];
+                    $subelement = $regs[2];
+                }
 
-				dol_include_once('/'.$module.'/class/actions_'.$subelement.'.class.php');
-				$classname = 'Actions'.ucfirst($subelement);
-				$object = new $classname($db);
-				$ret = $object->$methodname();
-				if ($ret > 0) echo json_encode($object->$cachename);
-			}
-		}
-		else
-		{
-			$object = new GenericObject($db);
-			$value=$object->$loadmethod($table_element, $fk_element, $field);
-			echo $value;
-		}
-	}
-	else
-	{
-		echo $langs->transnoentities('NotEnoughPermissions');
-	}
+                dol_include_once('/'.$module.'/class/actions_'.$subelement.'.class.php');
+                $classname = 'Actions'.ucfirst($subelement);
+                $object = new $classname($db);
+                $ret = $object->$methodname();
+                if ($ret > 0) echo json_encode($object->$cachename);
+            }
+        } else {
+            $object = new GenericObject($db);
+            $value=$object->$loadmethod($table_element, $fk_element, $field);
+            echo $value;
+        }
+    } else {
+        echo $langs->transnoentities('NotEnoughPermissions');
+    }
 }
-
-?>

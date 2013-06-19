@@ -29,121 +29,115 @@ require_once DOL_DOCUMENT_ROOT .'/core/modules/commande/modules_commande.php';
  */
 class mod_commande_marbre extends ModeleNumRefCommandes
 {
-	var $version='dolibarr';		// 'development', 'experimental', 'dolibarr'
-	var $prefix='CO';
-	var $error='';
-	var $nom='Marbre';
-
+    public $version='dolibarr';		// 'development', 'experimental', 'dolibarr'
+    public $prefix='CO';
+    public $error='';
+    public $nom='Marbre';
 
     /**
      *  Return description of numbering module
      *
      *  @return     string      Text with description
      */
-    function info()
+    public function info()
     {
-    	global $langs;
-      	return $langs->trans("SimpleNumRefModelDesc",$this->prefix);
+        global $langs;
+
+          return $langs->trans("SimpleNumRefModelDesc",$this->prefix);
     }
 
+    /**
+     *  Renvoi un exemple de numerotation
+     *
+     *  @return     string      Example
+     */
+    public function getExample()
+    {
+        return $this->prefix."0501-0001";
+    }
 
-	/**
-	 *  Renvoi un exemple de numerotation
-	 *
-	 *  @return     string      Example
-	 */
-	function getExample()
-	{
-		return $this->prefix."0501-0001";
-	}
+    /**
+     *  Test si les numeros deje en vigueur dans la base ne provoquent pas de
+     *  de conflits qui empechera cette numerotation de fonctionner.
+     *
+     *  @return     boolean     false si conflit, true si ok
+     */
+    public function canBeActivated()
+    {
+        global $conf,$langs;
 
+        $coyymm=''; $max='';
 
-	/**
-	 *  Test si les numeros deje en vigueur dans la base ne provoquent pas de
-	 *  de conflits qui empechera cette numerotation de fonctionner.
-	 *
-	 *  @return     boolean     false si conflit, true si ok
-	 */
-	function canBeActivated()
-	{
-		global $conf,$langs;
+        $posindice=8;
+        $sql = "SELECT MAX(SUBSTRING(ref FROM ".$posindice.")) as max";
+        $sql.= " FROM ".MAIN_DB_PREFIX."commande";
+        $sql.= " WHERE ref LIKE '".$this->prefix."____-%'";
+        $sql.= " AND entity = ".$conf->entity;
 
-		$coyymm=''; $max='';
+        $resql=$db->query($sql);
+        if ($resql) {
+            $row = $db->fetch_row($resql);
+            if ($row) { $coyymm = substr($row[0],0,6); $max=$row[0]; }
+        }
+        if ($coyymm && ! preg_match('/'.$this->prefix.'[0-9][0-9][0-9][0-9]/i',$coyymm)) {
+            $langs->load("errors");
+            $this->error=$langs->trans('ErrorNumRefModel', $max);
 
-		$posindice=8;
-		$sql = "SELECT MAX(SUBSTRING(ref FROM ".$posindice.")) as max";
-		$sql.= " FROM ".MAIN_DB_PREFIX."commande";
-		$sql.= " WHERE ref LIKE '".$this->prefix."____-%'";
-		$sql.= " AND entity = ".$conf->entity;
+            return false;
+        }
 
-		$resql=$db->query($sql);
-		if ($resql)
-		{
-			$row = $db->fetch_row($resql);
-			if ($row) { $coyymm = substr($row[0],0,6); $max=$row[0]; }
-		}
-		if ($coyymm && ! preg_match('/'.$this->prefix.'[0-9][0-9][0-9][0-9]/i',$coyymm))
-		{
-			$langs->load("errors");
-			$this->error=$langs->trans('ErrorNumRefModel', $max);
-			return false;
-		}
+        return true;
+    }
 
-		return true;
-	}
+    /**
+     * 	Return next free value
+     *
+     *  @param	Societe		$objsoc     Object thirdparty
+     *  @param  Object		$object		Object we need next value for
+     *  @return string      			Value if KO, <0 if KO
+     */
+    public function getNextValue($objsoc,$object)
+    {
+        global $db,$conf;
 
-	/**
-	 * 	Return next free value
-	 *
-	 *  @param	Societe		$objsoc     Object thirdparty
-	 *  @param  Object		$object		Object we need next value for
-	 *  @return string      			Value if KO, <0 if KO
-	 */
-	function getNextValue($objsoc,$object)
-	{
-		global $db,$conf;
+        // D'abord on recupere la valeur max
+        $posindice=8;
+        $sql = "SELECT MAX(SUBSTRING(ref FROM ".$posindice.")) as max";
+        $sql.= " FROM ".MAIN_DB_PREFIX."commande";
+        $sql.= " WHERE ref like '".$this->prefix."____-%'";
+        $sql.= " AND entity = ".$conf->entity;
 
-		// D'abord on recupere la valeur max
-		$posindice=8;
-		$sql = "SELECT MAX(SUBSTRING(ref FROM ".$posindice.")) as max";
-		$sql.= " FROM ".MAIN_DB_PREFIX."commande";
-		$sql.= " WHERE ref like '".$this->prefix."____-%'";
-		$sql.= " AND entity = ".$conf->entity;
+        $resql=$db->query($sql);
+        if ($resql) {
+            $obj = $db->fetch_object($resql);
+            if ($obj) $max = intval($obj->max);
+            else $max=0;
+        } else {
+            dol_syslog("mod_commande_marbre::getNextValue sql=".$sql);
 
-		$resql=$db->query($sql);
-		if ($resql)
-		{
-			$obj = $db->fetch_object($resql);
-			if ($obj) $max = intval($obj->max);
-			else $max=0;
-		}
-		else
-		{
-			dol_syslog("mod_commande_marbre::getNextValue sql=".$sql);
-			return -1;
-		}
+            return -1;
+        }
 
-		//$date=time();
-		$date=$object->date;
-		$yymm = strftime("%y%m",$date);
-		$num = sprintf("%04s",$max+1);
+        //$date=time();
+        $date=$object->date;
+        $yymm = strftime("%y%m",$date);
+        $num = sprintf("%04s",$max+1);
 
-		dol_syslog("mod_commande_marbre::getNextValue return ".$this->prefix.$yymm."-".$num);
-		return $this->prefix.$yymm."-".$num;
-	}
+        dol_syslog("mod_commande_marbre::getNextValue return ".$this->prefix.$yymm."-".$num);
 
+        return $this->prefix.$yymm."-".$num;
+    }
 
-	/**
-	 *  Return next free value
-	 *
-	 *  @param	Societe		$objsoc     Object third party
-	 * 	@param	string		$objforref	Object for number to search
-	 *  @return string      			Next free value
-	 */
-	function commande_get_num($objsoc,$objforref)
-	{
-		return $this->getNextValue($objsoc,$objforref);
-	}
+    /**
+     *  Return next free value
+     *
+     *  @param	Societe		$objsoc     Object third party
+     * 	@param	string		$objforref	Object for number to search
+     *  @return string      			Next free value
+     */
+    public function commande_get_num($objsoc,$objforref)
+    {
+        return $this->getNextValue($objsoc,$objforref);
+    }
 
 }
-?>

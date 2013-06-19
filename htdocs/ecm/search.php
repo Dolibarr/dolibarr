@@ -66,26 +66,19 @@ if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="label";
 
 $ecmdir = new EcmDirectory($db);
-if (! empty($section))
-{
-	$result=$ecmdir->fetch($section);
-	if (! $result > 0)
-	{
-		dol_print_error($db,$ecmdir->error);
-		exit;
-	}
+if (! empty($section)) {
+    $result=$ecmdir->fetch($section);
+    if (! $result > 0) {
+        dol_print_error($db,$ecmdir->error);
+        exit;
+    }
 }
-
 
 /*******************************************************************
  * ACTIONS
  *
  * Put here all code to do according to value of "action" parameter
  ********************************************************************/
-
-
-
-
 
 /*******************************************************************
  * PAGE
@@ -99,19 +92,17 @@ $form=new Form($db);
 $ecmdirstatic = new EcmDirectory($db);
 $userstatic = new User($db);
 
-
 // Ajout rubriques automatiques
 $rowspan=0;
 $sectionauto=array();
-if (! empty($conf->product->enabled) || ! empty($conf->service->enabled))     { $rowspan++; $sectionauto[]=array('level'=>1, 'module'=>'product', 'test'=>$conf->product->enabled, 'label'=>$langs->trans("ProductsAndServices"),     'desc'=>$langs->trans("ECMDocsByProducts")); }
-if (! empty($conf->societe->enabled))     { $rowspan++; $sectionauto[]=array('level'=>1, 'module'=>'company', 'test'=>$conf->societe->enabled, 'label'=>$langs->trans("ThirdParties"), 'desc'=>$langs->trans("ECMDocsByThirdParties")); }
-if (! empty($conf->propal->enabled))      { $rowspan++; $sectionauto[]=array('level'=>1, 'module'=>'propal',  'test'=>$conf->propal->enabled,  'label'=>$langs->trans("Prop"),    'desc'=>$langs->trans("ECMDocsByProposals")); }
-if (! empty($conf->contrat->enabled))     { $rowspan++; $sectionauto[]=array('level'=>1, 'module'=>'contract','test'=>$conf->contrat->enabled, 'label'=>$langs->trans("Contracts"),    'desc'=>$langs->trans("ECMDocsByContracts")); }
-if (! empty($conf->commande->enabled))    { $rowspan++; $sectionauto[]=array('level'=>1, 'module'=>'order',   'test'=>$conf->commande->enabled,'label'=>$langs->trans("CustomersOrders"),       'desc'=>$langs->trans("ECMDocsByOrders")); }
+if (! empty($conf->product->enabled) || ! empty($conf->service->enabled)) { $rowspan++; $sectionauto[]=array('level'=>1, 'module'=>'product', 'test'=>$conf->product->enabled, 'label'=>$langs->trans("ProductsAndServices"),     'desc'=>$langs->trans("ECMDocsByProducts")); }
+if (! empty($conf->societe->enabled)) { $rowspan++; $sectionauto[]=array('level'=>1, 'module'=>'company', 'test'=>$conf->societe->enabled, 'label'=>$langs->trans("ThirdParties"), 'desc'=>$langs->trans("ECMDocsByThirdParties")); }
+if (! empty($conf->propal->enabled)) { $rowspan++; $sectionauto[]=array('level'=>1, 'module'=>'propal',  'test'=>$conf->propal->enabled,  'label'=>$langs->trans("Prop"),    'desc'=>$langs->trans("ECMDocsByProposals")); }
+if (! empty($conf->contrat->enabled)) { $rowspan++; $sectionauto[]=array('level'=>1, 'module'=>'contract','test'=>$conf->contrat->enabled, 'label'=>$langs->trans("Contracts"),    'desc'=>$langs->trans("ECMDocsByContracts")); }
+if (! empty($conf->commande->enabled)) { $rowspan++; $sectionauto[]=array('level'=>1, 'module'=>'order',   'test'=>$conf->commande->enabled,'label'=>$langs->trans("CustomersOrders"),       'desc'=>$langs->trans("ECMDocsByOrders")); }
 if (! empty($conf->fournisseur->enabled)) { $rowspan++; $sectionauto[]=array('level'=>1, 'module'=>'order_supplier', 'test'=>$conf->fournisseur->enabled, 'label'=>$langs->trans("SuppliersInvoices"),     'desc'=>$langs->trans("ECMDocsByOrders")); }
-if (! empty($conf->facture->enabled))     { $rowspan++; $sectionauto[]=array('level'=>1, 'module'=>'invoice', 'test'=>$conf->facture->enabled, 'label'=>$langs->trans("CustomersInvoices"),     'desc'=>$langs->trans("ECMDocsByInvoices")); }
+if (! empty($conf->facture->enabled)) { $rowspan++; $sectionauto[]=array('level'=>1, 'module'=>'invoice', 'test'=>$conf->facture->enabled, 'label'=>$langs->trans("CustomersInvoices"),     'desc'=>$langs->trans("ECMDocsByInvoices")); }
 if (! empty($conf->fournisseur->enabled)) { $rowspan++; $sectionauto[]=array('level'=>1, 'module'=>'invoice_supplier', 'test'=>$conf->fournisseur->enabled, 'label'=>$langs->trans("SuppliersOrders"),     'desc'=>$langs->trans("ECMDocsByOrders")); }
-
 
 //***********************
 // List
@@ -127,11 +118,9 @@ print $langs->trans("FeatureNotYetAvailable").'.<br><br>';
 $head = ecm_prepare_head_fm($ecmdir);
 //dol_fiche_head($head, 'search_form', '', 1);
 
-
 print '<table class="border" width="100%"><tr><td width="40%" valign="top">';
 
 // Left area
-
 
 //print_fiche_titre($langs->trans("ECMSectionsManual"));
 
@@ -157,21 +146,20 @@ print '<td colspan="4">'.$langs->trans("ECMSearchByEntity").'</td></tr>';
 
 $buthtml='<td rowspan="'.$rowspan.'"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td>';
 $butshown=0;
-foreach($sectionauto as $sectioncur)
-{
-	if (! $sectioncur['test']) continue;
-	//if ($butshown % 2 == 0)
-		print '<tr '. $bc[false].'>';
-	print "<td>".$sectioncur['label'].':</td>';
-	print '<td';
-	//if ($butshown % 2 == 1)
-		print ' align="right"';
-	print '>';
-	print '<input type="text" name="search_'.$sectioncur['module'].'" class="flat" size="14">';
-	print '</td>';
-	//if ($butshown % 2 == 1)
-		print '</tr>';
-	$butshown++;
+foreach ($sectionauto as $sectioncur) {
+    if (! $sectioncur['test']) continue;
+    //if ($butshown % 2 == 0)
+        print '<tr '. $bc[false].'>';
+    print "<td>".$sectioncur['label'].':</td>';
+    print '<td';
+    //if ($butshown % 2 == 1)
+        print ' align="right"';
+    print '>';
+    print '<input type="text" name="search_'.$sectioncur['module'].'" class="flat" size="14">';
+    print '</td>';
+    //if ($butshown % 2 == 1)
+        print '</tr>';
+    $butshown++;
 }
 //if ($butshown % 2 == 1)
 //	print '<td>&nbsp;</td><td>&nbsp;</td></tr>';
@@ -179,8 +167,6 @@ foreach($sectionauto as $sectioncur)
 print '<tr '. $bc[false].'><td colspan="4" align="center"><input type="submit" class="button" value="'.$langs->trans("Search").'"></td></tr>';
 print "</table></form>";
 //print $langs->trans("ECMSectionAutoDesc");
-
-
 
 print '</td><td valign="top">';
 
@@ -198,16 +184,12 @@ $formfile->list_of_documents($filearray,'','ecm',$param,1,$relativepath,$user->r
 
 //	print '<tr><td> </td></tr></table>';
 
-
-
 print '</td></tr>';
 
 print '</table>';
-
 
 print '<br>';
 
 // End of page
 llxFooter();
 $db->close();
-?>

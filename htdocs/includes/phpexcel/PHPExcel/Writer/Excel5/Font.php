@@ -25,7 +25,6 @@
  * @version    1.7.6, 2011-02-27
  */
 
-
 /**
  * PHPExcel_Writer_Excel5_Font
  *
@@ -35,159 +34,162 @@
  */
 class PHPExcel_Writer_Excel5_Font
 {
-	/**
-	 * BIFF version
-	 *
-	 * @var int
-	 */
-	private $_BIFFVersion;
+    /**
+     * BIFF version
+     *
+     * @var int
+     */
+    private $_BIFFVersion;
 
-	/**
-	 * Color index
-	 *
-	 * @var int
-	 */
-	private $_colorIndex;
+    /**
+     * Color index
+     *
+     * @var int
+     */
+    private $_colorIndex;
 
-	/**
-	 * Font
-	 *
-	 * @var PHPExcel_Style_Font
-	 */
-	private $_font;
+    /**
+     * Font
+     *
+     * @var PHPExcel_Style_Font
+     */
+    private $_font;
 
-	/**
-	 * Constructor
-	 *
-	 * @param PHPExcel_Style_Font $font
-	 */
-	public function __construct(PHPExcel_Style_Font $font = null)
-	{
-		$this->_BIFFVersion = 0x0600;
-		$this->_colorIndex = 0x7FFF;
-		$this->_font = $font;
-	}
+    /**
+     * Constructor
+     *
+     * @param PHPExcel_Style_Font $font
+     */
+    public function __construct(PHPExcel_Style_Font $font = null)
+    {
+        $this->_BIFFVersion = 0x0600;
+        $this->_colorIndex = 0x7FFF;
+        $this->_font = $font;
+    }
 
-	/**
-	 * Set the color index
-	 *
-	 * @param int $colorIndex
-	 */
-	public function setColorIndex($colorIndex)
-	{
-		$this->_colorIndex = $colorIndex;
-	}
+    /**
+     * Set the color index
+     *
+     * @param int $colorIndex
+     */
+    public function setColorIndex($colorIndex)
+    {
+        $this->_colorIndex = $colorIndex;
+    }
 
-	/**
-	 * Get font record data
-	 *
-	 * @return string
-	 */
-	public function writeFont()
-	{
-		$font_outline = 0;
-		$font_shadow = 0;
+    /**
+     * Get font record data
+     *
+     * @return string
+     */
+    public function writeFont()
+    {
+        $font_outline = 0;
+        $font_shadow = 0;
 
-		$icv = $this->_colorIndex; // Index to color palette
-		if ($this->_font->getSuperScript()) {
-			$sss = 1;
-		} else if ($this->_font->getSubScript()) {
-			$sss = 2;
-		} else {
-			$sss = 0;
-		}
-		$bFamily = 0; // Font family
-		$bCharSet = PHPExcel_Shared_Font::getCharsetFromFontName($this->_font->getName()); // Character set
+        $icv = $this->_colorIndex; // Index to color palette
+        if ($this->_font->getSuperScript()) {
+            $sss = 1;
+        } elseif ($this->_font->getSubScript()) {
+            $sss = 2;
+        } else {
+            $sss = 0;
+        }
+        $bFamily = 0; // Font family
+        $bCharSet = PHPExcel_Shared_Font::getCharsetFromFontName($this->_font->getName()); // Character set
 
-		$record = 0x31; // Record identifier
-		$reserved = 0x00; // Reserved
-		$grbit = 0x00; // Font attributes
-		if ($this->_font->getItalic()) {
-			$grbit |= 0x02;
-		}
-		if ($this->_font->getStrikethrough()) {
-			$grbit |= 0x08;
-		}
-		if ($font_outline) {
-			$grbit |= 0x10;
-		}
-		if ($font_shadow) {
-			$grbit |= 0x20;
-		}
+        $record = 0x31; // Record identifier
+        $reserved = 0x00; // Reserved
+        $grbit = 0x00; // Font attributes
+        if ($this->_font->getItalic()) {
+            $grbit |= 0x02;
+        }
+        if ($this->_font->getStrikethrough()) {
+            $grbit |= 0x08;
+        }
+        if ($font_outline) {
+            $grbit |= 0x10;
+        }
+        if ($font_shadow) {
+            $grbit |= 0x20;
+        }
 
-		if ($this->_BIFFVersion == 0x0500) {
-			$data = pack("vvvvvCCCCC",
-				$this->_font->getSize() * 20,
-				$grbit,
-				$icv,
-				$this->_mapBold($this->_font->getBold()),
-				$sss,
-				$this->_mapUnderline($this->_font->getUnderline()),
-				$bFamily,
-				$bCharSet,
-				$reserved,
-				strlen($this->_font->getName())
-			);
-			$data .= $this->_font->getName();
-		} elseif ($this->_BIFFVersion == 0x0600) {
-			$data = pack("vvvvvCCCC",
-				$this->_font->getSize() * 20,
-				$grbit,
-				$icv,
-				$this->_mapBold($this->_font->getBold()),
-				$sss,
-				$this->_mapUnderline($this->_font->getUnderline()),
-				$bFamily,
-				$bCharSet,
-				$reserved
-			);
-			$data .= PHPExcel_Shared_String::UTF8toBIFF8UnicodeShort($this->_font->getName());
-		}
+        if ($this->_BIFFVersion == 0x0500) {
+            $data = pack("vvvvvCCCCC",
+                $this->_font->getSize() * 20,
+                $grbit,
+                $icv,
+                $this->_mapBold($this->_font->getBold()),
+                $sss,
+                $this->_mapUnderline($this->_font->getUnderline()),
+                $bFamily,
+                $bCharSet,
+                $reserved,
+                strlen($this->_font->getName())
+            );
+            $data .= $this->_font->getName();
+        } elseif ($this->_BIFFVersion == 0x0600) {
+            $data = pack("vvvvvCCCC",
+                $this->_font->getSize() * 20,
+                $grbit,
+                $icv,
+                $this->_mapBold($this->_font->getBold()),
+                $sss,
+                $this->_mapUnderline($this->_font->getUnderline()),
+                $bFamily,
+                $bCharSet,
+                $reserved
+            );
+            $data .= PHPExcel_Shared_String::UTF8toBIFF8UnicodeShort($this->_font->getName());
+        }
 
-		$length = strlen($data);
-		$header = pack("vv", $record, $length);
+        $length = strlen($data);
+        $header = pack("vv", $record, $length);
 
-		return($header . $data);
-	}
+        return($header . $data);
+    }
 
-	/**
-	 * Set BIFF version
-	 *
-	 * @param int $BIFFVersion
-	 */
-	public function setBIFFVersion($BIFFVersion)
-	{
-		$this->_BIFFVersion = $BIFFVersion;
-	}
+    /**
+     * Set BIFF version
+     *
+     * @param int $BIFFVersion
+     */
+    public function setBIFFVersion($BIFFVersion)
+    {
+        $this->_BIFFVersion = $BIFFVersion;
+    }
 
-	/**
-	 * Map to BIFF5-BIFF8 codes for bold
-	 *
-	 * @param boolean $bold
-	 * @return int
-	 */
-	private function _mapBold($bold) {
-		if ($bold) {
-			return 0x2BC;
-		}
-		return 0x190;
-	}
+    /**
+     * Map to BIFF5-BIFF8 codes for bold
+     *
+     * @param  boolean $bold
+     * @return int
+     */
+    private function _mapBold($bold)
+    {
+        if ($bold) {
+            return 0x2BC;
+        }
 
-	/**
-	 * Map underline
-	 *
-	 * @param string
-	 * @return int
-	 */
-	private function _mapUnderline($underline) {
-		switch ($underline) {
-			case PHPExcel_Style_Font::UNDERLINE_NONE:				return 0x00;
-			case PHPExcel_Style_Font::UNDERLINE_SINGLE:				return 0x01;
-			case PHPExcel_Style_Font::UNDERLINE_DOUBLE:				return 0x02;
-			case PHPExcel_Style_Font::UNDERLINE_SINGLEACCOUNTING:	return 0x21;
-			case PHPExcel_Style_Font::UNDERLINE_DOUBLEACCOUNTING:	return 0x22;
-			default:												return 0x00;
-		}
-	}
+        return 0x190;
+    }
+
+    /**
+     * Map underline
+     *
+     * @param string
+     * @return int
+     */
+    private function _mapUnderline($underline)
+    {
+        switch ($underline) {
+            case PHPExcel_Style_Font::UNDERLINE_NONE:				return 0x00;
+            case PHPExcel_Style_Font::UNDERLINE_SINGLE:				return 0x01;
+            case PHPExcel_Style_Font::UNDERLINE_DOUBLE:				return 0x02;
+            case PHPExcel_Style_Font::UNDERLINE_SINGLEACCOUNTING:	return 0x21;
+            case PHPExcel_Style_Font::UNDERLINE_DOUBLEACCOUNTING:	return 0x22;
+            default:												return 0x00;
+        }
+    }
 
 }

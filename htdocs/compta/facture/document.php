@@ -37,7 +37,6 @@ $langs->load('compta');
 $langs->load('other');
 $langs->load("bills");
 
-
 $id=(GETPOST('id','int')?GETPOST('id','int'):GETPOST('facid','int'));  // For backward compatibility
 $ref=GETPOST('ref','alpha');
 $socid=GETPOST('socid','int');
@@ -45,10 +44,9 @@ $action=GETPOST('action','alpha');
 $confirm=GETPOST('confirm', 'alpha');
 
 // Security check
-if ($user->societe_id)
-{
-	$action='';
-	$socid = $user->societe_id;
+if ($user->societe_id) {
+    $action='';
+    $socid = $user->societe_id;
 }
 $result=restrictedArea($user,'facture',$id,'');
 
@@ -65,38 +63,33 @@ if (! $sortfield) $sortfield="name";
 
 $object = new Facture($db);
 
-
 /*
  * Actions
  */
 
 // Envoi fichier
-if (GETPOST('sendit') && ! empty($conf->global->MAIN_UPLOAD_DOC))
-{
-	if ($object->fetch($id))
-	{
-		$object->fetch_thirdparty();
-		$upload_dir = $conf->facture->dir_output . "/" . dol_sanitizeFileName($object->ref);
-		dol_add_file_process($upload_dir,0,1,'userfile');
-	}
+if (GETPOST('sendit') && ! empty($conf->global->MAIN_UPLOAD_DOC)) {
+    if ($object->fetch($id)) {
+        $object->fetch_thirdparty();
+        $upload_dir = $conf->facture->dir_output . "/" . dol_sanitizeFileName($object->ref);
+        dol_add_file_process($upload_dir,0,1,'userfile');
+    }
 }
 
 // Delete
-if ($action == 'confirm_deletefile' && $confirm == 'yes')
-{
-	if ($object->fetch($id))
-	{
-	    $langs->load("other");
-		$object->fetch_thirdparty();
+if ($action == 'confirm_deletefile' && $confirm == 'yes') {
+    if ($object->fetch($id)) {
+        $langs->load("other");
+        $object->fetch_thirdparty();
 
-		$upload_dir = $conf->facture->dir_output . "/" . dol_sanitizeFileName($object->ref);
-		$file = $upload_dir . '/' . GETPOST('urlfile');	// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
-		$ret=dol_delete_file($file,0,0,0,$object);
-		if ($ret) setEventMessage($langs->trans("FileWasRemoved", GETPOST('urlfile')));
-		else setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), 'errors');
-    	header('Location: '.$_SERVER["PHP_SELF"].'?id='.$id);
-    	exit;
-	}
+        $upload_dir = $conf->facture->dir_output . "/" . dol_sanitizeFileName($object->ref);
+        $file = $upload_dir . '/' . GETPOST('urlfile');	// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
+        $ret=dol_delete_file($file,0,0,0,$object);
+        if ($ret) setEventMessage($langs->trans("FileWasRemoved", GETPOST('urlfile')));
+        else setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), 'errors');
+        header('Location: '.$_SERVER["PHP_SELF"].'?id='.$id);
+        exit;
+    }
 }
 
 /*
@@ -107,99 +100,83 @@ llxHeader();
 
 $form = new Form($db);
 
-if ($id > 0 || ! empty($ref))
-{
-	if ($object->fetch($id,$ref) > 0)
-	{
-		$object->fetch_thirdparty();
+if ($id > 0 || ! empty($ref)) {
+    if ($object->fetch($id,$ref) > 0) {
+        $object->fetch_thirdparty();
 
-		$upload_dir = $conf->facture->dir_output.'/'.dol_sanitizeFileName($object->ref);
+        $upload_dir = $conf->facture->dir_output.'/'.dol_sanitizeFileName($object->ref);
 
-		$head = facture_prepare_head($object);
-		dol_fiche_head($head, 'documents', $langs->trans('InvoiceCustomer'), 0, 'bill');
+        $head = facture_prepare_head($object);
+        dol_fiche_head($head, 'documents', $langs->trans('InvoiceCustomer'), 0, 'bill');
 
+        // Construit liste des fichiers
+        $filearray=dol_dir_list($upload_dir,"files",0,'','\.meta$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
+        $totalsize=0;
+        foreach ($filearray as $key => $file) {
+            $totalsize+=$file['size'];
+        }
 
-		// Construit liste des fichiers
-		$filearray=dol_dir_list($upload_dir,"files",0,'','\.meta$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
-		$totalsize=0;
-		foreach($filearray as $key => $file)
-		{
-			$totalsize+=$file['size'];
-		}
+        print '<table class="border" width="100%">';
 
+        $linkback = '<a href="'.DOL_URL_ROOT.'/compta/facture/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
 
+        // Ref
+        print '<tr><td width="30%">'.$langs->trans('Ref').'</td>';
+        print '<td colspan="3">';
+        $morehtmlref='';
+        $discount=new DiscountAbsolute($db);
+        $result=$discount->fetch(0,$object->id);
+        if ($result > 0) {
+            $morehtmlref=' ('.$langs->trans("CreditNoteConvertedIntoDiscount",$discount->getNomUrl(1,'discount')).')';
+        }
+        if ($result < 0) {
+            dol_print_error('',$discount->error);
+        }
+        print $form->showrefnav($object, 'ref', $linkback, 1, 'facnumber', 'ref', $morehtmlref);
+        print '</td></tr>';
 
-		print '<table class="border" width="100%">';
+        // Ref customer
+        print '<tr><td width="20%">';
+        print '<table class="nobordernopadding" width="100%"><tr><td>';
+        print $langs->trans('RefCustomer');
+        print '</td>';
+        print '</tr></table>';
+        print '</td>';
+        print '<td colspan="5">';
+        print $object->ref_client;
+        print '</td></tr>';
 
-		$linkback = '<a href="'.DOL_URL_ROOT.'/compta/facture/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
+        // Company
+        print '<tr><td>'.$langs->trans('Company').'</td><td colspan="3">'.$object->thirdparty->getNomUrl(1).'</td></tr>';
 
-		// Ref
-		print '<tr><td width="30%">'.$langs->trans('Ref').'</td>';
-		print '<td colspan="3">';
-		$morehtmlref='';
-		$discount=new DiscountAbsolute($db);
-		$result=$discount->fetch(0,$object->id);
-		if ($result > 0)
-		{
-			$morehtmlref=' ('.$langs->trans("CreditNoteConvertedIntoDiscount",$discount->getNomUrl(1,'discount')).')';
-		}
-		if ($result < 0)
-		{
-			dol_print_error('',$discount->error);
-		}
-		print $form->showrefnav($object, 'ref', $linkback, 1, 'facnumber', 'ref', $morehtmlref);
-		print '</td></tr>';
+        print '<tr><td>'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
+        print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.$totalsize.' '.$langs->trans("bytes").'</td></tr>';
+        print "</table>\n";
+        print "</div>\n";
 
-		// Ref customer
-		print '<tr><td width="20%">';
-		print '<table class="nobordernopadding" width="100%"><tr><td>';
-		print $langs->trans('RefCustomer');
-		print '</td>';
-		print '</tr></table>';
-		print '</td>';
-		print '<td colspan="5">';
-		print $object->ref_client;
-		print '</td></tr>';
+        /*
+         * Confirmation suppression fichier
+         */
+        if ($action == 'delete') {
+            $ret=$form->form_confirm($_SERVER["PHP_SELF"].'?facid='.$id.'&urlfile='.urlencode(GETPOST("urlfile")), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile', '', 0, 1);
+            if ($ret == 'html') print '<br>';
+        }
 
-		// Company
-		print '<tr><td>'.$langs->trans('Company').'</td><td colspan="3">'.$object->thirdparty->getNomUrl(1).'</td></tr>';
+        // Affiche formulaire upload
+        $formfile=new FormFile($db);
+        $formfile->form_attach_new_file(DOL_URL_ROOT.'/compta/facture/document.php?facid='.$object->id,'',0,0,$user->rights->facture->creer,50,$object);
 
-		print '<tr><td>'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
-		print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.$totalsize.' '.$langs->trans("bytes").'</td></tr>';
-		print "</table>\n";
-		print "</div>\n";
+        // List of document
+        $param='&facid='.$object->id;
+        $formfile->list_of_documents($filearray,$object,'facture',$param);
 
-    	/*
-		 * Confirmation suppression fichier
-		 */
-		if ($action == 'delete')
-		{
-			$ret=$form->form_confirm($_SERVER["PHP_SELF"].'?facid='.$id.'&urlfile='.urlencode(GETPOST("urlfile")), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile', '', 0, 1);
-			if ($ret == 'html') print '<br>';
-		}
-
-
-		// Affiche formulaire upload
-		$formfile=new FormFile($db);
-		$formfile->form_attach_new_file(DOL_URL_ROOT.'/compta/facture/document.php?facid='.$object->id,'',0,0,$user->rights->facture->creer,50,$object);
-
-
-		// List of document
-		$param='&facid='.$object->id;
-		$formfile->list_of_documents($filearray,$object,'facture',$param);
-
-	}
-	else
-	{
-		dol_print_error($db);
-	}
-}
-else
-{
-	print $langs->trans("UnkownError");
+    } else {
+        dol_print_error($db);
+    }
+} else {
+    print $langs->trans("UnkownError");
 }
 
 $db->close();
 
 llxFooter();
-?>

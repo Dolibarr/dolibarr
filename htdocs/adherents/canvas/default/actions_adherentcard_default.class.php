@@ -30,13 +30,13 @@ include_once DOL_DOCUMENT_ROOT.'/adherents/canvas/actions_adherentcard_common.cl
  */
 class ActionsAdherentCardDefault extends ActionsAdherentCardCommon
 {
-	var $db;
-	var $dirmodule;
-    var $targetmodule;
-    var $canvas;
-    var $card;
+    public $db;
+    public $dirmodule;
+    public $targetmodule;
+    public $canvas;
+    public $card;
 
-	/**
+    /**
      *	Constructor
      *
      *	@param	DoliDB	$db				Handler acces base de donnees
@@ -44,48 +44,47 @@ class ActionsAdherentCardDefault extends ActionsAdherentCardCommon
      *	@param	string	$targetmodule	Name of directory of module where canvas is stored
      *	@param	string	$canvas			Name of canvas
      *	@param	string	$card			Name of tab (sub-canvas)
-	 */
-	function __construct($db, $dirmodule, $targetmodule, $canvas, $card)
-	{
+     */
+    public function __construct($db, $dirmodule, $targetmodule, $canvas, $card)
+    {
         $this->db               = $db;
         $this->dirmodule		= $dirmodule;
         $this->targetmodule     = $targetmodule;
         $this->canvas           = $canvas;
         $this->card             = $card;
-	}
+    }
 
-	/**
-	 * 	Return the title of card
-	 *
-	 * 	@param	string	$action		Code action
-	 * 	@return	string				Title
-	 */
-	private function getTitle($action)
-	{
-		global $langs;
+    /**
+     * 	Return the title of card
+     *
+     * 	@param	string	$action		Code action
+     * 	@return	string				Title
+     */
+    private function getTitle($action)
+    {
+        global $langs;
 
-		$out='';
+        $out='';
 
-		if ($action == 'view') 		$out.= (! empty($conf->global->ADHERENT_ADDRESSES_MANAGEMENT) ? $langs->trans("Adherent") : $langs->trans("ContactAddress"));
-		if ($action == 'edit') 		$out.= (! empty($conf->global->ADHERENT_ADDRESSES_MANAGEMENT) ? $langs->trans("EditAdherent") : $langs->trans("EditAdherentAddress"));
-		if ($action == 'create')	$out.= (! empty($conf->global->ADHERENT_ADDRESSES_MANAGEMENT) ? $langs->trans("NewAdherent") : $langs->trans("NewAdherentAddress"));
+        if ($action == 'view') 		$out.= (! empty($conf->global->ADHERENT_ADDRESSES_MANAGEMENT) ? $langs->trans("Adherent") : $langs->trans("ContactAddress"));
+        if ($action == 'edit') 		$out.= (! empty($conf->global->ADHERENT_ADDRESSES_MANAGEMENT) ? $langs->trans("EditAdherent") : $langs->trans("EditAdherentAddress"));
+        if ($action == 'create')	$out.= (! empty($conf->global->ADHERENT_ADDRESSES_MANAGEMENT) ? $langs->trans("NewAdherent") : $langs->trans("NewAdherentAddress"));
+        return $out;
+    }
 
-		return $out;
-	}
+    /**
+     *  Assign custom values for canvas
+     *
+     *  @param	string		&$action    	Type of action
+     *  @param	int			$id				Id
+     *  @return	void
+     */
+    public function assign_values(&$action, $id)
+    {
+        global $conf, $db, $langs, $user;
+        global $form;
 
-	/**
-	 *  Assign custom values for canvas
-	 *
-	 *  @param	string		&$action    	Type of action
-	 *  @param	int			$id				Id
-	 *  @return	void
-	 */
-	function assign_values(&$action, $id)
-	{
-		global $conf, $db, $langs, $user;
-		global $form;
-
-		$ret = $this->getObject($id);
+        $ret = $this->getObject($id);
 
         parent::assign_values($action, $id);
 
@@ -93,56 +92,48 @@ class ActionsAdherentCardDefault extends ActionsAdherentCardCommon
         $this->tpl['error'] = $this->error;
         $this->tpl['errors']= $this->errors;
 
-		if ($action == 'view')
-		{
+        if ($action == 'view') {
             // Card header
             $head = member_prepare_head($this->object);
             $title = $this->getTitle($action);
 
-		    $this->tpl['showhead']=dol_get_fiche_head($head, 'card', $title, 0, 'adherent');
-		    $this->tpl['showend']=dol_get_fiche_end();
+            $this->tpl['showhead']=dol_get_fiche_head($head, 'card', $title, 0, 'adherent');
+            $this->tpl['showend']=dol_get_fiche_end();
 
-        	$objsoc = new Societe($db);
+            $objsoc = new Societe($db);
             $objsoc->fetch($this->object->socid);
 
             $this->tpl['actionstodo']=show_actions_todo($conf,$langs,$db,$objsoc,$this->object,1);
 
             $this->tpl['actionsdone']=show_actions_done($conf,$langs,$db,$objsoc,$this->object,1);
-		}
-		else
-		{
-			// Confirm delete contact
-        	if ($action == 'delete' && $user->rights->adherent->supprimer)
-        	{
-        		$this->tpl['action_delete'] = $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$this->object->id,$langs->trans("DeleteAdherent"),$langs->trans("ConfirmDeleteAdherent"),"confirm_delete",'',0,1);
-        	}
-		}
+        } else {
+            // Confirm delete contact
+            if ($action == 'delete' && $user->rights->adherent->supprimer) {
+                $this->tpl['action_delete'] = $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$this->object->id,$langs->trans("DeleteAdherent"),$langs->trans("ConfirmDeleteAdherent"),"confirm_delete",'',0,1);
+            }
+        }
 
-		if ($action == 'list')
-		{
-	        $this->LoadListDatas($GLOBALS['limit'], $GLOBALS['offset'], $GLOBALS['sortfield'], $GLOBALS['sortorder']);
-		}
+        if ($action == 'list') {
+            $this->LoadListDatas($GLOBALS['limit'], $GLOBALS['offset'], $GLOBALS['sortfield'], $GLOBALS['sortorder']);
+        }
 
-	}
+    }
 
-
-	/**
-	 * 	Fetch datas list
-	 *
-	 *  @param	int		$limit		Limit number of responses
-	 *  @param	int		$offset		Offset for first response
-	 *  @param	string	$sortfield	Sort field
-	 *  @param	string	$sortorder	Sort order ('ASC' or 'DESC')
-	 *  @return	void
-	 */
-	function LoadListDatas($limit, $offset, $sortfield, $sortorder)
-	{
-		global $conf, $langs;
+    /**
+     * 	Fetch datas list
+     *
+     *  @param	int		$limit		Limit number of responses
+     *  @param	int		$offset		Offset for first response
+     *  @param	string	$sortfield	Sort field
+     *  @param	string	$sortorder	Sort order ('ASC' or 'DESC')
+     *  @return	void
+     */
+    public function LoadListDatas($limit, $offset, $sortfield, $sortorder)
+    {
+        global $conf, $langs;
 
         //$this->getFieldList();
 
         $this->list_datas = array();
-	}
+    }
 }
-
-?>

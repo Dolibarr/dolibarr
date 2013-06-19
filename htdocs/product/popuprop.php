@@ -47,21 +47,16 @@ if ($page == -1) $page = 0;
 $limit = $conf->liste_limit;
 $offset = $limit * $page ;
 
-
 $staticproduct=new Product($db);
-
 
 /*
  * View
  */
 
 $helpurl='';
-if ($type == 0)
-{
+if ($type == 0) {
     $helpurl='EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
-}
-else if ($type == 1)
-{
+} elseif ($type == 1) {
     $helpurl='EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
 }
 
@@ -74,23 +69,20 @@ $sql.= ' WHERE entity IN ('.getEntity('product', 1).')';
 if (isset($type)) $sql.= " AND fk_product_type = ".$type;
 
 $result=$db->query($sql);
-if ($result)
-{
+if ($result) {
     $obj = $db->fetch_object($result);
     $num = $obj->c;
 }
 
 $param = '';
 $title = $langs->trans("ListProductServiceByPopularity");
-if (isset($type))
-{
-	$param = '&amp;type='.$type;
-	$title = $langs->trans("ListProductByPopularity");
-	if ($type == 1) $title = $langs->trans("ListServiceByPopularity");
+if (isset($type)) {
+    $param = '&amp;type='.$type;
+    $title = $langs->trans("ListProductByPopularity");
+    if ($type == 1) $title = $langs->trans("ListServiceByPopularity");
 }
 
 print_barre_liste($title, $page, "popuprop.php",$param,"","","",$num);
-
 
 print '<table class="noborder" width="100%">';
 
@@ -112,56 +104,50 @@ $sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit($limit, $offset);
 
 $result=$db->query($sql);
-if ($result)
-{
-	$num = $db->num_rows($result);
-	$i = 0;
+if ($result) {
+    $num = $db->num_rows($result);
+    $i = 0;
 
-	$var=True;
-	while ($i < $num)
-	{
-		$objp = $db->fetch_object($result);
+    $var=True;
+    while ($i < $num) {
+        $objp = $db->fetch_object($result);
 
-		// Multilangs
-		if (! empty($conf->global->MAIN_MULTILANGS)) // si l'option est active
-		{
-			$sql = "SELECT label";
-			$sql.= " FROM ".MAIN_DB_PREFIX."product_lang";
-			$sql.= " WHERE fk_product=".$objp->rowid;
-			$sql.= " AND lang='". $langs->getDefaultLang() ."'";
-			$sql.= " LIMIT 1";
+        // Multilangs
+        if (! empty($conf->global->MAIN_MULTILANGS)) { // si l'option est active
+            $sql = "SELECT label";
+            $sql.= " FROM ".MAIN_DB_PREFIX."product_lang";
+            $sql.= " WHERE fk_product=".$objp->rowid;
+            $sql.= " AND lang='". $langs->getDefaultLang() ."'";
+            $sql.= " LIMIT 1";
 
-			$resultp = $db->query($sql);
-			if ($resultp)
-			{
-				$objtp = $db->fetch_object($resultp);
-				if (! empty($objtp->label)) $objp->label = $objtp->label;
-			}
-		}
+            $resultp = $db->query($sql);
+            if ($resultp) {
+                $objtp = $db->fetch_object($resultp);
+                if (! empty($objtp->label)) $objp->label = $objtp->label;
+            }
+        }
 
-		$var=!$var;
-		print "<tr $bc[$var]>";
-		print '<td><a href="'.DOL_URL_ROOT.'/product/stats/fiche.php?id='.$objp->rowid.'">';
-		if ($objp->type==1) print img_object($langs->trans("ShowService"),"service");
-		else print img_object($langs->trans("ShowProduct"),"product");
-		print " ";
-		print $objp->ref.'</a></td>';
-		print '<td>';
-		if ($objp->type==1) print $langs->trans("ShowService");
-		else print $langs->trans("ShowProduct");
-		print '</td>';
-		print '<td>'.$objp->label.'</td>';
-		print '<td align="right">'.$objp->c.'</td>';
-		print "</tr>\n";
-		$i++;
-	}
+        $var=!$var;
+        print "<tr $bc[$var]>";
+        print '<td><a href="'.DOL_URL_ROOT.'/product/stats/fiche.php?id='.$objp->rowid.'">';
+        if ($objp->type==1) print img_object($langs->trans("ShowService"),"service");
+        else print img_object($langs->trans("ShowProduct"),"product");
+        print " ";
+        print $objp->ref.'</a></td>';
+        print '<td>';
+        if ($objp->type==1) print $langs->trans("ShowService");
+        else print $langs->trans("ShowProduct");
+        print '</td>';
+        print '<td>'.$objp->label.'</td>';
+        print '<td align="right">'.$objp->c.'</td>';
+        print "</tr>\n";
+        $i++;
+    }
 
-	$db->free();
+    $db->free();
 }
 
 print "</table>";
 
-
 llxFooter();
 $db->close();
-?>

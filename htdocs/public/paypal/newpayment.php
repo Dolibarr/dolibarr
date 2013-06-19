@@ -31,9 +31,8 @@ define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
 
 // For MultiCompany module
 $entity=(! empty($_GET['entity']) ? (int) $_GET['entity'] : (! empty($_POST['entity']) ? (int) $_POST['entity'] : 1));
-if (is_int($entity))
-{
-	define("DOLENTITY", $entity);
+if (is_int($entity)) {
+    define("DOLENTITY", $entity);
 }
 
 require '../../main.inc.php';
@@ -67,22 +66,18 @@ $amount=price2num(GETPOST("amount"));
 if (! GETPOST("currency",'alpha')) $currency=$conf->currency;
 else $currency=GETPOST("currency",'alpha');
 
-if (! GETPOST("action"))
-{
-    if (! GETPOST("amount") && ! GETPOST("source"))
-    {
-    	dol_print_error('',$langs->trans('ErrorBadParameters')." - amount or source");
-    	exit;
+if (! GETPOST("action")) {
+    if (! GETPOST("amount") && ! GETPOST("source")) {
+        dol_print_error('',$langs->trans('ErrorBadParameters')." - amount or source");
+        exit;
     }
-    if (is_numeric($amount) && ! GETPOST("tag") && ! GETPOST("source"))
-    {
-    	dol_print_error('',$langs->trans('ErrorBadParameters')." - tag or source");
-    	exit;
+    if (is_numeric($amount) && ! GETPOST("tag") && ! GETPOST("source")) {
+        dol_print_error('',$langs->trans('ErrorBadParameters')." - tag or source");
+        exit;
     }
-    if (GETPOST("source") && ! GETPOST("ref"))
-    {
-    	dol_print_error('',$langs->trans('ErrorBadParameters')." - ref");
-    	exit;
+    if (GETPOST("source") && ! GETPOST("ref")) {
+        dol_print_error('',$langs->trans('ErrorBadParameters')." - ref");
+        exit;
     }
 }
 
@@ -101,35 +96,29 @@ $TAG=GETPOST("tag",'alpha');
 $FULLTAG=GETPOST("fulltag",'alpha');		// fulltag is tag with more informations
 $SECUREKEY=GETPOST("securekey");	        // Secure key
 
-if (! empty($SOURCE))
-{
+if (! empty($SOURCE)) {
     $urlok.='source='.urlencode($SOURCE).'&';
     $urlko.='source='.urlencode($SOURCE).'&';
 }
-if (! empty($REF))
-{
+if (! empty($REF)) {
     $urlok.='ref='.urlencode($REF).'&';
     $urlko.='ref='.urlencode($REF).'&';
 }
-if (! empty($TAG))
-{
+if (! empty($TAG)) {
     $urlok.='tag='.urlencode($TAG).'&';
     $urlko.='tag='.urlencode($TAG).'&';
 }
-if (! empty($FULLTAG))
-{
+if (! empty($FULLTAG)) {
     $urlok.='fulltag='.urlencode($FULLTAG).'&';
     $urlko.='fulltag='.urlencode($FULLTAG).'&';
 }
-if (! empty($SECUREKEY))
-{
+if (! empty($SECUREKEY)) {
     $urlok.='securekey='.urlencode($SECUREKEY).'&';
     $urlko.='securekey='.urlencode($SECUREKEY).'&';
 }
-if (! empty($entity))
-{
-	$urlok.='entity='.urlencode($entity).'&';
-	$urlko.='entity='.urlencode($entity).'&';
+if (! empty($entity)) {
+    $urlok.='entity='.urlencode($entity).'&';
+    $urlko.='entity='.urlencode($entity).'&';
 }
 $urlok=preg_replace('/&$/','',$urlok);  // Remove last &
 $urlko=preg_replace('/&$/','',$urlko);  // Remove last &
@@ -139,54 +128,46 @@ $PAYPAL_API_OK="";
 if ($urlok) $PAYPAL_API_OK=$urlok;
 $PAYPAL_API_KO="";
 if ($urlko) $PAYPAL_API_KO=$urlko;
-if (empty($PAYPAL_API_USER))
-{
+if (empty($PAYPAL_API_USER)) {
     dol_print_error('',"Paypal setup param PAYPAL_API_USER not defined");
+
     return -1;
 }
-if (empty($PAYPAL_API_PASSWORD))
-{
+if (empty($PAYPAL_API_PASSWORD)) {
     dol_print_error('',"Paypal setup param PAYPAL_API_PASSWORD not defined");
+
     return -1;
 }
-if (empty($PAYPAL_API_SIGNATURE))
-{
+if (empty($PAYPAL_API_SIGNATURE)) {
     dol_print_error('',"Paypal setup param PAYPAL_API_SIGNATURE not defined");
+
     return -1;
 }
 
 // Check security token
 $valid=true;
-if (! empty($conf->global->PAYPAL_SECURITY_TOKEN))
-{
-    if (! empty($conf->global->PAYPAL_SECURITY_TOKEN_UNIQUE))
-    {
-	    if ($SOURCE && $REF) $token = dol_hash($conf->global->PAYPAL_SECURITY_TOKEN . $SOURCE . $REF, 2);    // Use the source in the hash to avoid duplicates if the references are identical
-	    else $token = dol_hash($conf->global->PAYPAL_SECURITY_TOKEN, 2);
-    }
-    else
-    {
+if (! empty($conf->global->PAYPAL_SECURITY_TOKEN)) {
+    if (! empty($conf->global->PAYPAL_SECURITY_TOKEN_UNIQUE)) {
+        if ($SOURCE && $REF) $token = dol_hash($conf->global->PAYPAL_SECURITY_TOKEN . $SOURCE . $REF, 2);    // Use the source in the hash to avoid duplicates if the references are identical
+        else $token = dol_hash($conf->global->PAYPAL_SECURITY_TOKEN, 2);
+    } else {
         $token = $conf->global->PAYPAL_SECURITY_TOKEN;
     }
-	if ($SECUREKEY != $token) $valid=false;
+    if ($SECUREKEY != $token) $valid=false;
 
-	if (! $valid)
-	{
-    	print '<div class="error">Bad value for key.</div>';
-	    //print 'SECUREKEY='.$SECUREKEY.' token='.$token.' valid='.$valid;
-    	exit;
-	}
+    if (! $valid) {
+        print '<div class="error">Bad value for key.</div>';
+        //print 'SECUREKEY='.$SECUREKEY.' token='.$token.' valid='.$valid;
+        exit;
+    }
 }
-
-
 
 /*
  * Actions
  */
 
-if (GETPOST("action") == 'dopayment')
-{
-	$PAYPAL_API_PRICE=price2num(GETPOST("newamount"),'MT');
+if (GETPOST("action") == 'dopayment') {
+    $PAYPAL_API_PRICE=price2num(GETPOST("newamount"),'MT');
     $PAYPAL_PAYMENT_TYPE='Sale';
 
     $shipToName=GETPOST("shipToName");
@@ -200,32 +181,31 @@ if (GETPOST("action") == 'dopayment')
     $email=GETPOST("email");
     $desc=GETPOST("desc");
 
-	$mesg='';
-	if (empty($PAYPAL_API_PRICE) || ! is_numeric($PAYPAL_API_PRICE))   $mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Amount"));
-	//elseif (empty($EMAIL))          $mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("YourEMail"));
-	//elseif (! isValidEMail($EMAIL)) $mesg=$langs->trans("ErrorBadEMail",$EMAIL);
-	elseif (empty($FULLTAG))        $mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("PaymentCode"));
+    $mesg='';
+    if (empty($PAYPAL_API_PRICE) || ! is_numeric($PAYPAL_API_PRICE))   $mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Amount"));
+    //elseif (empty($EMAIL))          $mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("YourEMail"));
+    //elseif (! isValidEMail($EMAIL)) $mesg=$langs->trans("ErrorBadEMail",$EMAIL);
+    elseif (empty($FULLTAG))        $mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("PaymentCode"));
 
     //var_dump($_POST);
-	if (empty($mesg))
-	{
-		dol_syslog("newpayment.php call paypal api and do redirect", LOG_DEBUG);
+    if (empty($mesg)) {
+        dol_syslog("newpayment.php call paypal api and do redirect", LOG_DEBUG);
 
-		// Other
-		$PAYPAL_API_DEVISE="USD";
-		//if ($currency == 'EUR') $PAYPAL_API_DEVISE="EUR";
-		//if ($currency == 'USD') $PAYPAL_API_DEVISE="USD";
+        // Other
+        $PAYPAL_API_DEVISE="USD";
+        //if ($currency == 'EUR') $PAYPAL_API_DEVISE="EUR";
+        //if ($currency == 'USD') $PAYPAL_API_DEVISE="USD";
         if (! empty($currency)) $PAYPAL_API_DEVISE=$currency;
 
-	    dol_syslog("Submit Paypal form", LOG_DEBUG);
-	    dol_syslog("PAYPAL_API_USER: $PAYPAL_API_USER", LOG_DEBUG);
-	    //dol_syslog("PAYPAL_API_PASSWORD: $PAYPAL_API_PASSWORD", LOG_DEBUG);  // No password into log files
-	    dol_syslog("PAYPAL_API_SIGNATURE: $PAYPAL_API_SIGNATURE", LOG_DEBUG);
-	    dol_syslog("PAYPAL_API_SANDBOX: $PAYPAL_API_SANDBOX", LOG_DEBUG);
-	    dol_syslog("PAYPAL_API_OK: $PAYPAL_API_OK", LOG_DEBUG);
-	    dol_syslog("PAYPAL_API_KO: $PAYPAL_API_KO", LOG_DEBUG);
-	    dol_syslog("PAYPAL_API_PRICE: $PAYPAL_API_PRICE", LOG_DEBUG);
-	    dol_syslog("PAYPAL_API_DEVISE: $PAYPAL_API_DEVISE", LOG_DEBUG);
+        dol_syslog("Submit Paypal form", LOG_DEBUG);
+        dol_syslog("PAYPAL_API_USER: $PAYPAL_API_USER", LOG_DEBUG);
+        //dol_syslog("PAYPAL_API_PASSWORD: $PAYPAL_API_PASSWORD", LOG_DEBUG);  // No password into log files
+        dol_syslog("PAYPAL_API_SIGNATURE: $PAYPAL_API_SIGNATURE", LOG_DEBUG);
+        dol_syslog("PAYPAL_API_SANDBOX: $PAYPAL_API_SANDBOX", LOG_DEBUG);
+        dol_syslog("PAYPAL_API_OK: $PAYPAL_API_OK", LOG_DEBUG);
+        dol_syslog("PAYPAL_API_KO: $PAYPAL_API_KO", LOG_DEBUG);
+        dol_syslog("PAYPAL_API_PRICE: $PAYPAL_API_PRICE", LOG_DEBUG);
+        dol_syslog("PAYPAL_API_DEVISE: $PAYPAL_API_DEVISE", LOG_DEBUG);
         dol_syslog("shipToName: $shipToName", LOG_DEBUG);
         dol_syslog("shipToStreet: $shipToStreet", LOG_DEBUG);
         dol_syslog("shipToCity: $shipToCity", LOG_DEBUG);
@@ -238,18 +218,16 @@ if (GETPOST("action") == 'dopayment')
         dol_syslog("desc: $desc", LOG_DEBUG);
 
         dol_syslog("SCRIPT_URI: ".(empty($_SERVER["SCRIPT_URI"])?'':$_SERVER["SCRIPT_URI"]), LOG_DEBUG);	// If defined script uri must match domain of PAYPAL_API_OK and PAYPAL_API_KO
-	    //$_SESSION["PaymentType"]=$PAYPAL_PAYMENT_TYPE;
-	    //$_SESSION["currencyCodeType"]=$PAYPAL_API_DEVISE;
-	    //$_SESSION["Payment_Amount"]=$PAYPAL_API_PRICE;
+        //$_SESSION["PaymentType"]=$PAYPAL_PAYMENT_TYPE;
+        //$_SESSION["currencyCodeType"]=$PAYPAL_API_DEVISE;
+        //$_SESSION["Payment_Amount"]=$PAYPAL_API_PRICE;
 
-	    // A redirect is added if API call successfull
+        // A redirect is added if API call successfull
         print_paypal_redirect($PAYPAL_API_PRICE,$PAYPAL_API_DEVISE,$PAYPAL_PAYMENT_TYPE,$PAYPAL_API_OK,$PAYPAL_API_KO, $FULLTAG);
 
-		exit;
-	}
+        exit;
+    }
 }
-
-
 
 /*
  * View
@@ -257,9 +235,8 @@ if (GETPOST("action") == 'dopayment')
 
 llxHeaderPaypal($langs->trans("PaymentForm"));
 
-if (! empty($PAYPAL_API_SANDBOX))
-{
-	dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode'),'','warning');
+if (! empty($PAYPAL_API_SANDBOX)) {
+    dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode'),'','warning');
 }
 
 // Common variables
@@ -299,36 +276,30 @@ else if (! empty($conf->global->PAYBOX_LOGO)) $logosmall=$conf->global->PAYBOX_L
 //print '<!-- Show logo (logosmall='.$logosmall.' logo='.$logo.') -->'."\n";
 // Define urllogo
 $urllogo='';
-if (! empty($logosmall) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$logosmall))
-{
-	$urllogo=DOL_URL_ROOT.'/viewimage.php?modulepart=companylogo&amp;file='.urlencode('thumbs/'.$logosmall);
-}
-elseif (! empty($logo) && is_readable($conf->mycompany->dir_output.'/logos/'.$logo))
-{
-	$urllogo=DOL_URL_ROOT.'/viewimage.php?modulepart=companylogo&amp;file='.urlencode($logo);
-	$width=96;
+if (! empty($logosmall) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$logosmall)) {
+    $urllogo=DOL_URL_ROOT.'/viewimage.php?modulepart=companylogo&amp;file='.urlencode('thumbs/'.$logosmall);
+} elseif (! empty($logo) && is_readable($conf->mycompany->dir_output.'/logos/'.$logo)) {
+    $urllogo=DOL_URL_ROOT.'/viewimage.php?modulepart=companylogo&amp;file='.urlencode($logo);
+    $width=96;
 }
 // Output html code for logo
-if ($urllogo)
-{
-	print '<tr>';
-	print '<td align="center"><img id="dolpaymentlogo" title="'.$title.'" src="'.$urllogo.'"';
-	if ($width) print ' width="'.$width.'"';
-	print '></td>';
-	print '</tr>'."\n";
+if ($urllogo) {
+    print '<tr>';
+    print '<td align="center"><img id="dolpaymentlogo" title="'.$title.'" src="'.$urllogo.'"';
+    if ($width) print ' width="'.$width.'"';
+    print '></td>';
+    print '</tr>'."\n";
 }
 
 // Output introduction text
 $text='';
-if (! empty($conf->global->PAYPAL_NEWFORM_TEXT))
-{
+if (! empty($conf->global->PAYPAL_NEWFORM_TEXT)) {
     $langs->load("members");
     if (preg_match('/^\((.*)\)$/',$conf->global->PAYPAL_NEWFORM_TEXT,$reg)) $text.=$langs->trans($reg[1])."<br>\n";
     else $text.=$conf->global->PAYPAL_NEWFORM_TEXT."<br>\n";
     $text='<tr><td align="center"><br>'.$text.'<br></td></tr>'."\n";
 }
-if (empty($text))
-{
+if (empty($text)) {
     $text.='<tr><td class="textpublicpayment"><br><strong>'.$langs->trans("WelcomeOnPaymentPage").'</strong><br></td></tr>'."\n";
     $text.='<tr><td class="textpublicpayment"><br>'.$langs->trans("ThisScreenAllowsYouToPay",$creditor).'<br><br></td></tr>'."\n";
 }
@@ -344,46 +315,43 @@ $error=0;
 $var=false;
 
 // Free payment
-if (! GETPOST("source") && $valid)
-{
-	$found=true;
-	$tag=GETPOST("tag");
-	$fulltag=$tag;
+if (! GETPOST("source") && $valid) {
+    $found=true;
+    $tag=GETPOST("tag");
+    $fulltag=$tag;
 
-	// Creditor
-	$var=!$var;
-	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Creditor");
+    // Creditor
+    $var=!$var;
+    print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Creditor");
     print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$creditor.'</b>';
     print '<input type="hidden" name="creditor" value="'.$creditor.'">';
     print '</td></tr>'."\n";
 
-	// Amount
-	$var=!$var;
-	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Amount");
-	if (empty($amount)) print ' ('.$langs->trans("ToComplete").')';
-	print '</td><td class="CTableRow'.($var?'1':'2').'">';
-	if (empty($amount) || ! is_numeric($amount))
-	{
+    // Amount
+    $var=!$var;
+    print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Amount");
+    if (empty($amount)) print ' ('.$langs->trans("ToComplete").')';
+    print '</td><td class="CTableRow'.($var?'1':'2').'">';
+    if (empty($amount) || ! is_numeric($amount)) {
         print '<input type="hidden" name="amount" value="'.GETPOST("amount",'int').'">';
-	    print '<input class="flat" size=8 type="text" name="newamount" value="'.GETPOST("newamount","int").'">';
-	}
-	else {
-		print '<b>'.price($amount).'</b>';
+        print '<input class="flat" size=8 type="text" name="newamount" value="'.GETPOST("newamount","int").'">';
+    } else {
+        print '<b>'.price($amount).'</b>';
         print '<input type="hidden" name="amount" value="'.$amount.'">';
-		print '<input type="hidden" name="newamount" value="'.$amount.'">';
-	}
-	// Currency
-	print ' <b>'.$langs->trans("Currency".$currency).'</b>';
-	print '<input type="hidden" name="currency" value="'.$currency.'">';
-	print '</td></tr>'."\n";
+        print '<input type="hidden" name="newamount" value="'.$amount.'">';
+    }
+    // Currency
+    print ' <b>'.$langs->trans("Currency".$currency).'</b>';
+    print '<input type="hidden" name="currency" value="'.$currency.'">';
+    print '</td></tr>'."\n";
 
-	// Tag
-	$var=!$var;
-	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("PaymentCode");
-	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$fulltag.'</b>';
-	print '<input type="hidden" name="tag" value="'.$tag.'">';
-	print '<input type="hidden" name="fulltag" value="'.$fulltag.'">';
-	print '</td></tr>'."\n";
+    // Tag
+    $var=!$var;
+    print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("PaymentCode");
+    print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$fulltag.'</b>';
+    print '<input type="hidden" name="tag" value="'.$tag.'">';
+    print '<input type="hidden" name="fulltag" value="'.$fulltag.'">';
+    print '</td></tr>'."\n";
 
     // We do not add fields shipToName, shipToStreet, shipToCity, shipToState, shipToCountryCode, shipToZip, shipToStreet2, phoneNum
     // as they don't exists (buyer is unknown, tag is free).
@@ -391,85 +359,79 @@ if (! GETPOST("source") && $valid)
 
 
 // Payment on customer order
-if (GETPOST("source") == 'order' && $valid)
-{
-	$found=true;
-	$langs->load("orders");
+if (GETPOST("source") == 'order' && $valid) {
+    $found=true;
+    $langs->load("orders");
 
-	require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
+    require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 
-	$order=new Commande($db);
-	$result=$order->fetch('',$ref);
-	if ($result < 0)
-	{
-		$mesg=$order->error;
-		$error++;
-	}
-	else
-	{
-		$result=$order->fetch_thirdparty($order->socid);
-	}
+    $order=new Commande($db);
+    $result=$order->fetch('',$ref);
+    if ($result < 0) {
+        $mesg=$order->error;
+        $error++;
+    } else {
+        $result=$order->fetch_thirdparty($order->socid);
+    }
 
-	$amount=$order->total_ttc;
+    $amount=$order->total_ttc;
     if (GETPOST("amount",'int')) $amount=GETPOST("amount",'int');
     $amount=price2num($amount);
 
-	$fulltag='ORD='.$order->ref.'.CUS='.$order->thirdparty->id;
-	//$fulltag.='.NAM='.strtr($order->thirdparty->name,"-"," ");
-	if (! empty($TAG)) { $tag=$TAG; $fulltag.='.TAG='.$TAG; }
-	$fulltag=dol_string_unaccent($fulltag);
+    $fulltag='ORD='.$order->ref.'.CUS='.$order->thirdparty->id;
+    //$fulltag.='.NAM='.strtr($order->thirdparty->name,"-"," ");
+    if (! empty($TAG)) { $tag=$TAG; $fulltag.='.TAG='.$TAG; }
+    $fulltag=dol_string_unaccent($fulltag);
 
-	// Creditor
-	$var=!$var;
-	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Creditor");
+    // Creditor
+    $var=!$var;
+    print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Creditor");
     print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$creditor.'</b>';
     print '<input type="hidden" name="creditor" value="'.$creditor.'">';
     print '</td></tr>'."\n";
 
-	// Debitor
-	$var=!$var;
-	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("ThirdParty");
-	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$order->thirdparty->name.'</b>';
+    // Debitor
+    $var=!$var;
+    print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("ThirdParty");
+    print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$order->thirdparty->name.'</b>';
 
-	// Object
-	$var=!$var;
-	$text='<b>'.$langs->trans("PaymentOrderRef",$order->ref).'</b>';
-	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Designation");
-	print '</td><td class="CTableRow'.($var?'1':'2').'">'.$text;
-	print '<input type="hidden" name="source" value="'.GETPOST("source",'alpha').'">';
-	print '<input type="hidden" name="ref" value="'.$order->ref.'">';
-	print '</td></tr>'."\n";
+    // Object
+    $var=!$var;
+    $text='<b>'.$langs->trans("PaymentOrderRef",$order->ref).'</b>';
+    print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Designation");
+    print '</td><td class="CTableRow'.($var?'1':'2').'">'.$text;
+    print '<input type="hidden" name="source" value="'.GETPOST("source",'alpha').'">';
+    print '<input type="hidden" name="ref" value="'.$order->ref.'">';
+    print '</td></tr>'."\n";
 
-	// Amount
-	$var=!$var;
-	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Amount");
-	if (empty($amount)) print ' ('.$langs->trans("ToComplete").')';
-	print '</td><td class="CTableRow'.($var?'1':'2').'">';
-	if (empty($amount) || ! is_numeric($amount))
-	{
+    // Amount
+    $var=!$var;
+    print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Amount");
+    if (empty($amount)) print ' ('.$langs->trans("ToComplete").')';
+    print '</td><td class="CTableRow'.($var?'1':'2').'">';
+    if (empty($amount) || ! is_numeric($amount)) {
         print '<input type="hidden" name="amount" value="'.GETPOST("amount",'int').'">';
-	    print '<input class="flat" size=8 type="text" name="newamount" value="'.GETPOST("newamount","int").'">';
-	}
-	else {
-		print '<b>'.price($amount).'</b>';
+        print '<input class="flat" size=8 type="text" name="newamount" value="'.GETPOST("newamount","int").'">';
+    } else {
+        print '<b>'.price($amount).'</b>';
         print '<input type="hidden" name="amount" value="'.$amount.'">';
-		print '<input type="hidden" name="newamount" value="'.$amount.'">';
-	}
-	// Currency
-	print ' <b>'.$langs->trans("Currency".$currency).'</b>';
-	print '<input type="hidden" name="currency" value="'.$currency.'">';
-	print '</td></tr>'."\n";
+        print '<input type="hidden" name="newamount" value="'.$amount.'">';
+    }
+    // Currency
+    print ' <b>'.$langs->trans("Currency".$currency).'</b>';
+    print '<input type="hidden" name="currency" value="'.$currency.'">';
+    print '</td></tr>'."\n";
 
-	// Tag
-	$var=!$var;
-	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("PaymentCode");
-	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$fulltag.'</b>';
-	print '<input type="hidden" name="tag" value="'.$tag.'">';
-	print '<input type="hidden" name="fulltag" value="'.$fulltag.'">';
-	print '</td></tr>'."\n";
+    // Tag
+    $var=!$var;
+    print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("PaymentCode");
+    print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$fulltag.'</b>';
+    print '<input type="hidden" name="tag" value="'.$tag.'">';
+    print '<input type="hidden" name="fulltag" value="'.$fulltag.'">';
+    print '</td></tr>'."\n";
 
-	// Shipping address
-	$shipToName=$order->thirdparty->name;
+    // Shipping address
+    $shipToName=$order->thirdparty->name;
     $shipToStreet=$order->thirdparty->address;
     $shipToCity=$order->thirdparty->town;
     $shipToState=$order->thirdparty->state_code;
@@ -477,8 +439,7 @@ if (GETPOST("source") == 'order' && $valid)
     $shipToZip=$order->thirdparty->zip;
     $shipToStreet2='';
     $phoneNum=$order->thirdparty->tel;
-    if ($shipToName && $shipToStreet && $shipToCity && $shipToCountryCode && $shipToZip)
-    {
+    if ($shipToName && $shipToStreet && $shipToCity && $shipToCountryCode && $shipToZip) {
         print '<input type="hidden" name="shipToName" value="'.$shipToName.'">'."\n";
         print '<input type="hidden" name="shipToStreet" value="'.$shipToStreet.'">'."\n";
         print '<input type="hidden" name="shipToCity" value="'.$shipToCity.'">'."\n";
@@ -487,9 +448,7 @@ if (GETPOST("source") == 'order' && $valid)
         print '<input type="hidden" name="shipToZip" value="'.$shipToZip.'">'."\n";
         print '<input type="hidden" name="shipToStreet2" value="'.$shipToStreet2.'">'."\n";
         print '<input type="hidden" name="phoneNum" value="'.$phoneNum.'">'."\n";
-    }
-    else
-    {
+    } else {
         print '<!-- Shipping address not complete, so we don t use it -->'."\n";
     }
     print '<input type="hidden" name="email" value="'.$order->thirdparty->email.'">'."\n";
@@ -498,82 +457,76 @@ if (GETPOST("source") == 'order' && $valid)
 
 
 // Payment on customer invoice
-if (GETPOST("source") == 'invoice' && $valid)
-{
-	$found=true;
-	$langs->load("bills");
+if (GETPOST("source") == 'invoice' && $valid) {
+    $found=true;
+    $langs->load("bills");
 
-	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+    require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 
-	$invoice=new Facture($db);
-	$result=$invoice->fetch('',$ref);
-	if ($result < 0)
-	{
-		$mesg=$invoice->error;
-		$error++;
-	}
-	else
-	{
-		$result=$invoice->fetch_thirdparty($invoice->socid);
-	}
+    $invoice=new Facture($db);
+    $result=$invoice->fetch('',$ref);
+    if ($result < 0) {
+        $mesg=$invoice->error;
+        $error++;
+    } else {
+        $result=$invoice->fetch_thirdparty($invoice->socid);
+    }
 
-	$amount=price2num($invoice->total_ttc - $invoice->getSommePaiement());
+    $amount=price2num($invoice->total_ttc - $invoice->getSommePaiement());
     if (GETPOST("amount",'int')) $amount=GETPOST("amount",'int');
     $amount=price2num($amount);
 
-	$fulltag='INV='.$invoice->ref.'.CUS='.$invoice->thirdparty->id;
-	//$fulltag.='.NAM='.strtr($invoice->thirdparty->name,"-"," ");
-	if (! empty($TAG)) { $tag=$TAG; $fulltag.='.TAG='.$TAG; }
-	$fulltag=dol_string_unaccent($fulltag);
+    $fulltag='INV='.$invoice->ref.'.CUS='.$invoice->thirdparty->id;
+    //$fulltag.='.NAM='.strtr($invoice->thirdparty->name,"-"," ");
+    if (! empty($TAG)) { $tag=$TAG; $fulltag.='.TAG='.$TAG; }
+    $fulltag=dol_string_unaccent($fulltag);
 
-	// Creditor
-	$var=!$var;
-	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Creditor");
+    // Creditor
+    $var=!$var;
+    print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Creditor");
     print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$creditor.'</b>';
     print '<input type="hidden" name="creditor" value="'.$creditor.'">';
     print '</td></tr>'."\n";
 
-	// Debitor
-	$var=!$var;
-	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("ThirdParty");
-	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$invoice->thirdparty->name.'</b>';
+    // Debitor
+    $var=!$var;
+    print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("ThirdParty");
+    print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$invoice->thirdparty->name.'</b>';
 
-	// Object
-	$var=!$var;
-	$text='<b>'.$langs->trans("PaymentInvoiceRef",$invoice->ref).'</b>';
-	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Designation");
-	print '</td><td class="CTableRow'.($var?'1':'2').'">'.$text;
-	print '<input type="hidden" name="source" value="'.GETPOST("source",'alpha').'">';
-	print '<input type="hidden" name="ref" value="'.$invoice->ref.'">';
-	print '</td></tr>'."\n";
+    // Object
+    $var=!$var;
+    $text='<b>'.$langs->trans("PaymentInvoiceRef",$invoice->ref).'</b>';
+    print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Designation");
+    print '</td><td class="CTableRow'.($var?'1':'2').'">'.$text;
+    print '<input type="hidden" name="source" value="'.GETPOST("source",'alpha').'">';
+    print '<input type="hidden" name="ref" value="'.$invoice->ref.'">';
+    print '</td></tr>'."\n";
 
-	// Amount
-	$var=!$var;
-	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Amount");
-	if (empty($amount)) print ' ('.$langs->trans("ToComplete").')';
-	print '</td><td class="CTableRow'.($var?'1':'2').'">';
-	if (empty($amount) || ! is_numeric($amount))
-	{
+    // Amount
+    $var=!$var;
+    print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Amount");
+    if (empty($amount)) print ' ('.$langs->trans("ToComplete").')';
+    print '</td><td class="CTableRow'.($var?'1':'2').'">';
+    if (empty($amount) || ! is_numeric($amount)) {
         print '<input type="hidden" name="amount" value="'.GETPOST("amount",'int').'">';
-	    print '<input class="flat" size=8 type="text" name="newamount" value="'.GETPOST("newamount","int").'">';
-	}
-	else {
-		print '<b>'.price($amount).'</b>';
+        print '<input class="flat" size=8 type="text" name="newamount" value="'.GETPOST("newamount","int").'">';
+    } else {
+        print '<b>'.price($amount).'</b>';
         print '<input type="hidden" name="amount" value="'.$amount.'">';
-		print '<input type="hidden" name="newamount" value="'.$amount.'">';
-	}
-	// Currency
-	print ' <b>'.$langs->trans("Currency".$currency).'</b>';
-	print '<input type="hidden" name="currency" value="'.$currency.'">';
-	print '</td></tr>'."\n";
+        print '<input type="hidden" name="newamount" value="'.$amount.'">';
+    }
+    // Currency
+    print ' <b>'.$langs->trans("Currency".$currency).'</b>';
+    print '<input type="hidden" name="currency" value="'.$currency.'">';
+    print '</td></tr>'."\n";
 
-	// Tag
-	$var=!$var;
-	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("PaymentCode");
-	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$fulltag.'</b>';
-	print '<input type="hidden" name="tag" value="'.$tag.'">';
-	print '<input type="hidden" name="fulltag" value="'.$fulltag.'">';
-	print '</td></tr>'."\n";
+    // Tag
+    $var=!$var;
+    print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("PaymentCode");
+    print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$fulltag.'</b>';
+    print '<input type="hidden" name="tag" value="'.$tag.'">';
+    print '<input type="hidden" name="fulltag" value="'.$fulltag.'">';
+    print '</td></tr>'."\n";
 
     // Shipping address
     $shipToName=$invoice->thirdparty->name;
@@ -584,8 +537,7 @@ if (GETPOST("source") == 'invoice' && $valid)
     $shipToZip=$invoice->thirdparty->zip;
     $shipToStreet2='';
     $phoneNum=$invoice->thirdparty->tel;
-    if ($shipToName && $shipToStreet && $shipToCity && $shipToCountryCode && $shipToZip)
-    {
+    if ($shipToName && $shipToStreet && $shipToCity && $shipToCountryCode && $shipToZip) {
         print '<input type="hidden" name="shipToName" value="'.$shipToName.'">'."\n";
         print '<input type="hidden" name="shipToStreet" value="'.$shipToStreet.'">'."\n";
         print '<input type="hidden" name="shipToCity" value="'.$shipToCity.'">'."\n";
@@ -594,9 +546,7 @@ if (GETPOST("source") == 'invoice' && $valid)
         print '<input type="hidden" name="shipToZip" value="'.$shipToZip.'">'."\n";
         print '<input type="hidden" name="shipToStreet2" value="'.$shipToStreet2.'">'."\n";
         print '<input type="hidden" name="phoneNum" value="'.$phoneNum.'">'."\n";
-    }
-    else
-    {
+    } else {
         print '<!-- Shipping address not complete, so we don t use it -->'."\n";
     }
     print '<input type="hidden" name="email" value="'.$invoice->thirdparty->email.'">'."\n";
@@ -604,171 +554,147 @@ if (GETPOST("source") == 'invoice' && $valid)
 }
 
 // Payment on contract line
-if (GETPOST("source") == 'contractline' && $valid)
-{
-	$found=true;
-	$langs->load("contracts");
+if (GETPOST("source") == 'contractline' && $valid) {
+    $found=true;
+    $langs->load("contracts");
 
-	require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
+    require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 
-	$contractline=new ContratLigne($db);
-	$result=$contractline->fetch('',$ref);
-	if ($result < 0)
-	{
-		$mesg=$contractline->error;
-		$error++;
-	}
-	else
-	{
-		if ($contractline->fk_contrat > 0)
-		{
-			$contract=new Contrat($db);
-			$result=$contract->fetch($contractline->fk_contrat);
-			if ($result > 0)
-			{
-				$result=$contract->fetch_thirdparty($contract->socid);
-			}
-			else
-			{
-				$mesg=$contract->error;
-				$error++;
-			}
-		}
-		else
-		{
-			$mesg='ErrorRecordNotFound';
-			$error++;
-		}
-	}
+    $contractline=new ContratLigne($db);
+    $result=$contractline->fetch('',$ref);
+    if ($result < 0) {
+        $mesg=$contractline->error;
+        $error++;
+    } else {
+        if ($contractline->fk_contrat > 0) {
+            $contract=new Contrat($db);
+            $result=$contract->fetch($contractline->fk_contrat);
+            if ($result > 0) {
+                $result=$contract->fetch_thirdparty($contract->socid);
+            } else {
+                $mesg=$contract->error;
+                $error++;
+            }
+        } else {
+            $mesg='ErrorRecordNotFound';
+            $error++;
+        }
+    }
 
-	$amount=$contractline->total_ttc;
-	if ($contractline->fk_product)
-	{
-		$product=new Product($db);
-		$result=$product->fetch($contractline->fk_product);
+    $amount=$contractline->total_ttc;
+    if ($contractline->fk_product) {
+        $product=new Product($db);
+        $result=$product->fetch($contractline->fk_product);
 
-		// We define price for product (TODO Put this in a method in product class)
-		if (! empty($conf->global->PRODUIT_MULTIPRICES))
-		{
-			$pu_ht = $product->multiprices[$contract->thirdparty->price_level];
-			$pu_ttc = $product->multiprices_ttc[$contract->thirdparty->price_level];
-			$price_base_type = $product->multiprices_base_type[$contract->thirdparty->price_level];
-		}
-		else
-		{
-			$pu_ht = $product->price;
-			$pu_ttc = $product->price_ttc;
-			$price_base_type = $product->price_base_type;
-		}
+        // We define price for product (TODO Put this in a method in product class)
+        if (! empty($conf->global->PRODUIT_MULTIPRICES)) {
+            $pu_ht = $product->multiprices[$contract->thirdparty->price_level];
+            $pu_ttc = $product->multiprices_ttc[$contract->thirdparty->price_level];
+            $price_base_type = $product->multiprices_base_type[$contract->thirdparty->price_level];
+        } else {
+            $pu_ht = $product->price;
+            $pu_ttc = $product->price_ttc;
+            $price_base_type = $product->price_base_type;
+        }
 
-		$amount=$pu_ttc;
-		if (empty($amount))
-		{
-			dol_print_error('','ErrorNoPriceDefinedForThisProduct');
-			exit;
-		}
-	}
+        $amount=$pu_ttc;
+        if (empty($amount)) {
+            dol_print_error('','ErrorNoPriceDefinedForThisProduct');
+            exit;
+        }
+    }
     if (GETPOST("amount",'int')) $amount=GETPOST("amount",'int');
     $amount=price2num($amount);
 
-	$fulltag='COL='.$contractline->ref.'.CON='.$contract->ref.'.CUS='.$contract->thirdparty->id.'.DAT='.dol_print_date(dol_now(),'%Y%m%d%H%M');
-	//$fulltag.='.NAM='.strtr($contract->thirdparty->name,"-"," ");
-	if (! empty($TAG)) { $tag=$TAG; $fulltag.='.TAG='.$TAG; }
-	$fulltag=dol_string_unaccent($fulltag);
+    $fulltag='COL='.$contractline->ref.'.CON='.$contract->ref.'.CUS='.$contract->thirdparty->id.'.DAT='.dol_print_date(dol_now(),'%Y%m%d%H%M');
+    //$fulltag.='.NAM='.strtr($contract->thirdparty->name,"-"," ");
+    if (! empty($TAG)) { $tag=$TAG; $fulltag.='.TAG='.$TAG; }
+    $fulltag=dol_string_unaccent($fulltag);
 
-	$qty=1;
-	if (GETPOST('qty')) $qty=GETPOST('qty');
+    $qty=1;
+    if (GETPOST('qty')) $qty=GETPOST('qty');
 
-	// Creditor
-	$var=!$var;
-	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Creditor");
-	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$creditor.'</b>';
+    // Creditor
+    $var=!$var;
+    print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Creditor");
+    print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$creditor.'</b>';
     print '<input type="hidden" name="creditor" value="'.$creditor.'">';
-	print '</td></tr>'."\n";
+    print '</td></tr>'."\n";
 
-	// Debitor
-	$var=!$var;
-	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("ThirdParty");
-	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$contract->thirdparty->name.'</b>';
+    // Debitor
+    $var=!$var;
+    print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("ThirdParty");
+    print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$contract->thirdparty->name.'</b>';
 
-	// Object
-	$var=!$var;
-	$text='<b>'.$langs->trans("PaymentRenewContractId",$contract->ref,$contractline->ref).'</b>';
-	if ($contractline->fk_product)
-	{
-		$text.='<br>'.$product->ref.($product->libelle?' - '.$product->libelle:'');
-	}
-	if ($contractline->description) $text.='<br>'.dol_htmlentitiesbr($contractline->description);
-	//if ($contractline->date_fin_validite) {
-	//	$text.='<br>'.$langs->trans("DateEndPlanned").': ';
-	//	$text.=dol_print_date($contractline->date_fin_validite);
-	//}
-	if ($contractline->date_fin_validite)
-	{
-		$text.='<br>'.$langs->trans("ExpiredSince").': '.dol_print_date($contractline->date_fin_validite);
-	}
+    // Object
+    $var=!$var;
+    $text='<b>'.$langs->trans("PaymentRenewContractId",$contract->ref,$contractline->ref).'</b>';
+    if ($contractline->fk_product) {
+        $text.='<br>'.$product->ref.($product->libelle?' - '.$product->libelle:'');
+    }
+    if ($contractline->description) $text.='<br>'.dol_htmlentitiesbr($contractline->description);
+    //if ($contractline->date_fin_validite) {
+    //	$text.='<br>'.$langs->trans("DateEndPlanned").': ';
+    //	$text.=dol_print_date($contractline->date_fin_validite);
+    //}
+    if ($contractline->date_fin_validite) {
+        $text.='<br>'.$langs->trans("ExpiredSince").': '.dol_print_date($contractline->date_fin_validite);
+    }
 
-	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Designation");
-	print '</td><td class="CTableRow'.($var?'1':'2').'">'.$text;
-	print '<input type="hidden" name="source" value="'.GETPOST("source",'alpha').'">';
-	print '<input type="hidden" name="ref" value="'.$contractline->ref.'">';
-	print '</td></tr>'."\n";
+    print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Designation");
+    print '</td><td class="CTableRow'.($var?'1':'2').'">'.$text;
+    print '<input type="hidden" name="source" value="'.GETPOST("source",'alpha').'">';
+    print '<input type="hidden" name="ref" value="'.$contractline->ref.'">';
+    print '</td></tr>'."\n";
 
-	// Quantity
-	$var=!$var;
-	$label=$langs->trans("Quantity");
-	$qty=1;
-	$duration='';
-	if ($contractline->fk_product)
-	{
-		if ($product->isservice() && $product->duration_value > 0)
-		{
-			$label=$langs->trans("Duration");
+    // Quantity
+    $var=!$var;
+    $label=$langs->trans("Quantity");
+    $qty=1;
+    $duration='';
+    if ($contractline->fk_product) {
+        if ($product->isservice() && $product->duration_value > 0) {
+            $label=$langs->trans("Duration");
 
-			// TODO Put this in a global method
-			if ($product->duration_value > 1)
-			{
-				$dur=array("h"=>$langs->trans("Hours"),"d"=>$langs->trans("DurationDays"),"w"=>$langs->trans("DurationWeeks"),"m"=>$langs->trans("DurationMonths"),"y"=>$langs->trans("DurationYears"));
-			}
-			else
-			{
-				$dur=array("h"=>$langs->trans("Hour"),"d"=>$langs->trans("DurationDay"),"w"=>$langs->trans("DurationWeek"),"m"=>$langs->trans("DurationMonth"),"y"=>$langs->trans("DurationYear"));
-			}
-			$duration=$product->duration_value.' '.$dur[$product->duration_unit];
-		}
-	}
-	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$label.'</td>';
-	print '<td class="CTableRow'.($var?'1':'2').'"><b>'.($duration?$duration:$qty).'</b>';
-	print '<input type="hidden" name="newqty" value="'.dol_escape_htmltag($qty).'">';
-	print '</b></td></tr>'."\n";
+            // TODO Put this in a global method
+            if ($product->duration_value > 1) {
+                $dur=array("h"=>$langs->trans("Hours"),"d"=>$langs->trans("DurationDays"),"w"=>$langs->trans("DurationWeeks"),"m"=>$langs->trans("DurationMonths"),"y"=>$langs->trans("DurationYears"));
+            } else {
+                $dur=array("h"=>$langs->trans("Hour"),"d"=>$langs->trans("DurationDay"),"w"=>$langs->trans("DurationWeek"),"m"=>$langs->trans("DurationMonth"),"y"=>$langs->trans("DurationYear"));
+            }
+            $duration=$product->duration_value.' '.$dur[$product->duration_unit];
+        }
+    }
+    print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$label.'</td>';
+    print '<td class="CTableRow'.($var?'1':'2').'"><b>'.($duration?$duration:$qty).'</b>';
+    print '<input type="hidden" name="newqty" value="'.dol_escape_htmltag($qty).'">';
+    print '</b></td></tr>'."\n";
 
-	// Amount
-	$var=!$var;
-	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Amount");
-	if (empty($amount)) print ' ('.$langs->trans("ToComplete").')';
-	print '</td><td class="CTableRow'.($var?'1':'2').'">';
-	if (empty($amount) || ! is_numeric($amount))
-	{
+    // Amount
+    $var=!$var;
+    print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Amount");
+    if (empty($amount)) print ' ('.$langs->trans("ToComplete").')';
+    print '</td><td class="CTableRow'.($var?'1':'2').'">';
+    if (empty($amount) || ! is_numeric($amount)) {
         print '<input type="hidden" name="amount" value="'.GETPOST("amount",'int').'">';
-	    print '<input class="flat" size=8 type="text" name="newamount" value="'.GETPOST("newamount","int").'">';
-	}
-	else {
-		print '<b>'.price($amount).'</b>';
+        print '<input class="flat" size=8 type="text" name="newamount" value="'.GETPOST("newamount","int").'">';
+    } else {
+        print '<b>'.price($amount).'</b>';
         print '<input type="hidden" name="amount" value="'.$amount.'">';
-		print '<input type="hidden" name="newamount" value="'.$amount.'">';
-	}
-	// Currency
-	print ' <b>'.$langs->trans("Currency".$currency).'</b>';
-	print '<input type="hidden" name="currency" value="'.$currency.'">';
-	print '</td></tr>'."\n";
+        print '<input type="hidden" name="newamount" value="'.$amount.'">';
+    }
+    // Currency
+    print ' <b>'.$langs->trans("Currency".$currency).'</b>';
+    print '<input type="hidden" name="currency" value="'.$currency.'">';
+    print '</td></tr>'."\n";
 
-	// Tag
-	$var=!$var;
-	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("PaymentCode");
-	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$fulltag.'</b>';
-	print '<input type="hidden" name="tag" value="'.$tag.'">';
-	print '<input type="hidden" name="fulltag" value="'.$fulltag.'">';
-	print '</td></tr>'."\n";
+    // Tag
+    $var=!$var;
+    print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("PaymentCode");
+    print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$fulltag.'</b>';
+    print '<input type="hidden" name="tag" value="'.$tag.'">';
+    print '<input type="hidden" name="fulltag" value="'.$fulltag.'">';
+    print '</td></tr>'."\n";
 
     // Shipping address
     $shipToName=$contract->thirdparty->name;
@@ -779,8 +705,7 @@ if (GETPOST("source") == 'contractline' && $valid)
     $shipToZip=$contract->thirdparty->zip;
     $shipToStreet2='';
     $phoneNum=$contract->thirdparty->tel;
-    if ($shipToName && $shipToStreet && $shipToCity && $shipToCountryCode && $shipToZip)
-    {
+    if ($shipToName && $shipToStreet && $shipToCity && $shipToCountryCode && $shipToZip) {
         print '<input type="hidden" name="shipToName" value="'.$shipToName.'">'."\n";
         print '<input type="hidden" name="shipToStreet" value="'.$shipToStreet.'">'."\n";
         print '<input type="hidden" name="shipToCity" value="'.$shipToCity.'">'."\n";
@@ -789,9 +714,7 @@ if (GETPOST("source") == 'contractline' && $valid)
         print '<input type="hidden" name="shipToZip" value="'.$shipToZip.'">'."\n";
         print '<input type="hidden" name="shipToStreet2" value="'.$shipToStreet2.'">'."\n";
         print '<input type="hidden" name="phoneNum" value="'.$phoneNum.'">'."\n";
-    }
-    else
-    {
+    } else {
         print '<!-- Shipping address not complete, so we don t use it -->'."\n";
     }
     print '<input type="hidden" name="email" value="'.$contract->thirdparty->email.'">'."\n";
@@ -799,106 +722,99 @@ if (GETPOST("source") == 'contractline' && $valid)
 }
 
 // Payment on member subscription
-if (GETPOST("source") == 'membersubscription' && $valid)
-{
-	$found=true;
-	$langs->load("members");
+if (GETPOST("source") == 'membersubscription' && $valid) {
+    $found=true;
+    $langs->load("members");
 
-	require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
-	require_once DOL_DOCUMENT_ROOT.'/adherents/class/cotisation.class.php';
+    require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
+    require_once DOL_DOCUMENT_ROOT.'/adherents/class/cotisation.class.php';
 
-	$member=new Adherent($db);
-	$result=$member->fetch('',$ref);
-	if ($result < 0)
-	{
-		$mesg=$member->error;
-		$error++;
-	}
-	else
-	{
-		$subscription=new Cotisation($db);
-	}
+    $member=new Adherent($db);
+    $result=$member->fetch('',$ref);
+    if ($result < 0) {
+        $mesg=$member->error;
+        $error++;
+    } else {
+        $subscription=new Cotisation($db);
+    }
 
-	$amount=$subscription->total_ttc;
+    $amount=$subscription->total_ttc;
     if (GETPOST("amount",'int')) $amount=GETPOST("amount",'int');
     $amount=price2num($amount);
 
-	$fulltag='MEM='.$member->id.'.DAT='.dol_print_date(dol_now(),'%Y%m%d%H%M');
-	if (! empty($TAG)) { $tag=$TAG; $fulltag.='.TAG='.$TAG; }
-	$fulltag=dol_string_unaccent($fulltag);
+    $fulltag='MEM='.$member->id.'.DAT='.dol_print_date(dol_now(),'%Y%m%d%H%M');
+    if (! empty($TAG)) { $tag=$TAG; $fulltag.='.TAG='.$TAG; }
+    $fulltag=dol_string_unaccent($fulltag);
 
-	// Creditor
-	$var=!$var;
-	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Creditor");
+    // Creditor
+    $var=!$var;
+    print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Creditor");
     print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$creditor.'</b>';
     print '<input type="hidden" name="creditor" value="'.$creditor.'">';
     print '</td></tr>'."\n";
 
-	// Debitor
-	$var=!$var;
-	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Member");
-	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>';
-	if ($member->morphy == 'mor' && ! empty($member->societe)) print $member->societe;
-	else print $member->getFullName($langs);
-	print '</b>';
+    // Debitor
+    $var=!$var;
+    print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Member");
+    print '</td><td class="CTableRow'.($var?'1':'2').'"><b>';
+    if ($member->morphy == 'mor' && ! empty($member->societe)) print $member->societe;
+    else print $member->getFullName($langs);
+    print '</b>';
 
-	// Object
-	$var=!$var;
-	$text='<b>'.$langs->trans("PaymentSubscription").'</b>';
-	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Designation");
-	print '</td><td class="CTableRow'.($var?'1':'2').'">'.$text;
-	print '<input type="hidden" name="source" value="'.GETPOST("source",'alpha').'">';
-	print '<input type="hidden" name="ref" value="'.$member->ref.'">';
-	print '</td></tr>'."\n";
+    // Object
+    $var=!$var;
+    $text='<b>'.$langs->trans("PaymentSubscription").'</b>';
+    print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Designation");
+    print '</td><td class="CTableRow'.($var?'1':'2').'">'.$text;
+    print '<input type="hidden" name="source" value="'.GETPOST("source",'alpha').'">';
+    print '<input type="hidden" name="ref" value="'.$member->ref.'">';
+    print '</td></tr>'."\n";
 
-	if ($member->last_subscription_date || $member->last_subscription_amount)
-	{
-		// Last subscription date
-		$var=!$var;
-		print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("LastSubscriptionDate");
-		print '</td><td class="CTableRow'.($var?'1':'2').'">'.dol_print_date($member->last_subscription_date,'day');
-		print '</td></tr>'."\n";
+    if ($member->last_subscription_date || $member->last_subscription_amount) {
+        // Last subscription date
+        $var=!$var;
+        print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("LastSubscriptionDate");
+        print '</td><td class="CTableRow'.($var?'1':'2').'">'.dol_print_date($member->last_subscription_date,'day');
+        print '</td></tr>'."\n";
 
-		// Last subscription amount
-		$var=!$var;
-		print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("LastSubscriptionAmount");
-		print '</td><td class="CTableRow'.($var?'1':'2').'">'.price($member->last_subscription_amount);
-		print '</td></tr>'."\n";
+        // Last subscription amount
+        $var=!$var;
+        print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("LastSubscriptionAmount");
+        print '</td><td class="CTableRow'.($var?'1':'2').'">'.price($member->last_subscription_amount);
+        print '</td></tr>'."\n";
 
-		if (empty($amount) && ! GETPOST('newamount')) $_GET['newamount']=$member->last_subscription_amount;
-	}
+        if (empty($amount) && ! GETPOST('newamount')) $_GET['newamount']=$member->last_subscription_amount;
+    }
 
-	// Amount
-	$var=!$var;
-	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Amount");
-	if (empty($amount)) print ' ('.$langs->trans("ToComplete").')';
-	print '</td><td class="CTableRow'.($var?'1':'2').'">';
-	if (empty($amount) || ! is_numeric($amount))
-	{
-	    $valtoshow=GETPOST("newamount",'int');
-	    if (! empty($conf->global->MEMBER_MIN_AMOUNT) && $valtoshow) $valtoshow=max($conf->global->MEMBER_MIN_AMOUNT,$valtoshow);
+    // Amount
+    $var=!$var;
+    print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Amount");
+    if (empty($amount)) print ' ('.$langs->trans("ToComplete").')';
+    print '</td><td class="CTableRow'.($var?'1':'2').'">';
+    if (empty($amount) || ! is_numeric($amount)) {
+        $valtoshow=GETPOST("newamount",'int');
+        if (! empty($conf->global->MEMBER_MIN_AMOUNT) && $valtoshow) $valtoshow=max($conf->global->MEMBER_MIN_AMOUNT,$valtoshow);
         print '<input type="hidden" name="amount" value="'.GETPOST("amount",'int').'">';
-	    print '<input class="flat" size="8" type="text" name="newamount" value="'.$valtoshow.'">';
-	}
-	else {
-	    $valtoshow=$amount;
-	    if (! empty($conf->global->MEMBER_MIN_AMOUNT) && $valtoshow) $valtoshow=max($conf->global->MEMBER_MIN_AMOUNT,$valtoshow);
-	    print '<b>'.price($valtoshow).'</b>';
+        print '<input class="flat" size="8" type="text" name="newamount" value="'.$valtoshow.'">';
+    } else {
+        $valtoshow=$amount;
+        if (! empty($conf->global->MEMBER_MIN_AMOUNT) && $valtoshow) $valtoshow=max($conf->global->MEMBER_MIN_AMOUNT,$valtoshow);
+        print '<b>'.price($valtoshow).'</b>';
         print '<input type="hidden" name="amount" value="'.$valtoshow.'">';
-		print '<input type="hidden" name="newamount" value="'.$valtoshow.'">';
-	}
-	// Currency
-	print ' <b>'.$langs->trans("Currency".$currency).'</b>';
-	print '<input type="hidden" name="currency" value="'.$currency.'">';
-	print '</td></tr>'."\n";
+        print '<input type="hidden" name="newamount" value="'.$valtoshow.'">';
+    }
+    // Currency
+    print ' <b>'.$langs->trans("Currency".$currency).'</b>';
+    print '<input type="hidden" name="currency" value="'.$currency.'">';
+    print '</td></tr>'."\n";
 
-	// Tag
-	$var=!$var;
-	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("PaymentCode");
-	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$fulltag.'</b>';
-	print '<input type="hidden" name="tag" value="'.$tag.'">';
-	print '<input type="hidden" name="fulltag" value="'.$fulltag.'">';
-	print '</td></tr>'."\n";
+    // Tag
+    $var=!$var;
+    print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("PaymentCode");
+    print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$fulltag.'</b>';
+    print '<input type="hidden" name="tag" value="'.$tag.'">';
+    print '<input type="hidden" name="fulltag" value="'.$fulltag.'">';
+    print '</td></tr>'."\n";
 
     // Shipping address
     $shipToName=$member->getFullName($langs);
@@ -909,8 +825,7 @@ if (GETPOST("source") == 'membersubscription' && $valid)
     $shipToZip=$member->zip;
     $shipToStreet2='';
     $phoneNum=$member->tel;
-    if ($shipToName && $shipToStreet && $shipToCity && $shipToCountryCode && $shipToZip)
-    {
+    if ($shipToName && $shipToStreet && $shipToCity && $shipToCountryCode && $shipToZip) {
         print '<input type="hidden" name="shipToName" value="'.$shipToName.'">'."\n";
         print '<input type="hidden" name="shipToStreet" value="'.$shipToStreet.'">'."\n";
         print '<input type="hidden" name="shipToCity" value="'.$shipToCity.'">'."\n";
@@ -919,9 +834,7 @@ if (GETPOST("source") == 'membersubscription' && $valid)
         print '<input type="hidden" name="shipToZip" value="'.$shipToZip.'">'."\n";
         print '<input type="hidden" name="shipToStreet2" value="'.$shipToStreet2.'">'."\n";
         print '<input type="hidden" name="phoneNum" value="'.$phoneNum.'">'."\n";
-    }
-    else
-    {
+    } else {
         print '<!-- Shipping address not complete, so we don t use it -->'."\n";
     }
     print '<input type="hidden" name="email" value="'.$member->email.'">'."\n";
@@ -938,22 +851,17 @@ if ($mesg) print '<tr><td align="center" colspan="2"><br><div class="warning">'.
 print '</table>'."\n";
 print "\n";
 
-if ($found && ! $error)	// We are in a management option and no error
-{
-	if (empty($conf->global->PAYPAL_API_INTEGRAL_OR_PAYPALONLY)) $conf->global->PAYPAL_API_INTEGRAL_OR_PAYPALONLY='integral';
+if ($found && ! $error) {	// We are in a management option and no error
+    if (empty($conf->global->PAYPAL_API_INTEGRAL_OR_PAYPALONLY)) $conf->global->PAYPAL_API_INTEGRAL_OR_PAYPALONLY='integral';
 
-	if ($conf->global->PAYPAL_API_INTEGRAL_OR_PAYPALONLY == 'integral')
-	{
-		print '<br><input class="button" type="submit" name="dopayment" value="'.$langs->trans("PaypalOrCBDoPayment").'">';
-	}
-	if ($conf->global->PAYPAL_API_INTEGRAL_OR_PAYPALONLY == 'paypalonly')
-	{
-		print '<br><input class="button" type="submit" name="dopayment" value="'.$langs->trans("PaypalDoPayment").'">';
-	}
-}
-else
-{
-	dol_print_error_email('ERRORNEWPAYMENTPAYPAL');
+    if ($conf->global->PAYPAL_API_INTEGRAL_OR_PAYPALONLY == 'integral') {
+        print '<br><input class="button" type="submit" name="dopayment" value="'.$langs->trans("PaypalOrCBDoPayment").'">';
+    }
+    if ($conf->global->PAYPAL_API_INTEGRAL_OR_PAYPALONLY == 'paypalonly') {
+        print '<br><input class="button" type="submit" name="dopayment" value="'.$langs->trans("PaypalDoPayment").'">';
+    }
+} else {
+    dol_print_error_email('ERRORNEWPAYMENTPAYPAL');
 }
 
 print '</td></tr>'."\n";
@@ -963,10 +871,8 @@ print '</form>'."\n";
 print '</center>'."\n";
 print '<br>';
 
-
 html_print_paypal_footer($mysoc,$langs);
 
 llxFooterPaypal();
 
 $db->close();
-?>

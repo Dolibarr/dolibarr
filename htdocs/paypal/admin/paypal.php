@@ -40,9 +40,8 @@ if (! $user->admin) accessforbidden();
 
 $action = GETPOST('action','alpha');
 
-if ($action == 'setvalue' && $user->admin)
-{
-	$db->begin();
+if ($action == 'setvalue' && $user->admin) {
+    $db->begin();
     $result=dolibarr_set_const($db, "PAYPAL_API_SANDBOX",GETPOST('PAYPAL_API_SANDBOX','alpha'),'chaine',0,'',$conf->entity);
     if (! $result > 0) $error++;
     $result=dolibarr_set_const($db, "PAYPAL_API_USER",GETPOST('PAYPAL_API_USER','alpha'),'chaine',0,'',$conf->entity);
@@ -60,26 +59,22 @@ if ($action == 'setvalue' && $user->admin)
     $result=dolibarr_set_const($db, "PAYPAL_SECURITY_TOKEN",GETPOST('PAYPAL_SECURITY_TOKEN','alpha'),'chaine',0,'',$conf->entity);
     if (! $result > 0) $error++;
     $result=dolibarr_set_const($db, "PAYPAL_SECURITY_TOKEN_UNIQUE",GETPOST('PAYPAL_SECURITY_TOKEN_UNIQUE','alpha'),'chaine',0,'',$conf->entity);
-	if (! $result > 0) $error++;
+    if (! $result > 0) $error++;
     $result=dolibarr_set_const($db, "PAYPAL_ADD_PAYMENT_URL",GETPOST('PAYPAL_ADD_PAYMENT_URL','alpha'),'chaine',0,'',$conf->entity);
     if (! $result > 0) $error++;
     $result=dolibarr_set_const($db, "PAYPAL_MESSAGE_OK",GETPOST('PAYPAL_MESSAGE_OK','alpha'),'chaine',0,'',$conf->entity);
     if (! $result > 0) $error++;
     $result=dolibarr_set_const($db, "PAYPAL_MESSAGE_KO",GETPOST('PAYPAL_MESSAGE_KO','alpha'),'chaine',0,'',$conf->entity);
-	if (! $result > 0) $error++;
+    if (! $result > 0) $error++;
 
-	if (! $error)
-  	{
-  		$db->commit();
-  		setEventMessage($langs->trans("SetupSaved"));
-  	}
-  	else
-  	{
-  		$db->rollback();
-		dol_print_error($db);
+    if (! $error) {
+          $db->commit();
+          setEventMessage($langs->trans("SetupSaved"));
+      } else {
+          $db->rollback();
+        dol_print_error($db);
     }
 }
-
 
 /*
  *	View
@@ -88,7 +83,6 @@ if ($action == 'setvalue' && $user->admin)
 $form=new Form($db);
 
 llxHeader('',$langs->trans("PaypalSetup"));
-
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print_fiche_titre(' - '.$langs->trans("ModuleSetup"),$linkback,'paypal_logo@paypal');
@@ -101,18 +95,15 @@ dol_fiche_head($head, 'paypalaccount', $langs->trans("ModuleSetup"));
 print $langs->trans("PaypalDesc")."<br>\n";
 
 // Test if php curl exist
-if (! function_exists('curl_version'))
-{
-	$langs->load("errors");
-	setEventMessage($langs->trans("ErrorPhpCurlNotInstalled"), 'errors');
+if (! function_exists('curl_version')) {
+    $langs->load("errors");
+    setEventMessage($langs->trans("ErrorPhpCurlNotInstalled"), 'errors');
 }
-
 
 print '<br>';
 print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="setvalue">';
-
 
 print '<table class="nobordernopadding" width="100%">';
 
@@ -212,7 +203,7 @@ print '<tr '.$bc[$var].'><td>';
 print $langs->trans("SecurityToken").'</td><td>';
 print '<input size="48" type="text" id="PAYPAL_SECURITY_TOKEN" name="PAYPAL_SECURITY_TOKEN" value="'.$conf->global->PAYPAL_SECURITY_TOKEN.'">';
 if (! empty($conf->use_javascript_ajax))
-	print '&nbsp;'.img_picto($langs->trans('Generate'), 'refresh', 'id="generate_token" class="linkobject"');
+    print '&nbsp;'.img_picto($langs->trans('Generate'), 'refresh', 'id="generate_token" class="linkobject"');
 print '</td></tr>';
 
 $var=!$var;
@@ -234,7 +225,7 @@ print '<br><br>';
 // Help doc
 print '<u>'.$langs->trans("InformationToFindParameters","Paypal").'</u>:<br>';
 if (! empty($conf->use_javascript_ajax))
-	print '<a href="#" id="apidoca">'.$langs->trans("ClickHere").'...</a>';
+    print '<a href="#" id="apidoca">'.$langs->trans("ClickHere").'...</a>';
 
 $realpaypalurl='www.paypal.com';
 $sandboxpaypalurl='developer.paypal.com';
@@ -256,106 +247,92 @@ print '<br><br>';
 
 $token='';
 
-
 // Url list
 print '<u>'.$langs->trans("FollowingUrlAreAvailableToMakePayments").':</u><br>';
 print img_picto('','object_globe.png').' '.$langs->trans("ToOfferALinkForOnlinePaymentOnFreeAmount",$servicename).':<br>';
 print '<strong>'.getPaypalPaymentUrl(1,'free')."</strong><br><br>\n";
-if (! empty($conf->commande->enabled))
-{
-	print img_picto('','object_globe.png').' '.$langs->trans("ToOfferALinkForOnlinePaymentOnOrder",$servicename).':<br>';
-	print '<strong>'.getPaypalPaymentUrl(1,'order')."</strong><br>\n";
-	if (! empty($conf->global->PAYPAL_SECURITY_TOKEN) && ! empty($conf->global->PAYPAL_SECURITY_TOKEN_UNIQUE))
-	{
-	    $langs->load("orders");
-	    print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-	    print $langs->trans("EnterRefToBuildUrl",$langs->transnoentitiesnoconv("Order")).': ';
+if (! empty($conf->commande->enabled)) {
+    print img_picto('','object_globe.png').' '.$langs->trans("ToOfferALinkForOnlinePaymentOnOrder",$servicename).':<br>';
+    print '<strong>'.getPaypalPaymentUrl(1,'order')."</strong><br>\n";
+    if (! empty($conf->global->PAYPAL_SECURITY_TOKEN) && ! empty($conf->global->PAYPAL_SECURITY_TOKEN_UNIQUE)) {
+        $langs->load("orders");
+        print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+        print $langs->trans("EnterRefToBuildUrl",$langs->transnoentitiesnoconv("Order")).': ';
         print '<input type="text class="flat" id="generate_order_ref" name="generate_order_ref" value="'.GETPOST('generate_order_ref','alpha').'" size="10">';
         print '<input type="submit" class="none" value="'.$langs->trans("GetSecuredUrl").'">';
-        if (GETPOST('generate_order_ref','alpha'))
-        {
+        if (GETPOST('generate_order_ref','alpha')) {
             print '<br> -> <strong>';
             $url=getPaypalPaymentUrl(0,'order',GETPOST('generate_order_ref','alpha'));
             print $url;
             print "</strong><br>\n";
         }
         print '</form>';
-	}
-	print '<br>';
+    }
+    print '<br>';
 }
-if (! empty($conf->facture->enabled))
-{
-	print img_picto('','object_globe.png').' '.$langs->trans("ToOfferALinkForOnlinePaymentOnInvoice",$servicename).':<br>';
-	print '<strong>'.getPaypalPaymentUrl(1,'invoice')."</strong><br>\n";
-	if (! empty($conf->global->PAYPAL_SECURITY_TOKEN) && ! empty($conf->global->PAYPAL_SECURITY_TOKEN_UNIQUE))
-	{
-	    $langs->load("bills");
-	    print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-	    print $langs->trans("EnterRefToBuildUrl",$langs->transnoentitiesnoconv("Invoice")).': ';
+if (! empty($conf->facture->enabled)) {
+    print img_picto('','object_globe.png').' '.$langs->trans("ToOfferALinkForOnlinePaymentOnInvoice",$servicename).':<br>';
+    print '<strong>'.getPaypalPaymentUrl(1,'invoice')."</strong><br>\n";
+    if (! empty($conf->global->PAYPAL_SECURITY_TOKEN) && ! empty($conf->global->PAYPAL_SECURITY_TOKEN_UNIQUE)) {
+        $langs->load("bills");
+        print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+        print $langs->trans("EnterRefToBuildUrl",$langs->transnoentitiesnoconv("Invoice")).': ';
         print '<input type="text class="flat" id="generate_invoice_ref" name="generate_invoice_ref" value="'.GETPOST('generate_invoice_ref','alpha').'" size="10">';
         print '<input type="submit" class="none" value="'.$langs->trans("GetSecuredUrl").'">';
-        if (GETPOST('generate_invoice_ref','alpha'))
-        {
+        if (GETPOST('generate_invoice_ref','alpha')) {
             print '<br> -> <strong>';
             $url=getPaypalPaymentUrl(0,'invoice',GETPOST('generate_invoice_ref','alpha'));
             print $url;
             print "</strong><br>\n";
         }
         print '</form>';
-	}
-	print '<br>';
+    }
+    print '<br>';
 }
-if (! empty($conf->contrat->enabled))
-{
-	print img_picto('','object_globe.png').' '.$langs->trans("ToOfferALinkForOnlinePaymentOnContractLine",$servicename).':<br>';
-	print '<strong>'.getPaypalPaymentUrl(1,'contractline')."</strong><br>\n";
-	if (! empty($conf->global->PAYPAL_SECURITY_TOKEN) && ! empty($conf->global->PAYPAL_SECURITY_TOKEN_UNIQUE))
-	{
-	    $langs->load("contract");
-	    print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-	    print $langs->trans("EnterRefToBuildUrl",$langs->transnoentitiesnoconv("Contract")).': ';
+if (! empty($conf->contrat->enabled)) {
+    print img_picto('','object_globe.png').' '.$langs->trans("ToOfferALinkForOnlinePaymentOnContractLine",$servicename).':<br>';
+    print '<strong>'.getPaypalPaymentUrl(1,'contractline')."</strong><br>\n";
+    if (! empty($conf->global->PAYPAL_SECURITY_TOKEN) && ! empty($conf->global->PAYPAL_SECURITY_TOKEN_UNIQUE)) {
+        $langs->load("contract");
+        print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+        print $langs->trans("EnterRefToBuildUrl",$langs->transnoentitiesnoconv("Contract")).': ';
         print '<input type="text class="flat" id="generate_contract_ref" name="generate_contract_ref" value="'.GETPOST('generate_contract_ref','alpha').'" size="10">';
         print '<input type="submit" class="none" value="'.$langs->trans("GetSecuredUrl").'">';
-        if (GETPOST('generate_contract_ref'))
-        {
+        if (GETPOST('generate_contract_ref')) {
             print '<br> -> <strong>';
             $url=getPaypalPaymentUrl(0,'contractline',GETPOST('generate_contract_ref','alpha'));
             print $url;
             print "</strong><br>\n";
         }
         print '</form>';
-	}
-	print '<br>';
+    }
+    print '<br>';
 }
-if (! empty($conf->adherent->enabled))
-{
-	print img_picto('','object_globe.png').' '.$langs->trans("ToOfferALinkForOnlinePaymentOnMemberSubscription",$servicename).':<br>';
-	print '<strong>'.getPaypalPaymentUrl(1,'membersubscription')."</strong><br>\n";
-	if (! empty($conf->global->PAYPAL_SECURITY_TOKEN) && ! empty($conf->global->PAYPAL_SECURITY_TOKEN_UNIQUE))
-	{
-	    $langs->load("members");
-	    print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-	    print $langs->trans("EnterRefToBuildUrl",$langs->transnoentitiesnoconv("Member")).': ';
+if (! empty($conf->adherent->enabled)) {
+    print img_picto('','object_globe.png').' '.$langs->trans("ToOfferALinkForOnlinePaymentOnMemberSubscription",$servicename).':<br>';
+    print '<strong>'.getPaypalPaymentUrl(1,'membersubscription')."</strong><br>\n";
+    if (! empty($conf->global->PAYPAL_SECURITY_TOKEN) && ! empty($conf->global->PAYPAL_SECURITY_TOKEN_UNIQUE)) {
+        $langs->load("members");
+        print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+        print $langs->trans("EnterRefToBuildUrl",$langs->transnoentitiesnoconv("Member")).': ';
         print '<input type="text class="flat" id="generate_member_ref" name="generate_member_ref" value="'.GETPOST('generate_member_ref','alpha').'" size="10">';
         print '<input type="submit" class="none" value="'.$langs->trans("GetSecuredUrl").'">';
-        if (GETPOST('generate_member_ref'))
-        {
+        if (GETPOST('generate_member_ref')) {
             print '<br> -> <strong>';
             $url=getPaypalPaymentUrl(0,'membersubscription',GETPOST('generate_member_ref','alpha'));
             print $url;
             print "</strong><br>\n";
         }
         print '</form>';
-	}
+    }
 }
 
 print "<br>";
 print info_admin($langs->trans("YouCanAddTagOnUrl"));
 
-if (! empty($conf->use_javascript_ajax))
-{
-	print "\n".'<script type="text/javascript">';
-	print '$(document).ready(function () {
+if (! empty($conf->use_javascript_ajax)) {
+    print "\n".'<script type="text/javascript">';
+    print '$(document).ready(function () {
             $("#apidoc").hide();
             $("#apidoca").click(function() {
                 $("#apidoca").hide();
@@ -363,18 +340,17 @@ if (! empty($conf->use_javascript_ajax))
             });
 
             $("#generate_token").click(function() {
-            	$.get( "'.DOL_URL_ROOT.'/core/ajax/security.php", {
-            		action: \'getrandompassword\',
-            		generic: true
-				},
-				function(token) {
-					$("#PAYPAL_SECURITY_TOKEN").val(token);
-				});
+                $.get( "'.DOL_URL_ROOT.'/core/ajax/security.php", {
+                    action: \'getrandompassword\',
+                    generic: true
+                },
+                function(token) {
+                    $("#PAYPAL_SECURITY_TOKEN").val(token);
+                });
             });
     });';
-	print '</script>';
+    print '</script>';
 }
 
 llxFooter();
 $db->close();
-?>

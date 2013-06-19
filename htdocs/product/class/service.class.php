@@ -23,69 +23,64 @@
  */
 require_once DOL_DOCUMENT_ROOT .'/core/class/commonobject.class.php';
 
-
 /**
  *       \class      Service
  *       \brief      Classe permettant la gestion des services predefinis
  */
 class Service extends CommonObject
 {
-	var $db;
+    public $db;
 
-	var $id;
-	var $libelle;
-	var $price;
-	var $tms;
-	var $debut;
-	var $fin;
+    public $id;
+    public $libelle;
+    public $price;
+    public $tms;
+    public $debut;
+    public $fin;
 
-	var $debut_epoch;
-	var $fin_epoch;
+    public $debut_epoch;
+    public $fin_epoch;
 
-	/**
-	*  Constructor
-	*
-	*  @param      DoliDB		$db      Database handler
-	*/
-	function __construct($db)
-	{
-		$this->db = $db;
-	}
+    /**
+    *  Constructor
+    *
+    *  @param      DoliDB		$db      Database handler
+    */
+    public function __construct($db)
+    {
+        $this->db = $db;
+    }
 
+    /**
+     *	Charge indicateurs this->nb de tableau de bord
+     *
+     *	@return     int         <0 if KO, >0 if OK
+     */
+    public function load_state_board()
+    {
+        global $conf, $user;
 
-	/**
-	 *	Charge indicateurs this->nb de tableau de bord
-	 *
-	 *	@return     int         <0 if KO, >0 if OK
-	 */
-	function load_state_board()
-	{
-		global $conf, $user;
+        $this->nb=array();
 
-		$this->nb=array();
+        $sql = "SELECT count(p.rowid) as nb";
+        $sql.= " FROM ".MAIN_DB_PREFIX."product as p";
+        $sql.= ' WHERE p.entity IN ('.getEntity('product', 1).')';
+        $sql.= " AND p.fk_product_type = 1";
 
-		$sql = "SELECT count(p.rowid) as nb";
-		$sql.= " FROM ".MAIN_DB_PREFIX."product as p";
-		$sql.= ' WHERE p.entity IN ('.getEntity('product', 1).')';
-		$sql.= " AND p.fk_product_type = 1";
-
-		$resql=$this->db->query($sql);
-		if ($resql)
-		{
-			while ($obj=$this->db->fetch_object($resql))
-			{
-				$this->nb["services"]=$obj->nb;
-			}
+        $resql=$this->db->query($sql);
+        if ($resql) {
+            while ($obj=$this->db->fetch_object($resql)) {
+                $this->nb["services"]=$obj->nb;
+            }
             $this->db->free($resql);
-			return 1;
-		}
-		else
-		{
-			dol_print_error($this->db);
-			$this->error=$this->db->error();
-			return -1;
-		}
-	}
+
+            return 1;
+        } else {
+            dol_print_error($this->db);
+            $this->error=$this->db->error();
+
+            return -1;
+        }
+    }
 
 }
-?>

@@ -36,7 +36,6 @@ $result=restrictedArea($user,'societe',0,'','','','');
 
 $thirdparty_static = new Societe($db);
 
-
 /*
  * View
  */
@@ -48,11 +47,9 @@ llxHeader("",$langs->trans("ThirdParties"),$helpurl);
 
 print_fiche_titre($transAreaType);
 
-
 //print '<table border="0" width="100%" class="notopnoleftnoright">';
 //print '<tr><td valign="top" width="30%" class="notopnoleft">';
 print '<div class="fichecenter"><div class="fichethirdleft">';
-
 
 /*
  * Search area
@@ -73,15 +70,14 @@ print '</tr>';
 
 print "</table></form><br>";
 
-
 /*
  * Statistics area
  */
 $third = array(
-		'customer' => 0,
-		'prospect' => 0,
-		'supplier' => 0,
-		'other' =>0
+        'customer' => 0,
+        'prospect' => 0,
+        'supplier' => 0,
+        'other' =>0
 );
 $total=0;
 
@@ -94,10 +90,8 @@ if ($socid)	$sql.= " AND s.rowid = ".$socid;
 if (! $user->rights->fournisseur->lire) $sql.=" AND (s.fournisseur <> 1 OR s.client <> 0)";    // client=0, fournisseur=0 must be visible
 //print $sql;
 $result = $db->query($sql);
-if ($result)
-{
-    while ($objp = $db->fetch_object($result))
-    {
+if ($result) {
+    while ($objp = $db->fetch_object($result)) {
         $found=0;
         if (! empty($conf->societe->enabled) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS_STATS) && ($objp->client == 1 || $objp->client == 3)) { $found=1; $third['customer']++; }
         if (! empty($conf->societe->enabled) && empty($conf->global->SOCIETE_DISABLE_PROSPECTS_STATS) && ($objp->client == 2 || $objp->client == 3)) { $found=1; $third['prospect']++; }
@@ -105,13 +99,11 @@ if ($result)
         if (! empty($conf->societe->enabled) && $objp->client == 0 && $objp->fournisseur == 0) { $found=1; $third['other']++; }
         if ($found) $total++;
     }
-}
-else dol_print_error($db);
+} else dol_print_error($db);
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").'</th></tr>';
-if (! empty($conf->use_javascript_ajax) && ((round($third['prospect'])?1:0)+(round($third['customer'])?1:0)+(round($third['supplier'])?1:0)+(round($third['other'])?1:0) >= 2))
-{
+if (! empty($conf->use_javascript_ajax) && ((round($third['prospect'])?1:0)+(round($third['customer'])?1:0)+(round($third['supplier'])?1:0)+(round($third['other'])?1:0) >= 2)) {
     print '<tr><td align="center">';
     $dataseries=array();
     if (! empty($conf->societe->enabled) && empty($conf->global->SOCIETE_DISABLE_PROSPECTS_STATS))     $dataseries[]=array('label'=>$langs->trans("Prospects"),'data'=>round($third['prospect']));
@@ -121,23 +113,18 @@ if (! empty($conf->use_javascript_ajax) && ((round($third['prospect'])?1:0)+(rou
     $data=array('series'=>$dataseries);
     dol_print_graph('stats',300,180,$data,1,'pie',0);
     print '</td></tr>';
-}
-else
-{
-    if (! empty($conf->societe->enabled) && empty($conf->global->SOCIETE_DISABLE_PROSPECTS_STATS))
-    {
+} else {
+    if (! empty($conf->societe->enabled) && empty($conf->global->SOCIETE_DISABLE_PROSPECTS_STATS)) {
         $statstring = "<tr $bc[0]>";
         $statstring.= '<td><a href="'.DOL_URL_ROOT.'/comm/prospect/list.php">'.$langs->trans("Prospects").'</a></td><td align="right">'.round($third['prospect']).'</td>';
         $statstring.= "</tr>";
     }
-    if (! empty($conf->societe->enabled) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS_STATS))
-    {
+    if (! empty($conf->societe->enabled) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS_STATS)) {
         $statstring.= "<tr $bc[1]>";
         $statstring.= '<td><a href="'.DOL_URL_ROOT.'/comm/list.php">'.$langs->trans("Customers").'</a></td><td align="right">'.round($third['customer']).'</td>';
         $statstring.= "</tr>";
     }
-    if (! empty($conf->fournisseur->enabled) && empty($conf->global->SOCIETE_DISABLE_SUPPLIERS_STATS))
-    {
+    if (! empty($conf->fournisseur->enabled) && empty($conf->global->SOCIETE_DISABLE_SUPPLIERS_STATS)) {
         $statstring2 = "<tr $bc[0]>";
         $statstring2.= '<td><a href="'.DOL_URL_ROOT.'/fourn/liste.php">'.$langs->trans("Suppliers").'</a></td><td align="right">'.round($third['supplier']).'</td>';
         $statstring2.= "</tr>";
@@ -150,10 +137,8 @@ print $total;
 print '</td></tr>';
 print '</table>';
 
-
 //print '</td><td valign="top" width="70%" class="notopnoleftnoright">';
 print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
-
 
 /*
  * Last third parties modified
@@ -171,14 +156,12 @@ $sql.= $db->plimit($max,0);
 
 //print $sql;
 $result = $db->query($sql);
-if ($result)
-{
+if ($result) {
     $num = $db->num_rows($result);
 
     $i = 0;
 
-    if ($num > 0)
-    {
+    if ($num > 0) {
         $transRecordedType = $langs->trans("LastModifiedThirdParties",$max);
 
         print '<table class="noborder" width="100%">';
@@ -190,8 +173,7 @@ if ($result)
 
         $var=True;
 
-        while ($i < $num)
-        {
+        while ($i < $num) {
             $objp = $db->fetch_object($result);
 
             $var=!$var;
@@ -209,22 +191,19 @@ if ($result)
             print "</td>\n";
             // Type
             print '<td align="center">';
-            if ($thirdparty_static->client==1 || $thirdparty_static->client==3)
-            {
-            	$thirdparty_static->name=$langs->trans("Customer");
-            	print $thirdparty_static->getNomUrl(0,'customer');
+            if ($thirdparty_static->client==1 || $thirdparty_static->client==3) {
+                $thirdparty_static->name=$langs->trans("Customer");
+                print $thirdparty_static->getNomUrl(0,'customer');
             }
             if ($thirdparty_static->client == 3 && empty($conf->global->SOCIETE_DISABLE_PROSPECTS)) print " / ";
-            if (($thirdparty_static->client==2 || $thirdparty_static->client==3) && empty($conf->global->SOCIETE_DISABLE_PROSPECTS))
-            {
-            	$thirdparty_static->name=$langs->trans("Prospect");
-            	print $thirdparty_static->getNomUrl(0,'prospect');
+            if (($thirdparty_static->client==2 || $thirdparty_static->client==3) && empty($conf->global->SOCIETE_DISABLE_PROSPECTS)) {
+                $thirdparty_static->name=$langs->trans("Prospect");
+                print $thirdparty_static->getNomUrl(0,'prospect');
             }
-            if (! empty($conf->fournisseur->enabled) && $thirdparty_static->fournisseur)
-            {
+            if (! empty($conf->fournisseur->enabled) && $thirdparty_static->fournisseur) {
                 if ($thirdparty_static->client) print " / ";
-            	$thirdparty_static->name=$langs->trans("Supplier");
-            	print $thirdparty_static->getNomUrl(0,'supplier');
+                $thirdparty_static->name=$langs->trans("Supplier");
+                print $thirdparty_static->getNomUrl(0,'supplier');
             }
             print '</td>';
             // Last modified date
@@ -242,9 +221,7 @@ if ($result)
 
         print "</table>";
     }
-}
-else
-{
+} else {
     dol_print_error($db);
 }
 
@@ -254,4 +231,3 @@ print '</div></div></div>';
 llxFooter();
 
 $db->close();
-?>

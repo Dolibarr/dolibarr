@@ -37,7 +37,6 @@ $userid=GETPOST('userid');
 $zone=GETPOST('zone','int');
 $userid=GETPOST('userid','int');
 
-
 /*
  * View
  */
@@ -52,23 +51,19 @@ top_httphead();
 print '<!-- Ajax page called with url '.$_SERVER["PHP_SELF"].'?'.$_SERVER["QUERY_STRING"].' -->'."\n";
 
 // Add a box
-if ($boxid > 0 && $zone !='' && $userid > 0)
-{
-	$tmp=explode('-',$boxorder);
-	$nbboxonleft=substr_count($tmp[0],',');
-	$nbboxonright=substr_count($tmp[1],',');
-	print $nbboxonleft.'-'.$nbboxonright;
-	if ($nbboxonleft > $nbboxonright) $boxorder=preg_replace('/B:/','B:'.$boxid.',',$boxorder);    // Insert id of new box into list
+if ($boxid > 0 && $zone !='' && $userid > 0) {
+    $tmp=explode('-',$boxorder);
+    $nbboxonleft=substr_count($tmp[0],',');
+    $nbboxonright=substr_count($tmp[1],',');
+    print $nbboxonleft.'-'.$nbboxonright;
+    if ($nbboxonleft > $nbboxonright) $boxorder=preg_replace('/B:/','B:'.$boxid.',',$boxorder);    // Insert id of new box into list
     else $boxorder=preg_replace('/^A:/','A:'.$boxid.',',$boxorder);    // Insert id of new box into list
 }
 
 // Registering the location of boxes after a move
-if ($boxorder && $zone != '' &&  $userid > 0)
-{
-	// boxorder value is the target order: "A:idboxA1,idboxA2,A-B:idboxB1,idboxB2,B"
-	dol_syslog("AjaxBox boxorder=".$boxorder." zone=".$zone." userid=".$userid, LOG_DEBUG);
+if ($boxorder && $zone != '' &&  $userid > 0) {
+    // boxorder value is the target order: "A:idboxA1,idboxA2,A-B:idboxB1,idboxB2,B"
+    dol_syslog("AjaxBox boxorder=".$boxorder." zone=".$zone." userid=".$userid, LOG_DEBUG);
 
-	$result=InfoBox::saveboxorder($db,$zone,$boxorder,$userid);
+    $result=InfoBox::saveboxorder($db,$zone,$boxorder,$userid);
 }
-
-?>

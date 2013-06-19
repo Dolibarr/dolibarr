@@ -33,91 +33,85 @@ if (! $user->admin) accessforbidden();
 $action=GETPOST('action','alpha');
 
 $modules=array(
-		'agenda' => array(
-				array(
-						'code' => 'MAIN_DELAY_ACTIONS_TODO',
-						'img' => 'action'
-				)
-		),
-		'propal' => array(
-				array(
-						'code' => 'MAIN_DELAY_PROPALS_TO_CLOSE',
-						'img' => 'propal'
-				),
-				array(
-						'code' => 'MAIN_DELAY_PROPALS_TO_BILL',
-						'img' => 'propal'
-				)
-		),
-		'commande' => array(
-				array(
-						'code' => 'MAIN_DELAY_ORDERS_TO_PROCESS',
-						'img' => 'order'
-				)
-		),
-		'facture' => array(
-				array(
-						'code' => 'MAIN_DELAY_CUSTOMER_BILLS_UNPAYED',
-						'img' => 'bill'
-				)
-		),
-		'fournisseur' => array(
-				array(
-						'code' => 'MAIN_DELAY_SUPPLIER_ORDERS_TO_PROCESS',
-						'img' => 'order'
-				),
-				array(
-						'code' => 'MAIN_DELAY_SUPPLIER_BILLS_TO_PAY',
-						'img' => 'bill'
-				)
-		),
-		'service' => array(
-				array(
-						'code' => 'MAIN_DELAY_NOT_ACTIVATED_SERVICES',
-						'img' => 'service'
-				),
-				array(
-						'code' => 'MAIN_DELAY_RUNNING_SERVICES',
-						'img' => 'service'
-				)
-		),
-		'banque' => array(
-				array(
-						'code' => 'MAIN_DELAY_TRANSACTIONS_TO_CONCILIATE',
-						'img' => 'account'
-				),
-				array(
-						'code' => 'MAIN_DELAY_CHEQUES_TO_DEPOSIT',
-						'img' => 'account'
-				)
-		),
-		'adherent' => array(
-				array(
-						'code' => 'MAIN_DELAY_MEMBERS',
-						'img' => 'user'
-				)
-		),
+        'agenda' => array(
+                array(
+                        'code' => 'MAIN_DELAY_ACTIONS_TODO',
+                        'img' => 'action'
+                )
+        ),
+        'propal' => array(
+                array(
+                        'code' => 'MAIN_DELAY_PROPALS_TO_CLOSE',
+                        'img' => 'propal'
+                ),
+                array(
+                        'code' => 'MAIN_DELAY_PROPALS_TO_BILL',
+                        'img' => 'propal'
+                )
+        ),
+        'commande' => array(
+                array(
+                        'code' => 'MAIN_DELAY_ORDERS_TO_PROCESS',
+                        'img' => 'order'
+                )
+        ),
+        'facture' => array(
+                array(
+                        'code' => 'MAIN_DELAY_CUSTOMER_BILLS_UNPAYED',
+                        'img' => 'bill'
+                )
+        ),
+        'fournisseur' => array(
+                array(
+                        'code' => 'MAIN_DELAY_SUPPLIER_ORDERS_TO_PROCESS',
+                        'img' => 'order'
+                ),
+                array(
+                        'code' => 'MAIN_DELAY_SUPPLIER_BILLS_TO_PAY',
+                        'img' => 'bill'
+                )
+        ),
+        'service' => array(
+                array(
+                        'code' => 'MAIN_DELAY_NOT_ACTIVATED_SERVICES',
+                        'img' => 'service'
+                ),
+                array(
+                        'code' => 'MAIN_DELAY_RUNNING_SERVICES',
+                        'img' => 'service'
+                )
+        ),
+        'banque' => array(
+                array(
+                        'code' => 'MAIN_DELAY_TRANSACTIONS_TO_CONCILIATE',
+                        'img' => 'account'
+                ),
+                array(
+                        'code' => 'MAIN_DELAY_CHEQUES_TO_DEPOSIT',
+                        'img' => 'account'
+                )
+        ),
+        'adherent' => array(
+                array(
+                        'code' => 'MAIN_DELAY_MEMBERS',
+                        'img' => 'user'
+                )
+        ),
 );
 
-if ($action == 'update')
-{
-	foreach($modules as $module => $delays)
-	{
-		if (! empty($conf->$module->enabled))
-    	{
-    		foreach($delays as $delay)
-    		{
-    			if (GETPOST($delay['code']))
-    			{
-    				dolibarr_set_const($db, $delay['code'], GETPOST($delay['code']), 'chaine', 0, '', $conf->entity);
-    			}
-    		}
-    	}
-	}
+if ($action == 'update') {
+    foreach ($modules as $module => $delays) {
+        if (! empty($conf->$module->enabled)) {
+            foreach ($delays as $delay) {
+                if (GETPOST($delay['code'])) {
+                    dolibarr_set_const($db, $delay['code'], GETPOST($delay['code']), 'chaine', 0, '', $conf->entity);
+                }
+            }
+        }
+    }
 
     dolibarr_set_const($db, "MAIN_DISABLE_METEO",$_POST["MAIN_DISABLE_METEO"],'chaine',0,'',$conf->entity);
 }
-
 
 /*
  * View
@@ -134,8 +128,7 @@ print "<br>\n";
 $form = new Form($db);
 $countrynotdefined='<font class="error">'.$langs->trans("ErrorSetACountryFirst").' ('.$langs->trans("SeeAbove").')</font>';
 
-if ($action == 'edit')
-{
+if ($action == 'edit') {
     print '<form method="post" action="'.$_SERVER['PHP_SELF'].'" name="form_index">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<input type="hidden" name="action" value="update">';
@@ -144,84 +137,76 @@ if ($action == 'edit')
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("DelaysOfToleranceBeforeWarning").'</td><td width="120px">'.$langs->trans("Value").'</td></tr>';
 
-    foreach($modules as $module => $delays)
-    {
-    	if (! empty($conf->$module->enabled))
-    	{
-    		foreach($delays as $delay)
-    		{
-    			$var=!$var;
-    			$value=(! empty($conf->global->$delay['code'])?$conf->global->$delay['code']:0);
-    			print '<tr '.$bc[$var].'>';
-    			print '<td width="20px">'.img_object('',$delay['img']).'</td>';
-    			print '<td>'.$langs->trans('Delays_'.$delay['code']).'</td><td>';
-    			print '<input size="5" name="'.$delay['code'].'" value="'.$value.'"> '.$langs->trans("days").'</td></tr>';
-    		}
-    	}
+    foreach ($modules as $module => $delays) {
+        if (! empty($conf->$module->enabled)) {
+            foreach ($delays as $delay) {
+                $var=!$var;
+                $value=(! empty($conf->global->$delay['code'])?$conf->global->$delay['code']:0);
+                print '<tr '.$bc[$var].'>';
+                print '<td width="20px">'.img_object('',$delay['img']).'</td>';
+                print '<td>'.$langs->trans('Delays_'.$delay['code']).'</td><td>';
+                print '<input size="5" name="'.$delay['code'].'" value="'.$value.'"> '.$langs->trans("days").'</td></tr>';
+            }
+        }
     }
 
     print '</table>';
 
     print '<br>';
 
-	// Show if meteo is enabled
-	print '<table class="noborder" width="100%">';
-	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td width="120px">'.$langs->trans("Value").'</td></tr>';
+    // Show if meteo is enabled
+    print '<table class="noborder" width="100%">';
+    print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td width="120px">'.$langs->trans("Value").'</td></tr>';
 
-	$var=!$var;
-	print '<tr '.$bc[$var].'>';
-	print '<td>'.$langs->trans("MAIN_DISABLE_METEO").'</td><td>' .$form->selectyesno('MAIN_DISABLE_METEO',(isset($conf->global->MAIN_DISABLE_METEO)?1:0),1) . '</td></tr>';
+    $var=!$var;
+    print '<tr '.$bc[$var].'>';
+    print '<td>'.$langs->trans("MAIN_DISABLE_METEO").'</td><td>' .$form->selectyesno('MAIN_DISABLE_METEO',(isset($conf->global->MAIN_DISABLE_METEO)?1:0),1) . '</td></tr>';
 
-	print '</table>';
+    print '</table>';
 
-	print '<br>';
+    print '<br>';
 
     print '<br><center><input type="submit" class="button" value="'.$langs->trans("Save").'"></center>';
     print '<br>';
 
     print '</form>';
-}
-else
-{
+} else {
     /*
      * Affichage des parametres
      */
 
-	print '<table class="noborder" width="100%">';
+    print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("DelaysOfToleranceBeforeWarning").'</td><td width="120px">'.$langs->trans("Value").'</td></tr>';
     $var=true;
 
-    foreach($modules as $module => $delays)
-    {
-    	if (! empty($conf->$module->enabled))
-    	{
-    		foreach($delays as $delay)
-    		{
-    			$var=!$var;
-    			$value=(! empty($conf->global->$delay['code'])?$conf->global->$delay['code']:0);
-    			print '<tr '.$bc[$var].'>';
-    			print '<td width="20px">'.img_object('',$delay['img']).'</td>';
-    			print '<td>'.$langs->trans('Delays_'.$delay['code']).'</td>';
-    			print '<td>'.$value.' '.$langs->trans("days").'</td></tr>';
-    		}
-    	}
+    foreach ($modules as $module => $delays) {
+        if (! empty($conf->$module->enabled)) {
+            foreach ($delays as $delay) {
+                $var=!$var;
+                $value=(! empty($conf->global->$delay['code'])?$conf->global->$delay['code']:0);
+                print '<tr '.$bc[$var].'>';
+                print '<td width="20px">'.img_object('',$delay['img']).'</td>';
+                print '<td>'.$langs->trans('Delays_'.$delay['code']).'</td>';
+                print '<td>'.$value.' '.$langs->trans("days").'</td></tr>';
+            }
+        }
     }
 
     print '</table>';
 
-	print '<br>';
+    print '<br>';
 
-	// Show if meteo is enabled
-	print '<table class="noborder" width="100%">';
-	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td width="120px">'.$langs->trans("Value").'</td></tr>';
+    // Show if meteo is enabled
+    print '<table class="noborder" width="100%">';
+    print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td width="120px">'.$langs->trans("Value").'</td></tr>';
 
-	$var=!$var;
-	print '<tr '.$bc[$var].'>';
-	print '<td>'.$langs->trans("MAIN_DISABLE_METEO").'</td><td>' . yn($conf->global->MAIN_DISABLE_METEO) . '</td></tr>';
+    $var=!$var;
+    print '<tr '.$bc[$var].'>';
+    print '<td>'.$langs->trans("MAIN_DISABLE_METEO").'</td><td>' . yn($conf->global->MAIN_DISABLE_METEO) . '</td></tr>';
 
-	print '</table>';
+    print '</table>';
 
-	print '<br>';
+    print '<br>';
 
     // Boutons d'action
     print '<div class="tabsAction">';
@@ -274,7 +259,5 @@ print '</tr>';
 
 print '</table>';
 
-
 llxFooter();
 $db->close();
-?>

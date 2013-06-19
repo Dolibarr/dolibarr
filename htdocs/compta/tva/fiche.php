@@ -46,20 +46,16 @@ $tva = new Tva($db);
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('taxvatcard'));
 
-
-
 /**
  * Actions
  */
 
-if ($_POST["cancel"] == $langs->trans("Cancel"))
-{
-	header("Location: reglement.php");
-	exit;
+if ($_POST["cancel"] == $langs->trans("Cancel")) {
+    header("Location: reglement.php");
+    exit;
 }
 
-if ($action == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
-{
+if ($action == 'add' && $_POST["cancel"] <> $langs->trans("Cancel")) {
     $db->begin();
 
     $datev=dol_mktime(12,0,0, $_POST["datevmonth"], $_POST["datevday"], $_POST["datevyear"]);
@@ -70,66 +66,51 @@ if ($action == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
     $tva->datev=$datev;
     $tva->datep=$datep;
     $tva->amount=$_POST["amount"];
-	$tva->label=$_POST["label"];
+    $tva->label=$_POST["label"];
 
     $ret=$tva->addPayment($user);
-    if ($ret > 0)
-    {
+    if ($ret > 0) {
         $db->commit();
         header("Location: reglement.php");
         exit;
-    }
-    else
-    {
+    } else {
         $db->rollback();
         $mesg='<div class="error">'.$tva->error.'</div>';
         $action="create";
     }
 }
 
-if ($action == 'delete')
-{
+if ($action == 'delete') {
     $result=$tva->fetch($_GET['id']);
 
-	if ($tva->rappro == 0)
-	{
-	    $db->begin();
+    if ($tva->rappro == 0) {
+        $db->begin();
 
-	    $ret=$tva->delete($user);
-	    if ($ret > 0)
-	    {
-			if ($tva->fk_bank)
-			{
-				$accountline=new AccountLine($db);
-				$result=$accountline->fetch($tva->fk_bank);
-				$result=$accountline->delete($user);
-			}
+        $ret=$tva->delete($user);
+        if ($ret > 0) {
+            if ($tva->fk_bank) {
+                $accountline=new AccountLine($db);
+                $result=$accountline->fetch($tva->fk_bank);
+                $result=$accountline->delete($user);
+            }
 
-			if ($result > 0)
-			{
-				$db->commit();
-				header("Location: ".DOL_URL_ROOT.'/compta/tva/reglement.php');
-				exit;
-			}
-			else
-			{
-				$tva->error=$accountline->error;
-				$db->rollback();
-				$mesg='<div class="error">'.$tva->error.'</div>';
-			}
-	    }
-	    else
-	    {
-	        $db->rollback();
-	        $mesg='<div class="error">'.$tva->error.'</div>';
-	    }
-	}
-	else
-	{
+            if ($result > 0) {
+                $db->commit();
+                header("Location: ".DOL_URL_ROOT.'/compta/tva/reglement.php');
+                exit;
+            } else {
+                $tva->error=$accountline->error;
+                $db->rollback();
+                $mesg='<div class="error">'.$tva->error.'</div>';
+            }
+        } else {
+            $db->rollback();
+            $mesg='<div class="error">'.$tva->error.'</div>';
+        }
+    } else {
         $mesg='<div class="error">Error try do delete a line linked to a conciliated bank transaction</div>';
-	}
+    }
 }
-
 
 /*
 *	View
@@ -139,20 +120,17 @@ llxHeader();
 
 $form = new Form($db);
 
-if ($id)
-{
+if ($id) {
     $vatpayment = new Tva($db);
-	$result = $vatpayment->fetch($id);
-	if ($result <= 0)
-	{
-		dol_print_error($db);
-		exit;
-	}
+    $result = $vatpayment->fetch($id);
+    if ($result <= 0) {
+        dol_print_error($db);
+        exit;
+    }
 }
 
 // Formulaire saisie tva
-if ($action == 'create')
-{
+if ($action == 'create') {
     print "<form name='add' action=\"fiche.php\" method=\"post\">\n";
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<input type="hidden" name="action" value="add">';
@@ -172,23 +150,22 @@ if ($action == 'create')
     print $form->select_date($datev,"datev",'','','','add');
     print '</td></tr>';
 
-	// Label
-	print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td><input name="label" size="40" value="'.($_POST["label"]?$_POST["label"]:$langs->trans("VATPayment")).'"></td></tr>';
+    // Label
+    print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td><input name="label" size="40" value="'.($_POST["label"]?$_POST["label"]:$langs->trans("VATPayment")).'"></td></tr>';
 
-	// Amount
-	print '<tr><td class="fieldrequired">'.$langs->trans("Amount").'</td><td><input name="amount" size="10" value="'.$_POST["amount"].'"></td></tr>';
+    // Amount
+    print '<tr><td class="fieldrequired">'.$langs->trans("Amount").'</td><td><input name="amount" size="10" value="'.$_POST["amount"].'"></td></tr>';
 
-    if (! empty($conf->banque->enabled))
-    {
-		print '<tr><td class="fieldrequired">'.$langs->trans("Account").'</td><td>';
+    if (! empty($conf->banque->enabled)) {
+        print '<tr><td class="fieldrequired">'.$langs->trans("Account").'</td><td>';
         $form->select_comptes($_POST["accountid"],"accountid",0,"courant=1",1);  // Affiche liste des comptes courant
         print '</td></tr>';
 
-	    print '<tr><td class="fieldrequired">'.$langs->trans("PaymentMode").'</td><td>';
-	    $form->select_types_paiements($_POST["paiementtype"], "paiementtype");
-	    print "</td>\n";
-	    print "</tr>";
-	}
+        print '<tr><td class="fieldrequired">'.$langs->trans("PaymentMode").'</td><td>';
+        $form->select_types_paiements($_POST["paiementtype"], "paiementtype");
+        print "</td>\n";
+        print "</tr>";
+    }
 
     // Other attributes
     $parameters=array('colspan' => ' colspan="1"');
@@ -196,14 +173,13 @@ if ($action == 'create')
 
     print '</table>';
 
-	print "<br>";
+    print "<br>";
 
-	print '<center><input type="submit" class="button" value="'.$langs->trans("Save").'"> &nbsp; ';
+    print '<center><input type="submit" class="button" value="'.$langs->trans("Save").'"> &nbsp; ';
     print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></center>';
 
     print '</form>';
 }
-
 
 /* ************************************************************************** */
 /*                                                                            */
@@ -211,77 +187,72 @@ if ($action == 'create')
 /*                                                                            */
 /* ************************************************************************** */
 
-if ($id)
-{
+if ($id) {
     if ($mesg) print $mesg;
 
-	$h = 0;
-	$head[$h][0] = DOL_URL_ROOT.'/compta/tva/fiche.php?id='.$vatpayment->id;
-	$head[$h][1] = $langs->trans('Card');
-	$head[$h][2] = 'card';
-	$h++;
+    $h = 0;
+    $head[$h][0] = DOL_URL_ROOT.'/compta/tva/fiche.php?id='.$vatpayment->id;
+    $head[$h][1] = $langs->trans('Card');
+    $head[$h][2] = 'card';
+    $h++;
 
-	dol_fiche_head($head, 'card', $langs->trans("VATPayment"), 0, 'payment');
+    dol_fiche_head($head, 'card', $langs->trans("VATPayment"), 0, 'payment');
 
 
-	print '<table class="border" width="100%">';
+    print '<table class="border" width="100%">';
 
-	print "<tr>";
-	print '<td width="25%">'.$langs->trans("Ref").'</td><td colspan="3">';
-	print $vatpayment->ref;
-	print '</td></tr>';
+    print "<tr>";
+    print '<td width="25%">'.$langs->trans("Ref").'</td><td colspan="3">';
+    print $vatpayment->ref;
+    print '</td></tr>';
 
-	// Label
-	print '<tr><td>'.$langs->trans("Label").'</td><td>'.$vatpayment->label.'</td></tr>';
+    // Label
+    print '<tr><td>'.$langs->trans("Label").'</td><td>'.$vatpayment->label.'</td></tr>';
 
-	print "<tr>";
-	print '<td>'.$langs->trans("DatePayment").'</td><td colspan="3">';
-	print dol_print_date($vatpayment->datep,'day');
-	print '</td></tr>';
+    print "<tr>";
+    print '<td>'.$langs->trans("DatePayment").'</td><td colspan="3">';
+    print dol_print_date($vatpayment->datep,'day');
+    print '</td></tr>';
 
-	print '<tr><td>'.$langs->trans("DateValue").'</td><td colspan="3">';
-	print dol_print_date($vatpayment->datev,'day');
-	print '</td></tr>';
+    print '<tr><td>'.$langs->trans("DateValue").'</td><td colspan="3">';
+    print dol_print_date($vatpayment->datev,'day');
+    print '</td></tr>';
 
-	print '<tr><td>'.$langs->trans("Amount").'</td><td colspan="3">'.price($vatpayment->amount).'</td></tr>';
+    print '<tr><td>'.$langs->trans("Amount").'</td><td colspan="3">'.price($vatpayment->amount).'</td></tr>';
 
-	if (! empty($conf->banque->enabled))
-	{
-		if ($vatpayment->fk_account > 0)
-		{
- 		   	$bankline=new AccountLine($db);
-    		$bankline->fetch($vatpayment->fk_bank);
+    if (! empty($conf->banque->enabled)) {
+        if ($vatpayment->fk_account > 0) {
+                $bankline=new AccountLine($db);
+            $bankline->fetch($vatpayment->fk_bank);
 
-	    	print '<tr>';
-	    	print '<td>'.$langs->trans('BankTransactionLine').'</td>';
-			print '<td colspan="3">';
-			print $bankline->getNomUrl(1,0,'showall');
-	    	print '</td>';
-	    	print '</tr>';
-		}
-	}
+            print '<tr>';
+            print '<td>'.$langs->trans('BankTransactionLine').'</td>';
+            print '<td colspan="3">';
+            print $bankline->getNomUrl(1,0,'showall');
+            print '</td>';
+            print '</tr>';
+        }
+    }
 
         // Other attributes
         $parameters=array('colspan' => ' colspan="3"');
         $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$vatpayment,$action);    // Note that $action and $object may have been modified by hook
 
-	print '</table>';
+    print '</table>';
 
-	print '</div>';
+    print '</div>';
 
-	/*
-	* Boutons d'actions
-	*/
-	print "<div class=\"tabsAction\">\n";
-	if ($vatpayment->rappro == 0)
-		print '<a class="butActionDelete" href="fiche.php?id='.$vatpayment->id.'&action=delete">'.$langs->trans("Delete").'</a>';
-	else
-		print '<a class="butActionRefused" href="#" title="'.$langs->trans("LinkedToAConcialitedTransaction").'">'.$langs->trans("Delete").'</a>';
-	print "</div>";
+    /*
+    * Boutons d'actions
+    */
+    print "<div class=\"tabsAction\">\n";
+    if ($vatpayment->rappro == 0)
+        print '<a class="butActionDelete" href="fiche.php?id='.$vatpayment->id.'&action=delete">'.$langs->trans("Delete").'</a>';
+    else
+        print '<a class="butActionRefused" href="#" title="'.$langs->trans("LinkedToAConcialitedTransaction").'">'.$langs->trans("Delete").'</a>';
+    print "</div>";
 }
-
 
 $db->close();
 
 llxFooter();
-?>

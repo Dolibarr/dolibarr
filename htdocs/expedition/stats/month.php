@@ -27,7 +27,6 @@ require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
 require_once DOL_DOCUMENT_ROOT.'/expedition/class/expeditionstats.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 
-
 /*
  * View
  */
@@ -51,16 +50,15 @@ $fileurl = DOL_URL_ROOT.'/viewimage.php?modulepart=expeditionstats&file=expediti
 
 $px = new DolGraph();
 $mesg = $px->isGraphKo();
-if (! $mesg)
-{
+if (! $mesg) {
     $px->SetData($data);
     $px->SetMaxValue($px->GetCeilMaxValue());
     $px->SetWidth($WIDTH);
     $px->SetHeight($HEIGHT);
     $px->SetYLabel($langs->trans("NbOfOrders"));
     $px->SetShading(3);
-	$px->SetHorizTickIncrement(1);
-	$px->SetPrecisionY(0);
+    $px->SetHorizTickIncrement(1);
+    $px->SetPrecisionY(0);
     $px->draw($filename,$fileurl);
 }
 
@@ -74,4 +72,3 @@ print '</table>';
 llxFooter();
 
 $db->close();
-?>

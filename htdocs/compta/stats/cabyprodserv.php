@@ -62,47 +62,42 @@ $date_startday = GETPOST("date_startday");
 $date_endyear = GETPOST("date_endyear");
 $date_endmonth = GETPOST("date_endmonth");
 $date_endday = GETPOST("date_endday");
-if (empty($year))
-{
-	$year_current = strftime("%Y",dol_now());
-	$month_current = strftime("%m",dol_now());
-	$year_start = $year_current;
+if (empty($year)) {
+    $year_current = strftime("%Y",dol_now());
+    $month_current = strftime("%m",dol_now());
+    $year_start = $year_current;
 } else {
-	$year_current = $year;
-	$month_current = strftime("%m",dol_now());
-	$year_start = $year;
+    $year_current = $year;
+    $month_current = strftime("%m",dol_now());
+    $year_start = $year;
 }
 $date_start=dol_mktime(0,0,0,$_REQUEST["date_startmonth"],$_REQUEST["date_startday"],$_REQUEST["date_startyear"]);
 $date_end=dol_mktime(23,59,59,$_REQUEST["date_endmonth"],$_REQUEST["date_endday"],$_REQUEST["date_endyear"]);
 // Quarter
-if (empty($date_start) || empty($date_end)) // We define date_start and date_end
-{
-	$q=GETPOST("q")?GETPOST("q"):0;
-	if ($q==0)
-	{
-		// We define date_start and date_end
-		$month_start=GETPOST("month")?GETPOST("month"):($conf->global->SOCIETE_FISCAL_MONTH_START?($conf->global->SOCIETE_FISCAL_MONTH_START):1);
-		$year_end=$year_start;
-		$month_end=$month_start;
-		if (! GETPOST("month"))	// If month not forced
-		{
-			if (! GETPOST('year') && $month_start > $month_current)
-			{
-				$year_start--;
-				$year_end--;
-			}
-			$month_end=$month_start-1;
-			if ($month_end < 1) $month_end=12;
-			else $year_end++;
-		}
-		$date_start=dol_get_first_day($year_start,$month_start,false); $date_end=dol_get_last_day($year_end,$month_end,false);
-	}
-	if ($q==1) { $date_start=dol_get_first_day($year_start,1,false); $date_end=dol_get_last_day($year_start,3,false); }
-	if ($q==2) { $date_start=dol_get_first_day($year_start,4,false); $date_end=dol_get_last_day($year_start,6,false); }
-	if ($q==3) { $date_start=dol_get_first_day($year_start,7,false); $date_end=dol_get_last_day($year_start,9,false); }
-	if ($q==4) { $date_start=dol_get_first_day($year_start,10,false); $date_end=dol_get_last_day($year_start,12,false); }
+if (empty($date_start) || empty($date_end)) { // We define date_start and date_end
+    $q=GETPOST("q")?GETPOST("q"):0;
+    if ($q==0) {
+        // We define date_start and date_end
+        $month_start=GETPOST("month")?GETPOST("month"):($conf->global->SOCIETE_FISCAL_MONTH_START?($conf->global->SOCIETE_FISCAL_MONTH_START):1);
+        $year_end=$year_start;
+        $month_end=$month_start;
+        if (! GETPOST("month")) {	// If month not forced
+            if (! GETPOST('year') && $month_start > $month_current) {
+                $year_start--;
+                $year_end--;
+            }
+            $month_end=$month_start-1;
+            if ($month_end < 1) $month_end=12;
+            else $year_end++;
+        }
+        $date_start=dol_get_first_day($year_start,$month_start,false); $date_end=dol_get_last_day($year_end,$month_end,false);
+    }
+    if ($q==1) { $date_start=dol_get_first_day($year_start,1,false); $date_end=dol_get_last_day($year_start,3,false); }
+    if ($q==2) { $date_start=dol_get_first_day($year_start,4,false); $date_end=dol_get_last_day($year_start,6,false); }
+    if ($q==3) { $date_start=dol_get_first_day($year_start,7,false); $date_end=dol_get_last_day($year_start,9,false); }
+    if ($q==4) { $date_start=dol_get_first_day($year_start,10,false); $date_end=dol_get_last_day($year_start,12,false); }
 } else {
-	// TODO We define q
+    // TODO We define q
 }
 
 $commonparams=array();
@@ -128,7 +123,7 @@ $allparams = array_merge($commonparams, $headerparams, $tableparams);
 $headerparams = array_merge($commonparams, $headerparams);
 $tableparams = array_merge($commonparams, $tableparams);
 
-foreach($allparams as $key => $value) {
+foreach ($allparams as $key => $value) {
     $paramslink .= '&' . $key . '=' . $value;
 }
 /*
@@ -147,11 +142,11 @@ if ($modecompta=="CREANCES-DETTES") {
     $period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',0,0,0,'',1,0,1);
 
     $description=$langs->trans("RulesCADue");
-	if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
-	    $description.= $langs->trans("DepositsAreNotIncluded");
-	} else {
-	    $description.= $langs->trans("DepositsAreIncluded");
-	}
+    if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
+        $description.= $langs->trans("DepositsAreNotIncluded");
+    } else {
+        $description.= $langs->trans("DepositsAreIncluded");
+    }
 
     $builddate=time();
 } else {
@@ -167,7 +162,6 @@ if ($modecompta=="CREANCES-DETTES") {
 
 report_header($nom,$nomlink,$period,$periodlink,$description,$builddate,$exportlink,$tableparams);
 
-
 // SQL request
 $catotal=0;
 
@@ -178,30 +172,30 @@ if ($modecompta == 'CREANCES-DETTES') {
     $sql.= " JOIN ".MAIN_DB_PREFIX."facturedet as l";
     $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."facture as f ON l.fk_facture = f.rowid";
     if ($selected_cat === -2) {
-	$sql.=" LEFT OUTER JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON p.rowid = cp.fk_product";
+    $sql.=" LEFT OUTER JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON p.rowid = cp.fk_product";
     }
     if ($selected_cat && $selected_cat !== -2) {
-	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie as c ON c.rowid = " . $selected_cat;
-	if ($subcat) {
-	    $sql.=" OR c.fk_parent = " . $selected_cat;
-	}
-	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON cp.fk_categorie = c.rowid";
+    $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie as c ON c.rowid = " . $selected_cat;
+    if ($subcat) {
+        $sql.=" OR c.fk_parent = " . $selected_cat;
+    }
+    $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON cp.fk_categorie = c.rowid";
     }
     $sql.= " WHERE l.fk_product = p.rowid";
     $sql.= " AND f.fk_statut in (1,2)";
     if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
-	$sql.= " AND f.type IN (0,1,2)";
+    $sql.= " AND f.type IN (0,1,2)";
     } else {
-	$sql.= " AND f.type IN (0,1,2,3)";
+    $sql.= " AND f.type IN (0,1,2,3)";
     }
     if ($date_start && $date_end) {
-	$sql.= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
+    $sql.= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
     }
     if ($selected_cat === -2) {
-	$sql.=" AND cp.fk_product is null";
+    $sql.=" AND cp.fk_product is null";
     }
     if ($selected_cat && $selected_cat !== -2) {
-	$sql.= " AND cp.fk_product = p.rowid";
+    $sql.= " AND cp.fk_product = p.rowid";
     }
     $sql.= " AND f.entity = ".$conf->entity;
     $sql.= " GROUP BY p.rowid ";
@@ -209,28 +203,27 @@ if ($modecompta == 'CREANCES-DETTES') {
 
     $result = $db->query($sql);
     if ($result) {
-	$num = $db->num_rows($result);
-	$i=0;
-	while ($i < $num) {
-		$obj = $db->fetch_object($result);
-		$amount_ht[$obj->rowid] = $obj->amount;
-		$amount[$obj->rowid] = $obj->amount_ttc;
-		$name[$obj->rowid] = $obj->ref . '&nbsp;-&nbsp;' . $obj->label;
-		$catotal_ht+=$obj->amount;
-		$catotal+=$obj->amount_ttc;
-		$i++;
-	}
+    $num = $db->num_rows($result);
+    $i=0;
+    while ($i < $num) {
+        $obj = $db->fetch_object($result);
+        $amount_ht[$obj->rowid] = $obj->amount;
+        $amount[$obj->rowid] = $obj->amount_ttc;
+        $name[$obj->rowid] = $obj->ref . '&nbsp;-&nbsp;' . $obj->label;
+        $catotal_ht+=$obj->amount;
+        $catotal+=$obj->amount_ttc;
+        $i++;
+    }
     } else {
-	dol_print_error($db);
+    dol_print_error($db);
     }
 
     // Show Array
     $i=0;
     print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
     // Extra parameters management
-    foreach($headerparams as $key => $value)
-    {
-	 print '<input type="hidden" name="'.$key.'" value="'.$value.'">';
+    foreach ($headerparams as $key => $value) {
+     print '<input type="hidden" name="'.$key.'" value="'.$value.'">';
     }
 
     print '<table class="noborder" width="100%">';
@@ -242,54 +235,54 @@ if ($modecompta == 'CREANCES-DETTES') {
     print $langs->trans("SubCats") . '? ';
     print '<input type="checkbox" name="subcat" value="yes"';
     if ($subcat) {
-	print ' checked';
+    print ' checked';
     }
     print '></td>';
     print '<td colspan="3" align="right">';
     print '<input type="image" class="liste_titre" name="button_search" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png"  value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
     print '</td></tr>';
-	    // Array header
+        // Array header
     print "<tr class=\"liste_titre\">";
     print_liste_field_titre(
-	    $langs->trans("Product"),
-	    $_SERVER["PHP_SELF"],
-	    "name",
-	    "",
-	    $paramslink,
-	    "",
-	    $sortfield,
-	    $sortorder
-	    );
+        $langs->trans("Product"),
+        $_SERVER["PHP_SELF"],
+        "name",
+        "",
+        $paramslink,
+        "",
+        $sortfield,
+        $sortorder
+        );
     print_liste_field_titre(
-	    $langs->trans('AmountHT'),
-	    $_SERVER["PHP_SELF"],
-	    "amount_ht",
-	    "",
-	    $paramslink,
-	    'align="right"',
-	    $sortfield,
-	    $sortorder
-	    );
+        $langs->trans('AmountHT'),
+        $_SERVER["PHP_SELF"],
+        "amount_ht",
+        "",
+        $paramslink,
+        'align="right"',
+        $sortfield,
+        $sortorder
+        );
     print_liste_field_titre(
-	    $langs->trans("AmountTTC"),
-	    $_SERVER["PHP_SELF"],
-	    "amount_ttc",
-	    "",
-	    $paramslink,
-	    'align="right"',
-	    $sortfield,
-	    $sortorder
-	    );
+        $langs->trans("AmountTTC"),
+        $_SERVER["PHP_SELF"],
+        "amount_ttc",
+        "",
+        $paramslink,
+        'align="right"',
+        $sortfield,
+        $sortorder
+        );
     print_liste_field_titre(
-	    $langs->trans("Percentage"),
-	    $_SERVER["PHP_SELF"],
-	    "amount_ttc",
-	    "",
-	    $paramslink,
-	    'align="right"',
-	    $sortfield,
-	    $sortorder
-	    );
+        $langs->trans("Percentage"),
+        $_SERVER["PHP_SELF"],
+        "amount_ttc",
+        "",
+        $paramslink,
+        'align="right"',
+        $sortfield,
+        $sortorder
+        );
     // TODO: statistics?
     print "</tr>\n";
 
@@ -297,85 +290,85 @@ if ($modecompta == 'CREANCES-DETTES') {
     $var=true;
 
     if (count($amount)) {
-	    $arrayforsort=$name;
-	    // defining arrayforsort
-	    if ($sortfield == 'nom' && $sortorder == 'asc') {
-		    asort($name);
-		    $arrayforsort=$name;
-	    }
-	    if ($sortfield == 'nom' && $sortorder == 'desc') {
-		    arsort($name);
-		    $arrayforsort=$name;
-	    }
-	    if ($sortfield == 'amount_ht' && $sortorder == 'asc') {
-		asort($amount_ht);
-		$arrayforsort=$amount_ht;
-	    }
-	    if ($sortfield == 'amount_ht' && $sortorder == 'desc') {
-		arsort($amount_ht);
-		$arrayforsort=$amount_ht;
-	    }
-	    if ($sortfield == 'amount_ttc' && $sortorder == 'asc') {
-		    asort($amount);
-		    $arrayforsort=$amount;
-	    }
-	    if ($sortfield == 'amount_ttc' && $sortorder == 'desc') {
-		    arsort($amount);
-		    $arrayforsort=$amount;
-	    }
-	    foreach($arrayforsort as $key=>$value) {
-		    $var=!$var;
-		    print "<tr ".$bc[$var].">";
+        $arrayforsort=$name;
+        // defining arrayforsort
+        if ($sortfield == 'nom' && $sortorder == 'asc') {
+            asort($name);
+            $arrayforsort=$name;
+        }
+        if ($sortfield == 'nom' && $sortorder == 'desc') {
+            arsort($name);
+            $arrayforsort=$name;
+        }
+        if ($sortfield == 'amount_ht' && $sortorder == 'asc') {
+        asort($amount_ht);
+        $arrayforsort=$amount_ht;
+        }
+        if ($sortfield == 'amount_ht' && $sortorder == 'desc') {
+        arsort($amount_ht);
+        $arrayforsort=$amount_ht;
+        }
+        if ($sortfield == 'amount_ttc' && $sortorder == 'asc') {
+            asort($amount);
+            $arrayforsort=$amount;
+        }
+        if ($sortfield == 'amount_ttc' && $sortorder == 'desc') {
+            arsort($amount);
+            $arrayforsort=$amount;
+        }
+        foreach ($arrayforsort as $key=>$value) {
+            $var=!$var;
+            print "<tr ".$bc[$var].">";
 
-		    // Third party
-		     $fullname=$name[$key];
-		    if ($key >= 0) {
-			$linkname='<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$key.'">'.img_object($langs->trans("ShowProduct"),'product').' '.$fullname.'</a>';
-		    } else {
-			$linkname=$langs->trans("PaymentsNotLinkedToProduct");
-		    }
+            // Third party
+             $fullname=$name[$key];
+            if ($key >= 0) {
+            $linkname='<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$key.'">'.img_object($langs->trans("ShowProduct"),'product').' '.$fullname.'</a>';
+            } else {
+            $linkname=$langs->trans("PaymentsNotLinkedToProduct");
+            }
 
-		print "<td>".$linkname."</td>\n";
+        print "<td>".$linkname."</td>\n";
 
-		// Amount w/o VAT
-		print '<td align="right">';
-		if ($key > 0) {
-		    print '<a href="'.DOL_URL_ROOT.'/compta/facture/list.php?productid='.$key.'">';
-		} else {
-		    print '<a href="#">';
-		}
-		print price($amount_ht[$key]);
-		print '</td>';
+        // Amount w/o VAT
+        print '<td align="right">';
+        if ($key > 0) {
+            print '<a href="'.DOL_URL_ROOT.'/compta/facture/list.php?productid='.$key.'">';
+        } else {
+            print '<a href="#">';
+        }
+        print price($amount_ht[$key]);
+        print '</td>';
 
-		// Amount with VAT
-		print '<td align="right">';
-		if ($key > 0) {
-		    print '<a href="'.DOL_URL_ROOT.'/compta/facture/list.php?productid='.$key.'">';
-		} else {
-		    print '<a href="#">';
-		}
-		print price($amount[$key]);
-		print '</a>';
-		print '</td>';
+        // Amount with VAT
+        print '<td align="right">';
+        if ($key > 0) {
+            print '<a href="'.DOL_URL_ROOT.'/compta/facture/list.php?productid='.$key.'">';
+        } else {
+            print '<a href="#">';
+        }
+        print price($amount[$key]);
+        print '</a>';
+        print '</td>';
 
-		// Percent;
-		print '<td align="right">'.($catotal > 0 ? round(100 * $amount[$key] / $catotal, 2).'%' : '&nbsp;').'</td>';
+        // Percent;
+        print '<td align="right">'.($catotal > 0 ? round(100 * $amount[$key] / $catotal, 2).'%' : '&nbsp;').'</td>';
 
-		// TODO: statistics?
+        // TODO: statistics?
 
-		print "</tr>\n";
-		$i++;
-	    }
+        print "</tr>\n";
+        $i++;
+        }
 
-	    // Total
-	    print '<tr class="liste_total">';
-	    print '<td>'.$langs->trans("Total").'</td>';
-	    print '<td align="right">'.price($catotal_ht).'</td>';
-	    print '<td align="right">'.price($catotal).'</td>';
-	    print '<td>&nbsp;</td>';
-	    print '</tr>';
+        // Total
+        print '<tr class="liste_total">';
+        print '<td>'.$langs->trans("Total").'</td>';
+        print '<td align="right">'.price($catotal_ht).'</td>';
+        print '<td align="right">'.price($catotal).'</td>';
+        print '<td>&nbsp;</td>';
+        print '</tr>';
 
-	    $db->free($result);
+        $db->free($result);
     }
     print "</table>";
     print '</form>';
@@ -387,4 +380,3 @@ if ($modecompta == 'CREANCES-DETTES') {
 
 llxFooter();
 $db->close();
-?>

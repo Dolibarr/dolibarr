@@ -32,47 +32,37 @@ if (! $user->admin) accessforbidden();
 
 $action=GETPOST('action','alpha');
 
-
 /*
  * Actions
  */
 
-if ($action == 'activate_hidemenu')
-{
-	dolibarr_set_const($db, "MAIN_MENU_HIDE_UNAUTHORIZED", '1','chaine',0,'',$conf->entity);
-	header("Location: ".$_SERVER["PHP_SELF"]);
-	exit;
-}
-else if ($action == 'disable_hidemenu')
-{
-	dolibarr_del_const($db, "MAIN_MENU_HIDE_UNAUTHORIZED",$conf->entity);
-	header("Location: ".$_SERVER["PHP_SELF"]);
-	exit;
+if ($action == 'activate_hidemenu') {
+    dolibarr_set_const($db, "MAIN_MENU_HIDE_UNAUTHORIZED", '1','chaine',0,'',$conf->entity);
+    header("Location: ".$_SERVER["PHP_SELF"]);
+    exit;
+} elseif ($action == 'disable_hidemenu') {
+    dolibarr_del_const($db, "MAIN_MENU_HIDE_UNAUTHORIZED",$conf->entity);
+    header("Location: ".$_SERVER["PHP_SELF"]);
+    exit;
 }
 
-if ($action == 'activate_layoutmenu')
-{
-	dolibarr_set_const($db, "MAIN_MENU_USE_JQUERY_LAYOUT", '1','chaine',0,'',$conf->entity);
-	header("Location: ".$_SERVER["PHP_SELF"]);
-	exit;
+if ($action == 'activate_layoutmenu') {
+    dolibarr_set_const($db, "MAIN_MENU_USE_JQUERY_LAYOUT", '1','chaine',0,'',$conf->entity);
+    header("Location: ".$_SERVER["PHP_SELF"]);
+    exit;
+} elseif ($action == 'disable_layoutmenu') {
+    dolibarr_del_const($db, "MAIN_MENU_USE_JQUERY_LAYOUT",$conf->entity);
+    header("Location: ".$_SERVER["PHP_SELF"]);
+    exit;
 }
-else if ($action == 'disable_layoutmenu')
-{
-	dolibarr_del_const($db, "MAIN_MENU_USE_JQUERY_LAYOUT",$conf->entity);
-	header("Location: ".$_SERVER["PHP_SELF"]);
-	exit;
-}
-
 
 /*
  * View
  */
 
-
 llxHeader('',$langs->trans("Setup"));
 
 print_fiche_titre($langs->trans("Menus"),'','setup');
-
 
 $h = 0;
 
@@ -93,7 +83,6 @@ $h++;
 
 dol_fiche_head($head, 'misc', $langs->trans("Menus"));
 
-
 // Other Options
 $var=true;
 
@@ -108,39 +97,30 @@ $var=!$var;
 print "<tr ".$bc[$var].">";
 print '<td colspan="3">'.$langs->trans("HideUnauthorizedMenu").'</td>';
 print '<td align="center">';
-if (empty($conf->global->MAIN_MENU_HIDE_UNAUTHORIZED))
-{
-	print '<a href="'.$_SERVER["PHP_SELF"].'?action=activate_hidemenu">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
-}
-else
-{
-	print '<a href="'.$_SERVER["PHP_SELF"].'?action=disable_hidemenu">'.img_picto($langs->trans("Enabled"),'switch_on').'</a>';
+if (empty($conf->global->MAIN_MENU_HIDE_UNAUTHORIZED)) {
+    print '<a href="'.$_SERVER["PHP_SELF"].'?action=activate_hidemenu">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
+} else {
+    print '<a href="'.$_SERVER["PHP_SELF"].'?action=disable_hidemenu">'.img_picto($langs->trans("Enabled"),'switch_on').'</a>';
 }
 print "</td>";
 print '</tr>';
 
 // Use a flip-hide menu
-if (isset($conf->global->MAIN_FEATURES_LEVEL) && $conf->global->MAIN_FEATURES_LEVEL > 0)
-{
-	$var=!$var;
-	print "<tr ".$bc[$var].">";
-	print '<td colspan="3">'.$langs->trans("MenuUseLayout").'</td>';
-	print '<td align="center">';
-	if (empty($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT))
-	{
-		print '<a href="'.$_SERVER["PHP_SELF"].'?action=activate_layoutmenu">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
-	}
-	else
-	{
-		print '<a href="'.$_SERVER["PHP_SELF"].'?action=disable_layoutmenu">'.img_picto($langs->trans("Enabled"),'switch_on').'</a>';
-	}
-	print "</td>";
-	print '</tr>';
+if (isset($conf->global->MAIN_FEATURES_LEVEL) && $conf->global->MAIN_FEATURES_LEVEL > 0) {
+    $var=!$var;
+    print "<tr ".$bc[$var].">";
+    print '<td colspan="3">'.$langs->trans("MenuUseLayout").'</td>';
+    print '<td align="center">';
+    if (empty($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT)) {
+        print '<a href="'.$_SERVER["PHP_SELF"].'?action=activate_layoutmenu">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
+    } else {
+        print '<a href="'.$_SERVER["PHP_SELF"].'?action=disable_layoutmenu">'.img_picto($langs->trans("Enabled"),'switch_on').'</a>';
+    }
+    print "</td>";
+    print '</tr>';
 }
 
 print '</table>';
 
-
 llxFooter();
 $db->close();
-?>

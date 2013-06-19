@@ -24,7 +24,7 @@
  *		\brief      Page de saisie d'un virement
  */
 
-require('../../main.inc.php');
+require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
@@ -41,92 +41,79 @@ $action = GETPOST('action','alpha');
  * Actions
  */
 
-if ($action == 'add')
-{
-	$langs->load("errors");
+if ($action == 'add') {
+    $langs->load("errors");
 
-	$mesg='';
-	$dateo = dol_mktime(12,0,0,GETPOST('remonth','int'),GETPOST('reday','int'),GETPOST('reyear','int'));
-	$label = GETPOST('label','alpha');
-	$amount= GETPOST('amount','int');
+    $mesg='';
+    $dateo = dol_mktime(12,0,0,GETPOST('remonth','int'),GETPOST('reday','int'),GETPOST('reyear','int'));
+    $label = GETPOST('label','alpha');
+    $amount= GETPOST('amount','int');
 
-	if (! $label)
-	{
-		$error=1;
-		$mesg.="<div class=\"error\">".$langs->trans("ErrorFieldRequired",$langs->transnoentities("Description"))."</div>";
-	}
-	if (! $amount)
-	{
-		$error=1;
-		$mesg.="<div class=\"error\">".$langs->trans("ErrorFieldRequired",$langs->transnoentities("Amount"))."</div>";
-	}
-	if (! GETPOST('account_from','int'))
-	{
-		$error=1;
-		$mesg.="<div class=\"error\">".$langs->trans("ErrorFieldRequired",$langs->transnoentities("TransferFrom"))."</div>";
-	}
-	if (! GETPOST('account_to','int'))
-	{
-		$error=1;
-		$mesg.="<div class=\"error\">".$langs->trans("ErrorFieldRequired",$langs->transnoentities("TransferTo"))."</div>";
-	}
-	if (! $error)
-	{
-		require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+    if (! $label) {
+        $error=1;
+        $mesg.="<div class=\"error\">".$langs->trans("ErrorFieldRequired",$langs->transnoentities("Description"))."</div>";
+    }
+    if (! $amount) {
+        $error=1;
+        $mesg.="<div class=\"error\">".$langs->trans("ErrorFieldRequired",$langs->transnoentities("Amount"))."</div>";
+    }
+    if (! GETPOST('account_from','int')) {
+        $error=1;
+        $mesg.="<div class=\"error\">".$langs->trans("ErrorFieldRequired",$langs->transnoentities("TransferFrom"))."</div>";
+    }
+    if (! GETPOST('account_to','int')) {
+        $error=1;
+        $mesg.="<div class=\"error\">".$langs->trans("ErrorFieldRequired",$langs->transnoentities("TransferTo"))."</div>";
+    }
+    if (! $error) {
+        require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
-		$accountfrom=new Account($db);
-		$accountfrom->fetch(GETPOST('account_from','int'));
+        $accountfrom=new Account($db);
+        $accountfrom->fetch(GETPOST('account_from','int'));
 
-		$accountto=new Account($db);
-		$accountto->fetch(GETPOST('account_to','int'));
+        $accountto=new Account($db);
+        $accountto->fetch(GETPOST('account_to','int'));
 
-		if ($accountto->id != $accountfrom->id)
-		{
-			$db->begin();
+        if ($accountto->id != $accountfrom->id) {
+            $db->begin();
 
-			$error=0;
-			$bank_line_id_from=0;
-			$bank_line_id_to=0;
-			$result=0;
+            $error=0;
+            $bank_line_id_from=0;
+            $bank_line_id_to=0;
+            $result=0;
 
-			// By default, electronic transfert from bank to bank
-			$typefrom='PRE';
-			$typeto='VIR';
-			if ($accountto->courant == 2 || $accountfrom->courant == 2)
-			{
-				// This is transfert of change
-				$typefrom='LIQ';
-				$typeto='LIQ';
-			}
+            // By default, electronic transfert from bank to bank
+            $typefrom='PRE';
+            $typeto='VIR';
+            if ($accountto->courant == 2 || $accountfrom->courant == 2) {
+                // This is transfert of change
+                $typefrom='LIQ';
+                $typeto='LIQ';
+            }
 
-			if (! $error) $bank_line_id_from = $accountfrom->addline($dateo, $typefrom, $label, -1*price2num($amount), '', '', $user);
-			if (! ($bank_line_id_from > 0)) $error++;
-			if (! $error) $bank_line_id_to = $accountto->addline($dateo, $typeto, $label, price2num($amount), '', '', $user);
-			if (! ($bank_line_id_to > 0)) $error++;
+            if (! $error) $bank_line_id_from = $accountfrom->addline($dateo, $typefrom, $label, -1*price2num($amount), '', '', $user);
+            if (! ($bank_line_id_from > 0)) $error++;
+            if (! $error) $bank_line_id_to = $accountto->addline($dateo, $typeto, $label, price2num($amount), '', '', $user);
+            if (! ($bank_line_id_to > 0)) $error++;
 
-		    if (! $error) $result=$accountfrom->add_url_line($bank_line_id_from, $bank_line_id_to, DOL_URL_ROOT.'/compta/bank/ligne.php?rowid=', '(banktransfert)', 'banktransfert');
-			if (! ($result > 0)) $error++;
-		    if (! $error) $result=$accountto->add_url_line($bank_line_id_to, $bank_line_id_from, DOL_URL_ROOT.'/compta/bank/ligne.php?rowid=', '(banktransfert)', 'banktransfert');
-			if (! ($result > 0)) $error++;
+            if (! $error) $result=$accountfrom->add_url_line($bank_line_id_from, $bank_line_id_to, DOL_URL_ROOT.'/compta/bank/ligne.php?rowid=', '(banktransfert)', 'banktransfert');
+            if (! ($result > 0)) $error++;
+            if (! $error) $result=$accountto->add_url_line($bank_line_id_to, $bank_line_id_from, DOL_URL_ROOT.'/compta/bank/ligne.php?rowid=', '(banktransfert)', 'banktransfert');
+            if (! ($result > 0)) $error++;
 
-			if (! $error)
-			{
-				$mesg.="<div class=\"ok\">";
-				$mesg.=$langs->trans("TransferFromToDone","<a href=\"account.php?account=".$accountfrom->id."\">".$accountfrom->label."</a>","<a href=\"account.php?account=".$accountto->id."\">".$accountto->label."</a>",$amount,$langs->transnoentities("Currency".$conf->currency));
-				$mesg.="</div>";
-				$db->commit();
-			}
-			else
-			{
-				$mesg.="<div class=\"error\">".$accountfrom->error.' '.$accountto->error."</div>";
-				$db->rollback();
-			}
-		}
-		else
-		{
-			$mesg.="<div class=\"error\">".$langs->trans("ErrorFromToAccountsMustDiffers")."</div>";
-		}
-	}
+            if (! $error) {
+                $mesg.="<div class=\"ok\">";
+                $mesg.=$langs->trans("TransferFromToDone","<a href=\"account.php?account=".$accountfrom->id."\">".$accountfrom->label."</a>","<a href=\"account.php?account=".$accountto->id."\">".$accountto->label."</a>",$amount,$langs->transnoentities("Currency".$conf->currency));
+                $mesg.="</div>";
+                $db->commit();
+            } else {
+                $mesg.="<div class=\"error\">".$accountfrom->error.' '.$accountto->error."</div>";
+                $db->rollback();
+            }
+        } else {
+            $mesg.="<div class=\"error\">".$langs->trans("ErrorFromToAccountsMustDiffers")."</div>";
+        }
+    }
 }
 
 
@@ -144,12 +131,11 @@ $account_to='';
 $label='';
 $amount='';
 
-if($error)
-{
-	$account_from =	GETPOST('account_from','int');
-	$account_to	= GETPOST('account_to','int');
-	$label = GETPOST('label','alpha');
-	$amount = GETPOST('amount','int');
+if ($error) {
+    $account_from =	GETPOST('account_from','int');
+    $account_to	= GETPOST('account_to','int');
+    $label = GETPOST('label','alpha');
+    $amount = GETPOST('amount','int');
 }
 
 print_fiche_titre($langs->trans("BankTransfer"));
@@ -193,4 +179,3 @@ print "</form>";
 $db->close();
 
 llxFooter();
-?>

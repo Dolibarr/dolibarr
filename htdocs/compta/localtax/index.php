@@ -28,8 +28,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 $langs->load("other");
 
 $year=$_GET["year"];
-if ($year == 0 )
-{
+if ($year == 0) {
     $year_current = strftime("%Y",time());
     $year_start = $year_current;
 } else {
@@ -52,8 +51,7 @@ function pt ($db, $sql, $date)
     global $conf, $bc,$langs;
 
     $result = $db->query($sql);
-    if ($result)
-    {
+    if ($result) {
         $num = $db->num_rows($result);
         $i = 0;
         $total = 0;
@@ -64,8 +62,7 @@ function pt ($db, $sql, $date)
         print '<td>&nbsp;</td>'."\n";
         print "</tr>\n";
         $var=True;
-        while ($i < $num)
-        {
+        while ($i < $num) {
             $obj = $db->fetch_object($result);
             $var=!$var;
             print '<tr '.$bc[$var].'>';
@@ -81,12 +78,10 @@ function pt ($db, $sql, $date)
 
         print "</table>";
         $db->free($result);
-    }
-    else {
+    } else {
         dolibar_print_error($db);
     }
 }
-
 
 /*
  * View
@@ -95,7 +90,6 @@ function pt ($db, $sql, $date)
 llxHeader();
 
 $tva = new Tva($db);
-
 
 $textprevyear="<a href=\"index.php?year=" . ($year_current-1) . "\">".img_previous()."</a>";
 $textnextyear=" <a href=\"index.php?year=" . ($year_current+1) . "\">".img_next()."</a>";
@@ -130,19 +124,16 @@ $y = $year_current ;
 $var=True;
 $total=0; $subtotalcoll=0; $subtotalpaye=0; $subtotal=0;
 $i=0;
-for ($m = 1 ; $m < 13 ; $m++ )
-{
+for ($m = 1 ; $m < 13 ; $m++) {
     $coll_listsell = vat_by_date($db, $y, 0, 0, 0, $modetax, 'sell', $m);
     $coll_listbuy = vat_by_date($db, $y, 0, 0, 0, $modetax, 'buy', $m);
 
-    if (! is_array($coll_listbuy) && $coll_listbuy == -1)
-    {
+    if (! is_array($coll_listbuy) && $coll_listbuy == -1) {
         $langs->load("errors");
         print '<tr><td colspan="5">'.$langs->trans("ErrorNoAccountancyModuleLoaded").'</td></tr>';
         break;
     }
-    if (! is_array($coll_listbuy) && $coll_listbuy == -2)
-    {
+    if (! is_array($coll_listbuy) && $coll_listbuy == -2) {
         print '<tr><td colspan="5">'.$langs->trans("FeatureNotYetAvailable").'</td></tr>';
         break;
     }
@@ -152,16 +143,14 @@ for ($m = 1 ; $m < 13 ; $m++ )
     print '<td nowrap>'.dol_print_date(dol_mktime(0,0,0,$m,1,$y),"%b %Y").'</td>';
 
     $x_coll = 0;
-    foreach($coll_listsell as $vatrate=>$val)
-    {
+    foreach ($coll_listsell as $vatrate=>$val) {
         $x_coll+=$val['localtax2'];
     }
     $subtotalcoll = $subtotalcoll + $x_coll;
     print "<td nowrap align=\"right\">".price($x_coll)."</td>";
 
     $x_paye = 0;
-    foreach($coll_listbuy as $vatrate=>$val)
-    {
+    foreach ($coll_listbuy as $vatrate=>$val) {
         $x_paye+=$val['localtax2'];
     }
     $subtotalpaye = $subtotalpaye + $x_paye;
@@ -216,4 +205,3 @@ print '</table>';
 $db->close();
 
 llxFooter();
-?>

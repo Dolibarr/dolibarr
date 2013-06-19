@@ -26,8 +26,6 @@
  */
 include_once(DOL_DOCUMENT_ROOT ."/core/modules/DolibarrModules.class.php");
 
-
-
 /**
  *  \class      modPrintIPP
  *  \brief      Classe de description et activation du module PrintIPP
@@ -35,13 +33,12 @@ include_once(DOL_DOCUMENT_ROOT ."/core/modules/DolibarrModules.class.php");
 class modPrintIPP extends DolibarrModules
 {
 
-	
-	/**
-	 *	Constructor
-	 *
-	 *  @param		DoliDB		$db      Database handler
-	 */
-    function  __construct($db)
+    /**
+     *	Constructor
+     *
+     *  @param		DoliDB		$db      Database handler
+     */
+    public function  __construct($db)
     {
         $this->db = $db ;
         $this->numero = 54000;
@@ -118,18 +115,17 @@ class modPrintIPP extends DolibarrModules
 
         $r++;
 
-
     }
 
     /**
-	 *		Function called when module is enabled.
-	 *		The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
-	 *		It also creates data directories
-	 *
+     *		Function called when module is enabled.
+     *		The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
+     *		It also creates data directories
+     *
      *      @param      string	$options    Options when enabling module ('', 'noboxes')
-	 *      @return     int             	1 if OK, 0 if KO
-	 */
-    function init($options='')
+     *      @return     int             	1 if OK, 0 if KO
+     */
+    public function init($options='')
     {
         $sql = array();
 
@@ -137,14 +133,14 @@ class modPrintIPP extends DolibarrModules
     }
 
    /**
-	 *		Function called when module is disabled.
-	 *      Remove from database constants, boxes and permissions from Dolibarr database.
-	 *		Data directories are not deleted
-	 *
+     *		Function called when module is disabled.
+     *      Remove from database constants, boxes and permissions from Dolibarr database.
+     *		Data directories are not deleted
+     *
      *      @param      string	$options    Options when enabling module ('', 'noboxes')
-	 *      @return     int             	1 if OK, 0 if KO
-	 */
-    	function remove($options='')
+     *      @return     int             	1 if OK, 0 if KO
+     */
+        function remove($options='')
     {
         $sql = array();
 
@@ -152,4 +148,3 @@ class modPrintIPP extends DolibarrModules
     }
 
 }
-?>

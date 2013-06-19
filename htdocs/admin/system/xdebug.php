@@ -27,7 +27,6 @@ $langs->load("admin");
 if (!$user->admin)
 accessforbidden();
 
-
 /*
  * View
 */
@@ -38,17 +37,13 @@ print_fiche_titre("XDebug",'','setup');
 
 print "<br>\n";
 
-
-if (!function_exists('xdebug_is_enabled'))
-{
+if (!function_exists('xdebug_is_enabled')) {
     print 'XDebug seems to be not installed. Function xdebug_is_enabled not found.';
     llxFooter();
     exit;
 }
 
-
-if (function_exists('socket_create'))
-{
+if (function_exists('socket_create')) {
     $address = empty($conf->global->XDEBUG_SERVER)?'127.0.0.1':$conf->global->XDEBUG_SERVER;
     $port = empty($conf->global->XDEBUG_PORT)?9000:$conf->global->XDEBUG_PORT;
 
@@ -61,8 +56,7 @@ if (function_exists('socket_create'))
     //socket_listen($sock);
     //$client = socket_accept($sock);
     $client=socket_connect($socket, $address, $port);
-    if ($client)
-    {
+    if ($client) {
         echo "Connection established: ".$client." - address=".$address." port=".$port."<br>\n";
         echo "There is a Remote debug server at this address.<br>\n";
         echo "<br>\n";
@@ -82,29 +76,23 @@ if (function_exists('socket_create'))
               xdebug.show_mem_delta=1<br>
               xdebug.trace_output_dir=/tmp/trace<br>
               xdebug.auto_trace=0<br>
-	    '."\n";
+        '."\n";
         print "<br>\n";
         echo 'Then check in your debug server (Eclipse), you have setup:<br>
-	         XDebug with same port than in php.ini<br>
-	         Allow Remote debug=yes or prompt<br>'."\n";
+             XDebug with same port than in php.ini<br>
+             Allow Remote debug=yes or prompt<br>'."\n";
         print "<br>\n";
         echo "Then, to run a debug session, add parameter XDEBUG_SESSION_START=aname on your URL. To stop, remove cookie XDEBUG_SESSION_START.\n";
-    }
-    else
-    {
+    } else {
         print socket_strerror(socket_last_error());
         echo "Failed to connect to address=".$address." port=".$port."<br>\n";
         echo "There is no Remote debug server at this address.\n";
     }
     socket_close($socket);
-}
-else
-{
+} else {
     print "Can't test if PHPDebug is OK as PHP socket functions are not enabled.";
 }
-
 
 llxFooter();
 
 $db->close();
-?>

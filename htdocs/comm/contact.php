@@ -48,20 +48,17 @@ $socid = GETPOST('socid','int');
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'societe',$socid,'');
 
-
 /*
 *	View
 */
 
 llxHeader('','Contacts');
 
-if ($type == "c" || $type == "p")
-{
+if ($type == "c" || $type == "p") {
   $label = $langs->trans("Customers");
   $urlfiche="fiche.php";
 }
-if ($type == "f")
-{
+if ($type == "f") {
   $label = $langs->trans("Suppliers");
   $urlfiche="fiche.php";
 }
@@ -85,34 +82,28 @@ if ($type == "p") $sql.= " AND s.client IN (2, 3)";
 if ($type == "f") $sql.= " AND s.fournisseur = 1";
 if ($socid) $sql.= " AND s.rowid = ".$socid;
 
-if (dol_strlen($stcomm))
-{
+if (dol_strlen($stcomm)) {
   $sql.= " AND s.fk_stcomm=$stcomm";
 }
 
 // FIXME $begin not exist
-if (dol_strlen($begin)) // filtre sur la premiere lettre du nom
-{
+if (dol_strlen($begin)) { // filtre sur la premiere lettre du nom
   $sql.= " AND upper(p.name) LIKE '".$begin."%'";
 }
 
-if (! empty($search_lastname))
-{
+if (! empty($search_lastname)) {
   $sql.= " AND p.name LIKE '%".$db->escape($search_lastname)."%'";
 }
 
-if (! empty($search_firstname))
-{
+if (! empty($search_firstname)) {
   $sql.= " AND p.firstname LIKE '%".$db->escape($search_firstname)."%'";
 }
 
-if (! empty($search_company))
-{
+if (! empty($search_company)) {
   $sql.= " AND s.nom LIKE '%".$db->escape($search_company)."%'";
 }
 
-if (! empty($contactname)) // acces a partir du module de recherche
-{
+if (! empty($contactname)) { // acces a partir du module de recherche
   $sql.= " AND (p.name LIKE '%".$db->escape(strtolower($contactname))."%' OR lower(p.firstname) LIKE '%".$db->escape(strtolower($contactname))."%') ";
   $sortfield = "p.name";
   $sortorder = "ASC";
@@ -122,8 +113,7 @@ $sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit($limit+1, $offset);
 
 $resql = $db->query($sql);
-if ($resql)
-{
+if ($resql) {
   $num = $db->num_rows($resql);
 
   $title = (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("ListOfContacts") : $langs->trans("ListOfContactsAddresses"));
@@ -150,8 +140,7 @@ if ($resql)
 
   $var=True;
   $i = 0;
-  while ($i < min($num,$limit))
-    {
+  while ($i < min($num,$limit)) {
       $obj = $db->fetch_object($resql);
 
       $var=!$var;
@@ -171,16 +160,12 @@ if ($resql)
       print "</tr>\n";
       $i++;
     }
-  	print "</table></p>";
-  	$db->free($resql);
-}
-else
-{
+      print "</table></p>";
+      $db->free($resql);
+} else {
     dol_print_error($db);
 }
 
 llxFooter();
 
 $db->close();
-
-?>

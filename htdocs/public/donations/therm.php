@@ -32,8 +32,6 @@ require_once DOL_DOCUMENT_ROOT.'/compta/dons/class/don.class.php';
 // Security check
 if (empty($conf->don->enabled)) accessforbidden('',1,1,1);
 
-
-
 /*
  * 	View (output an image)
  */
@@ -46,10 +44,7 @@ $actualValue  = $dontherm->sum_donations(3);
 
 $db->close();
 
-
 /*
  * Graph thermometer
  */
 print moneyMeter($actualValue, $pendingValue, $intentValue);
-
-?>

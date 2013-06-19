@@ -25,99 +25,94 @@
 
 require_once DOL_DOCUMENT_ROOT.'/core/modules/product/modules_product.class.php';
 
-
 /**
  *	\class 		mod_codeproduct_leopard
  *	\brief 		Classe permettant la gestion leopard des codes produits
  */
 class mod_codeproduct_leopard extends ModeleProductCode
 {
-	/*
-	 * Attention ce module est utilise par defaut si aucun module n'a
-	 * ete definit dans la configuration
-	 *
-	 * Le fonctionnement de celui-ci doit donc rester le plus ouvert possible
-	 */
+    /*
+     * Attention ce module est utilise par defaut si aucun module n'a
+     * ete definit dans la configuration
+     *
+     * Le fonctionnement de celui-ci doit donc rester le plus ouvert possible
+     */
 
-	var $nom='Leopard';					// Nom du modele
-	var $code_modifiable;				// Code modifiable
-	var $code_modifiable_invalide;		// Code modifiable si il est invalide
-	var $code_modifiable_null;			// Code modifiables si il est null
-	var $code_null;						// Code facultatif
-	var $version='dolibarr';    		// 'development', 'experimental', 'dolibarr'
-	var $code_auto; 	                // Numerotation automatique
-
-
-	/**
-	 *	Constructor
-	 */
-	function __construct()
-	{
-		$this->code_null = 1;
-		$this->code_modifiable = 1;
-		$this->code_modifiable_invalide = 1;
-		$this->code_modifiable_null = 1;
-		$this->code_auto = 0;
-	}
+    public $nom='Leopard';					// Nom du modele
+    public $code_modifiable;				// Code modifiable
+    public $code_modifiable_invalide;		// Code modifiable si il est invalide
+    public $code_modifiable_null;			// Code modifiables si il est null
+    public $code_null;						// Code facultatif
+    public $version='dolibarr';    		// 'development', 'experimental', 'dolibarr'
+    public $code_auto; 	                // Numerotation automatique
 
 
-	/**		Return description of module
-	 *
-	 * 		@param	string	$langs		Object langs
-	 * 		@return string      		Description of module
-	 */
-	function info($langs)
-	{
-		return $langs->trans("LeopardNumRefModelDesc");
-	}
+    /**
+     *	Constructor
+     */
+    public function __construct()
+    {
+        $this->code_null = 1;
+        $this->code_modifiable = 1;
+        $this->code_modifiable_invalide = 1;
+        $this->code_modifiable_null = 1;
+        $this->code_auto = 0;
+    }
 
 
-	/**
-	 * Return an example of result returned by getNextValue
-	 *
-	 * @param	product		$objproduct		Object product
-	 * @param	int			$type		Type of third party (1:customer, 2:supplier, -1:autodetect)
-	 * @return	string					Return next value
-	 */
-	function getNextValue($objproduct=0,$type=-1)
-	{
-		global $langs;
-		return '';
-	}
+    /**		Return description of module
+     *
+     * 		@param	string	$langs		Object langs
+     * 		@return string      		Description of module
+     */
+    public function info($langs)
+    {
+        return $langs->trans("LeopardNumRefModelDesc");
+    }
 
 
-	/**
-	 * 	Check validity of code according to its rules
-	 *
-	 *	@param	DoliDB		$db		Database handler
-	 *	@param	string		&$code	Code to check/correct
-	 *	@param	Product		$product	Object product
-	 *  @param  int		  	$type   0 = product , 1 = service
-	 *  @return int					0 if OK
-	 * 								-1 ErrorBadProductCodeSyntax
-	 * 								-2 ErrorProductCodeRequired
-	 * 								-3 ErrorProductCodeAlreadyUsed
-	 * 								-4 ErrorPrefixRequired
-	 */
-	function verif($db, &$code, $product, $type)
-	{
-		global $conf;
+    /**
+     * Return an example of result returned by getNextValue
+     *
+     * @param  product $objproduct Object product
+     * @param  int     $type       Type of third party (1:customer, 2:supplier, -1:autodetect)
+     * @return string  Return next value
+     */
+    public function getNextValue($objproduct=0,$type=-1)
+    {
+        global $langs;
 
-		$result=0;
-		$code = strtoupper(trim($code));
+        return '';
+    }
 
-		if (empty($code) && $this->code_null && empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED))
-		{
-			$result=0;
-		}
-		else if (empty($code) && (! $this->code_null || ! empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED)) )
-		{
-			$result=-2;
-		}
+    /**
+     * 	Check validity of code according to its rules
+     *
+     *	@param	DoliDB		$db		Database handler
+     *	@param	string		&$code	Code to check/correct
+     *	@param	Product		$product	Object product
+     *  @param  int		  	$type   0 = product , 1 = service
+     *  @return int					0 if OK
+     * 								-1 ErrorBadProductCodeSyntax
+     * 								-2 ErrorProductCodeRequired
+     * 								-3 ErrorProductCodeAlreadyUsed
+     * 								-4 ErrorPrefixRequired
+     */
+    public function verif($db, &$code, $product, $type)
+    {
+        global $conf;
 
-		dol_syslog("mod_codeproduct_leopard::verif type=".$type." result=".$result);
-		return $result;
-	}
+        $result=0;
+        $code = strtoupper(trim($code));
+
+        if (empty($code) && $this->code_null && empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED)) {
+            $result=0;
+        } elseif (empty($code) && (! $this->code_null || ! empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED)) ) {
+            $result=-2;
+        }
+
+        dol_syslog("mod_codeproduct_leopard::verif type=".$type." result=".$result);
+
+        return $result;
+    }
 }
-
-?>

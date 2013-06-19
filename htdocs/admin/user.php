@@ -39,38 +39,28 @@ if (! $user->admin) accessforbidden();
 
 $extrafields = new ExtraFields($db);
 
-
 /*
  * Action
  */
-if (preg_match('/set_(.*)/',$action,$reg))
-{
+if (preg_match('/set_(.*)/',$action,$reg)) {
     $code=$reg[1];
-    if (dolibarr_set_const($db, $code, 1, 'chaine', 0, '', $conf->entity) > 0)
-    {
+    if (dolibarr_set_const($db, $code, 1, 'chaine', 0, '', $conf->entity) > 0) {
         header("Location: ".$_SERVER["PHP_SELF"]);
         exit;
-    }
-    else
-    {
+    } else {
         dol_print_error($db);
     }
 }
 
-if (preg_match('/del_(.*)/',$action,$reg))
-{
+if (preg_match('/del_(.*)/',$action,$reg)) {
     $code=$reg[1];
-    if (dolibarr_del_const($db, $code, $conf->entity) > 0)
-    {
+    if (dolibarr_del_const($db, $code, $conf->entity) > 0) {
         header("Location: ".$_SERVER["PHP_SELF"]);
         exit;
-    }
-    else
-    {
+    } else {
         dol_print_error($db);
     }
 }
-
 
 /*
  * View
@@ -81,7 +71,6 @@ llxHeader('',$langs->trans("UsersSetup"),$help_url);
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print_fiche_titre($langs->trans("UsersSetup"),$linkback,'setup');
-
 
 $head=user_admin_prepare_head();
 
@@ -104,20 +93,14 @@ print '<td>'.$langs->trans("UserMailRequired").'</td>';
 print '<td align="center" width="20">&nbsp;</td>';
 
 print '<td align="center" width="100">';
-if ($conf->use_javascript_ajax)
-{
-	print ajax_constantonoff('USER_MAIL_REQUIRED');
-}
-else
-{
-	if($conf->global->USER_MAIL_REQUIRED == 0)
-	{
-		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_USER_MAIL_REQUIRED">'.img_picto($langs->trans("Disabled"),'off').'</a>';
-	}
-	else if($conf->global->USER_MAIL_REQUIRED == 1)
-	{
-		print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_USER_MAIL_REQUIRED">'.img_picto($langs->trans("Enabled"),'on').'</a>';
-	}
+if ($conf->use_javascript_ajax) {
+    print ajax_constantonoff('USER_MAIL_REQUIRED');
+} else {
+    if ($conf->global->USER_MAIL_REQUIRED == 0) {
+        print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_USER_MAIL_REQUIRED">'.img_picto($langs->trans("Disabled"),'off').'</a>';
+    } elseif ($conf->global->USER_MAIL_REQUIRED == 1) {
+        print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_USER_MAIL_REQUIRED">'.img_picto($langs->trans("Enabled"),'on').'</a>';
+    }
 }
 print '</td></tr>';
 
@@ -127,4 +110,3 @@ dol_fiche_end();
 
 llxFooter();
 $db->close();
-?>

@@ -48,8 +48,7 @@ $sql.= " WHERE f.entity = ".$conf->entity;
 $sql.= " ORDER BY dm DESC";
 
 $result = $db->query($sql);
-if ($result)
-{
+if ($result) {
     $num = $db->num_rows($result);
     $i = 0;
     $total = 0 ;
@@ -62,15 +61,14 @@ if ($result)
     print "<td align=\"right\">".$langs->trans("PayedByThisPayment")."</td>";
     print "</tr>\n";
     $var=1;
-    while ($i < $num)
-    {
+    while ($i < $num) {
         $obj = $db->fetch_object($result);
         $var=!$var;
         print "<tr $bc[$var]>";
 
-		$localtax_static->id=$obj->rowid;
-		$localtax_static->ref=$obj->rowid;
-		print "<td>".$localtax_static->getNomUrl(1)."</td>\n";
+        $localtax_static->id=$obj->rowid;
+        $localtax_static->ref=$obj->rowid;
+        print "<td>".$localtax_static->getNomUrl(1)."</td>\n";
         print "<td>".dol_trunc($obj->label,40)."</td>\n";
         print '<td align="left">'.dol_print_date($db->jdate($obj->dm),'day')."</td>\n";
         $total = $total + $obj->amount;
@@ -85,13 +83,10 @@ if ($result)
 
     print "</table>";
     $db->free($result);
-}
-else
-{
+} else {
     dol_print_error($db);
 }
 
 $db->close();
 
 llxFooter();
-?>

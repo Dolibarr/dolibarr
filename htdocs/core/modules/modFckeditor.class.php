@@ -27,46 +27,45 @@
 
 include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 
-
 /**
  *	Classe de description et activation du module Fckeditor
  */
 
 class modFckeditor extends DolibarrModules
 {
-	/**
-	 *   Constructor. Define names, constants, directories, boxes, permissions
-	 *
-	 *   @param      DoliDB		$db      Database handler
-	 */
-	function __construct($db)
-	{
-		$this->db = $db;
-		$this->numero = 2000;
+    /**
+     *   Constructor. Define names, constants, directories, boxes, permissions
+     *
+     *   @param      DoliDB		$db      Database handler
+     */
+    public function __construct($db)
+    {
+        $this->db = $db;
+        $this->numero = 2000;
 
-		$this->family = "technic";
-		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
-		$this->name = preg_replace('/^mod/i','',get_class($this));
-		$this->description = "Editeur WYSIWYG";
-		$this->version = 'dolibarr';    // 'experimental' or 'dolibarr' or version
-		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
-		$this->special = 2;
-		// Name of png file (without png) used for this module.
-		// Png file must be in theme/yourtheme/img directory under name object_pictovalue.png.
-		$this->picto='list';
+        $this->family = "technic";
+        // Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
+        $this->name = preg_replace('/^mod/i','',get_class($this));
+        $this->description = "Editeur WYSIWYG";
+        $this->version = 'dolibarr';    // 'experimental' or 'dolibarr' or version
+        $this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
+        $this->special = 2;
+        // Name of png file (without png) used for this module.
+        // Png file must be in theme/yourtheme/img directory under name object_pictovalue.png.
+        $this->picto='list';
 
-		// Data directories to create when module is enabled
-		$this->dirs = array("/fckeditor/temp","/fckeditor/image");
+        // Data directories to create when module is enabled
+        $this->dirs = array("/fckeditor/temp","/fckeditor/image");
 
-		// Config pages
-		$this->config_page_url = array("fckeditor.php");
+        // Config pages
+        $this->config_page_url = array("fckeditor.php");
 
-		// Dependances
-		$this->depends = array();
-		$this->requiredby = array();
+        // Dependances
+        $this->depends = array();
+        $this->requiredby = array();
 
-		// Constantes
-		$this->const = array();
+        // Constantes
+        $this->const = array();
         $this->const[0]  = array("FCKEDITOR_ENABLE_SOCIETE","yesno","1","WYSIWIG for description and note (except products/services)");
         $this->const[1]  = array("FCKEDITOR_ENABLE_PRODUCTDESC","yesno","1","WYSIWIG for products/services description and note");
         $this->const[2]  = array("FCKEDITOR_ENABLE_MAILING","yesno","1","WYSIWIG for mass emailings");
@@ -74,45 +73,44 @@ class modFckeditor extends DolibarrModules
         $this->const[4]  = array("FCKEDITOR_ENABLE_USERSIGN","yesno","1","WYSIWIG for products details lines for all entities");
         $this->const[5]  = array("FCKEDITOR_ENABLE_MAIL","yesno","1","WYSIWIG for products details lines for all entities");
 
-		// Boites
-		$this->boxes = array();
+        // Boites
+        $this->boxes = array();
 
-		// Permissions
-		$this->rights = array();
-		$this->rights_class = 'fckeditor';
-	}
-
-	/**
-	 *		Function called when module is enabled.
-	 *		The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
-	 *		It also creates data directories
-	 *
-     *      @param      string	$options    Options when enabling module ('', 'noboxes')
-	 *      @return     int             	1 if OK, 0 if KO
-	 */
-	function init($options='')
-	{
-		global $conf;
-
-		$sql = array();
-
-		return $this->_init($sql,$options);
-	}
+        // Permissions
+        $this->rights = array();
+        $this->rights_class = 'fckeditor';
+    }
 
     /**
-	 *		Function called when module is disabled.
-	 *      Remove from database constants, boxes and permissions from Dolibarr database.
-	 *		Data directories are not deleted
-	 *
+     *		Function called when module is enabled.
+     *		The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
+     *		It also creates data directories
+     *
      *      @param      string	$options    Options when enabling module ('', 'noboxes')
-	 *      @return     int             	1 if OK, 0 if KO
+     *      @return     int             	1 if OK, 0 if KO
      */
-    function remove($options='')
+    public function init($options='')
     {
-		$sql = array();
+        global $conf;
 
-		return $this->_remove($sql,$options);
+        $sql = array();
+
+        return $this->_init($sql,$options);
+    }
+
+    /**
+     *		Function called when module is disabled.
+     *      Remove from database constants, boxes and permissions from Dolibarr database.
+     *		Data directories are not deleted
+     *
+     *      @param      string	$options    Options when enabling module ('', 'noboxes')
+     *      @return     int             	1 if OK, 0 if KO
+     */
+    public function remove($options='')
+    {
+        $sql = array();
+
+        return $this->_remove($sql,$options);
     }
 
 }
-?>

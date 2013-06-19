@@ -41,153 +41,142 @@ if (! empty($conf->margin->enabled) && ! empty($object->element) && in_array($ob
 
 <script type="text/javascript">
 jQuery(document).ready(function() {
-	jQuery('#idprod').change(function() {
-		  if (jQuery('#idprod').val() > 0) jQuery('#np_desc').focus();
-	});
+    jQuery('#idprod').change(function() {
+          if (jQuery('#idprod').val() > 0) jQuery('#np_desc').focus();
+    });
 });
 </script>
 
-
 <tr class="liste_titre nodrag nodrop">
-	<td<?php echo (! empty($conf->global->MAIN_VIEW_LINE_NUMBER) ? ' colspan="4"' : ' colspan="3"'); ?>>
-	<?php
-	echo '<span class="hideonsmartphone">'.$langs->trans("AddNewLine").' - </span>';
-	if (! empty($conf->product->enabled) && empty($conf->service->enabled)) echo $langs->trans('RecordedProducts');
-	else if (empty($conf->product->enabled) && ! empty($conf->service->enabled)) echo $langs->trans('RecordedServices');
-	else echo $langs->trans('RecordedProductsAndServices');
-	?>
-	</td>
-	<td align="right"><?php echo $langs->trans('Qty'); ?></td>
-	<td align="right"><?php echo $langs->trans('ReductionShort'); ?></td>
+    <td<?php echo (! empty($conf->global->MAIN_VIEW_LINE_NUMBER) ? ' colspan="4"' : ' colspan="3"'); ?>>
+    <?php
+    echo '<span class="hideonsmartphone">'.$langs->trans("AddNewLine").' - </span>';
+    if (! empty($conf->product->enabled) && empty($conf->service->enabled)) echo $langs->trans('RecordedProducts');
+    else if (empty($conf->product->enabled) && ! empty($conf->service->enabled)) echo $langs->trans('RecordedServices');
+    else echo $langs->trans('RecordedProductsAndServices');
+    ?>
+    </td>
+    <td align="right"><?php echo $langs->trans('Qty'); ?></td>
+    <td align="right"><?php echo $langs->trans('ReductionShort'); ?></td>
 <?php
 $colspan = 4;
-if (! empty($usemargins))
-{
-	if (! empty($conf->global->DISPLAY_MARGIN_RATES)) $colspan++;
-	if (! empty($conf->global->DISPLAY_MARK_RATES))   $colspan++;
-	?>
-	<td align="right">
-	<?php
-	if ($conf->global->MARGIN_TYPE == "1")
-		echo $langs->trans('BuyingPrice');
-	else
-		echo $langs->trans('CostPrice');
-	?>
-	</td>
-	<?php
+if (! empty($usemargins)) {
+    if (! empty($conf->global->DISPLAY_MARGIN_RATES)) $colspan++;
+    if (! empty($conf->global->DISPLAY_MARK_RATES))   $colspan++;
+    ?>
+    <td align="right">
+    <?php
+    if ($conf->global->MARGIN_TYPE == "1")
+        echo $langs->trans('BuyingPrice');
+    else
+        echo $langs->trans('CostPrice');
+    ?>
+    </td>
+    <?php
 }
 ?>
-	<td colspan="<?php echo $colspan; ?>">&nbsp;</td>
+    <td colspan="<?php echo $colspan; ?>">&nbsp;</td>
 </tr>
 
 <tr <?php echo $bcnd[$var]; ?>>
 <?php
 if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
-		$coldisplay=4; }
-else {
-		$coldisplay=3; }
+        $coldisplay=4; } else {
+        $coldisplay=3; }
 ?>
-	<td<?php echo (! empty($conf->global->MAIN_VIEW_LINE_NUMBER) ? ' colspan="4"' : ' colspan="3"'); ?>>
-	<?php
+    <td<?php echo (! empty($conf->global->MAIN_VIEW_LINE_NUMBER) ? ' colspan="4"' : ' colspan="3"'); ?>>
+    <?php
 
-	echo '<span>';
-	$filtertype='';
-	if (! empty($object->element) && $object->element == 'contrat') $filtertype='1';
-	$form->select_produits('','idprod',$filtertype,$conf->product->limit_size,$buyer->price_level);
-	echo '</span>';
+    echo '<span>';
+    $filtertype='';
+    if (! empty($object->element) && $object->element == 'contrat') $filtertype='1';
+    $form->select_produits('','idprod',$filtertype,$conf->product->limit_size,$buyer->price_level);
+    echo '</span>';
 
-	if (is_object($hookmanager))
-	{
+    if (is_object($hookmanager)) {
         $parameters=array('fk_parent_line'=>GETPOST('fk_parent_line','int'));
-	    $reshook=$hookmanager->executeHooks('formCreateProductOptions',$parameters,$object,$action);
-	}
+        $reshook=$hookmanager->executeHooks('formCreateProductOptions',$parameters,$object,$action);
+    }
 
-	echo '<br>';
+    echo '<br>';
 
-	// Editor wysiwyg
-	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+    // Editor wysiwyg
+    require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
     $nbrows=ROWS_2;
     $enabled=(! empty($conf->global->FCKEDITOR_ENABLE_DETAILS)?$conf->global->FCKEDITOR_ENABLE_DETAILS:0);
     if (! empty($conf->global->MAIN_INPUT_DESC_HEIGHT)) $nbrows=$conf->global->MAIN_INPUT_DESC_HEIGHT;
     $doleditor=new DolEditor('np_desc',GETPOST('np_desc"'),'',100,'dolibarr_details','',false,true,$enabled,$nbrows,70);
-	$doleditor->Create();
-	?>
-	</td>
-	<td align="right"><input type="text" size="2" name="qty" class="flat" value="1"></td>
-	<td align="right" nowrap><input type="text" size="1" class="flat" name="remise_percent" value="<?php echo $buyer->remise_percent; ?>"><span class="hideonsmartphone">%</span></td>
-	<?php
-	$colspan = 4;
-	if (! empty($usemargins))
-	{
-		if (! empty($conf->global->DISPLAY_MARGIN_RATES)) {
-			$colspan++;
-			$coldisplay++;
-		}
-		if (! empty($conf->global->DISPLAY_MARK_RATES)) {
-			$colspan++;
-			$coldisplay++;
-		}
-		?>
-		<td align="right">
-			<select id="fournprice" name="fournprice" class="flat" style="display: none;"></select>
-			<input type="text" size="5" id="buying_price" name="buying_price" class="flat" value="<?php echo (isset($_POST["buying_price"])?$_POST["buying_price"]:''); ?>">
-		</td>
-		<?php
-	}
-	?>
-	<td align="center" valign="middle" colspan="<?php echo $colspan; ?>">
-		<input type="submit" class="button" value="<?php echo $langs->trans("Add"); ?>" name="addline">
-	</td>
-	<?php
-	//Line extrafield
-	if (!empty($extrafieldsline)) {
-		if ($this->table_element_line=='commandedet') {
-			$newline = new OrderLine($this->db);
-		}elseif ($this->table_element_line=='propaldet') {
-			$newline = new PropaleLigne($this->db);
-		}
-		elseif ($this->table_element_line=='facturedet') {
-			$newline = new FactureLigne($this->db);
-		}
-		if (is_object($newline)) {
-			print $newline->showOptionals($extrafieldsline,'edit',array('style'=>$bcnd[$var],'colspan'=>$coldisplay+5));
-		}
-	}
-	?>
+    $doleditor->Create();
+    ?>
+    </td>
+    <td align="right"><input type="text" size="2" name="qty" class="flat" value="1"></td>
+    <td align="right" nowrap><input type="text" size="1" class="flat" name="remise_percent" value="<?php echo $buyer->remise_percent; ?>"><span class="hideonsmartphone">%</span></td>
+    <?php
+    $colspan = 4;
+    if (! empty($usemargins)) {
+        if (! empty($conf->global->DISPLAY_MARGIN_RATES)) {
+            $colspan++;
+            $coldisplay++;
+        }
+        if (! empty($conf->global->DISPLAY_MARK_RATES)) {
+            $colspan++;
+            $coldisplay++;
+        }
+        ?>
+        <td align="right">
+            <select id="fournprice" name="fournprice" class="flat" style="display: none;"></select>
+            <input type="text" size="5" id="buying_price" name="buying_price" class="flat" value="<?php echo (isset($_POST["buying_price"])?$_POST["buying_price"]:''); ?>">
+        </td>
+        <?php
+    }
+    ?>
+    <td align="center" valign="middle" colspan="<?php echo $colspan; ?>">
+        <input type="submit" class="button" value="<?php echo $langs->trans("Add"); ?>" name="addline">
+    </td>
+    <?php
+    //Line extrafield
+    if (!empty($extrafieldsline)) {
+        if ($this->table_element_line=='commandedet') {
+            $newline = new OrderLine($this->db);
+        } elseif ($this->table_element_line=='propaldet') {
+            $newline = new PropaleLigne($this->db);
+        } elseif ($this->table_element_line=='facturedet') {
+            $newline = new FactureLigne($this->db);
+        }
+        if (is_object($newline)) {
+            print $newline->showOptionals($extrafieldsline,'edit',array('style'=>$bcnd[$var],'colspan'=>$coldisplay+5));
+        }
+    }
+    ?>
 </tr>
 
 <?php
-if (! empty($conf->service->enabled) && $dateSelector)
-{
-	if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) $colspan = 10;
-	else $colspan = 9;
-	if (! empty($usemargins))
-	{
-		$colspan++; // For the buying price
-		if (! empty($conf->global->DISPLAY_MARGIN_RATES)) $colspan++;
-		if (! empty($conf->global->DISPLAY_MARK_RATES))   $colspan++;
-	}
+if (! empty($conf->service->enabled) && $dateSelector) {
+    if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) $colspan = 10;
+    else $colspan = 9;
+    if (! empty($usemargins)) {
+        $colspan++; // For the buying price
+        if (! empty($conf->global->DISPLAY_MARGIN_RATES)) $colspan++;
+        if (! empty($conf->global->DISPLAY_MARK_RATES))   $colspan++;
+    }
 ?>
 
 <tr <?php echo $bcnd[$var]; ?>>
-	<td colspan="<?php echo $colspan; ?>">
-	<?php
-	if (! empty($object->element) && $object->element == 'contrat')
-	{
-		print $langs->trans("DateStartPlanned").' ';
-		$form->select_date('',"date_start",$usehm,$usehm,1,"addline");
-		print ' &nbsp; '.$langs->trans("DateEndPlanned").' ';
-		$form->select_date('',"date_end",$usehm,$usehm,1,"addline");
-	}
-	else
-	{
-		echo $langs->trans('ServiceLimitedDuration').' '.$langs->trans('From').' ';
-		echo $form->select_date('','date_start_predef',$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE,$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE,1,"addpredefinedproduct");
-		echo ' '.$langs->trans('to').' ';
-		echo $form->select_date('','date_end_predef',$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE,$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE,1,"addpredefinedproduct");
-	}
-	?>
-	</td>
+    <td colspan="<?php echo $colspan; ?>">
+    <?php
+    if (! empty($object->element) && $object->element == 'contrat') {
+        print $langs->trans("DateStartPlanned").' ';
+        $form->select_date('',"date_start",$usehm,$usehm,1,"addline");
+        print ' &nbsp; '.$langs->trans("DateEndPlanned").' ';
+        $form->select_date('',"date_end",$usehm,$usehm,1,"addline");
+    } else {
+        echo $langs->trans('ServiceLimitedDuration').' '.$langs->trans('From').' ';
+        echo $form->select_date('','date_start_predef',$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE,$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE,1,"addpredefinedproduct");
+        echo ' '.$langs->trans('to').' ';
+        echo $form->select_date('','date_end_predef',$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE,$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE,1,"addpredefinedproduct");
+    }
+    ?>
+    </td>
 </tr>
 <?php
 }
@@ -196,42 +185,41 @@ if (! empty($conf->service->enabled) && $dateSelector)
 </form>
 
 <?php
-if (! empty($usemargins))
-{
+if (! empty($usemargins)) {
 ?>
-	<script type="text/javascript">
-	$("#idprod").change(function() {
-	  $("#fournprice options").remove();
-	  $("#fournprice").hide();
-	  $("#buying_price").val("").show();
-	  $.post('<?php echo DOL_URL_ROOT; ?>/fourn/ajax/getSupplierPrices.php', {'idprod': $(this).val()}, function(data) {
-	    if (data && data.length > 0) {
-	      var options = '';
-	      var i = 0;
-	      $(data).each(function() {
-	        i++;
-	        options += '<option value="'+this.id+'" price="'+this.price+'"';
-	        if (i == 1) {
-	          options += ' selected';
-	          $("#buying_price").val(this.price);
-	        }
-	        options += '>'+this.label+'</option>';
-	      });
-	      options += '<option value=""><?php echo $langs->trans("InputPrice"); ?></option>';
-	      $("#buying_price").hide();
-	      $("#fournprice").html(options).show();
-	      $("#fournprice").change(function() {
-	        var selval = $(this).find('option:selected').attr("price");
-	        if (selval)
-	          $("#buying_price").val(selval).hide();
-	        else
-	          $('#buying_price').show();
-	      });
-	    }
-	  },
-	  'json');
-	});
-	</script>
+    <script type="text/javascript">
+    $("#idprod").change(function() {
+      $("#fournprice options").remove();
+      $("#fournprice").hide();
+      $("#buying_price").val("").show();
+      $.post('<?php echo DOL_URL_ROOT; ?>/fourn/ajax/getSupplierPrices.php', {'idprod': $(this).val()}, function(data) {
+        if (data && data.length > 0) {
+          var options = '';
+          var i = 0;
+          $(data).each(function() {
+            i++;
+            options += '<option value="'+this.id+'" price="'+this.price+'"';
+            if (i == 1) {
+              options += ' selected';
+              $("#buying_price").val(this.price);
+            }
+            options += '>'+this.label+'</option>';
+          });
+          options += '<option value=""><?php echo $langs->trans("InputPrice"); ?></option>';
+          $("#buying_price").hide();
+          $("#fournprice").html(options).show();
+          $("#fournprice").change(function() {
+            var selval = $(this).find('option:selected').attr("price");
+            if (selval)
+              $("#buying_price").val(selval).hide();
+            else
+              $('#buying_price').show();
+          });
+        }
+      },
+      'json');
+    });
+    </script>
 <?php
 }
 ?>

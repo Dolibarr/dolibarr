@@ -22,7 +22,6 @@
  *       \brief     Provide an Online Help support
  */
 
-
 // Use its own include to not share the include of Dolibarr
 // This is a standalone feature with no information from Dolibarr to show
 // and no database access to do.
@@ -31,11 +30,10 @@ $uri=preg_replace('/^http(s?):\/\//i','',$dolibarr_main_url_root);
 $pos = strstr($uri, '/');      // $pos contient alors url sans nom domaine
 if ($pos == '/') $pos = '';     // si $pos vaut /, on le met a ''
 if (! defined('DOL_URL_ROOT'))
-	define('DOL_URL_ROOT', $pos);	// URL racine relative
+    define('DOL_URL_ROOT', $pos);	// URL racine relative
 
 $langs->load("other");
 $langs->load("help");
-
 
 /*
  * View
@@ -102,9 +100,7 @@ print '</tr>';
 print '</table>'."\n";
 print "\n";
 
-
 print '</div><div class="inline-block">';
-
 
 // Online support
 print '<table class="login" width="100%">';
@@ -137,10 +133,7 @@ print '</td>';
 print '</tr>';
 print '</table>'."\n";
 
-
-
 print '</div><div class="inline-block">';
-
 
 // EMail support
 print '<table class="login" width="100%">';
@@ -174,9 +167,7 @@ print '</td>';
 print '</tr>';
 print '</table>'."\n";
 
-
 print '</div><div class="inline-block">';
-
 
 // Other support
 print '<table class="login" width="100%">';
@@ -212,10 +203,7 @@ print '</tr>';
 print '</table>'."\n";
 print "\n";
 
-
 print '<div style="clear: both"></div>';
 print '</div>';
 
-
 pFooter();
-?>

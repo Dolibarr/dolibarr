@@ -26,28 +26,26 @@
  */
 class dolprintIPP
 {
-    var $host;
-    var $port;
-    var $userid;
-    var $user;
-    var $password;
-    var $error;
-    var $db;
-
-
+    public $host;
+    public $port;
+    public $userid;
+    public $user;
+    public $password;
+    public $error;
+    public $db;
 
     /**
      * Constructor
      *
-     * @param   DoliDB      $db         database
-     * @param   string      $host       host of Cups
-     * @param   string      $port       port
-     * @param   string      $userid     userid
-     * @param   string      $user       user
-     * @param   string      $password   password
-     * @return  printIPP
+     * @param  DoliDB   $db       database
+     * @param  string   $host     host of Cups
+     * @param  string   $port     port
+     * @param  string   $userid   userid
+     * @param  string   $user     user
+     * @param  string   $password password
+     * @return printIPP
      */
-    function __construct($db,$host,$port,$userid,$user,$password)
+    public function __construct($db,$host,$port,$userid,$user,$password)
     {
         $this->db=$db;
         $this->host=$host;
@@ -57,13 +55,12 @@ class dolprintIPP
         $this->password=$password;
     }
 
-
     /**
      *  Return list of available printers
      *
      *  @return array                list of printers
      */
-    function getlist_available_printers()
+    public function getlist_available_printers()
     {
         global $conf,$db;
         include_once DOL_DOCUMENT_ROOT.'/includes/printipp/CupsPrintIPP.php';
@@ -74,18 +71,19 @@ class dolprintIPP
         $ipp->setUserName($this->userid);
         //$ipp->setAuthentication($this->user,$this->password);
         $ipp->getPrinters();
+
         return $ipp->available_printers;
     }
 
     /**
      *  Print selected file
-     *  
-     * @param   string      $file       file
-     * @param   string      $module     module
+     *
+     * @param string $file   file
+     * @param string $module module
      *
      *  @return void
      */
-    function print_file($file,$module)
+    public function print_file($file,$module)
     {
         global $conf,$db;
         include_once DOL_DOCUMENT_ROOT.'/includes/printipp/CupsPrintIPP.php';
@@ -99,15 +97,11 @@ class dolprintIPP
         // select printer uri for module order, propal,...
         $sql = 'SELECT rowid,printer_uri,copy FROM '.MAIN_DB_PREFIX.'printer_ipp WHERE module="'.$module.'"';
         $result = $this->db->query($sql);
-        if ($result)
-        {
+        if ($result) {
             $obj = $this->db->fetch_object($result);
-            if ($obj)
-            {
+            if ($obj) {
                 $ipp->setPrinterURI($obj->printer_uri);
-            }
-            else
-            {
+            } else {
                 $ipp->setPrinterURI($conf->global->PRINTIPP_URI_DEFAULT);
             }
         }
@@ -120,11 +114,11 @@ class dolprintIPP
     /**
      *  List jobs print
      *
-     * @param   string      $module     module
+     * @param string $module module
      *
      *  @return void
      */
-    function list_jobs($module)
+    public function list_jobs($module)
     {
         global $conf,$db;
         include_once DOL_DOCUMENT_ROOT.'/includes/printipp/CupsPrintIPP.php';
@@ -136,15 +130,11 @@ class dolprintIPP
         // select printer uri for module order, propal,...
         $sql = 'SELECT rowid,printer_uri,printer_name FROM '.MAIN_DB_PREFIX.'printer_ipp WHERE module="'.$module.'"';
         $result = $this->db->query($sql);
-        if ($result)
-        {
+        if ($result) {
             $obj = $this->db->fetch_object($result);
-            if ($obj)
-            {
+            if ($obj) {
                 $ipp->setPrinterURI($obj->printer_uri);
-            }
-            else
-            {
+            } else {
                 // All printers
                 $ipp->setPrinterURI("ipp://localhost:631/printers/");
             }
@@ -163,8 +153,7 @@ class dolprintIPP
         $jobs = $ipp->jobs_attributes;
         $var = True;
         //print '<pre>'.print_r($jobs,true).'</pre>';
-        foreach ($jobs as $value )
-        {
+        foreach ($jobs as $value) {
             $var=!$var;
             print "<tr $bc[$var]>";
             print '<td>'.$value->job_id->_value0.'</td>';
@@ -182,7 +171,7 @@ class dolprintIPP
      *  Get printer detail
      *
      */
-    function get_printer_detail($uri)
+    public function get_printer_detail($uri)
     {
         global $conf,$db;
 
@@ -194,7 +183,7 @@ class dolprintIPP
         $ipp->setUserName($this->userid);
         $ipp->setPrinterURI($uri);
         $ipp->getPrinterAttributes();
+
         return $ipp->printer_attributes;
     }
 }
-?>

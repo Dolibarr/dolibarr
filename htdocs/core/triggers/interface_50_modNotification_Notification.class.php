@@ -23,29 +23,28 @@
  *  \brief      File of class of triggers for notification module
  */
 
-
 /**
  *  Class of triggers for notification module
  */
 class InterfaceNotification
 {
-    var $db;
-    var $listofmanagedevents=array(
-    	'BILL_VALIDATE',
-    	'ORDER_VALIDATE',
-    	'PROPAL_VALIDATE',
+    public $db;
+    public $listofmanagedevents=array(
+        'BILL_VALIDATE',
+        'ORDER_VALIDATE',
+        'PROPAL_VALIDATE',
         'FICHINTER_VALIDATE',
-    	'ORDER_SUPPLIER_APPROVE',
-    	'ORDER_SUPPLIER_REFUSE',
+        'ORDER_SUPPLIER_APPROVE',
+        'ORDER_SUPPLIER_REFUSE',
         'SHIPPING_VALIDATE'
-   	);
+       );
 
     /**
      *   Constructor
      *
      *   @param		DoliDB		$db      Database handler
      */
-    function __construct($db)
+    public function __construct($db)
     {
         $this->db = $db;
 
@@ -61,7 +60,7 @@ class InterfaceNotification
      *
      *   @return     string      Name of trigger file
      */
-    function getName()
+    public function getName()
     {
         return $this->name;
     }
@@ -71,7 +70,7 @@ class InterfaceNotification
      *
      *   @return     string      Description of trigger file
      */
-    function getDesc()
+    public function getDesc()
     {
         return $this->description;
     }
@@ -81,7 +80,7 @@ class InterfaceNotification
      *
      *   @return     string      Version of trigger file
      */
-    function getVersion()
+    public function getVersion()
     {
         global $langs;
         $langs->load("admin");
@@ -103,14 +102,13 @@ class InterfaceNotification
      *      @param  conf		$conf       Object conf
      *      @return int         			<0 if KO, 0 if no triggered ran, >0 if OK
      */
-	function run_trigger($action,$object,$user,$langs,$conf)
+    public function run_trigger($action,$object,$user,$langs,$conf)
     {
-		if (empty($conf->notification->enabled)) return 0;     // Module not active, we do nothing
+        if (empty($conf->notification->enabled)) return 0;     // Module not active, we do nothing
 
-		require_once DOL_DOCUMENT_ROOT .'/core/class/notify.class.php';
+        require_once DOL_DOCUMENT_ROOT .'/core/class/notify.class.php';
 
-		if ($action == 'BILL_VALIDATE')
-		{
+        if ($action == 'BILL_VALIDATE') {
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
             $ref = dol_sanitizeFileName($object->ref);
@@ -118,14 +116,11 @@ class InterfaceNotification
             if (! file_exists($filepdf)) $filepdf='';
             $filepdf='';	// We can't add PDF as it is not generated yet.
             $langs->load("other");
-			$mesg = $langs->transnoentitiesnoconv("EMailTextInvoiceValidated",$object->ref);
+            $mesg = $langs->transnoentitiesnoconv("EMailTextInvoiceValidated",$object->ref);
 
             $notify = new Notify($this->db);
             $notify->send($action, $object->socid, $mesg, 'facture', $object->id, $filepdf);
-		}
-
-		elseif ($action == 'ORDER_VALIDATE')
-		{
+        } elseif ($action == 'ORDER_VALIDATE') {
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
             $ref = dol_sanitizeFileName($object->ref);
@@ -133,14 +128,11 @@ class InterfaceNotification
             if (! file_exists($filepdf)) $filepdf='';
             $filepdf='';	// We can't add PDF as it is not generated yet.
             $langs->load("other");
-			$mesg = $langs->transnoentitiesnoconv("EMailTextOrderValidated",$object->ref);
+            $mesg = $langs->transnoentitiesnoconv("EMailTextOrderValidated",$object->ref);
 
             $notify = new Notify($this->db);
             $notify->send($action, $object->socid, $mesg, 'order', $object->id, $filepdf);
-		}
-
-		elseif ($action == 'PROPAL_VALIDATE')
-		{
+        } elseif ($action == 'PROPAL_VALIDATE') {
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
             $ref = dol_sanitizeFileName($object->ref);
@@ -148,14 +140,11 @@ class InterfaceNotification
             if (! file_exists($filepdf)) $filepdf='';
             $filepdf='';	// We can't add PDF as it is not generated yet.
             $langs->load("other");
-			$mesg = $langs->transnoentitiesnoconv("EMailTextProposalValidated",$object->ref);
+            $mesg = $langs->transnoentitiesnoconv("EMailTextProposalValidated",$object->ref);
 
             $notify = new Notify($this->db);
             $notify->send($action, $object->socid, $mesg, 'propal', $object->id, $filepdf);
-		}
-
-		elseif ($action == 'FICHINTER_VALIDATE')
-		{
+        } elseif ($action == 'FICHINTER_VALIDATE') {
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
             $ref = dol_sanitizeFileName($object->ref);
@@ -163,43 +152,35 @@ class InterfaceNotification
             if (! file_exists($filepdf)) $filepdf='';
             $filepdf='';	// We can't add PDF as it is not generated yet.
             $langs->load("other");
-			$mesg = $langs->transnoentitiesnoconv("EMailTextInterventionValidated",$object->ref);
+            $mesg = $langs->transnoentitiesnoconv("EMailTextInterventionValidated",$object->ref);
 
             $notify = new Notify($this->db);
             $notify->send($action, $object->socid, $mesg, 'ficheinter', $object->id, $filepdf);
-		}
-
-		elseif ($action == 'ORDER_SUPPLIER_APPROVE')
-		{
+        } elseif ($action == 'ORDER_SUPPLIER_APPROVE') {
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
             $ref = dol_sanitizeFileName($object->ref);
             $filepdf = $conf->fournisseur->dir_output . '/commande/' . $ref . '/' . $ref . '.pdf';
             if (! file_exists($filepdf)) $filepdf='';
             $mesg = $langs->transnoentitiesnoconv("Hello").",\n\n";
-			$mesg.= $langs->transnoentitiesnoconv("EMailTextOrderApprovedBy",$object->ref,$user->getFullName($langs));
-			$mesg.= "\n\n".$langs->transnoentitiesnoconv("Sincerely").".\n\n";
+            $mesg.= $langs->transnoentitiesnoconv("EMailTextOrderApprovedBy",$object->ref,$user->getFullName($langs));
+            $mesg.= "\n\n".$langs->transnoentitiesnoconv("Sincerely").".\n\n";
 
             $notify = new Notify($this->db);
             $notify->send($action, $object->socid, $mesg, 'order_supplier', $object->id, $filepdf);
-		}
-
-		elseif ($action == 'ORDER_SUPPLIER_REFUSE')
-		{
+        } elseif ($action == 'ORDER_SUPPLIER_REFUSE') {
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
             $ref = dol_sanitizeFileName($object->ref);
             $filepdf = $conf->fournisseur->dir_output . '/commande/' . $ref . '/' . $ref . '.pdf';
             if (! file_exists($filepdf)) $filepdf='';
-			$mesg = $langs->transnoentitiesnoconv("Hello").",\n\n";
-			$mesg.= $langs->transnoentitiesnoconv("EMailTextOrderRefusedBy",$object->ref,$user->getFullName($langs));
-			$mesg.= "\n\n".$langs->transnoentitiesnoconv("Sincerely").".\n\n";
+            $mesg = $langs->transnoentitiesnoconv("Hello").",\n\n";
+            $mesg.= $langs->transnoentitiesnoconv("EMailTextOrderRefusedBy",$object->ref,$user->getFullName($langs));
+            $mesg.= "\n\n".$langs->transnoentitiesnoconv("Sincerely").".\n\n";
 
             $notify = new Notify($this->db);
             $notify->send($action, $object->socid, $mesg, 'order_supplier', $object->id, $filepdf);
-		}
-        elseif ($action == 'SHIPPING_VALIDATE')
-        {
+        } elseif ($action == 'SHIPPING_VALIDATE') {
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
             $ref = dol_sanitizeFileName($object->ref);
@@ -207,29 +188,28 @@ class InterfaceNotification
             if (! file_exists($filepdf)) $filepdf='';
             $mesg = $langs->transnoentitiesnoconv("EMailTextExpeditionValidated",$object->ref);
 
-
             $notify = new Notify($this->db);
             $notify->send($action, $object->socid, $mesg, 'expedition', $object->id, $filepdf);
         }
 
-		// If not found
+        // If not found
 /*
-        else
-        {
+        else {
             dol_syslog("Trigger '".$this->name."' for action '$action' was ran by ".__FILE__." but no handler found for this action.");
-			return -1;
+
+            return -1;
         }
 */
-		return 0;
-    }
 
+        return 0;
+    }
 
     /**
      * Return list of events managed by notification module
      *
-     * @return      array       Array of events managed by notification module
+     * @return array Array of events managed by notification module
      */
-    function getListOfManagedEvents()
+    public function getListOfManagedEvents()
     {
         global $conf,$langs;
 
@@ -240,20 +220,17 @@ class InterfaceNotification
         $sql.= $this->db->order("elementtype, code");
         dol_syslog("Get list of notifications sql=".$sql);
         $resql=$this->db->query($sql);
-        if ($resql)
-        {
+        if ($resql) {
             $num=$this->db->num_rows($resql);
             $i=0;
-            while ($i < $num)
-            {
+            while ($i < $num) {
                 $obj=$this->db->fetch_object($resql);
 
                 $qualified=0;
                 // Check is this event is supported by notification module
                 if (in_array($obj->code,$this->listofmanagedevents)) $qualified=1;
                 // Check if module for this event is active
-                if ($qualified)
-                {
+                if ($qualified) {
                     //print 'xx'.$obj->code;
                     $element=$obj->elementtype;
                     if ($element == 'order_supplier' && empty($conf->fournisseur->enabled)) $qualified=0;
@@ -265,18 +242,15 @@ class InterfaceNotification
                                  && empty($conf->$element->enabled)) $qualified=0;
                 }
 
-                if ($qualified)
-                {
+                if ($qualified) {
                     $ret[]=array('rowid'=>$obj->rowid,'code'=>$obj->code,'label'=>$obj->label,'description'=>$obj->description,'elementtype'=>$obj->elementtype);
                 }
 
                 $i++;
             }
-        }
-        else dol_print_error($this->db);
+        } else dol_print_error($this->db);
 
         return $ret;
     }
 
 }
-?>

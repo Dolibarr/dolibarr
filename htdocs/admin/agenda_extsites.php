@@ -49,58 +49,51 @@ $colorlist=array('BECEDD','DDBECE','BFDDBE','F598B4','F68654','CBF654','A4A4A5')
 /*
  * Actions
  */
-if ($actionsave)
-{
+if ($actionsave) {
     $db->begin();
 
     $disableext=GETPOST('AGENDA_DISABLE_EXT','alpha');
-	$res=dolibarr_set_const($db,'AGENDA_DISABLE_EXT',$disableext,'chaine',0,'',$conf->entity);
+    $res=dolibarr_set_const($db,'AGENDA_DISABLE_EXT',$disableext,'chaine',0,'',$conf->entity);
 
-	$i=1; $errorsaved=0;
-	$error=0;
+    $i=1; $errorsaved=0;
+    $error=0;
 
-	// Save agendas
-	while ($i <= $MAXAGENDA)
-	{
-		$name=trim(GETPOST('agenda_ext_name'.$i),'alpha');
-		$src=trim(GETPOST('agenda_ext_src'.$i,'alpha'));
-		$color=trim(GETPOST('agenda_ext_color'.$i,'alpha'));
-		if ($color=='-1') $color='';
+    // Save agendas
+    while ($i <= $MAXAGENDA) {
+        $name=trim(GETPOST('agenda_ext_name'.$i),'alpha');
+        $src=trim(GETPOST('agenda_ext_src'.$i,'alpha'));
+        $color=trim(GETPOST('agenda_ext_color'.$i,'alpha'));
+        if ($color=='-1') $color='';
 
-		if (! empty($src) && ! preg_match('/^(http\s*|ftp\s*):/', $src))
-		{
-			setEventMessage($langs->trans("ErrorParamMustBeAnUrl"),'errors');
-			$error++;
-			$errorsaved++;
-			break;
-		}
+        if (! empty($src) && ! preg_match('/^(http\s*|ftp\s*):/', $src)) {
+            setEventMessage($langs->trans("ErrorParamMustBeAnUrl"),'errors');
+            $error++;
+            $errorsaved++;
+            break;
+        }
 
-		//print 'color='.$color;
-		$res=dolibarr_set_const($db,'AGENDA_EXT_NAME'.$i,$name,'chaine',0,'',$conf->entity);
-		if (! $res > 0) $error++;
-		$res=dolibarr_set_const($db,'AGENDA_EXT_SRC'.$i,$src,'chaine',0,'',$conf->entity);
-		if (! $res > 0) $error++;
-		$res=dolibarr_set_const($db,'AGENDA_EXT_COLOR'.$i,$color,'chaine',0,'',$conf->entity);
-		if (! $res > 0) $error++;
-		$i++;
-	}
+        //print 'color='.$color;
+        $res=dolibarr_set_const($db,'AGENDA_EXT_NAME'.$i,$name,'chaine',0,'',$conf->entity);
+        if (! $res > 0) $error++;
+        $res=dolibarr_set_const($db,'AGENDA_EXT_SRC'.$i,$src,'chaine',0,'',$conf->entity);
+        if (! $res > 0) $error++;
+        $res=dolibarr_set_const($db,'AGENDA_EXT_COLOR'.$i,$color,'chaine',0,'',$conf->entity);
+        if (! $res > 0) $error++;
+        $i++;
+    }
 
-	// Save nb of agenda
-	if (! $error)
-	{
-		$res=dolibarr_set_const($db,'AGENDA_EXT_NB',trim(GETPOST('AGENDA_EXT_NB','alpha')),'chaine',0,'',$conf->entity);
-		if (! $res > 0) $error++;
-		if (empty($conf->global->AGENDA_EXT_NB)) $conf->global->AGENDA_EXT_NB=5;
-		$MAXAGENDA=empty($conf->global->AGENDA_EXT_NB)?5:$conf->global->AGENDA_EXT_NB;
-	}
+    // Save nb of agenda
+    if (! $error) {
+        $res=dolibarr_set_const($db,'AGENDA_EXT_NB',trim(GETPOST('AGENDA_EXT_NB','alpha')),'chaine',0,'',$conf->entity);
+        if (! $res > 0) $error++;
+        if (empty($conf->global->AGENDA_EXT_NB)) $conf->global->AGENDA_EXT_NB=5;
+        $MAXAGENDA=empty($conf->global->AGENDA_EXT_NB)?5:$conf->global->AGENDA_EXT_NB;
+    }
 
-    if (! $error)
-    {
+    if (! $error) {
         $db->commit();
         $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
-    }
-    else
-    {
+    } else {
         $db->rollback();
         if (empty($errorsaved)) $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
     }
@@ -148,20 +141,14 @@ $var=!$var;
 print "<tr ".$bc[$var].">";
 print "<td>".$langs->trans("ExtSitesEnableThisTool")."</td>";
 print '<td align="center">';
-if ($conf->use_javascript_ajax)
-{
-	print ajax_constantonoff('AGENDA_DISABLE_EXT',array('enabled'=>array(0=>'.hideifnotset')),null,1);
-}
-else
-{
-	if($conf->global->AGENDA_DISABLE_EXT == 0)
-	{
-		print '<a href="'.$_SERVER['PHP_SELF'].'?save=1&AGENDA_DISABLE_EXT=1">'.img_picto($langs->trans("Enabled"),'on').'</a>';
-	}
-	else
-	{
-		print '<a href="'.$_SERVER['PHP_SELF'].'?save=1&AGENDA_DISABLE_EXT=0">'.img_picto($langs->trans("Disabled"),'off').'</a>';
-	}
+if ($conf->use_javascript_ajax) {
+    print ajax_constantonoff('AGENDA_DISABLE_EXT',array('enabled'=>array(0=>'.hideifnotset')),null,1);
+} else {
+    if ($conf->global->AGENDA_DISABLE_EXT == 0) {
+        print '<a href="'.$_SERVER['PHP_SELF'].'?save=1&AGENDA_DISABLE_EXT=1">'.img_picto($langs->trans("Enabled"),'on').'</a>';
+    } else {
+        print '<a href="'.$_SERVER['PHP_SELF'].'?save=1&AGENDA_DISABLE_EXT=0">'.img_picto($langs->trans("Disabled"),'off').'</a>';
+    }
 }
 print "</td>";
 print "</tr>";
@@ -189,28 +176,27 @@ print "</tr>";
 
 $i=1;
 $var=true;
-while ($i <= $MAXAGENDA)
-{
-	$key=$i;
-	$name='AGENDA_EXT_NAME'.$key;
-	$src='AGENDA_EXT_SRC'.$key;
-	$color='AGENDA_EXT_COLOR'.$key;
+while ($i <= $MAXAGENDA) {
+    $key=$i;
+    $name='AGENDA_EXT_NAME'.$key;
+    $src='AGENDA_EXT_SRC'.$key;
+    $color='AGENDA_EXT_COLOR'.$key;
 
-	$var=!$var;
-	print "<tr ".$bc[$var].">";
-	// Nb
-	print '<td width="180" class="nowrap">'.$langs->trans("AgendaExtNb",$key)."</td>";
-	// Name
-	print '<td><input type="text" class="flat hideifnotset" name="agenda_ext_name'.$key.'" value="'. (GETPOST('agenda_ext_name'.$key)?GETPOST('agenda_ext_name'.$key):$conf->global->$name) . '" size="28"></td>';
-	// URL
-	print '<td><input type="url" class="flat hideifnotset" name="agenda_ext_src'.$key.'" value="'. (GETPOST('agenda_ext_src'.$key)?GETPOST('agenda_ext_src'.$key):$conf->global->$src) . '" size="60"></td>';
-	// Color (Possible colors are limited by Google)
-	print '<td class="nowrap" align="right">';
-	//print $formadmin->selectColor($conf->global->$color, "google_agenda_color".$key, $colorlist);
-	print $formother->selectColor((GETPOST("agenda_ext_color".$key)?GETPOST("agenda_ext_color".$key):$conf->global->$color), "agenda_ext_color".$key, 'extsitesconfig', 1, '', 'hideifnotset');
-	print '</td>';
-	print "</tr>";
-	$i++;
+    $var=!$var;
+    print "<tr ".$bc[$var].">";
+    // Nb
+    print '<td width="180" class="nowrap">'.$langs->trans("AgendaExtNb",$key)."</td>";
+    // Name
+    print '<td><input type="text" class="flat hideifnotset" name="agenda_ext_name'.$key.'" value="'. (GETPOST('agenda_ext_name'.$key)?GETPOST('agenda_ext_name'.$key):$conf->global->$name) . '" size="28"></td>';
+    // URL
+    print '<td><input type="url" class="flat hideifnotset" name="agenda_ext_src'.$key.'" value="'. (GETPOST('agenda_ext_src'.$key)?GETPOST('agenda_ext_src'.$key):$conf->global->$src) . '" size="60"></td>';
+    // Color (Possible colors are limited by Google)
+    print '<td class="nowrap" align="right">';
+    //print $formadmin->selectColor($conf->global->$color, "google_agenda_color".$key, $colorlist);
+    print $formother->selectColor((GETPOST("agenda_ext_color".$key)?GETPOST("agenda_ext_color".$key):$conf->global->$color), "agenda_ext_color".$key, 'extsitesconfig', 1, '', 'hideifnotset');
+    print '</td>';
+    print "</tr>";
+    $i++;
 }
 
 print '</table>';
@@ -227,8 +213,6 @@ dol_fiche_end();
 
 dol_htmloutput_mesg($mesg);
 
-
 llxFooter();
 
 $db->close();
-?>

@@ -29,10 +29,8 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
-
 if (!$user->admin)
     accessforbidden();
-
 
 $langs->load("admin");
 $langs->load("other");
@@ -43,31 +41,26 @@ $def = array();
 $action = GETPOST('action','alpha');
 
 // Sauvegardes parametres
-if ($action == 'update')
-{
+if ($action == 'update') {
     $i=0;
 
     $db->begin();
 
-	$label  = GETPOST('EXTERNALSITE_LABEL','alpha');
+    $label  = GETPOST('EXTERNALSITE_LABEL','alpha');
     $exturl = GETPOST('EXTERNALSITE_URL','alpha');
 
     $i+=dolibarr_set_const($db,'EXTERNALSITE_LABEL',trim($label),'chaine',0,'',$conf->entity);
     $i+=dolibarr_set_const($db,'EXTERNALSITE_URL',trim($exturl),'chaine',0,'',$conf->entity);
     //$i+=dolibarr_set_const($db,'EXTERNALSITE_LABEL',trim($_POST["EXTERNALSITE_LABEL"]),'chaine',0,'',$conf->entity);
 
-    if ($i >= 2)
-    {
+    if ($i >= 2) {
         $db->commit();
         $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
-    }
-    else
-    {
+    } else {
         $db->rollback();
         $mesg="<div class=\"error\">".$db->lasterror()."</div>";
     }
 }
-
 
 /**
  * View
@@ -123,18 +116,14 @@ print "</tr>";
 
 print "</table>";
 
-
 print '<br><center>';
 print "<input type=\"submit\" name=\"save\" class=\"button\" value=\"".$langs->trans("Save")."\">";
 print "</center>";
 
 print "</form>\n";
 
-
 dol_htmloutput_mesg($mesg);
-
 
 llxFooter();
 
 $db->close();
-?>

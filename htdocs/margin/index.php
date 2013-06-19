@@ -22,5 +22,3 @@
  */
 
 require 'productMargins.php';
-
-?>

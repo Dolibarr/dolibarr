@@ -43,11 +43,9 @@ llxHeader('',$langs->trans("Sendings"),$helpurl);
 
 print_fiche_titre($langs->trans("SendingsArea"));
 
-
 //print '<table class="notopnoleftnoright" width="100%">';
 //print '<tr><td valign="top" width="30%" class="notopnoleft">';
 print '<div class="fichecenter"><div class="fichethirdleft">';
-
 
 $var=false;
 print '<table class="noborder nohover" width="100%">';
@@ -70,48 +68,43 @@ $sql.= " FROM ".MAIN_DB_PREFIX."expedition as e";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON e.rowid = el.fk_target";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."commande as c ON el.fk_source = c.rowid";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = e.fk_soc";
-if (!$user->rights->societe->client->voir && !$socid)
-{
-	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON e.fk_soc = sc.fk_soc";
-	$sql.= $clause." sc.fk_user = " .$user->id;
-	$clause = " AND ";
+if (!$user->rights->societe->client->voir && !$socid) {
+    $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON e.fk_soc = sc.fk_soc";
+    $sql.= $clause." sc.fk_user = " .$user->id;
+    $clause = " AND ";
 }
 $sql.= $clause." e.fk_statut = 0";
 $sql.= " AND e.entity = ".$conf->entity;
 if ($socid) $sql.= " AND c.fk_soc = ".$socid;
 
 $resql=$db->query($sql);
-if ($resql)
-{
-	$num = $db->num_rows($resql);
-	if ($num)
-	{
-		print '<table class="noborder" width="100%">';
-		print '<tr class="liste_titre">';
-		print '<td colspan="3">'.$langs->trans("SendingsToValidate").'</td></tr>';
-		$i = 0;
-		$var = True;
-		while ($i < $num)
-		{
-			$var=!$var;
-			$obj = $db->fetch_object($resql);
-			print "<tr ".$bc[$var]."><td nowrap=\"nowrap\">";
-			$shipment->id=$obj->rowid;
-			$shipment->ref=$obj->ref;
-			print $shipment->getNomUrl(1);
-			print "</td>";
-			print '<td>';
-			print '<a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->socid.'">'.$obj->nom.'</a>';
-			print '</td>';
-			print '<td>';
-			if ($obj->commande_id) print '<a href="'.DOL_URL_ROOT.'/commande/fiche.php?id='.$obj->commande_id.'">'.$obj->commande_ref.'</a>';
-			print '</td></tr>';
-			$i++;
-		}
-		print "</table><br>";
-	}
+if ($resql) {
+    $num = $db->num_rows($resql);
+    if ($num) {
+        print '<table class="noborder" width="100%">';
+        print '<tr class="liste_titre">';
+        print '<td colspan="3">'.$langs->trans("SendingsToValidate").'</td></tr>';
+        $i = 0;
+        $var = True;
+        while ($i < $num) {
+            $var=!$var;
+            $obj = $db->fetch_object($resql);
+            print "<tr ".$bc[$var]."><td nowrap=\"nowrap\">";
+            $shipment->id=$obj->rowid;
+            $shipment->ref=$obj->ref;
+            print $shipment->getNomUrl(1);
+            print "</td>";
+            print '<td>';
+            print '<a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->socid.'">'.$obj->nom.'</a>';
+            print '</td>';
+            print '<td>';
+            if ($obj->commande_id) print '<a href="'.DOL_URL_ROOT.'/commande/fiche.php?id='.$obj->commande_id.'">'.$obj->commande_ref.'</a>';
+            print '</td></tr>';
+            $i++;
+        }
+        print "</table><br>";
+    }
 }
-
 
 /*
  * Commandes a traiter
@@ -128,43 +121,38 @@ if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.
 $sql.= " ORDER BY c.rowid ASC";
 
 $resql=$db->query($sql);
-if ($resql)
-{
-	$num = $db->num_rows($resql);
-	if ($num)
-	{
-		$langs->load("orders");
+if ($resql) {
+    $num = $db->num_rows($resql);
+    if ($num) {
+        $langs->load("orders");
 
-		$i = 0;
-		print '<table class="noborder" width="100%">';
-		print '<tr class="liste_titre">';
-		print '<td colspan="2">'.$langs->trans("OrdersToProcess").'</td></tr>';
-		$var = True;
-		while ($i < $num)
-		{
-			$var=!$var;
-			$obj = $db->fetch_object($resql);
-			print "<tr $bc[$var]>";
-			print '<td class="nowrap">';
-			$orderstatic->id=$obj->rowid;
-			$orderstatic->ref=$obj->ref;
-			print $orderstatic->getNomUrl(1);
-			print '</td>';
-			print '<td>';
-			$companystatic->nom=$obj->nom;
-			$companystatic->id=$obj->socid;
-			print $companystatic->getNomUrl(1,'customer',32);
-			print '</td></tr>';
-			$i++;
-		}
-		print "</table><br>";
-	}
+        $i = 0;
+        print '<table class="noborder" width="100%">';
+        print '<tr class="liste_titre">';
+        print '<td colspan="2">'.$langs->trans("OrdersToProcess").'</td></tr>';
+        $var = True;
+        while ($i < $num) {
+            $var=!$var;
+            $obj = $db->fetch_object($resql);
+            print "<tr $bc[$var]>";
+            print '<td class="nowrap">';
+            $orderstatic->id=$obj->rowid;
+            $orderstatic->ref=$obj->ref;
+            print $orderstatic->getNomUrl(1);
+            print '</td>';
+            print '<td>';
+            $companystatic->nom=$obj->nom;
+            $companystatic->id=$obj->socid;
+            print $companystatic->getNomUrl(1,'customer',32);
+            print '</td></tr>';
+            $i++;
+        }
+        print "</table><br>";
+    }
 }
-
 
 //print '</td><td valign="top" width="70%">';
 print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
-
 
 /*
  * Commandes en traitement
@@ -180,45 +168,40 @@ if ($socid) $sql.= " AND c.fk_soc = ".$socid;
 if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 
 $resql = $db->query($sql);
-if ( $resql )
-{
-	$langs->load("orders");
+if ($resql) {
+    $langs->load("orders");
 
-	$num = $db->num_rows($resql);
-	if ($num)
-	{
-		$i = 0;
-		print '<table class="noborder" width="100%">';
-		print '<tr class="liste_titre">';
-		print '<td colspan="3">'.$langs->trans("OrdersInProcess").'</td></tr>';
-		$var = True;
-		while ($i < $num)
-		{
-			$var=!$var;
-			$obj = $db->fetch_object($resql);
-			print "<tr $bc[$var]><td width=\"30%\">";
-			$orderstatic->id=$obj->rowid;
-			$orderstatic->ref=$obj->ref;
-			print $orderstatic->getNomUrl(1);
-			print '</td>';
-			print '<td>';
-			$companystatic->nom=$obj->nom;
-			$companystatic->id=$obj->socid;
-			print $companystatic->getNomUrl(1,'customer');
-			print '</td>';
+    $num = $db->num_rows($resql);
+    if ($num) {
+        $i = 0;
+        print '<table class="noborder" width="100%">';
+        print '<tr class="liste_titre">';
+        print '<td colspan="3">'.$langs->trans("OrdersInProcess").'</td></tr>';
+        $var = True;
+        while ($i < $num) {
+            $var=!$var;
+            $obj = $db->fetch_object($resql);
+            print "<tr $bc[$var]><td width=\"30%\">";
+            $orderstatic->id=$obj->rowid;
+            $orderstatic->ref=$obj->ref;
+            print $orderstatic->getNomUrl(1);
+            print '</td>';
+            print '<td>';
+            $companystatic->nom=$obj->nom;
+            $companystatic->id=$obj->socid;
+            print $companystatic->getNomUrl(1,'customer');
+            print '</td>';
             print '<td align="right">';
             $orderstatic->statut=$obj->status;
             $orderstatic->facturee=$obj->billed;
             print $orderstatic->getLibStatut(3);
             print '</td>';
             print '</tr>';
-			$i++;
-		}
-		print "</table><br>";
-	}
-}
-else dol_print_error($db);
-
+            $i++;
+        }
+        print "</table><br>";
+    }
+} else dol_print_error($db);
 
 /*
  * Last shipments
@@ -239,45 +222,36 @@ $sql.= " ORDER BY e.date_delivery DESC";
 $sql.= $db->plimit(5, 0);
 
 $resql = $db->query($sql);
-if ($resql)
-{
-	$num = $db->num_rows($resql);
-	if ($num)
-	{
-		$i = 0;
-		print '<table class="noborder" width="100%">';
-		print '<tr class="liste_titre">';
-		print '<td colspan="3">'.$langs->trans("LastSendings",$num).'</td></tr>';
-		$var = True;
-		while ($i < $num)
-		{
-			$var=!$var;
-			$obj = $db->fetch_object($resql);
-			print '<tr '.$bc[$var].'><td width="20%"><a href="fiche.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowSending"),"sending").' ';
-			print $obj->ref.'</a></td>';
-			print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->nom.'</a></td>';
-			print '<td>';
-			if ($obj->commande_id)
-			{
-				$orderstatic->id=$obj->commande_id;
-				$orderstatic->ref=$obj->commande_ref;
-				print $orderstatic->getNomUrl(1);
-			}
-			else print '&nbsp;';
-			print '</td></tr>';
-			$i++;
-		}
-		print "</table><br>";
-	}
-	$db->free($resql);
-}
-else dol_print_error($db);
-
+if ($resql) {
+    $num = $db->num_rows($resql);
+    if ($num) {
+        $i = 0;
+        print '<table class="noborder" width="100%">';
+        print '<tr class="liste_titre">';
+        print '<td colspan="3">'.$langs->trans("LastSendings",$num).'</td></tr>';
+        $var = True;
+        while ($i < $num) {
+            $var=!$var;
+            $obj = $db->fetch_object($resql);
+            print '<tr '.$bc[$var].'><td width="20%"><a href="fiche.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowSending"),"sending").' ';
+            print $obj->ref.'</a></td>';
+            print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->nom.'</a></td>';
+            print '<td>';
+            if ($obj->commande_id) {
+                $orderstatic->id=$obj->commande_id;
+                $orderstatic->ref=$obj->commande_ref;
+                print $orderstatic->getNomUrl(1);
+            } else print '&nbsp;';
+            print '</td></tr>';
+            $i++;
+        }
+        print "</table><br>";
+    }
+    $db->free($resql);
+} else dol_print_error($db);
 
 //print '</td></tr></table>';
 print '</div></div></div>';
 
-
 llxFooter();
 $db->close();
-?>

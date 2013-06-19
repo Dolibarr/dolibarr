@@ -25,15 +25,14 @@
 
 require_once realpath(dirname(__FILE__)).'/../main.inc.php';
 if (! class_exists('Holiday')) {
-	require DOL_DOCUMENT_ROOT. '/holiday/class/holiday.class.php';
+    require DOL_DOCUMENT_ROOT. '/holiday/class/holiday.class.php';
 }
 
 $langs->load("user");
 $langs->load("other");
 $langs->load("holiday");
 
-if (empty($conf->holiday->enabled))
-{
+if (empty($conf->holiday->enabled)) {
     llxHeader('',$langs->trans('CPTitreMenu'));
     print '<div class="tabBar">';
     print '<span style="color: #FF0000;">'.$langs->trans('NotActiveModCP').'</span>';
@@ -41,5 +40,3 @@ if (empty($conf->holiday->enabled))
     llxFooter();
     exit();
 }
-
-?>

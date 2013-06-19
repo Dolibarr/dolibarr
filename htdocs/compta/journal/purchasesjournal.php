@@ -49,13 +49,11 @@ if ($user->societe_id > 0) $socid = $user->societe_id;
 if (! empty($conf->comptabilite->enabled)) $result=restrictedArea($user,'compta','','','resultat');
 if (! empty($conf->accounting->enabled)) $result=restrictedArea($user,'accounting','','','comptarapport');
 
-
 /*
  * Actions
  */
 
 // None
-
 
 /*
  * View
@@ -68,18 +66,16 @@ $form=new Form($db);
 $year_current = strftime("%Y",dol_now());
 $pastmonth = strftime("%m",dol_now()) - 1;
 $pastmonthyear = $year_current;
-if ($pastmonth == 0)
-{
-	$pastmonth = 12;
-	$pastmonthyear--;
+if ($pastmonth == 0) {
+    $pastmonth = 12;
+    $pastmonthyear--;
 }
 
 $date_start=dol_mktime(0, 0, 0, $date_startmonth, $date_startday, $date_startyear);
 $date_end=dol_mktime(23, 59, 59, $date_endmonth, $date_endday, $date_endyear);
 
-if (empty($date_start) || empty($date_end)) // We define date_start and date_end
-{
-	$date_start=dol_get_first_day($pastmonthyear,$pastmonth,false); $date_end=dol_get_last_day($pastmonthyear,$pastmonth,false);
+if (empty($date_start) || empty($date_end)) { // We define date_start and date_end
+    $date_start=dol_get_first_day($pastmonthyear,$pastmonth,false); $date_end=dol_get_last_day($pastmonthyear,$pastmonth,false);
 }
 
 $nom=$langs->trans("PurchasesJournal");
@@ -112,58 +108,54 @@ else $sql.= " AND f.type IN (0,1,2,3)";
 if ($date_start && $date_end) $sql .= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
 
 $result = $db->query($sql);
-if ($result)
-{
-	$num = $db->num_rows($result);
-	// les variables
-	$cptfour = (! empty($conf->global->COMPTA_ACCOUNT_SUPPLIER)?$conf->global->COMPTA_ACCOUNT_SUPPLIER:$langs->trans("CodeNotDef"));
-	$cpttva = (! empty($conf->global->COMPTA_VAT_ACCOUNT)?$conf->global->COMPTA_VAT_ACCOUNT:$langs->trans("CodeNotDef"));
+if ($result) {
+    $num = $db->num_rows($result);
+    // les variables
+    $cptfour = (! empty($conf->global->COMPTA_ACCOUNT_SUPPLIER)?$conf->global->COMPTA_ACCOUNT_SUPPLIER:$langs->trans("CodeNotDef"));
+    $cpttva = (! empty($conf->global->COMPTA_VAT_ACCOUNT)?$conf->global->COMPTA_VAT_ACCOUNT:$langs->trans("CodeNotDef"));
 
-	$tabfac = array();
-	$tabht = array();
-	$tabtva = array();
-	$tabttc = array();
-	$tablocaltax1 = array();
-	$tablocaltax2 = array();
-	$tabcompany = array();
+    $tabfac = array();
+    $tabht = array();
+    $tabtva = array();
+    $tabttc = array();
+    $tablocaltax1 = array();
+    $tablocaltax2 = array();
+    $tabcompany = array();
 
-	$i=0;
-	while ($i < $num)
-	{
-		$obj = $db->fetch_object($result);
-		// contrôles
-		$compta_soc = (! empty($obj->code_compta_fournisseur)?$obj->code_compta_fournisseur:$cptfour);
-		$compta_prod = $obj->accountancy_code_buy;
-		if (empty($compta_prod))
-		{
-			if($obj->product_type == 0) $compta_prod = (! empty($conf->global->COMPTA_PRODUCT_BUY_ACCOUNT)?$conf->global->COMPTA_PRODUCT_BUY_ACCOUNT:$langs->trans("CodeNotDef"));
-			else $compta_prod = (! empty($conf->global->COMPTA_SERVICE_BUY_ACCOUNT)?$conf->global->COMPTA_SERVICE_BUY_ACCOUNT:$langs->trans("CodeNotDef"));
-		}
-		$compta_tva = (! empty($obj->account_tva)?$obj->account_tva:$cpttva);
-		$compta_localtax1 = (! empty($obj->account_localtax1)?$obj->account_localtax1:$langs->trans("CodeNotDef"));
-		$compta_localtax2 = (! empty($obj->account_localtax2)?$obj->account_localtax2:$langs->trans("CodeNotDef"));
+    $i=0;
+    while ($i < $num) {
+        $obj = $db->fetch_object($result);
+        // contrôles
+        $compta_soc = (! empty($obj->code_compta_fournisseur)?$obj->code_compta_fournisseur:$cptfour);
+        $compta_prod = $obj->accountancy_code_buy;
+        if (empty($compta_prod)) {
+            if($obj->product_type == 0) $compta_prod = (! empty($conf->global->COMPTA_PRODUCT_BUY_ACCOUNT)?$conf->global->COMPTA_PRODUCT_BUY_ACCOUNT:$langs->trans("CodeNotDef"));
+            else $compta_prod = (! empty($conf->global->COMPTA_SERVICE_BUY_ACCOUNT)?$conf->global->COMPTA_SERVICE_BUY_ACCOUNT:$langs->trans("CodeNotDef"));
+        }
+        $compta_tva = (! empty($obj->account_tva)?$obj->account_tva:$cpttva);
+        $compta_localtax1 = (! empty($obj->account_localtax1)?$obj->account_localtax1:$langs->trans("CodeNotDef"));
+        $compta_localtax2 = (! empty($obj->account_localtax2)?$obj->account_localtax2:$langs->trans("CodeNotDef"));
 
-		$account_localtax1=getLocalTaxesFromRate($obj->tva_tx, 1, $mysoc);
-		$compta_localtax1= (! empty($account_localtax1[2])?$account_localtax1[2]:$langs->trans("CodeNotDef"));
-		$account_localtax2=getLocalTaxesFromRate($obj->tva_tx, 2, $mysoc);
-		$compta_localtax2= (! empty($account_localtax2[2])?$account_localtax2[2]:$langs->trans("CodeNotDef"));
-		
-		$tabfac[$obj->rowid]["date"] = $obj->datef;
-		$tabfac[$obj->rowid]["ref"] = $obj->ref_supplier;
-		$tabfac[$obj->rowid]["type"] = $obj->type;
-		$tabfac[$obj->rowid]["lib"] = $obj->libelle;
-		$tabttc[$obj->rowid][$compta_soc] += $obj->total_ttc;
-		$tabht[$obj->rowid][$compta_prod] += $obj->total_ht;
-		if ($obj->recuperableonly != 1) $tabtva[$obj->rowid][$compta_tva] += $obj->total_tva;
-		$tablocaltax1[$obj->rowid][$compta_localtax1] += $obj->total_localtax1;
-   		$tablocaltax2[$obj->rowid][$compta_localtax2] += $obj->total_localtax2;
-		$tabcompany[$obj->rowid]=array('id'=>$obj->socid,'name'=>$obj->name);
+        $account_localtax1=getLocalTaxesFromRate($obj->tva_tx, 1, $mysoc);
+        $compta_localtax1= (! empty($account_localtax1[2])?$account_localtax1[2]:$langs->trans("CodeNotDef"));
+        $account_localtax2=getLocalTaxesFromRate($obj->tva_tx, 2, $mysoc);
+        $compta_localtax2= (! empty($account_localtax2[2])?$account_localtax2[2]:$langs->trans("CodeNotDef"));
 
-		$i++;
-	}
-}
-else {
-	dol_print_error($db);
+        $tabfac[$obj->rowid]["date"] = $obj->datef;
+        $tabfac[$obj->rowid]["ref"] = $obj->ref_supplier;
+        $tabfac[$obj->rowid]["type"] = $obj->type;
+        $tabfac[$obj->rowid]["lib"] = $obj->libelle;
+        $tabttc[$obj->rowid][$compta_soc] += $obj->total_ttc;
+        $tabht[$obj->rowid][$compta_prod] += $obj->total_ht;
+        if ($obj->recuperableonly != 1) $tabtva[$obj->rowid][$compta_tva] += $obj->total_tva;
+        $tablocaltax1[$obj->rowid][$compta_localtax1] += $obj->total_localtax1;
+           $tablocaltax2[$obj->rowid][$compta_localtax2] += $obj->total_localtax2;
+        $tabcompany[$obj->rowid]=array('id'=>$obj->socid,'name'=>$obj->name);
+
+        $i++;
+    }
+} else {
+    dol_print_error($db);
 }
 
 /*
@@ -183,76 +175,67 @@ $var=true;
 $invoicestatic=new FactureFournisseur($db);
 $companystatic=new Fournisseur($db);
 
-foreach ($tabfac as $key => $val)
-{
-	$invoicestatic->id = $key;
-	$invoicestatic->ref = $val["ref"];
-	$invoicestatic->type = $val["type"];
+foreach ($tabfac as $key => $val) {
+    $invoicestatic->id = $key;
+    $invoicestatic->ref = $val["ref"];
+    $invoicestatic->type = $val["type"];
 
-	$companystatic->id = $tabcompany[$key]['id'];
-	$companystatic->name = $tabcompany[$key]['name'];
+    $companystatic->id = $tabcompany[$key]['id'];
+    $companystatic->name = $tabcompany[$key]['name'];
 
-	$lines = array(
-		array(
-			'var' => $tabht[$key],
-			'label' => $langs->trans('Products'),
-		),
-		array(
-			'var' => $tabtva[$key],
-			'label' => $langs->trans('VAT')
-		),
-		array(
-			'var' => $tablocaltax1[$key],
-			'label' => $langs->transcountry('LT1', $mysoc->country_code)
-		),
-		array(
-			'var' => $tablocaltax2[$key],
-			'label' => $langs->transcountry('LT2', $mysoc->country_code)
-		),
-		array(
-			'var' => $tabttc[$key],
-			'label' => $langs->trans('ThirdParty').' ('.$companystatic->getNomUrl(0, 'supplier', 16).')',
-			'nomtcheck' => true,
-			'inv' => true
-		)
-	);
+    $lines = array(
+        array(
+            'var' => $tabht[$key],
+            'label' => $langs->trans('Products'),
+        ),
+        array(
+            'var' => $tabtva[$key],
+            'label' => $langs->trans('VAT')
+        ),
+        array(
+            'var' => $tablocaltax1[$key],
+            'label' => $langs->transcountry('LT1', $mysoc->country_code)
+        ),
+        array(
+            'var' => $tablocaltax2[$key],
+            'label' => $langs->transcountry('LT2', $mysoc->country_code)
+        ),
+        array(
+            'var' => $tabttc[$key],
+            'label' => $langs->trans('ThirdParty').' ('.$companystatic->getNomUrl(0, 'supplier', 16).')',
+            'nomtcheck' => true,
+            'inv' => true
+        )
+    );
 
-	foreach ($lines as $line)
-	{
-		foreach ($line['var'] as $k => $mt)
-		{
-			if (isset($line['nomtcheck']) || $mt)
-			{
-				print "<tr ".$bc[$var]." >";
-				//print "<td>".$conf->global->COMPTA_JOURNAL_BUY."</td>";
-				print "<td>".dol_print_date($val["date"])."</td>";
-				print "<td>".$invoicestatic->getNomUrl(1)."</td>";
-				print "<td>".$k."</td><td>".$line['label']."</td>";
+    foreach ($lines as $line) {
+        foreach ($line['var'] as $k => $mt) {
+            if (isset($line['nomtcheck']) || $mt) {
+                print "<tr ".$bc[$var]." >";
+                //print "<td>".$conf->global->COMPTA_JOURNAL_BUY."</td>";
+                print "<td>".dol_print_date($val["date"])."</td>";
+                print "<td>".$invoicestatic->getNomUrl(1)."</td>";
+                print "<td>".$k."</td><td>".$line['label']."</td>";
 
-				if (isset($line['inv']))
-				{
-					print '<td align="right">'.($mt<0?price(-$mt):'')."</td>";
-	    			print '<td align="right">'.($mt>=0?price($mt):'')."</td>";
-				}
-				else
-				{
-					print '<td align="right">'.($mt>=0?price($mt):'')."</td>";
-					print '<td align="right">'.($mt<0?price(-$mt):'')."</td>";
-				}
-				
-				print "</tr>";
-			}
-		}
-	}
+                if (isset($line['inv'])) {
+                    print '<td align="right">'.($mt<0?price(-$mt):'')."</td>";
+                    print '<td align="right">'.($mt>=0?price($mt):'')."</td>";
+                } else {
+                    print '<td align="right">'.($mt>=0?price($mt):'')."</td>";
+                    print '<td align="right">'.($mt<0?price(-$mt):'')."</td>";
+                }
 
-	$var = !$var;
+                print "</tr>";
+            }
+        }
+    }
+
+    $var = !$var;
 }
 
 print "</table>";
-
 
 // End of page
 llxFooter();
 
 $db->close();
-?>

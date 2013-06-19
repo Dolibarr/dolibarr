@@ -21,7 +21,6 @@
  * \brief      Authentication functions for HTTP Basic
  */
 
-
 /**
  * Check validity of user/password/entity
  * If test is ko, reason must be filled into $_SESSION["dol_loginmesg"]
@@ -33,16 +32,12 @@
 */
 function check_user_password_http($usertotest,$passwordtotest,$entitytotest)
 {
-	dol_syslog("functions_http::check_user_password_http _SERVER[REMOTE_USER]=".(empty($_SERVER["REMOTE_USER"])?'':$_SERVER["REMOTE_USER"]));
+    dol_syslog("functions_http::check_user_password_http _SERVER[REMOTE_USER]=".(empty($_SERVER["REMOTE_USER"])?'':$_SERVER["REMOTE_USER"]));
 
-	$login='';
-	if (! empty($_SERVER["REMOTE_USER"]))
-	{
-		$login=$_SERVER["REMOTE_USER"];
-	}
+    $login='';
+    if (! empty($_SERVER["REMOTE_USER"])) {
+        $login=$_SERVER["REMOTE_USER"];
+    }
 
-	return $login;
+    return $login;
 }
-
-
-?>

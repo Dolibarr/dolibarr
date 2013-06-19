@@ -27,109 +27,105 @@
 
 include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 
-
 /**
  *	Classe de description et activation du module Document
  */
 class modDocument extends DolibarrModules
 {
 
-	/**
-	 *   Constructor. Define names, constants, directories, boxes, permissions
-	 *
-	 *   @param      DoliDB		$db      Database handler
-	 */
-	function __construct($db)
-	{
-		$this->db = $db;
-		$this->numero = 51;
+    /**
+     *   Constructor. Define names, constants, directories, boxes, permissions
+     *
+     *   @param      DoliDB		$db      Database handler
+     */
+    public function __construct($db)
+    {
+        $this->db = $db;
+        $this->numero = 51;
 
-		$this->family = "technic";
-		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
-		$this->name = preg_replace('/^mod/i','',get_class($this));
-		$this->description = "Generation de courriers/publipostages papiers";
-		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
-		$this->version = 'development';
+        $this->family = "technic";
+        // Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
+        $this->name = preg_replace('/^mod/i','',get_class($this));
+        $this->description = "Generation de courriers/publipostages papiers";
+        // Possible values for version are: 'development', 'experimental', 'dolibarr' or version
+        $this->version = 'development';
 
-		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
-		$this->special = 0;
-		$this->picto='email';
+        $this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
+        $this->special = 0;
+        $this->picto='email';
 
-		// Data directories to create when module is enabled
-		$this->dirs = array("/document/temp");
+        // Data directories to create when module is enabled
+        $this->dirs = array("/document/temp");
 
-		// Config pages
-		//$this->config_page_url = array("document.php");
+        // Config pages
+        //$this->config_page_url = array("document.php");
 
-		// Dependencies
-		$this->depends = array();
-		$this->requiredby = array();
-		$this->conflictwith = array();
-		$this->langfiles = array("orders","bills","companies");
+        // Dependencies
+        $this->depends = array();
+        $this->requiredby = array();
+        $this->conflictwith = array();
+        $this->langfiles = array("orders","bills","companies");
 
-		// Constantes
+        // Constantes
 
-		$this->const = array();
+        $this->const = array();
 
-		// Boites
-		$this->boxes = array();
+        // Boites
+        $this->boxes = array();
 
-		// Permissions
-		$this->rights = array();
-		$this->rights_class = 'document';
+        // Permissions
+        $this->rights = array();
+        $this->rights_class = 'document';
 
-		$r=0;
+        $r=0;
 
-		$this->rights[$r][0] = 511;
-		$this->rights[$r][1] = 'Lire les documents';
-		$this->rights[$r][2] = 'r';
-		$this->rights[$r][3] = 1;
-		$this->rights[$r][4] = 'lire';
+        $this->rights[$r][0] = 511;
+        $this->rights[$r][1] = 'Lire les documents';
+        $this->rights[$r][2] = 'r';
+        $this->rights[$r][3] = 1;
+        $this->rights[$r][4] = 'lire';
 
-		$r++;
-		$this->rights[$r][0] = 512;
-		$this->rights[$r][1] = 'Supprimer les documents clients';
-		$this->rights[$r][2] = 'd';
-		$this->rights[$r][3] = 0;
-		$this->rights[$r][4] = 'supprimer';
-	}
-
-
-	/**
-	 *		Function called when module is enabled.
-	 *		The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
-	 *		It also creates data directories
-	 *
-     *      @param      string	$options    Options when enabling module ('', 'noboxes')
-	 *      @return     int             	1 if OK, 0 if KO
-	 */
-	function init($options='')
-	{
-		global $conf;
-
-		// Permissions
-		$this->remove($options);
-
-		$sql = array();
-
-		return $this->_init($sql,$options);
-	}
-
+        $r++;
+        $this->rights[$r][0] = 512;
+        $this->rights[$r][1] = 'Supprimer les documents clients';
+        $this->rights[$r][2] = 'd';
+        $this->rights[$r][3] = 0;
+        $this->rights[$r][4] = 'supprimer';
+    }
 
     /**
-	 *		Function called when module is disabled.
-	 *      Remove from database constants, boxes and permissions from Dolibarr database.
-	 *		Data directories are not deleted
-	 *
+     *		Function called when module is enabled.
+     *		The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
+     *		It also creates data directories
+     *
      *      @param      string	$options    Options when enabling module ('', 'noboxes')
-	 *      @return     int             	1 if OK, 0 if KO
+     *      @return     int             	1 if OK, 0 if KO
      */
-    function remove($options='')
+    public function init($options='')
     {
-		$sql = array();
+        global $conf;
 
-		return $this->_remove($sql,$options);
+        // Permissions
+        $this->remove($options);
+
+        $sql = array();
+
+        return $this->_init($sql,$options);
+    }
+
+    /**
+     *		Function called when module is disabled.
+     *      Remove from database constants, boxes and permissions from Dolibarr database.
+     *		Data directories are not deleted
+     *
+     *      @param      string	$options    Options when enabling module ('', 'noboxes')
+     *      @return     int             	1 if OK, 0 if KO
+     */
+    public function remove($options='')
+    {
+        $sql = array();
+
+        return $this->_remove($sql,$options);
     }
 
 }
-?>

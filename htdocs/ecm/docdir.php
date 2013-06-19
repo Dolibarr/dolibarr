@@ -47,8 +47,7 @@ $action=GETPOST('action','alpha');
 $confirm=GETPOST('confirm','alpha');
 
 // Security check
-if ($user->societe_id > 0)
-{
+if ($user->societe_id > 0) {
     $action = '';
     $socid = $user->societe_id;
 }
@@ -68,67 +67,56 @@ if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="label";
 
 $ecmdir = new EcmDirectory($db);
-if (! empty($section))
-{
-	$result=$ecmdir->fetch($section);
-	if (! $result > 0)
-	{
-		dol_print_error($db,$ecmdir->error);
-		exit;
-	}
+if (! empty($section)) {
+    $result=$ecmdir->fetch($section);
+    if (! $result > 0) {
+        dol_print_error($db,$ecmdir->error);
+        exit;
+    }
 }
-
 
 /*
  * Actions
  */
 
 // Action ajout d'un produit ou service
-if ($action == 'add' && $user->rights->ecm->setup)
-{
-	if (! empty($_POST["cancel"]))
-	{
-		header("Location: ".DOL_URL_ROOT.'/ecm/index.php?action=file_manager');
-		exit;
-	}
-	$ecmdir->ref                = trim($_POST["ref"]);
-	$ecmdir->label              = trim($_POST["label"]);
-	$ecmdir->description        = trim($_POST["desc"]);
-	$ecmdir->fk_parent          = $_POST["catParent"];
+if ($action == 'add' && $user->rights->ecm->setup) {
+    if (! empty($_POST["cancel"])) {
+        header("Location: ".DOL_URL_ROOT.'/ecm/index.php?action=file_manager');
+        exit;
+    }
+    $ecmdir->ref                = trim($_POST["ref"]);
+    $ecmdir->label              = trim($_POST["label"]);
+    $ecmdir->description        = trim($_POST["desc"]);
+    $ecmdir->fk_parent          = $_POST["catParent"];
 
-	$ok=true;
+    $ok=true;
 
-	if (! $ecmdir->label)
-	{
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Label")), 'errors');
-		$action = 'create';
-		$ok=false;
-	}
+    if (! $ecmdir->label) {
+        setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Label")), 'errors');
+        $action = 'create';
+        $ok=false;
+    }
 
-	if ($ok)
-	{
-		$id = $ecmdir->create($user);
+    if ($ok) {
+        $id = $ecmdir->create($user);
 
-		if ($id > 0)
-		{
-			header("Location: ".DOL_URL_ROOT.'/ecm/index.php?action=file_manager');
-			exit;
-		}
-		else
-		{
-			$langs->load("errors");
-			setEventMessage($langs->trans($ecmdir->error), 'errors');
-			setEventMessage($ecmdir->errors, 'errors');
-			$action = 'create';
-		}
-	}
+        if ($id > 0) {
+            header("Location: ".DOL_URL_ROOT.'/ecm/index.php?action=file_manager');
+            exit;
+        } else {
+            $langs->load("errors");
+            setEventMessage($langs->trans($ecmdir->error), 'errors');
+            setEventMessage($ecmdir->errors, 'errors');
+            $action = 'create';
+        }
+    }
 }
 
 // Suppression fichier
-else if ($action == 'confirm_deletesection' && $confirm == 'yes')
-{
-	$result=$ecmdir->delete($user);
-	setEventMessage($langs->trans("ECMSectionWasRemoved", $ecmdir->label));
+else if ($action == 'confirm_deletesection' && $confirm == 'yes') {
+    $result=$ecmdir->delete($user);
+    setEventMessage($langs->trans("ECMSectionWasRemoved", $ecmdir->label));
 }
 
 
@@ -143,89 +131,80 @@ llxHeader();
 $form=new Form($db);
 $formecm=new FormEcm($db);
 
-if ($action == 'create')
-{
-	//***********************
-	// Create
-	//***********************
-	print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-	print '<input type="hidden" name="action" value="add">';
+if ($action == 'create') {
+    //***********************
+    // Create
+    //***********************
+    print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
+    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<input type="hidden" name="action" value="add">';
 
-	$title=$langs->trans("ECMNewSection");
-	print_fiche_titre($title);
+    $title=$langs->trans("ECMNewSection");
+    print_fiche_titre($title);
 
-	print '<table class="border" width="100%">';
+    print '<table class="border" width="100%">';
 
-	// Label
-	print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td><input name="label" size="40" maxlength="32" value="'.$ecmdir->label.'"></td></tr>'."\n";
+    // Label
+    print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td><input name="label" size="40" maxlength="32" value="'.$ecmdir->label.'"></td></tr>'."\n";
 
-	print '<tr><td>'.$langs->trans("AddIn").'</td><td>';
-	print $formecm->select_all_sections(! empty($_GET["catParent"])?$_GET["catParent"]:$ecmdir->fk_parent,'catParent');
-	print '</td></tr>'."\n";
+    print '<tr><td>'.$langs->trans("AddIn").'</td><td>';
+    print $formecm->select_all_sections(! empty($_GET["catParent"])?$_GET["catParent"]:$ecmdir->fk_parent,'catParent');
+    print '</td></tr>'."\n";
 
-	// Description
-	print '<tr><td valign="top">'.$langs->trans("Description").'</td><td>';
-	print '<textarea name="desc" rows="4" cols="90">';
-	print $ecmdir->description;
-	print '</textarea>';
-	print '</td></tr>'."\n";
+    // Description
+    print '<tr><td valign="top">'.$langs->trans("Description").'</td><td>';
+    print '<textarea name="desc" rows="4" cols="90">';
+    print $ecmdir->description;
+    print '</textarea>';
+    print '</td></tr>'."\n";
 
-	print '</td></tr>'."\n";
+    print '</td></tr>'."\n";
 
-	print '</table><br>';
+    print '</table><br>';
 
-	print '<center>';
-	print '<input type="submit" class="button" name="create" value="'.$langs->trans("Create").'">';
-	print ' &nbsp; &nbsp; ';
-	print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
-	print '</center>';
-	print '</form>';
+    print '<center>';
+    print '<input type="submit" class="button" name="create" value="'.$langs->trans("Create").'">';
+    print ' &nbsp; &nbsp; ';
+    print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+    print '</center>';
+    print '</form>';
 }
 
 
-if (empty($action) || $action == 'delete_section')
-{
-	//***********************
-	// List
-	//***********************
-	print_fiche_titre($langs->trans("ECMSectionOfDocuments"));
-	print '<br>';
+if (empty($action) || $action == 'delete_section') {
+    //***********************
+    // List
+    //***********************
+    print_fiche_titre($langs->trans("ECMSectionOfDocuments"));
+    print '<br>';
 
 /*
-	$ecmdir->ref=$ecmdir->label;
-	print $langs->trans("ECMSection").': ';
-	print img_picto('','object_dir').' ';
-	print '<a href="'.DOL_URL_ROOT.'/ecm/docdir.php">'.$langs->trans("ECMRoot").'</a>';
-	//print ' -> <b>'.$ecmdir->getNomUrl(1).'</b><br>';
-	print "<br><br>";
+    $ecmdir->ref=$ecmdir->label;
+    print $langs->trans("ECMSection").': ';
+    print img_picto('','object_dir').' ';
+    print '<a href="'.DOL_URL_ROOT.'/ecm/docdir.php">'.$langs->trans("ECMRoot").'</a>';
+    //print ' -> <b>'.$ecmdir->getNomUrl(1).'</b><br>';
+    print "<br><br>";
 */
 
-	// Confirmation de la suppression d'une ligne categorie
-	if ($action == 'delete_section')
-	{
-		$ret=$form->form_confirm($_SERVER["PHP_SELF"].'?section='.$section, $langs->trans('DeleteSection'), $langs->trans('ConfirmDeleteSection',$ecmdir->label), 'confirm_deletesection');
-		if ($ret == 'html') print '<br>';
-	}
+    // Confirmation de la suppression d'une ligne categorie
+    if ($action == 'delete_section') {
+        $ret=$form->form_confirm($_SERVER["PHP_SELF"].'?section='.$section, $langs->trans('DeleteSection'), $langs->trans('ConfirmDeleteSection',$ecmdir->label), 'confirm_deletesection');
+        if ($ret == 'html') print '<br>';
+    }
 
-	// Construit fiche  rubrique
+    // Construit fiche  rubrique
 
-
-	// Actions buttons
-	print '<div class="tabsAction">';
-	if ($user->rights->ecm->setup)
-	{
-		print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=delete_section">'.$langs->trans('Delete').'</a>';
-	}
-	else
-	{
-		print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans('Delete').'</a>';
-	}
-	print '</div>';
+    // Actions buttons
+    print '<div class="tabsAction">';
+    if ($user->rights->ecm->setup) {
+        print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=delete_section">'.$langs->trans('Delete').'</a>';
+    } else {
+        print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans('Delete').'</a>';
+    }
+    print '</div>';
 }
-
 
 // End of page
 llxFooter();
 $db->close();
-?>

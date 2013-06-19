@@ -45,25 +45,19 @@ $result=restrictedArea($user,'facture',$id,'');
 $object = new Facture($db);
 $object->fetch($id);
 
-
 /******************************************************************************/
 /*                     Actions                                                */
 /******************************************************************************/
 
-if ($action == 'setnote_public' && $user->rights->facture->creer)
-{
-	$object->fetch($id);
-	$result=$object->update_note(dol_html_entity_decode(GETPOST('note_public'), ENT_QUOTES),'_public');
-	if ($result < 0) dol_print_error($db,$object->error);
+if ($action == 'setnote_public' && $user->rights->facture->creer) {
+    $object->fetch($id);
+    $result=$object->update_note(dol_html_entity_decode(GETPOST('note_public'), ENT_QUOTES),'_public');
+    if ($result < 0) dol_print_error($db,$object->error);
+} elseif ($action == 'setnote_private' && $user->rights->facture->creer) {
+    $object->fetch($id);
+    $result=$object->update_note(dol_html_entity_decode(GETPOST('note_private'), ENT_QUOTES),'_private');
+    if ($result < 0) dol_print_error($db,$object->error);
 }
-
-else if ($action == 'setnote_private' && $user->rights->facture->creer)
-{
-	$object->fetch($id);
-	$result=$object->update_note(dol_html_entity_decode(GETPOST('note_private'), ENT_QUOTES),'_private');
-	if ($result < 0) dol_print_error($db,$object->error);
-}
-
 
 /******************************************************************************/
 /* Affichage fiche                                                            */
@@ -73,49 +67,45 @@ llxHeader();
 
 $form = new Form($db);
 
-if ($id > 0 || ! empty($ref))
-{
-	$object = new Facture($db);
-	$object->fetch($id,$ref);
+if ($id > 0 || ! empty($ref)) {
+    $object = new Facture($db);
+    $object->fetch($id,$ref);
 
-	$soc = new Societe($db);
+    $soc = new Societe($db);
     $soc->fetch($object->socid);
 
     $head = facture_prepare_head($object);
     dol_fiche_head($head, 'note', $langs->trans("InvoiceCustomer"), 0, 'bill');
 
-
     print '<table class="border" width="100%">';
 
     $linkback = '<a href="'.DOL_URL_ROOT.'/compta/facture/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
 
-	// Ref
-	print '<tr><td width="25%">'.$langs->trans('Ref').'</td>';
-	print '<td colspan="3">';
-	$morehtmlref='';
-	$discount=new DiscountAbsolute($db);
-	$result=$discount->fetch(0,$object->id);
-	if ($result > 0)
-	{
-		$morehtmlref=' ('.$langs->trans("CreditNoteConvertedIntoDiscount",$discount->getNomUrl(1,'discount')).')';
-	}
-	if ($result < 0)
-	{
-		dol_print_error('',$discount->error);
-	}
-	print $form->showrefnav($object, 'ref', $linkback, 1, 'facnumber', 'ref', $morehtmlref);
-	print '</td></tr>';
+    // Ref
+    print '<tr><td width="25%">'.$langs->trans('Ref').'</td>';
+    print '<td colspan="3">';
+    $morehtmlref='';
+    $discount=new DiscountAbsolute($db);
+    $result=$discount->fetch(0,$object->id);
+    if ($result > 0) {
+        $morehtmlref=' ('.$langs->trans("CreditNoteConvertedIntoDiscount",$discount->getNomUrl(1,'discount')).')';
+    }
+    if ($result < 0) {
+        dol_print_error('',$discount->error);
+    }
+    print $form->showrefnav($object, 'ref', $linkback, 1, 'facnumber', 'ref', $morehtmlref);
+    print '</td></tr>';
 
-	// Ref customer
-	print '<tr><td width="20%">';
-	print '<table class="nobordernopadding" width="100%"><tr><td>';
-	print $langs->trans('RefCustomer');
-	print '</td>';
-	print '</tr></table>';
-	print '</td>';
-	print '<td colspan="5">';
-	print $object->ref_client;
-	print '</td></tr>';
+    // Ref customer
+    print '<tr><td width="20%">';
+    print '<table class="nobordernopadding" width="100%"><tr><td>';
+    print $langs->trans('RefCustomer');
+    print '</td>';
+    print '</tr></table>';
+    print '</td>';
+    print '<td colspan="5">';
+    print $object->ref_client;
+    print '</td></tr>';
 
     // Company
     print '<tr><td>'.$langs->trans("Company").'</td>';
@@ -125,13 +115,11 @@ if ($id > 0 || ! empty($ref))
 
     print '<br>';
 
-	include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
+    include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
 
-	dol_fiche_end();
+    dol_fiche_end();
 }
-
 
 llxFooter();
 
 $db->close();
-?>

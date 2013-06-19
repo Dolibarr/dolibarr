@@ -63,35 +63,28 @@ $picto = array(
 'MAIL' => 'email'
 );
 
-
-
 /*
  *  Actions
  */
 
-foreach($modules as $const => $desc)
-{
-    if ($action == 'activate_'.strtolower($const))
-    {
+foreach ($modules as $const => $desc) {
+    if ($action == 'activate_'.strtolower($const)) {
         dolibarr_set_const($db, "FCKEDITOR_ENABLE_".$const, "1",'chaine',0,'',$conf->entity);
         // Si fckeditor est active dans la description produit/service, on l'active dans les formulaires
-        if ($const == 'PRODUCTDESC' && ! empty($conf->global->PRODUIT_DESC_IN_FORM))
-        {
+        if ($const == 'PRODUCTDESC' && ! empty($conf->global->PRODUIT_DESC_IN_FORM)) {
             dolibarr_set_const($db, "FCKEDITOR_ENABLE_DETAILS", "1",'chaine',0,'',$conf->entity);
         }
         header("Location: ".$_SERVER["PHP_SELF"]);
         exit;
     }
-    if ($action == 'disable_'.strtolower($const))
-    {
+    if ($action == 'disable_'.strtolower($const)) {
         dolibarr_del_const($db, "FCKEDITOR_ENABLE_".$const,$conf->entity);
         header("Location: ".$_SERVER["PHP_SELF"]);
         exit;
     }
 }
 
-if (GETPOST('save','alpha'))
-{
+if (GETPOST('save','alpha')) {
     $res=dolibarr_set_const($db, "FCKEDITOR_TEST", GETPOST('formtestfield'),'chaine',0,'',$conf->entity);
 
     if ($res > 0) $mesg=$langs->trans("RecordModifiedSuccessfully");
@@ -111,12 +104,9 @@ print '<br>';
 
 $var=true;
 
-if (empty($conf->use_javascript_ajax))
-{
+if (empty($conf->use_javascript_ajax)) {
     dol_htmloutput_errors('',array($langs->trans("NotAvailable"),$langs->trans("JavascriptDisabled")),1);
-}
-else
-{
+} else {
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre">';
     print '<td colspan="2">'.$langs->trans("ActivateFCKeditor").'</td>';
@@ -124,8 +114,7 @@ else
     print "</tr>\n";
 
     // Modules
-    foreach($modules as $const => $desc)
-    {
+    foreach ($modules as $const => $desc) {
         // Si condition non remplie, on ne propose pas l'option
         if (! $conditions[$const]) continue;
 
@@ -136,12 +125,9 @@ else
         print '<td align="center" width="100">';
         $constante = 'FCKEDITOR_ENABLE_'.$const;
         $value = (isset($conf->global->$constante)?$conf->global->$constante:0);
-        if ($value == 0)
-        {
+        if ($value == 0) {
             print '<a href="'.$_SERVER['PHP_SELF'].'?action=activate_'.strtolower($const).'">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
-        }
-        else if ($value == 1)
-        {
+        } elseif ($value == 1) {
             print '<a href="'.$_SERVER['PHP_SELF'].'?action=disable_'.strtolower($const).'">'.img_picto($langs->trans("Enabled"),'switch_on').'</a>';
         }
 
@@ -170,7 +156,5 @@ else
      */
 }
 
-
 llxFooter();
 $db->close();
-?>

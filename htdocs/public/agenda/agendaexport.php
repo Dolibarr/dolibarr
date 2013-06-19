@@ -74,57 +74,52 @@ if (! isset($conf->global->MAIN_AGENDA_EXPORT_PAST_DELAY)) $conf->global->MAIN_A
 $filters['notolderthan']=$conf->global->MAIN_AGENDA_EXPORT_PAST_DELAY;
 
 // Check config
-if (empty($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY))
-{
-	$user->getrights();
+if (empty($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY)) {
+    $user->getrights();
 
-	llxHeaderVierge();
-	print '<div class="error">Module Agenda was not configured properly.</div>';
-	llxFooterVierge();
-	exit;
+    llxHeaderVierge();
+    print '<div class="error">Module Agenda was not configured properly.</div>';
+    llxFooterVierge();
+    exit;
 }
 
 // Check exportkey
-if (empty($_GET["exportkey"]) || $conf->global->MAIN_AGENDA_XCAL_EXPORTKEY != $_GET["exportkey"])
-{
-	$user->getrights();
+if (empty($_GET["exportkey"]) || $conf->global->MAIN_AGENDA_XCAL_EXPORTKEY != $_GET["exportkey"]) {
+    $user->getrights();
 
-	llxHeaderVierge();
-	print '<div class="error">Bad value for key.</div>';
-	llxFooterVierge();
-	exit;
+    llxHeaderVierge();
+    print '<div class="error">Bad value for key.</div>';
+    llxFooterVierge();
+    exit;
 }
-
 
 // Define filename with prefix on filters predica (each predica set must have on cache file)
 $shortfilename='dolibarrcalendar';
 $filename=$shortfilename;
 // Complete long filename
-foreach ($filters as $key => $value)
-{
+foreach ($filters as $key => $value) {
     //if ($key == 'notolderthan')    $filename.='-notolderthan'.$value; This filter key is already added before and does not need to be in filename
-	if ($key == 'year')            $filename.='-year'.$value;
+    if ($key == 'year')            $filename.='-year'.$value;
     if ($key == 'id')              $filename.='-id'.$value;
     if ($key == 'idfrom')          $filename.='-idfrom'.$value;
     if ($key == 'idto')            $filename.='-idto'.$value;
     if ($key == 'login')	       $filename.='-login'.$value;
-	if ($key == 'logina')	       $filename.='-logina'.$value;	// Author
-	if ($key == 'logind')	       $filename.='-logind'.$value;	// Affected to
-	if ($key == 'logint')	       $filename.='-logint'.$value;	// Done by
+    if ($key == 'logina')	       $filename.='-logina'.$value;	// Author
+    if ($key == 'logind')	       $filename.='-logind'.$value;	// Affected to
+    if ($key == 'logint')	       $filename.='-logint'.$value;	// Done by
 }
 // Add extension
 if ($format == 'vcal') { $shortfilename.='.vcs'; $filename.='.vcs'; }
 if ($format == 'ical') { $shortfilename.='.ics'; $filename.='.ics'; }
-if ($format == 'rss')  { $shortfilename.='.rss'; $filename.='.rss'; }
+if ($format == 'rss') { $shortfilename.='.rss'; $filename.='.rss'; }
 
-if ($shortfilename=='dolibarrcalendar')
-{
-	$langs->load("main");
-	$langs->load("errors");
-	llxHeaderVierge();
+if ($shortfilename=='dolibarrcalendar') {
+    $langs->load("main");
+    $langs->load("errors");
+    llxHeaderVierge();
     print '<div class="error">'.$langs->trans("ErrorWrongValueForParameterX",'format').'</div>';
-	llxFooterVierge();
-	exit;
+    llxFooterVierge();
+    exit;
 }
 
 $agenda=new ActionComm($db);
@@ -133,81 +128,71 @@ $cachedelay=0;
 if (! empty($conf->global->MAIN_AGENDA_EXPORT_CACHE)) $cachedelay=$conf->global->MAIN_AGENDA_EXPORT_CACHE;
 
 // Build file
-if ($format == 'ical' || $format == 'vcal')
-{
-	$result=$agenda->build_exportfile($format,$type,$cachedelay,$filename,$filters);
-	if ($result >= 0)
-	{
-		$attachment = true;
-		if (isset($_GET["attachment"])) $attachment=$_GET["attachment"];
-		//$attachment = false;
-		$contenttype='text/calendar';
-		if (isset($_GET["contenttype"])) $contenttype=$_GET["contenttype"];
-		//$contenttype='text/plain';
-		$outputencoding='UTF-8';
+if ($format == 'ical' || $format == 'vcal') {
+    $result=$agenda->build_exportfile($format,$type,$cachedelay,$filename,$filters);
+    if ($result >= 0) {
+        $attachment = true;
+        if (isset($_GET["attachment"])) $attachment=$_GET["attachment"];
+        //$attachment = false;
+        $contenttype='text/calendar';
+        if (isset($_GET["contenttype"])) $contenttype=$_GET["contenttype"];
+        //$contenttype='text/plain';
+        $outputencoding='UTF-8';
 
-		if ($contenttype)       header('Content-Type: '.$contenttype.($outputencoding?'; charset='.$outputencoding:''));
-		if ($attachment) 		header('Content-Disposition: attachment; filename="'.$shortfilename.'"');
+        if ($contenttype)       header('Content-Type: '.$contenttype.($outputencoding?'; charset='.$outputencoding:''));
+        if ($attachment) 		header('Content-Disposition: attachment; filename="'.$shortfilename.'"');
 
-		if ($cachedelay) header('Cache-Control: max-age='.$cachedelay.', private, must-revalidate');
-		else header('Cache-Control: private, must-revalidate');
+        if ($cachedelay) header('Cache-Control: max-age='.$cachedelay.', private, must-revalidate');
+        else header('Cache-Control: private, must-revalidate');
 
-		// Clean parameters
-		$outputfile=$conf->agenda->dir_temp.'/'.$filename;
-		$result=readfile($outputfile);
-		if (! $result) print 'File '.$outputfile.' was empty.';
+        // Clean parameters
+        $outputfile=$conf->agenda->dir_temp.'/'.$filename;
+        $result=readfile($outputfile);
+        if (! $result) print 'File '.$outputfile.' was empty.';
 
-	    //header("Location: ".DOL_URL_ROOT.'/document.php?modulepart=agenda&file='.urlencode($filename));
-		exit;
-	}
-	else
-	{
-		print 'Error '.$agenda->error;
+        //header("Location: ".DOL_URL_ROOT.'/document.php?modulepart=agenda&file='.urlencode($filename));
+        exit;
+    } else {
+        print 'Error '.$agenda->error;
 
-		exit;
-	}
+        exit;
+    }
 }
 
-if ($format == 'rss')
-{
-	$result=$agenda->build_exportfile($format,$type,$cachedelay,$filename,$filters);
-	if ($result >= 0)
-	{
-		$attachment = false;
-		if (isset($_GET["attachment"])) $attachment=$_GET["attachment"];
-		//$attachment = false;
-		$contenttype='application/rss+xml';
-		if (isset($_GET["contenttype"])) $contenttype=$_GET["contenttype"];
-		//$contenttype='text/plain';
-		$outputencoding='UTF-8';
+if ($format == 'rss') {
+    $result=$agenda->build_exportfile($format,$type,$cachedelay,$filename,$filters);
+    if ($result >= 0) {
+        $attachment = false;
+        if (isset($_GET["attachment"])) $attachment=$_GET["attachment"];
+        //$attachment = false;
+        $contenttype='application/rss+xml';
+        if (isset($_GET["contenttype"])) $contenttype=$_GET["contenttype"];
+        //$contenttype='text/plain';
+        $outputencoding='UTF-8';
 
-		if ($contenttype)       header('Content-Type: '.$contenttype.($outputencoding?'; charset='.$outputencoding:''));
-		if ($attachment) 		header('Content-Disposition: attachment; filename="'.$filename.'"');
+        if ($contenttype)       header('Content-Type: '.$contenttype.($outputencoding?'; charset='.$outputencoding:''));
+        if ($attachment) 		header('Content-Disposition: attachment; filename="'.$filename.'"');
 
-		// Ajout directives pour resoudre bug IE
-		//header('Cache-Control: Public, must-revalidate');
-		//header('Pragma: public');
-		if ($cachedelay) header('Cache-Control: max-age='.$cachedelay.', private, must-revalidate');
-		else header('Cache-Control: private, must-revalidate');
+        // Ajout directives pour resoudre bug IE
+        //header('Cache-Control: Public, must-revalidate');
+        //header('Pragma: public');
+        if ($cachedelay) header('Cache-Control: max-age='.$cachedelay.', private, must-revalidate');
+        else header('Cache-Control: private, must-revalidate');
 
-		// Clean parameters
-		$outputfile=$conf->agenda->dir_temp.'/'.$filename;
-		$result=readfile($outputfile);
-		if (! $result) print 'File '.$outputfile.' was empty.';
+        // Clean parameters
+        $outputfile=$conf->agenda->dir_temp.'/'.$filename;
+        $result=readfile($outputfile);
+        if (! $result) print 'File '.$outputfile.' was empty.';
 
-	//	header("Location: ".DOL_URL_ROOT.'/document.php?modulepart=agenda&file='.urlencode($filename));
-		exit;
-	}
-	else
-	{
-		print 'Error '.$agenda->error;
+    //	header("Location: ".DOL_URL_ROOT.'/document.php?modulepart=agenda&file='.urlencode($filename));
+        exit;
+    } else {
+        print 'Error '.$agenda->error;
 
-		exit;
-	}
+        exit;
+    }
 }
-
 
 llxHeaderVierge();
 print '<div class="error">'.$agenda->error.'</div>';
 llxFooterVierge();
-?>

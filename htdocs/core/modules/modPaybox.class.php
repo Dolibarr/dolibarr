@@ -25,7 +25,6 @@
  */
 include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 
-
 /**
  * 	Description and activation class for module Paybox
  */
@@ -36,7 +35,7 @@ class modPayBox extends DolibarrModules
      *
      *   @param      DoliDB		$db      Database handler
      */
-    function __construct($db)
+    public function __construct($db)
     {
         $this->db = $db;
 
@@ -85,7 +84,6 @@ class modPayBox extends DolibarrModules
         // New pages on tabs
         $this->tabs = array();
 
-
         // Boxes
         $this->boxes = array();			// List of boxes
         $r=0;
@@ -96,7 +94,6 @@ class modPayBox extends DolibarrModules
         //$r++;
         //$this->boxes[$r][1] = "myboxb.php";
         //$r++;
-
 
         // Permissions
         $this->rights = array();		// Permission array used by this module
@@ -110,7 +107,6 @@ class modPayBox extends DolibarrModules
         // $this->rights[$r][4] = 'level1';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
         // $this->rights[$r][5] = 'level2';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
         // $r++;
-
 
         // Main menu entries
         $this->menus = array();			// List of menus to add
@@ -156,7 +152,6 @@ class modPayBox extends DolibarrModules
         //							'user'=>2);				// 0=Menu for internal users, 1=external users, 2=both
         // $r++;
 
-
         // Exports
         $r=1;
 
@@ -174,37 +169,34 @@ class modPayBox extends DolibarrModules
     }
 
     /**
-	 *		Function called when module is enabled.
-	 *		The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
-	 *		It also creates data directories
-	 *
+     *		Function called when module is enabled.
+     *		The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
+     *		It also creates data directories
+     *
      *      @param      string	$options    Options when enabling module ('', 'noboxes')
-	 *      @return     int             	1 if OK, 0 if KO
+     *      @return     int             	1 if OK, 0 if KO
      */
-    function init($options='')
+    public function init($options='')
     {
         $sql = array();
 
         //$result=$this->_load_tables('');
-
         return $this->_init($sql,$options);
     }
 
     /**
-	 *		Function called when module is disabled.
-	 *      Remove from database constants, boxes and permissions from Dolibarr database.
-	 *		Data directories are not deleted
-	 *
+     *		Function called when module is disabled.
+     *      Remove from database constants, boxes and permissions from Dolibarr database.
+     *		Data directories are not deleted
+     *
      *      @param      string	$options    Options when enabling module ('', 'noboxes')
-	 *      @return     int             	1 if OK, 0 if KO
+     *      @return     int             	1 if OK, 0 if KO
      */
-    function remove($options='')
+    public function remove($options='')
     {
-		$sql = array();
+        $sql = array();
 
-		return $this->_remove($sql,$options);
+        return $this->_remove($sql,$options);
     }
 
 }
-
-?>

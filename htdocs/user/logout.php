@@ -33,11 +33,9 @@ if (! defined('EVEN_IF_ONLY_LOGIN_ALLOWED'))  define('EVEN_IF_ONLY_LOGIN_ALLOWED
 require_once '../main.inc.php';
 
 // This can happen only with a bookmark or forged url call.
-if (!empty($_SESSION["dol_authmode"]) && ($_SESSION["dol_authmode"] == 'forceuser' || $_SESSION["dol_authmode"] == 'http'))
-{
+if (!empty($_SESSION["dol_authmode"]) && ($_SESSION["dol_authmode"] == 'forceuser' || $_SESSION["dol_authmode"] == 'http')) {
    die("Disconnection does not work when connection was made in mode ".$_SESSION["dol_authmode"]);
 }
-
 
 // Appel des triggers
 include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
@@ -51,9 +49,8 @@ $urlfrom=empty($_SESSION["urlfrom"])?'':$_SESSION["urlfrom"];
 
 // Destroy some cookies
 // TODO external module
-if (! empty($conf->phenix->enabled) && ! empty($conf->phenix->cookie))
-{
-	setcookie($conf->phenix->cookie, '', 1, "/");
+if (! empty($conf->phenix->enabled) && ! empty($conf->phenix->cookie)) {
+    setcookie($conf->phenix->cookie, '', 1, "/");
 }
 
 // Define url to go
@@ -82,4 +79,3 @@ unset($_SESSION['dol_entity']);
 
 if (GETPOST('noredirect')) return;
 header("Location: ".$url);		// Default behaviour is redirect to index.php page
-?>

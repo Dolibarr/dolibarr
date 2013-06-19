@@ -26,7 +26,6 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/boutique/osc_master.inc.php';
 
-
 /*
  * View
  */
@@ -40,11 +39,9 @@ if ($sortorder == "") {
   $sortorder="ASC";
 }
 
-
 if ($page == -1) { $page = 0 ; }
 $limit = $conf->liste_limit;
 $offset = $limit * $page ;
-
 
 print_barre_liste("Liste des produits oscommerce", $page, "osc-liste.php");
 
@@ -52,8 +49,7 @@ $sql = "SELECT p.products_id, p.products_model, p.products_quantity, p.products_
 $sql .= " FROM ".$conf->global->OSC_DB_NAME.".".$conf->global->OSC_DB_TABLE_PREFIX."products as p, ".$conf->global->OSC_DB_NAME.".".$conf->global->OSC_DB_TABLE_PREFIX."products_description as d, ".$conf->global->OSC_DB_NAME.".".$conf->global->OSC_DB_TABLE_PREFIX."manufacturers as m";
 $sql .= " WHERE p.products_id = d.products_id AND d.language_id =" . $conf->global->OSC_LANGUAGE_ID;
 $sql .= " AND p.manufacturers_id=m.manufacturers_id";
-if ($reqstock=='epuise')
-{
+if ($reqstock=='epuise') {
   $sql .= " AND p.products_quantity <= 0";
 }
 
@@ -71,14 +67,12 @@ print '<td align="center">Status</td>';
 print '</tr>'."\n";
 
 $resql=$dbosc->query($sql);
-if ($resql)
-{
+if ($resql) {
   $num = $dbosc->num_rows($resql);
   $i = 0;
 
   $var=True;
-  while ($i < $num)
-  {
+  while ($i < $num) {
     $objp = $dbosc->fetch_object($resql);
     $var=!$var;
     print "<TR $bc[$var]>";
@@ -92,16 +86,12 @@ if ($resql)
     $i++;
   }
   $dbosc->free();
-}
-else
-{
-	dol_print_error($dbosc);
+} else {
+    dol_print_error($dbosc);
 }
 
 print "</TABLE>";
 
-
 $dbosc->close();
 
 llxFooter();
-?>

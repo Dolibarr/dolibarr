@@ -23,7 +23,7 @@
  *		\brief      Page to list services in contracts
  */
 
-require ("../main.inc.php");
+require '../main.inc.php';
 require_once (DOL_DOCUMENT_ROOT."/contrat/class/contrat.class.php");
 require_once (DOL_DOCUMENT_ROOT."/product/class/product.class.php");
 require_once (DOL_DOCUMENT_ROOT."/societe/class/societe.class.php");
@@ -63,7 +63,6 @@ $filter_op2=GETPOST('filter_op2');
 $contratid = GETPOST('id','int');
 if (! empty($user->societe_id)) $socid=$user->societe_id;
 $result = restrictedArea($user, 'contrat',$contratid);
-
 
 $staticcontrat=new Contrat($db);
 $staticcontratligne=new ContratLigne($db);
@@ -115,163 +114,151 @@ $sql .= $db->plimit($limit + 1, $offset);
 //print $sql;
 dol_syslog("contrat/services.php sql=".$sql);
 $resql=$db->query($sql);
-if ($resql)
-{
-	$num = $db->num_rows($resql);
-	$i = 0;
+if ($resql) {
+    $num = $db->num_rows($resql);
+    $i = 0;
 
-	$param='';
-	if ($search_contract) $param.='&amp;search_contract='.urlencode($search_contract);
-	if ($search_nom)      $param.='&amp;search_nom='.urlencode($search_nom);
-	if ($search_service)  $param.='&amp;search_service='.urlencode($search_service);
-	if ($mode)            $param.='&amp;mode='.$mode;
-	if ($filter)          $param.='&amp;filter='.$filter;
-	if (! empty($filter_op1) && $filter_op1 != -1) $param.='&amp;filter_op1='.urlencode($filter_op1);
-	if (! empty($filter_op2) && $filter_op2 != -1) $param.='&amp;filter_op2='.urlencode($filter_op2);
-	if ($filter_date1 != '') $param.='&amp;op1day='.$op1day.'&amp;op1month='.$op1month.'&amp;op1year='.$op1year;
-	if ($filter_date2 != '') $param.='&amp;op2day='.$op2day.'&amp;op2month='.$op2month.'&amp;op2year='.$op2year;
+    $param='';
+    if ($search_contract) $param.='&amp;search_contract='.urlencode($search_contract);
+    if ($search_nom)      $param.='&amp;search_nom='.urlencode($search_nom);
+    if ($search_service)  $param.='&amp;search_service='.urlencode($search_service);
+    if ($mode)            $param.='&amp;mode='.$mode;
+    if ($filter)          $param.='&amp;filter='.$filter;
+    if (! empty($filter_op1) && $filter_op1 != -1) $param.='&amp;filter_op1='.urlencode($filter_op1);
+    if (! empty($filter_op2) && $filter_op2 != -1) $param.='&amp;filter_op2='.urlencode($filter_op2);
+    if ($filter_date1 != '') $param.='&amp;op1day='.$op1day.'&amp;op1month='.$op1month.'&amp;op1year='.$op1year;
+    if ($filter_date2 != '') $param.='&amp;op2day='.$op2day.'&amp;op2month='.$op2month.'&amp;op2year='.$op2year;
 
-	$title=$langs->trans("ListOfServices");
-	if ($mode == "0") $title=$langs->trans("ListOfInactiveServices");	// Must use == "0"
-	if ($mode == "4" && $filter != "expired") $title=$langs->trans("ListOfRunningServices");
-	if ($mode == "4" && $filter == "expired") $title=$langs->trans("ListOfExpiredServices");
-	if ($mode == "5") $title=$langs->trans("ListOfClosedServices");
-	print_barre_liste($title, $page, "services.php", $param, $sortfield, $sortorder,'',$num);
+    $title=$langs->trans("ListOfServices");
+    if ($mode == "0") $title=$langs->trans("ListOfInactiveServices");	// Must use == "0"
+    if ($mode == "4" && $filter != "expired") $title=$langs->trans("ListOfRunningServices");
+    if ($mode == "4" && $filter == "expired") $title=$langs->trans("ListOfExpiredServices");
+    if ($mode == "5") $title=$langs->trans("ListOfClosedServices");
+    print_barre_liste($title, $page, "services.php", $param, $sortfield, $sortorder,'',$num);
 
-	print '<table class="liste" width="100%">';
+    print '<table class="liste" width="100%">';
 
-	print '<tr class="liste_titre">';
-	print_liste_field_titre($langs->trans("Contract"),"services.php", "c.rowid",$param,"","",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Service"),"services.php", "p.description",$param,"","",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Company"),"services.php", "s.nom",$param,"","",$sortfield,$sortorder);
-	// Date debut
-	if ($mode == "0") print_liste_field_titre($langs->trans("DateStartPlannedShort"),"services.php", "cd.date_ouverture_prevue",$param,'',' align="center"',$sortfield,$sortorder);
-	if ($mode == "" || $mode > 0) print_liste_field_titre($langs->trans("DateStartRealShort"),"services.php", "cd.date_ouverture",$param,'',' align="center"',$sortfield,$sortorder);
-	// Date fin
-	if ($mode == "" || $mode < 5) print_liste_field_titre($langs->trans("DateEndPlannedShort"),"services.php", "cd.date_fin_validite",$param,'',' align="center"',$sortfield,$sortorder);
-	else print_liste_field_titre($langs->trans("DateEndRealShort"),"services.php", "cd.date_cloture",$param,'',' align="center"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Status"),"services.php", "cd.statut,c.statut",$param,"","align=\"right\"",$sortfield,$sortorder);
-	print "</tr>\n";
+    print '<tr class="liste_titre">';
+    print_liste_field_titre($langs->trans("Contract"),"services.php", "c.rowid",$param,"","",$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Service"),"services.php", "p.description",$param,"","",$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Company"),"services.php", "s.nom",$param,"","",$sortfield,$sortorder);
+    // Date debut
+    if ($mode == "0") print_liste_field_titre($langs->trans("DateStartPlannedShort"),"services.php", "cd.date_ouverture_prevue",$param,'',' align="center"',$sortfield,$sortorder);
+    if ($mode == "" || $mode > 0) print_liste_field_titre($langs->trans("DateStartRealShort"),"services.php", "cd.date_ouverture",$param,'',' align="center"',$sortfield,$sortorder);
+    // Date fin
+    if ($mode == "" || $mode < 5) print_liste_field_titre($langs->trans("DateEndPlannedShort"),"services.php", "cd.date_fin_validite",$param,'',' align="center"',$sortfield,$sortorder);
+    else print_liste_field_titre($langs->trans("DateEndRealShort"),"services.php", "cd.date_cloture",$param,'',' align="center"',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Status"),"services.php", "cd.statut,c.statut",$param,"","align=\"right\"",$sortfield,$sortorder);
+    print "</tr>\n";
 
-	print '<form method="POST" action="services.php">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<form method="POST" action="services.php">';
+    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
-	print '<tr class="liste_titre">';
-	print '<td class="liste_titre">';
-	print '<input type="hidden" name="filter" value="'.$filter.'">';
-	print '<input type="hidden" name="mode" value="'.$mode.'">';
-	print '<input type="text" class="flat" size="3" name="search_contract" value="'.dol_escape_htmltag($search_contract).'">';
-	print '</td>';
-	// Service label
-	print '<td class="liste_titre">';
-	print '<input type="text" class="flat" size="18" name="search_service" value="'.dol_escape_htmltag($search_service).'">';
-	print '</td>';
-	// Third party
-	print '<td class="liste_titre">';
-	print '<input type="text" class="flat" size="24" name="search_nom" value="'.dol_escape_htmltag($search_nom).'">';
-	print '</td>';
-	print '<td class="liste_titre" align="center">';
-	$arrayofoperators=array('<'=>'<','>'=>'>');
-	print $form->selectarray('filter_op1',$arrayofoperators,$filter_op1,1);
-	print ' ';
-	$filter_date1=dol_mktime(0,0,0,$op1month,$op1day,$op1year);
-	print $form->select_date($filter_date1,'op1',0,0,1);
-	print '</td>';
-	print '<td class="liste_titre" align="center">';
-	$arrayofoperators=array('<'=>'<','>'=>'>');
-	print $form->selectarray('filter_op2',$arrayofoperators,$filter_op2,1);
-	print ' ';
-	$filter_date2=dol_mktime(0,0,0,$op2month,$op2day,$op2year);
-	print $form->select_date($filter_date2,'op2',0,0,1);
-	print '</td>';
-	print '<td class="liste_titre" align="right"><input class="liste_titre" type="image" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
-	print "</td>";
-	print "</tr>\n";
-	print '</form>';
+    print '<tr class="liste_titre">';
+    print '<td class="liste_titre">';
+    print '<input type="hidden" name="filter" value="'.$filter.'">';
+    print '<input type="hidden" name="mode" value="'.$mode.'">';
+    print '<input type="text" class="flat" size="3" name="search_contract" value="'.dol_escape_htmltag($search_contract).'">';
+    print '</td>';
+    // Service label
+    print '<td class="liste_titre">';
+    print '<input type="text" class="flat" size="18" name="search_service" value="'.dol_escape_htmltag($search_service).'">';
+    print '</td>';
+    // Third party
+    print '<td class="liste_titre">';
+    print '<input type="text" class="flat" size="24" name="search_nom" value="'.dol_escape_htmltag($search_nom).'">';
+    print '</td>';
+    print '<td class="liste_titre" align="center">';
+    $arrayofoperators=array('<'=>'<','>'=>'>');
+    print $form->selectarray('filter_op1',$arrayofoperators,$filter_op1,1);
+    print ' ';
+    $filter_date1=dol_mktime(0,0,0,$op1month,$op1day,$op1year);
+    print $form->select_date($filter_date1,'op1',0,0,1);
+    print '</td>';
+    print '<td class="liste_titre" align="center">';
+    $arrayofoperators=array('<'=>'<','>'=>'>');
+    print $form->selectarray('filter_op2',$arrayofoperators,$filter_op2,1);
+    print ' ';
+    $filter_date2=dol_mktime(0,0,0,$op2month,$op2day,$op2year);
+    print $form->select_date($filter_date2,'op2',0,0,1);
+    print '</td>';
+    print '<td class="liste_titre" align="right"><input class="liste_titre" type="image" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+    print "</td>";
+    print "</tr>\n";
+    print '</form>';
 
-	$contractstatic=new Contrat($db);
-	$productstatic=new Product($db);
+    $contractstatic=new Contrat($db);
+    $productstatic=new Product($db);
 
-	$var=True;
-	while ($i < min($num,$limit))
-	{
-		$obj = $db->fetch_object($resql);
-		$var=!$var;
-		print "<tr ".$bc[$var].">";
-		print '<td>';
-		$contractstatic->id=$obj->cid;
-		$contractstatic->ref=$obj->ref?$obj->ref:$obj->cid;
-		print $contractstatic->getNomUrl(1,16);
-		print '</td>';
+    $var=True;
+    while ($i < min($num,$limit)) {
+        $obj = $db->fetch_object($resql);
+        $var=!$var;
+        print "<tr ".$bc[$var].">";
+        print '<td>';
+        $contractstatic->id=$obj->cid;
+        $contractstatic->ref=$obj->ref?$obj->ref:$obj->cid;
+        print $contractstatic->getNomUrl(1,16);
+        print '</td>';
 
-		// Service
-		print '<td>';
-		if ($obj->pid)
-		{
-			$productstatic->id=$obj->pid;
-			$productstatic->type=$obj->ptype;
-			$productstatic->ref=$obj->pref;
-			print $productstatic->getNomUrl(1,'',20);
+        // Service
+        print '<td>';
+        if ($obj->pid) {
+            $productstatic->id=$obj->pid;
+            $productstatic->type=$obj->ptype;
+            $productstatic->ref=$obj->pref;
+            print $productstatic->getNomUrl(1,'',20);
             print $obj->label?' - '.dol_trunc($obj->label,16):'';
             if (! empty($obj->description) && ! empty($conf->global->PRODUCT_DESC_IN_LIST)) print '<br>'.dol_nl2br($obj->description);
-		}
-		else
-		{
-			if ($obj->type == 0) print img_object($obj->description,'product').dol_trunc($obj->description,20);
-			if ($obj->type == 1) print img_object($obj->description,'service').dol_trunc($obj->description,20);
-		}
-		print '</td>';
+        } else {
+            if ($obj->type == 0) print img_object($obj->description,'product').dol_trunc($obj->description,20);
+            if ($obj->type == 1) print img_object($obj->description,'service').dol_trunc($obj->description,20);
+        }
+        print '</td>';
 
-		// Third party
-		print '<td>';
-		$companystatic->id=$obj->socid;
-		$companystatic->nom=$obj->nom;
-		$companystatic->client=1;
-		print $companystatic->getNomUrl(1,'customer',28);
-		print '</td>';
+        // Third party
+        print '<td>';
+        $companystatic->id=$obj->socid;
+        $companystatic->nom=$obj->nom;
+        $companystatic->client=1;
+        print $companystatic->getNomUrl(1,'customer',28);
+        print '</td>';
 
-		// Start date
-		if ($mode == "0") {
-			print '<td align="center">';
-			print ($obj->date_ouverture_prevue?dol_print_date($db->jdate($obj->date_ouverture_prevue)):'&nbsp;');
-			if ($db->jdate($obj->date_ouverture_prevue) && ($db->jdate($obj->date_ouverture_prevue) < ($now - $conf->contrat->services->inactifs->warning_delay)))
-			print img_picto($langs->trans("Late"),"warning");
-			else print '&nbsp;&nbsp;&nbsp;&nbsp;';
-			print '</td>';
-		}
-		if ($mode == "" || $mode > 0) print '<td align="center">'.($obj->date_ouverture?dol_print_date($db->jdate($obj->date_ouverture)):'&nbsp;').'</td>';
-		// Date fin
-		if ($mode == "" || $mode < 5) print '<td align="center">'.($obj->date_fin_validite?dol_print_date($db->jdate($obj->date_fin_validite)):'&nbsp;');
-		else print '<td align="center">'.dol_print_date($db->jdate($obj->date_cloture));
-		// Icone warning
-		if ($obj->date_fin_validite && $db->jdate($obj->date_fin_validite) < ($now - $conf->contrat->services->expires->warning_delay) && $obj->statut < 5) print img_warning($langs->trans("Late"));
-		else print '&nbsp;&nbsp;&nbsp;&nbsp;';
-		print '</td>';
-		print '<td align="right" class="nowrap">';
-		if ($obj->cstatut == 0)	// If contract is draft, we say line is also draft
-		{
-			print $contractstatic->LibStatut(0,5,($obj->date_fin_validite && $db->jdate($obj->date_fin_validite) < $now));
-		}
-		else
-		{
-			print $staticcontratligne->LibStatut($obj->statut,5,($obj->date_fin_validite && $db->jdate($obj->date_fin_validite) < $now)?1:0);
-		}
-		print '</td>';
-		print "</tr>\n";
-		$i++;
-	}
-	$db->free($resql);
+        // Start date
+        if ($mode == "0") {
+            print '<td align="center">';
+            print ($obj->date_ouverture_prevue?dol_print_date($db->jdate($obj->date_ouverture_prevue)):'&nbsp;');
+            if ($db->jdate($obj->date_ouverture_prevue) && ($db->jdate($obj->date_ouverture_prevue) < ($now - $conf->contrat->services->inactifs->warning_delay)))
+            print img_picto($langs->trans("Late"),"warning");
+            else print '&nbsp;&nbsp;&nbsp;&nbsp;';
+            print '</td>';
+        }
+        if ($mode == "" || $mode > 0) print '<td align="center">'.($obj->date_ouverture?dol_print_date($db->jdate($obj->date_ouverture)):'&nbsp;').'</td>';
+        // Date fin
+        if ($mode == "" || $mode < 5) print '<td align="center">'.($obj->date_fin_validite?dol_print_date($db->jdate($obj->date_fin_validite)):'&nbsp;');
+        else print '<td align="center">'.dol_print_date($db->jdate($obj->date_cloture));
+        // Icone warning
+        if ($obj->date_fin_validite && $db->jdate($obj->date_fin_validite) < ($now - $conf->contrat->services->expires->warning_delay) && $obj->statut < 5) print img_warning($langs->trans("Late"));
+        else print '&nbsp;&nbsp;&nbsp;&nbsp;';
+        print '</td>';
+        print '<td align="right" class="nowrap">';
+        if ($obj->cstatut == 0) {	// If contract is draft, we say line is also draft
+            print $contractstatic->LibStatut(0,5,($obj->date_fin_validite && $db->jdate($obj->date_fin_validite) < $now));
+        } else {
+            print $staticcontratligne->LibStatut($obj->statut,5,($obj->date_fin_validite && $db->jdate($obj->date_fin_validite) < $now)?1:0);
+        }
+        print '</td>';
+        print "</tr>\n";
+        $i++;
+    }
+    $db->free($resql);
 
-	print "</table>";
+    print "</table>";
 
+} else {
+    dol_print_error($db);
 }
-else
-{
-	dol_print_error($db);
-}
-
 
 $db->close();
 
 llxFooter();
-?>

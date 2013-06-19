@@ -34,19 +34,15 @@ $action=GETPOST('action');
 
 $hookmanager->initHooks(array('index'));
 
-
 /*
  * Actions
  */
 
 // Check if company name is defined (first install)
-if (!isset($conf->global->MAIN_INFO_SOCIETE_NOM) || empty($conf->global->MAIN_INFO_SOCIETE_NOM))
-{
+if (!isset($conf->global->MAIN_INFO_SOCIETE_NOM) || empty($conf->global->MAIN_INFO_SOCIETE_NOM)) {
     header("Location: ".DOL_URL_ROOT."/admin/index.php?mainmenu=home&leftmenu=setup&mesg=setupnotcomplete");
     exit;
 }
-
-
 
 /*
  * View
@@ -56,11 +52,9 @@ llxHeader('',$langs->trans("HomeArea"));
 
 print_fiche_titre($langs->trans("HomeArea"));
 
-if (! empty($conf->global->MAIN_MOTD))
-{
+if (! empty($conf->global->MAIN_MOTD)) {
     $conf->global->MAIN_MOTD=preg_replace('/<br(\s[\sa-zA-Z_="]*)?\/?>/i','<br>',$conf->global->MAIN_MOTD);
-    if (! empty($conf->global->MAIN_MOTD))
-    {
+    if (! empty($conf->global->MAIN_MOTD)) {
         print "\n<!-- Start of welcome text -->\n";
         print '<table width="100%" class="notopnoleftnoright"><tr><td>';
         print dol_htmlentitiesbr($conf->global->MAIN_MOTD);
@@ -69,9 +63,7 @@ if (! empty($conf->global->MAIN_MOTD))
     }
 }
 
-
 print '<div class="fichecenter"><div class="fichethirdleft">';
-
 
 /*
  * Informations area
@@ -89,7 +81,6 @@ print '</td>';
 print "</tr>\n";
 print "</table>\n";
 
-
 /*
  * Dashboard Dolibarr states (statistics)
  * Hidden for external users
@@ -99,8 +90,7 @@ $langs->load("bills");
 $langs->load("orders");
 
 //print memory_get_usage();
-if ($user->societe_id == 0)
-{
+if ($user->societe_id == 0) {
     print '<br>';
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre">';
@@ -140,9 +130,9 @@ if ($user->societe_id == 0)
                    'Adherent',
                    'Product',
                    'Service',
-				   'Propal',
-				   'Commande',
-				   'Facture',
+                   'Propal',
+                   'Commande',
+                   'Facture',
                    'Contrat');
     // Cle array returned by the method load_state_board for each line
     $keys=array('customers',
@@ -151,10 +141,10 @@ if ($user->societe_id == 0)
                 'members',
                 'products',
                 'services',
-				'proposals',
-				'orders',
-				'invoices',
-				'Contracts');
+                'proposals',
+                'orders',
+                'invoices',
+                'Contracts');
     // Dashboard Icon lines
     $icons=array('company',
                  'company',
@@ -162,10 +152,10 @@ if ($user->societe_id == 0)
                  'user',
                  'product',
                  'service',
-				 'propal',
-				 'order',
-				 'bill',
-				 'order');
+                 'propal',
+                 'order',
+                 'bill',
+                 'order');
     // Translation keyword
     $titres=array("ThirdPartyCustomersStats",
                   "ThirdPartyProspectsStats",
@@ -198,25 +188,20 @@ if ($user->societe_id == 0)
                     "propal",
                     "orders",
                     "bills",
-					"contracts");
-
+                    "contracts");
 
     // Loop and displays each line of table
-    foreach ($keys as $key=>$val)
-    {
-        if ($conditions[$key])
-        {
+    foreach ($keys as $key=>$val) {
+        if ($conditions[$key]) {
             $classe=$classes[$key];
             // Search in cache if load_state_board is already realized
-            if (! isset($boardloaded[$classe]) || ! is_object($boardloaded[$classe]))
-            {
-            	include_once $includes[$key];	// Loading a class cost around 1Mb
+            if (! isset($boardloaded[$classe]) || ! is_object($boardloaded[$classe])) {
+                include_once $includes[$key];	// Loading a class cost around 1Mb
 
                 $board=new $classe($db);
                 $board->load_state_board($user);
                 $boardloaded[$classe]=$board;
-            }
-            else $board=$boardloaded[$classe];
+            } else $board=$boardloaded[$classe];
 
             $var=!$var;
             if ($langfile[$key]) $langs->load($langfile[$key]);
@@ -238,7 +223,6 @@ if ($user->societe_id == 0)
 
 print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
-
 /*
  * Dolibarr Working Board with weather
  */
@@ -256,14 +240,12 @@ print '<th class="liste_titre"width="20">&nbsp;</th>';
 if ($showweather) print '<th class="liste_titre hideonsmartphone" width="80">&nbsp;</th>';
 print '</tr>';
 
-
 //
 // Do not include sections without management permission
 //
 
 // Number of actions to do (late)
-if (! empty($conf->agenda->enabled) && $user->rights->agenda->myactions->read)
-{
+if (! empty($conf->agenda->enabled) && $user->rights->agenda->myactions->read) {
     include_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
     $board=new ActionComm($db);
     $board->load_board($user);
@@ -276,8 +258,7 @@ if (! empty($conf->agenda->enabled) && $user->rights->agenda->myactions->read)
 }
 
 // Number of customer orders a deal
-if (! empty($conf->commande->enabled) && $user->rights->commande->lire)
-{
+if (! empty($conf->commande->enabled) && $user->rights->commande->lire) {
     include_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
     $board=new Commande($db);
     $board->load_board($user);
@@ -290,8 +271,7 @@ if (! empty($conf->commande->enabled) && $user->rights->commande->lire)
 }
 
 // Number of suppliers orders a deal
-if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->commande->lire)
-{
+if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->commande->lire) {
     include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
     $board=new CommandeFournisseur($db);
     $board->load_board($user);
@@ -304,8 +284,7 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->commande
 }
 
 // Number of commercial proposals opened (expired)
-if (! empty($conf->propal->enabled) && $user->rights->propale->lire)
-{
+if (! empty($conf->propal->enabled) && $user->rights->propale->lire) {
     $langs->load("propal");
 
     include_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
@@ -320,8 +299,7 @@ if (! empty($conf->propal->enabled) && $user->rights->propale->lire)
 }
 
 // Number of commercial proposals CLOSED signed (billed)
-if (! empty($conf->propal->enabled) && $user->rights->propale->lire)
-{
+if (! empty($conf->propal->enabled) && $user->rights->propale->lire) {
     $langs->load("propal");
 
     include_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
@@ -336,8 +314,7 @@ if (! empty($conf->propal->enabled) && $user->rights->propale->lire)
 }
 
 // Number of services enabled (delayed)
-if (! empty($conf->contrat->enabled) && $user->rights->contrat->lire)
-{
+if (! empty($conf->contrat->enabled) && $user->rights->contrat->lire) {
     $langs->load("contracts");
 
     include_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
@@ -352,8 +329,7 @@ if (! empty($conf->contrat->enabled) && $user->rights->contrat->lire)
 }
 
 // Number of active services (expired)
-if (! empty($conf->contrat->enabled) && $user->rights->contrat->lire)
-{
+if (! empty($conf->contrat->enabled) && $user->rights->contrat->lire) {
     $langs->load("contracts");
 
     include_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
@@ -367,8 +343,7 @@ if (! empty($conf->contrat->enabled) && $user->rights->contrat->lire)
     $dashboardlines[]=$board;
 }
 // Number of invoices customers (has paid)
-if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
-{
+if (! empty($conf->facture->enabled) && $user->rights->facture->lire) {
     $langs->load("bills");
 
     include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
@@ -383,8 +358,7 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 }
 
 // Number of supplier invoices (has paid)
-if (! empty($conf->fournisseur->enabled) && ! empty($conf->facture->enabled) && $user->rights->facture->lire)
-{
+if (! empty($conf->fournisseur->enabled) && ! empty($conf->facture->enabled) && $user->rights->facture->lire) {
     $langs->load("bills");
 
     include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
@@ -399,15 +373,13 @@ if (! empty($conf->fournisseur->enabled) && ! empty($conf->facture->enabled) && 
 }
 
 // Number of transactions to conciliate
-if (! empty($conf->banque->enabled) && $user->rights->banque->lire && ! $user->societe_id)
-{
+if (! empty($conf->banque->enabled) && $user->rights->banque->lire && ! $user->societe_id) {
     $langs->load("banks");
 
     include_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
     $board=new Account($db);
     $found=$board->load_board($user);
-    if ($found > 0)
-    {
+    if ($found > 0) {
         $board->warning_delay=$conf->bank->rappro->warning_delay/60/60/24;
         $board->label=$langs->trans("TransactionsToConciliate");
         $board->url=DOL_URL_ROOT.'/compta/bank/index.php?leftmenu=bank&mainmenu=bank';
@@ -418,8 +390,7 @@ if (! empty($conf->banque->enabled) && $user->rights->banque->lire && ! $user->s
 }
 
 // Number of cheque to send
-if (! empty($conf->banque->enabled) && $user->rights->banque->lire && ! $user->societe_id)
-{
+if (! empty($conf->banque->enabled) && $user->rights->banque->lire && ! $user->societe_id) {
     $langs->load("banks");
 
     include_once DOL_DOCUMENT_ROOT.'/compta/paiement/cheque/class/remisecheque.class.php';
@@ -434,8 +405,7 @@ if (! empty($conf->banque->enabled) && $user->rights->banque->lire && ! $user->s
 }
 
 // Number of foundation members
-if (! empty($conf->adherent->enabled) && $user->rights->adherent->lire && ! $user->societe_id)
-{
+if (! empty($conf->adherent->enabled) && $user->rights->adherent->lire && ! $user->societe_id) {
     $langs->load("members");
 
     include_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
@@ -451,15 +421,13 @@ if (! empty($conf->adherent->enabled) && $user->rights->adherent->lire && ! $use
 
 // Calculate total nb of late
 $totallate=0;
-foreach($dashboardlines as $key => $board)
-{
+foreach ($dashboardlines as $key => $board) {
     if ($board->nbtodolate > 0) $totallate+=$board->nbtodolate;
 }
 
 // Show dashboard
 $var=true;
-foreach($dashboardlines as $key => $board)
-{
+foreach ($dashboardlines as $key => $board) {
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="16">'.$board->img.'</td><td>'.$board->label.'</td>';
     print '<td align="right"><a href="'.$board->url.'">'.$board->nbtodo.'</a></td>';
@@ -474,8 +442,7 @@ foreach($dashboardlines as $key => $board)
     print '<td class="nowrap" align="right">';
     print ' (>'.ceil($board->warning_delay).' '.$langs->trans("days").')';
     print '</td>';
-    if ($showweather)
-    {
+    if ($showweather) {
         print '<td class="nohover hideonsmartphone" rowspan="'.$rowspan.'" width="80" style="border-left: 1px solid #DDDDDD" align="center">';
         $text='';
         if ($totallate > 0) $text=$langs->transnoentitiesnoconv("WarningYouHaveAtLeastOneTaskLate").' ('.$langs->transnoentitiesnoconv("NActionsLate",$totallate).')';
@@ -492,20 +459,15 @@ foreach($dashboardlines as $key => $board)
     print "\n";
 }
 
-
 print '</table>';   // End table array
 
-
 print '</div></div></div><div class="fichecenter"><br>';
-
-
 
 /*
  * Show boxes
  */
 
 FormOther::printBoxesArea($user,"0");
-
 
 print '</div>';
 
@@ -514,30 +476,26 @@ print '</div>';
  */
 
 // Security warning repertoire install existe (si utilisateur admin)
-if ($user->admin && empty($conf->global->MAIN_REMOVE_INSTALL_WARNING))
-{
+if ($user->admin && empty($conf->global->MAIN_REMOVE_INSTALL_WARNING)) {
     $message='';
 
     // Check if install lock file is present
     $lockfile=DOL_DATA_ROOT.'/install.lock';
-    if (! empty($lockfile) && ! file_exists($lockfile) && is_dir(DOL_DOCUMENT_ROOT."/install"))
-    {
+    if (! empty($lockfile) && ! file_exists($lockfile) && is_dir(DOL_DOCUMENT_ROOT."/install")) {
         $langs->load("errors");
         //if (! empty($message)) $message.='<br>';
         $message.=info_admin($langs->trans("WarningLockFileDoesNotExists",DOL_DATA_ROOT).' '.$langs->trans("WarningUntilDirRemoved",DOL_DOCUMENT_ROOT."/install"));
     }
 
     // Conf files must be in read only mode
-    if (is_writable($conffile))
-    {
+    if (is_writable($conffile)) {
         $langs->load("errors");
         //$langs->load("other");
         //if (! empty($message)) $message.='<br>';
         $message.=info_admin($langs->transnoentities("WarningConfFileMustBeReadOnly").' '.$langs->trans("WarningUntilDirRemoved",DOL_DOCUMENT_ROOT."/install"));
     }
 
-    if ($message)
-    {
+    if ($message) {
         print $message;
         //$message.='<br>';
         //print info_admin($langs->trans("WarningUntilDirRemoved",DOL_DOCUMENT_ROOT."/install"));
@@ -549,7 +507,6 @@ if ($user->admin && empty($conf->global->MAIN_REMOVE_INSTALL_WARNING))
 llxFooter();
 
 $db->close();
-
 
 /**
  *  Show weather logo. Logo to show depends on $totallate and values for
@@ -582,4 +539,3 @@ function showWeather($totallate,$text,$options)
     if ($totallate > $level3) $out.=img_picto_common($text,'weather/weather-storm.png',$options);
     return $out;
 }
-?>

@@ -16,28 +16,26 @@
 include_once DOL_DOCUMENT_ROOT.'/core/modules/mailings/modules_mailings.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
-
 /**
  *	Class to offer a selector of emailing targets with Rule 'services expired'.
  */
 class mailing_thirdparties_services_expired extends MailingTargets
 {
-    var $name='DolibarrContractsLinesExpired';
-    var $desc='Third parties with expired contract\'s lines';
-    var $require_admin=0;
+    public $name='DolibarrContractsLinesExpired';
+    public $desc='Third parties with expired contract\'s lines';
+    public $require_admin=0;
 
-    var $require_module=array('contrat');
-    var $picto='company';
-    var $db;
-    var $arrayofproducts=array();
-
+    public $require_module=array('contrat');
+    public $picto='company';
+    public $db;
+    public $arrayofproducts=array();
 
     /**
      *	Constructor
      *
      *  @param		DoliDB		$db      Database handler
      */
-    function __construct($db)
+    public function __construct($db)
     {
         $this->db=$db;
 
@@ -49,26 +47,21 @@ class mailing_thirdparties_services_expired extends MailingTargets
         $sql.= " AND fk_product_type = 1";
         $sql.= " ORDER BY ref";
         $result=$this->db->query($sql);
-        if ($result)
-        {
+        if ($result) {
             $num = $this->db->num_rows($result);
             dol_syslog("dolibarr_services_expired.modules.php:mailing_dolibarr_services_expired ".$num." services found");
 
             $i = 0;
-            while ($i < $num)
-            {
+            while ($i < $num) {
                 $obj = $this->db->fetch_object($result);
                 $i++;
                 $this->arrayofproducts[$i]=$obj->ref;
             }
 
-        }
-        else
-        {
+        } else {
             dol_print_error($this->db);
         }
     }
-
 
     /**
      *  This is the main function that returns the array of emails
@@ -77,7 +70,7 @@ class mailing_thirdparties_services_expired extends MailingTargets
      *  @param  array	$filtersarray   If you used the formFilter function. Empty otherwise.
      *  @return int           			<0 if error, number of emails added if ok
      */
-    function add_to_target($mailing_id,$filtersarray=array())
+    public function add_to_target($mailing_id,$filtersarray=array())
     {
         $target = array();
 
@@ -87,8 +80,7 @@ class mailing_thirdparties_services_expired extends MailingTargets
         $j = 0;
 
         $product='';
-        foreach($filtersarray as $key)
-        {
+        foreach ($filtersarray as $key) {
             if ($key == '0') return "Error: You must choose a filter";
             $product=$this->arrayofproducts[$key];
         }
@@ -107,30 +99,27 @@ class mailing_thirdparties_services_expired extends MailingTargets
 
         // Stocke destinataires dans cibles
         $result=$this->db->query($sql);
-        if ($result)
-        {
+        if ($result) {
             $num = $this->db->num_rows($result);
             $i = 0;
 
             dol_syslog(get_class($this)."::add_to_target ".$num." targets found");
 
             $old = '';
-            while ($i < $num)
-            {
+            while ($i < $num) {
                 $obj = $this->db->fetch_object($result);
-                if ($old <> $obj->email)
-                {
+                if ($old <> $obj->email) {
                     $cibles[$j] = array(
-					'email' => $obj->email,
-					'lastname' => $obj->lastname,
-					'other' =>
+                    'email' => $obj->email,
+                    'lastname' => $obj->lastname,
+                    'other' =>
                     ('StartDate='.dol_print_date($this->db->jdate($obj->date_ouverture),'day')).';'.
                     ('EndDate='.dol_print_date($this->db->jdate($obj->date_fin_validite),'day')).';'.
                     ('Contract='.$obj->fk_contrat).';'.
                     ('ContactLine='.$obj->cdid),
-					'source_url' => $this->url($obj->id),
-					'source_id' => $obj->id,
-					'source_type' => 'thirdparty'
+                    'source_url' => $this->url($obj->id),
+                    'source_id' => $obj->id,
+                    'source_type' => 'thirdparty'
                     );
                     $old = $obj->email;
                     $j++;
@@ -138,19 +127,16 @@ class mailing_thirdparties_services_expired extends MailingTargets
 
                 $i++;
             }
-        }
-        else
-        {
+        } else {
             dol_syslog($this->db->error());
             $this->error=$this->db->error();
+
             return -1;
         }
 
         // ----- Your code end here -----
-
         return parent::add_to_target($mailing_id, $cibles);
     }
-
 
     /**
      *	On the main mailing area, there is a box with statistics.
@@ -160,15 +146,13 @@ class mailing_thirdparties_services_expired extends MailingTargets
      *
      *	@return		array		Array with SQL requests
      */
-    function getSqlArrayForStats()
+    public function getSqlArrayForStats()
     {
 
         //var $statssql=array();
         //$this->statssql[0]="SELECT field1 as label, count(distinct(email)) as nb FROM mytable WHERE email IS NOT NULL";
-
         return array();
     }
-
 
     /**
      *	Return here number of distinct emails returned by your selector.
@@ -178,7 +162,7 @@ class mailing_thirdparties_services_expired extends MailingTargets
      *	@param	string	$sql		SQL request to use to count
      *	@return	int					Number of recipients
      */
-    function getNbOfRecipients($sql='')
+    public function getNbOfRecipients($sql='')
     {
         $now=dol_now();
 
@@ -204,7 +188,7 @@ class mailing_thirdparties_services_expired extends MailingTargets
      *
      *  @return     string      A html select zone
      */
-    function formFilter()
+    public function formFilter()
     {
         global $langs;
 
@@ -212,14 +196,13 @@ class mailing_thirdparties_services_expired extends MailingTargets
         $s.='<select name="filter" class="flat">';
         if (count($this->arrayofproducts)) $s.='<option value="0">&nbsp;</option>';
         else $s.='<option value="0">'.$langs->trans("ContactsAllShort").'</option>';
-        foreach($this->arrayofproducts as $key => $val)
-        {
+        foreach ($this->arrayofproducts as $key => $val) {
             $s.='<option value="'.$key.'">'.$val.'</option>';
         }
         $s.='</select>';
+
         return $s;
     }
-
 
     /**
      *  Can include an URL link on each record provided by selector	shown on target page.
@@ -227,7 +210,7 @@ class mailing_thirdparties_services_expired extends MailingTargets
      *  @param	int		$id		ID
      *  @return string      	Url link
      */
-    function url($id)
+    public function url($id)
     {
         //$companystatic=new Societe($this->db);
         //$companystatic->id=$id;
@@ -237,5 +220,3 @@ class mailing_thirdparties_services_expired extends MailingTargets
     }
 
 }
-
-?>

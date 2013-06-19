@@ -33,7 +33,6 @@ require '../main.inc.php';
 
 $country=GETPOST('pays', 'alpha');
 
-
 /*
  * View
  */
@@ -50,30 +49,25 @@ print '<!-- Ajax page called with url '.$_SERVER["PHP_SELF"].'?'.$_SERVER["QUERY
 dol_syslog(join(',',$_POST));
 
 // Generation liste des pays
-if (! empty($country))
-{
-	global $langs;
-	$langs->load("dict");
+if (! empty($country)) {
+    global $langs;
+    $langs->load("dict");
 
-	$sql = "SELECT rowid, code, libelle, active";
-	$sql.= " FROM ".MAIN_DB_PREFIX."c_pays";
-	$sql.= " WHERE active = 1 AND libelle LIKE '%" . $db->escape(utf8_decode($country)) . "%'";
-	$sql.= " ORDER BY libelle ASC";
+    $sql = "SELECT rowid, code, libelle, active";
+    $sql.= " FROM ".MAIN_DB_PREFIX."c_pays";
+    $sql.= " WHERE active = 1 AND libelle LIKE '%" . $db->escape(utf8_decode($country)) . "%'";
+    $sql.= " ORDER BY libelle ASC";
 
-	$resql=$db->query($sql);
-	if ($resql)
-	{
-		print '<ul>';
-		while($country = $db->fetch_object($resql))
-		{
-			print '<li>';
-			// Si traduction existe, on l'utilise, sinon on prend le libellé par défaut
-			print ($country->code && $langs->trans("Country".$country->code)!="Country".$country->code?$langs->trans("Country".$country->code):($country->libelle!='-'?$country->libelle:'&nbsp;'));
-			print '<span class="informal" style="display:none">'.$country->rowid.'-idcache</span>';
-			print '</li>';
-		}
-		print '</ul>';
-	}
+    $resql=$db->query($sql);
+    if ($resql) {
+        print '<ul>';
+        while ($country = $db->fetch_object($resql)) {
+            print '<li>';
+            // Si traduction existe, on l'utilise, sinon on prend le libellé par défaut
+            print ($country->code && $langs->trans("Country".$country->code)!="Country".$country->code?$langs->trans("Country".$country->code):($country->libelle!='-'?$country->libelle:'&nbsp;'));
+            print '<span class="informal" style="display:none">'.$country->rowid.'-idcache</span>';
+            print '</li>';
+        }
+        print '</ul>';
+    }
 }
-
-?>

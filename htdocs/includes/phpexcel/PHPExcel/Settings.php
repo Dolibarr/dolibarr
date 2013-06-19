@@ -27,67 +27,67 @@
 
 /** PHPExcel root directory */
 if (!defined('PHPEXCEL_ROOT')) {
-	/**
-	 * @ignore
-	 */
-	define('PHPEXCEL_ROOT', dirname(__FILE__) . '/../');
-	require(PHPEXCEL_ROOT . 'PHPExcel/Autoloader.php');
+    /**
+     * @ignore
+     */
+    define('PHPEXCEL_ROOT', dirname(__FILE__) . '/../');
+    require(PHPEXCEL_ROOT . 'PHPExcel/Autoloader.php');
 }
-
 
 class PHPExcel_Settings
 {
-	/**	constants */
-	const PCLZIP		= 'PHPExcel_Shared_ZipArchive';
-	const ZIPARCHIVE	= 'ZipArchive';
+    /**	constants */
+    const PCLZIP		= 'PHPExcel_Shared_ZipArchive';
+    const ZIPARCHIVE	= 'ZipArchive';
 
+    private static $_zipClass	= self::ZIPARCHIVE;
 
-	private static $_zipClass	= self::ZIPARCHIVE;
+    /**
+     * Set the Zip Class to use (PCLZip or ZipArchive)
+     *
+     * @param  string  $zipClass PHPExcel_Settings::PCLZip or PHPExcel_Settings::ZipArchive
+     * @return boolean Success or failure
+     */
+    public static function setZipClass($zipClass)
+    {
+        if (($zipClass == self::PCLZIP) ||
+            ($zipClass == self::ZIPARCHIVE)) {
+            self::$_zipClass = $zipClass;
 
+            return True;
+        }
 
-	/**
-	 * Set the Zip Class to use (PCLZip or ZipArchive)
-	 *
-	 * @param	 string	$zipClass			PHPExcel_Settings::PCLZip or PHPExcel_Settings::ZipArchive
-	 * @return	 boolean					Success or failure
-	 */
-	public static function setZipClass($zipClass) {
-		if (($zipClass == self::PCLZIP) ||
-			($zipClass == self::ZIPARCHIVE)) {
-			self::$_zipClass = $zipClass;
-			return True;
-		}
-		return False;
-	}	//	function setZipClass()
+        return False;
+    }	//	function setZipClass()
 
+    /**
+     * Return the Zip Class to use (PCLZip or ZipArchive)
+     *
+     * @return string Zip Class to use	- PHPExcel_Settings::PCLZip or PHPExcel_Settings::ZipArchive
+     */
+    public static function getZipClass()
+    {
+        return self::$_zipClass;
+    }	//	function getZipClass()
 
-	/**
-	 * Return the Zip Class to use (PCLZip or ZipArchive)
-	 *
-	 * @return	 string						Zip Class to use	- PHPExcel_Settings::PCLZip or PHPExcel_Settings::ZipArchive
-	 */
-	public static function getZipClass() {
-		return self::$_zipClass;
-	}	//	function getZipClass()
+    public static function getCacheStorageMethod()
+    {
+        return PHPExcel_CachedObjectStorageFactory::$_cacheStorageMethod;
+    }	//	function getCacheStorageMethod()
 
+    public static function getCacheStorageClass()
+    {
+        return PHPExcel_CachedObjectStorageFactory::$_cacheStorageClass;
+    }	//	function getCacheStorageClass()
 
-	public static function getCacheStorageMethod() {
-		return PHPExcel_CachedObjectStorageFactory::$_cacheStorageMethod;
-	}	//	function getCacheStorageMethod()
+    public static function setCacheStorageMethod($method = PHPExcel_CachedObjectStorageFactory::cache_in_memory, $arguments = array())
+    {
+        return PHPExcel_CachedObjectStorageFactory::initialize($method,$arguments);
+    }	//	function setCacheStorageMethod()
 
-
-	public static function getCacheStorageClass() {
-		return PHPExcel_CachedObjectStorageFactory::$_cacheStorageClass;
-	}	//	function getCacheStorageClass()
-
-
-	public static function setCacheStorageMethod($method = PHPExcel_CachedObjectStorageFactory::cache_in_memory, $arguments = array()) {
-		return PHPExcel_CachedObjectStorageFactory::initialize($method,$arguments);
-	}	//	function setCacheStorageMethod()
-
-
-	public static function setLocale($locale){
-		return PHPExcel_Calculation::getInstance()->setLocale($locale);
-	}	//	function setLocale()
+    public static function setLocale($locale)
+    {
+        return PHPExcel_Calculation::getInstance()->setLocale($locale);
+    }	//	function setLocale()
 
 }

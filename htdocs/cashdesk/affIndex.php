@@ -27,14 +27,12 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/cashdesk/include/environnement.php';
 
 // Test if already logged
-if ( $_SESSION['uid'] <= 0 )
-{
-	header('Location: index.php');
-	exit;
+if ($_SESSION['uid'] <= 0) {
+    header('Location: index.php');
+    exit;
 }
 
 $langs->load("cashdesk");
-
 
 /*
  * View
@@ -50,11 +48,10 @@ top_htmlhead($head,$langs->trans("CashDesk"),0,0,$arrayofjs,$arrayofcss);
 
 print '<body>'."\n";
 
-if (!empty($error))
-{
-	print $error;
-	print '</body></html>';
-	exit;
+if (!empty($error)) {
+    print $error;
+    print '</body></html>';
+    exit;
 }
 
 print '<div class="conteneur">'."\n";
@@ -75,4 +72,3 @@ include_once 'affPied.php';
 
 print '</div></div></div>'."\n";
 print '</body></html>'."\n";
-?>

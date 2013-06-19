@@ -29,9 +29,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 $langs->load("admin");
 
 if (! $user->admin)
-	accessforbidden();
-
-
+    accessforbidden();
 
 /*
  * View
@@ -41,12 +39,9 @@ llxHeader();
 
 $title='InfoPHP';
 
-if (isset($title))
-{
-	print_fiche_titre($langs->trans($title), '', 'setup');
+if (isset($title)) {
+    print_fiche_titre($langs->trans($title), '', 'setup');
 }
-
-
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
@@ -65,59 +60,51 @@ print '<br>';
 
 // Get php_info array
 $phparray=phpinfo_array();
-foreach($phparray as $key => $value)
-{
-	//print_titre($key);
-	print '<table class="noborder">';
-	print '<tr class="liste_titre">';
-	//print '<td width="220px">'.$langs->trans("Parameter").'</td>';
-	print '<td width="220px">'.$key.'</td>';
-	print '<td colspan="2">'.$langs->trans("Value").'</td>';
-	print "</tr>\n";
+foreach ($phparray as $key => $value) {
+    //print_titre($key);
+    print '<table class="noborder">';
+    print '<tr class="liste_titre">';
+    //print '<td width="220px">'.$langs->trans("Parameter").'</td>';
+    print '<td width="220px">'.$key.'</td>';
+    print '<td colspan="2">'.$langs->trans("Value").'</td>';
+    print "</tr>\n";
 
-	$var=true;
-	//var_dump($value);
-	foreach($value as $keyparam => $keyvalue)
-	{
-		if (! is_array($keyvalue))
-		{
-			$var=!$var;
-			print '<tr '.$bc[$var].'>';
-			print '<td>'.$keyparam.'</td>';
-			$valtoshow=$keyvalue;
-			if ($keyparam == 'X-ChromePhp-Data') $valtoshow=dol_trunc($keyvalue,80);
-			print '<td colspan="2">';
-			if ($keyparam == 'Path') $valtoshow=join('; ',explode(';',trim($valtoshow)));
-			if ($keyparam == 'PATH') $valtoshow=join('; ',explode(';',trim($valtoshow)));
-			if ($keyparam == '_SERVER["PATH"]') $valtoshow=join('; ',explode(';',trim($valtoshow)));
-			print $valtoshow;
-			print '</td>';
-			print '</tr>';
-		}
-		else
-		{
-			$var=!$var;
-			print '<tr '.$bc[$var].'>';
-			print '<td>'.$keyparam.'</td>';
-			$i=0;
-			foreach($keyvalue as $keyparam2 => $keyvalue2)
-			{
-				print '<td>';
-				$valtoshow=$keyvalue2;
-				if ($keyparam == 'disable_functions') $valtoshow=join(', ',explode(',',trim($valtoshow)));
-				//print $keyparam;
-				print $valtoshow;
-				$i++;
-				print '</td>';
-			}
-			print '</tr>';
-		}
-	}
-	print '</table><br>';
+    $var=true;
+    //var_dump($value);
+    foreach ($value as $keyparam => $keyvalue) {
+        if (! is_array($keyvalue)) {
+            $var=!$var;
+            print '<tr '.$bc[$var].'>';
+            print '<td>'.$keyparam.'</td>';
+            $valtoshow=$keyvalue;
+            if ($keyparam == 'X-ChromePhp-Data') $valtoshow=dol_trunc($keyvalue,80);
+            print '<td colspan="2">';
+            if ($keyparam == 'Path') $valtoshow=join('; ',explode(';',trim($valtoshow)));
+            if ($keyparam == 'PATH') $valtoshow=join('; ',explode(';',trim($valtoshow)));
+            if ($keyparam == '_SERVER["PATH"]') $valtoshow=join('; ',explode(';',trim($valtoshow)));
+            print $valtoshow;
+            print '</td>';
+            print '</tr>';
+        } else {
+            $var=!$var;
+            print '<tr '.$bc[$var].'>';
+            print '<td>'.$keyparam.'</td>';
+            $i=0;
+            foreach ($keyvalue as $keyparam2 => $keyvalue2) {
+                print '<td>';
+                $valtoshow=$keyvalue2;
+                if ($keyparam == 'disable_functions') $valtoshow=join(', ',explode(',',trim($valtoshow)));
+                //print $keyparam;
+                print $valtoshow;
+                $i++;
+                print '</td>';
+            }
+            print '</tr>';
+        }
+    }
+    print '</table><br>';
 }
-
 
 llxFooter();
 
 $db->close();
-?>

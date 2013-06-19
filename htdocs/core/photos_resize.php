@@ -50,76 +50,63 @@ $original_file = isset($_REQUEST["file"])?urldecode($_REQUEST["file"]):'';
 // Security check
 if (empty($modulepart)) accessforbidden('Bad value for modulepart');
 $accessallowed=0;
-if ($modulepart=='produit|service')
-{
-	$result=restrictedArea($user,'produit|service',$id,'product&product');
-	if ($modulepart=='produit|service' && (! $user->rights->produit->lire && ! $user->rights->service->lire)) accessforbidden();
-	$accessallowed=1;
+if ($modulepart=='produit|service') {
+    $result=restrictedArea($user,'produit|service',$id,'product&product');
+    if ($modulepart=='produit|service' && (! $user->rights->produit->lire && ! $user->rights->service->lire)) accessforbidden();
+    $accessallowed=1;
 }
 
 // Security:
 // Limit access if permissions are wrong
-if (! $accessallowed)
-{
-	accessforbidden();
+if (! $accessallowed) {
+    accessforbidden();
 }
 
 $object = new Product($db);
-if ($id > 0)
-{
-	$result = $object->fetch($id);
-	if ($result <= 0) dol_print_error($db,'Failed to load object');
-	$dir=$conf->product->multidir_output[$object->entity];	// By default
-	if ($object->type == 0) $dir=$conf->product->multidir_output[$object->entity];
-	if ($object->type == 1) $dir=$conf->service->multidir_output[$object->entity];
+if ($id > 0) {
+    $result = $object->fetch($id);
+    if ($result <= 0) dol_print_error($db,'Failed to load object');
+    $dir=$conf->product->multidir_output[$object->entity];	// By default
+    if ($object->type == 0) $dir=$conf->product->multidir_output[$object->entity];
+    if ($object->type == 1) $dir=$conf->service->multidir_output[$object->entity];
 }
 
 /*
  * Actions
  */
 
-if ($action == 'confirm_resize' && (isset($_POST["file"]) != "") && (isset($_POST["sizex"]) != "") && (isset($_POST["sizey"]) != ""))
-{
-	$fullpath=$dir."/".$original_file;
-	$result=dol_imageResizeOrCrop($fullpath,0,$_POST['sizex'],$_POST['sizey']);
+if ($action == 'confirm_resize' && (isset($_POST["file"]) != "") && (isset($_POST["sizex"]) != "") && (isset($_POST["sizey"]) != "")) {
+    $fullpath=$dir."/".$original_file;
+    $result=dol_imageResizeOrCrop($fullpath,0,$_POST['sizex'],$_POST['sizey']);
 
-	if ($result == $fullpath)
-	{
-		header("Location: ".DOL_URL_ROOT."/product/photos.php?id=".$id.'&action=addthumb&file='.urldecode($_POST["file"]));
-		exit;
-	}
-	else
-	{
-		$mesg=$result;
-		$_GET['file']=$_POST["file"];
-	}
+    if ($result == $fullpath) {
+        header("Location: ".DOL_URL_ROOT."/product/photos.php?id=".$id.'&action=addthumb&file='.urldecode($_POST["file"]));
+        exit;
+    } else {
+        $mesg=$result;
+        $_GET['file']=$_POST["file"];
+    }
 }
 
 // Crop d'une image
-if ($action == 'confirm_crop')
-{
-	$fullpath=$dir."/".$original_file;
-	$result=dol_imageResizeOrCrop($fullpath,1,$_POST['w'],$_POST['h'],$_POST['x'],$_POST['y']);
+if ($action == 'confirm_crop') {
+    $fullpath=$dir."/".$original_file;
+    $result=dol_imageResizeOrCrop($fullpath,1,$_POST['w'],$_POST['h'],$_POST['x'],$_POST['y']);
 
-	if ($result == $fullpath)
-	{
-		header("Location: ".DOL_URL_ROOT."/product/photos.php?id=".$id.'&action=addthumb&file='.urldecode($_POST["file"]));
-		exit;
-	}
-	else
-	{
-		$mesg=$result;
-		$_GET['file']=$_POST["file"];
-	}
+    if ($result == $fullpath) {
+        header("Location: ".DOL_URL_ROOT."/product/photos.php?id=".$id.'&action=addthumb&file='.urldecode($_POST["file"]));
+        exit;
+    } else {
+        $mesg=$result;
+        $_GET['file']=$_POST["file"];
+    }
 }
-
 
 /*
  * View
  */
 
 llxHeader($head, $langs->trans("Image"), '', '', 0, 0, array('/includes/jquery/plugins/jcrop/js/jquery.Jcrop.min.js','/core/js/lib_photosresize.js'), array('/includes/jquery/plugins/jcrop/css/jquery.Jcrop.css'));
-
 
 print_fiche_titre($langs->trans("ImageEditor"));
 
@@ -158,8 +145,7 @@ print '<br></form>';
 
 print '<br>'."\n";
 
-if (! empty($conf->use_javascript_ajax))
-{
+if (! empty($conf->use_javascript_ajax)) {
 
 $infoarray=dol_getImageSize($dir."/".urldecode($_GET["file"]));
 $height=$infoarray['height'];
@@ -186,14 +172,12 @@ print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$id.'" method="post" onsubmit
       <input type="hidden" id="file" name="file" value="'.urlencode($original_file).'" />
       <input type="hidden" id="action" name="action" value="confirm_crop" />
       <input type="hidden" id="product" name="product" value="'.$id.'" />
-	  <input type="hidden" name="id" value="'.$id.'" />
+      <input type="hidden" name="id" value="'.$id.'" />
       <br><input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Recenter")).'" />
    </form>';
 print '</fieldset>';
 
 }
 
-
 llxFooter();
 $db->close();
-?>

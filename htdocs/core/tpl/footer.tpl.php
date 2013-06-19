@@ -19,6 +19,4 @@
 
 <!-- BEGIN TEMPLATE -->
 
-
-
 <!-- END TEMPLATE -->

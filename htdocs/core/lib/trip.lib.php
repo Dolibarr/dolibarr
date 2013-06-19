@@ -29,35 +29,33 @@
  */
 function trip_prepare_head($object)
 {
-	global $langs, $conf;
+    global $langs, $conf;
 
-	$h = 0;
-	$head = array();
+    $h = 0;
+    $head = array();
 
-	$head[$h][0] = DOL_URL_ROOT . '/compta/deplacement/fiche.php?id=' . $object->id;
-	$head[$h][1] = $langs->trans("Card");
-	$head[$h][2] = 'card';
-	$h++;
+    $head[$h][0] = DOL_URL_ROOT . '/compta/deplacement/fiche.php?id=' . $object->id;
+    $head[$h][1] = $langs->trans("Card");
+    $head[$h][2] = 'card';
+    $h++;
 
-	// Show more tabs from modules
-	// Entries must be declared in modules descriptor with line
+    // Show more tabs from modules
+    // Entries must be declared in modules descriptor with line
     // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
     // $this->tabs = array('entity:-tabname);   												to remove a tab
-	complete_head_from_modules($conf,$langs,$object,$head,$h,'trip');
+    complete_head_from_modules($conf,$langs,$object,$head,$h,'trip');
 
-	$head[$h][0] = DOL_URL_ROOT.'/compta/deplacement/document.php?id='.$object->id;
-	$head[$h][1] = $langs->trans("Documents");
-	$head[$h][2] = 'documents';
-	$h++;
+    $head[$h][0] = DOL_URL_ROOT.'/compta/deplacement/document.php?id='.$object->id;
+    $head[$h][1] = $langs->trans("Documents");
+    $head[$h][2] = 'documents';
+    $h++;
 
-	$head[$h][0] = DOL_URL_ROOT . '/compta/deplacement/info.php?id=' . $object->id;
-	$head[$h][1] = $langs->trans("Info");
-	$head[$h][2] = 'info';
-	$h++;
-	
-	complete_head_from_modules($conf,$langs,$object,$head,$h,'trip','remove');
+    $head[$h][0] = DOL_URL_ROOT . '/compta/deplacement/info.php?id=' . $object->id;
+    $head[$h][1] = $langs->trans("Info");
+    $head[$h][2] = 'info';
+    $h++;
 
-	return $head;
+    complete_head_from_modules($conf,$langs,$object,$head,$h,'trip','remove');
+
+    return $head;
 }
-
-?>

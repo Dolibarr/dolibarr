@@ -16,9 +16,7 @@
  *
  */
 ?>
- 
+
 <!-- BEGIN PHP TEMPLATE -->
-
-
 
 <!-- END PHP TEMPLATE -->

@@ -47,7 +47,6 @@ if (! $sortorder) $sortorder="DESC";
 if (! $sortfield) $sortfield="d.dated";
 $limit = $conf->liste_limit;
 
-
 /*
  * View
  */
@@ -58,9 +57,6 @@ $tripandexpense_static=new Deplacement($db);
 $help_url='';
 llxHeader('',$langs->trans("ListOfFees"),$help_url);
 
-
-
-
 $totalnb=0;
 $sql = "SELECT count(d.rowid) as nb, sum(d.km) as km, d.type";
 $sql.= " FROM ".MAIN_DB_PREFIX."deplacement as d";
@@ -69,12 +65,10 @@ $sql.= " GROUP BY d.type";
 $sql.= " ORDER BY d.type";
 
 $result = $db->query($sql);
-if ($result)
-{
+if ($result) {
     $num = $db->num_rows($result);
     $i = 0;
-    while ($i < $num)
-    {
+    while ($i < $num) {
         $objp = $db->fetch_object($result);
 
         $somme[$objp->type] = $objp->km;
@@ -87,7 +81,6 @@ if ($result)
     dol_print_error($db);
 }
 
-
 print_fiche_titre($langs->trans("ExpensesArea"));
 
 print '<table width="100%" class="notopnoleftnoright">';
@@ -95,21 +88,17 @@ print '<table width="100%" class="notopnoleftnoright">';
 // Left area
 print '<tr><td class="notopnoleft" width="30%" valign="top">';
 
-
-
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td colspan="4">'.$langs->trans("Statistics").'</td>';
 print "</tr>\n";
 
 $listoftype=$tripandexpense_static->listOfTypes();
-foreach ($listoftype as $code => $label)
-{
+foreach ($listoftype as $code => $label) {
     $dataseries[]=array('label'=>$label,'data'=>(isset($nb[$code])?(int) $nb[$code]:0));
 }
 
-if ($conf->use_javascript_ajax)
-{
+if ($conf->use_javascript_ajax) {
     print '<tr><td align="center" colspan="4">';
     $data=array('series'=>$dataseries);
     dol_print_graph('stats',300,180,$data,1,'pie',1);
@@ -122,7 +111,6 @@ print '<td align="right">'.$totalnb.'</td>';
 print '</tr>';
 
 print '</table>';
-
 
 // Right area
 print '</td><td valign="top">';
@@ -142,8 +130,7 @@ $sql.= $db->order("d.tms","DESC");
 $sql.= $db->plimit($max, 0);
 
 $result = $db->query($sql);
-if ($result)
-{
+if ($result) {
     $var=false;
     $num = $db->num_rows($result);
 
@@ -156,14 +143,12 @@ if ($result)
     print '<td align="right">'.$langs->trans("DateModificationShort").'</td>';
     print '<td width="16">&nbsp;</td>';
     print '</tr>';
-    if ($num)
-    {
+    if ($num) {
         $total_ttc = $totalam = $total = 0;
 
         $deplacementstatic=new Deplacement($db);
         $userstatic=new User($db);
-        while ($i < $num && $i < $max)
-        {
+        while ($i < $num && $i < $max) {
             $obj = $db->fetch_object($result);
             $deplacementstatic->ref=$obj->rowid;
             $deplacementstatic->id=$obj->rowid;
@@ -181,17 +166,12 @@ if ($result)
             $i++;
         }
 
-    }
-    else
-    {
+    } else {
         print '<tr '.$bc[$var].'><td colspan="2">'.$langs->trans("None").'</td></tr>';
     }
     print '</table><br>';
-}
-else dol_print_error($db);
-
+} else dol_print_error($db);
 
 llxFooter();
 
 $db->close();
-?>

@@ -21,7 +21,6 @@
  * search form to show product combo list.
  */
 
-
 //if (! defined('NOREQUIREUSER'))  define('NOREQUIREUSER','1');
 //if (! defined('NOREQUIREDB'))    define('NOREQUIREDB','1');
 if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC','1');
@@ -41,70 +40,58 @@ require_once DOL_DOCUMENT_ROOT.'/cashdesk/include/environnement.php';
 header("Content-type: text/html; charset=".$conf->file->character_set_client);
 
 // Search from criteria
-if (dol_strlen($_GET["code"]) >= 0)	// If search criteria is on char length at least
-{
-	$sql = "SELECT p.rowid, p.ref, p.label, p.tva_tx";
-	if (! empty($conf->stock->enabled) && !empty($conf_fkentrepot)) $sql.= ", ps.reel";
-	$sql.= " FROM ".MAIN_DB_PREFIX."product as p";
-	if (! empty($conf->stock->enabled) && !empty($conf_fkentrepot)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_stock as ps ON p.rowid = ps.fk_product AND ps.fk_entrepot = '".$conf_fkentrepot."'";
-	$sql.= " WHERE p.entity IN (".getEntity('product', 1).")";
-	$sql.= " AND p.tosell = 1";
-	$sql.= " AND p.fk_product_type = 0";
-	// Add criteria on ref/label
-	if (! empty($conf->global->PRODUCT_DONOTSEARCH_ANYWHERE))
-	{
-		$sql.= " AND (p.ref LIKE '".$_GET['code']."%' OR p.label LIKE '".$_GET['code']."%')";
-	}
-	else
-	{
-		$sql.= " AND (p.ref LIKE '%".$_GET['code']."%' OR p.label LIKE '%".$_GET['code']."%')";
-	}
-	$sql.= " ORDER BY label";
+if (dol_strlen($_GET["code"]) >= 0) {	// If search criteria is on char length at least
+    $sql = "SELECT p.rowid, p.ref, p.label, p.tva_tx";
+    if (! empty($conf->stock->enabled) && !empty($conf_fkentrepot)) $sql.= ", ps.reel";
+    $sql.= " FROM ".MAIN_DB_PREFIX."product as p";
+    if (! empty($conf->stock->enabled) && !empty($conf_fkentrepot)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_stock as ps ON p.rowid = ps.fk_product AND ps.fk_entrepot = '".$conf_fkentrepot."'";
+    $sql.= " WHERE p.entity IN (".getEntity('product', 1).")";
+    $sql.= " AND p.tosell = 1";
+    $sql.= " AND p.fk_product_type = 0";
+    // Add criteria on ref/label
+    if (! empty($conf->global->PRODUCT_DONOTSEARCH_ANYWHERE)) {
+        $sql.= " AND (p.ref LIKE '".$_GET['code']."%' OR p.label LIKE '".$_GET['code']."%')";
+    } else {
+        $sql.= " AND (p.ref LIKE '%".$_GET['code']."%' OR p.label LIKE '%".$_GET['code']."%')";
+    }
+    $sql.= " ORDER BY label";
 
-	dol_syslog("facturation_dhtml.php sql=".$sql);
-	$result = $db->query($sql);
+    dol_syslog("facturation_dhtml.php sql=".$sql);
+    $result = $db->query($sql);
 
-	if ($result)
-	{
-		if ( $nbr = $db->num_rows($result) )
-		{
-			$resultat = '<ul class="dhtml_bloc">';
+    if ($result) {
+        if ( $nbr = $db->num_rows($result) ) {
+            $resultat = '<ul class="dhtml_bloc">';
 
-			$ret=array(); $i=0;
-			while ( $tab = $db->fetch_array($result) )
-			{
-				foreach ( $tab as $cle => $valeur )
-				{
-					$ret[$i][$cle] = $valeur;
-				}
-				$i++;
-			}
-			$tab=$ret;
+            $ret=array(); $i=0;
+            while ( $tab = $db->fetch_array($result) ) {
+                foreach ($tab as $cle => $valeur) {
+                    $ret[$i][$cle] = $valeur;
+                }
+                $i++;
+            }
+            $tab=$ret;
 
-			$tab_size=count($tab);
-			for($i=0;$i < $tab_size;$i++)
-			{
-				$resultat .= '
-					<li class="dhtml_defaut" title="'.$tab[$i]['ref'].'"
-						onMouseOver="javascript: this.className = \'dhtml_selection\';"
-						onMouseOut="javascript: this.className = \'dhtml_defaut\';"
-					>'.$tab[$i]['ref'].' - '.$tab[$i]['label'].'</li>
-				';
-			}
+            $tab_size=count($tab);
+            for ($i=0;$i < $tab_size;$i++) {
+                $resultat .= '
+                    <li class="dhtml_defaut" title="'.$tab[$i]['ref'].'"
+                        onMouseOver="javascript: this.className = \'dhtml_selection\';"
+                        onMouseOut="javascript: this.className = \'dhtml_defaut\';"
+                    >'.$tab[$i]['ref'].' - '.$tab[$i]['label'].'</li>
+                ';
+            }
 
-			$resultat .= '</ul>';
+            $resultat .= '</ul>';
 
-			print $resultat;
-		}
-		else
-		{
-			$langs->load("cashdesk");
+            print $resultat;
+        } else {
+            $langs->load("cashdesk");
 
-			print '<ul class="dhtml_bloc">';
-			print '<li class="dhtml_defaut">'.$langs->trans("NoResults").'</li>';
-			print '</ul>';
-		}
-	}
+            print '<ul class="dhtml_bloc">';
+            print '<li class="dhtml_defaut">'.$langs->trans("NoResults").'</li>';
+            print '</ul>';
+        }
+    }
 
 }
-?>

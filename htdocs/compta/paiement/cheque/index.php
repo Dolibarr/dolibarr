@@ -23,7 +23,7 @@
  *		\brief      Home page for cheque receipts
  */
 
-require('../../../main.inc.php');
+require '../../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/cheque/class/remisecheque.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
@@ -34,10 +34,8 @@ $langs->load("categories");
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'banque', '','');
 
-
 $checkdepositstatic=new RemiseCheque($db);
 $accountstatic=new Account($db);
-
 
 /*
  * View
@@ -67,11 +65,9 @@ print '<tr class="liste_titre">';
 print '<td colspan="2">'.$langs->trans("BankChecks")."</td>\n";
 print "</tr>\n";
 
-if ($resql)
-{
+if ($resql) {
   $var=false;
-  if ($row = $db->fetch_row($resql) )
-    {
+  if ($row = $db->fetch_row($resql) ) {
       $num = $row[0];
     }
   print "<tr ".$bc[$var].">";
@@ -80,16 +76,12 @@ if ($resql)
   print '<a href="'.DOL_URL_ROOT.'/compta/paiement/cheque/fiche.php?leftmenu=customers_bills_checks&action=new">'.$num.'</a>';
   print '</td></tr>';
   print "</table>\n";
-}
-else
-{
+} else {
   dol_print_error($db);
 }
 
-
 //print '</td><td valign="top" width="70%" class="notopnoleftnoright">';
 print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
-
 
 $sql = "SELECT bc.rowid, bc.date_bordereau as db, bc.amount, bc.number as ref";
 $sql.= ", bc.statut, bc.nbcheque";
@@ -103,48 +95,43 @@ $sql.= " DESC LIMIT 10";
 
 $resql = $db->query($sql);
 
-if ($resql)
-{
-	print '<table class="noborder" width="100%">';
-	print '<tr class="liste_titre">';
-	print '<td>'.$langs->trans("CheckReceiptShort").'</td>';
-	print '<td>'.$langs->trans("Date")."</td>";
-	print '<td>'.$langs->trans("Account").'</td>';
-	print '<td align="right">'.$langs->trans("NbOfCheques").'</td>';
-	print '<td align="right">'.$langs->trans("Amount").'</td>';
-	print '<td align="right">'.$langs->trans("Status").'</td>';
-	print "</tr>\n";
+if ($resql) {
+    print '<table class="noborder" width="100%">';
+    print '<tr class="liste_titre">';
+    print '<td>'.$langs->trans("CheckReceiptShort").'</td>';
+    print '<td>'.$langs->trans("Date")."</td>";
+    print '<td>'.$langs->trans("Account").'</td>';
+    print '<td align="right">'.$langs->trans("NbOfCheques").'</td>';
+    print '<td align="right">'.$langs->trans("Amount").'</td>';
+    print '<td align="right">'.$langs->trans("Status").'</td>';
+    print "</tr>\n";
 
-	$var=true;
-	while ( $objp = $db->fetch_object($resql) )
-	{
+    $var=true;
+    while ( $objp = $db->fetch_object($resql) ) {
         $checkdepositstatic->id=$objp->rowid;
         $checkdepositstatic->ref=($objp->ref?$objp->ref:$objp->rowid);
-	    $checkdepositstatic->statut=$objp->statut;
+        $checkdepositstatic->statut=$objp->statut;
 
-		$accountstatic->id=$objp->bid;
-		$accountstatic->label=$objp->label;
+        $accountstatic->id=$objp->bid;
+        $accountstatic->label=$objp->label;
 
-		$var=!$var;
-		print "<tr $bc[$var]>\n";
+        $var=!$var;
+        print "<tr $bc[$var]>\n";
 
-		print '<td>'.$checkdepositstatic->getNomUrl(1).'</td>';
-		print '<td>'.dol_print_date($db->jdate($objp->db),'day').'</td>';
-		print '<td>'.$accountstatic->getNomUrl(1).'</td>';
-		print '<td align="right">'.$objp->nbcheque.'</td>';
-		print '<td align="right">'.price($objp->amount).'</td>';
-		print '<td align="right">'.$checkdepositstatic->LibStatut($objp->statut,3).'</td>';
+        print '<td>'.$checkdepositstatic->getNomUrl(1).'</td>';
+        print '<td>'.dol_print_date($db->jdate($objp->db),'day').'</td>';
+        print '<td>'.$accountstatic->getNomUrl(1).'</td>';
+        print '<td align="right">'.$objp->nbcheque.'</td>';
+        print '<td align="right">'.price($objp->amount).'</td>';
+        print '<td align="right">'.$checkdepositstatic->LibStatut($objp->statut,3).'</td>';
 
-		print '</tr>';
-	}
-	print "</table>";
-	$db->free($resql);
-}
-else
-{
+        print '</tr>';
+    }
+    print "</table>";
+    $db->free($resql);
+} else {
   dol_print_error($db);
 }
-
 
 //print "</td></tr></table>\n";
 print '</div></div></div>';
@@ -152,4 +139,3 @@ print '</div></div></div>';
 llxFooter();
 
 $db->close();
-?>

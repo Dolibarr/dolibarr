@@ -29,9 +29,8 @@ define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
 
 // For MultiCompany module
 $entity=(! empty($_GET['entity']) ? (int) $_GET['entity'] : 1);
-if (is_int($entity))
-{
-	define("DOLENTITY", $entity);
+if (is_int($entity)) {
+    define("DOLENTITY", $entity);
 }
 
 require '../../main.inc.php';
@@ -42,7 +41,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 // Security check
 if (empty($conf->adherent->enabled)) accessforbidden('',1,1,1);
 
-
 $langs->load("main");
 $langs->load("members");
 $langs->load("companies");
@@ -52,15 +50,11 @@ $id=GETPOST('id','int');
 $object = new Adherent($db);
 $extrafields = new ExtraFields($db);
 
-
-
 /*
  * Actions
  */
 
 // None
-
-
 
 /*
  * View
@@ -70,57 +64,49 @@ llxHeaderVierge($langs->trans("MemberCard"));
 
 // fetch optionals attributes and labels
 $extralabels=$extrafields->fetch_name_optionals_label('adherent');
-if ($id > 0)
-{
-	$res=$object->fetch($id);
-	if ($res < 0) { dol_print_error($db,$object->error); exit; }
-	$res=$object->fetch_optionals($object->id,$extralabels);
+if ($id > 0) {
+    $res=$object->fetch($id);
+    if ($res < 0) { dol_print_error($db,$object->error); exit; }
+    $res=$object->fetch_optionals($object->id,$extralabels);
 
-	print_titre($langs->trans("MemberCard"));
+    print_titre($langs->trans("MemberCard"));
 
-	if (empty($object->public))
-	{
-		 print $langs->trans("ErrorThisMemberIsNotPublic");
-	}
-	else
-	{
-		print '<table class="border" cellspacing="0" width="100%" cellpadding="3">';
+    if (empty($object->public)) {
+         print $langs->trans("ErrorThisMemberIsNotPublic");
+    } else {
+        print '<table class="border" cellspacing="0" width="100%" cellpadding="3">';
 
-		print '<tr><td width="15%">'.$langs->trans("Type").'</td><td class="valeur">'.$object->type."</td></tr>\n";
-		print '<tr><td>'.$langs->trans("Person").'</td><td class="valeur">'.$object->morphy.'</td></tr>';
-		print '<tr><td>'.$langs->trans("Firstname").'</td><td class="valeur" width="35%">'.$object->firstname.'&nbsp;</td></tr>';
-		print '<tr><td>'.$langs->trans("Lastname").'</td><td class="valeur">'.$object->lastname.'&nbsp;</td></tr>';
-		print '<tr><td>'.$langs->trans("Company").'</td><td class="valeur">'.$object->societe.'&nbsp;</td></tr>';
-		print '<tr><td>'.$langs->trans("Address").'</td><td class="valeur">'.nl2br($object->address).'&nbsp;</td></tr>';
-		print '<tr><td>'.$langs->trans("Zip").' '.$langs->trans("Town").'</td><td class="valeur">'.$object->zip.' '.$object->town.'&nbsp;</td></tr>';
-		print '<tr><td>'.$langs->trans("Country").'</td><td class="valeur">'.$object->country.'&nbsp;</td></tr>';
-		print '<tr><td>'.$langs->trans("EMail").'</td><td class="valeur">'.$object->email.'&nbsp;</td></tr>';
-		print '<tr><td>'.$langs->trans("Birthday").'</td><td class="valeur">'.$object->birth.'&nbsp;</td></tr>';
+        print '<tr><td width="15%">'.$langs->trans("Type").'</td><td class="valeur">'.$object->type."</td></tr>\n";
+        print '<tr><td>'.$langs->trans("Person").'</td><td class="valeur">'.$object->morphy.'</td></tr>';
+        print '<tr><td>'.$langs->trans("Firstname").'</td><td class="valeur" width="35%">'.$object->firstname.'&nbsp;</td></tr>';
+        print '<tr><td>'.$langs->trans("Lastname").'</td><td class="valeur">'.$object->lastname.'&nbsp;</td></tr>';
+        print '<tr><td>'.$langs->trans("Company").'</td><td class="valeur">'.$object->societe.'&nbsp;</td></tr>';
+        print '<tr><td>'.$langs->trans("Address").'</td><td class="valeur">'.nl2br($object->address).'&nbsp;</td></tr>';
+        print '<tr><td>'.$langs->trans("Zip").' '.$langs->trans("Town").'</td><td class="valeur">'.$object->zip.' '.$object->town.'&nbsp;</td></tr>';
+        print '<tr><td>'.$langs->trans("Country").'</td><td class="valeur">'.$object->country.'&nbsp;</td></tr>';
+        print '<tr><td>'.$langs->trans("EMail").'</td><td class="valeur">'.$object->email.'&nbsp;</td></tr>';
+        print '<tr><td>'.$langs->trans("Birthday").'</td><td class="valeur">'.$object->birth.'&nbsp;</td></tr>';
 
-		if (isset($object->photo) && $object->photo !='')
-		{
-			$form = new Form($db);
-			print '<tr><td>URL Photo</td><td class="valeur">';
-			print $form->showphoto('memberphoto', $object, 64);
-			print '</td></tr>'."\n";
-		}
-		//  foreach($objecto->attribute_label as $key=>$value){
-		//    print "<tr><td>$value</td><td>".$object->array_options["options_$key"]."&nbsp;</td></tr>\n";
-		//  }
+        if (isset($object->photo) && $object->photo !='') {
+            $form = new Form($db);
+            print '<tr><td>URL Photo</td><td class="valeur">';
+            print $form->showphoto('memberphoto', $object, 64);
+            print '</td></tr>'."\n";
+        }
+        //  foreach ($objecto->attribute_label as $key=>$value) {
+        //    print "<tr><td>$value</td><td>".$object->array_options["options_$key"]."&nbsp;</td></tr>\n";
+        //  }
 
-		print '<tr><td valign="top">'.$langs->trans("Comments").'</td><td>'.nl2br($object->note).'</td></tr>';
+        print '<tr><td valign="top">'.$langs->trans("Comments").'</td><td>'.nl2br($object->note).'</td></tr>';
 
-		print '</table>';
-	}
+        print '</table>';
+    }
 
 }
-
 
 llxFooterVierge();
 
 $db->close();
-
-
 
 /**
  * Show header for card member
@@ -131,15 +117,15 @@ $db->close();
  */
 function llxHeaderVierge($title, $head = "")
 {
-	global $user, $conf, $langs;
+    global $user, $conf, $langs;
 
-	header("Content-type: text/html; charset=".$conf->file->character_set_client);
-	print "<html>\n";
-	print "<head>\n";
-	print "<title>".$title."</title>\n";
-	if ($head) print $head."\n";
-	print "</head>\n";
-	print "<body>\n";
+    header("Content-type: text/html; charset=".$conf->file->character_set_client);
+    print "<html>\n";
+    print "<head>\n";
+    print "<title>".$title."</title>\n";
+    if ($head) print $head."\n";
+    print "</head>\n";
+    print "<body>\n";
 }
 
 /**
@@ -151,8 +137,6 @@ function llxFooterVierge()
 {
     printCommonFooter('public');
 
-	print "</body>\n";
-	print "</html>\n";
+    print "</body>\n";
+    print "</html>\n";
 }
-
-?>

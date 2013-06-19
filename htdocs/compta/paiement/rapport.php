@@ -35,8 +35,7 @@ $action=GETPOST('action');
 $dir = $conf->facture->dir_output.'/payments';
 
 $socid=0;
-if ($user->societe_id > 0)
-{
+if ($user->societe_id > 0) {
     $action = '';
     $socid = $user->societe_id;
     $dir = $conf->facture->dir_output.'/payments/private/'.$user->id;
@@ -45,18 +44,15 @@ if ($user->societe_id > 0)
 $year = $_GET["year"];
 if (! $year) { $year=date("Y"); }
 
-
 /*
  * Actions
  */
 
-if ($action == 'builddoc')
-{
+if ($action == 'builddoc') {
     $rap = new pdf_paiement($db);
 
     $outputlangs = $langs;
-    if (! empty($_REQUEST['lang_id']))
-    {
+    if (! empty($_REQUEST['lang_id'])) {
         $outputlangs = new Translate("",$conf);
         $outputlangs->setDefaultLang($_REQUEST['lang_id']);
     }
@@ -64,19 +60,15 @@ if ($action == 'builddoc')
     // We save charset_output to restore it because write_file can change it if needed for
     // output format that does not support UTF8.
     $sav_charset_output=$outputlangs->charset_output;
-    if ($rap->write_file($dir, $_POST["remonth"], $_POST["reyear"], $outputlangs) > 0)
-    {
+    if ($rap->write_file($dir, $_POST["remonth"], $_POST["reyear"], $outputlangs) > 0) {
         $outputlangs->charset_output=$sav_charset_output;
-    }
-    else
-    {
+    } else {
         $outputlangs->charset_output=$sav_charset_output;
         dol_print_error($db,$obj->error);
     }
 
     $year = $_POST["reyear"];
 }
-
 
 /*
  * View
@@ -109,15 +101,11 @@ clearstatcache();
 // Show link on other years
 $linkforyear=array();
 $found=0;
-if (is_dir($dir))
-{
+if (is_dir($dir)) {
     $handle=opendir($dir);
-    if (is_resource($handle))
-    {
-        while (($file = readdir($handle))!==false)
-        {
-            if (is_dir($dir.'/'.$file) && ! preg_match('/^\./',$file) && is_numeric($file))
-            {
+    if (is_resource($handle)) {
+        while (($file = readdir($handle))!==false) {
+            if (is_dir($dir.'/'.$file) && ! preg_match('/^\./',$file) && is_numeric($file)) {
                 $found=1;
                 $linkforyear[]=$file;
             }
@@ -125,15 +113,12 @@ if (is_dir($dir))
     }
 }
 asort($linkforyear);
-foreach($linkforyear as $cursoryear)
-{
+foreach ($linkforyear as $cursoryear) {
     print '<a href="rapport.php?year='.$cursoryear.'">'.$cursoryear.'</a> &nbsp;';
 }
 
-if ($year)
-{
-    if (is_dir($dir.'/'.$year))
-    {
+if ($year) {
+    if (is_dir($dir.'/'.$year)) {
         $handle=opendir($dir.'/'.$year);
 
         if ($found) print '<br>';
@@ -145,12 +130,9 @@ if ($year)
         print '<td align="right">'.$langs->trans("Date").'</td>';
         print '</tr>';
         $var=true;
-        if (is_resource($handle))
-        {
-            while (($file = readdir($handle))!==false)
-            {
-                if (preg_match('/^payment/i',$file))
-                {
+        if (is_resource($handle)) {
+            while (($file = readdir($handle))!==false) {
+                if (preg_match('/^payment/i',$file)) {
                     $var=!$var;
                     $tfile = $dir . '/'.$year.'/'.$file;
                     $relativepath = $year.'/'.$file;
@@ -168,4 +150,3 @@ if ($year)
 llxFooter();
 
 $db->close();
-?>

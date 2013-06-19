@@ -36,8 +36,7 @@ $mine = $_REQUEST['mode']=='mine' ? 1 : 0;
 //if (! $user->rights->projet->all->lire) $mine=1;	// Special for projects
 
 $object = new Project($db);
-if ($ref)
-{
+if ($ref) {
     $object->fetch(0,$ref);
     $id=$object->id;
 }
@@ -53,18 +52,16 @@ $result = restrictedArea($user, 'projet', $id);
 /*                     Actions                                                */
 /******************************************************************************/
 
-if ($action == 'setnote_public' && $user->rights->projet->creer)
-{
-	$object->fetch($id);
-	$result=$object->update_note(dol_html_entity_decode(GETPOST('note_public'), ENT_QUOTES),'_public');
-	if ($result < 0) dol_print_error($db,$object->error);
+if ($action == 'setnote_public' && $user->rights->projet->creer) {
+    $object->fetch($id);
+    $result=$object->update_note(dol_html_entity_decode(GETPOST('note_public'), ENT_QUOTES),'_public');
+    if ($result < 0) dol_print_error($db,$object->error);
 }
 
-if ($action == 'setnote_private' && $user->rights->projet->creer)
-{
-	$object->fetch($id);
-	$result=$object->update_note(dol_html_entity_decode(GETPOST('note_private'), ENT_QUOTES), '_private');
-	if ($result < 0) dol_print_error($db,$object->error);
+if ($action == 'setnote_private' && $user->rights->projet->creer) {
+    $object->fetch($id);
+    $result=$object->update_note(dol_html_entity_decode(GETPOST('note_private'), ENT_QUOTES), '_private');
+    if ($result < 0) dol_print_error($db,$object->error);
 }
 
 
@@ -81,11 +78,9 @@ $object = new Project($db);
 
 $now=dol_now();
 
-if ($id > 0 || ! empty($ref))
-{
-	if ($object->fetch($id, $ref))
-	{
-		if ($object->societe->id > 0)  $result=$object->societe->fetch($object->societe->id);
+if ($id > 0 || ! empty($ref)) {
+    if ($object->fetch($id, $ref)) {
+        if ($object->societe->id > 0)  $result=$object->societe->fetch($object->societe->id);
 
         // To verify role of users
         //$userAccess = $object->restrictedProjectArea($user,'read');
@@ -93,54 +88,52 @@ if ($id > 0 || ! empty($ref))
         //$userDelete = $object->restrictedProjectArea($user,'delete');
         //print "userAccess=".$userAccess." userWrite=".$userWrite." userDelete=".$userDelete;
 
-		$head = project_prepare_head($object);
-		dol_fiche_head($head, 'notes', $langs->trans('Project'), 0, ($object->public?'projectpub':'project'));
+        $head = project_prepare_head($object);
+        dol_fiche_head($head, 'notes', $langs->trans('Project'), 0, ($object->public?'projectpub':'project'));
 
-		print '<table class="border" width="100%">';
+        print '<table class="border" width="100%">';
 
-		$linkback = '<a href="'.DOL_URL_ROOT.'/projet/liste.php">'.$langs->trans("BackToList").'</a>';
+        $linkback = '<a href="'.DOL_URL_ROOT.'/projet/liste.php">'.$langs->trans("BackToList").'</a>';
 
-		// Ref
-		print '<tr><td width="30%">'.$langs->trans("Ref").'</td><td>';
-		// Define a complementary filter for search of next/prev ref.
-	    if (! $user->rights->projet->all->lire)
-        {
+        // Ref
+        print '<tr><td width="30%">'.$langs->trans("Ref").'</td><td>';
+        // Define a complementary filter for search of next/prev ref.
+        if (! $user->rights->projet->all->lire) {
             $projectsListId = $object->getProjectsAuthorizedForUser($user,$mine,0);
             $object->next_prev_filter=" rowid in (".(count($projectsListId)?join(',',array_keys($projectsListId)):'0').")";
         }
-		print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref');
-		print '</td></tr>';
+        print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref');
+        print '</td></tr>';
 
-		// Label
-		print '<tr><td>'.$langs->trans("Label").'</td><td>'.$object->title.'</td></tr>';
+        // Label
+        print '<tr><td>'.$langs->trans("Label").'</td><td>'.$object->title.'</td></tr>';
 
-		// Third party
-		print '<tr><td>'.$langs->trans("Company").'</td><td>';
-		if ($object->societe->id > 0) print $object->societe->getNomUrl(1);
-		else print'&nbsp;';
-		print '</td></tr>';
+        // Third party
+        print '<tr><td>'.$langs->trans("Company").'</td><td>';
+        if ($object->societe->id > 0) print $object->societe->getNomUrl(1);
+        else print'&nbsp;';
+        print '</td></tr>';
 
-		// Visibility
-		print '<tr><td>'.$langs->trans("Visibility").'</td><td>';
-		if ($object->public) print $langs->trans('SharedProject');
-		else print $langs->trans('PrivateProject');
-		print '</td></tr>';
+        // Visibility
+        print '<tr><td>'.$langs->trans("Visibility").'</td><td>';
+        if ($object->public) print $langs->trans('SharedProject');
+        else print $langs->trans('PrivateProject');
+        print '</td></tr>';
 
-		// Statut
-		print '<tr><td>'.$langs->trans("Status").'</td><td>'.$object->getLibStatut(4).'</td></tr>';
+        // Statut
+        print '<tr><td>'.$langs->trans("Status").'</td><td>'.$object->getLibStatut(4).'</td></tr>';
 
-		print "</table>";
+        print "</table>";
 
-		print '<br>';
+        print '<br>';
 
-		$colwidth=30;
-		include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
+        $colwidth=30;
+        include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
 
-		dol_fiche_end();;
-	}
+        dol_fiche_end();;
+    }
 }
 
 llxFooter();
 
 $db->close();
-?>

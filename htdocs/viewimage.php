@@ -52,7 +52,6 @@ function llxFooter() { }
 require 'main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
-
 $action=GETPOST('action','alpha');
 $original_file=GETPOST("file");
 $modulepart=GETPOST('modulepart','alpha');
@@ -62,30 +61,23 @@ $entity=GETPOST('entity')?GETPOST('entity','int'):$conf->entity;
 // Security check
 if (empty($modulepart)) accessforbidden('Bad value for parameter modulepart');
 
-
-
 /*
  * Actions
  */
 
 // None
 
-
-
 /*
  * View
  */
 
-if (GETPOST("cache"))
-{
+if (GETPOST("cache")) {
     // Important: Following code is to avoid page request by browser and PHP CPU at
     // each Dolibarr page access.
-    if (empty($dolibarr_nocache))
-    {
+    if (empty($dolibarr_nocache)) {
         header('Cache-Control: max-age=3600, public, must-revalidate');
         header('Pragma: cache');       // This is to avoid having Pragma: no-cache
-    }
-    else header('Cache-Control: no-cache');
+    } else header('Cache-Control: no-cache');
     //print $dolibarr_nocache; exit;
 }
 
@@ -109,32 +101,26 @@ $original_file              = $check_access['original_file'];
 
 // Security:
 // Limit access if permissions are wrong
-if (! $accessallowed)
-{
+if (! $accessallowed) {
     accessforbidden();
 }
 
 // Security:
 // On interdit les remontees de repertoire ainsi que les pipe dans les noms de fichiers.
-if (preg_match('/\.\./',$original_file) || preg_match('/[<>|]/',$original_file))
-{
+if (preg_match('/\.\./',$original_file) || preg_match('/[<>|]/',$original_file)) {
     dol_syslog("Refused to deliver file ".$original_file, LOG_WARNING);
     // Do no show plain path in shown error message
     dol_print_error(0,'Error: File '.$_GET["file"].' does not exists');
     exit;
 }
 
-
-
-if ($modulepart == 'barcode')
-{
+if ($modulepart == 'barcode') {
     $generator=GETPOST("generator","alpha");
     $code=GETPOST("code");
     $encoding=GETPOST("encoding","alpha");
     $readable=GETPOST("readable")?GETPOST("readable","alpha"):"Y";
 
-    if (empty($generator) || empty($encoding))
-    {
+    if (empty($generator) || empty($encoding)) {
         dol_print_error(0,'Error, parameter "generator" or "encoding" not defined');
         exit;
     }
@@ -143,8 +129,7 @@ if ($modulepart == 'barcode')
 
     $result=0;
 
-    foreach($dirbarcode as $reldir)
-    {
+    foreach ($dirbarcode as $reldir) {
         $dir=dol_buildpath($reldir,0);
         $newdir=dol_osencode($dir);
 
@@ -158,21 +143,17 @@ if ($modulepart == 'barcode')
     // Load barcode class
     $classname = "mod".ucfirst($generator);
     $module = new $classname($db);
-    if ($module->encodingIsSupported($encoding))
-    {
+    if ($module->encodingIsSupported($encoding)) {
         $result=$module->buildBarCode($code,$encoding,$readable);
     }
-}
-else					// Open and return file
-{
+} else {					// Open and return file
     clearstatcache();
 
     // Output files on browser
     dol_syslog("viewimage.php return file $original_file content-type=$type");
 
     // This test is to avoid error images when image is not available (for example thumbs).
-    if (! dol_is_file($original_file))
-    {
+    if (! dol_is_file($original_file)) {
         $original_file=DOL_DOCUMENT_ROOT.'/theme/common/nophoto.jpg';
         /*$error='Error: File '.$_GET["file"].' does not exists or filesystems permissions are not allowed';
         dol_print_error(0,$error);
@@ -181,13 +162,10 @@ else					// Open and return file
     }
 
     // Les drois sont ok et fichier trouve
-    if ($type)
-    {
+    if ($type) {
         header('Content-Disposition: inline; filename="'.basename($original_file).'"');
         header('Content-type: '.$type);
-    }
-    else
-    {
+    } else {
         header('Content-Disposition: inline; filename="'.basename($original_file).'"');
         header('Content-type: image/png');
     }
@@ -196,6 +174,4 @@ else					// Open and return file
     readfile($original_file_osencoded);
 }
 
-
 if (is_object($db)) $db->close();
-?>

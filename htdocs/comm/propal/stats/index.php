@@ -34,8 +34,7 @@ $HEIGHT=DolGraph::getDefaultGraphSizeForStats('height');
 $userid=GETPOST('userid','int');
 $socid=GETPOST('socid','int');
 // Security check
-if ($user->societe_id > 0)
-{
+if ($user->societe_id > 0) {
     $action = '';
     $socid = $user->societe_id;
 }
@@ -45,7 +44,6 @@ $year = GETPOST('year')>0?GETPOST('year'):$nowyear;
 //$startyear=$year-2;
 $startyear=$year-1;
 $endyear=$year;
-
 
 /*
  * View
@@ -70,27 +68,21 @@ $stats = new PropaleStats($db, $socid, ($userid>0?$userid:0));
 $data = $stats->getNbByMonthWithPrevYear($endyear,$startyear);
 // $data = array(array('Lib',val1,val2,val3),...)
 
-
-if (!$user->rights->societe->client->voir || $user->societe_id)
-{
+if (!$user->rights->societe->client->voir || $user->societe_id) {
     $filenamenb = $dir.'/proposalsnbinyear-'.$user->id.'-'.$year.'.png';
     $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=propalstats&file=proposalsnbinyear-'.$user->id.'-'.$year.'.png';
-}
-else
-{
+} else {
     $filenamenb = $dir.'/proposalsnbinyear-'.$year.'.png';
     $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=propalstats&file=proposalsnbinyear-'.$year.'.png';
 }
 
 $px1 = new DolGraph();
 $mesg = $px1->isGraphKo();
-if (! $mesg)
-{
+if (! $mesg) {
     $px1->SetData($data);
     $px1->SetPrecisionY(0);
     $i=$startyear;$legend=array();
-    while ($i <= $endyear)
-    {
+    while ($i <= $endyear) {
         $legend[]=$i;
         $i++;
     }
@@ -113,26 +105,21 @@ if (! $mesg)
 $data = $stats->getAmountByMonthWithPrevYear($endyear,$startyear);
 // $data = array(array('Lib',val1,val2,val3),...)
 
-if (!$user->rights->societe->client->voir || $user->societe_id)
-{
+if (!$user->rights->societe->client->voir || $user->societe_id) {
     $filenameamount = $dir.'/proposalsamountinyear-'.$user->id.'-'.$year.'.png';
     $fileurlamount = DOL_URL_ROOT.'/viewimage.php?modulepart=propalstats&file=proposalsamountinyear-'.$user->id.'-'.$year.'.png';
-}
-else
-{
+} else {
     $filenameamount = $dir.'/proposalsamountinyear-'.$year.'.png';
     $fileurlamount = DOL_URL_ROOT.'/viewimage.php?modulepart=propalstats&file=proposalsamountinyear-'.$year.'.png';
 }
 
 $px2 = new DolGraph();
 $mesg = $px2->isGraphKo();
-if (! $mesg)
-{
+if (! $mesg) {
     $px2->SetData($data);
     $px2->SetPrecisionY(0);
     $i=$startyear;$legend=array();
-    while ($i <= $endyear)
-    {
+    while ($i <= $endyear) {
         $legend[]=$i;
         $i++;
     }
@@ -155,14 +142,11 @@ $data = $stats->getAverageByMonthWithPrevYear($endyear, $startyear);
 
 $fileurl_avg='';
 if (! isset($mode)) $mode=''; // TODO $mode not defined ?
-if (!$user->rights->societe->client->voir || $user->societe_id)
-{
+if (!$user->rights->societe->client->voir || $user->societe_id) {
     $filename_avg = $dir.'/ordersaverage-'.$user->id.'-'.$year.'.png';
     if ($mode == 'customer') $fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=ordersaverage-'.$user->id.'-'.$year.'.png';
     if ($mode == 'supplier') $fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstatssupplier&file=ordersaverage-'.$user->id.'-'.$year.'.png';
-}
-else
-{
+} else {
     $filename_avg = $dir.'/ordersaverage-'.$year.'.png';
     if ($mode == 'customer') $fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=ordersaverage-'.$year.'.png';
     if ($mode == 'supplier') $fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstatssupplier&file=ordersaverage-'.$year.'.png';
@@ -170,12 +154,10 @@ else
 
 $px3 = new DolGraph();
 $mesg = $px3->isGraphKo();
-if (! $mesg)
-{
+if (! $mesg) {
     $px3->SetData($data);
     $i=$startyear;$legend=array();
-    while ($i <= $endyear)
-    {
+    while ($i <= $endyear) {
         $legend[]=$i;
         $i++;
     }
@@ -194,17 +176,15 @@ if (! $mesg)
     $px3->draw($filename_avg,$fileurl_avg);
 }
 
-
 // Show array
 $data = $stats->getAllByYear();
 $arrayyears=array();
-foreach($data as $val) {
-	if (! empty($val['year'])) {
-		$arrayyears[$val['year']]=$val['year'];
-	}
+foreach ($data as $val) {
+    if (! empty($val['year'])) {
+        $arrayyears[$val['year']]=$val['year'];
+    }
 }
 if (! count($arrayyears)) $arrayyears[$nowyear]=$nowyear;
-
 
 $h=0;
 $head = array();
@@ -217,37 +197,35 @@ complete_head_from_modules($conf,$langs,null,$head,$h,'propal_stats');
 
 dol_fiche_head($head,'byyear',$langs->trans("Statistics"));
 
-
 print '<div class="fichecenter"><div class="fichethirdleft">';
-
 
 //if (empty($socid))
 //{
-	// Show filter box
-	print '<form name="stats" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-	print '<input type="hidden" name="mode" value="'.$mode.'">';
-	print '<table class="border" width="100%">';
-	print '<tr><td class="liste_titre" colspan="2">'.$langs->trans("Filter").'</td></tr>';
-	// Company
-	print '<tr><td align="left">'.$langs->trans("ThirdParty").'</td><td align="left">';
-	$filter='s.client in (1,2,3)';
-	print $form->select_company($socid,'socid',$filter,1);
-	print '</td></tr>';
-	// User
-	print '<tr><td align="left">'.$langs->trans("CreatedBy").'</td><td align="left">';
-	print $form->select_users($userid,'userid',1);
-	print '</td></tr>';
-	// Year
-	print '<tr><td align="left">'.$langs->trans("Year").'</td><td align="left">';
-	if (! in_array($year,$arrayyears)) $arrayyears[$year]=$year;
-	if (! in_array($nowyear,$arrayyears)) $arrayyears[$nowyear]=$nowyear;
-	arsort($arrayyears);
-	print $form->selectarray('year',$arrayyears,$year,0);
-	print '</td></tr>';
-	print '<tr><td align="center" colspan="2"><input type="submit" name="submit" class="button" value="'.$langs->trans("Refresh").'"></td></tr>';
-	print '</table>';
-	print '</form>';
-	print '<br><br>';
+    // Show filter box
+    print '<form name="stats" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+    print '<input type="hidden" name="mode" value="'.$mode.'">';
+    print '<table class="border" width="100%">';
+    print '<tr><td class="liste_titre" colspan="2">'.$langs->trans("Filter").'</td></tr>';
+    // Company
+    print '<tr><td align="left">'.$langs->trans("ThirdParty").'</td><td align="left">';
+    $filter='s.client in (1,2,3)';
+    print $form->select_company($socid,'socid',$filter,1);
+    print '</td></tr>';
+    // User
+    print '<tr><td align="left">'.$langs->trans("CreatedBy").'</td><td align="left">';
+    print $form->select_users($userid,'userid',1);
+    print '</td></tr>';
+    // Year
+    print '<tr><td align="left">'.$langs->trans("Year").'</td><td align="left">';
+    if (! in_array($year,$arrayyears)) $arrayyears[$year]=$year;
+    if (! in_array($nowyear,$arrayyears)) $arrayyears[$nowyear]=$nowyear;
+    arsort($arrayyears);
+    print $form->selectarray('year',$arrayyears,$year,0);
+    print '</td></tr>';
+    print '<tr><td align="center" colspan="2"><input type="submit" name="submit" class="button" value="'.$langs->trans("Refresh").'"></td></tr>';
+    print '</table>';
+    print '</form>';
+    print '<br><br>';
 //}
 
 print '<table class="border" width="100%">';
@@ -259,12 +237,10 @@ print '<td align="center">'.$langs->trans("AmountAverage").'</td>';
 print '</tr>';
 
 $oldyear=0;
-foreach ($data as $val)
-{
+foreach ($data as $val) {
     $year = $val['year'];
     //print $avg; // TODO $avg not defined ?
-    while (! empty($year) && $oldyear > $year+1)
-    {	// If we have empty year
+    while (! empty($year) && $oldyear > $year+1) {	// If we have empty year
         $oldyear--;
         print '<tr height="24">';
         print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$oldyear.'&amp;mode='.$mode.'">'.$oldyear.'</a></td>';
@@ -284,14 +260,11 @@ foreach ($data as $val)
 
 print '</table>';
 
-
 print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
-
 
 // Show graphs
 print '<table class="border" width="100%"><tr valign="top"><td align="center">';
-if ($mesg) { print $mesg; }
-else {
+if ($mesg) { print $mesg; } else {
     print $px1->show();
     print "<br>\n";
     print $px2->show();
@@ -300,15 +273,11 @@ else {
 }
 print '</td></tr></table>';
 
-
 print '</div></div></div>';
 print '<div style="clear:both"></div>';
 
-
 dol_fiche_end();
-
 
 llxFooter();
 
 $db->close();
-?>

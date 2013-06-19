@@ -29,7 +29,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 $langs->load("admin");
 
 if (! $user->admin)
-	accessforbidden();
+    accessforbidden();
 
 $rowid=GETPOST('rowid','int');
 $entity=GETPOST('entity','int');
@@ -46,98 +46,72 @@ $consttype=(GETPOST('consttype','alpha')?GETPOST('consttype','alpha'):'chaine');
 $typeconst=array('yesno' => 'yesno', 'texte' => 'texte', 'chaine' => 'chaine');
 $mesg='';
 
-
-
 /*
  * Actions
  */
 
-if ($action == 'add')
-{
-	$error=0;
+if ($action == 'add') {
+    $error=0;
 
-	if (empty($constname))
-	{
-		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Name")).'</div>';
-		$error++;
-	}
-	if ($constvalue == '')
-	{
-		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Value")).'</div>';
-		$error++;
-	}
+    if (empty($constname)) {
+        $mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Name")).'</div>';
+        $error++;
+    }
+    if ($constvalue == '') {
+        $mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Value")).'</div>';
+        $error++;
+    }
 
-	if (! $error)
-	{
-		if (dolibarr_set_const($db, $constname, $constvalue, $typeconst[$consttype], 1, $constnote, $entity) >= 0)
-		{
-			setEventMessage($langs->trans("RecordSaved"));
-		}
-		else
-		{
-			dol_print_error($db);
-		}
-	}
+    if (! $error) {
+        if (dolibarr_set_const($db, $constname, $constvalue, $typeconst[$consttype], 1, $constnote, $entity) >= 0) {
+            setEventMessage($langs->trans("RecordSaved"));
+        } else {
+            dol_print_error($db);
+        }
+    }
 }
 
 // Mass update
-if (! empty($consts) && $action == 'update')
-{
-	$nbmodified=0;
-	foreach($consts as $const)
-	{
-		if (! empty($const["check"]))
-		{
-			if (dolibarr_set_const($db, $const["name"], $const["value"], $const["type"], 1, $const["note"], $const["entity"]) >= 0)
-			{
-				$nbmodified++;
-			}
-			else
-			{
-				dol_print_error($db);
-			}
-		}
-	}
-	if ($nbmodified > 0) setEventMessage($langs->trans("RecordSaved"));
-	$action='';
+if (! empty($consts) && $action == 'update') {
+    $nbmodified=0;
+    foreach ($consts as $const) {
+        if (! empty($const["check"])) {
+            if (dolibarr_set_const($db, $const["name"], $const["value"], $const["type"], 1, $const["note"], $const["entity"]) >= 0) {
+                $nbmodified++;
+            } else {
+                dol_print_error($db);
+            }
+        }
+    }
+    if ($nbmodified > 0) setEventMessage($langs->trans("RecordSaved"));
+    $action='';
 }
 
 // Mass delete
-if (! empty($consts) && $action == 'delete')
-{
+if (! empty($consts) && $action == 'delete') {
 
-	$nbdeleted=0;
-	foreach($consts as $const)
-	{
-		if (! empty($const["check"]))	// Is checkbox checked
-		{
-			if (dolibarr_del_const($db, $const["rowid"], -1) >= 0)
-			{
-				$nbdeleted++;
-			}
-			else
-			{
-				dol_print_error($db);
-			}
-		}
-	}
-	if ($nbdeleted > 0) setEventMessage($langs->trans("RecordDeleted"));
-	$action='';
+    $nbdeleted=0;
+    foreach ($consts as $const) {
+        if (! empty($const["check"])) {	// Is checkbox checked
+            if (dolibarr_del_const($db, $const["rowid"], -1) >= 0) {
+                $nbdeleted++;
+            } else {
+                dol_print_error($db);
+            }
+        }
+    }
+    if ($nbdeleted > 0) setEventMessage($langs->trans("RecordDeleted"));
+    $action='';
 }
 
 // Delete line from delete picto
-if ($action == 'delete')
-{
-	if (dolibarr_del_const($db, $rowid, $entity) >= 0)
-	{
-		setEventMessage($langs->trans("RecordDeleted"));
-	}
-	else
-	{
-		dol_print_error($db);
-	}
+if ($action == 'delete') {
+    if (dolibarr_del_const($db, $rowid, $entity) >= 0) {
+        setEventMessage($langs->trans("RecordDeleted"));
+    } else {
+        dol_print_error($db);
+    }
 }
-
 
 /*
  * View
@@ -146,24 +120,23 @@ if ($action == 'delete')
 llxHeader('',$langs->trans("OtherSetup"));
 
 // Add logic to show/hide buttons
-if ($conf->use_javascript_ajax)
-{
+if ($conf->use_javascript_ajax) {
 ?>
 <script type="text/javascript">
 jQuery(document).ready(function() {
-	jQuery("#updateconst").hide();
-	jQuery("#delconst").hide();
-	jQuery(".checkboxfordelete").click(function() {
-		jQuery("#delconst").show();
-		jQuery("#action").val('delete');
-	});
-	jQuery(".inputforupdate").keyup(function() {	// keypress does not support back
-		var field_id = jQuery(this).attr("id");
-		var row_num = field_id.split("_");
-		jQuery("#updateconst").show();
-		jQuery("#action").val('update');
-		jQuery("#check_" + row_num[1]).attr("checked",true);
-	});
+    jQuery("#updateconst").hide();
+    jQuery("#delconst").hide();
+    jQuery(".checkboxfordelete").click(function() {
+        jQuery("#delconst").show();
+        jQuery("#action").val('delete');
+    });
+    jQuery(".inputforupdate").keyup(function() {	// keypress does not support back
+        var field_id = jQuery(this).attr("id");
+        var row_num = field_id.split("_");
+        jQuery("#updateconst").show();
+        jQuery("#action").val('update');
+        jQuery("#check_" + row_num[1]).attr("checked",true);
+    });
 });
 </script>
 <?php
@@ -185,9 +158,7 @@ if (! empty($conf->multicompany->enabled) && !$user->entity) print '<td>'.$langs
 print '<td align="center">'.$langs->trans("Action").'</td>';
 print "</tr>\n";
 
-
 $form = new Form($db);
-
 
 // Line to add new record
 $var=false;
@@ -203,15 +174,12 @@ print '</td><td>';
 print '<input type="text" class="flat" size="40" name="constnote" value="">';
 print '</td>';
 // Limit to superadmin
-if (! empty($conf->multicompany->enabled) && !$user->entity)
-{
-	print '<td>';
-	print '<input type="text" class="flat" size="1" name="entity" value="'.$conf->entity.'">';
-	print '</td>';
-}
-else
-{
-	print '<input type="hidden" name="entity" value="'.$conf->entity.'">';
+if (! empty($conf->multicompany->enabled) && !$user->entity) {
+    print '<td>';
+    print '<input type="text" class="flat" size="1" name="entity" value="'.$conf->entity.'">';
+    print '</td>';
+} else {
+    print '<input type="hidden" name="entity" value="'.$conf->entity.'">';
 }
 print '<td align="center">';
 print '<input type="submit" class="button" value="'.$langs->trans("Add").'" name="Button">';
@@ -241,77 +209,67 @@ $sql.= " ORDER BY entity, name ASC";
 
 dol_syslog("Const::listConstant sql=".$sql);
 $result = $db->query($sql);
-if ($result)
-{
-	$num = $db->num_rows($result);
-	$i = 0;
-	$var=false;
+if ($result) {
+    $num = $db->num_rows($result);
+    $i = 0;
+    $var=false;
 
-	while ($i < $num)
-	{
-		$obj = $db->fetch_object($result);
-		$var=!$var;
+    while ($i < $num) {
+        $obj = $db->fetch_object($result);
+        $var=!$var;
 
-		print "\n";
-		print '<input type="hidden" name="const['.$i.'][rowid]" value="'.$obj->rowid.'">';
-		print '<input type="hidden" name="const['.$i.'][name]" value="'.$obj->name.'">';
-		print '<input type="hidden" name="const['.$i.'][type]" value="'.$obj->type.'">';
+        print "\n";
+        print '<input type="hidden" name="const['.$i.'][rowid]" value="'.$obj->rowid.'">';
+        print '<input type="hidden" name="const['.$i.'][name]" value="'.$obj->name.'">';
+        print '<input type="hidden" name="const['.$i.'][type]" value="'.$obj->type.'">';
 
-		print '<tr '.$bc[$var].'><td>'.$obj->name.'</td>'."\n";
+        print '<tr '.$bc[$var].'><td>'.$obj->name.'</td>'."\n";
 
-		// Value
-		print '<td>';
-		print '<input type="text" id="value_'.$i.'" class="flat inputforupdate" size="30" name="const['.$i.'][value]" value="'.htmlspecialchars($obj->value).'"';
-		print '>';
-		print '</td><td>';
+        // Value
+        print '<td>';
+        print '<input type="text" id="value_'.$i.'" class="flat inputforupdate" size="30" name="const['.$i.'][value]" value="'.htmlspecialchars($obj->value).'"';
+        print '>';
+        print '</td><td>';
 
-		// Note
-		print '<input type="text" id="note_'.$i.'"class="flat inputforupdate" size="40" name="const['.$i.'][note]" value="'.htmlspecialchars($obj->note,1).'"';
-		print '>';
-		print '</td>';
+        // Note
+        print '<input type="text" id="note_'.$i.'"class="flat inputforupdate" size="40" name="const['.$i.'][note]" value="'.htmlspecialchars($obj->note,1).'"';
+        print '>';
+        print '</td>';
 
-		// Entity limit to superadmin
-		if (! empty($conf->multicompany->enabled) && !$user->entity)
-		{
-			print '<td>';
-			print '<input type="text" class="flat" size="1" name="const['.$i.'][entity]" value="'.$obj->entity.'">';
-			print '</td>';
-		}
-		else
-		{
-			print '<input type="hidden" name="const['.$i.'][entity]" value="'.$obj->entity.'">';
-		}
+        // Entity limit to superadmin
+        if (! empty($conf->multicompany->enabled) && !$user->entity) {
+            print '<td>';
+            print '<input type="text" class="flat" size="1" name="const['.$i.'][entity]" value="'.$obj->entity.'">';
+            print '</td>';
+        } else {
+            print '<input type="hidden" name="const['.$i.'][entity]" value="'.$obj->entity.'">';
+        }
 
-		print '<td align="center">';
-		if ($conf->use_javascript_ajax)
-		{
-			print '<input type="checkbox" class="flat checkboxfordelete" id="check_'.$i.'" name="const['.$i.'][check]" value="1">';
-			print ' &nbsp; ';
-		}
-		else
-		{
-			print '<a href="'.$_SERVER['PHP_SELF'].'?rowid='.$obj->rowid.'&entity='.$obj->entity.'&action=delete'.((empty($user->entity) && $debug)?'&debug=1':'').'">'.img_delete().'</a>';
-		}
+        print '<td align="center">';
+        if ($conf->use_javascript_ajax) {
+            print '<input type="checkbox" class="flat checkboxfordelete" id="check_'.$i.'" name="const['.$i.'][check]" value="1">';
+            print ' &nbsp; ';
+        } else {
+            print '<a href="'.$_SERVER['PHP_SELF'].'?rowid='.$obj->rowid.'&entity='.$obj->entity.'&action=delete'.((empty($user->entity) && $debug)?'&debug=1':'').'">'.img_delete().'</a>';
+        }
 
-		print "</td></tr>\n";
+        print "</td></tr>\n";
 
-		print "\n";
-		$i++;
-	}
+        print "\n";
+        $i++;
+    }
 }
-
 
 print '</table>';
 
-if ($conf->use_javascript_ajax)
-{
-	print '<br>';
-	print '<div id="updateconst" align="right">';
-	print '<input type="submit" name="update" class="button" value="'.$langs->trans("Modify").'">';
-	print '</div>';
-	print '<div id="delconst" align="right">';
-	print '<input type="submit" name="delete" class="button" value="'.$langs->trans("Delete").'">';
-	print '</div>';
+if ($conf->use_javascript_ajax) {
+    print '<br>';
+    print '<div id="updateconst" align="right">';
+    print '<input type="submit" name="update" class="button" value="'.$langs->trans("Modify").'">';
+    print '</div>';
+    print '<div id="delconst" align="right">';
+    print '<input type="submit" name="delete" class="button" value="'.$langs->trans("Delete").'">';
+    print '</div>';
 }
 
 print "</form>\n";
@@ -319,4 +277,3 @@ print "</form>\n";
 llxFooter();
 
 $db->close();
-?>

@@ -31,16 +31,15 @@ include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
 class box_supplier_orders extends ModeleBoxes
 {
 
-    var $boxcode = "latestsupplierorders";
-    var $boximg = "object_order";
-    var $boxlabel="BoxLatestSupplierOrders";
-    var $depends = array("fournisseur");
+    public $boxcode = "latestsupplierorders";
+    public $boximg = "object_order";
+    public $boxlabel="BoxLatestSupplierOrders";
+    public $depends = array("fournisseur");
 
-    var $db;
-    var $param;
-    var $info_box_head = array();
-    var $info_box_contents = array();
-
+    public $db;
+    public $param;
+    public $info_box_head = array();
+    public $info_box_contents = array();
 
     /**
      *  Load data into info_box_contents array to show array later.
@@ -48,7 +47,7 @@ class box_supplier_orders extends ModeleBoxes
      *  @param	int		$max        Maximum number of records to load
      *  @return	void
      */
-    function loadBox($max = 5)
+    public function loadBox($max = 5)
     {
         global $conf, $user, $langs, $db;
         $langs->load("boxes");
@@ -60,8 +59,7 @@ class box_supplier_orders extends ModeleBoxes
 
         $this->info_box_head = array('text' => $langs->trans("BoxTitleLatestSupplierOrders", $max));
 
-        if ($user->rights->fournisseur->commande->lire)
-        {
+        if ($user->rights->fournisseur->commande->lire) {
             $sql = "SELECT s.nom, s.rowid as socid,";
             $sql.= " c.ref, c.tms, c.rowid,";
             $sql.= " c.fk_statut";
@@ -76,13 +74,11 @@ class box_supplier_orders extends ModeleBoxes
             $sql.= $db->plimit($max, 0);
 
             $result = $db->query($sql);
-            if ($result)
-            {
+            if ($result) {
                 $num = $db->num_rows($result);
 
                 $i = 0;
-                while ($i < $num)
-                {
+                while ($i < $num) {
                     $objp = $db->fetch_object($result);
                     $datem=$db->jdate($objp->tms);
 
@@ -118,17 +114,13 @@ class box_supplier_orders extends ModeleBoxes
                 if ($num == 0)
                     $this->info_box_contents[$i][0] = array('td' => 'align="center"', 'text' => $langs->trans("NoSupplierOrder"));
 
-				$db->free($result);
-            }
-            else
-            {
+                $db->free($result);
+            } else {
                 $this->info_box_contents[0][0] = array( 'td' => 'align="left"',
                                                         'maxlength'=>500,
                                                         'text' => ($db->error().' sql='.$sql));
             }
-        }
-        else
-        {
+        } else {
             $this->info_box_contents[0][0] = array('td' => 'align="left"',
                 'text' => $langs->trans("ReadPermissionNotAllowed"));
         }
@@ -141,11 +133,9 @@ class box_supplier_orders extends ModeleBoxes
      * 	@param  array	$contents   Array with properties of box lines
      * 	@return	void
      */
-    function showBox($head = null, $contents = null)
+    public function showBox($head = null, $contents = null)
     {
         parent::showBox($this->info_box_head, $this->info_box_contents);
     }
 
 }
-
-?>

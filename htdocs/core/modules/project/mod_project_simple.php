@@ -25,129 +25,119 @@
 
 require_once DOL_DOCUMENT_ROOT .'/core/modules/project/modules_project.php';
 
-
 /**
  * 	Class to manage the numbering module Simple for project references
  */
 class mod_project_simple extends ModeleNumRefProjects
 {
-	var $version='dolibarr';		// 'development', 'experimental', 'dolibarr'
-	var $prefix='PJ';
-    var $error='';
-	var $nom = "Simple";
+    public $version='dolibarr';		// 'development', 'experimental', 'dolibarr'
+    public $prefix='PJ';
+    public $error='';
+    public $nom = "Simple";
 
-
-    /** 
+    /**
      *  Return description of numbering module
-     * 
+     *
      *  @return     string      Text with description
      */
-    function info()
+    public function info()
     {
-    	global $langs;
-      	return $langs->trans("SimpleNumRefModelDesc",$this->prefix);
+        global $langs;
+
+          return $langs->trans("SimpleNumRefModelDesc",$this->prefix);
     }
 
-
-    /** 
+    /**
      *  Return an example of numbering module values
-     * 
+     *
      * 	@return     string      Example
      */
-    function getExample()
+    public function getExample()
     {
         return $this->prefix."0501-0001";
     }
 
-
     /**  Test si les numeros deja en vigueur dans la base ne provoquent pas de
      *   de conflits qui empechera cette numerotation de fonctionner.
-     * 
+     *
      *   @return     boolean     false si conflit, true si ok
      */
-    function canBeActivated()
+    public function canBeActivated()
     {
-    	global $conf,$langs;
+        global $conf,$langs;
 
         $coyymm=''; $max='';
 
-		$posindice=8;
-		$sql = "SELECT MAX(SUBSTRING(ref FROM ".$posindice.")) as max";
+        $posindice=8;
+        $sql = "SELECT MAX(SUBSTRING(ref FROM ".$posindice.")) as max";
         $sql.= " FROM ".MAIN_DB_PREFIX."projet";
-		$sql.= " WHERE ref LIKE '".$this->prefix."____-%'";
+        $sql.= " WHERE ref LIKE '".$this->prefix."____-%'";
         $sql.= " AND entity = ".$conf->entity;
         $resql=$db->query($sql);
-        if ($resql)
-        {
+        if ($resql) {
             $row = $db->fetch_row($resql);
             if ($row) { $coyymm = substr($row[0],0,6); $max=$row[0]; }
         }
-        if (! $coyymm || preg_match('/'.$this->prefix.'[0-9][0-9][0-9][0-9]/i',$coyymm))
-        {
+        if (! $coyymm || preg_match('/'.$this->prefix.'[0-9][0-9][0-9][0-9]/i',$coyymm)) {
             return true;
-        }
-        else
-        {
-			$langs->load("errors");
-			$this->error=$langs->trans('ErrorNumRefModel',$max);
+        } else {
+            $langs->load("errors");
+            $this->error=$langs->trans('ErrorNumRefModel',$max);
+
             return false;
         }
     }
 
-
    /**
-	*  Return next value
-	* 
-	*  @param   Societe	$objsoc		Object third party
-	*  @param   Project	$project	Object project
-	*  @return	string				Value if OK, 0 if KO
-	*/
-    function getNextValue($objsoc,$project)
+    *  Return next value
+    *
+    *  @param   Societe	$objsoc		Object third party
+    *  @param   Project	$project	Object project
+    *  @return	string				Value if OK, 0 if KO
+    */
+    public function getNextValue($objsoc,$project)
     {
-		global $db,$conf;
+        global $db,$conf;
 
-		// D'abord on recupere la valeur max
-		$posindice=8;
-		$sql = "SELECT MAX(SUBSTRING(ref FROM ".$posindice.")) as max";
-		$sql.= " FROM ".MAIN_DB_PREFIX."projet";
-		$sql.= " WHERE ref like '".$this->prefix."____-%'";
-		$sql.= " AND entity = ".$conf->entity;
+        // D'abord on recupere la valeur max
+        $posindice=8;
+        $sql = "SELECT MAX(SUBSTRING(ref FROM ".$posindice.")) as max";
+        $sql.= " FROM ".MAIN_DB_PREFIX."projet";
+        $sql.= " WHERE ref like '".$this->prefix."____-%'";
+        $sql.= " AND entity = ".$conf->entity;
 
-		$resql=$db->query($sql);
-		if ($resql)
-		{
-			$obj = $db->fetch_object($resql);
-			if ($obj) $max = intval($obj->max);
-			else $max=0;
-		}
-		else
-		{
-			dol_syslog("mod_project_simple::getNextValue sql=".$sql);
-			return -1;
-		}
+        $resql=$db->query($sql);
+        if ($resql) {
+            $obj = $db->fetch_object($resql);
+            if ($obj) $max = intval($obj->max);
+            else $max=0;
+        } else {
+            dol_syslog("mod_project_simple::getNextValue sql=".$sql);
 
-		$date=empty($project->date_c)?dol_now():$project->date_c;
+            return -1;
+        }
 
-		//$yymm = strftime("%y%m",time());
-		$yymm = strftime("%y%m",$date);
-		$num = sprintf("%04s",$max+1);
+        $date=empty($project->date_c)?dol_now():$project->date_c;
 
-		dol_syslog("mod_project_simple::getNextValue return ".$this->prefix.$yymm."-".$num);
-		return $this->prefix.$yymm."-".$num;
+        //$yymm = strftime("%y%m",time());
+        $yymm = strftime("%y%m",$date);
+        $num = sprintf("%04s",$max+1);
+
+        dol_syslog("mod_project_simple::getNextValue return ".$this->prefix.$yymm."-".$num);
+
+        return $this->prefix.$yymm."-".$num;
     }
 
 
-    /** 
+    /**
      * 	Return next reference not yet used as a reference
-     * 
+     *
      *  @param	Societe	$objsoc     Object third party
      *  @param  Project	$project	Object project
      *  @return string      		Next not used reference
      */
-    function project_get_num($objsoc=0,$project='')
+    public function project_get_num($objsoc=0,$project='')
     {
         return $this->getNextValue($objsoc,$project);
     }
 }
-
-?>

@@ -31,16 +31,16 @@ include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
  */
 class box_commandes extends ModeleBoxes
 {
-    var $boxcode="lastcustomerorders";
-    var $boximg="object_order";
-    var $boxlabel="BoxLastCustomerOrders";
-    var $depends = array("commande");
+    public $boxcode="lastcustomerorders";
+    public $boximg="object_order";
+    public $boxlabel="BoxLastCustomerOrders";
+    public $depends = array("commande");
 
-	var $db;
-	var $param;
+    public $db;
+    public $param;
 
-    var $info_box_head = array();
-    var $info_box_contents = array();
+    public $info_box_head = array();
+    public $info_box_contents = array();
 
 
     /**
@@ -49,19 +49,18 @@ class box_commandes extends ModeleBoxes
      *  @param	int		$max        Maximum number of records to load
      *  @return	void
      */
-    function loadBox($max=5)
+    public function loadBox($max=5)
     {
         global $user, $langs, $db, $conf;
 
-		$this->max=$max;
+        $this->max=$max;
 
-		include_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
+        include_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
         $commandestatic=new Commande($db);
 
         $this->info_box_head = array('text' => $langs->trans("BoxTitleLastCustomerOrders",$max));
 
-        if ($user->rights->commande->lire)
-        {
+        if ($user->rights->commande->lire) {
 
             $sql = "SELECT s.nom, s.rowid as socid,";
             $sql.= " c.ref, c.tms, c.rowid,";
@@ -77,16 +76,14 @@ class box_commandes extends ModeleBoxes
             $sql.= $db->plimit($max, 0);
 
             $result = $db->query($sql);
-            if ($result)
-            {
+            if ($result) {
                 $num = $db->num_rows($result);
 
                 $i = 0;
 
-                while ($i < $num)
-                {
+                while ($i < $num) {
                     $objp = $db->fetch_object($result);
-					$datem=$db->jdate($objp->tms);
+                    $datem=$db->jdate($objp->tms);
 
                     $this->info_box_contents[$i][0] = array('td' => 'align="left" width="16"',
                     'logo' => $this->boximg,
@@ -96,11 +93,11 @@ class box_commandes extends ModeleBoxes
                     'text' => $objp->ref,
                     'url' => DOL_URL_ROOT."/commande/fiche.php?id=".$objp->rowid);
 
-					$this->info_box_contents[$i][2] = array('td' => 'align="left" width="16"',
+                    $this->info_box_contents[$i][2] = array('td' => 'align="left" width="16"',
                     'logo' => 'company',
                     'url' => DOL_URL_ROOT."/comm/fiche.php?socid=".$objp->socid);
 
-					$this->info_box_contents[$i][3] = array('td' => 'align="left"',
+                    $this->info_box_contents[$i][3] = array('td' => 'align="left"',
                     'text' => $objp->nom,
                     'url' => DOL_URL_ROOT."/comm/fiche.php?socid=".$objp->socid);
 
@@ -116,32 +113,28 @@ class box_commandes extends ModeleBoxes
 
                 if ($num==0) $this->info_box_contents[$i][0] = array('td' => 'align="center"','text'=>$langs->trans("NoRecordedOrders"));
 
-				$db->free($result);
-            }
-            else {
+                $db->free($result);
+            } else {
                 $this->info_box_contents[0][0] = array(	'td' => 'align="left"',
-    	        										'maxlength'=>500,
-	            										'text' => ($db->error().' sql='.$sql));
+                                                        'maxlength'=>500,
+                                                        'text' => ($db->error().' sql='.$sql));
             }
-        }
-        else {
+        } else {
             $this->info_box_contents[0][0] = array('align' => 'left',
             'text' => $langs->trans("ReadPermissionNotAllowed"));
         }
     }
 
-	/**
-	 *	Method to show box
-	 *
-	 *	@param	array	$head       Array with properties of box title
-	 *	@param  array	$contents   Array with properties of box lines
-	 *	@return	void
-	 */
-    function showBox($head = null, $contents = null)
+    /**
+     *	Method to show box
+     *
+     *	@param	array	$head       Array with properties of box title
+     *	@param  array	$contents   Array with properties of box lines
+     *	@return	void
+     */
+    public function showBox($head = null, $contents = null)
     {
         parent::showBox($this->info_box_head, $this->info_box_contents);
     }
 
 }
-
-?>

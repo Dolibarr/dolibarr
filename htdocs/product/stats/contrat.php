@@ -56,7 +56,6 @@ $pagenext = $page + 1;
 if (! $sortorder) $sortorder="DESC";
 if (! $sortfield) $sortfield="c.date_contrat";
 
-
 /*
  * View
  */
@@ -66,143 +65,132 @@ $staticcontratligne=new ContratLigne($db);
 
 $form = new Form($db);
 
-if ($id > 0 || ! empty($ref))
-{
-	$product = new Product($db);
-	$result = $product->fetch($id, $ref);
-	
-	$parameters=array('id'=>$id);
-	$reshook=$hookmanager->executeHooks('doActions',$parameters,$product,$action);    // Note that $action and $object may have been modified by some hooks
-	$error=$hookmanager->error; $errors=$hookmanager->errors;
+if ($id > 0 || ! empty($ref)) {
+    $product = new Product($db);
+    $result = $product->fetch($id, $ref);
 
-	llxHeader("","",$langs->trans("CardProduct".$product->type));
+    $parameters=array('id'=>$id);
+    $reshook=$hookmanager->executeHooks('doActions',$parameters,$product,$action);    // Note that $action and $object may have been modified by some hooks
+    $error=$hookmanager->error; $errors=$hookmanager->errors;
 
-	if ($result > 0)
-	{
-		$head=product_prepare_head($product,$user);
-		$titre=$langs->trans("CardProduct".$product->type);
-		$picto=($product->type==1?'service':'product');
-		dol_fiche_head($head, 'referers', $titre, 0, $picto);
-		
-		$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$product,$action);    // Note that $action and $object may have been modified by hook
+    llxHeader("","",$langs->trans("CardProduct".$product->type));
 
-		print '<table class="border" width="100%">';
+    if ($result > 0) {
+        $head=product_prepare_head($product,$user);
+        $titre=$langs->trans("CardProduct".$product->type);
+        $picto=($product->type==1?'service':'product');
+        dol_fiche_head($head, 'referers', $titre, 0, $picto);
 
-		// Reference
-		print '<tr>';
-		print '<td width="30%">'.$langs->trans("Ref").'</td><td colspan="3">';
-		print $form->showrefnav($product,'ref','',1,'ref');
-		print '</td>';
-		print '</tr>';
+        $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$product,$action);    // Note that $action and $object may have been modified by hook
 
-		// Libelle
-		print '<tr><td>'.$langs->trans("Label").'</td><td colspan="3">'.$product->libelle.'</td>';
-		print '</tr>';
+        print '<table class="border" width="100%">';
 
-		// Status (to sell)
-		print '<tr><td>'.$langs->trans("Status").' ('.$langs->trans("Sell").')</td><td colspan="3">';
-		print $product->getLibStatut(2,0);
-		print '</td></tr>';
+        // Reference
+        print '<tr>';
+        print '<td width="30%">'.$langs->trans("Ref").'</td><td colspan="3">';
+        print $form->showrefnav($product,'ref','',1,'ref');
+        print '</td>';
+        print '</tr>';
 
-		// Status (to buy)
-		print '<tr><td>'.$langs->trans("Status").' ('.$langs->trans("Buy").')</td><td colspan="3">';
-		print $product->getLibStatut(2,1);
-		print '</td></tr>';
+        // Libelle
+        print '<tr><td>'.$langs->trans("Label").'</td><td colspan="3">'.$product->libelle.'</td>';
+        print '</tr>';
 
-		show_stats_for_company($product,$socid);
+        // Status (to sell)
+        print '<tr><td>'.$langs->trans("Status").' ('.$langs->trans("Sell").')</td><td colspan="3">';
+        print $product->getLibStatut(2,0);
+        print '</td></tr>';
 
-		print "</table>";
+        // Status (to buy)
+        print '<tr><td>'.$langs->trans("Status").' ('.$langs->trans("Buy").')</td><td colspan="3">';
+        print $product->getLibStatut(2,1);
+        print '</td></tr>';
 
-		print '</div>';
+        show_stats_for_company($product,$socid);
 
-		$now=dol_now();
+        print "</table>";
 
-		$sql = "SELECT";
-		$sql.= ' sum('.$db->ifsql("cd.statut=0",1,0).') as nb_initial,';
-		$sql.= ' sum('.$db->ifsql("cd.statut=4 AND cd.date_fin_validite > '".$db->idate($now)."'",1,0).") as nb_running,";
-		$sql.= ' sum('.$db->ifsql("cd.statut=4 AND (cd.date_fin_validite IS NULL OR cd.date_fin_validite <= '".$db->idate($now)."')",1,0).') as nb_late,';
-		$sql.= ' sum('.$db->ifsql("cd.statut=5",1,0).') as nb_closed,';
-		$sql.= " c.rowid as rowid, c.date_contrat, c.statut as statut,";
-		$sql.= " s.nom, s.rowid as socid, s.code_client";
-		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
-		if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-		$sql.= ", ".MAIN_DB_PREFIX."contrat as c";
-		$sql.= ", ".MAIN_DB_PREFIX."contratdet as cd";
-		$sql.= " WHERE c.rowid = cd.fk_contrat";
-		$sql.= " AND c.fk_soc = s.rowid";
-		$sql.= " AND c.entity = ".$conf->entity;
-		$sql.= " AND cd.fk_product =".$product->id;
-		if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-		if ($socid) $sql.= " AND s.rowid = ".$socid;
-		$sql.= " GROUP BY c.rowid, c.date_contrat, c.statut, s.nom, s.rowid, s.code_client";
-		$sql.= " ORDER BY $sortfield $sortorder";
-		$sql.= $db->plimit($conf->liste_limit +1, $offset);
+        print '</div>';
 
-		$result = $db->query($sql);
-		if ($result)
-		{
-			$num = $db->num_rows($result);
+        $now=dol_now();
 
-			print_barre_liste($langs->trans("Contrats"),$page,$_SERVER["PHP_SELF"],"&amp;id=$product->id",$sortfield,$sortorder,'',$num,0,'');
+        $sql = "SELECT";
+        $sql.= ' sum('.$db->ifsql("cd.statut=0",1,0).') as nb_initial,';
+        $sql.= ' sum('.$db->ifsql("cd.statut=4 AND cd.date_fin_validite > '".$db->idate($now)."'",1,0).") as nb_running,";
+        $sql.= ' sum('.$db->ifsql("cd.statut=4 AND (cd.date_fin_validite IS NULL OR cd.date_fin_validite <= '".$db->idate($now)."')",1,0).') as nb_late,';
+        $sql.= ' sum('.$db->ifsql("cd.statut=5",1,0).') as nb_closed,';
+        $sql.= " c.rowid as rowid, c.date_contrat, c.statut as statut,";
+        $sql.= " s.nom, s.rowid as socid, s.code_client";
+        $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
+        if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+        $sql.= ", ".MAIN_DB_PREFIX."contrat as c";
+        $sql.= ", ".MAIN_DB_PREFIX."contratdet as cd";
+        $sql.= " WHERE c.rowid = cd.fk_contrat";
+        $sql.= " AND c.fk_soc = s.rowid";
+        $sql.= " AND c.entity = ".$conf->entity;
+        $sql.= " AND cd.fk_product =".$product->id;
+        if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+        if ($socid) $sql.= " AND s.rowid = ".$socid;
+        $sql.= " GROUP BY c.rowid, c.date_contrat, c.statut, s.nom, s.rowid, s.code_client";
+        $sql.= " ORDER BY $sortfield $sortorder";
+        $sql.= $db->plimit($conf->liste_limit +1, $offset);
 
-			$i = 0;
-			print "<table class=\"noborder\" width=\"100%\">";
+        $result = $db->query($sql);
+        if ($result) {
+            $num = $db->num_rows($result);
 
-			print '<tr class="liste_titre">';
-			print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"c.rowid","","&amp;id=".$product->id,'',$sortfield,$sortorder);
-			print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","","&amp;id=".$product->id,'',$sortfield,$sortorder);
-			print_liste_field_titre($langs->trans("CustomerCode"),$_SERVER["PHP_SELF"],"s.code_client","","&amp;id=".$product->id,'',$sortfield,$sortorder);
-			print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"c.date_contrat","","&amp;id=".$product->id,'align="center"',$sortfield,$sortorder);
-			//print_liste_field_titre($langs->trans("AmountHT"),$_SERVER["PHP_SELF"],"c.amount","","&amp;id=".$product->id,'align="right"',$sortfield,$sortorder);
-			print '<td class="liste_titre" width="16">'.$staticcontratligne->LibStatut(0,3).'</td>';
-			print '<td class="liste_titre" width="16">'.$staticcontratligne->LibStatut(4,3).'</td>';
-			print '<td class="liste_titre" width="16">'.$staticcontratligne->LibStatut(5,3).'</td>';
-			print "</tr>\n";
+            print_barre_liste($langs->trans("Contrats"),$page,$_SERVER["PHP_SELF"],"&amp;id=$product->id",$sortfield,$sortorder,'',$num,0,'');
 
-			$contratstatic=new Contrat($db);
+            $i = 0;
+            print "<table class=\"noborder\" width=\"100%\">";
 
-			if ($num > 0)
-			{
-				$var=True;
-				while ($i < $num && $i < $conf->liste_limit)
-				{
-					$objp = $db->fetch_object($result);
-					$var=!$var;
+            print '<tr class="liste_titre">';
+            print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"c.rowid","","&amp;id=".$product->id,'',$sortfield,$sortorder);
+            print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","","&amp;id=".$product->id,'',$sortfield,$sortorder);
+            print_liste_field_titre($langs->trans("CustomerCode"),$_SERVER["PHP_SELF"],"s.code_client","","&amp;id=".$product->id,'',$sortfield,$sortorder);
+            print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"c.date_contrat","","&amp;id=".$product->id,'align="center"',$sortfield,$sortorder);
+            //print_liste_field_titre($langs->trans("AmountHT"),$_SERVER["PHP_SELF"],"c.amount","","&amp;id=".$product->id,'align="right"',$sortfield,$sortorder);
+            print '<td class="liste_titre" width="16">'.$staticcontratligne->LibStatut(0,3).'</td>';
+            print '<td class="liste_titre" width="16">'.$staticcontratligne->LibStatut(4,3).'</td>';
+            print '<td class="liste_titre" width="16">'.$staticcontratligne->LibStatut(5,3).'</td>';
+            print "</tr>\n";
 
-					print "<tr $bc[$var]>";
-					print '<td><a href="'.DOL_URL_ROOT.'/contrat/fiche.php?id='.$objp->rowid.'">'.img_object($langs->trans("ShowContract"),"contract").' ';
-					print $objp->rowid;
-					print "</a></td>\n";
-					print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$objp->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dol_trunc($objp->nom,44).'</a></td>';
-					print "<td>".$objp->code_client."</td>\n";
-					print "<td align=\"center\">";
-					print dol_print_date($db->jdate($objp->date_contrat))."</td>";
-					//print "<td align=\"right\">".price($objp->total_ht)."</td>\n";
-					//print '<td align="right">';
-					print '<td align="center">'.($objp->nb_initial>0?$objp->nb_initial:'').'</td>';
-					print '<td align="center">'.($objp->nb_running+$objp->nb_late>0?$objp->nb_running+$objp->nb_late:'').'</td>';
-					print '<td align="center">'.($objp->nb_closed>0?$objp->nb_closed:'').'</td>';
-					//$contratstatic->LibStatut($objp->statut,5).'</td>';
-					print "</tr>\n";
-					$i++;
-				}
-			}
-		}
-		else
-		{
-			dol_print_error($db);
-		}
-		print "</table>";
-		print '<br>';
-		$db->free($result);
-	}
+            $contratstatic=new Contrat($db);
+
+            if ($num > 0) {
+                $var=True;
+                while ($i < $num && $i < $conf->liste_limit) {
+                    $objp = $db->fetch_object($result);
+                    $var=!$var;
+
+                    print "<tr $bc[$var]>";
+                    print '<td><a href="'.DOL_URL_ROOT.'/contrat/fiche.php?id='.$objp->rowid.'">'.img_object($langs->trans("ShowContract"),"contract").' ';
+                    print $objp->rowid;
+                    print "</a></td>\n";
+                    print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$objp->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dol_trunc($objp->nom,44).'</a></td>';
+                    print "<td>".$objp->code_client."</td>\n";
+                    print "<td align=\"center\">";
+                    print dol_print_date($db->jdate($objp->date_contrat))."</td>";
+                    //print "<td align=\"right\">".price($objp->total_ht)."</td>\n";
+                    //print '<td align="right">';
+                    print '<td align="center">'.($objp->nb_initial>0?$objp->nb_initial:'').'</td>';
+                    print '<td align="center">'.($objp->nb_running+$objp->nb_late>0?$objp->nb_running+$objp->nb_late:'').'</td>';
+                    print '<td align="center">'.($objp->nb_closed>0?$objp->nb_closed:'').'</td>';
+                    //$contratstatic->LibStatut($objp->statut,5).'</td>';
+                    print "</tr>\n";
+                    $i++;
+                }
+            }
+        } else {
+            dol_print_error($db);
+        }
+        print "</table>";
+        print '<br>';
+        $db->free($result);
+    }
+} else {
+    dol_print_error();
 }
-else
-{
-	dol_print_error();
-}
-
 
 llxFooter();
 $db->close();
-?>

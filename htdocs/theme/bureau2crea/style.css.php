@@ -78,8 +78,8 @@ if (! empty($conf->global->MAIN_OVERWRITE_THEME_RES)) { $path='/'.$conf->global-
 
 body {
 /*	background-color: #FFFFFF; */
-	color: #101010;
-	font-size: 12px;
+    color: #101010;
+    font-size: 12px;
     font-family: arial, sans-serif, verdana, helvetica;
     margin-top: 0;
     margin-bottom: 0;
@@ -89,13 +89,13 @@ body {
 }
 
 #mainbody .main_box {
-	position: absolute;
+    position: absolute;
     width: 100%;
     margin: 0px;
     }
 
 #mainbody .connexion_box {
-	position: absolute;
+    position: absolute;
     top: 2px;
     right: 5px;
     height: 12px;
@@ -103,7 +103,7 @@ body {
     }
 
 #mainbody .connexion_box .login, #mainbody .connexion_box .printer {
-	margin-left: 10px;
+    margin-left: 10px;
     font-size: 10px;
     line-height: 14px;
     padding: 0px !important;
@@ -111,48 +111,48 @@ body {
     }
 
 #mainbody .connexion_box .login a {
-	color: #333;
+    color: #333;
     text-decoration: none;
     }
 
 #mainbody .connexion_box table {
-	margin-left: 10px;
+    margin-left: 10px;
     display: block;
     }
 
 #mainbody .content_box {
-	margin: 0px 20px 20px 20px;
+    margin: 0px 20px 20px 20px;
     }
 
 #ad_banner {
-	text-align: center;
-	vertical-align: bottom;
+    text-align: center;
+    vertical-align: bottom;
 }
 
 a:link, a:visited, a:hover, a:active { font-family: <?php print $fontlist ?>; font-weight: bold; color: #000000; text-decoration: none; }
 
 input, input.flat, textarea, textarea.flat, form.flat select, select.flat {
     font-size: <?php print $fontsize ?>px;
-	font-family: <?php print $fontlist ?>;
-	background: #FDFDFD;
+    font-family: <?php print $fontlist ?>;
+    background: #FDFDFD;
     border: 1px solid #ACBCBB;
     padding: 0px 0px 0px 0px;
     margin: 0px 0px 0px 0px;
 }
 select.flat, form.flat select {
-	font-weight: normal;
+    font-weight: normal;
 }
 input:disabled {
-	background:#ddd;
+    background:#ddd;
 }
 textarea:disabled {
-	background:#ddd;
+    background:#ddd;
 }
 
 input[type=checkbox] { background-color: transparent; border: none; box-shadow: none; }
 input[type=image] { background-color: transparent; border: none; box-shadow: none; }
 input.button[type=submit] {
-	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/bg_btnGreen.jpg',1); ?>);
+    background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/bg_btnGreen.jpg',1); ?>);
     display: block;
     height: 18px;
     line-height: 16px;
@@ -172,26 +172,26 @@ legend { margin-bottom: 8px; }
 
 .button {
     font-family: <?php print $fontlist ?>;
-	border: 0px;
-	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/button_bg.png',1); ?>);
-	background-position: bottom;
+    border: 0px;
+    background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/button_bg.png',1); ?>);
+    background-position: bottom;
     padding: 0px 2px 0px 2px;
     margin: 0px 0px 0px 0px;
 }
 .button:focus  {
     font-family: <?php print $fontlist ?>;
-	color: #222244;
-	border: 0px;
-	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/button_bg.png',1); ?>);
-	background-position: bottom;
+    color: #222244;
+    border: 0px;
+    background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/button_bg.png',1); ?>);
+    background-position: bottom;
     padding: 0px 2px 0px 2px;
     margin: 0px 0px 0px 0px;
 }
 .buttonajax {
     font-family: <?php print $fontlist ?>;
-	border: 0px;
-	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/button_bg.png',1); ?>);
-	background-position: bottom;
+    border: 0px;
+    background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/button_bg.png',1); ?>);
+    background-position: bottom;
     padding: 0px 0px 0px 0px;
     margin: 0px 0px 0px 0px;
 }
@@ -209,29 +209,29 @@ div.floatright
 }
 div.inline-block
 {
-	display:inline-block;
+    display:inline-block;
 }
 
 .valignmiddle {
-	vertical-align: middle;
+    vertical-align: middle;
 }
 .centpercent {
-	width: 100%;
+    width: 100%;
 }
 .center {
     text-align: center;
 }
 .left {
-	text-align: <?php print $left; ?>;
+    text-align: <?php print $left; ?>;
 }
 .right {
-	text-align: <?php print $right; ?>;
+    text-align: <?php print $right; ?>;
 }
 .nowrap {
-	white-space: <?php print ($dol_optimize_smallscreen?'normal':'nowrap'); ?>;
+    white-space: <?php print ($dol_optimize_smallscreen?'normal':'nowrap'); ?>;
 }
 .dolibarrcombobox {
-	height: 22px;
+    height: 22px;
 }
 
 /* ============================================================================== */
@@ -253,12 +253,11 @@ div.inline-block
     color: #002255;
 }
 td.showDragHandle {
-	cursor: move;
+    cursor: move;
 }
 .tdlineupdown {
-	white-space: nowrap;
+    white-space: nowrap;
 }
-
 
 /* ============================================================================== */
 /* Styles de positionnement des zones                                             */
@@ -274,77 +273,71 @@ td.showDragHandle {
   vertical-align: top;
 }
 #id-<?php echo $right; ?> {
-	width: 100%;
+    width: 100%;
 }
 
 div.leftContent {
-	margin-left: 20px !important;
+    margin-left: 20px !important;
     width: 220px !important;
 }
 
 div.fiche {
-	margin-<?php print $left; ?>: <?php print empty($conf->dol_optimize_smallscreen)?'10':'2'; ?>px;
-	margin-<?php print $right; ?>: <?php print empty($conf->dol_optimize_smallscreen)?'10':''; ?>px;
+    margin-<?php print $left; ?>: <?php print empty($conf->dol_optimize_smallscreen)?'10':'2'; ?>px;
+    margin-<?php print $right; ?>: <?php print empty($conf->dol_optimize_smallscreen)?'10':''; ?>px;
     padding: 0px;
     position: relative;
     height: auto;
 }
 
 div.fichecenter {
-	width: 100%;
-	clear: both;	/* This is to have div fichecenter that are true rectangles */
+    width: 100%;
+    clear: both;	/* This is to have div fichecenter that are true rectangles */
 }
 div.fichethirdleft {
-	<?php if (empty($conf->dol_optimize_smallscreen)) { print "float: ".$left.";\n"; } ?>
-	<?php if (empty($conf->dol_optimize_smallscreen)) { print "width: 35%;\n"; } ?>
+    <?php if (empty($conf->dol_optimize_smallscreen)) { print "float: ".$left.";\n"; } ?>
+    <?php if (empty($conf->dol_optimize_smallscreen)) { print "width: 35%;\n"; } ?>
 }
 div.fichetwothirdright {
-	<?php if (empty($conf->dol_optimize_smallscreen)) { print "float: ".$left.";\n"; } ?>
-	<?php if (empty($conf->dol_optimize_smallscreen)) { print "width: 65%;\n"; } ?>
+    <?php if (empty($conf->dol_optimize_smallscreen)) { print "float: ".$left.";\n"; } ?>
+    <?php if (empty($conf->dol_optimize_smallscreen)) { print "width: 65%;\n"; } ?>
 }
 div.fichehalfleft {
-	<?php if (empty($conf->dol_optimize_smallscreen)) { print "float: ".$left.";\n"; } ?>
-	<?php if (empty($conf->dol_optimize_smallscreen)) { print "width: 50%;\n"; } ?>
+    <?php if (empty($conf->dol_optimize_smallscreen)) { print "float: ".$left.";\n"; } ?>
+    <?php if (empty($conf->dol_optimize_smallscreen)) { print "width: 50%;\n"; } ?>
 }
 div.fichehalfright {
-	<?php if (empty($conf->dol_optimize_smallscreen)) { print "float: ".$left.";\n"; } ?>
-	<?php if (empty($conf->dol_optimize_smallscreen)) { print "width: 50%;\n"; } ?>
+    <?php if (empty($conf->dol_optimize_smallscreen)) { print "float: ".$left.";\n"; } ?>
+    <?php if (empty($conf->dol_optimize_smallscreen)) { print "width: 50%;\n"; } ?>
 }
 div.ficheaddleft {
-	<?php if (empty($conf->dol_optimize_smallscreen))   { print "padding-left: 16px;\n"; }
-	else print "margin-top: 10px;\n"; ?>
+    <?php if (empty($conf->dol_optimize_smallscreen)) { print "padding-left: 16px;\n"; } else print "margin-top: 10px;\n"; ?>
 }
-
 
 /* ============================================================================== */
 /* Barre de redimensionnement menu                                                */
 /* ============================================================================== */
 
 .ui-layout-resizer-west-open {
-	/*left: 240px !important;*/
+    /*left: 240px !important;*/
 }
-
 
 /* ============================================================================== */
 /* Menu top et 1ere ligne tableau                                                 */
 /* ============================================================================== */
 
 <?php
-if (! empty($conf->dol_optimize_smallscreen))
-{
-	$minwidthtmenu=70;
-	$heightmenu=39;
-}
-else
-{
-	$minwidthtmenu=70;
-	$heightmenu=39;
+if (! empty($conf->dol_optimize_smallscreen)) {
+    $minwidthtmenu=70;
+    $heightmenu=39;
+} else {
+    $minwidthtmenu=70;
+    $heightmenu=39;
 }
 ?>
 
 div.tmenu {
 <?php if (GETPOST("optioncss") == 'print') {  ?>
-	display:none;
+    display:none;
 <?php } else { ?>
     position: relative;
     display: block;
@@ -361,16 +354,14 @@ div.tmenu {
 <?php } ?>
 }
 
-
-
 /*
 div.mainmenu {
-	position : relative;
-	color: white;
-	background-repeat:no-repeat;
-	background-position:center top;
-	height: <?php echo ($heightmenu-19); ?>px;
-	margin-left: 0px;
+    position : relative;
+    color: white;
+    background-repeat:no-repeat;
+    background-position:center top;
+    height: <?php echo ($heightmenu-19); ?>px;
+    margin-left: 0px;
 }
 */
 
@@ -379,16 +370,15 @@ div.mainmenu {
 // Add here more div for other menu entries. moduletomainmenu=array('module name'=>'name of class for div')
 
 $moduletomainmenu=array('user'=>'','syslog'=>'','societe'=>'companies','projet'=>'project','propale'=>'commercial','commande'=>'commercial',
-	'produit'=>'products','service'=>'products','stock'=>'products',
-	'don'=>'accountancy','tax'=>'accountancy','banque'=>'accountancy','facture'=>'accountancy','compta'=>'accountancy','accounting'=>'accountancy','adherent'=>'members','import'=>'tools','export'=>'tools','mailing'=>'tools',
-	'contrat'=>'commercial','ficheinter'=>'commercial','deplacement'=>'commercial',
-	'fournisseur'=>'companies',
-	'barcode'=>'','fckeditor'=>'','categorie'=>'',
+    'produit'=>'products','service'=>'products','stock'=>'products',
+    'don'=>'accountancy','tax'=>'accountancy','banque'=>'accountancy','facture'=>'accountancy','compta'=>'accountancy','accounting'=>'accountancy','adherent'=>'members','import'=>'tools','export'=>'tools','mailing'=>'tools',
+    'contrat'=>'commercial','ficheinter'=>'commercial','deplacement'=>'commercial',
+    'fournisseur'=>'companies',
+    'barcode'=>'','fckeditor'=>'','categorie'=>'',
 );
 $mainmenuused='home';
-foreach($conf->modules as $val)
-{
-	$mainmenuused.=','.(isset($moduletomainmenu[$val])?$moduletomainmenu[$val]:$val);
+foreach ($conf->modules as $val) {
+    $mainmenuused.=','.(isset($moduletomainmenu[$val])?$moduletomainmenu[$val]:$val);
 }
 //var_dump($mainmenuused);
 $mainmenuusedarray=array_unique(explode(',',$mainmenuused));
@@ -397,37 +387,32 @@ $mainmenuusedarray=array();	// Disable
 
 $generic=1;
 $divalreadydefined=array('home','companies','products','commercial','accountancy','project','tools','members','shop','agenda','ecm','cashdesk');
-foreach($mainmenuusedarray as $val)
-{
-	if (empty($val) || in_array($val,$divalreadydefined)) continue;
-	//print "XXX".$val;
+foreach ($mainmenuusedarray as $val) {
+    if (empty($val) || in_array($val,$divalreadydefined)) continue;
+    //print "XXX".$val;
 
-	// Search img file in module dir
-	$found=0; $url='';
-	foreach($conf->file->dol_document_root as $dirroot)
-	{
-		if (file_exists($dirroot."/".$val."/img/".$val.".png"))
-		{
-			$url=dol_buildpath($path.'/'.$val.'/img/'.$val.'.png',1);
-			$found=1;
-			break;
-		}
-	}
-	// Img file not found
-	if (! $found && $generic <= 4)
-	{
-		$url=dol_buildpath($path.'/theme/'.$theme.'/img/menus/generic'.$generic.'.png',1);
-		$found=1;
-		$generic++;
-	}
-	if ($found)
-	{
-		print "/* A mainmenu entry but img file ".$val.".png not found, so we use a generic one */\n";
-		print "div.mainmenu.".$val." {\n";
-		print "	background-image: url(".$url.");\n";
-		print "	height:28px;\n";
-		print "}\n";
-	}
+    // Search img file in module dir
+    $found=0; $url='';
+    foreach ($conf->file->dol_document_root as $dirroot) {
+        if (file_exists($dirroot."/".$val."/img/".$val.".png")) {
+            $url=dol_buildpath($path.'/'.$val.'/img/'.$val.'.png',1);
+            $found=1;
+            break;
+        }
+    }
+    // Img file not found
+    if (! $found && $generic <= 4) {
+        $url=dol_buildpath($path.'/theme/'.$theme.'/img/menus/generic'.$generic.'.png',1);
+        $found=1;
+        $generic++;
+    }
+    if ($found) {
+        print "/* A mainmenu entry but img file ".$val.".png not found, so we use a generic one */\n";
+        print "div.mainmenu.".$val." {\n";
+        print "	background-image: url(".$url.");\n";
+        print "	height:28px;\n";
+        print "}\n";
+    }
 }
 // End of part to add more div class css
 ?>
@@ -437,34 +422,34 @@ foreach($mainmenuusedarray as $val)
 ?>
 
 ul.tmenu {
-	padding: 0px;
+    padding: 0px;
     margin: 0px 5px 0px 5px;
-	list-style: none;
+    list-style: none;
     width: auto;
     height: 22px;
 }
 
 li.tmenu, li.tmenusel {
-	float: <?php print $left; ?>;
-	height: 22px;
-	position:relative;
-	display: block;
-	padding: 0px;
+    float: <?php print $left; ?>;
+    height: 22px;
+    position:relative;
+    display: block;
+    padding: 0px;
     margin: 0px 2px 0px 0px;
 }
 
 li.tmenu span, li.tmenusel span {
-	margin: 0px 10px 0px 10px;
+    margin: 0px 10px 0px 10px;
     }
 
 .tmenuimage {
-	margin: 0 !important;
-	padding: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
 }
 
 li.tmenu a, li.tmenusel a {
-	position: relative;
-	display: block;
+    position: relative;
+    display: block;
     height: 22px;
     font-size: 12px;
     font-family: Geneva, Verdana, sans-serif;
@@ -475,12 +460,12 @@ li.tmenu a, li.tmenusel a {
 }
 
 li.tmenu a:hover {
-	color: #FFFFFF;
+    color: #FFFFFF;
     background-color: #D45416;
 }
 
 li.tmenu a.tmenusel, li.tmenu a.tmenusel:hover, li.tmenusel a.tmenusel, li.tmenusel a.tmenusel:hover {
-	color: #842F00;
+    color: #842F00;
     font-weight: bold;
     background-color: #FFF;
     font-weight: normal;
@@ -496,135 +481,131 @@ li.tmenusel {
 }
 
 li.tmenusel a:hover {
-	color: #474747;
+    color: #474747;
 }
 
 li.tmenu a.tmenudisabled {
-	color: #CCC;
+    color: #CCC;
 }
 
 /* --- end nav --- */
 
-
-
-
 /* Login */
 
 form#login {
-	margin-top: <?php echo $dol_optimize_smallscreen?'30':'60' ?>px;
-	margin-bottom: 30px;
-	font-size: 13px;
+    margin-top: <?php echo $dol_optimize_smallscreen?'30':'60' ?>px;
+    margin-bottom: 30px;
+    font-size: 13px;
 }
 .login_table_title {
-	margin-left: 10px;
-	margin-right: 10px;
-	max-width: 540px;
-	color: #888888;
-	text-shadow: 1px 1px 1px #FFF;
+    margin-left: 10px;
+    margin-right: 10px;
+    max-width: 540px;
+    color: #888888;
+    text-shadow: 1px 1px 1px #FFF;
 }
 .login_table label {
-	text-shadow: 1px 1px 1px #FFF;
+    text-shadow: 1px 1px 1px #FFF;
 }
 .login_table {
-	margin-left: 10px;
-	margin-right: 10px;
-	padding:12px;
-	max-width: 540px;
-	border: 1px solid #C0C0C0;
-	background-color: #E0E0E0;
+    margin-left: 10px;
+    margin-right: 10px;
+    padding:12px;
+    max-width: 540px;
+    border: 1px solid #C0C0C0;
+    background-color: #E0E0E0;
 
     -moz-box-shadow: 4px 4px 4px #CCC;
     -webkit-box-shadow: 4px 4px 4px #CCC;
     box-shadow: 4px 4px 4px #CCC;
 
-	border-radius: 12px;
-	border:solid 1px rgba(168,168,168,.4);
-	border-top:solid 1px f8f8f8;
-	background-color: #f8f8f8;
-	background-image: -o-linear-gradient(top, rgba(240,240,240,.3) 0%, rgba(192,192,192,.3) 100%);
-	background-image: -moz-linear-gradient(top, rgba(240,240,240,.3) 0%, rgba(192,192,192,.3) 100%);
-	background-image: -webkit-linear-gradient(top, rgba(240,240,240,.3) 0%, rgba(192,192,192,.3) 100%);
-	background-image: -ms-linear-gradient(top, rgba(240,240,240,.3) 0%, rgba(192,192,192,.3) 100%);
-	background-image: linear-gradient(top, rgba(240,240,240,.3) 0%, rgba(192,192,192,.3) 100%);
+    border-radius: 12px;
+    border:solid 1px rgba(168,168,168,.4);
+    border-top:solid 1px f8f8f8;
+    background-color: #f8f8f8;
+    background-image: -o-linear-gradient(top, rgba(240,240,240,.3) 0%, rgba(192,192,192,.3) 100%);
+    background-image: -moz-linear-gradient(top, rgba(240,240,240,.3) 0%, rgba(192,192,192,.3) 100%);
+    background-image: -webkit-linear-gradient(top, rgba(240,240,240,.3) 0%, rgba(192,192,192,.3) 100%);
+    background-image: -ms-linear-gradient(top, rgba(240,240,240,.3) 0%, rgba(192,192,192,.3) 100%);
+    background-image: linear-gradient(top, rgba(240,240,240,.3) 0%, rgba(192,192,192,.3) 100%);
 }
 #img_securitycode {
-	border: 1px solid #DDDDDD;
+    border: 1px solid #DDDDDD;
 }
 #img_logo {
-	max-width: 200px;
+    max-width: 200px;
 }
 
 div.login_block {
-	position: absolute;
-	<?php print $right; ?>: 5px;
-	top: 2px;
-	font-weight: bold;
-	<?php if (GETPOST("optioncss") == 'print') { ?>
-	display: none;
+    position: absolute;
+    <?php print $right; ?>: 5px;
+    top: 2px;
+    font-weight: bold;
+    <?php if (GETPOST("optioncss") == 'print') { ?>
+    display: none;
     color: #FFF;
-	<?php } ?>
+    <?php } ?>
 }
 
 div.login_block table {
-	display: inline;
+    display: inline;
 }
 
 div#login_left, div#login_right {
-	display: inline-block;
-	min-width: 220px;
-	text-align: center;
-	vertical-align: middle;
+    display: inline-block;
+    min-width: 220px;
+    text-align: center;
+    vertical-align: middle;
 }
 
 div.login {
-	white-space:nowrap;
-	padding: <?php echo ($conf->dol_optimize_smallscreen?'0':'8')?>px 0px 0px 0px;
-	margin: 0px 0px 0px 8px;
-	font-weight: bold;
+    white-space:nowrap;
+    padding: <?php echo ($conf->dol_optimize_smallscreen?'0':'8')?>px 0px 0px 0px;
+    margin: 0px 0px 0px 8px;
+    font-weight: bold;
 }
 div.login a {
-	color: #FFFFFF;
+    color: #FFFFFF;
 }
 div.login a:hover {
-	color: black;
-	text-decoration:underline;
+    color: black;
+    text-decoration:underline;
 }
 
 .alogin, .alogin:hover {
-	color: #888 !important;
-	font-weight: normal !important;
-	font-size: <?php echo $fontsizesmaller; ?>px !important;
+    color: #888 !important;
+    font-weight: normal !important;
+    font-size: <?php echo $fontsizesmaller; ?>px !important;
 }
 .alogin:hover {
-	text-decoration:underline !important;
+    text-decoration:underline !important;
 }
 
 img.login, img.printer, img.entity {
-	padding: <?php echo ($conf->dol_optimize_smallscreen?'0':'8')?>px 0px 0px 0px;
-	margin: 0px 0px 0px 8px;
-	text-decoration: none;
-	color: white;
-	font-weight: bold;
+    padding: <?php echo ($conf->dol_optimize_smallscreen?'0':'8')?>px 0px 0px 0px;
+    margin: 0px 0px 0px 8px;
+    text-decoration: none;
+    color: white;
+    font-weight: bold;
 }
-
 
 /* ============================================================================== */
 /* Menu gauche                                                                    */
 /* ============================================================================== */
 
 .vmenu {
-	margin: 0;
-	position: relative;
-	width: 180px;
+    margin: 0;
+    position: relative;
+    width: 180px;
 }
 <?php if (GETPOST("optioncss") == 'print') { ?>
 .vmenu {
-	display: none;
+    display: none;
 }
 <?php } ?>
 
 div.vmenu {
-	position: relative;
+    position: relative;
     float: left;
     margin: 0px;
     width: 180px;
@@ -649,13 +630,12 @@ a.help:visited      { font-size: 10px; font-weight: bold; background: #FFFFFF; b
 a.help:active       { font-size: 10px; font-weight: bold; background: #FFFFFF; border: 1px solid #8CACBB; color: #6198BA; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
 a.help:hover        { font-size: 10px; font-weight: bold; background: #FFFFFF; border: 1px solid #8CACBB; color: #6198BA; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
 
-
 div.blockvmenupair
 {
-	margin-bottom: 15px;
-	border-spacing: 0px;
-	padding: 0px;
-	width: 100%;
+    margin-bottom: 15px;
+    border-spacing: 0px;
+    padding: 0px;
+    width: 100%;
     background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/bg_leftCategorie.jpg',1); ?>);
     background-position: top right;
     background-repeat: no-repeat;
@@ -663,10 +643,10 @@ div.blockvmenupair
 }
 div.blockvmenuimpair
 {
-	margin-bottom: 15px;
-	border-spacing: 0px;
-	padding: 0px;
-	width: 100%;
+    margin-bottom: 15px;
+    border-spacing: 0px;
+    padding: 0px;
+    width: 100%;
     background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/bg_leftCategorie.jpg',1); ?>);
     background-position: top right;
     background-repeat: no-repeat;
@@ -675,24 +655,24 @@ div.blockvmenuimpair
 
 div.blockvmenuimpair form a.vmenu, div.blockvmenupair form a.vmenu
 {
-	width: 166px;
-	border-spacing: 0px;
-	color: #000000;
-	text-align:left;
-	text-decoration: none;
-	padding: 4px;
-	margin: 0px;
-	background: #FFFFFF;
-	margin-bottom: -12px;
+    width: 166px;
+    border-spacing: 0px;
+    color: #000000;
+    text-align:left;
+    text-decoration: none;
+    padding: 4px;
+    margin: 0px;
+    background: #FFFFFF;
+    margin-bottom: -12px;
 }
 
 div.menu_titre
 {
-	padding: 0px;
-	padding-left:0px;
-	margin-top: 8px;
-	margin: 0px;
-	height: 16px;
+    padding: 0px;
+    padding-left:0px;
+    margin-top: 8px;
+    margin: 0px;
+    height: 16px;
     text-align: left;
     font-size : 12px;
     color : #FFFFFF;
@@ -702,22 +682,22 @@ div.menu_titre
 }
 
 div.menu_titre a.vmenu {
-	/*font-weight: bold;*/
+    /*font-weight: bold;*/
     /*font-family: "Trebuchet MS",Arial,Helvetica,sans-serif;*/
     font-size: 12px;
 }
 
 div.blockvmenusearch
 {
-	margin: 3px 0px 15px 0px;
-	padding: 25px 0px 2px 2px;
+    margin: 3px 0px 15px 0px;
+    padding: 25px 0px 2px 2px;
     background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/bg_leftMenu.jpg',1); ?>);
     background-position: top right;
     background-repeat: no-repeat;
 }
 
 div.blockvmenusearch input[type="text"] {
-	float: left;
+    float: left;
     width: 110px;
     border: 1px solid #333;
     font-size: 10px;
@@ -725,27 +705,27 @@ div.blockvmenusearch input[type="text"] {
 }
 
 div.blockvmenusearch input.button[type="submit"] {
-	float: left;
+    float: left;
     margin-left: 10px;
 }
 
 div.blockvmenusearch div.menu_titre {
-	margin-top: 5px;
+    margin-top: 5px;
 }
 
 #blockvmenusearch div.menu_titre, #blockvmenusearch form
 {
-	padding-top: 1px;
-	padding-bottom: 1px;
-	min-height: 14px;
+    padding-top: 1px;
+    padding-bottom: 1px;
+    min-height: 14px;
 }
 
 div.blockvmenubookmarks
 {
-	margin: 0px;
-	border-spacing: 0px;
-	padding: 0px;
-	width: 100%;
+    margin: 0px;
+    border-spacing: 0px;
+    padding: 0px;
+    width: 100%;
     background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/bg_leftCategorie.jpg',1); ?>);
     background-position: top right;
     background-repeat: no-repeat;
@@ -755,13 +735,13 @@ div.blockvmenubookmarks
 div.blockvmenuhelp
 {
 <?php if (empty($conf->dol_optimize_smallscreen)) { ?>
-	text-align: center;
-	border-spacing: 0px;
+    text-align: center;
+    border-spacing: 0px;
     width: 162px;
-	background: transparent;
-	font-family: <?php print $fontlist ?>;
-	color: #000000;
-	text-decoration: none;
+    background: transparent;
+    font-family: <?php print $fontlist ?>;
+    color: #000000;
+    text-decoration: none;
     padding-left: 0px;
     padding-right: 1px;
     padding-top: 3px;
@@ -773,10 +753,10 @@ div.blockvmenuhelp
 }
 
 div.menu_contenu {
-	margin: 0px;
-	padding: 1px;
+    margin: 0px;
+    padding: 1px;
 
-	padding-right: 8px;
+    padding-right: 8px;
     font-size : 11px;
     font-weight:normal;
     color : #000000;
@@ -785,39 +765,37 @@ div.menu_contenu {
 
 div.menu_end {
 /*	border-top: 1px solid #436981; */
-	margin: 0px;
-	padding: 0px;
-	height: 6px;
+    margin: 0px;
+    padding: 0px;
+    height: 6px;
     width: 165px;
     background-repeat:no-repeat;
     display: none;
 }
 
-
 td.barre {
-	border-right: 1px solid #000000;
-	border-bottom: 1px solid #000000;
-	background: #b3c5cc;
-	font-family: <?php print $fontlist ?>;
-	color: #000000;
-	text-align: <?php print $left; ?>;
-	text-decoration: none;
+    border-right: 1px solid #000000;
+    border-bottom: 1px solid #000000;
+    background: #b3c5cc;
+    font-family: <?php print $fontlist ?>;
+    color: #000000;
+    text-align: <?php print $left; ?>;
+    text-decoration: none;
 }
 
 td.barre_select {
-	background: #b3c5cc;
-	color: #000000;
+    background: #b3c5cc;
+    color: #000000;
 }
 
 td.photo {
-	box-shadow: 2px 4px 2px #CCCCCC;
-	-moz-box-shadow: 2px 4px 2px #CCCCCC;
-	-webkit-box-shadow: 2px 4px 2px #CCCCCC;
-	border-collapse: collapse;
-	border: 1px solid #666;
+    box-shadow: 2px 4px 2px #CCCCCC;
+    -moz-box-shadow: 2px 4px 2px #CCCCCC;
+    -webkit-box-shadow: 2px 4px 2px #CCCCCC;
+    border-collapse: collapse;
+    border: 1px solid #666;
     background-color: #EDEDED;
 }
-
 
 /* ============================================================================== */
 /* Panes for Main                                                   */
@@ -833,11 +811,10 @@ td.photo {
 }
 
 #mainContent, #leftContent .ui-layout-center {
-	padding:    0px;
-	position:   relative; /* contain floated or positioned elements */
+    padding:    0px;
+    position:   relative; /* contain floated or positioned elements */
     overflow:   auto;  /* add scrolling to content-div */
 }
-
 
 /* ============================================================================== */
 /* Toolbar for ECM or Filemanager                                                 */
@@ -859,10 +836,9 @@ a.toolbarbutton {
     background: #FFFFFF;*/
 }
 img.toolbarbutton {
-	margin-top: 2px;
+    margin-top: 2px;
     height: 28px;
 }
-
 
 /* ============================================================================== */
 /* Panes for ECM or Filemanager                                                   */
@@ -891,16 +867,16 @@ img.toolbarbutton {
 }
 /* (scrolling) content-div inside pane allows for fixed header(s) and/or footer(s) */
 #containerlayout .ui-layout-content {
-	padding:    10px;
-	position:   relative; /* contain floated or positioned elements */
-	overflow:   auto; /* add scrolling to content-div */
+    padding:    10px;
+    position:   relative; /* contain floated or positioned elements */
+    overflow:   auto; /* add scrolling to content-div */
 }
 
 /*
  *  RESIZER-BARS
  */
 .ui-layout-resizer  { /* all 'resizer-bars' */
-	width: 8px !important;
+    width: 8px !important;
 }
 .ui-layout-resizer-hover    {   /* affects both open and closed states */
 }
@@ -948,18 +924,18 @@ img.toolbarbutton {
     top: 5px !important;
     }
 .ui-layout-toggler-open {
-	height: 48px !important;
-	width: 5px !important;
+    height: 48px !important;
+    width: 5px !important;
     -moz-border-radius:0px 10px 10px 0px;
-	-webkit-border-radius:0px 10px 10px 0px;
-	border-radius:0px 10px 10px 0px;
+    -webkit-border-radius:0px 10px 10px 0px;
+    border-radius:0px 10px 10px 0px;
 }
 .ui-layout-toggler-closed {
-	height: 48px !important;
-	width: 5px !important;
+    height: 48px !important;
+    width: 5px !important;
     -moz-border-radius:0px 10px 10px 0px;
-	-webkit-border-radius:0px 10px 10px 0px;
-	border-radius:0px 10px 10px 0px;
+    -webkit-border-radius:0px 10px 10px 0px;
+    border-radius:0px 10px 10px 0px;
 }
 .ui-layout-toggler .content {	/* style the text we put INSIDE the togglers */
     color:          #666;
@@ -975,7 +951,7 @@ img.toolbarbutton {
 }
 
 .ui-layout-north {
-	height: <?php print (empty($conf->dol_optimize_smallscreen)?'40':'40'); ?>px !important;
+    height: <?php print (empty($conf->dol_optimize_smallscreen)?'40':'40'); ?>px !important;
 }
 
 /* ECM */
@@ -991,21 +967,21 @@ img.toolbarbutton {
 }
 /* (scrolling) content-div inside pane allows for fixed header(s) and/or footer(s) */
 #containerlayout .ecm-layout-content {
-	padding:    10px;
-	position:   relative; /* contain floated or positioned elements */
-	overflow:   auto; /* add scrolling to content-div */
+    padding:    10px;
+    position:   relative; /* contain floated or positioned elements */
+    overflow:   auto; /* add scrolling to content-div */
 }
 
 .ecm-layout-toggler {
     background-color: #DDD;
     }
 .ecm-layout-toggler-open {
-	height: 48px !important;
-	width: 6px !important;
+    height: 48px !important;
+    width: 6px !important;
 }
 .ecm-layout-toggler-closed {
-	height: 48px !important;
-	width: 6px !important;
+    height: 48px !important;
+    width: 6px !important;
 }
 .ecm-layout-toggler .content {	/* style the text we put INSIDE the togglers */
     color:          #666;
@@ -1015,7 +991,7 @@ img.toolbarbutton {
     padding-bottom: 0.35ex; /* to 'vertically center' text inside text-span */
 }
 #ecm-layout-west-resizer {
-	width: 6px !important;
+    width: 6px !important;
 }
 
 .ecm-layout-resizer  { /* all 'resizer-bars' */
@@ -1054,7 +1030,7 @@ div.tabs {
 }
 
 div.tabs a.tabTitle {
-	padding: 4px 10px;
+    padding: 4px 10px;
     margin-left: 25px;
     position: relative;
     float: left;
@@ -1074,8 +1050,8 @@ left: -20px;
 }
 
 div.tabs a.tab {
-	display: block;
-	width: auto;
+    display: block;
+    width: auto;
     font-size: 11px;
     height: 25px;
     line-height: 25px;
@@ -1094,7 +1070,7 @@ div.tabs a.tab#active {
 }
 
 div.tabs a.tab:hover {
-	color: #FFFFFF;
+    color: #FFFFFF;
     background-color: #505050;
 }
 
@@ -1121,7 +1097,7 @@ div.tabsAction {
 a.tabTitle {
     background: #5088A9;
     color: white;
-	font-family: <?php print $fontlist ?>;
+    font-family: <?php print $fontlist ?>;
     font-weight: normal;
     padding: 0px 6px;
     margin: 0px 6px;
@@ -1135,7 +1111,7 @@ a.tabTitle {
 a.tab:link {
     background: #dee7ec;
     color: #436976;
-	font-family: <?php print $fontlist ?>;
+    font-family: <?php print $fontlist ?>;
     padding: 0px 6px;
     margin: 0em 0.2em;
     text-decoration: none;
@@ -1150,7 +1126,7 @@ a.tab:link {
 a.tab:visited {
     background: #dee7ec;
     color: #436976;
-	font-family: <?php print $fontlist ?>;
+    font-family: <?php print $fontlist ?>;
     padding: 0px 6px;
     margin: 0em 0.2em;
     text-decoration: none;
@@ -1165,7 +1141,7 @@ a.tab:visited {
 a.tab#active {
     background: white;
     border-bottom: #dee7ec 1px solid;
-	font-family: <?php print $fontlist ?>;
+    font-family: <?php print $fontlist ?>;
     color: #436976;
     padding: 0px 6px;
     margin: 0em 0.2em;
@@ -1181,7 +1157,7 @@ a.tab#active {
 a.tab:hover {
     background: white;
     color: #436976;
-	font-family: <?php print $fontlist ?>;
+    font-family: <?php print $fontlist ?>;
     padding: 0px 6px;
     margin: 0em 0.2em;
     text-decoration: none;
@@ -1195,7 +1171,7 @@ a.tab:hover {
 
 a.tabimage {
     color: #436976;
-	font-family: <?php print $fontlist ?>;
+    font-family: <?php print $fontlist ?>;
     text-decoration: none;
     white-space: nowrap;
 }
@@ -1207,7 +1183,7 @@ td.tab {
 span.tabspan {
     background: #dee7ec;
     color: #436976;
-	font-family: <?php print $fontlist ?>;
+    font-family: <?php print $fontlist ?>;
     padding: 0px 6px;
     margin: 0em 0.2em;
     text-decoration: none;
@@ -1227,14 +1203,14 @@ span.tabspan {
 div.divButAction { margin-bottom: 1.4em; }
 
 .butAction, .butAction:link, .butAction:visited, .butAction:hover, .butAction:active, .butActionDelete, .butActionDelete:link, .butActionDelete:visited, .butActionDelete:hover, .butActionDelete:active {
-	font-family:"Trebuchet MS",Arial,Helvetica,sans-serif;
-	font-weight: bold;
-	background: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/bg_btnBlue.jpg',1); ?>) repeat-x;
-	color: #FFF !important;
-	padding: 0px 10px 0px 10px;
-	margin: 0px 10px 0px 10px;
-	text-decoration: none;
-	white-space: nowrap;
+    font-family:"Trebuchet MS",Arial,Helvetica,sans-serif;
+    font-weight: bold;
+    background: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/bg_btnBlue.jpg',1); ?>) repeat-x;
+    color: #FFF !important;
+    padding: 0px 10px 0px 10px;
+    margin: 0px 10px 0px 10px;
+    text-decoration: none;
+    white-space: nowrap;
     font-size: 12px;
     height: 18px;
     line-height: 18px;
@@ -1246,7 +1222,7 @@ div.divButAction { margin-bottom: 1.4em; }
 }
 
 .butActionDelete    {
-	background: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/bg_btnRed.jpg',1); ?>) repeat-x !important;
+    background: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/bg_btnRed.jpg',1); ?>) repeat-x !important;
     color: #FFF;
 }
 
@@ -1257,29 +1233,29 @@ div.divButAction { margin-bottom: 1.4em; }
 }
 
 .butActionRefused {
-	font-family:"Trebuchet MS",Arial,Helvetica,sans-serif;
-	font-weight: bold;
-	background: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/bg_btnBlue.jpg',1); ?>) repeat-x;
-	color: #AAA !important;
-	padding: 0px 10px 0px 10px;
-	margin: 0px 10px 0px 10px;
-	text-decoration: none;
-	white-space: nowrap;
+    font-family:"Trebuchet MS",Arial,Helvetica,sans-serif;
+    font-weight: bold;
+    background: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/bg_btnBlue.jpg',1); ?>) repeat-x;
+    color: #AAA !important;
+    padding: 0px 10px 0px 10px;
+    margin: 0px 10px 0px 10px;
+    text-decoration: none;
+    white-space: nowrap;
     font-size: 12px;
     height: 18px;
     line-height: 18px;
     margin-bottom: 10px;
-	cursor: not-allowed;
+    cursor: not-allowed;
 }
 
 <?php if (! empty($conf->global->MAIN_BUTTON_HIDE_UNAUTHORIZED)) { ?>
 .butActionRefused {
-	display: none;
+    display: none;
 }
 <?php } ?>
 
 span.butAction, span.butActionDelete {
-	cursor: pointer;
+    cursor: pointer;
 }
 
 
@@ -1288,7 +1264,7 @@ span.butAction, span.butActionDelete {
 /* ============================================================================== */
 
 .allwidth {
-	width: 100%;
+    width: 100%;
 }
 
 /*
@@ -1305,7 +1281,7 @@ padding: 0px;
 }
 
 .boxhandle {
-	margin: 1px 1px 0px 0px;
+    margin: 1px 1px 0px 0px;
 }
 
 .notopnoleft {
@@ -1370,11 +1346,11 @@ border-left: 1px solid #000000;
 /* Main boxes */
 
 table.noborder {
-	/*box-shadow: 2px 4px 2px #CCCCCC;
-	-moz-box-shadow: 2px 4px 2px #CCCCCC;
-	-webkit-box-shadow: 2px 4px 2px #CCCCCC; */
-	border-collapse: collapse;
-	/*border: 1px solid #666;*/
+    /*box-shadow: 2px 4px 2px #CCCCCC;
+    -moz-box-shadow: 2px 4px 2px #CCCCCC;
+    -webkit-box-shadow: 2px 4px 2px #CCCCCC; */
+    border-collapse: collapse;
+    /*border: 1px solid #666;*/
 
 }
 
@@ -1453,12 +1429,12 @@ div.liste_titre, tr.liste_titre, form.liste_titre {
 }
 
 div.liste_titre a, tr.liste_titre a, form.liste_titre a {
-	color: #333333;
-	margin: 0px 5px;
+    color: #333333;
+    margin: 0px 5px;
 }
 
 div.liste_titre td, tr.liste_titre td, form.liste_titre div {
-	padding: 0px 5px;
+    padding: 0px 5px;
     vertical-align: middle;
     background: none !important;
 }
@@ -1474,7 +1450,7 @@ div.liste_titre, th.liste_titre, td.liste_titre
 }
 
 div.liste_titre input.button, tr.liste_titre input.button, form.liste_titre input.button {
-	float: left;
+    float: left;
     position: relative;
     /*margin: 30px 10px 10px 0px;*/
 }
@@ -1533,18 +1509,18 @@ border: 0px;
 }
 
 tr.pair td.nohover {
-	background: #FFFFFF;
+    background: #FFFFFF;
 }
 
 .pair td, .impair td
 {
-	padding: 2px 3px !important;
+    padding: 2px 3px !important;
 }
 
 .noshadow {
-	-moz-box-shadow: 0px 0px 0px #CCC !important;
-	-webkit-box-shadow: 0px 0px 0px #CCC !important;
-	box-shadow: 0px 0px 0px #CCC !important;
+    -moz-box-shadow: 0px 0px 0px #CCC !important;
+    -webkit-box-shadow: 0px 0px 0px #CCC !important;
+    box-shadow: 0px 0px 0px #CCC !important;
 }
 
 
@@ -1553,26 +1529,26 @@ tr.pair td.nohover {
  */
 
 .box {
-	padding-right: 0px;
-	padding-left: 0px;
-	padding-bottom: 4px;
+    padding-right: 0px;
+    padding-left: 0px;
+    padding-bottom: 4px;
 }
 
 tr.box_titre {
-	height: 24px;
-	background: #7699A9;
-	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/trtitle.png',1); ?>);
-	background-repeat: repeat-x;
-	color: #FFFFFF;
-	font-family: <?php print $fontlist ?>, sans-serif;
-	font-weight: normal;
-	border-bottom: 1px solid #FDFFFF;
+    height: 24px;
+    background: #7699A9;
+    background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/trtitle.png',1); ?>);
+    background-repeat: repeat-x;
+    color: #FFFFFF;
+    font-family: <?php print $fontlist ?>, sans-serif;
+    font-weight: normal;
+    border-bottom: 1px solid #FDFFFF;
   -moz-border-radius-topleft:6px;
   -moz-border-radius-topright:6px;
 }
 
 tr.box_titre td.boxclose {
-	width: 30px;
+    width: 30px;
 }
 
 tr.box_impair {
@@ -1629,7 +1605,7 @@ div.error {
 }
 
 #login div.error {
-	margin-top: 20px;
+    margin-top: 20px;
     }
 
 /* Info admin */
@@ -1674,15 +1650,15 @@ border: 0px;
 }
 
 div.titre {
-	font-family: "Trebuchet MS",Arial,Helvetica,sans-serif;
-	font-weight: normal;
-	color: #842F00;
+    font-family: "Trebuchet MS",Arial,Helvetica,sans-serif;
+    font-weight: normal;
+    color: #842F00;
     font-size: 16px;
-	text-decoration: none;
+    text-decoration: none;
 }
 
 #pictotitle {
-	margin-right: 15px;
+    margin-right: 15px;
 }
 
 #dolpaymenttable { width: 600px; font-size: 13px; }
@@ -1711,17 +1687,17 @@ table.valid {
     border-<?php print $left; ?>: solid 1px #E6E6E6;
     border-<?php print $right; ?>: solid 1px #444444;
     border-bottom: solid 1px #555555;
-	padding-top: 0px;
-	padding-left: 0px;
-	padding-right: 0px;
-	padding-bottom: 0px;
-	margin: 0px 0px;
+    padding-top: 0px;
+    padding-left: 0px;
+    padding-right: 0px;
+    padding-bottom: 0px;
+    margin: 0px 0px;
     background: #D5BAA8;
 }
 
 .validtitre {
     background: #D5BAA8;
-	font-weight: bold;
+    font-weight: bold;
 }
 
 
@@ -1752,16 +1728,16 @@ opacity: 1;
 img.datecallink { padding-left: 2px !important; padding-right: 2px !important; padding-bottom: 2px !important; }
 
 .ui-datepicker-trigger {
-	vertical-align: middle;
-	cursor: pointer;
+    vertical-align: middle;
+    cursor: pointer;
 }
 
 .bodyline {
-	-moz-border-radius:8px;
-	border: 1px #E4ECEC outset;
-	padding: 0px;
-	margin-bottom: 5px;
-	z-index: 3000;
+    -moz-border-radius:8px;
+    border: 1px #E4ECEC outset;
+    padding: 0px;
+    margin-bottom: 5px;
+    z-index: 3000;
 }
 table.dp {
     width: 180px;
@@ -1774,21 +1750,21 @@ table.dp {
 .dp td, .tpHour td, .tpMinute td{padding:2px; font-size:10px;}
 /* Barre titre */
 .dpHead,.tpHead,.tpHour td:Hover .tpHead{
-	font-weight:bold;
-	background-color:#BB6644;
-	color:white !important;
-	font-size:11px;
-	cursor:auto;
-	text-align: center;
+    font-weight:bold;
+    background-color:#BB6644;
+    color:white !important;
+    font-size:11px;
+    cursor:auto;
+    text-align: center;
 }
 /* Barre navigation */
 .dpButtons,.tpButtons {
-	text-align:center;
-	background-color:#BB6644;
-	color:#FFFFFF;
-	font-weight:bold;
-	border: 1px outset black;
-	cursor:pointer;
+    text-align:center;
+    background-color:#BB6644;
+    color:#FFFFFF;
+    font-weight:bold;
+    border: 1px outset black;
+    cursor:pointer;
 }
 .dpButtons:Active,.tpButtons:Active{border: 1px outset black;}
 .dpDayNames td,.dpExplanation {background-color:#D9DBE1; font-weight:bold; text-align:center; font-size:11px;}
@@ -1875,35 +1851,33 @@ li.cal_event       { border: none; list-style-type: none; }
 .ui-widget { font-family: Verdana,Arial,sans-serif; font-size: 0.9em; }
 .ui-autocomplete-loading { background: white url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/working.gif',1); ?>) right center no-repeat; }
 
-
 /* ============================================================================== */
 /*  jQuery - jeditable                                                            */
 /* ============================================================================== */
 
 .editkey_textarea, .editkey_ckeditor, .editkey_string, .editkey_email, .editkey_numeric, .editkey_select, .editkey_autocomplete {
-	background: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/edit.png',1) ?>) right top no-repeat;
-	cursor: pointer;
+    background: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/edit.png',1) ?>) right top no-repeat;
+    cursor: pointer;
 }
 
 .editkey_datepicker {
-	background: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/calendar.png',1) ?>) right center no-repeat;
-	cursor: pointer;
+    background: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/calendar.png',1) ?>) right center no-repeat;
+    cursor: pointer;
 }
 
 .editval_textarea.active:hover, .editval_ckeditor.active:hover, .editval_string.active:hover, .editval_email.active:hover, .editval_numeric.active:hover, .editval_select.active:hover, .editval_autocomplete.active:hover, .editval_datepicker.active:hover {
-	background: white;
-	cursor: pointer;
+    background: white;
+    cursor: pointer;
 }
 
 .viewval_textarea.active:hover, .viewval_ckeditor.active:hover, .viewval_string.active:hover, .viewval_email.active:hover, .viewval_numeric.active:hover, .viewval_select.active:hover, .viewval_autocomplete.active:hover, .viewval_datepicker.active:hover {
-	background: white;
-	cursor: pointer;
+    background: white;
+    cursor: pointer;
 }
 
 .viewval_hover {
-	background: white;
+    background: white;
 }
-
 
 /* ============================================================================== */
 /* Admin Menu                                                                     */
@@ -1914,51 +1888,49 @@ li.cal_event       { border: none; list-style-type: none; }
 .treeview li { background-color: transparent !important; padding: 0 0 0 16px !important; min-height: 20px; }
 .treeview .hover { color: black !important; }
 
-
 /* ============================================================================== */
 /*  Show Excel tabs                                                               */
 /* ============================================================================== */
 
 .table_data
 {
-	border-style:ridge;
-	border:1px solid;
+    border-style:ridge;
+    border:1px solid;
 }
 .tab_base
 {
-	background:#C5D0DD;
-	font-weight:bold;
-	border-style:ridge;
-	border: 1px solid;
-	cursor:pointer;
+    background:#C5D0DD;
+    font-weight:bold;
+    border-style:ridge;
+    border: 1px solid;
+    cursor:pointer;
 }
 .table_sub_heading
 {
-	background:#CCCCCC;
-	font-weight:bold;
-	border-style:ridge;
-	border: 1px solid;
+    background:#CCCCCC;
+    font-weight:bold;
+    border-style:ridge;
+    border: 1px solid;
 }
 .table_body
 {
-	background:#F0F0F0;
-	font-weight:normal;
-	font-family:sans-serif;
-	border-style:ridge;
-	border: 1px solid;
-	border-spacing: 0px;
-	border-collapse: collapse;
+    background:#F0F0F0;
+    font-weight:normal;
+    font-family:sans-serif;
+    border-style:ridge;
+    border: 1px solid;
+    border-spacing: 0px;
+    border-collapse: collapse;
 }
 .tab_loaded
 {
-	background:#222222;
-	color:white;
-	font-weight:bold;
-	border-style:groove;
-	border: 1px solid;
-	cursor:pointer;
+    background:#222222;
+    color:white;
+    font-weight:bold;
+    border-style:groove;
+    border: 1px solid;
+    cursor:pointer;
 }
-
 
 /* ============================================================================== */
 /*  CSS for color picker                                                          */
@@ -2040,7 +2012,6 @@ A.none, A.none:active, A.none:visited, A.none:hover {
  margin : 0px;
 }
 
-
 /* Style to overwrites JQuery styles */
 .ui-menu .ui-menu-item a {
     text-decoration:none;
@@ -2054,15 +2025,14 @@ A.none, A.none:active, A.none:visited, A.none:hover {
 }
 
 table.noborder {
-	margin-bottom: 10px;
+    margin-bottom: 10px;
     position: relative;
     border: none;
 }
 
 div.leftContent {
-	background-color: #FFF;
+    background-color: #FFF;
 }
-
 
 /* ============================================================================== */
 /*  CKEditor                                                                      */
@@ -2078,19 +2048,18 @@ span.cke_skin_kama { padding: 0 !important; }
 a.cke_dialog_ui_button
 {
     font-family: <?php print $fontlist ?> !important;
-	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/button_bg.png',1); ?>) !important;
-	background-position: bottom !important;
+    background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/button_bg.png',1); ?>) !important;
+    background-position: bottom !important;
     border: 1px solid #ACBCBB !important;
-	padding: 0.1em 0.7em !important;
-	margin: 0em 0.5em !important;
+    padding: 0.1em 0.7em !important;
+    margin: 0em 0.5em !important;
     -moz-border-radius:0px 5px 0px 5px !important;
-	-webkit-border-radius:0px 5px 0px 5px !important;
-	border-radius:0px 5px 0px 5px !important;
+    -webkit-border-radius:0px 5px 0px 5px !important;
+    border-radius:0px 5px 0px 5px !important;
     -moz-box-shadow: 4px 4px 4px #CCC !important;
     -webkit-box-shadow: 4px 4px 4px #CCC !important;
     box-shadow: 4px 4px 4px #CCC !important;
 }
-
 
 /* ============================================================================== */
 /*  File upload                                                                   */
@@ -2100,36 +2069,34 @@ a.cke_dialog_ui_button
     height: 72px !important;
 }
 
-
 /* ============================================================================== */
 /*  Table with div                                                                */
 /* ============================================================================== */
 
 div.table-border {
-	display:table;
+    display:table;
     width: 100%;
     border-collapse: collapse;
     border: 1px solid #9CACBB;
 }
 div.table-border-row {
-	display:table-row;
+    display:table-row;
 }
 div.table-key-border-col {
-	display:table-cell;
-	width: 25%;
-	vertical-align:top;
-	padding: 1px 2px 1px 1px;
-	border: 1px solid #9CACBB;
-	border-collapse: collapse;
+    display:table-cell;
+    width: 25%;
+    vertical-align:top;
+    padding: 1px 2px 1px 1px;
+    border: 1px solid #9CACBB;
+    border-collapse: collapse;
 }
 div.table-val-border-col {
-	display:table-cell;
-	width:auto;
-	padding: 1px 2px 1px 1px;
-	border: 1px solid #9CACBB;
-	border-collapse: collapse;
+    display:table-cell;
+    width:auto;
+    padding: 1px 2px 1px 1px;
+    border: 1px solid #9CACBB;
+    border-collapse: collapse;
 }
-
 
 /* ============================================================================== */
 /*  Login                                                                   */
@@ -2143,7 +2110,7 @@ div.table-val-border-col {
     }
 
 div#infoVersion {
-	position: relative;
+    position: relative;
     width: 100%;
     height: 15px;
     line-height: 15px;
@@ -2153,7 +2120,7 @@ div#infoVersion {
     }
 
 div#logoBox {
-	position: relative;
+    position: relative;
     width: 100%;
     height: auto;
     margin-top: 30px;
@@ -2161,7 +2128,7 @@ div#logoBox {
     }
 
 div#parameterBox {
-	position: relative;
+    position: relative;
     width: 100%;
     height: auto;
     border: 1px solid #666;
@@ -2172,14 +2139,14 @@ div#parameterBox {
     }
 
 div#parameterBox div {
-	width: 100%;
+    width: 100%;
     height: 20px;
     position: relative;
     line-height: 20px;
     }
 
 div#parameterBox div label {
-	width: 190px;
+    width: 190px;
     text-align: right;
     display: block;
     float: left;
@@ -2188,15 +2155,15 @@ div#parameterBox div label {
 
 div#parameterBox div input[type="text"],
 div#parameterBox div input[type="password"] {
-	width: 180px;
+    width: 180px;
     height: 16px;
     font-size: 10px;
     margin-top: 2px;
     }
 
 div#connectionLine {
-	margin: 10px 0px;
-	text-align: center;
+    margin: 10px 0px;
+    text-align: center;
     }
 
 div#logBox {
@@ -2204,21 +2171,21 @@ margin-top: 25px;
 }
 
 div.captchaBox {
-	margin-top: 10px;
+    margin-top: 10px;
     }
 
 div.captchaImg {
-	margin-bottom: 10px;
+    margin-bottom: 10px;
     margin-top: 5px;
     height: 40px !important;
     }
 
 img#captcha {
-	margin-left: 200px;
+    margin-left: 200px;
     }
 
 #captcha_refresh_img {
-	margin-bottom: 6px;
+    margin-bottom: 6px;
 }
 
 div#infoLogin {
@@ -2232,7 +2199,7 @@ div#infoLogin {
 }
 
 div.other {
-	margin: 10px 0px;
+    margin: 10px 0px;
     text-align: center;
     position: relative;
     width: 480px;
@@ -2241,43 +2208,40 @@ div.other {
     }
 
 form.listactionsfilter img {
-	display: none;
+    display: none;
     }
 
 form.listactionsfilter input[type="submit"] {
-	margin: 2px 0px;
+    margin: 2px 0px;
 }
-
-
 
 /* ============================================================================== */
 /*  JSGantt                                                                       */
 /* ============================================================================== */
 
 div.scroll2 {
-	width: <?php print isset($_SESSION['dol_screenwidth'])?max($_SESSION['dol_screenwidth']-830,450):'450'; ?>px !important;
+    width: <?php print isset($_SESSION['dol_screenwidth'])?max($_SESSION['dol_screenwidth']-830,450):'450'; ?>px !important;
 }
-
 
 /* ============================================================================== */
 /*  jFileTree                                                                     */
 /* ============================================================================== */
 
 .ecmfiletree {
-	width: 99%;
-	height: 99%;
-	background: #FFF;
-	padding-left: 2px;
-	font-weight: normal;
+    width: 99%;
+    height: 99%;
+    background: #FFF;
+    padding-left: 2px;
+    font-weight: normal;
 }
 
 .fileview {
-	width: 99%;
-	height: 99%;
-	background: #FFF;
-	padding-left: 2px;
-	padding-top: 4px;
-	font-weight: normal;
+    width: 99%;
+    height: 99%;
+    background: #FFF;
+    padding-left: 2px;
+    padding-top: 4px;
+    font-weight: normal;
 }
 
 div.filedirelem {
@@ -2307,43 +2271,43 @@ ui-layout-north {
 }
 
 ul.ecmjqft {
-	font-size: 11px;
-	line-height: 16px;
-	padding: 0px;
-	margin: 0px;
-	font-weight: normal;
+    font-size: 11px;
+    line-height: 16px;
+    padding: 0px;
+    margin: 0px;
+    font-weight: normal;
 }
 
 ul.ecmjqft li {
-	list-style: none;
-	padding: 0px;
-	padding-left: 20px;
-	margin: 0px;
-	white-space: nowrap;
-	display: block;
+    list-style: none;
+    padding: 0px;
+    padding-left: 20px;
+    margin: 0px;
+    white-space: nowrap;
+    display: block;
 }
 
 ul.ecmjqft a {
-	line-height: 16px;
-	vertical-align: middle;
-	color: #333;
-	padding: 0px 0px;
-	font-weight:normal;
-	display: inline-block !important;
+    line-height: 16px;
+    vertical-align: middle;
+    color: #333;
+    padding: 0px 0px;
+    font-weight:normal;
+    display: inline-block !important;
 /*	float: left;*/
 }
 ul.ecmjqft a:active {
-	font-weight: bold !important;
+    font-weight: bold !important;
 }
 ul.ecmjqft a:hover {
     text-decoration: underline;
 }
 div.ecmjqft {
-	vertical-align: middle;
-	display: inline-block !important;
-	text-align: right;
-	position:absolute;
-	right:8px;
+    vertical-align: middle;
+    display: inline-block !important;
+    text-align: right;
+    position:absolute;
+    right:8px;
 }
 
 /* Core Styles */
@@ -2351,105 +2315,102 @@ div.ecmjqft {
 .ecmjqft LI.expanded { font-weight:normal; background: url(<?php echo dol_buildpath($path.'/theme/common/treemenu/folder2-expanded.png',1); ?>) left top no-repeat; }
 .ecmjqft LI.wait { font-weight:normal; background: url(<?php echo dol_buildpath('/theme/eldy/img/working.gif',1); ?>) left top no-repeat; }
 
-
 /* ============================================================================== */
 /*  jNotify                                                                       */
 /* ============================================================================== */
 
 .jnotify-container {
-	position: fixed !important;
+    position: fixed !important;
 <?php if (! empty($conf->global->MAIN_JQUERY_JNOTIFY_BOTTOM)) { ?>
-	top: auto !important;
-	bottom: 4px !important;
+    top: auto !important;
+    bottom: 4px !important;
 <?php } ?>
-	text-align: center;
-	min-width: <?php echo $dol_optimize_smallscreen?'200':'480'; ?>px;
-	width: auto;
-	padding-left: 10px !important;
-	padding-right: 10px !important;
+    text-align: center;
+    min-width: <?php echo $dol_optimize_smallscreen?'200':'480'; ?>px;
+    width: auto;
+    padding-left: 10px !important;
+    padding-right: 10px !important;
 }
-
 
 /* ============================================================================== */
 /*  JMobile                                                                       */
 /* ============================================================================== */
 
 li.ui-li-divider .ui-link {
-	color: #FFF !important;
+    color: #FFF !important;
 }
 a.ui-link, a.ui-link:hover, .ui-btn:hover, span.ui-btn-text:hover, span.ui-btn-inner:hover {
-	text-decoration: none !important;
+    text-decoration: none !important;
 }
 
 .ui-btn-inner {
-	padding-left: 10px;
-	padding-right: 10px;
-	/* white-space: normal; */		/* Warning, enable this break the truncate feature */
+    padding-left: 10px;
+    padding-right: 10px;
+    /* white-space: normal; */		/* Warning, enable this break the truncate feature */
 }
 .ui-select .ui-btn-icon-right .ui-btn-inner {
-	padding-right: 36px;
+    padding-right: 36px;
 }
 .fiche .ui-controlgroup {
-	margin: 0px;
-	padding-bottom: 0px;
+    margin: 0px;
+    padding-bottom: 0px;
 }
 div.ui-controlgroup-controls div.tabsElem
 {
-	margin-top: 2px;
+    margin-top: 2px;
 }
 div.ui-controlgroup-controls div.tabsElem a
 {
-	-moz-box-shadow: 0 -3px 6px rgba(0,0,0,.2);
-	-webkit-box-shadow: 0 -3px 6px rgba(0,0,0,.2);
-	box-shadow: 0 -3px 6px rgba(0,0,0,.2);
-	border: none;
+    -moz-box-shadow: 0 -3px 6px rgba(0,0,0,.2);
+    -webkit-box-shadow: 0 -3px 6px rgba(0,0,0,.2);
+    box-shadow: 0 -3px 6px rgba(0,0,0,.2);
+    border: none;
 }
 a.tab span.ui-btn-inner
 {
-	border: none;
-	padding: 0;
+    border: none;
+    padding: 0;
 }
 
 .ui-body-c {
-	border: none;
-	text-shadow: none;
+    border: none;
+    text-shadow: none;
 }
 .ui-link {
-	color: rgb(<?php print $colortext; ?>) !important;
+    color: rgb(<?php print $colortext; ?>) !important;
 }
 
 a.ui-link {
-	word-wrap: break-word;
+    word-wrap: break-word;
 }
 
 /* force wrap possible onto field overflow does not works */
 .formdoc .ui-btn-inner
 {
-	white-space: normal;
-	overflow: hidden;
-	text-overflow: hidden;
+    white-space: normal;
+    overflow: hidden;
+    text-overflow: hidden;
 }
 
 /* Warning: setting this may make screen not beeing refreshed after a combo selection */
 .ui-body-c {
-	background: #fff;
+    background: #fff;
 }
 
 div.ui-radio
 {
-	display: inline-block;
+    display: inline-block;
 }
 .ui-radio input {
-	height: auto;
-	width: auto;
-	margin: 0;
-	position: static;
+    height: auto;
+    width: auto;
+    margin: 0;
+    position: static;
 }
 .ui-mobile fieldset
 {
-	padding-bottom: 10px; margin-bottom: 4px; border-bottom: 1px solid #AAAAAA !important;
+    padding-bottom: 10px; margin-bottom: 4px; border-bottom: 1px solid #AAAAAA !important;
 }
 
 <?php
 if (is_object($db)) $db->close();
-?>

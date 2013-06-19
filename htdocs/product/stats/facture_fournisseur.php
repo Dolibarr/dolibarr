@@ -57,8 +57,6 @@ $pagenext = $page + 1;
 if (! $sortorder) $sortorder="DESC";
 if (! $sortfield) $sortfield="f.datef";
 
-
-
 /*
  * View
  */
@@ -67,36 +65,33 @@ $supplierinvoicestatic=new FactureFournisseur($db);
 
 $form = new Form($db);
 
-if ($id > 0 || ! empty($ref))
-{
-	$product = new Product($db);
-	$result = $product->fetch($id, $ref);
-	
-	$parameters=array('id'=>$id);
-	$reshook=$hookmanager->executeHooks('doActions',$parameters,$product,$action);    // Note that $action and $object may have been modified by some hooks
-	$error=$hookmanager->error; $errors=$hookmanager->errors;
+if ($id > 0 || ! empty($ref)) {
+    $product = new Product($db);
+    $result = $product->fetch($id, $ref);
+
+    $parameters=array('id'=>$id);
+    $reshook=$hookmanager->executeHooks('doActions',$parameters,$product,$action);    // Note that $action and $object may have been modified by some hooks
+    $error=$hookmanager->error; $errors=$hookmanager->errors;
 
     llxHeader("","",$langs->trans("CardProduct".$product->type));
 
-    if ($result > 0)
-    {
+    if ($result > 0) {
         /*
          *  En mode visu
          */
-		$head=product_prepare_head($product, $user);
-		$titre=$langs->trans("CardProduct".$product->type);
-		$picto=($product->type==1?'service':'product');
-		dol_fiche_head($head, 'referers', $titre, 0, $picto);
-		
-		$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$product,$action);    // Note that $action and $object may have been modified by hook
+        $head=product_prepare_head($product, $user);
+        $titre=$langs->trans("CardProduct".$product->type);
+        $picto=($product->type==1?'service':'product');
+        dol_fiche_head($head, 'referers', $titre, 0, $picto);
 
+        $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$product,$action);    // Note that $action and $object may have been modified by hook
 
         print '<table class="border" width="100%">';
 
         // Reference
         print '<tr>';
         print '<td width="30%">'.$langs->trans("Ref").'</td><td colspan="3">';
-		print $form->showrefnav($product,'ref','',1,'ref');
+        print $form->showrefnav($product,'ref','',1,'ref');
         print '</td>';
         print '</tr>';
 
@@ -104,22 +99,21 @@ if ($id > 0 || ! empty($ref))
         print '<tr><td>'.$langs->trans("Label").'</td><td colspan="3">'.$product->libelle.'</td>';
         print '</tr>';
 
-		// Status (to sell)
-		print '<tr><td>'.$langs->trans("Status").' ('.$langs->trans("Sell").')</td><td colspan="3">';
-		print $product->getLibStatut(2,0);
-		print '</td></tr>';
+        // Status (to sell)
+        print '<tr><td>'.$langs->trans("Status").' ('.$langs->trans("Sell").')</td><td colspan="3">';
+        print $product->getLibStatut(2,0);
+        print '</td></tr>';
 
-		// Status (to buy)
-		print '<tr><td>'.$langs->trans("Status").' ('.$langs->trans("Buy").')</td><td colspan="3">';
-		print $product->getLibStatut(2,1);
-		print '</td></tr>';
+        // Status (to buy)
+        print '<tr><td>'.$langs->trans("Status").' ('.$langs->trans("Buy").')</td><td colspan="3">';
+        print $product->getLibStatut(2,1);
+        print '</td></tr>';
 
-		show_stats_for_company($product,$socid);
+        show_stats_for_company($product,$socid);
 
         print "</table>";
 
         print '</div>';
-
 
         $sql = "SELECT distinct s.nom, s.rowid as socid, s.code_client, f.facnumber, f.total_ht as total_ht,";
         $sql.= " f.datef, f.paye, f.fk_statut as statut, f.rowid as facid";
@@ -138,8 +132,7 @@ if ($id > 0 || ! empty($ref))
         $sql.= $db->plimit($conf->liste_limit +1, $offset);
 
         $result = $db->query($sql);
-        if ($result)
-        {
+        if ($result) {
             $num = $db->num_rows($result);
 
             print_barre_liste($langs->trans("SuppliersInvoices"),$page,$_SERVER["PHP_SELF"],"&amp;id=$product->id",$sortfield,$sortorder,'',$num,0,'');
@@ -156,11 +149,9 @@ if ($id > 0 || ! empty($ref))
             print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"f.paye,f.fk_statut","","&amp;id=".$product->id,'align="right"',$sortfield,$sortorder);
             print "</tr>\n";
 
-            if ($num > 0)
-            {
+            if ($num > 0) {
                 $var=True;
-                while ($i < $num && $conf->liste_limit)
-                {
+                while ($i < $num && $conf->liste_limit) {
                     $objp = $db->fetch_object($result);
                     $var=!$var;
 
@@ -168,7 +159,7 @@ if ($id > 0 || ! empty($ref))
                     print '<td>';
                     $supplierinvoicestatic->id=$objp->facid;
                     $supplierinvoicestatic->ref=$objp->facnumber;
-					print $supplierinvoicestatic->getNomUrl(1);
+                    print $supplierinvoicestatic->getNomUrl(1);
                     print "</td>\n";
                     print '<td><a href="'.DOL_URL_ROOT.'/fourn/fiche.php?socid='.$objp->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dol_trunc($objp->nom,44).'</a></td>';
                     print "<td>".$objp->code_client."</td>\n";
@@ -180,22 +171,16 @@ if ($id > 0 || ! empty($ref))
                     $i++;
                 }
             }
-        }
-        else
-        {
+        } else {
             dol_print_error($db);
         }
         print "</table>";
         print '<br>';
         $db->free($result);
     }
-}
-else
-{
+} else {
     dol_print_error();
 }
 
-
 llxFooter();
 $db->close();
-?>

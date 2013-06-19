@@ -28,13 +28,11 @@ $langs->load("admin");
 
 if (!$user->admin) accessforbidden();
 
-
 /*
  * Action
  */
 
 // None
-
 
 /*
  * View
@@ -54,14 +52,11 @@ print "<tr $bc[0]><td width=\"240\">".$langs->trans("DocumentRootServer")."</td>
 print "<tr $bc[1]><td>".$langs->trans("DataRootServer")."</td><td>" . DOL_DATA_ROOT . "</td></tr>\n";
 $labeluser=dol_getwebuser('user');
 $labelgroup=dol_getwebuser('group');
-if ($labeluser && $labelgroup)
-{
-	print "<tr $bc[0]><td>".$langs->trans("WebUserGroup")."</td><td>".$labeluser.'/'.$labelgroup."</td></tr>\n";
+if ($labeluser && $labelgroup) {
+    print "<tr $bc[0]><td>".$langs->trans("WebUserGroup")."</td><td>".$labeluser.'/'.$labelgroup."</td></tr>\n";
 }
 print '</table>';
-
 
 llxFooter();
 
 $db->close();
-?>

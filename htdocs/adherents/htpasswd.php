@@ -41,13 +41,11 @@ $now=dol_now();
 
 if ($sortorder == "") {  $sortorder="ASC"; }
 if ($sortfield == "") {  $sortfield="d.login"; }
-if (! isset($statut))
-{
+if (! isset($statut)) {
   $statut = 1 ;
 }
 
-if (! isset($cotis))
-{
+if (! isset($cotis)) {
   // par defaut les adherents doivent etre a jour de cotisation
   $cotis=1;
 }
@@ -56,38 +54,31 @@ if (! isset($cotis))
 $sql = "SELECT d.login, d.pass, d.datefin";
 $sql .= " FROM ".MAIN_DB_PREFIX."adherent as d ";
 $sql .= " WHERE d.statut = $statut ";
-if ($cotis==1)
-{
-	$sql .= " AND datefin > '".$db->idate($now)."'";
+if ($cotis==1) {
+    $sql .= " AND datefin > '".$db->idate($now)."'";
 }
 $sql.= $db->order($sortfield,$sortorder);
 //$sql.=$db->plimit($conf->liste_limit, $offset);
 
 $resql = $db->query($sql);
-if ($resql)
-{
-	$num = $db->num_rows($resql);
-	$i = 0;
+if ($resql) {
+    $num = $db->num_rows($resql);
+    $i = 0;
 
-	print_barre_liste($langs->trans("HTPasswordExport"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder,'',0);
+    print_barre_liste($langs->trans("HTPasswordExport"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder,'',0);
 
-	print "<hr>\n";
-	while ($i < $num)
-	{
-		$objp = $db->fetch_object($result);
-		$htpass=crypt($objp->pass,makesalt());
-		print $objp->login.":".$htpass."<br>\n";
-		$i++;
-	}
-	print "<hr>\n";
+    print "<hr>\n";
+    while ($i < $num) {
+        $objp = $db->fetch_object($result);
+        $htpass=crypt($objp->pass,makesalt());
+        print $objp->login.":".$htpass."<br>\n";
+        $i++;
+    }
+    print "<hr>\n";
+} else {
+    dol_print_error($db);
 }
-else
-{
-	dol_print_error($db);
-}
-
 
 llxFooter();
 
 $db->close();
-?>

@@ -33,8 +33,6 @@ $langs->load("mails");
 if (! $user->rights->mailing->lire || $user->societe_id > 0)
 accessforbidden();
 
-
-
 /*
  * View
  */
@@ -45,25 +43,22 @@ $form = new Form($db);
 
 $mil = new Mailing($db);
 
-if ($mil->fetch($_REQUEST["id"]) >= 0)
-{
-	$head = emailing_prepare_head($mil);
+if ($mil->fetch($_REQUEST["id"]) >= 0) {
+    $head = emailing_prepare_head($mil);
 
-	dol_fiche_head($head, 'info', $langs->trans("Mailing"), 0, 'email');
+    dol_fiche_head($head, 'info', $langs->trans("Mailing"), 0, 'email');
 
+    print '<table width="100%"><tr><td>';
+    $mil->user_creation=$mil->user_creat;
+    $mil->date_creation=$mil->date_creat;
+    $mil->user_validation=$mil->user_valid;
+    $mil->date_validation=$mil->date_valid;
+    dol_print_object_info($mil);
+    print '</td></tr></table>';
 
-	print '<table width="100%"><tr><td>';
-	$mil->user_creation=$mil->user_creat;
-	$mil->date_creation=$mil->date_creat;
-	$mil->user_validation=$mil->user_valid;
-	$mil->date_validation=$mil->date_valid;
-	dol_print_object_info($mil);
-	print '</td></tr></table>';
-
-	print '</div>';
+    print '</div>';
 }
 
 $db->close();
 
 llxFooter();
-?>

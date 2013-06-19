@@ -28,31 +28,26 @@ $langs->load("donations");
 
 if (!$user->rights->don->lire) accessforbidden();
 
-
 /*
  * View
  */
 
 llxHeader('',$langs->trans("Donations"),'EN:Module_Donations|FR:Module_Dons|ES:M&oacute;dulo_Donaciones');
 
-
 print_fiche_titre($langs->trans("Statistics"));
-
 
 $sql = "SELECT d.amount";
 $sql .= " FROM ".MAIN_DB_PREFIX."don as d LEFT JOIN ".MAIN_DB_PREFIX."projet as p";
 $sql .= " ON p.rowid = d.fk_don_projet";
 
 $result = $db->query($sql);
-if ($result)
-{
+if ($result) {
     $num = $db->num_rows($result);
 
     $var=true;
     $i=0;
     $total=0;
-    while ($i < $num)
-    {
+    while ($i < $num) {
         $objp = $db->fetch_object($result);
         $total += $objp->amount;
         $i++;
@@ -72,14 +67,10 @@ if ($result)
     print "</tr>";
 
     print "</table>";
-}
-else
-{
+} else {
     dol_print_error($db);
 }
-
 
 llxFooter();
 
 $db->close();
-?>

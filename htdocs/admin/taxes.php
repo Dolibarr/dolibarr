@@ -51,8 +51,7 @@ $action = GETPOST('action','alpha');
 
 $tax_mode = empty($conf->global->TAX_MODE)?0:$conf->global->TAX_MODE;
 
-if ($action == 'settaxmode')
-{
+if ($action == 'settaxmode') {
     $tax_mode = GETPOST('tax_mode','alpha');
 
     $db->begin();
@@ -60,8 +59,7 @@ if ($action == 'settaxmode')
     $res = dolibarr_set_const($db, 'TAX_MODE', $tax_mode,'chaine',0,'',$conf->entity);
     if (! $res > 0) $error++;
 
-    switch ($tax_mode)
-    {
+    switch ($tax_mode) {
         case 0:
             $value = 'payment';
             break;
@@ -79,38 +77,29 @@ if ($action == 'settaxmode')
     $res = dolibarr_set_const($db, 'TAX_MODE_BUY_SERVICE', $value,'chaine',0,'',$conf->entity);
     if (! $res > 0) $error++;
 
-    if (! $error)
-    {
+    if (! $error) {
         $db->commit();
         $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
-    }
-    else
-    {
+    } else {
         $db->rollback();
         $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
     }
 
-
 }
 
 /*
- if ($_POST['action'] == 'update' || $_POST['action'] == 'add')
- {
- if (! dolibarr_set_const($db, $_POST['constname'], $_POST['constvalue'], $typeconst[$_POST['consttype']], 0, isset($_POST['constnote']) ? $_POST['constnote'] : '',$conf->entity));
- {
+ if ($_POST['action'] == 'update' || $_POST['action'] == 'add') {
+ if (! dolibarr_set_const($db, $_POST['constname'], $_POST['constvalue'], $typeconst[$_POST['consttype']], 0, isset($_POST['constnote']) ? $_POST['constnote'] : '',$conf->entity)) {;
  print $db->error();
  }
  }
 
- if ($_GET['action'] == 'delete')
- {
- if (! dolibarr_del_const($db, $_GET['constname'],$conf->entity));
- {
+ if ($_GET['action'] == 'delete') {
+ if (! dolibarr_del_const($db, $_GET['constname'],$conf->entity)) {;
  print $db->error();
  }
  }
  */
-
 
 /*
  * View
@@ -133,14 +122,10 @@ $h++;
 
 dol_fiche_head($head, $hselected, $langs->trans("ModuleSetup"));
 
-
 print '<br>';
-if (empty($mysoc->tva_assuj))
-{
+if (empty($mysoc->tva_assuj)) {
     print $langs->trans("YourCompanyDoesNotUseVAT").'<br>';
-}
-else
-{
+} else {
     print '<table class="noborder" width="100%">';
 
     // Cas des parametres TAX_MODE_SELL/BUY_SERVICE/PRODUCT
@@ -181,25 +166,21 @@ else
     // Services
     print '<tr><td>'.$langs->trans("Services").'</td>';
     print '<td>';
-    if ($tax_mode == 0)
-    {
+    if ($tax_mode == 0) {
         print $langs->trans("OnPayment");
         print ' ('.$langs->trans("SupposedToBePaymentDate").')';
     }
-    if ($tax_mode == 1)
-    {
+    if ($tax_mode == 1) {
         print $langs->trans("OnInvoice");
         print ' ('.$langs->trans("InvoiceDateUsed").')';
     }
     print '</td>';
     print '<td>';
-    if ($tax_mode == 0)
-    {
+    if ($tax_mode == 0) {
         print $langs->trans("OnPayment");
         print ' ('.$langs->trans("SupposedToBePaymentDate").')';
     }
-    if ($tax_mode == 1)
-    {
+    if ($tax_mode == 1) {
         print $langs->trans("OnInvoice");
         print ' ('.$langs->trans("InvoiceDateUsed").')';
     }
@@ -213,4 +194,3 @@ dol_htmloutput_mesg($mesg);
 $db->close();
 
 llxFooter();
-?>

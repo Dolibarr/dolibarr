@@ -37,10 +37,9 @@ $socid=GETPOST('socid','int'); if ($socid < 0) $socid=0;
 $id = GETPOST('id','int');
 
 // Security check
-if ($user->societe_id > 0)
-{
-	$action = '';
-	$socid = $user->societe_id;
+if ($user->societe_id > 0) {
+    $action = '';
+    $socid = $user->societe_id;
 }
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'deplacement', $id,'');
@@ -52,7 +51,6 @@ $startyear=$year-1;
 $endyear=$year;
 
 $mode=GETPOST("mode")?GETPOST("mode"):'customer';
-
 
 /*
  * View
@@ -71,7 +69,6 @@ dol_mkdir($dir);
 
 $stats = new DeplacementStats($db, $socid, $userid);
 
-
 // Build graphic number of object
 // $data = array(array('Lib',val1,val2,val3),...)
 //print "$endyear, $startyear";
@@ -83,28 +80,26 @@ $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=tripsexpensesstats&amp;file
 
 $px1 = new DolGraph();
 $mesg = $px1->isGraphKo();
-if (! $mesg)
-{
-	$px1->SetData($data);
-	$px1->SetPrecisionY(0);
-	$i=$startyear;$legend=array();
-	while ($i <= $endyear)
-	{
-		$legend[]=$i;
-		$i++;
-	}
-	$px1->SetLegend($legend);
-	$px1->SetMaxValue($px1->GetCeilMaxValue());
-	$px1->SetWidth($WIDTH);
-	$px1->SetHeight($HEIGHT);
-	$px1->SetYLabel($langs->trans("Number"));
-	$px1->SetShading(3);
-	$px1->SetHorizTickIncrement(1);
-	$px1->SetPrecisionY(0);
-	$px1->mode='depth';
-	$px1->SetTitle($langs->trans("NumberByMonth"));
+if (! $mesg) {
+    $px1->SetData($data);
+    $px1->SetPrecisionY(0);
+    $i=$startyear;$legend=array();
+    while ($i <= $endyear) {
+        $legend[]=$i;
+        $i++;
+    }
+    $px1->SetLegend($legend);
+    $px1->SetMaxValue($px1->GetCeilMaxValue());
+    $px1->SetWidth($WIDTH);
+    $px1->SetHeight($HEIGHT);
+    $px1->SetYLabel($langs->trans("Number"));
+    $px1->SetShading(3);
+    $px1->SetHorizTickIncrement(1);
+    $px1->SetPrecisionY(0);
+    $px1->mode='depth';
+    $px1->SetTitle($langs->trans("NumberByMonth"));
 
-	$px1->draw($filenamenb,$fileurlnb);
+    $px1->draw($filenamenb,$fileurlnb);
 }
 
 // Build graphic amount of object
@@ -117,41 +112,35 @@ $fileurlamount = DOL_URL_ROOT.'/viewimage.php?modulepart=tripsexpensesstats&amp;
 
 $px2 = new DolGraph();
 $mesg = $px2->isGraphKo();
-if (! $mesg)
-{
-	$px2->SetData($data);
-	$i=$startyear;$legend=array();
-	while ($i <= $endyear)
-	{
-		$legend[]=$i;
-		$i++;
-	}
-	$px2->SetLegend($legend);
-	$px2->SetMaxValue($px2->GetCeilMaxValue());
-	$px2->SetMinValue(min(0,$px2->GetFloorMinValue()));
-	$px2->SetWidth($WIDTH);
-	$px2->SetHeight($HEIGHT);
-	$px2->SetYLabel($langs->trans("Amount"));
-	$px2->SetShading(3);
-	$px2->SetHorizTickIncrement(1);
-	$px2->SetPrecisionY(0);
-	$px2->mode='depth';
-	$px2->SetTitle($langs->trans("AmountTotal"));
+if (! $mesg) {
+    $px2->SetData($data);
+    $i=$startyear;$legend=array();
+    while ($i <= $endyear) {
+        $legend[]=$i;
+        $i++;
+    }
+    $px2->SetLegend($legend);
+    $px2->SetMaxValue($px2->GetCeilMaxValue());
+    $px2->SetMinValue(min(0,$px2->GetFloorMinValue()));
+    $px2->SetWidth($WIDTH);
+    $px2->SetHeight($HEIGHT);
+    $px2->SetYLabel($langs->trans("Amount"));
+    $px2->SetShading(3);
+    $px2->SetHorizTickIncrement(1);
+    $px2->SetPrecisionY(0);
+    $px2->mode='depth';
+    $px2->SetTitle($langs->trans("AmountTotal"));
 
-	$px2->draw($filenameamount,$fileurlamount);
+    $px2->draw($filenameamount,$fileurlamount);
 }
-
 
 $data = $stats->getAverageByMonthWithPrevYear($endyear, $startyear);
 
-if (!$user->rights->societe->client->voir || $user->societe_id)
-{
+if (!$user->rights->societe->client->voir || $user->societe_id) {
     $filename_avg = $dir.'/ordersaverage-'.$user->id.'-'.$year.'.png';
     if ($mode == 'customer') $fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=ordersaverage-'.$user->id.'-'.$year.'.png';
     if ($mode == 'supplier') $fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstatssupplier&file=ordersaverage-'.$user->id.'-'.$year.'.png';
-}
-else
-{
+} else {
     $filename_avg = $dir.'/ordersaverage-'.$year.'.png';
     if ($mode == 'customer') $fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=ordersaverage-'.$year.'.png';
     if ($mode == 'supplier') $fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstatssupplier&file=ordersaverage-'.$year.'.png';
@@ -159,12 +148,10 @@ else
 
 $px3 = new DolGraph();
 $mesg = $px3->isGraphKo();
-if (! $mesg)
-{
+if (! $mesg) {
     $px3->SetData($data);
     $i = $startyear;$legend=array();
-    while ($i <= $endyear)
-    {
+    while ($i <= $endyear) {
         $legend[]=$i;
         $i++;
     }
@@ -183,15 +170,13 @@ if (! $mesg)
     $px3->draw($filename_avg,$fileurl_avg);
 }
 
-
 // Show array
 $data = $stats->getAllByYear();
 $arrayyears=array();
-foreach($data as $val) {
+foreach ($data as $val) {
     $arrayyears[$val['year']]=$val['year'];
 }
 if (! count($arrayyears)) $arrayyears[$nowyear]=$nowyear;
-
 
 $h=0;
 $head = array();
@@ -204,9 +189,7 @@ complete_head_from_modules($conf,$langs,null,$head,$h,'trip_stats');
 
 dol_fiche_head($head,'byyear',$langs->trans("Statistics"));
 
-
 print '<div class="fichecenter"><div class="fichethirdleft">';
-
 
 // Show filter box
 print '<form name="stats" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
@@ -242,55 +225,46 @@ print '<td align="center">'.$langs->trans("AmountAverage").'</td>';
 print '</tr>';
 
 $oldyear=0;
-foreach ($data as $val)
-{
-	$year = $val['year'];
-	while ($year && $oldyear > $year+1)
-	{	// If we have empty year
-		$oldyear--;
-		print '<tr height="24">';
-		print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$oldyear.'&amp;mode='.$mode.'">'.$oldyear.'</a></td>';
-		print '<td align="right">0</td>';
-		print '<td align="right">0</td>';
-		print '<td align="right">0</td>';
-		print '</tr>';
-	}
-	print '<tr height="24">';
-	print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&amp;mode='.$mode.'">'.$year.'</a></td>';
-	print '<td align="right">'.$val['nb'].'</td>';
-	print '<td align="right">'.price(price2num($val['total'],'MT'),1).'</td>';
-	print '<td align="right">'.price(price2num($val['avg'],'MT'),1).'</td>';
-	print '</tr>';
-	$oldyear=$year;
+foreach ($data as $val) {
+    $year = $val['year'];
+    while ($year && $oldyear > $year+1) {	// If we have empty year
+        $oldyear--;
+        print '<tr height="24">';
+        print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$oldyear.'&amp;mode='.$mode.'">'.$oldyear.'</a></td>';
+        print '<td align="right">0</td>';
+        print '<td align="right">0</td>';
+        print '<td align="right">0</td>';
+        print '</tr>';
+    }
+    print '<tr height="24">';
+    print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&amp;mode='.$mode.'">'.$year.'</a></td>';
+    print '<td align="right">'.$val['nb'].'</td>';
+    print '<td align="right">'.price(price2num($val['total'],'MT'),1).'</td>';
+    print '<td align="right">'.price(price2num($val['avg'],'MT'),1).'</td>';
+    print '</tr>';
+    $oldyear=$year;
 }
 
 print '</table>';
 
-
 print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
-
 
 // Show graphs
 print '<table class="border" width="100%"><tr valign="top"><td align="center">';
-if ($mesg) { print $mesg; }
-else {
+if ($mesg) { print $mesg; } else {
     print $px1->show();
-	print "<br>\n";
-	print $px2->show();
+    print "<br>\n";
+    print $px2->show();
     print "<br>\n";
     print $px3->show();
 }
 print '</td></tr></table>';
 
-
 print '</div></div></div>';
 print '<div style="clear:both"></div>';
 
-
 dol_fiche_end();
-
 
 llxFooter();
 
 $db->close();
-?>

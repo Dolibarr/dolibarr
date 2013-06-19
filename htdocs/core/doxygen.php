@@ -31,4 +31,3 @@
  *      Dolibarr spanish portal: <a href="http://www.dolibarr.es">www.dolibarr.es</a><br>
  *      <br>
  */
-?>

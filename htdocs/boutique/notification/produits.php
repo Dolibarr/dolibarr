@@ -27,7 +27,6 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/boutique/osc_master.inc.php';
 
-
 /*
  * View
  */
@@ -40,7 +39,6 @@ if ($sortfield == "") {
 if ($sortorder == "") {
   $sortorder="ASC";
 }
-
 
 if ($page == -1) { $page = 0 ; }
 $limit = $conf->liste_limit;
@@ -56,8 +54,7 @@ $sql .= " GROUP BY p.products_name, p.products_id";
 $sql .= $dbosc->plimit($limit,$offset);
 
 $resql=$dbosc->query($sql);
-if ($resql)
-{
+if ($resql) {
   $num = $dbosc->num_rows($resql);
   $i = 0;
   print "<p><TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
@@ -67,8 +64,7 @@ if ($resql)
   print "<td></td>";
   print "</TR>\n";
   $var=True;
-  while ($i < $num)
-    {
+  while ($i < $num) {
       $objp = $dbosc->fetch_object($resql);
       $var=!$var;
       print "<TR $bc[$var]>";
@@ -84,13 +80,10 @@ if ($resql)
     }
   print "</TABLE>";
   $dbosc->free();
-}
-else
-{
-	dol_print_error($dbosc);
+} else {
+    dol_print_error($dbosc);
 }
 
 $dbosc->close();
 
 llxFooter();
-?>

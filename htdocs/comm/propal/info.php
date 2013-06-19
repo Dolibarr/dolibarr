@@ -38,7 +38,6 @@ $socid=GETPOST('socid','int');
 if (! empty($user->societe_id)) $socid=$user->societe_id;
 $result = restrictedArea($user, 'propal', $id);
 
-
 /*
  *	View
  */
@@ -60,7 +59,5 @@ print '</td></tr></table>';
 
 print '</div>';
 
-
 llxFooter();
 $db->close();
-?>

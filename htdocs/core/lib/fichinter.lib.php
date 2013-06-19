@@ -32,32 +32,30 @@
  */
 function fichinter_prepare_head($object)
 {
-	global $langs, $conf, $user;
-	$langs->load("fichinter");
+    global $langs, $conf, $user;
+    $langs->load("fichinter");
 
-	$h = 0;
-	$head = array();
+    $h = 0;
+    $head = array();
 
-	$head[$h][0] = DOL_URL_ROOT.'/fichinter/fiche.php?id='.$object->id;
-	$head[$h][1] = $langs->trans("Card");
-	$head[$h][2] = 'card';
-	$h++;
+    $head[$h][0] = DOL_URL_ROOT.'/fichinter/fiche.php?id='.$object->id;
+    $head[$h][1] = $langs->trans("Card");
+    $head[$h][2] = 'card';
+    $h++;
 
-	if (empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
-	{
-		$head[$h][0] = DOL_URL_ROOT.'/fichinter/contact.php?id='.$object->id;
-		$head[$h][1] = $langs->trans('InterventionContact');
-		$head[$h][2] = 'contact';
-		$h++;
-	}
+    if (empty($conf->global->MAIN_DISABLE_CONTACTS_TAB)) {
+        $head[$h][0] = DOL_URL_ROOT.'/fichinter/contact.php?id='.$object->id;
+        $head[$h][1] = $langs->trans('InterventionContact');
+        $head[$h][2] = 'contact';
+        $h++;
+    }
 
-	if (! empty($conf->global->MAIN_USE_PREVIEW_TABS))
-	{
-		$head[$h][0] = DOL_URL_ROOT.'/fichinter/apercu.php?id='.$object->id;
-		$head[$h][1] = $langs->trans('Preview');
-		$head[$h][2] = 'preview';
-		$h++;
-	}
+    if (! empty($conf->global->MAIN_USE_PREVIEW_TABS)) {
+        $head[$h][0] = DOL_URL_ROOT.'/fichinter/apercu.php?id='.$object->id;
+        $head[$h][1] = $langs->trans('Preview');
+        $head[$h][2] = 'preview';
+        $h++;
+    }
 
     // Show more tabs from modules
     // Entries must be declared in modules descriptor with line
@@ -65,23 +63,22 @@ function fichinter_prepare_head($object)
     // $this->tabs = array('entity:-tabname);   												to remove a tab
     complete_head_from_modules($conf,$langs,$object,$head,$h,'intervention');
 
-    if (empty($conf->global->MAIN_DISABLE_NOTES_TAB))
-    {
-    	$head[$h][0] = DOL_URL_ROOT.'/fichinter/note.php?id='.$object->id;
-    	$head[$h][1] = $langs->trans('Notes');
-    	$head[$h][2] = 'note';
-    	$h++;
+    if (empty($conf->global->MAIN_DISABLE_NOTES_TAB)) {
+        $head[$h][0] = DOL_URL_ROOT.'/fichinter/note.php?id='.$object->id;
+        $head[$h][1] = $langs->trans('Notes');
+        $head[$h][2] = 'note';
+        $h++;
     }
 
-	$head[$h][0] = DOL_URL_ROOT.'/fichinter/document.php?id='.$object->id;
-	$head[$h][1] = $langs->trans("Documents");
-	$head[$h][2] = 'documents';
-	$h++;
+    $head[$h][0] = DOL_URL_ROOT.'/fichinter/document.php?id='.$object->id;
+    $head[$h][1] = $langs->trans("Documents");
+    $head[$h][2] = 'documents';
+    $h++;
 
     $head[$h][0] = DOL_URL_ROOT.'/fichinter/info.php?id='.$object->id;
-	$head[$h][1] = $langs->trans('Info');
-	$head[$h][2] = 'info';
-	$h++;
+    $head[$h][1] = $langs->trans('Info');
+    $head[$h][2] = 'info';
+    $h++;
 
     complete_head_from_modules($conf,$langs,$object,$head,$h,'intervention','remove');
 
@@ -95,35 +92,32 @@ function fichinter_prepare_head($object)
  */
 function fichinter_admin_prepare_head()
 {
-	global $langs, $conf, $user;
+    global $langs, $conf, $user;
 
-	$h = 0;
-	$head = array();
+    $h = 0;
+    $head = array();
 
-	$h = 0;
+    $h = 0;
 
-	$head[$h][0] = DOL_URL_ROOT."/admin/fichinter.php";
-	$head[$h][1] = $langs->trans("Interventions");
-	$head[$h][2] = 'ficheinter';
-	$h++;
+    $head[$h][0] = DOL_URL_ROOT."/admin/fichinter.php";
+    $head[$h][1] = $langs->trans("Interventions");
+    $head[$h][2] = 'ficheinter';
+    $h++;
 
-	// Show more tabs from modules
-	// Entries must be declared in modules descriptor with line
-	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
-	// $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
-	complete_head_from_modules($conf,$langs,$object,$head,$h,'fichinter_admin');
+    // Show more tabs from modules
+    // Entries must be declared in modules descriptor with line
+    // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
+    // $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
+    complete_head_from_modules($conf,$langs,$object,$head,$h,'fichinter_admin');
 
-	$head[$h][0] = DOL_URL_ROOT.'/fichinter/admin/fichinter_extrafields.php';
-	$head[$h][1] = $langs->trans("ExtraFields");
+    $head[$h][0] = DOL_URL_ROOT.'/fichinter/admin/fichinter_extrafields.php';
+    $head[$h][1] = $langs->trans("ExtraFields");
     $head[$h][2] = 'attributes';
     $h++;
 
 
 
-	complete_head_from_modules($conf,$langs,$object,$head,$h,'fichinter_admin','remove');
+    complete_head_from_modules($conf,$langs,$object,$head,$h,'fichinter_admin','remove');
 
-		return $head;
+        return $head;
 }
-
-
-?>

@@ -34,31 +34,28 @@ $id = GETPOST('id','int');
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'deplacement', $id, '');
 
-
 /*
  * View
  */
 
 llxHeader();
 
-if ($id)
-{
-	$object = new Deplacement($db);
-	$object->fetch($id);
-	$object->info($id);
-	
-	$head = trip_prepare_head($object);
-	
-	dol_fiche_head($head, 'info', $langs->trans("TripCard"), 0, 'trip');
+if ($id) {
+    $object = new Deplacement($db);
+    $object->fetch($id);
+    $object->info($id);
+
+    $head = trip_prepare_head($object);
+
+    dol_fiche_head($head, 'info', $langs->trans("TripCard"), 0, 'trip');
 
     print '<table width="100%"><tr><td>';
     dol_print_object_info($object);
     print '</td></tr></table>';
-      
+
     print '</div>';
 }
 
 $db->close();
 
 llxFooter();
-?>

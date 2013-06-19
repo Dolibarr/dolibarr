@@ -41,16 +41,14 @@ if (!$user->admin) accessforbidden();
  * Actions
  */
 
-if ($action == 'add')
-{
+if ($action == 'add') {
     $sql = "UPDATE ".MAIN_DB_PREFIX."rights_def SET bydefault=1";
     $sql.= " WHERE id = ".$_GET["pid"];
     $sql.= " AND entity = ".$conf->entity;
     $db->query($sql);
 }
 
-if ($action == 'remove')
-{
+if ($action == 'remove') {
     $sql = "UPDATE ".MAIN_DB_PREFIX."rights_def SET bydefault=0";
     $sql.= " WHERE id = ".$_GET["pid"];
     $sql.= " AND entity = ".$conf->entity;
@@ -75,42 +73,34 @@ $db->begin();
 $modules = array();
 $modulesdir = dolGetModulesDirs();
 
-foreach ($modulesdir as $dir)
-{
-	// Load modules attributes in arrays (name, numero, orders) from dir directory
-	//print $dir."\n<br>";
-	$handle=@opendir(dol_osencode($dir));
-	if (is_resource($handle))
-	{
-		while (($file = readdir($handle))!==false)
-		{
-			if (is_readable($dir.$file) && substr($file, 0, 3) == 'mod' && substr($file, dol_strlen($file) - 10) == '.class.php')
-			{
-				$modName = substr($file, 0, dol_strlen($file) - 10);
-				if ($modName)
-				{
-					include_once $dir.$file;
-					$objMod = new $modName($db);
+foreach ($modulesdir as $dir) {
+    // Load modules attributes in arrays (name, numero, orders) from dir directory
+    //print $dir."\n<br>";
+    $handle=@opendir(dol_osencode($dir));
+    if (is_resource($handle)) {
+        while (($file = readdir($handle))!==false) {
+            if (is_readable($dir.$file) && substr($file, 0, 3) == 'mod' && substr($file, dol_strlen($file) - 10) == '.class.php') {
+                $modName = substr($file, 0, dol_strlen($file) - 10);
+                if ($modName) {
+                    include_once $dir.$file;
+                    $objMod = new $modName($db);
 
-					// Load all lang files of module
-					if (isset($objMod->langfiles) && is_array($objMod->langfiles))
-					{
-						foreach($objMod->langfiles as $domain)
-						{
-							$langs->load($domain);
-						}
-					}
-					// Load all permissions
-					if ($objMod->rights_class)
-					{
-						$ret=$objMod->insert_permissions(0);
-						$modules[$objMod->rights_class]=$objMod;
-						//print "modules[".$objMod->rights_class."]=$objMod;";
-					}
-				}
-			}
-		}
-	}
+                    // Load all lang files of module
+                    if (isset($objMod->langfiles) && is_array($objMod->langfiles)) {
+                        foreach ($objMod->langfiles as $domain) {
+                            $langs->load($domain);
+                        }
+                    }
+                    // Load all permissions
+                    if ($objMod->rights_class) {
+                        $ret=$objMod->insert_permissions(0);
+                        $modules[$objMod->rights_class]=$objMod;
+                        //print "modules[".$objMod->rights_class."]=$objMod;";
+                    }
+                }
+            }
+        }
+    }
 }
 
 $db->commit();
@@ -136,45 +126,38 @@ if (empty($conf->global->MAIN_USE_ADVANCED_PERMS)) $sql.= " AND r.perms NOT LIKE
 $sql.= " ORDER BY r.module, r.id";
 
 $result = $db->query($sql);
-if ($result)
-{
+if ($result) {
     $num	= $db->num_rows($result);
     $i		= 0;
     $var	= True;
     $oldmod	= "";
 
-    while ($i < $num)
-    {
+    while ($i < $num) {
         $obj = $db->fetch_object($result);
 
         // Si la ligne correspond a un module qui n'existe plus (absent de includes/module), on l'ignore
-        if (! $modules[$obj->module])
-        {
+        if (! $modules[$obj->module]) {
             $i++;
             continue;
         }
 
         // Check if permission we found is inside a module definition. If not, we discard it.
         $found=false;
-        foreach($modules[$obj->module]->rights as $key => $val)
-        {
-        	$rights_class=$objMod->rights_class;
-        	if ($val[4] == $obj->perms && (empty($val[5]) || $val[5] == $obj->subperms))
-        	{
-        		$found=true;
-        		break;
-        	}
+        foreach ($modules[$obj->module]->rights as $key => $val) {
+            $rights_class=$objMod->rights_class;
+            if ($val[4] == $obj->perms && (empty($val[5]) || $val[5] == $obj->subperms)) {
+                $found=true;
+                break;
+            }
         }
-		if (! $found)
-		{
-			$i++;
-			continue;
-		}
+        if (! $found) {
+            $i++;
+            continue;
+        }
 
         // Break found, it's a new module to catch
-        if ($oldmod <> $obj->module)
-        {
-        	$oldmod	= $obj->module;
+        if ($oldmod <> $obj->module) {
+            $oldmod	= $obj->module;
             $objMod	= $modules[$obj->module];
             $picto	= ($objMod->picto?$objMod->picto:'generic');
 
@@ -196,14 +179,11 @@ if ($result)
         print '<td>'.$perm_libelle. '</td>';
 
         print '<td align="center">';
-        if ($obj->bydefault == 1)
-        {
+        if ($obj->bydefault == 1) {
             print img_picto($langs->trans("Active"),'tick');
             print '</td><td>';
             print '<a href="perms.php?pid='.$obj->id.'&amp;action=remove#'.$objMod->getName().'">'.img_edit_remove().'</a>';
-        }
-        else
-        {
+        } else {
             print '&nbsp;';
             print '</td><td>';
             print '<a href="perms.php?pid='.$obj->id.'&amp;action=add#'.$objMod->getName().'">'.img_edit_add().'</a>';
@@ -218,8 +198,6 @@ print '</table>';
 
 print '</div>';
 
-
 $db->close();
 
 llxFooter();
-?>

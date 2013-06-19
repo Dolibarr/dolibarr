@@ -39,8 +39,7 @@ $canreaduser=($user->admin || $user->rights->user->user->lire);
 $id = GETPOST('id','int');
 $action = GETPOST('action','alpha');
 
-if ($id)
-{
+if ($id) {
     // $user est le user qui edite, $id est l'id de l'utilisateur edite
     $caneditfield=((($user->id == $id) && $user->rights->user->self->creer)
     || (($user->id != $id) && $user->rights->user->user->creer));
@@ -50,8 +49,7 @@ if ($id)
 $socid=0;
 if ($user->societe_id > 0) $socid = $user->societe_id;
 $feature2 = (($socid && $user->rights->user->self->creer)?'':'user');
-if ($user->id == $id)	// A user can always read its own card
-{
+if ($user->id == $id) {	// A user can always read its own card
     $feature2='';
     $canreaduser=1;
 }
@@ -74,14 +72,11 @@ $searchformtitle=array($langs->trans("Companies"),$langs->trans("Contacts"),$lan
 $form = new Form($db);
 $formadmin=new FormAdmin($db);
 
-
 /*
  * Actions
  */
-if ($action == 'update' && ($caneditfield  || $user->admin))
-{
-    if (! $_POST["cancel"])
-    {
+if ($action == 'update' && ($caneditfield  || $user->admin)) {
+    if (! $_POST["cancel"]) {
         $tabparam=array();
 
         if ($_POST["check_MAIN_LANG_DEFAULT"]=="on") $tabparam["MAIN_LANG_DEFAULT"]=$_POST["main_lang_default"];
@@ -108,8 +103,6 @@ if ($action == 'update' && ($caneditfield  || $user->admin))
     }
 }
 
-
-
 /*
  * View
  */
@@ -120,17 +113,14 @@ $head = user_prepare_head($fuser);
 
 $title = $langs->trans("User");
 
-if ($action == 'edit')
-{
-	print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-	print '<input type="hidden" name="action" value="update">';
-	print '<input type="hidden" name="id" value="'.$id.'">';
+if ($action == 'edit') {
+    print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
+    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<input type="hidden" name="action" value="update">';
+    print '<input type="hidden" name="id" value="'.$id.'">';
 }
 
-
 dol_fiche_head($head, 'guisetup', $title, 0, 'user');
-
 
 print '<table class="border" width="100%">';
 
@@ -153,20 +143,18 @@ print "</tr>\n";
 
 print '</table><br>';
 
-
-if ($action == 'edit')
-{
-	print '<script type="text/javascript" language="javascript">
-	jQuery(document).ready(function() {
-		$("#main_lang_default").change(function() {
-			$("#check_MAIN_LANG_DEFAULT").attr(\'checked\', true);
-		});
-		$("#main_size_liste_limit").keyup(function() {
-			if ($(this).val().length) $("#check_SIZE_LISTE_LIMIT").attr(\'checked\', true);
-			else $("#check_SIZE_LISTE_LIMIT").attr(\'checked\', false);
-		});
-	});
-	</script>';
+if ($action == 'edit') {
+    print '<script type="text/javascript" language="javascript">
+    jQuery(document).ready(function() {
+        $("#main_lang_default").change(function() {
+            $("#check_MAIN_LANG_DEFAULT").attr(\'checked\', true);
+        });
+        $("#main_size_liste_limit").keyup(function() {
+            if ($(this).val().length) $("#check_SIZE_LISTE_LIMIT").attr(\'checked\', true);
+            else $("#check_SIZE_LISTE_LIMIT").attr(\'checked\', false);
+        });
+    });
+    </script>';
 
     clearstatcache();
     $var=true;
@@ -205,7 +193,6 @@ if ($action == 'edit')
 
     dol_fiche_end();
 
-
     print '<center>';
     print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
     print ' &nbsp; &nbsp; ';
@@ -214,9 +201,7 @@ if ($action == 'edit')
 
     print '</form>';
 
-}
-else
-{
+} else {
     $var=true;
 
     print '<table class="noborder" width="100%">';
@@ -244,26 +229,18 @@ else
 
     print '</table><br>';
 
-
     // Skin
     show_theme($fuser,0,true);
 
     dol_fiche_end();
 
-
     print '<div class="tabsAction">';
-    if (empty($user->admin) && ! empty($dolibarr_main_demo))
-    {
+    if (empty($user->admin) && ! empty($dolibarr_main_demo)) {
         print "<a class=\"butActionRefused\" title=\"".$langs->trans("FeatureDisabledInDemo")."\" href=\"#\">".$langs->trans("Modify")."</a>";
-    }
-    else
-    {
-        if ($user->id == $fuser->id || ! empty($user->admin))       // Si utilisateur edite = utilisateur courant (pas besoin de droits particulier car il s'agit d'une page de modif d'output et non de données) ou si admin
-        {
+    } else {
+        if ($user->id == $fuser->id || ! empty($user->admin))       // Si utilisateur edite = utilisateur courant (pas besoin de droits particulier car il s'agit d'une page de modif d'output et non de données) { ou si admin
             print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&amp;id='.$fuser->id.'">'.$langs->trans("Modify").'</a>';
-        }
-        else
-        {
+        } else {
             print "<a class=\"butActionRefused\" title=\"".$langs->trans("NotEnoughPermissions")."\" href=\"#\">".$langs->trans("Modify")."</a>";
         }
     }
@@ -276,4 +253,3 @@ dol_fiche_end();
 
 llxFooter();
 $db->close();
-?>

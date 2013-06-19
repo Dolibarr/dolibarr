@@ -65,25 +65,25 @@ require_once 'PEAR.php';
 *  o Implement multipart/appledouble
 *  o UTF8: ???
 
-		> 4. We have also found a solution for decoding the UTF-8 
-		> headers. Therefore I made the following function:
-		> 
-		> function decode_utf8($txt) {
-		> $trans=array("�&#8216;"=>"õ","ű"=>"û","Ő"=>"�&#8226;","Ű"
-		=>"�&#8250;");
-		> $txt=strtr($txt,$trans);
-		> return(utf8_decode($txt));
-		> }
-		> 
-		> And I have inserted the following line to the class:
-		> 
-		> if (strtolower($charset)=="utf-8") $text=decode_utf8($text);
-		> 
-		> ... before the following one in the "_decodeHeader" function:
-		> 
-		> $input = str_replace($encoded, $text, $input);
-		> 
-		> This way from now on it can easily decode the UTF-8 headers too.
+        > 4. We have also found a solution for decoding the UTF-8
+        > headers. Therefore I made the following function:
+        >
+        > function decode_utf8($txt) {
+        > $trans=array("�&#8216;"=>"õ","ű"=>"û","Ő"=>"�&#8226;","Ű"
+        =>"�&#8250;");
+        > $txt=strtr($txt,$trans);
+        > return(utf8_decode($txt));
+        > }
+        >
+        > And I have inserted the following line to the class:
+        >
+        > if (strtolower($charset)=="utf-8") $text=decode_utf8($text);
+        >
+        > ... before the following one in the "_decodeHeader" function:
+        >
+        > $input = str_replace($encoded, $text, $input);
+        >
+        > This way from now on it can easily decode the UTF-8 headers too.
 
 *
 * @author  Richard Heyes <richard@phpguru.org>
@@ -95,44 +95,44 @@ class Mail_mimeDecode extends PEAR
      * The raw email to decode
      * @var    string
      */
-    var $_input;
+    public $_input;
 
     /**
      * The header part of the input
      * @var    string
      */
-    var $_header;
+    public $_header;
 
     /**
      * The body part of the input
      * @var    string
      */
-    var $_body;
+    public $_body;
 
     /**
      * If an error occurs, this is used to store the message
      * @var    string
      */
-    var $_error;
+    public $_error;
 
     /**
      * Flag to determine whether to include bodies in the
      * returned object.
      * @var    boolean
      */
-    var $_include_bodies;
+    public $_include_bodies;
 
     /**
      * Flag to determine whether to decode bodies
      * @var    boolean
      */
-    var $_decode_bodies;
+    public $_decode_bodies;
 
     /**
      * Flag to determine whether to decode headers
      * @var    boolean
      */
-    var $_decode_headers;
+    public $_decode_headers;
 
     /**
      * Constructor.
@@ -143,7 +143,7 @@ class Mail_mimeDecode extends PEAR
      * @param string The input to decode
      * @access public
      */
-    function Mail_mimeDecode($input)
+    public function Mail_mimeDecode($input)
     {
         list($header, $body)   = $this->_splitBodyHeader($input);
 
@@ -171,13 +171,13 @@ class Mail_mimeDecode extends PEAR
      * @return object Decoded results
      * @access public
      */
-    function decode($params = null)
+    public function decode($params = null)
     {
         // determine if this method has been called statically
         $isStatic = !(isset($this) && get_class($this) == __CLASS__);
 
         // Have we been called statically?
-	// If so, create an object and pass details to that.
+    // If so, create an object and pass details to that.
         if ($isStatic AND isset($params['input'])) {
 
             $obj = new Mail_mimeDecode($params['input']);
@@ -190,11 +190,11 @@ class Mail_mimeDecode extends PEAR
         // Called via an object
         } else {
             $this->_include_bodies = isset($params['include_bodies']) ?
-	                             $params['include_bodies'] : false;
+                                 $params['include_bodies'] : false;
             $this->_decode_bodies  = isset($params['decode_bodies']) ?
-	                             $params['decode_bodies']  : false;
+                                 $params['decode_bodies']  : false;
             $this->_decode_headers = isset($params['decode_headers']) ?
-	                             $params['decode_headers'] : false;
+                                 $params['decode_headers'] : false;
 
             $structure = $this->_decode($this->_header, $this->_body);
             if ($structure === false) {
@@ -215,7 +215,7 @@ class Mail_mimeDecode extends PEAR
      * @return object Results of decoding process
      * @access private
      */
-    function _decode($headers, $body, $default_ctype = 'text/plain')
+    public function _decode($headers, $body, $default_ctype = 'text/plain')
     {
         $return = new stdClass;
         $return->headers = array();
@@ -289,8 +289,9 @@ class Mail_mimeDecode extends PEAR
                 case 'multipart/alternative':
                 case 'multipart/related':
                 case 'multipart/mixed':
-                    if(!isset($content_type['other']['boundary'])){
+                    if (!isset($content_type['other']['boundary'])) {
                         $this->_error = 'No boundary found for ' . $content_type['value'] . ' part';
+
                         return false;
                     }
 
@@ -309,8 +310,8 @@ class Mail_mimeDecode extends PEAR
                 case 'message/rfc822':
                     $obj = new Mail_mimeDecode($body);
                     $return->parts[] = $obj->decode(array('include_bodies' => $this->_include_bodies,
-					                                      'decode_bodies'  => $this->_decode_bodies,
-														  'decode_headers' => $this->_decode_headers));
+                                                          'decode_bodies'  => $this->_decode_bodies,
+                                                          'decode_headers' => $this->_decode_headers));
                     unset($obj);
                     break;
 
@@ -337,7 +338,7 @@ class Mail_mimeDecode extends PEAR
      *
      * @param  object $structure   The structure to go through
      * @param  string $mime_number Internal use only.
-     * @return array               Mime numbers
+     * @return array  Mime numbers
      */
     function &getMimeNumbers(&$structure, $no_refs = false, $mime_number = '', $prepend = '')
     {
@@ -349,7 +350,6 @@ class Mail_mimeDecode extends PEAR
             }
             for ($i = 0; $i < count($structure->parts); $i++) {
 
-            
                 if (!empty($structure->headers['content-type']) AND substr(strtolower($structure->headers['content-type']), 0, 8) == 'message/') {
                     $prepend      = $prepend . $mime_number . '.';
                     $_mime_number = '';
@@ -369,7 +369,7 @@ class Mail_mimeDecode extends PEAR
             $structure->mime_id = $prepend . $mime_number;
             $no_refs ? $return[$prepend . $mime_number] = '' : $return[$prepend . $mime_number] = &$structure;
         }
-        
+
         return $return;
     }
 
@@ -382,12 +382,13 @@ class Mail_mimeDecode extends PEAR
      * @return array Contains header and body section
      * @access private
      */
-    function _splitBodyHeader($input)
+    public function _splitBodyHeader($input)
     {
         if (preg_match("/^(.*?)\r?\n\r?\n(.*)/s", $input, $match)) {
             return array($match[1], $match[2]);
         }
         $this->_error = 'Could not split header and body';
+
         return false;
     }
 
@@ -399,7 +400,7 @@ class Mail_mimeDecode extends PEAR
      * @return array Contains parsed headers
      * @access private
      */
-    function _parseHeaders($input)
+    public function _parseHeaders($input)
     {
 
         if ($input !== '') {
@@ -437,7 +438,7 @@ class Mail_mimeDecode extends PEAR
      * @return array Contains parsed result
      * @access private
      */
-    function _parseHeaderValue($input)
+    public function _parseHeaderValue($input)
     {
 
         if (($pos = strpos($input, ';')) !== false) {
@@ -486,7 +487,7 @@ class Mail_mimeDecode extends PEAR
      * @return array Contains array of resulting mime parts
      * @access private
      */
-    function _boundarySplit($input, $boundary)
+    public function _boundarySplit($input, $boundary)
     {
         $parts = array();
 
@@ -516,7 +517,7 @@ class Mail_mimeDecode extends PEAR
      * @return string Decoded header value
      * @access private
      */
-    function _decodeHeader($input)
+    public function _decodeHeader($input)
     {
         // Remove white space between encoded-words
         $input = preg_replace('/(=\?[^?]+\?(q|b)\?[^?]*\?=)(\s)+=\?/i', '\1=?', $input);
@@ -557,7 +558,7 @@ class Mail_mimeDecode extends PEAR
      * @return string Decoded body
      * @access private
      */
-    function _decodeBody($input, $encoding = '7bit')
+    public function _decodeBody($input, $encoding = '7bit')
     {
         switch (strtolower($encoding)) {
             case '7bit':
@@ -585,13 +586,13 @@ class Mail_mimeDecode extends PEAR
      * @return string Decoded body
      * @access private
      */
-    function _quotedPrintableDecode($input)
+    public function _quotedPrintableDecode($input)
     {
         // Remove soft line breaks
         $input = preg_replace("/=\r?\n/", '', $input);
 
         // Replace encoded characters
-		$input = preg_replace('/=([a-f0-9]{2})/ie', "chr(hexdec('\\1'))", $input);
+        $input = preg_replace('/=([a-f0-9]{2})/ie', "chr(hexdec('\\1'))", $input);
 
         return $input;
     }
@@ -607,7 +608,7 @@ class Mail_mimeDecode extends PEAR
      * pass it.
      *
      * @param  string Input body to look for attahcments in
-     * @return array  Decoded bodies, filenames and permissions
+     * @return array Decoded bodies, filenames and permissions
      * @access public
      * @author Unknown
      */
@@ -629,7 +630,7 @@ class Mail_mimeDecode extends PEAR
             for ($i = 0; $i < $strlen; $i++) {
                 $pos = 1;
                 $d = 0;
-                $len=(int)(((ord(substr($str[$i],0,1)) -32) - ' ') & 077);
+                $len=(int) (((ord(substr($str[$i],0,1)) -32) - ' ') & 077);
 
                 while (($d + 3 <= $len) AND ($pos + 4 <= strlen($str[$i]))) {
                     $c0 = (ord(substr($str[$i],$pos,1)) ^ 0x20);
@@ -673,7 +674,7 @@ class Mail_mimeDecode extends PEAR
 
     /**
      * getSendArray() returns the arguments required for Mail::send()
-     * used to build the arguments for a mail::send() call 
+     * used to build the arguments for a mail::send() call
      *
      * Usage:
      * $mailtext = Full email (for example generated by a template)
@@ -686,11 +687,11 @@ class Mail_mimeDecode extends PEAR
      * } else {
      *     echo $parts->message;
      * }
-     * @return mixed   array of recipeint, headers,body or Pear_Error
+     * @return mixed array of recipeint, headers,body or Pear_Error
      * @access public
      * @author Alan Knowles <alan@akbkhome.com>
      */
-    function getSendArray()
+    public function getSendArray()
     {
         // prevent warning if this is not set
         $this->_decode_headers = FALSE;
@@ -699,7 +700,7 @@ class Mail_mimeDecode extends PEAR
         if (!$headerlist) {
             return $this->raiseError("Message did not contain headers");
         }
-        foreach($headerlist as $item) {
+        foreach ($headerlist as $item) {
             $header[$item['name']] = $item['value'];
             switch (strtolower($item['name'])) {
                 case "to":
@@ -714,8 +715,9 @@ class Mail_mimeDecode extends PEAR
             return $this->raiseError("Message did not contain any recipents");
         }
         $to = substr($to,1);
+
         return array($to,$header,$this->_body);
-    } 
+    }
 
     /**
      * Returns a xml copy of the output of
@@ -734,7 +736,7 @@ class Mail_mimeDecode extends PEAR
      * @return string XML version of input
      * @access public
      */
-    function getXML($input)
+    public function getXML($input)
     {
         $crlf    =  "\r\n";
         $output  = '<?xml version=\'1.0\'?>' . $crlf .
@@ -753,15 +755,15 @@ class Mail_mimeDecode extends PEAR
      * @param  object  Input to convert to xml. This is a mimepart object.
      *                 It may or may not contain subparts.
      * @param  integer Number of tabs to indent
-     * @return string  XML version of input
+     * @return string XML version of input
      * @access private
      */
-    function _getXML($input, $indent = 1)
+    public function _getXML($input, $indent = 1)
     {
         $htab    =  "\t";
         $crlf    =  "\r\n";
         $output  =  '';
-        $headers = @(array)$input->headers;
+        $headers = @(array) $input->headers;
 
         foreach ($headers as $hdr_name => $hdr_value) {
 
@@ -797,10 +799,10 @@ class Mail_mimeDecode extends PEAR
      * @param  string  Name of header
      * @param  string  Value of header
      * @param  integer Number of tabs to indent
-     * @return string  XML version of input
+     * @return string XML version of input
      * @access private
      */
-    function _getXML_helper($hdr_name, $hdr_value, $indent)
+    public function _getXML_helper($hdr_name, $hdr_value, $indent)
     {
         $htab   = "\t";
         $crlf   = "\r\n";
@@ -833,4 +835,3 @@ class Mail_mimeDecode extends PEAR
     }
 
 } // End of class
-?>

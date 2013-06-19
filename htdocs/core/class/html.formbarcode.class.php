@@ -22,27 +22,25 @@
  *      \brief      Fichier de la classe des fonctions predefinie de composants html
  */
 
-
 /**
  *      Class to manage barcode HTML
  */
 class FormBarCode
 {
-    var $db;
-    var $error;
-
+    public $db;
+    public $error;
 
     /**
      *	Constructor
      *
      *	@param	DoliDB		$db		Database handler
      */
-    function __construct($db)
+    public function __construct($db)
     {
         $this->db = $db;
+
         return 1;
     }
-
 
     /**
      *	Return HTML select with list of bar code generators
@@ -53,14 +51,13 @@ class FormBarCode
      *  @param  int		$idForm			Id du formulaire
      * 	@return	string					HTML select string
      */
-    function setBarcodeEncoder($selected,$barcodelist,$code_id,$idForm='formbarcode')
+    public function setBarcodeEncoder($selected,$barcodelist,$code_id,$idForm='formbarcode')
     {
         global $conf, $langs;
 
         $disable = '';
 
-        if ($conf->use_javascript_ajax)
-        {
+        if ($conf->use_javascript_ajax) {
             print "\n".'<script type="text/javascript" language="javascript">';
             print 'jQuery(document).ready(function () {
                         jQuery("#select'.$idForm.'").change(function() {
@@ -87,8 +84,7 @@ class FormBarCode
         $select_encoder.= '<select id="select'.$idForm.'" class="flat" name="coder">';
         $select_encoder.= '<option value="0"'.($selected==0?' selected="selected"':'').' '.$disable.'>'.$langs->trans('Disable').'</option>';
         $select_encoder.= '<option value="-1" disabled="disabled">--------------------</option>';
-        foreach($barcodelist as $key => $value)
-        {
+        foreach ($barcodelist as $key => $value) {
             $select_encoder.= '<option value="'.$key.'"'.($selected==$key?' selected="selected"':'').'>'.$value.'</option>';
         }
         $select_encoder.= '</select></form>';
@@ -104,7 +100,7 @@ class FormBarCode
      *  @param  int		$useempty          Affiche valeur vide dans liste
      *  @return	void
      */
-    function select_barcode_type($selected='',$htmlname='barcodetype_id',$useempty=0)
+    public function select_barcode_type($selected='',$htmlname='barcodetype_id',$useempty=0)
     {
         global $langs,$conf;
 
@@ -115,32 +111,24 @@ class FormBarCode
         $sql.= " ORDER BY code";
 
         $result = $this->db->query($sql);
-        if ($result)
-        {
+        if ($result) {
             $num = $this->db->num_rows($result);
             $i = 0;
 
-            if ($useempty && $num > 0)
-            {
+            if ($useempty && $num > 0) {
                 print '<select class="flat" name="'.$htmlname.'">';
                 print '<option value="0">&nbsp;</option>';
-            }
-            else
-            {
+            } else {
                 $langs->load("errors");
                 print '<select disabled="disabled" class="flat" name="'.$htmlname.'">';
                 print '<option value="0" selected="selected">'.$langs->trans('ErrorNoActivatedBarcode').'</option>';
             }
 
-            while ($i < $num)
-            {
+            while ($i < $num) {
                 $obj = $this->db->fetch_object($result);
-                if ($selected == $obj->rowid)
-                {
+                if ($selected == $obj->rowid) {
                     print '<option value="'.$obj->rowid.'" selected="selected">';
-                }
-                else
-                {
+                } else {
                     print '<option value="'.$obj->rowid.'">';
                 }
                 print $obj->libelle;
@@ -148,8 +136,7 @@ class FormBarCode
                 $i++;
             }
             print "</select>";
-        }
-        else {
+        } else {
             dol_print_error($this->db);
         }
     }
@@ -162,11 +149,10 @@ class FormBarCode
      *  @param  string		$htmlname    	Nom du formulaire select
      *  @return	void
      */
-    function form_barcode_type($page, $selected='', $htmlname='barcodetype_id')
+    public function form_barcode_type($page, $selected='', $htmlname='barcodetype_id')
     {
         global $langs,$conf;
-        if ($htmlname != "none")
-        {
+        if ($htmlname != "none") {
             print '<form method="post" action="'.$page.'">';
             print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
             print '<input type="hidden" name="action" value="set'.$htmlname.'">';
@@ -180,5 +166,3 @@ class FormBarCode
     }
 
 }
-
-?>

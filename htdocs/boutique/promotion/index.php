@@ -25,26 +25,21 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/boutique/osc_master.inc.php';
 
-
 llxHeader();
 
-if ($action == "inactive")
-{
+if ($action == "inactive") {
   $promotion = new Promotion($dbosc);
   $promotion->set_inactive($id);
 }
-if ($action == "active")
-{
+if ($action == "active") {
   $promotion = new Promotion($dbosc);
   $promotion->set_active($id);
 }
 
-if ($sortfield == "")
-{
+if ($sortfield == "") {
   $sortfield="pd.products_name";
 }
-if ($sortorder == "")
-{
+if ($sortorder == "") {
   $sortorder="ASC";
 }
 
@@ -64,8 +59,7 @@ $sql.= " ORDER BY $sortfield $sortorder ";
 $sql.= $dbosc->plimit($limit,$offset);
 
 $resql=$dbosc->query($sql);
-if ($resql)
-{
+if ($resql) {
   $num = $dbosc->num_rows($resql);
   $i = 0;
   print '<table class=\"noborder width="100%">';
@@ -77,8 +71,7 @@ if ($resql)
   print '<td align="right">Prix remise</td>';
   print "</tr>\n";
   $var=True;
-  while ($i < $num)
-    {
+  while ($i < $num) {
       $objp = $dbosc->fetch_object($i);
       $var=!$var;
 
@@ -86,20 +79,17 @@ if ($resql)
       print '<td>'.$objp->products_model."</td>";
       print '<td>'.$objp->products_name."</td>";
 
-      if ($objp->status == 1)
-	{
-	  print '<td align="center"><img src="/theme/'.$conf->theme.'/img/icon_status_green.png" border="0" alt="actif"></td>';
-	  print '<td align="center">';
-	  print '<a href="index.php?action=inactive&id='.$objp->products_id.''.$urladd.'&page='.$page.'">';
-	  print '<img src="/theme/'.$conf->theme.'/img/icon_status_red_light.png" border="0"></a></td>';
-	}
-      else
-	{
-	  print '<td align="center">';
-	  print '<a href="index.php?action=active&id='.$objp->products_id.''.$urladd.'&page='.$page.'">';
-	  print '<img src="/theme/'.$conf->theme.'/img/icon_status_green_light.png" border="0"></a></td>';
-	  print '<td align="center"><img src="/theme/'.$conf->theme.'/img/icon_status_red.png" border="0" alt="inactif"></td>';
-	}
+      if ($objp->status == 1) {
+      print '<td align="center"><img src="/theme/'.$conf->theme.'/img/icon_status_green.png" border="0" alt="actif"></td>';
+      print '<td align="center">';
+      print '<a href="index.php?action=inactive&id='.$objp->products_id.''.$urladd.'&page='.$page.'">';
+      print '<img src="/theme/'.$conf->theme.'/img/icon_status_red_light.png" border="0"></a></td>';
+    } else {
+      print '<td align="center">';
+      print '<a href="index.php?action=active&id='.$objp->products_id.''.$urladd.'&page='.$page.'">';
+      print '<img src="/theme/'.$conf->theme.'/img/icon_status_green_light.png" border="0"></a></td>';
+      print '<td align="center"><img src="/theme/'.$conf->theme.'/img/icon_status_red.png" border="0" alt="inactif"></td>';
+    }
       print "<td>".dol_print_date($dbosc->jdate($objp->fin),'day')."</td>";
       print '<td align="right">'.price($objp->products_price)."</td>";
       print '<td align="right">'.price($objp->specials_new_products_price)."</td>";
@@ -108,13 +98,9 @@ if ($resql)
     }
   print "</TABLE>";
   $dbosc->free();
-}
-else
-{
-	dol_print_error($dbosc);
+} else {
+    dol_print_error($dbosc);
 }
 $dbosc->close();
 
 llxFooter();
-
-?>

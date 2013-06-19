@@ -45,68 +45,56 @@ if ($user->societe_id) $socid=$user->societe_id;
 
 $mesg='';
 
-
 /*
  * Actions
  */
 
 // Delete payment
-if ($_REQUEST['action'] == 'confirm_delete' && $_REQUEST['confirm'] == 'yes' && $user->rights->tax->charges->supprimer)
-{
-	$db->begin();
+if ($_REQUEST['action'] == 'confirm_delete' && $_REQUEST['confirm'] == 'yes' && $user->rights->tax->charges->supprimer) {
+    $db->begin();
 
-	$paiement = new PaymentSocialContribution($db);
-	$paiement->fetch($_REQUEST['id']);
-	$result = $paiement->delete($user);
-	if ($result > 0)
-	{
+    $paiement = new PaymentSocialContribution($db);
+    $paiement->fetch($_REQUEST['id']);
+    $result = $paiement->delete($user);
+    if ($result > 0) {
         $db->commit();
         header("Location: ".DOL_URL_ROOT."/compta/charges/index.php?mode=sconly");
         exit;
-	}
-	else
-	{
-		$mesg='<div class="error">'.$paiement->error.'</div>';
+    } else {
+        $mesg='<div class="error">'.$paiement->error.'</div>';
         $db->rollback();
-	}
+    }
 }
 
 // Create payment
-if ($_REQUEST['action'] == 'confirm_valide' && $_REQUEST['confirm'] == 'yes' && $user->rights->tax->charges->creer)
-{
-	$db->begin();
+if ($_REQUEST['action'] == 'confirm_valide' && $_REQUEST['confirm'] == 'yes' && $user->rights->tax->charges->creer) {
+    $db->begin();
 
-	$paiement = new PaymentSocialContribution($db);
-	$paiement->id = $_REQUEST['id'];
-	if ($paiement->valide() > 0)
-	{
-		$db->commit();
+    $paiement = new PaymentSocialContribution($db);
+    $paiement->id = $_REQUEST['id'];
+    if ($paiement->valide() > 0) {
+        $db->commit();
 
-		$factures=array();	// TODO Get all id of invoices linked to this payment
-		foreach($factures as $id)
-		{
-			$fac = new Facture($db);
-			$fac->fetch($id);
+        $factures=array();	// TODO Get all id of invoices linked to this payment
+        foreach ($factures as $id) {
+            $fac = new Facture($db);
+            $fac->fetch($id);
 
-			$outputlangs = $langs;
-			if (! empty($_REQUEST['lang_id']))
-			{
-				$outputlangs = new Translate("",$conf);
-				$outputlangs->setDefaultLang($_REQUEST['lang_id']);
-			}
-			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) facture_pdf_create($db, $fac, $fac->modelpdf, $outputlangs);
-		}
+            $outputlangs = $langs;
+            if (! empty($_REQUEST['lang_id'])) {
+                $outputlangs = new Translate("",$conf);
+                $outputlangs->setDefaultLang($_REQUEST['lang_id']);
+            }
+            if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) facture_pdf_create($db, $fac, $fac->modelpdf, $outputlangs);
+        }
 
-		header('Location: fiche.php?id='.$paiement->id);
-		exit;
-	}
-	else
-	{
-		$mesg='<div class="error">'.$paiement->error.'</div>';
-		$db->rollback();
-	}
+        header('Location: fiche.php?id='.$paiement->id);
+        exit;
+    } else {
+        $mesg='<div class="error">'.$paiement->error.'</div>';
+        $db->rollback();
+    }
 }
-
 
 /*
  * View
@@ -118,10 +106,9 @@ $socialcontrib=new ChargeSociales($db);
 $paiement = new PaymentSocialContribution($db);
 
 $result=$paiement->fetch($_GET['id']);
-if ($result <= 0)
-{
-	dol_print_error($db,'Payment '.$_GET['id'].' not found in database');
-	exit;
+if ($result <= 0) {
+    dol_print_error($db,'Payment '.$_GET['id'].' not found in database');
+    exit;
 }
 
 $form = new Form($db);
@@ -138,31 +125,26 @@ $head[$h][1] = $langs->trans("Info");
 $h++;
 */
 
-
 dol_fiche_head($head, $hselected, $langs->trans("PaymentSocialContribution"), 0, 'payment');
 
 /*
  * Confirmation de la suppression du paiement
  */
-if ($_GET['action'] == 'delete')
-{
-	$ret=$form->form_confirm('fiche.php?id='.$paiement->id, $langs->trans("DeletePayment"), $langs->trans("ConfirmDeletePayment"), 'confirm_delete','',0,2);
-	if ($ret == 'html') print '<br>';
+if ($_GET['action'] == 'delete') {
+    $ret=$form->form_confirm('fiche.php?id='.$paiement->id, $langs->trans("DeletePayment"), $langs->trans("ConfirmDeletePayment"), 'confirm_delete','',0,2);
+    if ($ret == 'html') print '<br>';
 }
 
 /*
  * Confirmation de la validation du paiement
  */
-if ($_GET['action'] == 'valide')
-{
-	$facid = $_GET['facid'];
-	$ret=$form->form_confirm('fiche.php?id='.$paiement->id.'&amp;facid='.$facid, $langs->trans("ValidatePayment"), $langs->trans("ConfirmValidatePayment"), 'confirm_valide','',0,2);
-	if ($ret == 'html') print '<br>';
+if ($_GET['action'] == 'valide') {
+    $facid = $_GET['facid'];
+    $ret=$form->form_confirm('fiche.php?id='.$paiement->id.'&amp;facid='.$facid, $langs->trans("ValidatePayment"), $langs->trans("ConfirmValidatePayment"), 'confirm_valide','',0,2);
+    if ($ret == 'html') print '<br>';
 }
 
-
 if ($mesg) print $mesg.'<br>';
-
 
 print '<table class="border" width="100%">';
 
@@ -184,29 +166,25 @@ print '<tr><td valign="top">'.$langs->trans('Numero').'</td><td colspan="3">'.$p
 // Montant
 print '<tr><td valign="top">'.$langs->trans('Amount').'</td><td colspan="3">'.price($paiement->amount).'&nbsp;'.$langs->trans('Currency'.$conf->currency).'</td></tr>';
 
-
 // Note
 print '<tr><td valign="top">'.$langs->trans('Note').'</td><td colspan="3">'.nl2br($paiement->note).'</td></tr>';
 
 // Bank account
-if (! empty($conf->banque->enabled))
-{
-    if ($paiement->bank_account)
-    {
-    	$bankline=new AccountLine($db);
-    	$bankline->fetch($paiement->bank_line);
+if (! empty($conf->banque->enabled)) {
+    if ($paiement->bank_account) {
+        $bankline=new AccountLine($db);
+        $bankline->fetch($paiement->bank_line);
 
-    	print '<tr>';
-    	print '<td>'.$langs->trans('BankTransactionLine').'</td>';
-		print '<td colspan="3">';
-		print $bankline->getNomUrl(1,0,'showall');
-    	print '</td>';
-    	print '</tr>';
+        print '<tr>';
+        print '<td>'.$langs->trans('BankTransactionLine').'</td>';
+        print '<td colspan="3">';
+        print $bankline->getNomUrl(1,0,'showall');
+        print '</td>';
+        print '</tr>';
     }
 }
 
 print '</table>';
-
 
 /*
  * List of social contributions payed
@@ -221,71 +199,64 @@ $sql.= ' AND pf.rowid = '.$paiement->id;
 
 dol_syslog("compta/payment_sc/fiche.php sql=".$sql);
 $resql=$db->query($sql);
-if ($resql)
-{
-	$num = $db->num_rows($resql);
+if ($resql) {
+    $num = $db->num_rows($resql);
 
-	$i = 0;
-	$total = 0;
-	print '<br><table class="noborder" width="100%">';
-	print '<tr class="liste_titre">';
-	print '<td>'.$langs->trans('SocialContribution').'</td>';
+    $i = 0;
+    $total = 0;
+    print '<br><table class="noborder" width="100%">';
+    print '<tr class="liste_titre">';
+    print '<td>'.$langs->trans('SocialContribution').'</td>';
     print '<td>'.$langs->trans('Type').'</td>';
-	print '<td>'.$langs->trans('Label').'</td>';
-	print '<td align="right">'.$langs->trans('ExpectedToPay').'</td>';
-	print '<td align="center">'.$langs->trans('Status').'</td>';
-	print '<td align="right">'.$langs->trans('PayedByThisPayment').'</td>';
-	print "</tr>\n";
+    print '<td>'.$langs->trans('Label').'</td>';
+    print '<td align="right">'.$langs->trans('ExpectedToPay').'</td>';
+    print '<td align="center">'.$langs->trans('Status').'</td>';
+    print '<td align="right">'.$langs->trans('PayedByThisPayment').'</td>';
+    print "</tr>\n";
 
-	if ($num > 0)
-	{
-		$var=True;
+    if ($num > 0) {
+        $var=True;
 
-		while ($i < $num)
-		{
-			$objp = $db->fetch_object($resql);
+        while ($i < $num) {
+            $objp = $db->fetch_object($resql);
 
-			$var=!$var;
-			print '<tr '.$bc[$var].'>';
-			// Ref
-			print '<td>';
-			$socialcontrib->fetch($objp->scid);
-			print $socialcontrib->getNomUrl(1);
-			print "</td>\n";
-			// Type
+            $var=!$var;
+            print '<tr '.$bc[$var].'>';
+            // Ref
+            print '<td>';
+            $socialcontrib->fetch($objp->scid);
+            print $socialcontrib->getNomUrl(1);
+            print "</td>\n";
+            // Type
             print '<td>';
             print $socialcontrib->type_libelle;
             /*print $socialcontrib->type;*/
             print "</td>\n";
-			// Label
-			print '<td>'.$objp->libelle.'</td>';
-			// Expected to pay
-			print '<td align="right">'.price($objp->sc_amount).'</td>';
-			// Status
-			print '<td align="center">'.$socialcontrib->LibStatut($objp->fk_statut,2).'</td>';
-			// Amount payed
-			print '<td align="right">'.price($objp->amount).'</td>';
-			print "</tr>\n";
-			if ($objp->paye == 1)	// If at least one invoice is paid, disable delete
-			{
-				$disable_delete = 1;
-			}
-			$total = $total + $objp->amount;
-			$i++;
-		}
-	}
-	$var=!$var;
+            // Label
+            print '<td>'.$objp->libelle.'</td>';
+            // Expected to pay
+            print '<td align="right">'.price($objp->sc_amount).'</td>';
+            // Status
+            print '<td align="center">'.$socialcontrib->LibStatut($objp->fk_statut,2).'</td>';
+            // Amount payed
+            print '<td align="right">'.price($objp->amount).'</td>';
+            print "</tr>\n";
+            if ($objp->paye == 1) {	// If at least one invoice is paid, disable delete
+                $disable_delete = 1;
+            }
+            $total = $total + $objp->amount;
+            $i++;
+        }
+    }
+    $var=!$var;
 
-	print "</table>\n";
-	$db->free($resql);
-}
-else
-{
-	dol_print_error($db);
+    print "</table>\n";
+    $db->free($resql);
+} else {
+    dol_print_error($db);
 }
 
 print '</div>';
-
 
 /*
  * Boutons Actions
@@ -293,37 +264,27 @@ print '</div>';
 print '<div class="tabsAction">';
 
 /*
-if (! empty($conf->global->BILL_ADD_PAYMENT_VALIDATION))
-{
-	if ($user->societe_id == 0 && $paiement->statut == 0 && $_GET['action'] == '')
-	{
-		if ($user->rights->facture->paiement)
-		{
-			print '<a class="butAction" href="fiche.php?id='.$_GET['id'].'&amp;facid='.$objp->facid.'&amp;action=valide">'.$langs->trans('Valid').'</a>';
-		}
-	}
+if (! empty($conf->global->BILL_ADD_PAYMENT_VALIDATION)) {
+    if ($user->societe_id == 0 && $paiement->statut == 0 && $_GET['action'] == '') {
+        if ($user->rights->facture->paiement) {
+            print '<a class="butAction" href="fiche.php?id='.$_GET['id'].'&amp;facid='.$objp->facid.'&amp;action=valide">'.$langs->trans('Valid').'</a>';
+        }
+    }
 }
 */
 
-if ($_GET['action'] == '')
-{
-	if ($user->rights->tax->charges->supprimer)
-	{
-		if (! $disable_delete)
-		{
-			print '<a class="butActionDelete" href="fiche.php?id='.$_GET['id'].'&amp;action=delete">'.$langs->trans('Delete').'</a>';
-		}
-		else
-		{
-			print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("CantRemovePaymentWithOneInvoicePaid")).'">'.$langs->trans('Delete').'</a>';
-		}
-	}
+if ($_GET['action'] == '') {
+    if ($user->rights->tax->charges->supprimer) {
+        if (! $disable_delete) {
+            print '<a class="butActionDelete" href="fiche.php?id='.$_GET['id'].'&amp;action=delete">'.$langs->trans('Delete').'</a>';
+        } else {
+            print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("CantRemovePaymentWithOneInvoicePaid")).'">'.$langs->trans('Delete').'</a>';
+        }
+    }
 }
 
 print '</div>';
 
-
 $db->close();
 
 llxFooter();
-?>

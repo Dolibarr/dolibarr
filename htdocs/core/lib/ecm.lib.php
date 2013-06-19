@@ -22,7 +22,6 @@
  *  \ingroup    ecm
  */
 
-
 /**
  * Prepare array with list of tabs
  *
@@ -31,16 +30,16 @@
  */
 function ecm_prepare_head($object)
 {
-	global $langs, $conf, $user;
-	$h = 0;
-	$head = array();
+    global $langs, $conf, $user;
+    $h = 0;
+    $head = array();
 
-	$head[$h][0] = DOL_URL_ROOT.'/ecm/docmine.php?section='.$object->id;
-	$head[$h][1] = $langs->trans("Card");
-	$head[$h][2] = 'card';
-	$h++;
+    $head[$h][0] = DOL_URL_ROOT.'/ecm/docmine.php?section='.$object->id;
+    $head[$h][1] = $langs->trans("Card");
+    $head[$h][2] = 'card';
+    $h++;
 
-	return $head;
+    return $head;
 }
 
 /**
@@ -71,21 +70,19 @@ function ecm_file_prepare_head($object)
  */
 function ecm_prepare_head_fm($object)
 {
-	global $langs, $conf;
-	$h = 0;
-	$head = array();
+    global $langs, $conf;
+    $h = 0;
+    $head = array();
 
-	$head[$h][0] = DOL_URL_ROOT.'/ecm/index.php?action=file_manager';
-	$head[$h][1] = $langs->trans('ECMFileManager');
-	$head[$h][2] = 'file_manager';
-	$h++;
+    $head[$h][0] = DOL_URL_ROOT.'/ecm/index.php?action=file_manager';
+    $head[$h][1] = $langs->trans('ECMFileManager');
+    $head[$h][2] = 'file_manager';
+    $h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/ecm/search.php';
-	$head[$h][1] = $langs->trans('Search');
-	$head[$h][2] = 'search_form';
-	$h++;
+    $head[$h][0] = DOL_URL_ROOT.'/ecm/search.php';
+    $head[$h][1] = $langs->trans('Search');
+    $head[$h][2] = 'search_form';
+    $h++;
 
-	return $head;
+    return $head;
 }
-
-?>

@@ -47,7 +47,6 @@ $confirm = GETPOST('confirm','alpha');
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'deplacement', $id, '');
 
-
 // Get parameters
 $sortfield = GETPOST('sortfield','alpha');
 $sortorder = GETPOST('sortorder','alpha');
@@ -59,42 +58,36 @@ $pagenext = $page + 1;
 if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="name";
 
-
 $object = new Deplacement($db);
 $object->fetch($id, $ref);
 
 $upload_dir = $conf->deplacement->dir_output.'/'.dol_sanitizeFileName($object->ref);
 $modulepart='trip';
 
-
 /*
  * Actions
  */
 
-if (GETPOST('sendit','alpha') && ! empty($conf->global->MAIN_UPLOAD_DOC))
-{
-	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+if (GETPOST('sendit','alpha') && ! empty($conf->global->MAIN_UPLOAD_DOC)) {
+    require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
-	dol_add_file_process($upload_dir,0,1,'userfile');
+    dol_add_file_process($upload_dir,0,1,'userfile');
 }
 
 // Delete
-else if ($action == 'confirm_deletefile' && $confirm == 'yes')
-{
-	if ($object->id > 0)
-	{
-		$langs->load("other");
-		$object->fetch_thirdparty();
+else if ($action == 'confirm_deletefile' && $confirm == 'yes') {
+    if ($object->id > 0) {
+        $langs->load("other");
+        $object->fetch_thirdparty();
 
-		$file = $upload_dir . '/' . GETPOST('urlfile');	// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
-		$ret=dol_delete_file($file,0,0,0,$object);
-		if ($ret) setEventMessage($langs->trans("FileWasRemoved", GETPOST('urlfile')));
-		else setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), 'errors');
-		header('Location: '.$_SERVER["PHP_SELF"].'?id='.$id);
-		exit;
-	}
+        $file = $upload_dir . '/' . GETPOST('urlfile');	// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
+        $ret=dol_delete_file($file,0,0,0,$object);
+        if ($ret) setEventMessage($langs->trans("FileWasRemoved", GETPOST('urlfile')));
+        else setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), 'errors');
+        header('Location: '.$_SERVER["PHP_SELF"].'?id='.$id);
+        exit;
+    }
 }
-
 
 /*
  * View
@@ -104,36 +97,31 @@ $form = new Form($db);
 
 llxHeader("","",$langs->trans("TripCard"));
 
+if ($object->id) {
+    $object->fetch_thirdparty();
 
-if ($object->id)
-{
-	$object->fetch_thirdparty();
+    $head=trip_prepare_head($object, $user);
 
-	$head=trip_prepare_head($object, $user);
+    dol_fiche_head($head, 'documents',  $langs->trans("TripCard"), 0, 'trip');
 
-	dol_fiche_head($head, 'documents',  $langs->trans("TripCard"), 0, 'trip');
-
-
-	// Construit liste des fichiers
-	$filearray=dol_dir_list($upload_dir,"files",0,'','\.meta$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
-	$totalsize=0;
-	foreach($filearray as $key => $file)
-	{
-		$totalsize+=$file['size'];
-	}
-
+    // Construit liste des fichiers
+    $filearray=dol_dir_list($upload_dir,"files",0,'','\.meta$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
+    $totalsize=0;
+    foreach ($filearray as $key => $file) {
+        $totalsize+=$file['size'];
+    }
 
     print '<table class="border" width="100%">';
 
     $linkback = '<a href="'.DOL_URL_ROOT.'/compta/deplacement/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
 
-	// Ref
-	print '<tr><td width="30%">'.$langs->trans("Ref").'</td><td>';
-	print $form->showrefnav($object, 'id', $linkback, 1, 'rowid', 'ref', '');
-	print '</td></tr>';
+    // Ref
+    print '<tr><td width="30%">'.$langs->trans("Ref").'</td><td>';
+    print $form->showrefnav($object, 'id', $linkback, 1, 'rowid', 'ref', '');
+    print '</td></tr>';
 
-	// Societe
-	//print "<tr><td>".$langs->trans("Company")."</td><td>".$object->client->getNomUrl(1)."</td></tr>";
+    // Societe
+    //print "<tr><td>".$langs->trans("Company")."</td><td>".$object->client->getNomUrl(1)."</td></tr>";
 
     print '<tr><td>'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
     print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.$totalsize.' '.$langs->trans("bytes").'</td></tr>';
@@ -144,28 +132,23 @@ if ($object->id)
     /*
      * Confirmation suppression fichier
      */
-    if ($action == 'delete')
-    {
-    	$ret=$form->form_confirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&urlfile='.urlencode($_GET["urlfile"]), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile', '', 0, 1);
-    	if ($ret == 'html') print '<br>';
+    if ($action == 'delete') {
+        $ret=$form->form_confirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&urlfile='.urlencode($_GET["urlfile"]), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile', '', 0, 1);
+        if ($ret == 'html') print '<br>';
     }
 
     // Affiche formulaire upload
-   	$formfile=new FormFile($db);
-	$formfile->form_attach_new_file(DOL_URL_ROOT.'/compta/deplacement/document.php?id='.$object->id,'',0,0,$user->rights->deplacement->creer,50,$object);
+       $formfile=new FormFile($db);
+    $formfile->form_attach_new_file(DOL_URL_ROOT.'/compta/deplacement/document.php?id='.$object->id,'',0,0,$user->rights->deplacement->creer,50,$object);
 
+    // List of document
+    $param='&id='.$object->id;
+    $formfile->list_of_documents($filearray,$object,'deplacement',$param);
 
-	// List of document
-	$param='&id='.$object->id;
-	$formfile->list_of_documents($filearray,$object,'deplacement',$param);
-
-}
-else
-{
-	print $langs->trans("UnkownError");
+} else {
+    print $langs->trans("UnkownError");
 }
 
 llxFooter();
 
 $db->close();
-?>

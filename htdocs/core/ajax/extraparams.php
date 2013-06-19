@@ -42,38 +42,26 @@ top_httphead();
 
 print '<!-- Ajax page called with url '.$_SERVER["PHP_SELF"].'?'.$_SERVER["QUERY_STRING"].' -->'."\n";
 
-if(! empty($id) && ! empty($element) && ! empty($htmlelement) && ! empty($type))
-{
-	$value = GETPOST('value','alpha');
-	$params=array();
-	
-	dol_syslog("AjaxSetExtraParameters id=".$id." element=".$element." htmlelement=".$htmlelement." type=".$type." value=".$value, LOG_DEBUG);
-	
-	$classpath = $subelement = $element;
-	
-	// For compatibility
-	if ($element == 'order' || $element == 'commande')    { $classpath = $subelement = 'commande'; }
-	else if ($element == 'propal')				{ $classpath = 'comm/propal'; $subelement = 'propal'; }
-	else if ($element == 'facture')				{ $classpath = 'compta/facture'; $subelement = 'facture'; }
-	else if ($element == 'contract')			{ $classpath = $subelement = 'contrat'; }
-	else if ($element == 'shipping')			{ $classpath = $subelement = 'expedition'; }
-	else if ($element == 'deplacement')			{ $classpath = 'compta/deplacement'; $subelement = 'deplacement'; }
-	else if ($element == 'order_supplier')		{ $classpath = 'fourn'; $subelement = 'fournisseur.commande'; }
-	else if ($element == 'invoice_supplier')	{ $classpath = 'fourn'; $subelement = 'fournisseur.facture'; }
-	
-	dol_include_once('/'.$classpath.'/class/'.$subelement.'.class.php');
-	
-	if ($element == 'order_supplier')			{ $classname = 'CommandeFournisseur'; }
-	else if ($element == 'invoice_supplier')	{ $classname = 'FactureFournisseur'; }
-	else $classname = ucfirst($subelement);
-	
-	$object	= new $classname($db);
-	$object->fetch($id);
-	
-	$params[$htmlelement] = array($type => $value);
-	$object->extraparams = array_merge($object->extraparams, $params);
-	
-	$result=$object->setExtraParameters();
-}
+if (! empty($id) && ! empty($element) && ! empty($htmlelement) && ! empty($type)) {
+    $value = GETPOST('value','alpha');
+    $params=array();
 
-?>
+    dol_syslog("AjaxSetExtraParameters id=".$id." element=".$element." htmlelement=".$htmlelement." type=".$type." value=".$value, LOG_DEBUG);
+
+    $classpath = $subelement = $element;
+
+    // For compatibility
+    if ($element == 'order' || $element == 'commande') { $classpath = $subelement = 'commande'; } elseif ($element == 'propal') { $classpath = 'comm/propal'; $subelement = 'propal'; } elseif ($element == 'facture') { $classpath = 'compta/facture'; $subelement = 'facture'; } elseif ($element == 'contract') { $classpath = $subelement = 'contrat'; } elseif ($element == 'shipping') { $classpath = $subelement = 'expedition'; } elseif ($element == 'deplacement') { $classpath = 'compta/deplacement'; $subelement = 'deplacement'; } elseif ($element == 'order_supplier') { $classpath = 'fourn'; $subelement = 'fournisseur.commande'; } elseif ($element == 'invoice_supplier') { $classpath = 'fourn'; $subelement = 'fournisseur.facture'; }
+
+    dol_include_once('/'.$classpath.'/class/'.$subelement.'.class.php');
+
+    if ($element == 'order_supplier') { $classname = 'CommandeFournisseur'; } elseif ($element == 'invoice_supplier') { $classname = 'FactureFournisseur'; } else $classname = ucfirst($subelement);
+
+    $object	= new $classname($db);
+    $object->fetch($id);
+
+    $params[$htmlelement] = array($type => $value);
+    $object->extraparams = array_merge($object->extraparams, $params);
+
+    $result=$object->setExtraParameters();
+}

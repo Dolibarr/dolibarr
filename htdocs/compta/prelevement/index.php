@@ -25,8 +25,7 @@
  *	\brief      Prelevement index page
  */
 
-
-require('../../main.inc.php');
+require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
@@ -46,28 +45,22 @@ $result = restrictedArea($user, 'prelevement','','');
  * Actions
  */
 
-
-
-
 /*
  * View
  */
 
 llxHeader('',$langs->trans("CustomersStandingOrdersArea"));
 
-if (prelevement_check_config() < 0)
-{
-	$langs->load("errors");
-	print '<div class="error">';
-	print $langs->trans("ErrorModuleSetupNotComplete");
-	print '</div>';
+if (prelevement_check_config() < 0) {
+    $langs->load("errors");
+    print '<div class="error">';
+    print $langs->trans("ErrorModuleSetupNotComplete");
+    print '</div>';
 }
 
 print_fiche_titre($langs->trans("CustomersStandingOrdersArea"));
 
-
 print '<div class="fichecenter"><div class="fichethirdleft">';
-
 
 $thirdpartystatic=new Societe($db);
 $invoicestatic=new Facture($db);
@@ -89,9 +82,7 @@ print '<td align="right">';
 print price($bprev->SommeAPrelever());
 print '</td></tr></table><br>';
 
-
 print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
-
 
 /*
  * Withdraw receipts
@@ -103,8 +94,7 @@ $sql.= " ORDER BY datec DESC";
 $sql.= $db->plimit($limit);
 
 $result = $db->query($sql);
-if ($result)
-{
+if ($result) {
     $num = $db->num_rows($result);
     $i = 0;
     $var=True;
@@ -117,8 +107,7 @@ if ($result)
     print '<td align="right">'.$langs->trans("Status").'</td>';
     print '</tr>';
 
-    while ($i < min($num,$limit))
-    {
+    while ($i < min($num,$limit)) {
         $obj = $db->fetch_object($result);
         $var=!$var;
 
@@ -139,9 +128,7 @@ if ($result)
     }
     print "</table><br>";
     $db->free($result);
-}
-else
-{
+} else {
     dol_print_error($db);
 }
 
@@ -162,19 +149,16 @@ if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.
 if ($socid) $sql.= " AND f.fk_soc = ".$socid;
 
 $resql=$db->query($sql);
-if ($resql)
-{
+if ($resql) {
     $num = $db->num_rows($resql);
     $i = 0;
 
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre">';
     print '<td colspan="5">'.$langs->trans("InvoiceWaitingWithdraw").' ('.$num.')</td></tr>';
-    if ($num)
-    {
+    if ($num) {
         $var = True;
-        while ($i < $num && $i < 20)
-        {
+        while ($i < $num && $i < 20) {
             $obj = $db->fetch_object($resql);
 
             $invoicestatic->id=$obj->rowid;
@@ -209,22 +193,16 @@ if ($resql)
             print '</tr>';
             $i++;
         }
-    }
-    else
-    {
+    } else {
         print '<tr><td colspan="2">'.$langs->trans("NoInvoiceToWithdraw").'</td></tr>';
     }
     print "</table><br>";
-}
-else
-{
+} else {
     dol_print_error($db);
 }
-
 
 print '</div></div></div>';
 
 llxFooter();
 
 $db->close();
-?>

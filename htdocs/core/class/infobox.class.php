@@ -27,8 +27,7 @@
  */
 class InfoBox
 {
-	static $listOfPages = array(0=>'Home');       // Nom des positions 0=Home, 1=...
-
+    public static $listOfPages = array(0=>'Home');       // Nom des positions 0=Home, 1=...
 
     /**
      *  Return array of boxes qualified for area and user
@@ -40,15 +39,14 @@ class InfoBox
      *  @param	array	$excludelist	Array of box id (box.box_id = boxes_def.rowid) to exclude
      *  @return array               	Array of boxes
      */
-    static function listBoxes($db, $mode, $zone, $user, $excludelist=array())
+    public static function listBoxes($db, $mode, $zone, $user, $excludelist=array())
     {
         global $conf;
 
         $boxes=array();
 
         $confuserzone='MAIN_BOXES_'.$zone;
-        if ($mode == 'activated')
-        {
+        if ($mode == 'activated') {
             $sql = "SELECT b.rowid, b.position, b.box_order, b.fk_user,";
             $sql.= " d.rowid as box_id, d.file, d.note, d.tms";
             $sql.= " FROM ".MAIN_DB_PREFIX."boxes as b, ".MAIN_DB_PREFIX."boxes_def as d";
@@ -58,55 +56,43 @@ class InfoBox
             if (is_object($user)) $sql.= " AND b.fk_user IN (0,".$user->id.")";
             else $sql.= " AND b.fk_user = 0";
             $sql.= " ORDER BY b.box_order";
-        }
-        else
-		{
+        } else {
             $sql = "SELECT d.rowid as box_id, d.file, d.note, d.tms";
             $sql.= " FROM ".MAIN_DB_PREFIX."boxes_def as d";
-            if (! empty($conf->multicompany->enabled) && ! empty($conf->multicompany->transverse_mode))
-            {
-            	$sql.= " WHERE entity IN (1,".$conf->entity.")"; // TODO add method for define another master entity
-            }
-            else
-			{
-            	$sql.= " WHERE entity = ".$conf->entity;
+            if (! empty($conf->multicompany->enabled) && ! empty($conf->multicompany->transverse_mode)) {
+                $sql.= " WHERE entity IN (1,".$conf->entity.")"; // TODO add method for define another master entity
+            } else {
+                $sql.= " WHERE entity = ".$conf->entity;
             }
         }
 
         dol_syslog(get_class()."::listBoxes get default box list for mode=".$mode." userid=".(is_object($user)?$user->id:'')." sql=".$sql, LOG_DEBUG);
         $resql = $db->query($sql);
-        if ($resql)
-        {
+        if ($resql) {
             $num = $db->num_rows($resql);
             $j = 0;
-            while ($j < $num)
-            {
+            while ($j < $num) {
                 $obj = $db->fetch_object($resql);
 
-                if (! in_array($obj->box_id, $excludelist))
-                {
-                    if (preg_match('/^([^@]+)@([^@]+)$/i',$obj->file,$regs))
-                    {
+                if (! in_array($obj->box_id, $excludelist)) {
+                    if (preg_match('/^([^@]+)@([^@]+)$/i',$obj->file,$regs)) {
                         $boxname = preg_replace('/\.php$/i','',$regs[1]);
                         $module = $regs[2];
                         $relsourcefile = "/".$module."/core/boxes/".$boxname.".php";
-                    }
-                    else
-                    {
+                    } else {
                         $boxname=preg_replace('/\.php$/i','',$obj->file);
                         $relsourcefile = "/core/boxes/".$boxname.".php";
-					}
+                    }
 
-					// TODO PERF Do not make "dol_include_once" here, nor "new" later. This means, we must store a 'depends' field to store modules list, then
+                    // TODO PERF Do not make "dol_include_once" here, nor "new" later. This means, we must store a 'depends' field to store modules list, then
                     // the "enabled" condition for modules forbidden for external users and the depends condition can be done.
                     // Goal is to avoid making a new instance for each boxes returned by select.
 
                     dol_include_once($relsourcefile);
-                    if (class_exists($boxname))
-                    {
+                    if (class_exists($boxname)) {
                         $box=new $boxname($db,$obj->note);		// Constructor may set properties like box->enabled. obj->note is note into box def, not user params.
                         //$box=new stdClass();
-                        
+
                         // box properties
                         $box->rowid		= (empty($obj->rowid) ? '' : $obj->rowid);
                         $box->id		= (empty($obj->box_id) ? '' : $obj->box_id);
@@ -114,11 +100,9 @@ class InfoBox
                         $box->box_order	= (empty($obj->box_order) ? '' : $obj->box_order);
                         $box->fk_user	= (empty($obj->fk_user) ? 0 : $obj->fk_user);
                         $box->sourcefile= $relsourcefile;
-                    	$box->class     = $boxname;
-                        if ($mode == 'activated' && ! is_object($user))	// List of activated box was not yet personalized into database
-                        {
-                            if (is_numeric($box->box_order))
-                            {
+                        $box->class     = $boxname;
+                        if ($mode == 'activated' && ! is_object($user)) {	// List of activated box was not yet personalized into database
+                            if (is_numeric($box->box_order)) {
                                 if ($box->box_order % 2 == 1) $box->box_order='A'.$box->box_order;
                                 elseif ($box->box_order % 2 == 0) $box->box_order='B'.$box->box_order;
                             }
@@ -126,14 +110,12 @@ class InfoBox
                         // box_def properties
                         $box->box_id	= (empty($obj->box_id) ? '' : $obj->box_id);
                         $box->note		= (empty($obj->note) ? '' : $obj->note);
-                        
+
                         // Filter on box->enabled (fused for example by box_comptes) and box->depends
                         //$enabled=1;
                         $enabled=$box->enabled;
-                        if (isset($box->depends) && count($box->depends) > 0)
-                        {
-                            foreach($box->depends as $module)
-                            {
+                        if (isset($box->depends) && count($box->depends) > 0) {
+                            foreach ($box->depends as $module) {
                                 //print $boxname.'-'.$module.'<br>';
                                 $tmpmodule=preg_replace('/@[^@]+/','',$module);
                                 if (empty($conf->$tmpmodule->enabled)) $enabled=0;
@@ -147,9 +129,7 @@ class InfoBox
                 }
                 $j++;
             }
-        }
-        else
-        {
+        } else {
             //dol_print_error($db);
             $error=$db->lasterror();
             dol_syslog(get_class()."::listBoxes Error ".$error, LOG_ERR);
@@ -157,7 +137,6 @@ class InfoBox
 
         return $boxes;
     }
-
 
     /**
      *  Save order of boxes for area and user
@@ -168,7 +147,7 @@ class InfoBox
      *  @param  int     $userid     	Id of user
      *  @return int                   	<0 if KO, >= 0 if OK
      */
-    static function saveboxorder($db, $zone,$boxorder,$userid=0)
+    public static function saveboxorder($db, $zone,$boxorder,$userid=0)
     {
         global $conf;
 
@@ -188,10 +167,10 @@ class InfoBox
         // Sauve parametre indiquant que le user a une config dediee
         $confuserzone='MAIN_BOXES_'.$zone;
         $tab[$confuserzone]=1;
-        if (dol_set_user_param($db, $conf, $user, $tab) < 0)
-        {
+        if (dol_set_user_param($db, $conf, $user, $tab) < 0) {
             $this->error=$db->lasterror();
             $db->rollback();
+
             return -3;
         }
 
@@ -203,11 +182,9 @@ class InfoBox
 
         dol_syslog(get_class()."::saveboxorder sql=".$sql);
         $result = $db->query($sql);
-        if ($result)
-        {
+        if ($result) {
             $colonnes=explode('-',$boxorder);
-            foreach ($colonnes as $collist)
-            {
+            foreach ($colonnes as $collist) {
                 $part=explode(':',$collist);
                 $colonne=$part[0];
                 $list=$part[1];
@@ -215,10 +192,8 @@ class InfoBox
 
                 $i=0;
                 $listarray=explode(',',$list);
-                foreach ($listarray as $id)
-                {
-                    if (is_numeric($id))
-                    {
+                foreach ($listarray as $id) {
+                    if (is_numeric($id)) {
                         //dol_syslog("aaaaa".count($listarray));
                         $i++;
                         $ii=sprintf('%02d',$i);
@@ -234,35 +209,30 @@ class InfoBox
 
                         dol_syslog(get_class()."::saveboxorder sql=".$sql);
                         $result = $db->query($sql);
-                        if ($result < 0)
-                        {
+                        if ($result < 0) {
                             $error++;
                             break;
                         }
                     }
                 }
             }
-            if ($error)
-            {
+            if ($error) {
                 $error=$db->error();
                 $db->rollback();
+
                 return -2;
-            }
-            else
-            {
+            } else {
                 $db->commit();
+
                 return 1;
             }
-        }
-        else
-        {
+        } else {
             $error=$db->lasterror();
             $db->rollback();
             dol_syslog(get_class()."::saveboxorder ".$error);
+
             return -1;
         }
     }
 
 }
-
-?>

@@ -29,51 +29,47 @@
  */
 function member_prepare_head($object)
 {
-	global $langs, $conf, $user;
+    global $langs, $conf, $user;
 
-	$h = 0;
-	$head = array();
+    $h = 0;
+    $head = array();
 
-	$head[$h][0] = DOL_URL_ROOT.'/adherents/fiche.php?rowid='.$object->id;
-	$head[$h][1] = $langs->trans("MemberCard");
-	$head[$h][2] = 'general';
-	$h++;
+    $head[$h][0] = DOL_URL_ROOT.'/adherents/fiche.php?rowid='.$object->id;
+    $head[$h][1] = $langs->trans("MemberCard");
+    $head[$h][2] = 'general';
+    $h++;
 
-	if (! empty($conf->ldap->enabled) && ! empty($conf->global->LDAP_MEMBER_ACTIVE))
-	{
-		$langs->load("ldap");
+    if (! empty($conf->ldap->enabled) && ! empty($conf->global->LDAP_MEMBER_ACTIVE)) {
+        $langs->load("ldap");
 
-		$head[$h][0] = DOL_URL_ROOT.'/adherents/ldap.php?id='.$object->id;
-		$head[$h][1] = $langs->trans("LDAPCard");
-		$head[$h][2] = 'ldap';
-		$h++;
-	}
+        $head[$h][0] = DOL_URL_ROOT.'/adherents/ldap.php?id='.$object->id;
+        $head[$h][1] = $langs->trans("LDAPCard");
+        $head[$h][2] = 'ldap';
+        $h++;
+    }
 
-    if (! empty($user->rights->adherent->cotisation->lire))
-	{
-		$head[$h][0] = DOL_URL_ROOT.'/adherents/card_subscriptions.php?rowid='.$object->id;
-		$head[$h][1] = $langs->trans("Subscriptions");
-		$head[$h][2] = 'subscription';
-		$h++;
-	}
+    if (! empty($user->rights->adherent->cotisation->lire)) {
+        $head[$h][0] = DOL_URL_ROOT.'/adherents/card_subscriptions.php?rowid='.$object->id;
+        $head[$h][1] = $langs->trans("Subscriptions");
+        $head[$h][2] = 'subscription';
+        $h++;
+    }
 
-	// Show agenda tab
-	if (! empty($conf->agenda->enabled))
-	{
-	    $head[$h][0] = DOL_URL_ROOT."/adherents/agenda.php?id=".$object->id;
-	    $head[$h][1] = $langs->trans('Agenda');
-	    $head[$h][2] = 'agenda';
-	    $h++;
-	}
+    // Show agenda tab
+    if (! empty($conf->agenda->enabled)) {
+        $head[$h][0] = DOL_URL_ROOT."/adherents/agenda.php?id=".$object->id;
+        $head[$h][1] = $langs->trans('Agenda');
+        $head[$h][2] = 'agenda';
+        $h++;
+    }
 
-	// Show category tab
-	if (! empty($conf->categorie->enabled) && ! empty($user->rights->categorie->lire))
-	{
-		$head[$h][0] = DOL_URL_ROOT."/categories/categorie.php?id=".$object->id.'&type=3';
-		$head[$h][1] = $langs->trans('Categories');
-		$head[$h][2] = 'category';
-		$h++;
-	}
+    // Show category tab
+    if (! empty($conf->categorie->enabled) && ! empty($user->rights->categorie->lire)) {
+        $head[$h][0] = DOL_URL_ROOT."/categories/categorie.php?id=".$object->id.'&type=3';
+        $head[$h][1] = $langs->trans('Categories');
+        $head[$h][2] = 'category';
+        $h++;
+    }
 
     // Show more tabs from modules
     // Entries must be declared in modules descriptor with line
@@ -82,9 +78,9 @@ function member_prepare_head($object)
     complete_head_from_modules($conf,$langs,$object,$head,$h,'member');
 
     $head[$h][0] = DOL_URL_ROOT.'/adherents/note.php?id='.$object->id;
-	$head[$h][1] = $langs->trans("Note");
-	$head[$h][2] = 'note';
-	$h++;
+    $head[$h][1] = $langs->trans("Note");
+    $head[$h][2] = 'note';
+    $h++;
 
     $head[$h][0] = DOL_URL_ROOT.'/adherents/document.php?id='.$object->id;
     $head[$h][1] = $langs->trans("Documents");
@@ -92,16 +88,14 @@ function member_prepare_head($object)
     $h++;
 
     $head[$h][0] = DOL_URL_ROOT.'/adherents/info.php?id='.$object->id;
-	$head[$h][1] = $langs->trans("Info");
-	$head[$h][2] = 'info';
-	$h++;
+    $head[$h][1] = $langs->trans("Info");
+    $head[$h][2] = 'info';
+    $h++;
 
+    complete_head_from_modules($conf,$langs,$object,$head,$h,'member','remove');
 
-	complete_head_from_modules($conf,$langs,$object,$head,$h,'member','remove');
-
-	return $head;
+    return $head;
 }
-
 
 /**
  *  Return array head with list of tabs to view object informations
@@ -130,7 +124,7 @@ function member_admin_prepare_head()
     $head[$h][1] = $langs->trans("ExtraFieldsMember");
     $head[$h][2] = 'attributes';
     $h++;
-    
+
     $head[$h][0] = DOL_URL_ROOT.'/adherents/admin/adherent_type_extrafields.php';
     $head[$h][1] = $langs->trans("ExtraFieldsMemberType");
     $head[$h][2] = 'attributes_type';
@@ -145,7 +139,6 @@ function member_admin_prepare_head()
 
     return $head;
 }
-
 
 /**
  *  Return array head with list of tabs to view object stats informations
@@ -195,4 +188,3 @@ function member_stats_prepare_head($object)
 
     return $head;
 }
-?>

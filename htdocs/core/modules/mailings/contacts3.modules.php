@@ -24,29 +24,27 @@
 
 include_once DOL_DOCUMENT_ROOT.'/core/modules/mailings/modules_mailings.php';
 
-
 /**
  *     \class      mailing_contacts3
  *     \brief      Class to manage a list of personalised recipients for mailing feature
  */
 class mailing_contacts3 extends MailingTargets
 {
-	var $name='ContactsByCompanyCategory';
+    public $name='ContactsByCompanyCategory';
     // This label is used if no translation is found for key MailingModuleDescXXX where XXX=name is found
-    var $desc='Add contacts by company category';
-    var $require_admin=0;
+    public $desc='Add contacts by company category';
+    public $require_admin=0;
 
-    var $require_module=array();
-    var $picto='contact';
-    var $db;
-
+    public $require_module=array();
+    public $picto='contact';
+    public $db;
 
     /**
     *	Constructor
     *
     *  @param		DoliDB		$db      Database handler
     */
-    function __construct($db)
+    public function __construct($db)
     {
         $this->db=$db;
     }
@@ -57,7 +55,7 @@ class mailing_contacts3 extends MailingTargets
      *  @param	int		$id		ID
      *  @return	string      	Url lien
      */
-    function url($id)
+    public function url($id)
     {
         return '<a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$id.'">'.img_object('',"contact").'</a>';
     }
@@ -69,38 +67,36 @@ class mailing_contacts3 extends MailingTargets
      *    @param    array	$filtersarray   Category
      *    @return   int           			<0 if error, number of emails added if ok
      */
-    function add_to_target($mailing_id,$filtersarray=array())
+    public function add_to_target($mailing_id,$filtersarray=array())
     {
-    	global $conf,$langs;
+        global $conf,$langs;
 
-    	$target = array();
+        $target = array();
 
         // La requete doit retourner: id, email, fk_contact, name, firstname, other
         $sql = "SELECT sp.rowid as id, sp.email as email, sp.rowid as fk_contact,";
         $sql.= " sp.lastname, sp.firstname, sp.civilite,";
         $sql.= " s.nom as companyname";
         $sql.= " FROM ".MAIN_DB_PREFIX."socpeople as sp";
-    	if ($filtersarray[0] <> 'all') $sql.= ", ".MAIN_DB_PREFIX."categorie as c";
-    	if ($filtersarray[0] <> 'all') $sql.= ", ".MAIN_DB_PREFIX."categorie_societe as cs";
-    	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = sp.fk_soc";
-    	$sql.= " WHERE sp.email != ''";     // Note that null != '' is false
-    	$sql.= " AND sp.no_email = 0";
-    	$sql.= " AND sp.entity IN (".getEntity('societe', 1).")";
-    	if ($filtersarray[0] <> 'all') $sql.= " AND cs.fk_categorie = c.rowid";
-    	if ($filtersarray[0] <> 'all') $sql.= " AND cs.fk_societe = sp.fk_soc";
-    	if ($filtersarray[0] <> 'all') $sql.= " AND c.label = '".$this->db->escape($filtersarray[0])."'";
-    	$sql.= " ORDER BY sp.lastname, sp.firstname";
+        if ($filtersarray[0] <> 'all') $sql.= ", ".MAIN_DB_PREFIX."categorie as c";
+        if ($filtersarray[0] <> 'all') $sql.= ", ".MAIN_DB_PREFIX."categorie_societe as cs";
+        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = sp.fk_soc";
+        $sql.= " WHERE sp.email != ''";     // Note that null != '' is false
+        $sql.= " AND sp.no_email = 0";
+        $sql.= " AND sp.entity IN (".getEntity('societe', 1).")";
+        if ($filtersarray[0] <> 'all') $sql.= " AND cs.fk_categorie = c.rowid";
+        if ($filtersarray[0] <> 'all') $sql.= " AND cs.fk_societe = sp.fk_soc";
+        if ($filtersarray[0] <> 'all') $sql.= " AND c.label = '".$this->db->escape($filtersarray[0])."'";
+        $sql.= " ORDER BY sp.lastname, sp.firstname";
 
-    	$resql = $this->db->query($sql);
-    	if ($resql)
-    	{
-    		$num = $this->db->num_rows($resql);
-    		$i = 0;
+        $resql = $this->db->query($sql);
+        if ($resql) {
+            $num = $this->db->num_rows($resql);
+            $i = 0;
 
-    		while ($i < $num)
-    		{
-    			$obj= $this->db->fetch_object($resql);
-    			$target[] = array(
+            while ($i < $num) {
+                $obj= $this->db->fetch_object($resql);
+                $target[] = array(
                             'email' => $obj->email,
                             'fk_contact' => $obj->fk_contact,
                             'lastname' => $obj->lastname,
@@ -111,29 +107,28 @@ class mailing_contacts3 extends MailingTargets
                             'source_url' => $this->url($obj->id),
                             'source_id' => $obj->id,
                             'source_type' => 'contact'
-    						);
-				$i++;
-			}
-		}
+                            );
+                $i++;
+            }
+        }
 
         return parent::add_to_target($mailing_id, $target);
     }
 
-
     /**
-	 *	On the main mailing area, there is a box with statistics.
-	 *	If you want to add a line in this report you must provide an
-	 *	array of SQL request that returns two field:
-	 *	One called "label", One called "nb".
-	 *
-	 *	@return		array		Array with SQL requests
-	 */
-    function getSqlArrayForStats()
-	{
-		global $conf, $langs;
+     *	On the main mailing area, there is a box with statistics.
+     *	If you want to add a line in this report you must provide an
+     *	array of SQL request that returns two field:
+     *	One called "label", One called "nb".
+     *
+     *	@return		array		Array with SQL requests
+     */
+    public function getSqlArrayForStats()
+    {
+        global $conf, $langs;
 
-		$statssql=array();
-		/*for ($i=0; $i<5; $i++) {
+        $statssql=array();
+        /*for ($i=0; $i<5; $i++) {
             $statssql[$i] = "SELECT c.label, count(sp.rowid) AS nb";
             $statssql[$i].= " FROM ".MAIN_DB_PREFIX."socpeople as sp,";
             $statssql[$i].= " ".MAIN_DB_PREFIX."societe as s,";
@@ -147,11 +142,10 @@ class mailing_contacts3 extends MailingTargets
             $statssql[$i].= " GROUP BY c.label";
             $statssql[$i].= " ORDER BY nb DESC";
             $statssql[$i].= " LIMIT $i,1";
-		}*/
+        }*/
 
-		return $statssql;
-	}
-
+        return $statssql;
+    }
 
     /**
      *		Return here number of distinct emails returned by your selector.
@@ -159,21 +153,21 @@ class mailing_contacts3 extends MailingTargets
      *		@param	string	$sql		Requete sql de comptage
      *		@return		int		Number of recipients
      */
-    function getNbOfRecipients($sql='')
+    public function getNbOfRecipients($sql='')
     {
-    	global $conf;
+        global $conf;
 
-    	// We must report here number of contacts when absolutely no filter selected (so all contacts).
-    	// Number with a filter are show in the combo list for each filter.
+        // We must report here number of contacts when absolutely no filter selected (so all contacts).
+        // Number with a filter are show in the combo list for each filter.
         // If we want a filter "is inside at least one category", we must add it into formFilter
-    	$sql = "SELECT count(distinct(c.email)) as nb";
+        $sql = "SELECT count(distinct(c.email)) as nb";
         $sql.= " FROM ".MAIN_DB_PREFIX."socpeople as c";
-    	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = c.fk_soc";
+        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = c.fk_soc";
         $sql.= " WHERE c.entity IN (".getEntity('societe', 1).")";
         $sql.= " AND c.email != ''"; // Note that null != '' is false
         $sql.= " AND c.no_email = 0";
         /*
-    	$sql = "SELECT count(distinct(sp.email)) as nb";
+        $sql = "SELECT count(distinct(sp.email)) as nb";
         $sql.= " FROM ".MAIN_DB_PREFIX."socpeople as sp,";
         $sql.= " ".MAIN_DB_PREFIX."societe as s,";
         $sql.= " ".MAIN_DB_PREFIX."categorie as c,";
@@ -184,9 +178,9 @@ class mailing_contacts3 extends MailingTargets
         $sql.= " AND cs.fk_categorie = c.rowid";
         $sql.= " AND cs.fk_societe = sp.fk_soc";
         */
-    	// La requete doit retourner un champ "nb" pour etre comprise
-    	// par parent::getNbOfRecipients
-    	return parent::getNbOfRecipients($sql);
+        // La requete doit retourner un champ "nb" pour etre comprise
+        // par parent::getNbOfRecipients
+        return parent::getNbOfRecipients($sql);
     }
 
     /**
@@ -195,11 +189,11 @@ class mailing_contacts3 extends MailingTargets
      *
      *      @return     string      A html select zone
      */
-    function formFilter()
+    public function formFilter()
     {
-    	global $conf, $langs;
+        global $conf, $langs;
 
-    	$langs->load("companies");
+        $langs->load("companies");
 
         $sql = "SELECT c.label, count(distinct(sp.email)) AS nb";
         $sql.= " FROM ".MAIN_DB_PREFIX."socpeople as sp,";
@@ -218,12 +212,10 @@ class mailing_contacts3 extends MailingTargets
         $s='';
         $s.='<select name="filter" class="flat">';
         $s.='<option value="all"></option>';
-        if ($resql)
-        {
+        if ($resql) {
             $num = $this->db->num_rows($resql);
             $i = 0;
-            while ($i < $num)
-            {
+            while ($i < $num) {
                 $obj = $this->db->fetch_object($resql);
                 $s.='<option value="'.$obj->label.'">'.$obj->label.' ('.$obj->nb.')</option>';
                 $i++;
@@ -235,5 +227,3 @@ class mailing_contacts3 extends MailingTargets
     }
 
 }
-
-?>

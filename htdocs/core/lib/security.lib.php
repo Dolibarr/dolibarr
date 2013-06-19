@@ -25,7 +25,6 @@
  *  			because it is used at low code level.
  */
 
-
 /**
  *	Encode a string with base 64 algorithm + specific change
  *	Code of this function is useless and we should use base64_encode only instead
@@ -36,13 +35,13 @@
 function dol_encode($chain)
 {
     $strlength=dol_strlen($chain);
-	for ($i=0; $i < $strlength; $i++)
-	{
-		$output_tab[$i] = chr(ord(substr($chain,$i,1))+17);
-	}
+    for ($i=0; $i < $strlength; $i++) {
+        $output_tab[$i] = chr(ord(substr($chain,$i,1))+17);
+    }
 
-	$string_coded = base64_encode(implode("",$output_tab));
-	return $string_coded;
+    $string_coded = base64_encode(implode("",$output_tab));
+
+    return $string_coded;
 }
 
 /**
@@ -55,18 +54,17 @@ function dol_encode($chain)
  */
 function dol_decode($chain)
 {
-	$chain = base64_decode($chain);
+    $chain = base64_decode($chain);
 
-	$strlength=dol_strlen($chain);
-	for($i=0; $i < $strlength;$i++)
-	{
-		$output_tab[$i] = chr(ord(substr($chain,$i,1))-17);
-	}
+    $strlength=dol_strlen($chain);
+    for ($i=0; $i < $strlength;$i++) {
+        $output_tab[$i] = chr(ord(substr($chain,$i,1))-17);
+    }
 
-	$string_decoded = implode("",$output_tab);
-	return $string_decoded;
+    $string_decoded = implode("",$output_tab);
+
+    return $string_decoded;
 }
-
 
 /**
  * 	Returns a hash of a string
@@ -77,11 +75,10 @@ function dol_decode($chain)
  */
 function dol_hash($chain,$type=0)
 {
-	if ($type == 1) return sha1($chain);
-	else if ($type == 2) return sha1(md5($chain));
-	else return md5($chain);
+    if ($type == 1) return sha1($chain);
+    else if ($type == 2) return sha1(md5($chain));
+    else return md5($chain);
 }
-
 
 /**
  *	Check permissions of a user to show a page and an object. Check read permission.
@@ -107,8 +104,7 @@ function restrictedArea($user, $features, $objectid=0, $dbtablename='', $feature
     //print ", perm: ".$features."->".$feature2."=".$user->rights->$features->$feature2->lire."<br>";
 
     // If we use canvas, we try to use function that overlod restrictarea if provided with canvas
-    if (is_object($objcanvas))
-    {
+    if (is_object($objcanvas)) {
         if (method_exists($objcanvas->control,'restrictedArea')) return $objcanvas->control->restrictedArea($user,$features,$objectid,$dbtablename,$feature2,$dbt_keyfield,$dbt_select);
     }
 
@@ -119,59 +115,41 @@ function restrictedArea($user, $features, $objectid=0, $dbtablename='', $feature
 
     // More subfeatures to check
     if (!empty($feature2))
-    	$feature2 = explode("&", $feature2);
+        $feature2 = explode("&", $feature2);
 
     // More parameters
     $params = explode('&', $dbtablename);
     $dbtablename=(! empty($params[0]) ? $params[0] : '');
     $sharedelement=(! empty($params[1]) ? $params[1] : '');
 
-	$listofmodules=explode(',',$conf->global->MAIN_MODULES_FOR_EXTERNAL);
+    $listofmodules=explode(',',$conf->global->MAIN_MODULES_FOR_EXTERNAL);
 
-	// Check read permission from module
+    // Check read permission from module
     $readok=1;
-    foreach ($features as $feature)
-    {
-    	if (! empty($user->societe_id) && ! empty($conf->global->MAIN_MODULES_FOR_EXTERNAL) && ! in_array($feature,$listofmodules))	// If limits on modules for external users, module must be into list of modules for external users
-    	{
-    		$readok=0;
-    		continue;
-    	}
+    foreach ($features as $feature) {
+        if (! empty($user->societe_id) && ! empty($conf->global->MAIN_MODULES_FOR_EXTERNAL) && ! in_array($feature,$listofmodules)) {	// If limits on modules for external users, module must be into list of modules for external users
+            $readok=0;
+            continue;
+        }
 
-        if ($feature == 'societe')
-        {
+        if ($feature == 'societe') {
             if (! $user->rights->societe->lire && ! $user->rights->fournisseur->lire) $readok=0;
-        }
-        else if ($feature == 'contact')
-        {
+        } elseif ($feature == 'contact') {
             if (! $user->rights->societe->contact->lire) $readok=0;
-        }
-        else if ($feature == 'produit|service')
-        {
+        } elseif ($feature == 'produit|service') {
             if (! $user->rights->produit->lire && ! $user->rights->service->lire) $readok=0;
-        }
-        else if ($feature == 'prelevement')
-        {
+        } elseif ($feature == 'prelevement') {
             if (! $user->rights->prelevement->bons->lire) $readok=0;
-        }
-        else if ($feature == 'cheque')
-        {
+        } elseif ($feature == 'cheque') {
             if (! $user->rights->banque->cheque) $readok=0;
-        }
-        else if ($feature == 'projet')
-        {
+        } elseif ($feature == 'projet') {
             if (! $user->rights->projet->lire && ! $user->rights->projet->all->lire) $readok=0;
-        }
-        else if (! empty($feature2))	// This should be used for future changes
-        {
-        	foreach($feature2 as $subfeature)
-        	{
-        		if (empty($user->rights->$feature->$subfeature->lire) && empty($user->rights->$feature->$subfeature->read)) $readok=0;
-        		else { $readok=1; break; } // For bypass the second test if the first is ok
-        	}
-        }
-        else if (! empty($feature) && ($feature!='user' && $feature!='usergroup'))		// This is for old permissions
-        {
+        } elseif (! empty($feature2)) {	// This should be used for future changes
+            foreach ($feature2 as $subfeature) {
+                if (empty($user->rights->$feature->$subfeature->lire) && empty($user->rights->$feature->$subfeature->read)) $readok=0;
+                else { $readok=1; break; } // For bypass the second test if the first is ok
+            }
+        } elseif (! empty($feature) && ($feature!='user' && $feature!='usergroup')) {		// This is for old permissions
             if (empty($user->rights->$feature->lire)
             && empty($user->rights->$feature->read)
             && empty($user->rights->$feature->run)) $readok=0;
@@ -183,46 +161,28 @@ function restrictedArea($user, $features, $objectid=0, $dbtablename='', $feature
 
     // Check write permission from module
     $createok=1;
-    if (GETPOST("action")  == 'create')
-    {
-        foreach ($features as $feature)
-        {
-            if ($feature == 'contact')
-            {
+    if (GETPOST("action")  == 'create') {
+        foreach ($features as $feature) {
+            if ($feature == 'contact') {
                 if (! $user->rights->societe->contact->creer) $createok=0;
-            }
-            else if ($feature == 'produit|service')
-            {
+            } elseif ($feature == 'produit|service') {
                 if (! $user->rights->produit->creer && ! $user->rights->service->creer) $createok=0;
-            }
-            else if ($feature == 'prelevement')
-            {
+            } elseif ($feature == 'prelevement') {
                 if (! $user->rights->prelevement->bons->creer) $createok=0;
-            }
-            else if ($feature == 'commande_fournisseur')
-            {
+            } elseif ($feature == 'commande_fournisseur') {
                 if (! $user->rights->fournisseur->commande->creer) $createok=0;
-            }
-            else if ($feature == 'banque')
-            {
+            } elseif ($feature == 'banque') {
                 if (! $user->rights->banque->modifier) $createok=0;
-            }
-            else if ($feature == 'cheque')
-            {
+            } elseif ($feature == 'cheque') {
                 if (! $user->rights->banque->cheque) $createok=0;
-            }
-            else if (! empty($feature2))	// This should be used for future changes
-            {
-            	foreach($feature2 as $subfeature)
-            	{
-            		if (empty($user->rights->$feature->$subfeature->creer) 
-            		&& empty($user->rights->$feature->$subfeature->write)
-            		&& empty($user->rights->$feature->$subfeature->create)) $createok=0;
-            		else { $createok=1; break; } // For bypass the second test if the first is ok
-            	}
-            }
-            else if (! empty($feature))		// This is for old permissions
-            {
+            } elseif (! empty($feature2)) {	// This should be used for future changes
+                foreach ($feature2 as $subfeature) {
+                    if (empty($user->rights->$feature->$subfeature->creer)
+                    && empty($user->rights->$feature->$subfeature->write)
+                    && empty($user->rights->$feature->$subfeature->create)) $createok=0;
+                    else { $createok=1; break; } // For bypass the second test if the first is ok
+                }
+            } elseif (! empty($feature)) {		// This is for old permissions
                 //print '<br>feature='.$feature.' creer='.$user->rights->$feature->creer.' write='.$user->rights->$feature->write;
                 if (empty($user->rights->$feature->creer)
                 && empty($user->rights->$feature->write)) $createok=0;
@@ -235,8 +195,7 @@ function restrictedArea($user, $features, $objectid=0, $dbtablename='', $feature
 
     // Check create user permission
     $createuserok=1;
-    if (GETPOST("action") == 'confirm_create_user' && GETPOST("confirm") == 'yes')
-    {
+    if (GETPOST("action") == 'confirm_create_user' && GETPOST("confirm") == 'yes') {
         if (! $user->rights->user->user->creer) $createuserok=0;
 
         if (! $createuserok) accessforbidden();
@@ -245,48 +204,28 @@ function restrictedArea($user, $features, $objectid=0, $dbtablename='', $feature
 
     // Check delete permission from module
     $deleteok=1;
-    if ((GETPOST("action")  == 'confirm_delete' && GETPOST("confirm") == 'yes') || GETPOST("action")  == 'delete')
-    {
-        foreach ($features as $feature)
-        {
-            if ($feature == 'contact')
-            {
+    if ((GETPOST("action")  == 'confirm_delete' && GETPOST("confirm") == 'yes') || GETPOST("action")  == 'delete') {
+        foreach ($features as $feature) {
+            if ($feature == 'contact') {
                 if (! $user->rights->societe->contact->supprimer) $deleteok=0;
-            }
-            else if ($feature == 'produit|service')
-            {
+            } elseif ($feature == 'produit|service') {
                 if (! $user->rights->produit->supprimer && ! $user->rights->service->supprimer) $deleteok=0;
-            }
-            else if ($feature == 'commande_fournisseur')
-            {
+            } elseif ($feature == 'commande_fournisseur') {
                 if (! $user->rights->fournisseur->commande->supprimer) $deleteok=0;
-            }
-            else if ($feature == 'banque')
-            {
+            } elseif ($feature == 'banque') {
                 if (! $user->rights->banque->modifier) $deleteok=0;
-            }
-            else if ($feature == 'cheque')
-            {
+            } elseif ($feature == 'cheque') {
                 if (! $user->rights->banque->cheque) $deleteok=0;
-            }
-            else if ($feature == 'ecm')
-            {
+            } elseif ($feature == 'ecm') {
                 if (! $user->rights->ecm->upload) $deleteok=0;
-            }
-            else if ($feature == 'ftp')
-            {
+            } elseif ($feature == 'ftp') {
                 if (! $user->rights->ftp->write) $deleteok=0;
-            }
-            else if (! empty($feature2))	// This should be used for future changes
-            {
-            	foreach($feature2 as $subfeature)
-            	{
-            		if (empty($user->rights->$feature->$subfeature->supprimer) && empty($user->rights->$feature->$subfeature->delete)) $deleteok=0;
-            		else { $deleteok=1; break; } // For bypass the second test if the first is ok
-            	}
-            }
-            else if (! empty($feature))		// This is for old permissions
-            {
+            } elseif (! empty($feature2)) {	// This should be used for future changes
+                foreach ($feature2 as $subfeature) {
+                    if (empty($user->rights->$feature->$subfeature->supprimer) && empty($user->rights->$feature->$subfeature->delete)) $deleteok=0;
+                    else { $deleteok=1; break; } // For bypass the second test if the first is ok
+                }
+            } elseif (! empty($feature)) {		// This is for old permissions
                 //print '<br>feature='.$feature.' creer='.$user->rights->$feature->supprimer.' write='.$user->rights->$feature->delete;
                 if (empty($user->rights->$feature->supprimer)
                 && empty($user->rights->$feature->delete)
@@ -301,10 +240,8 @@ function restrictedArea($user, $features, $objectid=0, $dbtablename='', $feature
 
     // If we have a particular object to check permissions on, we check this object
     // is linked to a company allowed to $user.
-    if (! empty($objectid) && $objectid > 0)
-    {
-        foreach ($features as $feature)
-        {
+    if (! empty($objectid) && $objectid > 0) {
+        foreach ($features as $feature) {
             $sql='';
 
             $check = array('adherent','banque','user','usergroup','produit','service','produit|service','categorie'); // Test on entity only (Objects with no link to company)
@@ -318,30 +255,22 @@ function restrictedArea($user, $features, $objectid=0, $dbtablename='', $feature
             if (empty($dbtablename)) $dbtablename = $feature;
 
             // Check permission for object with entity
-            if (in_array($feature,$check))
-            {
+            if (in_array($feature,$check)) {
                 $sql = "SELECT dbt.".$dbt_select;
                 $sql.= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
                 $sql.= " WHERE dbt.".$dbt_select." = ".$objectid;
-                if (($feature == 'user' || $feature == 'usergroup') && ! empty($conf->multicompany->enabled) && $conf->entity == 1 && $user->admin && ! $user->entity)
-                {
+                if (($feature == 'user' || $feature == 'usergroup') && ! empty($conf->multicompany->enabled) && $conf->entity == 1 && $user->admin && ! $user->entity) {
                     $sql.= " AND dbt.entity IS NOT NULL";
-                }
-                else
-                {
+                } else {
                     $sql.= " AND dbt.entity IN (".getEntity($sharedelement, 1).")";
                 }
-            }
-            else if (in_array($feature,$checksoc))
-            {
+            } elseif (in_array($feature,$checksoc)) {
                 // If external user: Check permission for external users
-                if ($user->societe_id > 0)
-                {
+                if ($user->societe_id > 0) {
                     if ($user->societe_id <> $objectid) accessforbidden();
                 }
                 // If internal user: Check permission for internal users that are restricted on their objects
-                else if (! empty($conf->societe->enabled) && ($user->rights->societe->lire && ! $user->rights->societe->client->voir))
-                {
+                else if (! empty($conf->societe->enabled) && ($user->rights->societe->lire && ! $user->rights->societe->client->voir)) {
                     $sql = "SELECT sc.fk_soc";
                     $sql.= " FROM (".MAIN_DB_PREFIX."societe_commerciaux as sc";
                     $sql.= ", ".MAIN_DB_PREFIX."societe as s)";
@@ -351,27 +280,22 @@ function restrictedArea($user, $features, $objectid=0, $dbtablename='', $feature
                     $sql.= " AND s.entity IN (".getEntity($sharedelement, 1).")";
                 }
                 // If multicompany and internal users with all permissions, check user is in correct entity
-                else if (! empty($conf->multicompany->enabled))
-                {
+                else if (! empty($conf->multicompany->enabled)) {
                     $sql = "SELECT s.rowid";
                     $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
                     $sql.= " WHERE s.rowid = ".$objectid;
                     $sql.= " AND s.entity IN (".getEntity($sharedelement, 1).")";
                 }
-            }
-            else if (in_array($feature,$checkother))
-            {
+            } elseif (in_array($feature,$checkother)) {
                 // If external user: Check permission for external users
-                if ($user->societe_id > 0)
-                {
+                if ($user->societe_id > 0) {
                     $sql = "SELECT dbt.rowid";
                     $sql.= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
                     $sql.= " WHERE dbt.rowid = ".$objectid;
                     $sql.= " AND dbt.fk_soc = ".$user->societe_id;
                 }
                 // If internal user: Check permission for internal users that are restricted on their objects
-                else if (! empty($conf->societe->enabled) && ($user->rights->societe->lire && ! $user->rights->societe->client->voir))
-                {
+                else if (! empty($conf->societe->enabled) && ($user->rights->societe->lire && ! $user->rights->societe->client->voir)) {
                     $sql = "SELECT dbt.rowid";
                     $sql.= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
                     $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON dbt.fk_soc = sc.fk_soc AND sc.fk_user = '".$user->id."'";
@@ -380,45 +304,35 @@ function restrictedArea($user, $features, $objectid=0, $dbtablename='', $feature
                     $sql.= " AND dbt.entity IN (".getEntity($sharedelement, 1).")";
                 }
                 // If multicompany and internal users with all permissions, check user is in correct entity
-                else if (! empty($conf->multicompany->enabled))
-                {
+                else if (! empty($conf->multicompany->enabled)) {
                     $sql = "SELECT dbt.rowid";
                     $sql.= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
                     $sql.= " WHERE dbt.rowid = ".$objectid;
                     $sql.= " AND dbt.entity IN (".getEntity($sharedelement, 1).")";
                 }
-            }
-            else if (in_array($feature,$checkproject))
-            {
-                if (! empty($conf->projet->enabled) && ! $user->rights->projet->all->lire)
-                {
+            } elseif (in_array($feature,$checkproject)) {
+                if (! empty($conf->projet->enabled) && ! $user->rights->projet->all->lire) {
                     include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
                     $projectstatic=new Project($db);
                     $tmps=$projectstatic->getProjectsAuthorizedForUser($user,0,1,0);
                     $tmparray=explode(',',$tmps);
                     if (! in_array($objectid,$tmparray)) accessforbidden();
+                } else {
+                    $sql = "SELECT dbt.".$dbt_select;
+                    $sql.= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
+                    $sql.= " WHERE dbt.".$dbt_select." = ".$objectid;
+                    $sql.= " AND dbt.entity IN (".getEntity($sharedelement, 1).")";
                 }
-                else
-                {
-                	$sql = "SELECT dbt.".$dbt_select;
-                	$sql.= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
-                	$sql.= " WHERE dbt.".$dbt_select." = ".$objectid;
-                	$sql.= " AND dbt.entity IN (".getEntity($sharedelement, 1).")";
-                }
-            }
-            else if (! in_array($feature,$nocheck))	// By default we check with link to third party
-            {
+            } elseif (! in_array($feature,$nocheck)) {	// By default we check with link to third party
                 // If external user: Check permission for external users
-                if ($user->societe_id > 0)
-                {
+                if ($user->societe_id > 0) {
                     $sql = "SELECT dbt.".$dbt_keyfield;
                     $sql.= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
                     $sql.= " WHERE dbt.rowid = ".$objectid;
                     $sql.= " AND dbt.".$dbt_keyfield." = ".$user->societe_id;
                 }
                 // If internal user: Check permission for internal users that are restricted on their objects
-                else if (! empty($conf->societe->enabled) && ($user->rights->societe->lire && ! $user->rights->societe->client->voir))
-                {
+                else if (! empty($conf->societe->enabled) && ($user->rights->societe->lire && ! $user->rights->societe->client->voir)) {
                     $sql = "SELECT sc.fk_soc";
                     $sql.= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
                     $sql.= ", ".MAIN_DB_PREFIX."societe as s";
@@ -430,8 +344,7 @@ function restrictedArea($user, $features, $objectid=0, $dbtablename='', $feature
                     $sql.= " AND sc.fk_user = ".$user->id;
                 }
                 // If multicompany and internal users with all permissions, check user is in correct entity
-                else if (! empty($conf->multicompany->enabled))
-                {
+                else if (! empty($conf->multicompany->enabled)) {
                     $sql = "SELECT dbt.".$dbt_select;
                     $sql.= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
                     $sql.= " WHERE dbt.".$dbt_select." = ".$objectid;
@@ -440,15 +353,11 @@ function restrictedArea($user, $features, $objectid=0, $dbtablename='', $feature
             }
 
             //print $sql."<br>";
-            if ($sql)
-            {
+            if ($sql) {
                 $resql=$db->query($sql);
-                if ($resql)
-                {
+                if ($resql) {
                     if ($db->num_rows($resql) == 0)	accessforbidden();
-                }
-                else
-                {
+                } else {
                     dol_syslog("security.lib:restrictedArea sql=".$sql, LOG_ERR);
                     accessforbidden();
                 }
@@ -458,7 +367,6 @@ function restrictedArea($user, $features, $objectid=0, $dbtablename='', $feature
 
     return 1;
 }
-
 
 /**
  *	Show a message to say access is forbidden and stop program
@@ -473,16 +381,14 @@ function restrictedArea($user, $features, $objectid=0, $dbtablename='', $feature
 function accessforbidden($message='',$printheader=1,$printfooter=1,$showonlymessage=0)
 {
     global $conf, $db, $user, $langs;
-    if (! is_object($langs))
-    {
+    if (! is_object($langs)) {
         include_once DOL_DOCUMENT_ROOT.'/core/class/translate.class.php';
         $langs=new Translate('',$conf);
     }
 
     $langs->load("errors");
 
-    if ($printheader)
-    {
+    if ($printheader) {
         if (function_exists("llxHeader")) llxHeader('');
         else if (function_exists("llxHeaderVierge")) llxHeaderVierge('');
     }
@@ -491,20 +397,14 @@ function accessforbidden($message='',$printheader=1,$printfooter=1,$showonlymess
     else print $message;
     print '</div>';
     print '<br>';
-    if (empty($showonlymessage))
-    {
-        if ($user->login)
-        {
+    if (empty($showonlymessage)) {
+        if ($user->login) {
             print $langs->trans("CurrentLogin").': <font class="error">'.$user->login.'</font><br>';
             print $langs->trans("ErrorForbidden2",$langs->trans("Home"),$langs->trans("Users"));
-        }
-        else
-        {
+        } else {
             print $langs->trans("ErrorForbidden3");
         }
     }
     if ($printfooter && function_exists("llxFooter")) llxFooter();
     exit(0);
 }
-
-?>

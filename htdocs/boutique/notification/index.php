@@ -29,8 +29,6 @@ require_once DOL_DOCUMENT_ROOT.'/boutique/osc_master.inc.php';
 
 $langs->load("products");
 
-
-
 llxHeader();
 
 if ($sortfield == "") {
@@ -39,7 +37,6 @@ if ($sortfield == "") {
 if ($sortorder == "") {
   $sortorder="ASC";
 }
-
 
 if ($page == -1) { $page = 0 ; }
 $limit = $conf->liste_limit;
@@ -56,8 +53,7 @@ $sql .= " ORDER BY $sortfield $sortorder ";
 $sql .= $dbosc->plimit($limit,$offset);
 
 $resql=$dbosc->query($sql);
-if ($resql)
-{
+if ($resql) {
   $num = $dbosc->num_rows($resql);
   $i = 0;
   print "<table class=\noborder\" width=\"100%\">";
@@ -66,8 +62,7 @@ if ($resql)
   print '<td>'.$langs->trans("Product").'</td>';
   print "</tr>\n";
   $var=True;
-  while ($i < $num)
-    {
+  while ($i < $num) {
       $objp = $dbosc->fetch_object($resql);
       $var=!$var;
       print "<tr $bc[$var]>";
@@ -78,13 +73,10 @@ if ($resql)
     }
   print "</table>";
   $dbosc->free($resql);
-}
-else
-{
+} else {
   dol_print_error($dbosc);
 }
 
 $dbosc->close();
 
 llxFooter();
-?>

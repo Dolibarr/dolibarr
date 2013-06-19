@@ -39,8 +39,7 @@ if ($mode == 'supplier' && ! $user->rights->fournisseur->commande->lire) accessf
 $userid=GETPOST('userid','int');
 $socid=GETPOST('socid','int');
 // Security check
-if ($user->societe_id > 0)
-{
+if ($user->societe_id > 0) {
     $action = '';
     $socid = $user->societe_id;
 }
@@ -54,7 +53,6 @@ $endyear=$year;
 $langs->load('orders');
 $langs->load('other');
 
-
 /*
  * View
  */
@@ -63,13 +61,11 @@ $form=new Form($db);
 
 llxHeader();
 
-if ($mode == 'customer')
-{
+if ($mode == 'customer') {
     $title=$langs->trans("OrdersStatistics");
     $dir=$conf->commande->dir_temp;
 }
-if ($mode == 'supplier')
-{
+if ($mode == 'supplier') {
     $title=$langs->trans("OrdersStatisticsSuppliers");
     $dir=$conf->fournisseur->dir_output.'/commande/temp';
 }
@@ -85,15 +81,11 @@ $data = $stats->getNbByMonthWithPrevYear($endyear,$startyear);
 //var_dump($data);
 // $data = array(array('Lib',val1,val2,val3),...)
 
-
-if (!$user->rights->societe->client->voir || $user->societe_id)
-{
+if (!$user->rights->societe->client->voir || $user->societe_id) {
     $filenamenb = $dir.'/ordersnbinyear-'.$user->id.'-'.$year.'.png';
     if ($mode == 'customer') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=ordersnbinyear-'.$user->id.'-'.$year.'.png';
     if ($mode == 'supplier') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstatssupplier&file=ordersnbinyear-'.$user->id.'-'.$year.'.png';
-}
-else
-{
+} else {
     $filenamenb = $dir.'/ordersnbinyear-'.$year.'.png';
     if ($mode == 'customer') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=ordersnbinyear-'.$year.'.png';
     if ($mode == 'supplier') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstatssupplier&file=ordersnbinyear-'.$year.'.png';
@@ -101,13 +93,11 @@ else
 
 $px1 = new DolGraph();
 $mesg = $px1->isGraphKo();
-if (! $mesg)
-{
+if (! $mesg) {
     $px1->SetData($data);
     $px1->SetPrecisionY(0);
     $i=$startyear;$legend=array();
-    while ($i <= $endyear)
-    {
+    while ($i <= $endyear) {
         $legend[]=$i;
         $i++;
     }
@@ -131,14 +121,11 @@ $data = $stats->getAmountByMonthWithPrevYear($endyear,$startyear);
 //var_dump($data);
 // $data = array(array('Lib',val1,val2,val3),...)
 
-if (!$user->rights->societe->client->voir || $user->societe_id)
-{
+if (!$user->rights->societe->client->voir || $user->societe_id) {
     $filenameamount = $dir.'/ordersamountinyear-'.$user->id.'-'.$year.'.png';
     if ($mode == 'customer') $fileurlamount = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=ordersamountinyear-'.$user->id.'-'.$year.'.png';
     if ($mode == 'supplier') $fileurlamount = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstatssupplier&file=ordersamountinyear-'.$user->id.'-'.$year.'.png';
-}
-else
-{
+} else {
     $filenameamount = $dir.'/ordersamountinyear-'.$year.'.png';
     if ($mode == 'customer') $fileurlamount = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=ordersamountinyear-'.$year.'.png';
     if ($mode == 'supplier') $fileurlamount = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstatssupplier&file=ordersamountinyear-'.$year.'.png';
@@ -146,12 +133,10 @@ else
 
 $px2 = new DolGraph();
 $mesg = $px2->isGraphKo();
-if (! $mesg)
-{
+if (! $mesg) {
     $px2->SetData($data);
     $i=$startyear;$legend=array();
-    while ($i <= $endyear)
-    {
+    while ($i <= $endyear) {
         $legend[]=$i;
         $i++;
     }
@@ -170,17 +155,13 @@ if (! $mesg)
     $px2->draw($filenameamount,$fileurlamount);
 }
 
-
 $data = $stats->getAverageByMonthWithPrevYear($endyear, $startyear);
 
-if (!$user->rights->societe->client->voir || $user->societe_id)
-{
+if (!$user->rights->societe->client->voir || $user->societe_id) {
     $filename_avg = $dir.'/ordersaverage-'.$user->id.'-'.$year.'.png';
     if ($mode == 'customer') $fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=ordersaverage-'.$user->id.'-'.$year.'.png';
     if ($mode == 'supplier') $fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstatssupplier&file=ordersaverage-'.$user->id.'-'.$year.'.png';
-}
-else
-{
+} else {
     $filename_avg = $dir.'/ordersaverage-'.$year.'.png';
     if ($mode == 'customer') $fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=ordersaverage-'.$year.'.png';
     if ($mode == 'supplier') $fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstatssupplier&file=ordersaverage-'.$year.'.png';
@@ -188,12 +169,10 @@ else
 
 $px3 = new DolGraph();
 $mesg = $px3->isGraphKo();
-if (! $mesg)
-{
+if (! $mesg) {
     $px3->SetData($data);
     $i=$startyear;$legend=array();
-    while ($i <= $endyear)
-    {
+    while ($i <= $endyear) {
         $legend[]=$i;
         $i++;
     }
@@ -212,15 +191,13 @@ if (! $mesg)
     $px3->draw($filename_avg,$fileurl_avg);
 }
 
-
-
 // Show array
 $data = $stats->getAllByYear();
 $arrayyears=array();
-foreach($data as $val) {
-	if (! empty($val['year'])) {
-		$arrayyears[$val['year']]=$val['year'];
-	}
+foreach ($data as $val) {
+    if (! empty($val['year'])) {
+        $arrayyears[$val['year']]=$val['year'];
+    }
 }
 if (! count($arrayyears)) $arrayyears[$nowyear]=$nowyear;
 
@@ -238,38 +215,36 @@ complete_head_from_modules($conf,$langs,null,$head,$h,$type);
 
 dol_fiche_head($head,'byyear',$langs->trans("Statistics"));
 
-
 print '<div class="fichecenter"><div class="fichethirdleft">';
-
 
 //if (empty($socid))
 //{
-	// Show filter box
-	print '<form name="stats" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-	print '<input type="hidden" name="mode" value="'.$mode.'">';
-	print '<table class="border" width="100%">';
-	print '<tr><td class="liste_titre" colspan="2">'.$langs->trans("Filter").'</td></tr>';
-	// Company
-	print '<tr><td align="left">'.$langs->trans("ThirdParty").'</td><td align="left">';
-	if ($mode == 'customer') $filter='s.client in (1,2,3)';
-	if ($mode == 'supplier') $filter='s.fournisseur = 1';
-	print $form->select_company($socid,'socid',$filter,1);
-	print '</td></tr>';
-	// User
-	print '<tr><td align="left">'.$langs->trans("CreatedBy").'</td><td align="left">';
-	print $form->select_users($userid,'userid',1);
-	print '</td></tr>';
-	// Year
-	print '<tr><td align="left">'.$langs->trans("Year").'</td><td align="left">';
-	if (! in_array($year,$arrayyears)) $arrayyears[$year]=$year;
-	if (! in_array($nowyear,$arrayyears)) $arrayyears[$nowyear]=$nowyear;
-	arsort($arrayyears);
-	print $form->selectarray('year',$arrayyears,$year,0);
-	print '</td></tr>';
-	print '<tr><td align="center" colspan="2"><input type="submit" name="submit" class="button" value="'.$langs->trans("Refresh").'"></td></tr>';
-	print '</table>';
-	print '</form>';
-	print '<br><br>';
+    // Show filter box
+    print '<form name="stats" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+    print '<input type="hidden" name="mode" value="'.$mode.'">';
+    print '<table class="border" width="100%">';
+    print '<tr><td class="liste_titre" colspan="2">'.$langs->trans("Filter").'</td></tr>';
+    // Company
+    print '<tr><td align="left">'.$langs->trans("ThirdParty").'</td><td align="left">';
+    if ($mode == 'customer') $filter='s.client in (1,2,3)';
+    if ($mode == 'supplier') $filter='s.fournisseur = 1';
+    print $form->select_company($socid,'socid',$filter,1);
+    print '</td></tr>';
+    // User
+    print '<tr><td align="left">'.$langs->trans("CreatedBy").'</td><td align="left">';
+    print $form->select_users($userid,'userid',1);
+    print '</td></tr>';
+    // Year
+    print '<tr><td align="left">'.$langs->trans("Year").'</td><td align="left">';
+    if (! in_array($year,$arrayyears)) $arrayyears[$year]=$year;
+    if (! in_array($nowyear,$arrayyears)) $arrayyears[$nowyear]=$nowyear;
+    arsort($arrayyears);
+    print $form->selectarray('year',$arrayyears,$year,0);
+    print '</td></tr>';
+    print '<tr><td align="center" colspan="2"><input type="submit" name="submit" class="button" value="'.$langs->trans("Refresh").'"></td></tr>';
+    print '</table>';
+    print '</form>';
+    print '<br><br>';
 //}
 
 print '<table class="border" width="100%">';
@@ -281,40 +256,35 @@ print '<td align="center">'.$langs->trans("AmountAverage").'</td>';
 print '</tr>';
 
 $oldyear=0;
-foreach ($data as $val)
-{
-	$year = $val['year'];
-	while (! empty($year) && $oldyear > $year+1)
-	{ // If we have empty year
-	$oldyear--;
-	print '<tr height="24">';
-	print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$oldyear.'&amp;mode='.$mode.'">'.$oldyear.'</a></td>';
+foreach ($data as $val) {
+    $year = $val['year'];
+    while (! empty($year) && $oldyear > $year+1) { // If we have empty year
+    $oldyear--;
+    print '<tr height="24">';
+    print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$oldyear.'&amp;mode='.$mode.'">'.$oldyear.'</a></td>';
 
-	print '<td align="right">0</td>';
-	print '<td align="right">0</td>';
-	print '<td align="right">0</td>';
-	print '</tr>';
-	}
+    print '<td align="right">0</td>';
+    print '<td align="right">0</td>';
+    print '<td align="right">0</td>';
+    print '</tr>';
+    }
 
-	print '<tr height="24">';
-	print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&amp;mode='.$mode.'">'.$year.'</a></td>';
-	print '<td align="right">'.$val['nb'].'</td>';
-	print '<td align="right">'.price(price2num($val['total'],'MT'),1).'</td>';
-	print '<td align="right">'.price(price2num($val['avg'],'MT'),1).'</td>';
-	print '</tr>';
-	$oldyear=$year;
+    print '<tr height="24">';
+    print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&amp;mode='.$mode.'">'.$year.'</a></td>';
+    print '<td align="right">'.$val['nb'].'</td>';
+    print '<td align="right">'.price(price2num($val['total'],'MT'),1).'</td>';
+    print '<td align="right">'.price(price2num($val['avg'],'MT'),1).'</td>';
+    print '</tr>';
+    $oldyear=$year;
 }
 
 print '</table>';
 
-
 print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
-
 
 // Show graphs
 print '<table class="border" width="100%"><tr valign="top"><td align="center">';
-if ($mesg) { print $mesg; }
-else {
+if ($mesg) { print $mesg; } else {
     print $px1->show();
     print "<br>\n";
     print $px2->show();
@@ -323,14 +293,11 @@ else {
 }
 print '</td></tr></table>';
 
-
 print '</div></div></div>';
 print '<div style="clear:both"></div>';
 
 dol_fiche_end();
 
-
 llxFooter();
 
 $db->close();
-?>

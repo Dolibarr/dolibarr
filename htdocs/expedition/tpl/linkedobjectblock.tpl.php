@@ -31,24 +31,23 @@ print_titre($langs->trans('RelatedShippings'));
 ?>
 <table class="noborder allwidth">
 <tr class="liste_titre">
-	<td><?php echo $langs->trans("Ref"); ?></td>
-	<td align="center"><?php echo $langs->trans("Date"); ?></td>
-	<td align="center"><?php echo $langs->trans("DateDeliveryPlanned"); ?></td>
-	<td align="right"><?php echo $langs->trans("AmountHTShort"); ?></td>
-	<td align="right"><?php echo $langs->trans("Status"); ?></td>
+    <td><?php echo $langs->trans("Ref"); ?></td>
+    <td align="center"><?php echo $langs->trans("Date"); ?></td>
+    <td align="center"><?php echo $langs->trans("DateDeliveryPlanned"); ?></td>
+    <td align="right"><?php echo $langs->trans("AmountHTShort"); ?></td>
+    <td align="right"><?php echo $langs->trans("Status"); ?></td>
 </tr>
 <?php
 $var=true;
-foreach($linkedObjectBlock as $object)
-{
-	$var=!$var;
+foreach ($linkedObjectBlock as $object) {
+    $var=!$var;
 ?>
 <tr <?php echo $GLOBALS['bc'][$var]; ?> ><td>
-	<a href="<?php echo DOL_URL_ROOT.'/expedition/fiche.php?id='.$object->id ?>"><?php echo img_object($langs->trans("ShowShipping"),"sending").' '.$object->ref; ?></a></td>
-	<td align="center"><?php echo dol_print_date($object->date_creation,'day'); ?></td>
-	<td align="center"><?php echo dol_print_date($object->date_delivery,'day'); ?></td>
-	<td align="right"><?php echo price($object->total_ht); ?></td>
-	<td align="right"><?php echo $object->getLibStatut(3); ?></td>
+    <a href="<?php echo DOL_URL_ROOT.'/expedition/fiche.php?id='.$object->id ?>"><?php echo img_object($langs->trans("ShowShipping"),"sending").' '.$object->ref; ?></a></td>
+    <td align="center"><?php echo dol_print_date($object->date_creation,'day'); ?></td>
+    <td align="center"><?php echo dol_print_date($object->date_delivery,'day'); ?></td>
+    <td align="right"><?php echo price($object->total_ht); ?></td>
+    <td align="right"><?php echo $object->getLibStatut(3); ?></td>
 </tr>
 <?php
 $total = $total + $object->total_ht;
@@ -56,9 +55,9 @@ $total = $total + $object->total_ht;
 
 ?>
 <tr class="liste_total">
-	<td align="left" colspan="3"><?php echo $langs->trans('TotalHT'); ?></td>
-	<td align="right"><?php echo price($total); ?></td>
-	<td>&nbsp;</td>
+    <td align="left" colspan="3"><?php echo $langs->trans('TotalHT'); ?></td>
+    <td align="right"><?php echo price($total); ?></td>
+    <td>&nbsp;</td>
 </tr>
 </table>
 

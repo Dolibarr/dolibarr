@@ -32,15 +32,13 @@ if (! defined('NOREQUIREMENU')) define('NOREQUIREMENU','1');
 if (! defined('NOREQUIREHTML')) define('NOREQUIREHTML','1');
 if (! defined('NOREQUIREAJAX')) define('NOREQUIREAJAX','1');
 
-
-if (! isset($mode) || $mode != 'noajax')    // For ajax call
-{
+if (! isset($mode) || $mode != 'noajax') {    // For ajax call
     require_once '../../main.inc.php';
     require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
     require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
     require_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmdirectory.class.php';
 
-	$action=GETPOST("action");
+    $action=GETPOST("action");
     $file=urldecode(GETPOST('file'));
     $section=GETPOST("section");
     $module=GETPOST("module");
@@ -60,21 +58,16 @@ if (! isset($mode) || $mode != 'noajax')    // For ajax call
 
     $ecmdir = new EcmDirectory($db);
     $result=$ecmdir->fetch($section);
-    if (! $result > 0)
-    {
+    if (! $result > 0) {
         //dol_print_error($db,$ecmdir->error);
         //exit;
     }
-}
-else    // For no ajax call
-{
+} else {    // For no ajax call
     $ecmdir = new EcmDirectory($db);
     $relativepath='';
-    if ($section > 0)
-    {
+    if ($section > 0) {
         $result=$ecmdir->fetch($section);
-        if (! $result > 0)
-        {
+        if (! $result > 0) {
             dol_print_error($db,$ecmdir->error);
             exit;
         }
@@ -96,14 +89,12 @@ if ($user->societe_id > 0) $socid = $user->societe_id;
 // Security:
 // On interdit les remontees de repertoire ainsi que les pipe dans
 // les noms de fichiers.
-if (preg_match('/\.\./',$upload_dir) || preg_match('/[<>|]/',$upload_dir))
-{
+if (preg_match('/\.\./',$upload_dir) || preg_match('/[<>|]/',$upload_dir)) {
     dol_syslog("Refused to deliver file ".$upload_dir);
     // Do no show plain path in shown error message
     dol_print_error(0,$langs->trans("ErrorFileNameInvalid",$upload_dir));
     exit;
 }
-
 
 /*
  * Action
@@ -111,15 +102,12 @@ if (preg_match('/\.\./',$upload_dir) || preg_match('/[<>|]/',$upload_dir))
 
 // None
 
-
-
 /*
  * View
  */
 
-if (! isset($mode) || $mode != 'noajax')
-{
-	// Ajout directives pour resoudre bug IE
+if (! isset($mode) || $mode != 'noajax') {
+    // Ajout directives pour resoudre bug IE
     header('Cache-Control: Public, must-revalidate');
     header('Pragma: public');
 
@@ -129,8 +117,7 @@ if (! isset($mode) || $mode != 'noajax')
 $type='directory';
 
 // This test if file exists should be useless. We keep it to find bug more easily
-if (! dol_is_dir($upload_dir))
-{
+if (! dol_is_dir($upload_dir)) {
 //	dol_mkdir($upload_dir);
 /*    $langs->load("install");
     dol_print_error(0,$langs->trans("ErrorDirDoesNotExists",$upload_dir));
@@ -144,8 +131,7 @@ $param=($sortfield?'&sortfield='.$sortfield:'').($sortorder?'&sortorder='.$sorto
 $url=DOL_URL_ROOT.'/ecm/index.php';
 
 // Dir scan
-if ($type == 'directory')
-{
+if ($type == 'directory') {
     $formfile=new FormFile($db);
 
     $maxlengthname=40;
@@ -161,8 +147,7 @@ if ($type == 'directory')
     // Auto area for suppliers invoices
     else if ($module == 'invoice') $upload_dir = $conf->facture->dir_output;
     // Auto area for suppliers invoices
-    else if ($module == 'invoice_supplier')
-    {
+    else if ($module == 'invoice_supplier') {
         $relativepath='facture';
         $upload_dir = $conf->fournisseur->dir_output.'/'.$relativepath;
     }
@@ -171,8 +156,7 @@ if ($type == 'directory')
     // Auto area for customers orders
     else if ($module == 'order') $upload_dir = $conf->commande->dir_output;
     // Auto area for suppliers orders
-    else if ($module == 'order_supplier')
-    {
+    else if ($module == 'order_supplier') {
         $relativepath='commande';
         $upload_dir = $conf->fournisseur->dir_output.'/'.$relativepath;
     }
@@ -185,8 +169,7 @@ if ($type == 'directory')
     // Auto area for projects
     else if ($module == 'project') $upload_dir = $conf->projet->dir_output;
 
-    if (in_array($module, $automodules))
-    {
+    if (in_array($module, $automodules)) {
         $param.='&module='.$module;
         $textifempty=($section?$langs->trans("NoFileFound"):($showonrightsize=='featurenotyetavailable'?$langs->trans("FeatureNotYetAvailable"):$langs->trans("NoFileFound")));
 
@@ -194,35 +177,28 @@ if ($type == 'directory')
         $formfile->list_of_autoecmfiles($upload_dir,$filearray,$module,$param,1,'',$user->rights->ecm->upload,1,$textifempty,$maxlengthname,$url);
     }
     //Manual area
-    else
-    {
+    else {
         $relativepath=$ecmdir->getRelativePath();
         $upload_dir = $conf->ecm->dir_output.'/'.$relativepath;
 
         // If $section defined with value 0
-        if ($section === '0')
-        {
+        if ($section === '0') {
             $filearray=array();
             $textifempty='<br><div align="center"><font class="warning">'.$langs->trans("DirNotSynchronizedSyncFirst").'</font></div><br>';
-        }
-        else $filearray=dol_dir_list($upload_dir,"files",0,'',array('^\.','\.meta$','^temp$','^CVS$'),$sortfield, $sorting,1);
+        } else $filearray=dol_dir_list($upload_dir,"files",0,'',array('^\.','\.meta$','^temp$','^CVS$'),$sortfield, $sorting,1);
 
-        if ($section)
-        {
+        if ($section) {
             $param.='&section='.$section;
             $textifempty = $langs->trans('NoFileFound');
-        }
-        else $textifempty=($showonrightsize=='featurenotyetavailable'?$langs->trans("FeatureNotYetAvailable"):$langs->trans("ECMSelectASection"));
-        
+        } else $textifempty=($showonrightsize=='featurenotyetavailable'?$langs->trans("FeatureNotYetAvailable"):$langs->trans("ECMSelectASection"));
+
         $formfile->list_of_documents($filearray,'','ecm',$param,1,$relativepath,$user->rights->ecm->upload,1,$textifempty,$maxlengthname,'',$url);
     }
 }
 
-if (! empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE_JS))
-{
-    if ($section)
-    {
-    	$param.=($param?'?':'').(preg_replace('/^&/','',$param));
+if (! empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE_JS)) {
+    if ($section) {
+        $param.=($param?'?':'').(preg_replace('/^&/','',$param));
 
         require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
         $useglobalvars=1;
@@ -241,4 +217,3 @@ if (! empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE
 
 // Close db if mode is not noajax
 if ((! isset($mode) || $mode != 'noajax') && is_object($db)) $db->close();
-?>

@@ -23,21 +23,20 @@
  */
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 
-
 /**
  *  \class      ModeleGenPassword
  *  \brief      Parent class for password rules/management modules
  */
 abstract class ModeleGenPassword
 {
-    var $error='';
+    public $error='';
 
     /**
      * 		Return if a module can be used or not
      *
      *      @return		boolean     true if module can be used
      */
-    function isEnabled()
+    public function isEnabled()
     {
         return true;
     }
@@ -47,9 +46,10 @@ abstract class ModeleGenPassword
      *
      *      @return     string      Description of text
      */
-    function getDescription()
+    public function getDescription()
     {
         global $langs;
+
         return $langs->trans("NoDescription");
     }
 
@@ -58,35 +58,35 @@ abstract class ModeleGenPassword
      *
      *      @return     string      Example of password
      */
-    function getExample()
+    public function getExample()
     {
         global $langs;
         $langs->load("bills");
+
         return $langs->trans("NoExample");
     }
 
-	/**
-	 * 		Build new password
-	 *
- 	 *      @return     string      Return a new generated password
-	 */
-    function getNewGeneratedPassword()
+    /**
+     * 		Build new password
+     *
+      *      @return     string      Return a new generated password
+     */
+    public function getNewGeneratedPassword()
     {
         global $langs;
+
         return $langs->trans("NotAvailable");
     }
 
-	/**
-	 * 		Validate a password
-	 *
-	 *		@param		string	$password	Password to check
- 	 *      @return     int					0 if KO, >0 if OK
-	 */
-    function validatePassword($password)
+    /**
+     * 		Validate a password
+     *
+     *		@param		string	$password	Password to check
+      *      @return     int					0 if KO, >0 if OK
+     */
+    public function validatePassword($password)
     {
         return 1;
     }
 
 }
-
-?>

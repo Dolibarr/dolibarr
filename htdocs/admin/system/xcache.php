@@ -28,7 +28,6 @@ if (!$user->admin) accessforbidden();
 
 $action=GETPOST('action');
 
-
 /*
  * View
  */
@@ -40,13 +39,11 @@ print_fiche_titre("XCache",'','setup');
 print "<br>\n";
 
 //function_exists('apc_cache_info') || function_exists('eaccelerator_info') || function_exists('xcache_info'))
-if (!function_exists('xcache_info'))
-{
+if (!function_exists('xcache_info')) {
     print 'XCache seems to be not installed. Function xcache_info not found.';
-	llxFooter();
-	exit;
+    llxFooter();
+    exit;
 }
-
 
 print 'Opcode cache XCache is on<br><br>'."\n\n";
 
@@ -61,8 +58,7 @@ print $langs->trans("xcache.coverager").': '.yn(ini_get('xcache.coverager')).'<b
 //print xcache_get();
 /*
 $cacheinfos = array();
-for ($i = 0; $i < 10; $i ++)
-{
+for ($i = 0; $i < 10; $i ++) {
     $data = xcache_info(XC_TYPE_PHP, $i);
     $data['cacheid'] = $i;
     $cacheinfos[] = $data;
@@ -70,8 +66,7 @@ for ($i = 0; $i < 10; $i ++)
 
 var_dump($cacheinfos);
 
-if ($action == 'clear')
-{
+if ($action == 'clear') {
     xcache_clear_cache();
 }
 */
@@ -79,4 +74,3 @@ if ($action == 'clear')
 llxFooter();
 
 $db->close();
-?>

@@ -28,7 +28,6 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/order.lib.php';
 require_once DOL_DOCUMENT_ROOT .'/commande/class/commande.class.php';
 
-
 $langs->load("companies");
 $langs->load("bills");
 $langs->load("orders");
@@ -43,30 +42,23 @@ $socid=0;
 if ($user->societe_id) $socid=$user->societe_id;
 $result=restrictedArea($user,'commande',$id,'');
 
-
 $object = new Commande($db);
-if (! $object->fetch($id, $ref) > 0)
-{
-	dol_print_error($db);
+if (! $object->fetch($id, $ref) > 0) {
+    dol_print_error($db);
 }
-
 
 /*
  * Actions
  */
 
-if ($action == 'setnote_public' && $user->rights->commande->creer)
-{
-	$object->fetch($id);
-	$result=$object->update_note(dol_html_entity_decode(GETPOST('note_public'), ENT_QUOTES),'_public');
-	if ($result < 0) dol_print_error($db,$object->error);
-}
-
-else if ($action == 'setnote_private' && $user->rights->commande->creer)
-{
-	$object->fetch($id);
-	$result=$object->update_note(dol_html_entity_decode(GETPOST('note_private'), ENT_QUOTES),'_private');
-	if ($result < 0) dol_print_error($db,$object->error);
+if ($action == 'setnote_public' && $user->rights->commande->creer) {
+    $object->fetch($id);
+    $result=$object->update_note(dol_html_entity_decode(GETPOST('note_public'), ENT_QUOTES),'_public');
+    if ($result < 0) dol_print_error($db,$object->error);
+} elseif ($action == 'setnote_private' && $user->rights->commande->creer) {
+    $object->fetch($id);
+    $result=$object->update_note(dol_html_entity_decode(GETPOST('note_private'), ENT_QUOTES),'_private');
+    if ($result < 0) dol_print_error($db,$object->error);
 }
 
 /*
@@ -77,49 +69,46 @@ llxHeader('',$langs->trans('Order'),'EN:Customers_Orders|FR:Commandes_Clients|ES
 
 $form = new Form($db);
 
-if ($id > 0 || ! empty($ref))
-{
-	$soc = new Societe($db);
-	$soc->fetch($object->socid);
+if ($id > 0 || ! empty($ref)) {
+    $soc = new Societe($db);
+    $soc->fetch($object->socid);
 
-	$head = commande_prepare_head($object);
+    $head = commande_prepare_head($object);
 
-	dol_fiche_head($head, 'note', $langs->trans("CustomerOrder"), 0, 'order');
+    dol_fiche_head($head, 'note', $langs->trans("CustomerOrder"), 0, 'order');
 
-	print '<table class="border" width="100%">';
+    print '<table class="border" width="100%">';
 
-	$linkback = '<a href="'.DOL_URL_ROOT.'/commande/liste.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
+    $linkback = '<a href="'.DOL_URL_ROOT.'/commande/liste.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
 
-	// Ref
-	print '<tr><td width="25%">'.$langs->trans("Ref").'</td><td colspan="3">';
-	print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref');
-	print "</td></tr>";
+    // Ref
+    print '<tr><td width="25%">'.$langs->trans("Ref").'</td><td colspan="3">';
+    print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref');
+    print "</td></tr>";
 
-	// Ref commande client
-	print '<tr><td>';
-	print '<table class="nobordernopadding" width="100%"><tr><td nowrap>';
-	print $langs->trans('RefCustomer').'</td><td align="left">';
-	print '</td>';
-	print '</tr></table>';
-	print '</td><td colspan="3">';
-	print $object->ref_client;
-	print '</td>';
-	print '</tr>';
+    // Ref commande client
+    print '<tr><td>';
+    print '<table class="nobordernopadding" width="100%"><tr><td nowrap>';
+    print $langs->trans('RefCustomer').'</td><td align="left">';
+    print '</td>';
+    print '</tr></table>';
+    print '</td><td colspan="3">';
+    print $object->ref_client;
+    print '</td>';
+    print '</tr>';
 
-	// Customer
-	print "<tr><td>".$langs->trans("Company")."</td>";
-	print '<td colspan="3">'.$soc->getNomUrl(1).'</td></tr>';
+    // Customer
+    print "<tr><td>".$langs->trans("Company")."</td>";
+    print '<td colspan="3">'.$soc->getNomUrl(1).'</td></tr>';
 
-	print "</table>";
+    print "</table>";
 
-	print '<br>';
+    print '<br>';
 
-	include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
+    include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
 
-	print '</div>';
+    print '</div>';
 }
-
 
 llxFooter();
 $db->close();
-?>

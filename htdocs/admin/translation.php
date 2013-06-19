@@ -33,17 +33,13 @@ $langs->load("errors");
 
 if (!$user->admin) accessforbidden();
 
-
 $action=GETPOST('action');
-
 
 /*
  * Actions
  */
 
 // None
-
-
 
 /*
  * View
@@ -65,8 +61,6 @@ print img_warning().' '.$langs->trans("SomeTranslationAreUncomplete").'<br>';
 $urlwikitranslatordoc='http://wiki.dolibarr.org/index.php/Translator_documentation';
 print $langs->trans("SeeAlso").': <a href="'.$urlwikitranslatordoc.'" target="_blank">'.$urlwikitranslatordoc.'</a><br>';
 
-
 llxFooter();
 
 $db->close();
-?>

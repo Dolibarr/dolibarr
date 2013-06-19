@@ -26,15 +26,11 @@ require_once DOL_DOCUMENT_ROOT.'/exports/class/export.class.php';
 
 $langs->load("exports");
 
-
 // Security check
 $result=restrictedArea($user,'export');
 
-
-
 $export=new Export($db);
 $export->load_arrays($user);
-
 
 /*
  * View
@@ -51,9 +47,7 @@ print $langs->trans("FormatedExportDesc2").' ';
 print $langs->trans("FormatedExportDesc3").'<br>';
 print '<br>';
 
-
 print '<div class="fichecenter"><div class="fichethirdleft">';
-
 
 // List export set
 print '<table class="noborder" width="100%">';
@@ -63,55 +57,46 @@ print '<td>'.$langs->trans("ExportableDatas").'</td>';
 //print '<td>&nbsp;</td>';
 print '</tr>';
 $var=true;
-if (count($export->array_export_code))
-{
-	foreach ($export->array_export_code as $key => $value)
-	{
-		$var=!$var;
-		print '<tr '.$bc[$var].'><td>';
-		//print img_object($export->array_export_module[$key]->getName(),$export->array_export_module[$key]->picto).' ';
-		print $export->array_export_module[$key]->getName();
-		print '</td><td>';
-		print img_object($export->array_export_module[$key]->getName(),$export->array_export_icon[$key]).' ';
-		$string=$langs->trans($export->array_export_label[$key]);
-		print ($string!=$export->array_export_label[$key]?$string:$export->array_export_label[$key]);
-		print '</td>';
-		//        print '<td width="24">';
-		//        print '<a href="'.DOL_URL_ROOT.'/exports/export.php?step=2&amp;datatoexport='.$export->array_export_code[$key].'&amp;action=cleanselect">'.img_picto($langs->trans("NewExport"),'filenew').'</a>';
-		//        print '</td>';
-		print '</tr>';
+if (count($export->array_export_code)) {
+    foreach ($export->array_export_code as $key => $value) {
+        $var=!$var;
+        print '<tr '.$bc[$var].'><td>';
+        //print img_object($export->array_export_module[$key]->getName(),$export->array_export_module[$key]->picto).' ';
+        print $export->array_export_module[$key]->getName();
+        print '</td><td>';
+        print img_object($export->array_export_module[$key]->getName(),$export->array_export_icon[$key]).' ';
+        $string=$langs->trans($export->array_export_label[$key]);
+        print ($string!=$export->array_export_label[$key]?$string:$export->array_export_label[$key]);
+        print '</td>';
+        //        print '<td width="24">';
+        //        print '<a href="'.DOL_URL_ROOT.'/exports/export.php?step=2&amp;datatoexport='.$export->array_export_code[$key].'&amp;action=cleanselect">'.img_picto($langs->trans("NewExport"),'filenew').'</a>';
+        //        print '</td>';
+        print '</tr>';
 
-	}
-}
-else
-{
-	print '<tr><td '.$bc[false].' colspan="2">'.$langs->trans("NoExportableData").'</td></tr>';
+    }
+} else {
+    print '<tr><td '.$bc[false].' colspan="2">'.$langs->trans("NoExportableData").'</td></tr>';
 }
 print '</table>';
 print '<br>';
 
 print '<center>';
-if (count($export->array_export_code))
-{
-	if ($user->rights->export->creer)
-	{
-		print '<a class="butAction" href="'.DOL_URL_ROOT.'/exports/export.php?leftmenu=export">'.$langs->trans("NewExport").'</a>';
-	}
-	else
-	{
-		print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'">'.$langs->trans("NewExport").'</a>';
-	}
-	/*
-	 print '<center><form action="'.DOL_URL_ROOT.'/exports/export.php?leftmenu=export"><input type="submit" class="button" value="'.$langs->trans("NewExport").'"';
-	print ($user->rights->export->creer?'':' disabled="disabled"');
-	print '></form></center>';
-	*/
+if (count($export->array_export_code)) {
+    if ($user->rights->export->creer) {
+        print '<a class="butAction" href="'.DOL_URL_ROOT.'/exports/export.php?leftmenu=export">'.$langs->trans("NewExport").'</a>';
+    } else {
+        print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'">'.$langs->trans("NewExport").'</a>';
+    }
+    /*
+     print '<center><form action="'.DOL_URL_ROOT.'/exports/export.php?leftmenu=export"><input type="submit" class="button" value="'.$langs->trans("NewExport").'"';
+    print ($user->rights->export->creer?'':' disabled="disabled"');
+    print '></form></center>';
+    */
 }
 print '</center>';
 print '<br>';
 
 print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
-
 
 // List of available export format
 $var=true;
@@ -127,25 +112,21 @@ $model=new ModeleExports();
 $liste=$model->liste_modeles($db);    // This is not a static method for exports because method load non static properties
 
 $var=true;
-foreach($liste as $key => $val)
-{
-	$var=!$var;
-	print '<tr '.$bc[$var].'>';
-	print '<td width="16">'.img_picto_common($model->getDriverLabelForKey($key),$model->getPictoForKey($key)).'</td>';
-	$text=$model->getDriverDescForKey($key);
-	print '<td>'.$form->textwithpicto($model->getDriverLabelForKey($key),$text).'</td>';
-	print '<td>'.$model->getLibLabelForKey($key).'</td>';
-	print '<td class="nowrap" align="right">'.$model->getLibVersionForKey($key).'</td>';
-	print '</tr>';
+foreach ($liste as $key => $val) {
+    $var=!$var;
+    print '<tr '.$bc[$var].'>';
+    print '<td width="16">'.img_picto_common($model->getDriverLabelForKey($key),$model->getPictoForKey($key)).'</td>';
+    $text=$model->getDriverDescForKey($key);
+    print '<td>'.$form->textwithpicto($model->getDriverLabelForKey($key),$text).'</td>';
+    print '<td>'.$model->getLibLabelForKey($key).'</td>';
+    print '<td class="nowrap" align="right">'.$model->getLibVersionForKey($key).'</td>';
+    print '</tr>';
 }
 
 print '</table>';
 
-
 print '</div></div></div>';
-
 
 llxFooter();
 
 $db->close();
-?>

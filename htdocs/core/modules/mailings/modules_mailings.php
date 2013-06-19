@@ -25,33 +25,32 @@
  */
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 
-
 /**
  *	    \class      MailingTargets
  *		\brief      Parent class of emailing target selectors modules
  */
 class MailingTargets    // This can't be abstract as it is used for some method
 {
-    var $db;
-    var $error;
+    public $db;
+    public $error;
 
 
     /**
-	 *	Constructor
-	 *
-	 *  @param		DoliDB		$db      Database handler
-	 */
-	function __construct($db)
-	{
+     *	Constructor
+     *
+     *  @param		DoliDB		$db      Database handler
+     */
+    public function __construct($db)
+    {
         $this->db = $db;
-	}
+    }
 
     /**
      * Return description of email selector
      *
-     * @return     string      Retourne la traduction de la cle MailingModuleDescXXX ou XXX nom du module, ou $this->desc si non trouve
+     * @return string Retourne la traduction de la cle MailingModuleDescXXX ou XXX nom du module, ou $this->desc si non trouve
      */
-    function getDesc()
+    public function getDesc()
     {
         global $langs;
         $langs->load("mails");
@@ -61,11 +60,11 @@ class MailingTargets    // This can't be abstract as it is used for some method
     }
 
     /**
-	 *	Return number of records for email selector
+     *	Return number of records for email selector
      *
      *  @return     string      Example
      */
-    function getNbOfRecords()
+    public function getNbOfRecords()
     {
         return 0;
     }
@@ -73,20 +72,19 @@ class MailingTargets    // This can't be abstract as it is used for some method
     /**
      * Retourne nombre de destinataires
      *
-     * @param      string	$sql        Requete sql de comptage
-     * @return     int       			Nb de destinataires si ok, < 0 si erreur
+     * @param  string $sql Requete sql de comptage
+     * @return int    Nb de destinataires si ok, < 0 si erreur
      */
-    function getNbOfRecipients($sql)
+    public function getNbOfRecipients($sql)
     {
         $result=$this->db->query($sql);
-        if ($result)
-        {
+        if ($result) {
             $obj = $this->db->fetch_object($result);
+
             return $obj->nb;
-        }
-        else
-        {
-        	$this->error=$this->db->error();
+        } else {
+            $this->error=$this->db->error();
+
             return -1;
         }
     }
@@ -95,9 +93,9 @@ class MailingTargets    // This can't be abstract as it is used for some method
      * Affiche formulaire de filtre qui apparait dans page de selection
      * des destinataires de mailings
      *
-     * @return     string      Retourne zone select
+     * @return string Retourne zone select
      */
-    function formFilter()
+    public function formFilter()
     {
         return '';
     }
@@ -105,92 +103,86 @@ class MailingTargets    // This can't be abstract as it is used for some method
     /**
      * Met a jour nombre de destinataires
      *
-     * @param	int		$mailing_id          Id of emailing
-     * @return  int			                 < 0 si erreur, nb destinataires si ok
+     * @param  int $mailing_id Id of emailing
+     * @return int < 0 si erreur, nb destinataires si ok
      */
-    function update_nb($mailing_id)
+    public function update_nb($mailing_id)
     {
         // Mise a jour nombre de destinataire dans table des mailings
         $sql = "SELECT COUNT(*) nb FROM ".MAIN_DB_PREFIX."mailing_cibles";
         $sql .= " WHERE fk_mailing = ".$mailing_id;
         $result=$this->db->query($sql);
-        if ($result)
-        {
+        if ($result) {
             $obj=$this->db->fetch_object($result);
             $nb=$obj->nb;
 
             $sql = "UPDATE ".MAIN_DB_PREFIX."mailing";
             $sql .= " SET nbemail = ".$nb." WHERE rowid = ".$mailing_id;
-            if (!$this->db->query($sql))
-            {
+            if (!$this->db->query($sql)) {
                 dol_syslog($this->db->error());
                 $this->error=$this->db->error();
+
                 return -1;
             }
-        }
-        else {
+        } else {
             return -1;
         }
+
         return $nb;
     }
 
     /**
      * Ajoute destinataires dans table des cibles
      *
-     * @param	int		$mailing_id    Id of emailing
-     * @param   array	$cibles        Array with targets
-     * @return  int      			   < 0 si erreur, nb ajout si ok
+     * @param  int   $mailing_id Id of emailing
+     * @param  array $cibles     Array with targets
+     * @return int   < 0 si erreur, nb ajout si ok
      */
-    function add_to_target($mailing_id, $cibles)
+    public function add_to_target($mailing_id, $cibles)
     {
-    	global $conf;
+        global $conf;
 
-    	$this->db->begin();
+        $this->db->begin();
 
         // Insert emailing targest from array into database
         $j = 0;
         $num = count($cibles);
-        foreach ($cibles as $targetarray)
-        {
-        	if (! empty($targetarray['email'])) // avoid empty email address
-        	{
-        		$sql = "INSERT INTO ".MAIN_DB_PREFIX."mailing_cibles";
-        		$sql .= " (fk_mailing,";
-        		$sql .= " fk_contact,";
-        		$sql .= " lastname, firstname, email, other, source_url, source_id,";
-        		if (! empty($conf->global->MAILING_EMAIL_UNSUBSCRIBE)) {
-        			$sql .= " tag,";
-        		}
-        		$sql.= " source_type)";
-        		$sql .= " VALUES (".$mailing_id.",";
-        		$sql .= (empty($targetarray['fk_contact']) ? '0' : "'".$targetarray['fk_contact']."'") .",";
-        		$sql .= "'".$this->db->escape($targetarray['lastname'])."',";
-        		$sql .= "'".$this->db->escape($targetarray['firstname'])."',";
-        		$sql .= "'".$this->db->escape($targetarray['email'])."',";
-        		$sql .= "'".$this->db->escape($targetarray['other'])."',";
-        		$sql .= "'".$this->db->escape($targetarray['source_url'])."',";
-        		$sql .= "'".$this->db->escape($targetarray['source_id'])."',";
-        		if (! empty($conf->global->MAILING_EMAIL_UNSUBSCRIBE)) {
-        			$sql .= "'".$this->db->escape(md5($targetarray['email'].';'.$targetarray['name'].';'.$mailing_id.';'.$conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY))."',";
-        		}
-        		$sql .= "'".$this->db->escape($targetarray['source_type'])."')";
-        		$result=$this->db->query($sql);
-        		if ($result)
-        		{
-        			$j++;
-        		}
-        		else
-        		{
-        			if ($this->db->errno() != 'DB_ERROR_RECORD_ALREADY_EXISTS')
-        			{
-        				// Si erreur autre que doublon
-        				dol_syslog($this->db->error());
-        				$this->error=$this->db->error();
-        				$this->db->rollback();
-        				return -1;
-        			}
-        		}
-        	}
+        foreach ($cibles as $targetarray) {
+            if (! empty($targetarray['email'])) { // avoid empty email address
+                $sql = "INSERT INTO ".MAIN_DB_PREFIX."mailing_cibles";
+                $sql .= " (fk_mailing,";
+                $sql .= " fk_contact,";
+                $sql .= " lastname, firstname, email, other, source_url, source_id,";
+                if (! empty($conf->global->MAILING_EMAIL_UNSUBSCRIBE)) {
+                    $sql .= " tag,";
+                }
+                $sql.= " source_type)";
+                $sql .= " VALUES (".$mailing_id.",";
+                $sql .= (empty($targetarray['fk_contact']) ? '0' : "'".$targetarray['fk_contact']."'") .",";
+                $sql .= "'".$this->db->escape($targetarray['lastname'])."',";
+                $sql .= "'".$this->db->escape($targetarray['firstname'])."',";
+                $sql .= "'".$this->db->escape($targetarray['email'])."',";
+                $sql .= "'".$this->db->escape($targetarray['other'])."',";
+                $sql .= "'".$this->db->escape($targetarray['source_url'])."',";
+                $sql .= "'".$this->db->escape($targetarray['source_id'])."',";
+                if (! empty($conf->global->MAILING_EMAIL_UNSUBSCRIBE)) {
+                    $sql .= "'".$this->db->escape(md5($targetarray['email'].';'.$targetarray['name'].';'.$mailing_id.';'.$conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY))."',";
+                }
+                $sql .= "'".$this->db->escape($targetarray['source_type'])."')";
+                $result=$this->db->query($sql);
+                if ($result) {
+                    $j++;
+                } else {
+                    if ($this->db->errno() != 'DB_ERROR_RECORD_ALREADY_EXISTS') {
+                        // Si erreur autre que doublon
+                        dol_syslog($this->db->error());
+                        $this->error=$this->db->error();
+                        $this->db->rollback();
+
+                        return -1;
+                    }
+                }
+            }
         }
 
         dol_syslog(get_class($this)."::add_to_target: sql ".$sql,LOG_DEBUG);
@@ -219,6 +211,7 @@ class MailingTargets    // This can't be abstract as it is used for some method
         $this->update_nb($mailing_id);
 
         $this->db->commit();
+
         return $j;
     }
 
@@ -228,13 +221,12 @@ class MailingTargets    // This can't be abstract as it is used for some method
      *	@param	int		$mailing_id        Id of emailing
      *	@return	void
      */
-    function clear_target($mailing_id)
+    public function clear_target($mailing_id)
     {
         $sql = "DELETE FROM ".MAIN_DB_PREFIX."mailing_cibles";
         $sql .= " WHERE fk_mailing = ".$mailing_id;
 
-        if (! $this->db->query($sql))
-        {
+        if (! $this->db->query($sql)) {
             dol_syslog($this->db->error());
         }
 
@@ -242,5 +234,3 @@ class MailingTargets    // This can't be abstract as it is used for some method
     }
 
 }
-
-?>

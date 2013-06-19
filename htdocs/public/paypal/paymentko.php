@@ -31,9 +31,8 @@ define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
 
 // For MultiCompany module
 $entity=(! empty($_GET['entity']) ? (int) $_GET['entity'] : (! empty($_POST['entity']) ? (int) $_POST['entity'] : 1));
-if (is_int($entity))
-{
-	define("DOLENTITY", $entity);
+if (is_int($entity)) {
+    define("DOLENTITY", $entity);
 }
 
 require '../../main.inc.php';
@@ -52,13 +51,9 @@ $langs->load("companies");
 $langs->load("paybox");
 $langs->load("paypal");
 
-
 /*
  * Actions
  */
-
-
-
 
 /*
  * View
@@ -70,34 +65,27 @@ $tracepost = "";
 foreach($_POST as $k => $v) $tracepost .= "{$k} - {$v}\n";
 dol_syslog("POST=".$tracepost, LOG_DEBUG, 0, '_paypal');
 
-
 // Send an email
-if (! empty($conf->global->MEMBER_PAYONLINE_SENDEMAIL) && preg_match('/MEM=/',$fulltag))
-{
-	$sendto=$conf->global->MEMBER_PAYONLINE_SENDEMAIL;
-	$from=$conf->global->MAILING_EMAIL_FROM;
-	require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-	$mailfile = new CMailFile(
-		'New subscription payed',
-		$sendto,
-		$from,
-		'New subscription payed '.$fulltag
-		);
+if (! empty($conf->global->MEMBER_PAYONLINE_SENDEMAIL) && preg_match('/MEM=/',$fulltag)) {
+    $sendto=$conf->global->MEMBER_PAYONLINE_SENDEMAIL;
+    $from=$conf->global->MAILING_EMAIL_FROM;
+    require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
+    $mailfile = new CMailFile(
+        'New subscription payed',
+        $sendto,
+        $from,
+        'New subscription payed '.$fulltag
+        );
 
-	$result=$mailfile->sendfile();
-	if ($result)
-	{
-		dol_syslog("EMail sent to ".$sendto, LOG_DEBUG, 0, '_paypal');
-	}
-	else
-	{
-		dol_syslog("Failed to send EMail to ".$sendto, LOG_ERR, 0, '_paypal');
-	}
+    $result=$mailfile->sendfile();
+    if ($result) {
+        dol_syslog("EMail sent to ".$sendto, LOG_DEBUG, 0, '_paypal');
+    } else {
+        dol_syslog("Failed to send EMail to ".$sendto, LOG_ERR, 0, '_paypal');
+    }
 }
 
-
 llxHeaderPaypal($langs->trans("PaymentForm"));
-
 
 // Show ko message
 print '<span id="dolpaymentspan"></span>'."\n";
@@ -112,11 +100,8 @@ if (empty($PAYPALFULLTAG)) $PAYPALFULLTAG=GETPOST('fulltag');
 if (! empty($conf->global->PAYPAL_MESSAGE_KO)) print $conf->global->PAYPAL_MESSAGE_KO;
 print "\n</div>\n";
 
-
 html_print_paypal_footer($mysoc,$langs);
-
 
 llxFooterPaypal();
 
 $db->close();
-?>

@@ -23,27 +23,25 @@
  *      \brief      Fichier de la classe des fonctions predefinie de composants html actions
  */
 
-
 /**
  *      Class to manage building of HTML components
  */
 class FormActions
 {
-    var $db;
-    var $error;
-
+    public $db;
+    public $error;
 
     /**
-	 *	Constructor
-	 *
-	 *  @param		DoliDB		$db      Database handler
+     *	Constructor
+     *
+     *  @param		DoliDB		$db      Database handler
      */
-    function __construct($db)
+    public function __construct($db)
     {
         $this->db = $db;
+
         return 1;
     }
-
 
     /**
      *  Show list of action status
@@ -54,7 +52,7 @@ class FormActions
      *  @param  string	$htmlname   Name of html prefix for html fields (selectX and valX)
      * 	@return	void
      */
-    function form_select_status_action($formname,$selected,$canedit=1,$htmlname='complete')
+    public function form_select_status_action($formname,$selected,$canedit=1,$htmlname='complete')
     {
         global $langs,$conf;
 
@@ -65,14 +63,13 @@ class FormActions
             '100' => $langs->trans("ActionDoneShort")
         );
 
-        if (! empty($conf->use_javascript_ajax))
-        {
+        if (! empty($conf->use_javascript_ajax)) {
             print "\n";
             print "<script type=\"text/javascript\">
                 var htmlname = '".$htmlname."';
 
                 $(document).ready(function () {
-                	select_status();
+                    select_status();
 
                     $('#select' + htmlname).change(function() {
                         select_status();
@@ -83,7 +80,8 @@ class FormActions
                     //});
                 });
 
-                function select_status() {
+                function select_status()
+                {
                     var defaultvalue = $('#select' + htmlname).val();
                     var percentage = $('input[name=percentage]');
                     var selected = '".(isset($selected)?$selected:'')."';
@@ -94,40 +92,33 @@ class FormActions
                     if (defaultvalue == -1) {
                         percentage.attr('disabled', 'disabled');
                         $('.hideifna').hide();
-                    }
-                    else if (defaultvalue == 0) {
-						percentage.val(0);
-                    	percentage.attr('disabled', 'disabled');
-                        $('.hideifna').show();
-                    }
-                    else if (defaultvalue == 100) {
-						percentage.val(100);
+                    } elseif (defaultvalue == 0) {
+                        percentage.val(0);
                         percentage.attr('disabled', 'disabled');
                         $('.hideifna').show();
-                    }
-                    else {
-                    	if (defaultvalue == 50 && (percentage.val() == 0 || percentage.val() == 100)) { percentage.val(50) };
-                    	percentage.removeAttr('disabled');
+                    } elseif (defaultvalue == 100) {
+                        percentage.val(100);
+                        percentage.attr('disabled', 'disabled');
+                        $('.hideifna').show();
+                    } else {
+                        if (defaultvalue == 50 && (percentage.val() == 0 || percentage.val() == 100)) { percentage.val(50) };
+                        percentage.removeAttr('disabled');
                         $('.hideifna').show();
                     }
                 }
                 </script>\n";
             print '<select '.($canedit?'':'disabled="disabled" ').'name="status" id="select'.$htmlname.'" class="flat">';
-            foreach($listofstatus as $key => $val)
-            {
+            foreach ($listofstatus as $key => $val) {
                 print '<option value="'.$key.'"'.(($selected == $key) || (($selected > 0 && $selected < 100) && $key == '50') ? ' selected="selected"' : '').'>'.$val.'</option>';
             }
             print '</select>';
             if ($selected == 0 || $selected == 100) $canedit=0;
             print ' <input type="text" id="val'.$htmlname.'" name="percentage" class="flat hideifna" value="'.($selected>=0?$selected:'').'" size="2"'.($canedit&&($selected>=0)?'':' disabled="disabled"').'>';
             print '<span class="hideifna">%</span>';
-        }
-        else
-        {
+        } else {
             print ' <input type="text" id="val'.$htmlname.'" name="percentage" class="flat" value="'.($selected>=0?$selected:'').'" size="2"'.($canedit?'':' disabled="disabled"').'>%';
         }
     }
-
 
     /**
      *  Show list of actions for element
@@ -138,7 +129,7 @@ class FormActions
      *  @param	int		$forceshowtitle	Show title even if there is no actions to show
      *	@return	int						<0 if KO, >=0 if OK
      */
-    function showactions($object,$typeelement,$socid=0,$forceshowtitle=0)
+    public function showactions($object,$typeelement,$socid=0,$forceshowtitle=0)
     {
         global $langs,$conf,$user;
         global $bc;
@@ -146,65 +137,61 @@ class FormActions
         require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 
         $listofactions=ActionComm::getActions($this->db, $socid, $object->id, $typeelement);
-		if (! is_array($listofactions)) dol_print_error($this->db,'FailedToGetActions');
+        if (! is_array($listofactions)) dol_print_error($this->db,'FailedToGetActions');
 
         $num = count($listofactions);
-        if ($num || $forceshowtitle)
-        {
-        	if ($typeelement == 'invoice')   $title=$langs->trans('ActionsOnBill');
-        	elseif ($typeelement == 'invoice_supplier' || $typeelement == 'supplier_invoice') $title=$langs->trans('ActionsOnBill');
-        	elseif ($typeelement == 'propal')    $title=$langs->trans('ActionsOnPropal');
-        	elseif ($typeelement == 'order')     $title=$langs->trans('ActionsOnOrder');
-        	elseif ($typeelement == 'order_supplier' || $typeelement == 'supplier_order')   $title=$langs->trans('ActionsOnOrder');
-        	elseif ($typeelement == 'project')   $title=$langs->trans('ActionsOnProject');
-        	elseif ($typeelement == 'shipping')  $title=$langs->trans('ActionsOnShipping');
+        if ($num || $forceshowtitle) {
+            if ($typeelement == 'invoice')   $title=$langs->trans('ActionsOnBill');
+            elseif ($typeelement == 'invoice_supplier' || $typeelement == 'supplier_invoice') $title=$langs->trans('ActionsOnBill');
+            elseif ($typeelement == 'propal')    $title=$langs->trans('ActionsOnPropal');
+            elseif ($typeelement == 'order')     $title=$langs->trans('ActionsOnOrder');
+            elseif ($typeelement == 'order_supplier' || $typeelement == 'supplier_order')   $title=$langs->trans('ActionsOnOrder');
+            elseif ($typeelement == 'project')   $title=$langs->trans('ActionsOnProject');
+            elseif ($typeelement == 'shipping')  $title=$langs->trans('ActionsOnShipping');
             elseif ($typeelement == 'fichinter') $title=$langs->trans('ActionsOnFicheInter');
-        	else $title=$langs->trans("Actions");
+            else $title=$langs->trans("Actions");
 
-        	print_titre($title);
+            print_titre($title);
 
-        	$total = 0;	$var=true;
-        	print '<table class="noborder" width="100%">';
-        	print '<tr class="liste_titre">';
-        	print '<th class="liste_titre">'.$langs->trans('Ref').'</th>';
-        	print '<th class="liste_titre">'.$langs->trans('Action').'</th>';
-        	print '<th class="liste_titre">'.$langs->trans('Date').'</th>';
-        	print '<th class="liste_titre">'.$langs->trans('By').'</th>';
-        	print '</tr>';
-        	print "\n";
+            $total = 0;	$var=true;
+            print '<table class="noborder" width="100%">';
+            print '<tr class="liste_titre">';
+            print '<th class="liste_titre">'.$langs->trans('Ref').'</th>';
+            print '<th class="liste_titre">'.$langs->trans('Action').'</th>';
+            print '<th class="liste_titre">'.$langs->trans('Date').'</th>';
+            print '<th class="liste_titre">'.$langs->trans('By').'</th>';
+            print '</tr>';
+            print "\n";
 
-        	$userstatic = new User($this->db);
+            $userstatic = new User($this->db);
 
-        	foreach($listofactions as $action)
-        	{
-        		$savlabel=$action->label;
-        		$action->label=$action->ref;
-        		$ref=$action->getNomUrl(1);
-        		$action->label=$savlabel;
-        		$label=$action->getNomUrl(0,38);
+            foreach ($listofactions as $action) {
+                $savlabel=$action->label;
+                $action->label=$action->ref;
+                $ref=$action->getNomUrl(1);
+                $action->label=$savlabel;
+                $label=$action->getNomUrl(0,38);
 
-        		$var=!$var;
-        		print '<tr '.$bc[$var].'>';
-				print '<td>'.$ref.'</td>';
-        		print '<td>'.$label.'</td>';
-        		print '<td>'.dol_print_date($action->datep,'day').'</td>';
-        		print '<td>';
-        		if (! empty($action->author->id))
-        		{
-        			$userstatic->id = $action->author->id;
-        			$userstatic->firstname = $action->author->firstname;
-        			$userstatic->lastname = $action->author->lastname;
-        			print $userstatic->getNomUrl(1);
-        		}
-        		print '</td>';
-        		print '</tr>';
-        	}
-        	print '</table>';
+                $var=!$var;
+                print '<tr '.$bc[$var].'>';
+                print '<td>'.$ref.'</td>';
+                print '<td>'.$label.'</td>';
+                print '<td>'.dol_print_date($action->datep,'day').'</td>';
+                print '<td>';
+                if (! empty($action->author->id)) {
+                    $userstatic->id = $action->author->id;
+                    $userstatic->firstname = $action->author->firstname;
+                    $userstatic->lastname = $action->author->lastname;
+                    print $userstatic->getNomUrl(1);
+                }
+                print '</td>';
+                print '</tr>';
+            }
+            print '</table>';
         }
 
         return $num;
     }
-
 
     /**
      *  Output list of type of event
@@ -215,7 +202,7 @@ class FormActions
      *  @param	string		$onlyautoornot	Group list by auto events or not: We keep only the 2 generic lines (AC_OTH and AC_OTH_AUTO)
      * 	@return	void
      */
-    function select_type_actions($selected='',$htmlname='actioncode',$excludetype='',$onlyautoornot=0)
+    public function select_type_actions($selected='',$htmlname='actioncode',$excludetype='',$onlyautoornot=0)
     {
         global $langs,$user;
 
@@ -224,14 +211,14 @@ class FormActions
         $caction=new CActionComm($this->db);
         $form=new Form($this->db);
 
-       	// Suggest a list with manual events or all auto events
-       	$arraylist=$caction->liste_array(1, 'code', $excludetype, $onlyautoornot);
-       	array_unshift($arraylist,'&nbsp;');     // Add empty line at start
-       	//asort($arraylist);
+           // Suggest a list with manual events or all auto events
+           $arraylist=$caction->liste_array(1, 'code', $excludetype, $onlyautoornot);
+           array_unshift($arraylist,'&nbsp;');     // Add empty line at start
+           //asort($arraylist);
 
-       	if ($selected == 'manual') $selected='AC_OTH';
-       	if ($selected == 'auto')   $selected='AC_OTH_AUTO';
-       	
+           if ($selected == 'manual') $selected='AC_OTH';
+           if ($selected == 'auto')   $selected='AC_OTH_AUTO';
+
         print $form->selectarray($htmlname, $arraylist, $selected);
         if ($user->admin && empty($onlyautoornot)) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
     }

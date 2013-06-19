@@ -25,11 +25,10 @@
 
 require '../main.inc.php';
 if (! empty($conf->multicompany->enabled))
-	dol_include_once('/multicompany/class/actions_multicompany.class.php', 'ActionsMulticompany');
-
+    dol_include_once('/multicompany/class/actions_multicompany.class.php', 'ActionsMulticompany');
 
 if (! $user->rights->user->user->lire && ! $user->admin)
-	accessforbidden();
+    accessforbidden();
 
 $langs->load("users");
 $langs->load("companies");
@@ -37,7 +36,7 @@ $langs->load("companies");
 // Security check (for external users)
 $socid=0;
 if ($user->societe_id > 0)
-	$socid = $user->societe_id;
+    $socid = $user->societe_id;
 
 $sall=GETPOST('sall','alpha');
 $search_user=GETPOST('search_user','alpha');
@@ -56,7 +55,6 @@ if (! $sortorder) $sortorder="ASC";
 $userstatic=new User($db);
 $companystatic = new Societe($db);
 
-
 /*
  * View
  */
@@ -73,25 +71,20 @@ $sql.= " u.ldap_sid, u.statut, u.entity,";
 $sql.= " s.nom, s.canvas";
 $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON u.fk_societe = s.rowid";
-if(! empty($conf->multicompany->enabled) && $conf->entity == 1 && (! empty($conf->multicompany->transverse_mode) || (! empty($user->admin) && empty($user->entity))))
-{
-	$sql.= " WHERE u.entity IS NOT NULL";
-}
-else
-{
-	$sql.= " WHERE u.entity IN (0,".$conf->entity.")";
+if (! empty($conf->multicompany->enabled) && $conf->entity == 1 && (! empty($conf->multicompany->transverse_mode) || (! empty($user->admin) && empty($user->entity)))) {
+    $sql.= " WHERE u.entity IS NOT NULL";
+} else {
+    $sql.= " WHERE u.entity IN (0,".$conf->entity.")";
 }
 if (! empty($socid)) $sql.= " AND u.fk_societe = ".$socid;
-if (! empty($search_user))
-{
+if (! empty($search_user)) {
     $sql.= " AND (u.login LIKE '%".$db->escape($search_user)."%' OR u.lastname LIKE '%".$db->escape($search_user)."%' OR u.firstname LIKE '%".$db->escape($search_user)."%')";
 }
 if ($sall) $sql.= " AND (u.login LIKE '%".$db->escape($sall)."%' OR u.lastname LIKE '%".$db->escape($sall)."%' OR u.firstname LIKE '%".$db->escape($sall)."%' OR u.email LIKE '%".$db->escape($sall)."%' OR u.note LIKE '%".$db->escape($sall)."%')";
 $sql.=$db->order($sortfield,$sortorder);
 
 $result = $db->query($sql);
-if ($result)
-{
+if ($result) {
     $num = $db->num_rows($result);
     $i = 0;
 
@@ -107,56 +100,42 @@ if ($result)
     print_liste_field_titre($langs->trans("Status"),"index.php","u.statut",$param,"",'align="right"',$sortfield,$sortorder);
     print "</tr>\n";
     $var=True;
-    while ($i < $num)
-    {
+    while ($i < $num) {
         $obj = $db->fetch_object($result);
         $var=!$var;
 
         print "<tr $bc[$var]>";
         print '<td><a href="fiche.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowUser"),"user").' '.$obj->login.'</a>';
-        if (! empty($conf->multicompany->enabled) && $obj->admin && ! $obj->entity)
-        {
-          	print img_picto($langs->trans("SuperAdministrator"),'redstar');
-        }
-        else if ($obj->admin)
-        {
-        	print img_picto($langs->trans("Administrator"),'star');
+        if (! empty($conf->multicompany->enabled) && $obj->admin && ! $obj->entity) {
+              print img_picto($langs->trans("SuperAdministrator"),'redstar');
+        } elseif ($obj->admin) {
+            print img_picto($langs->trans("Administrator"),'star');
         }
         print '</td>';
         print '<td>'.ucfirst($obj->lastname).'</td>';
         print '<td>'.ucfirst($obj->firstname).'</td>';
         print "<td>";
-        if ($obj->fk_societe)
-        {
+        if ($obj->fk_societe) {
             $companystatic->id=$obj->fk_societe;
             $companystatic->nom=$obj->nom;
             $companystatic->canvas=$obj->canvas;
             print $companystatic->getNomUrl(1);
         }
         // Multicompany enabled
-        else if (! empty($conf->multicompany->enabled))
-        {
-        	if (! $obj->entity)
-        	{
-        		print $langs->trans("AllEntities");
-        	}
-        	else
-        	{
-        		// $mc is defined in conf.class.php if multicompany enabled.
-        		if (is_object($mc))
-        		{
-        			$mc->getInfo($obj->entity);
-        			print $mc->label;
-        		}
-        	}
-        }
-        else if ($obj->ldap_sid)
-        {
-        	print $langs->trans("DomainUser");
-        }
-        else
-        {
-        	print $langs->trans("InternalUser");
+        else if (! empty($conf->multicompany->enabled)) {
+            if (! $obj->entity) {
+                print $langs->trans("AllEntities");
+            } else {
+                // $mc is defined in conf.class.php if multicompany enabled.
+                if (is_object($mc)) {
+                    $mc->getInfo($obj->entity);
+                    print $mc->label;
+                }
+            }
+        } elseif ($obj->ldap_sid) {
+            print $langs->trans("DomainUser");
+        } else {
+            print $langs->trans("InternalUser");
         }
         print '</td>';
 
@@ -166,21 +145,18 @@ if ($result)
         // Date last login
         print '<td class="nowrap" align="center">'.dol_print_date($db->jdate($obj->datelastlogin),"dayhour").'</td>';
 
-		// Statut
-		$userstatic->statut=$obj->statut;
+        // Statut
+        $userstatic->statut=$obj->statut;
         print '<td width="100" align="right">'.$userstatic->getLibStatut(5).'</td>';
         print "</tr>\n";
         $i++;
     }
     print "</table>";
     $db->free($result);
-}
-else
-{
+} else {
     dol_print_error($db);
 }
 
 llxFooter();
 
 $db->close();
-?>

@@ -78,8 +78,6 @@ print '</td></tr></table>';
 
 print '</div>';
 
-
 llxFooter();
 
 $db->close();
-?>

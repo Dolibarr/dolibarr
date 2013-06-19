@@ -24,142 +24,135 @@
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
 
-
 /**
  *	Parent class for export modules
  */
 class ModeleExports extends CommonDocGenerator    // This class can't be abstract as there is instance propreties loaded by liste_modeles
 {
-	var $error='';
+    public $error='';
 
-	var $driverlabel=array();
-	var $driverversion=array();
+    public $driverlabel=array();
+    public $driverversion=array();
 
-	var $liblabel=array();
-	var $libversion=array();
+    public $liblabel=array();
+    public $libversion=array();
 
 
-	/**
-	 *  Load into memory list of available export format
-	 *
+    /**
+     *  Load into memory list of available export format
+     *
      *  @param	DoliDB	$db     			Database handler
      *  @param  string	$maxfilenamelength  Max length of value to show
      *  @return	array						List of templates
-	 */
-	function liste_modeles($db,$maxfilenamelength=0)
-	{
-		dol_syslog(get_class($this)."::liste_modeles");
+     */
+    public function liste_modeles($db,$maxfilenamelength=0)
+    {
+        dol_syslog(get_class($this)."::liste_modeles");
 
-		$dir=DOL_DOCUMENT_ROOT."/core/modules/export/";
-		$handle=opendir($dir);
+        $dir=DOL_DOCUMENT_ROOT."/core/modules/export/";
+        $handle=opendir($dir);
 
-		// Recherche des fichiers drivers exports disponibles
-		$var=True;
-		$i=0;
-        if (is_resource($handle))
-        {
-    		while (($file = readdir($handle))!==false)
-    		{
-    			if (preg_match("/^export_(.*)\.modules\.php$/i",$file,$reg))
-    			{
-    				$moduleid=$reg[1];
+        // Recherche des fichiers drivers exports disponibles
+        $var=True;
+        $i=0;
+        if (is_resource($handle)) {
+            while (($file = readdir($handle))!==false) {
+                if (preg_match("/^export_(.*)\.modules\.php$/i",$file,$reg)) {
+                    $moduleid=$reg[1];
 
-    				// Chargement de la classe
-    				$file = $dir."/export_".$moduleid.".modules.php";
-    				$classname = "Export".ucfirst($moduleid);
+                    // Chargement de la classe
+                    $file = $dir."/export_".$moduleid.".modules.php";
+                    $classname = "Export".ucfirst($moduleid);
 
-    				require_once $file;
-    				$module = new $classname($db);
+                    require_once $file;
+                    $module = new $classname($db);
 
-    				// Picto
-    				$this->picto[$module->id]=$module->picto;
-    				// Driver properties
-    				$this->driverlabel[$module->id]=$module->getDriverLabel();
-    				$this->driverdesc[$module->id]=$module->getDriverDesc();
-    				$this->driverversion[$module->id]=$module->getDriverVersion();
-    				// If use an external lib
-    				$this->liblabel[$module->id]=$module->getLibLabel();
-    				$this->libversion[$module->id]=$module->getLibVersion();
+                    // Picto
+                    $this->picto[$module->id]=$module->picto;
+                    // Driver properties
+                    $this->driverlabel[$module->id]=$module->getDriverLabel();
+                    $this->driverdesc[$module->id]=$module->getDriverDesc();
+                    $this->driverversion[$module->id]=$module->getDriverVersion();
+                    // If use an external lib
+                    $this->liblabel[$module->id]=$module->getLibLabel();
+                    $this->libversion[$module->id]=$module->getLibVersion();
 
-    				$i++;
-    			}
-    		}
-    		closedir($handle);
+                    $i++;
+                }
+            }
+            closedir($handle);
         }
 
         asort($this->driverlabel);
 
-		return $this->driverlabel;
-	}
+        return $this->driverlabel;
+    }
 
 
-	/**
-	 *  Return picto of export driver
-	 *
-	 *  @param	string	$key	Key of driver
-	 *  @return	string			Picto string
-	 */
-	function getPictoForKey($key)
-	{
-		return $this->picto[$key];
-	}
+    /**
+     *  Return picto of export driver
+     *
+     *  @param	string	$key	Key of driver
+     *  @return	string			Picto string
+     */
+    public function getPictoForKey($key)
+    {
+        return $this->picto[$key];
+    }
 
-	/**
-	 *  Renvoi libelle d'un driver export
-	 *
-	 *  @param	string	$key	Key of driver
-	 *  @return	string			Label
-	 */
-	function getDriverLabelForKey($key)
-	{
-		return $this->driverlabel[$key];
-	}
+    /**
+     *  Renvoi libelle d'un driver export
+     *
+     *  @param	string	$key	Key of driver
+     *  @return	string			Label
+     */
+    public function getDriverLabelForKey($key)
+    {
+        return $this->driverlabel[$key];
+    }
 
-	/**
-	 *  Renvoi le descriptif d'un driver export
-	 *
-	 *  @param	string	$key	Key of driver
-	 *  @return	string			Description
-	 */
-	function getDriverDescForKey($key)
-	{
-		return $this->driverdesc[$key];
-	}
+    /**
+     *  Renvoi le descriptif d'un driver export
+     *
+     *  @param	string	$key	Key of driver
+     *  @return	string			Description
+     */
+    public function getDriverDescForKey($key)
+    {
+        return $this->driverdesc[$key];
+    }
 
-	/**
-	 *  Renvoi version d'un driver export
-	 *
-	 *  @param	string	$key	Key of driver
-	 *  @return	string			Driver version
-	 */
-	function getDriverVersionForKey($key)
-	{
-		return $this->driverversion[$key];
-	}
+    /**
+     *  Renvoi version d'un driver export
+     *
+     *  @param	string	$key	Key of driver
+     *  @return	string			Driver version
+     */
+    public function getDriverVersionForKey($key)
+    {
+        return $this->driverversion[$key];
+    }
 
-	/**
-	 *  Renvoi libelle de librairie externe du driver
-	 *
-	 *  @param	string	$key	Key of driver
-	 *  @return	string			Label of library
-	 */
-	function getLibLabelForKey($key)
-	{
-		return $this->liblabel[$key];
-	}
+    /**
+     *  Renvoi libelle de librairie externe du driver
+     *
+     *  @param	string	$key	Key of driver
+     *  @return	string			Label of library
+     */
+    public function getLibLabelForKey($key)
+    {
+        return $this->liblabel[$key];
+    }
 
-	/**
-	 *  Renvoi version de librairie externe du driver
-	 *
-	 *  @param	string	$key	Key of driver
-	 *  @return	string			Version of library
-	 */
-	function getLibVersionForKey($key)
-	{
-		return $this->libversion[$key];
-	}
+    /**
+     *  Renvoi version de librairie externe du driver
+     *
+     *  @param	string	$key	Key of driver
+     *  @return	string			Version of library
+     */
+    public function getLibVersionForKey($key)
+    {
+        return $this->libversion[$key];
+    }
 
 }
-
-
-?>

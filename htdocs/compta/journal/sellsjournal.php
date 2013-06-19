@@ -33,7 +33,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/client.class.php';
 
-
 $langs->load("companies");
 $langs->load("other");
 $langs->load("compta");
@@ -56,8 +55,6 @@ if (! empty($conf->accounting->enabled)) $result=restrictedArea($user,'accountin
 
 // None
 
-
-
 /*
  * View
  */
@@ -66,22 +63,19 @@ $form=new Form($db);
 
 llxHeader('',$langs->trans("SellsJournal"),'');
 
-
 $year_current = strftime("%Y",dol_now());
 $pastmonth = strftime("%m",dol_now()) - 1;
 $pastmonthyear = $year_current;
-if ($pastmonth == 0)
-{
-	$pastmonth = 12;
-	$pastmonthyear--;
+if ($pastmonth == 0) {
+    $pastmonth = 12;
+    $pastmonthyear--;
 }
 
 $date_start=dol_mktime(0, 0, 0, $date_startmonth, $date_startday, $date_startyear);
 $date_end=dol_mktime(23, 59, 59, $date_endmonth, $date_endday, $date_endyear);
 
-if (empty($date_start) || empty($date_end)) // We define date_start and date_end
-{
-	$date_start=dol_get_first_day($pastmonthyear,$pastmonth,false); $date_end=dol_get_last_day($pastmonthyear,$pastmonth,false);
+if (empty($date_start) || empty($date_end)) { // We define date_start and date_end
+    $date_start=dol_get_first_day($pastmonthyear,$pastmonth,false); $date_end=dol_get_last_day($pastmonthyear,$pastmonth,false);
 }
 
 $nom=$langs->trans("SellsJournal");
@@ -117,68 +111,62 @@ if ($date_start && $date_end) $sql .= " AND f.datef >= '".$db->idate($date_start
 $sql.= " ORDER BY f.rowid";
 
 $result = $db->query($sql);
-if ($result)
-{
-	$tabfac = array();
-	$tabht = array();
-	$tabtva = array();
-	$tablocaltax1 = array();
-	$tablocaltax2 = array();
-	$tabttc = array();
-	$tabcompany = array();
-	$account_localtax1=0;
-	$account_localtax2=0;
+if ($result) {
+    $tabfac = array();
+    $tabht = array();
+    $tabtva = array();
+    $tablocaltax1 = array();
+    $tablocaltax2 = array();
+    $tabttc = array();
+    $tabcompany = array();
+    $account_localtax1=0;
+    $account_localtax2=0;
 
-	$num = $db->num_rows($result);
-   	$i=0;
-   	$resligne=array();
-   	while ($i < $num)
-   	{
-   	    $obj = $db->fetch_object($result);
-   	    // les variables
-   	    $cptcli = (! empty($conf->global->COMPTA_ACCOUNT_CUSTOMER)?$conf->global->COMPTA_ACCOUNT_CUSTOMER:$langs->trans("CodeNotDef"));
-   	    $compta_soc = (! empty($obj->code_compta)?$obj->code_compta:$cptcli);
-		$compta_prod = $obj->accountancy_code_sell;
-		if (empty($compta_prod))
-		{
-			if($obj->product_type == 0) $compta_prod = (! empty($conf->global->COMPTA_PRODUCT_SOLD_ACCOUNT)?$conf->global->COMPTA_PRODUCT_SOLD_ACCOUNT:$langs->trans("CodeNotDef"));
-			else $compta_prod = (! empty($conf->global->COMPTA_SERVICE_SOLD_ACCOUNT)?$conf->global->COMPTA_SERVICE_SOLD_ACCOUNT:$langs->trans("CodeNotDef"));
-		}
-		$cpttva = (! empty($conf->global->COMPTA_VAT_ACCOUNT)?$conf->global->COMPTA_VAT_ACCOUNT:$langs->trans("CodeNotDef"));
-		$compta_tva = (! empty($obj->account_tva)?$obj->account_tva:$cpttva);
+    $num = $db->num_rows($result);
+       $i=0;
+       $resligne=array();
+       while ($i < $num) {
+           $obj = $db->fetch_object($result);
+           // les variables
+           $cptcli = (! empty($conf->global->COMPTA_ACCOUNT_CUSTOMER)?$conf->global->COMPTA_ACCOUNT_CUSTOMER:$langs->trans("CodeNotDef"));
+           $compta_soc = (! empty($obj->code_compta)?$obj->code_compta:$cptcli);
+        $compta_prod = $obj->accountancy_code_sell;
+        if (empty($compta_prod)) {
+            if($obj->product_type == 0) $compta_prod = (! empty($conf->global->COMPTA_PRODUCT_SOLD_ACCOUNT)?$conf->global->COMPTA_PRODUCT_SOLD_ACCOUNT:$langs->trans("CodeNotDef"));
+            else $compta_prod = (! empty($conf->global->COMPTA_SERVICE_SOLD_ACCOUNT)?$conf->global->COMPTA_SERVICE_SOLD_ACCOUNT:$langs->trans("CodeNotDef"));
+        }
+        $cpttva = (! empty($conf->global->COMPTA_VAT_ACCOUNT)?$conf->global->COMPTA_VAT_ACCOUNT:$langs->trans("CodeNotDef"));
+        $compta_tva = (! empty($obj->account_tva)?$obj->account_tva:$cpttva);
 
-		$account_localtax1=getLocalTaxesFromRate($obj->tva_tx, 1, $mysoc);
-		$compta_localtax1= (! empty($account_localtax1[3])?$account_localtax1[3]:$langs->trans("CodeNotDef"));
-		$account_localtax2=getLocalTaxesFromRate($obj->tva_tx, 2, $mysoc);
-		$compta_localtax2= (! empty($account_localtax2[3])?$account_localtax2[3]:$langs->trans("CodeNotDef"));
-		
-    	//la ligne facture
-   		$tabfac[$obj->rowid]["date"] = $obj->datef;
-   		$tabfac[$obj->rowid]["ref"] = $obj->facnumber;
-   		$tabfac[$obj->rowid]["type"] = $obj->type;
-   		if (! isset($tabttc[$obj->rowid][$compta_soc])) $tabttc[$obj->rowid][$compta_soc]=0;
-   		if (! isset($tabht[$obj->rowid][$compta_prod])) $tabht[$obj->rowid][$compta_prod]=0;
-   		if (! isset($tabtva[$obj->rowid][$compta_tva])) $tabtva[$obj->rowid][$compta_tva]=0;
-   		if (! isset($tablocaltax1[$obj->rowid][$compta_localtax1])) $tablocaltax1[$obj->rowid][$compta_localtax1]=0;
-   		if (! isset($tablocaltax2[$obj->rowid][$compta_localtax2])) $tablocaltax2[$obj->rowid][$compta_localtax2]=0;
-   		$tabttc[$obj->rowid][$compta_soc] += $obj->total_ttc;
-   		$tabht[$obj->rowid][$compta_prod] += $obj->total_ht;
-   		if($obj->recuperableonly != 1) $tabtva[$obj->rowid][$compta_tva] += $obj->total_tva;
-   		$tablocaltax1[$obj->rowid][$compta_localtax1] += $obj->total_localtax1;
-   		$tablocaltax2[$obj->rowid][$compta_localtax2] += $obj->total_localtax2;
-   		$tabcompany[$obj->rowid]=array('id'=>$obj->socid, 'name'=>$obj->name, 'client'=>$obj->client);
-   		$i++;
-   	}
-}
-else {
+        $account_localtax1=getLocalTaxesFromRate($obj->tva_tx, 1, $mysoc);
+        $compta_localtax1= (! empty($account_localtax1[3])?$account_localtax1[3]:$langs->trans("CodeNotDef"));
+        $account_localtax2=getLocalTaxesFromRate($obj->tva_tx, 2, $mysoc);
+        $compta_localtax2= (! empty($account_localtax2[3])?$account_localtax2[3]:$langs->trans("CodeNotDef"));
+
+        //la ligne facture
+           $tabfac[$obj->rowid]["date"] = $obj->datef;
+           $tabfac[$obj->rowid]["ref"] = $obj->facnumber;
+           $tabfac[$obj->rowid]["type"] = $obj->type;
+           if (! isset($tabttc[$obj->rowid][$compta_soc])) $tabttc[$obj->rowid][$compta_soc]=0;
+           if (! isset($tabht[$obj->rowid][$compta_prod])) $tabht[$obj->rowid][$compta_prod]=0;
+           if (! isset($tabtva[$obj->rowid][$compta_tva])) $tabtva[$obj->rowid][$compta_tva]=0;
+           if (! isset($tablocaltax1[$obj->rowid][$compta_localtax1])) $tablocaltax1[$obj->rowid][$compta_localtax1]=0;
+           if (! isset($tablocaltax2[$obj->rowid][$compta_localtax2])) $tablocaltax2[$obj->rowid][$compta_localtax2]=0;
+           $tabttc[$obj->rowid][$compta_soc] += $obj->total_ttc;
+           $tabht[$obj->rowid][$compta_prod] += $obj->total_ht;
+           if($obj->recuperableonly != 1) $tabtva[$obj->rowid][$compta_tva] += $obj->total_tva;
+           $tablocaltax1[$obj->rowid][$compta_localtax1] += $obj->total_localtax1;
+           $tablocaltax2[$obj->rowid][$compta_localtax2] += $obj->total_localtax2;
+           $tabcompany[$obj->rowid]=array('id'=>$obj->socid, 'name'=>$obj->name, 'client'=>$obj->client);
+           $i++;
+       }
+} else {
     dol_print_error($db);
 }
-
 
 /*
  * Show result array
  */
-
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
@@ -193,76 +181,67 @@ $var=true;
 $invoicestatic=new Facture($db);
 $companystatic=new Client($db);
 
-foreach ($tabfac as $key => $val)
-{
-	$invoicestatic->id=$key;
-	$invoicestatic->ref=$val["ref"];
-	$invoicestatic->type=$val["type"];
+foreach ($tabfac as $key => $val) {
+    $invoicestatic->id=$key;
+    $invoicestatic->ref=$val["ref"];
+    $invoicestatic->type=$val["type"];
 
-	$companystatic->id=$tabcompany[$key]['id'];
-	$companystatic->name=$tabcompany[$key]['name'];
-	$companystatic->client=$tabcompany[$key]['client'];
+    $companystatic->id=$tabcompany[$key]['id'];
+    $companystatic->name=$tabcompany[$key]['name'];
+    $companystatic->client=$tabcompany[$key]['client'];
 
-	$lines = array(
-		array(
-			'var' => $tabttc[$key],
-			'label' => $langs->trans('ThirdParty').' ('.$companystatic->getNomUrl(0, 'customer', 16).')',
-			'nomtcheck' => true,
-			'inv' => true
-		),
-		array(
-			'var' => $tabht[$key],
-			'label' => $langs->trans('Products'),
-		),
-		array(
-			'var' => $tabtva[$key],
-			'label' => $langs->trans('VAT')
-		),
-		array(
-			'var' => $tablocaltax1[$key],
-			'label' => $langs->transcountry('LT1', $mysoc->country_code)
-		),
-		array(
-			'var' => $tablocaltax2[$key],
-			'label' => $langs->transcountry('LT2', $mysoc->country_code)
-		)	
-	);
+    $lines = array(
+        array(
+            'var' => $tabttc[$key],
+            'label' => $langs->trans('ThirdParty').' ('.$companystatic->getNomUrl(0, 'customer', 16).')',
+            'nomtcheck' => true,
+            'inv' => true
+        ),
+        array(
+            'var' => $tabht[$key],
+            'label' => $langs->trans('Products'),
+        ),
+        array(
+            'var' => $tabtva[$key],
+            'label' => $langs->trans('VAT')
+        ),
+        array(
+            'var' => $tablocaltax1[$key],
+            'label' => $langs->transcountry('LT1', $mysoc->country_code)
+        ),
+        array(
+            'var' => $tablocaltax2[$key],
+            'label' => $langs->transcountry('LT2', $mysoc->country_code)
+        )
+    );
 
-	foreach ($lines as $line)
-	{
-		foreach ($line['var'] as $k => $mt)
-		{
-			if (isset($line['nomtcheck']) || $mt)
-			{
-				print "<tr ".$bc[$var]." >";
-				//print "<td>".$conf->global->COMPTA_JOURNAL_SELL."</td>";
-				print "<td>".dol_print_date($val["date"])."</td>";
-				print "<td>".$invoicestatic->getNomUrl(1)."</td>";
-				print "<td>".$k."</td><td>".$line['label']."</td>";
+    foreach ($lines as $line) {
+        foreach ($line['var'] as $k => $mt) {
+            if (isset($line['nomtcheck']) || $mt) {
+                print "<tr ".$bc[$var]." >";
+                //print "<td>".$conf->global->COMPTA_JOURNAL_SELL."</td>";
+                print "<td>".dol_print_date($val["date"])."</td>";
+                print "<td>".$invoicestatic->getNomUrl(1)."</td>";
+                print "<td>".$k."</td><td>".$line['label']."</td>";
 
-				if (isset($line['inv']))
-				{
-					print '<td align="right">'.($mt>=0?price($mt):'')."</td>";
-					print '<td align="right">'.($mt<0?price(-$mt):'')."</td>";
-				}
-				else
-				{
-					print '<td align="right">'.($mt<0?price(-$mt):'')."</td>";
-	    			print '<td align="right">'.($mt>=0?price($mt):'')."</td>";
-				}
+                if (isset($line['inv'])) {
+                    print '<td align="right">'.($mt>=0?price($mt):'')."</td>";
+                    print '<td align="right">'.($mt<0?price(-$mt):'')."</td>";
+                } else {
+                    print '<td align="right">'.($mt<0?price(-$mt):'')."</td>";
+                    print '<td align="right">'.($mt>=0?price($mt):'')."</td>";
+                }
 
-				print "</tr>";
-			}
-		}
-	}
+                print "</tr>";
+            }
+        }
+    }
 
-	$var = !$var;
+    $var = !$var;
 }
 
 print "</table>";
 
-
 // End of page
 llxFooter();
 $db->close();
-?>

@@ -42,24 +42,20 @@ $object = new Contact($db);
  * Action
  */
 
-if ($action == 'update' && ! $_POST["cancel"] && $user->rights->societe->contact->creer)
-{
-	$ret = $object->fetch($id);
+if ($action == 'update' && ! $_POST["cancel"] && $user->rights->societe->contact->creer) {
+    $ret = $object->fetch($id);
 
-	// Note: Correct date should be completed with location to have exact GM time of birth.
-	$object->birthday = dol_mktime(0,0,0,$_POST["birthdaymonth"],$_POST["birthdayday"],$_POST["birthdayyear"]);
-	$object->birthday_alert = $_POST["birthday_alert"];
+    // Note: Correct date should be completed with location to have exact GM time of birth.
+    $object->birthday = dol_mktime(0,0,0,$_POST["birthdaymonth"],$_POST["birthdayday"],$_POST["birthdayyear"]);
+    $object->birthday_alert = $_POST["birthday_alert"];
 
-	$result = $object->update_perso($id, $user);
-	if ($result > 0)
-	{
-		$object->old_name='';
-		$object->old_firstname='';
-	}
-	else
-	{
-		$error = $object->error;
-	}
+    $result = $object->update_perso($id, $user);
+    if ($result > 0) {
+        $object->old_name='';
+        $object->old_firstname='';
+    } else {
+        $error = $object->error;
+    }
 }
 
 
@@ -81,11 +77,10 @@ $head = contact_prepare_head($object);
 
 dol_fiche_head($head, 'perso', $title, 0, 'contact');
 
-if ($action == 'edit')
-{
-	/*
-	 * Fiche en mode edition
-	 */
+if ($action == 'edit') {
+    /*
+     * Fiche en mode edition
+     */
 
     print '<form name="perso" method="POST" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -104,17 +99,13 @@ if ($action == 'edit')
     print '<td width="20%">'.$langs->trans("Firstname").'</td><td width="30%">'.$object->firstname.'</td>';
 
     // Company
-    if (empty($conf->global->SOCIETE_DISABLE_CONTACTS))
-    {
-        if ($object->socid > 0)
-        {
+    if (empty($conf->global->SOCIETE_DISABLE_CONTACTS)) {
+        if ($object->socid > 0) {
             $objsoc = new Societe($db);
             $objsoc->fetch($object->socid);
 
             print '<tr><td>'.$langs->trans("Company").'</td><td colspan="3">'.$objsoc->getNomUrl(1).'</td>';
-        }
-        else
-        {
+        } else {
             print '<tr><td>'.$langs->trans("Company").'</td><td colspan="3">';
             print $langs->trans("ContactNotLinkedToCompany");
             print '</td></tr>';
@@ -133,12 +124,9 @@ if ($action == 'edit')
     print '</td>';
 
     print '<td colspan="2">'.$langs->trans("Alert").': ';
-    if (! empty($object->birthday_alert))
-    {
+    if (! empty($object->birthday_alert)) {
         print '<input type="checkbox" name="birthday_alert" checked="checked"></td>';
-    }
-    else
-    {
+    } else {
         print '<input type="checkbox" name="birthday_alert"></td>';
     }
     print '</tr>';
@@ -152,9 +140,7 @@ if ($action == 'edit')
     print '</center>';
 
     print "</form>";
-}
-else
-{
+} else {
     /*
      * Fiche en mode visu
      */
@@ -172,18 +158,13 @@ else
     print '<td width="20%">'.$langs->trans("Firstname").'</td><td width="30%">'.$object->firstname.'</td></tr>';
 
     // Company
-    if (empty($conf->global->SOCIETE_DISABLE_CONTACTS))
-    {
-        if ($object->socid > 0)
-        {
+    if (empty($conf->global->SOCIETE_DISABLE_CONTACTS)) {
+        if ($object->socid > 0) {
             $objsoc = new Societe($db);
             $objsoc->fetch($object->socid);
 
             print '<tr><td>'.$langs->trans("Company").'</td><td colspan="3">'.$objsoc->getNomUrl(1).'</td></tr>';
-        }
-
-        else
-        {
+        } else {
             print '<tr><td>'.$langs->trans("Company").'</td><td colspan="3">';
             print $langs->trans("ContactNotLinkedToCompany");
             print '</td></tr>';
@@ -197,8 +178,7 @@ else
 
     // Date To Birth
     print '<tr>';
-    if (! empty($object->birthday))
-    {
+    if (! empty($object->birthday)) {
         include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
         print '<td>'.$langs->trans("DateToBirth").'</td><td colspan="3">'.dol_print_date($object->birthday,"day");
@@ -216,9 +196,7 @@ else
         if ($object->birthday_alert) print $langs->trans("BirthdayAlertOn");
         else print $langs->trans("BirthdayAlertOff");
         print '</td>';
-    }
-    else
-    {
+    } else {
         print '<td>'.$langs->trans("DateToBirth").'</td><td colspan="3">'.$langs->trans("Unknown")."</td>";
     }
     print "</tr>";
@@ -229,15 +207,12 @@ else
 
 dol_fiche_end();
 
-if ($action != 'edit')
-{
+if ($action != 'edit') {
     // Barre d'actions
-    if ($user->societe_id == 0)
-    {
+    if ($user->societe_id == 0) {
         print '<div class="tabsAction">';
 
-        if ($user->rights->societe->contact->creer)
-        {
+        if ($user->rights->societe->contact->creer) {
             print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=edit">'.$langs->trans('Modify').'</a>';
         }
 
@@ -245,8 +220,6 @@ if ($action != 'edit')
     }
 }
 
-
 llxFooter();
 
 $db->close();
-?>

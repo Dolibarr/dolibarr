@@ -20,20 +20,20 @@ class Segment implements IteratorAggregate, Countable
     protected $name;
     protected $children = array();
     protected $vars = array();
-	protected $images = array();
-	protected $odf;
-	protected $file;
+    protected $images = array();
+    protected $odf;
+    protected $file;
     /**
      * Constructor
      *
      * @param string $name name of the segment to construct
-     * @param string $xml XML tree of the segment
+     * @param string $xml  XML tree of the segment
      */
     public function __construct($name, $xml, $odf)
     {
         $this->name = (string) $name;
         $this->xml = (string) $xml;
-		$this->odf = $odf;
+        $this->odf = $odf;
         $zipHandler = $this->odf->getConfig('ZIP_PROXY');
         $this->file = new $zipHandler($this->odf->getConfig('PATH_TO_TMP'));
         $this->_analyseChildren($this->xml);
@@ -93,20 +93,21 @@ class Segment implements IteratorAggregate, Countable
         $this->xmlParsed = preg_replace($reg, '$1', $this->xmlParsed);
         $this->file->open($this->odf->getTmpfile());
         foreach ($this->images as $imageKey => $imageValue) {
-			if ($this->file->getFromName('Pictures/' . $imageValue) === false) {
-				// Add the image inside the ODT document
-				$this->file->addFile($imageKey, 'Pictures/' . $imageValue);
-				// Add the image to the Manifest (which maintains a list of images, necessary to avoid "Corrupt ODT file. Repair?" when opening the file with LibreOffice)
-				$this->odf->addImageToManifest($imageValue);
-			}
+            if ($this->file->getFromName('Pictures/' . $imageValue) === false) {
+                // Add the image inside the ODT document
+                $this->file->addFile($imageKey, 'Pictures/' . $imageValue);
+                // Add the image to the Manifest (which maintains a list of images, necessary to avoid "Corrupt ODT file. Repair?" when opening the file with LibreOffice)
+                $this->odf->addImageToManifest($imageValue);
+            }
         }
         $this->file->close();
+
         return $this->xmlParsed;
     }
     /**
      * Analyse the XML code in order to find children
      *
-     * @param string $xml
+     * @param  string  $xml
      * @return Segment
      */
     protected function _analyseChildren($xml)
@@ -121,13 +122,14 @@ class Segment implements IteratorAggregate, Countable
                 $this->_analyseChildren($matches[2][$i]);
             }
         }
+
         return $this;
     }
     /**
      * Assign a template variable to replace
      *
-     * @param string $key
-     * @param string $value
+     * @param  string           $key
+     * @param  string           $value
      * @throws SegmentException
      * @return Segment
      */
@@ -136,16 +138,17 @@ class Segment implements IteratorAggregate, Countable
         if (strpos($this->xml, $this->odf->getConfig('DELIMITER_LEFT') . $key . $this->odf->getConfig('DELIMITER_RIGHT')) === false) {
             throw new SegmentException("var $key not found in {$this->getName()}");
         }
-		$value = $encode ? htmlspecialchars($value) : $value;
-		$value = ($charset == 'ISO-8859') ? utf8_encode($value) : $value;
+        $value = $encode ? htmlspecialchars($value) : $value;
+        $value = ($charset == 'ISO-8859') ? utf8_encode($value) : $value;
         $this->vars[$this->odf->getConfig('DELIMITER_LEFT') . $key . $this->odf->getConfig('DELIMITER_RIGHT')] = str_replace("\n", "<text:line-break/>", $value);
+
         return $this;
     }
     /**
      * Assign a template variable as a picture
      *
-     * @param string $key name of the variable within the template
-     * @param string $value path to the picture
+     * @param  string       $key   name of the variable within the template
+     * @param  string       $value path to the picture
      * @throws OdfException
      * @return Segment
      */
@@ -170,12 +173,13 @@ class Segment implements IteratorAggregate, Countable
 IMG;
         $this->images[$value] = $file;
         $this->setVars($key, $xml, false);
+
         return $this;
     }
     /**
      * Shortcut to retrieve a child
      *
-     * @param string $prop
+     * @param  string           $prop
      * @return Segment
      * @throws SegmentException
      */
@@ -190,8 +194,8 @@ IMG;
     /**
      * Proxy for setVars
      *
-     * @param string $meth
-     * @param array $args
+     * @param  string  $meth
+     * @param  array   $args
      * @return Segment
      */
     public function __call($meth, $args)
@@ -212,5 +216,3 @@ IMG;
         return $this->xmlParsed;
     }
 }
-
-?>

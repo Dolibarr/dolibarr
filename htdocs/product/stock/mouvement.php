@@ -58,8 +58,7 @@ $offset = $conf->liste_limit * $page;
 if (! $sortfield) $sortfield="m.datem";
 if (! $sortorder) $sortorder="DESC";
 
-if (GETPOST("button_removefilter"))
-{
+if (GETPOST("button_removefilter")) {
     $year='';
     $month='';
     $search_movement="";
@@ -69,7 +68,6 @@ if (GETPOST("button_removefilter"))
     $sall="";
 }
 
-
 /*
  * Actions
  */
@@ -77,10 +75,8 @@ if (GETPOST("button_removefilter"))
 if ($cancel) $action='';
 
 // Correct stock
-if ($action == "correct_stock" && ! $_POST["cancel"])
-{
-    if (is_numeric($_POST["nbpiece"]) && $product_id)
-    {
+if ($action == "correct_stock" && ! $_POST["cancel"]) {
+    if (is_numeric($_POST["nbpiece"]) && $product_id) {
         $product = new Product($db);
         $result=$product->fetch($product_id);
 
@@ -93,15 +89,12 @@ if ($action == "correct_stock" && ! $_POST["cancel"])
             0
         );		// We do not change value of stock for a correction
 
-        if ($result > 0)
-        {
+        if ($result > 0) {
             header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
             exit;
         }
-    }
-    else $action='';
+    } else $action='';
 }
-
 
 /*
  * View
@@ -126,39 +119,30 @@ $sql.= " WHERE m.fk_product = p.rowid";
 $sql.= " AND m.fk_entrepot = e.rowid";
 $sql.= " AND e.entity = ".$conf->entity;
 if (empty($conf->global->STOCK_SUPPORTS_SERVICES)) $sql.= " AND p.fk_product_type = 0";
-if ($id)
-{
+if ($id) {
     $sql.= " AND e.rowid ='".$id."'";
 }
-if ($month > 0)
-{
+if ($month > 0) {
     if ($year > 0)
     $sql.= " AND m.datem BETWEEN '".$db->idate(dol_get_first_day($year,$month,false))."' AND '".$db->idate(dol_get_last_day($year,$month,false))."'";
     else
     $sql.= " AND date_format(m.datem, '%m') = '$month'";
-}
-else if ($year > 0)
-{
+} elseif ($year > 0) {
     $sql.= " AND m.datem BETWEEN '".$db->idate(dol_get_first_day($year,1,false))."' AND '".$db->idate(dol_get_last_day($year,12,false))."'";
 }
-if (! empty($search_movement))
-{
+if (! empty($search_movement)) {
     $sql.= " AND m.label LIKE '%".$db->escape($search_movement)."%'";
 }
-if (! empty($search_product))
-{
+if (! empty($search_product)) {
     $sql.= " AND p.label LIKE '%".$db->escape($search_product)."%'";
 }
-if (! empty($search_warehouse))
-{
+if (! empty($search_warehouse)) {
     $sql.= " AND e.label LIKE '%".$db->escape($search_warehouse)."%'";
 }
-if (! empty($search_user))
-{
+if (! empty($search_user)) {
     $sql.= " AND u.login LIKE '%".$db->escape($search_user)."%'";
 }
-if (! empty($_GET['idproduct']))
-{
+if (! empty($_GET['idproduct'])) {
     $sql.= " AND p.rowid = '".$idproduct."'";
 }
 $sql.= $db->order($sortfield,$sortorder);
@@ -166,22 +150,18 @@ $sql.= $db->plimit($conf->liste_limit+1, $offset);
 
 //print $sql;
 $resql = $db->query($sql);
-if ($resql)
-{
+if ($resql) {
     $num = $db->num_rows($resql);
 
-    if ($idproduct)
-    {
+    if ($idproduct) {
         $product = new Product($db);
         $product->fetch($idproduct);
     }
 
-    if ($_GET["id"])
-    {
+    if ($_GET["id"]) {
         $entrepot = new Entrepot($db);
         $result = $entrepot->fetch($id);
-        if ($result < 0)
-        {
+        if ($result < 0) {
             dol_print_error($db);
         }
     }
@@ -192,16 +172,13 @@ if ($resql)
     $texte = $langs->trans("ListOfStockMovements");
     llxHeader("",$texte,$help_url);
 
-
     /*
      * Show tab only if we ask a particular warehouse
      */
-    if ($id)
-    {
+    if ($id) {
         $head = stock_prepare_head($entrepot);
 
         dol_fiche_head($head, 'movements', $langs->trans("Warehouse"), 0, 'stock');
-
 
         print '<table class="border" width="100%">';
 
@@ -253,23 +230,17 @@ if ($resql)
         $sql .= " FROM ".MAIN_DB_PREFIX."stock_mouvement as m";
         $sql .= " WHERE m.fk_entrepot = '".$entrepot->id."'";
         $resqlbis = $db->query($sql);
-        if ($resqlbis)
-        {
+        if ($resqlbis) {
             $obj = $db->fetch_object($resqlbis);
             $lastmovementdate=$db->jdate($obj->datem);
-        }
-        else
-        {
+        } else {
             dol_print_error($db);
         }
 
         print '<tr><td valign="top">'.$langs->trans("LastMovement").'</td><td colspan="3">';
-        if ($lastmovementdate)
-        {
+        if ($lastmovementdate) {
             print dol_print_date($lastmovementdate,'dayhour');
-        }
-        else
-        {
+        } else {
             print $langs->trans("None");
         }
         print "</td></tr>";
@@ -279,12 +250,10 @@ if ($resql)
         print '</div>';
     }
 
-
     /*
      * Correct stock
      */
-    if ($action == "correction")
-    {
+    if ($action == "correction") {
         print_titre($langs->trans("StockCorrection"));
         print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$id.'" method="post">'."\n";
         print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -324,8 +293,7 @@ if ($resql)
      * Transfer of units
      */
     /*
-    if ($action == "transfert")
-    {
+    if ($action == "transfert") {
         print_titre($langs->trans("Transfer"));
         print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$id.'" method="post">'."\n";
         print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -358,7 +326,7 @@ if ($resql)
 
         print '</form>';
     }
-	*/
+    */
 
     /* ************************************************************************** */
     /*                                                                            */
@@ -366,17 +334,14 @@ if ($resql)
     /*                                                                            */
     /* ************************************************************************** */
 
-    if (empty($action) && $id)
-    {
+    if (empty($action) && $id) {
         print "<div class=\"tabsAction\">\n";
 
-        if ($user->rights->stock->creer)
-        {
+        if ($user->rights->stock->creer) {
             print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=correction">'.$langs->trans("StockCorrection").'</a>';
         }
 
-        /*if ($user->rights->stock->mouvement->creer)
-        {
+        /*if ($user->rights->stock->mouvement->creer) {
             print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=transfert">'.$langs->trans("StockMovement").'</a>';
         }*/
         print '</div><br>';
@@ -440,8 +405,7 @@ if ($resql)
     print '</form>';
 
     $var=True;
-    while ($i < min($num,$conf->liste_limit))
-    {
+    while ($i < min($num,$conf->liste_limit)) {
         $objp = $db->fetch_object($resql);
         $var=!$var;
         print "<tr $bc[$var]>";
@@ -481,14 +445,10 @@ if ($resql)
 
     print "</table>";
 
-}
-else
-{
+} else {
     dol_print_error($db);
 }
 
 llxFooter();
 
 $db->close();
-
-?>

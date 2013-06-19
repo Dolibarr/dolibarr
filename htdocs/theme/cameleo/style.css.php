@@ -78,12 +78,12 @@ if (! empty($conf->global->MAIN_OVERWRITE_THEME_RES)) { $path='/'.$conf->global-
 
 body {
 <?php if (GETPOST("optioncss") == 'print') {  ?>
-	background-color: #FFFFFF;
+    background-color: #FFFFFF;
 <?php } else { ?>
-	/*background: #ffffff url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/headbg2.jpg',1); ?>) 0 0 no-repeat;*/
+    /*background: #ffffff url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/headbg2.jpg',1); ?>) 0 0 no-repeat;*/
 <?php } ?>
-	color: #101010;
-	font-size: <?php print $fontsize ?>px;
+    color: #101010;
+    font-size: <?php print $fontsize ?>px;
     font-family: <?php print $fontlist ?>;
     margin-top: 0;
     margin-bottom: 0;
@@ -102,36 +102,36 @@ input:focus, textarea:focus, button:focus, select:focus {
 
 input, input.flat, textarea, textarea.flat, form.flat select, select.flat {
     font-size: <?php print $fontsize ?>px;
-	font-family: <?php print $fontlist ?>;
-	background: #FDFDFD;
+    font-family: <?php print $fontlist ?>;
+    background: #FDFDFD;
     border: 1px solid #ACBCBB;
     padding: 1px 1px 1px 1px;
     margin: 0px 0px 0px 0px;
 }
 select.flat, form.flat select {
-	font-weight: normal;
+    font-weight: normal;
 }
 input:disabled {
-	background:#ddd;
+    background:#ddd;
 }
 textarea:disabled {
-	background:#ddd;
+    background:#ddd;
 }
 input[type=checkbox] { background-color: transparent; border: none; box-shadow: none; }
 input[type=image] { background-color: transparent; border: none; box-shadow: none; }
 input.button[type=submit] {
-	background: #A51B00;
-	-moz-border-radius:8px;
-	border-radius:8px;
-	border-right: 1px solid #555555;
-	border-bottom: 1px solid #555555;
-	border-left: 1px solid #D0D0D0;
-	border-top: 1px solid #D8D8D8;
-	/*border: 2px solid #063953;*/
-	color: #FFF;
-	padding: 0px 10px 0px 10px;
-	text-decoration: none;
-	white-space: nowrap;
+    background: #A51B00;
+    -moz-border-radius:8px;
+    border-radius:8px;
+    border-right: 1px solid #555555;
+    border-bottom: 1px solid #555555;
+    border-left: 1px solid #D0D0D0;
+    border-top: 1px solid #D8D8D8;
+    /*border: 2px solid #063953;*/
+    color: #FFF;
+    padding: 0px 10px 0px 10px;
+    text-decoration: none;
+    white-space: nowrap;
     /*display: block;
     height: 18px;*/
     vertical-align: top;
@@ -148,26 +148,26 @@ legend { margin-bottom: 8px; }
 
 .button {
     font-family: <?php print $fontlist ?>;
-	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/button_bg.png',1); ?>);
-	background-position: bottom;
+    background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/button_bg.png',1); ?>);
+    background-position: bottom;
     border: 1px solid #ACBCBB;
     padding: 0px 2px 0px 2px;
     margin: 0px 0px 0px 0px;
 }
 .button:focus  {
     font-family: <?php print $fontlist ?>;
-	color: #222244;
-	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/button_bg.png',1); ?>);
-	background-position: bottom;
+    color: #222244;
+    background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/button_bg.png',1); ?>);
+    background-position: bottom;
     border: 1px solid #ACBCBB;
     padding: 0px 2px 0px 2px;
     margin: 0px 0px 0px 0px;
 }
 .buttonajax {
     font-family: <?php print $fontlist ?>;
-	border: 0px;
-	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/button_bg.png',1); ?>);
-	background-position: bottom;
+    border: 0px;
+    background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/button_bg.png',1); ?>);
+    background-position: bottom;
     padding: 0px 0px 0px 0px;
     margin: 0px 0px 0px 0px;
 }
@@ -185,28 +185,27 @@ div.floatright
 }
 div.inline-block
 {
-	display:inline-block;
+    display:inline-block;
 }
 
 .valignmiddle {
-	vertical-align: middle;
+    vertical-align: middle;
 }
 .centpercent {
-	width: 100%;
+    width: 100%;
 }
 .center {
     text-align: center;
 }
 .left {
-	text-align: <?php print $left; ?>;
+    text-align: <?php print $left; ?>;
 }
 .right {
-	text-align: <?php print $right; ?>;
+    text-align: <?php print $right; ?>;
 }
 .nowrap {
-	white-space: <?php print ($dol_optimize_smallscreen?'normal':'nowrap'); ?>;
+    white-space: <?php print ($dol_optimize_smallscreen?'normal':'nowrap'); ?>;
 }
-
 
 /* ============================================================================== */
 /* Styles to hide objects                                                         */
@@ -224,15 +223,14 @@ div.inline-block
 /* ============================================================================== */
 
 .dragClass {
-	color: #002255;
+    color: #002255;
 }
 td.showDragHandle {
-	cursor: move;
+    cursor: move;
 }
 .tdlineupdown {
-	white-space: nowrap;
+    white-space: nowrap;
 }
-
 
 /* ============================================================================== */
 /* Styles de positionnement des zones                                             */
@@ -248,65 +246,60 @@ td.showDragHandle {
   vertical-align: top;
 }
 #id-<?php echo $right; ?> {
-	width: 100%;
+    width: 100%;
 }
 
 div.leftContent {
-	margin-left: 0px !important;
+    margin-left: 0px !important;
         background-color: #FFF;
 }
 
 div.fiche {
-	margin-<?php print $left; ?>: <?php print empty($conf->dol_optimize_smallscreen)?'5':'2'; ?>px;
-	margin-<?php print $right; ?>: <?php print empty($conf->dol_optimize_smallscreen)?'5':''; ?>px;
+    margin-<?php print $left; ?>: <?php print empty($conf->dol_optimize_smallscreen)?'5':'2'; ?>px;
+    margin-<?php print $right; ?>: <?php print empty($conf->dol_optimize_smallscreen)?'5':''; ?>px;
 }
 
 div.fichecenter {
-	width: 100%;
-	clear: both;	/* This is to have div fichecenter that are true rectangles */
+    width: 100%;
+    clear: both;	/* This is to have div fichecenter that are true rectangles */
 }
 div.fichethirdleft {
-	<?php if (empty($conf->dol_optimize_smallscreen)) { print "float: ".$left.";\n"; } ?>
-	<?php if (empty($conf->dol_optimize_smallscreen)) { print "width: 35%;\n"; } ?>
+    <?php if (empty($conf->dol_optimize_smallscreen)) { print "float: ".$left.";\n"; } ?>
+    <?php if (empty($conf->dol_optimize_smallscreen)) { print "width: 35%;\n"; } ?>
 }
 div.fichetwothirdright {
-	<?php if (empty($conf->dol_optimize_smallscreen)) { print "float: ".$left.";\n"; } ?>
-	<?php if (empty($conf->dol_optimize_smallscreen)) { print "width: 65%;\n"; } ?>
+    <?php if (empty($conf->dol_optimize_smallscreen)) { print "float: ".$left.";\n"; } ?>
+    <?php if (empty($conf->dol_optimize_smallscreen)) { print "width: 65%;\n"; } ?>
 }
 div.fichehalfleft {
-	<?php if (empty($conf->dol_optimize_smallscreen)) { print "float: ".$left.";\n"; } ?>
-	<?php if (empty($conf->dol_optimize_smallscreen)) { print "width: 50%;\n"; } ?>
+    <?php if (empty($conf->dol_optimize_smallscreen)) { print "float: ".$left.";\n"; } ?>
+    <?php if (empty($conf->dol_optimize_smallscreen)) { print "width: 50%;\n"; } ?>
 }
 div.fichehalfright {
-	<?php if (empty($conf->dol_optimize_smallscreen)) { print "float: ".$left.";\n"; } ?>
-	<?php if (empty($conf->dol_optimize_smallscreen)) { print "width: 50%;\n"; } ?>
+    <?php if (empty($conf->dol_optimize_smallscreen)) { print "float: ".$left.";\n"; } ?>
+    <?php if (empty($conf->dol_optimize_smallscreen)) { print "width: 50%;\n"; } ?>
 }
 div.ficheaddleft {
-	<?php if (empty($conf->dol_optimize_smallscreen))   { print "padding-left: 16px;\n"; }
-	else print "margin-top: 10px;\n"; ?>
+    <?php if (empty($conf->dol_optimize_smallscreen)) { print "padding-left: 16px;\n"; } else print "margin-top: 10px;\n"; ?>
 }
-
 
 /* ============================================================================== */
 /* Menu top et 1ere ligne tableau                                                 */
 /* ============================================================================== */
 
 <?php
-if (! empty($conf->dol_optimize_smallscreen))
-{
-	$minwidthtmenu=0;
-	$heightmenu=19;
-}
-else
-{
-	$minwidthtmenu=70;
-	$heightmenu=47;
+if (! empty($conf->dol_optimize_smallscreen)) {
+    $minwidthtmenu=0;
+    $heightmenu=19;
+} else {
+    $minwidthtmenu=70;
+    $heightmenu=47;
 }
 ?>
 
 div.tmenu {
 <?php if (GETPOST("optioncss") == 'print') {  ?>
-	display:none;
+    display:none;
 <?php } else { ?>
     position: relative;
     display: block;
@@ -330,32 +323,32 @@ div.tmenu {
 table.tmenu {
     padding: 0px 0px 10px 0px;	/* t r b l */
     margin: 0px 0px 0px 0px;	/* t r b l */
-	text-align: center;
+    text-align: center;
 }
 td.tmenu {
-	<?php print $minwidthtmenu?'width: '.$minwidthtmenu.'px;':''; ?>
-	text-align: center;
-	vertical-align: bottom;
-	white-space: nowrap;
+    <?php print $minwidthtmenu?'width: '.$minwidthtmenu.'px;':''; ?>
+    text-align: center;
+    vertical-align: bottom;
+    white-space: nowrap;
         height: 20px;
 }
 
 a.tmenudisabled:link, a.tmenudisabled:visited, a.tmenudisabled:hover, a.tmenudisabled:active {
-	color: #757575;
+    color: #757575;
         font-weight: normal;
-	padding: 0px 5px 0px 5px;
-	margin: 0px 1px 2px 1px;
-	cursor: not-allowed;
-	white-space: nowrap;
+    padding: 0px 5px 0px 5px;
+    margin: 0px 1px 2px 1px;
+    cursor: not-allowed;
+    white-space: nowrap;
 }
 
 a.tmenu:link, a.tmenu:visited, a.tmenu:hover, a.tmenu:active {
-	color: #842F00;
-	padding: 0px 10px 0px 10px;
-	/*margin: 0px 1px 0px 1px;*/
-	font-weight: bold;
+    color: #842F00;
+    padding: 0px 10px 0px 10px;
+    /*margin: 0px 1px 0px 1px;*/
+    font-weight: bold;
         font-family: "Trebuchet MS",Arial,Helvetica,sans-serif;
-	white-space: nowrap;
+    white-space: nowrap;
         height: 20px;
     -moz-border-radius-topleft:8px;
     -moz-border-radius-topright:8px;
@@ -407,21 +400,20 @@ a.tmenusel:link, a.tmenusel:visited, a.tmenusel:hover, a.tmenusel:active {
     background: #FFA820; /* old browsers */
 }
 
-
 ul.tmenu {	/* t r b l */
     padding: 0px 0px 10px 0px;
     margin: 0px 0px 0px 6px;
-	list-style: none;
+    list-style: none;
 }
 li.tmenu, li.tmenusel {
-	text-align: center;
-	vertical-align: top;
-	float: <?php print $left; ?>;
+    text-align: center;
+    vertical-align: top;
+    float: <?php print $left; ?>;
         height: 47px;
-	display: block;
-	padding: 1px 2px 0px 2px;
+    display: block;
+    padding: 1px 2px 0px 2px;
         margin: 0px 0px 0px 0px;
-	font-weight: normal;
+    font-weight: normal;
 }
 
 .gecko li.tmenu { /* uniquement pour firefox */
@@ -429,28 +421,27 @@ li.tmenu, li.tmenusel {
         margin: 0px 0px 0px 0px;
 }
 
-
 div.mainmenu {
-	position : relative;
-	color: white;
-	background-repeat:no-repeat;
-	background-position:center top;
-	height: <?php echo ($heightmenu-19); ?>px;
-	margin-left: 0px;
+    position : relative;
+    color: white;
+    background-repeat:no-repeat;
+    background-position:center top;
+    height: <?php echo ($heightmenu-19); ?>px;
+    margin-left: 0px;
 }
 
 <?php if (empty($conf->dol_optimize_smallscreen)) { ?>
 
 div.mainmenu.agenda {
-	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/agenda.png',1); ?>);
+    background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/agenda.png',1); ?>);
 }
 
 div.mainmenu.cashdesk {
-	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/pointofsale.png',1); ?>);
+    background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/pointofsale.png',1); ?>);
 }
 
 div.mainmenu.accountancy {
-	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/money.png',1); ?>);
+    background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/money.png',1); ?>);
 }
 
 div.mainmenu.bank {
@@ -458,15 +449,15 @@ div.mainmenu.bank {
 }
 
 div.mainmenu.companies {
-	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/company.png',1); ?>);
+    background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/company.png',1); ?>);
 }
 
 div.mainmenu.commercial {
-	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/commercial.png',1); ?>);
+    background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/commercial.png',1); ?>);
 }
 
 div.mainmenu.externalsite {
-	background-image: url(<?php echo dol_buildpath($path.'/theme/eldy/img/menus/externalsite.png',1); ?>);
+    background-image: url(<?php echo dol_buildpath($path.'/theme/eldy/img/menus/externalsite.png',1); ?>);
 }
 
 div.mainmenu.ftp {
@@ -474,7 +465,7 @@ div.mainmenu.ftp {
 }
 
 div.mainmenu.ecm {
-	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/ecm.png',1); ?>);
+    background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/ecm.png',1); ?>);
 }
 
 div.mainmenu.gravatar {
@@ -484,87 +475,81 @@ div.mainmenu.geopipmaxmind {
 }
 
 div.mainmenu.home{
-	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/home.png',1); ?>);
+    background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/home.png',1); ?>);
 }
 
 div.mainmenu.hrm {
-	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/holiday.png',1) ?>);
+    background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/holiday.png',1) ?>);
 }
 
 div.mainmenu.members {
-	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/members.png',1); ?>);
+    background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/members.png',1); ?>);
 }
 
 div.mainmenu.products {
-	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/products.png',1); ?>);
-	margin-left: 10px;
+    background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/products.png',1); ?>);
+    margin-left: 10px;
 }
 
 div.mainmenu.project {
-	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/project.png',1); ?>);
+    background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/project.png',1); ?>);
 }
 
 div.mainmenu.tools {
-	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/tools.png',1); ?>);
+    background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/tools.png',1); ?>);
 }
 
 div.mainmenu.shop {
-	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/shop.png',1); ?>);
+    background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/shop.png',1); ?>);
 }
 
 div.mainmenu.google {
-	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/globe.png',1); ?>);
+    background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/globe.png',1); ?>);
 }
 
 <?php
 // Add here more div for other menu entries. moduletomainmenu=array('module name'=>'name of class for div')
 
 $moduletomainmenu=array('user'=>'','syslog'=>'','societe'=>'companies','projet'=>'project','propale'=>'commercial','commande'=>'commercial',
-	'produit'=>'products','service'=>'products','stock'=>'products',
-	'don'=>'accountancy','tax'=>'accountancy','banque'=>'accountancy','facture'=>'accountancy','compta'=>'accountancy','accounting'=>'accountancy','adherent'=>'members','import'=>'tools','export'=>'tools','mailing'=>'tools',
-	'contrat'=>'commercial','ficheinter'=>'commercial','deplacement'=>'commercial',
-	'fournisseur'=>'companies',
-	'barcode'=>'','fckeditor'=>'','categorie'=>'',
+    'produit'=>'products','service'=>'products','stock'=>'products',
+    'don'=>'accountancy','tax'=>'accountancy','banque'=>'accountancy','facture'=>'accountancy','compta'=>'accountancy','accounting'=>'accountancy','adherent'=>'members','import'=>'tools','export'=>'tools','mailing'=>'tools',
+    'contrat'=>'commercial','ficheinter'=>'commercial','deplacement'=>'commercial',
+    'fournisseur'=>'companies',
+    'barcode'=>'','fckeditor'=>'','categorie'=>'',
 );
 $mainmenuused='home';
-foreach($conf->modules as $val)
-{
-	$mainmenuused.=','.(isset($moduletomainmenu[$val])?$moduletomainmenu[$val]:$val);
+foreach ($conf->modules as $val) {
+    $mainmenuused.=','.(isset($moduletomainmenu[$val])?$moduletomainmenu[$val]:$val);
 }
 //var_dump($mainmenuused);
 $mainmenuusedarray=array_unique(explode(',',$mainmenuused));
 
 $generic=1;
 $divalreadydefined=array('home','companies','products','commercial','accountancy','project','tools','members','shop','agenda','ecm','bookmark','cashdesk','geoipmaxmind','gravatar','clicktodial','paypal','webservices');
-foreach($mainmenuusedarray as $val)
-{
-	if (empty($val) || in_array($val,$divalreadydefined)) continue;
-	//print "XXX".$val;
+foreach ($mainmenuusedarray as $val) {
+    if (empty($val) || in_array($val,$divalreadydefined)) continue;
+    //print "XXX".$val;
 
-	// Search img file in module dir
-	$url='';
-	foreach($conf->file->dol_document_root as $dirroot)
-	{
-		if (file_exists($dirroot."/".$val."/img/".$val.".png"))
-		{
-			$url=dol_buildpath('/'.$val.'/img/'.$val.'.png', 1);
-			break;
-		}
-	}
-	// Img file not found
-	if (! $url && $generic <= 4)
-	{
-		$url=dol_buildpath($path.'/theme/'.$theme.'/img/menus/generic'.$generic.'.png',1);
-		$generic++;
-	}
-	if ($url)
-	{
-		print "/* A mainmenu entry but img file ".$val.".png not found, so we use a generic one */\n";
-		print "div.mainmenu.".$val." {\n";
-		print "	background-image: url(".$url.");\n";
-		print "	height:28px;\n";
-		print "}\n";
-	}
+    // Search img file in module dir
+    $url='';
+    foreach ($conf->file->dol_document_root as $dirroot) {
+        if (file_exists($dirroot."/".$val."/img/".$val.".png")) {
+            $url=dol_buildpath('/'.$val.'/img/'.$val.'.png', 1);
+            break;
+        }
+    }
+    // Img file not found
+    if (! $url && $generic <= 4) {
+        $url=dol_buildpath($path.'/theme/'.$theme.'/img/menus/generic'.$generic.'.png',1);
+        $generic++;
+    }
+    if ($url) {
+        print "/* A mainmenu entry but img file ".$val.".png not found, so we use a generic one */\n";
+        print "div.mainmenu.".$val." {\n";
+        print "	background-image: url(".$url.");\n";
+        print "	height:28px;\n";
+        print "}\n";
+    }
 }
 // End of part to add more div class css
 ?>
@@ -578,104 +563,101 @@ foreach($mainmenuusedarray as $val)
     margin:0 0px 0 0 !important;
 }
 
-
-
 /* Login */
 
 form#login {
-	margin-top: <?php echo $dol_optimize_smallscreen?'30':'60' ?>px;
-	margin-bottom: 30px;
-	font-size: 13px;
+    margin-top: <?php echo $dol_optimize_smallscreen?'30':'60' ?>px;
+    margin-bottom: 30px;
+    font-size: 13px;
 }
 .login_table_title {
-	max-width: 540px;
-	color: #888888;
-	text-shadow: 1px 1px 1px #FFF;
+    max-width: 540px;
+    color: #888888;
+    text-shadow: 1px 1px 1px #FFF;
 }
 .login_table label {
-	text-shadow: 1px 1px 1px #FFF;
+    text-shadow: 1px 1px 1px #FFF;
 }
 .login_table {
-	margin-left: 10px;
-	margin-right: 10px;
-	padding:12px;
-	max-width: 540px;
-	border: 1px solid #C0C0C0;
-	background-color: #E0E0E0;
+    margin-left: 10px;
+    margin-right: 10px;
+    padding:12px;
+    max-width: 540px;
+    border: 1px solid #C0C0C0;
+    background-color: #E0E0E0;
 
     -moz-box-shadow: 4px 4px 4px #CCC;
     -webkit-box-shadow: 4px 4px 4px #CCC;
     box-shadow: 4px 4px 4px #CCC;
 
-	border-radius: 12px;
-	border:solid 1px rgba(168,168,168,.4);
-	border-top:solid 1px f8f8f8;
-	background-color: #f8f8f8;
-	background-image: -o-linear-gradient(top, rgba(240,240,240,.3) 0%, rgba(192,192,192,.3) 100%);
-	background-image: -moz-linear-gradient(top, rgba(240,240,240,.3) 0%, rgba(192,192,192,.3) 100%);
-	background-image: -webkit-linear-gradient(top, rgba(240,240,240,.3) 0%, rgba(192,192,192,.3) 100%);
-	background-image: -ms-linear-gradient(top, rgba(240,240,240,.3) 0%, rgba(192,192,192,.3) 100%);
-	background-image: linear-gradient(top, rgba(240,240,240,.3) 0%, rgba(192,192,192,.3) 100%);
+    border-radius: 12px;
+    border:solid 1px rgba(168,168,168,.4);
+    border-top:solid 1px f8f8f8;
+    background-color: #f8f8f8;
+    background-image: -o-linear-gradient(top, rgba(240,240,240,.3) 0%, rgba(192,192,192,.3) 100%);
+    background-image: -moz-linear-gradient(top, rgba(240,240,240,.3) 0%, rgba(192,192,192,.3) 100%);
+    background-image: -webkit-linear-gradient(top, rgba(240,240,240,.3) 0%, rgba(192,192,192,.3) 100%);
+    background-image: -ms-linear-gradient(top, rgba(240,240,240,.3) 0%, rgba(192,192,192,.3) 100%);
+    background-image: linear-gradient(top, rgba(240,240,240,.3) 0%, rgba(192,192,192,.3) 100%);
 }
 #img_securitycode {
-	border: 1px solid #DDDDDD;
+    border: 1px solid #DDDDDD;
 }
 #img_logo {
-	max-width: 200px;
+    max-width: 200px;
 }
 
 div.login_block {
-	position: absolute;
-	<?php print $right; ?>: 5px;
-	top: 3px;
-	font-weight: bold;
-	<?php if (GETPOST("optioncss") == 'print') { ?>
-	display: none;
-	<?php } ?>
+    position: absolute;
+    <?php print $right; ?>: 5px;
+    top: 3px;
+    font-weight: bold;
+    <?php if (GETPOST("optioncss") == 'print') { ?>
+    display: none;
+    <?php } ?>
 }
 
 div.login_block table {
-	display: inline;
+    display: inline;
 }
 
 div#login_left, div#login_right {
-	display: inline-block;
-	min-width: 220px;
-	text-align: center;
-	vertical-align: middle;
+    display: inline-block;
+    min-width: 220px;
+    text-align: center;
+    vertical-align: middle;
 }
 
 div.login {
-	white-space:nowrap;
+    white-space:nowrap;
     padding: <?php echo ($conf->dol_optimize_smallscreen?'0':'8')?>px 0px 0px 0px;
     margin: 0px 0px 0px 8px;
-	font-weight: bold;
+    font-weight: bold;
 }
 div.login a {
-	color: #234046;
+    color: #234046;
 }
 div.login a:hover {
-	color: black;
-	text-decoration:underline;
+    color: black;
+    text-decoration:underline;
 }
 
 .alogin, .alogin:hover {
-	color: #888 !important;
-	font-weight: normal !important;
-	font-size: <?php echo $fontsizesmaller; ?>px !important;
+    color: #888 !important;
+    font-weight: normal !important;
+    font-size: <?php echo $fontsizesmaller; ?>px !important;
 }
 .alogin:hover {
-	text-decoration:underline !important;
+    text-decoration:underline !important;
 }
 
 img.login, img.printer, img.entity {
-	padding: <?php echo ($conf->dol_optimize_smallscreen?'0':'8')?>px 0px 0px 0px;
-	margin: 0px 0px 0px 8px;
-	text-decoration: none;
-	color: white;
-	font-weight: bold;
+    padding: <?php echo ($conf->dol_optimize_smallscreen?'0':'8')?>px 0px 0px 0px;
+    margin: 0px 0px 0px 8px;
+    text-decoration: none;
+    color: white;
+    font-weight: bold;
 }
-
 
 /* ============================================================================== */
 /* Menu gauche                                                                    */
@@ -713,13 +695,12 @@ a.help:visited      { font-size: 10px; font-weight: bold; background: #FFFFFF; b
 a.help:active       { font-size: 10px; font-weight: bold; background: #FFFFFF; border: 1px solid #8CACBB; color: #6198BA; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
 a.help:hover        { font-size: 10px; font-weight: bold; background: #FFFFFF; border: 1px solid #8CACBB; color: #6198BA; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
 
-
 div.blockvmenupair
 {
-	margin-bottom: 15px;
-	border-spacing: 0px;
-	padding: 0px;
-	width: 100%;
+    margin-bottom: 15px;
+    border-spacing: 0px;
+    padding: 0px;
+    width: 100%;
     background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/bg_leftCategorie2.jpg',1); ?>);
     background-position: top right;
     background-repeat: no-repeat;
@@ -728,10 +709,10 @@ div.blockvmenupair
 
 div.blockvmenuimpair
 {
-	margin-bottom: 15px;
-	border-spacing: 0px;
-	padding: 0px;
-	width: 100%;
+    margin-bottom: 15px;
+    border-spacing: 0px;
+    padding: 0px;
+    width: 100%;
     background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/bg_leftCategorie2.jpg',1); ?>);
     background-position: top right;
     background-repeat: no-repeat;
@@ -740,22 +721,22 @@ div.blockvmenuimpair
 
 img.logocompany
 {
-	margin-top: 22px;
-	border-spacing: 0px;
-	padding: 0px;
+    margin-top: 22px;
+    border-spacing: 0px;
+    padding: 0px;
 }
 
 div.blockvmenuimpair form a.vmenu, div.blockvmenupair form a.vmenu
 {
-	width: 166px;
-	border-spacing: 0px;
-	color: #000000;
-	text-align:left;
-	text-decoration: none;
-	padding: 4px;
-	margin: 0px;
-	background: #FFFFFF;
-	margin-bottom: -12px;
+    width: 166px;
+    border-spacing: 0px;
+    color: #000000;
+    text-align:left;
+    text-decoration: none;
+    padding: 4px;
+    margin: 0px;
+    background: #FFFFFF;
+    margin-bottom: -12px;
 }
 
 div.menu_titre
@@ -774,11 +755,10 @@ div.menu_titre
 }
 
 div.menu_titre a.vmenu {
-	font-weight: bold;
+    font-weight: bold;
     font-family: "Trebuchet MS",Arial,Helvetica,sans-serif;
     font-size: 12px;
 }
-
 
 div.blockvmenusearch
 {
@@ -798,28 +778,27 @@ div.blockvmenusearch input[type="text"] {
 }
 
 div.blockvmenusearch input.button[type="submit"] {
-	float: left;
+    float: left;
     margin-left: 10px;
 }
 
 div.blockvmenusearch div.menu_titre {
-	margin-top: 5px;
+    margin-top: 5px;
 }
 
 #blockvmenusearch div.menu_titre, #blockvmenusearch form
 {
-	padding-top: 1px;
-	padding-bottom: 1px;
-	height: 20px;
+    padding-top: 1px;
+    padding-bottom: 1px;
+    height: 20px;
 }
-
 
 div.blockvmenubookmarks
 {
-	margin: 0px;
-	border-spacing: 0px;
-	padding: 0px;
-	width: 100%;
+    margin: 0px;
+    border-spacing: 0px;
+    padding: 0px;
+    width: 100%;
     background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/bg_leftCategorie.jpg',1); ?>);
     background-position: top left;
     background-repeat: no-repeat;
@@ -829,13 +808,13 @@ div.blockvmenubookmarks
 div.blockvmenuhelp
 {
 <?php if (empty($conf->dol_optimize_smallscreen)) { ?>
-	text-align: center;
-	border-spacing: 0px;
+    text-align: center;
+    border-spacing: 0px;
     width: 162px;
-	background: transparent;
-	font-family: <?php print $fontlist ?>;
-	color: #000000;
-	text-decoration: none;
+    background: transparent;
+    font-family: <?php print $fontlist ?>;
+    color: #000000;
+    text-decoration: none;
     padding-left: 0px;
     padding-right: 1px;
     padding-top: 3px;
@@ -847,10 +826,10 @@ div.blockvmenuhelp
 }
 
 div.menu_contenu {
-	margin: 0px;
-	padding: 1px;
+    margin: 0px;
+    padding: 1px;
 
-	padding-right: 8px;
+    padding-right: 8px;
     font-size : 11px;
     font-weight:normal;
     color : #000000;
@@ -859,36 +838,34 @@ div.menu_contenu {
 
 div.menu_end {
 /*	border-top: 1px solid #436981; */
-	margin: 0px;
-	padding: 0px;
-	height: 6px;
+    margin: 0px;
+    padding: 0px;
+    height: 6px;
     width: 165px;
     background-repeat:no-repeat;
     display: none;
 }
 
-
 td.barre {
-	border-right: 1px solid #000000;
-	border-bottom: 1px solid #000000;
-	background: #b3c5cc;
-	font-family: <?php print $fontlist ?>;
-	color: #000000;
-	text-align: <?php print $left; ?>;
-	text-decoration: none;
+    border-right: 1px solid #000000;
+    border-bottom: 1px solid #000000;
+    background: #b3c5cc;
+    font-family: <?php print $fontlist ?>;
+    color: #000000;
+    text-align: <?php print $left; ?>;
+    text-decoration: none;
 }
 
 td.barre_select {
-	background: #b3c5cc;
-	color: #000000;
+    background: #b3c5cc;
+    color: #000000;
 }
 
 td.photo {
-	background: #F4F4F4;
-	color: #000000;
+    background: #F4F4F4;
+    color: #000000;
     border: 1px solid #b3c5cc;
 }
-
 
 /* ============================================================================== */
 /* Panes for Main                                                   */
@@ -904,8 +881,8 @@ td.photo {
 }
 
 #mainContent, #leftContent .ui-layout-center {
-	padding:    0px;
-	position:   relative; /* contain floated or positioned elements */
+    padding:    0px;
+    position:   relative; /* contain floated or positioned elements */
     overflow:   auto;  /* add scrolling to content-div */
 }
 
@@ -914,7 +891,7 @@ td.photo {
 /* ============================================================================== */
 
 .ui-layout-resizer-west-open {
-	/*left: 200px !important;*/
+    /*left: 200px !important;*/
 }
 
 .ui-layout-north {
@@ -941,10 +918,9 @@ a.toolbarbutton {
     background: #FFFFFF;*/
 }
 img.toolbarbutton {
-	margin-top: 2px;
-	height: 28px;
+    margin-top: 2px;
+    height: 28px;
 }
-
 
 /* ============================================================================== */
 /* Panes for ECM or Filemanager                                                   */
@@ -973,16 +949,16 @@ img.toolbarbutton {
 }
 /* (scrolling) content-div inside pane allows for fixed header(s) and/or footer(s) */
 #containerlayout .ui-layout-content {
-	padding:    10px;
-	position:   relative; /* contain floated or positioned elements */
-	overflow:   auto; /* add scrolling to content-div */
+    padding:    10px;
+    position:   relative; /* contain floated or positioned elements */
+    overflow:   auto; /* add scrolling to content-div */
 }
 
 /*
  *  RESIZER-BARS
  */
 .ui-layout-resizer  { /* all 'resizer-bars' */
-	width: 8px !important;
+    width: 8px !important;
 }
 .ui-layout-resizer-hover    {   /* affects both open and closed states */
 }
@@ -1030,18 +1006,18 @@ img.toolbarbutton {
     top: 5px !important;
     }
 .ui-layout-toggler-open {
-	height: 48px !important;
-	width: 5px !important;
+    height: 48px !important;
+    width: 5px !important;
     -moz-border-radius:0px 10px 10px 0px;
-	-webkit-border-radius:0px 10px 10px 0px;
-	border-radius:0px 10px 10px 0px;
+    -webkit-border-radius:0px 10px 10px 0px;
+    border-radius:0px 10px 10px 0px;
 }
 .ui-layout-toggler-closed {
-	height: 48px !important;
-	width: 5px !important;
+    height: 48px !important;
+    width: 5px !important;
     -moz-border-radius:0px 10px 10px 0px;
-	-webkit-border-radius:0px 10px 10px 0px;
-	border-radius:0px 10px 10px 0px;
+    -webkit-border-radius:0px 10px 10px 0px;
+    border-radius:0px 10px 10px 0px;
 }
 .ui-layout-toggler .content {	/* style the text we put INSIDE the togglers */
     color:          #666;
@@ -1057,7 +1033,7 @@ img.toolbarbutton {
 }
 
 .ui-layout-north {
-	height: <?php print (empty($conf->dol_optimize_smallscreen)?'54':'21'); ?>px !important;
+    height: <?php print (empty($conf->dol_optimize_smallscreen)?'54':'21'); ?>px !important;
 }
 
 /* ECM */
@@ -1073,21 +1049,21 @@ img.toolbarbutton {
 }
 /* (scrolling) content-div inside pane allows for fixed header(s) and/or footer(s) */
 #containerlayout .ecm-layout-content {
-	padding:    10px;
-	position:   relative; /* contain floated or positioned elements */
-	overflow:   auto; /* add scrolling to content-div */
+    padding:    10px;
+    position:   relative; /* contain floated or positioned elements */
+    overflow:   auto; /* add scrolling to content-div */
 }
 
 .ecm-layout-toggler {
     background-color: #DDD;
     }
 .ecm-layout-toggler-open {
-	height: 48px !important;
-	width: 6px !important;
+    height: 48px !important;
+    width: 6px !important;
 }
 .ecm-layout-toggler-closed {
-	height: 48px !important;
-	width: 6px !important;
+    height: 48px !important;
+    width: 6px !important;
 }
 .ecm-layout-toggler .content {	/* style the text we put INSIDE the togglers */
     color:          #666;
@@ -1097,7 +1073,7 @@ img.toolbarbutton {
     padding-bottom: 0.35ex; /* to 'vertically center' text inside text-span */
 }
 #ecm-layout-west-resizer {
-	width: 6px !important;
+    width: 6px !important;
 }
 
 .ecm-layout-resizer  { /* all 'resizer-bars' */
@@ -1150,8 +1126,8 @@ div.tabs a.tabTitle {
 }
 
 div.tabs a.tab {
-	display: block;
-	width: auto;
+    display: block;
+    width: auto;
     font-size: 11px;
     font-weight: bold;
     font-family: "Trebuchet MS",Arial,Helvetica,sans-serif;
@@ -1199,7 +1175,7 @@ div.tabs a.tab#active {
 }
 
 div.tabs a.tab:hover {
-	color: #FFF;
+    color: #FFF;
         -moz-border-radius-topleft:8px;
     -moz-border-radius-topright:8px;
     border-top-left-radius:8px;
@@ -1241,7 +1217,7 @@ td.tab {
 span.tabspan {
     background: #dee7ec;
     color: #434956;
-	font-family: <?php print $fontlist ?>;
+    font-family: <?php print $fontlist ?>;
     padding: 0px 6px;
     margin: 0em 0.2em;
     text-decoration: none;
@@ -1263,9 +1239,9 @@ span.tabspan {
 div.divButAction { margin-bottom: 1.4em; }
 
 .butAction:link, .butAction:visited, .butAction:hover, .butAction:active, .butActionDelete, .butActionRefused, .butActionDelete:link, .butActionDelete:visited, .butActionDelete:hover, .butActionDelete:active {
-	font-family:"Trebuchet MS",Arial,Helvetica,sans-serif;
-	font-weight: bold;
-	/*background: url(<?php echo dol_buildpath($path.'/theme/bureau2crea/img/bg_btnBlue.jpg',1); ?>) repeat-x;*/
+    font-family:"Trebuchet MS",Arial,Helvetica,sans-serif;
+    font-weight: bold;
+    /*background: url(<?php echo dol_buildpath($path.'/theme/bureau2crea/img/bg_btnBlue.jpg',1); ?>) repeat-x;*/
         background: #A81E00;
         -moz-border-radius:8px;
         border-radius:8px;
@@ -1273,12 +1249,12 @@ div.divButAction { margin-bottom: 1.4em; }
         border-bottom: 1px solid #555555;
         border-left: 1px solid #D0D0D0;
         border-top: 1px solid #D8D8D8;
-	/*border: 2px solid #063953;*/
-	color: #FFF;
-	padding: 0px 10px 0px 10px;
-	margin: 0px 10px 0px 10px;
-	text-decoration: none;
-	white-space: nowrap;
+    /*border: 2px solid #063953;*/
+    color: #FFF;
+    padding: 0px 10px 0px 10px;
+    margin: 0px 10px 0px 10px;
+    text-decoration: none;
+    white-space: nowrap;
     font-size: 12px;
     height: 18px;
     line-height: 18px;
@@ -1286,36 +1262,36 @@ div.divButAction { margin-bottom: 1.4em; }
 }
 
 .butAction:hover   {
-	background: #FFe7ec;
+    background: #FFe7ec;
         color: #961400;
 }
 
 .butActionDelete    {
-	border: 1px solid red;
+    border: 1px solid red;
 }
 
 .butActionDelete:link, .butActionDelete:visited, .butActionDelete:hover, .butActionDelete:active {
-	border: 2px solid red;
+    border: 2px solid red;
 }
 
 .butActionDelete:hover {
-	background: #FFe7ec;
+    background: #FFe7ec;
     color: #961400;
 }
 
 .butActionRefused {
     background: #FFe7ec;
-	color: #666;
+    color: #666;
 }
 
 <?php if (! empty($conf->global->MAIN_BUTTON_HIDE_UNAUTHORIZED)) { ?>
 .butActionRefused {
-	display: none;
+    display: none;
 }
 <?php } ?>
 
 span.butAction, span.butActionDelete {
-	cursor: pointer;
+    cursor: pointer;
 }
 
 
@@ -1324,7 +1300,7 @@ span.butAction, span.butActionDelete {
 /* ============================================================================== */
 
 .allwidth {
-	width: 100%;
+    width: 100%;
 }
 
 /*
@@ -1470,8 +1446,8 @@ div.liste_titre, tr.liste_titre, form.liste_titre {
 }
 th.liste_titre, td.liste_titre
 {
-	padding-left: 6px;
-	padding-right: 6px;
+    padding-left: 6px;
+    padding-right: 6px;
     white-space: <?php echo $dol_optimize_smallscreen?'normal':'nowrap'; ?>;
 }
 th.liste_titre_sel, td.liste_titre_sel
@@ -1524,13 +1500,13 @@ border: 0px;
 }
 
 .pair td, .impair td {
-	padding: 2px;
+    padding: 2px;
 }
 
 .noshadow {
-	-moz-box-shadow: 0px 0px 0px #CCC !important;
-	-webkit-box-shadow: 0px 0px 0px #CCC !important;
-	box-shadow: 0px 0px 0px #CCC !important;
+    -moz-box-shadow: 0px 0px 0px #CCC !important;
+    -webkit-box-shadow: 0px 0px 0px #CCC !important;
+    box-shadow: 0px 0px 0px #CCC !important;
 }
 
 
@@ -1539,17 +1515,17 @@ border: 0px;
  */
 
 .box {
-	padding-right: 0px;
-	padding-left: 0px;
-	padding-bottom: 4px;
+    padding-right: 0px;
+    padding-left: 0px;
+    padding-bottom: 4px;
 }
 
 tr.box_titre {
-	background-repeat: repeat-x;
-	color: #842F00;
-	font-weight: normal;
-	font-family: "Trebuchet MS",Arial,Helvetica,sans-serif;
-	white-space: nowrap;
+    background-repeat: repeat-x;
+    color: #842F00;
+    font-weight: normal;
+    font-family: "Trebuchet MS",Arial,Helvetica,sans-serif;
+    white-space: nowrap;
   -moz-border-radius-topleft:6px;
   -moz-border-radius-topright:6px;
     border-top-left-radius:6px;
@@ -1557,7 +1533,7 @@ tr.box_titre {
 }
 
 tr.box_titre td.boxclose {
-	width: 30px;
+    width: 30px;
 }
 
 tr.box_impair {
@@ -1660,11 +1636,11 @@ border: 0px;
 }
 
 div.titre {
-	font-family: "Trebuchet MS",Arial,Helvetica,sans-serif;
-	font-weight: normal;
-	color: #842F00;
+    font-family: "Trebuchet MS",Arial,Helvetica,sans-serif;
+    font-weight: normal;
+    color: #842F00;
     font-size: 20px;
-	text-decoration: none;
+    text-decoration: none;
     margin-left: 20px;
 }
 
@@ -1694,17 +1670,17 @@ table.valid {
     border-<?php print $left; ?>: solid 1px #E6E6E6;
     border-<?php print $right; ?>: solid 1px #444444;
     border-bottom: solid 1px #555555;
-	padding-top: 0px;
-	padding-left: 0px;
-	padding-right: 0px;
-	padding-bottom: 0px;
-	margin: 0px 0px;
+    padding-top: 0px;
+    padding-left: 0px;
+    padding-right: 0px;
+    padding-bottom: 0px;
+    margin: 0px 0px;
     background: #D5BAA8;
 }
 
 .validtitre {
     background: #D5BAA8;
-	font-weight: bold;
+    font-weight: bold;
 }
 
 
@@ -1733,13 +1709,13 @@ border-radius:6px;
 /* ============================================================================== */
 
 .ui-datepicker-trigger {
-	vertical-align: middle;
-	cursor: pointer;
+    vertical-align: middle;
+    cursor: pointer;
 }
 
 .bodyline {
-	padding: 0px;
-	margin-bottom: 5px;
+    padding: 0px;
+    margin-bottom: 5px;
         z-index: 3000;
 }
 table.dp {
@@ -1764,20 +1740,20 @@ background: -o-linear-gradient(top, #FFA820 0%,#FFA820 0%,#FFFFFF 100%); /* oper
 .dp td, .tpHour td, .tpMinute td{padding:2px; font-size:10px;}
 /* Barre titre */
 .dpHead,.tpHead,.tpHour td:Hover .tpHead{
-	font-weight:bold;
-	color:white;
-	font-size:11px;
-	cursor:auto;
+    font-weight:bold;
+    color:white;
+    font-size:11px;
+    cursor:auto;
 
 }
 /* Barre navigation */
 .dpButtons,.tpButtons {
-	text-align:center;
-	background-color:#A51B00;
-	color:#FFFFFF;
-	font-weight:bold;
-	border: 1px outset black;
-	cursor:pointer;
+    text-align:center;
+    background-color:#A51B00;
+    color:#FFFFFF;
+    font-weight:bold;
+    border: 1px outset black;
+    cursor:pointer;
 }
 .dpButtons:Active,.tpButtons:Active{border: 1px outset black;}
 .dpDayNames td,.dpExplanation {background-color:#FEF4AE; font-weight:bold; text-align:center; font-size:11px;}
@@ -1799,7 +1775,7 @@ background: -o-linear-gradient(top, #FFA820 0%,#FFA820 0%,#FFFFFF 100%); /* oper
     }
 
 .dpToday,.dpReg,.dpSelected{
-	cursor:pointer;
+    cursor:pointer;
 }
 .dpToday{font-weight:bold; color:black; background-color:#DDDDDD;}
 .dpReg:Hover,.dpToday:Hover{background-color:#A51B00;color:#FEF4AE; font-weight: bold;}
@@ -1885,57 +1861,56 @@ li.cal_event       { border: none; list-style-type: none; }
 
 .ui-autocomplete-loading { background: white url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/working.gif',1); ?>) right center no-repeat; }
 .ui-autocomplete {
-	       position:absolute;
-	       width:auto;
-	       font-size: 1.0em;
-	       background-color:white;
-	       border:1px solid #888;
-	       margin:0px;
-	       padding:0px;
-	     }
+           position:absolute;
+           width:auto;
+           font-size: 1.0em;
+           background-color:white;
+           border:1px solid #888;
+           margin:0px;
+           padding:0px;
+         }
 .ui-autocomplete ul {
-	       list-style-type:none;
-	       margin:0px;
-	       padding:0px;
-	     }
+           list-style-type:none;
+           margin:0px;
+           padding:0px;
+         }
 .ui-autocomplete ul li.selected { background-color: #D3E5EC;}
 .ui-autocomplete ul li {
-	       list-style-type:none;
-	       display:block;
-	       margin:0;
-	       padding:2px;
-	       height:16px;
-	       cursor:pointer;
-	     }
+           list-style-type:none;
+           display:block;
+           margin:0;
+           padding:2px;
+           height:16px;
+           cursor:pointer;
+         }
 
 /* ============================================================================== */
 /*  jQuery - jeditable                                                            */
 /* ============================================================================== */
 
 .editkey_textarea, .editkey_ckeditor, .editkey_string, .editkey_email, .editkey_numeric, .editkey_select, .editkey_autocomplete {
-	background: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/edit.png',1) ?>) right top no-repeat;
-	cursor: pointer;
+    background: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/edit.png',1) ?>) right top no-repeat;
+    cursor: pointer;
 }
 
 .editkey_datepicker {
-	background: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/calendar.png',1) ?>) right center no-repeat;
-	cursor: pointer;
+    background: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/calendar.png',1) ?>) right center no-repeat;
+    cursor: pointer;
 }
 
 .editval_textarea.active:hover, .editval_ckeditor.active:hover, .editval_string.active:hover, .editval_email.active:hover, .editval_numeric.active:hover, .editval_select.active:hover, .editval_autocomplete.active:hover, .editval_datepicker.active:hover {
-	background: white;
-	cursor: pointer;
+    background: white;
+    cursor: pointer;
 }
 
 .viewval_textarea.active:hover, .viewval_ckeditor.active:hover, .viewval_string.active:hover, .viewval_email.active:hover, .viewval_numeric.active:hover, .viewval_select.active:hover, .viewval_autocomplete.active:hover, .viewval_datepicker.active:hover {
-	background: white;
-	cursor: pointer;
+    background: white;
+    cursor: pointer;
 }
 
 .viewval_hover {
-	background: white;
+    background: white;
 }
-
 
 /* ============================================================================== */
 /* Admin Menu                                                                     */
@@ -1946,51 +1921,49 @@ li.cal_event       { border: none; list-style-type: none; }
 .treeview li { background-color: transparent !important; padding: 0 0 0 16px !important; min-height: 20px; }
 .treeview .hover { color: black !important; }
 
-
 /* ============================================================================== */
 /*  Show Excel tabs                                                               */
 /* ============================================================================== */
 
 .table_data
 {
-	border-style:ridge;
-	border:1px solid;
+    border-style:ridge;
+    border:1px solid;
 }
 .tab_base
 {
-	background:#C5D0DD;
-	font-weight:bold;
-	border-style:ridge;
-	border: 1px solid;
-	cursor:pointer;
+    background:#C5D0DD;
+    font-weight:bold;
+    border-style:ridge;
+    border: 1px solid;
+    cursor:pointer;
 }
 .table_sub_heading
 {
-	background:#CCCCCC;
-	font-weight:bold;
-	border-style:ridge;
-	border: 1px solid;
+    background:#CCCCCC;
+    font-weight:bold;
+    border-style:ridge;
+    border: 1px solid;
 }
 .table_body
 {
-	background:#F0F0F0;
-	font-weight:normal;
-	font-family:sans-serif;
-	border-style:ridge;
-	border: 1px solid;
-	border-spacing: 0px;
-	border-collapse: collapse;
+    background:#F0F0F0;
+    font-weight:normal;
+    font-family:sans-serif;
+    border-style:ridge;
+    border: 1px solid;
+    border-spacing: 0px;
+    border-collapse: collapse;
 }
 .tab_loaded
 {
-	background:#222222;
-	color:white;
-	font-weight:bold;
-	border-style:groove;
-	border: 1px solid;
-	cursor:pointer;
+    background:#222222;
+    color:white;
+    font-weight:bold;
+    border-style:groove;
+    border: 1px solid;
+    cursor:pointer;
 }
-
 
 /* ============================================================================== */
 /*  CSS for color picker                                                          */
@@ -2072,7 +2045,6 @@ A.none, A.none:active, A.none:visited, A.none:hover {
  margin : 0px;
 }
 
-
 /* Style to overwrites JQuery styles */
 .ui-menu .ui-menu-item a {
     text-decoration:none;
@@ -2097,7 +2069,6 @@ A.none, A.none:active, A.none:visited, A.none:hover {
 }
 .ui-autocomplete-input { margin: 0; padding: 1px; }
 
-
 /* ============================================================================== */
 /*  CKEditor                                                                      */
 /* ============================================================================== */
@@ -2112,14 +2083,14 @@ span.cke_skin_kama { padding: 0 !important; }
 a.cke_dialog_ui_button
 {
     font-family: <?php print $fontlist ?> !important;
-	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/button_bg.png',1); ?>) !important;
-	background-position: bottom !important;
+    background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/button_bg.png',1); ?>) !important;
+    background-position: bottom !important;
     border: 1px solid #ACBCBB !important;
-	padding: 0.1em 0.7em !important;
-	margin: 0em 0.5em !important;
+    padding: 0.1em 0.7em !important;
+    margin: 0em 0.5em !important;
     -moz-border-radius:0px 5px 0px 5px !important;
-	-webkit-border-radius:0px 5px 0px 5px !important;
-	border-radius:0px 5px 0px 5px !important;
+    -webkit-border-radius:0px 5px 0px 5px !important;
+    border-radius:0px 5px 0px 5px !important;
     -moz-box-shadow: 4px 4px 4px #CCC !important;
     -webkit-box-shadow: 4px 4px 4px #CCC !important;
     box-shadow: 4px 4px 4px #CCC !important;
@@ -2133,66 +2104,62 @@ a.cke_dialog_ui_button
     height: 72px !important;
 }
 
-
 /* ============================================================================== */
 /*  Table with div                                                                */
 /* ============================================================================== */
 
 div.table-border {
-	display:table;
+    display:table;
     width: 100%;
     border-collapse: collapse;
     border: 1px solid #9CACBB;
 }
 div.table-border-row {
-	display:table-row;
+    display:table-row;
 }
 div.table-key-border-col {
-	display:table-cell;
-	width: 25%;
-	vertical-align:top;
-	padding: 1px 2px 1px 1px;
-	border: 1px solid #9CACBB;
-	border-collapse: collapse;
+    display:table-cell;
+    width: 25%;
+    vertical-align:top;
+    padding: 1px 2px 1px 1px;
+    border: 1px solid #9CACBB;
+    border-collapse: collapse;
 }
 div.table-val-border-col {
-	display:table-cell;
-	width:auto;
-	padding: 1px 2px 1px 1px;
-	border: 1px solid #9CACBB;
-	border-collapse: collapse;
+    display:table-cell;
+    width:auto;
+    padding: 1px 2px 1px 1px;
+    border: 1px solid #9CACBB;
+    border-collapse: collapse;
 }
-
-
 
 /* ============================================================================== */
 /*  JSGantt                                                                       */
 /* ============================================================================== */
 
 div.scroll2 {
-	width: <?php print isset($_SESSION['dol_screenwidth'])?max($_SESSION['dol_screenwidth']-830,450):'450'; ?>px !important;
+    width: <?php print isset($_SESSION['dol_screenwidth'])?max($_SESSION['dol_screenwidth']-830,450):'450'; ?>px !important;
 }
-
 
 /* ============================================================================== */
 /*  jFileTree                                                                     */
 /* ============================================================================== */
 
 .ecmfiletree {
-	width: 99%;
-	height: 99%;
-	background: #FFF;
-	padding-left: 2px;
-	font-weight: normal;
+    width: 99%;
+    height: 99%;
+    background: #FFF;
+    padding-left: 2px;
+    font-weight: normal;
 }
 
 .fileview {
-	width: 99%;
-	height: 99%;
-	background: #FFF;
-	padding-left: 2px;
-	padding-top: 4px;
-	font-weight: normal;
+    width: 99%;
+    height: 99%;
+    background: #FFF;
+    padding-left: 2px;
+    padding-top: 4px;
+    font-weight: normal;
 }
 
 div.filedirelem {
@@ -2222,43 +2189,43 @@ ui-layout-north {
 }
 
 ul.ecmjqft {
-	font-size: 11px;
-	line-height: 16px;
-	padding: 0px;
-	margin: 0px;
-	font-weight: normal;
+    font-size: 11px;
+    line-height: 16px;
+    padding: 0px;
+    margin: 0px;
+    font-weight: normal;
 }
 
 ul.ecmjqft li {
-	list-style: none;
-	padding: 0px;
-	padding-left: 20px;
-	margin: 0px;
-	white-space: nowrap;
-	display: block;
+    list-style: none;
+    padding: 0px;
+    padding-left: 20px;
+    margin: 0px;
+    white-space: nowrap;
+    display: block;
 }
 
 ul.ecmjqft a {
-	line-height: 16px;
-	vertical-align: middle;
-	color: #333;
-	padding: 0px 0px;
-	font-weight:normal;
-	display: inline-block !important;
+    line-height: 16px;
+    vertical-align: middle;
+    color: #333;
+    padding: 0px 0px;
+    font-weight:normal;
+    display: inline-block !important;
 /*	float: left;*/
 }
 ul.ecmjqft a:active {
-	font-weight: bold !important;
+    font-weight: bold !important;
 }
 ul.ecmjqft a:hover {
     text-decoration: underline;
 }
 div.ecmjqft {
-	vertical-align: middle;
-	display: inline-block !important;
-	text-align: right;
-	position:absolute;
-	right:8px;
+    vertical-align: middle;
+    display: inline-block !important;
+    text-align: right;
+    position:absolute;
+    right:8px;
 }
 
 /* Core Styles */
@@ -2266,108 +2233,102 @@ div.ecmjqft {
 .ecmjqft LI.expanded { font-weight:normal; background: url(<?php echo dol_buildpath($path.'/theme/common/treemenu/folder2-expanded.png',1); ?>) left top no-repeat; }
 .ecmjqft LI.wait { font-weight:normal; background: url(<?php echo dol_buildpath('/theme/'.$theme.'/img/working.gif',1); ?>) left top no-repeat; }
 
-
-
 /* ============================================================================== */
 /*  jNotify                                                                       */
 /* ============================================================================== */
 
 .jnotify-container {
-	position: fixed !important;
+    position: fixed !important;
 <?php if (! empty($conf->global->MAIN_JQUERY_JNOTIFY_BOTTOM)) { ?>
-	top: auto !important;
-	bottom: 4px !important;
+    top: auto !important;
+    bottom: 4px !important;
 <?php } ?>
-	text-align: center;
-	min-width: <?php echo $dol_optimize_smallscreen?'200':'480'; ?>px;
-	width: auto;
-	padding-left: 10px !important;
-	padding-right: 10px !important;
+    text-align: center;
+    min-width: <?php echo $dol_optimize_smallscreen?'200':'480'; ?>px;
+    width: auto;
+    padding-left: 10px !important;
+    padding-right: 10px !important;
 }
-
-
 
 /* ============================================================================== */
 /*  JMobile                                                                       */
 /* ============================================================================== */
 
 li.ui-li-divider .ui-link {
-	color: #FFF !important;
+    color: #FFF !important;
 }
 a.ui-link, a.ui-link:hover, .ui-btn:hover, span.ui-btn-text:hover, span.ui-btn-inner:hover {
-	text-decoration: none !important;
+    text-decoration: none !important;
 }
 
 .ui-btn-inner {
-	padding-left: 10px;
-	padding-right: 10px;
-	/* white-space: normal; */		/* Warning, enable this break the truncate feature */
+    padding-left: 10px;
+    padding-right: 10px;
+    /* white-space: normal; */		/* Warning, enable this break the truncate feature */
 }
 .ui-select .ui-btn-icon-right .ui-btn-inner {
-	padding-right: 36px;
+    padding-right: 36px;
 }
 .fiche .ui-controlgroup {
-	margin: 0px;
-	padding-bottom: 0px;
+    margin: 0px;
+    padding-bottom: 0px;
 }
 div.ui-controlgroup-controls div.tabsElem
 {
-	margin-top: 2px;
+    margin-top: 2px;
 }
 div.ui-controlgroup-controls div.tabsElem a
 {
-	-moz-box-shadow: 0 -3px 6px rgba(0,0,0,.2);
-	-webkit-box-shadow: 0 -3px 6px rgba(0,0,0,.2);
-	box-shadow: 0 -3px 6px rgba(0,0,0,.2);
-	border: none;
+    -moz-box-shadow: 0 -3px 6px rgba(0,0,0,.2);
+    -webkit-box-shadow: 0 -3px 6px rgba(0,0,0,.2);
+    box-shadow: 0 -3px 6px rgba(0,0,0,.2);
+    border: none;
 }
 a.tab span.ui-btn-inner
 {
-	border: none;
-	padding: 0;
+    border: none;
+    padding: 0;
 }
 
 .ui-body-c {
-	border: none;
-	text-shadow: none;
+    border: none;
+    text-shadow: none;
 }
 .ui-link {
-	color: rgb(<?php print $colortext; ?>) !important;
+    color: rgb(<?php print $colortext; ?>) !important;
 }
 
 a.ui-link {
-	word-wrap: break-word;
+    word-wrap: break-word;
 }
 
 /* force wrap possible onto field overflow does not works */
 .formdoc .ui-btn-inner
 {
-	white-space: normal;
-	overflow: hidden;
-	text-overflow: hidden;
+    white-space: normal;
+    overflow: hidden;
+    text-overflow: hidden;
 }
 
 /* Warning: setting this may make screen not beeing refreshed after a combo selection */
 .ui-body-c {
-	background: #fff;
+    background: #fff;
 }
 
 div.ui-radio
 {
-	display: inline-block;
+    display: inline-block;
 }
 .ui-radio input {
-	height: auto;
-	width: auto;
-	margin: 0;
-	position: static;
+    height: auto;
+    width: auto;
+    margin: 0;
+    position: static;
 }
 .ui-mobile fieldset
 {
-	padding-bottom: 10px; margin-bottom: 4px; border-bottom: 1px solid #AAAAAA !important;
+    padding-bottom: 10px; margin-bottom: 4px; border-bottom: 1px solid #AAAAAA !important;
 }
-
 
 <?php
 if (is_object($db)) $db->close();
-?>

@@ -21,7 +21,6 @@
  *   \brief			File of class for exceptions
  */
 
-
 /**
  *	Class to manage exceptions
  */
@@ -30,7 +29,7 @@ class DolException extends Exception
     /**
      * Constructor
      */
-    function __construct()
+    public function __construct()
     {
     }
 }

@@ -28,61 +28,57 @@
  */
 abstract class ActionsCardCommon
 {
-    var $db;
-    var $dirmodule;
-    var $targetmodule;
-    var $canvas;
-    var $card;
+    public $db;
+    public $dirmodule;
+    public $targetmodule;
+    public $canvas;
+    public $card;
 
-	//! Template container
-	var $tpl = array();
-	//! Object container
-	var $object;
-	//! Error string
-	var $error;
-	//! Error array
-	var $errors=array();
+    //! Template container
+    public $tpl = array();
+    //! Object container
+    public $object;
+    //! Error string
+    public $error;
+    //! Error array
+    public $errors=array();
 
+    /**
+     * 	Instantiation of DAO class
+     *  TODO This method is useless
+     *
+     * 	@return	void
+     */
+    protected function getInstanceDao()
+    {
+        if (! is_object($this->object)) {
+            $modelclassfile = dol_buildpath('/'.$this->dirmodule.'/canvas/'.$this->canvas.'/dao_'.$this->targetmodule.'_'.$this->canvas.'.class.php');
+            if (file_exists($modelclassfile)) {
+                // Include dataservice class (model)
+                $ret = require_once $modelclassfile;
+                if ($ret) {
+                    // Instantiate dataservice class (model)
+                    $modelclassname = 'Dao'.ucfirst($this->targetmodule).ucfirst($this->canvas);
+                    $this->object = new $modelclassname($this->db);
+                }
+            }
+        }
+    }
 
-	/**
-	 * 	Instantiation of DAO class
-	 *  TODO This method is useless
-	 *
-	 * 	@return	void
-	 */
-	protected function getInstanceDao()
-	{
-		if (! is_object($this->object))
-		{
-			$modelclassfile = dol_buildpath('/'.$this->dirmodule.'/canvas/'.$this->canvas.'/dao_'.$this->targetmodule.'_'.$this->canvas.'.class.php');
-	        if (file_exists($modelclassfile))
-	        {
-	            // Include dataservice class (model)
-	            $ret = require_once $modelclassfile;
-	            if ($ret)
-	            {
-	            	// Instantiate dataservice class (model)
-	            	$modelclassname = 'Dao'.ucfirst($this->targetmodule).ucfirst($this->canvas);
-	            	$this->object = new $modelclassname($this->db);
-	            }
-	        }
-		}
-	}
-
-	/**
+    /**
      *  Get object from id or ref and save it into this->object
-	 *
+     *
      *  @param		int		$id			Object id
      *  @param		ref		$ref		Object ref
      *  @return		object				Object loaded
      */
     protected function getObject($id,$ref='')
     {
-    	$ret = $this->getInstanceDao();
+        $ret = $this->getInstanceDao();
 
-    	$object = new Societe($this->db);
-    	if (! empty($id) || ! empty($ref)) $object->fetch($id,$ref);
-    	$this->object = $object;
+        $object = new Societe($this->db);
+        if (! empty($id) || ! empty($ref)) $object->fetch($id,$ref);
+        $this->object = $object;
     }
 
     /**
@@ -91,18 +87,16 @@ abstract class ActionsCardCommon
      *	@param	int		&$action	Action code
      *	@return	void
      */
-    function doActions(&$action)
+    public function doActions(&$action)
     {
         global $conf, $user, $langs;
 
-        if ($_POST["getcustomercode"])
-        {
+        if ($_POST["getcustomercode"]) {
             // We defined value code_client
             $_POST["code_client"]="Acompleter";
         }
 
-        if ($_POST["getsuppliercode"])
-        {
+        if ($_POST["getsuppliercode"]) {
             // We defined value code_fournisseur
             $_POST["code_fournisseur"]="Acompleter";
         }
@@ -114,8 +108,7 @@ abstract class ActionsCardCommon
             require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
             $error=0;
 
-            if (GETPOST("private") == 1)
-            {
+            if (GETPOST("private") == 1) {
                 $this->object->particulier		= GETPOST("private");
 
                 $this->object->name				= empty($conf->global->MAIN_FIRSTNAME_NAME_POSITION)?trim($_POST["firstname"].' '.$_POST["lastname"]):trim($_POST["lastname"].' '.$_POST["firstname"]);
@@ -123,9 +116,7 @@ abstract class ActionsCardCommon
                 // Add non official properties
                 $this->object->name_bis        	= $_POST["lastname"];
                 $this->object->firstname		= $_POST["firstname"];
-            }
-            else
-            {
+            } else {
                 $this->object->name				= $_POST["nom"];
             }
 
@@ -158,12 +149,9 @@ abstract class ActionsCardCommon
 
             $this->object->forme_juridique_code	= $_POST["forme_juridique_code"];
             $this->object->effectif_id			= $_POST["effectif_id"];
-            if (GETPOST("private") == 1)
-            {
+            if (GETPOST("private") == 1) {
                 $this->object->typent_id		= 8; // TODO predict another method if the field "special" change of rowid
-            }
-            else
-            {
+            } else {
                 $this->object->typent_id		= $_POST["typent_id"];
             }
             $this->object->client				= $_POST["client"];
@@ -173,24 +161,20 @@ abstract class ActionsCardCommon
             $this->object->default_lang			= $_POST["default_lang"];
 
             // Check parameters
-            if (empty($_POST["cancel"]))
-            {
-                if (! empty($this->object->email) && ! isValidEMail($this->object->email))
-                {
+            if (empty($_POST["cancel"])) {
+                if (! empty($this->object->email) && ! isValidEMail($this->object->email)) {
                     $error = 1;
                     $langs->load("errors");
                     $this->error = $langs->trans("ErrorBadEMail",$this->object->email);
                     $action = ($action == 'add' ? 'create' : 'edit');
                 }
-                if (! empty($this->object->url) && ! isValidUrl($this->object->url))
-                {
+                if (! empty($this->object->url) && ! isValidUrl($this->object->url)) {
                     $error = 1;
                     $langs->load("errors");
                     $this->error = $langs->trans("ErrorBadUrl",$this->object->url);
                     $action = ($action == 'add' ? 'create' : 'edit');
                 }
-                if ($this->object->fournisseur && ! $conf->fournisseur->enabled)
-                {
+                if ($this->object->fournisseur && ! $conf->fournisseur->enabled) {
                     $error = 1;
                     $langs->load("errors");
                     $this->error = $langs->trans("ErrorSupplierModuleNotEnabled");
@@ -198,20 +182,16 @@ abstract class ActionsCardCommon
                 }
             }
 
-            if (! $error)
-            {
-                if ($action == 'add')
-                {
+            if (! $error) {
+                if ($action == 'add') {
                     $this->db->begin();
 
                     if (empty($this->object->client))      $this->object->code_client='';
                     if (empty($this->object->fournisseur)) $this->object->code_fournisseur='';
 
                     $result = $this->object->create($user);
-                    if ($result >= 0)
-                    {
-                        if ($this->object->particulier)
-                        {
+                    if ($result >= 0) {
+                        if ($this->object->particulier) {
                             dol_syslog(get_class($this)."::doActions This thirdparty is a personal people",LOG_DEBUG);
                             $contact=new Contact($this->db);
 
@@ -229,38 +209,30 @@ abstract class ActionsCardCommon
 
                             $result=$contact->create($user);
                         }
-                    }
-                    else
-                    {
+                    } else {
                         $this->errors=$this->object->errors;
                     }
 
-                    if ($result >= 0)
-                    {
+                    if ($result >= 0) {
                         $this->db->commit();
 
-                        if ( $this->object->client == 1 )
-                        {
+                        if ($this->object->client == 1) {
                             header("Location: ".DOL_URL_ROOT."/comm/fiche.php?socid=".$this->object->id);
+
                             return;
-                        }
-                        else
-                        {
-                            if (  $this->object->fournisseur == 1 )
-                            {
+                        } else {
+                            if ($this->object->fournisseur == 1) {
                                 header("Location: ".DOL_URL_ROOT."/fourn/fiche.php?socid=".$this->object->id);
+
                                 return;
-                            }
-                            else
-                            {
+                            } else {
                                 header("Location: ".$_SERVER["PHP_SELF"]."?socid=".$this->object->id);
+
                                 return;
                             }
                         }
                         exit;
-                    }
-                    else
-                    {
+                    } else {
                         $this->db->rollback();
 
                         $this->errors=$this->object->errors;
@@ -268,10 +240,8 @@ abstract class ActionsCardCommon
                     }
                 }
 
-                if ($action == 'update')
-                {
-                    if ($_POST["cancel"])
-                    {
+                if ($action == 'update') {
+                    if ($_POST["cancel"]) {
                         header("Location: ".$_SERVER["PHP_SELF"]."?socid=".$this->object->id);
                         exit;
                     }
@@ -283,13 +253,10 @@ abstract class ActionsCardCommon
                     if (empty($this->object->fournisseur) && empty($oldsoccanvas->code_fournisseur))    $this->object->code_fournisseur='';
 
                     $result = $this->object->update($this->object->id, $user, 1, $oldsoccanvas->codeclient_modifiable(), $oldsoccanvas->codefournisseur_modifiable());
-                    if ($result >= 0)
-                    {
+                    if ($result >= 0) {
                         header("Location: ".$_SERVER["PHP_SELF"]."?socid=".$this->object->id);
                         exit;
-                    }
-                    else
-                    {
+                    } else {
                         $this->object->id = $this->object->id;
                         $reload = 0;
                         $this->errors = $this->object->errors;
@@ -299,17 +266,13 @@ abstract class ActionsCardCommon
             }
         }
 
-        if ($action == 'confirm_delete' && GETPOST("confirm") == 'yes')
-        {
+        if ($action == 'confirm_delete' && GETPOST("confirm") == 'yes') {
             $result = $this->object->delete($this->object->id);
 
-            if ($result >= 0)
-            {
+            if ($result >= 0) {
                 header("Location: ".DOL_URL_ROOT."/societe/societe.php?delsoc=".$this->object->nom."");
                 exit;
-            }
-            else
-            {
+            } else {
                 $reload = 0;
                 $this->errors=$this->object->errors;
                 $action = '';
@@ -319,14 +282,10 @@ abstract class ActionsCardCommon
         /*
          * Generate document
          */
-        if ($action == 'builddoc')    // En get ou en post
-        {
-            if (is_numeric(GETPOST('model')))
-            {
+        if ($action == 'builddoc') {    // En get ou en post
+            if (is_numeric(GETPOST('model'))) {
                 $this->error=$langs->trans("ErrorFieldRequired",$langs->transnoentities("Model"));
-            }
-            else
-            {
+            } else {
                 require_once DOL_DOCUMENT_ROOT.'/core/modules/societe/modules_societe.class.php';
 
                 $this->object->fetch_thirdparty();
@@ -336,19 +295,15 @@ abstract class ActionsCardCommon
                 $newlang='';
                 if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id') ) $newlang=GETPOST('lang_id');
                 if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$this->object->default_lang;
-                if (! empty($newlang))
-                {
+                if (! empty($newlang)) {
                     $outputlangs = new Translate("",$conf);
                     $outputlangs->setDefaultLang($newlang);
                 }
                 $result=thirdparty_doc_create($this->db, $this->object->id, '', GETPOST('model'), $outputlangs);
-                if ($result <= 0)
-                {
+                if ($result <= 0) {
                     dol_print_error($this->db,$result);
                     exit;
-                }
-                else
-                {
+                } else {
                     header('Location: '.$_SERVER["PHP_SELF"].'?socid='.$this->object->id.(empty($conf->global->MAIN_JUMP_TAG)?'':'#builddoc'));
                     exit;
                 }
@@ -356,82 +311,75 @@ abstract class ActionsCardCommon
         }
     }
 
-	/**
-	 *    Assign custom values for canvas (for example into this->tpl to be used by templates)
-	 *
-	 *    @param	string	&$action    Type of action
-	 *    @param	string	$id			Id of object
-	 *    @param	string	$ref		Ref of object
-	 *    @return	void
+    /**
+     *    Assign custom values for canvas (for example into this->tpl to be used by templates)
+     *
+     *    @param	string	&$action    Type of action
+     *    @param	string	$id			Id of object
+     *    @param	string	$ref		Ref of object
+     *    @return	void
      */
-    function assign_values(&$action, $id=0, $ref='')
+    public function assign_values(&$action, $id=0, $ref='')
     {
         global $conf, $langs, $user, $mysoc, $canvas;
         global $form, $formadmin, $formcompany;
 
         if ($action == 'add' || $action == 'update') $this->assign_post($action);
 
-        if ($_GET["type"]=='f')  		{ $this->object->fournisseur=1; }
-        if ($_GET["type"]=='c')  		{ $this->object->client=1; }
-        if ($_GET["type"]=='p')  		{ $this->object->client=2; }
-        if ($_GET["type"]=='cp') 		{ $this->object->client=3; }
-        if ($_REQUEST["private"]==1) 	{ $this->object->particulier=1;	}
+        if ($_GET["type"]=='f') { $this->object->fournisseur=1; }
+        if ($_GET["type"]=='c') { $this->object->client=1; }
+        if ($_GET["type"]=='p') { $this->object->client=2; }
+        if ($_GET["type"]=='cp') { $this->object->client=3; }
+        if ($_REQUEST["private"]==1) { $this->object->particulier=1;	}
 
-        foreach($this->object as $key => $value)
-        {
+        foreach ($this->object as $key => $value) {
             $this->tpl[$key] = $value;
         }
 
         $this->tpl['error'] = get_htmloutput_errors($this->object->error,$this->object->errors);
         if (is_array($GLOBALS['errors'])) $this->tpl['error'] = get_htmloutput_mesg('',$GLOBALS['errors'],'error');
 
-        if ($action == 'create')
-        {
-        	if ($conf->use_javascript_ajax)
-			{
-				$this->tpl['ajax_selecttype'] = "\n".'<script type="text/javascript" language="javascript">
-				$(document).ready(function () {
-		              $("#radiocompany").click(function() {
+        if ($action == 'create') {
+            if ($conf->use_javascript_ajax) {
+                $this->tpl['ajax_selecttype'] = "\n".'<script type="text/javascript" language="javascript">
+                $(document).ready(function () {
+                      $("#radiocompany").click(function() {
                             document.formsoc.action.value="create";
                             document.formsoc.canvas.value="company";
                             document.formsoc.private.value=0;
                             document.formsoc.submit();
-		              });
-		               $("#radioprivate").click(function() {
+                      });
+                       $("#radioprivate").click(function() {
                             document.formsoc.action.value="create";
                             document.formsoc.canvas.value="individual";
                             document.formsoc.private.value=1;
                             document.formsoc.submit();
                       });
-		          });
+                  });
                 </script>'."\n";
-			}
+            }
         }
 
-        if ($action == 'create' || $action == 'edit')
-        {
-        	if ($conf->use_javascript_ajax)
-			{
-				$this->tpl['ajax_selectcountry'] = "\n".'<script type="text/javascript" language="javascript">
-				$(document).ready(function () {
-						$("#selectcountry_id").change(function() {
-							document.formsoc.action.value="'.$action.'";
-							document.formsoc.canvas.value="'.$canvas.'";
-							document.formsoc.submit();
-						});
-					})
-				</script>'."\n";
-			}
+        if ($action == 'create' || $action == 'edit') {
+            if ($conf->use_javascript_ajax) {
+                $this->tpl['ajax_selectcountry'] = "\n".'<script type="text/javascript" language="javascript">
+                $(document).ready(function () {
+                        $("#selectcountry_id").change(function() {
+                            document.formsoc.action.value="'.$action.'";
+                            document.formsoc.canvas.value="'.$canvas.'";
+                            document.formsoc.submit();
+                        });
+                    })
+                </script>'."\n";
+            }
 
             // Load object modCodeClient
             $module=(! empty($conf->global->SOCIETE_CODECLIENT_ADDON)?$conf->global->SOCIETE_CODECLIENT_ADDON:'mod_codeclient_leopard');
-            if (substr($module, 0, 15) == 'mod_codeclient_' && substr($module, -3) == 'php')
-            {
+            if (substr($module, 0, 15) == 'mod_codeclient_' && substr($module, -3) == 'php') {
                 $module = substr($module, 0, dol_strlen($module)-4);
             }
             $dirsociete=array_merge(array('/core/modules/societe/'),$conf->modules_parts['societe']);
-            foreach ($dirsociete as $dirroot)
-            {
+            foreach ($dirsociete as $dirroot) {
                 $res=dol_include_once($dirroot.$module.'.php');
                 if ($res) break;
             }
@@ -455,37 +403,34 @@ abstract class ActionsCardCommon
             $s=$modCodeClient->getToolTip($langs,$this->object,0);
             $this->tpl['help_customercode'] = $form->textwithpicto('',$s,1);
 
-            if (! empty($conf->fournisseur->enabled))
-            {
-            	$this->tpl['supplier_enabled'] = 1;
+            if (! empty($conf->fournisseur->enabled)) {
+                $this->tpl['supplier_enabled'] = 1;
 
-            	// Load object modCodeFournisseur
-            	$module=$conf->global->SOCIETE_CODECLIENT_ADDON;
-            	if (substr($module, 0, 15) == 'mod_codeclient_' && substr($module, -3) == 'php')
-            	{
-            		$module = substr($module, 0, dol_strlen($module)-4);
-            	}
+                // Load object modCodeFournisseur
+                $module=$conf->global->SOCIETE_CODECLIENT_ADDON;
+                if (substr($module, 0, 15) == 'mod_codeclient_' && substr($module, -3) == 'php') {
+                    $module = substr($module, 0, dol_strlen($module)-4);
+                }
                 $dirsociete=array_merge(array('/core/modules/societe/'),$conf->modules_parts['societe']);
-                foreach ($dirsociete as $dirroot)
-                {
+                foreach ($dirsociete as $dirroot) {
                     $res=dol_include_once($dirroot.$module.'.php');
                     if ($res) break;
                 }
-            	$modCodeFournisseur = new $module;
-            	$this->tpl['auto_suppliercode'] = $modCodeFournisseur->code_auto;
-            	// We verified if the tag prefix is used
-            	if ($modCodeFournisseur->code_auto) $this->tpl['prefix_suppliercode'] = $modCodeFournisseur->verif_prefixIsUsed();
+                $modCodeFournisseur = new $module;
+                $this->tpl['auto_suppliercode'] = $modCodeFournisseur->code_auto;
+                // We verified if the tag prefix is used
+                if ($modCodeFournisseur->code_auto) $this->tpl['prefix_suppliercode'] = $modCodeFournisseur->verif_prefixIsUsed();
 
-            	// Supplier
-            	$this->tpl['yn_supplier'] = $form->selectyesno("fournisseur",$this->object->fournisseur,1);
-            	$this->tpl['suppliercode'] = $this->object->code_fournisseur;
-            	if ((!$this->object->code_fournisseur || $this->object->code_fournisseur == -1) && $modCodeFournisseur->code_auto) $this->tpl['suppliercode'] = $modCodeFournisseur->getNextValue($this->object,1);
-            	$this->tpl['ismodifiable_suppliercode'] = $this->object->codefournisseur_modifiable();
-            	$s=$modCodeFournisseur->getToolTip($langs,$this->object,1);
-            	$this->tpl['help_suppliercode'] = $form->textwithpicto('',$s,1);
+                // Supplier
+                $this->tpl['yn_supplier'] = $form->selectyesno("fournisseur",$this->object->fournisseur,1);
+                $this->tpl['suppliercode'] = $this->object->code_fournisseur;
+                if ((!$this->object->code_fournisseur || $this->object->code_fournisseur == -1) && $modCodeFournisseur->code_auto) $this->tpl['suppliercode'] = $modCodeFournisseur->getNextValue($this->object,1);
+                $this->tpl['ismodifiable_suppliercode'] = $this->object->codefournisseur_modifiable();
+                $s=$modCodeFournisseur->getToolTip($langs,$this->object,1);
+                $this->tpl['help_suppliercode'] = $form->textwithpicto('',$s,1);
 
-            	$this->object->LoadSupplierCateg();
-            	$this->tpl['suppliercategory'] = $this->object->SupplierCategories;
+                $this->object->LoadSupplierCateg();
+                $this->tpl['suppliercategory'] = $this->object->SupplierCategories;
             }
 
             // Zip
@@ -517,35 +462,27 @@ abstract class ActionsCardCommon
 
             // Local Tax
             // TODO mettre dans une classe propre au pays
-            if($mysoc->country_code=='ES')
-            {
+            if ($mysoc->country_code=='ES') {
                 $this->tpl['localtax'] = '';
 
-                if($mysoc->localtax1_assuj=="1" && $mysoc->localtax2_assuj=="1")
-                {
+                if ($mysoc->localtax1_assuj=="1" && $mysoc->localtax2_assuj=="1") {
                     $this->tpl['localtax'].= '<tr><td>'.$langs->trans("LocalTax1IsUsedES").'</td><td>';
                     $this->tpl['localtax'].= $form->selectyesno('localtax1assuj_value',$this->object->localtax1_assuj,1);
                     $this->tpl['localtax'].= '</td><td>'.$langs->trans("LocalTax2IsUsedES").'</td><td>';
                     $this->tpl['localtax'].= $form->selectyesno('localtax2assuj_value',$this->object->localtax1_assuj,1);
                     $this->tpl['localtax'].= '</td></tr>';
-                }
-                elseif($mysoc->localtax1_assuj=="1")
-                {
+                } elseif ($mysoc->localtax1_assuj=="1") {
                     $this->tpl['localtax'].= '<tr><td>'.$langs->trans("LocalTax1IsUsedES").'</td><td colspan="3">';
                     $this->tpl['localtax'].= $form->selectyesno('localtax1assuj_value',$this->object->localtax1_assuj,1);
                     $this->tpl['localtax'].= '</td><tr>';
-                }
-                elseif($mysoc->localtax2_assuj=="1")
-                {
+                } elseif ($mysoc->localtax2_assuj=="1") {
                     $this->tpl['localtax'].= '<tr><td>'.$langs->trans("LocalTax2IsUsedES").'</td><td colspan="3">';
                     $this->tpl['localtax'].= $form->selectyesno('localtax2assuj_value',$this->object->localtax1_assuj,1);
                     $this->tpl['localtax'].= '</td><tr>';
                 }
             }
 
-        }
-        else
-        {
+        } else {
             $head = societe_prepare_head($this->object);
 
             $this->tpl['showhead']=dol_get_fiche_head($head, 'card', '', 0, 'company');
@@ -572,8 +509,7 @@ abstract class ActionsCardCommon
             $arr = $formcompany->typent_array(1);
             $this->tpl['typent'] = $arr[$this->object->typent_code];
 
-            if (! empty($conf->global->MAIN_MULTILANGS))
-            {
+            if (! empty($conf->global->MAIN_MULTILANGS)) {
                 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
                 //$s=picto_from_langcode($this->default_lang);
                 //print ($s?$s.' ':'');
@@ -589,65 +525,50 @@ abstract class ActionsCardCommon
             $this->tpl['sales_representatives'] = '';
             $listsalesrepresentatives=$this->object->getSalesRepresentatives($user);
             $nbofsalesrepresentative=count($listsalesrepresentatives);
-            if ($nbofsalesrepresentative > 3)   // We print only number
-            {
-            	$this->tpl['sales_representatives'].= '<a href="'.DOL_URL_ROOT.'/societe/commerciaux.php?socid='.$this->object->id.'">';
-            	$this->tpl['sales_representatives'].= $nbofsalesrepresentative;
-            	$this->tpl['sales_representatives'].= '</a>';
-            }
-            else if ($nbofsalesrepresentative > 0)
-            {
-            	$userstatic=new User($this->db);
-            	$i=0;
-            	foreach($listsalesrepresentatives as $val)
-            	{
-            		$userstatic->id=$val['id'];
-            		$userstatic->lastname=$val['name'];
-            		$userstatic->firstname=$val['firstname'];
-            		$this->tpl['sales_representatives'].= $userstatic->getNomUrl(1);
-            		$i++;
-            		if ($i < $nbofsalesrepresentative) $this->tpl['sales_representatives'].= ', ';
-            	}
-            }
-            else $this->tpl['sales_representatives'].= $langs->trans("NoSalesRepresentativeAffected");
+            if ($nbofsalesrepresentative > 3) {   // We print only number
+                $this->tpl['sales_representatives'].= '<a href="'.DOL_URL_ROOT.'/societe/commerciaux.php?socid='.$this->object->id.'">';
+                $this->tpl['sales_representatives'].= $nbofsalesrepresentative;
+                $this->tpl['sales_representatives'].= '</a>';
+            } elseif ($nbofsalesrepresentative > 0) {
+                $userstatic=new User($this->db);
+                $i=0;
+                foreach ($listsalesrepresentatives as $val) {
+                    $userstatic->id=$val['id'];
+                    $userstatic->lastname=$val['name'];
+                    $userstatic->firstname=$val['firstname'];
+                    $this->tpl['sales_representatives'].= $userstatic->getNomUrl(1);
+                    $i++;
+                    if ($i < $nbofsalesrepresentative) $this->tpl['sales_representatives'].= ', ';
+                }
+            } else $this->tpl['sales_representatives'].= $langs->trans("NoSalesRepresentativeAffected");
 
             // Linked member
-            if (! empty($conf->adherent->enabled))
-            {
+            if (! empty($conf->adherent->enabled)) {
                 $langs->load("members");
                 $adh=new Adherent($this->db);
                 $result=$adh->fetch('','',$this->object->id);
-                if ($result > 0)
-                {
+                if ($result > 0) {
                     $adh->ref=$adh->getFullName($langs);
                     $this->tpl['linked_member'] = $adh->getNomUrl(1);
-                }
-                else
-                {
+                } else {
                     $this->tpl['linked_member'] = $langs->trans("UserNotLinkedToMember");
                 }
             }
 
             // Local Tax
             // TODO mettre dans une classe propre au pays
-            if($mysoc->country_code=='ES')
-            {
+            if ($mysoc->country_code=='ES') {
                 $this->tpl['localtax'] = '';
 
-                if($mysoc->localtax1_assuj=="1" && $mysoc->localtax2_assuj=="1")
-                {
+                if ($mysoc->localtax1_assuj=="1" && $mysoc->localtax2_assuj=="1") {
                     $this->tpl['localtax'].= '<tr><td>'.$langs->trans("LocalTax1IsUsedES").'</td>';
                     $this->tpl['localtax'].= '<td>'.yn($this->object->localtax1_assuj).'</td>';
                     $this->tpl['localtax'].= '<td>'.$langs->trans("LocalTax2IsUsedES").'</td>';
                     $this->tpl['localtax'].= '<td>'.yn($this->object->localtax2_assuj).'</td></tr>';
-                }
-                elseif($mysoc->localtax1_assuj=="1")
-                {
+                } elseif ($mysoc->localtax1_assuj=="1") {
                     $this->tpl['localtax'].= '<tr><td>'.$langs->trans("LocalTax1IsUsedES").'</td>';
                     $this->tpl['localtax'].= '<td colspan="3">'.yn($this->object->localtax1_assuj).'</td></tr>';
-                }
-                elseif($mysoc->localtax2_assuj=="1")
-                {
+                } elseif ($mysoc->localtax2_assuj=="1") {
                     $this->tpl['localtax'].= '<tr><td>'.$langs->trans("LocalTax2IsUsedES").'</td>';
                     $this->tpl['localtax'].= '<td colspan="3">'.yn($this->object->localtax2_assuj).'</td></tr>';
                 }
@@ -701,8 +622,7 @@ abstract class ActionsCardCommon
         $this->object->localtax2_assuj		= 	$_POST["localtax2assuj_value"];
 
         // We set country_id, and country_code label of the chosen country
-        if ($this->object->country_id)
-        {
+        if ($this->object->country_id) {
             $tmparray=getCountry($this->object->country_id,'all',$this->db,$langs,0);
             $this->object->country_code	=	$tmparray['code'];
             $this->object->country_label=	$tmparray['label'];
@@ -710,5 +630,3 @@ abstract class ActionsCardCommon
     }
 
 }
-
-?>

@@ -21,23 +21,23 @@
  * @access public
  * @package Mail
  */
-class Mail_sendmail extends Mail {
-
-	/**
+class Mail_sendmail extends Mail
+{
+    /**
      * The location of the sendmail or sendmail wrapper binary on the
      * filesystem.
      * @var string
      */
-    var $sendmail_path = '/usr/sbin/sendmail';
+    public $sendmail_path = '/usr/sbin/sendmail';
 
-	/**
+    /**
      * Any extra command-line parameters to pass to the sendmail or
      * sendmail wrapper binary.
      * @var string
      */
-    var $sendmail_args = '';
+    public $sendmail_args = '';
 
-	/**
+    /**
      * Constructor.
      *
      * Instantiates a new Mail_sendmail:: object based on the parameters
@@ -55,7 +55,7 @@ class Mail_sendmail extends Mail {
      *              defaults.
      * @access public
      */
-    function Mail_sendmail($params)
+    public function Mail_sendmail($params)
     {
         if (isset($params['sendmail_path'])) $this->sendmail_path = $params['sendmail_path'];
         if (isset($params['sendmail_args'])) $this->sendmail_args = $params['sendmail_args'];
@@ -68,7 +68,7 @@ class Mail_sendmail extends Mail {
         $this->sep = (strstr(PHP_OS, 'WIN')) ? "\r\n" : "\n";
     }
 
-	/**
+    /**
      * Implements Mail::send() function using the sendmail
      * command-line binary.
      *
@@ -93,7 +93,7 @@ class Mail_sendmail extends Mail {
      *               failure.
      * @access public
      */
-    function send($recipients, $headers, $body)
+    public function send($recipients, $headers, $body)
     {
         $recipients = $this->parseRecipients($recipients);
         if (PEAR::isError($recipients)) {

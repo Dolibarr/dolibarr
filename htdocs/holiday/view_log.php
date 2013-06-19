@@ -23,7 +23,7 @@
  *  \ingroup    holiday
  */
 
-require('../main.inc.php');
+require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 require_once DOL_DOCUMENT_ROOT.'/holiday/common.inc.php';
 
@@ -33,8 +33,6 @@ if ($user->societe_id > 0) accessforbidden();
 // Si l'utilisateur n'a pas le droit de lire cette page
 if(!$user->rights->holiday->view_log) accessforbidden();
 
-
-
 /*
  * View
 */
@@ -42,7 +40,6 @@ if(!$user->rights->holiday->view_log) accessforbidden();
 $langs->load('users');
 
 llxHeader(array(),$langs->trans('CPTitreMenu'));
-
 
 $cp = new Holiday($db);
 //Recent changes are more important than old changes
@@ -65,30 +62,28 @@ print '<td class="liste_titre" align="right">'.$langs->trans('NewSoldeCP').'</td
 print '</tr>';
 $var=true;
 
-foreach($cp->logs as $logs_CP)
-{
-   	$var=!$var;
+foreach ($cp->logs as $logs_CP) {
+       $var=!$var;
 
-   	$user_action = new User($db);
-   	$user_action->fetch($logs_CP['fk_user_action']);
+       $user_action = new User($db);
+       $user_action->fetch($logs_CP['fk_user_action']);
 
-   	$user_update = new User($db);
-   	$user_update->fetch($logs_CP['fk_user_update']);
+       $user_update = new User($db);
+       $user_update->fetch($logs_CP['fk_user_update']);
 
-   	print '<tr '.$bc[$var].'>';
-   	print '<td>'.$logs_CP['rowid'].'</td>';
-   	print '<td style="text-align: center;">'.$logs_CP['date_action'].'</td>';
-   	print '<td>'.$user_action->getNomUrl(1).'</td>';
-   	print '<td>'.$user_update->getNomUrl(1).'</td>';
-   	print '<td>'.$logs_CP['type_action'].'</td>';
-   	print '<td style="text-align: right;">'.$logs_CP['prev_solde'].' '.$langs->trans('days').'</td>';
-   	print '<td style="text-align: right;">'.$logs_CP['new_solde'].' '.$langs->trans('days').'</td>';
-   	print '</tr>'."\n";
+       print '<tr '.$bc[$var].'>';
+       print '<td>'.$logs_CP['rowid'].'</td>';
+       print '<td style="text-align: center;">'.$logs_CP['date_action'].'</td>';
+       print '<td>'.$user_action->getNomUrl(1).'</td>';
+       print '<td>'.$user_update->getNomUrl(1).'</td>';
+       print '<td>'.$logs_CP['type_action'].'</td>';
+       print '<td style="text-align: right;">'.$logs_CP['prev_solde'].' '.$langs->trans('days').'</td>';
+       print '<td style="text-align: right;">'.$logs_CP['new_solde'].' '.$langs->trans('days').'</td>';
+       print '</tr>'."\n";
 
 }
 
-if($log_holiday == '2')
-{
+if ($log_holiday == '2') {
     print '<tr>';
     print '<td colspan="7" class="pair" style="text-align: center; padding: 5px;">'.$langs->trans('NoResults').'</td>';
     print '</tr>';
@@ -97,8 +92,6 @@ if($log_holiday == '2')
 print '</tbody>'."\n";
 print '</table>'."\n";
 
-
 // Fin de page
 $db->close();
 llxFooter();
-?>

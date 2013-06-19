@@ -14,18 +14,14 @@
 
         $listsalesrepresentatives=$object->getSalesRepresentatives($user);
         $nbofsalesrepresentative=count($listsalesrepresentatives);
-        if ($nbofsalesrepresentative > 3)   // We print only number
-        {
+        if ($nbofsalesrepresentative > 3) {   // We print only number
             print '<a href="'.DOL_URL_ROOT.'/societe/commerciaux.php?socid='.$object->id.'">';
             print $nbofsalesrepresentative;
             print '</a>';
-        }
-        else if ($nbofsalesrepresentative > 0)
-        {
+        } elseif ($nbofsalesrepresentative > 0) {
             $userstatic=new User($db);
             $i=0;
-            foreach($listsalesrepresentatives as $val)
-            {
+            foreach ($listsalesrepresentatives as $val) {
                 $userstatic->id=$val['id'];
                 $userstatic->lastname=$val['lastname'];
                 $userstatic->firstname=$val['firstname'];
@@ -33,7 +29,5 @@
                 $i++;
                 if ($i < $nbofsalesrepresentative) print ', ';
             }
-        }
-        else print $langs->trans("NoSalesRepresentativeAffected");
+        } else print $langs->trans("NoSalesRepresentativeAffected");
         print '</td></tr>';
-?>

@@ -38,7 +38,6 @@ $type=(GETPOST('type') ? GETPOST('type') : 0);
 $catname=GETPOST('catname','alpha');
 $section=(GETPOST('section')?GETPOST('section'):0);
 
-
 /*
  * View
  */
@@ -57,13 +56,11 @@ $arrayofcss=array('/includes/jquery/plugins/jquerytreeview/jquery.treeview.css')
 
 llxHeader('',$title,'','',0,0,$arrayofjs,$arrayofcss);
 
-
 print_fiche_titre($title);
 
 //print '<table border="0" width="100%" class="notopnoleftnoright">';
 //print '<tr><td valign="top" width="30%" class="notopnoleft">';
 print '<div class="fichecenter"><div class="fichethirdleft">';
-
 
 /*
  * Zone recherche produit/service
@@ -89,46 +86,39 @@ print '<td><input type="submit" class="button" value="'.$langs->trans ("Search")
 
 print '</table></form>';
 
-
 //print '</td><td valign="top" width="70%">';
 print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
-
 
 /*
  * Categories found
  */
-if ($catname || $id > 0)
-{
-	$cats = $categstatic->rechercher($id,$catname,$type);
+if ($catname || $id > 0) {
+    $cats = $categstatic->rechercher($id,$catname,$type);
 
-	print '<table class="noborder" width="100%">';
-	print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("FoundCats").'</td></tr>';
+    print '<table class="noborder" width="100%">';
+    print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("FoundCats").'</td></tr>';
 
-	$var=true;
-	foreach ($cats as $cat)
-	{
-		$var = ! $var;
-		print "\t<tr ".$bc[$var].">\n";
-		print "\t\t<td>";
-		$categstatic->id=$cat->id;
-		$categstatic->ref=$cat->label;
-		$categstatic->label=$cat->label;
-		$categstatic->type=$cat->type;
-		print $categstatic->getNomUrl(1,'');
-		print "</td>\n";
-		print "\t\t<td>".$cat->description."</td>\n";
-		print "\t</tr>\n";
-	}
-	print "</table>";
-}
-else print '&nbsp;';
-
+    $var=true;
+    foreach ($cats as $cat) {
+        $var = ! $var;
+        print "\t<tr ".$bc[$var].">\n";
+        print "\t\t<td>";
+        $categstatic->id=$cat->id;
+        $categstatic->ref=$cat->label;
+        $categstatic->label=$cat->label;
+        $categstatic->type=$cat->type;
+        print $categstatic->getNomUrl(1,'');
+        print "</td>\n";
+        print "\t\t<td>".$cat->description."</td>\n";
+        print "\t</tr>\n";
+    }
+    print "</table>";
+} else print '&nbsp;';
 
 //print '</td></tr></table>';
 print '</div></div></div>';
 
 print '<div class="fichecenter"><br>';
-
 
 // Charge tableau des categories
 $cate_arbo = $categstatic->get_full_arbo($type);
@@ -139,51 +129,45 @@ $fulltree=$cate_arbo;
 // Define data (format for treeview)
 $data=array();
 $data[] = array('rowid'=>0,'fk_menu'=>-1,'title'=>"racine",'mainmenu'=>'','leftmenu'=>'','fk_mainmenu'=>'','fk_leftmenu'=>'');
-foreach($fulltree as $key => $val)
-{
-	$categstatic->id=$val['id'];
-	$categstatic->ref=$val['label'];
-	$categstatic->type=$type;
-	$li=$categstatic->getNomUrl(1,'',60);
+foreach ($fulltree as $key => $val) {
+    $categstatic->id=$val['id'];
+    $categstatic->ref=$val['label'];
+    $categstatic->type=$type;
+    $li=$categstatic->getNomUrl(1,'',60);
 
-	$data[] = array(
-	'rowid'=>$val['rowid'],
-	'fk_menu'=>$val['fk_parent'],
-	'entry'=>'<table class="nobordernopadding centpercent"><tr><td>'.$li.
-	'</td><td width="50%">'.
-	' '.$val['description'].'</td>'.
-	'<td align="right" width="20px;"><a href="'.DOL_URL_ROOT.'/categories/viewcat.php?id='.$val['id'].'&type='.$type.'">'.img_view().'</a></td>'.
-	'</tr></table>'
-	);
+    $data[] = array(
+    'rowid'=>$val['rowid'],
+    'fk_menu'=>$val['fk_parent'],
+    'entry'=>'<table class="nobordernopadding centpercent"><tr><td>'.$li.
+    '</td><td width="50%">'.
+    ' '.$val['description'].'</td>'.
+    '<td align="right" width="20px;"><a href="'.DOL_URL_ROOT.'/categories/viewcat.php?id='.$val['id'].'&type='.$type.'">'.img_view().'</a></td>'.
+    '</tr></table>'
+    );
 }
-
 
 print '<table class="liste" width="100%">';
 print '<tr class="liste_titre"><td>'.$langs->trans("Categories").'</td><td>'.$langs->trans("Description").'</td><td align="right">';
-if (! empty($conf->use_javascript_ajax))
-{
-	print '<div id="iddivjstreecontrol"><a href="#">'.img_picto('','object_category').' '.$langs->trans("UndoExpandAll").'</a> | <a href="#">'.img_picto('','object_category-expanded').' '.$langs->trans("ExpandAll").'</a></div>';
+if (! empty($conf->use_javascript_ajax)) {
+    print '<div id="iddivjstreecontrol"><a href="#">'.img_picto('','object_category').' '.$langs->trans("UndoExpandAll").'</a> | <a href="#">'.img_picto('','object_category-expanded').' '.$langs->trans("ExpandAll").'</a></div>';
 }
 print '</td></tr>';
 
 $nbofentries=(count($data) - 1);
 
-if ($nbofentries > 0)
-{
-	print '<tr><td colspan="3">';
-	tree_recur($data,$data[0],0);
-	print '</td></tr>';
-}
-else
-{
-	print '<tr>';
-	print '<td colspan="3"><table class="nobordernopadding"><tr class="nobordernopadding"><td>'.img_picto_common('','treemenu/branchbottom.gif').'</td>';
-	print '<td valign="middle">';
-	print $langs->trans("NoCategoryYet");
-	print '</td>';
-	print '<td>&nbsp;</td>';
-	print '</table></td>';
-	print '</tr>';
+if ($nbofentries > 0) {
+    print '<tr><td colspan="3">';
+    tree_recur($data,$data[0],0);
+    print '</td></tr>';
+} else {
+    print '<tr>';
+    print '<td colspan="3"><table class="nobordernopadding"><tr class="nobordernopadding"><td>'.img_picto_common('','treemenu/branchbottom.gif').'</td>';
+    print '<td valign="middle">';
+    print $langs->trans("NoCategoryYet");
+    print '</td>';
+    print '<td>&nbsp;</td>';
+    print '</table></td>';
+    print '</tr>';
 }
 
 print "</table>";
@@ -193,4 +177,3 @@ print '</div>';
 llxFooter();
 
 $db->close();
-?>

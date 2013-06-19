@@ -54,20 +54,16 @@ $socid = GETPOST('socid','int');
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'agenda', $socid, '', 'myactions');
 
-
 /*
  * Actions
  */
-if ($action == 'builddoc')
-{
-	$cat = new CommActionRapport($db, $month, $year);
-	$result=$cat->write_file(GETPOST('id','int'));
-	if ($result < 0)
-	{
-		$mesg=$cat->error;
-	}
+if ($action == 'builddoc') {
+    $cat = new CommActionRapport($db, $month, $year);
+    $result=$cat->write_file(GETPOST('id','int'));
+    if ($result < 0) {
+        $mesg=$cat->error;
+    }
 }
-
 
 /*
  * View
@@ -91,71 +87,62 @@ $sql.= $db->plimit($limit+1,$offset);
 //print $sql;
 dol_syslog("select sql=".$sql);
 $resql=$db->query($sql);
-if ($resql)
-{
-	$num = $db->num_rows($resql);
+if ($resql) {
+    $num = $db->num_rows($resql);
 
-	print_barre_liste($langs->trans("Actions"), $page, "index.php",'',$sortfield,$sortorder,'',$num);
+    print_barre_liste($langs->trans("Actions"), $page, "index.php",'',$sortfield,$sortorder,'',$num);
 
-	dol_htmloutput_mesg($mesg,$mesgs);
+    dol_htmloutput_mesg($mesg,$mesgs);
 
-	$i = 0;
-	print '<table class="noborder" width="100%">';
-	print '<tr class="liste_titre">';
-	print '<td>'.$langs->trans("Date").'</td>';
-	print '<td align="center">'.$langs->trans("EventsNb").'</td>';
-	print '<td align="center">'.$langs->trans("Action").'</td>';
-	print '<td align="center">'.$langs->trans("PDF").'</td>';
-	print '<td align="center">'.$langs->trans("Date").'</td>';
-	print '<td align="center">'.$langs->trans("Size").'</td>';
-	print "</tr>\n";
-	$var=true;
-	while ($i < min($num,$limit))
-	{
-		$obj=$db->fetch_object($resql);
+    $i = 0;
+    print '<table class="noborder" width="100%">';
+    print '<tr class="liste_titre">';
+    print '<td>'.$langs->trans("Date").'</td>';
+    print '<td align="center">'.$langs->trans("EventsNb").'</td>';
+    print '<td align="center">'.$langs->trans("Action").'</td>';
+    print '<td align="center">'.$langs->trans("PDF").'</td>';
+    print '<td align="center">'.$langs->trans("Date").'</td>';
+    print '<td align="center">'.$langs->trans("Size").'</td>';
+    print "</tr>\n";
+    $var=true;
+    while ($i < min($num,$limit)) {
+        $obj=$db->fetch_object($resql);
 
-		if ($obj)
-		{
-			$var=!$var;
-			print "<tr ".$bc[$var].">";
+        if ($obj) {
+            $var=!$var;
+            print "<tr ".$bc[$var].">";
 
-			print "<td>".$obj->df."</td>\n";
-			print '<td align="center">'.$obj->cc.'</td>';
+            print "<td>".$obj->df."</td>\n";
+            print '<td align="center">'.$obj->cc.'</td>';
 
-			print '<td align="center">';
-			print '<a href="'.$_SERVER["PHP_SELF"].'?action=builddoc&amp;page='.$page.'&amp;month='.$obj->month.'&amp;year='.$obj->year.'">'.img_picto($langs->trans('GenerateReport'),'filenew').'</a>';
-			print '</td>';
+            print '<td align="center">';
+            print '<a href="'.$_SERVER["PHP_SELF"].'?action=builddoc&amp;page='.$page.'&amp;month='.$obj->month.'&amp;year='.$obj->year.'">'.img_picto($langs->trans('GenerateReport'),'filenew').'</a>';
+            print '</td>';
 
-			$name = "actions-".$obj->month."-".$obj->year.".pdf";
-			$relativepath= $name;
-			$file = $conf->agenda->dir_temp."/".$name;
+            $name = "actions-".$obj->month."-".$obj->year.".pdf";
+            $relativepath= $name;
+            $file = $conf->agenda->dir_temp."/".$name;
 
-			if (file_exists($file))
-			{
-				print '<td align="center"><a data-ajax="false" href="'.DOL_URL_ROOT.'/document.php?page='.$page.'&amp;file='.urlencode($relativepath).'&amp;modulepart=actionsreport">'.img_pdf().'</a></td>';
-				print '<td align="center">'.dol_print_date(dol_filemtime($file),'dayhour').'</td>';
-				print '<td align="center">'.dol_print_size(dol_filesize($file)).'</td>';
-			}
-			else {
-				print '<td>&nbsp;</td>';
-				print '<td>&nbsp;</td>';
-				print '<td>&nbsp;</td>';
-			}
+            if (file_exists($file)) {
+                print '<td align="center"><a data-ajax="false" href="'.DOL_URL_ROOT.'/document.php?page='.$page.'&amp;file='.urlencode($relativepath).'&amp;modulepart=actionsreport">'.img_pdf().'</a></td>';
+                print '<td align="center">'.dol_print_date(dol_filemtime($file),'dayhour').'</td>';
+                print '<td align="center">'.dol_print_size(dol_filesize($file)).'</td>';
+            } else {
+                print '<td>&nbsp;</td>';
+                print '<td>&nbsp;</td>';
+                print '<td>&nbsp;</td>';
+            }
 
-			print "</tr>\n";
-		}
-		$i++;
-	}
-	print "</table>";
-	$db->free($resql);
+            print "</tr>\n";
+        }
+        $i++;
+    }
+    print "</table>";
+    $db->free($resql);
+} else {
+    dol_print_error($db);
 }
-else
-{
-	dol_print_error($db);
-}
-
 
 $db->close();
 
 llxFooter();
-?>

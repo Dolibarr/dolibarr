@@ -48,207 +48,185 @@ $fieldvalue = (! empty($id) ? $id : $ref);
 $fieldtype = (! empty($ref) ? 'ref' : 'rowid');
 $result=restrictedArea($user,'produit|service',$fieldvalue,'product&product','','',$fieldtype);
 
-
 /*
  *	View
  */
 $form = new Form($db);
 
-if (! empty($id) || ! empty($ref))
-{
-	$object = new Product($db);
-	$result = $object->fetch($id,$ref);
+if (! empty($id) || ! empty($ref)) {
+    $object = new Product($db);
+    $result = $object->fetch($id,$ref);
 
-	llxHeader("","",$langs->trans("CardProduct".$object->type));
+    llxHeader("","",$langs->trans("CardProduct".$object->type));
 
-	if ($result)
-	{
-		$head=product_prepare_head($object, $user);
-		$titre=$langs->trans("CardProduct".$object->type);
-		$picto=($object->type==1?'service':'product');
-		dol_fiche_head($head, 'stats', $titre, 0, $picto);
+    if ($result) {
+        $head=product_prepare_head($object, $user);
+        $titre=$langs->trans("CardProduct".$object->type);
+        $picto=($object->type==1?'service':'product');
+        dol_fiche_head($head, 'stats', $titre, 0, $picto);
 
+        print '<table class="border" width="100%">';
 
-		print '<table class="border" width="100%">';
+        // Reference
+        print '<tr>';
+        print '<td width="30%">'.$langs->trans("Ref").'</td><td colspan="3">';
+        print $form->showrefnav($object,'ref','',1,'ref');
+        print '</td>';
+        print '</tr>';
 
-		// Reference
-		print '<tr>';
-		print '<td width="30%">'.$langs->trans("Ref").'</td><td colspan="3">';
-		print $form->showrefnav($object,'ref','',1,'ref');
-		print '</td>';
-		print '</tr>';
+        // Label
+        print '<tr><td>'.$langs->trans("Label").'</td><td colspan="3">'.$object->libelle.'</td></tr>';
 
-		// Label
-		print '<tr><td>'.$langs->trans("Label").'</td><td colspan="3">'.$object->libelle.'</td></tr>';
+        // Status (to sell)
+        print '<tr><td>'.$langs->trans("Status").' ('.$langs->trans("Sell").')</td><td>';
+        print $object->getLibStatut(2,0);
+        print '</td></tr>';
 
-		// Status (to sell)
-		print '<tr><td>'.$langs->trans("Status").' ('.$langs->trans("Sell").')</td><td>';
-		print $object->getLibStatut(2,0);
-		print '</td></tr>';
+        // Status (to buy)
+        print '<tr><td>'.$langs->trans("Status").' ('.$langs->trans("Buy").')</td><td>';
+        print $object->getLibStatut(2,1);
+        print '</td></tr>';
 
-		// Status (to buy)
-		print '<tr><td>'.$langs->trans("Status").' ('.$langs->trans("Buy").')</td><td>';
-		print $object->getLibStatut(2,1);
-		print '</td></tr>';
+        print '</table>';
+        print '</div>';
 
-		print '</table>';
-		print '</div>';
+        // Choice of stats
+        if ($mode == 'bynumber') print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&mode=byunit">';
+        else print img_picto('','tick').' ';
+        print $langs->trans("StatsByNumberOfUnits");
+        if ($mode == 'bynumber') print '</a>';
+        print ' &nbsp; &nbsp; &nbsp; ';
+        if ($mode == 'byunit') print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&mode=bynumber">';
+        else print img_picto('','tick').' ';
+        print $langs->trans("StatsByNumberOfEntities");
+        if ($mode == 'byunit') print '</a>';
 
+        print '<br><br>';
 
-		// Choice of stats
-		if ($mode == 'bynumber') print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&mode=byunit">';
-		else print img_picto('','tick').' ';
-		print $langs->trans("StatsByNumberOfUnits");
-		if ($mode == 'bynumber') print '</a>';
-		print ' &nbsp; &nbsp; &nbsp; ';
-		if ($mode == 'byunit') print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&mode=bynumber">';
-		else print img_picto('','tick').' ';
-		print $langs->trans("StatsByNumberOfEntities");
-		if ($mode == 'byunit') print '</a>';
+        print '<table width="100%">';
 
-		print '<br><br>';
+        // Generation des graphs
+        $WIDTH=380;
+        $HEIGHT=160;
+        $dir = (! empty($conf->product->multidir_temp[$object->entity])?$conf->product->multidir_temp[$object->entity]:$conf->service->multidir_temp[$object->entity]);
+        if (! file_exists($dir.'/'.$object->id)) {
+            if (dol_mkdir($dir.'/'.$object->id) < 0) {
+                $mesg = $langs->trans("ErrorCanNotCreateDir",$dir);
+                $error++;
+            }
+        }
 
-		print '<table width="100%">';
+        $graphfiles=array(
+        'propal'           =>array('modulepart'=>'productstats_proposals',
+        'file' => $object->id.'/propal12m.png',
+        'label' => ($mode=='byunit'?$langs->transnoentitiesnoconv("NumberOfUnitsProposals"):$langs->transnoentitiesnoconv("NumberOfProposals"))),
+        'orders'           =>array('modulepart'=>'productstats_orders',
+        'file' => $object->id.'/orders12m.png',
+        'label' => ($mode=='byunit'?$langs->transnoentitiesnoconv("NumberOfUnitsCustomerOrders"):$langs->transnoentitiesnoconv("NumberOfCustomerOrders"))),
+        'invoices'         =>array('modulepart'=>'productstats_invoices',
+        'file' => $object->id.'/invoices12m.png',
+        'label' => ($mode=='byunit'?$langs->transnoentitiesnoconv("NumberOfUnitsCustomerInvoices"):$langs->transnoentitiesnoconv("NumberOfCustomerInvoices"))),
+        'invoicessuppliers'=>array('modulepart'=>'productstats_invoicessuppliers',
+        'file' => $object->id.'/invoicessuppliers12m.png',
+        'label' => ($mode=='byunit'?$langs->transnoentitiesnoconv("NumberOfUnitsSupplierInvoices"):$langs->transnoentitiesnoconv("NumberOfSupplierInvoices"))),
+        );
 
-		// Generation des graphs
-		$WIDTH=380;
-		$HEIGHT=160;
-		$dir = (! empty($conf->product->multidir_temp[$object->entity])?$conf->product->multidir_temp[$object->entity]:$conf->service->multidir_temp[$object->entity]);
-		if (! file_exists($dir.'/'.$object->id))
-		{
-			if (dol_mkdir($dir.'/'.$object->id) < 0)
-			{
-				$mesg = $langs->trans("ErrorCanNotCreateDir",$dir);
-				$error++;
-			}
-		}
+        $px = new DolGraph();
 
-		$graphfiles=array(
-		'propal'           =>array('modulepart'=>'productstats_proposals',
-		'file' => $object->id.'/propal12m.png',
-		'label' => ($mode=='byunit'?$langs->transnoentitiesnoconv("NumberOfUnitsProposals"):$langs->transnoentitiesnoconv("NumberOfProposals"))),
-		'orders'           =>array('modulepart'=>'productstats_orders',
-		'file' => $object->id.'/orders12m.png',
-		'label' => ($mode=='byunit'?$langs->transnoentitiesnoconv("NumberOfUnitsCustomerOrders"):$langs->transnoentitiesnoconv("NumberOfCustomerOrders"))),
-		'invoices'         =>array('modulepart'=>'productstats_invoices',
-		'file' => $object->id.'/invoices12m.png',
-		'label' => ($mode=='byunit'?$langs->transnoentitiesnoconv("NumberOfUnitsCustomerInvoices"):$langs->transnoentitiesnoconv("NumberOfCustomerInvoices"))),
-		'invoicessuppliers'=>array('modulepart'=>'productstats_invoicessuppliers',
-		'file' => $object->id.'/invoicessuppliers12m.png',
-		'label' => ($mode=='byunit'?$langs->transnoentitiesnoconv("NumberOfUnitsSupplierInvoices"):$langs->transnoentitiesnoconv("NumberOfSupplierInvoices"))),
-		);
+        if (! $error) {
+            $mesg = $px->isGraphKo();
+            if (! $mesg) {
+                foreach ($graphfiles as $key => $val) {
+                    if (! $graphfiles[$key]['file']) continue;
 
-		$px = new DolGraph();
+                    $graph_data = array();
 
-		if (! $error)
-		{
-			$mesg = $px->isGraphKo();
-			if (! $mesg)
-			{
-				foreach($graphfiles as $key => $val)
-				{
-					if (! $graphfiles[$key]['file']) continue;
+                    // TODO Test si deja existant et recent, on ne genere pas
+                    if ($key == 'propal')            $graph_data = $object->get_nb_propal($socid,$mode);
+                    if ($key == 'orders')            $graph_data = $object->get_nb_order($socid,$mode);
+                    if ($key == 'invoices')          $graph_data = $object->get_nb_vente($socid,$mode);
+                    if ($key == 'invoicessuppliers') $graph_data = $object->get_nb_achat($socid,$mode);
 
-					$graph_data = array();
+                    if (is_array($graph_data)) {
+                        $px->SetData($graph_data);
+                        $px->SetYLabel($graphfiles[$key]['label']);
+                        $px->SetMaxValue($px->GetCeilMaxValue()<0?0:$px->GetCeilMaxValue());
+                        $px->SetMinValue($px->GetFloorMinValue()>0?0:$px->GetFloorMinValue());
+                        $px->SetWidth($WIDTH);
+                        $px->SetHeight($HEIGHT);
+                        $px->SetHorizTickIncrement(1);
+                        $px->SetPrecisionY(0);
+                        $px->SetShading(3);
+                        //print 'x '.$key.' '.$graphfiles[$key]['file'];
 
-					// TODO Test si deja existant et recent, on ne genere pas
-					if ($key == 'propal')            $graph_data = $object->get_nb_propal($socid,$mode);
-					if ($key == 'orders')            $graph_data = $object->get_nb_order($socid,$mode);
-					if ($key == 'invoices')          $graph_data = $object->get_nb_vente($socid,$mode);
-					if ($key == 'invoicessuppliers') $graph_data = $object->get_nb_achat($socid,$mode);
+                        $url=DOL_URL_ROOT.'/viewimage.php?modulepart='.$graphfiles[$key]['modulepart'].'&entity='.$object->entity.'&file='.urlencode($graphfiles[$key]['file']);
+                        $px->draw($dir."/".$graphfiles[$key]['file'],$url);
 
-					if (is_array($graph_data))
-					{
-						$px->SetData($graph_data);
-						$px->SetYLabel($graphfiles[$key]['label']);
-						$px->SetMaxValue($px->GetCeilMaxValue()<0?0:$px->GetCeilMaxValue());
-						$px->SetMinValue($px->GetFloorMinValue()>0?0:$px->GetFloorMinValue());
-						$px->SetWidth($WIDTH);
-						$px->SetHeight($HEIGHT);
-						$px->SetHorizTickIncrement(1);
-						$px->SetPrecisionY(0);
-						$px->SetShading(3);
-						//print 'x '.$key.' '.$graphfiles[$key]['file'];
+                        $graphfiles[$key]['output']=$px->show();
+                    } else {
+                        dol_print_error($db,'Error for calculating graph on key='.$key.' - '.$object->error);
+                    }
+                }
+            }
 
-						$url=DOL_URL_ROOT.'/viewimage.php?modulepart='.$graphfiles[$key]['modulepart'].'&entity='.$object->entity.'&file='.urlencode($graphfiles[$key]['file']);
-						$px->draw($dir."/".$graphfiles[$key]['file'],$url);
+            $mesg = $langs->trans("ChartGenerated");
+        }
 
-						$graphfiles[$key]['output']=$px->show();
-					}
-					else
-					{
-						dol_print_error($db,'Error for calculating graph on key='.$key.' - '.$object->error);
-					}
-				}
-			}
+        // Show graphs
+        $i=0;
+        foreach ($graphfiles as $key => $val) {
+            if (! $graphfiles[$key]['file']) continue;
 
-			$mesg = $langs->trans("ChartGenerated");
-		}
+            if ($graphfiles == 'propal' && ! $user->rights->propale->lire) continue;
+            if ($graphfiles == 'order' && ! $user->rights->commande->lire) continue;
+            if ($graphfiles == 'invoices' && ! $user->rights->facture->lire) continue;
+            if ($graphfiles == 'invoices_suppliers' && ! $user->rights->fournisseur->facture->lire) continue;
 
-		// Show graphs
-		$i=0;
-		foreach($graphfiles as $key => $val)
-		{
-			if (! $graphfiles[$key]['file']) continue;
+            if ($i % 2 == 0) print '<tr>';
 
-			if ($graphfiles == 'propal' && ! $user->rights->propale->lire) continue;
-			if ($graphfiles == 'order' && ! $user->rights->commande->lire) continue;
-			if ($graphfiles == 'invoices' && ! $user->rights->facture->lire) continue;
-			if ($graphfiles == 'invoices_suppliers' && ! $user->rights->fournisseur->facture->lire) continue;
+            // Show graph
+            print '<td width="50%" align="center">';
 
+            print '<table class="border" width="100%">';
+            // Label
+            print '<tr class="liste_titre"><td colspan="2">';
+            print $graphfiles[$key]['label'];
+            print '</td></tr>';
+            // Image
+            print '<tr><td colspan="2" align="center">';
+            print $graphfiles[$key]['output'];
+            print '</td></tr>';
+            // Date generation
+            print '<tr>';
+            if ($graphfiles[$key]['output'] && ! $px->isGraphKo()) {
+                if (file_exists($dir."/".$graphfiles[$key]['file']) && filemtime($dir."/".$graphfiles[$key]['file'])) print '<td>'.$langs->trans("GeneratedOn",dol_print_date(filemtime($dir."/".$graphfiles[$key]['file']),"dayhour")).'</td>';
+                else print '<td>'.$langs->trans("GeneratedOn",dol_print_date(dol_now()),"dayhour").'</td>';
+            } else {
+                print '<td>'.($mesg?'<font class="error">'.$mesg.'</font>':$langs->trans("ChartNotGenerated")).'</td>';
+            }
+            print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=recalcul&amp;mode='.$mode.'">'.img_picto($langs->trans("ReCalculate"),'refresh').'</a></td>';
+            print '</tr>';
+            print '</table>';
 
-			if ($i % 2 == 0) print '<tr>';
+            print '</td>';
 
-			// Show graph
-			print '<td width="50%" align="center">';
+            if ($i % 2 == 1) print '</tr>';
 
-			print '<table class="border" width="100%">';
-			// Label
-			print '<tr class="liste_titre"><td colspan="2">';
-			print $graphfiles[$key]['label'];
-			print '</td></tr>';
-			// Image
-			print '<tr><td colspan="2" align="center">';
-			print $graphfiles[$key]['output'];
-			print '</td></tr>';
-			// Date generation
-			print '<tr>';
-			if ($graphfiles[$key]['output'] && ! $px->isGraphKo())
-			{
-			    if (file_exists($dir."/".$graphfiles[$key]['file']) && filemtime($dir."/".$graphfiles[$key]['file'])) print '<td>'.$langs->trans("GeneratedOn",dol_print_date(filemtime($dir."/".$graphfiles[$key]['file']),"dayhour")).'</td>';
-			    else print '<td>'.$langs->trans("GeneratedOn",dol_print_date(dol_now()),"dayhour").'</td>';
-			}
-			else
-			{
-				print '<td>'.($mesg?'<font class="error">'.$mesg.'</font>':$langs->trans("ChartNotGenerated")).'</td>';
-			}
-			print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=recalcul&amp;mode='.$mode.'">'.img_picto($langs->trans("ReCalculate"),'refresh').'</a></td>';
-			print '</tr>';
-			print '</table>';
+            $i++;
+        }
 
-			print '</td>';
+        if ($i % 2 == 1) print '<td>&nbsp;</td></tr>';
 
-			if ($i % 2 == 1) print '</tr>';
+        print '</table>';
 
+        print '<div class="tabsAction">';
+        print '</div>';
 
-			$i++;
-		}
-
-		if ($i % 2 == 1) print '<td>&nbsp;</td></tr>';
-
-		print '</table>';
-
-		print '<div class="tabsAction">';
-		print '</div>';
-
-	}
-}
-else
-{
-	dol_print_error();
+    }
+} else {
+    dol_print_error();
 }
 
 llxFooter();
 
 $db->close();
-?>

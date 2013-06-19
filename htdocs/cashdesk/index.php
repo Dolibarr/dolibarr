@@ -32,14 +32,12 @@ $langs->load("admin");
 $langs->load("cashdesk");
 
 // Test if user logged
-if ( $_SESSION['uid'] > 0 )
-{
-	header('Location: '.DOL_URL_ROOT.'/cashdesk/affIndex.php');
-	exit;
+if ($_SESSION['uid'] > 0) {
+    header('Location: '.DOL_URL_ROOT.'/cashdesk/affIndex.php');
+    exit;
 }
 
 $usertxt=GETPOST('user','',1);
-
 
 /*
  * View
@@ -67,24 +65,24 @@ top_htmlhead('','',0,0,'',$arrayofcss);
 <?php if (! empty($_GET["err"])) print $_GET["err"]."<br><br>\n"; ?>
 <fieldset class="cadre_facturation"><legend class="titre1"><?php echo $langs->trans("Identification"); ?></legend>
 <form id="frmLogin" method="POST" action="index_verif.php">
-	<input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>" />
+    <input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>" />
 
 <table>
 
-	<tr>
-		<td class="label1"><?php echo $langs->trans("Login"); ?></td>
-		<td><input name="txtUsername" class="texte_login" type="text" value="<?php echo $usertxt; ?>" /></td>
-	</tr>
-	<tr>
-		<td class="label1"><?php echo $langs->trans("Password"); ?></td>
-		<td><input name="pwdPassword" class="texte_login" type="password" value="" /></td>
-	</tr>
+    <tr>
+        <td class="label1"><?php echo $langs->trans("Login"); ?></td>
+        <td><input name="txtUsername" class="texte_login" type="text" value="<?php echo $usertxt; ?>" /></td>
+    </tr>
+    <tr>
+        <td class="label1"><?php echo $langs->trans("Password"); ?></td>
+        <td><input name="pwdPassword" class="texte_login" type="password" value="" /></td>
+    </tr>
 
-	<tr>
-		<td colspan="2">
-		&nbsp;
-		</td>
-	</tr>
+    <tr>
+        <td colspan="2">
+        &nbsp;
+        </td>
+    </tr>
 
 <?php
 print "<tr>";
@@ -98,18 +96,17 @@ print $form->select_company(GETPOST('socid','int')?GETPOST('socid','int'):$conf-
 print '</td>';
 print "</tr>\n";
 
-if (! empty($conf->stock->enabled))
-{
-	$langs->load("stocks");
-	print "<tr>";
-	print '<td class="label1">'.$langs->trans("Warehouse").'</td>';
-	print '<td>';
-	$disabled=0;
-	if (! empty($conf->global->CASHDESK_ID_WAREHOUSE)) $disabled=1;	// If a particular stock is defined, we disable choice
-	print $formproduct->selectWarehouses(GETPOST('warehouseid')?GETPOST('warehouseid'):$conf->global->CASHDESK_ID_WAREHOUSE,'warehouseid','',!$disabled,$disabled);
-	//print '<input name="warehouse_id" class="texte_login" type="warehouse_id" value="" />';
-	print '</td>';
-	print "</tr>\n";
+if (! empty($conf->stock->enabled)) {
+    $langs->load("stocks");
+    print "<tr>";
+    print '<td class="label1">'.$langs->trans("Warehouse").'</td>';
+    print '<td>';
+    $disabled=0;
+    if (! empty($conf->global->CASHDESK_ID_WAREHOUSE)) $disabled=1;	// If a particular stock is defined, we disable choice
+    print $formproduct->selectWarehouses(GETPOST('warehouseid')?GETPOST('warehouseid'):$conf->global->CASHDESK_ID_WAREHOUSE,'warehouseid','',!$disabled,$disabled);
+    //print '<input name="warehouse_id" class="texte_login" type="warehouse_id" value="" />';
+    print '</td>';
+    print "</tr>\n";
 }
 
 print "<tr>";
@@ -141,12 +138,11 @@ print "</tr>\n";
 
 ?>
 
-	<tr>
-		<td colspan="2">
-		&nbsp;
-		</td>
-	</tr>
-
+    <tr>
+        <td colspan="2">
+        &nbsp;
+        </td>
+    </tr>
 
 </table>
 <br>
@@ -157,17 +153,14 @@ print "</tr>\n";
 </fieldset>
 
 <?php
-if ($_GET['err'] < 0)
-{
-	echo ('<script type="text/javascript">');
-	echo ('	document.getElementById(\'frmLogin\').pwdPassword.focus();');
-	echo ('</script>');
-}
-else
-{
-	echo ('<script type="text/javascript">');
-	echo ('	document.getElementById(\'frmLogin\').txtUsername.focus();');
-	echo ('</script>');
+if ($_GET['err'] < 0) {
+    echo ('<script type="text/javascript">');
+    echo ('	document.getElementById(\'frmLogin\').pwdPassword.focus();');
+    echo ('</script>');
+} else {
+    echo ('<script type="text/javascript">');
+    echo ('	document.getElementById(\'frmLogin\').txtUsername.focus();');
+    echo ('</script>');
 }
 ?>
 
@@ -181,4 +174,3 @@ else
 
 <?php
 print '</html>';
-?>

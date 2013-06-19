@@ -41,8 +41,7 @@ $action = GETPOST('action','alpha');
  * Action
  */
 
-if ($action == 'specimen')
-{
+if ($action == 'specimen') {
     $modele=GETPOST('module','alpha');
 
     $don = new Don($db);
@@ -51,62 +50,49 @@ if ($action == 'specimen')
     // Search template files
     $dir = DOL_DOCUMENT_ROOT . "/core/modules/dons/";
     $file = $modele.".modules.php";
-    if (file_exists($dir.$file))
-    {
+    if (file_exists($dir.$file)) {
         $classname = $modele;
         require_once $dir.$file;
 
         $obj = new $classname($db);
 
-        if ($obj->write_file($don,$langs) > 0)
-        {
+        if ($obj->write_file($don,$langs) > 0) {
             header("Location: ".DOL_URL_ROOT."/document.php?modulepart=donation&file=SPECIMEN.html");
+
             return;
-        }
-        else
-        {
+        } else {
             $mesg='<div class="error">'.$obj->error.'</div>';
             dol_syslog($obj->error, LOG_ERR);
         }
-    }
-    else
-    {
+    } else {
         $mesg='<div class="error">'.$langs->trans("ErrorModuleNotFound").'</div>';
         dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
     }
 }
 
 // Set default model
-else if ($action == 'setdoc')
-{
-	if (dolibarr_set_const($db, "DON_ADDON_MODEL",$value,'chaine',0,'',$conf->entity))
-	{
-		// La constante qui a ete lue en avant du nouveau set
-		// on passe donc par une variable pour avoir un affichage coherent
-		$conf->global->DON_ADDON_MODEL = $value;
-	}
+else if ($action == 'setdoc') {
+    if (dolibarr_set_const($db, "DON_ADDON_MODEL",$value,'chaine',0,'',$conf->entity)) {
+        // La constante qui a ete lue en avant du nouveau set
+        // on passe donc par une variable pour avoir un affichage coherent
+        $conf->global->DON_ADDON_MODEL = $value;
+    }
 
-	// On active le modele
-	$ret = delDocumentModel($value, $type);
-	if ($ret > 0)
-	{
-		$ret = addDocumentModel($value, $type, $label, $scandir);
-	}
+    // On active le modele
+    $ret = delDocumentModel($value, $type);
+    if ($ret > 0) {
+        $ret = addDocumentModel($value, $type, $label, $scandir);
+    }
 }
 
 // Activate a model
-else if ($action == 'set')
-{
-	$ret = addDocumentModel($value, $type, $label, $scandir);
-}
-
-else if ($action == 'del')
-{
-	$ret = delDocumentModel($value, $type);
-	if ($ret > 0)
-	{
+else if ($action == 'set') {
+    $ret = addDocumentModel($value, $type, $label, $scandir);
+} elseif ($action == 'del') {
+    $ret = delDocumentModel($value, $type);
+    if ($ret > 0) {
         if ($conf->global->DON_ADDON_MODEL == "$value") dolibarr_del_const($db, 'DON_ADDON_MODEL',$conf->entity);
-	}
+    }
 }
 
 /*
@@ -144,19 +130,15 @@ $sql = "SELECT nom";
 $sql.= " FROM ".MAIN_DB_PREFIX."document_model";
 $sql.= " WHERE type = '".$type."'";
 $resql=$db->query($sql);
-if ($resql)
-{
+if ($resql) {
     $i = 0;
     $num_rows=$db->num_rows($resql);
-    while ($i < $num_rows)
-    {
+    while ($i < $num_rows) {
         $array = $db->fetch_array($resql);
         array_push($def, $array[0]);
         $i++;
     }
-}
-else
-{
+} else {
     dol_print_error($db);
 }
 
@@ -174,12 +156,9 @@ clearstatcache();
 $handle=opendir($dir);
 
 $var=True;
-if (is_resource($handle))
-{
-    while (($file = readdir($handle))!==false)
-    {
-        if (preg_match('/\.modules\.php$/i',$file))
-        {
+if (is_resource($handle)) {
+    while (($file = readdir($handle))!==false) {
+        if (preg_match('/\.modules\.php$/i',$file)) {
             $var = !$var;
             $name = substr($file, 0, dol_strlen($file) -12);
             $classname = substr($file, 0, dol_strlen($file) -12);
@@ -191,8 +170,7 @@ if (is_resource($handle))
             if ($module->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
             if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
 
-            if ($module->isEnabled())
-            {
+            if ($module->isEnabled()) {
                 print '<tr '.$bc[$var].'><td width=\"100\">';
                 echo $module->name;
                 print '</td>';
@@ -201,23 +179,17 @@ if (is_resource($handle))
                 print '</td>';
 
                 // Active
-                if (in_array($name, $def))
-                {
+                if (in_array($name, $def)) {
                     print "<td align=\"center\">\n";
-                    if ($conf->global->DON_ADDON_MODEL == $name)
-                    {
+                    if ($conf->global->DON_ADDON_MODEL == $name) {
                         print img_picto($langs->trans("Enabled"),'on');
-                    }
-                    else
-                    {
+                    } else {
                         print '&nbsp;';
                         print '</td><td align="center">';
                         print '<a href="dons.php?action=setdoc&value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Enabled"),'on').'</a>';
                     }
                     print '</td>';
-                }
-                else
-                {
+                } else {
                     print "<td align=\"center\">\n";
                     print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
                     print "</td>";
@@ -225,12 +197,9 @@ if (is_resource($handle))
 
                 // Defaut
                 print "<td align=\"center\">";
-                if ($conf->global->DON_ADDON_MODEL == "$name")
-                {
+                if ($conf->global->DON_ADDON_MODEL == "$name") {
                     print img_picto($langs->trans("Default"),'on');
-                }
-                else
-                {
+                } else {
                     print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
                 }
                 print '</td>';
@@ -238,8 +207,7 @@ if (is_resource($handle))
                 // Info
                 $htmltooltip =    ''.$langs->trans("Name").': '.$module->name;
                 $htmltooltip.='<br>'.$langs->trans("Type").': '.($module->type?$module->type:$langs->trans("Unknown"));
-                if ($module->type == 'pdf')
-                {
+                if ($module->type == 'pdf') {
                     $htmltooltip.='<br>'.$langs->trans("Width").'/'.$langs->trans("Height").': '.$module->page_largeur.'/'.$module->page_hauteur;
                 }
                 $htmltooltip.='<br><br><u>'.$langs->trans("FeaturesSupported").':</u>';
@@ -259,11 +227,8 @@ if (is_resource($handle))
 
 print '</table>';
 
-
 print "<br>";
-
 
 $db->close();
 
 llxFooter();
-?>

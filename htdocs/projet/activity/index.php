@@ -23,7 +23,7 @@
  *	\brief      Page activite perso du module projet
  */
 
-require ("../../main.inc.php");
+require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
@@ -37,9 +37,7 @@ if ($user->societe_id > 0) $socid=$user->societe_id;
 //$result = restrictedArea($user, 'projet', $projectid);
 if (!$user->rights->projet->lire) accessforbidden();
 
-
 $langs->load("projects");
-
 
 /*
  * View
@@ -59,18 +57,14 @@ llxHeader("",$title);
 print_fiche_titre($title);
 
 if ($mine) print $langs->trans("MyTasksDesc").'<br><br>';
-else
-{
-	if ($user->rights->projet->all->lire && ! $socid) print $langs->trans("TasksDesc").'<br><br>';
-	else print $langs->trans("TasksPublicDesc").'<br><br>';
+else {
+    if ($user->rights->projet->all->lire && ! $socid) print $langs->trans("TasksDesc").'<br><br>';
+    else print $langs->trans("TasksPublicDesc").'<br><br>';
 }
-
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
-
 print_projecttasks_array($db,$socid,$projectsListId,$mine);
-
 
 /* Affichage de la liste des projets d'aujourd'hui */
 print '<br><table class="noborder" width="100%">';
@@ -92,30 +86,26 @@ $sql.= " AND p.rowid in (".$projectsListId.")";
 $sql.= " GROUP BY p.rowid, p.ref, p.title";
 
 $resql = $db->query($sql);
-if ( $resql )
-{
-	$var=true;
-	$total=0;
+if ($resql) {
+    $var=true;
+    $total=0;
 
-	while ($row = $db->fetch_object($resql))
-	{
-		$var=!$var;
-		print "<tr $bc[$var]>";
-		print '<td>';
-		$projectstatic->id=$row->rowid;
-		$projectstatic->ref=$row->ref;
-		print $projectstatic->getNomUrl(1);
-		print '</td>';
-		print '<td align="right">'.convertSecondToTime($row->nb).'</td>';
-		print "</tr>\n";
-		$total += $row->nb;
-	}
+    while ($row = $db->fetch_object($resql)) {
+        $var=!$var;
+        print "<tr $bc[$var]>";
+        print '<td>';
+        $projectstatic->id=$row->rowid;
+        $projectstatic->ref=$row->ref;
+        print $projectstatic->getNomUrl(1);
+        print '</td>';
+        print '<td align="right">'.convertSecondToTime($row->nb).'</td>';
+        print "</tr>\n";
+        $total += $row->nb;
+    }
 
-	$db->free($resql);
-}
-else
-{
-	dol_print_error($db);
+    $db->free($resql);
+} else {
+    dol_print_error($db);
 }
 print '<tr class="liste_total">';
 print '<td>'.$langs->trans('Total').'</td>';
@@ -124,8 +114,7 @@ print "</tr>\n";
 print "</table>";
 
 // TODO Do not use date_add function to be compatible with all database
-if ($db->type != 'pgsql')
-{
+if ($db->type != 'pgsql') {
 
 /* Affichage de la liste des projets d'hier */
 print '<br><table class="noborder" width="100%">';
@@ -147,30 +136,26 @@ $sql.= " AND p.rowid in (".$projectsListId.")";
 $sql.= " GROUP BY p.rowid, p.ref, p.title";
 
 $resql = $db->query($sql);
-if ( $resql )
-{
-	$var=true;
-	$total=0;
+if ($resql) {
+    $var=true;
+    $total=0;
 
-	while ($row = $db->fetch_object($resql))
-	{
-		$var=!$var;
-		print "<tr $bc[$var]>";
-		print '<td>';
-		$projectstatic->id=$row->rowid;
-		$projectstatic->ref=$row->ref;
-		print $projectstatic->getNomUrl(1);
-		print '</td>';
-		print '<td align="right">'.convertSecondToTime($row->nb).'</td>';
-		print "</tr>\n";
-		$total += $row->nb;
-	}
+    while ($row = $db->fetch_object($resql)) {
+        $var=!$var;
+        print "<tr $bc[$var]>";
+        print '<td>';
+        $projectstatic->id=$row->rowid;
+        $projectstatic->ref=$row->ref;
+        print $projectstatic->getNomUrl(1);
+        print '</td>';
+        print '<td align="right">'.convertSecondToTime($row->nb).'</td>';
+        print "</tr>\n";
+        $total += $row->nb;
+    }
 
-	$db->free($resql);
-}
-else
-{
-	dol_print_error($db);
+    $db->free($resql);
+} else {
+    dol_print_error($db);
 }
 print '<tr class="liste_total">';
 print '<td>'.$langs->trans('Total').'</td>';
@@ -185,8 +170,7 @@ print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 
 // TODO Do not use week function to be compatible with all database
-if ($db->type != 'pgsql')
-{
+if ($db->type != 'pgsql') {
 
 /* Affichage de la liste des projets de la semaine */
 print '<table class="noborder" width="100%">';
@@ -208,30 +192,26 @@ $sql.= " AND p.rowid in (".$projectsListId.")";
 $sql.= " GROUP BY p.rowid, p.ref, p.title";
 
 $resql = $db->query($sql);
-if ( $resql )
-{
-	$total = 0;
-	$var=true;
+if ($resql) {
+    $total = 0;
+    $var=true;
 
-	while ($row = $db->fetch_object($resql))
-	{
-		$var=!$var;
-		print "<tr ".$bc[$var].">";
-		print '<td>';
-		$projectstatic->id=$row->rowid;
-		$projectstatic->ref=$row->ref;
-		print $projectstatic->getNomUrl(1);
-		print '</td>';
-		print '<td align="right">'.convertSecondToTime($row->nb).'</td>';
-		print "</tr>\n";
-		$total += $row->nb;
-	}
+    while ($row = $db->fetch_object($resql)) {
+        $var=!$var;
+        print "<tr ".$bc[$var].">";
+        print '<td>';
+        $projectstatic->id=$row->rowid;
+        $projectstatic->ref=$row->ref;
+        print $projectstatic->getNomUrl(1);
+        print '</td>';
+        print '<td align="right">'.convertSecondToTime($row->nb).'</td>';
+        print "</tr>\n";
+        $total += $row->nb;
+    }
 
-	$db->free($resql);
-}
-else
-{
-	dol_print_error($db);
+    $db->free($resql);
+} else {
+    dol_print_error($db);
 }
 print '<tr class="liste_total">';
 print '<td>'.$langs->trans('Total').'</td>';
@@ -261,27 +241,23 @@ $sql.= " AND p.rowid in (".$projectsListId.")";
 $sql.= " GROUP BY p.rowid, p.ref, p.title";
 
 $resql = $db->query($sql);
-if ( $resql )
-{
-	$var=false;
+if ($resql) {
+    $var=false;
 
-	while ($row = $db->fetch_object($resql))
-	{
-		print "<tr $bc[$var]>";
-		print '<td>';
-		$projectstatic->id=$row->rowid;
-		$projectstatic->ref=$row->ref;
-		print $projectstatic->getNomUrl(1);
-		print '</td>';
-		print '<td align="right">'.convertSecondToTime($row->nb).'</td>';
-		print "</tr>\n";
-		$var=!$var;
-	}
-	$db->free($resql);
-}
-else
-{
-	dol_print_error($db);
+    while ($row = $db->fetch_object($resql)) {
+        print "<tr $bc[$var]>";
+        print '<td>';
+        $projectstatic->id=$row->rowid;
+        $projectstatic->ref=$row->ref;
+        print $projectstatic->getNomUrl(1);
+        print '</td>';
+        print '<td align="right">'.convertSecondToTime($row->nb).'</td>';
+        print "</tr>\n";
+        $var=!$var;
+    }
+    $db->free($resql);
+} else {
+    dol_print_error($db);
 }
 print "</table>";
 
@@ -306,33 +282,26 @@ $sql.= " GROUP BY p.rowid, p.ref, p.title";
 
 $var=false;
 $resql = $db->query($sql);
-if ( $resql )
-{
-	while ($row = $db->fetch_object($resql))
-	{
-		print "<tr $bc[$var]>";
-		print '<td>';
-		$projectstatic->id=$row->rowid;
-		$projectstatic->ref=$row->ref;
-		print $projectstatic->getNomUrl(1);
-		print '</td>';
-		print '<td align="right">'.convertSecondToTime($row->nb).'</td>';
-		print "</tr>\n";
-		$var=!$var;
-	}
-	$db->free($resql);
-}
-else
-{
-	dol_print_error($db);
+if ($resql) {
+    while ($row = $db->fetch_object($resql)) {
+        print "<tr $bc[$var]>";
+        print '<td>';
+        $projectstatic->id=$row->rowid;
+        $projectstatic->ref=$row->ref;
+        print $projectstatic->getNomUrl(1);
+        print '</td>';
+        print '<td align="right">'.convertSecondToTime($row->nb).'</td>';
+        print "</tr>\n";
+        $var=!$var;
+    }
+    $db->free($resql);
+} else {
+    dol_print_error($db);
 }
 print "</table>";
 
-
 print '</div></div></div>';
-
 
 llxFooter();
 
 $db->close();
-?>

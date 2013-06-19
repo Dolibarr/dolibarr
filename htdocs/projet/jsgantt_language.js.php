@@ -31,7 +31,6 @@ if (! defined('NOREQUIREMENU'))   define('NOREQUIREMENU',1);
 if (! defined('NOREQUIREHTML'))   define('NOREQUIREHTML',1);
 if (! defined('NOREQUIREAJAX'))   define('NOREQUIREAJAX','1');
 
-
 require_once '../main.inc.php';
 
 // Define css type
@@ -70,7 +69,5 @@ i18n["December"] = "<?php echo $langs->transnoentities("December") ?>";
 i18n["Quarter"] = "<?php echo $langs->transnoentities("Quarter") ?>";
 i18n["Period"] = "<?php echo $langs->transnoentities("Period") ?>";
 
-
 <?php
 if (is_object($db)) $db->close();
-?>

@@ -31,7 +31,6 @@ if ($user->societe_id > 0) $socid = $user->societe_id;
 if (! empty($conf->comptabilite->enabled)) $result=restrictedArea($user,'compta','','','resultat');
 if (! empty($conf->accounting->enabled)) $result=restrictedArea($user,'accounting','','','comptarapport');
 
-
 /*
  *	Views
  */
@@ -42,7 +41,6 @@ $year=$_GET["year"];
 $month=$_GET["month"];
 if (! $year) { $year = strftime("%Y", time()); }
 
-
 /* Le compte de r�sultat est un document officiel requis par l'administration selon le status ou activit� */
 
 print_titre("Bilan".($year?" annee $year":""));
@@ -51,8 +49,6 @@ print '<br>';
 
 print $langs->trans("FeatureNotYetAvailable");
 
-
 llxFooter();
 
 $db->close();
-?>

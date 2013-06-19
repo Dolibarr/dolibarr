@@ -33,95 +33,94 @@ include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 class modLabel extends DolibarrModules
 {
 
-	/**
-	 *   Constructor. Define names, constants, directories, boxes, permissions
-	 *
-	 *   @param      DoliDB		$db      Database handler
-	 */
-	function __construct($db)
-	{
-		$this->db = $db;
-		$this->numero = 60;
+    /**
+     *   Constructor. Define names, constants, directories, boxes, permissions
+     *
+     *   @param      DoliDB		$db      Database handler
+     */
+    public function __construct($db)
+    {
+        $this->db = $db;
+        $this->numero = 60;
 
-		$this->family = "other";
-		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
-		$this->name = preg_replace('/^mod/i','',get_class($this));
-		$this->description = "Gestion des etiquettes";
-		$this->version = 'development';		// 'development' or 'experimental' or 'dolibarr' or version
-		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
-		$this->special = 2;
-		$this->picto='label';
+        $this->family = "other";
+        // Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
+        $this->name = preg_replace('/^mod/i','',get_class($this));
+        $this->description = "Gestion des etiquettes";
+        $this->version = 'development';		// 'development' or 'experimental' or 'dolibarr' or version
+        $this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
+        $this->special = 2;
+        $this->picto='label';
 
-		// Data directories to create when module is enabled
-		$this->dirs = array("/label/temp");
+        // Data directories to create when module is enabled
+        $this->dirs = array("/label/temp");
 
-		// Dependancies
-		$this->depends = array();
-		$this->requiredby = array();
+        // Dependancies
+        $this->depends = array();
+        $this->requiredby = array();
 
-		// Config pages
-		$this->config_page_url = array("label.php");
+        // Config pages
+        $this->config_page_url = array("label.php");
 
-		// Constants
-		$this->const = array();
+        // Constants
+        $this->const = array();
 
-		// Boxes
-		$this->boxes = array();
+        // Boxes
+        $this->boxes = array();
 
-		// Permissions
-		$this->rights = array();
-		$this->rights_class = 'label';
+        // Permissions
+        $this->rights = array();
+        $this->rights_class = 'label';
 
-		$this->rights[1][0] = 601; // id de la permission
-		$this->rights[1][1] = 'Lire les etiquettes'; // libelle de la permission
-		$this->rights[1][3] = 1; // La permission est-elle une permission par defaut
-		$this->rights[1][4] = 'lire';
+        $this->rights[1][0] = 601; // id de la permission
+        $this->rights[1][1] = 'Lire les etiquettes'; // libelle de la permission
+        $this->rights[1][3] = 1; // La permission est-elle une permission par defaut
+        $this->rights[1][4] = 'lire';
 
-		$this->rights[2][0] = 602; // id de la permission
-		$this->rights[2][1] = 'Creer/modifier les etiquettes'; // libelle de la permission
-		$this->rights[2][3] = 0; // La permission est-elle une permission par defaut
-		$this->rights[2][4] = 'creer';
+        $this->rights[2][0] = 602; // id de la permission
+        $this->rights[2][1] = 'Creer/modifier les etiquettes'; // libelle de la permission
+        $this->rights[2][3] = 0; // La permission est-elle une permission par defaut
+        $this->rights[2][4] = 'creer';
 
-		$this->rights[4][0] = 609; // id de la permission
-		$this->rights[4][1] = 'Supprimer les etiquettes'; // libelle de la permission
-		$this->rights[4][3] = 0; // La permission est-elle une permission par defaut
-		$this->rights[4][4] = 'supprimer';
+        $this->rights[4][0] = 609; // id de la permission
+        $this->rights[4][1] = 'Supprimer les etiquettes'; // libelle de la permission
+        $this->rights[4][3] = 0; // La permission est-elle une permission par defaut
+        $this->rights[4][4] = 'supprimer';
 
-	}
+    }
 
-
-	/**
-	 *		Function called when module is enabled.
-	 *		The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
-	 *		It also creates data directories
-	 *
-     *      @param      string	$options    Options when enabling module ('', 'noboxes')
-	 *      @return     int             	1 if OK, 0 if KO
-	 */
-	function init($options='')
-	{
-		// Permissions
-		$this->remove($options);
-
-		$sql = array();
-
-		return $this->_init($sql,$options);
-	}
 
     /**
-	 *		Function called when module is disabled.
-	 *      Remove from database constants, boxes and permissions from Dolibarr database.
-	 *		Data directories are not deleted
-	 *
+     *		Function called when module is enabled.
+     *		The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
+     *		It also creates data directories
+     *
      *      @param      string	$options    Options when enabling module ('', 'noboxes')
-	 *      @return     int             	1 if OK, 0 if KO
+     *      @return     int             	1 if OK, 0 if KO
      */
-    function remove($options='')
+    public function init($options='')
     {
-		$sql = array();
+        // Permissions
+        $this->remove($options);
 
-		return $this->_remove($sql,$options);
+        $sql = array();
+
+        return $this->_init($sql,$options);
+    }
+
+    /**
+     *		Function called when module is disabled.
+     *      Remove from database constants, boxes and permissions from Dolibarr database.
+     *		Data directories are not deleted
+     *
+     *      @param      string	$options    Options when enabling module ('', 'noboxes')
+     *      @return     int             	1 if OK, 0 if KO
+     */
+    public function remove($options='')
+    {
+        $sql = array();
+
+        return $this->_remove($sql,$options);
     }
 
 }
-?>

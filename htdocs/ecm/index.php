@@ -65,14 +65,12 @@ if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="fullname";
 
 $ecmdir = new EcmDirectory($db);
-if ($section)
-{
-	$result=$ecmdir->fetch($section);
-	if (! $result > 0)
-	{
-		dol_print_error($db,$ecmdir->error);
-		exit;
-	}
+if ($section) {
+    $result=$ecmdir->fetch($section);
+    if (! $result > 0) {
+        dol_print_error($db,$ecmdir->error);
+        exit;
+    }
 }
 
 $form=new Form($db);
@@ -81,125 +79,99 @@ $userstatic = new User($db);
 
 $error=0;
 
-
 /*
  *	Actions
  */
 
 // Upload file
-if (GETPOST("sendit") && ! empty($conf->global->MAIN_UPLOAD_DOC))
-{
-	// Define relativepath and upload_dir
+if (GETPOST("sendit") && ! empty($conf->global->MAIN_UPLOAD_DOC)) {
+    // Define relativepath and upload_dir
     $relativepath='';
-	if ($ecmdir->id) $relativepath=$ecmdir->getRelativePath();
-	else $relativepath=GETPOST('section_dir');
-	$upload_dir = $conf->ecm->dir_output.'/'.$relativepath;
+    if ($ecmdir->id) $relativepath=$ecmdir->getRelativePath();
+    else $relativepath=GETPOST('section_dir');
+    $upload_dir = $conf->ecm->dir_output.'/'.$relativepath;
 
-	if (empty($_FILES['userfile']['tmp_name']))
-	{
-		$error++;
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("File")), 'errors');
-	}
+    if (empty($_FILES['userfile']['tmp_name'])) {
+        $error++;
+        setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("File")), 'errors');
+    }
 
-	if (! $error)
-	{
-		if (dol_mkdir($upload_dir) >= 0)
-		{
-			$resupload = dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_dir . "/" . dol_unescapefile($_FILES['userfile']['name']),0, 0, $_FILES['userfile']['error']);
-			if (is_numeric($resupload) && $resupload > 0)
-			{
-				//$mesg = '<div class="ok">'.$langs->trans("FileTransferComplete").'</div>';
-				//print_r($_FILES);
-				$result=$ecmdir->changeNbOfFiles('+');
-			}
-			else
-			{
-				$langs->load("errors");
-				if ($resupload < 0)	// Unknown error
-				{
-					setEventMessage($langs->trans("ErrorFileNotUploaded"), 'errors');
-				}
-				else if (preg_match('/ErrorFileIsInfectedWithAVirus/',$resupload))	// Files infected by a virus
-				{
-					setEventMessage($langs->trans("ErrorFileIsInfectedWithAVirus"), 'errors');
-				}
-				else	// Known error
-				{
-					setEventMessage($langs->trans($resupload), 'errors');
-				}
-			}
-		}
-		else
-		{
-			$langs->load("errors");
-			$mesg = '<div class="error">'.$langs->trans("ErrorFailToCreateDir",$upload_dir).'</div>';
-		}
-	}
+    if (! $error) {
+        if (dol_mkdir($upload_dir) >= 0) {
+            $resupload = dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_dir . "/" . dol_unescapefile($_FILES['userfile']['name']),0, 0, $_FILES['userfile']['error']);
+            if (is_numeric($resupload) && $resupload > 0) {
+                //$mesg = '<div class="ok">'.$langs->trans("FileTransferComplete").'</div>';
+                //print_r($_FILES);
+                $result=$ecmdir->changeNbOfFiles('+');
+            } else {
+                $langs->load("errors");
+                if ($resupload < 0) {	// Unknown error
+                    setEventMessage($langs->trans("ErrorFileNotUploaded"), 'errors');
+                } elseif (preg_match('/ErrorFileIsInfectedWithAVirus/',$resupload)) {	// Files infected by a virus
+                    setEventMessage($langs->trans("ErrorFileIsInfectedWithAVirus"), 'errors');
+                } else {	// Known error
+                    setEventMessage($langs->trans($resupload), 'errors');
+                }
+            }
+        } else {
+            $langs->load("errors");
+            $mesg = '<div class="error">'.$langs->trans("ErrorFailToCreateDir",$upload_dir).'</div>';
+        }
+    }
 }
 
-
-
 // Add directory
-if ($action == 'add' && $user->rights->ecm->setup)
-{
-	$ecmdir->ref                = 'NOTUSEDYET';
-	$ecmdir->label              = GETPOST("label");
-	$ecmdir->description        = GETPOST("desc");
+if ($action == 'add' && $user->rights->ecm->setup) {
+    $ecmdir->ref                = 'NOTUSEDYET';
+    $ecmdir->label              = GETPOST("label");
+    $ecmdir->description        = GETPOST("desc");
 
-	$id = $ecmdir->create($user);
-	if ($id > 0)
-	{
-		header("Location: ".$_SERVER["PHP_SELF"]);
-		exit;
-	}
-	else
-	{
-		$mesg='<div class="error">Error '.$langs->trans($ecmdir->error).'</div>';
-		$action = "create";
-	}
+    $id = $ecmdir->create($user);
+    if ($id > 0) {
+        header("Location: ".$_SERVER["PHP_SELF"]);
+        exit;
+    } else {
+        $mesg='<div class="error">Error '.$langs->trans($ecmdir->error).'</div>';
+        $action = "create";
+    }
 
-	clearstatcache();
+    clearstatcache();
 }
 
 // Remove file
-if ($action == 'confirm_deletefile')
-{
-    if (GETPOST('confirm') == 'yes')
-    {
+if ($action == 'confirm_deletefile') {
+    if (GETPOST('confirm') == 'yes') {
         $langs->load("other");
-    	$result=$ecmdir->fetch($section);
-    	if (! ($result > 0))
-    	{
-    		dol_print_error($db,$ecmdir->error);
-    		exit;
-    	}
-    	$relativepath=$ecmdir->getRelativePath();
-    	$upload_dir = $conf->ecm->dir_output.'/'.$relativepath;
-    	$file = $upload_dir . "/" . GETPOST('urlfile');	// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
+        $result=$ecmdir->fetch($section);
+        if (! ($result > 0)) {
+            dol_print_error($db,$ecmdir->error);
+            exit;
+        }
+        $relativepath=$ecmdir->getRelativePath();
+        $upload_dir = $conf->ecm->dir_output.'/'.$relativepath;
+        $file = $upload_dir . "/" . GETPOST('urlfile');	// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
 
-    	$ret=dol_delete_file($file);
-    	if ($ret) setEventMessage($langs->trans("FileWasRemoved", GETPOST('urlfile')));
-    	else setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), 'errors');
+        $ret=dol_delete_file($file);
+        if ($ret) setEventMessage($langs->trans("FileWasRemoved", GETPOST('urlfile')));
+        else setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), 'errors');
 
-    	$result=$ecmdir->changeNbOfFiles('-');
+        $result=$ecmdir->changeNbOfFiles('-');
 
-    	clearstatcache();
+        clearstatcache();
     }
-   	$action='file_manager';
+       $action='file_manager';
 }
 
 // Remove directory
-if ($action == 'confirm_deletesection' && GETPOST('confirm') == 'yes')
-{
-	$result=$ecmdir->delete($user);
-	$mesg = '<div class="ok">'.$langs->trans("ECMSectionWasRemoved", $ecmdir->label).'</div>';
+if ($action == 'confirm_deletesection' && GETPOST('confirm') == 'yes') {
+    $result=$ecmdir->delete($user);
+    $mesg = '<div class="ok">'.$langs->trans("ECMSectionWasRemoved", $ecmdir->label).'</div>';
 
     clearstatcache();
 }
 
 // Refresh directory view
-if ($action == 'refreshmanual')
-{
+if ($action == 'refreshmanual') {
     clearstatcache();
 
     $diroutputslash=str_replace('\\','/',$conf->ecm->dir_output);
@@ -216,20 +188,16 @@ if ($action == 'refreshmanual')
     // Now we compare both trees to complete missing trees into database
     //var_dump($disktree);
     //var_dump($sqltree);
-    foreach($disktree as $dirdesc)    // Loop on tree onto disk
-    {
+    foreach ($disktree as $dirdesc) {    // Loop on tree onto disk
         $dirisindatabase=0;
-        foreach($sqltree as $dirsqldesc)
-        {
-            if ($conf->ecm->dir_output.'/'.$dirsqldesc['fullrelativename'] == $dirdesc['fullname'])
-            {
+        foreach ($sqltree as $dirsqldesc) {
+            if ($conf->ecm->dir_output.'/'.$dirsqldesc['fullrelativename'] == $dirdesc['fullname']) {
                 $dirisindatabase=1;
                 break;
             }
         }
 
-        if (! $dirisindatabase)
-        {
+        if (! $dirisindatabase) {
             $txt="Directory found on disk ".$dirdesc['fullname'].", not found into database so we add it";
             dol_syslog($txt);
             //print $txt."<br>\n";
@@ -240,42 +208,33 @@ if ($action == 'refreshmanual')
             $relativepathtosearchparent=$relativepathmissing;
             //dol_syslog("Try to find parent id for directory ".$relativepathtosearchparent);
             if (preg_match('/\//',$relativepathtosearchparent))
-            //while (preg_match('/\//',$relativepathtosearchparent))
-            {
+            //while (preg_match('/\//',$relativepathtosearchparent)) {
                 $relativepathtosearchparent=preg_replace('/\/[^\/]*$/','',$relativepathtosearchparent);
                 $txt="Is relative parent path ".$relativepathtosearchparent." for ".$relativepathmissing." found in sql tree ?";
                 dol_syslog($txt);
                 //print $txt." -> ";
                 $parentdirisindatabase=0;
-                foreach($sqltree as $dirsqldesc)
-                {
-                    if ($dirsqldesc['fullrelativename'] == $relativepathtosearchparent)
-                    {
+                foreach ($sqltree as $dirsqldesc) {
+                    if ($dirsqldesc['fullrelativename'] == $relativepathtosearchparent) {
                         $parentdirisindatabase=$dirsqldesc['id'];
                         break;
                     }
                 }
-                if ($parentdirisindatabase > 0)
-                {
+                if ($parentdirisindatabase > 0) {
                     dol_syslog("Yes with id ".$parentdirisindatabase);
                     //print "Yes with id ".$parentdirisindatabase."<br>\n";
                     $fk_parent=$parentdirisindatabase;
                     //break;  // We found parent, we can stop the while loop
-                }
-                else
-                {
+                } else {
                     dol_syslog("No");
                     //print "No<br>\n";
                 }
-            }
-            else
-           {
+            } else {
                 dol_syslog("Parent is root");
                 $fk_parent=0;   // Parent is root
             }
 
-            if ($fk_parent >= 0)
-            {
+            if ($fk_parent >= 0) {
                 $ecmdirtmp=new EcmDirectory($db);
                 $ecmdirtmp->ref                = 'NOTUSEDYET';
                 $ecmdirtmp->label              = dol_basename($dirdesc['fullname']);
@@ -286,8 +245,7 @@ if ($action == 'refreshmanual')
                 dol_syslog($txt);
                 //print $ecmdirtmp->cachenbofdoc."<br>\n";exit;
                 $id = $ecmdirtmp->create($user);
-                if ($id > 0)
-                {
+                if ($id > 0) {
                     $newdirsql=array('id'=>$id,
                                      'id_mere'=>$ecmdirtmp->fk_parent,
                                      'label'=>$ecmdirtmp->label,
@@ -296,13 +254,10 @@ if ($action == 'refreshmanual')
                     $sqltree[]=$newdirsql; // We complete fulltree for following loops
                     //var_dump($sqltree);
                     $adirwascreated=1;
-                }
-                else
-                {
+                } else {
                     dol_syslog("Failed to create directory ".$ecmdirtmp->label, LOG_ERR);
                 }
-            }
-            else {
+            } else {
                 $txt="Parent of ".$dirdesc['fullname']." not found";
                 dol_syslog($txt);
                 //print $txt."<br>\n";
@@ -318,8 +273,6 @@ if ($action == 'refreshmanual')
     // it to be sure that fulltree array is not used without reloading it.
     if ($adirwascreated) $sqltree=null;
 }
-
-
 
 /*
  *	View
@@ -344,7 +297,7 @@ $moreheadjs=empty($conf->use_javascript_ajax)?"":"
 <script type=\"text/javascript\">
     jQuery(document).ready(function () {
         jQuery('#containerlayout').layout({
-        	name: \"ecmlayout\"
+            name: \"ecmlayout\"
         ,   paneClass:    \"ecm-layout-pane\"
         ,   resizerClass: \"ecm-layout-resizer\"
         ,   togglerClass: \"ecm-layout-toggler\"
@@ -376,21 +329,20 @@ $moreheadjs=empty($conf->use_javascript_ajax)?"":"
 
 llxHeader($moreheadcss.$moreheadjs,$langs->trans("ECMArea"),'','','','',$morejs,'',0,0);
 
-
 // Add sections to manage
 $rowspan=0;
 $sectionauto=array();
 if (!empty($conf->global->ECM_AUTO_TREE_ENABLED)) {
-	if (! empty($conf->product->enabled) || ! empty($conf->service->enabled))     { $rowspan++; $sectionauto[]=array('level'=>1, 'module'=>'product', 'test'=>(! empty($conf->product->enabled) || ! empty($conf->service->enabled)), 'label'=>$langs->trans("ProductsAndServices"),     'desc'=>$langs->trans("ECMDocsByProducts")); }
-	if (! empty($conf->societe->enabled))     { $rowspan++; $sectionauto[]=array('level'=>1, 'module'=>'company', 'test'=>$conf->societe->enabled, 'label'=>$langs->trans("ThirdParties"), 'desc'=>$langs->trans("ECMDocsByThirdParties")); }
-	if (! empty($conf->propal->enabled))      { $rowspan++; $sectionauto[]=array('level'=>1, 'module'=>'propal',  'test'=>$conf->propal->enabled,  'label'=>$langs->trans("Prop"),    'desc'=>$langs->trans("ECMDocsByProposals")); }
-	if (! empty($conf->contrat->enabled))     { $rowspan++; $sectionauto[]=array('level'=>1, 'module'=>'contract','test'=>$conf->contrat->enabled, 'label'=>$langs->trans("Contracts"),    'desc'=>$langs->trans("ECMDocsByContracts")); }
-	if (! empty($conf->commande->enabled))    { $rowspan++; $sectionauto[]=array('level'=>1, 'module'=>'order',   'test'=>$conf->commande->enabled,'label'=>$langs->trans("CustomersOrders"),       'desc'=>$langs->trans("ECMDocsByOrders")); }
-	if (! empty($conf->facture->enabled))     { $rowspan++; $sectionauto[]=array('level'=>1, 'module'=>'invoice', 'test'=>$conf->facture->enabled, 'label'=>$langs->trans("CustomersInvoices"),     'desc'=>$langs->trans("ECMDocsByInvoices")); }
-	if (! empty($conf->fournisseur->enabled)) { $rowspan++; $sectionauto[]=array('level'=>1, 'module'=>'order_supplier',   'test'=>$conf->fournisseur->enabled, 'label'=>$langs->trans("SuppliersOrders"),     'desc'=>$langs->trans("ECMDocsByOrders")); }
-	if (! empty($conf->fournisseur->enabled)) { $rowspan++; $sectionauto[]=array('level'=>1, 'module'=>'invoice_supplier', 'test'=>$conf->fournisseur->enabled, 'label'=>$langs->trans("SuppliersInvoices"),   'desc'=>$langs->trans("ECMDocsByInvoices")); }
-	if (! empty($conf->tax->enabled))         { $rowspan++; $sectionauto[]=array('level'=>1, 'module'=>'tax', 'test'=>$conf->tax->enabled, 'label'=>$langs->trans("SocialContributions"),     'desc'=>$langs->trans("ECMDocsBySocialContributions")); }
-	if (! empty($conf->projet->enabled))         { $rowspan++; $sectionauto[]=array('level'=>1, 'module'=>'project', 'test'=>$conf->projet->enabled, 'label'=>$langs->trans("Projects"),     'desc'=>$langs->trans("ECMDocsByProjects")); }
+    if (! empty($conf->product->enabled) || ! empty($conf->service->enabled)) { $rowspan++; $sectionauto[]=array('level'=>1, 'module'=>'product', 'test'=>(! empty($conf->product->enabled) || ! empty($conf->service->enabled)), 'label'=>$langs->trans("ProductsAndServices"),     'desc'=>$langs->trans("ECMDocsByProducts")); }
+    if (! empty($conf->societe->enabled)) { $rowspan++; $sectionauto[]=array('level'=>1, 'module'=>'company', 'test'=>$conf->societe->enabled, 'label'=>$langs->trans("ThirdParties"), 'desc'=>$langs->trans("ECMDocsByThirdParties")); }
+    if (! empty($conf->propal->enabled)) { $rowspan++; $sectionauto[]=array('level'=>1, 'module'=>'propal',  'test'=>$conf->propal->enabled,  'label'=>$langs->trans("Prop"),    'desc'=>$langs->trans("ECMDocsByProposals")); }
+    if (! empty($conf->contrat->enabled)) { $rowspan++; $sectionauto[]=array('level'=>1, 'module'=>'contract','test'=>$conf->contrat->enabled, 'label'=>$langs->trans("Contracts"),    'desc'=>$langs->trans("ECMDocsByContracts")); }
+    if (! empty($conf->commande->enabled)) { $rowspan++; $sectionauto[]=array('level'=>1, 'module'=>'order',   'test'=>$conf->commande->enabled,'label'=>$langs->trans("CustomersOrders"),       'desc'=>$langs->trans("ECMDocsByOrders")); }
+    if (! empty($conf->facture->enabled)) { $rowspan++; $sectionauto[]=array('level'=>1, 'module'=>'invoice', 'test'=>$conf->facture->enabled, 'label'=>$langs->trans("CustomersInvoices"),     'desc'=>$langs->trans("ECMDocsByInvoices")); }
+    if (! empty($conf->fournisseur->enabled)) { $rowspan++; $sectionauto[]=array('level'=>1, 'module'=>'order_supplier',   'test'=>$conf->fournisseur->enabled, 'label'=>$langs->trans("SuppliersOrders"),     'desc'=>$langs->trans("ECMDocsByOrders")); }
+    if (! empty($conf->fournisseur->enabled)) { $rowspan++; $sectionauto[]=array('level'=>1, 'module'=>'invoice_supplier', 'test'=>$conf->fournisseur->enabled, 'label'=>$langs->trans("SuppliersInvoices"),   'desc'=>$langs->trans("ECMDocsByInvoices")); }
+    if (! empty($conf->tax->enabled)) { $rowspan++; $sectionauto[]=array('level'=>1, 'module'=>'tax', 'test'=>$conf->tax->enabled, 'label'=>$langs->trans("SocialContributions"),     'desc'=>$langs->trans("ECMDocsBySocialContributions")); }
+    if (! empty($conf->projet->enabled)) { $rowspan++; $sectionauto[]=array('level'=>1, 'module'=>'project', 'test'=>$conf->projet->enabled, 'label'=>$langs->trans("Projects"),     'desc'=>$langs->trans("ECMDocsByProjects")); }
 }
 
 print_fiche_titre($langs->trans("ECMArea").' - '.$langs->trans("ECMFileManager"));
@@ -402,14 +354,12 @@ print "<br>\n";
 print '</div>';
 
 // Confirm remove file (for non javascript users)
-if ($action == 'delete' && empty($conf->use_javascript_ajax))
-{
-	$ret=$form->form_confirm($_SERVER["PHP_SELF"].'?section='.$section.'&urlfile='.urlencode($_GET["urlfile"]), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile','','',1);
-	if ($ret == 'html') print '<br>';
+if ($action == 'delete' && empty($conf->use_javascript_ajax)) {
+    $ret=$form->form_confirm($_SERVER["PHP_SELF"].'?section='.$section.'&urlfile='.urlencode($_GET["urlfile"]), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile','','',1);
+    if ($ret == 'html') print '<br>';
 }
 
 dol_htmloutput_mesg($mesg);
-
 
 if (! empty($conf->use_javascript_ajax)) $classviewhide='hidden';
 else $classviewhide='visible';
@@ -424,14 +374,11 @@ else $classviewhide='visible';
 print '<div class="toolbarbutton">';
 
 // Toolbar
-if ($user->rights->ecm->setup)
-{
+if ($user->rights->ecm->setup) {
     print '<a href="'.DOL_URL_ROOT.'/ecm/docdir.php?action=create" class="toolbarbutton" title="'.dol_escape_htmltag($langs->trans('ECMAddSection')).'">';
     print '<img class="toolbarbutton" border="0" src="'.DOL_URL_ROOT.'/theme/common/folder-new.png">';
     print '</a>';
-}
-else
-{
+} else {
     print '<a href="#" class="toolbarbutton" title="'.$langs->trans("NotAllowed").'">';
     print '<img class="toolbarbutton" border="0" src="'.DOL_URL_ROOT.'/theme/common/folder-new.png">';
     print '</a>';
@@ -450,10 +397,8 @@ print '</div>';
 <?php
 // Start left area
 
-
 // Confirmation de la suppression d'une ligne categorie
-if ($action == 'delete_section')
-{
+if ($action == 'delete_section') {
     $ret=$form->form_confirm($_SERVER["PHP_SELF"].'?section='.$section, $langs->trans('DeleteSection'), $langs->trans('ConfirmDeleteSection',$ecmdir->label), 'confirm_deletesection','','',1);
     if ($ret == 'html') print '<br>';
 }
@@ -461,289 +406,268 @@ if ($action == 'delete_section')
 
 
 
-if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i',$action) || $action == 'delete')
-{
-	print '<table width="100%" class="nobordernopadding">';
+if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i',$action) || $action == 'delete') {
+    print '<table width="100%" class="nobordernopadding">';
 
-	print '<tr class="liste_titre">';
+    print '<tr class="liste_titre">';
     print '<td class="liste_titre" align="left" colspan="6">';
     print '&nbsp;'.$langs->trans("ECMSections");
-	print '</td></tr>';
+    print '</td></tr>';
 
     $showonrightsize='';
     // Auto section
-	if (count($sectionauto))
-	{
-		$htmltooltip=$langs->trans("ECMAreaDesc2");
+    if (count($sectionauto)) {
+        $htmltooltip=$langs->trans("ECMAreaDesc2");
 
-		// Root title line (Automatic section)
-		print '<tr>';
-		print '<td>';
-		print '<table class="nobordernopadding"><tr class="nobordernopadding">';
-		print '<td align="left" width="24">';
-		print img_picto_common('','treemenu/base.gif');
-		print '</td><td align="left">';
-		$txt=$langs->trans("ECMRoot").' ('.$langs->trans("ECMSectionsAuto").')';
-		print $form->textwithpicto($txt, $htmltooltip, 1, 0);
-		print '</td>';
-		print '</tr></table>';
-		print '</td>';
-		print '<td align="right">&nbsp;</td>';
-		print '<td align="right">&nbsp;</td>';
-		print '<td align="right">&nbsp;</td>';
-		print '<td align="right">&nbsp;</td>';
-		print '<td align="center">';
-		print '</td>';
-		print '</tr>';
+        // Root title line (Automatic section)
+        print '<tr>';
+        print '<td>';
+        print '<table class="nobordernopadding"><tr class="nobordernopadding">';
+        print '<td align="left" width="24">';
+        print img_picto_common('','treemenu/base.gif');
+        print '</td><td align="left">';
+        $txt=$langs->trans("ECMRoot").' ('.$langs->trans("ECMSectionsAuto").')';
+        print $form->textwithpicto($txt, $htmltooltip, 1, 0);
+        print '</td>';
+        print '</tr></table>';
+        print '</td>';
+        print '<td align="right">&nbsp;</td>';
+        print '<td align="right">&nbsp;</td>';
+        print '<td align="right">&nbsp;</td>';
+        print '<td align="right">&nbsp;</td>';
+        print '<td align="center">';
+        print '</td>';
+        print '</tr>';
 
-		$sectionauto=dol_sort_array($sectionauto,'label','ASC',true,false);
+        $sectionauto=dol_sort_array($sectionauto,'label','ASC',true,false);
 
-		print '<tr>';
-    	print '<td colspan="6" style="padding-left: 20px">';
-	    print '<div id="filetreeauto" class="ecmfiletree"><ul class="ecmjqft">';
+        print '<tr>';
+        print '<td colspan="6" style="padding-left: 20px">';
+        print '<div id="filetreeauto" class="ecmfiletree"><ul class="ecmjqft">';
 
-		$nbofentries=0;
-		$oldvallevel=0;
-		foreach ($sectionauto as $key => $val)
-		{
-			if (empty($val['test'])) continue;   // If condition to show is ok
+        $nbofentries=0;
+        $oldvallevel=0;
+        foreach ($sectionauto as $key => $val) {
+            if (empty($val['test'])) continue;   // If condition to show is ok
 
-			$var=false;
+            $var=false;
 
-		    print '<li class="directory collapsed">';
-			if (! empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE_JS))
-			{
-			    print '<a class="fmdirlia jqft ecmjqft" href="'.DOL_URL_ROOT.'/ecm/index.php?module='.$val['module'].'">';
-			    print $val['label'];
-   			    print '</a>';
-			}
-			else
-			{
-			    print '<a class="fmdirlia jqft ecmjqft" href="'.DOL_URL_ROOT.'/ecm/index.php?module='.$val['module'].'">';
-			    print $val['label'];
-			    print '</a>';
-			}
+            print '<li class="directory collapsed">';
+            if (! empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE_JS)) {
+                print '<a class="fmdirlia jqft ecmjqft" href="'.DOL_URL_ROOT.'/ecm/index.php?module='.$val['module'].'">';
+                print $val['label'];
+                   print '</a>';
+            } else {
+                print '<a class="fmdirlia jqft ecmjqft" href="'.DOL_URL_ROOT.'/ecm/index.php?module='.$val['module'].'">';
+                print $val['label'];
+                print '</a>';
+            }
 
-		    print '<div class="ecmjqft">';
-		    // Info
-		    $htmltooltip='<b>'.$langs->trans("ECMSection").'</b>: '.$val['label'].'<br>';
-		    $htmltooltip='<b>'.$langs->trans("Type").'</b>: '.$langs->trans("ECMSectionAuto").'<br>';
-		    $htmltooltip.='<b>'.$langs->trans("ECMCreationUser").'</b>: '.$langs->trans("ECMTypeAuto").'<br>';
-		    $htmltooltip.='<b>'.$langs->trans("Description").'</b>: '.$val['desc'];
-		    print $form->textwithpicto('', $htmltooltip, 1, 'info');
-		    print '</div>';
-		    print '</li>';
+            print '<div class="ecmjqft">';
+            // Info
+            $htmltooltip='<b>'.$langs->trans("ECMSection").'</b>: '.$val['label'].'<br>';
+            $htmltooltip='<b>'.$langs->trans("Type").'</b>: '.$langs->trans("ECMSectionAuto").'<br>';
+            $htmltooltip.='<b>'.$langs->trans("ECMCreationUser").'</b>: '.$langs->trans("ECMTypeAuto").'<br>';
+            $htmltooltip.='<b>'.$langs->trans("Description").'</b>: '.$val['desc'];
+            print $form->textwithpicto('', $htmltooltip, 1, 'info');
+            print '</div>';
+            print '</li>';
 
-		    $nbofentries++;
-		}
+            $nbofentries++;
+        }
 
-	    print '</ul></div></td></tr>';
-	}
+        print '</ul></div></td></tr>';
+    }
 
 
-	// Manual section
-	$htmltooltip=$langs->trans("ECMAreaDesc2");
+    // Manual section
+    $htmltooltip=$langs->trans("ECMAreaDesc2");
 
 
-	// Root of manual section
-	print '<tr><td>';
-	print '<table class="nobordernopadding"><tr class="nobordernopadding">';
-	print '<td align="left" width="24px">';
-	print img_picto_common('','treemenu/base.gif');
-	print '</td><td align="left">';
-	$txt=$langs->trans("ECMRoot").' ('.$langs->trans("ECMSectionsManual").')';
-	print $form->textwithpicto($txt, $htmltooltip, 1, 'info');
-	print '</td>';
-	print '</tr></table></td>';
-	print '<td align="right">';
-	print '</td>';
-	print '<td align="right">&nbsp;</td>';
-	//print '<td align="right"><a href="'.DOL_URL_ROOT.'/ecm/docdir.php?action=create">'.img_edit_add().'</a></td>';
-	print '<td align="right">&nbsp;</td>';
-	print '<td align="right">&nbsp;</td>';
-	print '<td align="center">';
-	//print $form->textwithpicto('',$htmltooltip,1,"info");
-	print '</td>';
-	print '</tr>';
+    // Root of manual section
+    print '<tr><td>';
+    print '<table class="nobordernopadding"><tr class="nobordernopadding">';
+    print '<td align="left" width="24px">';
+    print img_picto_common('','treemenu/base.gif');
+    print '</td><td align="left">';
+    $txt=$langs->trans("ECMRoot").' ('.$langs->trans("ECMSectionsManual").')';
+    print $form->textwithpicto($txt, $htmltooltip, 1, 'info');
+    print '</td>';
+    print '</tr></table></td>';
+    print '<td align="right">';
+    print '</td>';
+    print '<td align="right">&nbsp;</td>';
+    //print '<td align="right"><a href="'.DOL_URL_ROOT.'/ecm/docdir.php?action=create">'.img_edit_add().'</a></td>';
+    print '<td align="right">&nbsp;</td>';
+    print '<td align="right">&nbsp;</td>';
+    print '<td align="center">';
+    //print $form->textwithpicto('',$htmltooltip,1,"info");
+    print '</td>';
+    print '</tr>';
 
-    if (! empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE_JS))
-    {
+    if (! empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE_JS)) {
         print '<tr><td colspan="6" style="padding-left: 20px">';
 
-    	// Show filemanager tree
-	    print '<div id="filetree" class="ecmfiletree"></div>';
+        // Show filemanager tree
+        print '<div id="filetree" class="ecmfiletree"></div>';
 
-	    if ($action == 'deletefile') print $form->formconfirm('eeeee', $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile', '', '', 'deletefile');
+        if ($action == 'deletefile') print $form->formconfirm('eeeee', $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile', '', '', 'deletefile');
 
-	    print '</td></tr>';
-    }
-    else
-    {
+        print '</td></tr>';
+    } else {
         print '<tr><td colspan="6" style="padding-left: 20px">';
         print '<div id="filetree" class="ecmfiletree">';
         print '<ul class="ecmjqft">';
 
-    	// Load full tree
-    	if (empty($sqltree)) $sqltree=$ecmdirstatic->get_full_arbo(0);    // Slow
+        // Load full tree
+        if (empty($sqltree)) $sqltree=$ecmdirstatic->get_full_arbo(0);    // Slow
 
-    	// ----- This section will show a tree from a fulltree array -----
-    	// $section must also be defined
-    	// ----------------------------------------------------------------
+        // ----- This section will show a tree from a fulltree array -----
+        // $section must also be defined
+        // ----------------------------------------------------------------
 
-    	// Define fullpathselected ( _x_y_z ) of $section parameter
-    	$fullpathselected='';
-    	foreach($sqltree as $key => $val)
-    	{
-    		//print $val['id']."-".$section."<br>";
-    		if ($val['id'] == $section)
-    		{
-    			$fullpathselected=$val['fullpath'];
-    			break;
-    		}
-    	}
-    	//print "fullpathselected=".$fullpathselected."<br>";
+        // Define fullpathselected ( _x_y_z ) of $section parameter
+        $fullpathselected='';
+        foreach ($sqltree as $key => $val) {
+            //print $val['id']."-".$section."<br>";
+            if ($val['id'] == $section) {
+                $fullpathselected=$val['fullpath'];
+                break;
+            }
+        }
+        //print "fullpathselected=".$fullpathselected."<br>";
 
-    	// Update expandedsectionarray in session
-    	$expandedsectionarray=array();
-    	if (isset($_SESSION['dol_ecmexpandedsectionarray'])) $expandedsectionarray=explode(',',$_SESSION['dol_ecmexpandedsectionarray']);
+        // Update expandedsectionarray in session
+        $expandedsectionarray=array();
+        if (isset($_SESSION['dol_ecmexpandedsectionarray'])) $expandedsectionarray=explode(',',$_SESSION['dol_ecmexpandedsectionarray']);
 
-    	if ($section && GETPOST('sectionexpand') == 'true')
-    	{
-    		// We add all sections that are parent of opened section
-    		$pathtosection=explode('_',$fullpathselected);
-    		foreach($pathtosection as $idcursor)
-    		{
-    			if ($idcursor && ! in_array($idcursor,$expandedsectionarray))	// Not already in array
-    			{
-    				$expandedsectionarray[]=$idcursor;
-    			}
-    		}
-    		$_SESSION['dol_ecmexpandedsectionarray']=join(',',$expandedsectionarray);
-    	}
-    	if ($section && GETPOST('sectionexpand') == 'false')
-    	{
-    		// We removed all expanded sections that are child of the closed section
-    		$oldexpandedsectionarray=$expandedsectionarray;
-    		$expandedsectionarray=array();	// Reset
-    		foreach($oldexpandedsectionarray as $sectioncursor)
-    		{
-    			// is_in_subtree(fulltree,sectionparent,sectionchild)
-    			if ($sectioncursor && ! is_in_subtree($sqltree,$section,$sectioncursor)) $expandedsectionarray[]=$sectioncursor;
-    		}
-    		$_SESSION['dol_ecmexpandedsectionarray']=join(',',$expandedsectionarray);
-    	}
-    	//print $_SESSION['dol_ecmexpandedsectionarray'].'<br>';
+        if ($section && GETPOST('sectionexpand') == 'true') {
+            // We add all sections that are parent of opened section
+            $pathtosection=explode('_',$fullpathselected);
+            foreach ($pathtosection as $idcursor) {
+                if ($idcursor && ! in_array($idcursor,$expandedsectionarray)) {	// Not already in array
+                    $expandedsectionarray[]=$idcursor;
+                }
+            }
+            $_SESSION['dol_ecmexpandedsectionarray']=join(',',$expandedsectionarray);
+        }
+        if ($section && GETPOST('sectionexpand') == 'false') {
+            // We removed all expanded sections that are child of the closed section
+            $oldexpandedsectionarray=$expandedsectionarray;
+            $expandedsectionarray=array();	// Reset
+            foreach ($oldexpandedsectionarray as $sectioncursor) {
+                // is_in_subtree(fulltree,sectionparent,sectionchild)
+                if ($sectioncursor && ! is_in_subtree($sqltree,$section,$sectioncursor)) $expandedsectionarray[]=$sectioncursor;
+            }
+            $_SESSION['dol_ecmexpandedsectionarray']=join(',',$expandedsectionarray);
+        }
+        //print $_SESSION['dol_ecmexpandedsectionarray'].'<br>';
 
-    	$nbofentries=0;
-    	$oldvallevel=0;
-    	$var=true;
-    	foreach($sqltree as $key => $val)
-    	{
-    		$var=false;
+        $nbofentries=0;
+        $oldvallevel=0;
+        $var=true;
+        foreach ($sqltree as $key => $val) {
+            $var=false;
 
-    		$ecmdirstatic->id=$val['id'];
-    		$ecmdirstatic->ref=$val['label'];
+            $ecmdirstatic->id=$val['id'];
+            $ecmdirstatic->ref=$val['label'];
 
-    		// Refresh cache
-    		if (preg_match('/refresh/i',$action))
-    		{
-    			$result=$ecmdirstatic->fetch($val['id']);
-    			$ecmdirstatic->ref=$ecmdirstatic->label;
+            // Refresh cache
+            if (preg_match('/refresh/i',$action)) {
+                $result=$ecmdirstatic->fetch($val['id']);
+                $ecmdirstatic->ref=$ecmdirstatic->label;
 
-    			$result=$ecmdirstatic->refreshcachenboffile(0);
-    			$val['cachenbofdoc']=$result;
-    		}
+                $result=$ecmdirstatic->refreshcachenboffile(0);
+                $val['cachenbofdoc']=$result;
+            }
 
-    		//$fullpathparent=preg_replace('/(_[^_]+)$/i','',$val['fullpath']);
+            //$fullpathparent=preg_replace('/(_[^_]+)$/i','',$val['fullpath']);
 
-    		// Define showline
-    		$showline=0;
+            // Define showline
+            $showline=0;
 
-    		// If directory is son of expanded directory, we show line
-    		if (in_array($val['id_mere'],$expandedsectionarray)) $showline=4;
-    		// If directory is brother of selected directory, we show line
-    		elseif ($val['id'] != $section && $val['id_mere'] == $ecmdirstatic->motherof[$section]) $showline=3;
-    		// If directory is parent of selected directory or is selected directory, we show line
-    		elseif (preg_match('/'.$val['fullpath'].'_/i',$fullpathselected.'_')) $showline=2;
-    		// If we are level one we show line
-    		elseif ($val['level'] < 2) $showline=1;
+            // If directory is son of expanded directory, we show line
+            if (in_array($val['id_mere'],$expandedsectionarray)) $showline=4;
+            // If directory is brother of selected directory, we show line
+            elseif ($val['id'] != $section && $val['id_mere'] == $ecmdirstatic->motherof[$section]) $showline=3;
+            // If directory is parent of selected directory or is selected directory, we show line
+            elseif (preg_match('/'.$val['fullpath'].'_/i',$fullpathselected.'_')) $showline=2;
+            // If we are level one we show line
+            elseif ($val['level'] < 2) $showline=1;
 
-    		if ($showline)
-    		{
-    			if (in_array($val['id'],$expandedsectionarray)) $option='indexexpanded';
-    			else $option='indexnotexpanded';
-    			//print $option;
+            if ($showline) {
+                if (in_array($val['id'],$expandedsectionarray)) $option='indexexpanded';
+                else $option='indexnotexpanded';
+                //print $option;
 
-    			print '<li class="directory collapsed">';
+                print '<li class="directory collapsed">';
 
-    			// Show tree graph pictos
+                // Show tree graph pictos
                 $cpt=1;
-    			while ($cpt < $sqltree[$key]['level'])
-    			{
-    			    print ' &nbsp; &nbsp;';
-    			    $cpt++;
-    			}
-    			$resarray=tree_showpad($sqltree,$key,1);
-    			$a=$resarray[0];
-    			$nbofsubdir=$resarray[1];
-    			$nboffilesinsubdir=$resarray[2];
+                while ($cpt < $sqltree[$key]['level']) {
+                    print ' &nbsp; &nbsp;';
+                    $cpt++;
+                }
+                $resarray=tree_showpad($sqltree,$key,1);
+                $a=$resarray[0];
+                $nbofsubdir=$resarray[1];
+                $nboffilesinsubdir=$resarray[2];
 
-    			// Show link
-    			print $ecmdirstatic->getNomUrl(0,$option,32,'class="fmdirlia jqft ecmjqft"');
+                // Show link
+                print $ecmdirstatic->getNomUrl(0,$option,32,'class="fmdirlia jqft ecmjqft"');
 
-    			print '<div class="ecmjqft">';
+                print '<div class="ecmjqft">';
 
-    			// Nb of docs
-    			print '<table class="nobordernopadding"><tr><td>';
-    			print $val['cachenbofdoc'];
-    			print '</td>';
-    			print '<td align="left">';
-    			if ($nbofsubdir && $nboffilesinsubdir) print '<font color="#AAAAAA">+'.$nboffilesinsubdir.'</font> ';
-    			print '</td>';
+                // Nb of docs
+                print '<table class="nobordernopadding"><tr><td>';
+                print $val['cachenbofdoc'];
+                print '</td>';
+                print '<td align="left">';
+                if ($nbofsubdir && $nboffilesinsubdir) print '<font color="#AAAAAA">+'.$nboffilesinsubdir.'</font> ';
+                print '</td>';
 
-    			// Info
-    			print '<td align="center">';
-    			$userstatic->id=$val['fk_user_c'];
-    			$userstatic->lastname=$val['login_c'];
-    			$htmltooltip='<b>'.$langs->trans("ECMSection").'</b>: '.$val['label'].'<br>';
-    			$htmltooltip='<b>'.$langs->trans("Type").'</b>: '.$langs->trans("ECMSectionManual").'<br>';
-    			$htmltooltip.='<b>'.$langs->trans("ECMCreationUser").'</b>: '.$userstatic->getNomUrl(1).'<br>';
-    			$htmltooltip.='<b>'.$langs->trans("ECMCreationDate").'</b>: '.dol_print_date($val['date_c'],"dayhour").'<br>';
-    			$htmltooltip.='<b>'.$langs->trans("Description").'</b>: '.$val['description'].'<br>';
-    			$htmltooltip.='<b>'.$langs->trans("ECMNbOfFilesInDir").'</b>: '.$val['cachenbofdoc'].'<br>';
-    			if ($nbofsubdir) $htmltooltip.='<b>'.$langs->trans("ECMNbOfFilesInSubDir").'</b>: '.$nboffilesinsubdir;
-    			else $htmltooltip.='<b>'.$langs->trans("ECMNbOfSubDir").'</b>: '.$nbofsubdir.'<br>';
-    			print $form->textwithpicto('', $htmltooltip, 1, 'info');
-    			print "</td>";
+                // Info
+                print '<td align="center">';
+                $userstatic->id=$val['fk_user_c'];
+                $userstatic->lastname=$val['login_c'];
+                $htmltooltip='<b>'.$langs->trans("ECMSection").'</b>: '.$val['label'].'<br>';
+                $htmltooltip='<b>'.$langs->trans("Type").'</b>: '.$langs->trans("ECMSectionManual").'<br>';
+                $htmltooltip.='<b>'.$langs->trans("ECMCreationUser").'</b>: '.$userstatic->getNomUrl(1).'<br>';
+                $htmltooltip.='<b>'.$langs->trans("ECMCreationDate").'</b>: '.dol_print_date($val['date_c'],"dayhour").'<br>';
+                $htmltooltip.='<b>'.$langs->trans("Description").'</b>: '.$val['description'].'<br>';
+                $htmltooltip.='<b>'.$langs->trans("ECMNbOfFilesInDir").'</b>: '.$val['cachenbofdoc'].'<br>';
+                if ($nbofsubdir) $htmltooltip.='<b>'.$langs->trans("ECMNbOfFilesInSubDir").'</b>: '.$nboffilesinsubdir;
+                else $htmltooltip.='<b>'.$langs->trans("ECMNbOfSubDir").'</b>: '.$nbofsubdir.'<br>';
+                print $form->textwithpicto('', $htmltooltip, 1, 'info');
+                print "</td>";
 
-    			print '</tr></table>';
+                print '</tr></table>';
 
-    			print '</div>';
+                print '</div>';
 
-    			print "</li>\n";
-    		}
+                print "</li>\n";
+            }
 
-    		$oldvallevel=$val['level'];
-    		$nbofentries++;
-    	}
+            $oldvallevel=$val['level'];
+            $nbofentries++;
+        }
 
-    	// If nothing to show
-    	if ($nbofentries == 0)
-    	{
-    		print '<li class="directory collapsed">';
-    		print '<div class="ecmjqft">';
-    		print $langs->trans("ECMNoDirectoryYet");
-    		print '</div>';
-   			print "</li>\n";
-    	}
+        // If nothing to show
+        if ($nbofentries == 0) {
+            print '<li class="directory collapsed">';
+            print '<div class="ecmjqft">';
+            print $langs->trans("ECMNoDirectoryYet");
+            print '</div>';
+               print "</li>\n";
+        }
 
-    	print '</ul>';
-    	print '</div>';
-    	print '</td></tr>';
+        print '</ul>';
+        print '</div>';
+        print '</td></tr>';
     }
 
 
-	print "</table>";
+    print "</table>";
 }
 
 
@@ -771,12 +695,10 @@ include_once DOL_DOCUMENT_ROOT.'/core/ajax/ajaxdirpreview.php';
 
 
 // To attach new file
-if ((! empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE_JS)) || ! empty($section))
-{
+if ((! empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE_JS)) || ! empty($section)) {
     $formfile=new FormFile($db);
-	$formfile->form_attach_new_file(DOL_URL_ROOT.'/ecm/index.php', 'none', 0, ($section?$section:-1), $user->rights->ecm->upload, 48);
-}
-else print '&nbsp;';
+    $formfile->form_attach_new_file(DOL_URL_ROOT.'/ecm/index.php', 'none', 0, ($section?$section:-1), $user->rights->ecm->upload, 48);
+} else print '&nbsp;';
 
 
 
@@ -789,12 +711,9 @@ else print '&nbsp;';
 // End of page
 
 if (! empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE_JS)) {
-	include 'tpl/builddatabase.tpl.php';
+    include 'tpl/builddatabase.tpl.php';
 }
-
-
 
 llxFooter();
 
 $db->close();
-?>

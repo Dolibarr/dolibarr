@@ -22,7 +22,6 @@
  *       \brief      File that is entry point to call Dolibarr WebServices
  */
 
-
 // This is to make Dolibarr working with Plesk
 set_include_path($_SERVER['DOCUMENT_ROOT'].'/htdocs');
 
@@ -32,19 +31,17 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/ws.lib.php';
 
 require_once(DOL_DOCUMENT_ROOT."/commande/class/commande.class.php");
 
-
 dol_syslog("Call Dolibarr webservices interfaces");
 
 $langs->load("main");
 
 // Enable and test if module web services is enabled
-if (empty($conf->global->MAIN_MODULE_WEBSERVICES))
-{
-	$langs->load("admin");
-	dol_syslog("Call Dolibarr webservices interfaces with module webservices disabled");
-	print $langs->trans("WarningModuleNotActive",'WebServices').'.<br><br>';
-	print $langs->trans("ToActivateModule");
-	exit;
+if (empty($conf->global->MAIN_MODULE_WEBSERVICES)) {
+    $langs->load("admin");
+    dol_syslog("Call Dolibarr webservices interfaces with module webservices disabled");
+    print $langs->trans("WarningModuleNotActive",'WebServices').'.<br><br>';
+    print $langs->trans("ToActivateModule");
+    exit;
 }
 
 // Create the soap Object
@@ -55,182 +52,179 @@ $ns='http://www.dolibarr.org/ns/';
 $server->configureWSDL('WebServicesDolibarrOrder',$ns);
 $server->wsdl->schemaTargetNamespace=$ns;
 
-
 // Define WSDL Authentication object
 $server->wsdl->addComplexType(
-		'authentication',
-		'complexType',
-		'struct',
-		'all',
-		'',
-		array(
-				'dolibarrkey' => array('name'=>'dolibarrkey','type'=>'xsd:string'),
-				'sourceapplication' => array('name'=>'sourceapplication','type'=>'xsd:string'),
-				'login' => array('name'=>'login','type'=>'xsd:string'),
-				'password' => array('name'=>'password','type'=>'xsd:string'),
-				'entity' => array('name'=>'entity','type'=>'xsd:string')
-		)
+        'authentication',
+        'complexType',
+        'struct',
+        'all',
+        '',
+        array(
+                'dolibarrkey' => array('name'=>'dolibarrkey','type'=>'xsd:string'),
+                'sourceapplication' => array('name'=>'sourceapplication','type'=>'xsd:string'),
+                'login' => array('name'=>'login','type'=>'xsd:string'),
+                'password' => array('name'=>'password','type'=>'xsd:string'),
+                'entity' => array('name'=>'entity','type'=>'xsd:string')
+        )
 );
 // Define WSDL Return object
 $server->wsdl->addComplexType(
-		'result',
-		'complexType',
-		'struct',
-		'all',
-		'',
-		array(
-				'result_code' => array('name'=>'result_code','type'=>'xsd:string'),
-				'result_label' => array('name'=>'result_label','type'=>'xsd:string'),
-		)
+        'result',
+        'complexType',
+        'struct',
+        'all',
+        '',
+        array(
+                'result_code' => array('name'=>'result_code','type'=>'xsd:string'),
+                'result_label' => array('name'=>'result_label','type'=>'xsd:string'),
+        )
 );
 
 // Define other specific objects
 $server->wsdl->addComplexType(
-		'line',
-		'complexType',
-		'struct',
-		'all',
-		'',
-		array(
-				'id' => array('name'=>'id','type'=>'xsd:string'),
-		        'type' => array('name'=>'type','type'=>'xsd:int'),
-				'fk_commande' => array('name'=>'fk_commande','type'=>'xsd:int'),
-				'fk_parent_line' => array('name'=>'fk_parent_line','type'=>'xsd:int'),
-				'desc' => array('name'=>'desc','type'=>'xsd:string'),
-				'qty' => array('name'=>'qty','type'=>'xsd:double'),
-				'price' => array('name'=>'price','type'=>'xsd:double'),
-				'unitprice' => array('name'=>'unitprice','type'=>'xsd:double'),
-				'vat_rate' => array('name'=>'vat_rate','type'=>'xsd:double'),
+        'line',
+        'complexType',
+        'struct',
+        'all',
+        '',
+        array(
+                'id' => array('name'=>'id','type'=>'xsd:string'),
+                'type' => array('name'=>'type','type'=>'xsd:int'),
+                'fk_commande' => array('name'=>'fk_commande','type'=>'xsd:int'),
+                'fk_parent_line' => array('name'=>'fk_parent_line','type'=>'xsd:int'),
+                'desc' => array('name'=>'desc','type'=>'xsd:string'),
+                'qty' => array('name'=>'qty','type'=>'xsd:double'),
+                'price' => array('name'=>'price','type'=>'xsd:double'),
+                'unitprice' => array('name'=>'unitprice','type'=>'xsd:double'),
+                'vat_rate' => array('name'=>'vat_rate','type'=>'xsd:double'),
 
-				'remise' => array('name'=>'remise','type'=>'xsd:double'),
-				'remise_percent' => array('name'=>'remise_percent','type'=>'xsd:double'),
+                'remise' => array('name'=>'remise','type'=>'xsd:double'),
+                'remise_percent' => array('name'=>'remise_percent','type'=>'xsd:double'),
 
-				'total_net' => array('name'=>'total_net','type'=>'xsd:double'),
-				'total_vat' => array('name'=>'total_vat','type'=>'xsd:double'),
-				'total' => array('name'=>'total','type'=>'xsd:double'),
+                'total_net' => array('name'=>'total_net','type'=>'xsd:double'),
+                'total_vat' => array('name'=>'total_vat','type'=>'xsd:double'),
+                'total' => array('name'=>'total','type'=>'xsd:double'),
 
-				'date_start' => array('name'=>'date_start','type'=>'xsd:date'),
-				'date_end' => array('name'=>'date_end','type'=>'xsd:date'),
+                'date_start' => array('name'=>'date_start','type'=>'xsd:date'),
+                'date_end' => array('name'=>'date_end','type'=>'xsd:date'),
 
-				// From product
-		        'product_id' => array('name'=>'product_id','type'=>'xsd:int'),
-				'product_ref' => array('name'=>'product_ref','type'=>'xsd:string'),
-				'product_label' => array('name'=>'product_label','type'=>'xsd:string'),
-				'product_desc' => array('name'=>'product_desc','type'=>'xsd:string')
-		)
+                // From product
+                'product_id' => array('name'=>'product_id','type'=>'xsd:int'),
+                'product_ref' => array('name'=>'product_ref','type'=>'xsd:string'),
+                'product_label' => array('name'=>'product_label','type'=>'xsd:string'),
+                'product_desc' => array('name'=>'product_desc','type'=>'xsd:string')
+        )
 );
 
 /*$server->wsdl->addComplexType(
-		'LinesArray',
-		'complexType',
-		'array',
-		'',
-		'SOAP-ENC:Array',
-		array(),
-		array(
-				array(
-						'ref'=>'SOAP-ENC:arrayType',
-						'wsdl:arrayType'=>'tns:line[]'
-				)
-		),
-		'tns:line'
+        'LinesArray',
+        'complexType',
+        'array',
+        '',
+        'SOAP-ENC:Array',
+        array(),
+        array(
+                array(
+                        'ref'=>'SOAP-ENC:arrayType',
+                        'wsdl:arrayType'=>'tns:line[]'
+                )
+        ),
+        'tns:line'
 );*/
 $server->wsdl->addComplexType(
-		'LinesArray2',
-		'complexType',
-		'array',
-		'sequence',
-		'',
-		array(
-				'line' => array(
-						'name' => 'line',
-						'type' => 'tns:line',
-						'minOccurs' => '0',
-						'maxOccurs' => 'unbounded'
-				)
-		)
+        'LinesArray2',
+        'complexType',
+        'array',
+        'sequence',
+        '',
+        array(
+                'line' => array(
+                        'name' => 'line',
+                        'type' => 'tns:line',
+                        'minOccurs' => '0',
+                        'maxOccurs' => 'unbounded'
+                )
+        )
 );
 
 $server->wsdl->addComplexType(
-		'order',
-		'complexType',
-		'struct',
-		'all',
-		'',
-		array(
-				'id' => array('name'=>'id','type'=>'xsd:string'),
-				'ref' => array('name'=>'ref','type'=>'xsd:string'),
-				'ref_client' => array('name'=>'ref_client','type'=>'xsd:string'),
-				'ref_ext' => array('name'=>'ref_ext','type'=>'xsd:string'),
-				'ref_int' => array('name'=>'ref_int','type'=>'xsd:string'),
-				'thirdparty_id' => array('name'=>'thirdparty_id','type'=>'xsd:int'),
-				'status' => array('name'=>'status','type'=>'xsd:int'),
-				'facturee' => array('name'=>'facturee','type'=>'xsd:string'),
-				'total_net' => array('name'=>'total_net','type'=>'xsd:double'),
-				'total_vat' => array('name'=>'total_vat','type'=>'xsd:double'),
-				'total_localtax1' => array('name'=>'total_localtax1','type'=>'xsd:double'),
-				'total_localtax2' => array('name'=>'total_localtax2','type'=>'xsd:double'),
-				'total' => array('name'=>'total','type'=>'xsd:double'),
-				'date' => array('name'=>'date','type'=>'xsd:date'),
-		        'date_creation' => array('name'=>'date_creation','type'=>'xsd:dateTime'),
-		        'date_validation' => array('name'=>'date_validation','type'=>'xsd:dateTime'),
-	    	    'date_modification' => array('name'=>'date_modification','type'=>'xsd:dateTime'),
-				'remise' => array('name'=>'remise','type'=>'xsd:string'),
-				'remise_percent' => array('name'=>'remise_percent','type'=>'xsd:string'),
-				'remise_absolue' => array('name'=>'remise_absolue','type'=>'xsd:string'),
-				'source' => array('name'=>'source','type'=>'xsd:string'),
-				'note_private' => array('name'=>'note_private','type'=>'xsd:string'),
-				'note_public' => array('name'=>'note_public','type'=>'xsd:string'),
-				'project_id' => array('name'=>'project_id','type'=>'xsd:string'),
+        'order',
+        'complexType',
+        'struct',
+        'all',
+        '',
+        array(
+                'id' => array('name'=>'id','type'=>'xsd:string'),
+                'ref' => array('name'=>'ref','type'=>'xsd:string'),
+                'ref_client' => array('name'=>'ref_client','type'=>'xsd:string'),
+                'ref_ext' => array('name'=>'ref_ext','type'=>'xsd:string'),
+                'ref_int' => array('name'=>'ref_int','type'=>'xsd:string'),
+                'thirdparty_id' => array('name'=>'thirdparty_id','type'=>'xsd:int'),
+                'status' => array('name'=>'status','type'=>'xsd:int'),
+                'facturee' => array('name'=>'facturee','type'=>'xsd:string'),
+                'total_net' => array('name'=>'total_net','type'=>'xsd:double'),
+                'total_vat' => array('name'=>'total_vat','type'=>'xsd:double'),
+                'total_localtax1' => array('name'=>'total_localtax1','type'=>'xsd:double'),
+                'total_localtax2' => array('name'=>'total_localtax2','type'=>'xsd:double'),
+                'total' => array('name'=>'total','type'=>'xsd:double'),
+                'date' => array('name'=>'date','type'=>'xsd:date'),
+                'date_creation' => array('name'=>'date_creation','type'=>'xsd:dateTime'),
+                'date_validation' => array('name'=>'date_validation','type'=>'xsd:dateTime'),
+                'date_modification' => array('name'=>'date_modification','type'=>'xsd:dateTime'),
+                'remise' => array('name'=>'remise','type'=>'xsd:string'),
+                'remise_percent' => array('name'=>'remise_percent','type'=>'xsd:string'),
+                'remise_absolue' => array('name'=>'remise_absolue','type'=>'xsd:string'),
+                'source' => array('name'=>'source','type'=>'xsd:string'),
+                'note_private' => array('name'=>'note_private','type'=>'xsd:string'),
+                'note_public' => array('name'=>'note_public','type'=>'xsd:string'),
+                'project_id' => array('name'=>'project_id','type'=>'xsd:string'),
 
-				'mode_reglement_id' => array('name'=>'mode_reglement_id','type'=>'xsd:string'),
-				'mode_reglement_code' => array('name'=>'mode_reglement_code','type'=>'xsd:string'),
-				'mode_reglement' => array('name'=>'mode_reglement','type'=>'xsd:string'),
-				'cond_reglement_id' => array('name'=>'cond_reglement_id','type'=>'xsd:string'),
-				'cond_reglement_code' => array('name'=>'cond_reglement_code','type'=>'xsd:string'),
-				'cond_reglement' => array('name'=>'cond_reglement','type'=>'xsd:string'),
-				'cond_reglement_doc' => array('name'=>'cond_reglement_doc','type'=>'xsd:string'),
+                'mode_reglement_id' => array('name'=>'mode_reglement_id','type'=>'xsd:string'),
+                'mode_reglement_code' => array('name'=>'mode_reglement_code','type'=>'xsd:string'),
+                'mode_reglement' => array('name'=>'mode_reglement','type'=>'xsd:string'),
+                'cond_reglement_id' => array('name'=>'cond_reglement_id','type'=>'xsd:string'),
+                'cond_reglement_code' => array('name'=>'cond_reglement_code','type'=>'xsd:string'),
+                'cond_reglement' => array('name'=>'cond_reglement','type'=>'xsd:string'),
+                'cond_reglement_doc' => array('name'=>'cond_reglement_doc','type'=>'xsd:string'),
 
-				'date_livraison' => array('name'=>'date_livraison','type'=>'xsd:date'),
-				'fk_delivery_address' => array('name'=>'fk_delivery_address','type'=>'xsd:int'),
-				'demand_reason_id' => array('name'=>'demand_reason_id','type'=>'xsd:string'),
+                'date_livraison' => array('name'=>'date_livraison','type'=>'xsd:date'),
+                'fk_delivery_address' => array('name'=>'fk_delivery_address','type'=>'xsd:int'),
+                'demand_reason_id' => array('name'=>'demand_reason_id','type'=>'xsd:string'),
 
-				'lines' => array('name'=>'lines','type'=>'tns:LinesArray2')
-		)
+                'lines' => array('name'=>'lines','type'=>'tns:LinesArray2')
+        )
 );
 /*
 $server->wsdl->addComplexType(
-		'OrdersArray',
-		'complexType',
-		'array',
-		'',
-		'SOAP-ENC:Array',
-		array(),
-		array(
-				array(
-						'ref'=>'SOAP-ENC:arrayType',
-						'wsdl:arrayType'=>'tns:order[]'
-				)
-		),
-		'tns:order'
+        'OrdersArray',
+        'complexType',
+        'array',
+        '',
+        'SOAP-ENC:Array',
+        array(),
+        array(
+                array(
+                        'ref'=>'SOAP-ENC:arrayType',
+                        'wsdl:arrayType'=>'tns:order[]'
+                )
+        ),
+        'tns:order'
 );*/
 $server->wsdl->addComplexType(
-		'OrdersArray2',
-		'complexType',
-		'array',
-		'sequence',
-		'',
-		array(
-				'order' => array(
-						'name' => 'order',
-						'type' => 'tns:order',
-						'minOccurs' => '0',
-						'maxOccurs' => 'unbounded'
-				)
-		)
+        'OrdersArray2',
+        'complexType',
+        'array',
+        'sequence',
+        '',
+        array(
+                'order' => array(
+                        'name' => 'order',
+                        'type' => 'tns:order',
+                        'minOccurs' => '0',
+                        'maxOccurs' => 'unbounded'
+                )
+        )
 );
-
-
 
 // 5 styles: RPC/encoded, RPC/literal, Document/encoded (not WS-I compliant), Document/literal, Document/literal wrapped
 // Style merely dictates how to translate a WSDL binding to a SOAP message. Nothing more. You can use either style with any programming model.
@@ -241,49 +235,48 @@ $styleuse='encoded';   // encoded/literal/literal wrapped
 
 // Register WSDL
 $server->register(
-		'getOrder',
-		array('authentication'=>'tns:authentication','id'=>'xsd:string','ref'=>'xsd:string','ref_ext'=>'xsd:string'), // Entry values
-		array('result'=>'tns:result','order'=>'tns:order'),	// Exit values
-		$ns,
-		$ns.'#getOrder',
-		$styledoc,
-		$styleuse,
-		'WS to get a particular invoice'
+        'getOrder',
+        array('authentication'=>'tns:authentication','id'=>'xsd:string','ref'=>'xsd:string','ref_ext'=>'xsd:string'), // Entry values
+        array('result'=>'tns:result','order'=>'tns:order'),	// Exit values
+        $ns,
+        $ns.'#getOrder',
+        $styledoc,
+        $styleuse,
+        'WS to get a particular invoice'
 );
 
 $server->register(
-		'getOrdersForThirdParty',
-		array('authentication'=>'tns:authentication','idthirdparty'=>'xsd:string'),	// Entry values
-		array('result'=>'tns:result','orders'=>'tns:OrdersArray2'),	// Exit values
-		$ns,
-		$ns.'#getOrdersForThirdParty',
-		$styledoc,
-		$styleuse,
-		'WS to get all orders of a third party'
+        'getOrdersForThirdParty',
+        array('authentication'=>'tns:authentication','idthirdparty'=>'xsd:string'),	// Entry values
+        array('result'=>'tns:result','orders'=>'tns:OrdersArray2'),	// Exit values
+        $ns,
+        $ns.'#getOrdersForThirdParty',
+        $styledoc,
+        $styleuse,
+        'WS to get all orders of a third party'
 );
 
 $server->register(
-		'createOrder',
-		array('authentication'=>'tns:authentication','order'=>'tns:order'),	// Entry values
-		array('result'=>'tns:result','id'=>'xsd:string','ref'=>'xsd:string'),	// Exit values
-		$ns,
-		$ns.'#createOrder',
-		$styledoc,
-		$styleuse,
-		'WS to create an order'
+        'createOrder',
+        array('authentication'=>'tns:authentication','order'=>'tns:order'),	// Entry values
+        array('result'=>'tns:result','id'=>'xsd:string','ref'=>'xsd:string'),	// Exit values
+        $ns,
+        $ns.'#createOrder',
+        $styledoc,
+        $styleuse,
+        'WS to create an order'
 );
-
 
 // Register WSDL
 $server->register(
-		'validOrder',
-		array('authentication'=>'tns:authentication','id'=>'xsd:string'),	// Entry values
-		array('result'=>'tns:result'),	// Exit values
-		$ns,
-		$ns.'#validOrder',
-		$styledoc,
-		$styleuse,
-		'WS to valid an order'
+        'validOrder',
+        array('authentication'=>'tns:authentication','id'=>'xsd:string'),	// Entry values
+        array('result'=>'tns:result'),	// Exit values
+        $ns,
+        $ns.'#validOrder',
+        $styledoc,
+        $styleuse,
+        'WS to valid an order'
 );
 
 /**
@@ -297,148 +290,135 @@ $server->register(
  */
 function getOrder($authentication,$id='',$ref='',$ref_ext='')
 {
-	global $db,$conf,$langs;
+    global $db,$conf,$langs;
 
-	dol_syslog("Function: getOrder login=".$authentication['login']." id=".$id." ref=".$ref." ref_ext=".$ref_ext);
+    dol_syslog("Function: getOrder login=".$authentication['login']." id=".$id." ref=".$ref." ref_ext=".$ref_ext);
 
-	if ($authentication['entity']) $conf->entity=$authentication['entity'];
+    if ($authentication['entity']) $conf->entity=$authentication['entity'];
 
-	// Init and check authentication
-	$objectresp=array();
-	$errorcode='';$errorlabel='';
-	$error=0;
+    // Init and check authentication
+    $objectresp=array();
+    $errorcode='';$errorlabel='';
+    $error=0;
 
-	$fuser=check_authentication($authentication,$error,$errorcode,$errorlabel);
+    $fuser=check_authentication($authentication,$error,$errorcode,$errorlabel);
 
-	if ($fuser->societe_id) $socid=$fuser->societe_id;
+    if ($fuser->societe_id) $socid=$fuser->societe_id;
 
-	// Check parameters
-	if (! $error && (($id && $ref) || ($id && $ref_ext) || ($ref && $ref_ext)))
-	{
-		$error++;
-		$errorcode='BAD_PARAMETERS'; $errorlabel="Parameter id, ref and ref_ext can't be both provided. You must choose one or other but not both.";
-	}
+    // Check parameters
+    if (! $error && (($id && $ref) || ($id && $ref_ext) || ($ref && $ref_ext))) {
+        $error++;
+        $errorcode='BAD_PARAMETERS'; $errorlabel="Parameter id, ref and ref_ext can't be both provided. You must choose one or other but not both.";
+    }
 
-	if (! $error)
-	{
-		$fuser->getrights();
+    if (! $error) {
+        $fuser->getrights();
 
-		if ($fuser->rights->commande->lire)
-		{
-			$order=new Commande($db);
-			$result=$order->fetch($id,$ref,$ref_ext);
-			if ($result > 0)
-			{
-				// Security for external user
-				if( $socid && ( $socid != $order->socid) )
-				{
-					$error++;
-					$errorcode='PERMISSION_DENIED'; $errorlabel=$order->socid.'User does not have permission for this request';
-				}
+        if ($fuser->rights->commande->lire) {
+            $order=new Commande($db);
+            $result=$order->fetch($id,$ref,$ref_ext);
+            if ($result > 0) {
+                // Security for external user
+                if ( $socid && ( $socid != $order->socid) ) {
+                    $error++;
+                    $errorcode='PERMISSION_DENIED'; $errorlabel=$order->socid.'User does not have permission for this request';
+                }
 
-				if(!$error)
-				{
+                if (!$error) {
 
-					$linesresp=array();
-					$i=0;
-					foreach($order->lines as $line)
-					{
-						//var_dump($line); exit;
-						$linesresp[]=array(
-						'id'=>$line->rowid,
-						'fk_commande'=>$line->fk_commande,
-						'fk_parent_line'=>$line->fk_parent_line,
-						'desc'=>$line->desc,
-						'qty'=>$line->qty,
-						'price'=>$line->price,
-						'subprice'=>$line->subprice,
-						'vat_rate'=>$line->tva_tx,
-						'remise'=>$line->remise,
-						'remise_percent'=>$line->remise_percent,
-						'fk_product'=>$line->fk_product,
-						'product_type'=>$line->product_type,
-						'total_net'=>$line->total_ht,
-						'total_vat'=>$line->total_tva,
-						'total'=>$line->total_ttc,
-						'date_start'=>$line->date_start,
-						'date_end'=>$line->date_end,
-						'product_ref'=>$line->product_ref,
-						'product_label'=>$line->product_label,
-						'product_desc'=>$line->product_desc
-						);
-						$i++;
-					}
+                    $linesresp=array();
+                    $i=0;
+                    foreach ($order->lines as $line) {
+                        //var_dump($line); exit;
+                        $linesresp[]=array(
+                        'id'=>$line->rowid,
+                        'fk_commande'=>$line->fk_commande,
+                        'fk_parent_line'=>$line->fk_parent_line,
+                        'desc'=>$line->desc,
+                        'qty'=>$line->qty,
+                        'price'=>$line->price,
+                        'subprice'=>$line->subprice,
+                        'vat_rate'=>$line->tva_tx,
+                        'remise'=>$line->remise,
+                        'remise_percent'=>$line->remise_percent,
+                        'fk_product'=>$line->fk_product,
+                        'product_type'=>$line->product_type,
+                        'total_net'=>$line->total_ht,
+                        'total_vat'=>$line->total_tva,
+                        'total'=>$line->total_ttc,
+                        'date_start'=>$line->date_start,
+                        'date_end'=>$line->date_end,
+                        'product_ref'=>$line->product_ref,
+                        'product_label'=>$line->product_label,
+                        'product_desc'=>$line->product_desc
+                        );
+                        $i++;
+                    }
 
-					// Create order
-					$objectresp = array(
-					'result'=>array('result_code'=>'OK', 'result_label'=>''),
-					'order'=>array(
-					'id' => $order->id,
-					'ref' => $order->ref,
-					'ref_client' => $order->ref_client,
-					'ref_ext' => $order->ref_ext,
-					'ref_int' => $order->ref_int,
-					'thirdparty_id' => $order->socid,
-					'status' => $order->statut,
+                    // Create order
+                    $objectresp = array(
+                    'result'=>array('result_code'=>'OK', 'result_label'=>''),
+                    'order'=>array(
+                    'id' => $order->id,
+                    'ref' => $order->ref,
+                    'ref_client' => $order->ref_client,
+                    'ref_ext' => $order->ref_ext,
+                    'ref_int' => $order->ref_int,
+                    'thirdparty_id' => $order->socid,
+                    'status' => $order->statut,
 
-					'total_net' => $order->total_ht,
-					'total_vat' => $order->total_tva,
-					'total_localtax1' => $order->total_localtax1,
-					'total_localtax2' => $order->total_localtax2,
-					'total' => $order->total_ttc,
-					'project_id' => $order->fk_project,
+                    'total_net' => $order->total_ht,
+                    'total_vat' => $order->total_tva,
+                    'total_localtax1' => $order->total_localtax1,
+                    'total_localtax2' => $order->total_localtax2,
+                    'total' => $order->total_ttc,
+                    'project_id' => $order->fk_project,
 
-					'date' => $order->date_commande?dol_print_date($order->date_commande,'dayrfc'):'',
-					'date_creation' => $invoice->date_creation?dol_print_date($invoice->date_creation,'dayhourrfc'):'',
-					'date_validation' => $invoice->date_validation?dol_print_date($invoice->date_creation,'dayhourrfc'):'',
-					'date_modification' => $invoice->datem?dol_print_date($invoice->datem,'dayhourrfc'):'',
-								
-					'remise' => $order->remise,
-					'remise_percent' => $order->remise_percent,
-					'remise_absolue' => $order->remise_absolue,
+                    'date' => $order->date_commande?dol_print_date($order->date_commande,'dayrfc'):'',
+                    'date_creation' => $invoice->date_creation?dol_print_date($invoice->date_creation,'dayhourrfc'):'',
+                    'date_validation' => $invoice->date_validation?dol_print_date($invoice->date_creation,'dayhourrfc'):'',
+                    'date_modification' => $invoice->datem?dol_print_date($invoice->datem,'dayhourrfc'):'',
 
-					'source' => $order->source,
-					'facturee' => $order->facturee,
-					'note_private' => $order->note_private,
-					'note_public' => $order->note_public,
-					'cond_reglement_id' => $order->cond_reglement_id,
-					'cond_reglement_code' => $order->cond_reglement_code,
-					'cond_reglement' => $order->cond_reglement,
-					'mode_reglement_id' => $order->mode_reglement_id,
-					'mode_reglement_code' => $order->mode_reglement_code,
-					'mode_reglement' => $order->mode_reglement,
-								
-					'date_livraison' => $order->date_livraison,
-					'fk_delivery_address' => $order->fk_delivery_address,
+                    'remise' => $order->remise,
+                    'remise_percent' => $order->remise_percent,
+                    'remise_absolue' => $order->remise_absolue,
 
-					'demand_reason_id' => $order->demand_reason_id,
-					'demand_reason_code' => $order->demand_reason_code,
+                    'source' => $order->source,
+                    'facturee' => $order->facturee,
+                    'note_private' => $order->note_private,
+                    'note_public' => $order->note_public,
+                    'cond_reglement_id' => $order->cond_reglement_id,
+                    'cond_reglement_code' => $order->cond_reglement_code,
+                    'cond_reglement' => $order->cond_reglement,
+                    'mode_reglement_id' => $order->mode_reglement_id,
+                    'mode_reglement_code' => $order->mode_reglement_code,
+                    'mode_reglement' => $order->mode_reglement,
 
-					'lines' => $linesresp
-					));
-				}
-			}
-			else
-			{
-				$error++;
-				$errorcode='NOT_FOUND'; $errorlabel='Object not found for id='.$id.' nor ref='.$ref.' nor ref_ext='.$ref_ext;
-			}
-		}
-		else
-		{
-			$error++;
-			$errorcode='PERMISSION_DENIED'; $errorlabel='User does not have permission for this request';
-		}
-	}
+                    'date_livraison' => $order->date_livraison,
+                    'fk_delivery_address' => $order->fk_delivery_address,
 
-	if ($error)
-	{
-		$objectresp = array('result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel));
-	}
+                    'demand_reason_id' => $order->demand_reason_id,
+                    'demand_reason_code' => $order->demand_reason_code,
 
-	return $objectresp;
+                    'lines' => $linesresp
+                    ));
+                }
+            } else {
+                $error++;
+                $errorcode='NOT_FOUND'; $errorlabel='Object not found for id='.$id.' nor ref='.$ref.' nor ref_ext='.$ref_ext;
+            }
+        } else {
+            $error++;
+            $errorcode='PERMISSION_DENIED'; $errorlabel='User does not have permission for this request';
+        }
+    }
+
+    if ($error) {
+        $objectresp = array('result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel));
+    }
+
+    return $objectresp;
 }
-
 
 /**
  * Get list of orders for third party
@@ -449,155 +429,143 @@ function getOrder($authentication,$id='',$ref='',$ref_ext='')
  */
 function getOrdersForThirdParty($authentication,$idthirdparty)
 {
-	global $db,$conf,$langs;
+    global $db,$conf,$langs;
 
-	dol_syslog("Function: getOrdersForThirdParty login=".$authentication['login']." idthirdparty=".$idthirdparty);
+    dol_syslog("Function: getOrdersForThirdParty login=".$authentication['login']." idthirdparty=".$idthirdparty);
 
-	if ($authentication['entity']) $conf->entity=$authentication['entity'];
+    if ($authentication['entity']) $conf->entity=$authentication['entity'];
 
-	// Init and check authentication
-	$objectresp=array();
-	$errorcode='';$errorlabel='';
-	$error=0;
-	$fuser=check_authentication($authentication,$error,$errorcode,$errorlabel);
+    // Init and check authentication
+    $objectresp=array();
+    $errorcode='';$errorlabel='';
+    $error=0;
+    $fuser=check_authentication($authentication,$error,$errorcode,$errorlabel);
 
-	if ($fuser->societe_id) $socid=$fuser->societe_id;
+    if ($fuser->societe_id) $socid=$fuser->societe_id;
 
-	// Check parameters
-	if (! $error && empty($idthirdparty))
-	{
-		$error++;
-		$errorcode='BAD_PARAMETERS'; $errorlabel='Parameter id is not provided';
-	}
+    // Check parameters
+    if (! $error && empty($idthirdparty)) {
+        $error++;
+        $errorcode='BAD_PARAMETERS'; $errorlabel='Parameter id is not provided';
+    }
 
-	if (! $error)
-	{
-		$linesorders=array();
+    if (! $error) {
+        $linesorders=array();
 
-		$sql.='SELECT c.rowid as orderid';
-		$sql.=' FROM '.MAIN_DB_PREFIX.'commande as c';
-		$sql.=" WHERE c.entity = ".$conf->entity;
-		if ($idthirdparty != 'all' ) $sql.=" AND c.fk_soc = ".$db->escape($idthirdparty);
+        $sql.='SELECT c.rowid as orderid';
+        $sql.=' FROM '.MAIN_DB_PREFIX.'commande as c';
+        $sql.=" WHERE c.entity = ".$conf->entity;
+        if ($idthirdparty != 'all' ) $sql.=" AND c.fk_soc = ".$db->escape($idthirdparty);
 
+        $resql=$db->query($sql);
+        if ($resql) {
+            $num=$db->num_rows($resql);
+            $i=0;
+            while ($i < $num) {
+                // En attendant remplissage par boucle
+                $obj=$db->fetch_object($resql);
 
-		$resql=$db->query($sql);
-		if ($resql)
-		{
-			$num=$db->num_rows($resql);
-			$i=0;
-			while ($i < $num)
-			{
-				// En attendant remplissage par boucle
-				$obj=$db->fetch_object($resql);
+                $order=new Commande($db);
+                $order->fetch($obj->orderid);
 
-				$order=new Commande($db);
-				$order->fetch($obj->orderid);
+                // Sécurité pour utilisateur externe
+                if ( $socid && ( $socid != $order->socid) ) {
+                    $error++;
+                    $errorcode='PERMISSION_DENIED'; $errorlabel=$order->socid.' User does not have permission for this request';
+                }
 
-				// Sécurité pour utilisateur externe
-				if( $socid && ( $socid != $order->socid) )
-				{
-					$error++;
-					$errorcode='PERMISSION_DENIED'; $errorlabel=$order->socid.' User does not have permission for this request';
-				}
+                if (!$error) {
 
-				if(!$error)
-				{
+                    // Define lines of invoice
+                    $linesresp=array();
+                    foreach ($order->lines as $line) {
+                        $linesresp[]=array(
+                        'id'=>$line->rowid,
+                        'type'=>$line->product_type,
+                        'fk_commande'=>$line->fk_commande,
+                        'fk_parent_line'=>$line->fk_parent_line,
+                        'desc'=>$line->desc,
+                        'qty'=>$line->qty,
+                        'price'=>$line->price,
+                        'subprice'=>$line->subprice,
+                        'tva_tx'=>$line->tva_tx,
+                        'remise'=>$line->remise,
+                        'remise_percent'=>$line->remise_percent,
+                        'total_net'=>$line->total_ht,
+                        'total_vat'=>$line->total_tva,
+                        'total'=>$line->total_ttc,
+                        'date_start'=>$line->date_start,
+                        'date_end'=>$line->date_end,
+                        'product_id'=>$line->fk_product,
+                        'product_ref'=>$line->product_ref,
+                        'product_label'=>$line->product_label,
+                        'product_desc'=>$line->product_desc
+                        );
+                    }
 
-					// Define lines of invoice
-					$linesresp=array();
-					foreach($order->lines as $line)
-					{
-						$linesresp[]=array(
-						'id'=>$line->rowid,
-						'type'=>$line->product_type,
-						'fk_commande'=>$line->fk_commande,
-						'fk_parent_line'=>$line->fk_parent_line,
-						'desc'=>$line->desc,
-						'qty'=>$line->qty,
-						'price'=>$line->price,
-						'subprice'=>$line->subprice,
-						'tva_tx'=>$line->tva_tx,
-						'remise'=>$line->remise,
-						'remise_percent'=>$line->remise_percent,
-						'total_net'=>$line->total_ht,
-						'total_vat'=>$line->total_tva,
-						'total'=>$line->total_ttc,
-						'date_start'=>$line->date_start,
-						'date_end'=>$line->date_end,
-						'product_id'=>$line->fk_product,
-						'product_ref'=>$line->product_ref,
-						'product_label'=>$line->product_label,
-						'product_desc'=>$line->product_desc
-						);
-					}
+                    // Now define invoice
+                    $linesorders[]=array(
+                    'id' => $order->id,
+                    'ref' => $order->ref,
+                    'ref_client' => $order->ref_client,
+                    'ref_ext' => $order->ref_ext,
+                    'ref_int' => $order->ref_int,
+                    'socid' => $order->socid,
+                    'status' => $order->statut,
 
-					// Now define invoice
-					$linesorders[]=array(
-					'id' => $order->id,
-					'ref' => $order->ref,
-					'ref_client' => $order->ref_client,
-					'ref_ext' => $order->ref_ext,
-					'ref_int' => $order->ref_int,
-					'socid' => $order->socid,
-					'status' => $order->statut,
+                    'total_net' => $order->total_ht,
+                    'total_vat' => $order->total_tva,
+                    'total_localtax1' => $order->total_localtax1,
+                    'total_localtax2' => $order->total_localtax2,
+                    'total' => $order->total_ttc,
+                    'project_id' => $order->fk_project,
 
-					'total_net' => $order->total_ht,
-					'total_vat' => $order->total_tva,
-					'total_localtax1' => $order->total_localtax1,
-					'total_localtax2' => $order->total_localtax2,
-					'total' => $order->total_ttc,
-					'project_id' => $order->fk_project,
+                    'date' => $order->date_commande?dol_print_date($order->date_commande,'dayrfc'):'',
 
-					'date' => $order->date_commande?dol_print_date($order->date_commande,'dayrfc'):'',
+                    'remise' => $order->remise,
+                    'remise_percent' => $order->remise_percent,
+                    'remise_absolue' => $order->remise_absolue,
 
-					'remise' => $order->remise,
-					'remise_percent' => $order->remise_percent,
-					'remise_absolue' => $order->remise_absolue,
+                    'source' => $order->source,
+                    'facturee' => $order->facturee,
+                    'note_private' => $order->note_private,
+                    'note_public' => $order->note_public,
+                    'cond_reglement_id' => $order->cond_reglement_id,
+                    'cond_reglement' => $order->cond_reglement,
+                    'cond_reglement_doc' => $order->cond_reglement_doc,
+                    'cond_reglement_code' => $order->cond_reglement_code,
+                    'mode_reglement_id' => $order->mode_reglement_id,
+                    'mode_reglement' => $order->mode_reglement,
+                    'mode_reglement_code' => $order->mode_reglement_code,
 
-					'source' => $order->source,
-					'facturee' => $order->facturee,
-					'note_private' => $order->note_private,
-					'note_public' => $order->note_public,
-					'cond_reglement_id' => $order->cond_reglement_id,
-					'cond_reglement' => $order->cond_reglement,
-					'cond_reglement_doc' => $order->cond_reglement_doc,
-					'cond_reglement_code' => $order->cond_reglement_code,
-					'mode_reglement_id' => $order->mode_reglement_id,
-					'mode_reglement' => $order->mode_reglement,
-					'mode_reglement_code' => $order->mode_reglement_code,
+                    'date_livraison' => $order->date_livraison,
 
-					'date_livraison' => $order->date_livraison,
+                    'demand_reason_id' => $order->demand_reason_id,
+                    'demand_reason_code' => $order->demand_reason_code,
 
-					'demand_reason_id' => $order->demand_reason_id,
-					'demand_reason_code' => $order->demand_reason_code,
+                    'lines' => $linesresp
+                    );
+                }
+                $i++;
+            }
 
-					'lines' => $linesresp
-					);
-				}
-				$i++;
-			}
+            $objectresp=array(
+            'result'=>array('result_code'=>'OK', 'result_label'=>''),
+            'orders'=>$linesorders
 
-			$objectresp=array(
-			'result'=>array('result_code'=>'OK', 'result_label'=>''),
-			'orders'=>$linesorders
+            );
+        } else {
+            $error++;
+            $errorcode=$db->lasterrno(); $errorlabel=$db->lasterror();
+        }
+    }
 
-			);
-		}
-		else
-		{
-			$error++;
-			$errorcode=$db->lasterrno(); $errorlabel=$db->lasterror();
-		}
-	}
+    if ($error) {
+        $objectresp = array('result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel));
+    }
 
-	if ($error)
-	{
-		$objectresp = array('result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel));
-	}
-
-	return $objectresp;
+    return $objectresp;
 }
-
 
 /**
  * Create order
@@ -608,104 +576,92 @@ function getOrdersForThirdParty($authentication,$idthirdparty)
  */
 function createOrder($authentication,$order)
 {
-	global $db,$conf,$langs;
+    global $db,$conf,$langs;
 
-	$now=dol_now();
+    $now=dol_now();
 
-	dol_syslog("Function: createOrder login=".$authentication['login']." socid :".$order['socid']);
+    dol_syslog("Function: createOrder login=".$authentication['login']." socid :".$order['socid']);
 
-	if ($authentication['entity']) $conf->entity=$authentication['entity'];
-	
-	// Init and check authentication
-	$objectresp=array();
-	$errorcode='';$errorlabel='';
-	$error=0;
-	$fuser=check_authentication($authentication,$error,$errorcode,$errorlabel);
+    if ($authentication['entity']) $conf->entity=$authentication['entity'];
 
-	// Check parameters
+    // Init and check authentication
+    $objectresp=array();
+    $errorcode='';$errorlabel='';
+    $error=0;
+    $fuser=check_authentication($authentication,$error,$errorcode,$errorlabel);
 
+    // Check parameters
 
-	if (! $error)
-	{
-		$newobject=new Commande($db);
-		$newobject->socid=$order['thirdparty_id'];
-		$newobject->type=$order['type'];
-		$newobject->ref_ext=$order['ref_ext'];
-		$newobject->date=dol_stringtotime($order['date'],'dayrfc');
-		$newobject->date_lim_reglement=dol_stringtotime($order['date_due'],'dayrfc');
-		$newobject->note_private=$order['note_private'];
-		$newobject->note_public=$order['note_public'];
-		$newobject->statut=$order['status'];
-		$newobject->facturee=$order['facturee'];
-		$newobject->fk_project=$order['project_id'];
-		$newobject->cond_reglement_id=$order['cond_reglement_id'];
-		$newobject->demand_reason_id=$order['demand_reason_id'];
-		$newobject->date_creation=$now;
+    if (! $error) {
+        $newobject=new Commande($db);
+        $newobject->socid=$order['thirdparty_id'];
+        $newobject->type=$order['type'];
+        $newobject->ref_ext=$order['ref_ext'];
+        $newobject->date=dol_stringtotime($order['date'],'dayrfc');
+        $newobject->date_lim_reglement=dol_stringtotime($order['date_due'],'dayrfc');
+        $newobject->note_private=$order['note_private'];
+        $newobject->note_public=$order['note_public'];
+        $newobject->statut=$order['status'];
+        $newobject->facturee=$order['facturee'];
+        $newobject->fk_project=$order['project_id'];
+        $newobject->cond_reglement_id=$order['cond_reglement_id'];
+        $newobject->demand_reason_id=$order['demand_reason_id'];
+        $newobject->date_creation=$now;
 
-		// Trick because nusoap does not store data with same structure if there is one or several lines
-		$arrayoflines=array();
-		if (isset($order['lines']['line'][0])) $arrayoflines=$order['lines']['line'];
-		else $arrayoflines=$order['lines'];
+        // Trick because nusoap does not store data with same structure if there is one or several lines
+        $arrayoflines=array();
+        if (isset($order['lines']['line'][0])) $arrayoflines=$order['lines']['line'];
+        else $arrayoflines=$order['lines'];
 
-		foreach($arrayoflines as $key => $line)
-		{
-			// $key can be 'line' or '0','1',...
-			$newline=new OrderLine($db);
+        foreach ($arrayoflines as $key => $line) {
+            // $key can be 'line' or '0','1',...
+            $newline=new OrderLine($db);
 
-			$newline->type=$line['type'];
-			$newline->desc=$line['desc'];
-			$newline->fk_product=$line['fk_product'];
-			$newline->tva_tx=$line['vat_rate'];
-			$newline->qty=$line['qty'];
-			$newline->subprice=$line['subprice'];
-			$newline->total_ht=$line['total_net'];
-			$newline->total_tva=$line['total_vat'];
-			$newline->total_ttc=$line['total'];
-			$newobject->lines[]=$newline;
-		}
+            $newline->type=$line['type'];
+            $newline->desc=$line['desc'];
+            $newline->fk_product=$line['fk_product'];
+            $newline->tva_tx=$line['vat_rate'];
+            $newline->qty=$line['qty'];
+            $newline->subprice=$line['subprice'];
+            $newline->total_ht=$line['total_net'];
+            $newline->total_tva=$line['total_vat'];
+            $newline->total_ttc=$line['total'];
+            $newobject->lines[]=$newline;
+        }
 
-
-		$db->begin();
+        $db->begin();
 
         $result=$newobject->create($fuser,0,0);
-		if ($result < 0)
-		{
-			$error++;
+        if ($result < 0) {
+            $error++;
 
-		}
+        }
 
-		if ($newobject->statut == 1)   // We want order validated
-		{
-			$result=$newobject->validate($fuser);
-			if ($result < 0)
-			{
-				$error++;
-			}
-		}
-				
-		if (! $error)
-		{
-			$db->commit();
-			$objectresp=array('result'=>array('result_code'=>'OK', 'result_label'=>''),'id'=>$newobject->id,'ref'=>$newobject->ref);
-		}
-		else
-		{
-			$db->rollback();
-			$error++;
-			$errorcode='KO';
-			$errorlabel=$newobject->error;
-		}
-		
-	}
+        if ($newobject->statut == 1) {   // We want order validated
+            $result=$newobject->validate($fuser);
+            if ($result < 0) {
+                $error++;
+            }
+        }
 
-	if ($error)
-	{
-		$objectresp = array('result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel));
-	}
+        if (! $error) {
+            $db->commit();
+            $objectresp=array('result'=>array('result_code'=>'OK', 'result_label'=>''),'id'=>$newobject->id,'ref'=>$newobject->ref);
+        } else {
+            $db->rollback();
+            $error++;
+            $errorcode='KO';
+            $errorlabel=$newobject->error;
+        }
 
-	return $objectresp;
+    }
+
+    if ($error) {
+        $objectresp = array('result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel));
+    }
+
+    return $objectresp;
 }
-
 
 /**
  * Valid an order
@@ -716,81 +672,65 @@ function createOrder($authentication,$order)
  */
 function validOrder($authentication,$id='')
 {
-	global $db,$conf,$langs;
+    global $db,$conf,$langs;
 
-	dol_syslog("Function: validOrder login=".$authentication['login']." id=".$id." ref=".$ref." ref_ext=".$ref_ext);
+    dol_syslog("Function: validOrder login=".$authentication['login']." id=".$id." ref=".$ref." ref_ext=".$ref_ext);
 
-	// Init and check authentication
-	$objectresp=array();
-	$errorcode='';$errorlabel='';
-	$error=0;
-	if ($authentication['entity']) $conf->entity=$authentication['entity'];
-	$fuser=check_authentication($authentication,$error,$errorcode,$errorlabel);
+    // Init and check authentication
+    $objectresp=array();
+    $errorcode='';$errorlabel='';
+    $error=0;
+    if ($authentication['entity']) $conf->entity=$authentication['entity'];
+    $fuser=check_authentication($authentication,$error,$errorcode,$errorlabel);
 
-	if (! $error)
-	{
-		$fuser->getrights();
+    if (! $error) {
+        $fuser->getrights();
 
-		if ($fuser->rights->commande->lire)
-		{
-			$order=new Commande($db);
-			$result=$order->fetch($id,$ref,$ref_ext);
+        if ($fuser->rights->commande->lire) {
+            $order=new Commande($db);
+            $result=$order->fetch($id,$ref,$ref_ext);
 
-			$order->fetch_thirdparty();
-			$db->begin();
-			if ($result > 0)
-			{
-				$result=$order->valid($fuser);
+            $order->fetch_thirdparty();
+            $db->begin();
+            if ($result > 0) {
+                $result=$order->valid($fuser);
 
-				if ($result	>= 0)
-				{
-					// Define output language
-					$outputlangs = $langs;
-					commande_pdf_create($db, $order, $order->modelpdf, $outputlangs, 0, 0, 0);
+                if ($result	>= 0) {
+                    // Define output language
+                    $outputlangs = $langs;
+                    commande_pdf_create($db, $order, $order->modelpdf, $outputlangs, 0, 0, 0);
 
-				}
-				else
-				{
-					$db->rollback();
-					$error++;
-					$errorcode='KO';
-					$errorlabel=$newobject->error;
-				}
-			}
-			else
-			{
-				$db->rollback();
-				$error++;
-				$errorcode='KO';
-				$errorlabel=$newobject->error;
-			}
+                } else {
+                    $db->rollback();
+                    $error++;
+                    $errorcode='KO';
+                    $errorlabel=$newobject->error;
+                }
+            } else {
+                $db->rollback();
+                $error++;
+                $errorcode='KO';
+                $errorlabel=$newobject->error;
+            }
 
-		}
-		else
-		{
-			$db->rollback();
-			$error++;
-			$errorcode='KO';
-			$errorlabel=$newobject->error;
-		}
+        } else {
+            $db->rollback();
+            $error++;
+            $errorcode='KO';
+            $errorlabel=$newobject->error;
+        }
 
-	}
+    }
 
-	if ($error)
-	{
-		$objectresp = array('result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel));
-	}
-	else
-	{
-		$db->commit();
-		$objectresp= array('result'=>array('result_code'=>'OK', 'result_label'=>''));
-	}
+    if ($error) {
+        $objectresp = array('result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel));
+    } else {
+        $db->commit();
+        $objectresp= array('result'=>array('result_code'=>'OK', 'result_label'=>''));
+    }
 
-	return $objectresp;
+    return $objectresp;
 }
-
 
 // Return the results.
 $server->service((isset($HTTP_RAW_POST_DATA)?$HTTP_RAW_POST_DATA:''));
-
-?>

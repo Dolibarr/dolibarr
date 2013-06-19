@@ -22,7 +22,7 @@
  *		\brief      Page de bilan
  */
 
-require('../../main.inc.php');
+require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 $langs->load("banks");
@@ -30,7 +30,6 @@ $langs->load("categories");
 
 if (!$user->rights->banque->lire)
   accessforbidden();
-
 
 /**
  * 	Get result of sql for field amount
@@ -40,17 +39,16 @@ if (!$user->rights->banque->lire)
  */
 function valeur($sql)
 {
-	global $db;
-	$resql=$db->query($sql);
-	if ($resql)
-	{
-		$obj=$db->fetch_object($resql);
-		$valeur = $obj->amount;
-		$db->free($resql);
-	}
-	return $valeur;
-}
+    global $db;
+    $resql=$db->query($sql);
+    if ($resql) {
+        $obj=$db->fetch_object($resql);
+        $valeur = $obj->amount;
+        $db->free($resql);
+    }
 
+    return $valeur;
+}
 
 /*
  *	View
@@ -86,10 +84,8 @@ $sql = "SELECT sum(amount) as amount FROM ".MAIN_DB_PREFIX."bank ";
 $solde = valeur($sql);
 print "<tr $bc[$var]><td>".$langs->trans("BankBalance")."</td><td align=\"right\">".price($solde)."</td></tr>";
 
-
 print "</table>";
 
 $db->close();
 
 llxFooter();
-?>

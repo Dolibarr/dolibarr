@@ -15,7 +15,5 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-	// Affichage des templates
-	require ('tpl/validation2.tpl.php');
-
-?>
+    // Affichage des templates
+    require 'tpl/validation2.tpl.php';

@@ -25,27 +25,23 @@
 require_once 'class/Facturation.class.php';
 
 // Si nouvelle vente, reinitialisation des donnees (destruction de l'objet et vidage de la table contenant la liste des articles)
-if ( $_GET['id'] == 'NOUV' )
-{
-	unset($_SESSION['serObjFacturation']);
-	unset($_SESSION['poscart']);
+if ($_GET['id'] == 'NOUV') {
+    unset($_SESSION['serObjFacturation']);
+    unset($_SESSION['poscart']);
 }
 
 // Recuperation, s'il existe, de l'objet contenant les infos de la vente en cours ...
-if (isset($_SESSION['serObjFacturation']))
-{
-	$obj_facturation = unserialize($_SESSION['serObjFacturation']);
-	unset($_SESSION['serObjFacturation']);
-}
-else
-{
-	// ... sinon, c'est une nouvelle vente
-	$obj_facturation = new Facturation();
+if (isset($_SESSION['serObjFacturation'])) {
+    $obj_facturation = unserialize($_SESSION['serObjFacturation']);
+    unset($_SESSION['serObjFacturation']);
+} else {
+    // ... sinon, c'est une nouvelle vente
+    $obj_facturation = new Facturation();
 }
 
 print '<div class="liste_articles">';
 
-require ('tpl/liste_articles.tpl.php');
+require 'tpl/liste_articles.tpl.php';
 
 $obj_facturation->prixTotalHt($lst_total_ht);
 $obj_facturation->prixTotalTtc($lst_total_ttc);
@@ -54,17 +50,12 @@ print '</div>';
 
 print '<div class="principal">';
 
-if ( $_GET['menu'] )
-{
-	include $_GET['menu'].'.php';
-}
-else
-{
-	include 'facturation.php';
+if ($_GET['menu']) {
+    include $_GET['menu'].'.php';
+} else {
+    include 'facturation.php';
 }
 
 print '</div>';
 
 $_SESSION['serObjFacturation'] = serialize($obj_facturation);
-
-?>

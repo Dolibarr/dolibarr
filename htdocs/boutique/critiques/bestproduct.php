@@ -27,7 +27,6 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/boutique/osc_master.inc.php';
 
-
 /*
  * View
  */
@@ -35,17 +34,15 @@ require_once DOL_DOCUMENT_ROOT.'/boutique/osc_master.inc.php';
 llxHeader();
 
 if ($sortfield == "") {
-	$sortfield="rat";
+    $sortfield="rat";
 }
 if ($sortorder == "") {
-	$sortorder="DESC";
+    $sortorder="DESC";
 }
-
 
 if ($page == -1) { $page = 0 ; }
 $limit = $conf->liste_limit;
 $offset = $limit * $page ;
-
 
 print_barre_liste("Liste des produits classes par critiques", $page, "bestproduct.php");
 
@@ -63,36 +60,30 @@ print '</td><td align="center">Quantite';
 print '</td><td align="center">Status</TD>';
 print "</TR>\n";
 
-
 $resql=$dbosc->query($sql);
-if ($resql)
-{
-	$num = $dbosc->num_rows($resql);
-	$i = 0;
+if ($resql) {
+    $num = $dbosc->num_rows($resql);
+    $i = 0;
 
-	$var=True;
-	while ($i < $num) {
-		$objp = $dbosc->fetch_object($resql);
-		$var=!$var;
-		print "<TR $bc[$var]>";
-		print '<TD><a href="'.DOL_URL_ROOT.'/boutique/livre/fiche.php?oscid='.$objp->products_id.'">'.$objp->products_model.'</a></TD>';
-		print '<TD align="center">'.$objp->rat."</TD>\n";
-		print '<TD align="center">'.$objp->products_quantity."</TD>\n";
-		print '<TD align="center">'.$objp->products_status."</TD>\n";
-		print "</TR>\n";
-		$i++;
-	}
-	$dbosc->free();
-}
-else
-{
-	dol_print_error($dbosc);
+    $var=True;
+    while ($i < $num) {
+        $objp = $dbosc->fetch_object($resql);
+        $var=!$var;
+        print "<TR $bc[$var]>";
+        print '<TD><a href="'.DOL_URL_ROOT.'/boutique/livre/fiche.php?oscid='.$objp->products_id.'">'.$objp->products_model.'</a></TD>';
+        print '<TD align="center">'.$objp->rat."</TD>\n";
+        print '<TD align="center">'.$objp->products_quantity."</TD>\n";
+        print '<TD align="center">'.$objp->products_status."</TD>\n";
+        print "</TR>\n";
+        $i++;
+    }
+    $dbosc->free();
+} else {
+    dol_print_error($dbosc);
 }
 
 print "</TABLE>";
 
-
 $dbosc->close();
 
 llxFooter();
-?>

@@ -30,7 +30,6 @@ if (file_exists($conffile)) include_once $conffile;
 require_once $dolibarr_main_document_root . '/core/lib/admin.lib.php';
 require_once $dolibarr_main_document_root . '/core/lib/security.lib.php'; // for dol_hash
 
-
 $setuplang=GETPOST("selectlang",'',3)?GETPOST("selectlang",'',3):'auto';
 $langs->setDefaultLang($setuplang);
 $versionfrom=GETPOST("versionfrom",'',3)?GETPOST("versionfrom",'',3):(empty($argv[1])?'':$argv[1]);
@@ -40,8 +39,7 @@ $action=GETPOST('action', 'alpha');
 // Define targetversion used to update MAIN_VERSION_LAST_INSTALL for first install
 // or MAIN_VERSION_LAST_UPGRADE for upgrade.
 $targetversion=DOL_VERSION;		// It it's last upgrade
-if (! empty($action) && preg_match('/upgrade/i', $action))	// If it's an old upgrade
-{
+if (! empty($action) && preg_match('/upgrade/i', $action)) {	// If it's an old upgrade
     $tmp=explode('_', $action, 2);
     if ($tmp[0]=='upgrade' && ! empty($tmp[1])) $targetversion=$tmp[1];
 }
@@ -70,33 +68,27 @@ if (@file_exists($forcedfile)) { $useforcedwizard=true; include_once $forcedfile
 
 dolibarr_install_syslog("--- etape5: Entering etape5.php page", LOG_INFO);
 
-
 /*
  *	Actions
  */
 
 // If install, check pass and pass_verif used to create admin account
-if ($action == "set")
-{
-    if ($_POST["pass"] <> $_POST["pass_verif"])
-    {
+if ($action == "set") {
+    if ($_POST["pass"] <> $_POST["pass_verif"]) {
         header("Location: etape4.php?error=1&selectlang=$setuplang".(isset($_POST["login"])?'&login='.$_POST["login"]:''));
         exit;
     }
 
-    if (dol_strlen(trim($_POST["pass"])) == 0)
-    {
+    if (dol_strlen(trim($_POST["pass"])) == 0) {
         header("Location: etape4.php?error=2&selectlang=$setuplang".(isset($_POST["login"])?'&login='.$_POST["login"]:''));
         exit;
     }
 
-    if (dol_strlen(trim($_POST["login"])) == 0)
-    {
+    if (dol_strlen(trim($_POST["login"])) == 0) {
         header("Location: etape4.php?error=3&selectlang=$setuplang".(isset($_POST["login"])?'&login='.$_POST["login"]:''));
         exit;
     }
 }
-
 
 /*
  *	View
@@ -106,29 +98,24 @@ pHeader($langs->trans("SetupEnd"),"etape5");
 print '<br>';
 
 // Test if we can run a first install process
-if (empty($versionfrom) && empty($versionto) && ! is_writable($conffile))
-{
+if (empty($versionfrom) && empty($versionto) && ! is_writable($conffile)) {
     print $langs->trans("ConfFileIsNotWritable",$conffiletoshow);
     pFooter(1,$setuplang,'jscheckparam');
     exit;
 }
 
-if ($action == "set" || empty($action) || preg_match('/upgrade/i',$action))
-{
+if ($action == "set" || empty($action) || preg_match('/upgrade/i',$action)) {
     print '<table cellspacing="0" cellpadding="2" width="100%">';
     $error=0;
 
     // If password is encoded, we decode it
-    if (preg_match('/crypted:/i',$dolibarr_main_db_pass) || ! empty($dolibarr_main_db_encrypted_pass))
-    {
+    if (preg_match('/crypted:/i',$dolibarr_main_db_pass) || ! empty($dolibarr_main_db_encrypted_pass)) {
         require_once $dolibarr_main_document_root.'/core/lib/security.lib.php';
-        if (preg_match('/crypted:/i',$dolibarr_main_db_pass))
-        {
+        if (preg_match('/crypted:/i',$dolibarr_main_db_pass)) {
             $dolibarr_main_db_pass = preg_replace('/crypted:/i', '', $dolibarr_main_db_pass);
             $dolibarr_main_db_pass = dol_decode($dolibarr_main_db_pass);
             $dolibarr_main_db_encrypted_pass = $dolibarr_main_db_pass;	// We need to set this as it is used to know the password was initially crypted
-        }
-        else $dolibarr_main_db_pass = dol_decode($dolibarr_main_db_encrypted_pass);
+        } else $dolibarr_main_db_pass = dol_decode($dolibarr_main_db_encrypted_pass);
     }
 
     $conf->db->type = $dolibarr_main_db_type;
@@ -145,12 +132,11 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i',$action))
     // Create the global $hookmanager object
     include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
     $hookmanager=new HookManager($db);
-        
+
     $ok = 0;
 
     // If first install
-    if ($action == "set")
-    {
+    if ($action == "set") {
         // Active module user
         $modName='modUser';
         $file = $modName . ".class.php";
@@ -160,8 +146,7 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i',$action))
         $result=$objMod->init();
         if (! $result) print 'ERROR in activating module file='.$file;
 
-        if ($db->connected == 1)
-        {
+        if ($db->connected == 1) {
             $conf->setValues($db);
 
             // Create user
@@ -180,28 +165,21 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i',$action))
 
             $conf->global->USER_MAIL_REQUIRED=0;     // Force global option to be sure to create a new user with no email
             $result=$newuser->create($createuser,1);
-            if ($result > 0)
-            {
+            if ($result > 0) {
                 print $langs->trans("AdminLoginCreatedSuccessfuly",$_POST["login"])."<br>";
                 $success = 1;
-            }
-            else
-            {
-                if ($newuser->error == 'ErrorLoginAlreadyExists')
-                {
+            } else {
+                if ($newuser->error == 'ErrorLoginAlreadyExists') {
                     dolibarr_install_syslog('install/etape5.php AdminLoginAlreadyExists', LOG_WARNING);
                     print '<br><div class="warning">'.$langs->trans("AdminLoginAlreadyExists",$_POST["login"])."</div><br>";
                     $success = 1;
-                }
-                else
-                {
+                } else {
                     dolibarr_install_syslog('install/etape5.php FailedToCreateAdminLogin '.$newuser->error, LOG_ERR);
                     print '<br><div class="error">'.$langs->trans("FailedToCreateAdminLogin").' '.$newuser->error.'</div><br><br>';
                 }
             }
 
-            if ($success)
-            {
+            if ($success) {
                 $db->begin();
 
                 dolibarr_install_syslog('install/etape5.php set MAIN_VERSION_LAST_INSTALL const to '.$targetversion, LOG_DEBUG);
@@ -211,8 +189,7 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i',$action))
                 if (! $resql) dol_print_error($db,'Error in setup program');
                 $conf->global->MAIN_VERSION_LAST_INSTALL=$targetversion;
 
-                if ($useforcedwizard)
-                {
+                if ($useforcedwizard) {
                     dolibarr_install_syslog('install/etape5.php set MAIN_REMOVE_INSTALL_WARNING const to 1', LOG_DEBUG);
                     $resql=$db->query("DELETE FROM ".MAIN_DB_PREFIX."const WHERE ".$db->decrypt('name')."='MAIN_REMOVE_INSTALL_WARNING'");
                     if (! $resql) dol_print_error($db,'Error in setup program');
@@ -222,14 +199,12 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i',$action))
                 }
 
                 // If we ask to force some modules to be enabled
-                if (! empty($force_install_module))
-                {
+                if (! empty($force_install_module)) {
                     if (! defined('DOL_DOCUMENT_ROOT') && ! empty($dolibarr_main_document_root)) define('DOL_DOCUMENT_ROOT',$dolibarr_main_document_root);
                     if (! defined('DOL_DOCUMENT_ROOT_ALT') && ! empty($dolibarr_main_document_root_alt)) define('DOL_DOCUMENT_ROOT_ALT',$dolibarr_main_document_root_alt);
 
                     $tmparray=explode(',',$force_install_module);
-                    foreach ($tmparray as $modtoactivate)
-                    {
+                    foreach ($tmparray as $modtoactivate) {
                         $modtoactivatenew=preg_replace('/\.class\.php$/i','',$modtoactivate);
                         print $langs->trans("ActivateModule",$modtoactivatenew).'<br>';
 
@@ -248,50 +223,38 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i',$action))
 
                 $db->commit();
             }
-        }
-        else
-        {
+        } else {
             print $langs->trans("ErrorFailedToConnect")."<br>";
         }
     }
     // If upgrade
-    elseif (empty($action) || preg_match('/upgrade/i',$action))
-    {
-        if ($db->connected == 1)
-        {
+    elseif (empty($action) || preg_match('/upgrade/i',$action)) {
+        if ($db->connected == 1) {
             $conf->setValues($db);
 
             // Define if we need to update the MAIN_VERSION_LAST_UPGRADE value in database
             $tagdatabase=false;
             if (empty($conf->global->MAIN_VERSION_LAST_UPGRADE)) $tagdatabase=true;	// We don't know what it was before, so now we consider we are version choosed.
-            else
-            {
+            else {
                 $mainversionlastupgradearray=preg_split('/[.-]/',$conf->global->MAIN_VERSION_LAST_UPGRADE);
                 $targetversionarray=preg_split('/[.-]/',$targetversion);
                 if (versioncompare($targetversionarray,$mainversionlastupgradearray) > 0) $tagdatabase=true;
             }
 
-            if ($tagdatabase)
-            {
+            if ($tagdatabase) {
                 dolibarr_install_syslog('install/etape5.php set MAIN_VERSION_LAST_UPGRADE const to value '.$targetversion, LOG_DEBUG);
                 $resql=$db->query("DELETE FROM ".MAIN_DB_PREFIX."const WHERE ".$db->decrypt('name')."='MAIN_VERSION_LAST_UPGRADE'");
                 if (! $resql) dol_print_error($db,'Error in setup program');
                 $resql=$db->query("INSERT INTO ".MAIN_DB_PREFIX."const(name,value,type,visible,note,entity) VALUES (".$db->encrypt('MAIN_VERSION_LAST_UPGRADE',1).",".$db->encrypt($targetversion,1).",'chaine',0,'Dolibarr version for last upgrade',0)");
                 if (! $resql) dol_print_error($db,'Error in setup program');
                 $conf->global->MAIN_VERSION_LAST_UPGRADE=$targetversion;
-            }
-            else
-            {
+            } else {
                 dolibarr_install_syslog('install/etape5.php We run an upgrade to version '.$targetversion.' but database was already upgraded to '.$conf->global->MAIN_VERSION_LAST_UPGRADE.'. We keep MAIN_VERSION_LAST_UPGRADE as it is.', LOG_DEBUG);
             }
-        }
-        else
-        {
+        } else {
             print $langs->trans("ErrorFailedToConnect")."<br>";
         }
-    }
-    else
-    {
+    } else {
         dol_print_error('','install/etape5.php Unknown choice of action');
     }
 
@@ -310,22 +273,18 @@ print "<br>";
 // Create lock file
 
 // If first install
-if ($action == "set")
-{
-    if (empty($conf->global->MAIN_VERSION_LAST_UPGRADE) || ($conf->global->MAIN_VERSION_LAST_UPGRADE == DOL_VERSION))
-    {
+if ($action == "set") {
+    if (empty($conf->global->MAIN_VERSION_LAST_UPGRADE) || ($conf->global->MAIN_VERSION_LAST_UPGRADE == DOL_VERSION)) {
         // Install is finished
         print $langs->trans("SystemIsInstalled")."<br>";
 
         $createlock=0;
 
-        if (! empty($force_install_lockinstall))
-        {
+        if (! empty($force_install_lockinstall)) {
             // Install is finished, we create the lock file
             $lockfile=DOL_DATA_ROOT.'/install.lock';
             $fp = @fopen($lockfile, "w");
-            if ($fp)
-            {
+            if ($fp) {
                 if ($force_install_lockinstall == 1) $force_install_lockinstall=444;    // For backward compatibility
                 fwrite($fp, "This is a lock file to prevent use of install pages (set with permission ".$force_install_lockinstall.")");
                 fclose($fp);
@@ -333,8 +292,7 @@ if ($action == "set")
                 $createlock=1;
             }
         }
-        if (empty($createlock))
-        {
+        if (empty($createlock)) {
             print '<div class="warning">'.$langs->trans("WarningRemoveInstallDir")."</div>";
         }
 
@@ -345,9 +303,7 @@ if ($action == "set")
         print '<center><a href="../admin/index.php?mainmenu=home&leftmenu=setup'.(isset($_POST["login"])?'&username='.urlencode($_POST["login"]):'').'">';
         print $langs->trans("GoToSetupArea");
         print '</a></center>';
-    }
-    else
-    {
+    } else {
         // If here MAIN_VERSION_LAST_UPGRADE is not empty
         print $langs->trans("VersionLastUpgrade").': <b><font class="ok">'.$conf->global->MAIN_VERSION_LAST_UPGRADE.'</font></b><br>';
         print $langs->trans("VersionProgram").': <b><font class="ok">'.DOL_VERSION.'</font></b><br>';
@@ -360,22 +316,18 @@ if ($action == "set")
     }
 }
 // If upgrade
-elseif (empty($action) || preg_match('/upgrade/i',$action))
-{
-    if (empty($conf->global->MAIN_VERSION_LAST_UPGRADE) || ($conf->global->MAIN_VERSION_LAST_UPGRADE == DOL_VERSION))
-    {
+elseif (empty($action) || preg_match('/upgrade/i',$action)) {
+    if (empty($conf->global->MAIN_VERSION_LAST_UPGRADE) || ($conf->global->MAIN_VERSION_LAST_UPGRADE == DOL_VERSION)) {
         // Upgrade is finished
         print $langs->trans("SystemIsUpgraded")."<br>";
 
         $createlock=0;
 
-        if (! empty($force_install_lockinstall))
-        {
+        if (! empty($force_install_lockinstall)) {
             // Upgrade is finished, we create the lock file
             $lockfile=DOL_DATA_ROOT.'/install.lock';
             $fp = @fopen($lockfile, "w");
-            if ($fp)
-            {
+            if ($fp) {
                 if ($force_install_lockinstall == 1) $force_install_lockinstall=444;    // For backward compatibility
                 fwrite($fp, "This is a lock file to prevent use of install pages (set with permission ".$force_install_lockinstall.")");
                 fclose($fp);
@@ -383,8 +335,7 @@ elseif (empty($action) || preg_match('/upgrade/i',$action))
                 $createlock=1;
             }
         }
-        if (empty($createlock))
-        {
+        if (empty($createlock)) {
             print '<br><div class="warning">'.$langs->trans("WarningRemoveInstallDir")."</div>";
         }
 
@@ -393,9 +344,7 @@ elseif (empty($action) || preg_match('/upgrade/i',$action))
         print '<center><a href="../index.php?mainmenu=home'.(isset($_POST["login"])?'&username='.urlencode($_POST["login"]):'').'">';
         print $langs->trans("GoToDolibarr");
         print '</a></center>';
-    }
-    else
-    {
+    } else {
         // If here MAIN_VERSION_LAST_UPGRADE is not empty
         print $langs->trans("VersionLastUpgrade").': <b><font class="ok">'.$conf->global->MAIN_VERSION_LAST_UPGRADE.'</font></b><br>';
         print $langs->trans("VersionProgram").': <b><font class="ok">'.DOL_VERSION.'</font></b>';
@@ -406,19 +355,13 @@ elseif (empty($action) || preg_match('/upgrade/i',$action))
         print $langs->trans("GoToUpgradePage");
         print '</a></center>';
     }
-}
-else
-{
+} else {
     dol_print_error('','install/etape5.php Unknown choice of action');
 }
-
-
 
 // Clear cache files
 clearstatcache();
 
-
 dolibarr_install_syslog("--- install/etape5.php Dolibarr setup finished", LOG_INFO);
 
 pFooter(1,$setuplang);
-?>

@@ -26,23 +26,21 @@
  */
 require_once DOL_DOCUMENT_ROOT .'/core/modules/facture/modules_facture.php';
 
-
 /**
  *	\class      mod_facture_mercure
  *	\brief      Classe du modele de numerotation de reference de facture Mercure
  */
 class mod_facture_mercure extends ModeleNumRefFactures
 {
-    var $version='dolibarr';		// 'development', 'experimental', 'dolibarr'
-    var $error = '';
-
+    public $version='dolibarr';		// 'development', 'experimental', 'dolibarr'
+    public $error = '';
 
     /**
      *  Renvoi la description du modele de numerotation
      *
      *  @return     string      Texte descripif
      */
-    function info()
+    public function info()
     {
         global $conf,$langs;
 
@@ -88,7 +86,7 @@ class mod_facture_mercure extends ModeleNumRefFactures
      *
      *  @return     string      Example
      */
-    function getExample()
+    public function getExample()
     {
         global $conf,$langs,$mysoc;
 
@@ -100,22 +98,22 @@ class mod_facture_mercure extends ModeleNumRefFactures
         $mysoc->code_client=$old_code_client;
         $mysoc->typent_code=$old_code_type;
 
-        if (! $numExample)
-        {
+        if (! $numExample) {
             $numExample = 'NotConfigured';
         }
+
         return $numExample;
     }
 
     /**
      * Return next value
      *
-     * @param	Societe		$objsoc     Object third party
-     * @param   Facture		$facture	Object invoice
-     * @param   string		$mode       'next' for next value or 'last' for last value
-     * @return  string      			Value if OK, 0 if KO
+     * @param  Societe $objsoc  Object third party
+     * @param  Facture $facture Object invoice
+     * @param  string  $mode    'next' for next value or 'last' for last value
+     * @return string  Value if OK, 0 if KO
      */
-    function getNextValue($objsoc,$facture,$mode='next')
+    public function getNextValue($objsoc,$facture,$mode='next')
     {
         global $db,$conf;
 
@@ -125,9 +123,9 @@ class mod_facture_mercure extends ModeleNumRefFactures
         $mask = '';
         if (is_object($facture) && $facture->type == 2) $mask=$conf->global->FACTURE_MERCURE_MASK_CREDIT;
         else $mask=$conf->global->FACTURE_MERCURE_MASK_INVOICE;
-        if (! $mask)
-        {
+        if (! $mask) {
             $this->error='NotConfigured';
+
             return 0;
         }
 
@@ -137,23 +135,20 @@ class mod_facture_mercure extends ModeleNumRefFactures
 
         $numFinal=get_next_value($db,$mask,'facture','facnumber',$where,$objsoc,$facture->date,$mode);
         if (! preg_match('/([0-9])+/',$numFinal)) $this->error = $numFinal;
-
         return  $numFinal;
     }
-
 
     /**
      * Return next free value
      *
-     * @param	Societe		$objsoc     	Object third party
-     * @param	string		$objforref		Object for number to search
-     * @param   string		$mode       	'next' for next value or 'last' for last value
-     * @return  string      				Next free value
+     * @param  Societe $objsoc    Object third party
+     * @param  string  $objforref Object for number to search
+     * @param  string  $mode      'next' for next value or 'last' for last value
+     * @return string  Next free value
      */
-    function getNumRef($objsoc,$objforref,$mode='next')
+    public function getNumRef($objsoc,$objforref,$mode='next')
     {
         return $this->getNextValue($objsoc,$objforref,$mode);
     }
 
 }
-?>

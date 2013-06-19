@@ -27,7 +27,6 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/menubase.class.php';
 
-
 $langs->load("admin");
 $langs->load('other');
 
@@ -53,20 +52,15 @@ $menu_handler=$menu_handler_top;
 if (GETPOST("handler_origine")) $menu_handler=GETPOST("handler_origine");
 if (GETPOST("menu_handler"))    $menu_handler=GETPOST("menu_handler");
 
-
-
 /*
  * Actions
  */
 
-if ($action == 'update')
-{
-    if (! $_POST['cancel'])
-    {
+if ($action == 'update') {
+    if (! $_POST['cancel']) {
         $menu = new Menubase($db);
         $result=$menu->fetch($_POST['menuId']);
-        if ($result > 0)
-        {
+        if ($result > 0) {
             $menu->titre=$_POST['titre'];
             $menu->leftmenu=$_POST['leftmenu'];
             $menu->url=$_POST['url'];
@@ -77,102 +71,81 @@ if ($action == 'update')
             $menu->target=$_POST['target'];
             $menu->user=$_POST['user'];
             $result=$menu->update($user);
-            if ($result > 0)
-            {
+            if ($result > 0) {
                 $mesg='<div class="ok">'.$langs->trans("RecordModifiedSuccessfully").'</div>';
-            }
-            else
-            {
+            } else {
                 $mesg='<div class="error">'.$menu->error.'</div>';
             }
-        }
-        else
-        {
+        } else {
             $mesg='<div class="error">'.$menu->error.'</div>';
         }
         $_GET["menuId"] = $_POST['menuId'];
         $action = "edit";
-    }
-    else
-    {
+    } else {
         header("Location: ".DOL_URL_ROOT."/admin/menus/index.php?menu_handler=".$menu_handler);
         exit;
     }
 
-    if ($_GET['return'])
-    {
+    if ($_GET['return']) {
         header("Location: ".DOL_URL_ROOT."/admin/menus/index.php?menu_handler=".$menu_handler);
         exit;
     }
 }
 
-if ($action == 'add')
-{
-    if ($_POST['cancel'])
-    {
+if ($action == 'add') {
+    if ($_POST['cancel']) {
         header("Location: ".DOL_URL_ROOT."/admin/menus/index.php?menu_handler=".$menu_handler);
         exit;
     }
 
     $leftmenu=''; $mainmenu='';
-    if (! empty($_POST['menuId']) && ! is_numeric($_POST['menuId']))
-    {
-	    $tmp=explode('&',$_POST['menuId']);
-	    foreach($tmp as $s)
-	    {
-	    	if (preg_match('/fk_mainmenu=/',$s))
-	    	{
-				$mainmenu=preg_replace('/fk_mainmenu=/','',$s);
-	    	}
-	    	if (preg_match('/fk_leftmenu=/',$s))
-	    	{
-	    		$leftmenu=preg_replace('/fk_leftmenu=/','',$s);
-	    	}
-	    }
+    if (! empty($_POST['menuId']) && ! is_numeric($_POST['menuId'])) {
+        $tmp=explode('&',$_POST['menuId']);
+        foreach ($tmp as $s) {
+            if (preg_match('/fk_mainmenu=/',$s)) {
+                $mainmenu=preg_replace('/fk_mainmenu=/','',$s);
+            }
+            if (preg_match('/fk_leftmenu=/',$s)) {
+                $leftmenu=preg_replace('/fk_leftmenu=/','',$s);
+            }
+        }
     }
 
     $langs->load("errors");
 
     $error=0;
-    if (! $error && ! $_POST['menu_handler'])
-    {
+    if (! $error && ! $_POST['menu_handler']) {
         $mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("MenuHandler")).'</div>';
         $action = 'create';
         $error++;
     }
-    if (! $error && ! $_POST['type'])
-    {
+    if (! $error && ! $_POST['type']) {
         $mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("Type")).'</div>';
         $action = 'create';
         $error++;
     }
-    if (! $error && ! $_POST['url'])
-    {
+    if (! $error && ! $_POST['url']) {
         $mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("Url")).'</div>';
         $action = 'create';
         $error++;
     }
-    if (! $error && ! $_POST['titre'])
-    {
+    if (! $error && ! $_POST['titre']) {
         $mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("Title")).'</div>';
         $action = 'create';
         $error++;
     }
-    if (! $error && $_POST['menuId'] && $_POST['type'] == 'top')
-    {
+    if (! $error && $_POST['menuId'] && $_POST['type'] == 'top') {
         $mesg='<div class="error">'.$langs->trans("ErrorTopMenuMustHaveAParentWithId0").'</div>';
         $action = 'create';
         $error++;
     }
-    if (! $error && empty($_POST['menuId']) && $_POST['type'] == 'left')
-    {
+    if (! $error && empty($_POST['menuId']) && $_POST['type'] == 'left') {
         $mesg='<div class="error">'.$langs->trans("ErrorLeftMenuMustHaveAParentId").'</div>';
         $action = 'create';
         $error++;
     }
 
-    if (! $error)
-    {
+    if (! $error) {
         $menu = new Menubase($db);
         $menu->menu_handler=preg_replace('/_menu$/','',$_POST['menu_handler']);
         $menu->type=$_POST['type'];
@@ -184,26 +157,20 @@ if ($action == 'add')
         $menu->perms=$_POST['perms'];
         $menu->target=$_POST['target'];
         $menu->user=$_POST['user'];
-        if (is_numeric($_POST['menuId']))
-        {
-        	$menu->fk_menu=$_POST['menuId'];
-        }
-        else
-       {
-	       	if ($_POST['type'] == 'top') $menu->fk_menu=0;
-	       	else $menu->fk_menu=-1;
-        	$menu->fk_mainmenu=$mainmenu;
-        	$menu->fk_leftmenu=$leftmenu;
+        if (is_numeric($_POST['menuId'])) {
+            $menu->fk_menu=$_POST['menuId'];
+        } else {
+               if ($_POST['type'] == 'top') $menu->fk_menu=0;
+               else $menu->fk_menu=-1;
+            $menu->fk_mainmenu=$mainmenu;
+            $menu->fk_leftmenu=$leftmenu;
        }
 
         $result=$menu->create($user);
-        if ($result > 0)
-        {
+        if ($result > 0) {
             header("Location: ".DOL_URL_ROOT."/admin/menus/index.php?menu_handler=".$_POST['menu_handler']);
             exit;
-        }
-        else
-        {
+        } else {
             $action = 'create';
             $mesg='<div class="error">'.$menu->error.'</div>';
         }
@@ -211,32 +178,26 @@ if ($action == 'add')
 }
 
 // delete
-if ($action == 'confirm_delete' && $_POST["confirm"] == 'yes')
-{
+if ($action == 'confirm_delete' && $_POST["confirm"] == 'yes') {
     $this->db->begin();
 
     $sql = "DELETE FROM ".MAIN_DB_PREFIX."menu WHERE rowid = ".$_GET['menuId'];
     $db->query($sql);
 
-    if ($result == 0)
-    {
+    if ($result == 0) {
         $this->db->commit();
 
         llxHeader();
         print '<div class="ok">'.$langs->trans("MenuDeleted").'</div>';
         llxFooter();
         exit ;
-    }
-    else
-    {
+    } else {
         $this->db->rollback();
 
         $reload = 0;
         $_GET["action"]='';
     }
 }
-
-
 
 /*
  * View
@@ -247,27 +208,22 @@ $formadmin=new FormAdmin($db);
 
 llxHeader('',$langs->trans("Menu"));
 
-
-if ($action == 'create')
-{
+if ($action == 'create') {
     print '<script type="text/javascript" language="javascript">
     jQuery(document).ready(function() {
-    	function init_topleft()
-    	{
-    		if (jQuery("#topleft").val() == \'top\')
-    		{
-	    		jQuery("#menuId").attr(\'disabled\',\'disabled\');
-	    		jQuery("#menuId").val(\'\');
-			}
-    		else
-    		{
-    			jQuery("#menuId").removeAttr(\'disabled\');
-    		}
-    	}
-    	init_topleft();
-    	jQuery("#topleft").click(function() {
-    		init_topleft();
-    	});
+        function init_topleft()
+        {
+            if (jQuery("#topleft").val() == \'top\') {
+                jQuery("#menuId").attr(\'disabled\',\'disabled\');
+                jQuery("#menuId").val(\'\');
+            } else {
+                jQuery("#menuId").removeAttr(\'disabled\');
+            }
+        }
+        init_topleft();
+        jQuery("#topleft").click(function() {
+            init_topleft();
+        });
     });
     </script>';
 
@@ -280,15 +236,12 @@ if ($action == 'create')
 
     // Id
     $parent_rowid = $_GET['menuId'];
-    if ($_GET['menuId'])
-    {
+    if ($_GET['menuId']) {
         $sql = "SELECT m.rowid, m.mainmenu, m.level, m.langs FROM ".MAIN_DB_PREFIX."menu as m WHERE m.rowid = ".$_GET['menuId'];
         $res  = $db->query($sql);
-        if ($res)
-        {
+        if ($res) {
 
-            while ($menu = $db->fetch_array($res))
-            {
+            while ($menu = $db->fetch_array($res)) {
                 $parent_rowid = $menu['rowid'];
                 $parent_mainmenu = $menu['mainmenu'];
                 $parent_langs = $menu['langs'];
@@ -315,13 +268,10 @@ if ($action == 'create')
 
     // Type
     print '<tr><td class="fieldrequired">'.$langs->trans('Type').'</td><td>';
-    if ($parent_rowid)
-    {
+    if ($parent_rowid) {
         print 'Left';
         print '<input type="hidden" name="type" value="left">';
-    }
-    else
-    {
+    } else {
         print '<select name="type" class="flat" id="topleft">';
         print '<option value="">&nbsp;</option>';
         print '<option value="top"'.($_POST["type"] && $_POST["type"]=='top'?' selected="true"':'').'>'.$langs->trans('Top').'</option>';
@@ -333,12 +283,9 @@ if ($action == 'create')
 
     // MenuId Parent
     print '<tr><td class="fieldrequired">'.$langs->trans('MenuIdParent').'</td>';
-    if ($parent_rowid)
-    {
+    if ($parent_rowid) {
         print '<td>'.$parent_rowid.'<input type="hidden" name="menuId" value="'.$parent_rowid.'"></td>';
-    }
-    else
-    {
+    } else {
         print '<td><input type="text" size="20" id="menuId" name="menuId" value="'.($_POST["menuId"]?$_POST["menuId"]:'').'"></td>';
     }
     print '<td>'.$langs->trans('DetailMenuIdParent').'</td></tr>';
@@ -377,9 +324,7 @@ if ($action == 'create')
     print '</form>';
 
     dol_htmloutput_mesg($mesg);
-}
-elseif ($action == 'edit')
-{
+} elseif ($action == 'edit') {
     print_fiche_titre($langs->trans("ModifMenu"),'','setup');
     print '<br>';
 
@@ -467,8 +412,6 @@ elseif ($action == 'edit')
     dol_htmloutput_mesg($mesg);
 }
 
-
 $db->close();
 
 llxFooter();
-?>

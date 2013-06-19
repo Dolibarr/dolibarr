@@ -23,7 +23,6 @@
  */
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 
-
 /**     \class      ChargeSociales
  *		\brief      Classe permettant la gestion des paiements des charges
  *                  La tva collectee n'est calculee que sur les factures payees.
@@ -34,28 +33,29 @@ class ChargeSociales extends CommonObject
     public $table='chargesociales';
     public $table_element='chargesociales';
 
-    var $id;
-    var $ref;
-    var $date_ech;
-    var $lib;
-    var $type;
-    var $type_libelle;
-    var $amount;
-    var $paye;
-    var $periode;
-    var $date_creation;
-    var $date_modification;
-    var $date_validation;
+    public $id;
+    public $ref;
+    public $date_ech;
+    public $lib;
+    public $type;
+    public $type_libelle;
+    public $amount;
+    public $paye;
+    public $periode;
+    public $date_creation;
+    public $date_modification;
+    public $date_validation;
 
 
     /**
      * Constructor
      *
-     * @param	DoliDB		$db		Database handler
+     * @param DoliDB $db Database handler
      */
-    function __construct($db)
+    public function __construct($db)
     {
         $this->db = $db;
+
         return 1;
     }
 
@@ -65,7 +65,7 @@ class ChargeSociales extends CommonObject
      *  @param	int     $id		1 si trouve, 0 sinon
      *  @return	void
      */
-    function fetch($id)
+    public function fetch($id)
     {
         $sql = "SELECT cs.rowid, cs.date_ech,";
         $sql.= " cs.libelle as lib, cs.fk_type, cs.amount, cs.paye, cs.periode,";
@@ -76,10 +76,8 @@ class ChargeSociales extends CommonObject
 
         dol_syslog(get_class($this)."::fetch sql=".$sql);
         $resql=$this->db->query($sql);
-        if ($resql)
-        {
-            if ($this->db->num_rows($resql))
-            {
+        if ($resql) {
+            if ($this->db->num_rows($resql)) {
                 $obj = $this->db->fetch_object($resql);
 
                 $this->id             = $obj->rowid;
@@ -93,16 +91,13 @@ class ChargeSociales extends CommonObject
                 $this->periode        = $this->db->jdate($obj->periode);
 
                 return 1;
-            }
-            else
-            {
+            } else {
                 return 0;
             }
             $this->db->free($resql);
-        }
-        else
-        {
+        } else {
             $this->error=$this->db->error();
+
             return -1;
         }
     }
@@ -114,17 +109,17 @@ class ChargeSociales extends CommonObject
      *      @param	User	$user   User making creation
      *      @return int     		<0 if KO, id if OK
      */
-    function create($user)
+    public function create($user)
     {
-    	global $conf;
+        global $conf;
 
         // Nettoyage parametres
         $newamount=price2num($this->amount,'MT');
 
         // Validation parametres
-        if (! $newamount > 0 || empty($this->date_ech) || empty($this->periode))
-        {
+        if (! $newamount > 0 || empty($this->date_ech) || empty($this->periode)) {
             $this->error="ErrorBadParameter";
+
             return -2;
         }
 
@@ -139,18 +134,17 @@ class ChargeSociales extends CommonObject
 
         dol_syslog(get_class($this)."::create sql=".$sql);
         $resql=$this->db->query($sql);
-        if ($resql)
-        {
+        if ($resql) {
             $this->id=$this->db->last_insert_id(MAIN_DB_PREFIX."chargesociales");
 
             //dol_syslog("ChargesSociales::create this->id=".$this->id);
             $this->db->commit();
+
             return $this->id;
-        }
-        else
-        {
+        } else {
             $this->error=$this->db->error();
             $this->db->rollback();
+
             return -1;
         }
     }
@@ -162,7 +156,7 @@ class ChargeSociales extends CommonObject
      *      @param		User    $user   Object user making delete
      *      @return     		int 	<0 if KO, >0 if OK
      */
-    function delete($user)
+    public function delete($user)
     {
         $error=0;
 
@@ -174,53 +168,45 @@ class ChargeSociales extends CommonObject
         $lines_url=$account->get_url('',$this->id,'sc');
 
         // Delete bank urls
-        foreach ($lines_url as $line_url)
-        {
-            if (! $error)
-            {
+        foreach ($lines_url as $line_url) {
+            if (! $error) {
                 $accountline=new AccountLine($this->db);
                 $accountline->fetch($line_url['fk_bank']);
                 $result=$accountline->delete_urls($user);
-                if ($result < 0)
-                {
+                if ($result < 0) {
                     $error++;
                 }
             }
         }
 
         // Delete payments
-        if (! $error)
-        {
+        if (! $error) {
             $sql = "DELETE FROM ".MAIN_DB_PREFIX."paiementcharge where fk_charge='".$this->id."'";
             dol_syslog(get_class($this)."::delete sql=".$sql);
             $resql=$this->db->query($sql);
-            if (! $resql)
-            {
+            if (! $resql) {
                 $error++;
                 $this->error=$this->db->lasterror();
             }
         }
 
-        if (! $error)
-        {
+        if (! $error) {
             $sql = "DELETE FROM ".MAIN_DB_PREFIX."chargesociales where rowid='".$this->id."'";
             dol_syslog(get_class($this)."::delete sql=".$sql);
             $resql=$this->db->query($sql);
-            if (! $resql)
-            {
+            if (! $resql) {
                 $error++;
                 $this->error=$this->db->lasterror();
             }
         }
 
-        if (! $error)
-        {
+        if (! $error) {
             $this->db->commit();
+
             return 1;
-        }
-        else
-        {
+        } else {
             $this->db->rollback();
+
             return -1;
         }
 
@@ -233,7 +219,7 @@ class ChargeSociales extends CommonObject
      *      @param	User	$user   Utilisateur qui modifie
      *      @return int     		<0 si erreur, >0 si ok
      */
-    function update($user)
+    public function update($user)
     {
         $this->db->begin();
 
@@ -245,15 +231,14 @@ class ChargeSociales extends CommonObject
 
         dol_syslog(get_class($this)."::update sql=".$sql);
         $resql=$this->db->query($sql);
-        if ($resql)
-        {
+        if ($resql) {
             $this->db->commit();
+
             return 1;
-        }
-        else
-        {
+        } else {
             $this->error=$this->db->error();
             $this->db->rollback();
+
             return -1;
         }
     }
@@ -261,12 +246,12 @@ class ChargeSociales extends CommonObject
     /**
      * Enter description here ...
      *
-     * @param	int		$year		Year
-     * @return	number
+     * @param  int    $year Year
+     * @return number
      */
-    function solde($year = 0)
+    public function solde($year = 0)
     {
-    	global $conf;
+        global $conf;
 
         $sql = "SELECT SUM(f.amount) as amount";
         $sql.= " FROM ".MAIN_DB_PREFIX."chargesociales as f";
@@ -278,24 +263,20 @@ class ChargeSociales extends CommonObject
         }
 
         $result = $this->db->query($sql);
-        if ($result)
-        {
-            if ($this->db->num_rows($result))
-            {
+        if ($result) {
+            if ($this->db->num_rows($result)) {
                 $obj = $this->db->fetch_object($result);
+
                 return $obj->amount;
-            }
-            else
-            {
+            } else {
                 return 0;
             }
 
             $this->db->free($result);
 
-        }
-        else
-        {
+        } else {
             print $this->db->error();
+
             return -1;
         }
     }
@@ -306,7 +287,7 @@ class ChargeSociales extends CommonObject
      *    @param	User	$user       Object user making change
      *    @return	int					<0 if KO, >0 if OK
      */
-    function set_paid($user)
+    public function set_paid($user)
     {
         $sql = "UPDATE ".MAIN_DB_PREFIX."chargesociales SET";
         $sql.= " paye = 1";
@@ -322,7 +303,7 @@ class ChargeSociales extends CommonObject
      *    @param	int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long
      *    @return	string        		Label
      */
-    function getLibStatut($mode=0)
+    public function getLibStatut($mode=0)
     {
         return $this->LibStatut($this->paye,$mode);
     }
@@ -334,38 +315,32 @@ class ChargeSociales extends CommonObject
      *    @param    int		$mode          	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
      *    @return   string        			Label
      */
-    function LibStatut($statut,$mode=0)
+    public function LibStatut($statut,$mode=0)
     {
         global $langs;
         $langs->load('customers');
 
-        if ($mode == 0)
-        {
+        if ($mode == 0) {
             if ($statut ==  0) return $langs->trans("Unpaid");
             if ($statut ==  1) return $langs->trans("Paid");
         }
-        if ($mode == 1)
-        {
+        if ($mode == 1) {
             if ($statut ==  0) return $langs->trans("Unpaid");
             if ($statut ==  1) return $langs->trans("Paid");
         }
-        if ($mode == 2)
-        {
+        if ($mode == 2) {
             if ($statut ==  0) return img_picto($langs->trans("Unpaid"), 'statut1').' '.$langs->trans("Unpaid");
             if ($statut ==  1) return img_picto($langs->trans("Paid"), 'statut6').' '.$langs->trans("Paid");
         }
-        if ($mode == 3)
-        {
+        if ($mode == 3) {
             if ($statut ==  0) return img_picto($langs->trans("Unpaid"), 'statut1');
             if ($statut ==  1) return img_picto($langs->trans("Paid"), 'statut6');
         }
-        if ($mode == 4)
-        {
+        if ($mode == 4) {
             if ($statut ==  0) return img_picto($langs->trans("Unpaid"), 'statut1').' '.$langs->trans("Unpaid");
             if ($statut ==  1) return img_picto($langs->trans("Paid"), 'statut6').' '.$langs->trans("Paid");
         }
-        if ($mode == 5)
-        {
+        if ($mode == 5) {
             if ($statut ==  0) return $langs->trans("Unpaid").' '.img_picto($langs->trans("Unpaid"), 'statut1');
             if ($statut ==  1) return $langs->trans("Paid").' '.img_picto($langs->trans("Paid"), 'statut6');
         }
@@ -381,7 +356,7 @@ class ChargeSociales extends CommonObject
      * 	@param	int		$maxlen			Longueur max libelle
      *	@return	string					Chaine avec URL
      */
-    function getNomUrl($withpicto=0,$maxlen=0)
+    public function getNomUrl($withpicto=0,$maxlen=0)
     {
         global $langs;
 
@@ -403,7 +378,7 @@ class ChargeSociales extends CommonObject
      *
      *	@return		int		Amount of payment already done, <0 if KO
      */
-    function getSommePaiement()
+    public function getSommePaiement()
     {
         $table='paiementcharge';
         $field='fk_charge';
@@ -414,18 +389,16 @@ class ChargeSociales extends CommonObject
 
         dol_syslog(get_class($this)."::getSommePaiement sql=".$sql, LOG_DEBUG);
         $resql=$this->db->query($sql);
-        if ($resql)
-        {
+        if ($resql) {
             $amount=0;
 
             $obj = $this->db->fetch_object($resql);
             if ($obj) $amount=$obj->amount?$obj->amount:0;
 
             $this->db->free($resql);
+
             return $amount;
-        }
-        else
-        {
+        } else {
             return -1;
         }
     }
@@ -436,7 +409,7 @@ class ChargeSociales extends CommonObject
      *  @param	int		$id     Id of social contribution
      *  @return	int				<0 if KO, >0 if OK
      */
-    function info($id)
+    public function info($id)
     {
         $sql = "SELECT e.rowid, e.tms as datem, e.date_creation as datec, e.date_valid as datev";
         $sql.= " FROM ".MAIN_DB_PREFIX."chargesociales as e";
@@ -444,10 +417,8 @@ class ChargeSociales extends CommonObject
 
         dol_syslog(get_class($this)."::info sql=".$sql);
         $result=$this->db->query($sql);
-        if ($result)
-        {
-            if ($this->db->num_rows($result))
-            {
+        if ($result) {
+            if ($this->db->num_rows($result)) {
                 $obj = $this->db->fetch_object($result);
 
                 $this->id = $obj->rowid;
@@ -472,9 +443,7 @@ class ChargeSociales extends CommonObject
 
             $this->db->free($result);
 
-        }
-        else
-        {
+        } else {
             dol_print_error($this->db);
         }
     }
@@ -486,7 +455,7 @@ class ChargeSociales extends CommonObject
      *
      *  @return	void
      */
-    function initAsSpecimen()
+    public function initAsSpecimen()
     {
         global $user,$langs,$conf;
 
@@ -504,5 +473,3 @@ class ChargeSociales extends CommonObject
         $this->type_libelle = 'Social contribution label';
     }
 }
-
-?>

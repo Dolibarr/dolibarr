@@ -18,7 +18,6 @@
  *
  */
 
-
 /**
  *   \file       htdocs/compta/ventilation/liste.php
  *   \ingroup    compta
@@ -35,7 +34,6 @@ if (!$user->rights->compta->ventilation->creer) accessforbidden();
  * Securite acces client
  */
 if ($user->societe_id > 0) accessforbidden();
-
 
 llxHeader('','Ventilation');
 
@@ -55,8 +53,7 @@ $sql .= " WHERE f.rowid = l.fk_facture_fourn AND f.fk_statut = 1 AND fk_code_ven
 $sql .= " ORDER BY l.rowid DESC ".$db->plimit($limit+1,$offset);
 
 $result = $db->query($sql);
-if ($result)
-{
+if ($result) {
   $num_lignes = $db->num_rows($result);
   $i = 0;
 
@@ -70,8 +67,7 @@ if ($result)
   print "</tr>\n";
 
   $var=True;
-  while ($i < min($num_lignes, $limit))
-    {
+  while ($i < min($num_lignes, $limit)) {
       $objp = $db->fetch_object($result);
       $var=!$var;
       print "<tr $bc[$var]>";
@@ -93,14 +89,9 @@ if ($result)
 
 print "</table>";
 
-
-
-}
-else
-{
+} else {
   print $db->error();
 }
 $db->close();
 
 llxFooter();
-?>

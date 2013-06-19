@@ -33,69 +33,68 @@ include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 class modBarcode extends DolibarrModules
 {
 
-	/**
-	 *   Constructor. Define names, constants, directories, boxes, permissions
-	 *
-	 *   @param      DoliDB		$db      Database handler
-	 */
-	function __construct($db)
-	{
-		$this->db = $db;
-		$this->numero = 55;
+    /**
+     *   Constructor. Define names, constants, directories, boxes, permissions
+     *
+     *   @param      DoliDB		$db      Database handler
+     */
+    public function __construct($db)
+    {
+        $this->db = $db;
+        $this->numero = 55;
 
-		$this->family = "technic";
-		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
-		$this->name = preg_replace('/^mod/i','',get_class($this));
-		$this->description = "Gestion des codes barres";
-		$this->version = 'dolibarr';		// 'development' or 'experimental' or 'dolibarr' or version
-		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
-		$this->special = 2;
-		$this->picto='barcode';
+        $this->family = "technic";
+        // Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
+        $this->name = preg_replace('/^mod/i','',get_class($this));
+        $this->description = "Gestion des codes barres";
+        $this->version = 'dolibarr';		// 'development' or 'experimental' or 'dolibarr' or version
+        $this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
+        $this->special = 2;
+        $this->picto='barcode';
 
-		// Data directories to create when module is enabled
-		$this->dirs = array("/barcode/temp");
+        // Data directories to create when module is enabled
+        $this->dirs = array("/barcode/temp");
 
-		// Dependances
-		$this->depends = array();        // May be used for product or service or third party module
-		$this->requiredby = array();
+        // Dependances
+        $this->depends = array();        // May be used for product or service or third party module
+        $this->requiredby = array();
 
-		// Config pages
-		$this->config_page_url = array("barcode.php");
+        // Config pages
+        $this->config_page_url = array("barcode.php");
 
-		// Constants
-		// Example: $this->const=array(0=>array('MYMODULE_MYNEWCONST1','chaine','myvalue','This is a constant to add',0),
-		//                            1=>array('MYMODULE_MYNEWCONST2','chaine','myvalue','This is another constant to add',0) );
-		$this->const = array(
-		                //0=>array('GENBARCODE_LOCATION','chaine',DOL_DOCUMENT_ROOT.'/includes/barcode/genbarcode/genbarcode','Path to genbarcode command line tool',0)
-		                );
+        // Constants
+        // Example: $this->const=array(0=>array('MYMODULE_MYNEWCONST1','chaine','myvalue','This is a constant to add',0),
+        //                            1=>array('MYMODULE_MYNEWCONST2','chaine','myvalue','This is another constant to add',0) );
+        $this->const = array(
+                        //0=>array('GENBARCODE_LOCATION','chaine',DOL_DOCUMENT_ROOT.'/includes/barcode/genbarcode/genbarcode','Path to genbarcode command line tool',0)
+                        );
 
-		// Boxes
-		$this->boxes = array();
+        // Boxes
+        $this->boxes = array();
 
-		// Permissions
-		$this->rights = array();
-		$this->rights_class = 'barcode';
+        // Permissions
+        $this->rights = array();
+        $this->rights_class = 'barcode';
 
-		$this->rights[1][0] = 300; // id de la permission
-		$this->rights[1][1] = 'Lire les codes barres'; // libelle de la permission
-		$this->rights[1][2] = 'r'; // type de la permission (deprecie a ce jour)
-		$this->rights[1][3] = 1; // La permission est-elle une permission par defaut
-		$this->rights[1][4] = 'lire';
+        $this->rights[1][0] = 300; // id de la permission
+        $this->rights[1][1] = 'Lire les codes barres'; // libelle de la permission
+        $this->rights[1][2] = 'r'; // type de la permission (deprecie a ce jour)
+        $this->rights[1][3] = 1; // La permission est-elle une permission par defaut
+        $this->rights[1][4] = 'lire';
 
-		$this->rights[2][0] = 301; // id de la permission
-		$this->rights[2][1] = 'Creer/modifier les codes barres'; // libelle de la permission
-		$this->rights[2][2] = 'w'; // type de la permission (deprecie a ce jour)
-		$this->rights[2][3] = 0; // La permission est-elle une permission par defaut
-		$this->rights[2][4] = 'creer';
+        $this->rights[2][0] = 301; // id de la permission
+        $this->rights[2][1] = 'Creer/modifier les codes barres'; // libelle de la permission
+        $this->rights[2][2] = 'w'; // type de la permission (deprecie a ce jour)
+        $this->rights[2][3] = 0; // La permission est-elle une permission par defaut
+        $this->rights[2][4] = 'creer';
 
-		$this->rights[4][0] = 302; // id de la permission
-		$this->rights[4][1] = 'Supprimer les codes barres'; // libelle de la permission
-		$this->rights[4][2] = 'd'; // type de la permission (deprecie a ce jour)
-		$this->rights[4][3] = 0; // La permission est-elle une permission par defaut
-		$this->rights[4][4] = 'supprimer';
+        $this->rights[4][0] = 302; // id de la permission
+        $this->rights[4][1] = 'Supprimer les codes barres'; // libelle de la permission
+        $this->rights[4][2] = 'd'; // type de la permission (deprecie a ce jour)
+        $this->rights[4][3] = 0; // La permission est-elle une permission par defaut
+        $this->rights[4][4] = 'supprimer';
 
-	}
-
+    }
 
     /**
      *      Function called when module is enabled.
@@ -103,39 +102,38 @@ class modBarcode extends DolibarrModules
      *      It also creates data directories.
      *
      *      @param      string	$options    Options when enabling module ('', 'noboxes')
-	 *      @return     int             	1 if OK, 0 if KO
-	 */
-	function init($options='')
-	{
-		// Permissions
-		$this->remove($options);
+     *      @return     int             	1 if OK, 0 if KO
+     */
+    public function init($options='')
+    {
+        // Permissions
+        $this->remove($options);
 
-		$sql = array(
-				array('sql'=>"INSERT INTO llx_c_barcode_type (code, libelle, coder, example, entity) VALUES ('EAN8', 'EAN8', 0, '1234567', __ENTITY__)",'ignoreerror'=>1),
-				array('sql'=>"INSERT INTO llx_c_barcode_type (code, libelle, coder, example, entity) VALUES ('EAN13', 'EAN13', 0, '123456789012', __ENTITY__)",'ignoreerror'=>1),
-				array('sql'=>"INSERT INTO llx_c_barcode_type (code, libelle, coder, example, entity) VALUES ('UPC', 'UPC', 0, '123456789012', __ENTITY__)",'ignoreerror'=>1),
-				array('sql'=>"INSERT INTO llx_c_barcode_type (code, libelle, coder, example, entity) VALUES ('ISBN', 'ISBN', 0, '123456789', __ENTITY__)",'ignoreerror'=>1),
-				array('sql'=>"INSERT INTO llx_c_barcode_type (code, libelle, coder, example, entity) VALUES ('C39', 'Code 39', 0, '1234567890', __ENTITY__)",'ignoreerror'=>1),
-				array('sql'=>"INSERT INTO llx_c_barcode_type (code, libelle, coder, example, entity) VALUES ('C128', 'Code 128', 0, 'ABCD1234567890', __ENTITY__)",'ignoreerror'=>1)
-		);
+        $sql = array(
+                array('sql'=>"INSERT INTO llx_c_barcode_type (code, libelle, coder, example, entity) VALUES ('EAN8', 'EAN8', 0, '1234567', __ENTITY__)",'ignoreerror'=>1),
+                array('sql'=>"INSERT INTO llx_c_barcode_type (code, libelle, coder, example, entity) VALUES ('EAN13', 'EAN13', 0, '123456789012', __ENTITY__)",'ignoreerror'=>1),
+                array('sql'=>"INSERT INTO llx_c_barcode_type (code, libelle, coder, example, entity) VALUES ('UPC', 'UPC', 0, '123456789012', __ENTITY__)",'ignoreerror'=>1),
+                array('sql'=>"INSERT INTO llx_c_barcode_type (code, libelle, coder, example, entity) VALUES ('ISBN', 'ISBN', 0, '123456789', __ENTITY__)",'ignoreerror'=>1),
+                array('sql'=>"INSERT INTO llx_c_barcode_type (code, libelle, coder, example, entity) VALUES ('C39', 'Code 39', 0, '1234567890', __ENTITY__)",'ignoreerror'=>1),
+                array('sql'=>"INSERT INTO llx_c_barcode_type (code, libelle, coder, example, entity) VALUES ('C128', 'Code 128', 0, 'ABCD1234567890', __ENTITY__)",'ignoreerror'=>1)
+        );
 
-		return $this->_init($sql, $options);
-	}
+        return $this->_init($sql, $options);
+    }
 
     /**
-	 *		Function called when module is disabled.
-	 *      Remove from database constants, boxes and permissions from Dolibarr database.
-	 *		Data directories are not deleted
-	 *
+     *		Function called when module is disabled.
+     *      Remove from database constants, boxes and permissions from Dolibarr database.
+     *		Data directories are not deleted
+     *
      *      @param      string	$options    Options when enabling module ('', 'noboxes')
-	 *      @return     int             	1 if OK, 0 if KO
+     *      @return     int             	1 if OK, 0 if KO
      */
-    function remove($options='')
+    public function remove($options='')
     {
-		$sql = array();
+        $sql = array();
 
-		return $this->_remove($sql, $options);
+        return $this->_remove($sql, $options);
     }
 
 }
-?>

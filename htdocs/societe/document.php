@@ -33,17 +33,15 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 $langs->load("companies");
 $langs->load('other');
 
-
 $action=GETPOST('action');
 $confirm=GETPOST('confirm');
 $id=(GETPOST('socid','int') ? GETPOST('socid','int') : GETPOST('id','int'));
 $ref = GETPOST('ref', 'alpha');
 
 // Security check
-if ($user->societe_id > 0)
-{
-	unset($action);
-	$socid = $user->societe_id;
+if ($user->societe_id > 0) {
+    unset($action);
+    $socid = $user->societe_id;
 }
 $result = restrictedArea($user, 'societe', $id, '&societe');
 
@@ -59,14 +57,12 @@ if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="name";
 
 $object = new Societe($db);
-if ($id > 0 || ! empty($ref))
-{
-	$result = $object->fetch($id, $ref);
+if ($id > 0 || ! empty($ref)) {
+    $result = $object->fetch($id, $ref);
 
-	$upload_dir = $conf->societe->multidir_output[$object->entity] . "/" . $object->id ;
-	$courrier_dir = $conf->societe->multidir_output[$object->entity] . "/courrier/" . get_exdir($object->id);
+    $upload_dir = $conf->societe->multidir_output[$object->entity] . "/" . $object->id ;
+    $courrier_dir = $conf->societe->multidir_output[$object->entity] . "/courrier/" . get_exdir($object->id);
 }
-
 
 /*
  * Actions
@@ -75,29 +71,24 @@ if ($id > 0 || ! empty($ref))
 // TODO Use an include to mutualize this code for action sendit and confirm_deletefile
 
 // Post file
-if (GETPOST('sendit') && ! empty($conf->global->MAIN_UPLOAD_DOC))
-{
-	if ($object->id)
-	{
-		dol_add_file_process($upload_dir,0,1,'userfile');
-	}
+if (GETPOST('sendit') && ! empty($conf->global->MAIN_UPLOAD_DOC)) {
+    if ($object->id) {
+        dol_add_file_process($upload_dir,0,1,'userfile');
+    }
 }
 
 // Delete file
-if ($action == 'confirm_deletefile' && $confirm == 'yes')
-{
-	if ($object->id)
-	{
-		$file = $upload_dir . "/" . GETPOST('urlfile');	// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
+if ($action == 'confirm_deletefile' && $confirm == 'yes') {
+    if ($object->id) {
+        $file = $upload_dir . "/" . GETPOST('urlfile');	// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
 
-		$ret=dol_delete_file($file,0,0,0,$object);
-		if ($ret) setEventMessage($langs->trans("FileWasRemoved", GETPOST('urlfile')));
-		else setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), 'errors');
-    	header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
-    	exit;
-	}
+        $ret=dol_delete_file($file,0,0,0,$object);
+        if ($ret) setEventMessage($langs->trans("FileWasRemoved", GETPOST('urlfile')));
+        else setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), 'errors');
+        header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
+        exit;
+    }
 }
-
 
 /*
  * View
@@ -108,95 +99,83 @@ $form = new Form($db);
 $help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
 llxHeader('',$langs->trans("ThirdParty").' - '.$langs->trans("Files"),$help_url);
 
-if ($object->id)
-{
-	/*
-	 * Affichage onglets
-	 */
-	if (! empty($conf->notification->enabled)) $langs->load("mails");
-	$head = societe_prepare_head($object);
+if ($object->id) {
+    /*
+     * Affichage onglets
+     */
+    if (! empty($conf->notification->enabled)) $langs->load("mails");
+    $head = societe_prepare_head($object);
 
-	$form=new Form($db);
+    $form=new Form($db);
 
-	dol_fiche_head($head, 'document', $langs->trans("ThirdParty"),0,'company');
+    dol_fiche_head($head, 'document', $langs->trans("ThirdParty"),0,'company');
 
+    // Construit liste des fichiers
+    $filearray=dol_dir_list($upload_dir,"files",0,'','\.meta$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
+    $totalsize=0;
+    foreach ($filearray as $key => $file) {
+        $totalsize+=$file['size'];
+    }
 
-	// Construit liste des fichiers
-	$filearray=dol_dir_list($upload_dir,"files",0,'','\.meta$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
-	$totalsize=0;
-	foreach($filearray as $key => $file)
-	{
-		$totalsize+=$file['size'];
-	}
+    print '<table class="border"width="100%">';
 
+    // Ref
+    print '<tr><td width="25%">'.$langs->trans("ThirdPartyName").'</td>';
+    print '<td colspan="3">';
+    print $form->showrefnav($object,'socid','',($user->societe_id?0:1),'rowid','nom');
+    print '</td></tr>';
 
-	print '<table class="border"width="100%">';
+    // Prefix
+    if (! empty($conf->global->SOCIETE_USEPREFIX)) {  // Old not used prefix field
+        print '<tr><td>'.$langs->trans('Prefix').'</td><td colspan="3">'.$object->prefix_comm.'</td></tr>';
+    }
 
-	// Ref
-	print '<tr><td width="25%">'.$langs->trans("ThirdPartyName").'</td>';
-	print '<td colspan="3">';
-	print $form->showrefnav($object,'socid','',($user->societe_id?0:1),'rowid','nom');
-	print '</td></tr>';
+    if ($object->client) {
+        print '<tr><td>';
+        print $langs->trans('CustomerCode').'</td><td colspan="3">';
+        print $object->code_client;
+        if ($object->check_codeclient() <> 0) print ' <font class="error">('.$langs->trans("WrongCustomerCode").')</font>';
+        print '</td></tr>';
+    }
 
-	// Prefix
-	if (! empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
-	{
-		print '<tr><td>'.$langs->trans('Prefix').'</td><td colspan="3">'.$object->prefix_comm.'</td></tr>';
-	}
+    if ($object->fournisseur) {
+        print '<tr><td>';
+        print $langs->trans('SupplierCode').'</td><td colspan="3">';
+        print $object->code_fournisseur;
+        if ($object->check_codefournisseur() <> 0) print ' <font class="error">('.$langs->trans("WrongSupplierCode").')</font>';
+        print '</td></tr>';
+    }
 
-	if ($object->client)
-	{
-		print '<tr><td>';
-		print $langs->trans('CustomerCode').'</td><td colspan="3">';
-		print $object->code_client;
-		if ($object->check_codeclient() <> 0) print ' <font class="error">('.$langs->trans("WrongCustomerCode").')</font>';
-		print '</td></tr>';
-	}
+    // Nbre fichiers
+    print '<tr><td>'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
 
-	if ($object->fournisseur)
-	{
-		print '<tr><td>';
-		print $langs->trans('SupplierCode').'</td><td colspan="3">';
-		print $object->code_fournisseur;
-		if ($object->check_codefournisseur() <> 0) print ' <font class="error">('.$langs->trans("WrongSupplierCode").')</font>';
-		print '</td></tr>';
-	}
+    //Total taille
+    print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.$totalsize.' '.$langs->trans("bytes").'</td></tr>';
 
-	// Nbre fichiers
-	print '<tr><td>'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
+    print '</table>';
 
-	//Total taille
-	print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.$totalsize.' '.$langs->trans("bytes").'</td></tr>';
+    print '</div>';
 
-	print '</table>';
+    /*
+     * Confirmation suppression fichier
+     */
+    if ($action == 'delete') {
+        $ret=$form->form_confirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&urlfile='.urlencode(GETPOST("urlfile")), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile', '', 0, 1);
+        if ($ret == 'html') print '<br>';
+    }
 
-	print '</div>';
+    $formfile=new FormFile($db);
 
-	/*
-	 * Confirmation suppression fichier
-	 */
-	if ($action == 'delete')
-	{
-		$ret=$form->form_confirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&urlfile='.urlencode(GETPOST("urlfile")), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile', '', 0, 1);
-		if ($ret == 'html') print '<br>';
-	}
+    // Show upload form
+    $formfile->form_attach_new_file($_SERVER["PHP_SELF"].'?id='.$object->id,'',0,0,$user->rights->societe->creer,50,$object);
 
-	$formfile=new FormFile($db);
+    // List of document
+    $formfile->list_of_documents($filearray,$object,'societe');
 
-	// Show upload form
-	$formfile->form_attach_new_file($_SERVER["PHP_SELF"].'?id='.$object->id,'',0,0,$user->rights->societe->creer,50,$object);
-
-	// List of document
-	$formfile->list_of_documents($filearray,$object,'societe');
-
-	print "<br><br>";
+    print "<br><br>";
+} else {
+    accessforbidden('',0,0);
 }
-else
-{
-	accessforbidden('',0,0);
-}
-
 
 llxFooter();
 $db->close();
-?>

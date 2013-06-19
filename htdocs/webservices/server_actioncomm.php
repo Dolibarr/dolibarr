@@ -25,7 +25,7 @@
 // This is to make Dolibarr working with Plesk
 set_include_path($_SERVER['DOCUMENT_ROOT'].'/htdocs');
 
-require_once("../master.inc.php");
+require_once '../master.inc.php';
 require_once(NUSOAP_PATH.'/nusoap.php');		// Include SOAP
 require_once(DOL_DOCUMENT_ROOT."/core/lib/ws.lib.php");
 
@@ -33,12 +33,10 @@ require_once(DOL_DOCUMENT_ROOT."/comm/action/class/actioncomm.class.php");
 require_once(DOL_DOCUMENT_ROOT."/comm/action/class/cactioncomm.class.php");
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
-
 dol_syslog("Call ActionComm webservices interfaces");
 
 // Enable and test if module web services is enabled
-if (empty($conf->global->MAIN_MODULE_WEBSERVICES))
-{
+if (empty($conf->global->MAIN_MODULE_WEBSERVICES)) {
     $langs->load("admin");
     dol_syslog("Call Dolibarr webservices interfaces with module webservices disabled");
     print $langs->trans("WarningModuleNotActive",'WebServices').'.<br><br>';
@@ -54,7 +52,6 @@ $ns='http://www.dolibarr.org/ns/';
 $server->configureWSDL('WebServicesDolibarrActionComm',$ns);
 $server->wsdl->schemaTargetNamespace=$ns;
 
-
 // Define WSDL Authentication object
 $server->wsdl->addComplexType(
     'authentication',
@@ -64,9 +61,9 @@ $server->wsdl->addComplexType(
     '',
     array(
         'dolibarrkey' => array('name'=>'dolibarrkey','type'=>'xsd:string'),
-    	'sourceapplication' => array('name'=>'sourceapplication','type'=>'xsd:string'),
-    	'login' => array('name'=>'login','type'=>'xsd:string'),
-    	'password' => array('name'=>'password','type'=>'xsd:string'),
+        'sourceapplication' => array('name'=>'sourceapplication','type'=>'xsd:string'),
+        'login' => array('name'=>'login','type'=>'xsd:string'),
+        'password' => array('name'=>'password','type'=>'xsd:string'),
         'entity' => array('name'=>'entity','type'=>'xsd:string'),
     )
 );
@@ -84,48 +81,45 @@ $server->wsdl->addComplexType(
     )
 );
 
-
 $actioncomm_fields= array(
     'id' => array('name'=>'id','type'=>'xsd:string'),
-	'ref' => array('name'=>'ref','type'=>'xsd:string'),
-	'ref_ext' => array('name'=>'ref_ext','type'=>'xsd:string'),
-	'type_id' => array('name'=>'type_id','type'=>'xsd:string'),
-	'type_code' => array('name'=>'type_code','type'=>'xsd:string'),
-	'type' => array('name'=>'type','type'=>'xsd:string'),
-	'label' => array('name'=>'label','type'=>'xsd:string'),
-	'datep' => array('name'=>'datep','type'=>'xsd:dateTime'),
-	'datef' => array('name'=>'datef','type'=>'xsd:dateTime'),
-	'datec' => array('name'=>'datec','type'=>'xsd:dateTime'),
-	'datem' => array('name'=>'datem','type'=>'xsd:dateTime'),
-	'note' => array('name'=>'note','type'=>'xsd:string'),
-	'percentage' => array('name'=>'percentage','type'=>'xsd:string'),
-	'author' => array('name'=>'author','type'=>'xsd:string'),
-	'usermod' => array('name'=>'usermod','type'=>'xsd:string'),
-	'usertodo' => array('name'=>'usertodo','type'=>'xsd:string'),
-	'userdone' => array('name'=>'userdone','type'=>'xsd:string'),
-	'priority' => array('name'=>'priority','type'=>'xsd:string'),
-	'fulldayevent' => array('name'=>'fulldayevent','type'=>'xsd:string'),
-	'location' => array('name'=>'location','type'=>'xsd:string'),
-	'socid' => array('name'=>'socid','type'=>'xsd:string'),
-	'contactid' => array('name'=>'contactid','type'=>'xsd:string'),
-	'projectid' => array('name'=>'projectid','type'=>'xsd:string'),
-	'fk_element' => array('name'=>'fk_element','type'=>'xsd:string'),
-	'elementtype' => array('name'=>'elementtype','type'=>'xsd:string'));
+    'ref' => array('name'=>'ref','type'=>'xsd:string'),
+    'ref_ext' => array('name'=>'ref_ext','type'=>'xsd:string'),
+    'type_id' => array('name'=>'type_id','type'=>'xsd:string'),
+    'type_code' => array('name'=>'type_code','type'=>'xsd:string'),
+    'type' => array('name'=>'type','type'=>'xsd:string'),
+    'label' => array('name'=>'label','type'=>'xsd:string'),
+    'datep' => array('name'=>'datep','type'=>'xsd:dateTime'),
+    'datef' => array('name'=>'datef','type'=>'xsd:dateTime'),
+    'datec' => array('name'=>'datec','type'=>'xsd:dateTime'),
+    'datem' => array('name'=>'datem','type'=>'xsd:dateTime'),
+    'note' => array('name'=>'note','type'=>'xsd:string'),
+    'percentage' => array('name'=>'percentage','type'=>'xsd:string'),
+    'author' => array('name'=>'author','type'=>'xsd:string'),
+    'usermod' => array('name'=>'usermod','type'=>'xsd:string'),
+    'usertodo' => array('name'=>'usertodo','type'=>'xsd:string'),
+    'userdone' => array('name'=>'userdone','type'=>'xsd:string'),
+    'priority' => array('name'=>'priority','type'=>'xsd:string'),
+    'fulldayevent' => array('name'=>'fulldayevent','type'=>'xsd:string'),
+    'location' => array('name'=>'location','type'=>'xsd:string'),
+    'socid' => array('name'=>'socid','type'=>'xsd:string'),
+    'contactid' => array('name'=>'contactid','type'=>'xsd:string'),
+    'projectid' => array('name'=>'projectid','type'=>'xsd:string'),
+    'fk_element' => array('name'=>'fk_element','type'=>'xsd:string'),
+    'elementtype' => array('name'=>'elementtype','type'=>'xsd:string'));
 
 //Retreive all extrafield for actioncomm
 // fetch optionals attributes and labels
 $extrafields=new ExtraFields($db);
 $extralabels=$extrafields->fetch_name_optionals_label('actioncomm',true);
 if (count($extrafields)>0) {
-	$extrafield_array = array();
+    $extrafield_array = array();
 }
-foreach($extrafields->attribute_label as $key=>$label)
-{
-	$type =$extrafields->attribute_type[$key];
-	if ($type=='date' || $type=='datetime') {$type='xsd:dateTime';}
-	else {$type='xsd:string';}
+foreach ($extrafields->attribute_label as $key=>$label) {
+    $type =$extrafields->attribute_type[$key];
+    if ($type=='date' || $type=='datetime') {$type='xsd:dateTime';} else {$type='xsd:string';}
 
-	$extrafield_array['options_'.$key]=array('name'=>'options_'.$key,'type'=>$type);
+    $extrafield_array['options_'.$key]=array('name'=>'options_'.$key,'type'=>$type);
 }
 
 $actioncomm_fields=array_merge($actioncomm_fields,$extrafield_array);
@@ -137,38 +131,36 @@ $server->wsdl->addComplexType(
     'struct',
     'all',
     '',
-	$actioncomm_fields
-);
-
-
-$server->wsdl->addComplexType(
-	'actioncommtype',
-	'complexType',
-	'array',
-	'sequence',
-	'',
-	array(
-	'code' => array('name'=>'code','type'=>'xsd:string'),
-	'libelle' => array('name'=>'libelle','type'=>'xsd:string')
-	)
+    $actioncomm_fields
 );
 
 $server->wsdl->addComplexType(
-	'actioncommtypes',
-	'complexType',
-	'array',
-	'sequence',
-	'',
-	 array(
+    'actioncommtype',
+    'complexType',
+    'array',
+    'sequence',
+    '',
+    array(
+    'code' => array('name'=>'code','type'=>'xsd:string'),
+    'libelle' => array('name'=>'libelle','type'=>'xsd:string')
+    )
+);
+
+$server->wsdl->addComplexType(
+    'actioncommtypes',
+    'complexType',
+    'array',
+    'sequence',
+    '',
+     array(
         'actioncommtype' => array(
             'name' => 'actioncommtype',
             'type' => 'tns:actioncommtype',
             'minOccurs' => '0',
             'maxOccurs' => 'unbounded'
         )
-	)
+    )
 );
-
 
 // 5 styles: RPC/encoded, RPC/literal, Document/encoded (not WS-I compliant), Document/literal, Document/literal wrapped
 // Style merely dictates how to translate a WSDL binding to a SOAP message. Nothing more. You can use either style with any programming model.
@@ -177,19 +169,18 @@ $styledoc='rpc';       // rpc/document (document is an extend into SOAP 1.0 to s
 $styleuse='encoded';   // encoded/literal/literal wrapped
 // Better choice is document/literal wrapped but literal wrapped not supported by nusoap.
 
-
 // Register WSDL
 $server->register(
-	'getListActionCommType',
-	// Entry values
-	array('authentication'=>'tns:authentication'),
-	// Exit values
-	array('result'=>'tns:result','actioncommtypes'=>'tns:actioncommtypes'),
-	$ns,
-	$ns.'#getListActionCommType',
-	$styledoc,
-	$styleuse,
-	'WS to get actioncommType'
+    'getListActionCommType',
+    // Entry values
+    array('authentication'=>'tns:authentication'),
+    // Exit values
+    array('result'=>'tns:result','actioncommtypes'=>'tns:actioncommtypes'),
+    $ns,
+    $ns.'#getListActionCommType',
+    $styledoc,
+    $styleuse,
+    'WS to get actioncommType'
 );
 
 // Register WSDL
@@ -208,34 +199,31 @@ $server->register(
 
 // Register WSDL
 $server->register(
-	'createActionComm',
-	// Entry values
-	array('authentication'=>'tns:authentication','actioncomm'=>'tns:actioncomm'),
-	// Exit values
-	array('result'=>'tns:result','id'=>'xsd:string'),
-	$ns,
-	$ns.'#createActionComm',
-	$styledoc,
-	$styleuse,
-	'WS to create a actioncomm'
+    'createActionComm',
+    // Entry values
+    array('authentication'=>'tns:authentication','actioncomm'=>'tns:actioncomm'),
+    // Exit values
+    array('result'=>'tns:result','id'=>'xsd:string'),
+    $ns,
+    $ns.'#createActionComm',
+    $styledoc,
+    $styleuse,
+    'WS to create a actioncomm'
 );
 
 // Register WSDL
 $server->register(
-	'updateActionComm',
-	// Entry values
-	array('authentication'=>'tns:authentication','actioncomm'=>'tns:actioncomm'),
-	// Exit values
-	array('result'=>'tns:result','id'=>'xsd:string'),
-	$ns,
-	$ns.'#updateActionComm',
-	$styledoc,
-	$styleuse,
-	'WS to update a actioncomm'
+    'updateActionComm',
+    // Entry values
+    array('authentication'=>'tns:authentication','actioncomm'=>'tns:actioncomm'),
+    // Exit values
+    array('result'=>'tns:result','id'=>'xsd:string'),
+    $ns,
+    $ns.'#updateActionComm',
+    $styledoc,
+    $styleuse,
+    'WS to update a actioncomm'
 );
-
-
-
 
 /**
  * Get ActionComm
@@ -258,88 +246,77 @@ function getActionComm($authentication,$id)
     $error=0;
     $fuser=check_authentication($authentication,$error,$errorcode,$errorlabel);
     // Check parameters
-    if ($error || (! $id))
-    {
+    if ($error || (! $id)) {
         $error++;
         $errorcode='BAD_PARAMETERS'; $errorlabel="Parameter id, ref and ref_ext can't be both provided. You must choose one or other but not both.";
     }
 
-    if (! $error)
-    {
+    if (! $error) {
         $fuser->getrights();
 
-        if ($fuser->rights->agenda->allactions->read)
-        {
+        if ($fuser->rights->agenda->allactions->read) {
             $actioncomm=new ActionComm($db);
             $result=$actioncomm->fetch($id);
-            if ($result > 0)
-            {
+            if ($result > 0) {
 
-            	$actioncomm_result_fields=array(
-						'id' => $actioncomm->id,
-						'ref'=> $actioncomm->ref,
-			        	'ref_ext'=> $actioncomm->ref_ext,
-			        	'type_id'=> $actioncomm->type_id,
-			        	'type_code'=> $actioncomm->type_code,
-			        	'type'=> $actioncomm->type,
-			        	'label'=> $actioncomm->label,
-			        	'datep'=> dol_print_date($actioncomm->datep,'dayhourrfc'),
-			        	'datef'=> dol_print_date($actioncomm->datef,'dayhourrfc'),
-			        	'datec'=> dol_print_date($actioncomm->datec,'dayhourrfc'),
-			        	'datem'=> dol_print_date($actioncomm->datem,'dayhourrfc'),
-			        	'note'=> $actioncomm->note,
-			        	'percentage'=> $actioncomm->percentage,
-			        	'author'=> $actioncomm->author->id,
-			        	'usermod'=> $actioncomm->usermod->id,
-			        	'usertodo'=> $actioncomm->usertodo->id,
-			        	'userdone'=> $actioncomm->userdone->id,
-			        	'priority'=> $actioncomm->priority,
-			        	'fulldayevent'=> $actioncomm->fulldayevent,
-			        	'location'=> $actioncomm->location,
-			        	'socid'=> $actioncomm->societe->id,
-			        	'contactid'=> $actioncomm->contact->id,
-			        	'projectid'=> $actioncomm->fk_project,
-			        	'fk_element'=> $actioncomm->fk_element,
-			        	'elementtype'=> $actioncomm->elementtype);
+                $actioncomm_result_fields=array(
+                        'id' => $actioncomm->id,
+                        'ref'=> $actioncomm->ref,
+                        'ref_ext'=> $actioncomm->ref_ext,
+                        'type_id'=> $actioncomm->type_id,
+                        'type_code'=> $actioncomm->type_code,
+                        'type'=> $actioncomm->type,
+                        'label'=> $actioncomm->label,
+                        'datep'=> dol_print_date($actioncomm->datep,'dayhourrfc'),
+                        'datef'=> dol_print_date($actioncomm->datef,'dayhourrfc'),
+                        'datec'=> dol_print_date($actioncomm->datec,'dayhourrfc'),
+                        'datem'=> dol_print_date($actioncomm->datem,'dayhourrfc'),
+                        'note'=> $actioncomm->note,
+                        'percentage'=> $actioncomm->percentage,
+                        'author'=> $actioncomm->author->id,
+                        'usermod'=> $actioncomm->usermod->id,
+                        'usertodo'=> $actioncomm->usertodo->id,
+                        'userdone'=> $actioncomm->userdone->id,
+                        'priority'=> $actioncomm->priority,
+                        'fulldayevent'=> $actioncomm->fulldayevent,
+                        'location'=> $actioncomm->location,
+                        'socid'=> $actioncomm->societe->id,
+                        'contactid'=> $actioncomm->contact->id,
+                        'projectid'=> $actioncomm->fk_project,
+                        'fk_element'=> $actioncomm->fk_element,
+                        'elementtype'=> $actioncomm->elementtype);
 
-			        	//Retreive all extrafield for actioncomm
-			        	// fetch optionals attributes and labels
-			        	$extrafields=new ExtraFields($db);
-			        	$extralabels=$extrafields->fetch_name_optionals_label('actioncomm',true);
-			        	//Get extrafield values
-			        	$actioncomm->fetch_optionals($actioncomm->id,$extralabels);
+                        //Retreive all extrafield for actioncomm
+                        // fetch optionals attributes and labels
+                        $extrafields=new ExtraFields($db);
+                        $extralabels=$extrafields->fetch_name_optionals_label('actioncomm',true);
+                        //Get extrafield values
+                        $actioncomm->fetch_optionals($actioncomm->id,$extralabels);
 
-			        	foreach($extrafields->attribute_label as $key=>$label)
-			        	{
-			        		$actioncomm_result_fields=array_merge($actioncomm_result_fields,array('options_'.$key => $actioncomm->array_options['options_'.$key]));
-			        	}
+                        foreach ($extrafields->attribute_label as $key=>$label) {
+                            $actioncomm_result_fields=array_merge($actioncomm_result_fields,array('options_'.$key => $actioncomm->array_options['options_'.$key]));
+                        }
 
                 // Create
                 $objectresp = array(
-			    	'result'=>array('result_code'=>'OK', 'result_label'=>''),
-			        'actioncomm'=>$actioncomm_result_fields);
-            }
-            else
-            {
+                    'result'=>array('result_code'=>'OK', 'result_label'=>''),
+                    'actioncomm'=>$actioncomm_result_fields);
+            } else {
                 $error++;
                 $errorcode='NOT_FOUND'; $errorlabel='Object not found for id='.$id.' nor ref='.$ref.' nor ref_ext='.$ref_ext;
             }
-        }
-        else
-        {
+        } else {
             $error++;
             $errorcode='PERMISSION_DENIED'; $errorlabel='User does not have permission for this request';
         }
     }
 
-    if ($error)
-    {
+    if ($error) {
         $objectresp = array('result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel));
     }
 
     return $objectresp;
 }
-
 
 /**
  * Get getListActionCommType
@@ -349,59 +326,50 @@ function getActionComm($authentication,$id)
  */
 function getListActionCommType($authentication)
 {
-	global $db,$conf,$langs;
+    global $db,$conf,$langs;
 
-	dol_syslog("Function: getListActionCommType login=".$authentication['login']);
+    dol_syslog("Function: getListActionCommType login=".$authentication['login']);
 
-	if ($authentication['entity']) $conf->entity=$authentication['entity'];
+    if ($authentication['entity']) $conf->entity=$authentication['entity'];
 
-	// Init and check authentication
-	$objectresp=array();
-	$errorcode='';$errorlabel='';
-	$error=0;
-	$fuser=check_authentication($authentication,$error,$errorcode,$errorlabel);
+    // Init and check authentication
+    $objectresp=array();
+    $errorcode='';$errorlabel='';
+    $error=0;
+    $fuser=check_authentication($authentication,$error,$errorcode,$errorlabel);
 
-	if (! $error)
-	{
-		$fuser->getrights();
+    if (! $error) {
+        $fuser->getrights();
 
-		if ($fuser->rights->agenda->myactions->read)
-		{
-			$cactioncomm=new CActionComm($db);
-			$result=$cactioncomm->liste_array('','code');
-			if ($result > 0)
-			{
-				$resultarray=array();
-				foreach($cactioncomm->liste_array as $code=>$libeller) {
-					$resultarray[]=array('code'=>$code,'libelle'=>$libeller);
-				}
+        if ($fuser->rights->agenda->myactions->read) {
+            $cactioncomm=new CActionComm($db);
+            $result=$cactioncomm->liste_array('','code');
+            if ($result > 0) {
+                $resultarray=array();
+                foreach ($cactioncomm->liste_array as $code=>$libeller) {
+                    $resultarray[]=array('code'=>$code,'libelle'=>$libeller);
+                }
 
-				 $objectresp = array(
-			    	'result'=>array('result_code'=>'OK', 'result_label'=>''),
-			        'actioncommtypes'=>$resultarray);
+                 $objectresp = array(
+                    'result'=>array('result_code'=>'OK', 'result_label'=>''),
+                    'actioncommtypes'=>$resultarray);
 
-			}
-			else
-			{
-				$error++;
-				$errorcode='NOT_FOUND'; $errorlabel='Object not found for id='.$id.' nor ref='.$ref.' nor ref_ext='.$ref_ext;
-			}
-		}
-		else
-		{
-			$error++;
-			$errorcode='PERMISSION_DENIED'; $errorlabel='User does not have permission for this request';
-		}
-	}
+            } else {
+                $error++;
+                $errorcode='NOT_FOUND'; $errorlabel='Object not found for id='.$id.' nor ref='.$ref.' nor ref_ext='.$ref_ext;
+            }
+        } else {
+            $error++;
+            $errorcode='PERMISSION_DENIED'; $errorlabel='User does not have permission for this request';
+        }
+    }
 
-	if ($error)
-	{
-		$objectresp = array('result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel));
-	}
+    if ($error) {
+        $objectresp = array('result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel));
+    }
 
-	return $objectresp;
+    return $objectresp;
 }
-
 
 /**
  * Create ActionComm
@@ -412,79 +380,72 @@ function getListActionCommType($authentication)
  */
 function createActionComm($authentication,$actioncomm)
 {
-	global $db,$conf,$langs;
+    global $db,$conf,$langs;
 
-	$now=dol_now();
+    $now=dol_now();
 
-	dol_syslog("Function: createActionComm login=".$authentication['login']);
+    dol_syslog("Function: createActionComm login=".$authentication['login']);
 
-	if ($authentication['entity']) $conf->entity=$authentication['entity'];
+    if ($authentication['entity']) $conf->entity=$authentication['entity'];
 
-	// Init and check authentication
-	$objectresp=array();
-	$errorcode='';$errorlabel='';
-	$error=0;
-	$fuser=check_authentication($authentication,$error,$errorcode,$errorlabel);
+    // Init and check authentication
+    $objectresp=array();
+    $errorcode='';$errorlabel='';
+    $error=0;
+    $fuser=check_authentication($authentication,$error,$errorcode,$errorlabel);
 
-	if (! $error)
-	{
-		$newobject=new ActionComm($db);
+    if (! $error) {
+        $newobject=new ActionComm($db);
 
-		$newobject->datep=$actioncomm['datep'];
-		$newobject->datef=$actioncomm['datef'];
-		$newobject->type_code=$actioncomm['type_code'];
-		$newobject->societe->id=$actioncomm['socid'];
-		$newobject->fk_project=$actioncomm['projectid'];
-		$newobject->note=$actioncomm['note'];
-		$newobject->contact->id=$actioncomm['contactid'];
-		$newobject->usertodo->id=$actioncomm['usertodo'];
-		$newobject->userdone->id=$actioncomm['userdone'];
-		$newobject->label=$actioncomm['label'];
-		$newobject->percentage=$actioncomm['percentage'];
-		$newobject->priority=$actioncomm['priority'];
-		$newobject->fulldayevent=$actioncomm['fulldayevent'];
-		$newobject->location=$actioncomm['location'];
-		$newobject->fk_element=$actioncomm['fk_element'];
-		$newobject->elementtype=$actioncomm['elementtype'];
+        $newobject->datep=$actioncomm['datep'];
+        $newobject->datef=$actioncomm['datef'];
+        $newobject->type_code=$actioncomm['type_code'];
+        $newobject->societe->id=$actioncomm['socid'];
+        $newobject->fk_project=$actioncomm['projectid'];
+        $newobject->note=$actioncomm['note'];
+        $newobject->contact->id=$actioncomm['contactid'];
+        $newobject->usertodo->id=$actioncomm['usertodo'];
+        $newobject->userdone->id=$actioncomm['userdone'];
+        $newobject->label=$actioncomm['label'];
+        $newobject->percentage=$actioncomm['percentage'];
+        $newobject->priority=$actioncomm['priority'];
+        $newobject->fulldayevent=$actioncomm['fulldayevent'];
+        $newobject->location=$actioncomm['location'];
+        $newobject->fk_element=$actioncomm['fk_element'];
+        $newobject->elementtype=$actioncomm['elementtype'];
 
-		//Retreive all extrafield for actioncomm
-		// fetch optionals attributes and labels
-		$extrafields=new ExtraFields($db);
-		$extralabels=$extrafields->fetch_name_optionals_label('actioncomm',true);
-		foreach($extrafields->attribute_label as $key=>$label)
-		{
-			$key='options_'.$key;
-			$newobject->array_options[$key]=$actioncomm[$key];
-		}
+        //Retreive all extrafield for actioncomm
+        // fetch optionals attributes and labels
+        $extrafields=new ExtraFields($db);
+        $extralabels=$extrafields->fetch_name_optionals_label('actioncomm',true);
+        foreach ($extrafields->attribute_label as $key=>$label) {
+            $key='options_'.$key;
+            $newobject->array_options[$key]=$actioncomm[$key];
+        }
 
-		$db->begin();
+        $db->begin();
 
-		$result=$newobject->add($fuser);
-		if ($result <= 0)
-		{
-			$error++;
-		}
+        $result=$newobject->add($fuser);
+        if ($result <= 0) {
+            $error++;
+        }
 
-		if (! $error)
-		{
-			$db->commit();
-			$objectresp=array('result'=>array('result_code'=>'OK', 'result_label'=>''),'id'=>$newobject->id);
-		}
-		else
-		{
-			$db->rollback();
-			$error++;
-			$errorcode='KO';
-			$errorlabel=$newobject->error;
-		}
-	}
+        if (! $error) {
+            $db->commit();
+            $objectresp=array('result'=>array('result_code'=>'OK', 'result_label'=>''),'id'=>$newobject->id);
+        } else {
+            $db->rollback();
+            $error++;
+            $errorcode='KO';
+            $errorlabel=$newobject->error;
+        }
+    }
 
-	if ($error)
-	{
-		$objectresp = array('result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel));
-	}
+    if ($error) {
+        $objectresp = array('result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel));
+    }
 
-	return $objectresp;
+    return $objectresp;
 }
 
 /**
@@ -496,97 +457,91 @@ function createActionComm($authentication,$actioncomm)
  */
 function updateActionComm($authentication,$actioncomm)
 {
-	global $db,$conf,$langs;
+    global $db,$conf,$langs;
 
-	$now=dol_now();
+    $now=dol_now();
 
-	dol_syslog("Function: updateActionComm login=".$authentication['login']);
+    dol_syslog("Function: updateActionComm login=".$authentication['login']);
 
-	if ($authentication['entity']) $conf->entity=$authentication['entity'];
+    if ($authentication['entity']) $conf->entity=$authentication['entity'];
 
-	// Init and check authentication
-	$objectresp=array();
-	$errorcode='';$errorlabel='';
-	$error=0;
-	$fuser=check_authentication($authentication,$error,$errorcode,$errorlabel);
-	// Check parameters
-	if (empty($actioncomm['id']))	{
-		$error++; $errorcode='KO'; $errorlabel="Actioncomm id is mandatory.";
-	}
+    // Init and check authentication
+    $objectresp=array();
+    $errorcode='';$errorlabel='';
+    $error=0;
+    $fuser=check_authentication($authentication,$error,$errorcode,$errorlabel);
+    // Check parameters
+    if (empty($actioncomm['id'])) {
+        $error++; $errorcode='KO'; $errorlabel="Actioncomm id is mandatory.";
+    }
 
-	if (! $error)
-	{
-		$objectfound=false;
-		
-		$object=new ActionComm($db);
-		$result=$object->fetch($actioncomm['id']);
-		
-		if (!empty($object->id)) {
-		
-			$objectfound=true;
+    if (! $error) {
+        $objectfound=false;
 
-			$object->datep=$actioncomm['datep'];
-			$object->datef=$actioncomm['datef'];
-			$object->type_code=$actioncomm['type_code'];
-			$object->societe->id=$actioncomm['socid'];
-			$object->fk_project=$actioncomm['projectid'];
-			$object->note=$actioncomm['note'];
-			$object->contact->id=$actioncomm['contactid'];
-			$object->usertodo->id=$actioncomm['usertodo'];
-			$object->userdone->id=$actioncomm['userdone'];
-			$object->label=$actioncomm['label'];
-			$object->percentage=$actioncomm['percentage'];
-			$object->priority=$actioncomm['priority'];
-			$object->fulldayevent=$actioncomm['fulldayevent'];
-			$object->location=$actioncomm['location'];
-			$object->fk_element=$actioncomm['fk_element'];
-			$object->elementtype=$actioncomm['elementtype'];
-	
-			//Retreive all extrafield for actioncomm
-			// fetch optionals attributes and labels
-			$extrafields=new ExtraFields($db);
-			$extralabels=$extrafields->fetch_name_optionals_label('actioncomm',true);
-			foreach($extrafields->attribute_label as $key=>$label)
-			{
-				$key='options_'.$key;
-				$object->array_options[$key]=$actioncomm[$key];
-			}
-	
-			$db->begin();
+        $object=new ActionComm($db);
+        $result=$object->fetch($actioncomm['id']);
 
-			$result=$object->update($fuser);
-			if ($result <= 0) {
-				$error++;
-			}
-		}
+        if (!empty($object->id)) {
 
-		if ((! $error) && ($objectfound))
-		{
-			$db->commit();
-			$objectresp=array(
-					'result'=>array('result_code'=>'OK', 'result_label'=>''),
-					'id'=>$object->id
-			);
-		}
-		elseif ($objectfound)
-		{
-			$db->rollback();
-			$error++;
-			$errorcode='KO';
-			$errorlabel=$object->error;
-		} else {
-			$error++;
-			$errorcode='NOT_FOUND';
-			$errorlabel='Actioncomm id='.$actioncomm['id'].' cannot be found';
-		}
-	}
+            $objectfound=true;
 
-	if ($error)
-	{
-		$objectresp = array('result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel));
-	}
+            $object->datep=$actioncomm['datep'];
+            $object->datef=$actioncomm['datef'];
+            $object->type_code=$actioncomm['type_code'];
+            $object->societe->id=$actioncomm['socid'];
+            $object->fk_project=$actioncomm['projectid'];
+            $object->note=$actioncomm['note'];
+            $object->contact->id=$actioncomm['contactid'];
+            $object->usertodo->id=$actioncomm['usertodo'];
+            $object->userdone->id=$actioncomm['userdone'];
+            $object->label=$actioncomm['label'];
+            $object->percentage=$actioncomm['percentage'];
+            $object->priority=$actioncomm['priority'];
+            $object->fulldayevent=$actioncomm['fulldayevent'];
+            $object->location=$actioncomm['location'];
+            $object->fk_element=$actioncomm['fk_element'];
+            $object->elementtype=$actioncomm['elementtype'];
 
-	return $objectresp;
+            //Retreive all extrafield for actioncomm
+            // fetch optionals attributes and labels
+            $extrafields=new ExtraFields($db);
+            $extralabels=$extrafields->fetch_name_optionals_label('actioncomm',true);
+            foreach ($extrafields->attribute_label as $key=>$label) {
+                $key='options_'.$key;
+                $object->array_options[$key]=$actioncomm[$key];
+            }
+
+            $db->begin();
+
+            $result=$object->update($fuser);
+            if ($result <= 0) {
+                $error++;
+            }
+        }
+
+        if ((! $error) && ($objectfound)) {
+            $db->commit();
+            $objectresp=array(
+                    'result'=>array('result_code'=>'OK', 'result_label'=>''),
+                    'id'=>$object->id
+            );
+        } elseif ($objectfound) {
+            $db->rollback();
+            $error++;
+            $errorcode='KO';
+            $errorlabel=$object->error;
+        } else {
+            $error++;
+            $errorcode='NOT_FOUND';
+            $errorlabel='Actioncomm id='.$actioncomm['id'].' cannot be found';
+        }
+    }
+
+    if ($error) {
+        $objectresp = array('result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel));
+    }
+
+    return $objectresp;
 }
 
 // Return the results.

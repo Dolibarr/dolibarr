@@ -51,7 +51,6 @@ if ($page < 0) $page = 0;
 if (! $sortfield) $sortfield="cs.date_ech";
 if (! $sortorder) $sortorder="DESC";
 
-
 /*
  * View
  */
@@ -67,22 +66,18 @@ if ($_GET["mode"] == 'sconly') $title=$langs->trans("SocialContributionsPayments
 
 print_fiche_titre($title,($year?"<a href='index.php?year=".($year-1)."'>".img_previous()."</a> ".$langs->trans("Year")." $year <a href='index.php?year=".($year+1)."'>".img_next()."</a>":""));
 
-if ($_GET["mode"] != 'sconly')
-{
-	print $langs->trans("DescTaxAndDividendsArea").'<br>';
-	print "<br>";
+if ($_GET["mode"] != 'sconly') {
+    print $langs->trans("DescTaxAndDividendsArea").'<br>';
+    print "<br>";
 }
-
 
 // Social contributions
-if ($_GET["mode"] != 'sconly')
-{
-	print_titre($langs->trans("SocialContributionsPayments"));
+if ($_GET["mode"] != 'sconly') {
+    print_titre($langs->trans("SocialContributionsPayments"));
 }
 
-if ($_GET["mode"] == 'sconly')
-{
-	$param='&mode=sconly';
+if ($_GET["mode"] == 'sconly') {
+    $param='&mode=sconly';
 }
 
 print '<table class="noborder" width="100%">';
@@ -104,14 +99,13 @@ $sql.= " ".MAIN_DB_PREFIX."chargesociales as cs";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiementcharge as pc ON pc.fk_charge = cs.rowid";
 $sql.= " WHERE cs.fk_type = c.id";
 $sql.= " AND cs.entity = ".$conf->entity;
-if ($year > 0)
-{
-	$sql .= " AND (";
-	// Si period renseignee on l'utilise comme critere de date, sinon on prend date echeance,
-	// ceci afin d'etre compatible avec les cas ou la periode n'etait pas obligatoire
-	$sql .= "   (cs.periode IS NOT NULL AND cs.periode between '".$db->idate(dol_get_first_day($year))."' AND '".$db->idate(dol_get_last_day($year))."')";
-	$sql .= "OR (cs.periode IS NULL AND cs.date_ech between '".$db->idate(dol_get_first_day($year))."' AND '".$db->idate(dol_get_last_day($year))."')";
-	$sql .= ")";
+if ($year > 0) {
+    $sql .= " AND (";
+    // Si period renseignee on l'utilise comme critere de date, sinon on prend date echeance,
+    // ceci afin d'etre compatible avec les cas ou la periode n'etait pas obligatoire
+    $sql .= "   (cs.periode IS NOT NULL AND cs.periode between '".$db->idate(dol_get_first_day($year))."' AND '".$db->idate(dol_get_last_day($year))."')";
+    $sql .= "OR (cs.periode IS NULL AND cs.date_ech between '".$db->idate(dol_get_first_day($year))."' AND '".$db->idate(dol_get_last_day($year))."')";
+    $sql .= ")";
 }
 $sql.= $db->order($sortfield,$sortorder);
 //$sql.= $db->plimit($limit+1,$offset);
@@ -119,142 +113,130 @@ $sql.= $db->order($sortfield,$sortorder);
 
 dol_syslog("compta/charges/index.php: select payment sql=".$sql);
 $resql=$db->query($sql);
-if ($resql)
-{
-	$num = $db->num_rows($resql);
-	$i = 0;
-	$total = 0;
-	$totalnb = 0;
-	$totalpaye = 0;
-	$var=true;
+if ($resql) {
+    $num = $db->num_rows($resql);
+    $i = 0;
+    $total = 0;
+    $totalnb = 0;
+    $totalpaye = 0;
+    $var=true;
 
-	while ($i < $num)
-	{
-		$obj = $db->fetch_object($resql);
-		$var = !$var;
-		print "<tr $bc[$var]>";
-		// Date
-		$date=$obj->periode;
-		if (empty($date)) $date=$obj->date_ech;
-		print '<td>'.dol_print_date($date,'day').'</td>';
-		// Label
-		print '<td>';
-		$socialcontrib->id=$obj->rowid;
-		$socialcontrib->ref=$obj->libelle;
-		$socialcontrib->lib=$obj->libelle;
-		print $socialcontrib->getNomUrl(1,'20');
-		print '</td>';
-		// Type
-		print '<td><a href="../sociales/index.php?filtre=cs.fk_type:'.$obj->type.'">'.$obj->lib.'</a></td>';
-		// Expected to pay
-		print '<td align="right">'.price($obj->total).'</td>';
-		// Ref payment
-		$payment_sc_static->id=$obj->pid;
-		$payment_sc_static->ref=$obj->pid;
-		print '<td>'.$payment_sc_static->getNomUrl(1)."</td>\n";
-		// Date payment
-		print '<td align="center">'.dol_print_date($db->jdate($obj->datep),'day').'</td>';
-		// Paid
-		print '<td align="right">'.price($obj->totalpaye).'</td>';
-		print '</tr>';
-		$total = $total + $obj->total;
-		$totalnb = $totalnb + $obj->nb;
-		$totalpaye = $totalpaye + $obj->totalpaye;
-		$i++;
-	}
+    while ($i < $num) {
+        $obj = $db->fetch_object($resql);
+        $var = !$var;
+        print "<tr $bc[$var]>";
+        // Date
+        $date=$obj->periode;
+        if (empty($date)) $date=$obj->date_ech;
+        print '<td>'.dol_print_date($date,'day').'</td>';
+        // Label
+        print '<td>';
+        $socialcontrib->id=$obj->rowid;
+        $socialcontrib->ref=$obj->libelle;
+        $socialcontrib->lib=$obj->libelle;
+        print $socialcontrib->getNomUrl(1,'20');
+        print '</td>';
+        // Type
+        print '<td><a href="../sociales/index.php?filtre=cs.fk_type:'.$obj->type.'">'.$obj->lib.'</a></td>';
+        // Expected to pay
+        print '<td align="right">'.price($obj->total).'</td>';
+        // Ref payment
+        $payment_sc_static->id=$obj->pid;
+        $payment_sc_static->ref=$obj->pid;
+        print '<td>'.$payment_sc_static->getNomUrl(1)."</td>\n";
+        // Date payment
+        print '<td align="center">'.dol_print_date($db->jdate($obj->datep),'day').'</td>';
+        // Paid
+        print '<td align="right">'.price($obj->totalpaye).'</td>';
+        print '</tr>';
+        $total = $total + $obj->total;
+        $totalnb = $totalnb + $obj->nb;
+        $totalpaye = $totalpaye + $obj->totalpaye;
+        $i++;
+    }
     print '<tr class="liste_total"><td align="right" colspan="3">'.$langs->trans("Total").'</td>';
     print '<td align="right">'.price($total)."</td>";
     print '<td align="center">&nbsp;</td>';
     print '<td align="center">&nbsp;</td>';
     print '<td align="right">'.price($totalpaye)."</td>";
-	print "</tr>";
-}
-else
-{
-	dol_print_error($db);
+    print "</tr>";
+} else {
+    dol_print_error($db);
 }
 print '</table>';
 
 
 // VAT
 
-if (empty($_GET["mode"]) || $_GET["mode"] != 'sconly')
-{
-	print "<br>";
+if (empty($_GET["mode"]) || $_GET["mode"] != 'sconly') {
+    print "<br>";
 
-	$tva = new Tva($db);
+    $tva = new Tva($db);
 
-	print_titre($langs->trans("VATPayments"));
+    print_titre($langs->trans("VATPayments"));
 
-	$sql = "SELECT f.rowid, f.amount, f.label, f.datev as dm";
-	$sql.= " FROM ".MAIN_DB_PREFIX."tva as f ";
-	$sql.= " WHERE f.entity = ".$conf->entity;
-	if ($year > 0)
-	{
-		// Si period renseignee on l'utilise comme critere de date, sinon on prend date echeance,
-		// ceci afin d'etre compatible avec les cas ou la periode n'etait pas obligatoire
-		$sql.= " AND f.datev between '".$db->idate(dol_get_first_day($year,1,false))."' AND '".$db->idate(dol_get_last_day($year,12,false))."'";
-	}
-	$sql.= " ORDER BY dm DESC";
+    $sql = "SELECT f.rowid, f.amount, f.label, f.datev as dm";
+    $sql.= " FROM ".MAIN_DB_PREFIX."tva as f ";
+    $sql.= " WHERE f.entity = ".$conf->entity;
+    if ($year > 0) {
+        // Si period renseignee on l'utilise comme critere de date, sinon on prend date echeance,
+        // ceci afin d'etre compatible avec les cas ou la periode n'etait pas obligatoire
+        $sql.= " AND f.datev between '".$db->idate(dol_get_first_day($year,1,false))."' AND '".$db->idate(dol_get_last_day($year,12,false))."'";
+    }
+    $sql.= " ORDER BY dm DESC";
 
-	$result = $db->query($sql);
-	if ($result)
-	{
-	    $num = $db->num_rows($result);
-	    $i = 0;
-	    $total = 0 ;
-	    print '<table class="noborder" width="100%">';
-	    print '<tr class="liste_titre">';
-	    print '<td width="120" class="nowrap">'.$langs->trans("PeriodEndDate").'</td>';
-	    print "<td>".$langs->trans("Label")."</td>";
-	    print '<td align="right" width="10%">'.$langs->trans("ExpectedToPay")."</td>";
-	    print '<td align="right" width="10%">'.$langs->trans("RefPayment")."</td>";
-	    print '<td align="center" width="15%">'.$langs->trans("DatePayment")."</td>";
-	    print '<td align="right" width="10%">'.$langs->trans("PayedByThisPayment")."</td>";
-	    print "</tr>\n";
-	    $var=1;
-	    while ($i < $num)
-	    {
-	        $obj = $db->fetch_object($result);
+    $result = $db->query($sql);
+    if ($result) {
+        $num = $db->num_rows($result);
+        $i = 0;
+        $total = 0 ;
+        print '<table class="noborder" width="100%">';
+        print '<tr class="liste_titre">';
+        print '<td width="120" class="nowrap">'.$langs->trans("PeriodEndDate").'</td>';
+        print "<td>".$langs->trans("Label")."</td>";
+        print '<td align="right" width="10%">'.$langs->trans("ExpectedToPay")."</td>";
+        print '<td align="right" width="10%">'.$langs->trans("RefPayment")."</td>";
+        print '<td align="center" width="15%">'.$langs->trans("DatePayment")."</td>";
+        print '<td align="right" width="10%">'.$langs->trans("PayedByThisPayment")."</td>";
+        print "</tr>\n";
+        $var=1;
+        while ($i < $num) {
+            $obj = $db->fetch_object($result);
 
-	        $total = $total + $obj->amount;
+            $total = $total + $obj->amount;
 
-	        $var=!$var;
-	        print "<tr $bc[$var]>";
-	        print '<td align="left">'.dol_print_date($db->jdate($obj->dm),'day').' ? </td>'."\n";
+            $var=!$var;
+            print "<tr $bc[$var]>";
+            print '<td align="left">'.dol_print_date($db->jdate($obj->dm),'day').' ? </td>'."\n";
 
-	        print "<td>".$obj->label."</td>\n";
+            print "<td>".$obj->label."</td>\n";
 
-	        print '<td align="right">'.price($obj->amount)."</td>";
+            print '<td align="right">'.price($obj->amount)."</td>";
 
-			$tva_static->id=$obj->rowid;
-			$tva_static->ref=$obj->rowid;
-	        print '<td align="right">'.$tva_static->getNomUrl(1)."</td>\n";
+            $tva_static->id=$obj->rowid;
+            $tva_static->ref=$obj->rowid;
+            print '<td align="right">'.$tva_static->getNomUrl(1)."</td>\n";
 
-	        print '<td align="center">'.dol_print_date($db->jdate($obj->dm),'day')."</td>\n";
-	        print "<td align=\"right\">".price($obj->amount)."</td>";
-	        print "</tr>\n";
+            print '<td align="center">'.dol_print_date($db->jdate($obj->dm),'day')."</td>\n";
+            print "<td align=\"right\">".price($obj->amount)."</td>";
+            print "</tr>\n";
 
-	        $i++;
-	    }
-	    print '<tr class="liste_total"><td align="right" colspan="2">'.$langs->trans("Total").'</td>';
-	    print '<td align="right">'.price($total)."</td>";
-	    print '<td align="center">&nbsp;</td>';
-	    print '<td align="center">&nbsp;</td>';
-	    print '<td align="right">'.price($total)."</td>";
-	    print "</tr>";
+            $i++;
+        }
+        print '<tr class="liste_total"><td align="right" colspan="2">'.$langs->trans("Total").'</td>';
+        print '<td align="right">'.price($total)."</td>";
+        print '<td align="center">&nbsp;</td>';
+        print '<td align="center">&nbsp;</td>';
+        print '<td align="right">'.price($total)."</td>";
+        print "</tr>";
 
-	    print "</table>";
-	    $db->free($result);
-	}
-	else
-	{
-	    dol_print_error($db);
-	}
+        print "</table>";
+        $db->free($result);
+    } else {
+        dol_print_error($db);
+    }
 }
-
 
 $db->close();
 
 llxFooter();
-?>

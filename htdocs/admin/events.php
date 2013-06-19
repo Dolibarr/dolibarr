@@ -26,7 +26,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/events.class.php';
 
-
 if (!$user->admin)
 accessforbidden();
 
@@ -36,34 +35,27 @@ $langs->load("other");
 
 $action=GETPOST("action");
 
-
 $securityevent=new Events($db);
 $eventstolog=$securityevent->eventstolog;
-
-
 
 /*
  *	Actions
  */
-if ($action == "save")
-{
-	$i=0;
+if ($action == "save") {
+    $i=0;
 
-	$db->begin();
+    $db->begin();
 
-	foreach ($eventstolog as $key => $arr)
-	{
-		$param='MAIN_LOGEVENTS_'.$arr['id'];
-		//print "param=".$param." - ".$_POST[$param];
-		if (! empty($_POST[$param])) dolibarr_set_const($db,$param,$_POST[$param],'chaine',0,'',$conf->entity);
-		else dolibarr_del_const($db,$param,$conf->entity);
-	}
+    foreach ($eventstolog as $key => $arr) {
+        $param='MAIN_LOGEVENTS_'.$arr['id'];
+        //print "param=".$param." - ".$_POST[$param];
+        if (! empty($_POST[$param])) dolibarr_set_const($db,$param,$_POST[$param],'chaine',0,'',$conf->entity);
+        else dolibarr_del_const($db,$param,$conf->entity);
+    }
 
-	$db->commit();
-	$mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
+    $db->commit();
+    $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
 }
-
-
 
 /*
  * View
@@ -81,7 +73,6 @@ $head=security_prepare_head();
 
 dol_fiche_head($head, 'audit', $langs->trans("Security"));
 
-
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="save">';
@@ -92,19 +83,17 @@ print "<tr class=\"liste_titre\">";
 print "<td colspan=\"2\">".$langs->trans("LogEvents")."</td>";
 print "</tr>\n";
 // Loop on each event type
-foreach ($eventstolog as $key => $arr)
-{
-	if ($arr['id'])
-	{
-		$var=!$var;
-		print '<tr '.$bc[$var].'>';
-		print '<td>'.$arr['id'].'</td>';
-		print '<td>';
-		$key='MAIN_LOGEVENTS_'.$arr['id'];
-		$value=$conf->global->$key;
-		print '<input '.$bc[$var].' type="checkbox" name="'.$key.'" value="1"'.($value?' checked="checked"':'').'>';
-		print '</td></tr>'."\n";
-	}
+foreach ($eventstolog as $key => $arr) {
+    if ($arr['id']) {
+        $var=!$var;
+        print '<tr '.$bc[$var].'>';
+        print '<td>'.$arr['id'].'</td>';
+        print '<td>';
+        $key='MAIN_LOGEVENTS_'.$arr['id'];
+        $value=$conf->global->$key;
+        print '<input '.$bc[$var].' type="checkbox" name="'.$key.'" value="1"'.($value?' checked="checked"':'').'>';
+        print '</td></tr>'."\n";
+    }
 }
 print '</table>';
 
@@ -116,11 +105,8 @@ print "</form>\n";
 
 print '</div>';
 
-
 dol_htmloutput_mesg($mesg);
-
 
 $db->close();
 
 llxFooter();
-?>

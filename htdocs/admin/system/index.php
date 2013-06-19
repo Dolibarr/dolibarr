@@ -31,13 +31,11 @@ $langs->load("install");
 
 if (! $user->admin) accessforbidden();
 
-
 /*
  * Actions
  */
 
 // None
-
 
 /*
  * View
@@ -46,7 +44,6 @@ if (! $user->admin) accessforbidden();
 llxHeader();
 
 print_fiche_titre($langs->trans("SummarySystem"),'','setup');
-
 
 print '<table class="noborder" width="100%">';
 print "<tr class=\"liste_titre\"><td colspan=\"2\">Dolibarr</td></tr>\n";
@@ -91,15 +88,13 @@ $dbversion=$db->getVersion();
 print "<tr $bc[0]><td width=\"280\">".$langs->trans("Version")."</td><td>" .$dblabel." ".$dbversion."</td></tr>\n";
 print '</table>';
 // Add checks on database options
-if ($db->type == 'pgsql')
-{
-	// Check option standard_conforming_strings is on
-	$paramarray=$db->getServerParametersValues('standard_conforming_strings');
-	if ($paramarray['standard_conforming_strings'] != 'on' && $paramarray['standard_conforming_strings'] != 1)
-	{
-		$langs->load("errors");
-		//print '<div class="error">'.$langs->trans("ErrorDatabaseParameterWrong",'standard_conforming_strings','on').'</div>';
-	}
+if ($db->type == 'pgsql') {
+    // Check option standard_conforming_strings is on
+    $paramarray=$db->getServerParametersValues('standard_conforming_strings');
+    if ($paramarray['standard_conforming_strings'] != 'on' && $paramarray['standard_conforming_strings'] != 1) {
+        $langs->load("errors");
+        //print '<div class="error">'.$langs->trans("ErrorDatabaseParameterWrong",'standard_conforming_strings','on').'</div>';
+    }
 }
 print '<br>';
 
@@ -111,12 +106,9 @@ print "<tr $bc[1]><td width=\"280\">".$langs->trans("Smartphone")."</td><td>".(e
 print '</table>';
 print '<br>';
 
-
 //print "<br>\n";
 print info_admin($langs->trans("SystemInfoDesc")).'<br>';
 
 llxFooter();
 
 $db->close();
-
-?>

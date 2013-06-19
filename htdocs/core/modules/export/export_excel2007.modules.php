@@ -27,74 +27,67 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/export/modules_export.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/export/export_excel.modules.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
-
 /**
  *	Class to build export files with Excel format
  */
 class ExportExcel2007 extends ExportExcel
 {
-	var $id;
-	var $label;
-	var $extension;
-	var $version;
+    public $id;
+    public $label;
+    public $extension;
+    public $version;
 
-	var $label_lib;
-	var $version_lib;
+    public $label_lib;
+    public $version_lib;
 
-	var $workbook;      // Handle fichier
-	var $worksheet;     // Handle onglet
-	var $row;
-	var $col;
-    var $file;          // To save filename
+    public $workbook;      // Handle fichier
+    public $worksheet;     // Handle onglet
+    public $row;
+    public $col;
+    public $file;          // To save filename
 
+    /**
+     *	Constructor
+     *
+     *	@param	    DoliDB	$db      Database handler
+     */
+    public function __construct($db)
+    {
+        global $conf, $langs;
+        $this->db = $db;
 
-	/**
-	 *	Constructor
-	 *
-	 *	@param	    DoliDB	$db      Database handler
-	 */
-	function __construct($db)
-	{
-		global $conf, $langs;
-		$this->db = $db;
-
-		$this->id='excel2007';                  // Same value then xxx in file name export_xxx.modules.php
-		$this->label='Excel 2007';               // Label of driver
-		$this->desc = $langs->trans('Excel2007FormatDesc');
-		$this->extension='xlsx';             // Extension for generated file by this driver
+        $this->id='excel2007';                  // Same value then xxx in file name export_xxx.modules.php
+        $this->label='Excel 2007';               // Label of driver
+        $this->desc = $langs->trans('Excel2007FormatDesc');
+        $this->extension='xlsx';             // Extension for generated file by this driver
         $this->picto='mime/xls';			// Picto
-		$this->version='1.30';             // Driver version
+        $this->version='1.30';             // Driver version
 
-		// If driver use an external library, put its name here
-		$this->label_lib='PhpExcel';
-		$this->version_lib='1.7.2';
+        // If driver use an external library, put its name here
+        $this->label_lib='PhpExcel';
+        $this->version_lib='1.7.2';
 
-		$this->row=0;
-	}
+        $this->row=0;
+    }
 
-
-	/**
+    /**
      *	Close Excel file
      *
-	 * 	@return		int							<0 if KO, >0 if OK
+     * 	@return		int							<0 if KO, >0 if OK
      */
-	function close_file()
-	{
-		if (! empty($conf->global->MAIN_USE_PHP_WRITEEXCEL))
-    	{
-	        $this->workbook->close();
-    	}
-    	else
-    	{
+    public function close_file()
+    {
+        if (! empty($conf->global->MAIN_USE_PHP_WRITEEXCEL)) {
+            $this->workbook->close();
+        } else {
             require_once PHPEXCEL_PATH.'PHPExcel/Writer/Excel5.php';
-    	    $objWriter = new PHPExcel_Writer_Excel2007($this->workbook);
+            $objWriter = new PHPExcel_Writer_Excel2007($this->workbook);
             $objWriter->save($this->file);
             $this->workbook->disconnectWorksheets();
             unset($this->workbook);
-    	}
-		return 0;
-	}
+        }
+
+        return 0;
+    }
 
 }
-
-?>

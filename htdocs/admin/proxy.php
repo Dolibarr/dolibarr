@@ -29,31 +29,25 @@ $langs->load("users");
 $langs->load("admin");
 $langs->load("other");
 
-
 if (!$user->admin) accessforbidden();
 
 $upload_dir=$conf->admin->dir_temp;
-
 
 /*
  * Actions
  */
 
-if (GETPOST("action") == 'set_proxy')
-{
-    if (GETPOST("MAIN_USE_CONNECT_TIMEOUT") && ! is_numeric(GETPOST("MAIN_USE_CONNECT_TIMEOUT")))
-    {
+if (GETPOST("action") == 'set_proxy') {
+    if (GETPOST("MAIN_USE_CONNECT_TIMEOUT") && ! is_numeric(GETPOST("MAIN_USE_CONNECT_TIMEOUT"))) {
         $mesg='<div class="error">'.$langs->trans("ErrorValueMustBeInteger").'</div>';
         $error++;
     }
-    if (GETPOST("MAIN_USE_RESPONSE_TIMEOUT") && ! is_numeric(GETPOST("MAIN_USE_RESPONSE_TIMEOUT")))
-    {
+    if (GETPOST("MAIN_USE_RESPONSE_TIMEOUT") && ! is_numeric(GETPOST("MAIN_USE_RESPONSE_TIMEOUT"))) {
         $mesg='<div class="error">'.$langs->trans("ErrorValueMustBeInteger").'</div>';
         $error++;
     }
 
-    if (! $error)
-    {
+    if (! $error) {
         $result=0;
         $result+=dolibarr_set_const($db, 'MAIN_USE_CONNECT_TIMEOUT', GETPOST("MAIN_USE_CONNECT_TIMEOUT"), 'chaine',0,'',$conf->entity);
         $result+=dolibarr_set_const($db, 'MAIN_USE_RESPONSE_TIMEOUT', GETPOST("MAIN_USE_RESPONSE_TIMEOUT"), 'chaine',0,'',$conf->entity);
@@ -65,12 +59,10 @@ if (GETPOST("action") == 'set_proxy')
         if ($result < 5) dol_print_error($db);
     }
 
-    if (! $error)
-    {
+    if (! $error) {
         $mesg='<div class="ok">'.$langs->trans("RecordModifiedSuccessfully").'</div>';
     }
 }
-
 
 /*
  * View
@@ -89,19 +81,15 @@ $head=security_prepare_head();
 
 dol_fiche_head($head, 'proxy', $langs->trans("Security"));
 
-
-if ($conf->use_javascript_ajax)
-{
+if ($conf->use_javascript_ajax) {
     print "\n".'<script type="text/javascript" language="javascript">';
     print 'jQuery(document).ready(function () {
                 function initfields()
                 {
-                    if (jQuery("#MAIN_PROXY_USE").val()==\'1\')
-                    {
+                    if (jQuery("#MAIN_PROXY_USE").val()==\'1\') {
                         jQuery(".drag").show();
                     }
-                    if (jQuery("#MAIN_PROXY_USE").val()==\'0\')
-                    {
+                    if (jQuery("#MAIN_PROXY_USE").val()==\'0\') {
                         jQuery(".drag").hide();
                     }
                 }
@@ -112,7 +100,6 @@ if ($conf->use_javascript_ajax)
            })';
     print '</script>'."\n";
 }
-
 
 // Timeout
 $var=true;
@@ -203,11 +190,8 @@ print '</center>';
 
 print '</form><br>';
 
-
 dol_htmloutput_mesg($mesg);
-
 
 $db->close();
 
 llxFooter();
-?>

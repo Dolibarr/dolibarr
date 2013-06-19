@@ -53,25 +53,19 @@ $result=restrictedArea($user, $origin, $origin_id);
 $object = new Expedition($db);
 $object->fetch($id);
 
-
 /******************************************************************************/
 /*                     Actions                                                */
 /******************************************************************************/
 
-if ($action == 'setnote_public' && $user->rights->facture->creer)
-{
-	$object->fetch($id);
-	$result=$object->update_note(dol_html_entity_decode(GETPOST('note_public'), ENT_QUOTES),'_public');
-	if ($result < 0) dol_print_error($db,$object->error);
+if ($action == 'setnote_public' && $user->rights->facture->creer) {
+    $object->fetch($id);
+    $result=$object->update_note(dol_html_entity_decode(GETPOST('note_public'), ENT_QUOTES),'_public');
+    if ($result < 0) dol_print_error($db,$object->error);
+} elseif ($action == 'setnote_private' && $user->rights->facture->creer) {
+    $object->fetch($id);
+    $result=$object->update_note(dol_html_entity_decode(GETPOST('note_private'), ENT_QUOTES),'_private');
+    if ($result < 0) dol_print_error($db,$object->error);
 }
-
-else if ($action == 'setnote_private' && $user->rights->facture->creer)
-{
-	$object->fetch($id);
-	$result=$object->update_note(dol_html_entity_decode(GETPOST('note_private'), ENT_QUOTES),'_private');
-	if ($result < 0) dol_print_error($db,$object->error);
-}
-
 
 /******************************************************************************/
 /* Affichage fiche                                                            */
@@ -81,80 +75,75 @@ llxHeader();
 
 $form = new Form($db);
 
-if ($id > 0 || ! empty($ref))
-{
+if ($id > 0 || ! empty($ref)) {
 
-	$soc = new Societe($db);
-	$soc->fetch($object->socid);
+    $soc = new Societe($db);
+    $soc->fetch($object->socid);
 
-	$head=shipping_prepare_head($object);
+    $head=shipping_prepare_head($object);
     dol_fiche_head($head, 'note', $langs->trans("Sending"), 0, 'sending');
 
-	print '<table class="border" width="100%">';
+    print '<table class="border" width="100%">';
 
-	$linkback = '<a href="'.DOL_URL_ROOT.'/expedition/liste.php">'.$langs->trans("BackToList").'</a>';
+    $linkback = '<a href="'.DOL_URL_ROOT.'/expedition/liste.php">'.$langs->trans("BackToList").'</a>';
 
-	// Ref
-	print '<tr><td width="20%">'.$langs->trans("Ref").'</td>';
-	print '<td colspan="3">';
-	print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref');
-	print '</td></tr>';
+    // Ref
+    print '<tr><td width="20%">'.$langs->trans("Ref").'</td>';
+    print '<td colspan="3">';
+    print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref');
+    print '</td></tr>';
 
-	// Customer
-	print '<tr><td width="20%">'.$langs->trans("Customer").'</td>';
-	print '<td colspan="3">'.$soc->getNomUrl(1).'</td>';
-	print "</tr>";
+    // Customer
+    print '<tr><td width="20%">'.$langs->trans("Customer").'</td>';
+    print '<td colspan="3">'.$soc->getNomUrl(1).'</td>';
+    print "</tr>";
 
-	// Linked documents
-	if ($typeobject == 'commande' && $object->$typeobject->id && ! empty($conf->commande->enabled))
-	{
-		print '<tr><td>';
-		$objectsrc=new Commande($db);
-		$objectsrc->fetch($object->$typeobject->id);
-		print $langs->trans("RefOrder").'</td>';
-		print '<td colspan="3">';
-		print $objectsrc->getNomUrl(1,'commande');
-		print "</td>\n";
-		print '</tr>';
-	}
-	if ($typeobject == 'propal' && $object->$typeobject->id && ! empty($conf->propal->enabled))
-	{
-		print '<tr><td>';
-		$objectsrc=new Propal($db);
-		$objectsrc->fetch($object->$typeobject->id);
-		print $langs->trans("RefProposal").'</td>';
-		print '<td colspan="3">';
-		print $objectsrc->getNomUrl(1,'expedition');
-		print "</td>\n";
-		print '</tr>';
-	}
+    // Linked documents
+    if ($typeobject == 'commande' && $object->$typeobject->id && ! empty($conf->commande->enabled)) {
+        print '<tr><td>';
+        $objectsrc=new Commande($db);
+        $objectsrc->fetch($object->$typeobject->id);
+        print $langs->trans("RefOrder").'</td>';
+        print '<td colspan="3">';
+        print $objectsrc->getNomUrl(1,'commande');
+        print "</td>\n";
+        print '</tr>';
+    }
+    if ($typeobject == 'propal' && $object->$typeobject->id && ! empty($conf->propal->enabled)) {
+        print '<tr><td>';
+        $objectsrc=new Propal($db);
+        $objectsrc->fetch($object->$typeobject->id);
+        print $langs->trans("RefProposal").'</td>';
+        print '<td colspan="3">';
+        print $objectsrc->getNomUrl(1,'expedition');
+        print "</td>\n";
+        print '</tr>';
+    }
 
-	// Ref customer
-	print '<tr><td>'.$langs->trans("RefCustomer").'</td>';
-	print '<td colspan="3">'.$object->ref_customer."</a></td>\n";
-	print '</tr>';
+    // Ref customer
+    print '<tr><td>'.$langs->trans("RefCustomer").'</td>';
+    print '<td colspan="3">'.$object->ref_customer."</a></td>\n";
+    print '</tr>';
 
-	// Date creation
-	print '<tr><td>'.$langs->trans("DateCreation").'</td>';
-	print '<td colspan="3">'.dol_print_date($object->date_creation,"day")."</td>\n";
-	print '</tr>';
+    // Date creation
+    print '<tr><td>'.$langs->trans("DateCreation").'</td>';
+    print '<td colspan="3">'.dol_print_date($object->date_creation,"day")."</td>\n";
+    print '</tr>';
 
-	// Delivery date planed
-	print '<tr><td>'.$langs->trans("DateDeliveryPlanned").'</td>';
-	print '<td colspan="3">'.dol_print_date($object->date_delivery,"dayhourtext")."</td>\n";
-	print '</tr>';
+    // Delivery date planed
+    print '<tr><td>'.$langs->trans("DateDeliveryPlanned").'</td>';
+    print '<td colspan="3">'.dol_print_date($object->date_delivery,"dayhourtext")."</td>\n";
+    print '</tr>';
 
-	print '</table>';
+    print '</table>';
 
-	print '<br>';
+    print '<br>';
 
-	include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
+    include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
 
-	dol_fiche_end();
+    dol_fiche_end();
 }
-
 
 llxFooter();
 
 $db->close();
-?>

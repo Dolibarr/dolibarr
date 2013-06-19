@@ -23,7 +23,7 @@
  *      \brief      Fiche de notes sur un contrat
  */
 
-require ("../main.inc.php");
+require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/contract.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 
@@ -43,24 +43,17 @@ $result=restrictedArea($user,'contrat',$id);
 $object = new Contrat($db);
 $object->fetch($id,$ref);
 
-
 /******************************************************************************/
 /*                     Actions                                                */
 /******************************************************************************/
 
-if ($action == 'setnote_public' && $user->rights->contrat->creer)
-{
-	$result=$object->update_note(dol_html_entity_decode(dol_htmlcleanlastbr(GETPOST('note_public')), ENT_QUOTES),'_public');
-	if ($result < 0) dol_print_error($db,$object->error);
+if ($action == 'setnote_public' && $user->rights->contrat->creer) {
+    $result=$object->update_note(dol_html_entity_decode(dol_htmlcleanlastbr(GETPOST('note_public')), ENT_QUOTES),'_public');
+    if ($result < 0) dol_print_error($db,$object->error);
+} elseif ($action == 'setnote_private' && $user->rights->contrat->creer) {
+    $result=$object->update_note(dol_html_entity_decode(dol_htmlcleanlastbr(GETPOST('note_private')), ENT_QUOTES),'_private');
+    if ($result < 0) dol_print_error($db,$object->error);
 }
-
-else if ($action == 'setnote_private' && $user->rights->contrat->creer)
-{
-	$result=$object->update_note(dol_html_entity_decode(dol_htmlcleanlastbr(GETPOST('note_private')), ENT_QUOTES),'_private');
-	if ($result < 0) dol_print_error($db,$object->error);
-}
-
-
 
 /******************************************************************************/
 /* Affichage fiche                                                            */
@@ -70,9 +63,8 @@ llxHeader();
 
 $form = new Form($db);
 
-if ($id > 0 || ! empty($ref))
-{
-	dol_htmloutput_mesg($mesg);
+if ($id > 0 || ! empty($ref)) {
+    dol_htmloutput_mesg($mesg);
 
     $object->fetch_thirdparty();
 
@@ -82,40 +74,37 @@ if ($id > 0 || ! empty($ref))
 
     dol_fiche_head($head, 'note', $langs->trans("Contract"), 0, 'contract');
 
-
     print '<table class="border" width="100%">';
 
     $linkback = '<a href="'.DOL_URL_ROOT.'/contrat/liste.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
 
     // Reference
-	print '<tr><td width="25%">'.$langs->trans('Ref').'</td><td colspan="5">'.$form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref', '').'</td></tr>';
+    print '<tr><td width="25%">'.$langs->trans('Ref').'</td><td colspan="5">'.$form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref', '').'</td></tr>';
 
     // Societe
     print '<tr><td>'.$langs->trans("Customer").'</td>';
     print '<td colspan="3">'.$object->thirdparty->getNomUrl(1).'</td></tr>';
 
-	// Ligne info remises tiers
+    // Ligne info remises tiers
     print '<tr><td>'.$langs->trans('Discount').'</td><td>';
-	if ($object->thirdparty->remise_percent) print $langs->trans("CompanyHasRelativeDiscount",$object->thirdparty->remise_percent);
-	else print $langs->trans("CompanyHasNoRelativeDiscount");
-	$absolute_discount=$object->thirdparty->getAvailableDiscounts();
-	print '. ';
-	if ($absolute_discount) print $langs->trans("CompanyHasAbsoluteDiscount",$absolute_discount,$langs->trans("Currency".$conf->currency));
-	else print $langs->trans("CompanyHasNoAbsoluteDiscount");
-	print '.';
-	print '</td></tr>';
+    if ($object->thirdparty->remise_percent) print $langs->trans("CompanyHasRelativeDiscount",$object->thirdparty->remise_percent);
+    else print $langs->trans("CompanyHasNoRelativeDiscount");
+    $absolute_discount=$object->thirdparty->getAvailableDiscounts();
+    print '. ';
+    if ($absolute_discount) print $langs->trans("CompanyHasAbsoluteDiscount",$absolute_discount,$langs->trans("Currency".$conf->currency));
+    else print $langs->trans("CompanyHasNoAbsoluteDiscount");
+    print '.';
+    print '</td></tr>';
 
-	print "</table>";
+    print "</table>";
 
-	print '<br>';
+    print '<br>';
 
-	include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
+    include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
 
-	dol_fiche_end();
+    dol_fiche_end();
 
 }
 
-
 llxFooter();
 $db->close();
-?>

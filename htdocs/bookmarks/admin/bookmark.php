@@ -32,25 +32,20 @@ accessforbidden();
 
 $action=GETPOST('action','alpha');
 
-if ($action == 'setvalue')
-{
-	$showmenu = GETPOST('BOOKMARKS_SHOW_IN_MENU','alpha');
-	$res = dolibarr_set_const($db, "BOOKMARKS_SHOW_IN_MENU",$showmenu,'chaine',0,'',$conf->entity);
+if ($action == 'setvalue') {
+    $showmenu = GETPOST('BOOKMARKS_SHOW_IN_MENU','alpha');
+    $res = dolibarr_set_const($db, "BOOKMARKS_SHOW_IN_MENU",$showmenu,'chaine',0,'',$conf->entity);
 
-	if (! $res > 0) $error++;
+    if (! $res > 0) $error++;
 
-	if (! $error)
-	{
-		$db->commit();
-		$mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
-	}
-	else
-	{
-		$db->rollback();
-		$mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
-	}
+    if (! $error) {
+        $db->commit();
+        $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
+    } else {
+        $db->rollback();
+        $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
+    }
 }
-
 
 /*
  * View
@@ -89,4 +84,3 @@ dol_htmloutput_mesg($mesg);
 $db->close();
 
 llxFooter();
-?>

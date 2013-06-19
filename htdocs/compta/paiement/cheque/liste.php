@@ -23,7 +23,7 @@
  *   \brief      Page liste des bordereau de remise de cheque
  */
 
-require('../../../main.inc.php');
+require '../../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/cheque/class/remisecheque.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
@@ -49,7 +49,6 @@ if (! $sortfield) $sortfield="bc.number";
 $checkdepositstatic=new RemiseCheque($db);
 $accountstatic=new Account($db);
 
-
 /*
  * View
  */
@@ -63,9 +62,8 @@ $sql.= " FROM ".MAIN_DB_PREFIX."bordereau_cheque as bc,";
 $sql.= " ".MAIN_DB_PREFIX."bank_account as ba";
 $sql.= " WHERE bc.fk_bank_account = ba.rowid";
 $sql.= " AND bc.entity = ".$conf->entity;
-if (GETPOST('search_montant'))
-{
-	$sql.=" AND bc.amount=".price2num(GETPOST('search_montant'));
+if (GETPOST('search_montant')) {
+    $sql.=" AND bc.amount=".price2num(GETPOST('search_montant'));
 }
 $sql.= " ORDER BY $sortfield $sortorder";
 $sql.= $db->plimit($limit+1, $offset);
@@ -73,84 +71,79 @@ $sql.= $db->plimit($limit+1, $offset);
 
 $resql = $db->query($sql);
 
-if ($resql)
-{
-	$num = $db->num_rows($resql);
-	$i = 0;
-	$params='';
+if ($resql) {
+    $num = $db->num_rows($resql);
+    $i = 0;
+    $params='';
 
-	print_barre_liste($langs->trans("MenuChequeDeposits"), $page, 'liste.php', $params, $sortfield, $sortorder, '', $num);
+    print_barre_liste($langs->trans("MenuChequeDeposits"), $page, 'liste.php', $params, $sortfield, $sortorder, '', $num);
 
-	print '<form method="get" action="liste.php">';
-	print '<table class="liste" width="100%">';
-	print '<tr class="liste_titre">';
-	print_liste_field_titre($langs->trans("Ref"),"liste.php","bc.number","",$params,"",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Date"),"liste.php","dp","",$params,'align="center"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Account"),"liste.php","ba.label","",$params,"",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("NbOfCheques"),"liste.php","bc.nbcheque","",$params,'align="right"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Amount"),"liste.php","bc.amount","",$params,'align="right"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Status"),"liste.php","bc.statut","",$params,'align="right"',$sortfield,$sortorder);
-	print "</tr>\n";
+    print '<form method="get" action="liste.php">';
+    print '<table class="liste" width="100%">';
+    print '<tr class="liste_titre">';
+    print_liste_field_titre($langs->trans("Ref"),"liste.php","bc.number","",$params,"",$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Date"),"liste.php","dp","",$params,'align="center"',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Account"),"liste.php","ba.label","",$params,"",$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("NbOfCheques"),"liste.php","bc.nbcheque","",$params,'align="right"',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Amount"),"liste.php","bc.amount","",$params,'align="right"',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Status"),"liste.php","bc.statut","",$params,'align="right"',$sortfield,$sortorder);
+    print "</tr>\n";
 
-	// Lignes des champs de filtre
-	print '<tr class="liste_titre">';
-	print '<td class="liste_titre">&nbsp;</td>';
-	print '<td class="liste_titre">&nbsp;</td>';
-	print '<td class="liste_titre">&nbsp;</td>';
-	print '<td class="liste_titre">&nbsp;</td>';
-	print '<td class="liste_titre" align="right">';
-	print '<input class="fat" type="text" size="6" name="search_montant" value="'.GETPOST('search_montant').'">';
-	print '</td>';
-	print '<td class="liste_titre" align="right">';
-	print '<input type="image" class="liste_titre" name="button_search" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
-	print '</td>';
-	print "</tr>\n";
+    // Lignes des champs de filtre
+    print '<tr class="liste_titre">';
+    print '<td class="liste_titre">&nbsp;</td>';
+    print '<td class="liste_titre">&nbsp;</td>';
+    print '<td class="liste_titre">&nbsp;</td>';
+    print '<td class="liste_titre">&nbsp;</td>';
+    print '<td class="liste_titre" align="right">';
+    print '<input class="fat" type="text" size="6" name="search_montant" value="'.GETPOST('search_montant').'">';
+    print '</td>';
+    print '<td class="liste_titre" align="right">';
+    print '<input type="image" class="liste_titre" name="button_search" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+    print '</td>';
+    print "</tr>\n";
 
-	$var=true;
-	while ($i < min($num,$limit))
-	{
-		$objp = $db->fetch_object($resql);
-		$var=!$var;
-		print "<tr $bc[$var]>";
+    $var=true;
+    while ($i < min($num,$limit)) {
+        $objp = $db->fetch_object($resql);
+        $var=!$var;
+        print "<tr $bc[$var]>";
 
-		// Num ref cheque
-		print '<td width="80">';
-		$checkdepositstatic->id=$objp->rowid;
-		$checkdepositstatic->ref=($objp->ref?$objp->ref:$objp->rowid);
-		$checkdepositstatic->statut=$objp->statut;
-		print $checkdepositstatic->getNomUrl(1);
-		print '</td>';
+        // Num ref cheque
+        print '<td width="80">';
+        $checkdepositstatic->id=$objp->rowid;
+        $checkdepositstatic->ref=($objp->ref?$objp->ref:$objp->rowid);
+        $checkdepositstatic->statut=$objp->statut;
+        print $checkdepositstatic->getNomUrl(1);
+        print '</td>';
 
-		// Date
-		print '<td align="center">'.dol_print_date($db->jdate($objp->dp),'day').'</td>';
+        // Date
+        print '<td align="center">'.dol_print_date($db->jdate($objp->dp),'day').'</td>';
 
-		// Banque
-		print '<td>';
-		if ($objp->bid) print '<a href="'.DOL_URL_ROOT.'/compta/bank/account.php?account='.$objp->bid.'">'.img_object($langs->trans("ShowAccount"),'account').' '.$objp->label.'</a>';
-		else print '&nbsp;';
-		print '</td>';
+        // Banque
+        print '<td>';
+        if ($objp->bid) print '<a href="'.DOL_URL_ROOT.'/compta/bank/account.php?account='.$objp->bid.'">'.img_object($langs->trans("ShowAccount"),'account').' '.$objp->label.'</a>';
+        else print '&nbsp;';
+        print '</td>';
 
-		// Nb of cheques
-		print '<td align="right">'.$objp->nbcheque.'</td>';
+        // Nb of cheques
+        print '<td align="right">'.$objp->nbcheque.'</td>';
 
-		// Montant
-		print '<td align="right">'.price($objp->amount).'</td>';
+        // Montant
+        print '<td align="right">'.price($objp->amount).'</td>';
 
-		// Statut
-		print '<td align="right">';
-		print $checkdepositstatic->LibStatut($objp->statut,5);
-		print "</td></tr>\n";
-		$i++;
-	}
-	print "</table>";
-	print "</form>\n";
-}
-else
-{
-	dol_print_error($db);
+        // Statut
+        print '<td align="right">';
+        print $checkdepositstatic->LibStatut($objp->statut,5);
+        print "</td></tr>\n";
+        $i++;
+    }
+    print "</table>";
+    print "</form>\n";
+} else {
+    dol_print_error($db);
 }
 
 $db->close();
 
 llxFooter();
-?>

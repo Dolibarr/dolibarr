@@ -29,36 +29,33 @@
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
 
-
 /**
  *	Classe mere des modeles de bon de livraison
  */
 abstract class ModelePDFDeliveryOrder extends CommonDocGenerator
 {
-	var $error='';
+    public $error='';
 
-	/**
-	 *  Return list of active generation modules
-	 *
+    /**
+     *  Return list of active generation modules
+     *
      *  @param	DoliDB	$db     			Database handler
      *  @param  string	$maxfilenamelength  Max length of value to show
      *  @return	array						List of templates
-	 */
-	static function liste_modeles($db,$maxfilenamelength=0)
-	{
-		global $conf;
+     */
+    public static function liste_modeles($db,$maxfilenamelength=0)
+    {
+        global $conf;
 
-		$type='delivery';
-		$liste=array();
+        $type='delivery';
+        $liste=array();
 
-		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-		$liste=getListOfModels($db,$type,$maxfilenamelength);
+        include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+        $liste=getListOfModels($db,$type,$maxfilenamelength);
 
-		return $liste;
-	}
+        return $liste;
+    }
 }
-
-
 
 /**
  *	\class      ModeleNumRefDeliveryOrder
@@ -66,84 +63,85 @@ abstract class ModelePDFDeliveryOrder extends CommonDocGenerator
  */
 abstract class ModeleNumRefDeliveryOrder
 {
-	var $error='';
+    public $error='';
 
-	/**
-	 * Return if a module can be used or not
-	 *
-	 * @return		boolean     true if module can be used
-	 */
-	function isEnabled()
-	{
-		return true;
-	}
+    /**
+     * Return if a module can be used or not
+     *
+     * @return boolean true if module can be used
+     */
+    public function isEnabled()
+    {
+        return true;
+    }
 
-	/**
-	 * Renvoi la description par defaut du modele de numerotation
-	 *
-	 * @return     string      Texte descripif
-	 */
-	function info()
-	{
-		global $langs;
-		$langs->load("deliveries");
-		return $langs->trans("NoDescription");
-	}
+    /**
+     * Renvoi la description par defaut du modele de numerotation
+     *
+     * @return string Texte descripif
+     */
+    public function info()
+    {
+        global $langs;
+        $langs->load("deliveries");
 
-	/**
-	 * Renvoi un exemple de numerotation
-	 *
-	 * @return     string      Example
-	 */
-	function getExample()
-	{
-		global $langs;
-		$langs->load("deliveries");
-		return $langs->trans("NoExample");
-	}
+        return $langs->trans("NoDescription");
+    }
 
-	/**
-	 * Test si les numeros deja en vigueur dans la base ne provoquent pas d
-	 * de conflits qui empechera cette numerotation de fonctionner.
-	 *
-	 * @return     boolean     false si conflit, true si ok
-	 */
-	function canBeActivated()
-	{
-		return true;
-	}
+    /**
+     * Renvoi un exemple de numerotation
+     *
+     * @return string Example
+     */
+    public function getExample()
+    {
+        global $langs;
+        $langs->load("deliveries");
 
-	/**
-	 * Renvoi prochaine valeur attribuee
-	 *
-	 *	@param	Societe		$objsoc     	Object third party
-	 *  @param  Object		$object			Object delivery
-	 *	@return	string						Valeur
-	 */
-	function getNextValue($objsoc, $object)
-	{
-		global $langs;
-		return $langs->trans("NotAvailable");
-	}
+        return $langs->trans("NoExample");
+    }
 
-	/**
-	 * Renvoi version du module numerotation
-	 *
-	 * @return     string      Valeur
-	 */
-	function getVersion()
-	{
-		global $langs;
-		$langs->load("admin");
+    /**
+     * Test si les numeros deja en vigueur dans la base ne provoquent pas d
+     * de conflits qui empechera cette numerotation de fonctionner.
+     *
+     * @return boolean false si conflit, true si ok
+     */
+    public function canBeActivated()
+    {
+        return true;
+    }
 
-		if ($this->version == 'development') return $langs->trans("VersionDevelopment");
-		if ($this->version == 'experimental') return $langs->trans("VersionExperimental");
-		if ($this->version == 'dolibarr') return DOL_VERSION;
-		return $langs->trans("NotAvailable");
-	}
+    /**
+     * Renvoi prochaine valeur attribuee
+     *
+     *	@param	Societe		$objsoc     	Object third party
+     *  @param  Object		$object			Object delivery
+     *	@return	string						Valeur
+     */
+    public function getNextValue($objsoc, $object)
+    {
+        global $langs;
+
+        return $langs->trans("NotAvailable");
+    }
+
+    /**
+     * Renvoi version du module numerotation
+     *
+     * @return string Valeur
+     */
+    public function getVersion()
+    {
+        global $langs;
+        $langs->load("admin");
+
+        if ($this->version == 'development') return $langs->trans("VersionDevelopment");
+        if ($this->version == 'experimental') return $langs->trans("VersionExperimental");
+        if ($this->version == 'dolibarr') return DOL_VERSION;
+        return $langs->trans("NotAvailable");
+    }
 }
-
-
 
 /**
  *	Create object on disk
@@ -156,99 +154,84 @@ abstract class ModeleNumRefDeliveryOrder
  */
 function delivery_order_pdf_create($db, $object, $modele, $outputlangs='')
 {
-	global $conf,$user,$langs;
+    global $conf,$user,$langs;
 
-	$langs->load("deliveries");
+    $langs->load("deliveries");
 
-	$error=0;
+    $error=0;
 
-	$srctemplatepath='';
+    $srctemplatepath='';
 
-	// Positionne modele sur le nom du modele de bon de livraison a utiliser
-	if (! dol_strlen($modele))
-	{
-		if (! empty($conf->global->LIVRAISON_ADDON_PDF))
-		{
-			$modele = $conf->global->LIVRAISON_ADDON_PDF;
-		}
-		else
-		{
-			$modele = 'typhon';
-		}
-	}
+    // Positionne modele sur le nom du modele de bon de livraison a utiliser
+    if (! dol_strlen($modele)) {
+        if (! empty($conf->global->LIVRAISON_ADDON_PDF)) {
+            $modele = $conf->global->LIVRAISON_ADDON_PDF;
+        } else {
+            $modele = 'typhon';
+        }
+    }
 
-	// If selected modele is a filename template (then $modele="modelname:filename")
-	$tmp=explode(':',$modele,2);
-    if (! empty($tmp[1]))
-    {
+    // If selected modele is a filename template (then $modele="modelname:filename")
+    $tmp=explode(':',$modele,2);
+    if (! empty($tmp[1])) {
         $modele=$tmp[0];
         $srctemplatepath=$tmp[1];
     }
 
-	// Search template files
-	$file=''; $classname=''; $filefound=0;
-	$dirmodels=array('/');
-	if (is_array($conf->modules_parts['models'])) $dirmodels=array_merge($dirmodels,$conf->modules_parts['models']);
-	foreach($dirmodels as $reldir)
-	{
-    	foreach(array('doc','pdf') as $prefix)
-    	{
-    	    $file = $prefix."_".$modele.".modules.php";
+    // Search template files
+    $file=''; $classname=''; $filefound=0;
+    $dirmodels=array('/');
+    if (is_array($conf->modules_parts['models'])) $dirmodels=array_merge($dirmodels,$conf->modules_parts['models']);
+    foreach ($dirmodels as $reldir) {
+        foreach (array('doc','pdf') as $prefix) {
+            $file = $prefix."_".$modele.".modules.php";
 
-    		// On verifie l'emplacement du modele
-	        $file=dol_buildpath($reldir."core/modules/livraison/pdf/".$file,0);
-    		if (file_exists($file))
-    		{
-    			$filefound=1;
-    			$classname=$prefix.'_'.$modele;
-    			break;
-    		}
-    	}
-    	if ($filefound) break;
+            // On verifie l'emplacement du modele
+            $file=dol_buildpath($reldir."core/modules/livraison/pdf/".$file,0);
+            if (file_exists($file)) {
+                $filefound=1;
+                $classname=$prefix.'_'.$modele;
+                break;
+            }
+        }
+        if ($filefound) break;
     }
 
-	// Charge le modele
-	if ($filefound)
-	{
-		require_once $file;
+    // Charge le modele
+    if ($filefound) {
+        require_once $file;
 
-		$obj = new $classname($db);
+        $obj = new $classname($db);
 
-		// We save charset_output to restore it because write_file can change it if needed for
-		// output format that does not support UTF8.
-		$sav_charset_output=$outputlangs->charset_output;
-		if ($obj->write_file($object,$outputlangs) > 0)
-		{
-			$outputlangs->charset_output=$sav_charset_output;
+        // We save charset_output to restore it because write_file can change it if needed for
+        // output format that does not support UTF8.
+        $sav_charset_output=$outputlangs->charset_output;
+        if ($obj->write_file($object,$outputlangs) > 0) {
+            $outputlangs->charset_output=$sav_charset_output;
 
-			// we delete preview files
-        	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-			dol_delete_preview($object);
+            // we delete preview files
+            require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+            dol_delete_preview($object);
 
-			// Appel des triggers
-			include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-			$interface=new Interfaces($db);
-			$result=$interface->run_triggers('DELIVERY_BUILDDOC',$object,$user,$langs,$conf);
-			if ($result < 0) {
-				$error++; $this->errors=$interface->errors;
-			}
-			// Fin appel triggers
+            // Appel des triggers
+            include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
+            $interface=new Interfaces($db);
+            $result=$interface->run_triggers('DELIVERY_BUILDDOC',$object,$user,$langs,$conf);
+            if ($result < 0) {
+                $error++; $this->errors=$interface->errors;
+            }
+            // Fin appel triggers
+            return 1;
+        } else {
+            $outputlangs->charset_output=$sav_charset_output;
+            dol_syslog("Erreur dans delivery_order_pdf_create");
+            dol_print_error($db,$obj->error);
 
-			return 1;
-		}
-		else
-		{
-			$outputlangs->charset_output=$sav_charset_output;
-			dol_syslog("Erreur dans delivery_order_pdf_create");
-			dol_print_error($db,$obj->error);
-			return 0;
-		}
-	}
-	else
-	{
-		print $langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists",$file);
-		return 0;
-	}
+            return 0;
+        }
+    } else {
+        print $langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists",$file);
+
+        return 0;
+    }
 }
-
-?>

@@ -28,27 +28,23 @@ $langs->load("admin");
 if (!$user->admin)
 accessforbidden();
 
-
 llxHeader();
 
-
-if (! dol_strlen(OSC_DB_NAME))
-{
-	print "Non dispo";
-	llxFooter();
+if (! dol_strlen(OSC_DB_NAME)) {
+    print "Non dispo";
+    llxFooter();
 }
 
 if ($sortfield == "") {
-	$sortfield="lower(p.label),p.price";
+    $sortfield="lower(p.label),p.price";
 }
 if ($sortorder == "") {
-	$sortorder="ASC";
+    $sortorder="ASC";
 }
 
 if ($page == -1) { $page = 0 ; }
 $limit = $conf->liste_limit;
 $offset = $limit * $page ;
-
 
 print_barre_liste("Liste des langues oscommerce", $page, "osc-languages.php");
 
@@ -63,29 +59,26 @@ print "<td>Code</td>";
 print "</TR>\n";
 
 $resql=$db->query($sql);
-if ($resql)
-{
-	$num = $db->num_rows($resql);
-	$i = 0;
+if ($resql) {
+    $num = $db->num_rows($resql);
+    $i = 0;
 
-	$var=True;
-	while ($i < $num) {
-		$objp = $db->fetch_object($resql);
-		$var=!$var;
-		print "<TR $bc[$var]>";
-		print "<TD>$objp->languages_id</TD>\n";
-		print "<TD>$objp->name</TD>\n";
-		print "<TD>$objp->code</TD>\n";
-		print "</TR>\n";
-		$i++;
-	}
-	$db->free();
+    $var=True;
+    while ($i < $num) {
+        $objp = $db->fetch_object($resql);
+        $var=!$var;
+        print "<TR $bc[$var]>";
+        print "<TD>$objp->languages_id</TD>\n";
+        print "<TD>$objp->name</TD>\n";
+        print "<TD>$objp->code</TD>\n";
+        print "</TR>\n";
+        $i++;
+    }
+    $db->free();
 }
 
 print "</TABLE>";
 
-
 $db->close();
 
 llxFooter();
-?>

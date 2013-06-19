@@ -25,129 +25,120 @@
 
 require_once DOL_DOCUMENT_ROOT .'/core/modules/propale/modules_propale.php';
 
-
 /**	    \class      mod_propale_marbre
  *		\brief      Class to manage customer order numbering rules Marbre
  */
 class mod_propale_marbre extends ModeleNumRefPropales
 {
-	var $version='dolibarr';		// 'development', 'experimental', 'dolibarr'
-	var $prefix='PR';
-	var $error='';
-	var $nom = "Marbre";
-
+    public $version='dolibarr';		// 'development', 'experimental', 'dolibarr'
+    public $prefix='PR';
+    public $error='';
+    public $nom = "Marbre";
 
     /**
      *  Return description of numbering module
      *
      *  @return     string      Text with description
      */
-    function info()
+    public function info()
     {
-    	global $langs;
-      	return $langs->trans("SimpleNumRefModelDesc",$this->prefix);
+        global $langs;
+
+          return $langs->trans("SimpleNumRefModelDesc",$this->prefix);
     }
 
+    /**
+     *  Return an example of numbering module values
+     *
+     *  @return     string      Example
+     */
+    public function getExample()
+    {
+        return $this->prefix."0501-0001";
+    }
 
-	/**
-	 *  Return an example of numbering module values
-	 *
-	 *  @return     string      Example
-	 */
-	function getExample()
-	{
-		return $this->prefix."0501-0001";
-	}
+    /**
+     *  Test si les numeros deje en vigueur dans la base ne provoquent pas de
+     *  de conflits qui empechera cette numerotation de fonctionner.
+     *
+     *  @return     boolean     false si conflit, true si ok
+     */
+    public function canBeActivated()
+    {
+        global $conf,$langs;
 
+        $pryymm=''; $max='';
 
-	/**
-	 *  Test si les numeros deje en vigueur dans la base ne provoquent pas de
-	 *  de conflits qui empechera cette numerotation de fonctionner.
-	 *
-	 *  @return     boolean     false si conflit, true si ok
-	 */
-	function canBeActivated()
-	{
-		global $conf,$langs;
+        $posindice=8;
+        $sql = "SELECT MAX(SUBSTRING(ref FROM ".$posindice.")) as max";
+        $sql.= " FROM ".MAIN_DB_PREFIX."propal";
+        $sql.= " WHERE ref LIKE '".$this->prefix."____-%'";
+        $sql.= " AND entity = ".$conf->entity;
 
-		$pryymm=''; $max='';
+        $resql=$db->query($sql);
+        if ($resql) {
+            $row = $db->fetch_row($resql);
+            if ($row) { $pryymm = substr($row[0],0,6); $max=$row[0]; }
+        }
 
-		$posindice=8;
-		$sql = "SELECT MAX(SUBSTRING(ref FROM ".$posindice.")) as max";
-		$sql.= " FROM ".MAIN_DB_PREFIX."propal";
-		$sql.= " WHERE ref LIKE '".$this->prefix."____-%'";
-		$sql.= " AND entity = ".$conf->entity;
+        if (! $pryymm || preg_match('/'.$this->prefix.'[0-9][0-9][0-9][0-9]/i',$pryymm)) {
+            return true;
+        } else {
+            $langs->load("errors");
+            $this->error=$langs->trans('ErrorNumRefModel',$max);
 
-		$resql=$db->query($sql);
-		if ($resql)
-		{
-			$row = $db->fetch_row($resql);
-			if ($row) { $pryymm = substr($row[0],0,6); $max=$row[0]; }
-		}
+            return false;
+        }
+    }
 
-		if (! $pryymm || preg_match('/'.$this->prefix.'[0-9][0-9][0-9][0-9]/i',$pryymm))
-		{
-			return true;
-		}
-		else
-		{
-			$langs->load("errors");
-			$this->error=$langs->trans('ErrorNumRefModel',$max);
-			return false;
-		}
-	}
+    /**
+     *  Return next value
+     *
+     *  @param	Societe		$objsoc     Object third party
+     * 	@param	Propal		$propal		Object commercial proposal
+     *  @return string      			Next value
+     */
+    public function getNextValue($objsoc,$propal)
+    {
+        global $db,$conf;
 
-	/**
-	 *  Return next value
-	 *
-	 *  @param	Societe		$objsoc     Object third party
-	 * 	@param	Propal		$propal		Object commercial proposal
-	 *  @return string      			Next value
-	 */
-	function getNextValue($objsoc,$propal)
-	{
-		global $db,$conf;
+        // D'abord on recupere la valeur max
+        $posindice=8;
+        $sql = "SELECT MAX(SUBSTRING(ref FROM ".$posindice.")) as max";	// This is standard SQL
+        $sql.= " FROM ".MAIN_DB_PREFIX."propal";
+        $sql.= " WHERE ref LIKE '".$this->prefix."____-%'";
+        $sql.= " AND entity = ".$conf->entity;
 
-		// D'abord on recupere la valeur max
-		$posindice=8;
-		$sql = "SELECT MAX(SUBSTRING(ref FROM ".$posindice.")) as max";	// This is standard SQL
-		$sql.= " FROM ".MAIN_DB_PREFIX."propal";
-		$sql.= " WHERE ref LIKE '".$this->prefix."____-%'";
-		$sql.= " AND entity = ".$conf->entity;
+        $resql=$db->query($sql);
+        if ($resql) {
+            $obj = $db->fetch_object($resql);
+            if ($obj) $max = intval($obj->max);
+            else $max=0;
+        } else {
+            dol_syslog("mod_propale_marbre::getNextValue sql=".$sql);
 
-		$resql=$db->query($sql);
-		if ($resql)
-		{
-			$obj = $db->fetch_object($resql);
-			if ($obj) $max = intval($obj->max);
-			else $max=0;
-		}
-		else
-		{
-			dol_syslog("mod_propale_marbre::getNextValue sql=".$sql);
-			return -1;
-		}
+            return -1;
+        }
 
-		$date = time();
-		$yymm = strftime("%y%m",$date);
-		$num = sprintf("%04s",$max+1);
+        $date = time();
+        $yymm = strftime("%y%m",$date);
+        $num = sprintf("%04s",$max+1);
 
-		dol_syslog("mod_propale_marbre::getNextValue return ".$this->prefix.$yymm."-".$num);
-		return $this->prefix.$yymm."-".$num;
-	}
+        dol_syslog("mod_propale_marbre::getNextValue return ".$this->prefix.$yymm."-".$num);
 
-	/**
-	 *  Return next free value
-	 *
-	 *  @param	Societe		$objsoc      	Object third party
-	 * 	@param	Object		$objforref		Object for number to search
-	 *  @return string      				Next free value
-	 */
-	function getNumRef($objsoc,$objforref)
-	{
-		return $this->getNextValue($objsoc,$objforref);
-	}
+        return $this->prefix.$yymm."-".$num;
+    }
+
+    /**
+     *  Return next free value
+     *
+     *  @param	Societe		$objsoc      	Object third party
+     * 	@param	Object		$objforref		Object for number to search
+     *  @return string      				Next free value
+     */
+    public function getNumRef($objsoc,$objforref)
+    {
+        return $this->getNextValue($objsoc,$objforref);
+    }
 
 }
-
-?>

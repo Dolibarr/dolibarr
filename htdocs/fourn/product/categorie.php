@@ -36,8 +36,7 @@ if (!$user->rights->produit->lire && !$user->rights->service->lire) accessforbid
 /*
  * Creation de l'objet produit correspondant a l'id
  */
-if ($_GET["id"])
-{
+if ($_GET["id"]) {
   $product = new Product($db);
   $result = $product->fetch($_GET["id"]);
 }
@@ -47,24 +46,20 @@ llxHeader("","",$langs->trans("CardProduct0"));
 /*
  * Fiche produit
  */
-if ($_GET["id"])
-{
+if ($_GET["id"]) {
   //on veut supprimer une cat�gorie
-  if ($_REQUEST["cat"])
-    {
+  if ($_REQUEST["cat"]) {
       $cat = new Categorie($db,$_REQUEST["cat"]);
       $cat->del_product($product);
     }
 
   //on veut ajouter une cat�gorie
-  if (isset($_REQUEST["add_cat"]) && $_REQUEST["add_cat"]>=0)
-    {
+  if (isset($_REQUEST["add_cat"]) && $_REQUEST["add_cat"]>=0) {
       $cat = new Categorie($db,$_REQUEST["add_cat"]);
       $cat->add_product($product);
     }
 
-  if ( $result )
-    {
+  if ($result) {
 
       /*
        *  En mode visu
@@ -76,20 +71,17 @@ if ($_GET["id"])
       $head[$h][1] = $langs->trans("Card");
       $h++;
 
+      if (! empty($conf->stock->enabled)) {
+      $head[$h][0] = DOL_URL_ROOT."/product/stock/product.php?id=".$product->id;
+      $head[$h][1] = $langs->trans("Stock");
+      $h++;
+    }
 
-      if (! empty($conf->stock->enabled))
-	{
-	  $head[$h][0] = DOL_URL_ROOT."/product/stock/product.php?id=".$product->id;
-	  $head[$h][1] = $langs->trans("Stock");
-	  $h++;
-	}
-
-      if (! empty($conf->fournisseur->enabled))
-	{
-	  $head[$h][0] = DOL_URL_ROOT."/product/fournisseurs.php?id=".$product->id;
-	  $head[$h][1] = $langs->trans("Suppliers");
-	  $h++;
-	}
+      if (! empty($conf->fournisseur->enabled)) {
+      $head[$h][0] = DOL_URL_ROOT."/product/fournisseurs.php?id=".$product->id;
+      $head[$h][1] = $langs->trans("Suppliers");
+      $h++;
+    }
 
       $head[$h][0] = DOL_URL_ROOT."/product/photos.php?id=".$product->id;
       $head[$h][1] = $langs->trans("Photos");
@@ -100,13 +92,12 @@ if ($_GET["id"])
       $h++;
 
       //affichage onglet cat�gorie
-      if (! empty($conf->categorie->enabled)){
-	$head[$h][0] = DOL_URL_ROOT."/fourn/product/categorie.php?id=".$product->id;
-	$head[$h][1] = $langs->trans('Categories');
-	$hselected = $h;
-	$h++;
+      if (! empty($conf->categorie->enabled)) {
+    $head[$h][0] = DOL_URL_ROOT."/fourn/product/categorie.php?id=".$product->id;
+    $head[$h][1] = $langs->trans('Categories');
+    $hselected = $h;
+    $h++;
       }
-
 
       dol_fiche_head($head, $hselected, $langs->trans("CardProduct".$product->type).' : '.$product->ref);
 
@@ -121,37 +112,28 @@ if ($_GET["id"])
       $c = new Categorie($db);
       $cats = $c->containing($_REQUEST['id'],0);
 
-      if (count($cats) > 0)
-	{
-	  print "Vous avez stock� le produit dans les cat�gorie suivantes:<br/><br/>";
-	  print '<table class="noborder" width="100%">';
-	  print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("AllWays").'</td></tr>';
+      if (count($cats) > 0) {
+      print "Vous avez stock� le produit dans les cat�gorie suivantes:<br/><br/>";
+      print '<table class="noborder" width="100%">';
+      print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("AllWays").'</td></tr>';
 
+      foreach ($cats as $cat) {
 
-	  foreach ($cats as $cat)
-	    {
+          $ways = $cat->print_all_ways();
+          foreach ($ways as $way) {
+          $i = !$i;
+          print "<tr ".$bc[$i]."><td>".$way."</td>";
+          print "<td><a href= '".DOL_URL_ROOT."/fourn/product/categorie.php?id=".$product->id."&amp;cat=".$cat->id."'>".$langs->trans("DeleteFromCat")."</a></td></tr>\n";
 
-	      $ways = $cat->print_all_ways();
-	      foreach ($ways as $way)
-		{
-		  $i = !$i;
-		  print "<tr ".$bc[$i]."><td>".$way."</td>";
-		  print "<td><a href= '".DOL_URL_ROOT."/fourn/product/categorie.php?id=".$product->id."&amp;cat=".$cat->id."'>".$langs->trans("DeleteFromCat")."</a></td></tr>\n";
+        }
 
-		}
-
-	    }
-	  print "</table><br/><br/>\n";
-	}
-      else if($cats < 0)
-	{
-	  print $langs->trans("ErrorUnknown");
-	}
-
-      else
-	{
-	  print $langs->trans("NoCat")."<br/><br/>";
-	}
+        }
+      print "</table><br/><br/>\n";
+    } elseif ($cats < 0) {
+      print $langs->trans("ErrorUnknown");
+    } else {
+      print $langs->trans("NoCat")."<br/><br/>";
+    }
 
     }
 
@@ -161,8 +143,7 @@ if ($_GET["id"])
   print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
   print "<tr><td><select name='add_cat'><option value='-1'>".$langs->trans("Choose")."</option>";
   $cat = new Categorie($db);
-  foreach ($cat->get_all_categories() as $categorie)
-    {
+  foreach ($cat->get_all_categories() as $categorie) {
       print "<option value='".$categorie->id."'>".$categorie->label."</option>\n";
     }
   print "</select></td><td><input type='submit' value='".$langs->trans("Select")."'></td></tr>";
@@ -171,7 +152,4 @@ if ($_GET["id"])
 }
 $db->close();
 
-
 llxFooter();
-?>
-

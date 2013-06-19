@@ -47,7 +47,6 @@ if (! $sortfield) $sortfield="e.ref";
 if (! $sortorder) $sortorder="DESC";
 $limit = $conf->liste_limit;
 
-
 /*
  * View
  */
@@ -61,100 +60,89 @@ llxHeader('',$langs->trans('ListOfSendings'),$helpurl);
 $sql = "SELECT e.rowid, e.ref, e.date_delivery, e.date_expedition, e.fk_statut";
 $sql.= ", s.nom as socname, s.rowid as socid";
 $sql.= " FROM (".MAIN_DB_PREFIX."expedition as e";
-if (!$user->rights->societe->client->voir && !$socid)	// Internal user with no permission to see all
-{
-	$sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+if (!$user->rights->societe->client->voir && !$socid) {	// Internal user with no permission to see all
+    $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 }
 $sql.= ")";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = e.fk_soc";
 $sql.= " WHERE e.entity = ".$conf->entity;
-if (!$user->rights->societe->client->voir && !$socid)	// Internal user with no permission to see all
-{
-	$sql.= " AND e.fk_soc = sc.fk_soc";
-	$sql.= " AND sc.fk_user = " .$user->id;
+if (!$user->rights->societe->client->voir && !$socid) {	// Internal user with no permission to see all
+    $sql.= " AND e.fk_soc = sc.fk_soc";
+    $sql.= " AND sc.fk_user = " .$user->id;
 }
-if ($socid)
-{
-	$sql.= " AND e.fk_soc = ".$socid;
+if ($socid) {
+    $sql.= " AND e.fk_soc = ".$socid;
 }
-if (GETPOST('sf_ref','alpha'))
-{
-	$sql.= " AND e.ref like '%".$db->escape(GETPOST('sf_ref','alpha'))."%'";
+if (GETPOST('sf_ref','alpha')) {
+    $sql.= " AND e.ref like '%".$db->escape(GETPOST('sf_ref','alpha'))."%'";
 }
 
 $sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit($limit + 1,$offset);
 
 $resql=$db->query($sql);
-if ($resql)
-{
-	$num = $db->num_rows($resql);
+if ($resql) {
+    $num = $db->num_rows($resql);
 
-	$expedition = new Expedition($db);
+    $expedition = new Expedition($db);
 
-	$param="&amp;socid=$socid";
+    $param="&amp;socid=$socid";
 
-	print_barre_liste($langs->trans('ListOfSendings'), $page, "liste.php",$param,$sortfield,$sortorder,'',$num);
+    print_barre_liste($langs->trans('ListOfSendings'), $page, "liste.php",$param,$sortfield,$sortorder,'',$num);
 
+    $i = 0;
+    print '<table class="noborder" width="100%">';
 
-	$i = 0;
-	print '<table class="noborder" width="100%">';
+    print '<tr class="liste_titre">';
+    print_liste_field_titre($langs->trans("Ref"),"liste.php","e.ref","",$param,'',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Company"),"liste.php","s.nom", "", $param,'align="left"',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("DateDeliveryPlanned"),"liste.php","e.date_delivery","",$param, 'align="center"',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("DateReceived"),"liste.php","e.date_expedition","",$param, 'align="center"',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Status"),"liste.php","e.fk_statut","",$param,'align="right"',$sortfield,$sortorder);
+    print "</tr>\n";
+    $var=True;
 
-	print '<tr class="liste_titre">';
-	print_liste_field_titre($langs->trans("Ref"),"liste.php","e.ref","",$param,'',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Company"),"liste.php","s.nom", "", $param,'align="left"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("DateDeliveryPlanned"),"liste.php","e.date_delivery","",$param, 'align="center"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("DateReceived"),"liste.php","e.date_expedition","",$param, 'align="center"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Status"),"liste.php","e.fk_statut","",$param,'align="right"',$sortfield,$sortorder);
-	print "</tr>\n";
-	$var=True;
+    while ($i < min($num,$limit)) {
+        $objp = $db->fetch_object($resql);
 
-	while ($i < min($num,$limit))
-	{
-		$objp = $db->fetch_object($resql);
+        $var=!$var;
+        print "<tr $bc[$var]>";
+        print "<td>";
+        $shipment->id=$objp->rowid;
+        $shipment->ref=$objp->ref;
+        print $shipment->getNomUrl(1);
+        print "</td>\n";
+        // Third party
+        print '<td>';
+        $companystatic->id=$objp->socid;
+        $companystatic->ref=$objp->socname;
+        $companystatic->nom=$objp->socname;
+        print $companystatic->getNomUrl(1);
+        print '</td>';
+        // Date delivery  planed
+        print "<td align=\"center\">";
+        print dol_print_date($db->jdate($objp->date_delivery),"day");
+        /*$now = time();
+        if ( ($now - $db->jdate($objp->date_expedition)) > $conf->warnings->lim && $objp->statutid == 1 ) {
+        }*/
+        print "</td>\n";
+        // Date real
+        print "<td align=\"center\">";
+        print dol_print_date($db->jdate($objp->date_expedition),"day");
+        print "</td>\n";
 
-		$var=!$var;
-		print "<tr $bc[$var]>";
-		print "<td>";
-		$shipment->id=$objp->rowid;
-		$shipment->ref=$objp->ref;
-		print $shipment->getNomUrl(1);
-		print "</td>\n";
-		// Third party
-		print '<td>';
-		$companystatic->id=$objp->socid;
-		$companystatic->ref=$objp->socname;
-		$companystatic->nom=$objp->socname;
-		print $companystatic->getNomUrl(1);
-		print '</td>';
-		// Date delivery  planed
-		print "<td align=\"center\">";
-		print dol_print_date($db->jdate($objp->date_delivery),"day");
-		/*$now = time();
-		if ( ($now - $db->jdate($objp->date_expedition)) > $conf->warnings->lim && $objp->statutid == 1 )
-		{
-		}*/
-		print "</td>\n";
-		// Date real
-		print "<td align=\"center\">";
-		print dol_print_date($db->jdate($objp->date_expedition),"day");
-		print "</td>\n";
+        print '<td align="right">'.$expedition->LibStatut($objp->fk_statut,5).'</td>';
+        print "</tr>\n";
 
-		print '<td align="right">'.$expedition->LibStatut($objp->fk_statut,5).'</td>';
-		print "</tr>\n";
+        $i++;
+    }
 
-		$i++;
-	}
-
-	print "</table>";
-	$db->free($resql);
-}
-else
-{
-	dol_print_error($db);
+    print "</table>";
+    $db->free($resql);
+} else {
+    dol_print_error($db);
 }
 
 $db->close();
 
 llxFooter();
-?>

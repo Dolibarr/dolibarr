@@ -39,14 +39,14 @@
    TODO: beta tests on other servers than Cups
  */
 // required and included files
-require_once ("http_class.php");
+require_once 'http_class.php';
 /*
 // If you want http backend from http://www.phpclasses.org/browse/package/3.html
-require_once("HTTP/http.php");
-include_once("SASL/sasl.php");
-include_once("SASL/basic_sasl_client.php");
-include_once("SASL/digest_sasl_client.php");
-include_once("SASL/ntlm_sasl_client.php");
+require_once 'HTTP/http.php';
+include_once 'SASL/sasl.php';
+include_once 'SASL/basic_sasl_client.php';
+include_once 'SASL/digest_sasl_client.php';
+include_once 'SASL/ntlm_sasl_client.php';
  */
 /**
  * Class and Function List:
@@ -121,18 +121,19 @@ include_once("SASL/ntlm_sasl_client.php");
 class ippException extends Exception
 {
  protected $errno;
- public function __construct($msg, $errno = null) 
+ public function __construct($msg, $errno = null)
  {
   parent::__construct($msg);
   $this->errno = $errno;
  }
- public function getErrorFormatted() 
+ public function getErrorFormatted()
  {
   $return = sprintf("[ipp]: %s -- " . _(" file %s, line %s"),
     $this->getMessage() , $this->getFile() , $this->getLine());
+
   return $return;
  }
- public function getErrno() 
+ public function getErrno()
  {
   return $this->errno;
  }
@@ -218,7 +219,7 @@ class BasicIPP
  protected $unix = false; // true -> use unix sockets instead of http
 
  // constructor
- public function __construct() 
+ public function __construct()
  {
   $tz = getenv("date.timezone");
   if (!$tz) $tz = @date_default_timezone_get();
@@ -242,32 +243,32 @@ class BasicIPP
  // SETUP
  //
 
- public function setPort($port = '631') 
+ public function setPort($port = '631')
  {
   $this->port = $port;
   self::_putDebug("Port is " . $this->port, 2);
  }
 
- public function setUnix($socket = '/var/run/cups/cups.sock') 
+ public function setUnix($socket = '/var/run/cups/cups.sock')
  {
   $this->host = $socket;
   $this->unix = true;
   self::_putDebug("Host is " . $this->host, 2);
  }
 
- public function setHost($host = 'localhost') 
+ public function setHost($host = 'localhost')
  {
   $this->host = $host;
   $this->unix = false;
   self::_putDebug("Host is " . $this->host, 2);
  }
 
- public function setTimeout($timeout) 
+ public function setTimeout($timeout)
  {
   $this->timeout = $timeout;
  }
 
- public function setPrinterURI($uri) 
+ public function setPrinterURI($uri)
  {
   $length = strlen($uri);
   $length = chr($length);
@@ -281,33 +282,30 @@ class BasicIPP
   $this->setup->uri = 1;
  }
 
- public function setData($data) 
+ public function setData($data)
  {
   $this->data = $data;
   self::_putDebug("Data set", 2);
  }
 
- public function setRawText() 
+ public function setRawText()
  {
   $this->setup->datatype = 'TEXT';
   $this->meta->mime_media_type = "";
   $this->setup->mime_media_type = 1;
   $this->datahead = chr(0x16);
-  if (is_readable($this->data)) 
-  {
+  if (is_readable($this->data)) {
    //It's a filename.  Open and stream.
    $data = fopen($this->data, "rb");
    while (!feof($data)) $output = fread($data, 8192);
-  }
-  else
-  {
+  } else {
    $output = $this->data;
   }
   if (substr($output, -1, 1) != chr(0x0c)) if (!isset($this->setup->noFormFeed)) $this->datatail = chr(0x0c);
   self::_putDebug(_("Forcing data to be interpreted as RAW TEXT") , 2);
  }
 
- public function unsetRawText() 
+ public function unsetRawText()
  {
   $this->setup->datatype = 'BINARY';
   $this->datahead = '';
@@ -315,24 +313,24 @@ class BasicIPP
   self::_putDebug(_("Unset forcing data to be interpreted as RAW TEXT") , 2);
  }
 
- public function setBinary() 
+ public function setBinary()
  {
   self::unsetRawText();
  }
 
- public function setFormFeed() 
+ public function setFormFeed()
  {
   $this->datatail = "\r\n" . chr(0x0c);
   unset($this->setup->noFormFeed);
  }
 
- public function unsetFormFeed() 
+ public function unsetFormFeed()
  {
   $this->datatail = '';
   $this->setup->noFormFeed = 1;
  }
 
- public function setCharset($charset = 'us-ascii') 
+ public function setCharset($charset = 'us-ascii')
  {
   $charset = strtolower($charset);
   $this->charset = $charset;
@@ -345,7 +343,7 @@ class BasicIPP
   $this->setup->charset = 1;
  }
 
- public function setLanguage($language = 'en_us') 
+ public function setLanguage($language = 'en_us')
  {
   $language = strtolower($language);
   $this->meta->language = chr(0x48) // natural-language type | value-tag
@@ -357,7 +355,7 @@ class BasicIPP
   $this->setup->language = 1;
  }
 
- public function setDocumentFormat($mime_media_type = 'application/octet-stream') 
+ public function setDocumentFormat($mime_media_type = 'application/octet-stream')
  {
   self::setBinary();
   $length = chr(strlen($mime_media_type));
@@ -370,12 +368,12 @@ class BasicIPP
  }
 
  // setDocumentFormat alias for backward compatibility
- public function setMimeMediaType($mime_media_type = "application/octet-stream") 
+ public function setMimeMediaType($mime_media_type = "application/octet-stream")
  {
   self::setDocumentFormat($mime_media_type);
  }
 
- public function setCopies($nbrcopies = 1) 
+ public function setCopies($nbrcopies = 1)
  {
   $this->meta->copies = "";
   if ($nbrcopies == 1 || !$nbrcopies) return true;
@@ -389,7 +387,7 @@ class BasicIPP
   $this->setup->copies = 1;
  }
 
- public function setDocumentName($document_name = "") 
+ public function setDocumentName($document_name = "")
  {
   $this->meta->document_name = "";
   if (!$document_name) return true;
@@ -405,18 +403,17 @@ class BasicIPP
 
  }
 
- public function setJobName($jobname = '', $absolute = false) 
+ public function setJobName($jobname = '', $absolute = false)
  {
   $this->meta->jobname = '';
-  if ($jobname == '') 
-  {
+  if ($jobname == '') {
    $this->meta->jobname = '';
+
    return true;
   }
   $postpend = date('-H:i:s-') . $this->_setJobId();
   if ($absolute) $postpend = '';
-  if (isset($this->values->jobname) && $jobname == '(PHP)')
-  {
+  if (isset($this->values->jobname) && $jobname == '(PHP)') {
    $jobname = $this->values->jobname;
   }
   $this->values->jobname = $jobname;
@@ -430,7 +427,7 @@ class BasicIPP
   $this->setup->jobname = 1;
  }
 
- public function setUserName($username = 'PHP-SERVER') 
+ public function setUserName($username = 'PHP-SERVER')
  {
   $this->requesting_user = $username;
   $this->meta->username = '';
@@ -438,8 +435,7 @@ class BasicIPP
   if ($username == 'PHP-SERVER' && isset($this->meta->username)) return TRUE;
   /*
      $value_length = 0x00;
-     for ($i = 0; $i < strlen($username); $i++) 
-     {
+     for ($i = 0; $i < strlen($username); $i++) {
      $value_length+= 0x01;
      }
      $value_length = chr($value_length);
@@ -447,19 +443,19 @@ class BasicIPP
    */
   $this->meta->username = chr(0x42) // keyword type || value-tag
    . chr(0x00) . chr(0x14) // name-length
-   . "requesting-user-name" 
+   . "requesting-user-name"
    . self::_giveMeStringLength($username) // value-length
    . $username;
   self::_putDebug(sprintf(_("Username: %s") , $username) , 2);
   $this->setup->username = 1;
  }
 
- public function setAuthentification($username, $password) 
+ public function setAuthentification($username, $password)
  {
   self::setAuthentication($username, $password);
  }
 
- public function setAuthentication($username, $password) 
+ public function setAuthentication($username, $password)
  {
   $this->password = $password;
   $this->username = $username;
@@ -467,12 +463,11 @@ class BasicIPP
   $this->setup->password = 1;
  }
 
- public function setSides($sides = 2) 
+ public function setSides($sides = 2)
  {
   $this->meta->sides = '';
   if (!$sides) return true;
-  switch ($sides) 
-  {
+  switch ($sides) {
    case 1:
     $sides = "one-sided";
     break;
@@ -497,7 +492,7 @@ class BasicIPP
   self::_putDebug(sprintf(_("Sides value set to %s") , $sides) , 2);
  }
 
- public function setFidelity() 
+ public function setFidelity()
  {
   // whether the server can't replace any attributes
   // (eg, 2 sided print is not possible,
@@ -510,7 +505,7 @@ class BasicIPP
   self::_putDebug(_("Fidelity attribute is set (paranoid mode)") , 3);
  }
 
- public function unsetFidelity() 
+ public function unsetFidelity()
  {
   // whether the server can replace any attributes
   // (eg, 2 sided print is not possible,
@@ -527,17 +522,17 @@ class BasicIPP
  {
   $this->meta->message = '';
   if (!$message) return true;
-  $this->meta->message = 
+  $this->meta->message =
    chr(0x41) // attribute type = textWithoutLanguage
-   . chr(0x00) 
-   . chr(0x07) 
-   . "message" 
+   . chr(0x00)
+   . chr(0x07)
+   . "message"
    . self::_giveMeStringLength(substr($message, 0, 127))
    . substr($message, 0, 127);
   self::_putDebug(sprintf(_('Setting message to "%s"') , $message) , 2);
  }
 
- public function setPageRanges($page_ranges) 
+ public function setPageRanges($page_ranges)
  {
   // $pages_ranges = string:  "1:5 10:25 40:52 ..."
   // to unset, specify an empty string.
@@ -547,80 +542,57 @@ class BasicIPP
   $first = true;
   #$page_ranges = split(' ', $page_ranges);
   $page_ranges = preg_split('# #', $page_ranges);
-  foreach($page_ranges as $page_range) 
-  {
+  foreach ($page_ranges as $page_range) {
    $value = self::_rangeOfIntegerBuild($page_range);
-   if ($first)
-   {
-    $this->meta->page_ranges .= 
-     $this->tags_types['rangeOfInteger']['tag'] 
-     . self::_giveMeStringLength('page-ranges') 
-     . 'page-ranges' 
-     . self::_giveMeStringLength($value) 
+   if ($first) {
+    $this->meta->page_ranges .=
+     $this->tags_types['rangeOfInteger']['tag']
+     . self::_giveMeStringLength('page-ranges')
+     . 'page-ranges'
+     . self::_giveMeStringLength($value)
      . $value;
-   }
-   else
-   {
-    $this->meta->page_ranges .= 
-     $this->tags_types['rangeOfInteger']['tag'] 
-     . self::_giveMeStringLength('') 
-     . self::_giveMeStringLength($value) 
+   } else {
+    $this->meta->page_ranges .=
+     $this->tags_types['rangeOfInteger']['tag']
+     . self::_giveMeStringLength('')
+     . self::_giveMeStringLength($value)
      . $value;
     $first = false;
    }
   }
  }
 
- public function setAttribute($attribute, $values) 
+ public function setAttribute($attribute, $values)
  {
   $operation_attributes_tags = array_keys($this->operation_tags);
   $job_attributes_tags = array_keys($this->job_tags);
   $printer_attributes_tags = array_keys($this->printer_tags);
   self::unsetAttribute($attribute);
-  if (in_array($attribute, $operation_attributes_tags)) 
-  {
-   if (!is_array($values))
-   {
+  if (in_array($attribute, $operation_attributes_tags)) {
+   if (!is_array($values)) {
     self::_setOperationAttribute($attribute, $values);
-   }
-   else
-   {
-    foreach($values as $value)
-    {
+   } else {
+    foreach ($values as $value) {
      self::_setOperationAttribute($attribute, $value);
     }
    }
-  }
-  elseif (in_array($attribute, $job_attributes_tags)) 
-  {
-   if (!is_array($values))
-   {
+  } elseif (in_array($attribute, $job_attributes_tags)) {
+   if (!is_array($values)) {
     self::_setJobAttribute($attribute, $values);
-   }
-   else 
-   {
-    foreach($values as $value)
-    {
+   } else {
+    foreach ($values as $value) {
      self::_setJobAttribute($attribute, $value);
     }
    }
-  }
-  elseif (in_array($attribute, $printer_attributes_tags)) 
-  {
-   if (!is_array($values))
-   {
+  } elseif (in_array($attribute, $printer_attributes_tags)) {
+   if (!is_array($values)) {
     self::_setPrinterAttribute($attribute, $values);
-   }
-   else
-   {
-    foreach($values as $value)
-    {
+   } else {
+    foreach ($values as $value) {
      self::_setPrinterAttribute($attribute, $value);
     }
    }
-  }
-  else
-  {
+  } else {
    trigger_error(
      sprintf(_('SetAttribute: Tag "%s" is not a printer or a job attribute'),
       $attribute) , E_USER_NOTICE);
@@ -630,38 +602,32 @@ class BasicIPP
    self::_errorLog(
      sprintf(_('SetAttribute: Tag "%s" is not a printer or a job attribute'),
       $attribute) , 2);
+
    return FALSE;
   }
  }
 
- public function unsetAttribute($attribute) 
+ public function unsetAttribute($attribute)
  {
   $operation_attributes_tags = array_keys($this->operation_tags);
   $job_attributes_tags = array_keys($this->job_tags);
   $printer_attributes_tags = array_keys($this->printer_tags);
-  if (in_array($attribute, $operation_attributes_tags)) 
-  {
-   unset( 
+  if (in_array($attribute, $operation_attributes_tags)) {
+   unset(
      $this->operation_tags[$attribute]['value'],
      $this->operation_tags[$attribute]['systag']
         );
-  }
-  elseif (in_array($attribute, $job_attributes_tags))
-  {
+  } elseif (in_array($attribute, $job_attributes_tags)) {
    unset(
      $this->job_tags[$attribute]['value'],
      $this->job_tags[$attribute]['systag']
         );
-  }
-  elseif (in_array($attribute, $printer_attributes_tags))
-  {
+  } elseif (in_array($attribute, $printer_attributes_tags)) {
    unset(
      $this->printer_tags[$attribute]['value'],
      $this->printer_tags[$attribute]['systag']
         );
-  }
-  else 
-  {
+  } else {
    trigger_error(
      sprintf(_('unsetAttribute: Tag "%s" is not a printer or a job attribute'),
       $attribute) , E_USER_NOTICE);
@@ -671,8 +637,10 @@ class BasicIPP
    self::_errorLog(
      sprintf(_('unsetAttribute: Tag "%s" is not a printer or a job attribute'),
       $attribute) , 2);
+
    return FALSE;
   }
+
   return true;
  }
 
@@ -680,16 +648,14 @@ class BasicIPP
  // LOGGING / DEBUGGING
  //
 
- public function setLog($log_destination, $destination_type = 'file', $level = 2) 
+ public function setLog($log_destination, $destination_type = 'file', $level = 2)
  {
 
-  if (is_string($log_destination) && !empty($log_destination))
-  {
+  if (is_string($log_destination) && !empty($log_destination)) {
    $this->log_destination = $log_destination;
   }
 
-  switch ($destination_type) 
-  {
+  switch ($destination_type) {
    case 'file':
    case 3:
     $this->log_destination = $log_destination;
@@ -711,25 +677,24 @@ class BasicIPP
   $this->log_level = $level;
  }
 
- public function printDebug() 
+ public function printDebug()
  {
-  for ($i = 0; $i < $this->debug_count; $i++)
-  {
+  for ($i = 0; $i < $this->debug_count; $i++) {
    echo $this->debug[$i], "\n";
   }
   $this->debug = array();
   $this->debug_count = 0;
  }
 
- public function getDebug() 
+ public function getDebug()
  {
   $debug = '';
-  for ($i = 0; $i < $this->debug_count; $i++)
-  {
+  for ($i = 0; $i < $this->debug_count; $i++) {
    $debug.= $this->debug[$i];
   }
   $this->debug = array();
   $this->debug_count = 0;
+
   return $debug;
  }
 
@@ -737,7 +702,7 @@ class BasicIPP
  // OPERATIONS
  //
 
- public function printJob() 
+ public function printJob()
  {
   // this BASIC version of printJob do not parse server
   // output for job's attributes
@@ -748,12 +713,10 @@ class BasicIPP
            )
           );
   if (!$this->_stringJob()) return FALSE;
-  if (is_readable($this->data)) 
-  {
+  if (is_readable($this->data)) {
    self::_putDebug(_("Printing a FILE"));
    $this->output = $this->stringjob;
-   if ($this->setup->datatype == "TEXT")
-   {
+   if ($this->setup->datatype == "TEXT") {
     $this->output.= chr(0x16);
    }
    $post_values = array(
@@ -761,8 +724,7 @@ class BasicIPP
      "Data" => $this->output,
      "File" => $this->data
      );
-   if ($this->setup->datatype == "TEXT" && !isset($this->setup->noFormFeed))
-   {
+   if ($this->setup->datatype == "TEXT" && !isset($this->setup->noFormFeed)) {
     $post_values = array_merge(
       $post_values,
       array(
@@ -770,11 +732,9 @@ class BasicIPP
            )
       );
    }
-  }
-  else
-  {
+  } else {
    self::_putDebug(_("Printing DATA"));
-   $this->output = 
+   $this->output =
     $this->stringjob
     . $this->datahead
     . $this->data
@@ -784,43 +744,39 @@ class BasicIPP
      "Data" => $this->output
      );
   }
-  if (self::_sendHttp($post_values, $this->paths["printers"]))
-  {
+  if (self::_sendHttp($post_values, $this->paths["printers"])) {
    self::_parseServerOutput();
   }
-  if (isset($this->serveroutput) && isset($this->serveroutput->status)) 
-  {
+  if (isset($this->serveroutput) && isset($this->serveroutput->status)) {
    $this->status = array_merge($this->status, array(
       $this->serveroutput->status
       ));
-   if ($this->serveroutput->status == "successfull-ok")
-   {
+   if ($this->serveroutput->status == "successfull-ok") {
     self::_errorLog(
-      sprintf("printing job %s: ", $this->last_job) 
+      sprintf("printing job %s: ", $this->last_job)
       . $this->serveroutput->status,
       3);
-   }
-   else
-   {
+   } else {
     self::_errorLog(
-      sprintf("printing job: ", $this->last_job) 
+      sprintf("printing job: ", $this->last_job)
       . $this->serveroutput->status,
       1);
    }
+
    return $this->serveroutput->status;
   }
 
-  $this->status = 
+  $this->status =
    array_merge($this->status, array("OPERATION FAILED"));
-  $this->jobs = 
+  $this->jobs =
    array_merge($this->jobs, array(""));
-  $this->jobs_uri = 
+  $this->jobs_uri =
    array_merge($this->jobs_uri, array(""));
 
   self::_errorLog("printing job : OPERATION FAILED", 1);
+
   return false;
  }
-
 
  /******************
   *
@@ -832,7 +788,7 @@ class BasicIPP
  // HTTP OUTPUT
  //
 
- protected function _sendHttp($post_values, $uri) 
+ protected function _sendHttp($post_values, $uri)
  {
   /*
      This function Copyright (C) 2005-2006 Thomas Harding, Manuel Lemos
@@ -846,13 +802,10 @@ class BasicIPP
   if (!$this->unix) $http->host = $this->host;
   else $http->host = "localhost";
   $http->with_exceptions = $this->with_exceptions;
-  if ($this->debug_http) 
-  {
+  if ($this->debug_http) {
    $http->debug = 1;
    $http->html_debug = 0;
-  }
-  else
-  {
+  } else {
    $http->debug = 0;
    $http->html_debug = 0;
   }
@@ -878,54 +831,41 @@ class BasicIPP
   if (isset($post_values["File"])) $arguments["BodyStream"][] = array(
     "File" => $post_values["File"]
     );
-  if (isset($post_values["FileType"]) 
+  if (isset($post_values["FileType"])
     && !strcmp($post_values["FileType"], "TEXT"))
   {
    $arguments["BodyStream"][] = array("Data" => Chr(12));
   }
   $arguments["RequestURI"] = $uri;
-  if ($this->with_exceptions && $this->handle_http_exceptions) 
-  {
-   try
-   {
+  if ($this->with_exceptions && $this->handle_http_exceptions) {
+   try {
     $success = $http->Open($arguments);
-   }
-   catch(httpException $e) 
-   {
+   } catch (httpException $e) {
     throw new ippException(
       sprintf("http error: %s", $e->getMessage()),
       $e->getErrno());
    }
-  }
-  else
-  {
+  } else {
    $success = $http->Open($arguments);
   }
-  if ($success[0] == true) 
-  {
+  if ($success[0] == true) {
    $success = $http->SendRequest($arguments);
-   if ($success[0] == true) 
-   {
+   if ($success[0] == true) {
     self::_putDebug("H T T P    R E Q U E S T :");
     self::_putDebug("Request headers:");
-    for (Reset($http->request_headers) , $header = 0; $header < count($http->request_headers); Next($http->request_headers) , $header++) 
-    {
+    for (Reset($http->request_headers) , $header = 0; $header < count($http->request_headers); Next($http->request_headers) , $header++) {
      $header_name = Key($http->request_headers);
-     if (GetType($http->request_headers[$header_name]) == "array") 
-     {
-      for ($header_value = 0; $header_value < count($http->request_headers[$header_name]); $header_value++)
-      {
+     if (GetType($http->request_headers[$header_name]) == "array") {
+      for ($header_value = 0; $header_value < count($http->request_headers[$header_name]); $header_value++) {
        self::_putDebug($header_name . ": " . $http->request_headers[$header_name][$header_value]);
       }
-     }
-     else
-     {
+     } else {
       self::_putDebug($header_name . ": " . $http->request_headers[$header_name]);
      }
     }
     self::_putDebug("Request body:");
     self::_putDebug(
-      htmlspecialchars($http->request_body) 
+      htmlspecialchars($http->request_body)
       . "*********** END REQUEST BODY *********"
             );
     $i = 0;
@@ -934,34 +874,28 @@ class BasicIPP
     $http->ReadReplyHeaders($headers);
     self::_putDebug("H T T P    R E S P O N S E :");
     self::_putDebug("Response headers:");
-    for (Reset($headers) , $header = 0; $header < count($headers); Next($headers) , $header++) 
-    {
+    for (Reset($headers) , $header = 0; $header < count($headers); Next($headers) , $header++) {
      $header_name = Key($headers);
-     if (GetType($headers[$header_name]) == "array") 
-     {
-      for ($header_value = 0; $header_value < count($headers[$header_name]); $header_value++) 
-      {
+     if (GetType($headers[$header_name]) == "array") {
+      for ($header_value = 0; $header_value < count($headers[$header_name]); $header_value++) {
        self::_putDebug($header_name . ": " . $headers[$header_name][$header_value]);
-       $this->serveroutput->headers[$i] = 
-        $header_name . ": " 
+       $this->serveroutput->headers[$i] =
+        $header_name . ": "
         . $headers[$header_name][$header_value];
        $i++;
       }
-     }
-     else
-     {
+     } else {
       self::_putDebug($header_name . ": " . $headers[$header_name]);
-      $this->serveroutput->headers[$i] = 
-       $header_name 
-       . ": " 
+      $this->serveroutput->headers[$i] =
+       $header_name
+       . ": "
        . $headers[$header_name];
       $i++;
      }
     }
     self::_putDebug("\n\nResponse body:\n");
     $this->serveroutput->body = "";
-    for (;;) 
-    {
+    for (;;) {
      $http->ReadReplyBody($body, 1024);
      if (strlen($body) == 0) break;
 
@@ -972,6 +906,7 @@ class BasicIPP
    }
   }
   $http->Close();
+
   return true;
  }
 
@@ -979,7 +914,7 @@ class BasicIPP
  // INIT
  //
 
- protected function _initTags() 
+ protected function _initTags()
  {
   $this->tags_types = array(
     "unsupported" => array(
@@ -1143,7 +1078,7 @@ class BasicIPP
  // SETUP
  //
 
- protected function _setOperationId() 
+ protected function _setOperationId()
  {
   $prepend = '';
   $this->operation_id+= 1;
@@ -1151,16 +1086,17 @@ class BasicIPP
   self::_putDebug("operation id is: " . $this->operation_id, 2);
  }
 
- protected function _setJobId() 
+ protected function _setJobId()
  {
   $this->meta->jobid+= 1;
   $prepend = '';
   $prepend_length = 4 - strlen($this->meta->jobid);
   for ($i = 0; $i < $prepend_length; $i++) $prepend.= '0';
+
   return $prepend . $this->meta->jobid;
  }
 
- protected function _setJobUri($job_uri) 
+ protected function _setJobUri($job_uri)
  {
   $this->meta->job_uri = chr(0x45) // type uri
    . chr(0x00) . chr(0x07) // name-length
@@ -1174,7 +1110,7 @@ class BasicIPP
  // RESPONSE PARSING
  //
 
- protected function _parseServerOutput() 
+ protected function _parseServerOutput()
  {
   $this->serveroutput->response = array();
   if (!self::_parseHttpHeaders()) return FALSE;
@@ -1188,14 +1124,14 @@ class BasicIPP
     sprintf("***** IPP STATUS: %s ******", $this->serveroutput->status),
     4);
   self::_putDebug("****** END OF OPERATION ****");
+
   return true;
  }
 
- protected function _parseHttpHeaders() 
+ protected function _parseHttpHeaders()
  {
   $response = "";
-  switch ($this->serveroutput->headers[0]) 
-  {
+  switch ($this->serveroutput->headers[0]) {
    case "http/1.1 200 ok: ":
     $this->serveroutput->httpstatus = "HTTP/1.1 200 OK";
    $response = "OK";
@@ -1218,6 +1154,7 @@ class BasicIPP
    trigger_error("No Response From Server", E_USER_WARNING);
    self::_errorLog("No Response From Server", 1);
    $this->disconnected = 1;
+
    return FALSE;
    break;
 
@@ -1244,20 +1181,21 @@ class BasicIPP
     . "-"
     . $string;
    $this->disconnected = 1;
+
    return FALSE;
    break;
   }
   unset($this->serveroutput->headers);
+
   return TRUE;
  }
 
- protected function _parseIppVersion() 
+ protected function _parseIppVersion()
  {
   $ippversion =
    (ord($this->serveroutput->body[$this->_parsing->offset]) * 256)
    + ord($this->serveroutput->body[$this->_parsing->offset + 1]);
-  switch ($ippversion) 
-  {
+  switch ($ippversion) {
    case 0x0101:
     $this->serveroutput->ipp_version = "1.1";
     break;
@@ -1276,42 +1214,32 @@ class BasicIPP
      ord($this->serveroutput->body[$this->_parsing->offset + 1]),
      $this->serveroutput->ipp_version));
   $this->_parsing->offset+= 2;
+
   return;
  }
 
- protected function _parseStatusCode() 
+ protected function _parseStatusCode()
  {
   $status_code =
    (ord($this->serveroutput->body[$this->_parsing->offset]) * 256)
    + ord($this->serveroutput->body[$this->_parsing->offset + 1]);
   $this->serveroutput->status = "NOT PARSED";
   $this->_parsing->offset+= 2;
-  if (strlen($this->serveroutput->body) < $this->_parsing->offset)
-  {
+  if (strlen($this->serveroutput->body) < $this->_parsing->offset) {
    return false;
   }
-  if ($status_code < 0x00FF) 
-  {
+  if ($status_code < 0x00FF) {
    $this->serveroutput->status = "successfull";
-  }
-  elseif ($status_code < 0x01FF) 
-  {
+  } elseif ($status_code < 0x01FF) {
    $this->serveroutput->status = "informational";
-  }
-  elseif ($status_code < 0x02FF) 
-  {
+  } elseif ($status_code < 0x02FF) {
    $this->serveroutput->status = "redirection";
-  }
-  elseif ($status_code < 0x04FF) 
-  {
+  } elseif ($status_code < 0x04FF) {
    $this->serveroutput->status = "client-error";
-  }
-  elseif ($status_code < 0x05FF) 
-  {
+  } elseif ($status_code < 0x05FF) {
    $this->serveroutput->status = "server-error";
   }
-  switch ($status_code) 
-  {
+  switch ($status_code) {
    case 0x0000:
     $this->serveroutput->status = "successfull-ok";
     break;
@@ -1454,10 +1382,11 @@ class BasicIPP
      $this->serveroutput->body[$this->_parsing->offset + 1],
      $this->serveroutput->status),
     4);
+
   return;
  }
 
- protected function _parseRequestID() 
+ protected function _parseRequestID()
  {
   $this->serveroutput->request_id =
    self::_interpretInteger(
@@ -1465,31 +1394,31 @@ class BasicIPP
      );
   self::_putDebug("request-id " . $this->serveroutput->request_id, 2);
   $this->_parsing->offset+= 4;
+
   return;
  }
 
- protected function _interpretInteger($value) 
+ protected function _interpretInteger($value)
  {
   // they are _signed_ integers
   $value_parsed = 0;
-  for ($i = strlen($value); $i > 0; $i --)
-  {
+  for ($i = strlen($value); $i > 0; $i --) {
    $value_parsed +=
     (
-     (1 << (($i - 1) * 8)) 
-     * 
+     (1 << (($i - 1) * 8))
+     *
      ord($value[strlen($value) - $i])
     );
 
   }
-  if ($value_parsed >= 2147483648)
-  {
+  if ($value_parsed >= 2147483648) {
    $value_parsed -= 4294967296;
   }
+
   return $value_parsed;
  }
 
- protected function _parseResponse() 
+ protected function _parseResponse()
  {
  }
 
@@ -1497,27 +1426,24 @@ class BasicIPP
  // REQUEST BUILDING
  //
 
- protected function _stringJob() 
+ protected function _stringJob()
  {
   if (!isset($this->setup->charset)) self::setCharset('us-ascii');
   if (!isset($this->setup->datatype)) self::setBinary();
-  if (!isset($this->setup->uri)) 
-  {
+  if (!isset($this->setup->uri)) {
    $this->getPrinters();
    unset($this->jobs[count($this->jobs) - 1]);
    unset($this->jobs_uri[count($this->jobs_uri) - 1]);
    unset($this->status[count($this->status) - 1]);
-   if (array_key_exists(0, $this->available_printers))
-   {
+   if (array_key_exists(0, $this->available_printers)) {
     self::setPrinterURI($this->available_printers[0]);
-   }
-   else 
-   {
+   } else {
     trigger_error(
       _("_stringJob: Printer URI is not set: die"),
       E_USER_WARNING);
     self::_putDebug(_("_stringJob: Printer URI is not set: die") , 4);
     self::_errorLog(" Printer URI is not set, die", 2);
+
     return FALSE;
    }
   }
@@ -1536,8 +1462,7 @@ class BasicIPP
   $printerattributes = '';
   $this->_buildValues($operationattributes, $jobattributes, $printerattributes);
   self::_setOperationId();
-  if (!isset($this->error_generation->request_body_malformed))
-  {
+  if (!isset($this->error_generation->request_body_malformed)) {
    $this->error_generation->request_body_malformed = "";
   }
   $this->stringjob = chr(0x01) . chr(0x01) // 1.1  | version-number
@@ -1553,8 +1478,7 @@ class BasicIPP
    . $this->meta->document_name
    . $this->meta->mime_media_type
    . $operationattributes;
-  if ($this->meta->copies || $this->meta->sides || $this->meta->page_ranges || !empty($jobattributes)) 
-  {
+  if ($this->meta->copies || $this->meta->sides || $this->meta->page_ranges || !empty($jobattributes)) {
    $this->stringjob .=
     chr(0x02) // start job-attributes | job-attributes-tag
     . $this->meta->copies
@@ -1568,34 +1492,29 @@ class BasicIPP
     sprintf(_("String sent to the server is: %s"),
      $this->stringjob)
           );
+
   return TRUE;
  }
 
- protected function _buildValues(&$operationattributes, &$jobattributes, &$printerattributes) 
+ protected function _buildValues(&$operationattributes, &$jobattributes, &$printerattributes)
  {
   $operationattributes = '';
-  foreach($this->operation_tags as $key => $values) 
-  {
+  foreach ($this->operation_tags as $key => $values) {
    $item = 0;
-   if (array_key_exists('value', $values))
-   {
-    foreach($values['value'] as $item_value) 
-    {
-     if ($item == 0)
-     {
+   if (array_key_exists('value', $values)) {
+    foreach ($values['value'] as $item_value) {
+     if ($item == 0) {
       $operationattributes .=
-       $values['systag'] 
-       . self::_giveMeStringLength($key) 
-       . $key 
-       . self::_giveMeStringLength($item_value) 
+       $values['systag']
+       . self::_giveMeStringLength($key)
+       . $key
+       . self::_giveMeStringLength($item_value)
        . $item_value;
-     }
-     else
-     {
-      $operationattributes .= 
-       $values['systag'] 
-       . self::_giveMeStringLength('') 
-       . self::_giveMeStringLength($item_value) 
+     } else {
+      $operationattributes .=
+       $values['systag']
+       . self::_giveMeStringLength('')
+       . self::_giveMeStringLength($item_value)
        . $item_value;
      }
      $item++;
@@ -1603,24 +1522,18 @@ class BasicIPP
    }
   }
   $jobattributes = '';
-  foreach($this->job_tags as $key => $values) 
-  {
+  foreach ($this->job_tags as $key => $values) {
    $item = 0;
-   if (array_key_exists('value', $values)) 
-   {
-    foreach($values['value'] as $item_value) 
-    {
-     if ($item == 0)
-     { 
+   if (array_key_exists('value', $values)) {
+    foreach ($values['value'] as $item_value) {
+     if ($item == 0) {
       $jobattributes .=
-       $values['systag'] 
+       $values['systag']
        . self::_giveMeStringLength($key)
        . $key
        . self::_giveMeStringLength($item_value)
        . $item_value;
-     }
-     else
-     {
+     } else {
       $jobattributes .=
        $values['systag']
        . self::_giveMeStringLength('')
@@ -1632,24 +1545,18 @@ class BasicIPP
    }
   }
   $printerattributes = '';
-  foreach($this->printer_tags as $key => $values) 
-  {
+  foreach ($this->printer_tags as $key => $values) {
    $item = 0;
-   if (array_key_exists('value', $values))
-   {
-    foreach($values['value'] as $item_value) 
-    {
-     if ($item == 0)
-     {
+   if (array_key_exists('value', $values)) {
+    foreach ($values['value'] as $item_value) {
+     if ($item == 0) {
       $printerattributes .=
        $values['systag']
        . self::_giveMeStringLength($key)
        . $key
        . self::_giveMeStringLength($item_value)
        . $item_value;
-     }
-     else
-     {
+     } else {
       $printerattributes .=
        $values['systag']
        . self::_giveMeStringLength('')
@@ -1663,24 +1570,21 @@ class BasicIPP
   reset($this->job_tags);
   reset($this->operation_tags);
   reset($this->printer_tags);
+
   return true;
  }
 
- protected function _giveMeStringLength($string) 
+ protected function _giveMeStringLength($string)
  {
   $length = strlen($string);
-  if ($length > ((0xFF << 8) + 0xFF)  )
-  {
+  if ($length > ((0xFF << 8) + 0xFF)  ) {
    $errmsg = sprintf (
      _('max string length for an ipp meta-information = %d, while here %d'),
      ((0xFF << 8) + 0xFF), $length);
 
-   if ($this->with_exceptions)
-   {
+   if ($this->with_exceptions) {
     throw new ippException($errmsg);
-   }
-   else
-   {
+   } else {
     trigger_error ($errmsg, E_USER_ERROR);
    }
   }
@@ -1688,16 +1592,15 @@ class BasicIPP
   $length -= $int1;
   $length = $length >> 8;
   $int2 = $length & 0xFF;
+
   return chr($int2) . chr($int1);
  }
 
- protected function _enumBuild($tag, $value) 
+ protected function _enumBuild($tag, $value)
  {
-  switch ($tag) 
-  {
+  switch ($tag) {
    case "orientation-requested":
-    switch ($value) 
-    {
+    switch ($value) {
      case 'portrait':
       $value = chr(3);
       break;
@@ -1717,8 +1620,7 @@ class BasicIPP
    break;
 
    case "print-quality":
-    switch ($value) 
-    {
+    switch ($value) {
      case 'draft':
       $value = chr(3);
       break;
@@ -1734,8 +1636,7 @@ class BasicIPP
    break;
 
    case "finishing":
-    switch ($value) 
-    {
+    switch ($value) {
      case 'none':
       $value = chr(3);
       break;
@@ -1815,19 +1716,19 @@ class BasicIPP
    break;
   }
   $prepend = '';
-  while ((strlen($value) + strlen($prepend)) < 4)
-  {
+  while ((strlen($value) + strlen($prepend)) < 4) {
    $prepend .= chr(0);
   }
+
   return $prepend . $value;
  }
 
- protected function _integerBuild($value) 
+ protected function _integerBuild($value)
  {
-  if ($value >= 2147483647 || $value < - 2147483648) 
-  {
+  if ($value >= 2147483647 || $value < - 2147483648) {
    trigger_error(
      _("Values must be between -2147483648 and 2147483647: assuming '0'") , E_USER_WARNING);
+
    return chr(0x00) . chr(0x00) . chr(0x00) . chr(0x00);
   }
   $initial_value = $value;
@@ -1844,23 +1745,24 @@ class BasicIPP
   if ($initial_value < 0) $int4 = chr($int4) | chr(0x80);
   else $int4 = chr($int4);
   $value = $int4 . chr($int3) . chr($int2) . chr($int1);
+
   return $value;
  }
 
- protected function _rangeOfIntegerBuild($integers) 
+ protected function _rangeOfIntegerBuild($integers)
  {
   #$integers = split(":", $integers);
   $integers = preg_split("#:#", $integers);
   for ($i = 0; $i < 2; $i++) $outvalue[$i] = self::_integerBuild($integers[$i]);
+
   return $outvalue[0] . $outvalue[1];
  }
 
- protected function _setJobAttribute($attribute, $value) 
+ protected function _setJobAttribute($attribute, $value)
  {
   //used by setAttribute
   $tag_type = $this->job_tags[$attribute]['tag'];
-  switch ($tag_type) 
-  {
+  switch ($tag_type) {
    case 'integer':
     $this->job_tags[$attribute]['value'][] = self::_integerBuild($value);
     break;
@@ -1903,18 +1805,18 @@ class BasicIPP
     trigger_error(sprintf(_('SetAttribute: Tag "%s": cannot set attribute') , $attribute) , E_USER_NOTICE);
     self::_putDebug(sprintf(_('SetAttribute: Tag "%s": cannot set attribute') , $attribute) , 2);
     self::_errorLog(sprintf(_('SetAttribute: Tag "%s": cannot set attribute') , $attribute) , 2);
+
     return FALSE;
     break;
   }
   $this->job_tags[$attribute]['systag'] = $this->tags_types[$tag_type]['tag'];
  }
 
- protected function _setOperationAttribute($attribute, $value) 
+ protected function _setOperationAttribute($attribute, $value)
  {
   //used by setAttribute
   $tag_type = $this->operation_tags[$attribute]['tag'];
-  switch ($tag_type) 
-  {
+  switch ($tag_type) {
    case 'integer':
     $this->operation_tags[$attribute]['value'][] = self::_integerBuild($value);
     break;
@@ -1928,18 +1830,18 @@ class BasicIPP
     trigger_error(sprintf(_('SetAttribute: Tag "%s": cannot set attribute') , $attribute) , E_USER_NOTICE);
     self::_putDebug(sprintf(_('SetAttribute: Tag "%s": cannot set attribute') , $attribute) , 2);
     self::_errorLog(sprintf(_('SetAttribute: Tag "%s": cannot set attribute') , $attribute) , 2);
+
     return FALSE;
     break;
   }
   $this->operation_tags[$attribute]['systag'] = $this->tags_types[$tag_type]['tag'];
  }
 
- protected function _setPrinterAttribute($attribute, $value) 
+ protected function _setPrinterAttribute($attribute, $value)
  {
   //used by setAttribute
   $tag_type = $this->printer_tags[$attribute]['tag'];
-  switch ($tag_type) 
-  {
+  switch ($tag_type) {
    case 'integer':
     $this->printer_tags[$attribute]['value'][] = self::_integerBuild($value);
     break;
@@ -1953,6 +1855,7 @@ class BasicIPP
     trigger_error(sprintf(_('SetAttribute: Tag "%s": cannot set attribute') , $attribute) , E_USER_NOTICE);
     self::_putDebug(sprintf(_('SetAttribute: Tag "%s": cannot set attribute') , $attribute) , 2);
     self::_errorLog(sprintf(_('SetAttribute: Tag "%s": cannot set attribute') , $attribute) , 2);
+
     return FALSE;
     break;
   }
@@ -1962,7 +1865,7 @@ class BasicIPP
  //
  // DEBUGGING
  //
- protected function _putDebug($string, $level = 1) 
+ protected function _putDebug($string, $level = 1)
  {
   if ($level === false) return;
   if ($level < $this->debug_level) return;
@@ -1975,17 +1878,18 @@ class BasicIPP
  //
  // LOGGING
  //
- protected function _errorLog($string_to_log, $level) 
+ protected function _errorLog($string_to_log, $level)
  {
   if ($level < $this->log_level) return;
   $string = sprintf('%s : %s:%s user %s : %s', basename($_SERVER['PHP_SELF']) , $this->host, $this->port, $this->requesting_user, $string_to_log);
-  if ($this->log_type == 0) 
-  {
+  if ($this->log_type == 0) {
    error_log($string);
+
    return;
   }
   $string = sprintf("%s %s Host %s:%s user %s : %s\n", date('M d H:i:s') , basename($_SERVER['PHP_SELF']) , $this->host, $this->port, $this->requesting_user, $string_to_log);
   error_log($string, $this->log_type, $this->log_destination);
+
   return;
  }
 
@@ -1997,4 +1901,3 @@ class BasicIPP
  * c-basic-offset: 4
  * End:
  */
-?>

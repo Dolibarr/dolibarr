@@ -64,14 +64,11 @@ require_once '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
-
 // Security check
-if (empty($conf->clicktodial->enabled))
-{
+if (empty($conf->clicktodial->enabled)) {
     accessforbidden();
     exit;
 }
-
 
 // Define Asterisk setup
 if (! isset($conf->global->ASTERISK_HOST))      $conf->global->ASTERISK_HOST="127.0.0.1";
@@ -79,7 +76,6 @@ if (! isset($conf->global->ASTERISK_TYPE))      $conf->global->ASTERISK_TYPE="SI
 if (! isset($conf->global->ASTERISK_INDICATIF)) $conf->global->ASTERISK_INDICATIF="0";
 if (! isset($conf->global->ASTERISK_PORT))      $conf->global->ASTERISK_PORT=5038;
 if ($conf->global->ASTERISK_INDICATIF=='NONE')  $conf->global->ASTERISK_INDICATIF='';
-
 
 $login = $_GET['login'];
 $password = $_GET['password'];
@@ -105,7 +101,6 @@ $strPriority = "1";
 // Nomber of try
 $strMaxRetry = "2";
 
-
 /*
  * View
  */
@@ -114,16 +109,13 @@ llxHeader();
 
 $number=strtolower($called);
 $pos=strpos($number,"local");
-if (! empty($number))
-{
-    if ($pos===false)
-    {
+if (! empty($number)) {
+    if ($pos===false) {
         $errno=0;
         $errstr=0;
         $strCallerId = "Dolibarr <".strtolower($caller).">";
         $oSocket = @fsockopen($strHost, $port, $errno, $errstr, 10);
-        if (!$oSocket)
-        {
+        if (!$oSocket) {
             print '<body>'."\n";
             $txt="Failed to execute fsockopen($strHost, $port, \$errno, \$errstr, 10)<br>\n";
             print $txt;
@@ -132,9 +124,7 @@ if (! empty($number))
             print $txt;
             dol_syslog($txt,LOG_ERR);
             print '</body>'."\n";
-        }
-        else
-        {
+        } else {
             $txt="Call Asterisk dialer for caller: ".$caller.", called: ".$called." clicktodiallogin: ".$login;
             dol_syslog($txt);
             print '<body onload="javascript:history.go(-1);">'."\n";
@@ -156,8 +146,7 @@ if (! empty($number))
             print '</body>'."\n";
         }
     }
-}
-else {
+} else {
     print 'Bad parameters in URL. Must be '.$_SERVER['PHP_SELF'].'?caller=99999&called=99999&login=xxxxx&password=xxxxx';
 }
 

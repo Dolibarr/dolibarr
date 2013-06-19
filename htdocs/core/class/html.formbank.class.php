@@ -21,20 +21,18 @@
  *	\brief      File of class with all html predefined components
  */
 
-
 /**
  *	Class to manage generation of HTML components for bank module
  */
 class FormBank
 {
-    var $db;
-    var $error;
-
+    public $db;
+    public $error;
 
     /**
      * Constructor
      *
-     * @param		DoliDB		$db      Database handler
+     * @param DoliDB $db Database handler
      */
     public function __construct($db)
     {
@@ -48,7 +46,7 @@ class FormBank
      *  @param  string	$htmlname        Nom champ formulaire
      *  @return	void
      */
-    function select_type_comptes_financiers($selected=1,$htmlname='type')
+    public function select_type_comptes_financiers($selected=1,$htmlname='type')
     {
         global $langs;
         $langs->load("banks");
@@ -58,16 +56,11 @@ class FormBank
         print '<select class="flat" name="'.$htmlname.'">';
         $num = count($type_available);
         $i = 0;
-        if ($num)
-        {
-            while ($i < $num)
-            {
-                if ($selected == $type_available[$i])
-                {
+        if ($num) {
+            while ($i < $num) {
+                if ($selected == $type_available[$i]) {
                     print '<option value="'.$type_available[$i].'" selected="selected">'.$langs->trans("BankType".$type_available[$i]).'</option>';
-                }
-                else
-                {
+                } else {
                     print '<option value="'.$type_available[$i].'">'.$langs->trans("BankType".$type_available[$i]).'</option>';
                 }
                 $i++;
@@ -77,5 +70,3 @@ class FormBank
     }
 
 }
-
-?>

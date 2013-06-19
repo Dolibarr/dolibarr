@@ -20,25 +20,16 @@
 <!-- BEGIN PHP TEMPLATE admin_extrafields_edit.tpl.php -->
 <script type="text/javascript">
     jQuery(document).ready(function() {
-    	function init_typeoffields(type)
-    	{
-    		var size = jQuery("#size");
-    		var unique = jQuery("#unique");
-    		var required = jQuery("#required");
-    		if (type == 'date') { size.attr('disabled','disabled'); }
-    		else if (type == 'datetime') { size.attr('disabled','disabled'); }
-    		else if (type == 'double') { size.removeAttr('disabled'); }
-    		else if (type == 'int') { size.removeAttr('disabled'); }
-    		else if (type == 'text') { size.removeAttr('disabled'); unique.attr('disabled','disabled').removeAttr('checked'); }
-    		else if (type == 'varchar') { size.removeAttr('disabled'); }
-    		else if (type == 'boolean') { size.val('').attr('disabled','disabled'); unique.attr('disabled','disabled');}
-    		else if (type == 'price') { size.val('').attr('disabled','disabled'); unique.attr('disabled','disabled');}
-    		else size.val('').attr('disabled','disabled');
-    	}
-    	init_typeoffields(jQuery("#type").val());
+        function init_typeoffields(type)
+        {
+            var size = jQuery("#size");
+            var unique = jQuery("#unique");
+            var required = jQuery("#required");
+            if (type == 'date') { size.attr('disabled','disabled'); } elseif (type == 'datetime') { size.attr('disabled','disabled'); } elseif (type == 'double') { size.removeAttr('disabled'); } elseif (type == 'int') { size.removeAttr('disabled'); } elseif (type == 'text') { size.removeAttr('disabled'); unique.attr('disabled','disabled').removeAttr('checked'); } elseif (type == 'varchar') { size.removeAttr('disabled'); } elseif (type == 'boolean') { size.val('').attr('disabled','disabled'); unique.attr('disabled','disabled');} elseif (type == 'price') { size.val('').attr('disabled','disabled'); unique.attr('disabled','disabled');} else size.val('').attr('disabled','disabled');
+        }
+        init_typeoffields(jQuery("#type").val());
     });
 </script>
-
 
 <form action="<?php echo $_SERVER["PHP_SELF"]; ?>?attrname=<?php echo $attrname; ?>" method="post">
 <input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>">
@@ -56,21 +47,16 @@ $required=$extrafields->attribute_required[$attrname];
 $pos=$extrafields->attribute_pos[$attrname];
 $param=$extrafields->attribute_param[$attrname];
 
-if((($type == 'select') || ($type == 'checkbox') ||(($type == 'radio'))) && is_array($param))
-{
-	$param_chain = '';
-	foreach ($param['options'] as $key => $value)
-	{
-		if(strlen($key))
-		{
-			$param_chain .= $key.','.$value."\n";
-		}
-	}
-}
-elseif ($type== 'sellist')
-{
-	$paramlist=array_keys($param['options']);
-	$param_chain = $paramlist[0];
+if ((($type == 'select') || ($type == 'checkbox') ||(($type == 'radio'))) && is_array($param)) {
+    $param_chain = '';
+    foreach ($param['options'] as $key => $value) {
+        if (strlen($key)) {
+            $param_chain .= $key.','.$value."\n";
+        }
+    }
+} elseif ($type== 'sellist') {
+    $paramlist=array_keys($param['options']);
+    $param_chain = $paramlist[0];
 }
 ?>
 <!-- Position -->
@@ -86,17 +72,16 @@ elseif ($type== 'sellist')
 </td></tr>
 <!--  Value (for select list / radio) -->
 <?php
-if(($type == 'select') || ($type == 'sellist') || ($type == 'checkbox') ||(($type == 'radio')))
-{
+if (($type == 'select') || ($type == 'sellist') || ($type == 'checkbox') ||(($type == 'radio'))) {
 ?>
 <tr id="value_choice">
 <td>
-	<?php echo $langs->trans("Value"); ?>
+    <?php echo $langs->trans("Value"); ?>
 </td>
 <td>
 <table class="nobordernopadding">
 <tr><td width="30%">
-	<textarea name="param" id="param"><?php echo $param_chain; ?></textarea>
+    <textarea name="param" id="param"><?php echo $param_chain; ?></textarea>
 </td><td><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamHelp".$type),1,0)?></td></tr>
 </table>
 </td>

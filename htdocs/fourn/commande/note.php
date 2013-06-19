@@ -44,22 +44,17 @@ $result = restrictedArea($user, 'fournisseur', $id, '', 'commande');
 $object = new CommandeFournisseur($db);
 $object->fetch($id, $ref);
 
-
 /*
  * Actions
  */
 
-if ($action == 'setnote_public' && $user->rights->fournisseur->commande->creer)
-{
+if ($action == 'setnote_public' && $user->rights->fournisseur->commande->creer) {
     $result=$object->update_note(dol_html_entity_decode(GETPOST('note_public'), ENT_QUOTES),'_public');
     if ($result < 0) dol_print_error($db,$object->error);
-}
-elseif ($action == 'setnote_private' && $user->rights->fournisseur->commande->creer)
-{
+} elseif ($action == 'setnote_private' && $user->rights->fournisseur->commande->creer) {
     $result=$object->update_note(dol_html_entity_decode(GETPOST('note_private'), ENT_QUOTES), '_private');
     if ($result < 0) dol_print_error($db,$object->error);
 }
-
 
 /*
  * View
@@ -77,10 +72,8 @@ $form = new Form($db);
 
 $now=dol_now();
 
-if ($id > 0 || ! empty($ref))
-{
-    if ($result >= 0)
-    {
+if ($id > 0 || ! empty($ref)) {
+    if ($result >= 0) {
         $soc = new Societe($db);
         $soc->fetch($object->socid);
 
@@ -91,7 +84,6 @@ if ($id > 0 || ! empty($ref))
 
         $title=$langs->trans("SupplierOrder");
         dol_fiche_head($head, 'note', $title, 0, 'order');
-
 
         /*
          *   Commande
@@ -120,17 +112,14 @@ if ($id > 0 || ! empty($ref))
         print "</td></tr>";
 
         // Date
-        if ($object->methode_commande_id > 0)
-        {
+        if ($object->methode_commande_id > 0) {
             print '<tr><td>'.$langs->trans("Date").'</td><td colspan="2">';
-            if ($object->date_commande)
-            {
+            if ($object->date_commande) {
                 print dol_print_date($object->date_commande,"dayhourtext")."\n";
             }
             print "</td></tr>";
 
-            if ($object->methode_commande)
-            {
+            if ($object->methode_commande) {
                 print '<tr><td>'.$langs->trans("Method").'</td><td colspan="2">'.$object->getInputMethod().'</td></tr>';
             }
         }
@@ -148,17 +137,13 @@ if ($id > 0 || ! empty($ref))
         include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
 
         dol_fiche_end();
-    }
-    else
-    {
+    } else {
         /* Order not found */
         $langs->load("errors");
         print $langs->trans("ErrorRecordNotFound");
     }
 }
 
-
 llxFooter();
 
 $db->close();
-?>

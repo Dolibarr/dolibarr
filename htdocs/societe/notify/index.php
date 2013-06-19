@@ -27,18 +27,15 @@ $langs->load("companies");
 $langs->load("banks");
 
 // S�curit� acc�s client
-if ($user->societe_id > 0)
-{
-	$action = '';
-	$socid = $user->societe_id;
+if ($user->societe_id > 0) {
+    $action = '';
+    $socid = $user->societe_id;
 }
 
-if ($sortorder == "")
-{
+if ($sortorder == "") {
   $sortorder="ASC";
 }
-if ($sortfield == "")
-{
+if ($sortfield == "") {
   $sortfield="s.nom";
 }
 
@@ -47,8 +44,6 @@ if ($page == -1) { $page = 0 ; }
 $offset = $conf->liste_limit * $page ;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-
-
 
 /*
  * Mode Liste
@@ -72,43 +67,37 @@ $sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit($conf->liste_limit, $offset);
 
 $result = $db->query($sql);
-if ($result)
-{
-	$num = $db->num_rows($result);
-	$i = 0;
+if ($result) {
+    $num = $db->num_rows($result);
+    $i = 0;
 
-	$paramlist='';
-	print_barre_liste($langs->trans("ListOfNotificationsDone"), $page, "index.php", $paramlist, $sortfield,$sortorder,'',$num);
+    $paramlist='';
+    print_barre_liste($langs->trans("ListOfNotificationsDone"), $page, "index.php", $paramlist, $sortfield,$sortorder,'',$num);
 
-	print '<table class="noborder" width="100%">';
-	print '<tr class="liste_titre">';
-	print_liste_field_titre($langs->trans("Company"),"index.php","s.nom","","",'valign="center"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Contact"),"index.php","c.lastname","","",'valign="center"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Action"),"index.php","a.titre","","",'valign="center"',$sortfield,$sortorder);
-	print "</tr>\n";
-	$var=True;
-	while ($i < $num)
-	{
-		$obj = $db->fetch_object($result);
+    print '<table class="noborder" width="100%">';
+    print '<tr class="liste_titre">';
+    print_liste_field_titre($langs->trans("Company"),"index.php","s.nom","","",'valign="center"',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Contact"),"index.php","c.lastname","","",'valign="center"',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Action"),"index.php","a.titre","","",'valign="center"',$sortfield,$sortorder);
+    print "</tr>\n";
+    $var=True;
+    while ($i < $num) {
+        $obj = $db->fetch_object($result);
 
-		$var=!$var;
+        $var=!$var;
 
-		print "<tr ".$bc[$var].">";
-		print "<td><a href=\"fiche.php?socid=".$obj->socid."\">".$obj->nom."</a></td>\n";
-		print "<td>".dolGetFirstLastname($obj->firstname, $obj->lastname)."</td>\n";
-		print "<td>".$obj->titre."</td>\n";
-		print "</tr>\n";
-		$i++;
-	}
-	print "</table>";
-	$db->free();
+        print "<tr ".$bc[$var].">";
+        print "<td><a href=\"fiche.php?socid=".$obj->socid."\">".$obj->nom."</a></td>\n";
+        print "<td>".dolGetFirstLastname($obj->firstname, $obj->lastname)."</td>\n";
+        print "<td>".$obj->titre."</td>\n";
+        print "</tr>\n";
+        $i++;
+    }
+    print "</table>";
+    $db->free();
+} else {
+    dol_print_error($db);
 }
-else
-{
-	dol_print_error($db);
-}
-
 
 llxFooter();
 $db->close();
-?>

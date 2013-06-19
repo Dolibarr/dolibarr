@@ -29,7 +29,6 @@
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
-
 /**
  *		Class to manage members of a foundation
  */
@@ -39,76 +38,75 @@ class Adherent extends CommonObject
     public $table_element='adherent';
     protected $ismultientitymanaged = 1;  // 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
-    var $error;
-    var $errors;
-    var $mesgs;
+    public $error;
+    public $errors;
+    public $mesgs;
 
-    var $id;
-    var $ref;
-    var $civilite_id;
-    var $firstname;
-    var $lastname;
-    var $login;
-    var $pass;
-    var $societe;
-    var $company;
-    var $address;
-    var $zip;
-    var $town;
+    public $id;
+    public $ref;
+    public $civilite_id;
+    public $firstname;
+    public $lastname;
+    public $login;
+    public $pass;
+    public $societe;
+    public $company;
+    public $address;
+    public $zip;
+    public $town;
 
-    var $state_id;              // Id of department
-    var $state_code;            // Code of department
-    var $state;                 // Label of department
+    public $state_id;              // Id of department
+    public $state_code;            // Code of department
+    public $state;                 // Label of department
 
-    var $country_id;
-    var $country_code;
-    var $country;
+    public $country_id;
+    public $country_code;
+    public $country;
 
-    var $email;
-    var $phone;
-    var $phone_perso;
-    var $phone_mobile;
+    public $email;
+    public $phone;
+    public $phone_perso;
+    public $phone_mobile;
 
-    var $morphy;
-    var $public;
-    var $note;				// Private note
-    var $statut;			// -1:brouillon, 0:resilie, >=1:valide,paye
-    var $photo;
+    public $morphy;
+    public $public;
+    public $note;				// Private note
+    public $statut;			// -1:brouillon, 0:resilie, >=1:valide,paye
+    public $photo;
 
-    var $datec;
-    var $datem;
-    var $datefin;
-    var $datevalid;
-    var $birth;
+    public $datec;
+    public $datem;
+    public $datefin;
+    public $datevalid;
+    public $birth;
 
-    var $typeid;			// Id type adherent
-    var $type;				// Libelle type adherent
-    var $need_subscription;
+    public $typeid;			// Id type adherent
+    public $type;				// Libelle type adherent
+    public $need_subscription;
 
-    var $user_id;
-    var $user_login;
+    public $user_id;
+    public $user_login;
 
-    var $fk_soc;
+    public $fk_soc;
 
     // Fields loaded by fetch_subscriptions()
-    var $first_subscription_date;
-    var $first_subscription_amount;
-    var $last_subscription_date;
-    var $last_subscription_amount;
-    var $subscriptions=array();
+    public $first_subscription_date;
+    public $first_subscription_amount;
+    public $last_subscription_date;
+    public $last_subscription_amount;
+    public $subscriptions=array();
 
     //  var $public;
-    var $array_options;
+    public $array_options;
 
-    var $oldcopy;		// To contains a clone of this when we need to save old properties of object
-
+    public $oldcopy;		// To contains a clone of this when we need to save old properties of object
 
     /**
-	 *	Constructor
-	 *
-	 *	@param 		DoliDB		$db		Database handler
+     *	Constructor
+     *
+     *	@param 		DoliDB		$db		Database handler
      */
-    function __construct($db)
+    public function __construct($db)
     {
         $this->db = $db;
         $this->statut = -1;
@@ -117,7 +115,6 @@ class Adherent extends CommonObject
         // les champs optionnels sont vides
         $this->array_options=array();
     }
-
 
     /**
      *  Fonction envoyant un email a l'adherent avec le texte fourni en parametre.
@@ -134,13 +131,12 @@ class Adherent extends CommonObject
      *  @param	string	$errors_to			erros to
      *  @return	int							<0 if KO, >0 if OK
      */
-    function send_an_email($text, $subject, $filename_list=array(), $mimetype_list=array(), $mimefilename_list=array(), $addr_cc="", $addr_bcc="", $deliveryreceipt=0, $msgishtml=-1, $errors_to='')
+    public function send_an_email($text, $subject, $filename_list=array(), $mimetype_list=array(), $mimefilename_list=array(), $addr_cc="", $addr_bcc="", $deliveryreceipt=0, $msgishtml=-1, $errors_to='')
     {
         global $conf,$langs;
 
         // Detect if message is HTML
-        if ($msgishtml == -1)
-        {
+        if ($msgishtml == -1) {
             $msgishtml = 0;
             if (dol_textishtml($text,1)) $msgishtml = 1;
         }
@@ -155,13 +151,11 @@ class Adherent extends CommonObject
 
         include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
         $mailfile = new CMailFile($subjecttosend, $this->email, $from, $texttosend, $filename_list, $mimetype_list, $mimefilename_list, $addr_cc, $addr_bcc, $deliveryreceipt, $msgishtml);
-        if ($mailfile->sendfile())
-        {
+        if ($mailfile->sendfile()) {
             return 1;
-        }
-        else
-        {
+        } else {
             $this->error=$langs->trans("ErrorFailedToSendMail",$from,$this->email).'. '.$mailfile->error;
+
             return -1;
         }
     }
@@ -170,70 +164,69 @@ class Adherent extends CommonObject
     /**
      * Make substitution
      *
-     * @param	string	$text       Text to make substitution to
-     * @return  string      		Value of input text string with substitutions done
+     * @param  string $text Text to make substitution to
+     * @return string Value of input text string with substitutions done
      */
-	function makeSubstitution($text)
-	{
-		global $conf,$langs;
+    public function makeSubstitution($text)
+    {
+        global $conf,$langs;
 
-		$birthday = dol_print_date($this->birth,'day');
+        $birthday = dol_print_date($this->birth,'day');
 
-		$msgishtml = 0;
-		if (dol_textishtml($text,1)) $msgishtml = 1;
+        $msgishtml = 0;
+        if (dol_textishtml($text,1)) $msgishtml = 1;
 
-		$infos='';
-		if ($this->civilite_id) $infos.= $langs->transnoentities("UserTitle").": ".$this->getCivilityLabel(1)."\n";
-		$infos.= $langs->transnoentities("id").": ".$this->id."\n";
-		$infos.= $langs->transnoentities("Lastname").": ".$this->lastname."\n";
-		$infos.= $langs->transnoentities("Firstname").": ".$this->firstname."\n";
-		$infos.= $langs->transnoentities("Company").": ".$this->societe."\n";
-		$infos.= $langs->transnoentities("Address").": ".$this->address."\n";
-		$infos.= $langs->transnoentities("Zip").": ".$this->zip."\n";
-		$infos.= $langs->transnoentities("Town").": ".$this->town."\n";
-		$infos.= $langs->transnoentities("Country").": ".$this->country."\n";
-		$infos.= $langs->transnoentities("EMail").": ".$this->email."\n";
-		if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED))
-		{
-		    $infos.= $langs->transnoentities("Login").": ".$this->login."\n";
-		    $infos.= $langs->transnoentities("Password").": ".$this->pass."\n";
-		}
-		$infos.= $langs->transnoentities("Birthday").": ".$birthday."\n";
-		$infos.= $langs->transnoentities("Photo").": ".$this->photo."\n";
-		$infos.= $langs->transnoentities("Public").": ".yn($this->public);
+        $infos='';
+        if ($this->civilite_id) $infos.= $langs->transnoentities("UserTitle").": ".$this->getCivilityLabel(1)."\n";
+        $infos.= $langs->transnoentities("id").": ".$this->id."\n";
+        $infos.= $langs->transnoentities("Lastname").": ".$this->lastname."\n";
+        $infos.= $langs->transnoentities("Firstname").": ".$this->firstname."\n";
+        $infos.= $langs->transnoentities("Company").": ".$this->societe."\n";
+        $infos.= $langs->transnoentities("Address").": ".$this->address."\n";
+        $infos.= $langs->transnoentities("Zip").": ".$this->zip."\n";
+        $infos.= $langs->transnoentities("Town").": ".$this->town."\n";
+        $infos.= $langs->transnoentities("Country").": ".$this->country."\n";
+        $infos.= $langs->transnoentities("EMail").": ".$this->email."\n";
+        if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED)) {
+            $infos.= $langs->transnoentities("Login").": ".$this->login."\n";
+            $infos.= $langs->transnoentities("Password").": ".$this->pass."\n";
+        }
+        $infos.= $langs->transnoentities("Birthday").": ".$birthday."\n";
+        $infos.= $langs->transnoentities("Photo").": ".$this->photo."\n";
+        $infos.= $langs->transnoentities("Public").": ".yn($this->public);
 
-		// Substitutions
-		$substitutionarray=array(
-				'%DOL_MAIN_URL_ROOT%'=>DOL_MAIN_URL_ROOT,
-				'%ID%'=>$msgishtml?dol_htmlentitiesbr($this->id):$this->id,
-				'%CIVILITE%'=>$this->getCivilityLabel($msgishtml?0:1),
-				'%FIRSTNAME%'=>$msgishtml?dol_htmlentitiesbr($this->firstname):$this->firstname,
-				'%LASTNAME%'=>$msgishtml?dol_htmlentitiesbr($this->lastname):$this->lastname,
-				'%FULLNAME%'=>$msgishtml?dol_htmlentitiesbr($this->getFullName($langs)):$this->getFullName($langs),
-				'%COMPANY%'=>$msgishtml?dol_htmlentitiesbr($this->societe):$this->societe,
-				'%ADDRESS%'=>$msgishtml?dol_htmlentitiesbr($this->address):$this->address,
-				'%ZIP%'=>$msgishtml?dol_htmlentitiesbr($this->zip):$this->zip,
-				'%TOWN%'=>$msgishtml?dol_htmlentitiesbr($this->town):$this->town,
-				'%COUNTRY%'=>$msgishtml?dol_htmlentitiesbr($this->country):$this->country,
-				'%EMAIL%'=>$msgishtml?dol_htmlentitiesbr($this->email):$this->email,
-				'%BIRTH%'=>$msgishtml?dol_htmlentitiesbr($birthday):$birthday,
-				'%PHOTO%'=>$msgishtml?dol_htmlentitiesbr($this->photo):$this->photo,
-				'%LOGIN%'=>$msgishtml?dol_htmlentitiesbr($this->login):$this->login,
-				'%PASSWORD%'=>$msgishtml?dol_htmlentitiesbr($this->pass):$this->pass,
-				// For backward compatibility
-				'%INFOS%'=>$msgishtml?dol_htmlentitiesbr($infos):$infos,
-				'%SOCIETE%'=>$msgishtml?dol_htmlentitiesbr($this->societe):$this->societe,
-				'%PRENOM%'=>$msgishtml?dol_htmlentitiesbr($this->firstname):$this->firstname,
-				'%NOM%'=>$msgishtml?dol_htmlentitiesbr($this->lastname):$this->lastname,
-				'%CP%'=>$msgishtml?dol_htmlentitiesbr($this->zip):$this->zip,
-				'%VILLE%'=>$msgishtml?dol_htmlentitiesbr($this->town):$this->town,
-				'%PAYS%'=>$msgishtml?dol_htmlentitiesbr($this->country):$this->country,
-		);
+        // Substitutions
+        $substitutionarray=array(
+                '%DOL_MAIN_URL_ROOT%'=>DOL_MAIN_URL_ROOT,
+                '%ID%'=>$msgishtml?dol_htmlentitiesbr($this->id):$this->id,
+                '%CIVILITE%'=>$this->getCivilityLabel($msgishtml?0:1),
+                '%FIRSTNAME%'=>$msgishtml?dol_htmlentitiesbr($this->firstname):$this->firstname,
+                '%LASTNAME%'=>$msgishtml?dol_htmlentitiesbr($this->lastname):$this->lastname,
+                '%FULLNAME%'=>$msgishtml?dol_htmlentitiesbr($this->getFullName($langs)):$this->getFullName($langs),
+                '%COMPANY%'=>$msgishtml?dol_htmlentitiesbr($this->societe):$this->societe,
+                '%ADDRESS%'=>$msgishtml?dol_htmlentitiesbr($this->address):$this->address,
+                '%ZIP%'=>$msgishtml?dol_htmlentitiesbr($this->zip):$this->zip,
+                '%TOWN%'=>$msgishtml?dol_htmlentitiesbr($this->town):$this->town,
+                '%COUNTRY%'=>$msgishtml?dol_htmlentitiesbr($this->country):$this->country,
+                '%EMAIL%'=>$msgishtml?dol_htmlentitiesbr($this->email):$this->email,
+                '%BIRTH%'=>$msgishtml?dol_htmlentitiesbr($birthday):$birthday,
+                '%PHOTO%'=>$msgishtml?dol_htmlentitiesbr($this->photo):$this->photo,
+                '%LOGIN%'=>$msgishtml?dol_htmlentitiesbr($this->login):$this->login,
+                '%PASSWORD%'=>$msgishtml?dol_htmlentitiesbr($this->pass):$this->pass,
+                // For backward compatibility
+                '%INFOS%'=>$msgishtml?dol_htmlentitiesbr($infos):$infos,
+                '%SOCIETE%'=>$msgishtml?dol_htmlentitiesbr($this->societe):$this->societe,
+                '%PRENOM%'=>$msgishtml?dol_htmlentitiesbr($this->firstname):$this->firstname,
+                '%NOM%'=>$msgishtml?dol_htmlentitiesbr($this->lastname):$this->lastname,
+                '%CP%'=>$msgishtml?dol_htmlentitiesbr($this->zip):$this->zip,
+                '%VILLE%'=>$msgishtml?dol_htmlentitiesbr($this->town):$this->town,
+                '%PAYS%'=>$msgishtml?dol_htmlentitiesbr($this->country):$this->country,
+        );
 
-		complete_substitutions_array($substitutionarray, $langs);
+        complete_substitutions_array($substitutionarray, $langs);
 
-		return make_substitutions($text,$substitutionarray);
-	}
+        return make_substitutions($text,$substitutionarray);
+    }
 
 
     /**
@@ -242,12 +235,13 @@ class Adherent extends CommonObject
      *	@param	string		$morphy		Nature physique ou morale de l'adherent
      *	@return	string					Label
      */
-    function getmorphylib($morphy='')
+    public function getmorphylib($morphy='')
     {
         global $langs;
         if (! $morphy) { $morphy=$this->morphy; }
         if ($morphy == 'phy') { return $langs->trans("Physical"); }
         if ($morphy == 'mor') { return $langs->trans("Moral"); }
+
         return $morphy;
     }
 
@@ -258,27 +252,26 @@ class Adherent extends CommonObject
      *	@param  int		$notrigger		1 ne declenche pas les triggers, 0 sinon
      *	@return	int						<0 if KO, >0 if OK
      */
-    function create($user,$notrigger=0)
+    public function create($user,$notrigger=0)
     {
         global $conf,$langs;
 
-		$error=0;
+        $error=0;
 
         $now=dol_now();
 
         // Check parameters
-        if (! empty($conf->global->ADHERENT_MAIL_REQUIRED) && ! isValidEMail($this->email))
-        {
+        if (! empty($conf->global->ADHERENT_MAIL_REQUIRED) && ! isValidEMail($this->email)) {
             $langs->load("errors");
             $this->error = $langs->trans("ErrorBadEMail",$this->email);
+
             return -1;
         }
         if (! $this->datec) $this->datec=$now;
-        if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED))
-        {
-            if (empty($this->login))
-            {
+        if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED)) {
+            if (empty($this->login)) {
                 $this->error = $langs->trans("ErrorWrongValueForParameterX","Login");
+
                 return -1;
             }
         }
@@ -299,41 +292,37 @@ class Adherent extends CommonObject
 
         dol_syslog(get_class($this)."::create sql=".$sql);
         $result = $this->db->query($sql);
-        if ($result)
-        {
+        if ($result) {
             $id = $this->db->last_insert_id(MAIN_DB_PREFIX."adherent");
-            if ($id > 0)
-            {
+            if ($id > 0) {
                 $this->id=$id;
                 $this->ref=$id;
 
                 // Update minor fields
                 $result=$this->update($user,1,1,0,0,'add'); // nosync is 1 to avoid update data of user
-                if ($result < 0)
-                {
+                if ($result < 0) {
                     $this->db->rollback();
+
                     return -1;
                 }
 
                 // Add link to user
-                if ($this->user_id)
-                {
+                if ($this->user_id) {
                     // Add link to user
                     $sql = "UPDATE ".MAIN_DB_PREFIX."user SET";
                     $sql.= " fk_member = '".$this->id."'";
                     $sql.= " WHERE rowid = ".$this->user_id;
                     dol_syslog(get_class($this)."::create sql=".$sql);
                     $resql = $this->db->query($sql);
-                    if (! $resql)
-                    {
+                    if (! $resql) {
                         $this->error='Failed to update user to make link with member';
                         $this->db->rollback();
+
                         return -4;
                     }
                 }
 
-                if (! $notrigger)
-                {
+                if (! $notrigger) {
                     // Appel des triggers
                     include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
                     $interface=new Interfaces($this->db);
@@ -342,31 +331,28 @@ class Adherent extends CommonObject
                     // Fin appel triggers
                 }
 
-                if (count($this->errors))
-                {
+                if (count($this->errors)) {
                     dol_syslog(get_class($this)."::create ".join(',',$this->errors), LOG_ERR);
                     $this->db->rollback();
+
                     return -3;
-                }
-                else
-                {
+                } else {
                     $this->db->commit();
+
                     return $this->id;
                 }
-            }
-            else
-            {
+            } else {
                 $this->error='Failed to get last insert id';
                 dol_syslog(get_class($this)."::create ".$this->error, LOG_ERR);
                 $this->db->rollback();
+
                 return -2;
             }
-        }
-        else
-        {
+        } else {
             $this->error=$this->db->error();
             dol_syslog(get_class($this)."::create ".$this->error, LOG_ERR);
             $this->db->rollback();
+
             return -1;
         }
     }
@@ -383,7 +369,7 @@ class Adherent extends CommonObject
      * 	@param	string	$action				Current action for hookmanager
      * 	@return	int							<0 if KO, >0 if OK
      */
-    function update($user,$notrigger=0,$nosyncuser=0,$nosyncuserpass=0,$nosyncthirdparty=0,$action='update')
+    public function update($user,$notrigger=0,$nosyncuser=0,$nosyncuserpass=0,$nosyncthirdparty=0,$action='update')
     {
         global $conf, $langs, $hookmanager;
 
@@ -393,21 +379,21 @@ class Adherent extends CommonObject
         dol_syslog(get_class($this)."::update notrigger=".$notrigger.", nosyncuser=".$nosyncuser.", nosyncuserpass=".$nosyncuserpass." nosyncthirdparty=".$nosyncthirdparty.", email=".$this->email);
 
         // Clean parameters
-		$this->lastname=trim($this->lastname)?trim($this->lastname):trim($this->lastname);
-		$this->firstname=trim($this->firstname)?trim($this->firstname):trim($this->firstname);
-		$this->address=($this->address?$this->address:$this->address);
-		$this->zip=($this->zip?$this->zip:$this->zip);
-		$this->town=($this->town?$this->town:$this->town);
-		$this->country_id=($this->country_id > 0?$this->country_id:$this->country_id);
-		$this->state_id=($this->state_id > 0?$this->state_id:$this->state_id);
-		if (! empty($conf->global->MAIN_FIRST_TO_UPPER)) $this->lastname=ucwords(trim($this->lastname));
+        $this->lastname=trim($this->lastname)?trim($this->lastname):trim($this->lastname);
+        $this->firstname=trim($this->firstname)?trim($this->firstname):trim($this->firstname);
+        $this->address=($this->address?$this->address:$this->address);
+        $this->zip=($this->zip?$this->zip:$this->zip);
+        $this->town=($this->town?$this->town:$this->town);
+        $this->country_id=($this->country_id > 0?$this->country_id:$this->country_id);
+        $this->state_id=($this->state_id > 0?$this->state_id:$this->state_id);
+        if (! empty($conf->global->MAIN_FIRST_TO_UPPER)) $this->lastname=ucwords(trim($this->lastname));
         if (! empty($conf->global->MAIN_FIRST_TO_UPPER)) $this->firstname=ucwords(trim($this->firstname));
 
         // Check parameters
-        if (! empty($conf->global->ADHERENT_MAIL_REQUIRED) && ! isValidEMail($this->email))
-        {
+        if (! empty($conf->global->ADHERENT_MAIL_REQUIRED) && ! isValidEMail($this->email)) {
             $langs->load("errors");
             $this->error = $langs->trans("ErrorBadEMail",$this->email);
+
             return -1;
         }
 
@@ -443,39 +429,32 @@ class Adherent extends CommonObject
 
         dol_syslog(get_class($this)."::update update member sql=".$sql);
         $resql = $this->db->query($sql);
-        if ($resql)
-        {
-		    unset($this->country_code);
-		    unset($this->country);
-		    unset($this->state_code);
-		    unset($this->state);
+        if ($resql) {
+            unset($this->country_code);
+            unset($this->country);
+            unset($this->state_code);
+            unset($this->state);
 
-		    $nbrowsaffected+=$this->db->affected_rows($resql);
+            $nbrowsaffected+=$this->db->affected_rows($resql);
 
             // Actions on extra fields (by external module)
             $hookmanager->initHooks(array('memberdao'));
             $parameters=array('id'=>$this->id);
             $action='';
             $reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
-            if (empty($reshook))
-            {
-            	if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
-            	{
-            		$result=$this->insertExtraFields();
-            		if ($result < 0)
-            		{
-            			$error++;
-            		}
-            	}
-            }
-            else if ($reshook < 0) $error++;
+            if (empty($reshook)) {
+                if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) { // For avoid conflicts if trigger used
+                    $result=$this->insertExtraFields();
+                    if ($result < 0) {
+                        $error++;
+                    }
+                }
+            } elseif ($reshook < 0) $error++;
 
             // Update password
-            if (! $error && $this->pass)
-            {
+            if (! $error && $this->pass) {
                 dol_syslog(get_class($this)."::update update password");
-                if ($this->pass != $this->pass_indatabase && $this->pass != $this->pass_indatabase_crypted)
-                {
+                if ($this->pass != $this->pass_indatabase && $this->pass != $this->pass_indatabase_crypted) {
                     // Si mot de passe saisi et different de celui en base
                     $result=$this->setPassword($user,$this->pass,0,$notrigger,$nosyncuserpass);
                     if (! $nbrowsaffected) $nbrowsaffected++;
@@ -483,16 +462,14 @@ class Adherent extends CommonObject
             }
 
             // Remove links to user and replace with new one
-            if (! $error)
-            {
+            if (! $error) {
                 dol_syslog(get_class($this)."::update update link to user");
                 $sql = "UPDATE ".MAIN_DB_PREFIX."user SET fk_member = NULL WHERE fk_member = ".$this->id;
                 dol_syslog(get_class($this)."::update sql=".$sql, LOG_DEBUG);
                 $resql = $this->db->query($sql);
                 if (! $resql) { $this->error=$this->db->error(); $this->db->rollback(); return -5; }
                 // If there is a user linked to this member
-                if ($this->user_id > 0)
-                {
+                if ($this->user_id > 0) {
                     $sql = "UPDATE ".MAIN_DB_PREFIX."user SET fk_member = ".$this->id." WHERE rowid = ".$this->user_id;
                     dol_syslog(get_class($this)."::update sql=".$sql, LOG_DEBUG);
                     $resql = $this->db->query($sql);
@@ -500,11 +477,9 @@ class Adherent extends CommonObject
                 }
             }
 
-            if (! $error && $nbrowsaffected)	// If something has change in main data
-            {
+            if (! $error && $nbrowsaffected) {	// If something has change in main data
                 // Update information on linked user if it is an update
-                if ($this->user_id > 0 && ! $nosyncuser)
-                {
+                if ($this->user_id > 0 && ! $nosyncuser) {
                     require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 
                     dol_syslog(get_class($this)."::update update linked user");
@@ -512,8 +487,7 @@ class Adherent extends CommonObject
                     $luser=new User($this->db);
                     $result=$luser->fetch($this->user_id);
 
-                    if ($result >= 0)
-                    {
+                    if ($result >= 0) {
                         $luser->civilite_id=$this->civilite_id;
                         $luser->firstname=$this->firstname;
                         $luser->lastname=$this->lastname;
@@ -528,23 +502,19 @@ class Adherent extends CommonObject
                         $luser->fk_member=$this->id;
 
                         $result=$luser->update($user,0,1,1);	// Use nosync to 1 to avoid cyclic updates
-                        if ($result < 0)
-                        {
+                        if ($result < 0) {
                             $this->error=$luser->error;
                             dol_syslog(get_class($this)."::update ".$this->error,LOG_ERR);
                             $error++;
                         }
-                    }
-                    else
-                    {
+                    } else {
                         $this->error=$luser->error;
                         $error++;
                     }
                 }
 
                 // Update information on linked thirdparty if it is an update
-                if ($this->fk_soc > 0 && ! $nosyncthirdparty)
-                {
+                if ($this->fk_soc > 0 && ! $nosyncthirdparty) {
                     require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 
                     dol_syslog(get_class($this)."::update update linked thirdparty");
@@ -554,8 +524,7 @@ class Adherent extends CommonObject
                     $lthirdparty=new Societe($this->db);
                     $result=$lthirdparty->fetch($this->fk_soc);
 
-                    if ($result >= 0)
-                    {
+                    if ($result >= 0) {
                         $lthirdparty->address=$this->address;
                         $lthirdparty->zip=$this->zip;
                         $lthirdparty->town=$this->town;
@@ -567,22 +536,18 @@ class Adherent extends CommonObject
                         //$lthirdparty->phone_mobile=$this->phone_mobile;
 
                         $result=$lthirdparty->update($this->fk_soc,$user,0,1,1,'update');	// Use sync to 0 to avoid cyclic updates
-                        if ($result < 0)
-                        {
+                        if ($result < 0) {
                             $this->error=$lthirdparty->error;
                             dol_syslog(get_class($this)."::update ".$this->error,LOG_ERR);
                             $error++;
                         }
-                    }
-                    else
-                    {
+                    } else {
                         $this->error=$lthirdparty->error;
                         $error++;
                     }
                 }
 
-                if (! $error && ! $notrigger)
-                {
+                if (! $error && ! $notrigger) {
                     // Appel des triggers
                     include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
                     $interface=new Interfaces($this->db);
@@ -592,22 +557,20 @@ class Adherent extends CommonObject
                 }
             }
 
-            if (! $error)
-            {
+            if (! $error) {
                 $this->db->commit();
+
                 return $nbrowsaffected;
-            }
-            else
-            {
+            } else {
                 $this->db->rollback();
+
                 return -1;
             }
-        }
-        else
-        {
+        } else {
             $this->db->rollback();
             $this->error=$this->db->lasterror();
             dol_syslog(get_class($this)."::Update ".$this->error,LOG_ERR);
+
             return -2;
         }
     }
@@ -620,7 +583,7 @@ class Adherent extends CommonObject
      *	@param	User	$user			User making change
      *	@return	int						<0 if KO, >0 if OK
      */
-    function update_end_date($user)
+    public function update_end_date($user)
     {
         global $conf, $langs;
 
@@ -636,8 +599,7 @@ class Adherent extends CommonObject
 
         dol_syslog(get_class($this)."::update_end_date sql=".$sql);
         $resql=$this->db->query($sql);
-        if ($resql)
-        {
+        if ($resql) {
             $obj=$this->db->fetch_object($resql);
             $dateop=$this->db->jdate($obj->dateop);
             $datedeb=$this->db->jdate($obj->datedeb);
@@ -649,26 +611,24 @@ class Adherent extends CommonObject
 
             dol_syslog(get_class($this)."::update_end_date sql=".$sql);
             $resql=$this->db->query($sql);
-            if ($resql)
-            {
+            if ($resql) {
                 $this->last_subscription_date=$dateop;
                 $this->last_subscription_date_start=$datedeb;
                 $this->last_subscription_date_end=$datefin;
                 $this->datefin=$datefin;
                 $this->db->commit();
+
                 return 1;
-            }
-            else
-            {
+            } else {
                 $this->db->rollback();
+
                 return -1;
             }
-        }
-        else
-        {
+        } else {
             $this->error=$this->db->lasterror();
             dol_syslog(get_class($this)."::update_end_date ".$this->error, LOG_ERR);
             $this->db->rollback();
+
             return -1;
         }
 
@@ -680,16 +640,16 @@ class Adherent extends CommonObject
      *  @param	int		$rowid		Id of member to delete
      *  @return	int					<0 if KO, 0=nothing to do, >0 if OK
      */
-    function delete($rowid)
+    public function delete($rowid)
     {
         global $conf, $langs, $user;
 
         $result = 0;
-		$error=0;
-		$errorflag=0;
+        $error=0;
+        $errorflag=0;
 
-		// Check parameters
-		if (empty($rowid)) $rowid=$this->id;
+        // Check parameters
+        if (empty($rowid)) $rowid=$this->id;
 
         $this->db->begin();
 
@@ -697,97 +657,82 @@ class Adherent extends CommonObject
         $sql = "DELETE FROM ".MAIN_DB_PREFIX."categorie_member WHERE fk_member = ".$rowid;
         dol_syslog(get_class($this)."::delete sql=".$sql);
         $resql=$this->db->query($sql);
-        if (! $resql)
-        {
-        	$error++;
-        	$this->error .= $this->db->lasterror();
-        	$errorflag=-1;
-        	dol_syslog(get_class($this)."::delete erreur ".$errorflag." ".$this->error, LOG_ERR);
+        if (! $resql) {
+            $error++;
+            $this->error .= $this->db->lasterror();
+            $errorflag=-1;
+            dol_syslog(get_class($this)."::delete erreur ".$errorflag." ".$this->error, LOG_ERR);
 
         }
 
         // Remove cotisation
-        if (! $error)
-        {
-        	 $sql = "DELETE FROM ".MAIN_DB_PREFIX."cotisation WHERE fk_adherent = ".$rowid;
-        	dol_syslog(get_class($this)."::delete sql=".$sql);
-        	$resql=$this->db->query($sql);
-        	if (! $resql)
-        	{
-        		$error++;
-        		$this->error .= $this->db->lasterror();
-        		$errorflag=-2;
-        		dol_syslog(get_class($this)."::delete erreur ".$errorflag." ".$this->error, LOG_ERR);
-        	}
+        if (! $error) {
+             $sql = "DELETE FROM ".MAIN_DB_PREFIX."cotisation WHERE fk_adherent = ".$rowid;
+            dol_syslog(get_class($this)."::delete sql=".$sql);
+            $resql=$this->db->query($sql);
+            if (! $resql) {
+                $error++;
+                $this->error .= $this->db->lasterror();
+                $errorflag=-2;
+                dol_syslog(get_class($this)."::delete erreur ".$errorflag." ".$this->error, LOG_ERR);
+            }
         }
 
         // Remove linked user
-        if (! $error)
-        {
-        	$ret=$this->setUserId(0);
-        	if ($ret < 0)
-        	{
-        		$error++;
-        		$this->error .= $this->db->lasterror();
-        		$errorflag=-3;
-        		dol_syslog(get_class($this)."::delete erreur ".$errorflag." ".$this->error, LOG_ERR);
-        	}
+        if (! $error) {
+            $ret=$this->setUserId(0);
+            if ($ret < 0) {
+                $error++;
+                $this->error .= $this->db->lasterror();
+                $errorflag=-3;
+                dol_syslog(get_class($this)."::delete erreur ".$errorflag." ".$this->error, LOG_ERR);
+            }
         }
 
         // Removed extrafields
-        if (! $error)
-        {
-        	if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
-        	{
-        		$result=$this->deleteExtraFields();
-        		if ($result < 0)
-        		{
-        			$error++;
-        			$errorflag=-4;
-        			dol_syslog(get_class($this)."::delete erreur ".$errorflag." ".$this->error, LOG_ERR);
-        		}
-        	}
+        if (! $error) {
+            if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) { // For avoid conflicts if trigger used
+                $result=$this->deleteExtraFields();
+                if ($result < 0) {
+                    $error++;
+                    $errorflag=-4;
+                    dol_syslog(get_class($this)."::delete erreur ".$errorflag." ".$this->error, LOG_ERR);
+                }
+            }
         }
 
         // Remove adherent
-        if (! $error)
-        {
-        	$sql = "DELETE FROM ".MAIN_DB_PREFIX."adherent WHERE rowid = ".$rowid;
-        	dol_syslog(get_class($this)."::delete sql=".$sql);
-        	$resql=$this->db->query($sql);
-        	if (! $resql)
-        	{
-        		$error++;
-        		$this->error .= $this->db->lasterror();
-        		$errorflag=-5;
-        		dol_syslog(get_class($this)."::delete erreur ".$errorflag." ".$this->error, LOG_ERR);
-        	}
+        if (! $error) {
+            $sql = "DELETE FROM ".MAIN_DB_PREFIX."adherent WHERE rowid = ".$rowid;
+            dol_syslog(get_class($this)."::delete sql=".$sql);
+            $resql=$this->db->query($sql);
+            if (! $resql) {
+                $error++;
+                $this->error .= $this->db->lasterror();
+                $errorflag=-5;
+                dol_syslog(get_class($this)."::delete erreur ".$errorflag." ".$this->error, LOG_ERR);
+            }
         }
 
-        if (! $error)
-        {
-        	// Appel des triggers
-       		include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-        	$interface=new Interfaces($this->db);
-        	$result=$interface->run_triggers('MEMBER_DELETE',$this,$user,$langs,$conf);
-        	if ($result < 0) {$error++; $this->errors=$interface->errors;}
-        	// Fin appel triggers
+        if (! $error) {
+            // Appel des triggers
+               include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
+            $interface=new Interfaces($this->db);
+            $result=$interface->run_triggers('MEMBER_DELETE',$this,$user,$langs,$conf);
+            if ($result < 0) {$error++; $this->errors=$interface->errors;}
+            // Fin appel triggers
         }
 
+        if (! $error) {
+            $this->db->commit();
 
+            return 1;
+        } else {
+            $this->db->rollback();
 
-        if (! $error)
-        {
-        	$this->db->commit();
-        	return 1;
-        }
-        else
-        {
-        	$this->db->rollback();
-        	return $errorflag;
+            return $errorflag;
         }
     }
-
 
     /**
      *    Change password of a user
@@ -799,7 +744,7 @@ class Adherent extends CommonObject
      *    @param	int		$nosyncuser		Do not synchronize linked user
      *    @return   string           		If OK return clear password, 0 if no change, < 0 if error
      */
-    function setPassword($user, $password='', $isencrypted=0, $notrigger=0, $nosyncuser=0)
+    public function setPassword($user, $password='', $isencrypted=0, $notrigger=0, $nosyncuser=0)
     {
         global $conf, $langs;
 
@@ -808,20 +753,16 @@ class Adherent extends CommonObject
         dol_syslog(get_class($this)."::setPassword user=".$user->id." password=".preg_replace('/./i','*',$password)." isencrypted=".$isencrypted);
 
         // If new password not provided, we generate one
-        if (! $password)
-        {
+        if (! $password) {
             require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
             $password=getRandomPassword('');
         }
 
         // Cryptage mot de passe
-        if ($isencrypted)
-        {
+        if ($isencrypted) {
             // Encryption
             $password_indatabase = dol_hash($password);
-        }
-        else
-        {
+        } else {
             $password_indatabase = $password;
         }
 
@@ -832,17 +773,14 @@ class Adherent extends CommonObject
         //dol_syslog("Adherent::Password sql=hidden");
         dol_syslog(get_class($this)."::setPassword sql=".$sql);
         $result = $this->db->query($sql);
-        if ($result)
-        {
+        if ($result) {
             $nbaffectedrows=$this->db->affected_rows($result);
 
-            if ($nbaffectedrows)
-            {
+            if ($nbaffectedrows) {
                 $this->pass=$password;
                 $this->pass_indatabase=$password_indatabase;
 
-                if ($this->user_id && ! $nosyncuser)
-                {
+                if ($this->user_id && ! $nosyncuser) {
                     require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 
                     // This member is linked with a user, so we also update users informations
@@ -850,25 +788,20 @@ class Adherent extends CommonObject
                     $luser=new User($this->db);
                     $result=$luser->fetch($this->user_id);
 
-                    if ($result >= 0)
-                    {
+                    if ($result >= 0) {
                         $result=$luser->setPassword($user,$this->pass,0,0,1);
-                        if ($result < 0)
-                        {
+                        if ($result < 0) {
                             $this->error=$luser->error;
                             dol_syslog(get_class($this)."::setPassword ".$this->error,LOG_ERR);
                             $error++;
                         }
-                    }
-                    else
-                    {
+                    } else {
                         $this->error=$luser->error;
                         $error++;
                     }
                 }
 
-                if (! $error && ! $notrigger)
-                {
+                if (! $error && ! $notrigger) {
                     // Appel des triggers
                     include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
                     $interface=new Interfaces($this->db);
@@ -878,15 +811,12 @@ class Adherent extends CommonObject
                 }
 
                 return $this->pass;
-            }
-            else
-            {
+            } else {
                 return 0;
             }
-        }
-        else
-        {
+        } else {
             dol_print_error($this->db);
+
             return -1;
         }
     }
@@ -898,7 +828,7 @@ class Adherent extends CommonObject
      *    @param     int	$userid        	Id of user to link to
      *    @return    int					1=OK, -1=KO
      */
-    function setUserId($userid)
+    public function setUserId($userid)
     {
         global $conf, $langs;
 
@@ -911,8 +841,7 @@ class Adherent extends CommonObject
         if (! $resql) { $this->error=$this->db->error(); $this->db->rollback(); return -1; }
 
         // Set link to user
-        if ($userid > 0)
-        {
+        if ($userid > 0) {
             $sql = "UPDATE ".MAIN_DB_PREFIX."user SET fk_member = ".$this->id;
             $sql.= " WHERE rowid = ".$userid;
             dol_syslog(get_class($this)."::setUserId sql=".$sql, LOG_DEBUG);
@@ -932,15 +861,14 @@ class Adherent extends CommonObject
      *    @param     int	$thirdpartyid		Id of user to link to
      *    @return    int						1=OK, -1=KO
      */
-    function setThirdPartyId($thirdpartyid)
+    public function setThirdPartyId($thirdpartyid)
     {
         global $conf, $langs;
 
         $this->db->begin();
 
         // Remove link to third party onto any other members
-        if ($thirdpartyid > 0)
-        {
+        if ($thirdpartyid > 0) {
             $sql = "UPDATE ".MAIN_DB_PREFIX."adherent SET fk_soc = null";
             $sql.= " WHERE fk_soc = '".$thirdpartyid."'";
             $sql.= " AND entity = ".$conf->entity;
@@ -954,16 +882,15 @@ class Adherent extends CommonObject
 
         dol_syslog(get_class($this)."::setThirdPartyId sql=".$sql);
         $resql = $this->db->query($sql);
-        if ($resql)
-        {
+        if ($resql) {
             $this->db->commit();
+
             return 1;
-        }
-        else
-        {
+        } else {
             $this->error=$this->db->error();
             dol_syslog(get_class($this)."::setThirdPartyId ".$this->error, LOG_ERR);
             $this->db->rollback();
+
             return -1;
         }
     }
@@ -975,7 +902,7 @@ class Adherent extends CommonObject
      *	@param	string	$login		login of member
      *	@return	void
      */
-    function fetch_login($login)
+    public function fetch_login($login)
     {
         global $conf;
 
@@ -984,16 +911,12 @@ class Adherent extends CommonObject
         $sql.= " AND entity = ".$conf->entity;
 
         $resql=$this->db->query($sql);
-        if ($resql)
-        {
-            if ($this->db->num_rows($resql))
-            {
+        if ($resql) {
+            if ($this->db->num_rows($resql)) {
                 $obj = $this->db->fetch_object($resql);
                 $this->fetch($obj->rowid);
             }
-        }
-        else
-        {
+        } else {
             dol_print_error($this->db);
         }
     }
@@ -1007,7 +930,7 @@ class Adherent extends CommonObject
      * 	@param	int		$fk_soc		To load member from its link to third party
      *	@return int         		>0 if OK, 0 if not found, <0 if KO
      */
-    function fetch($rowid,$ref='',$fk_soc='')
+    public function fetch($rowid,$ref='',$fk_soc='')
     {
         global $langs;
 
@@ -1032,17 +955,15 @@ class Adherent extends CommonObject
         $sql.= " WHERE d.fk_adherent_type = t.rowid";
         if ($rowid) $sql.= " AND d.rowid=".$rowid;
         elseif ($ref || $fk_soc) {
-        	$sql.= " AND d.entity IN (".getEntity().")";
-        	if ($ref) $sql.= " AND d.rowid='".$ref."'";
-        	elseif ($fk_soc) $sql.= " AND d.fk_soc='".$fk_soc."'";
+            $sql.= " AND d.entity IN (".getEntity().")";
+            if ($ref) $sql.= " AND d.rowid='".$ref."'";
+            elseif ($fk_soc) $sql.= " AND d.fk_soc='".$fk_soc."'";
         }
 
         dol_syslog(get_class($this)."::fetch sql=".$sql);
         $resql=$this->db->query($sql);
-        if ($resql)
-        {
-            if ($this->db->num_rows($resql))
-            {
+        if ($resql) {
+            if ($this->db->num_rows($resql)) {
                 $obj = $this->db->fetch_object($resql);
 
                 $this->entity			= $obj->entity;
@@ -1068,9 +989,9 @@ class Adherent extends CommonObject
                 $this->country_id		= $obj->country_id;
                 $this->country_code		= $obj->country_code;
                 if ($langs->trans("Country".$obj->country_code) != "Country".$obj->country_code)
-                	$this->country = $langs->transnoentitiesnoconv("Country".$obj->country_code);
+                    $this->country = $langs->transnoentitiesnoconv("Country".$obj->country_code);
                 else
-                	$this->country=$obj->country;
+                    $this->country=$obj->country;
 
                 $this->phone			= $obj->phone;
                 $this->phone_perso		= $obj->phone_perso;
@@ -1108,16 +1029,13 @@ class Adherent extends CommonObject
                 $result=$this->fetch_subscriptions();
 
                 return $result;
-            }
-            else
-            {
+            } else {
                 return 0;
             }
-        }
-        else
-        {
+        } else {
             $this->error=$this->db->lasterror();
             dol_syslog(get_class($this)."::fetch ".$this->error, LOG_ERR);
+
             return -1;
         }
     }
@@ -1132,11 +1050,11 @@ class Adherent extends CommonObject
      *
      *	@return		int			<0 si KO, >0 si OK
      */
-    function fetch_subscriptions()
+    public function fetch_subscriptions()
     {
         global $langs;
 
-		require_once DOL_DOCUMENT_ROOT.'/adherents/class/cotisation.class.php';
+        require_once DOL_DOCUMENT_ROOT.'/adherents/class/cotisation.class.php';
 
         $sql = "SELECT c.rowid, c.fk_adherent, c.cotisation, c.note, c.fk_bank,";
         $sql.= " c.tms as datem,";
@@ -1149,15 +1067,12 @@ class Adherent extends CommonObject
         dol_syslog(get_class($this)."::fetch_subscriptions sql=".$sql);
 
         $resql=$this->db->query($sql);
-        if ($resql)
-        {
+        if ($resql) {
             $this->subscriptions=array();
 
             $i=0;
-            while ($obj = $this->db->fetch_object($resql))
-            {
-                if ($i==0)
-                {
+            while ($obj = $this->db->fetch_object($resql)) {
+                if ($i==0) {
                     $this->first_subscription_date=$obj->dateadh;
                     $this->first_subscription_amount=$obj->cotisation;
                 }
@@ -1179,11 +1094,11 @@ class Adherent extends CommonObject
 
                 $i++;
             }
+
             return 1;
-        }
-        else
-        {
+        } else {
             $this->error=$this->db->error().' sql='.$sql;
+
             return -1;
         }
     }
@@ -1203,25 +1118,22 @@ class Adherent extends CommonObject
      *	@param	timestamp	$datesubend			Date fin adhesion
      *	@return int         					rowid of record added, <0 if KO
      */
-    function cotisation($date, $montant, $accountid=0, $operation='', $label='', $num_chq='', $emetteur_nom='', $emetteur_banque='', $datesubend=0)
+    public function cotisation($date, $montant, $accountid=0, $operation='', $label='', $num_chq='', $emetteur_nom='', $emetteur_banque='', $datesubend=0)
     {
         global $conf,$langs,$user;
 
-		require_once DOL_DOCUMENT_ROOT.'/adherents/class/cotisation.class.php';
+        require_once DOL_DOCUMENT_ROOT.'/adherents/class/cotisation.class.php';
 
-		$error=0;
+        $error=0;
 
         // Clean parameters
         if (! $montant) $montant=0;
 
         $this->db->begin();
 
-        if ($datesubend)
-        {
+        if ($datesubend) {
             $datefin=$datesubend;
-        }
-        else
-        {
+        } else {
             // If no end date, end date = date + 1 year - 1 day
             $datefin = dol_time_plus_duree($date,1,'y');
             $datefin = dol_time_plus_duree($datefin,-1,'d');
@@ -1236,13 +1148,11 @@ class Adherent extends CommonObject
         $cotisation->note=$label;
 
         $rowid=$cotisation->create($user);
-        if ($rowid > 0)
-        {
+        if ($rowid > 0) {
             // Update denormalized subscription end date (read database subscription to find values)
             // This will also update this->datefin
             $result=$this->update_end_date($user);
-            if ($result > 0)
-            {
+            if ($result > 0) {
                 // Change properties of object (used by triggers)
                 $this->last_subscription_date=dol_now();
                 $this->last_subscription_amount=$montant;
@@ -1257,21 +1167,19 @@ class Adherent extends CommonObject
                 // Fin appel triggers
             }
 
-            if (! $error)
-            {
+            if (! $error) {
                 $this->db->commit();
+
                 return $rowid;
-            }
-            else
-            {
+            } else {
                 $this->db->rollback();
+
                 return -2;
             }
-        }
-        else
-        {
+        } else {
             $this->error=$cotisation->error;
             $this->db->rollback();
+
             return -1;
         }
     }
@@ -1282,17 +1190,17 @@ class Adherent extends CommonObject
      *		@param	User	$user		user adherent qui valide
      *		@return	int					<0 if KO, 0 if nothing done, >0 if OK
      */
-    function validate($user)
+    public function validate($user)
     {
         global $langs,$conf;
 
-		$error=0;
-		$now=dol_now();
+        $error=0;
+        $now=dol_now();
 
-		// Check parameters
-        if ($this->statut == 1)
-        {
+        // Check parameters
+        if ($this->statut == 1) {
             dol_syslog(get_class($this)."::validate statut of member does not allow this", LOG_WARNING);
+
             return 0;
         }
 
@@ -1306,8 +1214,7 @@ class Adherent extends CommonObject
 
         dol_syslog(get_class($this)."::validate sql=".$sql);
         $result = $this->db->query($sql);
-        if ($result)
-        {
+        if ($result) {
             $this->statut=1;
 
             // Appel des triggers
@@ -1318,16 +1225,15 @@ class Adherent extends CommonObject
             // Fin appel triggers
 
             $this->db->commit();
+
             return 1;
-        }
-        else
-        {
+        } else {
             $this->error=$this->db->error();
             $this->db->rollback();
+
             return -1;
         }
     }
-
 
     /**
      *		Fonction qui resilie un adherent
@@ -1335,16 +1241,16 @@ class Adherent extends CommonObject
      *		@param	User	$user		User making change
      *		@return	int					<0 if KO, >0 if OK
      */
-    function resiliate($user)
+    public function resiliate($user)
     {
         global $langs,$conf;
 
-		$error=0;
+        $error=0;
 
-		// Check paramaters
-        if ($this->statut == 0)
-        {
+        // Check paramaters
+        if ($this->statut == 0) {
             dol_syslog(get_class($this)."::resiliate statut of member does not allow this", LOG_WARNING);
+
             return 0;
         }
 
@@ -1356,8 +1262,7 @@ class Adherent extends CommonObject
         $sql.= " WHERE rowid = ".$this->id;
 
         $result = $this->db->query($sql);
-        if ($result)
-        {
+        if ($result) {
             $this->statut=0;
 
             // Appel des triggers
@@ -1368,16 +1273,15 @@ class Adherent extends CommonObject
             // Fin appel triggers
 
             $this->db->commit();
+
             return 1;
-        }
-        else
-        {
+        } else {
             $this->error=$this->db->error();
             $this->db->rollback();
+
             return -1;
         }
     }
-
 
     /**
      *  Fonction qui ajoute l'adherent aux abonnements automatiques mailing-list, spip, etc.
@@ -1385,7 +1289,7 @@ class Adherent extends CommonObject
      *
      *  @return		int		<0 if KO, >0 if OK
      */
-    function add_to_abo()
+    public function add_to_abo()
     {
         global $conf,$langs;
 
@@ -1395,42 +1299,33 @@ class Adherent extends CommonObject
         $err=0;
 
         // mailman
-        if (! empty($conf->global->ADHERENT_USE_MAILMAN))
-        {
+        if (! empty($conf->global->ADHERENT_USE_MAILMAN)) {
             $result=$mailmanspip->add_to_mailman($this);
-            if ($result < 0)
-            {
-            	$this->error=$mailmanspip->error;
+            if ($result < 0) {
+                $this->error=$mailmanspip->error;
                 $err+=1;
             }
-            foreach ($mailmanspip->mladded_ko as $tmplist => $tmpemail)
-            {
-            	$langs->load("errors");
-            	$this->errors[]=$langs->trans("ErrorFailedToAddToMailmanList",$tmpemail,$tmplist);
+            foreach ($mailmanspip->mladded_ko as $tmplist => $tmpemail) {
+                $langs->load("errors");
+                $this->errors[]=$langs->trans("ErrorFailedToAddToMailmanList",$tmpemail,$tmplist);
             }
-            foreach ($mailmanspip->mladded_ok as $tmplist => $tmpemail)
-            {
-            	$langs->load("mailmanspip");
-            	$this->mesgs[]=$langs->trans("SuccessToAddToMailmanList",$tmpemail,$tmplist);
+            foreach ($mailmanspip->mladded_ok as $tmplist => $tmpemail) {
+                $langs->load("mailmanspip");
+                $this->mesgs[]=$langs->trans("SuccessToAddToMailmanList",$tmpemail,$tmplist);
             }
         }
 
         // spip
-        if ($conf->global->ADHERENT_USE_SPIP && ! empty($conf->mailmanspip->enabled))
-        {
+        if ($conf->global->ADHERENT_USE_SPIP && ! empty($conf->mailmanspip->enabled)) {
             $result=$mailmanspip->add_to_spip($this);
-            if ($result < 0)
-            {
-            	$this->error=$mailmanspip->error;
-            	$err+=1;
+            if ($result < 0) {
+                $this->error=$mailmanspip->error;
+                $err+=1;
             }
         }
-        if ($err)
-        {
+        if ($err) {
             return -$err;
-        }
-        else
-       {
+        } else {
             return 1;
         }
     }
@@ -1442,7 +1337,7 @@ class Adherent extends CommonObject
      *
      *  @return     int     <0 if KO, >0 if OK
      */
-    function del_to_abo()
+    public function del_to_abo()
     {
         global $conf,$langs;
 
@@ -1452,58 +1347,49 @@ class Adherent extends CommonObject
         $err=0;
 
         // mailman
-        if (! empty($conf->global->ADHERENT_USE_MAILMAN))
-        {
+        if (! empty($conf->global->ADHERENT_USE_MAILMAN)) {
             $result=$mailmanspip->del_to_mailman($this);
-            if ($result < 0)
-            {
+            if ($result < 0) {
                 $this->error=$mailmanspip->error;
                 $err+=1;
             }
 
-            foreach ($mailmanspip->mlremoved_ko as $tmplist => $tmpemail)
-            {
-            	$langs->load("errors");
-            	$this->errors[]=$langs->trans("ErrorFailedToRemoveToMailmanList",$tmpemail,$tmplist);
+            foreach ($mailmanspip->mlremoved_ko as $tmplist => $tmpemail) {
+                $langs->load("errors");
+                $this->errors[]=$langs->trans("ErrorFailedToRemoveToMailmanList",$tmpemail,$tmplist);
             }
-            foreach ($mailmanspip->mlremoved_ok as $tmplist => $tmpemail)
-            {
-            	$langs->load("mailmanspip");
-            	$this->mesgs[]=$langs->trans("SuccessToRemoveToMailmanList",$tmpemail,$tmplist);
+            foreach ($mailmanspip->mlremoved_ok as $tmplist => $tmpemail) {
+                $langs->load("mailmanspip");
+                $this->mesgs[]=$langs->trans("SuccessToRemoveToMailmanList",$tmpemail,$tmplist);
             }
         }
 
-        if ($conf->global->ADHERENT_USE_SPIP && ! empty($conf->mailmanspip->enabled))
-        {
+        if ($conf->global->ADHERENT_USE_SPIP && ! empty($conf->mailmanspip->enabled)) {
             $result=$mailmanspip->del_to_spip($this);
-            if ($result < 0)
-            {
+            if ($result < 0) {
                 $err+=1;
             }
         }
-        if ($err)
-        {
+        if ($err) {
             // error
             return -$err;
-        }
-        else
-        {
+        } else {
             return 1;
         }
     }
-
 
     /**
      *    Return civility label of a member
      *
      *    @return   string              	Translated name of civility
      */
-    function getCivilityLabel()
+    public function getCivilityLabel()
     {
         global $langs;
         $langs->load("dict");
 
         $code=$this->civilite_id;
+
         return $langs->getLabelFromKey($this->db, "Civility".$code, "c_civilite", "code", "civilite", $code);
     }
 
@@ -1515,26 +1401,23 @@ class Adherent extends CommonObject
      *		@param	string	$option			Page lien
      *		@return	string					Chaine avec URL
      */
-    function getNomUrl($withpicto=0,$maxlen=0,$option='card')
+    public function getNomUrl($withpicto=0,$maxlen=0,$option='card')
     {
         global $langs;
 
         $result='';
 
-        if ($option == 'card')
-        {
+        if ($option == 'card') {
             $lien = '<a href="'.DOL_URL_ROOT.'/adherents/fiche.php?rowid='.$this->id.'">';
             $lienfin='</a>';
         }
-        if ($option == 'subscription')
-        {
+        if ($option == 'subscription') {
             $lien = '<a href="'.DOL_URL_ROOT.'/adherents/card_subscriptions.php?rowid='.$this->id.'">';
             $lienfin='</a>';
         }
-        if ($option == 'category')
-        {
-        	$lien = '<a href="'.DOL_URL_ROOT.'/categories/categorie.php?id='.$this->id.'&type=3">';
-        	$lienfin='</a>';
+        if ($option == 'category') {
+            $lien = '<a href="'.DOL_URL_ROOT.'/categories/categorie.php?id='.$this->id.'&type=3">';
+            $lienfin='</a>';
         }
 
         $picto='user';
@@ -1543,6 +1426,7 @@ class Adherent extends CommonObject
         if ($withpicto) $result.=($lien.img_object($label,$picto).$lienfin);
         if ($withpicto && $withpicto != 2) $result.=' ';
         $result.=$lien.($maxlen?dol_trunc($this->ref,$maxlen):$this->ref).$lienfin;
+
         return $result;
     }
 
@@ -1552,7 +1436,7 @@ class Adherent extends CommonObject
      *  @param	int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
      *  @return string				Label
      */
-    function getLibStatut($mode=0)
+    public function getLibStatut($mode=0)
     {
         return $this->LibStatut($this->statut,$this->need_subscription,$this->datefin,$mode);
     }
@@ -1566,70 +1450,58 @@ class Adherent extends CommonObject
      *  @param  int			$mode        			0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
      *  @return string      						Label
      */
-    function LibStatut($statut,$need_subscription,$date_end_subscription,$mode=0)
+    public function LibStatut($statut,$need_subscription,$date_end_subscription,$mode=0)
     {
         global $langs;
         $langs->load("members");
-        if ($mode == 0)
-        {
+        if ($mode == 0) {
             if ($statut == -1) return $langs->trans("MemberStatusDraft");
-            if ($statut >= 1)
-            {
+            if ($statut >= 1) {
                 if (! $date_end_subscription)            return $langs->trans("MemberStatusActive");
                 elseif ($date_end_subscription < time()) return $langs->trans("MemberStatusActiveLate");
                 else                                     return $langs->trans("MemberStatusPaid");
             }
             if ($statut == 0)  return $langs->trans("MemberStatusResiliated");
         }
-        if ($mode == 1)
-        {
+        if ($mode == 1) {
             if ($statut == -1) return $langs->trans("MemberStatusDraftShort");
-            if ($statut >= 1)
-            {
+            if ($statut >= 1) {
                 if (! $date_end_subscription)            return $langs->trans("MemberStatusActiveShort");
                 elseif ($date_end_subscription < time()) return $langs->trans("MemberStatusActiveLateShort");
                 else                                     return $langs->trans("MemberStatusPaidShort");
             }
             if ($statut == 0)  return $langs->trans("MemberStatusResiliatedShort");
         }
-        if ($mode == 2)
-        {
+        if ($mode == 2) {
             if ($statut == -1) return img_picto($langs->trans('MemberStatusDraft'),'statut0').' '.$langs->trans("MemberStatusDraftShort");
-            if ($statut >= 1)
-            {
+            if ($statut >= 1) {
                 if (! $date_end_subscription)            return img_picto($langs->trans('MemberStatusActive'),'statut1').' '.$langs->trans("MemberStatusActiveShort");
                 elseif ($date_end_subscription < time()) return img_picto($langs->trans('MemberStatusActiveLate'),'statut3').' '.$langs->trans("MemberStatusActiveLateShort");
                 else                                     return img_picto($langs->trans('MemberStatusPaid'),'statut4').' '.$langs->trans("MemberStatusPaidShort");
             }
             if ($statut == 0)  return img_picto($langs->trans('MemberStatusResiliated'),'statut5').' '.$langs->trans("MemberStatusResiliatedShort");
         }
-        if ($mode == 3)
-        {
+        if ($mode == 3) {
             if ($statut == -1) return img_picto($langs->trans('MemberStatusDraft'),'statut0');
-            if ($statut >= 1)
-            {
+            if ($statut >= 1) {
                 if (! $date_end_subscription)            return img_picto($langs->trans('MemberStatusActive'),'statut1');
                 elseif ($date_end_subscription < time()) return img_picto($langs->trans('MemberStatusActiveLate'),'statut3');
                 else                                     return img_picto($langs->trans('MemberStatusPaid'),'statut4');
             }
             if ($statut == 0)  return img_picto($langs->trans('MemberStatusResiliated'),'statut5');
         }
-        if ($mode == 4)
-        {
+        if ($mode == 4) {
             if ($statut == -1) return img_picto($langs->trans('MemberStatusDraft'),'statut0').' '.$langs->trans("MemberStatusDraft");
-            if ($statut >= 1)
-            {
+            if ($statut >= 1) {
                 if (! $date_end_subscription)            return img_picto($langs->trans('MemberStatusActive'),'statut1').' '.$langs->trans("MemberStatusActive");
                 elseif ($date_end_subscription < time()) return img_picto($langs->trans('MemberStatusActiveLate'),'statut3').' '.$langs->trans("MemberStatusActiveLate");
                 else                                     return img_picto($langs->trans('MemberStatusPaid'),'statut4').' '.$langs->trans("MemberStatusPaid");
             }
             if ($statut == 0)  return img_picto($langs->trans('MemberStatusResiliated'),'statut5').' '.$langs->trans("MemberStatusResiliated");
         }
-        if ($mode == 5)
-        {
+        if ($mode == 5) {
             if ($statut == -1) return $langs->trans("MemberStatusDraft").' '.img_picto($langs->trans('MemberStatusDraft'),'statut0');
-            if ($statut >= 1)
-            {
+            if ($statut >= 1) {
                 if (! $date_end_subscription)            return '<span class="hideonsmartphone">'.$langs->trans("MemberStatusActive").' </span>'.img_picto($langs->trans('MemberStatusActive'),'statut1');
                 elseif ($date_end_subscription < time()) return '<span class="hideonsmartphone">'.$langs->trans("MemberStatusActiveLate").' </span>'.img_picto($langs->trans('MemberStatusActiveLate'),'statut3');
                 else                                     return '<span class="hideonsmartphone">'.$langs->trans("MemberStatusPaid").' </span>'.img_picto($langs->trans('MemberStatusPaid'),'statut4');
@@ -1638,13 +1510,12 @@ class Adherent extends CommonObject
         }
     }
 
-
     /**
      *      Charge indicateurs this->nb de tableau de bord
      *
      *      @return     int         <0 if KO, >0 if OK
      */
-    function load_state_board()
+    public function load_state_board()
     {
         global $conf;
 
@@ -1656,19 +1527,17 @@ class Adherent extends CommonObject
         $sql.= " AND a.entity = ".$conf->entity;
 
         $resql=$this->db->query($sql);
-        if ($resql)
-        {
-            while ($obj=$this->db->fetch_object($resql))
-            {
+        if ($resql) {
+            while ($obj=$this->db->fetch_object($resql)) {
                 $this->nb["members"]=$obj->nb;
             }
             $this->db->free($resql);
+
             return 1;
-        }
-        else
-        {
+        } else {
             dol_print_error($this->db);
             $this->error=$this->db->error();
+
             return -1;
         }
 
@@ -1680,7 +1549,7 @@ class Adherent extends CommonObject
      *      @param	User	$user   	Objet user
      *      @return int     			<0 if KO, >0 if OK
      */
-    function load_board($user)
+    public function load_board($user)
     {
         global $conf;
 
@@ -1697,23 +1566,20 @@ class Adherent extends CommonObject
         $sql.= " AND (a.datefin IS NULL or a.datefin < '".$this->db->idate($now)."')";
 
         $resql=$this->db->query($sql);
-        if ($resql)
-        {
-            while ($obj=$this->db->fetch_object($resql))
-            {
+        if ($resql) {
+            while ($obj=$this->db->fetch_object($resql)) {
                 $this->nbtodo++;
                 if ($this->db->jdate($obj->datefin) < ($now - $conf->adherent->cotisation->warning_delay)) $this->nbtodolate++;
             }
+
             return 1;
-        }
-        else
-        {
+        } else {
             dol_print_error($this->db);
             $this->error=$this->db->error();
+
             return -1;
         }
     }
-
 
     /**
      *  Initialise an instance with random values.
@@ -1722,7 +1588,7 @@ class Adherent extends CommonObject
      *
      *  @return	void
      */
-    function initAsSpecimen()
+    public function initAsSpecimen()
     {
         global $user,$langs;
 
@@ -1765,7 +1631,6 @@ class Adherent extends CommonObject
         $this->last_subscription_amount=10;
     }
 
-
     /**
      *	Retourne chaine DN complete dans l'annuaire LDAP pour l'objet
      *
@@ -1775,7 +1640,7 @@ class Adherent extends CommonObject
      *								2=Return key only (uid=qqq)
      *	@return	string				DN
      */
-    function _load_ldap_dn($info,$mode=0)
+    public function _load_ldap_dn($info,$mode=0)
     {
         global $conf;
         $dn='';
@@ -1785,13 +1650,12 @@ class Adherent extends CommonObject
         return $dn;
     }
 
-
     /**
      *	Initialise tableau info (tableau des attributs LDAP)
      *
      *	@return		array		Tableau info des attributs
      */
-    function _load_ldap_info()
+    public function _load_ldap_info()
     {
         global $conf,$langs;
 
@@ -1828,10 +1692,8 @@ class Adherent extends CommonObject
         if (isset($this->first_subscription_amount) && ! empty($conf->global->LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_AMOUNT)) $info[$conf->global->LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_AMOUNT] = $this->first_subscription_amount;
         if ($this->last_subscription_date && ! empty($conf->global->LDAP_FIELD_MEMBER_LASTSUBSCRIPTION_DATE))       $info[$conf->global->LDAP_FIELD_MEMBER_LASTSUBSCRIPTION_DATE]   = dol_print_date($this->last_subscription_date,'dayhourldap');
         if (isset($this->last_subscription_amount) && ! empty($conf->global->LDAP_FIELD_MEMBER_LASTSUBSCRIPTION_AMOUNT))   $info[$conf->global->LDAP_FIELD_MEMBER_LASTSUBSCRIPTION_AMOUNT] = $this->last_subscription_amount;
-
         return $info;
     }
-
 
     /**
      *      Charge les informations d'ordre info dans l'objet adherent
@@ -1839,7 +1701,7 @@ class Adherent extends CommonObject
      *      @param  int		$id       Id of member to load
      *      @return	void
      */
-    function info($id)
+    public function info($id)
     {
         $sql = 'SELECT a.rowid, a.datec as datec,';
         $sql.= ' a.datevalid as datev,';
@@ -1850,28 +1712,23 @@ class Adherent extends CommonObject
 
         dol_syslog(get_class($this)."::info sql=".$sql, LOG_DEBUG);
         $result=$this->db->query($sql);
-        if ($result)
-        {
-            if ($this->db->num_rows($result))
-            {
+        if ($result) {
+            if ($this->db->num_rows($result)) {
                 $obj = $this->db->fetch_object($result);
                 $this->id = $obj->rowid;
-                if ($obj->fk_user_author)
-                {
+                if ($obj->fk_user_author) {
                     $cuser = new User($this->db);
                     $cuser->fetch($obj->fk_user_author);
                     $this->user_creation   = $cuser;
                 }
 
-                if ($obj->fk_user_valid)
-                {
+                if ($obj->fk_user_valid) {
                     $vuser = new User($this->db);
                     $vuser->fetch($obj->fk_user_valid);
                     $this->user_validation = $vuser;
                 }
 
-                if ($obj->fk_user_mod)
-                {
+                if ($obj->fk_user_mod) {
                     $muser = new User($this->db);
                     $muser->fetch($obj->fk_user_mod);
                     $this->user_modification = $muser;
@@ -1884,12 +1741,9 @@ class Adherent extends CommonObject
 
             $this->db->free($result);
 
-        }
-        else
-        {
+        } else {
             dol_print_error($this->db);
         }
     }
 
 }
-?>

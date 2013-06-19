@@ -20,9 +20,7 @@
  *      \brief      Page affichage des bookmarks
  */
 
-
 require '../main.inc.php';
-
 
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
@@ -35,16 +33,13 @@ if (! $sortorder) $sortorder="DESC";
 if (! $sortfield) $sortfield="bid";
 $limit = $conf->liste_limit;
 
-
 llxHeader();
-
 
 /*
  * Actions
  */
 
-if ($_GET["action"] == 'add')
-{
+if ($_GET["action"] == 'add') {
     $bookmark=new Bookmark($db);
     $bookmark->fk_user=$user->id;
     $bookmark->url=$user->id;
@@ -53,18 +48,14 @@ if ($_GET["action"] == 'add')
     $bookmark->favicon='xxx';
 
     $res=$bookmark->create();
-    if ($res > 0)
-    {
+    if ($res > 0) {
         header("Location: ".$_SERVER["PHP_SELF"]);
-    }
-    else
-    {
+    } else {
         $mesg='<div class="error">'.$bookmark->error.'</div>';
     }
 }
 
-if ($_GET["action"] == 'delete')
-{
+if ($_GET["action"] == 'delete') {
     $bookmark=new Bookmark($db);
     $bookmark->id=$_GET["bid"];
     $bookmark->url=$user->id;
@@ -73,17 +64,12 @@ if ($_GET["action"] == 'delete')
     $bookmark->favicon='xxx';
 
     $res=$bookmark->remove();
-    if ($res > 0)
-    {
+    if ($res > 0) {
         header("Location: ".$_SERVER["PHP_SELF"]);
-    }
-    else
-    {
+    } else {
         $mesg='<div class="error">'.$bookmark->error.'</div>';
     }
 }
-
-
 
 print_fiche_titre($langs->trans("Bookmarks"));
 
@@ -95,8 +81,7 @@ $sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit($limit, $offset);
 
 $resql=$db->query($sql);
-if ($resql)
-{
+if ($resql) {
   $num = $db->num_rows($resql);
   $i = 0;
 
@@ -117,8 +102,7 @@ if ($resql)
   print "</tr>\n";
 
   $var=True;
-  while ($i < $num)
-    {
+  while ($i < $num) {
       $obj = $db->fetch_object($resql);
 
       $var=!$var;
@@ -136,14 +120,10 @@ if ($resql)
     }
   print "</table>";
   $db->free($resql);
-}
-else
-{
+} else {
   dol_print_error($db);
 }
-
 
 $db->close();
 
 llxFooter();
-?>

@@ -22,21 +22,20 @@
  *  \brief      Trigger file for workflows
  */
 
-
 /**
  *  Class of triggers for workflow module
  */
 
 class InterfaceWorkflowManager
 {
-    var $db;
+    public $db;
 
     /**
      *   Constructor
      *
      *   @param		DoliDB		$db      Database handler
      */
-    function __construct($db)
+    public function __construct($db)
     {
         $this->db = $db;
 
@@ -47,13 +46,12 @@ class InterfaceWorkflowManager
         $this->picto = 'technic';
     }
 
-
     /**
      *   Return name of trigger file
      *
      *   @return     string      Name of trigger file
      */
-    function getName()
+    public function getName()
     {
         return $this->name;
     }
@@ -63,7 +61,7 @@ class InterfaceWorkflowManager
      *
      *   @return     string      Description of trigger file
      */
-    function getDesc()
+    public function getDesc()
     {
         return $this->description;
     }
@@ -73,7 +71,7 @@ class InterfaceWorkflowManager
      *
      *   @return     string      Version of trigger file
      */
-    function getVersion()
+    public function getVersion()
     {
         global $langs;
         $langs->load("admin");
@@ -96,79 +94,70 @@ class InterfaceWorkflowManager
      *      @param  conf		$conf       Object conf
      *      @return int         			<0 if KO, 0 if no triggered ran, >0 if OK
      */
-	function run_trigger($action,$object,$user,$langs,$conf)
+    public function run_trigger($action,$object,$user,$langs,$conf)
     {
         if (empty($conf->workflow->enabled)) return 0;     // Module not active, we do nothing
 
         // Proposals to order
-        if ($action == 'PROPAL_CLOSE_SIGNED')
-        {
-        	dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
-            if (! empty($conf->commande->enabled) && ! empty($conf->global->WORKFLOW_PROPAL_AUTOCREATE_ORDER))
-            {
+        if ($action == 'PROPAL_CLOSE_SIGNED') {
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            if (! empty($conf->commande->enabled) && ! empty($conf->global->WORKFLOW_PROPAL_AUTOCREATE_ORDER)) {
                 include_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
                 $newobject = new Commande($this->db);
 
                 $ret=$newobject->createFromProposal($object);
                 if ($ret < 0) { $this->error=$newobject->error; $this->errors[]=$newobject->error; }
+
                 return $ret;
             }
         }
 
         // Order to invoice
-        if ($action == 'ORDER_CLOSE')
-        {
+        if ($action == 'ORDER_CLOSE') {
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
-            if (! empty($conf->facture->enabled) && ! empty($conf->global->WORKFLOW_ORDER_AUTOCREATE_INVOICE))
-            {
+            if (! empty($conf->facture->enabled) && ! empty($conf->global->WORKFLOW_ORDER_AUTOCREATE_INVOICE)) {
                 include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
                 $newobject = new Facture($this->db);
 
                 $ret=$newobject->createFromOrder($object);
                 if ($ret < 0) { $this->error=$newobject->error; $this->errors[]=$newobject->error; }
+
                 return $ret;
             }
         }
 
         // Order classify billed proposal
-        if ($action == 'ORDER_CLASSIFY_BILLED')
-        {
-        	dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
-        	if (! empty($conf->propal->enabled) && ! empty($conf->global->WORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL))
-        	{
-        		$object->fetchObjectLinked('','propal',$object->id,$object->element);
-				if (! empty($object->linkedObjects))
-				{
-					foreach($object->linkedObjects['propal'] as $element)
-					{
-						$ret=$element->classifyBilled();
-					}
-				}
-        		return $ret;
-        	}
+        if ($action == 'ORDER_CLASSIFY_BILLED') {
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            if (! empty($conf->propal->enabled) && ! empty($conf->global->WORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL)) {
+                $object->fetchObjectLinked('','propal',$object->id,$object->element);
+                if (! empty($object->linkedObjects)) {
+                    foreach ($object->linkedObjects['propal'] as $element) {
+                        $ret=$element->classifyBilled();
+                    }
+                }
+
+                return $ret;
+            }
         }
 
         // Invoice classify billed order
-        if ($action == 'BILL_PAYED')
-        {
-        	dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+        if ($action == 'BILL_PAYED') {
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
-        	if (! empty($conf->commande->enabled) && ! empty($conf->global->WORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER))
-        	{
-        		$object->fetchObjectLinked('','commande',$object->id,$object->element);
-        		if (! empty($object->linkedObjects))
-        		{
-        			foreach($object->linkedObjects['commande'] as $element)
-        			{
-        				$ret=$element->classifyBilled();
-        			}
-        		}
-        		return $ret;
-        	}
+            if (! empty($conf->commande->enabled) && ! empty($conf->global->WORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER)) {
+                $object->fetchObjectLinked('','commande',$object->id,$object->element);
+                if (! empty($object->linkedObjects)) {
+                    foreach ($object->linkedObjects['commande'] as $element) {
+                        $ret=$element->classifyBilled();
+                    }
+                }
+
+                return $ret;
+            }
         }
 
         return 0;
     }
 
 }
-?>

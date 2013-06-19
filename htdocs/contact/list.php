@@ -66,24 +66,18 @@ $offset = $limit * $page;
 
 $langs->load("companies");
 $titre = (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("ListOfContacts") : $langs->trans("ListOfContactsAddresses"));
-if ($type == "c" || $type=="p")
-{
-	$titre.='  ('.$langs->trans("ThirdPartyCustomers").')';
-	$urlfiche="fiche.php";
-}
-else if ($type == "f")
-{
-	$titre.=' ('.$langs->trans("ThirdPartySuppliers").')';
-	$urlfiche="fiche.php";
-}
-else if ($type == "o")
-{
-	$titre.=' ('.$langs->trans("OthersNotLinkedToThirdParty").')';
-	$urlfiche="";
+if ($type == "c" || $type=="p") {
+    $titre.='  ('.$langs->trans("ThirdPartyCustomers").')';
+    $urlfiche="fiche.php";
+} elseif ($type == "f") {
+    $titre.=' ('.$langs->trans("ThirdPartySuppliers").')';
+    $urlfiche="fiche.php";
+} elseif ($type == "o") {
+    $titre.=' ('.$langs->trans("OthersNotLinkedToThirdParty").')';
+    $urlfiche="";
 }
 
-if (GETPOST('button_removefilter'))
-{
+if (GETPOST('button_removefilter')) {
     $search_lastname="";
     $search_firstname="";
     $search_societe="";
@@ -98,8 +92,6 @@ if (GETPOST('button_removefilter'))
     $sall="";
 }
 if ($search_priv < 0) $search_priv='';
-
-
 
 /*
  * View
@@ -119,125 +111,96 @@ $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_pays as cp ON cp.rowid = p.fk_pays";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = p.fk_soc";
 if (!$user->rights->societe->client->voir && !$socid) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
 $sql.= ' WHERE p.entity IN ('.getEntity('societe', 1).')';
-if (!$user->rights->societe->client->voir && !$socid) //restriction
-{
-	$sql .= " AND (sc.fk_user = " .$user->id." OR p.fk_soc IS NULL)";
+if (!$user->rights->societe->client->voir && !$socid) { //restriction
+    $sql .= " AND (sc.fk_user = " .$user->id." OR p.fk_soc IS NULL)";
 }
-if (! empty($userid))    // propre au commercial
-{
+if (! empty($userid)) {    // propre au commercial
     $sql .= " AND p.fk_user_creat=".$db->escape($userid);
 }
 
 // Filter to exclude not owned private contacts
-if ($search_priv != '0' && $search_priv != '1')
-{
-	$sql .= " AND (p.priv='0' OR (p.priv='1' AND p.fk_user_creat=".$user->id."))";
-}
-else
-{
-	if ($search_priv == '0') $sql .= " AND p.priv='0'";
-	if ($search_priv == '1') $sql .= " AND (p.priv='1' AND p.fk_user_creat=".$user->id.")";
+if ($search_priv != '0' && $search_priv != '1') {
+    $sql .= " AND (p.priv='0' OR (p.priv='1' AND p.fk_user_creat=".$user->id."))";
+} else {
+    if ($search_priv == '0') $sql .= " AND p.priv='0'";
+    if ($search_priv == '1') $sql .= " AND (p.priv='1' AND p.fk_user_creat=".$user->id.")";
 }
 
-if ($search_lastname)        // filter on lastname
-{
+if ($search_lastname) {        // filter on lastname
     $sql .= " AND p.lastname LIKE '%".$db->escape($search_lastname)."%'";
 }
-if ($search_firstname)     // filter on firstname
-{
+if ($search_firstname) {     // filter on firstname
     $sql .= " AND p.firstname LIKE '%".$db->escape($search_firstname)."%'";
 }
-if ($search_societe)    // filtre sur la societe
-{
+if ($search_societe) {    // filtre sur la societe
     $sql .= " AND s.nom LIKE '%".$db->escape($search_societe)."%'";
 }
-if (strlen($search_poste))    // filtre sur la societe
-{
+if (strlen($search_poste)) {    // filtre sur la societe
     $sql .= " AND p.poste LIKE '%".$db->escape($search_poste)."%'";
 }
-if (strlen($search_phone))
-{
+if (strlen($search_phone)) {
     $sql .= " AND (p.phone LIKE '%".$db->escape($search_phone)."%' OR p.phone_perso LIKE '%".$db->escape($search_phone)."%' OR p.phone_mobile LIKE '%".$db->escape($search_phone)."%')";
 }
-if (strlen($search_phoneper))
-{
+if (strlen($search_phoneper)) {
     $sql .= " AND p.phone LIKE '%".$db->escape($search_phoneper)."%'";
 }
-if (strlen($search_phonepro))
-{
+if (strlen($search_phonepro)) {
     $sql .= " AND p.phone_perso LIKE '%".$db->escape($search_phonepro)."%'";
 }
-if (strlen($search_phonemob))
-{
+if (strlen($search_phonemob)) {
     $sql .= " AND p.phone_mobile LIKE '%".$db->escape($search_phonemob)."%'";
 }
-if (strlen($search_fax))
-{
+if (strlen($search_fax)) {
     $sql .= " AND p.fax LIKE '%".$db->escape($search_fax)."%'";
 }
-if (strlen($search_email))      // filtre sur l'email
-{
+if (strlen($search_email)) {      // filtre sur l'email
     $sql .= " AND p.email LIKE '%".$db->escape($search_email)."%'";
 }
-if ($type == "o")        // filtre sur type
-{
+if ($type == "o") {        // filtre sur type
     $sql .= " AND p.fk_soc IS NULL";
-}
-else if ($type == "f")        // filtre sur type
-{
+} elseif ($type == "f") {        // filtre sur type
     $sql .= " AND s.fournisseur = 1";
-}
-else if ($type == "c")        // filtre sur type
-{
+} elseif ($type == "c") {        // filtre sur type
     $sql .= " AND s.client IN (1, 3)";
-}
-else if ($type == "p")        // filtre sur type
-{
+} elseif ($type == "p") {        // filtre sur type
     $sql .= " AND s.client IN (2, 3)";
 }
-if ($sall)
-{
+if ($sall) {
     // For natural search
     $scrit = explode(' ', $sall);
     foreach ($scrit as $crit) {
         $sql .= " AND (p.lastname LIKE '%".$db->escape($crit)."%' OR p.firstname LIKE '%".$db->escape($crit)."%' OR p.email LIKE '%".$db->escape($crit)."%')";
     }
 }
-if (! empty($socid))
-{
+if (! empty($socid)) {
     $sql .= " AND s.rowid = ".$socid;
 }
 // Count total nb of records
 $nbtotalofrecords = 0;
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
-{
+if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
     $result = $db->query($sql);
     $nbtotalofrecords = $db->num_rows($result);
 }
 // Add order and limit
-if($view == "recent")
-{
+if ($view == "recent") {
     $sql.= " ORDER BY p.datec DESC ";
-	$sql.= " ".$db->plimit($conf->liste_limit+1, $offset);
-}
-else
-{
+    $sql.= " ".$db->plimit($conf->liste_limit+1, $offset);
+} else {
     $sql.= " ORDER BY $sortfield $sortorder ";
-	$sql.= " ".$db->plimit($conf->liste_limit+1, $offset);
+    $sql.= " ".$db->plimit($conf->liste_limit+1, $offset);
 }
 
 //print $sql;
 dol_syslog("contact/list.php sql=".$sql);
 $result = $db->query($sql);
-if ($result)
-{
-	$contactstatic=new Contact($db);
+if ($result) {
+    $contactstatic=new Contact($db);
 
     $param ='&begin='.urlencode($begin).'&view='.urlencode($view).'&userid='.urlencode($userid).'&contactname='.urlencode($sall);
     $param.='&type='.urlencode($type).'&view='.urlencode($view).'&search_lastname='.urlencode($search_lastname).'&search_firstname='.urlencode($search_firstname).'&search_societe='.urlencode($search_societe).'&search_email='.urlencode($search_email);
-	if ($search_priv == '0' || $search_priv == '1') $param.="&search_priv=".urlencode($search_priv);
+    if ($search_priv == '0' || $search_priv == '1') $param.="&search_priv=".urlencode($search_priv);
 
-	$num = $db->num_rows($result);
+    $num = $db->num_rows($result);
     $i = 0;
 
     print_barre_liste($titre, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords);
@@ -248,8 +211,7 @@ if ($result)
     print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
     print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 
-    if ($sall)
-    {
+    if ($sall) {
         print $langs->trans("Filter")." (".$langs->trans("Lastname").", ".$langs->trans("Firstname")." ".$langs->trans("or")." ".$langs->trans("EMail")."): ".$sall;
     }
 
@@ -281,8 +243,7 @@ if ($result)
     print '<td class="liste_titre">';
     print '<input class="flat" type="text" name="search_poste" size="9" value="'.$search_poste.'">';
     print '</td>';
-    if (empty($conf->global->SOCIETE_DISABLE_CONTACTS))
-    {
+    if (empty($conf->global->SOCIETE_DISABLE_CONTACTS)) {
         print '<td class="liste_titre">';
         print '<input class="flat" type="text" name="search_societe" size="9" value="'.$search_societe.'">';
         print '</td>';
@@ -299,11 +260,11 @@ if ($result)
     print '<td class="liste_titre">';
     print '<input class="flat" type="text" name="search_email" size="8" value="'.$search_email.'">';
     print '</td>';
-	print '<td class="liste_titre">&nbsp;</td>';
-	print '<td class="liste_titre" align="center">';
-	$selectarray=array('0'=>$langs->trans("ContactPublic"),'1'=>$langs->trans("ContactPrivate"));
-	print $form->selectarray('search_priv',$selectarray,$search_priv,1);
-	print '</td>';
+    print '<td class="liste_titre">&nbsp;</td>';
+    print '<td class="liste_titre" align="center">';
+    $selectarray=array('0'=>$langs->trans("ContactPublic"),'1'=>$langs->trans("ContactPrivate"));
+    print $form->selectarray('search_priv',$selectarray,$search_priv,1);
+    print '</td>';
     print '<td class="liste_titre" align="right">';
     print '<input type="image" value="button_search" class="liste_titre" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" name="button_search" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
     print '&nbsp; ';
@@ -312,39 +273,34 @@ if ($result)
     print '</tr>';
 
     $var=True;
-    while ($i < min($num,$limit))
-    {
+    while ($i < min($num,$limit)) {
         $obj = $db->fetch_object($result);
 
         $var=!$var;
 
         print "<tr $bc[$var]>";
 
-		// Name
-		print '<td valign="middle">';
-		$contactstatic->lastname=$obj->lastname;
-		$contactstatic->firstname='';
-		$contactstatic->id=$obj->cidp;
-		print $contactstatic->getNomUrl(1,'',20);
-		print '</td>';
+        // Name
+        print '<td valign="middle">';
+        $contactstatic->lastname=$obj->lastname;
+        $contactstatic->firstname='';
+        $contactstatic->id=$obj->cidp;
+        print $contactstatic->getNomUrl(1,'',20);
+        print '</td>';
 
-		// Firstname
+        // Firstname
         print '<td>'.dol_trunc($obj->firstname,20).'</td>';
 
-		// Function
+        // Function
         print '<td>'.dol_trunc($obj->poste,20).'</td>';
 
         // Company
-        if (empty($conf->global->SOCIETE_DISABLE_CONTACTS))
-        {
-    		print '<td>';
-            if ($obj->socid)
-            {
+        if (empty($conf->global->SOCIETE_DISABLE_CONTACTS)) {
+            print '<td>';
+            if ($obj->socid) {
                 print '<a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->socid.'">';
                 print img_object($langs->trans("ShowCompany"),"company").' '.dol_trunc($obj->name,20).'</a>';
-            }
-            else
-            {
+            } else {
                 print '&nbsp;';
             }
             print '</td>';
@@ -359,13 +315,13 @@ if ($result)
         // EMail
         print '<td>'.dol_print_email($obj->email,$obj->cidp,$obj->socid,'AC_EMAIL',18).'</td>';
 
-		// Date
-		print '<td align="center">'.dol_print_date($db->jdate($obj->tms),"day").'</td>';
+        // Date
+        print '<td align="center">'.dol_print_date($db->jdate($obj->tms),"day").'</td>';
 
-		// Private/Public
-		print '<td align="center">'.$contactstatic->LibPubPriv($obj->priv).'</td>';
+        // Private/Public
+        print '<td align="center">'.$contactstatic->LibPubPriv($obj->priv).'</td>';
 
-		// Links Add action and Export vcard
+        // Links Add action and Export vcard
         print '<td align="right">';
         print '<a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&amp;backtopage=1&amp;contactid='.$obj->cidp.'&amp;socid='.$obj->socid.'">'.img_object($langs->trans("AddAction"),"action").'</a>';
         print ' &nbsp; ';
@@ -384,15 +340,11 @@ if ($result)
     if ($num > $limit) print_barre_liste('', $page, $_SERVER["PHP_SELF"], '&amp;begin='.$begin.'&amp;view='.$view.'&amp;userid='.$userid, $sortfield, $sortorder, '', $num, $nbtotalofrecords, '');
 
     $db->free($result);
-}
-else
-{
+} else {
     dol_print_error($db);
 }
 
 print '<br>';
 
-
 llxFooter();
 $db->close();
-?>

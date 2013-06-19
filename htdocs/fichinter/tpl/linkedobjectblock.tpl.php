@@ -31,20 +31,19 @@ print_titre($langs->trans('RelatedInterventions'));
 ?>
 <table class="noborder allwidth">
 <tr class="liste_titre">
-	<td><?php echo $langs->trans("Ref"); ?></td>
-	<td align="center"><?php echo $langs->trans("Date"); ?></td>
-	<td align="right"><?php echo $langs->trans("Status"); ?></td>
+    <td><?php echo $langs->trans("Ref"); ?></td>
+    <td align="center"><?php echo $langs->trans("Date"); ?></td>
+    <td align="right"><?php echo $langs->trans("Status"); ?></td>
 </tr>
 <?php
 $var=true;
-foreach($linkedObjectBlock as $object)
-{
-	$var=!$var;
+foreach ($linkedObjectBlock as $object) {
+    $var=!$var;
 ?>
 <tr <?php echo $GLOBALS['bc'][$var]; ?> ><td>
-	<a href="<?php echo DOL_URL_ROOT.'/fichinter/fiche.php?id='.$object->id ?>"><?php echo img_object($langs->trans("ShowIntervention"),"intervention").' '.$object->ref; ?></a></td>
-	<td align="center"><?php echo dol_print_date($object->datev,'day'); ?></td>
-	<td align="right"><?php echo $object->getLibStatut(3); ?></td>
+    <a href="<?php echo DOL_URL_ROOT.'/fichinter/fiche.php?id='.$object->id ?>"><?php echo img_object($langs->trans("ShowIntervention"),"intervention").' '.$object->ref; ?></a></td>
+    <td align="center"><?php echo dol_print_date($object->datev,'day'); ?></td>
+    <td align="right"><?php echo $object->getLibStatut(3); ?></td>
 </tr>
 <?php
 }

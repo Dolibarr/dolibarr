@@ -30,14 +30,11 @@ include_once DOL_DOCUMENT_ROOT.'/boutique/client/class/boutiqueclient.class.php'
 
 $id=GETPOST('id', 'int');
 
-
 /*
  * Actions
  */
 
 // None
-
-
 
 /*
  * View
@@ -45,72 +42,60 @@ $id=GETPOST('id', 'int');
 
 llxHeader();
 
-if ($id > 0)
-{
-	$client = new BoutiqueClient($dbosc);
-	$result = $client->fetch($id);
-	if ( $result )
-	{
-		print '<div class="titre">'.$langs->trans("CustomerCard").': '.$client->name.'</div><br>';
+if ($id > 0) {
+    $client = new BoutiqueClient($dbosc);
+    $result = $client->fetch($id);
+    if ($result) {
+        print '<div class="titre">'.$langs->trans("CustomerCard").': '.$client->name.'</div><br>';
 
-		print '<table border="1" width="100%" cellspacing="0" cellpadding="4">';
-		print "<tr>";
-		print '<td width="20%">Nom</td><td width="80%">'.$client->name.'</td></tr>';
-		print "</table>";
+        print '<table border="1" width="100%" cellspacing="0" cellpadding="4">';
+        print "<tr>";
+        print '<td width="20%">Nom</td><td width="80%">'.$client->name.'</td></tr>';
+        print "</table>";
 
+        /*
+         * Commandes
+         */
+        $sql = "SELECT o.orders_id, o.customers_id, date_purchased, t.value as total";
+        $sql .= " FROM ".$conf->global->OSC_DB_NAME.".".$conf->global->OSC_DB_TABLE_PREFIX."orders as o, ".$conf->global->OSC_DB_NAME.".".$conf->global->OSC_DB_TABLE_PREFIX."orders_total as t";
+        $sql .= " WHERE o.customers_id = " . $client->id;
+        $sql .= " AND o.orders_id = t.orders_id AND t.class = 'ot_total'";
+        //echo $sql;
+        $resql=$dbosc->query($sql);
+        if ($resql) {
+            $num = $dbosc->num_rows($resql);
+            $i = 0;
+            print '<table class="noborder" width="50%">';
+            print "<tr class=\"liste_titre\"><td>Commandes</td>";
+            print "</tr>\n";
+            $var=True;
+            while ($i < $num) {
+                $objp = $dbosc->fetch_object($resql);
+                $var=!$var;
+                print "<tr $bc[$var]>";
 
-		/*
-		 * Commandes
-		 */
-		$sql = "SELECT o.orders_id, o.customers_id, date_purchased, t.value as total";
-		$sql .= " FROM ".$conf->global->OSC_DB_NAME.".".$conf->global->OSC_DB_TABLE_PREFIX."orders as o, ".$conf->global->OSC_DB_NAME.".".$conf->global->OSC_DB_TABLE_PREFIX."orders_total as t";
-		$sql .= " WHERE o.customers_id = " . $client->id;
-		$sql .= " AND o.orders_id = t.orders_id AND t.class = 'ot_total'";
-		//echo $sql;
-		$resql=$dbosc->query($sql);
-		if ($resql)
-		{
-			$num = $dbosc->num_rows($resql);
-			$i = 0;
-			print '<table class="noborder" width="50%">';
-			print "<tr class=\"liste_titre\"><td>Commandes</td>";
-			print "</tr>\n";
-			$var=True;
-			while ($i < $num)
-			{
-				$objp = $dbosc->fetch_object($resql);
-				$var=!$var;
-				print "<tr $bc[$var]>";
+                print '<td><a href="'.DOL_URL_ROOT.'/boutique/commande/fiche.php?id='.$objp->orders_id.'"><img src="/theme/'.$conf->theme.'/img/filenew.png" border="0" alt="Fiche">&nbsp;';
 
-				print '<td><a href="'.DOL_URL_ROOT.'/boutique/commande/fiche.php?id='.$objp->orders_id.'"><img src="/theme/'.$conf->theme.'/img/filenew.png" border="0" alt="Fiche">&nbsp;';
+                print dol_print_date($dbosc->jdate($objp->date_purchased),'dayhour')."</a>\n";
+                print $objp->total . "</a></TD>\n";
+                print "</tr>\n";
+                $i++;
+            }
+            print "</table>";
+            $dbosc->free($resql);
+        } else {
+            print "<p>ERROR 1</p>\n";
+            dol_print_error($dbosc);
+        }
 
-				print dol_print_date($dbosc->jdate($objp->date_purchased),'dayhour')."</a>\n";
-				print $objp->total . "</a></TD>\n";
-				print "</tr>\n";
-				$i++;
-			}
-			print "</table>";
-			$dbosc->free($resql);
-		}
-		else
-		{
-			print "<p>ERROR 1</p>\n";
-			dol_print_error($dbosc);
-		}
-
-	}
-	else
-	{
-		print "<p>ERROR 1</p>\n";
-		dol_print_error($dbosc);
-	}
+    } else {
+        print "<p>ERROR 1</p>\n";
+        dol_print_error($dbosc);
+    }
+} else {
+    print "<p>ERROR 1</p>\n";
+    print "Error";
 }
-else
-{
-	print "<p>ERROR 1</p>\n";
-	print "Error";
-}
-
 
 /* ************************************************************************** */
 /*                                                                            */
@@ -120,8 +105,6 @@ else
 
 // Pas d'action
 
-
 $dbosc->close();
 
 llxFooter();
-?>

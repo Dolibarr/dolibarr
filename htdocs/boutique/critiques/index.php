@@ -26,7 +26,6 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/boutique/osc_master.inc.php';
 
-
 /*
  * View
  */
@@ -34,12 +33,11 @@ require_once DOL_DOCUMENT_ROOT.'/boutique/osc_master.inc.php';
 llxHeader();
 
 if ($sortfield == "") {
-	$sortfield="date_added";
+    $sortfield="date_added";
 }
 if ($sortorder == "") {
-	$sortorder="DESC";
+    $sortorder="DESC";
 }
-
 
 if ($page == -1) { $page = 0 ; }
 $limit = $conf->liste_limit;
@@ -63,31 +61,27 @@ print "</TR>\n";
 
 $resql=$dbosc->query($sql);
 if ($resql) {
-	$num = $dbosc->num_rows($resql);
-	$i = 0;
+    $num = $dbosc->num_rows($resql);
+    $i = 0;
 
-	$var=True;
-	while ($i < $num) {
-		$objp = $dbosc->fetch_object($resql);
-		$var=!$var;
-		print "<TR $bc[$var]>";
-		print "<TD>".substr($objp->products_name, 0, 30)."</TD>\n";
-		print '<TD><a href="fiche.php?id='.$objp->reviews_id.'">'.substr($objp->reviews_text, 0, 40)." ...</a></td>\n";
-		print "<td align=\"center\">$objp->reviews_rating</TD>\n";
-		print "</TR>\n";
-		$i++;
-	}
-	$dbosc->free();
-}
-else
-{
-	dol_print_error($dbosc);
+    $var=True;
+    while ($i < $num) {
+        $objp = $dbosc->fetch_object($resql);
+        $var=!$var;
+        print "<TR $bc[$var]>";
+        print "<TD>".substr($objp->products_name, 0, 30)."</TD>\n";
+        print '<TD><a href="fiche.php?id='.$objp->reviews_id.'">'.substr($objp->reviews_text, 0, 40)." ...</a></td>\n";
+        print "<td align=\"center\">$objp->reviews_rating</TD>\n";
+        print "</TR>\n";
+        $i++;
+    }
+    $dbosc->free();
+} else {
+    dol_print_error($dbosc);
 }
 
 print "</TABLE>";
 
-
 $dbosc->close();
 
 llxFooter();
-?>

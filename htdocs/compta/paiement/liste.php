@@ -51,9 +51,6 @@ $limit = $conf->liste_limit;
 if (! $sortorder) $sortorder="DESC";
 if (! $sortfield) $sortfield="p.rowid";
 
-
-
-
 /*
  * 	View
  */
@@ -62,8 +59,7 @@ llxHeader('',$langs->trans("ListPayment"));
 
 $form=new Form($db);
 
-if (GETPOST("orphelins"))
-{
+if (GETPOST("orphelins")) {
     // Paiements lies a aucune facture (pour aide au diagnostic)
     $sql = "SELECT p.rowid, p.datep as dp, p.amount,";
     $sql.= " p.statut, p.num_paiement,";
@@ -75,9 +71,7 @@ if (GETPOST("orphelins"))
     $sql.= " WHERE p.fk_paiement = c.id";
     $sql.= " AND p.entity = ".$conf->entity;
     $sql.= " AND pf.fk_facture IS NULL";
-}
-else
-{
+} else {
     $sql = "SELECT DISTINCT p.rowid, p.datep as dp, p.amount,"; // DISTINCT is to avoid duplicate when there is a link to sales representatives
     $sql.= " p.statut, p.num_paiement,";
     //$sql.= " c.libelle as paiement_type,";
@@ -91,19 +85,16 @@ else
     $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON p.rowid = pf.fk_paiement";
     $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."facture as f ON pf.fk_facture = f.rowid";
     $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON f.fk_soc = s.rowid";
-    if (!$user->rights->societe->client->voir && !$socid)
-    {
+    if (!$user->rights->societe->client->voir && !$socid) {
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
     }
     $sql.= " WHERE p.fk_paiement = c.id";
     $sql.= " AND p.entity = ".$conf->entity;
-    if (! $user->rights->societe->client->voir && ! $socid)
-    {
+    if (! $user->rights->societe->client->voir && ! $socid) {
         $sql.= " AND sc.fk_user = " .$user->id;
     }
     if ($socid > 0) $sql.= " AND f.fk_soc = ".$socid;
-    if ($userid)
-    {
+    if ($userid) {
         if ($userid == -1) $sql.= " AND f.fk_user_author IS NULL";
         else  $sql.= " AND f.fk_user_author = ".$userid;
     }
@@ -120,8 +111,7 @@ $sql.= $db->plimit($limit+1, $offset);
 
 $resql = $db->query($sql);
 
-if ($resql)
-{
+if ($resql) {
     $num = $db->num_rows($resql);
     $i = 0;
 
@@ -143,8 +133,7 @@ if ($resql)
     print_liste_field_titre($langs->trans("Account"),$_SERVER["PHP_SELF"],"ba.label","",$paramlist,"",$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Amount"),$_SERVER["PHP_SELF"],"p.amount","",$paramlist,'align="right"',$sortfield,$sortorder);
     //print_liste_field_titre($langs->trans("Invoices"),"","","",$paramlist,'align="left"',$sortfield,$sortorder);
-    if (! empty($conf->global->BILL_ADD_PAYMENT_VALIDATION))
-    {
+    if (! empty($conf->global->BILL_ADD_PAYMENT_VALIDATION)) {
         print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"p.statut","",$paramlist,'align="right"',$sortfield,$sortorder);
     }
     print "</tr>\n";
@@ -168,16 +157,14 @@ if ($resql)
     print '<input class="fat" type="text" size="4" name="search_amount" value="'.$_REQUEST["search_amount"].'">';
     print '<input type="image" class="liste_titre" name="button_search" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
     print '</td>';
-    if (! empty($conf->global->BILL_ADD_PAYMENT_VALIDATION))
-    {
+    if (! empty($conf->global->BILL_ADD_PAYMENT_VALIDATION)) {
         print '<td align="right">';
         print '</td>';
     }
     print "</tr>\n";
 
     $var=true;
-    while ($i < min($num,$limit))
-    {
+    while ($i < min($num,$limit)) {
         $objp = $db->fetch_object($resql);
         $var=!$var;
         print "<tr $bc[$var]>";
@@ -192,29 +179,24 @@ if ($resql)
 
         // Company
         print '<td>';
-        if ($objp->socid)
-        {
+        if ($objp->socid) {
             $companystatic->id=$objp->socid;
             $companystatic->nom=$objp->nom;
             print $companystatic->getNomUrl(1,'',24);
-        }
-        else print '&nbsp;';
+        } else print '&nbsp;';
         print '</td>';
 
         print '<td>'.$langs->trans("PaymentTypeShort".$objp->paiement_code).' '.$objp->num_paiement.'</td>';
         print '<td>';
-        if ($objp->bid)
-        {
+        if ($objp->bid) {
             $accountstatic->id=$objp->bid;
             $accountstatic->label=$objp->label;
             print $accountstatic->getNomUrl(1);
-        }
-        else print '&nbsp;';
+        } else print '&nbsp;';
         print '</td>';
         print '<td align="right">'.price($objp->amount).'</td>';
 
-        if (! empty($conf->global->BILL_ADD_PAYMENT_VALIDATION))
-        {
+        if (! empty($conf->global->BILL_ADD_PAYMENT_VALIDATION)) {
             print '<td align="right">';
             if ($objp->statut == 0) print '<a href="fiche.php?id='.$objp->rowid.'&amp;action=valide">';
             print $paymentstatic->LibStatut($objp->statut,5);
@@ -228,13 +210,10 @@ if ($resql)
     }
     print "</table>\n";
     print "</form>\n";
-}
-else
-{
+} else {
     dol_print_error($db);
 }
 
 $db->close();
 
 llxFooter();
-?>

@@ -17,7 +17,6 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-
 /**
  *      \file       htdocs/admin/bank.php
  *		\ingroup    bank
@@ -39,41 +38,32 @@ if (!$user->admin)
 
 $action = GETPOST('action','alpha');
 
-
 /*
  * Actions
  */
 
-if ($action == 'set_BANK_CHEQUERECEIPT_FREE_TEXT')
-{
-	$freetext = GETPOST('BANK_CHEQUERECEIPT_FREE_TEXT');	// No alpha here, we want exact string
+if ($action == 'set_BANK_CHEQUERECEIPT_FREE_TEXT') {
+    $freetext = GETPOST('BANK_CHEQUERECEIPT_FREE_TEXT');	// No alpha here, we want exact string
 
     $res = dolibarr_set_const($db, "BANK_CHEQUERECEIPT_FREE_TEXT",$freetext,'chaine',0,'',$conf->entity);
 
-	if (! $res > 0) $error++;
+    if (! $res > 0) $error++;
 
- 	if (! $error)
-    {
+     if (! $error) {
         $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
-    }
-    else
-    {
+    } else {
         $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
     }
 }
 
 //Order display of bank account
-if ($action == 'setbankorder')
-{
-	if (dolibarr_set_const($db, "BANK_SHOW_ORDER_OPTION",GETPOST('value','alpha'),'chaine',0,'',$conf->entity) > 0)
-	{
-		header("Location: ".$_SERVER["PHP_SELF"]);
-		exit;
-	}
-	else
-	{
-		dol_print_error($db);
-	}
+if ($action == 'setbankorder') {
+    if (dolibarr_set_const($db, "BANK_SHOW_ORDER_OPTION",GETPOST('value','alpha'),'chaine',0,'',$conf->entity) > 0) {
+        header("Location: ".$_SERVER["PHP_SELF"]);
+        exit;
+    } else {
+        dol_print_error($db);
+    }
 }
 
 /*
@@ -133,7 +123,6 @@ print "</td></tr>\n";
 print '</form>';
 */
 
-
 //Show bank account order
 print_titre($langs->trans("BankOrderShow"));
 
@@ -157,38 +146,33 @@ $var = true;
 $i=0;
 
 $nbofbank=count($bankorder);
-while ($i < $nbofbank)
-{
-	$var = !$var;
+while ($i < $nbofbank) {
+    $var = !$var;
 
-	print '<tr '.$bc[$var].'>';
-	print '<td>'.$bankorder[$i][0]."</td><td>\n";
-	print $bankorder[$i][1];
-	print '</td>';
-	print '<td class="nowrap">';
-	$tmparray=explode(' ',$bankorder[$i][2]);
-	foreach($tmparray as $key => $val)
-	{
-	    if ($key > 0) print ', ';
-	    print $langs->trans($val);
-	}
-	print "</td>\n";
+    print '<tr '.$bc[$var].'>';
+    print '<td>'.$bankorder[$i][0]."</td><td>\n";
+    print $bankorder[$i][1];
+    print '</td>';
+    print '<td class="nowrap">';
+    $tmparray=explode(' ',$bankorder[$i][2]);
+    foreach ($tmparray as $key => $val) {
+        if ($key > 0) print ', ';
+        print $langs->trans($val);
+    }
+    print "</td>\n";
 
-	if ($conf->global->BANK_SHOW_ORDER_OPTION == $i)
-	{
-		print '<td align="center">';
-		print img_picto($langs->trans("Activated"),'on');
-		print '</td>';
-	}
-	else
-	{
-		print '<td align="center"><a href="'.$_SERVER['PHP_SELF'].'?action=setbankorder&amp;value='.$i.'">';
-		print img_picto($langs->trans("Disabled"),'off');
-		print '</a></td>';
-	}
-	print '<td>&nbsp;</td>';
-	print '</tr>'."\n";
-	$i++;
+    if ($conf->global->BANK_SHOW_ORDER_OPTION == $i) {
+        print '<td align="center">';
+        print img_picto($langs->trans("Activated"),'on');
+        print '</td>';
+    } else {
+        print '<td align="center"><a href="'.$_SERVER['PHP_SELF'].'?action=setbankorder&amp;value='.$i.'">';
+        print img_picto($langs->trans("Disabled"),'off');
+        print '</a></td>';
+    }
+    print '<td>&nbsp;</td>';
+    print '</tr>'."\n";
+    $i++;
 }
 
 print '</table>'."\n";
@@ -198,4 +182,3 @@ dol_htmloutput_mesg($mesg);
 $db->close();
 
 llxFooter();
-?>

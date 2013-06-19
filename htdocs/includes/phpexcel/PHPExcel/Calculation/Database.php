@@ -25,16 +25,14 @@
  * @version		1.7.6, 2011-02-27
  */
 
-
 /** PHPExcel root directory */
 if (!defined('PHPEXCEL_ROOT')) {
-	/**
-	 * @ignore
-	 */
-	define('PHPEXCEL_ROOT', dirname(__FILE__) . '/../../');
-	require(PHPEXCEL_ROOT . 'PHPExcel/Autoloader.php');
+    /**
+     * @ignore
+     */
+    define('PHPEXCEL_ROOT', dirname(__FILE__) . '/../../');
+    require(PHPEXCEL_ROOT . 'PHPExcel/Autoloader.php');
 }
-
 
 /**
  * PHPExcel_Calculation_Database
@@ -43,342 +41,355 @@ if (!defined('PHPEXCEL_ROOT')) {
  * @package		PHPExcel_Calculation
  * @copyright	Copyright (c) 2006 - 2011 PHPExcel (http://www.codeplex.com/PHPExcel)
  */
-class PHPExcel_Calculation_Database {
+class PHPExcel_Calculation_Database
+{
+    private static function __fieldExtract($database,$field)
+    {
+        $field = strtoupper(PHPExcel_Calculation_Functions::flattenSingleValue($field));
+        $fieldNames = array_map('strtoupper',array_shift($database));
 
+        if (is_numeric($field)) {
+            $keys = array_keys($fieldNames);
 
-	private static function __fieldExtract($database,$field) {
-		$field = strtoupper(PHPExcel_Calculation_Functions::flattenSingleValue($field));
-		$fieldNames = array_map('strtoupper',array_shift($database));
+            return $keys[$field-1];
+        }
+        $key = array_search($field,$fieldNames);
 
-		if (is_numeric($field)) {
-			$keys = array_keys($fieldNames);
-			return $keys[$field-1];
-		}
-		$key = array_search($field,$fieldNames);
-		return ($key) ? $key : null;
-	}
+        return ($key) ? $key : null;
+    }
 
-	private static function __filter($database,$criteria) {
-		$fieldNames = array_shift($database);
-		$criteriaNames = array_shift($criteria);
+    private static function __filter($database,$criteria)
+    {
+        $fieldNames = array_shift($database);
+        $criteriaNames = array_shift($criteria);
 
-		//	Convert the criteria into a set of AND/OR conditions with [:placeholders]
-		$testConditions = $testValues = array();
-		$testConditionsCount = 0;
-		foreach($criteriaNames as $key => $criteriaName) {
-			$testCondition = array();
-			$testConditionCount = 0;
-			foreach($criteria as $row => $criterion) {
-				if ($criterion[$key] > '') {
-					$testCondition[] = '[:'.$criteriaName.']'.PHPExcel_Calculation_Functions::_ifCondition($criterion[$key]);
-					$testConditionCount++;
-				}
-			}
-			if ($testConditionCount > 1) {
-				$testConditions[] = 'OR('.implode(',',$testCondition).')';
-				$testConditionsCount++;
-			} elseif($testConditionCount == 1) {
-				$testConditions[] = $testCondition[0];
-				$testConditionsCount++;
-			}
-		}
-		if ($testConditionsCount > 1) {
-			$testConditionSet = 'AND('.implode(',',$testConditions).')';
-		} elseif($testConditionsCount == 1) {
-			$testConditionSet = $testConditions[0];
-		}
+        //	Convert the criteria into a set of AND/OR conditions with [:placeholders]
+        $testConditions = $testValues = array();
+        $testConditionsCount = 0;
+        foreach ($criteriaNames as $key => $criteriaName) {
+            $testCondition = array();
+            $testConditionCount = 0;
+            foreach ($criteria as $row => $criterion) {
+                if ($criterion[$key] > '') {
+                    $testCondition[] = '[:'.$criteriaName.']'.PHPExcel_Calculation_Functions::_ifCondition($criterion[$key]);
+                    $testConditionCount++;
+                }
+            }
+            if ($testConditionCount > 1) {
+                $testConditions[] = 'OR('.implode(',',$testCondition).')';
+                $testConditionsCount++;
+            } elseif ($testConditionCount == 1) {
+                $testConditions[] = $testCondition[0];
+                $testConditionsCount++;
+            }
+        }
+        if ($testConditionsCount > 1) {
+            $testConditionSet = 'AND('.implode(',',$testConditions).')';
+        } elseif ($testConditionsCount == 1) {
+            $testConditionSet = $testConditions[0];
+        }
 
-		//	Loop through each row of the database
-		foreach($database as $dataRow => $dataValues) {
-			//	Substitute actual values from the database row for our [:placeholders]
-			$testConditionList = $testConditionSet;
-			foreach($criteriaNames as $key => $criteriaName) {
-				$k = array_search($criteriaName,$fieldNames);
-				if (isset($dataValues[$k])) {
-					$dataValue = $dataValues[$k];
-					$dataValue = (is_string($dataValue)) ? PHPExcel_Calculation::_wrapResult(strtoupper($dataValue)) : $dataValue;
-					$testConditionList = str_replace('[:'.$criteriaName.']',$dataValue,$testConditionList);
-				}
-			}
-			//	evaluate the criteria against the row data
-			$result = PHPExcel_Calculation::getInstance()->_calculateFormulaValue('='.$testConditionList);
-			//	If the row failed to meet the criteria, remove it from the database
-			if (!$result) {
-				unset($database[$dataRow]);
-			}
-		}
+        //	Loop through each row of the database
+        foreach ($database as $dataRow => $dataValues) {
+            //	Substitute actual values from the database row for our [:placeholders]
+            $testConditionList = $testConditionSet;
+            foreach ($criteriaNames as $key => $criteriaName) {
+                $k = array_search($criteriaName,$fieldNames);
+                if (isset($dataValues[$k])) {
+                    $dataValue = $dataValues[$k];
+                    $dataValue = (is_string($dataValue)) ? PHPExcel_Calculation::_wrapResult(strtoupper($dataValue)) : $dataValue;
+                    $testConditionList = str_replace('[:'.$criteriaName.']',$dataValue,$testConditionList);
+                }
+            }
+            //	evaluate the criteria against the row data
+            $result = PHPExcel_Calculation::getInstance()->_calculateFormulaValue('='.$testConditionList);
+            //	If the row failed to meet the criteria, remove it from the database
+            if (!$result) {
+                unset($database[$dataRow]);
+            }
+        }
 
-		return $database;
-	}
+        return $database;
+    }
 
+    /**
+     *	DAVERAGE
+     *
+     */
+    public static function DAVERAGE($database,$field,$criteria)
+    {
+        $field = self::__fieldExtract($database,$field);
+        if (is_null($field)) {
+            return NULL;
+        }
 
-	/**
-	 *	DAVERAGE
-	 *
-	 */
-	public static function DAVERAGE($database,$field,$criteria) {
-		$field = self::__fieldExtract($database,$field);
-		if (is_null($field)) {
-			return NULL;
-		}
+        //	reduce the database to a set of rows that match all the criteria
+        $database = self::__filter($database,$criteria);
+        //	extract an array of values for the requested column
+        $colData = array();
+        foreach ($database as $row) {
+            $colData[] = $row[$field];
+        }
 
-		//	reduce the database to a set of rows that match all the criteria
-		$database = self::__filter($database,$criteria);
-		//	extract an array of values for the requested column
-		$colData = array();
-		foreach($database as $row) {
-			$colData[] = $row[$field];
-		}
+        // Return
+        return PHPExcel_Calculation_Statistical::AVERAGE($colData);
+    }	//	function DAVERAGE()
 
-		// Return
-		return PHPExcel_Calculation_Statistical::AVERAGE($colData);
-	}	//	function DAVERAGE()
+    /**
+     *	DCOUNT
+     *
+     */
+    public static function DCOUNT($database,$field,$criteria)
+    {
+        $field = self::__fieldExtract($database,$field);
+        if (is_null($field)) {
+            return NULL;
+        }
 
-	/**
-	 *	DCOUNT
-	 *
-	 */
-	public static function DCOUNT($database,$field,$criteria) {
-		$field = self::__fieldExtract($database,$field);
-		if (is_null($field)) {
-			return NULL;
-		}
+        //	reduce the database to a set of rows that match all the criteria
+        $database = self::__filter($database,$criteria);
+        //	extract an array of values for the requested column
+        $colData = array();
+        foreach ($database as $row) {
+            $colData[] = $row[$field];
+        }
 
-		//	reduce the database to a set of rows that match all the criteria
-		$database = self::__filter($database,$criteria);
-		//	extract an array of values for the requested column
-		$colData = array();
-		foreach($database as $row) {
-			$colData[] = $row[$field];
-		}
+        // Return
+        return PHPExcel_Calculation_Statistical::COUNT($colData);
+    }	//	function DCOUNT()
 
-		// Return
-		return PHPExcel_Calculation_Statistical::COUNT($colData);
-	}	//	function DCOUNT()
+    /**
+     *	DCOUNTA
+     *
+     */
+    public static function DCOUNTA($database,$field,$criteria)
+    {
+        $field = self::__fieldExtract($database,$field);
+        if (is_null($field)) {
+            return NULL;
+        }
 
-	/**
-	 *	DCOUNTA
-	 *
-	 */
-	public static function DCOUNTA($database,$field,$criteria) {
-		$field = self::__fieldExtract($database,$field);
-		if (is_null($field)) {
-			return NULL;
-		}
+        //	reduce the database to a set of rows that match all the criteria
+        $database = self::__filter($database,$criteria);
+        //	extract an array of values for the requested column
+        $colData = array();
+        foreach ($database as $row) {
+            $colData[] = $row[$field];
+        }
 
-		//	reduce the database to a set of rows that match all the criteria
-		$database = self::__filter($database,$criteria);
-		//	extract an array of values for the requested column
-		$colData = array();
-		foreach($database as $row) {
-			$colData[] = $row[$field];
-		}
+        // Return
+        return PHPExcel_Calculation_Statistical::COUNTA($colData);
+    }	//	function DCOUNTA()
 
-		// Return
-		return PHPExcel_Calculation_Statistical::COUNTA($colData);
-	}	//	function DCOUNTA()
+    /**
+     *	DGET
+     *
+     */
+    public static function DGET($database,$field,$criteria)
+    {
+        $field = self::__fieldExtract($database,$field);
+        if (is_null($field)) {
+            return NULL;
+        }
 
-	/**
-	 *	DGET
-	 *
-	 */
-	public static function DGET($database,$field,$criteria) {
-		$field = self::__fieldExtract($database,$field);
-		if (is_null($field)) {
-			return NULL;
-		}
+        //	reduce the database to a set of rows that match all the criteria
+        $database = self::__filter($database,$criteria);
+        //	extract an array of values for the requested column
+        $colData = array();
+        foreach ($database as $row) {
+            $colData[] = $row[$field];
+        }
 
-		//	reduce the database to a set of rows that match all the criteria
-		$database = self::__filter($database,$criteria);
-		//	extract an array of values for the requested column
-		$colData = array();
-		foreach($database as $row) {
-			$colData[] = $row[$field];
-		}
+        // Return
+        if (count($colData) > 1) {
+            return PHPExcel_Calculation_Functions::NaN();
+        }
 
-		// Return
-		if (count($colData) > 1) {
-			return PHPExcel_Calculation_Functions::NaN();
-		}
+        return $colData[0];
+    }	//	function DGET()
 
-		return $colData[0];
-	}	//	function DGET()
+    /**
+     *	DMAX
+     *
+     */
+    public static function DMAX($database,$field,$criteria)
+    {
+        $field = self::__fieldExtract($database,$field);
+        if (is_null($field)) {
+            return NULL;
+        }
 
-	/**
-	 *	DMAX
-	 *
-	 */
-	public static function DMAX($database,$field,$criteria) {
-		$field = self::__fieldExtract($database,$field);
-		if (is_null($field)) {
-			return NULL;
-		}
+        //	reduce the database to a set of rows that match all the criteria
+        $database = self::__filter($database,$criteria);
+        //	extract an array of values for the requested column
+        $colData = array();
+        foreach ($database as $row) {
+            $colData[] = $row[$field];
+        }
 
-		//	reduce the database to a set of rows that match all the criteria
-		$database = self::__filter($database,$criteria);
-		//	extract an array of values for the requested column
-		$colData = array();
-		foreach($database as $row) {
-			$colData[] = $row[$field];
-		}
+        // Return
+        return PHPExcel_Calculation_Statistical::MAX($colData);
+    }	//	function DMAX()
 
-		// Return
-		return PHPExcel_Calculation_Statistical::MAX($colData);
-	}	//	function DMAX()
+    /**
+     *	DMIN
+     *
+     */
+    public static function DMIN($database,$field,$criteria)
+    {
+        $field = self::__fieldExtract($database,$field);
+        if (is_null($field)) {
+            return NULL;
+        }
 
-	/**
-	 *	DMIN
-	 *
-	 */
-	public static function DMIN($database,$field,$criteria) {
-		$field = self::__fieldExtract($database,$field);
-		if (is_null($field)) {
-			return NULL;
-		}
+        //	reduce the database to a set of rows that match all the criteria
+        $database = self::__filter($database,$criteria);
+        //	extract an array of values for the requested column
+        $colData = array();
+        foreach ($database as $row) {
+            $colData[] = $row[$field];
+        }
 
-		//	reduce the database to a set of rows that match all the criteria
-		$database = self::__filter($database,$criteria);
-		//	extract an array of values for the requested column
-		$colData = array();
-		foreach($database as $row) {
-			$colData[] = $row[$field];
-		}
+        // Return
+        return PHPExcel_Calculation_Statistical::MIN($colData);
+    }	//	function DMIN()
 
-		// Return
-		return PHPExcel_Calculation_Statistical::MIN($colData);
-	}	//	function DMIN()
+    /**
+     *	DPRODUCT
+     *
+     */
+    public static function DPRODUCT($database,$field,$criteria)
+    {
+        $field = self::__fieldExtract($database,$field);
+        if (is_null($field)) {
+            return NULL;
+        }
 
-	/**
-	 *	DPRODUCT
-	 *
-	 */
-	public static function DPRODUCT($database,$field,$criteria) {
-		$field = self::__fieldExtract($database,$field);
-		if (is_null($field)) {
-			return NULL;
-		}
+        //	reduce the database to a set of rows that match all the criteria
+        $database = self::__filter($database,$criteria);
+        //	extract an array of values for the requested column
+        $colData = array();
+        foreach ($database as $row) {
+            $colData[] = $row[$field];
+        }
 
-		//	reduce the database to a set of rows that match all the criteria
-		$database = self::__filter($database,$criteria);
-		//	extract an array of values for the requested column
-		$colData = array();
-		foreach($database as $row) {
-			$colData[] = $row[$field];
-		}
+        // Return
+        return PHPExcel_Calculation_MathTrig::PRODUCT($colData);
+    }	//	function DPRODUCT()
 
-		// Return
-		return PHPExcel_Calculation_MathTrig::PRODUCT($colData);
-	}	//	function DPRODUCT()
+    /**
+     *	DSTDEV
+     *
+     */
+    public static function DSTDEV($database,$field,$criteria)
+    {
+        $field = self::__fieldExtract($database,$field);
+        if (is_null($field)) {
+            return NULL;
+        }
 
-	/**
-	 *	DSTDEV
-	 *
-	 */
-	public static function DSTDEV($database,$field,$criteria) {
-		$field = self::__fieldExtract($database,$field);
-		if (is_null($field)) {
-			return NULL;
-		}
+        //	reduce the database to a set of rows that match all the criteria
+        $database = self::__filter($database,$criteria);
+        //	extract an array of values for the requested column
+        $colData = array();
+        foreach ($database as $row) {
+            $colData[] = $row[$field];
+        }
 
-		//	reduce the database to a set of rows that match all the criteria
-		$database = self::__filter($database,$criteria);
-		//	extract an array of values for the requested column
-		$colData = array();
-		foreach($database as $row) {
-			$colData[] = $row[$field];
-		}
+        // Return
+        return PHPExcel_Calculation_Statistical::STDEV($colData);
+    }	//	function DSTDEV()
 
-		// Return
-		return PHPExcel_Calculation_Statistical::STDEV($colData);
-	}	//	function DSTDEV()
+    /**
+     *	DSTDEVP
+     *
+     */
+    public static function DSTDEVP($database,$field,$criteria)
+    {
+        $field = self::__fieldExtract($database,$field);
+        if (is_null($field)) {
+            return NULL;
+        }
 
-	/**
-	 *	DSTDEVP
-	 *
-	 */
-	public static function DSTDEVP($database,$field,$criteria) {
-		$field = self::__fieldExtract($database,$field);
-		if (is_null($field)) {
-			return NULL;
-		}
+        //	reduce the database to a set of rows that match all the criteria
+        $database = self::__filter($database,$criteria);
+        //	extract an array of values for the requested column
+        $colData = array();
+        foreach ($database as $row) {
+            $colData[] = $row[$field];
+        }
 
-		//	reduce the database to a set of rows that match all the criteria
-		$database = self::__filter($database,$criteria);
-		//	extract an array of values for the requested column
-		$colData = array();
-		foreach($database as $row) {
-			$colData[] = $row[$field];
-		}
+        // Return
+        return PHPExcel_Calculation_Statistical::STDEVP($colData);
+    }	//	function DSTDEVP()
 
-		// Return
-		return PHPExcel_Calculation_Statistical::STDEVP($colData);
-	}	//	function DSTDEVP()
+    /**
+     *	DSUM
+     *
+     */
+    public static function DSUM($database,$field,$criteria)
+    {
+        $field = self::__fieldExtract($database,$field);
+        if (is_null($field)) {
+            return NULL;
+        }
 
-	/**
-	 *	DSUM
-	 *
-	 */
-	public static function DSUM($database,$field,$criteria) {
-		$field = self::__fieldExtract($database,$field);
-		if (is_null($field)) {
-			return NULL;
-		}
+        //	reduce the database to a set of rows that match all the criteria
+        $database = self::__filter($database,$criteria);
+        //	extract an array of values for the requested column
+        $colData = array();
+        foreach ($database as $row) {
+            $colData[] = $row[$field];
+        }
 
-		//	reduce the database to a set of rows that match all the criteria
-		$database = self::__filter($database,$criteria);
-		//	extract an array of values for the requested column
-		$colData = array();
-		foreach($database as $row) {
-			$colData[] = $row[$field];
-		}
+        // Return
+        return PHPExcel_Calculation_MathTrig::SUM($colData);
+    }	//	function DSUM()
 
-		// Return
-		return PHPExcel_Calculation_MathTrig::SUM($colData);
-	}	//	function DSUM()
+    /**
+     *	DVAR
+     *
+     */
+    public static function DVAR($database,$field,$criteria)
+    {
+        $field = self::__fieldExtract($database,$field);
+        if (is_null($field)) {
+            return NULL;
+        }
 
-	/**
-	 *	DVAR
-	 *
-	 */
-	public static function DVAR($database,$field,$criteria) {
-		$field = self::__fieldExtract($database,$field);
-		if (is_null($field)) {
-			return NULL;
-		}
+        //	reduce the database to a set of rows that match all the criteria
+        $database = self::__filter($database,$criteria);
+        //	extract an array of values for the requested column
+        $colData = array();
+        foreach ($database as $row) {
+            $colData[] = $row[$field];
+        }
 
-		//	reduce the database to a set of rows that match all the criteria
-		$database = self::__filter($database,$criteria);
-		//	extract an array of values for the requested column
-		$colData = array();
-		foreach($database as $row) {
-			$colData[] = $row[$field];
-		}
+        // Return
+        return PHPExcel_Calculation_Statistical::VARFunc($colData);
+    }	//	function DVAR()
 
-		// Return
-		return PHPExcel_Calculation_Statistical::VARFunc($colData);
-	}	//	function DVAR()
+    /**
+     *	DVARP
+     *
+     */
+    public static function DVARP($database,$field,$criteria)
+    {
+        $field = self::__fieldExtract($database,$field);
+        if (is_null($field)) {
+            return NULL;
+        }
 
-	/**
-	 *	DVARP
-	 *
-	 */
-	public static function DVARP($database,$field,$criteria) {
-		$field = self::__fieldExtract($database,$field);
-		if (is_null($field)) {
-			return NULL;
-		}
+        //	reduce the database to a set of rows that match all the criteria
+        $database = self::__filter($database,$criteria);
+        //	extract an array of values for the requested column
+        $colData = array();
+        foreach ($database as $row) {
+            $colData[] = $row[$field];
+        }
 
-		//	reduce the database to a set of rows that match all the criteria
-		$database = self::__filter($database,$criteria);
-		//	extract an array of values for the requested column
-		$colData = array();
-		foreach($database as $row) {
-			$colData[] = $row[$field];
-		}
-
-		// Return
-		return PHPExcel_Calculation_Statistical::VARP($colData);
-	}	//	function DVARP()
-
+        // Return
+        return PHPExcel_Calculation_Statistical::VARP($colData);
+    }	//	function DVARP()
 
 }	//	class PHPExcel_Calculation_Database

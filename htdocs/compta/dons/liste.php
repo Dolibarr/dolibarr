@@ -48,7 +48,6 @@ $search_name=GETPOST('search_name');
 
 if (!$user->rights->don->lire) accessforbidden();
 
-
 /*
  * View
  */
@@ -65,60 +64,50 @@ $sql.= " d.amount, d.fk_statut as statut, ";
 $sql.= " p.rowid as pid, p.ref, p.title, p.public";
 $sql.= " FROM ".MAIN_DB_PREFIX."don as d LEFT JOIN ".MAIN_DB_PREFIX."projet AS p";
 $sql.= " ON p.rowid = d.fk_don_projet WHERE 1 = 1";
-if ($statut >= 0)
-{
-	$sql .= " AND d.fk_statut = ".$statut;
+if ($statut >= 0) {
+    $sql .= " AND d.fk_statut = ".$statut;
 }
-if (trim($search_ref) != '')
-{
+if (trim($search_ref) != '') {
     $sql.= ' AND d.rowid LIKE \'%'.$db->escape(trim($search_ref)) . '%\'';
 }
-if (trim($search_company) != '')
-{
+if (trim($search_company) != '') {
     $sql.= ' AND d.societe LIKE \'%'.$db->escape(trim($search_company)) . '%\'';
 }
-if (trim($search_name) != '')
-{
+if (trim($search_name) != '') {
     $sql.= ' AND d.lastname LIKE \'%'.$db->escape(trim($search_name)) . '%\' OR d.firstname LIKE \'%'.$db->escape(trim($search_name)) . '%\'';
 }
 $sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit($limit+1, $offset);
 
 $resql = $db->query($sql);
-if ($resql)
-{
-	$num = $db->num_rows($resql);
-	$i = 0;
+if ($resql) {
+    $num = $db->num_rows($resql);
+    $i = 0;
 
-	$param="&statut=$statut&sortorder=$sortorder&sortfield=$sortfield";
+    $param="&statut=$statut&sortorder=$sortorder&sortfield=$sortfield";
 
-	if ($statut >= 0)
-	{
-	    $donationstatic->statut=$statut;
-	    $label=$donationstatic->getLibStatut(0);
-		print_barre_liste($label, $page, $_SERVER["PHP_SELF"], $param, '', '', '', $num);
-	}
-	else
-	{
-		print_barre_liste($langs->trans("Donations"), $page, $_SERVER["PHP_SELF"], $param, '', '', '', $num);
-	}
-
+    if ($statut >= 0) {
+        $donationstatic->statut=$statut;
+        $label=$donationstatic->getLibStatut(0);
+        print_barre_liste($label, $page, $_SERVER["PHP_SELF"], $param, '', '', '', $num);
+    } else {
+        print_barre_liste($langs->trans("Donations"), $page, $_SERVER["PHP_SELF"], $param, '', '', '', $num);
+    }
 
     print '<form method="get" action="'.$_SERVER["PHP_SELF"].'">'."\n";
-	print "<table class=\"noborder\" width=\"100%\">";
-	print '<tr class="liste_titre">';
-	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"d.rowid","&page=$page&statut=$statut","","",$sortfield,$sortorder);
+    print "<table class=\"noborder\" width=\"100%\">";
+    print '<tr class="liste_titre">';
+    print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"d.rowid","&page=$page&statut=$statut","","",$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"d.societe","&page=$page&statut=$statut","","",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Name"),$_SERVER["PHP_SELF"],"d.lastname","&page=$page&statut=$statut","","",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"d.datedon","&page=$page&statut=$statut","",'align="center"',$sortfield,$sortorder);
-	if (! empty($conf->projet->enabled))
-	{
-		$langs->load("projects");
-		print_liste_field_titre($langs->trans("Project"),$_SERVER["PHP_SELF"],"fk_don_projet","&page=$page&statut=$statut","","",$sortfield,$sortorder);
-	}
-	print_liste_field_titre($langs->trans("Amount"),$_SERVER["PHP_SELF"],"d.amount","&page=$page&statut=$statut","",'align="right"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"d.fk_statut","&page=$page&statut=$statut","",'align="right"',$sortfield,$sortorder);
-	print "</tr>\n";
+    print_liste_field_titre($langs->trans("Name"),$_SERVER["PHP_SELF"],"d.lastname","&page=$page&statut=$statut","","",$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"d.datedon","&page=$page&statut=$statut","",'align="center"',$sortfield,$sortorder);
+    if (! empty($conf->projet->enabled)) {
+        $langs->load("projects");
+        print_liste_field_titre($langs->trans("Project"),$_SERVER["PHP_SELF"],"fk_don_projet","&page=$page&statut=$statut","","",$sortfield,$sortorder);
+    }
+    print_liste_field_titre($langs->trans("Amount"),$_SERVER["PHP_SELF"],"d.amount","&page=$page&statut=$statut","",'align="right"',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"d.fk_statut","&page=$page&statut=$statut","",'align="right"',$sortfield,$sortorder);
+    print "</tr>\n";
 
     // Filters lines
     print '<tr class="liste_titre">';
@@ -134,8 +123,7 @@ if ($resql)
     print '<td class="liste_titre" align="left">';
     print '&nbsp;';
     print '</td>';
-    if (! empty($conf->projet->enabled))
-    {
+    if (! empty($conf->projet->enabled)) {
         print '<td class="liste_titre" align="right">';
         print '&nbsp;';
         print '</td>';
@@ -146,52 +134,44 @@ if ($resql)
     print '<td class="liste_titre" align="right"><input type="image" class="liste_titre" name="button_search" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
     print "</td></tr>\n";
 
-	$var=True;
-	while ($i < min($num,$limit))
-	{
-		$objp = $db->fetch_object($result);
-		$var=!$var;
-		print "<tr ".$bc[$var].">";
-		$donationstatic->id=$objp->rowid;
-		$donationstatic->ref=$objp->rowid;
-		$donationstatic->lastname=$objp->lastname;
-		$donationstatic->firstname=$objp->firstname;
-		print "<td>".$donationstatic->getNomUrl(1)."</td>\n";
+    $var=True;
+    while ($i < min($num,$limit)) {
+        $objp = $db->fetch_object($result);
+        $var=!$var;
+        print "<tr ".$bc[$var].">";
+        $donationstatic->id=$objp->rowid;
+        $donationstatic->ref=$objp->rowid;
+        $donationstatic->lastname=$objp->lastname;
+        $donationstatic->firstname=$objp->firstname;
+        print "<td>".$donationstatic->getNomUrl(1)."</td>\n";
         print "<td>".$objp->societe."</td>\n";
-		print "<td>".$donationstatic->getFullName($langs)."</td>\n";
-		print '<td align="center">'.dol_print_date($db->jdate($objp->datedon),'day').'</td>';
-		if (! empty($conf->projet->enabled))
-		{
-			print "<td>";
-			if ($objp->pid)
-			{
-				$projectstatic->id=$objp->pid;
-				$projectstatic->ref=$objp->ref;
-				$projectstatic->id=$objp->pid;
-				$projectstatic->public=$objp->public;
-				$projectstatic->title=$objp->title;
-				print $projectstatic->getNomUrl(1);
-			}
-			else print '&nbsp;';
-			print "</td>\n";
-		}
-		print '<td align="right">'.price($objp->amount).'</td>';
-		print '<td align="right">'.$donationstatic->LibStatut($objp->statut,5).'</td>';
+        print "<td>".$donationstatic->getFullName($langs)."</td>\n";
+        print '<td align="center">'.dol_print_date($db->jdate($objp->datedon),'day').'</td>';
+        if (! empty($conf->projet->enabled)) {
+            print "<td>";
+            if ($objp->pid) {
+                $projectstatic->id=$objp->pid;
+                $projectstatic->ref=$objp->ref;
+                $projectstatic->id=$objp->pid;
+                $projectstatic->public=$objp->public;
+                $projectstatic->title=$objp->title;
+                print $projectstatic->getNomUrl(1);
+            } else print '&nbsp;';
+            print "</td>\n";
+        }
+        print '<td align="right">'.price($objp->amount).'</td>';
+        print '<td align="right">'.$donationstatic->LibStatut($objp->statut,5).'</td>';
 
-		print "</tr>";
-		$i++;
-	}
-	print "</table>";
+        print "</tr>";
+        $i++;
+    }
+    print "</table>";
     print "</form>\n";
     $db->free($resql);
+} else {
+    dol_print_error($db);
 }
-else
-{
-	dol_print_error($db);
-}
-
 
 $db->close();
 
 llxFooter();
-?>

@@ -44,31 +44,25 @@ top_httphead();
 //print '<!-- Ajax page called with url '.$_SERVER["PHP_SELF"].'?'.$_SERVER["QUERY_STRING"].' -->'."\n";
 
 // Load original field value
-if (! empty($id) && ! empty($action) && ! empty($htmlname))
-{
-	$form = new Form($db);
-	$soc = new Societe($db);
+if (! empty($id) && ! empty($action) && ! empty($htmlname)) {
+    $form = new Form($db);
+    $soc = new Societe($db);
 
-	$soc->fetch($id);
+    $soc->fetch($id);
 
-	if ($action == 'getSellerVATRates')
-	{
-		$seller = $mysoc;
-		$buyer = $soc;
-	}
-	else
-	{
-		$buyer = $mysoc;
-		$seller = $soc;
-	}
+    if ($action == 'getSellerVATRates') {
+        $seller = $mysoc;
+        $buyer = $soc;
+    } else {
+        $buyer = $mysoc;
+        $seller = $soc;
+    }
 
-	$return=array();
+    $return=array();
 
-	$return['value']	= $form->load_tva('tva_tx',$selected,$seller,$buyer,$productid,0,'',true);
-	$return['num']		= $form->num;
-	$return['error']	= $form->error;
+    $return['value']	= $form->load_tva('tva_tx',$selected,$seller,$buyer,$productid,0,'',true);
+    $return['num']		= $form->num;
+    $return['error']	= $form->error;
 
-	echo json_encode($return);
+    echo json_encode($return);
 }
-
-?>

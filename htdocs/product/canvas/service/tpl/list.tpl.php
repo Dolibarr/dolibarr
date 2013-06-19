@@ -21,12 +21,12 @@
 
 <table class="notopnoleftnoright allwidth" style="margin-bottom: 2px;">
 <tr>
-	<td class="nobordernopadding" width="40" align="left" valign="middle">
-		<?php echo $title_picto; ?>
-	</td>
-	<td class="nobordernopadding" valign="middle">
-    	<div class="titre"><?php echo $title_text; ?></div>
-	</td>
+    <td class="nobordernopadding" width="40" align="left" valign="middle">
+        <?php echo $title_picto; ?>
+    </td>
+    <td class="nobordernopadding" valign="middle">
+        <div class="titre"><?php echo $title_text; ?></div>
+    </td>
 </tr>
 </table>
 
@@ -43,56 +43,56 @@
 <!-- FIELDS TITLE -->
 
 <tr class="liste_titre">
-	<?php
- 	foreach($fieldlist as $field) {
- 		if ($field['enabled']) {
- 			if ($field['sort'])	{ ?>
- 				<td class="liste_titre" align="<?php echo $field['align']; ?>"><?php echo $field['title']; ?>
- 					<a href="<?php echo $_SERVER["PHP_SELF"];?>?sortfield=<?php echo $field['name']; ?>&amp;sortorder=asc&amp;begin=&amp;tosell=&amp;canvas=default&amp;fourn_id=&amp;snom=&amp;sref=">
- 						<img src="<?php echo DOL_URL_ROOT; ?>/theme/<?php echo $conf->theme; ?>/img/1downarrow.png" border="0" alt="A-Z" title="A-Z">
- 					</a>
-  					<a href="<?php echo $_SERVER["PHP_SELF"];?>?sortfield=<?php echo $field['name']; ?>&amp;sortorder=desc&amp;begin=&amp;tosell=&amp;canvas=default&amp;fourn_id=&amp;snom=&amp;sref=">
-  						<img src="<?php echo DOL_URL_ROOT; ?>/theme/<?php echo $conf->theme; ?>/img/1uparrow.png" border="0" alt="Z-A" title="Z-A">
-  					</a>
-  				</td>
-  		<?php } else { ?>
-  				<td class="liste_titre" align="<?php echo $field['align']; ?>"><?php echo $field['title']; ?></td>
-	<?php } } } ?>
+    <?php
+     foreach ($fieldlist as $field) {
+         if ($field['enabled']) {
+             if ($field['sort']) { ?>
+                 <td class="liste_titre" align="<?php echo $field['align']; ?>"><?php echo $field['title']; ?>
+                     <a href="<?php echo $_SERVER["PHP_SELF"];?>?sortfield=<?php echo $field['name']; ?>&amp;sortorder=asc&amp;begin=&amp;tosell=&amp;canvas=default&amp;fourn_id=&amp;snom=&amp;sref=">
+                         <img src="<?php echo DOL_URL_ROOT; ?>/theme/<?php echo $conf->theme; ?>/img/1downarrow.png" border="0" alt="A-Z" title="A-Z">
+                     </a>
+                      <a href="<?php echo $_SERVER["PHP_SELF"];?>?sortfield=<?php echo $field['name']; ?>&amp;sortorder=desc&amp;begin=&amp;tosell=&amp;canvas=default&amp;fourn_id=&amp;snom=&amp;sref=">
+                          <img src="<?php echo DOL_URL_ROOT; ?>/theme/<?php echo $conf->theme; ?>/img/1uparrow.png" border="0" alt="Z-A" title="Z-A">
+                      </a>
+                  </td>
+          <?php } else { ?>
+                  <td class="liste_titre" align="<?php echo $field['align']; ?>"><?php echo $field['title']; ?></td>
+    <?php } } } ?>
 </tr>
 
  <!-- FIELDS SEARCH -->
 
 <tr class="liste_titre">
-	<?php
- 	$num = count($fieldlist);
- 	foreach($fieldlist as $key => $searchfield)	{
- 		if ($searchfield['enabled']) {
- 			if ($searchfield['search'])	{ ?>
-  				<td class="liste_titre" align="<?php echo $searchfield['align']; ?>"><input class="flat" type="text" name="s<?php echo $searchfield['alias']; ?>" value=""></td>
-	<?php } else if ($key == $num) { ?>
-  			<td class="liste_titre" align="right">
-  				<input type="image" class="liste_titre" name="button_search" src="<?php echo DOL_URL_ROOT; ?>/theme/<?php echo $conf->theme; ?>/img/search.png" alt="<?php echo $langs->trans('Search'); ?>">
-  				<input type="image" class="liste_titre" name="button_removefilter" src="<?php echo DOL_URL_ROOT; ?>/theme/<?php echo $conf->theme; ?>/img/searchclear.png" alt="<?php echo $langs->trans('RemoveFilter'); ?>">
-  			</td>
-  	<?php } else { ?>
-  			<td class="liste_titre">&nbsp;</td>
- 	<?php } } } ?>
+    <?php
+     $num = count($fieldlist);
+     foreach ($fieldlist as $key => $searchfield) {
+         if ($searchfield['enabled']) {
+             if ($searchfield['search']) { ?>
+                  <td class="liste_titre" align="<?php echo $searchfield['align']; ?>"><input class="flat" type="text" name="s<?php echo $searchfield['alias']; ?>" value=""></td>
+    <?php } elseif ($key == $num) { ?>
+              <td class="liste_titre" align="right">
+                  <input type="image" class="liste_titre" name="button_search" src="<?php echo DOL_URL_ROOT; ?>/theme/<?php echo $conf->theme; ?>/img/search.png" alt="<?php echo $langs->trans('Search'); ?>">
+                  <input type="image" class="liste_titre" name="button_removefilter" src="<?php echo DOL_URL_ROOT; ?>/theme/<?php echo $conf->theme; ?>/img/searchclear.png" alt="<?php echo $langs->trans('RemoveFilter'); ?>">
+              </td>
+      <?php } else { ?>
+              <td class="liste_titre">&nbsp;</td>
+     <?php } } } ?>
 </tr>
 
 <!-- FIELDS DATA -->
 
 <?php
 $var=True;
-foreach($datas as $line) {
-	$var=!$var;	?>
-	<tr <?php echo $bc[$var]; ?>>
-   		<?php
-   		foreach($line as $key => $value) {
-   			foreach($fieldlist as $field) {
-   				if ($field['alias'] == $key) { ?>
-   					<td align="<?php echo $field['align']; ?>"><?php echo $value; ?></td>
-   		<?php } } } ?>
-   	</tr>
+foreach ($datas as $line) {
+    $var=!$var;	?>
+    <tr <?php echo $bc[$var]; ?>>
+           <?php
+           foreach ($line as $key => $value) {
+               foreach ($fieldlist as $field) {
+                   if ($field['alias'] == $key) { ?>
+                       <td align="<?php echo $field['align']; ?>"><?php echo $value; ?></td>
+           <?php } } } ?>
+       </tr>
 <?php } ?>
 
 </table>

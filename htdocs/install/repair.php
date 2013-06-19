@@ -32,7 +32,6 @@ $grant_query='';
 $etape = 2;
 $ok = 0;
 
-
 // Cette page peut etre longue. On augmente le delai autorise.
 // Ne fonctionne que si on est pas en safe_mode.
 $err=error_reporting();
@@ -53,10 +52,8 @@ if ($dolibarr_main_db_type == "mysqli") $choix=1;
 if ($dolibarr_main_db_type == "pgsql") $choix=2;
 if ($dolibarr_main_db_type == "mssql") $choix=3;
 
-
 dolibarr_install_syslog("repair: Entering upgrade.php page");
 if (! is_object($conf)) dolibarr_install_syslog("repair: conf file not initialized",LOG_ERR);
-
 
 /*
  * View
@@ -75,16 +72,13 @@ print '<table cellspacing="0" cellpadding="1" border="0" width="100%">';
 $error=0;
 
 // If password is encoded, we decode it
-if (preg_match('/crypted:/i',$dolibarr_main_db_pass) || ! empty($dolibarr_main_db_encrypted_pass))
-{
+if (preg_match('/crypted:/i',$dolibarr_main_db_pass) || ! empty($dolibarr_main_db_encrypted_pass)) {
     require_once $dolibarr_main_document_root.'/core/lib/security.lib.php';
-    if (preg_match('/crypted:/i',$dolibarr_main_db_pass))
-    {
+    if (preg_match('/crypted:/i',$dolibarr_main_db_pass)) {
         $dolibarr_main_db_pass = preg_replace('/crypted:/i', '', $dolibarr_main_db_pass);
         $dolibarr_main_db_pass = dol_decode($dolibarr_main_db_pass);
         $dolibarr_main_db_encrypted_pass = $dolibarr_main_db_pass;	// We need to set this as it is used to know the password was initially crypted
-    }
-    else $dolibarr_main_db_pass = dol_decode($dolibarr_main_db_encrypted_pass);
+    } else $dolibarr_main_db_pass = dol_decode($dolibarr_main_db_encrypted_pass);
 }
 
 // $conf is already instancied inside inc.php
@@ -101,31 +95,24 @@ $conf->db->dolibarr_main_db_cryptkey	= isset($dolibarr_main_db_cryptkey)?$doliba
 
 $db=getDoliDBInstance($conf->db->type,$conf->db->host,$conf->db->user,$conf->db->pass,$conf->db->name,$conf->db->port);
 
-if ($db->connected == 1)
-{
+if ($db->connected == 1) {
     print '<tr><td class="nowrap">';
     print $langs->trans("ServerConnection")." : $dolibarr_main_db_host</td><td align=\"right\">".$langs->trans("OK")."</td></tr>";
     dolibarr_install_syslog("repair: ".$langs->transnoentities("ServerConnection")." : $dolibarr_main_db_host ".$langs->transnoentities("OK"));
     $ok = 1;
-}
-else
-{
+} else {
     print "<tr><td>".$langs->trans("ErrorFailedToConnectToDatabase",$dolibarr_main_db_name)."</td><td align=\"right\">".$langs->transnoentities("Error")."</td></tr>";
     dolibarr_install_syslog("repair: ".$langs->transnoentities("ErrorFailedToConnectToDatabase",$dolibarr_main_db_name));
     $ok = 0;
 }
 
-if ($ok)
-{
-    if($db->database_selected == 1)
-    {
+if ($ok) {
+    if ($db->database_selected == 1) {
         print '<tr><td class="nowrap">';
         print $langs->trans("DatabaseConnection")." : ".$dolibarr_main_db_name."</td><td align=\"right\">".$langs->trans("OK")."</td></tr>";
         dolibarr_install_syslog("repair: Database connection successfull : $dolibarr_main_db_name");
         $ok=1;
-    }
-    else
-    {
+    } else {
         print "<tr><td>".$langs->trans("ErrorFailedToConnectToDatabase",$dolibarr_main_db_name)."</td><td align=\"right\">".$langs->trans("Error")."</td></tr>";
         dolibarr_install_syslog("repair: ".$langs->transnoentities("ErrorFailedToConnectToDatabase",$dolibarr_main_db_name));
         $ok=0;
@@ -133,8 +120,7 @@ if ($ok)
 }
 
 // Affiche version
-if ($ok)
-{
+if ($ok) {
     $version=$db->getVersion();
     $versionarray=$db->getVersionArray();
     print '<tr><td>'.$langs->trans("ServerVersion").'</td>';
@@ -149,8 +135,7 @@ flush();
 
 
 // Run repair SQL file
-if ($ok)
-{
+if ($ok) {
     $dir = "mysql/migration/";
 
     $filelist=array();
@@ -160,26 +145,21 @@ if ($ok)
     // Recupere list fichier
     $filesindir=array();
     $handle=opendir($dir);
-    if (is_resource($handle))
-    {
-        while (($file = readdir($handle))!==false)
-        {
+    if (is_resource($handle)) {
+        while (($file = readdir($handle))!==false) {
             if (preg_match('/\.sql$/i',$file)) $filesindir[]=$file;
         }
     }
     sort($filesindir);
 
-    foreach($filesindir as $file)
-    {
-        if (preg_match('/repair/i',$file))
-        {
+    foreach ($filesindir as $file) {
+        if (preg_match('/repair/i',$file)) {
             $filelist[]=$file;
         }
     }
 
     // Loop on each file
-    foreach($filelist as $file)
-    {
+    foreach ($filelist as $file) {
         print '<tr><td nowrap>';
         print $langs->trans("Script").'</td><td align="right">'.$file.'</td></tr>';
 
@@ -194,11 +174,10 @@ if ($ok)
 // Search list of fields declared and list of fields created into databases and create fields missing
 $extrafields=new ExtraFields($db);
 $listofmodulesextra=array('societe'=>'societe','adherent'=>'adherent','product'=>'product',
-			'socpeople'=>'socpeople', 'commande'=>'commande', 'facture'=>'facture',
-			'commande_fournisseur'=>'commande_fournisseur', 'actioncomm'=>'actioncomm',
-			'adherent_type'=>'adherent_type','user'=>'user','projet'=>'projet', 'projet_task'=>'projet_task');
-foreach($listofmodulesextra as $tablename => $elementtype)
-{
+            'socpeople'=>'socpeople', 'commande'=>'commande', 'facture'=>'facture',
+            'commande_fournisseur'=>'commande_fournisseur', 'actioncomm'=>'actioncomm',
+            'adherent_type'=>'adherent_type','user'=>'user','projet'=>'projet', 'projet_task'=>'projet_task');
+foreach ($listofmodulesextra as $tablename => $elementtype) {
     // Get list of fields
     $tableextra=MAIN_DB_PREFIX.$tablename.'_extrafields';
 
@@ -208,20 +187,15 @@ foreach($listofmodulesextra as $tablename => $elementtype)
     // Define $arrayoffieldsfound
     $arrayoffieldsfound=array();
     $resql=$db->DDLDescTable($tableextra);
-    if ($resql)
-    {
+    if ($resql) {
         print '<tr><td>Check availability of extra field for '.$tableextra."<br>\n";
         $i=0;
-        while($obj=$db->fetch_object($resql))
-        {
+        while ($obj=$db->fetch_object($resql)) {
             $fieldname=$fieldtype='';
-            if (preg_match('/mysql/',$db->type))
-            {
+            if (preg_match('/mysql/',$db->type)) {
                 $fieldname=$obj->Field;
                 $fieldtype=$obj->Type;
-            }
-            else
-            {
+            } else {
                 $fieldname = isset($obj->Key)?$obj->Key:$obj->attname;
                 $fieldtype = isset($obj->Type)?$obj->Type:'varchar';
             }
@@ -232,29 +206,24 @@ foreach($listofmodulesextra as $tablename => $elementtype)
         }
 
         // If it does not match, we create fields
-        foreach($arrayoffieldsdesc as $code => $label)
-        {
-            if (! in_array($code,array_keys($arrayoffieldsfound)))
-            {
+        foreach ($arrayoffieldsdesc as $code => $label) {
+            if (! in_array($code,array_keys($arrayoffieldsfound))) {
                 print 'Found field '.$code.' declared into '.MAIN_DB_PREFIX.'extrafields table but not found into desc of table '.$tableextra." -> ";
                 $type=$extrafields->attribute_type[$code]; $value=$extrafields->attribute_size[$code]; $attribute=''; $default=''; $extra=''; $null='null';
                 $field_desc=array(
-                	'type'=>$type,
-                	'value'=>$value,
-                	'attribute'=>$attribute,
-                	'default'=>$default,
-                	'extra'=>$extra,
-                	'null'=>$null
+                    'type'=>$type,
+                    'value'=>$value,
+                    'attribute'=>$attribute,
+                    'default'=>$default,
+                    'extra'=>$extra,
+                    'null'=>$null
                 );
                 //var_dump($field_desc);exit;
 
                 $result=$db->DDLAddField($tableextra,$code,$field_desc,"");
-                if ($result < 0)
-                {
+                if ($result < 0) {
                     print "KO ".$db->lasterror."<br>\n";
-                }
-                else
-                {
+                } else {
                     print "OK<br>\n";
                 }
             }
@@ -270,36 +239,33 @@ clean_data_ecm_directories();
 
 
 // Check and clean linked elements
-if (GETPOST('clean_linked_elements'))
-{
-	// propal => order
-	print "</td><td>".checkLinkedElements('propal', 'commande')."</td></tr>\n";
+if (GETPOST('clean_linked_elements')) {
+    // propal => order
+    print "</td><td>".checkLinkedElements('propal', 'commande')."</td></tr>\n";
 
-	// propal => invoice
-	print "</td><td>".checkLinkedElements('propal', 'facture')."</td></tr>\n";
+    // propal => invoice
+    print "</td><td>".checkLinkedElements('propal', 'facture')."</td></tr>\n";
 
-	// order => invoice
-	print "</td><td>".checkLinkedElements('commande', 'facture')."</td></tr>\n";
+    // order => invoice
+    print "</td><td>".checkLinkedElements('commande', 'facture')."</td></tr>\n";
 
-	// order => shipping
-	print "</td><td>".checkLinkedElements('commande', 'shipping')."</td></tr>\n";
+    // order => shipping
+    print "</td><td>".checkLinkedElements('commande', 'shipping')."</td></tr>\n";
 
-	// shipping => delivery
-	print "</td><td>".checkLinkedElements('shipping', 'delivery')."</td></tr>\n";
+    // shipping => delivery
+    print "</td><td>".checkLinkedElements('shipping', 'delivery')."</td></tr>\n";
 
-	// order_supplier => invoice_supplier
-	print "</td><td>".checkLinkedElements('order_supplier', 'invoice_supplier')."</td></tr>\n";
+    // order_supplier => invoice_supplier
+    print "</td><td>".checkLinkedElements('order_supplier', 'invoice_supplier')."</td></tr>\n";
 }
 
 
 // Run purge of directory
-if (GETPOST('purge'))
-{
+if (GETPOST('purge')) {
     $conf->setValues($db);
 
     $listmodulepart=array('company','invoice','invoice_supplier','propal','order','order_supplier','contract','tax');
-    foreach ($listmodulepart as $modulepart)
-    {
+    foreach ($listmodulepart as $modulepart) {
         $filearray=array();
         $upload_dir = isset($conf->$modulepart->dir_output)?$conf->$modulepart->dir_output:'';
         if ($modulepart == 'company') $upload_dir = $conf->societe->dir_output; // TODO change for multicompany sharing
@@ -316,45 +282,31 @@ if (GETPOST('purge'))
         $filearray=dol_dir_list($upload_dir,"files",1,'',array('^SPECIMEN\.pdf$','^\.','\.meta$','^temp$','^payments$','^CVS$','^thumbs$'),'',SORT_DESC,1);
 
         // To show ref or specific information according to view to show (defined by $module)
-        if ($modulepart == 'invoice')
-        {
+        if ($modulepart == 'invoice') {
             include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
             $object_instance=new Facture($db);
-        }
-        else if ($modulepart == 'invoice_supplier')
-        {
+        } elseif ($modulepart == 'invoice_supplier') {
             include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
             $object_instance=new FactureFournisseur($db);
-        }
-        else if ($modulepart == 'propal')
-        {
+        } elseif ($modulepart == 'propal') {
             include_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
             $object_instance=new Propal($db);
-        }
-        else if ($modulepart == 'order')
-        {
+        } elseif ($modulepart == 'order') {
             include_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
             $object_instance=new Commande($db);
-        }
-        else if ($modulepart == 'order_supplier')
-        {
+        } elseif ($modulepart == 'order_supplier') {
             include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
             $object_instance=new CommandeFournisseur($db);
-        }
-        else if ($modulepart == 'contract')
-        {
+        } elseif ($modulepart == 'contract') {
             include_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
             $object_instance=new Contrat($db);
-        }
-        else if ($modulepart == 'tax')
-        {
+        } elseif ($modulepart == 'tax') {
             include_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
             $object_instance=new ChargeSociales($db);
         }
 
         $var=true;
-        foreach($filearray as $key => $file)
-        {
+        foreach ($filearray as $key => $file) {
             if (!is_dir($file['name'])
             && $file['name'] != '.'
             && $file['name'] != '..'
@@ -368,46 +320,42 @@ if (GETPOST('purge'))
                 $id=0; $ref=''; $object_instance->id=0; $object_instance->ref=''; $label='';
 
                 // To show ref or specific information according to view to show (defined by $module)
-                if ($modulepart == 'invoice')          {
+                if ($modulepart == 'invoice') {
                     preg_match('/(.*)\/[^\/]+$/',$relativefile,$reg);  $ref=$reg[1];
                 }
                 if ($modulepart == 'invoice_supplier') {
                     preg_match('/(\d+)\/[^\/]+$/',$relativefile,$reg); $id=$reg[1];
                 }
-                if ($modulepart == 'propal')           {
+                if ($modulepart == 'propal') {
                     preg_match('/(.*)\/[^\/]+$/',$relativefile,$reg);  $ref=$reg[1];
                 }
-                if ($modulepart == 'order')            {
+                if ($modulepart == 'order') {
                     preg_match('/(.*)\/[^\/]+$/',$relativefile,$reg);  $ref=$reg[1];
                 }
-                if ($modulepart == 'order_supplier')   {
+                if ($modulepart == 'order_supplier') {
                     preg_match('/(.*)\/[^\/]+$/',$relativefile,$reg);  $ref=$reg[1];
                 }
-                if ($modulepart == 'contract')         {
+                if ($modulepart == 'contract') {
                     preg_match('/(.*)\/[^\/]+$/',$relativefile,$reg);  $ref=$reg[1];
                 }
-                if ($modulepart == 'tax')              {
+                if ($modulepart == 'tax') {
                     preg_match('/(\d+)\/[^\/]+$/',$relativefile,$reg); $id=$reg[1];
                 }
 
-                if ($id || $ref)
-                {
+                if ($id || $ref) {
                     //print 'Fetch '.$id.' or '.$ref.'<br>';
                     $result=$object_instance->fetch($id,$ref);
                     //print $result.'<br>';
-                    if ($result == 0)    // Not found but no error
-                    {
+                    if ($result == 0) {    // Not found but no error
                         // Clean of orphelins directories are done into repair.php
                         print '<tr><td colspan="2">';
                         print 'Delete orphelins file '.$file['fullname'].'<br>';
-                        if (GETPOST('purge') == 2)
-                        {
+                        if (GETPOST('purge') == 2) {
                             dol_delete_file($file['fullname'],1,1,1);
                             dol_delete_dir(dirname($file['fullname']),1);
                         }
                         print "</td></tr>";
-                    }
-                    else if ($result < 0) print 'Error in '.get_class($object_instance).'.fetch of id'.$id.' ref='.$ref.', result='.$result.'<br>';
+                    } elseif ($result < 0) print 'Error in '.get_class($object_instance).'.fetch of id'.$id.' ref='.$ref.', result='.$result.'<br>';
                 }
             }
         }
@@ -418,8 +366,7 @@ print '</table>';
 
 
 
-if (empty($actiondone))
-{
+if (empty($actiondone)) {
     print '<div class="error">'.$langs->trans("ErrorWrongParameters").'</div>';
 }
 
@@ -434,4 +381,3 @@ if ($db->connected) $db->close();
 
 // Return code if ran from command line
 if (! $ok && isset($argv[1])) exit(1);
-?>

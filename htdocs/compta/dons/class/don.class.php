@@ -26,7 +26,6 @@
 
 require_once DOL_DOCUMENT_ROOT .'/core/class/commonobject.class.php';
 
-
 /**
  *      \class      Don
  *		\brief      Class to manage donations
@@ -36,34 +35,34 @@ class Don extends CommonObject
     public $element='don';
     public $table_element='don';
 
-    var $id;
-    var $ref;
-    var $date;
-    var $amount;
-    var $firstname;
-    var $lastname;
-    var $societe;
-    var $address;
-    var $zip;
-    var $town;
-    var $country;
-    var $email;
-    var $public;
-    var $fk_project;
-    var $modepaiement;
-    var $modepaiementid;
-    var $note_private;
-    var $note_public;
-    var $statut;
+    public $id;
+    public $ref;
+    public $date;
+    public $amount;
+    public $firstname;
+    public $lastname;
+    public $societe;
+    public $address;
+    public $zip;
+    public $town;
+    public $country;
+    public $email;
+    public $public;
+    public $fk_project;
+    public $modepaiement;
+    public $modepaiementid;
+    public $note_private;
+    public $note_public;
+    public $statut;
 
-    var $projet;
+    public $projet;
 
     /**
      *  Constructor
      *
      *  @param	DoliDB	$db 	Database handler
      */
-    function __construct($db)
+    public function __construct($db)
     {
         global $langs;
 
@@ -81,14 +80,13 @@ class Don extends CommonObject
         $this->labelstatutshort[2]=$langs->trans("DonationStatusPaidShort");
     }
 
-
     /**
      * 	Retourne le libelle du statut d'un don (brouillon, validee, abandonnee, payee)
      *
      *  @param	int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long
      *  @return string        		Libelle
      */
-    function getLibStatut($mode=0)
+    public function getLibStatut($mode=0)
     {
         return $this->LibStatut($this->statut,$mode);
     }
@@ -100,42 +98,36 @@ class Don extends CommonObject
      *  @param  int		$mode          	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
      *  @return string 			       	Libelle du statut
      */
-    function LibStatut($statut,$mode=0)
+    public function LibStatut($statut,$mode=0)
     {
         global $langs;
 
-        if ($mode == 0)
-        {
+        if ($mode == 0) {
             return $this->labelstatut[$statut];
         }
-        if ($mode == 1)
-        {
+        if ($mode == 1) {
             return $this->labelstatutshort[$statut];
         }
-        if ($mode == 2)
-        {
+        if ($mode == 2) {
             if ($statut == -1) return img_picto($this->labelstatut[$statut],'statut5').' '.$this->labelstatutshort[$statut];
             if ($statut == 0)  return img_picto($this->labelstatut[$statut],'statut0').' '.$this->labelstatutshort[$statut];
             if ($statut == 1)  return img_picto($this->labelstatut[$statut],'statut1').' '.$this->labelstatutshort[$statut];
             if ($statut == 2)  return img_picto($this->labelstatut[$statut],'statut6').' '.$this->labelstatutshort[$statut];
         }
-        if ($mode == 3)
-        {
+        if ($mode == 3) {
             $prefix='Short';
             if ($statut == -1) return img_picto($this->labelstatut[$statut],'statut5');
             if ($statut == 0)  return img_picto($this->labelstatut[$statut],'statut0');
             if ($statut == 1)  return img_picto($this->labelstatut[$statut],'statut1');
             if ($statut == 2)  return img_picto($this->labelstatut[$statut],'statut6');
         }
-        if ($mode == 4)
-        {
+        if ($mode == 4) {
             if ($statut == -1) return img_picto($this->labelstatut[$statut],'statut5').' '.$this->labelstatut[$statut];
             if ($statut == 0)  return img_picto($this->labelstatut[$statut],'statut0').' '.$this->labelstatut[$statut];
             if ($statut == 1)  return img_picto($this->labelstatut[$statut],'statut1').' '.$this->labelstatut[$statut];
             if ($statut == 2)  return img_picto($this->labelstatut[$statut],'statut6').' '.$this->labelstatut[$statut];
         }
-        if ($mode == 5)
-        {
+        if ($mode == 5) {
             $prefix='Short';
             if ($statut == -1) return $this->labelstatutshort[$statut].' '.img_picto($this->labelstatut[$statut],'statut5');
             if ($statut == 0)  return $this->labelstatutshort[$statut].' '.img_picto($this->labelstatut[$statut],'statut0');
@@ -144,7 +136,6 @@ class Don extends CommonObject
         }
     }
 
-
     /**
      *  Initialise an instance with random values.
      *  Used to build previews or test instances.
@@ -152,7 +143,7 @@ class Don extends CommonObject
      *
      *  @return	void
      */
-    function initAsSpecimen()
+    public function initAsSpecimen()
     {
         global $conf, $user,$langs;
 
@@ -166,12 +157,10 @@ class Don extends CommonObject
         $sql.= " LIMIT 10";
 
         $resql = $this->db->query($sql);
-        if ($resql)
-        {
+        if ($resql) {
             $num_socs = $this->db->num_rows($resql);
             $i = 0;
-            while ($i < $num_socs)
-            {
+            while ($i < $num_socs) {
                 $i++;
 
                 $row = $this->db->fetch_row($resql);
@@ -200,46 +189,39 @@ class Don extends CommonObject
         $this->statut=1;
     }
 
-
     /**
      *	Check params
      *
      *	@param	int	$minimum	Minimum
      *	@return	int				0 if KO, >0 if OK
      */
-    function check($minimum=0)
+    public function check($minimum=0)
     {
         $err = 0;
 
-        if (dol_strlen(trim($this->societe)) == 0)
-        {
-            if ((dol_strlen(trim($this->lastname)) + dol_strlen(trim($this->firstname))) == 0)
-            {
+        if (dol_strlen(trim($this->societe)) == 0) {
+            if ((dol_strlen(trim($this->lastname)) + dol_strlen(trim($this->firstname))) == 0) {
                 $error_string[$err] = "Vous devez saisir vos nom et prenom ou le nom de votre societe.";
                 $err++;
             }
         }
 
-        if (dol_strlen(trim($this->address)) == 0)
-        {
+        if (dol_strlen(trim($this->address)) == 0) {
             $error_string[$err] = "L'adresse saisie est invalide";
             $err++;
         }
 
-        if (dol_strlen(trim($this->zip)) == 0)
-        {
+        if (dol_strlen(trim($this->zip)) == 0) {
             $error_string[$err] = "Le code postal saisi est invalide";
             $err++;
         }
 
-        if (dol_strlen(trim($this->town)) == 0)
-        {
+        if (dol_strlen(trim($this->town)) == 0) {
             $error_string[$err] = "La ville saisie est invalide";
             $err++;
         }
 
-        if (dol_strlen(trim($this->email)) == 0)
-        {
+        if (dol_strlen(trim($this->email)) == 0) {
             $error_string[$err] = "L'email saisi est invalide";
             $err++;
         }
@@ -248,10 +230,8 @@ class Don extends CommonObject
 
         $map = range(0,9);
         $len=dol_strlen($this->amount);
-        for ($i = 0; $i < $len; $i++)
-        {
-            if (!isset($map[substr($this->amount, $i, 1)] ))
-            {
+        for ($i = 0; $i < $len; $i++) {
+            if (!isset($map[substr($this->amount, $i, 1)] )) {
                 $error_string[$err] = "Le montant du don contient un/des caractere(s) invalide(s)";
                 $err++;
                 $amount_invalid = 1;
@@ -259,30 +239,23 @@ class Don extends CommonObject
             }
         }
 
-        if (! $amount_invalid)
-        {
-            if ($this->amount == 0)
-            {
+        if (! $amount_invalid) {
+            if ($this->amount == 0) {
                 $error_string[$err] = "Le montant du don est null";
                 $err++;
-            }
-            else
-            {
-                if ($this->amount < $minimum && $minimum > 0)
-                {
+            } else {
+                if ($this->amount < $minimum && $minimum > 0) {
                     $error_string[$err] = "Le montant minimum du don est de $minimum";
                     $err++;
                 }
             }
         }
 
-        if ($err)
-        {
+        if ($err) {
             $this->error = $error_string;
+
             return 0;
-        }
-        else
-        {
+        } else {
             return 1;
         }
 
@@ -291,11 +264,11 @@ class Don extends CommonObject
     /**
      * Create donation record into database
      *
-     * @param	User	$user		Objet utilisateur qui cree le don
-     * @return  int  		        Id don cree si ok, <0 si ko
+     * @param  User $user Objet utilisateur qui cree le don
+     * @return int  Id don cree si ok, <0 si ko
      * TODO    add numbering module for Ref
      */
-    function create($user)
+    public function create($user)
     {
         global $conf;
 
@@ -344,8 +317,8 @@ class Don extends CommonObject
         $sql.= ", '".$this->db->escape($this->country)."'"; // TODO use country_id
         $sql.= ", ".$this->public;
         $sql.= ", ".($this->fk_project > 0?$this->fk_project:"null");
-       	$sql.= ", ".(!empty($this->note_private)?("'".$this->db->escape($this->note_private)."'"):"NULL");
-		$sql.= ", ".(!empty($this->note_public)?("'".$this->db->escape($this->note_public)."'"):"NULL");
+           $sql.= ", ".(!empty($this->note_private)?("'".$this->db->escape($this->note_private)."'"):"NULL");
+        $sql.= ", ".(!empty($this->note_public)?("'".$this->db->escape($this->note_public)."'"):"NULL");
         $sql.= ", ".$user->id;
         $sql.= ", null";
         $sql.= ", '".$this->db->idate($this->date)."'";
@@ -356,8 +329,7 @@ class Don extends CommonObject
 
         dol_syslog("Don::create sql=".$sql, LOG_DEBUG);
         $result = $this->db->query($sql);
-        if ($result)
-        {
+        if ($result) {
             $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."don");
 
             // Appel des triggers
@@ -368,12 +340,10 @@ class Don extends CommonObject
                     $error++; $this->errors=$interface->errors;
             }
             // Fin appel triggers
-
             return $this->id;
-        }
-        else
-        {
+        } else {
             dol_print_error($this->db);
+
             return -1;
         }
     }
@@ -384,7 +354,7 @@ class Don extends CommonObject
      *  @param 		User	$user   Objet utilisateur qui met a jour le don
      *  @return     int      		>0 if OK, <0 if KO
      */
-    function update($user)
+    public function update($user)
     {
         // Clean parameters
         $this->address=($this->address>0?$this->address:$this->address);
@@ -416,13 +386,11 @@ class Don extends CommonObject
 
         dol_syslog("Don::update sql=".$sql);
         $result = $this->db->query($sql);
-        if ($result)
-        {
+        if ($result) {
             return 1;
-        }
-        else
-        {
+        } else {
             dol_print_error($this->db);
+
             return -1;
         }
     }
@@ -433,26 +401,21 @@ class Don extends CommonObject
      *    @param  	int		$rowid     	Id of donation to delete
      *    @return	int					<0 if KO, >0 if OK
      */
-    function delete($rowid)
+    public function delete($rowid)
     {
 
         $sql = "DELETE FROM ".MAIN_DB_PREFIX."don WHERE rowid = $rowid AND fk_statut = 0;";
 
         $resql=$this->db->query($sql);
-        if ($resql)
-        {
-            if ( $this->db->affected_rows($resql) )
-            {
+        if ($resql) {
+            if ( $this->db->affected_rows($resql) ) {
                 return 1;
-            }
-            else
-            {
+            } else {
                 return -1;
             }
-        }
-        else
-        {
+        } else {
             dol_print_error($this->db);
+
             return -1;
         }
     }
@@ -464,7 +427,7 @@ class Don extends CommonObject
      *      @param      string	$ref        Ref of donation to load
      *      @return     int      			<0 if KO, >0 if OK
      */
-    function fetch($rowid,$ref='')
+    public function fetch($rowid,$ref='')
     {
         global $conf;
 
@@ -480,10 +443,8 @@ class Don extends CommonObject
 
         dol_syslog(get_class($this)."::fetch sql=".$sql);
         $resql=$this->db->query($sql);
-        if ($resql)
-        {
-            if ($this->db->num_rows($resql))
-            {
+        if ($resql) {
+            if ($this->db->num_rows($resql)) {
                 $obj = $this->db->fetch_object($resql);
 
                 $this->id             = $obj->rowid;
@@ -513,11 +474,11 @@ class Don extends CommonObject
                 $this->note_public	  = $obj->note_public;
                 $this->commentaire    = $obj->note;	// deprecated
             }
+
             return 1;
-        }
-        else
-        {
+        } else {
             dol_print_error($this->db);
+
             return -1;
         }
 
@@ -530,27 +491,22 @@ class Don extends CommonObject
      *    @param  	int		$userid  	utilisateur qui valide la promesse
      *    @return   int     			<0 if KO, >0 if OK
      */
-    function valid_promesse($rowid, $userid)
+    public function valid_promesse($rowid, $userid)
     {
 
         $sql = "UPDATE ".MAIN_DB_PREFIX."don SET fk_statut = 1, fk_user_valid = $userid WHERE rowid = $rowid AND fk_statut = 0";
 
         dol_syslog("sql=".$sql);
         $resql=$this->db->query($sql);
-        if ($resql)
-        {
-            if ( $this->db->affected_rows($resql) )
-            {
+        if ($resql) {
+            if ( $this->db->affected_rows($resql) ) {
                 return 1;
-            }
-            else
-            {
+            } else {
                 return 0;
             }
-        }
-        else
-        {
+        } else {
             dol_print_error($this->db);
+
             return -1;
         }
     }
@@ -562,35 +518,28 @@ class Don extends CommonObject
      *    @param    int		$modepaiement   	mode de paiement
      *    @return   int      					<0 if KO, >0 if OK
      */
-    function set_paye($rowid, $modepaiement='')
+    public function set_paye($rowid, $modepaiement='')
     {
         $sql = "UPDATE ".MAIN_DB_PREFIX."don SET fk_statut = 2";
-        if ($modepaiement)
-        {
+        if ($modepaiement) {
             $sql .= ", fk_paiement=$modepaiement";
         }
         $sql .=  " WHERE rowid = $rowid AND fk_statut = 1";
 
         dol_syslog("sql=".$sql);
         $resql=$this->db->query($sql);
-        if ($resql)
-        {
-            if ($this->db->affected_rows($resql))
-            {
+        if ($resql) {
+            if ($this->db->affected_rows($resql)) {
                 return 1;
-            }
-            else
-            {
+            } else {
                 return 0;
             }
-        }
-        else
-        {
+        } else {
             dol_print_error($this->db);
+
             return -1;
         }
     }
-
 
     /**
      *    Classe le don comme encaisse
@@ -598,27 +547,22 @@ class Don extends CommonObject
      *    @param	int		$rowid   	id du don a modifier
      *    @return   int     			<0 if KO, >0 if OK
      */
-    function set_encaisse($rowid)
+    public function set_encaisse($rowid)
     {
 
         $sql = "UPDATE ".MAIN_DB_PREFIX."don SET fk_statut = 3 WHERE rowid = $rowid AND fk_statut = 2";
 
         dol_syslog("sql=".$sql);
         $resql=$this->db->query($sql);
-        if ($resql)
-        {
-            if ( $this->db->affected_rows($resql) )
-            {
+        if ($resql) {
+            if ( $this->db->affected_rows($resql) ) {
                 return 1;
-            }
-            else
-            {
+            } else {
                 return 0;
             }
-        }
-        else
-        {
+        } else {
             dol_print_error($this->db);
+
             return -1;
         }
     }
@@ -629,26 +573,21 @@ class Don extends CommonObject
      *    @param	int		$rowid   	id du don a modifier
      *    @return   int     			<0 if KO, >0 if OK
      */
-    function set_cancel($rowid)
+    public function set_cancel($rowid)
     {
         $sql = "UPDATE ".MAIN_DB_PREFIX."don SET fk_statut = -1 WHERE rowid = ".$rowid;
 
         dol_syslog("sql=".$sql);
         $resql=$this->db->query($sql);
-        if ($resql)
-        {
-            if ( $this->db->affected_rows($resql) )
-            {
+        if ($resql) {
+            if ( $this->db->affected_rows($resql) ) {
                 return 1;
-            }
-            else
-            {
+            } else {
                 return 0;
             }
-        }
-        else
-        {
+        } else {
             dol_print_error($this->db);
+
             return -1;
         }
     }
@@ -659,7 +598,7 @@ class Don extends CommonObject
      *	@param	string	$param	1=promesses de dons validees , 2=xxx, 3=encaisses
      *	@return	int				Summ of donations
      */
-    function sum_donations($param)
+    public function sum_donations($param)
     {
         global $conf;
 
@@ -671,8 +610,7 @@ class Don extends CommonObject
         $sql.= " AND entity = ".$conf->entity;
 
         $resql=$this->db->query($sql);
-        if ($resql)
-        {
+        if ($resql) {
             $obj = $this->db->fetch_object($resql);
             $result=$obj->total;
         }
@@ -680,14 +618,13 @@ class Don extends CommonObject
         return $result;
     }
 
-
     /**
      *	Return clicable name (with picto eventually)
      *
      *	@param	int		$withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
      *	@return	string					Chaine avec URL
      */
-    function getNomUrl($withpicto=0)
+    public function getNomUrl($withpicto=0)
     {
         global $langs;
 
@@ -707,4 +644,3 @@ class Don extends CommonObject
     }
 
 }
-?>

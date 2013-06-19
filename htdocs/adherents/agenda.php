@@ -42,20 +42,16 @@ $result=restrictedArea($user,'adherent',$id);
 
 $object = new Adherent($db);
 $result=$object->fetch($id);
-if ($result > 0)
-{
+if ($result > 0) {
     $adht = new AdherentType($db);
     $result=$adht->fetch($object->typeid);
 }
-
 
 /*
  *	Actions
  */
 
 // None
-
-
 
 /*
  *	View
@@ -68,68 +64,65 @@ $form = new Form($db);
 /*
  * Fiche categorie de client et/ou fournisseur
  */
-if ($object->id > 0)
-{
-	require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
-	require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+if ($object->id > 0) {
+    require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+    require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 
-	$langs->load("companies");
+    $langs->load("companies");
 
-	llxHeader("",$langs->trans("Agenda"),'');
+    llxHeader("",$langs->trans("Agenda"),'');
 
-	if (! empty($conf->notification->enabled)) $langs->load("mails");
-	$head = member_prepare_head($object);
+    if (! empty($conf->notification->enabled)) $langs->load("mails");
+    $head = member_prepare_head($object);
 
-	dol_fiche_head($head, 'agenda', $langs->trans("Member"),0,'user');
+    dol_fiche_head($head, 'agenda', $langs->trans("Member"),0,'user');
 
-	print '<table class="border" width="100%">';
+    print '<table class="border" width="100%">';
 
-	$linkback = '<a href="'.DOL_URL_ROOT.'/adherents/liste.php">'.$langs->trans("BackToList").'</a>';
+    $linkback = '<a href="'.DOL_URL_ROOT.'/adherents/liste.php">'.$langs->trans("BackToList").'</a>';
 
-	// Reference
-	print '<tr><td width="20%">'.$langs->trans('Ref').'</td>';
-	print '<td colspan="3">';
-	print $form->showrefnav($object, 'id', $linkback);
-	print '</td>';
-	print '</tr>';
+    // Reference
+    print '<tr><td width="20%">'.$langs->trans('Ref').'</td>';
+    print '<td colspan="3">';
+    print $form->showrefnav($object, 'id', $linkback);
+    print '</td>';
+    print '</tr>';
 
-	// Login
-	if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED))
-	{
-	    print '<tr><td>'.$langs->trans("Login").' / '.$langs->trans("Id").'</td><td class="valeur">'.$object->login.'&nbsp;</td></tr>';
-	}
+    // Login
+    if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED)) {
+        print '<tr><td>'.$langs->trans("Login").' / '.$langs->trans("Id").'</td><td class="valeur">'.$object->login.'&nbsp;</td></tr>';
+    }
 
-	// Morphy
-	print '<tr><td>'.$langs->trans("Nature").'</td><td class="valeur" >'.$object->getmorphylib().'</td>';
-	/*print '<td rowspan="'.$rowspan.'" align="center" valign="middle" width="25%">';
-	 print $form->showphoto('memberphoto',$member);
-	print '</td>';*/
-	print '</tr>';
+    // Morphy
+    print '<tr><td>'.$langs->trans("Nature").'</td><td class="valeur" >'.$object->getmorphylib().'</td>';
+    /*print '<td rowspan="'.$rowspan.'" align="center" valign="middle" width="25%">';
+     print $form->showphoto('memberphoto',$member);
+    print '</td>';*/
+    print '</tr>';
 
-	// Type
-	print '<tr><td>'.$langs->trans("Type").'</td><td class="valeur">'.$adht->getNomUrl(1)."</td></tr>\n";
+    // Type
+    print '<tr><td>'.$langs->trans("Type").'</td><td class="valeur">'.$adht->getNomUrl(1)."</td></tr>\n";
 
-	// Company
-	print '<tr><td>'.$langs->trans("Company").'</td><td class="valeur">'.$object->societe.'</td></tr>';
+    // Company
+    print '<tr><td>'.$langs->trans("Company").'</td><td class="valeur">'.$object->societe.'</td></tr>';
 
-	// Civility
-	print '<tr><td>'.$langs->trans("UserTitle").'</td><td class="valeur">'.$object->getCivilityLabel().'&nbsp;</td>';
-	print '</tr>';
+    // Civility
+    print '<tr><td>'.$langs->trans("UserTitle").'</td><td class="valeur">'.$object->getCivilityLabel().'&nbsp;</td>';
+    print '</tr>';
 
-	// Lastname
-	print '<tr><td>'.$langs->trans("Lastname").'</td><td class="valeur" colspan="3">'.$object->lastname.'&nbsp;</td>';
-	print '</tr>';
+    // Lastname
+    print '<tr><td>'.$langs->trans("Lastname").'</td><td class="valeur" colspan="3">'.$object->lastname.'&nbsp;</td>';
+    print '</tr>';
 
-	// Firstname
-	print '<tr><td>'.$langs->trans("Firstname").'</td><td class="valeur" colspan="3">'.$object->firstname.'&nbsp;</td></tr>';
+    // Firstname
+    print '<tr><td>'.$langs->trans("Firstname").'</td><td class="valeur" colspan="3">'.$object->firstname.'&nbsp;</td></tr>';
 
-	// Status
-	print '<tr><td>'.$langs->trans("Status").'</td><td class="valeur">'.$object->getLibStatut(4).'</td></tr>';
+    // Status
+    print '<tr><td>'.$langs->trans("Status").'</td><td class="valeur">'.$object->getLibStatut(4).'</td></tr>';
 
-	print '</table>';
+    print '</table>';
 
-	print '</div>';
-
+    print '</div>';
 
     /*
      * Barre d'action
@@ -137,8 +130,7 @@ if ($object->id > 0)
 
     print '<div class="tabsAction">';
 
-    if (! empty($conf->agenda->enabled))
-    {
+    if (! empty($conf->agenda->enabled)) {
         print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create">'.$langs->trans("AddAction").'</a></div>';
     }
 
@@ -155,9 +147,6 @@ if ($object->id > 0)
     show_actions_done($conf,$langs,$db,$object);
 }
 
-
-
 llxFooter();
 
 $db->close();
-?>

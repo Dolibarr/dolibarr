@@ -41,9 +41,8 @@ $action=GETPOST('action','alpha');
 $confirm=GETPOST('confirm','alpha');
 
 // Security check
-if ($user->societe_id > 0)
-{
-	$id = $user->societe_id;
+if ($user->societe_id > 0) {
+    $id = $user->societe_id;
 }
 $result=restrictedArea($user,'adherent',$id);
 
@@ -58,35 +57,29 @@ $pagenext = $page + 1;
 if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="name";
 
-
 $upload_dir = $conf->adherent->dir_output . "/" . get_exdir($id,2,0,1) . '/' . $id;
-
-
 
 /*
  * Actions
  */
 
 // Envoie fichier
-if (GETPOST('sendit') && ! empty($conf->global->MAIN_UPLOAD_DOC))
-{
-	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+if (GETPOST('sendit') && ! empty($conf->global->MAIN_UPLOAD_DOC)) {
+    require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
-	dol_add_file_process($upload_dir,0,1,'userfile');
+    dol_add_file_process($upload_dir,0,1,'userfile');
 }
 
 // Suppression fichier
-if ($action == 'confirm_deletefile' && $confirm == 'yes')
-{
+if ($action == 'confirm_deletefile' && $confirm == 'yes') {
     $langs->load("other");
-	$file = $upload_dir . "/" . GETPOST('urlfile');	// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
-	$ret=dol_delete_file($file);
-	if ($ret) setEventMessage($langs->trans("FileWasRemoved", GETPOST('urlfile')));
-	else setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), 'errors');
+    $file = $upload_dir . "/" . GETPOST('urlfile');	// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
+    $ret=dol_delete_file($file);
+    if ($ret) setEventMessage($langs->trans("FileWasRemoved", GETPOST('urlfile')));
+    else setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), 'errors');
     header('Location: '.$_SERVER["PHP_SELF"].'?id='.$id);
     exit;
 }
-
 
 /*
  * View
@@ -98,37 +91,32 @@ $membert=new AdherentType($db);
 
 llxHeader();
 
-if ($id > 0)
-{
+if ($id > 0) {
     $result=$member->fetch($id);
     $result=$membert->fetch($member->typeid);
-	if ($result > 0)
-	{
-		/*
-		 * Affichage onglets
-		 */
-		if (! empty($conf->notification->enabled))
-			$langs->load("mails");
+    if ($result > 0) {
+        /*
+         * Affichage onglets
+         */
+        if (! empty($conf->notification->enabled))
+            $langs->load("mails");
 
-		$head = member_prepare_head($member);
+        $head = member_prepare_head($member);
 
-		$form=new Form($db);
+        $form=new Form($db);
 
-		dol_fiche_head($head, 'document', $langs->trans("Member"),0,'user');
+        dol_fiche_head($head, 'document', $langs->trans("Member"),0,'user');
 
+        // Construit liste des fichiers
+        $filearray=dol_dir_list($upload_dir,"files",0,'','\.meta$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
+        $totalsize=0;
+        foreach ($filearray as $key => $file) {
+            $totalsize+=$file['size'];
+        }
 
-		// Construit liste des fichiers
-		$filearray=dol_dir_list($upload_dir,"files",0,'','\.meta$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
-		$totalsize=0;
-		foreach($filearray as $key => $file)
-		{
-			$totalsize+=$file['size'];
-		}
+        print '<table class="border" width="100%">';
 
-
-		print '<table class="border" width="100%">';
-
-		$linkback = '<a href="'.DOL_URL_ROOT.'/adherents/liste.php">'.$langs->trans("BackToList").'</a>';
+        $linkback = '<a href="'.DOL_URL_ROOT.'/adherents/liste.php">'.$langs->trans("BackToList").'</a>';
 
         // Ref
         print '<tr><td width="20%">'.$langs->trans("Ref").'</td>';
@@ -137,8 +125,7 @@ if ($id > 0)
         print '</td></tr>';
 
         // Login
-        if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED))
-        {
+        if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED)) {
             print '<tr><td>'.$langs->trans("Login").' / '.$langs->trans("Id").'</td><td class="valeur">'.$member->login.'&nbsp;</td></tr>';
         }
 
@@ -170,48 +157,39 @@ if ($id > 0)
         // Status
         print '<tr><td>'.$langs->trans("Status").'</td><td class="valeur">'.$member->getLibStatut(4).'</td></tr>';
 
-    	// Nbre fichiers
-		print '<tr><td>'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
+        // Nbre fichiers
+        print '<tr><td>'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
 
-		//Total taille
-		print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.$totalsize.' '.$langs->trans("bytes").'</td></tr>';
+        //Total taille
+        print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.$totalsize.' '.$langs->trans("bytes").'</td></tr>';
 
-		print '</table>';
+        print '</table>';
 
-		print '</div>';
+        print '</div>';
 
-		/*
-		 * Confirmation suppression fichier
-		 */
-		if ($action == 'delete')
-		{
-			$ret=$form->form_confirm($_SERVER["PHP_SELF"].'?id='.$member->id.'&urlfile='.urlencode(GETPOST("urlfile")), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile', '', 0, 1);
-			if ($ret == 'html') print '<br>';
-		}
+        /*
+         * Confirmation suppression fichier
+         */
+        if ($action == 'delete') {
+            $ret=$form->form_confirm($_SERVER["PHP_SELF"].'?id='.$member->id.'&urlfile='.urlencode(GETPOST("urlfile")), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile', '', 0, 1);
+            if ($ret == 'html') print '<br>';
+        }
 
+        // Affiche formulaire upload
+        $formfile=new FormFile($db);
+        $formfile->form_attach_new_file(DOL_URL_ROOT.'/adherents/document.php?id='.$member->id,'',0,0,$user->rights->adherent->creer,50,$object);
 
-		// Affiche formulaire upload
-		$formfile=new FormFile($db);
-		$formfile->form_attach_new_file(DOL_URL_ROOT.'/adherents/document.php?id='.$member->id,'',0,0,$user->rights->adherent->creer,50,$object);
+        // List of document
+        $formfile->list_of_documents($filearray,$member,'member','', 0, get_exdir($member->id,2,0,1).'/'.$member->id.'/');
 
-
-		// List of document
-		$formfile->list_of_documents($filearray,$member,'member','', 0, get_exdir($member->id,2,0,1).'/'.$member->id.'/');
-
-		print "<br><br>";
-	}
-	else
-	{
-		dol_print_error($db);
-	}
-}
-else
-{
+        print "<br><br>";
+    } else {
+        dol_print_error($db);
+    }
+} else {
     $langs->load("errors");
-	print $langs->trans("ErrorRecordNotFound");
+    print $langs->trans("ErrorRecordNotFound");
 }
-
 
 llxFooter();
 $db->close();
-?>

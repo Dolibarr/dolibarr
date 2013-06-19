@@ -28,18 +28,14 @@ require_once DOL_DOCUMENT_ROOT.'/boutique/osc_master.inc.php';
 
 $id=$_GET["id"];
 
-
-
 llxHeader();
 
-if ($id)
-{
+if ($id) {
 
   $critique = new Critique($dbosc);
   $result = $critique->fetch($id);
 
-  if ( $result )
-    {
+  if ($result) {
 
       print '<div class="titre">Fiche Critique</div><br>';
 
@@ -50,11 +46,7 @@ if ($id)
       print '<tr><td width="20%">Texte</td><td width="80%">'.nl2br($critique->text).'</td></tr>';
       print "</table>";
 
-
-
-    }
-  else
-    {
+    } else {
       print "Fetch failed";
     }
 
@@ -74,10 +66,6 @@ print '<td width="20%" align="center">-</td>';
 print '<td width="20%" align="center">-</td>';
 print '</table><br>';
 
-
-
 $dbosc->close();
 
 llxFooter();
-
-?>

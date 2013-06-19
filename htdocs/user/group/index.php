@@ -26,10 +26,9 @@
 
 require '../../main.inc.php';
 
-if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS))
-{
-	if (! $user->rights->user->group_advance->read && ! $user->admin)
-		accessforbidden();
+if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
+    if (! $user->rights->user->group_advance->read && ! $user->admin)
+        accessforbidden();
 }
 
 $langs->load("users");
@@ -48,7 +47,6 @@ $pagenext = $page + 1;
 if (! $sortfield) $sortfield="g.nom";
 if (! $sortorder) $sortorder="ASC";
 
-
 /*
  * View
  */
@@ -60,16 +58,12 @@ print_fiche_titre($langs->trans("ListOfGroups"));
 $sql = "SELECT g.rowid, g.nom, g.entity, g.datec, COUNT(DISTINCT ugu.fk_user) as nb";
 $sql.= " FROM ".MAIN_DB_PREFIX."usergroup as g";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."usergroup_user as ugu ON ugu.fk_usergroup = g.rowid";
-if (! empty($conf->multicompany->enabled) && $conf->entity == 1 && ($conf->multicompany->transverse_mode || ($user->admin && ! $user->entity)))
-{
-	$sql.= " WHERE g.entity IS NOT NULL";
+if (! empty($conf->multicompany->enabled) && $conf->entity == 1 && ($conf->multicompany->transverse_mode || ($user->admin && ! $user->entity))) {
+    $sql.= " WHERE g.entity IS NOT NULL";
+} else {
+    $sql.= " WHERE g.entity IN (0,".$conf->entity.")";
 }
-else
-{
-	$sql.= " WHERE g.entity IN (0,".$conf->entity.")";
-}
-if (! empty($search_group))
-{
+if (! empty($search_group)) {
     $sql .= " AND (g.nom LIKE '%".$db->escape($search_group)."%' OR g.note LIKE '%".$db->escape($search_group)."%')";
 }
 if ($sall) $sql.= " AND (g.nom LIKE '%".$db->escape($sall)."%' OR g.note LIKE '%".$db->escape($sall)."%')";
@@ -77,8 +71,7 @@ $sql.= " GROUP BY g.rowid, g.nom, g.entity, g.datec";
 $sql.= $db->order($sortfield,$sortorder);
 
 $resql = $db->query($sql);
-if ($resql)
-{
+if ($resql) {
     $num = $db->num_rows($resql);
     $i = 0;
 
@@ -87,29 +80,25 @@ if ($resql)
     print '<tr class="liste_titre">';
     print_liste_field_titre($langs->trans("Group"),$_SERVER["PHP_SELF"],"g.nom",$param,"","",$sortfield,$sortorder);
     //multicompany
-    if(! empty($conf->multicompany->enabled) && empty($conf->multicompany->transverse_mode) && $conf->entity == 1)
-    {
-    	print_liste_field_titre($langs->trans("Entity"),$_SERVER["PHP_SELF"],"g.entity",$param,"",'align="center"',$sortfield,$sortorder);
+    if (! empty($conf->multicompany->enabled) && empty($conf->multicompany->transverse_mode) && $conf->entity == 1) {
+        print_liste_field_titre($langs->trans("Entity"),$_SERVER["PHP_SELF"],"g.entity",$param,"",'align="center"',$sortfield,$sortorder);
     }
     print_liste_field_titre($langs->trans("NbOfUsers"),$_SERVER["PHP_SELF"],"g.nb",$param,"",'align="center"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("DateCreation"),$_SERVER["PHP_SELF"],"g.datec",$param,"",'align="right"',$sortfield,$sortorder);
     print "</tr>\n";
     $var=True;
-    while ($i < $num)
-    {
+    while ($i < $num) {
         $obj = $db->fetch_object($resql);
         $var=!$var;
 
         print "<tr $bc[$var]>";
         print '<td><a href="fiche.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowGroup"),"group").' '.$obj->nom.'</a>';
-        if (! $obj->entity)
-        {
-        	print img_picto($langs->trans("GlobalGroup"),'redstar');
+        if (! $obj->entity) {
+            print img_picto($langs->trans("GlobalGroup"),'redstar');
         }
         print "</td>";
         //multicompany
-        if (! empty($conf->multicompany->enabled) && empty($conf->multicompany->transverse_mode) && $conf->entity == 1)
-        {
+        if (! empty($conf->multicompany->enabled) && empty($conf->multicompany->transverse_mode) && $conf->entity == 1) {
             $mc->getInfo($obj->entity);
             print '<td align="center">'.$mc->label.'</td>';
         }
@@ -120,13 +109,9 @@ if ($resql)
     }
     print "</table>";
     $db->free();
-}
-else
-{
+} else {
     dol_print_error($db);
 }
 
-
 llxFooter();
 $db->close();
-?>

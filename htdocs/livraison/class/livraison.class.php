@@ -32,903 +32,829 @@ require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
 if (! empty($conf->propal->enabled))   require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 if (! empty($conf->commande->enabled)) require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 
-
 /**
  *  \class      Livraison
  *  \brief      Classe de gestion des bons de livraison
  */
 class Livraison extends CommonObject
 {
-	public $element="delivery";
-	public $fk_element="fk_livraison";
-	public $table_element="livraison";
+    public $element="delivery";
+    public $fk_element="fk_livraison";
+    public $table_element="livraison";
 
-	var $id;
-	var $brouillon;
-	var $origin;
-	var $origin_id;
-	var $socid;
-	var $ref_customer;
-	var $statut;
-	
-	var $note_public;
-	var $note_private;
+    public $id;
+    public $brouillon;
+    public $origin;
+    public $origin_id;
+    public $socid;
+    public $ref_customer;
+    public $statut;
 
-	var $expedition_id;
+    public $note_public;
+    public $note_private;
 
-	var $date_delivery;    // Date really received
-	var $date_creation;
-	var $date_valid;
+    public $expedition_id;
 
+    public $date_delivery;    // Date really received
+    public $date_creation;
+    public $date_valid;
 
-	/**
-	 * Constructor
-	 *
-	 * @param	DoliDB	$db		Database handler
-	 */
-	function __construct($db)
-	{
-		$this->db = $db;
-		$this->lines = array();
-		$this->products = array();
+    /**
+     * Constructor
+     *
+     * @param DoliDB $db Database handler
+     */
+    public function __construct($db)
+    {
+        $this->db = $db;
+        $this->lines = array();
+        $this->products = array();
 
-		// List of short language codes for status
-		$this->statuts[-1] = 'StatusSendingCanceled';
-		$this->statuts[0]  = 'StatusSendingDraft';
-		$this->statuts[1]  = 'StatusSendingValidated';
-	}
+        // List of short language codes for status
+        $this->statuts[-1] = 'StatusSendingCanceled';
+        $this->statuts[0]  = 'StatusSendingDraft';
+        $this->statuts[1]  = 'StatusSendingValidated';
+    }
 
-	/**
-	 *  Create delivery receipt in database
-	 *
-	 *  @param 	User	$user       Objet du user qui cree
-	 *  @return int         		<0 si erreur, id livraison cree si ok
-	 */
-	function create($user)
-	{
-		global $conf;
+    /**
+     *  Create delivery receipt in database
+     *
+     *  @param 	User	$user       Objet du user qui cree
+     *  @return int         		<0 si erreur, id livraison cree si ok
+     */
+    public function create($user)
+    {
+        global $conf;
 
-		dol_syslog("Livraison::create");
+        dol_syslog("Livraison::create");
 
-		$error = 0;
+        $error = 0;
 
         $now=dol_now();
 
-		/* On positionne en mode brouillon le bon de livraison */
-		$this->brouillon = 1;
+        /* On positionne en mode brouillon le bon de livraison */
+        $this->brouillon = 1;
 
-		$this->user = $user;
+        $this->user = $user;
 
-		$this->db->begin();
+        $this->db->begin();
 
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."livraison (";
-		$sql.= "ref";
-		$sql.= ", entity";
-		$sql.= ", fk_soc";
-		$sql.= ", ref_customer";
-		$sql.= ", date_creation";
-		$sql.= ", fk_user_author";
-		$sql.= ", date_delivery";
-		$sql.= ", fk_address";
-		$sql.= ", note_private";
-		$sql.= ", note_public";
-		$sql.= ") VALUES (";
-		$sql.= "'(PROV)'";
-		$sql.= ", ".$conf->entity;
-		$sql.= ", ".$this->socid;
-		$sql.= ", '".$this->db->escape($this->ref_customer)."'";
-		$sql.= ", ".$this->db->idate($now);
-		$sql.= ", ".$user->id;
-		$sql.= ", ".($this->date_delivery?"'".$this->db->idate($this->date_delivery)."'":"null");
-		$sql.= ", ".($this->fk_delivery_address > 0 ? $this->fk_delivery_address : "null");
-		$sql.= ", ".(!empty($this->note_private)?"'".$this->db->escape($this->note_private)."'":"null");
-		$sql.= ", ".(!empty($this->note_public)?"'".$this->db->escape($this->note_public)."'":"null");
-		$sql.= ")";
+        $sql = "INSERT INTO ".MAIN_DB_PREFIX."livraison (";
+        $sql.= "ref";
+        $sql.= ", entity";
+        $sql.= ", fk_soc";
+        $sql.= ", ref_customer";
+        $sql.= ", date_creation";
+        $sql.= ", fk_user_author";
+        $sql.= ", date_delivery";
+        $sql.= ", fk_address";
+        $sql.= ", note_private";
+        $sql.= ", note_public";
+        $sql.= ") VALUES (";
+        $sql.= "'(PROV)'";
+        $sql.= ", ".$conf->entity;
+        $sql.= ", ".$this->socid;
+        $sql.= ", '".$this->db->escape($this->ref_customer)."'";
+        $sql.= ", ".$this->db->idate($now);
+        $sql.= ", ".$user->id;
+        $sql.= ", ".($this->date_delivery?"'".$this->db->idate($this->date_delivery)."'":"null");
+        $sql.= ", ".($this->fk_delivery_address > 0 ? $this->fk_delivery_address : "null");
+        $sql.= ", ".(!empty($this->note_private)?"'".$this->db->escape($this->note_private)."'":"null");
+        $sql.= ", ".(!empty($this->note_public)?"'".$this->db->escape($this->note_public)."'":"null");
+        $sql.= ")";
 
-		dol_syslog("Livraison::create sql=".$sql, LOG_DEBUG);
-		$resql=$this->db->query($sql);
-		if ($resql)
-		{
-			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."livraison");
+        dol_syslog("Livraison::create sql=".$sql, LOG_DEBUG);
+        $resql=$this->db->query($sql);
+        if ($resql) {
+            $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."livraison");
 
-			$numref = "(PROV".$this->id.")";
+            $numref = "(PROV".$this->id.")";
 
-			$sql = "UPDATE ".MAIN_DB_PREFIX."livraison ";
-			$sql.= "SET ref = '".$this->db->escape($numref)."'";
-			$sql.= " WHERE rowid = ".$this->id;
+            $sql = "UPDATE ".MAIN_DB_PREFIX."livraison ";
+            $sql.= "SET ref = '".$this->db->escape($numref)."'";
+            $sql.= " WHERE rowid = ".$this->id;
 
-			dol_syslog("Livraison::create sql=".$sql, LOG_DEBUG);
-			$resql=$this->db->query($sql);
-			if ($resql)
-			{
-				if (! $conf->expedition_bon->enabled)
-				{
-					$commande = new Commande($this->db);
-					$commande->id = $this->commande_id;
-					$this->lines = $commande->fetch_lines();
-				}
+            dol_syslog("Livraison::create sql=".$sql, LOG_DEBUG);
+            $resql=$this->db->query($sql);
+            if ($resql) {
+                if (! $conf->expedition_bon->enabled) {
+                    $commande = new Commande($this->db);
+                    $commande->id = $this->commande_id;
+                    $this->lines = $commande->fetch_lines();
+                }
 
+                /*
+                 *  Insertion des produits dans la base
+                 */
+                $num=count($this->lines);
+                for ($i = 0; $i < $num; $i++) {
+                    $origin_id=$this->lines[$i]->origin_line_id;
+                    if (! $origin_id) $origin_id=$this->lines[$i]->commande_ligne_id;	// For backward compatibility
 
-				/*
-				 *  Insertion des produits dans la base
-				 */
-				$num=count($this->lines);
-				for ($i = 0; $i < $num; $i++)
-				{
-					$origin_id=$this->lines[$i]->origin_line_id;
-					if (! $origin_id) $origin_id=$this->lines[$i]->commande_ligne_id;	// For backward compatibility
+                    if (! $this->create_line($origin_id, $this->lines[$i]->qty, $this->lines[$i]->fk_product, $this->lines[$i]->description)) {
+                        $error++;
+                    }
+                }
 
-					if (! $this->create_line($origin_id, $this->lines[$i]->qty, $this->lines[$i]->fk_product, $this->lines[$i]->description))
-					{
-						$error++;
-					}
-				}
+                if (! $error && $this->id && $this->origin_id) {
+                    $ret = $this->add_object_linked();
+                    if (!$ret) {
+                        $error++;
+                    }
 
-				if (! $error && $this->id && $this->origin_id)
-				{
-					$ret = $this->add_object_linked();
-					if (!$ret)
-					{
-						$error++;
-					}
+                    if (! $conf->expedition_bon->enabled) {
+                        // TODO uniformiser les statuts
+                        $ret = $this->setStatut(2,$this->origin_id,$this->origin);
+                        if (! $ret) {
+                            $error++;
+                        }
+                    }
+                }
 
-					if (! $conf->expedition_bon->enabled)
-					{
-						// TODO uniformiser les statuts
-						$ret = $this->setStatut(2,$this->origin_id,$this->origin);
-						if (! $ret)
-						{
-							$error++;
-						}
-					}
-				}
+                if (! $error) {
+                    $this->db->commit();
 
-				if (! $error)
-				{
-					$this->db->commit();
-					return $this->id;
-				}
-				else
-				{
-					$error++;
-					$this->error=$this->db->lasterror()." - sql=".$this->db->lastqueryerror;
-					dol_syslog("Livraison::create Error -3 ".$this->error, LOG_ERR);
-					$this->db->rollback();
-					return -3;
-				}
-			}
-			else
-			{
-				$error++;
-				$this->error=$this->db->lasterror()." - sql=".$this->db->lastqueryerror;
-				dol_syslog("Livraison::create Error -2 ".$this->error, LOG_ERR);
-				$this->db->rollback();
-				return -2;
-			}
-		}
-		else
-		{
-			$error++;
-			$this->error=$this->db->lasterror()." - sql=".$this->db->lastqueryerror;
-			dol_syslog("Livraison::create Error -1 ".$this->error, LOG_ERR);
-			$this->db->rollback();
-			return -1;
-		}
-	}
+                    return $this->id;
+                } else {
+                    $error++;
+                    $this->error=$this->db->lasterror()." - sql=".$this->db->lastqueryerror;
+                    dol_syslog("Livraison::create Error -3 ".$this->error, LOG_ERR);
+                    $this->db->rollback();
 
-	/**
-	 *	Create a line
-	 *
-	 *	@param	string	$origin_id				Id of order
-	 *	@param	string	$qty					Quantity
-	 *	@param	string	$fk_product				Id of predefined product
-	 *	@param	string	$description			Description
-	 *	@return	int								<0 if KO, >0 if OK
-	 */
-	function create_line($origin_id, $qty, $fk_product, $description)
-	{
-		$error = 0;
-		$idprod = $fk_product;
-		$j = 0;
+                    return -3;
+                }
+            } else {
+                $error++;
+                $this->error=$this->db->lasterror()." - sql=".$this->db->lastqueryerror;
+                dol_syslog("Livraison::create Error -2 ".$this->error, LOG_ERR);
+                $this->db->rollback();
 
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."livraisondet (fk_livraison, fk_origin_line,";
-		$sql.= " fk_product, description, qty)";
-		$sql.= " VALUES (".$this->id.",".$origin_id.",";
-		$sql.= " ".($idprod>0?$idprod:"null").",";
-		$sql.= " ".($description?"'".$this->db->escape($description)."'":"null").",";
-		$sql.= $qty.")";
+                return -2;
+            }
+        } else {
+            $error++;
+            $this->error=$this->db->lasterror()." - sql=".$this->db->lastqueryerror;
+            dol_syslog("Livraison::create Error -1 ".$this->error, LOG_ERR);
+            $this->db->rollback();
 
-		dol_syslog(get_class($this)."::create_line sql=".$sql, LOG_DEBUG);
-		if (! $this->db->query($sql) )
-		{
-			$error++;
-		}
+            return -1;
+        }
+    }
 
-		if ($error == 0 )
-		{
-			return 1;
-		}
-	}
+    /**
+     *	Create a line
+     *
+     *	@param	string	$origin_id				Id of order
+     *	@param	string	$qty					Quantity
+     *	@param	string	$fk_product				Id of predefined product
+     *	@param	string	$description			Description
+     *	@return	int								<0 if KO, >0 if OK
+     */
+    public function create_line($origin_id, $qty, $fk_product, $description)
+    {
+        $error = 0;
+        $idprod = $fk_product;
+        $j = 0;
 
-	/**
-	 * 	Load a delivery receipt
-	 *
-	 * 	@param	int		$id			Id of object to load
-	 * 	@return	void
-	 */
-	function fetch($id)
-	{
-		global $conf;
+        $sql = "INSERT INTO ".MAIN_DB_PREFIX."livraisondet (fk_livraison, fk_origin_line,";
+        $sql.= " fk_product, description, qty)";
+        $sql.= " VALUES (".$this->id.",".$origin_id.",";
+        $sql.= " ".($idprod>0?$idprod:"null").",";
+        $sql.= " ".($description?"'".$this->db->escape($description)."'":"null").",";
+        $sql.= $qty.")";
 
-		$sql = "SELECT l.rowid, l.fk_soc, l.date_creation, l.date_valid, l.ref, l.ref_customer, l.fk_user_author,";
-		$sql.=" l.total_ht, l.fk_statut, l.fk_user_valid, l.note_private, l.note_public";
-		$sql.= ", l.date_delivery, l.fk_address, l.model_pdf";
-		$sql.= ", el.fk_source as origin_id, el.sourcetype as origin";
-		$sql.= " FROM ".MAIN_DB_PREFIX."livraison as l";
-		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON el.fk_target = l.rowid AND el.targettype = '".$this->element."'";
-		$sql.= " WHERE l.rowid = ".$id;
+        dol_syslog(get_class($this)."::create_line sql=".$sql, LOG_DEBUG);
+        if (! $this->db->query($sql) ) {
+            $error++;
+        }
 
-		dol_syslog(get_class($this)."::fetch sql=".$sql, LOG_DEBUG);
-		$result = $this->db->query($sql);
-		if ($result)
-		{
-			if ($this->db->num_rows($result))
-			{
-				$obj = $this->db->fetch_object($result);
+        if ($error == 0) {
+            return 1;
+        }
+    }
 
-				$this->id                   = $obj->rowid;
-				$this->date_delivery        = $this->db->jdate($obj->date_delivery);
-				$this->date_creation        = $this->db->jdate($obj->date_creation);
-				$this->date_valid           = $this->db->jdate($obj->date_valid);
-				$this->ref                  = $obj->ref;
-				$this->ref_customer         = $obj->ref_customer;
-				$this->socid                = $obj->fk_soc;
-				$this->statut               = $obj->fk_statut;
-				$this->user_author_id       = $obj->fk_user_author;
-				$this->user_valid_id        = $obj->fk_user_valid;
-				$this->fk_delivery_address  = $obj->fk_address;
-				$this->note                 = $obj->note_private; //TODO deprecated
-				$this->note_private         = $obj->note_private;
-				$this->note_public          = $obj->note_public;
-				$this->modelpdf             = $obj->model_pdf;
-				$this->origin               = $obj->origin;		// May be 'shipping'
-				$this->origin_id            = $obj->origin_id;	// May be id of shipping
+    /**
+     * 	Load a delivery receipt
+     *
+     * 	@param	int		$id			Id of object to load
+     * 	@return	void
+     */
+    public function fetch($id)
+    {
+        global $conf;
 
-				$this->db->free($result);
+        $sql = "SELECT l.rowid, l.fk_soc, l.date_creation, l.date_valid, l.ref, l.ref_customer, l.fk_user_author,";
+        $sql.=" l.total_ht, l.fk_statut, l.fk_user_valid, l.note_private, l.note_public";
+        $sql.= ", l.date_delivery, l.fk_address, l.model_pdf";
+        $sql.= ", el.fk_source as origin_id, el.sourcetype as origin";
+        $sql.= " FROM ".MAIN_DB_PREFIX."livraison as l";
+        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON el.fk_target = l.rowid AND el.targettype = '".$this->element."'";
+        $sql.= " WHERE l.rowid = ".$id;
 
-				if ($this->statut == 0) $this->brouillon = 1;
+        dol_syslog(get_class($this)."::fetch sql=".$sql, LOG_DEBUG);
+        $result = $this->db->query($sql);
+        if ($result) {
+            if ($this->db->num_rows($result)) {
+                $obj = $this->db->fetch_object($result);
 
-				/*
-				 * Lignes
-				 */
-				$result=$this->fetch_lines();
-				if ($result < 0)
-				{
-					return -3;
-				}
+                $this->id                   = $obj->rowid;
+                $this->date_delivery        = $this->db->jdate($obj->date_delivery);
+                $this->date_creation        = $this->db->jdate($obj->date_creation);
+                $this->date_valid           = $this->db->jdate($obj->date_valid);
+                $this->ref                  = $obj->ref;
+                $this->ref_customer         = $obj->ref_customer;
+                $this->socid                = $obj->fk_soc;
+                $this->statut               = $obj->fk_statut;
+                $this->user_author_id       = $obj->fk_user_author;
+                $this->user_valid_id        = $obj->fk_user_valid;
+                $this->fk_delivery_address  = $obj->fk_address;
+                $this->note                 = $obj->note_private; //TODO deprecated
+                $this->note_private         = $obj->note_private;
+                $this->note_public          = $obj->note_public;
+                $this->modelpdf             = $obj->model_pdf;
+                $this->origin               = $obj->origin;		// May be 'shipping'
+                $this->origin_id            = $obj->origin_id;	// May be id of shipping
 
-				return 1;
-			}
-			else
-			{
-				$this->error='Delivery with id '.$id.' not found sql='.$sql;
-				dol_syslog(get_class($this).'::fetch Error '.$this->error, LOG_ERR);
-				return -2;
-			}
-		}
-		else
-		{
-			dol_syslog(get_class($this).'::fetch Error '.$this->error, LOG_ERR);
-			$this->error=$this->db->error();
-			return -1;
-		}
-	}
+                $this->db->free($result);
 
-	/**
-	 *        Validate object and update stock if option enabled
-	 *
+                if ($this->statut == 0) $this->brouillon = 1;
+
+                /*
+                 * Lignes
+                 */
+                $result=$this->fetch_lines();
+                if ($result < 0) {
+                    return -3;
+                }
+
+                return 1;
+            } else {
+                $this->error='Delivery with id '.$id.' not found sql='.$sql;
+                dol_syslog(get_class($this).'::fetch Error '.$this->error, LOG_ERR);
+
+                return -2;
+            }
+        } else {
+            dol_syslog(get_class($this).'::fetch Error '.$this->error, LOG_ERR);
+            $this->error=$this->db->error();
+
+            return -1;
+        }
+    }
+
+    /**
+     *        Validate object and update stock if option enabled
+     *
      *        @param 	User	$user        Object user that validate
      *        @return   int
-	 */
-	function valid($user)
-	{
-		global $conf, $langs;
+     */
+    public function valid($user)
+    {
+        global $conf, $langs;
         require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
-		dol_syslog(get_class($this)."::valid begin");
+        dol_syslog(get_class($this)."::valid begin");
 
-		$this->db->begin();
+        $this->db->begin();
 
-		$error = 0;
+        $error = 0;
 
-		if ($user->rights->expedition->livraison->valider)
-		{
-			if (! empty($conf->global->LIVRAISON_ADDON_NUMBER))
-			{
-				// Definition du nom de module de numerotation de commande
-				$modName = $conf->global->LIVRAISON_ADDON_NUMBER;
+        if ($user->rights->expedition->livraison->valider) {
+            if (! empty($conf->global->LIVRAISON_ADDON_NUMBER)) {
+                // Definition du nom de module de numerotation de commande
+                $modName = $conf->global->LIVRAISON_ADDON_NUMBER;
 
-				if (is_readable(DOL_DOCUMENT_ROOT .'/core/modules/livraison/'.$modName.'.php'))
-				{
-					require_once DOL_DOCUMENT_ROOT .'/core/modules/livraison/'.$modName.'.php';
+                if (is_readable(DOL_DOCUMENT_ROOT .'/core/modules/livraison/'.$modName.'.php')) {
+                    require_once DOL_DOCUMENT_ROOT .'/core/modules/livraison/'.$modName.'.php';
 
-					$now=dol_now();
+                    $now=dol_now();
 
-					// Recuperation de la nouvelle reference
-					$objMod = new $modName($this->db);
-					$soc = new Societe($this->db);
-					$soc->fetch($this->socid);
+                    // Recuperation de la nouvelle reference
+                    $objMod = new $modName($this->db);
+                    $soc = new Societe($this->db);
+                    $soc->fetch($this->socid);
 
-					// on verifie si le bon de livraison est en numerotation provisoire
-					$livref = substr($this->ref, 1, 4);
-					if ($livref == 'PROV')
-					{
-						$numref = $objMod->livraison_get_num($soc,$this);
-					}
+                    // on verifie si le bon de livraison est en numerotation provisoire
+                    $livref = substr($this->ref, 1, 4);
+                    if ($livref == 'PROV') {
+                        $numref = $objMod->livraison_get_num($soc,$this);
+                    }
 
-					// Tester si non deja au statut valide. Si oui, on arrete afin d'eviter
-					// de decrementer 2 fois le stock.
-					$sql = "SELECT ref";
-					$sql.= " FROM ".MAIN_DB_PREFIX."livraison";
-					$sql.= " WHERE ref = '".$numref."'";
-					$sql.= " AND fk_statut <> 0";
-					$sql.= " AND entity = ".$conf->entity;
+                    // Tester si non deja au statut valide. Si oui, on arrete afin d'eviter
+                    // de decrementer 2 fois le stock.
+                    $sql = "SELECT ref";
+                    $sql.= " FROM ".MAIN_DB_PREFIX."livraison";
+                    $sql.= " WHERE ref = '".$numref."'";
+                    $sql.= " AND fk_statut <> 0";
+                    $sql.= " AND entity = ".$conf->entity;
 
-					$resql=$this->db->query($sql);
-					if ($resql)
-					{
-						$num = $this->db->num_rows($resql);
-						if ($num > 0)
-						{
-							return 0;
-						}
-					}
+                    $resql=$this->db->query($sql);
+                    if ($resql) {
+                        $num = $this->db->num_rows($resql);
+                        if ($num > 0) {
+                            return 0;
+                        }
+                    }
 
-					$sql = "UPDATE ".MAIN_DB_PREFIX."livraison SET";
-					$sql.= " ref='".$this->db->escape($numref)."'";
-					$sql.= ", fk_statut = 1";
-					$sql.= ", date_valid = ".$this->db->idate($now);
-					$sql.= ", fk_user_valid = ".$user->id;
-					$sql.= " WHERE rowid = ".$this->id;
-					$sql.= " AND fk_statut = 0";
+                    $sql = "UPDATE ".MAIN_DB_PREFIX."livraison SET";
+                    $sql.= " ref='".$this->db->escape($numref)."'";
+                    $sql.= ", fk_statut = 1";
+                    $sql.= ", date_valid = ".$this->db->idate($now);
+                    $sql.= ", fk_user_valid = ".$user->id;
+                    $sql.= " WHERE rowid = ".$this->id;
+                    $sql.= " AND fk_statut = 0";
 
-					$resql=$this->db->query($sql);
-					if ($resql)
-					{
+                    $resql=$this->db->query($sql);
+                    if ($resql) {
 
-						$this->oldref='';
+                        $this->oldref='';
 
-						// Rename directory if dir was a temporary ref
-						if (preg_match('/^[\(]?PROV/i', $this->ref))
-						{
-							// On renomme repertoire ($this->ref = ancienne ref, $numfa = nouvelle ref)
-							// afin de ne pas perdre les fichiers attaches
-							$oldref = dol_sanitizeFileName($this->ref);
-							$newref = dol_sanitizeFileName($numref);
-							$dirsource = $conf->expedition->dir_output.'/receipt/'.$oldref;
-							$dirdest = $conf->expedition->dir_output.'/receipt/'.$newref;
-							if (file_exists($dirsource))
-							{
-								dol_syslog(get_class($this)."::valid rename dir ".$dirsource." into ".$dirdest);
+                        // Rename directory if dir was a temporary ref
+                        if (preg_match('/^[\(]?PROV/i', $this->ref)) {
+                            // On renomme repertoire ($this->ref = ancienne ref, $numfa = nouvelle ref)
+                            // afin de ne pas perdre les fichiers attaches
+                            $oldref = dol_sanitizeFileName($this->ref);
+                            $newref = dol_sanitizeFileName($numref);
+                            $dirsource = $conf->expedition->dir_output.'/receipt/'.$oldref;
+                            $dirdest = $conf->expedition->dir_output.'/receipt/'.$newref;
+                            if (file_exists($dirsource)) {
+                                dol_syslog(get_class($this)."::valid rename dir ".$dirsource." into ".$dirdest);
 
-								if (@rename($dirsource, $dirdest))
-								{
-									$this->oldref = $oldref;
+                                if (@rename($dirsource, $dirdest)) {
+                                    $this->oldref = $oldref;
 
-									dol_syslog("Rename ok");
-									// Suppression ancien fichier PDF dans nouveau rep
-									dol_delete_file($dirdest.'/'.$oldref.'*.*');
-								}
-							}
-						}
+                                    dol_syslog("Rename ok");
+                                    // Suppression ancien fichier PDF dans nouveau rep
+                                    dol_delete_file($dirdest.'/'.$oldref.'*.*');
+                                }
+                            }
+                        }
 
-						// Set new ref and current status
-						if (! $error)
-						{
-							$this->ref = $numref;
-							$this->statut = 1;
-						}
+                        // Set new ref and current status
+                        if (! $error) {
+                            $this->ref = $numref;
+                            $this->statut = 1;
+                        }
 
-						dol_syslog(get_class($this)."::valid ok");
-					}
-					else
-					{
-						$this->db->rollback();
-						$this->error=$this->db->error()." - sql=$sql";
-						dol_syslog(get_class($this)."::valid ".$this->error, LOG_ERR);
-						return -1;
-					}
-				}
-			}
-		}
-		else
-		{
-			$this->error="Non autorise";
-			dol_syslog(get_class($this)."::valid ".$this->error, LOG_ERR);
-			return -1;
-		}
+                        dol_syslog(get_class($this)."::valid ok");
+                    } else {
+                        $this->db->rollback();
+                        $this->error=$this->db->error()." - sql=$sql";
+                        dol_syslog(get_class($this)."::valid ".$this->error, LOG_ERR);
 
-		// Appel des triggers
-		include_once DOL_DOCUMENT_ROOT.'/core/class/interfaces.class.php';
-		$interface = new Interfaces($this->db);
-		$result = $interface->run_triggers('DELIVERY_VALIDATE', $this, $user, $langs, $conf);
-		// Fin appel triggers
-		if ($result < 0)
-		{
-			$this->db->rollback();
-			$this->error = $interface->errors;
-			dol_syslog(get_class($this)."::valid ".$this->error, LOG_ERR);
-			return -1;
-		}
-		else
-		{
-			$this->db->commit();
-			return 1;
-		}
-	}
+                        return -1;
+                    }
+                }
+            }
+        } else {
+            $this->error="Non autorise";
+            dol_syslog(get_class($this)."::valid ".$this->error, LOG_ERR);
 
-	/**
-	 * 	Cree le bon de livraison depuis une expedition existante
-	 *
-	 *	@param	User	$user            Utilisateur qui cree
-	 *	@param  int		$sending_id      Id de l'expedition qui sert de modele
-	 *	@return	void
-	 */
-	function create_from_sending($user, $sending_id)
-	{
-		$expedition = new Expedition($this->db);
-		$result=$expedition->fetch($sending_id);
+            return -1;
+        }
 
-		$this->lines = array();
+        // Appel des triggers
+        include_once DOL_DOCUMENT_ROOT.'/core/class/interfaces.class.php';
+        $interface = new Interfaces($this->db);
+        $result = $interface->run_triggers('DELIVERY_VALIDATE', $this, $user, $langs, $conf);
+        // Fin appel triggers
+        if ($result < 0) {
+            $this->db->rollback();
+            $this->error = $interface->errors;
+            dol_syslog(get_class($this)."::valid ".$this->error, LOG_ERR);
 
-		$num=count($expedition->lines);
-		for ($i = 0; $i < $num; $i++)
-		{
-			$line = new LivraisonLigne($this->db);
-			$line->origin_line_id    = $expedition->lines[$i]->origin_line_id;
-			$line->libelle           = $expedition->lines[$i]->libelle;
-			$line->description       = $expedition->lines[$i]->description;
-			$line->qty               = $expedition->lines[$i]->qty_shipped;
-			$line->fk_product        = $expedition->lines[$i]->fk_product;
-			$line->ref               = $expedition->lines[$i]->ref;
+            return -1;
+        } else {
+            $this->db->commit();
 
-			$this->lines[$i] = $line;
-		}
+            return 1;
+        }
+    }
 
-		$this->origin               = $expedition->element;
-		$this->origin_id            = $expedition->id;
-		$this->note_private         = $expedition->note_private;
-		$this->note_public          = $expedition->note_public;
-		$this->fk_project           = $expedition->fk_project;
-		$this->date_delivery        = $expedition->date_delivery;
-		$this->fk_delivery_address  = $expedition->fk_delivery_address;
-		$this->socid                = $expedition->socid;
-		$this->ref_customer			= $expedition->ref_customer;
+    /**
+     * 	Cree le bon de livraison depuis une expedition existante
+     *
+     *	@param	User	$user            Utilisateur qui cree
+     *	@param  int		$sending_id      Id de l'expedition qui sert de modele
+     *	@return	void
+     */
+    public function create_from_sending($user, $sending_id)
+    {
+        $expedition = new Expedition($this->db);
+        $result=$expedition->fetch($sending_id);
 
-		return $this->create($user);
-	}
+        $this->lines = array();
 
+        $num=count($expedition->lines);
+        for ($i = 0; $i < $num; $i++) {
+            $line = new LivraisonLigne($this->db);
+            $line->origin_line_id    = $expedition->lines[$i]->origin_line_id;
+            $line->libelle           = $expedition->lines[$i]->libelle;
+            $line->description       = $expedition->lines[$i]->description;
+            $line->qty               = $expedition->lines[$i]->qty_shipped;
+            $line->fk_product        = $expedition->lines[$i]->fk_product;
+            $line->ref               = $expedition->lines[$i]->ref;
 
-	/**
-	 * 	Add line
-	 *
-	 *	@param	int		$origin_id		Origin id
-	 *	@param	int		$qty			Qty
-	 *	@return	void
-	 */
-	function addline($origin_id, $qty)
-	{
-		$num = count($this->lines);
-		$line = new LivraisonLigne($this->db);
+            $this->lines[$i] = $line;
+        }
 
-		$line->origin_id = $origin_id;
-		$line->qty = $qty;
+        $this->origin               = $expedition->element;
+        $this->origin_id            = $expedition->id;
+        $this->note_private         = $expedition->note_private;
+        $this->note_public          = $expedition->note_public;
+        $this->fk_project           = $expedition->fk_project;
+        $this->date_delivery        = $expedition->date_delivery;
+        $this->fk_delivery_address  = $expedition->fk_delivery_address;
+        $this->socid                = $expedition->socid;
+        $this->ref_customer			= $expedition->ref_customer;
 
-		$this->lines[$num] = $line;
-	}
+        return $this->create($user);
+    }
 
-	/**
-	 *	Delete line
-	 *
-	 *	@param	int		$lineid		Line id
-	 *	@return	void
-	 */
-	function deleteline($lineid)
-	{
-		if ($this->statut == 0)
-		{
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX."commandedet";
-			$sql.= " WHERE rowid = ".$lineid;
+    /**
+     * 	Add line
+     *
+     *	@param	int		$origin_id		Origin id
+     *	@param	int		$qty			Qty
+     *	@return	void
+     */
+    public function addline($origin_id, $qty)
+    {
+        $num = count($this->lines);
+        $line = new LivraisonLigne($this->db);
 
-			if ($this->db->query($sql) )
-			{
-				$this->update_price();
+        $line->origin_id = $origin_id;
+        $line->qty = $qty;
 
-				return 1;
-			}
-			else
-			{
-				return 0;
-			}
-		}
-	}
+        $this->lines[$num] = $line;
+    }
 
-	/**
-	 * Delete object
-	 *
-	 * @return	void
-	 */
-	function delete()
-	{
-		global $conf, $langs, $user;
+    /**
+     *	Delete line
+     *
+     *	@param	int		$lineid		Line id
+     *	@return	void
+     */
+    public function deleteline($lineid)
+    {
+        if ($this->statut == 0) {
+            $sql = "DELETE FROM ".MAIN_DB_PREFIX."commandedet";
+            $sql.= " WHERE rowid = ".$lineid;
+
+            if ($this->db->query($sql) ) {
+                $this->update_price();
+
+                return 1;
+            } else {
+                return 0;
+            }
+        }
+    }
+
+    /**
+     * Delete object
+     *
+     * @return void
+     */
+    public function delete()
+    {
+        global $conf, $langs, $user;
 
         require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-		$this->db->begin();
+        $this->db->begin();
 
-		$error=0;
+        $error=0;
 
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."livraisondet";
-		$sql.= " WHERE fk_livraison = ".$this->id;
-		if ($this->db->query($sql))
-		{
-			// Delete linked object
-			$res = $this->deleteObjectLinked();
-			if ($res < 0) $error++;
+        $sql = "DELETE FROM ".MAIN_DB_PREFIX."livraisondet";
+        $sql.= " WHERE fk_livraison = ".$this->id;
+        if ($this->db->query($sql)) {
+            // Delete linked object
+            $res = $this->deleteObjectLinked();
+            if ($res < 0) $error++;
 
-			if (! $error)
-			{
-				$sql = "DELETE FROM ".MAIN_DB_PREFIX."livraison";
-				$sql.= " WHERE rowid = ".$this->id;
-				if ($this->db->query($sql))
-				{
-					$this->db->commit();
+            if (! $error) {
+                $sql = "DELETE FROM ".MAIN_DB_PREFIX."livraison";
+                $sql.= " WHERE rowid = ".$this->id;
+                if ($this->db->query($sql)) {
+                    $this->db->commit();
 
-					// On efface le repertoire de pdf provisoire
-					$ref = dol_sanitizeFileName($this->ref);
-					if (! empty($conf->expedition->dir_output))
-					{
-						$dir = $conf->expedition->dir_output . '/receipt/' . $ref ;
-						$file = $dir . '/' . $ref . '.pdf';
-						if (file_exists($file))
-						{
-							if (!dol_delete_file($file))
-							{
-								return 0;
-							}
-						}
-						if (file_exists($dir))
-						{
-							if (!dol_delete_dir($dir))
-							{
-								$this->error=$langs->trans("ErrorCanNotDeleteDir",$dir);
-								return 0;
-							}
-						}
-					}
+                    // On efface le repertoire de pdf provisoire
+                    $ref = dol_sanitizeFileName($this->ref);
+                    if (! empty($conf->expedition->dir_output)) {
+                        $dir = $conf->expedition->dir_output . '/receipt/' . $ref ;
+                        $file = $dir . '/' . $ref . '.pdf';
+                        if (file_exists($file)) {
+                            if (!dol_delete_file($file)) {
+                                return 0;
+                            }
+                        }
+                        if (file_exists($dir)) {
+                            if (!dol_delete_dir($dir)) {
+                                $this->error=$langs->trans("ErrorCanNotDeleteDir",$dir);
 
-					// Call triggers
-					include_once DOL_DOCUMENT_ROOT.'/core/class/interfaces.class.php';
-					$interface=new Interfaces($this->db);
-					$result=$interface->run_triggers('DELIVERY_DELETE',$this,$user,$langs,$conf);
-					if ($result < 0) {
-						$error++; $this->errors=$interface->errors;
-					}
-					// End call triggers
+                                return 0;
+                            }
+                        }
+                    }
 
-					return 1;
-				}
-				else
-				{
-					$this->error=$this->db->lasterror()." - sql=$sql";
-					$this->db->rollback();
-					return -3;
-				}
-			}
-			else
-			{
-				$this->error=$this->db->lasterror()." - sql=$sql";
-				$this->db->rollback();
-				return -2;
-			}
-		}
-		else
-		{
-			$this->error=$this->db->lasterror()." - sql=$sql";
-			$this->db->rollback();
-			return -1;
-		}
-	}
+                    // Call triggers
+                    include_once DOL_DOCUMENT_ROOT.'/core/class/interfaces.class.php';
+                    $interface=new Interfaces($this->db);
+                    $result=$interface->run_triggers('DELIVERY_DELETE',$this,$user,$langs,$conf);
+                    if ($result < 0) {
+                        $error++; $this->errors=$interface->errors;
+                    }
+                    // End call triggers
+                    return 1;
+                } else {
+                    $this->error=$this->db->lasterror()." - sql=$sql";
+                    $this->db->rollback();
 
-	/**
-	 *	Renvoie nom clicable (avec eventuellement le picto)
-	 *
-	 *	@param	int		$withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
-	 *	@return	string					Chaine avec URL
-	 */
-	function getNomUrl($withpicto=0)
-	{
-		global $langs;
+                    return -3;
+                }
+            } else {
+                $this->error=$this->db->lasterror()." - sql=$sql";
+                $this->db->rollback();
 
-		$result='';
-		$urlOption='';
+                return -2;
+            }
+        } else {
+            $this->error=$this->db->lasterror()." - sql=$sql";
+            $this->db->rollback();
 
+            return -1;
+        }
+    }
 
-		$lien = '<a href="'.DOL_URL_ROOT.'/livraison/fiche.php?id='.$this->id.'">';
-		$lienfin='</a>';
+    /**
+     *	Renvoie nom clicable (avec eventuellement le picto)
+     *
+     *	@param	int		$withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
+     *	@return	string					Chaine avec URL
+     */
+    public function getNomUrl($withpicto=0)
+    {
+        global $langs;
 
-		$picto='sending';
-		$label=$langs->trans("ShowReceiving").': '.$this->ref;
+        $result='';
+        $urlOption='';
 
-		if ($withpicto) $result.=($lien.img_object($label,$picto).$lienfin);
-		if ($withpicto && $withpicto != 2) $result.=' ';
-		$result.=$lien.$this->ref.$lienfin;
-		return $result;
-	}
+        $lien = '<a href="'.DOL_URL_ROOT.'/livraison/fiche.php?id='.$this->id.'">';
+        $lienfin='</a>';
 
-	/**
-	 *	Load lines
-	 *
-	 *	@return	void
-	 */
-	function fetch_lines()
-	{
-		$this->lines = array();
+        $picto='sending';
+        $label=$langs->trans("ShowReceiving").': '.$this->ref;
 
-		$sql = "SELECT ld.rowid, ld.fk_product, ld.description, ld.subprice, ld.total_ht, ld.qty as qty_shipped,";
-		$sql.= " cd.qty as qty_asked, cd.label as custom_label,";
-		$sql.= " p.ref as product_ref, p.fk_product_type as fk_product_type, p.label as product_label, p.description as product_desc";
-		$sql.= " FROM ".MAIN_DB_PREFIX."commandedet as cd, ".MAIN_DB_PREFIX."livraisondet as ld";
-		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p on p.rowid = ld.fk_product";
-		$sql.= " WHERE ld.fk_origin_line = cd.rowid";
-		$sql.= " AND ld.fk_livraison = ".$this->id;
+        if ($withpicto) $result.=($lien.img_object($label,$picto).$lienfin);
+        if ($withpicto && $withpicto != 2) $result.=' ';
+        $result.=$lien.$this->ref.$lienfin;
 
-		dol_syslog(get_class($this)."::fetch_lines sql=".$sql);
-		$resql = $this->db->query($sql);
-		if ($resql)
-		{
-			$num = $this->db->num_rows($resql);
-			$i = 0;
-			while ($i < $num)
-			{
-				$line = new LivraisonLigne($this->db);
+        return $result;
+    }
 
-				$obj = $this->db->fetch_object($resql);
+    /**
+     *	Load lines
+     *
+     *	@return	void
+     */
+    public function fetch_lines()
+    {
+        $this->lines = array();
 
-				$line->label			= $obj->custom_label;
-				$line->description		= $obj->description;
-				$line->fk_product		= $obj->fk_product;
-				$line->qty_asked		= $obj->qty_asked;
-				$line->qty_shipped		= $obj->qty_shipped;
+        $sql = "SELECT ld.rowid, ld.fk_product, ld.description, ld.subprice, ld.total_ht, ld.qty as qty_shipped,";
+        $sql.= " cd.qty as qty_asked, cd.label as custom_label,";
+        $sql.= " p.ref as product_ref, p.fk_product_type as fk_product_type, p.label as product_label, p.description as product_desc";
+        $sql.= " FROM ".MAIN_DB_PREFIX."commandedet as cd, ".MAIN_DB_PREFIX."livraisondet as ld";
+        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p on p.rowid = ld.fk_product";
+        $sql.= " WHERE ld.fk_origin_line = cd.rowid";
+        $sql.= " AND ld.fk_livraison = ".$this->id;
 
-				$line->ref				= $obj->product_ref;		// deprecated
-				$line->libelle			= $obj->product_label;		// deprecated
-				$line->product_label	= $obj->product_label;		// Product label
-				$line->product_ref		= $obj->product_ref;		// Product ref
-				$line->product_desc		= $obj->product_desc;		// Product description
-				$line->product_type		= $obj->fk_product_type;
+        dol_syslog(get_class($this)."::fetch_lines sql=".$sql);
+        $resql = $this->db->query($sql);
+        if ($resql) {
+            $num = $this->db->num_rows($resql);
+            $i = 0;
+            while ($i < $num) {
+                $line = new LivraisonLigne($this->db);
 
-				$line->price			= $obj->price;
-				$line->total_ht			= $obj->total_ht;
+                $obj = $this->db->fetch_object($resql);
 
-				$this->lines[$i] = $line;
+                $line->label			= $obj->custom_label;
+                $line->description		= $obj->description;
+                $line->fk_product		= $obj->fk_product;
+                $line->qty_asked		= $obj->qty_asked;
+                $line->qty_shipped		= $obj->qty_shipped;
 
-				$i++;
-			}
-			$this->db->free($resql);
-		}
+                $line->ref				= $obj->product_ref;		// deprecated
+                $line->libelle			= $obj->product_label;		// deprecated
+                $line->product_label	= $obj->product_label;		// Product label
+                $line->product_ref		= $obj->product_ref;		// Product ref
+                $line->product_desc		= $obj->product_desc;		// Product description
+                $line->product_type		= $obj->fk_product_type;
 
-		return $this->lines;
-	}
+                $line->price			= $obj->price;
+                $line->total_ht			= $obj->total_ht;
 
+                $this->lines[$i] = $line;
 
-	/**
-	 *  Retourne le libelle du statut d'une expedition
-	 *
-	 *  @param	int			$mode		Mode
-	 *  @return string      			Label
-	 */
-	function getLibStatut($mode=0)
-	{
-		return $this->LibStatut($this->statut,$mode);
-	}
+                $i++;
+            }
+            $this->db->free($resql);
+        }
 
-	/**
-	 *	Renvoi le libelle d'un statut donne
-	 *
-	 *  @param	int			$statut     Id statut
-	 *  @param  int			$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
-	 *  @return string					Label
-	 */
-	function LibStatut($statut,$mode)
-	{
-		global $langs;
+        return $this->lines;
+    }
 
-		if ($mode==0)
-		{
-			if ($statut==-1) return $langs->trans('StatusSendingCanceled');
-			if ($statut==0)  return $langs->trans('StatusSendingDraft');
-			if ($statut==1)  return $langs->trans('StatusSendingValidated');
-		}
-		if ($mode==1)
-		{
-			if ($statut==-1) return $langs->trans($this->statuts[$statut]);
-			if ($statut==0)  return $langs->trans($this->statuts[$statut]);
-			if ($statut==1)  return $langs->trans($this->statuts[$statut]);
-		}
-		if ($mode == 4)
-		{
-			if ($statut==-1) return img_picto($langs->trans('StatusSendingCanceled'),'statut5').' '.$langs->trans('StatusSendingCanceled');
-			if ($statut==0)  return img_picto($langs->trans('StatusSendingDraft'),'statut0').' '.$langs->trans('StatusSendingDraft');
-			if ($statut==1)  return img_picto($langs->trans('StatusSendingValidated'),'statut4').' '.$langs->trans('StatusSendingValidated');
-		}
-	}
+    /**
+     *  Retourne le libelle du statut d'une expedition
+     *
+     *  @param	int			$mode		Mode
+     *  @return string      			Label
+     */
+    public function getLibStatut($mode=0)
+    {
+        return $this->LibStatut($this->statut,$mode);
+    }
 
+    /**
+     *	Renvoi le libelle d'un statut donne
+     *
+     *  @param	int			$statut     Id statut
+     *  @param  int			$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+     *  @return string					Label
+     */
+    public function LibStatut($statut,$mode)
+    {
+        global $langs;
 
-	/**
+        if ($mode==0) {
+            if ($statut==-1) return $langs->trans('StatusSendingCanceled');
+            if ($statut==0)  return $langs->trans('StatusSendingDraft');
+            if ($statut==1)  return $langs->trans('StatusSendingValidated');
+        }
+        if ($mode==1) {
+            if ($statut==-1) return $langs->trans($this->statuts[$statut]);
+            if ($statut==0)  return $langs->trans($this->statuts[$statut]);
+            if ($statut==1)  return $langs->trans($this->statuts[$statut]);
+        }
+        if ($mode == 4) {
+            if ($statut==-1) return img_picto($langs->trans('StatusSendingCanceled'),'statut5').' '.$langs->trans('StatusSendingCanceled');
+            if ($statut==0)  return img_picto($langs->trans('StatusSendingDraft'),'statut0').' '.$langs->trans('StatusSendingDraft');
+            if ($statut==1)  return img_picto($langs->trans('StatusSendingValidated'),'statut4').' '.$langs->trans('StatusSendingValidated');
+        }
+    }
+
+    /**
      *  Initialise an instance with random values.
      *  Used to build previews or test instances.
      *	id must be 0 if object instance is a specimen.
      *
      *  @return	void
-	 */
-	function initAsSpecimen()
-	{
-		global $user,$langs,$conf;
+     */
+    public function initAsSpecimen()
+    {
+        global $user,$langs,$conf;
 
-		$now=dol_now();
+        $now=dol_now();
 
-		// Charge tableau des produits prodids
-		$prodids = array();
-		$sql = "SELECT rowid";
-		$sql.= " FROM ".MAIN_DB_PREFIX."product";
-		$sql.= " WHERE entity IN (".getEntity('product', 1).")";
-		$sql.= " AND tosell = 1";
-		$resql = $this->db->query($sql);
-		if ($resql)
-		{
-			$num_prods = $this->db->num_rows($resql);
-			$i = 0;
-			while ($i < $num_prods)
-			{
-				$i++;
-				$row = $this->db->fetch_row($resql);
-				$prodids[$i] = $row[0];
-			}
-		}
+        // Charge tableau des produits prodids
+        $prodids = array();
+        $sql = "SELECT rowid";
+        $sql.= " FROM ".MAIN_DB_PREFIX."product";
+        $sql.= " WHERE entity IN (".getEntity('product', 1).")";
+        $sql.= " AND tosell = 1";
+        $resql = $this->db->query($sql);
+        if ($resql) {
+            $num_prods = $this->db->num_rows($resql);
+            $i = 0;
+            while ($i < $num_prods) {
+                $i++;
+                $row = $this->db->fetch_row($resql);
+                $prodids[$i] = $row[0];
+            }
+        }
 
-		// Initialise parametres
-		$this->id=0;
-		$this->ref = 'SPECIMEN';
-		$this->specimen=1;
-		$this->socid = 1;
-		$this->date_delivery = $now;
-		$this->note_public='Pulbic note';
-		$this->note_private='Private note';
+        // Initialise parametres
+        $this->id=0;
+        $this->ref = 'SPECIMEN';
+        $this->specimen=1;
+        $this->socid = 1;
+        $this->date_delivery = $now;
+        $this->note_public='Pulbic note';
+        $this->note_private='Private note';
 
-		$i=0;
-		$line=new LivraisonLigne($this->db);
-		$line->fk_product     = $prodids[0];
-		$line->qty_asked      = 10;
-		$line->qty_shipped    = 9;
-		$line->ref            = 'REFPROD';
-		$line->label          = 'Specimen';
-		$line->description    = 'Description';
-		$line->price          = 100;
-		$line->total_ht       = 100;
+        $i=0;
+        $line=new LivraisonLigne($this->db);
+        $line->fk_product     = $prodids[0];
+        $line->qty_asked      = 10;
+        $line->qty_shipped    = 9;
+        $line->ref            = 'REFPROD';
+        $line->label          = 'Specimen';
+        $line->description    = 'Description';
+        $line->price          = 100;
+        $line->total_ht       = 100;
 
-		$this->lines[$i] = $line;
-	}
+        $this->lines[$i] = $line;
+    }
 
-	/**
-	 *  Renvoie la quantite de produit restante a livrer pour une commande
-	 *
-	 *  @return     array		Product remaining to be delivered
-	 *  TODO use new function
-	 */
-	function getRemainingDelivered()
-	{
-		global $langs;
+    /**
+     *  Renvoie la quantite de produit restante a livrer pour une commande
+     *
+     *  @return     array		Product remaining to be delivered
+     *  TODO use new function
+     */
+    public function getRemainingDelivered()
+    {
+        global $langs;
 
-		// Get the linked object
-		$this->fetchObjectLinked('','',$this->id,$this->element);
-		//var_dump($this->linkedObjectIds);
-		// Get the product ref and qty in source
-		$sqlSourceLine = "SELECT st.rowid, st.description, st.qty";
-		$sqlSourceLine.= ", p.ref, p.label";
-		$sqlSourceLine.= " FROM ".MAIN_DB_PREFIX.$this->linkedObjectIds[0]['type']."det as st";
-		$sqlSourceLine.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON st.fk_product = p.rowid";
-		$sqlSourceLine.= " WHERE fk_".$this->linked_object[0]['type']." = ".$this->linked_object[0]['linkid'];
+        // Get the linked object
+        $this->fetchObjectLinked('','',$this->id,$this->element);
+        //var_dump($this->linkedObjectIds);
+        // Get the product ref and qty in source
+        $sqlSourceLine = "SELECT st.rowid, st.description, st.qty";
+        $sqlSourceLine.= ", p.ref, p.label";
+        $sqlSourceLine.= " FROM ".MAIN_DB_PREFIX.$this->linkedObjectIds[0]['type']."det as st";
+        $sqlSourceLine.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON st.fk_product = p.rowid";
+        $sqlSourceLine.= " WHERE fk_".$this->linked_object[0]['type']." = ".$this->linked_object[0]['linkid'];
 
-		$resultSourceLine = $this->db->query($sqlSourceLine);
-		if ($resultSourceLine)
-		{
-			$num_lines = $this->db->num_rows($resultSourceLine);
-			$i = 0;
-			$resultArray = array();
-			while ($i < $num_lines)
-			{
-				$objSourceLine = $this->db->fetch_object($resultSourceLine);
+        $resultSourceLine = $this->db->query($sqlSourceLine);
+        if ($resultSourceLine) {
+            $num_lines = $this->db->num_rows($resultSourceLine);
+            $i = 0;
+            $resultArray = array();
+            while ($i < $num_lines) {
+                $objSourceLine = $this->db->fetch_object($resultSourceLine);
 
-				// Recupere les lignes de la source deja livrees
-				$sql = "SELECT ld.fk_origin_line, sum(ld.qty) as qty";
-				$sql.= " FROM ".MAIN_DB_PREFIX."livraisondet as ld, ".MAIN_DB_PREFIX."livraison as l,";
-				$sql.= " ".MAIN_DB_PREFIX.$this->linked_object[0]['type']." as c";
-				$sql.= ", ".MAIN_DB_PREFIX.$this->linked_object[0]['type']."det as cd";
-				$sql.= " WHERE ld.fk_livraison = l.rowid";
-				$sql.= " AND ld.fk_origin_line = cd.rowid";
-				$sql.= " AND cd.fk_".$this->linked_object[0]['type']." = c.rowid";
-				$sql.= " AND cd.fk_".$this->linked_object[0]['type']." = ".$this->linked_object[0]['linkid'];
-				$sql.= " AND ld.fk_origin_line = ".$objSourceLine->rowid;
-				$sql.= " GROUP BY ld.fk_origin_line";
+                // Recupere les lignes de la source deja livrees
+                $sql = "SELECT ld.fk_origin_line, sum(ld.qty) as qty";
+                $sql.= " FROM ".MAIN_DB_PREFIX."livraisondet as ld, ".MAIN_DB_PREFIX."livraison as l,";
+                $sql.= " ".MAIN_DB_PREFIX.$this->linked_object[0]['type']." as c";
+                $sql.= ", ".MAIN_DB_PREFIX.$this->linked_object[0]['type']."det as cd";
+                $sql.= " WHERE ld.fk_livraison = l.rowid";
+                $sql.= " AND ld.fk_origin_line = cd.rowid";
+                $sql.= " AND cd.fk_".$this->linked_object[0]['type']." = c.rowid";
+                $sql.= " AND cd.fk_".$this->linked_object[0]['type']." = ".$this->linked_object[0]['linkid'];
+                $sql.= " AND ld.fk_origin_line = ".$objSourceLine->rowid;
+                $sql.= " GROUP BY ld.fk_origin_line";
 
-				$result = $this->db->query($sql);
-				$row = $this->db->fetch_row($result);
+                $result = $this->db->query($sql);
+                $row = $this->db->fetch_row($result);
 
-				if ($objSourceLine->qty - $row[1] > 0)
-				{
-					if ($row[0] == $objSourceLine->rowid)
-					{
-						$array[$i]['qty'] = $objSourceLine->qty - $row[1];
-					}
-					else
-					{
-						$array[$i]['qty'] = $objSourceLine->qty;
-					}
+                if ($objSourceLine->qty - $row[1] > 0) {
+                    if ($row[0] == $objSourceLine->rowid) {
+                        $array[$i]['qty'] = $objSourceLine->qty - $row[1];
+                    } else {
+                        $array[$i]['qty'] = $objSourceLine->qty;
+                    }
 
-					$array[$i]['ref'] = $objSourceLine->ref;
-					$array[$i]['label'] = $objSourceLine->label?$objSourceLine->label:$objSourceLine->description;
-				}
-				elseif($objSourceLine->qty - $row[1] < 0)
-				{
-					$array[$i]['qty'] = $objSourceLine->qty - $row[1]. " Erreur livraison !";
-					$array[$i]['ref'] = $objSourceLine->ref;
-					$array[$i]['label'] = $objSourceLine->label?$objSourceLine->label:$objSourceLine->description;
-				}
+                    $array[$i]['ref'] = $objSourceLine->ref;
+                    $array[$i]['label'] = $objSourceLine->label?$objSourceLine->label:$objSourceLine->description;
+                } elseif ($objSourceLine->qty - $row[1] < 0) {
+                    $array[$i]['qty'] = $objSourceLine->qty - $row[1]. " Erreur livraison !";
+                    $array[$i]['ref'] = $objSourceLine->ref;
+                    $array[$i]['label'] = $objSourceLine->label?$objSourceLine->label:$objSourceLine->description;
+                }
 
-					$i++;
-			}
-			return $array;
-		}
-		else
-		{
-			$this->error=$this->db->error()." - sql=$sqlSourceLine";
-			dol_syslog(get_class($this)."::getRemainingDelivered ".$this->error, LOG_ERR);
-			return -1;
-		}
-	}
+                    $i++;
+            }
+
+            return $array;
+        } else {
+            $this->error=$this->db->error()." - sql=$sqlSourceLine";
+            dol_syslog(get_class($this)."::getRemainingDelivered ".$this->error, LOG_ERR);
+
+            return -1;
+        }
+    }
 
 }
-
-
 
 /**
  *  Classe de gestion des lignes de bons de livraison
  */
 class LivraisonLigne
 {
-	var $db;
+    public $db;
 
-	// From llx_expeditiondet
-	var $qty;
-	var $qty_asked;
-	var $qty_shipped;
-	var $price;
-	var $fk_product;
-	var $origin_id;
-	var $label;       // Label produit
-	var $description;  // Description produit
-	var $ref;
+    // From llx_expeditiondet
+    public $qty;
+    public $qty_asked;
+    public $qty_shipped;
+    public $price;
+    public $fk_product;
+    public $origin_id;
+    public $label;       // Label produit
+    public $description;  // Description produit
+    public $ref;
 
-	/**
-	 *	Constructor
-	 *
-	 *	@param	DoliDB	$db		Database handler
-	 */
-	function __construct($db)
-	{
-		$this->db=$db;
-	}
+    /**
+     *	Constructor
+     *
+     *	@param	DoliDB	$db		Database handler
+     */
+    public function __construct($db)
+    {
+        $this->db=$db;
+    }
 
 }
-
-?>

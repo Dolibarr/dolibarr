@@ -24,11 +24,9 @@
  *	\brief      Ask login and password of Dolibarr admin user
  */
 
-
 include_once 'inc.php';
 require_once $dolibarr_main_document_root.'/core/class/conf.class.php';
 require_once $dolibarr_main_document_root.'/core/lib/admin.lib.php';
-
 
 $setuplang=(GETPOST('selectlang','',3)?GETPOST('selectlang','',3):'auto');
 $langs->setDefaultLang($setuplang);
@@ -47,8 +45,6 @@ dolibarr_install_syslog("--- etape4: Entering etape4.php page");
 $err=0;
 $ok = 0;
 
-
-
 /*
  *	View
  */
@@ -56,23 +52,19 @@ $ok = 0;
 pHeader($langs->trans("AdminAccountCreation"),"etape5");
 
 // Test if we can run a first install process
-if (! is_writable($conffile))
-{
+if (! is_writable($conffile)) {
     print $langs->trans("ConfFileIsNotWritable",$conffiletoshow);
     pFooter(1,$setuplang,'jscheckparam');
     exit;
 }
 
-
 print '<br>'.$langs->trans("LastStepDesc").'<br><br>';
-
 
 print '<table cellspacing="0" cellpadding="2" width="100%">';
 
 $db=getDoliDBInstance($conf->db->type,$conf->db->host,$conf->db->user,$conf->db->pass,$conf->db->name,$conf->db->port);
 
-if ($db->ok == 1)
-{
+if ($db->ok == 1) {
     print '<tr><td>'.$langs->trans("DolibarrAdminLogin").' :</td><td>';
     print '<input name="login" value="'.(! empty($_GET["login"])?$_GET["login"]:(isset($force_install_dolibarrlogin)?$force_install_dolibarrlogin:'')).'"></td></tr>';
     print '<tr><td>'.$langs->trans("Password").' :</td><td>';
@@ -81,15 +73,13 @@ if ($db->ok == 1)
     print '<input type="password" name="pass_verif"></td></tr>';
     print '</table>';
 
-    if (isset($_GET["error"]) && $_GET["error"] == 1)
-    {
+    if (isset($_GET["error"]) && $_GET["error"] == 1) {
         print '<br>';
         print '<div class="error">'.$langs->trans("PasswordsMismatch").'</div>';
         $err=0;	// We show button
     }
 
-    if (isset($_GET["error"]) && $_GET["error"] == 2)
-    {
+    if (isset($_GET["error"]) && $_GET["error"] == 2) {
         print '<br>';
         print '<div class="error">';
         print $langs->trans("PleaseTypePassword");
@@ -97,8 +87,7 @@ if ($db->ok == 1)
         $err=0;	// We show button
     }
 
-    if (isset($_GET["error"]) && $_GET["error"] == 3)
-    {
+    if (isset($_GET["error"]) && $_GET["error"] == 3) {
         print '<br>';
         print '<div class="error">'.$langs->trans("PleaseTypeALogin").'</div>';
         $err=0;	// We show button
@@ -111,4 +100,3 @@ dolibarr_install_syslog("--- install/etape4.php end", LOG_INFO);
 pFooter($err,$setuplang);
 
 $db->close();
-?>

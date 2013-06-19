@@ -31,9 +31,8 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/propal.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
-
 if (!$user->admin)
-	accessforbidden();
+    accessforbidden();
 
 $langs->load("admin");
 $langs->load("other");
@@ -54,14 +53,11 @@ $elementtype='propaldet'; //Must be the $table_element of the class that manage 
 
 if (!$user->admin) accessforbidden();
 
-
 /*
  * Actions
  */
 
 require DOL_DOCUMENT_ROOT.'/core/admin_extrafields.inc.php';
-
-
 
 /*
  * View
@@ -78,7 +74,6 @@ print "<br>\n";
 $head = propal_admin_prepare_head(null);
 
 dol_fiche_head($head, 'attributeslines', $langs->trans("ModuleSetup"), 0, 'order');
-
 
 print $langs->trans("DefineHereComplementaryAttributes",$textobject).'<br>'."\n";
 print '<br>';
@@ -99,8 +94,7 @@ print '<td width="80">&nbsp;</td>';
 print "</tr>\n";
 
 $var=True;
-foreach($extrafields->attribute_type as $key => $value)
-{
+foreach ($extrafields->attribute_type as $key => $value) {
     $var=!$var;
     print "<tr ".$bc[$var].">";
     print "<td>".$extrafields->attribute_label[$key]."</td>\n";
@@ -118,15 +112,12 @@ print "</table>";
 
 dol_fiche_end();
 
-
 // Buttons
-if ($action != 'create' && $action != 'edit')
-{
+if ($action != 'create' && $action != 'edit') {
     print '<div class="tabsAction">';
     print "<a class=\"butAction\" href=\"".$_SERVER["PHP_SELF"]."?action=create\">".$langs->trans("NewAttribute")."</a>";
     print "</div>";
 }
-
 
 /* ************************************************************************** */
 /*                                                                            */
@@ -134,8 +125,7 @@ if ($action != 'create' && $action != 'edit')
 /*                                                                            */
 /* ************************************************************************** */
 
-if ($action == 'create')
-{
+if ($action == 'create') {
     print "<br>";
     print_titre($langs->trans('NewAttribute'));
 
@@ -147,8 +137,7 @@ if ($action == 'create')
 /* Edition d'un champ optionnel                                               */
 /*                                                                            */
 /* ************************************************************************** */
-if ($action == 'edit' && ! empty($attrname))
-{
+if ($action == 'edit' && ! empty($attrname)) {
     print "<br>";
     print_titre($langs->trans("FieldEdition", $attrname));
 
@@ -158,4 +147,3 @@ if ($action == 'edit' && ! empty($attrname))
 llxFooter();
 
 $db->close();
-?>

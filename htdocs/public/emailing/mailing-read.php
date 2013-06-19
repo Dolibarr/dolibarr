@@ -18,7 +18,6 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-
 /**
  *      \file       public/emailing/mailing-read.php
  *      \ingroup    mailing
@@ -44,12 +43,10 @@ function llxHeader() { }
  */
 function llxFooter() { }
 
-
 require '../../main.inc.php';
 
 $tag=GETPOST('tag');
 $securitykey=GETPOST('securitykey');
-
 
 /*
  * Actions
@@ -57,33 +54,30 @@ $securitykey=GETPOST('securitykey');
 
 dol_syslog("public/emailing/mailing-read.php : tag=".$tag." securitykey=".$securitykey, LOG_DEBUG);
 
-if ($securitykey != $conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY)
-{
-	print 'Bad security key value.';
-	exit;
+if ($securitykey != $conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY) {
+    print 'Bad security key value.';
+    exit;
 }
 
-if (! empty($tag))
-{
-	$statut='2';
-	$sql = "UPDATE ".MAIN_DB_PREFIX."mailing_cibles SET statut=".$statut." WHERE tag='".$db->escape($tag)."'";
-	dol_syslog("public/emailing/mailing-read.php : Mail read : ".$sql, LOG_DEBUG);
+if (! empty($tag)) {
+    $statut='2';
+    $sql = "UPDATE ".MAIN_DB_PREFIX."mailing_cibles SET statut=".$statut." WHERE tag='".$db->escape($tag)."'";
+    dol_syslog("public/emailing/mailing-read.php : Mail read : ".$sql, LOG_DEBUG);
 
-	$resql=$db->query($sql);
+    $resql=$db->query($sql);
 
-	//Update status communication of thirdparty prospect
-	$sql = "UPDATE ".MAIN_DB_PREFIX."societe SET fk_stcomm=3 WHERE rowid IN (SELECT source_id FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE tag='".$db->escape($tag)."' AND source_type='thirdparty' AND source_id is not null)";
-	dol_syslog("public/emailing/mailing-read.php : Mail read thirdparty : ".$sql, LOG_DEBUG);
+    //Update status communication of thirdparty prospect
+    $sql = "UPDATE ".MAIN_DB_PREFIX."societe SET fk_stcomm=3 WHERE rowid IN (SELECT source_id FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE tag='".$db->escape($tag)."' AND source_type='thirdparty' AND source_id is not null)";
+    dol_syslog("public/emailing/mailing-read.php : Mail read thirdparty : ".$sql, LOG_DEBUG);
 
-	$resql=$db->query($sql);
+    $resql=$db->query($sql);
 
     //Update status communication of contact prospect
-	$sql = "UPDATE ".MAIN_DB_PREFIX."societe SET fk_stcomm=3 WHERE rowid IN (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."socpeople AS sc INNER JOIN ".MAIN_DB_PREFIX."mailing_cibles AS mc ON mc.tag = '".$db->escape($tag)."' AND mc.source_type = 'contact' AND mc.source_id = sc.rowid)";
-	dol_syslog("public/emailing/mailing-read.php : Mail read contact : ".$sql, LOG_DEBUG);
+    $sql = "UPDATE ".MAIN_DB_PREFIX."societe SET fk_stcomm=3 WHERE rowid IN (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."socpeople AS sc INNER JOIN ".MAIN_DB_PREFIX."mailing_cibles AS mc ON mc.tag = '".$db->escape($tag)."' AND mc.source_type = 'contact' AND mc.source_id = sc.rowid)";
+    dol_syslog("public/emailing/mailing-read.php : Mail read contact : ".$sql, LOG_DEBUG);
 
-	$resql=$db->query($sql);
+    $resql=$db->query($sql);
 
 }
 
 $db->close();
-?>

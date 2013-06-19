@@ -29,105 +29,103 @@ require_once DOL_DOCUMENT_ROOT .'/core/modules/expedition/modules_expedition.php
  */
 class mod_expedition_ribera extends ModelNumRefExpedition
 {
-	var $version='dolibarr';
-	var $error = '';
-	var $nom = 'Ribera';
+    public $version='dolibarr';
+    public $error = '';
+    public $nom = 'Ribera';
 
-	/**
-	 *	Return default description of numbering model
-	 *
-	 *	@return     string      text description
-	 */
-	function info()
+    /**
+     *	Return default description of numbering model
+     *
+     *	@return     string      text description
+     */
+    public function info()
     {
-    	global $conf,$langs;
+        global $conf,$langs;
 
-		$langs->load("bills");
+        $langs->load("bills");
 
-		$form = new Form($this->db);
+        $form = new Form($this->db);
 
-		$texte = $langs->trans('GenericNumRefModelDesc')."<br>\n";
-		$texte.= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-		$texte.= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-		$texte.= '<input type="hidden" name="action" value="updateMask">';
-		$texte.= '<input type="hidden" name="maskconstexpedition" value="EXPEDITION_RIBERA_MASK">';
-		$texte.= '<table class="nobordernopadding" width="100%">';
+        $texte = $langs->trans('GenericNumRefModelDesc')."<br>\n";
+        $texte.= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+        $texte.= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+        $texte.= '<input type="hidden" name="action" value="updateMask">';
+        $texte.= '<input type="hidden" name="maskconstexpedition" value="EXPEDITION_RIBERA_MASK">';
+        $texte.= '<table class="nobordernopadding" width="100%">';
 
-		$tooltip=$langs->trans("GenericMaskCodes",$langs->transnoentities("Sending"),$langs->transnoentities("Sending"));
-		$tooltip.=$langs->trans("GenericMaskCodes2");
-		$tooltip.=$langs->trans("GenericMaskCodes3");
-		$tooltip.=$langs->trans("GenericMaskCodes4a",$langs->transnoentities("Sending"),$langs->transnoentities("Sending"));
-		$tooltip.=$langs->trans("GenericMaskCodes5");
+        $tooltip=$langs->trans("GenericMaskCodes",$langs->transnoentities("Sending"),$langs->transnoentities("Sending"));
+        $tooltip.=$langs->trans("GenericMaskCodes2");
+        $tooltip.=$langs->trans("GenericMaskCodes3");
+        $tooltip.=$langs->trans("GenericMaskCodes4a",$langs->transnoentities("Sending"),$langs->transnoentities("Sending"));
+        $tooltip.=$langs->trans("GenericMaskCodes5");
 
-		$texte.= '<tr><td>'.$langs->trans("Mask").':</td>';
-		$texte.= '<td align="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskexpedition" value="'.$conf->global->EXPEDITION_RIBERA_MASK.'">',$tooltip,1,1).'</td>';
-		$texte.= '<td align="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
-		$texte.= '</tr>';
-		$texte.= '</table>';
-		$texte.= '</form>';
+        $texte.= '<tr><td>'.$langs->trans("Mask").':</td>';
+        $texte.= '<td align="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskexpedition" value="'.$conf->global->EXPEDITION_RIBERA_MASK.'">',$tooltip,1,1).'</td>';
+        $texte.= '<td align="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
+        $texte.= '</tr>';
+        $texte.= '</table>';
+        $texte.= '</form>';
 
-		return $texte;
+        return $texte;
     }
 
-	/**
-	 *	Return numbering example
-	 *
-	 *	@return     string      Example
-	 */
-    function getExample()
+    /**
+     *	Return numbering example
+     *
+     *	@return     string      Example
+     */
+    public function getExample()
     {
-     	global $conf,$langs,$mysoc;
+         global $conf,$langs,$mysoc;
 
-    	$old_code_client=$mysoc->code_client;
-    	$mysoc->code_client='CCCCCCCCCC';
-     	$numExample = $this->getNextValue($mysoc,'');
-		$mysoc->code_client=$old_code_client;
+        $old_code_client=$mysoc->code_client;
+        $mysoc->code_client='CCCCCCCCCC';
+         $numExample = $this->getNextValue($mysoc,'');
+        $mysoc->code_client=$old_code_client;
 
-		if (! $numExample)
-		{
-			$numExample = $langs->trans('NotConfigured');
-		}
-		return $numExample;
+        if (! $numExample) {
+            $numExample = $langs->trans('NotConfigured');
+        }
+
+        return $numExample;
     }
 
-	/**
-	 *	Return next value
-	 *
-	 *	@param	Societe		$objsoc     Third party object
-	 *	@param	Object		$shipment	Shipment object
-	 *	@return string      			Value if OK, 0 if KO
-	 */
-    function getNextValue($objsoc,$shipment)
+    /**
+     *	Return next value
+     *
+     *	@param	Societe		$objsoc     Third party object
+     *	@param	Object		$shipment	Shipment object
+     *	@return string      			Value if OK, 0 if KO
+     */
+    public function getNextValue($objsoc,$shipment)
     {
-		global $db,$conf;
+        global $db,$conf;
 
-		require_once DOL_DOCUMENT_ROOT .'/core/lib/functions2.lib.php';
+        require_once DOL_DOCUMENT_ROOT .'/core/lib/functions2.lib.php';
 
-		$mask=$conf->global->EXPEDITION_RIBERA_MASK;
+        $mask=$conf->global->EXPEDITION_RIBERA_MASK;
 
-		if (! $mask)
-		{
-			$this->error='NotConfigured';
-			return 0;
-		}
+        if (! $mask) {
+            $this->error='NotConfigured';
 
-		$numFinal=get_next_value($db,$mask,'expedition','ref','',$objsoc->code_client,$shipment->date_expedition);
+            return 0;
+        }
 
-		return  $numFinal;
-	}
+        $numFinal=get_next_value($db,$mask,'expedition','ref','',$objsoc->code_client,$shipment->date_expedition);
 
-	/**
-	 *  Return next free value
-	 *
-	 *	@param	Societe		$objsoc     Third party object
-	 *	@param	Object		$objforref	Shipment object
-	 *	@return string      			Next free value
-	 */
-    function expedition_get_num($objsoc,$objforref)
+        return  $numFinal;
+    }
+
+    /**
+     *  Return next free value
+     *
+     *	@param	Societe		$objsoc     Third party object
+     *	@param	Object		$objforref	Shipment object
+     *	@return string      			Next free value
+     */
+    public function expedition_get_num($objsoc,$objforref)
     {
         return $this->getNextValue($objsoc,$objforref);
     }
 
 }
-
-?>

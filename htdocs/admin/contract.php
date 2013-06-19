@@ -35,36 +35,29 @@ if (!$user->admin) accessforbidden();
 $action = GETPOST('action','alpha');
 $value = GETPOST('value','alpha');
 
-if (empty($conf->global->CONTRACT_ADDON))
-{
+if (empty($conf->global->CONTRACT_ADDON)) {
     $conf->global->CONTRACT_ADDON='mod_contract_serpis';
 }
-
 
 /*
  * Actions
  */
 
-if ($action == 'updateMask')
-{
+if ($action == 'updateMask') {
     $maskconst = GETPOST('maskconstcontract','alpha');
     $maskvalue =  GETPOST('maskcontract','alpha');
     if ($maskconst) $res = dolibarr_set_const($db,$maskconst,$maskvalue,'chaine',0,'',$conf->entity);
 
     if (! $res > 0) $error++;
 
-    if (! $error)
-    {
+    if (! $error) {
         $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
-    }
-    else
-    {
+    } else {
         $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
     }
 }
 
-if ($action == 'setmod')
-{
+if ($action == 'setmod') {
     dolibarr_set_const($db, "CONTRACT_ADDON",$value,'chaine',0,'',$conf->entity);
 }
 
@@ -119,14 +112,11 @@ clearstatcache();
 
 $dir = "../core/modules/contract/";
 $handle = opendir($dir);
-if (is_resource($handle))
-{
+if (is_resource($handle)) {
     $var=true;
 
-    while (($file = readdir($handle))!==false)
-    {
-        if (substr($file, 0, 13) == 'mod_contract_' && substr($file, dol_strlen($file)-3, 3) == 'php')
-        {
+    while (($file = readdir($handle))!==false) {
+        if (substr($file, 0, 13) == 'mod_contract_' && substr($file, dol_strlen($file)-3, 3) == 'php') {
             $file = substr($file, 0, dol_strlen($file)-4);
 
             require_once DOL_DOCUMENT_ROOT ."/core/modules/contract/".$file.'.php';
@@ -137,8 +127,7 @@ if (is_resource($handle))
             if ($module->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
             if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
 
-            if ($module->isEnabled())
-            {
+            if ($module->isEnabled()) {
                 $var=!$var;
                 print '<tr '.$bc[$var].'><td>'.$module->nom."</td>\n";
                 print '<td>';
@@ -148,18 +137,14 @@ if (is_resource($handle))
                 // Show example of numbering model
                 print '<td class="nowrap">';
                 $tmp=$module->getExample();
-                if (preg_match('/^Error/',$tmp)) { $langs->load("errors"); print '<div class="error">'.$langs->trans($tmp).'</div>'; }
-                elseif ($tmp=='NotConfigured') print $langs->trans($tmp);
+                if (preg_match('/^Error/',$tmp)) { $langs->load("errors"); print '<div class="error">'.$langs->trans($tmp).'</div>'; } elseif ($tmp=='NotConfigured') print $langs->trans($tmp);
                 else print $tmp;
                 print '</td>'."\n";
 
                 print '<td align="center">';
-                if ($conf->global->CONTRACT_ADDON == "$file")
-                {
+                if ($conf->global->CONTRACT_ADDON == "$file") {
                     print img_picto($langs->trans("Activated"),'switch_on');
-                }
-                else
-                {
+                } else {
                     print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;value='.$file.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'">';
                     print img_picto($langs->trans("Disabled"),'switch_off');
                     print '</a>';
@@ -173,15 +158,11 @@ if (is_resource($handle))
                 $htmltooltip='';
                 $htmltooltip.=''.$langs->trans("Version").': <b>'.$module->getVersion().'</b><br>';
                 $nextval=$module->getNextValue($mysoc,$contract);
-                if ("$nextval" != $langs->trans("NotAvailable"))	// Keep " on nextval
-                {
+                if ("$nextval" != $langs->trans("NotAvailable")) {	// Keep " on nextval
                     $htmltooltip.=''.$langs->trans("NextValue").': ';
-                    if ($nextval)
-                    {
+                    if ($nextval) {
                         $htmltooltip.=$nextval.'<br>';
-                    }
-                    else
-                    {
+                    } else {
                         $htmltooltip.=$langs->trans($module->error).'<br>';
                     }
                 }
@@ -204,4 +185,3 @@ dol_htmloutput_mesg($mesg);
 $db->close();
 
 llxFooter();
-?>

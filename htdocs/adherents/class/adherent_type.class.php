@@ -26,7 +26,6 @@
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 
-
 /**
  *	Class to manage members type
  */
@@ -35,26 +34,24 @@ class AdherentType extends CommonObject
     public $table_element = 'adherent_type';
     public $element = 'adherent_type';
 
-    var $id;
-    var $libelle;
-    var $statut;
-    var $cotisation;  // Soumis a la cotisation
-    var $vote;		  // droit de vote
-    var $note; 		  // commentaire
-    var $mail_valid;  //mail envoye lors de la validation
-
+    public $id;
+    public $libelle;
+    public $statut;
+    public $cotisation;  // Soumis a la cotisation
+    public $vote;		  // droit de vote
+    public $note; 		  // commentaire
+    public $mail_valid;  //mail envoye lors de la validation
 
     /**
-	 *	Constructor
-	 *
-	 *	@param 		DoliDB		$db		Database handler
+     *	Constructor
+     *
+     *	@param 		DoliDB		$db		Database handler
      */
-    function __construct($db)
+    public function __construct($db)
     {
         $this->db = $db;
         $this->statut = 1;
     }
-
 
     /**
      *  Fonction qui permet de creer le status de l'adherent
@@ -62,7 +59,7 @@ class AdherentType extends CommonObject
      *  @param      User		$user		User making creation
      *  @return     						>0 if OK, < 0 if KO
      */
-    function create($user)
+    public function create($user)
     {
         global $conf;
 
@@ -78,14 +75,13 @@ class AdherentType extends CommonObject
 
         dol_syslog("Adherent_type::create sql=".$sql);
         $result = $this->db->query($sql);
-        if ($result)
-        {
+        if ($result) {
             $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."adherent_type");
+
             return $this->update($user);
-        }
-        else
-        {
+        } else {
             $this->error=$this->db->error().' sql='.$sql;
+
             return -1;
         }
     }
@@ -97,10 +93,10 @@ class AdherentType extends CommonObject
      *	@param		User	$user	Object user making change
      *  @return		int				>0 if OK, < 0 if KO
      */
-    function update($user)
+    public function update($user)
     {
-    	global $hookmanager;
-    	
+        global $hookmanager;
+
         $this->libelle=trim($this->libelle);
 
         $sql = "UPDATE ".MAIN_DB_PREFIX."adherent_type ";
@@ -114,31 +110,24 @@ class AdherentType extends CommonObject
         $sql .= " WHERE rowid = $this->id";
 
         $result = $this->db->query($sql);
-        if ($result)
-        {
-        	// Actions on extra fields (by external module or standard code)
-        	$hookmanager->initHooks(array('membertypedao'));
-        	$parameters=array('membertype'=>$this->id);
-        	$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
-        	if (empty($reshook))
-        	{
-        		if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
-        		{
-        			$result=$this->insertExtraFields();
-        			if ($result < 0)
-        			{
-        				$error++;
-        			}
-        		}
-        	}
-        	else if ($reshook < 0) $error++;
-        	
-        	
+        if ($result) {
+            // Actions on extra fields (by external module or standard code)
+            $hookmanager->initHooks(array('membertypedao'));
+            $parameters=array('membertype'=>$this->id);
+            $reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+            if (empty($reshook)) {
+                if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) { // For avoid conflicts if trigger used
+                    $result=$this->insertExtraFields();
+                    if ($result < 0) {
+                        $error++;
+                    }
+                }
+            } elseif ($reshook < 0) $error++;
+
             return 1;
-        }
-        else
-        {
+        } else {
             $this->error=$this->db->error().' sql='.$sql;
+
             return -1;
         }
     }
@@ -149,25 +138,20 @@ class AdherentType extends CommonObject
      *	@param      int		$rowid		Id of member type to delete
      *  @return		int					>0 if OK, < 0 if KO
      */
-    function delete($rowid)
+    public function delete($rowid)
     {
         $sql = "DELETE FROM ".MAIN_DB_PREFIX."adherent_type WHERE rowid = $rowid";
 
         $resql=$this->db->query($sql);
-        if ($resql)
-        {
-            if ( $this->db->affected_rows($resql) )
-            {
+        if ($resql) {
+            if ( $this->db->affected_rows($resql) ) {
                 return 1;
-            }
-            else
-            {
+            } else {
                 return 0;
             }
-        }
-        else
-        {
+        } else {
             print "Err : ".$this->db->error();
+
             return 0;
         }
     }
@@ -178,7 +162,7 @@ class AdherentType extends CommonObject
      *  @param 		int		$rowid		Id of member type to load
      *  @return		int					<0 if KO, >0 if OK
      */
-    function fetch($rowid)
+    public function fetch($rowid)
     {
         $sql = "SELECT d.rowid, d.libelle, d.statut, d.cotisation, d.mail_valid, d.note, d.vote";
         $sql .= " FROM ".MAIN_DB_PREFIX."adherent_type as d";
@@ -187,10 +171,8 @@ class AdherentType extends CommonObject
         dol_syslog("Adherent_type::fetch sql=".$sql);
 
         $resql=$this->db->query($sql);
-        if ($resql)
-        {
-            if ($this->db->num_rows($resql))
-            {
+        if ($resql) {
+            if ($this->db->num_rows($resql)) {
                 $obj = $this->db->fetch_object($resql);
 
                 $this->id             = $obj->rowid;
@@ -202,12 +184,12 @@ class AdherentType extends CommonObject
                 $this->note           = $obj->note;
                 $this->vote           = $obj->vote;
             }
+
             return 1;
-        }
-        else
-        {
+        } else {
             $this->error=$this->db->lasterror();
             dol_syslog("Adherent_type::fetch ".$this->error, LOG_ERR);
+
             return -1;
         }
     }
@@ -217,7 +199,7 @@ class AdherentType extends CommonObject
      *
      *  @return 	array	List of types of members
      */
-    function liste_array()
+    public function liste_array()
     {
         global $conf,$langs;
 
@@ -228,30 +210,25 @@ class AdherentType extends CommonObject
         $sql.= " WHERE entity = ".$conf->entity;
 
         $resql=$this->db->query($sql);
-        if ($resql)
-        {
+        if ($resql) {
             $nump = $this->db->num_rows($resql);
 
-            if ($nump)
-            {
+            if ($nump) {
                 $i = 0;
-                while ($i < $nump)
-                {
+                while ($i < $nump) {
                     $obj = $this->db->fetch_object($resql);
 
                     $projets[$obj->rowid] = $langs->trans($obj->libelle);
                     $i++;
                 }
             }
+
             return $projets;
-        }
-        else
-        {
+        } else {
             print $this->db->error();
         }
 
     }
-
 
     /**
      *    	Renvoie nom clicable (avec eventuellement le picto)
@@ -260,7 +237,7 @@ class AdherentType extends CommonObject
      *		@param		int		$maxlen			length max libelle
      *		@return		string					String with URL
      */
-    function getNomUrl($withpicto=0,$maxlen=0)
+    public function getNomUrl($withpicto=0,$maxlen=0)
     {
         global $langs;
 
@@ -275,25 +252,22 @@ class AdherentType extends CommonObject
         if ($withpicto) $result.=($lien.img_object($label,$picto).$lienfin);
         if ($withpicto && $withpicto != 2) $result.=' ';
         $result.=$lien.($maxlen?dol_trunc($this->libelle,$maxlen):$this->libelle).$lienfin;
+
         return $result;
     }
-
 
     /**
      *     getMailOnValid
      *
      *     @return     Return mail model
      */
-    function getMailOnValid()
+    public function getMailOnValid()
     {
         global $conf;
 
-        if (! empty($this->mail_valid) && trim(dol_htmlentitiesbr_decode($this->mail_valid)))
-        {
+        if (! empty($this->mail_valid) && trim(dol_htmlentitiesbr_decode($this->mail_valid))) {
             return $this->mail_valid;
-        }
-        else
-        {
+        } else {
             return $conf->global->ADHERENT_MAIL_VALID;
         }
     }
@@ -303,16 +277,14 @@ class AdherentType extends CommonObject
      *
      *     @return     Return mail model
      */
-    function getMailOnSubscription()
+    public function getMailOnSubscription()
     {
         global $conf;
 
-        if (! empty($this->mail_subscription) && trim(dol_htmlentitiesbr_decode($this->mail_subscription)))  // Property not yet defined
-        {
+        if (! empty($this->mail_subscription) && trim(dol_htmlentitiesbr_decode($this->mail_subscription))) {  // Property not yet defined
+
             return $this->mail_subscription;
-        }
-        else
-        {
+        } else {
             return $conf->global->ADHERENT_MAIL_COTIS;
         }
     }
@@ -322,18 +294,15 @@ class AdherentType extends CommonObject
      *
      *     @return     Return mail model
      */
-    function getMailOnResiliate()
+    public function getMailOnResiliate()
     {
         global $conf;
 
-        if (! empty($this->mail_resiliate) && trim(dol_htmlentitiesbr_decode($this->mail_resiliate)))  // Property not yet defined
-        {
+        if (! empty($this->mail_resiliate) && trim(dol_htmlentitiesbr_decode($this->mail_resiliate))) {  // Property not yet defined
+
             return $this->mail_resiliate;
-        }
-        else
-        {
+        } else {
             return $conf->global->ADHERENT_MAIL_RESIL;
         }
     }
 }
-?>

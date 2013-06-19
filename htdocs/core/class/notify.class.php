@@ -23,35 +23,33 @@
  */
 require_once DOL_DOCUMENT_ROOT .'/core/class/CMailFile.class.php';
 
-
 /**
  *      Class to manage notifications
  */
 class Notify
 {
-    var $id;
-    var $db;
-    var $error;
+    public $id;
+    public $db;
+    public $error;
 
-    var $author;
-    var $ref;
-    var $date;
-    var $duree;
-    var $note;
-    var $fk_project;
+    public $author;
+    public $ref;
+    public $date;
+    public $duree;
+    public $note;
+    public $fk_project;
 
-	// Les codes actions sont definis dans la table llx_notify_def
+    // Les codes actions sont definis dans la table llx_notify_def
 
     /**
-	 *	Constructor
-	 *
-	 *	@param 		DoliDB		$db		Database handler
+     *	Constructor
+     *
+     *	@param 		DoliDB		$db		Database handler
      */
-    function __construct($db)
+    public function __construct($db)
     {
         $this->db = $db;
     }
-
 
     /**
      *  Return message that say how many notification will occurs on requested event.
@@ -61,28 +59,28 @@ class Notify
      * 	@param	int		$socid		Id of third party
      *	@return	string				Message
      */
-	function confirmMessage($action,$socid)
-	{
-		global $langs;
-		$langs->load("mails");
+    public function confirmMessage($action,$socid)
+    {
+        global $langs;
+        $langs->load("mails");
 
-		$nb=$this->countDefinedNotifications($action,$socid);
-		if ($nb <= 0) $texte=img_object($langs->trans("Notifications"),'email').' '.$langs->trans("NoNotificationsWillBeSent");
-		if ($nb == 1) $texte=img_object($langs->trans("Notifications"),'email').' '.$langs->trans("ANotificationsWillBeSent");
-		if ($nb >= 2) $texte=img_object($langs->trans("Notifications"),'email').' '.$langs->trans("SomeNotificationsWillBeSent",$nb);
-		return $texte;
-	}
+        $nb=$this->countDefinedNotifications($action,$socid);
+        if ($nb <= 0) $texte=img_object($langs->trans("Notifications"),'email').' '.$langs->trans("NoNotificationsWillBeSent");
+        if ($nb == 1) $texte=img_object($langs->trans("Notifications"),'email').' '.$langs->trans("ANotificationsWillBeSent");
+        if ($nb >= 2) $texte=img_object($langs->trans("Notifications"),'email').' '.$langs->trans("SomeNotificationsWillBeSent",$nb);
+        return $texte;
+    }
 
     /**
      * Return number of notifications activated for action code and third party
      *
-     * @param	string	$action		Code of action in llx_c_action_trigger (new usage) or Id of action in llx_c_action_trigger (old usage)
-     * @param	int		$socid		Id of third party
-     * @return	int					<0 if KO, nb of notifications sent if OK
+     * @param  string $action Code of action in llx_c_action_trigger (new usage) or Id of action in llx_c_action_trigger (old usage)
+     * @param  int    $socid  Id of third party
+     * @return int    <0 if KO, nb of notifications sent if OK
      */
-	function countDefinedNotifications($action,$socid)
-	{
-		global $conf;
+    public function countDefinedNotifications($action,$socid)
+    {
+        global $conf;
 
         $num=-1;
 
@@ -99,21 +97,19 @@ class Notify
         $sql.= " AND s.entity IN (".getEntity('societe', 1).")";
         $sql.= " AND s.rowid = ".$socid;
 
-		dol_syslog("Notify.class::countDefinedNotifications ".$action.", ".$socid." sql=".$sql);
+        dol_syslog("Notify.class::countDefinedNotifications ".$action.", ".$socid." sql=".$sql);
 
         $resql = $this->db->query($sql);
-        if ($resql)
-        {
+        if ($resql) {
             $num = $this->db->num_rows($resql);
-		}
-		else
-		{
-			$this->error=$this->db->error.' sql='.$sql;
-			return -1;
-		}
+        } else {
+            $this->error=$this->db->error.' sql='.$sql;
 
-		return $num;
-	}
+            return -1;
+        }
+
+        return $num;
+    }
 
     /**
      *  Check if notification are active for couple action/company.
@@ -127,16 +123,16 @@ class Notify
      * 	@param	string	$file		Attach a file
      *	@return	int					<0 if KO, or number of changes if OK
      */
-    function send($action, $socid, $texte, $objet_type, $objet_id, $file="")
+    public function send($action, $socid, $texte, $objet_type, $objet_id, $file="")
     {
         global $conf,$langs,$mysoc,$dolibarr_main_url_root;
 
         $langs->load("other");
 
-		dol_syslog("Notify::send action=$action, socid=$socid, texte=$texte, objet_type=$objet_type, objet_id=$objet_id, file=$file");
+        dol_syslog("Notify::send action=$action, socid=$socid, texte=$texte, objet_type=$objet_type, objet_id=$objet_id, file=$file");
 
-		$sql = "SELECT s.nom, c.email, c.rowid as cid, c.lastname, c.firstname,";
-		$sql.= " a.rowid as adid, a.label, a.code, n.rowid";
+        $sql = "SELECT s.nom, c.email, c.rowid as cid, c.lastname, c.firstname,";
+        $sql.= " a.rowid as adid, a.label, a.code, n.rowid";
         $sql.= " FROM ".MAIN_DB_PREFIX."socpeople as c,";
         $sql.= " ".MAIN_DB_PREFIX."c_action_trigger as a,";
         $sql.= " ".MAIN_DB_PREFIX."notify_def as n,";
@@ -147,54 +143,50 @@ class Notify
         else $sql.= " AND a.code = '".$action."'";	// New usage
         $sql .= " AND s.rowid = ".$socid;
 
-		dol_syslog("Notify::send sql=".$sql);
+        dol_syslog("Notify::send sql=".$sql);
         $result = $this->db->query($sql);
-        if ($result)
-        {
+        if ($result) {
             $num = $this->db->num_rows($result);
             $i = 0;
-            while ($i < $num)	// For each notification couple defined (third party/actioncode)
-            {
+            while ($i < $num)	// For each notification couple defined (third party/actioncode) {
                 $obj = $this->db->fetch_object($result);
 
                 $sendto = $obj->firstname . " " . $obj->lastname . " <".$obj->email.">";
-				$actiondefid = $obj->adid;
+                $actiondefid = $obj->adid;
 
-                if (dol_strlen($sendto))
-                {
-                	include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-                	$application=($conf->global->MAIN_APPLICATION_TITLE?$conf->global->MAIN_APPLICATION_TITLE:'Dolibarr ERP/CRM');
+                if (dol_strlen($sendto)) {
+                    include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+                    $application=($conf->global->MAIN_APPLICATION_TITLE?$conf->global->MAIN_APPLICATION_TITLE:'Dolibarr ERP/CRM');
 
-                	$subject = '['.$application.'] '.$langs->transnoentitiesnoconv("DolibarrNotification");
+                    $subject = '['.$application.'] '.$langs->transnoentitiesnoconv("DolibarrNotification");
 
-                	$message = $langs->transnoentities("YouReceiveMailBecauseOfNotification",$application,$mysoc->name)."\n";
-                	$message.= $langs->transnoentities("YouReceiveMailBecauseOfNotification2",$application,$mysoc->name)."\n";
-                	$message.= "\n";
+                    $message = $langs->transnoentities("YouReceiveMailBecauseOfNotification",$application,$mysoc->name)."\n";
+                    $message.= $langs->transnoentities("YouReceiveMailBecauseOfNotification2",$application,$mysoc->name)."\n";
+                    $message.= "\n";
                     $message.= $texte;
                     // Add link
                     $link='';
-                    switch($objet_type)
-                    {
-                    	case 'ficheinter':
-						    $link='/fichinter/fiche.php?id='.$objet_id;
-    						break;
-                    	case 'propal':
-						    $link='/comm/propal.php?id='.$objet_id;
-    						break;
-    					case 'facture':
-						    $link='/compta/facture.php?facid='.$objet_id;
-    						break;
-                    	case 'order':
-						    $link='/commande/fiche.php?facid='.$objet_id;
-    						break;
-    					case 'order_supplier':
-						    $link='/fourn/commande/fiche.php?facid='.$objet_id;
-    						break;
+                    switch ($objet_type) {
+                        case 'ficheinter':
+                            $link='/fichinter/fiche.php?id='.$objet_id;
+                            break;
+                        case 'propal':
+                            $link='/comm/propal.php?id='.$objet_id;
+                            break;
+                        case 'facture':
+                            $link='/compta/facture.php?facid='.$objet_id;
+                            break;
+                        case 'order':
+                            $link='/commande/fiche.php?facid='.$objet_id;
+                            break;
+                        case 'order_supplier':
+                            $link='/fourn/commande/fiche.php?facid='.$objet_id;
+                            break;
                     }
-					// Define $urlwithroot
+                    // Define $urlwithroot
                     $urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
-					$urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;			// This is to use external domain name found into config file
-					//$urlwithroot=DOL_MAIN_URL_ROOT;						// This is to use same domain name than current
+                    $urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;			// This is to use external domain name found into config file
+                    //$urlwithroot=DOL_MAIN_URL_ROOT;						// This is to use same domain name than current
                     if ($link) $message.="\n".$urlwithroot.$link;
 
                     $filename = basename($file);
@@ -219,37 +211,31 @@ class Notify
                         $msgishtml
                     );
 
-                    if ($mailfile->sendfile())
-                    {
-                    	$now=dol_now();
+                    if ($mailfile->sendfile()) {
+                        $now=dol_now();
                         $sendto = htmlentities($sendto);
 
                         $sql = "INSERT INTO ".MAIN_DB_PREFIX."notify (daten, fk_action, fk_contact, objet_type, objet_id, email)";
                         $sql.= " VALUES (".$this->db->idate($now).", ".$actiondefid.", ".$obj->cid.", '".$objet_type."', ".$objet_id.", '".$this->db->escape($obj->email)."')";
                         dol_syslog("Notify::send sql=".$sql);
-                        if (! $this->db->query($sql) )
-                        {
+                        if (! $this->db->query($sql) ) {
                             dol_print_error($this->db);
                         }
-                    }
-                    else
-                    {
+                    } else {
                         $this->error=$mailfile->error;
                         //dol_syslog("Notify::send ".$this->error, LOG_ERR);
                     }
                 }
                 $i++;
             }
+
             return $i;
-        }
-        else
-        {
+        } else {
             $this->error=$this->db->error();
+
             return -1;
         }
 
     }
 
 }
-
-?>

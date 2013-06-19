@@ -4,7 +4,7 @@
 // This code demonstrates how to lookup the country and region by IP Address
 // It is designed to work with GeoIP Organization or GeoIP ISP available from MaxMind
 
-include("geoip.inc");
+include 'geoip.inc';
 
 $giorg = geoip_open("/usr/local/share/GeoIP/GeoIPOrg.dat",GEOIP_STANDARD);
 
@@ -20,4 +20,3 @@ geoip_close($giorg);
 geoip_close($giisp);
 
 ?>
-

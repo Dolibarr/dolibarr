@@ -26,23 +26,22 @@
  */
 require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
 
-
 /**
  *	\class      ModeleThirdPartyDoc
  *	\brief      Parent class for third parties models of doc generators
  */
 abstract class ModeleThirdPartyDoc extends CommonDocGenerator
 {
-    var $error='';
+    public $error='';
 
     /**
      *  Return list of active generation modules
      *
-	 * 	@param	DoliDB		$db					Database handler
+     * 	@param	DoliDB		$db					Database handler
      *  @param	string		$maxfilenamelength  Max length of value to show
      * 	@return	array							List of templates
      */
-    static function liste_modeles($db,$maxfilenamelength=0)
+    public static function liste_modeles($db,$maxfilenamelength=0)
     {
         global $conf;
 
@@ -63,16 +62,17 @@ abstract class ModeleThirdPartyDoc extends CommonDocGenerator
  */
 abstract class ModeleThirdPartyCode
 {
-    var $error='';
+    public $error='';
 
     /**     Renvoi la description par defaut du modele de numerotation
      *
      *		@param	Translate	$langs		Object langs
      *      @return string      			Texte descripif
      */
-    function info($langs)
+    public function info($langs)
     {
         $langs->load("bills");
+
         return $langs->trans("NoDescription");
     }
 
@@ -81,20 +81,20 @@ abstract class ModeleThirdPartyCode
      *		@param	Translate	$langs		Object langs
      *      @return string      			Nom du module
      */
-    function getNom($langs)
+    public function getNom($langs)
     {
         return $this->nom;
     }
-
 
     /**     Renvoi un exemple de numerotation
      *
      *		@param	Translate	$langs		Object langs
      *      @return string      			Example
      */
-    function getExample($langs)
+    public function getExample($langs)
     {
         $langs->load("bills");
+
         return $langs->trans("NoExample");
     }
 
@@ -103,7 +103,7 @@ abstract class ModeleThirdPartyCode
      *
      *      @return     boolean     false si conflit, true si ok
      */
-    function canBeActivated()
+    public function canBeActivated()
     {
         return true;
     }
@@ -115,18 +115,18 @@ abstract class ModeleThirdPartyCode
      *	@param	int			$type		Type
      *  @return string      			Value
      */
-    function getNextValue($objsoc=0,$type=-1)
+    public function getNextValue($objsoc=0,$type=-1)
     {
         global $langs;
+
         return $langs->trans("Function_getNextValue_InModuleNotWorking");
     }
-
 
     /**     Return version of module
      *
      *      @return     string      Version
      */
-    function getVersion()
+    public function getVersion()
     {
         global $langs;
         $langs->load("admin");
@@ -144,27 +144,24 @@ abstract class ModeleThirdPartyCode
      *  @param  string	$maxfilenamelength  Max length of value to show
      *  @return	array						List of numbers
      */
-    static function liste_modeles($db,$maxfilenamelength=0)
+    public static function liste_modeles($db,$maxfilenamelength=0)
     {
         $liste=array();
         $sql ="";
 
         $resql = $db->query($sql);
-        if ($resql)
-        {
+        if ($resql) {
             $num = $db->num_rows($resql);
             $i = 0;
-            while ($i < $num)
-            {
+            while ($i < $num) {
                 $row = $db->fetch_row($resql);
                 $liste[$row[0]]=$row[1];
                 $i++;
             }
-        }
-        else
-        {
+        } else {
             return -1;
         }
+
         return $liste;
     }
 
@@ -176,7 +173,7 @@ abstract class ModeleThirdPartyCode
      *		@param	int			$type		-1=Nothing, 0=Customer, 1=Supplier
      *		@return	string					HTML translated description
      */
-    function getToolTip($langs,$soc,$type)
+    public function getToolTip($langs,$soc,$type)
     {
         global $conf;
 
@@ -190,24 +187,21 @@ abstract class ModeleThirdPartyCode
         if ($type != -1) $s.=$langs->trans("ValidityControledByModule").': <b>'.$this->getNom($langs).'</b><br>';
         $s.='<br>';
         $s.='<u>'.$langs->trans("ThisIsModuleRules").':</u><br>';
-        if ($type == 0)
-        {
+        if ($type == 0) {
             $s.=$langs->trans("RequiredIfCustomer").': ';
             if (! empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED) && ! empty($this->code_null)) $s.='<strike>';
             $s.=yn(!$this->code_null,1,2);
             if (! empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED) && ! empty($this->code_null)) $s.='</strike> '.yn(1,1,2).' ('.$langs->trans("ForcedToByAModule",$langs->transnoentities("yes")).')';
             $s.='<br>';
         }
-        if ($type == 1)
-        {
+        if ($type == 1) {
             $s.=$langs->trans("RequiredIfSupplier").': ';
             if (! empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED) && ! empty($this->code_null)) $s.='<strike>';
             $s.=yn(!$this->code_null,1,2);
             if (! empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED) && ! empty($this->code_null)) $s.='</strike> '.yn(1,1,2).' ('.$langs->trans("ForcedToByAModule",$langs->transnoentities("yes")).')';
             $s.='<br>';
         }
-        if ($type == -1)
-        {
+        if ($type == -1) {
             $s.=$langs->trans("Required").': ';
             if (! empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED) && ! empty($this->code_null)) $s.='<strike>';
             $s.=yn(!$this->code_null,1,2);
@@ -220,33 +214,31 @@ abstract class ModeleThirdPartyCode
         $s.=$langs->trans("CanBeModifiedIfKo").': '.yn($this->code_modifiable_invalide,1,2).'<br>';
         $s.=$langs->trans("AutomaticCode").': '.yn($this->code_auto,1,2).'<br>';
         $s.='<br>';
-        if ($type == 0 || $type == -1)
-        {
+        if ($type == 0 || $type == -1) {
             $nextval=$this->getNextValue($soc,0);
             if (empty($nextval)) $nextval=$langs->trans("Undefined");
             $s.=$langs->trans("NextValue").($type == -1?' ('.$langs->trans("Customer").')':'').': <b>'.$nextval.'</b><br>';
         }
-        if ($type == 1 || $type == -1)
-        {
+        if ($type == 1 || $type == -1) {
             $nextval=$this->getNextValue($soc,1);
             if (empty($nextval)) $nextval=$langs->trans("Undefined");
             $s.=$langs->trans("NextValue").($type == -1?' ('.$langs->trans("Supplier").')':'').': <b>'.$nextval.'</b>';
         }
+
         return $s;
     }
 
-	/**
-	 *   Check if mask/numbering use prefix
-	 *
-	 *   @return	int		0=no, 1=yes
-	 */
-    function verif_prefixIsUsed()
+    /**
+     *   Check if mask/numbering use prefix
+     *
+     *   @return	int		0=no, 1=yes
+     */
+    public function verif_prefixIsUsed()
     {
         return 0;
     }
 
 }
-
 
 /**
  *		\class		ModeleAccountancyCode
@@ -254,17 +246,17 @@ abstract class ModeleThirdPartyCode
  */
 abstract class ModeleAccountancyCode
 {
-    var $error='';
-
+    public $error='';
 
     /**		Return description of module
      *
      * 		@param	Translate	$langs		Object langs
      * 		@return string      			Description of module
      */
-    function info($langs)
+    public function info($langs)
     {
         $langs->load("bills");
+
         return $langs->trans("NoDescription");
     }
 
@@ -275,9 +267,10 @@ abstract class ModeleAccountancyCode
      *      @param	int			$type		Type of third party (1:customer, 2:supplier, -1:autodetect)
      *      @return	string					Example
      */
-    function getExample($langs,$objsoc=0,$type=-1)
+    public function getExample($langs,$objsoc=0,$type=-1)
     {
         $langs->load("bills");
+
         return $langs->trans("NoExample");
     }
 
@@ -286,7 +279,7 @@ abstract class ModeleAccountancyCode
      *
      *      @return     boolean     false si conflit, true si ok
      */
-    function canBeActivated()
+    public function canBeActivated()
     {
         return true;
     }
@@ -295,7 +288,7 @@ abstract class ModeleAccountancyCode
      *
      *      @return     string      Version
      */
-    function getVersion()
+    public function getVersion()
     {
         global $langs;
         $langs->load("admin");
@@ -314,7 +307,7 @@ abstract class ModeleAccountancyCode
      *		@param	int			$type		-1=Nothing, 0=Customer, 1=Supplier
      *		@return	string					HTML translated description
      */
-    function getToolTip($langs,$soc,$type)
+    public function getToolTip($langs,$soc,$type)
     {
         global $conf,$db;
 
@@ -326,20 +319,19 @@ abstract class ModeleAccountancyCode
         //$s.='<br>';
         //$s.='<u>'.$langs->trans("ThisIsModuleRules").':</u><br>';
         $s.='<br>';
-        if ($type == 0 || $type == -1)
-        {
+        if ($type == 0 || $type == -1) {
             $result=$this->get_code($db,$soc,'customer');
             $nextval=$this->code;
             if (empty($nextval)) $nextval=$langs->trans("Undefined");
             $s.=$langs->trans("NextValue").($type == -1?' ('.$langs->trans("Customer").')':'').': <b>'.$nextval.'</b><br>';
         }
-        if ($type == 1 || $type == -1)
-        {
+        if ($type == 1 || $type == -1) {
             $result=$this->get_code($db,$soc,'supplier');
             $nextval=$this->code;
             if (empty($nextval)) $nextval=$langs->trans("Undefined");
             $s.=$langs->trans("NextValue").($type == -1?' ('.$langs->trans("Supplier").')':'').': <b>'.$nextval.'</b>';
         }
+
         return $s;
     }
 
@@ -351,14 +343,11 @@ abstract class ModeleAccountancyCode
      *  @param  int		$type			'customer' or 'supplier'
      *  @return	int						>=0 if OK, <0 if KO
      */
-    function get_code($db, $societe, $type='')
+    public function get_code($db, $societe, $type='')
     {
         return $langs->trans("NotAvailable");
     }
 }
-
-
-
 
 /**
  *	Create a document for third party
@@ -379,31 +368,26 @@ function thirdparty_doc_create($db, $object, $message, $modele, $outputlangs)
     $srctemplatepath='';
 
     // Positionne modele sur le nom du modele a utiliser
-    if (! dol_strlen($modele))
-    {
-        if (! empty($conf->global->COMPANY_ADDON_PDF))
-        {
+    if (! dol_strlen($modele)) {
+        if (! empty($conf->global->COMPANY_ADDON_PDF)) {
             $modele = $conf->global->COMPANY_ADDON_PDF;
-        }
-        else
-        {
+        } else {
             print $langs->trans("Error")." ".$langs->trans("Error_COMPANY_ADDON_PDF_NotDefined");
+
             return 0;
         }
     }
 
     // If selected modele is a filename template (then $modele="modelname:filename")
     $tmp=explode(':',$modele,2);
-    if (! empty($tmp[1]))
-    {
+    if (! empty($tmp[1])) {
         $modele=$tmp[0];
         $srctemplatepath=$tmp[1];
     }
 
     // Search template
     $file = "doc_".$modele.".modules.php";
-    if (file_exists($dir.'/'.$file))
-    {
+    if (file_exists($dir.'/'.$file)) {
         $classname = "doc_".$modele;
         require_once $dir.'/'.$file;
 
@@ -413,8 +397,7 @@ function thirdparty_doc_create($db, $object, $message, $modele, $outputlangs)
         // We save charset_output to restore it because write_file can change it if needed for
         // output format that does not support UTF8.
         $sav_charset_output=$outputlangs->charset_output;
-        if ($obj->write_file($object, $outputlangs, $srctemplatepath) > 0)
-        {
+        if ($obj->write_file($object, $outputlangs, $srctemplatepath) > 0) {
             $outputlangs->charset_output=$sav_charset_output;
 
             // Appel des triggers
@@ -422,26 +405,20 @@ function thirdparty_doc_create($db, $object, $message, $modele, $outputlangs)
             $interface=new Interfaces($db);
             $result=$interface->run_triggers('COMPANY_BUILDDOC',$object,$user,$langs,$conf);
             if ($result < 0) {
-            	$error++; $this->errors=$interface->errors;
+                $error++; $this->errors=$interface->errors;
             }
             // Fin appel triggers
-
             return 1;
-        }
-        else
-        {
+        } else {
             $outputlangs->charset_output=$sav_charset_output;
             dol_print_error($db,"thirdparty_doc_create Error: ".$obj->error);
+
             return -1;
         }
 
-    }
-    else
-    {
+    } else {
         dol_print_error('',$langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists",$dir.'/'.$file));
+
         return -1;
     }
 }
-
-
-?>

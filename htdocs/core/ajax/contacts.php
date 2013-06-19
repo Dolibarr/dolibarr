@@ -42,17 +42,14 @@ top_httphead();
 //print '<!-- Ajax page called with url '.$_SERVER["PHP_SELF"].'?'.$_SERVER["QUERY_STRING"].' -->'."\n";
 
 // Load original field value
-if (! empty($id) && ! empty($action) && ! empty($htmlname))
-{
-	$form = new Form($db);
-	
-	$return=array();
-	
-	$return['value']	= $form->selectcontacts($id,'','contactid',0,'','',0,'',true);
-	$return['num']		= $form->num;
-	$return['error']	= $form->error;
-	
-	echo json_encode($return);
-}
+if (! empty($id) && ! empty($action) && ! empty($htmlname)) {
+    $form = new Form($db);
 
-?>
+    $return=array();
+
+    $return['value']	= $form->selectcontacts($id,'','contactid',0,'','',0,'',true);
+    $return['num']		= $form->num;
+    $return['error']	= $form->error;
+
+    echo json_encode($return);
+}

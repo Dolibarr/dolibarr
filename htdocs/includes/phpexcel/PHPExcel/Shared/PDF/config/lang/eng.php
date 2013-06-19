@@ -3,12 +3,12 @@
 // File name   : eng.php
 // Begin       : 2004-03-03
 // Last Update : 2010-08-08
-// 
+//
 // Description : Language module for TCPDF
 //               (contains translated texts)
-// 
+//
 // Author: Nicola Asuni
-// 
+//
 // (c) Copyright:
 //               Nicola Asuni
 //               Tecnick.com s.r.l.
@@ -29,7 +29,7 @@
  * @license http://www.gnu.org/copyleft/lesser.html LGPL
  * @since 2004-03-03
  */
- 
+
 // ENGLISH
 
 global $l;
@@ -45,5 +45,5 @@ $l['a_meta_language'] = 'en';
 $l['w_page'] = 'page';
 
 //============================================================+
-// END OF FILE                                                 
+// END OF FILE
 //============================================================+

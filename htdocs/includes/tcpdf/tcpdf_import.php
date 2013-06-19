@@ -56,35 +56,34 @@ require_once(dirname(__FILE__).'/tcpdf_parser.php');
  * @version 1.0.000
  * @author Nicola Asuni - info@tecnick.com
  */
-class TCPDF_IMPORT extends TCPDF {
+class TCPDF_IMPORT extends TCPDF
+{
+    /**
+     * Import an existing PDF document
+     * @param $filename (string) Filename of the PDF document to import.
+     * @return true in case of success, false otherwise
+     * @public
+     * @since 1.0.000 (2011-05-24)
+     */
+    public function importPDF($filename)
+    {
+        // load document
+        $rawdata = file_get_contents($filename);
+        if ($rawdata === false) {
+            $this->Error('Unable to get the content of the file: '.$filename);
+        }
+        // parse PDF data
+        $pdf = new TCPDF_PARSER($rawdata);
+        $data = $pdf->getParsedData();
+        // release some memory
+        unset($rawdata);
 
-	/**
-	 * Import an existing PDF document
-	 * @param $filename (string) Filename of the PDF document to import.
-	 * @return true in case of success, false otherwise
-	 * @public
-	 * @since 1.0.000 (2011-05-24)
-	 */
-	public function importPDF($filename) {
-		// load document
-		$rawdata = file_get_contents($filename);
-		if ($rawdata === false) {
-			$this->Error('Unable to get the content of the file: '.$filename);
-		}
-		// parse PDF data
-		$pdf = new TCPDF_PARSER($rawdata);
-		$data = $pdf->getParsedData();
-		// release some memory
-		unset($rawdata);
+        // ...
 
-		// ...
+        print_r($data); // DEBUG
 
-
-		print_r($data); // DEBUG
-
-
-		unset($pdf);
-	}
+        unset($pdf);
+    }
 
 } // END OF CLASS
 

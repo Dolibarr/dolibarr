@@ -21,13 +21,13 @@
  * internal PHP-mail() implementation of the PEAR Mail:: interface.
  * @package Mail
  */
-class Mail_mail extends Mail {
-
+class Mail_mail extends Mail
+{
     /**
      * Any arguments to pass to the mail() function.
      * @var string
      */
-    var $_params = '';
+    public $_params = '';
 
     /**
      * Constructor.
@@ -37,7 +37,7 @@ class Mail_mail extends Mail {
      *
      * @param array $params Extra arguments for the mail() function.
      */
-    function Mail_mail($params = null)
+    public function Mail_mail($params = null)
     {
         /* The other mail implementations accept parameters as arrays.
          * In the interest of being consistent, explode an array into
@@ -55,7 +55,7 @@ class Mail_mail extends Mail {
         $this->sep = (strstr(PHP_OS, 'WIN')) ? "\r\n" : "\n";
     }
 
-	/**
+    /**
      * Implements Mail_mail::send() function using php's built-in mail()
      * command.
      *
@@ -81,7 +81,7 @@ class Mail_mail extends Mail {
      *
      * @access public
      */
-    function send($recipients, $headers, $body)
+    public function send($recipients, $headers, $body)
     {
         // If we're passed an array of recipients, implode it.
         if (is_array($recipients)) {

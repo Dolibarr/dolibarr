@@ -25,7 +25,6 @@
  * @version    1.7.6, 2011-02-27
  */
 
-
 /**
  * PHPExcel_CachedObjectStorage_ICache
  *
@@ -40,19 +39,19 @@ interface PHPExcel_CachedObjectStorage_ICache
      *
      *	@param	string			$pCoord		Coordinate address of the cell to update
      *	@param	PHPExcel_Cell	$cell		Cell to update
-	 *	@return	void
+     *	@return	void
      *	@throws	Exception
      */
-	public function addCacheData($pCoord, PHPExcel_Cell $cell);
+    public function addCacheData($pCoord, PHPExcel_Cell $cell);
 
     /**
      *	Add or Update a cell in cache
      *
      *	@param	PHPExcel_Cell	$cell		Cell to update
-	 *	@return	void
+     *	@return	void
      *	@throws	Exception
      */
-	public function updateCacheData(PHPExcel_Cell $cell);
+    public function updateCacheData(PHPExcel_Cell $cell);
 
     /**
      *	Fetch a cell from cache identified by coordinate address
@@ -61,7 +60,7 @@ interface PHPExcel_CachedObjectStorage_ICache
      *	@return PHPExcel_Cell 	Cell that was found, or null if not found
      *	@throws	Exception
      */
-	public function getCacheData($pCoord);
+    public function getCacheData($pCoord);
 
     /**
      *	Delete a cell in cache identified by coordinate address
@@ -69,36 +68,36 @@ interface PHPExcel_CachedObjectStorage_ICache
      *	@param	string			$pCoord		Coordinate address of the cell to delete
      *	@throws	Exception
      */
-	public function deleteCacheData($pCoord);
+    public function deleteCacheData($pCoord);
 
-	/**
-	 *	Is a value set in the current PHPExcel_CachedObjectStorage_ICache for an indexed cell?
-	 *
-	 *	@param	string		$pCoord		Coordinate address of the cell to check
-	 *	@return	void
-	 *	@return	boolean
-	 */
-	public function isDataSet($pCoord);
+    /**
+     *	Is a value set in the current PHPExcel_CachedObjectStorage_ICache for an indexed cell?
+     *
+     *	@param	string		$pCoord		Coordinate address of the cell to check
+     *	@return	void
+     *	@return	boolean
+     */
+    public function isDataSet($pCoord);
 
-	/**
-	 *	Get a list of all cell addresses currently held in cache
-	 *
-	 *	@return	array of string
-	 */
-	public function getCellList();
+    /**
+     *	Get a list of all cell addresses currently held in cache
+     *
+     *	@return	array of string
+     */
+    public function getCellList();
 
-	/**
-	 *	Get the list of all cell addresses currently held in cache sorted by column and row
-	 *
-	 *	@return	void
-	 */
-	public function getSortedCellList();
+    /**
+     *	Get the list of all cell addresses currently held in cache sorted by column and row
+     *
+     *	@return	void
+     */
+    public function getSortedCellList();
 
-	/**
-	 *	Clone the cell collection
-	 *
-	 *	@return	void
-	 */
-	public function copyCellCollection(PHPExcel_Worksheet $parent);
+    /**
+     *	Clone the cell collection
+     *
+     *	@return	void
+     */
+    public function copyCellCollection(PHPExcel_Worksheet $parent);
 
 }

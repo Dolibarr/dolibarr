@@ -27,7 +27,6 @@
 require '../../../main.inc.php';
 $langs->load("suppliers");
 
-
 llxHeader('','Compta - Ventilation');
 
 print_titre("Ventilation Comptable");
@@ -36,13 +35,10 @@ print '<table border="0" width="100%">';
 
 print '<tr><td valign="top" width="30%">';
 
-
-
 $sql = "SELECT count(*) FROM ".MAIN_DB_PREFIX."facturedet";
 $sql .= " WHERE fk_code_ventilation = 0";
 $result = $db->query($sql);
-if ($result)
-{
+if ($result) {
   $row = $db->fetch_row($result);
   $nbfac = $row[0];
 
@@ -53,8 +49,7 @@ $sql = "SELECT count(*) FROM ".MAIN_DB_PREFIX."paiement";
 $sql .= " WHERE fk_code_ventilation = 0";
 
 $result = $db->query($sql);
-if ($result)
-{
+if ($result) {
   $row = $db->fetch_row($result);
   $nbp = $row[0];
 
@@ -64,8 +59,7 @@ if ($result)
 $sql = "SELECT count(*) FROM ".MAIN_DB_PREFIX."facture_fourn_det";
 $sql .= " WHERE fk_code_ventilation = 0";
 $result = $db->query($sql);
-if ($result)
-{
+if ($result) {
   $row = $db->fetch_row($result);
   $nbfacfourn = $row[0];
 
@@ -76,8 +70,7 @@ if ($result)
 $sql .= " WHERE fk_code_ventilation = 0";
 
 $result = $db->query($sql);
-if ($result)
-{
+if ($result) {
   $row = $db->fetch_row($result);
   $nbpfourn = $row[0];
 
@@ -104,13 +97,11 @@ $sql .= " WHERE fd.fk_code_ventilation = ccg.rowid";
 $sql .= " GROUP BY ccg.rowid";
 
 $resql = $db->query($sql);
-if ($resql)
-{
+if ($resql) {
   $i = 0;
   $num = $db->num_rows($resql);
 
-  while ($i < $num)
-    {
+  while ($i < $num) {
 
       $row = $db->fetch_row($resql);
 
@@ -124,5 +115,3 @@ print "</table>\n";
 print '</td></tr></table>';
 
 llxFooter();
-
-?>

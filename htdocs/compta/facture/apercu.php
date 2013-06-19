@@ -41,7 +41,6 @@ $ref = GETPOST("ref");
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'facture', $id);
 
-
 /*
  * View
  */
@@ -58,24 +57,20 @@ $form = new Form($db);
 /*                                                                             */
 /* *************************************************************************** */
 
-if ($id > 0 || ! empty($ref))
-{
+if ($id > 0 || ! empty($ref)) {
     $object = New Facture($db);
 
-    if ($object->fetch($id,$ref) > 0)
-    {
+    if ($object->fetch($id,$ref) > 0) {
         $soc = new Societe($db);
         $soc->fetch($object->socid);
 
         $author = new User($db);
-        if ($object->user_author)
-        {
+        if ($object->user_author) {
             $author->fetch($object->user_author);
         }
 
         $head = facture_prepare_head($object);
         dol_fiche_head($head, 'preview', $langs->trans("InvoiceCustomer"), 0, 'bill');
-
 
         $totalpaye  = $object->getSommePaiement();
 
@@ -107,26 +102,22 @@ if ($id > 0 || ! empty($ref))
         // Type
         print '<tr><td>'.$langs->trans('Type').'</td><td colspan="5">';
         print $object->getLibType();
-        if ($object->type == 1)
-        {
+        if ($object->type == 1) {
             $facreplaced=new Facture($db);
             $facreplaced->fetch($object->fk_facture_source);
             print ' ('.$langs->transnoentities("ReplaceInvoice",$facreplaced->getNomUrl(1)).')';
         }
-        if ($object->type == 2)
-        {
+        if ($object->type == 2) {
             $facusing=new Facture($db);
             $facusing->fetch($object->fk_facture_source);
             print ' ('.$langs->transnoentities("CorrectInvoice",$facusing->getNomUrl(1)).')';
         }
 
         $facidavoir=$object->getListIdAvoirFromInvoice();
-        if (count($facidavoir) > 0)
-        {
+        if (count($facidavoir) > 0) {
             print ' ('.$langs->transnoentities("InvoiceHasAvoir");
             $i=0;
-            foreach($facidavoir as $id)
-            {
+            foreach ($facidavoir as $id) {
                 if ($i==0) print ' ';
                 else print ',';
                 $facavoir=new Facture($db);
@@ -135,8 +126,7 @@ if ($id > 0 || ! empty($ref))
             }
             print ')';
         }
-        if ($objectidnext > 0)
-        {
+        if ($objectidnext > 0) {
             $facthatreplace=new Facture($db);
             $facthatreplace->fetch($objectidnext);
             print ' ('.$langs->transnoentities("ReplacedByInvoice",$facthatreplace->getNomUrl(1)).')';
@@ -152,79 +142,56 @@ if ($id > 0 || ! empty($ref))
         if ($soc->remise_percent) print $langs->trans("CompanyHasRelativeDiscount",$soc->remise_percent);
         else print $langs->trans("CompanyHasNoRelativeDiscount");
 
-        if ($absolute_discount > 0)
-        {
+        if ($absolute_discount > 0) {
             print '. ';
-            if ($object->statut > 0 || $object->type == 2 || $object->type == 3)
-            {
-                if ($object->statut == 0)
-                {
+            if ($object->statut > 0 || $object->type == 2 || $object->type == 3) {
+                if ($object->statut == 0) {
                     print $langs->trans("CompanyHasAbsoluteDiscount",price($absolute_discount),$langs->transnoentities("Currency".$conf->currency));
                     print '. ';
-                }
-                else
-                {
-                    if ($object->statut < 1 || $object->type == 2 || $object->type == 3)
-                    {
+                } else {
+                    if ($object->statut < 1 || $object->type == 2 || $object->type == 3) {
                         $text=$langs->trans("CompanyHasAbsoluteDiscount",price($absolute_discount),$langs->transnoentities("Currency".$conf->currency));
                         print '<br>'.$text.'.<br>';
-                    }
-                    else
-                    {
+                    } else {
                         $text=$langs->trans("CompanyHasAbsoluteDiscount",price($absolute_discount),$langs->transnoentities("Currency".$conf->currency));
                         $text2=$langs->trans("AbsoluteDiscountUse");
                         print $form->textwithpicto($text,$text2);
                     }
                 }
-            }
-            else
-            {
+            } else {
                 // Remise dispo de type remise fixe (not credit note)
                 $filter='fk_facture_source IS NULL';
                 print '<br>';
                 $form->form_remise_dispo($_SERVER["PHP_SELF"].'?facid='.$object->id, 0,  'remise_id',$soc->id, $absolute_discount, $filter, $resteapayer, ' - '.$addabsolutediscount);
             }
-        }
-        else
-        {
-            if ($absolute_creditnote > 0)    // If not linke will be added later
-            {
+        } else {
+            if ($absolute_creditnote > 0) {    // If not linke will be added later
                 if ($object->statut == 0 && $object->type != 2 && $object->type != 3) print ' - '.$addabsolutediscount.'<br>';
                 else print '.';
-            }
-            else print '. ';
+            } else print '. ';
         }
-        if ($absolute_creditnote > 0)
-        {
+        if ($absolute_creditnote > 0) {
             // If validated, we show link "add credit note to payment"
-            if ($object->statut != 1 || $object->type == 2 || $object->type == 3)
-            {
-                if ($object->statut == 0 && $object->type != 3)
-                {
+            if ($object->statut != 1 || $object->type == 2 || $object->type == 3) {
+                if ($object->statut == 0 && $object->type != 3) {
                     $text=$langs->trans("CompanyHasCreditNote",price($absolute_creditnote),$langs->transnoentities("Currency".$conf->currency));
                     print $form->textwithpicto($text,$langs->trans("CreditNoteDepositUse"));
-                }
-                else
-                {
+                } else {
                     print $langs->trans("CompanyHasCreditNote",price($absolute_creditnote),$langs->transnoentities("Currency".$conf->currency)).'.';
                 }
-            }
-            else
-            {
+            } else {
                 // Remise dispo de type avoir
                 $filter='fk_facture_source IS NOT NULL';
                 if (! $absolute_discount) print '<br>';
                 $form->form_remise_dispo($_SERVER["PHP_SELF"].'?facid='.$object->id, 0, 'remise_id_for_payment', $soc->id, $absolute_creditnote, $filter, $resteapayer);
             }
         }
-        if (! $absolute_discount && ! $absolute_creditnote)
-        {
+        if (! $absolute_discount && ! $absolute_creditnote) {
             print $langs->trans("CompanyHasNoAbsoluteDiscount");
             if ($object->statut == 0 && $object->type != 2 && $object->type != 3) print ' - '.$addabsolutediscount.'<br>';
             else print '. ';
         }
-        /*if ($object->statut == 0 && $object->type != 2 && $object->type != 3)
-         {
+        /*if ($object->statut == 0 && $object->type != 2 && $object->type != 3) {
          if (! $absolute_discount && ! $absolute_creditnote) print '<br>';
          //print ' &nbsp; - &nbsp; ';
          print $addabsolutediscount;
@@ -245,20 +212,14 @@ if ($id > 0 || ! empty($ref))
         if ($object->type != 2 && $action != 'editpaymentterm' && $object->brouillon && $user->rights->facture->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editpaymentterm&amp;facid='.$object->id.'">'.img_edit($langs->trans('SetDate'),1).'</a></td>';
         print '</tr></table>';
         print '</td><td colspan="5">';
-        if ($object->type != 2)
-        {
-            if ($action == 'editpaymentterm')
-            {
+        if ($object->type != 2) {
+            if ($action == 'editpaymentterm') {
                 $form->form_date($_SERVER['PHP_SELF'].'?facid='.$object->id,$object->date_lim_reglement,'paymentterm');
-            }
-            else
-            {
+            } else {
                 print dol_print_date($object->date_lim_reglement,'daytext');
                 if ($object->date_lim_reglement < ($now - $conf->facture->client->warning_delay) && ! $object->paye && $object->statut == 1 && ! $object->am) print img_warning($langs->trans('Late'));
             }
-        }
-        else
-        {
+        } else {
             print '&nbsp;';
         }
         print '</td></tr>';
@@ -277,12 +238,9 @@ if ($id > 0 || ! empty($ref))
         if ($action != 'editmode' && $object->brouillon && $user->rights->facture->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editmode&amp;facid='.$object->id.'">'.img_edit($langs->trans('SetMode'),1).'</a></td>';
         print '</tr></table>';
         print '</td><td colspan="3">';
-        if ($action == 'editmode')
-        {
+        if ($action == 'editmode') {
             $form->form_modes_reglement($_SERVER['PHP_SELF'].'?facid='.$object->id,$object->mode_reglement_id,'mode_reglement_id');
-        }
-        else
-        {
+        } else {
             $form->form_modes_reglement($_SERVER['PHP_SELF'].'?facid='.$object->id,$object->mode_reglement_id,'none');
         }
         print '</td>';
@@ -310,8 +268,7 @@ if ($id > 0 || ! empty($ref))
         $var=true;
 
         // Si fichier PDF existe
-        if (file_exists($file))
-        {
+        if (file_exists($file)) {
             $encfile = urlencode($file);
             print_titre($langs->trans("Documents"));
             print '<table class="border" width="100%">';
@@ -324,8 +281,7 @@ if ($id > 0 || ! empty($ref))
             print '</tr>';
 
             // Si fichier detail PDF existe
-            if (file_exists($filedetail)) // facture detaillee supplementaire
-            {
+            if (file_exists($filedetail)) { // facture detaillee supplementaire
                 print "<tr $bc[$var]><td>Facture detaillee</td>";
 
                 print '<td><a data-ajax="false" href="'.DOL_URL_ROOT . '/document.php?modulepart=facture&file='.urlencode($relativepathdetail).'">'.$object->ref.'-detail.pdf</a></td>';
@@ -337,15 +293,11 @@ if ($id > 0 || ! empty($ref))
             print "</table>\n";
 
             // Conversion du PDF en image png si fichier png non existant
-            if (! file_exists($fileimage) && ! file_exists($fileimagebis))
-            {
-                if (class_exists("Imagick"))
-                {
+            if (! file_exists($fileimage) && ! file_exists($fileimagebis)) {
+                if (class_exists("Imagick")) {
                     $ret = dol_convert_file($file);
                     if ($ret < 0) $error++;
-                }
-                else
-                {
+                } else {
                     $langs->load("errors");
                     print '<font class="error">'.$langs->trans("ErrorNoImagickReadimage").'</font>';
                 }
@@ -366,19 +318,15 @@ if ($id > 0 || ! empty($ref))
         print '<tr><td>'.$langs->trans('Status').'</td><td align="left" colspan="3">'.($object->getLibStatut(4,$totalpaye)).'</td></tr>';
 
         // Projet
-        if (! empty($conf->projet->enabled))
-        {
+        if (! empty($conf->projet->enabled)) {
             $langs->load("projects");
             print '<tr>';
             print '<td>'.$langs->trans("Project").'</td><td colspan="3">';
-            if ($object->fk_project > 0)
-            {
+            if ($object->fk_project > 0) {
                 $project = New Project($db);
                 $project->fetch($object->fk_project);
                 print '<a href="'.DOL_URL_ROOT.'/projet/fiche.php?id='.$object->fk_project.'">'.$project->title.'</a>';
-            }
-            else
-            {
+            } else {
                 print '&nbsp;';
             }
             print '</td></tr>';
@@ -387,37 +335,29 @@ if ($id > 0 || ! empty($ref))
         print '</table>';
 
         dol_fiche_end();
-    }
-    else
-    {
+    } else {
         // Facture non trouvee
         print $langs->trans("ErrorBillNotFound",$_GET["facid"]);
     }
 }
 
 // Si fichier png PDF d'1 page trouve
-if (file_exists($fileimage))
-{
+if (file_exists($fileimage)) {
     print '<img src="'.DOL_URL_ROOT . '/viewimage.php?modulepart=apercufacture&file='.urlencode($relativepathimage).'">';
 }
 // Si fichier png PDF de plus d'1 page trouve
-elseif (file_exists($fileimagebis))
-{
+elseif (file_exists($fileimagebis)) {
     $multiple = preg_replace('/\.png/','',$relativepath) . "-";
 
-    for ($i = 0; $i < 20; $i++)
-    {
+    for ($i = 0; $i < 20; $i++) {
         $preview = $multiple.$i.'.png';
 
-        if (file_exists($dir_output.$preview))
-        {
+        if (file_exists($dir_output.$preview)) {
             print '<img src="'.DOL_URL_ROOT . '/viewimage.php?modulepart=apercufacture&file='.urlencode($preview).'"><p>';
         }
     }
 }
 
-
 $db->close();
 
 llxFooter();
-?>

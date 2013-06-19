@@ -40,9 +40,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/invoice.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 if (! empty($conf->commande->enabled)) require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
-if (! empty($conf->projet->enabled))
-{
-	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+if (! empty($conf->projet->enabled)) {
+    require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
 
 $langs->load('bills');
@@ -101,7 +100,6 @@ $hookmanager->initHooks(array('invoicelist'));
 
 $now=dol_now();
 
-
 /*
  * Actions
  */
@@ -110,8 +108,7 @@ $parameters=array('socid'=>$socid);
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 
 // Do we click on purge search criteria ?
-if (GETPOST("button_removefilter_x"))
-{
+if (GETPOST("button_removefilter_x")) {
     $search_categ='';
     $search_user='';
     $search_sale='';
@@ -122,7 +119,6 @@ if (GETPOST("button_removefilter_x"))
     $year='';
     $month='';
 }
-
 
 /*
  * View
@@ -149,8 +145,7 @@ if (! $sall) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'paiement_facture as pf ON pf.f
 else $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'facturedet as fd ON fd.fk_facture = f.rowid';
 // We'll need this table joined to the select in order to filter by sale
 if ($search_sale > 0 || (! $user->rights->societe->client->voir && ! $socid)) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-if ($search_user > 0)
-{
+if ($search_user > 0) {
     $sql.=", ".MAIN_DB_PREFIX."element_contact as ec";
     $sql.=", ".MAIN_DB_PREFIX."c_type_contact as tc";
 }
@@ -158,64 +153,50 @@ $sql.= ' WHERE f.fk_soc = s.rowid';
 $sql.= " AND f.entity = ".$conf->entity;
 if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 if ($socid) $sql.= ' AND s.rowid = '.$socid;
-if ($userid)
-{
+if ($userid) {
     if ($userid == -1) $sql.=' AND f.fk_user_author IS NULL';
     else $sql.=' AND f.fk_user_author = '.$userid;
 }
-if ($filtre)
-{
+if ($filtre) {
     $aFilter = explode(',', $filtre);
-    foreach ($aFilter as $filter)
-    {
+    foreach ($aFilter as $filter) {
         $filt = explode(':', $filter);
         $sql .= ' AND ' . trim($filt[0]) . ' = ' . trim($filt[1]);
     }
 }
-if ($search_ref)
-{
+if ($search_ref) {
     $sql.= ' AND f.facnumber LIKE \'%'.$db->escape(trim($search_ref)).'%\'';
 }
-if ($search_societe)
-{
+if ($search_societe) {
     $sql.= ' AND s.nom LIKE \'%'.$db->escape(trim($search_societe)).'%\'';
 }
-if ($search_montant_ht)
-{
+if ($search_montant_ht) {
     $sql.= ' AND f.total = \''.$db->escape(price2num(trim($search_montant_ht))).'\'';
 }
-if ($search_montant_ttc)
-{
+if ($search_montant_ttc) {
     $sql.= ' AND f.total_ttc = \''.$db->escape(price2num(trim($search_montant_ttc))).'\'';
 }
-if ($month > 0)
-{
+if ($month > 0) {
     if ($year > 0 && empty($day))
     $sql.= " AND f.datef BETWEEN '".$db->idate(dol_get_first_day($year,$month,false))."' AND '".$db->idate(dol_get_last_day($year,$month,false))."'";
     else if ($year > 0 && ! empty($day))
     $sql.= " AND f.datef BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $month, $day, $year))."' AND '".$db->idate(dol_mktime(23, 59, 59, $month, $day, $year))."'";
     else
     $sql.= " AND date_format(f.datef, '%m') = '".$month."'";
-}
-else if ($year > 0)
-{
+} elseif ($year > 0) {
     $sql.= " AND f.datef BETWEEN '".$db->idate(dol_get_first_day($year,1,false))."' AND '".$db->idate(dol_get_last_day($year,12,false))."'";
 }
 if ($search_sale > 0) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$search_sale;
-if ($search_user > 0)
-{
+if ($search_user > 0) {
     $sql.= " AND ec.fk_c_type_contact = tc.rowid AND tc.element='facture' AND tc.source='internal' AND ec.element_id = f.rowid AND ec.fk_socpeople = ".$search_user;
 }
-if (! $sall)
-{
+if (! $sall) {
     $sql.= ' GROUP BY f.rowid, f.facnumber, f.type, f.increment, f.total,f.tva, f.total_ttc,';
     $sql.= ' f.datef, f.date_lim_reglement,';
     $sql.= ' f.paye, f.fk_statut,';
     $sql.= ' s.nom, s.rowid';
-}
-else
-{
-	$sql.= ' AND (s.nom LIKE \'%'.$db->escape($sall).'%\' OR f.facnumber LIKE \'%'.$db->escape($sall).'%\' OR f.note LIKE \'%'.$db->escape($sall).'%\' OR fd.description LIKE \'%'.$db->escape($sall).'%\')';
+} else {
+    $sql.= ' AND (s.nom LIKE \'%'.$db->escape($sall).'%\' OR f.facnumber LIKE \'%'.$db->escape($sall).'%\' OR f.note LIKE \'%'.$db->escape($sall).'%\' OR fd.description LIKE \'%'.$db->escape($sall).'%\')';
 }
 $sql.= ' ORDER BY ';
 $listfield=explode(',',$sortfield);
@@ -225,12 +206,10 @@ $sql.= $db->plimit($limit+1,$offset);
 //print $sql;
 
 $resql = $db->query($sql);
-if ($resql)
-{
+if ($resql) {
     $num = $db->num_rows($resql);
 
-    if ($socid)
-    {
+    if ($socid) {
         $soc = new Societe($db);
         $soc->fetch($socid);
     }
@@ -250,23 +229,20 @@ if ($resql)
     print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">'."\n";
     print '<table class="liste" width="100%">';
 
- 	// If the user can view prospects other than his'
+     // If the user can view prospects other than his'
     $moreforfilter='';
- 	if ($user->rights->societe->client->voir || $socid)
- 	{
- 		$langs->load("commercial");
- 		$moreforfilter.=$langs->trans('ThirdPartiesOfSaleRepresentative'). ': ';
-		$moreforfilter.=$formother->select_salesrepresentatives($search_sale,'search_sale',$user);
-	 	$moreforfilter.=' &nbsp; &nbsp; &nbsp; ';
- 	}
+     if ($user->rights->societe->client->voir || $socid) {
+         $langs->load("commercial");
+         $moreforfilter.=$langs->trans('ThirdPartiesOfSaleRepresentative'). ': ';
+        $moreforfilter.=$formother->select_salesrepresentatives($search_sale,'search_sale',$user);
+         $moreforfilter.=' &nbsp; &nbsp; &nbsp; ';
+     }
     // If the user can view prospects other than his'
-    if ($user->rights->societe->client->voir || $socid)
-    {
+    if ($user->rights->societe->client->voir || $socid) {
         $moreforfilter.=$langs->trans('LinkedToSpecificUsers'). ': ';
         $moreforfilter.=$form->select_dolusers($search_user,'search_user',1);
     }
-    if ($moreforfilter)
-    {
+    if ($moreforfilter) {
         print '<tr class="liste_titre">';
         print '<td class="liste_titre" colspan="9">';
         print $moreforfilter;
@@ -305,16 +281,14 @@ if ($resql)
     print '<td class="liste_titre" align="right"><input type="image" class="liste_titre" name="button_search" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
     print "</td></tr>\n";
 
-    if ($num > 0)
-    {
+    if ($num > 0) {
         $var=True;
         $total_ht=0;
         $total_tva=0;
         $total_ttc=0;
         $totalrecu=0;
 
-        while ($i < min($num,$limit))
-        {
+        while ($i < min($num,$limit)) {
             $objp = $db->fetch_object($resql);
             $var=!$var;
 
@@ -354,8 +328,7 @@ if ($resql)
 
             // Date limit
             print '<td align="center" nowrap="1">'.dol_print_date($datelimit,'day');
-            if ($datelimit < ($now - $conf->facture->client->warning_delay) && ! $objp->paye && $objp->fk_statut == 1 && ! $paiement)
-            {
+            if ($datelimit < ($now - $conf->facture->client->warning_delay) && ! $objp->paye && $objp->fk_statut == 1 && ! $paiement) {
                 print img_warning($langs->trans('Late'));
             }
             print '</td>';
@@ -388,8 +361,7 @@ if ($resql)
             $i++;
         }
 
-        if (($offset + $num) <= $limit)
-        {
+        if (($offset + $num) <= $limit) {
             // Print total
             print '<tr class="liste_total">';
             print '<td class="liste_total" colspan="4" align="left">'.$langs->trans('Total').'</td>';
@@ -405,12 +377,9 @@ if ($resql)
     print "</table>\n";
     print "</form>\n";
     $db->free($resql);
-}
-else
-{
+} else {
     dol_print_error($db);
 }
 
 llxFooter();
 $db->close();
-?>

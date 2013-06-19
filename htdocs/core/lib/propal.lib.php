@@ -31,44 +31,42 @@
  */
 function propal_prepare_head($object)
 {
-	global $langs, $conf, $user;
-	$langs->load("propal");
-	$langs->load("compta");
+    global $langs, $conf, $user;
+    $langs->load("propal");
+    $langs->load("compta");
 
-	$h = 0;
-	$head = array();
+    $h = 0;
+    $head = array();
 
-	$head[$h][0] = DOL_URL_ROOT.'/comm/propal.php?id='.$object->id;
-	$head[$h][1] = $langs->trans('ProposalCard');
-	$head[$h][2] = 'comm';
-	$h++;
+    $head[$h][0] = DOL_URL_ROOT.'/comm/propal.php?id='.$object->id;
+    $head[$h][1] = $langs->trans('ProposalCard');
+    $head[$h][2] = 'comm';
+    $h++;
 
-	if ((empty($conf->commande->enabled) &&	((! empty($conf->expedition_bon->enabled) && $user->rights->expedition->lire)
-	|| (! empty($conf->livraison_bon->enabled) && $user->rights->expedition->livraison->lire))))
-	{
-		$langs->load("sendings");
-		$head[$h][0] = DOL_URL_ROOT.'/expedition/propal.php?id='.$object->id;
-		if ($conf->expedition_bon->enabled) $text=$langs->trans("Sendings");
-		if ($conf->livraison_bon->enabled)  $text.='/'.$langs->trans("Receivings");
-		$head[$h][1] = $text;
-		$head[$h][2] = 'shipping';
-		$h++;
-	}
-	if (! empty($conf->global->MAIN_USE_PREVIEW_TABS))
-	{
-		$head[$h][0] = DOL_URL_ROOT.'/comm/propal/apercu.php?id='.$object->id;
-		$head[$h][1] = $langs->trans("Preview");
-		$head[$h][2] = 'preview';
-		$h++;
-	}
+    if ((empty($conf->commande->enabled) &&	((! empty($conf->expedition_bon->enabled) && $user->rights->expedition->lire)
+    || (! empty($conf->livraison_bon->enabled) && $user->rights->expedition->livraison->lire))))
+    {
+        $langs->load("sendings");
+        $head[$h][0] = DOL_URL_ROOT.'/expedition/propal.php?id='.$object->id;
+        if ($conf->expedition_bon->enabled) $text=$langs->trans("Sendings");
+        if ($conf->livraison_bon->enabled)  $text.='/'.$langs->trans("Receivings");
+        $head[$h][1] = $text;
+        $head[$h][2] = 'shipping';
+        $h++;
+    }
+    if (! empty($conf->global->MAIN_USE_PREVIEW_TABS)) {
+        $head[$h][0] = DOL_URL_ROOT.'/comm/propal/apercu.php?id='.$object->id;
+        $head[$h][1] = $langs->trans("Preview");
+        $head[$h][2] = 'preview';
+        $h++;
+    }
 
-	if (empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
-	{
-		$head[$h][0] = DOL_URL_ROOT.'/comm/propal/contact.php?id='.$object->id;
-		$head[$h][1] = $langs->trans('ContactsAddresses');
-		$head[$h][2] = 'contact';
-		$h++;
-	}
+    if (empty($conf->global->MAIN_DISABLE_CONTACTS_TAB)) {
+        $head[$h][0] = DOL_URL_ROOT.'/comm/propal/contact.php?id='.$object->id;
+        $head[$h][1] = $langs->trans('ContactsAddresses');
+        $head[$h][2] = 'contact';
+        $h++;
+    }
 
     // Show more tabs from modules
     // Entries must be declared in modules descriptor with line
@@ -76,31 +74,30 @@ function propal_prepare_head($object)
     // $this->tabs = array('entity:-tabname);   												to remove a tab
     complete_head_from_modules($conf,$langs,$object,$head,$h,'propal');
 
-    if (empty($conf->global->MAIN_DISABLE_NOTES_TAB))
-    {
-	    $head[$h][0] = DOL_URL_ROOT.'/comm/propal/note.php?id='.$object->id;
-		$head[$h][1] = $langs->trans('Notes');
-		$head[$h][2] = 'note';
-		$h++;
+    if (empty($conf->global->MAIN_DISABLE_NOTES_TAB)) {
+        $head[$h][0] = DOL_URL_ROOT.'/comm/propal/note.php?id='.$object->id;
+        $head[$h][1] = $langs->trans('Notes');
+        $head[$h][2] = 'note';
+        $h++;
     }
 
-	$head[$h][0] = DOL_URL_ROOT.'/comm/propal/document.php?id='.$object->id;
-	/*$filesdir = $conf->propal->dir_output . "/" . dol_sanitizeFileName($propal->ref);
-	include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-	$listoffiles=dol_dir_list($filesdir,'files',1);
-	$head[$h][1] = (count($listoffiles)?$langs->trans('DocumentsNb',count($listoffiles)):$langs->trans('Documents'));*/
-	$head[$h][1] = $langs->trans('Documents');
-	$head[$h][2] = 'document';
-	$h++;
+    $head[$h][0] = DOL_URL_ROOT.'/comm/propal/document.php?id='.$object->id;
+    /*$filesdir = $conf->propal->dir_output . "/" . dol_sanitizeFileName($propal->ref);
+    include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+    $listoffiles=dol_dir_list($filesdir,'files',1);
+    $head[$h][1] = (count($listoffiles)?$langs->trans('DocumentsNb',count($listoffiles)):$langs->trans('Documents'));*/
+    $head[$h][1] = $langs->trans('Documents');
+    $head[$h][2] = 'document';
+    $h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/comm/propal/info.php?id='.$object->id;
-	$head[$h][1] = $langs->trans('Info');
-	$head[$h][2] = 'info';
-	$h++;
+    $head[$h][0] = DOL_URL_ROOT.'/comm/propal/info.php?id='.$object->id;
+    $head[$h][1] = $langs->trans('Info');
+    $head[$h][2] = 'info';
+    $h++;
 
-	complete_head_from_modules($conf,$langs,$object,$head,$h,'propal','remove');
+    complete_head_from_modules($conf,$langs,$object,$head,$h,'propal','remove');
 
-	return $head;
+    return $head;
 }
 
 /**
@@ -111,36 +108,33 @@ function propal_prepare_head($object)
  */
 function propal_admin_prepare_head($object)
 {
-	global $langs, $conf, $user;
+    global $langs, $conf, $user;
 
-	$h = 0;
-	$head = array();
+    $h = 0;
+    $head = array();
 
-	$head[$h][0] = DOL_URL_ROOT.'/admin/propal.php';
-	$head[$h][1] = $langs->trans("Miscellaneous");
-	$head[$h][2] = 'general';
-	$h++;
+    $head[$h][0] = DOL_URL_ROOT.'/admin/propal.php';
+    $head[$h][1] = $langs->trans("Miscellaneous");
+    $head[$h][2] = 'general';
+    $h++;
 
-	// Show more tabs from modules
-	// Entries must be declared in modules descriptor with line
-	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
-	// $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
-	complete_head_from_modules($conf,$langs,$object,$head,$h,'propal_admin');
+    // Show more tabs from modules
+    // Entries must be declared in modules descriptor with line
+    // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
+    // $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
+    complete_head_from_modules($conf,$langs,$object,$head,$h,'propal_admin');
 
-	$head[$h][0] = DOL_URL_ROOT.'/comm/admin/propal_extrafields.php';
-	$head[$h][1] = $langs->trans("ExtraFields");
+    $head[$h][0] = DOL_URL_ROOT.'/comm/admin/propal_extrafields.php';
+    $head[$h][1] = $langs->trans("ExtraFields");
     $head[$h][2] = 'attributes';
     $h++;
-    
+
     $head[$h][0] = DOL_URL_ROOT.'/comm/admin/propaldet_extrafields.php';
     $head[$h][1] = $langs->trans("ExtraFieldsLines");
     $head[$h][2] = 'attributeslines';
     $h++;
 
-	complete_head_from_modules($conf,$langs,$object,$head,$h,'propal_admin','remove');
+    complete_head_from_modules($conf,$langs,$object,$head,$h,'propal_admin','remove');
 
-	return $head;
+    return $head;
 }
-
-
-?>

@@ -46,18 +46,15 @@ $mesg='';
 
 $adherentstatic=new Adherent($db);
 
-
 /*
  * Actions
  */
 
-if ($mode == 'cardlogin' && empty($foruserlogin))
-{
+if ($mode == 'cardlogin' && empty($foruserlogin)) {
     $mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Login"));
 }
 
-if ((! empty($foruserid) || ! empty($foruserlogin) || ! empty($mode)) && ! $mesg)
-{
+if ((! empty($foruserid) || ! empty($foruserlogin) || ! empty($mode)) && ! $mesg) {
     $arrayofmembers=array();
 
     // requete en prenant que les adherents a jour de cotisation
@@ -74,20 +71,18 @@ if ((! empty($foruserid) || ! empty($foruserlogin) || ! empty($mode)) && ! $mesg
 
     dol_syslog("Search members sql=".$sql);
     $result = $db->query($sql);
-    if ($result)
-    {
-    	$num = $db->num_rows($result);
-    	$i = 0;
-    	while ($i < $num)
-    	{
-    		$objp = $db->fetch_object($result);
+    if ($result) {
+        $num = $db->num_rows($result);
+        $i = 0;
+        while ($i < $num) {
+            $objp = $db->fetch_object($result);
 
-    		if ($objp->country == '-') $objp->country='';
+            if ($objp->country == '-') $objp->country='';
 
-    		$adherentstatic->lastname=$objp->lastname;
-    		$adherentstatic->firstname=$objp->firstname;
+            $adherentstatic->lastname=$objp->lastname;
+            $adherentstatic->firstname=$objp->firstname;
 
-    		// List of values to scan for a replacement
+            // List of values to scan for a replacement
             $substitutionarray = array (
             '%ID%'=>$objp->rowid,
             '%LOGIN%'=>$objp->login,
@@ -107,25 +102,22 @@ if ((! empty($foruserid) || ! empty($foruserlogin) || ! empty($mode)) && ! $mesg
             '%MONTH%'=>$month,
             '%DAY%'=>$day,
             '%DOL_MAIN_URL_ROOT%'=>DOL_MAIN_URL_ROOT,
-            '%SERVER%'=>"http://".$_SERVER["SERVER_NAME"]."/",	
+            '%SERVER%'=>"http://".$_SERVER["SERVER_NAME"]."/",
             '%SOCIETE%'=>$objp->company
             );
             complete_substitutions_array($substitutionarray, $langs);
 
             // For business cards
-            if (empty($mode) || $mode=='card' || $mode=='cardlogin')
-            {
+            if (empty($mode) || $mode=='card' || $mode=='cardlogin') {
                 $textleft=make_substitutions($conf->global->ADHERENT_CARD_TEXT, $substitutionarray);
                 $textheader=make_substitutions($conf->global->ADHERENT_CARD_HEADER_TEXT, $substitutionarray);
                 $textfooter=make_substitutions($conf->global->ADHERENT_CARD_FOOTER_TEXT, $substitutionarray);
                 $textright=make_substitutions($conf->global->ADHERENT_CARD_TEXT_RIGHT, $substitutionarray);
 
-                if (is_numeric($foruserid) || $foruserlogin)
-                {
-                    for($j=0;$j<100;$j++)
-                    {
+                if (is_numeric($foruserid) || $foruserlogin) {
+                    for ($j=0;$j<100;$j++) {
                         $arrayofmembers[]=array(
-                        	'textleft'=>$textleft,
+                            'textleft'=>$textleft,
                             'textheader'=>$textheader,
                             'textfooter'=>$textfooter,
                             'textright'=>$textright,
@@ -133,11 +125,9 @@ if ((! empty($foruserid) || ! empty($foruserlogin) || ! empty($mode)) && ! $mesg
                             'photo'=>$objp->photo
                         );
                     }
-                }
-                else
-                {
+                } else {
                     $arrayofmembers[]=array(
-                    	'textleft'=>$textleft,
+                        'textleft'=>$textleft,
                         'textheader'=>$textheader,
                         'textfooter'=>$textfooter,
                         'textright'=>$textright,
@@ -148,9 +138,8 @@ if ((! empty($foruserid) || ! empty($foruserlogin) || ! empty($mode)) && ! $mesg
             }
 
             // For labels
-            if ($mode == 'label')
-            {
-            	if (empty($conf->global->ADHERENT_ETIQUETTE_TEXT)) $conf->global->ADHERENT_ETIQUETTE_TEXT="%FULLNAME%\n%ADDRESS%\n%ZIP% %TOWN%\n%COUNTRY%";
+            if ($mode == 'label') {
+                if (empty($conf->global->ADHERENT_ETIQUETTE_TEXT)) $conf->global->ADHERENT_ETIQUETTE_TEXT="%FULLNAME%\n%ADDRESS%\n%ZIP% %TOWN%\n%COUNTRY%";
                 $textleft=make_substitutions($conf->global->ADHERENT_ETIQUETTE_TEXT, $substitutionarray);
                 $textheader='';
                 $textfooter='';
@@ -165,52 +154,40 @@ if ((! empty($foruserid) || ! empty($foruserlogin) || ! empty($mode)) && ! $mesg
             }
 
             $i++;
-    	}
+        }
 
-    	// Build and output PDF
-        if (empty($mode) || $mode=='card' || $mode=='cardlogin')
-        {
-            if (! count($arrayofmembers))
-            {
+        // Build and output PDF
+        if (empty($mode) || $mode=='card' || $mode=='cardlogin') {
+            if (! count($arrayofmembers)) {
                 $mesg=$langs->trans("ErrorRecordNotFound");
             }
-            if (empty($model) || $model == '-1')
-            {
-            	$mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("DescADHERENT_CARD_TYPE"));
+            if (empty($model) || $model == '-1') {
+                $mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("DescADHERENT_CARD_TYPE"));
             }
             if (! $mesg) $result=members_card_pdf_create($db, $arrayofmembers, $model, $outputlangs);
 
-        }
-        elseif ($mode == 'label')
-        {
-            if (! count($arrayofmembers))
-            {
+        } elseif ($mode == 'label') {
+            if (! count($arrayofmembers)) {
                 $mesg=$langs->trans("ErrorRecordNotFound");
             }
-        	if (empty($modellabel) || $modellabel == '-1')
-    		{
-    			$mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("DescADHERENT_ETIQUETTE_TYPE"));
-    		}
-        	if (! $mesg) $result=members_label_pdf_create($db, $arrayofmembers, $modellabel, $outputlangs);
+            if (empty($modellabel) || $modellabel == '-1') {
+                $mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("DescADHERENT_ETIQUETTE_TYPE"));
+            }
+            if (! $mesg) $result=members_label_pdf_create($db, $arrayofmembers, $modellabel, $outputlangs);
         }
 
-    	if ($result <= 0)
-    	{
-    		dol_print_error('',$result);
-    	}
-    }
-    else
-    {
-    	dol_print_error($db);
+        if ($result <= 0) {
+            dol_print_error('',$result);
+        }
+    } else {
+        dol_print_error($db);
     }
 
-    if (! $mesg) 
-    {
-    	$db->close();
-    	exit;
+    if (! $mesg) {
+        $db->close();
+        exit;
     }
 }
-
 
 /*
  * View
@@ -236,9 +213,8 @@ print '<input type="hidden" name="action" value="builddoc">';
 print $langs->trans("DescADHERENT_CARD_TYPE").' ';
 // List of possible labels (defined into $_Avery_Labels variable set into format_cards.lib.php)
 $arrayoflabels=array();
-foreach(array_keys($_Avery_Labels) as $codecards)
-{
-	$arrayoflabels[$codecards]=$_Avery_Labels[$codecards]['name'];
+foreach (array_keys($_Avery_Labels) as $codecards) {
+    $arrayoflabels[$codecards]=$_Avery_Labels[$codecards]['name'];
 }
 print $form->selectarray('model',$arrayoflabels,(GETPOST('model')?GETPOST('model'):$conf->global->ADHERENT_CARD_TYPE),1,0,0);
 print '<br><input class="button" type="submit" value="'.$langs->trans("BuildDoc").'">';
@@ -252,9 +228,8 @@ print '<input type="hidden" name="action" value="builddoc">';
 print $langs->trans("DescADHERENT_CARD_TYPE").' ';
 // List of possible labels (defined into $_Avery_Labels variable set into format_cards.lib.php)
 $arrayoflabels=array();
-foreach(array_keys($_Avery_Labels) as $codecards)
-{
-	$arrayoflabels[$codecards]=$_Avery_Labels[$codecards]['name'];
+foreach (array_keys($_Avery_Labels) as $codecards) {
+    $arrayoflabels[$codecards]=$_Avery_Labels[$codecards]['name'];
 }
 print $form->selectarray('model',$arrayoflabels,(GETPOST('model')?GETPOST('model'):$conf->global->ADHERENT_CARD_TYPE),1,0,0);
 print '<br>'.$langs->trans("Login").': <input size="10" type="text" name="foruserlogin" value="'.GETPOST('foruserlogin').'">';
@@ -269,9 +244,8 @@ print '<input type="hidden" name="action" value="builddoc">';
 print $langs->trans("DescADHERENT_ETIQUETTE_TYPE").' ';
 // List of possible labels (defined into $_Avery_Labels variable set into format_cards.lib.php)
 $arrayoflabels=array();
-foreach(array_keys($_Avery_Labels) as $codecards)
-{
-	$arrayoflabels[$codecards]=$_Avery_Labels[$codecards]['name'];
+foreach (array_keys($_Avery_Labels) as $codecards) {
+    $arrayoflabels[$codecards]=$_Avery_Labels[$codecards]['name'];
 }
 print $form->selectarray('modellabel',$arrayoflabels,(GETPOST('modellabel')?GETPOST('modellabel'):$conf->global->ADHERENT_ETIQUETTE_TYPE),1,0,0);
 print '<br><input class="button" type="submit" value="'.$langs->trans("BuildDoc").'">';
@@ -281,4 +255,3 @@ print '<br>';
 llxFooter();
 
 $db->close();
-?>

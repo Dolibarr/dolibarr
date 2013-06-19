@@ -22,17 +22,14 @@ $langs->load("other");
 $socid = GETPOST("socid","int");
 
 // Security check
-if ($user->societe_id > 0)
-{
-	$action = '';
-	$socid = $user->societe_id;
+if ($user->societe_id > 0) {
+    $action = '';
+    $socid = $user->societe_id;
 }
 
 $section=$_GET["section"];
 if (! $section) $section='misc';
 $upload_dir = $conf->ecm->dir_output.'/'.$section;
-
-
 
 /*******************************************************************
  * ACTIONS
@@ -41,53 +38,36 @@ $upload_dir = $conf->ecm->dir_output.'/'.$section;
  ********************************************************************/
 
 // Envoie fichier
-if ( $_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
-{
-	if (dol_mkdir($upload_dir) >= 0)
-	{
-		$resupload = dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_dir . "/" . dol_unescapefile($_FILES['userfile']['name']),0,0,$_FILES['userfile']['error']);
-		if (is_numeric($resupload) && $resupload > 0)
-		{
-		    $result=$ecmdir->changeNbOfFiles('+');
-	    }
-	    else
-	    {
-   			$langs->load("errors");
-			if ($resupload < 0)	// Unknown error
-			{
-				setEventMessage($langs->trans("ErrorFileNotUploaded"), 'errors');
-			}
-			else if (preg_match('/ErrorFileIsInfectedWithAVirus/',$resupload))	// Files infected by a virus
-			{
-				setEventMessage($langs->trans("ErrorFileIsInfectedWithAVirus"), 'errors');
-			}
-			else	// Known error
-			{
-				setEventMessage($langs->trans($resupload), 'errors');
-			}
-	    }
-	}
-	else
-	{
-	    // Echec transfert (fichier depassant la limite ?)
-		$langs->load("errors");
-		$mesg = '<div class="error">'.$langs->trans("ErrorFailToCreateDir",$upload_dir).'</div>';
-	}
+if ( $_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC)) {
+    if (dol_mkdir($upload_dir) >= 0) {
+        $resupload = dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_dir . "/" . dol_unescapefile($_FILES['userfile']['name']),0,0,$_FILES['userfile']['error']);
+        if (is_numeric($resupload) && $resupload > 0) {
+            $result=$ecmdir->changeNbOfFiles('+');
+        } else {
+               $langs->load("errors");
+            if ($resupload < 0) {	// Unknown error
+                setEventMessage($langs->trans("ErrorFileNotUploaded"), 'errors');
+            } elseif (preg_match('/ErrorFileIsInfectedWithAVirus/',$resupload)) {	// Files infected by a virus
+                setEventMessage($langs->trans("ErrorFileIsInfectedWithAVirus"), 'errors');
+            } else {	// Known error
+                setEventMessage($langs->trans($resupload), 'errors');
+            }
+        }
+    } else {
+        // Echec transfert (fichier depassant la limite ?)
+        $langs->load("errors");
+        $mesg = '<div class="error">'.$langs->trans("ErrorFailToCreateDir",$upload_dir).'</div>';
+    }
 }
 
 // Suppression fichier
-if ($_POST['action'] == 'confirm_deletefile' && $_POST['confirm'] == 'yes')
-{
+if ($_POST['action'] == 'confirm_deletefile' && $_POST['confirm'] == 'yes') {
     $langs->load("other");
-	$file = $upload_dir . "/" . GETPOST('urlfile');	// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
-	$ret=dol_delete_file($file);
-	if ($ret) setEventMessage($langs->trans("FileWasRemoved", GETPOST('urlfile')));
-	else setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), 'errors');
+    $file = $upload_dir . "/" . GETPOST('urlfile');	// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
+    $ret=dol_delete_file($file);
+    if ($ret) setEventMessage($langs->trans("FileWasRemoved", GETPOST('urlfile')));
+    else setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), 'errors');
 }
-
-
-
-
 
 /*******************************************************************
  * PAGE
@@ -103,17 +83,14 @@ print_fiche_titre($langs->trans("ECMAutoOrg"));
 
 //$head = societe_prepare_head($societe);
 
-
 //dol_fiche_head($head, 'document', $societe->nom);
-
 
 /*
  * Confirmation de la suppression d'une ligne produit
  */
-if ($_GET['action'] == 'delete_file')
-{
-	$ret=$form->form_confirm($_SERVER["PHP_SELF"].'?socid='.$socid.'&amp;urlfile='.urldecode($_GET["urlfile"]), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile');
-	if ($ret == 'html') print '<br>';
+if ($_GET['action'] == 'delete_file') {
+    $ret=$form->form_confirm($_SERVER["PHP_SELF"].'?socid='.$socid.'&amp;urlfile='.urldecode($_GET["urlfile"]), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile');
+    if ($ret == 'html') print '<br>';
 }
 
 // Construit liste des fichiers
@@ -124,25 +101,20 @@ $errorlevel=error_reporting();
 error_reporting(0);
 $handle=opendir($upload_dir);
 error_reporting($errorlevel);
-if (is_resource($handle))
-{
-	$i=0;
-	while (($file = readdir($handle))!==false)
-	{
-		if (!is_dir($dir.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')
-		{
-			$filearray[$i]->name=$file;
-			$filearray[$i]->size=dol_filesize($upload_dir."/".$file);
-			$filearray[$i]->date=dol_filemtime($upload_dir."/".$file);
-			$totalsize+=$filearray[$i]->size;
-			$i++;
-		}
-	}
-	closedir($handle);
-}
-else
-{
-	//            print '<div class="error">'.$langs->trans("ErrorCanNotReadDir",$upload_dir).'</div>';
+if (is_resource($handle)) {
+    $i=0;
+    while (($file = readdir($handle))!==false) {
+        if (!is_dir($dir.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS') {
+            $filearray[$i]->name=$file;
+            $filearray[$i]->size=dol_filesize($upload_dir."/".$file);
+            $filearray[$i]->date=dol_filemtime($upload_dir."/".$file);
+            $totalsize+=$filearray[$i]->size;
+            $i++;
+        }
+    }
+    closedir($handle);
+} else {
+    //            print '<div class="error">'.$langs->trans("ErrorCanNotReadDir",$upload_dir).'</div>';
 }
 
 
@@ -162,9 +134,7 @@ print '</div>';
 
 */
 
-
 if ($mesg) { print $mesg."<br>"; }
-
 
 print $langs->trans("FeatureNotYetAvailable");
 
@@ -172,4 +142,3 @@ print $langs->trans("FeatureNotYetAvailable");
 $db->close();
 
 llxFooter();
-?>

@@ -21,7 +21,7 @@
  *	\brief      Setup page of opensurvey
  */
 
-require_once('../../main.inc.php');
+require_once '../../main.inc.php';
 require_once(DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/opensurvey/fonctions.php");
@@ -31,7 +31,6 @@ if (!$user->admin) accessforbidden();
 
 $langs->load("admin");
 $langs->load("other");
-
 
 /*
  * View
@@ -59,8 +58,6 @@ $url=$urlwithouturlroot.dol_buildpath('/opensurvey/public/index.php',1);
 $urllink='<a href="'.$url.'" target="_blank">'.$url.'</a>';
 print $urllink;
 
-
 llxFooter();
 
 $db->close();
-?>

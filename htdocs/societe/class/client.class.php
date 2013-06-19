@@ -23,20 +23,19 @@
  */
 include_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 
-
 /**
  *	Class to manage customers
  */
 class Client extends Societe
 {
-    var $nb;
+    public $nb;
 
     /**
      *  Constructor
      *
      *  @param	DoliDB	$db		Database handler
      */
-    function __construct($db)
+    public function __construct($db)
     {
         $this->db = $db;
     }
@@ -46,7 +45,7 @@ class Client extends Societe
      *
      *  @return     int         <0 if KO, >0 if OK
      */
-    function load_state_board()
+    public function load_state_board()
     {
         global $conf, $user;
 
@@ -55,35 +54,31 @@ class Client extends Societe
 
         $sql = "SELECT count(s.rowid) as nb, s.client";
         $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
-        if (!$user->rights->societe->client->voir && !$user->societe_id)
-        {
-        	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
-        	$sql.= " WHERE sc.fk_user = " .$user->id;
-        	$clause = "AND";
+        if (!$user->rights->societe->client->voir && !$user->societe_id) {
+            $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
+            $sql.= " WHERE sc.fk_user = " .$user->id;
+            $clause = "AND";
         }
         $sql.= " ".$clause." s.client IN (1,2,3)";
         $sql.= ' AND s.entity IN ('.getEntity($this->element, 1).')';
         $sql.= " GROUP BY s.client";
 
         $resql=$this->db->query($sql);
-        if ($resql)
-        {
-            while ($obj=$this->db->fetch_object($resql))
-            {
+        if ($resql) {
+            while ($obj=$this->db->fetch_object($resql)) {
                 if ($obj->client == 1 || $obj->client == 3) $this->nb["customers"]+=$obj->nb;
                 if ($obj->client == 2 || $obj->client == 3) $this->nb["prospects"]+=$obj->nb;
             }
             $this->db->free($resql);
+
             return 1;
-        }
-        else
-        {
+        } else {
             dol_print_error($this->db);
             $this->error=$this->db->error();
+
             return -1;
         }
 
     }
 
 }
-?>

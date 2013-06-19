@@ -31,9 +31,8 @@ define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
 
 // For MultiCompany module
 $entity=(! empty($_GET['entity']) ? (int) $_GET['entity'] : (! empty($_POST['entity']) ? (int) $_POST['entity'] : 1));
-if (is_int($entity))
-{
-	define("DOLENTITY", $entity);
+if (is_int($entity)) {
+    define("DOLENTITY", $entity);
 }
 
 require '../../main.inc.php';
@@ -65,19 +64,19 @@ $PAYPAL_API_OK="";
 if ($urlok) $PAYPAL_API_OK=$urlok;
 $PAYPAL_API_KO="";
 if ($urlko) $PAYPAL_API_KO=$urlko;
-if (empty($PAYPAL_API_USER))
-{
+if (empty($PAYPAL_API_USER)) {
     dol_print_error('',"Paypal setup param PAYPAL_API_USER not defined");
+
     return -1;
 }
-if (empty($PAYPAL_API_PASSWORD))
-{
+if (empty($PAYPAL_API_PASSWORD)) {
     dol_print_error('',"Paypal setup param PAYPAL_API_PASSWORD not defined");
+
     return -1;
 }
-if (empty($PAYPAL_API_SIGNATURE))
-{
+if (empty($PAYPAL_API_SIGNATURE)) {
     dol_print_error('',"Paypal setup param PAYPAL_API_SIGNATURE not defined");
+
     return -1;
 }
 
@@ -90,12 +89,9 @@ if (empty($PAYPALPAYERID)) $PAYPALPAYERID=GETPOST('PayerID');
 $PAYPALFULLTAG=GETPOST('FULLTAG');
 if (empty($PAYPALFULLTAG)) $PAYPALFULLTAG=GETPOST('fulltag');
 
-
 /*
  * Actions
  */
-
-
 
 /*
  * View
@@ -107,15 +103,12 @@ $tracepost = "";
 foreach($_POST as $k => $v) $tracepost .= "{$k} - {$v}\n";
 dol_syslog("POST=".$tracepost, LOG_DEBUG, 0, '_paypal');
 
-
 llxHeaderPaypal($langs->trans("PaymentForm"));
-
 
 print '<span id="dolpaymentspan"></span>'."\n";
 print '<div id="dolpaymentdiv" align="center">'."\n";
 
-if ($PAYPALTOKEN)
-{
+if ($PAYPALTOKEN) {
     // Get on url call
     $token              = $PAYPALTOKEN;
     $fulltag            = $PAYPALFULLTAG;
@@ -127,37 +120,30 @@ if ($PAYPALTOKEN)
     // From env
     $ipaddress          = $_SESSION['ipaddress'];
 
-	dol_syslog("Call newpaymentok with token=".$token." paymentType=".$paymentType." currencyCodeType=".$currencyCodeType." payerID=".$payerID." ipaddress=".$ipaddress." FinalPaymentAmt=".$FinalPaymentAmt." fulltag=".$fulltag, LOG_DEBUG, 0, '_paypal');
+    dol_syslog("Call newpaymentok with token=".$token." paymentType=".$paymentType." currencyCodeType=".$currencyCodeType." payerID=".$payerID." ipaddress=".$ipaddress." FinalPaymentAmt=".$FinalPaymentAmt." fulltag=".$fulltag, LOG_DEBUG, 0, '_paypal');
 
+    // Send an email
+    if (! empty($conf->global->MEMBER_PAYONLINE_SENDEMAIL) && preg_match('/MEM=/',$fulltag)) {
+        $sendto=$conf->global->MEMBER_PAYONLINE_SENDEMAIL;
+        $from=$conf->global->MAILING_EMAIL_FROM;
+        require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
+        $mailfile = new CMailFile(
+            'New subscription payed',
+            $sendto,
+            $from,
+            'New subscription payed '.$fulltag
+            );
 
-	// Send an email
-	if (! empty($conf->global->MEMBER_PAYONLINE_SENDEMAIL) && preg_match('/MEM=/',$fulltag))
-	{
-		$sendto=$conf->global->MEMBER_PAYONLINE_SENDEMAIL;
-		$from=$conf->global->MAILING_EMAIL_FROM;
-		require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-		$mailfile = new CMailFile(
-			'New subscription payed',
-			$sendto,
-			$from,
-			'New subscription payed '.$fulltag
-			);
+        $result=$mailfile->sendfile();
+        if ($result) {
+            dol_syslog("EMail sent to ".$sendto, LOG_DEBUG, 0, '_paypal');
+        } else {
+            dol_syslog("Failed to send EMail to ".$sendto, LOG_ERR, 0, '_paypal');
+        }
+    }
 
-		$result=$mailfile->sendfile();
-		if ($result)
-		{
-			dol_syslog("EMail sent to ".$sendto, LOG_DEBUG, 0, '_paypal');
-		}
-		else
-		{
-			dol_syslog("Failed to send EMail to ".$sendto, LOG_ERR, 0, '_paypal');
-		}
-	}
-
-
-	// Validate record
-    if (! empty($paymentType))
-    {
+    // Validate record
+    if (! empty($paymentType)) {
         dol_syslog("We call GetExpressCheckoutDetails", LOG_DEBUG, 0, '_paypal');
         $resArray=getDetails($token);
         //var_dump($resarray);
@@ -166,15 +152,14 @@ if ($PAYPALTOKEN)
         $resArray=confirmPayment($token, $paymentType, $currencyCodeType, $payerID, $ipaddress, $FinalPaymentAmt, $fulltag);
 
         $ack = strtoupper($resArray["ACK"]);
-        if($ack=="SUCCESS" || $ack=="SUCCESSWITHWARNING")
-        {
-        	$object = new stdClass();
+        if ($ack=="SUCCESS" || $ack=="SUCCESSWITHWARNING") {
+            $object = new stdClass();
 
-        	$object->source		= $source;
-        	$object->ref		= $ref;
-        	$object->payerID	= $payerID;
-        	$object->fulltag	= $fulltag;
-        	$object->resArray	= $resArray;
+            $object->source		= $source;
+            $object->ref		= $ref;
+            $object->payerID	= $payerID;
+            $object->fulltag	= $fulltag;
+            $object->resArray	= $resArray;
 
             // resArray was built from a string like that
             // TOKEN=EC%2d1NJ057703V9359028&TIMESTAMP=2010%2d11%2d01T11%3a40%3a13Z&CORRELATIONID=1efa8c6a36bd8&ACK=Success&VERSION=56&BUILD=1553277&TRANSACTIONID=9B994597K9921420R&TRANSACTIONTYPE=expresscheckout&PAYMENTTYPE=instant&ORDERTIME=2010%2d11%2d01T11%3a40%3a12Z&AMT=155%2e57&FEEAMT=5%2e54&TAXAMT=0%2e00&CURRENCYCODE=EUR&PAYMENTSTATUS=Completed&PENDINGREASON=None&REASONCODE=None
@@ -192,9 +177,7 @@ if ($PAYPALTOKEN)
             $result=$interface->run_triggers('PAYPAL_PAYMENT_OK',$object,$user,$langs,$conf);
             if ($result < 0) { $error++; $errors=$interface->errors; }
             // Fin appel triggers
-        }
-        else
-        {
+        } else {
             //Display a user friendly Error on the page using any of the following error information returned by PayPal
             $ErrorCode = urldecode($resArray["L_ERRORCODE0"]);
             $ErrorShortMsg = urldecode($resArray["L_SHORTMESSAGE0"]);
@@ -209,14 +192,10 @@ if ($PAYPALTOKEN)
 
             if ($mysoc->email) echo "\nPlease, send a screenshot of this page to ".$mysoc->email;
         }
-    }
-    else
-    {
+    } else {
         dol_print_error('','Session expired');
     }
-}
-else
-{
+} else {
     // No TOKEN parameter in URL
     dol_print_error('','No TOKEN parameter in URL');
 }
@@ -225,8 +204,6 @@ print "\n</div>\n";
 
 html_print_paypal_footer($mysoc,$langs);
 
-
 llxFooterPaypal();
 
 $db->close();
-?>

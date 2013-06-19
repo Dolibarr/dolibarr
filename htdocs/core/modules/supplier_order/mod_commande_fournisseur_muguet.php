@@ -25,40 +25,37 @@
 
 require_once DOL_DOCUMENT_ROOT .'/core/modules/supplier_order/modules_commandefournisseur.php';
 
-
 /**
  *	Classe du modele de numerotation de reference de commande fournisseur Muguet
  */
 class mod_commande_fournisseur_muguet extends ModeleNumRefSuppliersOrders
 {
-	var $version='dolibarr';		// 'development', 'experimental', 'dolibarr'
-	var $error = '';
-	var $nom = 'Muguet';
-	var $prefix='CF';
-
+    public $version='dolibarr';		// 'development', 'experimental', 'dolibarr'
+    public $error = '';
+    public $nom = 'Muguet';
+    public $prefix='CF';
 
     /**
      * 	Return description of numbering module
      *
      *  @return     string      Text with description
      */
-    function info()
+    public function info()
     {
-    	global $langs;
-      	return $langs->trans("SimpleNumRefModelDesc",$this->prefix);
-    }
+        global $langs;
 
+          return $langs->trans("SimpleNumRefModelDesc",$this->prefix);
+    }
 
     /**
      * 	Renvoi un exemple de numerotation
      *
      *  @return     string      Example
      */
-    function getExample()
+    public function getExample()
     {
         return $this->prefix."0501-0001";
     }
-
 
     /**
      * 	Test si les numeros deja en vigueur dans la base ne provoquent pas de
@@ -66,43 +63,40 @@ class mod_commande_fournisseur_muguet extends ModeleNumRefSuppliersOrders
      *
      *  @return     boolean     false si conflit, true si ok
      */
-    function canBeActivated()
+    public function canBeActivated()
     {
-    	global $conf,$langs;
+        global $conf,$langs;
 
         $coyymm=''; $max='';
 
-		$posindice=8;
-		$sql = "SELECT MAX(SUBSTRING(ref FROM ".$posindice.")) as max";
+        $posindice=8;
+        $sql = "SELECT MAX(SUBSTRING(ref FROM ".$posindice.")) as max";
         $sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseur";
-		$sql.= " WHERE ref LIKE '".$this->prefix."____-%'";
+        $sql.= " WHERE ref LIKE '".$this->prefix."____-%'";
         $sql.= " AND entity = ".$conf->entity;
         $resql=$db->query($sql);
-        if ($resql)
-        {
+        if ($resql) {
             $row = $db->fetch_row($resql);
             if ($row) { $coyymm = substr($row[0],0,6); $max=$row[0]; }
         }
-        if (! $coyymm || preg_match('/'.$this->prefix.'[0-9][0-9][0-9][0-9]/i',$coyymm))
-        {
+        if (! $coyymm || preg_match('/'.$this->prefix.'[0-9][0-9][0-9][0-9]/i',$coyymm)) {
             return true;
-        }
-        else
-        {
-			$langs->load("errors");
-			$this->error=$langs->trans('ErrorNumRefModel',$max);
+        } else {
+            $langs->load("errors");
+            $this->error=$langs->trans('ErrorNumRefModel',$max);
+
             return false;
         }
     }
 
     /**
      * 	Return next value
-	 *
-	 *  @param	Societe		$objsoc     Object third party
-	 *  @param  Object		$object		Object
-	 *  @return string      			Value if OK, 0 if KO
+     *
+     *  @param	Societe		$objsoc     Object third party
+     *  @param  Object		$object		Object
+     *  @return string      			Value if OK, 0 if KO
      */
-    function getNextValue($objsoc=0,$object='')
+    public function getNextValue($objsoc=0,$object='')
     {
         global $db,$conf;
 
@@ -110,18 +104,17 @@ class mod_commande_fournisseur_muguet extends ModeleNumRefSuppliersOrders
         $posindice=8;
         $sql = "SELECT MAX(SUBSTRING(ref FROM ".$posindice.")) as max";
         $sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseur";
-		$sql.= " WHERE ref like '".$this->prefix."____-%'";
+        $sql.= " WHERE ref like '".$this->prefix."____-%'";
         $sql.= " AND entity = ".$conf->entity;
 
         $resql=$db->query($sql);
-        if ($resql)
-        {
+        if ($resql) {
             $obj = $db->fetch_object($resql);
             if ($obj) $max = intval($obj->max);
             else $max=0;
         }
 
-		//$date=time();
+        //$date=time();
         $date=$object->date_commande;   // Not always defined
         if (empty($date)) $date=$object->date;  // Creation date is order date for suppliers orders
         $yymm = strftime("%y%m",$date);
@@ -134,14 +127,12 @@ class mod_commande_fournisseur_muguet extends ModeleNumRefSuppliersOrders
     /**
      * 	Renvoie la reference de commande suivante non utilisee
      *
-	 *  @param	Societe		$objsoc     Object third party
-	 *  @param  Object	    $object		Object
+     *  @param	Societe		$objsoc     Object third party
+     *  @param  Object	    $object		Object
      *  @return string      			Texte descripif
      */
-    function commande_get_num($objsoc=0,$object='')
+    public function commande_get_num($objsoc=0,$object='')
     {
         return $this->getNextValue($objsoc,$object);
     }
 }
-
-?>
