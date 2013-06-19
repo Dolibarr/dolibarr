@@ -84,8 +84,7 @@ if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.
 $sql.= " GROUP BY cf.fk_statut";
 
 $resql = $db->query($sql);
-if ($resql)
-{
+if ($resql) {
     $num = $db->num_rows($resql);
     $i = 0;
 
@@ -98,13 +97,10 @@ if ($resql)
     //    0=Draft -> 1=Validated -> 2=Approved -> 3=Process runing -> 4=Received partially -> 5=Received totally -> (reopen) 4=Received partially
     //                                                          -> 7=Canceled/Never received -> (reopen) 3=Process runing
     //                                      -> 6=Canceled -> (reopen) 2=Approved
-    while ($i < $num)
-    {
+    while ($i < $num) {
         $row = $db->fetch_row($resql);
-        if ($row)
-        {
-            if ($row[1]!=7 && $row[1]!=6 && $row[1]!=5)
-            {
+        if ($row) {
+            if ($row[1]!=7 && $row[1]!=6 && $row[1]!=5) {
                 $vals[$row[1]]=$row[0];
                 $totalinprocess+=$row[0];
             }
@@ -117,11 +113,9 @@ if ($resql)
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Statistics").' - '.$langs->trans("SuppliersOrders").'</td></tr>';
     print "</tr>\n";
-    foreach (array(0,1,2,3,4,5,6) as $statut)
-    {
+    foreach (array(0,1,2,3,4,5,6) as $statut) {
         $dataseries[]=array('label'=>$commandestatic->LibStatut($statut,1),'data'=>(isset($vals[$statut])?(int) $vals[$statut]:0));
-        if (! $conf->use_javascript_ajax)
-        {
+        if (! $conf->use_javascript_ajax) {
             $var=!$var;
             print "<tr ".$bc[$var].">";
             print '<td>'.$commandestatic->LibStatut($statut,0).'</td>';
@@ -129,8 +123,7 @@ if ($resql)
             print "</tr>\n";
         }
     }
-    if ($conf->use_javascript_ajax)
-    {
+    if ($conf->use_javascript_ajax) {
         print '<tr><td align="center" colspan="2">';
         $data=array('series'=>$dataseries);
         dol_print_graph('stats',300,180,$data,1,'pie',1);
@@ -141,9 +134,7 @@ if ($resql)
     print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td align="right">'.$total.'</td></tr>';
 
     print "</table><br>";
-}
-else
-{
+} else {
     dol_print_error($db);
 }
 
@@ -165,8 +156,7 @@ if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.
 $sql.= " GROUP BY cf.fk_statut";
 
 $resql = $db->query($sql);
-if ($resql)
-{
+if ($resql) {
     $num = $db->num_rows($resql);
     $i = 0;
 
@@ -177,8 +167,7 @@ if ($resql)
     print "</tr>\n";
     $var=True;
 
-    while ($i < $num)
-    {
+    while ($i < $num) {
         $row = $db->fetch_row($resql);
         $var=!$var;
 
@@ -191,9 +180,7 @@ if ($resql)
     }
     print "</table><br>";
     $db->free($resql);
-}
-else
-{
+} else {
     dol_print_error($db);
 }
 
@@ -202,8 +189,7 @@ else
  * Draft orders
  */
 
-if (! empty($conf->fournisseur->enabled))
-{
+if (! empty($conf->fournisseur->enabled)) {
     $sql = "SELECT c.rowid, c.ref, s.nom, s.rowid as socid";
     $sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as c";
     $sql.= ", ".MAIN_DB_PREFIX."societe as s";
@@ -215,19 +201,16 @@ if (! empty($conf->fournisseur->enabled))
     if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 
     $resql=$db->query($sql);
-    if ($resql)
-    {
+    if ($resql) {
         print '<table class="noborder" width="100%">';
         print '<tr class="liste_titre">';
         print '<td colspan="2">'.$langs->trans("DraftOrders").'</td></tr>';
         $langs->load("orders");
         $num = $db->num_rows($resql);
-        if ($num)
-        {
+        if ($num) {
             $i = 0;
             $var = True;
-            while ($i < $num)
-            {
+            while ($i < $num) {
                 $var=!$var;
                 $obj = $db->fetch_object($resql);
                 print "<tr $bc[$var]>";
@@ -258,8 +241,7 @@ $sql.= " AND perms = 'commande'";
 $sql.= " AND subperms = 'approuver'";
 
 $resql = $db->query($sql);
-if ($resql)
-{
+if ($resql) {
     $num = $db->num_rows($resql);
     $i = 0;
 
@@ -268,8 +250,7 @@ if ($resql)
     print "</tr>\n";
     $var=True;
 
-    while ($i < $num)
-    {
+    while ($i < $num) {
         $obj = $db->fetch_object($resql);
         $var=!$var;
 
@@ -285,9 +266,7 @@ if ($resql)
     }
     print "</table><br>";
     $db->free($resql);
-}
-else
-{
+} else {
     dol_print_error($db);
 }
 
@@ -313,19 +292,16 @@ $sql.= " ORDER BY c.tms DESC";
 $sql.= $db->plimit($max, 0);
 
 $resql=$db->query($sql);
-if ($resql)
-{
+if ($resql) {
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre">';
     print '<td colspan="4">'.$langs->trans("LastModifiedOrders",$max).'</td></tr>';
 
     $num = $db->num_rows($resql);
-    if ($num)
-    {
+    if ($num) {
         $i = 0;
         $var = True;
-        while ($i < $num)
-        {
+        while ($i < $num) {
             $var=!$var;
             $obj = $db->fetch_object($resql);
 
@@ -361,8 +337,7 @@ if ($resql)
         }
     }
     print "</table><br>";
-}
-else dol_print_error($db);
+} else dol_print_error($db);
 
 
 /*
@@ -381,20 +356,17 @@ if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.
 $sql.= " ORDER BY c.rowid DESC";
 
 $resql=$db->query($sql);
-if ($resql)
-{
+if ($resql) {
 $num = $db->num_rows($resql);
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td colspan="3">'.$langs->trans("OrdersToProcess").' <a href="'.DOL_URL_ROOT.'/commande/liste.php?viewstatut=1">('.$num.')</a></td></tr>';
 
-if ($num)
-{
+if ($num) {
 $i = 0;
 $var = True;
-while ($i < $num)
-{
+while ($i < $num) {
 $var=!$var;
 $obj = $db->fetch_object($resql);
 print "<tr $bc[$var]>";
@@ -439,4 +411,3 @@ print '</td></tr></table>';
 llxFooter();
 
 $db->close();
-?>

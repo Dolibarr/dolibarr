@@ -37,7 +37,6 @@ $socid = GETPOST('socid','int');
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'tax', $id, 'chargesociales','charges');
 
-
 /*
  * View
  */
@@ -53,7 +52,6 @@ $head = tax_prepare_head($chargesociales);
 
 dol_fiche_head($head, 'info', $langs->trans("SocialContribution"), 0, 'bill');
 
-
 print '<table width="100%"><tr><td>';
 dol_print_object_info($chargesociales);
 print '</td></tr></table>';
@@ -63,4 +61,3 @@ print '</div>';
 llxFooter();
 
 $db->close();
-?>

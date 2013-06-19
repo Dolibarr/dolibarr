@@ -28,44 +28,43 @@
  */
 include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 
-
 /**
  *	Classe de description et activation du module Fournisseur
  */
 class modFournisseur extends DolibarrModules
 {
 
-	/**
-	 *   Constructor. Define names, constants, directories, boxes, permissions
-	 *
-	 *   @param      DoliDB		$db      Database handler
-	 */
-	function __construct($db)
-	{
-		global $conf;
+    /**
+     *   Constructor. Define names, constants, directories, boxes, permissions
+     *
+     *   @param      DoliDB		$db      Database handler
+     */
+    public function __construct($db)
+    {
+        global $conf;
 
-		$this->db = $db;
-		$this->numero = 40;
+        $this->db = $db;
+        $this->numero = 40;
 
-		$this->family = "products";
-		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
-		$this->name = preg_replace('/^mod/i','',get_class($this));
-		$this->description = "Gestion des fournisseurs";
+        $this->family = "products";
+        // Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
+        $this->name = preg_replace('/^mod/i','',get_class($this));
+        $this->description = "Gestion des fournisseurs";
 
-		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
-		$this->version = 'dolibarr';
+        // Possible values for version are: 'development', 'experimental', 'dolibarr' or version
+        $this->version = 'dolibarr';
 
-		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
-		$this->special = 0;
-		$this->picto='company';
+        $this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
+        $this->special = 0;
+        $this->picto='company';
 
-		// Data directories to create when module is enabled
-		$this->dirs = array("/fournisseur/temp",
-							"/fournisseur/commande",
-		                    "/fournisseur/commande/temp",
-		                    "/fournisseur/facture",
-		                    "/fournisseur/facture/temp"
-		                    );
+        // Data directories to create when module is enabled
+        $this->dirs = array("/fournisseur/temp",
+                            "/fournisseur/commande",
+                            "/fournisseur/commande/temp",
+                            "/fournisseur/facture",
+                            "/fournisseur/facture/temp"
+                            );
 
             // Dependances
             $this->depends = array("modSociete");
@@ -77,35 +76,35 @@ class modFournisseur extends DolibarrModules
 
             // Constantes
             $this->const = array();
-			$r=0;
+            $r=0;
 
             $this->const[$r][0] = "COMMANDE_SUPPLIER_ADDON_PDF";
             $this->const[$r][1] = "chaine";
             $this->const[$r][2] = "muscadet";
-			$this->const[$r][3] = 'Nom du gestionnaire de generation des bons de commande en PDF';
-			$this->const[$r][4] = 0;
-			$r++;
+            $this->const[$r][3] = 'Nom du gestionnaire de generation des bons de commande en PDF';
+            $this->const[$r][4] = 0;
+            $r++;
 
             $this->const[$r][0] = "COMMANDE_SUPPLIER_ADDON_NUMBER";
             $this->const[$r][1] = "chaine";
             $this->const[$r][2] = "mod_commande_fournisseur_muguet";
-			$this->const[$r][3] = 'Nom du gestionnaire de numerotation des commandes fournisseur';
-			$this->const[$r][4] = 0;
-			$r++;
+            $this->const[$r][3] = 'Nom du gestionnaire de numerotation des commandes fournisseur';
+            $this->const[$r][4] = 0;
+            $r++;
 
-			$this->const[$r][0] = "INVOICE_SUPPLIER_ADDON_PDF";
+            $this->const[$r][0] = "INVOICE_SUPPLIER_ADDON_PDF";
             $this->const[$r][1] = "chaine";
             $this->const[$r][2] = "canelle";
-			$this->const[$r][3] = 'Nom du gestionnaire de generation des factures fournisseur en PDF';
-			$this->const[$r][4] = 0;
-			$r++;
-			
-			$this->const[$r][0] = "INVOICE_SUPPLIER_ADDON_NUMBER";
+            $this->const[$r][3] = 'Nom du gestionnaire de generation des factures fournisseur en PDF';
+            $this->const[$r][4] = 0;
+            $r++;
+
+            $this->const[$r][0] = "INVOICE_SUPPLIER_ADDON_NUMBER";
             $this->const[$r][1] = "chaine";
             $this->const[$r][2] = "mod_facture_fournisseur_cactus";
-			$this->const[$r][3] = 'Nom du gestionnaire de numerotation des factures fournisseur';
-			$this->const[$r][4] = 0;
-			$r++;
+            $this->const[$r][3] = 'Nom du gestionnaire de numerotation des factures fournisseur';
+            $this->const[$r][4] = 0;
+            $r++;
 
             // Boxes
             $this->boxes = array();
@@ -225,11 +224,11 @@ class modFournisseur extends DolibarrModules
 
             $r++;
             $this->rights[$r][0] = 1235;
-			$this->rights[$r][1] = 'Envoyer les factures par mail';
-			$this->rights[$r][2] = 'a';
-			$this->rights[$r][3] = 0;
-			$this->rights[$r][4] = 'supplier_invoice_advance';
-			$this->rights[$r][5] = 'send';
+            $this->rights[$r][1] = 'Envoyer les factures par mail';
+            $this->rights[$r][2] = 'a';
+            $this->rights[$r][3] = 0;
+            $this->rights[$r][4] = 'supplier_invoice_advance';
+            $this->rights[$r][5] = 'send';
 
             $r++;
             $this->rights[$r][0] = 1236;
@@ -308,45 +307,43 @@ class modFournisseur extends DolibarrModules
             $this->export_sql_end[$r] .=' WHERE f.fk_soc = s.rowid AND f.rowid = fd.fk_commande';
             $this->export_sql_end[$r] .=' AND f.entity = '.$conf->entity;
 
-	}
-
-
-	/**
-	 *		Function called when module is enabled.
-	 *		The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
-	 *		It also creates data directories
-	 *
-     *      @param      string	$options    Options when enabling module ('', 'noboxes')
-	 *      @return     int             	1 if OK, 0 if KO
-	 */
-	function init($options='')
-	{
-		global $conf;
-
-		$this->remove($options);
-
-		$sql = array(
-			 "DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->const[0][2]."' AND entity = ".$conf->entity,
-			 "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->const[0][2]."','order_supplier',".$conf->entity.")",
-		);
-
-		return $this->_init($sql,$options);
-	}
+    }
 
     /**
-	 *		Function called when module is disabled.
-	 *      Remove from database constants, boxes and permissions from Dolibarr database.
-	 *		Data directories are not deleted
-	 *
+     *		Function called when module is enabled.
+     *		The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
+     *		It also creates data directories
+     *
      *      @param      string	$options    Options when enabling module ('', 'noboxes')
-	 *      @return     int             	1 if OK, 0 if KO
+     *      @return     int             	1 if OK, 0 if KO
      */
-    function remove($options='')
+    public function init($options='')
     {
-		$sql = array();
+        global $conf;
 
-		return $this->_remove($sql,$options);
+        $this->remove($options);
+
+        $sql = array(
+             "DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->const[0][2]."' AND entity = ".$conf->entity,
+             "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->const[0][2]."','order_supplier',".$conf->entity.")",
+        );
+
+        return $this->_init($sql,$options);
+    }
+
+    /**
+     *		Function called when module is disabled.
+     *      Remove from database constants, boxes and permissions from Dolibarr database.
+     *		Data directories are not deleted
+     *
+     *      @param      string	$options    Options when enabling module ('', 'noboxes')
+     *      @return     int             	1 if OK, 0 if KO
+     */
+    public function remove($options='')
+    {
+        $sql = array();
+
+        return $this->_remove($sql,$options);
     }
 
 }
-?>

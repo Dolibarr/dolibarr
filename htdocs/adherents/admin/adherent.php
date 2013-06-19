@@ -37,61 +37,50 @@ $langs->load("members");
 
 if (! $user->admin) accessforbidden();
 
-
 $type=array('yesno','texte','chaine');
 
 $action = GETPOST('action','alpha');
-
 
 /*
  * Actions
  */
 
 // Action mise a jour ou ajout d'une constante
-if ($action == 'update' || $action == 'add')
-{
-	$constname=GETPOST('constname','alpha');
-	$constvalue=(GETPOST('constvalue_'.$constname) ? GETPOST('constvalue_'.$constname) : GETPOST('constvalue'));
+if ($action == 'update' || $action == 'add') {
+    $constname=GETPOST('constname','alpha');
+    $constvalue=(GETPOST('constvalue_'.$constname) ? GETPOST('constvalue_'.$constname) : GETPOST('constvalue'));
 
-	if (($constname=='ADHERENT_CARD_TYPE' || $constname=='ADHERENT_ETIQUETTE_TYPE') && $constvalue == -1) $constvalue='';
-	if ($constname=='ADHERENT_LOGIN_NOT_REQUIRED') // Invert choice
-	{
-		if ($constvalue) $constvalue=0;
-		else $constvalue=1;
-	}
+    if (($constname=='ADHERENT_CARD_TYPE' || $constname=='ADHERENT_ETIQUETTE_TYPE') && $constvalue == -1) $constvalue='';
+    if ($constname=='ADHERENT_LOGIN_NOT_REQUIRED') { // Invert choice
+        if ($constvalue) $constvalue=0;
+        else $constvalue=1;
+    }
 
-	$consttype=GETPOST('consttype','alpha');
-	$constnote=GETPOST('constnote');
-	$res=dolibarr_set_const($db,$constname,$constvalue,$type[$consttype],0,$constnote,$conf->entity);
+    $consttype=GETPOST('consttype','alpha');
+    $constnote=GETPOST('constnote');
+    $res=dolibarr_set_const($db,$constname,$constvalue,$type[$consttype],0,$constnote,$conf->entity);
 
-	if (! $res > 0) $error++;
+    if (! $res > 0) $error++;
 
-	if (! $error)
-	{
-		$mesg = '<div class="ok">'.$langs->trans("SetupSaved").'</div>';
-	}
-	else
-	{
-		$mesg = '<div class="error">'.$langs->trans("Error").'</div>';
-	}
+    if (! $error) {
+        $mesg = '<div class="ok">'.$langs->trans("SetupSaved").'</div>';
+    } else {
+        $mesg = '<div class="error">'.$langs->trans("Error").'</div>';
+    }
 }
 
 // Action activation d'un sous module du module adherent
-if ($action == 'set')
-{
+if ($action == 'set') {
     $result=dolibarr_set_const($db, GETPOST('name','alpha'),GETPOST('value'),'',0,'',$conf->entity);
-    if ($result < 0)
-    {
+    if ($result < 0) {
         print $db->error();
     }
 }
 
 // Action desactivation d'un sous module du module adherent
-if ($action == 'unset')
-{
+if ($action == 'unset') {
     $result=dolibarr_del_const($db,GETPOST('name','alpha'),$conf->entity);
-    if ($result < 0)
-    {
+    if ($result < 0) {
         print $db->error();
     }
 }
@@ -188,30 +177,26 @@ print "</tr>\n";
 print '</form>';
 
 // Use vat for invoice creation
-if ($conf->facture->enabled)
-{
-	$var=!$var;
-	print '<form action="adherent.php" method="POST">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-	print '<input type="hidden" name="action" value="update">';
-	print '<input type="hidden" name="constname" value="ADHERENT_VAT_FOR_SUBSCRIPTIONS">';
-	print '<tr '.$bc[$var].'><td>'.$langs->trans("VATToUseForSubscriptions").'</td>';
-	if (! empty($conf->banque->enabled))
-	{
-		print '<td>';
-		print $form->selectarray('constvalue', array('0'=>$langs->trans("NoVatOnSubscription"),'defaultforfoundationcountry'=>$langs->trans("Default")), (empty($conf->global->ADHERENT_VAT_FOR_SUBSCRIPTIONS)?'0':$conf->global->ADHERENT_VAT_FOR_SUBSCRIPTIONS), 0);
-		print '</td><td align="center" width="80">';
-		print '<input type="submit" class="button" value="'.$langs->trans("Update").'" name="Button">';
-		print '</td>';
-	}
-	else
-	{
-		print '<td align="right" colspan="2">';
-		print $langs->trans("WarningModuleNotActive",$langs->transnoentities("Module85Name"));
-		print '</td>';
-	}
-	print "</tr>\n";
-	print '</form>';
+if ($conf->facture->enabled) {
+    $var=!$var;
+    print '<form action="adherent.php" method="POST">';
+    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<input type="hidden" name="action" value="update">';
+    print '<input type="hidden" name="constname" value="ADHERENT_VAT_FOR_SUBSCRIPTIONS">';
+    print '<tr '.$bc[$var].'><td>'.$langs->trans("VATToUseForSubscriptions").'</td>';
+    if (! empty($conf->banque->enabled)) {
+        print '<td>';
+        print $form->selectarray('constvalue', array('0'=>$langs->trans("NoVatOnSubscription"),'defaultforfoundationcountry'=>$langs->trans("Default")), (empty($conf->global->ADHERENT_VAT_FOR_SUBSCRIPTIONS)?'0':$conf->global->ADHERENT_VAT_FOR_SUBSCRIPTIONS), 0);
+        print '</td><td align="center" width="80">';
+        print '<input type="submit" class="button" value="'.$langs->trans("Update").'" name="Button">';
+        print '</td>';
+    } else {
+        print '<td align="right" colspan="2">';
+        print $langs->trans("WarningModuleNotActive",$langs->transnoentities("Module85Name"));
+        print '</td>';
+    }
+    print "</tr>\n";
+    print '</form>';
 }
 
 print '</table>';
@@ -222,13 +207,13 @@ print '<br>';
  * Edition info modele document
  */
 $constantes=array(
-		'ADHERENT_CARD_TYPE',
+        'ADHERENT_CARD_TYPE',
 //		'ADHERENT_CARD_BACKGROUND',
-		'ADHERENT_CARD_HEADER_TEXT',
-		'ADHERENT_CARD_TEXT',
-		'ADHERENT_CARD_TEXT_RIGHT',
-		'ADHERENT_CARD_FOOTER_TEXT'
-		);
+        'ADHERENT_CARD_HEADER_TEXT',
+        'ADHERENT_CARD_TEXT',
+        'ADHERENT_CARD_TEXT_RIGHT',
+        'ADHERENT_CARD_FOOTER_TEXT'
+        );
 
 print_fiche_titre($langs->trans("MembersCards"),'','');
 
@@ -265,18 +250,18 @@ print '<br>';
  * Edition des variables globales non rattache a un theme specifique
  */
 $constantes=array(
-		'ADHERENT_AUTOREGISTER_NOTIF_MAIL_SUBJECT',
-		'ADHERENT_AUTOREGISTER_NOTIF_MAIL',
-		'ADHERENT_AUTOREGISTER_MAIL_SUBJECT',
-		'ADHERENT_AUTOREGISTER_MAIL',
-		'ADHERENT_MAIL_VALID_SUBJECT',
-		'ADHERENT_MAIL_VALID',
-		'ADHERENT_MAIL_COTIS_SUBJECT',
-		'ADHERENT_MAIL_COTIS',
-		'ADHERENT_MAIL_RESIL_SUBJECT',
-		'ADHERENT_MAIL_RESIL',
-		'ADHERENT_MAIL_FROM',
-		);
+        'ADHERENT_AUTOREGISTER_NOTIF_MAIL_SUBJECT',
+        'ADHERENT_AUTOREGISTER_NOTIF_MAIL',
+        'ADHERENT_AUTOREGISTER_MAIL_SUBJECT',
+        'ADHERENT_AUTOREGISTER_MAIL',
+        'ADHERENT_MAIL_VALID_SUBJECT',
+        'ADHERENT_MAIL_VALID',
+        'ADHERENT_MAIL_COTIS_SUBJECT',
+        'ADHERENT_MAIL_COTIS',
+        'ADHERENT_MAIL_RESIL_SUBJECT',
+        'ADHERENT_MAIL_RESIL',
+        'ADHERENT_MAIL_FROM',
+        );
 
 print_fiche_titre($langs->trans("Other"),'','');
 
@@ -290,8 +275,6 @@ print '<br>';
 
 dol_fiche_end();
 
-
 llxFooter();
 
 $db->close();
-?>

@@ -22,40 +22,38 @@
  *		\brief      File of class to manage absolute discounts
  */
 
-
 /**
  *		\class      DiscountAbsolute
  *		\brief      Class to manage absolute discounts
  */
 class DiscountAbsolute
 {
-    var $db;
-    var $error;
+    public $db;
+    public $error;
 
-    var $id;					// Id discount
-    var $fk_soc;
-    var $amount_ht;				//
-    var $amount_tva;			//
-    var $amount_ttc;			//
-    var $tva_tx;				// Vat rate
-    var $fk_user;				// Id utilisateur qui accorde la remise
-    var $description;			// Description libre
-    var $datec;					// Date creation
-    var $fk_facture_line;  		// Id invoice line when a discount linked to invoice line (for absolute discounts)
-    var $fk_facture;			// Id invoice when a discoutn linked to invoice (for credit note)
-    var $fk_facture_source;		// Id facture avoir a l'origine de la remise
-    var $ref_facture_source;	// Ref facture avoir a l'origine de la remise
+    public $id;					// Id discount
+    public $fk_soc;
+    public $amount_ht;				//
+    public $amount_tva;			//
+    public $amount_ttc;			//
+    public $tva_tx;				// Vat rate
+    public $fk_user;				// Id utilisateur qui accorde la remise
+    public $description;			// Description libre
+    public $datec;					// Date creation
+    public $fk_facture_line;  		// Id invoice line when a discount linked to invoice line (for absolute discounts)
+    public $fk_facture;			// Id invoice when a discoutn linked to invoice (for credit note)
+    public $fk_facture_source;		// Id facture avoir a l'origine de la remise
+    public $ref_facture_source;	// Ref facture avoir a l'origine de la remise
 
     /**
      *	Constructor
      *
      *  @param  	DoliDB		$db		Database handler
      */
-    function __construct($db)
+    public function __construct($db)
     {
         $this->db = $db;
     }
-
 
     /**
      *	Load object from database into memory
@@ -64,12 +62,12 @@ class DiscountAbsolute
      *  @param      int		$fk_facture_source	fk_facture_source
      *	@return		int							<0 if KO, =0 if not found, >0 if OK
      */
-    function fetch($rowid,$fk_facture_source=0)
+    public function fetch($rowid,$fk_facture_source=0)
     {
         // Check parameters
-        if (! $rowid && ! $fk_facture_source)
-        {
+        if (! $rowid && ! $fk_facture_source) {
             $this->error='ErrorBadParameters';
+
             return -1;
         }
 
@@ -87,10 +85,8 @@ class DiscountAbsolute
 
         dol_syslog(get_class($this)."::fetch sql=".$sql);
         $resql = $this->db->query($sql);
-        if ($resql)
-        {
-            if ($this->db->num_rows($resql))
-            {
+        if ($resql) {
+            if ($this->db->num_rows($resql)) {
                 $obj = $this->db->fetch_object($resql);
 
                 $this->id = $obj->rowid;
@@ -108,21 +104,19 @@ class DiscountAbsolute
                 $this->datec = $this->db->jdate($obj->datec);
 
                 $this->db->free($resql);
+
                 return 1;
-            }
-            else
-            {
+            } else {
                 $this->db->free($resql);
+
                 return 0;
             }
-        }
-        else
-        {
+        } else {
             $this->error=$this->db->error();
+
             return -1;
         }
     }
-
 
     /**
      *      Create a discount into database
@@ -130,7 +124,7 @@ class DiscountAbsolute
      *      @param      User	$user       User that create
      *      @return     int         		<0 if KO, >0 if OK
      */
-    function create($user)
+    public function create($user)
     {
         global $conf, $langs;
 
@@ -141,10 +135,10 @@ class DiscountAbsolute
         $this->tva_tx=price2num($this->tva_tx);
 
         // Check parameters
-        if (empty($this->description))
-        {
+        if (empty($this->description)) {
             $this->error='BadValueForPropertyDescription';
             dol_syslog(get_class($this)."::create ".$this->error, LOG_ERR);
+
             return -1;
         }
 
@@ -161,19 +155,17 @@ class DiscountAbsolute
 
         dol_syslog(get_class($this)."::create sql=".$sql);
         $resql=$this->db->query($sql);
-        if ($resql)
-        {
+        if ($resql) {
             $this->id=$this->db->last_insert_id(MAIN_DB_PREFIX."societe_remise_except");
+
             return $this->id;
-        }
-        else
-        {
+        } else {
             $this->error=$this->db->lasterror().' - sql='.$sql;
             dol_syslog(get_class($this)."::create ".$this->error, LOG_ERR);
+
             return -1;
         }
     }
-
 
     /**
      *  Delete object in database. If fk_facture_source is defined, we delete all familiy with same fk_facture_source. If not, only with id is removed
@@ -181,13 +173,12 @@ class DiscountAbsolute
      * 	@param		User	$user		Object of user asking to delete
      *	@return		int					<0 if KO, >0 if OK
      */
-    function delete($user)
+    public function delete($user)
     {
         global $conf, $langs;
 
         // Check if we can remove the discount
-        if ($this->fk_facture_source)
-        {
+        if ($this->fk_facture_source) {
             $sql.="SELECT COUNT(rowid) as nb";
             $sql.=" FROM ".MAIN_DB_PREFIX."societe_remise_except";
             $sql.=" WHERE (fk_facture_line IS NOT NULL";	// Not used as absolute simple discount
@@ -197,18 +188,16 @@ class DiscountAbsolute
 
             dol_syslog(get_class($this)."::delete Check if we can remove discount sql=".$sql);
             $resql=$this->db->query($sql);
-            if ($resql)
-            {
+            if ($resql) {
                 $obj = $this->db->fetch_object($resql);
-                if ($obj->nb > 0)
-                {
+                if ($obj->nb > 0) {
                     $this->error='ErrorThisPartOrAnotherIsAlreadyUsedSoDiscountSerieCantBeRemoved';
+
                     return -2;
                 }
-            }
-            else
-            {
+            } else {
                 dol_print_error($this->db);
+
                 return -1;
             }
         }
@@ -224,44 +213,37 @@ class DiscountAbsolute
 
         dol_syslog(get_class($this)."::delete Delete discount sql=".$sql);
         $result=$this->db->query($sql);
-        if ($result)
-        {
+        if ($result) {
             // If source of discount was a credit note or deposit, we change source statut.
-            if ($this->fk_facture_source)
-            {
+            if ($this->fk_facture_source) {
                 $sql = "UPDATE ".MAIN_DB_PREFIX."facture";
                 $sql.=" set paye=0, fk_statut=1";
                 $sql.=" WHERE (type = 2 or type = 3) AND rowid=".$this->fk_facture_source;
 
                 dol_syslog(get_class($this)."::delete Update credit note or deposit invoice statut sql=".$sql);
                 $result=$this->db->query($sql);
-                if ($result)
-                {
+                if ($result) {
                     $this->db->commit();
+
                     return 1;
-                }
-                else
-                {
+                } else {
                     $this->error=$this->db->lasterror();
                     $this->db->rollback();
+
                     return -1;
                 }
-            }
-            else
-            {
+            } else {
                 $this->db->commit();
+
                 return 1;
             }
-        }
-        else
-        {
+        } else {
             $this->error=$this->db->lasterror();
             $this->db->rollback();
+
             return -1;
         }
     }
-
-
 
     /**
      *	Link the discount to a particular invoice line or a particular invoice.
@@ -272,17 +254,17 @@ class DiscountAbsolute
      *	@param		int		$rowidinvoice	Invoice id (To use discount as a credit note to reduc payment of invoice)
      *	@return		int						<0 if KO, >0 if OK
      */
-    function link_to_invoice($rowidline,$rowidinvoice)
+    public function link_to_invoice($rowidline,$rowidinvoice)
     {
         // Check parameters
-        if (! $rowidline && ! $rowidinvoice)
-        {
+        if (! $rowidline && ! $rowidinvoice) {
             $this->error='ErrorBadParameters';
+
             return -1;
         }
-        if ($rowidline && $rowidinvoice)
-        {
+        if ($rowidline && $rowidinvoice) {
             $this->error='ErrorBadParameters';
+
             return -2;
         }
 
@@ -293,20 +275,18 @@ class DiscountAbsolute
 
         dol_syslog(get_class($this)."::link_to_invoice sql=".$sql,LOG_DEBUG);
         $resql = $this->db->query($sql);
-        if ($resql)
-        {
+        if ($resql) {
             $this->fk_facture_source=$rowidline;
             $this->fk_facture=$rowidinvoice;
+
             return 1;
-        }
-        else
-        {
+        } else {
             $this->error=$this->db->error();
             dol_syslog(get_class($this)."::link_to_invoice ".$this->error,LOG_ERR);
+
             return -3;
         }
     }
-
 
     /**
      *	Link the discount to a particular invoice line or a particular invoice.
@@ -314,7 +294,7 @@ class DiscountAbsolute
      *
      *	@return		int							<0 if KO, >0 if OK
      */
-    function unlink_invoice()
+    public function unlink_invoice()
     {
         $sql ="UPDATE ".MAIN_DB_PREFIX."societe_remise_except";
         $sql.=" SET fk_facture_line = NULL, fk_facture = NULL";
@@ -322,18 +302,15 @@ class DiscountAbsolute
 
         dol_syslog(get_class($this)."::unlink_invoice sql=".$sql,LOG_DEBUG);
         $resql = $this->db->query($sql);
-        if ($resql)
-        {
+        if ($resql) {
             return 1;
-        }
-        else
-        {
+        } else {
             $this->error=$this->db->error();
             dol_syslog(get_class($this)."::unlink_invoice ".$this->error,LOG_ERR);
+
             return -3;
         }
     }
-
 
     /**
      *  Renvoie montant TTC des reductions/avoirs en cours disponibles pour une société, un user ou autre
@@ -344,7 +321,7 @@ class DiscountAbsolute
      * 	@param		int			$maxvalue	Filter on max value for discount
      * 	@return		int						<0 if KO, amount otherwise
      */
-    function getAvailableDiscounts($company='', $user='',$filter='', $maxvalue=0)
+    public function getAvailableDiscounts($company='', $user='',$filter='', $maxvalue=0)
     {
         $sql  = "SELECT SUM(rc.amount_ttc) as amount";
         //        $sql  = "SELECT rc.amount_ttc as amount";
@@ -357,8 +334,7 @@ class DiscountAbsolute
 
         dol_syslog(get_class($this)."::getAvailableDiscounts sql=".$sql,LOG_DEBUG);
         $resql=$this->db->query($sql);
-        if ($resql)
-        {
+        if ($resql) {
             $obj = $this->db->fetch_object($resql);
             //while ($obj)
             //{
@@ -367,9 +343,9 @@ class DiscountAbsolute
             //}
             return $obj->amount;
         }
+
         return -1;
     }
-
 
     /**
      *  Return amount (with tax) of all credit notes and deposits invoices used by invoice
@@ -377,7 +353,7 @@ class DiscountAbsolute
      *	@param		Facture		$invoice	Object invoice
      *	@return		int						<0 if KO, Sum of credit notes and deposits amount otherwise
      */
-    function getSumCreditNotesUsed($invoice)
+    public function getSumCreditNotesUsed($invoice)
     {
         $sql = 'SELECT sum(rc.amount_ttc) as amount';
         $sql.= ' FROM '.MAIN_DB_PREFIX.'societe_remise_except as rc, '.MAIN_DB_PREFIX.'facture as f';
@@ -386,13 +362,11 @@ class DiscountAbsolute
 
         dol_syslog(get_class($this)."::getSumCreditNotesUsed sql=".$sql,LOG_DEBUG);
         $resql=$this->db->query($sql);
-        if ($resql)
-        {
+        if ($resql) {
             $obj = $this->db->fetch_object($resql);
+
             return $obj->amount;
-        }
-        else
-        {
+        } else {
             return -1;
         }
     }
@@ -403,7 +377,7 @@ class DiscountAbsolute
      *	@param		Facture		$invoice	Object invoice
      *	@return		int						<0 if KO, Sum of credit notes and deposits amount otherwise
      */
-    function getSumDepositsUsed($invoice)
+    public function getSumDepositsUsed($invoice)
     {
         $sql = 'SELECT sum(rc.amount_ttc) as amount';
         $sql.= ' FROM '.MAIN_DB_PREFIX.'societe_remise_except as rc, '.MAIN_DB_PREFIX.'facture as f';
@@ -412,13 +386,11 @@ class DiscountAbsolute
 
         dol_syslog(get_class($this)."::getSumDepositsUsed sql=".$sql,LOG_DEBUG);
         $resql=$this->db->query($sql);
-        if ($resql)
-        {
+        if ($resql) {
             $obj = $this->db->fetch_object($resql);
+
             return $obj->amount;
-        }
-        else
-        {
+        } else {
             return -1;
         }
     }
@@ -430,22 +402,20 @@ class DiscountAbsolute
      *	@param		string	$option			Where to link to ('invoice' or 'discount')
      *	@return		string					String with URL
      */
-    function getNomUrl($withpicto,$option='invoice')
+    public function getNomUrl($withpicto,$option='invoice')
     {
         global $langs;
 
         $result='';
 
-        if ($option == 'invoice')
-        {
+        if ($option == 'invoice') {
             $lien = '<a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$this->fk_facture_source.'">';
             $lienfin='</a>';
             $label=$langs->trans("ShowDiscount").': '.$this->ref_facture_source;
             $ref=$this->ref_facture_source;
             $picto='bill';
         }
-        if ($option == 'discount')
-        {
+        if ($option == 'discount') {
             $lien = '<a href="'.DOL_URL_ROOT.'/comm/remx.php?id='.$this->fk_soc.'">';
             $lienfin='</a>';
             $label=$langs->trans("Discount");
@@ -453,31 +423,29 @@ class DiscountAbsolute
             $picto='generic';
         }
 
-
         if ($withpicto) $result.=($lien.img_object($label,$picto).$lienfin);
         if ($withpicto && $withpicto != 2) $result.=' ';
         $result.=$lien.$ref.$lienfin;
+
         return $result;
     }
 
-
-	/**
+    /**
      *  Initialise an instance with random values.
      *  Used to build previews or test instances.
      *	id must be 0 if object instance is a specimen.
      *
      *  @return	void
-	 */
-	function initAsSpecimen()
-	{
-		global $user,$langs,$conf;
+     */
+    public function initAsSpecimen()
+    {
+        global $user,$langs,$conf;
 
-		$this->fk_soc         = 1;
-		$this->amount_ht      = 10;
-		$this->amount_tva     = 1.96;
-		$this->amount_ttc     = 11.96;
-		$this->tva_tx         = 19.6;
-		$this->description    = 'Specimen discount';
-	}
+        $this->fk_soc         = 1;
+        $this->amount_ht      = 10;
+        $this->amount_tva     = 1.96;
+        $this->amount_ttc     = 11.96;
+        $this->tva_tx         = 19.6;
+        $this->description    = 'Specimen discount';
+    }
 }
-?>

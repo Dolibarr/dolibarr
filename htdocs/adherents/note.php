@@ -39,34 +39,26 @@ $result=restrictedArea($user,'adherent',$id);
 
 $object = new Adherent($db);
 $result=$object->fetch($id);
-if ($result > 0)
-{
+if ($result > 0) {
     $adht = new AdherentType($db);
     $result=$adht->fetch($object->typeid);
 }
-
 
 /*
  * Actions
  */
 
-if ($action == 'update' && $user->rights->adherent->creer && ! $_POST["cancel"])
-{
-	$db->begin();
+if ($action == 'update' && $user->rights->adherent->creer && ! $_POST["cancel"]) {
+    $db->begin();
 
-	$res=$object->update_note(dol_html_entity_decode(GETPOST('note'), ENT_QUOTES));
-	if ($res < 0)
-	{
-		setEventMessage($object->error, 'errors');
-		$db->rollback();
-	}
-	else
-	{
-		$db->commit();
-	}
+    $res=$object->update_note(dol_html_entity_decode(GETPOST('note'), ENT_QUOTES));
+    if ($res < 0) {
+        setEventMessage($object->error, 'errors');
+        $db->rollback();
+    } else {
+        $db->commit();
+    }
 }
-
-
 
 /*
  * View
@@ -76,29 +68,27 @@ llxHeader('',$langs->trans("Member"),'EN:Module_Foundations|FR:Module_Adh&eacute
 
 $form = new Form($db);
 
-if ($id)
-{
-	$head = member_prepare_head($object);
+if ($id) {
+    $head = member_prepare_head($object);
 
-	dol_fiche_head($head, 'note', $langs->trans("Member"), 0, 'user');
+    dol_fiche_head($head, 'note', $langs->trans("Member"), 0, 'user');
 
-	print "<form method=\"post\" action=\"note.php\">";
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print "<form method=\"post\" action=\"note.php\">";
+    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
     print '<table class="border" width="100%">';
 
     $linkback = '<a href="'.DOL_URL_ROOT.'/adherents/liste.php">'.$langs->trans("BackToList").'</a>';
 
     // Reference
-	print '<tr><td width="20%">'.$langs->trans('Ref').'</td>';
-	print '<td colspan="3">';
-	print $form->showrefnav($object, 'id', $linkback);
-	print '</td>';
-	print '</tr>';
+    print '<tr><td width="20%">'.$langs->trans('Ref').'</td>';
+    print '<td colspan="3">';
+    print $form->showrefnav($object, 'id', $linkback);
+    print '</td>';
+    print '</tr>';
 
     // Login
-    if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED))
-    {
+    if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED)) {
         print '<tr><td>'.$langs->trans("Login").' / '.$langs->trans("Id").'</td><td class="valeur">'.$object->login.'&nbsp;</td></tr>';
     }
 
@@ -121,7 +111,7 @@ if ($id)
 
     // Lastname
     print '<tr><td>'.$langs->trans("Lastname").'</td><td class="valeur" colspan="3">'.$object->lastname.'&nbsp;</td>';
-	print '</tr>';
+    print '</tr>';
 
     // Firstname
     print '<tr><td>'.$langs->trans("Firstname").'</td><td class="valeur" colspan="3">'.$object->firstname.'&nbsp;</td></tr>';
@@ -131,33 +121,28 @@ if ($id)
 
     // Note
     print '<tr><td valign="top">'.$langs->trans("Note").'</td>';
-	print '<td valign="top" colspan="3">';
-	if ($action == 'edit' && $user->rights->adherent->creer)
-	{
-	    print "<input type=\"hidden\" name=\"action\" value=\"update\">";
-		print "<input type=\"hidden\" name=\"id\" value=\"".$object->id."\">";
+    print '<td valign="top" colspan="3">';
+    if ($action == 'edit' && $user->rights->adherent->creer) {
+        print "<input type=\"hidden\" name=\"action\" value=\"update\">";
+        print "<input type=\"hidden\" name=\"id\" value=\"".$object->id."\">";
         require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
         $doleditor=new DolEditor('note',$object->note,'',280,'dolibarr_notes','',true,true,$conf->global->FCKEDITOR_ENABLE_SOCIETE,10,80);
         $doleditor->Create();
-	}
-	else
-	{
-		print nl2br($object->note);
-	}
-	print "</td></tr>";
+    } else {
+        print nl2br($object->note);
+    }
+    print "</td></tr>";
 
-	if ($action == 'edit')
-	{
-		print '<tr><td colspan="4" align="center">';
-		print '<input type="submit" class="button" name="update" value="'.$langs->trans("Save").'">';
-		print '&nbsp; &nbsp;';
-		print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
-		print '</td></tr>';
-	}
+    if ($action == 'edit') {
+        print '<tr><td colspan="4" align="center">';
+        print '<input type="submit" class="button" name="update" value="'.$langs->trans("Save").'">';
+        print '&nbsp; &nbsp;';
+        print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+        print '</td></tr>';
+    }
 
     print "</table>";
-	print "</form>\n";
-
+    print "</form>\n";
 
     /*
     * Actions
@@ -165,17 +150,13 @@ if ($id)
     print '</div>';
     print '<div class="tabsAction">';
 
-    if ($user->rights->adherent->creer && $action != 'edit')
-    {
+    if ($user->rights->adherent->creer && $action != 'edit') {
         print '<div class="inline-block divButAction"><a class="butAction" href="note.php?id='.$object->id.'&amp;action=edit">'.$langs->trans('Modify')."</a></div>";
     }
 
     print "</div>";
 
-
 }
-
 
 llxFooter();
 $db->close();
-?>

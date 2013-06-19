@@ -45,7 +45,6 @@ $action = GETPOST("action");
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'tax', $id, 'chargesociales','charges');
 
-
 // Get parameters
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
@@ -59,31 +58,26 @@ $pagenext = $page + 1;
 if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="name";
 
-
 $object = new ChargeSociales($db);
 $object->fetch($id);
 
 $upload_dir = $conf->tax->dir_output.'/'.dol_sanitizeFileName($object->ref);
 $modulepart='tax';
 
-
 /*
  * Actions
  */
 
-if (GETPOST("sendit") && ! empty($conf->global->MAIN_UPLOAD_DOC))
-{
-	dol_add_file_process($upload_dir,0,1,'userfile');
+if (GETPOST("sendit") && ! empty($conf->global->MAIN_UPLOAD_DOC)) {
+    dol_add_file_process($upload_dir,0,1,'userfile');
 }
 
-if ($action == 'delete')
-{
-	$file = $upload_dir . '/' . GETPOST("urlfile");	// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
-	$ret=dol_delete_file($file,0,0,0,$object);
-	if ($ret) setEventMessage($langs->trans("FileWasRemoved", GETPOST('urlfile')));
-	else setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), 'errors');
+if ($action == 'delete') {
+    $file = $upload_dir . '/' . GETPOST("urlfile");	// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
+    $ret=dol_delete_file($file,0,0,0,$object);
+    if ($ret) setEventMessage($langs->trans("FileWasRemoved", GETPOST('urlfile')));
+    else setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), 'errors');
 }
-
 
 /*
  * View
@@ -94,38 +88,31 @@ $form = new Form($db);
 $help_url='EN:Module_Taxes_and_social_contributions|FR:Module Taxes et dividendes|ES:M&oacute;dulo Impuestos y cargas sociales (IVA, impuestos)';
 llxHeader("",$langs->trans("SocialContribution"),$help_url);
 
-if ($object->id)
-{
+if ($object->id) {
     $head=tax_prepare_head($object, $user);
 
     dol_fiche_head($head, 'documents',  $langs->trans("SocialContribution"), 0, 'bill');
 
-
     // Construit liste des fichiers
     $filearray=dol_dir_list($upload_dir,"files",0,'','\.meta$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
     $totalsize=0;
-    foreach($filearray as $key => $file)
-    {
+    foreach ($filearray as $key => $file) {
         $totalsize+=$file['size'];
     }
-
 
     print '<table class="border" width="100%">';
 
     // Ref
-	print '<tr><td width="25%">'.$langs->trans("Ref").'</td><td>';
-	print $form->showrefnav($object,'id');
-	print "</td></tr>";
+    print '<tr><td width="25%">'.$langs->trans("Ref").'</td><td>';
+    print $form->showrefnav($object,'id');
+    print "</td></tr>";
 
     // Label
-    if ($action == 'edit')
-    {
+    if ($action == 'edit') {
         print '<tr><td>'.$langs->trans("Label").'</td><td>';
         print '<input type="text" name="label" size="40" value="'.$object->lib.'">';
         print '</td></tr>';
-    }
-    else
-    {
+    } else {
         print '<tr><td>'.$langs->trans("Label").'</td><td>'.$object->lib.'</td></tr>';
     }
 
@@ -135,25 +122,20 @@ if ($object->id)
     // Period end date
     print "<tr><td>".$langs->trans("PeriodEndDate")."</td>";
     print "<td>";
-    if ($action == 'edit')
-    {
+    if ($action == 'edit') {
         print $form->select_date($object->periode, 'period', 0, 0, 0, 'charge', 1);
-    }
-    else
-    {
+    } else {
         print dol_print_date($object->periode,"day");
     }
     print "</td>";
     print "</tr>";
 
     // Due date
-    if ($action == 'edit')
-    {
+    if ($action == 'edit') {
         print '<tr><td>'.$langs->trans("DateDue")."</td><td>";
         print $form->select_date($object->date_ech, 'ech', 0, 0, 0, 'charge', 1);
         print "</td></tr>";
-    }
-    else {
+    } else {
         print "<tr><td>".$langs->trans("DateDue")."</td><td>".dol_print_date($object->date_ech,'day')."</td></tr>";
     }
 
@@ -169,24 +151,18 @@ if ($object->id)
 
     print '</div>';
 
-
     // Affiche formulaire upload
-   	$formfile=new FormFile($db);
-   	$formfile->form_attach_new_file(DOL_URL_ROOT.'/compta/sociales/document.php?id='.$object->id,'',0,0,$user->rights->tax->charges->creer,50,$object);
+       $formfile=new FormFile($db);
+       $formfile->form_attach_new_file(DOL_URL_ROOT.'/compta/sociales/document.php?id='.$object->id,'',0,0,$user->rights->tax->charges->creer,50,$object);
 
+       // List of document
+       //$param='&id='.$object->id;
+       $formfile->list_of_documents($filearray,$object,'tax',$param);
 
-   	// List of document
-   	//$param='&id='.$object->id;
-   	$formfile->list_of_documents($filearray,$object,'tax',$param);
-
-}
-else
-{
+} else {
     print $langs->trans("UnkownError");
 }
-
 
 llxFooter();
 
 $db->close();
-?>

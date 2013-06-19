@@ -28,7 +28,6 @@ require_once DOL_DOCUMENT_ROOT.'/boutique/osc_master.inc.php';
 
 $langs->load("companies");
 
-
 /*
  * View
  */
@@ -42,7 +41,6 @@ if ($sortorder == "") {
   $sortorder="ASC";
 }
 
-
 if ($page == -1) { $page = 0 ; }
 $limit = $conf->liste_limit;
 $offset = $limit * $page ;
@@ -55,8 +53,7 @@ $sql .= " ORDER BY $sortfield $sortorder ";
 $sql .= $dbosc->plimit($limit,$offset);
 
 $resql=$dbosc->query($sql);
-if ($resql)
-{
+if ($resql) {
   $num = $dbosc->num_rows($resql);
   $i = 0;
   print "<table class=\"noborder\" width=\"100%\">";
@@ -66,8 +63,7 @@ if ($resql)
   print '<td>'.$langs->trans("EMail").'</td><td align="center">'.$langs->trans("Newsletter").'</td>';
   print "</tr>\n";
   $var=True;
-  while ($i < $num)
-    {
+  while ($i < $num) {
       $objp = $dbosc->fetch_object($resql);
       $var=!$var;
       print "<tr $bc[$var]>";
@@ -80,13 +76,10 @@ if ($resql)
     }
   print "</table>";
   $dbosc->free();
-}
-else
-{
+} else {
   dol_print_error($dbosc);
 }
 
 $dbosc->close();
 
 llxFooter();
-?>

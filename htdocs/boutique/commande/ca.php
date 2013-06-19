@@ -26,19 +26,16 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/boutique/osc_master.inc.php';
 
-
 /*
  * View
  */
 
 llxHeader();
 
-if ($sortfield == "")
-{
+if ($sortfield == "") {
   $sortfield="date_purchased";
 }
-if ($sortorder == "")
-{
+if ($sortorder == "") {
   $sortorder="DESC";
 }
 
@@ -57,13 +54,11 @@ $sql .= " FROM ".$conf->global->OSC_DB_NAME.".".$conf->global->OSC_DB_TABLE_PREF
 $sql .= " WHERE t.class = 'ot_subtotal'";
 
 $resql=$dbosc->query($sql);
-if ($resql)
-{
+if ($resql) {
   $num = $dbosc->num_rows($resql);
 
   $var=True;
-  if ($num > 0)
-    {
+  if ($num > 0) {
       $objp = $dbosc->fetch_object($resql);
       $var=!$var;
       print "<tr $bc[$var]>";
@@ -75,9 +70,7 @@ if ($resql)
     }
 
   $dbosc->free();
-}
-else
-{
+} else {
   dol_print_error($dbosc);
 }
 
@@ -85,13 +78,11 @@ $sql = "SELECT sum(t.value) as value";
 $sql .= " FROM ".$conf->global->OSC_DB_NAME.".".$conf->global->OSC_DB_TABLE_PREFIX."orders_total as t";
 $sql .= " WHERE t.class = 'ot_shipping'";
 $resql=$dbosc->query($sql);
-if ($resql)
-{
+if ($resql) {
   $num = $dbosc->num_rows($resql);
 
   $var=True;
-  if ($num > 0)
-    {
+  if ($num > 0) {
       $objp = $dbosc->fetch_object($resql);
       $var=!$var;
       print "<tr $bc[$var]>";
@@ -101,16 +92,12 @@ if ($resql)
     }
 
   $dbosc->free();
-}
-else
-{
+} else {
   dol_print_error($dbosc);
 }
-
 
 print "</table>";
 
 $dbosc->close();
 
 llxFooter();
-?>

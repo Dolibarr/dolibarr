@@ -46,69 +46,52 @@ $result = restrictedArea($user, 'facture', $id);
 
 $object = new Facture($db);
 
-
 /*
  * Ajout d'un nouveau contact
  */
 
-if ($action == 'addcontact' && $user->rights->facture->creer)
-{
-	$result = $object->fetch($id);
+if ($action == 'addcontact' && $user->rights->facture->creer) {
+    $result = $object->fetch($id);
 
-    if ($result > 0 && $id > 0)
-    {
-    	$contactid = (GETPOST('userid') ? GETPOST('userid','int') : GETPOST('contactid','int'));
-  		$result = $object->add_contact($contactid, $_POST["type"], $_POST["source"]);
+    if ($result > 0 && $id > 0) {
+        $contactid = (GETPOST('userid') ? GETPOST('userid','int') : GETPOST('contactid','int'));
+          $result = $object->add_contact($contactid, $_POST["type"], $_POST["source"]);
     }
 
-	if ($result >= 0)
-	{
-		header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
-		exit;
-	}
-	else
-	{
-		if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS')
-		{
-			$langs->load("errors");
-			$mesg = '<div class="error">'.$langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType").'</div>';
-		}
-		else
-		{
-			$mesg = '<div class="error">'.$object->error.'</div>';
-		}
-	}
+    if ($result >= 0) {
+        header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+        exit;
+    } else {
+        if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
+            $langs->load("errors");
+            $mesg = '<div class="error">'.$langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType").'</div>';
+        } else {
+            $mesg = '<div class="error">'.$object->error.'</div>';
+        }
+    }
 }
 
 // bascule du statut d'un contact
-else if ($action == 'swapstatut' && $user->rights->facture->creer)
-{
-	if ($object->fetch($id))
-	{
-	    $result=$object->swapContactStatus(GETPOST('ligne'));
-	}
-	else
-	{
-		dol_print_error($db);
-	}
+else if ($action == 'swapstatut' && $user->rights->facture->creer) {
+    if ($object->fetch($id)) {
+        $result=$object->swapContactStatus(GETPOST('ligne'));
+    } else {
+        dol_print_error($db);
+    }
 }
 
 // Efface un contact
-else if ($action == 'deletecontact' && $user->rights->facture->creer)
-{
-	$object->fetch($id);
-	$result = $object->delete_contact($lineid);
+else if ($action == 'deletecontact' && $user->rights->facture->creer) {
+    $object->fetch($id);
+    $result = $object->delete_contact($lineid);
 
-	if ($result >= 0)
-	{
-		header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
-		exit;
-	}
-	else {
-		dol_print_error($db);
-	}
+    if ($result >= 0) {
+        header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+        exit;
+    } else {
+        dol_print_error($db);
+    }
 }
-
 
 /*
  * View
@@ -121,7 +104,6 @@ $formcompany = new FormCompany($db);
 $contactstatic=new Contact($db);
 $userstatic=new User($db);
 
-
 /* *************************************************************************** */
 /*                                                                             */
 /* Mode vue et edition                                                         */
@@ -129,42 +111,38 @@ $userstatic=new User($db);
 /* *************************************************************************** */
 dol_htmloutput_mesg($mesg);
 
-if ($id > 0 || ! empty($ref))
-{
-	if ($object->fetch($id, $ref) > 0)
-	{
-		$object->fetch_thirdparty();
+if ($id > 0 || ! empty($ref)) {
+    if ($object->fetch($id, $ref) > 0) {
+        $object->fetch_thirdparty();
 
-		$head = facture_prepare_head($object);
+        $head = facture_prepare_head($object);
 
-		dol_fiche_head($head, 'contact', $langs->trans('InvoiceCustomer'), 0, 'bill');
+        dol_fiche_head($head, 'contact', $langs->trans('InvoiceCustomer'), 0, 'bill');
 
-		/*
-		 *   Facture synthese pour rappel
-		 */
-		print '<table class="border" width="100%">';
+        /*
+         *   Facture synthese pour rappel
+         */
+        print '<table class="border" width="100%">';
 
-		$linkback = '<a href="'.DOL_URL_ROOT.'/compta/facture/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
+        $linkback = '<a href="'.DOL_URL_ROOT.'/compta/facture/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
 
-		// Ref
-		print '<tr><td width="20%">'.$langs->trans('Ref').'</td>';
-		print '<td colspan="3">';
-		$morehtmlref='';
-		$discount=new DiscountAbsolute($db);
-		$result=$discount->fetch(0,$object->id);
-		if ($result > 0)
-		{
-			$morehtmlref=' ('.$langs->trans("CreditNoteConvertedIntoDiscount",$discount->getNomUrl(1,'discount')).')';
-		}
-		if ($result < 0)
-		{
-			dol_print_error('',$discount->error);
-		}
-		print $form->showrefnav($object, 'ref', $linkback, 1, 'facnumber', 'ref', $morehtmlref);
-		print '</td></tr>';
+        // Ref
+        print '<tr><td width="20%">'.$langs->trans('Ref').'</td>';
+        print '<td colspan="3">';
+        $morehtmlref='';
+        $discount=new DiscountAbsolute($db);
+        $result=$discount->fetch(0,$object->id);
+        if ($result > 0) {
+            $morehtmlref=' ('.$langs->trans("CreditNoteConvertedIntoDiscount",$discount->getNomUrl(1,'discount')).')';
+        }
+        if ($result < 0) {
+            dol_print_error('',$discount->error);
+        }
+        print $form->showrefnav($object, 'ref', $linkback, 1, 'facnumber', 'ref', $morehtmlref);
+        print '</td></tr>';
 
-		// Ref customer
-		print '<tr><td width="20%">';
+        // Ref customer
+        print '<tr><td width="20%">';
         print '<table class="nobordernopadding" width="100%"><tr><td>';
         print $langs->trans('RefCustomer');
         print '</td>';
@@ -172,34 +150,29 @@ if ($id > 0 || ! empty($ref))
         print '</td>';
         print '<td colspan="5">';
         print $object->ref_client;
-		print '</td></tr>';
+        print '</td></tr>';
 
-		// Customer
-		print "<tr><td>".$langs->trans("Company")."</td>";
-		print '<td colspan="3">'.$object->client->getNomUrl(1,'compta').'</td></tr>';
-		print "</table>";
+        // Customer
+        print "<tr><td>".$langs->trans("Company")."</td>";
+        print '<td colspan="3">'.$object->client->getNomUrl(1,'compta').'</td></tr>';
+        print "</table>";
 
-		print '</div>';
+        print '</div>';
 
-		print '<br>';
+        print '<br>';
 
-		// Contacts lines (modules that overwrite templates must declare this into descriptor)
-		$dirtpls=array_merge($conf->modules_parts['tpl'],array('/core/tpl'));
-		foreach($dirtpls as $reldir)
-		{
-		    $res=@include dol_buildpath($reldir.'/contacts.tpl.php');
-		    if ($res) break;
-		}
+        // Contacts lines (modules that overwrite templates must declare this into descriptor)
+        $dirtpls=array_merge($conf->modules_parts['tpl'],array('/core/tpl'));
+        foreach ($dirtpls as $reldir) {
+            $res=@include dol_buildpath($reldir.'/contacts.tpl.php');
+            if ($res) break;
+        }
 
-	}
-	else
-	{
-		// Record not found
-		print "ErrorRecordNotFound";
-	}
+    } else {
+        // Record not found
+        print "ErrorRecordNotFound";
+    }
 }
-
 
 llxFooter();
 $db->close();
-?>

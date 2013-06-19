@@ -29,14 +29,14 @@
  */
 class ExpeditionStats
 {
-    var $db;
+    public $db;
 
     /**
      * Constructor
      *
-     * @param		DoliDB		$db      Database handler
+     * @param DoliDB $db Database handler
      */
-    function __construct($db)
+    public function __construct($db)
     {
         $this->db = $db;
     }
@@ -44,9 +44,9 @@ class ExpeditionStats
     /**
      * Return expedition number by year
      *
-     * @return	array	array with number by year
+     * @return array array with number by year
      */
-    function getNbExpeditionByYear()
+    public function getNbExpeditionByYear()
     {
         global $conf;
 
@@ -58,12 +58,10 @@ class ExpeditionStats
         $sql.= " GROUP BY dm DESC";
 
         $resql=$this->db->query($sql);
-        if ($resql)
-        {
+        if ($resql) {
             $num = $this->db->num_rows($resql);
             $i = 0;
-            while ($i < $num)
-            {
+            while ($i < $num) {
                 $row = $this->db->fetch_row($resql);
                 $result[$i] = $row;
 
@@ -71,16 +69,17 @@ class ExpeditionStats
             }
             $this->db->free($resql);
         }
+
         return $result;
     }
 
     /**
      * Return the expeditions number by month for a year
      *
-     * @param	int		$year		Year
-     * @return	array				Array with number by month
+     * @param  int   $year Year
+     * @return array Array with number by month
      */
-    function getNbExpeditionByMonth($year)
+    public function getNbExpeditionByMonth($year)
     {
         global $conf;
 
@@ -93,12 +92,10 @@ class ExpeditionStats
         $sql.= " GROUP BY dm DESC";
 
         $resql=$this->db->query($sql);
-        if ($resql)
-        {
+        if ($resql) {
             $num = $this->db->num_rows($resql);
             $i = 0;
-            while ($i < $num)
-            {
+            while ($i < $num) {
                 $row = $this->db->fetch_row($resql);
                 $j = $row[0] * 1;
                 $result[$j] = $row[1];
@@ -106,44 +103,39 @@ class ExpeditionStats
             }
             $this->db->free($resql);
         }
-        for ($i = 1 ; $i < 13 ; $i++)
-        {
+        for ($i = 1 ; $i < 13 ; $i++) {
             $res[$i] = $result[$i] + 0;
         }
 
         $data = array();
 
-        for ($i = 1 ; $i < 13 ; $i++)
-        {
+        for ($i = 1 ; $i < 13 ; $i++) {
             $data[$i-1] = array(dol_print_date(dol_mktime(12,0,0,$i,1,$year),"%b"), $res[$i]);
         }
 
         return $data;
     }
 
-
     /**
      * Return the expeditions number by month for a year
      *
-     * @param	int		$year		Year
-     * @return	array				Array with number by month
+     * @param  int   $year Year
+     * @return array Array with number by month
      */
-    function getNbExpeditionByMonthWithPrevYear($year)
+    public function getNbExpeditionByMonthWithPrevYear($year)
     {
         $data1 = $this->getNbExpeditionByMonth($year);
         $data2 = $this->getNbExpeditionByMonth($year - 1);
 
         $data = array();
 
-        for ($i = 1 ; $i < 13 ; $i++)
-        {
+        for ($i = 1 ; $i < 13 ; $i++) {
             $data[$i-1] = array(dol_print_date(dol_mktime(12,0,0,$i,1,$year),"%b"),
             $data1[$i][1],
             $data2[$i][1]);
         }
+
         return $data;
     }
 
 }
-
-?>

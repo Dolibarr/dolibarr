@@ -60,7 +60,6 @@ $catid        = GETPOST("catid",'int');
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('customerlist'));
 
-
 /*
  * Actions
  */
@@ -69,8 +68,7 @@ $parameters=array();
 $reshook=$hookmanager->executeHooks('doActions',$parameters);    // Note that $action and $object may have been modified by some hooks
 
 // Do we click on purge search criteria ?
-if (GETPOST("button_removefilter_x"))
-{
+if (GETPOST("button_removefilter_x")) {
     $search_categ='';
     $catid='';
     $search_sale='';
@@ -83,8 +81,6 @@ if (GETPOST("button_removefilter_x"))
     $search_idprof3='';
     $search_idprof4='';
 }
-
-
 
 /*
  * view
@@ -121,17 +117,15 @@ if ($search_town) $sql.= " AND s.town LIKE '%".$db->escape($search_town)."%'";
 if ($search_code)  $sql.= " AND s.code_client LIKE '%".$db->escape($search_code)."%'";
 if ($search_compta) $sql.= " AND s.code_compta LIKE '%".$db->escape($search_compta)."%'";
 // Insert sale filter
-if ($search_sale)
-{
-	$sql .= " AND sc.fk_user = ".$search_sale;
+if ($search_sale) {
+    $sql .= " AND sc.fk_user = ".$search_sale;
 }
 
 // Count total nb of records
 $nbtotalofrecords = 0;
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
-{
-	$result = $db->query($sql);
-	$nbtotalofrecords = $db->num_rows($result);
+if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+    $result = $db->query($sql);
+    $nbtotalofrecords = $db->num_rows($result);
 }
 
 $sql.= $db->order($sortfield,$sortorder);
@@ -140,50 +134,46 @@ $sql.= $db->plimit($conf->liste_limit +1, $offset);
 dol_syslog('comm:list.php: sql='.$sql,LOG_DEBUG);
 
 $result = $db->query($sql);
-if ($result)
-{
-	$num = $db->num_rows($result);
+if ($result) {
+    $num = $db->num_rows($result);
 
-	$param = "&amp;search_nom=".$search_nom."&amp;search_code=".$search_code."&amp;search_zipcode=".$search_zipcode."&amp;search_town=".$search_town;
- 	if ($search_categ != '') $param.='&amp;search_categ='.$search_categ;
- 	if ($search_sale != '')	$param.='&amp;search_sale='.$search_sale;
+    $param = "&amp;search_nom=".$search_nom."&amp;search_code=".$search_code."&amp;search_zipcode=".$search_zipcode."&amp;search_town=".$search_town;
+     if ($search_categ != '') $param.='&amp;search_categ='.$search_categ;
+     if ($search_sale != '')	$param.='&amp;search_sale='.$search_sale;
 
-	print_barre_liste($langs->trans("ListOfCustomers"), $page, $_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords);
+    print_barre_liste($langs->trans("ListOfCustomers"), $page, $_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords);
 
-	$i = 0;
+    $i = 0;
 
-	print '<form method="GET" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";
+    print '<form method="GET" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";
 
-	// Filter on categories
- 	$moreforfilter='';
-	if (! empty($conf->categorie->enabled))
-	{
-	 	$moreforfilter.=$langs->trans('Categories'). ': ';
-		$moreforfilter.=$formother->select_categories(2,$search_categ,'search_categ',1);
-	 	$moreforfilter.=' &nbsp; &nbsp; &nbsp; ';
-	}
- 	// If the user can view prospects other than his'
- 	if ($user->rights->societe->client->voir || $socid)
- 	{
-	 	$moreforfilter.=$langs->trans('SalesRepresentatives'). ': ';
-		$moreforfilter.=$formother->select_salesrepresentatives($search_sale,'search_sale',$user);
- 	}
- 	if ($moreforfilter)
-	{
-		print '<div class="liste_titre">';
-	    print $moreforfilter;
-	    print '</div>';
-	}
+    // Filter on categories
+     $moreforfilter='';
+    if (! empty($conf->categorie->enabled)) {
+         $moreforfilter.=$langs->trans('Categories'). ': ';
+        $moreforfilter.=$formother->select_categories(2,$search_categ,'search_categ',1);
+         $moreforfilter.=' &nbsp; &nbsp; &nbsp; ';
+    }
+     // If the user can view prospects other than his'
+     if ($user->rights->societe->client->voir || $socid) {
+         $moreforfilter.=$langs->trans('SalesRepresentatives'). ': ';
+        $moreforfilter.=$formother->select_salesrepresentatives($search_sale,'search_sale',$user);
+     }
+     if ($moreforfilter) {
+        print '<div class="liste_titre">';
+        print $moreforfilter;
+        print '</div>';
+    }
 
-	print '<table class="liste" width="100%">'."\n";
+    print '<table class="liste" width="100%">'."\n";
 
-	print '<tr class="liste_titre">';
-	print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","",$param,"",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Zip"),$_SERVER["PHP_SELF"],"s.zip","",$param,"",$sortfield,$sortorder);
+    print '<tr class="liste_titre">';
+    print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","",$param,"",$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Zip"),$_SERVER["PHP_SELF"],"s.zip","",$param,"",$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Town"),$_SERVER["PHP_SELF"],"s.town","",$param,"",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("CustomerCode"),$_SERVER["PHP_SELF"],"s.code_client","",$param,"",$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("CustomerCode"),$_SERVER["PHP_SELF"],"s.code_client","",$param,"",$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("AccountancyCode"),$_SERVER["PHP_SELF"],"s.code_compta","",$param,'align="left"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("DateCreation"),$_SERVER["PHP_SELF"],"datec","",$param,'align="right"',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("DateCreation"),$_SERVER["PHP_SELF"],"datec","",$param,'align="right"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"s.status","",$param,'align="right"',$sortfield,$sortorder);
 
     $parameters=array();
@@ -191,17 +181,17 @@ if ($result)
 
     print "</tr>\n";
 
-	print '<tr class="liste_titre">';
+    print '<tr class="liste_titre">';
 
-	print '<td class="liste_titre">';
-	print '<input type="text" class="flat" name="search_nom" value="'.$search_nom.'" size="10">';
-	print '</td>';
+    print '<td class="liste_titre">';
+    print '<input type="text" class="flat" name="search_nom" value="'.$search_nom.'" size="10">';
+    print '</td>';
 
-	print '<td class="liste_titre">';
-	print '<input type="text" class="flat" name="search_zipcode" value="'.$search_zipcode.'" size="10">';
-	print '</td>';
+    print '<td class="liste_titre">';
+    print '<input type="text" class="flat" name="search_zipcode" value="'.$search_zipcode.'" size="10">';
+    print '</td>';
 
-	print '<td class="liste_titre">';
+    print '<td class="liste_titre">';
     print '<input type="text" class="flat" name="search_town" value="'.$search_town.'" size="10">';
     print '</td>';
 
@@ -225,24 +215,23 @@ if ($result)
 
     print "</tr>\n";
 
-	$var=True;
+    $var=True;
 
-	while ($i < min($num,$conf->liste_limit))
-	{
-		$obj = $db->fetch_object($result);
+    while ($i < min($num,$conf->liste_limit)) {
+        $obj = $db->fetch_object($result);
 
-		$var=!$var;
+        $var=!$var;
 
-		print "<tr $bc[$var]>";
-		print '<td>';
-		$thirdpartystatic->id=$obj->rowid;
+        print "<tr $bc[$var]>";
+        print '<td>';
+        $thirdpartystatic->id=$obj->rowid;
         $thirdpartystatic->name=$obj->name;
         $thirdpartystatic->client=$obj->client;
         $thirdpartystatic->canvas=$obj->canvas;
         $thirdpartystatic->status=$obj->status;
         print $thirdpartystatic->getNomUrl(1);
-		print '</td>';
-		print '<td>'.$obj->zip.'</td>';
+        print '</td>';
+        print '<td>'.$obj->zip.'</td>';
         print '<td>'.$obj->town.'</td>';
         print '<td>'.$obj->code_client.'</td>';
         print '<td>'.$obj->code_compta.'</td>';
@@ -254,21 +243,18 @@ if ($result)
         $formconfirm=$hookmanager->executeHooks('printFieldListValue',$parameters);    // Note that $action and $object may have been modified by hook
 
         print "</tr>\n";
-		$i++;
-	}
-	//print_barre_liste($langs->trans("ListOfCustomers"), $page, $_SERVER["PHP_SELF"],'',$sortfield,$sortorder,'',$num);
-	print "</table>\n";
-	print "</form>\n";
-	$db->free($result);
+        $i++;
+    }
+    //print_barre_liste($langs->trans("ListOfCustomers"), $page, $_SERVER["PHP_SELF"],'',$sortfield,$sortorder,'',$num);
+    print "</table>\n";
+    print "</form>\n";
+    $db->free($result);
 
-	$parameters=array('sql' => $sql);
-	$formconfirm=$hookmanager->executeHooks('printFieldListFooter',$parameters);    // Note that $action and $object may have been modified by hook
-}
-else
-{
-	dol_print_error($db);
+    $parameters=array('sql' => $sql);
+    $formconfirm=$hookmanager->executeHooks('printFieldListFooter',$parameters);    // Note that $action and $object may have been modified by hook
+} else {
+    dol_print_error($db);
 }
 
 llxFooter();
 $db->close();
-?>

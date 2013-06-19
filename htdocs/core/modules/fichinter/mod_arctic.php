@@ -31,112 +31,108 @@ require_once DOL_DOCUMENT_ROOT .'/core/modules/fichinter/modules_fichinter.php';
  */
 class mod_arctic extends ModeleNumRefFicheinter
 {
-	var $version='dolibarr';		// 'development', 'experimental', 'dolibarr'
-	var $error = '';
-	var $nom = 'arctic';
+    public $version='dolibarr';		// 'development', 'experimental', 'dolibarr'
+    public $error = '';
+    public $nom = 'arctic';
 
-
-	/**
+    /**
      *  Renvoi la description du modele de numerotation
      *
      *  @return     string      Texte descripif
      */
-	function info()
+    public function info()
     {
-    	global $conf,$langs;
+        global $conf,$langs;
 
-		$langs->load("bills");
+        $langs->load("bills");
 
-		$form = new Form($this->db);
+        $form = new Form($this->db);
 
-		$texte = $langs->trans('GenericNumRefModelDesc')."<br>\n";
-		$texte.= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-		$texte.= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-		$texte.= '<input type="hidden" name="action" value="updateMask">';
-		$texte.= '<input type="hidden" name="maskconst" value="FICHINTER_ARTIC_MASK">';
-		$texte.= '<table class="nobordernopadding" width="100%">';
+        $texte = $langs->trans('GenericNumRefModelDesc')."<br>\n";
+        $texte.= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+        $texte.= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+        $texte.= '<input type="hidden" name="action" value="updateMask">';
+        $texte.= '<input type="hidden" name="maskconst" value="FICHINTER_ARTIC_MASK">';
+        $texte.= '<table class="nobordernopadding" width="100%">';
 
-		$tooltip=$langs->trans("GenericMaskCodes",$langs->transnoentities("InterventionCard"),$langs->transnoentities("InterventionCard"));
-		$tooltip.=$langs->trans("GenericMaskCodes2");
-		$tooltip.=$langs->trans("GenericMaskCodes3");
-		$tooltip.=$langs->trans("GenericMaskCodes4a",$langs->transnoentities("InterventionCard"),$langs->transnoentities("InterventionCard"));
-		$tooltip.=$langs->trans("GenericMaskCodes5");
+        $tooltip=$langs->trans("GenericMaskCodes",$langs->transnoentities("InterventionCard"),$langs->transnoentities("InterventionCard"));
+        $tooltip.=$langs->trans("GenericMaskCodes2");
+        $tooltip.=$langs->trans("GenericMaskCodes3");
+        $tooltip.=$langs->trans("GenericMaskCodes4a",$langs->transnoentities("InterventionCard"),$langs->transnoentities("InterventionCard"));
+        $tooltip.=$langs->trans("GenericMaskCodes5");
 
-		// Parametrage du prefix
-		$texte.= '<tr><td>'.$langs->trans("Mask").':</td>';
-		$texte.= '<td align="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskvalue" value="'.$conf->global->FICHINTER_ARTIC_MASK.'">',$tooltip,1,1).'</td>';
+        // Parametrage du prefix
+        $texte.= '<tr><td>'.$langs->trans("Mask").':</td>';
+        $texte.= '<td align="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskvalue" value="'.$conf->global->FICHINTER_ARTIC_MASK.'">',$tooltip,1,1).'</td>';
 
-		$texte.= '<td align="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
+        $texte.= '<td align="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
 
-		$texte.= '</tr>';
+        $texte.= '</tr>';
 
-		$texte.= '</table>';
-		$texte.= '</form>';
+        $texte.= '</table>';
+        $texte.= '</form>';
 
-		return $texte;
+        return $texte;
     }
 
     /**
      * Renvoi un exemple de numerotation
      *
-     * @return     string      Example
+     * @return string Example
      */
-    function getExample()
+    public function getExample()
     {
-     	global $conf,$langs,$mysoc;
+         global $conf,$langs,$mysoc;
 
-    	$old_code_client=$mysoc->code_client;
-    	$mysoc->code_client='CCCCCCCCCC';
-     	$numExample = $this->getNextValue($mysoc,'');
-		$mysoc->code_client=$old_code_client;
+        $old_code_client=$mysoc->code_client;
+        $mysoc->code_client='CCCCCCCCCC';
+         $numExample = $this->getNextValue($mysoc,'');
+        $mysoc->code_client=$old_code_client;
 
-		if (! $numExample)
-		{
-			$numExample = $langs->trans('NotConfigured');
-		}
-		return $numExample;
+        if (! $numExample) {
+            $numExample = $langs->trans('NotConfigured');
+        }
+
+        return $numExample;
     }
 
-	/**
-	 * 	Return next free value
-	 *
-	 *  @param	Societe		$objsoc     Object thirdparty
-	 *  @param  Object		$object		Object we need next value for
-	 *  @return string      			Value if KO, <0 if KO
-	 */
-    function getNextValue($objsoc=0,$object='')
+    /**
+     * 	Return next free value
+     *
+     *  @param	Societe		$objsoc     Object thirdparty
+     *  @param  Object		$object		Object we need next value for
+     *  @return string      			Value if KO, <0 if KO
+     */
+    public function getNextValue($objsoc=0,$object='')
     {
-		global $db,$conf;
+        global $db,$conf;
 
-		require_once DOL_DOCUMENT_ROOT .'/core/lib/functions2.lib.php';
+        require_once DOL_DOCUMENT_ROOT .'/core/lib/functions2.lib.php';
 
-		// On d�fini critere recherche compteur
-		$mask=$conf->global->FICHINTER_ARTIC_MASK;
+        // On d�fini critere recherche compteur
+        $mask=$conf->global->FICHINTER_ARTIC_MASK;
 
-		if (! $mask)
-		{
-			$this->error='NotConfigured';
-			return 0;
-		}
+        if (! $mask) {
+            $this->error='NotConfigured';
 
-		$numFinal=get_next_value($db,$mask,'fichinter','ref','',$objsoc->code_client,$object->date);
+            return 0;
+        }
 
-		return  $numFinal;
+        $numFinal=get_next_value($db,$mask,'fichinter','ref','',$objsoc->code_client,$object->date);
+
+        return  $numFinal;
   }
 
-
-	/**
-	 * 	Return next free value
-	 *
+    /**
+     * 	Return next free value
+     *
      *  @param	Societe		$objsoc     Object third party
-	 * 	@param	Object		$objforref	Object for number to search
+     * 	@param	Object		$objforref	Object for number to search
      *  @return string      			Next free value
      */
-    function getNumRef($objsoc,$objforref)
+    public function getNumRef($objsoc,$objforref)
     {
         return $this->getNextValue($objsoc,$objforref);
     }
 
 }
-
-?>

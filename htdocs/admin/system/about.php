@@ -30,13 +30,11 @@ $langs->load("admin");
 $langs->load("help");
 $langs->load("members");
 
-
 /*
  * View
  */
 
 llxHeader();
-
 
 print_fiche_titre("Dolibarr",'','setup');
 
@@ -64,11 +62,10 @@ print '<li>';
 print '<a target="_blank" href="http://www.dolibarr.org/">'.$langs->trans("OfficialWebSite").'</a>';
 print '</li>';
 // If the French language, it displays French website
-if (preg_match('/^fr_/i',$langs->getDefaultLang()))
-{
-	print '<li>';
-	print '<a target="_blank" href="http://www.dolibarr.fr/">'.$langs->trans("OfficialWebSiteFr").'</a>';
-	print '</li>';
+if (preg_match('/^fr_/i',$langs->getDefaultLang())) {
+    print '<li>';
+    print '<a target="_blank" href="http://www.dolibarr.fr/">'.$langs->trans("OfficialWebSiteFr").'</a>';
+    print '</li>';
 }
 print '<li>';
 print '<a target="_blank" href="http://wiki.dolibarr.org/">'.$langs->trans("OfficialWiki").'</a>';
@@ -89,7 +86,6 @@ print '<a target="_blank" href="http://www.dolistore.com">'.$langs->trans("Offic
 print '</li>';
 print '</ul>';
 
-
 print $langs->trans("HelpCenter").':';
 print '<ul>';
 print '<li>';
@@ -107,7 +103,6 @@ if (preg_match('/^es_/i',$langs->getDefaultLang())) $url='http://wiki.dolibarr.o
 print '<li><a href="'.$url.'" target="_blank">'.$langs->trans("SubscribeToFoundation").'</a></li>';
 print '</ul>';
 
-
 print $langs->trans("OfficialWebHostingService").':';
 $url='http://wiki.dolibarr.org/index.php/Cloud_Solutions'; $title=$langs->trans('List');
 if (preg_match('/^fr_/i',$langs->getDefaultLang())) $url='http://wiki.dolibarr.org/index.php/Solutions_de_Cloud';
@@ -118,18 +113,6 @@ print '<a target="_blank" href="'.$url.'">'.$title.'</a>';
 print '</li>';
 print '</ul>';
 
-
 llxFooter();
 
 $db->close();
-?>
-
-
-
-
-
-
-
-
-
-

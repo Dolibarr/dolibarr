@@ -22,31 +22,29 @@
  *       \brief      File of class to manage type of agenda events
  */
 
-
 /**
  *		Class to manage different types of events
  */
 class CActionComm
 {
-    var $error;
-    var $db;
+    public $error;
+    public $db;
 
-    var $id;
+    public $id;
 
-    var $code;
-    var $type;
-    var $libelle;
-    var $active;
+    public $code;
+    public $type;
+    public $libelle;
+    public $active;
 
-    var $type_actions=array();
-
+    public $type_actions=array();
 
     /**
      *  Constructor
      *
      *  @param	DoliDB		$db		Database handler
      */
-    function __construct($db)
+    public function __construct($db)
     {
         $this->db = $db;
     }
@@ -57,7 +55,7 @@ class CActionComm
      *  @param	int		$id     id or code of action type to read
      *  @return int 			1=ok, 0=not found, -1=error
      */
-    function fetch($id)
+    public function fetch($id)
     {
         $sql = "SELECT id, code, type, libelle, active";
         $sql.= " FROM ".MAIN_DB_PREFIX."c_actioncomm";
@@ -66,10 +64,8 @@ class CActionComm
 
         dol_syslog(get_class($this)."::fetch sql=".$sql);
         $resql=$this->db->query($sql);
-        if ($resql)
-        {
-            if ($this->db->num_rows($resql))
-            {
+        if ($resql) {
+            if ($this->db->num_rows($resql)) {
                 $obj = $this->db->fetch_object($resql);
 
                 $this->id      = $obj->id;
@@ -79,17 +75,14 @@ class CActionComm
                 $this->active  = $obj->active;
 
                 return 1;
-            }
-            else
-            {
+            } else {
                 return 0;
             }
 
             $this->db->free($resql);
-        }
-        else
-        {
+        } else {
             $this->error=$this->db->error();
+
             return -1;
         }
     }
@@ -103,7 +96,7 @@ class CActionComm
      *  @param	string		$onlyautoornot	Group list by auto events or not
      *  @return array      					Array of all event types if OK, <0 if KO
      */
-    function liste_array($active='',$idorcode='id',$excludetype='',$onlyautoornot=0)
+    public function liste_array($active='',$idorcode='id',$excludetype='',$onlyautoornot=0)
     {
         global $langs,$conf;
         $langs->load("commercial");
@@ -119,14 +112,11 @@ class CActionComm
 
         dol_syslog(get_class($this)."::liste_array sql=".$sql);
         $resql=$this->db->query($sql);
-        if ($resql)
-        {
+        if ($resql) {
             $nump = $this->db->num_rows($resql);
-            if ($nump)
-            {
+            if ($nump) {
                 $i = 0;
-                while ($i < $nump)
-                {
+                while ($i < $nump) {
                     $obj = $this->db->fetch_object($resql);
 
                     $qualified=1;
@@ -134,8 +124,7 @@ class CActionComm
                     // $obj->type can be system, systemauto, module, moduleauto, xxx, xxxauto
                     if ($qualified && $onlyautoornot && preg_match('/^system/',$obj->type) && ! preg_match('/^AC_OTH/',$obj->code)) $qualified=0;	// We discard detailed system events. We keep only the 2 generic lines (AC_OTH and AC_OTH_AUTO)
 
-                    if ($qualified && $obj->module)
-                    {
+                    if ($qualified && $obj->module) {
                         if ($obj->module == 'invoice' && ! $conf->facture->enabled)	 $qualified=0;
                         if ($obj->module == 'order'   && ! $conf->commande->enabled) $qualified=0;
                         if ($obj->module == 'propal'  && ! $conf->propal->enabled)	 $qualified=0;
@@ -144,12 +133,11 @@ class CActionComm
                         if ($obj->module == 'shipping'  && ! $conf->expedition->enabled)	 $qualified=0;
                     }
 
-                    if ($qualified)
-                    {
-                    	$code=$obj->code;
-                    	if ($onlyautoornot && $code == 'AC_OTH') $code='AC_MANUAL';
-                    	if ($onlyautoornot && $code == 'AC_OTH_AUTO') $code='AC_AUTO';
-                    	$transcode=$langs->trans("Action".$code);
+                    if ($qualified) {
+                        $code=$obj->code;
+                        if ($onlyautoornot && $code == 'AC_OTH') $code='AC_MANUAL';
+                        if ($onlyautoornot && $code == 'AC_OTH_AUTO') $code='AC_AUTO';
+                        $transcode=$langs->trans("Action".$code);
                         $repid[$obj->id] = ($transcode!="Action".$code?$transcode:$langs->trans($obj->libelle));
                         $repcode[$obj->code] = ($transcode!="Action".$code?$transcode:$langs->trans($obj->libelle));
                         if ($onlyautoornot && preg_match('/^module/',$obj->type) && $obj->module) $repcode[$obj->code].=' ('.$langs->trans("Module").': '.$obj->module.')';
@@ -160,14 +148,12 @@ class CActionComm
             if ($idorcode == 'id') $this->liste_array=$repid;
             if ($idorcode == 'code') $this->liste_array=$repcode;
             return $this->liste_array;
-        }
-        else
-        {
+        } else {
             $this->error=$this->db->lasterror();
+
             return -1;
         }
     }
-
 
     /**
      *  Return name of action type as a label translated
@@ -175,7 +161,7 @@ class CActionComm
      *	@param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Picto only
      *  @return string			      	Label of action type
      */
-    function getNomUrl($withpicto=0)
+    public function getNomUrl($withpicto=0)
     {
         global $langs;
 
@@ -185,4 +171,3 @@ class CActionComm
     }
 
 }
-?>

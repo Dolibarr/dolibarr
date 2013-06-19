@@ -21,35 +21,32 @@
  * 	\brief      Fichier de la classe des comptes comptables
  */
 
-
 /**
  * \class 		AccountancyAccount
  * \brief 		Classe permettant la gestion des comptes
  */
 class AccountancyAccount
 {
-    var $db;
-    var $error;
+    public $db;
+    public $error;
 
-    var $rowid;
-    var $fk_pcg_version;
-    var $pcg_type;
-    var $pcg_subtype;
-    var $label;
-    var $account_number;
-    var $account_parent;
-
+    public $rowid;
+    public $fk_pcg_version;
+    public $pcg_type;
+    public $pcg_subtype;
+    public $label;
+    public $account_number;
+    public $account_parent;
 
     /**
      *  Constructor
      *
      *  @param		DoliDB		$db		Database handler
      */
-    function __construct($db)
+    public function __construct($db)
     {
         $this->db = $db;
     }
-
 
     /**
      *    Insert account into database
@@ -57,33 +54,27 @@ class AccountancyAccount
      *    @param  	User	$user 	User making add
      *    @return	int				<0 if KO, Id line added if OK
      */
-    function create($user)
+    public function create($user)
     {
-    	$now=dol_now();
-    	
+        $now=dol_now();
+
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."accountingaccount";
         $sql.= " (date_creation, fk_user_author, numero,intitule)";
         $sql.= " VALUES (".$this->db->idate($now).",".$user->id.",'".$this->numero."','".$this->intitule."')";
 
         $resql = $this->db->query($sql);
-        if ($resql)
-        {
+        if ($resql) {
             $id = $this->db->last_insert_id(MAIN_DB_PREFIX."accountingaccount");
 
-            if ($id > 0)
-            {
+            if ($id > 0) {
                 $this->id = $id;
                 $result = $this->id;
-            }
-            else
-            {
+            } else {
                 $result = -2;
                 $this->error="AccountancyAccount::Create Erreur $result";
                 dol_syslog($this->error, LOG_ERR);
             }
-        }
-        else
-        {
+        } else {
             $result = -1;
             $this->error="AccountancyAccount::Create Erreur $result";
             dol_syslog($this->error, LOG_ERR);
@@ -93,4 +84,3 @@ class AccountancyAccount
     }
 
 }
-?>

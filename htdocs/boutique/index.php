@@ -28,7 +28,6 @@ require_once DOL_DOCUMENT_ROOT.'/boutique/osc_master.inc.php';
 $langs->load("boutique");
 $langs->load("orders");
 
-
 llxHeader("",$langs->trans("OSCommerceShop"),"");
 
 print_fiche_titre($langs->trans("OSCommerceShop"));
@@ -36,7 +35,6 @@ print_fiche_titre($langs->trans("OSCommerceShop"));
 print '<table width="100%" class="notopnoleftnoright">';
 
 print '<tr><td valign="top" width="40%" class="notopnoleft">';
-
 
 /*
  /* Chiffre d'affaires
@@ -58,32 +56,27 @@ $sql .= " WHERE t.class = 'ot_subtotal' AND YEAR(o.date_purchased) = YEAR(".$dbo
 $sql .= " GROUP BY mois ORDER BY mois";
 
 $result=$dbosc->query($sql);
-if ($result)
-{
-	$num = $dbosc->num_rows($result);
+if ($result) {
+    $num = $dbosc->num_rows($result);
 
-	$var=True;
-	$i=0;
-	if ($num > 0)
-	{
-		while ($i < $num)
-		{
-			$objp = $dbosc->fetch_object($result);
-			$var=!$var;
-			print "<tr $bc[$var]>";
-			print '<td align="left">'.$objp->mois.'</td>';
-			print '<td align="right">'.price($objp->value).'</td>';
+    $var=True;
+    $i=0;
+    if ($num > 0) {
+        while ($i < $num) {
+            $objp = $dbosc->fetch_object($result);
+            $var=!$var;
+            print "<tr $bc[$var]>";
+            print '<td align="left">'.$objp->mois.'</td>';
+            print '<td align="right">'.price($objp->value).'</td>';
 
-			print "</tr>\n";
-			$i++;
-		}
-	}
+            print "</tr>\n";
+            $i++;
+        }
+    }
 
-	$dbosc->free();
-}
-else
-{
-	dol_print_error($dbosc);
+    $dbosc->free();
+} else {
+    dol_print_error($dbosc);
 }
 
 
@@ -102,31 +95,26 @@ $sql .= " FROM ".$conf->global->OSC_DB_NAME.".".$conf->global->OSC_DB_TABLE_PREF
 $sql .= " WHERE t.class = 'ot_subtotal' ORDER BY o.date_purchased desc";
 
 $resql=$dbosc->query($sql);
-if ($resql)
-{
-	$langs->load("orders");
-	$num = $dbosc->num_rows($resql);
-	if ($num > 0)
-	{
-		$i = 0;
-		print '<table class="noborder" width="100%">';
-		print '<tr class="liste_titre">';
-		print '<td colspan="4">'.$langs->trans("LastOrders").'</td></tr>';
+if ($resql) {
+    $langs->load("orders");
+    $num = $dbosc->num_rows($resql);
+    if ($num > 0) {
+        $i = 0;
+        print '<table class="noborder" width="100%">';
+        print '<tr class="liste_titre">';
+        print '<td colspan="4">'.$langs->trans("LastOrders").'</td></tr>';
 
-		$num = min($num,OSC_MAXNBCOM);
-		while ($i < $num)
-		{
+        $num = min($num,OSC_MAXNBCOM);
+        while ($i < $num) {
 
-			$obj = $dbosc->fetch_object($resql);
-			print "<tr><td>$obj->orders_id</td><td>$obj->customers_name</td><td>".price($obj->value)."</td><td>$obj->payment_method</td></tr>";
-			$i++;
-		}
-		print "</table><br>";
-	}
-}
-else
-{
-	dol_print_error($dbosc);
+            $obj = $dbosc->fetch_object($resql);
+            print "<tr><td>$obj->orders_id</td><td>$obj->customers_name</td><td>".price($obj->value)."</td><td>$obj->payment_method</td></tr>";
+            $i++;
+        }
+        print "</table><br>";
+    }
+} else {
+    dol_print_error($dbosc);
 }
 
 /*
@@ -137,31 +125,26 @@ $sql .= " FROM ".$conf->global->OSC_DB_NAME.".".$conf->global->OSC_DB_TABLE_PREF
 $sql .= " WHERE t.class = 'ot_subtotal' and o.orders_status = 5 order by o.date_purchased desc";
 
 $resql=$dbosc->query($sql);
-if ($resql)
-{
-	$langs->load("orders");
-	$num = $dbosc->num_rows($resql);
-	if ($num > 0)
-	{
-		$i = 0;
-		print '<table class="noborder" width="100%">';
-		print '<tr class="liste_titre">';
-		print '<td colspan="4">'.$langs->trans("En Attente").'</td></tr>';
+if ($resql) {
+    $langs->load("orders");
+    $num = $dbosc->num_rows($resql);
+    if ($num > 0) {
+        $i = 0;
+        print '<table class="noborder" width="100%">';
+        print '<tr class="liste_titre">';
+        print '<td colspan="4">'.$langs->trans("En Attente").'</td></tr>';
 
-		$num = min($num,OSC_MAXNBCOM);
-		while ($i < $num)
-		{
+        $num = min($num,OSC_MAXNBCOM);
+        while ($i < $num) {
 
-	  $obj = $dbosc->fetch_object($resql);
-	  print "<tr><td>$obj->orders_id</td><td>$obj->customers_name</td><td>".price($obj->value)."</td><td>$obj->payment_method</td></tr>";
-	  $i++;
-		}
-		print "</table><br>";
-	}
-}
-else
-{
-	dol_print_error($dbosc);
+      $obj = $dbosc->fetch_object($resql);
+      print "<tr><td>$obj->orders_id</td><td>$obj->customers_name</td><td>".price($obj->value)."</td><td>$obj->payment_method</td></tr>";
+      $i++;
+        }
+        print "</table><br>";
+    }
+} else {
+    dol_print_error($dbosc);
 }
 
 /*
@@ -172,31 +155,26 @@ $sql .= " FROM ".$conf->global->OSC_DB_NAME.".".$conf->global->OSC_DB_TABLE_PREF
 $sql .= " WHERE t.class = 'ot_subtotal' and o.orders_status = 2 order by o.date_purchased desc";
 
 $resql=$dbosc->query($sql);
-if ($resql)
-{
-	$langs->load("orders");
-	$num = $dbosc->num_rows($resql);
-	if ($num > 0)
-	{
-		$i = 0;
-		print '<table class="noborder" width="100%">';
-		print '<tr class="liste_titre">';
-		print '<td colspan="4">'.$langs->trans("TreatmentInProgress").'</td></tr>';
+if ($resql) {
+    $langs->load("orders");
+    $num = $dbosc->num_rows($resql);
+    if ($num > 0) {
+        $i = 0;
+        print '<table class="noborder" width="100%">';
+        print '<tr class="liste_titre">';
+        print '<td colspan="4">'.$langs->trans("TreatmentInProgress").'</td></tr>';
 
-		$num = min($num,OSC_MAXNBCOM);
-		while ($i < $num)
-		{
+        $num = min($num,OSC_MAXNBCOM);
+        while ($i < $num) {
 
-	  $obj = $dbosc->fetch_object($resql);
-	  print "<tr><td>$obj->orders_id</td><td>$obj->customers_name</td><td>".price($obj->value)."</td><td>$obj->payment_method</td></tr>";
-	  $i++;
-		}
-		print "</table><br>";
-	}
-}
-else
-{
-	dol_print_error($dbosc);
+      $obj = $dbosc->fetch_object($resql);
+      print "<tr><td>$obj->orders_id</td><td>$obj->customers_name</td><td>".price($obj->value)."</td><td>$obj->payment_method</td></tr>";
+      $i++;
+        }
+        print "</table><br>";
+    }
+} else {
+    dol_print_error($dbosc);
 }
 
 
@@ -210,34 +188,28 @@ $sql .= " JOIN ".$conf->global->OSC_DB_NAME.".".$conf->global->OSC_DB_TABLE_PREF
 $sql .= " WHERE t.class = 'ot_subtotal' order by o.date_purchased desc";
 
 $resql=$dbosc->query($sql);
-if ($resql)
-{
-	$langs->load("orders");
-	$num = $dbosc->num_rows($resql);
-	if ($num > 0)
-	{
-		$i = 0;
-		print '<table class="noborder" width="100%">';
-		print '<tr class="liste_titre">';
-		print '<td colspan="7">'.$langs->trans("Derniers clients").'</td></tr>';
+if ($resql) {
+    $langs->load("orders");
+    $num = $dbosc->num_rows($resql);
+    if ($num > 0) {
+        $i = 0;
+        print '<table class="noborder" width="100%">';
+        print '<tr class="liste_titre">';
+        print '<td colspan="7">'.$langs->trans("Derniers clients").'</td></tr>';
 
-		$num = min($num,OSC_MAXNBCOM);
-		while ($i < $num)
-		{
-		  $obj = $dbosc->fetch_object($resql);
-		  print "<tr><td>$obj->date_purchased</td><td>$obj->customers_name</td><td>$obj->delivery_country</td><td>".price($obj->value)."</td><td>$obj->payment_method</td><td>$obj->orders_id</td><td>$obj->statut</td></tr>";
-		  $i++;
-		}
-		print "</table><br>";
-	}
-}
-else
-{
-	dol_print_error($dbosc);
+        $num = min($num,OSC_MAXNBCOM);
+        while ($i < $num) {
+          $obj = $dbosc->fetch_object($resql);
+          print "<tr><td>$obj->date_purchased</td><td>$obj->customers_name</td><td>$obj->delivery_country</td><td>".price($obj->value)."</td><td>$obj->payment_method</td><td>$obj->orders_id</td><td>$obj->statut</td></tr>";
+          $i++;
+        }
+        print "</table><br>";
+    }
+} else {
+    dol_print_error($dbosc);
 }
 print '</tr></table>';
 
 $dbosc->close();
 
 llxFooter();
-?>

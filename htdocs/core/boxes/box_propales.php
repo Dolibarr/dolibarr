@@ -31,38 +31,37 @@ include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
  */
 class box_propales extends ModeleBoxes
 {
-    var $boxcode="lastpropals";
-    var $boximg="object_propal";
-    var $boxlabel="BoxLastProposals";
-    var $depends = array("propal");	// conf->propal->enabled
+    public $boxcode="lastpropals";
+    public $boximg="object_propal";
+    public $boxlabel="BoxLastProposals";
+    public $depends = array("propal");	// conf->propal->enabled
 
-    var $db;
-    var $param;
+    public $db;
+    public $param;
 
-    var $info_box_head = array();
-    var $info_box_contents = array();
+    public $info_box_head = array();
+    public $info_box_contents = array();
 
 
     /**
-	 *  Load data into info_box_contents array to show array later.
-	 *
-	 *  @param	int		$max        Maximum number of records to load
+     *  Load data into info_box_contents array to show array later.
+     *
+     *  @param	int		$max        Maximum number of records to load
      *  @return	void
      */
-    function loadBox($max=5)
+    public function loadBox($max=5)
     {
-    	global $user, $langs, $db, $conf;
+        global $user, $langs, $db, $conf;
 
-    	$this->max=$max;
+        $this->max=$max;
 
-    	include_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
+        include_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
       $propalstatic=new Propal($db);
 
       $this->info_box_head = array('text' => $langs->trans("BoxTitleLastPropals",$max));
 
-      if ($user->rights->propale->lire)
-      {
-      	$sql = "SELECT s.nom, s.rowid as socid,";
+      if ($user->rights->propale->lire) {
+          $sql = "SELECT s.nom, s.rowid as socid,";
         $sql.= " p.rowid, p.ref, p.fk_statut, p.datep as dp, p.datec, p.fin_validite, p.date_cloture";
         $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
         $sql.= ", ".MAIN_DB_PREFIX."propal as p";
@@ -75,79 +74,71 @@ class box_propales extends ModeleBoxes
         $sql.= $db->plimit($max, 0);
 
         $result = $db->query($sql);
-        if ($result)
-        {
-        	$num = $db->num_rows($result);
-        	$now=dol_now();
+        if ($result) {
+            $num = $db->num_rows($result);
+            $now=dol_now();
 
-        	$i = 0;
+            $i = 0;
 
-        	while ($i < $num)
-        	{
-        		$objp = $db->fetch_object($result);
-        		$datec=$db->jdate($objp->datec);
-        		$dateterm=$db->jdate($objp->fin_validite);
-        		$dateclose=$db->jdate($objp->date_cloture);
+            while ($i < $num) {
+                $objp = $db->fetch_object($result);
+                $datec=$db->jdate($objp->datec);
+                $dateterm=$db->jdate($objp->fin_validite);
+                $dateclose=$db->jdate($objp->date_cloture);
 
-        		$late = '';
-        		if ($objp->fk_statut == 1 && $dateterm < ($now - $conf->propal->cloture->warning_delay)) { $late = img_warning($langs->trans("Late")); }
+                $late = '';
+                if ($objp->fk_statut == 1 && $dateterm < ($now - $conf->propal->cloture->warning_delay)) { $late = img_warning($langs->trans("Late")); }
 
-        		$this->info_box_contents[$i][0] = array('td' => 'align="left" width="16"',
-        		'logo' => $this->boximg,
-        		'url' => DOL_URL_ROOT."/comm/propal.php?id=".$objp->rowid);
+                $this->info_box_contents[$i][0] = array('td' => 'align="left" width="16"',
+                'logo' => $this->boximg,
+                'url' => DOL_URL_ROOT."/comm/propal.php?id=".$objp->rowid);
 
-        		$this->info_box_contents[$i][1] = array('td' => 'align="left"',
-        		'text' => $objp->ref,
-        		'text2'=> $late,
-        		'url' => DOL_URL_ROOT."/comm/propal.php?id=".$objp->rowid);
+                $this->info_box_contents[$i][1] = array('td' => 'align="left"',
+                'text' => $objp->ref,
+                'text2'=> $late,
+                'url' => DOL_URL_ROOT."/comm/propal.php?id=".$objp->rowid);
 
-				$this->info_box_contents[$i][2] = array('td' => 'align="left" width="16"',
+                $this->info_box_contents[$i][2] = array('td' => 'align="left" width="16"',
                 'logo' => 'company',
                 'url' => DOL_URL_ROOT."/comm/fiche.php?socid=".$objp->socid);
 
-				$this->info_box_contents[$i][3] = array('td' => 'align="left"',
-        		'text' => dol_trunc($objp->nom,40),
-        		'url' => DOL_URL_ROOT."/comm/fiche.php?socid=".$objp->socid);
+                $this->info_box_contents[$i][3] = array('td' => 'align="left"',
+                'text' => dol_trunc($objp->nom,40),
+                'url' => DOL_URL_ROOT."/comm/fiche.php?socid=".$objp->socid);
 
-        		$this->info_box_contents[$i][4] = array('td' => 'align="right"',
-        		'text' => dol_print_date($datec,'day'));
+                $this->info_box_contents[$i][4] = array('td' => 'align="right"',
+                'text' => dol_print_date($datec,'day'));
 
-        		$this->info_box_contents[$i][5] = array('td' => 'align="right" width="18"',
-        		'text' => $propalstatic->LibStatut($objp->fk_statut,3));
+                $this->info_box_contents[$i][5] = array('td' => 'align="right" width="18"',
+                'text' => $propalstatic->LibStatut($objp->fk_statut,3));
 
-        		$i++;
-        	}
+                $i++;
+            }
 
-        	if ($num==0) $this->info_box_contents[$i][0] = array('td' => 'align="center"','text'=>$langs->trans("NoRecordedProposals"));
+            if ($num==0) $this->info_box_contents[$i][0] = array('td' => 'align="center"','text'=>$langs->trans("NoRecordedProposals"));
 
-			$db->free($result);
-        }
-        else
-        {
-        	$this->info_box_contents[0][0] = array(    'td' => 'align="left"',
+            $db->free($result);
+        } else {
+            $this->info_box_contents[0][0] = array(    'td' => 'align="left"',
                                                         'maxlength'=>500,
                                                         'text' => ($db->error().' sql='.$sql));
         }
-      }
-      else
-      {
-      	$this->info_box_contents[0][0] = array('td' => 'align="left"',
-      	'text' => $langs->trans("ReadPermissionNotAllowed"));
+      } else {
+          $this->info_box_contents[0][0] = array('td' => 'align="left"',
+          'text' => $langs->trans("ReadPermissionNotAllowed"));
       }
     }
 
-	/**
-	 *	Method to show box
-	 *
-	 *	@param	array	$head       Array with properties of box title
-	 *	@param  array	$contents   Array with properties of box lines
-	 *	@return	void
-	 */
-    function showBox($head = null, $contents = null)
+    /**
+     *	Method to show box
+     *
+     *	@param	array	$head       Array with properties of box title
+     *	@param  array	$contents   Array with properties of box lines
+     *	@return	void
+     */
+    public function showBox($head = null, $contents = null)
     {
         parent::showBox($this->info_box_head, $this->info_box_contents);
     }
 
 }
-
-?>

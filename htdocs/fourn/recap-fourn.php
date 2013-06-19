@@ -31,13 +31,10 @@ $langs->load("bills");
 
 // Security check
 $socid = $_GET["socid"];
-if ($user->societe_id > 0)
-{
+if ($user->societe_id > 0) {
     $action = '';
     $socid = $user->societe_id;
 }
-
-
 
 /*
  * View
@@ -45,8 +42,7 @@ if ($user->societe_id > 0)
 
 llxHeader();
 
-if ($socid > 0)
-{
+if ($socid > 0) {
     $societe = new Societe($db);
     $societe->fetch($socid);
 
@@ -57,7 +53,6 @@ if ($socid > 0)
 
     dol_fiche_head($head, 'supplier', $langs->trans("ThirdParty"), 0, 'company');
 
-
     print "<table width=\"100%\">\n";
     print '<tr><td valign="top" width="50%">';
 
@@ -67,8 +62,7 @@ if ($socid > 0)
     print '<tr><td width="20%">'.$langs->trans("Name").'</td><td width="80%" colspan="3">'.$societe->nom.'</td></tr>';
 
     // Prefix
-    if (! empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
-    {
+    if (! empty($conf->global->SOCIETE_USEPREFIX)) {  // Old not used prefix field
         print '<tr><td>'.$langs->trans("Prefix").'</td><td colspan="3">';
         print ($societe->prefix_comm?$societe->prefix_comm:'&nbsp;');
         print '</td></tr>';
@@ -80,11 +74,7 @@ if ($socid > 0)
 
     print '</div>';
 
-
-
-
-    if (! empty($conf->fournisseur->enabled) && $user->rights->facture->lire)
-    {
+    if (! empty($conf->fournisseur->enabled) && $user->rights->facture->lire) {
         // Invoices list
         print_fiche_titre($langs->trans("SupplierPreview"));
 
@@ -99,8 +89,7 @@ if ($socid > 0)
         $sql.= " ORDER BY f.datef DESC";
 
         $resql=$db->query($sql);
-        if ($resql)
-        {
+        if ($resql) {
             $var=true;
             $num = $db->num_rows($resql);
 
@@ -114,22 +103,19 @@ if ($socid > 0)
             print '<td>&nbsp;</td>';
             print '</tr>';
 
-            if (! $num > 0)
-            {
+            if (! $num > 0) {
                 print '<tr><td colspan="7">'.$langs->trans("NoInvoice").'</td></tr>';
             }
 
             $solde = 0;
 
             // Boucle sur chaque facture
-            for ($i = 0 ; $i < $num ; $i++)
-            {
+            for ($i = 0 ; $i < $num ; $i++) {
                 $objf = $db->fetch_object($resql);
 
                 $fac = new FactureFournisseur($db);
                 $ret=$fac->fetch($objf->facid);
-                if ($ret < 0)
-                {
+                if ($ret < 0) {
                     print $fac->error."<br>";
                     continue;
                 }
@@ -163,13 +149,11 @@ if ($socid > 0)
                 $sql.= " AND pf.fk_facturefourn = ".$fac->id;
 
                 $resqlp = $db->query($sql);
-                if ($resqlp)
-                {
+                if ($resqlp) {
                     $nump = $db->num_rows($resqlp);
                     $j = 0;
 
-                    while ($j < $nump)
-                    {
+                    while ($j < $nump) {
                         $objp = $db->fetch_object($resqlp);
                         //$var=!$var;
                         print "<tr $bc[$var]>";
@@ -192,29 +176,21 @@ if ($socid > 0)
                     }
 
                     $db->free($resqlp);
-                }
-                else
-                {
+                } else {
                     dol_print_error($db);
                 }
             }
-        }
-        else
-        {
+        } else {
             dol_print_error($db);
         }
         print "</table>";
         print "<br>";
     }
 
-}
-else
-{
+} else {
     dol_print_error($db);
 }
-
 
 $db->close();
 
 llxFooter();
-?>

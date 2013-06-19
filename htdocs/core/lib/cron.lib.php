@@ -42,7 +42,6 @@ function cronadmin_prepare_head()
 
     complete_head_from_modules($conf, $langs, $object, $head, $h, 'cronadmin', 'remove');
 
-
     return $head;
 }
 
@@ -54,23 +53,23 @@ function cronadmin_prepare_head()
  */
 function cron_prepare_head($object)
 {
-	global $langs, $conf, $user;
-	$h = 0;
-	$head = array();
+    global $langs, $conf, $user;
+    $h = 0;
+    $head = array();
 
-	$head[$h][0] = dol_buildpath('/cron/card.php', 1).'?id='.$object->id;
-	$head[$h][1] = $langs->trans("CronTask");
-	$head[$h][2] = 'card';
-	$h++;
+    $head[$h][0] = dol_buildpath('/cron/card.php', 1).'?id='.$object->id;
+    $head[$h][1] = $langs->trans("CronTask");
+    $head[$h][2] = 'card';
+    $h++;
 
-	$head[$h][0] = dol_buildpath('/cron/info.php', 1).'?id='.$object->id;
-	$head[$h][1] = $langs->trans("Info");
-	$head[$h][2] = 'info';
-	$h++;
+    $head[$h][0] = dol_buildpath('/cron/info.php', 1).'?id='.$object->id;
+    $head[$h][1] = $langs->trans("Info");
+    $head[$h][2] = 'info';
+    $h++;
 
-	complete_head_from_modules($conf, $langs, $object, $head, $h, 'cron');
+    complete_head_from_modules($conf, $langs, $object, $head, $h, 'cron');
 
-	complete_head_from_modules($conf, $langs, $object, $head, $h, 'cron', 'remove');
+    complete_head_from_modules($conf, $langs, $object, $head, $h, 'cron', 'remove');
 
-	return $head;
+    return $head;
 }

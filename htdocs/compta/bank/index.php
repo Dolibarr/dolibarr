@@ -23,7 +23,7 @@
  *       \brief      Home page of bank module
  */
 
-require('../../main.inc.php');
+require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
@@ -38,8 +38,6 @@ $result=restrictedArea($user,'banque');
 
 $statut=GETPOST('statut');
 
-
-
 /*
  * View
  */
@@ -53,7 +51,6 @@ if ($statut == 'all') $link='<a href="'.$_SERVER["PHP_SELF"].'">'.$langs->trans(
 print_fiche_titre($langs->trans("AccountsArea"),$link);
 print '<br>';
 
-
 // On charge tableau des comptes financiers (ouverts par defaut)
 $accounts = array();
 
@@ -64,19 +61,16 @@ if ($statut != 'all') $sql.= " AND clos = 0";
 $sql.= $db->order('label', 'ASC');
 
 $resql = $db->query($sql);
-if ($resql)
-{
-	$num = $db->num_rows($resql);
-	$i = 0;
-	while ($i < $num)
-	{
-		$objp = $db->fetch_object($resql);
-		$accounts[$objp->rowid] = $objp->courant;
-		$i++;
-	}
-	$db->free($resql);
+if ($resql) {
+    $num = $db->num_rows($resql);
+    $i = 0;
+    while ($i < $num) {
+        $objp = $db->fetch_object($resql);
+        $accounts[$objp->rowid] = $objp->courant;
+        $i++;
+    }
+    $db->free($resql);
 }
-
 
 /*
  * Comptes courants (courant = 1)
@@ -92,47 +86,41 @@ print "</tr>\n";
 
 $total = 0; $found = 0;
 $var=true;
-foreach ($accounts as $key=>$type)
-{
-	if ($type == 1)
-	{
-	    $found++;
+foreach ($accounts as $key=>$type) {
+    if ($type == 1) {
+        $found++;
 
-		$acc = new Account($db);
-		$acc->fetch($key);
+        $acc = new Account($db);
+        $acc->fetch($key);
 
-		$var = !$var;
-		$solde = $acc->solde(1);
+        $var = !$var;
+        $solde = $acc->solde(1);
 
-		print '<tr '.$bc[$var].'>';
-		print '<td width="30%">'.$acc->getNomUrl(1).'</td>';
-		print '<td>'.$acc->bank.'</td>';
-		print '<td>'.$acc->number.'</td>';
-		print '<td align="center">';
-		if ($acc->rappro)
-		{
-			$result=$acc->load_board($user,$acc->id);
-			print $acc->nbtodo;
-			if ($acc->nbtodolate) print ' ('.$acc->nbtodolate.img_warning($langs->trans("Late")).')';
-		}
-		else print $langs->trans("FeatureDisabled");
-		print '</td>';
-		print '<td align="center">'.$acc->getLibStatut(2).'</td>';
-		print '<td align="right">';
-		print '<a href="account.php?account='.$acc->id.'">'.price($solde).'</a>';
-		print '</td>';
-		print '</tr>';
+        print '<tr '.$bc[$var].'>';
+        print '<td width="30%">'.$acc->getNomUrl(1).'</td>';
+        print '<td>'.$acc->bank.'</td>';
+        print '<td>'.$acc->number.'</td>';
+        print '<td align="center">';
+        if ($acc->rappro) {
+            $result=$acc->load_board($user,$acc->id);
+            print $acc->nbtodo;
+            if ($acc->nbtodolate) print ' ('.$acc->nbtodolate.img_warning($langs->trans("Late")).')';
+        } else print $langs->trans("FeatureDisabled");
+        print '</td>';
+        print '<td align="center">'.$acc->getLibStatut(2).'</td>';
+        print '<td align="right">';
+        print '<a href="account.php?account='.$acc->id.'">'.price($solde).'</a>';
+        print '</td>';
+        print '</tr>';
 
-		$total += $solde;
-	}
+        $total += $solde;
+    }
 }
 if (! $found) print '<tr '.$bc[$var].'><td colspan="6">'.$langs->trans("None").'</td></tr>';
 // Total
 print '<tr class="liste_total"><td colspan="5" class="liste_total">'.$langs->trans("Total").'</td><td align="right" class="liste_total">'.price($total).'</td></tr>';
 
-
 //print '<tr><td colspan="5">&nbsp;</td></tr>';
-
 
 /*
  * Comptes caisse/liquide (courant = 2)
@@ -146,40 +134,35 @@ print "</tr>\n";
 
 $total = 0; $found = 0;
 $var=true;
-foreach ($accounts as $key=>$type)
-{
-	if ($type == 2)
-	{
-	    $found++;
+foreach ($accounts as $key=>$type) {
+    if ($type == 2) {
+        $found++;
 
-	    $acc = new Account($db);
-		$acc->fetch($key);
+        $acc = new Account($db);
+        $acc->fetch($key);
 
-		$var = !$var;
-		$solde = $acc->solde(1);
+        $var = !$var;
+        $solde = $acc->solde(1);
 
-		print "<tr ".$bc[$var].">";
-		print '<td width="30%">'.$acc->getNomUrl(1).'</td>';
-		print '<td>'.$acc->bank.'</td>';
-		print '<td>&nbsp;</td>';
-		print '<td>&nbsp;</td>';
-		print '<td align="center">'.$acc->getLibStatut(2).'</td>';
-		print '<td align="right">';
-		print '<a href="account.php?account='.$acc->id.'">'.price($solde).'</a>';
-		print '</td>';
-		print '</tr>';
+        print "<tr ".$bc[$var].">";
+        print '<td width="30%">'.$acc->getNomUrl(1).'</td>';
+        print '<td>'.$acc->bank.'</td>';
+        print '<td>&nbsp;</td>';
+        print '<td>&nbsp;</td>';
+        print '<td align="center">'.$acc->getLibStatut(2).'</td>';
+        print '<td align="right">';
+        print '<a href="account.php?account='.$acc->id.'">'.price($solde).'</a>';
+        print '</td>';
+        print '</tr>';
 
-		$total += $solde;
-	}
+        $total += $solde;
+    }
 }
 if (! $found) print '<tr '.$bc[$var].'><td colspan="6">'.$langs->trans("None").'</td></tr>';
 // Total
 print '<tr class="liste_total"><td colspan="5" class="liste_total">'.$langs->trans("Total").'</td><td align="right" class="liste_total">'.price($total).'</td></tr>';
 
-
-
 //print '<tr><td colspan="5">&nbsp;</td></tr>';
-
 
 /*
  * Comptes placements (courant = 0)
@@ -195,39 +178,35 @@ print "</tr>\n";
 
 $total = 0; $found = 0;
 $var=true;
-foreach ($accounts as $key=>$type)
-{
-	if ($type == 0)
-	{
-	    $found++;
+foreach ($accounts as $key=>$type) {
+    if ($type == 0) {
+        $found++;
 
-	    $acc = new Account($db);
-		$acc->fetch($key);
+        $acc = new Account($db);
+        $acc->fetch($key);
 
-		$var = !$var;
-		$solde = $acc->solde(1);
+        $var = !$var;
+        $solde = $acc->solde(1);
 
-		print "<tr ".$bc[$var].">";
-		print '<td width="30%">'.$acc->getNomUrl(1).'</td>';
-		print '<td>'.$acc->bank.'</td>';
-		print '<td>'.$acc->number.'</td>';
-		print '<td align="center">';
-		if ($acc->rappro)
-		{
-			$result=$acc->load_board($user,$acc->id);
-			print $acc->nbtodo;
-			if ($acc->nbtodolate) print ' ('.$acc->nbtodolate.img_warning($langs->trans("Late")).')';
-		}
-		else print $langs->trans("FeatureDisabled");
-		print '</td>';
-		print '<td align="center">'.$acc->getLibStatut(2).'</td>';
-		print '<td align="right">';
-		print '<a href="account.php?account='.$acc->id.'">'.price($solde).'</a>';
-		print '</td>';
-		print '</tr>';
+        print "<tr ".$bc[$var].">";
+        print '<td width="30%">'.$acc->getNomUrl(1).'</td>';
+        print '<td>'.$acc->bank.'</td>';
+        print '<td>'.$acc->number.'</td>';
+        print '<td align="center">';
+        if ($acc->rappro) {
+            $result=$acc->load_board($user,$acc->id);
+            print $acc->nbtodo;
+            if ($acc->nbtodolate) print ' ('.$acc->nbtodolate.img_warning($langs->trans("Late")).')';
+        } else print $langs->trans("FeatureDisabled");
+        print '</td>';
+        print '<td align="center">'.$acc->getLibStatut(2).'</td>';
+        print '<td align="right">';
+        print '<a href="account.php?account='.$acc->id.'">'.price($solde).'</a>';
+        print '</td>';
+        print '</tr>';
 
-		$total += $solde;
-	}
+        $total += $solde;
+    }
 }
 if (! $found) print '<tr '.$bc[$var].'><td colspan="6">'.$langs->trans("None").'</td></tr>';
 // Total
@@ -236,20 +215,16 @@ print '<tr class="liste_total"><td colspan="5" class="liste_total">'.$langs->tra
 print "</table>";
 print "<br>";
 
-
 /*
  * Boutons d'actions
  */
 
 print '<div class="tabsAction">'."\n";
-if ($user->rights->banque->configurer) 
-{
-	print '<a class="butAction" href="fiche.php?action=create">'.$langs->trans("NewFinancialAccount").'</a>';
+if ($user->rights->banque->configurer) {
+    print '<a class="butAction" href="fiche.php?action=create">'.$langs->trans("NewFinancialAccount").'</a>';
 }
 print '</div>';
-
 
 llxFooter();
 
 $db->close();
-?>

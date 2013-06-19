@@ -24,60 +24,61 @@
 ?>
 
 <div id="principal_content" style="margin-left: 0px;">
-	<div style="margin-left: 0; position: relative;" class="gantt"
-		id="GanttChartDIV"></div>
+    <div style="margin-left: 0; position: relative;" class="gantt"
+        id="GanttChartDIV"></div>
 
-	<script type="text/javascript">
+    <script type="text/javascript">
 
-function DisplayHideRessources(boxName) {
-	graphFormat = g.getFormat();
-	if(boxName.checked == true) {
-		booShowRessources = 1;
-	}
-	else {
-		booShowRessources = 0;
-	}
-	reloadGraph();
+function DisplayHideRessources(boxName)
+{
+    graphFormat = g.getFormat();
+    if (boxName.checked == true) {
+        booShowRessources = 1;
+    } else {
+        booShowRessources = 0;
+    }
+    reloadGraph();
 }
 
-function DisplayHideDurations(boxName) {
-	graphFormat = g.getFormat();
-	if(boxName.checked == true) {
-		booShowDurations = 1;
-	}
-	else {
-		booShowDurations = 0;
-	}
-	reloadGraph();
+function DisplayHideDurations(boxName)
+{
+    graphFormat = g.getFormat();
+    if (boxName.checked == true) {
+        booShowDurations = 1;
+    } else {
+        booShowDurations = 0;
+    }
+    reloadGraph();
 }
 
-function DisplayHideComplete(boxName) {
-	graphFormat = g.getFormat();
-	if(boxName.checked == true) {
-		booShowComplete = 1;
-	}
-	else {
-		booShowComplete = 0;
-	}
-	reloadGraph();
+function DisplayHideComplete(boxName)
+{
+    graphFormat = g.getFormat();
+    if (boxName.checked == true) {
+        booShowComplete = 1;
+    } else {
+        booShowComplete = 0;
+    }
+    reloadGraph();
 }
 
-function selectBarText(value) {
-	graphFormat = g.getFormat();
-	id=value.options[value.selectedIndex].value;
-	barText = id;
-	reloadGraph();
+function selectBarText(value)
+{
+    graphFormat = g.getFormat();
+    id=value.options[value.selectedIndex].value;
+    barText = id;
+    reloadGraph();
 }
 
-function reloadGraph() {
-	g.setShowRes(booShowRessources);
-	g.setShowComp(booShowComplete);
-	g.setShowDur(booShowDurations);
-	g.setCaptionType(barText);
-	g.setFormat(graphFormat);
-	g.Draw(jQuery("#tabs").width()-40);
+function reloadGraph()
+{
+    g.setShowRes(booShowRessources);
+    g.setShowComp(booShowComplete);
+    g.setShowDur(booShowDurations);
+    g.setCaptionType(barText);
+    g.setFormat(graphFormat);
+    g.Draw(jQuery("#tabs").width()-40);
 }
-
 
 var g = new JSGantt.GanttChart('g',document.getElementById('GanttChartDIV'), 'day');
 var booShowRessources = 1;
@@ -95,29 +96,25 @@ g.setShowStartDate(1); 	// Show/Hide % Complete(0/1)
 g.setShowEndDate(1); 	// Show/Hide % Complete(0/1)
 g.setFormatArr("day","week","month","quarter") // Set format options (up to 4 : "minute","hour","day","week","month","quarter")
 g.setCaptionType('Caption');  // Set to Show Caption (None,Caption,Resource,Duration,Complete)
-if(g) {
+if (g) {
 <?php
 $level=0;
 $tnums = count($tasks);
 for ($tcursor=0; $tcursor < $tnums; $tcursor++) {
-	$t = $tasks[$tcursor];
-	if ($t["task_parent"] == 0) {
-		constructGanttLine($tasks,$t,$project_dependencies,$level,$project_id);
-		findChildGanttLine($tasks,$t["task_id"],$project_dependencies,$level+1);
-	}
+    $t = $tasks[$tcursor];
+    if ($t["task_parent"] == 0) {
+        constructGanttLine($tasks,$t,$project_dependencies,$level,$project_id);
+        findChildGanttLine($tasks,$t["task_id"],$project_dependencies,$level+1);
+    }
 }
 ?>
-	g.Draw(jQuery("#tabs").width()-40);
-	setTimeout('g.DrawDependencies()',100);
-}
-else
-{
-	alert("<?php echo $langs->trans("FailedToDefinGraph"); ?>");
+    g.Draw(jQuery("#tabs").width()-40);
+    setTimeout('g.DrawDependencies()',100);
+} else {
+    alert("<?php echo $langs->trans("FailedToDefinGraph"); ?>");
 }
 </script>
 </div>
-
-
 
 <?php
 /**
@@ -161,7 +158,7 @@ function constructGanttLine($tarr,$task,$project_dependencies,$level=0,$project_
     $link=DOL_URL_ROOT.'/projet/tasks/task.php?withproject=1&id='.$task["task_id"];
     // Name
     $name=$task['task_name'];
-    for($i=0; $i < $level; $i++) {
+    for ($i=0; $i < $level; $i++) {
         $name=' &nbsp; &nbsp; '.$name;
     }
     // Add line to gantt
@@ -183,14 +180,10 @@ function constructGanttLine($tarr,$task,$project_dependencies,$level=0,$project_
 function findChildGanttLine($tarr,$parent,$project_dependencies,$level)
 {
     $n=count($tarr);
-    for ($x=0; $x < $n; $x++)
-    {
-        if($tarr[$x]["task_parent"] == $parent && $tarr[$x]["task_parent"] != $tarr[$x]["task_id"])
-        {
+    for ($x=0; $x < $n; $x++) {
+        if ($tarr[$x]["task_parent"] == $parent && $tarr[$x]["task_parent"] != $tarr[$x]["task_id"]) {
             constructGanttLine($tarr,$tarr[$x],$project_dependencies,$level,null);
             findChildGanttLine($tarr,$tarr[$x]["task_id"],$project_dependencies,$level+1);
         }
     }
 }
-
-?>

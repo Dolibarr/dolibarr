@@ -33,31 +33,26 @@ $langs->load("admin");
 $langs->load("cron");
 
 if (! $user->admin)
-	accessforbidden();
+    accessforbidden();
 
 $actionsave=GETPOST("save");
 
 // Sauvegardes parametres
-if (!empty($actionsave))
-{
-	$i=0;
+if (!empty($actionsave)) {
+    $i=0;
 
-	$db->begin();
+    $db->begin();
 
-	$i+=dolibarr_set_const($db,'CRON_KEY',trim(GETPOST("CRON_KEY")),'chaine',0,'',0);
+    $i+=dolibarr_set_const($db,'CRON_KEY',trim(GETPOST("CRON_KEY")),'chaine',0,'',0);
 
-	if ($i >= 1)
-	{
-		$db->commit();
-		setEventMessage($langs->trans("SetupSaved"));
-	}
-	else
-	{
-		$db->rollback();
-		setEventMessage($langs->trans("Error"), 'errors');
-	}
+    if ($i >= 1) {
+        $db->commit();
+        setEventMessage($langs->trans("SetupSaved"));
+    } else {
+        $db->rollback();
+        setEventMessage($langs->trans("Error"), 'errors');
+    }
 }
-
 
 /*
  *	View
@@ -89,7 +84,7 @@ print '<tr class="impair">';
 print '<td class="fieldrequired">'.$langs->trans("KeyForCronAccess").'</td>';
 print '<td><input type="text" class="flat" id="CRON_KEY" name="CRON_KEY" value="'. (GETPOST('CRON_KEY')?GETPOST('CRON_KEY'):(! empty($conf->global->CRON_KEY)?$conf->global->CRON_KEY:'')) . '" size="40">';
 if (! empty($conf->use_javascript_ajax))
-	print '&nbsp;'.img_picto($langs->trans('Generate'), 'refresh', 'id="generate_token" class="linkobject"');
+    print '&nbsp;'.img_picto($langs->trans('Generate'), 'refresh', 'id="generate_token" class="linkobject"');
 print '</td>';
 print '<td>&nbsp;</td>';
 print '</tr>';
@@ -106,7 +101,6 @@ dol_fiche_end();
 
 print '<br><br>';
 
-
 // Define $urlwithroot
 $urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
 $urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
@@ -121,7 +115,6 @@ $url=$urlwithroot.'/public/cron/cron_run_jobs.php'.(empty($conf->global->CRON_KE
 print img_picto('','object_globe.png').' <a href="'.$url.'" target="_blank">'.$url."</a><br>\n";
 print '<br>';
 
-
 $linuxlike=1;
 if (preg_match('/^win/i',PHP_OS)) $linuxlike=0;
 if (preg_match('/^mac/i',PHP_OS)) $linuxlike=0;
@@ -134,31 +127,27 @@ print '<textarea rows="'.ROWS_2.'" cols="120">..'.$file."</textarea><br>\n";
 print '<br>';
 print $langs->trans("Note").': ';
 if ($linuxlike) {
-	print $langs->trans("CronExplainHowToRunUnix");
+    print $langs->trans("CronExplainHowToRunUnix");
 } else {
-	print $langs->trans("CronExplainHowToRunWin");
+    print $langs->trans("CronExplainHowToRunWin");
 }
-
-
-
 
 print '<br>';
 
-if (! empty($conf->use_javascript_ajax))
-{
-	print "\n".'<script type="text/javascript">';
-	print '$(document).ready(function () {
-		$("#generate_token").click(function() {
-		$.get( "'.DOL_URL_ROOT.'/core/ajax/security.php", {
-			action: \'getrandompassword\',
-			generic: true
+if (! empty($conf->use_javascript_ajax)) {
+    print "\n".'<script type="text/javascript">';
+    print '$(document).ready(function () {
+        $("#generate_token").click(function() {
+        $.get( "'.DOL_URL_ROOT.'/core/ajax/security.php", {
+            action: \'getrandompassword\',
+            generic: true
 },
-			function(token) {
-			$("#CRON_KEY").val(token);
+            function(token) {
+            $("#CRON_KEY").val(token);
 });
 });
 });';
-	print '</script>';
+    print '</script>';
 }
 
 llxFooter();

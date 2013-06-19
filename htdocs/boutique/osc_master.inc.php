@@ -26,14 +26,11 @@
  */
 $dbosc=getDoliDBInstance($conf->db->type,$conf->global->OSC_DB_HOST,$conf->global->OSC_DB_USER,$conf->global->OSC_DB_PASS,$conf->global->OSC_DB_NAME,$conf->global->OSC_DB_PORT);
 
-if (! $dbosc->connected)
-{
+if (! $dbosc->connected) {
     dol_syslog($dbosc,"host=".$conf->global->OSC_DB_HOST.", user=".$conf->global->OSC_DB_USER.", databasename=".$conf->global->OSC_DB_NAME.", ".$db->error,LOG_ERR);
 
-	llxHeader("",$langs->trans("OSCommerceShop"),"");
-	print '<div class="error">Failed to connect to oscommerce database. Check your module setup</div>';
-	llxFooter();
-	exit;
+    llxHeader("",$langs->trans("OSCommerceShop"),"");
+    print '<div class="error">Failed to connect to oscommerce database. Check your module setup</div>';
+    llxFooter();
+    exit;
 }
-
-?>

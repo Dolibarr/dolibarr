@@ -23,7 +23,7 @@
  *       \brief      Page liste des contrats
  */
 
-require ("../main.inc.php");
+require '../main.inc.php';
 require_once (DOL_DOCUMENT_ROOT."/contrat/class/contrat.class.php");
 
 $langs->load("contracts");
@@ -53,7 +53,6 @@ $result = restrictedArea($user, 'contrat', $id);
 
 $staticcontrat=new Contrat($db);
 $staticcontratligne=new ContratLigne($db);
-
 
 /*
  * View
@@ -88,8 +87,7 @@ $sql.= " ORDER BY $sortfield $sortorder";
 $sql.= $db->plimit($conf->liste_limit + 1, $offset);
 
 $resql=$db->query($sql);
-if ($resql)
-{
+if ($resql) {
     $num = $db->num_rows($resql);
     $i = 0;
 
@@ -128,8 +126,7 @@ if ($resql)
     print '</form>';
 
     $var=true;
-    while ($i < min($num,$limit))
-    {
+    while ($i < min($num,$limit)) {
         $obj = $db->fetch_object($resql);
         $var=!$var;
         print '<tr '.$bc[$var].'>';
@@ -151,13 +148,9 @@ if ($resql)
     $db->free($resql);
 
     print "</table>";
-}
-else
-{
+} else {
     dol_print_error($db);
 }
 
-
 llxFooter();
 $db->close();
-?>

@@ -43,14 +43,12 @@ $tab = $_SESSION['poscart'];
 
 $tab_size=count($tab);
 if ($tab_size <= 0) print '<center>'.$langs->trans("NoArticle").'<center><br>';
-else
-{
-    for ($i=0;$i < $tab_size;$i++)
-    {
+else {
+    for ($i=0;$i < $tab_size;$i++) {
         echo ('<div class="cadre_article">'."\n");
         echo ('<p><a href="facturation_verif.php?action=suppr_article&suppr_id='.$tab[$i]['id'].'" title="'.$langs->trans("DeleteArticle").'">'.$tab[$i]['ref'].' - '.$tab[$i]['label'].'</a></p>'."\n");
 
-        if ( $tab[$i]['remise_percent'] > 0 ) {
+        if ($tab[$i]['remise_percent'] > 0) {
 
             $remise_percent = ' -'.$tab[$i]['remise_percent'].'%';
 

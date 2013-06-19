@@ -26,57 +26,54 @@ $openeddir='/';
 <!-- BEGIN PHP TEMPLATE FOR JQUERY -->
 <script type="text/javascript">
 $(document).ready( function() {
-	$('#filetree').fileTree({ root: '<?php print dol_escape_js($openeddir); ?>',
-			// Called if we click on a file (not a dir)
-			script: '<?php echo DOL_URL_ROOT.'/core/ajax/ajaxdirtree.php?modulepart=ecm&openeddir='.urlencode($openeddir); ?>',
-			folderEvent: 'click',
-			multiFolder: false  },
-			// Called if we click on a file (not a dir)
-		function(file) {
-			$("#mesg").hide();
-			loadandshowpreview(file,0);
-		}
-	);
+    $('#filetree').fileTree({ root: '<?php print dol_escape_js($openeddir); ?>',
+            // Called if we click on a file (not a dir)
+            script: '<?php echo DOL_URL_ROOT.'/core/ajax/ajaxdirtree.php?modulepart=ecm&openeddir='.urlencode($openeddir); ?>',
+            folderEvent: 'click',
+            multiFolder: false  },
+            // Called if we click on a file (not a dir)
+        function(file) {
+            $("#mesg").hide();
+            loadandshowpreview(file,0);
+        }
+    );
 
-	$('#refreshbutton').click( function() {
-		ecmBuildDatabase();
-	});
+    $('#refreshbutton').click( function() {
+        ecmBuildDatabase();
+    });
 });
 
 function loadandshowpreview(filedirname,section)
 {
-	//alert('filedirname='+filedirname);
-	$('#ecmfileview').empty();
+    //alert('filedirname='+filedirname);
+    $('#ecmfileview').empty();
 
-	var url = '<?php echo dol_buildpath('/core/ajax/ajaxdirpreview.php',1); ?>?action=preview&module=ecm&section='+section+'&file='+urlencode(filedirname);
-	$.get(url, function(data) {
-		//alert('Load of url '+url+' was performed : '+data);
-		pos=data.indexOf("TYPE=directory",0);
-		//alert(pos);
-		if ((pos > 0) && (pos < 20))
-		{
-			filediractive=filedirname;    // Save current dirname
-			filetypeactive='directory';
-		}
-		else
-		{
-			filediractive=filedirname;    // Save current dirname
-			filetypeactive='file';
-		}
-		$('#ecmfileview').append(data);
-	});
+    var url = '<?php echo dol_buildpath('/core/ajax/ajaxdirpreview.php',1); ?>?action=preview&module=ecm&section='+section+'&file='+urlencode(filedirname);
+    $.get(url, function(data) {
+        //alert('Load of url '+url+' was performed : '+data);
+        pos=data.indexOf("TYPE=directory",0);
+        //alert(pos);
+        if ((pos > 0) && (pos < 20)) {
+            filediractive=filedirname;    // Save current dirname
+            filetypeactive='directory';
+        } else {
+            filediractive=filedirname;    // Save current dirname
+            filetypeactive='file';
+        }
+        $('#ecmfileview').append(data);
+    });
 }
 
 ecmBuildDatabase = function() {
-	$.pleaseBePatient("<?php echo $langs->trans('PleaseBePatient'); ?>");
-	$.getJSON( "<?php echo DOL_URL_ROOT . '/ecm/ajax/ecmdatabase.php'; ?>", {
-		action: "build",
-		element: "ecm"
-	},
-	function(response) {
-		$.unblockUI();
-		location.href="<?php echo $_SERVER['PHP_SELF']; ?>";
-	});
+    $.pleaseBePatient("<?php echo $langs->trans('PleaseBePatient'); ?>");
+    $.getJSON( "<?php echo DOL_URL_ROOT . '/ecm/ajax/ecmdatabase.php'; ?>", {
+        action: "build",
+        element: "ecm"
+    },
+    function(response) {
+        $.unblockUI();
+        location.href="<?php echo $_SERVER['PHP_SELF']; ?>";
+    });
 };
 </script>
 <!-- END PHP TEMPLATE FOR JQUERY -->

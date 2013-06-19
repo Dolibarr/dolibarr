@@ -33,7 +33,6 @@ if (!$user->admin) accessforbidden();
 
 // None
 
-
 /*
  * View
  */
@@ -61,15 +60,14 @@ print '<table class="noborder">
 ';
 
 $var=True;
-foreach ($triggers as $trigger)
-{
-	$var=!$var;
-	print '<tr '.$bc[$var].'>';
-	print '<td valign="top" width="14" align="center">'.$trigger['picto'].'</td>';
-	print '<td valign="top">'.$trigger['file'].'</td>';
-	print '<td valign="top" align="center">'.$trigger['status'].'</td>';
-	print '<td valign="top">'.$form->textwithpicto('', $trigger['info']).'</td>';
-	print '</tr>';
+foreach ($triggers as $trigger) {
+    $var=!$var;
+    print '<tr '.$bc[$var].'>';
+    print '<td valign="top" width="14" align="center">'.$trigger['picto'].'</td>';
+    print '<td valign="top">'.$trigger['file'].'</td>';
+    print '<td valign="top" align="center">'.$trigger['status'].'</td>';
+    print '<td valign="top">'.$form->textwithpicto('', $trigger['info']).'</td>';
+    print '</tr>';
 }
 
 print '</table>';
@@ -77,4 +75,3 @@ print '</table>';
 llxFooter();
 
 $db->close();
-?>

@@ -41,101 +41,83 @@ if (defined('SYSLOG_HANDLERS')) $activeModules = json_decode(constant('SYSLOG_HA
 
 $dir = dol_buildpath('/core/modules/syslog/');
 
-if (is_dir($dir))
-{
-	$handle = opendir($dir);
+if (is_dir($dir)) {
+    $handle = opendir($dir);
 
-	if (is_resource($handle))
-	{
-		$var=true;
+    if (is_resource($handle)) {
+        $var=true;
 
-		while (($file = readdir($handle))!==false)
-		{
-			if (substr($file, 0, 11) == 'mod_syslog_' && substr($file, dol_strlen($file)-3, 3) == 'php')
-			{
-				$file = substr($file, 0, dol_strlen($file)-4);
+        while (($file = readdir($handle))!==false) {
+            if (substr($file, 0, 11) == 'mod_syslog_' && substr($file, dol_strlen($file)-3, 3) == 'php') {
+                $file = substr($file, 0, dol_strlen($file)-4);
 
-				require_once $dir.$file.'.php';
+                require_once $dir.$file.'.php';
 
-				$module = new $file;
+                $module = new $file;
 
-				// Show modules according to features level
-				if ($module->getVersion() == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
-				if ($module->getVersion() == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
+                // Show modules according to features level
+                if ($module->getVersion() == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
+                if ($module->getVersion() == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
 
-				$syslogModules[] = $file;
-			}
-		}
-		closedir($handle);
-	}
+                $syslogModules[] = $file;
+            }
+        }
+        closedir($handle);
+    }
 }
-
 
 /*
  * Actions
  */
 
 // Set modes
-if ($action == 'set')
-{
-	$db->begin();
+if ($action == 'set') {
+    $db->begin();
 
-	$activeModules = array();
-	$selectedModules = (isset($_POST['SYSLOG_HANDLERS']) ? $_POST['SYSLOG_HANDLERS'] : array());
+    $activeModules = array();
+    $selectedModules = (isset($_POST['SYSLOG_HANDLERS']) ? $_POST['SYSLOG_HANDLERS'] : array());
 
-	foreach ($selectedModules as $syslogHandler)
-	{
-		if (in_array($syslogHandler, $syslogModules))
-		{
-			$module = new $syslogHandler;
+    foreach ($selectedModules as $syslogHandler) {
+        if (in_array($syslogHandler, $syslogModules)) {
+            $module = new $syslogHandler;
 
-			if ($module->isActive())
-			{
-				$activeModules[] = $syslogHandler;
+            if ($module->isActive()) {
+                $activeModules[] = $syslogHandler;
 
-				foreach ($module->configure() as $option)
-				{
-					if ($_POST[$option['constant']])
-					{
-						dolibarr_del_const($db, $option['constant'], 0);
-						dolibarr_set_const($db, $option['constant'], $_POST[$option['constant']], 'chaine',0, '', 0);
-					}
-				}
-			}
-		}
-	}
+                foreach ($module->configure() as $option) {
+                    if ($_POST[$option['constant']]) {
+                        dolibarr_del_const($db, $option['constant'], 0);
+                        dolibarr_set_const($db, $option['constant'], $_POST[$option['constant']], 'chaine',0, '', 0);
+                    }
+                }
+            }
+        }
+    }
 
-	dolibarr_set_const($db, 'SYSLOG_HANDLERS', json_encode($activeModules), 'chaine',0,'',0);
+    dolibarr_set_const($db, 'SYSLOG_HANDLERS', json_encode($activeModules), 'chaine',0,'',0);
 
-    if (! $error)
-	{
-		$db->commit();
-		$mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
-	}
-	else
-	{
-		$db->rollback();
-		if (empty($mesg)) $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
-	}
+    if (! $error) {
+        $db->commit();
+        $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
+    } else {
+        $db->rollback();
+        if (empty($mesg)) $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
+    }
 
 }
 
 // Set level
-if ($action == 'setlevel')
-{
-	$level = GETPOST("level");
-	$res = dolibarr_set_const($db,"SYSLOG_LEVEL",$level,'chaine',0,'',0);
-	dol_syslog("admin/syslog: level ".$level);
+if ($action == 'setlevel') {
+    $level = GETPOST("level");
+    $res = dolibarr_set_const($db,"SYSLOG_LEVEL",$level,'chaine',0,'',0);
+    dol_syslog("admin/syslog: level ".$level);
 
-	if (! $res > 0) $error++;
-	if (! $error)
-    {
+    if (! $res > 0) $error++;
+    if (! $error) {
         $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
-    }
-    else
-    {
+    } else {
         $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
-	}
+    }
 }
 
 /*
@@ -158,10 +140,9 @@ $syslogfile=$defaultsyslogfile=dolibarr_get_const($db,"SYSLOG_FILE",0);
 if (! $defaultsyslogfacility) $defaultsyslogfacility='LOG_USER';
 if (! $defaultsyslogfile) $defaultsyslogfile='dolibarr.log';
 
-if ($conf->global->MAIN_MODULE_MULTICOMPANY && $user->entity)
-{
-	print '<div class="error">'.$langs->trans("ContactSuperAdminForChange").'</div>';
-	$option = 'disabled="disabled"';
+if ($conf->global->MAIN_MODULE_MULTICOMPANY && $user->entity) {
+    print '<div class="error">'.$langs->trans("ContactSuperAdminForChange").'</div>';
+    $option = 'disabled="disabled"';
 }
 
 // Output mode
@@ -178,42 +159,38 @@ print '<td align="right" colspan="2"><input type="submit" class="button" '.$opti
 print "</tr>\n";
 $var=true;
 
-foreach ($syslogModules as $moduleName)
-{
-	$module = new $moduleName;
+foreach ($syslogModules as $moduleName) {
+    $module = new $moduleName;
 
-	$moduleactive=$module->isActive();
-	if ($moduleactive == -1 && empty($conf->global->MAIN_FEATURES_LEVEL)) continue;		// Some modules are hidden if not activable and not into debug mode (end user must not see them)
+    $moduleactive=$module->isActive();
+    if ($moduleactive == -1 && empty($conf->global->MAIN_FEATURES_LEVEL)) continue;		// Some modules are hidden if not activable and not into debug mode (end user must not see them)
 
-	$var=!$var;
-	print '<tr '.$bc[$var].'>';
-	print '<td width="140">';
-	print '<input '.$bc[$var].' type="checkbox" name="SYSLOG_HANDLERS[]" value="'.$moduleName.'" '.(in_array($moduleName, $activeModules) ? 'checked="checked"' : '').(!$moduleactive ? 'disabled="disabled"' : '').'> ';
-	print $module->getName();
-	print '</td>';
+    $var=!$var;
+    print '<tr '.$bc[$var].'>';
+    print '<td width="140">';
+    print '<input '.$bc[$var].' type="checkbox" name="SYSLOG_HANDLERS[]" value="'.$moduleName.'" '.(in_array($moduleName, $activeModules) ? 'checked="checked"' : '').(!$moduleactive ? 'disabled="disabled"' : '').'> ';
+    print $module->getName();
+    print '</td>';
 
-	print '<td class="nowrap">';
-	$setuparray=$module->configure();
-	if ($setuparray)
-	{
-		foreach ($setuparray as $option)
-		{
-			if (isset($_POST[$option['constant']])) $value=$_POST[$option['constant']]; 
-			else if (defined($option['constant'])) $value = constant($option['constant']);
-			else $value = (isset($option['default']) ? $option['default'] : '');
+    print '<td class="nowrap">';
+    $setuparray=$module->configure();
+    if ($setuparray) {
+        foreach ($setuparray as $option) {
+            if (isset($_POST[$option['constant']])) $value=$_POST[$option['constant']];
+            else if (defined($option['constant'])) $value = constant($option['constant']);
+            else $value = (isset($option['default']) ? $option['default'] : '');
 
-			print $option['name'].': <input type="text" class="flat" name="'.$option['constant'].'" value="'.$value.'"'.(isset($option['attr']) ? ' '.$option['attr'] : '').'>';
-		}
-	}
-	print '</td>';
+            print $option['name'].': <input type="text" class="flat" name="'.$option['constant'].'" value="'.$value.'"'.(isset($option['attr']) ? ' '.$option['attr'] : '').'>';
+        }
+    }
+    print '</td>';
 
-	print '<td align="left">';
-	if ($module->getInfo())
-	{
-		print $form->textwithpicto('', $module->getInfo());
-	}
-	print '</td>';
-	print "</tr>\n";
+    print '<td align="left">';
+    if ($module->getInfo()) {
+        print $form->textwithpicto('', $module->getInfo());
+    }
+    print '</td>';
+    print "</tr>\n";
 }
 
 print "</table>\n";
@@ -254,4 +231,3 @@ dol_htmloutput_mesg($mesg);
 llxFooter();
 
 $db->close();
-?>

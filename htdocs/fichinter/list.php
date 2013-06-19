@@ -54,13 +54,11 @@ $search_ref=GETPOST('search_ref','alpha');
 $search_company=GETPOST('search_company','alpha');
 $search_desc=GETPOST('search_desc','alpha');
 
-
 /*
  *	View
  */
 
 llxHeader();
-
 
 $sql = "SELECT";
 $sql.= " f.ref, f.rowid as fichid, f.fk_statut, f.description,";
@@ -68,7 +66,7 @@ $sql.= " fd.description as descriptiondetail, fd.date as dp, fd.duree,";
 $sql.= " s.nom, s.rowid as socid, s.client";
 $sql.= " FROM (".MAIN_DB_PREFIX."societe as s";
 if (! $user->rights->societe->client->voir && empty($socid))
-	$sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+    $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql.= ", ".MAIN_DB_PREFIX."fichinter as f)";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."fichinterdet as fd ON fd.fk_fichinter = f.rowid";
 $sql.= " WHERE f.fk_soc = s.rowid ";
@@ -77,95 +75,90 @@ if ($search_ref)     $sql .= " AND f.ref LIKE '%".$db->escape($search_ref)."%'";
 if ($search_company) $sql .= " AND s.nom LIKE '%".$db->escape($search_company)."%'";
 if ($search_desc)    $sql .= " AND (f.description LIKE '%".$db->escape($search_desc)."%' OR fd.description LIKE '%".$db->escape($search_desc)."%')";
 if (! $user->rights->societe->client->voir && empty($socid))
-	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+    $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 if ($socid)
-	$sql.= " AND s.rowid = " . $socid;
+    $sql.= " AND s.rowid = " . $socid;
 $sql.= " ORDER BY ".$sortfield." ".$sortorder;
 $sql.= $db->plimit($limit+1, $offset);
 
 $result=$db->query($sql);
-if ($result)
-{
-	$num = $db->num_rows($result);
+if ($result) {
+    $num = $db->num_rows($result);
 
-	$interventionstatic=new Fichinter($db);
+    $interventionstatic=new Fichinter($db);
 
-	$urlparam="&amp;socid=$socid";
-	print_barre_liste($langs->trans("ListOfInterventions"), $page, $_SERVER['PHP_SELF'], $urlparam, $sortfield, $sortorder, '', $num);
+    $urlparam="&amp;socid=$socid";
+    print_barre_liste($langs->trans("ListOfInterventions"), $page, $_SERVER['PHP_SELF'], $urlparam, $sortfield, $sortorder, '', $num);
 
-	print '<form method="get" action="'.$_SERVER["PHP_SELF"].'">'."\n";
-	print '<table class="noborder" width="100%">';
+    print '<form method="get" action="'.$_SERVER["PHP_SELF"].'">'."\n";
+    print '<table class="noborder" width="100%">';
 
-	print '<tr class="liste_titre">';
-	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"f.ref","",$urlparam,'width="15%"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","",$urlparam,'',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Description"),$_SERVER["PHP_SELF"],"f.description","",$urlparam,'',$sortfield,$sortorder);
-	print_liste_field_titre('',$_SERVER["PHP_SELF"],'');
-	print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"fd.date","",$urlparam,'align="center"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Duration"),$_SERVER["PHP_SELF"],"fd.duree","",$urlparam,'align="right"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"f.fk_statut","",$urlparam,'align="right"',$sortfield,$sortorder);
-	print "</tr>\n";
+    print '<tr class="liste_titre">';
+    print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"f.ref","",$urlparam,'width="15%"',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","",$urlparam,'',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Description"),$_SERVER["PHP_SELF"],"f.description","",$urlparam,'',$sortfield,$sortorder);
+    print_liste_field_titre('',$_SERVER["PHP_SELF"],'');
+    print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"fd.date","",$urlparam,'align="center"',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Duration"),$_SERVER["PHP_SELF"],"fd.duree","",$urlparam,'align="right"',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"f.fk_statut","",$urlparam,'align="right"',$sortfield,$sortorder);
+    print "</tr>\n";
 
-	print '<tr class="liste_titre">';
-	print '<td class="liste_titre">';
-	print '<input type="text" class="flat" name="search_ref" value="'.$search_ref.'" size="8">';
-	print '</td><td class="liste_titre">';
-	print '<input type="text" class="flat" name="search_company" value="'.$search_company.'" size="10">';
-	print '</td><td class="liste_titre">';
-	print '<input type="text" class="flat" name="search_desc" value="'.$search_desc.'" size="12">';
-	print '</td>';
-	print '<td class="liste_titre">&nbsp;</td>';
+    print '<tr class="liste_titre">';
+    print '<td class="liste_titre">';
+    print '<input type="text" class="flat" name="search_ref" value="'.$search_ref.'" size="8">';
+    print '</td><td class="liste_titre">';
+    print '<input type="text" class="flat" name="search_company" value="'.$search_company.'" size="10">';
+    print '</td><td class="liste_titre">';
+    print '<input type="text" class="flat" name="search_desc" value="'.$search_desc.'" size="12">';
+    print '</td>';
     print '<td class="liste_titre">&nbsp;</td>';
-	print '<td class="liste_titre">&nbsp;</td>';
-	print '<td class="liste_titre" align="right"><input class="liste_titre" type="image" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'"></td>';
-	print "</tr>\n";
+    print '<td class="liste_titre">&nbsp;</td>';
+    print '<td class="liste_titre">&nbsp;</td>';
+    print '<td class="liste_titre" align="right"><input class="liste_titre" type="image" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'"></td>';
+    print "</tr>\n";
 
-	$companystatic=new Societe($db);
+    $companystatic=new Societe($db);
 
-	$var=True;
-	$total = 0;
-	$i = 0;
-	while ($i < min($num, $limit))
-	{
-		$objp = $db->fetch_object($result);
-		$var=!$var;
-		print "<tr $bc[$var]>";
-		print "<td>";
-		$interventionstatic->id=$objp->fichid;
-		$interventionstatic->ref=$objp->ref;
-		print $interventionstatic->getNomUrl(1);
-		print "</td>\n";
-		print '<td>';
-		$companystatic->nom=$objp->nom;
-		$companystatic->id=$objp->socid;
-		$companystatic->client=$objp->client;
-		print $companystatic->getNomUrl(1,'',44);
-		print '</td>';
+    $var=True;
+    $total = 0;
+    $i = 0;
+    while ($i < min($num, $limit)) {
+        $objp = $db->fetch_object($result);
+        $var=!$var;
+        print "<tr $bc[$var]>";
+        print "<td>";
+        $interventionstatic->id=$objp->fichid;
+        $interventionstatic->ref=$objp->ref;
+        print $interventionstatic->getNomUrl(1);
+        print "</td>\n";
+        print '<td>';
+        $companystatic->nom=$objp->nom;
+        $companystatic->id=$objp->socid;
+        $companystatic->client=$objp->client;
+        print $companystatic->getNomUrl(1,'',44);
+        print '</td>';
         print '<td>'.dol_htmlentitiesbr(dol_trunc($objp->description,20)).'</td>';
-		print '<td>'.dol_htmlentitiesbr(dol_trunc($objp->descriptiondetail,20)).'</td>';
-		print '<td align="center">'.dol_print_date($db->jdate($objp->dp),'dayhour')."</td>\n";
-		print '<td align="right">'.convertSecondToTime($objp->duree).'</td>';
-		print '<td align="right">'.$interventionstatic->LibStatut($objp->fk_statut,5).'</td>';
+        print '<td>'.dol_htmlentitiesbr(dol_trunc($objp->descriptiondetail,20)).'</td>';
+        print '<td align="center">'.dol_print_date($db->jdate($objp->dp),'dayhour')."</td>\n";
+        print '<td align="right">'.convertSecondToTime($objp->duree).'</td>';
+        print '<td align="right">'.$interventionstatic->LibStatut($objp->fk_statut,5).'</td>';
 
-		print "</tr>\n";
+        print "</tr>\n";
 
-		$total += $objp->duree;
-		$i++;
-	}
-	print '<tr class="liste_total"><td colspan="5" class="liste_total">'.$langs->trans("Total").'</td>';
-	print '<td align="right" class="nowrap liste_total">'.convertSecondToTime($total).'</td><td>&nbsp;</td>';
-	print '</tr>';
+        $total += $objp->duree;
+        $i++;
+    }
+    print '<tr class="liste_total"><td colspan="5" class="liste_total">'.$langs->trans("Total").'</td>';
+    print '<td align="right" class="nowrap liste_total">'.convertSecondToTime($total).'</td><td>&nbsp;</td>';
+    print '</tr>';
 
-	print '</table>';
-	print "</form>\n";
-	$db->free($result);
-}
-else
-{
-	dol_print_error($db);
+    print '</table>';
+    print "</form>\n";
+    $db->free($result);
+} else {
+    dol_print_error($db);
 }
 
 $db->close();
 
 llxFooter();
-?>

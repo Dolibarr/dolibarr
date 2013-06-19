@@ -42,8 +42,7 @@ $sql.= " WHERE fd.fk_code_ventilation = 0";
 $sql.= " AND f.rowid = fd.fk_facture AND f.fk_statut = 1";
 
 $result = $db->query($sql);
-if ($result)
-{
+if ($result) {
   $row = $db->fetch_row($result);
   $nbfac = $row[0];
 
@@ -60,10 +59,8 @@ print "<tr ".$bc[$var].">".'<td>'.$langs->trans("Invoices").'</td><td align="rig
 $var=!$var;
 print "</table>\n";
 
-
 //print '</td><td valign="top" width="70%" class="notopnoleftnoright">';
 print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
-
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td>'.$langs->trans("Type").'</td><td align="center">'.$langs->trans("NbOfLines").'</td><td align="center">'.$langs->trans("AccountNumber").'</td><td align="center">'.$langs->trans("TransID").'</td></tr>';
@@ -74,14 +71,12 @@ $sql.= " WHERE fd.fk_code_ventilation = ccg.rowid";
 $sql.= " GROUP BY ccg.rowid";
 
 $resql = $db->query($sql);
-if ($resql)
-{
+if ($resql) {
     $i = 0;
     $num = $db->num_rows($resql);
     $var=true;
 
-    while ($i < $num)
-    {
+    while ($i < $num) {
 
         $row = $db->fetch_row($resql);
         $var=!$var;
@@ -96,8 +91,6 @@ print "</table>\n";
 //print '</td></tr></table>';
 print '</div></div></div>';
 
-
 llxFooter();
 
 $db->close();
-?>

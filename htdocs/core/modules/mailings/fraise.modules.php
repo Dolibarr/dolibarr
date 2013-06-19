@@ -26,71 +26,67 @@
 include_once DOL_DOCUMENT_ROOT.'/core/modules/mailings/modules_mailings.php';
 include_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 
-
 /**
  *	    \class      mailing_fraise
  *		\brief      Class to generate target according to rule Fraise
  */
 class mailing_fraise extends MailingTargets
 {
-	// CHANGE THIS: Put here a name not already used
-	var $name='FundationMembers';                    // Identifiant du module mailing
-	// CHANGE THIS: Put here a description of your selector module.
-	// This label is used if no translation found for key MailingModuleDescXXX where XXX=name is found
-    var $desc='Foundation members with emails (by status)';
-	// CHANGE THIS: Set to 1 if selector is available for admin users only
-    var $require_admin=0;
+    // CHANGE THIS: Put here a name not already used
+    public $name='FundationMembers';                    // Identifiant du module mailing
+    // CHANGE THIS: Put here a description of your selector module.
+    // This label is used if no translation found for key MailingModuleDescXXX where XXX=name is found
+    public $desc='Foundation members with emails (by status)';
+    // CHANGE THIS: Set to 1 if selector is available for admin users only
+    public $require_admin=0;
 
-    var $require_module=array('adherent');
-    var $picto='user';
+    public $require_module=array('adherent');
+    public $picto='user';
 
-    var $db;
+    public $db;
 
-
-	/**
-	 *	Constructor
-	 *
-	 *  @param		DoliDB		$db      Database handler
-	 */
-    function __construct($db)
+    /**
+     *	Constructor
+     *
+     *  @param		DoliDB		$db      Database handler
+     */
+    public function __construct($db)
     {
         $this->db=$db;
     }
 
-
     /**
-	 *	On the main mailing area, there is a box with statistics.
-	 *	If you want to add a line in this report you must provide an
-	 *	array of SQL request that returns two field:
-	 *	One called "label", One called "nb".
-	 *
-	 *	@return		array		Array with SQL requests
-	 */
-    function getSqlArrayForStats()
-	{
+     *	On the main mailing area, there is a box with statistics.
+     *	If you want to add a line in this report you must provide an
+     *	array of SQL request that returns two field:
+     *	One called "label", One called "nb".
+     *
+     *	@return		array		Array with SQL requests
+     */
+    public function getSqlArrayForStats()
+    {
         global $langs;
 
         $langs->load("members");
 
-		// Array for requests for statistics board
-	    $statssql=array();
+        // Array for requests for statistics board
+        $statssql=array();
 
         $statssql[0] ="SELECT '".$this->db->escape($langs->trans("FundationMembers"))."' as label, count(*) as nb";
-		$statssql[0].=" FROM ".MAIN_DB_PREFIX."adherent where statut = 1";
+        $statssql[0].=" FROM ".MAIN_DB_PREFIX."adherent where statut = 1";
 
-		return $statssql;
-	}
-
+        return $statssql;
+    }
 
     /**
-	 *	Return here number of distinct emails returned by your selector.
-	 *	For example if this selector is used to extract 500 different
-	 *	emails from a text file, this function must return 500.
-	 *
-	 *  @param	string	$sql		Requete sql de comptage
-	 *	@return		int			Nb of recipients
-	 */
-    function getNbOfRecipients($sql='')
+     *	Return here number of distinct emails returned by your selector.
+     *	For example if this selector is used to extract 500 different
+     *	emails from a text file, this function must return 500.
+     *
+     *  @param	string	$sql		Requete sql de comptage
+     *	@return		int			Nb of recipients
+     */
+    public function getNbOfRecipients($sql='')
     {
         $sql  = "SELECT count(distinct(a.email)) as nb";
         $sql .= " FROM ".MAIN_DB_PREFIX."adherent as a";
@@ -101,13 +97,12 @@ class mailing_fraise extends MailingTargets
         return parent::getNbOfRecipients($sql);
     }
 
-
     /**
      *   Affiche formulaire de filtre qui apparait dans page de selection des destinataires de mailings
      *
      *   @return     string      Retourne zone select
      */
-    function formFilter()
+    public function formFilter()
     {
         global $langs;
         $langs->load("members");
@@ -132,18 +127,16 @@ class mailing_fraise extends MailingTargets
         return $s;
     }
 
-
     /**
      *  Renvoie url lien vers fiche de la source du destinataire du mailing
      *
      *  @param	int		$id		ID
      *  @return     string      Url lien
      */
-    function url($id)
+    public function url($id)
     {
         return '<a href="'.DOL_URL_ROOT.'/adherents/fiche.php?rowid='.$id.'">'.img_object('',"user").'</a>';
     }
-
 
     /**
      *  Ajoute destinataires dans table des cibles
@@ -152,13 +145,13 @@ class mailing_fraise extends MailingTargets
      *  @param  array	$filtersarray   Param to filter sql request. Deprecated. Should use $_POST instead.
      *  @return int           			< 0 si erreur, nb ajout si ok
      */
-    function add_to_target($mailing_id,$filtersarray=array())
+    public function add_to_target($mailing_id,$filtersarray=array())
     {
-    	global $langs,$_POST;
-		$langs->load("members");
+        global $langs,$_POST;
+        $langs->load("members");
         $langs->load("companies");
 
-    	$cibles = array();
+        $cibles = array();
         $now=dol_now();
 
         $dateendsubscriptionafter=dol_mktime($_POST['subscriptionafterhour'],$_POST['subscriptionaftermin'],$_POST['subscriptionaftersec'],$_POST['subscriptionaftermonth'],$_POST['subscriptionafterday'],$_POST['subscriptionafteryear']);
@@ -182,8 +175,7 @@ class mailing_fraise extends MailingTargets
         // Add targets into table
         dol_syslog(get_class($this)."::add_to_target sql=".$sql);
         $result=$this->db->query($sql);
-        if ($result)
-        {
+        if ($result) {
             $num = $this->db->num_rows($result);
             $i = 0;
             $j = 0;
@@ -191,17 +183,15 @@ class mailing_fraise extends MailingTargets
             dol_syslog(get_class($this)."::add_to_target mailing ".$num." targets found");
 
             $old = '';
-            while ($i < $num)
-            {
+            while ($i < $num) {
                 $obj = $this->db->fetch_object($result);
-                if ($old <> $obj->email)
-                {
+                if ($old <> $obj->email) {
                     $cibles[$j] = array(
-                    			'email' => $obj->email,
-                    			'fk_contact' => $obj->fk_contact,
-                    			'lastname' => $obj->lastname,
-                    			'firstname' => $obj->firstname,
-                    			'other' =>
+                                'email' => $obj->email,
+                                'fk_contact' => $obj->fk_contact,
+                                'lastname' => $obj->lastname,
+                                'firstname' => $obj->firstname,
+                                'other' =>
                                 ($langs->transnoentities("Login").'='.$obj->login).';'.
                                 ($langs->transnoentities("UserTitle").'='.($obj->civilite?$langs->transnoentities("Civility".$obj->civilite):'')).';'.
                                 ($langs->transnoentities("DateEnd").'='.dol_print_date($this->db->jdate($obj->datefin),'day')).';'.
@@ -209,24 +199,21 @@ class mailing_fraise extends MailingTargets
                                 'source_url' => $this->url($obj->id),
                                 'source_id' => $obj->id,
                                 'source_type' => 'member'
-                    			);
+                                );
                     $old = $obj->email;
                     $j++;
                 }
 
                 $i++;
             }
-        }
-        else
-        {
+        } else {
             dol_syslog($this->db->error());
             $this->error=$this->db->error();
+
             return -1;
         }
 
         return parent::add_to_target($mailing_id, $cibles);
-	}
+    }
 
 }
-
-?>

@@ -1,11 +1,11 @@
 <?php
-include_once "includes/header.php";
-include_once "includes/navbar.php";
+include_once 'includes/header.php';
+include_once 'includes/navbar.php';
 ?>
 <h2>Magic Square Example</h2>
 <p>
-The Jama distribution comes with a magic square example that is used to 
-test and benchmark the LU, QR, SVD and symmetric Eig decompositions.  
+The Jama distribution comes with a magic square example that is used to
+test and benchmark the LU, QR, SVD and symmetric Eig decompositions.
 The example outputs a multi-column table with these column headings:
 </p>
 
@@ -46,11 +46,11 @@ Running the Java-based version of the matix square example produces these result
 <table border='1' align='center'>
   <tr>
     <th> n </th>
-    <th> trace </th>       
-    <th> max_eig </th>   
-    <th> rank </th>        
-    <th> cond </th>      
-    <th> lu_res </th>      
+    <th> trace </th>
+    <th> max_eig </th>
+    <th> rank </th>
+    <th> cond </th>
+    <th> lu_res </th>
     <th> qr_res </th>
   </tr>
   <tr>
@@ -146,14 +146,14 @@ Running the Java-based version of the matix square example produces these result
 <center>Elapsed Time =        0.710 seconds</center>
 
 <p>
-The magic square example does not fare well when <a href='../examples/MagicSquareExample.php'>run as a PHP script</a>.  For a 32x32 matrix array 
-it takes around a second to complete just the last row of computations in the above table.  
-Hopefully this result will spur PHP developers to find optimizations and better attuned algorithms 
-to speed things up. Matrix algebra is a great testing ground for ideas about time and memory 
-performance optimation.  Keep in perspective that PHP JAMA scripts are still plenty fast for use as 
-a tool for learning about matrix algebra and quickly extending your knowledge with new scripts 
+The magic square example does not fare well when <a href='../examples/MagicSquareExample.php'>run as a PHP script</a>.  For a 32x32 matrix array
+it takes around a second to complete just the last row of computations in the above table.
+Hopefully this result will spur PHP developers to find optimizations and better attuned algorithms
+to speed things up. Matrix algebra is a great testing ground for ideas about time and memory
+performance optimation.  Keep in perspective that PHP JAMA scripts are still plenty fast for use as
+a tool for learning about matrix algebra and quickly extending your knowledge with new scripts
 to apply knowledge.
-</p> 
+</p>
 
 <p>
 To learn more about the subject of magic squares you can visit the <a href='http://mathforum.org/alejandre/magic.square.html'>Drexel Math Forum on Magic Squares</a>.
@@ -162,5 +162,4 @@ You can also learn more by carefully examining the <code>MagicSquareExample.php<
 
 <?php
 highlight_file("../examples/MagicSquareExample.php");
-include_once "includes/footer.php";	
-?>
+include_once 'includes/footer.php';

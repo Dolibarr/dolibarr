@@ -22,7 +22,6 @@
  *      \brief      Authentication functions for OpenId mode
  */
 
-
 /**
  * Check validity of user/password/entity
  * If test is ko, reason must be filled into $_SESSION["dol_loginmesg"]
@@ -41,8 +40,7 @@ function check_user_password_myopenid($usertotest,$passwordtotest,$entitytotest)
     $login='';
 
     // Get identity from user and redirect browser to OpenID Server
-    if (isset($_POST['username']))
-    {
+    if (isset($_POST['username'])) {
         $openid = new SimpleOpenID();
         $openid->SetIdentity($_POST['username']);
         $protocol = ($conf->file->main_force_https ? 'https://' : 'http://');
@@ -50,26 +48,23 @@ function check_user_password_myopenid($usertotest,$passwordtotest,$entitytotest)
         $openid->SetRequiredFields(array('email','fullname'));
         $_SESSION['dol_entity'] = $_POST["entity"];
         //$openid->SetOptionalFields(array('dob','gender','postcode','country','language','timezone'));
-        if ($openid->GetOpenIDServer())
-        {
+        if ($openid->GetOpenIDServer()) {
             $openid->SetApprovedURL($protocol . $_SERVER["HTTP_HOST"] . $_SERVER["SCRIPT_NAME"]);      // Send Response from OpenID server to this script
             $openid->Redirect();     // This will redirect user to OpenID Server
-        }
-        else
-        {
+        } else {
             $error = $openid->GetError();
+
             return false;
         }
+
         return false;
     }
     // Perform HTTP Request to OpenID server to validate key
-    elseif($_GET['openid_mode'] == 'id_res')
-    {
+    elseif ($_GET['openid_mode'] == 'id_res') {
         $openid = new SimpleOpenID();
         $openid->SetIdentity($_GET['openid_identity']);
         $openid_validation_result = $openid->ValidateWithServer();
-        if ($openid_validation_result == true)
-        {
+        if ($openid_validation_result == true) {
             // OK HERE KEY IS VALID
 
             $sql ="SELECT login";
@@ -79,30 +74,23 @@ function check_user_password_myopenid($usertotest,$passwordtotest,$entitytotest)
 
             dol_syslog("functions_dolibarr::check_user_password_myopenid sql=".$sql);
             $resql=$db->query($sql);
-            if ($resql)
-            {
+            if ($resql) {
                 $obj=$db->fetch_object($resql);
-                if ($obj)
-                {
+                if ($obj) {
                     $login=$obj->login;
                 }
             }
-        }
-        else if($openid->IsError() == true)
-        {
+        } elseif ($openid->IsError() == true) {
             // ON THE WAY, WE GOT SOME ERROR
             $error = $openid->GetError();
+
             return false;
-        }
-        else
-        {
+        } else {
             // Signature Verification Failed
             //echo "INVALID AUTHORIZATION";
             return false;
         }
-    }
-    else if ($_GET['openid_mode'] == 'cancel')
-    {
+    } elseif ($_GET['openid_mode'] == 'cancel') {
         // User Canceled your Request
         //echo "USER CANCELED REQUEST";
         return false;
@@ -111,28 +99,25 @@ function check_user_password_myopenid($usertotest,$passwordtotest,$entitytotest)
     return $login;
 }
 
-
-
 /**
  * 	Class to manage OpenID
  */
 class SimpleOpenID
 {
-    var $openid_url_identity;
-    var $URLs = array();
-    var $error = array();
-    var $fields = array(
-		'required'	 => array(),
-		'optional'	 => array(),
+    public $openid_url_identity;
+    public $URLs = array();
+    public $error = array();
+    public $fields = array(
+        'required'	 => array(),
+        'optional'	 => array(),
     );
 
     /**
      * Constructor
      */
-    function __construct()
+    public function __construct()
     {
-        if (!function_exists('curl_exec'))
-        {
+        if (!function_exists('curl_exec')) {
             die('Error: Class SimpleOpenID requires curl extension to work');
         }
     }
@@ -140,10 +125,10 @@ class SimpleOpenID
     /**
      * SetOpenIDServer
      *
-     * @param	string	$a		Server
-     * @return	void
+     * @param  string $a Server
+     * @return void
      */
-    function SetOpenIDServer($a)
+    public function SetOpenIDServer($a)
     {
         $this->URLs['openid_server'] = $a;
     }
@@ -151,10 +136,10 @@ class SimpleOpenID
     /**
      * SetOpenIDServer
      *
-     * @param	string	$a		Server
-     * @return	void
+     * @param  string $a Server
+     * @return void
      */
-    function SetTrustRoot($a)
+    public function SetTrustRoot($a)
     {
         $this->URLs['trust_root'] = $a;
     }
@@ -162,10 +147,10 @@ class SimpleOpenID
     /**
      * SetOpenIDServer
      *
-     * @param	string	$a		Server
-     * @return	void
+     * @param  string $a Server
+     * @return void
      */
-    function SetCancelURL($a)
+    public function SetCancelURL($a)
     {
         $this->URLs['cancel'] = $a;
     }
@@ -173,10 +158,10 @@ class SimpleOpenID
     /**
      * SetApprovedURL
      *
-     * @param	string	$a		Server
-     * @return	void
+     * @param  string $a Server
+     * @return void
      */
-    function SetApprovedURL($a)
+    public function SetApprovedURL($a)
     {
         $this->URLs['approved'] = $a;
     }
@@ -184,14 +169,14 @@ class SimpleOpenID
     /**
      * SetRequiredFields
      *
-     * @param	string	$a		Server
-     * @return	void
+     * @param  string $a Server
+     * @return void
      */
-    function SetRequiredFields($a)
+    public function SetRequiredFields($a)
     {
-        if (is_array($a)){
+        if (is_array($a)) {
             $this->fields['required'] = $a;
-        }else{
+        } else {
             $this->fields['required'][] = $a;
         }
     }
@@ -199,14 +184,14 @@ class SimpleOpenID
     /**
      * SetOptionalFields
      *
-     * @param	string	$a		Server
-     * @return	void
+     * @param  string $a Server
+     * @return void
      */
-    function SetOptionalFields($a)
+    public function SetOptionalFields($a)
     {
-        if (is_array($a)){
+        if (is_array($a)) {
             $this->fields['optional'] = $a;
-        }else{
+        } else {
             $this->fields['optional'][] = $a;
         }
     }
@@ -214,10 +199,10 @@ class SimpleOpenID
     /**
      * SetIdentity
      *
-     * @param	string	$a		Server
-     * @return	void
+     * @param  string $a Server
+     * @return void
      */
-    function SetIdentity($a)
+    public function SetIdentity($a)
     { 	// Set Identity URL
         if ((stripos($a, 'http://') === false)
         && (stripos($a, 'https://') === false)){
@@ -225,14 +210,14 @@ class SimpleOpenID
         }
         /*
          $u = parse_url(trim($a));
-         if (!isset($u['path'])){
+         if (!isset($u['path'])) {
          $u['path'] = '/';
-         }else if(substr($u['path'],-1,1) == '/'){
+         } elseif (substr($u['path'],-1,1) == '/') {
          $u['path'] = substr($u['path'], 0, strlen($u['path'])-1);
          }
-         if (isset($u['query'])){ // If there is a query string, then use identity as is
+         if (isset($u['query'])) { // If there is a query string, then use identity as is
          $identity = $a;
-         }else{
+         } else {
          $identity = $u['scheme'] . '://' . $u['host'] . $u['path'];
          }
          //*/
@@ -242,35 +227,37 @@ class SimpleOpenID
     /**
      * GetIdentity
      *
-     * @return	void
+     * @return void
      */
-    function GetIdentity()
+    public function GetIdentity()
     { 	// Get Identity
+
         return $this->openid_url_identity;
     }
 
     /**
      * SetOpenIDServer
      *
-     * @return	void
+     * @return void
      */
-    function GetError()
+    public function GetError()
     {
         $e = $this->error;
+
         return array('code'=>$e[0],'description'=>$e[1]);
     }
 
     /**
      * ErrorStore
      *
-     * @param	string	$code		Code
-     * @param	string	$desc		Description
-     * @return	void
+     * @param  string $code Code
+     * @param  string $desc Description
+     * @return void
      */
-    function ErrorStore($code, $desc = null)
+    public function ErrorStore($code, $desc = null)
     {
         $errs['OPENID_NOSERVERSFOUND'] = 'Cannot find OpenID Server TAG on Identity page.';
-        if ($desc == null){
+        if ($desc == null) {
             $desc = $errs[$code];
         }
         $this->error = array($code,$desc);
@@ -279,16 +266,13 @@ class SimpleOpenID
     /**
      * IsError
      *
-     * @return	void
+     * @return void
      */
-    function IsError()
+    public function IsError()
     {
-        if (count($this->error) > 0)
-        {
+        if (count($this->error) > 0) {
             return true;
-        }
-        else
-        {
+        } else {
             return false;
         }
     }
@@ -296,30 +280,31 @@ class SimpleOpenID
     /**
      * splitResponse
      *
-     * @param	string	$response		Server
-     * @return	void
+     * @param  string $response Server
+     * @return void
      */
-    function splitResponse($response)
+    public function splitResponse($response)
     {
         $r = array();
         $response = explode("\n", $response);
-        foreach($response as $line) {
+        foreach ($response as $line) {
             $line = trim($line);
             if ($line != "") {
                 list($key, $value) = explode(":", $line, 2);
                 $r[trim($key)] = trim($value);
             }
         }
+
         return $r;
     }
 
     /**
      * OpenID_Standarize
      *
-     * @param	string	$openid_identity		Server
-     * @return	void
+     * @param  string $openid_identity Server
+     * @return void
      */
-    function OpenID_Standarize($openid_identity = null)
+    public function OpenID_Standarize($openid_identity = null)
     {
         if ($openid_identity === null)
         $openid_identity = $this->openid_url_identity;
@@ -329,33 +314,36 @@ class SimpleOpenID
         if (!isset($u['path']) || ($u['path'] == '/')) {
             $u['path'] = '';
         }
-        if(substr($u['path'],-1,1) == '/'){
+        if (substr($u['path'],-1,1) == '/') {
             $u['path'] = substr($u['path'], 0, strlen($u['path'])-1);
         }
-        if (isset($u['query'])){ // If there is a query string, then use identity as is
+        if (isset($u['query'])) { // If there is a query string, then use identity as is
+
             return $u['host'] . $u['path'] . '?' . $u['query'];
-        }else{
+        } else {
             return $u['host'] . $u['path'];
         }
     }
 
-    function array2url($arr)
+    public function array2url($arr)
     { // converts associated array to URL Query String
-        if (!is_array($arr)){
+        if (!is_array($arr)) {
             return false;
         }
         $query = '';
-        foreach($arr as $key => $value){
+        foreach ($arr as $key => $value) {
             $query .= $key . "=" . $value . "&";
         }
+
         return $query;
     }
 
-    function FSOCK_Request($url, $method="GET", $params = "")
+    public function FSOCK_Request($url, $method="GET", $params = "")
     {
         $fp = fsockopen("ssl://www.myopenid.com", 443, $errno, $errstr, 3); // Connection timeout is 3 seconds
         if (!$fp) {
             $this->ErrorStore('OPENID_SOCKETERROR', $errstr);
+
             return false;
         } else {
             $request = $method . " /server HTTP/1.0\r\n";
@@ -375,7 +363,7 @@ class SimpleOpenID
         }
     }
 
-    function CURL_Request($url, $method="GET", $params = "")
+    public function CURL_Request($url, $method="GET", $params = "")
     { // Remember, SSL MUST BE SUPPORTED
         if (is_array($params)) $params = $this->array2url($params);
 
@@ -389,15 +377,16 @@ class SimpleOpenID
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
         $response = curl_exec($curl);
 
-        if (curl_errno($curl) == 0){
+        if (curl_errno($curl) == 0) {
             $response;
-        }else{
+        } else {
             $this->ErrorStore('OPENID_CURL', curl_error($curl));
         }
+
         return $response;
     }
 
-    function HTML2OpenIDServer($content)
+    public function HTML2OpenIDServer($content)
     {
         $get = array();
 
@@ -413,15 +402,17 @@ class SimpleOpenID
         $delegates = array_merge($matches1[1], $matches2[1]);
 
         $ret = array($servers, $delegates);
+
         return $ret;
     }
 
-    function GetOpenIDServer()
+    public function GetOpenIDServer()
     {
         $response = $this->CURL_Request($this->openid_url_identity);
         list($servers, $delegates) = $this->HTML2OpenIDServer($response);
-        if (count($servers) == 0){
+        if (count($servers) == 0) {
             $this->ErrorStore('OPENID_NOSERVERSFOUND');
+
             return false;
         }
         if (isset($delegates[0])
@@ -429,15 +420,16 @@ class SimpleOpenID
             $this->SetIdentity($delegates[0]);
         }
         $this->SetOpenIDServer($servers[0]);
+
         return $servers[0];
     }
 
     /**
      * GetRedirectURL
      *
-     * @return	void
+     * @return void
      */
-    function GetRedirectURL()
+    public function GetRedirectURL()
     {
         $params = array();
         $params['openid.return_to'] = urlencode($this->URLs['approved']);
@@ -453,25 +445,23 @@ class SimpleOpenID
         && (count($this->fields['optional']) > 0)) {
             $params['openid.sreg.optional'] = implode(',',$this->fields['optional']);
         }
+
         return $this->URLs['openid_server'] . "?". $this->array2url($params);
     }
 
     /**
      * Redirect
      *
-     * @return	void
+     * @return void
      */
-    function Redirect()
+    public function Redirect()
     {
         $redirect_to = $this->GetRedirectURL();
-        if (headers_sent())
-        { // Use JavaScript to redirect if content has been previously sent (not recommended, but safe)
+        if (headers_sent()) { // Use JavaScript to redirect if content has been previously sent (not recommended, but safe)
             echo '<script language="JavaScript" type="text/javascript">window.location=\'';
             echo $redirect_to;
             echo '\';</script>';
-        }
-        else
-        {	// Default Header Redirect
+        } else {	// Default Header Redirect
             header('Location: ' . $redirect_to);
         }
     }
@@ -479,44 +469,37 @@ class SimpleOpenID
     /**
      * ValidateWithServer
      *
-     * @return	void
+     * @return void
      */
-    function ValidateWithServer()
+    public function ValidateWithServer()
     {
         $params = array(
-			'openid.assoc_handle' => urlencode($_GET['openid_assoc_handle']),
-			'openid.signed' => urlencode($_GET['openid_signed']),
-			'openid.sig' => urlencode($_GET['openid_sig'])
+            'openid.assoc_handle' => urlencode($_GET['openid_assoc_handle']),
+            'openid.signed' => urlencode($_GET['openid_signed']),
+            'openid.sig' => urlencode($_GET['openid_sig'])
         );
         // Send only required parameters to confirm validity
         $arr_signed = explode(",",str_replace('sreg.','sreg_',$_GET['openid_signed']));
         $num = count($arr_signed);
-        for ($i = 0; $i < $num; $i++)
-        {
+        for ($i = 0; $i < $num; $i++) {
             $s = str_replace('sreg_','sreg.', $arr_signed[$i]);
             $c = $_GET['openid_' . $arr_signed[$i]];
-            // if ($c != ""){
+            // if ($c != "") {
             $params['openid.' . $s] = urlencode($c);
             // }
         }
         $params['openid.mode'] = "check_authentication";
 
         $openid_server = $this->GetOpenIDServer();
-        if ($openid_server == false)
-        {
+        if ($openid_server == false) {
             return false;
         }
         $response = $this->CURL_Request($openid_server,'POST',$params);
         $data = $this->splitResponse($response);
-        if ($data['is_valid'] == "true")
-        {
+        if ($data['is_valid'] == "true") {
             return true;
-        }
-        else
-        {
+        } else {
             return false;
         }
     }
 }
-
-?>

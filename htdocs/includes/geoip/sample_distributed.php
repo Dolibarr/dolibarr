@@ -1,8 +1,8 @@
 #!/usr/bin/php -q
 <?php
 
-include("geoipcity.inc");
-include("Net/DNS.php");
+include 'geoipcity.inc';
+include 'Net/DNS.php';
 
 # replace LICENSE_KEY_HERE with your license key
 $l = "LICENSE_KEY_HERE";

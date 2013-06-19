@@ -41,105 +41,81 @@ $rowid=isset($_GET["rowid"])?$_GET["rowid"]:$_POST["rowid"];
 $typeid=isset($_GET["typeid"])?$_GET["typeid"]:$_POST["typeid"];
 
 if (! $user->rights->adherent->cotisation->lire)
-	 accessforbidden();
-
+     accessforbidden();
 
 /*
  * 	Actions
  */
 
-if ($user->rights->adherent->cotisation->creer && $_REQUEST["action"] == 'update' && ! $_POST["cancel"])
-{
-	// Charge objet actuel
-	$result=$subscription->fetch($_POST["rowid"]);
-	if ($result > 0)
-	{
-		$db->begin();
+if ($user->rights->adherent->cotisation->creer && $_REQUEST["action"] == 'update' && ! $_POST["cancel"]) {
+    // Charge objet actuel
+    $result=$subscription->fetch($_POST["rowid"]);
+    if ($result > 0) {
+        $db->begin();
 
-		$errmsg='';
+        $errmsg='';
 
-		if ($subscription->fk_bank)
-		{
-			$accountline=new AccountLine($db);
-			$result=$accountline->fetch($subscription->fk_bank);
+        if ($subscription->fk_bank) {
+            $accountline=new AccountLine($db);
+            $result=$accountline->fetch($subscription->fk_bank);
 
-			// If transaction consolidated
-			if ($accountline->rappro)
-			{
-				$errmsg=$langs->trans("SubscriptionLinkedToConciliatedTransaction");
-			}
-			else
-			{
-				$accountline->datev=dol_mktime($_POST['datesubhour'], $_POST['datesubmin'], 0, $_POST['datesubmonth'], $_POST['datesubday'], $_POST['datesubyear']);
-				$accountline->dateo=dol_mktime($_POST['datesubhour'], $_POST['datesubmin'], 0, $_POST['datesubmonth'], $_POST['datesubday'], $_POST['datesubyear']);
-				$accountline->amount=$_POST["amount"];
-				$result=$accountline->update($user);
-				if ($result < 0)
-				{
-					$errmsg=$accountline->error;
-				}
-			}
-		}
+            // If transaction consolidated
+            if ($accountline->rappro) {
+                $errmsg=$langs->trans("SubscriptionLinkedToConciliatedTransaction");
+            } else {
+                $accountline->datev=dol_mktime($_POST['datesubhour'], $_POST['datesubmin'], 0, $_POST['datesubmonth'], $_POST['datesubday'], $_POST['datesubyear']);
+                $accountline->dateo=dol_mktime($_POST['datesubhour'], $_POST['datesubmin'], 0, $_POST['datesubmonth'], $_POST['datesubday'], $_POST['datesubyear']);
+                $accountline->amount=$_POST["amount"];
+                $result=$accountline->update($user);
+                if ($result < 0) {
+                    $errmsg=$accountline->error;
+                }
+            }
+        }
 
-		if (! $errmsg)
-		{
-			// Modifie valeures
-			$subscription->dateh=dol_mktime($_POST['datesubhour'], $_POST['datesubmin'], 0, $_POST['datesubmonth'], $_POST['datesubday'], $_POST['datesubyear']);
-			$subscription->datef=dol_mktime($_POST['datesubendhour'], $_POST['datesubendmin'], 0, $_POST['datesubendmonth'], $_POST['datesubendday'], $_POST['datesubendyear']);
-			$subscription->note=$_POST["note"];
-			$subscription->amount=$_POST["amount"];
-			//print 'datef='.$subscription->datef.' '.$_POST['datesubendday'];
+        if (! $errmsg) {
+            // Modifie valeures
+            $subscription->dateh=dol_mktime($_POST['datesubhour'], $_POST['datesubmin'], 0, $_POST['datesubmonth'], $_POST['datesubday'], $_POST['datesubyear']);
+            $subscription->datef=dol_mktime($_POST['datesubendhour'], $_POST['datesubendmin'], 0, $_POST['datesubendmonth'], $_POST['datesubendday'], $_POST['datesubendyear']);
+            $subscription->note=$_POST["note"];
+            $subscription->amount=$_POST["amount"];
+            //print 'datef='.$subscription->datef.' '.$_POST['datesubendday'];
 
-			$result=$subscription->update($user);
-			if ($result >= 0 && ! count($subscription->errors))
-			{
-				$db->commit();
+            $result=$subscription->update($user);
+            if ($result >= 0 && ! count($subscription->errors)) {
+                $db->commit();
 
-				header("Location: fiche_subscription.php?rowid=".$subscription->id);
-				exit;
-			}
-			else
-			{
-				$db->rollback();
+                header("Location: fiche_subscription.php?rowid=".$subscription->id);
+                exit;
+            } else {
+                $db->rollback();
 
-			    if ($subscription->error)
-				{
-					$errmsg=$subscription->error;
-				}
-				else
-				{
-					foreach($subscription->errors as $error)
-					{
-						if ($errmsg) $errmsg.='<br>';
-						$errmsg.=$error;
-					}
-				}
-				$action='';
-			}
-		}
-		else
-		{
-			$db->rollback();
-		}
-	}
+                if ($subscription->error) {
+                    $errmsg=$subscription->error;
+                } else {
+                    foreach ($subscription->errors as $error) {
+                        if ($errmsg) $errmsg.='<br>';
+                        $errmsg.=$error;
+                    }
+                }
+                $action='';
+            }
+        } else {
+            $db->rollback();
+        }
+    }
 }
 
-if ($_REQUEST["action"] == 'confirm_delete' && $_REQUEST["confirm"] == 'yes' && $user->rights->adherent->cotisation->creer)
-{
-	$result=$subscription->fetch($rowid);
+if ($_REQUEST["action"] == 'confirm_delete' && $_REQUEST["confirm"] == 'yes' && $user->rights->adherent->cotisation->creer) {
+    $result=$subscription->fetch($rowid);
     $result=$subscription->delete($user);
-    if ($result > 0)
-    {
-    	header("Location: card_subscriptions.php?rowid=".$subscription->fk_adherent);
-    	exit;
-    }
-    else
-    {
-    	$mesg=$adh->error;
+    if ($result > 0) {
+        header("Location: card_subscriptions.php?rowid=".$subscription->fk_adherent);
+        exit;
+    } else {
+        $mesg=$adh->error;
     }
 }
-
-
 
 /*
  * View
@@ -149,149 +125,139 @@ llxHeader('',$langs->trans("SubscriptionCard"),'EN:Module_Foundations|FR:Module_
 
 $form = new Form($db);
 
-
 dol_htmloutput_errors($errmsg);
 
-
-if ($user->rights->adherent->cotisation->creer && $action == 'edit')
-{
-	/********************************************
-	 *
-	 * Fiche en mode edition
-	 *
-	 ********************************************/
+if ($user->rights->adherent->cotisation->creer && $action == 'edit') {
+    /********************************************
+     *
+     * Fiche en mode edition
+     *
+     ********************************************/
 
     $subscription->fetch($rowid);
-	$result=$adh->fetch($subscription->fk_adherent);
+    $result=$adh->fetch($subscription->fk_adherent);
 
-	/*
-	 * Affichage onglets
-	 */
-	$h = 0;
-	$head = array();
+    /*
+     * Affichage onglets
+     */
+    $h = 0;
+    $head = array();
 
-	$head[$h][0] = DOL_URL_ROOT.'/adherents/fiche_subscription.php?rowid='.$subscription->id;
-	$head[$h][1] = $langs->trans("SubscriptionCard");
-	$head[$h][2] = 'general';
-	$h++;
+    $head[$h][0] = DOL_URL_ROOT.'/adherents/fiche_subscription.php?rowid='.$subscription->id;
+    $head[$h][1] = $langs->trans("SubscriptionCard");
+    $head[$h][2] = 'general';
+    $h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/adherents/info_subscription.php?rowid='.$subscription->id;
-	$head[$h][1] = $langs->trans("Info");
-	$head[$h][2] = 'info';
-	$h++;
+    $head[$h][0] = DOL_URL_ROOT.'/adherents/info_subscription.php?rowid='.$subscription->id;
+    $head[$h][1] = $langs->trans("Info");
+    $head[$h][2] = 'info';
+    $h++;
 
-	dol_fiche_head($head, 'general', $langs->trans("Subscription"));
+    dol_fiche_head($head, 'general', $langs->trans("Subscription"));
 
-	print "\n";
-	print '<form name="update" action="'.$_SERVER["PHP_SELF"].'" method="post">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-	print "<input type=\"hidden\" name=\"action\" value=\"update\">";
-	print "<input type=\"hidden\" name=\"rowid\" value=\"$rowid\">";
-	print "<input type=\"hidden\" name=\"fk_bank\" value=\"".$subscription->fk_bank."\">";
-	print '<table class="border" width="100%">';
+    print "\n";
+    print '<form name="update" action="'.$_SERVER["PHP_SELF"].'" method="post">';
+    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print "<input type=\"hidden\" name=\"action\" value=\"update\">";
+    print "<input type=\"hidden\" name=\"rowid\" value=\"$rowid\">";
+    print "<input type=\"hidden\" name=\"fk_bank\" value=\"".$subscription->fk_bank."\">";
+    print '<table class="border" width="100%">';
 
     // Ref
     print '<tr><td width="20%">'.$langs->trans("Ref").'</td><td class="valeur" colspan="2">'.$subscription->ref.'&nbsp;</td></tr>';
 
     // Member
-	$adh->ref=$adh->getFullName($langs);
+    $adh->ref=$adh->getFullName($langs);
     print '<tr>';
-	print '<td>'.$langs->trans("Member").'</td><td class="valeur" colspan="3">'.$adh->getNomUrl(1,0,'subscription').'</td>';
+    print '<td>'.$langs->trans("Member").'</td><td class="valeur" colspan="3">'.$adh->getNomUrl(1,0,'subscription').'</td>';
     print '</tr>';
 
     // Date start subscription
     print '<tr><td>'.$langs->trans("DateSubscription").'</td><td class="valeur" colspan="2">';
-	$form->select_date($subscription->dateh,'datesub',1,1,0,'update',1);
-	print '</td>';
+    $form->select_date($subscription->dateh,'datesub',1,1,0,'update',1);
+    print '</td>';
     print '</tr>';
 
     // Date end subscription
     print '<tr><td>'.$langs->trans("DateEndSubscription").'</td><td class="valeur" colspan="2">';
-	$form->select_date($subscription->datef,'datesubend',0,0,0,'update',1);
-	print '</td>';
+    $form->select_date($subscription->datef,'datesubend',0,0,0,'update',1);
+    print '</td>';
     print '</tr>';
 
     // Amount
     print '<tr><td>'.$langs->trans("Amount").'</td><td class="valeur" colspan="2">';
-	print '<input type="text" class="flat" size="10" name="amount" value="'.price($subscription->amount).'"></td></tr>';
+    print '<input type="text" class="flat" size="10" name="amount" value="'.price($subscription->amount).'"></td></tr>';
 
     // Label
     print '<tr><td>'.$langs->trans("Label").'</td><td class="valeur" colspan="2">';
-	print '<input type="text" class="flat" size="60" name="note" value="'.$subscription->note.'"></td></tr>';
+    print '<input type="text" class="flat" size="60" name="note" value="'.$subscription->note.'"></td></tr>';
 
-	// Bank line
-	if (! empty($conf->banque->enabled))
-	{
-		if ($conf->global->ADHERENT_BANK_USE || $subscription->fk_bank)
-	    {
-    		print '<tr><td>'.$langs->trans("BankTransactionLine").'</td><td class="valeur" colspan="2">';
-			if ($subscription->fk_bank)
-			{
-	    		$bankline=new AccountLine($db);
-		    	$result=$bankline->fetch($subscription->fk_bank);
-				print $bankline->getNomUrl(1,0,'showall');
-			}
-			else
-			{
-				print $langs->trans("NoneF");
-			}
-	    	print '</td></tr>';
-	    }
-	}
+    // Bank line
+    if (! empty($conf->banque->enabled)) {
+        if ($conf->global->ADHERENT_BANK_USE || $subscription->fk_bank) {
+            print '<tr><td>'.$langs->trans("BankTransactionLine").'</td><td class="valeur" colspan="2">';
+            if ($subscription->fk_bank) {
+                $bankline=new AccountLine($db);
+                $result=$bankline->fetch($subscription->fk_bank);
+                print $bankline->getNomUrl(1,0,'showall');
+            } else {
+                print $langs->trans("NoneF");
+            }
+            print '</td></tr>';
+        }
+    }
 
-	print '<tr><td colspan="3" align="center">';
-	print '<input type="submit" class="button" name="submit" value="'.$langs->trans("Save").'">';
-	print ' &nbsp; &nbsp; &nbsp; ';
-	print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
-	print '</td></tr>';
+    print '<tr><td colspan="3" align="center">';
+    print '<input type="submit" class="button" name="submit" value="'.$langs->trans("Save").'">';
+    print ' &nbsp; &nbsp; &nbsp; ';
+    print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+    print '</td></tr>';
 
-	print '</table>';
-	print '</form>';
-	print "\n";
+    print '</table>';
+    print '</form>';
+    print "\n";
 
-	print '</div>';
-	print "\n";
+    print '</div>';
+    print "\n";
 }
 
-if ($rowid && $action != 'edit')
-{
-	/* ************************************************************************** */
-	/*                                                                            */
-	/* Mode affichage                                                             */
-	/*                                                                            */
-	/* ************************************************************************** */
+if ($rowid && $action != 'edit') {
+    /* ************************************************************************** */
+    /*                                                                            */
+    /* Mode affichage                                                             */
+    /*                                                                            */
+    /* ************************************************************************** */
 
     $result=$subscription->fetch($rowid);
-	$result=$adh->fetch($subscription->fk_adherent);
+    $result=$adh->fetch($subscription->fk_adherent);
 
-	/*
-	 * Affichage onglets
-	 */
-	$h = 0;
-	$head = array();
+    /*
+     * Affichage onglets
+     */
+    $h = 0;
+    $head = array();
 
-	$head[$h][0] = DOL_URL_ROOT.'/adherents/fiche_subscription.php?rowid='.$subscription->id;
-	$head[$h][1] = $langs->trans("SubscriptionCard");
-	$head[$h][2] = 'general';
-	$h++;
+    $head[$h][0] = DOL_URL_ROOT.'/adherents/fiche_subscription.php?rowid='.$subscription->id;
+    $head[$h][1] = $langs->trans("SubscriptionCard");
+    $head[$h][2] = 'general';
+    $h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/adherents/info_subscription.php?rowid='.$subscription->id;
-	$head[$h][1] = $langs->trans("Info");
-	$head[$h][2] = 'info';
-	$h++;
+    $head[$h][0] = DOL_URL_ROOT.'/adherents/info_subscription.php?rowid='.$subscription->id;
+    $head[$h][1] = $langs->trans("Info");
+    $head[$h][2] = 'info';
+    $h++;
 
-	dol_fiche_head($head, 'general', $langs->trans("Subscription"), '', 'payment');
+    dol_fiche_head($head, 'general', $langs->trans("Subscription"), '', 'payment');
 
-	if ($msg) print '<div class="error">'.$msg.'</div>';
+    if ($msg) print '<div class="error">'.$msg.'</div>';
 
     // Confirmation to delete subscription
-    if ($action == 'delete')
-    {
-		//$formquestion=array();
+    if ($action == 'delete') {
+        //$formquestion=array();
         //$formquestion['text']='<b>'.$langs->trans("ThisWillAlsoDeleteBankRecord").'</b>';
-		$text=$langs->trans("ConfirmDeleteSubscription");
-		if (! empty($conf->banque->enabled) && ! empty($conf->global->ADHERENT_BANK_USE)) $text.='<br>'.img_warning().' '.$langs->trans("ThisWillAlsoDeleteBankRecord");
-		$ret=$form->form_confirm($_SERVER["PHP_SELF"]."?rowid=".$subscription->id,$langs->trans("DeleteSubscription"),$text,"confirm_delete",$formquestion,0,1);
+        $text=$langs->trans("ConfirmDeleteSubscription");
+        if (! empty($conf->banque->enabled) && ! empty($conf->global->ADHERENT_BANK_USE)) $text.='<br>'.img_warning().' '.$langs->trans("ThisWillAlsoDeleteBankRecord");
+        $ret=$form->form_confirm($_SERVER["PHP_SELF"]."?rowid=".$subscription->id,$langs->trans("DeleteSubscription"),$text,"confirm_delete",$formquestion,0,1);
         if ($ret == 'html') print '<br>';
     }
 
@@ -303,29 +269,29 @@ if ($rowid && $action != 'edit')
 
     // Ref
     print '<tr><td width="20%">'.$langs->trans("Ref").'</td>';
-	print '<td class="valeur" colspan="3">';
-	print $form->showrefnav($subscription, 'rowid', $linkback, 1);
-	print '</td></tr>';
+    print '<td class="valeur" colspan="3">';
+    print $form->showrefnav($subscription, 'rowid', $linkback, 1);
+    print '</td></tr>';
 
     // Member
-	$adh->ref=$adh->getFullName($langs);
+    $adh->ref=$adh->getFullName($langs);
     print '<tr>';
-	print '<td>'.$langs->trans("Member").'</td><td class="valeur" colspan="3">'.$adh->getNomUrl(1,0,'subscription').'</td>';
+    print '<td>'.$langs->trans("Member").'</td><td class="valeur" colspan="3">'.$adh->getNomUrl(1,0,'subscription').'</td>';
     print '</tr>';
 
     // Date record
     /*print '<tr>';
-	print '<td>'.$langs->trans("DateSubscription").'</td><td class="valeur" colspan="3">'.dol_print_date($subscription->datec,'dayhour').'</td>';
+    print '<td>'.$langs->trans("DateSubscription").'</td><td class="valeur" colspan="3">'.dol_print_date($subscription->datec,'dayhour').'</td>';
     print '</tr>';*/
 
     // Date subscription
     print '<tr>';
-	print '<td>'.$langs->trans("DateSubscription").'</td><td class="valeur" colspan="3">'.dol_print_date($subscription->dateh,'day').'</td>';
+    print '<td>'.$langs->trans("DateSubscription").'</td><td class="valeur" colspan="3">'.dol_print_date($subscription->dateh,'day').'</td>';
     print '</tr>';
 
     // Date end subscription
     print '<tr>';
-	print '<td>'.$langs->trans("DateEndSubscription").'</td><td class="valeur" colspan="3">'.dol_print_date($subscription->datef,'day').'</td>';
+    print '<td>'.$langs->trans("DateEndSubscription").'</td><td class="valeur" colspan="3">'.dol_print_date($subscription->datef,'day').'</td>';
     print '</tr>';
 
     // Amount
@@ -335,31 +301,24 @@ if ($rowid && $action != 'edit')
     print '<tr><td>'.$langs->trans("Label").'</td><td class="valeur" colspan="3">'.$subscription->note.'</td></tr>';
 
     // Bank line
-	if (! empty($conf->banque->enabled))
-	{
-		if ($conf->global->ADHERENT_BANK_USE || $subscription->fk_bank)
-	    {
-    		print '<tr><td>'.$langs->trans("BankTransactionLine").'</td><td class="valeur" colspan="3">';
-			if ($subscription->fk_bank)
-			{
-	    		$bankline=new AccountLine($db);
-		    	$result=$bankline->fetch($subscription->fk_bank);
-		    	print $bankline->getNomUrl(1,0,'showall');
-			}
-			else
-			{
-				print $langs->trans("NoneF");
-			}
-	    	print '</td></tr>';
-	    }
-	}
-
+    if (! empty($conf->banque->enabled)) {
+        if ($conf->global->ADHERENT_BANK_USE || $subscription->fk_bank) {
+            print '<tr><td>'.$langs->trans("BankTransactionLine").'</td><td class="valeur" colspan="3">';
+            if ($subscription->fk_bank) {
+                $bankline=new AccountLine($db);
+                $result=$bankline->fetch($subscription->fk_bank);
+                print $bankline->getNomUrl(1,0,'showall');
+            } else {
+                print $langs->trans("NoneF");
+            }
+            print '</td></tr>';
+        }
+    }
 
     print "</table>\n";
     print '</form>';
 
     print "</div>\n";
-
 
     /*
      * Barre d'actions
@@ -367,21 +326,16 @@ if ($rowid && $action != 'edit')
      */
     print '<div class="tabsAction">';
 
-    if ($user->rights->adherent->cotisation->creer)
-	{
-		if (! $bankline->rappro)
-		{
-			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"]."?rowid=".$subscription->id."&action=edit\">".$langs->trans("Modify")."</a></div>";
-		}
-		else
-		{
-			print '<div class="inline-block divButAction"><a class="butActionRefused" title="'.$langs->trans("BankLineConciliated")."\" href=\"#\">".$langs->trans("Modify")."</a></div>";
-		}
-	}
+    if ($user->rights->adherent->cotisation->creer) {
+        if (! $bankline->rappro) {
+            print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"]."?rowid=".$subscription->id."&action=edit\">".$langs->trans("Modify")."</a></div>";
+        } else {
+            print '<div class="inline-block divButAction"><a class="butActionRefused" title="'.$langs->trans("BankLineConciliated")."\" href=\"#\">".$langs->trans("Modify")."</a></div>";
+        }
+    }
 
     // Supprimer
-    if ($user->rights->adherent->cotisation->creer)
-    {
+    if ($user->rights->adherent->cotisation->creer) {
         print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"]."?rowid=".$subscription->id."&action=delete\">".$langs->trans("Delete")."</a></div>\n";
     }
 
@@ -390,8 +344,6 @@ if ($rowid && $action != 'edit')
 
 }
 
-
 $db->close();
 
 llxFooter();
-?>

@@ -22,28 +22,27 @@
  *  \brief      Fichier de la classe de gestion du menu gauche
  */
 
-
 /**
  *	Class to manage left menus
  */
 class Menu
 {
-    var $liste;
+    public $liste;
 
     /**
-	 *	Constructor
+     *	Constructor
      */
-    function __construct()
+    public function __construct()
     {
-      	$this->liste = array();
+          $this->liste = array();
     }
 
     /**
      * Clear property ->liste
      *
-     * @return	void
+     * @return void
      */
-    function clear()
+    public function clear()
     {
         $this->liste = array();
     }
@@ -51,16 +50,16 @@ class Menu
     /**
      * Add a menu entry into this->liste (at end)
      *
-     * @param	string	$url        Url to follow on click
-     * @param   string	$titre      Label of menu to add
-     * @param   string	$level      Level of menu to add
-     * @param   int		$enabled    Menu active or not (0=Not active, 1=Active, 2=Active but grey)
-     * @param   string	$target		Target lien
-     * @param	string	$mainmenu	Main menu ('home', 'companies', 'products', ...)
-     * @param	string	$leftmenu	Left menu ('setup', 'system', 'admintools', ...)
-     * @return	void
+     * @param  string $url      Url to follow on click
+     * @param  string $titre    Label of menu to add
+     * @param  string $level    Level of menu to add
+     * @param  int    $enabled  Menu active or not (0=Not active, 1=Active, 2=Active but grey)
+     * @param  string $target   Target lien
+     * @param  string $mainmenu Main menu ('home', 'companies', 'products', ...)
+     * @param  string $leftmenu Left menu ('setup', 'system', 'admintools', ...)
+     * @return void
      */
-    function add($url, $titre, $level=0, $enabled=1, $target='',$mainmenu='',$leftmenu='')
+    public function add($url, $titre, $level=0, $enabled=1, $target='',$mainmenu='',$leftmenu='')
     {
         $this->liste[]=array('url'=>$url,'titre'=>$titre,'level'=>$level,'enabled'=>$enabled,'target'=>$target,'mainmenu'=>$mainmenu,'leftmenu'=>$leftmenu);
     }
@@ -68,17 +67,17 @@ class Menu
     /**
      * Insert a menu entry into this->liste
      *
-     * @param	int		$idafter	Array key after which inserting new entry
-     * @param	string	$url        Url to follow on click
-     * @param   string	$titre      Label of menu to add
-     * @param   string	$level      Level of menu to add
-     * @param   int		$enabled    Menu active or not
-     * @param   string	$target		Target lien
-     * @param	string	$mainmenu	Main menu ('home', 'companies', 'products', ...)
-     * @param	string	$leftmenu	Left menu ('setup', 'system', 'admintools', ...)
-     * @return	void
+     * @param  int    $idafter  Array key after which inserting new entry
+     * @param  string $url      Url to follow on click
+     * @param  string $titre    Label of menu to add
+     * @param  string $level    Level of menu to add
+     * @param  int    $enabled  Menu active or not
+     * @param  string $target   Target lien
+     * @param  string $mainmenu Main menu ('home', 'companies', 'products', ...)
+     * @param  string $leftmenu Left menu ('setup', 'system', 'admintools', ...)
+     * @return void
      */
-    function insert($idafter, $url, $titre, $level=0, $enabled=1, $target='',$mainmenu='',$leftmenu='')
+    public function insert($idafter, $url, $titre, $level=0, $enabled=1, $target='',$mainmenu='',$leftmenu='')
     {
         $array_start = array_slice($this->liste,0,($idafter+1));
         $array_new   = array(0=>array('url'=>$url,'titre'=>$titre,'level'=>$level,'enabled'=>$enabled,'target'=>$target,'mainmenu'=>$mainmenu,'leftmenu'=>$leftmenu));
@@ -89,11 +88,11 @@ class Menu
     /**
      * Remove a menu entry from this->liste
      *
-     * @return	void
+     * @return void
      */
-    function remove_last()
+    public function remove_last()
     {
-    	if (count($this->liste) > 1) array_pop($this->liste);
+        if (count($this->liste) > 1) array_pop($this->liste);
     }
 
 }

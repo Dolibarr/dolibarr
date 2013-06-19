@@ -30,280 +30,223 @@ if (GETPOST('type')=='date')     $extrasize='';
 if (GETPOST('type')=='datetime') $extrasize='';
 if (GETPOST('type')=='select')    $extrasize='';
 
-
 // Add attribute
-if ($action == 'add')
-{
-	if ($_POST["button"] != $langs->trans("Cancel"))
-	{
-	    // Check values
-		if (! GETPOST('type'))
-		{
-			$error++;
-			$langs->load("errors");
-			$mesg[]=$langs->trans("ErrorFieldRequired",$langs->trans("Type"));
-			$action = 'create';
-		}
+if ($action == 'add') {
+    if ($_POST["button"] != $langs->trans("Cancel")) {
+        // Check values
+        if (! GETPOST('type')) {
+            $error++;
+            $langs->load("errors");
+            $mesg[]=$langs->trans("ErrorFieldRequired",$langs->trans("Type"));
+            $action = 'create';
+        }
 
-        if (GETPOST('type')=='varchar' && $extrasize > $maxsizestring)
-        {
+        if (GETPOST('type')=='varchar' && $extrasize > $maxsizestring) {
             $error++;
             $langs->load("errors");
             $mesg[]=$langs->trans("ErrorSizeTooLongForVarcharType",$maxsizestring);
             $action = 'create';
         }
-        if (GETPOST('type')=='int' && $extrasize > $maxsizeint)
-        {
+        if (GETPOST('type')=='int' && $extrasize > $maxsizeint) {
             $error++;
             $langs->load("errors");
             $mesg[]=$langs->trans("ErrorSizeTooLongForIntType",$maxsizeint);
             $action = 'create';
         }
-        if (GETPOST('type')=='select' && !GETPOST('param'))
-        {
-        	$error++;
-        	$langs->load("errors");
-        	$mesg[]=$langs->trans("ErrorNoValueForSelectType");
-        	$action = 'create';
+        if (GETPOST('type')=='select' && !GETPOST('param')) {
+            $error++;
+            $langs->load("errors");
+            $mesg[]=$langs->trans("ErrorNoValueForSelectType");
+            $action = 'create';
         }
-        if (GETPOST('type')=='sellist' && !GETPOST('param'))
-        {
-        	$error++;
-        	$langs->load("errors");
-        	$mesg[]=$langs->trans("ErrorNoValueForSelectListType");
-        	$action = 'create';
+        if (GETPOST('type')=='sellist' && !GETPOST('param')) {
+            $error++;
+            $langs->load("errors");
+            $mesg[]=$langs->trans("ErrorNoValueForSelectListType");
+            $action = 'create';
         }
-        if (GETPOST('type')=='checkbox' && !GETPOST('param'))
-        {
-        	$error++;
-        	$langs->load("errors");
-        	$mesg[]=$langs->trans("ErrorNoValueForCheckBoxType");
-        	$action = 'create';
+        if (GETPOST('type')=='checkbox' && !GETPOST('param')) {
+            $error++;
+            $langs->load("errors");
+            $mesg[]=$langs->trans("ErrorNoValueForCheckBoxType");
+            $action = 'create';
         }
-        if (GETPOST('type')=='radio' && !GETPOST('param'))
-        {
-        	$error++;
-        	$langs->load("errors");
-        	$mesg[]=$langs->trans("ErrorNoValueForRadioType");
-        	$action = 'create';
+        if (GETPOST('type')=='radio' && !GETPOST('param')) {
+            $error++;
+            $langs->load("errors");
+            $mesg[]=$langs->trans("ErrorNoValueForRadioType");
+            $action = 'create';
         }
-        if  (((GETPOST('type')=='radio') || (GETPOST('type')=='checkbox') || (GETPOST('type')=='radio')) && GETPOST('param')) 
-        {
-        	// Construct array for parameter (value of select list)
-    		$parameters = GETPOST('param');
-    		$parameters_array = explode("\r\n",$parameters);
-    		foreach($parameters_array as $param_ligne)
-    		{
-    			if (!empty($param_ligne)) {
-	    			if (preg_match_all('/,/',$param_ligne,$matches)) 
-	    			{
-	    				if (count($matches[0])>1) {
-	    					$error++;
-	    					$langs->load("errors");
-	    					$mesg[]=$langs->trans("ErrorBadFormatValueList",$param_ligne);
-	    					$action = 'create';
-	    				}
-	    			}
-	    			else 
-	    			{
-	    				$error++;
-	    				$langs->load("errors");
-	    				$mesg[]=$langs->trans("ErrorBadFormatValueList",$param_ligne);
-	    				$action = 'create';
-	    			}
-    			}
-    		}  	
+        if (((GETPOST('type')=='radio') || (GETPOST('type')=='checkbox') || (GETPOST('type')=='radio')) && GETPOST('param')) {
+            // Construct array for parameter (value of select list)
+            $parameters = GETPOST('param');
+            $parameters_array = explode("\r\n",$parameters);
+            foreach ($parameters_array as $param_ligne) {
+                if (!empty($param_ligne)) {
+                    if (preg_match_all('/,/',$param_ligne,$matches)) {
+                        if (count($matches[0])>1) {
+                            $error++;
+                            $langs->load("errors");
+                            $mesg[]=$langs->trans("ErrorBadFormatValueList",$param_ligne);
+                            $action = 'create';
+                        }
+                    } else {
+                        $error++;
+                        $langs->load("errors");
+                        $mesg[]=$langs->trans("ErrorBadFormatValueList",$param_ligne);
+                        $action = 'create';
+                    }
+                }
+            }
         }
 
-	    if (! $error)
-	    {
-    		// Type et taille non encore pris en compte => varchar(255)
-    		if (isset($_POST["attrname"]) && preg_match("/^\w[a-zA-Z0-9-_]*$/",$_POST['attrname']))
-    		{
-    			// Construct array for parameter (value of select list)
-        		$default_value = GETPOST('default_value');
-    			$parameters = GETPOST('param');
-    			$parameters_array = explode("\r\n",$parameters);
-    			foreach($parameters_array as $param_ligne)
-    			{
-    				list($key,$value) = explode(',',$param_ligne);
-    				$params['options'][$key] = $value;
-    			}  			 
-    			
+        if (! $error) {
+            // Type et taille non encore pris en compte => varchar(255)
+            if (isset($_POST["attrname"]) && preg_match("/^\w[a-zA-Z0-9-_]*$/",$_POST['attrname'])) {
+                // Construct array for parameter (value of select list)
+                $default_value = GETPOST('default_value');
+                $parameters = GETPOST('param');
+                $parameters_array = explode("\r\n",$parameters);
+                foreach ($parameters_array as $param_ligne) {
+                    list($key,$value) = explode(',',$param_ligne);
+                    $params['options'][$key] = $value;
+                }
+
                 $result=$extrafields->addExtraField($_POST['attrname'],$_POST['label'],$_POST['type'],$_POST['pos'],$extrasize,$elementtype,(GETPOST('unique')?1:0),(GETPOST('required')?1:0),$default_value,$params);
-    			if ($result > 0)
-    			{
-    				setEventMessage($langs->trans('SetupSaved'));
-    				header("Location: ".$_SERVER["PHP_SELF"]);
-    				exit;
-    			}
-    			else
-    			{
+                if ($result > 0) {
+                    setEventMessage($langs->trans('SetupSaved'));
+                    header("Location: ".$_SERVER["PHP_SELF"]);
+                    exit;
+                } else {
                     $error++;
-    			    $mesg=$extrafields->error;
+                    $mesg=$extrafields->error;
                     setEventMessage($mesg,'errors');
-    			}
-    		}
-    		else
-    		{
+                }
+            } else {
                 $error++;
-    		    $langs->load("errors");
-    			$mesg=$langs->trans("ErrorFieldCanNotContainSpecialCharacters",$langs->transnoentities("AttributeCode"));
-    			setEventMessage($mesg,'errors');
-    			$action = 'create';
-    		}
-	    }
-	    else 
-	    {
-	    	setEventMessage($mesg,'errors');
-	    }
-	}
+                $langs->load("errors");
+                $mesg=$langs->trans("ErrorFieldCanNotContainSpecialCharacters",$langs->transnoentities("AttributeCode"));
+                setEventMessage($mesg,'errors');
+                $action = 'create';
+            }
+        } else {
+            setEventMessage($mesg,'errors');
+        }
+    }
 }
 
 // Rename field
-if ($action == 'update')
-{
-	if ($_POST["button"] != $langs->trans("Cancel"))
-	{
+if ($action == 'update') {
+    if ($_POST["button"] != $langs->trans("Cancel")) {
         // Check values
-		if (! GETPOST('type'))
-		{
-			$error++;
-			$langs->load("errors");
-			$mesg[]=$langs->trans("ErrorFieldRequired",$langs->trans("Type"));
-			$action = 'create';
-		}
-		if (GETPOST('type')=='varchar' && $extrasize > $maxsizestring)
-        {
+        if (! GETPOST('type')) {
+            $error++;
+            $langs->load("errors");
+            $mesg[]=$langs->trans("ErrorFieldRequired",$langs->trans("Type"));
+            $action = 'create';
+        }
+        if (GETPOST('type')=='varchar' && $extrasize > $maxsizestring) {
             $error++;
             $langs->load("errors");
             $mesg[]=$langs->trans("ErrorSizeTooLongForVarcharType",$maxsizestring);
             $action = 'edit';
         }
-        if (GETPOST('type')=='int' && $extrasize > $maxsizeint)
-        {
+        if (GETPOST('type')=='int' && $extrasize > $maxsizeint) {
             $error++;
             $langs->load("errors");
             $mesg[]=$langs->trans("ErrorSizeTooLongForIntType",$maxsizeint);
             $action = 'edit';
         }
-        if (GETPOST('type')=='select' && !GETPOST('param'))
-        {
-        	$error++;
-        	$langs->load("errors");
-        	$mesg[]=$langs->trans("ErrorNoValueForSelectType");
-        	$action = 'edit';
+        if (GETPOST('type')=='select' && !GETPOST('param')) {
+            $error++;
+            $langs->load("errors");
+            $mesg[]=$langs->trans("ErrorNoValueForSelectType");
+            $action = 'edit';
         }
-        if (GETPOST('type')=='sellist' && !GETPOST('param'))
-        {
-        	$error++;
-        	$langs->load("errors");
-        	$mesg[]=$langs->trans("ErrorNoValueForSelectListType");
-        	$action = 'edit';
+        if (GETPOST('type')=='sellist' && !GETPOST('param')) {
+            $error++;
+            $langs->load("errors");
+            $mesg[]=$langs->trans("ErrorNoValueForSelectListType");
+            $action = 'edit';
         }
-        if (GETPOST('type')=='checkbox' && !GETPOST('param'))
-        {
-        	$error++;
-        	$langs->load("errors");
-        	$mesg[]=$langs->trans("ErrorNoValueForCheckBoxType");
-        	$action = 'edit';
+        if (GETPOST('type')=='checkbox' && !GETPOST('param')) {
+            $error++;
+            $langs->load("errors");
+            $mesg[]=$langs->trans("ErrorNoValueForCheckBoxType");
+            $action = 'edit';
         }
-        if (GETPOST('type')=='radio' && !GETPOST('param'))
-        {
-        	$error++;
-        	$langs->load("errors");
-        	$mesg[]=$langs->trans("ErrorNoValueForRadioType");
-        	$action = 'edit';
+        if (GETPOST('type')=='radio' && !GETPOST('param')) {
+            $error++;
+            $langs->load("errors");
+            $mesg[]=$langs->trans("ErrorNoValueForRadioType");
+            $action = 'edit';
         }
-        if  (((GETPOST('type')=='radio') || (GETPOST('type')=='checkbox') || (GETPOST('type')=='radio')) && GETPOST('param'))
-        {
-        	// Construct array for parameter (value of select list)
-        	$parameters = GETPOST('param');
-        	$parameters_array = explode("\r\n",$parameters);
-        	foreach($parameters_array as $param_ligne)
-        	{
-        		if (!empty($param_ligne)) {
-	        		if (preg_match_all('/,/',$param_ligne,$matches))
-	        		{
-	        			if (count($matches[0])>1) {
-	        				$error++;
-	        				$langs->load("errors");
-	        				$mesg[]=$langs->trans("ErrorBadFormatValueList",$param_ligne);
-	        				$action = 'edit';
-	        			}
-	        		}
-	        		else
-	        		{
-	        			$error++;
-	        			$langs->load("errors");
-	        			$mesg[]=$langs->trans("ErrorBadFormatValueList",$param_ligne);
-	        			$action = 'edit';
-	        		}
-        		}
-        	}
+        if (((GETPOST('type')=='radio') || (GETPOST('type')=='checkbox') || (GETPOST('type')=='radio')) && GETPOST('param')) {
+            // Construct array for parameter (value of select list)
+            $parameters = GETPOST('param');
+            $parameters_array = explode("\r\n",$parameters);
+            foreach ($parameters_array as $param_ligne) {
+                if (!empty($param_ligne)) {
+                    if (preg_match_all('/,/',$param_ligne,$matches)) {
+                        if (count($matches[0])>1) {
+                            $error++;
+                            $langs->load("errors");
+                            $mesg[]=$langs->trans("ErrorBadFormatValueList",$param_ligne);
+                            $action = 'edit';
+                        }
+                    } else {
+                        $error++;
+                        $langs->load("errors");
+                        $mesg[]=$langs->trans("ErrorBadFormatValueList",$param_ligne);
+                        $action = 'edit';
+                    }
+                }
+            }
         }
 
-	    if (! $error)
-	    {
-            if (isset($_POST["attrname"]) && preg_match("/^\w[a-zA-Z0-9-_]*$/",$_POST['attrname']))
-    		{
-    			$pos = GETPOST('pos','int');
-    			// Construct array for parameter (value of select list)
-    			$parameters = GETPOST('param');
-    			$parameters_array = explode("\r\n",$parameters);
-    			foreach($parameters_array as $param_ligne)
-    			{
-    				list($key,$value) = explode(',',$param_ligne);
-    				$params['options'][$key] = $value;
-    			}
-    			$result=$extrafields->update($_POST['attrname'],$_POST['label'],$_POST['type'],$extrasize,$elementtype,(GETPOST('unique')?1:0),(GETPOST('required')?1:0),$pos,$params);
-    			if ($result > 0)
-    			{
-    				setEventMessage($langs->trans('SetupSaved'));
-    				header("Location: ".$_SERVER["PHP_SELF"]);
-    				exit;
-    			}
-    			else
-    			{
+        if (! $error) {
+            if (isset($_POST["attrname"]) && preg_match("/^\w[a-zA-Z0-9-_]*$/",$_POST['attrname'])) {
+                $pos = GETPOST('pos','int');
+                // Construct array for parameter (value of select list)
+                $parameters = GETPOST('param');
+                $parameters_array = explode("\r\n",$parameters);
+                foreach ($parameters_array as $param_ligne) {
+                    list($key,$value) = explode(',',$param_ligne);
+                    $params['options'][$key] = $value;
+                }
+                $result=$extrafields->update($_POST['attrname'],$_POST['label'],$_POST['type'],$extrasize,$elementtype,(GETPOST('unique')?1:0),(GETPOST('required')?1:0),$pos,$params);
+                if ($result > 0) {
+                    setEventMessage($langs->trans('SetupSaved'));
+                    header("Location: ".$_SERVER["PHP_SELF"]);
+                    exit;
+                } else {
                     $error++;
-    			    $mesg=$extrafields->error;
-    			    setEventMessage($mesg,'errors');
-    			}
-    		}
-    		else
-    		{
-    		    $error++;
-    			$langs->load("errors");
-    			$mesg=$langs->trans("ErrorFieldCanNotContainSpecialCharacters",$langs->transnoentities("AttributeCode"));
-    			setEventMessage($mesg,'errors');
-    		}
-	    }
-	    else
-	    {
-	    	setEventMessage($mesg,'errors');
-	    }
-	}
+                    $mesg=$extrafields->error;
+                    setEventMessage($mesg,'errors');
+                }
+            } else {
+                $error++;
+                $langs->load("errors");
+                $mesg=$langs->trans("ErrorFieldCanNotContainSpecialCharacters",$langs->transnoentities("AttributeCode"));
+                setEventMessage($mesg,'errors');
+            }
+        } else {
+            setEventMessage($mesg,'errors');
+        }
+    }
 }
 
 // Delete attribute
-if ($action == 'delete')
-{
-	if(isset($_GET["attrname"]) && preg_match("/^\w[a-zA-Z0-9-_]*$/",$_GET["attrname"]))
-	{
+if ($action == 'delete') {
+    if (isset($_GET["attrname"]) && preg_match("/^\w[a-zA-Z0-9-_]*$/",$_GET["attrname"])) {
         $result=$extrafields->delete($_GET["attrname"],$elementtype);
-        if ($result >= 0)
-        {
+        if ($result >= 0) {
             header("Location: ".$_SERVER["PHP_SELF"]);
             exit;
-        }
-        else $mesg=$extrafields->error;
-	}
-	else
-	{
-	    $error++;
-		$langs->load("errors");
-		$mesg=$langs->trans("ErrorFieldCanNotContainSpecialCharacters",$langs->transnoentities("AttributeCode"));
-	}
+        } else $mesg=$extrafields->error;
+    } else {
+        $error++;
+        $langs->load("errors");
+        $mesg=$langs->trans("ErrorFieldCanNotContainSpecialCharacters",$langs->transnoentities("AttributeCode"));
+    }
 }
-
-?>

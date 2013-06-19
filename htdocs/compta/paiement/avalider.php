@@ -31,12 +31,10 @@ if (! $user->rights->facture->lire)
   accessforbidden();
 
 $socid=0;
-if ($user->societe_id > 0)
-{
+if ($user->societe_id > 0) {
     $action = '';
     $socid = $user->societe_id;
 }
-
 
 /*
  * Affichage
@@ -58,15 +56,13 @@ $limit = $conf->liste_limit;
 $sql = "SELECT p.rowid, p.datep as dp, p.amount, p.statut";
 $sql.=", c.libelle as paiement_type, p.num_paiement";
 $sql.= " FROM ".MAIN_DB_PREFIX."paiement as p, ".MAIN_DB_PREFIX."c_paiement as c";
-if ($socid)
-{
+if ($socid) {
     $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON p.rowid = pf.fk_paiement";
     $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."facture as f ON pf.fk_facture = f.rowid";
 }
 $sql.= " WHERE p.fk_paiement = c.id";
 $sql.= " AND p.entity = ".$conf->entity;
-if ($socid)
-{
+if ($socid) {
     $sql.= " AND f.fk_soc = ".$socid;
 }
 $sql.= " AND p.statut = 0";
@@ -74,8 +70,7 @@ $sql.= " ORDER BY $sortfield $sortorder";
 $sql.= $db->plimit($limit+1, $offset);
 $resql = $db->query($sql);
 
-if ($resql)
-{
+if ($resql) {
     $num = $db->num_rows($resql);
     $i = 0;
     $var=True;
@@ -91,8 +86,7 @@ if ($resql)
     print "<td>&nbsp;</td>";
     print "</tr>\n";
 
-    while ($i < min($num,$limit))
-    {
+    while ($i < min($num,$limit)) {
         $objp = $db->fetch_object($resql);
         $var=!$var;
         print "<tr $bc[$var]>";
@@ -102,12 +96,9 @@ if ($resql)
         print '<td align="right">'.price($objp->amount).'</td>';
         print '<td align="center">';
 
-        if ($objp->statut == 0)
-        {
+        if ($objp->statut == 0) {
             print '<a href="fiche.php?id='.$objp->rowid.'&amp;action=valide">'.$langs->trans("PaymentStatusToValidShort").'</a>';
-        }
-        else
-        {
+        } else {
             print "-";
         }
 
@@ -121,4 +112,3 @@ if ($resql)
 $db->close();
 
 llxFooter();
-?>

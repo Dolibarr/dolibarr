@@ -35,8 +35,7 @@ $userid=GETPOST('userid','int'); if ($userid < 0) $userid=0;
 $socid=GETPOST('socid','int'); if ($socid < 0) $socid=0;
 
 // Security check
-if ($user->societe_id > 0)
-{
+if ($user->societe_id > 0) {
     $action = '';
     $socid = $user->societe_id;
 }
@@ -48,7 +47,6 @@ $endyear=$year;
 
 $langs->load("members");
 $langs->load("companies");
-
 
 /*
  * View
@@ -71,20 +69,16 @@ $data = $stats->getNbByMonthWithPrevYear($endyear,$startyear);
 //var_dump($data);
 // $data = array(array('Lib',val1,val2,val3),...)
 
-
 $filenamenb = $dir.'/subscriptionsnbinyear-'.$year.'.png';
 $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=memberstats&file=subscriptionsnbinyear-'.$year.'.png';
 
-
 $px1 = new DolGraph();
 $mesg = $px1->isGraphKo();
-if (! $mesg)
-{
+if (! $mesg) {
     $px1->SetData($data);
     $px1->SetPrecisionY(0);
     $i=$startyear;
-    while ($i <= $endyear)
-    {
+    while ($i <= $endyear) {
         $legend[]=$i;
         $i++;
     }
@@ -113,13 +107,11 @@ $fileurlamount = DOL_URL_ROOT.'/viewimage.php?modulepart=memberstats&file=subscr
 
 $px2 = new DolGraph();
 $mesg = $px2->isGraphKo();
-if (! $mesg)
-{
+if (! $mesg) {
     $px2->SetData($data);
     $px2->SetPrecisionY(0);
     $i=$startyear;
-    while ($i <= $endyear)
-    {
+    while ($i <= $endyear) {
         $legend[]=$i;
         $i++;
     }
@@ -138,11 +130,9 @@ if (! $mesg)
     $px2->draw($filenameamount,$fileurlamount);
 }
 
-
 $head = member_stats_prepare_head($adh);
 
 dol_fiche_head($head, 'statssubscription', $langs->trans("Statistics"), 0, 'user');
-
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
@@ -166,7 +156,6 @@ print '<br><br>';
 // Show array
 $data = $stats->getAllByYear();
 
-
 print '<table class="border" width="100%">';
 print '<tr height="24">';
 print '<td align="center">'.$langs->trans("Year").'</td>';
@@ -176,12 +165,10 @@ print '<td align="center">'.$langs->trans("AmountAverage").'</td>';
 print '</tr>';
 
 $oldyear=0;
-foreach ($data as $val)
-{
+foreach ($data as $val) {
     $year = $val['year'];
     print $avg;
-    while ($oldyear > $year+1)
-    {	// If we have empty year
+    while ($oldyear > $year+1) {	// If we have empty year
         $oldyear--;
         print '<tr height="24">';
         print '<td align="center">';
@@ -209,29 +196,22 @@ foreach ($data as $val)
 
 print '</table>';
 
-
 print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
-
 
 // Show graphs
 print '<table class="border" width="100%"><tr valign="top"><td align="center">';
-if ($mesg) { print $mesg; }
-else {
+if ($mesg) { print $mesg; } else {
     print $px1->show();
     print "<br>\n";
     print $px2->show();
 }
 print '</td></tr></table>';
 
-
 print '</div></div></div>';
 print '<div style="clear:both"></div>';
 
-
 dol_fiche_end();
-
 
 llxFooter();
 
 $db->close();
-?>

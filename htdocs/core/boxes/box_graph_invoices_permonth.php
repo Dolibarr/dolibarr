@@ -22,129 +22,119 @@
  */
 include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
 
-
 /**
  * Class to manage the box to show last invoices
  */
 class box_graph_invoices_permonth extends ModeleBoxes
 {
-	var $boxcode="invoicespermonth";
-	var $boximg="object_bill";
-	var $boxlabel="BoxInvoicesPerMonth";
-	var $depends = array("facture");
+    public $boxcode="invoicespermonth";
+    public $boximg="object_bill";
+    public $boxlabel="BoxInvoicesPerMonth";
+    public $depends = array("facture");
 
-	var $db;
+    public $db;
 
-	var $info_box_head = array();
-	var $info_box_contents = array();
+    public $info_box_head = array();
+    public $info_box_contents = array();
 
+    /**
+     *  Constructor
+     *
+     * 	@param	DoliDB	$db			Database handler
+     *  @param	string	$param		More parameters
+     */
+    public function __construct($db,$param)
+    {
+        global $conf;
 
-	/**
-	 *  Constructor
-	 *
-	 * 	@param	DoliDB	$db			Database handler
-	 *  @param	string	$param		More parameters
-	 */
-	function __construct($db,$param)
-	{
-		global $conf;
+        $this->db=$db;
+        $this->enabled=$conf->global->MAIN_FEATURES_LEVEL;
+    }
 
-		$this->db=$db;
-		$this->enabled=$conf->global->MAIN_FEATURES_LEVEL;
-	}
-
-	/**
-	 *  Load data into info_box_contents array to show array later.
-	 *
-	 *  @param	int		$max        Maximum number of records to load
+    /**
+     *  Load data into info_box_contents array to show array later.
+     *
+     *  @param	int		$max        Maximum number of records to load
      *  @return	void
-	 */
-	function loadBox($max=5)
-	{
-		global $conf, $user, $langs, $db;
+     */
+    public function loadBox($max=5)
+    {
+        global $conf, $user, $langs, $db;
 
-		$this->max=$max;
+        $this->max=$max;
 
-		include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-		$facturestatic=new Facture($db);
+        include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+        $facturestatic=new Facture($db);
 
-		$text = $langs->trans("BoxInvoicesPerMonth",$max);
-		$this->info_box_head = array(
-				'text' => $text,
-				'limit'=> dol_strlen($text),
-				'graph'=> 1
-		);
+        $text = $langs->trans("BoxInvoicesPerMonth",$max);
+        $this->info_box_head = array(
+                'text' => $text,
+                'limit'=> dol_strlen($text),
+                'graph'=> 1
+        );
 
-		if ($user->rights->facture->lire)
-		{
-			$sql = "SELECT f.rowid as facid, f.facnumber, f.type, f.amount, f.datef as df";
-			$sql.= ", f.paye, f.fk_statut, f.datec, f.tms";
-			$sql.= ", s.nom, s.rowid as socid";
-			$sql.= ", f.date_lim_reglement as datelimite";
-			$sql.= " FROM (".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f";
-			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-			$sql.= ")";
-			$sql.= " WHERE f.fk_soc = s.rowid";
-			$sql.= " AND f.entity = ".$conf->entity;
-			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-			if($user->societe_id)	$sql.= " AND s.rowid = ".$user->societe_id;
-			$sql.= " ORDER BY f.tms DESC";
-			$sql.= $db->plimit($max, 0);
+        if ($user->rights->facture->lire) {
+            $sql = "SELECT f.rowid as facid, f.facnumber, f.type, f.amount, f.datef as df";
+            $sql.= ", f.paye, f.fk_statut, f.datec, f.tms";
+            $sql.= ", s.nom, s.rowid as socid";
+            $sql.= ", f.date_lim_reglement as datelimite";
+            $sql.= " FROM (".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f";
+            if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+            $sql.= ")";
+            $sql.= " WHERE f.fk_soc = s.rowid";
+            $sql.= " AND f.entity = ".$conf->entity;
+            if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+            if($user->societe_id)	$sql.= " AND s.rowid = ".$user->societe_id;
+            $sql.= " ORDER BY f.tms DESC";
+            $sql.= $db->plimit($max, 0);
 
-			$result = $db->query($sql);
-			if ($result)
-			{
-				$num = $db->num_rows($result);
-				$now=dol_now();
+            $result = $db->query($sql);
+            if ($result) {
+                $num = $db->num_rows($result);
+                $now=dol_now();
 
-				$i = 0;
-				$l_due_date = $langs->trans('Late').' ('.strtolower($langs->trans('DateEcheance')).': %s)';
+                $i = 0;
+                $l_due_date = $langs->trans('Late').' ('.strtolower($langs->trans('DateEcheance')).': %s)';
 
-				while ($i < $num)
-				{
-					$objp = $db->fetch_object($result);
-					$datelimite=$db->jdate($objp->datelimite);
-					$datec=$db->jdate($objp->datec);
+                while ($i < $num) {
+                    $objp = $db->fetch_object($result);
+                    $datelimite=$db->jdate($objp->datelimite);
+                    $datec=$db->jdate($objp->datec);
 
-					$picto='bill';
-					if ($objp->type == 1) $picto.='r';
-					if ($objp->type == 2) $picto.='a';
-					$late = '';
-					if ($objp->paye == 0 && ($objp->fk_statut != 2 && $objp->fk_statut != 3) && $datelimite < ($now - $conf->facture->client->warning_delay)) { $late = img_warning(sprintf($l_due_date,dol_print_date($datelimite,'day')));}
+                    $picto='bill';
+                    if ($objp->type == 1) $picto.='r';
+                    if ($objp->type == 2) $picto.='a';
+                    $late = '';
+                    if ($objp->paye == 0 && ($objp->fk_statut != 2 && $objp->fk_statut != 3) && $datelimite < ($now - $conf->facture->client->warning_delay)) { $late = img_warning(sprintf($l_due_date,dol_print_date($datelimite,'day')));}
 
-					$i++;
-				}
+                    $i++;
+                }
 
-				$this->info_box_contents[0][0] = array('td' => 'align="center"','text2'=>'xxxxxxx');
+                $this->info_box_contents[0][0] = array('td' => 'align="center"','text2'=>'xxxxxxx');
 
-				$db->free($result);
-			}
-			else
-			{
-				$this->info_box_contents[0][0] = array(	'td' => 'align="left"',
-    	        										'maxlength'=>500,
-	            										'text' => ($db->error().' sql='.$sql));
-			}
+                $db->free($result);
+            } else {
+                $this->info_box_contents[0][0] = array(	'td' => 'align="left"',
+                                                        'maxlength'=>500,
+                                                        'text' => ($db->error().' sql='.$sql));
+            }
 
-		}
-		else {
-			$this->info_box_contents[0][0] = array('td' => 'align="left"',
+        } else {
+            $this->info_box_contents[0][0] = array('td' => 'align="left"',
             'text' => $langs->trans("ReadPermissionNotAllowed"));
-		}
-	}
+        }
+    }
 
-	/**
-	 *	Method to show box
-	 *
-	 *	@param	array	$head       Array with properties of box title
-	 *	@param  array	$contents   Array with properties of box lines
-	 *	@return	void
-	 */
-	function showBox($head = null, $contents = null)
-	{
-		parent::showBox($this->info_box_head, $this->info_box_contents);
-	}
+    /**
+     *	Method to show box
+     *
+     *	@param	array	$head       Array with properties of box title
+     *	@param  array	$contents   Array with properties of box lines
+     *	@return	void
+     */
+    public function showBox($head = null, $contents = null)
+    {
+        parent::showBox($this->info_box_head, $this->info_box_contents);
+    }
 
 }
-
-?>

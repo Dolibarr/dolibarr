@@ -57,14 +57,14 @@ header('Access-Control-Allow-Methods: OPTIONS, HEAD, GET, POST, PUT, DELETE');
 header('Access-Control-Allow-Headers: X-File-Name, X-File-Type, X-File-Size');
 
 switch ($_SERVER['REQUEST_METHOD']) {
-	case 'OPTIONS':
-		break;
+    case 'OPTIONS':
+        break;
     case 'HEAD':
     case 'GET':
         $upload_handler->get();
         break;
     case 'POST':
-    	if (isset($_REQUEST['_method']) && $_REQUEST['_method'] === 'DELETE') {
+        if (isset($_REQUEST['_method']) && $_REQUEST['_method'] === 'DELETE') {
             $upload_handler->delete();
         } else {
             $upload_handler->post();
@@ -79,5 +79,3 @@ switch ($_SERVER['REQUEST_METHOD']) {
 }
 
 $db->close();
-
-?>

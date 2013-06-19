@@ -52,8 +52,7 @@ $sql .= " , ".MAIN_DB_PREFIX."compta_compte_generaux as c";
 $sql .= " WHERE f.rowid = l.fk_facture_fourn AND f.fk_statut = 1 AND l.fk_code_ventilation <> 0 ";
 $sql .= " AND c.rowid = l.fk_code_ventilation";
 
-if (dol_strlen(trim($_GET["search_facture"])))
-{
+if (dol_strlen(trim($_GET["search_facture"]))) {
   $sql .= " AND f.facnumber like '%".$_GET["search_facture"]."%'";
 }
 
@@ -62,8 +61,7 @@ $sql .= $db->plimit($limit+1,$offset);
 
 $result = $db->query($sql);
 
-if ($result)
-{
+if ($result) {
   $num_lignes = $db->num_rows($result);
   $i = 0;
 
@@ -85,8 +83,7 @@ if ($result)
   print "</tr>\n";
 
   $var=True;
-  while ($i < min($num_lignes, $limit))
-    {
+  while ($i < min($num_lignes, $limit)) {
       $objp = $db->fetch_object($result);
       $var=!$var;
       print "<tr $bc[$var]>";
@@ -101,9 +98,7 @@ if ($result)
       print "</tr>";
       $i++;
     }
-}
-else
-{
+} else {
   print $db->error();
 }
 
@@ -112,4 +107,3 @@ print "</table></form>";
 $db->close();
 
 llxFooter();
-?>

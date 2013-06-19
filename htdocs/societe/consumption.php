@@ -25,7 +25,7 @@
  *	\brief      Add a tab on thirpdarty view to list all products/services bought or sells by thirdparty
  */
 
-require("../main.inc.php");
+require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
@@ -59,8 +59,7 @@ $month	= GETPOST('month','int');
 $year	= GETPOST('year','int');
 
 // Clean up on purge search criteria ?
-if (GETPOST("button_removefilter"))
-{
+if (GETPOST("button_removefilter")) {
     $sref='';
     $sprod_fulldescr='';
     $year='';
@@ -75,12 +74,9 @@ $langs->load("bills");
 $langs->load("orders");
 $langs->load("suppliers");
 
-
 /*
  * Actions
  */
-
-
 
 /*
  * View
@@ -93,10 +89,9 @@ $productstatic=new Product($db);
 $titre = $langs->trans("Referer",$object->name);
 llxHeader('',$titre,'');
 
-if (empty($socid))
-{
-	dol_print_error($db);
-	exit;
+if (empty($socid)) {
+    dol_print_error($db);
+    exit;
 }
 
 $head = societe_prepare_head($object);
@@ -112,55 +107,50 @@ print '<td colspan="3">';
 print $form->showrefnav($object,'socid','',($user->societe_id?0:1),'rowid','nom');
 print '</td></tr>';
 
-if (! empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
-{
-	print '<tr><td>'.$langs->trans('Prefix').'</td><td colspan="3">'.$object->prefix_comm.'</td></tr>';
+if (! empty($conf->global->SOCIETE_USEPREFIX)) {  // Old not used prefix field
+    print '<tr><td>'.$langs->trans('Prefix').'</td><td colspan="3">'.$object->prefix_comm.'</td></tr>';
 }
 
-if ($object->client)
-{
-	print '<tr><td>';
-	print $langs->trans('CustomerCode').'</td><td colspan="3">';
-	print $object->code_client;
-	if ($object->check_codeclient() <> 0) print ' <font class="error">('.$langs->trans("WrongCustomerCode").')</font>';
-	print '</td></tr>';
-	$sql = "SELECT count(*) as nb from ".MAIN_DB_PREFIX."facture where fk_soc = ".$socid;
-	$resql=$db->query($sql);
-	if (!$resql) dol_print_error($db);
+if ($object->client) {
+    print '<tr><td>';
+    print $langs->trans('CustomerCode').'</td><td colspan="3">';
+    print $object->code_client;
+    if ($object->check_codeclient() <> 0) print ' <font class="error">('.$langs->trans("WrongCustomerCode").')</font>';
+    print '</td></tr>';
+    $sql = "SELECT count(*) as nb from ".MAIN_DB_PREFIX."facture where fk_soc = ".$socid;
+    $resql=$db->query($sql);
+    if (!$resql) dol_print_error($db);
 
-	$obj = $db->fetch_object($resql);
-	$nbFactsClient = $obj->nb;
-	$thirdTypeArray['customer']=$langs->trans("customer");
-	if ($conf->facture->enabled) $elementTypeArray['invoice']=$langs->trans('Invoices');
-	if ($conf->commande->enabled) $elementTypeArray['order']=$langs->trans('Orders');
+    $obj = $db->fetch_object($resql);
+    $nbFactsClient = $obj->nb;
+    $thirdTypeArray['customer']=$langs->trans("customer");
+    if ($conf->facture->enabled) $elementTypeArray['invoice']=$langs->trans('Invoices');
+    if ($conf->commande->enabled) $elementTypeArray['order']=$langs->trans('Orders');
 }
 
-if ($object->fournisseur)
-{
-	print '<tr><td>';
-	print $langs->trans('SupplierCode').'</td><td colspan="3">';
-	print $object->code_fournisseur;
-	if ($object->check_codefournisseur() <> 0) print ' <font class="error">('.$langs->trans("WrongSupplierCode").')</font>';
-	print '</td></tr>';
-	$sql = "SELECT count(*) as nb from ".MAIN_DB_PREFIX."commande_fournisseur where fk_soc = ".$socid;
-	$resql=$db->query($sql);
-	if (!$resql) dol_print_error($db);
+if ($object->fournisseur) {
+    print '<tr><td>';
+    print $langs->trans('SupplierCode').'</td><td colspan="3">';
+    print $object->code_fournisseur;
+    if ($object->check_codefournisseur() <> 0) print ' <font class="error">('.$langs->trans("WrongSupplierCode").')</font>';
+    print '</td></tr>';
+    $sql = "SELECT count(*) as nb from ".MAIN_DB_PREFIX."commande_fournisseur where fk_soc = ".$socid;
+    $resql=$db->query($sql);
+    if (!$resql) dol_print_error($db);
 
-	$obj = $db->fetch_object($resql);
-	$nbCmdsFourn = $obj->nb;
-	$thirdTypeArray['supplier']=$langs->trans("supplier");
-	if ($conf->fournisseur->enabled) $elementTypeArray['supplier_invoice']=$langs->trans('SuppliersInvoices');
-	if ($conf->fournisseur->enabled) $elementTypeArray['supplier_order']=$langs->trans('SuppliersOrders');
+    $obj = $db->fetch_object($resql);
+    $nbCmdsFourn = $obj->nb;
+    $thirdTypeArray['supplier']=$langs->trans("supplier");
+    if ($conf->fournisseur->enabled) $elementTypeArray['supplier_invoice']=$langs->trans('SuppliersInvoices');
+    if ($conf->fournisseur->enabled) $elementTypeArray['supplier_order']=$langs->trans('SuppliersOrders');
 }
 print '</table>';
 
 dol_fiche_end();
 print '<br>';
 
-
 $sql_select='';
-if ($type_element == 'invoice')
-{ // Customer : show products from invoices
+if ($type_element == 'invoice') { // Customer : show products from invoices
 $documentstatic=new Facture($db);
 $sql_select = 'SELECT f.rowid as doc_id, f.facnumber as doc_number, f.type as doc_type, f.datef as datePrint, ';
 $tables_from = MAIN_DB_PREFIX."facture as f,".MAIN_DB_PREFIX."facturedet as d";
@@ -171,13 +161,11 @@ $datePrint = 'f.datef';
 $doc_number='f.facnumber';
 $thirdTypeSelect='customer';
 }
-if ($type_element == 'order')
-{
-	// TODO
+if ($type_element == 'order') {
+    // TODO
 
 }
-if ($type_element == 'supplier_order')
-{ // Supplier : Show products from orders.
+if ($type_element == 'supplier_order') { // Supplier : Show products from orders.
 $documentstatic=new CommandeFournisseur($db);
 $sql_select = 'SELECT c.rowid as doc_id, c.ref as doc_number, "1" as doc_type, c.date_valid as datePrint, ';
 $tables_from = MAIN_DB_PREFIX."commande_fournisseur as c,".MAIN_DB_PREFIX."commande_fournisseurdet as d";
@@ -187,9 +175,8 @@ $datePrint = 'c.date_creation';
 $doc_number='c.ref';
 $thirdTypeSelect='supplier';
 }
-if ($type_element == 'supplier_invoice')
-{
-	// TODO
+if ($type_element == 'supplier_invoice') {
+    // TODO
 
 }
 
@@ -201,22 +188,21 @@ $sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".$tables_from;
 $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON d.fk_product = p.rowid ';
 $sql.= $where;
 if ($month > 0) {
-	if ($year > 0) {
-		$start = dol_mktime(0, 0, 0, $month, 1, $year);
-		$end = dol_time_plus_duree($start,1,'m') - 1;
-		$sql.= " AND ".$datePrint." BETWEEN '".$db->idate($start)."' AND '".$db->idate($end)."'";
-	} else {
-		$sql.= " AND date_format(".$datePrint.", '%m') = '".sprintf('%02d',$month)."'";
-	}
-} else if ($year > 0) {
-	$start = dol_mktime(0, 0, 0, 1, 1, $year);
-	$end = dol_time_plus_duree($start,1,'y') - 1;
-	$sql.= " AND ".$datePrint." BETWEEN '".$db->idate($start)."' AND '".$db->idate($end)."'";
+    if ($year > 0) {
+        $start = dol_mktime(0, 0, 0, $month, 1, $year);
+        $end = dol_time_plus_duree($start,1,'m') - 1;
+        $sql.= " AND ".$datePrint." BETWEEN '".$db->idate($start)."' AND '".$db->idate($end)."'";
+    } else {
+        $sql.= " AND date_format(".$datePrint.", '%m') = '".sprintf('%02d',$month)."'";
+    }
+} elseif ($year > 0) {
+    $start = dol_mktime(0, 0, 0, 1, 1, $year);
+    $end = dol_time_plus_duree($start,1,'y') - 1;
+    $sql.= " AND ".$datePrint." BETWEEN '".$db->idate($start)."' AND '".$db->idate($end)."'";
 }
 if ($sref) $sql.= " AND ".$doc_number." LIKE '%".$sref."%'";
 $sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit($limit + 1, $offset);
-
 
 // Define type of elements
 $typeElementString = $form->selectarray("type_element",$elementTypeArray,GETPOST('type_element'));
@@ -225,11 +211,10 @@ $param="&amp;sref=".$sref."&amp;month=".$month."&amp;year=".$year."&amp;sprod_fu
 
 print_barre_liste($langs->trans('ProductsIntoElements', $typeElementString.' '.$button), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder,'',$num, '', '');
 
-if ($sql_select)
-{
-	dol_syslog("sql=".$sql);
-	$resql=$db->query($sql);
-	if (!$resql) dol_print_error($db);
+if ($sql_select) {
+    dol_syslog("sql=".$sql);
+    $resql=$db->query($sql);
+    if (!$resql) dol_print_error($db);
 }
 
 print '<table class="liste" width="100%">'."\n";
@@ -257,174 +242,153 @@ print '<input type="image" class="liste_titre" name="button_removefilter" src="'
 print '</td>';
 print '</tr>';
 
-if ($sql_select)
-{
-	$var=true;
-	$num = $db->num_rows($resql);
-	$i = 0;
-	while (($objp = $db->fetch_object($resql)) && $i < $conf->liste_limit )
-	{
-		$var=!$var;
-		print "<tr ".$bc[$var].">";
-		print '<td class="nobordernopadding nowrap" width="100">';
-		$documentstatic->id=$objp->doc_id;
-		$documentstatic->ref=$objp->doc_number;
-		$documentstatic->type=$objp->type;
-		print $documentstatic->getNomUrl(1);
-		print '</td>';
-		print '<td align="center" width="80">'.dol_print_date($db->jdate($objp->datePrint),'day').'</td>';
+if ($sql_select) {
+    $var=true;
+    $num = $db->num_rows($resql);
+    $i = 0;
+    while (($objp = $db->fetch_object($resql)) && $i < $conf->liste_limit ) {
+        $var=!$var;
+        print "<tr ".$bc[$var].">";
+        print '<td class="nobordernopadding nowrap" width="100">';
+        $documentstatic->id=$objp->doc_id;
+        $documentstatic->ref=$objp->doc_number;
+        $documentstatic->type=$objp->type;
+        print $documentstatic->getNomUrl(1);
+        print '</td>';
+        print '<td align="center" width="80">'.dol_print_date($db->jdate($objp->datePrint),'day').'</td>';
 
-		print '<td>';
+        print '<td>';
 
-		// Define text, description and type
-		$text=''; $description=''; $type=0;
+        // Define text, description and type
+        $text=''; $description=''; $type=0;
 
-		// Code to show product duplicated from commonobject->printObjectLine
-		if ($objp->fk_product > 0)
-		{
-			$product_static = new Product($db);
+        // Code to show product duplicated from commonobject->printObjectLine
+        if ($objp->fk_product > 0) {
+            $product_static = new Product($db);
 
-			$product_static->type=$objp->fk_product_type;
-			$product_static->id=$objp->fk_product;
-			$product_static->ref=$objp->ref;
-			$text=$product_static->getNomUrl(1);
-		}
+            $product_static->type=$objp->fk_product_type;
+            $product_static->id=$objp->fk_product;
+            $product_static->ref=$objp->ref;
+            $text=$product_static->getNomUrl(1);
+        }
 
-		// Product
-		if ($objp->fk_product > 0)
-		{
-			// Define output language
-			if (! empty($conf->global->MAIN_MULTILANGS) && ! empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE))
-			{
-				$prod = new Product($db);
-				$prod->fetch($objp->fk_product);
+        // Product
+        if ($objp->fk_product > 0) {
+            // Define output language
+            if (! empty($conf->global->MAIN_MULTILANGS) && ! empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE)) {
+                $prod = new Product($db);
+                $prod->fetch($objp->fk_product);
 
-				$outputlangs = $langs;
-				$newlang='';
-				if (empty($newlang) && GETPOST('lang_id')) $newlang=GETPOST('lang_id');
-				if (empty($newlang)) $newlang=$object->default_lang;
-				if (! empty($newlang))
-				{
-					$outputlangs = new Translate("",$conf);
-					$outputlangs->setDefaultLang($newlang);
-				}
+                $outputlangs = $langs;
+                $newlang='';
+                if (empty($newlang) && GETPOST('lang_id')) $newlang=GETPOST('lang_id');
+                if (empty($newlang)) $newlang=$object->default_lang;
+                if (! empty($newlang)) {
+                    $outputlangs = new Translate("",$conf);
+                    $outputlangs->setDefaultLang($newlang);
+                }
 
-				$label = (! empty($prod->multilangs[$outputlangs->defaultlang]["label"])) ? $prod->multilangs[$outputlangs->defaultlang]["label"] : $objp->product_label;
-			}
-			else
-			{
-				$label = $objp->product_label;
-			}
+                $label = (! empty($prod->multilangs[$outputlangs->defaultlang]["label"])) ? $prod->multilangs[$outputlangs->defaultlang]["label"] : $objp->product_label;
+            } else {
+                $label = $objp->product_label;
+            }
 
-			$text.= ' - '.(! empty($objp->label)?$objp->label:$label);
-			$description=(! empty($conf->global->PRODUIT_DESC_IN_FORM)?'':dol_htmlentitiesbr($objp->description));
-		}
+            $text.= ' - '.(! empty($objp->label)?$objp->label:$label);
+            $description=(! empty($conf->global->PRODUIT_DESC_IN_FORM)?'':dol_htmlentitiesbr($objp->description));
+        }
 
-		if (($objp->info_bits & 2) == 2) { ?>
-			<a href="<?php echo DOL_URL_ROOT.'/comm/remx.php?id='.$object->id; ?>">
-			<?php
-			$txt='';
-			print img_object($langs->trans("ShowReduc"),'reduc').' ';
-			if ($objp->description == '(DEPOSIT)') $txt=$langs->trans("Deposit");
-			//else $txt=$langs->trans("Discount");
-			print $txt;
-			?>
-			</a>
-			<?php
-			if ($objp->description)
-			{
-				if ($objp->description == '(CREDIT_NOTE)' && $objp->fk_remise_except > 0)
-				{
-					$discount=new DiscountAbsolute($db);
-					$discount->fetch($objp->fk_remise_except);
-					echo ($txt?' - ':'').$langs->transnoentities("DiscountFromCreditNote",$discount->getNomUrl(0));
-				}
-				elseif ($objp->description == '(DEPOSIT)' && $objp->fk_remise_except > 0)
-				{
-					$discount=new DiscountAbsolute($db);
-					$discount->fetch($objp->fk_remise_except);
-					echo ($txt?' - ':'').$langs->transnoentities("DiscountFromDeposit",$discount->getNomUrl(0));
-					// Add date of deposit
-					if (! empty($conf->global->INVOICE_ADD_DEPOSIT_DATE)) echo ' ('.dol_print_date($discount->datec).')';
-				}
-				else
-				{
-					echo ($txt?' - ':'').dol_htmlentitiesbr($objp->description);
-				}
-			}
-		}
-		else
-		{
-			if ($objp->fk_product > 0) {
+        if (($objp->info_bits & 2) == 2) { ?>
+            <a href="<?php echo DOL_URL_ROOT.'/comm/remx.php?id='.$object->id; ?>">
+            <?php
+            $txt='';
+            print img_object($langs->trans("ShowReduc"),'reduc').' ';
+            if ($objp->description == '(DEPOSIT)') $txt=$langs->trans("Deposit");
+            //else $txt=$langs->trans("Discount");
+            print $txt;
+            ?>
+            </a>
+            <?php
+            if ($objp->description) {
+                if ($objp->description == '(CREDIT_NOTE)' && $objp->fk_remise_except > 0) {
+                    $discount=new DiscountAbsolute($db);
+                    $discount->fetch($objp->fk_remise_except);
+                    echo ($txt?' - ':'').$langs->transnoentities("DiscountFromCreditNote",$discount->getNomUrl(0));
+                } elseif ($objp->description == '(DEPOSIT)' && $objp->fk_remise_except > 0) {
+                    $discount=new DiscountAbsolute($db);
+                    $discount->fetch($objp->fk_remise_except);
+                    echo ($txt?' - ':'').$langs->transnoentities("DiscountFromDeposit",$discount->getNomUrl(0));
+                    // Add date of deposit
+                    if (! empty($conf->global->INVOICE_ADD_DEPOSIT_DATE)) echo ' ('.dol_print_date($discount->datec).')';
+                } else {
+                    echo ($txt?' - ':'').dol_htmlentitiesbr($objp->description);
+                }
+            }
+        } else {
+            if ($objp->fk_product > 0) {
 
-				echo $form->textwithtooltip($text,$description,3,'','',$i,0,'');
+                echo $form->textwithtooltip($text,$description,3,'','',$i,0,'');
 
-				// Show range
-				echo get_date_range($objp->date_start, $objp->date_end);
+                // Show range
+                echo get_date_range($objp->date_start, $objp->date_end);
 
-				// Add description in form
-				if (! empty($conf->global->PRODUIT_DESC_IN_FORM))
-				{
-					print (! empty($objp->description) && $objp->description!=$objp->product_label)?'<br>'.dol_htmlentitiesbr($objp->description):'';
-				}
+                // Add description in form
+                if (! empty($conf->global->PRODUIT_DESC_IN_FORM)) {
+                    print (! empty($objp->description) && $objp->description!=$objp->product_label)?'<br>'.dol_htmlentitiesbr($objp->description):'';
+                }
 
-			} else {
+            } else {
 
-				//if (! empty($objp->fk_parent_line)) echo img_picto('', 'rightarrow');
-				if ($type==1) $text = img_object($langs->trans('Service'),'service');
-				else $text = img_object($langs->trans('Product'),'product');
+                //if (! empty($objp->fk_parent_line)) echo img_picto('', 'rightarrow');
+                if ($type==1) $text = img_object($langs->trans('Service'),'service');
+                else $text = img_object($langs->trans('Product'),'product');
 
-				if (! empty($objp->label)) {
-					$text.= ' <strong>'.$objp->label.'</strong>';
-					echo $form->textwithtooltip($text,dol_htmlentitiesbr($objp->description),3,'','',$i,0,'');
-				} else {
-					echo $text.' '.dol_htmlentitiesbr($objp->description);
-				}
+                if (! empty($objp->label)) {
+                    $text.= ' <strong>'.$objp->label.'</strong>';
+                    echo $form->textwithtooltip($text,dol_htmlentitiesbr($objp->description),3,'','',$i,0,'');
+                } else {
+                    echo $text.' '.dol_htmlentitiesbr($objp->description);
+                }
 
-				// Show range
-				echo get_date_range($objp->date_start,$objp->date_end);
-			}
-		}
+                // Show range
+                echo get_date_range($objp->date_start,$objp->date_end);
+            }
+        }
 
-		/*
-		$prodreftxt='';
-		if ($objp->prod_id > 0)
-		{
-			$productstatic->id = $objp->prod_id;
-			$productstatic->ref = $objp->prod_ref;
-			$productstatic->status = $objp->prod_type;
-			$prodreftxt = $productstatic->getNomUrl(0);
-			if(!empty($objp->product_label)) $prodreftxt .= ' - '.$objp->product_label;
-		}
-		// Show range
-		$prodreftxt .= get_date_range($objp->date_start, $objp->date_end);
-		// Add description in form
-		if (! empty($conf->global->PRODUIT_DESC_IN_FORM))
-		{
-			$prodreftxt .= (! empty($objp->description) && $objp->description!=$objp->product_label)?'<br>'.dol_htmlentitiesbr($objp->description):'';
-		}
-		*/
-		print '</td>';
+        /*
+        $prodreftxt='';
+        if ($objp->prod_id > 0) {
+            $productstatic->id = $objp->prod_id;
+            $productstatic->ref = $objp->prod_ref;
+            $productstatic->status = $objp->prod_type;
+            $prodreftxt = $productstatic->getNomUrl(0);
+            if(!empty($objp->product_label)) $prodreftxt .= ' - '.$objp->product_label;
+        }
+        // Show range
+        $prodreftxt .= get_date_range($objp->date_start, $objp->date_end);
+        // Add description in form
+        if (! empty($conf->global->PRODUIT_DESC_IN_FORM)) {
+            $prodreftxt .= (! empty($objp->description) && $objp->description!=$objp->product_label)?'<br>'.dol_htmlentitiesbr($objp->description):'';
+        }
+        */
+        print '</td>';
 
-		//print '<td align="left">'.$prodreftxt.'</td>';
+        //print '<td align="left">'.$prodreftxt.'</td>';
 
-		print '<td align="right">'.$objp->prod_qty.'</td>';
+        print '<td align="right">'.$objp->prod_qty.'</td>';
 
-		print "</tr>\n";
-		$i++;
-	}
-	if ($num > $conf->liste_limit) {
-		print_barre_liste('', $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder,'',$num);
-	}
-	$db->free($resql);
-}
-else {
-	print '<tr><td colspan="4">'.$langs->trans("FeatureNotYetAvailable").'</td></tr>';
+        print "</tr>\n";
+        $i++;
+    }
+    if ($num > $conf->liste_limit) {
+        print_barre_liste('', $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder,'',$num);
+    }
+    $db->free($resql);
+} else {
+    print '<tr><td colspan="4">'.$langs->trans("FeatureNotYetAvailable").'</td></tr>';
 }
 
 print "</table>";
 print "</form>";
-
 
 /*
  * Errors
@@ -436,4 +400,3 @@ dol_htmloutput_errors($error,$errors);
 llxFooter();
 
 $db->close();
-?>

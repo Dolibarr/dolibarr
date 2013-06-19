@@ -24,68 +24,63 @@
  */
 require_once DOL_DOCUMENT_ROOT.'/core/modules/societe/modules_societe.class.php';
 
-
 /**
  *      \class 		mod_codecompta_panicum
  *		\brief 		Class to manage accountancy code of thirdparties with Panicum rules
  */
 class mod_codecompta_panicum extends ModeleAccountancyCode
 {
-	var $nom='Panicum';
-    var $version='dolibarr';        // 'development', 'experimental', 'dolibarr'
+    public $nom='Panicum';
+    public $version='dolibarr';        // 'development', 'experimental', 'dolibarr'
 
+    /**
+     * 	Constructor
+     */
+    public function __construct()
+    {
+    }
 
-	/**
-	 * 	Constructor
-	 */
-	function __construct()
-	{
-	}
+    /**
+     * Return description of module
+     *
+     * @param  string $langs Object langs
+     * @return string Description of module
+     */
+    public function info($langs)
+    {
+        return $langs->trans("ModuleCompanyCode".$this->nom);
+    }
 
+    /**
+     *  Return an example of result returned by getNextValue
+     *
+     *  @param	Translate	$langs		Object langs
+     *  @param	Societe		$objsoc		Object thirdparty
+     *  @param	int			$type		Type of third party (1:customer, 2:supplier, -1:autodetect)
+     *  @return	string					Example
+     */
+    public function getExample($langs,$objsoc=0,$type=-1)
+    {
+        return '';
+    }
 
-	/**
-	 * Return description of module
-	 *
-	 * @param	string	$langs		Object langs
-	 * @return 	string      		Description of module
-	 */
-	function info($langs)
-	{
-		return $langs->trans("ModuleCompanyCode".$this->nom);
-	}
+    /**
+     *  Set accountancy account code for a third party into this->code
+     *
+     *  @param	DoliDB	$db              Database handler
+     *  @param  Societe	$societe         Third party object
+     *  @param  int		$type			'customer' or 'supplier'
+     *  @return	int						>=0 if OK, <0 if KO
+     */
+    public function get_code($db, $societe, $type='')
+    {
+        $this->code='';
 
-	/**
-	 *  Return an example of result returned by getNextValue
-	 *
-	 *  @param	Translate	$langs		Object langs
-	 *  @param	Societe		$objsoc		Object thirdparty
-	 *  @param	int			$type		Type of third party (1:customer, 2:supplier, -1:autodetect)
-	 *  @return	string					Example
-	 */
-	function getExample($langs,$objsoc=0,$type=-1)
-	{
-		return '';
-	}
+        if (is_object($societe)) {
+            if ($type == 'supplier') $this->code = (! empty($societe->code_compta_fournisseur)?$societe->code_compta_fournisseur:'');
+            else $this->code = (! empty($societe->code_compta)?$societe->code_compta:'');
+        }
 
-	/**
-	 *  Set accountancy account code for a third party into this->code
-	 *
-	 *  @param	DoliDB	$db              Database handler
-	 *  @param  Societe	$societe         Third party object
-	 *  @param  int		$type			'customer' or 'supplier'
-	 *  @return	int						>=0 if OK, <0 if KO
-	 */
-	function get_code($db, $societe, $type='')
-	{
-		$this->code='';
-
-		if (is_object($societe)) {
-			if ($type == 'supplier') $this->code = (! empty($societe->code_compta_fournisseur)?$societe->code_compta_fournisseur:'');
-			else $this->code = (! empty($societe->code_compta)?$societe->code_compta:'');
-		}
-
-		return 0; // return ok
-	}
+        return 0; // return ok
+    }
 }
-
-?>

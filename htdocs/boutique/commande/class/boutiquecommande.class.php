@@ -25,25 +25,23 @@
 require_once DOL_DOCUMENT_ROOT .'/societe/class/address.class.php';
 include_once DOL_DOCUMENT_ROOT.'/boutique/commande/class/boutiquecommande.class.php';
 
-
 /**
  *	\class      BoutiqueCommande
  *	\brief      Classe permettant la gestion des commandes OSC
  */
 class BoutiqueCommande
 {
-    var $db;
+    public $db;
 
-    var $id;
-    var $nom;
-
+    public $id;
+    public $nom;
 
     /**
      * Constructor
      *
-     * @param	DoliDB	$db		Database handler
+     * @param DoliDB $db Database handler
      */
-    function __construct($db)
+    public function __construct($db)
     {
         $this->db = $db;
 
@@ -61,7 +59,7 @@ class BoutiqueCommande
      * 	@param	string	$ref	Ref of order
      *	@return int 		    >0 if OK, <0 if KO
      */
-    function fetch($id,$ref='')
+    public function fetch($id,$ref='')
     {
         global $conf;
 
@@ -70,8 +68,7 @@ class BoutiqueCommande
         $sql.= " WHERE orders_id = ".$id;
 
         $result = $this->db->query($sql);
-        if ( $result )
-        {
+        if ($result) {
             $array = $this->db->fetch_array($result);
 
             $this->id          = $array["orders_id"];
@@ -103,33 +100,25 @@ class BoutiqueCommande
             $sql .= " FROM ".$conf->global->OSC_DB_NAME.".".$conf->global->OSC_DB_TABLE_PREFIX."orders_total WHERE orders_id = $id";
 
             $result = $this->db->query($sql);
-            if ( $result )
-            {
+            if ($result) {
                 $num = $this->db->num_rows($result);
 
-				$i=0;
-                while ($i < $num)
-                {
+                $i=0;
+                while ($i < $num) {
                     $array = $this->db->fetch_array($result);
-                    if ($array["class"] == 'ot_total')
-                    {
+                    if ($array["class"] == 'ot_total') {
                         $this->total_ot_total = $array["value"];
                     }
-                    if ($array["class"] == 'ot_shipping')
-                    {
+                    if ($array["class"] == 'ot_shipping') {
                         $this->total_ot_shipping = $array["value"];
                     }
                     $i++;
                 }
-            }
-            else
-            {
+            } else {
                 print $this->db->error();
             }
 
-        }
-        else
-        {
+        } else {
             print $this->db->error();
         }
 
@@ -137,4 +126,3 @@ class BoutiqueCommande
     }
 
 }
-?>

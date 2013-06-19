@@ -44,70 +44,61 @@ if ($page < 0) $page = 0;
 $limit = $conf->liste_limit;
 $offset = $limit * $page;
 
-
 $sql  = "SELECT e.rowid, e.label as ref, e.statut, e.lieu, e.address, e.zip, e.town, e.fk_pays";
 $sql.= " FROM ".MAIN_DB_PREFIX."entrepot as e";
 $sql.= " WHERE e.entity = ".$conf->entity;
-if ($sref)
-{
+if ($sref) {
     $sql.= " AND e.label like '%".$sref."%'";
 }
-if ($sall)
-{
+if ($sall) {
     $sql.= " AND (e.description like '%".$sall."%' OR e.lieu like '%".$sall."%' OR e.address like '%".$sall."%' OR e.town like '%".$sall."%')";
 }
 $sql.= " ORDER BY $sortfield $sortorder";
 $sql.= $db->plimit($limit+1, $offset);
 
 $result = $db->query($sql);
-if ($result)
-{
-	$num = $db->num_rows($result);
+if ($result) {
+    $num = $db->num_rows($result);
 
-	$i = 0;
+    $i = 0;
 
-	$help_url='EN:Module_Stocks_En|FR:Module_Stock|ES:M&oacute;dulo_Stocks';
-	llxHeader("",$langs->trans("ListOfWarehouses"),$help_url);
+    $help_url='EN:Module_Stocks_En|FR:Module_Stock|ES:M&oacute;dulo_Stocks';
+    llxHeader("",$langs->trans("ListOfWarehouses"),$help_url);
 
-	print_barre_liste($langs->trans("ListOfWarehouses"), $page, "liste.php", "", $sortfield, $sortorder,'',$num);
+    print_barre_liste($langs->trans("ListOfWarehouses"), $page, "liste.php", "", $sortfield, $sortorder,'',$num);
 
-	print '<table class="noborder" width="100%">';
+    print '<table class="noborder" width="100%">';
 
-	print "<tr class=\"liste_titre\">";
-	print_liste_field_titre($langs->trans("Ref"),"liste.php", "e.label","","","",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("LocationSummary"),"liste.php", "e.lieu","","","",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Status"),"liste.php", "e.statut",'','','align="right"',$sortfield,$sortorder);
-	print "</tr>\n";
+    print "<tr class=\"liste_titre\">";
+    print_liste_field_titre($langs->trans("Ref"),"liste.php", "e.label","","","",$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("LocationSummary"),"liste.php", "e.lieu","","","",$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Status"),"liste.php", "e.statut",'','','align="right"',$sortfield,$sortorder);
+    print "</tr>\n";
 
-	if ($num) {
-		$entrepot=new Entrepot($db);
+    if ($num) {
+        $entrepot=new Entrepot($db);
 
-		$var=True;
-		while ($i < min($num,$limit))
-		{
-			$objp = $db->fetch_object($result);
-			$var=!$var;
-			print "<tr $bc[$var]>";
-			print '<td><a href="fiche.php?id='.$objp->rowid.'">'.img_object($langs->trans("ShowWarehouse"),'stock').' '.$objp->ref.'</a></td>';
-			print '<td>'.$objp->lieu.'</td>';
-			print '<td align="right">'.$entrepot->LibStatut($objp->statut,5).'</td>';
-			print "</tr>\n";
-			$i++;
-		}
-	}
+        $var=True;
+        while ($i < min($num,$limit)) {
+            $objp = $db->fetch_object($result);
+            $var=!$var;
+            print "<tr $bc[$var]>";
+            print '<td><a href="fiche.php?id='.$objp->rowid.'">'.img_object($langs->trans("ShowWarehouse"),'stock').' '.$objp->ref.'</a></td>';
+            print '<td>'.$objp->lieu.'</td>';
+            print '<td align="right">'.$entrepot->LibStatut($objp->statut,5).'</td>';
+            print "</tr>\n";
+            $i++;
+        }
+    }
 
-	$db->free($result);
+    $db->free($result);
 
-	print "</table>";
+    print "</table>";
 
-}
-else
-{
+} else {
   dol_print_error($db);
 }
-
 
 $db->close();
 
 llxFooter();
-?>

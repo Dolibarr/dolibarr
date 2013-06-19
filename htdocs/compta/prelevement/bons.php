@@ -24,7 +24,7 @@
  * 	\brief      Page liste des bons de prelevements
  */
 
-require('../../main.inc.php');
+require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
@@ -53,7 +53,6 @@ $offset = $conf->liste_limit * $page ;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-
 /*
  * Mode Liste
  *
@@ -66,8 +65,7 @@ $sql.= " ORDER BY $sortfield $sortorder ";
 $sql.= $db->plimit($conf->liste_limit+1, $offset);
 
 $result = $db->query($sql);
-if ($result)
-{
+if ($result) {
   $num = $db->num_rows($result);
   $i = 0;
 
@@ -94,8 +92,7 @@ if ($result)
 
   $var=True;
 
-  while ($i < min($num,$conf->liste_limit))
-    {
+  while ($i < min($num,$conf->liste_limit)) {
       $obj = $db->fetch_object($result);
       $var=!$var;
 
@@ -115,14 +112,10 @@ if ($result)
     }
   print "</table>";
   $db->free($result);
-}
-else
-{
+} else {
   dol_print_error($db);
 }
 
 $db->close();
 
 llxFooter();
-
-?>

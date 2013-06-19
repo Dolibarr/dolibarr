@@ -34,11 +34,9 @@ $langs->load("members");
 $langs->load("users");
 
 if (!$user->rights->adherent->lire)
-	accessforbidden();
+    accessforbidden();
 
 $rowid=isset($_GET["rowid"])?$_GET["rowid"]:$_POST["rowid"];
-
-
 
 /*
  * Visualisation de la fiche
@@ -65,7 +63,6 @@ $head[$h][1] = $langs->trans("Info");
 $head[$h][2] = 'info';
 $h++;
 
-
 dol_fiche_head($head, 'info', $langs->trans("Subscription"), '', 'payment');
 
 $subscription->info($rowid);
@@ -76,8 +73,6 @@ print '</td></tr></table>';
 
 print '</div>';
 
-
 $db->close();
 
 llxFooter();
-?>

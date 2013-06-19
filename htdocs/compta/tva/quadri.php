@@ -30,8 +30,7 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
 
 $year=$_GET["year"];
-if ($year == 0 )
-{
+if ($year == 0) {
   $year_current = strftime("%Y",time());
   $year_start = $year_current;
 } else {
@@ -43,7 +42,6 @@ if ($year == 0 )
 $socid = isset($_GET["socid"])?$_GET["socid"]:'';
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'tax', '', '', 'charges');
-
 
 /**
  * Gets VAT to collect for the given month of the given year
@@ -58,10 +56,9 @@ $result = restrictedArea($user, 'tax', '', '', 'charges');
  */
 function tva_coll($db,$y,$q)
 {
-	global $conf;
+    global $conf;
 
-    if ($conf->global->COMPTA_MODE == "CREANCES-DETTES")
-    {
+    if ($conf->global->COMPTA_MODE == "CREANCES-DETTES") {
         // if vat paid on due invoices
         $sql = "SELECT d.fk_facture as facid, f.facnumber as facnum, d.tva_tx as rate, d.total_ht as totalht, d.total_tva as amount";
         $sql.= " FROM ".MAIN_DB_PREFIX."facture as f";
@@ -76,43 +73,37 @@ function tva_coll($db,$y,$q)
         $sql.= " AND round(date_format(f.datef,'%m')) <= ".($q*3).")";
         $sql.= " ORDER BY rate, facid";
 
-    }
-    else
-    {
+    } else {
         // if vat paid on paiments
     }
 
     $resql = $db->query($sql);
 
-    if ($resql)
-    {
-    	$list = array();
-    	$rate = -1;
-    	while($assoc = $db->fetch_array($resql))
-    	{
-    		if($assoc['rate'] != $rate){ //new rate
-    			$list[$assoc['rate']]['totalht'] = $assoc['totalht'];
-    			$list[$assoc['rate']]['vat'] = $assoc['amount'];
-    			$list[$assoc['rate']]['facid'][] = $assoc['facid'];
-    			$list[$assoc['rate']]['facnum'][] = $assoc['facnum'];
-    		}else{
-    			$list[$assoc['rate']]['totalht'] += $assoc['totalht'];
-    			$list[$assoc['rate']]['vat'] += $assoc['amount'];
-    			if(!in_array($assoc['facid'],$list[$assoc['rate']]['facid'])){
-	    			$list[$assoc['rate']]['facid'][] = $assoc['facid'];
-	    			$list[$assoc['rate']]['facnum'][] = $assoc['facnum'];
-    			}
-    		}
-    		$rate = $assoc['rate'];
-    	}
-		return $list;
-    }
-    else
-    {
+    if ($resql) {
+        $list = array();
+        $rate = -1;
+        while ($assoc = $db->fetch_array($resql)) {
+            if ($assoc['rate'] != $rate) { //new rate
+                $list[$assoc['rate']]['totalht'] = $assoc['totalht'];
+                $list[$assoc['rate']]['vat'] = $assoc['amount'];
+                $list[$assoc['rate']]['facid'][] = $assoc['facid'];
+                $list[$assoc['rate']]['facnum'][] = $assoc['facnum'];
+            } else {
+                $list[$assoc['rate']]['totalht'] += $assoc['totalht'];
+                $list[$assoc['rate']]['vat'] += $assoc['amount'];
+                if (!in_array($assoc['facid'],$list[$assoc['rate']]['facid'])) {
+                    $list[$assoc['rate']]['facid'][] = $assoc['facid'];
+                    $list[$assoc['rate']]['facnum'][] = $assoc['facnum'];
+                }
+            }
+            $rate = $assoc['rate'];
+        }
+
+        return $list;
+    } else {
         dol_print_error($db);
     }
 }
-
 
 /**
  * Gets VAT to pay for the given month of the given year
@@ -126,10 +117,9 @@ function tva_coll($db,$y,$q)
  */
 function tva_paye($db, $y,$q)
 {
-	global $conf;
+    global $conf;
 
-    if ($conf->global->COMPTA_MODE == "CREANCES-DETTES")
-    {
+    if ($conf->global->COMPTA_MODE == "CREANCES-DETTES") {
         // Si on paye la tva sur les factures dues (non brouillon)
         $sql = "SELECT d.fk_facture_fourn as facid, f.facnumber as facnum, d.tva_tx as rate, d.total_ht as totalht, d.tva as amount";
         $sql.= " FROM ".MAIN_DB_PREFIX."facture_fourn as f";
@@ -143,43 +133,37 @@ function tva_paye($db, $y,$q)
         $sql.= " AND (round(date_format(f.datef,'%m')) > ".(($q-1)*3);
         $sql.= " AND round(date_format(f.datef,'%m')) <= ".($q*3).")";
         $sql.= " ORDER BY rate, facid ";
-    }
-    else
-    {
+    } else {
         // Si on paye la tva sur les payments
     }
 
     $resql = $db->query($sql);
-    if ($resql)
-    {
-   	$list = array();
-    	$rate = -1;
-    	while($assoc = $db->fetch_array($resql))
-    	{
-    		if($assoc['rate'] != $rate){ //new rate
-    			$list[$assoc['rate']]['totalht'] = $assoc['totalht'];
-    			$list[$assoc['rate']]['vat'] = $assoc['amount'];
-    			$list[$assoc['rate']]['facid'][] = $assoc['facid'];
-    			$list[$assoc['rate']]['facnum'][] = $assoc['facnum'];
-    		}else{
-    			$list[$assoc['rate']]['totalht'] += $assoc['totalht'];
-    			$list[$assoc['rate']]['vat'] += $assoc['amount'];
-    			if(!in_array($assoc['facid'],$list[$assoc['rate']]['facid'])){
-	    			$list[$assoc['rate']]['facid'][] = $assoc['facid'];
-	    			$list[$assoc['rate']]['facnum'][] = $assoc['facnum'];
-    			}
-    		}
-    		$rate = $assoc['rate'];
-    	}
-		return $list;
+    if ($resql) {
+       $list = array();
+        $rate = -1;
+        while ($assoc = $db->fetch_array($resql)) {
+            if ($assoc['rate'] != $rate) { //new rate
+                $list[$assoc['rate']]['totalht'] = $assoc['totalht'];
+                $list[$assoc['rate']]['vat'] = $assoc['amount'];
+                $list[$assoc['rate']]['facid'][] = $assoc['facid'];
+                $list[$assoc['rate']]['facnum'][] = $assoc['facnum'];
+            } else {
+                $list[$assoc['rate']]['totalht'] += $assoc['totalht'];
+                $list[$assoc['rate']]['vat'] += $assoc['amount'];
+                if (!in_array($assoc['facid'],$list[$assoc['rate']]['facid'])) {
+                    $list[$assoc['rate']]['facid'][] = $assoc['facid'];
+                    $list[$assoc['rate']]['facnum'][] = $assoc['facnum'];
+                }
+            }
+            $rate = $assoc['rate'];
+        }
 
-    }
-    else
-    {
+        return $list;
+
+    } else {
         dol_print_error($db);
     }
 }
-
 
 /**
  * View
@@ -191,7 +175,6 @@ $textprevyear="<a href=\"quadri.php?year=" . ($year_current-1) . "\">".img_previ
 $textnextyear=" <a href=\"quadri.php?year=" . ($year_current+1) . "\">".img_next()."</a>";
 
 print_fiche_titre($langs->trans("VAT"),"$textprevyear ".$langs->trans("Year")." $year_start $textnextyear");
-
 
 echo '<table width="100%">';
 echo '<tr><td>';
@@ -212,110 +195,104 @@ print "<td align=\"right\">".$langs->trans("Invoices")."</td>";
 print "<td align=\"right\">".$langs->trans("TotalToPay")."</td>";
 print "</tr>\n";
 
-if ($conf->global->COMPTA_MODE == "CREANCES-DETTES")
-{
-	$y = $year_current;
+if ($conf->global->COMPTA_MODE == "CREANCES-DETTES") {
+    $y = $year_current;
 
-	$total = 0;  $subtotal = 0;
-	$i=0;
-	$subtot_coll_total = 0;
-	$subtot_coll_vat = 0;
-	$subtot_paye_total = 0;
-	$subtot_paye_vat = 0;
-	for ($q = 1 ; $q <= 4 ; $q++)
-	{
-		print "<tr class=\"liste_titre\"><td colspan=\"8\">".$langs->trans("Quadri")." $q (".dol_print_date(dol_mktime(0,0,0,(($q-1)*3)+1,1,$y),"%b %Y").' - '.dol_print_date(dol_mktime(0,0,0,($q*3),1,$y),"%b %Y").")</td></tr>";
-		$var=true;
+    $total = 0;  $subtotal = 0;
+    $i=0;
+    $subtot_coll_total = 0;
+    $subtot_coll_vat = 0;
+    $subtot_paye_total = 0;
+    $subtot_paye_vat = 0;
+    for ($q = 1 ; $q <= 4 ; $q++) {
+        print "<tr class=\"liste_titre\"><td colspan=\"8\">".$langs->trans("Quadri")." $q (".dol_print_date(dol_mktime(0,0,0,(($q-1)*3)+1,1,$y),"%b %Y").' - '.dol_print_date(dol_mktime(0,0,0,($q*3),1,$y),"%b %Y").")</td></tr>";
+        $var=true;
 
-		$x_coll = tva_coll($db, $y, $q);
-		$x_paye = tva_paye($db, $y, $q);
-		$x_both = array();
-		//now, from these two arrays, get another array with one rate per line
-		foreach(array_keys($x_coll) as $my_coll_rate){
-			$x_both[$my_coll_rate]['coll']['totalht'] = $x_coll[$my_coll_rate]['totalht'];
-			$x_both[$my_coll_rate]['coll']['vat'] = $x_coll[$my_coll_rate]['vat'];
-			$x_both[$my_coll_rate]['paye']['totalht'] = 0;
-			$x_both[$my_coll_rate]['paye']['vat'] = 0;
-			$x_both[$my_coll_rate]['coll']['links'] = '';
-			foreach($x_coll[$my_coll_rate]['facid'] as $id=>$dummy){
-				$x_both[$my_coll_rate]['coll']['links'] .= '<a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$x_coll[$my_coll_rate]['facid'][$id].'" title="'.$x_coll[$my_coll_rate]['facnum'][$id].'">..'.substr($x_coll[$my_coll_rate]['facnum'][$id],-2).'</a> ';
-			}
-		}
-		foreach(array_keys($x_paye) as $my_paye_rate){
-			$x_both[$my_paye_rate]['paye']['totalht'] = $x_paye[$my_paye_rate]['totalht'];
-			$x_both[$my_paye_rate]['paye']['vat'] = $x_paye[$my_paye_rate]['vat'];
-			if(!isset($x_both[$my_paye_rate]['coll']['totalht'])){
-				$x_both[$my_paye_rate]['coll']['total_ht'] = 0;
-				$x_both[$my_paye_rate]['coll']['vat'] = 0;
-			}
-			$x_both[$my_paye_rate]['paye']['links'] = '';
-			foreach($x_paye[$my_paye_rate]['facid'] as $id=>$dummy){
-				$x_both[$my_paye_rate]['paye']['links'] .= '<a href="../../fourn/facture/fiche.php?facid='.$x_paye[$my_paye_rate]['facid'][$id].'" title="'.$x_paye[$my_paye_rate]['facnum'][$id].'">..'.substr($x_paye[$my_paye_rate]['facnum'][$id],-2).'</a> ';
-			}
-		}
-		//now we have an array (x_both) indexed by rates for coll and paye
+        $x_coll = tva_coll($db, $y, $q);
+        $x_paye = tva_paye($db, $y, $q);
+        $x_both = array();
+        //now, from these two arrays, get another array with one rate per line
+        foreach (array_keys($x_coll) as $my_coll_rate) {
+            $x_both[$my_coll_rate]['coll']['totalht'] = $x_coll[$my_coll_rate]['totalht'];
+            $x_both[$my_coll_rate]['coll']['vat'] = $x_coll[$my_coll_rate]['vat'];
+            $x_both[$my_coll_rate]['paye']['totalht'] = 0;
+            $x_both[$my_coll_rate]['paye']['vat'] = 0;
+            $x_both[$my_coll_rate]['coll']['links'] = '';
+            foreach ($x_coll[$my_coll_rate]['facid'] as $id=>$dummy) {
+                $x_both[$my_coll_rate]['coll']['links'] .= '<a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$x_coll[$my_coll_rate]['facid'][$id].'" title="'.$x_coll[$my_coll_rate]['facnum'][$id].'">..'.substr($x_coll[$my_coll_rate]['facnum'][$id],-2).'</a> ';
+            }
+        }
+        foreach (array_keys($x_paye) as $my_paye_rate) {
+            $x_both[$my_paye_rate]['paye']['totalht'] = $x_paye[$my_paye_rate]['totalht'];
+            $x_both[$my_paye_rate]['paye']['vat'] = $x_paye[$my_paye_rate]['vat'];
+            if (!isset($x_both[$my_paye_rate]['coll']['totalht'])) {
+                $x_both[$my_paye_rate]['coll']['total_ht'] = 0;
+                $x_both[$my_paye_rate]['coll']['vat'] = 0;
+            }
+            $x_both[$my_paye_rate]['paye']['links'] = '';
+            foreach ($x_paye[$my_paye_rate]['facid'] as $id=>$dummy) {
+                $x_both[$my_paye_rate]['paye']['links'] .= '<a href="../../fourn/facture/fiche.php?facid='.$x_paye[$my_paye_rate]['facid'][$id].'" title="'.$x_paye[$my_paye_rate]['facnum'][$id].'">..'.substr($x_paye[$my_paye_rate]['facnum'][$id],-2).'</a> ';
+            }
+        }
+        //now we have an array (x_both) indexed by rates for coll and paye
 
-		$x_coll_sum = 0;
-		$x_coll_ht = 0;
-		$x_paye_sum = 0;
-		$x_paye_ht = 0;
-		foreach($x_both as $rate => $both){
-			$var=!$var;
-			print "<tr $bc[$var]>";
-			print "<td>$rate%</td>";
-			print "<td nowrap align=\"right\">".price($both['coll']['totalht'])."</td>";
-			print "<td nowrap align=\"right\">".price($both['coll']['vat'])."</td>";
-			print "<td align=\"right\">".$both['coll']['links']."</td>";
-			print "<td nowrap align=\"right\">".price($both['paye']['totalht'])."</td>";
-			print "<td nowrap align=\"right\">".price($both['paye']['vat'])."</td>";
-			print "<td align=\"right\">".$both['paye']['links']."</td>";
-			print "<td></td>";
-			print "</tr>";
-			$x_coll_sum += $both['coll']['vat'];
-			$x_paye_sum += $both['paye']['vat'];
-			$subtot_coll_total 	+= $both['coll']['totalht'];
-			$subtot_coll_vat 	+= $both['coll']['vat'];
-			$subtot_paye_total 	+= $both['paye']['totalht'];
-			$subtot_paye_vat 	+= $both['paye']['vat'];
-		}
+        $x_coll_sum = 0;
+        $x_coll_ht = 0;
+        $x_paye_sum = 0;
+        $x_paye_ht = 0;
+        foreach ($x_both as $rate => $both) {
+            $var=!$var;
+            print "<tr $bc[$var]>";
+            print "<td>$rate%</td>";
+            print "<td nowrap align=\"right\">".price($both['coll']['totalht'])."</td>";
+            print "<td nowrap align=\"right\">".price($both['coll']['vat'])."</td>";
+            print "<td align=\"right\">".$both['coll']['links']."</td>";
+            print "<td nowrap align=\"right\">".price($both['paye']['totalht'])."</td>";
+            print "<td nowrap align=\"right\">".price($both['paye']['vat'])."</td>";
+            print "<td align=\"right\">".$both['paye']['links']."</td>";
+            print "<td></td>";
+            print "</tr>";
+            $x_coll_sum += $both['coll']['vat'];
+            $x_paye_sum += $both['paye']['vat'];
+            $subtot_coll_total 	+= $both['coll']['totalht'];
+            $subtot_coll_vat 	+= $both['coll']['vat'];
+            $subtot_paye_total 	+= $both['paye']['totalht'];
+            $subtot_paye_vat 	+= $both['paye']['vat'];
+        }
 
-		$diff = $x_coll_sum - $x_paye_sum;
-		$total = $total + $diff;
-		$subtotal = $subtotal + $diff;
+        $diff = $x_coll_sum - $x_paye_sum;
+        $total = $total + $diff;
+        $subtotal = $subtotal + $diff;
 
-		$var=!$var;
-		print "<tr $bc[$var]>";
-		print '<td colspan="7"></td>';
-		print "<td nowrap align=\"right\">".price($diff)."</td>\n";
-		print "</tr>\n";
+        $var=!$var;
+        print "<tr $bc[$var]>";
+        print '<td colspan="7"></td>';
+        print "<td nowrap align=\"right\">".price($diff)."</td>\n";
+        print "</tr>\n";
 
-		$i++;
-	}
-	print '<tr class="liste_total">';
-	print '<td align="right">'.$langs->trans("Total").':</td>';
-	print '<td class="nowrap" align="right">'.price($subtot_coll_total).'</td>';
-	print '<td class="nowrap" align="right">'.price($subtot_coll_vat).'</td>';
-	print '<td></td>';
-	print '<td class="nowrap" align="right">'.price($subtot_paye_total).'</td>';
-	print '<td class="nowrap" align="right">'.price($subtot_paye_vat).'</td>';
-	print '<td></td>';
-	print '<td class="nowrap" align="right"><b>'.price($total).'</b>';
-	print '</td>';
-	print '</tr>';
+        $i++;
+    }
+    print '<tr class="liste_total">';
+    print '<td align="right">'.$langs->trans("Total").':</td>';
+    print '<td class="nowrap" align="right">'.price($subtot_coll_total).'</td>';
+    print '<td class="nowrap" align="right">'.price($subtot_coll_vat).'</td>';
+    print '<td></td>';
+    print '<td class="nowrap" align="right">'.price($subtot_paye_total).'</td>';
+    print '<td class="nowrap" align="right">'.price($subtot_paye_vat).'</td>';
+    print '<td></td>';
+    print '<td class="nowrap" align="right"><b>'.price($total).'</b>';
+    print '</td>';
+    print '</tr>';
 
-}
-else
-{
-	print '<tr><td colspan="5">'.$langs->trans("FeatureNotYetAvailable").'</td></tr>';
-	print '<tr><td colspan="5">'.$langs->trans("FeatureIsSupportedInInOutModeOnly").'</td></tr>';
+} else {
+    print '<tr><td colspan="5">'.$langs->trans("FeatureNotYetAvailable").'</td></tr>';
+    print '<tr><td colspan="5">'.$langs->trans("FeatureIsSupportedInInOutModeOnly").'</td></tr>';
 }
 
 print '</table>';
 echo '</td></tr>';
 echo '</table>';
 
-
 $db->close();
 
 llxFooter();
-?>

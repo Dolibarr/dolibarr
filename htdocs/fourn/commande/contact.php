@@ -44,70 +44,52 @@ $result = restrictedArea($user, 'fournisseur', $id, '', 'commande');
 
 $object = new CommandeFournisseur($db);
 
-
 /*
  * Ajout d'un nouveau contact
  */
 
-if ($action == 'addcontact' && $user->rights->fournisseur->commande->creer)
-{
-	$result = $object->fetch($id);
+if ($action == 'addcontact' && $user->rights->fournisseur->commande->creer) {
+    $result = $object->fetch($id);
 
-    if ($result > 0 && $id > 0)
-    {
-    	$contactid = (GETPOST('userid') ? GETPOST('userid') : GETPOST('contactid'));
-  		$result = $object->add_contact($contactid, $_POST["type"], $_POST["source"]);
+    if ($result > 0 && $id > 0) {
+        $contactid = (GETPOST('userid') ? GETPOST('userid') : GETPOST('contactid'));
+          $result = $object->add_contact($contactid, $_POST["type"], $_POST["source"]);
     }
 
-	if ($result >= 0)
-	{
-		header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
-		exit;
-	}
-	else
-	{
-		if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS')
-		{
-			$langs->load("errors");
-			$mesg = '<div class="error">'.$langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType").'</div>';
-		}
-		else
-		{
-			$mesg = '<div class="error">'.$object->error.'</div>';
-		}
-	}
+    if ($result >= 0) {
+        header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+        exit;
+    } else {
+        if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
+            $langs->load("errors");
+            $mesg = '<div class="error">'.$langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType").'</div>';
+        } else {
+            $mesg = '<div class="error">'.$object->error.'</div>';
+        }
+    }
 }
 
 // bascule du statut d'un contact
-else if ($action == 'swapstatut' && $user->rights->fournisseur->commande->creer)
-{
-	if ($object->fetch($id))
-	{
-	    $result=$object->swapContactStatus(GETPOST('ligne'));
-	}
-	else
-	{
-		dol_print_error($db);
-	}
+else if ($action == 'swapstatut' && $user->rights->fournisseur->commande->creer) {
+    if ($object->fetch($id)) {
+        $result=$object->swapContactStatus(GETPOST('ligne'));
+    } else {
+        dol_print_error($db);
+    }
 }
 
 // Efface un contact
-else if ($action == 'deletecontact' && $user->rights->fournisseur->commande->creer)
-{
-	$object->fetch($id);
-	$result = $object->delete_contact($_GET["lineid"]);
+else if ($action == 'deletecontact' && $user->rights->fournisseur->commande->creer) {
+    $object->fetch($id);
+    $result = $object->delete_contact($_GET["lineid"]);
 
-	if ($result >= 0)
-	{
-		header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
-		exit;
-	}
-	else {
-		dol_print_error($db);
-	}
+    if ($result >= 0) {
+        header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+        exit;
+    } else {
+        dol_print_error($db);
+    }
 }
-
-
 
 /*
  * View
@@ -120,7 +102,6 @@ $formcompany = new FormCompany($db);
 $contactstatic=new Contact($db);
 $userstatic=new User($db);
 
-
 /* *************************************************************************** */
 /*                                                                             */
 /* Mode vue et edition                                                         */
@@ -128,57 +109,49 @@ $userstatic=new User($db);
 /* *************************************************************************** */
 dol_htmloutput_mesg($mesg);
 
-if ($id > 0 || ! empty($ref))
-{
-	$langs->trans("OrderCard");
+if ($id > 0 || ! empty($ref)) {
+    $langs->trans("OrderCard");
 
-	if ($object->fetch($id, $ref) > 0)
-	{
-		$soc = new Societe($db);
-		$soc->fetch($object->socid);
+    if ($object->fetch($id, $ref) > 0) {
+        $soc = new Societe($db);
+        $soc->fetch($object->socid);
 
+        $head = ordersupplier_prepare_head($object);
+        dol_fiche_head($head, 'contact', $langs->trans("SupplierOrder"), 0, 'order');
 
-		$head = ordersupplier_prepare_head($object);
-		dol_fiche_head($head, 'contact', $langs->trans("SupplierOrder"), 0, 'order');
+        /*
+        *   Facture synthese pour rappel
+        */
+        print '<table class="border" width="100%">';
 
+        $linkback = '<a href="'.DOL_URL_ROOT.'/fourn/commande/liste.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
 
-		/*
-		*   Facture synthese pour rappel
-		*/
-		print '<table class="border" width="100%">';
+        // Ref
+        print '<tr><td width="20%">'.$langs->trans("Ref").'</td>';
+        print '<td colspan="2">';
+        print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref');
+        print '</td>';
+        print '</tr>';
 
-		$linkback = '<a href="'.DOL_URL_ROOT.'/fourn/commande/liste.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
+        // Fournisseur
+        print '<tr><td>'.$langs->trans("Supplier")."</td>";
+        print '<td colspan="2">'.$soc->getNomUrl(1,'supplier').'</td>';
+        print '</tr>';
 
-		// Ref
-		print '<tr><td width="20%">'.$langs->trans("Ref").'</td>';
-		print '<td colspan="2">';
-		print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref');
-		print '</td>';
-		print '</tr>';
+        print "</table>";
 
-		// Fournisseur
-		print '<tr><td>'.$langs->trans("Supplier")."</td>";
-		print '<td colspan="2">'.$soc->getNomUrl(1,'supplier').'</td>';
-		print '</tr>';
+        print '</div>';
 
-		print "</table>";
+        print '<br>';
 
-		print '</div>';
+        // Contacts lines
+        include DOL_DOCUMENT_ROOT.'/core/tpl/contacts.tpl.php';
 
-		print '<br>';
-
-		// Contacts lines
-		include DOL_DOCUMENT_ROOT.'/core/tpl/contacts.tpl.php';
-
-	}
-	else
-	{
-		// Contrat non trouv
-		print "ErrorRecordNotFound";
-	}
+    } else {
+        // Contrat non trouv
+        print "ErrorRecordNotFound";
+    }
 }
-
 
 llxFooter();
 $db->close();
-?>

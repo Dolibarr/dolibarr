@@ -24,7 +24,7 @@
  *	\brief      List activities of tasks
  */
 
-require ("../../main.inc.php");
+require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
@@ -47,24 +47,19 @@ $socid=0;
 if ($user->societe_id > 0) $socid=$user->societe_id;
 $result = restrictedArea($user, 'projet', $projectid);
 
-
 /*
  * Actions
  */
 
-if ($action == 'addtime' && $user->rights->projet->creer)
-{
+if ($action == 'addtime' && $user->rights->projet->creer) {
     $task = new Task($db);
 
     $timespent_duration=0;
 
-    foreach($_POST as $key => $time)
-    {
-        if(intval($time)>0)
-        {
+    foreach ($_POST as $key => $time) {
+        if (intval($time)>0) {
             // Hours or minutes
-            if(preg_match("/([0-9]+)(hour|min)/",$key,$matches))
-            {
+            if (preg_match("/([0-9]+)(hour|min)/",$key,$matches)) {
                 $id = $matches[1];
 
                 // We store HOURS in seconds
@@ -76,8 +71,7 @@ if ($action == 'addtime' && $user->rights->projet->creer)
         }
     }
 
-    if ($timespent_duration > 0)
-    {
+    if ($timespent_duration > 0) {
         $task->fetch($id);
         $task->timespent_duration = $timespent_duration;
         $task->timespent_fk_user = $user->id;
@@ -87,9 +81,7 @@ if ($action == 'addtime' && $user->rights->projet->creer)
         // header to avoid submit twice on back
         header('Location: '.$_SERVER["PHP_SELF"].'?id='.$projectid.($mode?'&mode='.$mode:''));
         exit;
-    }
-    else
-    {
+    } else {
         $mesg='<div class="error">'.$langs->trans("ErrorTimeSpentIsEmpty").'</div>';
     }
 }
@@ -106,14 +98,12 @@ $taskstatic = new Task($db);
 $title=$langs->trans("TimeSpent");
 if ($mine) $title=$langs->trans("MyTimeSpent");
 
-
 llxHeader("",$title,"");
 
 //$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,$mine,1);
 $projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,0,1);  // Return all project i have permission on. I want my tasks and some of my task may be on a public projet that is not my project
 
-if ($id)
-{
+if ($id) {
     $project->fetch($id);
     $project->societe->fetch($project->societe->id);
 }
@@ -125,12 +115,9 @@ $tasksrole=$taskstatic->getUserRolesForProjectsOrTasks(0,$user,($project->id?$pr
 //var_dump($projectsrole);
 //var_dump($taskrole);
 
-
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, "", $num);
 
-
 dol_htmloutput_mesg($mesg);
-
 
 print '<form name="addtime" method="POST" action="'.$_SERVER["PHP_SELF"].'?id='.$project->id.'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -153,8 +140,6 @@ projectLinesb($j, 0, $tasksarray, $level, $projectsrole, $tasksrole, $mine);
 print "</table>";
 print '</form>';
 
-
 llxFooter();
 
 $db->close();
-?>

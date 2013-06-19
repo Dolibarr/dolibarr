@@ -27,14 +27,12 @@
 require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/dons/class/don.class.php';
 
-
-
 /**
  *	Parent class of subscription templates
  */
 abstract class ModeleDon extends CommonDocGenerator
 {
-    var $error='';
+    public $error='';
 
     /**
      *  Return list of active generation modules
@@ -43,7 +41,7 @@ abstract class ModeleDon extends CommonDocGenerator
      *  @param  string	$maxfilenamelength  Max length of value to show
      *  @return	array						List of templates
      */
-    static function liste_modeles($db,$maxfilenamelength=0)
+    public static function liste_modeles($db,$maxfilenamelength=0)
     {
         global $conf;
 
@@ -57,20 +55,19 @@ abstract class ModeleDon extends CommonDocGenerator
     }
 }
 
-
 /**
  *	Parent class of donation numbering templates
  */
 abstract class ModeleNumRefDons
 {
-    var $error='';
+    public $error='';
 
     /**
      * 	Return if a module can be used or not
      *
      *  @return		boolean     true if module can be used
      */
-    function isEnabled()
+    public function isEnabled()
     {
         return true;
     }
@@ -80,10 +77,11 @@ abstract class ModeleNumRefDons
      *
      *  @return     string      Texte descripif
      */
-    function info()
+    public function info()
     {
         global $langs;
         $langs->load("bills");
+
         return $langs->trans("NoDescription");
     }
 
@@ -92,10 +90,11 @@ abstract class ModeleNumRefDons
      *
      *  @return     string      Example
      */
-    function getExample()
+    public function getExample()
     {
         global $langs;
         $langs->load("bills");
+
         return $langs->trans("NoExample");
     }
 
@@ -105,7 +104,7 @@ abstract class ModeleNumRefDons
      *
      *  @return     boolean     false si conflit, true si ok
      */
-    function canBeActivated()
+    public function canBeActivated()
     {
         return true;
     }
@@ -115,9 +114,10 @@ abstract class ModeleNumRefDons
      *
      *  @return     string      Valeur
      */
-    function getNextValue()
+    public function getNextValue()
     {
         global $langs;
+
         return $langs->trans("NotAvailable");
     }
 
@@ -126,7 +126,7 @@ abstract class ModeleNumRefDons
      *
      *  @return     string      Valeur
      */
-    function getVersion()
+    public function getVersion()
     {
         global $langs;
         $langs->load("admin");
@@ -137,7 +137,6 @@ abstract class ModeleNumRefDons
         return $langs->trans("NotAvailable");
     }
 }
-
 
 /**
  *	Cree un don sur disque en fonction du modele de DON_ADDON_PDF
@@ -165,52 +164,44 @@ function don_create($db, $id, $message, $modele, $outputlangs)
     $srctemplatepath='';
 
     // Set template to use
-    if (! dol_strlen($modele))
-    {
-        if (! empty($conf->global->DON_ADDON_MODEL))
-        {
+    if (! dol_strlen($modele)) {
+        if (! empty($conf->global->DON_ADDON_MODEL)) {
             $modele = $conf->global->DON_ADDON_MODEL;
-        }
-        else
-        {
+        } else {
             print $langs->trans("Error")." ".$langs->trans("Error_DON_ADDON_MODEL_NotDefined");
+
             return 0;
         }
     }
 
     // If selected modele is a filename template (then $modele="modelname:filename")
     $tmp=explode(':',$modele,2);
-    if (! empty($tmp[1]))
-    {
-    	$modele=$tmp[0];
-    	$srctemplatepath=$tmp[1];
+    if (! empty($tmp[1])) {
+        $modele=$tmp[0];
+        $srctemplatepath=$tmp[1];
     }
 
     // Search template files
     $file=''; $classname=''; $filefound=0;
     $dirmodels=array('/');
     if (is_array($conf->modules_parts['models'])) $dirmodels=array_merge($dirmodels,$conf->modules_parts['models']);
-    foreach($dirmodels as $reldir)
-    {
-    	foreach(array('html','doc','pdf') as $prefix)
-    	{
-    		$file = $prefix."_".preg_replace('/^html_/','',$modele).".modules.php";
+    foreach ($dirmodels as $reldir) {
+        foreach (array('html','doc','pdf') as $prefix) {
+            $file = $prefix."_".preg_replace('/^html_/','',$modele).".modules.php";
 
-    		// On verifie l'emplacement du modele
-    		$file=dol_buildpath($reldir."core/modules/dons/".$file,0);
-    		if (file_exists($file))
-    		{
-    			$filefound=1;
-    			$classname=$prefix.'_'.$modele;
-    			break;
-    		}
-    	}
-    	if ($filefound) break;
+            // On verifie l'emplacement du modele
+            $file=dol_buildpath($reldir."core/modules/dons/".$file,0);
+            if (file_exists($file)) {
+                $filefound=1;
+                $classname=$prefix.'_'.$modele;
+                break;
+            }
+        }
+        if ($filefound) break;
     }
 
     // Charge le modele
-	if ($filefound)
-	{
+    if ($filefound) {
         require_once $file;
 
         $object=new Don($db);
@@ -222,28 +213,24 @@ function don_create($db, $id, $message, $modele, $outputlangs)
         // We save charset_output to restore it because write_file can change it if needed for
         // output format that does not support UTF8.
         $sav_charset_output=$outputlangs->charset_output;
-        if ($obj->write_file($object,$outputlangs, $srctemplatepath, $hidedetails, $hidedesc, $hideref) > 0)
-        {
+        if ($obj->write_file($object,$outputlangs, $srctemplatepath, $hidedetails, $hidedesc, $hideref) > 0) {
             $outputlangs->charset_output=$sav_charset_output;
 
-			// we delete preview files
-        	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+            // we delete preview files
+            require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
             dol_delete_preview($object);
+
             return 1;
-        }
-        else
-        {
+        } else {
             $outputlangs->charset_output=$sav_charset_output;
             dol_syslog("Erreur dans don_create");
             dol_print_error($db,$obj->error);
+
             return 0;
         }
-    }
-    else
-    {
+    } else {
         print $langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists",$dir.$file);
+
         return 0;
     }
 }
-
-?>

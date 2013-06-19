@@ -28,7 +28,6 @@ require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
 
 $langs->load("sendings");
 
-
 /*
  * View
  */
@@ -50,12 +49,10 @@ $sql.= " AND entity = ".$conf->entity;
 $sql.= " GROUP BY dm DESC";
 
 $resql=$db->query($sql);
-if ($resql)
-{
+if ($resql) {
     $num = $db->num_rows($resql);
     $i = 0;
-    while ($i < $num)
-    {
+    while ($i < $num) {
         $row = $db->fetch_row($resql);
         $nbproduct = $row[0];
         $year = $row[1];
@@ -73,4 +70,3 @@ print '<i>'.$langs->trans("StatsOnShipmentsOnlyValidated").'</i>';
 llxFooter();
 
 $db->close();
-?>

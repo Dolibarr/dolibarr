@@ -24,8 +24,7 @@
  */
 
 include_once 'inc.php';
-if (! file_exists($conffile))
-{
+if (! file_exists($conffile)) {
     print 'Error: Dolibarr config file was not found. This may means that Dolibarr is not installed yet. Please call the page "/install/index.php" instead of "/install/upgrade.php").';
 }
 require_once $conffile; if (! isset($dolibarr_main_db_type)) $dolibarr_main_db_type='mysql';	// For backward compatibility
@@ -41,7 +40,6 @@ require_once $dolibarr_main_document_root . '/core/lib/files.lib.php';
 $grant_query='';
 $etape = 2;
 $error = 0;
-
 
 // Cette page peut etre longue. On augmente le delai autorise.
 // Ne fonctionne que si on est pas en safe_mode.
@@ -65,11 +63,8 @@ if ($dolibarr_main_db_type == 'mysqli') $choix=1;
 if ($dolibarr_main_db_type == 'pgsql')  $choix=2;
 if ($dolibarr_main_db_type == 'mssql')  $choix=3;
 
-
 dolibarr_install_syslog("upgrade2: Entering upgrade2.php page");
 if (! is_object($conf)) dolibarr_install_syslog("upgrade2: conf file not initialized",LOG_ERR);
-
-
 
 /*
  * View
@@ -77,24 +72,19 @@ if (! is_object($conf)) dolibarr_install_syslog("upgrade2: conf file not initial
 
 pHeader('','etape5',GETPOST("action")?GETPOST("action"):'upgrade','versionfrom='.$versionfrom.'&versionto='.$versionto);
 
-
-if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
-{
+if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action'))) {
     print '<h3>'.$langs->trans('DataMigration').'</h3>';
 
     print '<table cellspacing="0" cellpadding="1" border="0" width="100%">';
 
     // If password is encoded, we decode it
-    if (preg_match('/crypted:/i',$dolibarr_main_db_pass) || ! empty($dolibarr_main_db_encrypted_pass))
-    {
+    if (preg_match('/crypted:/i',$dolibarr_main_db_pass) || ! empty($dolibarr_main_db_encrypted_pass)) {
         require_once $dolibarr_main_document_root.'/core/lib/security.lib.php';
-        if (preg_match('/crypted:/i',$dolibarr_main_db_pass))
-        {
+        if (preg_match('/crypted:/i',$dolibarr_main_db_pass)) {
             $dolibarr_main_db_pass = preg_replace('/crypted:/i', '', $dolibarr_main_db_pass);
             $dolibarr_main_db_pass = dol_decode($dolibarr_main_db_pass);
             $dolibarr_main_db_encrypted_pass = $dolibarr_main_db_pass;	// We need to set this as it is used to know the password was initially crypted
-        }
-        else $dolibarr_main_db_pass = dol_decode($dolibarr_main_db_encrypted_pass);
+        } else $dolibarr_main_db_pass = dol_decode($dolibarr_main_db_encrypted_pass);
     }
 
     // $conf is already instancied inside inc.php
@@ -111,21 +101,16 @@ if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
     include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
     $hookmanager=new HookManager($db);
 
-    if ($db->connected != 1)
-    {
+    if ($db->connected != 1) {
         print '<tr><td colspan="4">'.$langs->trans("ErrorFailedToConnectToDatabase",$conf->db->name).'</td><td align="right">'.$langs->trans('Error').'</td></tr>';
         dolibarr_install_syslog('upgrade2: Failed to connect to database : '.$conf->db->name.' on '.$conf->db->host.' for user '.$conf->db->user, LOG_ERR);
         $error++;
     }
 
-    if (! $error)
-    {
-        if($db->database_selected == 1)
-        {
+    if (! $error) {
+        if ($db->database_selected == 1) {
             dolibarr_install_syslog('upgrade2: Database connection successfull : '.$dolibarr_main_db_name);
-        }
-        else
-        {
+        } else {
             $error++;
         }
     }
@@ -138,14 +123,12 @@ if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
     // Chargement config
     if (! $error) $conf->setValues($db);
 
-
     /***************************************************************************************
      *
      * Migration des donnees
      *
      ***************************************************************************************/
-    if (! $error)
-    {
+    if (! $error) {
         // Current version is $conf->global->MAIN_VERSION_LAST_UPGRADE
         // Version to install is DOL_VERSION
         $dolibarrlastupgradeversionarray=preg_split('/[\.-]/',isset($conf->global->MAIN_VERSION_LAST_UPGRADE)?$conf->global->MAIN_VERSION_LAST_UPGRADE:$conf->global->MAIN_VERSION_LAST_INSTALL);
@@ -160,8 +143,7 @@ if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
 
         $afterversionarray=explode('.','2.0.0');
         $beforeversionarray=explode('.','2.7.9');
-        if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
-        {
+        if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0) {
             // Script pour V2 -> V2.1
             migrate_paiements($db,$langs,$conf);
 
@@ -187,14 +169,12 @@ if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
 
             migrate_paiementfourn_facturefourn($db,$langs,$conf);
 
-
             // Script pour V2.1 -> V2.2
             migrate_paiements_orphelins_1($db,$langs,$conf);
 
             migrate_paiements_orphelins_2($db,$langs,$conf);
 
             migrate_links_transfert($db,$langs,$conf);
-
 
             // Script pour V2.2 -> V2.4
             migrate_commande_expedition($db,$langs,$conf);
@@ -203,10 +183,8 @@ if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
 
             migrate_detail_livraison($db,$langs,$conf);
 
-
             // Script pour V2.5 -> V2.6
             migrate_stocks($db,$langs,$conf);
-
 
             // Script pour V2.6 -> V2.7
             migrate_menus($db,$langs,$conf);
@@ -230,8 +208,7 @@ if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
         $afterversionarray=explode('.','2.7.9');
         $beforeversionarray=explode('.','2.8.9');
         //print $versionto.' '.versioncompare($versiontoarray,$afterversionarray).' '.versioncompare($versiontoarray,$beforeversionarray);
-        if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
-        {
+        if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0) {
             migrate_price_facture($db,$langs,$conf);     // Code of this function works for 2.8+ because need a field tva_tx
 
             migrate_relationship_tables($db,$langs,$conf,'co_exp','fk_commande','commande','fk_expedition','shipping');
@@ -262,8 +239,7 @@ if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
         // Script for VX (X<2.9) -> V2.9
         $afterversionarray=explode('.','2.8.9');
         $beforeversionarray=explode('.','2.9.9');
-        if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
-        {
+        if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0) {
             migrate_project_task_time($db,$langs,$conf);
 
             migrate_customerorder_shipping($db,$langs,$conf);
@@ -282,8 +258,7 @@ if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
         // Script for VX (X<3.0) -> V3.0
         $afterversionarray=explode('.','2.9.9');
         $beforeversionarray=explode('.','3.0.9');
-        if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
-        {
+        if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0) {
             // Reload modules
             migrate_reload_modules($db,$langs,$conf);
 
@@ -294,8 +269,7 @@ if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
         // Script for VX (X<3.1) -> V3.1
         $afterversionarray=explode('.','3.0.9');
         $beforeversionarray=explode('.','3.1.9');
-        if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
-        {
+        if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0) {
             migrate_directories($db,$langs,$conf,'/rss','/externalrss');
 
             migrate_actioncomm_element($db,$langs,$conf);
@@ -310,11 +284,10 @@ if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
         // Script for VX (X<3.2) -> V3.2
         $afterversionarray=explode('.','3.1.9');
         $beforeversionarray=explode('.','3.2.9');
-        if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
-        {
+        if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0) {
             migrate_price_contrat($db,$langs,$conf);
 
-        	migrate_mode_reglement($db,$langs,$conf);
+            migrate_mode_reglement($db,$langs,$conf);
 
             // Reload modules
             migrate_reload_modules($db,$langs,$conf);
@@ -326,20 +299,18 @@ if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
         // Script for VX (X<3.3) -> V3.3
         $afterversionarray=explode('.','3.2.9');
         $beforeversionarray=explode('.','3.3.9');
-        if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
-        {
-        	migrate_categorie_association($db,$langs,$conf);
+        if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0) {
+            migrate_categorie_association($db,$langs,$conf);
         }
 
         $afterversionarray=explode('.','3.3.9');
         $beforeversionarray=explode('.','3.4.9');
-        if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
-        {
-        	// Reload modules (this must be always and only into last targeted version)
-        	migrate_reload_modules($db,$langs,$conf);
+        if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0) {
+            // Reload modules (this must be always and only into last targeted version)
+            migrate_reload_modules($db,$langs,$conf);
 
-        	// Reload menus (this must be always and only into last targeted version)
-        	migrate_reload_menu($db,$langs,$conf,$versionto);
+            // Reload menus (this must be always and only into last targeted version)
+            migrate_reload_menu($db,$langs,$conf,$versionto);
         }
 
         print '<tr><td colspan="4"><br>'.$langs->trans("MigrationFinished").'</td></tr>';
@@ -356,9 +327,7 @@ if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
     }
 
     print '</table>';
-}
-else
-{
+} else {
     print '<div class="error">'.$langs->trans('ErrorWrongParameters').'</div>';
     $error++;
 }
@@ -373,8 +342,6 @@ if ($db->connected) $db->close();
 
 // Return code if ran from command line
 if ($ret) exit($ret);
-
-
 
 /**
  * Reporte liens vers une facture de paiements sur table de jointure (lien n-n paiements factures)
@@ -393,8 +360,7 @@ function migrate_paiements($db,$langs,$conf)
 
     $result = $db->DDLDescTable(MAIN_DB_PREFIX."paiement","fk_facture");
     $obj = $db->fetch_object($result);
-    if ($obj)
-    {
+    if ($obj) {
         $sql = "SELECT p.rowid, p.fk_facture, p.amount";
         $sql .= " FROM ".MAIN_DB_PREFIX."paiement as p";
         $sql .= " WHERE p.fk_facture > 0";
@@ -402,35 +368,28 @@ function migrate_paiements($db,$langs,$conf)
         $resql = $db->query($sql);
 
         dolibarr_install_syslog("upgrade2::migrate_paiements sql=".$sql);
-        if ($resql)
-        {
+        if ($resql) {
             $i = 0;
             $row = array();
             $num = $db->num_rows($resql);
 
-            while ($i < $num)
-            {
+            while ($i < $num) {
                 $obj = $db->fetch_object($resql);
                 $row[$i][0] = $obj->rowid ;
                 $row[$i][1] = $obj->fk_facture;
                 $row[$i][2] = $obj->amount;
                 $i++;
             }
-        }
-        else
-        {
+        } else {
             dol_print_error($db);
         }
 
-        if ($num)
-        {
+        if ($num) {
             print $langs->trans('MigrationPaymentsNumberToUpdate', $num)."<br>\n";
-            if ($db->begin())
-            {
+            if ($db->begin()) {
                 $res = 0;
                 $num=count($row);
-                for ($i = 0; $i < $num; $i++)
-                {
+                for ($i = 0; $i < $num; $i++) {
                     $sql = "INSERT INTO ".MAIN_DB_PREFIX."paiement_facture (fk_facture, fk_paiement, amount)";
                     $sql.= " VALUES (".$row[$i][1].",".$row[$i][0].",".$row[$i][2].")";
 
@@ -444,24 +403,17 @@ function migrate_paiements($db,$langs,$conf)
                 }
             }
 
-            if ($res == (2 * count($row)))
-            {
+            if ($res == (2 * count($row))) {
                 $db->commit();
                 print $langs->trans('MigrationSuccessfullUpdate')."<br>";
-            }
-            else
-            {
+            } else {
                 $db->rollback();
                 print $langs->trans('MigrationUpdateFailed').'<br>';
             }
-        }
-        else
-        {
+        } else {
             print $langs->trans('MigrationPaymentsNothingToUpdate')."<br>\n";
         }
-    }
-    else
-    {
+    } else {
         print $langs->trans('MigrationPaymentsNothingToUpdate')."<br>\n";
     }
 
@@ -487,8 +439,7 @@ function migrate_paiements_orphelins_1($db,$langs,$conf)
 
     $result = $db->DDLDescTable(MAIN_DB_PREFIX."paiement","fk_facture");
     $obj = $db->fetch_object($result);
-    if ($obj)
-    {
+    if ($obj) {
         // Tous les enregistrements qui sortent de cette requete devrait avoir un pere dans llx_paiement_facture
         $sql = "SELECT distinct p.rowid, p.datec, p.amount as pamount, bu.fk_bank, b.amount as bamount,";
         $sql.= " bu2.url_id as socid";
@@ -503,16 +454,13 @@ function migrate_paiements_orphelins_1($db,$langs,$conf)
 
         dolibarr_install_syslog("upgrade2::migrate_paiements_orphelins_1 sql=".$sql);
         $row = array();
-        if ($resql)
-        {
+        if ($resql) {
             $i = $j = 0;
             $num = $db->num_rows($resql);
 
-            while ($i < $num)
-            {
+            while ($i < $num) {
                 $obj = $db->fetch_object($resql);
-                if ($obj->pamount == $obj->bamount && $obj->socid)	// Pour etre sur d'avoir bon cas
-                {
+                if ($obj->pamount == $obj->bamount && $obj->socid) {	// Pour etre sur d'avoir bon cas
                     $row[$j]['paymentid'] = $obj->rowid ;		// paymentid
                     $row[$j]['pamount'] = $obj->pamount;
                     $row[$j]['fk_bank'] = $obj->fk_bank;
@@ -523,21 +471,17 @@ function migrate_paiements_orphelins_1($db,$langs,$conf)
                 }
                 $i++;
             }
-        }
-        else
-        {
+        } else {
             dol_print_error($db);
         }
 
-        if (count($row))
-        {
+        if (count($row)) {
             print $langs->trans('OrphelinsPaymentsDetectedByMethod', 1).': '.count($row)."<br>\n";
             $db->begin();
 
             $res = 0;
             $num=count($row);
-            for ($i = 0; $i < $num; $i++)
-            {
+            for ($i = 0; $i < $num; $i++) {
                 if ($conf->global->MAIN_FEATURES_LEVEL == 2) print '* '.$row[$i]['datec'].' paymentid='.$row[$i]['paymentid'].' pamount='.$row[$i]['pamount'].' fk_bank='.$row[$i]['fk_bank'].' bamount='.$row[$i]['bamount'].' socid='.$row[$i]['socid'].'<br>';
 
                 // On cherche facture sans lien paiement et du meme montant et pour meme societe.
@@ -548,12 +492,10 @@ function migrate_paiements_orphelins_1($db,$langs,$conf)
                 $sql.=" ORDER BY f.fk_statut";
                 //print $sql.'<br>';
                 $resql=$db->query($sql);
-                if ($resql)
-                {
+                if ($resql) {
                     $num = $db->num_rows($resql);
                     //print 'Nb of invoice found for this amount and company :'.$num.'<br>';
-                    if ($num >= 1)
-                    {
+                    if ($num >= 1) {
                         $obj=$db->fetch_object($resql);
                         $facid=$obj->rowid;
 
@@ -564,31 +506,22 @@ function migrate_paiements_orphelins_1($db,$langs,$conf)
 
                         print $langs->trans('MigrationProcessPaymentUpdate', 'facid='.$facid.'-paymentid='.$row[$i]['paymentid'].'-amount='.$row[$i]['pamount'])."<br>\n";
                     }
-                }
-                else
-                {
+                } else {
                     print 'ERROR';
                 }
             }
 
-            if ($res > 0)
-            {
+            if ($res > 0) {
                 print $langs->trans('MigrationSuccessfullUpdate')."<br>";
-            }
-            else
-            {
+            } else {
                 print $langs->trans('MigrationPaymentsNothingUpdatable')."<br>\n";
             }
 
             $db->commit();
-        }
-        else
-        {
+        } else {
             print $langs->trans('MigrationPaymentsNothingUpdatable')."<br>\n";
         }
-    }
-    else
-    {
+    } else {
         print $langs->trans('MigrationPaymentsNothingUpdatable')."<br>\n";
     }
 
@@ -614,8 +547,7 @@ function migrate_paiements_orphelins_2($db,$langs,$conf)
 
     $result = $db->DDLDescTable(MAIN_DB_PREFIX."paiement","fk_facture");
     $obj = $db->fetch_object($result);
-    if ($obj)
-    {
+    if ($obj) {
         // Tous les enregistrements qui sortent de cette requete devrait avoir un pere dans llx_paiement_facture
         $sql = "SELECT distinct p.rowid, p.datec, p.amount as pamount, bu.fk_bank, b.amount as bamount,";
         $sql.= " bu2.url_id as socid";
@@ -629,16 +561,13 @@ function migrate_paiements_orphelins_2($db,$langs,$conf)
 
         dolibarr_install_syslog("upgrade2::migrate_paiements_orphelins_2 sql=".$sql);
         $row = array();
-        if ($resql)
-        {
+        if ($resql) {
             $i = $j = 0;
             $num = $db->num_rows($resql);
 
-            while ($i < $num)
-            {
+            while ($i < $num) {
                 $obj = $db->fetch_object($resql);
-                if ($obj->pamount == $obj->bamount && $obj->socid)	// Pour etre sur d'avoir bon cas
-                {
+                if ($obj->pamount == $obj->bamount && $obj->socid) {	// Pour etre sur d'avoir bon cas
                     $row[$j]['paymentid'] = $obj->rowid ;		// paymentid
                     $row[$j]['pamount'] = $obj->pamount;
                     $row[$j]['fk_bank'] = $obj->fk_bank;
@@ -649,23 +578,19 @@ function migrate_paiements_orphelins_2($db,$langs,$conf)
                 }
                 $i++;
             }
-        }
-        else
-        {
+        } else {
             dol_print_error($db);
         }
 
         $nberr=0;
 
         $num=count($row);
-        if ($num)
-        {
+        if ($num) {
             print $langs->trans('OrphelinsPaymentsDetectedByMethod', 2).': '.count($row)."<br>\n";
             $db->begin();
 
             $res = 0;
-            for ($i = 0; $i < $num; $i++)
-            {
+            for ($i = 0; $i < $num; $i++) {
                 if ($conf->global->MAIN_FEATURES_LEVEL == 2) print '* '.$row[$i]['datec'].' paymentid='.$row[$i]['paymentid'].' '.$row[$i]['pamount'].' fk_bank='.$row[$i]['fk_bank'].' '.$row[$i]['bamount'].' socid='.$row[$i]['socid'].'<br>';
 
                 // On cherche facture sans lien paiement et du meme montant et pour meme societe.
@@ -676,12 +601,10 @@ function migrate_paiements_orphelins_2($db,$langs,$conf)
                 $sql.=" ORDER BY f.fk_statut";
                 //print $sql.'<br>';
                 $resql=$db->query($sql);
-                if ($resql)
-                {
+                if ($resql) {
                     $num = $db->num_rows($resql);
                     //print 'Nb of invoice found for this amount and company :'.$num.'<br>';
-                    if ($num >= 1)
-                    {
+                    if ($num >= 1) {
                         $obj=$db->fetch_object($resql);
                         $facid=$obj->rowid;
 
@@ -691,27 +614,20 @@ function migrate_paiements_orphelins_2($db,$langs,$conf)
 
                         print $langs->trans('MigrationProcessPaymentUpdate', 'facid='.$facid.'-paymentid='.$row[$i]['paymentid'].'-amount='.$row[$i]['pamount'])."<br>\n";
                     }
-                }
-                else
-                {
+                } else {
                     print 'ERROR';
                     $nberr++;
                 }
             }
 
-            if ($res > 0)
-            {
+            if ($res > 0) {
                 print $langs->trans('MigrationSuccessfullUpdate')."<br>";
-            }
-            else
-            {
+            } else {
                 print $langs->trans('MigrationPaymentsNothingUpdatable')."<br>\n";
             }
 
             $db->commit();
-        }
-        else
-        {
+        } else {
             print $langs->trans('MigrationPaymentsNothingUpdatable')."<br>\n";
         }
 
@@ -721,24 +637,18 @@ function migrate_paiements_orphelins_2($db,$langs,$conf)
         $sql = "ALTER TABLE ".MAIN_DB_PREFIX."paiement DROP COLUMN fk_facture";
         $db->query($sql);
 
-        if (!$nberr)
-        {
+        if (!$nberr) {
             $db->commit();
-        }
-        else
-        {
+        } else {
             print 'ERROR';
             $db->rollback();
         }
-    }
-    else
-    {
+    } else {
         print $langs->trans('MigrationPaymentsNothingUpdatable')."<br>\n";
     }
 
     print '</td></tr>';
 }
-
 
 /**
  * Mise a jour des contrats (gestion du contrat + detail de contrat)
@@ -768,19 +678,16 @@ function migrate_contracts_det($db,$langs,$conf)
     $resql = $db->query($sql);
 
     dolibarr_install_syslog("upgrade2::migrate_contracts_det sql=".$sql);
-    if ($resql)
-    {
+    if ($resql) {
         $i = 0;
         $row = array();
         $num = $db->num_rows($resql);
 
-        if ($num)
-        {
+        if ($num) {
             print $langs->trans('MigrationContractsNumberToUpdate', $num)."<br>\n";
             $db->begin();
 
-            while ($i < $num)
-            {
+            while ($i < $num) {
                 $obj = $db->fetch_object($resql);
 
                 $sql = "INSERT INTO ".MAIN_DB_PREFIX."contratdet (";
@@ -799,12 +706,9 @@ function migrate_contracts_det($db,$langs,$conf)
                 $sql.= ($obj->mise_en_service?$obj->fk_user_author:"null");
                 $sql.= ")";
 
-                if ($db->query($sql))
-                {
+                if ($db->query($sql)) {
                     print $langs->trans('MigrationContractsLineCreation', $obj->cref)."<br>\n";
-                }
-                else
-                {
+                } else {
                     dol_print_error($db);
                     $nberr++;
                 }
@@ -812,25 +716,18 @@ function migrate_contracts_det($db,$langs,$conf)
                 $i++;
             }
 
-            if (! $nberr)
-            {
+            if (! $nberr) {
                 //      $db->rollback();
                 $db->commit();
                 print $langs->trans('MigrationSuccessfullUpdate')."<br>";
-            }
-            else
-            {
+            } else {
                 $db->rollback();
                 print $langs->trans('MigrationUpdateFailed').'<br>';
             }
-        }
-        else
-        {
+        } else {
             print $langs->trans('MigrationContractsNothingToUpdate')."<br>\n";
         }
-    }
-    else
-    {
+    } else {
         print $langs->trans('MigrationContractsFieldDontExist')."<br>\n";
         //    dol_print_error($db);
     }
@@ -864,19 +761,16 @@ function migrate_links_transfert($db,$langs,$conf)
     $resql = $db->query($sql);
 
     dolibarr_install_syslog("upgrade2::migrate_links_transfert sql=".$sql);
-    if ($resql)
-    {
+    if ($resql) {
         $i = 0;
         $row = array();
         $num = $db->num_rows($resql);
 
-        if ($num)
-        {
+        if ($num) {
             print $langs->trans('MigrationBankTransfertsToUpdate', $num)."<br>\n";
             $db->begin();
 
-            while ($i < $num)
-            {
+            while ($i < $num) {
                 $obj = $db->fetch_object($resql);
 
                 $sql = "INSERT INTO ".MAIN_DB_PREFIX."bank_url (";
@@ -889,8 +783,7 @@ function migrate_links_transfert($db,$langs,$conf)
                 print $sql.'<br>';
                 dolibarr_install_syslog("migrate_links_transfert sql=".$sql);
 
-                if (! $db->query($sql))
-                {
+                if (! $db->query($sql)) {
                     dol_print_error($db);
                     $nberr++;
                 }
@@ -898,24 +791,18 @@ function migrate_links_transfert($db,$langs,$conf)
                 $i++;
             }
 
-            if (! $nberr)
-            {
+            if (! $nberr) {
                 //      $db->rollback();
                 $db->commit();
                 print $langs->trans('MigrationSuccessfullUpdate')."<br>";
-            }
-            else
-            {
+            } else {
                 $db->rollback();
                 print $langs->trans('MigrationUpdateFailed').'<br>';
             }
-        }
-        else {
+        } else {
             print $langs->trans('MigrationBankTransfertsNothingToUpdate')."<br>\n";
         }
-    }
-    else
-    {
+    } else {
         dol_print_error($db);
     }
 
@@ -978,22 +865,18 @@ function migrate_contracts_date2($db,$langs,$conf)
     $resql = $db->query($sql);
 
     dolibarr_install_syslog("upgrade2::migrate_contracts_date2 sql=".$sql);
-    if ($resql)
-    {
+    if ($resql) {
         $i = 0;
         $row = array();
         $num = $db->num_rows($resql);
 
-        if ($num)
-        {
+        if ($num) {
             $nbcontratsmodifie=0;
             $db->begin();
 
-            while ($i < $num)
-            {
+            while ($i < $num) {
                 $obj = $db->fetch_object($resql);
-                if ($obj->date_contrat > $obj->datemin)
-                {
+                if ($obj->date_contrat > $obj->datemin) {
                     print $langs->trans('MigrationContractsInvalidDateFix', $obj->cref, $obj->date_contrat, $obj->datemin)."<br>\n";
                     $sql ="UPDATE ".MAIN_DB_PREFIX."contrat";
                     $sql.=" SET date_contrat='".$obj->datemin."'";
@@ -1013,9 +896,7 @@ function migrate_contracts_date2($db,$langs,$conf)
             else
             print  $langs->trans('MigrationContractsInvalidDatesNothingToUpdate')."<br>\n";
         }
-    }
-    else
-    {
+    } else {
         dol_print_error($db);
     }
 
@@ -1074,13 +955,11 @@ function migrate_contracts_open($db,$langs,$conf)
         $row = array();
         $num = $db->num_rows($resql);
 
-        if ($num)
-        {
+        if ($num) {
             $nbcontratsmodifie=0;
             $db->begin();
 
-            while ($i < $num)
-            {
+            while ($i < $num) {
                 $obj = $db->fetch_object($resql);
 
                 print $langs->trans('MigrationReopenThisContract', $obj->cref)."<br>\n";
@@ -1102,8 +981,7 @@ function migrate_contracts_open($db,$langs,$conf)
             else
             print $langs->trans('MigrationReopeningContractsNothingToUpdate')."<br>\n";
         }
-    }
-    else print $langs->trans('MigrationReopeningContractsNothingToUpdate')."<br>\n";
+    } else print $langs->trans('MigrationReopeningContractsNothingToUpdate')."<br>\n";
 
     print '</td></tr>';
 }
@@ -1127,8 +1005,7 @@ function migrate_paiementfourn_facturefourn($db,$langs,$conf)
 
     $result = $db->DDLDescTable(MAIN_DB_PREFIX."paiementfourn","fk_facture_fourn");
     $obj = $db->fetch_object($result);
-    if ($obj)
-    {
+    if ($obj) {
         $error=0;
         $nb=0;
 
@@ -1138,15 +1015,13 @@ function migrate_paiementfourn_facturefourn($db,$langs,$conf)
 
         dolibarr_install_syslog("upgrade2::migrate_paiementfourn_facturefourn sql=".$select_sql);
         $select_resql = $db->query($select_sql);
-        if ($select_resql)
-        {
+        if ($select_resql) {
             $select_num = $db->num_rows($select_resql);
             $i=0;
             $var = true;
 
             // Pour chaque paiement fournisseur, on insere une ligne dans paiementfourn_facturefourn
-            while (($i < $select_num) && (! $error))
-            {
+            while (($i < $select_num) && (! $error)) {
                 $var = !$var;
                 $select_obj = $db->fetch_object($select_resql);
 
@@ -1155,15 +1030,12 @@ function migrate_paiementfourn_facturefourn($db,$langs,$conf)
                 $check_sql.= ' FROM '.MAIN_DB_PREFIX.'paiementfourn_facturefourn';
                 $check_sql.= ' WHERE fk_paiementfourn = '.$select_obj->rowid.' AND fk_facturefourn = '.$select_obj->fk_facture_fourn;
                 $check_resql = $db->query($check_sql);
-                if ($check_resql)
-                {
+                if ($check_resql) {
                     $check_num = $db->num_rows($check_resql);
-                    if ($check_num == 0)
-                    {
+                    if ($check_num == 0) {
                         $db->begin();
 
-                        if ($nb == 0)
-                        {
+                        if ($nb == 0) {
                             print '<tr><td colspan="4" class="nowrap"><b>'.$langs->trans('SuppliersInvoices').'</b></td></tr>';
                             print '<tr><td>fk_paiementfourn</td><td>fk_facturefourn</td><td>'.$langs->trans('Amount').'</td><td>&nbsp;</td></tr>';
                         }
@@ -1177,50 +1049,37 @@ function migrate_paiementfourn_facturefourn($db,$langs,$conf)
                         $insert_sql.= ' amount           = \''.$select_obj->amount.'\'';
                         $insert_resql = $db->query($insert_sql);
 
-                        if ($insert_resql)
-                        {
+                        if ($insert_resql) {
                             $nb++;
                             print '<td><span style="color:green">'.$langs->trans("OK").'</span></td>';
-                        }
-                        else
-                        {
+                        } else {
                             print '<td><span style="color:red">Error on insert</span></td>';
                             $error++;
                         }
                         print '</tr>';
                     }
-                }
-                else
-                {
+                } else {
                     $error++;
                 }
                 $i++;
             }
-        }
-        else
-        {
+        } else {
             $error++;
         }
 
-        if (!$error)
-        {
-            if (!$nb)
-            {
+        if (!$error) {
+            if (!$nb) {
                 print '<tr><td>'.$langs->trans("AlreadyDone").'</td></tr>';
             }
             $db->commit();
 
             $sql = "ALTER TABLE ".MAIN_DB_PREFIX."paiementfourn DROP COLUMN fk_facture_fourn";
             $db->query($sql);
-        }
-        else
-        {
+        } else {
             print '<tr><td>'.$langs->trans("Error").'</td></tr>';
             $db->rollback();
         }
-    }
-    else
-    {
+    } else {
         print '<tr><td>'.$langs->trans("AlreadyDone").'</td></tr>';
     }
 }
@@ -1254,14 +1113,11 @@ function migrate_price_facture($db,$langs,$conf)
 
     dolibarr_install_syslog("upgrade2::migrate_price_facture sql=".$sql);
     $resql=$db->query($sql);
-    if ($resql)
-    {
+    if ($resql) {
         $num = $db->num_rows($resql);
         $i = 0;
-        if ($num)
-        {
-            while ($i < $num)
-            {
+        if ($num) {
+            while ($i < $num) {
                 $obj = $db->fetch_object($resql);
 
                 $rowid = $obj->rowid;
@@ -1290,27 +1146,19 @@ function migrate_price_facture($db,$langs,$conf)
                 print ". ";
                 $facligne->update_total();
 
-
                 /* On touche a facture mere uniquement si total_ttc = 0 */
-                if (! $total_ttc_f)
-                {
+                if (! $total_ttc_f) {
                     $facture = new Facture($db);
                     $facture->id=$obj->facid;
 
-                    if ( $facture->fetch($facture->id) >= 0)
-                    {
-                        if ( $facture->update_price() > 0 )
-                        {
+                    if ( $facture->fetch($facture->id) >= 0) {
+                        if ( $facture->update_price() > 0 ) {
                             //print $facture->id;
-                        }
-                        else
-                        {
+                        } else {
                             print "Error id=".$facture->id;
                             $err++;
                         }
-                    }
-                    else
-                    {
+                    } else {
                         print "Error #3";
                         $err++;
                     }
@@ -1319,17 +1167,13 @@ function migrate_price_facture($db,$langs,$conf)
 
                 $i++;
             }
-        }
-        else
-        {
+        } else {
             print $langs->trans("AlreadyDone");
         }
         $db->free($resql);
 
         $db->commit();
-    }
-    else
-    {
+    } else {
         print "Error #1 ".$db->error();
         $err++;
 
@@ -1367,14 +1211,11 @@ function migrate_price_propal($db,$langs,$conf)
 
     dolibarr_install_syslog("upgrade2::migrate_price_propal sql=".$sql);
     $resql=$db->query($sql);
-    if ($resql)
-    {
+    if ($resql) {
         $num = $db->num_rows($resql);
         $i = 0;
-        if ($num)
-        {
-            while ($i < $num)
-            {
+        if ($num) {
+            while ($i < $num) {
                 $obj = $db->fetch_object($resql);
 
                 $rowid = $obj->rowid;
@@ -1402,40 +1243,29 @@ function migrate_price_propal($db,$langs,$conf)
                 print ". ";
                 $propalligne->update_total($rowid);
 
-
                 /* On touche pas a propal mere
                  $propal = new Propal($db);
                  $propal->id=$obj->rowid;
-                 if ( $propal->fetch($propal->id) >= 0 )
-                 {
-                 if ( $propal->update_price() > 0 )
-                 {
+                 if ( $propal->fetch($propal->id) >= 0 ) {
+                 if ( $propal->update_price() > 0 ) {
                  print ". ";
-                 }
-                 else
-                 {
+                 } else {
                  print "Error id=".$propal->id;
                  }
-                 }
-                 else
-                 {
+                 } else {
                  print "Error #3";
                  }
                  */
                 $i++;
             }
-        }
-        else
-        {
+        } else {
             print $langs->trans("AlreadyDone");
         }
 
         $db->free($resql);
 
         $db->commit();
-    }
-    else
-    {
+    } else {
         print "Error #1 ".$db->error();
 
         $db->rollback();
@@ -1472,14 +1302,11 @@ function migrate_price_contrat($db,$langs,$conf)
 
     dolibarr_install_syslog("upgrade2::migrate_price_contrat sql=".$sql);
     $resql=$db->query($sql);
-    if ($resql)
-    {
+    if ($resql) {
         $num = $db->num_rows($resql);
         $i = 0;
-        if ($num)
-        {
-            while ($i < $num)
-            {
+        if ($num) {
+            while ($i < $num) {
                 $obj = $db->fetch_object($resql);
 
                 $rowid = $obj->rowid;
@@ -1509,18 +1336,14 @@ function migrate_price_contrat($db,$langs,$conf)
 
                 $i++;
             }
-        }
-        else
-        {
+        } else {
             print $langs->trans("AlreadyDone");
         }
 
         $db->free($resql);
 
         $db->commit();
-    }
-    else
-    {
+    } else {
         print "Error #1 ".$db->error();
 
         $db->rollback();
@@ -1557,14 +1380,11 @@ function migrate_price_commande($db,$langs,$conf)
 
     dolibarr_install_syslog("upgrade2::migrate_price_commande sql=".$sql);
     $resql=$db->query($sql);
-    if ($resql)
-    {
+    if ($resql) {
         $num = $db->num_rows($resql);
         $i = 0;
-        if ($num)
-        {
-            while ($i < $num)
-            {
+        if ($num) {
+            while ($i < $num) {
                 $obj = $db->fetch_object($resql);
 
                 $rowid = $obj->rowid;
@@ -1595,27 +1415,19 @@ function migrate_price_commande($db,$langs,$conf)
                 /* On touche pas a facture mere
                  $commande = new Commande($db);
                  $commande->id = $obj->rowid;
-                 if ( $commande->fetch($commande->id) >= 0 )
-                 {
-                 if ( $commande->update_price() > 0 )
-                 {
+                 if ( $commande->fetch($commande->id) >= 0 ) {
+                 if ( $commande->update_price() > 0 ) {
                  print ". ";
-                 }
-                 else
-                 {
+                 } else {
                  print "Error id=".$commande->id;
                  }
-                 }
-                 else
-                 {
+                 } else {
                  print "Error #3";
                  }
                  */
                 $i++;
             }
-        }
-        else
-        {
+        } else {
             print $langs->trans("AlreadyDone");
         }
 
@@ -1625,16 +1437,13 @@ function migrate_price_commande($db,$langs,$conf)
          $sql = "DELETE FROM ".MAIN_DB_PREFIX."commandedet";
          $sql.= " WHERE price = 0 and total_ttc = 0 and total_tva = 0 and total_ht = 0 AND remise_percent = 0";
          $resql=$db->query($sql);
-         if (! $resql)
-         {
+         if (! $resql) {
          dol_print_error($db);
          }
          */
 
         $db->commit();
-    }
-    else
-    {
+    } else {
         print "Error #1 ".$db->error();
 
         $db->rollback();
@@ -1671,14 +1480,11 @@ function migrate_price_commande_fournisseur($db,$langs,$conf)
 
     dolibarr_install_syslog("upgrade2::migrate_price_commande_fournisseur sql=".$sql);
     $resql=$db->query($sql);
-    if ($resql)
-    {
+    if ($resql) {
         $num = $db->num_rows($resql);
         $i = 0;
-        if ($num)
-        {
-            while ($i < $num)
-            {
+        if ($num) {
+            while ($i < $num) {
                 $obj = $db->fetch_object($resql);
 
                 $rowid = $obj->rowid;
@@ -1709,27 +1515,19 @@ function migrate_price_commande_fournisseur($db,$langs,$conf)
                 /* On touche pas a facture mere
                  $commande = new Commande($db);
                  $commande->id = $obj->rowid;
-                 if ( $commande->fetch($commande->id) >= 0 )
-                 {
-                 if ( $commande->update_price() > 0 )
-                 {
+                 if ( $commande->fetch($commande->id) >= 0 ) {
+                 if ( $commande->update_price() > 0 ) {
                  print ". ";
-                 }
-                 else
-                 {
+                 } else {
                  print "Error id=".$commande->id;
                  }
-                 }
-                 else
-                 {
+                 } else {
                  print "Error #3";
                  }
                  */
                 $i++;
             }
-        }
-        else
-        {
+        } else {
             print $langs->trans("AlreadyDone");
         }
 
@@ -1739,16 +1537,13 @@ function migrate_price_commande_fournisseur($db,$langs,$conf)
          $sql = "DELETE FROM ".MAIN_DB_PREFIX."commande_fournisseurdet";
          $sql.= " WHERE subprice = 0 and total_ttc = 0 and total_tva = 0 and total_ht = 0";
          $resql=$db->query($sql);
-         if (! $resql)
-         {
+         if (! $resql) {
          dol_print_error($db);
          }
          */
 
         $db->commit();
-    }
-    else
-    {
+    } else {
         print "Error #1 ".$db->error();
 
         $db->rollback();
@@ -1774,12 +1569,10 @@ function migrate_modeles($db,$langs,$conf)
 
     dolibarr_install_syslog("upgrade2::migrate_modeles");
 
-    if (! empty($conf->facture->enabled))
-    {
+    if (! empty($conf->facture->enabled)) {
         include_once DOL_DOCUMENT_ROOT.'/core/modules/facture/modules_facture.php';
         $modellist=ModelePDFFactures::liste_modeles($db);
-        if (count($modellist)==0)
-        {
+        if (count($modellist)==0) {
             // Aucun model par defaut.
             $sql=" insert into llx_document_model(nom,type) values('crabe','invoice')";
             $resql = $db->query($sql);
@@ -1787,12 +1580,10 @@ function migrate_modeles($db,$langs,$conf)
         }
     }
 
-    if (! empty($conf->commande->enabled))
-    {
+    if (! empty($conf->commande->enabled)) {
         include_once DOL_DOCUMENT_ROOT.'/core/modules/commande/modules_commande.php';
         $modellist=ModelePDFCommandes::liste_modeles($db);
-        if (count($modellist)==0)
-        {
+        if (count($modellist)==0) {
             // Aucun model par defaut.
             $sql=" insert into llx_document_model(nom,type) values('einstein','order')";
             $resql = $db->query($sql);
@@ -1800,12 +1591,10 @@ function migrate_modeles($db,$langs,$conf)
         }
     }
 
-    if (! empty($conf->expedition->enabled))
-    {
+    if (! empty($conf->expedition->enabled)) {
         include_once DOL_DOCUMENT_ROOT.'/core/modules/expedition/modules_expedition.php';
         $modellist=ModelePDFExpedition::liste_modeles($db);
-        if (count($modellist)==0)
-        {
+        if (count($modellist)==0) {
             // Aucun model par defaut.
             $sql=" insert into llx_document_model(nom,type) values('rouget','shipping')";
             $resql = $db->query($sql);
@@ -1815,7 +1604,6 @@ function migrate_modeles($db,$langs,$conf)
 
     //print $langs->trans("AlreadyDone");
 }
-
 
 /**
  * Correspondance des expeditions et des commandes clients dans la table llx_co_exp
@@ -1836,31 +1624,26 @@ function migrate_commande_expedition($db,$langs,$conf)
 
     $result = $db->DDLDescTable(MAIN_DB_PREFIX."expedition","fk_commande");
     $obj = $db->fetch_object($result);
-    if ($obj)
-    {
+    if ($obj) {
         $error = 0;
 
         $db->begin();
 
         $sql = "SELECT e.rowid, e.fk_commande FROM ".MAIN_DB_PREFIX."expedition as e";
         $resql = $db->query($sql);
-        if ($resql)
-        {
+        if ($resql) {
             $i = 0;
             $num = $db->num_rows($resql);
 
-            if ($num)
-            {
-                while ($i < $num)
-                {
+            if ($num) {
+                while ($i < $num) {
                     $obj = $db->fetch_object($resql);
 
                     $sql = "INSERT INTO ".MAIN_DB_PREFIX."co_exp (fk_expedition,fk_commande)";
                     $sql.= " VALUES (".$obj->rowid.",".$obj->fk_commande.")";
                     $resql2=$db->query($sql);
 
-                    if (!$resql2)
-                    {
+                    if (!$resql2) {
                         $error++;
                         dol_print_error($db);
                     }
@@ -1869,26 +1652,19 @@ function migrate_commande_expedition($db,$langs,$conf)
                 }
             }
 
-            if ($error == 0)
-            {
+            if ($error == 0) {
                 $db->commit();
                 $sql = "ALTER TABLE ".MAIN_DB_PREFIX."expedition DROP COLUMN fk_commande";
                 print $langs->trans('FieldRenamed')."<br>\n";
                 $db->query($sql);
-            }
-            else
-            {
+            } else {
                 $db->rollback();
             }
-        }
-        else
-        {
+        } else {
             dol_print_error($db);
             $db->rollback();
         }
-    }
-    else
-    {
+    } else {
         print $langs->trans('AlreadyDone')."<br>\n";
     }
     print '</td></tr>';
@@ -1913,8 +1689,7 @@ function migrate_commande_livraison($db,$langs,$conf)
 
     $result = $db->DDLDescTable(MAIN_DB_PREFIX."livraison","fk_commande");
     $obj = $db->fetch_object($result);
-    if ($obj)
-    {
+    if ($obj) {
         $error = 0;
 
         $db->begin();
@@ -1924,36 +1699,29 @@ function migrate_commande_livraison($db,$langs,$conf)
         $sql.= " FROM ".MAIN_DB_PREFIX."livraison as l, ".MAIN_DB_PREFIX."commande as c";
         $sql.= " WHERE c.rowid = l.fk_commande";
         $resql = $db->query($sql);
-        if ($resql)
-        {
+        if ($resql) {
             $i = 0;
             $num = $db->num_rows($resql);
 
-            if ($num)
-            {
-                while ($i < $num)
-                {
+            if ($num) {
+                while ($i < $num) {
                     $obj = $db->fetch_object($resql);
 
                     $sql = "INSERT INTO ".MAIN_DB_PREFIX."co_liv (fk_livraison,fk_commande)";
                     $sql.= " VALUES (".$obj->rowid.",".$obj->fk_commande.")";
                     $resql2=$db->query($sql);
 
-                    if ($resql2)
-                    {
+                    if ($resql2) {
                         $sqlu = "UPDATE ".MAIN_DB_PREFIX."livraison SET";
                         $sqlu.= " ref_client='".$obj->ref_client."'";
                         $sqlu.= ", date_livraison='".$obj->date_livraison."'";
                         $sqlu.= " WHERE rowid = ".$obj->rowid;
                         $resql3=$db->query($sqlu);
-                        if (!$resql3)
-                        {
+                        if (!$resql3) {
                             $error++;
                             dol_print_error($db);
                         }
-                    }
-                    else
-                    {
+                    } else {
                         $error++;
                         dol_print_error($db);
                     }
@@ -1962,26 +1730,19 @@ function migrate_commande_livraison($db,$langs,$conf)
                 }
             }
 
-            if ($error == 0)
-            {
+            if ($error == 0) {
                 $db->commit();
                 $sql = "ALTER TABLE ".MAIN_DB_PREFIX."livraison DROP COLUMN fk_commande";
                 print $langs->trans('FieldRenamed')."<br>\n";
                 $db->query($sql);
-            }
-            else
-            {
+            } else {
                 $db->rollback();
             }
-        }
-        else
-        {
+        } else {
             dol_print_error($db);
             $db->rollback();
         }
-    }
-    else
-    {
+    } else {
         print $langs->trans('AlreadyDone')."<br>\n";
     }
     print '</td></tr>';
@@ -2008,8 +1769,7 @@ function migrate_detail_livraison($db,$langs,$conf)
     // If not this means migration was already done.
     $result = $db->DDLDescTable(MAIN_DB_PREFIX."livraisondet","fk_commande_ligne");
     $obj = $db->fetch_object($result);
-    if ($obj)
-    {
+    if ($obj) {
         $error = 0;
 
         $db->begin();
@@ -2019,15 +1779,12 @@ function migrate_detail_livraison($db,$langs,$conf)
         $sql.= " FROM ".MAIN_DB_PREFIX."commandedet as cd, ".MAIN_DB_PREFIX."livraisondet as ld";
         $sql.= " WHERE ld.fk_commande_ligne = cd.rowid";
         $resql = $db->query($sql);
-        if ($resql)
-        {
+        if ($resql) {
             $i = 0;
             $num = $db->num_rows($resql);
 
-            if ($num)
-            {
-                while ($i < $num)
-                {
+            if ($num) {
+                while ($i < $num) {
                     $obj = $db->fetch_object($resql);
 
                     $sql = "UPDATE ".MAIN_DB_PREFIX."livraisondet SET";
@@ -2038,15 +1795,13 @@ function migrate_detail_livraison($db,$langs,$conf)
                     $sql.= " WHERE fk_commande_ligne = ".$obj->rowid;
                     $resql2=$db->query($sql);
 
-                    if ($resql2)
-                    {
+                    if ($resql2) {
                         $sql = "SELECT total_ht";
                         $sql.= " FROM ".MAIN_DB_PREFIX."livraison";
                         $sql.= " WHERE rowid = ".$obj->fk_livraison;
                         $resql3=$db->query($sql);
 
-                        if ($resql3)
-                        {
+                        if ($resql3) {
                             $obju = $db->fetch_object($resql3);
                             $total_ht = $obju->total_ht + $obj->total_ht;
 
@@ -2054,20 +1809,15 @@ function migrate_detail_livraison($db,$langs,$conf)
                             $sqlu.= " total_ht='".$total_ht."'";
                             $sqlu.= " WHERE rowid=".$obj->fk_livraison;
                             $resql4=$db->query($sqlu);
-                            if (!$resql4)
-                            {
+                            if (!$resql4) {
                                 $error++;
                                 dol_print_error($db);
                             }
-                        }
-                        else
-                        {
+                        } else {
                             $error++;
                             dol_print_error($db);
                         }
-                    }
-                    else
-                    {
+                    } else {
                         $error++;
                         dol_print_error($db);
                     }
@@ -2077,30 +1827,22 @@ function migrate_detail_livraison($db,$langs,$conf)
 
             }
 
-            if ($error == 0)
-            {
+            if ($error == 0) {
                 $db->commit();
                 $sql = "ALTER TABLE ".MAIN_DB_PREFIX."livraisondet CHANGE fk_commande_ligne fk_origin_line integer";
                 print $langs->trans('FieldRenamed')."<br>\n";
                 $db->query($sql);
-            }
-            else
-            {
+            } else {
                 $db->rollback();
             }
-        }
-        else
-        {
+        } else {
             dol_print_error($db);
             $db->rollback();
         }
-    }
-    else
-    {
+    } else {
         $result = $db->DDLDescTable(MAIN_DB_PREFIX."livraisondet","fk_origin_line");
         $obj = $db->fetch_object($result);
-        if (!$obj)
-        {
+        if (!$obj) {
             $sql = "ALTER TABLE ".MAIN_DB_PREFIX."livraisondet ADD COLUMN fk_origin_line integer after fk_livraison";
             $db->query($sql);
         }
@@ -2134,15 +1876,12 @@ function migrate_stocks($db,$langs,$conf)
     $sql.= " FROM ".MAIN_DB_PREFIX."product_stock as ps";
     $sql.= " GROUP BY fk_product";
     $resql = $db->query($sql);
-    if ($resql)
-    {
+    if ($resql) {
         $i = 0;
         $num = $db->num_rows($resql);
 
-        if ($num)
-        {
-            while ($i < $num)
-            {
+        if ($num) {
+            while ($i < $num) {
                 $obj = $db->fetch_object($resql);
 
                 $sql = "UPDATE ".MAIN_DB_PREFIX."product SET";
@@ -2150,12 +1889,9 @@ function migrate_stocks($db,$langs,$conf)
                 $sql.= " WHERE rowid=".$obj->fk_product;
 
                 $resql2=$db->query($sql);
-                if ($resql2)
-                {
+                if ($resql2) {
 
-                }
-                else
-                {
+                } else {
                     $error++;
                     dol_print_error($db);
                 }
@@ -2165,17 +1901,12 @@ function migrate_stocks($db,$langs,$conf)
 
         }
 
-        if ($error == 0)
-        {
+        if ($error == 0) {
             $db->commit();
-        }
-        else
-        {
+        } else {
             $db->rollback();
         }
-    }
-    else
-    {
+    } else {
         dol_print_error($db);
         $db->rollback();
     }
@@ -2203,8 +1934,7 @@ function migrate_menus($db,$langs,$conf)
 
     $error = 0;
 
-    if ($db->DDLInfoTable(MAIN_DB_PREFIX."menu_constraint"))
-    {
+    if ($db->DDLInfoTable(MAIN_DB_PREFIX."menu_constraint")) {
         $db->begin();
 
         $sql = "SELECT m.rowid, mc.action";
@@ -2212,14 +1942,11 @@ function migrate_menus($db,$langs,$conf)
         $sql.= " WHERE md.fk_menu = m.rowid AND md.fk_constraint = mc.rowid";
         $sql.= " AND m.enabled = '1'";
         $resql = $db->query($sql);
-        if ($resql)
-        {
+        if ($resql) {
             $i = 0;
             $num = $db->num_rows($resql);
-            if ($num)
-            {
-                while ($i < $num)
-                {
+            if ($num) {
+                while ($i < $num) {
                     $obj = $db->fetch_object($resql);
 
                     $sql = "UPDATE ".MAIN_DB_PREFIX."menu SET";
@@ -2228,12 +1955,9 @@ function migrate_menus($db,$langs,$conf)
                     $sql.= " AND enabled = '1'";
 
                     $resql2=$db->query($sql);
-                    if ($resql2)
-                    {
+                    if ($resql2) {
 
-                    }
-                    else
-                    {
+                    } else {
                         $error++;
                         dol_print_error($db);
                     }
@@ -2242,23 +1966,16 @@ function migrate_menus($db,$langs,$conf)
                 }
             }
 
-            if ($error == 0)
-            {
+            if ($error == 0) {
                 $db->commit();
-            }
-            else
-            {
+            } else {
                 $db->rollback();
             }
-        }
-        else
-        {
+        } else {
             dol_print_error($db);
             $db->rollback();
         }
-    }
-    else
-    {
+    } else {
         print $langs->trans('AlreadyDone')."<br>\n";
     }
 
@@ -2285,8 +2002,7 @@ function migrate_commande_deliveryaddress($db,$langs,$conf)
 
     $error = 0;
 
-    if ($db->DDLInfoTable(MAIN_DB_PREFIX."co_exp"))
-    {
+    if ($db->DDLInfoTable(MAIN_DB_PREFIX."co_exp")) {
         $db->begin();
 
         $sql = "SELECT c.fk_adresse_livraison, ce.fk_expedition";
@@ -2296,15 +2012,12 @@ function migrate_commande_deliveryaddress($db,$langs,$conf)
         $sql.= " AND c.fk_adresse_livraison IS NOT NULL AND c.fk_adresse_livraison != 0";
 
         $resql = $db->query($sql);
-        if ($resql)
-        {
+        if ($resql) {
             $i = 0;
             $num = $db->num_rows($resql);
 
-            if ($num)
-            {
-                while ($i < $num)
-                {
+            if ($num) {
+                while ($i < $num) {
                     $obj = $db->fetch_object($resql);
 
                     $sql = "UPDATE ".MAIN_DB_PREFIX."expedition SET";
@@ -2312,37 +2025,27 @@ function migrate_commande_deliveryaddress($db,$langs,$conf)
                     $sql.= " WHERE rowid=".$obj->fk_expedition;
 
                     $resql2=$db->query($sql);
-                    if (!$resql2)
-                    {
+                    if (!$resql2) {
                         $error++;
                         dol_print_error($db);
                     }
                     print ". ";
                     $i++;
                 }
-            }
-            else
-            {
+            } else {
                 print $langs->trans('AlreadyDone')."<br>\n";
             }
 
-            if ($error == 0)
-            {
+            if ($error == 0) {
                 $db->commit();
-            }
-            else
-            {
+            } else {
                 $db->rollback();
             }
-        }
-        else
-        {
+        } else {
             dol_print_error($db);
             $db->rollback();
         }
-    }
-    else
-    {
+    } else {
         print $langs->trans('AlreadyDone')."<br>\n";
     }
 
@@ -2362,11 +2065,10 @@ function migrate_restore_missing_links($db,$langs,$conf)
 {
     dolibarr_install_syslog("upgrade2::migrate_restore_missing_links");
 
-    if (($db->type == 'mysql' || $db->type == 'mysqli'))
-    {
-        if (versioncompare($db->getVersionArray(),array(4,0)) < 0)
-        {
+    if (($db->type == 'mysql' || $db->type == 'mysqli')) {
+        if (versioncompare($db->getVersionArray(),array(4,0)) < 0) {
             dolibarr_install_syslog("upgrade2::migrate_restore_missing_links Version of database too old to make this migrate action");
+
             return 0;
         }
     }
@@ -2376,7 +2078,6 @@ function migrate_restore_missing_links($db,$langs,$conf)
     print '<b>'.$langs->trans('MigrationFixData')."</b> (1)<br>\n";
 
     $error = 0;
-
 
     // Restore missing link for this cross foreign key (link 1 <=> 1). Direction 1.
     $table1='facturedet'; $field1='fk_remise_except';
@@ -2392,15 +2093,12 @@ function migrate_restore_missing_links($db,$langs,$conf)
 
     dolibarr_install_syslog("upgrade2:migrate_restore_missing_links DIRECTION 1 sql=".$sql);
     $resql = $db->query($sql);
-    if ($resql)
-    {
+    if ($resql) {
         $i = 0;
         $num = $db->num_rows($resql);
 
-        if ($num)
-        {
-            while ($i < $num)
-            {
+        if ($num) {
+            while ($i < $num) {
                 $obj = $db->fetch_object($resql);
 
                 print 'Line '.$obj->rowid.' in '.$table1.' is linked to record '.$obj->field.' in '.$table2.' that has no link to '.$table1.'. We fix this.<br>';
@@ -2409,8 +2107,7 @@ function migrate_restore_missing_links($db,$langs,$conf)
                 $sql.= " WHERE rowid=".$obj->field;
 
                 $resql2=$db->query($sql);
-                if (! $resql2)
-                {
+                if (! $resql2) {
                     $error++;
                     dol_print_error($db);
                 }
@@ -2418,26 +2115,19 @@ function migrate_restore_missing_links($db,$langs,$conf)
                 $i++;
             }
 
-        }
-        else print $langs->trans('AlreadyDone')."<br>\n";
+        } else print $langs->trans('AlreadyDone')."<br>\n";
 
-        if ($error == 0)
-        {
+        if ($error == 0) {
             $db->commit();
-        }
-        else
-        {
+        } else {
             $db->rollback();
         }
-    }
-    else
-    {
+    } else {
         dol_print_error($db);
         $db->rollback();
     }
 
     print '</td></tr>';
-
 
     print '<tr><td colspan="4">';
 
@@ -2458,15 +2148,12 @@ function migrate_restore_missing_links($db,$langs,$conf)
 
     dolibarr_install_syslog("upgrade2:migrate_restore_missing_links DIRECTION 2 sql=".$sql);
     $resql = $db->query($sql);
-    if ($resql)
-    {
+    if ($resql) {
         $i = 0;
         $num = $db->num_rows($resql);
 
-        if ($num)
-        {
-            while ($i < $num)
-            {
+        if ($num) {
+            while ($i < $num) {
                 $obj = $db->fetch_object($resql);
 
                 print 'Line '.$obj->rowid.' in '.$table1.' is linked to record '.$obj->field.' in '.$table2.' that has no link to '.$table1.'. We fix this.<br>';
@@ -2475,8 +2162,7 @@ function migrate_restore_missing_links($db,$langs,$conf)
                 $sql.= " WHERE rowid=".$obj->field;
 
                 $resql2=$db->query($sql);
-                if (! $resql2)
-                {
+                if (! $resql2) {
                     $error++;
                     dol_print_error($db);
                 }
@@ -2484,23 +2170,16 @@ function migrate_restore_missing_links($db,$langs,$conf)
                 $i++;
             }
 
-        }
-        else
-        {
+        } else {
             print $langs->trans('AlreadyDone')."<br>\n";
         }
 
-        if ($error == 0)
-        {
+        if ($error == 0) {
             $db->commit();
-        }
-        else
-        {
+        } else {
             $db->rollback();
         }
-    }
-    else
-    {
+    } else {
         dol_print_error($db);
         $db->rollback();
     }
@@ -2527,23 +2206,19 @@ function migrate_project_user_resp($db,$langs,$conf)
 
     $result = $db->DDLDescTable(MAIN_DB_PREFIX."projet","fk_user_resp");
     $obj = $db->fetch_object($result);
-    if ($obj)
-    {
+    if ($obj) {
         $error = 0;
 
         $db->begin();
 
         $sql = "SELECT rowid, fk_user_resp FROM ".MAIN_DB_PREFIX."projet";
         $resql = $db->query($sql);
-        if ($resql)
-        {
+        if ($resql) {
             $i = 0;
             $num = $db->num_rows($resql);
 
-            if ($num)
-            {
-                while ($i < $num)
-                {
+            if ($num) {
+                while ($i < $num) {
                     $obj = $db->fetch_object($resql);
 
                     $sql2 = "INSERT INTO ".MAIN_DB_PREFIX."element_contact (";
@@ -2560,11 +2235,9 @@ function migrate_project_user_resp($db,$langs,$conf)
                     $sql2.= ", ".$obj->fk_user_resp;
                     $sql2.= ")";
 
-                    if ($obj->fk_user_resp > 0)
-                    {
+                    if ($obj->fk_user_resp > 0) {
                         $resql2=$db->query($sql2);
-                        if (!$resql2)
-                        {
+                        if (!$resql2) {
                             $error++;
                             dol_print_error($db);
                         }
@@ -2575,31 +2248,21 @@ function migrate_project_user_resp($db,$langs,$conf)
                 }
             }
 
-            if ($error == 0)
-            {
+            if ($error == 0) {
                 $sqlDrop = "ALTER TABLE ".MAIN_DB_PREFIX."projet DROP COLUMN fk_user_resp";
-                if ($db->query($sqlDrop))
-                {
+                if ($db->query($sqlDrop)) {
                     $db->commit();
-                }
-                else
-                {
+                } else {
                     $db->rollback();
                 }
-            }
-            else
-            {
+            } else {
                 $db->rollback();
             }
-        }
-        else
-        {
+        } else {
             dol_print_error($db);
             $db->rollback();
         }
-    }
-    else
-    {
+    } else {
         print $langs->trans('AlreadyDone')."<br>\n";
     }
     print '</td></tr>';
@@ -2622,23 +2285,19 @@ function migrate_project_task_actors($db,$langs,$conf)
     print '<br>';
     print '<b>'.$langs->trans('MigrationProjectTaskActors')."</b><br>\n";
 
-    if ($db->DDLInfoTable(MAIN_DB_PREFIX."projet_task_actors"))
-    {
+    if ($db->DDLInfoTable(MAIN_DB_PREFIX."projet_task_actors")) {
         $error = 0;
 
         $db->begin();
 
         $sql = "SELECT fk_projet_task, fk_user FROM ".MAIN_DB_PREFIX."projet_task_actors";
         $resql = $db->query($sql);
-        if ($resql)
-        {
+        if ($resql) {
             $i = 0;
             $num = $db->num_rows($resql);
 
-            if ($num)
-            {
-                while ($i < $num)
-                {
+            if ($num) {
+                while ($i < $num) {
                     $obj = $db->fetch_object($resql);
 
                     $sql2 = "INSERT INTO ".MAIN_DB_PREFIX."element_contact (";
@@ -2657,8 +2316,7 @@ function migrate_project_task_actors($db,$langs,$conf)
 
                     $resql2=$db->query($sql2);
 
-                    if (!$resql2)
-                    {
+                    if (!$resql2) {
                         $error++;
                         dol_print_error($db);
                     }
@@ -2667,31 +2325,21 @@ function migrate_project_task_actors($db,$langs,$conf)
                 }
             }
 
-            if ($error == 0)
-            {
+            if ($error == 0) {
                 $sqlDrop = "DROP TABLE ".MAIN_DB_PREFIX."projet_task_actors";
-                if ($db->query($sqlDrop))
-                {
+                if ($db->query($sqlDrop)) {
                     $db->commit();
-                }
-                else
-                {
+                } else {
                     $db->rollback();
                 }
-            }
-            else
-            {
+            } else {
                 $db->rollback();
             }
-        }
-        else
-        {
+        } else {
             dol_print_error($db);
             $db->rollback();
         }
-    }
-    else
-    {
+    } else {
         print $langs->trans('AlreadyDone')."<br>\n";
     }
     print '</td></tr>';
@@ -2719,8 +2367,7 @@ function migrate_relationship_tables($db,$langs,$conf,$table,$fk_source,$sourcet
 
     $error = 0;
 
-    if ($db->DDLInfoTable(MAIN_DB_PREFIX.$table))
-    {
+    if ($db->DDLInfoTable(MAIN_DB_PREFIX.$table)) {
         dolibarr_install_syslog("upgrade2::migrate_relationship_tables table = ".MAIN_DB_PREFIX.$table);
 
         $db->begin();
@@ -2729,15 +2376,12 @@ function migrate_relationship_tables($db,$langs,$conf,$table,$fk_source,$sourcet
         $sqlSelect.= " FROM ".MAIN_DB_PREFIX.$table;
 
         $resql = $db->query($sqlSelect);
-        if ($resql)
-        {
+        if ($resql) {
             $i = 0;
             $num = $db->num_rows($resql);
 
-            if ($num)
-            {
-                while ($i < $num)
-                {
+            if ($num) {
+                while ($i < $num) {
                     $obj = $db->fetch_object($resql);
 
                     $sqlInsert = "INSERT INTO ".MAIN_DB_PREFIX."element_element (";
@@ -2753,45 +2397,32 @@ function migrate_relationship_tables($db,$langs,$conf,$table,$fk_source,$sourcet
                     $sqlInsert.= ")";
 
                     $result=$db->query($sqlInsert);
-                    if (! $result)
-                    {
+                    if (! $result) {
                         $error++;
                         dol_print_error($db);
                     }
                     print ". ";
                     $i++;
                 }
-            }
-            else
-            {
+            } else {
                 print $langs->trans('AlreadyDone')."<br>\n";
             }
 
-            if ($error == 0)
-            {
+            if ($error == 0) {
                 $sqlDrop = "DROP TABLE ".MAIN_DB_PREFIX.$table;
-                if ($db->query($sqlDrop))
-                {
+                if ($db->query($sqlDrop)) {
                     $db->commit();
-                }
-                else
-                {
+                } else {
                     $db->rollback();
                 }
-            }
-            else
-            {
+            } else {
                 $db->rollback();
             }
-        }
-        else
-        {
+        } else {
             dol_print_error($db);
             $db->rollback();
         }
-    }
-    else
-    {
+    } else {
         print $langs->trans('AlreadyDone')."<br>\n";
     }
 
@@ -2822,22 +2453,18 @@ function migrate_project_task_time($db,$langs,$conf)
     $sql = "SELECT rowid, fk_task, task_duration";
     $sql.= " FROM ".MAIN_DB_PREFIX."projet_task_time";
     $resql = $db->query($sql);
-    if ($resql)
-    {
+    if ($resql) {
         $i = 0;
         $num = $db->num_rows($resql);
 
-        if ($num)
-        {
+        if ($num) {
             $totaltime = array();
             $oldtime = 0;
 
-            while ($i < $num)
-            {
+            while ($i < $num) {
                 $obj = $db->fetch_object($resql);
 
-                if ($obj->task_duration > 0)
-                {
+                if ($obj->task_duration > 0) {
                     // convert to second
                     // only for int time and float time ex: 1,75 for 1h45
                     list($hour,$min) = explode('.',$obj->task_duration);
@@ -2850,8 +2477,7 @@ function migrate_project_task_time($db,$langs,$conf)
                     $sql2.= " WHERE rowid = ".$obj->rowid;
 
                     $resql2=$db->query($sql2);
-                    if (!$resql2)
-                    {
+                    if (!$resql2) {
                         $error++;
                         dol_print_error($db);
                     }
@@ -2859,9 +2485,7 @@ function migrate_project_task_time($db,$langs,$conf)
                     $oldtime++;
                     if (! empty($totaltime[$obj->fk_task])) $totaltime[$obj->fk_task] += $newtime;
                     else $totaltime[$obj->fk_task] = $newtime;
-                }
-                else
-                {
+                } else {
                     if (! empty($totaltime[$obj->fk_task])) $totaltime[$obj->fk_task] += $obj->task_duration;
                     else $totaltime[$obj->fk_task] = $obj->task_duration;
                 }
@@ -2869,50 +2493,35 @@ function migrate_project_task_time($db,$langs,$conf)
                 $i++;
             }
 
-            if ($error == 0)
-            {
-                if ($oldtime > 0)
-                {
-                    foreach($totaltime as $taskid => $total_duration)
-                    {
+            if ($error == 0) {
+                if ($oldtime > 0) {
+                    foreach ($totaltime as $taskid => $total_duration) {
                         $sql = "UPDATE ".MAIN_DB_PREFIX."projet_task SET";
                         $sql.= " duration_effective = ".$total_duration;
                         $sql.= " WHERE rowid = ".$taskid;
 
                         $resql=$db->query($sql);
-                        if (!$resql)
-                        {
+                        if (!$resql) {
                             $error++;
                             dol_print_error($db);
                         }
                     }
-                }
-                else
-                {
+                } else {
                     print $langs->trans('AlreadyDone')."<br>\n";
                 }
-            }
-            else
-            {
+            } else {
                 dol_print_error($db);
             }
-        }
-        else
-        {
+        } else {
             print $langs->trans('AlreadyDone')."<br>\n";
         }
-    }
-    else
-    {
+    } else {
         dol_print_error($db);
     }
 
-    if ($error == 0)
-    {
+    if ($error == 0) {
         $db->commit();
-    }
-    else
-    {
+    } else {
         $db->rollback();
     }
 
@@ -2940,8 +2549,7 @@ function migrate_customerorder_shipping($db,$langs,$conf)
     $result2 = $db->DDLDescTable(MAIN_DB_PREFIX."expedition","date_delivery");
     $obj1 = $db->fetch_object($result1);
     $obj2 = $db->fetch_object($result2);
-    if (!$obj1 && !$obj2)
-    {
+    if (!$obj1 && !$obj2) {
         dolibarr_install_syslog("upgrade2::migrate_customerorder_shipping");
 
         $db->begin();
@@ -2949,8 +2557,7 @@ function migrate_customerorder_shipping($db,$langs,$conf)
         $sqlAdd1 = "ALTER TABLE ".MAIN_DB_PREFIX."expedition ADD COLUMN ref_customer varchar(30) AFTER entity";
         $sqlAdd2 = "ALTER TABLE ".MAIN_DB_PREFIX."expedition ADD COLUMN date_delivery date DEFAULT NULL AFTER date_expedition";
 
-        if ($db->query($sqlAdd1) && $db->query($sqlAdd2))
-        {
+        if ($db->query($sqlAdd1) && $db->query($sqlAdd2)) {
             $sqlSelect = "SELECT e.rowid as shipping_id, c.ref_client, c.date_livraison";
             $sqlSelect.= " FROM ".MAIN_DB_PREFIX."expedition as e";
             $sqlSelect.= ", ".MAIN_DB_PREFIX."element_element as el";
@@ -2959,15 +2566,12 @@ function migrate_customerorder_shipping($db,$langs,$conf)
             $sqlSelect.= " AND el.targettype = 'shipping'";
 
             $resql = $db->query($sqlSelect);
-            if ($resql)
-            {
+            if ($resql) {
                 $i = 0;
                 $num = $db->num_rows($resql);
 
-                if ($num)
-                {
-                    while ($i < $num)
-                    {
+                if ($num) {
+                    while ($i < $num) {
                         $obj = $db->fetch_object($resql);
 
                         $sqlUpdate = "UPDATE ".MAIN_DB_PREFIX."expedition SET";
@@ -2976,44 +2580,32 @@ function migrate_customerorder_shipping($db,$langs,$conf)
                         $sqlUpdate.= " WHERE rowid = ".$obj->shipping_id;
 
                         $result=$db->query($sqlUpdate);
-                        if (! $result)
-                        {
+                        if (! $result) {
                             $error++;
                             dol_print_error($db);
                         }
                         print ". ";
                         $i++;
                     }
-                }
-                else
-                {
+                } else {
                     print $langs->trans('AlreadyDone')."<br>\n";
                 }
 
-                if ($error == 0)
-                {
+                if ($error == 0) {
                     $db->commit();
-                }
-                else
-                {
+                } else {
                     dol_print_error($db);
                     $db->rollback();
                 }
-            }
-            else
-            {
+            } else {
                 dol_print_error($db);
                 $db->rollback();
             }
-        }
-        else
-        {
+        } else {
             dol_print_error($db);
             $db->rollback();
         }
-    }
-    else
-    {
+    } else {
         print $langs->trans('AlreadyDone')."<br>\n";
     }
 
@@ -3039,8 +2631,7 @@ function migrate_shipping_delivery($db,$langs,$conf)
 
     $result = $db->DDLDescTable(MAIN_DB_PREFIX."livraison","fk_expedition");
     $obj = $db->fetch_object($result);
-    if ($obj)
-    {
+    if ($obj) {
         dolibarr_install_syslog("upgrade2::migrate_shipping_delivery");
 
         $db->begin();
@@ -3050,15 +2641,12 @@ function migrate_shipping_delivery($db,$langs,$conf)
         $sqlSelect.= " WHERE fk_expedition is not null";
 
         $resql = $db->query($sqlSelect);
-        if ($resql)
-        {
+        if ($resql) {
             $i = 0;
             $num = $db->num_rows($resql);
 
-            if ($num)
-            {
-                while ($i < $num)
-                {
+            if ($num) {
+                while ($i < $num) {
                     $obj = $db->fetch_object($resql);
 
                     $sqlInsert = "INSERT INTO ".MAIN_DB_PREFIX."element_element (";
@@ -3074,34 +2662,27 @@ function migrate_shipping_delivery($db,$langs,$conf)
                     $sqlInsert.= ")";
 
                     $result=$db->query($sqlInsert);
-                    if ($result)
-                    {
+                    if ($result) {
                         $sqlUpdate = "UPDATE ".MAIN_DB_PREFIX."livraison SET fk_expedition = NULL";
                         $sqlUpdate.= " WHERE rowid = ".$obj->rowid;
 
                         $result=$db->query($sqlUpdate);
-                        if (! $result)
-                        {
+                        if (! $result) {
                             $error++;
                             dol_print_error($db);
                         }
                         print ". ";
-                    }
-                    else
-                    {
+                    } else {
                         $error++;
                         dol_print_error($db);
                     }
                     $i++;
                 }
-            }
-            else
-            {
+            } else {
                 print $langs->trans('AlreadyDone')."<br>\n";
             }
 
-            if ($error == 0)
-            {
+            if ($error == 0) {
                 $sqlDelete = "DELETE FROM ".MAIN_DB_PREFIX."element_element WHERE sourcetype = 'commande' AND targettype = 'delivery'";
                 $db->query($sqlDelete);
 
@@ -3110,21 +2691,15 @@ function migrate_shipping_delivery($db,$langs,$conf)
                 // DDL commands must not be inside a transaction
                 $sqlDrop = "ALTER TABLE ".MAIN_DB_PREFIX."livraison DROP COLUMN fk_expedition";
                 $db->query($sqlDrop);
-            }
-            else
-            {
+            } else {
                 dol_print_error($db);
                 $db->rollback();
             }
-        }
-        else
-        {
+        } else {
             dol_print_error($db);
             $db->rollback();
         }
-    }
-    else
-    {
+    } else {
         print $langs->trans('AlreadyDone')."<br>\n";
     }
 
@@ -3166,15 +2741,12 @@ function migrate_shipping_delivery2($db,$langs,$conf)
     $sqlSelect.= " AND (l.date_delivery IS NULL".($db->type!='pgsql'?" or l.date_delivery = ''":"").")";
 
     $resql = $db->query($sqlSelect);
-    if ($resql)
-    {
+    if ($resql) {
         $i = 0;
         $num = $db->num_rows($resql);
 
-        if ($num)
-        {
-            while ($i < $num)
-            {
+        if ($num) {
+            while ($i < $num) {
                 $obj = $db->fetch_object($resql);
 
                 $sqlUpdate = "UPDATE ".MAIN_DB_PREFIX."livraison SET";
@@ -3183,32 +2755,24 @@ function migrate_shipping_delivery2($db,$langs,$conf)
                 $sqlUpdate.= " WHERE rowid = ".$obj->delivery_id;
 
                 $result=$db->query($sqlUpdate);
-                if (! $result)
-                {
+                if (! $result) {
                     $error++;
                     dol_print_error($db);
                 }
                 print ". ";
                 $i++;
             }
-        }
-        else
-        {
+        } else {
             print $langs->trans('AlreadyDone')."<br>\n";
         }
 
-        if ($error == 0)
-        {
+        if ($error == 0) {
             $db->commit();
-        }
-        else
-        {
+        } else {
             dol_print_error($db);
             $db->rollback();
         }
-    }
-    else
-    {
+    } else {
         dol_print_error($db);
         $db->rollback();
     }
@@ -3226,60 +2790,53 @@ function migrate_shipping_delivery2($db,$langs,$conf)
  */
 function migrate_actioncomm_element($db,$langs,$conf)
 {
-	print '<tr><td colspan="4">';
+    print '<tr><td colspan="4">';
 
-	print '<br>';
-	print '<b>'.$langs->trans('MigrationActioncommElement')."</b><br>\n";
+    print '<br>';
+    print '<b>'.$langs->trans('MigrationActioncommElement')."</b><br>\n";
 
-	$elements = array(
-		'propal' => 'propalrowid',
-		'order' => 'fk_commande',
-		'invoice' => 'fk_facture',
-		'contract' => 'fk_contract',
-		'order_supplier' => 'fk_supplier_order',
-		'invoice_supplier' => 'fk_supplier_invoice'
-	);
+    $elements = array(
+        'propal' => 'propalrowid',
+        'order' => 'fk_commande',
+        'invoice' => 'fk_facture',
+        'contract' => 'fk_contract',
+        'order_supplier' => 'fk_supplier_order',
+        'invoice_supplier' => 'fk_supplier_invoice'
+    );
 
-	foreach($elements as $type => $field)
-	{
-		$result = $db->DDLDescTable(MAIN_DB_PREFIX."actioncomm",$field);
-		$obj = $db->fetch_object($result);
-		if ($obj)
-		{
-			dolibarr_install_syslog("upgrade2::migrate_actioncomm_element field=".$field);
+    foreach ($elements as $type => $field) {
+        $result = $db->DDLDescTable(MAIN_DB_PREFIX."actioncomm",$field);
+        $obj = $db->fetch_object($result);
+        if ($obj) {
+            dolibarr_install_syslog("upgrade2::migrate_actioncomm_element field=".$field);
 
-			$db->begin();
+            $db->begin();
 
-			$sql = "UPDATE ".MAIN_DB_PREFIX."actioncomm SET ";
-			$sql.= "fk_element = ".$field.", elementtype = '".$type."'";
-			$sql.= " WHERE ".$field." IS NOT NULL";
-			$sql.= " AND fk_element IS NULL";
-			$sql.= " AND elementtype IS NULL";
+            $sql = "UPDATE ".MAIN_DB_PREFIX."actioncomm SET ";
+            $sql.= "fk_element = ".$field.", elementtype = '".$type."'";
+            $sql.= " WHERE ".$field." IS NOT NULL";
+            $sql.= " AND fk_element IS NULL";
+            $sql.= " AND elementtype IS NULL";
 
-			$resql = $db->query($sql);
-			if ($resql)
-			{
-				$db->commit();
+            $resql = $db->query($sql);
+            if ($resql) {
+                $db->commit();
 
-				// DDL commands must not be inside a transaction
-				// We will drop at next version because a migrate should be runnable several times if it fails.
-				//$sqlDrop = "ALTER TABLE ".MAIN_DB_PREFIX."actioncomm DROP COLUMN ".$field;
-				//$db->query($sqlDrop);
-				//print ". ";
-			}
-			else
-			{
-				dol_print_error($db);
-				$db->rollback();
-			}
-		}
-		else
-		{
-			print $langs->trans('AlreadyDone')."<br>\n";
-		}
-	}
+                // DDL commands must not be inside a transaction
+                // We will drop at next version because a migrate should be runnable several times if it fails.
+                //$sqlDrop = "ALTER TABLE ".MAIN_DB_PREFIX."actioncomm DROP COLUMN ".$field;
+                //$db->query($sqlDrop);
+                //print ". ";
+            } else {
+                dol_print_error($db);
+                $db->rollback();
+            }
+        } else {
+            print $langs->trans('AlreadyDone')."<br>\n";
+        }
+    }
 
-	print '</td></tr>';
+    print '</td></tr>';
 }
 
 /**
@@ -3292,92 +2849,80 @@ function migrate_actioncomm_element($db,$langs,$conf)
  */
 function migrate_mode_reglement($db,$langs,$conf)
 {
-	print '<tr><td colspan="4">';
+    print '<tr><td colspan="4">';
 
-	print '<br>';
-	print '<b>'.$langs->trans('MigrationPaymentMode')."</b><br>\n";
+    print '<br>';
+    print '<b>'.$langs->trans('MigrationPaymentMode')."</b><br>\n";
 
-	$elements = array(
-		'old_id' => array(5,8,9,10,11),
-		'new_id' => array(50,51,52,53,54),
-		'code' => array('VAD','TRA','LCR','FAC','PRO'),
-		'tables' => array('commande_fournisseur','commande','facture_rec','facture','propal')
-	);
-	$count=0;
+    $elements = array(
+        'old_id' => array(5,8,9,10,11),
+        'new_id' => array(50,51,52,53,54),
+        'code' => array('VAD','TRA','LCR','FAC','PRO'),
+        'tables' => array('commande_fournisseur','commande','facture_rec','facture','propal')
+    );
+    $count=0;
 
-	foreach($elements['old_id'] as $key => $old_id)
-	{
-		$error=0;
+    foreach ($elements['old_id'] as $key => $old_id) {
+        $error=0;
 
-		dolibarr_install_syslog("upgrade2::migrate_mode_reglement code=".$elements['code'][$key]);
+        dolibarr_install_syslog("upgrade2::migrate_mode_reglement code=".$elements['code'][$key]);
 
-		$sqlSelect = "SELECT id";
-		$sqlSelect.= " FROM ".MAIN_DB_PREFIX."c_paiement";
-		$sqlSelect.= " WHERE id = ".$old_id;
-		$sqlSelect.= " AND code = '".$elements['code'][$key]."'";
+        $sqlSelect = "SELECT id";
+        $sqlSelect.= " FROM ".MAIN_DB_PREFIX."c_paiement";
+        $sqlSelect.= " WHERE id = ".$old_id;
+        $sqlSelect.= " AND code = '".$elements['code'][$key]."'";
 
-		$resql = $db->query($sqlSelect);
-		if ($resql)
-		{
-			$num = $db->num_rows($resql);
-			if ($num)
-			{
-				$count++;
+        $resql = $db->query($sqlSelect);
+        if ($resql) {
+            $num = $db->num_rows($resql);
+            if ($num) {
+                $count++;
 
-				$db->begin();
+                $db->begin();
 
-				$sqla = "UPDATE ".MAIN_DB_PREFIX."paiement SET ";
-				$sqla.= "fk_paiement = ".$elements['new_id'][$key];
-				$sqla.= " WHERE fk_paiement = ".$old_id;
-				$sqla.= " AND fk_paiement IN (SELECT id FROM ".MAIN_DB_PREFIX."c_paiement WHERE id = ".$old_id." AND code = '".$elements['code'][$key]."')";
-				$resqla = $db->query($sqla);
+                $sqla = "UPDATE ".MAIN_DB_PREFIX."paiement SET ";
+                $sqla.= "fk_paiement = ".$elements['new_id'][$key];
+                $sqla.= " WHERE fk_paiement = ".$old_id;
+                $sqla.= " AND fk_paiement IN (SELECT id FROM ".MAIN_DB_PREFIX."c_paiement WHERE id = ".$old_id." AND code = '".$elements['code'][$key]."')";
+                $resqla = $db->query($sqla);
 
-				$sql = "UPDATE ".MAIN_DB_PREFIX."c_paiement SET ";
-				$sql.= "id = ".$elements['new_id'][$key];
-				$sql.= " WHERE id = ".$old_id;
-				$sql.= " AND code = '".$elements['code'][$key]."'";
-				$resql = $db->query($sql);
+                $sql = "UPDATE ".MAIN_DB_PREFIX."c_paiement SET ";
+                $sql.= "id = ".$elements['new_id'][$key];
+                $sql.= " WHERE id = ".$old_id;
+                $sql.= " AND code = '".$elements['code'][$key]."'";
+                $resql = $db->query($sql);
 
-				if ($resqla && $resql)
-				{
-					foreach($elements['tables'] as $table)		// FIXME We must not update tables if oldid is not renamed
-					{
-						$sql = "UPDATE ".MAIN_DB_PREFIX.$table." SET ";
-						$sql.= "fk_mode_reglement = ".$elements['new_id'][$key];
-						$sql.= " WHERE fk_mode_reglement = ".$old_id;
+                if ($resqla && $resql) {
+                    foreach ($elements['tables'] as $table) {		// FIXME We must not update tables if oldid is not renamed
+                        $sql = "UPDATE ".MAIN_DB_PREFIX.$table." SET ";
+                        $sql.= "fk_mode_reglement = ".$elements['new_id'][$key];
+                        $sql.= " WHERE fk_mode_reglement = ".$old_id;
 
-						$resql = $db->query($sql);
-						if (! $resql)
-						{
-							dol_print_error($db);
-							$error++;
-						}
-						print ". ";
-					}
+                        $resql = $db->query($sql);
+                        if (! $resql) {
+                            dol_print_error($db);
+                            $error++;
+                        }
+                        print ". ";
+                    }
 
-					if (! $error)
-					{
-						$db->commit();
-					}
-					else
-					{
-						dol_print_error($db);
-						$db->rollback();
-					}
-				}
-				else
-				{
-					dol_print_error($db);
-					$db->rollback();
-				}
-			}
-		}
-	}
+                    if (! $error) {
+                        $db->commit();
+                    } else {
+                        dol_print_error($db);
+                        $db->rollback();
+                    }
+                } else {
+                    dol_print_error($db);
+                    $db->rollback();
+                }
+            }
+        }
+    }
 
-	if ($count == 0) print $langs->trans('AlreadyDone')."<br>\n";
+    if ($count == 0) print $langs->trans('AlreadyDone')."<br>\n";
 
-
-	print '</td></tr>';
+    print '</td></tr>';
 }
 
 /**
@@ -3390,87 +2935,70 @@ function migrate_mode_reglement($db,$langs,$conf)
  */
 function migrate_categorie_association($db,$langs,$conf)
 {
-	print '<tr><td colspan="4">';
+    print '<tr><td colspan="4">';
 
-	print '<br>';
-	print '<b>'.$langs->trans('MigrationCategorieAssociation')."</b><br>\n";
+    print '<br>';
+    print '<b>'.$langs->trans('MigrationCategorieAssociation')."</b><br>\n";
 
-	$error = 0;
+    $error = 0;
 
-	if ($db->DDLInfoTable(MAIN_DB_PREFIX."categorie_association"))
-	{
-		dolibarr_install_syslog("upgrade2::migrate_categorie_association");
+    if ($db->DDLInfoTable(MAIN_DB_PREFIX."categorie_association")) {
+        dolibarr_install_syslog("upgrade2::migrate_categorie_association");
 
-		$db->begin();
+        $db->begin();
 
-		$sqlSelect = "SELECT fk_categorie_mere, fk_categorie_fille";
-		$sqlSelect.= " FROM ".MAIN_DB_PREFIX."categorie_association";
+        $sqlSelect = "SELECT fk_categorie_mere, fk_categorie_fille";
+        $sqlSelect.= " FROM ".MAIN_DB_PREFIX."categorie_association";
 
-		$resql = $db->query($sqlSelect);
-		if ($resql)
-		{
-			$i = 0;
-			$num = $db->num_rows($resql);
+        $resql = $db->query($sqlSelect);
+        if ($resql) {
+            $i = 0;
+            $num = $db->num_rows($resql);
 
-			if ($num)
-			{
-				while ($i < $num)
-				{
-					$obj = $db->fetch_object($resql);
+            if ($num) {
+                while ($i < $num) {
+                    $obj = $db->fetch_object($resql);
 
-					$sqlUpdate = "UPDATE ".MAIN_DB_PREFIX."categorie SET ";
-					$sqlUpdate.= "fk_parent = ".$obj->fk_categorie_mere;
-					$sqlUpdate.= " WHERE rowid = ".$obj->fk_categorie_fille;
+                    $sqlUpdate = "UPDATE ".MAIN_DB_PREFIX."categorie SET ";
+                    $sqlUpdate.= "fk_parent = ".$obj->fk_categorie_mere;
+                    $sqlUpdate.= " WHERE rowid = ".$obj->fk_categorie_fille;
 
-					$result=$db->query($sqlUpdate);
-					if (! $result)
-					{
-						$error++;
-						dol_print_error($db);
-					}
-					print ". ";
-					$i++;
-				}
-			}
-			else
-			{
-				print $langs->trans('AlreadyDone')."<br>\n";
-			}
+                    $result=$db->query($sqlUpdate);
+                    if (! $result) {
+                        $error++;
+                        dol_print_error($db);
+                    }
+                    print ". ";
+                    $i++;
+                }
+            } else {
+                print $langs->trans('AlreadyDone')."<br>\n";
+            }
 
-			if (! $error)
-			{
-				// TODO DROP table in the next release
-				/*
-				$sqlDrop = "DROP TABLE ".MAIN_DB_PREFIX."categorie_association";
-				if ($db->query($sqlDrop))
-				{
-					$db->commit();
-				}
-				else
-				{
-					$db->rollback();
-				}
-				*/
+            if (! $error) {
+                // TODO DROP table in the next release
+                /*
+                $sqlDrop = "DROP TABLE ".MAIN_DB_PREFIX."categorie_association";
+                if ($db->query($sqlDrop)) {
+                    $db->commit();
+                } else {
+                    $db->rollback();
+                }
+                */
 
-				$db->commit();
-			}
-			else
-			{
-				$db->rollback();
-			}
-		}
-		else
-		{
-			dol_print_error($db);
-			$db->rollback();
-		}
-	}
-	else
-	{
-		print $langs->trans('AlreadyDone')."<br>\n";
-	}
+                $db->commit();
+            } else {
+                $db->rollback();
+            }
+        } else {
+            dol_print_error($db);
+            $db->rollback();
+        }
+    } else {
+        print $langs->trans('AlreadyDone')."<br>\n";
+    }
 
-	print '</td></tr>';
+    print '</td></tr>';
 }
 
 /**
@@ -3487,13 +3015,11 @@ function migrate_directories($db,$langs,$conf,$oldname,$newname)
 {
     dolibarr_install_syslog("upgrade2::migrate_directories");
 
-    if (is_dir(DOL_DATA_ROOT.$oldname) && ! file_exists(DOL_DATA_ROOT.$newname))
-    {
+    if (is_dir(DOL_DATA_ROOT.$oldname) && ! file_exists(DOL_DATA_ROOT.$newname)) {
         dolibarr_install_syslog("upgrade2::migrate_directories move ".DOL_DATA_ROOT.$oldname.' into '.DOL_DATA_ROOT.$newname);
         @rename(DOL_DATA_ROOT.$oldname,DOL_DATA_ROOT.$newname);
     }
 }
-
 
 /**
  * Delete deprecated files
@@ -3538,25 +3064,21 @@ function migrate_delete_old_files($db,$langs,$conf)
     DOL_DOCUMENT_ROOT.'/core/modules/facture/pdf_oursin.modules.php'
     );
 
-    foreach ($filetodeletearray as $filetodelete)
-    {
+    foreach ($filetodeletearray as $filetodelete) {
         //print '<b>'.$filetodelete."</b><br>\n";
         $result=1;
-        if (file_exists($filetodelete))
-        {
+        if (file_exists($filetodelete)) {
             $result=dol_delete_file($filetodelete);
-            if (! $result)
-            {
+            if (! $result) {
                 $langs->load("errors");
                 print '<div class="error">'.$langs->trans("Error").': '.$langs->trans("ErrorFailToDeleteFile",$filetodelete);
                 print ' '.$langs->trans("RemoveItManuallyAndPressF5ToContinue").'</div>';
-            }
-            else
-            {
+            } else {
                 //print $langs->trans("FileWasRemoved",$filetodelete);
             }
         }
     }
+
     return $result;
 }
 
@@ -3580,23 +3102,20 @@ function migrate_delete_old_dir($db,$langs,$conf)
     DOL_DOCUMENT_ROOT.'/core/modules/facture/mercure'
     );
 
-    foreach ($filetodeletearray as $filetodelete)
-    {
+    foreach ($filetodeletearray as $filetodelete) {
         //print '<b>'.$filetodelete."</b><br>\n";
-        if (file_exists($filetodelete))
-        {
+        if (file_exists($filetodelete)) {
             $result=dol_delete_dir_recursive($filetodelete);
         }
-        if (! $result)
-        {
+        if (! $result) {
             $langs->load("errors");
             print '<div class="error">'.$langs->trans("Error").': '.$langs->trans("ErrorFailToDeleteDir",$filetodelete);
             print ' '.$langs->trans("RemoveItManuallyAndPressF5ToContinue").'</div>';
         }
     }
+
     return $result;
 }
-
 
 /**
  * Disable/Reenable features modules.
@@ -3612,8 +3131,7 @@ function migrate_reload_modules($db,$langs,$conf)
 {
     dolibarr_install_syslog("upgrade2::migrate_reload_modules");
 
-    if (! empty($conf->global->MAIN_MODULE_AGENDA))
-    {
+    if (! empty($conf->global->MAIN_MODULE_AGENDA)) {
         dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module Agenda");
         $res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modAgenda.class.php';
         if ($res) {
@@ -3622,8 +3140,7 @@ function migrate_reload_modules($db,$langs,$conf)
             $mod->init('noboxes');
         }
     }
-    if (! empty($conf->global->MAIN_MODULE_SOCIETE))
-    {
+    if (! empty($conf->global->MAIN_MODULE_SOCIETE)) {
         dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module Societe");
         $res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modSociete.class.php';
         if ($res) {
@@ -3632,8 +3149,7 @@ function migrate_reload_modules($db,$langs,$conf)
             $mod->init('noboxes');
         }
     }
-    if (! empty($conf->global->MAIN_MODULE_PRODUIT))    // Permission has changed into 2.7
-    {
+    if (! empty($conf->global->MAIN_MODULE_PRODUIT)) {    // Permission has changed into 2.7
         dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module Produit");
         $res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modProduct.class.php';
         if ($res) {
@@ -3642,8 +3158,7 @@ function migrate_reload_modules($db,$langs,$conf)
             $mod->init('noboxes');
         }
     }
-    if (! empty($conf->global->MAIN_MODULE_SERVICE))    // Permission has changed into 2.7
-    {
+    if (! empty($conf->global->MAIN_MODULE_SERVICE)) {    // Permission has changed into 2.7
         dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module Service");
         if ($res) {
             $res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modService.class.php';
@@ -3652,8 +3167,7 @@ function migrate_reload_modules($db,$langs,$conf)
             $mod->init('noboxes');
         }
     }
-    if (! empty($conf->global->MAIN_MODULE_COMMANDE))   // Permission has changed into 2.9
-    {
+    if (! empty($conf->global->MAIN_MODULE_COMMANDE)) {   // Permission has changed into 2.9
         dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module Commande");
         if ($res) {
             $res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modCommande.class.php';
@@ -3662,8 +3176,7 @@ function migrate_reload_modules($db,$langs,$conf)
             $mod->init('noboxes');
         }
     }
-    if (! empty($conf->global->MAIN_MODULE_FACTURE))    // Permission has changed into 2.9
-    {
+    if (! empty($conf->global->MAIN_MODULE_FACTURE)) {    // Permission has changed into 2.9
         dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module Facture");
         if ($res) {
             $res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modFacture.class.php';
@@ -3672,8 +3185,7 @@ function migrate_reload_modules($db,$langs,$conf)
             $mod->init('noboxes');
         }
     }
-    if (! empty($conf->global->MAIN_MODULE_FOURNISSEUR))    // Permission has changed into 2.9
-    {
+    if (! empty($conf->global->MAIN_MODULE_FOURNISSEUR)) {    // Permission has changed into 2.9
         dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module Fournisseur");
         $res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modFournisseur.class.php';
         if ($res) {
@@ -3683,8 +3195,7 @@ function migrate_reload_modules($db,$langs,$conf)
         }
     }
 
-    if (! empty($conf->global->MAIN_MODULE_USER))    // Permission has changed into 3.0
-    {
+    if (! empty($conf->global->MAIN_MODULE_USER)) {    // Permission has changed into 3.0
         dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module User");
         $res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modUser.class.php';
         if ($res) {
@@ -3693,8 +3204,7 @@ function migrate_reload_modules($db,$langs,$conf)
             $mod->init('noboxes');
         }
     }
-    if (! empty($conf->global->MAIN_MODULE_DEPLACEMENT))    // Permission has changed into 3.0
-    {
+    if (! empty($conf->global->MAIN_MODULE_DEPLACEMENT)) {    // Permission has changed into 3.0
         dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module Deplacement");
         $res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modDeplacement.class.php';
         if ($res) {
@@ -3703,8 +3213,7 @@ function migrate_reload_modules($db,$langs,$conf)
             $mod->init('noboxes');
         }
     }
-    if (! empty($conf->global->MAIN_MODULE_DON))    // Permission has changed into 3.0
-    {
+    if (! empty($conf->global->MAIN_MODULE_DON)) {    // Permission has changed into 3.0
         dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module Don");
         $res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modDon.class.php';
         if ($res) {
@@ -3713,8 +3222,7 @@ function migrate_reload_modules($db,$langs,$conf)
             $mod->init('noboxes');
         }
     }
-    if (! empty($conf->global->MAIN_MODULE_ECM))    // Permission has changed into 3.0 and 3.1
-    {
+    if (! empty($conf->global->MAIN_MODULE_ECM)) {    // Permission has changed into 3.0 and 3.1
         dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module ECM");
         if ($res) {
             $res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modECM.class.php';
@@ -3723,8 +3231,7 @@ function migrate_reload_modules($db,$langs,$conf)
             $mod->init('noboxes');
         }
     }
-    if (! empty($conf->global->MAIN_MODULE_PAYBOX))    // Permission has changed into 3.0
-    {
+    if (! empty($conf->global->MAIN_MODULE_PAYBOX)) {    // Permission has changed into 3.0
         dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module Paybox");
         $res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modPaybox.class.php';
         if ($res) {
@@ -3735,8 +3242,6 @@ function migrate_reload_modules($db,$langs,$conf)
     }
 
 }
-
-
 
 /**
  * Reload menu if dynamic menus, if modified by version
@@ -3760,21 +3265,18 @@ function migrate_reload_menu($db,$langs,$conf,$versionto)
     // Script for VX (X<2.9) -> V2.9
     $afterversionarray=explode('.','2.8.9');
     $beforeversionarray=explode('.','2.9.9');
-    if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
-    {
+    if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0) {
         $listofmenuhandler['auguria']=1;   // We set here only dynamic menu handlers
     }
 
     // Script for VX (X<3.2) -> V3.2
     $afterversionarray=explode('.','3.1.9');
     $beforeversionarray=explode('.','3.2.9');
-    if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
-    {
+    if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0) {
         $listofmenuhandler['auguria']=1;   // We set here only dynamic menu handlers
     }
 
-    foreach ($listofmenuhandler as $key => $val)
-    {
+    foreach ($listofmenuhandler as $key => $val) {
         print '<tr><td colspan="4">';
 
         //print "x".$key;
@@ -3784,16 +3286,13 @@ function migrate_reload_menu($db,$langs,$conf,$versionto)
         // Load sql ini_menu_handler.sql file
         $dir = DOL_DOCUMENT_ROOT."/core/menus/";
         $file='init_menu_'.$key.'.sql';
-        if (file_exists($dir.$file))
-        {
+        if (file_exists($dir.$file)) {
             $result=run_sql($dir.$file,1,'',1,$key);
         }
 
         print '</td></tr>';
     }
 }
-
-
 
 /* A faire egalement: Modif statut paye et fk_facture des factures payes completement
 
@@ -3805,5 +3304,3 @@ On les corrige:
 update llx_facture set paye=1, fk_statut=2 where close_code is null
 and rowid in (...)
 */
-
-?>

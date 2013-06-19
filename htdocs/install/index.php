@@ -30,14 +30,12 @@ $err = 0;
 
 // Si fichier conf existe deja et rempli, on est pas sur une premiere install,
 // on ne passe donc pas par la page de choix de langue
-if (file_exists($conffile) && isset($dolibarr_main_url_root))
-{
+if (file_exists($conffile) && isset($dolibarr_main_url_root)) {
     header("Location: check.php?testget=ok");
     exit;
 }
 
 $langs->load("admin");
-
 
 /*
  * View
@@ -64,5 +62,3 @@ print '<br><br>'.$langs->trans("SomeTranslationAreUncomplete");
 
 // Si pas d'erreur, on affiche le bouton pour passer a l'etape suivante
 if ($err == 0) pFooter(0);
-
-?>

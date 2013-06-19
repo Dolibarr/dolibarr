@@ -44,27 +44,23 @@ $offset = $limit * $page;
 
 if (! $user->admin) accessforbidden();
 
-if ($file && ! $what)
-{
+if ($file && ! $what) {
     //print DOL_URL_ROOT.'/dolibarr_export.php';
     header("Location: ".DOL_URL_ROOT.'/admin/tools/dolibarr_export.php?msg='.urlencode($langs->trans("ErrorFieldRequired",$langs->transnoentities("ExportMethod"))));
     exit;
 }
 
-
 /*
  * Actions
  */
 
-if ($action == 'delete')
-{
-	$file=$conf->admin->dir_output.'/backup/'.GETPOST('urlfile');
-	$ret=dol_delete_file($file, 1);
-	if ($ret) setEventMessage($langs->trans("FileWasRemoved", GETPOST('urlfile')));
-	else setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), 'errors');
-	$action='';
+if ($action == 'delete') {
+    $file=$conf->admin->dir_output.'/backup/'.GETPOST('urlfile');
+    $ret=dol_delete_file($file, 1);
+    if ($ret) setEventMessage($langs->trans("FileWasRemoved", GETPOST('urlfile')));
+    else setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), 'errors');
+    $action='';
 }
-
 
 /*
  * View
@@ -72,16 +68,14 @@ if ($action == 'delete')
 
 // Increase limit of time. Works only if we are not in safe mode
 $ExecTimeLimit=600;
-if (!empty($ExecTimeLimit))
-{
+if (!empty($ExecTimeLimit)) {
     $err=error_reporting();
     error_reporting(0);     // Disable all errors
     //error_reporting(E_ALL);
     @set_time_limit($ExecTimeLimit);   // Need more than 240 on Windows 7/64
     error_reporting($err);
 }
-if (!empty($MemoryLimit))
-{
+if (!empty($MemoryLimit)) {
     @ini_set('memory_limit', $MemoryLimit);
 }
 
@@ -93,7 +87,6 @@ llxHeader('','',$help_url);
 
 print_fiche_titre($langs->trans("Backup"),'','setup');
 
-
 // Start with empty buffer
 $dump_buffer = '';
 $dump_buffer_len = 0;
@@ -101,13 +94,10 @@ $dump_buffer_len = 0;
 // We will send fake headers to avoid browser timeout when buffering
 $time_start = time();
 
-
 // MYSQL
-if ($what == 'mysql')
-{
+if ($what == 'mysql') {
     $cmddump=GETPOST("mysqldump");	// Do not sanitize here with 'alpha', will be sanitize later by escapeshellarg
-    if ($cmddump)
-    {
+    if ($cmddump) {
         dolibarr_set_const($db, 'SYSTEMTOOLS_MYSQLDUMP', $cmddump,'chaine',0,'',$conf->entity);
     }
 
@@ -132,17 +122,13 @@ if ($what == 'mysql')
     if (GETPOST("disable_fk"))           $param.=" -K";
     if (GETPOST("sql_compat") && GETPOST("sql_compat") != 'NONE') $param.=" --compatible=".escapeshellarg(GETPOST("sql_compat","alpha"));
     if (GETPOST("drop_database"))        $param.=" --add-drop-database";
-    if (GETPOST("sql_structure"))
-    {
+    if (GETPOST("sql_structure")) {
         if (GETPOST("drop"))			 $param.=" --add-drop-table";
-    }
-    else
-    {
+    } else {
         $param.=" -t";
     }
     if (GETPOST("disable-add-locks")) $param.=" --add-locks=FALSE";
-    if (GETPOST("sql_data"))
-    {
+    if (GETPOST("sql_data")) {
         $param.=" --tables";
         if (GETPOST("showcolumns"))	 $param.=" -c";
         if (GETPOST("extended_ins")) $param.=" -e";
@@ -150,16 +136,13 @@ if ($what == 'mysql')
         if (GETPOST("delayed"))	 	 $param.=" --delayed-insert";
         if (GETPOST("sql_ignore"))	 $param.=" --insert-ignore";
         if (GETPOST("hexforbinary")) $param.=" --hex-blob";
-    }
-    else
-    {
+    } else {
         $param.=" -d";    // No row information (no data)
     }
     $param.=" --default-character-set=utf8";    // We always save output into utf8 charset
     $paramcrypted=$param;
     $paramclear=$param;
-    if (! empty($dolibarr_main_db_pass))
-    {
+    if (! empty($dolibarr_main_db_pass)) {
         $paramcrypted.=' -p"'.preg_replace('/./i','*',$dolibarr_main_db_pass).'"';
         $paramclear.=' -p"'.str_replace(array('"','`'),array('\"','\`'),$dolibarr_main_db_pass).'"';
     }
@@ -183,13 +166,11 @@ if ($what == 'mysql')
     if ($compression == 'gz')   $handle = gzopen($outputfile, 'w');
     if ($compression == 'bz')   $handle = bzopen($outputfile, 'w');
 
-    if ($handle)
-    {
+    if ($handle) {
         $ok=0;
         dol_syslog("Run command ".$fullcommandcrypted);
         $handlein = popen($fullcommandclear, 'r');
-        while (!feof($handlein))
-        {
+        while (!feof($handlein)) {
             $read = fgets($handlein);
             fwrite($handle,$read);
             if (preg_match('/'.preg_quote('-- Dump completed').'/i',$read)) $ok=1;
@@ -203,9 +184,7 @@ if ($what == 'mysql')
 
         if (! empty($conf->global->MAIN_UMASK))
         @chmod($outputfile, octdec($conf->global->MAIN_UMASK));
-    }
-    else
-    {
+    } else {
         $langs->load("errors");
         dol_syslog("Failed to open file ".$outputfile,LOG_ERR);
         $errormsg=$langs->trans("ErrorFailedToWriteInDir");
@@ -215,8 +194,7 @@ if ($what == 'mysql')
     if ($compression == 'none') $handle = fopen($outputfile, 'r');
     if ($compression == 'gz')   $handle = gzopen($outputfile, 'r');
     if ($compression == 'bz')   $handle = bzopen($outputfile, 'r');
-    if ($handle)
-    {
+    if ($handle) {
         // Get 2048 first chars of error message.
         $errormsg = fgets($handle,2048);
         // Close file
@@ -224,25 +202,22 @@ if ($what == 'mysql')
         if ($compression == 'gz')   gzclose($handle);
         if ($compression == 'bz')   bzclose($handle);
         if ($ok && preg_match('/^-- MySql/i',$errormsg)) $errormsg='';	// Pas erreur
-        else
-        {
+        else {
             // Renommer fichier sortie en fichier erreur
             //print "$outputfile -> $outputerror";
             @dol_delete_file($outputerror,1);
             @rename($outputfile,$outputerror);
             // Si safe_mode on et command hors du parametre exec, on a un fichier out vide donc errormsg vide
-            if (! $errormsg)
-            {
-            	$langs->load("errors");
-            	$errormsg=$langs->trans("ErrorFailedToRunExternalCommand");
+            if (! $errormsg) {
+                $langs->load("errors");
+                $errormsg=$langs->trans("ErrorFailedToRunExternalCommand");
             }
         }
     }
     // Fin execution commande
 }
 
-if ($what == 'mysqlnobin')
-{
+if ($what == 'mysqlnobin') {
     $outputdir  = $conf->admin->dir_output.'/backup';
     $outputfile = $outputdir.'/'.$file;
     $outputfiletemp = $outputfile.'-TMP.sql';
@@ -253,24 +228,19 @@ if ($what == 'mysqlnobin')
     $outputerror = $outputfile.'.err';
     dol_mkdir($conf->admin->dir_output.'/backup');
 
-    if ($compression == 'gz' or $compression == 'bz')
-    {
+    if ($compression == 'gz' or $compression == 'bz') {
         backup_tables($outputfiletemp);
         dol_compress_file($outputfiletemp, $outputfile, $compression);
         unlink($outputfiletemp);
-    }
-    else
-    {
+    } else {
         backup_tables($outputfile);
     }
 }
 
 // POSTGRESQL
-if ($what == 'postgresql')
-{
+if ($what == 'postgresql') {
     $cmddump=GETPOST("postgresqldump");	// Do not sanitize here with 'alpha', will be sanitize later by escapeshellarg
-    if ($cmddump)
-    {
+    if ($cmddump) {
         dolibarr_set_const($db, 'SYSTEMTOOLS_POSTGRESQLDUMP', $cmddump,'chaine',0,'',$conf->entity);
     }
 
@@ -293,13 +263,11 @@ if ($what == 'postgresql')
     if (! empty($dolibarr_main_db_port)) $param.=" -p ".$dolibarr_main_db_port;
     if (GETPOST("sql_compat") && GETPOST("sql_compat") == 'ANSI') $param.="  --disable-dollar-quoting";
     if (GETPOST("drop_database"))        $param.=" -c -C";
-    if (GETPOST("sql_structure"))
-    {
+    if (GETPOST("sql_structure")) {
         if (GETPOST("drop"))			 $param.=" --add-drop-table";
         if (! GETPOST("sql_data"))       $param.=" -s";
     }
-    if (GETPOST("sql_data"))
-    {
+    if (GETPOST("sql_data")) {
         if (! GETPOST("sql_structure"))	 $param.=" -a";
         if (GETPOST("showcolumns"))	     $param.=" -c";
     }
@@ -309,8 +277,7 @@ if ($what == 'postgresql')
     //if ($compression == 'bz')
     $paramcrypted=$param;
     $paramclear=$param;
-    /*if (! empty($dolibarr_main_db_pass))
-     {
+    /*if (! empty($dolibarr_main_db_pass)) {
     $paramcrypted.=" -W".preg_replace('/./i','*',$dolibarr_main_db_pass);
     $paramclear.=" -W".$dolibarr_main_db_pass;
     }*/
@@ -322,7 +289,6 @@ if ($what == 'postgresql')
 
     print '<br>';
 
-
     // Now show to ask to run command
     print $langs->trans("YouMustRunCommandFromCommandLineAfterLoginToUser",$dolibarr_main_db_user,$dolibarr_main_db_user);
 
@@ -332,21 +298,14 @@ if ($what == 'postgresql')
     $what='';
 }
 
-
-
-
 // Si on a demande une generation
-if ($what)
-{
-    if ($errormsg)
-    {
+if ($what) {
+    if ($errormsg) {
         print '<div class="error">'.$langs->trans("Error")." : ".$errormsg.'</div>';
         //		print '<a href="'.DOL_URL_ROOT.$relativepatherr.'">'.$langs->trans("DownloadErrorFile").'</a><br>';
         print '<br>';
         print '<br>';
-    }
-    else
-    {
+    } else {
         print '<div class="ok">';
         print $langs->trans("BackupFileSuccessfullyCreated").'.<br>';
         print $langs->trans("YouCanDownloadBackupFile");
@@ -365,8 +324,6 @@ $time_end = time();
 llxFooter();
 
 $db->close();
-
-
 
 // MYSQL NO BINARIES (only php)
 /**	Backup the db OR just a table without mysqldump binary (does not require any exec permission)
@@ -389,27 +346,23 @@ function backup_tables($outputfile, $tables='*')
     $db->query('SET CHARACTER SET utf8');
 
     //get all of the tables
-    if ($tables == '*')
-    {
+    if ($tables == '*') {
         $tables = array();
         $result = $db->query('SHOW FULL TABLES WHERE Table_type = \'BASE TABLE\'');
-        while($row = $db->fetch_row($result))
-        {
+        while ($row = $db->fetch_row($result)) {
             $tables[] = $row[0];
         }
-    }
-    else
-    {
+    } else {
         $tables = is_array($tables) ? $tables : explode(',',$tables);
     }
 
     //cycle through
     $handle = fopen($outputfile, 'w+');
-    if (fwrite($handle, '') === FALSE)
-    {
+    if (fwrite($handle, '') === FALSE) {
         $langs->load("errors");
         dol_syslog("Failed to open file ".$outputfile,LOG_ERR);
         $errormsg=$langs->trans("ErrorFailedToWriteInDir");
+
         return -1;
     }
 
@@ -440,8 +393,7 @@ function backup_tables($outputfile, $tables='*')
     if (GETPOST("nobin_delayed")) $delayed = 'DELAYED ';
 
     // Process each table and print their definition + their datas
-    foreach($tables as $table)
-    {
+    foreach ($tables as $table) {
         // Saving the table structure
         fwrite($handle, "\n--\n-- Table structure for table `".$table."`\n--\n");
 
@@ -453,7 +405,6 @@ function backup_tables($outputfile, $tables='*')
         fwrite($handle,$row2[1].";\n");
         //fwrite($handle,"/*!40101 SET character_set_client = @saved_cs_client */;\n\n");
 
-
         // Dumping the data (locking the table and disabling the keys check while doing the process)
         fwrite($handle, "\n--\n-- Dumping data for table `".$table."`\n--\n");
         if (!GETPOST("nobin_nolocks")) fwrite($handle, "LOCK TABLES `".$table."` WRITE;\n"); // Lock the table before inserting data (when the data will be imported back)
@@ -462,19 +413,19 @@ function backup_tables($outputfile, $tables='*')
         $sql='SELECT * FROM '.$table;
         $result = $db->query($sql);
         $num_fields = $db->num_rows($result);
-        while($row = $db->fetch_row($result)) {
+        while ($row = $db->fetch_row($result)) {
             // For each row of data we print a line of INSERT
             fwrite($handle,'INSERT '.$delayed.$ignore.'INTO `'.$table.'` VALUES (');
             $columns = count($row);
-            for($j=0; $j<$columns; $j++) {
+            for ($j=0; $j<$columns; $j++) {
                 // Processing each columns of the row to ensure that we correctly save the value (eg: add quotes for string - in fact we add quotes for everything, it's easier)
                 if ($row[$j] == null and !is_string($row[$j])) {
                     // IMPORTANT: if the field is NULL we set it NULL
                     $row[$j] = 'NULL';
-                } elseif(is_string($row[$j]) and $row[$j] == '') {
+                } elseif (is_string($row[$j]) and $row[$j] == '') {
                     // if it's an empty string, we set it as an empty string
                     $row[$j] = "''";
-                } elseif(is_numeric($row[$j]) and !strcmp($row[$j], $row[$j]+0) ) { // test if it's a numeric type and the numeric version ($nb+0) == string version (eg: if we have 01, it's probably not a number but rather a string, else it would not have any leading 0)
+                } elseif (is_numeric($row[$j]) and !strcmp($row[$j], $row[$j]+0) ) { // test if it's a numeric type and the numeric version ($nb+0) == string version (eg: if we have 01, it's probably not a number but rather a string, else it would not have any leading 0)
                     // if it's a number, we return it as-is
                     $row[$j] = $row[$j];
                 } else { // else for all other cases we escape the value and put quotes around
@@ -493,11 +444,9 @@ function backup_tables($outputfile, $tables='*')
     /* Backup Procedure structure*/
     /*
      $result = $db->query('SHOW PROCEDURE STATUS');
-    if ($db->num_rows($result) > 0)
-    {
+    if ($db->num_rows($result) > 0) {
     while ($row = $db->fetch_row($result)) { $procedures[] = $row[1]; }
-    foreach($procedures as $proc)
-    {
+    foreach ($procedures as $proc) {
     fwrite($handle,"DELIMITER $$\n\n");
     fwrite($handle,"DROP PROCEDURE IF EXISTS '$name'.'$proc'$$\n");
     $resqlcreateproc=$db->query("SHOW CREATE PROCEDURE '$proc'");
@@ -520,4 +469,3 @@ function backup_tables($outputfile, $tables='*')
 
     return 1;
 }
-?>

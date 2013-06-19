@@ -32,27 +32,25 @@ require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
-
 /**
  *	Class to manage mailman and spip
  */
 class MailmanSpip
 {
-    var $db;
-    var $error;
+    public $db;
+    public $error;
 
-    var $mladded_ok;
-    var $mladded_ko;
-    var $mlremoved_ok;
-    var $mlremoved_ko;
-
+    public $mladded_ok;
+    public $mladded_ko;
+    public $mlremoved_ok;
+    public $mlremoved_ko;
 
     /**
-	 *	Constructor
-	 *
-	 *	@param 		DoliDB		$db		Database handler
+     *	Constructor
+     *
+     *	@param 		DoliDB		$db		Database handler
      */
-    function __construct($db)
+    public function __construct($db)
     {
         $this->db = $db;
     }
@@ -62,10 +60,9 @@ class MailmanSpip
      *
      * @return boolean
      */
-    function isSpipEnabled()
+    public function isSpipEnabled()
     {
-        if (defined("ADHERENT_USE_SPIP") && (ADHERENT_USE_SPIP == 1))
-        {
+        if (defined("ADHERENT_USE_SPIP") && (ADHERENT_USE_SPIP == 1)) {
             return true;
         }
 
@@ -77,12 +74,10 @@ class MailmanSpip
      *
      * @return boolean
      */
-    function checkSpipConfig()
+    public function checkSpipConfig()
     {
-        if (defined('ADHERENT_SPIP_SERVEUR') && defined('ADHERENT_SPIP_USER') && defined('ADHERENT_SPIP_PASS') && defined('ADHERENT_SPIP_DB'))
-        {
-            if (ADHERENT_SPIP_SERVEUR != '' && ADHERENT_SPIP_USER != '' && ADHERENT_SPIP_PASS != '' && ADHERENT_SPIP_DB != '')
-            {
+        if (defined('ADHERENT_SPIP_SERVEUR') && defined('ADHERENT_SPIP_USER') && defined('ADHERENT_SPIP_PASS') && defined('ADHERENT_SPIP_DB')) {
+            if (ADHERENT_SPIP_SERVEUR != '' && ADHERENT_SPIP_USER != '' && ADHERENT_SPIP_PASS != '' && ADHERENT_SPIP_DB != '') {
                 return true;
             }
         }
@@ -93,14 +88,13 @@ class MailmanSpip
     /**
      * Function used to connect to SPIP
      *
-     * @return boolean|DoliDB		Boolean of DoliDB
+     * @return boolean|DoliDB Boolean of DoliDB
      */
-    function connectSpip()
+    public function connectSpip()
     {
         $resource = getDoliDBInstance('mysql', ADHERENT_SPIP_SERVEUR, ADHERENT_SPIP_USER, ADHERENT_SPIP_PASS, ADHERENT_SPIP_DB, ADHERENT_SPIP_PORT);
 
-        if ($resource->ok)
-        {
+        if ($resource->ok) {
             return $resource;
         }
 
@@ -112,10 +106,10 @@ class MailmanSpip
     /**
      * Function used to connect to Mailman
      *
-     * @param	object 	$object 	Object with the data
-     * @param	string 	$url    	Mailman URL to be called with patterns
-     * @param	string	$list		Name of mailing-list
-     * @return 	mixed				Boolean or string
+     * @param  object $object Object with the data
+     * @param  string $url    Mailman URL to be called with patterns
+     * @param  string $list   Name of mailing-list
+     * @return mixed  Boolean or string
      */
     private function callMailman($object, $url, $list)
     {
@@ -151,8 +145,7 @@ class MailmanSpip
         dol_syslog('result curl_exec='.$result);
 
         //An error was found, we store it in $this->error for later
-        if ($result === false || curl_errno($ch) > 0)
-        {
+        if ($result === false || curl_errno($ch) > 0) {
             $this->error = curl_errno($ch).' '.curl_error($ch);
             dol_syslog('Error using curl '.$this->error, LOG_ERR);
         }
@@ -168,18 +161,15 @@ class MailmanSpip
      *	@param	Object	$object		Object with data (->firstname, ->lastname, ->email and ->login)
      *  @return	int					=0 if KO, >0 if OK
      */
-    function add_to_spip($object)
+    public function add_to_spip($object)
     {
         dol_syslog(get_class($this)."::add_to_spip");
 
-        if ($this->isSpipEnabled())
-        {
-            if ($this->checkSpipConfig())
-            {
+        if ($this->isSpipEnabled()) {
+            if ($this->checkSpipConfig()) {
                 $mydb = $this->connectSpip();
 
-                if ($mydb)
-                {
+                if ($mydb) {
                     require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
                     $mdpass=dol_hash($object->pass);
                     $htpass=crypt($object->pass,makesalt());
@@ -189,17 +179,12 @@ class MailmanSpip
 
                     $mydb->close();
 
-                    if ($result)
-                    {
+                    if ($result) {
                         return 1;
-                    }
-                    else $this->error = $mydb->lasterror();
-                }
-                else $this->error = 'Failed to connect to SPIP';
-            }
-            else $this->error = 'BadSPIPConfiguration';
-        }
-        else $this->error = 'SPIPNotEnabled';
+                    } else $this->error = $mydb->lasterror();
+                } else $this->error = 'Failed to connect to SPIP';
+            } else $this->error = 'BadSPIPConfiguration';
+        } else $this->error = 'SPIPNotEnabled';
 
         return 0;
     }
@@ -210,35 +195,27 @@ class MailmanSpip
      *	@param	Object	$object		Object with data (->login)
      *  @return	int					=0 if KO, >0 if OK
      */
-    function del_to_spip($object)
+    public function del_to_spip($object)
     {
         dol_syslog(get_class($this)."::del_to_spip");
 
-        if ($this->isSpipEnabled())
-        {
-            if ($this->checkSpipConfig())
-            {
+        if ($this->isSpipEnabled()) {
+            if ($this->checkSpipConfig()) {
                 $mydb = $this->connectSpip();
 
-                if ($mydb)
-                {
+                if ($mydb) {
                     $query = "DELETE FROM spip_auteurs WHERE login='".$object->login."'";
 
                     $result = $mydb->query($query);
 
                     $mydb->close();
 
-                    if ($result)
-                    {
+                    if ($result) {
                         return 1;
-                    }
-                    else $this->error = $mydb->lasterror();
-                }
-                else $this->error = 'Failed to connect to SPIP';
-            }
-            else $this->error = 'BadSPIPConfiguration';
-        }
-        else $this->error = 'SPIPNotEnabled';
+                    } else $this->error = $mydb->lasterror();
+                } else $this->error = 'Failed to connect to SPIP';
+            } else $this->error = 'BadSPIPConfiguration';
+        } else $this->error = 'SPIPNotEnabled';
 
         return 0;
     }
@@ -249,46 +226,36 @@ class MailmanSpip
      *	@param	Object	$object		Object with data (->login)
      *  @return int     			1=exists, 0=does not exists, -1=error
      */
-    function is_in_spip($object)
+    public function is_in_spip($object)
     {
-        if ($this->isSpipEnabled())
-        {
-            if ($this->checkSpipConfig())
-            {
+        if ($this->isSpipEnabled()) {
+            if ($this->checkSpipConfig()) {
                 $mydb = $this->connectSpip();
 
-                if ($mydb)
-                {
+                if ($mydb) {
                     $query = "SELECT login FROM spip_auteurs WHERE login='".$object->login."'";
 
                     $result = $mydb->query($query);
 
-                    if ($result)
-                    {
-                        if ($mydb->num_rows($result))
-                        {
+                    if ($result) {
+                        if ($mydb->num_rows($result)) {
                             // nous avons au moins une reponse
                             $mydb->close($result);
+
                             return 1;
-                        }
-                        else
-                        {
+                        } else {
                             // nous n'avons pas de reponse => n'existe pas
                             $mydb->close($result);
+
                             return 0;
                         }
-                    }
-                    else
-                    {
+                    } else {
                         $this->error = $mydb->lasterror();
                         $mydb->close();
                     }
-                }
-                else $this->error = 'Failed to connect to SPIP';
-            }
-            else $this->error = 'BadSPIPConfiguration';
-        }
-        else $this->error = 'SPIPNotEnabled';
+                } else $this->error = 'Failed to connect to SPIP';
+            } else $this->error = 'BadSPIPConfiguration';
+        } else $this->error = 'SPIPNotEnabled';
 
         return -1;
     }
@@ -300,7 +267,7 @@ class MailmanSpip
      *  @param	array	$listes    	To force mailing-list (string separated with ,)
      *  @return	int		  			<0 if KO, >=0 if OK
      */
-    function add_to_mailman($object,$listes='')
+    public function add_to_mailman($object,$listes='')
     {
         global $conf,$langs,$user;
 
@@ -309,58 +276,51 @@ class MailmanSpip
         $this->mladded_ok=array();
         $this->mladded_ko=array();
 
-        if (! function_exists("curl_init"))
-        {
+        if (! function_exists("curl_init")) {
             $langs->load("errors");
             $this->error=$langs->trans("ErrorFunctionNotAvailableInPHP","curl_init");
+
             return -1;
         }
 
-        if ($conf->adherent->enabled)	// Synchro for members
-        {
-	        if (! empty($conf->global->ADHERENT_MAILMAN_URL))
-	        {
-	            if ($listes == '' && ! empty($conf->global->ADHERENT_MAILMAN_LISTS)) $lists=explode(',',$conf->global->ADHERENT_MAILMAN_LISTS);
-	            else $lists=explode(',',$listes);
+        if ($conf->adherent->enabled) {	// Synchro for members
+            if (! empty($conf->global->ADHERENT_MAILMAN_URL)) {
+                if ($listes == '' && ! empty($conf->global->ADHERENT_MAILMAN_LISTS)) $lists=explode(',',$conf->global->ADHERENT_MAILMAN_LISTS);
+                else $lists=explode(',',$listes);
 
-	            $categstatic=new Categorie($this->db);
+                $categstatic=new Categorie($this->db);
 
-	            foreach ($lists as $list)
-	            {
-	                // Filter on type something (ADHERENT_MAILMAN_LISTS = "mailinglist0,TYPE:typevalue:mailinglist1,CATEG:categvalue:mailinglist2")
-	                $tmp=explode(':',$list);
-	                if (! empty($tmp[2]))
-	                {
-	                    $list=$tmp[2];
-	                    if ($object->element == 'member' && $tmp[0] == 'TYPE' && $object->type != $tmp[1])    // Filter on member type label
-	                    {
-	                        dol_syslog("We ignore list ".$list." because object member type ".$object->type." does not match ".$tmp[1], LOG_DEBUG);
-	                        continue;
-	                    }
-	                    if ($object->element == 'member' && $tmp[0] == 'CATEG' && ! in_array($tmp[1], $categstatic->containing($object->id, 'member', 'label')))    // Filter on member category
-	                    {
-	                        dol_syslog("We ignore list ".$list." because object member is not into category ".$tmp[1], LOG_DEBUG);
-	                        continue;
-	                    }
-	                }
+                foreach ($lists as $list) {
+                    // Filter on type something (ADHERENT_MAILMAN_LISTS = "mailinglist0,TYPE:typevalue:mailinglist1,CATEG:categvalue:mailinglist2")
+                    $tmp=explode(':',$list);
+                    if (! empty($tmp[2])) {
+                        $list=$tmp[2];
+                        if ($object->element == 'member' && $tmp[0] == 'TYPE' && $object->type != $tmp[1]) {    // Filter on member type label
+                            dol_syslog("We ignore list ".$list." because object member type ".$object->type." does not match ".$tmp[1], LOG_DEBUG);
+                            continue;
+                        }
+                        if ($object->element == 'member' && $tmp[0] == 'CATEG' && ! in_array($tmp[1], $categstatic->containing($object->id, 'member', 'label'))) {    // Filter on member category
+                            dol_syslog("We ignore list ".$list." because object member is not into category ".$tmp[1], LOG_DEBUG);
+                            continue;
+                        }
+                    }
 
-	                //We call Mailman to subscribe the user
-	                $result = $this->callMailman($object, $conf->global->ADHERENT_MAILMAN_URL, $list);
+                    //We call Mailman to subscribe the user
+                    $result = $this->callMailman($object, $conf->global->ADHERENT_MAILMAN_URL, $list);
 
-					if ($result === false)
-					{
-						$this->mladded_ko[$list]=$object->email;
-					    return -2;
-					}
-					else $this->mladded_ok[$list]=$object->email;
-	            }
-	            return count($lists);
-	        }
-	        else
-	       {
-	            $this->error="ADHERENT_MAILMAN_URL not defined";
-	            return -1;
-	        }
+                    if ($result === false) {
+                        $this->mladded_ko[$list]=$object->email;
+
+                        return -2;
+                    } else $this->mladded_ok[$list]=$object->email;
+                }
+
+                return count($lists);
+            } else {
+                $this->error="ADHERENT_MAILMAN_URL not defined";
+
+                return -1;
+            }
         }
     }
 
@@ -372,7 +332,7 @@ class MailmanSpip
      *  @param	array	$listes     To force mailing-list (string separated with ,)
      *  @return int         		<0 if KO, >=0 if OK
      */
-    function del_to_mailman($object,$listes='')
+    public function del_to_mailman($object,$listes='')
     {
         global $conf,$langs,$user;
 
@@ -381,58 +341,50 @@ class MailmanSpip
         $this->mlremoved_ok=array();
         $this->mlremoved_ko=array();
 
-        if (! function_exists("curl_init"))
-        {
+        if (! function_exists("curl_init")) {
             $langs->load("errors");
             $this->error=$langs->trans("ErrorFunctionNotAvailableInPHP","curl_init");
+
             return -1;
         }
 
-        if ($conf->adherent->enabled)	// Synchro for members
-        {
-	        if (! empty($conf->global->ADHERENT_MAILMAN_UNSUB_URL))
-	        {
-	            if ($listes=='' && ! empty($conf->global->ADHERENT_MAILMAN_LISTS)) $lists=explode(',',$conf->global->ADHERENT_MAILMAN_LISTS);
-	            else $lists=explode(',',$listes);
+        if ($conf->adherent->enabled) {	// Synchro for members
+            if (! empty($conf->global->ADHERENT_MAILMAN_UNSUB_URL)) {
+                if ($listes=='' && ! empty($conf->global->ADHERENT_MAILMAN_LISTS)) $lists=explode(',',$conf->global->ADHERENT_MAILMAN_LISTS);
+                else $lists=explode(',',$listes);
 
-	            foreach ($lists as $list)
-	            {
-	            	// Filter on type something (ADHERENT_MAILMAN_LISTS = "mailinglist0,TYPE:typevalue:mailinglist1,CATEG:categvalue:mailinglist2")
-	            	$tmp=explode(':',$list);
-	            	if (! empty($tmp[2]))
-	            	{
-	            		$list=$tmp[2];
-	            		if ($object->element == 'member' && $tmp[0] == 'TYPE' && $object->type != $tmp[1])    // Filter on member type label
-	            		{
-	            			dol_syslog("We ignore list ".$list." because object member type ".$object->type." does not match ".$tmp[1], LOG_DEBUG);
-	            			continue;
-	            		}
-	            		if ($object->element == 'member' && $tmp[0] == 'CATEG' && ! in_array($tmp[1], $categstatic->containing($object->id, 'member', 'label')))    // Filter on member category
-	            		{
-	            			dol_syslog("We ignore list ".$list." because object member is not into category ".$tmp[1], LOG_DEBUG);
-	            			continue;
-	            		}
-	            	}
+                foreach ($lists as $list) {
+                    // Filter on type something (ADHERENT_MAILMAN_LISTS = "mailinglist0,TYPE:typevalue:mailinglist1,CATEG:categvalue:mailinglist2")
+                    $tmp=explode(':',$list);
+                    if (! empty($tmp[2])) {
+                        $list=$tmp[2];
+                        if ($object->element == 'member' && $tmp[0] == 'TYPE' && $object->type != $tmp[1]) {    // Filter on member type label
+                            dol_syslog("We ignore list ".$list." because object member type ".$object->type." does not match ".$tmp[1], LOG_DEBUG);
+                            continue;
+                        }
+                        if ($object->element == 'member' && $tmp[0] == 'CATEG' && ! in_array($tmp[1], $categstatic->containing($object->id, 'member', 'label'))) {    // Filter on member category
+                            dol_syslog("We ignore list ".$list." because object member is not into category ".$tmp[1], LOG_DEBUG);
+                            continue;
+                        }
+                    }
 
-	                //We call Mailman to unsubscribe the user
-	                $result = $this->callMailman($object, $conf->global->ADHERENT_MAILMAN_UNSUB_URL, $list);
+                    //We call Mailman to unsubscribe the user
+                    $result = $this->callMailman($object, $conf->global->ADHERENT_MAILMAN_UNSUB_URL, $list);
 
-					if ($result === false)
-					{
-						$this->mlremoved_ko[$list]=$object->email;
-					    return -2;
-					}
-					else $this->mlremoved_ok[$list]=$object->email;
-	            }
-	            return count($lists);
-	        }
-	        else
-			{
-	            $this->error="ADHERENT_MAILMAN_UNSUB_URL not defined";
-	            return -1;
-	        }
+                    if ($result === false) {
+                        $this->mlremoved_ko[$list]=$object->email;
+
+                        return -2;
+                    } else $this->mlremoved_ok[$list]=$object->email;
+                }
+
+                return count($lists);
+            } else {
+                $this->error="ADHERENT_MAILMAN_UNSUB_URL not defined";
+
+                return -1;
+            }
         }
     }
 
 }
-?>

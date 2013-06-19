@@ -25,9 +25,7 @@
  * @version    1.7.6, 2011-02-27
  */
 
-
 require_once(PHPEXCEL_ROOT . 'PHPExcel/Shared/trend/bestFitClass.php');
-
 
 /**
  * PHPExcel_Logarithmic_Best_Fit
@@ -38,45 +36,45 @@ require_once(PHPEXCEL_ROOT . 'PHPExcel/Shared/trend/bestFitClass.php');
  */
 class PHPExcel_Logarithmic_Best_Fit extends PHPExcel_Best_Fit
 {
-	protected $_bestFitType		= 'logarithmic';
+    protected $_bestFitType		= 'logarithmic';
 
+    public function getValueOfYForX($xValue)
+    {
+        return $this->getIntersect() + $this->getSlope() * log($xValue - $this->_Xoffset);
+    }	//	function getValueOfYForX()
 
-	public function getValueOfYForX($xValue) {
-		return $this->getIntersect() + $this->getSlope() * log($xValue - $this->_Xoffset);
-	}	//	function getValueOfYForX()
+    public function getValueOfXForY($yValue)
+    {
+        return exp(($yValue - $this->getIntersect()) / $this->getSlope());
+    }	//	function getValueOfXForY()
 
+    public function getEquation($dp=0)
+    {
+        $slope = $this->getSlope($dp);
+        $intersect = $this->getIntersect($dp);
 
-	public function getValueOfXForY($yValue) {
-		return exp(($yValue - $this->getIntersect()) / $this->getSlope());
-	}	//	function getValueOfXForY()
+        return 'Y = '.$intersect.' + '.$slope.' * log(X)';
+    }	//	function getEquation()
 
+    private function _logarithmic_regression($yValues, $xValues, $const)
+    {
+        foreach ($xValues as &$value) {
+            if ($value < 0.0) {
+                $value = 0 - log(abs($value));
+            } elseif ($value > 0.0) {
+                $value = log($value);
+            }
+        }
+        unset($value);
 
-	public function getEquation($dp=0) {
-		$slope = $this->getSlope($dp);
-		$intersect = $this->getIntersect($dp);
+        $this->_leastSquareFit($yValues, $xValues, $const);
+    }	//	function _logarithmic_regression()
 
-		return 'Y = '.$intersect.' + '.$slope.' * log(X)';
-	}	//	function getEquation()
-
-
-	private function _logarithmic_regression($yValues, $xValues, $const) {
-		foreach($xValues as &$value) {
-			if ($value < 0.0) {
-				$value = 0 - log(abs($value));
-			} elseif ($value > 0.0) {
-				$value = log($value);
-			}
-		}
-		unset($value);
-
-		$this->_leastSquareFit($yValues, $xValues, $const);
-	}	//	function _logarithmic_regression()
-
-
-	function __construct($yValues, $xValues=array(), $const=True) {
-		if (parent::__construct($yValues, $xValues) !== False) {
-			$this->_logarithmic_regression($yValues, $xValues, $const);
-		}
-	}	//	function __construct()
+    public function __construct($yValues, $xValues=array(), $const=True)
+    {
+        if (parent::__construct($yValues, $xValues) !== False) {
+            $this->_logarithmic_regression($yValues, $xValues, $const);
+        }
+    }	//	function __construct()
 
 }	//	class logarithmicBestFit

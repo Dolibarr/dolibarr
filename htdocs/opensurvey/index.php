@@ -21,11 +21,9 @@
  *	\brief      Home page of opensurvey area
  */
 
-require_once('../main.inc.php');
+require_once '../main.inc.php';
 require_once(DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
-
-
 
 /*
  * View
@@ -38,17 +36,14 @@ llxHeader();
 $nbsondages=0;
 $sql='SELECT COUNT(*) as nb FROM '.MAIN_DB_PREFIX.'opensurvey_sondage';
 $resql=$db->query($sql);
-if ($resql)
-{
-	$obj=$db->fetch_object($resql);
-	$nbsondages=$obj->nb;
-}
-else dol_print_error($db,'');
+if ($resql) {
+    $obj=$db->fetch_object($resql);
+    $nbsondages=$obj->nb;
+} else dol_print_error($db,'');
 
 print_fiche_titre($langs->trans("OpenSurveyArea"));
 
 echo $langs->trans("NoSurveysInDatabase",$nbsondages).'<br><br>'."\n";
-
 
 // Link
 print img_picto('','object_globe.png').' '.$langs->trans("PublicLinkToCreateSurvey").':<br>';
@@ -62,9 +57,6 @@ $url=$urlwithouturlroot.dol_buildpath('/opensurvey/public/index.php',1);
 $urllink='<a href="'.$url.'" target="_blank">'.$url.'</a>';
 print $urllink;
 
-
-
 llxFooter();
 
 $db->close();
-?>

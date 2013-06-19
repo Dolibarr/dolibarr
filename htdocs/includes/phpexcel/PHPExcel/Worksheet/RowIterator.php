@@ -25,7 +25,6 @@
  * @version    1.7.6, 2011-02-27
  */
 
-
 /**
  * PHPExcel_Worksheet_RowIterator
  *
@@ -37,41 +36,44 @@
  */
 class PHPExcel_Worksheet_RowIterator extends CachingIterator
 {
-	/**
-	 * PHPExcel_Worksheet to iterate
-	 *
-	 * @var PHPExcel_Worksheet
-	 */
-	private $_subject;
+    /**
+     * PHPExcel_Worksheet to iterate
+     *
+     * @var PHPExcel_Worksheet
+     */
+    private $_subject;
 
-	/**
-	 * Current iterator position
-	 *
-	 * @var int
-	 */
-	private $_position = 1;
+    /**
+     * Current iterator position
+     *
+     * @var int
+     */
+    private $_position = 1;
 
-	/**
-	 * Create a new row iterator
-	 *
-	 * @param PHPExcel_Worksheet 		$subject
-	 */
-	public function __construct(PHPExcel_Worksheet $subject = null) {
-		// Set subject
-		$this->_subject = $subject;
-	}
+    /**
+     * Create a new row iterator
+     *
+     * @param PHPExcel_Worksheet $subject
+     */
+    public function __construct(PHPExcel_Worksheet $subject = null)
+    {
+        // Set subject
+        $this->_subject = $subject;
+    }
 
-	/**
-	 * Destructor
-	 */
-	public function __destruct() {
-		unset($this->_subject);
-	}
+    /**
+     * Destructor
+     */
+    public function __destruct()
+    {
+        unset($this->_subject);
+    }
 
-	/**
-	 * Rewind iterator
-	 */
-    public function rewind() {
+    /**
+     * Rewind iterator
+     */
+    public function rewind()
+    {
         $this->_position = 1;
     }
 
@@ -80,8 +82,9 @@ class PHPExcel_Worksheet_RowIterator extends CachingIterator
      *
      * @return PHPExcel_Worksheet_Row
      */
-    public function current() {
-    	return new PHPExcel_Worksheet_Row($this->_subject, $this->_position);
+    public function current()
+    {
+        return new PHPExcel_Worksheet_Row($this->_subject, $this->_position);
     }
 
     /**
@@ -89,14 +92,16 @@ class PHPExcel_Worksheet_RowIterator extends CachingIterator
      *
      * @return int
      */
-    public function key() {
+    public function key()
+    {
         return $this->_position;
     }
 
     /**
      * Next value
      */
-    public function next() {
+    public function next()
+    {
         ++$this->_position;
     }
 
@@ -105,7 +110,8 @@ class PHPExcel_Worksheet_RowIterator extends CachingIterator
      *
      * @return boolean
      */
-    public function valid() {
+    public function valid()
+    {
         return $this->_position <= $this->_subject->getHighestRow();
     }
 }

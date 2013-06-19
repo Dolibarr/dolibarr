@@ -24,7 +24,7 @@
  *  \brief      Page to list withdraw requests
  */
 
-require('../../main.inc.php');
+require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/modPrelevement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
@@ -61,7 +61,6 @@ $pagenext = $page + 1;
 if (! $sortorder) $sortorder="DESC";
 if (! $sortfield) $sortfield="f.facnumber";
 
-
 /*
  * Liste de demandes
  */
@@ -81,82 +80,72 @@ if ($socid) $sql.= " AND f.fk_soc = ".$socid;
 if (!$statut) $sql.= " AND pfd.traite = 0";
 if ($statut) $sql.= " AND pfd.traite = ".$statut;
 $sql.= " AND pfd.fk_facture = f.rowid";
-if (dol_strlen(trim(GETPOST('search_societe','alpha'))))
-{
-	$sql.= " AND s.nom LIKE '%".GETPOST('search_societe','alpha')."%'";
+if (dol_strlen(trim(GETPOST('search_societe','alpha')))) {
+    $sql.= " AND s.nom LIKE '%".GETPOST('search_societe','alpha')."%'";
 }
 $sql.= " ORDER BY $sortfield $sortorder ";
 $sql.= $db->plimit($conf->liste_limit+1, $offset);
 
 $resql=$db->query($sql);
-if ($resql)
-{
-	$num = $db->num_rows($resql);
-	$i = 0;
+if ($resql) {
+    $num = $db->num_rows($resql);
+    $i = 0;
 
-	if (!$statut)
-	{
-		print_barre_liste($langs->trans("RequestStandingOrderToTreat"), $page, "demandes.php", $urladd, $sortfield, $sortorder, '', $num);
-	}
-	else
-	{
-		print_barre_liste($langs->trans("RequestStandingOrderTreated"), $page, "demandes.php", $urladd, $sortfield, $sortorder, '', $num);
-	}
+    if (!$statut) {
+        print_barre_liste($langs->trans("RequestStandingOrderToTreat"), $page, "demandes.php", $urladd, $sortfield, $sortorder, '', $num);
+    } else {
+        print_barre_liste($langs->trans("RequestStandingOrderTreated"), $page, "demandes.php", $urladd, $sortfield, $sortorder, '', $num);
+    }
 
-	print '<table class="liste" width="100%">';
+    print '<table class="liste" width="100%">';
 
-	print '<tr class="liste_titre">';
-	print '<td class="liste_titre">'.$langs->trans("Bill").'</td><td class="liste_titre">'.$langs->trans("Company").'</td>';
+    print '<tr class="liste_titre">';
+    print '<td class="liste_titre">'.$langs->trans("Bill").'</td><td class="liste_titre">'.$langs->trans("Company").'</td>';
     print '<td class="liste_titre" align="right">'.$langs->trans("Amount").'</td>';
-	print '<td class="liste_titre" align="right">'.$langs->trans("DateRequest").'</td>';
-	print '</tr>';
+    print '<td class="liste_titre" align="right">'.$langs->trans("DateRequest").'</td>';
+    print '</tr>';
 
-	print '<form action="'.$_SERVER["PHP_SELF"].'" method="GET">';
-	print '<td class="liste_titre"><input type="text" class="flat" name="search_facture" size="12" value="'.GETPOST('search_facture','alpha').'"></td>';
-	print '<td class="liste_titre"><input type="text" class="flat" name="search_societe" size="18" value="'.GETPOST('search_societe','alpha').'"></td>';
-	print '<td colspan="2" class="liste_titre" align="right"><input type="image" class="liste_titre" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" name="button_search" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'"></td>';
-	print '</tr>';
-	print '</form>';
+    print '<form action="'.$_SERVER["PHP_SELF"].'" method="GET">';
+    print '<td class="liste_titre"><input type="text" class="flat" name="search_facture" size="12" value="'.GETPOST('search_facture','alpha').'"></td>';
+    print '<td class="liste_titre"><input type="text" class="flat" name="search_societe" size="18" value="'.GETPOST('search_societe','alpha').'"></td>';
+    print '<td colspan="2" class="liste_titre" align="right"><input type="image" class="liste_titre" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" name="button_search" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'"></td>';
+    print '</tr>';
+    print '</form>';
 
-	$var = True;
+    $var = True;
 
-	$users = array();
+    $users = array();
 
-	while ($i < min($num,$conf->liste_limit))
-	{
-		$obj = $db->fetch_object($resql);
-		$var=!$var;
-		print '<tr '.$bc[$var].'>';
+    while ($i < min($num,$conf->liste_limit)) {
+        $obj = $db->fetch_object($resql);
+        $var=!$var;
+        print '<tr '.$bc[$var].'>';
 
-		// Ref facture
-		print '<td>';
-		$invoicestatic->id=$obj->rowid;
-		$invoicestatic->ref=$obj->facnumber;
-		print $invoicestatic->getNomUrl(1,'withdraw');
-		print '</td>';
+        // Ref facture
+        print '<td>';
+        $invoicestatic->id=$obj->rowid;
+        $invoicestatic->ref=$obj->facnumber;
+        print $invoicestatic->getNomUrl(1,'withdraw');
+        print '</td>';
 
-		print '<td>';
-		$thirdpartystatic->id=$obj->socid;
-		$thirdpartystatic->nom=$obj->nom;
-		print $thirdpartystatic->getNomUrl(1,'customer');
-		print '</td>';
+        print '<td>';
+        $thirdpartystatic->id=$obj->socid;
+        $thirdpartystatic->nom=$obj->nom;
+        print $thirdpartystatic->getNomUrl(1,'customer');
+        print '</td>';
 
         print '<td align="right">'.price($obj->total_ttc).'</td>';
 
         print '<td align="right">'.dol_print_date($db->jdate($obj->date_demande),'day').'</td>';
 
-		print '</tr>';
-		$i++;
-	}
+        print '</tr>';
+        $i++;
+    }
 
-	print "</table><br>";
+    print "</table><br>";
 
+} else {
+    dol_print_error($db);
 }
-else
-{
-	dol_print_error($db);
-}
-
 
 llxFooter();
-?>

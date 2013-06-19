@@ -35,8 +35,7 @@ if (! $user->admin) accessforbidden();
 $dirstandard = array();
 $dirsmartphone = array();
 $dirmenus=array_merge(array("/core/menus/"),(array) $conf->modules_parts['menus']);
-foreach($dirmenus as $dirmenu)
-{
+foreach ($dirmenus as $dirmenu) {
     $dirstandard[]=$dirmenu.'standard';
     $dirsmartphone[]=$dirmenu.'smartphone';
 }
@@ -59,146 +58,130 @@ if (GETPOST("menu_handler"))    $menu_handler=GETPOST("menu_handler");
 
 $menu_handler_to_search=preg_replace('/(_backoffice|_frontoffice|_menu)?(\.php)?/i','',$menu_handler);
 
-
 /*
  * Actions
  */
 
-if ($action == 'up')
-{
-	$current=array();
-	$previous=array();
+if ($action == 'up') {
+    $current=array();
+    $previous=array();
 
-	// Get current position
-	$sql = "SELECT m.rowid, m.position, m.type, m.fk_menu";
-	$sql.= " FROM ".MAIN_DB_PREFIX."menu as m";
-	$sql.= " WHERE m.rowid = ".$_GET["menuId"];
-	dol_syslog("admin/menus/index.php ".$sql);
-	$result = $db->query($sql);
-	$num = $db->num_rows($result);
-	$i = 0;
-	while($i < $num)
-	{
-		$obj = $db->fetch_object($result);
-		$current['rowid'] = $obj->rowid;
-		$current['order'] = $obj->position;
-		$current['type'] = $obj->type;
-		$current['fk_menu'] = $obj->fk_menu;
-		$i++;
-	}
+    // Get current position
+    $sql = "SELECT m.rowid, m.position, m.type, m.fk_menu";
+    $sql.= " FROM ".MAIN_DB_PREFIX."menu as m";
+    $sql.= " WHERE m.rowid = ".$_GET["menuId"];
+    dol_syslog("admin/menus/index.php ".$sql);
+    $result = $db->query($sql);
+    $num = $db->num_rows($result);
+    $i = 0;
+    while ($i < $num) {
+        $obj = $db->fetch_object($result);
+        $current['rowid'] = $obj->rowid;
+        $current['order'] = $obj->position;
+        $current['type'] = $obj->type;
+        $current['fk_menu'] = $obj->fk_menu;
+        $i++;
+    }
 
-	// Menu before
-	$sql = "SELECT m.rowid, m.position";
-	$sql.= " FROM ".MAIN_DB_PREFIX."menu as m";
-	$sql.= " WHERE (m.position < ".($current['order'])." OR (m.position = ".($current['order'])." AND rowid < ".$_GET["menuId"]."))";
-	$sql.= " AND m.menu_handler='".$menu_handler_to_search."'";
-	$sql.= " AND m.entity = ".$conf->entity;
-	$sql.= " AND m.type = '".$current['type']."'";
-	$sql.= " AND m.fk_menu = '".$current['fk_menu']."'";
-	$sql.= " ORDER BY m.position, m.rowid";
-	dol_syslog("admin/menus/index.php ".$sql);
-	$result = $db->query($sql);
-	$num = $db->num_rows($result);
-	$i = 0;
-	while($i < $num)
-	{
-		$obj = $db->fetch_object($result);
-		$previous['rowid'] = $obj->rowid;
-		$previous['order'] = $obj->position;
-		$i++;
-	}
+    // Menu before
+    $sql = "SELECT m.rowid, m.position";
+    $sql.= " FROM ".MAIN_DB_PREFIX."menu as m";
+    $sql.= " WHERE (m.position < ".($current['order'])." OR (m.position = ".($current['order'])." AND rowid < ".$_GET["menuId"]."))";
+    $sql.= " AND m.menu_handler='".$menu_handler_to_search."'";
+    $sql.= " AND m.entity = ".$conf->entity;
+    $sql.= " AND m.type = '".$current['type']."'";
+    $sql.= " AND m.fk_menu = '".$current['fk_menu']."'";
+    $sql.= " ORDER BY m.position, m.rowid";
+    dol_syslog("admin/menus/index.php ".$sql);
+    $result = $db->query($sql);
+    $num = $db->num_rows($result);
+    $i = 0;
+    while ($i < $num) {
+        $obj = $db->fetch_object($result);
+        $previous['rowid'] = $obj->rowid;
+        $previous['order'] = $obj->position;
+        $i++;
+    }
 
-	$sql = "UPDATE ".MAIN_DB_PREFIX."menu as m";
-	$sql.= " SET m.position = ".$previous['order'];
-	$sql.= " WHERE m.rowid = ".$current['rowid']; // Up the selected entry
-	dol_syslog("admin/menus/index.php ".$sql);
-	$db->query($sql);
-	$sql = "UPDATE ".MAIN_DB_PREFIX."menu as m";
-	$sql.= " SET m.position = ".($current['order']!=$previous['order']?$current['order']:$current['order']+1);
-	$sql.= " WHERE m.rowid = ".$previous['rowid']; // Descend celui du dessus
-	dol_syslog("admin/menus/index.php ".$sql);
-	$db->query($sql);
+    $sql = "UPDATE ".MAIN_DB_PREFIX."menu as m";
+    $sql.= " SET m.position = ".$previous['order'];
+    $sql.= " WHERE m.rowid = ".$current['rowid']; // Up the selected entry
+    dol_syslog("admin/menus/index.php ".$sql);
+    $db->query($sql);
+    $sql = "UPDATE ".MAIN_DB_PREFIX."menu as m";
+    $sql.= " SET m.position = ".($current['order']!=$previous['order']?$current['order']:$current['order']+1);
+    $sql.= " WHERE m.rowid = ".$previous['rowid']; // Descend celui du dessus
+    dol_syslog("admin/menus/index.php ".$sql);
+    $db->query($sql);
+} elseif ($action == 'down') {
+    $current=array();
+    $next=array();
+
+    // Get current position
+    $sql = "SELECT m.rowid, m.position, m.type, m.fk_menu";
+    $sql.= " FROM ".MAIN_DB_PREFIX."menu as m";
+    $sql.= " WHERE m.rowid = ".$_GET["menuId"];
+    dol_syslog("admin/menus/index.php ".$sql);
+    $result = $db->query($sql);
+    $num = $db->num_rows($result);
+    $i = 0;
+    while ($i < $num) {
+        $obj = $db->fetch_object($result);
+        $current['rowid'] = $obj->rowid;
+        $current['order'] = $obj->position;
+        $current['type'] = $obj->type;
+        $current['fk_menu'] = $obj->fk_menu;
+        $i++;
+    }
+
+    // Menu after
+    $sql = "SELECT m.rowid, m.position";
+    $sql.= " FROM ".MAIN_DB_PREFIX."menu as m";
+    $sql.= " WHERE (m.position > ".($current['order'])." OR (m.position = ".($current['order'])." AND rowid > ".$_GET["menuId"]."))";
+    $sql.= " AND m.menu_handler='".$menu_handler_to_search."'";
+    $sql.= " AND m.entity = ".$conf->entity;
+    $sql.= " AND m.type = '".$current['type']."'";
+    $sql.= " AND m.fk_menu = '".$current['fk_menu']."'";
+    $sql.= " ORDER BY m.position, m.rowid";
+    dol_syslog("admin/menus/index.php ".$sql);
+    $result = $db->query($sql);
+    $num = $db->num_rows($result);
+    $i = 0;
+    while ($i < $num) {
+        $obj = $db->fetch_object($result);
+        $next['rowid'] = $obj->rowid;
+        $next['order'] = $obj->position;
+        $i++;
+    }
+
+    $sql = "UPDATE ".MAIN_DB_PREFIX."menu as m";
+    $sql.= " SET m.position = ".($current['order']!=$next['order']?$next['order']:$current['order']+1); // Down the selected entry
+    $sql.= " WHERE m.rowid = ".$current['rowid'];
+    dol_syslog("admin/menus/index.php ".$sql);
+    $db->query($sql);
+    $sql = "UPDATE ".MAIN_DB_PREFIX."menu as m";	// Up the next entry
+    $sql.= " SET m.position = ".$current['order'];
+    $sql.= " WHERE m.rowid = ".$next['rowid'];
+    dol_syslog("admin/menus/index.php ".$sql);
+    $db->query($sql);
+} elseif ($action == 'confirm_delete' && $confirm == 'yes') {
+    $db->begin();
+
+    $sql = "DELETE FROM ".MAIN_DB_PREFIX."menu";
+    $sql.= " WHERE rowid = ".$_GET['menuId'];
+    $resql=$db->query($sql);
+    if ($resql) {
+        $db->commit();
+
+        header("Location: ".DOL_URL_ROOT.'/admin/menus/index.php?menu_handler='.$menu_handler.'&mesg='.urlencode($langs->trans("MenuDeleted")));
+        exit ;
+    } else {
+        $db->rollback();
+
+        $reload = 0;
+        $action='';
+    }
 }
-
-elseif ($action == 'down')
-{
-	$current=array();
-	$next=array();
-
-	// Get current position
-	$sql = "SELECT m.rowid, m.position, m.type, m.fk_menu";
-	$sql.= " FROM ".MAIN_DB_PREFIX."menu as m";
-	$sql.= " WHERE m.rowid = ".$_GET["menuId"];
-	dol_syslog("admin/menus/index.php ".$sql);
-	$result = $db->query($sql);
-	$num = $db->num_rows($result);
-	$i = 0;
-	while($i < $num)
-	{
-		$obj = $db->fetch_object($result);
-		$current['rowid'] = $obj->rowid;
-		$current['order'] = $obj->position;
-		$current['type'] = $obj->type;
-		$current['fk_menu'] = $obj->fk_menu;
-		$i++;
-	}
-
-	// Menu after
-	$sql = "SELECT m.rowid, m.position";
-	$sql.= " FROM ".MAIN_DB_PREFIX."menu as m";
-	$sql.= " WHERE (m.position > ".($current['order'])." OR (m.position = ".($current['order'])." AND rowid > ".$_GET["menuId"]."))";
-	$sql.= " AND m.menu_handler='".$menu_handler_to_search."'";
-	$sql.= " AND m.entity = ".$conf->entity;
-	$sql.= " AND m.type = '".$current['type']."'";
-	$sql.= " AND m.fk_menu = '".$current['fk_menu']."'";
-	$sql.= " ORDER BY m.position, m.rowid";
-	dol_syslog("admin/menus/index.php ".$sql);
-	$result = $db->query($sql);
-	$num = $db->num_rows($result);
-	$i = 0;
-	while($i < $num)
-	{
-		$obj = $db->fetch_object($result);
-		$next['rowid'] = $obj->rowid;
-		$next['order'] = $obj->position;
-		$i++;
-	}
-
-	$sql = "UPDATE ".MAIN_DB_PREFIX."menu as m";
-	$sql.= " SET m.position = ".($current['order']!=$next['order']?$next['order']:$current['order']+1); // Down the selected entry
-	$sql.= " WHERE m.rowid = ".$current['rowid'];
-	dol_syslog("admin/menus/index.php ".$sql);
-	$db->query($sql);
-	$sql = "UPDATE ".MAIN_DB_PREFIX."menu as m";	// Up the next entry
-	$sql.= " SET m.position = ".$current['order'];
-	$sql.= " WHERE m.rowid = ".$next['rowid'];
-	dol_syslog("admin/menus/index.php ".$sql);
-	$db->query($sql);
-}
-
-elseif ($action == 'confirm_delete' && $confirm == 'yes')
-{
-	$db->begin();
-
-	$sql = "DELETE FROM ".MAIN_DB_PREFIX."menu";
-	$sql.= " WHERE rowid = ".$_GET['menuId'];
-	$resql=$db->query($sql);
-	if ($resql)
-	{
-		$db->commit();
-
-		header("Location: ".DOL_URL_ROOT.'/admin/menus/index.php?menu_handler='.$menu_handler.'&mesg='.urlencode($langs->trans("MenuDeleted")));
-		exit ;
-	}
-	else
-	{
-		$db->rollback();
-
-		$reload = 0;
-		$action='';
-	}
-}
-
 
 /*
  * View
@@ -212,12 +195,9 @@ $arrayofcss=array('/includes/jquery/plugins/jquerytreeview/jquery.treeview.css')
 
 llxHeader('',$langs->trans("Menus"),'','',0,0,$arrayofjs,$arrayofcss);
 
-
 print_fiche_titre($langs->trans("Menus"),'','setup');
 
-
 dol_htmloutput_mesg($mesg);
-
 
 $h = 0;
 
@@ -241,20 +221,17 @@ dol_fiche_head($head, 'editor', $langs->trans("Menus"));
 print $langs->trans("MenusEditorDesc")."<br>\n";
 print "<br>\n";
 
-
 // Confirmation for remove menu entry
-if ($action == 'delete')
-{
-	$sql = "SELECT m.titre";
-	$sql.= " FROM ".MAIN_DB_PREFIX."menu as m";
-	$sql.= " WHERE m.rowid = ".$_GET['menuId'];
-	$result = $db->query($sql);
-	$obj = $db->fetch_object($result);
+if ($action == 'delete') {
+    $sql = "SELECT m.titre";
+    $sql.= " FROM ".MAIN_DB_PREFIX."menu as m";
+    $sql.= " WHERE m.rowid = ".$_GET['menuId'];
+    $result = $db->query($sql);
+    $obj = $db->fetch_object($result);
 
     $ret=$form->form_confirm("index.php?menu_handler=".$menu_handler."&menuId=".$_GET['menuId'],$langs->trans("DeleteMenu"),$langs->trans("ConfirmDeleteMenu",$obj->titre),"confirm_delete");
     if ($ret == 'html') print '<br>';
 }
-
 
 print '<form name="newmenu" class="nocellnopadd" action="'.$_SERVER["PHP_SELF"].'">';
 print '<input type="hidden" action="change_menu_handler">';
@@ -280,89 +257,82 @@ print '<td colspan="2">';
 
 $rangLast = 0;
 $idLast = -1;
-if ($conf->use_javascript_ajax)
-{
-	/*-------------------- MAIN -----------------------
-	tableau des elements de l'arbre:
-	c'est un tableau a 2 dimensions.
-	Une ligne represente un element : data[$x]
-	chaque ligne est decomposee en 3 donnees:
-	  - l'index de l'élément
-	  - l'index de l'élément parent
-	  - la chaine a afficher
-	ie: data[]= array (index, index parent, chaine )
-	*/
-	//il faut d'abord declarer un element racine de l'arbre
+if ($conf->use_javascript_ajax) {
+    /*-------------------- MAIN -----------------------
+    tableau des elements de l'arbre:
+    c'est un tableau a 2 dimensions.
+    Une ligne represente un element : data[$x]
+    chaque ligne est decomposee en 3 donnees:
+      - l'index de l'élément
+      - l'index de l'élément parent
+      - la chaine a afficher
+    ie: data[]= array (index, index parent, chaine )
+    */
+    //il faut d'abord declarer un element racine de l'arbre
 
-	$data[] = array('rowid'=>0,'fk_menu'=>-1,'title'=>"racine",'mainmenu'=>'','leftmenu'=>'','fk_mainmenu'=>'','fk_leftmenu'=>'');
+    $data[] = array('rowid'=>0,'fk_menu'=>-1,'title'=>"racine",'mainmenu'=>'','leftmenu'=>'','fk_mainmenu'=>'','fk_leftmenu'=>'');
 
-	//puis tous les elements enfants
+    //puis tous les elements enfants
 
-	$sql = "SELECT m.rowid, m.titre, m.langs, m.mainmenu, m.leftmenu, m.fk_menu, m.fk_mainmenu, m.fk_leftmenu";
-	$sql.= " FROM ".MAIN_DB_PREFIX."menu as m";
-	$sql.= " WHERE menu_handler = '".$menu_handler_to_search."'";
-	$sql.= " AND entity = ".$conf->entity;
-	$sql.= " AND fk_menu >= 0";
-	$sql.= " ORDER BY m.position, m.rowid";		// Order is position then rowid (because we need a sort criteria when position is same)
+    $sql = "SELECT m.rowid, m.titre, m.langs, m.mainmenu, m.leftmenu, m.fk_menu, m.fk_mainmenu, m.fk_leftmenu";
+    $sql.= " FROM ".MAIN_DB_PREFIX."menu as m";
+    $sql.= " WHERE menu_handler = '".$menu_handler_to_search."'";
+    $sql.= " AND entity = ".$conf->entity;
+    $sql.= " AND fk_menu >= 0";
+    $sql.= " ORDER BY m.position, m.rowid";		// Order is position then rowid (because we need a sort criteria when position is same)
 
-	dol_syslog("sql=".$sql);
-	$res  = $db->query($sql);
-	if ($res)
-	{
-		$num = $db->num_rows($res);
+    dol_syslog("sql=".$sql);
+    $res  = $db->query($sql);
+    if ($res) {
+        $num = $db->num_rows($res);
 
-		$i = 1;
-		while ($menu = $db->fetch_array($res))
-		{
-			if (! empty($menu['langs'])) $langs->load($menu['langs']);
-			$titre = $langs->trans($menu['titre']);
-			$data[] = array(
-				'rowid'=>$menu['rowid'],
-				'fk_menu'=>$menu['fk_menu'],
-				'title'=>$titre,
-				'mainmenu'=>$menu['mainmenu'],
-				'leftmenu'=>$menu['leftmenu'],
-				'fk_mainmenu'=>$menu['fk_mainmenu'],
-				'fk_leftmenu'=>$menu['fk_leftmenu'],
-				'entry'=>'<table class="nobordernopadding centpercent"><tr><td>'.
-						'<strong> &nbsp; <a href="edit.php?menu_handler='.$menu_handler_to_search.'&action=edit&menuId='.$menu['rowid'].'">'.$titre.'</a></strong>'.
-						'</td><td align="right">'.
-						'<a href="edit.php?menu_handler='.$menu_handler_to_search.'&action=edit&menuId='.$menu['rowid'].'">'.img_edit('default',0,'class="menuEdit" id="edit'.$menu['rowid'].'"').'</a> '.
-						'<a href="edit.php?menu_handler='.$menu_handler_to_search.'&action=create&menuId='.$menu['rowid'].'">'.img_edit_add('default',0,'class="menuNew" id="new'.$menu['rowid'].'"').'</a> '.
-						'<a href="index.php?menu_handler='.$menu_handler_to_search.'&action=delete&menuId='.$menu['rowid'].'">'.img_delete('default',0,'class="menuDel" id="del'.$menu['rowid'].'"').'</a> '.
-						'<a href="index.php?menu_handler='.$menu_handler_to_search.'&action=up&menuId='.$menu['rowid'].'">'.img_picto("Monter","1uparrow").'</a><a href="index.php?menu_handler='.$menu_handler_to_search.'&action=down&menuId='.$menu['rowid'].'">'.img_picto("Descendre","1downarrow").'</a>'.
-						'</td></tr></table>'
-			);
-			$i++;
-		}
-	}
+        $i = 1;
+        while ($menu = $db->fetch_array($res)) {
+            if (! empty($menu['langs'])) $langs->load($menu['langs']);
+            $titre = $langs->trans($menu['titre']);
+            $data[] = array(
+                'rowid'=>$menu['rowid'],
+                'fk_menu'=>$menu['fk_menu'],
+                'title'=>$titre,
+                'mainmenu'=>$menu['mainmenu'],
+                'leftmenu'=>$menu['leftmenu'],
+                'fk_mainmenu'=>$menu['fk_mainmenu'],
+                'fk_leftmenu'=>$menu['fk_leftmenu'],
+                'entry'=>'<table class="nobordernopadding centpercent"><tr><td>'.
+                        '<strong> &nbsp; <a href="edit.php?menu_handler='.$menu_handler_to_search.'&action=edit&menuId='.$menu['rowid'].'">'.$titre.'</a></strong>'.
+                        '</td><td align="right">'.
+                        '<a href="edit.php?menu_handler='.$menu_handler_to_search.'&action=edit&menuId='.$menu['rowid'].'">'.img_edit('default',0,'class="menuEdit" id="edit'.$menu['rowid'].'"').'</a> '.
+                        '<a href="edit.php?menu_handler='.$menu_handler_to_search.'&action=create&menuId='.$menu['rowid'].'">'.img_edit_add('default',0,'class="menuNew" id="new'.$menu['rowid'].'"').'</a> '.
+                        '<a href="index.php?menu_handler='.$menu_handler_to_search.'&action=delete&menuId='.$menu['rowid'].'">'.img_delete('default',0,'class="menuDel" id="del'.$menu['rowid'].'"').'</a> '.
+                        '<a href="index.php?menu_handler='.$menu_handler_to_search.'&action=up&menuId='.$menu['rowid'].'">'.img_picto("Monter","1uparrow").'</a><a href="index.php?menu_handler='.$menu_handler_to_search.'&action=down&menuId='.$menu['rowid'].'">'.img_picto("Descendre","1downarrow").'</a>'.
+                        '</td></tr></table>'
+            );
+            $i++;
+        }
+    }
 
-	// Appelle de la fonction recursive (ammorce)
-	// avec recherche depuis la racine.
-	//var_dump($data);
-	tree_recur($data,$data[0],0);
+    // Appelle de la fonction recursive (ammorce)
+    // avec recherche depuis la racine.
+    //var_dump($data);
+    tree_recur($data,$data[0],0);
 
-	print '</td>';
+    print '</td>';
 
-	print '</tr>';
+    print '</tr>';
 
-	print '</table>';
+    print '</table>';
 
+    print '</div>';
 
-	print '</div>';
-
-
-	/*
-	 * Boutons actions
-	 */
-	print '<div class="tabsAction">';
-	print '<a class="butAction" href="'.DOL_URL_ROOT.'/admin/menus/edit.php?menuId=0&amp;action=create&amp;menu_handler='.urlencode($menu_handler).'">'.$langs->trans("NewMenu").'</a>';
-	print '</div>';
-}
-else
-{
-	$langs->load("errors");
-	print '<div class="error">'.$langs->trans("ErrorFeatureNeedJavascript").'</div>';
+    /*
+     * Boutons actions
+     */
+    print '<div class="tabsAction">';
+    print '<a class="butAction" href="'.DOL_URL_ROOT.'/admin/menus/edit.php?menuId=0&amp;action=create&amp;menu_handler='.urlencode($menu_handler).'">'.$langs->trans("NewMenu").'</a>';
+    print '</div>';
+} else {
+    $langs->load("errors");
+    print '<div class="error">'.$langs->trans("ErrorFeatureNeedJavascript").'</div>';
 }
 
 print '<br>';
@@ -370,4 +340,3 @@ print '<br>';
 llxFooter();
 
 $db->close();
-?>

@@ -27,7 +27,6 @@ require '../main.inc.php';
 
 $langs->load("companies");
 
-
 /*
  * View
  */
@@ -35,8 +34,7 @@ $langs->load("companies");
 llxHeader();
 
 // Security check
-if ($user->societe_id > 0)
-{
+if ($user->societe_id > 0) {
     $action = '';
     $socid = $user->societe_id;
 }
@@ -51,7 +49,6 @@ $pagenext = $page + 1;
 if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="p.name";
 $limit = $conf->liste_limit;
-
 
 /*
  * Mode liste
@@ -89,8 +86,7 @@ $sql .= " ORDER BY $sortfield $sortorder ";
 $sql .= $db->plimit($limit, $offset);
 
 $result = $db->query($sql);
-if ($result)
-{
+if ($result) {
     $num = $db->num_rows($result);
 
     $title = (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("ListOfContacts") : $langs->trans("ListOfContactsAddresses"));
@@ -106,8 +102,7 @@ if ($result)
     print "</tr>\n";
     $var=True;
     $i = 0;
-    while ($i < min($num,$limit))
-    {
+    while ($i < min($num,$limit)) {
         $obj = $db->fetch_object($result);
 
         $var=!$var;
@@ -126,14 +121,10 @@ if ($result)
     print "</table>";
     $db->free($result);
 
-}
-else
-{
+} else {
     dol_print_error($db);
 }
-
 
 llxFooter();
 
 $db->close();
-?>

@@ -36,73 +36,52 @@ if (! $user->admin) accessforbidden();
 
 $action=GETPOST('action','alpha');
 
-
 /*
  * Action
  */
-if (preg_match('/set_(.*)/',$action,$reg))
-{
+if (preg_match('/set_(.*)/',$action,$reg)) {
     $code=$reg[1];
-    if (dolibarr_set_const($db, $code, 1, 'yesno', 0, '', $conf->entity) > 0)
-    {
+    if (dolibarr_set_const($db, $code, 1, 'yesno', 0, '', $conf->entity) > 0) {
         header("Location: ".$_SERVER["PHP_SELF"]);
         exit;
-    }
-    else
-    {
+    } else {
         dol_print_error($db);
     }
 }
 
-if (preg_match('/del_(.*)/',$action,$reg))
-{
+if (preg_match('/del_(.*)/',$action,$reg)) {
     $code=$reg[1];
-    if (dolibarr_del_const($db, $code, $conf->entity) > 0)
-    {
+    if (dolibarr_del_const($db, $code, $conf->entity) > 0) {
         header("Location: ".$_SERVER["PHP_SELF"]);
         exit;
-    }
-    else
-    {
+    } else {
         dol_print_error($db);
     }
 }
 
-if ($action == 'remises')
-{
-    if (dolibarr_set_const($db, 'MARGIN_METHODE_FOR_DISCOUNT', $_POST['MARGIN_METHODE_FOR_DISCOUNT'], 'chaine', 0, '', $conf->entity) > 0)
-    {
+if ($action == 'remises') {
+    if (dolibarr_set_const($db, 'MARGIN_METHODE_FOR_DISCOUNT', $_POST['MARGIN_METHODE_FOR_DISCOUNT'], 'chaine', 0, '', $conf->entity) > 0) {
           $conf->global->MARGIN_METHODE_FOR_DISCOUNT = $_POST['MARGIN_METHODE_FOR_DISCOUNT'];
           setEventMessage($langs->trans("RecordModifiedSuccessfully"));
-    }
-    else
-    {
+    } else {
         dol_print_error($db);
     }
 }
 
-if ($action == 'typemarges')
-{
-    if (dolibarr_set_const($db, 'MARGIN_TYPE', $_POST['MARGIN_TYPE'], 'chaine', 0, '', $conf->entity) > 0)
-    {
+if ($action == 'typemarges') {
+    if (dolibarr_set_const($db, 'MARGIN_TYPE', $_POST['MARGIN_TYPE'], 'chaine', 0, '', $conf->entity) > 0) {
           $conf->global->MARGIN_METHODE_FOR_DISCOUNT = $_POST['MARGIN_TYPE'];
           setEventMessage($langs->trans("RecordModifiedSuccessfully"));
-    }
-    else
-    {
+    } else {
         dol_print_error($db);
     }
 }
 
-if ($action == 'contact')
-{
-    if (dolibarr_set_const($db, 'AGENT_CONTACT_TYPE', $_POST['AGENT_CONTACT_TYPE'], 'chaine', 0, '', $conf->entity) > 0)
-    {
+if ($action == 'contact') {
+    if (dolibarr_set_const($db, 'AGENT_CONTACT_TYPE', $_POST['AGENT_CONTACT_TYPE'], 'chaine', 0, '', $conf->entity) > 0) {
           $conf->global->AGENT_CONTACT_TYPE = $_POST['AGENT_CONTACT_TYPE'];
           setEventMessage($langs->trans("RecordModifiedSuccessfully"));
-    }
-    else
-    {
+    } else {
         dol_print_error($db);
     }
 }
@@ -113,10 +92,8 @@ if ($action == 'contact')
 
 llxHeader('',$langs->trans("margesSetup"));
 
-
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print_fiche_titre($langs->trans("margesSetup"),$linkback,'setup');
-
 
 $head = marges_admin_prepare_head();
 
@@ -143,11 +120,11 @@ print '<td>'.$langs->trans("MARGIN_TYPE").'</td>';
 print '<td align="right">'.$langs->trans('MargeBrute');
 print ' <input type="radio" name="MARGIN_TYPE" value="1" ';
 if (isset($conf->global->MARGIN_TYPE) && $conf->global->MARGIN_TYPE == '1')
-	print 'checked ';
+    print 'checked ';
 print '/><br/>'.$langs->trans('MargeNette');
 print ' <input type="radio" name="MARGIN_TYPE" value="2" ';
 if (isset($conf->global->MARGIN_TYPE) && $conf->global->MARGIN_TYPE == '2')
-	print 'checked ';
+    print 'checked ';
 print '/>';
 print '</td>';
 print '<td>';
@@ -162,20 +139,14 @@ $var=!$var;
 print '<tr '.$bc[$var].'>';
 print '<td>'.$langs->trans("DisplayMarginRates").'</td>';
 print '<td colspan="2" align="center">';
-if (! empty($conf->use_javascript_ajax))
-{
-	print ajax_constantonoff('DISPLAY_MARGIN_RATES');
-}
-else
-{
-	if (empty($conf->global->DISPLAY_MARGIN_RATES))
-	{
-		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_DISPLAY_MARGIN_RATES">'.img_picto($langs->trans("Disabled"),'off').'</a>';
-	}
-	else
-	{
-		print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_DISPLAY_MARGIN_RATES">'.img_picto($langs->trans("Enabled"),'on').'</a>';
-	}
+if (! empty($conf->use_javascript_ajax)) {
+    print ajax_constantonoff('DISPLAY_MARGIN_RATES');
+} else {
+    if (empty($conf->global->DISPLAY_MARGIN_RATES)) {
+        print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_DISPLAY_MARGIN_RATES">'.img_picto($langs->trans("Disabled"),'off').'</a>';
+    } else {
+        print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_DISPLAY_MARGIN_RATES">'.img_picto($langs->trans("Enabled"),'on').'</a>';
+    }
 }
 print '</td>';
 print '<td>'.$langs->trans('MarginRate').' = '.$langs->trans('Margin').' / '.$langs->trans('BuyingPrice').'</td>';
@@ -186,20 +157,14 @@ $var=!$var;
 print '<tr '.$bc[$var].'>';
 print '<td>'.$langs->trans("DisplayMarkRates").'</td>';
 print '<td colspan="2" align="center">';
-if (! empty($conf->use_javascript_ajax))
-{
-	print ajax_constantonoff('DISPLAY_MARK_RATES');
-}
-else
-{
-	if (empty($conf->global->DISPLAY_MARK_RATES))
-	{
-		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_DISPLAY_MARK_RATES">'.img_picto($langs->trans("Disabled"),'off').'</a>';
-	}
-	else
-	{
-		print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_DISPLAY_MARK_RATES">'.img_picto($langs->trans("Enabled"),'on').'</a>';
-	}
+if (! empty($conf->use_javascript_ajax)) {
+    print ajax_constantonoff('DISPLAY_MARK_RATES');
+} else {
+    if (empty($conf->global->DISPLAY_MARK_RATES)) {
+        print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_DISPLAY_MARK_RATES">'.img_picto($langs->trans("Disabled"),'off').'</a>';
+    } else {
+        print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_DISPLAY_MARK_RATES">'.img_picto($langs->trans("Enabled"),'on').'</a>';
+    }
 }
 print '</td>';
 print '<td>'.$langs->trans('MarkRate').' = '.$langs->trans('Margin').' / '.$langs->trans('SellingPrice').'</td>';
@@ -209,20 +174,14 @@ $var=!$var;
 print '<tr '.$bc[$var].'>';
 print '<td>'.$langs->trans("ForceBuyingPriceIfNull").'</td>';
 print '<td colspan="2" align="center">';
-if (! empty($conf->use_javascript_ajax))
-{
-	print ajax_constantonoff('ForceBuyingPriceIfNull');
-}
-else
-{
-	if (empty($conf->global->ForceBuyingPriceIfNull))
-	{
-		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_ForceBuyingPriceIfNull">'.img_picto($langs->trans("Disabled"),'off').'</a>';
-	}
-	else
-	{
-		print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_ForceBuyingPriceIfNull">'.img_picto($langs->trans("Enabled"),'on').'</a>';
-	}
+if (! empty($conf->use_javascript_ajax)) {
+    print ajax_constantonoff('ForceBuyingPriceIfNull');
+} else {
+    if (empty($conf->global->ForceBuyingPriceIfNull)) {
+        print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_ForceBuyingPriceIfNull">'.img_picto($langs->trans("Disabled"),'off').'</a>';
+    } else {
+        print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_ForceBuyingPriceIfNull">'.img_picto($langs->trans("Enabled"),'on').'</a>';
+    }
 }
 print '</td>';
 print '<td>'.$langs->trans('ForceBuyingPriceIfNullDetails').'</td>';
@@ -239,15 +198,15 @@ print '<td align="left">';
 print '<select name="MARGIN_METHODE_FOR_DISCOUNT" class="flat">';
 print '<option value="1" ';
 if (isset($conf->global->MARGIN_METHODE_FOR_DISCOUNT) && $conf->global->MARGIN_METHODE_FOR_DISCOUNT == '1')
-	print 'selected ';
+    print 'selected ';
 print '>'.$langs->trans('UseDiscountAsProduct').'</option>';
 print '<option value="2" ';
 if (isset($conf->global->MARGIN_METHODE_FOR_DISCOUNT) && $conf->global->MARGIN_METHODE_FOR_DISCOUNT == '2')
-	print 'selected ';
+    print 'selected ';
 print '>'.$langs->trans('UseDiscountAsService').'</option>';
 print '<option value="3" ';
 if (isset($conf->global->MARGIN_METHODE_FOR_DISCOUNT) && $conf->global->MARGIN_METHODE_FOR_DISCOUNT == '3')
-	print 'selected ';
+    print 'selected ';
 print '>'.$langs->trans('UseDiscountOnTotal').'</option>';
 print '</select>';
 print '</td>';
@@ -285,4 +244,3 @@ print '<br>';
 
 llxFooter();
 $db->close();
-?>

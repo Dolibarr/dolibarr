@@ -24,7 +24,7 @@
  *      \brief      Page ajout de categories bancaires
  */
 
-require('../../main.inc.php');
+require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 $langs->load("banks");
@@ -35,80 +35,66 @@ $action=GETPOST('action');
 if (!$user->rights->banque->configurer)
   accessforbidden();
 
-
-
 /*
  * Add category
  */
-if (GETPOST('add'))
-{
-	if (GETPOST("label"))
-	{
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."bank_categ (";
-		$sql.= "label";
-		$sql.= ", entity";
-		$sql.= ") VALUES (";
-		$sql.= "'".$db->escape(GETPOST("label"))."'";
-		$sql.= ", ".$conf->entity;
-		$sql.= ")";
+if (GETPOST('add')) {
+    if (GETPOST("label")) {
+        $sql = "INSERT INTO ".MAIN_DB_PREFIX."bank_categ (";
+        $sql.= "label";
+        $sql.= ", entity";
+        $sql.= ") VALUES (";
+        $sql.= "'".$db->escape(GETPOST("label"))."'";
+        $sql.= ", ".$conf->entity;
+        $sql.= ")";
 
-		dol_syslog("sql=".$sql);
-		$result = $db->query($sql);
-		if (!$result)
-		{
-			dol_print_error($db);
-		}
-	}
+        dol_syslog("sql=".$sql);
+        $result = $db->query($sql);
+        if (!$result) {
+            dol_print_error($db);
+        }
+    }
 }
 
 /*
  * Update category
  */
-if (GETPOST('update'))
-{
-	if (GETPOST("label"))
-	{
-		$sql = "UPDATE ".MAIN_DB_PREFIX."bank_categ ";
-		$sql.= "set label='".$db->escape(GETPOST("label"))."'";
-		$sql.= " WHERE rowid = '".GETPOST('categid')."'";
-		$sql.= " AND entity = ".$conf->entity;
+if (GETPOST('update')) {
+    if (GETPOST("label")) {
+        $sql = "UPDATE ".MAIN_DB_PREFIX."bank_categ ";
+        $sql.= "set label='".$db->escape(GETPOST("label"))."'";
+        $sql.= " WHERE rowid = '".GETPOST('categid')."'";
+        $sql.= " AND entity = ".$conf->entity;
 
-		dol_syslog("sql=".$sql);
-		$result = $db->query($sql);
-		if (!$result)
-		{
-			dol_print_error($db);
-		}
-	}
+        dol_syslog("sql=".$sql);
+        $result = $db->query($sql);
+        if (!$result) {
+            dol_print_error($db);
+        }
+    }
 }
 /*
 * Action suppression catégorie
 */
-if ($action == 'delete')
-{
-	if (GETPOST('categid'))
-	{
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_categ";
-		$sql.= " WHERE rowid = '".GETPOST('categid')."'";
-		$sql.= " AND entity = ".$conf->entity;
+if ($action == 'delete') {
+    if (GETPOST('categid')) {
+        $sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_categ";
+        $sql.= " WHERE rowid = '".GETPOST('categid')."'";
+        $sql.= " AND entity = ".$conf->entity;
 
-		dol_syslog("sql=".$sql);
-		$result = $db->query($sql);
-		if (!$result)
-		{
-			dol_print_error($db);
-		}
-	}
+        dol_syslog("sql=".$sql);
+        $result = $db->query($sql);
+        if (!$result) {
+            dol_print_error($db);
+        }
+    }
 }
-
-
 
 /*
  * View
  */
 
 llxHeader();
-
 
 print_fiche_titre($langs->trans("Rubriques"));
 
@@ -126,38 +112,33 @@ $sql.= " WHERE entity = ".$conf->entity;
 $sql.= " ORDER BY label";
 
 $result = $db->query($sql);
-if ($result)
-{
-	$num = $db->num_rows($result);
-	$i = 0; $total = 0;
+if ($result) {
+    $num = $db->num_rows($result);
+    $i = 0; $total = 0;
 
-	$var=True;
-	while ($i < $num)
-	{
-		$objp = $db->fetch_object($result);
-		$var=!$var;
-		print "<tr ".$bc[$var].">";
-		print '<td><a href="'.DOL_URL_ROOT.'/compta/bank/budget.php?bid='.$objp->rowid.'">'.$objp->rowid.'</a></td>';
-		if (GETPOST("action") == 'edit' && GETPOST("categid")== $objp->rowid)
-		{
-			print "<td colspan=2>";
-			print '<input type="hidden" name="categid" value="'.$objp->rowid.'">';
-			print '<input name="label" type="text" size=45 value="'.$objp->label.'">';
-			print '<input type="submit" name="update" class="button" value="'.$langs->trans("Edit").'">';
+    $var=True;
+    while ($i < $num) {
+        $objp = $db->fetch_object($result);
+        $var=!$var;
+        print "<tr ".$bc[$var].">";
+        print '<td><a href="'.DOL_URL_ROOT.'/compta/bank/budget.php?bid='.$objp->rowid.'">'.$objp->rowid.'</a></td>';
+        if (GETPOST("action") == 'edit' && GETPOST("categid")== $objp->rowid) {
+            print "<td colspan=2>";
+            print '<input type="hidden" name="categid" value="'.$objp->rowid.'">';
+            print '<input name="label" type="text" size=45 value="'.$objp->label.'">';
+            print '<input type="submit" name="update" class="button" value="'.$langs->trans("Edit").'">';
 
-			print "</td>";
-		}
-		else
-		{
-			print "<td >".$objp->label."</td>";
-			print '<td style="text-align: center;">';
-			print '<a href="'.$_SERVER["PHP_SELF"].'?categid='.$objp->rowid.'&amp;action=edit">'.img_edit().'</a>&nbsp;&nbsp;';
-			print '<a href="'.$_SERVER["PHP_SELF"].'?categid='.$objp->rowid.'&amp;action=delete">'.img_delete().'</a></td>';
-		}
-		print "</tr>";
-		$i++;
-	}
-	$db->free($result);
+            print "</td>";
+        } else {
+            print "<td >".$objp->label."</td>";
+            print '<td style="text-align: center;">';
+            print '<a href="'.$_SERVER["PHP_SELF"].'?categid='.$objp->rowid.'&amp;action=edit">'.img_edit().'</a>&nbsp;&nbsp;';
+            print '<a href="'.$_SERVER["PHP_SELF"].'?categid='.$objp->rowid.'&amp;action=delete">'.img_delete().'</a></td>';
+        }
+        print "</tr>";
+        $i++;
+    }
+    $db->free($result);
 }
 
 print "</form>";
@@ -165,13 +146,12 @@ print "</form>";
 /*
  * Line to add category
  */
-if ($action != 'edit')
-{
-	$var=!$var;
-	print '<tr '.$bc[$var].'>';
-	print '<td>&nbsp;</td><td><input name="label" type="text" size="45"></td>';
-	print '<td align="center"><input type="submit" name="add" class="button" value="'.$langs->trans("Add").'"></td>';
-	print '</tr>';
+if ($action != 'edit') {
+    $var=!$var;
+    print '<tr '.$bc[$var].'>';
+    print '<td>&nbsp;</td><td><input name="label" type="text" size="45"></td>';
+    print '<td align="center"><input type="submit" name="add" class="button" value="'.$langs->trans("Add").'"></td>';
+    print '</tr>';
 }
 
 print "</table>";
@@ -181,4 +161,3 @@ print "</form>";
 llxFooter();
 
 $db->close();
-?>

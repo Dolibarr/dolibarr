@@ -46,90 +46,69 @@ $object = new PaiementFourn($db);
  * Actions
  */
 
-if ($action == 'setnote' && $user->rights->fournisseur->facture->creer)
-{
+if ($action == 'setnote' && $user->rights->fournisseur->facture->creer) {
     $db->begin();
 
     $object->fetch($id);
     $result = $object->update_note(GETPOST('note'));
-    if ($result > 0)
-    {
+    if ($result > 0) {
         $db->commit();
         $action='';
-    }
-    else
-    {
+    } else {
         $mesg='<div class="error">'.$object->error.'</div>';
         $db->rollback();
     }
 }
 
-if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->fournisseur->facture->supprimer)
-{
-	$db->begin();
+if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->fournisseur->facture->supprimer) {
+    $db->begin();
 
-	$object->fetch($id);
-	$result = $object->delete();
-	if ($result > 0)
-	{
-		$db->commit();
-		header('Location: '.DOL_URL_ROOT.'/fourn/facture/paiement.php');
-		exit;
-	}
-	else
-	{
-		$mesg='<div class="error">'.$object->error.'</div>';
-		$db->rollback();
-	}
+    $object->fetch($id);
+    $result = $object->delete();
+    if ($result > 0) {
+        $db->commit();
+        header('Location: '.DOL_URL_ROOT.'/fourn/facture/paiement.php');
+        exit;
+    } else {
+        $mesg='<div class="error">'.$object->error.'</div>';
+        $db->rollback();
+    }
 }
 
-if ($action == 'confirm_valide' && $confirm == 'yes' && $user->rights->fournisseur->facture->valider)
-{
-	$db->begin();
+if ($action == 'confirm_valide' && $confirm == 'yes' && $user->rights->fournisseur->facture->valider) {
+    $db->begin();
 
-	$object->fetch($id);
-	if ($object->valide() >= 0)
-	{
-		$db->commit();
-		header('Location: '.$_SERVER['PHP_SELF'].'?id='.$object->id);
-		exit;
-	}
-	else
-	{
-		$mesg='<div class="error">'.$object->error.'</div>';
-		$db->rollback();
-	}
+    $object->fetch($id);
+    if ($object->valide() >= 0) {
+        $db->commit();
+        header('Location: '.$_SERVER['PHP_SELF'].'?id='.$object->id);
+        exit;
+    } else {
+        $mesg='<div class="error">'.$object->error.'</div>';
+        $db->rollback();
+    }
 }
 
-if ($action == 'setnum' && ! empty($_POST['num_paiement']))
-{
-	$object->fetch($id);
+if ($action == 'setnum' && ! empty($_POST['num_paiement'])) {
+    $object->fetch($id);
     $res = $object->update_num($_POST['num_paiement']);
-	if ($res === 0)
-	{
-		$mesg = '<div class="ok">'.$langs->trans('PaymentNumberUpdateSucceeded').'</div>';
-	}
-	else
-	{
-		$mesg = '<div class="error">'.$langs->trans('PaymentNumberUpdateFailed').'</div>';
-	}
+    if ($res === 0) {
+        $mesg = '<div class="ok">'.$langs->trans('PaymentNumberUpdateSucceeded').'</div>';
+    } else {
+        $mesg = '<div class="error">'.$langs->trans('PaymentNumberUpdateFailed').'</div>';
+    }
 }
 
-if ($action == 'setdate' && ! empty($_POST['datepday']))
-{
-	$object->fetch($id);
+if ($action == 'setdate' && ! empty($_POST['datepday'])) {
+    $object->fetch($id);
     $datepaye = dol_mktime(12, 0, 0, $_POST['datepmonth'], $_POST['datepday'], $_POST['datepyear']);
-	$res = $object->update_date($datepaye);
-	if ($res === 0)
-	{
-		$mesg = '<div class="ok">'.$langs->trans('PaymentDateUpdateSucceeded').'</div>';
-	}
-	else
-	{
-		$mesg = '<div class="error">'.$langs->trans('PaymentDateUpdateFailed').'</div>';
-	}
+    $res = $object->update_date($datepaye);
+    if ($res === 0) {
+        $mesg = '<div class="ok">'.$langs->trans('PaymentDateUpdateSucceeded').'</div>';
+    } else {
+        $mesg = '<div class="error">'.$langs->trans('PaymentDateUpdateFailed').'</div>';
+    }
 }
-
 
 /*
  * View
@@ -150,68 +129,61 @@ $head[$h][0] = DOL_URL_ROOT.'/fourn/paiement/info.php?id='.$id;
 $head[$h][1] = $langs->trans('Info');
 $h++;
 
-
 dol_fiche_head($head, $hselected, $langs->trans('SupplierPayment'), 0, 'payment');
 
 $result=$object->fetch($id);
-if ($result > 0)
-{
-	/*
-	 * Confirmation de la suppression du paiement
-	 */
-	if ($action == 'delete')
-	{
-		$ret=$form->form_confirm($_SERVER['PHP_SELF'].'?id='.$object->id, $langs->trans("DeletePayment"), $langs->trans("ConfirmDeletePayment"), 'confirm_delete');
-		if ($ret == 'html') print '<br>';
-	}
+if ($result > 0) {
+    /*
+     * Confirmation de la suppression du paiement
+     */
+    if ($action == 'delete') {
+        $ret=$form->form_confirm($_SERVER['PHP_SELF'].'?id='.$object->id, $langs->trans("DeletePayment"), $langs->trans("ConfirmDeletePayment"), 'confirm_delete');
+        if ($ret == 'html') print '<br>';
+    }
 
-	/*
-	 * Confirmation de la validation du paiement
-	 */
-	if ($action == 'valide')
-	{
-		$ret=$form->form_confirm($_SERVER['PHP_SELF'].'?id='.$object->id, $langs->trans("ValidatePayment"), $langs->trans("ConfirmValidatePayment"), 'confirm_valide');
-		if ($ret == 'html') print '<br>';
-	}
+    /*
+     * Confirmation de la validation du paiement
+     */
+    if ($action == 'valide') {
+        $ret=$form->form_confirm($_SERVER['PHP_SELF'].'?id='.$object->id, $langs->trans("ValidatePayment"), $langs->trans("ConfirmValidatePayment"), 'confirm_valide');
+        if ($ret == 'html') print '<br>';
+    }
 
-	print '<table class="border" width="100%">';
+    print '<table class="border" width="100%">';
 
-	print '<tr>';
-	print '<td valign="top" width="20%" colspan="2">'.$langs->trans('Ref').'</td><td colspan="3">';
+    print '<tr>';
+    print '<td valign="top" width="20%" colspan="2">'.$langs->trans('Ref').'</td><td colspan="3">';
     print $form->showrefnav($object,'id','',1,'rowid','ref');
-	print '</td></tr>';
+    print '</td></tr>';
 
-	// Date payment
+    // Date payment
     print '<tr><td valign="top" colspan="2">'.$form->editfieldkey("Date",'datep',$object->date,$object,$object->statut == 0 && $user->rights->fournisseur->facture->creer).'</td><td colspan="3">';
     print $form->editfieldval("Date",'datep',$object->date,$object,$object->statut == 0 && $user->rights->fournisseur->facture->creer,'datepicker','',null,$langs->trans('PaymentDateUpdateSucceeded'));
     print '</td></tr>';
 
-	// Payment mode
-	print '<tr><td valign="top" colspan="2">'.$langs->trans('PaymentMode').'</td><td colspan="3">'.$object->type_libelle.'</td></tr>';
+    // Payment mode
+    print '<tr><td valign="top" colspan="2">'.$langs->trans('PaymentMode').'</td><td colspan="3">'.$object->type_libelle.'</td></tr>';
 
-	// Payment numero
+    // Payment numero
     print '<tr><td valign="top" colspan="2">'.$form->editfieldkey("Numero",'num_paiement',$object->numero,$object,$object->statut == 0 && $user->rights->fournisseur->facture->creer).'</td><td colspan="3">';
     print $form->editfieldval("Numero",'num_paiement',$object->numero,$object,$object->statut == 0 && $user->rights->fournisseur->facture->creer,'string','',null,$langs->trans('PaymentNumberUpdateSucceeded'));
     print '</td></tr>';
 
-	// Amount
-	print '<tr><td valign="top" colspan="2">'.$langs->trans('Amount').'</td><td colspan="3">'.price($object->montant).'&nbsp;'.$langs->trans('Currency'.$conf->currency).'</td></tr>';
+    // Amount
+    print '<tr><td valign="top" colspan="2">'.$langs->trans('Amount').'</td><td colspan="3">'.price($object->montant).'&nbsp;'.$langs->trans('Currency'.$conf->currency).'</td></tr>';
 
-	if (! empty($conf->global->BILL_ADD_PAYMENT_VALIDATION))
-	{
-		print '<tr><td valign="top" colspan="2">'.$langs->trans('Status').'</td><td colspan="3">'.$object->getLibStatut(4).'</td></tr>';
-	}
+    if (! empty($conf->global->BILL_ADD_PAYMENT_VALIDATION)) {
+        print '<tr><td valign="top" colspan="2">'.$langs->trans('Status').'</td><td colspan="3">'.$object->getLibStatut(4).'</td></tr>';
+    }
 
-	// Note
+    // Note
     print '<tr><td valign="top"" colspan="2">'.$form->editfieldkey("Note",'note',$object->note,$object,$user->rights->fournisseur->facture->creer).'</td><td colspan="3">';
     print $form->editfieldval("Note",'note',$object->note,$object,$user->rights->fournisseur->facture->creer,'textarea');
     print '</td></tr>';
 
     // Bank account
-	if (! empty($conf->banque->enabled))
-	{
-		if ($object->bank_account)
-		{
+    if (! empty($conf->banque->enabled)) {
+        if ($object->bank_account) {
             $bankline=new AccountLine($db);
             $bankline->fetch($object->bank_line);
 
@@ -224,116 +196,102 @@ if ($result > 0)
         }
     }
 
-	print '</table>';
+    print '</table>';
 
-	dol_htmloutput_mesg($mesg);
+    dol_htmloutput_mesg($mesg);
 
-	print '<br>';
+    print '<br>';
 
-	/**
-	 *	Liste des factures
-	 */
-	$allow_delete = 1 ;
-	$sql = 'SELECT f.rowid, f.ref, f.ref_supplier, f.total_ttc, pf.amount, f.rowid as facid, f.paye, f.fk_statut, s.nom, s.rowid as socid';
-	$sql .= ' FROM '.MAIN_DB_PREFIX.'paiementfourn_facturefourn as pf,'.MAIN_DB_PREFIX.'facture_fourn as f,'.MAIN_DB_PREFIX.'societe as s';
-	$sql .= ' WHERE pf.fk_facturefourn = f.rowid AND f.fk_soc = s.rowid';
-	$sql .= ' AND pf.fk_paiementfourn = '.$object->id;
-	$resql=$db->query($sql);
-	if ($resql)
-	{
-		$num = $db->num_rows($resql);
+    /**
+     *	Liste des factures
+     */
+    $allow_delete = 1 ;
+    $sql = 'SELECT f.rowid, f.ref, f.ref_supplier, f.total_ttc, pf.amount, f.rowid as facid, f.paye, f.fk_statut, s.nom, s.rowid as socid';
+    $sql .= ' FROM '.MAIN_DB_PREFIX.'paiementfourn_facturefourn as pf,'.MAIN_DB_PREFIX.'facture_fourn as f,'.MAIN_DB_PREFIX.'societe as s';
+    $sql .= ' WHERE pf.fk_facturefourn = f.rowid AND f.fk_soc = s.rowid';
+    $sql .= ' AND pf.fk_paiementfourn = '.$object->id;
+    $resql=$db->query($sql);
+    if ($resql) {
+        $num = $db->num_rows($resql);
 
-		$i = 0;
-		$total = 0;
-		print '<b>'.$langs->trans("Invoices").'</b><br>';
-		print '<table class="noborder" width="100%">';
-		print '<tr class="liste_titre">';
-		print '<td>'.$langs->trans('Ref').'</td>';
-		print '<td>'.$langs->trans('RefSupplier').'</td>';
-		print '<td>'.$langs->trans('Company').'</td>';
-		print '<td align="right">'.$langs->trans('ExpectedToPay').'</td>';
-		print '<td align="center">'.$langs->trans('Status').'</td>';
-		print '<td align="right">'.$langs->trans('PayedByThisPayment').'</td>';
-		print "</tr>\n";
+        $i = 0;
+        $total = 0;
+        print '<b>'.$langs->trans("Invoices").'</b><br>';
+        print '<table class="noborder" width="100%">';
+        print '<tr class="liste_titre">';
+        print '<td>'.$langs->trans('Ref').'</td>';
+        print '<td>'.$langs->trans('RefSupplier').'</td>';
+        print '<td>'.$langs->trans('Company').'</td>';
+        print '<td align="right">'.$langs->trans('ExpectedToPay').'</td>';
+        print '<td align="center">'.$langs->trans('Status').'</td>';
+        print '<td align="right">'.$langs->trans('PayedByThisPayment').'</td>';
+        print "</tr>\n";
 
-		if ($num > 0)
-		{
-			$var=True;
+        if ($num > 0) {
+            $var=True;
 
-			$facturestatic=new FactureFournisseur($db);
+            $facturestatic=new FactureFournisseur($db);
 
-			while ($i < $num)
-			{
-				$objp = $db->fetch_object($resql);
-				$var=!$var;
-				print '<tr '.$bc[$var].'>';
-				// Ref
-				print '<td><a href="'.DOL_URL_ROOT.'/fourn/facture/fiche.php?facid='.$objp->facid.'">'.img_object($langs->trans('ShowBill'),'bill').' ';
-				print $objp->ref;
-				print "</a></td>\n";
-				// Ref supplier
-				print '<td>'.$objp->ref_supplier."</td>\n";
-				// Third party
-				print '<td><a href="'.DOL_URL_ROOT.'/fourn/fiche.php?socid='.$objp->socid.'">'.img_object($langs->trans('ShowCompany'),'company').' '.$objp->nom.'</a></td>';
-				// Expected to pay
-				print '<td align="right">'.price($objp->total_ttc).'</td>';
-				// Status
-				print '<td align="center">'.$facturestatic->LibStatut($objp->paye,$objp->fk_statut,2,1).'</td>';
-				// Payed
-				print '<td align="right">'.price($objp->amount).'</td>';
-				print "</tr>\n";
-				if ($objp->paye == 1)
-				{
-					$allow_delete = 0;
-				}
-				$total = $total + $objp->amount;
-				$i++;
-			}
-		}
-		$var=!$var;
+            while ($i < $num) {
+                $objp = $db->fetch_object($resql);
+                $var=!$var;
+                print '<tr '.$bc[$var].'>';
+                // Ref
+                print '<td><a href="'.DOL_URL_ROOT.'/fourn/facture/fiche.php?facid='.$objp->facid.'">'.img_object($langs->trans('ShowBill'),'bill').' ';
+                print $objp->ref;
+                print "</a></td>\n";
+                // Ref supplier
+                print '<td>'.$objp->ref_supplier."</td>\n";
+                // Third party
+                print '<td><a href="'.DOL_URL_ROOT.'/fourn/fiche.php?socid='.$objp->socid.'">'.img_object($langs->trans('ShowCompany'),'company').' '.$objp->nom.'</a></td>';
+                // Expected to pay
+                print '<td align="right">'.price($objp->total_ttc).'</td>';
+                // Status
+                print '<td align="center">'.$facturestatic->LibStatut($objp->paye,$objp->fk_statut,2,1).'</td>';
+                // Payed
+                print '<td align="right">'.price($objp->amount).'</td>';
+                print "</tr>\n";
+                if ($objp->paye == 1) {
+                    $allow_delete = 0;
+                }
+                $total = $total + $objp->amount;
+                $i++;
+            }
+        }
+        $var=!$var;
 
-		print "</table>\n";
-		$db->free($resql);
-	}
-	else
-	{
-		dol_print_error($db);
-	}
+        print "</table>\n";
+        $db->free($resql);
+    } else {
+        dol_print_error($db);
+    }
 
-	print '</div>';
+    print '</div>';
 
+    /*
+     * Boutons Actions
+     */
 
-	/*
-	 * Boutons Actions
-	 */
+    print '<div class="tabsAction">';
+    if (! empty($conf->global->BILL_ADD_PAYMENT_VALIDATION)) {
+        if ($user->societe_id == 0 && $object->statut == 0 && $action == '') {
+            if ($user->rights->fournisseur->facture->valider) {
+                print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=valide">'.$langs->trans('Valid').'</a>';
 
-	print '<div class="tabsAction">';
-	if (! empty($conf->global->BILL_ADD_PAYMENT_VALIDATION))
-	{
-		if ($user->societe_id == 0 && $object->statut == 0 && $action == '')
-		{
-			if ($user->rights->fournisseur->facture->valider)
-			{
-				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=valide">'.$langs->trans('Valid').'</a>';
+            }
+        }
+    }
+    if ($user->societe_id == 0 && $allow_delete && $object->statut == 0 && $action == '') {
+        if ($user->rights->fournisseur->facture->supprimer) {
+            print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=delete">'.$langs->trans('Delete').'</a>';
 
-			}
-		}
-	}
-	if ($user->societe_id == 0 && $allow_delete && $object->statut == 0 && $action == '')
-	{
-		if ($user->rights->fournisseur->facture->supprimer)
-		{
-			print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=delete">'.$langs->trans('Delete').'</a>';
+        }
+    }
+    print '</div>';
 
-		}
-	}
-	print '</div>';
-
-}
-else
-{
-	$langs->load("errors");
-	print $langs->trans("ErrorRecordNotFound");
+} else {
+    $langs->load("errors");
+    print $langs->trans("ErrorRecordNotFound");
 }
 
 dol_fiche_end();
@@ -341,4 +299,3 @@ dol_fiche_end();
 llxFooter();
 
 $db->close();
-?>

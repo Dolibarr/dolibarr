@@ -60,17 +60,15 @@ $extrafields = new ExtraFields($db);
 // fetch optionals attributes and labels
 $extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
 
-if ($id > 0 || ! empty($ref))
-{
-	$object = new Product($db);
-	$object->fetch($id, $ref);
+if ($id > 0 || ! empty($ref)) {
+    $object = new Product($db);
+    $object->fetch($id, $ref);
 }
 
 // Get object canvas (By default, this is not defined, so standard usage of dolibarr)
 $canvas = !empty($object->canvas)?$object->canvas:GETPOST("canvas");
 $objcanvas='';
-if (! empty($canvas))
-{
+if (! empty($canvas)) {
     require_once DOL_DOCUMENT_ROOT.'/core/class/canvas.class.php';
     $objcanvas = new Canvas($db,$action);
     $objcanvas->getCanvas('product','card',$canvas);
@@ -84,8 +82,6 @@ $result=restrictedArea($user,'produit|service',$fieldvalue,'product&product','',
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('productcard'));
 
-
-
 /*
  * Actions
  */
@@ -94,81 +90,71 @@ $parameters=array('id'=>$id, 'ref'=>$ref, 'objcanvas'=>$objcanvas);
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 $error=$hookmanager->error; $errors=$hookmanager->errors;
 
-if (empty($reshook))
-{
+if (empty($reshook)) {
     // Type
-    if ($action ==	'setfk_product_type' && $user->rights->produit->creer)
-    {
-    	$result = $object->setValueFrom('fk_product_type', GETPOST('fk_product_type'));
-    	header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
-    	exit;
+    if ($action ==	'setfk_product_type' && $user->rights->produit->creer) {
+        $result = $object->setValueFrom('fk_product_type', GETPOST('fk_product_type'));
+        header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+        exit;
     }
 
     // Barcode type
-    if ($action ==	'setfk_barcode_type' && $user->rights->barcode->creer)
-    {
-    	$result = $object->setValueFrom('fk_barcode_type', GETPOST('fk_barcode_type'));
-    	header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
-    	exit;
+    if ($action ==	'setfk_barcode_type' && $user->rights->barcode->creer) {
+        $result = $object->setValueFrom('fk_barcode_type', GETPOST('fk_barcode_type'));
+        header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+        exit;
     }
 
     // Barcode value
-    if ($action ==	'setbarcode' && $user->rights->barcode->creer)
-    {
-    	//Todo: ajout verification de la validite du code barre en fonction du type
-    	$result = $object->setValueFrom('barcode', GETPOST('barcode'));
-    	header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
-    	exit;
+    if ($action ==	'setbarcode' && $user->rights->barcode->creer) {
+        //Todo: ajout verification de la validite du code barre en fonction du type
+        $result = $object->setValueFrom('barcode', GETPOST('barcode'));
+        header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+        exit;
     }
 
-    if ($action == 'setaccountancy_code_buy')
-    {
+    if ($action == 'setaccountancy_code_buy') {
         $result = $object->setValueFrom('accountancy_code_buy', GETPOST('accountancy_code_buy'));
         if ($result < 0)
-        	setEventMessage(join(',',$object->errors), 'errors');
+            setEventMessage(join(',',$object->errors), 'errors');
         $action="";
     }
 
-    if ($action == 'setaccountancy_code_sell')
-    {
+    if ($action == 'setaccountancy_code_sell') {
         $result = $object->setValueFrom('accountancy_code_sell', GETPOST('accountancy_code_sell'));
         if ($result < 0)
-        	setEventMessage(join(',',$object->errors), 'errors');
+            setEventMessage(join(',',$object->errors), 'errors');
         $action="";
     }
 
     // Add a product or service
-    if ($action == 'add' && ($user->rights->produit->creer || $user->rights->service->creer))
-    {
+    if ($action == 'add' && ($user->rights->produit->creer || $user->rights->service->creer)) {
         $error=0;
 
-        if (! GETPOST('libelle'))
-        {
+        if (! GETPOST('libelle')) {
             setEventMessage($langs->trans('ErrorFieldRequired',$langs->transnoentities('Label')), 'errors');
             $action = "create";
             $error++;
         }
-        if (empty($ref))
-        {
+        if (empty($ref)) {
             setEventMessage($langs->trans('ErrorFieldRequired',$langs->transnoentities('Ref')), 'errors');
             $action = "create";
             $error++;
         }
 
-        if (! $error)
-        {
+        if (! $error) {
             $object->ref                = $ref;
             $object->libelle            = GETPOST('libelle');
             $object->price_base_type    = GETPOST('price_base_type');
 
             if ($object->price_base_type == 'TTC')
-            	$object->price_ttc = GETPOST('price');
+                $object->price_ttc = GETPOST('price');
             else
-            	$object->price = GETPOST('price');
+                $object->price = GETPOST('price');
             if ($object->price_base_type == 'TTC')
-            	$object->price_min_ttc = GETPOST('price_min');
+                $object->price_min_ttc = GETPOST('price_min');
             else
-            	$object->price_min = GETPOST('price_min');
+                $object->price_min = GETPOST('price_min');
 
             $object->tva_tx             = str_replace('*','',GETPOST('tva_tx'));
             $object->tva_npr            = preg_match('/\*/',GETPOST('tva_tx'))?1:0;
@@ -200,52 +186,39 @@ if (empty($reshook))
             $object->hidden             	= GETPOST('hidden')=='yes'?1:0;
 
             // MultiPrix
-            if (! empty($conf->global->PRODUIT_MULTIPRICES))
-            {
-                for($i=2;$i<=$conf->global->PRODUIT_MULTIPRICES_LIMIT;$i++)
-                {
-                    if (isset($_POST["price_".$i]))
-                    {
+            if (! empty($conf->global->PRODUIT_MULTIPRICES)) {
+                for ($i=2;$i<=$conf->global->PRODUIT_MULTIPRICES_LIMIT;$i++) {
+                    if (isset($_POST["price_".$i])) {
                         $object->multiprices["$i"] = price2num($_POST["price_".$i],'MU');
                         $object->multiprices_base_type["$i"] = $_POST["multiprices_base_type_".$i];
-                    }
-                    else
-                    {
+                    } else {
                         $object->multiprices["$i"] = "";
                     }
                 }
             }
 
             // Fill array 'array_options' with data from add form
-        	$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
+            $ret = $extrafields->setOptionalsFromPost($extralabels,$object);
 
             $id = $object->create($user);
 
-            if ($id > 0)
-            {
+            if ($id > 0) {
                 header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
                 exit;
-            }
-            else
-            {
-            	setEventMessage($langs->trans($object->error), 'errors');
+            } else {
+                setEventMessage($langs->trans($object->error), 'errors');
                 $action = "create";
             }
         }
     }
 
     // Update a product or service
-    if ($action == 'update' && ($user->rights->produit->creer || $user->rights->service->creer))
-    {
-    	if (GETPOST('cancel'))
-        {
+    if ($action == 'update' && ($user->rights->produit->creer || $user->rights->service->creer)) {
+        if (GETPOST('cancel')) {
             $action = '';
-        }
-        else
-        {
-            if ($object->id > 0)
-            {
-            	$object->oldcopy=dol_clone($object);
+        } else {
+            if ($object->id > 0) {
+                $object->oldcopy=dol_clone($object);
 
                 $object->ref                = $ref;
                 $object->libelle            = GETPOST('libelle');
@@ -271,23 +244,17 @@ if (empty($reshook))
                 $object->hidden             = GETPOST('hidden')=='yes'?1:0;
 
                 // Fill array 'array_options' with data from add form
-        		$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
+                $ret = $extrafields->setOptionalsFromPost($extralabels,$object);
 
-                if ($object->check())
-                {
-                    if ($object->update($object->id, $user) > 0)
-                    {
+                if ($object->check()) {
+                    if ($object->update($object->id, $user) > 0) {
                         $action = 'view';
-                    }
-                    else
-                    {
-                    	setEventMessage($langs->trans($object->error), 'errors');
+                    } else {
+                        setEventMessage($langs->trans($object->error), 'errors');
                         $action = 'edit';
                     }
-                }
-                else
-                {
-                	setEventMessage($langs->trans("ErrorProductBadRefOrLabel"), 'errors');
+                } else {
+                    setEventMessage($langs->trans("ErrorProductBadRefOrLabel"), 'errors');
                     $action = 'edit';
                 }
             }
@@ -297,35 +264,26 @@ if (empty($reshook))
 
     // Action clone object
     if ($action == 'confirm_clone' && $confirm != 'yes') { $action=''; }
-    if ($action == 'confirm_clone' && $confirm == 'yes' && ($user->rights->produit->creer || $user->rights->service->creer))
-    {
-        if (! GETPOST('clone_content') && ! GETPOST('clone_prices') )
-        {
-        	setEventMessage($langs->trans("NoCloneOptionsSpecified"), 'errors');
-        }
-        else
-        {
+    if ($action == 'confirm_clone' && $confirm == 'yes' && ($user->rights->produit->creer || $user->rights->service->creer)) {
+        if (! GETPOST('clone_content') && ! GETPOST('clone_prices') ) {
+            setEventMessage($langs->trans("NoCloneOptionsSpecified"), 'errors');
+        } else {
             $db->begin();
 
             $originalId = $id;
-            if ($object->id > 0)
-            {
+            if ($object->id > 0) {
                 $object->ref = GETPOST('clone_ref');
                 $object->status = 0;
                 $object->status_buy = 0;
                 $object->id = null;
 
-                if ($object->check())
-                {
+                if ($object->check()) {
                     $id = $object->create($user);
-                    if ($id > 0)
-                    {
-                        if (GETPOST('clone_composition'))
-                        {
+                    if ($id > 0) {
+                        if (GETPOST('clone_composition')) {
                             $result = $object->clone_associations($originalId, $id);
 
-                            if ($result < 1)
-                            {
+                            if ($result < 1) {
                                 $db->rollback();
                                 setEventMessage($langs->trans('ErrorProductClone'), 'errors');
                                 header("Location: ".$_SERVER["PHP_SELF"]."?id=".$originalId);
@@ -340,13 +298,10 @@ if (empty($reshook))
 
                         header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
                         exit;
-                    }
-                    else
-                    {
+                    } else {
                         $id=$originalId;
 
-                        if ($object->error == 'ErrorProductAlreadyExists')
-                        {
+                        if ($object->error == 'ErrorProductAlreadyExists') {
                             $db->rollback();
 
                             $_error++;
@@ -357,18 +312,14 @@ if (empty($reshook))
                             $mesg.='</div>';
                             setEventMessage($mesg, 'errors');
                             //dol_print_error($object->db);
-                        }
-                        else
-                        {
+                        } else {
                             $db->rollback();
                             setEventMessage($langs->trans($object->error), 'errors');
                             dol_print_error($db,$object->error);
                         }
                     }
                 }
-            }
-            else
-            {
+            } else {
                 $db->rollback();
                 dol_print_error($db,$object->error);
             }
@@ -377,42 +328,33 @@ if (empty($reshook))
 
     // Delete a product
     if ($action == 'confirm_delete' && $confirm != 'yes') { $action=''; }
-    if ($action == 'confirm_delete' && $confirm == 'yes')
-    {
-        if (($object->type == 0 && $user->rights->produit->supprimer) || ($object->type == 1 && $user->rights->service->supprimer))
-        {
+    if ($action == 'confirm_delete' && $confirm == 'yes') {
+        if (($object->type == 0 && $user->rights->produit->supprimer) || ($object->type == 1 && $user->rights->service->supprimer)) {
             $result = $object->delete($object->id);
         }
 
-        if ($result > 0)
-        {
+        if ($result > 0) {
             header('Location: '.DOL_URL_ROOT.'/product/liste.php?delprod='.urlencode($object->ref));
             exit;
-        }
-        else
-        {
-        	setEventMessage($langs->trans($object->error), 'errors');
+        } else {
+            setEventMessage($langs->trans($object->error), 'errors');
             $reload = 0;
             $action='';
         }
     }
 
-
     // Add product into proposal
-    if ($object->id > 0 && $action == 'addinpropal')
-    {
+    if ($object->id > 0 && $action == 'addinpropal') {
         $propal = new Propal($db);
         $result=$propal->fetch(GETPOST('propalid'));
-        if ($result <= 0)
-        {
+        if ($result <= 0) {
             dol_print_error($db,$propal->error);
             exit;
         }
 
         $soc = new Societe($db);
         $result=$soc->fetch($propal->socid);
-        if ($result <= 0)
-        {
+        if ($result <= 0) {
             dol_print_error($db,$soc->error);
             exit;
         }
@@ -428,8 +370,7 @@ if (empty($reshook))
         $price_base_type = $object->price_base_type;
 
         // If multiprice
-        if ($conf->global->PRODUIT_MULTIPRICES && $soc->price_level)
-        {
+        if ($conf->global->PRODUIT_MULTIPRICES && $soc->price_level) {
             $pu_ht = $object->multiprices[$soc->price_level];
             $pu_ttc = $object->multiprices_ttc[$soc->price_level];
             $price_base_type = $object->multiprices_base_type[$soc->price_level];
@@ -437,14 +378,10 @@ if (empty($reshook))
 
         // On reevalue prix selon taux tva car taux tva transaction peut etre different
         // de ceux du produit par defaut (par exemple si pays different entre vendeur et acheteur).
-        if ($tva_tx != $object->tva_tx)
-        {
-            if ($price_base_type != 'HT')
-            {
+        if ($tva_tx != $object->tva_tx) {
+            if ($price_base_type != 'HT') {
                 $pu_ht = price2num($pu_ttc / (1 + ($tva_tx/100)), 'MU');
-            }
-            else
-            {
+            } else {
                 $pu_ttc = price2num($pu_ht * (1 + ($tva_tx/100)), 'MU');
             }
         }
@@ -462,9 +399,9 @@ if (empty($reshook))
             $price_base_type,
             $pu_ttc
         );
-        if ($result > 0)
-        {
+        if ($result > 0) {
             header("Location: ".DOL_URL_ROOT."/comm/propal.php?id=".$propal->id);
+
             return;
         }
 
@@ -472,20 +409,17 @@ if (empty($reshook))
     }
 
     // Add product into order
-    if ($object->id > 0 && $action == 'addincommande')
-    {
+    if ($object->id > 0 && $action == 'addincommande') {
         $commande = new Commande($db);
         $result=$commande->fetch(GETPOST('commandeid'));
-        if ($result <= 0)
-        {
+        if ($result <= 0) {
             dol_print_error($db,$commande->error);
             exit;
         }
 
         $soc = new Societe($db);
         $result=$soc->fetch($commande->socid);
-        if ($result <= 0)
-        {
+        if ($result <= 0) {
             dol_print_error($db,$soc->error);
             exit;
         }
@@ -496,14 +430,12 @@ if (empty($reshook))
         $localtax1_tx= get_localtax($tva_tx, 1, $soc);
         $localtax2_tx= get_localtax($tva_tx, 2, $soc);
 
-
         $pu_ht = $object->price;
         $pu_ttc = $object->price_ttc;
         $price_base_type = $object->price_base_type;
 
         // If multiprice
-        if ($conf->global->PRODUIT_MULTIPRICES && $soc->price_level)
-        {
+        if ($conf->global->PRODUIT_MULTIPRICES && $soc->price_level) {
             $pu_ht = $object->multiprices[$soc->price_level];
             $pu_ttc = $object->multiprices_ttc[$soc->price_level];
             $price_base_type = $object->multiprices_base_type[$soc->price_level];
@@ -511,14 +443,10 @@ if (empty($reshook))
 
         // On reevalue prix selon taux tva car taux tva transaction peut etre different
         // de ceux du produit par defaut (par exemple si pays different entre vendeur et acheteur).
-        if ($tva_tx != $object->tva_tx)
-        {
-            if ($price_base_type != 'HT')
-            {
+        if ($tva_tx != $object->tva_tx) {
+            if ($price_base_type != 'HT') {
                 $pu_ht = price2num($pu_ttc / (1 + ($tva_tx/100)), 'MU');
-            }
-            else
-            {
+            } else {
                 $pu_ttc = price2num($pu_ht * (1 + ($tva_tx/100)), 'MU');
             }
         }
@@ -539,28 +467,24 @@ if (empty($reshook))
             $pu_ttc
         );
 
-        if ($result > 0)
-        {
+        if ($result > 0) {
             header("Location: ".DOL_URL_ROOT."/commande/fiche.php?id=".$commande->id);
             exit;
         }
     }
 
     // Add product into invoice
-    if ($object->id > 0 && $action == 'addinfacture' && $user->rights->facture->creer)
-    {
+    if ($object->id > 0 && $action == 'addinfacture' && $user->rights->facture->creer) {
         $facture = New Facture($db);
         $result=$facture->fetch(GETPOST('factureid'));
-        if ($result <= 0)
-        {
+        if ($result <= 0) {
             dol_print_error($db,$facture->error);
             exit;
         }
 
         $soc = new Societe($db);
         $soc->fetch($facture->socid);
-        if ($result <= 0)
-        {
+        if ($result <= 0) {
             dol_print_error($db,$soc->error);
             exit;
         }
@@ -576,8 +500,7 @@ if (empty($reshook))
         $price_base_type = $object->price_base_type;
 
         // If multiprice
-        if ($conf->global->PRODUIT_MULTIPRICES && $soc->price_level)
-        {
+        if ($conf->global->PRODUIT_MULTIPRICES && $soc->price_level) {
             $pu_ht = $object->multiprices[$soc->price_level];
             $pu_ttc = $object->multiprices_ttc[$soc->price_level];
             $price_base_type = $object->multiprices_base_type[$soc->price_level];
@@ -585,14 +508,10 @@ if (empty($reshook))
 
         // On reevalue prix selon taux tva car taux tva transaction peut etre different
         // de ceux du produit par defaut (par exemple si pays different entre vendeur et acheteur).
-        if ($tva_tx != $object->tva_tx)
-        {
-            if ($price_base_type != 'HT')
-            {
+        if ($tva_tx != $object->tva_tx) {
+            if ($price_base_type != 'HT') {
                 $pu_ht = price2num($pu_ttc / (1 + ($tva_tx/100)), 'MU');
-            }
-            else
-            {
+            } else {
                 $pu_ttc = price2num($pu_ht * (1 + ($tva_tx/100)), 'MU');
             }
         }
@@ -616,21 +535,18 @@ if (empty($reshook))
             $pu_ttc
         );
 
-        if ($result > 0)
-        {
+        if ($result > 0) {
             header("Location: ".DOL_URL_ROOT."/compta/facture.php?facid=".$facture->id);
             exit;
         }
     }
 }
 
-if (GETPOST("cancel") == $langs->trans("Cancel"))
-{
+if (GETPOST("cancel") == $langs->trans("Cancel")) {
     $action = '';
     header("Location: ".$_SERVER["PHP_SELF"]."?id=".$object->id);
     exit;
 }
-
 
 /*
  * View
@@ -648,35 +564,28 @@ llxHeader('', $title, $helpurl);
 $form = new Form($db);
 $formproduct = new FormProduct($db);
 
-
-if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
-{
-	// -----------------------------------------
-	// When used with CANVAS
-	// -----------------------------------------
-	if (empty($object->error) && $id)
-	{
-		$object = new Product($db);
-		$result=$object->fetch($id);
-		if ($result <= 0) dol_print_error('',$object->error);
-	}
-	$objcanvas->assign_values($action, $object->id, $object->ref);	// Set value for templates
-	$objcanvas->display_canvas($action);							// Show template
-}
-else
-{
+if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
+    // -----------------------------------------
+    // When used with CANVAS
+    // -----------------------------------------
+    if (empty($object->error) && $id) {
+        $object = new Product($db);
+        $result=$object->fetch($id);
+        if ($result <= 0) dol_print_error('',$object->error);
+    }
+    $objcanvas->assign_values($action, $object->id, $object->ref);	// Set value for templates
+    $objcanvas->display_canvas($action);							// Show template
+} else {
     // -----------------------------------------
     // When used in standard mode
     // -----------------------------------------
-    if ($action == 'create' && ($user->rights->produit->creer || $user->rights->service->creer))
-    {
+    if ($action == 'create' && ($user->rights->produit->creer || $user->rights->service->creer)) {
         //WYSIWYG Editor
         require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 
-		// Load object modCodeProduct
+        // Load object modCodeProduct
         $module=(! empty($conf->global->PRODUCT_CODEPRODUCT_ADDON)?$conf->global->PRODUCT_CODEPRODUCT_ADDON:'mod_codeproduct_leopard');
-        if (substr($module, 0, 16) == 'mod_codeproduct_' && substr($module, -3) == 'php')
-        {
+        if (substr($module, 0, 16) == 'mod_codeproduct_' && substr($module, -3) == 'php') {
             $module = substr($module, 0, dol_strlen($module)-4);
         }
         dol_include_once('/core/modules/product/'.$module.'.php');
@@ -686,8 +595,8 @@ else
         print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
         print '<input type="hidden" name="action" value="add">';
         print '<input type="hidden" name="type" value="'.$type.'">'."\n";
-		if (! empty($modCodeProduct->code_auto))
-			print '<input type="hidden" name="code_auto" value="1">';
+        if (! empty($modCodeProduct->code_auto))
+            print '<input type="hidden" name="code_auto" value="1">';
 
         if ($type==1) $title=$langs->trans("NewService");
         else $title=$langs->trans("NewProduct");
@@ -696,11 +605,10 @@ else
         print '<table class="border" width="100%">';
         print '<tr>';
         $tmpcode='';
-		if (! empty($modCodeProduct->code_auto))
-			$tmpcode=$modCodeProduct->getNextValue($object,$type);
+        if (! empty($modCodeProduct->code_auto))
+            $tmpcode=$modCodeProduct->getNextValue($object,$type);
         print '<td class="fieldrequired" width="20%">'.$langs->trans("Ref").'</td><td><input name="ref" size="40" maxlength="32" value="'.$tmpcode.'">';
-        if ($_error)
-        {
+        if ($_error) {
             print $langs->trans("RefAlreadyExists");
         }
         print '</td></tr>';
@@ -721,14 +629,11 @@ else
         print '</td></tr>';
 
         // Stock min level
-        if ($type != 1 && ! empty($conf->stock->enabled))
-        {
+        if ($type != 1 && ! empty($conf->stock->enabled)) {
             print '<tr><td>'.$langs->trans("StockLimit").'</td><td>';
             print '<input name="seuil_stock_alerte" size="4" value="'.GETPOST('seuil_stock_alerte').'">';
             print '</td></tr>';
-        }
-        else
-        {
+        } else {
             print '<input name="seuil_stock_alerte" type="hidden" value="0">';
         }
 
@@ -741,8 +646,7 @@ else
         print "</td></tr>";
 
         // Nature
-        if ($type != 1)
-        {
+        if ($type != 1) {
             print '<tr><td>'.$langs->trans("Nature").'</td><td>';
             $statutarray=array('1' => $langs->trans("Finished"), '0' => $langs->trans("RowMaterial"));
             print $form->selectarray('finished',$statutarray,GETPOST('finished'),1);
@@ -750,8 +654,7 @@ else
         }
 
         // Duration
-        if ($type == 1)
-        {
+        if ($type == 1) {
             print '<tr><td>'.$langs->trans("Duration").'</td><td><input name="duration_value" size="6" maxlength="5" value="'.GETPOST('duration_value').'"> &nbsp;';
             print '<input name="duration_unit" type="radio" value="h">'.$langs->trans("Hour").'&nbsp;';
             print '<input name="duration_unit" type="radio" value="d">'.$langs->trans("Day").'&nbsp;';
@@ -761,8 +664,7 @@ else
             print '</td></tr>';
         }
 
-        if ($type != 1)	// Le poids et le volume ne concerne que les produits et pas les services
-        {
+        if ($type != 1) {	// Le poids et le volume ne concerne que les produits et pas les services
             // Weight
             print '<tr><td>'.$langs->trans("Weight").'</td><td>';
             print '<input name="weight" size="4" value="'.GETPOST('weight').'">';
@@ -797,9 +699,8 @@ else
         // Other attributes
         $parameters=array('colspan' => ' colspan="2"');
         $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
-        if (empty($reshook) && ! empty($extrafields->attribute_label))
-        {
-        	print $object->showOptionals($extrafields,'edit');
+        if (empty($reshook) && ! empty($extrafields->attribute_label)) {
+            print $object->showOptionals($extrafields,'edit');
         }
 
         // Note (private, no output on invoices, propales...)
@@ -814,13 +715,10 @@ else
 
         print '<br>';
 
-        if (! empty($conf->global->PRODUIT_MULTIPRICES))
-        {
+        if (! empty($conf->global->PRODUIT_MULTIPRICES)) {
             // We do no show price array on create when multiprices enabled.
             // We must set them on prices tab.
-        }
-        else
-        {
+        } else {
             print '<table class="border" width="100%">';
 
             // PRIX
@@ -853,13 +751,11 @@ else
      * Product card
      */
 
-    else if ($object->id > 0)
-    {
+    else if ($object->id > 0) {
         $res=$object->fetch_optionals($object->id,$extralabels);
 
         // Fiche en mode edition
-        if ($action == 'edit' && ($user->rights->produit->creer || $user->rights->service->creer))
-        {
+        if ($action == 'edit' && ($user->rights->produit->creer || $user->rights->service->creer)) {
             //WYSIWYG Editor
             require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 
@@ -884,13 +780,10 @@ else
             // Status
             print '<tr><td class="fieldrequired">'.$langs->trans("Status").' ('.$langs->trans("Sell").')</td><td colspan="2">';
             print '<select class="flat" name="statut">';
-            if ($object->status)
-            {
+            if ($object->status) {
                 print '<option value="1" selected="selected">'.$langs->trans("OnSell").'</option>';
                 print '<option value="0">'.$langs->trans("NotOnSell").'</option>';
-            }
-            else
-            {
+            } else {
                 print '<option value="1">'.$langs->trans("OnSell").'</option>';
                 print '<option value="0" selected="selected">'.$langs->trans("NotOnSell").'</option>';
             }
@@ -900,13 +793,10 @@ else
             // To Buy
             print '<tr><td class="fieldrequired">'.$langs->trans("Status").' ('.$langs->trans("Buy").')</td><td colspan="2">';
             print '<select class="flat" name="statut_buy">';
-            if ($object->status_buy)
-            {
+            if ($object->status_buy) {
                 print '<option value="1" selected="selected">'.$langs->trans("ProductStatusOnBuy").'</option>';
                 print '<option value="0">'.$langs->trans("ProductStatusNotOnBuy").'</option>';
-            }
-            else
-            {
+            } else {
                 print '<option value="1">'.$langs->trans("ProductStatusOnBuy").'</option>';
                 print '<option value="0" selected="selected">'.$langs->trans("ProductStatusNotOnBuy").'</option>';
             }
@@ -916,7 +806,7 @@ else
             // Description (used in invoice, propal...)
             print '<tr><td valign="top">'.$langs->trans("Description").'</td><td colspan="2">';
 
-	        // We use dolibarr_details as type of DolEditor here, because we must not accept images as description is included into PDF and not accepted by TCPDF.
+            // We use dolibarr_details as type of DolEditor here, because we must not accept images as description is included into PDF and not accepted by TCPDF.
             $doleditor = new DolEditor('desc', $object->description, '', 160, 'dolibarr_details', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, 4, 90);
             $doleditor->Create();
 
@@ -924,27 +814,22 @@ else
             print "\n";
 
             // Nature
-            if($object->type!=1)
-            {
+            if ($object->type!=1) {
                 print '<tr><td>'.$langs->trans("Nature").'</td><td colspan="2">';
                 $statutarray=array('-1'=>'&nbsp;', '1' => $langs->trans("Finished"), '0' => $langs->trans("RowMaterial"));
                 print $form->selectarray('finished',$statutarray,$object->finished);
                 print '</td></tr>';
             }
 
-            if ($object->isproduct() && ! empty($conf->stock->enabled))
-            {
+            if ($object->isproduct() && ! empty($conf->stock->enabled)) {
                 print "<tr>".'<td>'.$langs->trans("StockLimit").'</td><td colspan="2">';
                 print '<input name="seuil_stock_alerte" size="4" value="'.$object->seuil_stock_alerte.'">';
                 print '</td></tr>';
-            }
-            else
-            {
+            } else {
                 print '<input name="seuil_stock_alerte" type="hidden" value="'.$object->seuil_stock_alerte.'">';
             }
 
-            if ($object->isservice())
-            {
+            if ($object->isservice()) {
                 // Duration
                 print '<tr><td>'.$langs->trans("Duration").'</td><td colspan="2"><input name="duration_value" size="3" maxlength="5" value="'.$object->duration_value.'">';
                 print '&nbsp; ';
@@ -959,9 +844,7 @@ else
                 print '<input name="duration_unit" type="radio" value="y"'.($object->duration_unit=='y'?' checked':'').'>'.$langs->trans("Year");
 
                 print '</td></tr>';
-            }
-            else
-            {
+            } else {
                 // Weight
                 print '<tr><td>'.$langs->trans("Weight").'</td><td colspan="2">';
                 print '<input name="weight" size="5" value="'.$object->weight.'"> ';
@@ -996,9 +879,8 @@ else
             // Other attributes
             $parameters=array('colspan' => ' colspan="2"');
             $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
-            if (empty($reshook) && ! empty($extrafields->attribute_label))
-            {
-            	print $object->showOptionals($extrafields,'edit');
+            if (empty($reshook) && ! empty($extrafields->attribute_label)) {
+                print $object->showOptionals($extrafields,'edit');
             }
 
             // Note
@@ -1018,8 +900,7 @@ else
             print '</form>';
         }
         // Fiche en mode visu
-        else
-        {
+        else {
             $head=product_prepare_head($object, $user);
             $titre=$langs->trans("CardProduct".$object->type);
             $picto=($object->type==1?'service':'product');
@@ -1049,8 +930,7 @@ else
             else $nblignes+=4;
 
             // Photo
-            if ($showphoto || $showbarcode)
-            {
+            if ($showphoto || $showbarcode) {
                 print '<td valign="middle" align="center" width="25%" rowspan="'.$nblignes.'">';
                 if ($showphoto)   print $object->show_photos($conf->product->multidir_output[$object->entity],1,1,0,0,0,80);
                 if ($showphoto && $showbarcode) print '<br><br>';
@@ -1061,17 +941,15 @@ else
             print '</tr>';
 
             // Type
-            if (! empty($conf->produit->enabled) && ! empty($conf->service->enabled))
-            {
-            	// TODO change for compatibility with edit in place
-            	$typeformat='select;0:'.$langs->trans("Product").',1:'.$langs->trans("Service");
+            if (! empty($conf->produit->enabled) && ! empty($conf->service->enabled)) {
+                // TODO change for compatibility with edit in place
+                $typeformat='select;0:'.$langs->trans("Product").',1:'.$langs->trans("Service");
                 print '<tr><td>'.$form->editfieldkey("Type",'fk_product_type',$object->type,$object,$user->rights->produit->creer||$user->rights->service->creer,$typeformat).'</td><td colspan="2">';
                 print $form->editfieldval("Type",'fk_product_type',$object->type,$object,$user->rights->produit->creer||$user->rights->service->creer,$typeformat);
                 print '</td></tr>';
             }
 
-            if ($showbarcode)
-            {
+            if ($showbarcode) {
                 // Barcode type
                 print '<tr><td nowrap>';
                 print '<table width="100%" class="nobordernopadding"><tr><td nowrap>';
@@ -1080,14 +958,11 @@ else
                 if (($action != 'editbarcodetype') && $user->rights->barcode->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editbarcodetype&amp;id='.$object->id.'">'.img_edit($langs->trans('Edit'),1).'</a></td>';
                 print '</tr></table>';
                 print '</td><td colspan="2">';
-                if ($action == 'editbarcodetype')
-                {
+                if ($action == 'editbarcodetype') {
                     require_once DOL_DOCUMENT_ROOT.'/core/class/html.formbarcode.class.php';
                     $formbarcode = new FormBarCode($db);
                     $formbarcode->form_barcode_type($_SERVER['PHP_SELF'].'?id='.$object->id,$object->barcode_type,'fk_barcode_type');
-                }
-                else
-                {
+                } else {
                     $object->fetch_barcode();
                     print $object->barcode_type_label?$object->barcode_type_label:($object->barcode?'<div class="warning">'.$langs->trans("SetDefaultBarcodeType").'<div>':'');
                 }
@@ -1101,16 +976,13 @@ else
                 if (($action != 'editbarcode') && $user->rights->barcode->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editbarcode&amp;id='.$object->id.'">'.img_edit($langs->trans('Edit'),1).'</a></td>';
                 print '</tr></table>';
                 print '</td><td colspan="2">';
-                if ($action == 'editbarcode')
-                {
+                if ($action == 'editbarcode') {
                     print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'">';
                     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
                     print '<input type="hidden" name="action" value="setbarcode">';
                     print '<input size="40" type="text" name="barcode" value="'.$object->barcode.'">';
                     print '&nbsp;<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
-                }
-                else
-                {
+                } else {
                     print $object->barcode;
                 }
                 print '</td></tr>'."\n";
@@ -1140,72 +1012,53 @@ else
             print '<tr><td valign="top">'.$langs->trans("Description").'</td><td colspan="2">'.(dol_textishtml($object->description)?$object->description:dol_nl2br($object->description,1,true)).'</td></tr>';
 
             // Nature
-            if($object->type!=1)
-            {
+            if ($object->type!=1) {
                 print '<tr><td>'.$langs->trans("Nature").'</td><td colspan="2">';
                 print $object->getLibFinished();
                 print '</td></tr>';
             }
 
-            if ($object->isservice())
-            {
+            if ($object->isservice()) {
                 // Duration
                 print '<tr><td>'.$langs->trans("Duration").'</td><td colspan="2">'.$object->duration_value.'&nbsp;';
-                if ($object->duration_value > 1)
-                {
+                if ($object->duration_value > 1) {
                     $dur=array("h"=>$langs->trans("Hours"),"d"=>$langs->trans("Days"),"w"=>$langs->trans("Weeks"),"m"=>$langs->trans("Months"),"y"=>$langs->trans("Years"));
-                }
-                else if ($object->duration_value > 0)
-                {
+                } elseif ($object->duration_value > 0) {
                     $dur=array("h"=>$langs->trans("Hour"),"d"=>$langs->trans("Day"),"w"=>$langs->trans("Week"),"m"=>$langs->trans("Month"),"y"=>$langs->trans("Year"));
                 }
                 print (! empty($object->duration_unit) && isset($dur[$object->duration_unit]) ? $langs->trans($dur[$object->duration_unit]) : '')."&nbsp;";
 
                 print '</td></tr>';
-            }
-            else
-            {
+            } else {
                 // Weight
                 print '<tr><td>'.$langs->trans("Weight").'</td><td colspan="2">';
-                if ($object->weight != '')
-                {
+                if ($object->weight != '') {
                     print $object->weight." ".measuring_units_string($object->weight_units,"weight");
-                }
-                else
-                {
+                } else {
                     print '&nbsp;';
                 }
                 print "</td></tr>\n";
                 // Length
                 print '<tr><td>'.$langs->trans("Length").'</td><td colspan="2">';
-                if ($object->length != '')
-                {
+                if ($object->length != '') {
                     print $object->length." ".measuring_units_string($object->length_units,"size");
-                }
-                else
-                {
+                } else {
                     print '&nbsp;';
                 }
                 print "</td></tr>\n";
                 // Surface
                 print '<tr><td>'.$langs->trans("Surface").'</td><td colspan="2">';
-                if ($object->surface != '')
-                {
+                if ($object->surface != '') {
                     print $object->surface." ".measuring_units_string($object->surface_units,"surface");
-                }
-                else
-                {
+                } else {
                     print '&nbsp;';
                 }
                 print "</td></tr>\n";
                 // Volume
                 print '<tr><td>'.$langs->trans("Volume").'</td><td colspan="2">';
-                if ($object->volume != '')
-                {
+                if ($object->volume != '') {
                     print $object->volume." ".measuring_units_string($object->volume_units,"volume");
-                }
-                else
-                {
+                } else {
                     print '&nbsp;';
                 }
                 print "</td></tr>\n";
@@ -1220,9 +1073,8 @@ else
             // Other attributes
             $parameters=array('colspan' => ' colspan="'.(2+(($showphoto||$showbarcode)?1:0)).'"');
             $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
-            if (empty($reshook) && ! empty($extrafields->attribute_label))
-            {
-            	print $object->showOptionals($extrafields);
+            if (empty($reshook) && ! empty($extrafields->attribute_label)) {
+                print $object->showOptionals($extrafields);
             }
 
             // Note
@@ -1233,18 +1085,15 @@ else
             dol_fiche_end();
         }
 
-    }
-    else if ($action != 'create')
-    {
+    } elseif ($action != 'create') {
         header("Location: index.php");
         exit;
     }
 }
 
-
 // Define confirmation messages
 $formquestionclone=array(
-	'text' => $langs->trans("ConfirmClone"),
+    'text' => $langs->trans("ConfirmClone"),
     array('type' => 'text', 'name' => 'clone_ref','label' => $langs->trans("NewRefForClone"), 'value' => $langs->trans("CopyOf").' '.$object->ref, 'size'=>24),
     array('type' => 'checkbox', 'name' => 'clone_content','label' => $langs->trans("CloneContentProduct"), 'value' => 1),
     array('type' => 'checkbox', 'name' => 'clone_prices', 'label' => $langs->trans("ClonePricesProduct").' ('.$langs->trans("FeatureNotYetAvailable").')', 'value' => 0, 'disabled' => true),
@@ -1252,18 +1101,14 @@ $formquestionclone=array(
 );
 
 // Confirm delete product
-if ($action == 'delete' && empty($conf->use_javascript_ajax))
-{
+if ($action == 'delete' && empty($conf->use_javascript_ajax)) {
     print $form->formconfirm("fiche.php?id=".$object->id,$langs->trans("DeleteProduct"),$langs->trans("ConfirmDeleteProduct"),"confirm_delete",'',0,"action-delete");
 }
 
 // Clone confirmation
-if ($action == 'clone' && empty($conf->use_javascript_ajax))
-{
+if ($action == 'clone' && empty($conf->use_javascript_ajax)) {
     print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id,$langs->trans('CloneProduct'),$langs->trans('ConfirmCloneProduct',$object->ref),'confirm_clone',$formquestionclone,'yes','action-clone',250,600);
 }
-
-
 
 /* ************************************************************************** */
 /*                                                                            */
@@ -1273,21 +1118,15 @@ if ($action == 'clone' && empty($conf->use_javascript_ajax))
 
 print "\n".'<div class="tabsAction">'."\n";
 
-if ($action == '' || $action == 'view')
-{
-    if ($user->rights->produit->creer || $user->rights->service->creer)
-    {
+if ($action == '' || $action == 'view') {
+    if ($user->rights->produit->creer || $user->rights->service->creer) {
         if (! isset($object->no_button_edit) || $object->no_button_edit <> 1) print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&amp;id='.$object->id.'">'.$langs->trans("Modify").'</a></div>';
 
-        if (! isset($object->no_button_copy) || $object->no_button_copy <> 1)
-        {
-            if (! empty($conf->use_javascript_ajax))
-            {
+        if (! isset($object->no_button_copy) || $object->no_button_copy <> 1) {
+            if (! empty($conf->use_javascript_ajax)) {
                 print '<div class="inline-block divButAction"><span id="action-clone" class="butAction">'.$langs->trans('ToClone').'</span></div>'."\n";
                 print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id,$langs->trans('CloneProduct'),$langs->trans('ConfirmCloneProduct',$object->ref),'confirm_clone',$formquestionclone,'yes','action-clone',250,600);
-            }
-            else
-            {
+            } else {
                 print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=clone&amp;id='.$object->id.'">'.$langs->trans("ToClone").'</a></div>';
             }
         }
@@ -1297,25 +1136,17 @@ if ($action == '' || $action == 'view')
     if (($object->type == 0 && $user->rights->produit->supprimer)
     || ($object->type == 1 && $user->rights->service->supprimer))
     {
-        if (empty($object_is_used) && (! isset($object->no_button_delete) || $object->no_button_delete <> 1))
-        {
-            if (! empty($conf->use_javascript_ajax))
-            {
+        if (empty($object_is_used) && (! isset($object->no_button_delete) || $object->no_button_delete <> 1)) {
+            if (! empty($conf->use_javascript_ajax)) {
                 print '<div class="inline-block divButAction"><span id="action-delete" class="butActionDelete">'.$langs->trans('Delete').'</span></div>'."\n";
                 print $form->formconfirm("fiche.php?id=".$object->id,$langs->trans("DeleteProduct"),$langs->trans("ConfirmDeleteProduct"),"confirm_delete",'',0,"action-delete");
-            }
-            else
-            {
+            } else {
                 print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&amp;id='.$object->id.'">'.$langs->trans("Delete").'</a></div>';
             }
-        }
-        else
-        {
+        } else {
             print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.$langs->trans("ProductIsUsed").'">'.$langs->trans("Delete").'</a></div>';
         }
-    }
-    else
-    {
+    } else {
         print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans("Delete").'</a></div>';
     }
 }
@@ -1327,15 +1158,13 @@ print "\n</div><br>\n";
  * All the "Add to" areas
  */
 
-if ($object->id && ($action == '' || $action == 'view') && $object->status)
-{
+if ($object->id && ($action == '' || $action == 'view') && $object->status) {
     //Variable used to check if any text is going to be printed
     $html = '';
-	//print '<div class="fichecenter"><div class="fichehalfleft">';
+    //print '<div class="fichecenter"><div class="fichehalfleft">';
 
     // Propals
-    if (! empty($conf->propal->enabled) && $user->rights->propale->creer)
-    {
+    if (! empty($conf->propal->enabled) && $user->rights->propale->creer) {
         $propal = new Propal($db);
 
         $langs->load("propal");
@@ -1350,26 +1179,23 @@ if ($object->id && ($action == '' || $action == 'view') && $object->status)
         $html .= '<form method="POST" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'">';
         $html .= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
         $html .= '<table class="nobordernopadding" width="100%">';
-        if (is_array($otherprop) && count($otherprop))
-        {
-        	$var=!$var;
-        	$html .= '<tr '.$bc[$var].'><td style="width: 200px;">';
-        	$html .= '<input type="hidden" name="action" value="addinpropal">';
-        	$html .= $langs->trans("Proposals").'</td><td colspan="2">';
-        	$html .= $form->selectarray("propalid", $otherprop, 0, 1);
-        	$html .= '</td></tr>';
-        	$html .= '<tr '.$bc[$var].'><td class="nowrap">'.$langs->trans("Quantity").' ';
-        	$html .= '<input type="text" class="flat" name="qty" size="1" value="1"></td><td class="nowrap">'.$langs->trans("ReductionShort").'(%) ';
-        	$html .= '<input type="text" class="flat" name="remise_percent" size="1" value="0">';
-        	$html .= '</td><td align="right">';
-        	$html .= '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
-        	$html .= '</td></tr>';
-        }
-        else
-        {
-        	$html .= "<tr ".$bc[!$var]."><td>";
-        	$html .= $langs->trans("NoOtherOpenedPropals");
-        	$html .= '</td></tr>';
+        if (is_array($otherprop) && count($otherprop)) {
+            $var=!$var;
+            $html .= '<tr '.$bc[$var].'><td style="width: 200px;">';
+            $html .= '<input type="hidden" name="action" value="addinpropal">';
+            $html .= $langs->trans("Proposals").'</td><td colspan="2">';
+            $html .= $form->selectarray("propalid", $otherprop, 0, 1);
+            $html .= '</td></tr>';
+            $html .= '<tr '.$bc[$var].'><td class="nowrap">'.$langs->trans("Quantity").' ';
+            $html .= '<input type="text" class="flat" name="qty" size="1" value="1"></td><td class="nowrap">'.$langs->trans("ReductionShort").'(%) ';
+            $html .= '<input type="text" class="flat" name="remise_percent" size="1" value="0">';
+            $html .= '</td><td align="right">';
+            $html .= '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
+            $html .= '</td></tr>';
+        } else {
+            $html .= "<tr ".$bc[!$var]."><td>";
+            $html .= $langs->trans("NoOtherOpenedPropals");
+            $html .= '</td></tr>';
         }
         $html .= '</table>';
         $html .= '</form>';
@@ -1379,8 +1205,7 @@ if ($object->id && ($action == '' || $action == 'view') && $object->status)
     }
 
     // Commande
-    if (! empty($conf->commande->enabled) && $user->rights->commande->creer)
-    {
+    if (! empty($conf->commande->enabled) && $user->rights->commande->creer) {
         $commande = new Commande($db);
 
         $langs->load("orders");
@@ -1395,26 +1220,23 @@ if ($object->id && ($action == '' || $action == 'view') && $object->status)
         $html .= '<form method="POST" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'">';
         $html .= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
         $html .= '<table class="nobordernopadding" width="100%">';
-        if (is_array($othercom) && count($othercom))
-        {
-        	$var=!$var;
-        	$html .= '<tr '.$bc[$var].'><td style="width: 200px;">';
-        	$html .= '<input type="hidden" name="action" value="addincommande">';
-        	$html .= $langs->trans("Orders").'</td><td colspan="2">';
-        	$html .= $form->selectarray("commandeid", $othercom, 0, 1);
-        	$html .= '</td></tr>';
-        	$html .= '<tr '.$bc[$var].'><td class="nowrap">'.$langs->trans("Quantity").' ';
-        	$html .= '<input type="text" class="flat" name="qty" size="1" value="1"></td><td class="nowrap">'.$langs->trans("ReductionShort").'(%) ';
-        	$html .= '<input type="text" class="flat" name="remise_percent" size="1" value="0">';
-        	$html .= '</td><td align="right">';
-        	$html .= '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
-        	$html .= '</td></tr>';
-        }
-        else
-		{
-        	$html .= "<tr ".$bc[!$var]."><td>";
-        	$html .= $langs->trans("NoOtherOpenedOrders");
-        	$html .= '</td></tr>';
+        if (is_array($othercom) && count($othercom)) {
+            $var=!$var;
+            $html .= '<tr '.$bc[$var].'><td style="width: 200px;">';
+            $html .= '<input type="hidden" name="action" value="addincommande">';
+            $html .= $langs->trans("Orders").'</td><td colspan="2">';
+            $html .= $form->selectarray("commandeid", $othercom, 0, 1);
+            $html .= '</td></tr>';
+            $html .= '<tr '.$bc[$var].'><td class="nowrap">'.$langs->trans("Quantity").' ';
+            $html .= '<input type="text" class="flat" name="qty" size="1" value="1"></td><td class="nowrap">'.$langs->trans("ReductionShort").'(%) ';
+            $html .= '<input type="text" class="flat" name="remise_percent" size="1" value="0">';
+            $html .= '</td><td align="right">';
+            $html .= '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
+            $html .= '</td></tr>';
+        } else {
+            $html .= "<tr ".$bc[!$var]."><td>";
+            $html .= $langs->trans("NoOtherOpenedOrders");
+            $html .= '</td></tr>';
         }
         $html .= '</table>';
         $html .= '</form>';
@@ -1424,53 +1246,48 @@ if ($object->id && ($action == '' || $action == 'view') && $object->status)
     }
 
     // Factures
-    if (! empty($conf->facture->enabled) && $user->rights->facture->creer)
-    {
-    	$invoice = new Facture($db);
+    if (! empty($conf->facture->enabled) && $user->rights->facture->creer) {
+        $invoice = new Facture($db);
 
-    	$langs->load("bills");
+        $langs->load("bills");
 
-    	$html .= '<tr class="liste_titre">';
-    	$html .= '<td class="liste_titre">'.$langs->trans("AddToOtherBills").'</td>';
+        $html .= '<tr class="liste_titre">';
+        $html .= '<td class="liste_titre">'.$langs->trans("AddToOtherBills").'</td>';
         $html .= '</tr><tr>';
-    	$html .= '<td valign="top">';
+        $html .= '<td valign="top">';
 
-    	$var=true;
-    	$otherinvoice = $invoice->liste_array(2, 1, null);
-    	$html .= '<form method="POST" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'">';
-    	$html .= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-    	$html .= '<table class="nobordernopadding" width="100%">';
-    	if (is_array($otherinvoice) && count($otherinvoice))
-    	{
-    		$var=!$var;
-    		$html .= '<tr '.$bc[$var].'><td style="width: 200px;">';
-    		$html .= '<input type="hidden" name="action" value="addinfacture">';
-    		$html .= $langs->trans("Invoice").'</td><td colspan="2">';
-    		$html .= $form->selectarray("factureid", $otherinvoice, 0, 1);
-    		$html .= '</td></tr>';
-    		$html .= '<tr '.$bc[$var].'><td class="nowrap">'.$langs->trans("Quantity").' ';
-    		$html .= '<input type="text" class="flat" name="qty" size="1" value="1"></td><td class="nowrap">'.$langs->trans("ReductionShort").'(%) ';
-    		$html .= '<input type="text" class="flat" name="remise_percent" size="1" value="0">';
-    		$html .= '</td><td align="right">';
-    		$html .= '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
-    		$html .= '</td></tr>';
-    	}
-    	else
-    	{
-    		$html .= "<tr ".$bc[!$var]."><td>";
-    		$html .= $langs->trans("NoOtherDraftBills");
-    		$html .= '</td></tr>';
-    	}
-    	$html .= '</table>';
-    	$html .= '</form>';
+        $var=true;
+        $otherinvoice = $invoice->liste_array(2, 1, null);
+        $html .= '<form method="POST" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'">';
+        $html .= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+        $html .= '<table class="nobordernopadding" width="100%">';
+        if (is_array($otherinvoice) && count($otherinvoice)) {
+            $var=!$var;
+            $html .= '<tr '.$bc[$var].'><td style="width: 200px;">';
+            $html .= '<input type="hidden" name="action" value="addinfacture">';
+            $html .= $langs->trans("Invoice").'</td><td colspan="2">';
+            $html .= $form->selectarray("factureid", $otherinvoice, 0, 1);
+            $html .= '</td></tr>';
+            $html .= '<tr '.$bc[$var].'><td class="nowrap">'.$langs->trans("Quantity").' ';
+            $html .= '<input type="text" class="flat" name="qty" size="1" value="1"></td><td class="nowrap">'.$langs->trans("ReductionShort").'(%) ';
+            $html .= '<input type="text" class="flat" name="remise_percent" size="1" value="0">';
+            $html .= '</td><td align="right">';
+            $html .= '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
+            $html .= '</td></tr>';
+        } else {
+            $html .= "<tr ".$bc[!$var]."><td>";
+            $html .= $langs->trans("NoOtherDraftBills");
+            $html .= '</td></tr>';
+        }
+        $html .= '</table>';
+        $html .= '</form>';
 
-    	$html .= '</td>';
-    	$html .= '</tr>';
+        $html .= '</td>';
+        $html .= '</tr>';
     }
 
     //If any text is going to be printed, then we show the table
-    if (!empty($html))
-    {
+    if (!empty($html)) {
         print '<table width="100%" class="noborder">';
         print $html;
         print '</table>';
@@ -1478,7 +1295,5 @@ if ($object->id && ($action == '' || $action == 'view') && $object->status)
     }
 }
 
-
 llxFooter();
 $db->close();
-?>

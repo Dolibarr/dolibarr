@@ -47,18 +47,14 @@ if ($id > 0) $object->fetch($id);
 /******************************************************************************/
 /*                     Actions                                                */
 /******************************************************************************/
-if ($action == 'setnote_public' && $user->rights->societe->creer)
-{
-	$object->fetch($id);
-	$result=$object->update_note(dol_html_entity_decode(GETPOST('note_public'), ENT_QUOTES),'_public');
-	if ($result < 0) setEventMessage($object->error,'errors');
-}
-
-else if ($action == 'setnote_private' && $user->rights->societe->creer)
-{
-	$object->fetch($id);
-	$result=$object->update_note(dol_html_entity_decode(GETPOST('note_private'), ENT_QUOTES),'_private');
-	if ($result < 0) setEventMessage($object->error,'errors');
+if ($action == 'setnote_public' && $user->rights->societe->creer) {
+    $object->fetch($id);
+    $result=$object->update_note(dol_html_entity_decode(GETPOST('note_public'), ENT_QUOTES),'_public');
+    if ($result < 0) setEventMessage($object->error,'errors');
+} elseif ($action == 'setnote_private' && $user->rights->societe->creer) {
+    $object->fetch($id);
+    $result=$object->update_note(dol_html_entity_decode(GETPOST('note_private'), ENT_QUOTES),'_private');
+    if ($result < 0) setEventMessage($object->error,'errors');
 }
 
 /*
@@ -70,8 +66,7 @@ $form = new Form($db);
 $help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
 llxHeader('',$langs->trans("ThirdParty").' - '.$langs->trans("Notes"),$help_url);
 
-if ($id > 0)
-{
+if ($id > 0) {
     /*
      * Affichage onglets
      */
@@ -80,7 +75,6 @@ if ($id > 0)
     $head = societe_prepare_head($object);
 
     dol_fiche_head($head, 'note', $langs->trans("ThirdParty"),0,'company');
-
 
     print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -92,13 +86,11 @@ if ($id > 0)
     print $form->showrefnav($object,'socid','',($user->societe_id?0:1),'rowid','nom');
     print '</td></tr>';
 
-    if (! empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
-    {
+    if (! empty($conf->global->SOCIETE_USEPREFIX)) {  // Old not used prefix field
         print '<tr><td>'.$langs->trans('Prefix').'</td><td colspan="3">'.$object->prefix_comm.'</td></tr>';
     }
 
-    if ($object->client)
-    {
+    if ($object->client) {
         print '<tr><td>';
         print $langs->trans('CustomerCode').'</td><td colspan="3">';
         print $object->code_client;
@@ -106,8 +98,7 @@ if ($id > 0)
         print '</td></tr>';
     }
 
-    if ($object->fournisseur)
-    {
+    if ($object->fournisseur) {
         print '<tr><td>';
         print $langs->trans('SupplierCode').'</td><td colspan="3">';
         print $object->code_fournisseur;
@@ -122,11 +113,8 @@ if ($id > 0)
     $colwidth='25';
     include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
 
-
     dol_fiche_end();
 }
 
 llxFooter();
 $db->close();
-
-?>

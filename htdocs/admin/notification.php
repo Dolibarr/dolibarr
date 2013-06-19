@@ -42,20 +42,14 @@ $action = GETPOST("action");
  * Actions
  */
 
-if ($action == 'setvalue' && $user->admin)
-{
-	$result=dolibarr_set_const($db, "NOTIFICATION_EMAIL_FROM",$_POST["email_from"],'chaine',0,'',$conf->entity);
-  	if ($result >= 0)
-  	{
-  		$mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
-  	}
-  	else
-  	{
-		$mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
+if ($action == 'setvalue' && $user->admin) {
+    $result=dolibarr_set_const($db, "NOTIFICATION_EMAIL_FROM",$_POST["email_from"],'chaine',0,'',$conf->entity);
+      if ($result >= 0) {
+          $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
+      } else {
+        $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
     }
 }
-
-
 
 /*
  *	View
@@ -66,7 +60,7 @@ llxHeader();
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print_fiche_titre($langs->trans("NotificationSetup"),$linkback,'setup');
 
-print $langs->trans("NotificationsDesc").'<br><br>';	
+print $langs->trans("NotificationsDesc").'<br><br>';
 
 print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -94,7 +88,6 @@ print '<center><input type="submit" class="button" value="'.$langs->trans("Modif
 print '</form>';
 print '<br>';
 
-
 print_fiche_titre($langs->trans("ListOfAvailableNotifications"),'','');
 
 print '<table class="noborder" width="100%">';
@@ -108,8 +101,7 @@ print "</tr>\n";
 $notificationtrigger=new InterfaceNotification($db);
 $listofnotifiedevents=$notificationtrigger->getListOfManagedEvents();
 
-foreach($listofnotifiedevents as $notifiedevent)
-{
+foreach ($listofnotifiedevents as $notifiedevent) {
     $var=!$var;
     $label=$langs->trans("Notify_".$notifiedevent['code']); //!=$langs->trans("Notify_".$notifiedevent['code'])?$langs->trans("Notify_".$notifiedevent['code']):$notifiedevent['label'];
 
@@ -131,4 +123,3 @@ dol_htmloutput_mesg($mesg);
 $db->close();
 
 llxFooter();
-?>

@@ -38,14 +38,12 @@ $socid = isset($_GET["socid"])?$_GET["socid"]:'';
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'tax', '', '', 'charges');
 
-
 /*
  * Actions
  */
 
 //add payment of localtax
-if ($_POST["action"] == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
-{
+if ($_POST["action"] == 'add' && $_POST["cancel"] <> $langs->trans("Cancel")) {
     $localtax = new Localtax($db);
 
     $db->begin();
@@ -58,17 +56,14 @@ if ($_POST["action"] == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
     $localtax->datev=$datev;
     $localtax->datep=$datep;
     $localtax->amount=$_POST["amount"];
-	$localtax->label=$_POST["label"];
+    $localtax->label=$_POST["label"];
 
     $ret=$localtax->addPayment($user);
-    if ($ret > 0)
-    {
+    if ($ret > 0) {
         $db->commit();
         header("Location: reglement.php");
         exit;
-    }
-    else
-    {
+    } else {
         $db->rollback();
         $mesg='<div class="error">'.$localtax->error.'</div>';
         $_GET["action"]="create";
@@ -76,50 +71,38 @@ if ($_POST["action"] == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
 }
 
 //delete payment of localtax
-if ($_GET["action"] == 'delete')
-{
+if ($_GET["action"] == 'delete') {
     $localtax = new Localtax($db);
     $result=$localtax->fetch($_GET['id']);
 
-	if ($localtax->rappro == 0)
-	{
-	    $db->begin();
+    if ($localtax->rappro == 0) {
+        $db->begin();
 
-	    $ret=$localtax->delete($user);
-	    if ($ret > 0)
-	    {
-			if ($localtax->fk_bank)
-			{
-				$accountline=new AccountLine($db);
-				$result=$accountline->fetch($localtax->fk_bank);
-				$result=$accountline->delete($user);
-			}
+        $ret=$localtax->delete($user);
+        if ($ret > 0) {
+            if ($localtax->fk_bank) {
+                $accountline=new AccountLine($db);
+                $result=$accountline->fetch($localtax->fk_bank);
+                $result=$accountline->delete($user);
+            }
 
-			if ($result > 0)
-			{
-				$db->commit();
-				header("Location: ".DOL_URL_ROOT.'/compta/localtax/reglement.php');
-				exit;
-			}
-			else
-			{
-				$localtax->error=$accountline->error;
-				$db->rollback();
-				$mesg='<div class="error">'.$localtax->error.'</div>';
-			}
-	    }
-	    else
-	    {
-	        $db->rollback();
-	        $mesg='<div class="error">'.$localtax->error.'</div>';
-	    }
-	}
-	else
-	{
+            if ($result > 0) {
+                $db->commit();
+                header("Location: ".DOL_URL_ROOT.'/compta/localtax/reglement.php');
+                exit;
+            } else {
+                $localtax->error=$accountline->error;
+                $db->rollback();
+                $mesg='<div class="error">'.$localtax->error.'</div>';
+            }
+        } else {
+            $db->rollback();
+            $mesg='<div class="error">'.$localtax->error.'</div>';
+        }
+    } else {
         $mesg='<div class="error">Error try do delete a line linked to a conciliated bank transaction</div>';
-	}
+    }
 }
-
 
 /*
 *	View
@@ -129,20 +112,16 @@ llxHeader();
 
 $form = new Form($db);
 
-if ($id)
-{
+if ($id) {
     $vatpayment = new Localtax($db);
-	$result = $vatpayment->fetch($id);
-	if ($result <= 0)
-	{
-		dol_print_error($db);
-		exit;
-	}
+    $result = $vatpayment->fetch($id);
+    if ($result <= 0) {
+        dol_print_error($db);
+        exit;
+    }
 }
 
-
-if ($_GET["action"] == 'create')
-{
+if ($_GET["action"] == 'create') {
     print "<form name='add' action=\"fiche.php\" method=\"post\">\n";
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<input type="hidden" name="action" value="add">';
@@ -162,33 +141,31 @@ if ($_GET["action"] == 'create')
     print $form->select_date($datev,"datev",'','','','add');
     print '</td></tr>';
 
-	// Label
-	print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td><input name="label" size="40" value="'.($_POST["label"]?$_POST["label"]:$langs->transcountry("LT2Payment",$mysoc->country_code)).'"></td></tr>';
+    // Label
+    print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td><input name="label" size="40" value="'.($_POST["label"]?$_POST["label"]:$langs->transcountry("LT2Payment",$mysoc->country_code)).'"></td></tr>';
 
-	// Amount
-	print '<tr><td class="fieldrequired">'.$langs->trans("Amount").'</td><td><input name="amount" size="10" value="'.$_POST["amount"].'"></td></tr>';
+    // Amount
+    print '<tr><td class="fieldrequired">'.$langs->trans("Amount").'</td><td><input name="amount" size="10" value="'.$_POST["amount"].'"></td></tr>';
 
-    if (! empty($conf->banque->enabled))
-    {
-		print '<tr><td class="fieldrequired">'.$langs->trans("Account").'</td><td>';
+    if (! empty($conf->banque->enabled)) {
+        print '<tr><td class="fieldrequired">'.$langs->trans("Account").'</td><td>';
         $form->select_comptes($_POST["accountid"],"accountid",0,"courant=1",1);  // Affiche liste des comptes courant
         print '</td></tr>';
 
-	    print '<tr><td class="fieldrequired">'.$langs->trans("PaymentMode").'</td><td>';
-	    $form->select_types_paiements($_POST["paiementtype"], "paiementtype");
-	    print "</td>\n";
-	    print "</tr>";
-	}
+        print '<tr><td class="fieldrequired">'.$langs->trans("PaymentMode").'</td><td>';
+        $form->select_types_paiements($_POST["paiementtype"], "paiementtype");
+        print "</td>\n";
+        print "</tr>";
+    }
     print '</table>';
 
-	print "<br>";
+    print "<br>";
 
-	print '<center><input type="submit" class="button" value="'.$langs->trans("Save").'"> &nbsp; ';
+    print '<center><input type="submit" class="button" value="'.$langs->trans("Save").'"> &nbsp; ';
     print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></center>';
 
     print '</form>';
 }
-
 
 /* ************************************************************************** */
 /*                                                                            */
@@ -196,71 +173,65 @@ if ($_GET["action"] == 'create')
 /*                                                                            */
 /* ************************************************************************** */
 
-if ($id)
-{
+if ($id) {
     if ($mesg) print $mesg;
 
-	$h = 0;
-	$head[$h][0] = DOL_URL_ROOT.'/compta/localtax/fiche.php?id='.$vatpayment->id;
-	$head[$h][1] = $langs->trans('Card');
-	$head[$h][2] = 'card';
-	$h++;
+    $h = 0;
+    $head[$h][0] = DOL_URL_ROOT.'/compta/localtax/fiche.php?id='.$vatpayment->id;
+    $head[$h][1] = $langs->trans('Card');
+    $head[$h][2] = 'card';
+    $h++;
 
-	dol_fiche_head($head, 'card', $langs->trans("VATPayment"), 0, 'payment');
+    dol_fiche_head($head, 'card', $langs->trans("VATPayment"), 0, 'payment');
 
 
-	print '<table class="border" width="100%">';
+    print '<table class="border" width="100%">';
 
-	print "<tr>";
-	print '<td width="25%">'.$langs->trans("Ref").'</td><td colspan="3">';
-	print $vatpayment->ref;
-	print '</td></tr>';
+    print "<tr>";
+    print '<td width="25%">'.$langs->trans("Ref").'</td><td colspan="3">';
+    print $vatpayment->ref;
+    print '</td></tr>';
 
-	print "<tr>";
-	print '<td>'.$langs->trans("DatePayment").'</td><td colspan="3">';
-	print dol_print_date($vatpayment->datep,'day');
-	print '</td></tr>';
+    print "<tr>";
+    print '<td>'.$langs->trans("DatePayment").'</td><td colspan="3">';
+    print dol_print_date($vatpayment->datep,'day');
+    print '</td></tr>';
 
-	print '<tr><td>'.$langs->trans("DateValue").'</td><td colspan="3">';
-	print dol_print_date($vatpayment->datev,'day');
-	print '</td></tr>';
+    print '<tr><td>'.$langs->trans("DateValue").'</td><td colspan="3">';
+    print dol_print_date($vatpayment->datev,'day');
+    print '</td></tr>';
 
-	print '<tr><td>'.$langs->trans("Amount").'</td><td colspan="3">'.price($vatpayment->amount).'</td></tr>';
+    print '<tr><td>'.$langs->trans("Amount").'</td><td colspan="3">'.price($vatpayment->amount).'</td></tr>';
 
-	if (! empty($conf->banque->enabled))
-	{
-		if ($vatpayment->fk_account > 0)
-		{
- 		   	$bankline=new AccountLine($db);
-    		$bankline->fetch($vatpayment->fk_bank);
+    if (! empty($conf->banque->enabled)) {
+        if ($vatpayment->fk_account > 0) {
+                $bankline=new AccountLine($db);
+            $bankline->fetch($vatpayment->fk_bank);
 
-	    	print '<tr>';
-	    	print '<td>'.$langs->trans('BankTransactionLine').'</td>';
-			print '<td colspan="3">';
-			print $bankline->getNomUrl(1,0,'showall');
-	    	print '</td>';
-	    	print '</tr>';
-		}
-	}
+            print '<tr>';
+            print '<td>'.$langs->trans('BankTransactionLine').'</td>';
+            print '<td colspan="3">';
+            print $bankline->getNomUrl(1,0,'showall');
+            print '</td>';
+            print '</tr>';
+        }
+    }
 
-	print '</table>';
+    print '</table>';
 
-	print '</div>';
+    print '</div>';
 
-	/*
-	* Boutons d'actions
-	*/
-	print "<div class=\"tabsAction\">\n";
-	if ($vatpayment->rappro == 0)
-		print '<a class="butActionDelete" href="fiche.php?id='.$vatpayment->id.'&action=delete">'.$langs->trans("Delete").'</a>';
-	else
-		print '<a class="butActionRefused" href="#" title="'.$langs->trans("LinkedToAConcialitedTransaction").'">'.$langs->trans("Delete").'</a>';
-	print "</div>";
+    /*
+    * Boutons d'actions
+    */
+    print "<div class=\"tabsAction\">\n";
+    if ($vatpayment->rappro == 0)
+        print '<a class="butActionDelete" href="fiche.php?id='.$vatpayment->id.'&action=delete">'.$langs->trans("Delete").'</a>';
+    else
+        print '<a class="butActionRefused" href="#" title="'.$langs->trans("LinkedToAConcialitedTransaction").'">'.$langs->trans("Delete").'</a>';
+    print "</div>";
 }
-
 
 $db->close();
 
 llxFooter();
-
-?>

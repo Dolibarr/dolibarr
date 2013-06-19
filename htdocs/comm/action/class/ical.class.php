@@ -24,46 +24,43 @@
  *       \brief      File of class to parse ical calendars
  */
 
-
 /**
  *		Class to parse ICal calendars
  */
 class ICal
 {
-    var $file_text; // Text in file
-    var $cal; // Array to save iCalendar parse data
-    var $event_count; // Number of Events
-    var $todo_count; // Number of Todos
-    var $freebusy_count; // Number of Freebusy
-    var $last_key; //Help variable save last key (multiline string)
+    public $file_text; // Text in file
+    public $cal; // Array to save iCalendar parse data
+    public $event_count; // Number of Events
+    public $todo_count; // Number of Todos
+    public $freebusy_count; // Number of Freebusy
+    public $last_key; //Help variable save last key (multiline string)
 
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
 
-	/**
-	 * Constructor
-	 */
-	public function __construct()
-	{
+    }
 
-	}
-
-	/**
+    /**
      * Read text file, icalender text file
      *
-     * @param 	string 	$file		File
-     * @return	string
+     * @param  string $file File
+     * @return string
      */
-    function read_file($file)
+    public function read_file($file)
     {
         $this->file = $file;
         $file_text='';
-        
+
         $tmparray=file($file);
-        if (is_array($tmparray))
-        {
-        	$file_text = join("", $tmparray); //load file
-        	$file_text = preg_replace("/[\r\n]{1,} ([:;])/","\\1",$file_text);
+        if (is_array($tmparray)) {
+            $file_text = join("", $tmparray); //load file
+            $file_text = preg_replace("/[\r\n]{1,} ([:;])/","\\1",$file_text);
         }
-        
+
         return $file_text; // return all text
     }
 
@@ -72,7 +69,7 @@ class ICal
      *
      * @return int
      */
-    function get_event_count()
+    public function get_event_count()
     {
         return $this->event_count;
     }
@@ -82,7 +79,7 @@ class ICal
      *
      * @return int
      */
-    function get_todo_count()
+    public function get_todo_count()
     {
         return $this->todo_count;
     }
@@ -90,10 +87,10 @@ class ICal
     /**
      * Translate Calendar
      *
-     * @param	string 	$uri	Url
-     * @return	array
+     * @param  string $uri Url
+     * @return array
      */
-    function parse($uri)
+    public function parse($uri)
     {
         $this->cal = array(); // new empty array
 
@@ -108,16 +105,13 @@ class ICal
         if (!stristr($this->file_text[0],'BEGIN:VCALENDAR')) return 'error not VCALENDAR';
 
         $insidealarm=0;
-        foreach ($this->file_text as $text)
-        {
+        foreach ($this->file_text as $text) {
             $text = trim($text); // trim one line
-            if (!empty($text))
-            {
+            if (!empty($text)) {
                 // get Key and Value VCALENDAR:Begin -> Key = VCALENDAR, Value = begin
                 list($key, $value) = $this->retun_key_value($text);
 
-                switch ($text) // search special string
-                {
+                switch ($text) { // search special string
                     case "BEGIN:VTODO":
                         $this->todo_count = $this->todo_count+1; // new to do begin
                         $type = "VTODO";
@@ -165,27 +159,26 @@ class ICal
                 }
             }
         }
+
         return $this->cal;
     }
 
     /**
      * Add to $this->ical array one value and key.
      *
-     * @param 	string 	$type		Type ('VTODO', 'VEVENT', 'VFREEBUSY', 'VCALENDAR'...)
-     * @param 	string 	$key		Key	('DTSTART', ...). Note: Field is never 'DTSTART;TZID=...' because ';...' was before removed and added as another property
-     * @param 	string 	$value		Value
-     * @return	void
+     * @param  string $type  Type ('VTODO', 'VEVENT', 'VFREEBUSY', 'VCALENDAR'...)
+     * @param  string $key   Key	('DTSTART', ...). Note: Field is never 'DTSTART;TZID=...' because ';...' was before removed and added as another property
+     * @param  string $value Value
+     * @return void
      */
-    function add_to_array($type, $key, $value)
+    public function add_to_array($type, $key, $value)
     {
 
         //print 'type='.$type.' key='.$key.' value='.$value.'<br>'."\n";
 
-        if ($key == false)
-        {
+        if ($key == false) {
             $key = $this->last_key;
-            switch ($type)
-            {
+            switch ($type) {
                 case 'VEVENT': $value = $this->cal[$type][$this->event_count][$key].$value;break;
                 case 'VFREEBUSY': $value = $this->cal[$type][$this->freebusy_count][$key].$value;break;
                 case 'VTODO': $value = $this->cal[$type][$this->todo_count][$key].$value;break;
@@ -195,20 +188,15 @@ class ICal
         if (($key == "DTSTAMP") or ($key == "LAST-MODIFIED") or ($key == "CREATED")) $value = $this->ical_date_to_unix($value);
         if ($key == "RRULE" ) $value = $this->ical_rrule($value);
 
-        if (stristr($key,"DTSTART") or stristr($key,"DTEND") or stristr($key,"DTSTART;VALUE=DATE") or stristr($key,"DTEND;VALUE=DATE"))
-        {
-        	if (stristr($key,"DTSTART;VALUE=DATE") or stristr($key,"DTEND;VALUE=DATE"))
-        	{
-        		list($key,$value) = array($key,$value);
-        	}
-        	else
-        	{
-        		list($key,$value) = $this->ical_dt_date($key,$value);
-        	}
+        if (stristr($key,"DTSTART") or stristr($key,"DTEND") or stristr($key,"DTSTART;VALUE=DATE") or stristr($key,"DTEND;VALUE=DATE")) {
+            if (stristr($key,"DTSTART;VALUE=DATE") or stristr($key,"DTEND;VALUE=DATE")) {
+                list($key,$value) = array($key,$value);
+            } else {
+                list($key,$value) = $this->ical_dt_date($key,$value);
+            }
         }
 
-        switch ($type)
-        {
+        switch ($type) {
             case "VTODO":
                 $this->cal[$type][$this->todo_count][$key] = $value;
                 break;
@@ -231,20 +219,18 @@ class ICal
     /**
      * Parse text "XXXX:value text some with : " and return array($key = "XXXX", $value="value");
      *
-     * @param 	string 	$text	Text
-     * @return 	array
+     * @param  string $text Text
+     * @return array
      */
-    function retun_key_value($text)
+    public function retun_key_value($text)
     {
         preg_match("/([^:]+)[:]([\w\W]+)/", $text, $matches);
 
-        if (empty($matches))
-        {
+        if (empty($matches)) {
             return array(false,$text);
-        }
-        else
-        {
+        } else {
             $matches = array_splice($matches, 1, 2);
+
             return $matches;
         }
 
@@ -253,26 +239,26 @@ class ICal
     /**
      * Parse RRULE  return array
      *
-     * @param 	string 	$value	string
-     * @return 	array
+     * @param  string $value string
+     * @return array
      */
-    function ical_rrule($value)
+    public function ical_rrule($value)
     {
         $rrule = explode(';',$value);
-        foreach ($rrule as $line)
-        {
+        foreach ($rrule as $line) {
             $rcontent = explode('=', $line);
             $result[$rcontent[0]] = $rcontent[1];
         }
+
         return $result;
     }
     /**
      * Return Unix time from ical date time fomrat (YYYYMMDD[T]HHMMSS[Z] or YYYYMMDD[T]HHMMSS)
      *
-     * @param 	string		$ical_date		String date
-     * @return 	timestamp
+     * @param  string    $ical_date String date
+     * @return timestamp
      */
-    function ical_date_to_unix($ical_date)
+    public function ical_date_to_unix($ical_date)
     {
         $ical_date = str_replace('T', '', $ical_date);
         $ical_date = str_replace('Z', '', $ical_date);
@@ -290,20 +276,20 @@ class ICal
     /**
      * Return unix date from iCal date format
      *
-     * @param 	string 		$key			Key
-     * @param 	string 		$value			Value
-     * @return 	array
+     * @param  string $key   Key
+     * @param  string $value Value
+     * @return array
      */
-    function ical_dt_date($key, $value)
+    public function ical_dt_date($key, $value)
     {
         $value = $this->ical_date_to_unix($value);
 
         // Analyse TZID
         $temp = explode(";",$key);
 
-        if (empty($temp[1])) // not TZID
-        {
+        if (empty($temp[1])) { // not TZID
             $value = str_replace('T', '', $value);
+
             return array($key,$value);
         }
         // adding $value and $tzid
@@ -320,15 +306,14 @@ class ICal
      *
      * @return array
      */
-    function get_sort_event_list()
+    public function get_sort_event_list()
     {
         $temp = $this->get_event_list();
-        if (!empty($temp))
-        {
+        if (!empty($temp)) {
             usort($temp, array(&$this, "ical_dtstart_compare"));
+
             return $temp;
-        } else
-        {
+        } else {
             return false;
         }
     }
@@ -336,11 +321,11 @@ class ICal
     /**
      * Compare two unix timestamp
      *
-     * @param 	array 	$a		Operand a
-     * @param 	array 	$b		Operand b
-     * @return 	integer
+     * @param  array   $a Operand a
+     * @param  array   $b Operand b
+     * @return integer
      */
-    function ical_dtstart_compare($a, $b)
+    public function ical_dtstart_compare($a, $b)
     {
         return strnatcasecmp($a['DTSTART']['unixtime'], $b['DTSTART']['unixtime']);
     }
@@ -350,7 +335,7 @@ class ICal
      *
      * @return array
      */
-    function get_event_list()
+    public function get_event_list()
     {
         return (! empty($this->cal['VEVENT'])?$this->cal['VEVENT']:'');
     }
@@ -360,7 +345,7 @@ class ICal
      *
      * @return array
      */
-    function get_freebusy_list()
+    public function get_freebusy_list()
     {
         return $this->cal['VFREEBUSY'];
     }
@@ -370,7 +355,7 @@ class ICal
      *
      * @return array
      */
-    function get_todo_list()
+    public function get_todo_list()
     {
         return $this->cal['VTODO'];
     }
@@ -380,7 +365,7 @@ class ICal
      *
      * @return array
      */
-    function get_calender_data()
+    public function get_calender_data()
     {
         return $this->cal['VCALENDAR'];
     }
@@ -390,9 +375,8 @@ class ICal
      *
      * @return array
      */
-    function get_all_data()
+    public function get_all_data()
     {
         return $this->cal;
     }
 }
-?>

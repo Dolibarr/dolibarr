@@ -23,7 +23,7 @@
  *	\brief      List all task of a project
  */
 
-require ("../../main.inc.php");
+require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
@@ -34,7 +34,6 @@ $langs->load('users');
 
 $id=GETPOST('id','int');
 $search_project=GETPOST('search_project');
-
 
 // Security check
 $socid=0;
@@ -49,8 +48,6 @@ $page = $page == -1 ? 0 : $page;
 
 $mine = $_REQUEST['mode']=='mine' ? 1 : 0;
 
-
-
 /*
  * View
  */
@@ -64,20 +61,18 @@ if ($mine) $title=$langs->trans("MyActivities");
 
 llxHeader("",$title,"Projet");
 
-if ($id)
-{
-	$projectstatic->fetch($id);
-	$projectstatic->societe->fetch($projectstatic->societe->id);
+if ($id) {
+    $projectstatic->fetch($id);
+    $projectstatic->societe->fetch($projectstatic->societe->id);
 }
 
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, "", $num);
 
 // Show description of content
 if ($mine) print $langs->trans("MyProjectsDesc").'<br><br>';
-else
-{
-	if ($user->rights->projet->all->lire && ! $socid) print $langs->trans("ProjectsDesc").'<br><br>';
-	else print $langs->trans("ProjectsPublicDesc").'<br><br>';
+else {
+    if ($user->rights->projet->all->lire && ! $socid) print $langs->trans("ProjectsDesc").'<br><br>';
+    else print $langs->trans("ProjectsPublicDesc").'<br><br>';
 }
 
 // Get list of project id allowed to user
@@ -127,15 +122,12 @@ print '</div>';
 /*
  * Actions
  */
-if ($user->rights->projet->creer)
-{
-	print '<div class="tabsAction">';
-	print '<a class="butAction" href="'.DOL_URL_ROOT.'/projet/tasks.php?action=create">'.$langs->trans('AddTask').'</a>';
-	print '</div>';
+if ($user->rights->projet->creer) {
+    print '<div class="tabsAction">';
+    print '<a class="butAction" href="'.DOL_URL_ROOT.'/projet/tasks.php?action=create">'.$langs->trans('AddTask').'</a>';
+    print '</div>';
 }
-
 
 llxFooter();
 
 $db->close();
-?>

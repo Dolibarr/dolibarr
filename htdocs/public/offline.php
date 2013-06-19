@@ -24,7 +24,7 @@
  */
 
 define('NOCSRFCHECK',1);
-define('NOLOGIN',1);		
+define('NOLOGIN',1);
 
 require '../main.inc.php';
 
@@ -34,5 +34,3 @@ require '../main.inc.php';
 
 print 'Sorry, it seems your internet connexion is off.<br>';
 print 'You need to be connected to network to use this software.<br>';
- 
-?>

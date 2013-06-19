@@ -69,58 +69,47 @@ $projectstatic = new Project($db);
  */
 
 // Retreive First Task ID of Project if withprojet is on to allow project prev next to work
-if (! empty($project_ref) && ! empty($withproject))
-{
-	if ($projectstatic->fetch(0,$project_ref) > 0)
-	{
-		$tasksarray=$object->getTasksArray(0, 0, $projectstatic->id, $socid, 0);
-		if (count($tasksarray) > 0)
-		{
-			$id=$tasksarray[0]->id;
-			$object->fetch($id);
-		}
-		else
-		{
-			header("Location: ".DOL_URL_ROOT.'/projet/tasks.php?id='.$projectstatic->id.($withproject?'&withproject=1':'').(empty($mode)?'':'&mode='.$mode));
-			exit;
-		}
-	}
+if (! empty($project_ref) && ! empty($withproject)) {
+    if ($projectstatic->fetch(0,$project_ref) > 0) {
+        $tasksarray=$object->getTasksArray(0, 0, $projectstatic->id, $socid, 0);
+        if (count($tasksarray) > 0) {
+            $id=$tasksarray[0]->id;
+            $object->fetch($id);
+        } else {
+            header("Location: ".DOL_URL_ROOT.'/projet/tasks.php?id='.$projectstatic->id.($withproject?'&withproject=1':'').(empty($mode)?'':'&mode='.$mode));
+            exit;
+        }
+    }
 }
 
-if ($id > 0 || ! empty($ref))
-{
-	if ($object->fetch($id,$ref) > 0)
-	{
-		$projectstatic->fetch($object->fk_project);
+if ($id > 0 || ! empty($ref)) {
+    if ($object->fetch($id,$ref) > 0) {
+        $projectstatic->fetch($object->fk_project);
 
-		if (! empty($projectstatic->socid)) {
-			$projectstatic->fetch_thirdparty();
-		}
+        if (! empty($projectstatic->socid)) {
+            $projectstatic->fetch_thirdparty();
+        }
 
-		$object->project = dol_clone($projectstatic);
+        $object->project = dol_clone($projectstatic);
 
-		$upload_dir = $conf->projet->dir_output.'/'.dol_sanitizeFileName($projectstatic->ref).'/'.dol_sanitizeFileName($object->ref);
-	}
-	else
-	{
-		dol_print_error($db);
-	}
+        $upload_dir = $conf->projet->dir_output.'/'.dol_sanitizeFileName($projectstatic->ref).'/'.dol_sanitizeFileName($object->ref);
+    } else {
+        dol_print_error($db);
+    }
 }
 
 // Envoi fichier
-if (GETPOST('sendit') && ! empty($conf->global->MAIN_UPLOAD_DOC))
-{
-	dol_add_file_process($upload_dir,0,1,'userfile');
+if (GETPOST('sendit') && ! empty($conf->global->MAIN_UPLOAD_DOC)) {
+    dol_add_file_process($upload_dir,0,1,'userfile');
 }
 
 // Delete
-if ($action=='delete')
-{
+if ($action=='delete') {
     $langs->load("other");
-	$file = $upload_dir . '/' . GETPOST('urlfile');	// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
-	$ret=dol_delete_file($file,0,0,0,$object);
-	if ($ret) setEventMessage($langs->trans("FileWasRemoved", GETPOST('urlfile')));
-	else setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), 'errors');
+    $file = $upload_dir . '/' . GETPOST('urlfile');	// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
+    $ret=dol_delete_file($file,0,0,0,$object);
+    if ($ret) setEventMessage($langs->trans("FileWasRemoved", GETPOST('urlfile')));
+    else setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), 'errors');
     header('Location: '.$_SERVER["PHP_SELF"].'?id='.$id);
     exit;
 }
@@ -133,135 +122,124 @@ $form = new Form($db);
 
 llxHeader('',$langs->trans('Task'));
 
-if ($object->id > 0)
-{
-	if (! empty($projectstatic->socid)) $projectstatic->societe->fetch($projectstatic->socid);
+if ($object->id > 0) {
+    if (! empty($projectstatic->socid)) $projectstatic->societe->fetch($projectstatic->socid);
 
-	$userWrite  = $projectstatic->restrictedProjectArea($user,'write');
+    $userWrite  = $projectstatic->restrictedProjectArea($user,'write');
 
-	if (! empty($withproject))
-	{
-		// Tabs for project
-		$tab='tasks';
-		$head=project_prepare_head($projectstatic);
-		dol_fiche_head($head, $tab, $langs->trans("Project"),0,($projectstatic->public?'projectpub':'project'));
+    if (! empty($withproject)) {
+        // Tabs for project
+        $tab='tasks';
+        $head=project_prepare_head($projectstatic);
+        dol_fiche_head($head, $tab, $langs->trans("Project"),0,($projectstatic->public?'projectpub':'project'));
 
-		$param=($mode=='mine'?'&mode=mine':'');
+        $param=($mode=='mine'?'&mode=mine':'');
 
-		print '<table class="border" width="100%">';
+        print '<table class="border" width="100%">';
 
-		// Ref
-		print '<tr><td width="30%">';
-		print $langs->trans("Ref");
-		print '</td><td>';
-		// Define a complementary filter for search of next/prev ref.
-		if (! $user->rights->projet->all->lire)
-		{
-			$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,$mine,0);
-			$projectstatic->next_prev_filter=" rowid in (".(count($projectsListId)?join(',',array_keys($projectsListId)):'0').")";
-		}
-		print $form->showrefnav($projectstatic,'project_ref','',1,'ref','ref','',$param.'&withproject=1');
-		print '</td></tr>';
+        // Ref
+        print '<tr><td width="30%">';
+        print $langs->trans("Ref");
+        print '</td><td>';
+        // Define a complementary filter for search of next/prev ref.
+        if (! $user->rights->projet->all->lire) {
+            $projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,$mine,0);
+            $projectstatic->next_prev_filter=" rowid in (".(count($projectsListId)?join(',',array_keys($projectsListId)):'0').")";
+        }
+        print $form->showrefnav($projectstatic,'project_ref','',1,'ref','ref','',$param.'&withproject=1');
+        print '</td></tr>';
 
-		print '<tr><td>'.$langs->trans("Label").'</td><td>'.$projectstatic->title.'</td></tr>';
+        print '<tr><td>'.$langs->trans("Label").'</td><td>'.$projectstatic->title.'</td></tr>';
 
-		print '<tr><td>'.$langs->trans("Company").'</td><td>';
-		if (! empty($projectstatic->societe->id)) print $projectstatic->societe->getNomUrl(1);
-		else print '&nbsp;';
-		print '</td>';
-		print '</tr>';
+        print '<tr><td>'.$langs->trans("Company").'</td><td>';
+        if (! empty($projectstatic->societe->id)) print $projectstatic->societe->getNomUrl(1);
+        else print '&nbsp;';
+        print '</td>';
+        print '</tr>';
 
-		// Visibility
-		print '<tr><td>'.$langs->trans("Visibility").'</td><td>';
-		if ($projectstatic->public) print $langs->trans('SharedProject');
-		else print $langs->trans('PrivateProject');
-		print '</td></tr>';
+        // Visibility
+        print '<tr><td>'.$langs->trans("Visibility").'</td><td>';
+        if ($projectstatic->public) print $langs->trans('SharedProject');
+        else print $langs->trans('PrivateProject');
+        print '</td></tr>';
 
-		// Statut
-		print '<tr><td>'.$langs->trans("Status").'</td><td>'.$projectstatic->getLibStatut(4).'</td></tr>';
+        // Statut
+        print '<tr><td>'.$langs->trans("Status").'</td><td>'.$projectstatic->getLibStatut(4).'</td></tr>';
 
-		print '</table>';
+        print '</table>';
 
-		dol_fiche_end();
+        dol_fiche_end();
 
-		print '<br>';
-	}
+        print '<br>';
+    }
 
-	$head = task_prepare_head($object);
-	dol_fiche_head($head, 'task_document', $langs->trans("Task"), 0, 'projecttask');
+    $head = task_prepare_head($object);
+    dol_fiche_head($head, 'task_document', $langs->trans("Task"), 0, 'projecttask');
 
-	$param=(GETPOST('withproject')?'&withproject=1':'');
-	$linkback=GETPOST('withproject')?'<a href="'.DOL_URL_ROOT.'/projet/tasks.php?id='.$projectstatic->id.'">'.$langs->trans("BackToList").'</a>':'';
+    $param=(GETPOST('withproject')?'&withproject=1':'');
+    $linkback=GETPOST('withproject')?'<a href="'.DOL_URL_ROOT.'/projet/tasks.php?id='.$projectstatic->id.'">'.$langs->trans("BackToList").'</a>':'';
 
-	// Files list constructor
-	$filearray=dol_dir_list($upload_dir,"files",0,'','\.meta$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
-	$totalsize=0;
-	foreach($filearray as $key => $file)
-	{
-		$totalsize+=$file['size'];
-	}
+    // Files list constructor
+    $filearray=dol_dir_list($upload_dir,"files",0,'','\.meta$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
+    $totalsize=0;
+    foreach ($filearray as $key => $file) {
+        $totalsize+=$file['size'];
+    }
 
-	print '<table class="border" width="100%">';
+    print '<table class="border" width="100%">';
 
-	// Ref
-	print '<tr><td width="30%">';
-	print $langs->trans("Ref");
-	print '</td><td colspan="3">';
-	if (empty($withproject) || empty($projectstatic->id))
-	{
-		$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,$mine,1);
-		$object->next_prev_filter=" fk_projet in (".$projectsListId.")";
-	}
-	else $object->next_prev_filter=" fk_projet = ".$projectstatic->id;
-	print $form->showrefnav($object,'id',$linkback,1,'rowid','ref','',$param);
-	print '</td>';
-	print '</tr>';
+    // Ref
+    print '<tr><td width="30%">';
+    print $langs->trans("Ref");
+    print '</td><td colspan="3">';
+    if (empty($withproject) || empty($projectstatic->id)) {
+        $projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,$mine,1);
+        $object->next_prev_filter=" fk_projet in (".$projectsListId.")";
+    } else $object->next_prev_filter=" fk_projet = ".$projectstatic->id;
+    print $form->showrefnav($object,'id',$linkback,1,'rowid','ref','',$param);
+    print '</td>';
+    print '</tr>';
 
-	// Label
-	print '<tr><td>'.$langs->trans("Label").'</td><td colspan="3">'.$object->label.'</td></tr>';
+    // Label
+    print '<tr><td>'.$langs->trans("Label").'</td><td colspan="3">'.$object->label.'</td></tr>';
 
-	// Project
-	if (empty($withproject))
-	{
-		print '<tr><td>'.$langs->trans("Project").'</td><td colspan="3">';
-		print $projectstatic->getNomUrl(1);
-		print '</td></tr>';
+    // Project
+    if (empty($withproject)) {
+        print '<tr><td>'.$langs->trans("Project").'</td><td colspan="3">';
+        print $projectstatic->getNomUrl(1);
+        print '</td></tr>';
 
-		// Third party
-		print '<td>'.$langs->trans("Company").'</td><td colspan="3">';
-		if ($projectstatic->societe->id) print $projectstatic->societe->getNomUrl(1);
-		else print '&nbsp;';
-		print '</td></tr>';
-	}
+        // Third party
+        print '<td>'.$langs->trans("Company").'</td><td colspan="3">';
+        if ($projectstatic->societe->id) print $projectstatic->societe->getNomUrl(1);
+        else print '&nbsp;';
+        print '</td></tr>';
+    }
 
-	// Files infos
-	print '<tr><td>'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
-	print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.$totalsize.' '.$langs->trans("bytes").'</td></tr>';
+    // Files infos
+    print '<tr><td>'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
+    print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.$totalsize.' '.$langs->trans("bytes").'</td></tr>';
 
-	print "</table>\n";
+    print "</table>\n";
 
-	dol_fiche_end();
+    dol_fiche_end();
 
-	print '<br>';
+    print '<br>';
 
 
-	// Affiche formulaire upload
-	$formfile=new FormFile($db);
-	$formfile->form_attach_new_file(DOL_URL_ROOT.'/projet/tasks/document.php?id='.$object->id.($withproject?'&withproject=1':''),'',0,0,$user->rights->projet->creer,50,$object);
+    // Affiche formulaire upload
+    $formfile=new FormFile($db);
+    $formfile->form_attach_new_file(DOL_URL_ROOT.'/projet/tasks/document.php?id='.$object->id.($withproject?'&withproject=1':''),'',0,0,$user->rights->projet->creer,50,$object);
 
 
-	// List of document
-	$param='&id='.$object->id;
-	$formfile->list_of_documents($filearray,$object,'projet',$param,0,dol_sanitizeFileName($projectstatic->ref).'/'.dol_sanitizeFileName($object->ref).'/');
+    // List of document
+    $param='&id='.$object->id;
+    $formfile->list_of_documents($filearray,$object,'projet',$param,0,dol_sanitizeFileName($projectstatic->ref).'/'.dol_sanitizeFileName($object->ref).'/');
+} else {
+    header('Location: index.php');
+    exit;
 }
-else
-{
-	header('Location: index.php');
-	exit;
-}
-
 
 llxFooter();
 
 $db->close();
-?>

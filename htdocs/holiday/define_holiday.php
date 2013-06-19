@@ -25,7 +25,7 @@
  *		\brief      File that defines the balance of paid holiday of users.
  */
 
-require('../main.inc.php');
+require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 require_once DOL_DOCUMENT_ROOT.'/holiday/common.inc.php';
 
@@ -36,7 +36,6 @@ if ($user->societe_id > 0) accessforbidden();
 if(!$user->rights->holiday->define_holiday) accessforbidden();
 
 $action=GETPOST('action');
-
 
 /*
  * View
@@ -53,15 +52,14 @@ $listUsers = $holiday->fetchUsers(false,false);
 $userstatic=new User($db);
 
 // Si il y a une action de mise à jour
-if ($action == 'update' && isset($_POST['update_cp']))
-{
+if ($action == 'update' && isset($_POST['update_cp'])) {
     $userID = array_keys($_POST['update_cp']);
     $userID = $userID[0];
 
     $userValue = $_POST['nb_holiday'];
     $userValue = $userValue[$userID];
 
-    if(!empty($userValue)) {
+    if (!empty($userValue)) {
         $userValue = price2num($userValue,2);
     } else {
         $userValue = 0;
@@ -77,33 +75,31 @@ if ($action == 'update' && isset($_POST['update_cp']))
     $holiday->updateSoldeCP($userID,$userValue);
 
     // If it first update of sold, we set date to avoid to have sold incremented by new month
-	$now=dol_now();
+    $now=dol_now();
     $sql = "UPDATE ".MAIN_DB_PREFIX."holiday_config SET";
     $sql.= " value = '".dol_print_date($now,'%Y%m%d%H%M%S')."'";
     $sql.= " WHERE name = 'lastUpdate' and value IS NULL";	// Add value IS NULL to be sure to update only at init.
     dol_syslog('define_holiday update lastUpdate entry sql='.$sql);
-    $result = $db->query($sql);    
+    $result = $db->query($sql);
 
     $mesg='<div class="ok">'.$langs->trans('UpdateConfCPOK').'</div>';
 
     dol_htmloutput_mesg($mesg);
 
-}
-elseif($action == 'add_event')
-{
+} elseif ($action == 'add_event') {
     $error = false;
 
-    if(!empty($_POST['list_event']) && $_POST['list_event'] > 0) {
+    if (!empty($_POST['list_event']) && $_POST['list_event'] > 0) {
         $event = $_POST['list_event'];
     } else { $error = true;
     }
 
-    if(!empty($_POST['userCP']) && $_POST['userCP'] > 0) {
+    if (!empty($_POST['userCP']) && $_POST['userCP'] > 0) {
         $userCP = $_POST['userCP'];
     } else { $error = true;
     }
 
-    if($error) {
+    if ($error) {
         $message = '<div class="error">'.$langs->trans('ErrorAddEventToUserCP').'</div>';
     } else {
         $nb_holiday = $holiday->getCPforUser($userCP);
@@ -127,20 +123,19 @@ $i = 0;
 
 $cp_events = $holiday->fetchEventsCP();
 
-if($cp_events == 1)
-{
-	print '<br><form method="POST" action="'.$_SERVER["PHP_SELF"].'">'."\n";
-	print '<input type="hidden" name="action" value="add_event" />';
+if ($cp_events == 1) {
+    print '<br><form method="POST" action="'.$_SERVER["PHP_SELF"].'">'."\n";
+    print '<input type="hidden" name="action" value="add_event" />';
 
-	print_fiche_titre($langs->trans('DefineEventUserCP'),'','');
+    print_fiche_titre($langs->trans('DefineEventUserCP'),'','');
 
-	print $langs->trans('MotifCP').' : ';
-	print $holiday->selectEventCP();
-	print ' &nbsp; '.$langs->trans('UserCP').' : ';
-	print $form->select_users('',"userCP",1,"",0,'');
-	print ' <input type="submit" value="'.$langs->trans("addEventToUserCP").'" name="bouton" class="button"/>';
+    print $langs->trans('MotifCP').' : ';
+    print $holiday->selectEventCP();
+    print ' &nbsp; '.$langs->trans('UserCP').' : ';
+    print $form->select_users('',"userCP",1,"",0,'');
+    print ' <input type="submit" value="'.$langs->trans("addEventToUserCP").'" name="bouton" class="button"/>';
 
-	print '</form><br>';
+    print '</form><br>';
 }
 
 dol_fiche_head();
@@ -156,8 +151,7 @@ print '<td width="20%" style="text-align:center">'.$langs->trans('Note').'</td>'
 print '<td style="text-align:center">'.$langs->trans('UpdateButtonCP').'</td>';
 print '</tr>';
 
-foreach($listUsers as $users)
-{
+foreach ($listUsers as $users) {
 
     $var=!$var;
 
@@ -187,4 +181,3 @@ dol_fiche_end();
 llxFooter();
 
 $db->close();
-?>

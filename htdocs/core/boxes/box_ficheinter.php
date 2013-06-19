@@ -29,127 +29,118 @@ include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
  */
 class box_ficheinter extends ModeleBoxes
 {
-	var $boxcode="ficheinter";
-	var $boximg="object_intervention";
-	var $boxlabel="BoxFicheInter";
-	var $depends = array("ficheinter");	// conf->contrat->enabled
+    public $boxcode="ficheinter";
+    public $boximg="object_intervention";
+    public $boxlabel="BoxFicheInter";
+    public $depends = array("ficheinter");	// conf->contrat->enabled
 
-	var $db;
-	var $param;
+    public $db;
+    public $param;
 
-	var $info_box_head = array();
-	var $info_box_contents = array();
+    public $info_box_head = array();
+    public $info_box_contents = array();
 
 
-	/**
-	 *  Load data for box to show them later
-	 *
-	 *  @param	int		$max        Maximum number of records to load
-	 *  @return	void
-	*/
-	function loadBox($max=10)
-	{
-		global $user, $langs, $db, $conf;
+    /**
+     *  Load data for box to show them later
+     *
+     *  @param	int		$max        Maximum number of records to load
+     *  @return	void
+    */
+    public function loadBox($max=10)
+    {
+        global $user, $langs, $db, $conf;
 
-		$this->max=$max;
+        $this->max=$max;
 
-		include_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
-		$ficheinterstatic=new Fichinter($db);
+        include_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
+        $ficheinterstatic=new Fichinter($db);
 
-		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastFicheInter",$max));
+        $this->info_box_head = array('text' => $langs->trans("BoxTitleLastFicheInter",$max));
 
-		if ($user->rights->ficheinter->lire)
-		{
-			$sql = "SELECT f.rowid, f.ref, f.fk_soc, f.fk_statut,";
-			$sql.= " f.datec,";
-			$sql.= " f.date_valid as datev,";
-			$sql.= " f.tms as datem,";
-			$sql.= " s.nom, s.rowid as socid, s.client";
-			$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
-			if (! $user->rights->societe->client->voir)
-				$sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-			$sql.= ", ".MAIN_DB_PREFIX."fichinter as f";
-			$sql.= " WHERE f.fk_soc = s.rowid ";
-			$sql.= " AND f.entity = ".$conf->entity;
-			if (! $user->rights->societe->client->voir)
-				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-			$sql.= " ORDER BY f.tms DESC";
-			$sql.= $db->plimit($max, 0);
+        if ($user->rights->ficheinter->lire) {
+            $sql = "SELECT f.rowid, f.ref, f.fk_soc, f.fk_statut,";
+            $sql.= " f.datec,";
+            $sql.= " f.date_valid as datev,";
+            $sql.= " f.tms as datem,";
+            $sql.= " s.nom, s.rowid as socid, s.client";
+            $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
+            if (! $user->rights->societe->client->voir)
+                $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+            $sql.= ", ".MAIN_DB_PREFIX."fichinter as f";
+            $sql.= " WHERE f.fk_soc = s.rowid ";
+            $sql.= " AND f.entity = ".$conf->entity;
+            if (! $user->rights->societe->client->voir)
+                $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+            $sql.= " ORDER BY f.tms DESC";
+            $sql.= $db->plimit($max, 0);
 
-			dol_syslog(get_class($this).'::loadBox sql='.$sql,LOG_DEBUG);
-			$resql = $db->query($sql);
-			if ($resql)
-			{
-				$num = $db->num_rows($resql);
-				$now=dol_now();
+            dol_syslog(get_class($this).'::loadBox sql='.$sql,LOG_DEBUG);
+            $resql = $db->query($sql);
+            if ($resql) {
+                $num = $db->num_rows($resql);
+                $now=dol_now();
 
-				$i = 0;
+                $i = 0;
 
-				while ($i < $num)
-				{
-					$objp = $db->fetch_object($resql);
-					$datec=$db->jdate($objp->datec);
+                while ($i < $num) {
+                    $objp = $db->fetch_object($resql);
+                    $datec=$db->jdate($objp->datec);
 
-					$ficheinterstatic->statut=$objp->fk_statut;
-					$ficheinterstatic->id=$objp->rowid;
+                    $ficheinterstatic->statut=$objp->fk_statut;
+                    $ficheinterstatic->id=$objp->rowid;
 
-					$this->info_box_contents[$i][0] = array('td' => 'align="left" width="16"',
-					'logo' => $this->boximg,
-					'url' => DOL_URL_ROOT."/ficheinter/fiche.php?id=".$objp->rowid);
+                    $this->info_box_contents[$i][0] = array('td' => 'align="left" width="16"',
+                    'logo' => $this->boximg,
+                    'url' => DOL_URL_ROOT."/ficheinter/fiche.php?id=".$objp->rowid);
 
-					$this->info_box_contents[$i][1] = array('td' => 'align="left"',
-					'text' => ($objp->ref?$objp->ref:$objp->rowid),	// Some contracts have no ref
-					'url' => DOL_URL_ROOT."/contrat/fiche.php?id=".$objp->rowid);
+                    $this->info_box_contents[$i][1] = array('td' => 'align="left"',
+                    'text' => ($objp->ref?$objp->ref:$objp->rowid),	// Some contracts have no ref
+                    'url' => DOL_URL_ROOT."/contrat/fiche.php?id=".$objp->rowid);
 
-					$this->info_box_contents[$i][2] = array('td' => 'align="left" width="16"',
-					'logo' => 'company',
-					'url' => DOL_URL_ROOT."/comm/fiche.php?socid=".$objp->socid);
+                    $this->info_box_contents[$i][2] = array('td' => 'align="left" width="16"',
+                    'logo' => 'company',
+                    'url' => DOL_URL_ROOT."/comm/fiche.php?socid=".$objp->socid);
 
-					$this->info_box_contents[$i][3] = array('td' => 'align="left"',
-					'text' => dol_trunc($objp->nom,40),
-					'url' => DOL_URL_ROOT."/comm/fiche.php?socid=".$objp->socid);
+                    $this->info_box_contents[$i][3] = array('td' => 'align="left"',
+                    'text' => dol_trunc($objp->nom,40),
+                    'url' => DOL_URL_ROOT."/comm/fiche.php?socid=".$objp->socid);
 
-					$this->info_box_contents[$i][4] = array('td' => 'align="right"',
-					'text' => dol_print_date($datec,'day'));
+                    $this->info_box_contents[$i][4] = array('td' => 'align="right"',
+                    'text' => dol_print_date($datec,'day'));
 
-					$this->info_box_contents[$i][5] = array('td' => 'align="right" class="nowrap"',
-					'text' => $ficheinterstatic->getLibStatut(6),
-					'asis'=>1
-					);
+                    $this->info_box_contents[$i][5] = array('td' => 'align="right" class="nowrap"',
+                    'text' => $ficheinterstatic->getLibStatut(6),
+                    'asis'=>1
+                    );
 
-					$i++;
-				}
+                    $i++;
+                }
 
-				if ($num==0) $this->info_box_contents[$i][0] = array('td' => 'align="center"','text'=>$langs->trans("NoRecordedContracts"));
+                if ($num==0) $this->info_box_contents[$i][0] = array('td' => 'align="center"','text'=>$langs->trans("NoRecordedContracts"));
 
-				$db->free($resql);
-			}
-			else
-			{
-				$this->info_box_contents[0][0] = array(  'td' => 'align="left"',
-				'maxlength'=>500,
-				'text' => ($db->error().' sql='.$sql));
-			}
-		}
-		else
-		{
-			$this->info_box_contents[0][0] = array('td' => 'align="left"',
-			'text' => $langs->trans("ReadPermissionNotAllowed"));
-		}
-	}
+                $db->free($resql);
+            } else {
+                $this->info_box_contents[0][0] = array(  'td' => 'align="left"',
+                'maxlength'=>500,
+                'text' => ($db->error().' sql='.$sql));
+            }
+        } else {
+            $this->info_box_contents[0][0] = array('td' => 'align="left"',
+            'text' => $langs->trans("ReadPermissionNotAllowed"));
+        }
+    }
 
-	/**
-	 *	Method to show box
-	 *
-	 *	@param	array	$head       Array with properties of box title
-	 *	@param  array	$contents   Array with properties of box lines
-	 *	@return	void
-	 */
-	function showBox($head = null, $contents = null)
-	{
-		parent::showBox($this->info_box_head, $this->info_box_contents);
-	}
+    /**
+     *	Method to show box
+     *
+     *	@param	array	$head       Array with properties of box title
+     *	@param  array	$contents   Array with properties of box lines
+     *	@return	void
+     */
+    public function showBox($head = null, $contents = null)
+    {
+        parent::showBox($this->info_box_head, $this->info_box_contents);
+    }
 
 }
-
-?>

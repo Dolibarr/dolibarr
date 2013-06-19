@@ -37,18 +37,16 @@ $action=GETPOST('action', 'alpha');
 
 if (! $user->admin) accessforbidden();
 
-
 /*
  * Actions
  */
 
-if ($action == 'update')
-{
-	$public=GETPOST('MEMBER_ENABLE_PUBLIC');
-	$amount=GETPOST('MEMBER_NEWFORM_AMOUNT');
-	$editamount=GETPOST('MEMBER_NEWFORM_EDITAMOUNT');
-	$payonline=GETPOST('MEMBER_NEWFORM_PAYONLINE');
-	$email=GETPOST('MEMBER_PAYONLINE_SENDEMAIL');
+if ($action == 'update') {
+    $public=GETPOST('MEMBER_ENABLE_PUBLIC');
+    $amount=GETPOST('MEMBER_NEWFORM_AMOUNT');
+    $editamount=GETPOST('MEMBER_NEWFORM_EDITAMOUNT');
+    $payonline=GETPOST('MEMBER_NEWFORM_PAYONLINE');
+    $email=GETPOST('MEMBER_PAYONLINE_SENDEMAIL');
 
     $res=dolibarr_set_const($db, "MEMBER_ENABLE_PUBLIC",$public,'chaine',0,'',$conf->entity);
     $res=dolibarr_set_const($db, "MEMBER_NEWFORM_AMOUNT",$amount,'chaine',0,'',$conf->entity);
@@ -58,16 +56,12 @@ if ($action == 'update')
 
     if (! $res > 0) $error++;
 
- 	if (! $error)
-    {
+     if (! $error) {
         $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
-    }
-    else
-    {
+    } else {
         $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
     }
 }
-
 
 /*
  * View
@@ -78,7 +72,6 @@ $form=new Form($db);
 $help_url='EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros';
 llxHeader('',$langs->trans("MembersSetup"),$help_url);
 
-
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print_fiche_titre($langs->trans("MembersSetup"),$linkback,'setup');
 
@@ -88,46 +81,39 @@ dol_fiche_head($head, 'public', $langs->trans("Member"), 0, 'user');
 
 dol_htmloutput_mesg($mesg);
 
-if ($conf->use_javascript_ajax)
-{
+if ($conf->use_javascript_ajax) {
     print "\n".'<script type="text/javascript" language="javascript">';
     print 'jQuery(document).ready(function () {
                 function initemail()
                 {
-                    if (jQuery("#MEMBER_NEWFORM_PAYONLINE").val()==\'-1\')
-                    {
+                    if (jQuery("#MEMBER_NEWFORM_PAYONLINE").val()==\'-1\') {
                         jQuery("#tremail").hide();
-					}
-					else
-					{
+                    } else {
                         jQuery("#tremail").show();
-					}
-				}
+                    }
+                }
                 function initfields()
                 {
-					if (jQuery("#MEMBER_ENABLE_PUBLIC").val()==\'0\')
-                    {
+                    if (jQuery("#MEMBER_ENABLE_PUBLIC").val()==\'0\') {
                         jQuery("#tramount").hide();
                         jQuery("#tredit").hide();
                         jQuery("#trpayment").hide();
                         jQuery("#tremail").hide();
                     }
-                    if (jQuery("#MEMBER_ENABLE_PUBLIC").val()==\'1\')
-                    {
+                    if (jQuery("#MEMBER_ENABLE_PUBLIC").val()==\'1\') {
                         jQuery("#tramount").show();
                         jQuery("#tredit").show();
                         jQuery("#trpayment").show();
                         if (jQuery("#MEMBER_NEWFORM_PAYONLINE").val()==\'-1\') jQuery("#tremail").hide();
                         else jQuery("#tremail").show();
-					}
-				}
-				initfields();
+                    }
+                }
+                initfields();
                 jQuery("#MEMBER_ENABLE_PUBLIC").change(function() { initfields(); });
                 jQuery("#MEMBER_NEWFORM_PAYONLINE").change(function() { initemail(); });
-			})';
+            })';
     print '</script>'."\n";
 }
-
 
 print $langs->trans("BlankSubscriptionFormDesc").'<br><br>';
 
@@ -178,28 +164,26 @@ print '</td><td align="right">';
 print $form->selectyesno("MEMBER_NEWFORM_EDITAMOUNT",(! empty($conf->global->MEMBER_NEWFORM_EDITAMOUNT)?$conf->global->MEMBER_NEWFORM_EDITAMOUNT:0),1);
 print "</td></tr>\n";
 
-if (! empty($conf->paybox->enabled) || ! empty($conf->paypal->enabled))
-{
-	// Jump to an online payment page
-	$var=! $var;
-	print '<tr '.$bc[$var].' id="trpayment"><td>';
-	print $langs->trans("MEMBER_NEWFORM_PAYONLINE");
-	print '</td><td align="right">';
-	$listofval=array();
-	if (! empty($conf->paybox->enabled)) $listofval['paybox']='Paybox';
-	if (! empty($conf->paypal->enabled)) $listofval['paypal']='PayPal';
-	print $form->selectarray("MEMBER_NEWFORM_PAYONLINE",$listofval,(! empty($conf->global->MEMBER_NEWFORM_PAYONLINE)?$conf->global->MEMBER_NEWFORM_PAYONLINE:''),1);
-	print "</td></tr>\n";
+if (! empty($conf->paybox->enabled) || ! empty($conf->paypal->enabled)) {
+    // Jump to an online payment page
+    $var=! $var;
+    print '<tr '.$bc[$var].' id="trpayment"><td>';
+    print $langs->trans("MEMBER_NEWFORM_PAYONLINE");
+    print '</td><td align="right">';
+    $listofval=array();
+    if (! empty($conf->paybox->enabled)) $listofval['paybox']='Paybox';
+    if (! empty($conf->paypal->enabled)) $listofval['paypal']='PayPal';
+    print $form->selectarray("MEMBER_NEWFORM_PAYONLINE",$listofval,(! empty($conf->global->MEMBER_NEWFORM_PAYONLINE)?$conf->global->MEMBER_NEWFORM_PAYONLINE:''),1);
+    print "</td></tr>\n";
 }
 
-if (! empty($conf->paybox->enabled) || ! empty($conf->paypal->enabled))
-{
+if (! empty($conf->paybox->enabled) || ! empty($conf->paypal->enabled)) {
     // Jump to an online payment page
     $var=! $var;
     print '<tr '.$bc[$var].' id="tremail"><td>';
     print $langs->trans("MEMBER_PAYONLINE_SENDEMAIL");
     print '</td><td align="right">';
-	print '<input type="text" id="MEMBER_PAYONLINE_SENDEMAIL" name="MEMBER_PAYONLINE_SENDEMAIL" size="24" value="'.(! empty($conf->global->MEMBER_PAYONLINE_SENDEMAIL)?$conf->global->MEMBER_PAYONLINE_SENDEMAIL:'').'">';;
+    print '<input type="text" id="MEMBER_PAYONLINE_SENDEMAIL" name="MEMBER_PAYONLINE_SENDEMAIL" size="24" value="'.(! empty($conf->global->MEMBER_PAYONLINE_SENDEMAIL)?$conf->global->MEMBER_PAYONLINE_SENDEMAIL:'').'">';;
     print "</td></tr>\n";
 }
 
@@ -212,7 +196,6 @@ print '</center>';
 print '</form>';
 
 dol_fiche_end();
-
 
 print '<br>';
 //print $langs->trans('FollowingLinksArePublic').'<br>';
@@ -231,4 +214,3 @@ print '</table>';
 llxFooter();
 
 $db->close();
-?>

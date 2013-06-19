@@ -25,7 +25,6 @@
 
 include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 
-
 /**
  * 	Description and activation class for module ECM
  */
@@ -33,197 +32,194 @@ class modECM extends DolibarrModules
 {
 
    /**
-	 *   Constructor. Define names, constants, directories, boxes, permissions
-	 *
-	 *   @param      DoliDB		$db      Database handler
+     *   Constructor. Define names, constants, directories, boxes, permissions
+     *
+     *   @param      DoliDB		$db      Database handler
     */
-	function __construct($db)
-	{
-		$this->db = $db;
+    public function __construct($db)
+    {
+        $this->db = $db;
 
-		// Id for module (must be unique).
-		// Use here a free id.
-		$this->numero = 2500;
+        // Id for module (must be unique).
+        // Use here a free id.
+        $this->numero = 2500;
 
-		// Family can be 'crm','financial','hr','projects','product','ecm','technic','other'
-		// It is used to sort modules in module setup page
-		$this->family = "ecm";
-		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
-		$this->name = preg_replace('/^mod/i','',get_class($this));
-		// Module description used if translation string 'ModuleXXXDesc' not found (XXX is id value)
-		$this->description = "Electronic Content Management";
-		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
-		$this->version = 'dolibarr';
-		// Key used in llx_const table to save module status enabled/disabled (XXX is id value)
-		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
-		// Where to store the module in setup page (0=common,1=interface,2=other)
-		$this->special = 0;
-		// Name of png file (without png) used for this module
-		$this->picto='dir';
+        // Family can be 'crm','financial','hr','projects','product','ecm','technic','other'
+        // It is used to sort modules in module setup page
+        $this->family = "ecm";
+        // Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
+        $this->name = preg_replace('/^mod/i','',get_class($this));
+        // Module description used if translation string 'ModuleXXXDesc' not found (XXX is id value)
+        $this->description = "Electronic Content Management";
+        // Possible values for version are: 'development', 'experimental', 'dolibarr' or version
+        $this->version = 'dolibarr';
+        // Key used in llx_const table to save module status enabled/disabled (XXX is id value)
+        $this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
+        // Where to store the module in setup page (0=common,1=interface,2=other)
+        $this->special = 0;
+        // Name of png file (without png) used for this module
+        $this->picto='dir';
 
-		// Data directories to create when module is enabled
-		$this->dirs = array("/ecm/temp");
+        // Data directories to create when module is enabled
+        $this->dirs = array("/ecm/temp");
 
-		// Config pages. Put here list of php page names stored in admmin directory used to setup module
-		$this->config_page_url = array('ecm.php');
+        // Config pages. Put here list of php page names stored in admmin directory used to setup module
+        $this->config_page_url = array('ecm.php');
 
-		// Dependencies
-		$this->depends = array();		// List of modules id that must be enabled if this module is enabled
-		$this->requiredby = array();	// List of modules id to disable if this one is disabled
+        // Dependencies
+        $this->depends = array();		// List of modules id that must be enabled if this module is enabled
+        $this->requiredby = array();	// List of modules id to disable if this one is disabled
 
-		// Constants
-		$this->const = array();			// List of parameters
-		$r=0;
-		
-		$this->const[$r][0] = "ECM_AUTO_TREE_ENABLED";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "1";
-		$this->const[$r][3] = 'Auto tree is enabled by default';
-		$this->const[$r][4] = 0;
-		
-		// Boxes
-		$this->boxes = array();			// List of boxes
-		$r=0;
+        // Constants
+        $this->const = array();			// List of parameters
+        $r=0;
 
-		// Add here list of php file(s) stored in core/boxes that contains class to show a box.
-		// Example:
+        $this->const[$r][0] = "ECM_AUTO_TREE_ENABLED";
+        $this->const[$r][1] = "chaine";
+        $this->const[$r][2] = "1";
+        $this->const[$r][3] = 'Auto tree is enabled by default';
+        $this->const[$r][4] = 0;
+
+        // Boxes
+        $this->boxes = array();			// List of boxes
+        $r=0;
+
+        // Add here list of php file(s) stored in core/boxes that contains class to show a box.
+        // Example:
         //$this->boxes[$r][1] = "myboxa.php";
-    	//$r++;
+        //$r++;
         //$this->boxes[$r][1] = "myboxb.php";
-    	//$r++;
+        //$r++;
 
-		// Permissions
-		$this->rights_class = 'ecm';	// Permission key
-		$this->rights = array();		// Permission array used by this module
+        // Permissions
+        $this->rights_class = 'ecm';	// Permission key
+        $this->rights = array();		// Permission array used by this module
 
-		$r++;
-		$this->rights[$r][0] = 2501;
-		$this->rights[$r][1] = 'Consulter/Télécharger les documents';
-		$this->rights[$r][2] = 'r';
-		$this->rights[$r][3] = 1;
-		$this->rights[$r][4] = 'read';
+        $r++;
+        $this->rights[$r][0] = 2501;
+        $this->rights[$r][1] = 'Consulter/Télécharger les documents';
+        $this->rights[$r][2] = 'r';
+        $this->rights[$r][3] = 1;
+        $this->rights[$r][4] = 'read';
 
-		$r++;
-		$this->rights[$r][0] = 2503;
-		$this->rights[$r][1] = 'Soumettre ou supprimer des documents';
-		$this->rights[$r][2] = 'w';
-		$this->rights[$r][3] = 1;
-		$this->rights[$r][4] = 'upload';
+        $r++;
+        $this->rights[$r][0] = 2503;
+        $this->rights[$r][1] = 'Soumettre ou supprimer des documents';
+        $this->rights[$r][2] = 'w';
+        $this->rights[$r][3] = 1;
+        $this->rights[$r][4] = 'upload';
 
-		$r++;
-		$this->rights[$r][0] = 2515;
-		$this->rights[$r][1] = 'Administrer les rubriques de documents';
-		$this->rights[$r][2] = 'w';
-		$this->rights[$r][3] = 1;
-		$this->rights[$r][4] = 'setup';
-
+        $r++;
+        $this->rights[$r][0] = 2515;
+        $this->rights[$r][1] = 'Administrer les rubriques de documents';
+        $this->rights[$r][2] = 'w';
+        $this->rights[$r][3] = 1;
+        $this->rights[$r][4] = 'setup';
 
         // Menus
-		//------
-		$this->menus = array();			// List of menus to add
-		$r=0;
+        //------
+        $this->menus = array();			// List of menus to add
+        $r=0;
 
-		// Top menu
-		$this->menu[$r]=array('fk_menu'=>0,
-							  'type'=>'top',
-							  'titre'=>'MenuECM',
-							  'mainmenu'=>'ecm',
-							  'url'=>'/ecm/index.php',
-							  'langs'=>'ecm',
-							  'position'=>100,
-							  'perms'=>'$user->rights->ecm->read || $user->rights->ecm->upload || $user->rights->ecm->setup',
-							  'enabled'=>'$conf->ecm->enabled',
-							  'target'=>'',
-							  'user'=>2);			// 0=Menu for internal users, 1=external users, 2=both
-		$r++;
+        // Top menu
+        $this->menu[$r]=array('fk_menu'=>0,
+                              'type'=>'top',
+                              'titre'=>'MenuECM',
+                              'mainmenu'=>'ecm',
+                              'url'=>'/ecm/index.php',
+                              'langs'=>'ecm',
+                              'position'=>100,
+                              'perms'=>'$user->rights->ecm->read || $user->rights->ecm->upload || $user->rights->ecm->setup',
+                              'enabled'=>'$conf->ecm->enabled',
+                              'target'=>'',
+                              'user'=>2);			// 0=Menu for internal users, 1=external users, 2=both
+        $r++;
 
-		// Left menu linked to top menu
-		$this->menu[$r]=array('fk_menu'=>'r=0',
-							  'type'=>'left',
-							  'titre'=>'ECMArea',
-							  'mainmenu'=>'ecm',
-							  'url'=>'/ecm/index.php',
-							  'langs'=>'ecm',
-							  'position'=>101,
-							  'perms'=>'$user->rights->ecm->read || $user->rights->ecm->upload',
-							  'enabled'=>'$user->rights->ecm->read || $user->rights->ecm->upload',
-							  'target'=>'',
-							  'user'=>2);			// 0=Menu for internal users, 1=external users, 2=both
-		$r++;
+        // Left menu linked to top menu
+        $this->menu[$r]=array('fk_menu'=>'r=0',
+                              'type'=>'left',
+                              'titre'=>'ECMArea',
+                              'mainmenu'=>'ecm',
+                              'url'=>'/ecm/index.php',
+                              'langs'=>'ecm',
+                              'position'=>101,
+                              'perms'=>'$user->rights->ecm->read || $user->rights->ecm->upload',
+                              'enabled'=>'$user->rights->ecm->read || $user->rights->ecm->upload',
+                              'target'=>'',
+                              'user'=>2);			// 0=Menu for internal users, 1=external users, 2=both
+        $r++;
 
-		$this->menu[$r]=array('fk_menu'=>'r=1',
-							  'type'=>'left',
-							  'titre'=>'ECMNewSection',
-							  'mainmenu'=>'ecm',
-							  'url'=>'/ecm/docdir.php?action=create',
-							  'langs'=>'ecm',
-							  'position'=>100,
-							  'perms'=>'$user->rights->ecm->setup',
-							  'enabled'=>'$user->rights->ecm->setup',
-							  'target'=>'',
-							  'user'=>2);			// 0=Menu for internal users, 1=external users, 2=both
-		$r++;
+        $this->menu[$r]=array('fk_menu'=>'r=1',
+                              'type'=>'left',
+                              'titre'=>'ECMNewSection',
+                              'mainmenu'=>'ecm',
+                              'url'=>'/ecm/docdir.php?action=create',
+                              'langs'=>'ecm',
+                              'position'=>100,
+                              'perms'=>'$user->rights->ecm->setup',
+                              'enabled'=>'$user->rights->ecm->setup',
+                              'target'=>'',
+                              'user'=>2);			// 0=Menu for internal users, 1=external users, 2=both
+        $r++;
 
-		$this->menu[$r]=array('fk_menu'=>'r=1',
-							  'type'=>'left',
-							  'titre'=>'ECMFileManager',
-							  'mainmenu'=>'ecm',
-							  'url'=>'/ecm/index.php?action=file_manager',
-							  'langs'=>'ecm',
-							  'position'=>102,
-							  'perms'=>'$user->rights->ecm->read || $user->rights->ecm->upload',
-							  'enabled'=>'$user->rights->ecm->read || $user->rights->ecm->upload',
-							  'target'=>'',
-							  'user'=>2);			// 0=Menu for internal users, 1=external users, 2=both
-		$r++;
+        $this->menu[$r]=array('fk_menu'=>'r=1',
+                              'type'=>'left',
+                              'titre'=>'ECMFileManager',
+                              'mainmenu'=>'ecm',
+                              'url'=>'/ecm/index.php?action=file_manager',
+                              'langs'=>'ecm',
+                              'position'=>102,
+                              'perms'=>'$user->rights->ecm->read || $user->rights->ecm->upload',
+                              'enabled'=>'$user->rights->ecm->read || $user->rights->ecm->upload',
+                              'target'=>'',
+                              'user'=>2);			// 0=Menu for internal users, 1=external users, 2=both
+        $r++;
 
-		/*
-		$this->menu[$r]=array('fk_menu'=>'r=1',
-							  'type'=>'left',
-							  'titre'=>'Search',
-							  'mainmenu'=>'ecm',
-							  'url'=>'/ecm/search.php',
-							  'langs'=>'ecm',
-							  'position'=>103,
-							  'perms'=>'$user->rights->ecm->read',
-							  'enabled'=>'$user->rights->ecm->read',
-							  'target'=>'',
-							  'user'=>2);			// 0=Menu for internal users, 1=external users, 2=both
-							  
-		$r++;*/
+        /*
+        $this->menu[$r]=array('fk_menu'=>'r=1',
+                              'type'=>'left',
+                              'titre'=>'Search',
+                              'mainmenu'=>'ecm',
+                              'url'=>'/ecm/search.php',
+                              'langs'=>'ecm',
+                              'position'=>103,
+                              'perms'=>'$user->rights->ecm->read',
+                              'enabled'=>'$user->rights->ecm->read',
+                              'target'=>'',
+                              'user'=>2);			// 0=Menu for internal users, 1=external users, 2=both
 
-	}
+        $r++;*/
 
-	/**
-	 *		Function called when module is enabled.
-	 *		The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
-	 *		It also creates data directories
-	 *
-     *      @param      string	$options    Options when enabling module ('', 'noboxes')
-	 *      @return     int             	1 if OK, 0 if KO
-     */
-	function init($options='')
-  	{
-    	$sql = array();
-
-    	return $this->_init($sql,$options);
-  	}
+    }
 
     /**
-	 *		Function called when module is disabled.
-	 *      Remove from database constants, boxes and permissions from Dolibarr database.
-	 *		Data directories are not deleted
-	 *
+     *		Function called when module is enabled.
+     *		The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
+     *		It also creates data directories
+     *
      *      @param      string	$options    Options when enabling module ('', 'noboxes')
-	 *      @return     int             	1 if OK, 0 if KO
+     *      @return     int             	1 if OK, 0 if KO
      */
-    function remove($options='')
-    {
-		$sql = array();
+    public function init($options='')
+      {
+        $sql = array();
 
-		return $this->_remove($sql,$options);
+        return $this->_init($sql,$options);
+      }
+
+    /**
+     *		Function called when module is disabled.
+     *      Remove from database constants, boxes and permissions from Dolibarr database.
+     *		Data directories are not deleted
+     *
+     *      @param      string	$options    Options when enabling module ('', 'noboxes')
+     *      @return     int             	1 if OK, 0 if KO
+     */
+    public function remove($options='')
+    {
+        $sql = array();
+
+        return $this->_remove($sql,$options);
     }
 
 }
-
-?>

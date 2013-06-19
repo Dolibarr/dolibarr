@@ -21,20 +21,19 @@
  *      \brief      Trigger file for paypal workflow
  */
 
-
 /**
  *  Class of triggers for paypal module
  */
 class InterfacePaypalWorkflow
 {
-    var $db;
+    public $db;
 
     /**
      *   Constructor
      *
      *   @param		DoliDB		$db      Database handler
      */
-    function __construct($db)
+    public function __construct($db)
     {
         $this->db = $db;
 
@@ -45,13 +44,12 @@ class InterfacePaypalWorkflow
         $this->picto = 'paypal@paypal';
     }
 
-
     /**
      *  Renvoi nom du lot de triggers
      *
      *  @return     string      Nom du lot de triggers
      */
-    function getName()
+    public function getName()
     {
         return $this->name;
     }
@@ -61,7 +59,7 @@ class InterfacePaypalWorkflow
      *
      *  @return     string      Descriptif du lot de triggers
      */
-    function getDesc()
+    public function getDesc()
     {
         return $this->description;
     }
@@ -71,7 +69,7 @@ class InterfacePaypalWorkflow
      *
      *  @return     string      Version du lot de triggers
      */
-    function getVersion()
+    public function getVersion()
     {
         global $langs;
         $langs->load("admin");
@@ -94,68 +92,59 @@ class InterfacePaypalWorkflow
      *      @param  conf		$conf       Object conf
      *      @return int         			<0 if KO, 0 if no triggered ran, >0 if OK
      */
-	function run_trigger($action,$object,$user,$langs,$conf)
+    public function run_trigger($action,$object,$user,$langs,$conf)
     {
         // Mettre ici le code a executer en reaction de l'action
         // Les donnees de l'action sont stockees dans $object
 
-        if ($action == 'PAYPAL_PAYMENT_OK')
-        {
-        	dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". source=".$object->source." ref=".$object->ref);
+        if ($action == 'PAYPAL_PAYMENT_OK') {
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". source=".$object->source." ref=".$object->ref);
 
-        	if (! empty($object->source))
-        	{
-        		if ($object->source == 'membersubscription')
-        		{
-        			//require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherents.class.php';
+            if (! empty($object->source)) {
+                if ($object->source == 'membersubscription') {
+                    //require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherents.class.php';
 
-        			// TODO add subscription treatment
-        		}
-        		else
-        		{
-        			require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+                    // TODO add subscription treatment
+                } else {
+                    require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 
-        			$soc = new Societe($this->db);
+                    $soc = new Societe($this->db);
 
-        			// Parse element/subelement (ex: project_task)
-        			$element = $path = $filename = $object->source;
-        			if (preg_match('/^([^_]+)_([^_]+)/i',$object->source,$regs))
-        			{
-        				$element = $path = $regs[1];
-        				$filename = $regs[2];
-        			}
-        			// For compatibility
-        			if ($element == 'order') {
-        				$path = $filename = 'commande';
-        			}
-        			if ($element == 'invoice') {
-        				$path = 'compta/facture'; $filename = 'facture';
-        			}
+                    // Parse element/subelement (ex: project_task)
+                    $element = $path = $filename = $object->source;
+                    if (preg_match('/^([^_]+)_([^_]+)/i',$object->source,$regs)) {
+                        $element = $path = $regs[1];
+                        $filename = $regs[2];
+                    }
+                    // For compatibility
+                    if ($element == 'order') {
+                        $path = $filename = 'commande';
+                    }
+                    if ($element == 'invoice') {
+                        $path = 'compta/facture'; $filename = 'facture';
+                    }
 
-        			dol_include_once('/'.$path.'/class/'.$filename.'.class.php');
+                    dol_include_once('/'.$path.'/class/'.$filename.'.class.php');
 
-        			$classname = ucfirst($filename);
-        			$obj = new $classname($this->db);
+                    $classname = ucfirst($filename);
+                    $obj = new $classname($this->db);
 
-        			$ret = $obj->fetch('',$object->ref);
-        			if ($ret < 0) return -1;
+                    $ret = $obj->fetch('',$object->ref);
+                    if ($ret < 0) return -1;
 
-        			// Add payer id
-        			$soc->setValueFrom('ref_int', $object->payerID, 'societe', $obj->socid);
+                    // Add payer id
+                    $soc->setValueFrom('ref_int', $object->payerID, 'societe', $obj->socid);
 
-        			// Add transaction id
-        			$obj->setValueFrom('ref_int',$object->resArray["TRANSACTIONID"]);
-        		}
-        	}
-        	else
-        	{
-        		// TODO add free tag treatment
-        	}
+                    // Add transaction id
+                    $obj->setValueFrom('ref_int',$object->resArray["TRANSACTIONID"]);
+                }
+            } else {
+                // TODO add free tag treatment
+            }
 
         }
 
-		return 0;
+        return 0;
     }
 
 }
-?>

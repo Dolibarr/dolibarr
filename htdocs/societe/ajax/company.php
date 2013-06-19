@@ -52,56 +52,47 @@ $price_by_qty_rowid=GETPOST('pbq', 'int');
 dol_syslog(join(',',$_GET));
 //print_r($_GET);
 
-if (! empty($action) && $action == 'fetch' && ! empty($id))
-{
-	require DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
+if (! empty($action) && $action == 'fetch' && ! empty($id)) {
+    require DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
 
-	$outjson=array();
+    $outjson=array();
 
-	$object = new Societe($db);
-	$ret=$object->fetch($id);
-	if ($ret > 0)
-	{
-		$outname=$object->name;
+    $object = new Societe($db);
+    $ret=$object->fetch($id);
+    if ($ret > 0) {
+        $outname=$object->name;
 
-		$outjson = array('name'=>$outname);
-	}
+        $outjson = array('name'=>$outname);
+    }
 
-	echo json_encode($outjson);
+    echo json_encode($outjson);
+} else {
+    require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
+
+    $langs->load("products");
+    $langs->load("main");
+
+    top_httphead();
+
+    if (empty($htmlname)) return;
+
+    $match = preg_grep('/('.$htmlname.'[0-9]+)/',array_keys($_GET));
+    sort($match);
+    $id = (! empty($match[0]) ? $match[0] : '');
+
+    if (! GETPOST($htmlname) && ! GETPOST($id)) return;
+
+    // When used from jQuery, the search term is added as GET param "term".
+    $searchkey=(GETPOST($id)?GETPOST($id):(GETPOST($htmlname)?GETPOST($htmlname):''));
+
+    $form = new Form($db);
+    if (empty($mode) || $mode == 'customer') {
+        $arrayresult=$form->select_company_html($socid,$htmlname,"client IN (1,3)",0,0,0,null,$searchkey,$outjson);
+    } elseif ($mode == 'supplier') {
+        $arrayresult=$form->select_company_html($socid,$htmlname,"fournisseur=1",0,0,0,null,$searchkey,$outjson);
+    }
+
+    $db->close();
+
+    if ($outjson) print json_encode($arrayresult);
 }
-else
-{
-	require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
-
-	$langs->load("products");
-	$langs->load("main");
-
-	top_httphead();
-
-	if (empty($htmlname)) return;
-
-	$match = preg_grep('/('.$htmlname.'[0-9]+)/',array_keys($_GET));
-	sort($match);
-	$id = (! empty($match[0]) ? $match[0] : '');
-
-	if (! GETPOST($htmlname) && ! GETPOST($id)) return;
-
-	// When used from jQuery, the search term is added as GET param "term".
-	$searchkey=(GETPOST($id)?GETPOST($id):(GETPOST($htmlname)?GETPOST($htmlname):''));
-
-	$form = new Form($db);
-	if (empty($mode) || $mode == 'customer')
-	{
-		$arrayresult=$form->select_company_html($socid,$htmlname,"client IN (1,3)",0,0,0,null,$searchkey,$outjson);
-	}
-	elseif ($mode == 'supplier')
-	{
-		$arrayresult=$form->select_company_html($socid,$htmlname,"fournisseur=1",0,0,0,null,$searchkey,$outjson);
-	}
-
-	$db->close();
-
-	if ($outjson) print json_encode($arrayresult);
-}
-
-?>

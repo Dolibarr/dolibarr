@@ -33,7 +33,6 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 $action=GETPOST('action');
 
-
 /*
  * View
  */
@@ -47,10 +46,9 @@ top_httphead();
 
 //print '<!-- Ajax page called with url '.$_SERVER["PHP_SELF"].'?'.$_SERVER["QUERY_STRING"].' -->'."\n";
 
-if (($user->rights->banque->modifier || $user->rights->banque->consolidate) && $action == 'dvnext')
-{
-	// Increase date
-	$al =new AccountLine($db);
+if (($user->rights->banque->modifier || $user->rights->banque->consolidate) && $action == 'dvnext') {
+    // Increase date
+    $al =new AccountLine($db);
     $al->datev_next($_GET["rowid"]);
     $al->fetch($_GET["rowid"]);
 
@@ -59,10 +57,9 @@ if (($user->rights->banque->modifier || $user->rights->banque->consolidate) && $
     exit;
 }
 
-if (($user->rights->banque->modifier || $user->rights->banque->consolidate) && $action == 'dvprev')
-{
-	// Decrease date
-	$al =new AccountLine($db);
+if (($user->rights->banque->modifier || $user->rights->banque->consolidate) && $action == 'dvprev') {
+    // Decrease date
+    $al =new AccountLine($db);
     $al->datev_previous($_GET["rowid"]);
     $al->fetch($_GET["rowid"]);
 
@@ -70,5 +67,3 @@ if (($user->rights->banque->modifier || $user->rights->banque->consolidate) && $
 
     exit;
 }
-
-?>

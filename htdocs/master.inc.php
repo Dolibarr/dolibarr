@@ -33,8 +33,6 @@
 
 require_once 'filefunc.inc.php';	// May have been already require by main.inc.php. But may not by scripts.
 
-
-
 /*
  * Create $conf object
  */
@@ -65,14 +63,12 @@ $conf->file->main_force_https			= empty($dolibarr_main_force_https)?'':$dolibarr
 $conf->file->strict_mode 				= empty($dolibarr_strict_mode)?'':$dolibarr_strict_mode;					// Force php strict mode (for debug)
 $conf->file->cookie_cryptkey			= empty($dolibarr_main_cookie_cryptkey)?'':$dolibarr_main_cookie_cryptkey;	// Cookie cryptkey
 $conf->file->dol_document_root			= array('main' => DOL_DOCUMENT_ROOT);										// Define array of document root directories
-if (! empty($dolibarr_main_document_root_alt))
-{
-	// dolibarr_main_document_root_alt can contains several directories
-	$values=preg_split('/[;,]/',$dolibarr_main_document_root_alt);
-	foreach($values as $value)
-	{
-		$conf->file->dol_document_root['alt']=$value;
-	}
+if (! empty($dolibarr_main_document_root_alt)) {
+    // dolibarr_main_document_root_alt can contains several directories
+    $values=preg_split('/[;,]/',$dolibarr_main_document_root_alt);
+    foreach ($values as $value) {
+        $conf->file->dol_document_root['alt']=$value;
+    }
 }
 
 // Set properties specific to multicompany
@@ -85,27 +81,23 @@ if (! defined('NOREQUIREUSER')) require_once DOL_DOCUMENT_ROOT .'/user/class/use
 if (! defined('NOREQUIRETRAN')) require_once DOL_DOCUMENT_ROOT .'/core/class/translate.class.php';
 if (! defined('NOREQUIRESOC'))  require_once DOL_DOCUMENT_ROOT .'/societe/class/societe.class.php';
 
-
 /*
  * Creation objet $langs (must be before all other code)
  */
-if (! defined('NOREQUIRETRAN'))
-{
-	$langs = new Translate('',$conf);	// A mettre apres lecture de la conf
+if (! defined('NOREQUIRETRAN')) {
+    $langs = new Translate('',$conf);	// A mettre apres lecture de la conf
 }
 
 /*
  * Object $db
  */
-if (! defined('NOREQUIREDB'))
-{
+if (! defined('NOREQUIREDB')) {
     $db=getDoliDBInstance($conf->db->type,$conf->db->host,$conf->db->user,$conf->db->pass,$conf->db->name,$conf->db->port);
 
-	if ($db->error)
-	{
-		dol_print_error($db,"host=".$conf->db->host.", port=".$conf->db->port.", user=".$conf->db->user.", databasename=".$conf->db->name.", ".$db->error);
-		exit;
-	}
+    if ($db->error) {
+        dol_print_error($db,"host=".$conf->db->host.", port=".$conf->db->port.", user=".$conf->db->user.", databasename=".$conf->db->name.", ".$db->error);
+        exit;
+    }
 }
 
 // Now database connexion is known, so we can forget password
@@ -115,101 +107,80 @@ unset($conf->db->pass);				// This is to avoid password to be shown in memory/sw
 /*
  * Object $user
  */
-if (! defined('NOREQUIREUSER'))
-{
-	$user = new User($db);
+if (! defined('NOREQUIREUSER')) {
+    $user = new User($db);
 }
 
 /*
  * Load object $conf
  * After this, all parameters conf->global->CONSTANTS are loaded
  */
-if (! defined('NOREQUIREDB'))
-{
-	// By default conf->entity is 1, but we change this if we ask another value.
-	if (session_id() && ! empty($_SESSION["dol_entity"]))			// Entity inside an opened session
-	{
-		$conf->entity = $_SESSION["dol_entity"];
-	}
-	else if (! empty($_ENV["dol_entity"]))							// Entity inside a CLI script
-	{
-		$conf->entity = $_ENV["dol_entity"];
-	}
-	else if (isset($_POST["loginfunction"]) && GETPOST("entity"))	// Just after a login page
-	{
-		$conf->entity = GETPOST("entity",'int');
-	}
-	else if (defined('DOLENTITY') && is_int(DOLENTITY))				// For public page with MultiCompany module
-	{
-		$conf->entity = DOLENTITY;
-	}
-	else if (!empty($_COOKIE['DOLENTITY']))							// For other application with MultiCompany module
-	{
-		$conf->entity = $_COOKIE['DOLENTITY'];
-	}
-	else if (! empty($conf->multicompany->force_entity) && is_int($conf->multicompany->force_entity)) // To force entity in login page
-	{
-		$conf->entity = $conf->multicompany->force_entity;
-	}
+if (! defined('NOREQUIREDB')) {
+    // By default conf->entity is 1, but we change this if we ask another value.
+    if (session_id() && ! empty($_SESSION["dol_entity"])) {			// Entity inside an opened session
+        $conf->entity = $_SESSION["dol_entity"];
+    } elseif (! empty($_ENV["dol_entity"])) {							// Entity inside a CLI script
+        $conf->entity = $_ENV["dol_entity"];
+    } elseif (isset($_POST["loginfunction"]) && GETPOST("entity")) {	// Just after a login page
+        $conf->entity = GETPOST("entity",'int');
+    } elseif (defined('DOLENTITY') && is_int(DOLENTITY)) {				// For public page with MultiCompany module
+        $conf->entity = DOLENTITY;
+    } elseif (!empty($_COOKIE['DOLENTITY'])) {							// For other application with MultiCompany module
+        $conf->entity = $_COOKIE['DOLENTITY'];
+    } elseif (! empty($conf->multicompany->force_entity) && is_int($conf->multicompany->force_entity)) { // To force entity in login page
+        $conf->entity = $conf->multicompany->force_entity;
+    }
 
-	//print "Will work with data into entity instance number '".$conf->entity."'";
+    //print "Will work with data into entity instance number '".$conf->entity."'";
 
-	// Here we read database (llx_const table) and define $conf->global->XXX var.
-	$conf->setValues($db);
+    // Here we read database (llx_const table) and define $conf->global->XXX var.
+    $conf->setValues($db);
 }
 
 // Overwrite database value
-if (! empty($conf->file->mailing_limit_sendbyweb))
-{
-	$conf->global->MAILING_LIMIT_SENDBYWEB = $conf->file->mailing_limit_sendbyweb;
+if (! empty($conf->file->mailing_limit_sendbyweb)) {
+    $conf->global->MAILING_LIMIT_SENDBYWEB = $conf->file->mailing_limit_sendbyweb;
 }
 
 // If software has been locked. Only login $conf->global->MAIN_ONLY_LOGIN_ALLOWED is allowed.
-if (! empty($conf->global->MAIN_ONLY_LOGIN_ALLOWED))
-{
-	$ok=0;
-	if ((! session_id() || ! isset($_SESSION["dol_login"])) && ! isset($_POST["username"]) && ! empty($_SERVER["GATEWAY_INTERFACE"])) $ok=1;	// We let working pages if not logged and inside a web browser (login form, to allow login by admin)
-	elseif (isset($_POST["username"]) && $_POST["username"] == $conf->global->MAIN_ONLY_LOGIN_ALLOWED) $ok=1;				// We let working pages that is a login submission (login submit, to allow login by admin)
-	elseif (defined('NOREQUIREDB'))   $ok=1;				// We let working pages that don't need database access (xxx.css.php)
-	elseif (defined('EVEN_IF_ONLY_LOGIN_ALLOWED')) $ok=1;	// We let working pages that ask to work even if only login enabled (logout.php)
-	elseif (session_id() && isset($_SESSION["dol_login"]) && $_SESSION["dol_login"] == $conf->global->MAIN_ONLY_LOGIN_ALLOWED) $ok=1;	// We let working if user is allowed admin
-	if (! $ok)
-	{
-		if (session_id() && isset($_SESSION["dol_login"]) && $_SESSION["dol_login"] != $conf->global->MAIN_ONLY_LOGIN_ALLOWED)
-		{
-			print 'Sorry, your application is offline.'."\n";
-			print 'You are logged with user "'.$_SESSION["dol_login"].'" and only administrator user "'.$conf->global->MAIN_ONLY_LOGIN_ALLOWED.'" is allowed to connect for the moment.'."\n";
-			$nexturl=DOL_URL_ROOT.'/user/logout.php';
-			print 'Please try later or <a href="'.$nexturl.'">click here to disconnect and change login user</a>...'."\n";
-		}
-		else
-		{
-			print 'Sorry, your application is offline. Only administrator user "'.$conf->global->MAIN_ONLY_LOGIN_ALLOWED.'" is allowed to connect for the moment.'."\n";
-			$nexturl=DOL_URL_ROOT.'/';
-			print 'Please try later or <a href="'.$nexturl.'">click here to change login user</a>...'."\n";
-		}
-		exit;
-	}
+if (! empty($conf->global->MAIN_ONLY_LOGIN_ALLOWED)) {
+    $ok=0;
+    if ((! session_id() || ! isset($_SESSION["dol_login"])) && ! isset($_POST["username"]) && ! empty($_SERVER["GATEWAY_INTERFACE"])) $ok=1;	// We let working pages if not logged and inside a web browser (login form, to allow login by admin)
+    elseif (isset($_POST["username"]) && $_POST["username"] == $conf->global->MAIN_ONLY_LOGIN_ALLOWED) $ok=1;				// We let working pages that is a login submission (login submit, to allow login by admin)
+    elseif (defined('NOREQUIREDB'))   $ok=1;				// We let working pages that don't need database access (xxx.css.php)
+    elseif (defined('EVEN_IF_ONLY_LOGIN_ALLOWED')) $ok=1;	// We let working pages that ask to work even if only login enabled (logout.php)
+    elseif (session_id() && isset($_SESSION["dol_login"]) && $_SESSION["dol_login"] == $conf->global->MAIN_ONLY_LOGIN_ALLOWED) $ok=1;	// We let working if user is allowed admin
+    if (! $ok) {
+        if (session_id() && isset($_SESSION["dol_login"]) && $_SESSION["dol_login"] != $conf->global->MAIN_ONLY_LOGIN_ALLOWED) {
+            print 'Sorry, your application is offline.'."\n";
+            print 'You are logged with user "'.$_SESSION["dol_login"].'" and only administrator user "'.$conf->global->MAIN_ONLY_LOGIN_ALLOWED.'" is allowed to connect for the moment.'."\n";
+            $nexturl=DOL_URL_ROOT.'/user/logout.php';
+            print 'Please try later or <a href="'.$nexturl.'">click here to disconnect and change login user</a>...'."\n";
+        } else {
+            print 'Sorry, your application is offline. Only administrator user "'.$conf->global->MAIN_ONLY_LOGIN_ALLOWED.'" is allowed to connect for the moment.'."\n";
+            $nexturl=DOL_URL_ROOT.'/';
+            print 'Please try later or <a href="'.$nexturl.'">click here to change login user</a>...'."\n";
+        }
+        exit;
+    }
 }
 
 // Create object $mysoc (A thirdparty object that contains properties of companies managed by Dolibarr.
-if (! defined('NOREQUIREDB') && ! defined('NOREQUIRESOC'))
-{
-	require_once DOL_DOCUMENT_ROOT .'/societe/class/societe.class.php';
+if (! defined('NOREQUIREDB') && ! defined('NOREQUIRESOC')) {
+    require_once DOL_DOCUMENT_ROOT .'/societe/class/societe.class.php';
 
-	$mysoc=new Societe($db);
-	$mysoc->setMysoc($conf);
+    $mysoc=new Societe($db);
+    $mysoc->setMysoc($conf);
 
-	// For some countries, we need to invert our address with customer address
-	if ($mysoc->country_code == 'DE' && ! isset($conf->global->MAIN_INVERT_SENDER_RECIPIENT)) $conf->global->MAIN_INVERT_SENDER_RECIPIENT=1;
+    // For some countries, we need to invert our address with customer address
+    if ($mysoc->country_code == 'DE' && ! isset($conf->global->MAIN_INVERT_SENDER_RECIPIENT)) $conf->global->MAIN_INVERT_SENDER_RECIPIENT=1;
 }
 
 
 // Set default language (must be after the setValues setting global $conf->global->MAIN_LANG_DEFAULT. Page main.inc.php will overwrite langs->defaultlang with user value later)
-if (! defined('NOREQUIRETRAN'))
-{
+if (! defined('NOREQUIRETRAN')) {
     $langcode=(GETPOST('lang')?GETPOST('lang','alpha',1):(empty($conf->global->MAIN_LANG_DEFAULT)?'auto':$conf->global->MAIN_LANG_DEFAULT));
-	$langs->setDefaultLang($langcode);
+    $langs->setDefaultLang($langcode);
 }
 
 
@@ -225,5 +196,3 @@ if (! defined('MAIN_LABEL_MENTION_NPR') ) define('MAIN_LABEL_MENTION_NPR','NPR')
 
 // We force FPDF
 if (! empty($dolibarr_pdf_force_fpdf)) $conf->global->MAIN_USE_FPDF=$dolibarr_pdf_force_fpdf;
-
-?>

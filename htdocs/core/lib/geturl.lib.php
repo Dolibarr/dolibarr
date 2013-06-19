@@ -39,7 +39,7 @@ function getURLContent($url,$postorget='GET',$param)
     $PROXY_USER=empty($conf->global->MAIN_PROXY_USER)?0:$conf->global->MAIN_PROXY_USER;
     $PROXY_PASS=empty($conf->global->MAIN_PROXY_PASS)?0:$conf->global->MAIN_PROXY_PASS;
 
-	dol_syslog("getURLContent postorget=".$postorget." URL=".$url." param=".$param);
+    dol_syslog("getURLContent postorget=".$postorget." URL=".$url." param=".$param);
 
     //setting the curl parameters.
     $ch = curl_init();
@@ -58,14 +58,13 @@ function getURLContent($url,$postorget='GET',$param)
 
     curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, empty($conf->global->MAIN_USE_CONNECT_TIMEOUT)?5:$conf->global->MAIN_USE_CONNECT_TIMEOUT);
     curl_setopt($ch, CURLOPT_TIMEOUT, empty($conf->global->MAIN_USE_RESPONSE_TIMEOUT)?30:$conf->global->MAIN_USE_RESPONSE_TIMEOUT);
-    
+
     curl_setopt($ch, CURLOPT_RETURNTRANSFER,1);
     if ($postorget == 'POST') curl_setopt($ch, CURLOPT_POST, 1);
     else curl_setopt($ch, CURLOPT_POST, 0);
 
     //if USE_PROXY constant set to TRUE in Constants.php, then only proxy will be enabled.
-    if ($USE_PROXY)
-    {
+    if ($USE_PROXY) {
         dol_syslog("getURLContent set proxy to ".$PROXY_HOST. ":" . $PROXY_PORT." - ".$PROXY_USER. ":" . $PROXY_PASS);
         //curl_setopt ($ch, CURLOPT_PROXYTYPE, CURLPROXY_HTTP); // Curl 7.10
         curl_setopt($ch, CURLOPT_PROXY, $PROXY_HOST. ":" . $PROXY_PORT);
@@ -82,23 +81,19 @@ function getURLContent($url,$postorget='GET',$param)
     $rep['content']=$response;
     $rep['curl_error_no']='';
     $rep['curl_error_msg']='';
-    
+
     dol_syslog("getURLContent response=".$response);
 
-    if (curl_errno($ch))
-    {
+    if (curl_errno($ch)) {
         // moving to display page to display curl errors
-		$rep['curl_error_no']=curl_errno($ch);
+        $rep['curl_error_no']=curl_errno($ch);
         $rep['curl_error_msg']=curl_error($ch);
 
-		dol_syslog("getURLContent curl_error array is ".join(',',$rep));
-    }
-    else
-    {
+        dol_syslog("getURLContent curl_error array is ".join(',',$rep));
+    } else {
         //closing the curl
         curl_close($ch);
     }
 
     return $rep;
 }
-

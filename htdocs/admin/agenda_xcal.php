@@ -27,7 +27,6 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
 
-
 if (!$user->admin)
     accessforbidden();
 
@@ -39,8 +38,7 @@ $def = array();
 $actionsave=GETPOST('save','alpha');
 
 // Sauvegardes parametres
-if ($actionsave)
-{
+if ($actionsave) {
     $i=0;
 
     $db->begin();
@@ -49,19 +47,14 @@ if ($actionsave)
     $i+=dolibarr_set_const($db,'MAIN_AGENDA_EXPORT_PAST_DELAY',trim(GETPOST('MAIN_AGENDA_EXPORT_PAST_DELAY','alpha')),'chaine',0,'',$conf->entity);
     $i+=dolibarr_set_const($db,'MAIN_AGENDA_EXPORT_CACHE',trim(GETPOST('MAIN_AGENDA_EXPORT_CACHE','alpha')),'chaine',0,'',$conf->entity);
 
-    if ($i >= 3)
-    {
+    if ($i >= 3) {
         $db->commit();
         setEventMessage($langs->trans("SetupSaved"));
-    }
-    else
-    {
+    } else {
         $db->rollback();
         setEventMessage($langs->trans("SaveFailed"), 'errors');
     }
 }
-
-
 
 /**
  * View
@@ -74,7 +67,6 @@ llxHeader();
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print_fiche_titre($langs->trans("AgendaSetup"),$linkback,'setup');
 print '<br>';
-
 
 $head=agenda_prepare_head();
 
@@ -98,7 +90,7 @@ print "<tr class=\"impair\">";
 print '<td class="fieldrequired">'.$langs->trans("PasswordTogetVCalExport")."</td>";
 print '<td><input required="required" type="text" class="flat" id="MAIN_AGENDA_XCAL_EXPORTKEY" name="MAIN_AGENDA_XCAL_EXPORTKEY" value="' . (GETPOST('MAIN_AGENDA_XCAL_EXPORTKEY','alpha')?GETPOST('MAIN_AGENDA_XCAL_EXPORTKEY','alpha'):$conf->global->MAIN_AGENDA_XCAL_EXPORTKEY) . '" size="40">';
 if (! empty($conf->use_javascript_ajax))
-	print '&nbsp;'.img_picto($langs->trans('Generate'), 'refresh', 'id="generate_token" class="linkobject"');
+    print '&nbsp;'.img_picto($langs->trans('Generate'), 'refresh', 'id="generate_token" class="linkobject"');
 print '</td>';
 print "<td>&nbsp;</td>";
 print "</tr>";
@@ -130,12 +122,10 @@ clearstatcache();
 //if ($mesg) print "<br>$mesg<br>";
 print "<br>";
 
-
 // Define $urlwithroot
 $urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
 $urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
 //$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
-
 
 // Show message
 $message='';
@@ -158,24 +148,21 @@ $message.=$langs->trans("AgendaUrlOptions4",$user->login,$user->login).'<br>';
 $message.=$langs->trans("AgendaUrlOptions5",$user->login,$user->login);
 print info_admin($message);
 
-if (! empty($conf->use_javascript_ajax))
-{
-	print "\n".'<script type="text/javascript">';
-	print '$(document).ready(function () {
+if (! empty($conf->use_javascript_ajax)) {
+    print "\n".'<script type="text/javascript">';
+    print '$(document).ready(function () {
             $("#generate_token").click(function() {
-            	$.get( "'.DOL_URL_ROOT.'/core/ajax/security.php", {
-            		action: \'getrandompassword\',
-            		generic: true
-				},
-				function(token) {
-					$("#MAIN_AGENDA_XCAL_EXPORTKEY").val(token);
-				});
+                $.get( "'.DOL_URL_ROOT.'/core/ajax/security.php", {
+                    action: \'getrandompassword\',
+                    generic: true
+                },
+                function(token) {
+                    $("#MAIN_AGENDA_XCAL_EXPORTKEY").val(token);
+                });
             });
     });';
-	print '</script>';
+    print '</script>';
 }
-
 
 llxFooter();
 $db->close();
-?>

@@ -28,89 +28,88 @@
 
 include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 
-
 /**
  *	Classe de description et activation du module Prelevement
  */
 class modPrelevement extends DolibarrModules
 {
 
-	/**
-	 *   Constructor. Define names, constants, directories, boxes, permissions
-	 *
-	 *   @param      DoliDB		$db      Database handler
-	 */
-	function __construct($db)
-	{
-		global $conf;
+    /**
+     *   Constructor. Define names, constants, directories, boxes, permissions
+     *
+     *   @param      DoliDB		$db      Database handler
+     */
+    public function __construct($db)
+    {
+        global $conf;
 
-		$this->db = $db;
-		$this->numero = 57;
+        $this->db = $db;
+        $this->numero = 57;
 
-		$this->family = "financial";
-		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
-		$this->name = preg_replace('/^mod/i','',get_class($this));
-		$this->description = "Gestion des Prelevements";
+        $this->family = "financial";
+        // Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
+        $this->name = preg_replace('/^mod/i','',get_class($this));
+        $this->description = "Gestion des Prelevements";
 
-		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
-		$this->version = 'dolibarr';
+        // Possible values for version are: 'development', 'experimental', 'dolibarr' or version
+        $this->version = 'dolibarr';
 
-		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
-		$this->special = 0;
-		// Name of png file (without png) used for this module
-		$this->picto='payment';
+        $this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
+        $this->special = 0;
+        // Name of png file (without png) used for this module
+        $this->picto='payment';
 
-		// Data directories to create when module is enabled
-		$this->dirs = array("/prelevement/temp","/prelevement/receipts");
+        // Data directories to create when module is enabled
+        $this->dirs = array("/prelevement/temp","/prelevement/receipts");
 
-		// Dependancies
-		$this->depends = array("modFacture","modBanque");
-		$this->requiredby = array();
+        // Dependancies
+        $this->depends = array("modFacture","modBanque");
+        $this->requiredby = array();
 
-		// Config pages
-		$this->config_page_url = array("prelevement.php");
+        // Config pages
+        $this->config_page_url = array("prelevement.php");
 
-		// Constantes
-		$this->const = array();
+        // Constantes
+        $this->const = array();
 
-		// Boites
-		$this->boxes = array();
+        // Boites
+        $this->boxes = array();
 
-		// Permissions
-		$this->rights = array();
-		$this->rights_class = 'prelevement';
-		$r=0;
-		$r++;
-		$this->rights[$r][0] = 151;
-		$this->rights[$r][1] = 'Read withdrawals';
-		$this->rights[$r][2] = 'r';
-		$this->rights[$r][3] = 1;
-		$this->rights[$r][4] = 'bons';
-		$this->rights[$r][5] = 'lire';
+        // Permissions
+        $this->rights = array();
+        $this->rights_class = 'prelevement';
+        $r=0;
+        $r++;
+        $this->rights[$r][0] = 151;
+        $this->rights[$r][1] = 'Read withdrawals';
+        $this->rights[$r][2] = 'r';
+        $this->rights[$r][3] = 1;
+        $this->rights[$r][4] = 'bons';
+        $this->rights[$r][5] = 'lire';
 
-		$r++;
-		$this->rights[$r][0] = 152;
-		$this->rights[$r][1] = 'Create/modify a withdrawals';
-		$this->rights[$r][2] = 'w';
-		$this->rights[$r][3] = 0;
-		$this->rights[$r][4] = 'bons';
-		$this->rights[$r][5] = 'creer';
+        $r++;
+        $this->rights[$r][0] = 152;
+        $this->rights[$r][1] = 'Create/modify a withdrawals';
+        $this->rights[$r][2] = 'w';
+        $this->rights[$r][3] = 0;
+        $this->rights[$r][4] = 'bons';
+        $this->rights[$r][5] = 'creer';
 
-		$r++;
-		$this->rights[$r][0] = 153;
-		$this->rights[$r][1] = 'Send withdrawals to bank';
-		$this->rights[$r][2] = 'a';
-		$this->rights[$r][3] = 0;
-		$this->rights[$r][4] = 'bons';
-		$this->rights[$r][5] = 'send';
+        $r++;
+        $this->rights[$r][0] = 153;
+        $this->rights[$r][1] = 'Send withdrawals to bank';
+        $this->rights[$r][2] = 'a';
+        $this->rights[$r][3] = 0;
+        $this->rights[$r][4] = 'bons';
+        $this->rights[$r][5] = 'send';
 
-		$r++;
-		$this->rights[$r][0] = 154;
-		$this->rights[$r][1] = 'credit/refuse withdrawals';
-		$this->rights[$r][2] = 'a';
-		$this->rights[$r][3] = 0;
-		$this->rights[$r][4] = 'bons';
-		$this->rights[$r][5] = 'credit';
+        $r++;
+        $this->rights[$r][0] = 154;
+        $this->rights[$r][1] = 'credit/refuse withdrawals';
+        $this->rights[$r][2] = 'a';
+        $this->rights[$r][3] = 0;
+        $this->rights[$r][4] = 'bons';
+        $this->rights[$r][5] = 'credit';
 
 /*        $this->rights[2][0] = 154;
         $this->rights[2][1] = 'Setup withdraw account';
@@ -119,43 +118,41 @@ class modPrelevement extends DolibarrModules
         $this->rights[2][4] = 'bons';
         $this->rights[2][5] = 'configurer';
 */
-	}
-
-
-	/**
-	 *		Function called when module is enabled.
-	 *		The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
-	 *		It also creates data directories
-	 *
-     *      @param      string	$options    Options when enabling module ('', 'noboxes')
-	 *      @return     int             	1 if OK, 0 if KO
-	 */
-	function init($options='')
-	{
-		global $conf;
-
-		// Permissions
-		$this->remove($options);
-
-		$sql = array();
-
-		return $this->_init($sql,$options);
-	}
+    }
 
     /**
-	 *		Function called when module is disabled.
-	 *      Remove from database constants, boxes and permissions from Dolibarr database.
-	 *		Data directories are not deleted
-	 *
+     *		Function called when module is enabled.
+     *		The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
+     *		It also creates data directories
+     *
      *      @param      string	$options    Options when enabling module ('', 'noboxes')
-	 *      @return     int             	1 if OK, 0 if KO
+     *      @return     int             	1 if OK, 0 if KO
      */
-    function remove($options='')
+    public function init($options='')
     {
-		$sql = array();
+        global $conf;
 
-		return $this->_remove($sql,$options);
+        // Permissions
+        $this->remove($options);
+
+        $sql = array();
+
+        return $this->_init($sql,$options);
+    }
+
+    /**
+     *		Function called when module is disabled.
+     *      Remove from database constants, boxes and permissions from Dolibarr database.
+     *		Data directories are not deleted
+     *
+     *      @param      string	$options    Options when enabling module ('', 'noboxes')
+     *      @return     int             	1 if OK, 0 if KO
+     */
+    public function remove($options='')
+    {
+        $sql = array();
+
+        return $this->_remove($sql,$options);
     }
 
 }
-?>

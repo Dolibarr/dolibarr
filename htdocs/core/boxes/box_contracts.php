@@ -29,16 +29,16 @@ include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
  */
 class box_contracts extends ModeleBoxes
 {
-    var $boxcode="lastcontracts";
-    var $boximg="object_contract";
-    var $boxlabel="BoxLastContracts";
-    var $depends = array("contrat");	// conf->contrat->enabled
+    public $boxcode="lastcontracts";
+    public $boximg="object_contract";
+    public $boxlabel="BoxLastContracts";
+    public $depends = array("contrat");	// conf->contrat->enabled
 
-    var $db;
-    var $param;
+    public $db;
+    public $param;
 
-    var $info_box_head = array();
-    var $info_box_contents = array();
+    public $info_box_head = array();
+    public $info_box_contents = array();
 
 
     /**
@@ -47,111 +47,102 @@ class box_contracts extends ModeleBoxes
      *  @param	int		$max        Maximum number of records to load
      *  @return	void
      */
-    function loadBox($max=5)
+    public function loadBox($max=5)
     {
-    	global $user, $langs, $db, $conf;
+        global $user, $langs, $db, $conf;
 
-    	$this->max=$max;
+        $this->max=$max;
 
-    	include_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
-    	$contractstatic=new Contrat($db);
+        include_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
+        $contractstatic=new Contrat($db);
 
-    	$this->info_box_head = array('text' => $langs->trans("BoxTitleLastContracts",$max));
+        $this->info_box_head = array('text' => $langs->trans("BoxTitleLastContracts",$max));
 
-    	if ($user->rights->contrat->lire)
-    	{
-    		$sql = "SELECT s.nom, s.rowid as socid,";
-    		$sql.= " c.rowid, c.ref, c.statut as fk_statut, c.date_contrat, c.datec, c.fin_validite, c.date_cloture";
-    		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."contrat as c";
-    		if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-    		$sql.= " WHERE c.fk_soc = s.rowid";
-    		$sql.= " AND c.entity = ".$conf->entity;
-    		if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-    		if($user->societe_id) $sql.= " AND s.rowid = ".$user->societe_id;
-    		$sql.= " ORDER BY c.date_contrat DESC, c.ref DESC ";
-    		$sql.= $db->plimit($max, 0);
+        if ($user->rights->contrat->lire) {
+            $sql = "SELECT s.nom, s.rowid as socid,";
+            $sql.= " c.rowid, c.ref, c.statut as fk_statut, c.date_contrat, c.datec, c.fin_validite, c.date_cloture";
+            $sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."contrat as c";
+            if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+            $sql.= " WHERE c.fk_soc = s.rowid";
+            $sql.= " AND c.entity = ".$conf->entity;
+            if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+            if($user->societe_id) $sql.= " AND s.rowid = ".$user->societe_id;
+            $sql.= " ORDER BY c.date_contrat DESC, c.ref DESC ";
+            $sql.= $db->plimit($max, 0);
 
-    		$resql = $db->query($sql);
-    		if ($resql)
-    		{
-    			$num = $db->num_rows($resql);
-    			$now=dol_now();
+            $resql = $db->query($sql);
+            if ($resql) {
+                $num = $db->num_rows($resql);
+                $now=dol_now();
 
-    			$i = 0;
+                $i = 0;
 
-    			while ($i < $num)
-    			{
-    				$objp = $db->fetch_object($resql);
-    				$datec=$db->jdate($objp->datec);
-    				$dateterm=$db->jdate($objp->fin_validite);
-    				$dateclose=$db->jdate($objp->date_cloture);
-    				$late = '';
+                while ($i < $num) {
+                    $objp = $db->fetch_object($resql);
+                    $datec=$db->jdate($objp->datec);
+                    $dateterm=$db->jdate($objp->fin_validite);
+                    $dateclose=$db->jdate($objp->date_cloture);
+                    $late = '';
 
-    				$contractstatic->statut=$objp->fk_statut;
-    				$contractstatic->id=$objp->rowid;
-    				$result=$contractstatic->fetch_lines();
+                    $contractstatic->statut=$objp->fk_statut;
+                    $contractstatic->id=$objp->rowid;
+                    $result=$contractstatic->fetch_lines();
 
-    				// fin_validite is no more on contract but on services
-    				// if ($objp->fk_statut == 1 && $dateterm < ($now - $conf->contrat->cloture->warning_delay)) { $late = img_warning($langs->trans("Late")); }
+                    // fin_validite is no more on contract but on services
+                    // if ($objp->fk_statut == 1 && $dateterm < ($now - $conf->contrat->cloture->warning_delay)) { $late = img_warning($langs->trans("Late")); }
 
-    				$this->info_box_contents[$i][0] = array('td' => 'align="left" width="16"',
-    				'logo' => $this->boximg,
-    				'url' => DOL_URL_ROOT."/contrat/fiche.php?id=".$objp->rowid);
+                    $this->info_box_contents[$i][0] = array('td' => 'align="left" width="16"',
+                    'logo' => $this->boximg,
+                    'url' => DOL_URL_ROOT."/contrat/fiche.php?id=".$objp->rowid);
 
-    				$this->info_box_contents[$i][1] = array('td' => 'align="left"',
-    				'text' => ($objp->ref?$objp->ref:$objp->rowid),	// Some contracts have no ref
-    				'text2'=> $late,
-    				'url' => DOL_URL_ROOT."/contrat/fiche.php?id=".$objp->rowid);
+                    $this->info_box_contents[$i][1] = array('td' => 'align="left"',
+                    'text' => ($objp->ref?$objp->ref:$objp->rowid),	// Some contracts have no ref
+                    'text2'=> $late,
+                    'url' => DOL_URL_ROOT."/contrat/fiche.php?id=".$objp->rowid);
 
-    				$this->info_box_contents[$i][2] = array('td' => 'align="left" width="16"',
-    				'logo' => 'company',
-    				'url' => DOL_URL_ROOT."/comm/fiche.php?socid=".$objp->socid);
+                    $this->info_box_contents[$i][2] = array('td' => 'align="left" width="16"',
+                    'logo' => 'company',
+                    'url' => DOL_URL_ROOT."/comm/fiche.php?socid=".$objp->socid);
 
-    				$this->info_box_contents[$i][3] = array('td' => 'align="left"',
-    				'text' => dol_trunc($objp->nom,40),
-    				'url' => DOL_URL_ROOT."/comm/fiche.php?socid=".$objp->socid);
+                    $this->info_box_contents[$i][3] = array('td' => 'align="left"',
+                    'text' => dol_trunc($objp->nom,40),
+                    'url' => DOL_URL_ROOT."/comm/fiche.php?socid=".$objp->socid);
 
-    				$this->info_box_contents[$i][4] = array('td' => 'align="right"',
-    				'text' => dol_print_date($datec,'day'));
+                    $this->info_box_contents[$i][4] = array('td' => 'align="right"',
+                    'text' => dol_print_date($datec,'day'));
 
-    				$this->info_box_contents[$i][5] = array('td' => 'align="right" class="nowrap"',
-    				'text' => $contractstatic->getLibStatut(6),
-    				'asis'=>1
-    				);
+                    $this->info_box_contents[$i][5] = array('td' => 'align="right" class="nowrap"',
+                    'text' => $contractstatic->getLibStatut(6),
+                    'asis'=>1
+                    );
 
-    				$i++;
-    			}
+                    $i++;
+                }
 
-    			if ($num==0) $this->info_box_contents[$i][0] = array('td' => 'align="center"','text'=>$langs->trans("NoRecordedContracts"));
+                if ($num==0) $this->info_box_contents[$i][0] = array('td' => 'align="center"','text'=>$langs->trans("NoRecordedContracts"));
 
-				$db->free($resql);
-    		}
-    		else
-    		{
-    			$this->info_box_contents[0][0] = array(  'td' => 'align="left"',
+                $db->free($resql);
+            } else {
+                $this->info_box_contents[0][0] = array(  'td' => 'align="left"',
                                                         'maxlength'=>500,
                                                         'text' => ($db->error().' sql='.$sql));
-    		}
-    	}
-    	else
-    	{
-    		$this->info_box_contents[0][0] = array('td' => 'align="left"',
-    		'text' => $langs->trans("ReadPermissionNotAllowed"));
-    	}
+            }
+        } else {
+            $this->info_box_contents[0][0] = array('td' => 'align="left"',
+            'text' => $langs->trans("ReadPermissionNotAllowed"));
+        }
     }
 
-	/**
-	 *	Method to show box
-	 *
-	 *	@param	array	$head       Array with properties of box title
-	 *	@param  array	$contents   Array with properties of box lines
-	 *	@return	void
-	 */
-    function showBox($head = null, $contents = null)
+    /**
+     *	Method to show box
+     *
+     *	@param	array	$head       Array with properties of box title
+     *	@param  array	$contents   Array with properties of box lines
+     *	@return	void
+     */
+    public function showBox($head = null, $contents = null)
     {
         parent::showBox($this->info_box_head, $this->info_box_contents);
     }
 
 }
-
-?>

@@ -48,18 +48,14 @@ $object = new Propal($db);
 /*                     Actions                                                */
 /******************************************************************************/
 
-if ($action == 'setnote_public' && $user->rights->propale->creer)
-{
-	$object->fetch($id);
-	$result=$object->update_note(dol_html_entity_decode(GETPOST('note_public'), ENT_QUOTES),'_public');
-	if ($result < 0) dol_print_error($db,$object->error);
-}
-
-else if ($action == 'setnote_private' && $user->rights->propale->creer)
-{
-	$object->fetch($id);
-	$result=$object->update_note(dol_html_entity_decode(GETPOST('note_private'), ENT_QUOTES),'_private');
-	if ($result < 0) dol_print_error($db,$object->error);
+if ($action == 'setnote_public' && $user->rights->propale->creer) {
+    $object->fetch($id);
+    $result=$object->update_note(dol_html_entity_decode(GETPOST('note_public'), ENT_QUOTES),'_public');
+    if ($result < 0) dol_print_error($db,$object->error);
+} elseif ($action == 'setnote_private' && $user->rights->propale->creer) {
+    $object->fetch($id);
+    $result=$object->update_note(dol_html_entity_decode(GETPOST('note_private'), ENT_QUOTES),'_private');
+    if ($result < 0) dol_print_error($db,$object->error);
 }
 
 
@@ -71,90 +67,82 @@ llxHeader('',$langs->trans('Proposal'),'EN:Commercial_Proposals|FR:Proposition_c
 
 $form = new Form($db);
 
-if ($id > 0 || ! empty($ref))
-{
-	if ($mesg) print $mesg;
+if ($id > 0 || ! empty($ref)) {
+    if ($mesg) print $mesg;
 
-	$now=dol_now();
+    $now=dol_now();
 
-	if ($object->fetch($id, $ref))
-	{
-		$societe = new Societe($db);
-		if ( $societe->fetch($object->socid) )
-		{
-			$head = propal_prepare_head($object);
-			dol_fiche_head($head, 'note', $langs->trans('Proposal'), 0, 'propal');
+    if ($object->fetch($id, $ref)) {
+        $societe = new Societe($db);
+        if ( $societe->fetch($object->socid) ) {
+            $head = propal_prepare_head($object);
+            dol_fiche_head($head, 'note', $langs->trans('Proposal'), 0, 'propal');
 
-			print '<table class="border" width="100%">';
+            print '<table class="border" width="100%">';
 
-			$linkback = '<a href="'.DOL_URL_ROOT.'/comm/propal/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans('BackToList').'</a>';
+            $linkback = '<a href="'.DOL_URL_ROOT.'/comm/propal/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans('BackToList').'</a>';
 
-			// Ref
-			print '<tr><td width="25%">'.$langs->trans('Ref').'</td><td colspan="3">';
-			print $form->showrefnav($object,'ref',$linkback,1,'ref','ref','');
-			print '</td></tr>';
+            // Ref
+            print '<tr><td width="25%">'.$langs->trans('Ref').'</td><td colspan="3">';
+            print $form->showrefnav($object,'ref',$linkback,1,'ref','ref','');
+            print '</td></tr>';
 
-			// Ref client
-			print '<tr><td>';
-			print '<table class="nobordernopadding" width="100%"><tr><td nowrap>';
-			print $langs->trans('RefCustomer').'</td><td align="left">';
-			print '</td>';
-			print '</tr></table>';
-			print '</td><td colspan="3">';
-			print $object->ref_client;
-			print '</td>';
-			print '</tr>';
+            // Ref client
+            print '<tr><td>';
+            print '<table class="nobordernopadding" width="100%"><tr><td nowrap>';
+            print $langs->trans('RefCustomer').'</td><td align="left">';
+            print '</td>';
+            print '</tr></table>';
+            print '</td><td colspan="3">';
+            print $object->ref_client;
+            print '</td>';
+            print '</tr>';
 
-			// Customer
-			if ( is_null($object->client) )
-				$object->fetch_thirdparty();
-			print "<tr><td>".$langs->trans("Company")."</td>";
-			print '<td colspan="3">'.$object->client->getNomUrl(1).'</td></tr>';
+            // Customer
+            if ( is_null($object->client) )
+                $object->fetch_thirdparty();
+            print "<tr><td>".$langs->trans("Company")."</td>";
+            print '<td colspan="3">'.$object->client->getNomUrl(1).'</td></tr>';
 
-			// Ligne info remises tiers
-			print '<tr><td>'.$langs->trans('Discounts').'</td><td colspan="3">';
-			if ($societe->remise_percent) print $langs->trans("CompanyHasRelativeDiscount",$societe->remise_percent);
-			else print $langs->trans("CompanyHasNoRelativeDiscount");
-			$absolute_discount=$societe->getAvailableDiscounts();
-			print '. ';
-			if ($absolute_discount) print $langs->trans("CompanyHasAbsoluteDiscount",price($absolute_discount),$langs->trans("Currency".$conf->currency));
-			else print $langs->trans("CompanyHasNoAbsoluteDiscount");
-			print '.';
-			print '</td></tr>';
+            // Ligne info remises tiers
+            print '<tr><td>'.$langs->trans('Discounts').'</td><td colspan="3">';
+            if ($societe->remise_percent) print $langs->trans("CompanyHasRelativeDiscount",$societe->remise_percent);
+            else print $langs->trans("CompanyHasNoRelativeDiscount");
+            $absolute_discount=$societe->getAvailableDiscounts();
+            print '. ';
+            if ($absolute_discount) print $langs->trans("CompanyHasAbsoluteDiscount",price($absolute_discount),$langs->trans("Currency".$conf->currency));
+            else print $langs->trans("CompanyHasNoAbsoluteDiscount");
+            print '.';
+            print '</td></tr>';
 
-			// Date
-			print '<tr><td>'.$langs->trans('Date').'</td><td colspan="3">';
-			print dol_print_date($object->date,'daytext');
-			print '</td>';
-			print '</tr>';
+            // Date
+            print '<tr><td>'.$langs->trans('Date').'</td><td colspan="3">';
+            print dol_print_date($object->date,'daytext');
+            print '</td>';
+            print '</tr>';
 
-			// Date fin propal
-			print '<tr>';
-			print '<td>'.$langs->trans('DateEndPropal').'</td><td colspan="3">';
-			if ($object->fin_validite)
-			{
-				print dol_print_date($object->fin_validite,'daytext');
-				if ($object->statut == 1 && $object->fin_validite < ($now - $conf->propal->cloture->warning_delay)) print img_warning($langs->trans("Late"));
-			}
-			else
-			{
-				print $langs->trans("Unknown");
-			}
-			print '</td>';
-			print '</tr>';
+            // Date fin propal
+            print '<tr>';
+            print '<td>'.$langs->trans('DateEndPropal').'</td><td colspan="3">';
+            if ($object->fin_validite) {
+                print dol_print_date($object->fin_validite,'daytext');
+                if ($object->statut == 1 && $object->fin_validite < ($now - $conf->propal->cloture->warning_delay)) print img_warning($langs->trans("Late"));
+            } else {
+                print $langs->trans("Unknown");
+            }
+            print '</td>';
+            print '</tr>';
 
-			print "</table>";
+            print "</table>";
 
-			print '<br>';
+            print '<br>';
 
-			include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
+            include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
 
-			dol_fiche_end();
-		}
-	}
+            dol_fiche_end();
+        }
+    }
 }
-
 
 llxFooter();
 $db->close();
-?>

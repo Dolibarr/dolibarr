@@ -30,35 +30,34 @@
  */
 function contact_prepare_head($object)
 {
-	global $langs, $conf;
+    global $langs, $conf;
 
-	$h = 0;
-	$head = array();
+    $h = 0;
+    $head = array();
 
-	$head[$h][0] = DOL_URL_ROOT.'/contact/fiche.php?id='.$object->id;
-	$head[$h][1] = $langs->trans("Card");
-	$head[$h][2] = 'card';
-	$h++;
+    $head[$h][0] = DOL_URL_ROOT.'/contact/fiche.php?id='.$object->id;
+    $head[$h][1] = $langs->trans("Card");
+    $head[$h][2] = 'card';
+    $h++;
 
-	if (! empty($conf->ldap->enabled) && ! empty($conf->global->LDAP_CONTACT_ACTIVE))
-	{
-		$langs->load("ldap");
+    if (! empty($conf->ldap->enabled) && ! empty($conf->global->LDAP_CONTACT_ACTIVE)) {
+        $langs->load("ldap");
 
-		$head[$h][0] = DOL_URL_ROOT.'/contact/ldap.php?id='.$object->id;
-		$head[$h][1] = $langs->trans("LDAPCard");
-		$head[$h][2] = 'ldap';
-		$h++;
-	}
+        $head[$h][0] = DOL_URL_ROOT.'/contact/ldap.php?id='.$object->id;
+        $head[$h][1] = $langs->trans("LDAPCard");
+        $head[$h][2] = 'ldap';
+        $h++;
+    }
 
-	$head[$h][0] = DOL_URL_ROOT.'/contact/perso.php?id='.$object->id;
-	$head[$h][1] = $langs->trans("PersonalInformations");
-	$head[$h][2] = 'perso';
-	$h++;
+    $head[$h][0] = DOL_URL_ROOT.'/contact/perso.php?id='.$object->id;
+    $head[$h][1] = $langs->trans("PersonalInformations");
+    $head[$h][2] = 'perso';
+    $h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/contact/exportimport.php?id='.$object->id;
-	$head[$h][1] = $langs->trans("ExportImport");
-	$head[$h][2] = 'exportimport';
-	$h++;
+    $head[$h][0] = DOL_URL_ROOT.'/contact/exportimport.php?id='.$object->id;
+    $head[$h][1] = $langs->trans("ExportImport");
+    $head[$h][2] = 'exportimport';
+    $h++;
 
     // Show more tabs from modules
     // Entries must be declared in modules descriptor with line
@@ -71,16 +70,14 @@ function contact_prepare_head($object)
     $head[$h][1] = $langs->trans("Note");
     $head[$h][2] = 'note';
     $h++;
-    
+
     // Info
     $head[$h][0] = DOL_URL_ROOT.'/contact/info.php?id='.$object->id;
-	$head[$h][1] = $langs->trans("Info");
-	$head[$h][2] = 'info';
-	$h++;
+    $head[$h][1] = $langs->trans("Info");
+    $head[$h][2] = 'info';
+    $h++;
 
-	complete_head_from_modules($conf,$langs,$object,$head,$h,'contact','remove');
+    complete_head_from_modules($conf,$langs,$object,$head,$h,'contact','remove');
 
-	return $head;
+    return $head;
 }
-
-?>

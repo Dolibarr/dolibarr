@@ -40,7 +40,6 @@ $langs->load("main");
 $right=($langs->trans("DIRECTION")=='rtl'?'left':'right');
 $left=($langs->trans("DIRECTION")=='rtl'?'right':'left');
 
-
 /*
  * View
  */
@@ -55,33 +54,27 @@ top_htmlhead($head, $title, 0, 0, $arrayofjs, $arrayofcss);
 
 print '<body>'."\n";
 
-if (empty($user->societe_id))	// If internal user or not defined
-{
-	$conf->standard_menu=(empty($conf->global->MAIN_MENU_STANDARD_FORCED)?(empty($conf->global->MAIN_MENU_STANDARD)?'eldy_menu.php':$conf->global->MAIN_MENU_STANDARD):$conf->global->MAIN_MENU_STANDARD_FORCED);
-}
-else                        	// If external user
-{
-	$conf->standard_menu=(empty($conf->global->MAIN_MENUFRONT_STANDARD_FORCED)?(empty($conf->global->MAIN_MENUFRONT_STANDARD)?'eldy_menu.php':$conf->global->MAIN_MENUFRONT_STANDARD):$conf->global->MAIN_MENUFRONT_STANDARD_FORCED);
+if (empty($user->societe_id)) {	// If internal user or not defined
+    $conf->standard_menu=(empty($conf->global->MAIN_MENU_STANDARD_FORCED)?(empty($conf->global->MAIN_MENU_STANDARD)?'eldy_menu.php':$conf->global->MAIN_MENU_STANDARD):$conf->global->MAIN_MENU_STANDARD_FORCED);
+} else {                        	// If external user
+    $conf->standard_menu=(empty($conf->global->MAIN_MENUFRONT_STANDARD_FORCED)?(empty($conf->global->MAIN_MENUFRONT_STANDARD)?'eldy_menu.php':$conf->global->MAIN_MENUFRONT_STANDARD):$conf->global->MAIN_MENUFRONT_STANDARD_FORCED);
 }
 
 // Load the menu manager (only if not already done)
 $file_menu=$conf->standard_menu;
 if (GETPOST('menu')) $file_menu=GETPOST('menu');     // example: menu=eldy_menu.php
-if (! class_exists('MenuManager'))
-{
-	$menufound=0;
-	$dirmenus=array_merge(array("/core/menus/"),(array) $conf->modules_parts['menus']);
-	foreach($dirmenus as $dirmenu)
-	{
-		$menufound=dol_include_once($dirmenu."standard/".$file_menu);
-		if ($menufound) break;
-	}
-	if (! $menufound)	// If failed to include, we try with standard
-	{
-		dol_syslog("You define a menu manager '".$file_menu."' that can not be loaded.", LOG_WARNING);
-		$file_menu='eldy_menu.php';
-		include_once DOL_DOCUMENT_ROOT."/core/menus/standard/".$file_menu;
-	}
+if (! class_exists('MenuManager')) {
+    $menufound=0;
+    $dirmenus=array_merge(array("/core/menus/"),(array) $conf->modules_parts['menus']);
+    foreach ($dirmenus as $dirmenu) {
+        $menufound=dol_include_once($dirmenu."standard/".$file_menu);
+        if ($menufound) break;
+    }
+    if (! $menufound) {	// If failed to include, we try with standard
+        dol_syslog("You define a menu manager '".$file_menu."' that can not be loaded.", LOG_WARNING);
+        $file_menu='eldy_menu.php';
+        include_once DOL_DOCUMENT_ROOT."/core/menus/standard/".$file_menu;
+    }
 }
 $menumanager = new MenuManager($db, empty($user->societe_id)?0:1);
 $menumanager->loadMenu('all','all');
@@ -93,4 +86,3 @@ print '</body>';
 print '</html>'."\n";
 
 $db->close();
-?>

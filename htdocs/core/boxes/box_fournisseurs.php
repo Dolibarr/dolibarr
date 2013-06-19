@@ -24,44 +24,41 @@
 
 include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
 
-
 /**
  * Class to manage the box to show last suppliers
  */
 class box_fournisseurs extends ModeleBoxes
 {
-    var $boxcode="lastsuppliers";
-    var $boximg="object_company";
-    var $boxlabel="BoxLastSuppliers";
-    var $depends = array("fournisseur");
+    public $boxcode="lastsuppliers";
+    public $boximg="object_company";
+    public $boxlabel="BoxLastSuppliers";
+    public $depends = array("fournisseur");
 
-	var $db;
-	var $param;
+    public $db;
+    public $param;
 
-    var $info_box_head = array();
-    var $info_box_contents = array();
-
+    public $info_box_head = array();
+    public $info_box_contents = array();
 
     /**
-	 *  Load data into info_box_contents array to show array later.
-	 *
-	 *  @param	int		$max        Maximum number of records to load
+     *  Load data into info_box_contents array to show array later.
+     *
+     *  @param	int		$max        Maximum number of records to load
      *  @return	void
      */
-    function loadBox($max=5)
+    public function loadBox($max=5)
     {
         global $conf, $user, $langs, $db;
         $langs->load("boxes");
 
-		$this->max=$max;
+        $this->max=$max;
 
         include_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
         $thirdpartystatic=new Societe($db);
 
-		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastModifiedSuppliers",$max));
+        $this->info_box_head = array('text' => $langs->trans("BoxTitleLastModifiedSuppliers",$max));
 
-        if ($user->rights->societe->lire)
-        {
+        if ($user->rights->societe->lire) {
             $sql = "SELECT s.nom, s.rowid as socid, s.datec, s.tms, s.status";
             $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
             if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -73,16 +70,14 @@ class box_fournisseurs extends ModeleBoxes
             $sql.= $db->plimit($max, 0);
 
             $result = $db->query($sql);
-            if ($result)
-            {
+            if ($result) {
                 $num = $db->num_rows($result);
 
                 $i = 0;
-                while ($i < $num)
-                {
+                while ($i < $num) {
                     $objp = $db->fetch_object($result);
-    				$datec=$db->jdate($objp->datec);
-    				$datem=$db->jdate($objp->tms);
+                    $datec=$db->jdate($objp->datec);
+                    $datem=$db->jdate($objp->tms);
 
                     $this->info_box_contents[$i][0] = array('td' => 'align="left" width="16"',
                     'logo' => $this->boximg,
@@ -93,7 +88,7 @@ class box_fournisseurs extends ModeleBoxes
                     'url' => DOL_URL_ROOT."/fourn/fiche.php?socid=".$objp->socid);
 
                     $this->info_box_contents[$i][2] = array('td' => 'align="right"',
-					'text' => dol_print_date($datem, "day"));
+                    'text' => dol_print_date($datem, "day"));
 
                     $this->info_box_contents[$i][3] = array('td' => 'align="right" width="18"',
                     'text' => $thirdpartystatic->LibStatut($objp->status,3));
@@ -103,33 +98,29 @@ class box_fournisseurs extends ModeleBoxes
 
                 if ($num==0) $this->info_box_contents[$i][0] = array('td' => 'align="center"','text'=>$langs->trans("NoRecordedSuppliers"));
 
-				$db->free($result);
-            }
-            else {
+                $db->free($result);
+            } else {
                 $this->info_box_contents[0][0] = array( 'td' => 'align="left"',
                                                         'maxlength'=>500,
                                                         'text' => ($db->error().' sql='.$sql));
             }
-        }
-        else {
+        } else {
             $this->info_box_contents[0][0] = array('td' => 'align="left"',
             'text' => $langs->trans("ReadPermissionNotAllowed"));
         }
 
     }
 
-	/**
-	 *	Method to show box
-	 *
-	 *	@param	array	$head       Array with properties of box title
-	 *	@param  array	$contents   Array with properties of box lines
-	 *	@return	void
-	 */
-    function showBox($head = null, $contents = null)
+    /**
+     *	Method to show box
+     *
+     *	@param	array	$head       Array with properties of box title
+     *	@param  array	$contents   Array with properties of box lines
+     *	@return	void
+     */
+    public function showBox($head = null, $contents = null)
     {
         parent::showBox($this->info_box_head, $this->info_box_contents);
     }
 
 }
-
-?>

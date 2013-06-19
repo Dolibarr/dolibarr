@@ -34,7 +34,6 @@ dol_htmloutput_errors($object->error,$object->errors);
 <input type="hidden" name="id" value="<?php echo $object->id; ?>">
 <input type="hidden" name="canvas" value="<?php echo $object->canvas; ?>">
 
-
 <table class="border allwidth">
 
 <tr>

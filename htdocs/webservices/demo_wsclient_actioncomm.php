@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2006-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2012 Florian Henry  <florian.henry@open-concept.pro>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
@@ -39,14 +39,12 @@ $ns='http://www.dolibarr.org/ns/';
 //$action='getlist';
 $action='create';
 
-
 // Set the WebService URL
 dol_syslog("Create nusoap_actioncomm for URL=".$WS_DOL_URL);
 $soapclient = new nusoap_client($WS_DOL_URL);
-if ($soapclient)
-{
-	$soapclient->soap_defencoding='UTF-8';
-	$soapclient->decodeUTF8(false);
+if ($soapclient) {
+    $soapclient->soap_defencoding='UTF-8';
+    $soapclient->decodeUTF8(false);
 }
 
 // Call the WebService method and store its result in $result.
@@ -57,78 +55,68 @@ $authentication=array(
     'password'=>'homedread',
     'entity'=>'1');
 
-
 // Test URL
-if ($action=='get')
-{
-	$WS_METHOD=$WS_METHOD_GET;
+if ($action=='get') {
+    $WS_METHOD=$WS_METHOD_GET;
     $parameters = array('authentication'=>$authentication,'id'=>1);
     dol_syslog("Call method ".$WS_METHOD_GET);
     $result = $soapclient->call($WS_METHOD_GET,$parameters,$ns,'');
-    if (! $result)
-    {
-    	print $soapclient->error_str;
-    	print "<br>\n\n";
-    	print $soapclient->request;
-    	print "<br>\n\n";
-    	print $soapclient->response;
-    	exit;
+    if (! $result) {
+        print $soapclient->error_str;
+        print "<br>\n\n";
+        print $soapclient->request;
+        print "<br>\n\n";
+        print $soapclient->response;
+        exit;
     }
 }
 
-
 // Test URL
-if ($action=='getlist')
-{
-	$WS_METHOD=$WS_METHOD_GET_C_LIST;
-	$parameters = array('authentication'=>$authentication);
-	dol_syslog("Call method ".$WS_METHOD_GET_C_LIST);
-	$result = $soapclient->call($WS_METHOD_GET_C_LIST,$parameters,$ns,'');
-	if (! $result)
-	{
-		print $soapclient->error_str;
-		print "<br>\n\n";
-		print $soapclient->request;
-		print "<br>\n\n";
-		print $soapclient->response;
-		exit;
-	}
+if ($action=='getlist') {
+    $WS_METHOD=$WS_METHOD_GET_C_LIST;
+    $parameters = array('authentication'=>$authentication);
+    dol_syslog("Call method ".$WS_METHOD_GET_C_LIST);
+    $result = $soapclient->call($WS_METHOD_GET_C_LIST,$parameters,$ns,'');
+    if (! $result) {
+        print $soapclient->error_str;
+        print "<br>\n\n";
+        print $soapclient->request;
+        print "<br>\n\n";
+        print $soapclient->response;
+        exit;
+    }
 }
 
 // Test URL
-if ($action=='create')
-{
-	$WS_METHOD=$WS_METHOD_CREATE;
-	$new=array(
-	'datep'=>dol_mktime(13, 30, 00, 12, 16, 2012),
-	'datef'=>dol_mktime(15, 30, 00, 12, 16, 2012),
-	'type_code'=>'AC_RDV',
-	'socid'=>'1',
-	'projectid'=>'',
-	'note'=>'This is note',
-	'contactid'=>'',
-	'usertodo'=>'1',
-	'userdone'=>'1',
-	'label'=>'Ceci est les titre de l\'envenement',
-	'percentage'=>'100',
-	'location'=>'Location1'
-	);
-	
-	
-	$parameters = array('authentication'=>$authentication,'actioncomm'=>$new);
-	dol_syslog("Call method ".$WS_METHOD_CREATE);
-	$result = $soapclient->call($WS_METHOD_CREATE,$parameters,$ns,'');
-	if (! $result)
-	{
-		print $soapclient->error_str;
-		print "<br>\n\n";
-		print $soapclient->request;
-		print "<br>\n\n";
-		print $soapclient->response;
-		exit;
-	}
-}
+if ($action=='create') {
+    $WS_METHOD=$WS_METHOD_CREATE;
+    $new=array(
+    'datep'=>dol_mktime(13, 30, 00, 12, 16, 2012),
+    'datef'=>dol_mktime(15, 30, 00, 12, 16, 2012),
+    'type_code'=>'AC_RDV',
+    'socid'=>'1',
+    'projectid'=>'',
+    'note'=>'This is note',
+    'contactid'=>'',
+    'usertodo'=>'1',
+    'userdone'=>'1',
+    'label'=>'Ceci est les titre de l\'envenement',
+    'percentage'=>'100',
+    'location'=>'Location1'
+    );
 
+    $parameters = array('authentication'=>$authentication,'actioncomm'=>$new);
+    dol_syslog("Call method ".$WS_METHOD_CREATE);
+    $result = $soapclient->call($WS_METHOD_CREATE,$parameters,$ns,'');
+    if (! $result) {
+        print $soapclient->error_str;
+        print "<br>\n\n";
+        print $soapclient->request;
+        print "<br>\n\n";
+        print $soapclient->response;
+        exit;
+    }
+}
 
 /*
  * View
@@ -162,4 +150,3 @@ echo '<pre>' . htmlspecialchars($soapclient->response, ENT_QUOTES) . '</pre>';
 
 echo '</body>'."\n";;
 echo '</html>'."\n";;
-?>

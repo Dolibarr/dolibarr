@@ -32,7 +32,6 @@ $langs->load("stocks");
 // Security check
 $result=restrictedArea($user,'stock');
 
-
 /*
  * View
  */
@@ -42,11 +41,9 @@ llxHeader("",$langs->trans("Stocks"),$help_url);
 
 print_fiche_titre($langs->trans("StocksArea"));
 
-
 //print '<table border="0" width="100%" class="notopnoleftnoright">';
 //print '<tr><td valign="top" width="30%" class="notopnoleft">';
 print '<div class="fichecenter"><div class="fichethirdleft">';
-
 
 /*
  * Zone recherche entrepot
@@ -70,8 +67,7 @@ $sql.= $db->plimit(15, 0);
 
 $result = $db->query($sql);
 
-if ($result)
-{
+if ($result) {
     $num = $db->num_rows($result);
 
     $i = 0;
@@ -79,13 +75,11 @@ if ($result)
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Warehouses").'</td></tr>';
 
-    if ($num)
-    {
+    if ($num) {
         $entrepot=new Entrepot($db);
 
         $var=True;
-        while ($i < $num)
-        {
+        while ($i < $num) {
             $objp = $db->fetch_object($result);
             $var=!$var;
             print "<tr $bc[$var]>";
@@ -98,16 +92,12 @@ if ($result)
 
     }
     print "</table>";
-}
-else
-{
+} else {
     dol_print_error($db);
 }
 
-
 //print '</td><td valign="top" width="70%" class="notopnoleftnoright">';
 print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
-
 
 // Last movements
 $max=10;
@@ -126,41 +116,39 @@ $sql.= $db->plimit($max,0);
 
 dol_syslog("Index:list stock movements sql=".$sql, LOG_DEBUG);
 $resql = $db->query($sql);
-if ($resql)
-{
-	$num = $db->num_rows($resql);
+if ($resql) {
+    $num = $db->num_rows($resql);
 
-	print '<table class="noborder" width="100%">';
-	print "<tr class=\"liste_titre\">";
-	print '<td>'.$langs->trans("LastMovements",min($num,$max)).'</td>';
-	print '<td>'.$langs->trans("Product").'</td>';
-	print '<td>'.$langs->trans("Warehouse").'</td>';
-	print '<td align="right"><a href="'.DOL_URL_ROOT.'/product/stock/mouvement.php">'.$langs->trans("FullList").'</a></td>';
-	print "</tr>\n";
+    print '<table class="noborder" width="100%">';
+    print "<tr class=\"liste_titre\">";
+    print '<td>'.$langs->trans("LastMovements",min($num,$max)).'</td>';
+    print '<td>'.$langs->trans("Product").'</td>';
+    print '<td>'.$langs->trans("Warehouse").'</td>';
+    print '<td align="right"><a href="'.DOL_URL_ROOT.'/product/stock/mouvement.php">'.$langs->trans("FullList").'</a></td>';
+    print "</tr>\n";
 
-	$var=True;
-	$i=0;
-	while ($i < min($num,$max))
-	{
-		$objp = $db->fetch_object($resql);
-		$var=!$var;
-		print "<tr $bc[$var]>";
-		print '<td>'.dol_print_date($db->jdate($objp->datem),'dayhour').'</td>';
-		print "<td><a href=\"../fiche.php?id=$objp->rowid\">";
-		print img_object($langs->trans("ShowProduct"),"product").' '.$objp->produit;
-		print "</a></td>\n";
-		print '<td><a href="fiche.php?id='.$objp->entrepot_id.'">';
-		print img_object($langs->trans("ShowWarehouse"),"stock").' '.$objp->stock;
-		print "</a></td>\n";
-		print '<td align="right">';
-		if ($objp->value > 0) print '+';
-		print $objp->value.'</td>';
-		print "</tr>\n";
-		$i++;
-	}
-	$db->free($resql);
+    $var=True;
+    $i=0;
+    while ($i < min($num,$max)) {
+        $objp = $db->fetch_object($resql);
+        $var=!$var;
+        print "<tr $bc[$var]>";
+        print '<td>'.dol_print_date($db->jdate($objp->datem),'dayhour').'</td>';
+        print "<td><a href=\"../fiche.php?id=$objp->rowid\">";
+        print img_object($langs->trans("ShowProduct"),"product").' '.$objp->produit;
+        print "</a></td>\n";
+        print '<td><a href="fiche.php?id='.$objp->entrepot_id.'">';
+        print img_object($langs->trans("ShowWarehouse"),"stock").' '.$objp->stock;
+        print "</a></td>\n";
+        print '<td align="right">';
+        if ($objp->value > 0) print '+';
+        print $objp->value.'</td>';
+        print "</tr>\n";
+        $i++;
+    }
+    $db->free($resql);
 
-	print "</table>";
+    print "</table>";
 }
 
 //print '</td></tr></table>';
@@ -169,4 +157,3 @@ print '</div></div></div>';
 llxFooter();
 
 $db->close();
-?>

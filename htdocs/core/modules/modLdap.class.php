@@ -26,100 +26,98 @@
  */
 include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 
-
 /**
  *	Classe de description et activation du module Ldap
  */
 class modLdap extends DolibarrModules
 {
-	/**
-	 *   Constructor. Define names, constants, directories, boxes, permissions
-	 *
-	 *   @param      DoliDB		$db      Database handler
-	 */
-	function __construct($db)
-	{
-		$this->db = $db;
-		$this->numero = 200;
+    /**
+     *   Constructor. Define names, constants, directories, boxes, permissions
+     *
+     *   @param      DoliDB		$db      Database handler
+     */
+    public function __construct($db)
+    {
+        $this->db = $db;
+        $this->numero = 200;
 
-		$this->family = "technic";
-		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
-		$this->name = preg_replace('/^mod/i','',get_class($this));
-		$this->description = "Synchronisation Ldap";
-		$this->version = 'dolibarr';    // 'experimental' or 'dolibarr' or version
-		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
-		// Where to store the module in setup page (0=common,1=interface,2=others,3=very specific)
-		$this->special = 1;
-		// Name of image file used for this module.
-		// If file is in theme/yourtheme/img directory under name object_pictovalue.png, use this->picto='pictovalue'
-		// If file is in module/images directory, use this->picto=DOL_URL_ROOT.'/module/images/file.png'
-		$this->picto = 'technic';
+        $this->family = "technic";
+        // Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
+        $this->name = preg_replace('/^mod/i','',get_class($this));
+        $this->description = "Synchronisation Ldap";
+        $this->version = 'dolibarr';    // 'experimental' or 'dolibarr' or version
+        $this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
+        // Where to store the module in setup page (0=common,1=interface,2=others,3=very specific)
+        $this->special = 1;
+        // Name of image file used for this module.
+        // If file is in theme/yourtheme/img directory under name object_pictovalue.png, use this->picto='pictovalue'
+        // If file is in module/images directory, use this->picto=DOL_URL_ROOT.'/module/images/file.png'
+        $this->picto = 'technic';
 
-		// Data directories to create when module is enabled
-		$this->dirs = array("/ldap/temp");
+        // Data directories to create when module is enabled
+        $this->dirs = array("/ldap/temp");
 
-		// Config pages
-		$this->config_page_url = array("ldap.php");
+        // Config pages
+        $this->config_page_url = array("ldap.php");
 
-		// Dependancies
-		$this->depends = array();
-		$this->requiredby = array();
+        // Dependancies
+        $this->depends = array();
+        $this->requiredby = array();
 
-		// Constants
-		$this->const = array(
-		0=>array('LDAP_SERVER_TYPE','chaine','openldap','',0),
-		1=>array('LDAP_SERVER_PROTOCOLVERSION','chaine','3','',0),
-		2=>array('LDAP_SERVER_HOST','chaine','localhost','',0),
-		3=>array('LDAP_USER_DN','chaine','ou=users,dc=example,dc=com','',0),
-		4=>array('LDAP_GROUP_DN','chaine','ou=groups,dc=example,dc=com','',0),
-		5=>array('LDAP_FILTER_CONNECTION','chaine','&(objectClass=inetOrgPerson)','',0),
-		6=>array('LDAP_FIELD_LOGIN','chaine','uid','',0),
-		7=>array('LDAP_FIELD_FULLNAME','chaine','cn','',0),
-		8=>array('LDAP_FIELD_NAME','chaine','sn','',0),
-		9=>array('LDAP_FIELD_FIRSTNAME','chaine','givenname','',0),
-		10=>array('LDAP_FIELD_MAIL','chaine','mail','',0),
-		11=>array('LDAP_FIELD_PHONE','chaine','telephonenumber','',0),
-		12=>array('LDAP_FIELD_FAX','chaine','facsimiletelephonenumber','',0),
-		13=>array('LDAP_FIELD_MOBILE','chaine','mobile','',0),
-		);
+        // Constants
+        $this->const = array(
+        0=>array('LDAP_SERVER_TYPE','chaine','openldap','',0),
+        1=>array('LDAP_SERVER_PROTOCOLVERSION','chaine','3','',0),
+        2=>array('LDAP_SERVER_HOST','chaine','localhost','',0),
+        3=>array('LDAP_USER_DN','chaine','ou=users,dc=example,dc=com','',0),
+        4=>array('LDAP_GROUP_DN','chaine','ou=groups,dc=example,dc=com','',0),
+        5=>array('LDAP_FILTER_CONNECTION','chaine','&(objectClass=inetOrgPerson)','',0),
+        6=>array('LDAP_FIELD_LOGIN','chaine','uid','',0),
+        7=>array('LDAP_FIELD_FULLNAME','chaine','cn','',0),
+        8=>array('LDAP_FIELD_NAME','chaine','sn','',0),
+        9=>array('LDAP_FIELD_FIRSTNAME','chaine','givenname','',0),
+        10=>array('LDAP_FIELD_MAIL','chaine','mail','',0),
+        11=>array('LDAP_FIELD_PHONE','chaine','telephonenumber','',0),
+        12=>array('LDAP_FIELD_FAX','chaine','facsimiletelephonenumber','',0),
+        13=>array('LDAP_FIELD_MOBILE','chaine','mobile','',0),
+        );
 
-		// Boites
-		$this->boxes = array();
+        // Boites
+        $this->boxes = array();
 
-		// Permissions
-		$this->rights = array();
-		$this->rights_class = 'ldap';
-	}
-
-	/**
-	 *		Function called when module is enabled.
-	 *		The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
-	 *		It also creates data directories
-	 *
-     *      @param      string	$options    Options when enabling module ('', 'noboxes')
-	 *      @return     int             	1 if OK, 0 if KO
-	 */
-	function init($options='')
-	{
-		$sql = array();
-
-		return $this->_init($sql,$options);
-	}
+        // Permissions
+        $this->rights = array();
+        $this->rights_class = 'ldap';
+    }
 
     /**
-	 *		Function called when module is disabled.
-	 *      Remove from database constants, boxes and permissions from Dolibarr database.
-	 *		Data directories are not deleted
-	 *
+     *		Function called when module is enabled.
+     *		The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
+     *		It also creates data directories
+     *
      *      @param      string	$options    Options when enabling module ('', 'noboxes')
-	 *      @return     int             	1 if OK, 0 if KO
+     *      @return     int             	1 if OK, 0 if KO
      */
-    function remove($options='')
+    public function init($options='')
     {
-		$sql = array();
+        $sql = array();
 
-		return $this->_remove($sql,$options);
+        return $this->_init($sql,$options);
+    }
+
+    /**
+     *		Function called when module is disabled.
+     *      Remove from database constants, boxes and permissions from Dolibarr database.
+     *		Data directories are not deleted
+     *
+     *      @param      string	$options    Options when enabling module ('', 'noboxes')
+     *      @return     int             	1 if OK, 0 if KO
+     */
+    public function remove($options='')
+    {
+        $sql = array();
+
+        return $this->_remove($sql,$options);
     }
 
 }
-?>

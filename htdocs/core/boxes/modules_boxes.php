@@ -23,244 +23,221 @@
  *		\brief      Fichier contenant la classe mere des boites
  */
 
-
 /**
  *		Parent class of boxes
  */
 class ModeleBoxes    // Can't be abtract as it is instanciated to build "empty" boxes
 {
-	var $db;
-	var $error='';
-	var $max=5;
-	var $enabled=1;
+    public $db;
+    public $error='';
+    public $max=5;
+    public $enabled=1;
 
-	var $rowid;
-	var $id;
-	var $position;
-	var $box_order;
-	var $fk_user;
-	var $sourcefile;
-	var $class;
-	var $box_id;
-	var $note;
+    public $rowid;
+    public $id;
+    public $position;
+    public $box_order;
+    public $fk_user;
+    public $sourcefile;
+    public $class;
+    public $box_id;
+    public $note;
 
 
-	/**
-	 *	Constructor
-	 *
-	 *	@param	DoliDB	$db			Database handler
+    /**
+     *	Constructor
+     *
+     *	@param	DoliDB	$db			Database handler
      *  @param	string	$param		More parameters
-	 */
-	function __construct($db,$param='')
-	{
-		$this->db=$db;
-	}
+     */
+    public function __construct($db,$param='')
+    {
+        $this->db=$db;
+    }
 
-	/**
-	 *  Return last error message
-	 *
-	 *  @return	string				Error message
-	 */
-	function error()
-	{
-		return $this->error;
-	}
-
-
-	/**
-	 *  Load a box line from its rowid
-	 *
-	 *  @param	int		$rowid		Row id to load
-	 *  @return	int					<0 if KO, >0 if OK
-	 */
-	function fetch($rowid)
-	{
-		global $conf;
-
-		// Recupere liste des boites d'un user si ce dernier a sa propre liste
-		$sql = "SELECT b.rowid, b.box_id, b.position, b.box_order, b.fk_user";
-		$sql.= " FROM ".MAIN_DB_PREFIX."boxes as b";
-		$sql.= " WHERE b.entity = ".$conf->entity;
-		$sql.= " AND b.rowid = ".$rowid;
-		dol_syslog(get_class($this)."::fetch rowid=".$rowid);
-
-		$resql = $this->db->query($sql);
-		if ($resql)
-		{
-			$obj = $this->db->fetch_object($resql);
-			if ($obj)
-			{
-				$this->rowid=$obj->rowid;
-				$this->box_id=$obj->box_id;
-				$this->position=$obj->position;
-				$this->box_order=$obj->box_order;
-				$this->fk_user=$obj->fk_user;
-				return 1;
-			}
-			else
-			{
-				return -1;
-			}
-		}
-		else
-		{
-			return -1;
-		}
-	}
+    /**
+     *  Return last error message
+     *
+     *  @return	string				Error message
+     */
+    public function error()
+    {
+        return $this->error;
+    }
 
 
-	/**
-	 *	Standard method to show a box (usage by boxes not mandatory, a box can still use its own function)
-	 *
-	 *	@param	array	$head       Array with properties of box title
-	 *	@param  array	$contents   Array with properties of box lines
-	 *	@return	void
-	 */
-	function showBox($head, $contents)
-	{
-		global $langs,$conf;
+    /**
+     *  Load a box line from its rowid
+     *
+     *  @param	int		$rowid		Row id to load
+     *  @return	int					<0 if KO, >0 if OK
+     */
+    public function fetch($rowid)
+    {
+        global $conf;
 
-		$MAXLENGTHBOX=60;   // Mettre 0 pour pas de limite
-		$bcx[0] = 'class="box_pair"';
-		$bcx[1] = 'class="box_impair"';
-		$var = false;
+        // Recupere liste des boites d'un user si ce dernier a sa propre liste
+        $sql = "SELECT b.rowid, b.box_id, b.position, b.box_order, b.fk_user";
+        $sql.= " FROM ".MAIN_DB_PREFIX."boxes as b";
+        $sql.= " WHERE b.entity = ".$conf->entity;
+        $sql.= " AND b.rowid = ".$rowid;
+        dol_syslog(get_class($this)."::fetch rowid=".$rowid);
 
-		dol_syslog(get_class($this).'::showBox');
+        $resql = $this->db->query($sql);
+        if ($resql) {
+            $obj = $this->db->fetch_object($resql);
+            if ($obj) {
+                $this->rowid=$obj->rowid;
+                $this->box_id=$obj->box_id;
+                $this->position=$obj->position;
+                $this->box_order=$obj->box_order;
+                $this->fk_user=$obj->fk_user;
 
-		// Define nbcol and nblines of the box to show
-		$nbcol=0;
-		if (isset($contents[0])) $nbcol=count($contents[0]);
-		$nblines=count($contents);
+                return 1;
+            } else {
+                return -1;
+            }
+        } else {
+            return -1;
+        }
+    }
 
-		print "\n\n<!-- Box start -->\n";
-		print '<div class="box" id="boxto_'.$this->box_id.'">'."\n";
+    /**
+     *	Standard method to show a box (usage by boxes not mandatory, a box can still use its own function)
+     *
+     *	@param	array	$head       Array with properties of box title
+     *	@param  array	$contents   Array with properties of box lines
+     *	@return	void
+     */
+    public function showBox($head, $contents)
+    {
+        global $langs,$conf;
 
-		if (! empty($head['text']) || ! empty($head['sublink']) || $nblines)
-		{
-			print '<table summary="boxtable'.$this->box_id.'" width="100%" class="noborder boxtable">'."\n";
-		}
+        $MAXLENGTHBOX=60;   // Mettre 0 pour pas de limite
+        $bcx[0] = 'class="box_pair"';
+        $bcx[1] = 'class="box_impair"';
+        $var = false;
 
-		// Show box title
-		if (! empty($head['text']) || ! empty($head['sublink']))
-		{
-			//print '<div id="boxto_'.$this->box_id.'_title">'."\n";
-			//print '<table summary="boxtabletitle'.$this->box_id.'" width="100%" class="noborder">'."\n";
-			print '<tr class="box_titre">';
-			print '<td';
-			if ($nbcol > 0) { print ' colspan="'.$nbcol.'"'; }
-			print '>';
-			if ($conf->use_javascript_ajax)
-			{
-				print '<table summary="" class="nobordernopadding" width="100%"><tr><td>';
-			}
-			if (! empty($head['text']))
-			{
-				$s=dol_trunc($head['text'],isset($head['limit'])?$head['limit']:$MAXLENGTHBOX);
-				print $s;
-			}
-			if (! empty($head['sublink']))
-			{
-				print ' <a href="'.$head['sublink'].'" target="_blank">'.img_picto($head['subtext'],$head['subpicto']).'</a>';
-			}
-			if ($conf->use_javascript_ajax)
-			{
-				print '</td><td class="nocellnopadd boxclose nowrap">';
-				// The image must have the class 'boxhandle' beause it's value used in DOM draggable objects to define the area used to catch the full object
-				print img_picto($langs->trans("MoveBox",$this->box_id),'grip','class="boxhandle hideonsmartphone" style="cursor:move;"');
-				print img_picto($langs->trans("Close",$this->box_id),'close','class="boxclose" rel="x:y" style="cursor:pointer;" id="imgclose'.$this->box_id.'"');
-				$label=$head['text'];
-				if (! empty($head['graph'])) $label.=' ('.$langs->trans("Graph").')';
-				print '<input type="hidden" id="boxlabelentry'.$this->box_id.'" value="'.dol_escape_htmltag($label).'">';
-				print '</td></tr></table>';
-			}
-			print '</td>';
-			print "</tr>\n";
+        dol_syslog(get_class($this).'::showBox');
+
+        // Define nbcol and nblines of the box to show
+        $nbcol=0;
+        if (isset($contents[0])) $nbcol=count($contents[0]);
+        $nblines=count($contents);
+
+        print "\n\n<!-- Box start -->\n";
+        print '<div class="box" id="boxto_'.$this->box_id.'">'."\n";
+
+        if (! empty($head['text']) || ! empty($head['sublink']) || $nblines) {
+            print '<table summary="boxtable'.$this->box_id.'" width="100%" class="noborder boxtable">'."\n";
+        }
+
+        // Show box title
+        if (! empty($head['text']) || ! empty($head['sublink'])) {
+            //print '<div id="boxto_'.$this->box_id.'_title">'."\n";
+            //print '<table summary="boxtabletitle'.$this->box_id.'" width="100%" class="noborder">'."\n";
+            print '<tr class="box_titre">';
+            print '<td';
+            if ($nbcol > 0) { print ' colspan="'.$nbcol.'"'; }
+            print '>';
+            if ($conf->use_javascript_ajax) {
+                print '<table summary="" class="nobordernopadding" width="100%"><tr><td>';
+            }
+            if (! empty($head['text'])) {
+                $s=dol_trunc($head['text'],isset($head['limit'])?$head['limit']:$MAXLENGTHBOX);
+                print $s;
+            }
+            if (! empty($head['sublink'])) {
+                print ' <a href="'.$head['sublink'].'" target="_blank">'.img_picto($head['subtext'],$head['subpicto']).'</a>';
+            }
+            if ($conf->use_javascript_ajax) {
+                print '</td><td class="nocellnopadd boxclose nowrap">';
+                // The image must have the class 'boxhandle' beause it's value used in DOM draggable objects to define the area used to catch the full object
+                print img_picto($langs->trans("MoveBox",$this->box_id),'grip','class="boxhandle hideonsmartphone" style="cursor:move;"');
+                print img_picto($langs->trans("Close",$this->box_id),'close','class="boxclose" rel="x:y" style="cursor:pointer;" id="imgclose'.$this->box_id.'"');
+                $label=$head['text'];
+                if (! empty($head['graph'])) $label.=' ('.$langs->trans("Graph").')';
+                print '<input type="hidden" id="boxlabelentry'.$this->box_id.'" value="'.dol_escape_htmltag($label).'">';
+                print '</td></tr></table>';
+            }
+            print '</td>';
+            print "</tr>\n";
 //			print "</table>\n";
 //			print "</div>\n";
-		}
+        }
 
-		// Show box lines
-		if ($nblines)
-		{
-			//print '<table summary="boxtablelines'.$this->box_id.'" width="100%" class="noborder">'."\n";
-			// Loop on each record
-			for ($i=0, $n=$nblines; $i < $n; $i++)
-			{
-				if (isset($contents[$i]))
-				{
-					$var=!$var;
+        // Show box lines
+        if ($nblines) {
+            //print '<table summary="boxtablelines'.$this->box_id.'" width="100%" class="noborder">'."\n";
+            // Loop on each record
+            for ($i=0, $n=$nblines; $i < $n; $i++) {
+                if (isset($contents[$i])) {
+                    $var=!$var;
 
-					// TR
-					if (isset($contents[$i][0]['tr'])) print '<tr valign="top" '.$contents[$i][0]['tr'].'>';
-					else print '<tr valign="top" '.$bcx[$var].'>';
+                    // TR
+                    if (isset($contents[$i][0]['tr'])) print '<tr valign="top" '.$contents[$i][0]['tr'].'>';
+                    else print '<tr valign="top" '.$bcx[$var].'>';
 
-					// Loop on each TD
-					$nbcolthisline=count($contents[$i]);
-					for ($j=0; $j < $nbcolthisline; $j++)
-					{
-						// Define tdparam
-						$tdparam='';
-						if (isset($contents[$i][$j]['td'])) $tdparam.=' '.$contents[$i][$j]['td'];
+                    // Loop on each TD
+                    $nbcolthisline=count($contents[$i]);
+                    for ($j=0; $j < $nbcolthisline; $j++) {
+                        // Define tdparam
+                        $tdparam='';
+                        if (isset($contents[$i][$j]['td'])) $tdparam.=' '.$contents[$i][$j]['td'];
 
-						if (empty($contents[$i][$j]['text'])) $contents[$i][$j]['text']="";
-						$texte=isset($contents[$i][$j]['text'])?$contents[$i][$j]['text']:'';
-						$textewithnotags=preg_replace('/<([^>]+)>/i','',$texte);
-						$texte2=isset($contents[$i][$j]['text2'])?$contents[$i][$j]['text2']:'';
-						$texte2withnotags=preg_replace('/<([^>]+)>/i','',$texte2);
-						//print "xxx $textewithnotags y";
+                        if (empty($contents[$i][$j]['text'])) $contents[$i][$j]['text']="";
+                        $texte=isset($contents[$i][$j]['text'])?$contents[$i][$j]['text']:'';
+                        $textewithnotags=preg_replace('/<([^>]+)>/i','',$texte);
+                        $texte2=isset($contents[$i][$j]['text2'])?$contents[$i][$j]['text2']:'';
+                        $texte2withnotags=preg_replace('/<([^>]+)>/i','',$texte2);
+                        //print "xxx $textewithnotags y";
 
-						print '<td'.$tdparam.'>';
+                        print '<td'.$tdparam.'>';
 
-						// Url
-						if (! empty($contents[$i][$j]['url']))
-						{
-							print '<a href="'.$contents[$i][$j]['url'].'" title="'.$textewithnotags.'"';
-							//print ' alt="'.$textewithnotags.'"';      // Pas de alt sur un "<a href>"
-							print isset($contents[$i][$j]['target'])?' target="'.$contents[$i][$j]['target'].'"':'';
-							print '>';
-						}
+                        // Url
+                        if (! empty($contents[$i][$j]['url'])) {
+                            print '<a href="'.$contents[$i][$j]['url'].'" title="'.$textewithnotags.'"';
+                            //print ' alt="'.$textewithnotags.'"';      // Pas de alt sur un "<a href>"
+                            print isset($contents[$i][$j]['target'])?' target="'.$contents[$i][$j]['target'].'"':'';
+                            print '>';
+                        }
 
-						// Logo
-						if (! empty($contents[$i][$j]['logo']))
-						{
-							$logo=preg_replace("/^object_/i","",$contents[$i][$j]['logo']);
-							print img_object($langs->trans("Show"),$logo);
-						}
+                        // Logo
+                        if (! empty($contents[$i][$j]['logo'])) {
+                            $logo=preg_replace("/^object_/i","",$contents[$i][$j]['logo']);
+                            print img_object($langs->trans("Show"),$logo);
+                        }
 
-						$maxlength=$MAXLENGTHBOX;
-						if (! empty($contents[$i][$j]['maxlength'])) $maxlength=$contents[$i][$j]['maxlength'];
+                        $maxlength=$MAXLENGTHBOX;
+                        if (! empty($contents[$i][$j]['maxlength'])) $maxlength=$contents[$i][$j]['maxlength'];
 
-						if ($maxlength) $textewithnotags=dol_trunc($textewithnotags,$maxlength);
-						if (preg_match('/^<img/i',$texte) || ! empty($contents[$i][$j]['asis'])) print $texte;	// show text with no html cleaning
-						else print $textewithnotags;				// show text with html cleaning
+                        if ($maxlength) $textewithnotags=dol_trunc($textewithnotags,$maxlength);
+                        if (preg_match('/^<img/i',$texte) || ! empty($contents[$i][$j]['asis'])) print $texte;	// show text with no html cleaning
+                        else print $textewithnotags;				// show text with html cleaning
 
-						// End Url
-						if (! empty($contents[$i][$j]['url'])) print '</a>';
+                        // End Url
+                        if (! empty($contents[$i][$j]['url'])) print '</a>';
 
-						if (preg_match('/^<img/i',$texte2) || ! empty($contents[$i][$j]['asis2'])) print $texte2;	// show text with no html cleaning
-						else print $texte2withnotags;				// show text with html cleaning
+                        if (preg_match('/^<img/i',$texte2) || ! empty($contents[$i][$j]['asis2'])) print $texte2;	// show text with no html cleaning
+                        else print $texte2withnotags;				// show text with html cleaning
 
-						print "</td>";
-					}
+                        print "</td>";
+                    }
 
-					print "</tr>\n";
-				}
-			}
-		}
+                    print "</tr>\n";
+                }
+            }
+        }
 
-		if (! empty($head['text']) || ! empty($head['sublink']) || $nblines)
-		{
-			print "</table>\n";
-		}
+        if (! empty($head['text']) || ! empty($head['sublink']) || $nblines) {
+            print "</table>\n";
+        }
 
-		// If invisible box with no contents
-		if (empty($head['text']) && empty($head['sublink']) && ! $nblines) print "<br>\n";
+        // If invisible box with no contents
+        if (empty($head['text']) && empty($head['sublink']) && ! $nblines) print "<br>\n";
 
-		print "</div>\n";
-		print "<!-- Box end -->\n\n";
-	}
+        print "</div>\n";
+        print "<!-- Box end -->\n\n";
+    }
 
 }
-
-
-?>

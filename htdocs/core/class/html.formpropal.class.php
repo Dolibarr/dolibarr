@@ -21,25 +21,23 @@
  *	\brief      File of class with all html predefined components
  */
 
-
 /**
  *	Class to manage generation of HTML components for proposal management
  */
 class FormPropal
 {
-	var $db;
-	var $error;
+    public $db;
+    public $error;
 
-
-	/**
-	 * Constructor
-	 *
-	 * @param		DoliDB		$db      Database handler
-	 */
-	public function __construct($db)
-	{
-		$this->db = $db;
-	}
+    /**
+     * Constructor
+     *
+     * @param DoliDB $db Database handler
+     */
+    public function __construct($db)
+    {
+        $this->db = $db;
+    }
 
     /**
      *    Return combo list of differents status of a proposal
@@ -49,7 +47,7 @@ class FormPropal
      *    @param	int		$short		Use short labels
      *    @return	void
      */
-    function select_propal_statut($selected='',$short=0)
+    public function select_propal_statut($selected='',$short=0)
     {
         global $langs;
 
@@ -58,32 +56,23 @@ class FormPropal
 
         dol_syslog(get_class($this)."::select_propal_statut sql=".$sql);
         $resql=$this->db->query($sql);
-        if ($resql)
-        {
+        if ($resql) {
             print '<select class="flat" name="propal_statut">';
             print '<option value="">&nbsp;</option>';
             $num = $this->db->num_rows($resql);
             $i = 0;
-            if ($num)
-            {
-                while ($i < $num)
-                {
+            if ($num) {
+                while ($i < $num) {
                     $obj = $this->db->fetch_object($resql);
-                    if ($selected == $obj->id)
-                    {
+                    if ($selected == $obj->id) {
                         print '<option value="'.$obj->id.'" selected="selected">';
-                    }
-                    else
-                    {
+                    } else {
                         print '<option value="'.$obj->id.'">';
                     }
                     $key=$obj->code;
-                    if ($langs->trans("PropalStatus".$key.($short?'Short':'')) != "PropalStatus".$key.($short?'Short':''))
-                    {
+                    if ($langs->trans("PropalStatus".$key.($short?'Short':'')) != "PropalStatus".$key.($short?'Short':'')) {
                         print $langs->trans("PropalStatus".$key.($short?'Short':''));
-                    }
-                    else
-                    {
+                    } else {
                         $conv_to_new_code=array('PR_DRAFT'=>'Draft','PR_OPEN'=>'Opened','PR_CLOSED'=>'Closed','PR_SIGNED'=>'Signed','PR_NOTSIGNED'=>'NotSigned','PR_FAC'=>'Billed');
                         if (! empty($conv_to_new_code[$obj->code])) $key=$conv_to_new_code[$obj->code];
                         print ($langs->trans("PropalStatus".$key.($short?'Short':''))!="PropalStatus".$key.($short?'Short':''))?$langs->trans("PropalStatus".$key.($short?'Short':'')):$obj->label;
@@ -93,13 +82,9 @@ class FormPropal
                 }
             }
             print '</select>';
-        }
-        else
-        {
+        } else {
             dol_print_error($this->db);
         }
     }
 
 }
-
-?>

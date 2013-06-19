@@ -35,45 +35,39 @@ $langs->load("paybox");
 
 if (!$user->admin)
   accessforbidden();
-  
+
 $action = GETPOST('action','alpha');
 
-
-if ($action == 'setvalue' && $user->admin)
-{
-	$db->begin();
-	//$result=dolibarr_set_const($db, "PAYBOX_IBS_DEVISE",$_POST["PAYBOX_IBS_DEVISE"],'chaine',0,'',$conf->entity);
-	$result=dolibarr_set_const($db, "PAYBOX_CGI_URL_V1", GETPOST('PAYBOX_CGI_URL_V1','alpha'),'chaine',0,'',$conf->entity);
-	if (! $result > 0) $error++;
-	$result=dolibarr_set_const($db, "PAYBOX_CGI_URL_V2",GETPOST('PAYBOX_CGI_URL_V2','alpha'),'chaine',0,'',$conf->entity);
-	if (! $result > 0) $error++;
-	$result=dolibarr_set_const($db, "PAYBOX_IBS_SITE",GETPOST('PAYBOX_IBS_SITE','alpha'),'chaine',0,'',$conf->entity);
-	if (! $result > 0) $error++;
-	$result=dolibarr_set_const($db, "PAYBOX_IBS_RANG",GETPOST('PAYBOX_IBS_RANG','alpha'),'chaine',0,'',$conf->entity);
-	if (! $result > 0) $error++;
-	$result=dolibarr_set_const($db, "PAYBOX_PBX_IDENTIFIANT",GETPOST('PAYBOX_PBX_IDENTIFIANT','alpha'),'chaine',0,'',$conf->entity);
-	if (! $result > 0) $error++;
+if ($action == 'setvalue' && $user->admin) {
+    $db->begin();
+    //$result=dolibarr_set_const($db, "PAYBOX_IBS_DEVISE",$_POST["PAYBOX_IBS_DEVISE"],'chaine',0,'',$conf->entity);
+    $result=dolibarr_set_const($db, "PAYBOX_CGI_URL_V1", GETPOST('PAYBOX_CGI_URL_V1','alpha'),'chaine',0,'',$conf->entity);
+    if (! $result > 0) $error++;
+    $result=dolibarr_set_const($db, "PAYBOX_CGI_URL_V2",GETPOST('PAYBOX_CGI_URL_V2','alpha'),'chaine',0,'',$conf->entity);
+    if (! $result > 0) $error++;
+    $result=dolibarr_set_const($db, "PAYBOX_IBS_SITE",GETPOST('PAYBOX_IBS_SITE','alpha'),'chaine',0,'',$conf->entity);
+    if (! $result > 0) $error++;
+    $result=dolibarr_set_const($db, "PAYBOX_IBS_RANG",GETPOST('PAYBOX_IBS_RANG','alpha'),'chaine',0,'',$conf->entity);
+    if (! $result > 0) $error++;
+    $result=dolibarr_set_const($db, "PAYBOX_PBX_IDENTIFIANT",GETPOST('PAYBOX_PBX_IDENTIFIANT','alpha'),'chaine',0,'',$conf->entity);
+    if (! $result > 0) $error++;
     $result=dolibarr_set_const($db, "PAYBOX_CREDITOR",GETPOST('PAYBOX_CREDITOR','alpha'),'chaine',0,'',$conf->entity);
     if (! $result > 0) $error++;
-	$result=dolibarr_set_const($db, "PAYBOX_CSS_URL",GETPOST('PAYBOX_CSS_URL','alpha'),'chaine',0,'',$conf->entity);
-	if (! $result > 0) $error++;
+    $result=dolibarr_set_const($db, "PAYBOX_CSS_URL",GETPOST('PAYBOX_CSS_URL','alpha'),'chaine',0,'',$conf->entity);
+    if (! $result > 0) $error++;
     $result=dolibarr_set_const($db, "PAYBOX_MESSAGE_OK",GETPOST('PAYBOX_MESSAGE_OK','alpha'),'chaine',0,'',$conf->entity);
     if (! $result > 0) $error++;
     $result=dolibarr_set_const($db, "PAYBOX_MESSAGE_KO",GETPOST('PAYBOX_MESSAGE_KO','alpha'),'chaine',0,'',$conf->entity);
-	if (! $result > 0) $error++;
-	
-    if (! $error)
-  	{
-  		$db->commit();
-  		$mesg='<div class="ok">'.$langs->trans("SetupSaved").'</div>';
-  	}
-  	else
-  	{
-  		$db->rollback();
-		dol_print_error($db);
+    if (! $result > 0) $error++;
+
+    if (! $error) {
+          $db->commit();
+          $mesg='<div class="ok">'.$langs->trans("SetupSaved").'</div>';
+      } else {
+          $db->rollback();
+        dol_print_error($db);
     }
 }
-
 
 /*
  *	View
@@ -194,26 +188,22 @@ print '<br><br>';
 print '<u>'.$langs->trans("FollowingUrlAreAvailableToMakePayments").':</u><br>';
 print img_picto('','object_globe.png').' '.$langs->trans("ToOfferALinkForOnlinePaymentOnFreeAmount",$servicename).':<br>';
 print '<b>'.DOL_MAIN_URL_ROOT.'/public/paybox/newpayment.php?amount=<i>9.99</i>&tag=<i>your_free_tag</i></b>'."<br>\n";
-if (! empty($conf->commande->enabled))
-{
-	print img_picto('','object_globe.png').' '.$langs->trans("ToOfferALinkForOnlinePaymentOnOrder",$servicename).':<br>';
-	print '<b>'.DOL_MAIN_URL_ROOT.'/public/paybox/newpayment.php?source=order&ref=<i>order_ref</i></b>'."<br>\n";
+if (! empty($conf->commande->enabled)) {
+    print img_picto('','object_globe.png').' '.$langs->trans("ToOfferALinkForOnlinePaymentOnOrder",$servicename).':<br>';
+    print '<b>'.DOL_MAIN_URL_ROOT.'/public/paybox/newpayment.php?source=order&ref=<i>order_ref</i></b>'."<br>\n";
 }
-if (! empty($conf->facture->enabled))
-{
-	print img_picto('','object_globe.png').' '.$langs->trans("ToOfferALinkForOnlinePaymentOnInvoice",$servicename).':<br>';
-	print '<b>'.DOL_MAIN_URL_ROOT.'/public/paybox/newpayment.php?source=invoice&ref=<i>invoice_ref</i></b>'."<br>\n";
+if (! empty($conf->facture->enabled)) {
+    print img_picto('','object_globe.png').' '.$langs->trans("ToOfferALinkForOnlinePaymentOnInvoice",$servicename).':<br>';
+    print '<b>'.DOL_MAIN_URL_ROOT.'/public/paybox/newpayment.php?source=invoice&ref=<i>invoice_ref</i></b>'."<br>\n";
 //	print $langs->trans("SetupPayBoxToHavePaymentCreatedAutomatically",$langs->transnoentitiesnoconv("FeatureNotYetAvailable"))."<br>\n";
 }
-if (! empty($conf->contrat->enabled))
-{
-	print img_picto('','object_globe.png').' '.$langs->trans("ToOfferALinkForOnlinePaymentOnContractLine",$servicename).':<br>';
-	print '<b>'.DOL_MAIN_URL_ROOT.'/public/paybox/newpayment.php?source=contractline&ref=<i>contractline_ref</i></b>'."<br>\n";
+if (! empty($conf->contrat->enabled)) {
+    print img_picto('','object_globe.png').' '.$langs->trans("ToOfferALinkForOnlinePaymentOnContractLine",$servicename).':<br>';
+    print '<b>'.DOL_MAIN_URL_ROOT.'/public/paybox/newpayment.php?source=contractline&ref=<i>contractline_ref</i></b>'."<br>\n";
 }
-if (! empty($conf->adherent->enabled))
-{
-	print img_picto('','object_globe.png').' '.$langs->trans("ToOfferALinkForOnlinePaymentOnMemberSubscription",$servicename).':<br>';
-	print '<b>'.DOL_MAIN_URL_ROOT.'/public/paybox/newpayment.php?source=membersubscription&ref=<i>member_ref</i></b>'."<br>\n";
+if (! empty($conf->adherent->enabled)) {
+    print img_picto('','object_globe.png').' '.$langs->trans("ToOfferALinkForOnlinePaymentOnMemberSubscription",$servicename).':<br>';
+    print '<b>'.DOL_MAIN_URL_ROOT.'/public/paybox/newpayment.php?source=membersubscription&ref=<i>member_ref</i></b>'."<br>\n";
 }
 
 print "<br>";
@@ -224,4 +214,3 @@ dol_htmloutput_mesg($mesg);
 $db->close();
 
 llxFooter();
-?>

@@ -25,40 +25,40 @@
 <input type="hidden" name="element" value="<?php echo $object->element; ?>">
 <!-- The fileupload-buttonbar contains buttons to add/delete files and start/cancel the upload -->
 <div class="row fileupload-buttonbar">
-	<div class="span7">
-		<!-- The fileinput-button span is used to style the file input field as button -->
-		<span class="btn btn-success fileinput-button">
-			<i class="icon-plus icon-white"></i>
-			<span><?php echo $langs->trans('AddFiles'); ?></span>
-			<input type="file" name="files[]" multiple>
-		</span>
-		<button type="submit" class="btn btn-primary start">
-			<i class="icon-upload icon-white"></i>
-			<span><?php echo $langs->trans('StartUpload'); ?></span>
-		</button>
-		<button type="reset" class="btn btn-warning cancel">
-			<i class="icon-ban-circle icon-white"></i>
-			<span><?php echo $langs->trans('CancelUpload'); ?></span>
-		</button>
-		<!--
-		<button type="button" class="btn btn-danger delete">
-			<i class="icon-trash icon-white"></i>
-			<span><?php echo $langs->trans('Delete'); ?></span>
-		</button>
-		<input type="checkbox" class="toggle">
-		-->
-	</div>
-	<!-- The global progress information -->
-	<div class="span5 fileupload-progress fade">
-		<!-- The global progress bar -->
-		<!--
-		<div class="progress progress-success progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100">
-			<div class="bar" style="width:0%;"></div>
-		</div>
-		-->
-		<!-- The extended global progress information -->
-		<div class="progress-extended">&nbsp;</div>
-	</div>
+    <div class="span7">
+        <!-- The fileinput-button span is used to style the file input field as button -->
+        <span class="btn btn-success fileinput-button">
+            <i class="icon-plus icon-white"></i>
+            <span><?php echo $langs->trans('AddFiles'); ?></span>
+            <input type="file" name="files[]" multiple>
+        </span>
+        <button type="submit" class="btn btn-primary start">
+            <i class="icon-upload icon-white"></i>
+            <span><?php echo $langs->trans('StartUpload'); ?></span>
+        </button>
+        <button type="reset" class="btn btn-warning cancel">
+            <i class="icon-ban-circle icon-white"></i>
+            <span><?php echo $langs->trans('CancelUpload'); ?></span>
+        </button>
+        <!--
+        <button type="button" class="btn btn-danger delete">
+            <i class="icon-trash icon-white"></i>
+            <span><?php echo $langs->trans('Delete'); ?></span>
+        </button>
+        <input type="checkbox" class="toggle">
+        -->
+    </div>
+    <!-- The global progress information -->
+    <div class="span5 fileupload-progress fade">
+        <!-- The global progress bar -->
+        <!--
+        <div class="progress progress-success progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100">
+            <div class="bar" style="width:0%;"></div>
+        </div>
+        -->
+        <!-- The extended global progress information -->
+        <div class="progress-extended">&nbsp;</div>
+    </div>
 </div>
 <!-- The loading indicator is shown during file processing -->
 <div class="fileupload-loading"></div>
@@ -77,7 +77,7 @@
         <td class="size"><span>{%=o.formatFileSize(file.size)%}</span></td>
         {% if (file.error) { %}
             <td class="error" colspan="2"><span class="label label-important">{%=locale.fileupload.error%}</span> {%=locale.fileupload.errors[file.error] || file.error%}</td>
-        {% } else if (o.files.valid && !i) { %}
+        {% } elseif (o.files.valid && !i) { %}
             <td>
                 <div class="progress progress-success progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div class="bar" style="width:0%;"></div></div>
             </td>

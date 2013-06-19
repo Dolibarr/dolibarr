@@ -31,10 +31,8 @@ $graphheight = round($graphwidth * $mapratio);
 
 $mode=GETPOST('mode')?GETPOST('mode'):'';
 
-
 // Security check
-if ($user->societe_id > 0)
-{
+if ($user->societe_id > 0) {
     $action = '';
     $socid = $user->societe_id;
 }
@@ -46,7 +44,6 @@ $endyear=$year;
 
 $langs->load("members");
 $langs->load("companies");
-
 
 /*
  * View
@@ -76,43 +73,34 @@ $foundphy=$foundmor=0;
 // Define $data array
 dol_syslog("Count member sql=".$sql);
 $resql=$db->query($sql);
-if ($resql)
-{
-	$num=$db->num_rows($resql);
-	$i=0;
-	while ($i < $num)
-	{
-		$obj=$db->fetch_object($resql);
+if ($resql) {
+    $num=$db->num_rows($resql);
+    $i=0;
+    while ($i < $num) {
+        $obj=$db->fetch_object($resql);
 
-		if ($obj->code == 'phy') $foundphy++;
-		if ($obj->code == 'mor') $foundmor++;
+        if ($obj->code == 'phy') $foundphy++;
+        if ($obj->code == 'mor') $foundmor++;
 
-		$data[]=array('label'=>$obj->code, 'nb'=>$obj->nb, 'lastdate'=>$db->jdate($obj->lastdate));
+        $data[]=array('label'=>$obj->code, 'nb'=>$obj->nb, 'lastdate'=>$db->jdate($obj->lastdate));
 
-		$i++;
-	}
-	$db->free($resql);
+        $i++;
+    }
+    $db->free($resql);
+} else {
+    dol_print_error($db);
 }
-else
-{
-	dol_print_error($db);
-}
-
 
 $head = member_stats_prepare_head($adh);
 
 dol_fiche_head($head, 'statsbyproperties', $langs->trans("Statistics"), 0, 'user');
 
-
 // Print title
-if (! count($data))
-{
-	print $langs->trans("NoValidatedMemberYet").'<br>';
-	print '<br>';
-}
-else
-{
-	print_fiche_titre($langs->trans("MembersByNature"),'','');
+if (! count($data)) {
+    print $langs->trans("NoValidatedMemberYet").'<br>';
+    print '<br>';
+} else {
+    print_fiche_titre($langs->trans("MembersByNature"),'','');
 }
 
 // Print array
@@ -128,25 +116,21 @@ if (! $foundmor) $data[]=array('label'=>'mor','nb'=>'0','lastdate'=>'');
 
 $oldyear=0;
 $var=true;
-foreach ($data as $val)
-{
-	$year = $val['year'];
-	$var=!$var;
-	print '<tr '.$bc[$var].'>';
-	print '<td align="center">'.$memberstatic->getmorphylib($val['label']).'</td>';
-	print '<td align="right">'.$val['nb'].'</td>';
-	print '<td align="right">'.dol_print_date($val['lastdate'],'dayhour').'</td>';
-	print '</tr>';
-	$oldyear=$year;
+foreach ($data as $val) {
+    $year = $val['year'];
+    $var=!$var;
+    print '<tr '.$bc[$var].'>';
+    print '<td align="center">'.$memberstatic->getmorphylib($val['label']).'</td>';
+    print '<td align="right">'.$val['nb'].'</td>';
+    print '<td align="right">'.dol_print_date($val['lastdate'],'dayhour').'</td>';
+    print '</tr>';
+    $oldyear=$year;
 }
 
 print '</table>';
 
-
 dol_fiche_end();
-
 
 llxFooter();
 
 $db->close();
-?>

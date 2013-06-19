@@ -19,23 +19,23 @@
  * or see http://www.gnu.org/
  */
 
-
 /**
  *	    \class      ModeleProductCode
  *		\brief  	Parent class for product code generators
  */
 abstract class ModeleProductCode
 {
-    var $error='';
+    public $error='';
 
     /**     Renvoi la description par defaut du modele de numerotation
      *
      *		@param	Translate	$langs		Object langs
      *      @return string      			Texte descripif
      */
-    function info($langs)
+    public function info($langs)
     {
         $langs->load("bills");
+
         return $langs->trans("NoDescription");
     }
 
@@ -44,20 +44,20 @@ abstract class ModeleProductCode
      *		@param	Translate	$langs		Object langs
      *      @return string      			Nom du module
      */
-    function getNom($langs)
+    public function getNom($langs)
     {
         return $this->nom;
     }
-
 
     /**     Renvoi un exemple de numerotation
      *
      *		@param	Translate	$langs		Object langs
      *      @return string      			Example
      */
-    function getExample($langs)
+    public function getExample($langs)
     {
         $langs->load("bills");
+
         return $langs->trans("NoExample");
     }
 
@@ -66,7 +66,7 @@ abstract class ModeleProductCode
      *
      *      @return     boolean     false si conflit, true si ok
      */
-    function canBeActivated()
+    public function canBeActivated()
     {
         return true;
     }
@@ -78,18 +78,18 @@ abstract class ModeleProductCode
      *	@param	int			$type		Type
      *  @return string      			Value
      */
-    function getNextValue($objproduct=0,$type=-1)
+    public function getNextValue($objproduct=0,$type=-1)
     {
         global $langs;
+
         return $langs->trans("Function_getNextValue_InModuleNotWorking");
     }
-
 
     /**     Return version of module
      *
      *      @return     string      Version
      */
-    function getVersion()
+    public function getVersion()
     {
         global $langs;
         $langs->load("admin");
@@ -107,27 +107,24 @@ abstract class ModeleProductCode
      *  @param  string	$maxfilenamelength  Max length of value to show
      *  @return	array						List of numbers
      */
-    static function liste_modeles($db,$maxfilenamelength=0)
+    public static function liste_modeles($db,$maxfilenamelength=0)
     {
         $liste=array();
         $sql ="";
 
         $resql = $db->query($sql);
-        if ($resql)
-        {
+        if ($resql) {
             $num = $db->num_rows($resql);
             $i = 0;
-            while ($i < $num)
-            {
+            while ($i < $num) {
                 $row = $db->fetch_row($resql);
                 $liste[$row[0]]=$row[1];
                 $i++;
             }
-        }
-        else
-        {
+        } else {
             return -1;
         }
+
         return $liste;
     }
 
@@ -139,7 +136,7 @@ abstract class ModeleProductCode
      *		@param	int			$type		-1=Nothing, 0=Customer, 1=Supplier
      *		@return	string					HTML translated description
      */
-    function getToolTip($langs,$product,$type)
+    public function getToolTip($langs,$product,$type)
     {
         global $conf;
 
@@ -153,24 +150,21 @@ abstract class ModeleProductCode
         if ($type != -1) $s.=$langs->trans("ValidityControledByModule").': <b>'.$this->getNom($langs).'</b><br>';
         $s.='<br>';
         $s.='<u>'.$langs->trans("ThisIsModuleRules").':</u><br>';
-        if ($type == 0)
-        {
+        if ($type == 0) {
             $s.=$langs->trans("RequiredIfProduct").': ';
             if (! empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED) && ! empty($this->code_null)) $s.='<strike>';
             $s.=yn(!$this->code_null,1,2);
             if (! empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED) && ! empty($this->code_null)) $s.='</strike> '.yn(1,1,2).' ('.$langs->trans("ForcedToByAModule",$langs->transnoentities("yes")).')';
             $s.='<br>';
         }
-        if ($type == 1)
-        {
+        if ($type == 1) {
             $s.=$langs->trans("RequiredIfService").': ';
             if (! empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED) && ! empty($this->code_null)) $s.='<strike>';
             $s.=yn(!$this->code_null,1,2);
             if (! empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED) && ! empty($this->code_null)) $s.='</strike> '.yn(1,1,2).' ('.$langs->trans("ForcedToByAModule",$langs->transnoentities("yes")).')';
             $s.='<br>';
         }
-        if ($type == -1)
-        {
+        if ($type == -1) {
             $s.=$langs->trans("Required").': ';
             if (! empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED) && ! empty($this->code_null)) $s.='<strike>';
             $s.=yn(!$this->code_null,1,2);
@@ -183,31 +177,28 @@ abstract class ModeleProductCode
         $s.=$langs->trans("CanBeModifiedIfKo").': '.yn($this->code_modifiable_invalide,1,2).'<br>';
         $s.=$langs->trans("AutomaticCode").': '.yn($this->code_auto,1,2).'<br>';
         $s.='<br>';
-        if ($type == 0 || $type == -1)
-        {
+        if ($type == 0 || $type == -1) {
             $nextval=$this->getNextValue($product,0);
             if (empty($nextval)) $nextval=$langs->trans("Undefined");
             $s.=$langs->trans("NextValue").($type == -1?' ('.$langs->trans("Product").')':'').': <b>'.$nextval.'</b><br>';
         }
-        if ($type == 1 || $type == -1)
-        {
+        if ($type == 1 || $type == -1) {
             $nextval=$this->getNextValue($product,1);
             if (empty($nextval)) $nextval=$langs->trans("Undefined");
             $s.=$langs->trans("NextValue").($type == -1?' ('.$langs->trans("Service").')':'').': <b>'.$nextval.'</b>';
         }
+
         return $s;
     }
 
-	/**
-	 *   Check if mask/numbering use prefix
-	 *
-	 *   @return	int		0=no, 1=yes
-	 */
-    function verif_prefixIsUsed()
+    /**
+     *   Check if mask/numbering use prefix
+     *
+     *   @return	int		0=no, 1=yes
+     */
+    public function verif_prefixIsUsed()
     {
         return 0;
     }
 
 }
-
-?>

@@ -54,68 +54,53 @@ if (! $sortfield) $sortfield="c.lastname";
 
 $now=dol_now();
 
-
 /*
  * Actions
  */
 
 // Add a notification
-if ($action == 'add')
-{
+if ($action == 'add') {
     $error=0;
 
-    if (empty($contactid))
-    {
+    if (empty($contactid)) {
         $mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Contact")).'</div>';
         $error++;
     }
-    if ($actionid <= 0)
-    {
+    if ($actionid <= 0) {
         $mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Action")).'</div>';
         $error++;
     }
 
-    if (! $error)
-    {
+    if (! $error) {
         $db->begin();
 
         $sql = "DELETE FROM ".MAIN_DB_PREFIX."notify_def";
         $sql .= " WHERE fk_soc=".$socid." AND fk_contact=".$contactid." AND fk_action=".$actionid;
-        if ($db->query($sql))
-        {
+        if ($db->query($sql)) {
             $sql = "INSERT INTO ".MAIN_DB_PREFIX."notify_def (datec,fk_soc, fk_contact, fk_action)";
             $sql .= " VALUES ('".$db->idate($now)."',".$socid.",".$contactid.",".$actionid.")";
 
-            if (! $db->query($sql))
-            {
+            if (! $db->query($sql)) {
                 $error++;
                 dol_print_error($db);
             }
-        }
-        else
-        {
+        } else {
             dol_print_error($db);
         }
 
-        if (! $error)
-        {
+        if (! $error) {
             $db->commit();
-        }
-        else
-        {
+        } else {
             $db->rollback();
         }
     }
 }
 
 // Remove a notification
-if ($action == 'delete')
-{
+if ($action == 'delete') {
     $sql = "DELETE FROM ".MAIN_DB_PREFIX."notify_def where rowid=".$_GET["actid"];
     $db->query($sql);
 }
-
-
 
 /*
  *	View
@@ -128,16 +113,13 @@ llxHeader();
 $object = new Societe($db);
 $result=$object->fetch($socid);
 
-if ($result > 0)
-{
+if ($result > 0) {
     $form = new Form($db);
     $langs->load("other");
-
 
     $head = societe_prepare_head($object);
 
     dol_fiche_head($head, 'notify', $langs->trans("ThirdParty"),0,'company');
-
 
     print '<table class="border"width="100%">';
 
@@ -146,13 +128,11 @@ if ($result > 0)
     print '</td></tr>';
 
     // Prefix
-    if (! empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
-    {
+    if (! empty($conf->global->SOCIETE_USEPREFIX)) {  // Old not used prefix field
         print '<tr><td>'.$langs->trans('Prefix').'</td><td colspan="3">'.$object->prefix_comm.'</td></tr>';
     }
 
-    if ($object->client)
-    {
+    if ($object->client) {
         print '<tr><td>';
         print $langs->trans('CustomerCode').'</td><td colspan="3">';
         print $object->code_client;
@@ -160,8 +140,7 @@ if ($result > 0)
         print '</td></tr>';
     }
 
-    if ($object->fournisseur)
-    {
+    if ($object->fournisseur) {
         print '<tr><td>';
         print $langs->trans('SupplierCode').'</td><td colspan="3">';
         print $object->code_fournisseur;
@@ -175,18 +154,15 @@ if ($result > 0)
     $sql.= " FROM ".MAIN_DB_PREFIX."notify_def as n";
     $sql.= " WHERE fk_soc = ".$object->id;
     $resql=$db->query($sql);
-    if ($resql)
-    {
+    if ($resql) {
         $num = $db->num_rows($resql);
         $i = 0;
-        while ($i < $num)
-        {
+        while ($i < $num) {
             $obj = $db->fetch_object($resql);
             $nb=$obj->nb;
             $i++;
         }
-    }
-    else {
+    } else {
         dol_print_error($db);
     }
     print $nb;
@@ -196,9 +172,7 @@ if ($result > 0)
     // Help
     print '<br>'.$langs->trans("NotificationsDesc").'<br>';
 
-
     dol_fiche_end();
-
 
     print "\n";
 
@@ -222,17 +196,15 @@ if ($result > 0)
 
     $var=false;
     $listofemails=$object->thirdparty_and_contact_email_array();
-    if (count($listofemails) > 0)
-    {
+    if (count($listofemails) > 0) {
         $actions=array();
 
         // Load array of available notifications
         $notificationtrigger=new InterfaceNotification($db);
         $listofnotifiedevents=$notificationtrigger->getListOfManagedEvents();
 
-        foreach($listofnotifiedevents as $notifiedevent)
-        {
- 			$label=($langs->trans("Notify_".$notifiedevent['code'])!="Notify_".$notifiedevent['code']?$langs->trans("Notify_".$notifiedevent['code']):$notifiedevent['label']);
+        foreach ($listofnotifiedevents as $notifiedevent) {
+             $label=($langs->trans("Notify_".$notifiedevent['code'])!="Notify_".$notifiedevent['code']?$langs->trans("Notify_".$notifiedevent['code']):$notifiedevent['label']);
             $actions[$notifiedevent['rowid']]=$label;
         }
         print '<tr '.$bc[$var].'><td>';
@@ -247,9 +219,7 @@ if ($result > 0)
         print '</td>';
         print '<td align="right"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
         print '</tr>';
-    }
-    else
-    {
+    } else {
         print '<tr '.$bc[$var].'><td colspan="4">';
         print $langs->trans("YouMustCreateContactFirst");
         print '</td></tr>';
@@ -287,15 +257,13 @@ if ($result > 0)
     $sql.= " AND c.fk_soc = ".$object->id;
 
     $resql=$db->query($sql);
-    if ($resql)
-    {
+    if ($resql) {
         $num = $db->num_rows($resql);
         $i = 0;
 
         $contactstatic=new Contact($db);
 
-        while ($i < $num)
-        {
+        while ($i < $num) {
             $var = !$var;
 
             $obj = $db->fetch_object($resql);
@@ -304,14 +272,10 @@ if ($result > 0)
             $contactstatic->lastname=$obj->lastname;
             $contactstatic->firstname=$obj->firstname;
             print '<tr '.$bc[$var].'><td>'.$contactstatic->getNomUrl(1);
-            if ($obj->type == 'email')
-            {
-                if (isValidEmail($obj->email))
-                {
+            if ($obj->type == 'email') {
+                if (isValidEmail($obj->email)) {
                     print ' &lt;'.$obj->email.'&gt;';
-                }
-                else
-                {
+                } else {
                     $langs->load("errors");
                     print ' &nbsp; '.img_warning().' '.$langs->trans("ErrorBadEMail",$obj->email);
                 }
@@ -330,15 +294,12 @@ if ($result > 0)
             $i++;
         }
         $db->free($resql);
-    }
-    else
-    {
+    } else {
         dol_print_error($db);
     }
 
     print '</table>';
     print '<br>';
-
 
     // List of notifications done
     print_fiche_titre($langs->trans("ListOfNotificationsDone"),'','');
@@ -364,15 +325,13 @@ if ($result > 0)
     $sql.= " AND c.fk_soc = ".$object->id;
 
     $resql=$db->query($sql);
-    if ($resql)
-    {
+    if ($resql) {
         $num = $db->num_rows($resql);
         $i = 0;
 
         $contactstatic=new Contact($db);
 
-        while ($i < $num)
-        {
+        while ($i < $num) {
             $var = !$var;
 
             $obj = $db->fetch_object($resql);
@@ -394,18 +353,13 @@ if ($result > 0)
             $i++;
         }
         $db->free($resql);
-    }
-    else
-    {
+    } else {
         dol_print_error($db);
     }
 
     print '</table>';
-}
-else dol_print_error('','RecordNotFound');
+} else dol_print_error('','RecordNotFound');
 
 $db->close();
 
 llxFooter();
-
-?>

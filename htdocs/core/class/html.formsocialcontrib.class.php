@@ -21,25 +21,23 @@
  *	\brief      File of class with all html predefined components
  */
 
-
 /**
  *	Class to manage generation of HTML components for social contributions management
  */
 class FormSocialContrib
 {
-	var $db;
-	var $error;
+    public $db;
+    public $error;
 
-
-	/**
-	* Constructor
-	*
-	* @param		DoliDB		$db      Database handler
-	*/
-	public function __construct($db)
-	{
-	    $this->db = $db;
-	}
+    /**
+    * Constructor
+    *
+    * @param		DoliDB		$db      Database handler
+    */
+    public function __construct($db)
+    {
+        $this->db = $db;
+    }
 
     /**
      *	Return list of social contributions.
@@ -52,26 +50,22 @@ class FormSocialContrib
      * 	@param	int		$help			Add or not the admin help picto
      * 	@return	void
      */
-    function select_type_socialcontrib($selected='',$htmlname='actioncode', $useempty=0, $maxlen=40, $help=1)
+    public function select_type_socialcontrib($selected='',$htmlname='actioncode', $useempty=0, $maxlen=40, $help=1)
     {
         global $db,$langs,$user,$mysoc;
 
-        if (empty($mysoc->country_id) && empty($mysoc->country_code))
-        {
+        if (empty($mysoc->country_id) && empty($mysoc->country_code)) {
             dol_print_error('','Call to select_type_socialcontrib with mysoc country not yet defined');
             exit;
         }
 
-        if (! empty($mysoc->country_id))
-        {
+        if (! empty($mysoc->country_id)) {
             $sql = "SELECT c.id, c.libelle as type";
             $sql.= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c";
             $sql.= " WHERE c.active = 1";
             $sql.= " AND c.fk_pays = ".$mysoc->country_id;
             $sql.= " ORDER BY c.libelle ASC";
-        }
-        else
-        {
+        } else {
             $sql = "SELECT c.id, c.libelle as type";
             $sql.= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c, ".MAIN_DB_PREFIX."c_pays as p";
             $sql.= " WHERE c.active = 1 AND c.fk_pays = p.rowid";
@@ -81,17 +75,14 @@ class FormSocialContrib
 
         dol_syslog("Form::select_type_socialcontrib sql=".$sql, LOG_DEBUG);
         $resql=$db->query($sql);
-        if ($resql)
-        {
+        if ($resql) {
             $num = $db->num_rows($resql);
-            if ($num)
-            {
+            if ($num) {
                 print '<select class="flat" name="'.$htmlname.'">';
                 $i = 0;
 
                 if ($useempty) print '<option value="0">&nbsp;</option>';
-                while ($i < $num)
-                {
+                while ($i < $num) {
                     $obj = $db->fetch_object($resql);
                     print '<option value="'.$obj->id.'"';
                     if ($obj->id == $selected) print ' selected="selected"';
@@ -100,18 +91,12 @@ class FormSocialContrib
                 }
                 print '</select>';
                 if ($user->admin && $help) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
-            }
-            else
-            {
+            } else {
                 print $langs->trans("ErrorNoSocialContributionForSellerCountry",$mysoc->country_code);
             }
-        }
-        else
-        {
+        } else {
             dol_print_error($db,$db->lasterror());
         }
     }
 
 }
-
-?>

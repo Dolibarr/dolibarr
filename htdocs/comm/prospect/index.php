@@ -28,13 +28,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
 
 $langs->load("propal");
 
-
-if ($user->societe_id > 0)
-{
-	$socid = $user->societe_id;
+if ($user->societe_id > 0) {
+    $socid = $user->societe_id;
 }
-
-
 
 /*
  *	View
@@ -50,19 +46,17 @@ print_fiche_titre($langs->trans("ProspectionArea"));
 //print '<tr><td valign="top" width="30%" class="notopnoleft">';
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
-
-if (! empty($conf->propal->enabled))
-{
-	$var=false;
-	print '<table class="noborder nohover" width="100%">';
-	print '<form method="post" action="'.DOL_URL_ROOT.'/comm/propal.php">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-	print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("SearchAProposal").'</td></tr>';
-	print '<tr '.$bc[$var].'><td>';
-	print $langs->trans("Ref").':</td><td><input type="text" class="flat" name="sf_ref" size="18"></td><td rowspan="2"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
-	print '<tr '.$bc[$var].'><td nowrap>'.$langs->trans("Other").':</td><td><input type="text" class="flat" name="sall" size="18"></td>';
-	print '</tr>';
-	print "</form></table><br>\n";
+if (! empty($conf->propal->enabled)) {
+    $var=false;
+    print '<table class="noborder nohover" width="100%">';
+    print '<form method="post" action="'.DOL_URL_ROOT.'/comm/propal.php">';
+    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("SearchAProposal").'</td></tr>';
+    print '<tr '.$bc[$var].'><td>';
+    print $langs->trans("Ref").':</td><td><input type="text" class="flat" name="sf_ref" size="18"></td><td rowspan="2"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
+    print '<tr '.$bc[$var].'><td nowrap>'.$langs->trans("Other").':</td><td><input type="text" class="flat" name="sall" size="18"></td>';
+    print '</tr>';
+    print "</form></table><br>\n";
 }
 
 /*
@@ -82,87 +76,77 @@ $sql.= " GROUP BY st.id";
 $sql.= " ORDER BY st.id";
 
 $resql=$db->query($sql);
-if ($resql)
-{
-	$num = $db->num_rows($resql);
-	$i = 0;
-	if ($num > 0 )
-	{
-		$var=true;
+if ($resql) {
+    $num = $db->num_rows($resql);
+    $i = 0;
+    if ($num > 0) {
+        $var=true;
 
-		print '<table class="noborder" width="100%">';
-		print '<tr class="liste_titre">';
-		print '<td colspan="2">'.$langs->trans("ProspectsByStatus").'</td></tr>';
-		while ($i < $num)
-		{
-			$obj = $db->fetch_object($resql);
-			$var=!$var;
-			print '<tr '.$bc[$var].'><td>';
-			print '<a href="prospects.php?page=0&amp;stcomm='.$obj->id.'">';
-			print img_action($langs->trans("Show"),$obj->id).' ';
-			print $langs->trans("StatusProspect".$obj->id);
-			print '</a></td><td align="right">'.$obj->cc.'</td></tr>';
-			$i++;
-		}
-		print "</table><br>";
-	}
+        print '<table class="noborder" width="100%">';
+        print '<tr class="liste_titre">';
+        print '<td colspan="2">'.$langs->trans("ProspectsByStatus").'</td></tr>';
+        while ($i < $num) {
+            $obj = $db->fetch_object($resql);
+            $var=!$var;
+            print '<tr '.$bc[$var].'><td>';
+            print '<a href="prospects.php?page=0&amp;stcomm='.$obj->id.'">';
+            print img_action($langs->trans("Show"),$obj->id).' ';
+            print $langs->trans("StatusProspect".$obj->id);
+            print '</a></td><td align="right">'.$obj->cc.'</td></tr>';
+            $i++;
+        }
+        print "</table><br>";
+    }
 }
-
 
 /*
  * Liste des propal brouillons
  */
-if (! empty($conf->propal->enabled) && $user->rights->propale->lire)
-{
-	$sql = "SELECT p.rowid, p.ref, p.price, s.nom as sname";
-	$sql.= " FROM ".MAIN_DB_PREFIX."propal as p";
-	$sql.= ", ".MAIN_DB_PREFIX."societe as s";
-	if (! $user->rights->societe->client->voir && ! $socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-	$sql.= " WHERE p.fk_statut = 0";
-	$sql.= " AND p.fk_soc = s.rowid";
-	$sql.= " AND p.entity = ".$conf->entity;
-	if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+if (! empty($conf->propal->enabled) && $user->rights->propale->lire) {
+    $sql = "SELECT p.rowid, p.ref, p.price, s.nom as sname";
+    $sql.= " FROM ".MAIN_DB_PREFIX."propal as p";
+    $sql.= ", ".MAIN_DB_PREFIX."societe as s";
+    if (! $user->rights->societe->client->voir && ! $socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+    $sql.= " WHERE p.fk_statut = 0";
+    $sql.= " AND p.fk_soc = s.rowid";
+    $sql.= " AND p.entity = ".$conf->entity;
+    if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 
-	$resql=$db->query($sql);
-	if ($resql)
-	{
-		$var=true;
+    $resql=$db->query($sql);
+    if ($resql) {
+        $var=true;
 
-		$total=0;
-		$num = $db->num_rows($resql);
-		$i = 0;
-		if ($num > 0)
-		{
-			print '<table class="noborder"" width="100%">';
-			print '<tr class="liste_titre">';
-			print '<td colspan="2">'.$langs->trans("ProposalsDraft").'</td></tr>';
+        $total=0;
+        $num = $db->num_rows($resql);
+        $i = 0;
+        if ($num > 0) {
+            print '<table class="noborder"" width="100%">';
+            print '<tr class="liste_titre">';
+            print '<td colspan="2">'.$langs->trans("ProposalsDraft").'</td></tr>';
 
-			while ($i < $num)
-			{
-				$obj = $db->fetch_object($resql);
-				$var=!$var;
-				print '<tr '.$bc[$var].'><td>';
-				print '<a href="'.DOL_URL_ROOT.'/comm/propal.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowPropal"),"propal").' '.$obj->ref.'</a>';
-				print '</td><td align="right">';
-				print price($obj->price);
-				print "</td></tr>";
-				$i++;
-				$total += $obj->price;
-			}
-			if ($total>0) {
-				$var=!$var;
-				print '<tr class="liste_total"><td>'.$langs->trans("Total")."</td><td align=\"right\">".price($total)."</td></tr>";
-			}
-			print "</table><br>";
-		}
-		$db->free($resql);
-	}
+            while ($i < $num) {
+                $obj = $db->fetch_object($resql);
+                $var=!$var;
+                print '<tr '.$bc[$var].'><td>';
+                print '<a href="'.DOL_URL_ROOT.'/comm/propal.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowPropal"),"propal").' '.$obj->ref.'</a>';
+                print '</td><td align="right">';
+                print price($obj->price);
+                print "</td></tr>";
+                $i++;
+                $total += $obj->price;
+            }
+            if ($total>0) {
+                $var=!$var;
+                print '<tr class="liste_total"><td>'.$langs->trans("Total")."</td><td align=\"right\">".price($total)."</td></tr>";
+            }
+            print "</table><br>";
+        }
+        $db->free($resql);
+    }
 }
-
 
 //print '</td><td valign="top" width="70%" class="notopnoleftnoright">';
 print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
-
 
 /*
  * Actions commerciales a faire
@@ -172,67 +156,61 @@ if (! empty($conf->agenda->enabled)) show_array_actions_to_do(10);
 /*
  * Dernieres propales ouvertes
  */
-if (! empty($conf->propal->enabled) && $user->rights->propale->lire)
-{
-	$sql = "SELECT s.nom as name, s.rowid as socid, s.client, s.canvas,";
-	$sql.= " p.rowid as propalid, p.total as total_ttc, p.ref, p.datep as dp, c.label as statut, c.id as statutid";
-	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
-	$sql.= ", ".MAIN_DB_PREFIX."propal as p";
-	$sql.= ", ".MAIN_DB_PREFIX."c_propalst as c";
-	if (! $user->rights->societe->client->voir && ! $socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-	$sql.= " WHERE p.fk_soc = s.rowid";
-	$sql.= " AND p.fk_statut = c.id";
-	$sql.= " AND p.fk_statut = 1";
-	$sql.= " AND p.entity = ".$conf->entity;
-	if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-	if ($socid) $sql.= " AND s.rowid = ".$socid;
-	$sql.= " ORDER BY p.rowid DESC";
-	$sql.= $db->plimit(5, 0);
+if (! empty($conf->propal->enabled) && $user->rights->propale->lire) {
+    $sql = "SELECT s.nom as name, s.rowid as socid, s.client, s.canvas,";
+    $sql.= " p.rowid as propalid, p.total as total_ttc, p.ref, p.datep as dp, c.label as statut, c.id as statutid";
+    $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
+    $sql.= ", ".MAIN_DB_PREFIX."propal as p";
+    $sql.= ", ".MAIN_DB_PREFIX."c_propalst as c";
+    if (! $user->rights->societe->client->voir && ! $socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+    $sql.= " WHERE p.fk_soc = s.rowid";
+    $sql.= " AND p.fk_statut = c.id";
+    $sql.= " AND p.fk_statut = 1";
+    $sql.= " AND p.entity = ".$conf->entity;
+    if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+    if ($socid) $sql.= " AND s.rowid = ".$socid;
+    $sql.= " ORDER BY p.rowid DESC";
+    $sql.= $db->plimit(5, 0);
 
-	$resql=$db->query($sql);
-	if ($resql)
-	{
-		$total = 0;
-		$num = $db->num_rows($resql);
-		$i = 0;
-		if ($num > 0)
-		{
-			$var=true;
+    $resql=$db->query($sql);
+    if ($resql) {
+        $total = 0;
+        $num = $db->num_rows($resql);
+        $i = 0;
+        if ($num > 0) {
+            $var=true;
 
-			print '<table class="noborder" width="100%">';
-			print '<tr class="liste_titre"><td colspan="4">'.$langs->trans("ProposalsOpened").'</td></tr>';
+            print '<table class="noborder" width="100%">';
+            print '<tr class="liste_titre"><td colspan="4">'.$langs->trans("ProposalsOpened").'</td></tr>';
 
-			while ($i < $num)
-			{
-				$obj = $db->fetch_object($resql);
-				$var=!$var;
-				print '<tr '.$bc[$var].'><td>';
-				print '<a href="../propal.php?id='.$obj->propalid.'">';
-				print img_object($langs->trans("ShowPropal"),"propal").' '.$obj->ref.'</a></td>';
+            while ($i < $num) {
+                $obj = $db->fetch_object($resql);
+                $var=!$var;
+                print '<tr '.$bc[$var].'><td>';
+                print '<a href="../propal.php?id='.$obj->propalid.'">';
+                print img_object($langs->trans("ShowPropal"),"propal").' '.$obj->ref.'</a></td>';
 
-				print "<td>";
+                print "<td>";
                 $companystatic->id=$obj->socid;
                 $companystatic->name=$obj->name;
                 $companystatic->client=$obj->client;
                 $companystatic->canvas=$obj->canvas;
                 print $companystatic->getNomUrl(1,'',44);
-				print "</td>\n";
-				print "<td align=\"right\">";
-				print dol_print_date($db->jdate($obj->dp),'day')."</td>\n";
-				print "<td align=\"right\">".price($obj->total_ttc)."</td></tr>\n";
-				$i++;
-				$total += $obj->price;
-			}
-			if ($total>0) {
-				print '<tr class="liste_total"><td colspan="3" align="right">'.$langs->trans("Total")."</td><td align=\"right\">".price($total)."</td></tr>";
-			}
-			print "</table><br>";
-		}
-	}
-	else
-	{
-		dol_print_error($db);
-	}
+                print "</td>\n";
+                print "<td align=\"right\">";
+                print dol_print_date($db->jdate($obj->dp),'day')."</td>\n";
+                print "<td align=\"right\">".price($obj->total_ttc)."</td></tr>\n";
+                $i++;
+                $total += $obj->price;
+            }
+            if ($total>0) {
+                print '<tr class="liste_total"><td colspan="3" align="right">'.$langs->trans("Total")."</td><td align=\"right\">".price($total)."</td></tr>";
+            }
+            print "</table><br>";
+        }
+    } else {
+        dol_print_error($db);
+    }
 }
 
 /*
@@ -249,34 +227,30 @@ $sql.= " ORDER BY s.tms ASC";
 $sql.= $db->plimit(15, 0);
 
 $resql=$db->query($sql);
-if ($resql)
-{
-	$num = $db->num_rows($resql);
-	$i = 0;
-	if ($num > 0 )
-	{
-		$var=true;
+if ($resql) {
+    $num = $db->num_rows($resql);
+    $i = 0;
+    if ($num > 0) {
+        $var=true;
 
-		print '<table class="noborder" width="100%">';
-		print '<tr class="liste_titre"><td>'.$langs->trans("ProspectToContact").'</td></tr>';
+        print '<table class="noborder" width="100%">';
+        print '<tr class="liste_titre"><td>'.$langs->trans("ProspectToContact").'</td></tr>';
 
-		while ($i < $num)
-		{
-			$obj = $db->fetch_object($resql);
-			$var=!$var;
-			print '<tr '.$bc[$var].'><td width="12%">';
+        while ($i < $num) {
+            $obj = $db->fetch_object($resql);
+            $var=!$var;
+            print '<tr '.$bc[$var].'><td width="12%">';
             $companystatic->id=$obj->socid;
             $companystatic->name=$obj->name;
             $companystatic->client=$obj->client;
             $companystatic->canvas=$obj->canvas;
             print $companystatic->getNomUrl(1,'prospect',44);
-			print '</td></tr>';
-			$i++;
-		}
-		print "</table><br>";
-	}
+            print '</td></tr>';
+            $i++;
+        }
+        print "</table><br>";
+    }
 }
-
 
 //print '</td></tr></table>';
 print '</div></div></div>';
@@ -284,4 +258,3 @@ print '</div></div></div>';
 llxFooter();
 
 $db->close();
-?>

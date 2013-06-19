@@ -46,7 +46,6 @@ $offset = $limit * $page;
 
 $year = strftime("%Y",time());
 
-
 /*
  *	View
  */
@@ -58,12 +57,10 @@ $sql.= " FROM ".MAIN_DB_PREFIX."entrepot as e";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_stock as ps ON e.rowid = ps.fk_entrepot";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON ps.fk_product = p.rowid";
 $sql.= " WHERE e.entity = ".$conf->entity;
-if ($sref)
-{
+if ($sref) {
     $sql.= " AND e.ref LIKE '%".$sref."%'";
 }
-if ($sall)
-{
+if ($sall) {
     $sql.= " AND (e.label LIKE '%".$db->escape($sall)."%'";
     $sql.= " OR e.description LIKE '%".$db->escape($sall)."%'";
     $sql.= " OR e.lieu LIKE '%".$db->escape($sall)."%'";
@@ -75,8 +72,7 @@ $sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit($limit + 1, $offset);
 
 $result = $db->query($sql);
-if ($result)
-{
+if ($result) {
     $num = $db->num_rows($result);
 
     $i = 0;
@@ -95,13 +91,11 @@ if ($result)
     print_liste_field_titre($langs->trans("Status"),"valo.php", "e.statut",'','','align="right"',$sortfield,$sortorder);
     print "</tr>\n";
 
-    if ($num)
-    {
+    if ($num) {
         $entrepot=new Entrepot($db);
         $total = $totalsell = 0;
         $var=false;
-        while ($i < min($num,$limit))
-        {
+        while ($i < min($num,$limit)) {
             $objp = $db->fetch_object($result);
             print "<tr $bc[$var]>";
             print '<td><a href="fiche.php?id='.$objp->ref.'">'.img_object($langs->trans("ShowWarehouse"),'stock').' '.$objp->label.'</a></td>';
@@ -139,27 +133,21 @@ if ($result)
     print '<br>';
 
     $file='entrepot-'.$year.'.png';
-    if (file_exists(DOL_DATA_ROOT.'/entrepot/temp/'.$file))
-    {
+    if (file_exists(DOL_DATA_ROOT.'/entrepot/temp/'.$file)) {
         $url=DOL_URL_ROOT.'/viewimage.php?modulepart=graph_stock&amp;file='.$file;
         print '<img src="'.$url.'">';
     }
 
     $file='entrepot-'.($year-1).'.png';
-    if (file_exists(DOL_DATA_ROOT.'/entrepot/temp/'.$file))
-    {
+    if (file_exists(DOL_DATA_ROOT.'/entrepot/temp/'.$file)) {
         $url=DOL_URL_ROOT.'/viewimage.php?modulepart=graph_stock&amp;file='.$file;
         print '<br><img src="'.$url.'">';
     }
 
-}
-else
-{
+} else {
     dol_print_error($db);
 }
-
 
 llxFooter();
 
 $db->close();
-?>

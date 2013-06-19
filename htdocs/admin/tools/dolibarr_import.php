@@ -28,11 +28,10 @@ $langs->load("admin");
 $langs->load("other");
 
 if (! $user->admin)
-	accessforbidden();
+    accessforbidden();
 
 $radio_dump=GETPOST('radio_dump');
 $showpass=GETPOST('showpass');
-
 
 /*
  * View
@@ -46,19 +45,19 @@ llxHeader('','',$help_url);
 ?>
 <script type="text/javascript">
 jQuery(document).ready(function() {
-	jQuery("#mysql_options").<?php echo $radio_dump=='mysql_options'?'show()':'hide()'; ?>;
-	jQuery("#postgresql_options").<?php echo $radio_dump=='postgresql_options'?'show()':'hide()'; ?>;
+    jQuery("#mysql_options").<?php echo $radio_dump=='mysql_options'?'show()':'hide()'; ?>;
+    jQuery("#postgresql_options").<?php echo $radio_dump=='postgresql_options'?'show()':'hide()'; ?>;
 
-	jQuery("#radio_dump_mysql").click(function() {
-		jQuery("#mysql_options").show();
-	});
-	jQuery("#radio_dump_postgresql").click(function() {
-		jQuery("#postgresql_options").show();
-	});
-	<?php
-	    if ($label == 'MySQL')      print 'jQuery("#radio_dump_mysql").click();';
-	    if ($label == 'PostgreSQL') print 'jQuery("#radio_dump_postgresql").click();';
-	?>
+    jQuery("#radio_dump_mysql").click(function() {
+        jQuery("#mysql_options").show();
+    });
+    jQuery("#radio_dump_postgresql").click(function() {
+        jQuery("#postgresql_options").show();
+    });
+    <?php
+        if ($label == 'MySQL')      print 'jQuery("#radio_dump_mysql").click();';
+        if ($label == 'PostgreSQL') print 'jQuery("#radio_dump_postgresql").click();';
+    ?>
 });
 </script>
 <?php
@@ -78,28 +77,23 @@ print $langs->trans("RestoreDesc3",DOL_DATA_ROOT).'<br><br>';
 <?php if ($conf->use_javascript_ajax) { ?>
 <div id="div_container_exportoptions">
 <fieldset id="exportoptions">
-	<legend><?php echo $langs->trans("ImportMethod"); ?></legend>
+    <legend><?php echo $langs->trans("ImportMethod"); ?></legend>
     <?php
-    if ($label == 'MySQL')
-    {
+    if ($label == 'MySQL') {
     ?>
     <div class="formelementrow">
         <input type="radio" name="what" value="mysql" id="radio_dump_mysql"<?php echo ($radio_dump=='mysql_options'?' checked':''); ?> />
         <label for="radio_dump_mysql">MySQL (mysql)</label>
     </div>
     <?php
-    }
-    else if ($label == 'PostgreSQL')
-    {
+    } elseif ($label == 'PostgreSQL') {
     ?>
     <div class="formelementrow">
         <input type="radio" name="what" value="mysql" id="radio_dump_postgresql"<?php echo ($radio_dump=='postgresql_options'?' checked':''); ?> />
         <label for="radio_dump_postgresql">PostgreSQL Restore (pg_restore)</label>
     </div>
     <?php
-    }
-    else
-    {
+    } else {
         print 'No method available with database '.$label;
     }
     ?>
@@ -109,45 +103,40 @@ print $langs->trans("RestoreDesc3",DOL_DATA_ROOT).'<br><br>';
 
 </td><td valign="top">
 
-
 <div id="div_container_sub_exportoptions">
 <?php
-if ($label == 'MySQL')
-{
+if ($label == 'MySQL') {
 ?>
-	<fieldset id="mysql_options">
+    <fieldset id="mysql_options">
     <legend><?php echo $langs->trans('RestoreMySQL') ?></legend>
-	<div class="formelementrow">
-	<?php
-	// Parameteres execution
-	$command=$db->getPathOfRestore();
-	if (preg_match("/\s/",$command)) $command=$command=escapeshellarg($command);	// Use quotes on command
+    <div class="formelementrow">
+    <?php
+    // Parameteres execution
+    $command=$db->getPathOfRestore();
+    if (preg_match("/\s/",$command)) $command=$command=escapeshellarg($command);	// Use quotes on command
 
-	$param=$dolibarr_main_db_name;
-	$param.=" -h ".$dolibarr_main_db_host;
-	if (! empty($dolibarr_main_db_port)) $param.=" -P ".$dolibarr_main_db_port;
-	$param.=" -u ".$dolibarr_main_db_user;
-	$paramcrypted=$param;
-	$paramclear=$param;
-	if (! empty($dolibarr_main_db_pass))
-	{
-		$paramcrypted.=" -p".preg_replace('/./i','*',$dolibarr_main_db_pass);
-		$paramclear.=" -p".$dolibarr_main_db_pass;
-	}
+    $param=$dolibarr_main_db_name;
+    $param.=" -h ".$dolibarr_main_db_host;
+    if (! empty($dolibarr_main_db_port)) $param.=" -P ".$dolibarr_main_db_port;
+    $param.=" -u ".$dolibarr_main_db_user;
+    $paramcrypted=$param;
+    $paramclear=$param;
+    if (! empty($dolibarr_main_db_pass)) {
+        $paramcrypted.=" -p".preg_replace('/./i','*',$dolibarr_main_db_pass);
+        $paramclear.=" -p".$dolibarr_main_db_pass;
+    }
 
-	echo $langs->trans("ImportMySqlDesc");
-	print '<br>';
-	print '<textarea rows="1" cols="120">'.$langs->trans("ImportMySqlCommand",$command,($showpass?$paramclear:$paramcrypted)).'</textarea><br>';
+    echo $langs->trans("ImportMySqlDesc");
+    print '<br>';
+    print '<textarea rows="1" cols="120">'.$langs->trans("ImportMySqlCommand",$command,($showpass?$paramclear:$paramcrypted)).'</textarea><br>';
 
-	if (empty($_GET["showpass"]) && $dolibarr_main_db_pass) print '<br><a href="'.$_SERVER["PHP_SELF"].'?showpass=1&amp;radio_dump=mysql_options">'.$langs->trans("UnHidePassword").'</a>';
-	//else print '<br><a href="'.$_SERVER["PHP_SELF"].'?showpass=0&amp;radio_dump=mysql_options">'.$langs->trans("HidePassword").'</a>';
-	?>
-	</div>
+    if (empty($_GET["showpass"]) && $dolibarr_main_db_pass) print '<br><a href="'.$_SERVER["PHP_SELF"].'?showpass=1&amp;radio_dump=mysql_options">'.$langs->trans("UnHidePassword").'</a>';
+    //else print '<br><a href="'.$_SERVER["PHP_SELF"].'?showpass=0&amp;radio_dump=mysql_options">'.$langs->trans("HidePassword").'</a>';
+    ?>
+    </div>
     </fieldset>
 <?php
-}
-else if ($label == 'PostgreSQL')
-{
+} elseif ($label == 'PostgreSQL') {
 ?>
     <fieldset id="postgresql_options">
     <legend>Restore PostgreSQL</legend>
@@ -163,8 +152,7 @@ else if ($label == 'PostgreSQL')
     $param.=" -U ".$dolibarr_main_db_user;
     $paramcrypted=$param;
     $paramclear=$param;
-    /*if (! empty($dolibarr_main_db_pass))
-    {
+    /*if (! empty($dolibarr_main_db_pass)) {
         $paramcrypted.=" -p".preg_replace('/./i','*',$dolibarr_main_db_pass);
         $paramclear.=" -p".$dolibarr_main_db_pass;
     }*/
@@ -186,7 +174,6 @@ else if ($label == 'PostgreSQL')
 
 </div>
 
-
 </td></tr></table>
 </fieldset>
 
@@ -194,4 +181,3 @@ else if ($label == 'PostgreSQL')
 llxFooter();
 
 $db->close();
-?>

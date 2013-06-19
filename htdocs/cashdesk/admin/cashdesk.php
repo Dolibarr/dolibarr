@@ -27,11 +27,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 
 // If socid provided by ajax company selector
-if (! empty($_REQUEST['CASHDESK_ID_THIRDPARTY_id']))
-{
-	$_GET['CASHDESK_ID_THIRDPARTY'] = GETPOST('CASHDESK_ID_THIRDPARTY_id','alpha');
-	$_POST['CASHDESK_ID_THIRDPARTY'] = GETPOST('CASHDESK_ID_THIRDPARTY_id','alpha');
-	$_REQUEST['CASHDESK_ID_THIRDPARTY'] = GETPOST('CASHDESK_ID_THIRDPARTY_id','alpha');
+if (! empty($_REQUEST['CASHDESK_ID_THIRDPARTY_id'])) {
+    $_GET['CASHDESK_ID_THIRDPARTY'] = GETPOST('CASHDESK_ID_THIRDPARTY_id','alpha');
+    $_POST['CASHDESK_ID_THIRDPARTY'] = GETPOST('CASHDESK_ID_THIRDPARTY_id','alpha');
+    $_REQUEST['CASHDESK_ID_THIRDPARTY'] = GETPOST('CASHDESK_ID_THIRDPARTY_id','alpha');
 }
 
 // Security check
@@ -41,36 +40,31 @@ accessforbidden();
 $langs->load("admin");
 $langs->load("cashdesk");
 
-
 /*
  * Actions
  */
-if (GETPOST('action','alpha') == 'set')
-{
-	$db->begin();
+if (GETPOST('action','alpha') == 'set') {
+    $db->begin();
 
-	if (GETPOST('socid','int') < 0) $_POST["socid"]='';
-	/*if (GETPOST("CASHDESK_ID_BANKACCOUNT") < 0)  $_POST["CASHDESK_ID_BANKACCOUNT"]='';
-	if (GETPOST("CASHDESK_ID_WAREHOUSE") < 0)  $_POST["CASHDESK_ID_WAREHOUSE"]='';*/
+    if (GETPOST('socid','int') < 0) $_POST["socid"]='';
+    /*if (GETPOST("CASHDESK_ID_BANKACCOUNT") < 0)  $_POST["CASHDESK_ID_BANKACCOUNT"]='';
+    if (GETPOST("CASHDESK_ID_WAREHOUSE") < 0)  $_POST["CASHDESK_ID_WAREHOUSE"]='';*/
 
-	$res = dolibarr_set_const($db,"CASHDESK_ID_THIRDPARTY",GETPOST('socid','int'),'chaine',0,'',$conf->entity);
-	$res = dolibarr_set_const($db,"CASHDESK_ID_BANKACCOUNT_CASH",GETPOST('CASHDESK_ID_BANKACCOUNT_CASH','alpha'),'chaine',0,'',$conf->entity);
-	$res = dolibarr_set_const($db,"CASHDESK_ID_BANKACCOUNT_CHEQUE",GETPOST('CASHDESK_ID_BANKACCOUNT_CHEQUE','alpha'),'chaine',0,'',$conf->entity);
-	$res = dolibarr_set_const($db,"CASHDESK_ID_BANKACCOUNT_CB",GETPOST('CASHDESK_ID_BANKACCOUNT_CB','alpha'),'chaine',0,'',$conf->entity);
-	$res = dolibarr_set_const($db,"CASHDESK_ID_WAREHOUSE",GETPOST('CASHDESK_ID_WAREHOUSE','alpha'),'chaine',0,'',$conf->entity);
-	$res = dolibarr_set_const($db,"CASHDESK_SERVICES", GETPOST('CASHDESK_SERVICES','alpha'),'chaine',0,'',$conf->entity);
+    $res = dolibarr_set_const($db,"CASHDESK_ID_THIRDPARTY",GETPOST('socid','int'),'chaine',0,'',$conf->entity);
+    $res = dolibarr_set_const($db,"CASHDESK_ID_BANKACCOUNT_CASH",GETPOST('CASHDESK_ID_BANKACCOUNT_CASH','alpha'),'chaine',0,'',$conf->entity);
+    $res = dolibarr_set_const($db,"CASHDESK_ID_BANKACCOUNT_CHEQUE",GETPOST('CASHDESK_ID_BANKACCOUNT_CHEQUE','alpha'),'chaine',0,'',$conf->entity);
+    $res = dolibarr_set_const($db,"CASHDESK_ID_BANKACCOUNT_CB",GETPOST('CASHDESK_ID_BANKACCOUNT_CB','alpha'),'chaine',0,'',$conf->entity);
+    $res = dolibarr_set_const($db,"CASHDESK_ID_WAREHOUSE",GETPOST('CASHDESK_ID_WAREHOUSE','alpha'),'chaine',0,'',$conf->entity);
+    $res = dolibarr_set_const($db,"CASHDESK_SERVICES", GETPOST('CASHDESK_SERVICES','alpha'),'chaine',0,'',$conf->entity);
 
-	dol_syslog("admin/cashdesk: level ".GETPOST('level','alpha'));
+    dol_syslog("admin/cashdesk: level ".GETPOST('level','alpha'));
 
-	if (! $res > 0) $error++;
+    if (! $res > 0) $error++;
 
- 	if (! $error)
-    {
+     if (! $error) {
         $db->commit();
         $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
-    }
-    else
-    {
+    } else {
         $db->rollback();
         $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
     }
@@ -89,7 +83,6 @@ $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToM
 print_fiche_titre($langs->trans("CashDeskSetup"),$linkback,'setup');
 print '<br>';
 
-
 // Mode
 $var=true;
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
@@ -106,38 +99,35 @@ print '<td colspan="2">';
 //print $form->select_company($conf->global->CASHDESK_ID_THIRDPARTY,'socid','s.client in (1,3)',1,1);
 print $form->select_thirdparty($conf->global->CASHDESK_ID_THIRDPARTY,'socid','s.client in (1,3)',0,array(),1);
 print '</td></tr>';
-if (! empty($conf->banque->enabled))
-{
-	$var=!$var;
-	print '<tr '.$bc[$var].'><td>'.$langs->trans("CashDeskBankAccountForSell").'</td>';
-	print '<td colspan="2">';
-	$form->select_comptes($conf->global->CASHDESK_ID_BANKACCOUNT_CASH,'CASHDESK_ID_BANKACCOUNT_CASH',0,"courant=2",1);
-	print '</td></tr>';
+if (! empty($conf->banque->enabled)) {
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td>'.$langs->trans("CashDeskBankAccountForSell").'</td>';
+    print '<td colspan="2">';
+    $form->select_comptes($conf->global->CASHDESK_ID_BANKACCOUNT_CASH,'CASHDESK_ID_BANKACCOUNT_CASH',0,"courant=2",1);
+    print '</td></tr>';
 
-	$var=!$var;
-	print '<tr '.$bc[$var].'><td>'.$langs->trans("CashDeskBankAccountForCheque").'</td>';
-	print '<td colspan="2">';
-	$form->select_comptes($conf->global->CASHDESK_ID_BANKACCOUNT_CHEQUE,'CASHDESK_ID_BANKACCOUNT_CHEQUE',0,"courant=1",1);
-	print '</td></tr>';
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td>'.$langs->trans("CashDeskBankAccountForCheque").'</td>';
+    print '<td colspan="2">';
+    $form->select_comptes($conf->global->CASHDESK_ID_BANKACCOUNT_CHEQUE,'CASHDESK_ID_BANKACCOUNT_CHEQUE',0,"courant=1",1);
+    print '</td></tr>';
 
-	$var=!$var;
-	print '<tr '.$bc[$var].'><td>'.$langs->trans("CashDeskBankAccountForCB").'</td>';
-	print '<td colspan="2">';
-	$form->select_comptes($conf->global->CASHDESK_ID_BANKACCOUNT_CB,'CASHDESK_ID_BANKACCOUNT_CB',0,"courant=1",1);
-	print '</td></tr>';
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td>'.$langs->trans("CashDeskBankAccountForCB").'</td>';
+    print '<td colspan="2">';
+    $form->select_comptes($conf->global->CASHDESK_ID_BANKACCOUNT_CB,'CASHDESK_ID_BANKACCOUNT_CB',0,"courant=1",1);
+    print '</td></tr>';
 }
 
-if (! empty($conf->stock->enabled))
-{
-	$var=!$var;
-	print '<tr '.$bc[$var].'><td>'.$langs->trans("CashDeskIdWareHouse").'</td>';
-	print '<td colspan="2">';
-	print $formproduct->selectWarehouses($conf->global->CASHDESK_ID_WAREHOUSE,'CASHDESK_ID_WAREHOUSE','',1);
-	print '</td></tr>';
+if (! empty($conf->stock->enabled)) {
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td>'.$langs->trans("CashDeskIdWareHouse").'</td>';
+    print '<td colspan="2">';
+    print $formproduct->selectWarehouses($conf->global->CASHDESK_ID_WAREHOUSE,'CASHDESK_ID_WAREHOUSE','',1);
+    print '</td></tr>';
 }
 
-if (! empty($conf->service->enabled))
-{
+if (! empty($conf->service->enabled)) {
     $var=! $var;
     print '<tr '.$bc[$var].'><td>';
     print $langs->trans("CashdeskShowServices");
@@ -158,4 +148,3 @@ dol_htmloutput_mesg($mesg);
 $db->close();
 
 llxFooter();
-?>

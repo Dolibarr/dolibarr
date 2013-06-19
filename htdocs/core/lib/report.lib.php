@@ -22,7 +22,6 @@
  *  \brief      	Set of functions for reporting
  */
 
-
 /**
 *    Show header of a VAT report
 *
@@ -38,69 +37,66 @@
 */
 function report_header($nom,$variante,$period,$periodlink,$description,$builddate,$exportlink='',$moreparam=array())
 {
-	global $langs, $hselected;
+    global $langs, $hselected;
 
-	print "\n\n<!-- debut cartouche rapport -->\n";
+    print "\n\n<!-- debut cartouche rapport -->\n";
 
-	$h=0;
-	$head[$h][0] = $_SERVER["PHP_SELF"];
-	$head[$h][1] = $langs->trans("Report");
-	$head[$h][2] = 'report';
+    $h=0;
+    $head[$h][0] = $_SERVER["PHP_SELF"];
+    $head[$h][1] = $langs->trans("Report");
+    $head[$h][2] = 'report';
 
-	dol_fiche_head($head, $hselected);
+    dol_fiche_head($head, $hselected);
 
-	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-	foreach($moreparam as $key => $value)
-	{
-	     print '<input type="hidden" name="'.$key.'" value="'.$value.'">';
-	}
-	print '<table width="100%" class="border">';
+    print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+    foreach ($moreparam as $key => $value) {
+         print '<input type="hidden" name="'.$key.'" value="'.$value.'">';
+    }
+    print '<table width="100%" class="border">';
 
-	// Ligne de titre
-	print '<tr>';
-	print '<td valign="top" width="110">'.$langs->trans("ReportName").'</td>';
-	if (! $variante) print '<td colspan="3">';
-	else print '<td>';
-	print $nom;
-	if ($variante) print '</td><td colspan="2">'.$variante;
-	print '</td>';
-	print '</tr>';
+    // Ligne de titre
+    print '<tr>';
+    print '<td valign="top" width="110">'.$langs->trans("ReportName").'</td>';
+    if (! $variante) print '<td colspan="3">';
+    else print '<td>';
+    print $nom;
+    if ($variante) print '</td><td colspan="2">'.$variante;
+    print '</td>';
+    print '</tr>';
 
-	// Ligne de la periode d'analyse du rapport
-	print '<tr>';
-	print '<td>'.$langs->trans("ReportPeriod").'</td>';
-	if (! $periodlink) print '<td colspan="3">';
-	else print '<td>';
-	if ($period) print $period;
-	if ($periodlink) print '</td><td colspan="2">'.$periodlink;
-	print '</td>';
-	print '</tr>';
+    // Ligne de la periode d'analyse du rapport
+    print '<tr>';
+    print '<td>'.$langs->trans("ReportPeriod").'</td>';
+    if (! $periodlink) print '<td colspan="3">';
+    else print '<td>';
+    if ($period) print $period;
+    if ($periodlink) print '</td><td colspan="2">'.$periodlink;
+    print '</td>';
+    print '</tr>';
 
-	// Ligne de description
-	print '<tr>';
-	print '<td valign="top">'.$langs->trans("ReportDescription").'</td>';
-	print '<td colspan="3">'.$description.'</td>';
-	print '</tr>';
+    // Ligne de description
+    print '<tr>';
+    print '<td valign="top">'.$langs->trans("ReportDescription").'</td>';
+    print '<td colspan="3">'.$description.'</td>';
+    print '</tr>';
 
-	// Ligne d'export
-	print '<tr>';
-	print '<td>'.$langs->trans("GeneratedOn").'</td>';
-	if (! $exportlink) print '<td colspan="3">';
-	else print '<td>';
-	print dol_print_date($builddate);
-	if ($exportlink) print '</td><td>'.$langs->trans("Export").'</td><td>'.$exportlink;
-	print '</td></tr>';
+    // Ligne d'export
+    print '<tr>';
+    print '<td>'.$langs->trans("GeneratedOn").'</td>';
+    if (! $exportlink) print '<td colspan="3">';
+    else print '<td>';
+    print dol_print_date($builddate);
+    if ($exportlink) print '</td><td>'.$langs->trans("Export").'</td><td>'.$exportlink;
+    print '</td></tr>';
 
-	print '<tr>';
-	print '<td colspan="4" align="center"><input type="submit" class="button" name="submit" value="'.$langs->trans("Refresh").'"></td>';
-	print '</tr>';
+    print '<tr>';
+    print '<td colspan="4" align="center"><input type="submit" class="button" name="submit" value="'.$langs->trans("Refresh").'"></td>';
+    print '</tr>';
 
-	print '</table>';
+    print '</table>';
 
-	print '</form>';
+    print '</form>';
 
-	print '</div>';
-	print "\n<!-- fin cartouche rapport -->\n\n";
+    print '</div>';
+    print "\n<!-- fin cartouche rapport -->\n\n";
 }
-
-?>

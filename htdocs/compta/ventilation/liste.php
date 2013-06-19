@@ -18,7 +18,6 @@
  *
  */
 
-
 /**
  * 		\file       htdocs/compta/ventilation/liste.php
  * 		\ingroup    compta
@@ -37,7 +36,6 @@ if (!$user->rights->compta->ventilation->creer) accessforbidden();
 
 // Securite acces client
 if ($user->societe_id > 0) accessforbidden();
-
 
 llxHeader('','Ventilation');
 
@@ -64,67 +62,62 @@ $sql.= " AND f.entity = ".$conf->entity;
 $sql.= " ORDER BY l.rowid DESC ".$db->plimit($limit+1,$offset);
 
 $result = $db->query($sql);
-if ($result)
-{
-	$num_lignes = $db->num_rows($result);
-	$i = 0;
+if ($result) {
+    $num_lignes = $db->num_rows($result);
+    $i = 0;
 
-	print_barre_liste($langs->trans("InvoiceLinesToDispatch"),$page,"liste.php","",$sortfield,$sortorder,'',$num_lignes);
+    print_barre_liste($langs->trans("InvoiceLinesToDispatch"),$page,"liste.php","",$sortfield,$sortorder,'',$num_lignes);
 
-	print '<table class="noborder" width="100%">';
-	print '<tr class="liste_titre"><td>'.$langs->trans("Invoice").'</td>';
-	print '<td>'.$langs->trans("Ref").'</td>';
-	print '<td>'.$langs->trans("Label").'</td>';
-	print '<td>'.$langs->trans("Description").'</td>';
-	print '<td align="right">'.$langs->trans("Montant").'</td>';
-	print '<td>&nbsp;</td>';
-	print "</tr>\n";
+    print '<table class="noborder" width="100%">';
+    print '<tr class="liste_titre"><td>'.$langs->trans("Invoice").'</td>';
+    print '<td>'.$langs->trans("Ref").'</td>';
+    print '<td>'.$langs->trans("Label").'</td>';
+    print '<td>'.$langs->trans("Description").'</td>';
+    print '<td align="right">'.$langs->trans("Montant").'</td>';
+    print '<td>&nbsp;</td>';
+    print "</tr>\n";
 
-	$facture_static=new Facture($db);
-	$product_static=new Product($db);
+    $facture_static=new Facture($db);
+    $product_static=new Product($db);
 
-	$var=True;
-	while ($i < min($num_lignes, $limit))
-	{
-		$objp = $db->fetch_object($result);
-		$var=!$var;
-		print "<tr $bc[$var]>";
+    $var=True;
+    while ($i < min($num_lignes, $limit)) {
+        $objp = $db->fetch_object($result);
+        $var=!$var;
+        print "<tr $bc[$var]>";
 
-		// Ref facture
-		$facture_static->ref=$objp->facnumber;
-		$facture_static->id=$objp->facid;
-		print '<td>'.$facture_static->getNomUrl(1).'</td>';
+        // Ref facture
+        $facture_static->ref=$objp->facnumber;
+        $facture_static->id=$objp->facid;
+        print '<td>'.$facture_static->getNomUrl(1).'</td>';
 
-		// Ref produit
-		$product_static->ref=$objp->product_ref;
-		$product_static->id=$objp->product_id;
-		$product_static->type=$objp->type;
-		print '<td>';
-		if ($product_static->id) print $product_static->getNomUrl(1);
-		else print '&nbsp;';
-		print '</td>';
+        // Ref produit
+        $product_static->ref=$objp->product_ref;
+        $product_static->id=$objp->product_id;
+        $product_static->type=$objp->type;
+        print '<td>';
+        if ($product_static->id) print $product_static->getNomUrl(1);
+        else print '&nbsp;';
+        print '</td>';
 
-		print '<td>'.dol_trunc($objp->product_label,24).'</td>';
-		print '<td>'.nl2br(dol_trunc($objp->description,32)).'</td>';
+        print '<td>'.dol_trunc($objp->product_label,24).'</td>';
+        print '<td>'.nl2br(dol_trunc($objp->description,32)).'</td>';
 
-		print '<td align="right">';
-		print price($objp->price);
-		print '</td>';
+        print '<td align="right">';
+        print price($objp->price);
+        print '</td>';
 
-		print '<td align="right"><a href="fiche.php?id='.$objp->rowid.'">';
-		print img_edit();
-		print '</a></td>';
+        print '<td align="right"><a href="fiche.php?id='.$objp->rowid.'">';
+        print img_edit();
+        print '</a></td>';
 
-		print "</tr>";
-		$i++;
-	}
-	print "</table>";
-}
-else
-{
-	print $db->error();
+        print "</tr>";
+        $i++;
+    }
+    print "</table>";
+} else {
+    print $db->error();
 }
 
 llxFooter();
 $db->close();
-?>

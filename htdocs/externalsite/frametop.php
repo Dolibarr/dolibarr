@@ -22,21 +22,9 @@
  *		\brief      Top frame to show external web application
  */
 
-require ("../main.inc.php");
+require '../main.inc.php';
 
 $langs->load("externalsite");
 
 top_htmlhead("","");
 top_menu("","","_top");
-
-?>
-
-
-
-
-
-
-
-
-
-

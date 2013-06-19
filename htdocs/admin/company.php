@@ -43,7 +43,6 @@ if (! $user->admin) accessforbidden();
 
 $message='';
 
-
 /*
  * Actions
  */
@@ -54,8 +53,7 @@ if ( ($action == 'update' && empty($_POST["cancel"]))
     require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
     $tmparray=getCountry(GETPOST('country_id','int'),'all',$db,$langs,0);
-    if (! empty($tmparray['id']))
-    {
+    if (! empty($tmparray['id'])) {
         $mysoc->country_id   =$tmparray['id'];
         $mysoc->country_code =$tmparray['code'];
         $mysoc->country_label=$tmparray['label'];
@@ -76,63 +74,46 @@ if ( ($action == 'update' && empty($_POST["cancel"]))
     dolibarr_set_const($db, "MAIN_INFO_SOCIETE_WEB",$_POST["web"],'chaine',0,'',$conf->entity);
     dolibarr_set_const($db, "MAIN_INFO_SOCIETE_NOTE",$_POST["note"],'chaine',0,'',$conf->entity);
     dolibarr_set_const($db, "MAIN_INFO_SOCIETE_GENCOD",$_POST["barcode"],'chaine',0,'',$conf->entity);
-    if ($_FILES["logo"]["tmp_name"])
-    {
-        if (preg_match('/([^\\/:]+)$/i',$_FILES["logo"]["name"],$reg))
-        {
+    if ($_FILES["logo"]["tmp_name"]) {
+        if (preg_match('/([^\\/:]+)$/i',$_FILES["logo"]["name"],$reg)) {
             $original_file=$reg[1];
 
             $isimage=image_format_supported($original_file);
-            if ($isimage >= 0)
-            {
+            if ($isimage >= 0) {
                 dol_syslog("Move file ".$_FILES["logo"]["tmp_name"]." to ".$conf->mycompany->dir_output.'/logos/'.$original_file);
-                if (! is_dir($conf->mycompany->dir_output.'/logos/'))
-                {
+                if (! is_dir($conf->mycompany->dir_output.'/logos/')) {
                     dol_mkdir($conf->mycompany->dir_output.'/logos/');
                 }
                 $result=dol_move_uploaded_file($_FILES["logo"]["tmp_name"],$conf->mycompany->dir_output.'/logos/'.$original_file,1,0,$_FILES['logo']['error']);
-                if ($result > 0)
-                {
+                if ($result > 0) {
                     dolibarr_set_const($db, "MAIN_INFO_SOCIETE_LOGO",$original_file,'chaine',0,'',$conf->entity);
 
                     // Create thumbs of logo (Note that PDF use original file and not thumbs)
-                    if ($isimage > 0)
-                    {
+                    if ($isimage > 0) {
                         // Create small thumbs for company (Ratio is near 16/9)
                         // Used on logon for example
                         $imgThumbSmall = vignette($conf->mycompany->dir_output.'/logos/'.$original_file, $maxwidthsmall, $maxheightsmall, '_small', $quality);
-                        if (preg_match('/([^\\/:]+)$/i',$imgThumbSmall,$reg))
-                        {
+                        if (preg_match('/([^\\/:]+)$/i',$imgThumbSmall,$reg)) {
                             $imgThumbSmall = $reg[1];
                             dolibarr_set_const($db, "MAIN_INFO_SOCIETE_LOGO_SMALL",$imgThumbSmall,'chaine',0,'',$conf->entity);
-                        }
-                        else dol_syslog($imgThumbSmall);
+                        } else dol_syslog($imgThumbSmall);
 
                         // Create mini thumbs for company (Ratio is near 16/9)
                         // Used on menu or for setup page for example
                         $imgThumbMini = vignette($conf->mycompany->dir_output.'/logos/'.$original_file, $maxwidthmini, $maxheightmini, '_mini', $quality);
-                        if (preg_match('/([^\\/:]+)$/i',$imgThumbMini,$reg))
-                        {
+                        if (preg_match('/([^\\/:]+)$/i',$imgThumbMini,$reg)) {
                             $imgThumbMini = $reg[1];
                             dolibarr_set_const($db, "MAIN_INFO_SOCIETE_LOGO_MINI",$imgThumbMini,'chaine',0,'',$conf->entity);
-                        }
-                        else dol_syslog($imgThumbMini);
-                    }
-                    else dol_syslog($langs->trans("ErrorImageFormatNotSupported"),LOG_WARNING);
-                }
-                else if (preg_match('/^ErrorFileIsInfectedWithAVirus/',$result))
-                {
+                        } else dol_syslog($imgThumbMini);
+                    } else dol_syslog($langs->trans("ErrorImageFormatNotSupported"),LOG_WARNING);
+                } elseif (preg_match('/^ErrorFileIsInfectedWithAVirus/',$result)) {
                     $langs->load("errors");
                     $tmparray=explode(':',$result);
                     $message .= '<div class="error">'.$langs->trans('ErrorFileIsInfectedWithAVirus',$tmparray[1]).'</div>';
-                }
-                else
-                {
+                } else {
                     $message .= '<div class="error">'.$langs->trans("ErrorFailedToSaveFile").'</div>';
                 }
-            }
-            else
-            {
+            } else {
                 $message .= '<div class="error">'.$langs->trans("ErrorOnlyPngJpgSupported").'</div>';
             }
         }
@@ -157,60 +138,47 @@ if ( ($action == 'update' && empty($_POST["cancel"]))
     dolibarr_set_const($db, "FACTURE_LOCAL_TAX1_OPTION",$_POST["optionlocaltax1"],'chaine',0,'',$conf->entity);
     dolibarr_set_const($db, "FACTURE_LOCAL_TAX2_OPTION",$_POST["optionlocaltax2"],'chaine',0,'',$conf->entity);
 
-    if ($action != 'updateedit' && ! $message)
-    {
+    if ($action != 'updateedit' && ! $message) {
         header("Location: ".$_SERVER["PHP_SELF"]);
         exit;
     }
 }
 
-if ($action == 'addthumb')
-{
-    if (file_exists($conf->mycompany->dir_output.'/logos/'.$_GET["file"]))
-    {
+if ($action == 'addthumb') {
+    if (file_exists($conf->mycompany->dir_output.'/logos/'.$_GET["file"])) {
         $isimage=image_format_supported($_GET["file"]);
 
         // Create thumbs of logo
-        if ($isimage > 0)
-        {
+        if ($isimage > 0) {
             // Create small thumbs for company (Ratio is near 16/9)
             // Used on logon for example
             $imgThumbSmall = vignette($conf->mycompany->dir_output.'/logos/'.$_GET["file"], $maxwidthsmall, $maxheightsmall, '_small',$quality);
-            if (image_format_supported($imgThumbSmall) >= 0 && preg_match('/([^\\/:]+)$/i',$imgThumbSmall,$reg))
-            {
+            if (image_format_supported($imgThumbSmall) >= 0 && preg_match('/([^\\/:]+)$/i',$imgThumbSmall,$reg)) {
                 $imgThumbSmall = $reg[1];
                 dolibarr_set_const($db, "MAIN_INFO_SOCIETE_LOGO_SMALL",$imgThumbSmall,'chaine',0,'',$conf->entity);
-            }
-            else dol_syslog($imgThumbSmall);
+            } else dol_syslog($imgThumbSmall);
 
             // Create mini thumbs for company (Ratio is near 16/9)
             // Used on menu or for setup page for example
             $imgThumbMini = vignette($conf->mycompany->dir_output.'/logos/'.$_GET["file"], $maxwidthmini, $maxheightmini, '_mini',$quality);
-            if (image_format_supported($imgThumbSmall) >= 0 && preg_match('/([^\\/:]+)$/i',$imgThumbMini,$reg))
-            {
+            if (image_format_supported($imgThumbSmall) >= 0 && preg_match('/([^\\/:]+)$/i',$imgThumbMini,$reg)) {
                 $imgThumbMini = $reg[1];
                 dolibarr_set_const($db, "MAIN_INFO_SOCIETE_LOGO_MINI",$imgThumbMini,'chaine',0,'',$conf->entity);
-            }
-            else dol_syslog($imgThumbMini);
+            } else dol_syslog($imgThumbMini);
 
             header("Location: ".$_SERVER["PHP_SELF"]);
             exit;
-        }
-        else
-        {
+        } else {
             $message .= '<div class="error">'.$langs->trans("ErrorImageFormatNotSupported").'</div>';
             dol_syslog($langs->transnoentities("ErrorImageFormatNotSupported"),LOG_WARNING);
         }
-    }
-    else
-    {
+    } else {
         $message .= '<div class="error">'.$langs->trans("ErrorFileDoesNotExists",$_GET["file"]).'</div>';
         dol_syslog($langs->transnoentities("ErrorFileDoesNotExists",$_GET["file"]),LOG_WARNING);
     }
 }
 
-if ($action == 'removelogo')
-{
+if ($action == 'removelogo') {
     require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
     $logofile=$conf->mycompany->dir_output.'/logos/'.$mysoc->logo;
@@ -228,7 +196,6 @@ if ($action == 'removelogo')
     dolibarr_del_const($db, "MAIN_INFO_SOCIETE_LOGO_MINI",$conf->entity);
     $mysoc->logo_mini='';
 }
-
 
 /*
  * View
@@ -248,8 +215,7 @@ print_fiche_titre($langs->trans("CompanyFoundation"),'','setup');
 print $langs->trans("CompanyFundationDesc")."<br>\n";
 print "<br>\n";
 
-if ($action == 'edit' || $action == 'updateedit')
-{
+if ($action == 'edit' || $action == 'updateedit') {
     /**
      * Edition des parametres
      */
@@ -326,8 +292,7 @@ if ($action == 'edit' || $action == 'updateedit')
     print '</td></tr>'."\n";
 
     // Barcode
-    if (! empty($conf->barcode->enabled))
-    {
+    if (! empty($conf->barcode->enabled)) {
         $var=!$var;
         print '<tr '.$bc[$var].'><td>'.$langs->trans("Gencod").'</td><td>';
         print '<input name="barcode" size="40" value="'. $conf->global->MAIN_INFO_SOCIETE_GENCOD . '"></td></tr>';
@@ -340,17 +305,13 @@ if ($action == 'edit' || $action == 'updateedit')
     print '<table width="100%" class="nocellnopadd"><tr class="nocellnopadd"><td valign="middle" class="nocellnopadd">';
     print '<input type="file" class="flat" name="logo" size="50">';
     print '</td><td valign="middle" align="right">';
-    if (! empty($mysoc->logo_mini))
-    {
+    if (! empty($mysoc->logo_mini)) {
         print '<a href="'.$_SERVER["PHP_SELF"].'?action=removelogo">'.img_delete($langs->trans("Delete")).'</a>';
-        if (file_exists($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_mini))
-        {
+        if (file_exists($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_mini)) {
             print ' &nbsp; ';
             print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=companylogo&amp;file='.urlencode('/thumbs/'.$mysoc->logo_mini).'">';
         }
-    }
-    else
-    {
+    } else {
         print '<img height="30" src="'.DOL_URL_ROOT.'/theme/common/nophoto.jpg">';
     }
     print '</td></tr></table>';
@@ -381,107 +342,80 @@ if ($action == 'edit' || $action == 'updateedit')
     // Forme juridique
     $var=!$var;
     print '<tr '.$bc[$var].'><td>'.$langs->trans("JuridicalStatus").'</td><td>';
-    if ($mysoc->country_code)
-    {
+    if ($mysoc->country_code) {
         $formcompany->select_forme_juridique($conf->global->MAIN_INFO_SOCIETE_FORME_JURIDIQUE,$mysoc->country_code);
-    }
-    else
-    {
+    } else {
         print $countrynotdefined;
     }
     print '</td></tr>';
 
     // ProfID1
-    if ($langs->transcountry("ProfId1",$mysoc->country_code) != '-')
-    {
+    if ($langs->transcountry("ProfId1",$mysoc->country_code) != '-') {
         $var=!$var;
         print '<tr '.$bc[$var].'><td width="35%">'.$langs->transcountry("ProfId1",$mysoc->country_code).'</td><td>';
-        if (! empty($mysoc->country_code))
-        {
+        if (! empty($mysoc->country_code)) {
             print '<input name="siren" size="20" value="' . (! empty($conf->global->MAIN_INFO_SIREN) ? $conf->global->MAIN_INFO_SIREN : '') . '">';
-        }
-        else
-        {
+        } else {
             print $countrynotdefined;
         }
         print '</td></tr>';
     }
 
     // ProfId2
-    if ($langs->transcountry("ProfId2",$mysoc->country_code) != '-')
-    {
+    if ($langs->transcountry("ProfId2",$mysoc->country_code) != '-') {
         $var=!$var;
         print '<tr '.$bc[$var].'><td width="35%">'.$langs->transcountry("ProfId2",$mysoc->country_code).'</td><td>';
-        if (! empty($mysoc->country_code))
-        {
+        if (! empty($mysoc->country_code)) {
             print '<input name="siret" size="20" value="' . (! empty($conf->global->MAIN_INFO_SIRET) ? $conf->global->MAIN_INFO_SIRET : '' ) . '">';
-        }
-        else
-        {
+        } else {
             print $countrynotdefined;
         }
         print '</td></tr>';
     }
 
     // ProfId3
-    if ($langs->transcountry("ProfId3",$mysoc->country_code) != '-')
-    {
+    if ($langs->transcountry("ProfId3",$mysoc->country_code) != '-') {
         $var=!$var;
         print '<tr '.$bc[$var].'><td width="35%">'.$langs->transcountry("ProfId3",$mysoc->country_code).'</td><td>';
-        if (! empty($mysoc->country_code))
-        {
+        if (! empty($mysoc->country_code)) {
             print '<input name="ape" size="20" value="' . (! empty($conf->global->MAIN_INFO_APE) ? $conf->global->MAIN_INFO_APE : '') . '">';
-        }
-        else
-        {
+        } else {
             print $countrynotdefined;
         }
         print '</td></tr>';
     }
 
     // ProfId4
-    if ($langs->transcountry("ProfId4",$mysoc->country_code) != '-')
-    {
+    if ($langs->transcountry("ProfId4",$mysoc->country_code) != '-') {
         $var=!$var;
         print '<tr '.$bc[$var].'><td width="35%">'.$langs->transcountry("ProfId4",$mysoc->country_code).'</td><td>';
-        if (! empty($mysoc->country_code))
-        {
+        if (! empty($mysoc->country_code)) {
             print '<input name="rcs" size="20" value="' . (! empty($conf->global->MAIN_INFO_RCS) ? $conf->global->MAIN_INFO_RCS : '') . '">';
-        }
-        else
-        {
+        } else {
             print $countrynotdefined;
         }
         print '</td></tr>';
     }
 
     // ProfId5
-    if ($langs->transcountry("ProfId5",$mysoc->country_code) != '-')
-    {
+    if ($langs->transcountry("ProfId5",$mysoc->country_code) != '-') {
         $var=!$var;
         print '<tr '.$bc[$var].'><td width="35%">'.$langs->transcountry("ProfId5",$mysoc->country_code).'</td><td>';
-        if (! empty($mysoc->country_code))
-        {
+        if (! empty($mysoc->country_code)) {
             print '<input name="MAIN_INFO_PROFID5" size="20" value="' . (! empty($conf->global->MAIN_INFO_PROFID5) ? $conf->global->MAIN_INFO_PROFID5 : '') . '">';
-        }
-        else
-        {
+        } else {
             print $countrynotdefined;
         }
         print '</td></tr>';
     }
 
     // ProfId6
-    if ($langs->transcountry("ProfId6",$mysoc->country_code) != '-')
-    {
+    if ($langs->transcountry("ProfId6",$mysoc->country_code) != '-') {
         $var=!$var;
         print '<tr '.$bc[$var].'><td width="35%">'.$langs->transcountry("ProfId6",$mysoc->country_code).'</td><td>';
-        if (! empty($mysoc->country_code))
-        {
+        if (! empty($mysoc->country_code)) {
             print '<input name="MAIN_INFO_PROFID6" size="20" value="' . (! empty($conf->global->MAIN_INFO_PROFID6) ? $conf->global->MAIN_INFO_PROFID6 : '') . '">';
-        }
-        else
-        {
+        } else {
             print $countrynotdefined;
         }
         print '</td></tr>';
@@ -494,7 +428,6 @@ if ($action == 'edit' || $action == 'updateedit')
     print '</td></tr>';
 
     print '</table>';
-
 
     /*
      *  Debut d'annee fiscale
@@ -547,8 +480,7 @@ if ($action == 'edit' || $action == 'updateedit')
     /*
      *  Local Taxes
      */
-    if ($mysoc->useLocalTax(1))
-    {
+    if ($mysoc->useLocalTax(1)) {
         // Local Tax 1
         print '<br>';
         print '<table class="noborder" width="100%">';
@@ -578,9 +510,8 @@ if ($action == 'edit' || $action == 'updateedit')
         print "</table>";
         print "</td></tr>\n";
         print "</table>";
-	}
-    if ($mysoc->useLocalTax(2))
-    {
+    }
+    if ($mysoc->useLocalTax(2)) {
         // Local Tax 2
         print '<br>';
         print '<table class="noborder" width="100%">';
@@ -621,9 +552,7 @@ if ($action == 'edit' || $action == 'updateedit')
     print '<br>';
 
     print '</form>';
-}
-else
-{
+} else {
     /*
      * Show parameters
      */
@@ -656,13 +585,11 @@ else
 
     $var=!$var;
     print '<tr '.$bc[$var].'><td>'.$langs->trans("CompanyCountry").'</td><td>';
-    if ($mysoc->country_code)
-    {
+    if ($mysoc->country_code) {
         $img=picto_from_langcode($mysoc->country_code);
         print $img?$img.' ':'';
         print getCountry($mysoc->country_code,1);
-    }
-    else print img_warning().' <font class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("CompanyCountry")).'</font>';
+    } else print img_warning().' <font class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("CompanyCountry")).'</font>';
     print '</td></tr>';
 
     $var=!$var;
@@ -691,8 +618,7 @@ else
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("Web").'</td><td>' . dol_print_url($conf->global->MAIN_INFO_SOCIETE_WEB,'_blank',80) . '</td></tr>';
 
     // Barcode
-    if (! empty($conf->barcode->enabled))
-    {
+    if (! empty($conf->barcode->enabled)) {
         $var=!$var;
         print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("Gencod").'</td><td>' . $conf->global->MAIN_INFO_SOCIETE_GENCOD . '</td></tr>';
     }
@@ -706,16 +632,11 @@ else
     print '</td><td valign="center" align="right">';
 
     // On propose la generation de la vignette si elle n'existe pas
-    if (!is_file($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_mini) && preg_match('/(\.jpg|\.jpeg|\.png)$/i',$mysoc->logo))
-    {
+    if (!is_file($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_mini) && preg_match('/(\.jpg|\.jpeg|\.png)$/i',$mysoc->logo)) {
         print '<a href="'.$_SERVER["PHP_SELF"].'?action=addthumb&amp;file='.urlencode($mysoc->logo).'">'.img_picto($langs->trans('GenerateThumb'),'refresh').'&nbsp;&nbsp;</a>';
-    }
-    else if ($mysoc->logo_mini && is_file($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_mini))
-    {
+    } elseif ($mysoc->logo_mini && is_file($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_mini)) {
         print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=companylogo&amp;file='.urlencode('/thumbs/'.$mysoc->logo_mini).'">';
-    }
-    else
-    {
+    } else {
         print '<img height="30" src="'.DOL_URL_ROOT.'/theme/common/nophoto.jpg">';
     }
     print '</td></tr></table>';
@@ -727,9 +648,7 @@ else
 
     print '</table>';
 
-
     print '<br>';
-
 
     // Identifiants de la societe (country-specific)
     print '<form name="formsoc" method="post">';
@@ -750,86 +669,74 @@ else
     print '</td></tr>';
 
     // ProfId1
-    if ($langs->transcountry("ProfId1",$mysoc->country_code) != '-')
-    {
+    if ($langs->transcountry("ProfId1",$mysoc->country_code) != '-') {
         $var=!$var;
         print '<tr '.$bc[$var].'><td width="35%">'.$langs->transcountry("ProfId1",$mysoc->country_code).'</td><td>';
-        if (! empty($conf->global->MAIN_INFO_SIREN))
-        {
+        if (! empty($conf->global->MAIN_INFO_SIREN)) {
             print $conf->global->MAIN_INFO_SIREN;
             if ($mysoc->country_code == 'FR') print ' &nbsp; <a href="http://avis-situation-sirene.insee.fr/avisitu/jsp/avis.jsp" target="_blank">'.$langs->trans("Check").'</a>';
         } else {
-        	print '&nbsp;';
+            print '&nbsp;';
         }
         print '</td></tr>';
     }
 
     // ProfId2
-    if ($langs->transcountry("ProfId2",$mysoc->country_code) != '-')
-    {
+    if ($langs->transcountry("ProfId2",$mysoc->country_code) != '-') {
         $var=!$var;
         print '<tr '.$bc[$var].'><td width="35%">'.$langs->transcountry("ProfId2",$mysoc->country_code).'</td><td>';
-        if (! empty($conf->global->MAIN_INFO_SIRET))
-        {
+        if (! empty($conf->global->MAIN_INFO_SIRET)) {
             print $conf->global->MAIN_INFO_SIRET;
         } else {
-        	print '&nbsp;';
+            print '&nbsp;';
         }
         print '</td></tr>';
     }
 
     // ProfId3
-    if ($langs->transcountry("ProfId3",$mysoc->country_code) != '-')
-    {
+    if ($langs->transcountry("ProfId3",$mysoc->country_code) != '-') {
         $var=!$var;
         print '<tr '.$bc[$var].'><td width="35%">'.$langs->transcountry("ProfId3",$mysoc->country_code).'</td><td>';
-        if (! empty($conf->global->MAIN_INFO_APE))
-        {
+        if (! empty($conf->global->MAIN_INFO_APE)) {
             print $conf->global->MAIN_INFO_APE;
         } else {
-        	print '&nbsp;';
+            print '&nbsp;';
         }
         print '</td></tr>';
     }
 
     // ProfId4
-    if ($langs->transcountry("ProfId4",$mysoc->country_code) != '-')
-    {
+    if ($langs->transcountry("ProfId4",$mysoc->country_code) != '-') {
         $var=!$var;
         print '<tr '.$bc[$var].'><td width="35%">'.$langs->transcountry("ProfId4",$mysoc->country_code).'</td><td>';
-        if (! empty($conf->global->MAIN_INFO_RCS))
-        {
+        if (! empty($conf->global->MAIN_INFO_RCS)) {
             print $conf->global->MAIN_INFO_RCS;
         } else {
-        	print '&nbsp;';
+            print '&nbsp;';
         }
         print '</td></tr>';
     }
 
     // ProfId5
-    if ($langs->transcountry("ProfId5",$mysoc->country_code) != '-')
-    {
+    if ($langs->transcountry("ProfId5",$mysoc->country_code) != '-') {
         $var=!$var;
         print '<tr '.$bc[$var].'><td width="35%">'.$langs->transcountry("ProfId5",$mysoc->country_code).'</td><td>';
-        if (! empty($conf->global->MAIN_INFO_PROFID5))
-        {
+        if (! empty($conf->global->MAIN_INFO_PROFID5)) {
             print $conf->global->MAIN_INFO_PROFID5;
         } else {
-        	print '&nbsp;';
+            print '&nbsp;';
         }
         print '</td></tr>';
     }
 
     // ProfId6
-    if ($langs->transcountry("ProfId6",$mysoc->country_code) != '-')
-    {
+    if ($langs->transcountry("ProfId6",$mysoc->country_code) != '-') {
         $var=!$var;
         print '<tr '.$bc[$var].'><td width="35%">'.$langs->transcountry("ProfId6",$mysoc->country_code).'</td><td>';
-        if (! empty($conf->global->MAIN_INFO_PROFID6))
-        {
+        if (! empty($conf->global->MAIN_INFO_PROFID6)) {
             print $conf->global->MAIN_INFO_PROFID6;
         } else {
-        	print '&nbsp;';
+            print '&nbsp;';
         }
         print '</td></tr>';
     }
@@ -838,16 +745,13 @@ else
     $var=!$var;
     print '<tr '.$bc[$var].'><td>'.$langs->trans("VATIntra").'</td>';
     print '<td>';
-    if (! empty($conf->global->MAIN_INFO_TVAINTRA))
-    {
+    if (! empty($conf->global->MAIN_INFO_TVAINTRA)) {
         $s='';
         $s.=$conf->global->MAIN_INFO_TVAINTRA;
         $s.='<input type="hidden" name="tva_intra" size="12" maxlength="20" value="'.$conf->global->MAIN_INFO_TVAINTRA.'">';
-        if (empty($conf->global->MAIN_DISABLEVATCHECK))
-        {
+        if (empty($conf->global->MAIN_DISABLEVATCHECK)) {
             $s.=' &nbsp; ';
-            if (! empty($conf->use_javascript_ajax))
-            {
+            if (! empty($conf->use_javascript_ajax)) {
                 print "\n";
                 print '<script language="JavaScript" type="text/javascript">';
                 print "function CheckVAT(a) {\n";
@@ -857,16 +761,12 @@ else
                 print "\n";
                 $s.='<a href="#" onClick="javascript: CheckVAT(document.formsoc.tva_intra.value);">'.$langs->trans("VATIntraCheck").'</a>';
                 $s = $form->textwithpicto($s,$langs->trans("VATIntraCheckDesc",$langs->trans("VATIntraCheck")),1);
-            }
-            else
-            {
+            } else {
                 $s.='<a href="'.$langs->transcountry("VATIntraCheckURL",$soc->id_country).'" target="_blank">'.img_picto($langs->trans("VATIntraCheckableOnEUSite"),'help').'</a>';
             }
         }
         print $s;
-    }
-    else
-    {
+    } else {
         print '&nbsp;';
     }
     print '</td>';
@@ -927,8 +827,7 @@ else
     /*
      *  Local Taxes
      */
-    if ($mysoc->useLocalTax(1))
-    {
+    if ($mysoc->useLocalTax(1)) {
         // Local Tax 1
         print '<br>';
         print '<table class="noborder" width="100%">';
@@ -959,9 +858,8 @@ else
         print "</td></tr>\n";
 
         print "</table>";
-	}
-    if ($mysoc->useLocalTax(2))
-    {
+    }
+    if ($mysoc->useLocalTax(2)) {
         // Local Tax 2
         print '<br>';
         print '<table class="noborder" width="100%">';
@@ -1003,8 +901,6 @@ else
     print '<br>';
 }
 
-
 llxFooter();
 
 $db->close();
-?>

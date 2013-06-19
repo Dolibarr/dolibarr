@@ -46,20 +46,17 @@ $result = restrictedArea($user, 'societe', $socid);
 
 $object = new Address($db);
 
-
 /*
  * Actions
  */
 
 // Cancel
-if (GETPOST("cancel") && ! empty($backtopage))
-{
-	header("Location: ".$backtopage);
-	exit;
+if (GETPOST("cancel") && ! empty($backtopage)) {
+    header("Location: ".$backtopage);
+    exit;
 }
 
-if ($action == 'add' || $action == 'update')
-{
+if ($action == 'add' || $action == 'update') {
     $object->socid		= $socid;
     $object->label		= ($_POST["label"]!=$langs->trans('RequiredField')?$_POST["label"]:'');
     $object->name		= ($_POST["name"]!=$langs->trans('RequiredField')?$_POST["name"]:'');
@@ -72,99 +69,67 @@ if ($action == 'add' || $action == 'update')
     $object->note		= $_POST["note"];
 
     // Add new address
-    if ($action == 'add')
-    {
+    if ($action == 'add') {
         $result	= $object->create($socid, $user);
 
-        if ($result >= 0)
-        {
-        	if (! empty($backtopage))
-        	{
-        		header("Location: ".$backtopage);
-        		exit;
-        	}
-            else if ($origin == 'commande')
-            {
+        if ($result >= 0) {
+            if (! empty($backtopage)) {
+                header("Location: ".$backtopage);
+                exit;
+            } elseif ($origin == 'commande') {
                 header("Location: ../commande/contact.php?action=editdelivery_adress&socid=".$socid."&id=".$originid);
                 exit;
-            }
-            elseif ($origin == 'propal')
-            {
+            } elseif ($origin == 'propal') {
                 header("Location: ../comm/propal/contact.php?action=editdelivery_adress&socid=".$socid."&id=".$originid);
                 exit;
-            }
-            elseif ($origin == 'shipment')
-            {
-            	header("Location: ../expedition/fiche.php?id=".$originid);
-            	exit;
-            }
-            else
-            {
+            } elseif ($origin == 'shipment') {
+                header("Location: ../expedition/fiche.php?id=".$originid);
+                exit;
+            } else {
                 header("Location: ".$_SERVER['PHP_SELF']."?socid=".$socid);
                 exit;
             }
-        }
-        else
-        {
+        } else {
             $mesg = $object->error;
             $action='create';
         }
     }
 
     // Update address
-    else if ($action == 'update')
-    {
+    else if ($action == 'update') {
         $result 	= $object->update($_POST["id"], $socid, $user);
 
-        if ($result >= 0)
-        {
-        	if (! empty($backtopage))
-        	{
-        		header("Location: ".$backtopage);
-        		exit;
-        	}
-            else if ($origin == 'commande')
-            {
+        if ($result >= 0) {
+            if (! empty($backtopage)) {
+                header("Location: ".$backtopage);
+                exit;
+            } elseif ($origin == 'commande') {
                 header("Location: ../commande/contact.php?id=".$originid);
                 exit;
-            }
-            elseif ($origin == 'propal')
-            {
+            } elseif ($origin == 'propal') {
                 header("Location: ../comm/propal/contact.php?id=".$originid);
                 exit;
-            }
-            elseif ($origin == 'shipment')
-            {
+            } elseif ($origin == 'shipment') {
                 header("Location: ../expedition/fiche.php?id=".$originid);
                 exit;
-            }
-            else
-            {
+            } else {
                 header("Location: ".$_SERVER['PHP_SELF']."?socid=".$socid);
                 exit;
             }
-        }
-        else
-        {
+        } else {
             $reload = 0;
             $mesg = $object->error;
             $actino= "edit";
         }
     }
 
-}
-
-else if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->societe->supprimer)
-{
+} elseif ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->societe->supprimer) {
     $result = $object->delete($id, $socid);
 
-    if ($result == 0)
-    {
+    if ($result == 0) {
         header("Location: ".$_SERVER['PHP_SELF']."?socid=".$socid);
         exit ;
-    }
-    else
-    {
+    } else {
         $reload = 0;
         $action='';
     }
@@ -183,17 +148,13 @@ $countrynotdefined=$langs->trans("ErrorSetACountryFirst").' ('.$langs->trans("Se
 
 dol_htmloutput_errors($mesg);
 
-
-if ($action == 'create')
-{
-    if ($user->rights->societe->creer)
-    {
+if ($action == 'create') {
+    if ($user->rights->societe->creer) {
         /*
          * Creation
          */
 
-        if ($_POST["label"] && $_POST["name"])
-        {
+        if ($_POST["label"] && $_POST["name"]) {
             $object->socid		=	$socid;
             $object->label		=	$_POST["label"];
             $object->name		=	$_POST["name"];
@@ -207,9 +168,8 @@ if ($action == 'create')
 
         // On positionne country_id, country_code and label of the chosen country
         $object->country_id = (GETPOST('country_id','int') ? GETPOST('country_id','int') : $mysoc->country_id);
-        if ($object->country_id)
-        {
-        	$tmparray=getCountry($object->country_id,'all');
+        if ($object->country_id) {
+            $tmparray=getCountry($object->country_id,'all');
             $object->country_code	= $tmparray['code'];
             $object->country		= $tmparray['label'];
         }
@@ -219,8 +179,7 @@ if ($action == 'create')
         print "<br>\n";
 
         // If javascript enabled, we add interactivity on mandatory fields
-        if ($conf->use_javascript_ajax)
-        {
+        if ($conf->use_javascript_ajax) {
             print "\n".'<script type="text/javascript" language="javascript">';
             print '$(document).ready(function () {
                         $("#label").focus(function() {
@@ -286,19 +245,16 @@ if ($action == 'create')
 
         print '<br><center>';
         print '<input type="submit" class="button" value="'.$langs->trans('Add').'">';
-        if (! empty($backtopage))
-        {
-        	print ' &nbsp; &nbsp; ';
-        	print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+        if (! empty($backtopage)) {
+            print ' &nbsp; &nbsp; ';
+            print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
         }
         print '</center>'."\n";
 
         print '</form>'."\n";
 
     }
-}
-elseif ($action == 'edit')
-{
+} elseif ($action == 'edit') {
     /*
      * Fiche societe en mode edition
      */
@@ -312,15 +268,11 @@ elseif ($action == 'edit')
     print_titre($langs->trans("EditAddress"));
     print "<br>\n";
 
-    if ($socid)
-    {
-        if ($reload || ! $_POST["name"])
-        {
+    if ($socid) {
+        if ($reload || ! $_POST["name"]) {
             $object->socid = $socid;
             $object->fetch_address($id);
-        }
-        else
-        {
+        } else {
             $object->id			=	$id;
             $object->socid		=	$socid;
             $object->label		=	$_POST["label"];
@@ -334,11 +286,10 @@ elseif ($action == 'edit')
             $object->note		=	$_POST["note"];
 
             // On positionne country_id, country_code and label of the chosen country
-            if ($object->country_id)
-            {
-	        	$tmparray=getCountry($object->country_id,'all');
-	            $object->country_code	= $tmparray['code'];
-	            $object->country		= $tmparray['label'];
+            if ($object->country_id) {
+                $tmparray=getCountry($object->country_id,'all');
+                $object->country_code	= $tmparray['code'];
+                $object->country		= $tmparray['label'];
             }
         }
 
@@ -392,16 +343,13 @@ elseif ($action == 'edit')
 
         print '</form>';
     }
-}
-else
-{
+} else {
     /*
      * Fiche societe en mode visu
      */
 
     $result=$object->fetch_lines($socid);
-    if ($result < 0)
-    {
+    if ($result < 0) {
         dol_print_error($db,$object->error);
         exit;
     }
@@ -412,20 +360,16 @@ else
 
     dol_fiche_head($head, 'customer', $societe->nom);
 
-
     // Confirmation delete
-    if ($action == 'delete')
-    {
+    if ($action == 'delete') {
         $form = new Form($db);
         $ret=$form->form_confirm($_SERVER['PHP_SELF']."?socid=".$object->socid."&amp;id=".$id,$langs->trans("DeleteAddress"),$langs->trans("ConfirmDeleteAddress"),"confirm_delete");
         if ($ret == 'html') print '<br>';
     }
 
     $nblines = count($object->lines);
-    if ($nblines)
-    {
-        for ($i = 0 ; $i < $nblines ; $i++)
-        {
+    if ($nblines) {
+        for ($i = 0 ; $i < $nblines ; $i++) {
 
             print '<table class="border" width="100%">';
 
@@ -448,45 +392,36 @@ else
 
             print '</table>';
 
-
             /*
              *
              */
 
             print '<div class="tabsAction">';
 
-            if ($user->rights->societe->creer)
-            {
+            if ($user->rights->societe->creer) {
                 print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?socid='.$object->socid.'&amp;id='.$object->lines[$i]->id.'&amp;action=edit">'.$langs->trans("Modify").'</a></div>';
             }
 
-            if ($user->rights->societe->supprimer)
-            {
+            if ($user->rights->societe->supprimer) {
                 print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?socid='.$object->socid.'&amp;id='.$object->lines[$i]->id.'&amp;action=delete">'.$langs->trans("Delete").'</a></div>';
             }
-
 
             print '</div>';
             print '<br>';
         }
-    }
-    else
-    {
+    } else {
         print $langs->trans("None");
     }
     print '</div>';
-
 
     /*
      * Bouton actions
      */
 
-    if ($action == '')
-    {
+    if ($action == '') {
         print '<div class="tabsAction">';
 
-        if ($user->rights->societe->creer)
-        {
+        if ($user->rights->societe->creer) {
             print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?socid='.$object->socid.'&amp;action=create">'.$langs->trans("Add").'</a></div>';
         }
         print '</div>';
@@ -494,8 +429,6 @@ else
 
 }
 
-
 // End of page
 llxFooter();
 $db->close();
-?>

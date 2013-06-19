@@ -28,8 +28,7 @@ $langs->load("admin");
 $langs->load("companies");
 
 if (! $user->admin)
-	accessforbidden();
-
+    accessforbidden();
 
 /*
  * View
@@ -51,10 +50,8 @@ print info_admin($langs->trans("SystemAreaForAdminOnly")).'<br>';
 
 print '<br><br>';
 
-
 // Show logo
 print '<center><div class="logo_setup"></div></center>';
 
 llxFooter();
 $db->close();
-?>

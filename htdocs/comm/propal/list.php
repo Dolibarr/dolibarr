@@ -36,7 +36,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formpropal.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 if (! empty($conf->projet->enabled))
-	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+    require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
 $langs->load('companies');
 $langs->load('propal');
@@ -68,31 +68,25 @@ $module='propal';
 $dbtable='';
 $objectid='';
 if (! empty($user->societe_id))	$socid=$user->societe_id;
-if (! empty($socid))
-{
-	$objectid=$socid;
-	$module='societe';
-	$dbtable='&societe';
+if (! empty($socid)) {
+    $objectid=$socid;
+    $module='societe';
+    $dbtable='&societe';
 }
 $result = restrictedArea($user, $module, $objectid, $dbtable);
 
-
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('propallist'));
-
-
 
 /*
  * Actions
  */
 
-
 $parameters=array('socid'=>$socid);
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 
 // Do we click on purge search criteria ?
-if (GETPOST("button_removefilter_x"))
-{
+if (GETPOST("button_removefilter_x")) {
     $search_categ='';
     $search_user='';
     $search_sale='';
@@ -104,7 +98,6 @@ if (GETPOST("button_removefilter_x"))
     $year='';
     $month='';
 }
-
 
 /*
  * View
@@ -146,59 +139,47 @@ if ($sall) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'propaldet as pd ON p.rowid=pd.fk
 $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'user as u ON p.fk_user_author = u.rowid';
 // We'll need this table joined to the select in order to filter by sale
 if ($search_sale || (! $user->rights->societe->client->voir && ! $socid)) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-if ($search_user > 0)
-{
+if ($search_user > 0) {
     $sql.=", ".MAIN_DB_PREFIX."element_contact as c";
     $sql.=", ".MAIN_DB_PREFIX."c_type_contact as tc";
 }
 $sql.= ' WHERE p.fk_soc = s.rowid';
 $sql.= ' AND p.entity = '.$conf->entity;
-if (! $user->rights->societe->client->voir && ! $socid) //restriction
-{
-	$sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+if (! $user->rights->societe->client->voir && ! $socid) { //restriction
+    $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 }
-if ($search_ref)
-{
-	$sql.= " AND p.ref LIKE '%".$db->escape(trim($search_ref))."%'";
+if ($search_ref) {
+    $sql.= " AND p.ref LIKE '%".$db->escape(trim($search_ref))."%'";
 }
-if ($search_refcustomer)
-{
-	$sql.= " AND p.ref_client LIKE '%".$db->escape(trim($search_refcustomer))."%'";
+if ($search_refcustomer) {
+    $sql.= " AND p.ref_client LIKE '%".$db->escape(trim($search_refcustomer))."%'";
 }
-if ($search_societe)
-{
-	$sql.= " AND s.nom LIKE '%".$db->escape(trim($search_societe))."%'";
+if ($search_societe) {
+    $sql.= " AND s.nom LIKE '%".$db->escape(trim($search_societe))."%'";
 }
-if ($search_author)
-{
-	$sql.= " AND u.login LIKE '%".$db->escape(trim($search_author))."%'";
+if ($search_author) {
+    $sql.= " AND u.login LIKE '%".$db->escape(trim($search_author))."%'";
 }
-if ($search_montant_ht)
-{
-	$sql.= " AND p.total_ht='".$db->escape(price2num(trim($search_montant_ht)))."'";
+if ($search_montant_ht) {
+    $sql.= " AND p.total_ht='".$db->escape(price2num(trim($search_montant_ht)))."'";
 }
 if ($sall) $sql.= " AND (s.nom LIKE '%".$db->escape($sall)."%' OR p.note LIKE '%".$db->escape($sall)."%' OR pd.description LIKE '%".$db->escape($sall)."%')";
 if ($socid) $sql.= ' AND s.rowid = '.$socid;
-if ($viewstatut <> '')
-{
-	$sql.= ' AND p.fk_statut IN ('.$viewstatut.')';
+if ($viewstatut <> '') {
+    $sql.= ' AND p.fk_statut IN ('.$viewstatut.')';
 }
-if ($month > 0)
-{
+if ($month > 0) {
     if ($year > 0 && empty($day))
     $sql.= " AND p.datep BETWEEN '".$db->idate(dol_get_first_day($year,$month,false))."' AND '".$db->idate(dol_get_last_day($year,$month,false))."'";
     else if ($year > 0 && ! empty($day))
     $sql.= " AND p.datep BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $month, $day, $year))."' AND '".$db->idate(dol_mktime(23, 59, 59, $month, $day, $year))."'";
     else
     $sql.= " AND date_format(p.datep, '%m') = '".$month."'";
-}
-else if ($year > 0)
-{
-	$sql.= " AND p.datep BETWEEN '".$db->idate(dol_get_first_day($year,1,false))."' AND '".$db->idate(dol_get_last_day($year,12,false))."'";
+} elseif ($year > 0) {
+    $sql.= " AND p.datep BETWEEN '".$db->idate(dol_get_first_day($year,1,false))."' AND '".$db->idate(dol_get_last_day($year,12,false))."'";
 }
 if ($search_sale > 0) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$search_sale;
-if ($search_user > 0)
-{
+if ($search_user > 0) {
     $sql.= " AND c.fk_c_type_contact = tc.rowid AND tc.element='propal' AND tc.source='internal' AND c.element_id = p.rowid AND c.fk_socpeople = ".$search_user;
 }
 
@@ -207,205 +188,193 @@ $sql.= ' ORDER BY '.$sortfield.' '.$sortorder.', p.ref DESC';
 $sql.= $db->plimit($limit + 1,$offset);
 $result=$db->query($sql);
 
-if ($result)
-{
-	$objectstatic=new Propal($db);
-	$userstatic=new User($db);
+if ($result) {
+    $objectstatic=new Propal($db);
+    $userstatic=new User($db);
 
-	$num = $db->num_rows($result);
+    $num = $db->num_rows($result);
 
- 	if ($socid)
-	{
-		$soc = new Societe($db);
-		 $soc->fetch($socid);
-	}
+     if ($socid) {
+        $soc = new Societe($db);
+         $soc->fetch($socid);
+    }
 
-	$param='&socid='.$socid.'&viewstatut='.$viewstatut;
-	if ($month)              $param.='&month='.$month;
-	if ($year)               $param.='&year='.$year;
+    $param='&socid='.$socid.'&viewstatut='.$viewstatut;
+    if ($month)              $param.='&month='.$month;
+    if ($year)               $param.='&year='.$year;
     if ($search_ref)         $param.='&search_ref=' .$search_ref;
     if ($search_refcustomer) $param.='&search_ref=' .$search_refcustomer;
     if ($search_societe)     $param.='&search_societe=' .$search_societe;
-	if ($search_user > 0)    $param.='&search_user='.$search_user;
-	if ($search_sale > 0)    $param.='&search_sale='.$search_sale;
-	if ($search_montant_ht)  $param.='&search_montant_ht='.$search_montant_ht;
-	if ($search_author)  	 $param.='&search_author='.$search_author;
-	print_barre_liste($langs->trans('ListOfProposals').' '.($socid?'- '.$soc->nom:''), $page, $_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num);
+    if ($search_user > 0)    $param.='&search_user='.$search_user;
+    if ($search_sale > 0)    $param.='&search_sale='.$search_sale;
+    if ($search_montant_ht)  $param.='&search_montant_ht='.$search_montant_ht;
+    if ($search_author)  	 $param.='&search_author='.$search_author;
+    print_barre_liste($langs->trans('ListOfProposals').' '.($socid?'- '.$soc->nom:''), $page, $_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num);
 
-	// Lignes des champs de filtre
-	print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">';
+    // Lignes des champs de filtre
+    print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">';
 
-	$i = 0;
-	print '<table class="liste" width="100%">';
+    $i = 0;
+    print '<table class="liste" width="100%">';
 
-	$moreforfilter='';
+    $moreforfilter='';
 
- 	// If the user can view prospects other than his'
- 	if ($user->rights->societe->client->voir || $socid)
- 	{
- 		$langs->load("commercial");
-	 	$moreforfilter.=$langs->trans('ThirdPartiesOfSaleRepresentative'). ': ';
-		$moreforfilter.=$formother->select_salesrepresentatives($search_sale,'search_sale',$user);
-	 	$moreforfilter.=' &nbsp; &nbsp; &nbsp; ';
- 	}
-	// If the user can view prospects other than his'
-	if ($user->rights->societe->client->voir || $socid)
-	{
-	    $moreforfilter.=$langs->trans('LinkedToSpecificUsers'). ': ';
-	    $moreforfilter.=$form->select_dolusers($search_user,'search_user',1);
-	}
-	if (! empty($moreforfilter))
-	{
-	    print '<tr class="liste_titre">';
-	    print '<td class="liste_titre" colspan="10">';
-	    print $moreforfilter;
-	    print '</td></tr>';
-	}
+     // If the user can view prospects other than his'
+     if ($user->rights->societe->client->voir || $socid) {
+         $langs->load("commercial");
+         $moreforfilter.=$langs->trans('ThirdPartiesOfSaleRepresentative'). ': ';
+        $moreforfilter.=$formother->select_salesrepresentatives($search_sale,'search_sale',$user);
+         $moreforfilter.=' &nbsp; &nbsp; &nbsp; ';
+     }
+    // If the user can view prospects other than his'
+    if ($user->rights->societe->client->voir || $socid) {
+        $moreforfilter.=$langs->trans('LinkedToSpecificUsers'). ': ';
+        $moreforfilter.=$form->select_dolusers($search_user,'search_user',1);
+    }
+    if (! empty($moreforfilter)) {
+        print '<tr class="liste_titre">';
+        print '<td class="liste_titre" colspan="10">';
+        print $moreforfilter;
+        print '</td></tr>';
+    }
 
-	print '<tr class="liste_titre">';
-	print_liste_field_titre($langs->trans('Ref'),$_SERVER["PHP_SELF"],'p.ref','',$param,'',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans('Company'),$_SERVER["PHP_SELF"],'s.nom','',$param,'',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans('RefCustomer'),$_SERVER["PHP_SELF"],'p.ref_client','',$param,'',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans('Date'),$_SERVER["PHP_SELF"],'p.datep','',$param, 'align="center"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans('DateEndPropalShort'),$_SERVER["PHP_SELF"],'dfv','',$param, 'align="center"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans('AmountHT'),$_SERVER["PHP_SELF"],'p.total_ht','',$param, 'align="right"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans('Author'),$_SERVER["PHP_SELF"],'u.login','',$param,'align="right"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans('Status'),$_SERVER["PHP_SELF"],'p.fk_statut','',$param,'align="right"',$sortfield,$sortorder);
-	print_liste_field_titre('');
-	print "</tr>\n";
+    print '<tr class="liste_titre">';
+    print_liste_field_titre($langs->trans('Ref'),$_SERVER["PHP_SELF"],'p.ref','',$param,'',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans('Company'),$_SERVER["PHP_SELF"],'s.nom','',$param,'',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans('RefCustomer'),$_SERVER["PHP_SELF"],'p.ref_client','',$param,'',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans('Date'),$_SERVER["PHP_SELF"],'p.datep','',$param, 'align="center"',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans('DateEndPropalShort'),$_SERVER["PHP_SELF"],'dfv','',$param, 'align="center"',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans('AmountHT'),$_SERVER["PHP_SELF"],'p.total_ht','',$param, 'align="right"',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans('Author'),$_SERVER["PHP_SELF"],'u.login','',$param,'align="right"',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans('Status'),$_SERVER["PHP_SELF"],'p.fk_statut','',$param,'align="right"',$sortfield,$sortorder);
+    print_liste_field_titre('');
+    print "</tr>\n";
 
-	print '<tr class="liste_titre">';
-	print '<td class="liste_titre">';
-	print '<input class="flat" size="10" type="text" name="search_ref" value="'.$search_ref.'">';
-	print '</td>';
-	print '<td class="liste_titre" align="left">';
-	print '<input class="flat" type="text" size="16" name="search_societe" value="'.$search_societe.'">';
-	print '</td>';
-	print '<td class="liste_titre">';
-	print '<input class="flat" size="10" type="text" name="search_refcustomer" value="'.$search_refcustomer.'">';
-	print '</td>';
-	print '<td class="liste_titre" colspan="1" align="center">';
-	print $langs->trans('Month').': <input class="flat" type="text" size="1" maxlength="2" name="month" value="'.$month.'">';
-	print '&nbsp;'.$langs->trans('Year').': ';
-	$syear = $year;
-	$formother->select_year($syear,'year',1, 20, 5);
-	print '</td>';
-	print '<td class="liste_titre" colspan="1">&nbsp;</td>';
-	print '<td class="liste_titre" align="center">';
-	print '<input class="flat" type="text" size="10" name="search_montant_ht" value="'.$search_montant_ht.'">';
-	print '</td>';
-	
-	print '<td class="liste_titre" align="right">';
-	print '<input class="flat" size="10" type="text" name="search_author" value="'.$search_author.'">';
-	print '</td>';
-	print '<td class="liste_titre" align="right">';
-	$formpropal->select_propal_statut($viewstatut,1);
-	print '</td>';
-	print '<td class="liste_titre" align="right"><input class="liste_titre" type="image" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
-	print '</td>';
-	print "</tr>\n";
+    print '<tr class="liste_titre">';
+    print '<td class="liste_titre">';
+    print '<input class="flat" size="10" type="text" name="search_ref" value="'.$search_ref.'">';
+    print '</td>';
+    print '<td class="liste_titre" align="left">';
+    print '<input class="flat" type="text" size="16" name="search_societe" value="'.$search_societe.'">';
+    print '</td>';
+    print '<td class="liste_titre">';
+    print '<input class="flat" size="10" type="text" name="search_refcustomer" value="'.$search_refcustomer.'">';
+    print '</td>';
+    print '<td class="liste_titre" colspan="1" align="center">';
+    print $langs->trans('Month').': <input class="flat" type="text" size="1" maxlength="2" name="month" value="'.$month.'">';
+    print '&nbsp;'.$langs->trans('Year').': ';
+    $syear = $year;
+    $formother->select_year($syear,'year',1, 20, 5);
+    print '</td>';
+    print '<td class="liste_titre" colspan="1">&nbsp;</td>';
+    print '<td class="liste_titre" align="center">';
+    print '<input class="flat" type="text" size="10" name="search_montant_ht" value="'.$search_montant_ht.'">';
+    print '</td>';
 
-	$var=true;
-	$total=0;
-	$subtotal=0;
+    print '<td class="liste_titre" align="right">';
+    print '<input class="flat" size="10" type="text" name="search_author" value="'.$search_author.'">';
+    print '</td>';
+    print '<td class="liste_titre" align="right">';
+    $formpropal->select_propal_statut($viewstatut,1);
+    print '</td>';
+    print '<td class="liste_titre" align="right"><input class="liste_titre" type="image" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+    print '</td>';
+    print "</tr>\n";
 
-	while ($i < min($num,$limit))
-	{
-		$objp = $db->fetch_object($result);
-		$now = dol_now();
-		$var=!$var;
-		print '<tr '.$bc[$var].'>';
-		print '<td class="nowrap">';
+    $var=true;
+    $total=0;
+    $subtotal=0;
 
-		$objectstatic->id=$objp->propalid;
-		$objectstatic->ref=$objp->ref;
+    while ($i < min($num,$limit)) {
+        $objp = $db->fetch_object($result);
+        $now = dol_now();
+        $var=!$var;
+        print '<tr '.$bc[$var].'>';
+        print '<td class="nowrap">';
 
-		print '<table class="nobordernopadding"><tr class="nocellnopadd">';
-		print '<td class="nobordernopadding nowrap">';
-		print $objectstatic->getNomUrl(1);
-		print '</td>';
+        $objectstatic->id=$objp->propalid;
+        $objectstatic->ref=$objp->ref;
 
-		print '<td width="20" class="nobordernopadding nowrap">';
-		if ($objp->fk_statut == 1 && $db->jdate($objp->dfv) < ($now - $conf->propal->cloture->warning_delay)) print img_warning($langs->trans("Late"));
-		print '</td>';
+        print '<table class="nobordernopadding"><tr class="nocellnopadd">';
+        print '<td class="nobordernopadding nowrap">';
+        print $objectstatic->getNomUrl(1);
+        print '</td>';
 
-		print '<td width="16" align="right" class="nobordernopadding">';
-		$filename=dol_sanitizeFileName($objp->ref);
-		$filedir=$conf->propal->dir_output . '/' . dol_sanitizeFileName($objp->ref);
-		$urlsource=$_SERVER['PHP_SELF'].'?id='.$objp->propalid;
-		print $formfile->getDocumentsLink($objectstatic->element, $filename, $filedir);
-		print '</td></tr></table>';
+        print '<td width="20" class="nobordernopadding nowrap">';
+        if ($objp->fk_statut == 1 && $db->jdate($objp->dfv) < ($now - $conf->propal->cloture->warning_delay)) print img_warning($langs->trans("Late"));
+        print '</td>';
 
-		$url = DOL_URL_ROOT.'/comm/fiche.php?socid='.$objp->rowid;
+        print '<td width="16" align="right" class="nobordernopadding">';
+        $filename=dol_sanitizeFileName($objp->ref);
+        $filedir=$conf->propal->dir_output . '/' . dol_sanitizeFileName($objp->ref);
+        $urlsource=$_SERVER['PHP_SELF'].'?id='.$objp->propalid;
+        print $formfile->getDocumentsLink($objectstatic->element, $filename, $filedir);
+        print '</td></tr></table>';
 
-		// Company
-		$companystatic->id=$objp->rowid;
-		$companystatic->nom=$objp->nom;
-		$companystatic->client=$objp->client;
-		print '<td>';
-		print $companystatic->getNomUrl(1,'customer');
-		print '</td>';
+        $url = DOL_URL_ROOT.'/comm/fiche.php?socid='.$objp->rowid;
 
-		// Customer ref
-		print '<td class="nowrap">';
-		print $objp->ref_client;
-		print '</td>';
+        // Company
+        $companystatic->id=$objp->rowid;
+        $companystatic->nom=$objp->nom;
+        $companystatic->client=$objp->client;
+        print '<td>';
+        print $companystatic->getNomUrl(1,'customer');
+        print '</td>';
 
-		// Date propale
-		print '<td align="center">';
-		$y = dol_print_date($db->jdate($objp->dp),'%Y');
-		$m = dol_print_date($db->jdate($objp->dp),'%m');
-		$mt= dol_print_date($db->jdate($objp->dp),'%b');
-		$d = dol_print_date($db->jdate($objp->dp),'%d');
-		print $d."\n";
-		print ' <a href="'.$_SERVER["PHP_SELF"].'?year='.$y.'&amp;month='.$m.'">';
-		print $mt."</a>\n";
-		print ' <a href="'.$_SERVER["PHP_SELF"].'?year='.$y.'">';
-		print $y."</a></td>\n";
+        // Customer ref
+        print '<td class="nowrap">';
+        print $objp->ref_client;
+        print '</td>';
 
-		// Date fin validite
-		if ($objp->dfv)
-		{
-			print '<td align="center">'.dol_print_date($db->jdate($objp->dfv),'day');
-			print '</td>';
-		}
-		else
-		{
-			print '<td>&nbsp;</td>';
-		}
+        // Date propale
+        print '<td align="center">';
+        $y = dol_print_date($db->jdate($objp->dp),'%Y');
+        $m = dol_print_date($db->jdate($objp->dp),'%m');
+        $mt= dol_print_date($db->jdate($objp->dp),'%b');
+        $d = dol_print_date($db->jdate($objp->dp),'%d');
+        print $d."\n";
+        print ' <a href="'.$_SERVER["PHP_SELF"].'?year='.$y.'&amp;month='.$m.'">';
+        print $mt."</a>\n";
+        print ' <a href="'.$_SERVER["PHP_SELF"].'?year='.$y.'">';
+        print $y."</a></td>\n";
 
-		print '<td align="right">'.price($objp->total_ht)."</td>\n";
+        // Date fin validite
+        if ($objp->dfv) {
+            print '<td align="center">'.dol_print_date($db->jdate($objp->dfv),'day');
+            print '</td>';
+        } else {
+            print '<td>&nbsp;</td>';
+        }
 
-		$userstatic->id=$objp->fk_user_author;
-		$userstatic->login=$objp->login;
-		print '<td align="center">';
-		if ($userstatic->id) print $userstatic->getLoginUrl(1);
-		else print '&nbsp;';
-		print "</td>\n";
+        print '<td align="right">'.price($objp->total_ht)."</td>\n";
 
-		print '<td align="right">'.$objectstatic->LibStatut($objp->fk_statut,5)."</td>\n";
+        $userstatic->id=$objp->fk_user_author;
+        $userstatic->login=$objp->login;
+        print '<td align="center">';
+        if ($userstatic->id) print $userstatic->getLoginUrl(1);
+        else print '&nbsp;';
+        print "</td>\n";
 
-		print '<td>&nbsp;</td>';
+        print '<td align="right">'.$objectstatic->LibStatut($objp->fk_statut,5)."</td>\n";
 
-		print "</tr>\n";
+        print '<td>&nbsp;</td>';
 
-		$total += $objp->total_ht;
-		$subtotal += $objp->total_ht;
+        print "</tr>\n";
 
-		$i++;
-	}
-	print '</table>';
+        $total += $objp->total_ht;
+        $subtotal += $objp->total_ht;
 
-	print '</form>';
+        $i++;
+    }
+    print '</table>';
 
-	$db->free($result);
-}
-else
-{
-	dol_print_error($db);
+    print '</form>';
+
+    $db->free($result);
+} else {
+    dol_print_error($db);
 }
 
 // End of page
 llxFooter();
 $db->close();
-?>

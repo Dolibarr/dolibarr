@@ -41,7 +41,6 @@ $langs->load("holiday");
 // Si pas administrateur
 if (! $user->admin) accessforbidden();
 
-
 /*
  * View
  */
@@ -57,77 +56,73 @@ print_fiche_titre($langs->trans('ConfCP'), $linkback);
 $cp = new Holiday($db);
 
 // Contrôle du formulaire
-if ($action == "add")
-{
+if ($action == "add") {
     $message = '';
     $error = false;
 
     // Option du groupe de validation
-    /*if (!$cp->updateConfCP('userGroup',$_POST['userGroup']))
-    {
+    /*if (!$cp->updateConfCP('userGroup',$_POST['userGroup'])) {
         $error = true;
     }*/
 
     // Option du délai pour faire une demande de congés payés
-    if (!$cp->updateConfCP('delayForRequest',$_POST['delayForRequest']))
-    {
+    if (!$cp->updateConfCP('delayForRequest',$_POST['delayForRequest'])) {
         $error = true;
     }
 
     // Option du nombre de jours à ajouter chaque mois
     $nbHolidayEveryMonth = price2num($_POST['nbHolidayEveryMonth'],5);
 
-    if(!$cp->updateConfCP('nbHolidayEveryMonth',$nbHolidayEveryMonth))
-    {
+    if (!$cp->updateConfCP('nbHolidayEveryMonth',$nbHolidayEveryMonth)) {
         $error = true;
     }
 
     // Option du nombre de jours pour un mariage
     $OptMariageCP = price2num($_POST['OptMariage'],5);
 
-    if(!$cp->updateConfCP('OptMariage',$OptMariageCP)) {
+    if (!$cp->updateConfCP('OptMariage',$OptMariageCP)) {
         $error = true;
     }
 
     // Option du nombre de jours pour un décés d'un proche
     $OptDecesProcheCP = price2num($_POST['OptDecesProche'],5);
 
-    if(!$cp->updateConfCP('OptDecesProche',$OptDecesProcheCP)) {
+    if (!$cp->updateConfCP('OptDecesProche',$OptDecesProcheCP)) {
         $error = true;
     }
 
     // Option du nombre de jours pour un mariage d'un enfant
     $OptMariageProcheCP = price2num($_POST['OptMariageProche'],5);
 
-    if(!$cp->updateConfCP('OptMariageProche',$OptMariageProcheCP)) {
+    if (!$cp->updateConfCP('OptMariageProche',$OptMariageProcheCP)) {
         $error = true;
     }
 
     // Option du nombre de jours pour un décés d'un parent
     $OptDecesParentsCP = price2num($_POST['OptDecesParents'],5);
 
-    if(!$cp->updateConfCP('OptDecesParents',$OptDecesParentsCP)) {
+    if (!$cp->updateConfCP('OptDecesParents',$OptDecesParentsCP)) {
         $error = true;
     }
 
     // Option pour avertir le valideur si délai de demande incorrect
-    if(isset($_POST['AlertValidatorDelay'])) {
-        if(!$cp->updateConfCP('AlertValidatorDelay','1')) {
+    if (isset($_POST['AlertValidatorDelay'])) {
+        if (!$cp->updateConfCP('AlertValidatorDelay','1')) {
             $error = true;
         }
     } else {
-        if(!$cp->updateConfCP('AlertValidatorDelay','0')) {
+        if (!$cp->updateConfCP('AlertValidatorDelay','0')) {
             $error = true;
         }
     }
 
     // Option pour avertir le valideur si solde des congés de l'utilisateur inccorect
-    if(isset($_POST['AlertValidatorSolde'])) {
-        if(!$cp->updateConfCP('AlertValidatorSolde','1')) {
+    if (isset($_POST['AlertValidatorSolde'])) {
+        if (!$cp->updateConfCP('AlertValidatorSolde','1')) {
             $error = true;
         }
     } else {
-        if(!$cp->updateConfCP('AlertValidatorSolde','0')) {
+        if (!$cp->updateConfCP('AlertValidatorSolde','0')) {
             $error = true;
         }
     }
@@ -135,7 +130,7 @@ if ($action == "add")
     // Option du nombre de jours à déduire pour 1 jour de congés
     $nbHolidayDeducted = price2num($_POST['nbHolidayDeducted'],2);
 
-    if(!$cp->updateConfCP('nbHolidayDeducted',$nbHolidayDeducted)) {
+    if (!$cp->updateConfCP('nbHolidayDeducted',$nbHolidayDeducted)) {
         $error = true;
     }
 
@@ -152,7 +147,7 @@ if ($action == "add")
     $result = $db->query($sql);
     $num = $db->num_rows($sql);
 
-    if($num < 1) {
+    if ($num < 1) {
         $cp->createCPusers();
         $message.= '<br /><div class="warning">'.$langs->trans('AddCPforUsers').'</div>';
     }
@@ -161,47 +156,37 @@ if ($action == "add")
 
 
     // Si il s'agit de créer un event
-}
-elseif ($action == 'create_event')
-{
+} elseif ($action == 'create_event') {
     $error = 0;
 
     $optName = trim($optName);
     $optValue = price2num($optValue,2);
 
-    if (! $optName)
-    {
-    	$message='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Name")).'</div>';
+    if (! $optName) {
+        $message='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Name")).'</div>';
         $error++;
     }
-    if (! $optValue > 0)
-    {
-    	$message='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Value")).'</div>';
-    	$error++;
+    if (! $optValue > 0) {
+        $message='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Value")).'</div>';
+        $error++;
     }
 
     $cp->optName = $optName;
     $cp->optValue = $optValue;
 
-    if (! $error)
-    {
+    if (! $error) {
         $result = $cp->createEventCP($user);
-        if($result > 0)
-        {
+        if ($result > 0) {
             $message = 'OkCreateEventCP';
             $optName='';
             $optValue='';
-        }
-        else
-        {
+        } else {
             $message = '<div class="error">'.$cp->error.'</div>';
         }
     }
 
     dol_htmloutput_mesg($message);
-}
-elseif($action == 'event' && isset($_POST['update_event']))
-{
+} elseif ($action == 'event' && isset($_POST['update_event'])) {
     $error = false;
 
     $eventId = array_keys($_POST['update_event']);
@@ -213,23 +198,22 @@ elseif($action == 'event' && isset($_POST['update_event']))
     $eventValue = $optValue;
     $eventValue = $eventValue[$eventId];
 
-    if(!empty($eventName)) {
+    if (!empty($eventName)) {
         $eventName = trim($eventName);
     } else {
         $error = true;
     }
 
-    if(!empty($eventValue)) {
+    if (!empty($eventValue)) {
         $eventValue = price2num($eventValue,2);
     } else {
         $error = true;
     }
 
-    if(!$error)
-    {
+    if (!$error) {
         // Mise à jour des congés de l'utilisateur
         $update = $cp->updateEventCP($eventId,$eventName,$eventValue);
-        if(!$update) {
+        if (!$update) {
             $message='ErrorUpdateEventCP';
         } else {
             $message='UpdateEventOkCP';
@@ -239,15 +223,13 @@ elseif($action == 'event' && isset($_POST['update_event']))
     }
 
     dol_htmloutput_mesg($message);
-}
-elseif($action && isset($_POST['delete_event']))
-{
+} elseif ($action && isset($_POST['delete_event'])) {
     $eventId = array_keys($_POST['delete_event']);
     $eventId = $eventId[0];
 
     $result = $cp->deleteEventCP($eventId);
 
-    if($result) {
+    if ($result) {
         print '<div class="tabBar">';
         print $langs->trans('DeleteEventOkCP');
         print '</div>';
@@ -342,7 +324,7 @@ dol_fiche_head(array(),'','');
 
 $cp_events = $cp->fetchEventsCP();
 
-if($cp_events == 1) {
+if ($cp_events == 1) {
 
     $var = false;
     $i = 0;
@@ -361,7 +343,7 @@ if($cp_events == 1) {
 
     print '</tr>'."\n";
 
-    foreach($cp->events as $infos_event) {
+    foreach ($cp->events as $infos_event) {
 
         $var=!$var;
 
@@ -410,7 +392,6 @@ print '</table>';
 print '</form>';
 
 dol_fiche_end();
-
 
 // Fin de page
 llxFooter();

@@ -49,6 +49,4 @@ $osversion=version_os();
 print "<tr $bc[1]><td width=\"240\">".$langs->trans("Version")."</td><td>".$osversion."</td></tr>\n";
 print '</table>';
 
-
 llxFooter();
-?>

@@ -41,8 +41,7 @@ if (!$mode) $mode='config';
 /*
  * Action
  */
-if ($action == 'setvalue' && $user->admin)
-{
+if ($action == 'setvalue' && $user->admin) {
     $db->begin();
 
     if (! $result > 0) $error++;
@@ -55,18 +54,14 @@ if ($action == 'setvalue' && $user->admin)
     $result=dolibarr_set_const($db, "PRINTIPP_PASSWORD",GETPOST('PRINTIPP_PASSWORD','alpha'),'chaine',0,'',$conf->entity);
     if (! $result > 0) $error++;
 
-    if (! $error)
-    {
+    if (! $error) {
         $db->commit();
         setEventMessage($langs->trans("SetupSaved"));
-    }
-    else
-    {
+    } else {
         $db->rollback();
         dol_print_error($db);
     }
 }
-
 
 /*
  * View
@@ -87,12 +82,10 @@ print $langs->trans("PrintIPPDesc")."<br>\n";
 
 print '<br>';
 
-if ($mode=='config'&& $user->admin)
-{
+if ($mode=='config'&& $user->admin) {
     print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?mode=config">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<input type="hidden" name="action" value="setvalue">';
-
 
     print '<table class="nobordernopadding" width="100%">';
 
@@ -106,18 +99,12 @@ if ($mode=='config'&& $user->admin)
     print '<tr '.$bc[$var].'><td class="fieldrequired">';
     print $langs->trans("PRINTIPP_ENABLED").'</td><td colspan="2" align="left">';
 
-    if (! empty($conf->use_javascript_ajax))
-    {
+    if (! empty($conf->use_javascript_ajax)) {
         print ajax_constantonoff('PRINTIPP_ENABLED');
-    }
-    else
-    {
-        if (empty($conf->global->PRINTIPP_ENABLED))
-        {
+    } else {
+        if (empty($conf->global->PRINTIPP_ENABLED)) {
             print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_PRINTIPP_ENABLED">'.img_picto($langs->trans("Disabled"),'off').'</a>';
-         }
-         else
-         {
+         } else {
              print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_PRINTIPP_ENABLED">'.img_picto($langs->trans("Enabled"),'on').'</a>';
          }
     }
@@ -148,7 +135,7 @@ if ($mode=='config'&& $user->admin)
     print $langs->trans("PRINTIPP_PASSWORD").'</td><td>';
     print '<input size="32" type="text" name="PRINTIPP_PASSWORD" value="'.$conf->global->PRINTIPP_PASSWORD.'">';
     print '</td></tr>';
-    
+
     //$var=true;
     //print '<tr class="liste_titre">';
     //print '<td>'.$langs->trans("OtherParameter").'</td>';
@@ -162,8 +149,7 @@ if ($mode=='config'&& $user->admin)
     print '</form>';
 }
 
-if ($mode=='test'&& $user->admin)
-{
+if ($mode=='test'&& $user->admin) {
     print '<table class="nobordernopadding" width="100%">';
     $printer = new dolPrintIPP($db,$conf->global->PRINTIPP_HOST,$conf->global->PRINTIPP_PORT,$user->login,$conf->global->PRINTIPP_USER,$conf->global->PRINTIPP_PASSWORD);
     $var=true;
@@ -182,8 +168,7 @@ if ($mode=='test'&& $user->admin)
     print "</tr>\n";
     $list = $printer->getlist_available_printers();
     $var = True;
-    foreach ($list as $value )
-    {
+    foreach ($list as $value) {
         $var=!$var;
         $printer_det = $printer->get_printer_detail($value);
         print "<tr ".$bc[$var].">";
@@ -201,7 +186,7 @@ if ($mode=='test'&& $user->admin)
         print "</tr>\n";
     }
     print '</table>';
-    
+
     if (count($list) == 0) print $langs->trans("NoPrinterFound");
 }
 
@@ -209,4 +194,3 @@ dol_fiche_end();
 
 llxFooter();
 $db->close();
-?>

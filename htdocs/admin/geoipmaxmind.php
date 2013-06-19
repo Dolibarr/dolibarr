@@ -38,35 +38,27 @@ $action = GETPOST("action");
 /*
  * Actions
  */
-if ($action == 'set')
-{
-	$error=0;
+if ($action == 'set') {
+    $error=0;
 
-	$gimcdf= GETPOST("GEOIPMAXMIND_COUNTRY_DATAFILE");
+    $gimcdf= GETPOST("GEOIPMAXMIND_COUNTRY_DATAFILE");
 
-	if (! $gimcdf && ! file_exists($gimcdf))
-	{
-		$mesg='<div class="error">'.$langs->trans("ErrorFileNotFound",$gimcdf).'</div>';
-		$error++;
-	}
+    if (! $gimcdf && ! file_exists($gimcdf)) {
+        $mesg='<div class="error">'.$langs->trans("ErrorFileNotFound",$gimcdf).'</div>';
+        $error++;
+    }
 
-	if (! $error)
-	{
-		$res = dolibarr_set_const($db,"GEOIPMAXMIND_COUNTRY_DATAFILE",$gimcdf,'chaine',0,'',$conf->entity);
-		if (! $res > 0) $error++;
+    if (! $error) {
+        $res = dolibarr_set_const($db,"GEOIPMAXMIND_COUNTRY_DATAFILE",$gimcdf,'chaine',0,'',$conf->entity);
+        if (! $res > 0) $error++;
 
-		if (! $error)
-	    {
-	        $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
-	    }
-	    else
-	    {
-	        $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
-	    }
-	}
+        if (! $error) {
+            $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
+        } else {
+            $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
+        }
+    }
 }
-
-
 
 /*
  * View
@@ -82,9 +74,8 @@ print '<br>';
 
 $version='';
 $geoip='';
-if (! empty($conf->global->GEOIPMAXMIND_COUNTRY_DATAFILE))
-{
-	$geoip=new DolGeoIP('country',$conf->global->GEOIPMAXMIND_COUNTRY_DATAFILE);
+if (! empty($conf->global->GEOIPMAXMIND_COUNTRY_DATAFILE)) {
+    $geoip=new DolGeoIP('country',$conf->global->GEOIPMAXMIND_COUNTRY_DATAFILE);
 }
 
 // Mode
@@ -104,9 +95,8 @@ print '<tr '.$bc[$var].'><td width=\"50%\">'.$langs->trans("PathToGeoIPMaxmindCo
 print '<td colspan="2">';
 print '<input size="50" type="text" name="GEOIPMAXMIND_COUNTRY_DATAFILE" value="'.$conf->global->GEOIPMAXMIND_COUNTRY_DATAFILE.'">';
 if ($geoip) $version=$geoip->getVersion();
-if ($version)
-{
-	print '<br>'.$langs->trans("Version").': '.$version;
+if ($version) {
+    print '<br>'.$langs->trans("Version").': '.$version;
 }
 print '</td></tr>';
 
@@ -126,25 +116,24 @@ print '<br>';
 $url2='http://www.maxmind.com/app/perl?rId=awstats';
 print $langs->trans("YouCanDownloadAdvancedDatFileTo",'<a href="'.$url2.'" target="_blank">'.$url2.'</a>');
 
-if ($geoip)
-{
-	print '<br><br>';
-	print '<br>'.$langs->trans("TestGeoIPResult",$ip).':';
+if ($geoip) {
+    print '<br><br>';
+    print '<br>'.$langs->trans("TestGeoIPResult",$ip).':';
 
-	$ip='24.24.24.24';
-	print '<br>'.$ip.' -> ';
-	$result=dol_print_ip($ip,1);
-	if ($result) print $result;
-	else print $langs->trans("Error");
+    $ip='24.24.24.24';
+    print '<br>'.$ip.' -> ';
+    $result=dol_print_ip($ip,1);
+    if ($result) print $result;
+    else print $langs->trans("Error");
 
-	/* We disable this test because dol_print_ip need an ip as input
-	$ip='www.google.com';
-	print '<br>'.$ip.' -> ';
-	$result=dol_print_ip($ip,1);
-	if ($result) print $result;
-	else print $langs->trans("Error");
-	*/
-	$geoip->close();
+    /* We disable this test because dol_print_ip need an ip as input
+    $ip='www.google.com';
+    print '<br>'.$ip.' -> ';
+    $result=dol_print_ip($ip,1);
+    if ($result) print $result;
+    else print $langs->trans("Error");
+    */
+    $geoip->close();
 }
 
 dol_htmloutput_mesg($mesg);
@@ -152,4 +141,3 @@ dol_htmloutput_mesg($mesg);
 llxFooter();
 
 $db->close();
-?>

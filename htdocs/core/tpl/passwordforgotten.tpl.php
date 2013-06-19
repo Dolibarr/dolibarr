@@ -34,8 +34,8 @@ print top_htmlhead('',$langs->trans('Login').' '.$title);
 <!-- Javascript code on logon page only to detect user tz, dst_observed, dst_first, dst_second -->
 <script type="text/javascript">
 $(document).ready(function () {
-	// Set focus on correct field
-	<?php if ($focus_element) { ?>$('#<?php echo $focus_element; ?>').focus(); <?php } ?>		// Warning to use this only on visible element
+    // Set focus on correct field
+    <?php if ($focus_element) { ?>$('#<?php echo $focus_element; ?>').focus(); <?php } ?>		// Warning to use this only on visible element
 });
 </script>
 
@@ -68,28 +68,27 @@ $(document).ready(function () {
 
 <?php
 if (! empty($hookmanager->resArray['options'])) {
-	foreach ($hookmanager->resArray['options'] as $format => $option)
-	{
-		if ($format == 'table') {
-			echo '<!-- Option by hook -->';
-			echo $option;
-		}
-	}
+    foreach ($hookmanager->resArray['options'] as $format => $option) {
+        if ($format == 'table') {
+            echo '<!-- Option by hook -->';
+            echo $option;
+        }
+    }
 }
 ?>
 
 <?php if ($captcha) { ?>
-	<!-- Captcha -->
-	<tr><td valign="middle" class="loginfield nowrap"><strong><label for="securitycode"><?php echo $langs->trans('SecurityCode'); ?></label></strong></td>
-	<td valign="top" class="nowrap none" align="left">
+    <!-- Captcha -->
+    <tr><td valign="middle" class="loginfield nowrap"><strong><label for="securitycode"><?php echo $langs->trans('SecurityCode'); ?></label></strong></td>
+    <td valign="top" class="nowrap none" align="left">
 
-	<table class="login_table_securitycode" style="width: 100px;"><tr>
-	<td><input id="securitycode" class="flat" type="text" size="6" maxlength="5" name="code" tabindex="4" /></td>
-	<td><img src="<?php echo DOL_URL_ROOT ?>/core/antispamimage.php" border="0" width="80" height="32" id="img_securitycode" /></td>
-	<td><a href="<?php echo $php_self; ?>"><?php echo $captcha_refresh; ?></a></td>
-	</tr></table>
+    <table class="login_table_securitycode" style="width: 100px;"><tr>
+    <td><input id="securitycode" class="flat" type="text" size="6" maxlength="5" name="code" tabindex="4" /></td>
+    <td><img src="<?php echo DOL_URL_ROOT ?>/core/antispamimage.php" border="0" width="80" height="32" id="img_securitycode" /></td>
+    <td><a href="<?php echo $php_self; ?>"><?php echo $captcha_refresh; ?></a></td>
+    </tr></table>
 
-	</td></tr>
+    </td></tr>
 <?php } ?>
 
 </table>
@@ -110,15 +109,15 @@ if (! empty($hookmanager->resArray['options'])) {
 
 <br>
 <div align="center" style="margin-top: 4px;">
-	<?php
-	$moreparam='';
-	if (! empty($conf->dol_hide_topmenu))   $moreparam.=(strpos($moreparam,'?')===false?'?':'&').'dol_hide_topmenu='.$conf->dol_hide_topmenu;
-	if (! empty($conf->dol_hide_leftmenu))  $moreparam.=(strpos($moreparam,'?')===false?'?':'&').'dol_hide_leftmenu='.$conf->dol_hide_leftmenu;
-	if (! empty($conf->dol_no_mouse_hover)) $moreparam.=(strpos($moreparam,'?')===false?'?':'&').'dol_no_mouse_hover='.$conf->dol_no_mouse_hover;
-	if (! empty($conf->dol_use_jmobile))    $moreparam.=(strpos($moreparam,'?')===false?'?':'&').'dol_use_jmobile='.$conf->dol_use_jmobile;
+    <?php
+    $moreparam='';
+    if (! empty($conf->dol_hide_topmenu))   $moreparam.=(strpos($moreparam,'?')===false?'?':'&').'dol_hide_topmenu='.$conf->dol_hide_topmenu;
+    if (! empty($conf->dol_hide_leftmenu))  $moreparam.=(strpos($moreparam,'?')===false?'?':'&').'dol_hide_leftmenu='.$conf->dol_hide_leftmenu;
+    if (! empty($conf->dol_no_mouse_hover)) $moreparam.=(strpos($moreparam,'?')===false?'?':'&').'dol_no_mouse_hover='.$conf->dol_no_mouse_hover;
+    if (! empty($conf->dol_use_jmobile))    $moreparam.=(strpos($moreparam,'?')===false?'?':'&').'dol_use_jmobile='.$conf->dol_use_jmobile;
 
-	print '<a style="color: #888888; font-size: 10px" href="'.$dol_url_root.'/index.php'.$moreparam.'">('.$langs->trans('BackToLoginPage').')</a>';
-	?>
+    print '<a style="color: #888888; font-size: 10px" href="'.$dol_url_root.'/index.php'.$moreparam.'">('.$langs->trans('BackToLoginPage').')</a>';
+    ?>
 </div>
 
 </div>
@@ -127,26 +126,24 @@ if (! empty($hookmanager->resArray['options'])) {
 
 </form>
 
-
 <center><div align="center" style="max-width: 680px; margin-left: 10px; margin-right: 10px;">
 <?php if ($mode == 'dolibarr' || ! $disabled) { ?>
-	<font style="font-size: 12px;">
-	<?php echo $langs->trans('SendNewPasswordDesc'); ?>
-	</font>
-<?php }else{ ?>
-	<div class="warning" align="center">
-	<?php echo $langs->trans('AuthenticationDoesNotAllowSendNewPassword', $mode); ?>
-	</div>
+    <font style="font-size: 12px;">
+    <?php echo $langs->trans('SendNewPasswordDesc'); ?>
+    </font>
+<?php } else { ?>
+    <div class="warning" align="center">
+    <?php echo $langs->trans('AuthenticationDoesNotAllowSendNewPassword', $mode); ?>
+    </div>
 <?php } ?>
 </div></center>
-
 
 <br>
 
 <?php if ($message) { ?>
-	<center><div align="center" style="max-width: 680px; margin-left: 10px; margin-right: 10px;"><div class="error">
-	<?php echo $message; ?>
-	</div></div></center>
+    <center><div align="center" style="max-width: 680px; margin-left: 10px; margin-right: 10px;"><div class="error">
+    <?php echo $message; ?>
+    </div></div></center>
 <?php } ?>
 
 </center>	<!-- end of center -->

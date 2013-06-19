@@ -30,19 +30,17 @@ require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 
-
 dol_syslog("Call Dolibarr webservices interfaces");
 
 $langs->load("main");
 
 // Enable and test if module web services is enabled
-if (empty($conf->global->MAIN_MODULE_WEBSERVICES))
-{
-	$langs->load("admin");
-	dol_syslog("Call Dolibarr webservices interfaces with module webservices disabled");
-	print $langs->trans("WarningModuleNotActive",'WebServices').'.<br><br>';
-	print $langs->trans("ToActivateModule");
-	exit;
+if (empty($conf->global->MAIN_MODULE_WEBSERVICES)) {
+    $langs->load("admin");
+    dol_syslog("Call Dolibarr webservices interfaces with module webservices disabled");
+    print $langs->trans("WarningModuleNotActive",'WebServices').'.<br><br>';
+    print $langs->trans("ToActivateModule");
+    exit;
 }
 
 // Create the soap Object
@@ -53,7 +51,6 @@ $ns='http://www.dolibarr.org/ns/';
 $server->configureWSDL('WebServicesDolibarrSupplierInvoice',$ns);
 $server->wsdl->schemaTargetNamespace=$ns;
 
-
 // Define WSDL Authentication object
 $server->wsdl->addComplexType(
     'authentication',
@@ -63,8 +60,8 @@ $server->wsdl->addComplexType(
     '',
     array(
         'dolibarrkey' => array('name'=>'dolibarrkey','type'=>'xsd:string'),
-    	'sourceapplication' => array('name'=>'sourceapplication','type'=>'xsd:string'),
-    	'login' => array('name'=>'login','type'=>'xsd:string'),
+        'sourceapplication' => array('name'=>'sourceapplication','type'=>'xsd:string'),
+        'login' => array('name'=>'login','type'=>'xsd:string'),
         'password' => array('name'=>'password','type'=>'xsd:string'),
         'entity' => array('name'=>'entity','type'=>'xsd:string'),
     )
@@ -93,10 +90,10 @@ $server->wsdl->addComplexType(
         'id' => array('name'=>'id','type'=>'xsd:string'),
         'type' => array('name'=>'type','type'=>'xsd:int'),
         'desc' => array('name'=>'desc','type'=>'xsd:string'),
-    	'fk_product' => array('name'=>'fk_product','type'=>'xsd:int'),
+        'fk_product' => array('name'=>'fk_product','type'=>'xsd:int'),
         'total_net' => array('name'=>'total_net','type'=>'xsd:double'),
-    	'total_vat' => array('name'=>'total_vat','type'=>'xsd:double'),
-    	'total' => array('name'=>'total','type'=>'xsd:double'),
+        'total_vat' => array('name'=>'total_vat','type'=>'xsd:double'),
+        'total' => array('name'=>'total','type'=>'xsd:double'),
         'vat_rate' => array('name'=>'vat_rate','type'=>'xsd:double'),
         'qty' => array('name'=>'qty','type'=>'xsd:double'),
         'date_start' => array('name'=>'date_start','type'=>'xsd:date'),
@@ -128,7 +125,7 @@ $server->wsdl->addComplexType(
     'all',
     '',
     array(
-    	'id' => array('name'=>'id','type'=>'xsd:string'),
+        'id' => array('name'=>'id','type'=>'xsd:string'),
         'ref' => array('name'=>'ref','type'=>'xsd:string'),
         'ref_ext' => array('name'=>'ref_ext','type'=>'xsd:string'),
         'ref_supplier' => array('name'=>'ref_supplier','type'=>'xsd:string'),
@@ -149,7 +146,7 @@ $server->wsdl->addComplexType(
         'status' => array('name'=>'status','type'=>'xsd:int'),
         'close_code' => array('name'=>'close_code','type'=>'xsd:string'),
         'close_note' => array('name'=>'close_note','type'=>'xsd:string'),
-    	'lines' => array('name'=>'lines','type'=>'tns:LinesArray')
+        'lines' => array('name'=>'lines','type'=>'tns:LinesArray')
     )
 );
 
@@ -178,8 +175,6 @@ $server->wsdl->addComplexType(
     ),
     'tns:invoice'
 );
-
-
 
 // 5 styles: RPC/encoded, RPC/literal, Document/encoded (not WS-I compliant), Document/literal, Document/literal wrapped
 // Style merely dictates how to translate a WSDL binding to a SOAP message. Nothing more. You can use either style with any programming model.
@@ -214,7 +209,6 @@ $server->register(
     'WS to get SupplierInvoicesForThirdParty'
 );
 
-
 /**
  * Get invoice from id, ref or ref_ext
  *
@@ -226,11 +220,11 @@ $server->register(
  */
 function getSupplierInvoice($authentication,$id='',$ref='',$ref_ext='')
 {
-	global $db,$conf,$langs;
+    global $db,$conf,$langs;
 
-	dol_syslog("Function: getSupplierInvoice login=".$authentication['login']." id=".$id." ref=".$ref." ref_ext=".$ref_ext);
+    dol_syslog("Function: getSupplierInvoice login=".$authentication['login']." id=".$id." ref=".$ref." ref_ext=".$ref_ext);
 
-	if ($authentication['entity']) $conf->entity=$authentication['entity'];
+    if ($authentication['entity']) $conf->entity=$authentication['entity'];
 
     // Init and check authentication
     $objectresp=array();
@@ -238,49 +232,44 @@ function getSupplierInvoice($authentication,$id='',$ref='',$ref_ext='')
     $error=0;
     $fuser=check_authentication($authentication,$error,$errorcode,$errorlabel);
     // Check parameters
-	if (! $error && (($id && $ref) || ($id && $ref_ext) || ($ref && $ref_ext)))
-	{
-		$error++;
-		$errorcode='BAD_PARAMETERS'; $errorlabel="Parameter id, ref and ref_ext can't be both provided. You must choose one or other but not both.";
-	}
+    if (! $error && (($id && $ref) || ($id && $ref_ext) || ($ref && $ref_ext))) {
+        $error++;
+        $errorcode='BAD_PARAMETERS'; $errorlabel="Parameter id, ref and ref_ext can't be both provided. You must choose one or other but not both.";
+    }
 
-	if (! $error)
-	{
-		$fuser->getrights();
+    if (! $error) {
+        $fuser->getrights();
 
-		if ($fuser->rights->fournisseur->facture->lire)
-		{
-			$invoice=new FactureFournisseur($db);
-			$result=$invoice->fetch($id,$ref,$ref_ext);
-			if ($result > 0)
-			{
-				$linesresp=array();
-				$i=0;
-				foreach($invoice->lines as $line)
-				{
-					//var_dump($line); exit;
-					$linesresp[]=array(
-						'id'=>$line->rowid,
-						'type'=>$line->product_type,
-						'total_net'=>$line->total_ht,
-						'total_vat'=>$line->total_tva,
-						'total'=>$line->total_ttc,
+        if ($fuser->rights->fournisseur->facture->lire) {
+            $invoice=new FactureFournisseur($db);
+            $result=$invoice->fetch($id,$ref,$ref_ext);
+            if ($result > 0) {
+                $linesresp=array();
+                $i=0;
+                foreach ($invoice->lines as $line) {
+                    //var_dump($line); exit;
+                    $linesresp[]=array(
+                        'id'=>$line->rowid,
+                        'type'=>$line->product_type,
+                        'total_net'=>$line->total_ht,
+                        'total_vat'=>$line->total_tva,
+                        'total'=>$line->total_ttc,
                         'vat_rate'=>$line->tva_tx,
                         'qty'=>$line->qty
-					);
-					$i++;
-				}
+                    );
+                    $i++;
+                }
 
-			    // Create invoice
-			    $objectresp = array(
-			    	'result'=>array('result_code'=>'OK', 'result_label'=>''),
-			        'invoice'=>array(
-				    	'id' => $invoice->id,
-			   			'ref' => $invoice->ref,
+                // Create invoice
+                $objectresp = array(
+                    'result'=>array('result_code'=>'OK', 'result_label'=>''),
+                    'invoice'=>array(
+                        'id' => $invoice->id,
+                           'ref' => $invoice->ref,
                         'ref_supplier'=>$invoice->ref_supplier,
-			            'ref_ext' => $invoice->ref_ext,
-			            'fk_user_author' => $invoice->fk_user_author,
-			            'fk_user_valid' => $invoice->fk_user_valid,
+                        'ref_ext' => $invoice->ref_ext,
+                        'fk_user_author' => $invoice->fk_user_author,
+                        'fk_user_valid' => $invoice->fk_user_valid,
                         'fk_thirdparty' => $invoice->fk_soc,
                         'type'=>$invoice->type,
                         'status'=>$invoice->statut,
@@ -302,29 +291,23 @@ function getSupplierInvoice($authentication,$id='',$ref='',$ref_ext='')
 //					        'lines' => array('0'=>array('id'=>222,'type'=>1),
 //				        				 '1'=>array('id'=>333,'type'=>1))
 
-			    ));
-			}
-			else
-			{
-				$error++;
-				$errorcode='NOT_FOUND'; $errorlabel='Object not found for id='.$id.' nor ref='.$ref.' nor ref_ext='.$ref_ext;
-			}
-		}
-		else
-		{
-			$error++;
-			$errorcode='PERMISSION_DENIED'; $errorlabel='User does not have permission for this request';
-		}
-	}
+                ));
+            } else {
+                $error++;
+                $errorcode='NOT_FOUND'; $errorlabel='Object not found for id='.$id.' nor ref='.$ref.' nor ref_ext='.$ref_ext;
+            }
+        } else {
+            $error++;
+            $errorcode='PERMISSION_DENIED'; $errorlabel='User does not have permission for this request';
+        }
+    }
 
-	if ($error)
-	{
-		$objectresp = array('result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel));
-	}
+    if ($error) {
+        $objectresp = array('result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel));
+    }
 
-	return $objectresp;
+    return $objectresp;
 }
-
 
 /**
  * Get list of invoices for third party
@@ -336,11 +319,11 @@ function getSupplierInvoice($authentication,$id='',$ref='',$ref_ext='')
  */
 function getSupplierInvoicesForThirdParty($authentication,$idthirdparty)
 {
-	global $db,$conf,$langs;
+    global $db,$conf,$langs;
 
-	dol_syslog("Function: getSupplierInvoicesForThirdParty login=".$authentication['login']." idthirdparty=".$idthirdparty);
+    dol_syslog("Function: getSupplierInvoicesForThirdParty login=".$authentication['login']." idthirdparty=".$idthirdparty);
 
-	if ($authentication['entity']) $conf->entity=$authentication['entity'];
+    if ($authentication['entity']) $conf->entity=$authentication['entity'];
 
     // Init and check authentication
     $objectresp=array();
@@ -348,77 +331,71 @@ function getSupplierInvoicesForThirdParty($authentication,$idthirdparty)
     $error=0;
     $fuser=check_authentication($authentication,$error,$errorcode,$errorlabel);
     // Check parameters
-	if (! $error && empty($idthirdparty))
-	{
-		$error++;
-		$errorcode='BAD_PARAMETERS'; $errorlabel='Parameter id is not provided';
-	}
+    if (! $error && empty($idthirdparty)) {
+        $error++;
+        $errorcode='BAD_PARAMETERS'; $errorlabel='Parameter id is not provided';
+    }
 
-	if (! $error)
-	{
-		$linesinvoice=array();
+    if (! $error) {
+        $linesinvoice=array();
 
-		$sql.='SELECT f.rowid as facid';
-		$sql.=' FROM '.MAIN_DB_PREFIX.'facture_fourn as f';
-		//$sql.=', '.MAIN_DB_PREFIX.'societe as s';
-		//$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON pt.fk_product = p.rowid';
-		//$sql.=" WHERE f.fk_soc = s.rowid AND nom = '".$db->escape($idthirdparty)."'";
-		//$sql.=" WHERE f.fk_soc = s.rowid AND nom = '".$db->escape($idthirdparty)."'";
+        $sql.='SELECT f.rowid as facid';
+        $sql.=' FROM '.MAIN_DB_PREFIX.'facture_fourn as f';
+        //$sql.=', '.MAIN_DB_PREFIX.'societe as s';
+        //$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON pt.fk_product = p.rowid';
+        //$sql.=" WHERE f.fk_soc = s.rowid AND nom = '".$db->escape($idthirdparty)."'";
+        //$sql.=" WHERE f.fk_soc = s.rowid AND nom = '".$db->escape($idthirdparty)."'";
         $sql.=" WHERE f.entity = ".$conf->entity;
-		if ($idthirdparty != 'all') $sql.=" AND f.fk_soc = ".$db->escape($idthirdparty);
+        if ($idthirdparty != 'all') $sql.=" AND f.fk_soc = ".$db->escape($idthirdparty);
 
-		$resql=$db->query($sql);
-		if ($resql)
-		{
-			$num=$db->num_rows($resql);
-			$i=0;
-			while ($i < $num)
-			{
+        $resql=$db->query($sql);
+        if ($resql) {
+            $num=$db->num_rows($resql);
+            $i=0;
+            while ($i < $num) {
                 // En attendant remplissage par boucle
-			    $obj=$db->fetch_object($resql);
+                $obj=$db->fetch_object($resql);
 
-			    $invoice=new FactureFournisseur($db);
-			    $result=$invoice->fetch($obj->facid);
-				if ($result < 0)
-				{
-					$error++;
-					$errorcode=$result; $errorlabel=$invoice->error;
-					break;
-				}
+                $invoice=new FactureFournisseur($db);
+                $result=$invoice->fetch($obj->facid);
+                if ($result < 0) {
+                    $error++;
+                    $errorcode=$result; $errorlabel=$invoice->error;
+                    break;
+                }
 
-				// Define lines of invoice
-				$linesresp=array();
-				foreach($invoice->lines as $line)
-				{
-   				    $linesresp[]=array(
-    					'id'=>$line->rowid,
-    					'type'=>$line->product_type,
+                // Define lines of invoice
+                $linesresp=array();
+                foreach ($invoice->lines as $line) {
+                       $linesresp[]=array(
+                        'id'=>$line->rowid,
+                        'type'=>$line->product_type,
                         'desc'=>dol_htmlcleanlastbr($line->description),
-    					'total_net'=>$line->total_ht,
-    					'total_vat'=>$line->total_tva,
-    					'total'=>$line->total_ttc,
+                        'total_net'=>$line->total_ht,
+                        'total_vat'=>$line->total_tva,
+                        'total'=>$line->total_ttc,
                         'vat_rate'=>$line->tva_tx,
                         'qty'=>$line->qty,
-   				        'product_ref'=>$line->product_ref,
+                           'product_ref'=>$line->product_ref,
                         'product_label'=>$line->product_label,
                         'product_desc'=>$line->product_desc,
-   				    );
-				}
+                       );
+                }
 
-				// Now define invoice
-				$linesinvoice[]=array(
-					'id'=>$invoice->id,
-				    'ref'=>$invoice->ref,
-				    'ref_supplier'=>$invoice->ref_supplier,
-				    'ref_ext'=>$invoice->ref_ext,
+                // Now define invoice
+                $linesinvoice[]=array(
+                    'id'=>$invoice->id,
+                    'ref'=>$invoice->ref,
+                    'ref_supplier'=>$invoice->ref_supplier,
+                    'ref_ext'=>$invoice->ref_ext,
                     'fk_user_author' => $invoice->fk_user_author,
                     'fk_user_valid' => $invoice->fk_user_valid,
                     'fk_thirdparty' => $invoice->fk_soc,
-				    'type'=>$invoice->type,
+                    'type'=>$invoice->type,
                     'status'=>$invoice->statut,
-				    'total_net'=>$invoice->total_ht,
-					'total_vat'=>$invoice->total_tva,
-					'total'=>$invoice->total_ttc,
+                    'total_net'=>$invoice->total_ht,
+                    'total_vat'=>$invoice->total_tva,
+                    'total'=>$invoice->total_ttc,
                     'date_creation'=>dol_print_date($invoice->datec,'dayhourrfc'),
                     'date_modification'=>dol_print_date($invoice->tms,'dayhourrfc'),
                     'date_invoice'=>dol_print_date($invoice->date,'dayhourrfc'),
@@ -430,35 +407,29 @@ function getSupplierInvoicesForThirdParty($authentication,$idthirdparty)
                     'close_code'=>$invoice->close_code,
                     'close_note'=>$invoice->close_note,
 
-				    'lines' => $linesresp
-				);
+                    'lines' => $linesresp
+                );
 
-				$i++;
-			}
+                $i++;
+            }
 
-			$objectresp=array(
-		    	'result'=>array('result_code'=>'OK', 'result_label'=>''),
-		        'invoices'=>$linesinvoice
+            $objectresp=array(
+                'result'=>array('result_code'=>'OK', 'result_label'=>''),
+                'invoices'=>$linesinvoice
 
-			);
-		}
-		else
-		{
-			$error++;
-			$errorcode=$db->lasterrno(); $errorlabel=$db->lasterror();
-		}
-	}
+            );
+        } else {
+            $error++;
+            $errorcode=$db->lasterrno(); $errorlabel=$db->lasterror();
+        }
+    }
 
-	if ($error)
-	{
-		$objectresp = array('result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel));
-	}
+    if ($error) {
+        $objectresp = array('result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel));
+    }
 
-	return $objectresp;
+    return $objectresp;
 }
-
 
 // Return the results.
 $server->service($HTTP_RAW_POST_DATA);
-
-?>

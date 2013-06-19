@@ -73,16 +73,14 @@ $sql.= " b.fk_account";
 $sql.= " FROM ".MAIN_DB_PREFIX."adherent as d, ".MAIN_DB_PREFIX."cotisation as c";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON c.fk_bank=b.rowid";
 $sql.= " WHERE d.rowid = c.fk_adherent";
-if (isset($date_select) && $date_select != '')
-{
+if (isset($date_select) && $date_select != '') {
     $sql.= " AND dateadh LIKE '$date_select%'";
 }
 $sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit($conf->liste_limit+1, $offset);
 
 $result = $db->query($sql);
-if ($result)
-{
+if ($result) {
     $num = $db->num_rows($result);
     $i = 0;
 
@@ -99,8 +97,7 @@ if ($result)
     print_liste_field_titre($langs->trans("Name"),"cotisations.php","d.lastname",$param,"","",$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Login"),"cotisations.php","d.login",$param,"","",$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Label"),"cotisations.php","c.note",$param,"",'align="left"',$sortfield,$sortorder);
-    if (! empty($conf->banque->enabled))
-    {
+    if (! empty($conf->banque->enabled)) {
         print_liste_field_titre($langs->trans("Account"),"cotisations.php","b.fk_account",$pram,"","",$sortfield,$sortorder);
     }
     print_liste_field_titre($langs->trans("Date"),"cotisations.php","c.dateadh",$param,"",'align="center"',$sortfield,$sortorder);
@@ -115,8 +112,7 @@ if ($result)
 
     $var=true;
     $total=0;
-    while ($i < $num && $i < $conf->liste_limit)
-    {
+    while ($i < $num && $i < $conf->liste_limit) {
         $objp = $db->fetch_object($result);
         $total+=$objp->cotisation;
 
@@ -131,8 +127,7 @@ if ($result)
 
         $var=!$var;
 
-        if ($allowinsertbankafter && ! $objp->fk_account && ! empty($conf->banque->enabled) && $objp->cotisation)
-        {
+        if ($allowinsertbankafter && ! $objp->fk_account && ! empty($conf->banque->enabled) && $objp->cotisation) {
             print "<form method=\"post\" action=\"cotisations.php\">";
             print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
         }
@@ -153,20 +148,15 @@ if ($result)
         print '</td>';
 
         // Banque
-        if (! empty($conf->banque->enabled))
-        {
-            if ($objp->fk_account)
-            {
+        if (! empty($conf->banque->enabled)) {
+            if ($objp->fk_account) {
                 $accountstatic->id=$objp->fk_account;
                 $accountstatic->fetch($objp->fk_account);
                 //$accountstatic->label=$objp->label;
                 print '<td>'.$accountstatic->getNomUrl(1).'</td>';
-            }
-            else
-            {
+            } else {
                 print "<td>";
-                if ($allowinsertbankafter && $objp->cotisation)
-                {
+                if ($allowinsertbankafter && $objp->cotisation) {
                     print '<input type="hidden" name="action" value="2bank">';
                     print '<input type="hidden" name="rowid" value="'.$objp->crowid.'">';
                     $form = new Form($db);
@@ -174,9 +164,7 @@ if ($result)
                     print '<br>';
                     $form->select_types_paiements('','paymenttypeid');
                     print '<input name="num_chq" type="text" class="flat" size="5">';
-                }
-                else
-                {
+                } else {
                     print '&nbsp;';
                 }
                 print "</td>\n";
@@ -193,8 +181,7 @@ if ($result)
         print '<td align="right">'.price($objp->cotisation).'</td>';
 
         print "</tr>";
-        if ($allowinsertbankafter && ! $objp->fk_account && ! empty($conf->banque->enabled) && $objp->cotisation)
-        {
+        if ($allowinsertbankafter && ! $objp->fk_account && ! empty($conf->banque->enabled) && $objp->cotisation) {
             print "</form>\n";
         }
         $i++;
@@ -207,27 +194,21 @@ if ($result)
     print "<td align=\"right\">&nbsp;</td>\n";
     print "<td align=\"right\">&nbsp;</td>\n";
     print "<td align=\"right\">&nbsp;</td>\n";
-    if (! empty($conf->banque->enabled))
-    {
+    if (! empty($conf->banque->enabled)) {
         print '<td>&nbsp;</td>';
     }
-   	print '<td>&nbsp;</td>';
-   	print '<td>&nbsp;</td>';
-   	print "<td align=\"right\">".price($total)."</td>\n";
+       print '<td>&nbsp;</td>';
+       print '<td>&nbsp;</td>';
+       print "<td align=\"right\">".price($total)."</td>\n";
     print "</tr>\n";
 
     print "</table>";
     print "<br>\n";
 
-
-}
-else
-{
+} else {
     dol_print_error($db);
 }
-
 
 $db->close();
 
 llxFooter();
-?>

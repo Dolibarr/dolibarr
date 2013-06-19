@@ -19,11 +19,11 @@
 
 <!-- BEGIN PHP TEMPLATE originproductline.tpl.php -->
 <tr <?php echo $bc[$var]; ?>>
-	<td><?php echo $this->tpl['label']; ?></td>
-	<td><?php echo $this->tpl['description']; ?></td>
-	<td align="right"><?php echo $this->tpl['vat_rate']; ?></td>
-	<td align="right"><?php echo $this->tpl['price']; ?></td>
-	<td align="right"><?php echo $this->tpl['qty']; ?></td>
-	<td align="right"><?php echo $this->tpl['remise_percent']; ?></td>
+    <td><?php echo $this->tpl['label']; ?></td>
+    <td><?php echo $this->tpl['description']; ?></td>
+    <td align="right"><?php echo $this->tpl['vat_rate']; ?></td>
+    <td align="right"><?php echo $this->tpl['price']; ?></td>
+    <td align="right"><?php echo $this->tpl['qty']; ?></td>
+    <td align="right"><?php echo $this->tpl['remise_percent']; ?></td>
 </tr>
 <!-- END PHP TEMPLATE originproductline.tpl.php -->

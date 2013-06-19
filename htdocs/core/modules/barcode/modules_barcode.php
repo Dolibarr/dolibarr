@@ -26,26 +26,22 @@
  */
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 
-
 /**
  *  \class      ModeleBarCode
  *	\brief      Classe mere des modeles de code barre
  */
 abstract class ModeleBarCode
 {
-	var $error='';
+    public $error='';
 
-
-	/**
-	 * Return if a module can be used or not
-	 *
-	 * @return		boolean     true if module can be used
-	 */
-	function isEnabled()
-	{
-		return true;
-	}
+    /**
+     * Return if a module can be used or not
+     *
+     * @return boolean true if module can be used
+     */
+    public function isEnabled()
+    {
+        return true;
+    }
 
 }
-
-?>

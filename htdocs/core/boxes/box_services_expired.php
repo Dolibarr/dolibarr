@@ -23,24 +23,22 @@
 
 include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
 
-
 /**
  * Class to manage the box to show expired services
  */
 class box_services_expired extends ModeleBoxes
 {
 
-    var $boxcode="expiredservices";     // id of box
-    var $boximg="object_contract";
-    var $boxlabel="BoxOldestExpiredServices";
-    var $depends = array("contrat");	// conf->propal->enabled
+    public $boxcode="expiredservices";     // id of box
+    public $boximg="object_contract";
+    public $boxlabel="BoxOldestExpiredServices";
+    public $depends = array("contrat");	// conf->propal->enabled
 
-    var $db;
-    var $param;
+    public $db;
+    public $param;
 
-    var $info_box_head = array();
-    var $info_box_contents = array();
-
+    public $info_box_head = array();
+    public $info_box_contents = array();
 
     /**
      *  Load data for box to show them later
@@ -48,108 +46,97 @@ class box_services_expired extends ModeleBoxes
      *  @param	int		$max        Maximum number of records to load
      *  @return	void
      */
-    function loadBox($max=5)
+    public function loadBox($max=5)
     {
-    	global $user, $langs, $db, $conf;
+        global $user, $langs, $db, $conf;
 
-    	$this->max=$max;
+        $this->max=$max;
 
-    	$now=dol_now();
+        $now=dol_now();
 
-    	$this->info_box_head = array('text' => $langs->trans("BoxLastExpiredServices",$max));
+        $this->info_box_head = array('text' => $langs->trans("BoxLastExpiredServices",$max));
 
-    	if ($user->rights->contrat->lire)
-    	{
-    	    // Select contracts with at least one expired service
-			$sql = "SELECT ";
-    		$sql.= " c.rowid, c.ref, c.statut as fk_statut, c.date_contrat,";
-			$sql.= " s.nom, s.rowid as socid,";
-			$sql.= " MIN(cd.date_fin_validite) as date_line, COUNT(cd.rowid) as nb_services";
-    		$sql.= " FROM ".MAIN_DB_PREFIX."contrat as c, ".MAIN_DB_PREFIX."societe s, ".MAIN_DB_PREFIX."contratdet as cd";
+        if ($user->rights->contrat->lire) {
+            // Select contracts with at least one expired service
+            $sql = "SELECT ";
+            $sql.= " c.rowid, c.ref, c.statut as fk_statut, c.date_contrat,";
+            $sql.= " s.nom, s.rowid as socid,";
+            $sql.= " MIN(cd.date_fin_validite) as date_line, COUNT(cd.rowid) as nb_services";
+            $sql.= " FROM ".MAIN_DB_PREFIX."contrat as c, ".MAIN_DB_PREFIX."societe s, ".MAIN_DB_PREFIX."contratdet as cd";
             if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-    		$sql.= " WHERE cd.statut = 4 AND cd.date_fin_validite <= '".$db->idate($now)."'";
-    		$sql.= " AND c.fk_soc=s.rowid AND cd.fk_contrat=c.rowid AND c.statut > 0";
+            $sql.= " WHERE cd.statut = 4 AND cd.date_fin_validite <= '".$db->idate($now)."'";
+            $sql.= " AND c.fk_soc=s.rowid AND cd.fk_contrat=c.rowid AND c.statut > 0";
             if ($user->societe_id) $sql.=' AND c.fk_soc = '.$user->societe_id;
             if (!$user->rights->societe->client->voir  && !$user->societe_id) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-    		$sql.= " GROUP BY c.rowid, c.ref, c.statut, c.date_contrat, s.nom, s.rowid";
-    		$sql.= " ORDER BY date_line ASC";
-    		$sql.= $db->plimit($max, 0);
+            $sql.= " GROUP BY c.rowid, c.ref, c.statut, c.date_contrat, s.nom, s.rowid";
+            $sql.= " ORDER BY date_line ASC";
+            $sql.= $db->plimit($max, 0);
 
-    		$resql = $db->query($sql);
-    		if ($resql)
-    		{
-    			$num = $db->num_rows($resql);
+            $resql = $db->query($sql);
+            if ($resql) {
+                $num = $db->num_rows($resql);
 
-    			$i = 0;
+                $i = 0;
 
-    			while ($i < $num)
-    			{
-    			    $late='';
+                while ($i < $num) {
+                    $late='';
 
-    				$objp = $db->fetch_object($resql);
+                    $objp = $db->fetch_object($resql);
 
-					$dateline=$db->jdate($objp->date_line);
-					if (($dateline + $conf->contrat->services->expires->warning_delay) < $now) $late=img_warning($langs->trans("Late"));
+                    $dateline=$db->jdate($objp->date_line);
+                    if (($dateline + $conf->contrat->services->expires->warning_delay) < $now) $late=img_warning($langs->trans("Late"));
 
-    				$this->info_box_contents[$i][0] = array('td' => 'align="left" width="16"',
-    				'logo' => $this->boximg,
-    				'url' => DOL_URL_ROOT."/contrat/fiche.php?id=".$objp->rowid);
+                    $this->info_box_contents[$i][0] = array('td' => 'align="left" width="16"',
+                    'logo' => $this->boximg,
+                    'url' => DOL_URL_ROOT."/contrat/fiche.php?id=".$objp->rowid);
 
-    				$this->info_box_contents[$i][1] = array('td' => 'align="left"',
-    				'text' => ($objp->ref?$objp->ref:$objp->rowid),	// Some contracts have no ref
-    				'url' => DOL_URL_ROOT."/contrat/fiche.php?id=".$objp->rowid);
+                    $this->info_box_contents[$i][1] = array('td' => 'align="left"',
+                    'text' => ($objp->ref?$objp->ref:$objp->rowid),	// Some contracts have no ref
+                    'url' => DOL_URL_ROOT."/contrat/fiche.php?id=".$objp->rowid);
 
-    				$this->info_box_contents[$i][2] = array('td' => 'align="left" width="16"',
-    				'logo' => 'company',
-    				'url' => DOL_URL_ROOT."/comm/fiche.php?socid=".$objp->socid);
+                    $this->info_box_contents[$i][2] = array('td' => 'align="left" width="16"',
+                    'logo' => 'company',
+                    'url' => DOL_URL_ROOT."/comm/fiche.php?socid=".$objp->socid);
 
-    				$this->info_box_contents[$i][3] = array('td' => 'align="left"',
-    				'text' => dol_trunc($objp->nom,40),
-    				'url' => DOL_URL_ROOT."/comm/fiche.php?socid=".$objp->socid);
+                    $this->info_box_contents[$i][3] = array('td' => 'align="left"',
+                    'text' => dol_trunc($objp->nom,40),
+                    'url' => DOL_URL_ROOT."/comm/fiche.php?socid=".$objp->socid);
 
-    				$this->info_box_contents[$i][4] = array('td' => 'align="center"',
-    				'text' => dol_print_date($dateline,'day'),
-    				'text2'=> $late);
+                    $this->info_box_contents[$i][4] = array('td' => 'align="center"',
+                    'text' => dol_print_date($dateline,'day'),
+                    'text2'=> $late);
 
-    				$this->info_box_contents[$i][5] = array('td' => 'align="right"',
-    				'text' => $objp->nb_services);
+                    $this->info_box_contents[$i][5] = array('td' => 'align="right"',
+                    'text' => $objp->nb_services);
 
+                    $i++;
+                }
 
-    				$i++;
-    			}
+                if ($num==0) $this->info_box_contents[$i][0] = array('td' => 'align="center"','text'=>$langs->trans("NoExpiredServices"));
 
-    			if ($num==0) $this->info_box_contents[$i][0] = array('td' => 'align="center"','text'=>$langs->trans("NoExpiredServices"));
-
-				$db->free($resql);
-    		}
-    		else
-    		{
-    			$this->info_box_contents[0][0] = array(  'td' => 'align="left"',
+                $db->free($resql);
+            } else {
+                $this->info_box_contents[0][0] = array(  'td' => 'align="left"',
                                                         'maxlength'=>500,
                                                         'text' => ($db->error().' sql='.$sql));
-    		}
+            }
 
-
-    	}
-    	else
-    	{
-    		$this->info_box_contents[0][0] = array('td' => 'align="left"',
-    		'text' => $langs->trans("ReadPermissionNotAllowed"));
-    	}
+        } else {
+            $this->info_box_contents[0][0] = array('td' => 'align="left"',
+            'text' => $langs->trans("ReadPermissionNotAllowed"));
+        }
     }
 
-	/**
-	 *	Method to show box
-	 *
-	 *	@param	array	$head       Array with properties of box title
-	 *	@param  array	$contents   Array with properties of box lines
-	 *	@return	void
-	 */
-    function showBox($head = null, $contents = null)
+    /**
+     *	Method to show box
+     *
+     *	@param	array	$head       Array with properties of box title
+     *	@param  array	$contents   Array with properties of box lines
+     *	@return	void
+     */
+    public function showBox($head = null, $contents = null)
     {
         parent::showBox($this->info_box_head, $this->info_box_contents);
     }
 
  }
-
-?>

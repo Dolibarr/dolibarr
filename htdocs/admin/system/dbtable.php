@@ -29,10 +29,9 @@ require '../../main.inc.php';
 $langs->load("admin");
 
 if (! $user->admin)
-	accessforbidden();
+    accessforbidden();
 
 $table=GETPOST('table','alpha');
-
 
 /*
  * View
@@ -40,94 +39,79 @@ $table=GETPOST('table','alpha');
 
 llxHeader();
 
-
 print_fiche_titre($langs->trans("Table") . " ".$table,'','setup');
 
 // Define request to get table description
 $base=0;
-if (preg_match('/mysql/i',$conf->db->type))
-{
-	$sql = "SHOW TABLE STATUS LIKE '".$db->escape($table)."'";
-	$base=1;
-}
-else if ($conf->db->type == 'pgsql')
-{
-	$sql = "SELECT conname,contype FROM pg_constraint";
-	$base=2;
+if (preg_match('/mysql/i',$conf->db->type)) {
+    $sql = "SHOW TABLE STATUS LIKE '".$db->escape($table)."'";
+    $base=1;
+} elseif ($conf->db->type == 'pgsql') {
+    $sql = "SELECT conname,contype FROM pg_constraint";
+    $base=2;
 }
 
-if (! $base)
-{
-	print $langs->trans("FeatureNotAvailableWithThisDatabaseDriver");
-}
-else
-{
-	$resql = $db->query($sql);
-	if ($resql)
-	{
-		$num = $db->num_rows($resql);
-		$var=True;
-		$i=0;
-		while ($i < $num)
-		{
-			$row = $db->fetch_row($resql);
-			$i++;
-		}
-	}
+if (! $base) {
+    print $langs->trans("FeatureNotAvailableWithThisDatabaseDriver");
+} else {
+    $resql = $db->query($sql);
+    if ($resql) {
+        $num = $db->num_rows($resql);
+        $var=True;
+        $i=0;
+        while ($i < $num) {
+            $row = $db->fetch_row($resql);
+            $i++;
+        }
+    }
 
-	if ($base == 1)
-	{
-		$link=array();
-		$cons = explode(";", $row[14]);
-		if (! empty($cons))
-		{
-			foreach($cons as $cc)
-			{
-				$cx = preg_replace("/\)\sREFER/", "", $cc);
-				$cx = preg_replace("/\(`/", "", $cx);
-				$cx = preg_replace("/`\)/", "", $cx);
-				$cx = preg_replace("/`\s/", "", $cx);
+    if ($base == 1) {
+        $link=array();
+        $cons = explode(";", $row[14]);
+        if (! empty($cons)) {
+            foreach ($cons as $cc) {
+                $cx = preg_replace("/\)\sREFER/", "", $cc);
+                $cx = preg_replace("/\(`/", "", $cx);
+                $cx = preg_replace("/`\)/", "", $cx);
+                $cx = preg_replace("/`\s/", "", $cx);
 
-				$val = explode("`",$cx);
+                $val = explode("`",$cx);
 
-				$link[trim($val[0])][0] = (isset($val[1])?$val[1]:'');
-				$link[trim($val[0])][1] = (isset($val[2])?$val[2]:'');
-			}
-		}
+                $link[trim($val[0])][0] = (isset($val[1])?$val[1]:'');
+                $link[trim($val[0])][1] = (isset($val[2])?$val[2]:'');
+            }
+        }
 
-		//  var_dump($link);
+        //  var_dump($link);
 
-		print '<table>';
-		print '<tr class="liste_titre"><td>'.$langs->trans("Fields").'</td><td>'.$langs->trans("Type").'</td><td>'.$langs->trans("Index").'</td>';
-		print '<td>'.$langs->trans("FieldsLinked").'</td></tr>';
+        print '<table>';
+        print '<tr class="liste_titre"><td>'.$langs->trans("Fields").'</td><td>'.$langs->trans("Type").'</td><td>'.$langs->trans("Index").'</td>';
+        print '<td>'.$langs->trans("FieldsLinked").'</td></tr>';
 
-		$sql = "DESCRIBE ".$table;
-		$resql = $db->query($sql);
-		if ($resql)
-		{
-			$num = $db->num_rows($resql);
-			$var=True;
-			$i=0;
-			while ($i < $num)
-			{
-				$row = $db->fetch_row($resql);
-				$var=!$var;
-				print "<tr $bc[$var]>";
+        $sql = "DESCRIBE ".$table;
+        $resql = $db->query($sql);
+        if ($resql) {
+            $num = $db->num_rows($resql);
+            $var=True;
+            $i=0;
+            while ($i < $num) {
+                $row = $db->fetch_row($resql);
+                $var=!$var;
+                print "<tr $bc[$var]>";
 
-				print "<td>$row[0]</td>";
-				print "<td>$row[1]</td>";
-				print "<td>$row[3]</td>";
-				print "<td>".(isset($link[$row[0]][0])?$link[$row[0]][0]:'').".";
-				print (isset($link[$row[0]][1])?$link[$row[0]][1]:'')."</td>";
+                print "<td>$row[0]</td>";
+                print "<td>$row[1]</td>";
+                print "<td>$row[3]</td>";
+                print "<td>".(isset($link[$row[0]][0])?$link[$row[0]][0]:'').".";
+                print (isset($link[$row[0]][1])?$link[$row[0]][1]:'')."</td>";
 
-				print '</tr>';
-				$i++;
-			}
-		}
-		print '</table>';
-	}
+                print '</tr>';
+                $i++;
+            }
+        }
+        print '</table>';
+    }
 }
 
 llxFooter();
 $db->close();
-?>

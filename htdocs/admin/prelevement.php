@@ -37,25 +37,21 @@ if (!$user->admin) accessforbidden();
 
 $action = GETPOST('action','alpha');
 
-
 /*
  * Actions
  */
 
-if ($action == "set")
-{
+if ($action == "set") {
     $db->begin();
-    for ($i = 0 ; $i < 2 ; $i++)
-    {
-    	$res = dolibarr_set_const($db, GETPOST("nom$i",'alpha'), GETPOST("value$i",'alpha'),'chaine',0,'',$conf->entity);
+    for ($i = 0 ; $i < 2 ; $i++) {
+        $res = dolibarr_set_const($db, GETPOST("nom$i",'alpha'), GETPOST("value$i",'alpha'),'chaine',0,'',$conf->entity);
         if (! $res > 0) $error++;
     }
 
     $id=GETPOST('PRELEVEMENT_ID_BANKACCOUNT','int');
     $account = new Account($db, $id);
 
-    if($account->fetch($id)>0)
-    {
+    if ($account->fetch($id)>0) {
         $res = dolibarr_set_const($db, "PRELEVEMENT_ID_BANKACCOUNT", $id,'chaine',0,'',$conf->entity);
         if (! $res > 0) $error++;
         $res = dolibarr_set_const($db, "PRELEVEMENT_CODE_BANQUE", $account->code_banque,'chaine',0,'',$conf->entity);
@@ -72,23 +68,18 @@ if ($action == "set")
         if (! $res > 0) $error++;
         $res = dolibarr_set_const($db, "PRELEVEMENT_RAISON_SOCIALE", $account->proprio,'chaine',0,'',$conf->entity);
         if (! $res > 0) $error++;
-    }
-    else $error++;
+    } else $error++;
 
-    if (! $error)
-    {
+    if (! $error) {
         $db->commit();
         $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
-    }
-    else
-    {
+    } else {
         $db->rollback();
         $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
     }
 }
 
-if ($action == "addnotif")
-{
+if ($action == "addnotif") {
     $bon = new BonPrelevement($db);
     $bon->AddNotification($db,GETPOST('user','int'),$action);
 
@@ -96,15 +87,13 @@ if ($action == "addnotif")
     exit;
 }
 
-if ($action == "deletenotif")
-{
+if ($action == "deletenotif") {
     $bon = new BonPrelevement($db);
     $bon->DeleteNotificationById(GETPOST('notif','int'));
 
     header("Location: prelevement.php");
     exit;
 }
-
 
 /*
  *	View
@@ -171,8 +160,7 @@ print '<br>';
  * Notifications
  */
 
-if (! empty($conf->global->MAIN_MODULE_NOTIFICATION))
-{
+if (! empty($conf->global->MAIN_MODULE_NOTIFICATION)) {
     $langs->load("mails");
     print_titre($langs->trans("Notifications"));
 
@@ -181,17 +169,14 @@ if (! empty($conf->global->MAIN_MODULE_NOTIFICATION))
     $sql.= " WHERE entity IN (0,".$conf->entity.")";
 
     $resql=$db->query($sql);
-    if ($resql)
-    {
+    if ($resql) {
         $num = $db->num_rows($resql);
         $var = true;
         $i = 0;
-        while ($i < $num)
-        {
+        while ($i < $num) {
             $obj = $db->fetch_object($resql);
             $var=!$var;
-            if (!$obj->fk_societe)
-            {
+            if (!$obj->fk_societe) {
                 $username=dolGetFirstLastname($obj->firstname,$obj->lastname);
                 $internalusers[$obj->rowid] = $username;
             }
@@ -208,13 +193,11 @@ if (! empty($conf->global->MAIN_MODULE_NOTIFICATION))
     $sql.= " ORDER BY rang ASC";
 
     $resql = $db->query($sql);
-    if ($resql)
-    {
+    if ($resql) {
         $num = $db->num_rows($resql);
         $i = 0;
         $var = false;
-        while ($i < $num)
-        {
+        while ($i < $num) {
             $obj = $db->fetch_object($resql);
             $label=($langs->trans("Notify_".$obj->code)!="Notify_".$obj->code?$langs->trans("Notify_".$obj->code):$obj->label);
             $actions[$obj->rowid]=$label;
@@ -222,7 +205,6 @@ if (! empty($conf->global->MAIN_MODULE_NOTIFICATION))
         }
         $db->free($resql);
     }
-
 
     print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?action=addnotif">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -254,13 +236,11 @@ $sql.= " AND nd.fk_action = ad.rowid";
 $sql.= " AND u.entity IN (0,".$conf->entity.")";
 
 $resql = $db->query($sql);
-if ($resql)
-{
+if ($resql) {
     $num = $db->num_rows($resql);
     $i = 0;
     $var = false;
-    while ($i < $num)
-    {
+    while ($i < $num) {
         $obj = $db->fetch_object($resql);
         $var=!$var;
 
@@ -283,4 +263,3 @@ dol_htmloutput_mesg($mesg);
 $db->close();
 
 llxFooter();
-?>

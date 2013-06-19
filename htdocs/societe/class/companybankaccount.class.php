@@ -25,34 +25,33 @@
 
 require_once DOL_DOCUMENT_ROOT .'/compta/bank/class/account.class.php';
 
-
 /**
  * 		\brief	Class to manage bank accounts description of third parties
  */
 class CompanyBankAccount extends Account
 {
-    var $rowid;
-    var $socid;
+    public $rowid;
+    public $socid;
 
-    var $bank;
-    var $courant;
-    var $clos;
-    var $code_banque;
-    var $code_guichet;
-    var $number;
-    var $cle_rib;
-    var $bic;
-    var $iban;
-    var $iban_prefix;		// deprecated
-    var $proprio;
-    var $owner_address;
+    public $bank;
+    public $courant;
+    public $clos;
+    public $code_banque;
+    public $code_guichet;
+    public $number;
+    public $cle_rib;
+    public $bic;
+    public $iban;
+    public $iban_prefix;		// deprecated
+    public $proprio;
+    public $owner_address;
 
     /**
-	 *  Constructor
-	 *
-	 *  @param      DoliDB		$db      Database handler
+     *  Constructor
+     *
+     *  @param      DoliDB		$db      Database handler
      */
-    function __construct($db)
+    public function __construct($db)
     {
         $this->db = $db;
 
@@ -60,31 +59,28 @@ class CompanyBankAccount extends Account
         $this->clos = 0;
         $this->solde = 0;
         $this->error_number = 0;
+
         return 1;
     }
-
 
     /**
      * Create bank information record
      *
-     * @return	int		<0 if KO, >= 0 if OK
+     * @return int <0 if KO, >= 0 if OK
      */
-    function create()
+    public function create()
     {
         $now=dol_now();
 
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."societe_rib (fk_soc, datec) values ($this->socid, '".$this->db->idate($now)."')";
         $resql=$this->db->query($sql);
-        if ($resql)
-        {
-            if ($this->db->affected_rows($resql))
-            {
+        if ($resql) {
+            if ($this->db->affected_rows($resql)) {
                 return 1;
             }
-        }
-        else
-        {
+        } else {
             print $this->db->error();
+
             return 0;
         }
     }
@@ -95,22 +91,19 @@ class CompanyBankAccount extends Account
      *	@param	User	$user	Object user
      *	@return	int				<=0 if KO, >0 if OK
      */
-    function update($user='')
+    public function update($user='')
     {
         $sql = "SELECT fk_soc FROM ".MAIN_DB_PREFIX."societe_rib";
         $sql .= " WHERE fk_soc = ".$this->socid;
 
         $result = $this->db->query($sql);
-        if ($result)
-        {
-            if ($this->db->num_rows($result) == 0)
-            {
+        if ($result) {
+            if ($this->db->num_rows($result) == 0) {
                 $this->create();
             }
-        }
-        else
-        {
+        } else {
             dol_print_error($this->db);
+
             return 0;
         }
 
@@ -128,13 +121,11 @@ class CompanyBankAccount extends Account
         $sql .= " WHERE fk_soc = ".$this->socid;
 
         $result = $this->db->query($sql);
-        if ($result)
-        {
+        if ($result) {
             return 1;
-        }
-        else
-        {
+        } else {
             dol_print_error($this->db);
+
             return 0;
         }
     }
@@ -146,7 +137,7 @@ class CompanyBankAccount extends Account
      * 	@param	int		$socid		Id of company
      * 	@return	int					<0 if KO, >0 if OK
      */
-    function fetch($id,$socid=0)
+    public function fetch($id,$socid=0)
     {
         if (empty($id) && empty($socid)) return -1;
 
@@ -156,10 +147,8 @@ class CompanyBankAccount extends Account
         if ($socid) $sql.= " WHERE fk_soc  = ".$socid;
 
         $resql = $this->db->query($sql);
-        if ($resql)
-        {
-            if ($this->db->num_rows($resql))
-            {
+        if ($resql) {
+            if ($this->db->num_rows($resql)) {
                 $obj = $this->db->fetch_object($resql);
 
                 $this->id			   = $obj->rowid;
@@ -179,10 +168,9 @@ class CompanyBankAccount extends Account
             $this->db->free($resql);
 
             return 1;
-        }
-        else
-        {
+        } else {
             dol_print_error($this->db);
+
             return -1;
         }
     }
@@ -190,24 +178,19 @@ class CompanyBankAccount extends Account
     /**
      * Return RIB
      *
-     * @return	string		RIB
+     * @return string RIB
      */
-    function getRibLabel()
+    public function getRibLabel()
     {
-    	global $langs;
-    	
-    	if ($this->code_banque || $this->code_guichet || $this->number || $this->cle_rib)
-    	{
-    		$rib = $this->code_banque." ".$this->code_guichet." ".$this->number;
-    		$rib.=($this->cle_rib?" (".$this->cle_rib.")":"");
-    	}
-    	else
-    	{
-    		$rib=$langs->trans("NoRIB");
-    	}
+        global $langs;
 
-    	return $rib;
+        if ($this->code_banque || $this->code_guichet || $this->number || $this->cle_rib) {
+            $rib = $this->code_banque." ".$this->code_guichet." ".$this->number;
+            $rib.=($this->cle_rib?" (".$this->cle_rib.")":"");
+        } else {
+            $rib=$langs->trans("NoRIB");
+        }
+
+        return $rib;
     }
 }
-
-?>

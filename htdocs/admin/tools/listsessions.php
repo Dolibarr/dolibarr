@@ -28,14 +28,13 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 $langs->load("install");
 
 if (! $user->admin)
-	accessforbidden();
+    accessforbidden();
 
 $action=GETPOST('action', 'alpha');
 $confirm=GETPOST('confirm', 'alpha');
 
 // Security check
-if ($user->societe_id > 0)
-{
+if ($user->societe_id > 0) {
   $action = '';
   $socid = $user->societe_id;
 }
@@ -54,36 +53,28 @@ $pagenext = $page + 1;
 if (! $sortorder) $sortorder="DESC";
 if (! $sortfield) $sortfield="dateevent";
 
-
 /*
  * Actions
  */
 
 // Purge sessions
-if ($action == 'confirm_purge' && $confirm == 'yes' && $user->admin)
-{
-	$res=purgeSessions(session_id());
+if ($action == 'confirm_purge' && $confirm == 'yes' && $user->admin) {
+    $res=purgeSessions(session_id());
 }
 
 // Lock new sessions
-if ($action == 'confirm_lock' && $confirm == 'yes' && $user->admin)
-{
-	if (dolibarr_set_const($db, 'MAIN_ONLY_LOGIN_ALLOWED', $user->login, 'text',1,'Logon is restricted to a particular user', 0) < 0)
-	{
-		dol_print_error($db);
-	}
+if ($action == 'confirm_lock' && $confirm == 'yes' && $user->admin) {
+    if (dolibarr_set_const($db, 'MAIN_ONLY_LOGIN_ALLOWED', $user->login, 'text',1,'Logon is restricted to a particular user', 0) < 0) {
+        dol_print_error($db);
+    }
 }
 
 // Unlock new sessions
-if ($action == 'confirm_unlock' && $user->admin)
-{
-	if (dolibarr_del_const($db, 'MAIN_ONLY_LOGIN_ALLOWED', -1) < 0)
-	{
-		dol_print_error($db);
-	}
+if ($action == 'confirm_unlock' && $user->admin) {
+    if (dolibarr_del_const($db, 'MAIN_ONLY_LOGIN_ALLOWED', -1) < 0) {
+        dol_print_error($db);
+    }
 }
-
-
 
 /*
 *	View
@@ -113,77 +104,69 @@ if ($openbasedir) print '<b>'.$langs->trans("OpenBaseDir").'</b>: '.$openbasedir
 if ($suhosin) print '<b>'.$langs->trans("SuhosinSessionEncrypt").'</b>: '.$suhosin.'<br>';
 print '<br>';
 
-if ($action == 'purge')
-{
-	$formquestion=array();
-	$ret=$form->form_confirm($_SERVER["PHP_SELF"].'?noparam=noparam', $langs->trans('PurgeSessions'), $langs->trans('ConfirmPurgeSessions'),'confirm_purge',$formquestion,'no',2);
-	if ($ret == 'html') print '<br>';
-}
-else if ($action == 'lock')
-{
-	$formquestion=array();
-	$ret=$form->form_confirm($_SERVER["PHP_SELF"].'?noparam=noparam', $langs->trans('LockNewSessions'), $langs->trans('ConfirmLockNewSessions',$user->login),'confirm_lock',$formquestion,'no',1);
-	if ($ret == 'html') print '<br>';
+if ($action == 'purge') {
+    $formquestion=array();
+    $ret=$form->form_confirm($_SERVER["PHP_SELF"].'?noparam=noparam', $langs->trans('PurgeSessions'), $langs->trans('ConfirmPurgeSessions'),'confirm_purge',$formquestion,'no',2);
+    if ($ret == 'html') print '<br>';
+} elseif ($action == 'lock') {
+    $formquestion=array();
+    $ret=$form->form_confirm($_SERVER["PHP_SELF"].'?noparam=noparam', $langs->trans('LockNewSessions'), $langs->trans('ConfirmLockNewSessions',$user->login),'confirm_lock',$formquestion,'no',1);
+    if ($ret == 'html') print '<br>';
 }
 
-if ($savehandler == 'files')
-{
-	print '<table class="liste" width="100%">';
-	print '<tr class="liste_titre">';
-	print_liste_field_titre($langs->trans("Login"),$_SERVER["PHP_SELF"],"login","","",'align="left"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("SessionId"),$_SERVER["PHP_SELF"],"id","","",'align="left"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("DateCreation"),$_SERVER["PHP_SELF"],"datec","","",'align="left"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("DateModification"),$_SERVER["PHP_SELF"],"datem","","",'align="left"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Age"),$_SERVER["PHP_SELF"],"age","","",'align="left"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Raw"),$_SERVER["PHP_SELF"],"raw","","",'align="left"',$sortfield,$sortorder);
-	print_liste_field_titre('','','');
-	print "</tr>\n";
+if ($savehandler == 'files') {
+    print '<table class="liste" width="100%">';
+    print '<tr class="liste_titre">';
+    print_liste_field_titre($langs->trans("Login"),$_SERVER["PHP_SELF"],"login","","",'align="left"',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("SessionId"),$_SERVER["PHP_SELF"],"id","","",'align="left"',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("DateCreation"),$_SERVER["PHP_SELF"],"datec","","",'align="left"',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("DateModification"),$_SERVER["PHP_SELF"],"datem","","",'align="left"',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Age"),$_SERVER["PHP_SELF"],"age","","",'align="left"',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Raw"),$_SERVER["PHP_SELF"],"raw","","",'align="left"',$sortfield,$sortorder);
+    print_liste_field_titre('','','');
+    print "</tr>\n";
 
-	$var=True;
+    $var=True;
 
-	foreach ($listofsessions as $key => $sessionentry)
-	{
-		$var=!$var;
+    foreach ($listofsessions as $key => $sessionentry) {
+        $var=!$var;
 
-		print "<tr $bc[$var]>";
+        print "<tr $bc[$var]>";
 
-		// Login
-		print '<td>'.$sessionentry['login'].'</td>';
+        // Login
+        print '<td>'.$sessionentry['login'].'</td>';
 
-		// ID
-		print '<td align="left" class="nowrap">';
-		if ("$key" == session_id()) print $form->textwithpicto($key,$langs->trans("YourSession"));
-		else print $key;
-		print '</td>';
+        // ID
+        print '<td align="left" class="nowrap">';
+        if ("$key" == session_id()) print $form->textwithpicto($key,$langs->trans("YourSession"));
+        else print $key;
+        print '</td>';
 
-		// Date creation
-		print '<td align="left" class="nowrap">'.dol_print_date($sessionentry['creation'],'%Y-%m-%d %H:%M:%S').'</td>';
+        // Date creation
+        print '<td align="left" class="nowrap">'.dol_print_date($sessionentry['creation'],'%Y-%m-%d %H:%M:%S').'</td>';
 
-		// Date modification
-		print '<td align="left" class="nowrap">'.dol_print_date($sessionentry['modification'],'%Y-%m-%d %H:%M:%S').'</td>';
+        // Date modification
+        print '<td align="left" class="nowrap">'.dol_print_date($sessionentry['modification'],'%Y-%m-%d %H:%M:%S').'</td>';
 
-		// Age
-		print '<td>'.$sessionentry['age'].'</td>';
+        // Age
+        print '<td>'.$sessionentry['age'].'</td>';
 
-		// Raw
-		print '<td>'.dol_trunc($sessionentry['raw'],40,'middle').'</td>';
+        // Raw
+        print '<td>'.dol_trunc($sessionentry['raw'],40,'middle').'</td>';
 
-		print '<td>&nbsp;</td>';
+        print '<td>&nbsp;</td>';
 
-		print "</tr>\n";
-		$i++;
-	}
+        print "</tr>\n";
+        $i++;
+    }
 
-	if (count($listofsessions) == 0)
-	{
-		print '<tr><td colspan="6">'.$langs->trans("NoSessionFound",$savepath,$openbasedir).'</td></tr>';
-	}
-	print "</table>";
+    if (count($listofsessions) == 0) {
+        print '<tr><td colspan="6">'.$langs->trans("NoSessionFound",$savepath,$openbasedir).'</td></tr>';
+    }
+    print "</table>";
 
-}
-else
-{
-	print $langs->trans("NoSessionListWithThisHandler");
+} else {
+    print $langs->trans("NoSessionListWithThisHandler");
 }
 
 /*
@@ -192,22 +175,16 @@ else
 
 print '<div class="tabsAction">';
 
-
-if (empty($conf->global->MAIN_ONLY_LOGIN_ALLOWED))
-{
-	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=lock">'.$langs->trans("LockNewSessions").'</a>';
-}
-else
-{
-	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=confirm_unlock">'.$langs->trans("UnlockNewSessions").'</a>';
+if (empty($conf->global->MAIN_ONLY_LOGIN_ALLOWED)) {
+    print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=lock">'.$langs->trans("LockNewSessions").'</a>';
+} else {
+    print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=confirm_unlock">'.$langs->trans("UnlockNewSessions").'</a>';
 }
 
-if ($savehandler == 'files')
-{
-	if (count($listofsessions))
-	{
-	    print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=purge">'.$langs->trans("PurgeSessions").'</a>';
-	}
+if ($savehandler == 'files') {
+    if (count($listofsessions)) {
+        print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=purge">'.$langs->trans("PurgeSessions").'</a>';
+    }
 }
 
 print '</div>';
@@ -216,4 +193,3 @@ print '<br>';
 
 llxFooter();
 $db->close();
-?>

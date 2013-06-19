@@ -36,8 +36,8 @@
 // +-----------------------------------------------------------------------+
 //
 
-require_once('PEAR.php');
-require_once('Mail/mimePart.php');
+require_once 'PEAR.php';
+require_once 'Mail/mimePart.php';
 
 /**
  * Mime mail composer class. Can handle: text and html bodies, embedded html
@@ -61,55 +61,54 @@ class Mail_mime
      * Contains the plain text part of the email
      * @var string
      */
-    var $_txtbody;
+    public $_txtbody;
     /**
      * Contains the html part of the email
      * @var string
      */
-    var $_htmlbody;
+    public $_htmlbody;
     /**
      * contains the mime encoded text
      * @var string
      */
-    var $_mime;
+    public $_mime;
     /**
      * contains the multipart content
      * @var string
      */
-    var $_multipart;
+    public $_multipart;
     /**
      * list of the attached images
      * @var array
      */
-    var $_html_images = array();
+    public $_html_images = array();
     /**
      * list of the attachements
      * @var array
      */
-    var $_parts = array();
+    public $_parts = array();
     /**
      * Build parameters
      * @var array
      */
-    var $_build_params = array();
+    public $_build_params = array();
     /**
      * Headers for the mail
      * @var array
      */
-    var $_headers = array();
+    public $_headers = array();
     /**
      * End Of Line sequence (for serialize)
      * @var string
      */
-    var $_eol;
-
+    public $_eol;
 
     /**
      * Constructor function
      *
      * @access public
      */
-    function Mail_mime($crlf = "\r\n")
+    public function Mail_mime($crlf = "\r\n")
     {
         $this->_setEOL($crlf);
         $this->_build_params = array(
@@ -127,7 +126,7 @@ class Mail_mime
      *
      * @access private
      */
-    function __wakeup()
+    public function __wakeup()
     {
         $this->_setEOL($this->_eol);
     }
@@ -138,17 +137,17 @@ class Mail_mime
      * text/plain part that emails clients who don't support
      * html should show.
      *
-     * @param  string  $data   Either a string or
+     * @param string $data Either a string or
      *                         the file name with the contents
-     * @param  bool    $isfile If true the first param should be treated
+     * @param bool $isfile If true the first param should be treated
      *                         as a file name, else as a string (default)
-     * @param  bool    $append If true the text or file is appended to
+     * @param bool $append If true the text or file is appended to
      *                         the existing body, else the old body is
      *                         overwritten
-     * @return mixed   true on success or PEAR_Error object
+     * @return mixed true on success or PEAR_Error object
      * @access public
      */
-    function setTXTBody($data, $isfile = false, $append = false)
+    public function setTXTBody($data, $isfile = false, $append = false)
     {
         if (!$isfile) {
             if (!$append) {
@@ -167,20 +166,21 @@ class Mail_mime
                 $this->_txtbody .= $cont;
             }
         }
+
         return true;
     }
 
     /**
      * Adds a html part to the mail
      *
-     * @param  string  $data   Either a string or the file name with the
+     * @param string $data Either a string or the file name with the
      *                         contents
-     * @param  bool    $isfile If true the first param should be treated
+     * @param bool $isfile If true the first param should be treated
      *                         as a file name, else as a string (default)
-     * @return mixed   true on success or PEAR_Error object
+     * @return mixed true on success or PEAR_Error object
      * @access public
      */
-    function setHTMLBody($data, $isfile = false)
+    public function setHTMLBody($data, $isfile = false)
     {
         if (!$isfile) {
             $this->_htmlbody = $data;
@@ -198,16 +198,16 @@ class Mail_mime
     /**
      * Adds an image to the list of embedded images.
      *
-     * @param  string  $file       The image file name OR image data itself
-     * @param  string  $c_type     The content type
-     * @param  string  $name       The filename of the image.
+     * @param string $file   The image file name OR image data itself
+     * @param string $c_type The content type
+     * @param string $name   The filename of the image.
      *                             Only use if $file is the image data
-     * @param  bool    $isfilename Whether $file is a filename or not
+     * @param bool $isfilename Whether $file is a filename or not
      *                             Defaults to true
-     * @return mixed   true on success or PEAR_Error object
+     * @return mixed true on success or PEAR_Error object
      * @access public
      */
-    function addHTMLImage($file, $c_type='application/octet-stream',
+    public function addHTMLImage($file, $c_type='application/octet-stream',
                           $name = '', $isfilename = true)
     {
         $filedata = ($isfilename === true) ? $this->_file2str($file)
@@ -226,23 +226,24 @@ class Mail_mime
                                       'c_type' => $c_type,
                                       'cid'    => md5(uniqid(time()))
                                      );
+
         return true;
     }
 
     /**
      * Adds a file to the list of attachments.
      *
-     * @param  string  $file       The file name of the file to attach
+     * @param string $file The file name of the file to attach
      *                             OR the file data itself
-     * @param  string  $c_type     The content type
-     * @param  string  $name       The filename of the attachment
+     * @param string $c_type The content type
+     * @param string $name   The filename of the attachment
      *                             Only use if $file is the file data
-     * @param  bool    $isFilename Whether $file is a filename or not
+     * @param bool $isFilename Whether $file is a filename or not
      *                             Defaults to true
      * @return mixed true on success or PEAR_Error object
      * @access public
      */
-    function addAttachment($file, $c_type = 'application/octet-stream',
+    public function addAttachment($file, $c_type = 'application/octet-stream',
                            $name = '', $isfilename = true,
                            $encoding = 'base64')
     {
@@ -270,14 +271,15 @@ class Mail_mime
                                 'c_type'   => $c_type,
                                 'encoding' => $encoding
                                );
+
         return true;
     }
 
     /**
      * Get the contents of the given file name as string
      *
-     * @param  string  $file_name  path of file to process
-     * @return string  contents of $file_name
+     * @param  string $file_name path of file to process
+     * @return string contents of $file_name
      * @access private
      */
     function &_file2str($file_name)
@@ -289,12 +291,13 @@ class Mail_mime
             return PEAR::raiseError('Could not open ' . $file_name);
         }
         $filesize = filesize($file_name);
-        if ($filesize == 0){
+        if ($filesize == 0) {
             $cont =  "";
-        }else{
+        } else {
             $cont = fread($fd, $filesize);
         }
         fclose($fd);
+
         return $cont;
     }
 
@@ -305,7 +308,7 @@ class Mail_mime
      * @param mixed    The object to add the part to, or
      *                 null if a new object is to be created.
      * @param string   The text to add.
-     * @return object  The text mimePart object
+     * @return object The text mimePart object
      * @access private
      */
     function &_addTextPart(&$obj, $text)
@@ -326,7 +329,7 @@ class Mail_mime
      *
      * @param  mixed   The object to add the part to, or
      *                 null if a new object is to be created.
-     * @return object  The html mimePart object
+     * @return object The html mimePart object
      * @access private
      */
     function &_addHtmlPart(&$obj)
@@ -346,12 +349,13 @@ class Mail_mime
      * the initial content-type and returns it during the
      * build process.
      *
-     * @return object  The multipart/mixed mimePart object
+     * @return object The multipart/mixed mimePart object
      * @access private
      */
     function &_addMixedPart()
     {
         $params['content_type'] = 'multipart/mixed';
+
         return new Mail_mimePart('', $params);
     }
 
@@ -362,7 +366,7 @@ class Mail_mime
      *
      * @param  mixed   The object to add the part to, or
      *                 null if a new object is to be created.
-     * @return object  The multipart/mixed mimePart object
+     * @return object The multipart/mixed mimePart object
      * @access private
      */
     function &_addAlternativePart(&$obj)
@@ -382,7 +386,7 @@ class Mail_mime
      *
      * @param mixed    The object to add the part to, or
      *                 null if a new object is to be created
-     * @return object  The multipart/mixed mimePart object
+     * @return object The multipart/mixed mimePart object
      * @access private
      */
     function &_addRelatedPart(&$obj)
@@ -401,7 +405,7 @@ class Mail_mime
      *
      * @param  object  The mimePart to add the image to
      * @param  array   The image information
-     * @return object  The image mimePart object
+     * @return object The image mimePart object
      * @access private
      */
     function &_addHtmlImagePart(&$obj, $value)
@@ -420,7 +424,7 @@ class Mail_mime
      *
      * @param  object  The mimePart to add the image to
      * @param  array   The attachment information
-     * @return object  The image mimePart object
+     * @return object The image mimePart object
      * @access private
      */
     function &_addAttachmentPart(&$obj, $value)
@@ -562,6 +566,7 @@ class Mail_mime
             $output = $message->encode();
             $this->_headers = array_merge($this->_headers,
                                           $output['headers']);
+
             return $output['body'];
 
         } else {
@@ -574,7 +579,7 @@ class Mail_mime
      * (MIME-Version and Content-Type). Format of argument is:
      * $array['header-name'] = 'header-value';
      *
-     * @param  array $xtra_headers Assoc array with any extra headers.
+     * @param array $xtra_headers Assoc array with any extra headers.
      *                             Optional.
      * @return array Assoc array with the mime headers
      * @access public
@@ -596,28 +601,29 @@ class Mail_mime
      * Get the text version of the headers
      * (usefull if you want to use the PHP mail() function)
      *
-     * @param  array   $xtra_headers Assoc array with any extra headers.
+     * @param array $xtra_headers Assoc array with any extra headers.
      *                               Optional.
-     * @return string  Plain text headers
+     * @return string Plain text headers
      * @access public
      */
-    function txtHeaders($xtra_headers = null)
+    public function txtHeaders($xtra_headers = null)
     {
         $headers = $this->headers($xtra_headers);
         $ret = '';
         foreach ($headers as $key => $val) {
             $ret .= "$key: $val" . MAIL_MIME_CRLF;
         }
+
         return $ret;
     }
 
     /**
      * Sets the Subject header
      *
-     * @param  string $subject String to set the subject to
+     * @param string $subject String to set the subject to
      * access  public
      */
-    function setSubject($subject)
+    public function setSubject($subject)
     {
         $this->_headers['Subject'] = $subject;
     }
@@ -625,10 +631,10 @@ class Mail_mime
     /**
      * Set an email to the From (the sender) header
      *
-     * @param  string $email The email direction to add
+     * @param string $email The email direction to add
      * @access public
      */
-    function setFrom($email)
+    public function setFrom($email)
     {
         $this->_headers['From'] = $email;
     }
@@ -637,10 +643,10 @@ class Mail_mime
      * Add an email to the Cc (carbon copy) header
      * (multiple calls to this method are allowed)
      *
-     * @param  string $email The email direction to add
+     * @param string $email The email direction to add
      * @access public
      */
-    function addCc($email)
+    public function addCc($email)
     {
         if (isset($this->_headers['Cc'])) {
             $this->_headers['Cc'] .= ", $email";
@@ -653,10 +659,10 @@ class Mail_mime
      * Add an email to the Bcc (blank carbon copy) header
      * (multiple calls to this method are allowed)
      *
-     * @param  string $email The email direction to add
+     * @param string $email The email direction to add
      * @access public
      */
-    function addBcc($email)
+    public function addBcc($email)
     {
         if (isset($this->_headers['Bcc'])) {
             $this->_headers['Bcc'] .= ", $email";
@@ -668,11 +674,11 @@ class Mail_mime
     /**
      * Encodes a header as per RFC2047
      *
-     * @param  string  $input The header data to encode
-     * @return string  Encoded data
+     * @param  string $input The header data to encode
+     * @return string Encoded data
      * @access private
      */
-    function _encodeHeaders($input)
+    public function _encodeHeaders($input)
     {
         foreach ($input as $hdr_name => $hdr_value) {
             preg_match_all('/(\w*[\x80-\xFF]+\w*)/', $hdr_value, $matches);
@@ -698,7 +704,7 @@ class Mail_mime
      * @param string $eol End Of Line sequence
      * @access private
      */
-    function _setEOL($eol)
+    public function _setEOL($eol)
     {
         $this->_eol = $eol;
         if (!defined('MAIL_MIME_CRLF')) {
@@ -706,7 +712,4 @@ class Mail_mime
         }
     }
 
-    
-
 } // End of class
-?>

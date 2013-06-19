@@ -30,10 +30,9 @@
 
 define('NOTOKENRENEWAL',1); // Disables token renewal
 // Pour autre que bittorrent, on charge environnement + info issus de logon (comme le user)
-if (isset($_GET["modulepart"]) && $_GET["modulepart"] == 'bittorrent' && ! defined("NOLOGIN"))
-{
-	define("NOLOGIN",1);
-	define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
+if (isset($_GET["modulepart"]) && $_GET["modulepart"] == 'bittorrent' && ! defined("NOLOGIN")) {
+    define("NOLOGIN",1);
+    define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
 }
 if (! defined('NOREQUIREMENU')) define('NOREQUIREMENU','1');
 if (! defined('NOREQUIREHTML')) define('NOREQUIREHTML','1');
@@ -52,7 +51,6 @@ function llxHeader() { }
  */
 function llxFooter() { }
 
-
 require 'main.inc.php';	// Load $user and permissions
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
@@ -66,13 +64,11 @@ $entity=GETPOST('entity')?GETPOST('entity','int'):$conf->entity;
 // Security check
 if (empty($modulepart)) accessforbidden('Bad value for parameter modulepart');
 
-
 /*
  * Action
  */
 
 // None
-
 
 /*
  * View
@@ -103,47 +99,39 @@ $sqlprotectagainstexternals = $check_access['sqlprotectagainstexternals'];
 $original_file              = $check_access['original_file'];
 
 // Basic protection (against external users only)
-if ($user->societe_id > 0)
-{
-	if ($sqlprotectagainstexternals)
-	{
-		$resql = $db->query($sqlprotectagainstexternals);
-		if ($resql)
-		{
-			$num=$db->num_rows($resql);
-			$i=0;
-			while ($i < $num)
-			{
-				$obj = $db->fetch_object($resql);
-				if ($user->societe_id != $obj->fk_soc)
-				{
-					$accessallowed=0;
-					break;
-				}
-				$i++;
-			}
-		}
-	}
+if ($user->societe_id > 0) {
+    if ($sqlprotectagainstexternals) {
+        $resql = $db->query($sqlprotectagainstexternals);
+        if ($resql) {
+            $num=$db->num_rows($resql);
+            $i=0;
+            while ($i < $num) {
+                $obj = $db->fetch_object($resql);
+                if ($user->societe_id != $obj->fk_soc) {
+                    $accessallowed=0;
+                    break;
+                }
+                $i++;
+            }
+        }
+    }
 }
 
 // Security:
 // Limite acces si droits non corrects
-if (! $accessallowed)
-{
-	accessforbidden();
+if (! $accessallowed) {
+    accessforbidden();
 }
 
 // Security:
 // On interdit les remontees de repertoire ainsi que les pipe dans
 // les noms de fichiers.
-if (preg_match('/\.\./',$original_file) || preg_match('/[<>|]/',$original_file))
-{
-	dol_syslog("Refused to deliver file ".$original_file);
-	$file=basename($original_file);		// Do no show plain path of original_file in shown error message
-	dol_print_error(0,$langs->trans("ErrorFileNameInvalid",$file));
-	exit;
+if (preg_match('/\.\./',$original_file) || preg_match('/[<>|]/',$original_file)) {
+    dol_syslog("Refused to deliver file ".$original_file);
+    $file=basename($original_file);		// Do no show plain path of original_file in shown error message
+    dol_print_error(0,$langs->trans("ErrorFileNameInvalid",$file));
+    exit;
 }
-
 
 clearstatcache();
 
@@ -154,10 +142,9 @@ dol_syslog("document.php download $original_file $filename content-type=$type");
 $original_file_osencoded=dol_osencode($original_file);	// New file name encoded in OS encoding charset
 
 // This test if file exists should be useless. We keep it to find bug more easily
-if (! file_exists($original_file_osencoded))
-{
-	dol_print_error(0,$langs->trans("ErrorFileDoesNotExists",$original_file));
-	exit;
+if (! file_exists($original_file_osencoded)) {
+    dol_print_error(0,$langs->trans("ErrorFileDoesNotExists",$original_file));
+    exit;
 }
 
 // Les drois sont ok et fichier trouve, on l'envoie
@@ -177,5 +164,3 @@ header('Pragma: public');
 //flush();
 
 readfile($original_file_osencoded);
-
-?>

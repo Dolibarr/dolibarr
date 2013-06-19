@@ -47,14 +47,11 @@ $elementtype='product'; //Must be the $element of the class that manage extrafie
 
 if (!$user->admin) accessforbidden();
 
-
 /*
  * Actions
  */
 
 require DOL_DOCUMENT_ROOT.'/core/admin_extrafields.inc.php';
-
-
 
 /*
  * View
@@ -62,29 +59,23 @@ require DOL_DOCUMENT_ROOT.'/core/admin_extrafields.inc.php';
 
 $title = $langs->trans('ProductServiceSetup');
 $tab = $langs->trans("ProductsAndServices");
-if (empty($conf->produit->enabled))
-{
-	$title = $langs->trans('ServiceSetup');
-	$tab = $langs->trans('Services');
-}
-else if (empty($conf->service->enabled))
-{
-	$title = $langs->trans('ProductSetup');
-	$tab = $langs->trans('Products');
+if (empty($conf->produit->enabled)) {
+    $title = $langs->trans('ServiceSetup');
+    $tab = $langs->trans('Services');
+} elseif (empty($conf->service->enabled)) {
+    $title = $langs->trans('ProductSetup');
+    $tab = $langs->trans('Products');
 }
 
 $help_url='EN:Module Third Parties setup|FR:Paramétrage_du_module_Tiers';
 llxHeader('',$title);
 
-
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print_fiche_titre($title,$linkback,'setup');
-
 
 $head = product_admin_prepare_head();
 
 dol_fiche_head($head, 'attributes', $tab, 0, 'product');
-
 
 print $langs->trans('DefineHereComplementaryAttributes', $tab).'<br>'."\n";
 print '<br>';
@@ -107,8 +98,7 @@ print '<td width="80">&nbsp;</td>';
 print "</tr>\n";
 
 $var=True;
-foreach($extrafields->attribute_type as $key => $value)
-{
+foreach ($extrafields->attribute_type as $key => $value) {
     $var=!$var;
     print "<tr ".$bc[$var].">";
     print "<td>".$extrafields->attribute_label[$key]."</td>\n";
@@ -127,15 +117,12 @@ print "</table>";
 
 dol_fiche_end();
 
-
 // Buttons
-if ($action != 'create' && $action != 'edit')
-{
+if ($action != 'create' && $action != 'edit') {
     print '<div class="tabsAction">';
     print "<a class=\"butAction\" href=\"".$_SERVER["PHP_SELF"]."?action=create\">".$langs->trans("NewAttribute")."</a>";
     print "</div>";
 }
-
 
 /* ************************************************************************** */
 /*                                                                            */
@@ -143,8 +130,7 @@ if ($action != 'create' && $action != 'edit')
  /*                                                                            */
 /* ************************************************************************** */
 
-if ($action == 'create')
-{
+if ($action == 'create') {
     print "<br>";
     print_titre($langs->trans('NewAttribute'));
 
@@ -156,8 +142,7 @@ if ($action == 'create')
 /* Edition d'un champ optionnel                                               */
 /*                                                                            */
 /* ************************************************************************** */
-if ($action == 'edit' && ! empty($attrname))
-{
+if ($action == 'edit' && ! empty($attrname)) {
     print "<br>";
     print_titre($langs->trans("FieldEdition", $attrname));
 
@@ -167,4 +152,3 @@ if ($action == 'edit' && ! empty($attrname))
 llxFooter();
 
 $db->close();
-?>

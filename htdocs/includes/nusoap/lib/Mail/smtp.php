@@ -23,19 +23,19 @@
  * @access public
  * @package Mail
  */
-class Mail_smtp extends Mail {
-
+class Mail_smtp extends Mail
+{
     /**
      * The SMTP host to connect to.
      * @var string
      */
-    var $host = 'localhost';
+    public $host = 'localhost';
 
     /**
      * The port the SMTP server is on.
      * @var integer
      */
-    var $port = 25;
+    public $port = 25;
 
     /**
      * Should SMTP authentication be used?
@@ -48,19 +48,19 @@ class Mail_smtp extends Mail {
      *
      * @var mixed
      */
-    var $auth = false;
+    public $auth = false;
 
     /**
      * The username to use if the SMTP server requires authentication.
      * @var string
      */
-    var $username = '';
+    public $username = '';
 
     /**
      * The password to use if the SMTP server requires authentication.
      * @var string
      */
-    var $password = '';
+    public $password = '';
 
     /**
      * Hostname or domain that will be sent to the remote SMTP server in the
@@ -68,14 +68,14 @@ class Mail_smtp extends Mail {
      *
      * @var string
      */
-    var $localhost = 'localhost';
+    public $localhost = 'localhost';
 
     /**
      * SMTP connection timeout value.  NULL indicates no timeout.
      *
      * @var integer
      */
-    var $timeout = null;
+    public $timeout = null;
 
     /**
      * Whether to use VERP or not. If not a boolean, the string value
@@ -83,14 +83,14 @@ class Mail_smtp extends Mail {
      *
      * @var mixed boolean or string
      */
-    var $verp = false;
+    public $verp = false;
 
     /**
      * Turn on Net_SMTP debugging?
      *
      * @var boolean $debug
      */
-    var $debug = false;
+    public $debug = false;
 
     /**
      * Constructor.
@@ -114,7 +114,7 @@ class Mail_smtp extends Mail {
      *              defaults.
      * @access public
      */
-    function Mail_smtp($params)
+    public function Mail_smtp($params)
     {
         if (isset($params['host'])) $this->host = $params['host'];
         if (isset($params['port'])) $this->port = $params['port'];
@@ -124,7 +124,7 @@ class Mail_smtp extends Mail {
         if (isset($params['localhost'])) $this->localhost = $params['localhost'];
         if (isset($params['timeout'])) $this->timeout = $params['timeout'];
         if (isset($params['verp'])) $this->verp = $params['verp'];
-        if (isset($params['debug'])) $this->debug = (boolean)$params['debug'];
+        if (isset($params['debug'])) $this->debug = (boolean) $params['debug'];
     }
 
     /**
@@ -151,7 +151,7 @@ class Mail_smtp extends Mail {
      *               failure.
      * @access public
      */
-    function send($recipients, $headers, $body)
+    public function send($recipients, $headers, $body)
     {
         include_once 'Net/SMTP.php';
 
@@ -216,6 +216,7 @@ class Mail_smtp extends Mail {
         }
 
         $smtp->disconnect();
+
         return true;
     }
 

@@ -33,8 +33,8 @@ $object->fetch($facid);
 
 <style type="text/css">
 body {
-	font-size: 1.5em;
-	position: relative;
+    font-size: 1.5em;
+    position: relative;
 }
 
 .entete { /* 		position: relative; */
@@ -42,52 +42,52 @@ body {
 }
 
 .address { /* 			float: left; */
-	font-size: 12px;
+    font-size: 12px;
 }
 
 .date_heure {
-	position: absolute;
-	top: 0;
-	right: 0;
-	font-size: 16px;
+    position: absolute;
+    top: 0;
+    right: 0;
+    font-size: 16px;
 }
 
 .infos {
-	position: relative;
+    position: relative;
 }
 
 .liste_articles {
-	width: 100%;
-	border-bottom: 1px solid #000;
-	text-align: center;
+    width: 100%;
+    border-bottom: 1px solid #000;
+    text-align: center;
 }
 
 .liste_articles tr.titres th {
-	border-bottom: 1px solid #000;
+    border-bottom: 1px solid #000;
 }
 
 .liste_articles td.total {
-	text-align: right;
+    text-align: right;
 }
 
 .totaux {
-	margin-top: 20px;
-	width: 30%;
-	float: right;
-	text-align: right;
+    margin-top: 20px;
+    width: 30%;
+    float: right;
+    text-align: right;
 }
 
 .lien {
-	position: absolute;
-	top: 0;
-	left: 0;
-	display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: none;
 }
 
 @media print {
-	.lien {
-		display: none;
-	}
+    .lien {
+        display: none;
+    }
 }
 </style>
 
@@ -115,27 +115,26 @@ print $object->ref;
 <br>
 
 <table class="liste_articles">
-	<tr class="titres">
-		<th><?php print $langs->trans("Code"); ?></th>
-		<th><?php print $langs->trans("Label"); ?></th>
-		<th><?php print $langs->trans("Qty"); ?></th>
-		<th><?php print $langs->trans("Discount").' (%)'; ?></th>
-		<th><?php print $langs->trans("TotalHT"); ?></th>
-	</tr>
+    <tr class="titres">
+        <th><?php print $langs->trans("Code"); ?></th>
+        <th><?php print $langs->trans("Label"); ?></th>
+        <th><?php print $langs->trans("Qty"); ?></th>
+        <th><?php print $langs->trans("Discount").' (%)'; ?></th>
+        <th><?php print $langs->trans("TotalHT"); ?></th>
+    </tr>
 
-	<?php
+    <?php
 
-	$tab=array();
+    $tab=array();
     $tab = $_SESSION['poscart'];
 
     $tab_size=count($tab);
-    for($i=0;$i < $tab_size;$i++)
-    {
+    for ($i=0;$i < $tab_size;$i++) {
         $remise = $tab[$i]['remise'];
         echo ('<tr><td>'.$tab[$i]['ref'].'</td><td>'.$tab[$i]['label'].'</td><td>'.$tab[$i]['qte'].'</td><td>'.$tab[$i]['remise_percent'].'</td><td class="total">'.price(price2num($tab[$i]['total_ht'],'MT'),0,$langs,0,0,-1,$conf->currency).'</td></tr>'."\n");
     }
 
-	?>
+    ?>
 </table>
 
 <table class="totaux">
@@ -147,10 +146,10 @@ echo '<tr><th class="nowrap">'.$langs->trans("TotalTTC").'</th><td class="nowrap
 </table>
 
 <script type="text/javascript">
-	window.print();
+    window.print();
 </script>
 
 <a class="lien" href="#"
-	onclick="javascript: window.close(); return(false);"><?php echo $langs->trans("Close"); ?></a>
+    onclick="javascript: window.close(); return(false);"><?php echo $langs->trans("Close"); ?></a>
 
 </body>

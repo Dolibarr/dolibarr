@@ -22,7 +22,6 @@
  *  \brief		File of class to manage module geoip
  */
 
-
 /**
  * 		\class      DolGeoIP
  *      \brief      Classe to manage GeoIP
@@ -33,120 +32,107 @@
  */
 class DolGeoIP
 {
-	var $gi;
+    public $gi;
 
-	/**
-	 * Constructor
-	 *
-	 * @param 	string	$type		'country' or 'city'
-	 * @param	string	$datfile	Data file
-	 * @return 	GeoIP
-	 */
-	function __construct($type,$datfile)
-	{
-		if ($type == 'country')
-		{
-		    // geoip may have been already included with PEAR
-		    if (! function_exists('geoip_country_code_by_name')) $res=include_once GEOIP_PATH.'geoip.inc';
-		}
-		else if ($type == 'city')
-		{
-		    // geoip may have been already included with PEAR
-		    if (! function_exists('geoip_country_code_by_name')) $res=include_once GEOIP_PATH.'geoipcity.inc';
-		}
-		else { print 'ErrorBadParameterInConstructor'; return 0; }
+    /**
+     * Constructor
+     *
+     * @param  string $type    'country' or 'city'
+     * @param  string $datfile Data file
+     * @return GeoIP
+     */
+    public function __construct($type,$datfile)
+    {
+        if ($type == 'country') {
+            // geoip may have been already included with PEAR
+            if (! function_exists('geoip_country_code_by_name')) $res=include_once GEOIP_PATH.'geoip.inc';
+        } elseif ($type == 'city') {
+            // geoip may have been already included with PEAR
+            if (! function_exists('geoip_country_code_by_name')) $res=include_once GEOIP_PATH.'geoipcity.inc';
+        } else { print 'ErrorBadParameterInConstructor'; return 0; }
 
-		// Here, function exists (embedded into PHP or exists because we made include)
-		if (empty($type) || empty($datfile))
-		{
-			//dol_syslog("DolGeoIP::DolGeoIP parameter datafile not defined", LOG_ERR);
-			$this->errorlabel='DolGeoIP constructor was called with no datafile parameter';
-			//dol_print_error('','DolGeoIP constructor was called with no datafile parameter');
-			print $this->errorlabel;
-			return 0;
-		}
-		if (! file_exists($datfile))
-		{
-			//dol_syslog("DolGeoIP::DolGeoIP datafile ".$datfile." can not be read", LOG_ERR);
-			$this->error='ErrorGeoIPClassNotInitialized';
-			$this->errorlabel="Datafile ".$datfile." not found";
-			print $this->errorlabel;
-			return 0;
-		}
+        // Here, function exists (embedded into PHP or exists because we made include)
+        if (empty($type) || empty($datfile)) {
+            //dol_syslog("DolGeoIP::DolGeoIP parameter datafile not defined", LOG_ERR);
+            $this->errorlabel='DolGeoIP constructor was called with no datafile parameter';
+            //dol_print_error('','DolGeoIP constructor was called with no datafile parameter');
+            print $this->errorlabel;
 
-		if (function_exists('geoip_open'))
-		{
-		    $this->gi = geoip_open($datfile,GEOIP_STANDARD);
-		}
-		else
-		{
-		    $this->gi = 'NOGI';    // We are using embedded php geoip functions
-		    //print 'function_exists(geoip_country_code_by_name))='.function_exists('geoip_country_code_by_name');
-		    //print geoip_database_info();
-		}
-	}
+            return 0;
+        }
+        if (! file_exists($datfile)) {
+            //dol_syslog("DolGeoIP::DolGeoIP datafile ".$datfile." can not be read", LOG_ERR);
+            $this->error='ErrorGeoIPClassNotInitialized';
+            $this->errorlabel="Datafile ".$datfile." not found";
+            print $this->errorlabel;
 
-	/**
-	 * Return in lower case the country code from an ip
-	 *
-	 * @param	string	$ip		IP to scan
-	 * @return	string			Country code (two letters)
-	 */
-	function getCountryCodeFromIP($ip)
-	{
-		if (empty($this->gi))
-		{
-			return '';
-		}
-		if ($this->gi == 'NOGI')
-		{
-		    // geoip_country_code_by_addr does not exists
-    		return strtolower(geoip_country_code_by_name($ip));
-		}
-		else
-		{
-		    if (! function_exists('geoip_country_code_by_addr')) return strtolower(geoip_country_code_by_name($this->gi, $ip));
-		    return strtolower(geoip_country_code_by_addr($this->gi, $ip));
-		}
-	}
+            return 0;
+        }
 
-	/**
-	 * Return in lower case the country code from a host name
-	 *
-	 * @param	string	$name	FQN of host (example: myserver.xyz.com)
-	 * @return	string			Country code (two letters)
-	 */
-	function getCountryCodeFromName($name)
-	{
-		if (empty($this->gi))
-		{
-			return '';
-		}
-		return geoip_country_code_by_name($this->gi, $name);
-	}
+        if (function_exists('geoip_open')) {
+            $this->gi = geoip_open($datfile,GEOIP_STANDARD);
+        } else {
+            $this->gi = 'NOGI';    // We are using embedded php geoip functions
+            //print 'function_exists(geoip_country_code_by_name))='.function_exists('geoip_country_code_by_name');
+            //print geoip_database_info();
+        }
+    }
 
-	/**
-	 * Return verion of data file
-	 *
-	 * @return	string		Version of datafile
-	 */
-	function getVersion()
-	{
-	    if ($this->gi == 'NOGI') return geoip_database_info();
-		return '';
-	}
+    /**
+     * Return in lower case the country code from an ip
+     *
+     * @param  string $ip IP to scan
+     * @return string Country code (two letters)
+     */
+    public function getCountryCodeFromIP($ip)
+    {
+        if (empty($this->gi)) {
+            return '';
+        }
+        if ($this->gi == 'NOGI') {
+            // geoip_country_code_by_addr does not exists
+            return strtolower(geoip_country_code_by_name($ip));
+        } else {
+            if (! function_exists('geoip_country_code_by_addr')) return strtolower(geoip_country_code_by_name($this->gi, $ip));
+            return strtolower(geoip_country_code_by_addr($this->gi, $ip));
+        }
+    }
 
-	/**
-	 * Close geoip object
-	 *
-	 * @return	void
-	 */
-	function close()
-	{
-	    if (function_exists('geoip_close'))    // With some geoip with PEAR, geoip_close function may not exists
-	    {
-	        geoip_close($this->gi);
-	    }
-	}
+    /**
+     * Return in lower case the country code from a host name
+     *
+     * @param  string $name FQN of host (example: myserver.xyz.com)
+     * @return string Country code (two letters)
+     */
+    public function getCountryCodeFromName($name)
+    {
+        if (empty($this->gi)) {
+            return '';
+        }
+
+        return geoip_country_code_by_name($this->gi, $name);
+    }
+
+    /**
+     * Return verion of data file
+     *
+     * @return string Version of datafile
+     */
+    public function getVersion()
+    {
+        if ($this->gi == 'NOGI') return geoip_database_info();
+        return '';
+    }
+
+    /**
+     * Close geoip object
+     *
+     * @return void
+     */
+    public function close()
+    {
+        if (function_exists('geoip_close')) {    // With some geoip with PEAR, geoip_close function may not exists
+            geoip_close($this->gi);
+        }
+    }
 }
-?>

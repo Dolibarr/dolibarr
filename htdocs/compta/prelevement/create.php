@@ -24,7 +24,7 @@
  *	\brief      Prelevement creation page
  */
 
-require('../../main.inc.php');
+require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
@@ -45,34 +45,27 @@ $result = restrictedArea($user, 'prelevement', '', '', 'bons');
 // Get supervariables
 $action = GETPOST('action','alpha');
 
-
 /*
  * Actions
  */
 
 // Change customer bank information to withdraw
-if ($action == 'modify')
-{
-    for ($i = 1 ; $i < 9 ; $i++)
-    {
+if ($action == 'modify') {
+    for ($i = 1 ; $i < 9 ; $i++) {
         dolibarr_set_const($db, GETPOST("nom$i"), GETPOST("value$i"),'chaine',0,'',$conf->entity);
     }
 }
 
-if ($action == 'create')
-{
+if ($action == 'create') {
     $bprev = new BonPrelevement($db);
     $result=$bprev->create($conf->global->PRELEVEMENT_CODE_BANQUE, $conf->global->PRELEVEMENT_CODE_GUICHET);
-    if ($result < 0)
-    {
+    if ($result < 0) {
         $mesg='<div class="error">'.$bprev->error.'</div>';
     }
-    if ($result == 0)
-    {
+    if ($result == 0) {
         $mesg='<div class="error">'.$langs->trans("NoInvoiceCouldBeWithdrawed").'</div>';
     }
 }
-
 
 /*
  * View
@@ -84,12 +77,11 @@ $bprev = new BonPrelevement($db);
 
 llxHeader('', $langs->trans("NewStandingOrder"));
 
-if (prelevement_check_config() < 0)
-{
-	$langs->load("errors");
-	print '<div class="error">';
-	print $langs->trans("ErrorModuleSetupNotComplete");
-	print '</div>';
+if (prelevement_check_config() < 0) {
+    $langs->load("errors");
+    print '<div class="error">';
+    print $langs->trans("ErrorModuleSetupNotComplete");
+    print '</div>';
 }
 
 $h=0;
@@ -99,13 +91,11 @@ $h++;
 
 dol_fiche_head($head, $hselected, $langs->trans("StandingOrders"), 0, 'payment');
 
-
 $nb=$bprev->NbFactureAPrelever();
 $nb1=$bprev->NbFactureAPrelever(1);
 $nb11=$bprev->NbFactureAPrelever(1,1);
 $pricetowithdraw=$bprev->SommeAPrelever();
-if ($nb < 0 || $nb1 < 0 || $nb11 < 0)
-{
+if ($nb < 0 || $nb1 < 0 || $nb11 < 0) {
     dol_print_error($bprev->error);
 }
 print '<table class="border" width="100%">';
@@ -136,13 +126,10 @@ if ($mesg) print $mesg;
 
 print "<div class=\"tabsAction\">\n";
 
-if ($nb)
-{
+if ($nb) {
     if ($pricetowithdraw) print '<a class="butAction" href="create.php?action=create">'.$langs->trans("CreateAll")."</a>\n";
     else print '<a class="butActionRefused" href="#">'.$langs->trans("CreateAll")."</a>\n";
-}
-else
-{
+} else {
     print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NoInvoiceToWithdraw")).'">'.$langs->trans("CreateAll")."</a>\n";
 }
     //if ($nb11) print '<a class="butAction" href="create.php?action=create&amp;banque=1">'.$langs->trans("CreateBanque")."</a>\n";
@@ -150,7 +137,6 @@ else
 
 print "</div>\n";
 print '<br>';
-
 
 /*
  * Invoices waiting for withdraw
@@ -168,8 +154,7 @@ $sql.= " AND pfd.fk_facture = f.rowid";
 if ($socid) $sql.= " AND f.fk_soc = ".$socid;
 
 $resql=$db->query($sql);
-if ($resql)
-{
+if ($resql) {
     $num = $db->num_rows($resql);
     $i = 0;
 
@@ -183,11 +168,9 @@ if ($resql)
     print '<td align="right">'.$langs->trans("DateRequest").'</td>';
     print '</tr>';
 
-    if ($num)
-    {
+    if ($num) {
         $var = True;
-        while ($i < $num && $i < 20)
-        {
+        while ($i < $num && $i < 20) {
             $obj = $db->fetch_object($resql);
             $var=!$var;
             print '<tr '.$bc[$var].'><td>';
@@ -210,16 +193,12 @@ if ($resql)
             print '</tr>';
             $i++;
         }
-    }
-    else print '<tr><td colspan="4">'.$langs->trans("None").'</td></tr>';
+    } else print '<tr><td colspan="4">'.$langs->trans("None").'</td></tr>';
     print "</table>";
     print "<br>\n";
-}
-else
-{
+} else {
     dol_print_error($db);
 }
-
 
 /*
  * List of last withdraws
@@ -236,8 +215,7 @@ $sql.= " ORDER BY datec DESC";
 $sql.=$db->plimit($limit);
 
 $result = $db->query($sql);
-if ($result)
-{
+if ($result) {
     $num = $db->num_rows($result);
     $i = 0;
 
@@ -249,8 +227,7 @@ if ($result)
 
     $var=True;
 
-    while ($i < min($num,$limit))
-    {
+    while ($i < min($num,$limit)) {
         $obj = $db->fetch_object($result);
         $var=!$var;
 
@@ -268,14 +245,10 @@ if ($result)
     }
     print "</table><br>";
     $db->free($result);
-}
-else
-{
+} else {
     dol_print_error($db);
 }
-
 
 $db->close();
 
 llxFooter();
-?>

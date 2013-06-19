@@ -21,28 +21,23 @@
  *	\brief      Page to list surveys
  */
 
-
 define("NOLOGIN",1);		// This means this output page does not require to be logged.
 define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
-require_once('../../main.inc.php');
+require_once '../../main.inc.php';
 require_once(DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/opensurvey/class/opensurveysondage.class.php");
 
 $action=GETPOST('action');
 $numsondage = $numsondageadmin = '';
-if (GETPOST('sondage'))
-{
-	if (strlen(GETPOST('sondage')) == 24)	// recuperation du numero de sondage admin (24 car.) dans l'URL
-	{
-		$numsondageadmin=GETPOST("sondage",'alpha');
-		$numsondage=substr($numsondageadmin, 0, 16);
-	}
-	else
-	{
-		$numsondageadmin='';
-		$numsondage=GETPOST("sondage",'alpha');
-	}
+if (GETPOST('sondage')) {
+    if (strlen(GETPOST('sondage')) == 24)	// recuperation du numero de sondage admin (24 car.) { dans l'URL
+        $numsondageadmin=GETPOST("sondage",'alpha');
+        $numsondage=substr($numsondageadmin, 0, 16);
+    } else {
+        $numsondageadmin='';
+        $numsondage=GETPOST("sondage",'alpha');
+    }
 }
 
 $object=new Opensurveysondage($db);
@@ -67,28 +62,24 @@ $toutsujet=explode(",",$object->sujet);
 
 // affichage des sujets du sondage
 $input.=$langs->trans("Name").";";
-for ($i=0;$toutsujet[$i];$i++)
-{
-	if ($object->format=="D"||$object->format=="D+")
-	{
-		$input.=''.dol_print_date($toutsujet[$i],'dayhour').';';
-	} else {
-		$input.=''.$toutsujet[$i].';';
-	}
+for ($i=0;$toutsujet[$i];$i++) {
+    if ($object->format=="D"||$object->format=="D+") {
+        $input.=''.dol_print_date($toutsujet[$i],'dayhour').';';
+    } else {
+        $input.=''.$toutsujet[$i].';';
+    }
 }
 
 $input.="\r\n";
 
-if (strpos($object->sujet,'@') !== false)
-{
-	$input.=";";
-	for ($i=0;$toutsujet[$i];$i++)
-	{
-		$heures=explode("@",$toutsujet[$i]);
-		$input.=''.$heures[1].';';
-	}
+if (strpos($object->sujet,'@') !== false) {
+    $input.=";";
+    for ($i=0;$toutsujet[$i];$i++) {
+        $heures=explode("@",$toutsujet[$i]);
+        $input.=''.$heures[1].';';
+    }
 
-	$input.="\r\n";
+    $input.="\r\n";
 }
 
 
@@ -98,50 +89,38 @@ $sql.=" WHERE id_sondage='" . $db->escape($numsondage) . "'";
 $sql.=" ORDER BY id_users";
 dol_syslog("sql=".$sql);
 $resql=$db->query($sql);
-if ($resql)
-{
-	$num=$db->num_rows($resql);
-	$i=0;
-	while ($i < $num)
-	{
-		$obj=$db->fetch_object($resql);
+if ($resql) {
+    $num=$db->num_rows($resql);
+    $i=0;
+    while ($i < $num) {
+        $obj=$db->fetch_object($resql);
 
-		// Le nom de l'utilisateur
-		$nombase=str_replace("°","'",$obj->nom);
-		$input.=$nombase.';';
+        // Le nom de l'utilisateur
+        $nombase=str_replace("°","'",$obj->nom);
+        $input.=$nombase.';';
 
-		//affichage des resultats
-		$ensemblereponses=$obj->reponses;
-		for ($k=0;$k<$nbcolonnes;$k++)
-		{
-			$car=substr($ensemblereponses,$k,1);
-			if ($car == "1")
-			{
-				$input.='OK;';
-				$somme[$k]++;
-			}
-			else if ($car == "2")
-			{
-				$input.='KO;';
-				$somme[$k]++;
-			}
-			else
-			{
-				$input.=';';
-			}
-		}
+        //affichage des resultats
+        $ensemblereponses=$obj->reponses;
+        for ($k=0;$k<$nbcolonnes;$k++) {
+            $car=substr($ensemblereponses,$k,1);
+            if ($car == "1") {
+                $input.='OK;';
+                $somme[$k]++;
+            } elseif ($car == "2") {
+                $input.='KO;';
+                $somme[$k]++;
+            } else {
+                $input.=';';
+            }
+        }
 
-		$input.="\r\n";
-		$i++;
-	}
-}
-else dol_print_error($db);
-
+        $input.="\r\n";
+        $i++;
+    }
+} else dol_print_error($db);
 
 $filesize = strlen($input);
 $filename=$numsondage."_".dol_print_date($now,'%Y%m%d%H%M').".csv";
-
-
 
 header('Content-Type: text/csv; charset=utf-8');
 header('Content-Length: '.$filesize);
@@ -150,4 +129,3 @@ header('Cache-Control: max-age=10');
 echo $input;
 
 exit;
-?>

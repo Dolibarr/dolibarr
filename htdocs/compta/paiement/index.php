@@ -22,7 +22,6 @@ require '../../main.inc.php';
 if (!$user->admin && $user->societe_id > 0)
   accessforbidden();
 
-
 /*
  * View
  */
@@ -31,9 +30,6 @@ llxHeader();
 
 print_fiche_titre("Payments");
 
-
-
 $db->close();
 
 llxFooter();
-?>

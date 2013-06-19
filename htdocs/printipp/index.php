@@ -34,4 +34,3 @@ $printer->list_jobs('commande');
 llxFooter();
 
 $db->close();
-?>

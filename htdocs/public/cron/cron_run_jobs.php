@@ -33,46 +33,44 @@ if (! defined('NOLOGIN'))   define('NOLOGIN','1');
 // Dolibarr environment
 $res = @include("../../main.inc.php"); // From htdocs directory
 if (! $res) {
-	$res = @include("../../../main.inc.php"); // From "custom" directory
+    $res = @include("../../../main.inc.php"); // From "custom" directory
 }
 if (! $res) die("Include of master.inc.php fails");
 
 // librarie jobs
 dol_include_once("/cron/class/cronjob.class.php");
 
-
 global $langs, $conf;
 
 // Check the key, avoid that a stranger starts cron
 $key = $_GET['securitykey'];
 if (empty($key)) {
-	echo 'securitykey is require';
-	exit;
+    echo 'securitykey is require';
+    exit;
 }
-if($key != $conf->global->CRON_KEY)
-{
-	echo 'securitykey is wrong';
-	exit;
+if ($key != $conf->global->CRON_KEY) {
+    echo 'securitykey is wrong';
+    exit;
 }
 // Check the key, avoid that a stranger starts cron
 $userlogin = $_GET['userlogin'];
 if (empty($userlogin)) {
-	echo 'userlogin is require';
-	exit;
+    echo 'userlogin is require';
+    exit;
 }
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 $user=new User($db);
 $result=$user->fetch('',$userlogin);
 if ($result<0) {
-	echo "User Error:".$user->error;
-	dol_syslog("cron_run_jobs.php:: User Error:".$user->error, LOG_ERR);
-	exit;
-}else {
-	if (empty($user->id)) {
-		echo " User user login:".$userlogin." do not exists";
-		dol_syslog(" User user login:".$userlogin." do not exists", LOG_ERR);
-		exit;
-	}
+    echo "User Error:".$user->error;
+    dol_syslog("cron_run_jobs.php:: User Error:".$user->error, LOG_ERR);
+    exit;
+} else {
+    if (empty($user->id)) {
+        echo " User user login:".$userlogin." do not exists";
+        dol_syslog(" User user login:".$userlogin." do not exists", LOG_ERR);
+        exit;
+    }
 }
 $id = $_GET['id'];
 
@@ -85,58 +83,58 @@ $object = new Cronjob($db);
 
 $filter=array();
 if (empty($id)) {
-	$filter=array();
-	$filter['t.rowid']=$id;
+    $filter=array();
+    $filter['t.rowid']=$id;
 }
 
 $result = $object->fetch_all('DESC','t.rowid', 0, 0, 1, $filter);
 if ($result<0) {
-	echo "Error:".$cronjob->error;
-	dol_syslog("cron_run_jobs.php:: fetch Error".$cronjob->error, LOG_ERR);
-	exit;
+    echo "Error:".$cronjob->error;
+    dol_syslog("cron_run_jobs.php:: fetch Error".$cronjob->error, LOG_ERR);
+    exit;
 }
 
 // current date
 $now=dol_now();
 
-if(is_array($object->lines) && (count($object->lines)>0)){
-	// Loop over job
-	foreach($object->lines as $line){
+if (is_array($object->lines) && (count($object->lines)>0)) {
+    // Loop over job
+    foreach ($object->lines as $line) {
 
-		dol_syslog("cron_run_jobs.php:: fetch cronjobid:".$line->id, LOG_ERR);
+        dol_syslog("cron_run_jobs.php:: fetch cronjobid:".$line->id, LOG_ERR);
 
-		//If date_next_jobs is less of current dat, execute the program, and store the execution time of the next execution in database
-		if ((($line->datenextrun <= $now) && $line->dateend < $now)
-				|| ((empty($line->datenextrun)) && (empty($line->dateend)))){
+        //If date_next_jobs is less of current dat, execute the program, and store the execution time of the next execution in database
+        if ((($line->datenextrun <= $now) && $line->dateend < $now)
+                || ((empty($line->datenextrun)) && (empty($line->dateend)))){
 
-			dol_syslog("cron_run_jobs.php:: torun line->datenextrun:".dol_print_date($line->datenextrun,'dayhourtext')." line->dateend:".dol_print_date($line->dateend,'dayhourtext')." now:".dol_print_date($now,'dayhourtext'), LOG_ERR);
+            dol_syslog("cron_run_jobs.php:: torun line->datenextrun:".dol_print_date($line->datenextrun,'dayhourtext')." line->dateend:".dol_print_date($line->dateend,'dayhourtext')." now:".dol_print_date($now,'dayhourtext'), LOG_ERR);
 
-			$cronjob=new Cronjob($db);
-			$result=$cronjob->fetch($line->id);
-			if ($result<0) {
-				echo "Error:".$cronjob->error;
-				dol_syslog("cron_run_jobs.php:: fetch Error".$cronjob->error, LOG_ERR);
-				exit;
-			}
-			// execute methode
-			$result=$cronjob->run_jobs($userlogin);
-			if ($result<0) {
-				echo "Error:".$cronjob->error;
-				dol_syslog("cron_run_jobs.php:: run_jobs Error".$cronjob->error, LOG_ERR);
-				exit;
-			}
+            $cronjob=new Cronjob($db);
+            $result=$cronjob->fetch($line->id);
+            if ($result<0) {
+                echo "Error:".$cronjob->error;
+                dol_syslog("cron_run_jobs.php:: fetch Error".$cronjob->error, LOG_ERR);
+                exit;
+            }
+            // execute methode
+            $result=$cronjob->run_jobs($userlogin);
+            if ($result<0) {
+                echo "Error:".$cronjob->error;
+                dol_syslog("cron_run_jobs.php:: run_jobs Error".$cronjob->error, LOG_ERR);
+                exit;
+            }
 
-				// we re-program the next execution and stores the last execution time for this job
-			$result=$cronjob->reprogram_jobs($userlogin);
-			if ($result<0) {
-				echo "Error:".$cronjob->error;
-				dol_syslog("cron_run_jobs.php:: reprogram_jobs Error".$cronjob->error, LOG_ERR);
-				exit;
-			}
+                // we re-program the next execution and stores the last execution time for this job
+            $result=$cronjob->reprogram_jobs($userlogin);
+            if ($result<0) {
+                echo "Error:".$cronjob->error;
+                dol_syslog("cron_run_jobs.php:: reprogram_jobs Error".$cronjob->error, LOG_ERR);
+                exit;
+            }
 
-		}
-	}
-	echo "OK";
+        }
+    }
+    echo "OK";
 } else {
-	echo "No Jobs to run";
+    echo "No Jobs to run";
 }

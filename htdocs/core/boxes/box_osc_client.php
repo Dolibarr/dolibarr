@@ -24,52 +24,47 @@
 
 include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
 
-
 /**
  * Class to manage the box to show last customers of shop
  */
 class box_osc_clients extends ModeleBoxes
 {
-    var $boxcode="nbofcustomers";
-    var $boximg="object_company";
-    var $boxlabel="BoxNbOfCustomers";
-    var $depends = array("boutique");
+    public $boxcode="nbofcustomers";
+    public $boximg="object_company";
+    public $boxlabel="BoxNbOfCustomers";
+    public $depends = array("boutique");
 
-	var $db;
-	var $param;
+    public $db;
+    public $param;
 
-    var $info_box_head = array();
-    var $info_box_contents = array();
-
+    public $info_box_head = array();
+    public $info_box_contents = array();
 
     /**
-	 *  Load data into info_box_contents array to show array later.
-	 *
-	 *  @param	int		$max        Maximum number of records to load
+     *  Load data into info_box_contents array to show array later.
+     *
+     *  @param	int		$max        Maximum number of records to load
      *  @return	void
      */
-    function loadBox($max=5)
+    public function loadBox($max=5)
     {
         global $conf, $user, $langs, $db;
         $langs->load("boxes");
 
-		$this->max=$max;
+        $this->max=$max;
 
-		$this->info_box_head = array('text' => $langs->trans("BoxTitleNbOfCustomers",$max));
+        $this->info_box_head = array('text' => $langs->trans("BoxTitleNbOfCustomers",$max));
 
-        if ($user->rights->boutique->lire)
-        {
+        if ($user->rights->boutique->lire) {
             $sql = "SELECT count(*) as cus FROM ".$conf->global->OSC_DB_NAME.".".$conf->global->OSC_DB_TABLE_PREFIX."customers";
 
             $resql = $db->query($sql);
-            if ($resql)
-            {
+            if ($resql) {
                 $num = $db->num_rows($resql);
 
                 $i = 0;
 
-                while ($i < $num)
-                {
+                while ($i < $num) {
                     $objp = $db->fetch_object($resql);
 
                     $this->info_box_contents[$i][0] = array('td' => 'align="center" width="16"',
@@ -81,33 +76,29 @@ class box_osc_clients extends ModeleBoxes
                     $i++;
                 }
 
-				$db->free($resql);
-            }
-            else {
+                $db->free($resql);
+            } else {
                 $this->info_box_contents[0][0] = array( 'td' => 'align="left"',
                                                         'maxlength'=>500,
                                                         'text' => ($db->error().' sql='.$sql));
             }
-        }
-        else {
+        } else {
             $this->info_box_contents[0][0] = array('td' => 'align="left"',
             'text' => $langs->trans("ReadPermissionNotAllowed"));
         }
 
     }
 
-	/**
-	 *	Method to show box
-	 *
-	 *	@param	array	$head       Array with properties of box title
-	 *	@param  array	$contents   Array with properties of box lines
-	 *	@return	void
-	 */
-    function showBox($head = null, $contents = null)
+    /**
+     *	Method to show box
+     *
+     *	@param	array	$head       Array with properties of box title
+     *	@param  array	$contents   Array with properties of box lines
+     *	@return	void
+     */
+    public function showBox($head = null, $contents = null)
     {
         parent::showBox($this->info_box_head, $this->info_box_contents);
     }
 
 }
-
-?>

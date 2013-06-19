@@ -33,13 +33,11 @@ $result = restrictedArea($user, 'don');
 
 $donation_static=new Don($db);
 
-
 /*
  * Actions
  */
 
 // None
-
 
 /*
  * View
@@ -59,12 +57,10 @@ $sql.= " GROUP BY d.fk_statut";
 $sql.= " ORDER BY d.fk_statut";
 
 $result = $db->query($sql);
-if ($result)
-{
-	$i = 0;
+if ($result) {
+    $i = 0;
     $num = $db->num_rows($result);
-    while ($i < $num)
-    {
+    while ($i < $num) {
         $objp = $db->fetch_object($result);
 
         $somme[$objp->fk_statut] = $objp->somme;
@@ -78,12 +74,10 @@ if ($result)
 
 print_fiche_titre($langs->trans("DonationsArea"));
 
-
 print '<table width="100%" class="notopnoleftnoright">';
 
 // Left area
 print '<tr><td class="notopnoleft" width="30%" valign="top">';
-
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
@@ -91,13 +85,11 @@ print '<td colspan="4">'.$langs->trans("Statistics").'</td>';
 print "</tr>\n";
 
 $listofstatus=array(0,1,-1,2);
-foreach ($listofstatus as $status)
-{
+foreach ($listofstatus as $status) {
     $dataseries[]=array('label'=>$donstatic->LibStatut($status,1),'data'=>(isset($nb[$status])?(int) $nb[$status]:0));
 }
 
-if ($conf->use_javascript_ajax)
-{
+if ($conf->use_javascript_ajax) {
     print '<tr><td align="center" colspan="4">';
     $data=array('series'=>$dataseries);
     dol_print_graph('stats',300,180,$data,1,'pie',1);
@@ -114,8 +106,7 @@ print '</tr>';
 $total=0;
 $totalnb=0;
 $var=true;
-foreach ($listofstatus as $status)
-{
+foreach ($listofstatus as $status) {
     $var=!$var;
     print "<tr ".$bc[$var].">";
     print '<td><a href="liste.php?statut='.$status.'">'.$donstatic->LibStatut($status,4).'</a></td>';
@@ -135,10 +126,8 @@ print '<td align="right">'.($totalnb?price(price2num($total/$totalnb,'MT')):'&nb
 print '</tr>';
 print "</table>";
 
-
 // Right area
 print '</td><td valign="top">';
-
 
 $max=10;
 
@@ -154,19 +143,16 @@ $sql.= " ORDER BY c.tms DESC";
 $sql.= $db->plimit($max, 0);
 
 $resql=$db->query($sql);
-if ($resql)
-{
+if ($resql) {
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre">';
     print '<td colspan="5">'.$langs->trans("LastModifiedDonations",$max).'</td></tr>';
 
     $num = $db->num_rows($resql);
-    if ($num)
-    {
+    if ($num) {
         $i = 0;
         $var = True;
-        while ($i < $num)
-        {
+        while ($i < $num) {
             $var=!$var;
             $obj = $db->fetch_object($resql);
 
@@ -199,14 +185,10 @@ if ($resql)
         }
     }
     print "</table><br>";
-}
-else dol_print_error($db);
-
+} else dol_print_error($db);
 
 print '</td></tr></table>';
-
 
 llxFooter();
 
 $db->close();
-?>

@@ -29,10 +29,10 @@
  */
 function holiday_prepare_head($object)
 {
-	global $langs, $conf, $user;
+    global $langs, $conf, $user;
 
-	$h = 0;
-	$head = array();
+    $h = 0;
+    $head = array();
 
     $head[$h][0] = DOL_URL_ROOT . '/holiday/fiche.php?id='.$object->id;
     $head[$h][1] = $langs->trans("Card");
@@ -45,9 +45,7 @@ function holiday_prepare_head($object)
     // $this->tabs = array('entity:-tabname);   												to remove a tab
     complete_head_from_modules($conf,$langs,$object,$head,$h,'holiday');
 
-	complete_head_from_modules($conf,$langs,$object,$head,$h,'holiday','remove');
+    complete_head_from_modules($conf,$langs,$object,$head,$h,'holiday','remove');
 
-	return $head;
+    return $head;
 }
-
-?>

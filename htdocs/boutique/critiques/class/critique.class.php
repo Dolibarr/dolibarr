@@ -21,65 +21,60 @@
  *		\brief      Fichier de la classe des critiques OSCommerce
  */
 
-
 /**
  *		Classe permettant la gestion des critiques OSCommerce
  */
 class Critique
 {
-	var $db;
+    public $db;
 
-	var $id;
-	var $nom;
+    public $id;
+    public $nom;
 
-	/**
-	 * Constructor
-	 *
-	 * @param	DoliDB		$db		Database handler
-	 */
-	function __construct($db)
-	{
-		$this->db = $db;
-	}
+    /**
+     * Constructor
+     *
+     * @param DoliDB $db Database handler
+     */
+    public function __construct($db)
+    {
+        $this->db = $db;
+    }
 
-	/**
-	 * Load instance
-	 *
-	 *	@param	int		$id		Id to load
-	 *	@return	int				<0 if KO, >0 if OK
-	 */
-	function fetch ($id)
-	{
-		global $conf;
+    /**
+     * Load instance
+     *
+     *	@param	int		$id		Id to load
+     *	@return	int				<0 if KO, >0 if OK
+     */
+    public function fetch ($id)
+    {
+        global $conf;
 
-		$sql = "SELECT r.reviews_id, r.reviews_rating, d.reviews_text, p.products_name";
+        $sql = "SELECT r.reviews_id, r.reviews_rating, d.reviews_text, p.products_name";
 
-		$sql .= " FROM ".$conf->global->OSC_DB_NAME.".".$conf->global->OSC_DB_TABLE_PREFIX."reviews as r, ".$conf->global->OSC_DB_NAME.".".$conf->global->OSC_DB_TABLE_PREFIX."reviews_description as d";
-		$sql .= " ,".$conf->global->OSC_DB_NAME.".".$conf->global->OSC_DB_TABLE_PREFIX."products_description as p";
+        $sql .= " FROM ".$conf->global->OSC_DB_NAME.".".$conf->global->OSC_DB_TABLE_PREFIX."reviews as r, ".$conf->global->OSC_DB_NAME.".".$conf->global->OSC_DB_TABLE_PREFIX."reviews_description as d";
+        $sql .= " ,".$conf->global->OSC_DB_NAME.".".$conf->global->OSC_DB_TABLE_PREFIX."products_description as p";
 
-		$sql .= " WHERE r.reviews_id = d.reviews_id AND r.products_id=p.products_id";
-		$sql .= " AND p.language_id = ".$conf->global->OSC_LANGUAGE_ID. " AND d.languages_id=".$conf->global->OSC_LANGUAGE_ID;
-		$sql .= " AND r.reviews_id=$id";
+        $sql .= " WHERE r.reviews_id = d.reviews_id AND r.products_id=p.products_id";
+        $sql .= " AND p.language_id = ".$conf->global->OSC_LANGUAGE_ID. " AND d.languages_id=".$conf->global->OSC_LANGUAGE_ID;
+        $sql .= " AND r.reviews_id=$id";
 
-		$result = $this->db->query($sql);
+        $result = $this->db->query($sql);
 
-		if ( $result )
-		{
-			$result = $this->db->fetch_array($result);
+        if ($result) {
+            $result = $this->db->fetch_array($result);
 
-			$this->id           = $result["reviews_id"];
-			$this->product_name = stripslashes($result["products_name"]);
-			$this->text         = stripslashes($result["reviews_text"]);
+            $this->id           = $result["reviews_id"];
+            $this->product_name = stripslashes($result["products_name"]);
+            $this->text         = stripslashes($result["reviews_text"]);
 
-			$this->db->free($result);
-		}
-		else
-		{
-			print $this->db->lasterror();
-		}
+            $this->db->free($result);
+        } else {
+            print $this->db->lasterror();
+        }
 
-		return $result;
-	}
+        return $result;
+    }
 
 }
-?>

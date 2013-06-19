@@ -50,7 +50,6 @@ $limit = $conf->liste_limit;
 
 $search_ref=GETPOST('search_ref','alpha');
 
-
 /*
  * View
  */
@@ -71,8 +70,7 @@ $sql.= " WHERE d.fk_user = u.rowid";
 $sql.= " AND d.entity = ".$conf->entity;
 if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND sc.fk_user = " .$user->id;
 if ($socid) $sql.= " AND s.rowid = ".$socid;
-if (trim($search_ref) != '')
-{
+if (trim($search_ref) != '') {
     $sql.= ' AND d.rowid LIKE \'%'.$db->escape(trim($search_ref)) . '%\'';
 }
 $sql.= $db->order($sortfield,$sortorder);
@@ -80,8 +78,7 @@ $sql.= $db->plimit($limit + 1, $offset);
 
 //print $sql;
 $resql=$db->query($sql);
-if ($resql)
-{
+if ($resql) {
     $num = $db->num_rows($resql);
 
     print_barre_liste($langs->trans("ListOfFees"), $page, $_SERVER["PHP_SELF"],"&socid=$socid",$sortfield,$sortorder,'',$num);
@@ -123,8 +120,7 @@ if ($resql)
     print "</td></tr>\n";
 
     $var=true;
-    while ($i < min($num,$limit))
-    {
+    while ($i < min($num,$limit)) {
         $obj = $db->fetch_object($resql);
 
         $soc = new Societe($db);
@@ -150,12 +146,9 @@ if ($resql)
     print "</table>";
     print "</form>\n";
     $db->free($resql);
-}
-else
-{
+} else {
     dol_print_error($db);
 }
 $db->close();
 
 llxFooter();
-?>

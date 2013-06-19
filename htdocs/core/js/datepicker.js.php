@@ -42,7 +42,6 @@ header('Content-type: text/javascript; charset=UTF-8');
 if (empty($dolibarr_nocache)) header('Cache-Control: max-age=3600, public, must-revalidate');
 else header('Cache-Control: no-cache');
 
-
 // Define tradMonths javascript array (we define this in datepicker AND in parent page to avoid errors with IE8)
 $tradMonths=array(
 dol_escape_js($langs->transnoentitiesnoconv("January")),
@@ -105,7 +104,6 @@ $langs->trans("SaturdayMin")
 );
 ?>
 
-
 // For eldy and jQuery date picker
 var tradMonths = <?php echo json_encode($tradMonths) ?>;
 var tradMonthsShort = <?php echo json_encode($tradMonthsShort) ?>;
@@ -113,40 +111,37 @@ var tradDays = <?php echo json_encode($tradDays) ?>;
 var tradDaysShort = <?php echo json_encode($tradDaysShort) ?>;
 var tradDaysMin = <?php echo json_encode($tradDaysMin) ?>;
 
-
 // For JQuery date picker
 $(document).ready(function() {
-	$.datepicker.setDefaults({
-		autoSize: true,
-		changeMonth: true,
-		changeYear: true,
-		altField: '#timestamp',
-		altFormat: '@'			// Gives a timestamp dateformat
-	});
+    $.datepicker.setDefaults({
+        autoSize: true,
+        changeMonth: true,
+        changeYear: true,
+        altField: '#timestamp',
+        altFormat: '@'			// Gives a timestamp dateformat
+    });
 });
 
 jQuery(function($){
-	$.datepicker.regional['<?php echo $langs->defaultlang ?>'] = {
-		closeText: '<?php echo $langs->trans("Close2") ?>',
-		prevText: '<?php echo $langs->trans("Previous") ?>',
-		nextText: '<?php echo $langs->trans("Next") ?>',
-		currentText: '<?php echo $langs->trans("Now") ?>',
-		monthNames: tradMonths,
-		monthNamesShort: tradMonthsShort,
-		dayNames: tradDays,
-		dayNamesShort: tradDaysShort,
-		dayNamesMin: tradDaysMin,
-		weekHeader: '<?php echo $langs->trans("Week"); ?>',
-		dateFormat: '<?php echo $langs->trans("FormatDateShortJQuery"); ?>',
-		firstDay: <?php echo (isset($conf->global->MAIN_START_WEEK)?$conf->global->MAIN_START_WEEK:'1'); ?>,
-		isRTL: <?php echo ($langs->trans("DIRECTION")=='rtl'?'true':'false'); ?>,
-		showMonthAfterYear: false,  // TODO add specific to country
-		yearSuffix: ''				// TODO add specific to country
-	};
-	$.datepicker.setDefaults($.datepicker.regional['<?php echo $langs->defaultlang ?>']);
+    $.datepicker.regional['<?php echo $langs->defaultlang ?>'] = {
+        closeText: '<?php echo $langs->trans("Close2") ?>',
+        prevText: '<?php echo $langs->trans("Previous") ?>',
+        nextText: '<?php echo $langs->trans("Next") ?>',
+        currentText: '<?php echo $langs->trans("Now") ?>',
+        monthNames: tradMonths,
+        monthNamesShort: tradMonthsShort,
+        dayNames: tradDays,
+        dayNamesShort: tradDaysShort,
+        dayNamesMin: tradDaysMin,
+        weekHeader: '<?php echo $langs->trans("Week"); ?>',
+        dateFormat: '<?php echo $langs->trans("FormatDateShortJQuery"); ?>',
+        firstDay: <?php echo (isset($conf->global->MAIN_START_WEEK)?$conf->global->MAIN_START_WEEK:'1'); ?>,
+        isRTL: <?php echo ($langs->trans("DIRECTION")=='rtl'?'true':'false'); ?>,
+        showMonthAfterYear: false,  // TODO add specific to country
+        yearSuffix: ''				// TODO add specific to country
+    };
+    $.datepicker.setDefaults($.datepicker.regional['<?php echo $langs->defaultlang ?>']);
 });
-
 
 <?php
 if (is_object($db)) $db->close();
-?>

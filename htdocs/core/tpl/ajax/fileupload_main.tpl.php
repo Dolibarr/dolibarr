@@ -37,51 +37,51 @@ window.locale = {
 };
 
 $(function () {
-	'use strict';
+    'use strict';
 
-	// Initialize the jQuery File Upload widget:
-	$('#fileupload').fileupload();
+    // Initialize the jQuery File Upload widget:
+    $('#fileupload').fileupload();
 
-	// Events
-	$('#fileupload').fileupload({
-		stop: function (e, data) {
-			location.href='<?php echo $_SERVER["PHP_SELF"].'?'.$_SERVER["QUERY_STRING"]; ?>';
-		},
-		destroy: function (e, data) {
-			var that = $(this).data('fileupload');
-			$( "#confirm-delete" ).dialog({
-				resizable: false,
-				width: 400,
-				modal: true,
-				buttons: {
-					"<?php echo $langs->trans('Ok'); ?>": function() {
-						$( "#confirm-delete" ).dialog( "close" );
-						if (data.url) {
-							$.ajax(data)
-								.success(function (data) {
-									if (data) {
-										that._adjustMaxNumberOfFiles(1);
-										$(this).fadeOut(function () {
-											$(this).remove();
-											$.jnotify("<?php echo $langs->trans('FileIsDelete'); ?>");
-										});
-									} else {
-										$.jnotify("<?php echo $langs->trans('ErrorFileNotDeleted'); ?>", "error", true);
-									}
-								});
-						} else {
-							data.context.fadeOut(function () {
-								$(this).remove();
-							});
-						}
-					},
-					"<?php echo $langs->trans('Cancel'); ?>": function() {
-						$( "#confirm-delete" ).dialog( "close" );
-					}
-				}
-			});
-		}
-	});
+    // Events
+    $('#fileupload').fileupload({
+        stop: function (e, data) {
+            location.href='<?php echo $_SERVER["PHP_SELF"].'?'.$_SERVER["QUERY_STRING"]; ?>';
+        },
+        destroy: function (e, data) {
+            var that = $(this).data('fileupload');
+            $( "#confirm-delete" ).dialog({
+                resizable: false,
+                width: 400,
+                modal: true,
+                buttons: {
+                    "<?php echo $langs->trans('Ok'); ?>": function() {
+                        $( "#confirm-delete" ).dialog( "close" );
+                        if (data.url) {
+                            $.ajax(data)
+                                .success(function (data) {
+                                    if (data) {
+                                        that._adjustMaxNumberOfFiles(1);
+                                        $(this).fadeOut(function () {
+                                            $(this).remove();
+                                            $.jnotify("<?php echo $langs->trans('FileIsDelete'); ?>");
+                                        });
+                                    } else {
+                                        $.jnotify("<?php echo $langs->trans('ErrorFileNotDeleted'); ?>", "error", true);
+                                    }
+                                });
+                        } else {
+                            data.context.fadeOut(function () {
+                                $(this).remove();
+                            });
+                        }
+                    },
+                    "<?php echo $langs->trans('Cancel'); ?>": function() {
+                        $( "#confirm-delete" ).dialog( "close" );
+                    }
+                }
+            });
+        }
+    });
 });
 </script>
 <!-- END TEMPLATE FILE UPLOAD MAIN -->

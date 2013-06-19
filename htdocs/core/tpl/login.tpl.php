@@ -34,8 +34,8 @@ print top_htmlhead('',$langs->trans('Login').' '.$title,0,0,$arrayofjs);
 
 <script type="text/javascript">
 $(document).ready(function () {
-	// Set focus on correct field
-	<?php if ($focus_element) { ?>$('#<?php echo $focus_element; ?>').focus(); <?php } ?>		// Warning to use this only on visible element
+    // Set focus on correct field
+    <?php if ($focus_element) { ?>$('#<?php echo $focus_element; ?>').focus(); <?php } ?>		// Warning to use this only on visible element
 });
 </script>
 
@@ -84,27 +84,26 @@ $(document).ready(function () {
 </td></tr>
 <?php
 if (! empty($hookmanager->resArray['options'])) {
-	foreach ($hookmanager->resArray['options'] as $format => $option)
-	{
-		if ($format == 'table') {
-			echo '<!-- Option by hook -->';
-			echo $option;
-		}
-	}
+    foreach ($hookmanager->resArray['options'] as $format => $option) {
+        if ($format == 'table') {
+            echo '<!-- Option by hook -->';
+            echo $option;
+        }
+    }
 }
 ?>
 <?php if ($captcha) { ?>
-	<!-- Captcha -->
-	<tr><td valign="middle" class="loginfield nowrap"><b><?php echo $langs->trans('SecurityCode'); ?></b></td>
-	<td valign="top" class="nowrap none" align="left">
+    <!-- Captcha -->
+    <tr><td valign="middle" class="loginfield nowrap"><b><?php echo $langs->trans('SecurityCode'); ?></b></td>
+    <td valign="top" class="nowrap none" align="left">
 
-	<table class="login_table_securitycode" style="width: 100px;"><tr>
-	<td><input id="securitycode" class="flat" type="text" size="6" maxlength="5" name="code" tabindex="4" /></td>
-	<td><img src="<?php echo DOL_URL_ROOT ?>/core/antispamimage.php" border="0" width="80" height="32" id="img_securitycode" /></td>
-	<td><a href="<?php echo $php_self; ?>"><?php echo $captcha_refresh; ?></a></td>
-	</tr></table>
+    <table class="login_table_securitycode" style="width: 100px;"><tr>
+    <td><input id="securitycode" class="flat" type="text" size="6" maxlength="5" name="code" tabindex="4" /></td>
+    <td><img src="<?php echo DOL_URL_ROOT ?>/core/antispamimage.php" border="0" width="80" height="32" id="img_securitycode" /></td>
+    <td><a href="<?php echo $php_self; ?>"><?php echo $captcha_refresh; ?></a></td>
+    </tr></table>
 
-	</td></tr>
+    </td></tr>
 <?php } ?>
 </table>
 
@@ -123,34 +122,33 @@ if (! empty($hookmanager->resArray['options'])) {
 <br><input type="submit" class="button" value="&nbsp; <?php echo $langs->trans('Connection'); ?> &nbsp;" tabindex="5" />
 
 <?php
-if ($forgetpasslink || $helpcenterlink)
-{
-	$moreparam='';
-	if ($dol_hide_topmenu)   $moreparam.=(strpos($moreparam,'?')===false?'?':'&').'dol_hide_topmenu='.$dol_hide_topmenu;
-	if ($dol_hide_leftmenu)  $moreparam.=(strpos($moreparam,'?')===false?'?':'&').'dol_hide_leftmenu='.$dol_hide_leftmenu;
-	if ($dol_no_mouse_hover) $moreparam.=(strpos($moreparam,'?')===false?'?':'&').'dol_no_mouse_hover='.$dol_no_mouse_hover;
-	if ($dol_use_jmobile)    $moreparam.=(strpos($moreparam,'?')===false?'?':'&').'dol_use_jmobile='.$dol_use_jmobile;
+if ($forgetpasslink || $helpcenterlink) {
+    $moreparam='';
+    if ($dol_hide_topmenu)   $moreparam.=(strpos($moreparam,'?')===false?'?':'&').'dol_hide_topmenu='.$dol_hide_topmenu;
+    if ($dol_hide_leftmenu)  $moreparam.=(strpos($moreparam,'?')===false?'?':'&').'dol_hide_leftmenu='.$dol_hide_leftmenu;
+    if ($dol_no_mouse_hover) $moreparam.=(strpos($moreparam,'?')===false?'?':'&').'dol_no_mouse_hover='.$dol_no_mouse_hover;
+    if ($dol_use_jmobile)    $moreparam.=(strpos($moreparam,'?')===false?'?':'&').'dol_use_jmobile='.$dol_use_jmobile;
 
-	echo '<br>';
-	echo '<div align="center" style="margin-top: 4px;">';
-	if ($forgetpasslink) {
-		echo '<a class="alogin" href="'.DOL_URL_ROOT.'/user/passwordforgotten.php'.$moreparam.'">(';
-		echo $langs->trans('PasswordForgotten');
-		if (! $helpcenterlink) echo ')';
-		echo '</a>';
-	}
+    echo '<br>';
+    echo '<div align="center" style="margin-top: 4px;">';
+    if ($forgetpasslink) {
+        echo '<a class="alogin" href="'.DOL_URL_ROOT.'/user/passwordforgotten.php'.$moreparam.'">(';
+        echo $langs->trans('PasswordForgotten');
+        if (! $helpcenterlink) echo ')';
+        echo '</a>';
+    }
 
-	if ($forgetpasslink && $helpcenterlink) echo '&nbsp;-&nbsp;';
+    if ($forgetpasslink && $helpcenterlink) echo '&nbsp;-&nbsp;';
 
-	if ($helpcenterlink) {
-		$url=DOL_URL_ROOT.'/support/index.php'.$moreparam;
-		if (! empty($conf->global->MAIN_HELPCENTER_LINKTOUSE)) $url=$conf->global->MAIN_HELPCENTER_LINKTOUSE;
-		echo '<a class="alogin" href="'.dol_escape_htmltag($url).'" target="_blank">';
-		if (! $forgetpasslink) echo '(';
-		echo $langs->trans('NeedHelpCenter');
-		echo ')</a>';
-	}
-	echo '</div>';
+    if ($helpcenterlink) {
+        $url=DOL_URL_ROOT.'/support/index.php'.$moreparam;
+        if (! empty($conf->global->MAIN_HELPCENTER_LINKTOUSE)) $url=$conf->global->MAIN_HELPCENTER_LINKTOUSE;
+        echo '<a class="alogin" href="'.dol_escape_htmltag($url).'" target="_blank">';
+        if (! $forgetpasslink) echo '(';
+        echo $langs->trans('NeedHelpCenter');
+        echo ')</a>';
+    }
+    echo '</div>';
 }
 ?>
 
@@ -160,45 +158,39 @@ if ($forgetpasslink || $helpcenterlink)
 
 </form>
 
-
-
-
-<?php if (! empty($_SESSION['dol_loginmesg']))
-{
+<?php if (! empty($_SESSION['dol_loginmesg'])) {
 ?>
-	<center><div align="center" style="max-width: 500px; margin-left: 10px; margin-right: 10px;"><div class="error">
-	<?php echo $_SESSION['dol_loginmesg']; ?>
-	</div></div></center>
+    <center><div align="center" style="max-width: 500px; margin-left: 10px; margin-right: 10px;"><div class="error">
+    <?php echo $_SESSION['dol_loginmesg']; ?>
+    </div></div></center>
 <?php
 }
 ?>
 
-<?php if ($main_home)
-{
+<?php if ($main_home) {
 ?>
-	<center><div align="center" class="login_main_home" style="max-width: 80%">
-	<?php echo $main_home; ?>
-	</div></center><br>
+    <center><div align="center" class="login_main_home" style="max-width: 80%">
+    <?php echo $main_home; ?>
+    </div></center><br>
 <?php
 }
 ?>
 
 <?php
-if (! empty($conf->global->MAIN_GOOGLE_AD_CLIENT) && ! empty($conf->global->MAIN_GOOGLE_AD_SLOT))
-{
+if (! empty($conf->global->MAIN_GOOGLE_AD_CLIENT) && ! empty($conf->global->MAIN_GOOGLE_AD_SLOT)) {
 ?>
-	<div align="center"><br>
-		<script type="text/javascript"><!--
-			google_ad_client = "<?php echo $conf->global->MAIN_GOOGLE_AD_CLIENT ?>";
-			google_ad_slot = "<?php echo $conf->global->MAIN_GOOGLE_AD_SLOT ?>";
-			google_ad_width = <?php echo $conf->global->MAIN_GOOGLE_AD_WIDTH ?>;
-			google_ad_height = <?php echo $conf->global->MAIN_GOOGLE_AD_HEIGHT ?>;
-			//-->
-		</script>
-		<script type="text/javascript"
-			src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
-		</script>
-	</div>
+    <div align="center"><br>
+        <script type="text/javascript"><!--
+            google_ad_client = "<?php echo $conf->global->MAIN_GOOGLE_AD_CLIENT ?>";
+            google_ad_slot = "<?php echo $conf->global->MAIN_GOOGLE_AD_SLOT ?>";
+            google_ad_width = <?php echo $conf->global->MAIN_GOOGLE_AD_WIDTH ?>;
+            google_ad_height = <?php echo $conf->global->MAIN_GOOGLE_AD_HEIGHT ?>;
+            //-->
+        </script>
+        <script type="text/javascript"
+            src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+        </script>
+    </div>
 <?php
 }
 ?>

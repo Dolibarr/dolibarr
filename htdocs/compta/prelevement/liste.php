@@ -23,7 +23,7 @@
  *      \ingroup    prelevement
  *      \brief      Page liste des prelevements
  */
-require('../../main.inc.php');
+require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/ligneprelevement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
@@ -53,8 +53,6 @@ $ligne=new LignePrelevement($db,$user);
 
 $offset = $conf->liste_limit * $page ;
 
-
-
 /*
  *  View
  */
@@ -76,28 +74,23 @@ $sql.= " AND pf.fk_facture = f.rowid";
 $sql.= " AND f.fk_soc = s.rowid";
 $sql.= " AND f.entity = ".$conf->entity;
 if ($socid) $sql.= " AND s.rowid = ".$socid;
-if ($search_line)
-{
+if ($search_line) {
     $sql.= " AND pl.rowid = '".$search_line."'";
 }
-if ($search_bon)
-{
+if ($search_bon) {
     $sql.= " AND p.ref LIKE '%".$search_bon."%'";
 }
-if ($search_code)
-{
+if ($search_code) {
     $sql.= " AND s.code_client LIKE '%".$search_code."%'";
 }
-if ($search_societe)
-{
+if ($search_societe) {
     $sql .= " AND s.nom LIKE '%".$search_societe."%'";
 }
 $sql.=$db->order($sortfield,$sortorder);
 $sql.=$db->plimit($conf->liste_limit+1, $offset);
 
 $result = $db->query($sql);
-if ($result)
-{
+if ($result) {
     $num = $db->num_rows($result);
     $i = 0;
 
@@ -135,8 +128,7 @@ if ($result)
 
     $var=True;
 
-    while ($i < min($num,$conf->liste_limit))
-    {
+    while ($i < min($num,$conf->liste_limit)) {
         $obj = $db->fetch_object($result);
 
         $var=!$var;
@@ -177,14 +169,10 @@ if ($result)
     }
     print "</table>";
     $db->free($result);
-}
-else
-{
+} else {
     dol_print_error($db);
 }
 
 $db->close();
 
-
 llxFooter();
-?>

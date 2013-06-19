@@ -24,292 +24,266 @@
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 
-
 /**
  *	Class to manage subscriptions of foundation members
  */
 class Cotisation extends CommonObject
 {
-	public $element='subscription';
-	public $table_element='cotisation';
+    public $element='subscription';
+    public $table_element='cotisation';
 
-	var $id;
-	var $datec;
-	var $datem;
-	var $dateh;				// Subscription start date
-	var $datef;				// Subscription end date
-	var $fk_adherent;
-	var $amount;
-	var $note;
-	var $fk_bank;
+    public $id;
+    public $datec;
+    public $datem;
+    public $dateh;				// Subscription start date
+    public $datef;				// Subscription end date
+    public $fk_adherent;
+    public $amount;
+    public $note;
+    public $fk_bank;
 
+    /**
+     *	Constructor
+     *
+     *	@param 		DoliDB		$db		Database handler
+     */
+    public function __construct($db)
+    {
+        $this->db = $db;
+    }
 
-	/**
-	 *	Constructor
-	 *
-	 *	@param 		DoliDB		$db		Database handler
-	 */
-	function __construct($db)
-	{
-		$this->db = $db;
-	}
+    /**
+     *	Fonction qui permet de creer la cotisation
+     *
+     *	@param	int		$userid		userid de celui qui insere
+     *	@return	int					<0 if KO, Id subscription created if OK
+     */
+    public function create($userid)
+    {
+        global $langs;
 
+        $now=dol_now();
 
-	/**
-	 *	Fonction qui permet de creer la cotisation
-	 *
-	 *	@param	int		$userid		userid de celui qui insere
-	 *	@return	int					<0 if KO, Id subscription created if OK
-	 */
-	function create($userid)
-	{
-		global $langs;
+        // Check parameters
+        if ($this->datef <= $this->dateh) {
+            $this->error=$langs->trans("ErrorBadValueForDate");
 
-		$now=dol_now();
+            return -1;
+        }
 
-		// Check parameters
-		if ($this->datef <= $this->dateh)
-		{
-			$this->error=$langs->trans("ErrorBadValueForDate");
-			return -1;
-		}
-
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."cotisation (fk_adherent, datec, dateadh, datef, cotisation, note)";
+        $sql = "INSERT INTO ".MAIN_DB_PREFIX."cotisation (fk_adherent, datec, dateadh, datef, cotisation, note)";
         $sql.= " VALUES (".$this->fk_adherent.", '".$this->db->idate($now)."',";
-		$sql.= " '".$this->db->idate($this->dateh)."',";
-		$sql.= " '".$this->db->idate($this->datef)."',";
-		$sql.= " ".$this->amount.",'".$this->db->escape($this->note)."')";
+        $sql.= " '".$this->db->idate($this->dateh)."',";
+        $sql.= " '".$this->db->idate($this->datef)."',";
+        $sql.= " ".$this->amount.",'".$this->db->escape($this->note)."')";
 
-		dol_syslog(get_class($this)."::create sql=".$sql);
-		$resql = $this->db->query($sql);
-		if ($resql)
-		{
-			return $this->db->last_insert_id(MAIN_DB_PREFIX."cotisation");
-		}
-		else
-		{
-			$this->error=$this->db->error();
-			dol_syslog($this->error, LOG_ERR);
-			return -1;
-		}
-	}
+        dol_syslog(get_class($this)."::create sql=".$sql);
+        $resql = $this->db->query($sql);
+        if ($resql) {
+            return $this->db->last_insert_id(MAIN_DB_PREFIX."cotisation");
+        } else {
+            $this->error=$this->db->error();
+            dol_syslog($this->error, LOG_ERR);
 
+            return -1;
+        }
+    }
 
-	/**
-	 *  Fonction qui permet de recuperer une cotisation
-	 *
-	 *  @param	int		$rowid		Id cotisation
-	 *  @return	int					<0 if KO, =0 if not found, >0 if OK
-	 */
-	function fetch($rowid)
-	{
+    /**
+     *  Fonction qui permet de recuperer une cotisation
+     *
+     *  @param	int		$rowid		Id cotisation
+     *  @return	int					<0 if KO, =0 if not found, >0 if OK
+     */
+    public function fetch($rowid)
+    {
         $sql ="SELECT rowid, fk_adherent, datec,";
-		$sql.=" tms,";
-		$sql.=" dateadh,";
-		$sql.=" datef,";
-		$sql.=" cotisation, note, fk_bank";
-		$sql.=" FROM ".MAIN_DB_PREFIX."cotisation";
-		$sql.="	WHERE rowid=".$rowid;
+        $sql.=" tms,";
+        $sql.=" dateadh,";
+        $sql.=" datef,";
+        $sql.=" cotisation, note, fk_bank";
+        $sql.=" FROM ".MAIN_DB_PREFIX."cotisation";
+        $sql.="	WHERE rowid=".$rowid;
 
-		dol_syslog("Cotisation::fetch sql=".$sql);
-		$resql=$this->db->query($sql);
-		if ($resql)
-		{
-			if ($this->db->num_rows($resql))
-			{
-				$obj = $this->db->fetch_object($resql);
+        dol_syslog("Cotisation::fetch sql=".$sql);
+        $resql=$this->db->query($sql);
+        if ($resql) {
+            if ($this->db->num_rows($resql)) {
+                $obj = $this->db->fetch_object($resql);
 
-				$this->id             = $obj->rowid;
-				$this->ref            = $obj->rowid;
+                $this->id             = $obj->rowid;
+                $this->ref            = $obj->rowid;
 
-				$this->fk_adherent    = $obj->fk_adherent;
-				$this->datec          = $this->db->jdate($obj->datec);
-				$this->datem          = $this->db->jdate($obj->tms);
-				$this->dateh          = $this->db->jdate($obj->dateadh);
-				$this->datef          = $this->db->jdate($obj->datef);
-				$this->amount         = $obj->cotisation;
-				$this->note           = $obj->note;
-				$this->fk_bank        = $obj->fk_bank;
-				return 1;
-			}
-			else
-			{
-				return 0;
-			}
-		}
-		else
-		{
-			$this->error=$this->db->error();
-			return -1;
-		}
-	}
+                $this->fk_adherent    = $obj->fk_adherent;
+                $this->datec          = $this->db->jdate($obj->datec);
+                $this->datem          = $this->db->jdate($obj->tms);
+                $this->dateh          = $this->db->jdate($obj->dateadh);
+                $this->datef          = $this->db->jdate($obj->datef);
+                $this->amount         = $obj->cotisation;
+                $this->note           = $obj->note;
+                $this->fk_bank        = $obj->fk_bank;
 
+                return 1;
+            } else {
+                return 0;
+            }
+        } else {
+            $this->error=$this->db->error();
 
-	/**
-	 *	Met a jour en base la cotisation
-	 *
-	 *	@param	User	$user			Objet user qui met a jour
-	 *	@param 	int		$notrigger		0=Desactive les triggers
-	 *	@return	int						<0 if KO, >0 if OK
-	 */
-	function update($user,$notrigger=0)
-	{
-		$this->db->begin();
+            return -1;
+        }
+    }
 
-		$sql = "UPDATE ".MAIN_DB_PREFIX."cotisation SET ";
-		$sql .= " fk_adherent = ".$this->fk_adherent.",";
-		$sql .= " note=".($this->note ? "'".$this->db->escape($this->note)."'" : 'null').",";
-		$sql .= " cotisation = '".price2num($this->amount)."',";
-		$sql .= " dateadh='".$this->db->idate($this->dateh)."',";
-		$sql .= " datef='".$this->db->idate($this->datef)."',";
-		$sql .= " datec='".$this->db->idate($this->datec)."',";
-		$sql .= " fk_bank = ".($this->fk_bank ? $this->fk_bank : 'null');
-		$sql .= " WHERE rowid = ".$this->id;
+    /**
+     *	Met a jour en base la cotisation
+     *
+     *	@param	User	$user			Objet user qui met a jour
+     *	@param 	int		$notrigger		0=Desactive les triggers
+     *	@return	int						<0 if KO, >0 if OK
+     */
+    public function update($user,$notrigger=0)
+    {
+        $this->db->begin();
 
-		dol_syslog("Cotisation::update sql=".$sql);
-		$resql = $this->db->query($sql);
-		if ($resql)
-		{
-			$member=new Adherent($this->db);
-			$result=$member->fetch($this->fk_adherent);
-			$result=$member->update_end_date($user);
+        $sql = "UPDATE ".MAIN_DB_PREFIX."cotisation SET ";
+        $sql .= " fk_adherent = ".$this->fk_adherent.",";
+        $sql .= " note=".($this->note ? "'".$this->db->escape($this->note)."'" : 'null').",";
+        $sql .= " cotisation = '".price2num($this->amount)."',";
+        $sql .= " dateadh='".$this->db->idate($this->dateh)."',";
+        $sql .= " datef='".$this->db->idate($this->datef)."',";
+        $sql .= " datec='".$this->db->idate($this->datec)."',";
+        $sql .= " fk_bank = ".($this->fk_bank ? $this->fk_bank : 'null');
+        $sql .= " WHERE rowid = ".$this->id;
 
-			$this->db->commit();
-			return 1;
-		}
-		else
-		{
-			$this->db->rollback();
-			$this->error=$this->db->error();
-			dol_syslog("Cotisation::update ".$this->error, LOG_ERR);
-			return -1;
-		}
-	}
+        dol_syslog("Cotisation::update sql=".$sql);
+        $resql = $this->db->query($sql);
+        if ($resql) {
+            $member=new Adherent($this->db);
+            $result=$member->fetch($this->fk_adherent);
+            $result=$member->update_end_date($user);
 
-	/**
-	 *	Delete a subscription
-	 *
-	 *	@param	User	$user		User that delete
-	 *	@return	int					<0 if KO, 0 if not found, >0 if OK
-	 */
-	function delete($user)
-	{
-		// It subscription is linked to a bank transaction, we get it
-		if ($this->fk_bank)
-		{
-			require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
-			$accountline=new AccountLine($this->db);
-			$result=$accountline->fetch($this->fk_bank);
-		}
+            $this->db->commit();
 
-		$this->db->begin();
+            return 1;
+        } else {
+            $this->db->rollback();
+            $this->error=$this->db->error();
+            dol_syslog("Cotisation::update ".$this->error, LOG_ERR);
 
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."cotisation WHERE rowid = ".$this->id;
-		dol_syslog("Cotisation::delete sql=".$sql);
-		$resql=$this->db->query($sql);
-		if ($resql)
-		{
-			$num=$this->db->affected_rows($resql);
-			if ($num)
-			{
-				require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
-				$member=new Adherent($this->db);
-				$result=$member->fetch($this->fk_adherent);
-				$result=$member->update_end_date($user);
+            return -1;
+        }
+    }
 
-				if ($accountline->rowid > 0)	// If we found bank account line (this means this->fk_bank defined)
-				{
-					$result=$accountline->delete($user);		// Return false if refused because line is conciliated
-					if ($result > 0)
-					{
-						$this->db->commit();
-						return 1;
-					}
-					else
-					{
-						$this->error=$accountline->error;
-						$this->db->rollback();
-						return -1;
-					}
-				}
-				else
-				{
-					$this->db->commit();
-					return 1;
-				}
-			}
-			else
-			{
-				$this->db->commit();
-				return 0;
-			}
-		}
-		else
-		{
-			$this->error=$this->db->lasterror();
-			$this->db->rollback();
-			return -1;
-		}
-	}
+    /**
+     *	Delete a subscription
+     *
+     *	@param	User	$user		User that delete
+     *	@return	int					<0 if KO, 0 if not found, >0 if OK
+     */
+    public function delete($user)
+    {
+        // It subscription is linked to a bank transaction, we get it
+        if ($this->fk_bank) {
+            require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+            $accountline=new AccountLine($this->db);
+            $result=$accountline->fetch($this->fk_bank);
+        }
 
+        $this->db->begin();
 
-	/**
-	 *  Renvoie nom clicable (avec eventuellement le picto)
-	 *
-	 *	@param	int		$withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
-	 *	@return	string					Chaine avec URL
-	 */
-	function getNomUrl($withpicto=0)
-	{
-		global $langs;
+        $sql = "DELETE FROM ".MAIN_DB_PREFIX."cotisation WHERE rowid = ".$this->id;
+        dol_syslog("Cotisation::delete sql=".$sql);
+        $resql=$this->db->query($sql);
+        if ($resql) {
+            $num=$this->db->affected_rows($resql);
+            if ($num) {
+                require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
+                $member=new Adherent($this->db);
+                $result=$member->fetch($this->fk_adherent);
+                $result=$member->update_end_date($user);
 
-		$result='';
+                if ($accountline->rowid > 0)	// If we found bank account line (this means this->fk_bank defined) {
+                    $result=$accountline->delete($user);		// Return false if refused because line is conciliated
+                    if ($result > 0) {
+                        $this->db->commit();
 
-		$lien = '<a href="'.DOL_URL_ROOT.'/adherents/fiche_subscription.php?rowid='.$this->id.'">';
-		$lienfin='</a>';
+                        return 1;
+                    } else {
+                        $this->error=$accountline->error;
+                        $this->db->rollback();
 
-		$picto='payment';
-		$label=$langs->trans("ShowSubscription");
+                        return -1;
+                    }
+                } else {
+                    $this->db->commit();
 
-		if ($withpicto) $result.=($lien.img_object($label,$picto).$lienfin);
-		if ($withpicto && $withpicto != 2) $result.=' ';
-		$result.=$lien.$this->ref.$lienfin;
-		return $result;
-	}
+                    return 1;
+                }
+            } else {
+                $this->db->commit();
 
+                return 0;
+            }
+        } else {
+            $this->error=$this->db->lasterror();
+            $this->db->rollback();
+
+            return -1;
+        }
+    }
+
+    /**
+     *  Renvoie nom clicable (avec eventuellement le picto)
+     *
+     *	@param	int		$withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
+     *	@return	string					Chaine avec URL
+     */
+    public function getNomUrl($withpicto=0)
+    {
+        global $langs;
+
+        $result='';
+
+        $lien = '<a href="'.DOL_URL_ROOT.'/adherents/fiche_subscription.php?rowid='.$this->id.'">';
+        $lienfin='</a>';
+
+        $picto='payment';
+        $label=$langs->trans("ShowSubscription");
+
+        if ($withpicto) $result.=($lien.img_object($label,$picto).$lienfin);
+        if ($withpicto && $withpicto != 2) $result.=' ';
+        $result.=$lien.$this->ref.$lienfin;
+
+        return $result;
+    }
 
     /**
      *  Charge les informations d'ordre info dans l'objet cotisation
-	 *
+     *
      *  @param	int		$id       Id subscription
      *  @return	void
      */
-	function info($id)
-	{
-		$sql = 'SELECT c.rowid, c.datec,';
-		$sql.= ' c.tms as datem';
-		$sql.= ' FROM '.MAIN_DB_PREFIX.'cotisation as c';
-		$sql.= ' WHERE c.rowid = '.$id;
+    public function info($id)
+    {
+        $sql = 'SELECT c.rowid, c.datec,';
+        $sql.= ' c.tms as datem';
+        $sql.= ' FROM '.MAIN_DB_PREFIX.'cotisation as c';
+        $sql.= ' WHERE c.rowid = '.$id;
 
-		$result=$this->db->query($sql);
-		if ($result)
-		{
-			if ($this->db->num_rows($result))
-			{
-				$obj = $this->db->fetch_object($result);
-				$this->id = $obj->rowid;
+        $result=$this->db->query($sql);
+        if ($result) {
+            if ($this->db->num_rows($result)) {
+                $obj = $this->db->fetch_object($result);
+                $this->id = $obj->rowid;
 
-				$this->date_creation     = $this->db->jdate($obj->datec);
-				$this->date_modification = $this->db->jdate($obj->datem);
-			}
+                $this->date_creation     = $this->db->jdate($obj->datec);
+                $this->date_modification = $this->db->jdate($obj->datem);
+            }
 
-			$this->db->free($result);
+            $this->db->free($result);
 
-		}
-		else
-		{
-			dol_print_error($this->db);
-		}
-	}
+        } else {
+            dol_print_error($this->db);
+        }
+    }
 }
-?>

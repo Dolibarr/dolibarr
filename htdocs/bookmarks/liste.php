@@ -24,7 +24,6 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/bookmarks/class/bookmark.class.php';
 
-
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
@@ -36,26 +35,20 @@ if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="position";
 $limit=$conf->liste_limit;
 
-
 /*
  * Actions
  */
 
-if ($_GET["action"] == 'delete')
-{
+if ($_GET["action"] == 'delete') {
     $bookmark=new Bookmark($db);
     $res=$bookmark->remove($_GET["bid"]);
-    if ($res > 0)
-    {
+    if ($res > 0) {
         header("Location: ".$_SERVER["PHP_SELF"]);
         exit;
-    }
-    else
-    {
+    } else {
         $mesg='<div class="error">'.$bookmark->error.'</div>';
     }
 }
-
 
 /*
  * View
@@ -78,8 +71,7 @@ $sql.= $db->order($sortfield.", position",$sortorder);
 $sql.= $db->plimit($limit, $offset);
 
 $resql=$db->query($sql);
-if ($resql)
-{
+if ($resql) {
     $num = $db->num_rows($resql);
     $i = 0;
 
@@ -98,8 +90,7 @@ if ($resql)
     print "</tr>\n";
 
     $var=True;
-    while ($i < $num)
-    {
+    while ($i < $num) {
         $obj = $db->fetch_object($resql);
 
         $var=!$var;
@@ -116,13 +107,11 @@ if ($resql)
 
         // Title
         print "<td>";
-        if ($obj->rowid)
-        {
+        if ($obj->rowid) {
             // Lien interne societe
             $lieninterne=1;
             $lien="Dolibarr";
-            if (! $obj->title)
-            {
+            if (! $obj->title) {
                 // For compatibility with old Dolibarr bookmarks
                 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
                 $societe=new Societe($db);
@@ -151,16 +140,13 @@ if ($resql)
 
         // Author
         print '<td align="center">';
-		if ($obj->fk_user)
-		{
-        	$userstatic->id=$obj->fk_user;
-	    	$userstatic->lastname=$obj->login;
-			print $userstatic->getNomUrl(1);
-		}
-		else
-		{
-			print $langs->trans("Public");
-		}
+        if ($obj->fk_user) {
+            $userstatic->id=$obj->fk_user;
+            $userstatic->lastname=$obj->login;
+            print $userstatic->getNomUrl(1);
+        } else {
+            print $langs->trans("Public");
+        }
         print "</td>\n";
 
         // Date creation
@@ -171,16 +157,12 @@ if ($resql)
 
         // Actions
         print '<td align="right" class="nowrap">';
-        if ($user->rights->bookmark->creer)
-        {
-        	print "<a href=\"".DOL_URL_ROOT."/bookmarks/fiche.php?action=edit&id=".$obj->bid."&backtopage=".urlencode($_SERVER["PHP_SELF"])."\">".img_edit()."</a> ";
+        if ($user->rights->bookmark->creer) {
+            print "<a href=\"".DOL_URL_ROOT."/bookmarks/fiche.php?action=edit&id=".$obj->bid."&backtopage=".urlencode($_SERVER["PHP_SELF"])."\">".img_edit()."</a> ";
         }
-        if ($user->rights->bookmark->supprimer)
-        {
+        if ($user->rights->bookmark->supprimer) {
             print "<a href=\"".$_SERVER["PHP_SELF"]."?action=delete&bid=$obj->bid\">".img_delete()."</a>";
-        }
-        else
-        {
+        } else {
             print "&nbsp;";
         }
         print "</td>";
@@ -189,25 +171,18 @@ if ($resql)
     }
     print "</table>";
     $db->free($resql);
-}
-else
-{
+} else {
     dol_print_error($db);
 }
 
-
-
 print "<div class=\"tabsAction\">\n";
 
-if ($user->rights->bookmark->creer)
-{
+if ($user->rights->bookmark->creer) {
     print '<a class="butAction" href="fiche.php?action=create">'.$langs->trans("NewBookmark").'</a>';
 }
 
 print '</div>';
 
-
 $db->close();
 
 llxFooter();
-?>

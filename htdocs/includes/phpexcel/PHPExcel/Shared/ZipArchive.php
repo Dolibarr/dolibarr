@@ -27,7 +27,6 @@
 
 require_once PHPEXCEL_ROOT . 'PHPExcel/Shared/PCLZip/pclzip.lib.php';
 
-
 /**
  * PHPExcel_Shared_ZipArchive
  *
@@ -38,53 +37,50 @@ require_once PHPEXCEL_ROOT . 'PHPExcel/Shared/PCLZip/pclzip.lib.php';
 class PHPExcel_Shared_ZipArchive
 {
 
-	/**
-	 * Temporary storage directory
-	 *
-	 * @var string
-	 */
-	private $_tempDir;
+    /**
+     * Temporary storage directory
+     *
+     * @var string
+     */
+    private $_tempDir;
 
-	/**
-	 * Zip Archive Stream Handle
-	 *
-	 * @var string
-	 */
-	private $_zip;
+    /**
+     * Zip Archive Stream Handle
+     *
+     * @var string
+     */
+    private $_zip;
 
+    public function open($fileName)
+    {
+        $this->_tempDir = PHPExcel_Shared_File::sys_get_temp_dir();
 
-	public function open($fileName)
-	{
-		$this->_tempDir = PHPExcel_Shared_File::sys_get_temp_dir();
+        $this->_zip = new PclZip($fileName);
 
-		$this->_zip = new PclZip($fileName);
+        return true;
+    }
 
-		return true;
-	}
+    public function close()
+    {
+    }
 
+    public function addFromString($localname, $contents)
+    {
+        $filenameParts = pathinfo($localname);
 
-	public function close()
-	{
-	}
+        $handle = fopen($this->_tempDir.'/'.$filenameParts["basename"], "wb");
+        fwrite($handle, $contents);
+        fclose($handle);
 
+        $res = $this->_zip->add($this->_tempDir.'/'.$filenameParts["basename"],
+                                PCLZIP_OPT_REMOVE_PATH, $this->_tempDir,
+                                PCLZIP_OPT_ADD_PATH, $filenameParts["dirname"]
+                               );
+        if ($res == 0) {
+            throw new Exception("Error zipping files : " . $this->_zip->errorInfo(true));
+        }
 
-	public function addFromString($localname, $contents)
-	{
-		$filenameParts = pathinfo($localname);
-
-		$handle = fopen($this->_tempDir.'/'.$filenameParts["basename"], "wb");
-		fwrite($handle, $contents);
-		fclose($handle);
-
-		$res = $this->_zip->add($this->_tempDir.'/'.$filenameParts["basename"],
-								PCLZIP_OPT_REMOVE_PATH, $this->_tempDir,
-								PCLZIP_OPT_ADD_PATH, $filenameParts["dirname"]
-							   );
-		if ($res == 0) {
-			throw new Exception("Error zipping files : " . $this->_zip->errorInfo(true));
-		}
-
-		unlink($this->_tempDir.'/'.$filenameParts["basename"]);
-	}
+        unlink($this->_tempDir.'/'.$filenameParts["basename"]);
+    }
 
 }

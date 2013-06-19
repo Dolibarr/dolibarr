@@ -22,13 +22,10 @@
  * \brief      Page with Paypal init var.
  */
 
-if (session_id() == "")
-{
+if (session_id() == "") {
     session_start();
-    if (ini_get('register_globals'))    // To solve bug in using $_SESSION
-    {
-        foreach ($_SESSION as $key=>$value)
-        {
+    if (ini_get('register_globals')) {    // To solve bug in using $_SESSION
+        foreach ($_SESSION as $key=>$value) {
             if (isset($GLOBALS[$key])) unset($GLOBALS[$key]);
         }
     }
@@ -48,13 +45,10 @@ $API_version="56";
  ' For the sandbox, the URL is       https://www.sandbox.paypal.com/webscr&cmd=_express-checkout&token=
  ' For the live site, the URL is        https://www.paypal.com/webscr&cmd=_express-checkout&token=
  */
-if (! empty($conf->global->PAYPAL_API_SANDBOX))
-{
+if (! empty($conf->global->PAYPAL_API_SANDBOX)) {
     $API_Endpoint = "https://api-3t.sandbox.paypal.com/nvp";
     $API_Url = "https://www.sandbox.paypal.com/webscr?cmd=_express-checkout&token=";
-}
-else
-{
+} else {
     $API_Endpoint = "https://api-3t.paypal.com/nvp";
     $API_Url = "https://www.paypal.com/cgi-bin/webscr?cmd=_express-checkout&token=";
 }
@@ -75,5 +69,3 @@ $PROXY_PORT = $conf->global->MAIN_PROXY_PORT;
 $PROXY_USER = $conf->global->MAIN_PROXY_USER;
 $PROXY_PASS = $conf->global->MAIN_PROXY_PASS;
 $USE_PROXY = empty($conf->global->MAIN_PROXY_USE)?false:true;
-
-?>

@@ -29,32 +29,32 @@ PHPExcel_Autoloader::Register();
 PHPExcel_Shared_ZipStreamWrapper::register();
 // check mbstring.func_overload
 if (ini_get('mbstring.func_overload') & 2) {
-	throw new Exception('Multibyte function overloading in PHP must be disabled for string functions (2).');
+    throw new Exception('Multibyte function overloading in PHP must be disabled for string functions (2).');
 }
 PHPExcel_Shared_String::buildCharacterSets();
 
-
 class PHPExcel_Autoloader
 {
-	public static function Register() {
-		return spl_autoload_register(array('PHPExcel_Autoloader', 'Load'));
-	}	//	function Register()
+    public static function Register()
+    {
+        return spl_autoload_register(array('PHPExcel_Autoloader', 'Load'));
+    }	//	function Register()
 
+    public static function Load($pObjectName)
+    {
+        if ((class_exists($pObjectName)) || (strpos($pObjectName, 'PHPExcel') === False)) {
+            return false;
+        }
 
-	public static function Load($pObjectName){
-		if ((class_exists($pObjectName)) || (strpos($pObjectName, 'PHPExcel') === False)) {
-			return false;
-		}
+        $pObjectFilePath =	PHPEXCEL_ROOT.
+                            str_replace('_',DIRECTORY_SEPARATOR,$pObjectName).
+                            '.php';
 
-		$pObjectFilePath =	PHPEXCEL_ROOT.
-							str_replace('_',DIRECTORY_SEPARATOR,$pObjectName).
-							'.php';
+        if ((file_exists($pObjectFilePath) === false) || (is_readable($pObjectFilePath) === false)) {
+            return false;
+        }
 
-		if ((file_exists($pObjectFilePath) === false) || (is_readable($pObjectFilePath) === false)) {
-			return false;
-		}
-
-		require($pObjectFilePath);
-	}	//	function Load()
+        require($pObjectFilePath);
+    }	//	function Load()
 
 }

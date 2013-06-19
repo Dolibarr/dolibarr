@@ -25,446 +25,409 @@
 
 require_once DOL_DOCUMENT_ROOT .'/core/class/commonobject.class.php';
 
-
 /**
  *	Class to manage emailings module
  */
 class Mailing extends CommonObject
 {
-	public $element='mailing';
-	public $table_element='mailing';
+    public $element='mailing';
+    public $table_element='mailing';
 
-	var $id;
-	var $statut;
-	var $titre;
-	var $sujet;
-	var $body;
-	var $nbemail;
-	var $bgcolor;
-	var $bgimage;
+    public $id;
+    public $statut;
+    public $titre;
+    public $sujet;
+    public $body;
+    public $nbemail;
+    public $bgcolor;
+    public $bgimage;
 
-	var $email_from;
-	var $email_replyto;
-	var $email_errorsto;
+    public $email_from;
+    public $email_replyto;
+    public $email_errorsto;
 
-	var $joined_file1;
-	var $joined_file2;
-	var $joined_file3;
-	var $joined_file4;
+    public $joined_file1;
+    public $joined_file2;
+    public $joined_file3;
+    public $joined_file4;
 
-	var $user_creat;
-	var $user_valid;
+    public $user_creat;
+    public $user_valid;
 
-	var $date_creat;
-	var $date_valid;
-	
-	var $extraparams=array();
+    public $date_creat;
+    public $date_valid;
 
+    public $extraparams=array();
 
-	/**
+    /**
      *  Constructor
      *
      *  @param      DoliDb		$db      Database handler
-	 */
-	function __construct($db)
-	{
-		$this->db = $db;
+     */
+    public function __construct($db)
+    {
+        $this->db = $db;
 
-		// List of language codes for status
-		$this->statuts[0] = 'MailingStatusDraft';
-		$this->statuts[1] = 'MailingStatusValidated';
-		$this->statuts[2] = 'MailingStatusSentPartialy';
-		$this->statuts[3] = 'MailingStatusSentCompletely';
-	}
+        // List of language codes for status
+        $this->statuts[0] = 'MailingStatusDraft';
+        $this->statuts[1] = 'MailingStatusValidated';
+        $this->statuts[2] = 'MailingStatusSentPartialy';
+        $this->statuts[3] = 'MailingStatusSentCompletely';
+    }
 
-	/**
-	 *  Create an EMailing
-	 *
-	 *  @param	User	$user 		Object of user making creation
-	 *  @return int	   				-1 if error, Id of created object if OK
-	 */
-	function create($user)
-	{
-		global $conf, $langs;
+    /**
+     *  Create an EMailing
+     *
+     *  @param	User	$user 		Object of user making creation
+     *  @return int	   				-1 if error, Id of created object if OK
+     */
+    public function create($user)
+    {
+        global $conf, $langs;
 
-		$this->db->begin();
+        $this->db->begin();
 
-		$this->titre=trim($this->titre);
-		$this->email_from=trim($this->email_from);
+        $this->titre=trim($this->titre);
+        $this->email_from=trim($this->email_from);
 
-		if (! $this->email_from)
-		{
-			$this->error = $langs->trans("ErrorMailFromRequired");
-			return -1;
-		}
+        if (! $this->email_from) {
+            $this->error = $langs->trans("ErrorMailFromRequired");
 
-		$now=dol_now();
+            return -1;
+        }
 
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."mailing";
-		$sql .= " (date_creat, fk_user_creat, entity)";
-		$sql .= " VALUES (".$this->db->idate($now).", ".$user->id.", ".$conf->entity.")";
+        $now=dol_now();
 
-		if (! $this->titre)
-		{
-			$this->titre = $langs->trans("NoTitle");
-		}
+        $sql = "INSERT INTO ".MAIN_DB_PREFIX."mailing";
+        $sql .= " (date_creat, fk_user_creat, entity)";
+        $sql .= " VALUES (".$this->db->idate($now).", ".$user->id.", ".$conf->entity.")";
 
-		dol_syslog("Mailing::Create sql=".$sql);
-		$result=$this->db->query($sql);
-		if ($result)
-		{
-			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."mailing");
+        if (! $this->titre) {
+            $this->titre = $langs->trans("NoTitle");
+        }
 
-			if ($this->update($user) > 0)
-			{
-				$this->db->commit();
-			}
-			else
-			{
-				$this->error=$this->db->lasterror();
-				dol_syslog("Mailing::Create ".$this->error, LOG_ERR);
-				$this->db->rollback();
-				return -1;
-			}
+        dol_syslog("Mailing::Create sql=".$sql);
+        $result=$this->db->query($sql);
+        if ($result) {
+            $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."mailing");
 
-			return $this->id;
-		}
-		else
-		{
-			$this->error=$this->db->lasterror();
-			dol_syslog("Mailing::Create ".$this->error, LOG_ERR);
-			$this->db->rollback();
-			return -1;
-		}
-	}
+            if ($this->update($user) > 0) {
+                $this->db->commit();
+            } else {
+                $this->error=$this->db->lasterror();
+                dol_syslog("Mailing::Create ".$this->error, LOG_ERR);
+                $this->db->rollback();
 
-	/**
-	 *  Update emailing record
-	 *
-	 *  @param	User	$user 		Object of user making change
-	 *  @return int				    < 0 if KO, > 0 if OK
-	 */
-	function update($user)
-	{
-		$sql = "UPDATE ".MAIN_DB_PREFIX."mailing ";
-		$sql .= " SET titre = '".$this->db->escape($this->titre)."'";
-		$sql .= ", sujet = '".$this->db->escape($this->sujet)."'";
-		$sql .= ", body = '".$this->db->escape($this->body)."'";
-		$sql .= ", email_from = '".$this->email_from."'";
-		$sql .= ", email_replyto = '".$this->email_replyto."'";
-		$sql .= ", email_errorsto = '".$this->email_errorsto."'";
-		$sql .= ", bgcolor = '".($this->bgcolor?$this->bgcolor:null)."'";
-		$sql .= ", bgimage = '".($this->bgimage?$this->bgimage:null)."'";
-		$sql .= " WHERE rowid = ".$this->id;
+                return -1;
+            }
 
-		dol_syslog("Mailing::Update sql=".$sql);
-		$result=$this->db->query($sql);
-		if ($result)
-		{
-			return 1;
-		}
-		else
-		{
-			$this->error=$this->db->lasterror();
-			dol_syslog("Mailing::Update ".$this->error, LOG_ERR);
-			return -1;
-		}
-	}
+            return $this->id;
+        } else {
+            $this->error=$this->db->lasterror();
+            dol_syslog("Mailing::Create ".$this->error, LOG_ERR);
+            $this->db->rollback();
 
-	/**
-	 *	Get object from database
-	 *
-	 *	@param	int		$rowid      Id of emailing
-	 *	@return	int					<0 if KO, >0 if OK
-	 */
-	function fetch($rowid)
-	{
-		global $conf;
-		
-		$sql = "SELECT m.rowid, m.titre, m.sujet, m.body, m.bgcolor, m.bgimage";
-		$sql.= ", m.email_from, m.email_replyto, m.email_errorsto";
-		$sql.= ", m.statut, m.nbemail";
-		$sql.= ", m.fk_user_creat, m.fk_user_valid";
-		$sql.= ", m.date_creat";
-		$sql.= ", m.date_valid";
-		$sql.= ", m.date_envoi";
-		$sql.= ", m.extraparams";
-		$sql.= " FROM ".MAIN_DB_PREFIX."mailing as m";
-		$sql.= " WHERE m.rowid = ".$rowid;
+            return -1;
+        }
+    }
 
-		dol_syslog(get_class($this)."::fetch sql=".$sql);
-		$result=$this->db->query($sql);
-		if ($result)
-		{
-			if ($this->db->num_rows($result))
-			{
-				$obj = $this->db->fetch_object($result);
+    /**
+     *  Update emailing record
+     *
+     *  @param	User	$user 		Object of user making change
+     *  @return int				    < 0 if KO, > 0 if OK
+     */
+    public function update($user)
+    {
+        $sql = "UPDATE ".MAIN_DB_PREFIX."mailing ";
+        $sql .= " SET titre = '".$this->db->escape($this->titre)."'";
+        $sql .= ", sujet = '".$this->db->escape($this->sujet)."'";
+        $sql .= ", body = '".$this->db->escape($this->body)."'";
+        $sql .= ", email_from = '".$this->email_from."'";
+        $sql .= ", email_replyto = '".$this->email_replyto."'";
+        $sql .= ", email_errorsto = '".$this->email_errorsto."'";
+        $sql .= ", bgcolor = '".($this->bgcolor?$this->bgcolor:null)."'";
+        $sql .= ", bgimage = '".($this->bgimage?$this->bgimage:null)."'";
+        $sql .= " WHERE rowid = ".$this->id;
 
-				$this->id				= $obj->rowid;
-				$this->ref				= $obj->rowid;
-				$this->statut			= $obj->statut;
-				$this->nbemail			= $obj->nbemail;
-				$this->titre			= $obj->titre;
-				
-				$this->sujet			= $obj->sujet;				
-				if (!empty($conf->global->FCKEDITOR_ENABLE_MAILING) && dol_textishtml(dol_html_entity_decode($obj->body, ENT_COMPAT | ENT_HTML401))) {
-					$this->body				= dol_html_entity_decode($obj->body, ENT_COMPAT | ENT_HTML401);
-				}else {
-					$this->body				= $obj->body;
-				}
-				
-				$this->bgcolor			= $obj->bgcolor;
-				$this->bgimage			= $obj->bgimage;
+        dol_syslog("Mailing::Update sql=".$sql);
+        $result=$this->db->query($sql);
+        if ($result) {
+            return 1;
+        } else {
+            $this->error=$this->db->lasterror();
+            dol_syslog("Mailing::Update ".$this->error, LOG_ERR);
 
-				$this->email_from		= $obj->email_from;
-				$this->email_replyto	= $obj->email_replyto;
-				$this->email_errorsto	= $obj->email_errorsto;
+            return -1;
+        }
+    }
 
-				$this->user_creat		= $obj->fk_user_creat;
-				$this->user_valid		= $obj->fk_user_valid;
+    /**
+     *	Get object from database
+     *
+     *	@param	int		$rowid      Id of emailing
+     *	@return	int					<0 if KO, >0 if OK
+     */
+    public function fetch($rowid)
+    {
+        global $conf;
 
-				$this->date_creat		= $this->db->jdate($obj->date_creat);
-				$this->date_valid		= $this->db->jdate($obj->date_valid);
-				$this->date_envoi		= $this->db->jdate($obj->date_envoi);
-				
-				$this->extraparams		= (array) json_decode($obj->extraparams, true);
+        $sql = "SELECT m.rowid, m.titre, m.sujet, m.body, m.bgcolor, m.bgimage";
+        $sql.= ", m.email_from, m.email_replyto, m.email_errorsto";
+        $sql.= ", m.statut, m.nbemail";
+        $sql.= ", m.fk_user_creat, m.fk_user_valid";
+        $sql.= ", m.date_creat";
+        $sql.= ", m.date_valid";
+        $sql.= ", m.date_envoi";
+        $sql.= ", m.extraparams";
+        $sql.= " FROM ".MAIN_DB_PREFIX."mailing as m";
+        $sql.= " WHERE m.rowid = ".$rowid;
 
-				return 1;
-			}
-			else
-			{
-				dol_syslog(get_class($this)."::fetch Erreur -1");
-				return -1;
-			}
-		}
-		else
-		{
-			dol_syslog(get_class($this)."::fetch Erreur -2");
-			return -2;
-		}
-	}
+        dol_syslog(get_class($this)."::fetch sql=".$sql);
+        $result=$this->db->query($sql);
+        if ($result) {
+            if ($this->db->num_rows($result)) {
+                $obj = $this->db->fetch_object($result);
 
+                $this->id				= $obj->rowid;
+                $this->ref				= $obj->rowid;
+                $this->statut			= $obj->statut;
+                $this->nbemail			= $obj->nbemail;
+                $this->titre			= $obj->titre;
 
-	/**
-	 *	Load an object from its id and create a new one in database
-	 *
-	 *	@param  int		$fromid     	Id of object to clone
-	 *	@param	int		$option1		1=Copy content, 0=Forget content
-	 *	@param	int		$option2		Not used
-	 *	@return	int						New id of clone
-	 */
-	function createFromClone($fromid,$option1,$option2)
-	{
-		global $user,$langs;
+                $this->sujet			= $obj->sujet;
+                if (!empty($conf->global->FCKEDITOR_ENABLE_MAILING) && dol_textishtml(dol_html_entity_decode($obj->body, ENT_COMPAT | ENT_HTML401))) {
+                    $this->body				= dol_html_entity_decode($obj->body, ENT_COMPAT | ENT_HTML401);
+                } else {
+                    $this->body				= $obj->body;
+                }
 
-		$error=0;
+                $this->bgcolor			= $obj->bgcolor;
+                $this->bgimage			= $obj->bgimage;
 
-		$object=new Mailing($this->db);
+                $this->email_from		= $obj->email_from;
+                $this->email_replyto	= $obj->email_replyto;
+                $this->email_errorsto	= $obj->email_errorsto;
 
-		$this->db->begin();
+                $this->user_creat		= $obj->fk_user_creat;
+                $this->user_valid		= $obj->fk_user_valid;
 
-		// Load source object
-		$object->fetch($fromid);
-		$object->id=0;
-		$object->statut=0;
+                $this->date_creat		= $this->db->jdate($obj->date_creat);
+                $this->date_valid		= $this->db->jdate($obj->date_valid);
+                $this->date_envoi		= $this->db->jdate($obj->date_envoi);
 
-		// Clear fields
-		$object->titre=$langs->trans("CopyOf").' '.$object->titre.' '.dol_print_date(dol_now());
+                $this->extraparams		= (array) json_decode($obj->extraparams, true);
 
-		// If no option copy content
-		if (empty($option1))
-		{
-			// Clear values
-			$object->nbemail            = 0;
-			$object->sujet              = '';
-			$object->body               = '';
-			$object->bgcolor            = '';
-			$object->bgimage            = '';
+                return 1;
+            } else {
+                dol_syslog(get_class($this)."::fetch Erreur -1");
 
-			$object->email_from         = '';
-			$object->email_replyto      = '';
-			$object->email_errorsto     = '';
+                return -1;
+            }
+        } else {
+            dol_syslog(get_class($this)."::fetch Erreur -2");
 
-			$object->user_creat         = $user->id;
-			$object->user_valid         = '';
+            return -2;
+        }
+    }
 
-			$object->date_creat         = '';
-			$object->date_valid         = '';
-			$object->date_envoi         = '';
-		}
+    /**
+     *	Load an object from its id and create a new one in database
+     *
+     *	@param  int		$fromid     	Id of object to clone
+     *	@param	int		$option1		1=Copy content, 0=Forget content
+     *	@param	int		$option2		Not used
+     *	@return	int						New id of clone
+     */
+    public function createFromClone($fromid,$option1,$option2)
+    {
+        global $user,$langs;
 
-		// Create clone
-		$result=$object->create($user);
+        $error=0;
 
-		// Other options
-		if ($result < 0)
-		{
-			$this->error=$object->error;
-			$error++;
-		}
+        $object=new Mailing($this->db);
 
-		if (! $error)
-		{
+        $this->db->begin();
 
+        // Load source object
+        $object->fetch($fromid);
+        $object->id=0;
+        $object->statut=0;
 
+        // Clear fields
+        $object->titre=$langs->trans("CopyOf").' '.$object->titre.' '.dol_print_date(dol_now());
 
-		}
+        // If no option copy content
+        if (empty($option1)) {
+            // Clear values
+            $object->nbemail            = 0;
+            $object->sujet              = '';
+            $object->body               = '';
+            $object->bgcolor            = '';
+            $object->bgimage            = '';
 
-		// End
-		if (! $error)
-		{
-			$this->db->commit();
-			return $object->id;
-		}
-		else
-		{
-			$this->db->rollback();
-			return -1;
-		}
-	}
+            $object->email_from         = '';
+            $object->email_replyto      = '';
+            $object->email_errorsto     = '';
 
-	/**
-	 *  Validate emailing
-	 *
-	 *  @param	User	$user      	Objet user qui valide
-	 * 	@return	int					<0 if KO, >0 if OK
-	 */
-	function valid($user)
-	{
-		$now=dol_now();
+            $object->user_creat         = $user->id;
+            $object->user_valid         = '';
 
-		$sql = "UPDATE ".MAIN_DB_PREFIX."mailing ";
-		$sql .= " SET statut = 1, date_valid = ".$this->db->idate($now).", fk_user_valid=".$user->id;
-		$sql .= " WHERE rowid = ".$this->id;
+            $object->date_creat         = '';
+            $object->date_valid         = '';
+            $object->date_envoi         = '';
+        }
 
-		dol_syslog("Mailing::valid sql=".$sql, LOG_DEBUG);
-		if ($this->db->query($sql))
-		{
-			return 1;
-		}
-		else
-		{
-			$this->error=$this->db->lasterror();
-			dol_syslog("Mailing::Valid ".$this->error, LOG_ERR);
-			return -1;
-		}
-	}
+        // Create clone
+        $result=$object->create($user);
 
+        // Other options
+        if ($result < 0) {
+            $this->error=$object->error;
+            $error++;
+        }
 
-	/**
-	 *  Delete emailing
-	 *
-	 *  @param	int		$rowid      id du mailing a supprimer
-	 *  @return int         		1 en cas de succes
-	 */
-	function delete($rowid)
-	{
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."mailing";
-		$sql.= " WHERE rowid = ".$rowid;
+        if (! $error) {
 
-		dol_syslog("Mailing::delete sql=".$sql, LOG_DEBUG);
-		$resql=$this->db->query($sql);
-		if ($resql)
-		{
-			return 1;
-		}
-		else
-		{
-			$this->error=$this->db->lasterror();
-			dol_syslog("Mailing::Valid ".$this->error, LOG_ERR);
-			return -1;
-		}
-	}
+        }
 
+        // End
+        if (! $error) {
+            $this->db->commit();
 
-	/**
-	 *  Change status of each recipient
-	 *
-	 *	@param	User	$user      	Objet user qui valide
-	 *  @return int         		<0 if KO, >0 if OK
-	 */
-	function reset_targets_status($user)
-	{
-		$sql = "UPDATE ".MAIN_DB_PREFIX."mailing_cibles";
-		$sql.= " SET statut = 0";
-		$sql.= " WHERE fk_mailing = ".$this->id;
+            return $object->id;
+        } else {
+            $this->db->rollback();
 
-		dol_syslog("Mailing::reset_targets_status sql=".$sql, LOG_DEBUG);
-		$resql=$this->db->query($sql);
-		if ($resql)
-		{
-			return 1;
-		}
-		else
-		{
-			$this->error=$this->db->lasterror();
-			dol_syslog("Mailing::Valid ".$this->error, LOG_ERR);
-			return -1;
-		}
-	}
+            return -1;
+        }
+    }
 
+    /**
+     *  Validate emailing
+     *
+     *  @param	User	$user      	Objet user qui valide
+     * 	@return	int					<0 if KO, >0 if OK
+     */
+    public function valid($user)
+    {
+        $now=dol_now();
 
-	/**
-	 *  Retourne le libelle du statut d'un mailing (brouillon, validee, ...
-	 *
-	 *  @param	int		$mode          	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long
-	 *  @return string        			Label
-	 */
-	function getLibStatut($mode=0)
-	{
-		return $this->LibStatut($this->statut,$mode);
-	}
+        $sql = "UPDATE ".MAIN_DB_PREFIX."mailing ";
+        $sql .= " SET statut = 1, date_valid = ".$this->db->idate($now).", fk_user_valid=".$user->id;
+        $sql .= " WHERE rowid = ".$this->id;
 
-	/**
-	 *  Renvoi le libelle d'un statut donne
-	 *
-	 *  @param	int		$statut        	Id statut
-	 *  @param  int		$mode          	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
-	 *  @return string        			Label
-	 */
-	function LibStatut($statut,$mode=0)
-	{
-		global $langs;
-		$langs->load('mails');
+        dol_syslog("Mailing::valid sql=".$sql, LOG_DEBUG);
+        if ($this->db->query($sql)) {
+            return 1;
+        } else {
+            $this->error=$this->db->lasterror();
+            dol_syslog("Mailing::Valid ".$this->error, LOG_ERR);
 
-		if ($mode == 0)
-		{
-			return $langs->trans($this->statuts[$statut]);
-		}
-		if ($mode == 1)
-		{
-			return $langs->trans($this->statuts[$statut]);
-		}
-		if ($mode == 2)
-		{
-			if ($statut == 0) return img_picto($langs->trans($this->statuts[$statut]),'statut0').' '.$langs->trans($this->statuts[$statut]);
-			if ($statut == 1) return img_picto($langs->trans($this->statuts[$statut]),'statut1').' '.$langs->trans($this->statuts[$statut]);
-			if ($statut == 2) return img_picto($langs->trans($this->statuts[$statut]),'statut3').' '.$langs->trans($this->statuts[$statut]);
-			if ($statut == 3) return img_picto($langs->trans($this->statuts[$statut]),'statut6').' '.$langs->trans($this->statuts[$statut]);
-		}
-		if ($mode == 3)
-		{
-			if ($statut == 0) return img_picto($langs->trans($this->statuts[$statut]),'statut0');
-			if ($statut == 1) return img_picto($langs->trans($this->statuts[$statut]),'statut1');
-			if ($statut == 2) return img_picto($langs->trans($this->statuts[$statut]),'statut3');
-			if ($statut == 3) return img_picto($langs->trans($this->statuts[$statut]),'statut6');
-		}
-		if ($mode == 4)
-		{
-			if ($statut == 0) return img_picto($langs->trans($this->statuts[$statut]),'statut0').' '.$langs->trans($this->statuts[$statut]);
-			if ($statut == 1) return img_picto($langs->trans($this->statuts[$statut]),'statut1').' '.$langs->trans($this->statuts[$statut]);
-			if ($statut == 2) return img_picto($langs->trans($this->statuts[$statut]),'statut3').' '.$langs->trans($this->statuts[$statut]);
-			if ($statut == 3) return img_picto($langs->trans($this->statuts[$statut]),'statut6').' '.$langs->trans($this->statuts[$statut]);
-		}
-		if ($mode == 5)
-		{
-			if ($statut == 0)  return $langs->trans($this->statuts[$statut]).' '.img_picto($langs->trans($this->statuts[$statut]),'statut0');
-			if ($statut == 1)  return $langs->trans($this->statuts[$statut]).' '.img_picto($langs->trans($this->statuts[$statut]),'statut1');
-			if ($statut == 2)  return $langs->trans($this->statuts[$statut]).' '.img_picto($langs->trans($this->statuts[$statut]),'statut3');
-			if ($statut == 3)  return $langs->trans($this->statuts[$statut]).' '.img_picto($langs->trans($this->statuts[$statut]),'statut6');
-		}
-	}
+            return -1;
+        }
+    }
+
+    /**
+     *  Delete emailing
+     *
+     *  @param	int		$rowid      id du mailing a supprimer
+     *  @return int         		1 en cas de succes
+     */
+    public function delete($rowid)
+    {
+        $sql = "DELETE FROM ".MAIN_DB_PREFIX."mailing";
+        $sql.= " WHERE rowid = ".$rowid;
+
+        dol_syslog("Mailing::delete sql=".$sql, LOG_DEBUG);
+        $resql=$this->db->query($sql);
+        if ($resql) {
+            return 1;
+        } else {
+            $this->error=$this->db->lasterror();
+            dol_syslog("Mailing::Valid ".$this->error, LOG_ERR);
+
+            return -1;
+        }
+    }
+
+    /**
+     *  Change status of each recipient
+     *
+     *	@param	User	$user      	Objet user qui valide
+     *  @return int         		<0 if KO, >0 if OK
+     */
+    public function reset_targets_status($user)
+    {
+        $sql = "UPDATE ".MAIN_DB_PREFIX."mailing_cibles";
+        $sql.= " SET statut = 0";
+        $sql.= " WHERE fk_mailing = ".$this->id;
+
+        dol_syslog("Mailing::reset_targets_status sql=".$sql, LOG_DEBUG);
+        $resql=$this->db->query($sql);
+        if ($resql) {
+            return 1;
+        } else {
+            $this->error=$this->db->lasterror();
+            dol_syslog("Mailing::Valid ".$this->error, LOG_ERR);
+
+            return -1;
+        }
+    }
+
+    /**
+     *  Retourne le libelle du statut d'un mailing (brouillon, validee, ...
+     *
+     *  @param	int		$mode          	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long
+     *  @return string        			Label
+     */
+    public function getLibStatut($mode=0)
+    {
+        return $this->LibStatut($this->statut,$mode);
+    }
+
+    /**
+     *  Renvoi le libelle d'un statut donne
+     *
+     *  @param	int		$statut        	Id statut
+     *  @param  int		$mode          	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+     *  @return string        			Label
+     */
+    public function LibStatut($statut,$mode=0)
+    {
+        global $langs;
+        $langs->load('mails');
+
+        if ($mode == 0) {
+            return $langs->trans($this->statuts[$statut]);
+        }
+        if ($mode == 1) {
+            return $langs->trans($this->statuts[$statut]);
+        }
+        if ($mode == 2) {
+            if ($statut == 0) return img_picto($langs->trans($this->statuts[$statut]),'statut0').' '.$langs->trans($this->statuts[$statut]);
+            if ($statut == 1) return img_picto($langs->trans($this->statuts[$statut]),'statut1').' '.$langs->trans($this->statuts[$statut]);
+            if ($statut == 2) return img_picto($langs->trans($this->statuts[$statut]),'statut3').' '.$langs->trans($this->statuts[$statut]);
+            if ($statut == 3) return img_picto($langs->trans($this->statuts[$statut]),'statut6').' '.$langs->trans($this->statuts[$statut]);
+        }
+        if ($mode == 3) {
+            if ($statut == 0) return img_picto($langs->trans($this->statuts[$statut]),'statut0');
+            if ($statut == 1) return img_picto($langs->trans($this->statuts[$statut]),'statut1');
+            if ($statut == 2) return img_picto($langs->trans($this->statuts[$statut]),'statut3');
+            if ($statut == 3) return img_picto($langs->trans($this->statuts[$statut]),'statut6');
+        }
+        if ($mode == 4) {
+            if ($statut == 0) return img_picto($langs->trans($this->statuts[$statut]),'statut0').' '.$langs->trans($this->statuts[$statut]);
+            if ($statut == 1) return img_picto($langs->trans($this->statuts[$statut]),'statut1').' '.$langs->trans($this->statuts[$statut]);
+            if ($statut == 2) return img_picto($langs->trans($this->statuts[$statut]),'statut3').' '.$langs->trans($this->statuts[$statut]);
+            if ($statut == 3) return img_picto($langs->trans($this->statuts[$statut]),'statut6').' '.$langs->trans($this->statuts[$statut]);
+        }
+        if ($mode == 5) {
+            if ($statut == 0)  return $langs->trans($this->statuts[$statut]).' '.img_picto($langs->trans($this->statuts[$statut]),'statut0');
+            if ($statut == 1)  return $langs->trans($this->statuts[$statut]).' '.img_picto($langs->trans($this->statuts[$statut]),'statut1');
+            if ($statut == 2)  return $langs->trans($this->statuts[$statut]).' '.img_picto($langs->trans($this->statuts[$statut]),'statut3');
+            if ($statut == 3)  return $langs->trans($this->statuts[$statut]).' '.img_picto($langs->trans($this->statuts[$statut]),'statut6');
+        }
+    }
 
 }
-
-?>

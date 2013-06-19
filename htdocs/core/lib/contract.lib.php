@@ -30,22 +30,21 @@
  */
 function contract_prepare_head($object)
 {
-	global $langs, $conf;
-	$h = 0;
-	$head = array();
+    global $langs, $conf;
+    $h = 0;
+    $head = array();
 
-	$head[$h][0] = DOL_URL_ROOT.'/contrat/fiche.php?id='.$object->id;
-	$head[$h][1] = $langs->trans("ContractCard");
-	$head[$h][2] = 'card';
-	$h++;
+    $head[$h][0] = DOL_URL_ROOT.'/contrat/fiche.php?id='.$object->id;
+    $head[$h][1] = $langs->trans("ContractCard");
+    $head[$h][2] = 'card';
+    $h++;
 
-	if (empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
-	{
-		$head[$h][0] = DOL_URL_ROOT.'/contrat/contact.php?id='.$object->id;
-		$head[$h][1] = $langs->trans("ContactsAddresses");
-		$head[$h][2] = 'contact';
-		$h++;
-	}
+    if (empty($conf->global->MAIN_DISABLE_CONTACTS_TAB)) {
+        $head[$h][0] = DOL_URL_ROOT.'/contrat/contact.php?id='.$object->id;
+        $head[$h][1] = $langs->trans("ContactsAddresses");
+        $head[$h][2] = 'contact';
+        $h++;
+    }
 
     // Show more tabs from modules
     // Entries must be declared in modules descriptor with line
@@ -53,27 +52,24 @@ function contract_prepare_head($object)
     // $this->tabs = array('entity:-tabname);   												to remove a tab
     complete_head_from_modules($conf,$langs,$object,$head,$h,'contract');
 
-    if (empty($conf->global->MAIN_DISABLE_NOTES_TAB))
-    {
-    	$head[$h][0] = DOL_URL_ROOT.'/contrat/note.php?id='.$object->id;
-    	$head[$h][1] = $langs->trans("Note");
-    	$head[$h][2] = 'note';
-    	$h++;
+    if (empty($conf->global->MAIN_DISABLE_NOTES_TAB)) {
+        $head[$h][0] = DOL_URL_ROOT.'/contrat/note.php?id='.$object->id;
+        $head[$h][1] = $langs->trans("Note");
+        $head[$h][2] = 'note';
+        $h++;
     }
 
-	$head[$h][0] = DOL_URL_ROOT.'/contrat/document.php?id='.$object->id;
-	$head[$h][1] = $langs->trans("Documents");
-	$head[$h][2] = 'documents';
-	$h++;
+    $head[$h][0] = DOL_URL_ROOT.'/contrat/document.php?id='.$object->id;
+    $head[$h][1] = $langs->trans("Documents");
+    $head[$h][2] = 'documents';
+    $h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/contrat/info.php?id='.$object->id;
-	$head[$h][1] = $langs->trans("Info");
-	$head[$h][2] = 'info';
-	$h++;
+    $head[$h][0] = DOL_URL_ROOT.'/contrat/info.php?id='.$object->id;
+    $head[$h][1] = $langs->trans("Info");
+    $head[$h][2] = 'info';
+    $h++;
 
     complete_head_from_modules($conf,$langs,$object,$head,$h,'contract','remove');
 
-	return $head;
+    return $head;
 }
-
-?>

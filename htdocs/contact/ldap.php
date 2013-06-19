@@ -42,38 +42,32 @@ $result = restrictedArea($user, 'contact', $id, 'socpeople&societe');
 $contact = new Contact($db);
 $contact->fetch($id, $user);
 
-
 /*
  * Actions
  */
 
-if ($action == 'dolibarr2ldap')
-{
-	$message="";
+if ($action == 'dolibarr2ldap') {
+    $message="";
 
-	$db->begin();
+    $db->begin();
 
-	$ldap=new Ldap();
-	$result=$ldap->connect_bind();
+    $ldap=new Ldap();
+    $result=$ldap->connect_bind();
 
-	$info=$contact->_load_ldap_info();
-	$dn=$contact->_load_ldap_dn($info);
-	$olddn=$dn;	// We can say that old dn = dn as we force synchro
+    $info=$contact->_load_ldap_info();
+    $dn=$contact->_load_ldap_dn($info);
+    $olddn=$dn;	// We can say that old dn = dn as we force synchro
 
-	$result=$ldap->update($dn,$info,$user,$olddn);
+    $result=$ldap->update($dn,$info,$user,$olddn);
 
-	if ($result >= 0)
-	{
-		$message.='<div class="ok">'.$langs->trans("ContactSynchronized").'</div>';
-		$db->commit();
-	}
-	else
-	{
-		$message.='<div class="error">'.$ldap->error.'</div>';
-		$db->rollback();
-	}
+    if ($result >= 0) {
+        $message.='<div class="ok">'.$langs->trans("ContactSynchronized").'</div>';
+        $db->commit();
+    } else {
+        $message.='<div class="error">'.$ldap->error.'</div>';
+        $db->rollback();
+    }
 }
-
 
 /*
  *	View
@@ -89,7 +83,6 @@ $head = contact_prepare_head($contact);
 
 dol_fiche_head($head, 'ldap', $title, 0, 'contact');
 
-
 print '<table class="border" width="100%">';
 
 // Ref
@@ -102,18 +95,15 @@ print '<tr><td>'.$langs->trans("Lastname").' / '.$langs->trans("Label").'</td><t
 print '<td>'.$langs->trans("Firstname").'</td><td width="25%">'.$contact->firstname.'</td></tr>';
 
 // Company
-if ($contact->socid > 0)
-{
-	$objsoc = new Societe($db);
-	$objsoc->fetch($contact->socid);
+if ($contact->socid > 0) {
+    $objsoc = new Societe($db);
+    $objsoc->fetch($contact->socid);
 
-	print '<tr><td width="20%">'.$langs->trans("Company").'</td><td colspan="3">'.$objsoc->getNomUrl(1).'</td></tr>';
-}
-else
-{
-	print '<tr><td width="20%">'.$langs->trans("Company").'</td><td colspan="3">';
-	print $langs->trans("ContactNotLinkedToCompany");
-	print '</td></tr>';
+    print '<tr><td width="20%">'.$langs->trans("Company").'</td><td colspan="3">'.$objsoc->getNomUrl(1).'</td></tr>';
+} else {
+    print '<tr><td width="20%">'.$langs->trans("Company").'</td><td colspan="3">';
+    print $langs->trans("ContactNotLinkedToCompany");
+    print '</td></tr>';
 }
 
 // Civility
@@ -136,9 +126,7 @@ print '</table>';
 
 print '</div>';
 
-
 dol_htmloutput_mesg($message);
-
 
 /*
  * Barre d'actions
@@ -146,9 +134,8 @@ dol_htmloutput_mesg($message);
 
 print '<div class="tabsAction">';
 
-if (! empty($conf->global->LDAP_CONTACT_ACTIVE) && $conf->global->LDAP_CONTACT_ACTIVE != 'ldap2dolibarr')
-{
-	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$contact->id.'&amp;action=dolibarr2ldap">'.$langs->trans("ForceSynchronize").'</a>';
+if (! empty($conf->global->LDAP_CONTACT_ACTIVE) && $conf->global->LDAP_CONTACT_ACTIVE != 'ldap2dolibarr') {
+    print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$contact->id.'&amp;action=dolibarr2ldap">'.$langs->trans("ForceSynchronize").'</a>';
 }
 
 print "</div>\n";
@@ -170,47 +157,34 @@ print '</tr>';
 // Lecture LDAP
 $ldap=new Ldap();
 $result=$ldap->connect_bind();
-if ($result > 0)
-{
-	$info=$contact->_load_ldap_info();
-	$dn=$contact->_load_ldap_dn($info,1);
-	$search = "(".$contact->_load_ldap_dn($info,2).")";
-	$records=$ldap->getAttribute($dn,$search);
+if ($result > 0) {
+    $info=$contact->_load_ldap_info();
+    $dn=$contact->_load_ldap_dn($info,1);
+    $search = "(".$contact->_load_ldap_dn($info,2).")";
+    $records=$ldap->getAttribute($dn,$search);
 
-	//var_dump($records);
+    //var_dump($records);
 
-	// Affichage arbre
-	if (count($records) && $records != false && (! isset($records['count']) || $records['count'] > 0))
-	{
-		if (! is_array($records))
-		{
-			print '<tr '.$bc[false].'><td colspan="2"><font class="error">'.$langs->trans("ErrorFailedToReadLDAP").'</font></td></tr>';
-		}
-		else
-		{
-			$result=show_ldap_content($records,0,$records['count'],true);
-		}
-	}
-	else
-	{
-		print '<tr '.$bc[false].'><td colspan="2">'.$langs->trans("LDAPRecordNotFound").' (dn='.$dn.' - search='.$search.')</td></tr>';
-	}
+    // Affichage arbre
+    if (count($records) && $records != false && (! isset($records['count']) || $records['count'] > 0)) {
+        if (! is_array($records)) {
+            print '<tr '.$bc[false].'><td colspan="2"><font class="error">'.$langs->trans("ErrorFailedToReadLDAP").'</font></td></tr>';
+        } else {
+            $result=show_ldap_content($records,0,$records['count'],true);
+        }
+    } else {
+        print '<tr '.$bc[false].'><td colspan="2">'.$langs->trans("LDAPRecordNotFound").' (dn='.$dn.' - search='.$search.')</td></tr>';
+    }
 
-	$ldap->unbind();
-	$ldap->close();
-}
-else
-{
-	dol_print_error('',$ldap->error);
+    $ldap->unbind();
+    $ldap->close();
+} else {
+    dol_print_error('',$ldap->error);
 }
 
 
 print '</table>';
 
-
-
-
 $db->close();
 
 llxFooter();
-?>

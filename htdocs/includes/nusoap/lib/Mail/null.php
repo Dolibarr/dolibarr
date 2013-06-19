@@ -23,8 +23,8 @@
  * @access public
  * @package Mail
  */
-class Mail_null extends Mail {
-
+class Mail_null extends Mail
+{
     /**
      * Implements Mail_null::send() function. Silently discards all
      * mail.
@@ -50,7 +50,7 @@ class Mail_null extends Mail {
      *               failure.
      * @access public
      */
-    function send($recipients, $headers, $body)
+    public function send($recipients, $headers, $body)
     {
         return true;
     }

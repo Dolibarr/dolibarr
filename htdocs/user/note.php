@@ -48,29 +48,21 @@ $feature2 = (($socid && $user->rights->user->self->creer)?'':'user');
 if ($user->id == $id) $feature2=''; // A user can always read its own card
 $result = restrictedArea($user, 'user', $id, '&user', $feature2);
 
-
-
 /******************************************************************************/
 /*                     Actions                                                */
 /******************************************************************************/
 
-if ($action == 'update' && $user->rights->user->user->creer && ! $_POST["cancel"])
-{
-	$db->begin();
+if ($action == 'update' && $user->rights->user->user->creer && ! $_POST["cancel"]) {
+    $db->begin();
 
-	$res=$fuser->update_note(dol_html_entity_decode(GETPOST('note'), ENT_QUOTES));
-	if ($res < 0)
-	{
-		$mesg='<div class="error">'.$adh->error.'</div>';
-		$db->rollback();
-	}
-	else
-	{
-		$db->commit();
-	}
+    $res=$fuser->update_note(dol_html_entity_decode(GETPOST('note'), ENT_QUOTES));
+    if ($res < 0) {
+        $mesg='<div class="error">'.$adh->error.'</div>';
+        $db->rollback();
+    } else {
+        $db->commit();
+    }
 }
-
-
 
 /******************************************************************************/
 /* Affichage fiche                                                            */
@@ -80,30 +72,29 @@ llxHeader();
 
 $form = new Form($db);
 
-if ($id)
-{
-	$head = user_prepare_head($fuser);
+if ($id) {
+    $head = user_prepare_head($fuser);
 
-	$title = $langs->trans("User");
-	dol_fiche_head($head, 'note', $title, 0, 'user');
+    $title = $langs->trans("User");
+    dol_fiche_head($head, 'note', $title, 0, 'user');
 
-	if ($msg) print '<div class="error">'.$msg.'</div>';
+    if ($msg) print '<div class="error">'.$msg.'</div>';
 
-	print "<form method=\"post\" action=\"note.php\">";
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print "<form method=\"post\" action=\"note.php\">";
+    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
     print '<table class="border" width="100%">';
 
     // Reference
-	print '<tr><td width="20%">'.$langs->trans('Ref').'</td>';
-	print '<td colspan="3">';
-	print $form->showrefnav($fuser,'id','',$user->rights->user->user->lire || $user->admin);
-	print '</td>';
-	print '</tr>';
+    print '<tr><td width="20%">'.$langs->trans('Ref').'</td>';
+    print '<td colspan="3">';
+    print $form->showrefnav($fuser,'id','',$user->rights->user->user->lire || $user->admin);
+    print '</td>';
+    print '</tr>';
 
     // Lastname
     print '<tr><td>'.$langs->trans("Lastname").'</td><td class="valeur" colspan="3">'.$fuser->lastname.'&nbsp;</td>';
-	print '</tr>';
+    print '</tr>';
 
     // Firstname
     print '<tr><td>'.$langs->trans("Firstname").'</td><td class="valeur" colspan="3">'.$fuser->firstname.'&nbsp;</td></tr>';
@@ -111,37 +102,32 @@ if ($id)
     // Login
     print '<tr><td>'.$langs->trans("Login").'</td><td class="valeur" colspan="3">'.$fuser->login.'&nbsp;</td></tr>';
 
-	// Note
+    // Note
     print '<tr><td valign="top">'.$langs->trans("Note").'</td>';
-	print '<td valign="top" colspan="3">';
-	if ($action == 'edit' && $user->rights->user->user->creer)
-	{
-		print "<input type=\"hidden\" name=\"action\" value=\"update\">";
-		print "<input type=\"hidden\" name=\"id\" value=\"".$fuser->id."\">";
-	    // Editeur wysiwyg
-		require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-		$doleditor=new DolEditor('note',$fuser->note,'',280,'dolibarr_notes','In',true,false,$conf->global->FCKEDITOR_ENABLE_SOCIETE,10,80);
-		$doleditor->Create();
-	}
-	else
-	{
-		print dol_htmlentitiesbr($fuser->note);
-	}
-	print "</td></tr>";
+    print '<td valign="top" colspan="3">';
+    if ($action == 'edit' && $user->rights->user->user->creer) {
+        print "<input type=\"hidden\" name=\"action\" value=\"update\">";
+        print "<input type=\"hidden\" name=\"id\" value=\"".$fuser->id."\">";
+        // Editeur wysiwyg
+        require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+        $doleditor=new DolEditor('note',$fuser->note,'',280,'dolibarr_notes','In',true,false,$conf->global->FCKEDITOR_ENABLE_SOCIETE,10,80);
+        $doleditor->Create();
+    } else {
+        print dol_htmlentitiesbr($fuser->note);
+    }
+    print "</td></tr>";
 
     print "</table>";
 
-	if ($action == 'edit')
-	{
-		print '<center><br>';
-		print '<input type="submit" class="button" name="update" value="'.$langs->trans("Save").'">';
-		print '&nbsp; &nbsp;';
-		print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
-		print '</center>';
-	}
+    if ($action == 'edit') {
+        print '<center><br>';
+        print '<input type="submit" class="button" name="update" value="'.$langs->trans("Save").'">';
+        print '&nbsp; &nbsp;';
+        print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+        print '</center>';
+    }
 
-	print "</form>\n";
-
+    print "</form>\n";
 
     /*
     * Actions
@@ -149,17 +135,14 @@ if ($id)
     print '</div>';
     print '<div class="tabsAction">';
 
-    if ($user->rights->user->user->creer && $action != 'edit')
-    {
+    if ($user->rights->user->user->creer && $action != 'edit') {
         print "<a class=\"butAction\" href=\"note.php?id=".$fuser->id."&amp;action=edit\">".$langs->trans('Modify')."</a>";
     }
 
     print "</div>";
-
 
 }
 
 $db->close();
 
 llxFooter();
-?>

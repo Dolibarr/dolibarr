@@ -22,26 +22,25 @@
  *  \brief      Trigger file for
  */
 
-
 /**
  *  Class of triggers for security events
  */
 class InterfaceLogevents
 {
-    var $db;
-    var $error;
+    public $db;
+    public $error;
 
-    var $date;
-    var $duree;
-    var $texte;
-    var $desc;
+    public $date;
+    public $duree;
+    public $texte;
+    public $desc;
 
     /**
      *   Constructor
      *
      *   @param		DoliDB		$db      Database handler
      */
-    function __construct($db)
+    public function __construct($db)
     {
         $this->db = $db;
 
@@ -57,7 +56,7 @@ class InterfaceLogevents
      *
      *   @return     string      Name of trigger file
      */
-    function getName()
+    public function getName()
     {
         return $this->name;
     }
@@ -67,7 +66,7 @@ class InterfaceLogevents
      *
      *   @return     string      Description of trigger file
      */
-    function getDesc()
+    public function getDesc()
     {
         return $this->description;
     }
@@ -77,7 +76,7 @@ class InterfaceLogevents
      *
      *   @return     string      Version of trigger file
      */
-    function getVersion()
+    public function getVersion()
     {
         global $langs;
         $langs->load("admin");
@@ -100,89 +99,75 @@ class InterfaceLogevents
      *      @param  string		$entity     Value for instance of data (Always 1 except if module MultiCompany is installed)
      *      @return int         			<0 if KO, 0 if no triggered ran, >0 if OK
      */
-    function run_trigger($action,$object,$user,$langs,$conf,$entity=1)
+    public function run_trigger($action,$object,$user,$langs,$conf,$entity=1)
     {
-    	if (! empty($conf->global->MAIN_LOGEVENTS_DISABLE_ALL)) return 0;	// Log events is disabled (hidden features)
+        if (! empty($conf->global->MAIN_LOGEVENTS_DISABLE_ALL)) return 0;	// Log events is disabled (hidden features)
 
-    	$key='MAIN_LOGEVENTS_'.$action;
-    	//dol_syslog("xxxxxxxxxxx".$key);
-    	if (empty($conf->global->$key)) return 0;				// Log events not enabled for this action
+        $key='MAIN_LOGEVENTS_'.$action;
+        //dol_syslog("xxxxxxxxxxx".$key);
+        if (empty($conf->global->$key)) return 0;				// Log events not enabled for this action
 
-    	if (empty($conf->entity)) $conf->entity = $entity;  // forcing of the entity if it's not defined (ex: in login form)
+        if (empty($conf->entity)) $conf->entity = $entity;  // forcing of the entity if it's not defined (ex: in login form)
 
         $this->date=dol_now();
         $this->duree=0;
 
         // Actions
-        if ($action == 'USER_LOGIN')
-        {
+        if ($action == 'USER_LOGIN') {
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
             // Initialisation donnees (date,duree,texte,desc)
             $this->texte="(UserLogged,".$object->login.")";
             $this->desc="(UserLogged,".$object->login.")";
         }
-        if ($action == 'USER_LOGIN_FAILED')
-        {
+        if ($action == 'USER_LOGIN_FAILED') {
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
             // Initialisation donnees (date,duree,texte,desc)
             $this->texte=$object->trigger_mesg;	// Message direct
             $this->desc=$object->trigger_mesg;	// Message direct
         }
-        if ($action == 'USER_LOGOUT')
-        {
+        if ($action == 'USER_LOGOUT') {
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
             // Initialisation donnees (date,duree,texte,desc)
             $this->texte="(UserLogoff,".$object->login.")";
             $this->desc="(UserLogoff,".$object->login.")";
         }
-        if ($action == 'USER_CREATE')
-        {
+        if ($action == 'USER_CREATE') {
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("users");
 
             // Initialisation donnees (date,duree,texte,desc)
             $this->texte=$langs->transnoentities("NewUserCreated",$object->login);
             $this->desc=$langs->transnoentities("NewUserCreated",$object->login);
-		}
-        elseif ($action == 'USER_MODIFY')
-        {
+        } elseif ($action == 'USER_MODIFY') {
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("users");
 
             // Initialisation donnees (date,duree,texte,desc)
             $this->texte=$langs->transnoentities("EventUserModified",$object->login);
             $this->desc=$langs->transnoentities("EventUserModified",$object->login);
-        }
-        elseif ($action == 'USER_NEW_PASSWORD')
-        {
+        } elseif ($action == 'USER_NEW_PASSWORD') {
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("users");
 
             // Initialisation donnees (date,duree,texte,desc)
             $this->texte=$langs->transnoentities("NewUserPassword",$object->login);
             $this->desc=$langs->transnoentities("NewUserPassword",$object->login);
-        }
-        elseif ($action == 'USER_ENABLEDISABLE')
-        {
+        } elseif ($action == 'USER_ENABLEDISABLE') {
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("users");
             // Initialisation donnees (date,duree,texte,desc)
-			if ($object->statut == 0)
-			{
-				$this->texte=$langs->transnoentities("UserEnabled",$object->login);
-				$this->desc=$langs->transnoentities("UserEnabled",$object->login);
-			}
-			if ($object->statut == 1)
-			{
-				$this->texte=$langs->transnoentities("UserDisabled",$object->login);
-				$this->desc=$langs->transnoentities("UserDisabled",$object->login);
-			}
-        }
-        elseif ($action == 'USER_DELETE')
-        {
+            if ($object->statut == 0) {
+                $this->texte=$langs->transnoentities("UserEnabled",$object->login);
+                $this->desc=$langs->transnoentities("UserEnabled",$object->login);
+            }
+            if ($object->statut == 1) {
+                $this->texte=$langs->transnoentities("UserDisabled",$object->login);
+                $this->desc=$langs->transnoentities("UserDisabled",$object->login);
+            }
+        } elseif ($action == 'USER_DELETE') {
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("users");
             // Initialisation donnees (date,duree,texte,desc)
@@ -190,70 +175,61 @@ class InterfaceLogevents
             $this->desc=$langs->transnoentities("UserDeleted",$object->login);
         }
 
-		// Groupes
-        elseif ($action == 'GROUP_CREATE')
-        {
+        // Groupes
+        elseif ($action == 'GROUP_CREATE') {
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("users");
             // Initialisation donnees (date,duree,texte,desc)
             $this->texte=$langs->transnoentities("NewGroupCreated",$object->nom);
             $this->desc=$langs->transnoentities("NewGroupCreated",$object->nom);
-		}
-        elseif ($action == 'GROUP_MODIFY')
-        {
+        } elseif ($action == 'GROUP_MODIFY') {
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("users");
             // Initialisation donnees (date,duree,texte,desc)
             $this->texte=$langs->transnoentities("GroupModified",$object->nom);
             $this->desc=$langs->transnoentities("GroupModified",$object->nom);
-		}
-        elseif ($action == 'GROUP_DELETE')
-        {
+        } elseif ($action == 'GROUP_DELETE') {
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("users");
             // Initialisation donnees (date,duree,texte,desc)
             $this->texte=$langs->transnoentities("GroupDeleted",$object->nom);
             $this->desc=$langs->transnoentities("GroupDeleted",$object->nom);
-		}
+        }
 
-		// If not found
+        // If not found
 /*
-        else
-        {
+        else {
             dol_syslog("Trigger '".$this->name."' for action '$action' was ran by ".__FILE__." but no handler found for this action.");
-			return 0;
+
+            return 0;
         }
 */
 
         // Add entry in event table
-        if ($this->date)
-        {
-			include_once DOL_DOCUMENT_ROOT.'/core/class/events.class.php';
+        if ($this->date) {
+            include_once DOL_DOCUMENT_ROOT.'/core/class/events.class.php';
 
-			$event=new Events($this->db);
+            $event=new Events($this->db);
             $event->type=$action;
             $event->dateevent=$this->date;
             $event->label=$this->texte;
             $event->description=$this->desc;
-			$event->user_agent=$_SERVER["HTTP_USER_AGENT"];
+            $event->user_agent=$_SERVER["HTTP_USER_AGENT"];
 
             $result=$event->create($user);
-            if ($result > 0)
-            {
+            if ($result > 0) {
                 return 1;
-            }
-            else
-            {
+            } else {
                 $error ="Failed to insert security event: ".$event->error;
                 $this->error=$error;
 
                 dol_syslog(get_class($this).": ".$this->error, LOG_ERR);
+
                 return -1;
             }
         }
 
-		return 0;
+        return 0;
     }
 
 }
-?>

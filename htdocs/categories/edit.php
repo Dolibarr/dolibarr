@@ -41,10 +41,9 @@ $description=GETPOST('description');
 $visible=GETPOST('visible');
 $parent=GETPOST('parent');
 
-if ($id == "")
-{
-	dol_print_error('','Missing parameter id');
-	exit();
+if ($id == "") {
+    dol_print_error('','Missing parameter id');
+    exit();
 }
 
 // Security check
@@ -57,51 +56,39 @@ $result = restrictedArea($user, 'categorie', $id, '&category');
  */
 
 // Action mise a jour d'une categorie
-if ($action == 'update' && $user->rights->categorie->creer)
-{
-	$categorie = new Categorie($db);
-	$result=$categorie->fetch($id);
+if ($action == 'update' && $user->rights->categorie->creer) {
+    $categorie = new Categorie($db);
+    $result=$categorie->fetch($id);
 
-	$categorie->label          = $nom;
-	$categorie->description    = dol_htmlcleanlastbr($description);
-	$categorie->socid          = ($socid ? $socid : 'null');
-	$categorie->visible        = $visible;
+    $categorie->label          = $nom;
+    $categorie->description    = dol_htmlcleanlastbr($description);
+    $categorie->socid          = ($socid ? $socid : 'null');
+    $categorie->visible        = $visible;
 
-	if ($parent != "-1")
-		$categorie->fk_parent = $parent;
-	else
-		$categorie->fk_parent = "";
+    if ($parent != "-1")
+        $categorie->fk_parent = $parent;
+    else
+        $categorie->fk_parent = "";
 
-
-	if (empty($categorie->label))
-	{
-		$action = 'create';
-		$mesg = $langs->trans("ErrorFieldRequired",$langs->transnoentities("Label"));
-	}
-	if (empty($categorie->description))
-	{
-		$action = 'create';
-		$mesg = $langs->trans("ErrorFieldRequired",$langs->transnoentities("Description"));
-	}
-	if (empty($categorie->error))
-	{
-		if ($categorie->update($user) > 0)
-		{
-			header('Location: '.DOL_URL_ROOT.'/categories/viewcat.php?id='.$categorie->id.'&type='.$type);
-			exit;
-		}
-		else
-		{
-			$mesg=$categorie->error;
-		}
-	}
-	else
-	{
-		$mesg=$categorie->error;
-	}
+    if (empty($categorie->label)) {
+        $action = 'create';
+        $mesg = $langs->trans("ErrorFieldRequired",$langs->transnoentities("Label"));
+    }
+    if (empty($categorie->description)) {
+        $action = 'create';
+        $mesg = $langs->trans("ErrorFieldRequired",$langs->transnoentities("Description"));
+    }
+    if (empty($categorie->error)) {
+        if ($categorie->update($user) > 0) {
+            header('Location: '.DOL_URL_ROOT.'/categories/viewcat.php?id='.$categorie->id.'&type='.$type);
+            exit;
+        } else {
+            $mesg=$categorie->error;
+        }
+    } else {
+        $mesg=$categorie->error;
+    }
 }
-
-
 
 /*
  * View
@@ -111,9 +98,7 @@ llxHeader("","",$langs->trans("Categories"));
 
 print_fiche_titre($langs->trans("ModifCat"));
 
-
 dol_htmloutput_errors($mesg);
-
 
 $object = new Categorie($db);
 $object->fetch($id);
@@ -163,7 +148,5 @@ print '</form>';
 
 print '</td></tr></table>';
 
-
 llxFooter();
 $db->close();
-?>

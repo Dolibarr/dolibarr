@@ -30,7 +30,6 @@ if (!$user->admin) accessforbidden();
 
 $mesg='';
 
-
 /*
  * View
  */
@@ -40,14 +39,12 @@ llxHeader('',$langs->trans("Setup"),$wikihelp);
 
 $form = new Form($db);
 
-
 print_fiche_titre($langs->trans("SetupArea"),'','setup');
 
 if ($mesg) print $mesg.'<br>';
 
 print $langs->trans("SetupDescription1").' ';
 print $langs->trans("AreaForAdminOnly").' ';
-
 
 //print "<br>";
 //print "<br>";
@@ -57,22 +54,20 @@ print '<br>';
 //print '<hr style="color: #DDDDDD;">';
 if (empty($conf->global->MAIN_INFO_SOCIETE_NOM) || empty($conf->global->MAIN_INFO_SOCIETE_COUNTRY)) $setupcompanynotcomplete=1;
 print img_picto('','puce').' '.$langs->trans("SetupDescription3",DOL_URL_ROOT.'/admin/company.php?mainmenu=home'.(empty($setupcompanynotcomplete)?'':'&action=edit'));
-if (! empty($setupcompanynotcomplete))
-{
-	$langs->load("errors");
-	$warnpicto=img_warning($langs->trans("WarningMandatorySetupNotComplete"));
-	print '<br><div class="warning"><a href="'.DOL_URL_ROOT.'/admin/company.php?mainmenu=home'.(empty($setupcompanynotcomplete)?'':'&action=edit').'">'.$warnpicto.' '.$langs->trans("WarningMandatorySetupNotComplete").'</a></div>';
+if (! empty($setupcompanynotcomplete)) {
+    $langs->load("errors");
+    $warnpicto=img_warning($langs->trans("WarningMandatorySetupNotComplete"));
+    print '<br><div class="warning"><a href="'.DOL_URL_ROOT.'/admin/company.php?mainmenu=home'.(empty($setupcompanynotcomplete)?'':'&action=edit').'">'.$warnpicto.' '.$langs->trans("WarningMandatorySetupNotComplete").'</a></div>';
 }
 print '<br>';
 print '<br>';
 print '<br>';
 //print '<hr style="color: #DDDDDD;">';
 print img_picto('','puce').' '.$langs->trans("SetupDescription4",DOL_URL_ROOT.'/admin/modules.php?mainmenu=home');
-if (count($conf->modules) <= 1)	// If only user module enabled
-{
-	$langs->load("errors");
-	$warnpicto=img_warning($langs->trans("WarningMandatorySetupNotComplete"));
-	print '<br><div class="warning"><a href="'.DOL_URL_ROOT.'/admin/modules.php?mainmenu=home">'.$warnpicto.' '.$langs->trans("WarningMandatorySetupNotComplete").'</a></div>';
+if (count($conf->modules) <= 1) {	// If only user module enabled
+    $langs->load("errors");
+    $warnpicto=img_warning($langs->trans("WarningMandatorySetupNotComplete"));
+    print '<br><div class="warning"><a href="'.DOL_URL_ROOT.'/admin/modules.php?mainmenu=home">'.$warnpicto.' '.$langs->trans("WarningMandatorySetupNotComplete").'</a></div>';
 }
 print '<br>';
 print '<br>';
@@ -85,8 +80,6 @@ print "<br>";
 // Show logo
 print '<center><div class="logo_setup"></div></center>';
 
-
 llxFooter();
 
 $db->close();
-?>

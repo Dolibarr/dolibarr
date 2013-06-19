@@ -27,11 +27,10 @@ require '../main.inc.php';
 
 $langs->load("externalsite");
 
-if (empty($conf->global->EXTERNALSITE_URL))
-{
-	llxHeader();
-	print '<div class="error">'.$langs->trans('ExternalSiteModuleNotComplete').'</div>';
-	llxFooter();
+if (empty($conf->global->EXTERNALSITE_URL)) {
+    llxHeader();
+    print '<div class="error">'.$langs->trans('ExternalSiteModuleNotComplete').'</div>';
+    llxFooter();
 }
 
 $mainmenu=GETPOST('mainmenu', 'alpha');
@@ -58,15 +57,12 @@ print "
 
 <noframes>
 <body>
-	<br><center>
-	Sorry, your browser is too old or not correctly configured to view this area.<br>
-	Your browser must support frames.<br>
-	</center>
+    <br><center>
+    Sorry, your browser is too old or not correctly configured to view this area.<br>
+    Your browser must support frames.<br>
+    </center>
 </body>
 </noframes>
 
 </html>
 ";
-
-
-?>

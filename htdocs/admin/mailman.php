@@ -38,7 +38,6 @@ $langs->load("mailmanspip");
 
 if (! $user->admin) accessforbidden();
 
-
 $type=array('yesno','texte','chaine');
 
 $action = GETPOST("action");
@@ -50,59 +49,46 @@ $testunsubscribeemail = GETPOST("testunsubscribeemail");
  */
 
 // Action mise a jour ou ajout d'une constante
-if ($action == 'update' || $action == 'add')
-{
-	foreach($_POST['constname'] as $key => $val)
-	{
-		$constname=$_POST["constname"][$key];
-		$constvalue=$_POST["constvalue"][$key];
-		$consttype=$_POST["consttype"][$key];
-		$constnote=$_POST["constnote"][$key];
-		$res=dolibarr_set_const($db,$constname,$constvalue,$type[$consttype],0,$constnote,$conf->entity);
+if ($action == 'update' || $action == 'add') {
+    foreach ($_POST['constname'] as $key => $val) {
+        $constname=$_POST["constname"][$key];
+        $constvalue=$_POST["constvalue"][$key];
+        $consttype=$_POST["consttype"][$key];
+        $constnote=$_POST["constnote"][$key];
+        $res=dolibarr_set_const($db,$constname,$constvalue,$type[$consttype],0,$constnote,$conf->entity);
 
-		if (! $res > 0) $error++;
-	}
+        if (! $res > 0) $error++;
+    }
 
-	if (! $error)
-	{
-		$mesg = '<div class="ok">'.$langs->trans("SetupSaved").'</div>';
-	}
-	else
-	{
-		$mesg = '<div class="error">'.$langs->trans("Error").'</div>';
-	}
+    if (! $error) {
+        $mesg = '<div class="ok">'.$langs->trans("SetupSaved").'</div>';
+    } else {
+        $mesg = '<div class="error">'.$langs->trans("Error").'</div>';
+    }
 }
 
 // Action activation d'un sous module du module adherent
-if ($action == 'set')
-{
+if ($action == 'set') {
     $result=dolibarr_set_const($db, $_GET["name"], $_GET["value"], '', 0, '', $conf->entity);
-    if ($result < 0)
-    {
+    if ($result < 0) {
         dol_print_error($db);
     }
 }
 
 // Action desactivation d'un sous module du module adherent
-if ($action == 'unset')
-{
+if ($action == 'unset') {
     $result=dolibarr_del_const($db, $_GET["name"], $conf->entity);
-    if ($result < 0)
-    {
+    if ($result < 0) {
         dol_print_error($db);
     }
 }
 
-if (($action == 'testsubscribe' || $action == 'testunsubscribe') && ! empty($conf->global->ADHERENT_USE_MAILMAN))
-{
+if (($action == 'testsubscribe' || $action == 'testunsubscribe') && ! empty($conf->global->ADHERENT_USE_MAILMAN)) {
     $email=GETPOST($action.'email');
-    if (! isValidEmail($email))
-    {
+    if (! isValidEmail($email)) {
         $langs->load("errors");
         $mesg='<div class="error">'.$langs->trans("ErrorBadEMail",$email).'</div>';
-    }
-    else
-    {
+    } else {
         include_once DOL_DOCUMENT_ROOT.'/mailmanspip/class/mailmanspip.class.php';
         $mailmanspip=new MailmanSpip($db);
 
@@ -112,29 +98,21 @@ if (($action == 'testsubscribe' || $action == 'testunsubscribe') && ! empty($con
         /*$object->element='member';
         $object->type='Preferred Partners'; */
 
-        if ($action == 'testsubscribe')
-        {
+        if ($action == 'testsubscribe') {
             $result=$mailmanspip->add_to_mailman($object);
-            if ($result < 0)
-            {
+            if ($result < 0) {
                 $error++;
                 $mesg='<div class="error">'.$mailmanspip->error.'</div>';
-            }
-            else
-            {
+            } else {
                 $mesg='MailmanCreationSuccess';
             }
         }
-        if ($action == 'testunsubscribe')
-        {
+        if ($action == 'testunsubscribe') {
             $result=$mailmanspip->del_to_mailman($object);
-            if ($result < 0)
-            {
+            if ($result < 0) {
                 $error++;
                 $mesg='<div class="error">'.$mailmanspip->error.'</div>';
-            }
-            else
-            {
+            } else {
                 $mesg='MailmanDeletionSuccess';
             }
         }
@@ -164,8 +142,7 @@ dol_htmloutput_mesg($mesg);
 
 
 $var=!$var;
-if (! empty($conf->global->ADHERENT_USE_MAILMAN))
-{
+if (! empty($conf->global->ADHERENT_USE_MAILMAN)) {
     //$lien=img_picto($langs->trans("Active"),'tick').' ';
     $lien='<a href="'.$_SERVER["PHP_SELF"].'?action=unset&value=0&name=ADHERENT_USE_MAILMAN">';
     //$lien.=$langs->trans("Disable");
@@ -190,27 +167,22 @@ if (! empty($conf->global->ADHERENT_USE_MAILMAN))
     var i3=0;
     jQuery(document).ready(function(){
         jQuery("#exampleclick1").click(function(event){
-            if (i1 == 0) { jQuery("#example1").show(); i1=1; }
-            else if (i1 == 1)  { jQuery("#example1").hide(); i1=0; }
+            if (i1 == 0) { jQuery("#example1").show(); i1=1; } elseif (i1 == 1) { jQuery("#example1").hide(); i1=0; }
             });
         jQuery("#exampleclick2").click(function(){
-            if (i2 == 0) { jQuery("#example2").show(); i2=1; }
-            else if (i2 == 1)  { jQuery("#example2").hide(); i2=0; }
+            if (i2 == 0) { jQuery("#example2").show(); i2=1; } elseif (i2 == 1) { jQuery("#example2").hide(); i2=0; }
             });
         jQuery("#exampleclick3").click(function(){
-            if (i3 == 0) { jQuery("#example3").show(); i3=1; }
-            else if (i3 == 1)  { jQuery("#example3").hide(); i3=0; }
+            if (i3 == 0) { jQuery("#example3").show(); i3=1; } elseif (i3 == 1) { jQuery("#example3").hide(); i3=0; }
             });
-	});
+    });
     </script>';
 
     form_constantes($constantes,1);
 
     print '*'.$langs->trans("FollowingConstantsWillBeSubstituted").'<br>';
     print '%LISTE%, %MAILMAN_ADMINPW%, %EMAIL% <br>';
-}
-else
-{
+} else {
     $lien='<a href="'.$_SERVER["PHP_SELF"].'?action=set&value=1&name=ADHERENT_USE_MAILMAN">';
     //$lien.=img_$langs->trans("Activate")
     $lien.=img_picto($langs->trans("Disabled"),'switch_off');
@@ -220,8 +192,7 @@ else
 
 dol_fiche_end();
 
-if (! empty($conf->global->ADHERENT_USE_MAILMAN))
-{
+if (! empty($conf->global->ADHERENT_USE_MAILMAN)) {
     print '<form action="'.$_SERVER["PHP_SELF"].'">';
     print '<input type="hidden" name="action" value="testsubscribe">';
     print $langs->trans("TestSubscribe").'<br>';
@@ -234,8 +205,6 @@ if (! empty($conf->global->ADHERENT_USE_MAILMAN))
     print '</form>';
 }
 
-
 llxFooter();
 
 $db->close();
-?>

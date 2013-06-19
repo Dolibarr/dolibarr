@@ -53,19 +53,14 @@ if (! $sortfield) $sortfield="p.rowid";
 $amounts = array();
 
 // Security check
-if ($user->societe_id > 0)
-{
+if ($user->societe_id > 0) {
     $socid = $user->societe_id;
 }
-
-
-
 
 /*
  * Actions
  */
-if ($action == 'add_paiement')
-{
+if ($action == 'add_paiement') {
     $error = 0;
 
     $datepaye = dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
@@ -73,10 +68,8 @@ if ($action == 'add_paiement')
     $total = 0;
 
     // Genere tableau des montants amounts
-    foreach ($_POST as $key => $value)
-    {
-        if (substr($key,0,7) == 'amount_')
-        {
+    foreach ($_POST as $key => $value) {
+        if (substr($key,0,7) == 'amount_') {
             $other_facid = substr($key,7);
             $amounts[$other_facid] = price2num(GETPOST($key));
             $total = $total + $amounts[$other_facid];
@@ -84,37 +77,31 @@ if ($action == 'add_paiement')
     }
 
     // Effectue les verifications des parametres
-    if ($_POST['paiementid'] <= 0)
-    {
-    	setEventMessage($langs->trans('ErrorFieldRequired',$langs->transnoentities('PaymentMode')), 'errors');
+    if ($_POST['paiementid'] <= 0) {
+        setEventMessage($langs->trans('ErrorFieldRequired',$langs->transnoentities('PaymentMode')), 'errors');
         $error++;
     }
 
-    if (! empty($conf->banque->enabled))
-    {
+    if (! empty($conf->banque->enabled)) {
         // Si module bank actif, un compte est obligatoire lors de la saisie
         // d'un paiement
-        if (! $_POST['accountid'])
-        {
-        	setEventMessage($langs->trans('ErrorFieldRequired',$langs->transnoentities('AccountToCredit')), 'errors');
+        if (! $_POST['accountid']) {
+            setEventMessage($langs->trans('ErrorFieldRequired',$langs->transnoentities('AccountToCredit')), 'errors');
             $error++;
         }
     }
 
-    if ($total == 0)
-    {
-    	setEventMessage($langs->trans('ErrorFieldRequired',$langs->trans('PaymentAmount')), 'errors');
+    if ($total == 0) {
+        setEventMessage($langs->trans('ErrorFieldRequired',$langs->trans('PaymentAmount')), 'errors');
         $error++;
     }
 
-    if (empty($datepaye))
-    {
-    	setEventMessage($langs->trans('ErrorFieldRequired',$langs->transnoentities('Date')), 'errors');
+    if (empty($datepaye)) {
+        setEventMessage($langs->trans('ErrorFieldRequired',$langs->transnoentities('Date')), 'errors');
         $error++;
     }
 
-    if (! $error)
-    {
+    if (! $error) {
         $db->begin();
 
         // Creation de la ligne paiement
@@ -124,37 +111,30 @@ if ($action == 'add_paiement')
         $paiement->paiementid   = $_POST['paiementid'];
         $paiement->num_paiement = $_POST['num_paiement'];
         $paiement->note         = $_POST['comment'];
-        if (! $error)
-        {
+        if (! $error) {
             $paiement_id = $paiement->create($user,(GETPOST('closepaidinvoices')=='on'?1:0));
-            if ($paiement_id < 0)
-            {
-            	setEventMessage($paiement->error, 'errors');
+            if ($paiement_id < 0) {
+                setEventMessage($paiement->error, 'errors');
                 $error++;
             }
         }
 
-        if (! $error)
-        {
+        if (! $error) {
             $result=$paiement->addPaymentToBank($user,'payment_supplier','(SupplierInvoicePayment)',$_POST['accountid'],'','');
-            if ($result < 0)
-            {
-            	setEventMessage($paiement->error, 'errors');
+            if ($result < 0) {
+                setEventMessage($paiement->error, 'errors');
                 $error++;
             }
         }
 
-        if (! $error)
-        {
+        if (! $error) {
             $db->commit();
 
             // If payment dispatching on more than one invoice, we keep on summary page, otherwise go on invoice card
             $invoiceid=0;
-            foreach ($paiement->amounts as $key => $amount)
-            {
+            foreach ($paiement->amounts as $key => $amount) {
                 $facid = $key;
-                if (is_numeric($amount) && $amount <> 0)
-                {
+                if (is_numeric($amount) && $amount <> 0) {
                     if ($invoiceid != 0) $invoiceid=-1; // There is more than one invoice payed by this payment
                     else $invoiceid=$facid;
                 }
@@ -163,9 +143,7 @@ if ($action == 'add_paiement')
             else $loc = DOL_URL_ROOT.'/fourn/paiement/fiche.php?id='.$paiement_id;
             header('Location: '.$loc);
             exit;
-        }
-        else
-        {
+        } else {
             $db->rollback();
         }
     }
@@ -183,8 +161,7 @@ llxHeader();
 
 $form=new Form($db);
 
-if ($action == 'create' || $action == 'add_paiement')
-{
+if ($action == 'create' || $action == 'add_paiement') {
     $object = new FactureFournisseur($db);
     $object->fetch($facid);
 
@@ -200,11 +177,9 @@ if ($action == 'create' || $action == 'add_paiement')
     $sql.= ' AND f.rowid = '.$facid;
     if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
     $resql = $db->query($sql);
-    if ($resql)
-    {
+    if ($resql) {
         $num = $db->num_rows($resql);
-        if ($num)
-        {
+        if ($num) {
             $obj = $db->fetch_object($resql);
             $total = $obj->total;
 
@@ -236,115 +211,102 @@ if ($action == 'create' || $action == 'add_paiement')
             print '<td rowspan="3" valign="top">';
             print '<textarea name="comment" wrap="soft" cols="60" rows="'.ROWS_3.'">'.(empty($_POST['comment'])?'':$_POST['comment']).'</textarea></td></tr>';
             print '<tr><td>'.$langs->trans('Numero').'</td><td><input name="num_paiement" type="text" value="'.(empty($_POST['num_paiement'])?'':$_POST['num_paiement']).'"></td></tr>';
-            if (! empty($conf->banque->enabled))
-            {
+            if (! empty($conf->banque->enabled)) {
                 print '<tr><td class="fieldrequired">'.$langs->trans('Account').'</td><td>';
                 $form->select_comptes(empty($_POST['accountid'])?'':$_POST['accountid'],'accountid',0,'',2);
                 print '</td></tr>';
-            }
-            else
-            {
+            } else {
                 print '<tr><td colspan="2">&nbsp;</td></tr>';
             }
             print '</table>';
 
 
-			$parameters=array('facid'=>$facid, 'ref'=>$ref, 'objcanvas'=>$objcanvas);
-			$reshook=$hookmanager->executeHooks('paymentsupplierinvoices',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
-			$error=$hookmanager->error; $errors=$hookmanager->errors;
-			if (empty($reshook))
-			{
-				/*
-	             * Autres factures impayees
-	             */
-	            $sql = 'SELECT f.rowid as facid, f.ref, f.ref_supplier, f.total_ht, f.total_ttc, f.datef as df';
-	            $sql.= ', SUM(pf.amount) as am';
-	            $sql.= ' FROM '.MAIN_DB_PREFIX.'facture_fourn as f';
-	            $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'paiementfourn_facturefourn as pf ON pf.fk_facturefourn = f.rowid';
-	            $sql.= " WHERE f.entity = ".$conf->entity;
-	            $sql.= ' AND f.fk_soc = '.$object->socid;
-	            $sql.= ' AND f.paye = 0';
-	            $sql.= ' AND f.fk_statut = 1';  // Statut=0 => non validee, Statut=2 => annulee
-	            $sql.= ' GROUP BY f.rowid, f.ref_supplier, f.total_ht, f.total_ttc, f.datef';
-	            $resql = $db->query($sql);
-	            if ($resql)
-	            {
-	                $num = $db->num_rows($resql);
-	                if ($num > 0)
-	                {
-	                    $i = 0;
-	                    print '<br>';
+            $parameters=array('facid'=>$facid, 'ref'=>$ref, 'objcanvas'=>$objcanvas);
+            $reshook=$hookmanager->executeHooks('paymentsupplierinvoices',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+            $error=$hookmanager->error; $errors=$hookmanager->errors;
+            if (empty($reshook)) {
+                /*
+                 * Autres factures impayees
+                 */
+                $sql = 'SELECT f.rowid as facid, f.ref, f.ref_supplier, f.total_ht, f.total_ttc, f.datef as df';
+                $sql.= ', SUM(pf.amount) as am';
+                $sql.= ' FROM '.MAIN_DB_PREFIX.'facture_fourn as f';
+                $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'paiementfourn_facturefourn as pf ON pf.fk_facturefourn = f.rowid';
+                $sql.= " WHERE f.entity = ".$conf->entity;
+                $sql.= ' AND f.fk_soc = '.$object->socid;
+                $sql.= ' AND f.paye = 0';
+                $sql.= ' AND f.fk_statut = 1';  // Statut=0 => non validee, Statut=2 => annulee
+                $sql.= ' GROUP BY f.rowid, f.ref_supplier, f.total_ht, f.total_ttc, f.datef';
+                $resql = $db->query($sql);
+                if ($resql) {
+                    $num = $db->num_rows($resql);
+                    if ($num > 0) {
+                        $i = 0;
+                        print '<br>';
 
-	                    print $langs->trans('Invoices').'<br>';
-	                    print '<table class="noborder" width="100%">';
-	                    print '<tr class="liste_titre">';
-	                    print '<td>'.$langs->trans('Ref').'</td>';
-	                    print '<td>'.$langs->trans('RefSupplier').'</td>';
-	                    print '<td align="center">'.$langs->trans('Date').'</td>';
-	                    print '<td align="right">'.$langs->trans('AmountTTC').'</td>';
-	                    print '<td align="right">'.$langs->trans('AlreadyPaid').'</td>';
-	                    print '<td align="right">'.$langs->trans('RemainderToPay').'</td>';
-	                    print '<td align="center">'.$langs->trans('Amount').'</td>';
-	                    print '</tr>';
+                        print $langs->trans('Invoices').'<br>';
+                        print '<table class="noborder" width="100%">';
+                        print '<tr class="liste_titre">';
+                        print '<td>'.$langs->trans('Ref').'</td>';
+                        print '<td>'.$langs->trans('RefSupplier').'</td>';
+                        print '<td align="center">'.$langs->trans('Date').'</td>';
+                        print '<td align="right">'.$langs->trans('AmountTTC').'</td>';
+                        print '<td align="right">'.$langs->trans('AlreadyPaid').'</td>';
+                        print '<td align="right">'.$langs->trans('RemainderToPay').'</td>';
+                        print '<td align="center">'.$langs->trans('Amount').'</td>';
+                        print '</tr>';
 
-	                    $var=True;
-	                    $total=0;
-	                    $total_ttc=0;
-	                    $totalrecu=0;
-	                    while ($i < $num)
-	                    {
-	                        $objp = $db->fetch_object($resql);
-	                        $var=!$var;
-	                        print '<tr '.$bc[$var].'>';
-	                        print '<td><a href="fiche.php?facid='.$objp->facid.'">'.img_object($langs->trans('ShowBill'),'bill').' '.$objp->ref;
-	                        print '</a></td>';
-	                        print '<td>'.$objp->ref_supplier.'</td>';
-	                        if ($objp->df > 0 )
-	                        {
-	                            print '<td align="center">';
-	                            print dol_print_date($db->jdate($objp->df)).'</td>';
-	                        }
-	                        else
-	                        {
-	                            print '<td align="center"><b>!!!</b></td>';
-	                        }
-	                        print '<td align="right">'.price($objp->total_ttc).'</td>';
-	                        print '<td align="right">'.price($objp->am).'</td>';
-	                        print '<td align="right">'.price($objp->total_ttc - $objp->am).'</td>';
-	                        print '<td align="center">';
-	                        $namef = 'amount_'.$objp->facid;
-	                        print '<input type="text" size="8" name="'.$namef.'" value="'.GETPOST($namef).'">';
-	                        print "</td></tr>\n";
-	                        $total+=$objp->total_ht;
-	                        $total_ttc+=$objp->total_ttc;
-	                        $totalrecu+=$objp->am;
-	                        $i++;
-	                    }
-	                    if ($i > 1)
-	                    {
-	                        // Print total
-	                        print '<tr class="liste_total">';
-	                        print '<td colspan="3" align="left">'.$langs->trans('TotalTTC').':</td>';
-	                        print '<td align="right"><b>'.price($total_ttc).'</b></td>';
-	                        print '<td align="right"><b>'.price($totalrecu).'</b></td>';
-	                        print '<td align="right"><b>'.price($total_ttc - $totalrecu).'</b></td>';
-	                        print '<td align="center">&nbsp;</td>';
-	                        print "</tr>\n";
-	                    }
-	                    print "</table>\n";
-	                }
-	                $db->free($resql);
-	            }
-	            else
-	           {
-	                dol_print_error($db);
-	            }
-			}
+                        $var=True;
+                        $total=0;
+                        $total_ttc=0;
+                        $totalrecu=0;
+                        while ($i < $num) {
+                            $objp = $db->fetch_object($resql);
+                            $var=!$var;
+                            print '<tr '.$bc[$var].'>';
+                            print '<td><a href="fiche.php?facid='.$objp->facid.'">'.img_object($langs->trans('ShowBill'),'bill').' '.$objp->ref;
+                            print '</a></td>';
+                            print '<td>'.$objp->ref_supplier.'</td>';
+                            if ($objp->df > 0) {
+                                print '<td align="center">';
+                                print dol_print_date($db->jdate($objp->df)).'</td>';
+                            } else {
+                                print '<td align="center"><b>!!!</b></td>';
+                            }
+                            print '<td align="right">'.price($objp->total_ttc).'</td>';
+                            print '<td align="right">'.price($objp->am).'</td>';
+                            print '<td align="right">'.price($objp->total_ttc - $objp->am).'</td>';
+                            print '<td align="center">';
+                            $namef = 'amount_'.$objp->facid;
+                            print '<input type="text" size="8" name="'.$namef.'" value="'.GETPOST($namef).'">';
+                            print "</td></tr>\n";
+                            $total+=$objp->total_ht;
+                            $total_ttc+=$objp->total_ttc;
+                            $totalrecu+=$objp->am;
+                            $i++;
+                        }
+                        if ($i > 1) {
+                            // Print total
+                            print '<tr class="liste_total">';
+                            print '<td colspan="3" align="left">'.$langs->trans('TotalTTC').':</td>';
+                            print '<td align="right"><b>'.price($total_ttc).'</b></td>';
+                            print '<td align="right"><b>'.price($totalrecu).'</b></td>';
+                            print '<td align="right"><b>'.price($total_ttc - $totalrecu).'</b></td>';
+                            print '<td align="center">&nbsp;</td>';
+                            print "</tr>\n";
+                        }
+                        print "</table>\n";
+                    }
+                    $db->free($resql);
+                } else {
+                    dol_print_error($db);
+                }
+            }
 
-			//			print '<tr><td colspan="3" align="center">';
-			print '<center><br><input type="checkbox" checked="checked" name="closepaidinvoices"> '.$langs->trans("ClosePaidInvoicesAutomatically");
-			print '<br><input type="submit" class="button" value="'.$langs->trans('Save').'"></center>';
-			//			print '</td></tr>';
+            //			print '<tr><td colspan="3" align="center">';
+            print '<center><br><input type="checkbox" checked="checked" name="closepaidinvoices"> '.$langs->trans("ClosePaidInvoicesAutomatically");
+            print '<br><input type="submit" class="button" value="'.$langs->trans('Save').'"></center>';
+            //			print '</td></tr>';
 
             print '</form>';
         }
@@ -354,8 +316,7 @@ if ($action == 'create' || $action == 'add_paiement')
 /*
  * Show list
  */
-if (empty($action))
-{
+if (empty($action)) {
     if ($page == -1) $page = 0 ;
     $limit = $conf->liste_limit;
     $offset = $limit * $page ;
@@ -385,29 +346,23 @@ if (empty($action))
     $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank_account as ba ON b.fk_account = ba.rowid';
     $sql.= " WHERE f.entity = ".$conf->entity;
     if (!$user->rights->societe->client->voir) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-    if ($socid)
-    {
+    if ($socid) {
         $sql .= ' AND f.fk_soc = '.$socid;
     }
     // Search criteria
-    if (! empty($search_ref))
-    {
+    if (! empty($search_ref)) {
         $sql .= ' AND p.rowid='.$db->escape($search_ref);
     }
-    if (! empty($search_account))
-    {
+    if (! empty($search_account)) {
         $sql .= ' AND b.fk_account='.$db->escape($search_account);
     }
-    if (! empty($search_paymenttype))
-    {
+    if (! empty($search_paymenttype)) {
         $sql .= " AND c.code='".$db->escape($search_paymenttype)."'";
     }
-    if (! empty($search_amount))
-    {
+    if (! empty($search_amount)) {
         $sql .= " AND p.amount=".price2num($search_amount);
     }
-    if (! empty($search_company))
-    {
+    if (! empty($search_company)) {
         $sql .= " AND s.nom LIKE '%".$db->escape($search_company)."%'";
     }
     $sql.= " GROUP BY p.rowid, p.datep, p.amount, p.num_paiement, s.rowid, s.nom, c.libelle, ba.rowid, ba.label";
@@ -416,8 +371,7 @@ if (empty($action))
     $sql.= $db->plimit($limit+1, $offset);
 
     $resql = $db->query($sql);
-    if ($resql)
-    {
+    if ($resql) {
         $num = $db->num_rows($resql);
         $i = 0;
         $var=True;
@@ -465,8 +419,7 @@ if (empty($action))
         print '</td>';
         print "</tr>\n";
 
-        while ($i < min($num,$limit))
-        {
+        while ($i < min($num,$limit)) {
             $objp = $db->fetch_object($resql);
             $var=!$var;
             print '<tr '.$bc[$var].'>';
@@ -503,9 +456,7 @@ if (empty($action))
         }
         print "</table>";
         print "</form>\n";
-    }
-    else
-    {
+    } else {
         dol_print_error($db);
     }
 }
@@ -513,4 +464,3 @@ if (empty($action))
 $db->close();
 
 llxFooter();
-?>

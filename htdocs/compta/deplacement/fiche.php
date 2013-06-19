@@ -28,13 +28,11 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/trip.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/deplacement/class/deplacement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
-if (! empty($conf->projet->enabled))
-{
+if (! empty($conf->projet->enabled)) {
     require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
 
 $langs->load("trips");
-
 
 // Security check
 $id = GETPOST('id','int');
@@ -51,76 +49,55 @@ $object = new Deplacement($db);
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('tripsandexpensescard'));
 
-
 /*
  * Actions
 */
-if ($action == 'validate' && $user->rights->deplacement->creer)
-{
+if ($action == 'validate' && $user->rights->deplacement->creer) {
     $object->fetch($id);
-    if ($object->statut == 0)
-    {
+    if ($object->statut == 0) {
         $result = $object->setStatut(1);
-        if ($result > 0)
-        {
+        if ($result > 0) {
             header("Location: " . $_SERVER["PHP_SELF"] . "?id=" . $id);
             exit;
-        }
-        else
-        {
+        } else {
             $mesg=$object->error;
         }
     }
 }
 
 /*
-else if ($action == 'unblock' && $user->rights->deplacement->unvalidate)
-{
+else if ($action == 'unblock' && $user->rights->deplacement->unvalidate) {
     $object->fetch($id);
-    if ($object->fk_statut == '1') 	// Not blocked...
-    {
+    if ($object->fk_statut == '1') { 	// Not blocked...
         $mesg='<div class="error">'.$langs->trans("Error").'</div>';
         $action='';
         $error++;
-    }
-    else
-    {
+    } else {
         $result = $object->fetch($id);
 
         $object->fk_statut	= '1';
 
         $result = $object->update($user);
 
-        if ($result > 0)
-        {
+        if ($result > 0) {
             header("Location: " . $_SERVER["PHP_SELF"] . "?id=" . $id);
             exit;
-        }
-        else
-        {
+        } else {
             $mesg=$object->error;
         }
     }
 }*/
 
-else if ($action == 'confirm_delete' && $confirm == "yes" && $user->rights->deplacement->supprimer)
-{
+else if ($action == 'confirm_delete' && $confirm == "yes" && $user->rights->deplacement->supprimer) {
     $result=$object->delete($id);
-    if ($result >= 0)
-    {
+    if ($result >= 0) {
         header("Location: index.php");
         exit;
-    }
-    else
-    {
+    } else {
         $mesg=$object->error;
     }
-}
-
-else if ($action == 'add' && $user->rights->deplacement->creer)
-{
-    if (! GETPOST('cancel','alpha'))
-    {
+} elseif ($action == 'add' && $user->rights->deplacement->creer) {
+    if (! GETPOST('cancel','alpha')) {
         $error=0;
 
         $object->date			= dol_mktime(12, 0, 0, GETPOST('remonth','int'), GETPOST('reday','int'), GETPOST('reyear','int'));
@@ -132,54 +109,41 @@ else if ($action == 'add' && $user->rights->deplacement->creer)
         $object->note_public	= GETPOST('note_public','alpha');
         $object->statut     	= 0;
 
-        if (! $object->date)
-        {
+        if (! $object->date) {
             $mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Date"));
             $error++;
         }
-        if ($object->type == '-1') 	// Otherwise it is TF_LUNCH,...
-        {
+        if ($object->type == '-1') { 	// Otherwise it is TF_LUNCH,...
             $mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Type")).'</div>';
             $error++;
         }
-        if (! ($object->fk_user > 0))
-        {
+        if (! ($object->fk_user > 0)) {
             $mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Person")).'</div>';
             $error++;
         }
 
-        if (! $error)
-        {
+        if (! $error) {
             $id = $object->create($user);
 
-            if ($id > 0)
-            {
+            if ($id > 0) {
                 header("Location: " . $_SERVER["PHP_SELF"] . "?id=" . $id);
                 exit;
-            }
-            else
-            {
+            } else {
                 $mesg=$object->error;
                 $action='create';
             }
-        }
-        else
-        {
+        } else {
             $action='create';
         }
-    }
-    else
-    {
+    } else {
         header("Location: index.php");
         exit;
     }
 }
 
 // Update record
-else if ($action == 'update' && $user->rights->deplacement->creer)
-{
-    if (! GETPOST('cancel','alpha'))
-    {
+else if ($action == 'update' && $user->rights->deplacement->creer) {
+    if (! GETPOST('cancel','alpha')) {
         $result = $object->fetch($id);
 
         $object->date			= dol_mktime(12, 0, 0, GETPOST('remonth','int'), GETPOST('reday','int'), GETPOST('reyear','int'));
@@ -192,58 +156,44 @@ else if ($action == 'update' && $user->rights->deplacement->creer)
 
         $result = $object->update($user);
 
-        if ($result > 0)
-        {
+        if ($result > 0) {
             header("Location: " . $_SERVER["PHP_SELF"] . "?id=" . $id);
             exit;
-        }
-        else
-        {
+        } else {
             $mesg=$object->error;
         }
-    }
-    else
-    {
+    } else {
         header("Location: " . $_SERVER["PHP_SELF"] . "?id=" . $id);
         exit;
     }
 }
 
 // Set into a project
-else if ($action == 'classin' && $user->rights->deplacement->creer)
-{
+else if ($action == 'classin' && $user->rights->deplacement->creer) {
     $object->fetch($id);
     $result=$object->setProject(GETPOST('projectid','int'));
     if ($result < 0) dol_print_error($db, $object->error);
 }
 
 // Set fields
-else if ($action == 'setdated' && $user->rights->deplacement->creer)
-{
+else if ($action == 'setdated' && $user->rights->deplacement->creer) {
     $dated=dol_mktime(GETPOST('datedhour','int'), GETPOST('datedmin','int'), GETPOST('datedsec','int'), GETPOST('datedmonth','int'), GETPOST('datedday','int'), GETPOST('datedyear','int'));
     $object->fetch($id);
     $result=$object->setValueFrom('dated',$dated,'','','date');
     if ($result < 0) dol_print_error($db, $object->error);
-}
-else if ($action == 'setkm' && $user->rights->deplacement->creer)
-{
+} elseif ($action == 'setkm' && $user->rights->deplacement->creer) {
     $object->fetch($id);
     $result=$object->setValueFrom('km',GETPOST('km','int'));
     if ($result < 0) dol_print_error($db, $object->error);
-}
-else if ($action == 'setnote_public' && $user->rights->deplacement->creer)
-{
+} elseif ($action == 'setnote_public' && $user->rights->deplacement->creer) {
     $object->fetch($id);
     $result=$object->update_note(dol_html_entity_decode(GETPOST('note_public'), ENT_QUOTES),'_public');
     if ($result < 0) dol_print_error($db, $object->error);
-}
-else if ($action == 'setnote_private' && $user->rights->deplacement->creer)
-{
+} elseif ($action == 'setnote_private' && $user->rights->deplacement->creer) {
     $object->fetch($id);
     $result=$object->update_note(dol_html_entity_decode(GETPOST('note_private'), ENT_QUOTES),'_private');
     if ($result < 0) dol_print_error($db, $object->error);
 }
-
 
 /*
  * View
@@ -256,8 +206,7 @@ $form = new Form($db);
 /*
  * Action create
 */
-if ($action == 'create')
-{
+if ($action == 'create') {
     //WYSIWYG Editor
     require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 
@@ -301,19 +250,18 @@ if ($action == 'create')
     print '<tr>';
     print '<td class="border" valign="top">'.$langs->trans('NotePublic').'</td>';
     print '<td valign="top" colspan="2">';
-    
+
     $doleditor = new DolEditor('note_public', GETPOST('note_public', 'alpha'), 600, 200, 'dolibarr_notes', 'In', false, true, true, ROWS_8, 100);
     print $doleditor->Create(1);
 
     print '</td></tr>';
 
     // Private note
-    if (! $user->societe_id)
-    {
+    if (! $user->societe_id) {
         print '<tr>';
         print '<td class="border" valign="top">'.$langs->trans('NotePrivate').'</td>';
         print '<td valign="top" colspan="2">';
-        
+
         $doleditor = new DolEditor('note_private', GETPOST('note_private', 'alpha'), 600, 200, 'dolibarr_notes', 'In', false, true, true, ROWS_8, 100);
         print $doleditor->Create(1);
 
@@ -330,26 +278,21 @@ if ($action == 'create')
     print '<input class="button" type="submit" name="cancel" value="'.$langs->trans("Cancel").'"></center';
 
     print '</form>';
-}
-else if ($id)
-{
+} elseif ($id) {
     $result = $object->fetch($id);
-    if ($result > 0)
-    {
+    if ($result > 0) {
         dol_htmloutput_mesg($mesg);
 
         $head = trip_prepare_head($object);
 
         dol_fiche_head($head, 'card', $langs->trans("TripCard"), 0, 'trip');
 
-        if ($action == 'edit' && $user->rights->deplacement->creer)
-        {
+        if ($action == 'edit' && $user->rights->deplacement->creer) {
             //WYSIWYG Editor
             require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 
             $soc = new Societe($db);
-            if ($object->socid)
-            {
+            if ($object->socid) {
                 $soc->fetch($object->socid);
             }
 
@@ -400,12 +343,11 @@ else if ($id)
 
             $doleditor = new DolEditor('note_public', $object->note_public, 600, 200, 'dolibarr_notes', 'In', false, true, true, ROWS_8, '100');
             print $doleditor->Create(1);
-            
+
             print "</td></tr>";
 
             // Private note
-            if (! $user->societe_id)
-            {
+            if (! $user->societe_id) {
                 print '<tr><td valign="top">'.$langs->trans("NotePrivate").'</td>';
                 print '<td valign="top" colspan="3">';
 
@@ -428,14 +370,11 @@ else if ($id)
             print '</form>';
 
             print '</div>';
-        }
-        else
-        {
+        } else {
             /*
              * Confirmation de la suppression du deplacement
             */
-            if ($action == 'delete')
-            {
+            if ($action == 'delete') {
                 $ret=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$id,$langs->trans("DeleteTrip"),$langs->trans("ConfirmDeleteTrip"),"confirm_delete");
                 if ($ret == 'html') print '<br>';
             }
@@ -487,8 +426,7 @@ else if ($id)
             print '</td></tr>';
 
             // Project
-            if (! empty($conf->projet->enabled))
-            {
+            if (! empty($conf->projet->enabled)) {
                 $langs->load('projects');
                 print '<tr>';
                 print '<td>';
@@ -496,20 +434,16 @@ else if ($id)
                 print '<table class="nobordernopadding" width="100%"><tr><td>';
                 print $langs->trans('Project');
                 print '</td>';
-                if ($action != 'classify' && $user->rights->deplacement->creer)
-                {
+                if ($action != 'classify' && $user->rights->deplacement->creer) {
                     print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=classify&amp;id='.$object->id.'">';
                     print img_edit($langs->trans('SetProject'),1);
                     print '</a></td>';
                 }
                 print '</tr></table>';
                 print '</td><td colspan="3">';
-                if ($action == 'classify')
-                {
+                if ($action == 'classify') {
                     $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project,'projectid');
-                }
-                else
-                {
+                } else {
                     $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project,'none');
                 }
                 print '</td>';
@@ -538,46 +472,32 @@ else if ($id)
 
             print '<div class="tabsAction">';
 
-            if ($object->statut == 0) 	// if blocked...
-            {
-                if ($user->rights->deplacement->creer)
-                {
+            if ($object->statut == 0) { 	// if blocked...
+                if ($user->rights->deplacement->creer) {
                     print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=validate&id='.$id.'">'.$langs->trans('Validate').'</a>';
-                }
-                else
-                {
+                } else {
                     print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">'.$langs->trans('Validate').'</a>';
                 }
             }
 
-            if ($user->rights->deplacement->creer)
-            {
+            if ($user->rights->deplacement->creer) {
                 print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&id='.$id.'">'.$langs->trans('Modify').'</a>';
-            }
-            else
-            {
+            } else {
                 print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">'.$langs->trans('Modify').'</a>';
             }
-            if ($user->rights->deplacement->supprimer)
-            {
+            if ($user->rights->deplacement->supprimer) {
                 print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&id='.$id.'">'.$langs->trans('Delete').'</a>';
-            }
-            else
-            {
+            } else {
                 print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">'.$langs->trans('Delete').'</a>';
             }
 
             print '</div>';
         }
-    }
-    else
-    {
+    } else {
         dol_print_error($db);
     }
 }
 
-
 llxFooter();
 
 $db->close();
-?>

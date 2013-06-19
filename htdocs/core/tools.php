@@ -31,8 +31,6 @@ $langs->load("other");
 $socid=0;
 if ($user->societe_id > 0) $socid=$user->societe_id;
 
-
-
 /*
  * View
  */
@@ -48,11 +46,6 @@ print_fiche_titre($text);
 // Show description of content
 print $langs->trans("ToolsDesc").'<br><br>';
 
-
-
-
-
 llxFooter();
 
 $db->close();
-?>

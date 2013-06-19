@@ -52,8 +52,7 @@ $specimenthirdparty->initAsSpecimen();
  * Actions
  */
 
-if ($action == 'updateMask')
-{
+if ($action == 'updateMask') {
     $maskconstorder=GETPOST('maskconstorder','alpha');
     $maskvalue=GETPOST('maskorder','alpha');
 
@@ -61,18 +60,12 @@ if ($action == 'updateMask')
 
     if (! $res > 0) $error++;
 
-    if (! $error)
-    {
+    if (! $error) {
         $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
-    }
-    else
-    {
+    } else {
         $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
     }
-}
-
-else if ($action == 'specimen')  // For orders
-{
+} elseif ($action == 'specimen') {  // For orders
     $modele=GETPOST('module','alpha');
 
     $commande = new CommandeFournisseur($db);
@@ -82,102 +75,75 @@ else if ($action == 'specimen')  // For orders
     // Search template files
     $file=''; $classname=''; $filefound=0;
     $dirmodels=array_merge(array('/'),(array) $conf->modules_parts['models']);
-    foreach($dirmodels as $reldir)
-    {
-    	$file=dol_buildpath($reldir."core/modules/supplier_order/pdf/pdf_".$modele.".modules.php",0);
-    	if (file_exists($file))
-    	{
-    		$filefound=1;
-    		$classname = "pdf_".$modele;
-    		break;
-    	}
+    foreach ($dirmodels as $reldir) {
+        $file=dol_buildpath($reldir."core/modules/supplier_order/pdf/pdf_".$modele.".modules.php",0);
+        if (file_exists($file)) {
+            $filefound=1;
+            $classname = "pdf_".$modele;
+            break;
+        }
     }
 
-    if ($filefound)
-    {
-    	require_once $file;
+    if ($filefound) {
+        require_once $file;
 
-    	$module = new $classname($db,$commande);
+        $module = new $classname($db,$commande);
 
-    	if ($module->write_file($commande,$langs) > 0)
-    	{
-    		header("Location: ".DOL_URL_ROOT."/document.php?modulepart=commande_fournisseur&file=SPECIMEN.pdf");
-    		return;
-    	}
-    	else
-    	{
-    		$mesg='<font class="error">'.$module->error.'</font>';
-    		dol_syslog($module->error, LOG_ERR);
-    	}
-    }
-    else
-    {
-    	$mesg='<font class="error">'.$langs->trans("ErrorModuleNotFound").'</font>';
-    	dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
+        if ($module->write_file($commande,$langs) > 0) {
+            header("Location: ".DOL_URL_ROOT."/document.php?modulepart=commande_fournisseur&file=SPECIMEN.pdf");
+
+            return;
+        } else {
+            $mesg='<font class="error">'.$module->error.'</font>';
+            dol_syslog($module->error, LOG_ERR);
+        }
+    } else {
+        $mesg='<font class="error">'.$langs->trans("ErrorModuleNotFound").'</font>';
+        dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
     }
 }
 
 // Activate a model
-else if ($action == 'set')
-{
-	$ret = addDocumentModel($value, $type, $label, $scandir);
-}
-
-else if ($action == 'del')
-{
-	$ret = delDocumentModel($value, $type);
-	if ($ret > 0)
-	{
+else if ($action == 'set') {
+    $ret = addDocumentModel($value, $type, $label, $scandir);
+} elseif ($action == 'del') {
+    $ret = delDocumentModel($value, $type);
+    if ($ret > 0) {
         if ($conf->global->COMMANDE_SUPPLIER_ADDON_PDF == "$value") dolibarr_del_const($db, 'COMMANDE_SUPPLIER_ADDON_PDF',$conf->entity);
-	}
+    }
 }
 
 // Set default model
-else if ($action == 'setdoc')
-{
-	if (dolibarr_set_const($db, "COMMANDE_SUPPLIER_ADDON_PDF",$value,'chaine',0,'',$conf->entity))
-	{
-		// La constante qui a ete lue en avant du nouveau set
-		// on passe donc par une variable pour avoir un affichage coherent
-		$conf->global->COMMANDE_SUPPLIER_ADDON_PDF = $value;
-	}
+else if ($action == 'setdoc') {
+    if (dolibarr_set_const($db, "COMMANDE_SUPPLIER_ADDON_PDF",$value,'chaine',0,'',$conf->entity)) {
+        // La constante qui a ete lue en avant du nouveau set
+        // on passe donc par une variable pour avoir un affichage coherent
+        $conf->global->COMMANDE_SUPPLIER_ADDON_PDF = $value;
+    }
 
-	// On active le modele
-	$ret = delDocumentModel($value, $type);
-	if ($ret > 0)
-	{
-		$ret = addDocumentModel($value, $type, $label, $scandir);
-	}
-}
-
-else if ($action == 'setmod')
-{
+    // On active le modele
+    $ret = delDocumentModel($value, $type);
+    if ($ret > 0) {
+        $ret = addDocumentModel($value, $type, $label, $scandir);
+    }
+} elseif ($action == 'setmod') {
     // TODO Verifier si module numerotation choisi peut etre active
     // par appel methode canBeActivated
 
     dolibarr_set_const($db, "COMMANDE_SUPPLIER_ADDON_NUMBER",$value,'chaine',0,'',$conf->entity);
-}
-
-else if ($action == 'addcat')
-{
+} elseif ($action == 'addcat') {
     $fourn = new Fournisseur($db);
     $fourn->CreateCategory($user,$_POST["cat"]);
-}
-
-else if ($action == 'set_SUPPLIER_ORDER_FREE_TEXT')
-{
+} elseif ($action == 'set_SUPPLIER_ORDER_FREE_TEXT') {
     $freetext = GETPOST('SUPPLIER_ORDER_FREE_TEXT');	// No alpha here, we want exact string
 
     $res = dolibarr_set_const($db, "SUPPLIER_ORDER_FREE_TEXT",$freetext,'chaine',0,'',$conf->entity);
 
     if (! $res > 0) $error++;
 
-    if (! $error)
-    {
+    if (! $error) {
         $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
-    }
-    else
-    {
+    } else {
         $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
     }
 }
@@ -218,29 +184,23 @@ print "</tr>\n";
 
 clearstatcache();
 
-foreach ($dirmodels as $reldir)
-{
-	$dir = dol_buildpath($reldir."core/modules/supplier_order/");
+foreach ($dirmodels as $reldir) {
+    $dir = dol_buildpath($reldir."core/modules/supplier_order/");
 
-    if (is_dir($dir))
-    {
+    if (is_dir($dir)) {
         $handle = opendir($dir);
-        if (is_resource($handle))
-        {
+        if (is_resource($handle)) {
             $var=true;
 
-            while (($file = readdir($handle))!==false)
-            {
-                if (substr($file, 0, 25) == 'mod_commande_fournisseur_' && substr($file, dol_strlen($file)-3, 3) == 'php')
-                {
+            while (($file = readdir($handle))!==false) {
+                if (substr($file, 0, 25) == 'mod_commande_fournisseur_' && substr($file, dol_strlen($file)-3, 3) == 'php') {
                     $file = substr($file, 0, dol_strlen($file)-4);
 
                     require_once $dir.$file.'.php';
 
                     $module = new $file;
 
-                    if ($module->isEnabled())
-                    {
+                    if ($module->isEnabled()) {
                         // Show modules according to features level
                         if ($module->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
                         if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
@@ -255,18 +215,14 @@ foreach ($dirmodels as $reldir)
                         $tmp=$module->getExample();
                         if (preg_match('/^Error/',$tmp)) {
                             $langs->load("errors"); print '<div class="error">'.$langs->trans($tmp).'</div>';
-                        }
-                        elseif ($tmp=='NotConfigured') print $langs->trans($tmp);
+                        } elseif ($tmp=='NotConfigured') print $langs->trans($tmp);
                         else print $tmp;
                         print '</td>'."\n";
 
                         print '<td align="center">';
-                        if ($conf->global->COMMANDE_SUPPLIER_ADDON_NUMBER == "$file")
-                        {
+                        if ($conf->global->COMMANDE_SUPPLIER_ADDON_NUMBER == "$file") {
                             print img_picto($langs->trans("Activated"),'switch_on');
-                        }
-                        else
-                        {
+                        } else {
                             print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;value='.$file.'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
                         }
                         print '</td>';
@@ -278,15 +234,11 @@ foreach ($dirmodels as $reldir)
                         $htmltooltip='';
                         $htmltooltip.=''.$langs->trans("Version").': <b>'.$module->getVersion().'</b><br>';
                         $nextval=$module->getNextValue($mysoc,$commande);
-                        if ("$nextval" != $langs->trans("NotAvailable"))	// Keep " on nextval
-                        {
+                        if ("$nextval" != $langs->trans("NotAvailable")) {	// Keep " on nextval
                             $htmltooltip.=''.$langs->trans("NextValue").': ';
-                            if ($nextval)
-                            {
+                            if ($nextval) {
                                 $htmltooltip.=$nextval.'<br>';
-                            }
-                            else
-                            {
+                            } else {
                                 $htmltooltip.=$langs->trans($module->error).'<br>';
                             }
                         }
@@ -322,19 +274,15 @@ $sql.= " WHERE type = 'order_supplier'";
 $sql.= " AND entity = ".$conf->entity;
 
 $resql=$db->query($sql);
-if ($resql)
-{
+if ($resql) {
     $i = 0;
     $num_rows=$db->num_rows($resql);
-    while ($i < $num_rows)
-    {
+    while ($i < $num_rows) {
         $array = $db->fetch_array($resql);
         array_push($def, $array[0]);
         $i++;
     }
-}
-else
-{
+} else {
     dol_print_error($db);
 }
 
@@ -351,19 +299,14 @@ print '</tr>'."\n";
 clearstatcache();
 
 $var=true;
-foreach ($dirmodels as $reldir)
-{
-	$dir = dol_buildpath($reldir."core/modules/supplier_order/pdf/");
+foreach ($dirmodels as $reldir) {
+    $dir = dol_buildpath($reldir."core/modules/supplier_order/pdf/");
 
-    if (is_dir($dir))
-    {
+    if (is_dir($dir)) {
         $handle=opendir($dir);
-        if (is_resource($handle))
-        {
-            while (($file = readdir($handle))!==false)
-            {
-                if (preg_match('/\.modules\.php$/i',$file) && substr($file,0,4) == 'pdf_')
-                {
+        if (is_resource($handle)) {
+            while (($file = readdir($handle))!==false) {
+                if (preg_match('/\.modules\.php$/i',$file) && substr($file,0,4) == 'pdf_') {
                     $name = substr($file, 4, dol_strlen($file) -16);
                     $classname = substr($file, 0, dol_strlen($file) -12);
 
@@ -377,23 +320,17 @@ foreach ($dirmodels as $reldir)
                     print "</td>\n";
 
                     // Active
-                    if (in_array($name, $def))
-                    {
+                    if (in_array($name, $def)) {
                         print '<td align="center">'."\n";
-                        if ($conf->global->COMMANDE_SUPPLIER_ADDON_PDF != "$name")
-                        {
+                        if ($conf->global->COMMANDE_SUPPLIER_ADDON_PDF != "$name") {
                             print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'&amp;type=order_supplier">';
                             print img_picto($langs->trans("Enabled"),'switch_on');
                             print '</a>';
-                        }
-                        else
-                        {
+                        } else {
                             print img_picto($langs->trans("Enabled"),'switch_on');
                         }
                         print "</td>";
-                    }
-                    else
-                    {
+                    } else {
                         print '<td align="center">'."\n";
                         print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'&amp;type=order_supplier">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
                         print "</td>";
@@ -401,12 +338,9 @@ foreach ($dirmodels as $reldir)
 
                     // Default
                     print '<td align="center">';
-                    if ($conf->global->COMMANDE_SUPPLIER_ADDON_PDF == "$name")
-                    {
+                    if ($conf->global->COMMANDE_SUPPLIER_ADDON_PDF == "$name") {
                         print img_picto($langs->trans("Default"),'on');
-                    }
-                    else
-                    {
+                    } else {
                         print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'&amp;type=order_supplier"" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
                     }
                     print '</td>';
@@ -466,4 +400,3 @@ dol_htmloutput_mesg($mesg);
 
 $db->close();
 llxFooter();
-?>

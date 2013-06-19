@@ -32,79 +32,81 @@
  */
 class ModelNumRefContracts
 {
-	var $error='';
+    public $error='';
 
-	/**
-	 *	Return if a module can be used or not
-	 *
-	 * 	@return		boolean     true if module can be used
-	 */
-	function isEnabled()
-	{
-		return true;
-	}
+    /**
+     *	Return if a module can be used or not
+     *
+     * 	@return		boolean     true if module can be used
+     */
+    public function isEnabled()
+    {
+        return true;
+    }
 
-	/**
-	 *	Return default description of numbering model
-	 *
-	 *	@return     string      text description
-	 */
-	function info()
-	{
-		global $langs;
-		$langs->load("contracts");
-		return $langs->trans("NoDescription");
-	}
+    /**
+     *	Return default description of numbering model
+     *
+     *	@return     string      text description
+     */
+    public function info()
+    {
+        global $langs;
+        $langs->load("contracts");
 
-	/**
-	 *	Return numbering example
-	 *
-	 *	@return     string      Example
-	 */
-	function getExample()
-	{
-		global $langs;
-		$langs->load("contracts");
-		return $langs->trans("NoExample");
-	}
+        return $langs->trans("NoDescription");
+    }
 
-	/**
-	 *	Test if existing numbers make problems with numbering
-	 *
-	 *	@return		boolean		false if conflit, true if ok
-	 */
-	function canBeActivated()
-	{
-		return true;
-	}
+    /**
+     *	Return numbering example
+     *
+     *	@return     string      Example
+     */
+    public function getExample()
+    {
+        global $langs;
+        $langs->load("contracts");
 
-	/**
-	 *	Return next value
-	 *
-	 *	@param	Societe		$objsoc     third party object
-	 *	@param	Object		$contract	contract object
-	 *	@return	string					Value
-	 */
-	function getNextValue($objsoc, $contract)
-	{
-		global $langs;
-		return $langs->trans("NotAvailable");
-	}
+        return $langs->trans("NoExample");
+    }
 
-	/**
-	 *	Return numbering version module
-	 *
-	 *	@return     string      Value
-	 */
-	function getVersion()
-	{
-		global $langs;
-		$langs->load("admin");
+    /**
+     *	Test if existing numbers make problems with numbering
+     *
+     *	@return		boolean		false if conflit, true if ok
+     */
+    public function canBeActivated()
+    {
+        return true;
+    }
 
-		if ($this->version == 'development') return $langs->trans("VersionDevelopment");
-		if ($this->version == 'experimental') return $langs->trans("VersionExperimental");
-		if ($this->version == 'dolibarr') return DOL_VERSION;
-		return $langs->trans("NotAvailable");
-	}
+    /**
+     *	Return next value
+     *
+     *	@param	Societe		$objsoc     third party object
+     *	@param	Object		$contract	contract object
+     *	@return	string					Value
+     */
+    public function getNextValue($objsoc, $contract)
+    {
+        global $langs;
+
+        return $langs->trans("NotAvailable");
+    }
+
+    /**
+     *	Return numbering version module
+     *
+     *	@return     string      Value
+     */
+    public function getVersion()
+    {
+        global $langs;
+        $langs->load("admin");
+
+        if ($this->version == 'development') return $langs->trans("VersionDevelopment");
+        if ($this->version == 'experimental') return $langs->trans("VersionExperimental");
+        if ($this->version == 'dolibarr') return DOL_VERSION;
+        return $langs->trans("NotAvailable");
+    }
 }
-?>

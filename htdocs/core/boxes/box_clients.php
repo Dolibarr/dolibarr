@@ -31,109 +31,102 @@ include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
  */
 class box_clients extends ModeleBoxes
 {
-	var $boxcode="lastcustomers";
-	var $boximg="object_company";
-	var $boxlabel="BoxLastCustomers";
-	var $depends = array("societe");
+    public $boxcode="lastcustomers";
+    public $boximg="object_company";
+    public $boxlabel="BoxLastCustomers";
+    public $depends = array("societe");
 
-	var $db;
-	var $param;
+    public $db;
+    public $param;
 
-	var $info_box_head = array();
-	var $info_box_contents = array();
+    public $info_box_head = array();
+    public $info_box_contents = array();
 
 
-	/**
+    /**
      *  Load data for box to show them later
      *
      *  @param	int		$max        Maximum number of records to load
      *  @return	void
-	 */
-	function loadBox($max=5)
-	{
-		global $user, $langs, $db, $conf;
-		$langs->load("boxes");
+     */
+    public function loadBox($max=5)
+    {
+        global $user, $langs, $db, $conf;
+        $langs->load("boxes");
 
-		$this->max=$max;
+        $this->max=$max;
 
         include_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
         $thirdpartystatic=new Societe($db);
 
         $this->info_box_head = array('text' => $langs->trans("BoxTitleLastModifiedCustomers",$max));
 
-		if ($user->rights->societe->lire)
-		{
-			$sql = "SELECT s.nom, s.rowid as socid, s.datec, s.tms, s.status";
-			$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
-			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-			$sql.= " WHERE s.client IN (1, 3)";
-			$sql.= " AND s.entity IN (".getEntity('societe', 1).")";
-			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-			if ($user->societe_id) $sql.= " AND s.rowid = $user->societe_id";
-			$sql.= " ORDER BY s.tms DESC";
-			$sql.= $db->plimit($max, 0);
+        if ($user->rights->societe->lire) {
+            $sql = "SELECT s.nom, s.rowid as socid, s.datec, s.tms, s.status";
+            $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
+            if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+            $sql.= " WHERE s.client IN (1, 3)";
+            $sql.= " AND s.entity IN (".getEntity('societe', 1).")";
+            if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+            if ($user->societe_id) $sql.= " AND s.rowid = $user->societe_id";
+            $sql.= " ORDER BY s.tms DESC";
+            $sql.= $db->plimit($max, 0);
 
-			dol_syslog(get_class($this)."::loadBox sql=".$sql,LOG_DEBUG);
-			$result = $db->query($sql);
-			if ($result)
-			{
-				$num = $db->num_rows($result);
+            dol_syslog(get_class($this)."::loadBox sql=".$sql,LOG_DEBUG);
+            $result = $db->query($sql);
+            if ($result) {
+                $num = $db->num_rows($result);
                 if (empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) $url= DOL_URL_ROOT."/comm/fiche.php?socid=";
                 else $url= DOL_URL_ROOT."/societe/soc.php?socid=";
 
-				$i = 0;
-				while ($i < $num)
-				{
-					$objp = $db->fetch_object($result);
-					$datec=$db->jdate($objp->datec);
-					$datem=$db->jdate($objp->tms);
+                $i = 0;
+                while ($i < $num) {
+                    $objp = $db->fetch_object($result);
+                    $datec=$db->jdate($objp->datec);
+                    $datem=$db->jdate($objp->tms);
 
-					$this->info_box_contents[$i][0] = array('td' => 'align="left" width="16"',
+                    $this->info_box_contents[$i][0] = array('td' => 'align="left" width="16"',
                     'logo' => $this->boximg,
                     'url' => $url.$objp->socid);
 
-					$this->info_box_contents[$i][1] = array('td' => 'align="left"',
+                    $this->info_box_contents[$i][1] = array('td' => 'align="left"',
                     'text' => $objp->nom,
                     'url' => $url.$objp->socid);
 
-					$this->info_box_contents[$i][2] = array('td' => 'align="right"',
-					'text' => dol_print_date($datem, "day"));
+                    $this->info_box_contents[$i][2] = array('td' => 'align="right"',
+                    'text' => dol_print_date($datem, "day"));
 
                     $this->info_box_contents[$i][3] = array('td' => 'align="right" width="18"',
                     'text' => $thirdpartystatic->LibStatut($objp->status,3));
 
-					$i++;
-				}
+                    $i++;
+                }
 
-				if ($num==0) $this->info_box_contents[$i][0] = array('td' => 'align="center"','text'=>$langs->trans("NoRecordedCustomers"));
+                if ($num==0) $this->info_box_contents[$i][0] = array('td' => 'align="center"','text'=>$langs->trans("NoRecordedCustomers"));
 
-				$db->free($result);
-			}
-			else {
-				$this->info_box_contents[0][0] = array(	'td' => 'align="left"',
-    	        										'maxlength'=>500,
-	            										'text' => ($db->error().' sql='.$sql));
-			}
-		}
-		else {
-			$this->info_box_contents[0][0] = array('align' => 'left',
+                $db->free($result);
+            } else {
+                $this->info_box_contents[0][0] = array(	'td' => 'align="left"',
+                                                        'maxlength'=>500,
+                                                        'text' => ($db->error().' sql='.$sql));
+            }
+        } else {
+            $this->info_box_contents[0][0] = array('align' => 'left',
             'text' => $langs->trans("ReadPermissionNotAllowed"));
-		}
+        }
 
-	}
+    }
 
-	/**
-	 *	Method to show box
-	 *
-	 *	@param	array	$head       Array with properties of box title
-	 *	@param  array	$contents   Array with properties of box lines
-	 *	@return	void
-	 */
-	function showBox($head = null, $contents = null)
-	{
-		parent::showBox($this->info_box_head, $this->info_box_contents);
-	}
+    /**
+     *	Method to show box
+     *
+     *	@param	array	$head       Array with properties of box title
+     *	@param  array	$contents   Array with properties of box lines
+     *	@return	void
+     */
+    public function showBox($head = null, $contents = null)
+    {
+        parent::showBox($this->info_box_head, $this->info_box_contents);
+    }
 
 }
-
-?>

@@ -27,7 +27,6 @@ require '../../main.inc.php';
 // Security check
 if (!$user->rights->produit->lire && !$user->rights->service->lire) accessforbidden();
 
-
 /*
  * View
  */
@@ -63,12 +62,10 @@ $sql.= " FROM ".MAIN_DB_PREFIX."product as p";
 $sql.= " WHERE p.entity IN (".getEntity('product', 1).")";
 $sql.= " GROUP BY p.fk_product_type";
 $resql=$db->query($sql);
-if ($resql)
-{
+if ($resql) {
   $num = $db->num_rows($resql);
   $i = 0;
-  while ($i < $num)
-    {
+  while ($i < $num) {
       $row = $db->fetch_row($resql);
       $prodser[$row[1]] = $row[0];
       $i++;
@@ -78,14 +75,12 @@ if ($resql)
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Statistics").'</td></tr>';
-if (! empty($conf->product->enabled))
-{
+if (! empty($conf->product->enabled)) {
     print "<tr $bc[0]>";
     print '<td><a href="liste.php?type=0">'.$langs->trans("Products").'</a></td><td>'.round($prodser[0]).'</td>';
     print "</tr>";
 }
-if (! empty($conf->service->enabled))
-{
+if (! empty($conf->service->enabled)) {
     print "<tr $bc[1]>";
     print '<td><a href="liste.php?type=1">'.$langs->trans("Services").'</a></td><td>'.round($prodser[1]).'</td>';
     print "</tr>";
@@ -93,7 +88,6 @@ if (! empty($conf->service->enabled))
 print '</table>';
 
 print '</td><td valign="top" width="70%">';
-
 
 /*
  * Derniers produits en vente
@@ -107,42 +101,37 @@ $sql.= $db->plimit(15, 0);
 
 $resql = $db->query($sql);
 
-if ($resql)
-{
+if ($resql) {
   $num = $db->num_rows($resql);
 
   $i = 0;
 
-  if ($num > 0)
-    {
+  if ($num > 0) {
       print '<table class="noborder" width="100%">';
 
       print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("LastProducts").'</td></tr>';
 
       $var=True;
-      while ($i < $num)
-	{
-	  $objp = $db->fetch_object($resql);
-	  $var=!$var;
-	  print "<tr $bc[$var]>";
-	  print "<td><a href=\"fiche.php?id=$objp->rowid\">";
-	  if ($objp->fk_product_type==1) print img_object($langs->trans("ShowService"),"service");
-	  else print img_object($langs->trans("ShowProduct"),"product");
-	  print "</a> <a href=\"fiche.php?id=$objp->rowid\">$objp->ref</a></td>\n";
-	  print "<td>$objp->label</td>";
-	  print "<td>";
-	  if ($objp->fk_product_type==1) print $langs->trans('ShowService');
-	  else print $langs->trans('ShowProduct');
-	  print "</td></tr>\n";
-	  $i++;
-	}
+      while ($i < $num) {
+      $objp = $db->fetch_object($resql);
+      $var=!$var;
+      print "<tr $bc[$var]>";
+      print "<td><a href=\"fiche.php?id=$objp->rowid\">";
+      if ($objp->fk_product_type==1) print img_object($langs->trans("ShowService"),"service");
+      else print img_object($langs->trans("ShowProduct"),"product");
+      print "</a> <a href=\"fiche.php?id=$objp->rowid\">$objp->ref</a></td>\n";
+      print "<td>$objp->label</td>";
+      print "<td>";
+      if ($objp->fk_product_type==1) print $langs->trans('ShowService');
+      else print $langs->trans('ShowProduct');
+      print "</td></tr>\n";
+      $i++;
+    }
       $db->free($resql);
 
       print "</table>";
     }
-}
-else
-{
+} else {
   dol_print_error();
 }
 
@@ -151,4 +140,3 @@ print '</td></tr></table>';
 $db->close();
 
 llxFooter();
-?>

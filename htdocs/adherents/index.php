@@ -35,7 +35,6 @@ $langs->load("members");
 // Security check
 $result=restrictedArea($user,'adherent');
 
-
 /*
  * View
  */
@@ -47,7 +46,6 @@ $statictype=new AdherentType($db);
 $subscriptionstatic=new Cotisation($db);
 
 print_fiche_titre($langs->trans("MembersArea"));
-
 
 $var=True;
 
@@ -70,27 +68,25 @@ $sql.= " GROUP BY t.rowid, t.libelle, t.cotisation, d.statut";
 
 dol_syslog("index.php::select nb of members by type sql=".$sql, LOG_DEBUG);
 $result = $db->query($sql);
-if ($result)
-{
-	$num = $db->num_rows($result);
-	$i = 0;
-	while ($i < $num)
-	{
-		$objp = $db->fetch_object($result);
+if ($result) {
+    $num = $db->num_rows($result);
+    $i = 0;
+    while ($i < $num) {
+        $objp = $db->fetch_object($result);
 
-		$adhtype=new AdherentType($db);
-		$adhtype->id=$objp->rowid;
-		$adhtype->cotisation=$objp->cotisation;
-		$adhtype->libelle=$objp->libelle;
-		$AdherentType[$objp->rowid]=$adhtype;
+        $adhtype=new AdherentType($db);
+        $adhtype->id=$objp->rowid;
+        $adhtype->cotisation=$objp->cotisation;
+        $adhtype->libelle=$objp->libelle;
+        $AdherentType[$objp->rowid]=$adhtype;
 
-		if ($objp->statut == -1) { $MemberToValidate[$objp->rowid]=$objp->somme; }
-		if ($objp->statut == 1)  { $MembersValidated[$objp->rowid]=$objp->somme; }
-		if ($objp->statut == 0)  { $MembersResiliated[$objp->rowid]=$objp->somme; }
+        if ($objp->statut == -1) { $MemberToValidate[$objp->rowid]=$objp->somme; }
+        if ($objp->statut == 1) { $MembersValidated[$objp->rowid]=$objp->somme; }
+        if ($objp->statut == 0) { $MembersResiliated[$objp->rowid]=$objp->somme; }
 
-		$i++;
-	}
-	$db->free($result);
+        $i++;
+    }
+    $db->free($result);
 }
 
 $now=dol_now();
@@ -108,23 +104,19 @@ $sql.= " GROUP BY d.fk_adherent_type";
 
 dol_syslog("index.php::select nb of uptodate members by type sql=".$sql, LOG_DEBUG);
 $result = $db->query($sql);
-if ($result)
-{
-	$num = $db->num_rows($result);
-	$i = 0;
-	while ($i < $num)
-	{
-		$objp = $db->fetch_object($result);
-		$MemberUpToDate[$objp->fk_adherent_type]=$objp->somme;
-		$i++;
-	}
-	$db->free();
+if ($result) {
+    $num = $db->num_rows($result);
+    $i = 0;
+    while ($i < $num) {
+        $objp = $db->fetch_object($result);
+        $MemberUpToDate[$objp->fk_adherent_type]=$objp->somme;
+        $i++;
+    }
+    $db->free();
 }
-
 
 //print '<tr><td width="30%" class="notopnoleft" valign="top">';
 print '<div class="fichecenter"><div class="fichethirdleft">';
-
 
 // Formulaire recherche adherent
 print '<form action="liste.php" method="post">';
@@ -149,13 +141,11 @@ print $langs->trans("Other").':</td><td><input type="text" name="sall" class="fl
 print '</td></tr>';
 print "</table></form>";
 
-
 /*
  * Statistics
  */
 
-if ($conf->use_javascript_ajax)
-{
+if ($conf->use_javascript_ajax) {
     print '<br>';
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Statistics").'</td></tr>';
@@ -168,8 +158,7 @@ if ($conf->use_javascript_ajax)
     $dataval=array();
     $datalabels=array();
     $i=0;
-    foreach ($AdherentType as $key => $adhtype)
-    {
+    foreach ($AdherentType as $key => $adhtype) {
         $datalabels[]=array($i,$adhtype->getNomUrl(0,dol_size(16)));
         $dataval['draft'][]=array($i,isset($MemberToValidate[$key])?$MemberToValidate[$key]:0);
         $dataval['notuptodate'][]=array($i,isset($MembersValidated[$key])?$MembersValidated[$key]-(isset($MemberUpToDate[$key])?$MemberUpToDate[$key]:0):0);
@@ -196,10 +185,8 @@ if ($conf->use_javascript_ajax)
     print '</table>';
 }
 
-
 //print '</td><td class="notopnoleftnoright" valign="top">';
 print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
-
 
 $var=true;
 
@@ -218,50 +205,44 @@ $sql.= $db->order("a.tms","DESC");
 $sql.= $db->plimit($max, 0);
 
 $resql=$db->query($sql);
-if ($resql)
-{
-	print '<table class="noborder" width="100%">';
-	print '<tr class="liste_titre">';
-	print '<td colspan="4">'.$langs->trans("LastMembersModified",$max).'</td></tr>';
+if ($resql) {
+    print '<table class="noborder" width="100%">';
+    print '<tr class="liste_titre">';
+    print '<td colspan="4">'.$langs->trans("LastMembersModified",$max).'</td></tr>';
 
-	$num = $db->num_rows($resql);
-	if ($num)
-	{
-		$i = 0;
-		$var = True;
-		while ($i < $num)
-		{
-			$var=!$var;
-			$obj = $db->fetch_object($resql);
-			print "<tr ".$bc[$var].">";
-			$staticmember->id=$obj->rowid;
-			$staticmember->lastname=$obj->lastname;
-			$staticmember->firstname=$obj->firstname;
-			if (! empty($obj->fk_soc)) {
-				$staticmember->socid = $obj->fk_soc;
-				$staticmember->fetch_thirdparty();
-				$staticmember->name=$staticmember->thirdparty->name;
-			} else {
-				$staticmember->name=$obj->company;
-			}
-			$staticmember->ref=$staticmember->getFullName($langs);
-			$statictype->id=$obj->typeid;
-			$statictype->libelle=$obj->libelle;
-			print '<td>'.$staticmember->getNomUrl(1,32).'</td>';
-			print '<td>'.$statictype->getNomUrl(1,32).'</td>';
-			print '<td>'.dol_print_date($db->jdate($obj->datem),'dayhour').'</td>';
-			print '<td align="right">'.$staticmember->LibStatut($obj->statut,($obj->cotisation=='yes'?1:0),$db->jdate($obj->date_end_subscription),5).'</td>';
-			print '</tr>';
-			$i++;
-		}
-	}
-	print "</table><br>";
+    $num = $db->num_rows($resql);
+    if ($num) {
+        $i = 0;
+        $var = True;
+        while ($i < $num) {
+            $var=!$var;
+            $obj = $db->fetch_object($resql);
+            print "<tr ".$bc[$var].">";
+            $staticmember->id=$obj->rowid;
+            $staticmember->lastname=$obj->lastname;
+            $staticmember->firstname=$obj->firstname;
+            if (! empty($obj->fk_soc)) {
+                $staticmember->socid = $obj->fk_soc;
+                $staticmember->fetch_thirdparty();
+                $staticmember->name=$staticmember->thirdparty->name;
+            } else {
+                $staticmember->name=$obj->company;
+            }
+            $staticmember->ref=$staticmember->getFullName($langs);
+            $statictype->id=$obj->typeid;
+            $statictype->libelle=$obj->libelle;
+            print '<td>'.$staticmember->getNomUrl(1,32).'</td>';
+            print '<td>'.$statictype->getNomUrl(1,32).'</td>';
+            print '<td>'.dol_print_date($db->jdate($obj->datem),'dayhour').'</td>';
+            print '<td align="right">'.$staticmember->LibStatut($obj->statut,($obj->cotisation=='yes'?1:0),$db->jdate($obj->date_end_subscription),5).'</td>';
+            print '</tr>';
+            $i++;
+        }
+    }
+    print "</table><br>";
+} else {
+    dol_print_error($db);
 }
-else
-{
-	dol_print_error($db);
-}
-
 
 /*
  * Last modified subscriptions
@@ -278,52 +259,46 @@ $sql.= $db->order("c.tms","DESC");
 $sql.= $db->plimit($max, 0);
 
 $resql=$db->query($sql);
-if ($resql)
-{
-	print '<table class="noborder" width="100%">';
-	print '<tr class="liste_titre">';
-	print '<td colspan="5">'.$langs->trans("LastSubscriptionsModified",$max).'</td></tr>';
+if ($resql) {
+    print '<table class="noborder" width="100%">';
+    print '<tr class="liste_titre">';
+    print '<td colspan="5">'.$langs->trans("LastSubscriptionsModified",$max).'</td></tr>';
 
-	$num = $db->num_rows($resql);
-	if ($num)
-	{
-		$i = 0;
-		$var = True;
-		while ($i < $num)
-		{
-			$var=!$var;
-			$obj = $db->fetch_object($resql);
-			print "<tr ".$bc[$var].">";
-			$subscriptionstatic->id=$obj->cid;
-			$subscriptionstatic->ref=$obj->cid;
-			$staticmember->id=$obj->rowid;
-			$staticmember->lastname=$obj->lastname;
-			$staticmember->firstname=$obj->firstname;
-			if (! empty($obj->fk_soc)) {
-				$staticmember->socid = $obj->fk_soc;
-				$staticmember->fetch_thirdparty();
-				$staticmember->name=$staticmember->thirdparty->name;
-			} else {
-				$staticmember->name=$obj->company;
-			}
-			$staticmember->ref=$staticmember->getFullName($langs);
-			print '<td>'.$subscriptionstatic->getNomUrl(1).'</td>';
-			print '<td>'.$staticmember->getNomUrl(1,32,'subscription').'</td>';
-			print '<td>'.get_date_range($db->jdate($obj->date_start),$db->jdate($obj->date_end)).'</td>';
-			print '<td align="right">'.price($obj->cotisation).'</td>';
-			//print '<td align="right">'.$staticmember->LibStatut($obj->statut,($obj->cotisation=='yes'?1:0),$db->jdate($obj->date_end_subscription),5).'</td>';
-			print '<td align="right">'.dol_print_date($db->jdate($obj->datem?$obj->datem:$obj->datec),'dayhour').'</td>';
-			print '</tr>';
-			$i++;
-		}
-	}
-	print "</table><br>";
+    $num = $db->num_rows($resql);
+    if ($num) {
+        $i = 0;
+        $var = True;
+        while ($i < $num) {
+            $var=!$var;
+            $obj = $db->fetch_object($resql);
+            print "<tr ".$bc[$var].">";
+            $subscriptionstatic->id=$obj->cid;
+            $subscriptionstatic->ref=$obj->cid;
+            $staticmember->id=$obj->rowid;
+            $staticmember->lastname=$obj->lastname;
+            $staticmember->firstname=$obj->firstname;
+            if (! empty($obj->fk_soc)) {
+                $staticmember->socid = $obj->fk_soc;
+                $staticmember->fetch_thirdparty();
+                $staticmember->name=$staticmember->thirdparty->name;
+            } else {
+                $staticmember->name=$obj->company;
+            }
+            $staticmember->ref=$staticmember->getFullName($langs);
+            print '<td>'.$subscriptionstatic->getNomUrl(1).'</td>';
+            print '<td>'.$staticmember->getNomUrl(1,32,'subscription').'</td>';
+            print '<td>'.get_date_range($db->jdate($obj->date_start),$db->jdate($obj->date_end)).'</td>';
+            print '<td align="right">'.price($obj->cotisation).'</td>';
+            //print '<td align="right">'.$staticmember->LibStatut($obj->statut,($obj->cotisation=='yes'?1:0),$db->jdate($obj->date_end_subscription),5).'</td>';
+            print '<td align="right">'.dol_print_date($db->jdate($obj->datem?$obj->datem:$obj->datec),'dayhour').'</td>';
+            print '</tr>';
+            $i++;
+        }
+    }
+    print "</table><br>";
+} else {
+    dol_print_error($db);
 }
-else
-{
-	dol_print_error($db);
-}
-
 
 // Summary of members by type
 print '<table class="noborder" width="100%">';
@@ -335,16 +310,15 @@ print '<td align=right>'.$langs->trans("MenuMembersUpToDate").'</td>';
 print '<td align=right>'.$langs->trans("MembersStatusResiliated").'</td>';
 print "</tr>\n";
 
-foreach ($AdherentType as $key => $adhtype)
-{
-	$var=!$var;
-	print "<tr $bc[$var]>";
-	print '<td>'.$adhtype->getNomUrl(1, dol_size(32)).'</td>';
-	print '<td align="right">'.(isset($MemberToValidate[$key]) && $MemberToValidate[$key] > 0?$MemberToValidate[$key]:'').' '.$staticmember->LibStatut(-1,$adhtype->cotisation,0,3).'</td>';
-	print '<td align="right">'.(isset($MembersValidated[$key]) && ($MembersValidated[$key]-(isset($MemberUpToDate[$key])?$MemberUpToDate[$key]:0) > 0) ? $MembersValidated[$key]-(isset($MemberUpToDate[$key])?$MemberUpToDate[$key]:0):'').' '.$staticmember->LibStatut(1,$adhtype->cotisation,0,3).'</td>';
-	print '<td align="right">'.(isset($MemberUpToDate[$key]) && $MemberUpToDate[$key] > 0 ? $MemberUpToDate[$key]:'').' '.$staticmember->LibStatut(1,$adhtype->cotisation,$now,3).'</td>';
-	print '<td align="right">'.(isset($MembersResiliated[$key]) && $MembersResiliated[$key]> 0 ?$MembersResiliated[$key]:'').' '.$staticmember->LibStatut(0,$adhtype->cotisation,0,3).'</td>';
-	print "</tr>\n";
+foreach ($AdherentType as $key => $adhtype) {
+    $var=!$var;
+    print "<tr $bc[$var]>";
+    print '<td>'.$adhtype->getNomUrl(1, dol_size(32)).'</td>';
+    print '<td align="right">'.(isset($MemberToValidate[$key]) && $MemberToValidate[$key] > 0?$MemberToValidate[$key]:'').' '.$staticmember->LibStatut(-1,$adhtype->cotisation,0,3).'</td>';
+    print '<td align="right">'.(isset($MembersValidated[$key]) && ($MembersValidated[$key]-(isset($MemberUpToDate[$key])?$MemberUpToDate[$key]:0) > 0) ? $MembersValidated[$key]-(isset($MemberUpToDate[$key])?$MemberUpToDate[$key]:0):'').' '.$staticmember->LibStatut(1,$adhtype->cotisation,0,3).'</td>';
+    print '<td align="right">'.(isset($MemberUpToDate[$key]) && $MemberUpToDate[$key] > 0 ? $MemberUpToDate[$key]:'').' '.$staticmember->LibStatut(1,$adhtype->cotisation,$now,3).'</td>';
+    print '<td align="right">'.(isset($MembersResiliated[$key]) && $MembersResiliated[$key]> 0 ?$MembersResiliated[$key]:'').' '.$staticmember->LibStatut(0,$adhtype->cotisation,0,3).'</td>';
+    print "</tr>\n";
 }
 print '<tr class="liste_total">';
 print '<td class="liste_total">'.$langs->trans("Total").'</td>';
@@ -357,7 +331,6 @@ print '</tr>';
 print "</table>\n";
 print "<br>\n";
 
-
 // List of subscription by year
 $Total=array();
 $Number=array();
@@ -368,25 +341,22 @@ $sql = "SELECT c.cotisation, c.dateadh";
 $sql.= " FROM ".MAIN_DB_PREFIX."adherent as d, ".MAIN_DB_PREFIX."cotisation as c";
 $sql.= " WHERE d.entity IN (".getEntity().")";
 $sql.= " AND d.rowid = c.fk_adherent";
-if(isset($date_select) && $date_select != '')
-{
-	$sql .= " AND dateadh LIKE '$date_select%'";
+if (isset($date_select) && $date_select != '') {
+    $sql .= " AND dateadh LIKE '$date_select%'";
 }
 $result = $db->query($sql);
-if ($result)
-{
-	$num = $db->num_rows($result);
-	$i = 0;
-	while ($i < $num)
-	{
-		$objp = $db->fetch_object($result);
-		$year=dol_print_date($db->jdate($objp->dateadh),"%Y");
-		$Total[$year]=(isset($Total[$year])?$Total[$year]:0)+$objp->cotisation;
-		$Number[$year]=(isset($Number[$year])?$Number[$year]:0)+1;
-		$tot+=$objp->cotisation;
-		$numb+=1;
-		$i++;
-	}
+if ($result) {
+    $num = $db->num_rows($result);
+    $i = 0;
+    while ($i < $num) {
+        $objp = $db->fetch_object($result);
+        $year=dol_print_date($db->jdate($objp->dateadh),"%Y");
+        $Total[$year]=(isset($Total[$year])?$Total[$year]:0)+$objp->cotisation;
+        $Number[$year]=(isset($Number[$year])?$Number[$year]:0)+1;
+        $tot+=$objp->cotisation;
+        $numb+=1;
+        $i++;
+    }
 }
 
 print '<table class="noborder" width="100%">';
@@ -399,15 +369,14 @@ print "</tr>\n";
 
 $var=true;
 krsort($Total);
-foreach ($Total as $key=>$value)
-{
-	$var=!$var;
-	print "<tr $bc[$var]>";
-	print "<td><a href=\"cotisations.php?date_select=$key\">$key</a></td>";
-	print "<td align=\"right\">".$Number[$key]."</td>";
-	print "<td align=\"right\">".price($value)."</td>";
-	print "<td align=\"right\">".price(price2num($value/$Number[$key],'MT'))."</td>";
-	print "</tr>\n";
+foreach ($Total as $key=>$value) {
+    $var=!$var;
+    print "<tr $bc[$var]>";
+    print "<td><a href=\"cotisations.php?date_select=$key\">$key</a></td>";
+    print "<td align=\"right\">".$Number[$key]."</td>";
+    print "<td align=\"right\">".price($value)."</td>";
+    print "<td align=\"right\">".price(price2num($value/$Number[$key],'MT'))."</td>";
+    print "</tr>\n";
 }
 
 // Total
@@ -422,7 +391,5 @@ print "</table><br>\n";
 //print '</td></tr></table>';
 print '</div></div></div>';
 
-
 llxFooter();
 $db->close();
-?>

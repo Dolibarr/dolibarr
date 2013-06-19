@@ -44,13 +44,11 @@ $label = GETPOST('label','alpha');
 $scandir = GETPOST('scandir','alpha');
 $type='invoice';
 
-
 /*
  * Actions
  */
 
-if ($action == 'updateMask')
-{
+if ($action == 'updateMask') {
     $maskconstinvoice=GETPOST('maskconstinvoice','alpha');
     $maskconstcredit=GETPOST('maskconstcredit','alpha');
     $maskinvoice=GETPOST('maskinvoice','alpha');
@@ -58,203 +56,158 @@ if ($action == 'updateMask')
     if ($maskconstinvoice) $res = dolibarr_set_const($db,$maskconstinvoice,$maskinvoice,'chaine',0,'',$conf->entity);
     if ($maskconstcredit)  $res = dolibarr_set_const($db,$maskconstcredit,$maskcredit,'chaine',0,'',$conf->entity);
 
-	if (! $res > 0) $error++;
+    if (! $res > 0) $error++;
 
- 	if (! $error)
-    {
+     if (! $error) {
         $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
-    }
-    else
-    {
+    } else {
         $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
     }
 }
 
-if ($action == 'specimen')
-{
+if ($action == 'specimen') {
     $modele=GETPOST('module','alpha');
 
     $facture = new Facture($db);
     $facture->initAsSpecimen();
 
-	// Search template files
-	$file=''; $classname=''; $filefound=0;
-	$dirmodels=array_merge(array('/'),(array) $conf->modules_parts['models']);
-	foreach($dirmodels as $reldir)
-	{
-	    $file=dol_buildpath($reldir."core/modules/facture/doc/pdf_".$modele.".modules.php",0);
-    	if (file_exists($file))
-    	{
-    		$filefound=1;
-    		$classname = "pdf_".$modele;
-    		break;
-    	}
+    // Search template files
+    $file=''; $classname=''; $filefound=0;
+    $dirmodels=array_merge(array('/'),(array) $conf->modules_parts['models']);
+    foreach ($dirmodels as $reldir) {
+        $file=dol_buildpath($reldir."core/modules/facture/doc/pdf_".$modele.".modules.php",0);
+        if (file_exists($file)) {
+            $filefound=1;
+            $classname = "pdf_".$modele;
+            break;
+        }
     }
 
-    if ($filefound)
-    {
-    	require_once $file;
+    if ($filefound) {
+        require_once $file;
 
-    	$module = new $classname($db);
+        $module = new $classname($db);
 
-    	if ($module->write_file($facture,$langs) > 0)
-    	{
-    		header("Location: ".DOL_URL_ROOT."/document.php?modulepart=facture&file=SPECIMEN.pdf");
-    		return;
-    	}
-    	else
-    	{
-    		$mesg='<font class="error">'.$module->error.'</font>';
-    		dol_syslog($module->error, LOG_ERR);
-    	}
-    }
-    else
-    {
-    	$mesg='<font class="error">'.$langs->trans("ErrorModuleNotFound").'</font>';
-    	dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
+        if ($module->write_file($facture,$langs) > 0) {
+            header("Location: ".DOL_URL_ROOT."/document.php?modulepart=facture&file=SPECIMEN.pdf");
+
+            return;
+        } else {
+            $mesg='<font class="error">'.$module->error.'</font>';
+            dol_syslog($module->error, LOG_ERR);
+        }
+    } else {
+        $mesg='<font class="error">'.$langs->trans("ErrorModuleNotFound").'</font>';
+        dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
     }
 }
 
 // define constants for models generator that need parameters
-if ($action == 'setModuleOptions')
-{
+if ($action == 'setModuleOptions') {
     $post_size=count($_POST);
-    for($i=0;$i < $post_size;$i++)
-    {
-        if (array_key_exists('param'.$i,$_POST))
-        {
+    for ($i=0;$i < $post_size;$i++) {
+        if (array_key_exists('param'.$i,$_POST)) {
             $param=GETPOST("param".$i,'alpha');
             $value=GETPOST("value".$i,'alpha');
             if ($param) $res = dolibarr_set_const($db,$param,$value,'chaine',0,'',$conf->entity);
         }
     }
-	if (! $res > 0) $error++;
+    if (! $res > 0) $error++;
 
- 	if (! $error)
-    {
+     if (! $error) {
         $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
-    }
-    else
-    {
+    } else {
         $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
     }
 }
 
 // Activate a model
-else if ($action == 'set')
-{
-	$ret = addDocumentModel($value, $type, $label, $scandir);
-}
-
-else if ($action == 'del')
-{
-	$ret = delDocumentModel($value, $type);
-	if ($ret > 0)
-	{
+else if ($action == 'set') {
+    $ret = addDocumentModel($value, $type, $label, $scandir);
+} elseif ($action == 'del') {
+    $ret = delDocumentModel($value, $type);
+    if ($ret > 0) {
         if ($conf->global->FACTURE_ADDON_PDF == "$value") dolibarr_del_const($db, 'FACTURE_ADDON_PDF',$conf->entity);
-	}
+    }
 }
 
 // Set default model
-else if ($action == 'setdoc')
-{
-	if (dolibarr_set_const($db, "FACTURE_ADDON_PDF",$value,'chaine',0,'',$conf->entity))
-	{
-		// La constante qui a ete lue en avant du nouveau set
-		// on passe donc par une variable pour avoir un affichage coherent
-		$conf->global->FACTURE_ADDON_PDF = $value;
-	}
-	
-	// On active le modele
-	$ret = delDocumentModel($value, $type);
-	if ($ret > 0)
-	{
-		$ret = addDocumentModel($value, $type, $label, $scandir);
-	}
-}
+else if ($action == 'setdoc') {
+    if (dolibarr_set_const($db, "FACTURE_ADDON_PDF",$value,'chaine',0,'',$conf->entity)) {
+        // La constante qui a ete lue en avant du nouveau set
+        // on passe donc par une variable pour avoir un affichage coherent
+        $conf->global->FACTURE_ADDON_PDF = $value;
+    }
 
-else if ($action == 'setmod')
-{
+    // On active le modele
+    $ret = delDocumentModel($value, $type);
+    if ($ret > 0) {
+        $ret = addDocumentModel($value, $type, $label, $scandir);
+    }
+} elseif ($action == 'setmod') {
     // TODO Verifier si module numerotation choisi peut etre active
     // par appel methode canBeActivated
 
     dolibarr_set_const($db, "FACTURE_ADDON",$value,'chaine',0,'',$conf->entity);
 }
 
-if ($action == 'setribchq')
-{
-	$rib = GETPOST('rib','alpha');
-	$chq = GETPOST('chq','alpha');
+if ($action == 'setribchq') {
+    $rib = GETPOST('rib','alpha');
+    $chq = GETPOST('chq','alpha');
 
-	$res = dolibarr_set_const($db, "FACTURE_RIB_NUMBER",$rib,'chaine',0,'',$conf->entity);
+    $res = dolibarr_set_const($db, "FACTURE_RIB_NUMBER",$rib,'chaine',0,'',$conf->entity);
     $res = dolibarr_set_const($db, "FACTURE_CHQ_NUMBER",$chq,'chaine',0,'',$conf->entity);
 
-	if (! $res > 0) $error++;
+    if (! $res > 0) $error++;
 
- 	if (! $error)
-    {
+     if (! $error) {
         $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
-    }
-    else
-    {
+    } else {
         $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
     }
 }
 
-if ($action == 'set_FACTURE_DRAFT_WATERMARK')
-{
-	$draft = GETPOST('FACTURE_DRAFT_WATERMARK','alpha');
+if ($action == 'set_FACTURE_DRAFT_WATERMARK') {
+    $draft = GETPOST('FACTURE_DRAFT_WATERMARK','alpha');
 
     $res = dolibarr_set_const($db, "FACTURE_DRAFT_WATERMARK",trim($draft),'chaine',0,'',$conf->entity);
 
-	if (! $res > 0) $error++;
+    if (! $res > 0) $error++;
 
- 	if (! $error)
-    {
+     if (! $error) {
         $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
-    }
-    else
-    {
+    } else {
         $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
     }
 }
 
-if ($action == 'set_FACTURE_FREE_TEXT')
-{
-	$freetext = GETPOST('FACTURE_FREE_TEXT');	// No alpha here, we want exact string
+if ($action == 'set_FACTURE_FREE_TEXT') {
+    $freetext = GETPOST('FACTURE_FREE_TEXT');	// No alpha here, we want exact string
 
     $res = dolibarr_set_const($db, "FACTURE_FREE_TEXT",$freetext,'chaine',0,'',$conf->entity);
 
-	if (! $res > 0) $error++;
+    if (! $res > 0) $error++;
 
- 	if (! $error)
-    {
+     if (! $error) {
         $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
-    }
-    else
-    {
+    } else {
         $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
     }
 }
 
-if ($action == 'setforcedate')
-{
-	$forcedate = GETPOST('forcedate','alpha');
+if ($action == 'setforcedate') {
+    $forcedate = GETPOST('forcedate','alpha');
 
     $res = dolibarr_set_const($db, "FAC_FORCE_DATE_VALIDATION",$forcedate,'chaine',0,'',$conf->entity);
 
-	if (! $res > 0) $error++;
+    if (! $res > 0) $error++;
 
- 	if (! $error)
-    {
+     if (! $error) {
         $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
-    }
-    else
-    {
+    } else {
         $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
     }
 }
-
 
 /*
  * View
@@ -265,7 +218,6 @@ $dirmodels=array_merge(array('/'),(array) $conf->modules_parts['models']);
 llxHeader("",$langs->trans("BillsSetup"),'EN:Invoice_Configuration|FR:Configuration_module_facture|ES:ConfiguracionFactura');
 
 $form=new Form($db);
-
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print_fiche_titre($langs->trans("BillsSetup"),$linkback,'setup');
@@ -291,30 +243,23 @@ print '</tr>'."\n";
 
 clearstatcache();
 
-foreach ($dirmodels as $reldir)
-{
-	$dir = dol_buildpath($reldir."core/modules/facture/");
-    if (is_dir($dir))
-    {
+foreach ($dirmodels as $reldir) {
+    $dir = dol_buildpath($reldir."core/modules/facture/");
+    if (is_dir($dir)) {
         $handle = opendir($dir);
-        if (is_resource($handle))
-        {
-        	$var=true;
+        if (is_resource($handle)) {
+            $var=true;
 
-            while (($file = readdir($handle))!==false)
-            {
-                if (! is_dir($dir.$file) || (substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS'))
-                {
+            while (($file = readdir($handle))!==false) {
+                if (! is_dir($dir.$file) || (substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')) {
                     $filebis = $file;
                     $classname = preg_replace('/\.php$/','',$file);
                     // For compatibility
-                    if (! is_file($dir.$filebis))
-                    {
+                    if (! is_file($dir.$filebis)) {
                         $filebis = $file."/".$file.".modules.php";
                         $classname = "mod_facture_".$file;
                     }
-                    if (! class_exists($classname) && is_readable($dir.$filebis) && (preg_match('/mod_/',$filebis) || preg_match('/mod_/',$classname)) && substr($filebis, dol_strlen($filebis)-3, 3) == 'php')
-                    {
+                    if (! class_exists($classname) && is_readable($dir.$filebis) && (preg_match('/mod_/',$filebis) || preg_match('/mod_/',$classname)) && substr($filebis, dol_strlen($filebis)-3, 3) == 'php') {
                         // Chargement de la classe de numerotation
                         require_once $dir.$filebis;
 
@@ -324,8 +269,7 @@ foreach ($dirmodels as $reldir)
                         if ($module->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
                         if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
 
-                        if ($module->isEnabled())
-                        {
+                        if ($module->isEnabled()) {
                             $var = !$var;
                             print '<tr '.$bc[$var].'><td width="100">';
                             echo preg_replace('/mod_facture_/','',preg_replace('/\.php$/','',$file));
@@ -345,12 +289,9 @@ foreach ($dirmodels as $reldir)
 
                             print '<td align="center">';
                             //print "> ".$conf->global->FACTURE_ADDON." - ".$file;
-                            if ($conf->global->FACTURE_ADDON == $file || $conf->global->FACTURE_ADDON.'.php' == $file)
-                            {
+                            if ($conf->global->FACTURE_ADDON == $file || $conf->global->FACTURE_ADDON.'.php' == $file) {
                                 print img_picto($langs->trans("Activated"),'switch_on');
-                            }
-                            else
-                            {
+                            } else {
                                 print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&value='.preg_replace('/\.php$/','',$file).'&scandir='.$module->scandir.'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
                             }
                             print '</td>';
@@ -363,30 +304,22 @@ foreach ($dirmodels as $reldir)
                             $htmltooltip.=''.$langs->trans("Version").': <b>'.$module->getVersion().'</b><br>';
                             $facture->type=0;
                             $nextval=$module->getNextValue($mysoc,$facture);
-                            if ("$nextval" != $langs->trans("NotAvailable"))	// Keep " on nextval
-                            {
+                            if ("$nextval" != $langs->trans("NotAvailable")) {	// Keep " on nextval
                                 $htmltooltip.=$langs->trans("NextValueForInvoices").': ';
-                                if ($nextval)
-                                {
+                                if ($nextval) {
                                     $htmltooltip.=$nextval.'<br>';
-                                }
-                                else
-                                {
+                                } else {
                                     $htmltooltip.=$langs->trans($module->error).'<br>';
                                 }
                             }
                             // Example for credit invoice
                             $facture->type=2;
                             $nextval=$module->getNextValue($mysoc,$facture);
-                            if ("$nextval" != $langs->trans("NotAvailable"))	// Keep " on nextval
-                            {
+                            if ("$nextval" != $langs->trans("NotAvailable")) {	// Keep " on nextval
                                 $htmltooltip.=$langs->trans("NextValueForCreditNotes").': ';
-                                if ($nextval)
-                                {
+                                if ($nextval) {
                                     $htmltooltip.=$nextval;
-                                }
-                                else
-                                {
+                                } else {
                                     $htmltooltip.=$langs->trans($module->error);
                                 }
                             }
@@ -394,8 +327,7 @@ foreach ($dirmodels as $reldir)
                             print '<td align="center">';
                             print $form->textwithpicto('',$htmltooltip,1,0);
 
-                            if ($conf->global->FACTURE_ADDON.'.php' == $file)  // If module is the one used, we show existing errors
-                            {
+                            if ($conf->global->FACTURE_ADDON.'.php' == $file) {  // If module is the one used, we show existing errors
                                 if (! empty($module->error)) dol_htmloutput_mesg($module->error,'','error',1);
                             }
 
@@ -414,7 +346,6 @@ foreach ($dirmodels as $reldir)
 
 print '</table>';
 
-
 /*
  *  Document templates generators
  */
@@ -429,19 +360,15 @@ $sql.= " FROM ".MAIN_DB_PREFIX."document_model";
 $sql.= " WHERE type = '".$type."'";
 $sql.= " AND entity = ".$conf->entity;
 $resql=$db->query($sql);
-if ($resql)
-{
+if ($resql) {
     $i = 0;
     $num_rows=$db->num_rows($resql);
-    while ($i < $num_rows)
-    {
+    while ($i < $num_rows) {
         $array = $db->fetch_array($resql);
         array_push($def, $array[0]);
         $i++;
     }
-}
-else
-{
+} else {
     dol_print_error($db);
 }
 
@@ -458,114 +385,94 @@ print "</tr>\n";
 clearstatcache();
 
 $var=true;
-foreach ($dirmodels as $reldir)
-{
-    foreach (array('','/doc') as $valdir)
-    {
-    	$dir = dol_buildpath($reldir."core/modules/facture".$valdir);
+foreach ($dirmodels as $reldir) {
+    foreach (array('','/doc') as $valdir) {
+        $dir = dol_buildpath($reldir."core/modules/facture".$valdir);
 
-        if (is_dir($dir))
-        {
+        if (is_dir($dir)) {
             $handle=opendir($dir);
-            if (is_resource($handle))
-            {
-                while (($file = readdir($handle))!==false)
-                {
+            if (is_resource($handle)) {
+                while (($file = readdir($handle))!==false) {
                     $filelist[]=$file;
                 }
                 closedir($handle);
                 arsort($filelist);
 
-                foreach($filelist as $file)
-                {
-                    if (preg_match('/\.modules\.php$/i',$file) && preg_match('/^(pdf_|doc_)/',$file))
-                    {
-                    	if (file_exists($dir.'/'.$file))
-                    	{
-                    		$name = substr($file, 4, dol_strlen($file) -16);
-	                        $classname = substr($file, 0, dol_strlen($file) -12);
+                foreach ($filelist as $file) {
+                    if (preg_match('/\.modules\.php$/i',$file) && preg_match('/^(pdf_|doc_)/',$file)) {
+                        if (file_exists($dir.'/'.$file)) {
+                            $name = substr($file, 4, dol_strlen($file) -16);
+                            $classname = substr($file, 0, dol_strlen($file) -12);
 
-	                        require_once $dir.'/'.$file;
-	                        $module = new $classname($db);
+                            require_once $dir.'/'.$file;
+                            $module = new $classname($db);
 
-	                        $modulequalified=1;
-	                        if ($module->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2) $modulequalified=0;
-	                        if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) $modulequalified=0;
+                            $modulequalified=1;
+                            if ($module->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2) $modulequalified=0;
+                            if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) $modulequalified=0;
 
-	                        if ($modulequalified)
-	                        {
-	                            $var = !$var;
-	                            print '<tr '.$bc[$var].'><td width="100">';
-	                            print (empty($module->name)?$name:$module->name);
-	                            print "</td><td>\n";
-	                            if (method_exists($module,'info')) print $module->info($langs);
-	                            else print $module->description;
-	                            print '</td>';
+                            if ($modulequalified) {
+                                $var = !$var;
+                                print '<tr '.$bc[$var].'><td width="100">';
+                                print (empty($module->name)?$name:$module->name);
+                                print "</td><td>\n";
+                                if (method_exists($module,'info')) print $module->info($langs);
+                                else print $module->description;
+                                print '</td>';
 
-	                            // Active
-	                            if (in_array($name, $def))
-	                            {
-	                            	print '<td align="center">'."\n";
-	                            	print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&value='.$name.'">';
-	                            	print img_picto($langs->trans("Enabled"),'switch_on');
-	                            	print '</a>';
-	                            	print '</td>';
-	                            }
-	                            else
-	                            {
-	                                print "<td align=\"center\">\n";
-	                                print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&value='.$name.'&scandir='.$module->scandir.'&label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
-	                                print "</td>";
-	                            }
+                                // Active
+                                if (in_array($name, $def)) {
+                                    print '<td align="center">'."\n";
+                                    print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&value='.$name.'">';
+                                    print img_picto($langs->trans("Enabled"),'switch_on');
+                                    print '</a>';
+                                    print '</td>';
+                                } else {
+                                    print "<td align=\"center\">\n";
+                                    print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&value='.$name.'&scandir='.$module->scandir.'&label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
+                                    print "</td>";
+                                }
 
-	                            // Defaut
-	                            print "<td align=\"center\">";
-	                            if ($conf->global->FACTURE_ADDON_PDF == "$name")
-	                            {
-	                                print img_picto($langs->trans("Default"),'on');
-	                            }
-	                            else
-	                            {
-	                                print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&value='.$name.'&scandir='.$module->scandir.'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
-	                            }
-	                            print '</td>';
+                                // Defaut
+                                print "<td align=\"center\">";
+                                if ($conf->global->FACTURE_ADDON_PDF == "$name") {
+                                    print img_picto($langs->trans("Default"),'on');
+                                } else {
+                                    print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&value='.$name.'&scandir='.$module->scandir.'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
+                                }
+                                print '</td>';
 
-	                            // Info
-	                            $htmltooltip =    ''.$langs->trans("Name").': '.$module->name;
-	                            $htmltooltip.='<br>'.$langs->trans("Type").': '.($module->type?$module->type:$langs->trans("Unknown"));
-	                            if ($module->type == 'pdf')
-	                            {
-	                                $htmltooltip.='<br>'.$langs->trans("Width").'/'.$langs->trans("Height").': '.$module->page_largeur.'/'.$module->page_hauteur;
-	                            }
-	                            $htmltooltip.='<br><br><u>'.$langs->trans("FeaturesSupported").':</u>';
-	                            $htmltooltip.='<br>'.$langs->trans("Logo").': '.yn($module->option_logo,1,1);
-	                            $htmltooltip.='<br>'.$langs->trans("PaymentMode").': '.yn($module->option_modereg,1,1);
-	                            $htmltooltip.='<br>'.$langs->trans("PaymentConditions").': '.yn($module->option_condreg,1,1);
-	                            $htmltooltip.='<br>'.$langs->trans("Discounts").': '.yn($module->option_escompte,1,1);
-	                            $htmltooltip.='<br>'.$langs->trans("CreditNote").': '.yn($module->option_credit_note,1,1);
-	                            $htmltooltip.='<br>'.$langs->trans("MultiLanguage").': '.yn($module->option_multilang,1,1);
-	                            $htmltooltip.='<br>'.$langs->trans("WatermarkOnDraftInvoices").': '.yn($module->option_draft_watermark,1,1);
+                                // Info
+                                $htmltooltip =    ''.$langs->trans("Name").': '.$module->name;
+                                $htmltooltip.='<br>'.$langs->trans("Type").': '.($module->type?$module->type:$langs->trans("Unknown"));
+                                if ($module->type == 'pdf') {
+                                    $htmltooltip.='<br>'.$langs->trans("Width").'/'.$langs->trans("Height").': '.$module->page_largeur.'/'.$module->page_hauteur;
+                                }
+                                $htmltooltip.='<br><br><u>'.$langs->trans("FeaturesSupported").':</u>';
+                                $htmltooltip.='<br>'.$langs->trans("Logo").': '.yn($module->option_logo,1,1);
+                                $htmltooltip.='<br>'.$langs->trans("PaymentMode").': '.yn($module->option_modereg,1,1);
+                                $htmltooltip.='<br>'.$langs->trans("PaymentConditions").': '.yn($module->option_condreg,1,1);
+                                $htmltooltip.='<br>'.$langs->trans("Discounts").': '.yn($module->option_escompte,1,1);
+                                $htmltooltip.='<br>'.$langs->trans("CreditNote").': '.yn($module->option_credit_note,1,1);
+                                $htmltooltip.='<br>'.$langs->trans("MultiLanguage").': '.yn($module->option_multilang,1,1);
+                                $htmltooltip.='<br>'.$langs->trans("WatermarkOnDraftInvoices").': '.yn($module->option_draft_watermark,1,1);
 
+                                print '<td align="center">';
+                                print $form->textwithpicto('',$htmltooltip,1,0);
+                                print '</td>';
 
-	                            print '<td align="center">';
-	                            print $form->textwithpicto('',$htmltooltip,1,0);
-	                            print '</td>';
+                                // Preview
+                                print '<td align="center">';
+                                if ($module->type == 'pdf') {
+                                    print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"),'bill').'</a>';
+                                } else {
+                                    print img_object($langs->trans("PreviewNotAvailable"),'generic');
+                                }
+                                print '</td>';
 
-	                            // Preview
-	                            print '<td align="center">';
-	                            if ($module->type == 'pdf')
-	                            {
-	                                print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"),'bill').'</a>';
-	                            }
-	                            else
-	                            {
-	                                print img_object($langs->trans("PreviewNotAvailable"),'generic');
-	                            }
-	                            print '</td>';
-
-	                            print "</tr>\n";
-	                        }
-                    	}
+                                print "</tr>\n";
+                            }
+                        }
                     }
                 }
             }
@@ -573,7 +480,6 @@ foreach ($dirmodels as $reldir)
     }
 }
 print '</table>';
-
 
 /*
  *  Modes de reglement
@@ -598,24 +504,20 @@ $var=!$var;
 print '<tr '.$bc[$var].'>';
 print "<td>".$langs->trans("SuggestPaymentByRIBOnAccount")."</td>";
 print "<td>";
-if (! empty($conf->banque->enabled))
-{
+if (! empty($conf->banque->enabled)) {
     $sql = "SELECT rowid, label";
     $sql.= " FROM ".MAIN_DB_PREFIX."bank_account";
     $sql.= " WHERE clos = 0";
     $sql.= " AND courant = 1";
     $sql.= " AND entity = ".$conf->entity;
     $resql=$db->query($sql);
-    if ($resql)
-    {
+    if ($resql) {
         $num = $db->num_rows($resql);
         $i = 0;
-        if ($num > 0)
-        {
-        	print '<select name="rib" class="flat" id="rib">';
-        	print '<option value="0">'.$langs->trans("DoNotSuggestPaymentMode").'</option>';
-            while ($i < $num)
-            {
+        if ($num > 0) {
+            print '<select name="rib" class="flat" id="rib">';
+            print '<option value="0">'.$langs->trans("DoNotSuggestPaymentMode").'</option>';
+            while ($i < $num) {
                 $row = $db->fetch_row($resql);
 
                 print '<option value="'.$row[0].'"';
@@ -625,15 +527,11 @@ if (! empty($conf->banque->enabled))
                 $i++;
             }
             print "</select>";
-        }
-        else
-        {
-        	print "<i>".$langs->trans("NoActiveBankAccountDefined")."</i>";
+        } else {
+            print "<i>".$langs->trans("NoActiveBankAccountDefined")."</i>";
         }
     }
-}
-else
-{
+} else {
     print $langs->trans("BankModuleNotActive");
 }
 print "</td></tr>";
@@ -652,12 +550,10 @@ $sql.= " AND courant = 1";
 $sql.= " AND entity = ".$conf->entity;
 $var=True;
 $resql=$db->query($sql);
-if ($resql)
-{
+if ($resql) {
     $num = $db->num_rows($resql);
     $i = 0;
-    while ($i < $num)
-    {
+    while ($i < $num) {
         $var=!$var;
         $row = $db->fetch_row($resql);
 
@@ -672,7 +568,6 @@ print "</select>";
 print "</td></tr>";
 print "</table>";
 print "</form>";
-
 
 print "<br>";
 print_titre($langs->trans("OtherOptions"));
@@ -725,7 +620,6 @@ print '</form>';
 
 print '</table>';
 
-
 /*
  *  Repertoire
  */
@@ -743,13 +637,10 @@ print '<td>'.$conf->facture->dir_output.'</td>'."\n";
 print '</tr>'."\n";
 print "</table>\n";
 
-
 //dol_fiche_end();
 
 dol_htmloutput_mesg($mesg);
 
-
 llxFooter();
 
 $db->close();
-?>

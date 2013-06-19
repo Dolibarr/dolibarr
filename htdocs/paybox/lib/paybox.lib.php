@@ -22,8 +22,6 @@
  *  \brief			Library for common paybox functions
  */
 
-
-
 /**
  * Show header
  *
@@ -33,31 +31,30 @@
  */
 function llxHeaderPaybox($title, $head = "")
 {
-	global $user, $conf, $langs;
+    global $user, $conf, $langs;
 
-	header("Content-type: text/html; charset=".$conf->file->character_set_client);
+    header("Content-type: text/html; charset=".$conf->file->character_set_client);
 
-	print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">';
-	//print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" http://www.w3.org/TR/1999/REC-html401-19991224/strict.dtd>';
-	print "\n";
-	print "<html>\n";
-	print "<head>\n";
-	print '<meta name="robots" content="noindex,nofollow">'."\n";
-	print '<meta name="keywords" content="dolibarr,payment,online">'."\n";
-	print '<meta name="description" content="Welcome on Dolibarr online payment form">'."\n";
-	print "<title>".$title."</title>\n";
-	if ($head) print $head."\n";
-	if (! empty($conf->global->PAYBOX_CSS_URL)) print '<link rel="stylesheet" type="text/css" href="'.$conf->global->PAYBOX_CSS_URL.'?lang='.$langs->defaultlang.'">'."\n";
-	else
-	{
-		print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.$conf->css.'?lang='.$langs->defaultlang.'">'."\n";
-		print '<style type="text/css">';
-		print '.CTableRow1      { margin: 1px; padding: 3px; font: 12px verdana,arial; background: #e6E6eE; color: #000000; -moz-border-radius-topleft:6px; -moz-border-radius-topright:6px; -moz-border-radius-bottomleft:6px; -moz-border-radius-bottomright:6px;}';
-		print '.CTableRow2      { margin: 1px; padding: 3px; font: 12px verdana,arial; background: #FFFFFF; color: #000000; -moz-border-radius-topleft:6px; -moz-border-radius-topright:6px; -moz-border-radius-bottomleft:6px; -moz-border-radius-bottomright:6px;}';
-		print '</style>';
-	}
-	print "</head>\n";
-	print '<body style="margin: 20px;">'."\n";
+    print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">';
+    //print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" http://www.w3.org/TR/1999/REC-html401-19991224/strict.dtd>';
+    print "\n";
+    print "<html>\n";
+    print "<head>\n";
+    print '<meta name="robots" content="noindex,nofollow">'."\n";
+    print '<meta name="keywords" content="dolibarr,payment,online">'."\n";
+    print '<meta name="description" content="Welcome on Dolibarr online payment form">'."\n";
+    print "<title>".$title."</title>\n";
+    if ($head) print $head."\n";
+    if (! empty($conf->global->PAYBOX_CSS_URL)) print '<link rel="stylesheet" type="text/css" href="'.$conf->global->PAYBOX_CSS_URL.'?lang='.$langs->defaultlang.'">'."\n";
+    else {
+        print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.$conf->css.'?lang='.$langs->defaultlang.'">'."\n";
+        print '<style type="text/css">';
+        print '.CTableRow1      { margin: 1px; padding: 3px; font: 12px verdana,arial; background: #e6E6eE; color: #000000; -moz-border-radius-topleft:6px; -moz-border-radius-topright:6px; -moz-border-radius-bottomleft:6px; -moz-border-radius-bottomright:6px;}';
+        print '.CTableRow2      { margin: 1px; padding: 3px; font: 12px verdana,arial; background: #FFFFFF; color: #000000; -moz-border-radius-topleft:6px; -moz-border-radius-topright:6px; -moz-border-radius-bottomleft:6px; -moz-border-radius-bottomright:6px;}';
+        print '</style>';
+    }
+    print "</head>\n";
+    print '<body style="margin: 20px;">'."\n";
 }
 
 /**
@@ -67,10 +64,9 @@ function llxHeaderPaybox($title, $head = "")
  */
 function llxFooterPayBox()
 {
-	print "</body>\n";
-	print "</html>\n";
+    print "</body>\n";
+    print "</html>\n";
 }
-
 
 /**
  * Create a redirect form to paybox form
@@ -85,52 +81,52 @@ function llxFooterPayBox()
  */
 function print_paybox_redirect($PRICE,$CURRENCY,$EMAIL,$urlok,$urlko,$TAG)
 {
-	global $conf, $langs, $db;
+    global $conf, $langs, $db;
 
-	dol_syslog("Paybox.lib::print_paybox_redirect", LOG_DEBUG);
+    dol_syslog("Paybox.lib::print_paybox_redirect", LOG_DEBUG);
 
-	// Clean parameters
-	$PBX_IDENTIFIANT="2";	// Identifiant pour v2 test
-	if (! empty($conf->global->PAYBOX_PBX_IDENTIFIANT)) $PBX_IDENTIFIANT=$conf->global->PAYBOX_PBX_IDENTIFIANT;
-	$IBS_SITE="1999888";    // Site test
-	if (! empty($conf->global->PAYBOX_IBS_SITE)) $IBS_SITE=$conf->global->PAYBOX_IBS_SITE;
-	$IBS_RANG="99";         // Rang test
-	if (! empty($conf->global->PAYBOX_IBS_RANG)) $IBS_RANG=$conf->global->PAYBOX_IBS_RANG;
-	$IBS_DEVISE="840";		// Currency (Dollar US by default)
-	if ($CURRENCY == 'EUR') $IBS_DEVISE="978";
-	if ($CURRENCY == 'USD') $IBS_DEVISE="840";
+    // Clean parameters
+    $PBX_IDENTIFIANT="2";	// Identifiant pour v2 test
+    if (! empty($conf->global->PAYBOX_PBX_IDENTIFIANT)) $PBX_IDENTIFIANT=$conf->global->PAYBOX_PBX_IDENTIFIANT;
+    $IBS_SITE="1999888";    // Site test
+    if (! empty($conf->global->PAYBOX_IBS_SITE)) $IBS_SITE=$conf->global->PAYBOX_IBS_SITE;
+    $IBS_RANG="99";         // Rang test
+    if (! empty($conf->global->PAYBOX_IBS_RANG)) $IBS_RANG=$conf->global->PAYBOX_IBS_RANG;
+    $IBS_DEVISE="840";		// Currency (Dollar US by default)
+    if ($CURRENCY == 'EUR') $IBS_DEVISE="978";
+    if ($CURRENCY == 'USD') $IBS_DEVISE="840";
 
-	$URLPAYBOX="";
-	if ($conf->global->PAYBOX_CGI_URL_V1) $URLPAYBOX=$conf->global->PAYBOX_CGI_URL_V1;
-	if ($conf->global->PAYBOX_CGI_URL_V2) $URLPAYBOX=$conf->global->PAYBOX_CGI_URL_V2;
+    $URLPAYBOX="";
+    if ($conf->global->PAYBOX_CGI_URL_V1) $URLPAYBOX=$conf->global->PAYBOX_CGI_URL_V1;
+    if ($conf->global->PAYBOX_CGI_URL_V2) $URLPAYBOX=$conf->global->PAYBOX_CGI_URL_V2;
 
-	if (empty($IBS_DEVISE))
-	{
-		dol_print_error('',"Paybox setup param PAYBOX_IBS_DEVISE not defined");
-		return -1;
-	}
-	if (empty($URLPAYBOX))
-	{
-		dol_print_error('',"Paybox setup param PAYBOX_CGI_URL_V1 and PAYBOX_CGI_URL_V2 undefined");
-		return -1;
-	}
-	if (empty($IBS_SITE))
-	{
-		dol_print_error('',"Paybox setup param PAYBOX_IBS_SITE not defined");
-		return -1;
-	}
-	if (empty($IBS_RANG))
-	{
-		dol_print_error('',"Paybox setup param PAYBOX_IBS_RANG not defined");
-		return -1;
-	}
+    if (empty($IBS_DEVISE)) {
+        dol_print_error('',"Paybox setup param PAYBOX_IBS_DEVISE not defined");
 
-	// Definition des parametres vente produit pour paybox
+        return -1;
+    }
+    if (empty($URLPAYBOX)) {
+        dol_print_error('',"Paybox setup param PAYBOX_CGI_URL_V1 and PAYBOX_CGI_URL_V2 undefined");
+
+        return -1;
+    }
+    if (empty($IBS_SITE)) {
+        dol_print_error('',"Paybox setup param PAYBOX_IBS_SITE not defined");
+
+        return -1;
+    }
+    if (empty($IBS_RANG)) {
+        dol_print_error('',"Paybox setup param PAYBOX_IBS_RANG not defined");
+
+        return -1;
+    }
+
+    // Definition des parametres vente produit pour paybox
     $IBS_CMD=$TAG;
     $IBS_TOTAL=$PRICE*100;     	// En centimes
     $IBS_MODE=1;            	// Mode formulaire
     $IBS_PORTEUR=$EMAIL;
-	$IBS_RETOUR="montant:M;ref:R;auto:A;trans:T";   // Format des parametres du get de validation en reponse (url a definir sous paybox)
+    $IBS_RETOUR="montant:M;ref:R;auto:A;trans:T";   // Format des parametres du get de validation en reponse (url a definir sous paybox)
     //$IBS_TXT="<center><b>".$langsiso->trans("YouWillBeRedirectedOnPayBox")."</b><br><i>".$langsiso->trans("PleaseBePatient")."...</i><br></center>";
     $IBS_TXT=' ';	// Use a space
     $IBS_BOUTPI=$langs->trans("Wait");
@@ -140,16 +136,16 @@ function print_paybox_redirect($PRICE,$CURRENCY,$EMAIL,$urlok,$urlko,$TAG)
     $IBS_REFUSE=$urlko;
     $IBS_BKGD="#FFFFFF";
     $IBS_WAIT="2000";
-	$IBS_LANG="GBR"; 	// By default GBR=english (FRA, GBR, ESP, ITA et DEU...)
-	if (preg_match('/^FR/i',$langs->defaultlang)) $IBS_LANG="FRA";
-	if (preg_match('/^ES/i',$langs->defaultlang)) $IBS_LANG="ESP";
-	if (preg_match('/^IT/i',$langs->defaultlang)) $IBS_LANG="ITA";
-	if (preg_match('/^DE/i',$langs->defaultlang)) $IBS_LANG="DEU";
-	if (preg_match('/^NL/i',$langs->defaultlang)) $IBS_LANG="NLD";
-	if (preg_match('/^SE/i',$langs->defaultlang)) $IBS_LANG="SWE";
-	$IBS_OUTPUT='E';
-	$PBX_SOURCE='HTML';
-	$PBX_TYPEPAIEMENT='CARTE';
+    $IBS_LANG="GBR"; 	// By default GBR=english (FRA, GBR, ESP, ITA et DEU...)
+    if (preg_match('/^FR/i',$langs->defaultlang)) $IBS_LANG="FRA";
+    if (preg_match('/^ES/i',$langs->defaultlang)) $IBS_LANG="ESP";
+    if (preg_match('/^IT/i',$langs->defaultlang)) $IBS_LANG="ITA";
+    if (preg_match('/^DE/i',$langs->defaultlang)) $IBS_LANG="DEU";
+    if (preg_match('/^NL/i',$langs->defaultlang)) $IBS_LANG="NLD";
+    if (preg_match('/^SE/i',$langs->defaultlang)) $IBS_LANG="SWE";
+    $IBS_OUTPUT='E';
+    $PBX_SOURCE='HTML';
+    $PBX_TYPEPAIEMENT='CARTE';
 
     dol_syslog("Soumission Paybox", LOG_DEBUG);
     dol_syslog("IBS_MODE: $IBS_MODE", LOG_DEBUG);
@@ -202,7 +198,7 @@ function print_paybox_redirect($PRICE,$CURRENCY,$EMAIL,$urlok,$urlko,$TAG)
     print '<input type="hidden" name="IBS_WAIT" value="'.$IBS_WAIT.'">'."\n";
     print '<input type="hidden" name="IBS_LANG" value="'.$IBS_LANG.'">'."\n";
     print '<input type="hidden" name="IBS_OUTPUT" value="'.$IBS_OUTPUT.'">'."\n";
-	*/
+    */
 
     // For Paybox V2 (PBX_xxx)
     print '<!-- Param for Paybox v2 -->'."\n";
@@ -230,7 +226,6 @@ function print_paybox_redirect($PRICE,$CURRENCY,$EMAIL,$urlok,$urlko,$TAG)
 
     // Formulaire pour module Paybox v2 (PBX_xxx)
 
-
     print "\n";
     print '<script type="text/javascript" language="javascript">'."\n";
     print '	document.Submit.submit();'."\n";
@@ -239,9 +234,8 @@ function print_paybox_redirect($PRICE,$CURRENCY,$EMAIL,$urlok,$urlko,$TAG)
     print '</body></html>'."\n";
     print "\n";
 
-	return;
+    return;
 }
-
 
 /**
  * Show footer of company in HTML pages
@@ -252,62 +246,53 @@ function print_paybox_redirect($PRICE,$CURRENCY,$EMAIL,$urlok,$urlko,$TAG)
  */
 function html_print_paybox_footer($fromcompany,$langs)
 {
-	global $conf;
+    global $conf;
 
-	// Juridical status
-	$line1="";
-	if ($fromcompany->forme_juridique_code)
-	{
-		$line1.=($line1?" - ":"").getFormeJuridiqueLabel($fromcompany->forme_juridique_code);
-	}
-	// Capital
-	if ($fromcompany->capital)
-	{
-		$line1.=($line1?" - ":"").$langs->transnoentities("CapitalOf",$fromcompany->capital)." ".$langs->transnoentities("Currency".$conf->currency);
-	}
-	// Prof Id 1
-	if ($fromcompany->idprof1 && ($fromcompany->country_code != 'FR' || ! $fromcompany->idprof2))
-	{
-		$field=$langs->transcountrynoentities("ProfId1",$fromcompany->country_code);
-		if (preg_match('/\((.*)\)/i',$field,$reg)) $field=$reg[1];
-		$line1.=($line1?" - ":"").$field.": ".$fromcompany->idprof1;
-	}
-	// Prof Id 2
-	if ($fromcompany->idprof2)
-	{
-		$field=$langs->transcountrynoentities("ProfId2",$fromcompany->country_code);
-		if (preg_match('/\((.*)\)/i',$field,$reg)) $field=$reg[1];
-		$line1.=($line1?" - ":"").$field.": ".$fromcompany->idprof2;
-	}
+    // Juridical status
+    $line1="";
+    if ($fromcompany->forme_juridique_code) {
+        $line1.=($line1?" - ":"").getFormeJuridiqueLabel($fromcompany->forme_juridique_code);
+    }
+    // Capital
+    if ($fromcompany->capital) {
+        $line1.=($line1?" - ":"").$langs->transnoentities("CapitalOf",$fromcompany->capital)." ".$langs->transnoentities("Currency".$conf->currency);
+    }
+    // Prof Id 1
+    if ($fromcompany->idprof1 && ($fromcompany->country_code != 'FR' || ! $fromcompany->idprof2)) {
+        $field=$langs->transcountrynoentities("ProfId1",$fromcompany->country_code);
+        if (preg_match('/\((.*)\)/i',$field,$reg)) $field=$reg[1];
+        $line1.=($line1?" - ":"").$field.": ".$fromcompany->idprof1;
+    }
+    // Prof Id 2
+    if ($fromcompany->idprof2) {
+        $field=$langs->transcountrynoentities("ProfId2",$fromcompany->country_code);
+        if (preg_match('/\((.*)\)/i',$field,$reg)) $field=$reg[1];
+        $line1.=($line1?" - ":"").$field.": ".$fromcompany->idprof2;
+    }
 
-	// Second line of company infos
-	$line2="";
-	// Prof Id 3
-	if ($fromcompany->idprof3)
-	{
-		$field=$langs->transcountrynoentities("ProfId3",$fromcompany->country_code);
-		if (preg_match('/\((.*)\)/i',$field,$reg)) $field=$reg[1];
-		$line2.=($line2?" - ":"").$field.": ".$fromcompany->idprof3;
-	}
-	// Prof Id 4
-	if ($fromcompany->idprof4)
-	{
-		$field=$langs->transcountrynoentities("ProfId4",$fromcompany->country_code);
-		if (preg_match('/\((.*)\)/i',$field,$reg)) $field=$reg[1];
-		$line2.=($line2?" - ":"").$field.": ".$fromcompany->idprof4;
-	}
-	// IntraCommunautary VAT
-	if ($fromcompany->tva_intra != '')
-	{
-		$line2.=($line2?" - ":"").$langs->transnoentities("VATIntraShort").": ".$fromcompany->tva_intra;
-	}
+    // Second line of company infos
+    $line2="";
+    // Prof Id 3
+    if ($fromcompany->idprof3) {
+        $field=$langs->transcountrynoentities("ProfId3",$fromcompany->country_code);
+        if (preg_match('/\((.*)\)/i',$field,$reg)) $field=$reg[1];
+        $line2.=($line2?" - ":"").$field.": ".$fromcompany->idprof3;
+    }
+    // Prof Id 4
+    if ($fromcompany->idprof4) {
+        $field=$langs->transcountrynoentities("ProfId4",$fromcompany->country_code);
+        if (preg_match('/\((.*)\)/i',$field,$reg)) $field=$reg[1];
+        $line2.=($line2?" - ":"").$field.": ".$fromcompany->idprof4;
+    }
+    // IntraCommunautary VAT
+    if ($fromcompany->tva_intra != '') {
+        $line2.=($line2?" - ":"").$langs->transnoentities("VATIntraShort").": ".$fromcompany->tva_intra;
+    }
 
-	print '<br><br><hr>'."\n";
-	print '<center><font style="font-size: 10px;">'."\n";
-	print $fromcompany->nom.'<br>';
-	print $line1.'<br>';
-	print $line2;
-	print '</font></center>'."\n";
+    print '<br><br><hr>'."\n";
+    print '<center><font style="font-size: 10px;">'."\n";
+    print $fromcompany->nom.'<br>';
+    print $line1.'<br>';
+    print $line2;
+    print '</font></center>'."\n";
 }
-
-?>

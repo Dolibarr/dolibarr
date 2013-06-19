@@ -68,65 +68,52 @@ dolibarr_install_syslog("--- etape1: Entering etape1.php page");
 
 $error = 0;
 
-
 /*
  *	View
  */
 
-
 pHeader($langs->trans("ConfigurationFile"),"etape2");
 
 // Test if we can run a first install process
-if (! is_writable($conffile))
-{
+if (! is_writable($conffile)) {
     print $langs->trans("ConfFileIsNotWritable",$conffiletoshow);
     pFooter(1,$setuplang,'jscheckparam');
     exit;
 }
 
-
 // Check parameters
-if (empty($db_type))
-{
+if (empty($db_type)) {
     print '<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("DatabaseType")).'</div>';
     $error++;
 }
-if (empty($db_host))
-{
+if (empty($db_host)) {
     print '<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("Server")).'</div>';
     $error++;
 }
-if (empty($db_name))
-{
+if (empty($db_name)) {
     print '<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("DatabaseName")).'</div>';
     $error++;
 }
-if (empty($db_user))
-{
+if (empty($db_user)) {
     print '<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("Login")).'</div>';
     $error++;
 }
-if (! empty($db_port) && ! is_numeric($db_port))
-{
+if (! empty($db_port) && ! is_numeric($db_port)) {
     print '<div class="error">'.$langs->trans("ErrorBadValueForParameter",$db_port,$langs->transnoentities("Port")).'</div>';
     $error++;
 }
-if (! empty($db_prefix) && ! preg_match('/^[a-z0-9]+_$/i', $db_prefix))
-{
-	print '<div class="error">'.$langs->trans("ErrorBadValueForParameter",$db_prefix,$langs->transnoentities("DatabasePrefix")).'</div>';
-	$error++;
+if (! empty($db_prefix) && ! preg_match('/^[a-z0-9]+_$/i', $db_prefix)) {
+    print '<div class="error">'.$langs->trans("ErrorBadValueForParameter",$db_prefix,$langs->transnoentities("DatabasePrefix")).'</div>';
+    $error++;
 }
 
-
 // Remove last / into dans main_dir
-if (substr($main_dir, dol_strlen($main_dir) -1) == "/")
-{
+if (substr($main_dir, dol_strlen($main_dir) -1) == "/") {
     $main_dir = substr($main_dir, 0, dol_strlen($main_dir)-1);
 }
 
 // Remove last / into dans main_url
-if (! empty($main_url) && substr($main_url, dol_strlen($main_url) -1) == "/")
-{
+if (! empty($main_url) && substr($main_url, dol_strlen($main_url) -1) == "/") {
     $main_url = substr($main_url, 0, dol_strlen($main_url)-1);
 }
 
@@ -134,24 +121,19 @@ if (! empty($main_url) && substr($main_url, dol_strlen($main_url) -1) == "/")
 $main_data_dir=isset($_POST["main_data_dir"])?$_POST["main_data_dir"]:'';
 if (! $main_data_dir) { $main_data_dir="$main_dir/documents"; }
 
-
 // Test database connexion
-if (! $error)
-{
+if (! $error) {
     $result=@include_once $main_dir."/core/db/".$db_type.'.class.php';
-    if ($result)
-    {
+    if ($result) {
         // If we ask database or user creation we need to connect as root, so we need root login
-        if (! empty($_POST["db_create_database"]) && ! $userroot)
-        {
+        if (! empty($_POST["db_create_database"]) && ! $userroot) {
             print '<div class="error">'.$langs->trans("YouAskDatabaseCreationSoDolibarrNeedToConnect",$db_name).'</div>';
             print '<br>';
             print $langs->trans("BecauseConnectionFailedParametersMayBeWrong").'<br><br>';
             print $langs->trans("ErrorGoBackAndCorrectParameters");
             $error++;
         }
-        if (! empty($_POST["db_create_user"]) && ! $userroot)
-        {
+        if (! empty($_POST["db_create_user"]) && ! $userroot) {
             print '<div class="error">'.$langs->trans("YouAskLoginCreationSoDolibarrNeedToConnect",$db_user).'</div>';
             print '<br>';
             print $langs->trans("BecauseConnectionFailedParametersMayBeWrong").'<br><br>';
@@ -160,21 +142,14 @@ if (! $error)
         }
 
         // If we need root access
-        if (! $error && (! empty($_POST["db_create_database"]) || ! empty($_POST["db_create_user"])))
-        {
+        if (! $error && (! empty($_POST["db_create_database"]) || ! empty($_POST["db_create_user"]))) {
             $databasefortest=$db_name;
-            if (! empty($_POST["db_create_database"]))
-            {
-                if ($db_type == 'mysql' || $db_type == 'mysqli')
-                {
+            if (! empty($_POST["db_create_database"])) {
+                if ($db_type == 'mysql' || $db_type == 'mysqli') {
                     $databasefortest='mysql';
-                }
-                elseif ($db_type == 'pgsql')
-                {
+                } elseif ($db_type == 'pgsql') {
                     $databasefortest='postgres';
-                }
-                else
-                {
+                } else {
                     $databasefortest='mssql';
                 }
             }
@@ -185,17 +160,14 @@ if (! $error)
             dol_syslog("databasefortest=".$databasefortest." connected=".$db->connected." database_selected=".$db->database_selected, LOG_DEBUG);
             //print "databasefortest=".$databasefortest." connected=".$db->connected." database_selected=".$db->database_selected;
 
-            if (empty($_POST["db_create_database"]) && $db->connected && ! $db->database_selected)
-            {
+            if (empty($_POST["db_create_database"]) && $db->connected && ! $db->database_selected) {
                 print '<div class="error">'.$langs->trans("ErrorConnectedButDatabaseNotFound",$db_name).'</div>';
                 print '<br>';
                 if (! $db->connected) print $langs->trans("IfDatabaseNotExistsGoBackAndUncheckCreate").'<br><br>';
                 print $langs->trans("ErrorGoBackAndCorrectParameters");
                 $error++;
-            }
-            elseif ($db->error && ! (! empty($_POST["db_create_database"]) && $db->connected))
-            {
-            	// Note: you may experience error here with message "No such file or directory" when mysql was installed for the first time but not yet launched.
+            } elseif ($db->error && ! (! empty($_POST["db_create_database"]) && $db->connected)) {
+                // Note: you may experience error here with message "No such file or directory" when mysql was installed for the first time but not yet launched.
                 if ($db->error == "No such file or directory") print '<div class="error">'.$langs->trans("ErrorToConnectToMysqlCheckInstance").'</div>';
                 else print '<div class="error">'.$db->error.'</div>';
                 if (! $db->connected) print $langs->trans("BecauseConnectionFailedParametersMayBeWrong").'<br><br>';
@@ -206,43 +178,33 @@ if (! $error)
             }
         }
         // If we need simple access
-        if (! $error && (empty($_POST["db_create_database"]) && empty($_POST["db_create_user"])))
-        {
+        if (! $error && (empty($_POST["db_create_database"]) && empty($_POST["db_create_user"]))) {
             $db=getDoliDBInstance($db_type, $db_host, $db_user, $db_pass, $db_name, $db_port);
 
-            if ($db->error)
-            {
+            if ($db->error) {
                 print '<div class="error">'.$db->error.'</div>';
                 if (! $db->connected) print $langs->trans("BecauseConnectionFailedParametersMayBeWrong").'<br><br>';
                 print $langs->trans("ErrorGoBackAndCorrectParameters");
                 $error++;
             }
         }
-    }
-    else
-    {
+    } else {
         print "<br>\nFailed to include_once(\"".$main_dir."/core/db/".$db_type.".class.php\")<br>\n";
         print '<div class="error">'.$langs->trans("ErrorWrongValueForParameter",$langs->transnoentities("WebPagesDirectory")).'</div>';
         print $langs->trans("ErrorGoBackAndCorrectParameters");
         $error++;
     }
-}
-
-else
-{
+} else {
     if (isset($db)) print $db->lasterror();
     if (isset($db) && ! $db->connected) print '<br>'.$langs->trans("BecauseConnectionFailedParametersMayBeWrong").'<br><br>';
     print $langs->trans("ErrorGoBackAndCorrectParameters");
     $error++;
 }
 
-if (! $error && $db->connected)
-{
-    if (! empty($_POST["db_create_database"]))
-    {
+if (! $error && $db->connected) {
+    if (! empty($_POST["db_create_database"])) {
         $result=$db->select_db($db_name);
-        if ($result)
-        {
+        if ($result) {
             print '<div class="error">'.$langs->trans("ErrorDatabaseAlreadyExists", $db_name).'</div>';
             print $langs->trans("IfDatabaseExistsGoBackAndCheckCreate").'<br><br>';
             print $langs->trans("ErrorGoBackAndCorrectParameters");
@@ -252,17 +214,13 @@ if (! $error && $db->connected)
 }
 
 // Define $defaultCharacterSet and $defaultDBSortingCollation
-if (! $error && $db->connected)
-{
-    if (! empty($_POST["db_create_database"]))	// If we create database, we force default value
-    {
-    	//$defaultCharacterSet=getStaticMember(get_class($db),'forcecharset');
-    	//$defaultDBSortingCollation=getStaticMember(get_class($db),'forcecollate');
-    	$defaultCharacterSet=$db->forcecharset;
-    	$defaultDBSortingCollation=$db->forcecollate;
-    }
-    else	// If already created, we take current value
-    {
+if (! $error && $db->connected) {
+    if (! empty($_POST["db_create_database"])) {	// If we create database, we force default value
+        //$defaultCharacterSet=getStaticMember(get_class($db),'forcecharset');
+        //$defaultDBSortingCollation=getStaticMember(get_class($db),'forcecollate');
+        $defaultCharacterSet=$db->forcecharset;
+        $defaultDBSortingCollation=$db->forcecollate;
+    } else {	// If already created, we take current value
         $defaultCharacterSet=$db->getDefaultCharacterSetDatabase();
         $defaultDBSortingCollation=$db->getDefaultCollationDatabase();
     }
@@ -274,15 +232,12 @@ if (! $error && $db->connected)
     dolibarr_install_syslog("db_character_set=".$db_character_set." db_collation=".$db_collation);
 }
 
-
 // Create config file
-if (! $error && $db->connected && $action == "set")
-{
+if (! $error && $db->connected && $action == "set") {
     umask(0);
-    foreach($_POST as $key => $value)
-    {
+    foreach ($_POST as $key => $value) {
         if (! preg_match('/^db_pass/i', $key))
-        	dolibarr_install_syslog("Choice for ".$key." = ".$value);
+            dolibarr_install_syslog("Choice for ".$key." = ".$value);
     }
 
     // Show title of step
@@ -290,10 +245,8 @@ if (! $error && $db->connected && $action == "set")
     print '<table cellspacing="0" width="100%" cellpadding="1" border="0">';
 
     // Check parameter main_dir
-    if (! $error)
-    {
-        if (! is_dir($main_dir))
-        {
+    if (! $error) {
+        if (! is_dir($main_dir)) {
             dolibarr_install_syslog("etape1: Repertoire '".$main_dir."' inexistant ou non accessible");
 
             print "<tr><td>";
@@ -307,23 +260,18 @@ if (! $error && $db->connected && $action == "set")
         }
     }
 
-    if (! $error)
-    {
+    if (! $error) {
         dolibarr_install_syslog("etape1: Directory '".$main_dir."' exists");
     }
 
-
     // Create subdirectory main_data_dir
-    if (! $error)
-    {
+    if (! $error) {
         // Create directory for documents
-        if (! is_dir($main_data_dir))
-        {
+        if (! is_dir($main_data_dir)) {
             dol_mkdir($main_data_dir);
         }
 
-        if (! is_dir($main_data_dir))
-        {
+        if (! is_dir($main_data_dir)) {
             print "<tr><td>".$langs->trans("ErrorDirDoesNotExists",$main_data_dir);
             print ' '.$langs->trans("YouMustCreateItAndAllowServerToWrite");
             print '</td><td>';
@@ -331,17 +279,13 @@ if (! $error && $db->connected && $action == "set")
             print "</td></tr>";
             print '<tr><td colspan="2"><br>'.$langs->trans("CorrectProblemAndReloadPage",$_SERVER['PHP_SELF'].'?testget=ok').'</td></tr>';
             $error++;
-        }
-        else
-        {
+        } else {
             // Create .htaccess file in document directory
             $pathhtaccess=$main_data_dir.'/.htaccess';
-            if (! file_exists($pathhtaccess))
-            {
+            if (! file_exists($pathhtaccess)) {
                 dolibarr_install_syslog("etape1: .htaccess file does not exists, we create it in '".$main_data_dir."'");
                 $handlehtaccess=@fopen($pathhtaccess,'w');
-                if ($handlehtaccess)
-                {
+                if ($handlehtaccess) {
                     fwrite($handlehtaccess,'Order allow,deny'."\n");
                     fwrite($handlehtaccess,'Deny from all'."\n");
 
@@ -362,59 +306,47 @@ if (! $error && $db->connected && $action == "set")
 
             // Boucle sur chaque repertoire de dir[] pour les creer s'ils nexistent pas
             $num=count($dir);
-            for ($i = 0; $i < $num; $i++)
-            {
-                if (is_dir($dir[$i]))
-                {
+            for ($i = 0; $i < $num; $i++) {
+                if (is_dir($dir[$i])) {
                     dolibarr_install_syslog("etape1: Directory '".$dir[$i]."' exists");
-                }
-                else
-                {
-                    if (dol_mkdir($dir[$i]) < 0)
-                    {
+                } else {
+                    if (dol_mkdir($dir[$i]) < 0) {
                         print "<tr><td>";
                         print "Failed to create directory: ".$dir[$i];
                         print '</td><td>';
                         print $langs->trans("Error");
                         print "</td></tr>";
                         $error++;
-                    }
-                    else
-                    {
+                    } else {
                         dolibarr_install_syslog("etape1: Directory '".$dir[$i]."' created");
                     }
                 }
             }
 
-            if ($error)
-            {
+            if ($error) {
                 print "<tr><td>".$langs->trans("ErrorDirDoesNotExists",$main_data_dir);
                 print ' '.$langs->trans("YouMustCreateItAndAllowServerToWrite");
                 print '</td><td>';
                 print '<font class="error">'.$langs->trans("Error").'</font>';
                 print "</td></tr>";
                 print '<tr><td colspan="2"><br>'.$langs->trans("CorrectProblemAndReloadPage",$_SERVER['PHP_SELF'].'?testget=ok').'</td></tr>';
-            }
-            else
-            {
-            	//ODT templates
-            	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-            	$srcroot=$main_dir.'/install/doctemplates';
-            	$destroot=$main_data_dir.'/doctemplates';
-            	$docs=array('thirdparties' => 'thirdparty', 'proposals' => 'proposal', 'orders' => 'order', 'invoices' => 'invoice', 'projects' => 'project', 'projects' => 'task_summary');
-            	foreach($docs as $cursordir => $cursorfile)
-            	{
-            		$src=$srcroot.'/'.$cursordir.'/template_'.$cursorfile.'.odt';
-            		$dirodt=$destroot.'/'.$cursordir;
-            		$dest=$dirodt.'/template_'.$cursorfile.'.odt';
+            } else {
+                //ODT templates
+                require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+                $srcroot=$main_dir.'/install/doctemplates';
+                $destroot=$main_data_dir.'/doctemplates';
+                $docs=array('thirdparties' => 'thirdparty', 'proposals' => 'proposal', 'orders' => 'order', 'invoices' => 'invoice', 'projects' => 'project', 'projects' => 'task_summary');
+                foreach ($docs as $cursordir => $cursorfile) {
+                    $src=$srcroot.'/'.$cursordir.'/template_'.$cursorfile.'.odt';
+                    $dirodt=$destroot.'/'.$cursordir;
+                    $dest=$dirodt.'/template_'.$cursorfile.'.odt';
 
-            		dol_mkdir($dirodt);
-            		$result=dol_copy($src,$dest,0,0);
-            		if ($result < 0)
-            		{
-            			print '<tr><td colspan="2"><br>'.$langs->trans('ErrorFailToCopyFile',$src,$dest).'</td></tr>';
-            		}
-            	}
+                    dol_mkdir($dirodt);
+                    $result=dol_copy($src,$dest,0,0);
+                    if ($result < 0) {
+                        print '<tr><td colspan="2"><br>'.$langs->trans('ErrorFailToCopyFile',$src,$dest).'</td></tr>';
+                    }
+                }
             }
         }
     }
@@ -432,11 +364,9 @@ if (! $error && $db->connected && $action == "set")
     $main_alt_dir_name = ((GETPOST("main_alt_dir_name") && GETPOST("main_alt_dir_name") != '') ? GETPOST("main_alt_dir_name") : 'custom');
 
     // Write conf file on disk
-    if (! $error)
-    {
+    if (! $error) {
         // Save old conf file on disk
-        if (file_exists("$conffile"))
-        {
+        if (file_exists("$conffile")) {
             // We must ignore errors as an existing old file may already exists and not be replacable or
             // the installer (like for ubuntu) may not have permission to create another file than conf.php.
             // Also no other process must be able to read file or we expose the new file, so content with password.
@@ -451,8 +381,7 @@ if (! $error && $db->connected && $action == "set")
     $error+=write_master_file($main_data_dir.'/custom/master.inc.php',$main_dir);
 
     // Create database and admin user database
-    if (! $error)
-    {
+    if (! $error) {
         // We reload configuration file
         conf($dolibarr_main_document_root);
 
@@ -461,28 +390,20 @@ if (! $error && $db->connected && $action == "set")
         print '</td>';
         print '<td><img src="../theme/eldy/img/tick.png" alt="Ok"></td></tr>';
 
-
         $userroot=isset($_POST["db_user_root"])?$_POST["db_user_root"]:"";
         $passroot=isset($_POST["db_pass_root"])?$_POST["db_pass_root"]:"";
 
-
         // Si creation utilisateur admin demandee, on le cree
-        if (isset($_POST["db_create_user"]) && $_POST["db_create_user"] == "on")
-        {
+        if (isset($_POST["db_create_user"]) && $_POST["db_create_user"] == "on") {
             dolibarr_install_syslog("etape1: Create database user: ".$dolibarr_main_db_user);
 
             //print $conf->db->host." , ".$conf->db->name." , ".$conf->db->user." , ".$conf->db->port;
             $databasefortest=$conf->db->name;
-            if ($conf->db->type == 'mysql' || $conf->db->type == 'mysqli')
-            {
+            if ($conf->db->type == 'mysql' || $conf->db->type == 'mysqli') {
                 $databasefortest='mysql';
-            }
-            else if ($conf->db->type == 'pgsql')
-            {
+            } elseif ($conf->db->type == 'pgsql') {
                 $databasefortest='postgres';
-            }
-            else if ($conf->db->type == 'mssql')
-            {
+            } elseif ($conf->db->type == 'mssql') {
                 $databasefortest='mssql';
             }
 
@@ -490,29 +411,23 @@ if (! $error && $db->connected && $action == "set")
 
             $db=getDoliDBInstance($conf->db->type,$conf->db->host,$userroot,$passroot,$databasefortest,$conf->db->port);
 
-            if ($db->error)
-            {
+            if ($db->error) {
                 print '<div class="error">'.$db->error.'</div>';
                 $error++;
             }
 
-            if (! $error)
-            {
-                if ($db->connected)
-                {
+            if (! $error) {
+                if ($db->connected) {
                     $result=$db->DDLCreateUser($dolibarr_main_db_host,$dolibarr_main_db_user,$dolibarr_main_db_pass,$dolibarr_main_db_name);
 
-                    if ($result > 0)
-                    {
+                    if ($result > 0) {
 
                         print '<tr><td>';
                         print $langs->trans("UserCreation").' : ';
                         print $dolibarr_main_db_user;
                         print '</td>';
                         print '<td><img src="../theme/eldy/img/tick.png" alt="Ok"></td></tr>';
-                    }
-                    else
-                    {
+                    } else {
                         if ($db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS'
                         || $db->errno() == 'DB_ERROR_KEY_NAME_ALREADY_EXISTS'
                         || $db->errno() == 'DB_ERROR_USER_ALREADY_EXISTS')
@@ -523,9 +438,7 @@ if (! $error && $db->connected && $action == "set")
                             print $dolibarr_main_db_user;
                             print '</td>';
                             print '<td>'.$langs->trans("LoginAlreadyExists").'</td></tr>';
-                        }
-                        else
-                        {
+                        } else {
                             dolibarr_install_syslog("etape1: Failed to create user");
                             print '<tr><td>';
                             print $langs->trans("UserCreation").' : ';
@@ -536,9 +449,7 @@ if (! $error && $db->connected && $action == "set")
                     }
 
                     $db->close();
-                }
-                else
-                {
+                } else {
                     print '<tr><td>';
                     print $langs->trans("UserCreation").' : ';
                     print $dolibarr_main_db_user;
@@ -559,20 +470,16 @@ if (! $error && $db->connected && $action == "set")
             }
         }   // Fin si "creation utilisateur"
 
-
         // If database creation is asked, we create it
-        if (! $error && (isset($_POST["db_create_database"]) && $_POST["db_create_database"] == "on"))
-        {
-        	dolibarr_install_syslog("etape1: Create database : ".$dolibarr_main_db_name." ".$dolibarr_main_db_character_set." ".$dolibarr_main_db_collation." ".$dolibarr_main_db_user, LOG_DEBUG);
-        	$newdb=getDoliDBInstance($conf->db->type,$conf->db->host,$userroot,$passroot,'',$conf->db->port);
+        if (! $error && (isset($_POST["db_create_database"]) && $_POST["db_create_database"] == "on")) {
+            dolibarr_install_syslog("etape1: Create database : ".$dolibarr_main_db_name." ".$dolibarr_main_db_character_set." ".$dolibarr_main_db_collation." ".$dolibarr_main_db_user, LOG_DEBUG);
+            $newdb=getDoliDBInstance($conf->db->type,$conf->db->host,$userroot,$passroot,'',$conf->db->port);
             //print 'eee'.$conf->db->type." ".$conf->db->host." ".$userroot." ".$passroot." ".$conf->db->port." ".$newdb->connected." ".$newdb->forcecharset;exit;
 
-            if ($newdb->connected)
-            {
+            if ($newdb->connected) {
                 $result=$newdb->DDLCreateDb($dolibarr_main_db_name, $dolibarr_main_db_character_set, $dolibarr_main_db_collation, $dolibarr_main_db_user);
 
-                if ($result)
-                {
+                if ($result) {
                     print '<tr><td>';
                     print $langs->trans("DatabaseCreation")." (".$langs->trans("User")." ".$userroot.") : ";
                     print $dolibarr_main_db_name;
@@ -586,9 +493,7 @@ if (! $error && $db->connected && $action == "set")
                     // If values differs, we save conf file again
                     //if ($check1 != $dolibarr_main_db_character_set) dolibarr_install_syslog('etape1: Value for character_set is not the one asked for database creation', LOG_WARNING);
                     //if ($check2 != $dolibarr_main_db_collation)     dolibarr_install_syslog('etape1: Value for collation is not the one asked for database creation', LOG_WARNING);
-                }
-                else
-                {
+                } else {
                     // Affiche aide diagnostique
                     print '<tr><td colspan="2"><br>';
                     print $langs->trans("ErrorFailedToCreateDatabase",$dolibarr_main_db_name).'<br>';
@@ -601,8 +506,7 @@ if (! $error && $db->connected && $action == "set")
                     $error++;
                 }
                 $newdb->close();
-            }
-            else {
+            } else {
                 print '<tr><td>';
                 print $langs->trans("DatabaseCreation")." (".$langs->trans("User")." ".$userroot.") : ";
                 print $dolibarr_main_db_name;
@@ -622,17 +526,14 @@ if (! $error && $db->connected && $action == "set")
             }
         }   // Fin si "creation database"
 
-
         // We test access with dolibarr database user (not admin)
-        if (! $error)
-        {
+        if (! $error) {
             dolibarr_install_syslog("etape1: connexion de type=".$conf->db->type." sur host=".$conf->db->host." port=".$conf->db->port." user=".$conf->db->user." name=".$conf->db->name, LOG_DEBUG);
             //print "connexion de type=".$conf->db->type." sur host=".$conf->db->host." port=".$conf->db->port." user=".$conf->db->user." name=".$conf->db->name;
 
             $db=getDoliDBInstance($conf->db->type,$conf->db->host,$conf->db->user,$conf->db->pass,$conf->db->name,$conf->db->port);
 
-            if ($db->connected == 1)
-            {
+            if ($db->connected == 1) {
                 dolibarr_install_syslog("etape1: connexion to server by user ".$conf->db->user." is ok", LOG_DEBUG);
                 print "<tr><td>";
                 print $langs->trans("ServerConnection")." (".$langs->trans("User")." ".$conf->db->user.") : ";
@@ -642,8 +543,7 @@ if (! $error && $db->connected && $action == "set")
                 print "</td></tr>";
 
                 // si acces serveur ok et acces base ok, tout est ok, on ne va pas plus loin, on a meme pas utilise le compte root.
-                if ($db->database_selected == 1)
-                {
+                if ($db->database_selected == 1) {
                     dolibarr_install_syslog("etape1: connexion to database : ".$conf->db->name.", by user : ".$conf->db->user." is ok", LOG_DEBUG);
                     print "<tr><td>";
                     print $langs->trans("DatabaseConnection")." (".$langs->trans("User")." ".$conf->db->user.") : ";
@@ -653,9 +553,7 @@ if (! $error && $db->connected && $action == "set")
                     print "</td></tr>";
 
                     $error = 0;
-                }
-                else
-                {
+                } else {
                     dolibarr_install_syslog("etape1: connexion to database ".$conf->db->name.", by user : ".$conf->db->user." has failed", LOG_ERR);
                     print "<tr><td>";
                     print $langs->trans("DatabaseConnection")." (".$langs->trans("User")." ".$conf->db->user.") : ";
@@ -673,9 +571,7 @@ if (! $error && $db->connected && $action == "set")
 
                     $error++;
                 }
-            }
-            else
-            {
+            } else {
                 dolibarr_install_syslog("etape1: la connexion au serveur par le user ".$conf->db->user." est rate");
                 print "<tr><td>";
                 print $langs->trans("ServerConnection")." (".$langs->trans("User")." ".$conf->db->user.") : ";
@@ -704,14 +600,14 @@ if (! $error && $db->connected && $action == "set")
 <script type="text/javascript">
 function jsinfo()
 {
-	ok=true;
+    ok=true;
 
-	//alert('<?php echo dol_escape_js($langs->transnoentities("NextStepMightLastALongTime")); ?>');
+    //alert('<?php echo dol_escape_js($langs->transnoentities("NextStepMightLastALongTime")); ?>');
 
-	document.getElementById('nextbutton').style.visibility="hidden";
-	document.getElementById('pleasewait').style.visibility="visible";
+    document.getElementById('nextbutton').style.visibility="hidden";
+    document.getElementById('pleasewait').style.visibility="visible";
 
-	return ok;
+    return ok;
 }
 </script>
 
@@ -720,7 +616,6 @@ function jsinfo()
 dolibarr_install_syslog("--- install/etape1.php end", LOG_INFO);
 
 pFooter($error,$setuplang,'jsinfo',1);
-
 
 /**
  *  Create main file. No particular permissions are set by installer.
@@ -732,8 +627,7 @@ pFooter($error,$setuplang,'jsinfo',1);
 function write_main_file($mainfile,$main_dir)
 {
     $fp = @fopen("$mainfile", "w");
-    if($fp)
-    {
+    if ($fp) {
         clearstatcache();
         fputs($fp, '<?php'."\n");
         fputs($fp, "// Wrapper to include main into htdocs\n");
@@ -742,7 +636,6 @@ function write_main_file($mainfile,$main_dir)
         fclose($fp);
     }
 }
-
 
 /**
  *  Create master file. No particular permissions are set by installer.
@@ -754,8 +647,7 @@ function write_main_file($mainfile,$main_dir)
 function write_master_file($masterfile,$main_dir)
 {
     $fp = @fopen("$masterfile", "w");
-    if($fp)
-    {
+    if ($fp) {
         clearstatcache();
         fputs($fp, '<?php'."\n");
         fputs($fp, "// Wrapper to include master into htdocs\n");
@@ -764,7 +656,6 @@ function write_master_file($masterfile,$main_dir)
         fclose($fp);
     }
 }
-
 
 /**
  *  Save configuration file. No particular permissions are set by installer.
@@ -793,8 +684,7 @@ function write_conf_file($conffile)
     $key = md5(uniqid(mt_rand(),TRUE)); // Generate random hash
 
     $fp = fopen("$conffile", "w");
-    if($fp)
-    {
+    if ($fp) {
         clearstatcache();
 
         fputs($fp,'<?php'."\n");
@@ -815,42 +705,42 @@ function write_conf_file($conffile)
         fputs($fp,"\n");
 
         fputs($fp, $main_use_alt_dir.'$dolibarr_main_document_root_alt=\''.str_replace("'","\'",($main_dir."/".$main_alt_dir_name)).'\';');
-		fputs($fp,"\n");
+        fputs($fp,"\n");
 
-		fputs($fp, '$dolibarr_main_data_root=\''.str_replace("'","\'",($main_data_dir)).'\';');
-		fputs($fp,"\n");
+        fputs($fp, '$dolibarr_main_data_root=\''.str_replace("'","\'",($main_data_dir)).'\';');
+        fputs($fp,"\n");
 
-		fputs($fp, '$dolibarr_main_db_host=\''.str_replace("'","\'",($db_host)).'\';');
-		fputs($fp,"\n");
+        fputs($fp, '$dolibarr_main_db_host=\''.str_replace("'","\'",($db_host)).'\';');
+        fputs($fp,"\n");
 
-		fputs($fp, '$dolibarr_main_db_port=\''.str_replace("'","\'",($db_port)).'\';');
-		fputs($fp,"\n");
+        fputs($fp, '$dolibarr_main_db_port=\''.str_replace("'","\'",($db_port)).'\';');
+        fputs($fp,"\n");
 
-		fputs($fp, '$dolibarr_main_db_name=\''.str_replace("'","\'",($db_name)).'\';');
-		fputs($fp,"\n");
+        fputs($fp, '$dolibarr_main_db_name=\''.str_replace("'","\'",($db_name)).'\';');
+        fputs($fp,"\n");
 
-		fputs($fp, '$dolibarr_main_db_prefix=\''.str_replace("'","\'",($main_db_prefix)).'\';');
-		fputs($fp,"\n");
+        fputs($fp, '$dolibarr_main_db_prefix=\''.str_replace("'","\'",($main_db_prefix)).'\';');
+        fputs($fp,"\n");
 
-		fputs($fp, '$dolibarr_main_db_user=\''.str_replace("'","\'",($db_user)).'\';');
-		fputs($fp,"\n");
-		fputs($fp, '$dolibarr_main_db_pass=\''.str_replace("'","\'",($db_pass)).'\';');
-		fputs($fp,"\n");
+        fputs($fp, '$dolibarr_main_db_user=\''.str_replace("'","\'",($db_user)).'\';');
+        fputs($fp,"\n");
+        fputs($fp, '$dolibarr_main_db_pass=\''.str_replace("'","\'",($db_pass)).'\';');
+        fputs($fp,"\n");
 
-		fputs($fp, '$dolibarr_main_db_type=\''.str_replace("'","\'",($db_type)).'\';');
-		fputs($fp,"\n");
+        fputs($fp, '$dolibarr_main_db_type=\''.str_replace("'","\'",($db_type)).'\';');
+        fputs($fp,"\n");
 
-		fputs($fp, '$dolibarr_main_db_character_set=\''.str_replace("'","\'",($db_character_set)).'\';');
-		fputs($fp,"\n");
+        fputs($fp, '$dolibarr_main_db_character_set=\''.str_replace("'","\'",($db_character_set)).'\';');
+        fputs($fp,"\n");
 
-		fputs($fp, '$dolibarr_main_db_collation=\''.str_replace("'","\'",($db_collation)).'\';');
-		fputs($fp,"\n");
+        fputs($fp, '$dolibarr_main_db_collation=\''.str_replace("'","\'",($db_collation)).'\';');
+        fputs($fp,"\n");
 
-		/* Authentication */
-		fputs($fp, '$dolibarr_main_authentication=\'dolibarr\';');
-		fputs($fp,"\n\n");
+        /* Authentication */
+        fputs($fp, '$dolibarr_main_authentication=\'dolibarr\';');
+        fputs($fp,"\n\n");
 
-		fputs($fp, '// Specific settings');
+        fputs($fp, '// Specific settings');
         fputs($fp,"\n");
 
         fputs($fp, '$dolibarr_main_prod=\'0\';');
@@ -860,12 +750,12 @@ function write_conf_file($conffile)
         fputs($fp,"\n");
 
         fputs($fp, '$dolibarr_main_force_https=\''.$main_force_https.'\';');
-		fputs($fp,"\n");
+        fputs($fp,"\n");
 
-		fputs($fp, '$dolibarr_main_cookie_cryptkey=\''.$key.'\';');
-		fputs($fp,"\n");
+        fputs($fp, '$dolibarr_main_cookie_cryptkey=\''.$key.'\';');
+        fputs($fp,"\n");
 
-		fputs($fp, '$dolibarr_mailing_limit_sendbyweb=\'0\';');
+        fputs($fp, '$dolibarr_mailing_limit_sendbyweb=\'0\';');
         fputs($fp,"\n");
 
         // Write params to overwrites default lib path
@@ -913,34 +803,29 @@ function write_conf_file($conffile)
         // Write params to overwrites default font path
         fputs($fp,"\n");
         if (empty($force_dolibarr_font_DOL_DEFAULT_TTF)) { fputs($fp, '//'); $force_dolibarr_font_DOL_DEFAULT_TTF=''; }
-   		fputs($fp, '$dolibarr_font_DOL_DEFAULT_TTF=\''.$force_dolibarr_font_DOL_DEFAULT_TTF.'\';');
+           fputs($fp, '$dolibarr_font_DOL_DEFAULT_TTF=\''.$force_dolibarr_font_DOL_DEFAULT_TTF.'\';');
         fputs($fp,"\n");
         if (empty($force_dolibarr_font_DOL_DEFAULT_TTF_BOLD)) { fputs($fp, '//'); $force_dolibarr_font_DOL_DEFAULT_TTF_BOLD=''; }
         fputs($fp, '$dolibarr_font_DOL_DEFAULT_TTF_BOLD=\''.$force_dolibarr_font_DOL_DEFAULT_TTF_BOLD.'\';');
         fputs($fp,"\n");
 
-		fputs($fp, '?>');
-		fclose($fp);
+        fputs($fp, '?>');
+        fclose($fp);
 
-		if (file_exists("$conffile"))
-		{
-			include $conffile;	// On force rechargement. Ne pas mettre include_once !
-			conf($dolibarr_main_document_root);
+        if (file_exists("$conffile")) {
+            include $conffile;	// On force rechargement. Ne pas mettre include_once !
+            conf($dolibarr_main_document_root);
 
-			print "<tr><td>";
-			print $langs->trans("SaveConfigurationFile");
-			print ' <strong>'.$conffile.'</strong>';
-			print "</td><td>";
-			print '<img src="../theme/eldy/img/tick.png" alt="Ok">';
-			print "</td></tr>";
-		}
-		else
-		{
-			$error++;
-		}
-	}
+            print "<tr><td>";
+            print $langs->trans("SaveConfigurationFile");
+            print ' <strong>'.$conffile.'</strong>';
+            print "</td><td>";
+            print '<img src="../theme/eldy/img/tick.png" alt="Ok">';
+            print "</td></tr>";
+        } else {
+            $error++;
+        }
+    }
 
-	return $error;
+    return $error;
 }
-
-?>

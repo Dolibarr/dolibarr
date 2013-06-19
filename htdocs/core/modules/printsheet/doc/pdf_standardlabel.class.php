@@ -60,336 +60,313 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/format_cards.lib.php';
 class pdf_standardlabel
 {
 
-	var $code;		// Code of format
-	var $format;	// Array with informations
+    public $code;		// Code of format
+    public $format;	// Array with informations
 
-	// Proprietes privees
-	var $_Avery_Name	= '';	// Nom du format de l'etiquette
-	var $_Margin_Left	= 0;	// Marge de gauche de l'etiquette
-	var $_Margin_Top	= 0;	// marge en haut de la page avant la premiere etiquette
-	var $_X_Space 	= 0;	// Espace horizontal entre 2 bandes d'etiquettes
-	var $_Y_Space 	= 0;	// Espace vertical entre 2 bandes d'etiquettes
-	var $_X_Number 	= 0;	// NX Nombre d'etiquettes sur la largeur de la page
-	var $_Y_Number 	= 0;	// NY Nombre d'etiquettes sur la hauteur de la page
-	var $_Width 		= 0;	// Largeur de chaque etiquette
-	var $_Height 		= 0;	// Hauteur de chaque etiquette
-	var $_Char_Size	= 10;	// Hauteur des caracteres
-	var $_Line_Height	= 10;	// Hauteur par defaut d'une ligne
-	var $_Metric 		= 'mm';	// Type of metric.. Will help to calculate good values
-	var $_Metric_Doc 	= 'mm';	// Type of metric for the doc..
+    // Proprietes privees
+    public $_Avery_Name	= '';	// Nom du format de l'etiquette
+    public $_Margin_Left	= 0;	// Marge de gauche de l'etiquette
+    public $_Margin_Top	= 0;	// marge en haut de la page avant la premiere etiquette
+    public $_X_Space 	= 0;	// Espace horizontal entre 2 bandes d'etiquettes
+    public $_Y_Space 	= 0;	// Espace vertical entre 2 bandes d'etiquettes
+    public $_X_Number 	= 0;	// NX Nombre d'etiquettes sur la largeur de la page
+    public $_Y_Number 	= 0;	// NY Nombre d'etiquettes sur la hauteur de la page
+    public $_Width 		= 0;	// Largeur de chaque etiquette
+    public $_Height 		= 0;	// Hauteur de chaque etiquette
+    public $_Char_Size	= 10;	// Hauteur des caracteres
+    public $_Line_Height	= 10;	// Hauteur par defaut d'une ligne
+    public $_Metric 		= 'mm';	// Type of metric.. Will help to calculate good values
+    public $_Metric_Doc 	= 'mm';	// Type of metric for the doc..
 
-	var $_COUNTX = 1;
-	var $_COUNTY = 1;
-	var $_First = 1;
+    public $_COUNTX = 1;
+    public $_COUNTY = 1;
+    public $_First = 1;
 
+    /**
+     *	Constructor
+     *
+     *  @param		DoliDB		$db      Database handler
+     */
+    public function __construct($db)
+    {
+        $this->db = $db;
+    }
 
+    /**
+     * Methode qui permet de modifier la taille des caracteres
+     * Cela modiera aussi l'espace entre chaque ligne
+     *
+     * @param  PDF  &$pdf PDF
+     * @param  int  $pt   point
+     * @return void
+     */
+    public function Set_Char_Size(&$pdf,$pt)
+    {
+        if ($pt > 3) {
+            $this->_Char_Size = $pt;
+            $this->_Line_Height = $this->_Get_Height_Chars($pt);
+            $pdf->SetFont('','',$pt);
+        }
+    }
 
-	/**
-	 *	Constructor
-	 *
-	 *  @param		DoliDB		$db      Database handler
-	 */
-	function __construct($db)
-	{
-		$this->db = $db;
-	}
+    /**
+     * On imprime une etiquette
+     *
+     * @param  PDF       &$pdf        PDF
+     * @param  string    $textleft    Textleft
+     * @param  string    $header      Header
+     * @param  string    $footer      Footer
+     * @param  Translate $outputlangs Output langs
+     * @param  string    $textright   Text right
+     * @return void
+     */
+    public function Add_PDF_card(&$pdf,$textleft,$header,$footer,$outputlangs,$textright='')
+    {
+        global $mysoc,$conf,$langs;
 
-	/**
-	 * Methode qui permet de modifier la taille des caracteres
-	 * Cela modiera aussi l'espace entre chaque ligne
-	 *
-	 * @param    PDF    &$pdf      PDF
-	 * @param    int    $pt        point
-	 * @return   void
-	 */
-	function Set_Char_Size(&$pdf,$pt)
-	{
-		if ($pt > 3) {
-			$this->_Char_Size = $pt;
-			$this->_Line_Height = $this->_Get_Height_Chars($pt);
-			$pdf->SetFont('','',$pt);
-		}
-	}
+        // We are in a new page, then we must add a page
+        if (($this->_COUNTX ==0) and ($this->_COUNTY==0) and (!$this->_First==1)) {
+            $pdf->AddPage();
+        }
+        $this->_First=0;
+        $_PosX = $this->_Margin_Left+($this->_COUNTX*($this->_Width+$this->_X_Space));
+        $_PosY = $this->_Margin_Top+($this->_COUNTY*($this->_Height+$this->_Y_Space));
 
-	/**
-	 * On imprime une etiquette
-	 *
-	 * @param    PDF	    &$pdf		    PDF
-	 * @param    string     $textleft       Textleft
-	 * @param    string     $header         Header
-	 * @param    string     $footer         Footer
-	 * @param    Translate  $outputlangs    Output langs
-	 * @param    string     $textright      Text right
-	 * @return   void
-	 */
-	function Add_PDF_card(&$pdf,$textleft,$header,$footer,$outputlangs,$textright='')
-	{
-		global $mysoc,$conf,$langs;
+        // Define logo
+        $logo=$conf->mycompany->dir_output.'/logos/'.$mysoc->logo;
+        if (! is_readable($logo)) {
+            $logo='';
+            if (! empty($mysoc->logo_small) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_small)) {
+                $logo=$conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_small;
+            } elseif (! empty($mysoc->logo) && is_readable($conf->mycompany->dir_output.'/logos/'.$mysoc->logo)) {
+                $logo=$conf->mycompany->dir_output.'/logos/'.$mysoc->logo;
+            }
+        }
+        // Define photo
+        $photo='';
 
-		// We are in a new page, then we must add a page
-		if (($this->_COUNTX ==0) and ($this->_COUNTY==0) and (!$this->_First==1)) {
-			$pdf->AddPage();
-		}
-		$this->_First=0;
-		$_PosX = $this->_Margin_Left+($this->_COUNTX*($this->_Width+$this->_X_Space));
-		$_PosY = $this->_Margin_Top+($this->_COUNTY*($this->_Height+$this->_Y_Space));
+        // Define background image
+        $backgroundimage='';
 
-		// Define logo
-		$logo=$conf->mycompany->dir_output.'/logos/'.$mysoc->logo;
-		if (! is_readable($logo))
-		{
-			$logo='';
-			if (! empty($mysoc->logo_small) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_small))
-			{
-				$logo=$conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_small;
-			}
-			elseif (! empty($mysoc->logo) && is_readable($conf->mycompany->dir_output.'/logos/'.$mysoc->logo))
-			{
-				$logo=$conf->mycompany->dir_output.'/logos/'.$mysoc->logo;
-			}
-		}
-		// Define photo
-		$photo='';
+        // Print lines
+        if ($this->code == "CARD") {
+            $this->Tformat=$this->_Avery_Labels["CARD"];
+            //$this->_Pointille($pdf,$_PosX,$_PosY,$_PosX+$this->_Width,$_PosY+$this->_Height,0.3,25);
+            $this->_Croix($pdf,$_PosX,$_PosY,$_PosX+$this->_Width,$_PosY+$this->_Height,0.1,10);
+        }
 
-		// Define background image
-		$backgroundimage='';
+        // Background
+        if ($backgroundimage) {
+            $pdf->image($backgroundimage,$_PosX,$_PosY,$this->_Width,$this->_Height);
+        }
 
-		// Print lines
-		if ($this->code == "CARD")
-		{
-			$this->Tformat=$this->_Avery_Labels["CARD"];
-			//$this->_Pointille($pdf,$_PosX,$_PosY,$_PosX+$this->_Width,$_PosY+$this->_Height,0.3,25);
-			$this->_Croix($pdf,$_PosX,$_PosY,$_PosX+$this->_Width,$_PosY+$this->_Height,0.1,10);
-		}
+        // Top
+        if ($header!='') {
+            if ($this->code == "CARD") {
+                $pdf->SetDrawColor(128,128,128);
+                $pdf->Line($_PosX, $_PosY+$this->_Line_Height+1, $_PosX+$this->_Width, $_PosY+$this->_Line_Height+1);
+                $pdf->SetDrawColor(0,0,0);
+            }
+            $pdf->SetXY($_PosX, $_PosY+1);
+            $pdf->Cell($this->_Width, $this->_Line_Height, $outputlangs->convToOutputCharset($header),0,1,'C');
+        }
 
-		// Background
-		if ($backgroundimage)
-		{
-			$pdf->image($backgroundimage,$_PosX,$_PosY,$this->_Width,$this->_Height);
-		}
+        // Middle
+        if ($textright=='') {	// Only a left part
+            if ($textleft == '%LOGO%' && $logo) $this->Image($logo,$_PosX+2,$_PosY+3+$this->_Line_Height,20);
+            else if ($textleft == '%PHOTO%' && $photo) $this->Image($photo,$_PosX+2,$_PosY+3+$this->_Line_Height,20);
+            else {
+                $pdf->SetXY($_PosX+3, $_PosY+3+$this->_Line_Height);
+                $pdf->MultiCell($this->_Width, $this->_Line_Height, $outputlangs->convToOutputCharset($textleft),0,'L');
+            }
+        } elseif ($textleft!='' && $textright!='') {	//
+            if ($textleft == '%LOGO%' || $textleft == '%PHOTO%') {
+                if ($textleft == '%LOGO%' && $logo) $pdf->Image($logo,$_PosX+2,$_PosY+3+$this->_Line_Height,20);
+                else if ($textleft == '%PHOTO%' && $photo) $pdf->Image($photo,$_PosX+2,$_PosY+3+$this->_Line_Height,20);
+                $pdf->SetXY($_PosX+21, $_PosY+3+$this->_Line_Height);
+                $pdf->MultiCell($this->_Width-22, $this->_Line_Height, $outputlangs->convToOutputCharset($textright),0,'R');
+            } elseif ($textright == '%LOGO%' || $textright == '%PHOTO%') {
+                if ($textright == '%LOGO%' && $logo) $pdf->Image($logo,$_PosX+$this->_Width-21,$_PosY+3+$this->_Line_Height,20);
+                else if ($textright == '%PHOTO%' && $photo) $pdf->Image($photo,$_PosX+$this->_Width-21,$_PosY+3+$this->_Line_Height,20);
+                $pdf->SetXY($_PosX+2, $_PosY+3+$this->_Line_Height);
+                $pdf->MultiCell($this->_Width-22, $this->_Line_Height, $outputlangs->convToOutputCharset($textleft),0,'L');
+            } else {
+                $pdf->SetXY($_PosX+2, $_PosY+3+$this->_Line_Height);
+                $pdf->MultiCell(round($this->_Width/2), $this->_Line_Height, $outputlangs->convToOutputCharset($textleft),0,'L');
+                $pdf->SetXY($_PosX+round($this->_Width/2), $_PosY+3+$this->_Line_Height);
+                $pdf->MultiCell(round($this->_Width/2)-2, $this->_Line_Height, $outputlangs->convToOutputCharset($textright),0,'R');
+            }
+        } else {	// Only a right part
+            if ($textright == '%LOGO%' && $logo) $this->Image($logo,$_PosX+$this->_Width-21,$_PosY+1,20);
+            else if ($textright == '%PHOTO%' && $photo) $this->Image($photo,$_PosX+$this->_Width-21,$_PosY+1,20);
+            else {
+                $pdf->SetXY($_PosX+2, $_PosY+3+$this->_Line_Height);
+                $pdf->MultiCell($this->_Width, $this->_Line_Height, $outputlangs->convToOutputCharset($textright),0,'R');
+            }
+        }
 
-		// Top
-		if ($header!='')
-		{
-			if ($this->code == "CARD")
-			{
-				$pdf->SetDrawColor(128,128,128);
-				$pdf->Line($_PosX, $_PosY+$this->_Line_Height+1, $_PosX+$this->_Width, $_PosY+$this->_Line_Height+1);
-				$pdf->SetDrawColor(0,0,0);
-			}
-			$pdf->SetXY($_PosX, $_PosY+1);
-			$pdf->Cell($this->_Width, $this->_Line_Height, $outputlangs->convToOutputCharset($header),0,1,'C');
-		}
+        // Bottom
+        if ($footer!='') {
+            if ($this->code == "CARD") {
+                $pdf->SetDrawColor(128,128,128);
+                $pdf->Line($_PosX, $_PosY+$this->_Height-$this->_Line_Height-2, $_PosX+$this->_Width, $_PosY+$this->_Height-$this->_Line_Height-2);
+                $pdf->SetDrawColor(0,0,0);
+            }
+            $pdf->SetXY($_PosX, $_PosY+$this->_Height-$this->_Line_Height-1);
+            $pdf->Cell($this->_Width, $this->_Line_Height, $outputlangs->convToOutputCharset($footer),0,1,'C');
+        }
+        //print "$_PosY+$this->_Height-$this->_Line_Height-1<br>\n";
 
-		// Middle
-		if ($textright=='')	// Only a left part
-		{
-			if ($textleft == '%LOGO%' && $logo) $this->Image($logo,$_PosX+2,$_PosY+3+$this->_Line_Height,20);
-			else if ($textleft == '%PHOTO%' && $photo) $this->Image($photo,$_PosX+2,$_PosY+3+$this->_Line_Height,20);
-			else
-			{
-				$pdf->SetXY($_PosX+3, $_PosY+3+$this->_Line_Height);
-				$pdf->MultiCell($this->_Width, $this->_Line_Height, $outputlangs->convToOutputCharset($textleft),0,'L');
-			}
-		}
-		else if ($textleft!='' && $textright!='')	//
-		{
-			if ($textleft == '%LOGO%' || $textleft == '%PHOTO%')
-			{
-				if ($textleft == '%LOGO%' && $logo) $pdf->Image($logo,$_PosX+2,$_PosY+3+$this->_Line_Height,20);
-				else if ($textleft == '%PHOTO%' && $photo) $pdf->Image($photo,$_PosX+2,$_PosY+3+$this->_Line_Height,20);
-				$pdf->SetXY($_PosX+21, $_PosY+3+$this->_Line_Height);
-				$pdf->MultiCell($this->_Width-22, $this->_Line_Height, $outputlangs->convToOutputCharset($textright),0,'R');
-			}
-			else if ($textright == '%LOGO%' || $textright == '%PHOTO%')
-			{
-				if ($textright == '%LOGO%' && $logo) $pdf->Image($logo,$_PosX+$this->_Width-21,$_PosY+3+$this->_Line_Height,20);
-				else if ($textright == '%PHOTO%' && $photo) $pdf->Image($photo,$_PosX+$this->_Width-21,$_PosY+3+$this->_Line_Height,20);
-				$pdf->SetXY($_PosX+2, $_PosY+3+$this->_Line_Height);
-				$pdf->MultiCell($this->_Width-22, $this->_Line_Height, $outputlangs->convToOutputCharset($textleft),0,'L');
-			}
-			else
-			{
-				$pdf->SetXY($_PosX+2, $_PosY+3+$this->_Line_Height);
-				$pdf->MultiCell(round($this->_Width/2), $this->_Line_Height, $outputlangs->convToOutputCharset($textleft),0,'L');
-				$pdf->SetXY($_PosX+round($this->_Width/2), $_PosY+3+$this->_Line_Height);
-				$pdf->MultiCell(round($this->_Width/2)-2, $this->_Line_Height, $outputlangs->convToOutputCharset($textright),0,'R');
-			}
-		}
-		else	// Only a right part
-		{
-			if ($textright == '%LOGO%' && $logo) $this->Image($logo,$_PosX+$this->_Width-21,$_PosY+1,20);
-			else if ($textright == '%PHOTO%' && $photo) $this->Image($photo,$_PosX+$this->_Width-21,$_PosY+1,20);
-			else
-			{
-				$pdf->SetXY($_PosX+2, $_PosY+3+$this->_Line_Height);
-				$pdf->MultiCell($this->_Width, $this->_Line_Height, $outputlangs->convToOutputCharset($textright),0,'R');
-			}
-		}
+        $this->_COUNTY++;
 
-		// Bottom
-		if ($footer!='')
-		{
-			if ($this->code == "CARD")
-			{
-				$pdf->SetDrawColor(128,128,128);
-				$pdf->Line($_PosX, $_PosY+$this->_Height-$this->_Line_Height-2, $_PosX+$this->_Width, $_PosY+$this->_Height-$this->_Line_Height-2);
-				$pdf->SetDrawColor(0,0,0);
-			}
-			$pdf->SetXY($_PosX, $_PosY+$this->_Height-$this->_Line_Height-1);
-			$pdf->Cell($this->_Width, $this->_Line_Height, $outputlangs->convToOutputCharset($footer),0,1,'C');
-		}
-		//print "$_PosY+$this->_Height-$this->_Line_Height-1<br>\n";
+        if ($this->_COUNTY == $this->_Y_Number) {
+            // Si on est en bas de page, on remonte le 'curseur' de position
+            $this->_COUNTX++;
+            $this->_COUNTY=0;
+        }
 
-		$this->_COUNTY++;
-
-		if ($this->_COUNTY == $this->_Y_Number) {
-			// Si on est en bas de page, on remonte le 'curseur' de position
-			$this->_COUNTX++;
-			$this->_COUNTY=0;
-		}
-
-		if ($this->_COUNTX == $this->_X_Number) {
-			// Si on est en bout de page, alors on repart sur une nouvelle page
-			$this->_COUNTX=0;
-			$this->_COUNTY=0;
-		}
-	}
+        if ($this->_COUNTX == $this->_X_Number) {
+            // Si on est en bout de page, alors on repart sur une nouvelle page
+            $this->_COUNTX=0;
+            $this->_COUNTY=0;
+        }
+    }
 
 
-	/**
-	 * Print dot line
-	 *
-	 * @param	PDF		&$pdf				PDF
-	 * @param 	int		$x1					X1
-	 * @param 	int		$y1					Y1
-	 * @param 	int		$x2					X2
-	 * @param 	int		$y2					Y2
-	 * @param 	int		$epaisseur			Epaisseur
-	 * @param 	int		$nbPointilles		Nb pointilles
-	 * @return	void
-	 */
-	function _Pointille(&$pdf,$x1=0,$y1=0,$x2=210,$y2=297,$epaisseur=1,$nbPointilles=15)
-	{
-		$pdf->SetLineWidth($epaisseur);
-		$length=abs($x1-$x2);
-		$hauteur=abs($y1-$y2);
-		if($length>$hauteur) {
-			$Pointilles=($length/$nbPointilles)/2; // taille des pointilles
-		}
-		else {
-			$Pointilles=($hauteur/$nbPointilles)/2;
-		}
-		for($i=$x1;$i<=$x2;$i+=$Pointilles+$Pointilles) {
-			for($j=$i;$j<=($i+$Pointilles);$j++) {
-				if($j<=($x2-1)) {
-		$pdf->Line($j,$y1,$j+1,$y1); // on trace le pointill? du haut, point par point
-		$pdf->Line($j,$y2,$j+1,$y2); // on trace le pointill? du bas, point par point
-				}
-			}
-		}
-		for($i=$y1;$i<=$y2;$i+=$Pointilles+$Pointilles) {
-			for($j=$i;$j<=($i+$Pointilles);$j++) {
-				if($j<=($y2-1)) {
-		$pdf->Line($x1,$j,$x1,$j+1); // on trace le pointill? du haut, point par point
-		$pdf->Line($x2,$j,$x2,$j+1); // on trace le pointill? du bas, point par point
-				}
-			}
-		}
-	}
+    /**
+     * Print dot line
+     *
+     * @param  PDF  &$pdf         PDF
+     * @param  int  $x1           X1
+     * @param  int  $y1           Y1
+     * @param  int  $x2           X2
+     * @param  int  $y2           Y2
+     * @param  int  $epaisseur    Epaisseur
+     * @param  int  $nbPointilles Nb pointilles
+     * @return void
+     */
+    public function _Pointille(&$pdf,$x1=0,$y1=0,$x2=210,$y2=297,$epaisseur=1,$nbPointilles=15)
+    {
+        $pdf->SetLineWidth($epaisseur);
+        $length=abs($x1-$x2);
+        $hauteur=abs($y1-$y2);
+        if ($length>$hauteur) {
+            $Pointilles=($length/$nbPointilles)/2; // taille des pointilles
+        } else {
+            $Pointilles=($hauteur/$nbPointilles)/2;
+        }
+        for ($i=$x1;$i<=$x2;$i+=$Pointilles+$Pointilles) {
+            for ($j=$i;$j<=($i+$Pointilles);$j++) {
+                if ($j<=($x2-1)) {
+        $pdf->Line($j,$y1,$j+1,$y1); // on trace le pointill? du haut, point par point
+        $pdf->Line($j,$y2,$j+1,$y2); // on trace le pointill? du bas, point par point
+                }
+            }
+        }
+        for ($i=$y1;$i<=$y2;$i+=$Pointilles+$Pointilles) {
+            for ($j=$i;$j<=($i+$Pointilles);$j++) {
+                if ($j<=($y2-1)) {
+        $pdf->Line($x1,$j,$x1,$j+1); // on trace le pointill? du haut, point par point
+        $pdf->Line($x2,$j,$x2,$j+1); // on trace le pointill? du bas, point par point
+                }
+            }
+        }
+    }
 
-	/**
-	 * Fonction realisant une croix aux 4 coins des cartes
-	 *
-	 * @param PDF	&$pdf				PDF
-	 * @param int	$x1					X1
-	 * @param int	$y1					Y1
-	 * @param int	$x2					X2
-	 * @param int	$y2					Y2
-	 * @param int	$epaisseur			Epaisseur
-	 * @param int	$taille             Size
-	 * @return void
-	 */
-	function _Croix(&$pdf,$x1=0,$y1=0,$x2=210,$y2=297,$epaisseur=1,$taille=4)
-	{
-		$pdf->SetDrawColor(192,192,192);
+    /**
+     * Fonction realisant une croix aux 4 coins des cartes
+     *
+     * @param  PDF  &$pdf      PDF
+     * @param  int  $x1        X1
+     * @param  int  $y1        Y1
+     * @param  int  $x2        X2
+     * @param  int  $y2        Y2
+     * @param  int  $epaisseur Epaisseur
+     * @param  int  $taille    Size
+     * @return void
+     */
+    public function _Croix(&$pdf,$x1=0,$y1=0,$x2=210,$y2=297,$epaisseur=1,$taille=4)
+    {
+        $pdf->SetDrawColor(192,192,192);
 
-		$pdf->SetLineWidth($epaisseur);
-		$lg=$taille/2;
-		// croix haut gauche
-		$pdf->Line($x1,$y1-$lg,$x1,$y1+$lg);
-		$pdf->Line($x1-$lg,$y1,$x1+$lg,$y1);
-		// croix bas gauche
-		$pdf->Line($x1,$y2-$lg,$x1,$y2+$lg);
-		$pdf->Line($x1-$lg,$y2,$x1+$lg,$y2);
-		// croix haut droit
-		$pdf->Line($x2,$y1-$lg,$x2,$y1+$lg);
-		$pdf->Line($x2-$lg,$y1,$x2+$lg,$y1);
-		// croix bas droit
-		$pdf->Line($x2,$y2-$lg,$x2,$y2+$lg);
-		$pdf->Line($x2-$lg,$y2,$x2+$lg,$y2);
+        $pdf->SetLineWidth($epaisseur);
+        $lg=$taille/2;
+        // croix haut gauche
+        $pdf->Line($x1,$y1-$lg,$x1,$y1+$lg);
+        $pdf->Line($x1-$lg,$y1,$x1+$lg,$y1);
+        // croix bas gauche
+        $pdf->Line($x1,$y2-$lg,$x1,$y2+$lg);
+        $pdf->Line($x1-$lg,$y2,$x1+$lg,$y2);
+        // croix haut droit
+        $pdf->Line($x2,$y1-$lg,$x2,$y1+$lg);
+        $pdf->Line($x2-$lg,$y1,$x2+$lg,$y1);
+        // croix bas droit
+        $pdf->Line($x2,$y2-$lg,$x2,$y2+$lg);
+        $pdf->Line($x2-$lg,$y2,$x2+$lg,$y2);
 
-		$pdf->SetDrawColor(0,0,0);
-	}
+        $pdf->SetDrawColor(0,0,0);
+    }
 
-	/**
-	 * Convert units (in to mm, mm to in)
-	 * $src and $dest must be 'in' or 'mm'
-	 *
-	 * @param int       $value  value
-	 * @param string    $src    from
-	 * @param string    $dest   to
-	 * @return float    value   value after conversion
-	 */
-	function _Convert_Metric ($value, $src, $dest) {
-		if ($src != $dest) {
-			$tab['in'] = 39.37008;
-			$tab['mm'] = 1000;
-			return $value * $tab[$dest] / $tab[$src];
-		} else {
-			return $value;
-		}
-	}
+    /**
+     * Convert units (in to mm, mm to in)
+     * $src and $dest must be 'in' or 'mm'
+     *
+     * @param  int    $value value
+     * @param  string $src   from
+     * @param  string $dest  to
+     * @return float  value   value after conversion
+     */
+    public function _Convert_Metric ($value, $src, $dest)
+    {
+        if ($src != $dest) {
+            $tab['in'] = 39.37008;
+            $tab['mm'] = 1000;
 
-	/**
-	 * Give the height for a char size given.
-	 *
-	 * @param  int    $pt    Point
-	 * @return int           Height chars
-	 */
-	function _Get_Height_Chars($pt) {
-		// Tableau de concordance entre la hauteur des caracteres et de l'espacement entre les lignes
-		$_Table_Hauteur_Chars = array(6=>2, 7=>2.5, 8=>3, 9=>3.5, 10=>4, 11=>6, 12=>7, 13=>8, 14=>9, 15=>10);
-		if (in_array($pt, array_keys($_Table_Hauteur_Chars))) {
-			return $_Table_Hauteur_Chars[$pt];
-		} else {
-			return 100; // There is a prob..
-		}
-	}
+            return $value * $tab[$dest] / $tab[$src];
+        } else {
+            return $value;
+        }
+    }
 
-	/**
-	 * Set format
-	 *
-	 * @param    PDF       &$pdf    PDF
-	 * @param    string    $format  Format
-	 * @return   void
-	 */
-	function _Set_Format(&$pdf, $format)
-	{
-		$this->_Metric 	= $format['metric'];
-		$this->_Avery_Name 	= $format['name'];
-		$this->_Avery_Code	= $format['code'];
-		$this->_Margin_Left	= $this->_Convert_Metric($format['marginLeft'], $this->_Metric, $this->_Metric_Doc);
-		$this->_Margin_Top	= $this->_Convert_Metric($format['marginTop'], $this->_Metric, $this->_Metric_Doc);
-		$this->_X_Space 	= $this->_Convert_Metric($format['SpaceX'], $this->_Metric, $this->_Metric_Doc);
-		$this->_Y_Space 	= $this->_Convert_Metric($format['SpaceY'], $this->_Metric, $this->_Metric_Doc);
-		$this->_X_Number 	= $format['NX'];
-		$this->_Y_Number 	= $format['NY'];
-		$this->_Width 	= $this->_Convert_Metric($format['width'], $this->_Metric, $this->_Metric_Doc);
-		$this->_Height	= $this->_Convert_Metric($format['height'], $this->_Metric, $this->_Metric_Doc);
-		$this->Set_Char_Size($pdf, $format['font-size']);
-	}
+    /**
+     * Give the height for a char size given.
+     *
+     * @param  int $pt Point
+     * @return int Height chars
+     */
+    public function _Get_Height_Chars($pt)
+    {
+        // Tableau de concordance entre la hauteur des caracteres et de l'espacement entre les lignes
+        $_Table_Hauteur_Chars = array(6=>2, 7=>2.5, 8=>3, 9=>3.5, 10=>4, 11=>6, 12=>7, 13=>8, 14=>9, 15=>10);
+        if (in_array($pt, array_keys($_Table_Hauteur_Chars))) {
+            return $_Table_Hauteur_Chars[$pt];
+        } else {
+            return 100; // There is a prob..
+        }
+    }
 
+    /**
+     * Set format
+     *
+     * @param  PDF    &$pdf   PDF
+     * @param  string $format Format
+     * @return void
+     */
+    public function _Set_Format(&$pdf, $format)
+    {
+        $this->_Metric 	= $format['metric'];
+        $this->_Avery_Name 	= $format['name'];
+        $this->_Avery_Code	= $format['code'];
+        $this->_Margin_Left	= $this->_Convert_Metric($format['marginLeft'], $this->_Metric, $this->_Metric_Doc);
+        $this->_Margin_Top	= $this->_Convert_Metric($format['marginTop'], $this->_Metric, $this->_Metric_Doc);
+        $this->_X_Space 	= $this->_Convert_Metric($format['SpaceX'], $this->_Metric, $this->_Metric_Doc);
+        $this->_Y_Space 	= $this->_Convert_Metric($format['SpaceY'], $this->_Metric, $this->_Metric_Doc);
+        $this->_X_Number 	= $format['NX'];
+        $this->_Y_Number 	= $format['NY'];
+        $this->_Width 	= $this->_Convert_Metric($format['width'], $this->_Metric, $this->_Metric_Doc);
+        $this->_Height	= $this->_Convert_Metric($format['height'], $this->_Metric, $this->_Metric_Doc);
+        $this->Set_Char_Size($pdf, $format['font-size']);
+    }
 
     /**
      *  Function to build PDF on disk, then output on HTTP strem.
@@ -397,10 +374,10 @@ class pdf_standardlabel
      *  @param	array		$arrayofmembers  	Array of members informations
      *  @param  Translate	$outputlangs     	Lang object for output language
      *  @param	string		$srctemplatepath	Full path of source filename for generator using a template file
-	 *	@param	string		$outputdir			Output directory
+     *	@param	string		$outputdir			Output directory
      *  @return int             				1=OK, 0=KO
      */
-    function write_file($arrayofmembers,$outputlangs,$srctemplatepath,$outputdir='')
+    public function write_file($arrayofmembers,$outputlangs,$srctemplatepath,$outputdir='')
     {
         global $user,$conf,$langs,$mysoc,$_Avery_Labels;
 
@@ -411,8 +388,8 @@ class pdf_standardlabel
         $this->format = $this->Tformat['paper-size'];
 
         if (! is_object($outputlangs)) $outputlangs=$langs;
-		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
-		if (! empty($conf->global->MAIN_USE_FPDF)) $outputlangs->charset_output='ISO-8859-1';
+        // For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
+        if (! empty($conf->global->MAIN_USE_FPDF)) $outputlangs->charset_output='ISO-8859-1';
 
         $outputlangs->load("main");
         $outputlangs->load("dict");
@@ -424,19 +401,17 @@ class pdf_standardlabel
         $filename='tmp_address_sheet.pdf';
         $file = $dir."/".$filename;
 
-        if (! file_exists($dir))
-        {
-            if (dol_mkdir($dir) < 0)
-            {
+        if (! file_exists($dir)) {
+            if (dol_mkdir($dir) < 0) {
                 $this->error=$langs->trans("ErrorCanNotCreateDir",$dir);
+
                 return 0;
             }
         }
 
         $pdf=pdf_getInstance($this->format,$this->Tformat['metric']);
 
-        if (class_exists('TCPDF'))
-        {
+        if (class_exists('TCPDF')) {
             $pdf->setPrintHeader(false);
             $pdf->setPrintFooter(false);
         }
@@ -462,14 +437,11 @@ class pdf_standardlabel
         $this->_COUNTY = $posY;
         $this->_Set_Format($pdf, $this->Tformat);
 
-
         $pdf->Open();
         $pdf->AddPage();
 
-
         // Add each record
-        foreach($arrayofmembers as $val)
-        {
+        foreach ($arrayofmembers as $val) {
             // imprime le texte specifique sur la carte
             $this->Add_PDF_card($pdf,$val['textleft'],$val['textheader'],$val['textfooter'],$langs,$val['textright'],$val['id'],$val['photo']);
         }
@@ -477,14 +449,11 @@ class pdf_standardlabel
         //$pdf->SetXY(10, 295);
         //$pdf->Cell($this->_Width, $this->_Line_Height, 'XXX',0,1,'C');
 
-
         // Output to file
         $pdf->Output($file,'F');
 
         if (! empty($conf->global->MAIN_UMASK))
             @chmod($file, octdec($conf->global->MAIN_UMASK));
-
-
 
         // Output to http stream
         clearstatcache();
@@ -507,4 +476,3 @@ class pdf_standardlabel
         return 1;
     }
 }
-?>

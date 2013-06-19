@@ -33,48 +33,45 @@
  */
 function commande_prepare_head($object)
 {
-	global $langs, $conf, $user;
-	if (! empty($conf->expedition->enabled)) $langs->load("sendings");
-	$langs->load("orders");
+    global $langs, $conf, $user;
+    if (! empty($conf->expedition->enabled)) $langs->load("sendings");
+    $langs->load("orders");
 
-	$h = 0;
-	$head = array();
+    $h = 0;
+    $head = array();
 
-	if (! empty($conf->commande->enabled) && $user->rights->commande->lire)
-	{
-		$head[$h][0] = DOL_URL_ROOT.'/commande/fiche.php?id='.$object->id;
-		$head[$h][1] = $langs->trans("OrderCard");
-		$head[$h][2] = 'order';
-		$h++;
-	}
+    if (! empty($conf->commande->enabled) && $user->rights->commande->lire) {
+        $head[$h][0] = DOL_URL_ROOT.'/commande/fiche.php?id='.$object->id;
+        $head[$h][1] = $langs->trans("OrderCard");
+        $head[$h][2] = 'order';
+        $h++;
+    }
 
-	if (($conf->expedition_bon->enabled && $user->rights->expedition->lire)
-	|| ($conf->livraison_bon->enabled && $user->rights->expedition->livraison->lire))
-	{
-		$head[$h][0] = DOL_URL_ROOT.'/expedition/shipment.php?id='.$object->id;
-		if ($conf->expedition_bon->enabled) $text=$langs->trans("Sendings");
-		if ($conf->expedition_bon->enabled && $conf->livraison_bon->enabled) $text.='/';
-		if ($conf->livraison_bon->enabled)  $text.=$langs->trans("Receivings");
-		$head[$h][1] = $text;
-		$head[$h][2] = 'shipping';
-		$h++;
-	}
+    if (($conf->expedition_bon->enabled && $user->rights->expedition->lire)
+    || ($conf->livraison_bon->enabled && $user->rights->expedition->livraison->lire))
+    {
+        $head[$h][0] = DOL_URL_ROOT.'/expedition/shipment.php?id='.$object->id;
+        if ($conf->expedition_bon->enabled) $text=$langs->trans("Sendings");
+        if ($conf->expedition_bon->enabled && $conf->livraison_bon->enabled) $text.='/';
+        if ($conf->livraison_bon->enabled)  $text.=$langs->trans("Receivings");
+        $head[$h][1] = $text;
+        $head[$h][2] = 'shipping';
+        $h++;
+    }
 
-	if (! empty($conf->global->MAIN_USE_PREVIEW_TABS))
-	{
-		$head[$h][0] = DOL_URL_ROOT.'/commande/apercu.php?id='.$object->id;
-		$head[$h][1] = $langs->trans("Preview");
-		$head[$h][2] = 'preview';
-		$h++;
-	}
+    if (! empty($conf->global->MAIN_USE_PREVIEW_TABS)) {
+        $head[$h][0] = DOL_URL_ROOT.'/commande/apercu.php?id='.$object->id;
+        $head[$h][1] = $langs->trans("Preview");
+        $head[$h][2] = 'preview';
+        $h++;
+    }
 
-	if (empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
-	{
-		$head[$h][0] = DOL_URL_ROOT.'/commande/contact.php?id='.$object->id;
-		$head[$h][1] = $langs->trans('ContactsAddresses');
-		$head[$h][2] = 'contact';
-		$h++;
-	}
+    if (empty($conf->global->MAIN_DISABLE_CONTACTS_TAB)) {
+        $head[$h][0] = DOL_URL_ROOT.'/commande/contact.php?id='.$object->id;
+        $head[$h][1] = $langs->trans('ContactsAddresses');
+        $head[$h][2] = 'contact';
+        $h++;
+    }
 
     // Show more tabs from modules
     // Entries must be declared in modules descriptor with line
@@ -83,26 +80,25 @@ function commande_prepare_head($object)
     complete_head_from_modules($conf,$langs,$object,$head,$h,'order');
 
     $head[$h][0] = DOL_URL_ROOT.'/commande/document.php?id='.$object->id;
-	/*$filesdir = $conf->commande->dir_output . "/" . dol_sanitizeFileName($commande->ref);
-	include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-	$listoffiles=dol_dir_list($filesdir,'files',1);
-	$head[$h][1] = (count($listoffiles)?$langs->trans('DocumentsNb',count($listoffiles)):$langs->trans('Documents'));*/
-	$head[$h][1] = $langs->trans('Documents');
-	$head[$h][2] = 'documents';
-	$h++;
+    /*$filesdir = $conf->commande->dir_output . "/" . dol_sanitizeFileName($commande->ref);
+    include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+    $listoffiles=dol_dir_list($filesdir,'files',1);
+    $head[$h][1] = (count($listoffiles)?$langs->trans('DocumentsNb',count($listoffiles)):$langs->trans('Documents'));*/
+    $head[$h][1] = $langs->trans('Documents');
+    $head[$h][2] = 'documents';
+    $h++;
 
-	if (empty($conf->global->MAIN_DISABLE_NOTES_TAB))
-	{
-		$head[$h][0] = DOL_URL_ROOT.'/commande/note.php?id='.$object->id;
-		$head[$h][1] = $langs->trans('Notes');
-		$head[$h][2] = 'note';
-		$h++;
-	}
+    if (empty($conf->global->MAIN_DISABLE_NOTES_TAB)) {
+        $head[$h][0] = DOL_URL_ROOT.'/commande/note.php?id='.$object->id;
+        $head[$h][1] = $langs->trans('Notes');
+        $head[$h][2] = 'note';
+        $h++;
+    }
 
-	$head[$h][0] = DOL_URL_ROOT.'/commande/info.php?id='.$object->id;
-	$head[$h][1] = $langs->trans("Info");
-	$head[$h][2] = 'info';
-	$h++;
+    $head[$h][0] = DOL_URL_ROOT.'/commande/info.php?id='.$object->id;
+    $head[$h][1] = $langs->trans("Info");
+    $head[$h][2] = 'info';
+    $h++;
 
     complete_head_from_modules($conf,$langs,$object,$head,$h,'order','remove');
 
@@ -117,32 +113,29 @@ function commande_prepare_head($object)
  */
 function order_admin_prepare_head($object)
 {
-	global $langs, $conf, $user;
+    global $langs, $conf, $user;
 
-	$h = 0;
-	$head = array();
+    $h = 0;
+    $head = array();
 
-	$head[$h][0] = DOL_URL_ROOT.'/admin/commande.php';
-	$head[$h][1] = $langs->trans("Miscellaneous");
-	$head[$h][2] = 'general';
-	$h++;
+    $head[$h][0] = DOL_URL_ROOT.'/admin/commande.php';
+    $head[$h][1] = $langs->trans("Miscellaneous");
+    $head[$h][2] = 'general';
+    $h++;
 
-	complete_head_from_modules($conf,$langs,$object,$head,$h,'order_admin');
+    complete_head_from_modules($conf,$langs,$object,$head,$h,'order_admin');
 
-	$head[$h][0] = DOL_URL_ROOT.'/admin/order_extrafields.php';
-	$head[$h][1] = $langs->trans("ExtraFields");
-	$head[$h][2] = 'attributes';
-	$h++;
-	
-	$head[$h][0] = DOL_URL_ROOT.'/admin/orderdet_extrafields.php';
-	$head[$h][1] = $langs->trans("ExtraFieldsLines");
-	$head[$h][2] = 'attributeslines';
-	$h++;
+    $head[$h][0] = DOL_URL_ROOT.'/admin/order_extrafields.php';
+    $head[$h][1] = $langs->trans("ExtraFields");
+    $head[$h][2] = 'attributes';
+    $h++;
 
-	complete_head_from_modules($conf,$langs,$object,$head,$h,'order_admin','remove');
+    $head[$h][0] = DOL_URL_ROOT.'/admin/orderdet_extrafields.php';
+    $head[$h][1] = $langs->trans("ExtraFieldsLines");
+    $head[$h][2] = 'attributeslines';
+    $h++;
 
-	return $head;
+    complete_head_from_modules($conf,$langs,$object,$head,$h,'order_admin','remove');
+
+    return $head;
 }
-
-
-?>

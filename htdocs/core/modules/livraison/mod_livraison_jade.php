@@ -26,7 +26,6 @@
 
 require_once DOL_DOCUMENT_ROOT .'/core/modules/livraison/modules_livraison.php';
 
-
 /**
  *  \class      mod_livraison_jade
  *  \brief      Classe du modele de numerotation de reference de bon de livraison Jade
@@ -34,30 +33,30 @@ require_once DOL_DOCUMENT_ROOT .'/core/modules/livraison/modules_livraison.php';
 
 class mod_livraison_jade extends ModeleNumRefDeliveryOrder
 {
-	var $version='dolibarr';		// 'development', 'experimental', 'dolibarr'
-	var $error = '';
-	var $nom = "Jade";
+    public $version='dolibarr';		// 'development', 'experimental', 'dolibarr'
+    public $error = '';
+    public $nom = "Jade";
 
-    var $prefix='BL';
+    public $prefix='BL';
 
+    /**
+     *   Renvoi la description du modele de numerotation
+     *
+     *   @return     string      Texte descripif
+     */
+    public function info()
+    {
+        global $langs;
 
-	/**
-	 *   Renvoi la description du modele de numerotation
-	 *
-	 *   @return     string      Texte descripif
-	 */
-	function info()
-	{
-		global $langs;
-		return $langs->trans("SimpleNumRefModelDesc",$this->prefix);
-	}
+        return $langs->trans("SimpleNumRefModelDesc",$this->prefix);
+    }
 
-	/**
-	 *  Renvoi un exemple de numerotation
-	 *
+    /**
+     *  Renvoi un exemple de numerotation
+     *
      *  @return     string      Example
      */
-    function getExample()
+    public function getExample()
     {
         return $this->prefix."0501-0001";
     }
@@ -68,7 +67,7 @@ class mod_livraison_jade extends ModeleNumRefDeliveryOrder
      *
      *  @return     boolean     false si conflit, true si ok
      */
-    function canBeActivated()
+    public function canBeActivated()
     {
         global $langs,$conf;
 
@@ -84,15 +83,14 @@ class mod_livraison_jade extends ModeleNumRefDeliveryOrder
         $sql.= " AND entity = ".$conf->entity;
 
         $resql=$db->query($sql);
-        if ($resql)
-        {
+        if ($resql) {
             $row = $db->fetch_row($resql);
             if ($row) { $fayymm = substr($row[0],0,6); $max=$row[0]; }
         }
-        if ($fayymm && ! preg_match('/'.$this->prefix.'[0-9][0-9][0-9][0-9]/i',$fayymm))
-        {
+        if ($fayymm && ! preg_match('/'.$this->prefix.'[0-9][0-9][0-9][0-9]/i',$fayymm)) {
             $langs->load("errors");
             $this->error=$langs->trans('ErrorNumRefModel',$max);
+
             return false;
         }
 
@@ -100,13 +98,13 @@ class mod_livraison_jade extends ModeleNumRefDeliveryOrder
     }
 
     /**
-	 * 	Return next free value
-	 *
-	 *  @param	Societe		$objsoc     Object thirdparty
-	 *  @param  Object		$object		Object we need next value for
-	 *  @return string      			Value if KO, <0 if KO
-	 */
-    function getNextValue($objsoc,$object)
+     * 	Return next free value
+     *
+     *  @param	Societe		$objsoc     Object thirdparty
+     *  @param  Object		$object		Object we need next value for
+     *  @return string      			Value if KO, <0 if KO
+     */
+    public function getNextValue($objsoc,$object)
     {
         global $db,$conf;
 
@@ -119,15 +117,13 @@ class mod_livraison_jade extends ModeleNumRefDeliveryOrder
 
         $resql=$db->query($sql);
         dol_syslog("mod_livraison_jade::getNextValue sql=".$sql);
-        if ($resql)
-        {
+        if ($resql) {
             $obj = $db->fetch_object($resql);
             if ($obj) $max = intval($obj->max);
             else $max=0;
-        }
-        else
-        {
+        } else {
             dol_syslog("mod_livraison_jade::getNextValue sql=".$sql, LOG_ERR);
+
             return -1;
         }
 
@@ -137,21 +133,21 @@ class mod_livraison_jade extends ModeleNumRefDeliveryOrder
         $num = sprintf("%04s",$max+1);
 
         dol_syslog("mod_livraison_jade::getNextValue return ".$this->prefix.$yymm."-".$num);
+
         return $this->prefix.$yymm."-".$num;
     }
 
 
-	/**
-	 *  Return next free ref
-	 *
+    /**
+     *  Return next free ref
+     *
      *  @param	Societe		$objsoc      	Object thirdparty
      *  @param  Object		$object			Object livraison
      *  @return string      				Texte descripif
      */
-    function livraison_get_num($objsoc=0,$object='')
+    public function livraison_get_num($objsoc=0,$object='')
     {
         return $this->getNextValue($objsoc,$object);
     }
 
 }
-?>

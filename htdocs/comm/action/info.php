@@ -34,8 +34,7 @@ $langs->load("commercial");
 $id = GETPOST('id','int');
 
 // Security check
-if ($user->societe_id > 0)
-{
+if ($user->societe_id > 0) {
   $action = '';
   $socid = $user->societe_id;
 }
@@ -67,4 +66,3 @@ print '</div>';
 $db->close();
 
 llxFooter();
-?>

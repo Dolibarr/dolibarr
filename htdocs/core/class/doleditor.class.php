@@ -28,22 +28,21 @@
  */
 class DolEditor
 {
-    var $tool;      // Store the selected tool
+    public $tool;      // Store the selected tool
 
-	// If using fckeditor
-	var $editor;
+    // If using fckeditor
+    public $editor;
 
-	// If not using fckeditor
-	var $content;
-	var $htmlname;
-	var $toolbarname;
-	var $toolbarstartexpanded;
-	var $rows;
-	var $cols;
-	var $height;
-	var $width;
-	var $readonly;
-
+    // If not using fckeditor
+    public $content;
+    public $htmlname;
+    public $toolbarname;
+    public $toolbarstartexpanded;
+    public $rows;
+    public $cols;
+    public $height;
+    public $width;
+    public $readonly;
 
     /**
      *      Create an object to build an HTML area to edit a large string content
@@ -57,21 +56,21 @@ class DolEditor
      *                       		             	'In' each window has its own toolbar
      *                              		      	'Out:name' share toolbar into the div called 'name'
      *      @param  boolean	$toolbarstartexpanded  	Bar is visible or not at start
-	 *		@param	int		$uselocalbrowser		Enabled to add links to local object with local browser. If false, only external images can be added in content.
-	 *      @param  int		$okforextendededitor    True=Allow usage of extended editor tool (like fckeditor)
+     *		@param	int		$uselocalbrowser		Enabled to add links to local object with local browser. If false, only external images can be added in content.
+     *      @param  int		$okforextendededitor    True=Allow usage of extended editor tool (like fckeditor)
      *      @param  int		$rows                   Size of rows for textarea tool
-	 *      @param  int		$cols                   Size of cols for textarea tool
-	 *      @param	int		$readonly				0=Read/Edit, 1=Read only
-	 */
-    function __construct($htmlname,$content,$width='',$height=200,$toolbarname='Basic',$toolbarlocation='In',$toolbarstartexpanded=false,$uselocalbrowser=true,$okforextendededitor=true,$rows=0,$cols=0,$readonly=0)
+     *      @param  int		$cols                   Size of cols for textarea tool
+     *      @param	int		$readonly				0=Read/Edit, 1=Read only
+     */
+    public function __construct($htmlname,$content,$width='',$height=200,$toolbarname='Basic',$toolbarlocation='In',$toolbarstartexpanded=false,$uselocalbrowser=true,$okforextendededitor=true,$rows=0,$cols=0,$readonly=0)
     {
-    	global $conf,$langs;
+        global $conf,$langs;
 
-    	dol_syslog(get_class($this)."::DolEditor htmlname=".$htmlname." width=".$width." height=".$height." toolbarname=".$toolbarname);
+        dol_syslog(get_class($this)."::DolEditor htmlname=".$htmlname." width=".$width." height=".$height." toolbarname=".$toolbarname);
 
-    	if (! $rows) $rows=round($height/20);
-    	if (! $cols) $cols=($width?round($width/6):80);
-		$shorttoolbarname=preg_replace('/_encoded$/','',$toolbarname);
+        if (! $rows) $rows=round($height/20);
+        if (! $cols) $cols=($width?round($width/6):80);
+        $shorttoolbarname=preg_replace('/_encoded$/','',$toolbarname);
 
         // Name of extended editor to use (FCKEDITOR_EDITORNAME can be 'ckeditor' or 'fckeditor')
         $defaulteditor='ckeditor';
@@ -84,55 +83,51 @@ class DolEditor
         if ($conf->browser->phone) $this->tool = 'textarea';
 
         // Define content and some properties
-        if ($this->tool == 'ckeditor')
-        {
+        if ($this->tool == 'ckeditor') {
             $content=dol_htmlentitiesbr($content);  // If content is not HTML, we convert to HTML.
         }
-        if ($this->tool == 'fckeditor')
-    	{
-        	require_once DOL_DOCUMENT_ROOT.'/includes/fckeditor/fckeditor.php';
+        if ($this->tool == 'fckeditor') {
+            require_once DOL_DOCUMENT_ROOT.'/includes/fckeditor/fckeditor.php';
 
-    		$content=dol_htmlentitiesbr($content);	// If content is not HTML, we convert to HTML.
+            $content=dol_htmlentitiesbr($content);	// If content is not HTML, we convert to HTML.
 
-        	$this->editor = new FCKeditor($htmlname);
-        	$this->editor->BasePath = DOL_URL_ROOT.'/includes/fckeditor/' ;
-        	$this->editor->Value	= $content;
-        	$this->editor->Height   = $height;
-        	if (! empty($width)) $this->editor->Width = $width;
-        	$this->editor->ToolbarSet = $shorttoolbarname;
-        	$this->editor->Config['AutoDetectLanguage'] = 'true';
-        	$this->editor->Config['ToolbarLocation'] = $toolbarlocation ? $toolbarlocation : 'In';
-        	$this->editor->Config['ToolbarStartExpanded'] = $toolbarstartexpanded;
+            $this->editor = new FCKeditor($htmlname);
+            $this->editor->BasePath = DOL_URL_ROOT.'/includes/fckeditor/' ;
+            $this->editor->Value	= $content;
+            $this->editor->Height   = $height;
+            if (! empty($width)) $this->editor->Width = $width;
+            $this->editor->ToolbarSet = $shorttoolbarname;
+            $this->editor->Config['AutoDetectLanguage'] = 'true';
+            $this->editor->Config['ToolbarLocation'] = $toolbarlocation ? $toolbarlocation : 'In';
+            $this->editor->Config['ToolbarStartExpanded'] = $toolbarstartexpanded;
 
-    		// Rem: Le forcage de ces 2 parametres ne semble pas fonctionner.
-    		// Dolibarr utilise toujours liens avec modulepart='fckeditor' quelque soit modulepart.
-    		// Ou se trouve donc cette valeur /viewimage.php?modulepart=fckeditor&file=' ?
-        	$modulepart='fckeditor';
-    		$this->editor->Config['UserFilesPath'] = '/viewimage.php?modulepart='.$modulepart.'&file=';
-    		$this->editor->Config['UserFilesAbsolutePath'] = DOL_DATA_ROOT.'/'.$modulepart.'/' ;
+            // Rem: Le forcage de ces 2 parametres ne semble pas fonctionner.
+            // Dolibarr utilise toujours liens avec modulepart='fckeditor' quelque soit modulepart.
+            // Ou se trouve donc cette valeur /viewimage.php?modulepart=fckeditor&file=' ?
+            $modulepart='fckeditor';
+            $this->editor->Config['UserFilesPath'] = '/viewimage.php?modulepart='.$modulepart.'&file=';
+            $this->editor->Config['UserFilesAbsolutePath'] = DOL_DATA_ROOT.'/'.$modulepart.'/' ;
 
-        	$this->editor->Config['LinkBrowser']=($uselocalbrowser?'true':'false');
-        	$this->editor->Config['ImageBrowser']=($uselocalbrowser?'true':'false');
+            $this->editor->Config['LinkBrowser']=($uselocalbrowser?'true':'false');
+            $this->editor->Config['ImageBrowser']=($uselocalbrowser?'true':'false');
 
-        	if (file_exists(DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/fckeditor/fckconfig.js'))
-        	{
-        		$this->editor->Config['CustomConfigurationsPath'] = DOL_URL_ROOT.'/theme/'.$conf->theme.'/fckeditor/fckconfig.js';
-        		$this->editor->Config['SkinPath'] = DOL_URL_ROOT.'/theme/'.$conf->theme.'/fckeditor/';
-    		}
-    	}
+            if (file_exists(DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/fckeditor/fckconfig.js')) {
+                $this->editor->Config['CustomConfigurationsPath'] = DOL_URL_ROOT.'/theme/'.$conf->theme.'/fckeditor/fckconfig.js';
+                $this->editor->Config['SkinPath'] = DOL_URL_ROOT.'/theme/'.$conf->theme.'/fckeditor/';
+            }
+        }
 
-    	// Define some properties
-        if (in_array($this->tool,array('textarea','ckeditor')))
-        {
-    	    $this->content				= $content;
-    	    $this->htmlname 			= $htmlname;
-    	    $this->toolbarname			= $shorttoolbarname;
-    	    $this->toolbarstartexpanded = $toolbarstartexpanded;
+        // Define some properties
+        if (in_array($this->tool,array('textarea','ckeditor'))) {
+            $this->content				= $content;
+            $this->htmlname 			= $htmlname;
+            $this->toolbarname			= $shorttoolbarname;
+            $this->toolbarstartexpanded = $toolbarstartexpanded;
             $this->rows					= max(ROWS_3,$rows);
             $this->cols					= max(40,$cols);
             $this->height				= $height;
             $this->width				= $width;
-    	}
+        }
 
     }
 
@@ -144,56 +139,52 @@ class DolEditor
      *  @param	string	$morejs		Add more js. For example: ".on( \'saveSnapshot\', function(e) { alert(\'ee\'); });"
      *  @return	void
      */
-    function Create($noprint=0,$morejs='')
+    public function Create($noprint=0,$morejs='')
     {
-    	global $conf;
+        global $conf;
 
         $found=0;
-		$out='';
+        $out='';
 
-        if ($this->tool == 'fckeditor')
-        {
+        if ($this->tool == 'fckeditor') {
             $found=1;
             $this->editor->Create();
         }
-        if (in_array($this->tool,array('textarea','ckeditor')))
-        {
+        if (in_array($this->tool,array('textarea','ckeditor'))) {
             $found=1;
             //$out.= '<textarea id="'.$this->htmlname.'" name="'.$this->htmlname.'" rows="'.$this->rows.'" cols="'.$this->cols.'"'.($this->readonly?' disabled="disabled"':'').' class="flat">';
             $out.= '<textarea id="'.$this->htmlname.'" name="'.$this->htmlname.'" rows="'.$this->rows.'" cols="'.$this->cols.'" class="flat">';
             $out.= $this->content;
             $out.= '</textarea>';
 
-            if ($this->tool == 'ckeditor')
-            {
-            	if (! defined('REQUIRE_CKEDITOR')) define('REQUIRE_CKEDITOR','1');
+            if ($this->tool == 'ckeditor') {
+                if (! defined('REQUIRE_CKEDITOR')) define('REQUIRE_CKEDITOR','1');
 
-            	//$skin='kama';
-            	//$skin='office2003';
-            	//$skin='v2';
-            	$skin='kama';
+                //$skin='kama';
+                //$skin='office2003';
+                //$skin='v2';
+                $skin='kama';
 
-            	$htmlencode_force=preg_match('/_encoded$/',$this->toolbarname)?'true':'false';
+                $htmlencode_force=preg_match('/_encoded$/',$this->toolbarname)?'true':'false';
 
-            	$out.= '<script type="text/javascript">
-            			$(document).ready(function () {
+                $out.= '<script type="text/javascript">
+                        $(document).ready(function () {
                             /* if (CKEDITOR.loadFullCore) CKEDITOR.loadFullCore(); */
                             /* should be editor=CKEDITOR.replace but what if serveral editors ? */
                             CKEDITOR.replace(\''.$this->htmlname.'\',
-            					{
-            						/* property:xxx is same than CKEDITOR.config.property = xxx */
-            						customConfig : ckeditorConfig,
-            						readOnly : '.($this->readonly?'true':'false').',
-                            		htmlEncodeOutput :'.$htmlencode_force.',
-            						toolbar: \''.$this->toolbarname.'\',
-            						toolbarStartupExpanded: '.($this->toolbarstartexpanded ? 'true' : 'false').',
-            						width: '.($this->width ? '\''.$this->width.'\'' : '\'\'').',
-            						height: '.$this->height.',
+                                {
+                                    /* property:xxx is same than CKEDITOR.config.property = xxx */
+                                    customConfig : ckeditorConfig,
+                                    readOnly : '.($this->readonly?'true':'false').',
+                                    htmlEncodeOutput :'.$htmlencode_force.',
+                                    toolbar: \''.$this->toolbarname.'\',
+                                    toolbarStartupExpanded: '.($this->toolbarstartexpanded ? 'true' : 'false').',
+                                    width: '.($this->width ? '\''.$this->width.'\'' : '\'\'').',
+                                    height: '.$this->height.',
                                     skin: \''.$skin.'\',
                                     on :
                                             {
-                                                instanceReady : function( ev )
-                                                {
+                                                instanceReady : function( ev ) {
                                                     // Output paragraphs as <p>Text</p>.
                                                     this.dataProcessor.writer.setRules( \'p\',
                                                         {
@@ -205,8 +196,7 @@ class DolEditor
                                                         });
                                                 }
                                             }';
-            	if ($this->uselocalbrowser)
-            	{
+                if ($this->uselocalbrowser) {
                     $out.= ','."\n";
                     // To use filemanager with old fckeditor (GPL)
                     $out.= '    filebrowserBrowseUrl : ckeditorFilebrowserBrowseUrl,';
@@ -226,15 +216,14 @@ class DolEditor
                                filebrowserWindowHeight : \'500\',
                                filebrowserImageWindowWidth : \'900\',
                                filebrowserImageWindowHeight : \'500\'';
-            	}
-            	$out.= '	})'.$morejs;
-            	$out.= '});
-            			</script>';
+                }
+                $out.= '	})'.$morejs;
+                $out.= '});
+                        </script>';
             }
         }
 
-        if (empty($found))
-        {
+        if (empty($found)) {
             $out.= 'Error, unknown value for tool '.$this->tool.' in DolEditor Create function.';
         }
 
@@ -243,5 +232,3 @@ class DolEditor
     }
 
 }
-
-?>

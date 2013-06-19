@@ -28,18 +28,17 @@
  */
 class BoutiqueClient
 {
-    var $db ;
+    public $db ;
 
-    var $id ;
-    var $nom;
+    public $id ;
+    public $nom;
 
-
-	/**
-	 * 	Constructor
-	 *
-	 * 	@param		DoliDB	$db		Database handler
-	 */
-    function __construct($db)
+    /**
+     * 	Constructor
+     *
+     * 	@param		DoliDB	$db		Database handler
+     */
+    public function __construct($db)
     {
         $this->db = $db;
     }
@@ -50,29 +49,27 @@ class BoutiqueClient
      *   @param		int		$id			Id du client
      *   @return	int					<0 if KO, >0 if OK
      */
-    function fetch($id)
+    public function fetch($id)
     {
-		global $conf;
+        global $conf;
 
         $sql = "SELECT customers_id, customers_lastname, customers_firstname FROM ".$conf->global->OSC_DB_NAME.".".$conf->global->OSC_DB_TABLE_PREFIX."customers WHERE customers_id = ".$id;
 
         $resql = $this->db->query($sql);
-        if ( $resql )
-        {
+        if ($resql) {
             $result = $this->db->fetch_array($resql);
 
             $this->id      = $result["customers_id"];
             $this->name    = $result["customers_firstname"] . " " . $result["customers_lastname"];
 
             $this->db->free($resql);
-        	return 1;
-        }
-        else
-        {
+
+            return 1;
+        } else {
             print $this->db->error();
+
             return -1;
         }
     }
 
 }
-?>

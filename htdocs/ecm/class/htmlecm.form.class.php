@@ -21,7 +21,6 @@
  */
 require_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmdirectory.class.php';
 
-
 /**
  * \class      	FormEcm
  * \brief      	Classe permettant la generation de composants html
@@ -29,63 +28,54 @@ require_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmdirectory.class.php';
  */
 class FormEcm
 {
-	var $db;
-	var $error;
+    public $db;
+    public $error;
 
+    /**
+     * 	Constructor
+     *
+     * 	@param	DoliDB	$db		Database handler
+     */
+    public function __construct($db)
+    {
+        $this->db = $db;
+    }
 
-	/**
-	 * 	Constructor
-	 *
-	 * 	@param	DoliDB	$db		Database handler
-	 */
-	function __construct($db)
-	{
-		$this->db = $db;
-	}
+    /**
+     *	Retourne la liste des categories du type choisi
+     *
+     *  @param	int		$selected    		Id categorie preselectionnee
+     *  @param  string	$select_name		Nom formulaire HTML
+     *  @return	string						String with HTML select
+     */
+    public function select_all_sections($selected='',$select_name='')
+    {
+        global $langs;
+        $langs->load("ecm");
 
+        if ($select_name=="") $select_name="catParent";
 
-	/**
-	 *	Retourne la liste des categories du type choisi
-	 *
-	 *  @param	int		$selected    		Id categorie preselectionnee
-	 *  @param  string	$select_name		Nom formulaire HTML
-	 *  @return	string						String with HTML select
-	 */
-	function select_all_sections($selected='',$select_name='')
-	{
-		global $langs;
-		$langs->load("ecm");
+        $cat = new EcmDirectory($this->db);
+        $cate_arbo = $cat->get_full_arbo();
 
-		if ($select_name=="") $select_name="catParent";
+        $output = '<select class="flat" name="'.$select_name.'">';
+        if (is_array($cate_arbo)) {
+            if (! count($cate_arbo)) $output.= '<option value="-1" disabled="disabled">'.$langs->trans("NoCategoriesDefined").'</option>';
+            else {
+                $output.= '<option value="-1">&nbsp;</option>';
+                foreach ($cate_arbo as $key => $value) {
+                    if ($cate_arbo[$key]['id'] == $selected) {
+                        $add = 'selected="selected" ';
+                    } else {
+                        $add = '';
+                    }
+                    $output.= '<option '.$add.'value="'.$cate_arbo[$key]['id'].'">'.$cate_arbo[$key]['fulllabel'].'</option>';
+                }
+            }
+        }
+        $output.= '</select>';
+        $output.= "\n";
 
-		$cat = new EcmDirectory($this->db);
-		$cate_arbo = $cat->get_full_arbo();
-
-		$output = '<select class="flat" name="'.$select_name.'">';
-		if (is_array($cate_arbo))
-		{
-			if (! count($cate_arbo)) $output.= '<option value="-1" disabled="disabled">'.$langs->trans("NoCategoriesDefined").'</option>';
-			else
-			{
-				$output.= '<option value="-1">&nbsp;</option>';
-				foreach($cate_arbo as $key => $value)
-				{
-					if ($cate_arbo[$key]['id'] == $selected)
-					{
-						$add = 'selected="selected" ';
-					}
-					else
-					{
-						$add = '';
-					}
-					$output.= '<option '.$add.'value="'.$cate_arbo[$key]['id'].'">'.$cate_arbo[$key]['fulllabel'].'</option>';
-				}
-			}
-		}
-		$output.= '</select>';
-		$output.= "\n";
-		return $output;
-	}
+        return $output;
+    }
 }
-
-?>

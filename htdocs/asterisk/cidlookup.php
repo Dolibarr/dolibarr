@@ -32,12 +32,10 @@ $phone = $_GET['phone'];
 
 include '../master.inc.php';
 
-
 // Check parameters
-if (empty($phone))
-{
-	print "Error: Url must be called with parameter phone=phone to search\n";
-	exit;
+if (empty($phone)) {
+    print "Error: Url must be called with parameter phone=phone to search\n";
+    exit;
 }
 
 $sql = "SELECT s.nom as name FROM ".MAIN_DB_PREFIX."societe as s";
@@ -51,20 +49,14 @@ $sql.= $db->plimit(1);
 
 dol_syslog('cidlookup search information with phone '.$phone, LOG_DEBUG);
 $resql = $db->query($sql);
-if ($resql)
-{
-	$obj = $db->fetch_object($resql);
-	if ($obj)
-	{
-		$found = $obj->name;
-	}
-	$db->free($resql);
-}
-else
-{
-	dol_print_error($db,'Error');
+if ($resql) {
+    $obj = $db->fetch_object($resql);
+    if ($obj) {
+        $found = $obj->name;
+    }
+    $db->free($resql);
+} else {
+    dol_print_error($db,'Error');
 }
 
 echo $found;
-
-?>

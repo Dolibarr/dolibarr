@@ -29,7 +29,7 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/treeview.lib.php';
 
 if (! $user->rights->user->user->lire && ! $user->admin)
-	accessforbidden();
+    accessforbidden();
 
 $langs->load("users");
 $langs->load("companies");
@@ -37,15 +37,13 @@ $langs->load("companies");
 // Security check (for external users)
 $socid=0;
 if ($user->societe_id > 0)
-	$socid = $user->societe_id;
+    $socid = $user->societe_id;
 
 $sall=GETPOST('sall','alpha');
 $search_user=GETPOST('search_user','alpha');
 
 $userstatic=new User($db);
 $companystatic = new Societe($db);
-
-
 
 /*
  * View
@@ -60,8 +58,6 @@ llxHeader('',$langs->trans("ListOfUsers"). ' ('.$langs->trans("HierarchicView").
 
 print_fiche_titre($langs->trans("ListOfUsers"). ' ('.$langs->trans("HierarchicView").')', '<form action="'.DOL_URL_ROOT.'/user/index.php" method="POST"><input type="submit" class="button" style="width:120px" name="viewcal" value="'.dol_escape_htmltag($langs->trans("ViewList")).'"></form>');
 
-
-
 // Charge tableau des categories
 $user_arbo = $userstatic->get_full_tree();
 
@@ -71,22 +67,20 @@ $fulltree=$user_arbo;
 // Define data (format for treeview)
 $data=array();
 $data[] = array('rowid'=>0,'fk_menu'=>-1,'title'=>"racine",'mainmenu'=>'','leftmenu'=>'','fk_mainmenu'=>'','fk_leftmenu'=>'');
-foreach($fulltree as $key => $val)
-{
-	$userstatic->id=$val['id'];
-	$userstatic->ref=$val['label'];
-	$userstatic->firstname=$val['firstname'];
-	$userstatic->lastname=$val['name'];
-	$userstatic->statut=$val['statut'];
-	$li=$userstatic->getNomUrl(1,'').' ('.$val['login'].')';
+foreach ($fulltree as $key => $val) {
+    $userstatic->id=$val['id'];
+    $userstatic->ref=$val['label'];
+    $userstatic->firstname=$val['firstname'];
+    $userstatic->lastname=$val['name'];
+    $userstatic->statut=$val['statut'];
+    $li=$userstatic->getNomUrl(1,'').' ('.$val['login'].')';
 
-	$data[] = array(
-		'rowid'=>$val['rowid'],
-		'fk_menu'=>$val['fk_user'],
-		'entry'=>'<table class="nobordernopadding centpercent"><tr><td>'.$li.'</td><td align="right">'.$userstatic->getLibStatut(5).'</td></tr></table>'
-	);
+    $data[] = array(
+        'rowid'=>$val['rowid'],
+        'fk_menu'=>$val['fk_user'],
+        'entry'=>'<table class="nobordernopadding centpercent"><tr><td>'.$li.'</td><td align="right">'.$userstatic->getLibStatut(5).'</td></tr></table>'
+    );
 }
-
 
 print '<table class="liste" width="100%">';
 print '<tr class="liste_titre"><td>'.$langs->trans("HierarchicView").'</td><td></td><td align="right"><div id="iddivjstreecontrol"><a href="#">'.img_picto('','object_category').' '.$langs->trans("UndoExpandAll").'</a>';
@@ -94,28 +88,23 @@ print ' | <a href="#">'.img_picto('','object_category-expanded').' '.$langs->tra
 
 $nbofentries=(count($data) - 1);
 
-if ($nbofentries > 0)
-{
-	print '<tr '.$bc[true].'><td colspan="3">';
-	tree_recur($data,$data[0],0);
-	print '</td></tr>';
-}
-else
-{
-	print '<tr '.$bc[true].'>';
-	print '<td colspan="3"><table class="nobordernopadding"><tr class="nobordernopadding"><td>'.img_picto_common('','treemenu/branchbottom.gif').'</td>';
-	print '<td valign="middle">';
-	print $langs->trans("NoCategoryYet");
-	print '</td>';
-	print '<td>&nbsp;</td>';
-	print '</table></td>';
-	print '</tr>';
+if ($nbofentries > 0) {
+    print '<tr '.$bc[true].'><td colspan="3">';
+    tree_recur($data,$data[0],0);
+    print '</td></tr>';
+} else {
+    print '<tr '.$bc[true].'>';
+    print '<td colspan="3"><table class="nobordernopadding"><tr class="nobordernopadding"><td>'.img_picto_common('','treemenu/branchbottom.gif').'</td>';
+    print '<td valign="middle">';
+    print $langs->trans("NoCategoryYet");
+    print '</td>';
+    print '<td>&nbsp;</td>';
+    print '</table></td>';
+    print '</tr>';
 }
 
 print "</table>";
 
-
 llxFooter();
 
 $db->close();
-?>

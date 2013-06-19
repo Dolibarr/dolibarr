@@ -21,7 +21,6 @@
  *      \brief      Empty authentication functions for test
  */
 
-
 /**
  * Check validity of user/password/entity
  * If test is ko, reason must be filled into $_SESSION["dol_loginmesg"]
@@ -33,11 +32,9 @@
  */
 function check_user_password_empty($usertotest,$passwordtotest,$entitytotest)
 {
-	dol_syslog("functions_empty::check_user_password_empty usertotest=".$usertotest);
+    dol_syslog("functions_empty::check_user_password_empty usertotest=".$usertotest);
 
-	$login='';
+    $login='';
 
-	return $login;
+    return $login;
 }
-
-?>

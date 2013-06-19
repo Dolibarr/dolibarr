@@ -26,7 +26,6 @@
 include_once DOL_DOCUMENT_ROOT . '/core/class/stats.class.php';
 include_once DOL_DOCUMENT_ROOT . '/adherents/class/cotisation.class.php';
 
-
 /**
  *	Class to manage statistics of members
  */
@@ -34,149 +33,144 @@ class AdherentStats extends Stats
 {
     public $table_element;
 
-    var $socid;
-    var $userid;
+    public $socid;
+    public $userid;
 
-    var $from;
-    var $field;
-    var $where;
+    public $from;
+    public $field;
+    public $where;
 
-
-	/**
-	 *	Constructor
-	 *
-	 *	@param 		DoliDB		$db			Database handler
-	 * 	@param 		int			$socid	   	Id third party
+    /**
+     *	Constructor
+     *
+     *	@param 		DoliDB		$db			Database handler
+     * 	@param 		int			$socid	   	Id third party
      * 	@param   	int			$userid    	Id user for filter
-	 * 	@return 	AdherentStats
-	 */
-	function __construct($db, $socid=0, $userid=0)
-	{
-		global $user, $conf;
+     * 	@return 	AdherentStats
+     */
+    public function __construct($db, $socid=0, $userid=0)
+    {
+        global $user, $conf;
 
-		$this->db = $db;
+        $this->db = $db;
         $this->socid = $socid;
         $this->userid = $userid;
 
-		$object=new Cotisation($this->db);
+        $object=new Cotisation($this->db);
 
-		$this->from = MAIN_DB_PREFIX.$object->table_element." as p";
-		$this->from.= ", ".MAIN_DB_PREFIX."adherent as m";
+        $this->from = MAIN_DB_PREFIX.$object->table_element." as p";
+        $this->from.= ", ".MAIN_DB_PREFIX."adherent as m";
 
-		$this->field='cotisation';
+        $this->field='cotisation';
 
-		$this->where.= " m.statut != 0";
-		$this->where.= " AND p.fk_adherent = m.rowid AND m.entity = ".$conf->entity;
-		//if (!$user->rights->societe->client->voir && !$user->societe_id) $this->where .= " AND p.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
-		if($this->memberid)
-		{
-			$this->where .= " AND m.rowid = ".$this->memberid;
-		}
+        $this->where.= " m.statut != 0";
+        $this->where.= " AND p.fk_adherent = m.rowid AND m.entity = ".$conf->entity;
+        //if (!$user->rights->societe->client->voir && !$user->societe_id) $this->where .= " AND p.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
+        if ($this->memberid) {
+            $this->where .= " AND m.rowid = ".$this->memberid;
+        }
         //if ($this->userid > 0) $this->where.=' AND fk_user_author = '.$this->userid;
-	}
+    }
 
+    /**
+     * Renvoie le nombre de proposition par mois pour une annee donnee
+     *
+     * @param  int   $year Year
+     * @return array Array of nb each month
+     */
+    public function getNbByMonth($year)
+    {
+        global $user;
 
-	/**
-	 * Renvoie le nombre de proposition par mois pour une annee donnee
-	 *
-     * @param   int		$year       Year
-     * @return	array				Array of nb each month
-	 */
-	function getNbByMonth($year)
-	{
-		global $user;
-
-		$sql = "SELECT date_format(p.dateadh,'%m') as dm, count(*)";
-		$sql.= " FROM ".$this->from;
-		//if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-		$sql.= " WHERE date_format(p.dateadh,'%Y') = '".$year."'";
-		$sql.= " AND ".$this->where;
-		$sql.= " GROUP BY dm";
+        $sql = "SELECT date_format(p.dateadh,'%m') as dm, count(*)";
+        $sql.= " FROM ".$this->from;
+        //if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+        $sql.= " WHERE date_format(p.dateadh,'%Y') = '".$year."'";
+        $sql.= " AND ".$this->where;
+        $sql.= " GROUP BY dm";
         $sql.= $this->db->order('dm','DESC');
 
-		return $this->_getNbByMonth($year, $sql);
-	}
+        return $this->_getNbByMonth($year, $sql);
+    }
 
-	/**
-	 * Renvoie le nombre de cotisation par annee
-	 *
-     * @return	array				Array of nb each year
-	 */
-	function getNbByYear()
-	{
-		global $user;
+    /**
+     * Renvoie le nombre de cotisation par annee
+     *
+     * @return array Array of nb each year
+     */
+    public function getNbByYear()
+    {
+        global $user;
 
-		$sql = "SELECT date_format(p.dateadh,'%Y') as dm, count(*)";
-		$sql.= " FROM ".$this->from;
-		//if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-		$sql.= " WHERE ".$this->where;
-		$sql.= " GROUP BY dm";
+        $sql = "SELECT date_format(p.dateadh,'%Y') as dm, count(*)";
+        $sql.= " FROM ".$this->from;
+        //if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+        $sql.= " WHERE ".$this->where;
+        $sql.= " GROUP BY dm";
         $sql.= $this->db->order('dm','DESC');
 
-		return $this->_getNbByYear($sql);
-	}
+        return $this->_getNbByYear($sql);
+    }
 
-	/**
-	 * Renvoie le nombre de cotisation par mois pour une annee donnee
-	 *
-     * @param   int		$year       Year
-     * @return	array				Array of amount each month
-	 */
-	function getAmountByMonth($year)
-	{
-		global $user;
+    /**
+     * Renvoie le nombre de cotisation par mois pour une annee donnee
+     *
+     * @param  int   $year Year
+     * @return array Array of amount each month
+     */
+    public function getAmountByMonth($year)
+    {
+        global $user;
 
-		$sql = "SELECT date_format(p.dateadh,'%m') as dm, sum(p.".$this->field.")";
-		$sql.= " FROM ".$this->from;
-		//if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-		$sql.= " WHERE date_format(p.dateadh,'%Y') = '".$year."'";
-		$sql.= " AND ".$this->where;
-		$sql.= " GROUP BY dm";
+        $sql = "SELECT date_format(p.dateadh,'%m') as dm, sum(p.".$this->field.")";
+        $sql.= " FROM ".$this->from;
+        //if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+        $sql.= " WHERE date_format(p.dateadh,'%Y') = '".$year."'";
+        $sql.= " AND ".$this->where;
+        $sql.= " GROUP BY dm";
         $sql.= $this->db->order('dm','DESC');
 
-		return $this->_getAmountByMonth($year, $sql);
-	}
+        return $this->_getAmountByMonth($year, $sql);
+    }
 
-	/**
-	 * Return average amount each month
-	 *
-     * @param   int		$year       Year
-     * @return	array				Array of average each month
-	 */
-	function getAverageByMonth($year)
-	{
-		global $user;
+    /**
+     * Return average amount each month
+     *
+     * @param  int   $year Year
+     * @return array Array of average each month
+     */
+    public function getAverageByMonth($year)
+    {
+        global $user;
 
-		$sql = "SELECT date_format(p.dateadh,'%m') as dm, avg(p.".$this->field.")";
-		$sql.= " FROM ".$this->from;
-		//if (!$user->rights->societe->client->voir && !$this->socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-		$sql.= " WHERE date_format(p.dateadh,'%Y') = '".$year."'";
-		$sql.= " AND ".$this->where;
-		$sql.= " GROUP BY dm";
+        $sql = "SELECT date_format(p.dateadh,'%m') as dm, avg(p.".$this->field.")";
+        $sql.= " FROM ".$this->from;
+        //if (!$user->rights->societe->client->voir && !$this->socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+        $sql.= " WHERE date_format(p.dateadh,'%Y') = '".$year."'";
+        $sql.= " AND ".$this->where;
+        $sql.= " GROUP BY dm";
         $sql.= $this->db->order('dm','DESC');
 
-		return $this->_getAverageByMonth($year, $sql);
-	}
+        return $this->_getAverageByMonth($year, $sql);
+    }
 
+    /**
+     *	Return nb, total and average
+     *
+     * 	@return		array					Array with nb, total amount, average for each year
+     */
+    public function getAllByYear()
+    {
+        global $user;
 
-	/**
-	 *	Return nb, total and average
-	 *
-	 * 	@return		array					Array with nb, total amount, average for each year
-	 */
-	function getAllByYear()
-	{
-		global $user;
-
-		$sql = "SELECT date_format(p.dateadh,'%Y') as year, count(*) as nb, sum(".$this->field.") as total, avg(".$this->field.") as avg";
-		$sql.= " FROM ".$this->from;
-		//if (!$user->rights->societe->client->voir && !$this->socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-		$sql.= " WHERE ".$this->where;
-		$sql.= " GROUP BY year";
+        $sql = "SELECT date_format(p.dateadh,'%Y') as year, count(*) as nb, sum(".$this->field.") as total, avg(".$this->field.") as avg";
+        $sql.= " FROM ".$this->from;
+        //if (!$user->rights->societe->client->voir && !$this->socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+        $sql.= " WHERE ".$this->where;
+        $sql.= " GROUP BY year";
         $sql.= $this->db->order('year','DESC');
 
-		return $this->_getAllByYear($sql);
-	}
+        return $this->_getAllByYear($sql);
+    }
 
 }
-?>
