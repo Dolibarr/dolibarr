@@ -259,6 +259,7 @@ select.flat, form.flat select {
 input:disabled {
 	background:#ddd;
 }
+
 input:-webkit-autofill {
 	background-color: #FCFEFA !important; background-image:none !important;
 }
@@ -274,6 +275,10 @@ textarea:disabled {
 }
 input[type=checkbox] { background-color: transparent; border: none; box-shadow: none; }
 input[type=image] { background-color: transparent; border: none; box-shadow: none; }
+
+<?php if (! empty($dol_use_jmobile)) { ?>
+legend { margin-bottom: 8px; }
+<?php } ?>
 
 .button {
     font-family: <?php print $fontlist ?>;
@@ -2676,6 +2681,11 @@ div.ui-radio
 	margin: 0;
 	position: static;
 }
+.ui-mobile fieldset
+{
+	padding-bottom: 10px; margin-bottom: 4px; border-bottom: 1px solid #AAAAAA !important;
+}
+
 
 <?php
 if (is_object($db)) $db->close();
