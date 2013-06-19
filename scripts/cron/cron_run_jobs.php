@@ -58,7 +58,6 @@ if (! isset($argv[2]) || ! $argv[2]) {
 require_once ($path."../../htdocs/master.inc.php");
 require_once (DOL_DOCUMENT_ROOT."/cron/class/cronjob.class.php");
 require_once (DOL_DOCUMENT_ROOT.'/user/class/user.class.php');
-require_once (DOL_DOCUMENT_ROOT."/cron/class/cronjob.class.php");
 
 // Global variables
 $version=DOL_VERSION;
