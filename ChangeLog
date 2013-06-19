@@ -6,6 +6,7 @@ English Dolibarr ChangeLog
 
 - Fix: [ bug #903 ] Fatal error: Call to undefined function dol_get_first_day() in htdocs/commande/liste.php
 - Fix: [ bug #934 ] Error on proformat invoice creation (pgsql)
+- Fix: [ bug #947 ] Can't create proposal lines with unit price = 0
 
 ***** ChangeLog for 3.3.2 compared to 3.3.1 *****
 
