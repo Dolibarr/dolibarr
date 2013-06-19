@@ -196,7 +196,7 @@ body {
 	background-color: <?php print $colorbackbody; ?>;
 <?php } ?>
 	color:#232323;
-	<?php if (empty($dol_use_jmobile)) { ?>
+	<?php if (empty($dol_use_jmobile) || 1==1) { ?>
 	font-size:<?php print $fontsize ?>px;
 	<?php } ?>
    	font-family:<?php print $fontlist ?>;
@@ -2066,9 +2066,13 @@ li.ui-li-divider .ui-link {
 	color: #FFF !important;
 }
 .ui-btn-inner {
+	min-width: .4em;
 	padding-left: 10px;
 	padding-right: 10px;
 	white-space: normal;
+	<?php if (empty($dol_use_jmobile) || 1==1) { ?>
+	font-size: <?php print $fontsize ?>px;
+	<?php } ?>
 }
 .ui-select .ui-btn-icon-right .ui-btn-inner {
 	padding-right: 36px;
