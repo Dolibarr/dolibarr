@@ -26,6 +26,7 @@
 
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 if (! empty($conf->propal->enabled))      require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 if (! empty($conf->facture->enabled))     require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
@@ -82,6 +83,7 @@ $help_url="EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos";
 llxHeader("",$langs->trans("Referers"),$help_url);
 
 $form = new Form($db);
+$formproject=new FormProjets($db);
 
 $userstatic=new User($db);
 
@@ -213,7 +215,7 @@ foreach ($listofreferent as $key => $value)
 
 		print_titre($langs->trans($title));
 		
-		$selectList=$project->select_element($tablename);
+		$selectList=$formproject->select_element($tablename);
 		if ($selectList)
 		{
 			print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$projectid.'" method="post">';
