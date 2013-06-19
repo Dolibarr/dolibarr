@@ -142,6 +142,10 @@ input.button[type=submit] {
     font-weight: bold;
 }
 
+<?php if (! empty($dol_use_jmobile)) { ?>
+legend { margin-bottom: 8px; }
+<?php } ?>
+
 .button {
     font-family: <?php print $fontlist ?>;
 	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/button_bg.png',1); ?>);
@@ -2353,6 +2357,10 @@ div.ui-radio
 	width: auto;
 	margin: 0;
 	position: static;
+}
+.ui-mobile fieldset
+{
+	padding-bottom: 10px; margin-bottom: 4px; border-bottom: 1px solid #AAAAAA !important;
 }
 
 
