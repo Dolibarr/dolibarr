@@ -64,6 +64,7 @@ abstract class CommonObject
     {
         global $conf;
 
+        //print "lastname=".$this->lastname." name=".$this->name." nom=".$this->nom."<br>\n";
         $lastname=$this->lastname;
         $firstname=$this->firstname;
         if (empty($lastname))  $lastname=($this->lastname?$this->lastname:($this->name?$this->name:$this->nom));

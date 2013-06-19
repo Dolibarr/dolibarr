@@ -216,7 +216,7 @@ body {
 	background: <?php print $colorbackbody; ?>;
 <?php } ?>
 	color: #101010;
-	<?php if (empty($dol_use_jmobile)) { ?>
+	<?php if (empty($dol_use_jmobile) || 1==1) { ?>
 	font-size: <?php print $fontsize ?>px;
 	<?php } ?>
 	font-family: <?php print $fontlist ?>;
@@ -2622,17 +2622,27 @@ div.dolEventError h1, div.dolEventError h2 {
 li.ui-li-divider .ui-link {
 	color: #FFF !important;
 }
+.ui-btn {
+	margin: 0.2em 4px
+}
 a.ui-link, a.ui-link:hover, .ui-btn:hover, span.ui-btn-text:hover, span.ui-btn-inner:hover {
 	text-decoration: none !important;
 }
 
 .ui-btn-inner {
+	min-width: .4em;
 	padding-left: 10px;
 	padding-right: 10px;
+	<?php if (empty($dol_use_jmobile) || 1==1) { ?>
+	font-size: <?php print $fontsize ?>px;
+    <?php } ?>
 	/* white-space: normal; */		/* Warning, enable this break the truncate feature */
 }
+.ui-btn-icon-right .ui-btn-inner {
+	padding-right: 34px;
+}
 .ui-select .ui-btn-icon-right .ui-btn-inner {
-	padding-right: 36px;
+	padding-right: 38px;
 }
 .fiche .ui-controlgroup {
 	margin: 0px;

@@ -79,7 +79,7 @@ if (! empty($conf->global->MAIN_OVERWRITE_THEME_RES)) { $path='/'.$conf->global-
 body {
 /*	background-color: #FFFFFF; */
 	color: #101010;
-	<?php if (empty($dol_use_jmobile)) { ?>
+	<?php if (empty($dol_use_jmobile) || 1==1) { ?>
 	font-size: <?php print $fontsize ?>px;
     <?php } ?>
     font-family: <?php print $fontlist ?>;
