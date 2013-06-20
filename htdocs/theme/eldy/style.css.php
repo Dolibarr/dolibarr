@@ -1107,9 +1107,6 @@ td.photo {
     padding: 0 4px 0 4px !important;
 }
 
-.toolbar {
-    height: 34px !important;
-}
 
 a.toolbarbutton {
     margin-top: 0px;
@@ -2623,7 +2620,7 @@ li.ui-li-divider .ui-link {
 	color: #FFF !important;
 }
 .ui-btn {
-	margin: 0.2em 4px
+	margin: 0.1em 2px
 }
 a.ui-link, a.ui-link:hover, .ui-btn:hover, span.ui-btn-text:hover, span.ui-btn-inner:hover {
 	text-decoration: none !important;
@@ -2641,8 +2638,14 @@ a.ui-link, a.ui-link:hover, .ui-btn:hover, span.ui-btn-text:hover, span.ui-btn-i
 .ui-btn-icon-right .ui-btn-inner {
 	padding-right: 34px;
 }
+.ui-btn-icon-left .ui-btn-inner {
+	padding-left: 34px;
+}
 .ui-select .ui-btn-icon-right .ui-btn-inner {
 	padding-right: 38px;
+}
+.ui-select .ui-btn-icon-left .ui-btn-inner {
+	padding-left: 38px;
 }
 .fiche .ui-controlgroup {
 	margin: 0px;
@@ -2657,8 +2660,13 @@ div.ui-controlgroup-controls div.tabsElem a
 	-moz-box-shadow: 0 -3px 6px rgba(0,0,0,.2);
 	-webkit-box-shadow: 0 -3px 6px rgba(0,0,0,.2);
 	box-shadow: 0 -3px 6px rgba(0,0,0,.2);
-	border: none;
 }
+div.ui-controlgroup-controls div.tabsElem a#active {
+	-moz-box-shadow: 0 -3px 6px rgba(0,0,0,.3);
+	-webkit-box-shadow: 0 -3px 6px rgba(0,0,0,.3);
+	box-shadow: 0 -3px 6px rgba(0,0,0,.3);
+}
+
 a.tab span.ui-btn-inner
 {
 	border: none;
@@ -2709,6 +2717,7 @@ ul.ulmenu {
 	border-radius: 0;
 	-webkit-border-radius: 0;
 }
+
 
 <?php
 if (is_object($db)) $db->close();

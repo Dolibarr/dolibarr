@@ -57,6 +57,12 @@ $left=($langs->trans("DIRECTION")=='rtl'?'right':'left');
 $fontsize=empty($conf->dol_optimize_smallscreen)?'12':'12';
 $fontsizesmaller=empty($conf->dol_optimize_smallscreen)?'11':'11';
 
+
+$path='';    			// This value may be used in future for external module to overwrite theme
+$theme='bureau2crea';	// Value of theme
+if (! empty($conf->global->MAIN_OVERWRITE_THEME_RES)) { $path='/'.$conf->global->MAIN_OVERWRITE_THEME_RES; $theme=$conf->global->MAIN_OVERWRITE_THEME_RES; }
+
+// Define image path files
 $fontlist='arial, sans-serif, verdana, helvetica';
 //$fontlist='Verdana,Helvetica,Arial,sans-serif';
 
@@ -66,9 +72,6 @@ $dol_optimize_smallscreen=$conf->dol_optimize_smallscreen;
 $dol_no_mouse_hover=$conf->dol_no_mouse_hover;
 $dol_use_jmobile=$conf->dol_use_jmobile;
 
-$path='';    			// This value may be used in future for external module to overwrite theme
-$theme='bureau2crea';	// Value of theme
-if (! empty($conf->global->MAIN_OVERWRITE_THEME_RES)) { $path='/'.$conf->global->MAIN_OVERWRITE_THEME_RES; $theme=$conf->global->MAIN_OVERWRITE_THEME_RES; }
 
 ?>
 
@@ -301,7 +304,7 @@ div.fichethirdleft {
 	<?php if (empty($conf->dol_optimize_smallscreen)) { print "width: 35%;\n"; } ?>
 }
 div.fichetwothirdright {
-	<?php if (empty($conf->dol_optimize_smallscreen)) { print "float: ".$left.";\n"; } ?>
+	<?php if (empty($conf->dol_optimize_smallscreen)) { print "float: ".$right.";\n"; } ?>
 	<?php if (empty($conf->dol_optimize_smallscreen)) { print "width: 65%;\n"; } ?>
 }
 div.fichehalfleft {
@@ -309,7 +312,7 @@ div.fichehalfleft {
 	<?php if (empty($conf->dol_optimize_smallscreen)) { print "width: 50%;\n"; } ?>
 }
 div.fichehalfright {
-	<?php if (empty($conf->dol_optimize_smallscreen)) { print "float: ".$left.";\n"; } ?>
+	<?php if (empty($conf->dol_optimize_smallscreen)) { print "float: ".$right.";\n"; } ?>
 	<?php if (empty($conf->dol_optimize_smallscreen)) { print "width: 50%;\n"; } ?>
 }
 div.ficheaddleft {
@@ -957,7 +960,7 @@ img.toolbarbutton {
  *  RESIZER-BARS
  */
 .ui-layout-resizer  { /* all 'resizer-bars' */
-	width: 8px !important;
+	width: <?php echo (empty($conf->dol_optimize_smallscreen)?'8':'24'); ?>px !important;
 }
 .ui-layout-resizer-hover    {   /* affects both open and closed states */
 }
@@ -966,7 +969,7 @@ img.toolbarbutton {
 /*.ui-layout-resizer-open-hover ,*/ /* hover-color to 'resize' */
 .ui-layout-resizer-dragging {   /* resizer beging 'dragging' */
     background: #DDD;
-    width: 8px;
+    width: <?php echo (empty($conf->dol_optimize_smallscreen)?'8':'24'); ?>px;
 }
 .ui-layout-resizer-dragging {   /* CLONED resizer being dragged */
     border-left:  1px solid #BBB;
@@ -1079,6 +1082,8 @@ img.toolbarbutton {
     border:         1px solid #BBB;
     border-width:   0;
     }
+.ecm-layout-resizer-closed {
+}
 
 .ecm-in-layout-center {
     border-left: 1px !important;
@@ -1731,7 +1736,7 @@ border: 0px;
 }
 
 div.titre {
-	font-family: "Trebuchet MS",Arial,Helvetica,sans-serif;
+	font-family: <?php print $fontlist ?>;
 	font-weight: normal;
 	color: #842F00;
     font-size: 16px;
@@ -1929,9 +1934,30 @@ li.cal_event       { border: none; list-style-type: none; }
 /*  Ajax - Liste deroulante de l'autocompletion                                   */
 /* ============================================================================== */
 
-.ui-widget { font-family: Verdana,Arial,sans-serif; font-size: 0.9em; }
 .ui-autocomplete-loading { background: white url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/working.gif',1); ?>) right center no-repeat; }
-
+.ui-autocomplete {
+	       position:absolute;
+	       width:auto;
+	       font-size: 1.0em;
+	       background-color:white;
+	       border:1px solid #888;
+	       margin:0px;
+	       padding:0px;
+	     }
+.ui-autocomplete ul {
+	       list-style-type:none;
+	       margin:0px;
+	       padding:0px;
+	     }
+.ui-autocomplete ul li.selected { background-color: #D3E5EC;}
+.ui-autocomplete ul li {
+	       list-style-type:none;
+	       display:block;
+	       margin:0;
+	       padding:2px;
+	       height:18px;
+	       cursor:pointer;
+	     }
 
 /* ============================================================================== */
 /*  jQuery - jeditable                                                            */
@@ -2106,9 +2132,22 @@ A.none, A.none:active, A.none:visited, A.none:hover {
     line-height:1.5;
     zoom:1;
     font-weight: normal;
-    font-family:Verdana,Arial,sans-serif;
+    font-family:<?php echo $fontlist; ?>;
     font-size:1em;
 }
+.ui-widget {
+    font-family:<?php echo $fontlist; ?>;
+    font-size:<?php echo $fontsize; ?>px;
+}
+.ui-button { margin-left: -1px; }
+.ui-button-icon-only .ui-button-text { height: 8px; }
+.ui-button-icon-only .ui-button-text, .ui-button-icons-only .ui-button-text { padding: 2px 0px 6px 0px; }
+.ui-button-text
+{
+    line-height: 1em !important;
+}
+.ui-autocomplete-input { margin: 0; padding: 1px; }
+
 
 table.noborder {
 	margin-bottom: 10px;
@@ -2406,7 +2445,7 @@ div.ecmjqft {
 /* Core Styles */
 .ecmjqft LI.directory { font-weight:normal; background: url(<?php echo dol_buildpath($path.'/theme/common/treemenu/folder2.png',1); ?>) left top no-repeat; }
 .ecmjqft LI.expanded { font-weight:normal; background: url(<?php echo dol_buildpath($path.'/theme/common/treemenu/folder2-expanded.png',1); ?>) left top no-repeat; }
-.ecmjqft LI.wait { font-weight:normal; background: url(<?php echo dol_buildpath('/theme/eldy/img/working.gif',1); ?>) left top no-repeat; }
+.ecmjqft LI.wait { font-weight:normal; background: url(<?php echo dol_buildpath('/theme/'.$theme.'/img/working.gif',1); ?>) left top no-repeat; }
 
 
 /* ============================================================================== */
@@ -2434,6 +2473,9 @@ div.ecmjqft {
 li.ui-li-divider .ui-link {
 	color: #FFF !important;
 }
+.ui-btn {
+	margin: 0.1em 2px
+}
 a.ui-link, a.ui-link:hover, .ui-btn:hover, span.ui-btn-text:hover, span.ui-btn-inner:hover {
 	text-decoration: none !important;
 }
@@ -2446,6 +2488,10 @@ a.ui-link, a.ui-link:hover, .ui-btn:hover, span.ui-btn-text:hover, span.ui-btn-i
 .ui-select .ui-btn-icon-right .ui-btn-inner {
 	padding-right: 36px;
 }
+.ui-select .ui-btn-icon-left .ui-btn-inner {
+	padding-left: 36px;
+}
+
 .fiche .ui-controlgroup {
 	margin: 0px;
 	padding-bottom: 0px;
@@ -2506,6 +2552,12 @@ div.ui-radio
 {
 	padding-bottom: 10px; margin-bottom: 4px; border-bottom: 1px solid #AAAAAA !important;
 }
+
+ul.ulmenu {
+	border-radius: 0;
+	-webkit-border-radius: 0;
+}
+
 
 <?php
 if (is_object($db)) $db->close();
