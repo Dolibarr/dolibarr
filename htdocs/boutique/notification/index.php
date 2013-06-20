@@ -70,7 +70,7 @@ if ($resql)
     {
       $objp = $dbosc->fetch_object($resql);
       $var=!$var;
-      print "<tr $bc[$var]>";
+      print "<tr ".$bc[$var].">";
       print "<td width='70%'><a href=\"fiche.php?id=$objp->rowid\">$objp->customers_firstname $objp->customers_lastname</a></TD>\n";
       print '<td><a href="'.DOL_URL_ROOT.'/boutique/livre/fiche.php?oscid='.$objp->products_id.'">'.$objp->products_name."</a></td>";
       print "</tr>\n";

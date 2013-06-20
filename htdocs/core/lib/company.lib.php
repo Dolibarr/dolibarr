@@ -448,7 +448,7 @@ function show_projects($conf,$langs,$db,$object,$backtopage='')
                     if ($user->rights->projet->lire && $userAccess > 0)
                     {
                         $var = !$var;
-                        print "<tr $bc[$var]>";
+                        print "<tr ".$bc[$var].">";
 
                         // Ref
                         print '<td><a href="'.DOL_URL_ROOT.'/projet/fiche.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowProject"),($obj->public?'projectpub':'project'))." ".$obj->ref.'</a></td>';

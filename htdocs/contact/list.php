@@ -318,7 +318,7 @@ if ($result)
 
         $var=!$var;
 
-        print "<tr $bc[$var]>";
+        print "<tr ".$bc[$var].">";
 
 		// Name
 		print '<td valign="middle">';

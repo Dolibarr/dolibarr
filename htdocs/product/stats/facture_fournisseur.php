@@ -164,7 +164,7 @@ if ($id > 0 || ! empty($ref))
                     $objp = $db->fetch_object($result);
                     $var=!$var;
 
-                    print "<tr $bc[$var]>";
+                    print "<tr ".$bc[$var].">";
                     print '<td>';
                     $supplierinvoicestatic->id=$objp->facid;
                     $supplierinvoicestatic->ref=$objp->facnumber;

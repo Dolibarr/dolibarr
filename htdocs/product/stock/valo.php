@@ -103,7 +103,7 @@ if ($result)
         while ($i < min($num,$limit))
         {
             $objp = $db->fetch_object($result);
-            print "<tr $bc[$var]>";
+            print "<tr ".$bc[$var].">";
             print '<td><a href="fiche.php?id='.$objp->ref.'">'.img_object($langs->trans("ShowWarehouse"),'stock').' '.$objp->label.'</a></td>';
             print '<td>'.$objp->lieu.'</td>';
             // PMP value

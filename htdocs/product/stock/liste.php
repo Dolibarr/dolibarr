@@ -87,7 +87,7 @@ if ($result)
 		{
 			$objp = $db->fetch_object($result);
 			$var=!$var;
-			print "<tr $bc[$var]>";
+			print "<tr ".$bc[$var].">";
 			print '<td><a href="fiche.php?id='.$objp->rowid.'">'.img_object($langs->trans("ShowWarehouse"),'stock').' '.$objp->ref.'</a></td>';
 			print '<td>'.$objp->lieu.'</td>';
 			print '<td align="right">'.$entrepot->LibStatut($objp->statut,5).'</td>';

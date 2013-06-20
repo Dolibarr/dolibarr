@@ -450,7 +450,7 @@ if ($object->fetch($id) >= 0)
 				$obj = $db->fetch_object($resql);
 				$var=!$var;
 
-				print "<tr $bc[$var]>";
+				print "<tr ".$bc[$var].">";
 				print '<td>'.$obj->email.'</td>';
 				print '<td>'.$obj->lastname.'</td>';
 				print '<td>'.$obj->firstname.'</td>';

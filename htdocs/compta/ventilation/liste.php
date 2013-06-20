@@ -88,7 +88,7 @@ if ($result)
 	{
 		$objp = $db->fetch_object($result);
 		$var=!$var;
-		print "<tr $bc[$var]>";
+		print "<tr ".$bc[$var].">";
 
 		// Ref facture
 		$facture_static->ref=$objp->facnumber;
