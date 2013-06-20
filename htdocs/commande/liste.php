@@ -46,6 +46,7 @@ $sall=GETPOST('sall');
 $socid=GETPOST('socid','int');
 $search_user=GETPOST('search_user','int');
 $search_sale=GETPOST('search_sale','int');
+$search_montant_ht=GETPOST('search_montant_ht','int');
 
 // Security check
 $id = (GETPOST('orderid')?GETPOST('orderid'):GETPOST('id','int'));
@@ -190,7 +191,10 @@ if ($search_user > 0)
 {
     $sql.= " AND ec.fk_c_type_contact = tc.rowid AND tc.element='commande' AND tc.source='internal' AND ec.element_id = c.rowid AND ec.fk_socpeople = ".$search_user;
 }
-
+if ($search_montant_ht)
+{
+	$sql.= " AND c.total_ht='".$db->escape(price2num(trim($search_montant_ht)))."'";
+}
 $sql.= ' ORDER BY '.$sortfield.' '.$sortorder;
 $sql.= $db->plimit($limit + 1,$offset);
 
@@ -235,6 +239,7 @@ if ($resql)
 	if ($sref_client)     $param.='&sref_client='.$sref_client;
 	if ($search_user > 0) $param.='&search_user='.$search_user;
 	if ($search_sale > 0) $param.='&search_sale='.$search_sale;
+	if ($search_montant_ht)  $param.='&search_montant_ht='.$search_montant_ht;
 
 	$num = $db->num_rows($resql);
 	print_barre_liste($title, $page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num);
@@ -276,7 +281,9 @@ if ($resql)
 	print_liste_field_titre($langs->trans('RefCustomerOrder'),$_SERVER["PHP_SELF"],'c.ref_client','',$param,'',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans('OrderDate'),$_SERVER["PHP_SELF"],'c.date_commande','',$param, 'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans('DeliveryDate'),$_SERVER["PHP_SELF"],'c.date_livraison','',$param, 'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans('AmountHT'),$_SERVER["PHP_SELF"],'c.total_ht','',$param, 'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans('Status'),$_SERVER["PHP_SELF"],'c.fk_statut','',$param,'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre('');
 	print '</tr>';
 	print '<tr class="liste_titre">';
 	print '<td class="liste_titre">';
@@ -286,6 +293,10 @@ if ($resql)
 	print '</td><td class="liste_titre" align="left">';
 	print '<input class="flat" type="text" size="10" name="sref_client" value="'.$sref_client.'">';
 	print '</td><td class="liste_titre">&nbsp;';
+	print '</td><td class="liste_titre">&nbsp;';
+	print '<td class="liste_titre" align="right">';
+	print '<input class="flat" type="text" size="10" name="search_montant_ht" value="'.$search_montant_ht.'">';
+	print '</td>';
 	print '</td><td class="liste_titre">&nbsp;';
 	print '</td><td align="right" class="liste_titre">';
 	print '<input type="image" class="liste_titre" name="button_search" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png"  value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
@@ -370,16 +381,34 @@ if ($resql)
 		print ' <a href="'.$_SERVER['PHP_SELF'].'?deliveryyear='.$y.'&amp;deliverymonth='.$m.'">'.$ml.'</a>';
 		print ' <a href="'.$_SERVER['PHP_SELF'].'?deliveryyear='.$y.'">'.$y.'</a>';
 		print '</td>';
+		
+		print '<td align="center">'.price($objp->total_ht)."</td>\n";
+	
 
 		// Statut
 		print '<td align="right" nowrap="nowrap">'.$generic_commande->LibStatut($objp->fk_statut,$objp->facturee,5).'</td>';
 
+		print '<td>&nbsp;</td>';
 		print '</tr>';
 
 		$total+=$objp->total_ht;
 		$subtotal+=$objp->total_ht;
 		$i++;
 	}
+	if( $num <= $limit)
+	{
+		print '<tr class="liste_total">';
+		print '<td colspan="5" align="left">'.$langs->trans("Total").'</td>';
+		print '<td align="right"><b>'.price($total).' '.getCurrencySymbol($conf->currency).'</b><td colspan="2"></td>';
+	}
+	else
+	{
+		print '<tr class="liste_total">';
+		print '<td colspan="5" align="left">'.$langs->trans("Total for this page").'</td>';
+		print '<td align="right"><b>'.price($total).' '.getCurrencySymbol($conf->currency).'</b><td colspan="2"></td>';
+	}
+		
+	
 	print '</table>';
 
 	print '</form>';
