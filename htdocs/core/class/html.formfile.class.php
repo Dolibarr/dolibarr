@@ -529,6 +529,7 @@ class FormFile
                         $out.= ($param?'&'.$param:'');
                         $out.= '">'.img_printer().'</a></td>';
                     }
+                    if (is_object($hookmanager)) $out.= $hookmanager->executeHooks('formBuilddocLineOptions',$parameters,$file);
 				}
 
                 $out.= '</tr>';
