@@ -2065,6 +2065,9 @@ div.jnotify-background {
 li.ui-li-divider .ui-link {
 	color: #FFF !important;
 }
+.ui-btn {
+	margin: 0.1em 2px
+}
 .ui-btn-inner {
 	min-width: .4em;
 	padding-left: 10px;
@@ -2074,9 +2077,19 @@ li.ui-li-divider .ui-link {
 	font-size: <?php print $fontsize ?>px;
 	<?php } ?>
 }
+.ui-btn-icon-right .ui-btn-inner {
+	padding-right: 34px;
+}
+.ui-btn-icon-left .ui-btn-inner {
+	padding-left: 34px;
+}
 .ui-select .ui-btn-icon-right .ui-btn-inner {
 	padding-right: 36px;
 }
+.ui-select .ui-btn-icon-left .ui-btn-inner {
+	padding-left: 36px;
+}
+
 .fiche .ui-controlgroup {
 	margin: 0px;
 	padding-bottom: 0px;
@@ -2091,7 +2104,11 @@ div.ui-controlgroup-controls div.tabsElem a
 	-moz-box-shadow: 0 -3px 6px rgba(0,0,0,.2);
 	-webkit-box-shadow: 0 -3px 6px rgba(0,0,0,.2);
 	box-shadow: 0 -3px 6px rgba(0,0,0,.2);
-	border: none;
+}
+div.ui-controlgroup-controls div.tabsElem a#active {
+	-moz-box-shadow: 0 -3px 6px rgba(0,0,0,.3);
+	-webkit-box-shadow: 0 -3px 6px rgba(0,0,0,.3);
+	box-shadow: 0 -3px 6px rgba(0,0,0,.3);
 }
 
 a.tab span.ui-btn-inner, a.tab span.ui-btn-inner span.ui-btn-text
@@ -2138,6 +2155,12 @@ div.ui-radio
 {
 	padding-bottom: 10px; margin-bottom: 4px; border-bottom: 1px solid #AAAAAA !important;
 }
+
+ul.ulmenu {
+	border-radius: 0;
+	-webkit-border-radius: 0;
+}
+
 
 <?php
 if (is_object($db)) $db->close();
