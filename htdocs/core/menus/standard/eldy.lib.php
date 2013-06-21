@@ -928,7 +928,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 			}
 
 			// Gestion cheques
-			if (! empty($conf->facture->enabled) && ! empty($conf->banque->enabled))
+			if (! empty($conf->banque->enabled) && (! empty($conf->facture->enabled)) || ! empty($conf->global->MAIN_MENU_CHEQUE_DEPOSIT_ON))
 			{
 				$newmenu->add("/compta/paiement/cheque/index.php?leftmenu=checks&amp;mainmenu=bank",$langs->trans("MenuChequeDeposits"),0,$user->rights->banque->cheque, '', $mainmenu, 'checks');
 				$newmenu->add("/compta/paiement/cheque/fiche.php?leftmenu=checks&amp;action=new&amp;mainmenu=bank",$langs->trans("NewChequeDeposit"),1,$user->rights->banque->cheque);
