@@ -1244,7 +1244,7 @@ else
                     print '<input type="hidden" name="idprod" value="'.($objp->fk_product?$objp->fk_product:'0').'">';
                     print '<input type="hidden" name="fournprice" value="'.($objp->fk_fournprice?$objp->fk_fournprice:'0').'">';
                     // Ligne carac
-                    print "<tr $bc[$var]>";
+                    print "<tr ".$bc[$var].">";
                     print '<td>';
                     if ($objp->fk_product)
                     {
@@ -1285,7 +1285,7 @@ else
                     print '<br><input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
                     print '</td>';
                     // Ligne dates prevues
-                    print "<tr $bc[$var]>";
+                    print "<tr ".$bc[$var].">";
                     print '<td colspan="'.($conf->margin->enabled?6:5).'">';
                     print $langs->trans("DateStartPlanned").' ';
                     $form->select_date($db->jdate($objp->date_debut),"date_start_update",$usehm,$usehm,($db->jdate($objp->date_debut)>0?0:1),"update");

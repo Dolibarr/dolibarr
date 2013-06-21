@@ -327,7 +327,7 @@ if ($action == 'create')
 
 			$line = $commande->lines[$i];
 			$var=!$var;
-			print "<tr $bc[$var]>\n";
+			print "<tr ".$bc[$var].">\n";
 			if ($line->fk_product > 0)
 			{
 				$product->fetch($line->fk_product);
@@ -597,7 +597,7 @@ else
 			{
 				$var=!$var;
 
-				print "<tr $bc[$var]>";
+				print "<tr ".$bc[$var].">";
 				if ($delivery->lines[$i]->fk_product > 0)
 				{
 					$product = new Product($db);

@@ -148,7 +148,7 @@ for ($m = 1 ; $m < 13 ; $m++ )
     }
 
     $var=!$var;
-    print "<tr $bc[$var]>";
+    print "<tr ".$bc[$var].">";
     print '<td nowrap>'.dol_print_date(dol_mktime(0,0,0,$m,1,$y),"%b %Y").'</td>';
 
     $x_coll = 0;

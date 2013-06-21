@@ -182,7 +182,7 @@ if ($resql)
         $row = $db->fetch_row($resql);
         $var=!$var;
 
-        print "<tr $bc[$var]>";
+        print "<tr ".$bc[$var].">";
         print '<td>'.$langs->trans($commandestatic->statuts[$row[1]]).'</td>';
         print '<td align="right"><a href="liste.php?statut='.$row[1].'">'.$row[0].' '.$commandestatic->LibStatut($row[1],3).'</a></td>';
 
@@ -230,7 +230,7 @@ if (! empty($conf->fournisseur->enabled))
             {
                 $var=!$var;
                 $obj = $db->fetch_object($resql);
-                print "<tr $bc[$var]>";
+                print "<tr ".$bc[$var].">";
                 print '<td class="nowrap">';
                 print "<a href=\"fiche.php?id=".$obj->rowid."\">".img_object($langs->trans("ShowOrder"),"order").' '.$obj->ref."</a></td>";
                 print '<td><a href="'.DOL_URL_ROOT.'/fourn/fiche.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dol_trunc($obj->nom,24).'</a></td></tr>';
@@ -273,7 +273,7 @@ if ($resql)
         $obj = $db->fetch_object($resql);
         $var=!$var;
 
-        print "<tr $bc[$var]>";
+        print "<tr ".$bc[$var].">";
         print '<td>';
         $userstatic->id=$obj->rowid;
         $userstatic->lastname=$obj->lastname;
@@ -329,7 +329,7 @@ if ($resql)
             $var=!$var;
             $obj = $db->fetch_object($resql);
 
-            print "<tr $bc[$var]>";
+            print "<tr ".$bc[$var].">";
             print '<td width="20%" class="nowrap">';
 
             $commandestatic->id=$obj->rowid;
@@ -397,7 +397,7 @@ while ($i < $num)
 {
 $var=!$var;
 $obj = $db->fetch_object($resql);
-print "<tr $bc[$var]>";
+print "<tr ".$bc[$var].">";
 print '<td class="nowrap">';
 
 $commandestatic->id=$obj->rowid;

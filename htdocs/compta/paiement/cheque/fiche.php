@@ -553,7 +553,7 @@ else
 				$accounts[$objp->bid]=0;
 			$accounts[$objp->bid] += 1;
 
-			print "<tr $bc[$var]>";
+			print "<tr ".$bc[$var].">";
 			print '<td align="center">'.$i.'</td>';
 			print '<td align="center">'.dol_print_date($db->jdate($objp->date),'day').'</td>';	// Date operation
 			print '<td align="center">'.($objp->num_chq?$objp->num_chq:'&nbsp;').'</td>';

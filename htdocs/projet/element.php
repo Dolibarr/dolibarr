@@ -252,7 +252,7 @@ foreach ($listofreferent as $key => $value)
 				//print $classname;
 
 				$var=!$var;
-				print "<tr $bc[$var]>";
+				print "<tr ".$bc[$var].">";
 
 				// Ref
 				print '<td align="left">';

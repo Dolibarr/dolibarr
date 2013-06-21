@@ -129,7 +129,7 @@ if ($result)
 	{
 		$objp = $db->fetch_object($result);
 		$var=!$var;
-		print "<tr $bc[$var]>";
+		print "<tr ".$bc[$var].">";
 		print "<td>";
 		$interventionstatic->id=$objp->fichid;
 		$interventionstatic->ref=$objp->ref;

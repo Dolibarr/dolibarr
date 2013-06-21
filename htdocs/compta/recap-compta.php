@@ -177,7 +177,7 @@ if ($socid > 0)
 					{
 						$objp = $db->fetch_object($resqlp);
 						//$var=!$var;
-						print "<tr $bc[$var]>";
+						print "<tr ".$bc[$var].">";
 						print '<td align="center">'.dol_print_date($db->jdate($objp->dp),'day')."</td>\n";
 						print '<td>';
 						print '&nbsp; &nbsp; &nbsp; '; // Decalage

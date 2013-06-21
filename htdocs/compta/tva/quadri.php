@@ -261,7 +261,7 @@ if ($conf->global->COMPTA_MODE == "CREANCES-DETTES")
 		$x_paye_ht = 0;
 		foreach($x_both as $rate => $both){
 			$var=!$var;
-			print "<tr $bc[$var]>";
+			print "<tr ".$bc[$var].">";
 			print "<td>$rate%</td>";
 			print "<td nowrap align=\"right\">".price($both['coll']['totalht'])."</td>";
 			print "<td nowrap align=\"right\">".price($both['coll']['vat'])."</td>";
@@ -284,7 +284,7 @@ if ($conf->global->COMPTA_MODE == "CREANCES-DETTES")
 		$subtotal = $subtotal + $diff;
 
 		$var=!$var;
-		print "<tr $bc[$var]>";
+		print "<tr ".$bc[$var].">";
 		print '<td colspan="7"></td>';
 		print "<td nowrap align=\"right\">".price($diff)."</td>\n";
 		print "</tr>\n";
