@@ -70,7 +70,7 @@ if ($result)
     {
         $obj = $db->fetch_object($result);
         $var=!$var;
-        print "<tr $bc[$var]>";
+        print "<tr ".$bc[$var].">";
 
 		$tva_static->id=$obj->rowid;
 		$tva_static->ref=$obj->rowid;

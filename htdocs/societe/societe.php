@@ -385,7 +385,7 @@ if ($resql)
 	{
 		$obj = $db->fetch_object($resql);
 		$var=!$var;
-		print "<tr $bc[$var]><td>";
+		print "<tr ".$bc[$var]."><td>";
 		$companystatic->id=$obj->rowid;
 		$companystatic->name=$obj->name;
 		$companystatic->canvas=$obj->canvas;

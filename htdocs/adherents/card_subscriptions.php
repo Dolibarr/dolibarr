@@ -700,7 +700,7 @@ if ($rowid)
             {
                 $objp = $db->fetch_object($result);
                 $var=!$var;
-                print "<tr $bc[$var]>";
+                print "<tr ".$bc[$var].">";
                 $cotisationstatic->ref=$objp->crowid;
                 $cotisationstatic->id=$objp->crowid;
                 print '<td>'.$cotisationstatic->getNomUrl(1).'</td>';

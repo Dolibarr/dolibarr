@@ -169,7 +169,7 @@ if ($id > 0 || ! empty($ref))
 					$objp = $db->fetch_object($result);
 					$var=!$var;
 
-					print "<tr $bc[$var]>";
+					print "<tr ".$bc[$var].">";
 					print '<td><a href="'.DOL_URL_ROOT.'/contrat/fiche.php?id='.$objp->rowid.'">'.img_object($langs->trans("ShowContract"),"contract").' ';
 					print $objp->rowid;
 					print "</a></td>\n";

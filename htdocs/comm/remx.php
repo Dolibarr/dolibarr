@@ -338,7 +338,7 @@ if ($socid > 0)
 		{
 			$obj = $db->fetch_object($resql);
 			$var = !$var;
-			print "<tr $bc[$var]>";
+			print "<tr ".$bc[$var].">";
 			print '<td>'.dol_print_date($db->jdate($obj->dc),'dayhour').'</td>';
 			if ($obj->description == '(CREDIT_NOTE)')
 			{
@@ -384,7 +384,7 @@ if ($socid > 0)
 
 			if ($_GET["action"]=='split' && $_GET['remid'] == $obj->rowid)
 			{
-				print "<tr $bc[$var]>";
+				print "<tr ".$bc[$var].">";
 				print '<td colspan="8">';
 				$amount1=price2num($obj->amount_ttc/2,'MT');
 				$amount2=($obj->amount_ttc-$amount1);
@@ -495,7 +495,7 @@ if ($socid > 0)
 		{
 			$obj = array_shift($tab_sqlobj);
 			$var = !$var;
-			print "<tr $bc[$var]>";
+			print "<tr ".$bc[$var].">";
 			print '<td>'.dol_print_date($db->jdate($obj->dc),'dayhour').'</td>';
 			if ($obj->description == '(CREDIT_NOTE)')
 			{

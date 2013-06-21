@@ -140,7 +140,7 @@ if ($id > 0 || ! empty($ref))
 			print_titre($langs->trans("Documents"));
 			print '<table class="border" width="100%">';
 
-			print "<tr $bc[$var]><td>".$langs->trans("Propal")." PDF</td>";
+			print "<tr ".$bc[$var]."><td>".$langs->trans("Propal")." PDF</td>";
 
 			print '<td><a data-ajax="false" href="'.DOL_URL_ROOT . '/document.php?modulepart=propal&file='.urlencode($relativepath).'">'.$object->ref.'.pdf</a></td>';
 

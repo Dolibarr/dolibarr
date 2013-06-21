@@ -195,7 +195,7 @@ if ($id > 0 || ! empty($ref))
 
 					$marginRate = ($objp->buying_price != 0)?(100 * round($objp->marge / $objp->buying_price, 5)):'' ;
 					$markRate = ($objp->selling_price != 0)?(100 * round($objp->marge / $objp->selling_price, 5)):'' ;
-					print "<tr $bc[$var]>";
+					print "<tr ".$bc[$var].">";
 					print '<td>';
 					$invoicestatic->id=$objp->facid;
 					$invoicestatic->ref=$objp->facnumber;

@@ -132,7 +132,7 @@ if ($resql)
 	{
 		$obj = $db->fetch_object($resql);
 		$var = !$var;
-		print "<tr $bc[$var]>";
+		print "<tr ".$bc[$var].">";
 		// Date
 		$date=$obj->periode;
 		if (empty($date)) $date=$obj->date_ech;
@@ -220,7 +220,7 @@ if (empty($_GET["mode"]) || $_GET["mode"] != 'sconly')
 	        $total = $total + $obj->amount;
 
 	        $var=!$var;
-	        print "<tr $bc[$var]>";
+	        print "<tr ".$bc[$var].">";
 	        print '<td align="left">'.dol_print_date($db->jdate($obj->dm),'day').' ? </td>'."\n";
 
 	        print "<td>".$obj->label."</td>\n";

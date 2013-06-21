@@ -141,7 +141,7 @@ if ($result)
 
         $var=!$var;
 
-        print "<tr $bc[$var]><td>";
+        print "<tr ".$bc[$var]."><td>";
 
         print $ligne->LibStatut($obj->statut_ligne,2);
         print "&nbsp;";

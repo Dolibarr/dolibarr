@@ -260,7 +260,7 @@ if ($resql)
 
 		$var=!$var;
 
-		print "<tr $bc[$var]>";
+		print "<tr ".$bc[$var].">";
 
 		// Action (type)
 		print '<td>';

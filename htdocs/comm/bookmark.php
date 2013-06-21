@@ -122,7 +122,7 @@ if ($resql)
       $obj = $db->fetch_object($resql);
 
       $var=!$var;
-      print "<tr $bc[$var]>";
+      print "<tr ".$bc[$var].">";
       //print "<td>" . ($i + 1 + ($limit * $page)) . "</td>";
       print "<td align=\"center\"><b>".$obj->bid."</b></td>";
       print "<td><a href='".DOL_URL_ROOT."/user/fiche.php?id=".$obj->fk_user."'>".img_object($langs->trans("ShowUser"),"user").' '.$obj->lastname." ".$obj->firstname."</a></td>\n";
