@@ -100,7 +100,7 @@ if ( $resql )
 	while ($row = $db->fetch_object($resql))
 	{
 		$var=!$var;
-		print "<tr $bc[$var]>";
+		print "<tr ".$bc[$var].">";
 		print '<td>';
 		$projectstatic->id=$row->rowid;
 		$projectstatic->ref=$row->ref;
@@ -155,7 +155,7 @@ if ( $resql )
 	while ($row = $db->fetch_object($resql))
 	{
 		$var=!$var;
-		print "<tr $bc[$var]>";
+		print "<tr ".$bc[$var].">";
 		print '<td>';
 		$projectstatic->id=$row->rowid;
 		$projectstatic->ref=$row->ref;
@@ -267,7 +267,7 @@ if ( $resql )
 
 	while ($row = $db->fetch_object($resql))
 	{
-		print "<tr $bc[$var]>";
+		print "<tr ".$bc[$var].">";
 		print '<td>';
 		$projectstatic->id=$row->rowid;
 		$projectstatic->ref=$row->ref;
@@ -310,7 +310,7 @@ if ( $resql )
 {
 	while ($row = $db->fetch_object($resql))
 	{
-		print "<tr $bc[$var]>";
+		print "<tr ".$bc[$var].">";
 		print '<td>';
 		$projectstatic->id=$row->rowid;
 		$projectstatic->ref=$row->ref;

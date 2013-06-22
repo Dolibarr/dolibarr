@@ -70,7 +70,7 @@ if ($result)
 		{
 			$objp = $dbosc->fetch_object($result);
 			$var=!$var;
-			print "<tr $bc[$var]>";
+			print "<tr ".$bc[$var].">";
 			print '<td align="left">'.$objp->mois.'</td>';
 			print '<td align="right">'.price($objp->value).'</td>';
 

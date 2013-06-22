@@ -162,7 +162,7 @@ if ($id > 0 || ! empty($ref))
 					$objp = $db->fetch_object($result);
 					$var=!$var;
 
-					print "<tr $bc[$var]>";
+					print "<tr ".$bc[$var].">";
 					print '<td><a href="'.DOL_URL_ROOT.'/commande/fiche.php?id='.$objp->commandeid.'">'.img_object($langs->trans("ShowOrder"),"order").' ';
 					print $objp->ref;
 					print "</a></td>\n";

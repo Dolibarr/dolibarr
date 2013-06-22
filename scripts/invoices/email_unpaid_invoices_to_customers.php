@@ -152,7 +152,7 @@ if ($resql)
 
             if (dol_strlen($newemail))
             {
-            	$message .= $outputlangs->trans("Invoice")." ".$obj->facnumber." : ".price($obj->total_ttc,0,$outputlangs)."\n";
+            	$message .= $outputlangs->trans("Invoice")." ".$obj->facnumber." : ".price($obj->total_ttc,0,$outputlangs,0,0,-1,$conf->currency)."\n";
             	dol_syslog("email_unpaid_invoices_to_customers.php: ".$newemail." ".$message);
             	$foundtoprocess++;
             }
@@ -249,7 +249,7 @@ function envoi_mail($mode,$oldemail,$message,$total,$userlang,$oldtarget)
     	$allmessage.= "Note: This list contains only unpaid invoices.".($usehtml?"<br>\n":"\n");
     }
     $allmessage.= $message.($usehtml?"<br>\n":"\n");
-    $allmessage.= $langs->trans("Total")." = ".price($total).($usehtml?"<br>\n":"\n");
+    $allmessage.= $langs->trans("Total")." = ".price($total,0,$userlang,0,0,-1,$conf->currency).($usehtml?"<br>\n":"\n");
     if (! empty($conf->global->SCRIPT_EMAIL_UNPAID_INVOICES_CUSTOMERS_FOOTER))
     {
     	$allmessage.=$conf->global->SCRIPT_EMAIL_UNPAID_INVOICES_CUSTOMERS_FOOTER;

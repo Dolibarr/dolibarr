@@ -124,9 +124,16 @@ if ($resql)
                 if (empty($obj->email)) print "Warning: Customer ".$customer." has no email. Notice disabled.\n";
             }
 
+            // Define line content
+            $outputlangs=new Translate('',$conf);
+            $outputlangs->setDefaultLang(empty($obj->default_lang)?$langs->defaultlang:$obj->default_lang);	// By default language of customer
+            $outputlangs->load("bills");
+            $outputlangs->load("main");
+            $outputlangs->load("contracts");
+            
             if (dol_strlen($oldemail))
             {
-            	$message .= $langs->trans("Contract")." ".$obj->ref.": ".$langs->trans("Service")." ".$obj->label." (".price($obj->total_ttc)."), ".$langs->trans("DateEndPlannedShort")." ".dol_print_date($db->jdate($obj->date_fin_validite),'day')."\n\n";
+            	$message .= $langs->trans("Contract")." ".$obj->ref.": ".$langs->trans("Service")." ".$obj->label." (".price($obj->total_ttc,0,$outputlangs,0,0,-1,$conf->currency)."), ".$langs->trans("DateEndPlannedShort")." ".dol_print_date($db->jdate($obj->date_fin_validite),'day')."\n\n";
             	dol_syslog("email_expire_services_to_customers.php: ".$obj->email);
             	$foundtoprocess++;
             }
@@ -222,7 +229,7 @@ function envoi_mail($mode,$oldemail,$message,$total,$userlang,$oldcustomer,$dura
     	$allmessage.= "Note: This list contains only services to expire.".($usehtml?"<br>\n":"\n").($usehtml?"<br>\n":"\n");
     }
     $allmessage.= $message.($usehtml?"<br>\n":"\n");
-    $allmessage.= $langs->trans("Total")." = ".price($total).($usehtml?"<br>\n":"\n");
+    $allmessage.= $langs->trans("Total")." = ".price($total,0,$userlang,0,0,-1,$conf->currency).($usehtml?"<br>\n":"\n");
     if (! empty($conf->global->SCRIPT_EMAIL_EXPIRE_SERVICES_CUSTOMERS_FOOTER))
     {
     	$allmessage.=$conf->global->SCRIPT_EMAIL_EXPIRE_SERVICES_CUSTOMERS_FOOTER;

@@ -126,7 +126,7 @@ if ($id > 0 || ! empty($ref))
 			print_titre($langs->trans("Documents"));
 			print '<table class="border" width="100%">';
 
-			print "<tr $bc[$var]><td>".$langs->trans("Order")." PDF</td>";
+			print "<tr ".$bc[$var]."><td>".$langs->trans("Order")." PDF</td>";
 
 			print '<td><a data-ajax="false" href="'.DOL_URL_ROOT . '/document.php?modulepart=commande&file='.urlencode($relativepath).'">'.$object->ref.'.pdf</a></td>';
 			print '<td align="right">'.dol_print_size(dol_filesize($file)).'</td>';
@@ -137,7 +137,7 @@ if ($id > 0 || ! empty($ref))
 			// TODO obsolete ?
 			if (file_exists($filedetail))
 			{
-				print "<tr $bc[$var]><td>Commande detaillee</td>";
+				print "<tr ".$bc[$var]."><td>Commande detaillee</td>";
 
 				print '<td><a data-ajax="false" href="'.DOL_URL_ROOT . '/document.php?modulepart=commande&file='.urlencode($relativepathdetail).'">'.$object->ref.'-detail.pdf</a></td>';
 				print '<td align="right">'.dol_print_size(dol_filesize($filedetail)).'</td>';

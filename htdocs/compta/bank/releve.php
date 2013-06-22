@@ -295,7 +295,7 @@ else
 			$total = $total + $objp->amount;
 
 			$var=!$var;
-			print "<tr $bc[$var]>";
+			print "<tr ".$bc[$var].">";
 
 			// Date operation
 			print '<td class="nowrap" align="center">'.dol_print_date($db->jdate($objp->do),"day").'</td>';

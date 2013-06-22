@@ -126,7 +126,7 @@ if ($resql)
 		$accountstatic->label=$objp->label;
 
 		$var=!$var;
-		print "<tr $bc[$var]>\n";
+		print "<tr ".$bc[$var].">\n";
 
 		print '<td>'.$checkdepositstatic->getNomUrl(1).'</td>';
 		print '<td>'.dol_print_date($db->jdate($objp->db),'day').'</td>';
