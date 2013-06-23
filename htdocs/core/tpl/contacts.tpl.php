@@ -62,7 +62,7 @@ $userstatic=new User($db);
 	<tr <?php echo $bc[$var]; ?>>
 		<td class="nowrap"><?php echo img_object('','user').' '.$langs->trans("Users"); ?></td>
 		<td><?php echo $conf->global->MAIN_INFO_SOCIETE_NOM; ?></td>
-		<td><?php echo $form->select_users($user->id,'userid',0,(! empty($userAlreadySelected)?$userAlreadySelected:'')); ?></td>
+		<td><?php echo $form->select_dolusers($user->id,'userid',0,(! empty($userAlreadySelected)?$userAlreadySelected:'')); ?></td>
 		<td><?php echo $formcompany->selectTypeContact($object, '', 'type','internal'); ?></td>
 		<td align="right" colspan="3" ><input type="submit" class="button" value="<?php echo $langs->trans("Add"); ?>"></td>
 	</tr>
