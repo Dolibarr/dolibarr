@@ -1236,11 +1236,15 @@ function dol_most_recent_file($dir,$regexfilter='',$excludefilter=array('\.meta$
  * @param	string	$modulepart			Module of document
  * @param	string	$original_file		Relative path with filename
  * @param	string	$entity				Restrict onto entity
+ * @param	User	$fuser				User object
  * @return	mixed						Array with access information : accessallowed & sqlprotectagainstexternals & original_file (as full path name)
  */
-function dol_check_secure_access_document($modulepart,$original_file,$entity)
+function dol_check_secure_access_document($modulepart,$original_file,$entity,$fuser='')
 {
 	global $user, $conf;
+
+	if(is_object($fuser))
+		$user = $fuser;
 
 	if (empty($modulepart)) return 'ErrorBadParameter';
 	if (empty($entity)) $entity=0;
@@ -1759,7 +1763,7 @@ function dol_check_secure_access_document($modulepart,$original_file,$entity)
 			eval('$sqlprotectagainstexternals = "'.$conf->global->$sqlProtectConstName.'";');
 		}
 	}
-	
+
 	$ret = array(
 		'accessallowed' => $accessallowed,
 		'sqlprotectagainstexternals'=>$sqlprotectagainstexternals,
