@@ -143,6 +143,12 @@ textarea:disabled {
 }
 input[type=checkbox] { background-color: transparent; border: none; box-shadow: none; }
 input[type=image] { background-color: transparent; border: none; box-shadow: none; }
+input:-webkit-autofill {
+	background-color: <?php echo empty($dol_use_jmobile)?'#FBFFEA':'#FFFFFF' ?> !important;
+	background-image:none !important;
+	-webkit-box-shadow: 0 0 0 50px <?php echo empty($dol_use_jmobile)?'#FBFFEA':'#FFFFFF' ?> inset;
+}
+
 <?php if (! empty($dol_use_jmobile)) { ?>
 legend { margin-bottom: 8px; }
 <?php } ?>
@@ -1408,19 +1414,20 @@ th.liste_titre_sel, td.liste_titre_sel
     /* border-bottom: 1px solid #FDFFFF; */
     white-space: nowrap;
 }
+
 input.liste_titre {
-background: transparent;
-background-repeat: repeat-x;
-border: 0px;
+	background: transparent;
+	background-repeat: repeat-x;
+	border: 0px;
 }
 
 tr.liste_total td {
-border-top: 1px solid #DDDDDD;
-background: #F0F0F0;
-background-repeat: repeat-x;
-color: #332266;
-font-weight: normal;
-white-space: nowrap;
+	border-top: 1px solid #DDDDDD;
+	background: #F0F0F0;
+	background-repeat: repeat-x;
+	color: #332266;
+	font-weight: normal;
+	white-space: nowrap;
 }
 
 
