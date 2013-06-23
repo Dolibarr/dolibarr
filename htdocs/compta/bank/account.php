@@ -329,7 +329,7 @@ if ($id > 0 || ! empty($ref))
 	// Show title
 	if ($action != 'addline' && $action != 'delete')
 	{
-		print '<tr><td colspan="9" align="right">'.$navig.'</td></tr>';
+		print '<tr><td colspan="10" align="right">'.$navig.'</td></tr>';
 	}
 
 	// Form to add a transaction with no invoice
@@ -379,7 +379,7 @@ if ($id > 0 || ! empty($ref))
 		print '</td></tr>';
 		print "</form>";
 
-		print '<tr class="noborder"><td colspan="8">&nbsp;</td></tr>'."\n";
+		print '<tr class="noborder"><td colspan="10">&nbsp;</td></tr>'."\n";
 	}
 
 	/*
