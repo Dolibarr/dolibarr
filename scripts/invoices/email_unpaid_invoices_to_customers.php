@@ -38,11 +38,12 @@ if (substr($sapi_type, 0, 3) == 'cgi') {
 
 if (! isset($argv[2]) || ! $argv[2] || ! in_array($argv[1],array('test','confirm')) || ! in_array($argv[2],array('thirdparties','contacts')))
 {
-	print "Usage: $script_file (test|confirm) (thirdparties|contacts) [delay]\n";
+	print "Usage: $script_file (test|confirm) (thirdparties|contacts) [delay] [after]\n";
 	print "\n";
 	print "Send an email to customers to remind all unpaid customer invoices.\n";
 	print "If you choose 'test' mode, no emails are sent.\n";
-	print "If you add a delay (nb of days), only invoice with due date < today + delay are included.\n";
+	print "If you add param delay (nb of days), only invoice with due date < today + delay are included.\n";
+	print "If you add param after (nb of days), only invoice with due date >= today + delay are included.\n";
 	exit(-1);
 }
 $mode=$argv[1];
@@ -69,9 +70,10 @@ print "***** ".$script_file." (".$version.") pid=".getmypid()." *****\n";
 
 $now=dol_now('tzserver');
 $duration_value=isset($argv[3])?$argv[3]:'none';
+$duration_value2=isset($argv[4])?$argv[4]:'none';
 
 $error = 0;
-print $script_file." launched with mode ".$mode." default lang=".$langs->defaultlang.(is_numeric($duration_value)?" delay=".$duration_value:"")."\n";
+print $script_file." launched with mode ".$mode." default lang=".$langs->defaultlang.(is_numeric($duration_value)?" delay=".$duration_value:"").(is_numeric($duration_value2)?" after=".$duration_value2:"")."\n";
 
 if ($mode != 'confirm') $conf->global->MAIN_DISABLE_ALL_MAILS=1;
 
@@ -82,6 +84,7 @@ $sql.= " FROM ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."societe as s";
 if ($targettype == 'contacts') $sql.= ", ".MAIN_DB_PREFIX."socpeople as sp";
 $sql.= " WHERE f.fk_statut != 0 AND f.paye = 0";
 $sql.= " AND f.fk_soc = s.rowid";
+if (is_numeric($duration_value2)) $sql.= " AND f.date_lim_reglement >= '".$db->idate(dol_time_plus_duree($now, $duration_value2, "d"))."'";
 if (is_numeric($duration_value)) $sql.= " AND f.date_lim_reglement < '".$db->idate(dol_time_plus_duree($now, $duration_value, "d"))."'";
 if ($targettype == 'contacts') $sql.= " AND s.rowid = sp.fk_soc";
 $sql.= " ORDER BY";
