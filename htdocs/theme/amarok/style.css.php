@@ -914,7 +914,7 @@ a.help:link, a.help:visited, a.help:hover, a.help:active { font-size:<?php print
 
 div.tabs {
 	margin: 0px 0px 0px 6px;
-	padding: 0px 6px 3px 0px;
+	padding: 0px 6px 1px 0px;
 	clear:both;
 	height:100%;
 }
@@ -1090,16 +1090,16 @@ td.formdocbutton {padding-top:6px;}
 #undertopmenu {
 }
 
-table img {
+table img, div.tagtable img {
 	padding:0px 2px;
 	vertical-align:middle;
 }
 
-table.liste img {
+table.liste img, div.list img {
 	padding:0px;
 }
 
-table a {
+table a, div.tagtable a {
 	vertical-align:middle;
 }
 
@@ -1160,9 +1160,9 @@ table.border.formdoc {
 	width:60%;
 }
 
-table.border.formdoc td {padding:1px 3px;}
+table.border.formdoc td { padding:1px 3px; }
 
-table.noborder {
+table.noborder, div.noborder {
 	border:1px solid #bbbbbb;
 	padding:0px;
 	margin:3px 0px 8px;
@@ -1172,9 +1172,9 @@ table.noborder {
 	box-shadow:2px 4px 2px #cccccc;
 }
 
-table.noborder tr {}
+table.noborder tr, div.noborder form {}
 
-table.noborder td {padding:1px 2px 1px 3px;}
+table.noborder td, , div.noborder div { padding:1px 2px 1px 3px; }
 
 table.nobordernopadding {
 	border-collapse:collapse;
@@ -1258,12 +1258,12 @@ tr.liste_titre td, tr.liste_titre th, form.liste_titre div {
 	text-shadow:1px 1px 1px #ffffff;
 }
 
-td.liste_titre_sel {
+td.liste_titre_sel, form.liste_titre div.liste_titre_sel {
 	font-weight:bold;
 	white-space:nowrap;
 }
 
-tr.liste_total td {
+tr.liste_total td, form.liste_total div {
 	padding:1px 2px;
 	border-top:solid 1px #cccccc;
 	background-color:#eaeaea;
@@ -1271,9 +1271,9 @@ tr.liste_total td {
 	white-space:nowrap;
 }
 
-tr.impair td, tr.pair td {padding:1px 1px 1px 2px;}
+tr.impair td, tr.pair td, form.impair div, form.pair div { padding:1px 1px 1px 2px; }
 
-tr.impair table.nobordernopadding td, tr.pair table.nobordernopadding td {padding:1px 0px;}
+tr.impair table.nobordernopadding td, tr.pair table.nobordernopadding td { padding:1px 0px; }
 
 .impair {
 	background:#fdfdfd;
@@ -1912,11 +1912,11 @@ a.none, a.none:active, a.none:visited, a.none:hover {
     font-size:<?php echo $fontsize; ?>px;
 }
 
-.ui-button {margin-left:-1px;}
-.ui-button-icon-only .ui-button-text {height:8px;}
-.ui-button-icon-only .ui-button-text, .ui-button-icons-only .ui-button-text {padding:2px 0px 6px 0px;}
-.ui-button-text {line-height:1em !important;}
-.ui-autocomplete-input {margin:0; padding:1px;}
+.ui-button { margin-left:-2px; padding-top: 1px; }
+.ui-button-icon-only .ui-button-text { height:8px; }
+.ui-button-icon-only .ui-button-text, .ui-button-icons-only .ui-button-text { padding:2px 0px 6px 0px; }
+.ui-button-text { line-height:1em !important; }
+.ui-autocomplete-input { margin:0; padding:1px; }
 
 
 /* ============================================================================== */

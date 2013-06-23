@@ -1591,7 +1591,7 @@ td.border {
 
 /* Main boxes */
 
-table.noborder, table.formdoc {
+table.noborder, table.formdoc, div.noborder {
 	width: 100%;
 
 	border-collapse: separate !important;
@@ -1621,7 +1621,7 @@ table.noborder, table.formdoc {
 	border-radius: 0.2em;
 }
 
-table.noborder tr {
+table.noborder tr, div.noborder form {
 	border-top-color: #FEFEFE;
 
 	border-right-width: 1px;
@@ -1634,7 +1634,7 @@ table.noborder tr {
 	height: 20px;
 }
 
-table.noborder th, table.noborder td {
+table.noborder th, table.noborder td, div.noborder form, div.noborder form div {
 	padding: 1px 2px 1px 3px;			/* t r b l */
 }
 
@@ -1709,7 +1709,7 @@ div.liste_titre, tr.liste_titre, tr.liste_titre_sel, form.liste_titre, form.list
     white-space: <?php echo $dol_optimize_smallscreen?'normal':'nowrap'; ?>;
     text-align: <?php echo $left; ?>;
 }
-tr.liste_titre th, th.liste_titre, tr.liste_titre td, td.liste_titre
+tr.liste_titre th, th.liste_titre, tr.liste_titre td, td.liste_titre, form.liste_titre div
 {
     font-family: <?php print $fontlist ?>;
     /*font-weight: normal;*/
@@ -1717,7 +1717,7 @@ tr.liste_titre th, th.liste_titre, tr.liste_titre td, td.liste_titre
     white-space: <?php echo $dol_optimize_smallscreen?'normal':'nowrap'; ?>;
 	text-shadow:1px 0px 1px #ffffff;
 }
-tr.liste_titre_sel th, th.liste_titre_sel, tr.liste_titre_sel td, td.liste_titre_sel
+tr.liste_titre_sel th, th.liste_titre_sel, tr.liste_titre_sel td, td.liste_titre_sel, form.liste_titre_sel div
 {
     font-family: <?php print $fontlist ?>;
     font-weight: normal;
@@ -1731,10 +1731,10 @@ input.liste_titre {
     border: 0px;
 }
 
-tr.liste_total {
+tr.liste_total, form.liste_total {
 	background: #F0F0F0;
 }
-tr.liste_total td {
+tr.liste_total td, form.liste_total div {
     border-top: 1px solid #DDDDDD;
     color: #332266;
     font-weight: normal;
@@ -2406,7 +2406,7 @@ A.none, A.none:active, A.none:visited, A.none:hover {
     font-family:<?php echo $fontlist; ?>;
     font-size:<?php echo $fontsize; ?>px;
 }
-.ui-button { margin-left: -1px; }
+.ui-button { margin-left: -2px; padding-top: 1px; }
 .ui-button-icon-only .ui-button-text { height: 8px; }
 .ui-button-icon-only .ui-button-text, .ui-button-icons-only .ui-button-text { padding: 2px 0px 6px 0px; }
 .ui-button-text
