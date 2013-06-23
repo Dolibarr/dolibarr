@@ -1395,7 +1395,7 @@ border-left: 1px solid #000000;
 
 /* Main boxes */
 
-table.noborder {
+table.noborder, div.noborder {
     background: #FFF url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/bg_liste_titremenu.jpg',1); ?>);
     background-repeat: repeat-x;
     background-position: top right;
@@ -1413,10 +1413,10 @@ table.noborder {
     /*border-collapse: collapse;*/
 }
 
-table.noborder tr {
+table.noborder tr, div.noborder form {
 }
 
-table.noborder td {
+table.noborder td, div.noborder form div {
 }
 
 #graph {
@@ -1481,18 +1481,20 @@ div.liste_titre, tr.liste_titre, form.liste_titre {
     white-space: <?php echo $dol_optimize_smallscreen?'normal':'nowrap'; ?>;
     text-align: <?php echo $left; ?>;
 }
-th.liste_titre, td.liste_titre
+th.liste_titre, td.liste_titre, form.liste_titre div
 {
 	padding-left: 6px;
 	padding-right: 6px;
     white-space: <?php echo $dol_optimize_smallscreen?'normal':'nowrap'; ?>;
+    vertical-align: middle;
 }
-th.liste_titre_sel, td.liste_titre_sel
+th.liste_titre_sel, td.liste_titre_sel, form.liste_titre_sel div
 {
     background-position: top right;
     color: #A51B00;
     font-weight: bold;
     white-space: <?php echo $dol_optimize_smallscreen?'normal':'nowrap'; ?>;
+    vertical-align: middle;
 }
 
 input.liste_titre {
@@ -1503,7 +1505,7 @@ background-position: top right;*/
 border: 0px;
 }
 
-tr.liste_total td {
+tr.liste_total td, form.liste_total div {
 border-top: 1px solid #DDDDDD;
 background: #F0F0F0;
 /* background-image: url(<?php echo dol_buildpath($path.'/theme/login_background.png',1); ?>); */
@@ -2103,7 +2105,7 @@ A.none, A.none:active, A.none:visited, A.none:hover {
     font-family:<?php echo $fontlist; ?>;
     font-size:<?php echo $fontsize; ?>px;
 }
-.ui-button { margin-left: -1px; }
+.ui-button { margin-left: -1px; padding-top: 1px; }
 .ui-button-icon-only .ui-button-text { height: 8px; }
 .ui-button-icon-only .ui-button-text, .ui-button-icons-only .ui-button-text { padding: 2px 0px 6px 0px; }
 .ui-button-text

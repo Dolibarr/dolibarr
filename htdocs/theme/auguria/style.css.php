@@ -1233,7 +1233,7 @@ border-left: 1px solid #000000;
 
 /* Main boxes */
 
-table.noborder {
+table.noborder, div.noborder {
     border-collapse: collapse;
     border-top-color: #FEFEFE;
 
@@ -1259,7 +1259,7 @@ table.noborder {
     box-shadow: 4px 4px 4px #CCC;
 }
 
-table.noborder tr {
+table.noborder tr, div.noborder form {
     border-top-color: #FEFEFE;
 
     border-right-width: 1px;
@@ -1272,7 +1272,7 @@ table.noborder tr {
 	height: 20px;
 }
 
-table.noborder td {
+table.noborder td, div.noborder form div {
 	padding: 1px 2px 2px 1px;			/* t r b l */
 }
 
@@ -1370,7 +1370,7 @@ input.liste_titre {
 	border: 0px;
 }
 
-tr.liste_total td {
+tr.liste_total td, form.liste_total div {
 	border-top: 1px solid #DDDDDD;
 	background: #F0F0F0;
 	background-repeat: repeat-x;
@@ -1932,7 +1932,7 @@ A.none, A.none:active, A.none:visited, A.none:hover {
     font-family:<?php echo $fontlist; ?>;
     font-size:<?php echo $fontsize; ?>px;
 }
-.ui-button { margin-left: -1px; }
+.ui-button { margin-left: -1px; padding-top: 1px; }
 .ui-button-icon-only .ui-button-text { height: 8px; }
 .ui-button-icon-only .ui-button-text, .ui-button-icons-only .ui-button-text { padding: 2px 0px 6px 0px; }
 .ui-button-text
