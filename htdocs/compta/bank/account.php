@@ -295,25 +295,25 @@ if ($id > 0 || ! empty($ref))
 	$param.='&amp;account='.$object->id;
 
 	// Define transaction list navigation string
-	$navig = '<form action="'.$_SERVER["PHP_SELF"].'" name="newpage" method="GET">';
+	$navig = '<form action="'.$_SERVER["PHP_SELF"].'" name="newpage" method="GET"><div data-role="fieldcontain">';
 	//print 'nbpage='.$totalPages.' viewline='.$viewline.' limitsql='.$limitsql;
 	if ($limitsql > $viewline) $navig.='<a href="account.php?'.$param.'&amp;page='.($page+1).'">'.img_previous().'</a>';
-	$navig.= $langs->trans("Page")." "; // ' Page ';
-	$navig.='<input type="text" name="negpage" size="1" class="flat" value="'.($totalPages-$page).'">';
+	$navig.= '<label for="negpage">'.$langs->trans("Page")."</label> "; // ' Page ';
+	$navig.='<input type="text" name="negpage" id="negpage" size="1" class="flat" value="'.($totalPages-$page).'">';
 	$navig.='<input type="hidden" name="paiementtype" value="'.$paiementtype.'">';
 	$navig.='<input type="hidden" name="req_nb"     value="'.$req_nb.'">';
 	$navig.='<input type="hidden" name="req_desc"   value="'.$req_desc.'">';
 	$navig.='<input type="hidden" name="req_debit"  value="'.$req_debit.'">';
 	$navig.='<input type="hidden" name="req_credit" value="'.$req_credit.'">';
 	$navig.='<input type="hidden" name="thirdparty" value="'.$thirdparty.'">';
-	$navig.='<input type="hidden" name="nbpage"  value="'.$totalPages.'">';
-	$navig.='<input type="hidden" name="id" value="'.$object->id.'">';
+	$navig.='<input type="hidden" name="nbpage"     value="'.$totalPages.'">';
+	$navig.='<input type="hidden" name="id"         value="'.$object->id.'">';
 	$navig.='/'.$totalPages.' ';
 	if ($total_lines > $limitsql )
 	{
 		$navig.= '<a href="'.$_SERVER["PHP_SELF"].'?'.$param.'&amp;page='.($page-1).'">'.img_next().'</a>';
 	}
-	$navig.='</form>';
+	$navig.='</fieldset></div></form>';
 	//var_dump($navig);
 
 	// Confirmation delete
