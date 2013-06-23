@@ -2720,6 +2720,12 @@ ul.ulmenu {
 	-webkit-border-radius: 0;
 }
 
+.ui-field-contain label.ui-input-text {
+	vertical-align: middle !important;
+}
+.ui-mobile fieldset {
+	border-bottom: none !important;
+}
 
 <?php
 if (is_object($db)) $db->close();
