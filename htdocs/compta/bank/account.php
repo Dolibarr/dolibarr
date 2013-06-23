@@ -55,6 +55,10 @@ $result=restrictedArea($user,'banque',$fieldvalue,'bank_account','','',$fieldtyp
 $paiementtype=GETPOST('paiementtype','alpha',3);
 $req_nb=GETPOST("req_nb",'',3);
 $thirdparty=GETPOST("thirdparty",'',3);
+$req_desc=GETPOST("req_desc",'',3);
+$req_debit=GETPOST("req_debit",'',3);
+$req_credit=GETPOST("req_credit",'',3);
+
 $vline=GETPOST("vline");
 $page=GETPOST('page','int');
 $negpage=GETPOST('negpage','int');
@@ -186,22 +190,22 @@ if ($id > 0 || ! empty($ref))
 		$param.='&amp;req_nb='.urlencode($req_nb);
 		$mode_search = 1;
 	}
-	if (GETPOST("req_desc"))
+	if ($req_desc)
 	{
-		$sql_rech.= " AND b.label LIKE '%".$db->escape(GETPOST("req_desc"))."%'";
-		$param.='&amp;req_desc='.urlencode(GETPOST("req_desc"));
+		$sql_rech.= " AND b.label LIKE '%".$db->escape($req_desc)."%'";
+		$param.='&amp;req_desc='.urlencode($req_desc);
 		$mode_search = 1;
 	}
-	if (GETPOST("req_debit"))
+	if ($req_debit != '')
 	{
-		$sql_rech.=" AND b.amount = -".price2num(GETPOST("req_debit"));
-		$param.='&amp;req_debit='.urlencode(GETPOST("req_debit"));
+		$sql_rech.=" AND b.amount = -".price2num($req_debit);
+		$param.='&amp;req_debit='.urlencode($req_debit);
 		$mode_search = 1;
 	}
-	if (GETPOST("req_credit"))
+	if ($req_credit != '')
 	{
-		$sql_rech.=" AND b.amount = ".price2num(GETPOST("req_credit"));
-		$param.='&amp;req_credit='.urlencode(GETPOST("req_credit"));
+		$sql_rech.=" AND b.amount = ".price2num($req_credit);
+		$param.='&amp;req_credit='.urlencode($req_credit);
 		$mode_search = 1;
 	}
 	if ($thirdparty)
@@ -298,9 +302,9 @@ if ($id > 0 || ! empty($ref))
 	$navig.='<input type="text" name="negpage" size="1" class="flat" value="'.($totalPages-$page).'">';
 	$navig.='<input type="hidden" name="paiementtype" value="'.$paiementtype.'">';
 	$navig.='<input type="hidden" name="req_nb"     value="'.$req_nb.'">';
-	$navig.='<input type="hidden" name="req_desc"   value="'.GETPOST("req_desc").'">';
-	$navig.='<input type="hidden" name="req_debit"  value="'.GETPOST("req_debit").'">';
-	$navig.='<input type="hidden" name="req_credit" value="'.GETPOST("req_credit").'">';
+	$navig.='<input type="hidden" name="req_desc"   value="'.$req_desc.'">';
+	$navig.='<input type="hidden" name="req_debit"  value="'.$req_debit.'">';
+	$navig.='<input type="hidden" name="req_credit" value="'.$req_credit.'">';
 	$navig.='<input type="hidden" name="thirdparty" value="'.$thirdparty.'">';
 	$navig.='<input type="hidden" name="nbpage"  value="'.$totalPages.'">';
 	$navig.='<input type="hidden" name="id" value="'.$object->id.'">';
@@ -325,7 +329,7 @@ if ($id > 0 || ! empty($ref))
 	// Show title
 	if ($action != 'addline' && $action != 'delete')
 	{
-		print '<tr><td colspan="9" align="right">'.$navig.'</td></tr>';
+		print '<tr><td colspan="10" align="right">'.$navig.'</td></tr>';
 	}
 
 	// Form to add a transaction with no invoice
@@ -375,7 +379,7 @@ if ($id > 0 || ! empty($ref))
 		print '</td></tr>';
 		print "</form>";
 
-		print '<tr class="noborder"><td colspan="8">&nbsp;</td></tr>'."\n";
+		print '<tr class="noborder"><td colspan="10">&nbsp;</td></tr>'."\n";
 	}
 
 	/*
@@ -412,10 +416,10 @@ if ($id > 0 || ! empty($ref))
 	print $form->select_types_paiements($paiementtype,'paiementtype',$filtertype,2,1,1,8);
 	print '</td>';
 	print '<td><input type="text" class="flat" name="req_nb" value="'.$req_nb.'" size="2"></td>';
-	print '<td><input type="text" class="flat" name="req_desc" value="'.GETPOST("req_desc").'" size="24"></td>';
+	print '<td><input type="text" class="flat" name="req_desc" value="'.$req_desc.'" size="24"></td>';
 	print '<td><input type="text" class="flat" name="thirdparty" value="'.$thirdparty.'" size="14"></td>';
-	print '<td align="right"><input type="text" class="flat" name="req_debit" value="'.GETPOST("req_debit").'" size="4"></td>';
-	print '<td align="right"><input type="text" class="flat" name="req_credit" value="'.GETPOST("req_credit").'" size="4"></td>';
+	print '<td align="right"><input type="text" class="flat" name="req_debit" value="'.$req_debit.'" size="4"></td>';
+	print '<td align="right"><input type="text" class="flat" name="req_credit" value="'.$req_credit.'" size="4"></td>';
 	print '<td align="center">&nbsp;</td>';
 	print '<td align="center" width="40"><input type="image" class="liste_titre" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'"></td>';
 	print "</tr>\n";
@@ -674,7 +678,7 @@ if ($id > 0 || ! empty($ref))
 				}
 
 				// Balance
-				if ($action != 'search')
+				if (! $mode_search)
 				{
 					if ($total >= 0)
 					{
