@@ -25,8 +25,6 @@
 
 require '../main.inc.php';
 require_once(DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php");
-
-// librairie jobs
 require_once DOL_DOCUMENT_ROOT."/cron/class/cronjob.class.php";
 require_once DOL_DOCUMENT_ROOT.'/core/lib/cron.lib.php';
 
@@ -99,6 +97,8 @@ if ($action == 'confirm_execute' && $confirm == "yes" && $user->rights->cron->ex
 		setEventMessage($object->error,'errors');
 	}
 
+	header("Location: ".DOL_URL_ROOT.'/cron/list.php?status=-1');		// Make a call to avoid to run twice job when using back
+	exit;
 }
 
 
@@ -141,8 +141,8 @@ if ($result < 0) {
 
 print "<br><br>";
 
-if (count($object->lines)>0) {
-
+if (count($object->lines)>0)
+{
 	print '<table class="noborder">';
 	print '<tr class="liste_titre">';
 	$arg_url='&page='.$page.'&status='.$status.'&search_label='.$search_label;
@@ -156,7 +156,7 @@ if (count($object->lines)>0) {
 	print_liste_field_titre($langs->trans("CronNbRun"),$_SERVEUR['PHP_SELF'],"t.nbrun","",$arg_url,'',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("CronLastResult"),$_SERVEUR['PHP_SELF'],"t.lastresult","",$arg_url,'',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("CronLastOutput"),$_SERVEUR['PHP_SELF'],"t.lastoutput","",$arg_url,'',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Active"),$_SERVEUR['PHP_SELF'],"t.status","",$arg_url,'align="center"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Enabled"),$_SERVEUR['PHP_SELF'],"t.status","",$arg_url,'align="center"',$sortfield,$sortorder);
 	print '<td></td>';
 	print '</tr>';
 
@@ -302,6 +302,10 @@ else
 print '</div>';
 
 print '<br>';
+
+
+dol_print_cron_urls();
+
 
 llxFooter();
 

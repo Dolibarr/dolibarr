@@ -1,7 +1,7 @@
 # Dolibarr language file - en_US - cron
 CHARSET=UTF-8
 Module2310Name=Cron
-Module2310Desc=Gestion des tâches programmées
+Module2310Desc=Gestion des travaux programmées
 
 #
 # About page
@@ -13,20 +13,20 @@ CronAboutPage = Page à propos de Cron
 #
 # Right
 #
-Permission23101 = Voir la tâche planifiée
-Permission23102 = Créer/modifier la tâche planifiée
-Permission23103 = Supprimer la tâche planifiée
-Permission23104 = Lancer la tâche planifiée
+Permission23101 = Voir les travaux planifiés
+Permission23102 = Créer/modifier des travaux planifiés
+Permission23103 = Supprimer un travail planifiée
+Permission23104 = Lancer un travail planifié
 
 #
 # Admin
 #
-CronSetup= Page de configuration du module - Gestion des tâches planifiées
-URLToLaunchCronJobs=URL pour lancer les travaux cron
-OrToLaunchASpecificJob=Ou pour lancer un travail spécifique
-KeyForCronAccess=Clé de sécurité pour l'URL de lancement des travaux cron
-FileToLaunchCronJobs=Commande pour lancer les travaux cron
-CronExplainHowToRunUnix=Sur un environnement Unix vous devez utiliser crontab pour exécuter une commande toute les minutes
+CronSetup= Page de configuration du module - Gestion des travaux planifiées
+URLToLaunchCronJobs=URL pour lancer les travaux planifiés actifs
+OrToLaunchASpecificJob=Ou pour lancer un travail planifié spécifique
+KeyForCronAccess=Clé de sécurité pour l'URL de lancement des travaux planifiés
+FileToLaunchCronJobs=Commande pour lancer les travaux planifiés actifs
+CronExplainHowToRunUnix=Sur un environnement Unix vous pouvez utiliser 'crontab' pour exécuter une commande toute les minutes
 CronExplainHowToRunWin=Sur un environement Microsoft(tm) Windows vous pouvez utiliser le planificateur de tâche pour lancer une commande toute les minutes
 
 
@@ -71,6 +71,8 @@ CronNoJobs=Aucun travail enregistré
 CronPriority=Priorité
 CronLabel=Description
 CronNbRun=Nb. exec.
+CronEach=Tous les
+JobFinished=Tache lancée et terminée
 
 #
 #Page card
