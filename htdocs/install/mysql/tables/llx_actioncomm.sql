@@ -25,9 +25,9 @@ create table llx_actioncomm
   id				integer AUTO_INCREMENT PRIMARY KEY,
   ref_ext			varchar(128),
   entity			integer DEFAULT 1 NOT NULL,		-- multi company id
-  datep				datetime,						-- date debut planifiee
-  datep2			datetime,						-- deprecated
-  datea				datetime,						-- date debut realisation
+  datep				datetime,						-- date start
+  datep2			datetime,						-- date end
+  datea				datetime,						-- deprecated
   datea2			datetime,						-- deprecated
 
   fk_action			integer,						-- type of action (optionnal link with llx_c_actioncomm or null)
