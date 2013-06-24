@@ -196,7 +196,9 @@ body {
 	background-color: <?php print $colorbackbody; ?>;
 <?php } ?>
 	color:#232323;
+	<?php if (empty($dol_use_jmobile) || 1==1) { ?>
 	font-size:<?php print $fontsize ?>px;
+	<?php } ?>
    	font-family:<?php print $fontlist ?>;
     <?php print 'direction:'.$langs->trans("DIRECTION").";\n"; ?>
 }
@@ -212,6 +214,8 @@ a:hover, a:active {
 	color:rgba(0,0,0,.6);
 }
 
+<?php if (empty($dol_use_jmobile)) { ?>
+
 input, input.flat, textarea, textarea.flat, form.flat select, select.flat {
 	padding: 1px;
 }
@@ -224,6 +228,8 @@ input, textarea {
     border-bottom:solid 1px rgba(0,0,0,.2);
     box-shadow:1px 1px 2px rgba(0,0,0,.2) inset;
 }
+
+<?php } ?>
 
 input[type="image"] {
 	border-radius:0px;
@@ -245,6 +251,15 @@ input:disabled {background:#b6b6b6;}
 
 input[type=checkbox] { background-color: transparent; border: none; box-shadow: none; }
 input[type=image] { background-color: transparent; border: none; box-shadow: none; }
+input:-webkit-autofill {
+	background-color: <?php echo empty($dol_use_jmobile)?'#FBFFEA':'#FFFFFF' ?> !important;
+	background-image:none !important;
+	-webkit-box-shadow: 0 0 0 50px <?php echo empty($dol_use_jmobile)?'#FBFFEA':'#FFFFFF' ?> inset;
+}
+
+<?php if (! empty($dol_use_jmobile)) { ?>
+legend { margin-bottom: 8px; }
+<?php } ?>
 
 textarea.flat {
 	font-size:<?php print $fontsize ?>px;
@@ -899,7 +914,7 @@ a.help:link, a.help:visited, a.help:hover, a.help:active { font-size:<?php print
 
 div.tabs {
 	margin: 0px 0px 0px 6px;
-	padding: 0px 6px 3px 0px;
+	padding: 0px 6px 1px 0px;
 	clear:both;
 	height:100%;
 }
@@ -1075,16 +1090,16 @@ td.formdocbutton {padding-top:6px;}
 #undertopmenu {
 }
 
-table img {
+table img, div.tagtable img {
 	padding:0px 2px;
 	vertical-align:middle;
 }
 
-table.liste img {
+table.liste img, div.list img {
 	padding:0px;
 }
 
-table a {
+table a, div.tagtable a {
 	vertical-align:middle;
 }
 
@@ -1145,9 +1160,9 @@ table.border.formdoc {
 	width:60%;
 }
 
-table.border.formdoc td {padding:1px 3px;}
+table.border.formdoc td { padding:1px 3px; }
 
-table.noborder {
+table.noborder, div.noborder {
 	border:1px solid #bbbbbb;
 	padding:0px;
 	margin:3px 0px 8px;
@@ -1157,9 +1172,9 @@ table.noborder {
 	box-shadow:2px 4px 2px #cccccc;
 }
 
-table.noborder tr {}
+table.noborder tr, div.noborder form {}
 
-table.noborder td {padding:1px 2px 1px 3px;}
+table.noborder td, , div.noborder div { padding:1px 2px 1px 3px; }
 
 table.nobordernopadding {
 	border-collapse:collapse;
@@ -1243,12 +1258,12 @@ tr.liste_titre td, tr.liste_titre th, form.liste_titre div {
 	text-shadow:1px 1px 1px #ffffff;
 }
 
-td.liste_titre_sel {
+td.liste_titre_sel, form.liste_titre div.liste_titre_sel {
 	font-weight:bold;
 	white-space:nowrap;
 }
 
-tr.liste_total td {
+tr.liste_total td, form.liste_total div {
 	padding:1px 2px;
 	border-top:solid 1px #cccccc;
 	background-color:#eaeaea;
@@ -1256,9 +1271,9 @@ tr.liste_total td {
 	white-space:nowrap;
 }
 
-tr.impair td, tr.pair td {padding:1px 1px 1px 2px;}
+tr.impair td, tr.pair td, form.impair div, form.pair div { padding:1px 1px 1px 2px; }
 
-tr.impair table.nobordernopadding td, tr.pair table.nobordernopadding td {padding:1px 0px;}
+tr.impair table.nobordernopadding td, tr.pair table.nobordernopadding td { padding:1px 0px; }
 
 .impair {
 	background:#fdfdfd;
@@ -1897,11 +1912,11 @@ a.none, a.none:active, a.none:visited, a.none:hover {
     font-size:<?php echo $fontsize; ?>px;
 }
 
-.ui-button {margin-left:-1px;}
-.ui-button-icon-only .ui-button-text {height:8px;}
-.ui-button-icon-only .ui-button-text, .ui-button-icons-only .ui-button-text {padding:2px 0px 6px 0px;}
-.ui-button-text {line-height:1em !important;}
-.ui-autocomplete-input {margin:0; padding:1px;}
+.ui-button { margin-left:-2px; padding-top: 1px; }
+.ui-button-icon-only .ui-button-text { height:8px; }
+.ui-button-icon-only .ui-button-text, .ui-button-icons-only .ui-button-text { padding:2px 0px 6px 0px; }
+.ui-button-text { line-height:1em !important; }
+.ui-autocomplete-input { margin:0; padding:1px; }
 
 
 /* ============================================================================== */
@@ -2055,14 +2070,31 @@ div.jnotify-background {
 li.ui-li-divider .ui-link {
 	color: #FFF !important;
 }
+.ui-btn {
+	margin: 0.1em 2px
+}
 .ui-btn-inner {
+	min-width: .4em;
 	padding-left: 10px;
 	padding-right: 10px;
 	white-space: normal;
+	<?php if (empty($dol_use_jmobile) || 1==1) { ?>
+	font-size: <?php print $fontsize ?>px;
+	<?php } ?>
+}
+.ui-btn-icon-right .ui-btn-inner {
+	padding-right: 34px;
+}
+.ui-btn-icon-left .ui-btn-inner {
+	padding-left: 34px;
 }
 .ui-select .ui-btn-icon-right .ui-btn-inner {
 	padding-right: 36px;
 }
+.ui-select .ui-btn-icon-left .ui-btn-inner {
+	padding-left: 36px;
+}
+
 .fiche .ui-controlgroup {
 	margin: 0px;
 	padding-bottom: 0px;
@@ -2077,7 +2109,11 @@ div.ui-controlgroup-controls div.tabsElem a
 	-moz-box-shadow: 0 -3px 6px rgba(0,0,0,.2);
 	-webkit-box-shadow: 0 -3px 6px rgba(0,0,0,.2);
 	box-shadow: 0 -3px 6px rgba(0,0,0,.2);
-	border: none;
+}
+div.ui-controlgroup-controls div.tabsElem a#active {
+	-moz-box-shadow: 0 -3px 6px rgba(0,0,0,.3);
+	-webkit-box-shadow: 0 -3px 6px rgba(0,0,0,.3);
+	box-shadow: 0 -3px 6px rgba(0,0,0,.3);
 }
 
 a.tab span.ui-btn-inner, a.tab span.ui-btn-inner span.ui-btn-text
@@ -2087,7 +2123,7 @@ a.tab span.ui-btn-inner, a.tab span.ui-btn-inner span.ui-btn-text
 }
 
 .ui-body-c {
-	border: none;
+	border: 1px solid #CCC;
 	text-shadow: none;
 }
 .ui-link {
@@ -2119,6 +2155,22 @@ div.ui-radio
 	width: auto;
 	margin: 0;
 	position: static;
+}
+.ui-mobile fieldset
+{
+	padding-bottom: 10px; margin-bottom: 4px; border-bottom: 1px solid #AAAAAA !important;
+}
+
+ul.ulmenu {
+	border-radius: 0;
+	-webkit-border-radius: 0;
+}
+
+.ui-field-contain label.ui-input-text {
+	vertical-align: middle !important;
+}
+.ui-mobile fieldset {
+	border-bottom: none !important;
 }
 
 <?php

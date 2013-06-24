@@ -57,18 +57,20 @@ $left=($langs->trans("DIRECTION")=='rtl'?'right':'left');
 $fontsize=empty($conf->dol_optimize_smallscreen)?'12':'12';
 $fontsizesmaller=empty($conf->dol_optimize_smallscreen)?'11':'11';
 
-$fontlist='arial,tahoma,verdana,helvetica';
-//$fontlist='Verdana,Helvetica,Arial,sans-serif';
 
+$path='';    			// This value may be used in future for external module to overwrite theme
+$theme='bureau2crea';	// Value of theme
+if (! empty($conf->global->MAIN_OVERWRITE_THEME_RES)) { $path='/'.$conf->global->MAIN_OVERWRITE_THEME_RES; $theme=$conf->global->MAIN_OVERWRITE_THEME_RES; }
+
+// Define image path files
+$fontlist='arial, sans-serif, verdana, helvetica';
+//$fontlist='Verdana,Helvetica,Arial,sans-serif';
 $dol_hide_topmenu=$conf->dol_hide_topmenu;
 $dol_hide_leftmenu=$conf->dol_hide_leftmenu;
 $dol_optimize_smallscreen=$conf->dol_optimize_smallscreen;
 $dol_no_mouse_hover=$conf->dol_no_mouse_hover;
 $dol_use_jmobile=$conf->dol_use_jmobile;
 
-$path='';    			// This value may be used in future for external module to overwrite theme
-$theme='bureau2crea';	// Value of theme
-if (! empty($conf->global->MAIN_OVERWRITE_THEME_RES)) { $path='/'.$conf->global->MAIN_OVERWRITE_THEME_RES; $theme=$conf->global->MAIN_OVERWRITE_THEME_RES; }
 
 ?>
 
@@ -79,8 +81,10 @@ if (! empty($conf->global->MAIN_OVERWRITE_THEME_RES)) { $path='/'.$conf->global-
 body {
 /*	background-color: #FFFFFF; */
 	color: #101010;
-	font-size: 12px;
-    font-family: arial, sans-serif, verdana, helvetica;
+	<?php if (empty($dol_use_jmobile) || 1==1) { ?>
+	font-size: <?php print $fontsize ?>px;
+    <?php } ?>
+    font-family: <?php print $fontlist ?>;
     margin-top: 0;
     margin-bottom: 0;
     margin-right: 0;
@@ -149,9 +153,14 @@ textarea:disabled {
 	background:#ddd;
 }
 
-
 input[type=checkbox] { background-color: transparent; border: none; box-shadow: none; }
 input[type=image] { background-color: transparent; border: none; box-shadow: none; }
+input:-webkit-autofill {
+	background-color: <?php echo empty($dol_use_jmobile)?'#FBFFEA':'#FFFFFF' ?> !important;
+	background-image:none !important;
+	-webkit-box-shadow: 0 0 0 50px <?php echo empty($dol_use_jmobile)?'#FBFFEA':'#FFFFFF' ?> inset;
+}
+
 input.button[type=submit] {
 	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/bg_btnGreen.jpg',1); ?>);
     display: block;
@@ -166,6 +175,10 @@ input.button[type=submit] {
     font-size: 10px;
     display: inline;
 }
+
+<?php if (! empty($dol_use_jmobile)) { ?>
+legend { margin-bottom: 8px; }
+<?php } ?>
 
 .button {
     font-family: <?php print $fontlist ?>;
@@ -227,9 +240,9 @@ div.inline-block
 .nowrap {
 	white-space: <?php print ($dol_optimize_smallscreen?'normal':'nowrap'); ?>;
 }
-.dolibarrcombobox {
+/*.dolibarrcombobox {
 	height: 22px;
-}
+}*/
 
 /* ============================================================================== */
 /* Styles to hide objects                                                         */
@@ -296,7 +309,7 @@ div.fichethirdleft {
 	<?php if (empty($conf->dol_optimize_smallscreen)) { print "width: 35%;\n"; } ?>
 }
 div.fichetwothirdright {
-	<?php if (empty($conf->dol_optimize_smallscreen)) { print "float: ".$left.";\n"; } ?>
+	<?php if (empty($conf->dol_optimize_smallscreen)) { print "float: ".$right.";\n"; } ?>
 	<?php if (empty($conf->dol_optimize_smallscreen)) { print "width: 65%;\n"; } ?>
 }
 div.fichehalfleft {
@@ -304,7 +317,7 @@ div.fichehalfleft {
 	<?php if (empty($conf->dol_optimize_smallscreen)) { print "width: 50%;\n"; } ?>
 }
 div.fichehalfright {
-	<?php if (empty($conf->dol_optimize_smallscreen)) { print "float: ".$left.";\n"; } ?>
+	<?php if (empty($conf->dol_optimize_smallscreen)) { print "float: ".$right.";\n"; } ?>
 	<?php if (empty($conf->dol_optimize_smallscreen)) { print "width: 50%;\n"; } ?>
 }
 div.ficheaddleft {
@@ -897,7 +910,7 @@ img.toolbarbutton {
  *  RESIZER-BARS
  */
 .ui-layout-resizer  { /* all 'resizer-bars' */
-	width: 8px !important;
+	width: <?php echo (empty($conf->dol_optimize_smallscreen)?'8':'24'); ?>px !important;
 }
 .ui-layout-resizer-hover    {   /* affects both open and closed states */
 }
@@ -906,7 +919,7 @@ img.toolbarbutton {
 /*.ui-layout-resizer-open-hover ,*/ /* hover-color to 'resize' */
 .ui-layout-resizer-dragging {   /* resizer beging 'dragging' */
     background: #DDD;
-    width: 8px;
+    width: <?php echo (empty($conf->dol_optimize_smallscreen)?'8':'24'); ?>px;
 }
 .ui-layout-resizer-dragging {   /* CLONED resizer being dragged */
     border-left:  1px solid #BBB;
@@ -1019,6 +1032,8 @@ img.toolbarbutton {
     border:         1px solid #BBB;
     border-width:   0;
     }
+.ecm-layout-resizer-closed {
+}
 
 .ecm-in-layout-center {
     border-left: 1px !important;
@@ -1366,7 +1381,7 @@ border-left: 1px solid #000000;
 
 /* Main boxes */
 
-table.noborder {
+table.noborder, div.noborder form {
 	/*box-shadow: 2px 4px 2px #CCCCCC;
 	-moz-box-shadow: 2px 4px 2px #CCCCCC;
 	-webkit-box-shadow: 2px 4px 2px #CCCCCC; */
@@ -1375,10 +1390,10 @@ table.noborder {
 
 }
 
-table.noborder tr {
+table.noborder tr, div.noborder form {
 }
 
-table.noborder td {
+table.noborder td, div.noborder div {
 }
 
 table.nobordernopadding {
@@ -1437,9 +1452,9 @@ th.liste_titre_sel, td.liste_titre_sel, th.liste_titre {
     color: #FFFFFF !important;
 }
 
-tr.liste_total {
-height: 25px;
-border-top: 1px solid #333;
+tr.liste_total, form.liste_total {
+	height: 25px;
+	border-top: 1px solid #333;
 }
 
 div#stats {
@@ -1476,7 +1491,7 @@ div.liste_titre input.button, tr.liste_titre input.button, form.liste_titre inpu
     /*margin: 30px 10px 10px 0px;*/
 }
 
-th.liste_titre_sel, td.liste_titre_sel
+th.liste_titre_sel, td.liste_titre_sel, div.liste_titre_sel
 {
     background: #505050;
     background-repeat: repeat-x;
@@ -1493,47 +1508,47 @@ input.liste_titre {
     border: 0px;
 }
 
-tr.liste_total td {
-border-top: 1px solid #DDDDDD;
-background: #F0F0F0;
-/* background-image: url(<?php echo dol_buildpath($path.'/theme/login_background.png',1); ?>); */
-background-repeat: repeat-x;
-color: #332266;
-font-weight: normal;
-padding: 5px;
+tr.liste_total td, form.liste_total div {
+	border-top: 1px solid #DDDDDD;
+	background: #F0F0F0;
+	/* background-image: url(<?php echo dol_buildpath($path.'/theme/login_background.png',1); ?>); */
+	background-repeat: repeat-x;
+	color: #332266;
+	font-weight: normal;
+	padding: 5px;
 }
 
 .impair {
-background: #eaeaea;
-font-family: <?php print $fontlist ?>;
-border: 0px;
+	background: #eaeaea;
+	font-family: <?php print $fontlist ?>;
+	border: 0px;
 }
 
 .impair:hover {
-background: #c0c4c7;
-border: 0px;
+	background: #c0c4c7;
+	border: 0px;
 }
 
-tr.impair td.nohover {
-background: #eaeaea;
+tr.impair td.nohover, form.impair div.nohover {
+	background: #eaeaea;
 }
 
 .pair	{
-background: #FFFFFF;
-font-family: <?php print $fontlist ?>;
-border: 0px;
+	background: #FFFFFF;
+	font-family: <?php print $fontlist ?>;
+	border: 0px;
 }
 
 .pair:hover {
-background: #c0c4c7;
-border: 0px;
+	background: #c0c4c7;
+	border: 0px;
 }
 
 tr.pair td.nohover {
 	background: #FFFFFF;
 }
 
-.pair td, .impair td
+.pair td, .impair td, .pair div, .impair div
 {
 	padding: 2px 3px !important;
 }
@@ -1671,7 +1686,7 @@ border: 0px;
 }
 
 div.titre {
-	font-family: "Trebuchet MS",Arial,Helvetica,sans-serif;
+	font-family: <?php print $fontlist ?>;
 	font-weight: normal;
 	color: #842F00;
     font-size: 16px;
@@ -1869,9 +1884,30 @@ li.cal_event       { border: none; list-style-type: none; }
 /*  Ajax - Liste deroulante de l'autocompletion                                   */
 /* ============================================================================== */
 
-.ui-widget { font-family: Verdana,Arial,sans-serif; font-size: 0.9em; }
 .ui-autocomplete-loading { background: white url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/working.gif',1); ?>) right center no-repeat; }
-
+.ui-autocomplete {
+	       position:absolute;
+	       width:auto;
+	       font-size: 1.0em;
+	       background-color:white;
+	       border:1px solid #888;
+	       margin:0px;
+	       padding:0px;
+	     }
+.ui-autocomplete ul {
+	       list-style-type:none;
+	       margin:0px;
+	       padding:0px;
+	     }
+.ui-autocomplete ul li.selected { background-color: #D3E5EC;}
+.ui-autocomplete ul li {
+	       list-style-type:none;
+	       display:block;
+	       margin:0;
+	       padding:2px;
+	       height:18px;
+	       cursor:pointer;
+	     }
 
 /* ============================================================================== */
 /*  jQuery - jeditable                                                            */
@@ -2046,9 +2082,22 @@ A.none, A.none:active, A.none:visited, A.none:hover {
     line-height:1.5;
     zoom:1;
     font-weight: normal;
-    font-family:Verdana,Arial,sans-serif;
+    font-family:<?php echo $fontlist; ?>;
     font-size:1em;
 }
+.ui-widget {
+    font-family:<?php echo $fontlist; ?>;
+    font-size:<?php echo $fontsize; ?>px;
+}
+.ui-button { margin-left: -1px; padding-top: 1px; }
+.ui-button-icon-only .ui-button-text { height: 8px; }
+.ui-button-icon-only .ui-button-text, .ui-button-icons-only .ui-button-text { padding: 2px 0px 6px 0px; }
+.ui-button-text
+{
+    line-height: 1em !important;
+}
+.ui-autocomplete-input { margin: 0; padding: 1px; }
+
 
 table.noborder {
 	margin-bottom: 10px;
@@ -2346,7 +2395,7 @@ div.ecmjqft {
 /* Core Styles */
 .ecmjqft LI.directory { font-weight:normal; background: url(<?php echo dol_buildpath($path.'/theme/common/treemenu/folder2.png',1); ?>) left top no-repeat; }
 .ecmjqft LI.expanded { font-weight:normal; background: url(<?php echo dol_buildpath($path.'/theme/common/treemenu/folder2-expanded.png',1); ?>) left top no-repeat; }
-.ecmjqft LI.wait { font-weight:normal; background: url(<?php echo dol_buildpath('/theme/eldy/img/working.gif',1); ?>) left top no-repeat; }
+.ecmjqft LI.wait { font-weight:normal; background: url(<?php echo dol_buildpath('/theme/'.$theme.'/img/working.gif',1); ?>) left top no-repeat; }
 
 
 /* ============================================================================== */
@@ -2374,6 +2423,9 @@ div.ecmjqft {
 li.ui-li-divider .ui-link {
 	color: #FFF !important;
 }
+.ui-btn {
+	margin: 0.1em 2px
+}
 a.ui-link, a.ui-link:hover, .ui-btn:hover, span.ui-btn-text:hover, span.ui-btn-inner:hover {
 	text-decoration: none !important;
 }
@@ -2386,6 +2438,10 @@ a.ui-link, a.ui-link:hover, .ui-btn:hover, span.ui-btn-text:hover, span.ui-btn-i
 .ui-select .ui-btn-icon-right .ui-btn-inner {
 	padding-right: 36px;
 }
+.ui-select .ui-btn-icon-left .ui-btn-inner {
+	padding-left: 36px;
+}
+
 .fiche .ui-controlgroup {
 	margin: 0px;
 	padding-bottom: 0px;
@@ -2408,7 +2464,7 @@ a.tab span.ui-btn-inner
 }
 
 .ui-body-c {
-	border: none;
+	border: 1px solid #CCC;
 	text-shadow: none;
 }
 .ui-link {
@@ -2442,6 +2498,16 @@ div.ui-radio
 	margin: 0;
 	position: static;
 }
+.ui-mobile fieldset
+{
+	padding-bottom: 10px; margin-bottom: 4px; border-bottom: 1px solid #AAAAAA !important;
+}
+
+ul.ulmenu {
+	border-radius: 0;
+	-webkit-border-radius: 0;
+}
+
 
 <?php
 if (is_object($db)) $db->close();

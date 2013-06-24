@@ -180,7 +180,7 @@ if (! empty($conf->propal->enabled))
 			{
 				$var=!$var;
 				$obj = $db->fetch_object($resql);
-				print "<tr $bc[$var]>";
+				print "<tr ".$bc[$var].">";
 
 				$propalstatic->id=$obj->rowid;
 				$propalstatic->ref=$obj->ref;
@@ -241,7 +241,7 @@ if ($resql)
 			$var=!$var;
 			$obj = $db->fetch_object($resql);
 
-			print "<tr $bc[$var]>";
+			print "<tr ".$bc[$var].">";
 			print '<td width="20%" class="nowrap">';
 
 			$propalstatic->id=$obj->rowid;
@@ -402,7 +402,7 @@ if (! empty($conf->propal->enabled))
 			{
 				$var=!$var;
 				$obj = $db->fetch_object($resql);
-				print "<tr $bc[$var]>";
+				print "<tr ".$bc[$var].">";
 				print '<td class="nowrap">';
 
 				$propalstatic->id=$obj->rowid;
@@ -474,7 +474,7 @@ if (! empty($conf->propal->enabled))
 			{
 				$var=!$var;
 				$obj = $db->fetch_object($resql);
-				print "<tr $bc[$var]>";
+				print "<tr ".$bc[$var].">";
 				print '<td width="20%" class="nowrap">';
 
 				$propalstatic->id=$obj->rowid;

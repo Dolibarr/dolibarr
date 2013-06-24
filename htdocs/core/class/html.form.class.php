@@ -1076,11 +1076,12 @@ class Form
      *  @param  array	$exclude        Array list of users id to exclude
      * 	@param	int		$disabled		If select list must be disabled
      *  @param  array	$include        Array list of users id to include
-     * 	@param	int		$enableonly		Array list of users id to be enabled. All other must be disabled
+     * 	@param	array	$enableonly		Array list of users id to be enabled. All other must be disabled
      *  @param	int		$force_entity	0 or Id of environment to force
+     *  @param	int		$maxlength		Maximum length of string into list (0=no limit)
      * 	@return	string					HTML select string
      */
-    function select_dolusers($selected='',$htmlname='userid',$show_empty=0,$exclude='',$disabled=0,$include='',$enableonly='',$force_entity=0)
+    function select_dolusers($selected='', $htmlname='userid', $show_empty=0, $exclude='', $disabled=0, $include='', $enableonly='', $force_entity=0, $maxlength=0)
     {
         global $conf,$user,$langs;
 
@@ -1161,7 +1162,8 @@ class Form
                         if ($disableline) $out.= ' disabled="disabled"';
                         $out.= '>';
                     }
-                    $out.= $userstatic->getFullName($langs);
+
+                    $out.= $userstatic->getFullName($langs, 0, 0, $maxlength);
 
                     if (! empty($conf->multicompany->enabled) && empty($conf->multicompany->transverse_mode) && $conf->entity == 1 && $user->admin && ! $user->entity)
                     {
@@ -2685,7 +2687,7 @@ class Form
 
         require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
         require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
-        
+
         $formproject=new FormProjets($this->db);
 
         $langs->load("project");

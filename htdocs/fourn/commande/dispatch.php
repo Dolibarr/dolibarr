@@ -373,7 +373,7 @@ if ($id > 0 || ! empty($ref))
 				while ($i < $num)
 				{
 					$objp = $db->fetch_object($resql);
-					print "<tr $bc[$var]>";
+					print "<tr ".$bc[$var].">";
 					print '<td>';
 					print '<a href="'.DOL_URL_ROOT.'/product/fournisseurs.php?id='.$objp->fk_product.'">'.img_object($langs->trans("ShowProduct"),'product').' '.$objp->ref.'</a>';
 					print ' - '.$objp->label;

@@ -209,7 +209,7 @@ if ($result)
 
 			$var=!$var;
 
-			print "<tr $bc[$var]>";
+			print "<tr ".$bc[$var].">";
 			if ($agentid > 0) {
 				$companystatic->id=$objp->socid;
 				$companystatic->nom=$objp->nom;

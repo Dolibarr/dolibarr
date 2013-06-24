@@ -216,8 +216,10 @@ body {
 	background: <?php print $colorbackbody; ?>;
 <?php } ?>
 	color: #101010;
+	<?php if (empty($dol_use_jmobile) || 1==1) { ?>
 	font-size: <?php print $fontsize ?>px;
-    font-family: <?php print $fontlist ?>;
+	<?php } ?>
+	font-family: <?php print $fontlist ?>;
     margin-top: 0;
     margin-bottom: 0;
     margin-right: 0;
@@ -229,9 +231,12 @@ a:link, a:visited, a:hover, a:active { font-family: <?php print $fontlist ?>; fo
 
 a:hover { text-decoration: underline; color: #000000;}
 
+<?php if (empty($dol_use_jmobile)) { ?>
+
 input:focus, textarea:focus, button:focus, select:focus {
     box-shadow: 0 0 4px #8091BF;
 }
+
 input, input.flat, textarea, textarea.flat, form.flat select, select.flat {
     font-size: <?php print $fontsize ?>px;
 	font-family: <?php print $fontlist ?>;
@@ -242,6 +247,7 @@ input, input.flat, textarea, textarea.flat, form.flat select, select.flat {
     margin: 0px 0px 0px 0px;
     <?php } ?>
 }
+
 input, textarea, select {
 	border-radius:4px;
 	border:solid 1px rgba(0,0,0,.3);
@@ -253,15 +259,15 @@ input, textarea, select {
 	margin-bottom:1px;
 	margin-top:1px;
 	}
+<?php } ?>
+
 select.flat, form.flat select {
 	font-weight: normal;
 }
 input:disabled {
 	background:#ddd;
 }
-input:-webkit-autofill {
-	background-color: #FCFEFA !important; background-image:none !important;
-}
+
 input.liste_titre {
 	box-shadow: none !important;
 }
@@ -274,6 +280,16 @@ textarea:disabled {
 }
 input[type=checkbox] { background-color: transparent; border: none; box-shadow: none; }
 input[type=image] { background-color: transparent; border: none; box-shadow: none; }
+input:-webkit-autofill {
+	background-color: <?php echo empty($dol_use_jmobile)?'#FBFFEA':'#FFFFFF' ?> !important;
+	background-image:none !important;
+	-webkit-box-shadow: 0 0 0 50px <?php echo empty($dol_use_jmobile)?'#FBFFEA':'#FFFFFF' ?> inset;
+}
+
+<?php if (! empty($dol_use_jmobile)) { ?>
+legend { margin-bottom: 8px; }
+<?php } ?>
+
 
 .button {
     font-family: <?php print $fontlist ?>;
@@ -1093,9 +1109,6 @@ td.photo {
     padding: 0 4px 0 4px !important;
 }
 
-.toolbar {
-    height: 34px !important;
-}
 
 a.toolbarbutton {
     margin-top: 0px;
@@ -1578,7 +1591,7 @@ td.border {
 
 /* Main boxes */
 
-table.noborder, table.formdoc {
+table.noborder, table.formdoc, div.noborder {
 	width: 100%;
 
 	border-collapse: separate !important;
@@ -1608,7 +1621,7 @@ table.noborder, table.formdoc {
 	border-radius: 0.2em;
 }
 
-table.noborder tr {
+table.noborder tr, div.noborder form {
 	border-top-color: #FEFEFE;
 
 	border-right-width: 1px;
@@ -1621,7 +1634,7 @@ table.noborder tr {
 	height: 20px;
 }
 
-table.noborder th, table.noborder td {
+table.noborder th, table.noborder td, div.noborder form, div.noborder form div {
 	padding: 1px 2px 1px 3px;			/* t r b l */
 }
 
@@ -1696,7 +1709,7 @@ div.liste_titre, tr.liste_titre, tr.liste_titre_sel, form.liste_titre, form.list
     white-space: <?php echo $dol_optimize_smallscreen?'normal':'nowrap'; ?>;
     text-align: <?php echo $left; ?>;
 }
-tr.liste_titre th, th.liste_titre, tr.liste_titre td, td.liste_titre
+tr.liste_titre th, th.liste_titre, tr.liste_titre td, td.liste_titre, form.liste_titre div
 {
     font-family: <?php print $fontlist ?>;
     /*font-weight: normal;*/
@@ -1704,7 +1717,7 @@ tr.liste_titre th, th.liste_titre, tr.liste_titre td, td.liste_titre
     white-space: <?php echo $dol_optimize_smallscreen?'normal':'nowrap'; ?>;
 	text-shadow:1px 0px 1px #ffffff;
 }
-tr.liste_titre_sel th, th.liste_titre_sel, tr.liste_titre_sel td, td.liste_titre_sel
+tr.liste_titre_sel th, th.liste_titre_sel, tr.liste_titre_sel td, td.liste_titre_sel, form.liste_titre_sel div
 {
     font-family: <?php print $fontlist ?>;
     font-weight: normal;
@@ -1718,10 +1731,10 @@ input.liste_titre {
     border: 0px;
 }
 
-tr.liste_total {
+tr.liste_total, form.liste_total {
 	background: #F0F0F0;
 }
-tr.liste_total td {
+tr.liste_total td, form.liste_total div {
     border-top: 1px solid #DDDDDD;
     color: #332266;
     font-weight: normal;
@@ -2393,7 +2406,7 @@ A.none, A.none:active, A.none:visited, A.none:hover {
     font-family:<?php echo $fontlist; ?>;
     font-size:<?php echo $fontsize; ?>px;
 }
-.ui-button { margin-left: -1px; }
+.ui-button { margin-left: -2px; <?php print (preg_match('/chrome/',$conf->browser->name)?'padding-top: 1px;':''); ?> }
 .ui-button-icon-only .ui-button-text { height: 8px; }
 .ui-button-icon-only .ui-button-text, .ui-button-icons-only .ui-button-text { padding: 2px 0px 6px 0px; }
 .ui-button-text
@@ -2608,17 +2621,33 @@ div.dolEventError h1, div.dolEventError h2 {
 li.ui-li-divider .ui-link {
 	color: #FFF !important;
 }
+.ui-btn {
+	margin: 0.1em 2px
+}
 a.ui-link, a.ui-link:hover, .ui-btn:hover, span.ui-btn-text:hover, span.ui-btn-inner:hover {
 	text-decoration: none !important;
 }
 
 .ui-btn-inner {
+	min-width: .4em;
 	padding-left: 10px;
 	padding-right: 10px;
+	<?php if (empty($dol_use_jmobile) || 1==1) { ?>
+	font-size: <?php print $fontsize ?>px;
+    <?php } ?>
 	/* white-space: normal; */		/* Warning, enable this break the truncate feature */
 }
+.ui-btn-icon-right .ui-btn-inner {
+	padding-right: 34px;
+}
+.ui-btn-icon-left .ui-btn-inner {
+	padding-left: 34px;
+}
 .ui-select .ui-btn-icon-right .ui-btn-inner {
-	padding-right: 36px;
+	padding-right: 38px;
+}
+.ui-select .ui-btn-icon-left .ui-btn-inner {
+	padding-left: 38px;
 }
 .fiche .ui-controlgroup {
 	margin: 0px;
@@ -2633,8 +2662,13 @@ div.ui-controlgroup-controls div.tabsElem a
 	-moz-box-shadow: 0 -3px 6px rgba(0,0,0,.2);
 	-webkit-box-shadow: 0 -3px 6px rgba(0,0,0,.2);
 	box-shadow: 0 -3px 6px rgba(0,0,0,.2);
-	border: none;
 }
+div.ui-controlgroup-controls div.tabsElem a#active {
+	-moz-box-shadow: 0 -3px 6px rgba(0,0,0,.3);
+	-webkit-box-shadow: 0 -3px 6px rgba(0,0,0,.3);
+	box-shadow: 0 -3px 6px rgba(0,0,0,.3);
+}
+
 a.tab span.ui-btn-inner
 {
 	border: none;
@@ -2642,7 +2676,7 @@ a.tab span.ui-btn-inner
 }
 
 .ui-body-c {
-	border: none;
+	border: 1px solid #CCC;
 	text-shadow: none;
 }
 .ui-link {
@@ -2675,6 +2709,22 @@ div.ui-radio
 	width: auto;
 	margin: 0;
 	position: static;
+}
+.ui-mobile fieldset
+{
+	padding-bottom: 10px; margin-bottom: 4px; border-bottom: 1px solid #AAAAAA !important;
+}
+
+ul.ulmenu {
+	border-radius: 0;
+	-webkit-border-radius: 0;
+}
+
+.ui-field-contain label.ui-input-text {
+	vertical-align: middle !important;
+}
+.ui-mobile fieldset {
+	border-bottom: none !important;
 }
 
 <?php

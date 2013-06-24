@@ -72,14 +72,14 @@ $(document).ready(function () {
 <table class="left" summary="Login pass" cellpadding="2">
 <!-- Login -->
 <tr>
-<td valign="bottom" class="loginfield"><strong><label for="username"><?php echo $langs->trans('Login'); ?></label></strong></td>
-<td valign="bottom" class="nowrap">
+<td valign="middle" class="loginfield"><strong><label for="username"><?php echo $langs->trans('Login'); ?></label></strong></td>
+<td valign="middle" class="nowrap">
 <input type="text" id="username" name="username" class="flat" size="15" maxlength="40" value="<?php echo dol_escape_htmltag($login); ?>" tabindex="1" />
 </td>
 </tr>
 <!-- Password -->
-<tr><td valign="top" class="loginfield nowrap"><strong><label for="password"><?php echo $langs->trans('Password'); ?></label></strong></td>
-<td valign="top" class="nowrap">
+<tr><td valign="middle" class="loginfield nowrap"><strong><label for="password"><?php echo $langs->trans('Password'); ?></label></strong></td>
+<td valign="middle" class="nowrap">
 <input id="password" name="password" class="flat" type="password" size="15" maxlength="30" value="<?php echo dol_escape_htmltag($password); ?>" tabindex="2" autocomplete="off" />
 </td></tr>
 <?php

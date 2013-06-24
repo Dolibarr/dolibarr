@@ -136,7 +136,7 @@ if ($result)
             print "<form method=\"post\" action=\"cotisations.php\">";
             print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
         }
-        print "<tr $bc[$var]>";
+        print "<tr ".$bc[$var].">";
 
         // Ref
         print '<td>'.$cotisation->getNomUrl(1).'</td>';

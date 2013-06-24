@@ -180,7 +180,7 @@ if ($resql)
     {
         $objp = $db->fetch_object($resql);
         $var=!$var;
-        print "<tr $bc[$var]>";
+        print "<tr ".$bc[$var].">";
 
         print '<td width="40">';
         $paymentstatic->id=$objp->rowid;

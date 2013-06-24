@@ -3,8 +3,8 @@
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2007		Franky Van Liedekerke	<franky.van.liedekerke@telenet.be>
  * Copyright (C) 2006-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2011-2012	Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2013      Florian Henry		  	<florian.henry@open-concept.pro>
+ * Copyright (C) 2011-2013	Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -786,82 +786,132 @@ class Expedition extends CommonObject
 	{
 		global $conf, $langs, $user;
         require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-
+		
 		$error=0;
-
+		
 		$this->db->begin();
-
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."expeditiondet";
-		$sql.= " WHERE fk_expedition = ".$this->id;
-
-		if ( $this->db->query($sql) )
+		
+		// Stock control
+		if ($conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_SHIPMENT && $this->statut > 0)
 		{
-			// Delete linked object
-			$res = $this->deleteObjectLinked();
-			if ($res < 0) $error++;
-
-			if (! $error)
+			require_once(DOL_DOCUMENT_ROOT."/product/stock/class/mouvementstock.class.php");
+		
+			$langs->load("agenda");
+		
+			// Loop on each product line to add a stock movement
+			$sql = "SELECT cd.fk_product, cd.subprice, ed.qty, ed.fk_entrepot";
+			$sql.= " FROM ".MAIN_DB_PREFIX."commandedet as cd,";
+			$sql.= " ".MAIN_DB_PREFIX."expeditiondet as ed";
+			$sql.= " WHERE ed.fk_expedition = ".$this->id;
+			$sql.= " AND cd.rowid = ed.fk_origin_line";
+		
+			dol_syslog(get_class($this)."::delete select details sql=".$sql);
+			$resql=$this->db->query($sql);
+			if ($resql)
 			{
-				$sql = "DELETE FROM ".MAIN_DB_PREFIX."expedition";
-				$sql.= " WHERE rowid = ".$this->id;
-
-				if ($this->db->query($sql))
+				$cpt = $this->db->num_rows($resql);
+				for ($i = 0; $i < $cpt; $i++)
 				{
-					$this->db->commit();
-
-					// On efface le repertoire de pdf provisoire
-					$ref = dol_sanitizeFileName($this->ref);
-					if (! empty($conf->expedition->dir_output))
+					dol_syslog(get_class($this)."::delete movement index ".$i);
+					$obj = $this->db->fetch_object($resql);
+					
+					//var_dump($this->lines[$i]);
+					$mouvS = new MouvementStock($this->db);
+					// We decrement stock of product (and sub-products)
+					// We use warehouse selected for each line
+					$result=$mouvS->reception($user, $obj->fk_product, $obj->fk_entrepot, $obj->qty, $obj->subprice, $langs->trans("ShipmentDeletedInDolibarr",$this->ref));
+					if ($result < 0)
 					{
-						$dir = $conf->expedition->dir_output . '/sending/' . $ref ;
-						$file = $dir . '/' . $ref . '.pdf';
-						if (file_exists($file))
-						{
-							if (! dol_delete_file($file))
-							{
-								return 0;
-							}
-						}
-						if (file_exists($dir))
-						{
-							if (!dol_delete_dir($dir))
-							{
-								$this->error=$langs->trans("ErrorCanNotDeleteDir",$dir);
-								return 0;
-							}
-						}
+						$error++;
+						break;
 					}
-
-					// Call triggers
-		            include_once DOL_DOCUMENT_ROOT.'/core/class/interfaces.class.php';
-		            $interface=new Interfaces($this->db);
-		            $result=$interface->run_triggers('SHIPPING_DELETE',$this,$user,$langs,$conf);
-		            if ($result < 0) { $error++; $this->errors=$interface->errors; }
-		            // End call triggers
-
-					// TODO il faut incrementer le stock si on supprime une expedition validee
-					return 1;
+				}
+			}
+			else
+			{
+				$error++;
+			}
+		}
+		
+		if(! $error)
+		{
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."expeditiondet";
+			$sql.= " WHERE fk_expedition = ".$this->id;
+	
+			if ( $this->db->query($sql) )
+			{
+				// Delete linked object
+				$res = $this->deleteObjectLinked();
+				if ($res < 0) $error++;
+	
+				if (! $error)
+				{
+					$sql = "DELETE FROM ".MAIN_DB_PREFIX."expedition";
+					$sql.= " WHERE rowid = ".$this->id;
+	
+					if ($this->db->query($sql))
+					{
+						$this->db->commit();
+	
+						// On efface le repertoire de pdf provisoire
+						$ref = dol_sanitizeFileName($this->ref);
+						if (! empty($conf->expedition->dir_output))
+						{
+							$dir = $conf->expedition->dir_output . '/sending/' . $ref ;
+							$file = $dir . '/' . $ref . '.pdf';
+							if (file_exists($file))
+							{
+								if (! dol_delete_file($file))
+								{
+									return 0;
+								}
+							}
+							if (file_exists($dir))
+							{
+								if (!dol_delete_dir($dir))
+								{
+									$this->error=$langs->trans("ErrorCanNotDeleteDir",$dir);
+									return 0;
+								}
+							}
+						}
+	
+						// Call triggers
+			            include_once DOL_DOCUMENT_ROOT.'/core/class/interfaces.class.php';
+			            $interface=new Interfaces($this->db);
+			            $result=$interface->run_triggers('SHIPPING_DELETE',$this,$user,$langs,$conf);
+			            if ($result < 0) { $error++; $this->errors=$interface->errors; }
+			            // End call triggers
+	
+						return 1;
+					}
+					else
+					{
+						$this->error=$this->db->lasterror()." - sql=$sql";
+						$this->db->rollback();
+						return -3;
+					}
 				}
 				else
 				{
 					$this->error=$this->db->lasterror()." - sql=$sql";
 					$this->db->rollback();
-					return -3;
+					return -2;
 				}
 			}
 			else
 			{
 				$this->error=$this->db->lasterror()." - sql=$sql";
 				$this->db->rollback();
-				return -2;
+				return -1;
 			}
 		}
-		else
+		else 
 		{
-			$this->error=$this->db->lasterror()." - sql=$sql";
 			$this->db->rollback();
 			return -1;
 		}
+			
 	}
 
 	/**

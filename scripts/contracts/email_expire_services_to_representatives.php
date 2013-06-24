@@ -125,9 +125,15 @@ if ($resql)
                 if (empty($obj->email)) print "Warning: Sale representative ".$salerepresentative." has no email. Notice disabled.\n";
             }
 
+            // Define line content
+            $outputlangs=new Translate('',$conf);
+            $outputlangs->setDefaultLang(empty($obj->lang)?$langs->defaultlang:$obj->lang);	// By default language of sale representative
+            $outputlangs->load("bills");
+            $outputlangs->load("main");
+            
             if (dol_strlen($obj->email))
             {
-            	$message .= $langs->trans("Contract")." ".$obj->ref.": ".$langs->trans("Service")." ".$obj->label." (".price($obj->total_ttc).") ".$obj->nom.", ".$langs->trans("DateEndPlannedShort")." ".dol_print_date($db->jdate($obj->date_fin_validite),'day')."\n\n";
+            	$message .= $langs->trans("Contract")." ".$obj->ref.": ".$langs->trans("Service")." ".$obj->label." (".price($obj->total_ttc,0,$outputlangs,0,0,-1,$conf->currency).") ".$obj->nom.", ".$langs->trans("DateEndPlannedShort")." ".dol_print_date($db->jdate($obj->date_fin_validite),'day')."\n\n";
             	dol_syslog("email_expire_services_to_representatives.php: ".$obj->email);
             	$foundtoprocess++;
             }
@@ -221,7 +227,7 @@ function envoi_mail($mode,$oldemail,$message,$total,$userlang,$oldsalerepresenta
     	$allmessage.= "Note: This list contains only services of contracts for third parties you are linked to as a sale representative.".($usehtml?"<br>\n":"\n").($usehtml?"<br>\n":"\n");
     }
     $allmessage.= $message.($usehtml?"<br>\n":"\n");
-    $allmessage.= $langs->trans("Total")." = ".price($total).($usehtml?"<br>\n":"\n");
+    $allmessage.= $langs->trans("Total")." = ".price($total,0,$userlang,0,0,-1,$conf->currency).($usehtml?"<br>\n":"\n");
     if (! empty($conf->global->SCRIPT_EMAIL_EXPIRE_SERVICES_SALESREPRESENTATIVES_FOOTER))
     {
     	$allmessage.=$conf->global->SCRIPT_EMAIL_EXPIRE_SERVICES_SALESREPRESENTATIVES_FOOTER;

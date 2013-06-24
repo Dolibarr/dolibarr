@@ -152,7 +152,7 @@ if ($resql)
 		$obj = $db->fetch_object($resql);
 		$var=!$var;
 
-		print "<tr $bc[$var]>";
+		print "<tr ".$bc[$var].">";
 
 		// Ref
 		print '<td><a href="'.DOL_URL_ROOT.'/fourn/commande/fiche.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowOrder"),"order").' '.$obj->ref.'</a></td>'."\n";

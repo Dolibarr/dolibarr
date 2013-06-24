@@ -185,7 +185,7 @@ if ($resql)
 
 		$var=!$var;
 
-		print "<tr $bc[$var]>";
+		print "<tr ".$bc[$var].">";
 		print '<td>';
 		$thirdpartystatic->id=$obj->rowid;
 		$thirdpartystatic->nom=$obj->nom;

@@ -626,7 +626,7 @@ if ($id > 0)
 
 				$objp = $db->fetch_object($resql);
 				$var=!$var;
-				print "<tr $bc[$var]>";
+				print "<tr ".$bc[$var].">";
 				print '<td class="nowrap">';
 				$contrat->id=$objp->id;
 				$contrat->ref=$objp->ref?$objp->ref:$objp->id;
@@ -748,7 +748,7 @@ if ($id > 0)
 			{
 				$objp = $db->fetch_object($resql);
 				$var=!$var;
-				print "<tr $bc[$var]>";
+				print "<tr ".$bc[$var].">";
 				print '<td class="nowrap">';
 				$facturestatic->id=$objp->facid;
 				$facturestatic->ref=$objp->facnumber;

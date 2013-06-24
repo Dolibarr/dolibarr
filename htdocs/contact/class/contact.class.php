@@ -107,7 +107,7 @@ class Contact extends CommonObject
 		$this->db->begin();
 
 		// Clean parameters
-		$this->lastname=$this->lastname?trim($this->lastname):$this->lastname;
+		$this->lastname=$this->lastname?trim($this->lastname):trim($this->name);
         $this->firstname=trim($this->firstname);
         if (! empty($conf->global->MAIN_FIRST_TO_UPPER)) $this->lastname=ucwords($this->lastname);
         if (! empty($conf->global->MAIN_FIRST_TO_UPPER)) $this->firstname=ucwords($this->firstname);

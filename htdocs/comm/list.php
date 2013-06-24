@@ -233,7 +233,7 @@ if ($result)
 
 		$var=!$var;
 
-		print "<tr $bc[$var]>";
+		print "<tr ".$bc[$var].">";
 		print '<td>';
 		$thirdpartystatic->id=$obj->rowid;
         $thirdpartystatic->name=$obj->name;

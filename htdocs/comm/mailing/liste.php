@@ -136,7 +136,7 @@ if ($result)
 
 		$var=!$var;
 
-		print "<tr $bc[$var]>";
+		print "<tr ".$bc[$var].">";
 		print '<td><a href="'.DOL_URL_ROOT.'/comm/mailing/fiche.php?id='.$obj->rowid.'">';
 		print img_object($langs->trans("ShowEMail"),"email").' '.stripslashes($obj->rowid).'</a></td>';
 		print '<td>'.$obj->titre.'</td>';

@@ -244,7 +244,7 @@ if (is_array($coll_list))
 					$intra = '';
 				}
 			}
-			print "<tr $bc[$var]>";
+			print "<tr ".$bc[$var].">";
 			print "<td nowrap>".$i."</td>";
 			$company_static->id=$coll->socid;
 			$company_static->nom=$coll->nom;

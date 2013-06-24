@@ -192,6 +192,7 @@ MemberResiliatedInDolibarr=Membre %s donat de baixa en Dolibarr
 MemberDeletedInDolibarr=Membre %s eliminat de Dolibarr
 MemberSubscriptionAddedInDolibarr=Subscripció del membre %s afegida a Dolibarr
 ShipmentValidatedInDolibarr=Expedició %s validada en Dolibarr
+ShipmentDeletedInDolibarr=Expedició %s eliminada de Dolibarr
 ##### Export #####
 Export=Exportació
 ExportsArea=Àrea d'exportacions

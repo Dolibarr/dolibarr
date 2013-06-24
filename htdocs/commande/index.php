@@ -194,7 +194,7 @@ if (! empty($conf->commande->enabled))
 			{
 				$var=!$var;
 				$obj = $db->fetch_object($resql);
-				print "<tr $bc[$var]>";
+				print "<tr ".$bc[$var].">";
 				print '<td class="nowrap">';
 				print "<a href=\"fiche.php?id=".$obj->rowid."\">".img_object($langs->trans("ShowOrder"),"order").' '.$obj->ref."</a></td>";
 				print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dol_trunc($obj->nom,24).'</a></td></tr>';
@@ -246,7 +246,7 @@ if ($resql)
 			$var=!$var;
 			$obj = $db->fetch_object($resql);
 
-			print "<tr $bc[$var]>";
+			print "<tr ".$bc[$var].">";
 			print '<td width="20%" class="nowrap">';
 
 			$commandestatic->id=$obj->rowid;
@@ -315,7 +315,7 @@ if (! empty($conf->commande->enabled))
 			{
 				$var=!$var;
 				$obj = $db->fetch_object($resql);
-				print "<tr $bc[$var]>";
+				print "<tr ".$bc[$var].">";
 				print '<td class="nowrap" width="20%">';
 
 				$commandestatic->id=$obj->rowid;
@@ -386,7 +386,7 @@ if (! empty($conf->commande->enabled))
 			{
 				$var=!$var;
 				$obj = $db->fetch_object($resql);
-				print "<tr $bc[$var]>";
+				print "<tr ".$bc[$var].">";
 				print '<td width="20%" class="nowrap">';
 
 				$commandestatic->id=$obj->rowid;

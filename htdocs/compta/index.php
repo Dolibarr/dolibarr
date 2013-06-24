@@ -679,7 +679,7 @@ if (! empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 				while ($i < $num)
 				{
 					$obj = $db->fetch_object($resql);
-					print "<tr $bc[$var]>";
+					print "<tr ".$bc[$var].">";
 					$chargestatic->id=$obj->rowid;
 					$chargestatic->ref=$obj->libelle;
 					$chargestatic->lib=$obj->libelle;
@@ -762,7 +762,7 @@ if (! empty($conf->facture->enabled) && ! empty($conf->commande->enabled) && $us
 			{
 				$obj = $db->fetch_object($resql);
 
-				print "<tr $bc[$var]>";
+				print "<tr ".$bc[$var].">";
 				print '<td class="nowrap">';
 
 				$commandestatic->id=$obj->rowid;
@@ -1026,7 +1026,7 @@ if ($resql)
 		$obj = $db->fetch_object($resql);
 		$var=!$var;
 
-		print "<tr $bc[$var]><td>".dol_print_date($obj->da,"day")."</td>";
+		print "<tr ".$bc[$var]."><td>".dol_print_date($obj->da,"day")."</td>";
 		print "<td><a href=\"action/fiche.php\">$obj->libelle $obj->label</a></td></tr>";
 		$i++;
 	}

@@ -546,7 +546,7 @@ if ($object->id > 0)
 			$obj = $db->fetch_object($result);
 			$var=!$var;
 
-			print "<tr $bc[$var]>";
+			print "<tr ".$bc[$var].">";
 
 			print '<td align="left">'.dol_print_date($db->jdate($obj->date_demande),'day')."</td>\n";
 

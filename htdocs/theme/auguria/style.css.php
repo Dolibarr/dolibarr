@@ -102,7 +102,9 @@ body {
 	background: #ffffff url(<?php echo $img_head; ?>) 0 0 no-repeat;
 <?php } ?>
 	color: #101010;
+	<?php if (empty($dol_use_jmobile) || 1==1) { ?>
 	font-size: <?php print $fontsize ?>px;
+	<?php } ?>
     font-family: <?php print $fontlist ?>;
     margin-top: 0;
     margin-bottom: 0;
@@ -112,6 +114,8 @@ body {
 }
 
 a:link, a:visited, a:hover, a:active { font-family: <?php print $fontlist ?>; font-weight: bold; color: #000000; text-decoration: none; }
+
+<?php if (empty($dol_use_jmobile)) { ?>
 
 input:focus, textarea:focus, button:focus, select:focus {
     box-shadow: 0 0 4px #8091BF;
@@ -125,6 +129,9 @@ input, input.flat, textarea, textarea.flat, form.flat select, select.flat {
     padding: 1px 1px 1px 1px;
     margin: 0px 0px 0px 0px;
 }
+
+<?php } ?>
+
 select.flat, form.flat select {
 	font-weight: normal;
 }
@@ -136,6 +143,15 @@ textarea:disabled {
 }
 input[type=checkbox] { background-color: transparent; border: none; box-shadow: none; }
 input[type=image] { background-color: transparent; border: none; box-shadow: none; }
+input:-webkit-autofill {
+	background-color: <?php echo empty($dol_use_jmobile)?'#FBFFEA':'#FFFFFF' ?> !important;
+	background-image:none !important;
+	-webkit-box-shadow: 0 0 0 50px <?php echo empty($dol_use_jmobile)?'#FBFFEA':'#FFFFFF' ?> inset;
+}
+
+<?php if (! empty($dol_use_jmobile)) { ?>
+legend { margin-bottom: 8px; }
+<?php } ?>
 .button {
     font-family: <?php print $fontlist ?>;
 	border: 1px solid #ACBCBB;
@@ -1217,7 +1233,7 @@ border-left: 1px solid #000000;
 
 /* Main boxes */
 
-table.noborder {
+table.noborder, div.noborder {
     border-collapse: collapse;
     border-top-color: #FEFEFE;
 
@@ -1243,7 +1259,7 @@ table.noborder {
     box-shadow: 4px 4px 4px #CCC;
 }
 
-table.noborder tr {
+table.noborder tr, div.noborder form {
     border-top-color: #FEFEFE;
 
     border-right-width: 1px;
@@ -1256,7 +1272,7 @@ table.noborder tr {
 	height: 20px;
 }
 
-table.noborder td {
+table.noborder td, div.noborder form div {
 	padding: 1px 2px 2px 1px;			/* t r b l */
 }
 
@@ -1347,19 +1363,20 @@ th.liste_titre_sel, td.liste_titre_sel
     /* border-bottom: 1px solid #FDFFFF; */
     white-space: nowrap;
 }
+
 input.liste_titre {
-background: transparent;
-background-repeat: repeat-x;
-border: 0px;
+	background: transparent;
+	background-repeat: repeat-x;
+	border: 0px;
 }
 
-tr.liste_total td {
-border-top: 1px solid #DDDDDD;
-background: #F0F0F0;
-background-repeat: repeat-x;
-color: #332266;
-font-weight: normal;
-white-space: nowrap;
+tr.liste_total td, form.liste_total div {
+	border-top: 1px solid #DDDDDD;
+	background: #F0F0F0;
+	background-repeat: repeat-x;
+	color: #332266;
+	font-weight: normal;
+	white-space: nowrap;
 }
 
 
@@ -1915,7 +1932,7 @@ A.none, A.none:active, A.none:visited, A.none:hover {
     font-family:<?php echo $fontlist; ?>;
     font-size:<?php echo $fontsize; ?>px;
 }
-.ui-button { margin-left: -1px; }
+.ui-button { margin-left: -1px; padding-top: 1px; }
 .ui-button-icon-only .ui-button-text { height: 8px; }
 .ui-button-icon-only .ui-button-text, .ui-button-icons-only .ui-button-text { padding: 2px 0px 6px 0px; }
 .ui-button-text
@@ -2193,18 +2210,29 @@ div.ecmjqft {
 li.ui-li-divider .ui-link {
 	color: #FFF !important;
 }
+.ui-btn {
+	margin: 0.1em 2px
+}
 a.ui-link, a.ui-link:hover, .ui-btn:hover, span.ui-btn-text:hover, span.ui-btn-inner:hover {
 	text-decoration: none !important;
 }
 
 .ui-btn-inner {
+	min-width: .4em;
 	padding-left: 10px;
 	padding-right: 10px;
+	<?php if (empty($dol_use_jmobile) || 1==1) { ?>
+	font-size: <?php print $fontsize ?>px;
+	<?php } ?>
 	/* white-space: normal; */		/* Warning, enable this break the truncate feature */
 }
 .ui-select .ui-btn-icon-right .ui-btn-inner {
 	padding-right: 36px;
 }
+.ui-select .ui-btn-icon-left .ui-btn-inner {
+	padding-left: 36px;
+}
+
 .fiche .ui-controlgroup {
 	margin: 0px;
 	padding-bottom: 0px;
@@ -2227,7 +2255,7 @@ a.tab span.ui-btn-inner
 }
 
 .ui-body-c {
-	border: none;
+	border: 1px solid #CCC;
 	text-shadow: none;
 }
 .ui-link {
@@ -2261,7 +2289,23 @@ div.ui-radio
 	margin: 0;
 	position: static;
 }
+.ui-mobile fieldset
+{
+	padding-bottom: 10px; margin-bottom: 4px; border-bottom: 1px solid #AAAAAA !important;
+}
 
+
+ul.ulmenu {
+	border-radius: 0;
+	-webkit-border-radius: 0;
+}
+
+.ui-field-contain label.ui-input-text {
+	vertical-align: middle !important;
+}
+.ui-mobile fieldset {
+	border-bottom: none !important;
+}
 
 <?php
 if (is_object($db)) $db->close();

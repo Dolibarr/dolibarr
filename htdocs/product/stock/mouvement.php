@@ -444,7 +444,7 @@ if ($resql)
     {
         $objp = $db->fetch_object($resql);
         $var=!$var;
-        print "<tr $bc[$var]>";
+        print "<tr ".$bc[$var].">";
         // Id movement
         //print '<td>'.$objp->mid.'</td>';	// This is primary not movement id
         // Date

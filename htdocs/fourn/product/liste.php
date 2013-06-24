@@ -216,7 +216,7 @@ if ($resql)
 	{
 		$objp = $db->fetch_object($resql);
 		$var=!$var;
-		print "<tr $bc[$var]>";
+		print "<tr ".$bc[$var].">";
 
 		print '<td>';
 		$productstatic->id=$objp->rowid;
