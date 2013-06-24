@@ -312,7 +312,6 @@ if (empty($reshook))
                 $object->ref = GETPOST('clone_ref');
                 $object->status = 0;
                 $object->status_buy = 0;
-                $object->finished = 1;
                 $object->id = null;
 
                 if ($object->check())
@@ -732,7 +731,7 @@ else
         {
             print '<tr><td>'.$langs->trans("Nature").'</td><td>';
             $statutarray=array('1' => $langs->trans("Finished"), '0' => $langs->trans("RowMaterial"));
-            print $form->selectarray('finished',$statutarray,GETPOST('finished'));
+            print $form->selectarray('finished',$statutarray,GETPOST('finished'),1);
             print '</td></tr>';
         }
 

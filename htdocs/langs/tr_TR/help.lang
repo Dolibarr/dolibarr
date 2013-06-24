@@ -1,14 +1,6 @@
-/*
- * Language code: tr_TR
- * Automatic generated via autotranslator.php tool
- * Generation date 2010-03-15 19:05:26
- */
-
-
-// START - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).
-// Reference language: en_US
+# Dolibarr language file - Source file is en_US - help
 CHARSET=UTF-8
-CommunitySupport=Forum/Wiki destek
+CommunitySupport=Forum/Wiki desteği
 EMailSupport=E-posta desteği
 RemoteControlSupport=Çevrimiçi gerçek zamanlı/uzaktan destek
 OtherSupport=Diğer destek
@@ -22,7 +14,7 @@ TypeSupportCommunauty=Genel (ücretsiz)
 TypeSupportCommercial=Ticari
 TypeOfHelp=Tür
 NeedHelpCenter=Yardım veya desteğe mi gereksiniminiz var?
-Efficiency=Verimlilik
+Efficiency=Verim
 TypeHelpOnly=Yalnızca yardım
 TypeHelpDev=Yardım+Geliştirme
 TypeHelpDevForm=Yardım+Geliştirme+Biçimlendirme
@@ -32,5 +24,5 @@ ToGetHelpGoOnSparkAngels2=Bazen, arama yaptığınız sırada bir firma bulunmaz
 BackToHelpCenter=Aksi durumda yardım merkezine geri gitmek için <a href="%s">burayı </a>.
 LinkToGoldMember=Bo parçaçcığı (widget) tıklayarak Dolibar tarafından sizin için dilinizde önseçilen eğitmeni arayabilirsiniz (durumu ve ençok ücreti otomatikmen güncellenir):
 PossibleLanguages=Desteklenen diller
-MakeADonation= Dolibarr projesine bağış yapın
+MakeADonation=Dolibarr projesine bağış yapın
 SubscribeToFoundation=Dolibarr projesine yardım edin, vakıfa abone olun

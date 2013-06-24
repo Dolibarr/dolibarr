@@ -2040,15 +2040,16 @@ function img_up($alt = 'default', $selected = 0)
  *
  *	@param	string	$alt        Text to show on alt image
  *	@param  int		$selected	Selected
+ *	@param	string	$options	Add more attribute on img tag (For example 'style="float: right"')
  *	@return string      		Return img tag
  */
-function img_left($alt = 'default', $selected = 0)
+function img_left($alt = 'default', $selected = 0, $options='')
 {
 	global $conf, $langs;
 
 	if ($alt == 'default') $alt = $langs->trans('Left');
 
-	return img_picto($alt, ($selected ? '1leftarrow_selected.png' : '1leftarrow.png'));
+	return img_picto($alt, ($selected ? '1leftarrow_selected.png' : '1leftarrow.png'), $options);
 }
 
 /**
@@ -2056,15 +2057,16 @@ function img_left($alt = 'default', $selected = 0)
  *
  *	@param	string	$alt        Text to show on alt image
  *	@param  int		$selected	Selected
+ *	@param	string	$options	Add more attribute on img tag (For example 'style="float: right"')
  *	@return string      		Return img tag
  */
-function img_right($alt = 'default', $selected = 0)
+function img_right($alt = 'default', $selected = 0, $options='')
 {
 	global $conf, $langs;
 
 	if ($alt == 'default') $alt = $langs->trans('Right');
 
-	return img_picto($alt, ($selected ? '1rightarrow_selected.png' : '1rightarrow.png'));
+	return img_picto($alt, ($selected ? '1rightarrow_selected.png' : '1rightarrow.png'), $options);
 }
 
 /**
@@ -2683,7 +2685,7 @@ function price($amount, $form=0, $outlangs='', $trunc=1, $rounding=-1, $forcerou
 		if (in_array($currency_code,$listofcurrenciesbefore)) $cursymbolbefore.=$outlangs->getCurrencySymbol($currency_code);
 		else $cursymbolafter.=$outlangs->getCurrencySymbol($currency_code);
 	}
-	$output.=$cursymbolbefore.$end.$cursymbolafter;
+	$output=$cursymbolbefore.$output.$end.$cursymbolafter;
 
 	return $output;
 }

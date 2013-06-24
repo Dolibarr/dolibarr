@@ -83,7 +83,9 @@ body {
 	/*background: #ffffff url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/headbg2.jpg',1); ?>) 0 0 no-repeat;*/
 <?php } ?>
 	color: #101010;
+	<?php if (empty($dol_use_jmobile) || 1==1) { ?>
 	font-size: <?php print $fontsize ?>px;
+    <?php } ?>
     font-family: <?php print $fontlist ?>;
     margin-top: 0;
     margin-bottom: 0;
@@ -95,6 +97,8 @@ body {
 
 a:link, a:visited, a:active { font-family: <?php print $fontlist ?>; font-weight: bold; color: blue; text-decoration: none; }
 a:hover { font-family: <?php print $fontlist ?>; font-weight: bold; color: #A51B00; text-decoration: none; }
+
+<?php if (empty($dol_use_jmobile)) { ?>
 
 input:focus, textarea:focus, button:focus, select:focus {
     box-shadow: 0 0 4px #8091BF;
@@ -108,6 +112,8 @@ input, input.flat, textarea, textarea.flat, form.flat select, select.flat {
     padding: 1px 1px 1px 1px;
     margin: 0px 0px 0px 0px;
 }
+<?php } ?>
+
 select.flat, form.flat select {
 	font-weight: normal;
 }
@@ -117,8 +123,15 @@ input:disabled {
 textarea:disabled {
 	background:#ddd;
 }
+
 input[type=checkbox] { background-color: transparent; border: none; box-shadow: none; }
 input[type=image] { background-color: transparent; border: none; box-shadow: none; }
+input:-webkit-autofill {
+	background-color: <?php echo empty($dol_use_jmobile)?'#FBFFEA':'#FFFFFF' ?> !important;
+	background-image:none !important;
+	-webkit-box-shadow: 0 0 0 50px <?php echo empty($dol_use_jmobile)?'#FBFFEA':'#FFFFFF' ?> inset;
+}
+
 input.button[type=submit] {
 	background: #A51B00;
 	-moz-border-radius:8px;
@@ -135,12 +148,16 @@ input.button[type=submit] {
     /*display: block;
     height: 18px;*/
     vertical-align: top;
-    font-family: "Trebuchet MS",Arial,Helvetica,sans-serif;
+    font-family: <?php print $fontlist ?>;
     line-height: 14px;
     cursor: pointer;
     font-size: 11px;
     font-weight: bold;
 }
+
+<?php if (! empty($dol_use_jmobile)) { ?>
+legend { margin-bottom: 8px; }
+<?php } ?>
 
 .button {
     font-family: <?php print $fontlist ?>;
@@ -350,7 +367,7 @@ a.tmenu:link, a.tmenu:visited, a.tmenu:hover, a.tmenu:active {
 	padding: 0px 10px 0px 10px;
 	/*margin: 0px 1px 0px 1px;*/
 	font-weight: bold;
-        font-family: "Trebuchet MS",Arial,Helvetica,sans-serif;
+        font-family: <?php print $fontlist ?>;
 	white-space: nowrap;
         height: 20px;
     -moz-border-radius-topleft:8px;
@@ -390,7 +407,7 @@ a.tmenusel:link, a.tmenusel:visited, a.tmenusel:hover, a.tmenusel:active {
         color: #FFF;
         font-weight: bold;
         height: 20px;
-        font-family: "Trebuchet MS",Arial,Helvetica,sans-serif;
+        font-family: <?php print $fontlist ?>;
         padding: 0px 10px 0px 10px;
         -moz-border-radius-topleft:8px;
     -moz-border-radius-topright:8px;
@@ -767,7 +784,7 @@ div.menu_titre
 
 div.menu_titre a.vmenu {
 	font-weight: bold;
-    font-family: "Trebuchet MS",Arial,Helvetica,sans-serif;
+    font-family: <?php print $fontlist ?>;
     font-size: 12px;
 }
 
@@ -1146,7 +1163,7 @@ div.tabs a.tab {
 	width: auto;
     font-size: 11px;
     font-weight: bold;
-    font-family: "Trebuchet MS",Arial,Helvetica,sans-serif;
+    font-family: <?php print $fontlist ?>;
     height: 18px;
     background-position: right;
     line-height: 18px;
@@ -1255,7 +1272,7 @@ span.tabspan {
 div.divButAction { margin-bottom: 1.4em; }
 
 .butAction:link, .butAction:visited, .butAction:hover, .butAction:active, .butActionDelete, .butActionRefused, .butActionDelete:link, .butActionDelete:visited, .butActionDelete:hover, .butActionDelete:active {
-	font-family:"Trebuchet MS",Arial,Helvetica,sans-serif;
+	font-family: <?php print $fontlist ?>;
 	font-weight: bold;
 	/*background: url(<?php echo dol_buildpath($path.'/theme/bureau2crea/img/bg_btnBlue.jpg',1); ?>) repeat-x;*/
         background: #A81E00;
@@ -1374,7 +1391,7 @@ border-left: 1px solid #000000;
 
 /* Main boxes */
 
-table.noborder {
+table.noborder, div.noborder {
     background: #FFF url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/bg_liste_titremenu.jpg',1); ?>);
     background-repeat: repeat-x;
     background-position: top right;
@@ -1392,10 +1409,10 @@ table.noborder {
     /*border-collapse: collapse;*/
 }
 
-table.noborder tr {
+table.noborder tr, div.noborder form {
 }
 
-table.noborder td {
+table.noborder td, div.noborder form div {
 }
 
 #graph {
@@ -1439,14 +1456,20 @@ table.liste td {
     padding-right: 2px;
 }
 
-tr.liste_titre, tr.liste_titre_sel
+.tagtable { display: table; }
+.tagtable form { display: table-row; }
+.tagtable form div { display: table-cell; }
+.tagtr { display: table-row; }
+.tagtd { display: table-cell; }
+
+tr.liste_titre, tr.liste_titre_sel, form.liste_titre, form.liste_titre_sel
 {
     height: 20px !important;
 }
-div.liste_titre, tr.liste_titre {
+div.liste_titre, tr.liste_titre, form.liste_titre {
     color: #842F00;
     font-weight: bold;
-    font-family: "Trebuchet MS",Arial,Helvetica,sans-serif;
+    font-family: <?php print $fontlist ?>;
     /*border-bottom: 1px solid #FDFFFF;*/
     border-radius: 8px;
     padding-left: 10px;
@@ -1454,18 +1477,20 @@ div.liste_titre, tr.liste_titre {
     white-space: <?php echo $dol_optimize_smallscreen?'normal':'nowrap'; ?>;
     text-align: <?php echo $left; ?>;
 }
-th.liste_titre, td.liste_titre
+th.liste_titre, td.liste_titre, form.liste_titre div
 {
 	padding-left: 6px;
 	padding-right: 6px;
     white-space: <?php echo $dol_optimize_smallscreen?'normal':'nowrap'; ?>;
+    vertical-align: middle;
 }
-th.liste_titre_sel, td.liste_titre_sel
+th.liste_titre_sel, td.liste_titre_sel, form.liste_titre_sel div
 {
     background-position: top right;
     color: #A51B00;
     font-weight: bold;
     white-space: <?php echo $dol_optimize_smallscreen?'normal':'nowrap'; ?>;
+    vertical-align: middle;
 }
 
 input.liste_titre {
@@ -1476,7 +1501,7 @@ background-position: top right;*/
 border: 0px;
 }
 
-tr.liste_total td {
+tr.liste_total td, form.liste_total div {
 border-top: 1px solid #DDDDDD;
 background: #F0F0F0;
 /* background-image: url(<?php echo dol_buildpath($path.'/theme/login_background.png',1); ?>); */
@@ -1534,7 +1559,7 @@ tr.box_titre {
 	background-repeat: repeat-x;
 	color: #842F00;
 	font-weight: normal;
-	font-family: "Trebuchet MS",Arial,Helvetica,sans-serif;
+	font-family: <?php print $fontlist ?>;
 	white-space: nowrap;
   -moz-border-radius-topleft:6px;
   -moz-border-radius-topright:6px;
@@ -1646,12 +1671,14 @@ border: 0px;
 }
 
 div.titre {
-	font-family: "Trebuchet MS",Arial,Helvetica,sans-serif;
+	font-family: <?php print $fontlist ?>;
 	font-weight: normal;
 	color: #842F00;
     font-size: 20px;
 	text-decoration: none;
-    margin-left: 20px;
+	<?php if (empty($dol_use_jmobile)) { ?>
+	margin-left: 12px;
+	<?php } ?>
 }
 
 #dolpaymenttable { width: 600px; font-size: 13px; }
@@ -1961,7 +1988,7 @@ li.cal_event       { border: none; list-style-type: none; }
 {
 	background:#F0F0F0;
 	font-weight:normal;
-	font-family:sans-serif;
+	font-family: <?php print $fontlist ?>;
 	border-style:ridge;
 	border: 1px solid;
 	border-spacing: 0px;
@@ -2074,7 +2101,7 @@ A.none, A.none:active, A.none:visited, A.none:hover {
     font-family:<?php echo $fontlist; ?>;
     font-size:<?php echo $fontsize; ?>px;
 }
-.ui-button { margin-left: -1px; }
+.ui-button { margin-left: -1px; padding-top: 1px; }
 .ui-button-icon-only .ui-button-text { height: 8px; }
 .ui-button-icon-only .ui-button-text, .ui-button-icons-only .ui-button-text { padding: 2px 0px 6px 0px; }
 .ui-button-text
@@ -2277,38 +2304,76 @@ div.ecmjqft {
 /*  JMobile                                                                       */
 /* ============================================================================== */
 
-.ui-body-c {
+li.ui-li-divider .ui-link {
+	color: #FFF !important;
+}
+.ui-btn {
+	margin: 0.1em 2px
+}
+a.ui-link, a.ui-link:hover, .ui-btn:hover, span.ui-btn-text:hover, span.ui-btn-inner:hover {
+	text-decoration: none !important;
+}
+
+.ui-btn-inner {
+	min-width: .4em;
+	padding-left: 10px;
+	padding-right: 10px;
+	<?php if (empty($dol_use_jmobile) || 1==1) { ?>
+	font-size: <?php print $fontsize ?>px;
+	<?php } ?>
+	/* white-space: normal; */		/* Warning, enable this break the truncate feature */
+}
+.ui-select .ui-btn-icon-right .ui-btn-inner {
+	padding-right: 36px;
+}
+.ui-select .ui-btn-icon-left .ui-btn-inner {
+	padding-left: 36px;
+}
+
+.fiche .ui-controlgroup {
+	margin: 0px;
+	padding-bottom: 0px;
+}
+div.ui-controlgroup-controls div.tabsElem
+{
+	margin-top: 2px;
+}
+div.ui-controlgroup-controls div.tabsElem a
+{
+	-moz-box-shadow: 0 -3px 6px rgba(0,0,0,.2);
+	-webkit-box-shadow: 0 -3px 6px rgba(0,0,0,.2);
+	box-shadow: 0 -3px 6px rgba(0,0,0,.2);
 	border: none;
-	text-shadow: none;
 }
-
-div.ui-controlgroup
-{
-	height: auto;
-	background-image: none;
-}
-
-div.ui-controlgroup-controls div.tabsElem, div.ui-controlgroup-controls div.tabsElem a.tab
-{
-	height: auto;
-}
-
 a.tab span.ui-btn-inner
 {
 	border: none;
 	padding: 0;
 }
-div.tabs a.tab#active span.ui-btn-inner, div.tabs a.tab#active span.ui-btn-text, div.tabs a.tab span.ui-btn-inner, div.tabs a.tab span.ui-btn-text {
-	background-image: none;
-	color: #D45416;
-	height: auto;
+
+.ui-body-c {
+	border: 1px solid #CCC;
+	text-shadow: none;
+}
+.ui-link {
+	color: rgb(<?php print $colortext; ?>) !important;
 }
 
-.ui-btn-icon-left .ui-icon {
-	left: 8px;
+a.ui-link {
+	word-wrap: break-word;
 }
-.ui-btn-icon-right .ui-icon {
-	right: 8px;
+
+/* force wrap possible onto field overflow does not works */
+.formdoc .ui-btn-inner
+{
+	white-space: normal;
+	overflow: hidden;
+	text-overflow: hidden;
+}
+
+/* Warning: setting this may make screen not beeing refreshed after a combo selection */
+.ui-body-c {
+	background: #fff;
 }
 
 div.ui-radio
@@ -2320,6 +2385,22 @@ div.ui-radio
 	width: auto;
 	margin: 0;
 	position: static;
+}
+.ui-mobile fieldset
+{
+	padding-bottom: 10px; margin-bottom: 4px; border-bottom: 1px solid #AAAAAA !important;
+}
+
+ul.ulmenu {
+	border-radius: 0;
+	-webkit-border-radius: 0;
+}
+
+.ui-field-contain label.ui-input-text {
+	vertical-align: middle !important;
+}
+.ui-mobile fieldset {
+	border-bottom: none !important;
 }
 
 <?php

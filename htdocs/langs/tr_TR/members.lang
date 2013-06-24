@@ -1,16 +1,9 @@
-/*
- * Language code: tr_TR
- * Manually generated
- * Generation date 2012-07-24 12:07:26
- */
-
-// START - Lines generated manually (2012-07-24 12:07:26).
-// Reference language: en_US->tr_TR - members
+# Dolibarr language file - Source file is en_US - members
 CHARSET=UTF-8
 MembersArea=Üye alanı
 PublicMembersArea=Genel üye alanı
 MemberCard=Üye kartı
-SubscriptionCard=Abonelik kartı
+SubscriptionCard=Abone kartı
 Member=Üye
 Members=Üyeler
 MemberAccount=Üye girişi
@@ -31,7 +24,7 @@ SetLinkToUser=Bir Dolibarr kullanıcısına bağlantı
 SetLinkToThirdParty=Bir Dolibarr üçüncü partisine bağlantı
 MembersCards=Üye kartvizitleri
 MembersList=Üyelerin listesi
-(MembersListToValid=Taslak üye listesi (doğrulaacak)
+MembersListToValid=Taslak üye listesi (doğrulanacak)
 MembersListValid=Geçerli üye listesi
 MembersListUpToDate=Güncel abonelikleri ile geçerli üye listesi
 MembersListNotUpToDate=Abonelik tarihleri geçmiş geçerli üye listesi
@@ -117,17 +110,13 @@ ConfirmValidateMember=Bu üyeliği doğrulamak istediğinizden emin misiniz?
 FollowingLinksArePublic=Aşağıdaki bağlantılar açık sayfalar olup herhangi bir Dolibarr izni ile korunmamaktadır. Onlar biçimlendirilmiş sayfalar olmayıp üye veritabanının nasıl listelendiğine örnek olarak verilmiştir.
 PublicMemberList=Genel üye listesi
 BlankSubscriptionForm=Genel oto-abonelik formu
-"BlankSubscriptionFormDesc=Dolibarr size dış ziyaretçilerin kurum üyeliği istemesine izin veren genel bir URL sağlar. Eğer bir çevrimiçi ödeme modülü etkinse ayrıca bir ödeme formu da otomatik olarak sağlanacaktır.
-"
-"EnablePublicSubscriptionForm=Genel oto-üyelik formunu etkinleştirin
-"
+# BlankSubscriptionFormDesc=Dolibarr can provide you a public URL to allow external visitors to ask to subscribe to the foundation. If an online payment module is enabled, a payment form will also be automatically provided.
+# EnablePublicSubscriptionForm=Enable the public auto-subscription form
 MemberPublicLinks=Genel bağlantılar/sayfalar
 ExportDataset_member_1=Üyeler ve abonelikleri
-"ImportDataset_member_1=Üyeler
-"
+# ImportDataset_member_1=Members
 LastMembers=Son % s üye
-"LastMembersModified=Son değiştirilen % s üye olarak
-"
+# LastMembersModified=Last %s modified members
 LastSubscriptionsModified=Sondeğiştirilen  %s abonelik
 AttributeName=Öznitelik adı
 FieldEdition=%s Alanının düzenlenmesi
@@ -142,6 +131,8 @@ AddSubscription=Abonelik ekle
 ShowSubscription=Abonelik göster
 MemberModifiedInDolibarr=Üyelik Dolibarr'da değiştirilmiş
 SendAnEMailToMember=Üyelere bilgi e-postası gönder
+# DescADHERENT_AUTOREGISTER_NOTIF_MAIL_SUBJECT=Subject of the e-mail received in case of auto-inscription of a guest
+# DescADHERENT_AUTOREGISTER_NOTIF_MAIL=E-mail received in case of auto-inscription of a guest
 DescADHERENT_AUTOREGISTER_MAIL_SUBJECT=Üye oto-abonelik Eposta konusu
 DescADHERENT_AUTOREGISTER_MAIL=Üye oto-aboneliği Epostası
 DescADHERENT_MAIL_VALID_SUBJECT=Üye doğrulama Epostası konusu
@@ -152,20 +143,21 @@ DescADHERENT_MAIL_RESIL_SUBJECT=Üyelik sonlandırma Epostası konusu
 DescADHERENT_MAIL_RESIL=Üyelik sonlandırma Epostası
 DescADHERENT_MAIL_FROM=Otomatik epostalar için Eposta gönderen
 DescADHERENT_ETIQUETTE_TYPE=Etiket sayfası biçimi
+DescADHERENT_ETIQUETTE_TEXT=Üye adres sayfalarına yazılan metin
 DescADHERENT_CARD_TYPE=Kart sayfası biçimi
 DescADHERENT_CARD_HEADER_TEXT=Üyelik kartlarının en üstüne basılacak metin
 DescADHERENT_CARD_TEXT=Üyelik kartlarına basılacak metin (sola yanaşık)
 DescADHERENT_CARD_TEXT_RIGHT=Üyelik kartlarına basılacak metin (sağa yanaşık)
 DescADHERENT_CARD_FOOTER_TEXT=Üyelik kartlarının en altına basılacak metin
-DescADHERENT_MAILMAN_LISTS=Yeni üyelerin otomatik kayıt listesi (leri) (virgül ile ayrılmış)
 GlobalConfigUsedIfNotDefined=Tanımlanan metin yoksa kurum modülü kurulumunda tanımlanan metin kullanılacaktır
 MayBeOverwrited=Bu metin üyenin türü için tanımlanan değerin üzerine yazılabilir
 ShowTypeCard='%s' türünü göster
 HTPasswordExport=htpassword dosyası oluşturulması
 NoThirdPartyAssociatedToMember=Bu üye ile ilintili üçüncü parti yok
 ThirdPartyDolibarr=Dolibarr üçüncü partisi
-MembersAndSubscriptions=Üyeler ve abonelikler
+MembersAndSubscriptions= Üyeler ve abonelikler
 MoreActions=Kayıt üzerinde tamamlayıcı işlem
+# MoreActionsOnSubscription=Complementary action, suggested by default when recording a subscription
 MoreActionBankDirect=Hesap üzerinde doğrudan bir işlem kaydı oluşturun
 MoreActionBankViaInvoice=Hesaba bir fatura ve ödeme oluştur
 MoreActionInvoiceOnly=Ödeme yapılmamış bir fatura oluştur
@@ -177,8 +169,7 @@ DocForLabels=Adres çizelgeleri oluştur (Çıkış formatı için gerçek ayar 
 SubscriptionPayment=Abonelik ödemesi
 LastSubscriptionDate=Son abonelik tarihi
 LastSubscriptionAmount=Son abonelik tutarı
-"MembersStatisticsByCountries=Ülkelere göre üyelik istatistikleri
-"
+# MembersStatisticsByCountries=Members statistics by country
 MembersStatisticsByState=Eyalete/ile göre üyelik istatistikleri
 MembersStatisticsByTown=İlçelere göre üyelik istatistikleri
 NbOfMembers=Üye sayısı
@@ -205,5 +196,10 @@ Associations=Dernekler
 Collectivités=Kurumlar
 Particuliers=Kişisel
 Entreprises=Firmalar
-"DOLIBARRFOUNDATION_PAYMENT_FORM=Banka havalesi ile abonelik ödemesi yapmak için, <a target=""_blank"" href=""http://wiki.dolibarr.org/index.php/Subscribe#To_subscribe_making_a_bank_transfer"">http://wiki.dolibarr.org/index.php/Subscribe</a> sayfasına bakın . <br> Kredi Kartı veya Paypal ile ödeme yapmak için, bu sayfanın alt kısmındaki düğmeyi tıklatın. <br>
-"
+# DOLIBARRFOUNDATION_PAYMENT_FORM=To make your subscription payment using a bank transfer, see page <a target="_blank" href="http://wiki.dolibarr.org/index.php/Subscribe#To_subscribe_making_a_bank_transfer">http://wiki.dolibarr.org/index.php/Subscribe</a>.<br>To pay using a Credit Card or Paypal, click on button at bottom of this page.<br>
+ByProperties=Özelliklere göre
+MembersStatisticsByProperties=Özelliklere göre üye istatistikleri
+MembersByNature=Doğal üyeler
+# VATToUseForSubscriptions=VAT rate to use for subscriptions
+# NoVatOnSubscription=No TVA for subscriptions
+# MEMBER_PAYONLINE_SENDEMAIL=Email to warn when Dolibarr receive a confirmation of a validated payment for subscription

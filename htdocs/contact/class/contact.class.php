@@ -107,7 +107,7 @@ class Contact extends CommonObject
 		$this->db->begin();
 
 		// Clean parameters
-		$this->lastname=$this->lastname?trim($this->lastname):$this->lastname;
+		$this->lastname=$this->lastname?trim($this->lastname):trim($this->name);
         $this->firstname=trim($this->firstname);
         if (! empty($conf->global->MAIN_FIRST_TO_UPPER)) $this->lastname=ucwords($this->lastname);
         if (! empty($conf->global->MAIN_FIRST_TO_UPPER)) $this->firstname=ucwords($this->firstname);
@@ -883,7 +883,8 @@ class Contact extends CommonObject
 		global $langs;
 		$langs->load("dict");
 
-		$code=$this->civilite_id;
+		$code=(! empty($this->civilite_id)?$this->civilite_id:(! empty($this->civility_id)?$this->civility_id:''));
+		if (empty($code)) return '';
         return $langs->getLabelFromKey($this->db, "Civility".$code, "c_civilite", "code", "civilite", $code);
 	}
 

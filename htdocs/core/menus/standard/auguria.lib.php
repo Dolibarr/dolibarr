@@ -301,7 +301,7 @@ function print_left_auguria_menu($db,$menu_array_before,$menu_array_after,&$tabM
 	// Show menu
 	if (empty($noout))
 	{
-		$alt=0;
+		$alt=0; $blockvmenuopened=false;
 		$num=count($menu_array);
 		for ($i = 0; $i < $num; $i++)
 		{
@@ -311,6 +311,7 @@ function print_left_auguria_menu($db,$menu_array_before,$menu_array_after,&$tabM
 			$alt++;
 			if (empty($menu_array[$i]['level']) && $showmenu)
 			{
+				$blockvmenuopened=true;
 				if (($alt%2==0))
 				{
 					print '<div class="blockvmenuimpair">'."\n";
@@ -344,8 +345,8 @@ function print_left_auguria_menu($db,$menu_array_before,$menu_array_after,&$tabM
 				$url.='mainmenu='.$mainmenu;
 			}
 
-			print '<!-- Add menu entry with mainmenu='.$menu_array[$i]['mainmenu'].', leftmenu='.$menu_array[$i]['leftmenu'].', level='.$menu_array[$i]['level'].' -->'."\n";
-
+			print '<!-- Process menu entry with mainmenu='.$menu_array[$i]['mainmenu'].', leftmenu='.$menu_array[$i]['leftmenu'].', level='.$menu_array[$i]['level'].' enabled='.$menu_array[$i]['enabled'].' -->'."\n";
+				
 			// Menu niveau 0
 			if ($menu_array[$i]['level'] == 0)
 			{
@@ -379,12 +380,12 @@ function print_left_auguria_menu($db,$menu_array_before,$menu_array_after,&$tabM
 				}
 			}
 
-			// If next is a new block or end
+			// If next is a new block or if there is nothing after
 			if (empty($menu_array[$i+1]['level']))
 			{
 				if ($showmenu)
 					print '<div class="menu_end"></div>'."\n";
-				print "</div>\n";
+				if ($blockvmenuopened) { print "</div>\n"; $blockvmenuopened=false; }
 			}
 		}
 	}

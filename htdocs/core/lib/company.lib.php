@@ -92,10 +92,13 @@ function societe_prepare_head($object)
         $head[$h][2] = 'note';
         $h++;
 
-        $head[$h][0] = DOL_URL_ROOT.'/societe/consumption.php?socid='.$object->id;
-        $head[$h][1] = $langs->trans("Referers");
-        $head[$h][2] = 'consumption';
-        $h++;
+        if (! empty($conf->commande->enabled) || ! empty($conf->propal->enabled) || ! empty($conf->facture->enabled) || ! empty($conf->fournisseur->enabled))
+        {
+	        $head[$h][0] = DOL_URL_ROOT.'/societe/consumption.php?socid='.$object->id;
+	        $head[$h][1] = $langs->trans("Referers");
+	        $head[$h][2] = 'consumption';
+	        $h++;
+        }
 
         // Attached files
         $head[$h][0] = DOL_URL_ROOT.'/societe/document.php?socid='.$object->id;
@@ -405,7 +408,9 @@ function show_projects($conf,$langs,$db,$object,$backtopage='')
         if (! empty($conf->projet->enabled) && $user->rights->projet->creer)
         {
             //$buttoncreate='<a class="butAction" href="'.DOL_URL_ROOT.'/projet/fiche.php?socid='.$object->id.'&action=create&amp;backtopage='.urlencode($backtopage).'">'.$langs->trans("AddProject").'</a>';
-			$buttoncreate='<a class="addnewrecord" href="'.DOL_URL_ROOT.'/projet/fiche.php?socid='.$object->id.'&amp;action=create&amp;backtopage='.urlencode($backtopage).'">'.$langs->trans("AddProject").' '.img_picto($langs->trans("AddProject"),'filenew').'</a>'."\n";
+			$buttoncreate='<a class="addnewrecord" href="'.DOL_URL_ROOT.'/projet/fiche.php?socid='.$object->id.'&amp;action=create&amp;backtopage='.urlencode($backtopage).'">'.$langs->trans("AddProject");
+			if (empty($conf->dol_optimize_smallscreen)) $buttoncreate.=' '.img_picto($langs->trans("AddProject"),'filenew');
+			$buttoncreate.='</a>'."\n";
         }
 
         print "\n";
