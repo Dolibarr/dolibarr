@@ -78,9 +78,9 @@ abstract class CommonObject
 
         if ($nameorder)
         {
-            $ret.=$firstname;
-            if ($firstname && $lastname) $ret.=' ';
             $ret.=$lastname;
+            if ($firstname && $lastname) $ret.=' ';
+            $ret.=$firstname;
         }
         else
         {
