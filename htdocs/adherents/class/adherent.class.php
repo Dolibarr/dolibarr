@@ -27,8 +27,6 @@
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
-require_once DOL_DOCUMENT_ROOT.'/adherents/class/cotisation.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 
@@ -1101,12 +1099,10 @@ class Adherent extends CommonObject
 
                 // Retreive all extrafield for thirdparty
                 // fetch optionals attributes and labels
-                require_once(DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php');
+                require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
                 $extrafields=new ExtraFields($this->db);
                 $extralabels=$extrafields->fetch_name_optionals_label($this->table_element,true);
-                if (count($extralabels)>0) {
-                	$this->fetch_optionals($this->id,$extralabels);
-                }
+                $this->fetch_optionals($this->id,$extralabels);
 
                 // Load other properties
                 $result=$this->fetch_subscriptions();
@@ -1139,6 +1135,8 @@ class Adherent extends CommonObject
     function fetch_subscriptions()
     {
         global $langs;
+
+		require_once DOL_DOCUMENT_ROOT.'/adherents/class/cotisation.class.php';
 
         $sql = "SELECT c.rowid, c.fk_adherent, c.cotisation, c.note, c.fk_bank,";
         $sql.= " c.tms as datem,";
@@ -1208,6 +1206,8 @@ class Adherent extends CommonObject
     function cotisation($date, $montant, $accountid=0, $operation='', $label='', $num_chq='', $emetteur_nom='', $emetteur_banque='', $datesubend=0)
     {
         global $conf,$langs,$user;
+
+		require_once DOL_DOCUMENT_ROOT.'/adherents/class/cotisation.class.php';
 
 		$error=0;
 
@@ -1662,6 +1662,7 @@ class Adherent extends CommonObject
             {
                 $this->nb["members"]=$obj->nb;
             }
+            $this->db->free($resql);
             return 1;
         }
         else

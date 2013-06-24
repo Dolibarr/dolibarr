@@ -133,6 +133,7 @@ class Fournisseur extends Societe
 			{
 				$this->nb["suppliers"]=$obj->nb;
 			}
+            $this->db->free($resql);
 			return 1;
 		}
 		else

@@ -16,13 +16,13 @@ fi
 # To detec
 if [ "x$1" = "xlist" ]
 then
-	find . -iname "*.php" -o -iname "*.sh" -o -iname "*.pl" -o -iname "*.lang" -o -iname "*.txt" -exec file "{}" + | grep -v 'htdocs\/includes' | grep CRLF
+	find . \( -iname "*.php" -o -iname "*.sh" -o -iname "*.pl" -o -iname "*.lang" -o -iname "*.txt" \) -exec file "{}" + | grep -v 'htdocs\/includes' | grep CRLF
 fi
 
 # To convert
 if [ "x$1" = "xfix" ]
 then
-	for fic in `find . -iname "*.php" -o -iname "*.sh" -o -iname "*.pl" -o -iname "*.lang" -o -iname "*.txt" -exec file "{}" + | grep -v 'htdocs\/includes' | grep CRLF | awk -F':' '{ print $1 }' `
+	for fic in `find . \( -iname "*.php" -o -iname "*.sh" -o -iname "*.pl" -o -iname "*.lang" -o -iname "*.txt" \) -exec file "{}" + | grep -v 'htdocs\/includes' | grep CRLF | awk -F':' '{ print $1 }' `
 	do
 		echo "Fix file $fic"
 		dos2unix $fic

@@ -1,4 +1,4 @@
-# Dolibarr language file - Source file is en_US - mailmanspip
+# Dolibarr language file - tr_TR - mailmanspip
 CHARSET=UTF-8
 MailmanSpipSetup=Mailman ve SPIP modülü Kurulumu
 MailmanTitle=Mailman liste postalama sistemi
@@ -24,5 +24,3 @@ DeleteIntoSpip=SPIP ten kaldır
 DeleteIntoSpipConfirmation=Bu üyeyi SPIP ten kaldırmak istediğinizden emin misiniz?
 DeleteIntoSpipError=Kullanıcı SPIP ten menedilemedi
 SPIPConnectionFailed=SPIP e bağlanılamadı
-# SuccessToAddToMailmanList=Add of %s to mailman list %s or SPIP database done
-# SuccessToRemoveToMailmanList=Removal of %s from mailman list %s or SPIP database done

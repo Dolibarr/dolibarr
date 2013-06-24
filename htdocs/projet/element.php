@@ -26,6 +26,7 @@
 
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 if (! empty($conf->propal->enabled))      require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 if (! empty($conf->facture->enabled))     require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
@@ -46,8 +47,10 @@ if (! empty($conf->commande->enabled)) 	$langs->load("orders");
 if (! empty($conf->propal->enabled))   	$langs->load("propal");
 if (! empty($conf->ficheinter->enabled))	$langs->load("interventions");
 
-$projectid=GETPOST('id');
-$ref=GETPOST('ref');
+$projectid=GETPOST('id','int');
+$ref=GETPOST('ref','alpha');
+$action=GETPOST('action','alpha');
+
 if ($projectid == '' && $ref == '')
 {
 	dol_print_error('','Bad parameter');
@@ -62,6 +65,8 @@ if ($ref)
 {
     $project->fetch(0,$ref);
     $projectid=$project->id;
+}else {
+	$project->fetch($projectid);
 }
 
 // Security check
@@ -78,11 +83,12 @@ $help_url="EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos";
 llxHeader("",$langs->trans("Referers"),$help_url);
 
 $form = new Form($db);
+$formproject=new FormProjets($db);
 
 $userstatic=new User($db);
 
 $project = new Project($db);
-$project->fetch($_GET["id"],$_GET["ref"]);
+$project->fetch($projectid,$ref);
 $project->societe->fetch($project->societe->id);
 
 // To verify role of users
@@ -191,7 +197,10 @@ if ($action=="addelement")
 {
 	$tablename = GETPOST("tablename");
 	$elementselectid = GETPOST("elementselect");
-	$project->update_element($tablename, $elementselectid);
+	$result=$project->update_element($tablename, $elementselectid);
+	if ($result<0) {
+		setEventMessage($mailchimp->error,'errors');
+	}
 }
 
 foreach ($listofreferent as $key => $value)
@@ -206,7 +215,7 @@ foreach ($listofreferent as $key => $value)
 
 		print_titre($langs->trans($title));
 		
-		$selectList=$project->select_element($tablename);
+		$selectList=$formproject->select_element($tablename);
 		if ($selectList)
 		{
 			print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$projectid.'" method="post">';
@@ -243,7 +252,7 @@ foreach ($listofreferent as $key => $value)
 				//print $classname;
 
 				$var=!$var;
-				print "<tr $bc[$var]>";
+				print "<tr ".$bc[$var].">";
 
 				// Ref
 				print '<td align="left">';

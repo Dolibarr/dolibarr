@@ -102,11 +102,14 @@ function print_actions_filter($form,$canedit,$status,$year,$month,$day,$showbirt
 
 			if (! empty($conf->projet->enabled) && $user->rights->projet->lire)
 			{
+				require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
+				$formproject=new FormProjets($db);
+				
 				print '<tr>';
 				print '<td class="nowrap">';
 				print $langs->trans("Project").' &nbsp; ';
 				print '</td><td class="nowrap">';
-				select_projects($socid?$socid:-1, $pid, 'projectid', 64);
+				$formproject->select_projects($socid?$socid:-1, $pid, 'projectid', 64);
 				print '</td></tr>';
 			}
 

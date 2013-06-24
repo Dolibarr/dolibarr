@@ -157,7 +157,7 @@ for ($m = 1 ; $m < 13 ; $m++ )
     }
 
     $var=!$var;
-    print "<tr $bc[$var]>";
+    print "<tr ".$bc[$var].">";
     print '<td nowrap><a href="quadri_detail.php?leftmenu=tax_vat&month='.$m.'&year='.$y.'">'.dol_print_date(dol_mktime(0,0,0,$m,1,$y),"%b %Y").'</a></td>';
 
     $x_coll = 0;

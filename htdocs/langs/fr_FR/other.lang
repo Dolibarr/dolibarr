@@ -195,6 +195,7 @@ MemberResiliatedInDolibarr=Adhérent %s résilié dans Dolibarr
 MemberDeletedInDolibarr=Adhérent %s supprimé de Dolibarr
 MemberSubscriptionAddedInDolibarr=Souscription adhérent %s ajoutée dans Dolibarr
 ShipmentValidatedInDolibarr=Expédition %s validée dans Dolibarr
+ShipmentDeletedInDolibarr=Expédition %s supprimé de Dolibarr
 ##### Export #####
 Export=Export
 ExportsArea=Espace exports

@@ -198,7 +198,7 @@ if ($result) {
         $objp = $db->fetch_object($result);
         $var=!$var;
 
-        print "<tr $bc[$var]><td>&nbsp;</td>";
+        print "<tr ".$bc[$var]."><td>&nbsp;</td>";
         print "<td>".$langs->trans("Bills").' <a href="'.DOL_URL_ROOT.'/compta/facture/list.php?socid='.$objp->socid.'">'.$objp->nom."</td>\n";
 
         if ($modecompta == 'CREANCES-DETTES')
@@ -243,7 +243,7 @@ if ($modecompta != 'CREANCES-DETTES')
                 $objp = $db->fetch_object($result);
                 $var=!$var;
 
-                print "<tr $bc[$var]><td>&nbsp;</td>";
+                print "<tr ".$bc[$var]."><td>&nbsp;</td>";
                 print "<td>".$langs->trans("Bills")." ".$langs->trans("Other")." (".$langs->trans("PaymentsNotLinkedToInvoice").")\n";
 
                 if ($modecompta == 'CREANCES-DETTES')
@@ -266,7 +266,7 @@ if ($modecompta != 'CREANCES-DETTES')
 if ($total_ttc == 0)
 {
     $var=!$var;
-    print "<tr $bc[$var]><td>&nbsp;</td>";
+    print "<tr ".$bc[$var]."><td>&nbsp;</td>";
     print '<td colspan="3">'.$langs->trans("None").'</td>';
     print '</tr>';
 }
@@ -330,7 +330,7 @@ if ($result) {
             $objp = $db->fetch_object($result);
             $var=!$var;
 
-            print "<tr $bc[$var]><td>&nbsp;</td>";
+            print "<tr ".$bc[$var]."><td>&nbsp;</td>";
             print "<td>".$langs->trans("Bills")." <a href=\"".DOL_URL_ROOT."/fourn/facture/index.php?socid=".$objp->socid."\">".$objp->nom."</a></td>\n";
 
             if ($modecompta == 'CREANCES-DETTES')
@@ -349,7 +349,7 @@ if ($result) {
     else
     {
         $var=!$var;
-        print "<tr $bc[$var]><td>&nbsp;</td>";
+        print "<tr ".$bc[$var]."><td>&nbsp;</td>";
         print '<td colspan="3">'.$langs->trans("None").'</td>';
         print '</tr>';
     }
@@ -416,7 +416,7 @@ if ($result) {
             $subtotal_ttc += $obj->amount;
 
             $var = !$var;
-            print "<tr $bc[$var]><td>&nbsp;</td>";
+            print "<tr ".$bc[$var]."><td>&nbsp;</td>";
             print '<td>'.$obj->nom.'</td>';
             if ($modecompta == 'CREANCES-DETTES') print '<td align="right">'.price(-$obj->amount).'</td>';
             print '<td align="right">'.price(-$obj->amount).'</td>';
@@ -426,7 +426,7 @@ if ($result) {
     }
     else {
         $var = !$var;
-        print "<tr $bc[$var]><td>&nbsp;</td>";
+        print "<tr ".$bc[$var]."><td>&nbsp;</td>";
         print '<td colspan="3">'.$langs->trans("None").'</td>';
         print '</tr>';
     }
@@ -493,7 +493,7 @@ if ($result) {
             $subtotal_ttc += $obj->amount;
 
             $var = !$var;
-            print "<tr $bc[$var]><td>&nbsp;</td>";
+            print "<tr ".$bc[$var]."><td>&nbsp;</td>";
             print '<td>'.$obj->nom.'</td>';
             if ($modecompta == 'CREANCES-DETTES')
             	print '<td align="right">'.price(-$obj->amount).'</td>';
@@ -504,7 +504,7 @@ if ($result) {
     }
     else {
         $var = !$var;
-        print "<tr $bc[$var]><td>&nbsp;</td>";
+        print "<tr ".$bc[$var]."><td>&nbsp;</td>";
         print '<td colspan="3">'.$langs->trans("None").'</td>';
         print '</tr>';
     }
@@ -581,7 +581,7 @@ if ($modecompta == 'CREANCES-DETTES')
     } else {
         dol_print_error($db);
     }
-    print "<tr $bc[$var]><td>&nbsp;</td>";
+    print "<tr ".$bc[$var]."><td>&nbsp;</td>";
     print "<td>".$langs->trans("VATToPay")."</td>\n";
     print "<td align=\"right\">&nbsp;</td>\n";
     print "<td align=\"right\">".price($amount)."</td>\n";
@@ -624,7 +624,7 @@ if ($modecompta == 'CREANCES-DETTES')
     } else {
         dol_print_error($db);
     }
-    print "<tr $bc[$var]><td>&nbsp;</td>";
+    print "<tr ".$bc[$var]."><td>&nbsp;</td>";
     print "<td>".$langs->trans("VATToCollect")."</td>\n";
     print "<td align=\"right\">&nbsp;</td>\n";
     print "<td align=\"right\">".price($amount)."</td>\n";
@@ -666,7 +666,7 @@ else
     } else {
         dol_print_error($db);
     }
-    print "<tr $bc[$var]><td>&nbsp;</td>";
+    print "<tr ".$bc[$var]."><td>&nbsp;</td>";
     print "<td>".$langs->trans("VATPaid")."</td>\n";
     if ($modecompta == 'CREANCES-DETTES')
     	print "<td align=\"right\">".price($amount)."</td>\n";
@@ -709,7 +709,7 @@ else
     {
         dol_print_error($db);
     }
-    print "<tr $bc[$var]><td>&nbsp;</td>";
+    print "<tr ".$bc[$var]."><td>&nbsp;</td>";
     print "<td>".$langs->trans("VATCollected")."</td>\n";
     if ($modecompta == 'CREANCES-DETTES')
     	print "<td align=\"right\">".price($amount)."</td>\n";

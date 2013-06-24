@@ -195,6 +195,7 @@ MemberResiliatedInDolibarr=Member %s resiliated in Dolibarr
 MemberDeletedInDolibarr=Member %s deleted from Dolibarr
 MemberSubscriptionAddedInDolibarr=Subscription for member %s added in Dolibarr
 ShipmentValidatedInDolibarr=Shipment %s validated in Dolibarr
+ShipmentDeletedInDolibarr=Shipment %s deleted from Dolibarr
 ##### Export #####
 Export=Export
 ExportsArea=Exports area

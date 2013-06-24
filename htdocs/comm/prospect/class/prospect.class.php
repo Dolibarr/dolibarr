@@ -81,6 +81,7 @@ class Prospect extends Societe
                 if ($obj->client == 1 || $obj->client == 3) $this->nb["customers"]+=$obj->nb;
                 if ($obj->client == 2 || $obj->client == 3) $this->nb["prospects"]+=$obj->nb;
             }
+            $this->db->free($resql);
             return 1;
         }
         else

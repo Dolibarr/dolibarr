@@ -38,7 +38,7 @@ if (! empty($conf->produit->enabled) || ! empty($conf->service->enabled))  requi
 if (! empty($conf->propal->enabled))  require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 if (! empty($conf->projet->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
-	require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
+	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
 
 $langs->load("contracts");
@@ -459,7 +459,7 @@ else if ($action == 'addline' && $user->rights->contrat->creer)
 
         if($price_min && (price2num($pu_ht)*(1-price2num(GETPOST('remise_percent'))/100) < price2num($price_min)))
         {
-            $object->error = $langs->trans("CantBeLessThanMinPrice",price2num($price_min,'MU').' '.$langs->trans("Currency".$conf->currency));
+            $object->error = $langs->trans("CantBeLessThanMinPrice",price(price2num($price_min,'MU'),0,$langs,0,0,-1,$conf->currency));
             $result = -1 ;
         }
         else
@@ -838,7 +838,7 @@ if ($action == 'create')
 	{
 		// Ligne info remises tiers
 		print '<tr><td>'.$langs->trans('Discounts').'</td><td colspan="2">';
-		if ($soc->remise_client) print $langs->trans("CompanyHasRelativeDiscount",$soc->remise_client);
+		if ($soc->remise_percent) print $langs->trans("CompanyHasRelativeDiscount",$soc->remise_percent);
 		else print $langs->trans("CompanyHasNoRelativeDiscount");
 		print '. ';
 		$absolute_discount=$soc->getAvailableDiscounts();
@@ -864,8 +864,10 @@ if ($action == 'create')
 
     if (! empty($conf->projet->enabled))
     {
+    	$formproject=new FormProjets($db);
+
         print '<tr><td>'.$langs->trans("Project").'</td><td>';
-        select_projects($soc->id,$projectid,"projectid");
+        $formproject->select_projects($soc->id,$projectid,"projectid");
         print "</td></tr>";
     }
 
@@ -1010,7 +1012,7 @@ else
 
         // Ligne info remises tiers
         print '<tr><td>'.$langs->trans('Discount').'</td><td colspan="3">';
-        if ($object->thirdparty->remise_client) print $langs->trans("CompanyHasRelativeDiscount",$object->thirdparty->remise_client);
+        if ($object->thirdparty->remise_percent) print $langs->trans("CompanyHasRelativeDiscount",$object->thirdparty->remise_percent);
         else print $langs->trans("CompanyHasNoRelativeDiscount");
         $absolute_discount=$object->thirdparty->getAvailableDiscounts();
         print '. ';
@@ -1242,7 +1244,7 @@ else
                     print '<input type="hidden" name="idprod" value="'.($objp->fk_product?$objp->fk_product:'0').'">';
                     print '<input type="hidden" name="fournprice" value="'.($objp->fk_fournprice?$objp->fk_fournprice:'0').'">';
                     // Ligne carac
-                    print "<tr $bc[$var]>";
+                    print "<tr ".$bc[$var].">";
                     print '<td>';
                     if ($objp->fk_product)
                     {
@@ -1283,7 +1285,7 @@ else
                     print '<br><input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
                     print '</td>';
                     // Ligne dates prevues
-                    print "<tr $bc[$var]>";
+                    print "<tr ".$bc[$var].">";
                     print '<td colspan="'.($conf->margin->enabled?6:5).'">';
                     print $langs->trans("DateStartPlanned").' ';
                     $form->select_date($db->jdate($objp->date_debut),"date_start_update",$usehm,$usehm,($db->jdate($objp->date_debut)>0?0:1),"update");

@@ -201,7 +201,7 @@ if ($resql)
             print $thirdpartystatic->getNomUrl(1,'customer');
             print '</td>';
             print '<td align="right">';
-            print price($obj->total_ttc).' '.$langs->trans("Currency".$conf->currency);
+            print price($obj->total_ttc,0,$langs,0,0,-1,$conf->currency);
             print '</td>';
             // Date
             print '<td align="right">';
@@ -254,14 +254,14 @@ if ($result)
         $obj = $db->fetch_object($result);
         $var=!$var;
 
-        print "<tr $bc[$var]><td>";
+        print "<tr ".$bc[$var]."><td>";
         $bprev->id=$obj->rowid;
         $bprev->ref=$obj->ref;
         print $bprev->getNomUrl(1);
         print "</td>\n";
         print '<td align="center">'.dol_print_date($db->jdate($obj->datec),'day')."</td>\n";
 
-        print '<td align="right">'.price($obj->amount).' '.$langs->trans("Currency".$conf->currency)."</td>\n";
+        print '<td align="right">'.price($obj->amount,0,$langs,0,0,-1,$conf->currency)."</td>\n";
 
         print "</tr>\n";
         $i++;

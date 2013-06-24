@@ -5,6 +5,7 @@
 * Copyright (C) 2004      Benoit Mortier	    <benoit.mortier@opensides.be>
 * Copyright (C) 2009-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
 * Copyright (C) 2009-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+* Copyright (C) 2013	  Florian Henry        <forian.henry@open-concept.pro>
 *
 * This program is free software; you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -559,7 +560,7 @@ class ExtraFields
 					$this->attribute_pos[$tab->name]=$tab->pos;
 				}
 			}
-			
+
 			return $array_name_label;
 		}
 		else
@@ -626,11 +627,11 @@ class ExtraFields
 		{
 			$tmp=explode(',',$size);
 			$newsize=$tmp[0];
-			$out='<input type="text" name="options_'.$key.'" size="'.$showsize.'" maxlength="'.$newsize.'" value="'.$value.'"'.($moreparam?$moreparam:'').'>';
+			$out='<input type="text" class="flat" name="options_'.$key.'" size="'.$showsize.'" maxlength="'.$newsize.'" value="'.$value.'"'.($moreparam?$moreparam:'').'>';
 		}
 		elseif ($type == 'varchar')
 		{
-			$out='<input type="text" name="options_'.$key.'" size="'.$showsize.'" maxlength="'.$size.'" value="'.$value.'"'.($moreparam?$moreparam:'').'>';
+			$out='<input type="text" class="flat" name="options_'.$key.'" size="'.$showsize.'" maxlength="'.$size.'" value="'.$value.'"'.($moreparam?$moreparam:'').'>';
 		}
 		elseif ($type == 'text')
 		{
@@ -646,27 +647,30 @@ class ExtraFields
 			} else {
 				$checked=' value="1" ';
 			}
-			$out='<input type="checkbox" name="options_'.$key.'" '.$checked.' '.($moreparam?$moreparam:'').'>';
+			$out='<input type="checkbox" class="flat" name="options_'.$key.'" '.$checked.' '.($moreparam?$moreparam:'').'>';
 		}
 		elseif ($type == 'mail')
 		{
-			$out='<input type="text" name="options_'.$key.'" size="32" value="'.$value.'">';
+			$out='<input type="text" class="flat" name="options_'.$key.'" size="32" value="'.$value.'">';
 		}
 		elseif ($type == 'phone')
 		{
-			$out='<input type="text" name="options_'.$key.'"  size="20" value="'.$value.'">';
+			$out='<input type="text" class="flat" name="options_'.$key.'"  size="20" value="'.$value.'">';
 		}
 		elseif ($type == 'price')
 		{
-			$out='<input type="text" name="options_'.$key.'"  size="6" value="'.price($value).'"> '.$langs->getCurrencySymbol($conf->currency);
+			$out='<input type="text" class="flat" name="options_'.$key.'"  size="6" value="'.price($value).'"> '.$langs->getCurrencySymbol($conf->currency);
 		}
 		elseif ($type == 'double')
 		{
-			$out='<input type="text" name="options_'.$key.'"  size="6" value="'.price($value).'"> ';
+			if (!empty($value)) {
+				$value=price($value);
+			}
+			$out='<input type="text" class="flat" name="options_'.$key.'"  size="6" value="'.$value.'"> ';
 		}
 		elseif ($type == 'select')
 		{
-			$out='<select name="options_'.$key.'">';
+			$out='<select class="flat" name="options_'.$key.'">';
 			foreach ($param['options'] as $key=>$val )
 			{
 				$out.='<option value="'.$key.'"';
@@ -677,10 +681,10 @@ class ExtraFields
 		}
 		elseif ($type == 'sellist')
 		{
-			$out='<select name="options_'.$key.'">';
+			$out='<select class="flat" name="options_'.$key.'">';
 			$param_list=array_keys($param['options']);
 			$InfoFieldList = explode(":", $param_list[0]);
-			
+
 			// 0 1 : tableName
 			// 1 2 : label field name Nom du champ contenant le libelle
 			// 2 3 : key fields name (if differ of rowid)
@@ -694,7 +698,7 @@ class ExtraFields
 			$sql.= ' FROM '.MAIN_DB_PREFIX .$InfoFieldList[0];
 			//$sql.= ' WHERE entity = '.$conf->entity;
 
-			dol_syslog(get_class($this).':showInputField:$type=sellist sql='.$sql);
+			dol_syslog(get_class($this).'::showInputField type=sellist sql='.$sql);
 			$resql = $this->db->query($sql);
 
 			if ($resql)
@@ -707,7 +711,13 @@ class ExtraFields
 					while ($i < $num)
 					{
 						$obj = $this->db->fetch_object($resql);
-						$labeltoshow=dol_trunc($obj->$InfoFieldList[1],18);
+						$translabel=$langs->trans($obj->$InfoFieldList[1]);
+						if ($translabel!=$obj->$InfoFieldList[1]) {
+							$labeltoshow=dol_trunc($translabel,18);
+						}else {
+							$labeltoshow=dol_trunc($obj->$InfoFieldList[1],18);
+						}
+
 						if ($value==$obj->rowid)
 						{
 							$out.='<option value="'.$obj->rowid.'" selected="selected">'.$labeltoshow.'</option>';
@@ -731,7 +741,7 @@ class ExtraFields
 			foreach ($param['options'] as $keyopt=>$val )
 			{
 
-				$out.='<input type="checkbox" name="options_'.$key.'[]"';
+				$out.='<input class="flat" type="checkbox" name="options_'.$key.'[]"';
 				$out.=' value="'.$keyopt.'"';
 
 				if ((is_array($value_arr)) && in_array($keyopt,$value_arr)) {
@@ -748,7 +758,7 @@ class ExtraFields
 			$out='';
 			foreach ($param['options'] as $keyopt=>$val )
 			{
-				$out.='<input type="radio" name="options_'.$key.'"';
+				$out.='<input class="flat" type="radio" name="options_'.$key.'"';
 				$out.=' value="'.$keyopt.'"';
 				$out.= ($value==$keyopt?'checked="checked"':'');
 				$out.='/>'.$val.'<br>';
@@ -796,7 +806,9 @@ class ExtraFields
 		}
 		elseif ($type == 'double')
 		{
-			$value=price($value);
+			if (!empty($value)) {
+				$value=price($value);
+			}
 		}
 		elseif ($type == 'boolean')
 		{
@@ -816,7 +828,7 @@ class ExtraFields
 		}
 		elseif ($type == 'price')
 		{
-			$value=price($value).' '.$langs->getCurrencySymbol($conf->currency);
+			$value=price($value,0,$langs,0,0,-1,$conf->currency);
 		}
 		elseif ($type == 'select')
 		{
@@ -830,7 +842,6 @@ class ExtraFields
 			if (count($InfoFieldList)==3)
 				$keyList=$InfoFieldList[2];
 
-			
 			$sql = 'SELECT '.$InfoFieldList[1];
 			$sql.= ' FROM '.MAIN_DB_PREFIX .$InfoFieldList[0];
 			$sql.= ' WHERE '.$keyList.'=\''.$this->db->escape($value).'\'';
@@ -840,7 +851,13 @@ class ExtraFields
 			if ($resql)
 			{
 				$obj = $this->db->fetch_object($resql);
-				$value=$obj->$InfoFieldList[1];
+				$translabel=$langs->trans($obj->$InfoFieldList[1]);
+				if ($translabel!=$obj->$InfoFieldList[1]) {
+					$value=dol_trunc($translabel,18);
+				}else {
+					$value=$obj->$InfoFieldList[1];
+				}
+
 			}
 		}
 		elseif ($type == 'radio')
@@ -890,7 +907,7 @@ class ExtraFields
 	function setOptionalsFromPost($extralabels,&$object)
 	{
 		global $_POST;
-		
+
 		if (is_array($extralabels))
 		{
 			// Get extra fields
@@ -921,6 +938,52 @@ class ExtraFields
 			}
 
 			return 1;
+		}
+		else {
+			return 0;
+		}
+	}
+	/**
+	 * return array_options array for object by extrafields value (using for data send by forms)
+	 *
+	 * @param   array	$extralabels    $array of extrafields
+	 * @return	int						1 if array_options set / 0 if no value
+	 */
+	function getOptionalsFromPost($extralabels)
+	{
+		global $_POST;
+
+		$array_options = array();
+		if (is_array($extralabels))
+		{
+			// Get extra fields
+			foreach ($extralabels as $key => $value)
+			{
+				$key_type = $this->attribute_type[$key];
+
+				if (in_array($key_type,array('date','datetime')))
+				{
+					// Clean parameters
+					$value_key=dol_mktime($_POST["options_".$key."hour"], $_POST["options_".$key."min"], 0, $_POST["options_".$key."month"], $_POST["options_".$key."day"], $_POST["options_".$key."year"]);
+				}
+				else if (in_array($key_type,array('checkbox')))
+				{
+					$value_arr=GETPOST("options_".$key);
+					$value_key=implode($value_arr,',');
+				}
+				else if (in_array($key_type,array('price','double')))
+				{
+					$value_arr=GETPOST("options_".$key);
+					$value_key=price2num($value_arr);
+				}
+				else
+				{
+					$value_key=GETPOST("options_".$key);
+				}
+				$array_options["options_".$key]=$value_key;
+			}
+
+			return $array_options;
 		}
 		else {
 			return 0;

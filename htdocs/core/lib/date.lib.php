@@ -164,21 +164,6 @@ function getParentCompanyTimeZoneInt($refgmtdate='now')
 
 
 /**
- *  Add a delay of a timezone to a date
- *
- *  @param      timestamp	$time               Date timestamp
- *  @param      string		$timezone			Timezone
- *  @return     timestamp      			        New timestamp
- */
-function dol_time_plus_timezone($time,$timezone)
-{
-    // TODO Finish function
-
-    return $time;
-}
-
-
-/**
  *  Add a delay to a date
  *
  *  @param      timestamp	$time               Date timestamp (or string with format YYYY-MM-DD)
@@ -329,14 +314,12 @@ function convertSecondToTime($iSecond,$format='all',$lengthOfDay=86400,$lengthOf
  *		                		DD/MM/YY HH:MM:SS or DD/MM/YYYY HH:MM:SS (this format should not be used anymore)
  *  @param	int		$gm         1 =Input date is GM date,
  *                              0 =Input date is local date using PHP server timezone
- *                              -1=Input date is local date using timezone provided as third parameter
- *	@param	string	$tz			Timezone to use. This means param $gm=-1
  *  @return	date				Date
  *		                		19700101020000 -> 7200 with gm=1
  *
  *  @see    dol_print_date, dol_mktime, dol_getdate
  */
-function dol_stringtotime($string, $gm=1, $tz='')
+function dol_stringtotime($string, $gm=1)
 {
     // Convert date with format DD/MM/YYY HH:MM:SS. This part of code should not be used.
     if (preg_match('/^([0-9]+)\/([0-9]+)\/([0-9]+)\s?([0-9]+)?:?([0-9]+)?:?([0-9]+)?/i',$string,$reg))
@@ -380,10 +363,6 @@ function dol_stringtotime($string, $gm=1, $tz='')
     $string=preg_replace('/([^0-9])/i','',$string);
     $tmp=$string.'000000';
     $date=dol_mktime(substr($tmp,8,2),substr($tmp,10,2),substr($tmp,12,2),substr($tmp,4,2),substr($tmp,6,2),substr($tmp,0,4),($gm?1:0));
-    if ($gm == -1)
-    {
-        $date=dol_time_plus_timezone($date,$tz);
-    }
     return $date;
 }
 

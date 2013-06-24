@@ -25,7 +25,12 @@ Replace call to serialize_val with no bugged value
 
 TCPDF:
 ------
-* Removed all fonts except dejavusans* (used by greek, arab, persan, romanian, turkish), freemono* (russian), cid*+msungstdlight+stsongstdlight+uni2cid* (chinese), helvetica* (all other)
+* Removed all fonts except 
+    dejavusans* (used by greek, arab, persan, romanian, turkish), 
+    freemono* (russian), 
+    cid*+msungstdlight+stsongstdlight+uni2cid* (chinese), 
+    helvetica* (all other languages),
+    zapfdingbats.php (for special chars like form checkboxes)
 * Removed useless directories (examples, tools)
 * Fix
  	// initialize subsetchars

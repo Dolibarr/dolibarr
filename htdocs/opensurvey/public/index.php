@@ -53,7 +53,8 @@ print '<center>
 print $langs->trans("OrganizeYourMeetingEasily").'
 <div class="corps">
 <br>
-<div class="index_date"><div><img class="opacity" src="images/date.png" onclick="document.formulaire.date.click()"></div><button id="date" name="choix_sondage" value="date" type="submit" class="button orange bigrounded"><img src="images/calendar-32.png" alt=""><strong>&nbsp;Créer un sondage spécial dates</strong></button></div><div class="index_sondage"><div><img class="opacity" src="images/sondage2.png" onclick="document.formulaire.autre.click()"></div><button id="autre" name="choix_sondage" value="autre" type="submit" class="button blue bigrounded"><img src="images/chart-32.png" alt=""><strong>&nbsp;Créer un sondage classique</strong></button></div><div style="clear:both;"></div>
+<div class="index_date"><div><img class="opacity" src="images/date.png" onclick="document.formulaire.date.click()"></div><button id="date" name="choix_sondage" value="date" type="submit" class="button orange bigrounded"><img src="images/calendar-32.png" alt=""><strong>&nbsp;'.dol_escape_htmltag($langs->trans("CreateSurveyDate")).'</strong></button></div>
+<div class="index_sondage"><div><img class="opacity" src="images/sondage2.png" onclick="document.formulaire.autre.click()"></div><button id="autre" name="choix_sondage" value="autre" type="submit" class="button blue bigrounded"><img src="images/chart-32.png" alt=""><strong>&nbsp;'.dol_escape_htmltag($langs->trans("CreateSurveyStandard")).'</strong></button></div><div style="clear:both;"></div>
 </div>
 </form></center>';
 

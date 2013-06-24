@@ -1278,65 +1278,62 @@ class Project extends CommonObject
 	    return $result;
 	}
 	
-	 /**
-	  *    Build Select List of element associable to a project
-	  *
-	  *    @param	TableName		Table of the element to update
-	  *    @return	string			The HTML select list of element
-	  */
-	function select_element($Tablename)
+	/**
+	 * Clean task not linked to a parent
+	 *
+	 * @param	DoliDB	$db     Database handler
+	 * @return	int				Nb of records deleted
+	 */
+	function clean_orphelins()
 	{
-		global $db;
-
-		$projectkey="fk_projet";
-		switch ($Tablename)
-		{
-			case "facture":
-				$sql = "SELECT rowid, facnumber as ref";
-				break;
-			case "facture_fourn":
-				$sql = "SELECT rowid, ref";
-				break;
-			case "facture_rec":
-				$sql = "SELECT rowid, titre as ref";
-				break;
-			case "actioncomm":
-				$sql = "SELECT id as rowid, label as ref";
-				$projectkey="fk_project";
-				break;
-			default:
-				$sql = "SELECT rowid, ref";
-				break;
-		}
-
-		$sql.= " FROM ".MAIN_DB_PREFIX.$Tablename;
-		$sql.= " WHERE ".$projectkey." is null";
-		if (!empty($this->societe->id)) {
-			$sql.= " AND fk_soc=".$this->societe->id;
-		} 
-		$sql.= " ORDER BY ref DESC";
-
-		dol_syslog("Project.Lib::select_element sql=".$sql);
-
-		$resql=$db->query($sql);
+		$nb=0;
+	
+		// There is orphelins. We clean that
+		$listofid=array();
+	
+		// Get list of id in array listofid
+		$sql='SELECT rowid FROM '.MAIN_DB_PREFIX.'projet_task';
+		$resql = $this->db->query($sql);
 		if ($resql)
 		{
-			$num = $db->num_rows($resql);
+			$num = $this->db->num_rows($resql);
 			$i = 0;
-			if ($num > 0)
+			while ($i < $num && $i < 100)
 			{
-				$sellist = '<select class="flat" name="elementselect">';
-				while ($i < $num)
-				{
-					$obj = $db->fetch_object($resql);
-					$sellist .='<option value="'.$obj->rowid.'">'.$obj->ref.'</option>';
-					$i++;
-				}
-				$sellist .='</select>';
+				$obj = $this->db->fetch_object($resql);
+				$listofid[]=$obj->rowid;
+				$i++;
 			}
-			return $sellist ;
+		}
+		else
+		{
+			dol_print_error($this->db);
+		}
+	
+		if (count($listofid))
+		{
+			// Removed orphelins records
+			print 'Some orphelins were found and restored to be parents so records are visible again: ';
+			print join(',',$listofid);
+	
+			$sql = "UPDATE ".MAIN_DB_PREFIX."projet_task";
+			$sql.= " SET fk_task_parent = 0";
+			$sql.= " WHERE fk_task_parent NOT IN (".join(',',$listofid).")";
+	
+			$resql = $this->db->query($sql);
+			if ($resql)
+			{
+				$nb=$this->db->affected_rows($sql);
+	
+				return $nb;
+			}
+			else
+			{
+				return -1;
+			}
 		}
 	}
+	
 	
 	 /**
 	  *    Associate element to a project
@@ -1347,8 +1344,8 @@ class Project extends CommonObject
 	  */
 	function update_element($TableName, $ElementSelectId)
 	{
-		global $db;
-		$sql="update ".MAIN_DB_PREFIX.$TableName;
+		$sql="UPDATE ".MAIN_DB_PREFIX.$TableName;
+		
 		if ($TableName=="actioncomm")
 		{
 			$sql.= " SET fk_project=".$this->id;
@@ -1359,7 +1356,17 @@ class Project extends CommonObject
 			$sql.= " SET fk_projet=".$this->id;
 			$sql.= " WHERE rowid=".$ElementSelectId;
 		}
-		$resql=$db->query($sql);
+		
+		dol_syslog(get_class($this)."::update_element sql=" . $sql, LOG_DEBUG);
+		$resql=$this->db->query($sql);
+		if (!$resql) {
+			$this->error=$this->db->lasterror();	
+			dol_syslog(get_class($this)."::update_element error : " . $this->error, LOG_ERR);
+			return -1;
+		}else {
+			return 1;
+		}
+			
 	}
 }
 

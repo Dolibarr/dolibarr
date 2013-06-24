@@ -133,6 +133,11 @@ function order_admin_prepare_head($object)
 	$head[$h][1] = $langs->trans("ExtraFields");
 	$head[$h][2] = 'attributes';
 	$h++;
+	
+	$head[$h][0] = DOL_URL_ROOT.'/admin/orderdet_extrafields.php';
+	$head[$h][1] = $langs->trans("ExtraFieldsLines");
+	$head[$h][2] = 'attributeslines';
+	$h++;
 
 	complete_head_from_modules($conf,$langs,$object,$head,$h,'order_admin','remove');
 

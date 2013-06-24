@@ -81,9 +81,9 @@ WithdrawalFileNotCapable=Ülkeniz için para çekme makbuzu dosyası oluşturula
 ShowWithdraw=Para çekme göster
 IfInvoiceNeedOnWithdrawPaymentWontBeClosed=Faturaya henüz enaz bir ödeme tahsilatı işlenmemişse, ödendi olarak ayarlanamaz.
 DoStandingOrdersBeforePayments=Bu sekmeler ödeme talimatı istemenizi sağlar. Bitirildiğinde faturayı kapatmak için ödemeyi yazabilirsiniz.
-# WithdrawalFile=Withdrawal file
-# SetToStatusSent=Set to status "File Sent"
-# ThisWillAlsoAddPaymentOnInvoice=This will also create payments onto invoices and will classify them to paid
+WithdrawalFile=Para çekme dosyası
+SetToStatusSent="Dosya Gönderildi" durumuna ayarla
+ThisWillAlsoAddPaymentOnInvoice=Bu aynı zamanda faturalara ödeme oluşturur ve onları ödendi olarak sınıflandırı
 
 ### Notifications
 InfoCreditSubject=Banka tarafından ödenen %s ödeme talimatı

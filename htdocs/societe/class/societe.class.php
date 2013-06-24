@@ -106,9 +106,6 @@ class Societe extends CommonObject
     var $remise_percent;
     var $mode_reglement_id;
     var $cond_reglement_id;
-    var $remise_client;  // TODO obsolete
-    var $mode_reglement; // TODO obsolete
-    var $cond_reglement; // TODO obsolete
 
     var $client;					// 0=no customer, 1=customer, 2=prospect, 3=customer and prospect
     var $prospect;					// 0=no prospect, 1=prospect
@@ -829,14 +826,11 @@ class Societe extends CommonObject
                 $this->remise_percent		= $obj->remise_client;
                 $this->mode_reglement_id 	= $obj->mode_reglement;
                 $this->cond_reglement_id 	= $obj->cond_reglement;
-                $this->remise_client  		= $obj->remise_client;  // TODO obsolete
-                $this->mode_reglement 		= $obj->mode_reglement; // TODO obsolete
-                $this->cond_reglement 		= $obj->cond_reglement; // TODO obsolete
 
                 $this->client      = $obj->client;
                 $this->fournisseur = $obj->fournisseur;
 
-                $this->note = $obj->note_private; //TODO Deprecatedfor backward comtability
+                $this->note = $obj->note_private; // TODO Deprecated for backward comtability
                 $this->note_private = $obj->note_private;
                 $this->note_public = $obj->note_public;
                 $this->default_lang = $obj->default_lang;
@@ -854,9 +848,7 @@ class Societe extends CommonObject
                 require_once(DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php');
                 $extrafields=new ExtraFields($this->db);
                 $extralabels=$extrafields->fetch_name_optionals_label($this->table_element,true);
-                if (count($extralabels)>0) {
-                	$this->fetch_optionals($this->id,$extralabels);
-                }
+               	$this->fetch_optionals($this->id,$extralabels);
             }
             else
             {
@@ -1689,50 +1681,10 @@ class Societe extends CommonObject
      */
     function display_rib()
     {
-        global $langs;
-
         require_once DOL_DOCUMENT_ROOT . '/societe/class/companybankaccount.class.php';
-
         $bac = new CompanyBankAccount($this->db);
         $bac->fetch(0,$this->id);
-
-        if ($bac->code_banque || $bac->code_guichet || $bac->number || $bac->cle_rib)
-        {
-            $rib = $bac->code_banque." ".$bac->code_guichet." ".$bac->number;
-            $rib.=($bac->cle_rib?" (".$bac->cle_rib.")":"");
-        }
-        else
-        {
-            $rib=$langs->trans("NoRIB");
-        }
-        return $rib;
-    }
-
-    /**
-     * Load this->bank_account attribut
-     *
-     * @return	int		1
-     */
-    function load_ban()
-    {
-        require_once DOL_DOCUMENT_ROOT . '/societe/class/companybankaccount.class.php';
-
-        $bac = new CompanyBankAccount($this->db);
-        $bac->fetch(0,$this->id);
-
-        $this->bank_account = $bac;
-        return 1;
-    }
-
-    /**
-     * Check bank numbers
-     *
-     * @return int		<0 if KO, >0 if OK
-     */
-    function verif_rib()
-    {
-        $this->load_ban();
-        return $this->bank_account->verif();
+        return $bac->getRibLabel();
     }
 
     /**

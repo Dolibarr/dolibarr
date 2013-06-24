@@ -385,13 +385,13 @@ if ($resql)
 	{
 		$obj = $db->fetch_object($resql);
 		$var=!$var;
-		print "<tr $bc[$var]><td>";
+		print "<tr ".$bc[$var]."><td>";
 		$companystatic->id=$obj->rowid;
 		$companystatic->name=$obj->name;
 		$companystatic->canvas=$obj->canvas;
         $companystatic->client=$obj->client;
         $companystatic->status=$obj->status;
-		print $companystatic->getNomUrl(1,'',24);
+		print $companystatic->getNomUrl(1,'',100);
 		print "</td>\n";
 		print "<td>".$obj->town."</td>\n";
 		print "<td>".$obj->idprof1."</td>\n";

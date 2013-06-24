@@ -437,7 +437,7 @@ else
 				if (! empty($objp->date_end)) $type=1;
 
 				// Show line
-				print "<tr $bc[$var]>";
+				print "<tr ".$bc[$var].">";
 				if ($object->lines[$i]->fk_product > 0)
 				{
 					print '<td>';
@@ -548,7 +548,7 @@ else
 					$objp = $db->fetch_object($result);
 					$var=!$var;
 
-					print "<tr $bc[$var]>";
+					print "<tr ".$bc[$var].">";
 
 					print '<td><a href="'.$_SERVER['PHP_SELF'].'?id='.$objp->facid.'">'.img_object($langs->trans("ShowBill"),"bill").' '.$objp->titre;
 					print "</a></td>\n";

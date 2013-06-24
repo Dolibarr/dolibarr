@@ -36,6 +36,7 @@ if (! empty($conf->categorie->enabled))
 
 $langs->load("products");
 $langs->load("stocks");
+$langs->load("suppliers");
 
 $action = GETPOST('action');
 $sref=GETPOST("sref");

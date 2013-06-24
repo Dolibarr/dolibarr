@@ -1024,6 +1024,7 @@ class Commande extends CommonOrder
      *  @param		int				$fk_fournprice		Id supplier price
      *  @param		int				$pa_ht				Buying price (without tax)
      *  @param		string			$label				Label
+	 *  @param		array			$array_option		extrafields array
      *	@return     int             					>0 if OK, <0 if KO
      *
      *	@see        add_product
@@ -1033,7 +1034,7 @@ class Commande extends CommonOrder
      *	par l'appelant par la methode get_default_tva(societe_vendeuse,societe_acheteuse,produit)
      *	et le desc doit deja avoir la bonne valeur (a l'appelant de gerer le multilangue)
      */
-	function addline($commandeid, $desc, $pu_ht, $qty, $txtva, $txlocaltax1=0, $txlocaltax2=0, $fk_product=0, $remise_percent=0, $info_bits=0, $fk_remise_except=0, $price_base_type='HT', $pu_ttc=0, $date_start='', $date_end='', $type=0, $rang=-1, $special_code=0, $fk_parent_line=0, $fk_fournprice=null, $pa_ht=0, $label='')
+	function addline($commandeid, $desc, $pu_ht, $qty, $txtva, $txlocaltax1=0, $txlocaltax2=0, $fk_product=0, $remise_percent=0, $info_bits=0, $fk_remise_except=0, $price_base_type='HT', $pu_ttc=0, $date_start='', $date_end='', $type=0, $rang=-1, $special_code=0, $fk_parent_line=0, $fk_fournprice=null, $pa_ht=0, $label='',$array_option=0)
     {
         dol_syslog(get_class($this)."::addline commandeid=$commandeid, desc=$desc, pu_ht=$pu_ht, qty=$qty, txtva=$txtva, fk_product=$fk_product, remise_percent=$remise_percent, info_bits=$info_bits, fk_remise_except=$fk_remise_except, price_base_type=$price_base_type, pu_ttc=$pu_ttc, date_start=$date_start, date_end=$date_end, type=$type", LOG_DEBUG);
 
@@ -1139,6 +1140,10 @@ class Commande extends CommonOrder
             // TODO Ne plus utiliser
             $this->line->price=$price;
             $this->line->remise=$remise;
+
+			if (is_array($array_option) && count($array_option)>0) {
+				$this->line->array_options=$array_option;
+			}
 
             $result=$this->line->insert();
             if ($result > 0)
@@ -1339,16 +1344,13 @@ class Commande extends CommonOrder
                 $this->lines				= array();
 
                 if ($this->statut == 0) $this->brouillon = 1;
-                
+
                 // Retreive all extrafield for invoice
                 // fetch optionals attributes and labels
-                if(!class_exists('Extrafields'))
-                	require_once(DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php');
+                require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
                 $extrafields=new ExtraFields($this->db);
                 $extralabels=$extrafields->fetch_name_optionals_label($this->table_element,true);
-                if (count($extralabels)>0) {
-                	$this->fetch_optionals($this->id,$extralabels);
-                }
+               	$this->fetch_optionals($this->id,$extralabels);
 
                 $this->db->free();
 
@@ -2239,9 +2241,10 @@ class Commande extends CommonOrder
      *  @param		int				$pa_ht				Price (without tax) of product when it was bought
      *  @param		string			$label				Label
      *  @param		int				$special_code		Special code (also used by externals modules!)
+	 *  @param		array			$array_option		extrafields array
      *  @return   	int              					< 0 if KO, > 0 if OK
      */
-	function updateline($rowid, $desc, $pu, $qty, $remise_percent, $txtva, $txlocaltax1=0,$txlocaltax2=0, $price_base_type='HT', $info_bits=0, $date_start='', $date_end='', $type=0, $fk_parent_line=0, $skip_update_total=0, $fk_fournprice=null, $pa_ht=0, $label='', $special_code=0)
+	function updateline($rowid, $desc, $pu, $qty, $remise_percent, $txtva, $txlocaltax1=0,$txlocaltax2=0, $price_base_type='HT', $info_bits=0, $date_start='', $date_end='', $type=0, $fk_parent_line=0, $skip_update_total=0, $fk_fournprice=null, $pa_ht=0, $label='', $special_code=0, $array_option=0)
     {
         global $conf;
 
@@ -2335,6 +2338,10 @@ class Commande extends CommonOrder
             $this->line->price=$price;
             $this->line->remise=$remise;
 
+			if (is_array($array_option) && count($array_option)>0) {
+				$this->line->array_options=$array_option;
+			}
+
             $result=$this->line->update();
             if ($result > 0)
             {
@@ -2420,7 +2427,7 @@ class Commande extends CommonOrder
         	// Delete linked contacts
         	$res = $this->delete_linked_contact();
         	if ($res < 0) $error++;
-        	
+
         	// Remove extrafields
         	if ((! $error) && (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED))) // For avoid conflicts if trigger used
         	{
@@ -2458,8 +2465,8 @@ class Commande extends CommonOrder
         			}
         		}
         	}
-        	
-        	
+
+
         }
 
         if (! $error)
@@ -2823,6 +2830,7 @@ class Commande extends CommonOrder
             {
                 $this->nb["orders"]=$obj->nb;
             }
+            $this->db->free($resql);
             return 1;
         }
         else
@@ -2900,6 +2908,7 @@ class Commande extends CommonOrder
             {
                 $obj = $this->db->fetch_object($resql);
 
+				$this->lines[$i]					= new OrderLine($this->db);
                 $this->lines[$i]->id				= $obj->rowid;
                 $this->lines[$i]->label 			= $obj->custom_label;
                 $this->lines[$i]->description 		= $obj->description;
@@ -2952,10 +2961,13 @@ class Commande extends CommonOrder
  *  \class      OrderLine
  *  \brief      Classe de gestion des lignes de commande
  */
-class OrderLine
+class OrderLine extends CommonOrderLine
 {
     var $db;
     var $error;
+
+	public $element='commandedet';
+	public $table_element='commandedet';
 
     var $oldline;
 
@@ -3102,6 +3114,18 @@ class OrderLine
         $resql=$this->db->query($sql);
         if ($resql)
         {
+			// Remove extrafields
+			if ((! $error) && (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED))) // For avoid conflicts if trigger used
+			{
+				$this->id=$this->rowid;
+				$result=$this->deleteExtraFields();
+				if ($result < 0)
+				{
+					$error++;
+					dol_syslog(get_class($this)."::delete error -4 ".$this->error, LOG_ERR);
+				}
+			}
+
             // Appel des triggers
             include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
             $interface=new Interfaces($this->db);
@@ -3200,6 +3224,16 @@ class OrderLine
         {
             $this->rowid=$this->db->last_insert_id(MAIN_DB_PREFIX.'commandedet');
 
+			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+			{
+				$this->id=$this->rowid;
+				$result=$this->insertExtraFields();
+				if ($result < 0)
+				{
+					$error++;
+				}
+			}
+
             if (! $notrigger)
             {
                 // Appel des triggers
@@ -3294,6 +3328,16 @@ class OrderLine
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
+			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+			{
+				$this->id=$this->rowid;
+				$result=$this->insertExtraFields();
+				if ($result < 0)
+				{
+					$error++;
+				}
+			}
+
 			if (! $notrigger)
 			{
 				// Appel des triggers

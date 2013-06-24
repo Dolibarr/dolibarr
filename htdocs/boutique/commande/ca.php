@@ -66,7 +66,7 @@ if ($resql)
     {
       $objp = $dbosc->fetch_object($resql);
       $var=!$var;
-      print "<tr $bc[$var]>";
+      print "<tr ".$bc[$var].">";
       print '<td>Somme des commandes</td>';
       print '<td align="right">'.price($objp->value).'</td>';
 
@@ -94,7 +94,7 @@ if ($resql)
     {
       $objp = $dbosc->fetch_object($resql);
       $var=!$var;
-      print "<tr $bc[$var]>";
+      print "<tr ".$bc[$var].">";
       print '<td>Somme des frais de port</td>';
       print '<td align="right">'.price($objp->value).'</td></tr>';
       $i++;

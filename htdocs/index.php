@@ -98,6 +98,7 @@ $langs->load("commercial");
 $langs->load("bills");
 $langs->load("orders");
 
+//print memory_get_usage();
 if ($user->societe_id == 0)
 {
     print '<br>';
@@ -209,7 +210,7 @@ if ($user->societe_id == 0)
             // Search in cache if load_state_board is already realized
             if (! isset($boardloaded[$classe]) || ! is_object($boardloaded[$classe]))
             {
-                include_once $includes[$key];
+            	include_once $includes[$key];	// Loading a class cost around 1Mb
 
                 $board=new $classe($db);
                 $board->load_state_board($user);
@@ -234,7 +235,6 @@ if ($user->societe_id == 0)
 
     print '</table>';
 }
-
 
 print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 

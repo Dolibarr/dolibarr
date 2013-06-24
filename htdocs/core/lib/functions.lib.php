@@ -2040,15 +2040,16 @@ function img_up($alt = 'default', $selected = 0)
  *
  *	@param	string	$alt        Text to show on alt image
  *	@param  int		$selected	Selected
+ *	@param	string	$options	Add more attribute on img tag (For example 'style="float: right"')
  *	@return string      		Return img tag
  */
-function img_left($alt = 'default', $selected = 0)
+function img_left($alt = 'default', $selected = 0, $options='')
 {
 	global $conf, $langs;
 
 	if ($alt == 'default') $alt = $langs->trans('Left');
 
-	return img_picto($alt, ($selected ? '1leftarrow_selected.png' : '1leftarrow.png'));
+	return img_picto($alt, ($selected ? '1leftarrow_selected.png' : '1leftarrow.png'), $options);
 }
 
 /**
@@ -2056,15 +2057,16 @@ function img_left($alt = 'default', $selected = 0)
  *
  *	@param	string	$alt        Text to show on alt image
  *	@param  int		$selected	Selected
+ *	@param	string	$options	Add more attribute on img tag (For example 'style="float: right"')
  *	@return string      		Return img tag
  */
-function img_right($alt = 'default', $selected = 0)
+function img_right($alt = 'default', $selected = 0, $options='')
 {
 	global $conf, $langs;
 
 	if ($alt == 'default') $alt = $langs->trans('Right');
 
-	return img_picto($alt, ($selected ? '1rightarrow_selected.png' : '1rightarrow.png'));
+	return img_picto($alt, ($selected ? '1rightarrow_selected.png' : '1rightarrow.png'), $options);
 }
 
 /**
@@ -2614,8 +2616,8 @@ function vatrate($rate,$addpercent=false,$info_bits=0,$usestarfornpr=0)
  *		@param	string		$form			Type of format, HTML or not (not by default)
  *		@param	Translate	$outlangs		Object langs for output
  *		@param	int			$trunc			1=Truncate if there is too much decimals (default), 0=Does not truncate
- *		@param	int			$rounding		Minimum number of decimal to show. If not defined we use min($conf->global->MAIN_MAX_DECIMALS_UNIT,$conf->global->MAIN_MAX_DECIMALS_TOTAL)
- *		@param	int			$forcerounding	Force the number of decimal fo forcerounding decimal (-1=do not force)
+ *		@param	int			$rounding		Minimum number of decimal to show. If 0, no change, if -1, we use min($conf->global->MAIN_MAX_DECIMALS_UNIT,$conf->global->MAIN_MAX_DECIMALS_TOTAL)
+ *		@param	int			$forcerounding	Force the number of decimal to forcerounding decimal (-1=do not force)
  *		@param	string		$currency_code	To add currency symbol (''=add nothing, 'XXX'=add currency symbols for XXX currency)
  *		@return	string						Chaine avec montant formate
  *
@@ -2682,7 +2684,7 @@ function price($amount, $form=0, $outlangs='', $trunc=1, $rounding=-1, $forcerou
 		if (in_array($currency_code,$listofcurrenciesbefore)) $cursymbolbefore.=$outlangs->getCurrencySymbol($currency_code);
 		else $cursymbolafter.=$outlangs->getCurrencySymbol($currency_code);
 	}
-	$output.=$cursymbolbefore.$end.$cursymbolafter;
+	$output=$cursymbolbefore.$output.$end.$cursymbolafter;
 
 	return $output;
 }
@@ -4323,12 +4325,15 @@ function printCommonFooter($zone='private')
 	// End of tuning
 	if (! empty($_SERVER['DOL_TUNING']) || ! empty($conf->global->MAIN_SHOW_TUNING_INFO))
 	{
-		$micro_end_time=dol_microtime_float(true);
 		print "\n".'<script type="text/javascript">'."\n";
 		print 'window.console && console.log("';
 		if (! empty($conf->global->MEMCACHED_SERVER)) print 'MEMCACHED_SERVER='.$conf->global->MEMCACHED_SERVER.' - ';
 		print 'MAIN_OPTIMIZE_SPEED='.(isset($conf->global->MAIN_OPTIMIZE_SPEED)?$conf->global->MAIN_OPTIMIZE_SPEED:'off');
-		print ' - Build time: '.ceil(1000*($micro_end_time-$micro_start_time)).' ms';
+		if ($micro_start_time)
+		{
+			$micro_end_time=dol_microtime_float(true);
+			print ' - Build time: '.ceil(1000*($micro_end_time-$micro_start_time)).' ms';
+		}
 		if (function_exists("memory_get_usage"))
 		{
 			print ' - Mem: '.memory_get_usage();

@@ -143,6 +143,8 @@ class HookManager
             {
                 foreach($modules as $module => $actionclassinstance)
                 {
+                	//print "Before hook ".get_class($actionclassinstance)." method=".$method." results=".count($actionclassinstance->results)." resprints=".count($actionclassinstance->resprints)." result=".$result." resaction=".$resaction."<br>\n";
+
                 	//print 'class='.get_class($actionclassinstance).' method='.$method.' action='.$action;
                 	// jump to next class if method does not exists
                     if (! method_exists($actionclassinstance,$method)) continue;
@@ -186,7 +188,10 @@ class HookManager
                     	if (! is_array($result) && ! is_numeric($result)) $this->resPrint.=$result;
                     }
 
-                    //print "method=".$method." results=".count($actionclassinstance->results)." resprints=".count($actionclassinstance->resprints)." result=".$result." resaction=".$resaction;
+                    //print "After hook  ".get_class($actionclassinstance)." method=".$method." results=".count($actionclassinstance->results)." resprints=".count($actionclassinstance->resprints)." result=".$result." resaction=".$resaction."<br>\n";
+
+                    unset($actionclassinstance->results);
+                    unset($actionclassinstance->resprints);
                 }
             }
         }

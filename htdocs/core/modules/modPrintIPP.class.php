@@ -1,5 +1,5 @@
 <?php
-/*
+/* Copyright (C) 2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -97,22 +97,22 @@ class modPrintIPP extends DolibarrModules
         $this->rights[$r][1] = 'Printer';
         $this->rights[$r][2] = 'r';
         $this->rights[$r][3] = 1;
-        $this->rights[$r][4] = 'use';
+        $this->rights[$r][4] = 'read';
 
         // Main menu entries
         $this->menus = array();         // List of menus to add
         $r=0;
 
         // This is to declare the Top Menu entry:
-        $this->menu[$r]=array(  'fk_menu'=>'fk_mainmenu=home',               // Put 0 if this is a top menu
+        $this->menu[$r]=array(  'fk_menu'=>'fk_mainmenu=home,fk_leftmenu=modulesadmintools',               // Put 0 if this is a top menu
                                 'type'=>'left',              // This is a Top menu entry
                                 'titre'=>'Printer',
                                 'mainmenu'=>'printer',
                                 'url'=>'/printipp/index.php',
                                 'langs'=>'printipp',            // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-                                'position'=>100,
-                                'enabled'=>'$conf->printipp->enabled',
-                                'perms'=>'$user->rights->printipp->use',    // Use 'perms'=>'1' if you want your menu with no permission rules
+                                'position'=>300,
+                                'enabled'=>'$conf->printipp->enabled && $leftmenu==\'modulesadmintools\'',
+                                'perms'=>'$user->rights->printipp->read',    // Use 'perms'=>'1' if you want your menu with no permission rules
                                 'target'=>'',
                                 'user'=>0);                 // 0=Menu for internal users, 1=external users, 2=both
 

@@ -53,6 +53,7 @@ $search_ref=GETPOST('sf_ref')?GETPOST('sf_ref','alpha'):GETPOST('search_ref','al
 $search_refcustomer=GETPOST('search_refcustomer','alpha');
 $search_societe=GETPOST('search_societe','alpha');
 $search_montant_ht=GETPOST('search_montant_ht','alpha');
+$search_author=GETPOST('search_author','alpha');
 
 $sall=GETPOST("sall");
 $mesg=(GETPOST("msg") ? GETPOST("msg") : GETPOST("mesg"));
@@ -99,6 +100,7 @@ if (GETPOST("button_removefilter_x"))
     $search_refcustomer='';
     $search_societe='';
     $search_montant_ht='';
+    $search_author='';
     $year='';
     $month='';
 }
@@ -167,6 +169,10 @@ if ($search_societe)
 {
 	$sql.= " AND s.nom LIKE '%".$db->escape(trim($search_societe))."%'";
 }
+if ($search_author)
+{
+	$sql.= " AND u.login LIKE '%".$db->escape(trim($search_author))."%'";
+}
 if ($search_montant_ht)
 {
 	$sql.= " AND p.total_ht='".$db->escape(price2num(trim($search_montant_ht)))."'";
@@ -205,7 +211,6 @@ if ($result)
 {
 	$objectstatic=new Propal($db);
 	$userstatic=new User($db);
-
 	$num = $db->num_rows($result);
 
  	if ($socid)
@@ -223,6 +228,7 @@ if ($result)
 	if ($search_user > 0)    $param.='&search_user='.$search_user;
 	if ($search_sale > 0)    $param.='&search_sale='.$search_sale;
 	if ($search_montant_ht)  $param.='&search_montant_ht='.$search_montant_ht;
+	if ($search_author)  	 $param.='&search_author='.$search_author;
 	print_barre_liste($langs->trans('ListOfProposals').' '.($socid?'- '.$soc->nom:''), $page, $_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num);
 
 	// Lignes des champs de filtre
@@ -250,7 +256,7 @@ if ($result)
 	if (! empty($moreforfilter))
 	{
 	    print '<tr class="liste_titre">';
-	    print '<td class="liste_titre" colspan="9">';
+	    print '<td class="liste_titre" colspan="10">';
 	    print $moreforfilter;
 	    print '</td></tr>';
 	}
@@ -284,10 +290,13 @@ if ($result)
 	$formother->select_year($syear,'year',1, 20, 5);
 	print '</td>';
 	print '<td class="liste_titre" colspan="1">&nbsp;</td>';
-	print '<td class="liste_titre" align="right">';
+	print '<td class="liste_titre" align="center">';
 	print '<input class="flat" type="text" size="10" name="search_montant_ht" value="'.$search_montant_ht.'">';
 	print '</td>';
-	print '<td class="liste_titre">&nbsp;</td>';
+	
+	print '<td class="liste_titre" align="right">';
+	print '<input class="flat" size="10" type="text" name="search_author" value="'.$search_author.'">';
+	print '</td>';
 	print '<td class="liste_titre" align="right">';
 	$formpropal->select_propal_statut($viewstatut,1);
 	print '</td>';
@@ -384,6 +393,25 @@ if ($result)
 
 		$i++;
 	}
+
+	if ($total>0)
+			{
+				if($num<$limit){
+					$var=!$var;
+					print '<tr class="liste_total"><td align="left">'.$langs->trans("Total HT").'</td>';
+					print '<td colspan="5" align="right"">'.price($total).'<td colspan="3"</td>';
+					print '</tr>';
+				}
+				else
+				{
+					$var=!$var;
+					print '<tr class="liste_total"><td align="left">'.$langs->trans("Total HT for this page").'</td>';
+					print '<td colspan="5" align="right"">'.price($total).'<td colspan="3"</td>';
+					print '</tr>';
+				}
+					
+			}
+	
 	print '</table>';
 
 	print '</form>';

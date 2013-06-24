@@ -195,7 +195,7 @@ if ($result)
             $objp = $db->fetch_object($result);
 
             $var=!$var;
-            print "<tr $bc[$var]>";
+            print "<tr ".$bc[$var].">";
             // Name
             print '<td class="nowrap">';
             $thirdparty_static->id=$objp->rowid;

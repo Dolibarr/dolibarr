@@ -63,12 +63,12 @@ if ($result)
     print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td align="right">'.$langs->trans("Value").'</td></tr>';
 
     $var=!$var;
-    print "<tr $bc[$var]>";
+    print "<tr ".$bc[$var].">";
     print '<td>'.$langs->trans("DonationsNumber").'</td><td align="right">'.$num.'</td></tr>';
     $var=!$var;
-    print "<tr $bc[$var]>".'<td>'.$langs->trans("AmountTotal").'</td><td align="right">'.price($total).'</td>';
+    print "<tr ".$bc[$var].">".'<td>'.$langs->trans("AmountTotal").'</td><td align="right">'.price($total).'</td>';
     $var=!$var;
-    print "<tr $bc[$var]>".'<td>'.$langs->trans("Average").'</td><td align="right">'.price($total / ($num?$num:1)).'</td>';
+    print "<tr ".$bc[$var].">".'<td>'.$langs->trans("Average").'</td><td align="right">'.price($total / ($num?$num:1)).'</td>';
     print "</tr>";
 
     print "</table>";

@@ -66,7 +66,7 @@ if ($result)
     {
         $obj = $db->fetch_object($result);
         $var=!$var;
-        print "<tr $bc[$var]>";
+        print "<tr ".$bc[$var].">";
 
 		$localtax_static->id=$obj->rowid;
 		$localtax_static->ref=$obj->rowid;

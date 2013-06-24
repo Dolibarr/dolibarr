@@ -289,4 +289,8 @@ abstract class CommonInvoice extends CommonObject
 	}
 }
 
+abstract class CommonInvoiceLine extends CommonObject
+{
+}
+
 ?>
