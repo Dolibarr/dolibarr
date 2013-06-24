@@ -64,7 +64,7 @@ dol_syslog("POST=".$tracepost, LOG_DEBUG, 0, '_paybox');
 
 
 // Send an email
-if (! empty($conf->global->MEMBER_PAYONLINE_SENDEMAIL) && preg_match('/MEM=',$fulltag))
+if (! empty($conf->global->MEMBER_PAYONLINE_SENDEMAIL) && preg_match('/MEM=/',$fulltag))
 {
 	$sendto=$conf->global->MEMBER_PAYONLINE_SENDEMAIL;
 	$from=$conf->global->MAILING_EMAIL_FROM;
