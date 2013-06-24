@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2013 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2007-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -70,7 +70,7 @@ if (! empty($action) && $action == 'fetch' && ! empty($id))
 		$outdiscount=0;
 
 		$found=false;
-		
+
 		// Price by qty
 		if (!empty($price_by_qty_rowid) && $price_by_qty_rowid >= 1)		// If we need a particular price related to qty
 		{
@@ -101,6 +101,7 @@ if (! empty($action) && $action == 'fetch' && ! empty($id))
 			$sql = "SELECT price, price_ttc, price_base_type, tva_tx";
 			$sql.= " FROM ".MAIN_DB_PREFIX."product_price ";
 			$sql.= " WHERE fk_product='".$id."'";
+			$sql.= " AND entity IN (".getEntity('productprice', 1).")";
 			$sql.= " AND price_level=".$price_level;
 			$sql.= " ORDER BY date_price";
 			$sql.= " DESC LIMIT 1";

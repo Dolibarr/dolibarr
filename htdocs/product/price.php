@@ -2,7 +2,7 @@
 /* Copyright (C) 2001-2007	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005		Eric Seigne				<eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2013	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2006		Andre Cianfarani		<acianfa@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -664,6 +664,7 @@ $sql.= " p.date_price as dp, u.rowid as user_id, u.login";
 $sql.= " FROM ".MAIN_DB_PREFIX."product_price as p,";
 $sql.= " ".MAIN_DB_PREFIX."user as u";
 $sql.= " WHERE fk_product = ".$object->id;
+$sql.= " AND p.entity IN (".getEntity('productprice', 1).")";
 $sql.= " AND p.fk_user_author = u.rowid";
 if (! empty($socid) && ! empty($conf->global->PRODUIT_MULTIPRICES)) $sql.= " AND p.price_level = ".$soc->price_level;
 $sql.= " ORDER BY p.date_price DESC, p.price_level ASC";
