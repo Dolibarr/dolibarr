@@ -1709,13 +1709,16 @@ div.liste_titre, tr.liste_titre, tr.liste_titre_sel, form.liste_titre, form.list
     white-space: <?php echo $dol_optimize_smallscreen?'normal':'nowrap'; ?>;
     text-align: <?php echo $left; ?>;
 }
-tr.liste_titre th, th.liste_titre, tr.liste_titre td, td.liste_titre, form.liste_titre div
+tr.liste_titre th, th.liste_titre, tr.liste_titre td, td.liste_titre, form.liste_titre div, div.liste_titre
 {
     font-family: <?php print $fontlist ?>;
     /*font-weight: normal;*/
     border-bottom: 1px solid #FDFFFF;
     white-space: <?php echo $dol_optimize_smallscreen?'normal':'nowrap'; ?>;
 	text-shadow:1px 0px 1px #ffffff;
+}
+div.liste_titre {
+	padding-left: 3px;
 }
 tr.liste_titre_sel th, th.liste_titre_sel, tr.liste_titre_sel td, td.liste_titre_sel, form.liste_titre_sel div
 {

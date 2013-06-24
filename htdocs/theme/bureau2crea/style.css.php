@@ -65,6 +65,7 @@ if (! empty($conf->global->MAIN_OVERWRITE_THEME_RES)) { $path='/'.$conf->global-
 // Define image path files
 $fontlist='arial, sans-serif, verdana, helvetica';
 //$fontlist='Verdana,Helvetica,Arial,sans-serif';
+
 $dol_hide_topmenu=$conf->dol_hide_topmenu;
 $dol_hide_leftmenu=$conf->dol_hide_leftmenu;
 $dol_optimize_smallscreen=$conf->dol_optimize_smallscreen;
