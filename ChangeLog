@@ -92,6 +92,7 @@ For users:
 - New: [ task #826 ] Optionnal increase stock when deleting an invoice already validated.
 - New: [ task #823 ] Shipping_validate email notification.
 - New: [ task #900 ] Review code of ficheinter.class.php
+- Fix: [Bug #958] LocalTax2 for Spain fails on Suppliers
 
 For translators:
 - Update language files.
