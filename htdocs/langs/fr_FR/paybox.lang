@@ -33,3 +33,6 @@ VendorName=Nom du vendeur
 CSSUrlForPaymentForm=URL feuille style css pour le formulaire de paiement
 MessageOK=Message sur page de retour de paiement validé
 MessageKO=Message sur page de retour de paiement annulé
+NewPayboxPaymentReceived=Nouveau paiement Paybox reçu
+NewPayboxPaymentFailed=Nouveau paiement Paybox tenté mais en échec
+PAYBOX_PAYONLINE_SENDEMAIL=EMail à prévenir en cas de paiement (succès ou non)

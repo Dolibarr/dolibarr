@@ -61,6 +61,8 @@ if ($action == 'setvalue' && $user->admin)
     if (! $result > 0) $error++;
     $result=dolibarr_set_const($db, "PAYBOX_MESSAGE_KO",GETPOST('PAYBOX_MESSAGE_KO','alpha'),'chaine',0,'',$conf->entity);
 	if (! $result > 0) $error++;
+	$result=dolibarr_set_const($db, "PAYBOX_PAYONLINE_SENDEMAIL",GETPOST('PAYBOX_PAYONLINE_SENDEMAIL'),'chaine',0,'',$conf->entity);
+	if (! $result > 0) $error++;
 	
     if (! $error)
   	{
@@ -90,6 +92,16 @@ llxHeader();
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print_fiche_titre($langs->trans("PayBoxSetup"),$linkback,'setup');
+
+$h = 0;
+$head = array();
+
+$head[$h][0] = DOL_URL_ROOT."/paybox/admin/paybox.php";
+$head[$h][1] = $langs->trans("Account");
+$head[$h][2] = 'payboxaccount';
+$h++;
+
+dol_fiche_head($head, 'payboxaccount', '');
 
 print $langs->trans("PayBoxDesc")."<br>\n";
 
@@ -186,8 +198,17 @@ $doleditor=new DolEditor('PAYBOX_MESSAGE_KO',$conf->global->PAYBOX_MESSAGE_KO,''
 $doleditor->Create();
 print '</td></tr>';
 
+$var=!$var;
+print '<tr '.$bc[$var].'><td>';
+print $langs->trans("PAYBOX_PAYONLINE_SENDEMAIL").'</td><td>';
+print '<input size="32" type="email" name="PAYBOX_PAYONLINE_SENDEMAIL" value="'.$conf->global->PAYBOX_PAYONLINE_SENDEMAIL.'">';
+print ' &nbsp; '.$langs->trans("Example").': myemail@myserver.com';
+print '</td></tr>';
+
 print '<tr><td colspan="2" align="center"><br><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td></tr>';
 print '</table></form>';
+
+dol_fiche_end();
 
 print '<br><br>';
 
