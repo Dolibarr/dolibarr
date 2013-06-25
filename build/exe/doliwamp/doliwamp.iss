@@ -17,9 +17,9 @@
 ; ----- Change this -----
 AppName=DoliWamp
 ; DoliWamp-x.x.x or DoliWamp-x.x.x-alpha or DoliWamp-x.x.x-beta or DoliWamp-x.x.x-rc or DoliWamp-x.x.x
-AppVerName=DoliWamp-3.3.2
+AppVerName=DoliWamp-3.3.3
 ; DoliWamp-x.x x or DoliWamp-x.x.x-alpha or DoliWamp-x.x.x-beta or DoliWamp-x.x.x-rc or DoliWamp-x.x.x
-OutputBaseFilename=DoliWamp-3.3.2
+OutputBaseFilename=DoliWamp-3.3.3
 ; Define full path from wich all relative path are defined
 ; You must modify this to put here your dolibarr root directory
 ;SourceDir=C:\Documents and Settings\ldestailleur\git\dolibarr_old
