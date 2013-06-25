@@ -258,7 +258,7 @@ GenericMaskCodes2=<b>（）中交</b>的客戶端代碼<br> <b>（cccc000）n</b
 GenericMaskCodes3=非遮罩字元的則該字元維持不變，也就是 A 就是 A，Z 就是 Z<br>注意:不允許空白字元<br>
 GenericMaskCodes4a=<u>例如: 第99筆 %s 資訊於 2007-01-31 建立完成：</u> <br>
 GenericMaskCodes4b=<u>例如: 於 2007-01-31 建立的客戶/供應商資訊:</u> <br>
-GenericMaskCodes5=參數:<b>ABC{yy}{mm}-{000000}</b> 編碼為 <b>ABC0701-000099</b><br> 參數:<b>{0000+100}-ZZZ/{dd}/XXX</b> 編碼為 <b>0199-ZZZ/31/XXX</b>
+GenericMaskCodes5=參數:<b>ABC{yy}{mm}-{000000}</b> 編碼為 <b>ABC0701-000099</b><br> 參數:<b>{0000+100@1}-ZZZ/{dd}/XXX</b> 編碼為 <b>0199-ZZZ/31/XXX</b>
 
 GenericNumRefModelDesc=根據事先定義的遮罩值，回傳一個客制化的編號，詳細可參照說明。
 ServerAvailableOnIPOrPort=服務器可在地址<b>%s%s的</b>連接埠上
