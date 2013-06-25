@@ -94,16 +94,16 @@ dol_syslog("Call newpaymentok with token=".$token." paymentType=".$paymentType."
 */
 
 // Send an email
-if (! empty($conf->global->MEMBER_PAYONLINE_SENDEMAIL) && preg_match('/MEM=/',$fulltag))
+if (! empty($conf->global->PAYBOX_PAYONLINE_SENDEMAIL))
 {
-	$sendto=$conf->global->MEMBER_PAYONLINE_SENDEMAIL;
+	$sendto=$conf->global->PAYBOX_PAYONLINE_SENDEMAIL;
 	$from=$conf->global->MAILING_EMAIL_FROM;
 	require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 	$mailfile = new CMailFile(
-		'New subscription payed',
+		'['.$conf->global->MAIN_APPLICATION_TITLE.'] '.$langs->trans("NewPayboxPaymentReceived"),
 		$sendto,
 		$from,
-		'New subscription payed '.$fulltag
+		$langs->trans("NewPayboxPaymentReceived")."\n".$fulltag
 		);
 
 	$result=$mailfile->sendfile();

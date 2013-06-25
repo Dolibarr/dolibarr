@@ -127,21 +127,23 @@ if ($PAYPALTOKEN)
     // From env
     $ipaddress          = $_SESSION['ipaddress'];
 
-	dol_syslog("Call newpaymentok with token=".$token." paymentType=".$paymentType." currencyCodeType=".$currencyCodeType." payerID=".$payerID." ipaddress=".$ipaddress." FinalPaymentAmt=".$FinalPaymentAmt." fulltag=".$fulltag, LOG_DEBUG, 0, '_paypal');
+	dol_syslog("Call paymentok with token=".$token." paymentType=".$paymentType." currencyCodeType=".$currencyCodeType." payerID=".$payerID." ipaddress=".$ipaddress." FinalPaymentAmt=".$FinalPaymentAmt." fulltag=".$fulltag, LOG_DEBUG, 0, '_paypal');
 
 
 	// Send an email
-	if (! empty($conf->global->MEMBER_PAYONLINE_SENDEMAIL) && preg_match('/MEM=/',$fulltag))
+	//if (! empty($conf->global->MEMBER_PAYONLINE_SENDEMAIL) && preg_match('/MEM=/',$fulltag))
+	if (! empty($conf->global->PAYPAL_PAYONLINE_SENDEMAIL))
 	{
-		$sendto=$conf->global->MEMBER_PAYONLINE_SENDEMAIL;
+		//$sendto=$conf->global->MEMBER_PAYONLINE_SENDEMAIL;
+		$sendto=$conf->global->PAYPAL_PAYONLINE_SENDEMAIL;
 		$from=$conf->global->MAILING_EMAIL_FROM;
 		require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 		$mailfile = new CMailFile(
-			'New subscription payed',
+			'['.$conf->global->MAIN_APPLICATION_TITLE.'] '.$langs->trans("NewPaypalPaymentReceived"),
 			$sendto,
 			$from,
-			'New subscription payed '.$fulltag
-			);
+			$langs->trans("NewPaypalPaymentReceived")."\ntag=".$fulltag."\ntoken=".$token." paymentType=".$paymentType." currencycodeType=".$currencyCodeType." payerId=".$payerID." ipaddress=".$ipaddress." FinalPaymentAmt=".$FinalPaymentAmt
+		);
 
 		$result=$mailfile->sendfile();
 		if ($result)

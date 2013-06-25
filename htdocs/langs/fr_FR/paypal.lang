@@ -18,3 +18,7 @@ PAYPAL_ADD_PAYMENT_URL=Ajouter l'URL de paiement Paypal lors de l'envoi d'un doc
 PAYPAL_IPN_MAIL_ADDRESS=Adresse email pour les notifications instantanées de paiement (IPN)
 PredefinedMailContentLink=Vous pouvez cliquer sur le lien sécurisé ci-dessous pour effectuer votre paiement (Paypal) si ce dernier n'a pas encore été fait.\n\n%s\n\n
 YouAreCurrentlyInSandboxMode=Vous êtes actuellement dans le mode "sandbox"
+NewPaypalPaymentReceived=Nouveau paiement Paypal reçu
+NewPaypalPaymentFailed=Nouveau paiement Paypal tenté mais en échec
+PAYPAL_PAYONLINE_SENDEMAIL=EMail à prévenir en cas de paiement (succès ou non)
+
