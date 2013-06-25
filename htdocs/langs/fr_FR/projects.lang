@@ -109,3 +109,4 @@ SelectElement=Eléments associable au projet :
 AddElement=Associer
 PlannedWorkload = Charge de travail prévue
 WorkloadOccupation= Pourcentage affectation
+ProjectReferers=Objets associés

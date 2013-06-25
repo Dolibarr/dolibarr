@@ -129,7 +129,9 @@ WARNING: If you used external modules, some of them may need to be upgraded due 
 
 
 ***** ChangeLog for 3.3.3 compared to 3.3.2 *****
-  - Fix: [ bug #903 ] Fatal error: Call to undefined function dol_get_first_day() in htdocs/commande/liste.php
+- Fix: [ bug #903 ] Fatal error: Call to undefined function dol_get_first_day() in htdocs/commande/liste.php
+- Fix: [ bug #934 ] Error on proformat invoice creation (pgsql)
+- Fix: [ bug #947 ] Can't create proposal lines with unit price = 0
 
 ***** ChangeLog for 3.3.2 compared to 3.3.1 *****
 - Fix: Dutch (nl_NL) translation
