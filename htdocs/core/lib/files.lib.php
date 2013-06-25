@@ -1235,12 +1235,15 @@ function dol_most_recent_file($dir,$regexfilter='',$excludefilter=array('\.meta$
  *
  * @param	string	$modulepart			Module of document
  * @param	string	$original_file		Relative path with filename
+ *  @param  User	$fuser				User object (forced)
  * @param	string	$entity				Restrict onto entity
  * @return	mixed						Array with access information : accessallowed & sqlprotectagainstexternals & original_file (as full path name)
  */
-function dol_check_secure_access_document($modulepart,$original_file,$entity)
+function dol_check_secure_access_document($modulepart,$original_file,$entity,$fuser='')
 {
 	global $user, $conf;
+
+	if (! is_object($fuser)) $fuser=$user;
 
 	if (empty($modulepart)) return 'ErrorBadParameter';
 	if (empty($entity)) $entity=0;
@@ -1271,101 +1274,101 @@ function dol_check_secure_access_document($modulepart,$original_file,$entity)
 	// Wrapping pour les apercu factures
 	elseif ($modulepart == 'apercufacture')
 	{
-		if ($user->rights->facture->lire) $accessallowed=1;
+		if ($fuser->rights->facture->lire) $accessallowed=1;
 		$original_file=$conf->facture->dir_output.'/'.$original_file;
 	}
 	// Wrapping pour les apercu propal
 	elseif ($modulepart == 'apercupropal')
 	{
-		if ($user->rights->propale->lire) $accessallowed=1;
+		if ($fuser->rights->propale->lire) $accessallowed=1;
 		$original_file=$conf->propal->dir_output.'/'.$original_file;
 	}
 	// Wrapping pour les apercu commande
 	elseif ($modulepart == 'apercucommande')
 	{
-		if ($user->rights->commande->lire) $accessallowed=1;
+		if ($fuser->rights->commande->lire) $accessallowed=1;
 		$original_file=$conf->commande->dir_output.'/'.$original_file;
 	}
 	// Wrapping pour les apercu intervention
 	elseif ($modulepart == 'apercufichinter')
 	{
-		if ($user->rights->ficheinter->lire) $accessallowed=1;
+		if ($fuser->rights->ficheinter->lire) $accessallowed=1;
 		$original_file=$conf->ficheinter->dir_output.'/'.$original_file;
 	}
 	// Wrapping pour les images des stats propales
 	elseif ($modulepart == 'propalstats')
 	{
-		if ($user->rights->propale->lire) $accessallowed=1;
+		if ($fuser->rights->propale->lire) $accessallowed=1;
 		$original_file=$conf->propal->dir_temp.'/'.$original_file;
 	}
 	// Wrapping pour les images des stats commandes
 	elseif ($modulepart == 'orderstats')
 	{
-		if ($user->rights->commande->lire) $accessallowed=1;
+		if ($fuser->rights->commande->lire) $accessallowed=1;
 		$original_file=$conf->commande->dir_temp.'/'.$original_file;
 	}
 	elseif ($modulepart == 'orderstatssupplier')
 	{
-		if ($user->rights->fournisseur->commande->lire) $accessallowed=1;
+		if ($fuser->rights->fournisseur->commande->lire) $accessallowed=1;
 		$original_file=$conf->fournisseur->dir_output.'/commande/temp/'.$original_file;
 	}
 	// Wrapping pour les images des stats factures
 	elseif ($modulepart == 'billstats')
 	{
-		if ($user->rights->facture->lire) $accessallowed=1;
+		if ($fuser->rights->facture->lire) $accessallowed=1;
 		$original_file=$conf->facture->dir_temp.'/'.$original_file;
 	}
 	elseif ($modulepart == 'billstatssupplier')
 	{
-		if ($user->rights->fournisseur->facture->lire) $accessallowed=1;
+		if ($fuser->rights->fournisseur->facture->lire) $accessallowed=1;
 		$original_file=$conf->fournisseur->dir_output.'/facture/temp/'.$original_file;
 	}
 	// Wrapping pour les images des stats expeditions
 	elseif ($modulepart == 'expeditionstats')
 	{
-		if ($user->rights->expedition->lire) $accessallowed=1;
+		if ($fuser->rights->expedition->lire) $accessallowed=1;
 		$original_file=$conf->expedition->dir_temp.'/'.$original_file;
 	}
 	// Wrapping pour les images des stats expeditions
 	elseif ($modulepart == 'tripsexpensesstats')
 	{
-		if ($user->rights->deplacement->lire) $accessallowed=1;
+		if ($fuser->rights->deplacement->lire) $accessallowed=1;
 		$original_file=$conf->deplacement->dir_temp.'/'.$original_file;
 	}
 	// Wrapping pour les images des stats expeditions
 	elseif ($modulepart == 'memberstats')
 	{
-		if ($user->rights->adherent->lire) $accessallowed=1;
+		if ($fuser->rights->adherent->lire) $accessallowed=1;
 		$original_file=$conf->adherent->dir_temp.'/'.$original_file;
 	}
 	// Wrapping pour les images des stats produits
 	elseif (preg_match('/^productstats_/i',$modulepart))
 	{
-		if ($user->rights->produit->lire || $user->rights->service->lire) $accessallowed=1;
+		if ($fuser->rights->produit->lire || $fuser->rights->service->lire) $accessallowed=1;
 		$original_file=(!empty($conf->product->multidir_temp[$entity])?$conf->product->multidir_temp[$entity]:$conf->service->multidir_temp[$entity]).'/'.$original_file;
 	}
 	// Wrapping for products or services
 	elseif ($modulepart == 'tax')
 	{
-		if ($user->rights->tax->charges->lire) $accessallowed=1;
+		if ($fuser->rights->tax->charges->lire) $accessallowed=1;
 		$original_file=$conf->tax->dir_output.'/'.$original_file;
 	}
 	// Wrapping for products or services
 	elseif ($modulepart == 'actions')
 	{
-		if ($user->rights->agenda->myactions->read) $accessallowed=1;
+		if ($fuser->rights->agenda->myactions->read) $accessallowed=1;
 		$original_file=$conf->agenda->dir_output.'/'.$original_file;
 	}
 	// Wrapping for categories
 	elseif ($modulepart == 'category')
 	{
-		if ($user->rights->categorie->lire) $accessallowed=1;
+		if ($fuser->rights->categorie->lire) $accessallowed=1;
 		$original_file=$conf->categorie->multidir_output[$entity].'/'.$original_file;
 	}
 	// Wrapping pour les prelevements
 	elseif ($modulepart == 'prelevement')
 	{
-		if ($user->rights->prelevement->bons->lire || preg_match('/^specimen/i',$original_file))
+		if ($fuser->rights->prelevement->bons->lire || preg_match('/^specimen/i',$original_file))
 		{
 			$accessallowed=1;
 		}
@@ -1408,7 +1411,7 @@ function dol_check_secure_access_document($modulepart,$original_file,$entity)
 	elseif ($modulepart == 'scanner_user_temp')
 	{
 		$accessallowed=1;
-		$original_file=$conf->scanner->dir_temp.'/'.$user->id.'/'.$original_file;
+		$original_file=$conf->scanner->dir_temp.'/'.$fuser->id.'/'.$original_file;
 	}
 	// Wrapping pour les images fckeditor
 	elseif ($modulepart == 'fckeditor')
@@ -1420,7 +1423,7 @@ function dol_check_secure_access_document($modulepart,$original_file,$entity)
 	// Wrapping for third parties
 	else if ($modulepart == 'company' || $modulepart == 'societe')
 	{
-		if ($user->rights->societe->lire || preg_match('/^specimen/i',$original_file))
+		if ($fuser->rights->societe->lire || preg_match('/^specimen/i',$original_file))
 		{
 			$accessallowed=1;
 		}
@@ -1431,7 +1434,7 @@ function dol_check_secure_access_document($modulepart,$original_file,$entity)
 	// Wrapping for invoices
 	else if ($modulepart == 'facture' || $modulepart == 'invoice')
 	{
-		if ($user->rights->facture->lire || preg_match('/^specimen/i',$original_file))
+		if ($fuser->rights->facture->lire || preg_match('/^specimen/i',$original_file))
 		{
 			$accessallowed=1;
 		}
@@ -1441,7 +1444,7 @@ function dol_check_secure_access_document($modulepart,$original_file,$entity)
 
 	else if ($modulepart == 'unpaid')
 	{
-		if ($user->rights->facture->lire || preg_match('/^specimen/i',$original_file))
+		if ($fuser->rights->facture->lire || preg_match('/^specimen/i',$original_file))
 		{
 			$accessallowed=1;
 		}
@@ -1451,7 +1454,7 @@ function dol_check_secure_access_document($modulepart,$original_file,$entity)
 	// Wrapping pour les fiches intervention
 	else if ($modulepart == 'ficheinter')
 	{
-		if ($user->rights->ficheinter->lire || preg_match('/^specimen/i',$original_file))
+		if ($fuser->rights->ficheinter->lire || preg_match('/^specimen/i',$original_file))
 		{
 			$accessallowed=1;
 		}
@@ -1462,7 +1465,7 @@ function dol_check_secure_access_document($modulepart,$original_file,$entity)
 	// Wrapping pour les deplacements et notes de frais
 	else if ($modulepart == 'deplacement')
 	{
-		if ($user->rights->deplacement->lire || preg_match('/^specimen/i',$original_file))
+		if ($fuser->rights->deplacement->lire || preg_match('/^specimen/i',$original_file))
 		{
 			$accessallowed=1;
 		}
@@ -1472,7 +1475,7 @@ function dol_check_secure_access_document($modulepart,$original_file,$entity)
 	// Wrapping pour les propales
 	else if ($modulepart == 'propal')
 	{
-		if ($user->rights->propale->lire || preg_match('/^specimen/i',$original_file))
+		if ($fuser->rights->propale->lire || preg_match('/^specimen/i',$original_file))
 		{
 			$accessallowed=1;
 		}
@@ -1484,7 +1487,7 @@ function dol_check_secure_access_document($modulepart,$original_file,$entity)
 	// Wrapping pour les commandes
 	else if ($modulepart == 'commande' || $modulepart == 'order')
 	{
-		if ($user->rights->commande->lire || preg_match('/^specimen/i',$original_file))
+		if ($fuser->rights->commande->lire || preg_match('/^specimen/i',$original_file))
 		{
 			$accessallowed=1;
 		}
@@ -1495,7 +1498,7 @@ function dol_check_secure_access_document($modulepart,$original_file,$entity)
 	// Wrapping pour les projets
 	else if ($modulepart == 'project')
 	{
-		if ($user->rights->projet->lire || preg_match('/^specimen/i',$original_file))
+		if ($fuser->rights->projet->lire || preg_match('/^specimen/i',$original_file))
 		{
 			$accessallowed=1;
 		}
@@ -1506,7 +1509,7 @@ function dol_check_secure_access_document($modulepart,$original_file,$entity)
 	// Wrapping pour les commandes fournisseurs
 	else if ($modulepart == 'commande_fournisseur' || $modulepart == 'order_supplier')
 	{
-		if ($user->rights->fournisseur->commande->lire || preg_match('/^specimen/i',$original_file))
+		if ($fuser->rights->fournisseur->commande->lire || preg_match('/^specimen/i',$original_file))
 		{
 			$accessallowed=1;
 		}
@@ -1517,7 +1520,7 @@ function dol_check_secure_access_document($modulepart,$original_file,$entity)
 	// Wrapping pour les factures fournisseurs
 	else if ($modulepart == 'facture_fournisseur' || $modulepart == 'invoice_supplier')
 	{
-		if ($user->rights->fournisseur->facture->lire || preg_match('/^specimen/i',$original_file))
+		if ($fuser->rights->fournisseur->facture->lire || preg_match('/^specimen/i',$original_file))
 		{
 			$accessallowed=1;
 		}
@@ -1528,18 +1531,18 @@ function dol_check_secure_access_document($modulepart,$original_file,$entity)
 	// Wrapping pour les rapport de paiements
 	else if ($modulepart == 'facture_paiement')
 	{
-		if ($user->rights->facture->lire || preg_match('/^specimen/i',$original_file))
+		if ($fuser->rights->facture->lire || preg_match('/^specimen/i',$original_file))
 		{
 			$accessallowed=1;
 		}
-		if ($user->societe_id > 0) $original_file=$conf->facture->dir_output.'/payments/private/'.$user->id.'/'.$original_file;
+		if ($fuser->societe_id > 0) $original_file=$conf->facture->dir_output.'/payments/private/'.$fuser->id.'/'.$original_file;
 		else $original_file=$conf->facture->dir_output.'/payments/'.$original_file;
 	}
 
 	// Wrapping pour les exports de compta
 	else if ($modulepart == 'export_compta')
 	{
-		if ($user->rights->compta->ventilation->creer || preg_match('/^specimen/i',$original_file))
+		if ($fuser->rights->compta->ventilation->creer || preg_match('/^specimen/i',$original_file))
 		{
 			$accessallowed=1;
 		}
@@ -1549,7 +1552,7 @@ function dol_check_secure_access_document($modulepart,$original_file,$entity)
 	// Wrapping pour les expedition
 	else if ($modulepart == 'expedition')
 	{
-		if ($user->rights->expedition->lire || preg_match('/^specimen/i',$original_file))
+		if ($fuser->rights->expedition->lire || preg_match('/^specimen/i',$original_file))
 		{
 			$accessallowed=1;
 		}
@@ -1559,7 +1562,7 @@ function dol_check_secure_access_document($modulepart,$original_file,$entity)
 	// Wrapping pour les bons de livraison
 	else if ($modulepart == 'livraison')
 	{
-		if ($user->rights->expedition->livraison->lire || preg_match('/^specimen/i',$original_file))
+		if ($fuser->rights->expedition->livraison->lire || preg_match('/^specimen/i',$original_file))
 		{
 			$accessallowed=1;
 		}
@@ -1569,7 +1572,7 @@ function dol_check_secure_access_document($modulepart,$original_file,$entity)
 	// Wrapping pour les actions
 	else if ($modulepart == 'actions')
 	{
-		if ($user->rights->agenda->myactions->read || preg_match('/^specimen/i',$original_file))
+		if ($fuser->rights->agenda->myactions->read || preg_match('/^specimen/i',$original_file))
 		{
 			$accessallowed=1;
 		}
@@ -1579,7 +1582,7 @@ function dol_check_secure_access_document($modulepart,$original_file,$entity)
 	// Wrapping pour les actions
 	else if ($modulepart == 'actionsreport')
 	{
-		if ($user->rights->agenda->allactions->read || preg_match('/^specimen/i',$original_file))
+		if ($fuser->rights->agenda->allactions->read || preg_match('/^specimen/i',$original_file))
 		{
 			$accessallowed=1;
 		}
@@ -1589,7 +1592,7 @@ function dol_check_secure_access_document($modulepart,$original_file,$entity)
 	// Wrapping pour les produits et services
 	else if ($modulepart == 'product' || $modulepart == 'produit' || $modulepart == 'service')
 	{
-		if (($user->rights->produit->lire || $user->rights->service->lire) || preg_match('/^specimen/i',$original_file))
+		if (($fuser->rights->produit->lire || $fuser->rights->service->lire) || preg_match('/^specimen/i',$original_file))
 		{
 			$accessallowed=1;
 		}
@@ -1600,7 +1603,7 @@ function dol_check_secure_access_document($modulepart,$original_file,$entity)
 	// Wrapping pour les contrats
 	else if ($modulepart == 'contract')
 	{
-		if ($user->rights->contrat->lire || preg_match('/^specimen/i',$original_file))
+		if ($fuser->rights->contrat->lire || preg_match('/^specimen/i',$original_file))
 		{
 			$accessallowed=1;
 		}
@@ -1610,7 +1613,7 @@ function dol_check_secure_access_document($modulepart,$original_file,$entity)
 	// Wrapping pour les dons
 	else if ($modulepart == 'donation')
 	{
-		if ($user->rights->don->lire || preg_match('/^specimen/i',$original_file))
+		if ($fuser->rights->don->lire || preg_match('/^specimen/i',$original_file))
 		{
 			$accessallowed=1;
 		}
@@ -1620,7 +1623,7 @@ function dol_check_secure_access_document($modulepart,$original_file,$entity)
 	// Wrapping pour les remises de cheques
 	else if ($modulepart == 'remisecheque')
 	{
-		if ($user->rights->banque->lire || preg_match('/^specimen/i',$original_file))
+		if ($fuser->rights->banque->lire || preg_match('/^specimen/i',$original_file))
 		{
 			$accessallowed=1;
 		}
@@ -1634,7 +1637,7 @@ function dol_check_secure_access_document($modulepart,$original_file,$entity)
 		// Aucun test necessaire car on force le rep de download sur
 		// le rep export qui est propre a l'utilisateur
 		$accessallowed=1;
-		$original_file=$conf->export->dir_temp.'/'.$user->id.'/'.$original_file;
+		$original_file=$conf->export->dir_temp.'/'.$fuser->id.'/'.$original_file;
 	}
 
 	// Wrapping for import module
@@ -1658,7 +1661,7 @@ function dol_check_secure_access_document($modulepart,$original_file,$entity)
 	// Wrapping pour les backups
 	else if ($modulepart == 'systemtools')
 	{
-		if ($user->admin)
+		if ($fuser->admin)
 		{
 			$accessallowed=1;
 		}
@@ -1668,7 +1671,7 @@ function dol_check_secure_access_document($modulepart,$original_file,$entity)
 	// Wrapping for upload file test
 	else if ($modulepart == 'admin_temp')
 	{
-		if ($user->admin)
+		if ($fuser->admin)
 			$accessallowed=1;
 		$original_file=$conf->admin->dir_temp.'/'.$original_file;
 	}
@@ -1685,7 +1688,7 @@ function dol_check_secure_access_document($modulepart,$original_file,$entity)
 	// Wrapping pour Foundation module
 	else if ($modulepart == 'member')
 	{
-		if ($user->rights->adherent->lire || preg_match('/^specimen/i',$original_file))
+		if ($fuser->rights->adherent->lire || preg_match('/^specimen/i',$original_file))
 		{
 			$accessallowed=1;
 		}
@@ -1696,7 +1699,7 @@ function dol_check_secure_access_document($modulepart,$original_file,$entity)
 	else if ($modulepart == 'scanner_user_temp')
 	{
 		$accessallowed=1;
-		$original_file=$conf->scanner->dir_temp.'/'.$user->id.'/'.$original_file;
+		$original_file=$conf->scanner->dir_temp.'/'.$fuser->id.'/'.$original_file;
 	}
 
     // GENERIC Wrapping
@@ -1709,18 +1712,18 @@ function dol_check_secure_access_document($modulepart,$original_file,$entity)
 		// Define $accessallowed
 		if (preg_match('/^([a-z]+)_user_temp$/i',$modulepart,$reg))
 		{
-			if ($user->rights->$reg[1]->lire || $user->rights->$reg[1]->read || ($user->rights->$reg[1]->download)) $accessallowed=1;
-			$original_file=$conf->$reg[1]->dir_temp.'/'.$user->id.'/'.$original_file;
+			if ($fuser->rights->$reg[1]->lire || $fuser->rights->$reg[1]->read || ($fuser->rights->$reg[1]->download)) $accessallowed=1;
+			$original_file=$conf->$reg[1]->dir_temp.'/'.$fuser->id.'/'.$original_file;
 		}
 		else if (preg_match('/^([a-z]+)_temp$/i',$modulepart,$reg))
 		{
-			if ($user->rights->$reg[1]->lire || $user->rights->$reg[1]->read || ($user->rights->$reg[1]->download)) $accessallowed=1;
+			if ($fuser->rights->$reg[1]->lire || $fuser->rights->$reg[1]->read || ($fuser->rights->$reg[1]->download)) $accessallowed=1;
 			$original_file=$conf->$reg[1]->dir_temp.'/'.$original_file;
 		}
 		else if (preg_match('/^([a-z]+)_user$/i',$modulepart,$reg))
 		{
-			if ($user->rights->$reg[1]->lire || $user->rights->$reg[1]->read || ($user->rights->$reg[1]->download)) $accessallowed=1;
-			$original_file=$conf->$reg[1]->dir_output.'/'.$user->id.'/'.$original_file;
+			if ($fuser->rights->$reg[1]->lire || $fuser->rights->$reg[1]->read || ($fuser->rights->$reg[1]->download)) $accessallowed=1;
+			$original_file=$conf->$reg[1]->dir_output.'/'.$fuser->id.'/'.$original_file;
 		}
 		else
 		{
@@ -1728,24 +1731,24 @@ function dol_check_secure_access_document($modulepart,$original_file,$entity)
 			$subperm=GETPOST('subperm');
 			if ($perm || $subperm)
 			{
-				if (($perm && ! $subperm && $user->rights->$modulepart->$perm) || ($perm && $subperm && $user->rights->$modulepart->$perm->$subperm)) $accessallowed=1;
+				if (($perm && ! $subperm && $fuser->rights->$modulepart->$perm) || ($perm && $subperm && $fuser->rights->$modulepart->$perm->$subperm)) $accessallowed=1;
 				$original_file=$conf->$modulepart->dir_output.'/'.$original_file;
 			}
 			else
 			{
-				if ($user->rights->$modulepart->lire || $user->rights->$modulepart->read) $accessallowed=1;
+				if ($fuser->rights->$modulepart->lire || $fuser->rights->$modulepart->read) $accessallowed=1;
 				$original_file=$conf->$modulepart->dir_output.'/'.$original_file;
 			}
 		}
 		if (preg_match('/^specimen/i',$original_file))	$accessallowed=1;    // If link to a specimen
-		if ($user->admin) $accessallowed=1;    // If user is admin
+		if ($fuser->admin) $accessallowed=1;    // If user is admin
 
 		// For modules who wants to manage different levels of permissions for documents
 		$subPermCategoryConstName = strtoupper($modulepart).'_SUBPERMCATEGORY_FOR_DOCUMENTS';
 		if (! empty($conf->global->$subPermCategoryConstName))
 		{
 			$subPermCategory = $conf->global->$subPermCategoryConstName;
-			if (! empty($subPermCategory) && (($user->rights->$modulepart->$subPermCategory->lire) || ($user->rights->$modulepart->$subPermCategory->read) || ($user->rights->$modulepart->$subPermCategory->download)))
+			if (! empty($subPermCategory) && (($fuser->rights->$modulepart->$subPermCategory->lire) || ($fuser->rights->$modulepart->$subPermCategory->read) || ($fuser->rights->$modulepart->$subPermCategory->download)))
 			{
 				$accessallowed=1;
 			}
@@ -1759,7 +1762,7 @@ function dol_check_secure_access_document($modulepart,$original_file,$entity)
 			eval('$sqlprotectagainstexternals = "'.$conf->global->$sqlProtectConstName.'";');
 		}
 	}
-	
+
 	$ret = array(
 		'accessallowed' => $accessallowed,
 		'sqlprotectagainstexternals'=>$sqlprotectagainstexternals,
