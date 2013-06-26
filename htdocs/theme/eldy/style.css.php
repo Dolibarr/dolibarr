@@ -2703,11 +2703,12 @@ a.ui-link {
 	background: #fff;
 }
 
-div.ui-radio
+div.ui-radio, div.ui-checkbox
 {
 	display: inline-block;
+	border-bottom: 0px !important;
 }
-.ui-radio input {
+ui-checkbox input, .ui-radio input {
 	height: auto;
 	width: auto;
 	margin: 0;
