@@ -1571,7 +1571,7 @@ span.butAction, span.butActionDelete {
 }
 
 
-table.border {
+table.border, table.dataTable {
 	border: 1px solid #9CACBB;
 	border-collapse: collapse;
 }
@@ -1687,11 +1687,11 @@ table.liste td {
 .tagtr { display: table-row; }
 .tagtd { display: table-cell; }
 
-tr.liste_titre, tr.liste_titre_sel, form.liste_titre, form.liste_titre_sel
+tr.liste_titre, tr.liste_titre_sel, form.liste_titre, form.liste_titre_sel, table.dataTable.tr
 {
 	height: 20px !important;
 }
-div.liste_titre, tr.liste_titre, tr.liste_titre_sel, form.liste_titre, form.liste_titre_sel
+div.liste_titre, tr.liste_titre, tr.liste_titre_sel, form.liste_titre, form.liste_titre_sel, table.dataTable thead tr
 {
     background: rgb(<?php echo $colorbacktitle1; ?>);
     background-repeat: repeat-x;
