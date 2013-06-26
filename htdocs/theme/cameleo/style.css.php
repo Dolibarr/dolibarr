@@ -2394,6 +2394,10 @@ div.ui-radio
 	margin: 4px;
 	position: static;
 }
+div.ui-checkbox label+input, div.ui-radio label+input {
+	position: absolute;
+}
+
 .ui-mobile fieldset
 {
 	padding-bottom: 10px; margin-bottom: 4px; border-bottom: 1px solid #AAAAAA !important;
