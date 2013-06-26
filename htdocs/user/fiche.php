@@ -188,6 +188,7 @@ if ($action == 'add' && $canadduser)
         $object->email		    = GETPOST("email");
         $object->job			= GETPOST("job");
         $object->signature	    = GETPOST("signature");
+        $object->accountancy_code = GETPOST("accountancy_code");
         $object->note			= GETPOST("note");
         $object->ldap_sid		= GETPOST("ldap_sid");
 
@@ -324,6 +325,7 @@ if ($action == 'update' && ! $_POST["cancel"])
             $object->email		= GETPOST("email");
             $object->job		= GETPOST("job");
             $object->signature	= GETPOST("signature");
+			$object->accountancy_code	= GETPOST("accountancy_code");
             $object->openid		= GETPOST("openid");
             $object->fk_user    = GETPOST("fk_user")>0?GETPOST("fk_user"):0;
 
@@ -1192,6 +1194,10 @@ else
             }
             print '</td>';
             print "</tr>\n";
+			
+			// Accountancy code
+            print '<tr><td valign="top">'.$langs->trans("AccountancyCode").'</td>';
+            print '<td>'.$object->accountancy_code.'</td>';
 
             // Status
             print '<tr><td valign="top">'.$langs->trans("Status").'</td>';
@@ -1821,6 +1827,21 @@ else
             }
             print '</td>';
             print "</tr>\n";
+			
+			// Accountancy code
+            print "<tr>";
+            print '<td valign="top">'.$langs->trans("AccountancyCode").'</td>';
+            print '<td>';
+            if ($caneditfield)
+            {
+                print '<input size="30" type="text" class="flat" name="accountancy_code" value="'.$object->accountancy_code.'">';
+            }
+            else
+            {
+                print '<input type="hidden" name="accountancy_code" value="'.$object->accountancy_code.'">';
+                print $object->accountancy_code;
+            }
+            print '</td>';
 
             // Status
             print '<tr><td valign="top">'.$langs->trans("Status").'</td>';
