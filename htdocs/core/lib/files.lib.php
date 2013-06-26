@@ -1248,7 +1248,7 @@ function dol_check_secure_access_document($modulepart,$original_file,$entity,$fu
 
 	if (empty($modulepart)) return 'ErrorBadParameter';
 	if (empty($entity)) $entity=0;
-	dol_syslog('$modulepart='.$modulepart.' $original_file= '.$original_file);
+	dol_syslog('modulepart='.$modulepart.' original_file= '.$original_file);
 	// We define $accessallowed and $sqlprotectagainstexternals
 	$accessallowed=0;
 	$sqlprotectagainstexternals='';
