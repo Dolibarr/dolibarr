@@ -306,6 +306,11 @@ class DateLibTest extends PHPUnit_Framework_TestCase
     	print __METHOD__." result=".$result."\n";
 		$this->assertEquals(7200,$result);
 
+        $stime='1970-01-01 02:00:00';
+        $result=dol_stringtotime($stime);
+    	print __METHOD__." result=".$result."\n";
+		$this->assertEquals(7200,$result);
+		
         $stime='19700101T020000Z';
         $result=dol_stringtotime($stime);
     	print __METHOD__." result=".$result."\n";

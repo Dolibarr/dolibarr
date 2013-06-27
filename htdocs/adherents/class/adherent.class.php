@@ -266,6 +266,9 @@ class Adherent extends CommonObject
 
         $now=dol_now();
 
+        // Clean parameters
+        $this->import_key = trim($this->import_key);
+        
         // Check parameters
         if (! empty($conf->global->ADHERENT_MAIL_REQUIRED) && ! isValidEMail($this->email))
         {
@@ -287,7 +290,7 @@ class Adherent extends CommonObject
 
         // Insert member
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."adherent";
-        $sql.= " (datec,login,fk_user_author,fk_user_mod,fk_user_valid,morphy,fk_adherent_type,entity)";
+        $sql.= " (datec,login,fk_user_author,fk_user_mod,fk_user_valid,morphy,fk_adherent_type,entity,import_key)";
         $sql.= " VALUES (";
         $sql.= " '".$this->db->idate($this->datec)."'";
         $sql.= ", ".($this->login?"'".$this->db->escape($this->login)."'":"null");
@@ -295,6 +298,7 @@ class Adherent extends CommonObject
         $sql.= ", null, null, '".$this->morphy."'";
         $sql.= ", '".$this->typeid."'";
         $sql.= ", ".$conf->entity;
+        $sql.= ", ".(! empty($this->import_key) ? "'".$this->import_key."'":"null");
         $sql.= ")";
 
         dol_syslog(get_class($this)."::create sql=".$sql);

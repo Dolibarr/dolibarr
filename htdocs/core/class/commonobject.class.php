@@ -37,12 +37,12 @@ abstract class CommonObject
     public $errors;
     public $canvas;                // Contains canvas name if it is
 
+    public $name;
     public $lastname;
     public $firstname;
-    public $name;
-    public $nom;
     public $civility_id;
-
+    public $import_key;
+    
     public $array_options=array();
 
     public $linkedObjectsIds;
