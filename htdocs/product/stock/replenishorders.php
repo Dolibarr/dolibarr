@@ -53,16 +53,16 @@ dol_fiche_head($head,
                0,
                'stock');
 $commandestatic = new CommandeFournisseur($db);
-$sref = GETPOST('search_ref');
-$snom = GETPOST('search_nom');
-$suser = GETPOST('search_user');
-$sttc = GETPOST('search_ttc');
-$sall = GETPOST('search_all');
-$sdate = GETPOST('search_date');
+$sref = GETPOST('search_ref', 'alpha');
+$snom = GETPOST('search_nom', 'alpha');
+$suser = GETPOST('search_user', 'alpha');
+$sttc = GETPOST('search_ttc', 'int');
+$sall = GETPOST('search_all', 'alpha');
+$sdate = GETPOST('search_date', 'alpha');
 $page = GETPOST('page', 'int');
 
-$sortorder = GETPOST('sortorder');
-$sortfield = GETPOST('sortfield');
+$sortorder = GETPOST('sortorder', 'alpha');
+$sortfield = GETPOST('sortfield', 'alpha');
 
 if (!$sortorder) {
     $sortorder = 'DESC';
@@ -109,10 +109,21 @@ if ($sttc) {
 }
 if ($sdate) {
     $elts = explode('/', $sdate);
-    $date = date('Y-m-d',
-                 mktime(0, 0, 0, $elts[1], $elts[0], $elts[2])
-                );
-    $sql .= ' AND cf.date_creation LIKE "' . $date . '%"';
+    $datearray = array();
+    if($elts[2])
+    {
+        $datearray[0] = $elts[2];
+    }
+    if($elts[1])
+    {
+        $datearray[1] = $elts[1];
+    }
+    if($elts[0])
+    {
+        $datearray[2] = $elts[0];
+    }
+    $date = implode('-', $datearray);
+    $sql .= ' AND cf.date_creation LIKE "%' . $date . '%"';
 }
 if ($sall) {
     $sql .= ' AND (cf.ref LIKE "%' . $db->escape($sall) . '%" ';
@@ -122,8 +133,8 @@ if ($socid) {
     $sql .= ' AND s.rowid = ' . $socid;
 }
 
-if (GETPOST('statut')) {
-    $sql .= ' AND fk_statut = ' . GETPOST('statut');
+if (GETPOST('statut', 'int')) {
+    $sql .= ' AND fk_statut = ' . GETPOST('statut', 'int');
 }
 
 $sql .= ' ORDER BY ' . $sortfield . ' ' . $sortorder  . ' ';

@@ -69,11 +69,11 @@ function ordered($product_id)
 }
 
 $action = GETPOST('action','alpha');
-$sref = GETPOST('sref');
-$snom = GETPOST('snom');
-$sall = GETPOST('sall');
+$sref = GETPOST('sref', 'alpha');
+$snom = GETPOST('snom', 'alpha');
+$sall = GETPOST('sall', 'alpha');
 $type = GETPOST('type','int');
-$tobuy = GETPOST('tobuy');
+$tobuy = GETPOST('tobuy', 'int');
 
 $sortfield = GETPOST('sortfield','alpha');
 $sortorder = GETPOST('sortorder','alpha');
@@ -238,7 +238,7 @@ if ($resql) {
     $head[1][1] = $langs->trans("ReplenishmentOrders");
     $head[1][2] = 'replenishorders';
     dol_fiche_head($head, 'replenish', $title, 0, 'stock');
-    if ($sref || $snom || $sall || GETPOST('search')) {
+    if ($sref || $snom || $sall || GETPOST('search', 'alpha')) {
         $filters = '&sref=' . $sref . '&snom=' . $snom;
         $filters .= '&amp;sall=' . $sall;
         print_barre_liste($texte,
@@ -496,7 +496,7 @@ if ($resql) {
          '</form>';
 
     if ($num > $conf->liste_limit) {
-        if ($sref || $snom || $sall || GETPOST('search')) {
+        if ($sref || $snom || $sall || GETPOST('search', 'alpha')) {
             $filters = '&sref=' . $sref . '&snom=' . $snom;
             $filters .= '&amp;sall=' . $sall;
             print_barre_liste('',
