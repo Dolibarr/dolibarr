@@ -998,16 +998,47 @@ class Adherent extends CommonObject
         }
     }
 
-
+    /**
+     *	Method to load member from its name
+     *
+     *	@param	string	$firstname	Firstname
+     **	@param	string	$lastname	Lastname
+     *	@return	void
+     */
+    function fetch_name($firstname,$lastname)
+    {
+    	global $conf;
+    
+    	$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."adherent";
+    	$sql.= " WHERE firstname='".$this->db->escape($firstname)."'";
+    	$sql.= " AND lastname='".$this->db->escape($lastname)."'";
+    	$sql.= " AND entity = ".$conf->entity;
+    
+    	$resql=$this->db->query($sql);
+    	if ($resql)
+    	{
+    		if ($this->db->num_rows($resql))
+    		{
+    			$obj = $this->db->fetch_object($resql);
+    			$this->fetch($obj->rowid);
+    		}
+    	}
+    	else
+    	{
+    		dol_print_error($this->db);
+    	}
+    }
+    
     /**
      *	Load member from database
      *
      *	@param	int		$rowid      Id of object to load
      * 	@param	string	$ref		To load member from its ref
      * 	@param	int		$fk_soc		To load member from its link to third party
+     * 	@param	int		$ref_ext	External reference
      *	@return int         		>0 if OK, 0 if not found, <0 if KO
      */
-    function fetch($rowid,$ref='',$fk_soc='')
+    function fetch($rowid,$ref='',$fk_soc='',$ref_ext='')
     {
         global $langs;
 
@@ -1035,6 +1066,10 @@ class Adherent extends CommonObject
         	$sql.= " AND d.entity IN (".getEntity().")";
         	if ($ref) $sql.= " AND d.rowid='".$ref."'";
         	elseif ($fk_soc) $sql.= " AND d.fk_soc='".$fk_soc."'";
+        }
+        elseif ($ref_ext)
+        {
+        	$sql.= " AND d.ref_ext='".$this->db->escape($ref_ext)."'";
         }
 
         dol_syslog(get_class($this)."::fetch sql=".$sql);
