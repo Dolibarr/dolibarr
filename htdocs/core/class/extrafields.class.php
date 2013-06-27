@@ -868,7 +868,6 @@ class ExtraFields
 			$sql.= ' FROM '.MAIN_DB_PREFIX .$InfoFieldList[0];
 			$sql.= ' WHERE '.$selectkey.'=\''.$this->db->escape($value).'\'';
 			//$sql.= ' AND entity = '.$conf->entity;
-			print $sql;
 			dol_syslog(get_class($this).':showOutputField:$type=sellist sql='.$sql);
 			$resql = $this->db->query($sql);
 			if ($resql)
