@@ -1008,12 +1008,12 @@ else if ($action == 'add' && $user->rights->facture->creer)
 										$fk_parent_line = 0;
 									}
 
-								//Extrafields
-								if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
-								{
-									$lines[$i]->fetch_optionals($lines[$i]->rowid);
-									$array_option=$lines[$i]->array_options;
-								}
+									//Extrafields
+									if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && method_exists($lines[$i],'fetch_optionals'))
+									{
+										$lines[$i]->fetch_optionals($lines[$i]->rowid);
+										$array_option=$lines[$i]->array_options;
+									}
 
 									$result = $object->addline(
 										$id,
