@@ -108,21 +108,34 @@ if ($sttc) {
     $sql .= ' AND cf.total_ttc = ' . price2num($sttc);
 }
 if ($sdate) {
-    $elts = explode('/', $sdate);
-    $datearray = array();
-    if($elts[2])
-    {
-        $datearray[0] = $elts[2];
+    if(GETPOST('search_datemonth', 'int') && GETPOST('search_dateday', 'int')
+       && GETPOST('search_dateyear', 'int')) {
+           $date = date('Y-m-d',
+                        dol_mktime(0,
+                                   0,
+                                   0,
+                                   GETPOST('search_datemonth', 'int'),
+                                   GETPOST('search_dateday', 'int'),
+                                   GETPOST('search_dateyear', 'int')
+                                  )
+                       );
+    } else {
+        $elts = explode('/', $sdate);
+        $datearray = array();
+        if($elts[2])
+        {
+            $datearray[0] = $elts[2];
+        }
+        if($elts[1])
+        {
+            $datearray[1] = $elts[1];
+        }
+        if($elts[0])
+        {
+            $datearray[2] = $elts[0];
+        }
+        $date = implode('-', $datearray);
     }
-    if($elts[1])
-    {
-        $datearray[1] = $elts[1];
-    }
-    if($elts[0])
-    {
-        $datearray[2] = $elts[0];
-    }
-    $date = implode('-', $datearray);
     $sql .= ' AND cf.date_creation LIKE "%' . $date . '%"';
 }
 if ($sall) {
@@ -211,6 +224,7 @@ if ($resql) {
                             $sortfield,
                             $sortorder
                             );
+    $form = new Form($db);
     echo '</tr>',
          '<tr class="liste_titre">',
          '<td class="liste_titre">',
@@ -226,7 +240,7 @@ if ($resql) {
          '<input type="text" class="flat" name="search_ttc" value="' . $sttc . '">',
          '</td>',
          '<td class="liste_titre">',
-         '<input type="text" class="flat" name="search_date" value="' . $sdate . '">',
+         $form->select_date('', 'search_date', 0, 0, 1, "", 1, 0, 1, 0, ''),
          '</td>',
          '<td class="liste_titre" align="right">';
     $src = DOL_URL_ROOT . '/theme/' . $conf->theme . '/img/search.png';
