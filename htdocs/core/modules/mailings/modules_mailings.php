@@ -169,7 +169,7 @@ class MailingTargets    // This can't be abstract as it is used for some method
         		$sql .= "'".$this->db->escape($cibles[$i]['email'])."',";
         		$sql .= "'".$this->db->escape($cibles[$i]['other'])."',";
         		$sql .= "'".$this->db->escape($cibles[$i]['source_url'])."',";
-        		$sql .= "'".$this->db->escape($cibles[$i]['source_id'])."',";
+        		$sql .= "".(empty($cibles[$i]['source_id']) ? 'null' : "'".$this->db->escape($cibles[$i]['source_id'])."'").",";
         		if (! empty($conf->global->MAILING_EMAIL_UNSUBSCRIBE)) {
         			$sql .= "'".$this->db->escape(md5($cibles[$i]['email'].';'.$cibles[$i]['name'].';'.$mailing_id.';'.$conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY))."',";
         		}
