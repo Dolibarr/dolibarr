@@ -255,6 +255,7 @@ print '<tr class="liste_titre">';
 print "  <td>".$langs->trans("RuleForStockReplenishment")."</td>\n";
 print "  <td align=\"right\" width=\"160\">&nbsp;</td>\n";
 print '</tr>'."\n";
+$var = !$var;
 print "<tr ".$bc[$var].">";
 print '<td width="60%">'.$langs->trans("UseVirtualStock").'</td>';
 print '<td width="160" align="right">';
