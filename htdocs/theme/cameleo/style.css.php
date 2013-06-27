@@ -154,6 +154,10 @@ input.button[type=submit] {
     font-size: 11px;
     font-weight: bold;
 }
+::-webkit-input-placeholder { color:#ccc; }
+::-moz-placeholder { color:#ccc; } /* firefox 19+ */
+:-ms-input-placeholder { color:#ccc; } /* ie */
+input:-moz-placeholder { color:#ccc; }
 
 <?php if (! empty($dol_use_jmobile)) { ?>
 legend { margin-bottom: 8px; }
@@ -2380,10 +2384,10 @@ div.ui-radio
 {
 	display: inline-block;
 }
-.ui-radio input {
+.ui-checkbox input, .ui-radio input {
 	height: auto;
 	width: auto;
-	margin: 0;
+	margin: 4px;
 	position: static;
 }
 .ui-mobile fieldset

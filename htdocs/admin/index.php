@@ -68,7 +68,7 @@ print '<br>';
 print '<br>';
 //print '<hr style="color: #DDDDDD;">';
 print img_picto('','puce').' '.$langs->trans("SetupDescription4",DOL_URL_ROOT.'/admin/modules.php?mainmenu=home');
-if (count($conf->modules) <= 1)	// If only user module enabled
+if (count($conf->modules) <= (empty($conf->global->MAIN_MINNB_MODULE)?1:$conf->global->MAIN_MINNB_MODULE))	// If only user module enabled
 {
 	$langs->load("errors");
 	$warnpicto=img_warning($langs->trans("WarningMandatorySetupNotComplete"));

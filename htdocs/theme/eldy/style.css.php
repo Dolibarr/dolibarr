@@ -285,6 +285,10 @@ input:-webkit-autofill {
 	background-image:none !important;
 	-webkit-box-shadow: 0 0 0 50px <?php echo empty($dol_use_jmobile)?'#FBFFEA':'#FFFFFF' ?> inset;
 }
+::-webkit-input-placeholder { color:#ccc; }
+::-moz-placeholder { color:#ccc; } /* firefox 19+ */
+:-ms-input-placeholder { color:#ccc; } /* ie */
+input:-moz-placeholder { color:#ccc; }
 
 <?php if (! empty($dol_use_jmobile)) { ?>
 legend { margin-bottom: 8px; }
@@ -2703,14 +2707,15 @@ a.ui-link {
 	background: #fff;
 }
 
-div.ui-radio
+div.ui-radio, div.ui-checkbox
 {
 	display: inline-block;
+	border-bottom: 0px !important;
 }
-.ui-radio input {
+.ui-checkbox input, .ui-radio input {
 	height: auto;
 	width: auto;
-	margin: 0;
+	margin: 4px;
 	position: static;
 }
 .ui-mobile fieldset
