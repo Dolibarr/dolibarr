@@ -893,11 +893,12 @@ abstract class DolibarrModules
                         if ($this->db->errno() != "DB_ERROR_RECORD_ALREADY_EXISTS")
                         {
                             $this->error=$this->db->lasterror();
-                            dol_syslog(get_class($this)."::insert_permissions error ".$this->error, LOG_ERR);
+                            dol_syslog(get_class($this)."::insert_permissions errno = ".$this->db->errno()." error ".$this->error, LOG_ERR);
                             $err++;
                             break;
                         }
                         else dol_syslog(get_class($this)."::insert_permissions record already exists", LOG_INFO);
+                        
                     }
                     $this->db->free($resqlinsert);
 

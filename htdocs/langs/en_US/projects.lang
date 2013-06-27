@@ -107,3 +107,4 @@ TypeContact_project_task_external_CONTRIBUTOR=Contributor
 DocumentModelBaleine=A complete project's report model (logo...)
 PlannedWorkload = Planned workload
 WorkloadOccupation= Workload affectation
+ProjectReferers=Refering objects

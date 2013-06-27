@@ -207,7 +207,7 @@ class FormFile
         	return $this->getDocumentsLink($modulepart, $filename, $filedir);
         }
         $printer = ($user->rights->printipp->read && $conf->printipp->enabled)?true:false;
-
+        $hookmanager->initHooks(array('formfile'));
         $forname='builddoc';
         $out='';
         $var=true;
@@ -450,14 +450,18 @@ class FormFile
                	$langs->load("errors");
                	$genbutton.= ' '.img_warning($langs->transnoentitiesnoconv("WarningNoDocumentModelActivated"));
             }
-
             if (! $allowgenifempty && ! is_array($modellist) && empty($modellist) && empty($conf->dol_no_mouse_hover) && $modulepart != 'unpaid') $genbutton='';
-
             $out.= $genbutton;
             $out.= '</th>';
 
             if ($printer) $out.= '<th></th>';
-
+            if($hookmanager->hooks['formfile'])
+            {
+                foreach($hookmanager->hooks['formfile'] as $module)
+                {
+                    if(method_exists($module, 'formBuilddocLineOptions')) $out .= '<th></th>';
+                }
+            }
             $out.= '</tr>';
 
             // Execute hooks
@@ -529,6 +533,7 @@ class FormFile
                         $out.= ($param?'&'.$param:'');
                         $out.= '">'.img_printer().'</a></td>';
                     }
+                    if (is_object($hookmanager)) $out.= $hookmanager->executeHooks('formBuilddocLineOptions',$parameters,$file);
 				}
 
                 $out.= '</tr>';

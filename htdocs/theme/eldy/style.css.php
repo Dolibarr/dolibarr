@@ -285,6 +285,10 @@ input:-webkit-autofill {
 	background-image:none !important;
 	-webkit-box-shadow: 0 0 0 50px <?php echo empty($dol_use_jmobile)?'#FBFFEA':'#FFFFFF' ?> inset;
 }
+::-webkit-input-placeholder { color:#ccc; }
+::-moz-placeholder { color:#ccc; } /* firefox 19+ */
+:-ms-input-placeholder { color:#ccc; } /* ie */
+input:-moz-placeholder { color:#ccc; }
 
 <?php if (! empty($dol_use_jmobile)) { ?>
 legend { margin-bottom: 8px; }
@@ -1571,7 +1575,7 @@ span.butAction, span.butActionDelete {
 }
 
 
-table.border {
+table.border, table.dataTable {
 	border: 1px solid #9CACBB;
 	border-collapse: collapse;
 }
@@ -1687,11 +1691,11 @@ table.liste td {
 .tagtr { display: table-row; }
 .tagtd { display: table-cell; }
 
-tr.liste_titre, tr.liste_titre_sel, form.liste_titre, form.liste_titre_sel
+tr.liste_titre, tr.liste_titre_sel, form.liste_titre, form.liste_titre_sel, table.dataTable.tr
 {
 	height: 20px !important;
 }
-div.liste_titre, tr.liste_titre, tr.liste_titre_sel, form.liste_titre, form.liste_titre_sel
+div.liste_titre, tr.liste_titre, tr.liste_titre_sel, form.liste_titre, form.liste_titre_sel, table.dataTable thead tr
 {
     background: rgb(<?php echo $colorbacktitle1; ?>);
     background-repeat: repeat-x;
@@ -2703,15 +2707,19 @@ a.ui-link {
 	background: #fff;
 }
 
-div.ui-radio
+div.ui-radio, div.ui-checkbox
 {
 	display: inline-block;
+	border-bottom: 0px !important;
 }
-.ui-radio input {
+.ui-checkbox input, .ui-radio input {
 	height: auto;
 	width: auto;
-	margin: 0;
+	margin: 4px;
 	position: static;
+}
+div.ui-checkbox label+input, div.ui-radio label+input {
+	position: absolute;
 }
 .ui-mobile fieldset
 {

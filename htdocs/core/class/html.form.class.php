@@ -3497,7 +3497,7 @@ class Form
                 // Year
                 if ($empty || $set_time == -1)
                 {
-                    $retstring.='<input'.($disabled?' disabled="disabled"':'').' class="flat" type="text" size="3" maxlength="4" name="'.$prefix.'year" value="'.$syear.'">';
+                    $retstring.='<input'.($disabled?' disabled="disabled"':'').' placeholder="'.dol_escape_htmltag($langs->trans("Year")).'" class="flat" type="text" size="3" maxlength="4" name="'.$prefix.'year" value="'.$syear.'">';
                 }
                 else
                 {
