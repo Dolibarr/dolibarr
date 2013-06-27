@@ -701,7 +701,13 @@ class ExtraFields
 				$keyList.= ', '.$parentField;
 			}
 
-			$sql = 'SELECT '.$keyList.', '.$InfoFieldList[1];
+			$fields_label = explode('|',$InfoFieldList[1]);
+			if(is_array($fields_label)) {
+				$keyList .=', ';
+				$keyList .= implode(', ', $fields_label);
+			}
+
+			$sql = 'SELECT '.$keyList;
 			$sql.= ' FROM '.MAIN_DB_PREFIX .$InfoFieldList[0];
 			//$sql.= ' WHERE entity = '.$conf->entity;
 
@@ -717,14 +723,38 @@ class ExtraFields
 				{
 					while ($i < $num)
 					{
+						$labeltoshow='';
 						$obj = $this->db->fetch_object($resql);
-						$translabel=$langs->trans($obj->$InfoFieldList[1]);
-						if ($translabel!=$obj->$InfoFieldList[1]) {
-							$labeltoshow=dol_trunc($translabel,18);
-						}else {
-							$labeltoshow=dol_trunc($obj->$InfoFieldList[1],18);
+
+
+						// Several field into label (eq table:code|libelle:rowid)
+						$fields_label = explode('|',$InfoFieldList[1]);
+						if(is_array($fields_label))
+						{
+							foreach ($fields_label as $field_toshow)
+							{
+								$translabel=$langs->trans($obj->$field_toshow);
+								if ($translabel!=$obj->$field_toshow) {
+									$labeltoshow=dol_trunc($translabel,18).' ';
+								}else {
+									$labeltoshow=dol_trunc($obj->$field_toshow,18).' ';
+								}
+							}
 						}
-						
+						else
+						{
+							$translabel=$langs->trans($obj->$InfoFieldList[1]);
+							if ($translabel!=$obj->$InfoFieldList[1]) {
+								$labeltoshow=dol_trunc($translabel,18);
+							}else {
+								$labeltoshow=dol_trunc($obj->$InfoFieldList[1],18);
+						}
+
+						if ($value==$obj->rowid)
+						{
+							$out.='<option value="'.$obj->rowid.'" selected="selected">'.$labeltoshow.'</option>';
+						}
+
 						if(!empty($InfoFieldList[3])) {
 							$parent = $parentName.':'.$obj->{$parentField};
 						}
@@ -733,7 +763,7 @@ class ExtraFields
 						$out.= ($value==$obj->rowid?' selected="selected"':'');
 						$out.= (!empty($parent)?' parent="'.$parent.'"':'');
 						$out.='>'.$labeltoshow.'</option>';
-						
+
 						$i++;
 					}
 				}
@@ -846,26 +876,56 @@ class ExtraFields
 		{
 			$param_list=array_keys($params['options']);
 			$InfoFieldList = explode(":", $param_list[0]);
-			$keyList='rowid';
-			if (count($InfoFieldList)==3)
-				$keyList=$InfoFieldList[2];
 
-			$sql = 'SELECT '.$InfoFieldList[1];
+			$selectkey="rowid";
+			$keyList='rowid';
+
+			if (count($InfoFieldList)==3)
+			{
+				$selectkey = $InfoFieldList[2];
+				$keyList=$InfoFieldList[2].' as rowid';
+			}
+
+			$fields_label = explode('|',$InfoFieldList[1]);
+			if(is_array($fields_label)) {
+				$keyList .=', ';
+				$keyList .= implode(', ', $fields_label);
+			}
+
+			$sql = 'SELECT '.$keyList;
 			$sql.= ' FROM '.MAIN_DB_PREFIX .$InfoFieldList[0];
-			$sql.= ' WHERE '.$keyList.'=\''.$this->db->escape($value).'\'';
+			$sql.= ' WHERE '.$selectkey.'=\''.$this->db->escape($value).'\'';
 			//$sql.= ' AND entity = '.$conf->entity;
 			dol_syslog(get_class($this).':showOutputField:$type=sellist sql='.$sql);
 			$resql = $this->db->query($sql);
 			if ($resql)
 			{
 				$obj = $this->db->fetch_object($resql);
-				$translabel=$langs->trans($obj->$InfoFieldList[1]);
-				if ($translabel!=$obj->$InfoFieldList[1]) {
-					$value=dol_trunc($translabel,18);
-				}else {
-					$value=$obj->$InfoFieldList[1];
-				}
 
+				// Several field into label (eq table:code|libelle:rowid)
+				$fields_label = explode('|',$InfoFieldList[1]);
+
+				if(is_array($fields_label))
+				{
+					foreach ($fields_label as $field_toshow)
+					{
+						$translabel=$langs->trans($obj->$InfoFieldList[1]);
+						if ($translabel!=$obj->$InfoFieldList[1]) {
+							$value=dol_trunc($translabel,18).' ';
+						}else {
+							$value=$obj->$InfoFieldList[1].' ';
+						}
+					}
+				}
+				else
+				{
+					$translabel=$langs->trans($obj->$InfoFieldList[1]);
+					if ($translabel!=$obj->$InfoFieldList[1]) {
+						$value=dol_trunc($translabel,18);
+					}else {
+						$value=$obj->$InfoFieldList[1];
+					}
+				}
 			}
 		}
 		elseif ($type == 'radio')
