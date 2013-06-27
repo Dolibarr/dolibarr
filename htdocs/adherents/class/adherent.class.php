@@ -1539,11 +1539,12 @@ class Adherent extends CommonObject
      */
     function getCivilityLabel()
     {
-        global $langs;
-        $langs->load("dict");
-
-        $code=$this->civilite_id;
-        return $langs->getLabelFromKey($this->db, "Civility".$code, "c_civilite", "code", "civilite", $code);
+    	global $langs;
+    	$langs->load("dict");
+    	
+    	$code=(! empty($this->civilite_id)?$this->civilite_id:(! empty($this->civility_id)?$this->civility_id:''));
+    	if (empty($code)) return '';
+    	return $langs->getLabelFromKey($this->db, "Civility".$code, "c_civilite", "code", "civilite", $code);
     }
 
     /**

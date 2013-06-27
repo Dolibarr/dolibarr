@@ -380,7 +380,6 @@ LinkToTest=Link clicável gerado por usuário <strong>%s</strong> (clique no nú
 KeepEmptyToUseDefault=Mantenha vazio para usar o valor default
 DefaultLink=link padrão
 ValueOverwrittenByUserSetup=Atenção, este valor pode ser substituído por configuração específica do usuário (cada usuário pode definir sua própria url clicktodial)
-
 # Modules
 Module0Name=Usuários e Grupos
 Module0Desc=Usuários e gestão de grupos
