@@ -28,8 +28,7 @@ include_once DOL_DOCUMENT_ROOT . '/fourn/class/fournisseur.facture.class.php';
 include_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
 
 /**
- *       \class      FactureStats
- *       \brief      Classe permettant la gestion des stats des factures
+ *	Class to manage stats for invoices (customer and supplier)
  */
 class FactureStats extends Stats
 {
@@ -47,7 +46,7 @@ class FactureStats extends Stats
      *
 	 * 	@param	DoliDB		$db			Database handler
 	 * 	@param 	int			$socid		Id third party
-	 * 	@param 	string		$mode	   	Option
+	 * 	@param 	string		$mode	   	Option ('customer', 'supplier')
      * 	@param	int			$userid    	Id user for filter (creation user)
 	 * 	@return FactureStats
 	 */
@@ -87,8 +86,8 @@ class FactureStats extends Stats
 	/**
 	 * 	Renvoie le nombre de facture par mois pour une annee donnee
 	 *
-	 *	@param	int		$year	Year to scan
-	 *	@return	array			Array of values
+	 *	@param	int		$year		Year to scan
+	 *	@return	array				Array of values
 	 */
 	function getNbByMonth($year)
 	{

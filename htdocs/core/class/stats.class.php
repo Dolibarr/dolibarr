@@ -30,47 +30,103 @@
 abstract class Stats
 {
 	protected $db;
-
+	var $_lastfetchdategetNbByMonthWithPrevYear;	// Date of cache file read by getNbByMonthWithPrevYear
+	
 
 	/**
-	 * Return nb of entity by month for several years
+	 * Return nb of elements by month for several years
 	 *
-	 * @param 	int		$endyear	Start year
-	 * @param 	int		$startyear	End year
-	 * @return 	array				Array of values
+	 * @param 	int		$endyear		Start year
+	 * @param 	int		$startyear		End year
+	 * @param	int		$cachedelay		Delay we accept for cache file (0=No read, no save of cache, -1=No read but save)
+	 * @return 	array					Array of values
 	 */
-	function getNbByMonthWithPrevYear($endyear,$startyear)
+	function getNbByMonthWithPrevYear($endyear,$startyear,$cachedelay=0)
 	{
+		global $conf,$user,$langs;
+		
 	    if ($startyear > $endyear) return -1;
+
+	    if (! empty($cachedelay))
+	    {
+	    	include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+	    	include_once DOL_DOCUMENT_ROOT.'/core/lib/json.lib.php';
+	    }
 
 		$datay=array();
 
-		$year=$startyear;
-		while ($year <= $endyear)
-		{
-			$datay[$year] = $this->getNbByMonth($year);
-			$year++;
-		}
+		$newpathofdestfile=$conf->user->dir_temp.'/'.get_class($this).'_'.$langs->defaultlang.'_user'.$user->id.'.cache';
+		$newmask='0644';
 
-		$data = array();
+		$nowgmt = dol_now();
 
-		for ($i = 0 ; $i < 12 ; $i++)
+		// Search into cache
+		$foundintocache=0;
+		if ($cachedelay > 0)
 		{
-			$data[$i][]=$datay[$endyear][$i][0];
-			$year=$startyear;
-			while($year <= $endyear)
+			$filedate=dol_filemtime($newpathofdestfile);
+			if ($filedate >= ($nowgmt - $cachedelay))
 			{
-				$data[$i][]=$datay[$year][$i][1];
-				$year++;
+				$foundintocache=1;
+		
+				$this->_lastfetchdategetNbByMonthWithPrevYear=$filedate;
+			}
+			else
+			{
+				dol_syslog(get_class($this)."::getNbByMonthWithPrevYear cache file ".$newpathofdestfile." is not found or older than now - cachedelay (".$nowgmt." - ".$cachedelay.") so we can't use it.");
 			}
 		}
+		
+		// Load file into $data
+		if ($foundintocache)    // Cache file found and is not too old
+		{
+			dol_syslog(get_class($this)."::getNbByMonthWithPrevYear read data from cache file ".$newpathofdestfile." ".$filedate.".");
+			$data = dol_json_decode(file_get_contents($newpathofdestfile), true);
+		}
+		else
+		{
+			$year=$startyear;
+			while ($year <= $endyear)
+			{
+				$datay[$year] = $this->getNbByMonth($year);
+				$year++;
+			}
+	
+			$data = array();
+	
+			for ($i = 0 ; $i < 12 ; $i++)
+			{
+				$data[$i][]=$datay[$endyear][$i][0];
+				$year=$startyear;
+				while($year <= $endyear)
+				{
+					$data[$i][]=$datay[$year][$i][1];
+					$year++;
+				}
+			}
 
+		}
+
+		// Save cache file
+		if (empty($foundintocache) && ($cachedelay > 0 || $cachedelay == -1))
+		{
+			dol_syslog(get_class($this)."::getNbByMonthWithPrevYear save cache file ".$newpathofdestfile." onto disk.");
+			if (! dol_is_dir($conf->user->dir_temp)) dol_mkdir($conf->user->dir_temp);
+			$fp = fopen($newpathofdestfile, 'w');
+			fwrite($fp, dol_json_encode($data));
+			fclose($fp);
+			if (! empty($conf->global->MAIN_UMASK)) $newmask=$conf->global->MAIN_UMASK;
+			@chmod($newpathofdestfile, octdec($newmask));
+		
+			$this->_lastfetchdategetNbByMonthWithPrevYear=$nowgmt;
+		}
+				
 		// return array(array('Month',val1,val2,val3),...)
 		return $data;
 	}
 
 	/**
-	 * Return amount of entity by month for several years
+	 * Return amount of elements by month for several years
 	 *
 	 * @param	int		$endyear		Start year
 	 * @param	int		$startyear		End year
@@ -210,9 +266,10 @@ abstract class Stats
 	 *
      *     @param   int		$year       Year
      *     @param   string	$sql        SQL
+     *     @param	int		$format		0=Label of absiss is a translated text, 1=Label of absiss is a number 
      *     @return	array				Array of nb each month
 	 */
-	function _getNbByMonth($year, $sql)
+	function _getNbByMonth($year, $sql, $format=0)
 	{
 		$result=array();
 		$res=array();
@@ -246,9 +303,9 @@ abstract class Stats
 
 		for ($i = 1 ; $i < 13 ; $i++)
 		{
-			$month=dol_print_date(dol_mktime(12,0,0,$i,1,$year),"%b");
+			$month=dol_print_date(dol_mktime(12,0,0,$i,1,$year),($format?"%m":"%b"));
 			$month=dol_substr($month,0,3);
-			$data[$i-1] = array(ucfirst($month), $res[$i]);
+			$data[$i-1] = array($month, $res[$i]);
 		}
 
 		return $data;
@@ -258,11 +315,12 @@ abstract class Stats
 	/**
 	 *     Renvoie le nombre d'element par mois pour une annee donnee
 	 *
-	 *     @param	int		$year        Year
-	 *     @param   string	$sql         SQL
+	 *     @param	int		$year       Year
+	 *     @param   string	$sql		SQL
+     *     @param	int		$format		0=Label of absiss is a translated text, 1=Label of absiss is a number 
 	 *     @return	array
 	 */
-	function _getAmountByMonth($year, $sql)
+	function _getAmountByMonth($year, $sql, $format=0)
 	{
 		$result=array();
 		$res=array();
@@ -294,20 +352,21 @@ abstract class Stats
 
 		for ($i = 1 ; $i < 13 ; $i++)
 		{
-			$month=dol_print_date(dol_mktime(12,0,0,$i,1,$year),"%b");
+			$month=dol_print_date(dol_mktime(12,0,0,$i,1,$year),($format?"%m":"%b"));
 			$month=dol_substr($month,0,3);
-			$data[$i-1] = array(ucfirst($month), $res[$i]);
+			$data[$i-1] = array($month, $res[$i]);
 		}
 
 		return $data;
 	}
 
 	/**
-	 *	    Renvoie le montant moyen par mois pour une annee donnee
+	 *	   Renvoie le montant moyen par mois pour une annee donnee
 	 *
-     *      @param	int		$year        Year
-     *      @param  string	$sql         SQL
-     *      @return	array
+     *     @param	int		$year       Year
+     *     @param  string	$sql        SQL
+     *     @param	int		$format		0=Label of absiss is a translated text, 1=Label of absiss is a number 
+     *     @return	array
 	 */
 	function _getAverageByMonth($year, $sql)
 	{
@@ -340,9 +399,9 @@ abstract class Stats
 
 		for ($i = 1 ; $i < 13 ; $i++)
 		{
-			$month=dol_print_date(dol_mktime(12,0,0,$i,1,$year),"%b");
+			$month=dol_print_date(dol_mktime(12,0,0,$i,1,$year),($format?"%m":"%b"));
 			$month=dol_substr($month,0,3);
-			$data[$i-1] = array(ucfirst($month), $res[$i]);
+			$data[$i-1] = array($month, $res[$i]);
 		}
 
 		return $data;

@@ -64,7 +64,9 @@ class box_graph_invoices_permonth extends ModeleBoxes
 		global $conf, $user, $langs, $db;
 
 		$this->max=$max;
-
+		
+		$refreshaction='refresh_'.$this->boxcode;
+		
 		include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 		$facturestatic=new Facture($db);
 
@@ -72,58 +74,73 @@ class box_graph_invoices_permonth extends ModeleBoxes
 		$this->info_box_head = array(
 				'text' => $text,
 				'limit'=> dol_strlen($text),
-				'graph'=> 1
+				'graph'=> 1,
+				'sublink'=>$_SERVER["PHP_SELF"].'?action='.$refreshaction,
+				'subtext'=>$langs->trans("Refresh"),
+				'subpicto'=>'refresh.png',
+				'target'=>'none'
 		);
 
 		if ($user->rights->facture->lire)
 		{
-			$sql = "SELECT f.rowid as facid, f.facnumber, f.type, f.amount, f.datef as df";
-			$sql.= ", f.paye, f.fk_statut, f.datec, f.tms";
-			$sql.= ", s.nom, s.rowid as socid";
-			$sql.= ", f.date_lim_reglement as datelimite";
-			$sql.= " FROM (".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f";
-			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-			$sql.= ")";
-			$sql.= " WHERE f.fk_soc = s.rowid";
-			$sql.= " AND f.entity = ".$conf->entity;
-			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-			if($user->societe_id)	$sql.= " AND s.rowid = ".$user->societe_id;
-			$sql.= " ORDER BY f.tms DESC";
-			$sql.= $db->plimit($max, 0);
-
-			$result = $db->query($sql);
-			if ($result)
+			require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
+			include_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facturestats.class.php';
+				
+			$nowarray=dol_getdate(dol_now(),true);
+			$endyear=$nowarray['year'];
+			$startyear=$endyear-1;
+			$mode='customer';
+			$userid=0;
+			$WIDTH='256';
+			$HEIGHT='192';
+				
+			$stats = new FactureStats($this->db, 0, $mode, ($userid>0?$userid:0));
+			
+			// Build graphic number of object
+			// $data = array(array('Lib',val1,val2,val3),...)
+			$data = $stats->getNbByMonthWithPrevYear($endyear,$startyear,(GETPOST('action')==$refreshaction?-1:(3600*24)));
+			//var_dump($data);
+			
+			$filenamenb = $dir."/invoicesnbinyear-".$year.".png";
+			if ($mode == 'customer') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=billstats&amp;file=invoicesnbinyear-'.$year.'.png';
+			if ($mode == 'supplier') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=billstatssupplier&amp;file=invoicesnbinyear-'.$year.'.png';
+			
+			$px1 = new DolGraph();
+			$mesg = $px1->isGraphKo();
+			if (! $mesg)
 			{
-				$num = $db->num_rows($result);
-				$now=dol_now();
-
-				$i = 0;
-				$l_due_date = $langs->trans('Late').' ('.strtolower($langs->trans('DateEcheance')).': %s)';
-
-				while ($i < $num)
+				$px1->SetData($data);
+				$px1->SetPrecisionY(0);
+				$i=$startyear;$legend=array();
+				while ($i <= $endyear)
 				{
-					$objp = $db->fetch_object($result);
-					$datelimite=$db->jdate($objp->datelimite);
-					$datec=$db->jdate($objp->datec);
-
-					$picto='bill';
-					if ($objp->type == 1) $picto.='r';
-					if ($objp->type == 2) $picto.='a';
-					$late = '';
-					if ($objp->paye == 0 && ($objp->fk_statut != 2 && $objp->fk_statut != 3) && $datelimite < ($now - $conf->facture->client->warning_delay)) { $late = img_warning(sprintf($l_due_date,dol_print_date($datelimite,'day')));}
-
+					$legend[]=$i;
 					$i++;
 				}
+				$px1->SetLegend($legend);
+				$px1->SetMaxValue($px1->GetCeilMaxValue());
+				$px1->SetWidth($WIDTH);
+				$px1->SetHeight($HEIGHT);
+				$px1->SetYLabel($langs->trans("NumberOfBills"));
+				$px1->SetShading(3);
+				$px1->SetHorizTickIncrement(1);
+				$px1->SetPrecisionY(0);
+				$px1->mode='depth';
+				//$px1->SetTitle($langs->trans("NumberOfBillsByMonth"));
+			
+				$px1->draw($filenamenb,$fileurlnb);
+			}
 
-				$this->info_box_contents[0][0] = array('td' => 'align="center"','text2'=>'xxxxxxx');
-
-				$db->free($result);
+			
+			if (! $mesg)
+			{
+				$this->info_box_contents[0][0] = array('td' => 'align="center"','textnoformat'=>$px1->show());
 			}
 			else
 			{
 				$this->info_box_contents[0][0] = array(	'td' => 'align="left"',
     	        										'maxlength'=>500,
-	            										'text' => ($db->error().' sql='.$sql));
+	            										'text' => $mesg);
 			}
 
 		}

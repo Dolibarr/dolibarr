@@ -6,8 +6,8 @@ English Dolibarr ChangeLog
 For users:
 - New: [ task #877 ] Reorganize menus.
 - New: [ task #858 ] Holiday module: note on manual holiday assignation.
-- New: [ task #892 ] Add option in thirdparty customer/supplier admin to hide non active 
-  companies in select_company method.
+- New: [ task #892 ] Add hidden option in thirdparty customer/supplier module to
+  hide non active companies in select_company method.
 - New: [ task #531 ] Add a workload field on tasks.
 - New: Add graph of bank account input/output into input-output report page.
 - New: Add script export-bank-receipts.php
@@ -16,28 +16,30 @@ For users:
 - New: [ task #901 ] Add Extrafeild on Fiche Inter.
 - New: Show process id in all command line scripts.
 - New: Module mailman can subscribe/unsubscribe to ML according to categories or type of member.
-- New: Add object_hour as substitution tag for opendocument generation.
-- New: Add option to send email when paypal or paybox payment is done.
-- New: Implement same rule for return value of all command line scripts (0 when success, <>0 if error).
+- New: Add object_hour and object_date_rfc as substitution tag for opendocument generation.
+- New: Add options to send an email when paypal or paybox payment is done.
 - New: Clone product/service composition.
 - New: [ task #926 ] Add extrafield feature on order lines.
 - New: [ task #927 ] Add extrafield feature on Proposal lines.
 - New: [ task #928 ] Add extrafield feature on invoice lines.
 - New: Add option ADHERENT_LOGIN_NOT_REQUIRED.
-- New: Add a cron module.
+- New: Add a cron module to define scheduled jobs.
+- New: Add new graphical boxes (customer invoices per month).
+- Qual: Implement same rule for return value of all command line scripts (0 when success, <>0 if error).
 
 For translators:
 - Normalized sort order of all languages files with english reference files.
 
 For developers:
 - New: DolGraph can build graph with three lines.
-- New: Can enable tuning info from option MAIN_SHOW_TUNING_INFO.
+- New: DolGraph accept a parameter to cache data of graph getNbByMonthWithPrevYear.
+- New: Can enable tuning info with option MAIN_SHOW_TUNING_INFO.
 - New: Show version of client lib used by mysql drivers.
 - New: Add function to get content of an url (using all dolibarr setup like timeout, proxies...)
 - New: Upgrade lib of TCPDF to 6.0
-- New: Add property hidden into module descriptor to allow to hide a module according to
+- New: Add property "hidden" into module descriptors to allow to hide a module according to
   some dynamic conditions.
-
+ 
 
 ***** ChangeLog for 3.4 compared to 3.3.2 *****
 For users:

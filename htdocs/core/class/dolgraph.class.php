@@ -785,7 +785,7 @@ class DolGraph
         $tag=dol_escape_htmltag(dol_string_unaccent(dol_string_nospecial(basename($file),'_',array('-','.'))));
 
         $this->_stringtoshow ='<!-- Build using '.$this->_library.' -->'."\n";
-        $this->_stringtoshow.='<br><div align="center">'.$this->title.'</div><br>';
+        if (! empty($this->title)) $this->_stringtoshow.='<br><div align="center">'.$this->title.'</div><br>';
         $this->_stringtoshow.='<div id="placeholder_'.$tag.'" style="width:'.$this->width.'px;height:'.$this->height.'px;" class="dolgraph"></div>'."\n";
         $this->_stringtoshow.='<script id="'.$tag.'">'."\n";
         $this->_stringtoshow.='$(function () {'."\n";
