@@ -922,6 +922,10 @@ class CommandeFournisseur extends CommonOrder
 
 		$error=0;
         $now=dol_now();
+        if(!$this->source)
+        {
+            $this->source = 0;
+        }
 
         /* On positionne en mode brouillon la commande */
         $this->brouillon = 1;
@@ -952,7 +956,7 @@ class CommandeFournisseur extends CommonOrder
 		//$sql.= ", ".$this->db->idate($now);
         $sql.= ", ".$user->id;
         $sql.= ", 0";
-        $sql.= ", ".($this->source? $this->source : 0);
+        $sql.= ", " . $this->source;
         $sql.= ", '".$conf->global->COMMANDE_SUPPLIER_ADDON_PDF."'";
         //$sql.= ", ".$this->mode_reglement_id;
         $sql.= ")";
