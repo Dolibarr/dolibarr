@@ -52,6 +52,16 @@ abstract class CommonObject
 
 
     /**
+     * Method to output saved errors
+     * 
+     * @return	string		String with errors
+     */
+    function errorsToString()
+    {
+    	return $this->error.(is_array($this->errors)?(($this->error!=''?' ':'').join(',',$this->errors)):'');
+    }
+
+    /**
      *	Return full name (civility+' '+name+' '+lastname)
      *
      *	@param	Translate	$langs			Language object for translation of civility
