@@ -1389,6 +1389,9 @@ div.error {
 	color:#333333;
 }
 
+.dolgraphtitle { margin-top: 6px; margin-bottom: 4px; }
+.dolgraphtitlecssboxes { margin: 0px; }
+
 #pictotitle {
 	padding-left:5px;
 	padding-right:1px;

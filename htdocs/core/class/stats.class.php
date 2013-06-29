@@ -30,8 +30,8 @@
 abstract class Stats
 {
 	protected $db;
-	var $_lastfetchdategetNbByMonthWithPrevYear;	// Date of cache file read by getNbByMonthWithPrevYear
-	
+	var $_lastfetchdate=array();	// Dates of cache file read by methods
+
 
 	/**
 	 * Return nb of elements by month for several years
@@ -44,23 +44,23 @@ abstract class Stats
 	function getNbByMonthWithPrevYear($endyear,$startyear,$cachedelay=0)
 	{
 		global $conf,$user,$langs;
-		
+
 	    if ($startyear > $endyear) return -1;
 
-	    if (! empty($cachedelay))
+		$datay=array();
+
+		// Search into cache
+		if (! empty($cachedelay))
 	    {
 	    	include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 	    	include_once DOL_DOCUMENT_ROOT.'/core/lib/json.lib.php';
 	    }
 
-		$datay=array();
-
-		$newpathofdestfile=$conf->user->dir_temp.'/'.get_class($this).'_'.$langs->defaultlang.'_user'.$user->id.'.cache';
+		$newpathofdestfile=$conf->user->dir_temp.'/'.get_class($this).'_'.__FUNCTION__.'_'.$langs->defaultlang.'_user'.$user->id.'.cache';
 		$newmask='0644';
 
 		$nowgmt = dol_now();
 
-		// Search into cache
 		$foundintocache=0;
 		if ($cachedelay > 0)
 		{
@@ -68,19 +68,19 @@ abstract class Stats
 			if ($filedate >= ($nowgmt - $cachedelay))
 			{
 				$foundintocache=1;
-		
-				$this->_lastfetchdategetNbByMonthWithPrevYear=$filedate;
+
+				$this->_lastfetchdate[get_class($this).'_'.__FUNCTION__]=$filedate;
 			}
 			else
 			{
-				dol_syslog(get_class($this)."::getNbByMonthWithPrevYear cache file ".$newpathofdestfile." is not found or older than now - cachedelay (".$nowgmt." - ".$cachedelay.") so we can't use it.");
+				dol_syslog(get_class($this).'_'.__FUNCTION__." cache file ".$newpathofdestfile." is not found or older than now - cachedelay (".$nowgmt." - ".$cachedelay.") so we can't use it.");
 			}
 		}
-		
+
 		// Load file into $data
 		if ($foundintocache)    // Cache file found and is not too old
 		{
-			dol_syslog(get_class($this)."::getNbByMonthWithPrevYear read data from cache file ".$newpathofdestfile." ".$filedate.".");
+			dol_syslog(get_class($this).'_'.__FUNCTION__." read data from cache file ".$newpathofdestfile." ".$filedate.".");
 			$data = dol_json_decode(file_get_contents($newpathofdestfile), true);
 		}
 		else
@@ -91,9 +91,9 @@ abstract class Stats
 				$datay[$year] = $this->getNbByMonth($year);
 				$year++;
 			}
-	
+
 			$data = array();
-	
+
 			for ($i = 0 ; $i < 12 ; $i++)
 			{
 				$data[$i][]=$datay[$endyear][$i][0];
@@ -104,23 +104,22 @@ abstract class Stats
 					$year++;
 				}
 			}
-
 		}
 
 		// Save cache file
 		if (empty($foundintocache) && ($cachedelay > 0 || $cachedelay == -1))
 		{
-			dol_syslog(get_class($this)."::getNbByMonthWithPrevYear save cache file ".$newpathofdestfile." onto disk.");
+			dol_syslog(get_class($this).'_'.__FUNCTION__." save cache file ".$newpathofdestfile." onto disk.");
 			if (! dol_is_dir($conf->user->dir_temp)) dol_mkdir($conf->user->dir_temp);
 			$fp = fopen($newpathofdestfile, 'w');
 			fwrite($fp, dol_json_encode($data));
 			fclose($fp);
 			if (! empty($conf->global->MAIN_UMASK)) $newmask=$conf->global->MAIN_UMASK;
 			@chmod($newpathofdestfile, octdec($newmask));
-		
-			$this->_lastfetchdategetNbByMonthWithPrevYear=$nowgmt;
+
+			$this->_lastfetchdate[get_class($this).'_'.__FUNCTION__]=$nowgmt;
 		}
-				
+
 		// return array(array('Month',val1,val2,val3),...)
 		return $data;
 	}
@@ -130,32 +129,86 @@ abstract class Stats
 	 *
 	 * @param	int		$endyear		Start year
 	 * @param	int		$startyear		End year
+	 * @param	int		$cachedelay		Delay we accept for cache file (0=No read, no save of cache, -1=No read but save)
 	 * @return 	array					Array of values
 	 */
-	function getAmountByMonthWithPrevYear($endyear,$startyear)
+	function getAmountByMonthWithPrevYear($endyear,$startyear,$cachedelay=0)
 	{
+		global $conf,$user,$langs;
+
         if ($startyear > $endyear) return -1;
 
         $datay=array();
 
-		$year=$startyear;
-		while($year <= $endyear)
-		{
-			$datay[$year] = $this->getAmountByMonth($year);
-			$year++;
-		}
+        // Search into cache
+        if (! empty($cachedelay))
+        {
+        	include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+        	include_once DOL_DOCUMENT_ROOT.'/core/lib/json.lib.php';
+        }
 
-		$data = array();
+        $newpathofdestfile=$conf->user->dir_temp.'/'.get_class($this).'_'.__FUNCTION__.'_'.$langs->defaultlang.'_user'.$user->id.'.cache';
+        $newmask='0644';
 
-		for ($i = 0 ; $i < 12 ; $i++)
+        $nowgmt = dol_now();
+
+        $foundintocache=0;
+        if ($cachedelay > 0)
+        {
+        	$filedate=dol_filemtime($newpathofdestfile);
+        	if ($filedate >= ($nowgmt - $cachedelay))
+        	{
+        		$foundintocache=1;
+
+        		$this->_lastfetchdate[get_class($this).'_'.__FUNCTION__]=$filedate;
+        	}
+        	else
+        	{
+        		dol_syslog(get_class($this).'_'.__FUNCTION__." cache file ".$newpathofdestfile." is not found or older than now - cachedelay (".$nowgmt." - ".$cachedelay.") so we can't use it.");
+        	}
+        }
+
+        // Load file into $data
+        if ($foundintocache)    // Cache file found and is not too old
+        {
+        	dol_syslog(get_class($this).'_'.__FUNCTION__." read data from cache file ".$newpathofdestfile." ".$filedate.".");
+        	$data = dol_json_decode(file_get_contents($newpathofdestfile), true);
+        }
+        else
 		{
-			$data[$i][]=$datay[$endyear][$i][0];
 			$year=$startyear;
 			while($year <= $endyear)
 			{
-				$data[$i][]=$datay[$year][$i][1];
+				$datay[$year] = $this->getAmountByMonth($year);
 				$year++;
 			}
+
+			$data = array();
+
+			for ($i = 0 ; $i < 12 ; $i++)
+			{
+				$data[$i][]=$datay[$endyear][$i][0];
+				$year=$startyear;
+				while($year <= $endyear)
+				{
+					$data[$i][]=$datay[$year][$i][1];
+					$year++;
+				}
+			}
+		}
+
+		// Save cache file
+		if (empty($foundintocache) && ($cachedelay > 0 || $cachedelay == -1))
+		{
+			dol_syslog(get_class($this).'_'.__FUNCTION__." save cache file ".$newpathofdestfile." onto disk.");
+			if (! dol_is_dir($conf->user->dir_temp)) dol_mkdir($conf->user->dir_temp);
+			$fp = fopen($newpathofdestfile, 'w');
+			fwrite($fp, dol_json_encode($data));
+			fclose($fp);
+			if (! empty($conf->global->MAIN_UMASK)) $newmask=$conf->global->MAIN_UMASK;
+			@chmod($newpathofdestfile, octdec($newmask));
+
+			$this->_lastfetchdate[get_class($this).'_'.__FUNCTION__]=$nowgmt;
 		}
 
 		return $data;
@@ -266,7 +319,7 @@ abstract class Stats
 	 *
      *     @param   int		$year       Year
      *     @param   string	$sql        SQL
-     *     @param	int		$format		0=Label of absiss is a translated text, 1=Label of absiss is a number 
+     *     @param	int		$format		0=Label of absiss is a translated text, 1=Label of absiss is a number
      *     @return	array				Array of nb each month
 	 */
 	function _getNbByMonth($year, $sql, $format=0)
@@ -317,7 +370,7 @@ abstract class Stats
 	 *
 	 *     @param	int		$year       Year
 	 *     @param   string	$sql		SQL
-     *     @param	int		$format		0=Label of absiss is a translated text, 1=Label of absiss is a number 
+     *     @param	int		$format		0=Label of absiss is a translated text, 1=Label of absiss is a number
 	 *     @return	array
 	 */
 	function _getAmountByMonth($year, $sql, $format=0)
@@ -365,7 +418,7 @@ abstract class Stats
 	 *
      *     @param	int		$year       Year
      *     @param  string	$sql        SQL
-     *     @param	int		$format		0=Label of absiss is a translated text, 1=Label of absiss is a number 
+     *     @param	int		$format		0=Label of absiss is a translated text, 1=Label of absiss is a number
      *     @return	array
 	 */
 	function _getAverageByMonth($year, $sql)

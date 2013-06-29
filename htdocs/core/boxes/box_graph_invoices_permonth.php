@@ -64,13 +64,13 @@ class box_graph_invoices_permonth extends ModeleBoxes
 		global $conf, $user, $langs, $db;
 
 		$this->max=$max;
-		
+
 		$refreshaction='refresh_'.$this->boxcode;
-		
+
 		include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 		$facturestatic=new Facture($db);
 
-		$text = $langs->trans("BoxInvoicesPerMonth",$max);
+		$text = $langs->trans("BoxCustomersInvoicesPerMonth",$max);
 		$this->info_box_head = array(
 				'text' => $text,
 				'limit'=> dol_strlen($text),
@@ -85,7 +85,7 @@ class box_graph_invoices_permonth extends ModeleBoxes
 		{
 			require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 			include_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facturestats.class.php';
-				
+
 			$nowarray=dol_getdate(dol_now(),true);
 			$endyear=$nowarray['year'];
 			$startyear=$endyear-1;
@@ -93,23 +93,22 @@ class box_graph_invoices_permonth extends ModeleBoxes
 			$userid=0;
 			$WIDTH='256';
 			$HEIGHT='192';
-				
+
 			$stats = new FactureStats($this->db, 0, $mode, ($userid>0?$userid:0));
-			
-			// Build graphic number of object
-			// $data = array(array('Lib',val1,val2,val3),...)
-			$data = $stats->getNbByMonthWithPrevYear($endyear,$startyear,(GETPOST('action')==$refreshaction?-1:(3600*24)));
-			//var_dump($data);
-			
+
+			// Build graphic number of object. $data = array(array('Lib',val1,val2,val3),...)
+			$data1 = $stats->getNbByMonthWithPrevYear($endyear,$startyear,(GETPOST('action')==$refreshaction?-1:(3600*24)));
+
 			$filenamenb = $dir."/invoicesnbinyear-".$year.".png";
 			if ($mode == 'customer') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=billstats&amp;file=invoicesnbinyear-'.$year.'.png';
 			if ($mode == 'supplier') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=billstatssupplier&amp;file=invoicesnbinyear-'.$year.'.png';
-			
+
 			$px1 = new DolGraph();
 			$mesg = $px1->isGraphKo();
 			if (! $mesg)
 			{
-				$px1->SetData($data);
+				$px1->SetData($data1);
+				unset($data1);
 				$px1->SetPrecisionY(0);
 				$i=$startyear;$legend=array();
 				while ($i <= $endyear)
@@ -125,16 +124,60 @@ class box_graph_invoices_permonth extends ModeleBoxes
 				$px1->SetShading(3);
 				$px1->SetHorizTickIncrement(1);
 				$px1->SetPrecisionY(0);
+				$px1->SetCssPrefix("cssboxes");
 				$px1->mode='depth';
-				//$px1->SetTitle($langs->trans("NumberOfBillsByMonth"));
-			
+				$px1->SetTitle($langs->trans("NumberOfBillsByMonth"));
+
 				$px1->draw($filenamenb,$fileurlnb);
 			}
 
-			
+			// Build graphic number of object. $data = array(array('Lib',val1,val2,val3),...)
+			$data2 = $stats->getAmountByMonthWithPrevYear($endyear,$startyear,(GETPOST('action')==$refreshaction?-1:(3600*24)));
+
+			$filenamenb = $dir."/invoicesnbinyear-".$year.".png";
+			if ($mode == 'customer') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=billstats&amp;file=invoicesamountinyear-'.$year.'.png';
+			if ($mode == 'supplier') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=billstatssupplier&amp;file=invoicesamountinyear-'.$year.'.png';
+
+			$px2 = new DolGraph();
+			$mesg = $px2->isGraphKo();
 			if (! $mesg)
 			{
-				$this->info_box_contents[0][0] = array('td' => 'align="center"','textnoformat'=>$px1->show());
+				$px2->SetData($data2);
+				unset($data2);
+				$px2->SetPrecisionY(0);
+				$i=$startyear;$legend=array();
+				while ($i <= $endyear)
+				{
+					$legend[]=$i;
+					$i++;
+				}
+				$px2->SetLegend($legend);
+				$px2->SetMaxValue($px2->GetCeilMaxValue());
+				$px2->SetWidth($WIDTH);
+				$px2->SetHeight($HEIGHT);
+				$px2->SetYLabel($langs->trans("AmountOfBillsHT"));
+				$px2->SetShading(3);
+				$px2->SetHorizTickIncrement(1);
+				$px2->SetPrecisionY(0);
+				$px2->SetCssPrefix("cssboxes");
+				$px2->mode='depth';
+				$px2->SetTitle($langs->trans("AmountOfBillsByMonthHT"));
+
+				$px2->draw($filenamenb,$fileurlnb);
+			}
+
+
+			if (! $mesg)
+			{
+				$stringtoshow ='<div class="fichecenter">';
+				//$stringtoshow.='<div class="fichehalfleft">';
+				//$stringtoshow.=$px1->show();
+				//$stringtoshow.='</div>';
+				//$stringtoshow.='<div class="fichehalfright">';
+				$stringtoshow.=$px2->show();
+				//$stringtoshow.='</div>';
+				$stringtoshow.='</div>';
+				$this->info_box_contents[0][0] = array('td' => 'align="center"','textnoformat'=>$stringtoshow);
 			}
 			else
 			{
