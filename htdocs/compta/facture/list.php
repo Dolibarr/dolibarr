@@ -367,13 +367,13 @@ if ($resql)
             print $thirdparty->getNomUrl(1,'customer');
             print '</td>';
 
-            print '<td align="right">'.price($objp->total_ht,0,$langs,0,0,-1,$conf->currency).'</td>';
+            print '<td align="right">'.price($objp->total_ht,0,$langs).'</td>';
 
-            print '<td align="right">'.price($objp->total_tva,0,$langs,0,0,-1,$conf->currency).'</td>';
+            print '<td align="right">'.price($objp->total_tva,0,$langs).'</td>';
 
-            print '<td align="right">'.price($objp->total_ttc,0,$langs,0,0,-1,$conf->currency).'</td>';
+            print '<td align="right">'.price($objp->total_ttc,0,$langs).'</td>';
 
-            print '<td align="right">'.(! empty($paiement)?price($paiement,0,$langs,0,0,-1,$conf->currency):'&nbsp;').'</td>';
+            print '<td align="right">'.(! empty($paiement)?price($paiement,0,$langs):'&nbsp;').'</td>';
 
             // Affiche statut de la facture
             print '<td align="right" class="nowrap">';
@@ -393,10 +393,10 @@ if ($resql)
             // Print total
             print '<tr class="liste_total">';
             print '<td class="liste_total" colspan="4" align="left">'.$langs->trans('Total').'</td>';
-            print '<td class="liste_total" align="right">'.price($total_ht,0,$langs,0,0,-1,$conf->currency).'</td>';
-            print '<td class="liste_total" align="right">'.price($total_tva,0,$langs,0,0,-1,$conf->currency).'</td>';
-            print '<td class="liste_total" align="right">'.price($total_ttc,0,$langs,0,0,-1,$conf->currency).'</td>';
-            print '<td class="liste_total" align="right">'.price($totalrecu,0,$langs,0,0,-1,$conf->currency).'</td>';
+            print '<td class="liste_total" align="right">'.price($total_ht,0,$langs).'</td>';
+            print '<td class="liste_total" align="right">'.price($total_tva,0,$langs).'</td>';
+            print '<td class="liste_total" align="right">'.price($total_ttc,0,$langs).'</td>';
+            print '<td class="liste_total" align="right">'.price($totalrecu,0,$langs).'</td>';
             print '<td class="liste_total" align="center">&nbsp;</td>';
             print '</tr>';
         }
