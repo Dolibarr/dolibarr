@@ -16,22 +16,22 @@
  */
 
 /**
- *	\file       htdocs/core/boxes/box_invoice_permonth.php
- *	\ingroup    factures
- *	\brief      Box to show graph of invoices per month
+ *	\file       htdocs/core/boxes/box_order_permonth.php
+ *	\ingroup    commandes
+ *	\brief      Box to show graph of orders per month
  */
 include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
 
 
 /**
- * Class to manage the box to show last invoices
+ * Class to manage the box to show last orders
  */
-class box_graph_invoices_permonth extends ModeleBoxes
+class box_graph_orders_permonth extends ModeleBoxes
 {
-	var $boxcode="invoicespermonth";
+	var $boxcode="orderspermonth";
 	var $boximg="object_bill";
-	var $boxlabel="BoxCustomersInvoicesPerMonth";
-	var $depends = array("facture");
+	var $boxlabel="BoxCustomersOrdersPerMonth";
+	var $depends = array("commande");
 
 	var $db;
 
@@ -66,10 +66,10 @@ class box_graph_invoices_permonth extends ModeleBoxes
 
 		$refreshaction='refresh_'.$this->boxcode;
 
-		include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-		$facturestatic=new Facture($db);
+		include_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
+		$commandestatic=new Commande($db);
 
-		$text = $langs->trans("BoxCustomersInvoicesPerMonth",$max);
+		$text = $langs->trans("BoxCustomersOrdersPerMonth",$max);
 		$this->info_box_head = array(
 				'text' => $text,
 				'limit'=> dol_strlen($text),
@@ -80,13 +80,13 @@ class box_graph_invoices_permonth extends ModeleBoxes
 				'target'=>'none'
 		);
 
-		if ($user->rights->facture->lire)
+		if ($user->rights->commande->lire)
 		{
 			include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
-			include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facturestats.class.php';
+			include_once DOL_DOCUMENT_ROOT.'/commande/class/commandestats.class.php';
 
-			$shownb=(! empty($conf->global->FACTURE_BOX_GRAPH_SHOW_NB));
-			$showtot=(! isset($conf->global->FACTURE_BOX_GRAPH_SHOW_TOT) || ! empty($conf->global->FACTURE_BOX_GRAPH_SHOW_TOT));
+			$shownb=(! empty($conf->global->COMMANDE_BOX_GRAPH_SHOW_NB));
+			$showtot=(! isset($conf->global->COMMANDE_BOX_GRAPH_SHOW_TOT) || ! empty($conf->global->COMMANDE_BOX_GRAPH_SHOW_TOT));
 			$nowarray=dol_getdate(dol_now(),true);
 			$endyear=$nowarray['year'];
 			$startyear=$endyear-1;
@@ -95,16 +95,16 @@ class box_graph_invoices_permonth extends ModeleBoxes
 			$WIDTH='256';
 			$HEIGHT='192';
 
-			$stats = new FactureStats($this->db, 0, $mode, ($userid>0?$userid:0));
+			$stats = new CommandeStats($this->db, 0, $mode, ($userid>0?$userid:0));
 
 			// Build graphic number of object. $data = array(array('Lib',val1,val2,val3),...)
 			if ($shownb)
 			{
 				$data1 = $stats->getNbByMonthWithPrevYear($endyear,$startyear,(GETPOST('action')==$refreshaction?-1:(3600*24)));
 
-				$filenamenb = $dir."/invoicesnbinyear-".$year.".png";
-				if ($mode == 'customer') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=billstats&amp;file=invoicesnbinyear-'.$year.'.png';
-				if ($mode == 'supplier') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=billstatssupplier&amp;file=invoicesnbinyear-'.$year.'.png';
+				$filenamenb = $dir."/ordersnbinyear-".$year.".png";
+				if ($mode == 'customer') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&amp;file=ordersnbinyear-'.$year.'.png';
+				if ($mode == 'supplier') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstatssupplier&amp;file=ordersnbinyear-'.$year.'.png';
 
 				$px1 = new DolGraph();
 				$mesg = $px1->isGraphKo();
@@ -123,13 +123,13 @@ class box_graph_invoices_permonth extends ModeleBoxes
 					$px1->SetMaxValue($px1->GetCeilMaxValue());
 					$px1->SetWidth($WIDTH);
 					$px1->SetHeight($HEIGHT);
-					$px1->SetYLabel($langs->trans("NumberOfBills"));
+					$px1->SetYLabel($langs->trans("NumberOfOrders"));
 					$px1->SetShading(3);
 					$px1->SetHorizTickIncrement(1);
 					$px1->SetPrecisionY(0);
 					$px1->SetCssPrefix("cssboxes");
 					$px1->mode='depth';
-					$px1->SetTitle($langs->trans("NumberOfBillsByMonth"));
+					$px1->SetTitle($langs->trans("NumberOfOrdersByMonth"));
 
 					$px1->draw($filenamenb,$fileurlnb);
 				}
@@ -140,9 +140,9 @@ class box_graph_invoices_permonth extends ModeleBoxes
 			{
 				$data2 = $stats->getAmountByMonthWithPrevYear($endyear,$startyear,(GETPOST('action')==$refreshaction?-1:(3600*24)));
 
-				$filenamenb = $dir."/invoicesamountinyear-".$year.".png";
-				if ($mode == 'customer') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=billstats&amp;file=invoicesamountinyear-'.$year.'.png';
-				if ($mode == 'supplier') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=billstatssupplier&amp;file=invoicesamountinyear-'.$year.'.png';
+				$filenamenb = $dir."/ordersamountinyear-".$year.".png";
+				if ($mode == 'customer') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&amp;file=ordersamountinyear-'.$year.'.png';
+				if ($mode == 'supplier') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstatssupplier&amp;file=ordersamountinyear-'.$year.'.png';
 
 				$px2 = new DolGraph();
 				$mesg = $px2->isGraphKo();
@@ -161,13 +161,13 @@ class box_graph_invoices_permonth extends ModeleBoxes
 					$px2->SetMaxValue($px2->GetCeilMaxValue());
 					$px2->SetWidth($WIDTH);
 					$px2->SetHeight($HEIGHT);
-					$px2->SetYLabel($langs->trans("AmountOfBillsHT"));
+					$px2->SetYLabel($langs->trans("AmountOfOrdersHT"));
 					$px2->SetShading(3);
 					$px2->SetHorizTickIncrement(1);
 					$px2->SetPrecisionY(0);
 					$px2->SetCssPrefix("cssboxes");
 					$px2->mode='depth';
-					$px2->SetTitle($langs->trans("AmountOfBillsByMonthHT"));
+					$px2->SetTitle($langs->trans("AmountOfOrdersByMonthHT"));
 
 					$px2->draw($filenamenb,$fileurlnb);
 				}

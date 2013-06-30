@@ -2811,9 +2811,9 @@ function get_localtax($tva, $local, $thirdparty_buyer="", $thirdparty_seller="")
 			}
 		}
 
-		if ($local == 2) 
+		if ($local == 2)
 		{
-			
+
 			if ($thirdparty_seller->id==$mysoc->id)
 			{
 				if (! $thirdparty_buyer->localtax2_assuj) return 0;

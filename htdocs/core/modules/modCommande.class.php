@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2005	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2004-2008	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2013	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2004		Sebastien Di Cintio		<sdicintio@ressource-toi.org>
  * Copyright (C) 2004		Benoit Mortier			<benoit.mortier@opensides.be>
  * Copyright (C) 2004		Eric Seigne				<eric.seigne@ryxeo.com>
@@ -99,7 +99,7 @@ class modCommande extends DolibarrModules
 
 		// Boites
 		$this->boxes = array();
-		$this->boxes[0][1] = "box_commandes.php";
+		$this->boxes = array(0=>array('file'=>'box_commandes.php','enabledbydefaulton'=>'Home'),2=>array('file'=>'box_graph_orders_permonth.php','enabledbydefaulton'=>'Home'));
 
 		// Permissions
 		$this->rights = array();
