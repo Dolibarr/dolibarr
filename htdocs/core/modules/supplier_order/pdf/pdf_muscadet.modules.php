@@ -1000,9 +1000,10 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 			$pdf->SetXY($posx+2,$posy+3);
 			$pdf->SetFont('','B', $default_font_size);
 			$pdf->MultiCell(80, 4, $outputlangs->convToOutputCharset($this->emetteur->name), 0, 'L');
+			$posy=$pdf->getY();
 
 			// Show sender information
-			$pdf->SetXY($posx+2,$posy+4+(dol_nboflines_bis($this->emetteur->name,44)*4));
+			$pdf->SetXY($posx+2,$posy);
 			$pdf->SetFont('','', $default_font_size - 1);
 			$pdf->MultiCell(80, 4, $carac_emetteur, 0, 'L');
 

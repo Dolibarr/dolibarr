@@ -565,7 +565,7 @@ class pdf_expedition_rouget extends ModelePdfExpedition
 			$posx=$this->marge_gauche;
 			$posy=42;
 			$hautcadre=40;
-			if (! empty($conf->global->MAIN_INVERT_SENDER_RECIPIENT)) $posx=$this->page_largeur - 80 - $this->marge_droite;
+			if (! empty($conf->global->MAIN_INVERT_SENDER_RECIPIENT)) $posx=$this->page_largeur-$this->marge_droite-80;
 
 			// Show sender frame
 			$pdf->SetTextColor(0,0,0);
@@ -581,10 +581,11 @@ class pdf_expedition_rouget extends ModelePdfExpedition
 			$pdf->SetTextColor(0,0,60);
 			$pdf->SetFont('','B',$default_font_size);
 			$pdf->MultiCell(80, 3, $outputlangs->convToOutputCharset($this->emetteur->name), 0, 'L');
+			$posy=$pdf->getY();
 
 			// Show sender information
 			$pdf->SetFont('','', $default_font_size - 1);
-			$pdf->SetXY($posx+2,$posy+8);
+			$pdf->SetXY($posx+2,$posy);
 			$pdf->MultiCell(80, 4, $carac_emetteur, 0, 'L');
 
 
