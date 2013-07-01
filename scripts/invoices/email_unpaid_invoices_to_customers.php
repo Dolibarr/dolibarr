@@ -82,7 +82,7 @@ $sql.= " s.rowid as sid, s.nom as name, s.email, s.default_lang";
 if ($targettype == 'contacts') $sql.= ", sp.rowid as cid, sp.firstname as cfirstname, sp.lastname as clastname, sp.email as cemail";
 $sql.= " FROM ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."societe as s";
 if ($targettype == 'contacts') $sql.= ", ".MAIN_DB_PREFIX."socpeople as sp";
-$sql.= " WHERE f.fk_statut != 0 AND f.paye = 0";
+$sql.= " WHERE f.fk_statut = 1 AND f.paye = 0";
 $sql.= " AND f.fk_soc = s.rowid";
 if (is_numeric($duration_value2)) $sql.= " AND f.date_lim_reglement >= '".$db->idate(dol_time_plus_duree($now, $duration_value2, "d"))."'";
 if (is_numeric($duration_value)) $sql.= " AND f.date_lim_reglement < '".$db->idate(dol_time_plus_duree($now, $duration_value, "d"))."'";
