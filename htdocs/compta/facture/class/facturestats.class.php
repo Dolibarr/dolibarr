@@ -91,6 +91,8 @@ class FactureStats extends Stats
 	 */
 	function getNbByMonth($year)
 	{
+		global $user;
+
 		$sql = "SELECT MONTH(f.datef) as dm, COUNT(*)";
 		$sql.= " FROM ".$this->from;
 		if (!$user->rights->societe->client->voir && !$this->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -112,6 +114,8 @@ class FactureStats extends Stats
 	 */
 	function getNbByYear()
 	{
+		global $user;
+
 		$sql = "SELECT YEAR(f.datef) as dm, COUNT(*)";
 		$sql.= " FROM ".$this->from;
 		if (!$user->rights->societe->client->voir && !$this->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -131,6 +135,8 @@ class FactureStats extends Stats
 	 */
 	function getAmountByMonth($year)
 	{
+		global $user;
+
 		$sql = "SELECT date_format(datef,'%m') as dm, SUM(f.".$this->field.")";
 		$sql.= " FROM ".$this->from;
 		if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -152,6 +158,8 @@ class FactureStats extends Stats
 	 */
 	function getAverageByMonth($year)
 	{
+		global $user;
+
 		$sql = "SELECT date_format(datef,'%m') as dm, AVG(f.".$this->field.")";
 		$sql.= " FROM ".$this->from;
 		if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -170,6 +178,8 @@ class FactureStats extends Stats
 	 */
 	function getAllByYear()
 	{
+		global $user;
+
 		$sql = "SELECT date_format(datef,'%Y') as year, COUNT(*) as nb, SUM(f.".$this->field.") as total, AVG(f.".$this->field.") as avg";
 		$sql.= " FROM ".$this->from;
 		if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
