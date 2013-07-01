@@ -1,4 +1,4 @@
-# Dolibarr language file - Source file is en_US - projects
+# Dolibarr language file - tr_TR - projects
 CHARSET=UTF-8
 Project=Proje
 Projects=Projeler
@@ -11,7 +11,7 @@ MyTasksDesc=Bu görünüm ilgilisi olduğunuz projelerle ya da görevlerle sın�
 TasksPublicDesc=Bu görünüm okuma izininiz olan tüm projeleri ve görevleri içerir.
 TasksDesc=Bu görünüm tüm projeleri ve görevleri içerir (size verilen kullanıcı izinleri her şeyi görmenizi sağlar).
 Myprojects=Projelerim
-ProjectsArea=Projeler alanı
+ProjectsArea=Proje alanı
 NewProject=Yeni proje
 AddProject=Proje ekle
 DeleteAProject=Bir proje sil
@@ -33,7 +33,7 @@ RefTask=Görev ref.
 LabelTask=Görev etiketi
 NewTimeSpent=Yeni harcanan süre
 MyTimeSpent=Harcadığım sürelerim
-MyTasks=Grevlerim
+MyTasks=Görevlerim
 Tasks=Görevler
 Task=Görev
 NewTask=Yeni görev
@@ -94,7 +94,7 @@ ConfirmCloneProject=Bu projeyi klonlamak istediğinizden emin misiniz?
 ProjectReportDate=Görevi proje başlama tarihine göre değiştir
 ErrorShiftTaskDate=Görev tarihini yeni proje başlama tarihine göre kaydırmak olası değil
 ProjectsAndTasksLines=Projeler ve görevler
-##### Types de contacts #####
+##### Tkişi türleri #####
 TypeContact_project_internal_PROJECTLEADER=Proje önderi
 TypeContact_project_external_PROJECTLEADER=Proje önderi
 TypeContact_project_internal_CONTRIBUTOR=Katılımcı
@@ -103,7 +103,7 @@ TypeContact_project_task_internal_TASKEXECUTIVE=Görev yöneticisi
 TypeContact_project_task_external_TASKEXECUTIVE=Görev yöneticisi
 TypeContact_project_task_internal_CONTRIBUTOR=Katılımcı
 TypeContact_project_task_external_CONTRIBUTOR=Katılımcı
-# Documents models
+# Belge modelleri
 DocumentModelBaleine=Eksiksiz bir proje rapor modeli (logo. ..)
-# PlannedWorkload = Planned workload
-# WorkloadOccupation= Workload affectation
+PlannedWorkload =Planlanan işyükü
+WorkloadOccupation=İşyükü etkilemesi

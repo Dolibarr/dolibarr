@@ -1,4 +1,4 @@
-# Dolibarr language file - Source file is en_US - propal
+# Dolibarr language file - tr_TR - propal
 CHARSET=UTF-8
 Proposals=Teklifler
 Proposal=Teklif
@@ -15,8 +15,8 @@ NewProposal=Yeni teklif
 NewPropal=Yeni teklif
 Prospect=Aday
 ProspectList=Aday listesi
-DeleteProp=Ticari teklif sil
-ValidateProp=Ticari teklif doğrula
+DeleteProp=Teklif sil
+ValidateProp=Teklif doğrula
 AddProp=Teklif ekle
 ConfirmDeleteProp=Bu teklifi silmek istediğinizden emin misiniz?
 ConfirmValidateProp=Bu teklifi doğrulamak istediğinizden emin misiniz?
@@ -38,7 +38,7 @@ PropalStatusDraft=Taslak (doğrulama gerektiriyor)
 PropalStatusValidated=Onaylı (teklif açık)
 PropalStatusOpened=Onaylı (teklif açık)
 PropalStatusClosed=Kapalı
-PropalStatusSigned=İmzalanmış(faturalanması gerekiyor)
+PropalStatusSigned=İmzalanmış (faturalanması gerekiyor)
 PropalStatusNotSigned=İmzalanmamış (kapalı)
 PropalStatusBilled=Faturalanmış
 PropalStatusDraftShort=Taslak
@@ -49,8 +49,8 @@ PropalStatusSignedShort=İmzalı
 PropalStatusNotSignedShort=İmzalanmamış
 PropalStatusBilledShort=Faturalanmış
 PropalsToClose=Kapatılacak teklifler
-PropalsToBill=Faturalandırılacak imzalı teklifler
-ListOfProposals=Ticari teklif listesi
+PropalsToBill=Faturalanalacak imzalı teklifler
+ListOfProposals=Teklif listesi
 ActionsOnPropal=Tekliler için yapılan eylemler
 NoOpenedPropals=Açık teklif yok
 NoOtherOpenedPropals=Başka hiçbir açık teklif yok
@@ -75,7 +75,7 @@ CopyPropalFrom=Varolan teklifi kopyalayarak teklif oluştur
 CreateEmptyPropal=Boş teklif oluştur veya ürünler/hizmetler listesinden oluştur
 DefaultProposalDurationValidity=Varsayılan teklif geçerlilik süresi (gün olarak)
 UseCustomerContactAsPropalRecipientIfExist=Teklif alıcısı olarak üçüncü parti yerine, eğer tanımlanmışsa, kişi adresini kullan
-ClonePropal=Teklif kopyala
+ClonePropal=Teklif klonla
 ConfirmClonePropal=Bu teklifi <b>%s</b> klonlamak istediğinizden emin misiniz?
 ConfirmReOpenProp=Bu teklifi <b>%s</b> yeniden açmak istediğinizden emin misiniz?
 ProposalsAndProposalsLines=Teklif ve satırları
@@ -83,19 +83,19 @@ ProposalLine=Teklif satırı
 AvailabilityPeriod=Kabul edilebilir süre
 SetAvailability=Kabul edilebilir süreyi ayarla
 AfterOrder=siparişten sonra
-##### Availability #####
+##### Uygunluk #####
 AvailabilityTypeAV_NOW=İvedi
 AvailabilityTypeAV_1W=1 hafta
 AvailabilityTypeAV_2W=2 hafta
 AvailabilityTypeAV_3W=3 hafta
 AvailabilityTypeAV_1M=1 ay
-##### Types de contacts #####
+##### Kişi türleri #####
 TypeContact_propal_internal_SALESREPFOLL=Teklif izleme temsilcisi
 TypeContact_propal_external_BILLING=Müşteri faturası ilgilisi
 TypeContact_propal_external_CUSTOMER=Müşteri teklif izleme ilgilisi
-# Document models
+# Belge modelleri
 DocModelAzurDescription=Eksiksiz bir teklif modeli (logo. ..)
 DocModelJauneDescription=Jaune teklif modeli
-# DefaultModelPropalCreate=Default model creation
-# DefaultModelPropalToBill=Default template when closing a business proposal (to be invoiced)
-# DefaultModelPropalClosed=Default template when closing a business proposal (unbilled)
+DefaultModelPropalCreate=Varsayılan model oluşturma
+DefaultModelPropalToBill=Bir teklif kapatılırkenki varsayılan şablon (faturalanmak üzere)
+DefaultModelPropalClosed=Bir teklif kapatılırkenki varsayılan şablon (faturalanmamış)

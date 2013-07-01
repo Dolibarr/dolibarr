@@ -1,4 +1,4 @@
-# Dolibarr language file - Source file is en_US - sendings
+# Dolibarr language file - tr_TR - sendings
 CHARSET=UTF-8
 RefSending=Sevkiyat ref.
 Sending=Sevkiyat
@@ -59,14 +59,14 @@ LinkToTrackYourPackage=Paketinizi izleyeceğiniz bağlantı
 ShipmentCreationIsDoneFromOrder=Şu an için, yeni bir sevkiyat yaratılması amacıyla kart oluşturulur.
 RelatedShippings=İlgili sevkiyatlar
 ShipmentLine=Sevkiyat kalemi
-# CarrierList=List of transporters
+CarrierList=Taşımacı listesi
 
-# Sending methods
+# Gönderme yöntemleri
 SendingMethodCATCH=Müşteri tarafından
 SendingMethodTRANS=Nakliyeci tarafından
 SendingMethodCOLSUI=Colissimo
 
-# ModelDocument
+# Belge modeli
 DocumentModelSirocco=Teslimat makbuzları için basit belge modeli
 DocumentModelTyphon=Teslimat makbuzları için daha fazla eksiksiz doküman modeli (logo. ..)
 
