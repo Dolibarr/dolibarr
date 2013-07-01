@@ -1,8 +1,8 @@
 #!/usr/bin/php
 <?php
-/* Copyright (C) 2012 Nicolas Villa aka Boyquotes http://informetic.fr
- * Copyright (C) 2013 Florian Henry <forian.henry@open-concept.pro
- * Copyright (C) 2013 Laurent Destailleur <eldy@users.sourceforge.net>
+/* Copyright (C) 2012   Nicolas Villa aka Boyquotes http://informetic.fr
+ * Copyright (C) 2013   Florian Henry <forian.henry@open-concept.pro
+ * Copyright (C) 2013   Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

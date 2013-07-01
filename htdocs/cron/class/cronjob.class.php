@@ -65,7 +65,7 @@ class Cronjob extends CommonObject
 	var $fk_user_mod;
 	var $note;
 	var $nbrun;
-    var $libname;
+	var $libname;
 	var $lines;
 
 
@@ -114,7 +114,7 @@ class Cronjob extends CommonObject
 		if (isset($this->status)) $this->status=trim($this->status);
 		if (isset($this->note)) $this->note=trim($this->note);
 		if (isset($this->nbrun)) $this->nbrun=trim($this->nbrun);
-        if (isset($this->libname)) $this->libname = trim($this->libname);
+		if (isset($this->libname)) $this->libname = trim($this->libname);
 
 		// Check parameters
 		// Put here code to add a control on parameters values
@@ -150,11 +150,11 @@ class Cronjob extends CommonObject
 			$this->errors[]=$langs->trans('CronFieldMandatory',$langs->trans('CronObject'));
 			$error++;
 		}
-        
-        if (($this->jobtype=='function') && (empty($this->libname))) {
-            $this->errors[]=$langs->trans('CronFieldMandatory',$langs->trans('CronLib'));
-            $error++;
-        }
+
+		if (($this->jobtype=='function') && (empty($this->libname))) {
+			$this->errors[]=$langs->trans('CronFieldMandatory',$langs->trans('CronLib'));
+			$error++;
+		}
 
         // Insert request
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."cronjob(";
@@ -184,10 +184,10 @@ class Cronjob extends CommonObject
 		$sql.= "fk_user_mod,";
 		$sql.= "note,";
 		$sql.= "nbrun";
-        $sql .= ",libname";
+		$sql .= ",libname";
 
 
-        $sql.= ") VALUES (";
+		$sql.= ") VALUES (";
 
 		$sql.= " ".$this->db->idate(dol_now()).",";
 		$sql.= " ".(! isset($this->jobtype)?'NULL':"'".$this->db->escape($this->jobtype)."'").",";
@@ -214,7 +214,7 @@ class Cronjob extends CommonObject
 		$sql.= " ".$user->id.",";
 		$sql.= " ".(! isset($this->note)?'NULL':"'".$this->db->escape($this->note)."'").",";
 		$sql.= " ".(! isset($this->nbrun)?'0':"'".$this->db->escape($this->nbrun)."'").",";
-        $sql.= " ".(! isset($this->libname)?'NULL':"'".$this->db->escape($this->libname)."'")."";
+		$sql.= " ".(! isset($this->libname)?'NULL':"'".$this->db->escape($this->libname)."'")."";
 
 
 		$sql.= ")";
@@ -301,7 +301,7 @@ class Cronjob extends CommonObject
 		$sql.= " t.fk_user_mod,";
 		$sql.= " t.note,";
 		$sql.= " t.nbrun";
-        $sql .= ", t.libname";
+		$sql .= ", t.libname";
 
 
         $sql.= " FROM ".MAIN_DB_PREFIX."cronjob as t";
@@ -344,7 +344,7 @@ class Cronjob extends CommonObject
 				$this->fk_user_mod = $obj->fk_user_mod;
 				$this->note = $obj->note;
 				$this->nbrun = $obj->nbrun;
-                $this->libname = $obj->libname;
+				$this->libname = $obj->libname;
 
             }
             $this->db->free($resql);
@@ -401,7 +401,7 @@ class Cronjob extends CommonObject
     	$sql.= " t.fk_user_mod,";
     	$sql.= " t.note,";
     	$sql.= " t.nbrun";
-        $sql .= ", t.libname";
+    	$sql .= ", t.libname";
 
     	$sql.= " FROM ".MAIN_DB_PREFIX."cronjob as t";
     	$sql.= " WHERE 1 = 1";
@@ -474,7 +474,7 @@ class Cronjob extends CommonObject
 	    			$line->fk_user_mod = $obj->fk_user_mod;
 	    			$line->note = $obj->note;
 	    			$line->nbrun = $obj->nbrun;
-                    $line->libname = $obj->libname;
+        			$line->libname = $obj->libname;
 	    			$this->lines[]=$line;
 
 	    			$i++;
@@ -568,10 +568,10 @@ class Cronjob extends CommonObject
 			$error++;
 		}
 
-        if (($this->jobtype=='function') && (empty($this->libname))) {
-            $this->errors[]=$langs->trans('CronFieldMandatory',$langs->trans('CronLib'));
-            $error++;
-        }
+		if (($this->jobtype=='function') && (empty($this->libname))) {
+			$this->errors[]=$langs->trans('CronFieldMandatory',$langs->trans('CronLib'));
+			$error++;
+		}
 
 
         // Update request
@@ -600,7 +600,7 @@ class Cronjob extends CommonObject
 		$sql.= " fk_user_mod=".$user->id.",";
 		$sql.= " note=".(isset($this->note)?"'".$this->db->escape($this->note)."'":"null").",";
 		$sql.= " nbrun=".(isset($this->nbrun)?$this->nbrun:"null");
-        $sql.= ", libname=".(isset($this->libname)?"'".$this->db->escape($this->libname)."'":"null");
+		$sql.= ", libname=".(isset($this->libname)?"'".$this->db->escape($this->libname)."'":"null");
 
 
         $sql.= " WHERE rowid=".$this->id;
@@ -959,47 +959,47 @@ class Cronjob extends CommonObject
 
 		}
 
-        if($this->jobtype == 'function')
-        {
-            //load lib
-            $libpath = '/' . strtolower($this->module_name) . '/lib/' . $this->libname;
-            $ret = dol_include_once($libpath);
-            if ($ret === false)
-            {
-                $this->error = $langs->trans('CronCannotLoadLib') . ': ' . $libpath;
-                dol_syslog(get_class($this) . "::run_jobs " . $this->error, LOG_ERR);
-                return -1;
-            }
-            // Load langs
-            $result=$langs->load($this->module_name . '@' . $this->module_name);
-            if ($result<0)
-            {
-                dol_syslog(get_class($this) . "::run_jobs Cannot load module langs" . $langs->error, LOG_ERR);
-                return -1;
-            }
-            dol_syslog(get_class($this) . "::run_jobs " . $this->libname . "::" . $this->methodename."(" . $this->params . ");", LOG_DEBUG);
-            $params_arr = array();
-            $params_arr = explode(", ", $this->params);
-            if (!is_array($params_arr))
-            {
-                $result = call_user_func($this->methodename, $this->params);
-            }
-            else
-            {
-                $result = call_user_func_array($this->methodename, $params_arr);
-            }
+		if($this->jobtype == 'function')
+		{
+			//load lib
+			$libpath = '/' . strtolower($this->module_name) . '/lib/' . $this->libname;
+			$ret = dol_include_once($libpath);
+			if ($ret === false)
+			{
+				$this->error = $langs->trans('CronCannotLoadLib') . ': ' . $libpath;
+				dol_syslog(get_class($this) . "::run_jobs " . $this->error, LOG_ERR);
+				return -1;
+			}
+			// Load langs
+			$result=$langs->load($this->module_name . '@' . $this->module_name);
+			if ($result<0)
+			{
+				dol_syslog(get_class($this) . "::run_jobs Cannot load module langs" . $langs->error, LOG_ERR);
+				return -1;
+			}
+			dol_syslog(get_class($this) . "::run_jobs " . $this->libname . "::" . $this->methodename."(" . $this->params . ");", LOG_DEBUG);
+			$params_arr = array();
+			$params_arr = explode(", ", $this->params);
+			if (!is_array($params_arr))
+			{
+				$result = call_user_func($this->methodename, $this->params);
+			}
+			else
+			{
+				$result = call_user_func_array($this->methodename, $params_arr);
+			}
 
-            if ($result === false)
-            {
-                dol_syslog(get_class($this) . "::run_jobs " . $object->error, LOG_ERR);
-                return -1;
-            }
-            else
-            {
+			if ($result === false)
+			{
+				dol_syslog(get_class($this) . "::run_jobs " . $object->error, LOG_ERR);
+				return -1;
+			}
+			else
+			{
                 $this->lastoutput=var_export($result,true);
                 $this->lastresult=var_export($result,true);
-            }
-        }
+			}
+		}
 
 		// Run a command line
 		if ($this->jobtype=='command')
@@ -1150,7 +1150,7 @@ class Cronjobline
 	var $fk_user_mod;
 	var $note;
 	var $nbrun;
-    var $libname;
+	var $libname;
 
 	/**
 	 *  Constructor
