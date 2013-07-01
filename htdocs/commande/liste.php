@@ -272,7 +272,7 @@ if ($resql)
 	if (! empty($moreforfilter))
 	{
 	    print '<tr class="liste_titre">';
-	    print '<td class="liste_titre" colspan="8">';
+	    print '<td class="liste_titre" colspan="9">';
 	    print $moreforfilter;
 	    print '</td></tr>';
 	}
@@ -284,6 +284,7 @@ if ($resql)
 	print_liste_field_titre($langs->trans('OrderDate'),$_SERVER["PHP_SELF"],'c.date_commande','',$param, 'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans('DeliveryDate'),$_SERVER["PHP_SELF"],'c.date_livraison','',$param, 'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans('AmountHT'),$_SERVER["PHP_SELF"],'c.total_ht','',$param, 'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre ($langs->trans('Facture HT'));
 	print_liste_field_titre($langs->trans('Status'),$_SERVER["PHP_SELF"],'c.fk_statut','',$param,'align="center"',$sortfield,$sortorder);
 	
 	print '<td colspan="1">';
@@ -386,6 +387,21 @@ if ($resql)
 
 		
 		print '<td align="right">'.price($objp->total_ht)."</td>\n";
+		
+		//facture
+		
+		$total_facture=0;
+		$obj->total_ht=0;
+		$somethingshown=$generic_commande->showLinkedObject();
+		$linkedObject = $GLOBALS['linkedObject'];
+		
+		foreach($linkedObject as $obj)
+		{
+			$total_facture = $total_facture + $obj->total_ht;
+		}
+		
+		print '<td align="center">'.price($total_facture)."</td>\n";
+		
 		// Statut
 		print '<td align="right" nowrap="nowrap">'.$generic_commande->LibStatut($objp->fk_statut,$objp->facturee,5).'</td>';
 
