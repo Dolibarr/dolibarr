@@ -1,4 +1,4 @@
-# Dolibarr language file - Source file is en_US - users
+## Dolibarr language file - tr_TR - users
 CHARSET=UTF-8
 UserCard=Kullanıcı kartı
 ContactCard=Kişi kartı
@@ -114,6 +114,6 @@ YourRole=Sizin rolünüz
 YourQuotaOfUsersIsReached=Aktif kullanıcı kotanıza ulaşıldı!
 NbOfUsers=Kullanıcı sayısı
 DontDowngradeSuperAdmin=Yalnızca bir SuperAdmin, bir SuperAdmin’inin derecesini düşürebilir
-# HierarchicalResponsible=Hierarchical responsible
-# HierarchicView=Hierarchical view
-# UseTypeFieldToChange=Use field Type to change
+HierarchicalResponsible=Sıradüzeni sorumlusu
+HierarchicView=Sıradüzeni görünümü
+UseTypeFieldToChange=Değiştirmek için Tür alanı seç

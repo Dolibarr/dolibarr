@@ -1,11 +1,4 @@
-/*
- * Language code: tr_TR
- * Manually generated
- * Generation date 2012-07-23 23:40:49
- */
-
-// START - Lines generated manually (2012-07-23 23:40:49).
-// Reference language: en_US -> tr_TR - paypal
+# Dolibarr language file - tr_TR - paypal
 CHARSET=UTF-8
 PaypalSetup=PayPal modülü kurulumu
 PaypalDesc=Bu modül  <a href="http://www.paypal.com" target="_blank">PayPal</a> üzerinden müşteriler tarafından ödeme yapılmasını sağlar. Bu bir ücretsiz ödeme veya belirli bir Dolibarr nesnesine (fatura, siparş,…) bir ödeme yapmak için kullanılabilir 
@@ -19,7 +12,9 @@ PAYPAL_API_SIGNATURE=API imzası
 PAYPAL_API_INTEGRAL_OR_PAYPALONLY="Dahili" (kredi kartı+paypal) ya da sadece "Paypal" ödemesi sunar
 PAYPAL_CSS_URL=Ödeme sayfasında CSS stili çizelgesinin isteğe bağlı URL si URL
 ThisIsTransactionId=Bu işlem kimliğidir: <b>%s</b> 
+PAYPAL_CSS_URL=Ödeme sayfasında CSS sayfa stili URL seçeneği
+ThisIsTransactionId=Bu işlem kimliğidir: <b>%s</b>
 PAYPAL_ADD_PAYMENT_URL=Posta yoluyla bir belge gönderdiğinizde, Paypal ödeme url'sini ekleyin
 PAYPAL_IPN_MAIL_ADDRESS=Anında ödeme bildirimi için e-posta adresi (NPI)
 PredefinedMailContentLink=Ödemenizi via PayPal\n\n%s\n\n ile yapmak için aşağıdaki güvenli bağlantıya tıklayabilirsiniz
-YouAreCurrentlyInSandboxMode="Sandbox" geçerli biçimindesiniz
+YouAreCurrentlyInSandboxMode=Şu anda "Sandbox" modundasınız
