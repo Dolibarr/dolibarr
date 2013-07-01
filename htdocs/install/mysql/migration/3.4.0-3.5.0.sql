@@ -68,6 +68,7 @@ DROP table llx_adherent_options_label;
 
 ALTER TABLE llx_user ADD accountancy_code VARCHAR( 24 ) NULL;
 
+DELETE FROM llx_boxes where box_id IN (SELECT rowid FROM llx_boxes_def where file='box_activity.php' AND note IS NULL);
 DELETE FROM llx_boxes_def where file='box_activity.php' AND note IS NULL;
   
 
