@@ -10,7 +10,7 @@
 # Syntax
 if [ "x$1" = "x" ]
 then
-	echo "Usage: txpush.sh (all|xx_XX) [-r dolibarr.file]"
+	echo "Usage: txpush.sh (source|all|xx_XX) [-r dolibarr.file]"
 	exit
 fi
 
@@ -23,7 +23,12 @@ then
 		tx push -t -l $fic $2 $3
 	done
 else
+if [ "x$1" = "xsource" ]
+then
+	echo "tx push -s $2 $3"
+	tx push -s $2 $3 
+else
 	echo "tx push -t -l $1 $2 $3"
 	tx push -t -l $1 $2 $3
 fi
-
+fi
