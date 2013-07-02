@@ -298,11 +298,11 @@ if ($resql)
 	print '</td><td class="liste_titre" align="left">';
 	print '<input class="flat" type="text" size="10" name="sref_client" value="'.$sref_client.'">';
 	print '<td colspan ="2">';
-	print '</td><td class="liste_titre" align="right">';
+	print '</td><td class="liste_titre" align="left">';
 	print '<input class="flat"  type="text" size="10" name="search_montant_ht" value="'.$search_montant_ht.'">';
-	print '</td><td class="liste_titre">';
-	print '<input type="image" class="liste_titre" name="button_search" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png"  value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
-	print '<td colspan="1">';
+	print '</td><td class="liste_titre" colspan="2">';
+	print '<input type="image" align="right" class="liste_titre" name="button_search" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png"  value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+	print '<td colspan="2">';
 	print '</td></tr>';
 
 	$var=true;
@@ -391,16 +391,20 @@ if ($resql)
 		//facture
 		
 		$total_facture=0;
-		$obj->total_ht=0;
 		$somethingshown=$generic_commande->showLinkedObject();
 		$linkedObject = $GLOBALS['linkedObject'];
 		
-		foreach($linkedObject as $obj)
-		{
-			$total_facture = $total_facture + $obj->total_ht;
-		}
 		
-		print '<td align="center">'.price($total_facture)."</td>\n";
+			foreach($linkedObject as $obj)
+			{
+				
+					$total_facture = $total_facture + $obj->total_ht;
+				
+			}
+			$obj->total_ht=0;
+		
+		
+		print '<td align="right">'.price($total_facture)."</td>\n";
 		
 		// Statut
 		print '<td align="right" nowrap="nowrap">'.$generic_commande->LibStatut($objp->fk_statut,$objp->facturee,5).'</td>';
@@ -410,9 +414,27 @@ if ($resql)
 		print '</tr>';
 
 		$total+=$objp->total_ht;
-		$subtotal+=$objp->total_ht;
+		$subtotal+=$total_facture;
 		$i++;
 	}
+	if($num >= $limit)
+	{
+		
+		print '<tr class="liste_total">';
+		print '<td colspan="5" align="left">'.$langs->trans("Total for this page").'</td>';
+		print '<td align="right"><b>'.price($total).''.getCurrencySymbol($conf->currency).'</b></td>';
+		print '<td align="right"><b>'.price($subtotal).''.getCurrencySymbol($conf->currency).'</b></td>';
+		print '<td colspan="2">';
+	}
+	else
+	{
+		print '<tr class="liste_total">';
+		print '<td colspan="5" align="left">'.$langs->trans("Total").'</td>';
+		print '<td align="right"><b>'.price($total).''.getCurrencySymbol($conf->currency).'</b></td>';
+		print '<td align="right"><b>'.price($subtotal).''.getCurrencySymbol($conf->currency).'</b></td>';
+		print '<td colspan="2">';
+	}
+		
 	print '</table>';
 
 	print '</form>';
