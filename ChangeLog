@@ -39,6 +39,9 @@ For developers:
 - New: Upgrade lib of TCPDF to 6.0
 - New: Add property "hidden" into module descriptors to allow to hide a module according to
   some dynamic conditions.
+- New: Add option MAIN_MOTD_SETUPPAGE to add a content onto setup page. Also content for
+  MAIN_MOTD_SETUPPAGE, MAIN_MOTD_SETUPPAGE, MAIN_HOME now accept "|langfile" into translation
+  key to use a specific language file.
  
 
 ***** ChangeLog for 3.4 compared to 3.3.2 *****

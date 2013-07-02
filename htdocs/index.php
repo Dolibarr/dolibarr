@@ -61,6 +61,15 @@ if (! empty($conf->global->MAIN_MOTD))
     $conf->global->MAIN_MOTD=preg_replace('/<br(\s[\sa-zA-Z_="]*)?\/?>/i','<br>',$conf->global->MAIN_MOTD);
     if (! empty($conf->global->MAIN_MOTD))
     {
+    	$i=0;
+    	while (preg_match('/__\(([a-zA-Z|@]+)\)__/i',$conf->global->MAIN_MOTD,$reg) && $i < 100)
+    	{
+    		$tmp=explode('|',$reg[1]);
+    		if (! empty($tmp[1])) $langs->load($tmp[1]);
+    		$conf->global->MAIN_MOTD=preg_replace('/__\('.preg_quote($reg[1]).'\)__/i',$langs->trans($tmp[0]),$conf->global->MAIN_MOTD);
+    		$i++;
+    	}
+
         print "\n<!-- Start of welcome text -->\n";
         print '<table width="100%" class="notopnoleftnoright"><tr><td>';
         print dol_htmlentitiesbr($conf->global->MAIN_MOTD);
