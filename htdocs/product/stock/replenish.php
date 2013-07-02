@@ -461,8 +461,7 @@ if ($resql) {
             $warning='';
             if ($objp->seuil_stock_alerte
                 && ($stock < $objp->seuil_stock_alerte)) {
-                    $warn = $langs->trans('StockTooLow');
-                    $warning = img_warning($warn) . ' ';
+                    $warning = img_warning($langs->trans('StockTooLow')) . ' ';
             }
             //depending on conf, use either physical stock or
             //virtual stock to compute the stock to buy value
