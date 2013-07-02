@@ -957,7 +957,7 @@ a.tabTitle img {
 }
 
 a.tab {
-	padding: 5px 12px 5px;
+	padding: 5px 12px 2px;
 	margin: 0em 0.2em;
 	background-color:rgba(0,0,0,.2);
 	color:#666666;
