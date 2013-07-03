@@ -97,6 +97,7 @@ print "</table>\n";
 $langs->load("commercial");
 $langs->load("bills");
 $langs->load("orders");
+$langs->load("contracts");
 
 if ($user->societe_id == 0)
 {
