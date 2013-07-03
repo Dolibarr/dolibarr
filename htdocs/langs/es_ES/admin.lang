@@ -1,1435 +1,1435 @@
 # Dolibarr language file - es_ES - admin
-CHARSETUTF-8
-VersionVersión
-VersionProgramVersión programa
-VersionLastInstallVersión instalación inicial
-VersionLastUpgradeVersión última actualización
-VersionExperimentalExperimental
-VersionDevelopmentDesarrollo
-VersionUnknownDesconocida
-VersionRecommandedRecomendada
-SessionIdSesión ID
-SessionSaveHandlerModalidad de salvaguardado de sesiones
-SessionSavePathLocalización salvaguardado de sesiones
-PurgeSessionsPurga de sesiones
-ConfirmPurgeSessions¿Quiere purgar las sesiones? Esto desconectará a todos los usuarios (salvo a usted mismo).
-NoSessionListWithThisHandlerEl gestor de período de sesiones configurado en su PHP no enumera las sesiones en curso
-LockNewSessionsBloquear conexiones nuevas
-ConfirmLockNewSessions¿Está seguro de querer restringir el acceso a Dolibarr a su usuario? Solamente el login <b>%s</b> podrá conectarse si confirma.
-UnlockNewSessionsEliminar bloqueo de conexiones
-YourSessionSu sesión
-SessionsSesiones de usuarios
-WebUserGroupServidor web usuario/grupo
-NoSessionFoundParece que su PHP no puede listar las sesiones activas. El directorio de salvaguardado de sesiones (<b>%s</b>) puede estar protegido (por ejemplo, por los permisos del sistema operativo o por la directiva open_basedir de su PHP).
-HTMLCharsetCharset de las páginas HTML
-DBStoringCharsetCharset base de datos para almacenamiento de datos
-DBSortingCharsetCharset base de datos para clasificar los datos
-WarningModuleNotActiveMódulo <b>%s</b> no activo
-WarningOnlyPermissionOfActivatedModulesAtención, solamente los permisos relacionados con los módulos activados se indican aquí. Puede activar los otros módulos en la página Configuración->Módulos
-DolibarrSetupInstalación/Actualización de Dolibarr
-DolibarrUserUsuario Dolibarr
-InternalUserUsuario interno
-ExternalUserUsuario externo
-InternalUsersUsuarios internos
-ExternalUsersUsuarios externos
-GlobalSetupGeneral
-GUISetupEntorno
-SetupAreaÁrea configuración
-FormToTestFileUploadFormFormulario de prueba de subida de archivo (según opciones elegidas)
-IfModuleEnabledNota: sólo es eficaz si el módulo <b>%s</b> está activado
-RemoveLockElimine el archivo <b>%s</b>, si existe, para permitir la utilidad de actualización.
-RestoreLockSustituir un archivo <b>%s</b>, dándole sólo derechos de lectura a este archivo con el fin de prohibir nuevas actualizaciones.
-SecuritySetupConfiguración de la seguridad
-ErrorModuleRequirePHPVersionError, este módulo requiere una versión %s o superior de PHP
-ErrorModuleRequireDolibarrVersionError, este módulo requiere una versión %s o superior de Dolibarr
-ErrorDecimalLargerThanAreForbiddenError, las precisiones superiores a <b>%s</b> no están soportadas.
-DictionnarySetupDiccionarios
-DictionnaryDiccionarios
-ErrorReservedTypeSystemSystemAutoEl uso del tipo 'system' y 'systemauto' está reservado. Puede utilizar 'user' como valor para añadir su propio registro
-ErrorCodeCantContainZeroEl código no puede contener el valor 0
-DisableJavascriptDesactivar las funciones Javascript
-ConfirmAjaxUtilizar los popups de confirmación Ajax
-UseSearchToSelectCompanyUtilizar un formulario de búsqueda para buscar terceros (en vez de lista desplegable)<br><br>Tenga en cuenta que si tiene un gran número de productos o servicios (>100 000), puede mejorar el rendimiento mediante la constante SOCIETE_DONOTSEARCH_ANYWHERE a 1 en Configuración->Varios. La búsqueda se limitará entonces al inicio de la cadena.
-ActivityStateToSelectCompanyAgregar un filtro en la búsqueda para mostrar/ocultar los terceros en activo o que hayan dejado de ejercer
-UseSearchToSelectContactUtilizar un formulario de búsqueda para buscar contactos (en vez de una lista desplegable).<br>Tenga en cuenta que si tiene un gran número de contactos (>100 000), puede mejorar el rendimiento mediante la constante CONTACT_DONOTSEARCH_ANYWHERE a 1 en Configuración->Varios. La búsqueda se limitará entonces al inicio de la cadena.
-SearchFilterOpciones filtros de búsqueda
-NumberOfKeyToSearchNº de caracteres para desencadenar la búsqueda: %s
-ViewFullDateActionsVer las fechas de las acciones en su totalidad en la ficha de tercero
-NotAvailableWhenAjaxDisabledNo disponible cuando Ajax esté desactivado
-JavascriptDisabledJavascript desactivado
-UsePopupCalendarUtilizar popups para la introducción de las fechas
-UsePreviewTabsVer fichas "vista previa"
-ShowPreviewVer vista previa
-PreviewNotAvailableVista previa no disponible
-ThemeCurrentlyActiveTema actualmente activo
-CurrentTimeZoneZona horaria PHP (Servidor)
-SpaceÁrea
-FieldsCampos
-MaskMáscara
-NextValuePróximo valor
-NextValueForInvoicesPróximo valor (facturas)
-NextValueForCreditNotesPróximo valor (notas de entrega)
-MustBeLowerThanPHPLimitObservación: Su PHP limita el tamaño a <b>%s</b> %s de máximo, cualquiera que sea el valor de este parámetro
-NoMaxSizeByPHPLimitNinguna limitación interna en su servidor PHP
-MaxSizeForUploadedFilesTamaño máximo de los documentos a subir (0 para prohibir la subida)
-UseCaptchaCodeUtilización de código gráfico (CAPTCHA) en el login
-UseAvToScanUploadedFilesUtilización de un antivirus para escanear los archivos subidos
-AntiVirusCommandRuta completa hacia el comando antivirus
-AntiVirusCommandExampleEjemplo para ClamWin: c:\Program Files (x86)\ClamWin\bin\clamscan.exe<br>Ejemplo para ClamAv: /usr/bin/clamscan
-AntiVirusParamParámetros complementarios en la línea de comandos
-AntiVirusParamExampleEjemplo para ClamWin: --database="C:\Program Files (x86)\ClamWin\lib"
-ComptaSetupConfiguración del módulo Contabilidad
-UserSetupConfiguración gestión de los usuarios
-MenuSetupAdministración de los menús por base de datos
-MenuLimitsLímites y precisión
-MenuIdParentId del menú padre
-DetailMenuIdParentID del menú padre (vacío para un menú superior)
-DetailPositionNúmero de orden para la posición del menú
-PersonalizedMenusNotSupportedMenús personalizados no generados
-AllMenusTodos
-NotConfiguredNo configurado
-SetupConfiguración
-ActivationActivación
-ActiveActivo
-SetupShortConfig.
-OtherOptionsOtras opciones
-OtherSetupVarios
-CurrentValueSeparatorDecimalSeparador decimal
-CurrentValueSeparatorThousandSeparador miles
-ModulesMódulos
-ModulesCommonMódulos principales
-ModulesOtherMódulos complementarios
-ModulesInterfacesMódulos interfaz
-ModulesSpecialMódulos específicos
-ParameterInDolibarrVariable %s
-LanguageParameterVariable idioma %s
-LanguageBrowserParameterVariable %s
-LocalisationDolibarrParametersParámetros de localización
-ClientTZZona horaria Cliente (usuario)
-ClientHourHora cliente (usuario)
-OSTZZona horaria
-PHPTZZona horaria PHP
-PHPServerOffsetWithGreenwichOffset servidor con Greenwich (segundos)
-ClientOffsetWithGreenwichOffset cliente/navegador con Greenwich (segundos)
-DaylingSavingTimeHorario de verano (usuario)
-CurrentHourHora PHP (servidor)
-CompanyTZZona Horaria empresa (sede central)
-CompanyHourHora empresa (sede central)
-CurrentSessionTimeOutTimeout sesión actual
-OSEnvEntorno SO
-BoxPanel
-BoxesPaneles
-MaxNbOfLinesForBoxesNº de líneas máximo para los paneles
-PositionByDefaultPosición por defecto
-PositionOrden
-MenusDescLos gestores de menú definen el contenido de las 2 barras de menús (la barra horizontal y la barra vertical). Es posible asignar gestores diferentes según el usuario sea interno o externo.
-MenusEditorDescEl editor de menús permite definir entradas personalizadas en los menús. Debe utilizarse con prudencia so pena de poner a Dolibarr en una situación inestable siendo necesaria una reinstalación para encontrar un menú coherente.
-MenuForUsersMenú para los usuarios
-LangFileArchivo .lang
-SystemSistema
-SystemInfoInfo. sistema
-SystemToolsUtilidades sistema
-SystemToolsAreaÁrea utilidades del sistema
-SystemToolsAreaDescEsta área ofrece distintas funciones de administración. Utilice la menú para elegir la funcionalidad buscada.
-PurgeAreaDescEsta página le permite eliminar todos los archivos creados o guardados por Dolibarr (archivos temporales o todos los archivos del directorio <b>%s</b>). El uso de esta función no es necesaria. Se proporciona para los usuarios que albergan a Dolibarr en un servidor que no ofrece los permisos de eliminación de archivos salvaguardados por el servidor Web.
-PurgeDeleteLogFileBorrar el archivo log <b>%s</b> definido por el módulo Syslog (no hay riesgo de pérdida de datos)
-PurgeDeleteTemporaryFilesEliminar todos los archivos temporales (sin riesgo de perdida de datos)
-PurgeDeleteAllFilesInDocumentsDirEliminar todos los archivos del directorio <b>%s</b>. Archivos temporales y archivos adjuntados a elementos (terceros, facturas, etc.) serán eliminados.
-PurgeRunNowPurgar
-PurgeNothingToDeleteNingún directorio a eliminar
-PurgeNDirectoriesDeleted<b>%s</b> archivos o directorios eliminados
-PurgeAuditEventsPurgar los eventos de seguridad
-ConfirmPurgeAuditEvents¿Está seguro de querer purgar la lista de los eventos de auditoría de seguridad (Se borrará toda la lista, pero esto no afecta a sus datos)?
-NewBackupNueva copia de seguridad
-GenerateBackupGenerar copia de seguridad
-BackupCopia de seguridad
-RestoreRestauración
-RunCommandSummaryLa copia será realizada por el comando siguiente
-RunCommandSummaryToLaunchLa copia puede ser realizada por el comando siguiente
-WebServerMustHavePermissionForCommandSu servidor Web debe tener los derechos de ejecutar tal orden
-BackupResultResultado de la copia
-BackupFileSuccessfullyCreatedArchivo de copia generado correctamente
-YouCanDownloadBackupFileLos archivos generados pueden ahora descargarse
-NoBackupFileAvailableNinguna copia disponible
-ExportMethodMétodo de exportación
-ImportMethodMétodo de importación
-ToBuildBackupFileClickHerePara crear una copia, haga click <a href="%s">aquí</a>.
-ImportMySqlDescPara importar una copia, hay que utilizar el comando mysql en linea siguiente:
-ImportPostgreSqlDescPara importar una copia de seguridad, debe usar el comando pg_restore desde la línea de comandos:
-ImportMySqlCommand%s %s < miarchivobackup.sql
-ImportPostgreSqlCommand%s %s miarchivobackup.sql
-FileNameToGenerateNombre del archivo a generar
-CommandsToDisableForeignKeysForImportComando para desactivar las claves excluyentes a la importación
-CommandsToDisableForeignKeysForImportWarningObligatorio si quiere poder restaurar más tarde el dump SQL
-ExportCompatibilityCompatibilidad del archivo de exportación generado
-MySqlExportParametersParámetros de la exportación MySql
-PostgreSqlExportParametersParámetros de la exportación PostgreSQL
-UseTransactionnalModeUtilizar el modo transaccional
-FullPathToMysqldumpCommandRuta completa del comando mysqldump
-FullPathToPostgreSQLdumpCommandruta completa hacia el comando pg_dump
-ExportOptionsOpciones de exportación
-AddDropDatabaseAñadir órdenes DROP DATABASE
-AddDropTableAñadir órdenes DROP TABLE
-ExportStructureEstructura
-DatasDatos
-NameColumnNombre las columnas
-ExtendedInsertInstrucciones INSERT extendidas
-NoLockBeforeInsertSin instrucción LOCK antes del INSERT 
-DelayedInsertInserciones con retraso
-EncodeBinariesInHexaCodificar los campos binarios en hexadecimal
-IgnoreDuplicateRecordsIgnorar los errores de duplicación (INSERT IGNORE)
-YesSí
-NoNo
-AutoDetectLangAutodetección (navegador)
-FeatureDisabledInDemoOpción deshabilitada en demo
-RightsPermisos
-BoxesDescLos paneles son pequeñas zonas de información que se muestran en algunas páginas. Puede elegir activar o desactivar un panel haciendo clic en 'Activar', o haciendo click en el cubo de basura para desactivarlo. Solo se muestran los paneles relacionados con un <a href="modules.php">módulo</a> activo.
-OnlyActiveElementsAreShownSólo los elementos de <a href="%s">módulos activados</a> son mostrados.
-ModulesDescLos módulos Dolibarr definen las funcionalidades disponibles en la aplicación. Algunos módulos requieren permisos que deberán indicarse a los usuarios para que puedan acceder a sus funcionalidades.
-ModulesInterfaceDescLos módulos de interfaz son módulos que permiten vincular a Dolibarr con sistemas, aplicaciones o servicios externos.
-ModulesSpecialDescLos módulos complementarios son módulos de uso muy específico o menos corriente que los módulos normales.
-ModulesJobDescLos módulos específicos permiten una preconfiguración simplificada de Dolibarr para un negocio en concreto.
-ModulesMarketPlaceDescHay disponibles para su descarga en sitios externos otros módulos/extensiones...
-ModulesMarketPlacesMás módulos...
-DoliStoreDescDoliStore, el sitio oficial de módulos complementarios y para Dolibarr ERP/CRM
-WebSiteDescSitios proveedores a consultar para encontrar más módulos
-URLEnlace
-BoxesAvailablePaneles disponibles
-BoxesActivatedPaneles activados
-ActivateOnActivar en
-ActiveOnActivo en
-SourceFileArchivo origen
-AutomaticIfJavascriptDisabledAutomático si Javascript está desactivado
-AvailableOnlyIfJavascriptNotDisabledDisponible solamente si Javascript esta activado
-AvailableOnlyIfJavascriptAndAjaxNotDisabledDisponible solamente si Javascript y Ajax están activados
-RequiredRequerido
-SecuritySeguridad
-PasswordsContraseñas
-DoNotStoreClearPasswordNo almacenar la contraseña sin cifrar en la base
-MainDbPasswordFileConfEncryptedEncriptar la contraseña de la base en el archivo conf.php
-InstrucToEncodePassPara tener la contraseña de la base de datos codificada en el archivo de configuración <b>conf.php</b>, reemplazar en ese fichero la línea <br><b>$dolibarr_main_db_pass="..."</b><br> por <br><b>$dolibarr_main_db_pass="crypted:%s"</b>
-InstrucToClearPassPara tener la contraseña de la base de datos descodificada en el archivo de configuración b>conf.php</b>, reemplazar en ese fichero la línea <br><b>$dolibarr_main_db_pass="crypted:..."</b><br> por <br><b>$dolibarr_main_db_pass="%s"</b>
-ProtectAndEncryptPdfFilesProtección y encriptación de los pdf generados
-ProtectAndEncryptPdfFilesDescLa protección de un documento pdf deja el documento libre a la lectura y a la impresión a cualquier lector de PDF. Por el contrario, la modificación y la copia resultan imposibles.
-FeatureFunción
-DolibarrLicenseLicencia
-DolibarrProjectLeaderjefe de proyecto
-DeveloppersDesarrolladores/contribuidores
-OtherDeveloppersOtros desarrolladores/contribuidores
-OfficialWebSiteSitio web oficial internacional
-OfficialWebSiteFrsitio web oficial habla francesa
-OfficialWikiWiki documentación Dolibarr
-OfficialDemoDemo en línea Dolibarr
-OfficialMarketPlaceSitio oficial de módulos complementarios y extensiones
-OfficialWebHostingServiceServicio oficial de alojamiento (SaaS)
-ForDocumentationSeeWikiPara la documentación de usuario, desarrollador o Preguntas Frecuentes (FAQ), consulte el wiki Dolibarr: <br><b><a href="%s" target="_blank">%s</a></b>
-ForAnswersSeeForumPara otras cuestiones o realizar sus propias consultas, puede utilizar el foro Dolibarr: <br><b><a href="%s" target="_blank">%s</a></b>
-HelpCenterDesc1Esta aplicación, independiente de Dolibarr, le permite ayudarle a obtener un servicio de soporte de Dolibarr.
-HelpCenterDesc2Algunos de estos servicios sólo están disponibles en <b>inglés</b>.
-CurrentTopMenuHandlerGestor de menú superior
-CurrentLeftMenuHandlerGestor de menú izquierdo
-CurrentMenuHandlerGestor de menú
-CurrentSmartphoneMenuHandlerGestor menú smartphone actual
-MeasuringUnitUnidad de medida
-EmailsE-Mails
-EMailsSetupConfiguración E-Mails
-EMailsDescEsta página permite sustituir los parámetros PHP relacionados con el envío de correos electrónicos. En la mayoría de los casos en SO como UNIX/Linux, los parámetros PHP son ya correctos y esta página es inútil.
-MAIN_MAIL_SMTP_PORTPuerto del servidor SMTP (Por defecto en php.ini: <b>%s</b>)
-MAIN_MAIL_SMTP_SERVERNombre host o ip del servidor SMTP (Por defecto en php.ini: <b>%s</b>)
-MAIN_MAIL_SMTP_PORT_NotAvailableOnLinuxLikePuerto del servidor SMTP (No definido en PHP en sistemas de tipo Unix)
-MAIN_MAIL_SMTP_SERVER_NotAvailableOnLinuxLikeNombre servidor o ip del servidor SMTP (No definido en PHP en sistemas de tipo Unix)
-MAIN_MAIL_EMAIL_FROME-Mail del emisor para envíos E-Mail automáticos (Por defecto en php.ini: <b>%s</b>)
-MAIN_MAIL_ERRORS_TOE-Mail usado para los retornos de error de los e-mails enviados
-MAIN_MAIL_AUTOCOPY_TOEnviar automáticamente copia oculta de los e-mails enviados a
-MAIN_DISABLE_ALL_MAILSDesactivar globalmente todo envío de correos electrónicos (para modo de pruebas o demo)
-MAIN_MAIL_SENDMODEMétodo de envío de e-mails
-MAIN_MAIL_SMTPS_IDID de autentificación SMTP  si se requiere autenticación SMTP
-MAIN_MAIL_SMTPS_PWContraseña autentificación SMTP si se requiere autentificación SMTP
-MAIN_MAIL_EMAIL_TLSUso de encriptación TLS (SSL)
-MAIN_DISABLE_ALL_SMSDesactivar globalmente todo envío de SMS (para modo de pruebas o demo)
-MAIN_SMS_SENDMODEMétodo de envío de SMS
-MAIN_MAIL_SMS_FROMNúmero de teléfono por defecto para los envíos SMS
-FeatureNotAvailableOnLinuxFuncionalidad no disponible en sistemas  Unix. Pruebe su sendmail localmente.
-SubmitTranslationSi la traducción de este idioma es incompleta o si encuentra errores, puede corregirlos mediante la edición de los archivos en el directorio <b>langs/%s</b> y envíe los cambios al foro www.dolibarr.es.
-ModuleSetupConfiguración del módulo
-ModulesSetupConfiguración de los módulos
-ModuleFamilyBaseSistema
-ModuleFamilyCrmGestión cliente (CRM)
-ModuleFamilyProductsGestión productos
-ModuleFamilyHrRecursos Humanos
-ModuleFamilyProjectsProyectos/Trabajo cooperativo
-ModuleFamilyOtherOtro
-ModuleFamilyTechnicMódulos herramientas o Sistema
-ModuleFamilyExperimentalMódulos experimentales
-ModuleFamilyFinancialMódulos financieros (Contabilidad/tesorería)
-ModuleFamilyECMGestión Electrónica de Documentos (GED)
-MenuHandlersGestores menú
-MenuAdminEditor menú
-DoNotUseInProductionNo usar en producción
-ThisIsProcessToFollowHe aquí el procedimiento a seguir:
-StepNbPaso %s
-FindPackageFromWebSiteBuscar el paquete que responde a su necesidad (por ejemplo en el sitio web %s)
-DownloadPackageFromWebSiteDescargar el paquete desde el sitio %s.
-UnpackPackageInDolibarrRootDescomprimir el paquete en el directorio raíz de Dolibarr <b>%s</b> sobre los archivos existentes (sin desplazar o borrar los existentes, so pena de perder su configuración o los módulos no oficiales instalados)
-SetupIsReadyForUseLa instalación ha finalizado y Dolibarr está disponible con el nuevo componente.
-NotExistsDirectNo existe el directorio alternativo.<br>
-InfDirAltDesde la versión 3 es posible definir un directorio root alternativo, esto le permite almacenar en el mismo lugar módulos y temas personalizados.<br>Basta con crear un directorio en el raíz de Dolibarr (por ejemplo: custom).<br>
-InfDirExample<br>Seguidamente se declara en el archivo conf.php:<br> $dolibarr_main_url_root_alt='http://miservidor/custom'<br>$dolibarr_main_document_root_alt='/directorio/de/dolibarr/htdocs/custom'<br>*Estas lineas vienen comentadas con un "#", para descomentarlas solo hay que retirar el caracter.
-YouCanSubmitFileSeleccione paquete:
-CurrentVersionVersión actual de Dolibarr
-CallUpdatePageLlamar a la página de actualización de la estructura y datos de la base de datos %s.
-LastStableVersionÚltima versión estable disponible
-GenericMaskCodesPuede introducir cualquier máscara numérica. En esta máscara, puede utilizar las siguientes etiquetas:<br><b>{000000} </b> corresponde a un número que se incrementa en cada uno de %s. Introduzca tantos ceros como longitud desee mostrar. El contador se completará a partir de ceros por la izquierda con el fin de tener tantos ceros como la máscara. <br> <b> {000000+000}</ b> Igual que el anterior, con una compensación correspondiente al número a la derecha del signo + se aplica a partir del primer %s. <br> <b> {000000@x}</b> igual que el anterior, pero el contador se restablece a cero cuando se llega a x meses (x entre 1 y 12). Si esta opción se utiliza y x es de 2 o superior, entonces la secuencia {yy}{mm} o {yyyy}{mm} también es necesaria. <br> <b> {dd} </b> días (01 a 31). <br><b> {mm}</b> mes (01 a 12). <br><b>{yy}</b>, <b>{yyyy}</b> ou <b>{y}</b> año en 2, 4 ó 1 cifra.<br>
-GenericMaskCodes2<b>{cccc}</b> el código de cliente en n caracteres<br><b>{cccc000}</b> el código de cliente en n caracteres es seguido por un contador propio al cliente sin offset, completado con ceros hasta completar la máscara, y volviendo a cero al mismo tiempo que el contador global.<br><b>{tttt}</b>El código del tipo de la empresa en n caracteres (ver diccionarios-tipos de empresas).<br>
-GenericMaskCodes3Cualquier otro carácter en la máscara se quedará sin cambios. <br>No se permiten espacios <br>
-GenericMaskCodes4a<u>Ejemplo en la 99 ª %s del tercero La Empresa realizada el 31/03/2007: </u><br>
-GenericMaskCodes4b<u>Ejemplo sobre un tercero creado el 31/03/2007:</u><br>
-GenericMaskCodes4c<u>Ejemplo en un producto/servicio creado el 31/03/2007:</u><br>
-GenericMaskCodes5<b>ABC{yy}{mm}-{000000}</b> dará <b>ABC0703-000099</b><br><b>{0000+100@1}-XXX/{dd}/YYY</b> daráa <b>0199-XXX/31/YYY</b>
-GenericNumRefModelDescDevuelve un número creado acorde a una máscara definida.
-ServerAvailableOnIPOrPortServidor disponible en la dirección <b>%s</b> en el puerto <b>%s</b>
-ServerNotAvailableOnIPOrPortServidor no disponible en la dirección <b>%s</b> en el puerto <b>%s</b>
-DoTestServerAvailabilityProbar conectividad con el servidor
-DoTestSendProbar envío
-DoTestSendHTMLProbar envío HTML
-ErrorCantUseRazInStartedYearIfNoYearMonthInMaskError, no se puede usar la opción @ si la secuencia {yy}{mm} o {yyyy}{mm} no se encuentra en la máscara.
-UMaskParámetro UMask de nuevos archivos en Unix/Linux/BSD.
-UMaskExplanationEste parámetro determina los derechos de los archivos creados en el servidor Dolibarr (durante la subida, por ejemplo).<br>Este debe ser el valor octal (por ejemplo, 0666 significa lectura / escritura para todos).<br>Este parámetro no tiene ningún efecto sobre un servidor Windows.
-SeeWikiForAllTeamVea el wiki para más detalles de todos los actores y de su organización
-UseACacheDelayDemora en caché de la exportación en segundos (0 o vacio sin caché)
-DisableLinkToHelpCenterOcultar el enlace "¿Necesita soporte o ayuda?" en la página de login
-DisableLinkToHelpOcultar el enlace "<b>%s Ayuda en línea</b>" del menú izquierdo
-AddCRIfTooLongNo hay líneas de corte automático, de modo que si el texto es demasiado largo en los documentos, debe agregar sus propios retornos de carro en el texto mecanografiado.
-ModuleDisabledMódulo desactivado
-ModuleDisabledSoNoEventMódulo desactivado, por lo que evento nunca se crea
-ConfirmPurge¿Está seguro de querer realizar esta purga?<br>Esto borrará definitivamente todos los datos de sus archivos (área GED, archivos adjuntos etc.).
-MinLengthLonguitud mínima
-LanguageFilesCachedIntoShmopSharedMemoryarchivos .lang en memoria compartida
-ExamplesWithCurrentSetupEjemplos con la configuración activa actual
-ListOfDirectoriesListado de directorios de plantillas OpenDocument
-ListOfDirectoriesForModelGenODTListado de directorios con plantillas de documentos OpenDocument.<br><br>Indicar la ruta completa del directorio.<br>Añadir un retorno a la línea entre cada directorio.<b>Para indicar un directorio del módulo GED, indicar <b>DOL_DATA_ROOT/ecm/nombredeldirectorio</b>.<br><br>Los archivos de plantilla de estos directorios deben terminar con <b>.odt</b> 
-NumberOfModelFilesFoundNúmero de archivos de plantillas ODT encontrados en este/estos directorio(s)
-ExampleOfDirectoriesForModelGenEjemplos de sintaxis:<br>c:\mydir<br>/home/mydir<br>DOL_DATA_ROOT/ecm/ecmdir
-FollowingSubstitutionKeysCanBeUsedColocando los siguientes tags en la plantilla, obtendrá una sustitución con el valor personalizado al generar el documento:
-FullListOnOnlineDocumentationhttp://wiki.dolibarr.org/index.php/Crear_un_modelo_de_documento_ODT
-FirstnameNamePositionOrden visualización nombre/apellidos
-DescWeatherLos siguientes gráficos se mostrarán en el panel si el número de elementos llegan a estos valores:
-KeyForWebServicesAccessClave para usar los Web Services (parámetro "dolibarrkey" en webservices)
-TestSubmitFormFormulario de pruebas
-ThisForceAlsoThemeUsar este gestor de menús predetermina también el tema, sea cual sea la elección del usuario. Además, este gestor de menús, especial para smartphones, solamente funciona en algunos teléfonos. Use otro gestor si observa cualquier problema.
-ThemeDirDirectorio de los temas
-ConnectionTimeoutTimeout de conexión
-ResponseTimeoutTimeout de respuesta
-SmsTestMessageMensaje de prueba de __PHONEFROM__ para __PHONETO__
-ModuleMustBeEnabledFirstPara usar esta función debe estar activado el módulo <b>%s</b>.
-SecurityTokenClave para encriptar urls
-NoSmsEngineNo hay disponible ningún gestor de envío de SMS. Los gestores de envío de SMS no se instalan por defecto ya que dependen de cada proveedor, sin embargo puede encontrarlos en la plataforma %s.
-PDFPDF
-PDFDescPuede definir aquí las opciones globales para la generación de los PDF
-PDFAddressForgingReglas de visualización de direcciones
-HideAnyVATInformationOnPDFOcultar toda la información relacionada con el IVA en la generación de los PDF
-HideDescOnPDFOcultar descripción de los productos en la generación de los PDF
-HideRefOnPDFOcultar referencia de los productos en la generación de los PDF
-HideDetailsOnPDFOcultar detalles de las líneas de productos en la generación de los PDF
-LibraryLibrería
-UrlGenerationParametersSeguridad de las URLs
-SecurityTokenIsUnique¿Usar un parámetro securekey único para cada URL?
-EnterRefToBuildUrlIntroduzca la referencia del objeto %s
-GetSecuredUrlObtener la URL calculada
-ButtonHideUnauthorizedOcultar los botones de acciones no autorizadas en vez de mostrarlos atenuados
-TotalNumberOfActivatedModulesNúmero total de módulos activados: <b>%s</b>
-YouMustEnableOneModuleDebe activar al menos un módulo.
-ProductVatMassChangeModificar IVA en masa
-ProductVatMassChangeDescEsta página le permite cambiar el tipo de IVA definido en  los productos o servicios de un valor a otro. Tenga en cuenta que el cambio se lleva a cabo en masa sobre toda la base de datos.
-OldVATRatesTasa de IVA antigua
-NewVATRatesTasa de IVA nueva
-PriceBaseTypeToChangeCambiar el precio cuya referencia de base es
-MassConvertConvertir masivamente
-StringCadena de texto
-TextLongTexto largo
-IntNumérico entero
-FloatDecimal
-DateAndTimeFecha y hora
-UniqueÚnico
-BooleanBoleano (Casilla de verificación)
-ExtrafieldPhoneTeléfono
-ExtrafieldPricePrecio
-ExtrafieldMailCorreo
-ExtrafieldSelectLista de selección
-ExtrafieldSelectListLista de selección de tabla
-ExtrafieldSeparatorSeparador
-ExtrafieldCheckBoxCasilla de verificación
-ExtrafieldRadioBotón de selección excluyente
-ExtrafieldParamHelpselectLa lista ha de ser en forma llave, valor<br><br> por ejemplo : <br>1,text1<br>2,text2<br>3,text3<br>...
-ExtrafieldParamHelpcheckboxLa lista ha de ser en forma llave, valor<br><br> por ejemplo : <br>1,text1<br>2,text2<br>3,text3<br>...
-ExtrafieldParamHelpradioLa lista ha de ser en forma llave, valor<br><br> por ejemplo : <br>1,text1<br>2,text2<br>3,text3<br>...
-ExtrafieldParamHelpsellistLa lista ha de ser de la tabl<br><br> por ejemplo: <br>table:label:(code)<br>
-LibraryToBuildPDFLibrería usada para la creación de archivos PDF
-WarningUsingFPDFAtención: Su archivo <b>conf.php</b> contiene la directiva <b>dolibarr_pdf_force_fpdf=1</b>. Esto hace que se use la librería FPDF para generar sus archivos PDF. Esta librería es antigua y no cubre algunas funcionalidades (Unicode, transparencia de imágenes, idiomas cirílicos, árabes o asiáticos, etc.), por lo que puede tener problemas en la generación de los PDF.<br>Para resolverlo, y disponer de un soporte completo de PDF, puede descargar la <a href="http://www.tcpdf.org/" target="_blank">librería TCPDF</a> , y a continuación comentar o eliminar la línea <b>$dolibarr_pdf_force_fpdf=1</b>, y añadir en su lugar <b>$dolibarr_lib_TCPDF_PATH='ruta_a_TCPDF'</b>   
-LocalTaxDescAlgunos países aplican 2 o 3 tasas a cada línea de factura. Si es el caso, escoja el tipo de la segunda y tercera tasa y su valor. Los posibles tipos son:<br>1 : tasa local aplicable a productos y servicios sin IVA (IVA no se aplica en la tasa local)<br>2 : tasa local se aplica a productos y servicios antes del IVA (IVA se calcula sobre importe+tasa local)<br>3 : tasa local se aplica a productos sin IVA (IVA no se aplica en la tasa local)<br>4 : tasa local se aplica a productos antes del IVA (IVA se calcula sobre el importe+tasa local)<br>5 : tasa local se aplica a servicios sin IVA (IVA no se aplica a la tasa local)<br>6 : tasa local se aplica a servicios antes del IVA (IVA se calcula sobre importe + tasa local)
-SuhosinSessionEncryptAlmacenamiento de sesiones cifradas por Suhosin
-SMSSMS
-LinkToTestClickToDialIntroduzca un número de teléfono al que llamar para probar el enlace de llamada ClickToDial para el usuario <strong>%s</strong>
-RefreshPhoneLinkRefrescar enlace
-LinkToTestEnlace seleccionable para el usuario  <strong>%s</strong> (haga clic en el número para probar)
-KeepEmptyToUseDefaultDeje este campo vacío para usar el valor por defecto
-DefaultLinkEnlace por defecto
-ValueOverwrittenByUserSetupAtención: Este valor puede ser sobreescrito por un valor específico de la configuración del usuario (cada usuario puede tener su propia url clicktodial)
-# Modules= undefined
-Module0NameUsuarios y grupos
-Module0DescGestión de usuarios y grupos
-Module1NameTerceros
-Module1DescGestión de terceros (empresas, particulares) y contactos
-Module2NameComercial
-Module2DescGestión comercial
-Module10NameContabilidad
-Module10DescActivación de informes simples de contabilidad (diarios, ventas) basados en el contenido de la base de datos. Sin desgloses.
-Module20NamePresupuestos
-Module20DescGestión de presupuestos/propuestas comerciales
-Module22NameE-Mailings
-Module22DescAdministración y envío de E-Mails masivos
-Module23NameEnergía
-Module23DescRealiza el seguimiento del consumo de energías
-Module25NamePedidos de clientes
-Module25DescGestión de pedidos de clientes
-Module30NameFacturas y abonos
-Module30DescGestión de facturas y abonos a clientes. Gestión facturas de proveedores
-Module40NameProveedores
-Module40DescGestión de proveedores
-Module42NameSyslog
-Module42DescGeneración de logs (archivos, syslog,...)
-Module49NameEditores
-Module49DescGestión de editores
-Module50NameProductos
-Module50DescGestión de productos
-Module51NamePublipostage
-Module51DescAdministración y envío de correo de papel en masa
-Module52NameStocks de productos
-Module52DescGestión de stocks de productos
-Module53NameServicios
-Module53DescGestión de servicios
-Module54NameContratos
-Module54DescGestión de contratos
-Module55NameCódigos de barras
-Module55DescGestión de los códigos de barras
-Module56NameTelefonía
-Module56DescGestión de la telefonía
-Module57NameDomiciliaciones
-Module57DescGestión de domiciliaciones y reintegros bancarios
-Module58NameClickToDial
-Module58DescIntegración con ClickToDial
-Module59NameBookmark4u
-Module59DescAñade función para generar una cuenta Bookmark4u desde una cuenta Dolibarr
-Module70NameIntervenciones
-Module70DescGestión de las intervenciones a terceros
-Module75NameNotas de gasto y desplazamientos
-Module75DescGestión de las notas de gasto y desplazamientos
-Module80NameExpediciones
-Module80DescGestión de expediciones y recepciones 
-Module85NameBancos y cajas
-Module85DescGestión de las cuentas financieras de tipo cuentas bancarias, postales o efectivo
-Module100NameSitio web externo
-Module100DescIncluye cualquier sitio web externo en los menús de Dolibarr, viéndolo en un frame
-Module105NameMailman y SPIP
-Module105DescInterfaz con Mailman o SPIP para el módulo Miembros
-Module200NameLDAP
-Module200DescSincronización con un directorio LDAP
-Module210NamePostNuke
-Module210DescIntegración con PostNuke
-Module240NameExportaciones de datos
-Module240DescHerramienta de exportación de datos Dolibarr (con asistente)
-Module250NameImportación de datos
-Module250DescHerramienta de importación de datos a Dolibarr (con asistente)
-Module310NameMiembros
-Module310DescGestión de miembros de una asociación
-Module320NameHilos RSS
-Module320DescAdición de hilos de información RSS en las pantallas Dolibarr
-Module330NameMarcadores
-Module330DescGestión de marcadores
-Module400NameProyectos
-Module400DescGestión de los proyectos en los otros módulos
-Module410NameWebcalendar
-Module410DescInterfaz con el calendario Webcalendar
-Module500NameImpuestos, cargas sociales y dividendos
-Module500DescGestión de impuestos y cargas sociales
-Module600NameNotificaciones
-Module600DescEnvío de notificaciones (por correo electrónico) sobre los eventos de trabajo Dolibarr
-Module700NameDonaciones
-Module700DescGestión de donaciones
-Module800NameOSCommerce 1
-Module800DescInterfaz de visualización de una tienda OSCommerce mediante acceso directo a su base de datos
-Module900NameOSCommerce 2
-Module900DescInterfaz de visualización de una tienda OSCommerce mediante Web services. Este módulo requiere instalar los archivos de /oscommerce_ws/ws_server en OSCommerce. Lea el archivo README del directorio /oscommerce_ws/ws_server.
-Module1200NameMantis
-Module1200DescInterfaz con el sistema de seguimiento de incidencias Mantis
-Module1400NameContabilidad experta
-Module1400DescGestión experta de la contabilidad (doble partida)
-Module1780NameCategorías
-Module1780DescGestión de categorías (productos, proveedores y clientes)
-Module2000NameEditor WYSIWYG
-Module2000DescPermite la edición de ciertas zonas de texto mediante un editor avanzado
-Module2300NameProgramador
-Module2300DescTareas programadas
-Module2400NameAgenda
-Module2400DescGestión de la agenda y de las acciones
-Module2500NameGestión Electrónica de Documentos
-Module2500DescPermite administrar una base de documentos
-Module2600NameWebServices
-Module2600DescActiva los servicios de servidor web services de Dolibarr
-Module2650NameUltimatepdf
-Module2650DescGestión de la presentación de las plantillas pdf (presupuestos, facturas, pedidos, etc.)
-Module2700NameGravatar
-Module2700DescUtiliza el servicio en línea de Gravatar (www.gravatar.com) para mostrar fotos de los usuarios/miembros (que se encuentran en sus mensajes de correo electrónico). Necesita un acceso a Internet
-Module2900NameGeoIPMaxmind
-Module2900DescCapacidades de conversión GeoIP Maxmind
-Module5000NameMulti-empresa
-Module5000DescPermite gestionar varias empresas
-Module20000NameDías libres
-Module20000DescGestión de los días libres de los empleados
-Module50000NamePayBox
-Module50000DescMódulo para proporcionar un pago en línea con tarjeta de crédito mediante Paybox
-Module50100NameTPV
-Module50100DescTerminal Punto de Venta para la venta en mostrador
-Module50200NamePaypal
-Module50200DescMódulo para proporcionar un pago en línea con tarjeta de crédito mediante Paypal
-Module59000NameMárgenes
-Module59000DescMódulo para gestionar los márgenes de beneficio
-Module60000NameComisiones
-Module60000DescMódulo para gestionar las comisiones de venta
-Permission11Consultar facturas
-Permission12Crear/Modificar facturas
-Permission13De-validar facturas
-Permission14Validar facturas
-Permission15Enviar facturas por correo
-Permission16Emitir pagos de facturas
-Permission19Eliminar facturas
-Permission21Consultar presupuestos
-Permission22Crear/modificar presupuestos
-Permission24Validar presupuestos
-Permission25Enviar los presupuestos
-Permission26Cerrar presupuestos
-Permission27Eliminar presupuestos
-Permission28Exportar los presupuestos
-Permission31Consultar productos
-Permission32Crear/modificar productos
-Permission34Eliminar productos
-Permission36Ver/gestionar los productos ocultos
-Permission38Exportar productos
-Permission41Consultar proyectos y tareas (compartidos o soy contacto)
-Permission42Crear/modificar proyectos y tareas (compartidos o soy contacto)
-Permission44Eliminar proyectos y tareas (compartidos o soy contacto)
-Permission61Consultar intervenciones
-Permission62Crear/modificar intervenciones
-Permission64Eliminar intervenciones
-Permission67Exportar intervenciones
-Permission71Consultar miembros
-Permission72Crear/modificar miembros
-Permission74Eliminar miembros
-Permission75Configurar tipos y atributos de los miembros
-Permission76Exportar miembros
-Permission78Consultar cotizaciones
-Permission79Crear/modificar cotizaciones
-Permission81Consultar pedidos de clientes
-Permission82Crear/modificar pedidos de clientes
-Permission84Validar pedidos de clientes
-Permission86Enviar pedidos de clientes
-Permission87Cerrar pedidos de clientes
-Permission88Anular pedidos de clientes
-Permission89Eliminar pedidos de clientes
-Permission91Consultar impuestos e IVA
-Permission92Crear/modificar impuestos e IVA
-Permission93Eliminar impuestos e IVA
-Permission94Exportar impuestos
-Permission95Consultar balances y resultados
-Permission96Parametrizar desglose
-Permission97Leer líneas de facturas
-Permission98Desglosar líneas de facturas
-Permission101Consultar expediciones
-Permission102Crear/modificar expediciones
-Permission104Validar expediciones
-Permission106Exportar expediciones
-Permission109Eliminar expediciones
-Permission111Consultar cuentas financieras (cuentas bancarias, cajas)
-Permission112Crear/modificar cantidad/eliminar registros bancarios
-Permission113Configurar cuentas financieras (crear, controlar las categorías)
-Permission114Exportar transacciones y registros bancarios
-Permission115Exportar transacciones y extractos
-Permission116Captar transferencias entre cuentas
-Permission117Gestionar els dipòsits en banc dels xecs rebuts
-Permission121Consultar empresas
-Permission122Crear/modificar empresas
-Permission125Eliminar empresas
-Permission126Exportar las empresas
-Permission141Consultar todos los proyectos y tareas (incluyendo los privados de los que no sea contacto)
-Permission142Crear/modificar todos los proyectos y tareas (incluyendo los privados de los que no sea contacto)
-Permission144Eliminar todos los proyectos y tareas (incluyendo los privados de los que no sea contacto)
-Permission146Consultar proveedores
-Permission147Consultar estadísticas
-Permission151Consultar domiciliaciones
-Permission152Crear/modificar domiciliaciones
-Permission153Enviar domiciliaciones
-Permission154Abonar/devolver domiciliaciones
-Permission161Consultar contratos de servicio
-Permission162Crear/modificar contratos de servicio
-Permission163Activar los servicios de un contrato
-Permission164Desactivar los servicios de un contrato
-Permission165Eliminar contratos
-Permission171Leer los desplazamientos
-Permission172Crear/modificar los desplazamientos
-Permission173Eliminar desplazamientos
-Permission178Exportar desplazamientos
-Permission180Consultar proveedores
-Permission181Consultar pedidos a proveedores
-Permission182Crear/modificar pedidos a proveedores
-Permission183Validar pedidos a proveedores
-Permission184Aprobar pedidos a proveedores
-Permission185Enviar pedidos a proveedores
-Permission186Recibir pedidos de proveedores
-Permission187Cerrar pedidos a proveedores
-Permission188Anular pedidos a proveedores
-Permission192Crear líneas
-Permission193Cancelar líneas
-Permission194Consultar el ancho de banda de líneas
-Permission202Crear conexiones ADSL
-Permission203Realizar pedido de conexiones
-Permission204Pedir conexiones
-Permission205Gestionar conexiones
-Permission206Consultar conexiones
-Permission211Consultar telefonía
-Permission212Pedir líneas
-Permission213Activar una línea
-Permission214Configurar la telefonía
-Permission215Configurar proveedores
-Permission221Consultar E-Mails
-Permission222Crear/modificar E-Mails (asunto, destinatarios, etc.)
-Permission223Validar E-Mails (permite el envío)
-Permission229Eliminar E-Mails
-Permission237Ver los destinatarios y la información
-Permission238Enviar los e-mails manualmente
-Permission239Eliminar los e-mails después de su validación o su envío
-Permission241Consultar categorías
-Permission242Crear/modificar categorías
-Permission243Eliminar categorías
-Permission244Ver contenido de categorías ocultas
-Permission251Consultar otros usuarios
-PermissionAdvanced251Consultar otros usuarios
-Permission252Consultar los permisos de otros usuarios
-Permission253Crear/modificar otros usuarios y sus permisos
-PermissionAdvanced253Crear/modificar usuarios internos/externos y sus permisos
-Permission254Modificar la contraseña de otros usuarios
-Permission255Eliminar o desactivar otros usuarios
-Permission256Consultar sus permisos
-Permission262Consultar todas las empresas (Solamente usuarios internos. Los externos están limitados a ellos mismos)
-Permission271Consultar el CA
-Permission272Consultar las facturas
-Permission273Emitir las facturas
-Permission281Consultar contactos
-Permission282Crear/modificar contactos
-Permission283Eliminar contactos
-Permission286Exportar contactos
-Permission291Consultar tarifas
-Permission292Definir permisos sobre las tarifas
-Permission293Modificar tarifas de clientes
-Permission300Consultar códigos de barras
-Permission301Crear/modificar códigos de barras
-Permission302Eliminar código de barras
-Permission311Consultar servicios
-Permission312Asignar servicios a un contrato
-Permission331Consultar marcadores
-Permission332Crear/modificar marcadores
-Permission333Eliminar marcadores
-Permission341Consultar sus propios permisos
-Permission342Crear/modificar su propia info de usuario
-Permission343Modificar su propia contraseña
-Permission344Modificar sus propios permisos
-Permission351Consultar los grupos
-Permission352Consultar los permisos de grupos
-Permission353Crear/modificar los grupos y sus permisos
-Permission354Eliminar o desactivar grupos
-Permission358Exportar usuarios
-Permission401Consultar haberes
-Permission402Crear/modificar haberes
-Permission403Validar haberes
-Permission404Eliminar haberes
-Permission531Consultar servicios
-Permission532Crear/modificar servicios
-Permission534Eliminar servicios
-Permission536Ver/gestionar los servicios ocultos
-Permission538Exportar servicios
-Permission701Consultar donaciones
-Permission702Crear/modificar donaciones
-Permission703Eliminar donaciones
-Permission1001Consultar stocks
-Permission1002Crear/modificar stocks
-Permission1003Eliminar stocks
-Permission1004Consultar movimientos de stock
-Permission1005Crear/modificar movimientos de stock
-Permission1101Consultar órdenes de envío
-Permission1102Crear/modificar órdenes de envío
-Permission1104Validar orden de envío
-Permission1109Eliminar orden de envío
-Permission1181Consultar proveedores
-Permission1182Consultar pedidos a proveedores
-Permission1183Crear pedidos a proveedores
-Permission1184Validar pedidos a proveedores
-Permission1185Aprobar pedidos a proveedores
-Permission1186Enviar pedidos a proveedores
-Permission1187Recibir pedidos de proveedores
-Permission1188Cerrar pedidos a proveedores
-Permission1201Obtener resultado de una exportación
-Permission1202Crear/codificar exportaciones
-Permission1231Consultar facturas de proveedores
-Permission1232Crear facturas de proveedores
-Permission1233Validar facturas de proveedores
-Permission1234Eliminar facturas de proveedores
-Permission1235Enviar facturas de proveedores por correo
-Permission1236Exportar facturas de proveedores, atributos y pagos
-Permission1237Exportar pedidos de proveedores junto con sus detalles
-Permission1251Lanzar las importaciones en masa a la base de datos (carga de datos)
-Permission1321Exportar facturas a clientes, atributos y cobros
-Permission1401Leer el plan contable
-Permission1402Crear/Modificar un plan contable
-Permission1403Cerrar un plan contable
-Permission1411Leer los movimientos contables
-Permission1412Crear/modificar/anular movimientos contables
-Permission1415Leer Balances, informes, diarios, libros maestros
-Permission1421Exportar pedidos de clientes y atributos
-Permission23001Ver tareas programadas
-Permission23002Crear/actualizar tareas programadas
-Permission23003Borrar tareas programadas
-Permission23004Ejecutar tareas programadas
-Permission2401Leer acciones (eventos o tareas) vinculadas a su cuenta
-Permission2402Crear/eliminar acciones (eventos o tareas) vinculadas a su cuenta
-Permission2403Modificar acciones (eventos o tareas) vinculadas a su cuenta
-Permission2411Leer acciones (eventos o tareas) de otros
-Permission2412Crear/modificar acciones (eventos o tareas) de otros
-Permission2413Eliminar acciones (eventos o tareas) de otros
-Permission2501Consultar/Recuperar documentos
-Permission2502Recuperar documentos
-Permission2503Enviar o eliminar documentos
-Permission2515Configuración directorios de documentos
-Permission2801Utilizar el cliente FTP en modo lectura (sólo explorar y descargar)
-Permission2802Utilizar el cliente FTP en modo escritura (borrar o subir archivos)
-Permission50101Usar TPV
-Permission50201Consultar las transacciones
-Permission50202Importar las transacciones
-DictionnaryCompanyTypeTipos de empresa
-DictionnaryCompanyJuridicalTypeFormas jurídicas
-DictionnaryProspectLevelPerspectiva nivel cliente potencial
-DictionnaryCantonDepartamentos/Provincias/Zonas
-DictionnaryRegionRegiones
-DictionnaryCountryPaíses
-DictionnaryCurrencyMonedas
-DictionnaryCivilityTítulos de cortesía
-DictionnaryActionsTipos de eventos de la agenda
-DictionnarySocialContributionsTipos de cargas sociales
-DictionnaryVATTasa de IVA (Impuesto sobre ventas en EEUU)
-DictionnaryRevenueStampImportes de sellos fiscales
-DictionnaryPaymentConditionsCondiciones de pago
-DictionnaryPaymentModesModos de pago
-DictionnaryTypeContactTipos de contactos/direcciones
-DictionnaryEcotaxeBaremos CEcoParticipación (DEEE)
-DictionnaryPaperFormatFormatos de papel
-DictionnaryFeesTipos de desplazamientos y honorarios
-DictionnarySendingMethodsMétodos de expedición
-DictionnaryStaffEmpleados
-DictionnaryAvailabilityTiempos de entrega
-DictionnaryOrderMethodsMétodos de pedido
-DictionnarySourceOrígenes de presupuestos/pedidos
-DictionnaryAccountancyplanPlan contable
-DictionnaryAccountancysystemModelos de planes contables
-SetupSavedConfiguración guardada
-BackToModuleListVolver a la lista de módulos
-BackToDictionnaryListVolver a la lista de diccionarios
-VATReceivedOnlyImpuestos especiales no facturables
-VATManagementGestión IVA
-VATIsUsedDescEl tipo de IVA propuesto por defecto en las creaciones de presupuestos, facturas, pedidos, etc. Responde a la siguiente regla:<br>Si el vendedor no está sujeto a IVA, IVA por defecto=0. Final de regla.<br>Si el país del vendedor= país del comprador entonces IVA por defecto=IVA del producto vendido. Final de regla.<br>Si vendedor y comprador residen en la Comunidad Europea y el bien vendido= nuevo medio de transportes (auto, barco, avión), IVA por defecto=0 (el IVA debe ser pagado por comprador a la hacienda pública de su país y no al vendedor). Final de regla<br>Si vendedor y comprador residen en la Comunidad Europea y comprador= particular o empresa sin NIF intracomunitario entonces IVA por defecto=IVA del producto vendido. Final de regla.<br>Si vendedor y comprador residen en la Comunidad Europea y comprador= empresa con NIF intracomunitario entonces IVA por defecto=0. Final de regla.<br>Si no, IVA propuesto por defecto=0. Final de regla.<br>
-VATIsNotUsedDescEl tipo de IVA propuesto por defecto es 0. Este es el caso de asociaciones, particulares o algunas pequeñas sociedades.
-VATIsUsedExampleFREn Francia, se trata de las sociedades u organismos que eligen un régimen fiscal general (General simplificado o General normal), régimen en el cual se declara el IVA.
-VATIsNotUsedExampleFREn Francia, se trata de asociaciones exentas de IVA o sociedades, organismos o profesiones liberales que han elegido el régimen fiscal de módulos (IVA en franquicia), pagando un IVA en franquicia sin hacer declaración de IVA. Esta elección hace aparecer la anotación  "IVA no aplicable - art-293B del CGI" en las facturas.
+CHARSET=UTF-8
+Version=Versión
+VersionProgram=Versión programa
+VersionLastInstall=Versión instalación inicial
+VersionLastUpgrade=Versión última actualización
+VersionExperimental=Experimental
+VersionDevelopment=Desarrollo
+VersionUnknown=Desconocida
+VersionRecommanded=Recomendada
+SessionId=Sesión ID
+SessionSaveHandler=Modalidad de salvaguardado de sesiones
+SessionSavePath=Localización salvaguardado de sesiones
+PurgeSessions=Purga de sesiones
+ConfirmPurgeSessions=¿Quiere purgar las sesiones? Esto desconectará a todos los usuarios (salvo a usted mismo).
+NoSessionListWithThisHandler=El gestor de período de sesiones configurado en su PHP no enumera las sesiones en curso
+LockNewSessions=Bloquear conexiones nuevas
+ConfirmLockNewSessions=¿Está seguro de querer restringir el acceso a Dolibarr a su usuario? Solamente el login <b>%s</b> podrá conectarse si confirma.
+UnlockNewSessions=Eliminar bloqueo de conexiones
+YourSession=Su sesión
+Sessions=Sesiones de usuarios
+WebUserGroup=Servidor web usuario/grupo
+NoSessionFound=Parece que su PHP no puede listar las sesiones activas. El directorio de salvaguardado de sesiones (<b>%s</b>) puede estar protegido (por ejemplo, por los permisos del sistema operativo o por la directiva open_basedir de su PHP).
+HTMLCharset=Charset de las páginas HTML
+DBStoringCharset=Charset base de datos para almacenamiento de datos
+DBSortingCharset=Charset base de datos para clasificar los datos
+WarningModuleNotActive=Módulo <b>%s</b> no activo
+WarningOnlyPermissionOfActivatedModules=Atención, solamente los permisos relacionados con los módulos activados se indican aquí. Puede activar los otros módulos en la página Configuración->Módulos
+DolibarrSetup=Instalación/Actualización de Dolibarr
+DolibarrUser=Usuario Dolibarr
+InternalUser=Usuario interno
+ExternalUser=Usuario externo
+InternalUsers=Usuarios internos
+ExternalUsers=Usuarios externos
+GlobalSetup=General
+GUISetup=Entorno
+SetupArea=Área configuración
+FormToTestFileUploadForm=Formulario de prueba de subida de archivo (según opciones elegidas)
+IfModuleEnabled=Nota: sólo es eficaz si el módulo <b>%s</b> está activado
+RemoveLock=Elimine el archivo <b>%s</b>, si existe, para permitir la utilidad de actualización.
+RestoreLock=Sustituir un archivo <b>%s</b>, dándole sólo derechos de lectura a este archivo con el fin de prohibir nuevas actualizaciones.
+SecuritySetup=Configuración de la seguridad
+ErrorModuleRequirePHPVersion=Error, este módulo requiere una versión %s o superior de PHP
+ErrorModuleRequireDolibarrVersion=Error, este módulo requiere una versión %s o superior de Dolibarr
+ErrorDecimalLargerThanAreForbidden=Error, las precisiones superiores a <b>%s</b> no están soportadas.
+DictionnarySetup=Diccionarios
+Dictionnary=Diccionarios
+ErrorReservedTypeSystemSystemAuto=El uso del tipo 'system' y 'systemauto' está reservado. Puede utilizar 'user' como valor para añadir su propio registro
+ErrorCodeCantContainZero=El código no puede contener el valor 0
+DisableJavascript=Desactivar las funciones Javascript
+ConfirmAjax=Utilizar los popups de confirmación Ajax
+UseSearchToSelectCompany=Utilizar un formulario de búsqueda para buscar terceros (en vez de lista desplegable)<br><br>Tenga en cuenta que si tiene un gran número de productos o servicios (>100 000), puede mejorar el rendimiento mediante la constante SOCIETE_DONOTSEARCH_ANYWHERE a 1 en Configuración->Varios. La búsqueda se limitará entonces al inicio de la cadena.
+ActivityStateToSelectCompany=Agregar un filtro en la búsqueda para mostrar/ocultar los terceros en activo o que hayan dejado de ejercer
+UseSearchToSelectContact=Utilizar un formulario de búsqueda para buscar contactos (en vez de una lista desplegable).<br>Tenga en cuenta que si tiene un gran número de contactos (>100 000), puede mejorar el rendimiento mediante la constante CONTACT_DONOTSEARCH_ANYWHERE a 1 en Configuración->Varios. La búsqueda se limitará entonces al inicio de la cadena.
+SearchFilter=Opciones filtros de búsqueda
+NumberOfKeyToSearch=Nº de caracteres para desencadenar la búsqueda: %s
+ViewFullDateActions=Ver las fechas de las acciones en su totalidad en la ficha de tercero
+NotAvailableWhenAjaxDisabled=No disponible cuando Ajax esté desactivado
+JavascriptDisabled=Javascript desactivado
+UsePopupCalendar=Utilizar popups para la introducción de las fechas
+UsePreviewTabs=Ver fichas "vista previa"
+ShowPreview=Ver vista previa
+PreviewNotAvailable=Vista previa no disponible
+ThemeCurrentlyActive=Tema actualmente activo
+CurrentTimeZone=Zona horaria PHP (Servidor)
+Space=Área
+Fields=Campos
+Mask=Máscara
+NextValue=Próximo valor
+NextValueForInvoices=Próximo valor (facturas)
+NextValueForCreditNotes=Próximo valor (notas de entrega)
+MustBeLowerThanPHPLimit=Observación: Su PHP limita el tamaño a <b>%s</b> %s de máximo, cualquiera que sea el valor de este parámetro
+NoMaxSizeByPHPLimit=Ninguna limitación interna en su servidor PHP
+MaxSizeForUploadedFiles=Tamaño máximo de los documentos a subir (0 para prohibir la subida)
+UseCaptchaCode=Utilización de código gráfico (CAPTCHA) en el login
+UseAvToScanUploadedFiles=Utilización de un antivirus para escanear los archivos subidos
+AntiVirusCommand=Ruta completa hacia el comando antivirus
+AntiVirusCommandExample=Ejemplo para ClamWin: c:\Program Files (x86)\ClamWin\bin\clamscan.exe<br>Ejemplo para ClamAv: /usr/bin/clamscan
+AntiVirusParam=Parámetros complementarios en la línea de comandos
+AntiVirusParamExample=Ejemplo para ClamWin: --database="C:\Program Files (x86)\ClamWin\lib"
+ComptaSetup=Configuración del módulo Contabilidad
+UserSetup=Configuración gestión de los usuarios
+MenuSetup=Administración de los menús por base de datos
+MenuLimits=Límites y precisión
+MenuIdParent=Id del menú padre
+DetailMenuIdParent=ID del menú padre (vacío para un menú superior)
+DetailPosition=Número de orden para la posición del menú
+PersonalizedMenusNotSupported=Menús personalizados no generados
+AllMenus=Todos
+NotConfigured=No configurado
+Setup=Configuración
+Activation=Activación
+Active=Activo
+SetupShort=Config.
+OtherOptions=Otras opciones
+OtherSetup=Varios
+CurrentValueSeparatorDecimal=Separador decimal
+CurrentValueSeparatorThousand=Separador miles
+Modules=Módulos
+ModulesCommon=Módulos principales
+ModulesOther=Módulos complementarios
+ModulesInterfaces=Módulos interfaz
+ModulesSpecial=Módulos específicos
+ParameterInDolibarr=Variable %s
+LanguageParameter=Variable idioma %s
+LanguageBrowserParameter=Variable %s
+LocalisationDolibarrParameters=Parámetros de localización
+ClientTZ=Zona horaria Cliente (usuario)
+ClientHour=Hora cliente (usuario)
+OSTZ=Zona horaria
+PHPTZ=Zona horaria PHP
+PHPServerOffsetWithGreenwich=Offset servidor con Greenwich (segundos)
+ClientOffsetWithGreenwich=Offset cliente/navegador con Greenwich (segundos)
+DaylingSavingTime=Horario de verano (usuario)
+CurrentHour=Hora PHP (servidor)
+CompanyTZ=Zona Horaria empresa (sede central)
+CompanyHour=Hora empresa (sede central)
+CurrentSessionTimeOut=Timeout sesión actual
+OSEnv=Entorno SO
+Box=Panel
+Boxes=Paneles
+MaxNbOfLinesForBoxes=Nº de líneas máximo para los paneles
+PositionByDefault=Posición por defecto
+Position=Orden
+MenusDesc=Los gestores de menú definen el contenido de las 2 barras de menús (la barra horizontal y la barra vertical). Es posible asignar gestores diferentes según el usuario sea interno o externo.
+MenusEditorDesc=El editor de menús permite definir entradas personalizadas en los menús. Debe utilizarse con prudencia so pena de poner a Dolibarr en una situación inestable siendo necesaria una reinstalación para encontrar un menú coherente.
+MenuForUsers=Menú para los usuarios
+LangFile=Archivo .lang
+System=Sistema
+SystemInfo=Info. sistema
+SystemTools=Utilidades sistema
+SystemToolsArea=Área utilidades del sistema
+SystemToolsAreaDesc=Esta área ofrece distintas funciones de administración. Utilice la menú para elegir la funcionalidad buscada.
+PurgeAreaDesc=Esta página le permite eliminar todos los archivos creados o guardados por Dolibarr (archivos temporales o todos los archivos del directorio <b>%s</b>). El uso de esta función no es necesaria. Se proporciona para los usuarios que albergan a Dolibarr en un servidor que no ofrece los permisos de eliminación de archivos salvaguardados por el servidor Web.
+PurgeDeleteLogFile=Borrar el archivo log <b>%s</b> definido por el módulo Syslog (no hay riesgo de pérdida de datos)
+PurgeDeleteTemporaryFiles=Eliminar todos los archivos temporales (sin riesgo de perdida de datos)
+PurgeDeleteAllFilesInDocumentsDir=Eliminar todos los archivos del directorio <b>%s</b>. Archivos temporales y archivos adjuntados a elementos (terceros, facturas, etc.) serán eliminados.
+PurgeRunNow=Purgar
+PurgeNothingToDelete=Ningún directorio a eliminar
+PurgeNDirectoriesDeleted=<b>%s</b> archivos o directorios eliminados
+PurgeAuditEvents=Purgar los eventos de seguridad
+ConfirmPurgeAuditEvents=¿Está seguro de querer purgar la lista de los eventos de auditoría de seguridad (Se borrará toda la lista, pero esto no afecta a sus datos)?
+NewBackup=Nueva copia de seguridad
+GenerateBackup=Generar copia de seguridad
+Backup=Copia de seguridad
+Restore=Restauración
+RunCommandSummary=La copia será realizada por el comando siguiente
+RunCommandSummaryToLaunch=La copia puede ser realizada por el comando siguiente
+WebServerMustHavePermissionForCommand=Su servidor Web debe tener los derechos de ejecutar tal orden
+BackupResult=Resultado de la copia
+BackupFileSuccessfullyCreated=Archivo de copia generado correctamente
+YouCanDownloadBackupFile=Los archivos generados pueden ahora descargarse
+NoBackupFileAvailable=Ninguna copia disponible
+ExportMethod=Método de exportación
+ImportMethod=Método de importación
+ToBuildBackupFileClickHere=Para crear una copia, haga click <a href="%s">aquí</a>.
+ImportMySqlDesc=Para importar una copia, hay que utilizar el comando mysql en linea siguiente:
+ImportPostgreSqlDesc=Para importar una copia de seguridad, debe usar el comando pg_restore desde la línea de comandos:
+ImportMySqlCommand=%s %s < miarchivobackup.sql
+ImportPostgreSqlCommand=%s %s miarchivobackup.sql
+FileNameToGenerate=Nombre del archivo a generar
+CommandsToDisableForeignKeysForImport=Comando para desactivar las claves excluyentes a la importación
+CommandsToDisableForeignKeysForImportWarning=Obligatorio si quiere poder restaurar más tarde el dump SQL
+ExportCompatibility=Compatibilidad del archivo de exportación generado
+MySqlExportParameters=Parámetros de la exportación MySql
+PostgreSqlExportParameters=Parámetros de la exportación PostgreSQL
+UseTransactionnalMode=Utilizar el modo transaccional
+FullPathToMysqldumpCommand=Ruta completa del comando mysqldump
+FullPathToPostgreSQLdumpCommand=ruta completa hacia el comando pg_dump
+ExportOptions=Opciones de exportación
+AddDropDatabase=Añadir órdenes DROP DATABASE
+AddDropTable=Añadir órdenes DROP TABLE
+ExportStructure=Estructura
+Datas=Datos
+NameColumn=Nombre las columnas
+ExtendedInsert=Instrucciones INSERT extendidas
+NoLockBeforeInsert=Sin instrucción LOCK antes del INSERT 
+DelayedInsert=Inserciones con retraso
+EncodeBinariesInHexa=Codificar los campos binarios en hexadecimal
+IgnoreDuplicateRecords=Ignorar los errores de duplicación (INSERT IGNORE)
+Yes=Sí
+No=No
+AutoDetectLang=Autodetección (navegador)
+FeatureDisabledInDemo=Opción deshabilitada en demo
+Rights=Permisos
+BoxesDesc=Los paneles son pequeñas zonas de información que se muestran en algunas páginas. Puede elegir activar o desactivar un panel haciendo clic en 'Activar', o haciendo click en el cubo de basura para desactivarlo. Solo se muestran los paneles relacionados con un <a href="modules.php">módulo</a> activo.
+OnlyActiveElementsAreShown=Sólo los elementos de <a href="%s">módulos activados</a> son mostrados.
+ModulesDesc=Los módulos Dolibarr definen las funcionalidades disponibles en la aplicación. Algunos módulos requieren permisos que deberán indicarse a los usuarios para que puedan acceder a sus funcionalidades.
+ModulesInterfaceDesc=Los módulos de interfaz son módulos que permiten vincular a Dolibarr con sistemas, aplicaciones o servicios externos.
+ModulesSpecialDesc=Los módulos complementarios son módulos de uso muy específico o menos corriente que los módulos normales.
+ModulesJobDesc=Los módulos específicos permiten una preconfiguración simplificada de Dolibarr para un negocio en concreto.
+ModulesMarketPlaceDesc=Hay disponibles para su descarga en sitios externos otros módulos/extensiones...
+ModulesMarketPlaces=Más módulos...
+DoliStoreDesc=DoliStore, el sitio oficial de módulos complementarios y para Dolibarr ERP/CRM
+WebSiteDesc=Sitios proveedores a consultar para encontrar más módulos
+URL=Enlace
+BoxesAvailable=Paneles disponibles
+BoxesActivated=Paneles activados
+ActivateOn=Activar en
+ActiveOn=Activo en
+SourceFile=Archivo origen
+AutomaticIfJavascriptDisabled=Automático si Javascript está desactivado
+AvailableOnlyIfJavascriptNotDisabled=Disponible solamente si Javascript esta activado
+AvailableOnlyIfJavascriptAndAjaxNotDisabled=Disponible solamente si Javascript y Ajax están activados
+Required=Requerido
+Security=Seguridad
+Passwords=Contraseñas
+DoNotStoreClearPassword=No almacenar la contraseña sin cifrar en la base
+MainDbPasswordFileConfEncrypted=Encriptar la contraseña de la base en el archivo conf.php
+InstrucToEncodePass=Para tener la contraseña de la base de datos codificada en el archivo de configuración <b>conf.php</b>, reemplazar en ese fichero la línea <br><b>$dolibarr_main_db_pass="..."</b><br> por <br><b>$dolibarr_main_db_pass="crypted:%s"</b>
+InstrucToClearPass=Para tener la contraseña de la base de datos descodificada en el archivo de configuración b>conf.php</b>, reemplazar en ese fichero la línea <br><b>$dolibarr_main_db_pass="crypted:..."</b><br> por <br><b>$dolibarr_main_db_pass="%s"</b>
+ProtectAndEncryptPdfFiles=Protección y encriptación de los pdf generados
+ProtectAndEncryptPdfFilesDesc=La protección de un documento pdf deja el documento libre a la lectura y a la impresión a cualquier lector de PDF. Por el contrario, la modificación y la copia resultan imposibles.
+Feature=Función
+DolibarrLicense=Licencia
+DolibarrProjectLeader=jefe de proyecto
+Developpers=Desarrolladores/contribuidores
+OtherDeveloppers=Otros desarrolladores/contribuidores
+OfficialWebSite=Sitio web oficial internacional
+OfficialWebSiteFr=sitio web oficial habla francesa
+OfficialWiki=Wiki documentación Dolibarr
+OfficialDemo=Demo en línea Dolibarr
+OfficialMarketPlace=Sitio oficial de módulos complementarios y extensiones
+OfficialWebHostingService=Servicio oficial de alojamiento (SaaS)
+ForDocumentationSeeWiki=Para la documentación de usuario, desarrollador o Preguntas Frecuentes (FAQ), consulte el wiki Dolibarr: <br><b><a href="%s" target="_blank">%s</a></b>
+ForAnswersSeeForum=Para otras cuestiones o realizar sus propias consultas, puede utilizar el foro Dolibarr: <br><b><a href="%s" target="_blank">%s</a></b>
+HelpCenterDesc1=Esta aplicación, independiente de Dolibarr, le permite ayudarle a obtener un servicio de soporte de Dolibarr.
+HelpCenterDesc2=Algunos de estos servicios sólo están disponibles en <b>inglés</b>.
+CurrentTopMenuHandler=Gestor de menú superior
+CurrentLeftMenuHandler=Gestor de menú izquierdo
+CurrentMenuHandler=Gestor de menú
+CurrentSmartphoneMenuHandler=Gestor menú smartphone actual
+MeasuringUnit=Unidad de medida
+Emails=E-Mails
+EMailsSetup=Configuración E-Mails
+EMailsDesc=Esta página permite sustituir los parámetros PHP relacionados con el envío de correos electrónicos. En la mayoría de los casos en SO como UNIX/Linux, los parámetros PHP son ya correctos y esta página es inútil.
+MAIN_MAIL_SMTP_PORT=Puerto del servidor SMTP (Por defecto en php.ini: <b>%s</b>)
+MAIN_MAIL_SMTP_SERVER=Nombre host o ip del servidor SMTP (Por defecto en php.ini: <b>%s</b>)
+MAIN_MAIL_SMTP_PORT_NotAvailableOnLinuxLike=Puerto del servidor SMTP (No definido en PHP en sistemas de tipo Unix)
+MAIN_MAIL_SMTP_SERVER_NotAvailableOnLinuxLike=Nombre servidor o ip del servidor SMTP (No definido en PHP en sistemas de tipo Unix)
+MAIN_MAIL_EMAIL_FROM=E-Mail del emisor para envíos E-Mail automáticos (Por defecto en php.ini: <b>%s</b>)
+MAIN_MAIL_ERRORS_TO=E-Mail usado para los retornos de error de los e-mails enviados
+MAIN_MAIL_AUTOCOPY_TO=Enviar automáticamente copia oculta de los e-mails enviados a
+MAIN_DISABLE_ALL_MAILS=Desactivar globalmente todo envío de correos electrónicos (para modo de pruebas o demo)
+MAIN_MAIL_SENDMODE=Método de envío de e-mails
+MAIN_MAIL_SMTPS_ID=ID de autentificación SMTP  si se requiere autenticación SMTP
+MAIN_MAIL_SMTPS_PW=Contraseña autentificación SMTP si se requiere autentificación SMTP
+MAIN_MAIL_EMAIL_TLS=Uso de encriptación TLS (SSL)
+MAIN_DISABLE_ALL_SMS=Desactivar globalmente todo envío de SMS (para modo de pruebas o demo)
+MAIN_SMS_SENDMODE=Método de envío de SMS
+MAIN_MAIL_SMS_FROM=Número de teléfono por defecto para los envíos SMS
+FeatureNotAvailableOnLinux=Funcionalidad no disponible en sistemas  Unix. Pruebe su sendmail localmente.
+SubmitTranslation=Si la traducción de este idioma es incompleta o si encuentra errores, puede corregirlos mediante la edición de los archivos en el directorio <b>langs/%s</b> y envíe los cambios al foro www.dolibarr.es.
+ModuleSetup=Configuración del módulo
+ModulesSetup=Configuración de los módulos
+ModuleFamilyBase=Sistema
+ModuleFamilyCrm=Gestión cliente (CRM)
+ModuleFamilyProducts=Gestión productos
+ModuleFamilyHr=Recursos Humanos
+ModuleFamilyProjects=Proyectos/Trabajo cooperativo
+ModuleFamilyOther=Otro
+ModuleFamilyTechnic=Módulos herramientas o Sistema
+ModuleFamilyExperimental=Módulos experimentales
+ModuleFamilyFinancial=Módulos financieros (Contabilidad/tesorería)
+ModuleFamilyECM=Gestión Electrónica de Documentos (GED)
+MenuHandlers=Gestores menú
+MenuAdmin=Editor menú
+DoNotUseInProduction=No usar en producción
+ThisIsProcessToFollow=He aquí el procedimiento a seguir:
+StepNb=Paso %s
+FindPackageFromWebSite=Buscar el paquete que responde a su necesidad (por ejemplo en el sitio web %s)
+DownloadPackageFromWebSite=Descargar el paquete desde el sitio %s.
+UnpackPackageInDolibarrRoot=Descomprimir el paquete en el directorio raíz de Dolibarr <b>%s</b> sobre los archivos existentes (sin desplazar o borrar los existentes, so pena de perder su configuración o los módulos no oficiales instalados)
+SetupIsReadyForUse=La instalación ha finalizado y Dolibarr está disponible con el nuevo componente.
+NotExistsDirect=No existe el directorio alternativo.<br>
+InfDirAlt=Desde la versión 3 es posible definir un directorio root alternativo, esto le permite almacenar en el mismo lugar módulos y temas personalizados.<br>Basta con crear un directorio en el raíz de Dolibarr (por ejemplo: custom).<br>
+InfDirExample=<br>Seguidamente se declara en el archivo conf.php:<br> $dolibarr_main_url_root_alt='http://miservidor/custom'<br>$dolibarr_main_document_root_alt='/directorio/de/dolibarr/htdocs/custom'<br>*Estas lineas vienen comentadas con un "#", para descomentarlas solo hay que retirar el caracter.
+YouCanSubmitFile=Seleccione paquete:
+CurrentVersion=Versión actual de Dolibarr
+CallUpdatePage=Llamar a la página de actualización de la estructura y datos de la base de datos %s.
+LastStableVersion=Última versión estable disponible
+GenericMaskCodes=Puede introducir cualquier máscara numérica. En esta máscara, puede utilizar las siguientes etiquetas:<br><b>{000000} </b> corresponde a un número que se incrementa en cada uno de %s. Introduzca tantos ceros como longitud desee mostrar. El contador se completará a partir de ceros por la izquierda con el fin de tener tantos ceros como la máscara. <br> <b> {000000+000}</ b> Igual que el anterior, con una compensación correspondiente al número a la derecha del signo + se aplica a partir del primer %s. <br> <b> {000000@x}</b> igual que el anterior, pero el contador se restablece a cero cuando se llega a x meses (x entre 1 y 12). Si esta opción se utiliza y x es de 2 o superior, entonces la secuencia {yy}{mm} o {yyyy}{mm} también es necesaria. <br> <b> {dd} </b> días (01 a 31). <br><b> {mm}</b> mes (01 a 12). <br><b>{yy}</b>, <b>{yyyy}</b> ou <b>{y}</b> año en 2, 4 ó 1 cifra.<br>
+GenericMaskCodes2=<b>{cccc}</b> el código de cliente en n caracteres<br><b>{cccc000}</b> el código de cliente en n caracteres es seguido por un contador propio al cliente sin offset, completado con ceros hasta completar la máscara, y volviendo a cero al mismo tiempo que el contador global.<br><b>{tttt}</b>El código del tipo de la empresa en n caracteres (ver diccionarios-tipos de empresas).<br>
+GenericMaskCodes3=Cualquier otro carácter en la máscara se quedará sin cambios. <br>No se permiten espacios <br>
+GenericMaskCodes4a=<u>Ejemplo en la 99 ª %s del tercero La Empresa realizada el 31/03/2007: </u><br>
+GenericMaskCodes4b=<u>Ejemplo sobre un tercero creado el 31/03/2007:</u><br>
+GenericMaskCodes4c=<u>Ejemplo en un producto/servicio creado el 31/03/2007:</u><br>
+GenericMaskCodes5=<b>ABC{yy}{mm}-{000000}</b> dará <b>ABC0703-000099</b><br><b>{0000+100@1}-XXX/{dd}/YYY</b> daráa <b>0199-XXX/31/YYY</b>
+GenericNumRefModelDesc=Devuelve un número creado acorde a una máscara definida.
+ServerAvailableOnIPOrPort=Servidor disponible en la dirección <b>%s</b> en el puerto <b>%s</b>
+ServerNotAvailableOnIPOrPort=Servidor no disponible en la dirección <b>%s</b> en el puerto <b>%s</b>
+DoTestServerAvailability=Probar conectividad con el servidor
+DoTestSend=Probar envío
+DoTestSendHTML=Probar envío HTML
+ErrorCantUseRazInStartedYearIfNoYearMonthInMask=Error, no se puede usar la opción @ si la secuencia {yy}{mm} o {yyyy}{mm} no se encuentra en la máscara.
+UMask=Parámetro UMask de nuevos archivos en Unix/Linux/BSD.
+UMaskExplanation=Este parámetro determina los derechos de los archivos creados en el servidor Dolibarr (durante la subida, por ejemplo).<br>Este debe ser el valor octal (por ejemplo, 0666 significa lectura / escritura para todos).<br>Este parámetro no tiene ningún efecto sobre un servidor Windows.
+SeeWikiForAllTeam=Vea el wiki para más detalles de todos los actores y de su organización
+UseACacheDelay=Demora en caché de la exportación en segundos (0 o vacio sin caché)
+DisableLinkToHelpCenter=Ocultar el enlace "¿Necesita soporte o ayuda?" en la página de login
+DisableLinkToHelp=Ocultar el enlace "<b>%s Ayuda en línea</b>" del menú izquierdo
+AddCRIfTooLong=No hay líneas de corte automático, de modo que si el texto es demasiado largo en los documentos, debe agregar sus propios retornos de carro en el texto mecanografiado.
+ModuleDisabled=Módulo desactivado
+ModuleDisabledSoNoEvent=Módulo desactivado, por lo que evento nunca se crea
+ConfirmPurge=¿Está seguro de querer realizar esta purga?<br>Esto borrará definitivamente todos los datos de sus archivos (área GED, archivos adjuntos etc.).
+MinLength=Longuitud mínima
+LanguageFilesCachedIntoShmopSharedMemory=archivos .lang en memoria compartida
+ExamplesWithCurrentSetup=Ejemplos con la configuración activa actual
+ListOfDirectories=Listado de directorios de plantillas OpenDocument
+ListOfDirectoriesForModelGenODT=Listado de directorios con plantillas de documentos OpenDocument.<br><br>Indicar la ruta completa del directorio.<br>Añadir un retorno a la línea entre cada directorio.<b>Para indicar un directorio del módulo GED, indicar <b>DOL_DATA_ROOT/ecm/nombredeldirectorio</b>.<br><br>Los archivos de plantilla de estos directorios deben terminar con <b>.odt</b> 
+NumberOfModelFilesFound=Número de archivos de plantillas ODT encontrados en este/estos directorio(s)
+ExampleOfDirectoriesForModelGen=Ejemplos de sintaxis:<br>c:\mydir<br>/home/mydir<br>DOL_DATA_ROOT/ecm/ecmdir
+FollowingSubstitutionKeysCanBeUsed=Colocando los siguientes tags en la plantilla, obtendrá una sustitución con el valor personalizado al generar el documento:
+FullListOnOnlineDocumentation=http://wiki.dolibarr.org/index.php/Crear_un_modelo_de_documento_ODT
+FirstnameNamePosition=Orden visualización nombre/apellidos
+DescWeather=Los siguientes gráficos se mostrarán en el panel si el número de elementos llegan a estos valores:
+KeyForWebServicesAccess=Clave para usar los Web Services (parámetro "dolibarrkey" en webservices)
+TestSubmitForm=Formulario de pruebas
+ThisForceAlsoTheme=Usar este gestor de menús predetermina también el tema, sea cual sea la elección del usuario. Además, este gestor de menús, especial para smartphones, solamente funciona en algunos teléfonos. Use otro gestor si observa cualquier problema.
+ThemeDir=Directorio de los temas
+ConnectionTimeout=Timeout de conexión
+ResponseTimeout=Timeout de respuesta
+SmsTestMessage=Mensaje de prueba de __PHONEFROM__ para __PHONETO__
+ModuleMustBeEnabledFirst=Para usar esta función debe estar activado el módulo <b>%s</b>.
+SecurityToken=Clave para encriptar urls
+NoSmsEngine=No hay disponible ningún gestor de envío de SMS. Los gestores de envío de SMS no se instalan por defecto ya que dependen de cada proveedor, sin embargo puede encontrarlos en la plataforma %s.
+PDF=PDF
+PDFDesc=Puede definir aquí las opciones globales para la generación de los PDF
+PDFAddressForging=Reglas de visualización de direcciones
+HideAnyVATInformationOnPDF=Ocultar toda la información relacionada con el IVA en la generación de los PDF
+HideDescOnPDF=Ocultar descripción de los productos en la generación de los PDF
+HideRefOnPDF=Ocultar referencia de los productos en la generación de los PDF
+HideDetailsOnPDF=Ocultar detalles de las líneas de productos en la generación de los PDF
+Library=Librería
+UrlGenerationParameters=Seguridad de las URLs
+SecurityTokenIsUnique=¿Usar un parámetro securekey único para cada URL?
+EnterRefToBuildUrl=Introduzca la referencia del objeto %s
+GetSecuredUrl=Obtener la URL calculada
+ButtonHideUnauthorized=Ocultar los botones de acciones no autorizadas en vez de mostrarlos atenuados
+TotalNumberOfActivatedModules=Número total de módulos activados: <b>%s</b>
+YouMustEnableOneModule=Debe activar al menos un módulo.
+ProductVatMassChange=Modificar IVA en masa
+ProductVatMassChangeDesc=Esta página le permite cambiar el tipo de IVA definido en  los productos o servicios de un valor a otro. Tenga en cuenta que el cambio se lleva a cabo en masa sobre toda la base de datos.
+OldVATRates=Tasa de IVA antigua
+NewVATRates=Tasa de IVA nueva
+PriceBaseTypeToChange=Cambiar el precio cuya referencia de base es
+MassConvert=Convertir masivamente
+String=Cadena de texto
+TextLong=Texto largo
+Int=Numérico entero
+Float=Decimal
+DateAndTime=Fecha y hora
+Unique=Único
+Boolean=Boleano (Casilla de verificación)
+ExtrafieldPhone=Teléfono
+ExtrafieldPrice=Precio
+ExtrafieldMail=Correo
+ExtrafieldSelect=Lista de selección
+ExtrafieldSelectList=Lista de selección de tabla
+ExtrafieldSeparator=Separador
+ExtrafieldCheckBox=Casilla de verificación
+ExtrafieldRadio=Botón de selección excluyente
+ExtrafieldParamHelpselect=La lista ha de ser en forma llave, valor<br><br> por ejemplo : <br>1,text1<br>2,text2<br>3,text3<br>...
+ExtrafieldParamHelpcheckbox=La lista ha de ser en forma llave, valor<br><br> por ejemplo : <br>1,text1<br>2,text2<br>3,text3<br>...
+ExtrafieldParamHelpradio=La lista ha de ser en forma llave, valor<br><br> por ejemplo : <br>1,text1<br>2,text2<br>3,text3<br>...
+ExtrafieldParamHelpsellist=La lista ha de ser de la tabl<br><br> por ejemplo: <br>table:label:(code)<br>
+LibraryToBuildPDF=Librería usada para la creación de archivos PDF
+WarningUsingFPDF=Atención: Su archivo <b>conf.php</b> contiene la directiva <b>dolibarr_pdf_force_fpdf=1</b>. Esto hace que se use la librería FPDF para generar sus archivos PDF. Esta librería es antigua y no cubre algunas funcionalidades (Unicode, transparencia de imágenes, idiomas cirílicos, árabes o asiáticos, etc.), por lo que puede tener problemas en la generación de los PDF.<br>Para resolverlo, y disponer de un soporte completo de PDF, puede descargar la <a href="http://www.tcpdf.org/" target="_blank">librería TCPDF</a> , y a continuación comentar o eliminar la línea <b>$dolibarr_pdf_force_fpdf=1</b>, y añadir en su lugar <b>$dolibarr_lib_TCPDF_PATH='ruta_a_TCPDF'</b>   
+LocalTaxDesc=Algunos países aplican 2 o 3 tasas a cada línea de factura. Si es el caso, escoja el tipo de la segunda y tercera tasa y su valor. Los posibles tipos son:<br>1 : tasa local aplicable a productos y servicios sin IVA (IVA no se aplica en la tasa local)<br>2 : tasa local se aplica a productos y servicios antes del IVA (IVA se calcula sobre importe+tasa local)<br>3 : tasa local se aplica a productos sin IVA (IVA no se aplica en la tasa local)<br>4 : tasa local se aplica a productos antes del IVA (IVA se calcula sobre el importe+tasa local)<br>5 : tasa local se aplica a servicios sin IVA (IVA no se aplica a la tasa local)<br>6 : tasa local se aplica a servicios antes del IVA (IVA se calcula sobre importe + tasa local)
+SuhosinSessionEncrypt=Almacenamiento de sesiones cifradas por Suhosin
+SMS=SMS
+LinkToTestClickToDial=Introduzca un número de teléfono al que llamar para probar el enlace de llamada ClickToDial para el usuario <strong>%s</strong>
+RefreshPhoneLink=Refrescar enlace
+LinkToTest=Enlace seleccionable para el usuario  <strong>%s</strong> (haga clic en el número para probar)
+KeepEmptyToUseDefault=Deje este campo vacío para usar el valor por defecto
+DefaultLink=Enlace por defecto
+ValueOverwrittenByUserSetup=Atención: Este valor puede ser sobreescrito por un valor específico de la configuración del usuario (cada usuario puede tener su propia url clicktodial)
+# Modules= undefined=
+Module0Name=Usuarios y grupos
+Module0Desc=Gestión de usuarios y grupos
+Module1Name=Terceros
+Module1Desc=Gestión de terceros (empresas, particulares) y contactos
+Module2Name=Comercial
+Module2Desc=Gestión comercial
+Module10Name=Contabilidad
+Module10Desc=Activación de informes simples de contabilidad (diarios, ventas) basados en el contenido de la base de datos. Sin desgloses.
+Module20Name=Presupuestos
+Module20Desc=Gestión de presupuestos/propuestas comerciales
+Module22Name=E-Mailings
+Module22Desc=Administración y envío de E-Mails masivos
+Module23Name=Energía
+Module23Desc=Realiza el seguimiento del consumo de energías
+Module25Name=Pedidos de clientes
+Module25Desc=Gestión de pedidos de clientes
+Module30Name=Facturas y abonos
+Module30Desc=Gestión de facturas y abonos a clientes. Gestión facturas de proveedores
+Module40Name=Proveedores
+Module40Desc=Gestión de proveedores
+Module42Name=Syslog
+Module42Desc=Generación de logs (archivos, syslog,...)
+Module49Name=Editores
+Module49Desc=Gestión de editores
+Module50Name=Productos
+Module50Desc=Gestión de productos
+Module51Name=Publipostage
+Module51Desc=Administración y envío de correo de papel en masa
+Module52Name=Stocks de productos
+Module52Desc=Gestión de stocks de productos
+Module53Name=Servicios
+Module53Desc=Gestión de servicios
+Module54Name=Contratos
+Module54Desc=Gestión de contratos
+Module55Name=Códigos de barras
+Module55Desc=Gestión de los códigos de barras
+Module56Name=Telefonía
+Module56Desc=Gestión de la telefonía
+Module57Name=Domiciliaciones
+Module57Desc=Gestión de domiciliaciones y reintegros bancarios
+Module58Name=ClickToDial
+Module58Desc=Integración con ClickToDial
+Module59Name=Bookmark4u
+Module59Desc=Añade función para generar una cuenta Bookmark4u desde una cuenta Dolibarr
+Module70Name=Intervenciones
+Module70Desc=Gestión de las intervenciones a terceros
+Module75Name=Notas de gasto y desplazamientos
+Module75Desc=Gestión de las notas de gasto y desplazamientos
+Module80Name=Expediciones
+Module80Desc=Gestión de expediciones y recepciones 
+Module85Name=Bancos y cajas
+Module85Desc=Gestión de las cuentas financieras de tipo cuentas bancarias, postales o efectivo
+Module100Name=Sitio web externo
+Module100Desc=Incluye cualquier sitio web externo en los menús de Dolibarr, viéndolo en un frame
+Module105Name=Mailman y SPIP
+Module105Desc=Interfaz con Mailman o SPIP para el módulo Miembros
+Module200Name=LDAP
+Module200Desc=Sincronización con un directorio LDAP
+Module210Name=PostNuke
+Module210Desc=Integración con PostNuke
+Module240Name=Exportaciones de datos
+Module240Desc=Herramienta de exportación de datos Dolibarr (con asistente)
+Module250Name=Importación de datos
+Module250Desc=Herramienta de importación de datos a Dolibarr (con asistente)
+Module310Name=Miembros
+Module310Desc=Gestión de miembros de una asociación
+Module320Name=Hilos RSS
+Module320Desc=Adición de hilos de información RSS en las pantallas Dolibarr
+Module330Name=Marcadores
+Module330Desc=Gestión de marcadores
+Module400Name=Proyectos
+Module400Desc=Gestión de los proyectos en los otros módulos
+Module410Name=Webcalendar
+Module410Desc=Interfaz con el calendario Webcalendar
+Module500Name=Impuestos, cargas sociales y dividendos
+Module500Desc=Gestión de impuestos y cargas sociales
+Module600Name=Notificaciones
+Module600Desc=Envío de notificaciones (por correo electrónico) sobre los eventos de trabajo Dolibarr
+Module700Name=Donaciones
+Module700Desc=Gestión de donaciones
+Module800Name=OSCommerce 1
+Module800Desc=Interfaz de visualización de una tienda OSCommerce mediante acceso directo a su base de datos
+Module900Name=OSCommerce 2
+Module900Desc=Interfaz de visualización de una tienda OSCommerce mediante Web services. Este módulo requiere instalar los archivos de /oscommerce_ws/ws_server en OSCommerce. Lea el archivo README del directorio /oscommerce_ws/ws_server.
+Module1200Name=Mantis
+Module1200Desc=Interfaz con el sistema de seguimiento de incidencias Mantis
+Module1400Name=Contabilidad experta
+Module1400Desc=Gestión experta de la contabilidad (doble partida)
+Module1780Name=Categorías
+Module1780Desc=Gestión de categorías (productos, proveedores y clientes)
+Module2000Name=Editor WYSIWYG
+Module2000Desc=Permite la edición de ciertas zonas de texto mediante un editor avanzado
+Module2300Name=Programador
+Module2300Desc=Tareas programadas
+Module2400Name=Agenda
+Module2400Desc=Gestión de la agenda y de las acciones
+Module2500Name=Gestión Electrónica de Documentos
+Module2500Desc=Permite administrar una base de documentos
+Module2600Name=WebServices
+Module2600Desc=Activa los servicios de servidor web services de Dolibarr
+Module2650Name=Ultimatepdf
+Module2650Desc=Gestión de la presentación de las plantillas pdf (presupuestos, facturas, pedidos, etc.)
+Module2700Name=Gravatar
+Module2700Desc=Utiliza el servicio en línea de Gravatar (www.gravatar.com) para mostrar fotos de los usuarios/miembros (que se encuentran en sus mensajes de correo electrónico). Necesita un acceso a Internet
+Module2900Name=GeoIPMaxmind
+Module2900Desc=Capacidades de conversión GeoIP Maxmind
+Module5000Name=Multi-empresa
+Module5000Desc=Permite gestionar varias empresas
+Module20000Name=Días libres
+Module20000Desc=Gestión de los días libres de los empleados
+Module50000Name=PayBox
+Module50000Desc=Módulo para proporcionar un pago en línea con tarjeta de crédito mediante Paybox
+Module50100Name=TPV
+Module50100Desc=Terminal Punto de Venta para la venta en mostrador
+Module50200Name=Paypal
+Module50200Desc=Módulo para proporcionar un pago en línea con tarjeta de crédito mediante Paypal
+Module59000Name=Márgenes
+Module59000Desc=Módulo para gestionar los márgenes de beneficio
+Module60000Name=Comisiones
+Module60000Desc=Módulo para gestionar las comisiones de venta
+Permission11=Consultar facturas
+Permission12=Crear/Modificar facturas
+Permission13=De-validar facturas
+Permission14=Validar facturas
+Permission15=Enviar facturas por correo
+Permission16=Emitir pagos de facturas
+Permission19=Eliminar facturas
+Permission21=Consultar presupuestos
+Permission22=Crear/modificar presupuestos
+Permission24=Validar presupuestos
+Permission25=Enviar los presupuestos
+Permission26=Cerrar presupuestos
+Permission27=Eliminar presupuestos
+Permission28=Exportar los presupuestos
+Permission31=Consultar productos
+Permission32=Crear/modificar productos
+Permission34=Eliminar productos
+Permission36=Ver/gestionar los productos ocultos
+Permission38=Exportar productos
+Permission41=Consultar proyectos y tareas (compartidos o soy contacto)
+Permission42=Crear/modificar proyectos y tareas (compartidos o soy contacto)
+Permission44=Eliminar proyectos y tareas (compartidos o soy contacto)
+Permission61=Consultar intervenciones
+Permission62=Crear/modificar intervenciones
+Permission64=Eliminar intervenciones
+Permission67=Exportar intervenciones
+Permission71=Consultar miembros
+Permission72=Crear/modificar miembros
+Permission74=Eliminar miembros
+Permission75=Configurar tipos y atributos de los miembros
+Permission76=Exportar miembros
+Permission78=Consultar cotizaciones
+Permission79=Crear/modificar cotizaciones
+Permission81=Consultar pedidos de clientes
+Permission82=Crear/modificar pedidos de clientes
+Permission84=Validar pedidos de clientes
+Permission86=Enviar pedidos de clientes
+Permission87=Cerrar pedidos de clientes
+Permission88=Anular pedidos de clientes
+Permission89=Eliminar pedidos de clientes
+Permission91=Consultar impuestos e IVA
+Permission92=Crear/modificar impuestos e IVA
+Permission93=Eliminar impuestos e IVA
+Permission94=Exportar impuestos
+Permission95=Consultar balances y resultados
+Permission96=Parametrizar desglose
+Permission97=Leer líneas de facturas
+Permission98=Desglosar líneas de facturas
+Permission101=Consultar expediciones
+Permission102=Crear/modificar expediciones
+Permission104=Validar expediciones
+Permission106=Exportar expediciones
+Permission109=Eliminar expediciones
+Permission111=Consultar cuentas financieras (cuentas bancarias, cajas)
+Permission112=Crear/modificar cantidad/eliminar registros bancarios
+Permission113=Configurar cuentas financieras (crear, controlar las categorías)
+Permission114=Exportar transacciones y registros bancarios
+Permission115=Exportar transacciones y extractos
+Permission116=Captar transferencias entre cuentas
+Permission117=Gestionar envío de cheques
+Permission121=Consultar empresas
+Permission122=Crear/modificar empresas
+Permission125=Eliminar empresas
+Permission126=Exportar las empresas
+Permission141=Consultar todos los proyectos y tareas (incluyendo los privados de los que no sea contacto)
+Permission142=Crear/modificar todos los proyectos y tareas (incluyendo los privados de los que no sea contacto)
+Permission144=Eliminar todos los proyectos y tareas (incluyendo los privados de los que no sea contacto)
+Permission146=Consultar proveedores
+Permission147=Consultar estadísticas
+Permission151=Consultar domiciliaciones
+Permission152=Crear/modificar domiciliaciones
+Permission153=Enviar domiciliaciones
+Permission154=Abonar/devolver domiciliaciones
+Permission161=Consultar contratos de servicio
+Permission162=Crear/modificar contratos de servicio
+Permission163=Activar los servicios de un contrato
+Permission164=Desactivar los servicios de un contrato
+Permission165=Eliminar contratos
+Permission171=Leer los desplazamientos
+Permission172=Crear/modificar los desplazamientos
+Permission173=Eliminar desplazamientos
+Permission178=Exportar desplazamientos
+Permission180=Consultar proveedores
+Permission181=Consultar pedidos a proveedores
+Permission182=Crear/modificar pedidos a proveedores
+Permission183=Validar pedidos a proveedores
+Permission184=Aprobar pedidos a proveedores
+Permission185=Enviar pedidos a proveedores
+Permission186=Recibir pedidos de proveedores
+Permission187=Cerrar pedidos a proveedores
+Permission188=Anular pedidos a proveedores
+Permission192=Crear líneas
+Permission193=Cancelar líneas
+Permission194=Consultar el ancho de banda de líneas
+Permission202=Crear conexiones ADSL
+Permission203=Realizar pedido de conexiones
+Permission204=Pedir conexiones
+Permission205=Gestionar conexiones
+Permission206=Consultar conexiones
+Permission211=Consultar telefonía
+Permission212=Pedir líneas
+Permission213=Activar una línea
+Permission214=Configurar la telefonía
+Permission215=Configurar proveedores
+Permission221=Consultar E-Mails
+Permission222=Crear/modificar E-Mails (asunto, destinatarios, etc.)
+Permission223=Validar E-Mails (permite el envío)
+Permission229=Eliminar E-Mails
+Permission237=Ver los destinatarios y la información
+Permission238=Enviar los e-mails manualmente
+Permission239=Eliminar los e-mails después de su validación o su envío
+Permission241=Consultar categorías
+Permission242=Crear/modificar categorías
+Permission243=Eliminar categorías
+Permission244=Ver contenido de categorías ocultas
+Permission251=Consultar otros usuarios
+PermissionAdvanced251=Consultar otros usuarios
+Permission252=Consultar los permisos de otros usuarios
+Permission253=Crear/modificar otros usuarios y sus permisos
+PermissionAdvanced253=Crear/modificar usuarios internos/externos y sus permisos
+Permission254=Modificar la contraseña de otros usuarios
+Permission255=Eliminar o desactivar otros usuarios
+Permission256=Consultar sus permisos
+Permission262=Consultar todas las empresas (Solamente usuarios internos. Los externos están limitados a ellos mismos)
+Permission271=Consultar el CA
+Permission272=Consultar las facturas
+Permission273=Emitir las facturas
+Permission281=Consultar contactos
+Permission282=Crear/modificar contactos
+Permission283=Eliminar contactos
+Permission286=Exportar contactos
+Permission291=Consultar tarifas
+Permission292=Definir permisos sobre las tarifas
+Permission293=Modificar tarifas de clientes
+Permission300=Consultar códigos de barras
+Permission301=Crear/modificar códigos de barras
+Permission302=Eliminar código de barras
+Permission311=Consultar servicios
+Permission312=Asignar servicios a un contrato
+Permission331=Consultar marcadores
+Permission332=Crear/modificar marcadores
+Permission333=Eliminar marcadores
+Permission341=Consultar sus propios permisos
+Permission342=Crear/modificar su propia info de usuario
+Permission343=Modificar su propia contraseña
+Permission344=Modificar sus propios permisos
+Permission351=Consultar los grupos
+Permission352=Consultar los permisos de grupos
+Permission353=Crear/modificar los grupos y sus permisos
+Permission354=Eliminar o desactivar grupos
+Permission358=Exportar usuarios
+Permission401=Consultar haberes
+Permission402=Crear/modificar haberes
+Permission403=Validar haberes
+Permission404=Eliminar haberes
+Permission531=Consultar servicios
+Permission532=Crear/modificar servicios
+Permission534=Eliminar servicios
+Permission536=Ver/gestionar los servicios ocultos
+Permission538=Exportar servicios
+Permission701=Consultar donaciones
+Permission702=Crear/modificar donaciones
+Permission703=Eliminar donaciones
+Permission1001=Consultar stocks
+Permission1002=Crear/modificar stocks
+Permission1003=Eliminar stocks
+Permission1004=Consultar movimientos de stock
+Permission1005=Crear/modificar movimientos de stock
+Permission1101=Consultar órdenes de envío
+Permission1102=Crear/modificar órdenes de envío
+Permission1104=Validar orden de envío
+Permission1109=Eliminar orden de envío
+Permission1181=Consultar proveedores
+Permission1182=Consultar pedidos a proveedores
+Permission1183=Crear pedidos a proveedores
+Permission1184=Validar pedidos a proveedores
+Permission1185=Aprobar pedidos a proveedores
+Permission1186=Enviar pedidos a proveedores
+Permission1187=Recibir pedidos de proveedores
+Permission1188=Cerrar pedidos a proveedores
+Permission1201=Obtener resultado de una exportación
+Permission1202=Crear/codificar exportaciones
+Permission1231=Consultar facturas de proveedores
+Permission1232=Crear facturas de proveedores
+Permission1233=Validar facturas de proveedores
+Permission1234=Eliminar facturas de proveedores
+Permission1235=Enviar facturas de proveedores por correo
+Permission1236=Exportar facturas de proveedores, atributos y pagos
+Permission1237=Exportar pedidos de proveedores junto con sus detalles
+Permission1251=Lanzar las importaciones en masa a la base de datos (carga de datos)
+Permission1321=Exportar facturas a clientes, atributos y cobros
+Permission1401=Leer el plan contable
+Permission1402=Crear/Modificar un plan contable
+Permission1403=Cerrar un plan contable
+Permission1411=Leer los movimientos contables
+Permission1412=Crear/modificar/anular movimientos contables
+Permission1415=Leer Balances, informes, diarios, libros maestros
+Permission1421=Exportar pedidos de clientes y atributos
+Permission23001=Ver tareas programadas
+Permission23002=Crear/actualizar tareas programadas
+Permission23003=Borrar tareas programadas
+Permission23004=Ejecutar tareas programadas
+Permission2401=Leer acciones (eventos o tareas) vinculadas a su cuenta
+Permission2402=Crear/eliminar acciones (eventos o tareas) vinculadas a su cuenta
+Permission2403=Modificar acciones (eventos o tareas) vinculadas a su cuenta
+Permission2411=Leer acciones (eventos o tareas) de otros
+Permission2412=Crear/modificar acciones (eventos o tareas) de otros
+Permission2413=Eliminar acciones (eventos o tareas) de otros
+Permission2501=Consultar/Recuperar documentos
+Permission2502=Recuperar documentos
+Permission2503=Enviar o eliminar documentos
+Permission2515=Configuración directorios de documentos
+Permission2801=Utilizar el cliente FTP en modo lectura (sólo explorar y descargar)
+Permission2802=Utilizar el cliente FTP en modo escritura (borrar o subir archivos)
+Permission50101=Usar TPV
+Permission50201=Consultar las transacciones
+Permission50202=Importar las transacciones
+DictionnaryCompanyType=Tipos de empresa
+DictionnaryCompanyJuridicalType=Formas jurídicas
+DictionnaryProspectLevel=Perspectiva nivel cliente potencial
+DictionnaryCanton=Departamentos/Provincias/Zonas
+DictionnaryRegion=Regiones
+DictionnaryCountry=Países
+DictionnaryCurrency=Monedas
+DictionnaryCivility=Títulos de cortesía
+DictionnaryActions=Tipos de eventos de la agenda
+DictionnarySocialContributions=Tipos de cargas sociales
+DictionnaryVAT=Tasa de IVA (Impuesto sobre ventas en EEUU)
+DictionnaryRevenueStamp=Importes de sellos fiscales
+DictionnaryPaymentConditions=Condiciones de pago
+DictionnaryPaymentModes=Modos de pago
+DictionnaryTypeContact=Tipos de contactos/direcciones
+DictionnaryEcotaxe=Baremos CEcoParticipación (DEEE)
+DictionnaryPaperFormat=Formatos de papel
+DictionnaryFees=Tipos de desplazamientos y honorarios
+DictionnarySendingMethods=Métodos de expedición
+DictionnaryStaff=Empleados
+DictionnaryAvailability=Tiempos de entrega
+DictionnaryOrderMethods=Métodos de pedido
+DictionnarySource=Orígenes de presupuestos/pedidos
+DictionnaryAccountancyplan=Plan contable
+DictionnaryAccountancysystem=Modelos de planes contables
+SetupSaved=Configuración guardada
+BackToModuleList=Volver a la lista de módulos
+BackToDictionnaryList=Volver a la lista de diccionarios
+VATReceivedOnly=Impuestos especiales no facturables
+VATManagement=Gestión IVA
+VATIsUsedDesc=El tipo de IVA propuesto por defecto en las creaciones de presupuestos, facturas, pedidos, etc. Responde a la siguiente regla:<br>Si el vendedor no está sujeto a IVA, IVA por defecto=0. Final de regla.<br>Si el país del vendedor= país del comprador entonces IVA por defecto=IVA del producto vendido. Final de regla.<br>Si vendedor y comprador residen en la Comunidad Europea y el bien vendido= nuevo medio de transportes (auto, barco, avión), IVA por defecto=0 (el IVA debe ser pagado por comprador a la hacienda pública de su país y no al vendedor). Final de regla<br>Si vendedor y comprador residen en la Comunidad Europea y comprador= particular o empresa sin NIF intracomunitario entonces IVA por defecto=IVA del producto vendido. Final de regla.<br>Si vendedor y comprador residen en la Comunidad Europea y comprador= empresa con NIF intracomunitario entonces IVA por defecto=0. Final de regla.<br>Si no, IVA propuesto por defecto=0. Final de regla.<br>
+VATIsNotUsedDesc=El tipo de IVA propuesto por defecto es 0. Este es el caso de asociaciones, particulares o algunas pequeñas sociedades.
+VATIsUsedExampleFR=En Francia, se trata de las sociedades u organismos que eligen un régimen fiscal general (General simplificado o General normal), régimen en el cual se declara el IVA.
+VATIsNotUsedExampleFR=En Francia, se trata de asociaciones exentas de IVA o sociedades, organismos o profesiones liberales que han elegido el régimen fiscal de módulos (IVA en franquicia), pagando un IVA en franquicia sin hacer declaración de IVA. Esta elección hace aparecer la anotación  "IVA no aplicable - art-293B del CGI" en las facturas.
 ##### Local Taxes #####
-LocalTax1IsUsedSujeto
-LocalTax1IsNotUsedNo sujeto
-LocalTax1IsUsedDescUso de un 2º tipo de impuesto (Distinto del IVA)
-LocalTax1IsNotUsedDescNo usar un 2º tipo de impuesto (Distinto del IVA)
-LocalTax1ManagementGestión 2º tipo de impuesto
-LocalTax1IsUsedExample
-LocalTax1IsNotUsedExample
-LocalTax2IsUsedSujeto
-LocalTax2IsNotUsedNo sujeto
-LocalTax2IsUsedDescUso de un 3er. tipo de impuesto (Distinto del IVA)
-LocalTax2IsNotUsedDescNo usar un 3er. tipo de impuesto (Distinto del IVA)
-LocalTax2ManagementGestión 3er. tipo de impuesto
-LocalTax2IsUsedExample
-LocalTax2IsNotUsedExample
-LocalTax1ManagementESGestión RE
-LocalTax1IsUsedDescESEl tipo de RE propuesto por defecto en las creaciones de presupuestos, facturas, pedidos, etc. Responde a la siguiente regla:<br>Si el comprador no está sujeto a RE, RE por defecto=0. Final de regla.<br>Si el comprador está sujeto a RE entonces se aplica valor de RE por defecto. Final de regla.<br>
-LocalTax1IsNotUsedDescESEl tipo de RE propuesto por defecto es 0. Final de regla.
-LocalTax1IsUsedExampleESEn España, se trata de personas físicas: autónomos sujetos a unos epígrafes concretos del IAE.
-LocalTax1IsNotUsedExampleESEn España, se trata de empresas jurídicas: Sociedades limitadas, anónimas, etc. y personas físicas (autónomos) sujetos a ciertos epígrafes del IAE.
-LocalTax2ManagementESGestión IRPF
-LocalTax2IsUsedDescESEl tipo de IRPF propuesto por defecto en las creaciones de presupuestos, facturas, pedidos, etc. Responde a la siguiente regla:<br>Si el vendedor no está sujeto a IRPF, IRPF por defecto=0. Final de regla.<br>Si el vendedor está sujeto a IRPF entonces se aplica valor de IRPF por defecto. Final de regla.<br>
-LocalTax2IsNotUsedDescESEl tipo de IRPF propuesto por defecto es 0. Final de regla.
-LocalTax2IsUsedExampleESEn España, se trata de personas físicas: autónomos y profesionales independientes que prestan servicios y empresas que han elegido el régimen fiscal de módulos.
-LocalTax2IsNotUsedExampleESEn España, se trata de empresas no sujetas al régimen fiscal de módulos.
-LabelUsedByDefaultEtiqueta que se utilizará si no se encuentra traducción para este código
-LabelOnDocumentsEtiqueta sobre documentos
-NbOfDaysNº de días
-AtEndOfMonthA fin de mes
-OffsetDecálogo
-AlwaysActiveSiempre activo
-UpdateRequiredSu sistema necesita una actualización. Para actualizar haga clic en <a href="%s">Actualizar</a>.
-UpgradeActualización
-MenuUpgradeActualización / Extensión
-AddExtensionThemeModuleOrOtherAñadir extensión (tema, módulo, etc.)
-WebServerServidor web
-DocumentRootServerDirectorio raíz de las páginas web
-DataRootServerDirectorio raíz de los archivos de datos
-IPIP
-PortPuerto
-VirtualServerNameNombre del servidor virtual
-AllParametersTodos los parámetros
-OSSO
-PhpEnvEnv
-PhpModulesMódulos
-PhpConfConf
-PhpWebLinkVínculo Web-PHP
-PearPear
-PearPackagesPaquetes Pear
-DatabaseBase de datos
-DatabaseServerHost de la base de datos
-DatabaseNameNombre de la base de datos
-DatabasePortPuerto de la base de datos
-DatabaseUserLogin de la base de datos
-DatabasePasswordContraseña de la base de datos
-DatabaseConfigurationConfiguración de la base de datos
-TablesTablas
-TableNameNombre de la tabla
-TableLineFormatFormato líneas
-NbOfRecordNº Reg.
-ConstraintsConstraints
-ConstraintsTypeTipo de constraint
-ConstraintsToShowOrNotEntryConstraint para mostrar o no la entrada de menú
-AllMustBeOkTodos deben ser controlados
-HostServidor
-DriverTypeTipo de driver
-SummarySystemResumen de la información de sistemas Dolibarr
-SummaryConstLista de todos los parámetros de configuración Dolibarr
-SystemUpdateActualización del sistema
-SystemSuccessfulyUpdateSu sistema se actualizó correctamente
-MenuCompanySetupEmpresa/Institución
-MenuNewUserNuevo usuario
-MenuTopManagerGestor del menú superior
-MenuLeftManagerGestor del menú izquierdo
-MenuManagerGestor del menú estándar
-MenuSmartphoneManagerGestor de menú smartphone
-DefaultMenuTopManagerGestor del menú superior
-DefaultMenuLeftManagerGestor del menú izquierdo
-DefaultMenuManagerGestor del menú estándar
-DefaultMenuSmartphoneManagerGestor de menú smartphone
-SkinTema visual
-DefaultSkinTema visual por defecto
-MaxSizeListLongitud máxima de listados
-DefaultMaxSizeListLongitud máxima de listados por defecto
-MessageOfDayMensaje del día
-MessageLoginMensaje del login
-PermanentLeftSearchFormZona de búsqueda permanente del menú izquierdo
-DefaultLanguageIdioma por defecto a utilizar (código idioma)
-EnableMultilangInterfaceActivar interfaz multi-idioma
-EnableShowLogoMostrar el logotipo en el menú de la izquierda
-SystemSuccessfulyUpdatedSu sistema está actualizado
-CompanyInfoInformación de la empresa/institución
-CompanyIdsIdentificación reglamentaria
-CompanyNameNombre/Razón social
-CompanyAddressDirección
-CompanyZipCódigo postal
-CompanyTownPoblación
-CompanyCountryPaís
-CompanyCurrencyDivisa principal
-DoNotShowNo mostrar
-DoNotSuggestPaymentModeNo sugerir
-NoActiveBankAccountDefinedNinguna cuenta bancaria activa definida
-OwnerOfBankAccountTitular de la cuenta %s
-BankModuleNotActiveMódulo cuentas bancarias no activado
-ShowBugTrackLinkMostrar vínculo "Señalar un bug"
-ShowWorkBoardMostrar panel de información en la página principal
-AlertsAlertas
-DelaysPlazos
-DelayBeforeWarningPlazo antes de alerta
-DelaysBeforeWarningPlazos antes de alerta
-DelaysOfToleranceBeforeWarningPlazos de tolerancia antes de alerta
-DelaysOfToleranceDescEsta pantalla permite configura los plazos de tolerancia antes de que se alerte con el símbolo %s, sobre cada elemento en retraso.
-Delays_MAIN_DELAY_ACTIONS_TODOTolerancia de retraso antes de la alerta (en días) sobre acciones planificadas no realizadas
-Delays_MAIN_DELAY_ORDERS_TO_PROCESSTolerancia de retraso antes de la alerta (en días) sobre pedidos de clientes no procesados
-Delays_MAIN_DELAY_SUPPLIER_ORDERS_TO_PROCESSTolerancia de retraso antes de la alerta (en días) sobre pedidos a proveedores no procesados
-Delays_MAIN_DELAY_PROPALS_TO_CLOSETolerancia de retraso antes de la alerta (en días) sobre presupuestos a cerrar
-Delays_MAIN_DELAY_PROPALS_TO_BILLTolerancia de retraso antes de la alerta (en días) sobre presupuestos no facturados
-Delays_MAIN_DELAY_NOT_ACTIVATED_SERVICESTolerancia de retraso antes de la alerta (en días) sobre servicios a activar
-Delays_MAIN_DELAY_RUNNING_SERVICESTolerancia de retraso antes de la alerta (en días) sobre servicios expirados
-Delays_MAIN_DELAY_SUPPLIER_BILLS_TO_PAYTolerancia de retraso antes de la alerta (en días) sobre facturas de proveedor impagadas
-Delays_MAIN_DELAY_CUSTOMER_BILLS_UNPAYEDTolerancia de retraso antes de la alerta (en días) sobre facturas a cliente impagadas
-Delays_MAIN_DELAY_TRANSACTIONS_TO_CONCILIATETolerancia de retraso antes de la alerta (en días) sobre conciliaciones bancarias pendientes
-Delays_MAIN_DELAY_MEMBERSTolerancia de retraso entes de la alerta  (en días) sobre cotizaciones adherentes en retraso
-Delays_MAIN_DELAY_CHEQUES_TO_DEPOSITTolerancia de retraso entes de la alerta  (en días) sobre cheques a ingresar
-SetupDescription1Todas las opciones del área de configuración son opciones que permiten configurar a Dolibarr antes de empezar su utilización.
-SetupDescription2Los 2 pasos indispensables de la configuración son las 2 primeras en el menú izquierdo:  la configuración de la empresa/institución y la configuración de los módulos:
-SetupDescription3La configuración <b>Empresa/institución</b> a administrar es requerida ya que se utiliza la información para la introducción de datos en la mayoría de las pantallas, en inserciones, o para modificar el comportamiento de Dolibarr (como, por ejemplo, de las funciones que dependen de su país).
-SetupDescription4La configuración <b>Módulos</b> es indispensable ya que Dolibarr no es un ERP/CRM monolítico, es un conjunto de módulos más o menos independiente. Después de activar los módulos que le interesen comprobará sus funcionalidades en los menús de Dolibarr.
-SetupDescription5Las otras entradas de configuración gestionan parámetros opcionales.
-EventsSetupConfiguración del registro de eventos
-LogEventsAuditoría de la seguridad de eventos
-AuditAuditoría
-InfoDolibarrInfo. Dolibarr
-InfoOSInfo. SO
-InfoWebServerInfo. servidor
-InfoDatabaseInfo. base de datos
-InfoPHPInfo. PHP
-ListEventsAuditoría de eventos
-ListOfSecurityEventsListado de eventos de seguridad Dolibarr
-SecurityEventsPurgedEventos de seguridad purgados
-LogEventDescPuede habilitar el registro de eventos de seguridad Dolibarr aquí. Los administradores pueden ver su contenido a través de menú <b>Herramientas del sistema - Auditoría</b>.Atención, esta característica puede consumir una gran cantidad de datos en la base de datos.
-AreaForAdminOnlyEstas funciones solo son accesibles a un usuario administrador.
-SystemInfoDescLa información del sistema es información técnica accesible solamente en solo lectura a los administradores.
-SystemAreaForAdminOnlyEsta área solo es accesible a los usuarios de tipo administradores. Ningún permiso Dolibarr permite extender el círculo de usuarios autorizados a esta área.
-CompanyFundationDescModifique en esta página toda la información conocida sobre la empresa o asociación a administrar (para ello haga clic en el botón "Modificar" a pie de página)
-DisplayDescPuede encontrar aquí todos los parámetros relacionados con la apariencia de Dolibarr
-AvailableModulesMódulos disponibles
-ToActivateModulePara activar los módulos, vaya al área de Configuración (Inicio->Configuración->Módulos).
-SessionTimeOutTimeout de sesiones
-SessionExplanationAsegura que el período de sesiones no expirará antes de este momento. Sin embargo, la gestión del período de sesiones de PHP no garantiza que el período de sesiones expira después de este período: Este será el caso si un sistema de limpieza del caché de sesiones es activo. <br> Nota: Sin mecanismo especial, el mecanismo interno para limpiar el período de sesiones de PHP todos los accesos <b>%s/%s</b>, pero sólo en torno al acceso de otros períodos de sesiones.
-TriggersAvailableTriggers disponibles
-TriggersDescLos triggers son archivos que, une vez depositados en el directorio <b>htdocs/core/triggers</b>, modifican el comportamiento del workflow de Dolibarr. Realizan acciones suplementarias, desencadenadas por los eventos Dolibarr (creación de empresa, validación factura, cierre contrato, etc).
-TriggerDisabledByNameTriggers de este archivo desactivados por el sufijo <b>-NORUN</b> en el nombre del archivo.
-TriggerDisabledAsModuleDisabledTriggers de este archivo desactivados ya que el módulo <b>%s</b> no está activado.
-TriggerAlwaysActiveTriggers de este archivo siempre activos, ya que los módulos Dolibarr relacionados están activados
-TriggerActiveAsModuleActiveTriggers de este archivo activos ya que el módulo <b>%s</b> está activado
-GeneratedPasswordDescIndique aquí que norma quiere utilizar para generar las contraseñas cuando quiera generar una nueva contraseña
-DictionnaryDescIndique aquí los datos de referencia. Puede completar/modificar los datos predefinidos con los suyos.
-ConstDescCualquier otro parámetro no editable en las páginas anteriores
-OnceSetupFinishedCreateUsersAtención, está bajo una cuenta de administrador de Dolibarr. Los administradores se utilizan para configurar a Dolibarr. Para un uso corriente de Dolibarr, se recomienda utilizar una cuenta no administrador creada desde el menú "Usuarios y grupos"
-MiscellaneousDescDefina aquí los otros parámetros relacionados con la seguridad.
-LimitsSetupConfiguración de límites y precisiones
-LimitsDescPuede definir aquí los límites y precisiones utilizados por Dolibarr
-MAIN_MAX_DECIMALS_UNITDecimales máximos para los precios unitarios
-MAIN_MAX_DECIMALS_TOTDecimales máximos para los precios totales
-MAIN_MAX_DECIMALS_SHOWNDecimales máximos para los importes mostrados en pantalla (Poner <b>...</b> después del máximo si quiere ver <b>...</b> cuando el número se trunque al mostrarlo en pantalla)
-MAIN_DISABLE_PDF_COMPRESSIONUtilizar la compresión PDF para los archivos PDF generados
-MAIN_ROUNDING_RULE_TOTTamaño rango para el redondeo (para algunos países que redondean sobre otra base que no sea base 10)
-UnitPriceOfProductPrecio unitario sin IVA de un producto
-TotalPriceAfterRoundingPrecio total después del redondeo
-ParameterActiveForNextInputOnlyParámetro efectivo solamente a partir de las próximas sesiones
-NoEventOrNoAuditSetupNo se han registrado eventos de seguridad. Esto puede ser normal si la auditoría no ha sido habilitada en la página "configuración->seguridad->auditoría".
-NoEventFoundWithCriteriaNo se han encontrado eventos de seguridad para tales criterios de búsqueda.
-SeeLocalSendMailSetupVer la configuración local de sendmail
-BackupDescPara realizar una copia de seguridad completa de Dolibarr, usted debe:
-BackupDesc2* Guardar el contenido del directorio de documentos (<b>%s</b>) que contiene todos los archivos subidos o generados (comprimiendo el directorio, por ejemplo).
-BackupDesc3* Guardar el contenido de su base de datos en un archivo de volcado. Para ello puede utilizar el asistente a continuación.
-BackupDescXEl directorio archivado deberá guardarse  en un lugar seguro.
-BackupDescYEl archivo de volcado generado deberá guardarse en un lugar seguro.
-BackupPHPWarningLa copia de seguridad no puede ser garantizada con este método. Es preferible utilizar el anterior
-RestoreDescPara restaurar una copia de seguridad de Dolibarr, usted debe:
-RestoreDesc2* Tomar el archivo (archivo zip, por ejemplo) del directorio de los documentos y descomprimirlo en el directorio de los documentos de una nueva instalación de Dolibarr directorio o en la carpeta de los documentos de esta instalación (<b>%s</b>).
-RestoreDesc3* Recargar el archivo de volcado guardado en la base de datos de una nueva instalación de Dolibarr o de esta instalación. Atención, una vez realizada la restauración, deberá utilizar un login/contraseña de administrador existente en el momento de la copia de seguridad para conectarse. Para restaurar la base de datos en la instalación actual, puede utilizar el asistente a continuación.
-RestoreMySQLImportación MySQL
-ForcedToByAModuleEsta regla está forzada a <b>%s</b> por uno de los módulos activados
-PreviousDumpFilesArchivos de copia de seguridad de la base de datos disponibles
-WeekStartOnDayPrimer día de la semana
-RunningUpdateProcessMayBeRequiredParece necesario realizar el proceso de actualización (la versión del programa %s difiere de la versión de la base de datos %s)
-YouMustRunCommandFromCommandLineAfterLoginToUserDebe ejecutar el comando desde un shell después de haber iniciado sesión con la cuenta <b>%s</b>.
-YourPHPDoesNotHaveSSLSupportFunciones SSL no disponibles en su PHP
-DownloadMoreSkinsMás temas para descargar
-SimpleNumRefModelDescDevuelve el número bajo el formato %syymm-nnnn donde yy es el año, mm el mes y nnnn un contador secuencial sin ruptura y sin volver a 0
-ShowProfIdInAddressMostrar el identificador profesional en las direcciones de los documentos
-ShowVATIntaInAddressOcultar el IVA identificador en las direcciones de los documentos
-TranslationUncompleteTraducción parcial
-SomeTranslationAreUncompleteAlgunos idiomas están traducidos en parte o pueden contener errores. Si lo encuentra, puede corregir los archivos de texto <b>.lang</b> del directorio <b>htdocs/langs</b> y enviarlos al foro <a href="http://www.dolibarr.fr/forum" target="_blank">http://www.dolibarr.fr</a>. 
-MenuUseLayoutHacer el menú izquierdo ocultable (la opción javascript no debería deshabilitarse)
-MAIN_DISABLE_METEODeshabilitar la vista meteorológica
-TestLoginToAPIComprobar conexión a la API
-ProxyDescAlgunas de las características de Dolibarr requieren que el servidor tenga acceso a Internet. Defina aqui los parámetros para dicho acceso. Si el servidor está detrás de un proxy, estos parámetros indican a Dolibarr cómo pasarlo.
-ExternalAccessAcceso externo
-MAIN_PROXY_USEUsar un servidor proxy (si no acceso directo a Internet)
-MAIN_PROXY_HOSTNombre/Dirección del servidor proxy
-MAIN_PROXY_PORTPuerto del servidor proxy
-MAIN_PROXY_USERLogin del servidor proxy
-MAIN_PROXY_PASSContraseña del servidor proxy
-DefineHereComplementaryAttributesDefina aquí la lista de atributos adicionales, no disponibles por defecto, y que desea gestionar para %s.
-ExtraFieldsAtributos adicionales
-ExtraFieldsThirdPartiesAtributos adicionales (terceros)
-ExtraFieldsContactsAtributos adicionales (contactos/direcciones)
-ExtraFieldsMemberAtributos complementarios (miembros)
-ExtraFieldsMemberTypeAtributos complementarios  (tipos de miembros)
-ExtraFieldsCustomerInvoicesAtributos complementarios (facturas a clientes)
-ExtraFieldsSupplierOrdersAtributos complementarios (pedidos)
-ExtraFieldsSupplierInvoicesAtributos complementarios (facturas)
-ExtraFieldsProjectAtributos complementarios (proyectos)
-ExtraFieldsProjectTaskAtributos complementarios (tareas)
-ExtraFieldHasWrongValueEl atributo %s tiene un valor incorrecto.
-AlphaNumOnlyCharsAndNoSpacesolamente caracteres alfanuméricos sin espacios
-SendingMailSetupConfiguración del envío por mail
-SendmailOptionNotCompleteAtención, en algunos sistemas Linux, con este método de envio, para poder enviar mails en su nombre, la configuración de sendmail debe contener la opción <b>-ba</b> (parámetro <b>mail.force_extra_parameters</b> en el archivo <b>php.ini</b>). Si algunos de sus destinatarios no reciben sus mensajes, pruebe a modificar este parámetro PHP con <b>mail.force_extra_parameters=-ba</b>.
-PathToDocumentsRutas de acceso a documentos
-PathDirectoryDirectorio
-SendmailOptionMayHurtBuggedMTALa funcionalidad de enviar correo electrónico a través del "correo directo PHP" genera una solicitud que puede ser mal interpretado por algunos servidores de correo. Esto se traduce en mensajes de correo electrónico ilegibles para las personas alojadas en  estas plataformas. Este es el caso de clientes en ciertos proveedores de servicios de Internet (Ej: Orange). Esto no es un problema ni de Dolibarr ni de PHP, pero sí del servidor de correo. Sin embargo, puede agregar la opción MAIN_FIX_FOR_BUGGED_MTA con valor 1 en configuración-varios para tratar que Dolibarr evite el error. Otra solución (recomendada) es utilizar el método de envío por SMTP que no tiene este inconveniente. 
-TranslationSetupConfiguración traducción
-TranslationDescLa elección del idioma mostrado en pantalla se modifica:<br>* A nivel global desde el menú <strong>Inicio - Configuración - Entorno</strong><br>* De manera específica al usuario desde la pestaña <strong>Interfaz usuario</strong> de su ficha de usuario (hacer clic en su login en la parte superior izquierda de la pantalla).
-ClassNotFoundIntoPathWarningNo se ha encontrado la clase %s en su path PHP 
-YesInSummerSí en verano
-OnlyFollowingModulesAreOpenedToExternalUsersTenga en cuenta que sólo los módulos siguientes están abiertos a usuarios externos (sean cuales sean los permisos de los usuarios):
-ConditionIsCurrentlyActualmente la condición es %s
-##### Module password generation= undefined
-PasswordGenerationStandardDevuelve una contraseña generada por el algoritmo interno Dolibarr: 8 caracteres, números y caracteres en minúsculas mezcladas.
-PasswordGenerationNoneNo ofrece contraseñas. La contraseña se introduce manualmente.
+LocalTax1IsUsed=Sujeto
+LocalTax1IsNotUsed=No sujeto
+LocalTax1IsUsedDesc=Uso de un 2º tipo de impuesto (Distinto del IVA)
+LocalTax1IsNotUsedDesc=No usar un 2º tipo de impuesto (Distinto del IVA)
+LocalTax1Management=Gestión 2º tipo de impuesto
+LocalTax1IsUsedExample=
+LocalTax1IsNotUsedExample=
+LocalTax2IsUsed=Sujeto
+LocalTax2IsNotUsed=No sujeto
+LocalTax2IsUsedDesc=Uso de un 3er. tipo de impuesto (Distinto del IVA)
+LocalTax2IsNotUsedDesc=No usar un 3er. tipo de impuesto (Distinto del IVA)
+LocalTax2Management=Gestión 3er. tipo de impuesto
+LocalTax2IsUsedExample=
+LocalTax2IsNotUsedExample=
+LocalTax1ManagementES=Gestión RE
+LocalTax1IsUsedDescES=El tipo de RE propuesto por defecto en las creaciones de presupuestos, facturas, pedidos, etc. Responde a la siguiente regla:<br>Si el comprador no está sujeto a RE, RE por defecto=0. Final de regla.<br>Si el comprador está sujeto a RE entonces se aplica valor de RE por defecto. Final de regla.<br>
+LocalTax1IsNotUsedDescES=El tipo de RE propuesto por defecto es 0. Final de regla.
+LocalTax1IsUsedExampleES=En España, se trata de personas físicas: autónomos sujetos a unos epígrafes concretos del IAE.
+LocalTax1IsNotUsedExampleES=En España, se trata de empresas jurídicas: Sociedades limitadas, anónimas, etc. y personas físicas (autónomos) sujetos a ciertos epígrafes del IAE.
+LocalTax2ManagementES=Gestión IRPF
+LocalTax2IsUsedDescES=El tipo de IRPF propuesto por defecto en las creaciones de presupuestos, facturas, pedidos, etc. Responde a la siguiente regla:<br>Si el vendedor no está sujeto a IRPF, IRPF por defecto=0. Final de regla.<br>Si el vendedor está sujeto a IRPF entonces se aplica valor de IRPF por defecto. Final de regla.<br>
+LocalTax2IsNotUsedDescES=El tipo de IRPF propuesto por defecto es 0. Final de regla.
+LocalTax2IsUsedExampleES=En España, se trata de personas físicas: autónomos y profesionales independientes que prestan servicios y empresas que han elegido el régimen fiscal de módulos.
+LocalTax2IsNotUsedExampleES=En España, se trata de empresas no sujetas al régimen fiscal de módulos.
+LabelUsedByDefault=Etiqueta que se utilizará si no se encuentra traducción para este código
+LabelOnDocuments=Etiqueta sobre documentos
+NbOfDays=Nº de días
+AtEndOfMonth=A fin de mes
+Offset=Decálogo
+AlwaysActive=Siempre activo
+UpdateRequired=Su sistema necesita una actualización. Para actualizar haga clic en <a href="%s">Actualizar</a>.
+Upgrade=Actualización
+MenuUpgrade=Actualización / Extensión
+AddExtensionThemeModuleOrOther=Añadir extensión (tema, módulo, etc.)
+WebServer=Servidor web
+DocumentRootServer=Directorio raíz de las páginas web
+DataRootServer=Directorio raíz de los archivos de datos
+IP=IP
+Port=Puerto
+VirtualServerName=Nombre del servidor virtual
+AllParameters=Todos los parámetros
+OS=SO
+PhpEnv=Env
+PhpModules=Módulos
+PhpConf=Conf
+PhpWebLink=Vínculo Web-PHP
+Pear=Pear
+PearPackages=Paquetes Pear
+Database=Base de datos
+DatabaseServer=Host de la base de datos
+DatabaseName=Nombre de la base de datos
+DatabasePort=Puerto de la base de datos
+DatabaseUser=Login de la base de datos
+DatabasePassword=Contraseña de la base de datos
+DatabaseConfiguration=Configuración de la base de datos
+Tables=Tablas
+TableName=Nombre de la tabla
+TableLineFormat=Formato líneas
+NbOfRecord=Nº Reg.
+Constraints=Constraints
+ConstraintsType=Tipo de constraint
+ConstraintsToShowOrNotEntry=Constraint para mostrar o no la entrada de menú
+AllMustBeOk=Todos deben ser controlados
+Host=Servidor
+DriverType=Tipo de driver
+SummarySystem=Resumen de la información de sistemas Dolibarr
+SummaryConst=Lista de todos los parámetros de configuración Dolibarr
+SystemUpdate=Actualización del sistema
+SystemSuccessfulyUpdate=Su sistema se actualizó correctamente
+MenuCompanySetup=Empresa/Institución
+MenuNewUser=Nuevo usuario
+MenuTopManager=Gestor del menú superior
+MenuLeftManager=Gestor del menú izquierdo
+MenuManager=Gestor del menú estándar
+MenuSmartphoneManager=Gestor de menú smartphone
+DefaultMenuTopManager=Gestor del menú superior
+DefaultMenuLeftManager=Gestor del menú izquierdo
+DefaultMenuManager=Gestor del menú estándar
+DefaultMenuSmartphoneManager=Gestor de menú smartphone
+Skin=Tema visual
+DefaultSkin=Tema visual por defecto
+MaxSizeList=Longitud máxima de listados
+DefaultMaxSizeList=Longitud máxima de listados por defecto
+MessageOfDay=Mensaje del día
+MessageLogin=Mensaje del login
+PermanentLeftSearchForm=Zona de búsqueda permanente del menú izquierdo
+DefaultLanguage=Idioma por defecto a utilizar (código idioma)
+EnableMultilangInterface=Activar interfaz multi-idioma
+EnableShowLogo=Mostrar el logotipo en el menú de la izquierda
+SystemSuccessfulyUpdated=Su sistema está actualizado
+CompanyInfo=Información de la empresa/institución
+CompanyIds=Identificación reglamentaria
+CompanyName=Nombre/Razón social
+CompanyAddress=Dirección
+CompanyZip=Código postal
+CompanyTown=Población
+CompanyCountry=País
+CompanyCurrency=Divisa principal
+DoNotShow=No mostrar
+DoNotSuggestPaymentMode=No sugerir
+NoActiveBankAccountDefined=Ninguna cuenta bancaria activa definida
+OwnerOfBankAccount=Titular de la cuenta %s
+BankModuleNotActive=Módulo cuentas bancarias no activado
+ShowBugTrackLink=Mostrar vínculo "Señalar un bug"
+ShowWorkBoard=Mostrar panel de información en la página principal
+Alerts=Alertas
+Delays=Plazos
+DelayBeforeWarning=Plazo antes de alerta
+DelaysBeforeWarning=Plazos antes de alerta
+DelaysOfToleranceBeforeWarning=Plazos de tolerancia antes de alerta
+DelaysOfToleranceDesc=Esta pantalla permite configura los plazos de tolerancia antes de que se alerte con el símbolo %s, sobre cada elemento en retraso.
+Delays_MAIN_DELAY_ACTIONS_TODO=Tolerancia de retraso antes de la alerta (en días) sobre acciones planificadas no realizadas
+Delays_MAIN_DELAY_ORDERS_TO_PROCESS=Tolerancia de retraso antes de la alerta (en días) sobre pedidos de clientes no procesados
+Delays_MAIN_DELAY_SUPPLIER_ORDERS_TO_PROCESS=Tolerancia de retraso antes de la alerta (en días) sobre pedidos a proveedores no procesados
+Delays_MAIN_DELAY_PROPALS_TO_CLOSE=Tolerancia de retraso antes de la alerta (en días) sobre presupuestos a cerrar
+Delays_MAIN_DELAY_PROPALS_TO_BILL=Tolerancia de retraso antes de la alerta (en días) sobre presupuestos no facturados
+Delays_MAIN_DELAY_NOT_ACTIVATED_SERVICES=Tolerancia de retraso antes de la alerta (en días) sobre servicios a activar
+Delays_MAIN_DELAY_RUNNING_SERVICES=Tolerancia de retraso antes de la alerta (en días) sobre servicios expirados
+Delays_MAIN_DELAY_SUPPLIER_BILLS_TO_PAY=Tolerancia de retraso antes de la alerta (en días) sobre facturas de proveedor impagadas
+Delays_MAIN_DELAY_CUSTOMER_BILLS_UNPAYED=Tolerancia de retraso antes de la alerta (en días) sobre facturas a cliente impagadas
+Delays_MAIN_DELAY_TRANSACTIONS_TO_CONCILIATE=Tolerancia de retraso antes de la alerta (en días) sobre conciliaciones bancarias pendientes
+Delays_MAIN_DELAY_MEMBERS=Tolerancia de retraso entes de la alerta  (en días) sobre cotizaciones adherentes en retraso
+Delays_MAIN_DELAY_CHEQUES_TO_DEPOSIT=Tolerancia de retraso entes de la alerta  (en días) sobre cheques a ingresar
+SetupDescription1=Todas las opciones del área de configuración son opciones que permiten configurar a Dolibarr antes de empezar su utilización.
+SetupDescription2=Los 2 pasos indispensables de la configuración son las 2 primeras en el menú izquierdo:  la configuración de la empresa/institución y la configuración de los módulos:
+SetupDescription3=La configuración <b>Empresa/institución</b> a administrar es requerida ya que se utiliza la información para la introducción de datos en la mayoría de las pantallas, en inserciones, o para modificar el comportamiento de Dolibarr (como, por ejemplo, de las funciones que dependen de su país).
+SetupDescription4=La configuración <b>Módulos</b> es indispensable ya que Dolibarr no es un ERP/CRM monolítico, es un conjunto de módulos más o menos independiente. Después de activar los módulos que le interesen comprobará sus funcionalidades en los menús de Dolibarr.
+SetupDescription5=Las otras entradas de configuración gestionan parámetros opcionales.
+EventsSetup=Configuración del registro de eventos
+LogEvents=Auditoría de la seguridad de eventos
+Audit=Auditoría
+InfoDolibarr=Info. Dolibarr
+InfoOS=Info. SO
+InfoWebServer=Info. servidor
+InfoDatabase=Info. base de datos
+InfoPHP=Info. PHP
+ListEvents=Auditoría de eventos
+ListOfSecurityEvents=Listado de eventos de seguridad Dolibarr
+SecurityEventsPurged=Eventos de seguridad purgados
+LogEventDesc=Puede habilitar el registro de eventos de seguridad Dolibarr aquí. Los administradores pueden ver su contenido a través de menú <b>Herramientas del sistema - Auditoría</b>.Atención, esta característica puede consumir una gran cantidad de datos en la base de datos.
+AreaForAdminOnly=Estas funciones solo son accesibles a un usuario administrador.
+SystemInfoDesc=La información del sistema es información técnica accesible solamente en solo lectura a los administradores.
+SystemAreaForAdminOnly=Esta área solo es accesible a los usuarios de tipo administradores. Ningún permiso Dolibarr permite extender el círculo de usuarios autorizados a esta área.
+CompanyFundationDesc=Modifique en esta página toda la información conocida sobre la empresa o asociación a administrar (para ello haga clic en el botón "Modificar" a pie de página)
+DisplayDesc=Puede encontrar aquí todos los parámetros relacionados con la apariencia de Dolibarr
+AvailableModules=Módulos disponibles
+ToActivateModule=Para activar los módulos, vaya al área de Configuración (Inicio->Configuración->Módulos).
+SessionTimeOut=Timeout de sesiones
+SessionExplanation=Asegura que el período de sesiones no expirará antes de este momento. Sin embargo, la gestión del período de sesiones de PHP no garantiza que el período de sesiones expira después de este período: Este será el caso si un sistema de limpieza del caché de sesiones es activo. <br> Nota: Sin mecanismo especial, el mecanismo interno para limpiar el período de sesiones de PHP todos los accesos <b>%s/%s</b>, pero sólo en torno al acceso de otros períodos de sesiones.
+TriggersAvailable=Triggers disponibles
+TriggersDesc=Los triggers son archivos que, une vez depositados en el directorio <b>htdocs/core/triggers</b>, modifican el comportamiento del workflow de Dolibarr. Realizan acciones suplementarias, desencadenadas por los eventos Dolibarr (creación de empresa, validación factura, cierre contrato, etc).
+TriggerDisabledByName=Triggers de este archivo desactivados por el sufijo <b>-NORUN</b> en el nombre del archivo.
+TriggerDisabledAsModuleDisabled=Triggers de este archivo desactivados ya que el módulo <b>%s</b> no está activado.
+TriggerAlwaysActive=Triggers de este archivo siempre activos, ya que los módulos Dolibarr relacionados están activados
+TriggerActiveAsModuleActive=Triggers de este archivo activos ya que el módulo <b>%s</b> está activado
+GeneratedPasswordDesc=Indique aquí que norma quiere utilizar para generar las contraseñas cuando quiera generar una nueva contraseña
+DictionnaryDesc=Indique aquí los datos de referencia. Puede completar/modificar los datos predefinidos con los suyos.
+ConstDesc=Cualquier otro parámetro no editable en las páginas anteriores
+OnceSetupFinishedCreateUsers=Atención, está bajo una cuenta de administrador de Dolibarr. Los administradores se utilizan para configurar a Dolibarr. Para un uso corriente de Dolibarr, se recomienda utilizar una cuenta no administrador creada desde el menú "Usuarios y grupos"
+MiscellaneousDesc=Defina aquí los otros parámetros relacionados con la seguridad.
+LimitsSetup=Configuración de límites y precisiones
+LimitsDesc=Puede definir aquí los límites y precisiones utilizados por Dolibarr
+MAIN_MAX_DECIMALS_UNIT=Decimales máximos para los precios unitarios
+MAIN_MAX_DECIMALS_TOT=Decimales máximos para los precios totales
+MAIN_MAX_DECIMALS_SHOWN=Decimales máximos para los importes mostrados en pantalla (Poner <b>...</b> después del máximo si quiere ver <b>...</b> cuando el número se trunque al mostrarlo en pantalla)
+MAIN_DISABLE_PDF_COMPRESSION=Utilizar la compresión PDF para los archivos PDF generados
+MAIN_ROUNDING_RULE_TOT=Tamaño rango para el redondeo (para algunos países que redondean sobre otra base que no sea base 10)
+UnitPriceOfProduct=Precio unitario sin IVA de un producto
+TotalPriceAfterRounding=Precio total después del redondeo
+ParameterActiveForNextInputOnly=Parámetro efectivo solamente a partir de las próximas sesiones
+NoEventOrNoAuditSetup=No se han registrado eventos de seguridad. Esto puede ser normal si la auditoría no ha sido habilitada en la página "configuración->seguridad->auditoría".
+NoEventFoundWithCriteria=No se han encontrado eventos de seguridad para tales criterios de búsqueda.
+SeeLocalSendMailSetup=Ver la configuración local de sendmail
+BackupDesc=Para realizar una copia de seguridad completa de Dolibarr, usted debe:
+BackupDesc2=* Guardar el contenido del directorio de documentos (<b>%s</b>) que contiene todos los archivos subidos o generados (comprimiendo el directorio, por ejemplo).
+BackupDesc3=* Guardar el contenido de su base de datos en un archivo de volcado. Para ello puede utilizar el asistente a continuación.
+BackupDescX=El directorio archivado deberá guardarse  en un lugar seguro.
+BackupDescY=El archivo de volcado generado deberá guardarse en un lugar seguro.
+BackupPHPWarning=La copia de seguridad no puede ser garantizada con este método. Es preferible utilizar el anterior
+RestoreDesc=Para restaurar una copia de seguridad de Dolibarr, usted debe:
+RestoreDesc2=* Tomar el archivo (archivo zip, por ejemplo) del directorio de los documentos y descomprimirlo en el directorio de los documentos de una nueva instalación de Dolibarr directorio o en la carpeta de los documentos de esta instalación (<b>%s</b>).
+RestoreDesc3=* Recargar el archivo de volcado guardado en la base de datos de una nueva instalación de Dolibarr o de esta instalación. Atención, una vez realizada la restauración, deberá utilizar un login/contraseña de administrador existente en el momento de la copia de seguridad para conectarse. Para restaurar la base de datos en la instalación actual, puede utilizar el asistente a continuación.
+RestoreMySQL=Importación MySQL
+ForcedToByAModule=Esta regla está forzada a <b>%s</b> por uno de los módulos activados
+PreviousDumpFiles=Archivos de copia de seguridad de la base de datos disponibles
+WeekStartOnDay=Primer día de la semana
+RunningUpdateProcessMayBeRequired=Parece necesario realizar el proceso de actualización (la versión del programa %s difiere de la versión de la base de datos %s)
+YouMustRunCommandFromCommandLineAfterLoginToUser=Debe ejecutar el comando desde un shell después de haber iniciado sesión con la cuenta <b>%s</b>.
+YourPHPDoesNotHaveSSLSupport=Funciones SSL no disponibles en su PHP
+DownloadMoreSkins=Más temas para descargar
+SimpleNumRefModelDesc=Devuelve el número bajo el formato %syymm-nnnn donde yy es el año, mm el mes y nnnn un contador secuencial sin ruptura y sin volver a 0
+ShowProfIdInAddress=Mostrar el identificador profesional en las direcciones de los documentos
+ShowVATIntaInAddress=Ocultar el IVA identificador en las direcciones de los documentos
+TranslationUncomplete=Traducción parcial
+SomeTranslationAreUncomplete=Algunos idiomas están traducidos en parte o pueden contener errores. Si lo encuentra, puede corregir los archivos de texto <b>.lang</b> del directorio <b>htdocs/langs</b> y enviarlos al foro <a href="http://www.dolibarr.fr/forum" target="_blank">http://www.dolibarr.fr</a>. 
+MenuUseLayout=Hacer el menú izquierdo ocultable (la opción javascript no debería deshabilitarse)
+MAIN_DISABLE_METEO=Deshabilitar la vista meteorológica
+TestLoginToAPI=Comprobar conexión a la API
+ProxyDesc=Algunas de las características de Dolibarr requieren que el servidor tenga acceso a Internet. Defina aqui los parámetros para dicho acceso. Si el servidor está detrás de un proxy, estos parámetros indican a Dolibarr cómo pasarlo.
+ExternalAccess=Acceso externo
+MAIN_PROXY_USE=Usar un servidor proxy (si no acceso directo a Internet)
+MAIN_PROXY_HOST=Nombre/Dirección del servidor proxy
+MAIN_PROXY_PORT=Puerto del servidor proxy
+MAIN_PROXY_USER=Login del servidor proxy
+MAIN_PROXY_PASS=Contraseña del servidor proxy
+DefineHereComplementaryAttributes=Defina aquí la lista de atributos adicionales, no disponibles por defecto, y que desea gestionar para %s.
+ExtraFields=Atributos adicionales
+ExtraFieldsThirdParties=Atributos adicionales (terceros)
+ExtraFieldsContacts=Atributos adicionales (contactos/direcciones)
+ExtraFieldsMember=Atributos complementarios (miembros)
+ExtraFieldsMemberType=Atributos complementarios  (tipos de miembros)
+ExtraFieldsCustomerInvoices=Atributos complementarios (facturas a clientes)
+ExtraFieldsSupplierOrders=Atributos complementarios (pedidos)
+ExtraFieldsSupplierInvoices=Atributos complementarios (facturas)
+ExtraFieldsProject=Atributos complementarios (proyectos)
+ExtraFieldsProjectTask=Atributos complementarios (tareas)
+ExtraFieldHasWrongValue=El atributo %s tiene un valor incorrecto.
+AlphaNumOnlyCharsAndNoSpace=solamente caracteres alfanuméricos sin espacios
+SendingMailSetup=Configuración del envío por mail
+SendmailOptionNotComplete=Atención, en algunos sistemas Linux, con este método de envio, para poder enviar mails en su nombre, la configuración de sendmail debe contener la opción <b>-ba</b> (parámetro <b>mail.force_extra_parameters</b> en el archivo <b>php.ini</b>). Si algunos de sus destinatarios no reciben sus mensajes, pruebe a modificar este parámetro PHP con <b>mail.force_extra_parameters=-ba</b>.
+PathToDocuments=Rutas de acceso a documentos
+PathDirectory=Directorio
+SendmailOptionMayHurtBuggedMTA=La funcionalidad de enviar correo electrónico a través del "correo directo PHP" genera una solicitud que puede ser mal interpretado por algunos servidores de correo. Esto se traduce en mensajes de correo electrónico ilegibles para las personas alojadas en  estas plataformas. Este es el caso de clientes en ciertos proveedores de servicios de Internet (Ej: Orange). Esto no es un problema ni de Dolibarr ni de PHP, pero sí del servidor de correo. Sin embargo, puede agregar la opción MAIN_FIX_FOR_BUGGED_MTA con valor 1 en configuración-varios para tratar que Dolibarr evite el error. Otra solución (recomendada) es utilizar el método de envío por SMTP que no tiene este inconveniente. 
+TranslationSetup=Configuración traducción
+TranslationDesc=La elección del idioma mostrado en pantalla se modifica:<br>* A nivel global desde el menú <strong>Inicio - Configuración - Entorno</strong><br>* De manera específica al usuario desde la pestaña <strong>Interfaz usuario</strong> de su ficha de usuario (hacer clic en su login en la parte superior izquierda de la pantalla).
+ClassNotFoundIntoPathWarning=No se ha encontrado la clase %s en su path PHP 
+YesInSummer=Sí en verano
+OnlyFollowingModulesAreOpenedToExternalUsers=Tenga en cuenta que sólo los módulos siguientes están abiertos a usuarios externos (sean cuales sean los permisos de los usuarios):
+ConditionIsCurrently=Actualmente la condición es %s
+##### Module password generation= undefined=
+PasswordGenerationStandard=Devuelve una contraseña generada por el algoritmo interno Dolibarr: 8 caracteres, números y caracteres en minúsculas mezcladas.
+PasswordGenerationNone=No ofrece contraseñas. La contraseña se introduce manualmente.
 ##### Users setup #####
-UserGroupSetupConfiguración módulo usuarios y grupos
-GeneratePasswordProponer una contraseña generada
-RuleForGeneratedPasswordsNorma para la generación de las contraseñas propuestas
-DoNotSuggestNo proponer
-EncryptedPasswordInDatabasePermitir encriptación de las contraseñas en la base de datos
-DisableForgetPasswordLinkOnLogonPageNo mostrar el vínculo "Contraseña olvidada" en la página de login
-UsersSetupConfiguración del módulo usuarios
-UserMailRequiredE-Mail necesario para crear un usuario nuevo
+UserGroupSetup=Configuración módulo usuarios y grupos
+GeneratePassword=Proponer una contraseña generada
+RuleForGeneratedPasswords=Norma para la generación de las contraseñas propuestas
+DoNotSuggest=No proponer
+EncryptedPasswordInDatabase=Permitir encriptación de las contraseñas en la base de datos
+DisableForgetPasswordLinkOnLogonPage=No mostrar el vínculo "Contraseña olvidada" en la página de login
+UsersSetup=Configuración del módulo usuarios
+UserMailRequired=E-Mail necesario para crear un usuario nuevo
 ##### Company setup #####
-CompanySetupConfiguración del módulo terceros
-CompanyCodeCheckerMódulo de generación y control de los códigos de terceros (clientes/proveedores)
-AccountCodeManagerMódulo de generación de los códigos contables (clientes/proveedores)
-ModuleCompanyCodeAquariumDevuelve un código contable compuesto de<br>%s seguido del código tercero de proveedor para el código contable de proveedor,<br>%s seguido del código tercero de cliente para el código contable de cliente.
-ModuleCompanyCodePanicumDevuelve un código contable vacío.
-ModuleCompanyCodeDigitariaDevuelve un código contable compuesto siguiendo el código de tercero. El código está formado por carácter ' C ' en primera posición seguido de los 5 primeros caracteres del código tercero.
-UseNotificationsUsar notificaciones
-NotificationsDescLa función de las notificaciones permite enviar automáticamente un correo electrónico para un determinado evento Dolibarr en las empresas configuradas para ello
-ModelModulesModelos de documentos
-DocumentModelOdtGeneración desde los documentos OpenDocument (Archivo .ODT OpenOffice, KOffice, TextEdit,...)
-WatermarkOnDraftMarca de agua en los documentos borrador
-CompanyIdProfCheckerReglas sobre los ID profesionales
-MustBeUnique¿Debe ser único?
-MustBeMandatory¿Debe ser obligatorio para crear terceros?
-MustBeInvoiceMandatory¿Debe ser obligatorio para validar facturas?
-MiscellaneousMiscelánea
+CompanySetup=Configuración del módulo terceros
+CompanyCodeChecker=Módulo de generación y control de los códigos de terceros (clientes/proveedores)
+AccountCodeManager=Módulo de generación de los códigos contables (clientes/proveedores)
+ModuleCompanyCodeAquarium=Devuelve un código contable compuesto de<br>%s seguido del código tercero de proveedor para el código contable de proveedor,<br>%s seguido del código tercero de cliente para el código contable de cliente.
+ModuleCompanyCodePanicum=Devuelve un código contable vacío.
+ModuleCompanyCodeDigitaria=Devuelve un código contable compuesto siguiendo el código de tercero. El código está formado por carácter ' C ' en primera posición seguido de los 5 primeros caracteres del código tercero.
+UseNotifications=Usar notificaciones
+NotificationsDesc=La función de las notificaciones permite enviar automáticamente un correo electrónico para un determinado evento Dolibarr en las empresas configuradas para ello
+ModelModules=Modelos de documentos
+DocumentModelOdt=Generación desde los documentos OpenDocument (Archivo .ODT OpenOffice, KOffice, TextEdit,...)
+WatermarkOnDraft=Marca de agua en los documentos borrador
+CompanyIdProfChecker=Reglas sobre los ID profesionales
+MustBeUnique=¿Debe ser único?
+MustBeMandatory=¿Debe ser obligatorio para crear terceros?
+MustBeInvoiceMandatory=¿Debe ser obligatorio para validar facturas?
+Miscellaneous=Miscelánea
 ##### Webcal setup #####
-WebCalSetupConfiguración de enlace con el calendario Webcalendar
-WebCalSyncroIntegrar los eventos Dolibarr en WebCalendar
-WebCalAllwaysSiempre, sin consultar
-WebCalYesByDefaultConsultar (Si por defecto)
-WebCalNoByDefaultConsultar (No por defecto)
-WebCalNeverNunca
-WebCalURLDirección (URL) de acceso al calendario
-WebCalServerServidor de la base de datos del calendario
-WebCalDatabaseNameNombre de la base de datos
-WebCalUserUsuario con acceso a la base
-WebCalSetupSavedLos datos de enlace se han guardado correctamente.
-WebCalTestOkLa conexión al servidor '%s' en la base '%s' por el usuario '%s' ha sido satisfactoria.
-WebCalTestKo1La conexión al servidor '%s' ha sido satisfactoria, pero la base '%s' no se ha podido comprobar.
-WebCalTestKo2La conexión al servidor '%s' por el usuario '%s' ha fallado.
-WebCalErrorConnectOkButWrongDatabaseLa conexión salió bien pero la base no parece ser una base Webcalendar.
-WebCalAddEventOnCreateActionsAñadir evento en el calendario en las creaciones de acciones
-WebCalAddEventOnCreateCompanyAñadir evento en el calendario en la creación de empresas
-WebCalAddEventOnStatusPropalAñadir evento en el calendario en el cambio de estado de los presupuestos
-WebCalAddEventOnStatusContractAñadir evento en el calendario en el cambio de estado de los contratos
-WebCalAddEventOnStatusBillAñadir evento en el calendario en el cambio de estado de las facturas
-WebCalAddEventOnStatusMemberAñadir evento en el calendario en el cambio de estado de los miembros
-WebCalUrlForVCalExportUn vínculo de exportación del calendario en formato <b>%s</b> estará disponible en la url: %s
-WebCalCheckWebcalSetupLa configuración del módulo Webcal puede ser incorrecta
+WebCalSetup=Configuración de enlace con el calendario Webcalendar
+WebCalSyncro=Integrar los eventos Dolibarr en WebCalendar
+WebCalAllways=Siempre, sin consultar
+WebCalYesByDefault=Consultar (Si por defecto)
+WebCalNoByDefault=Consultar (No por defecto)
+WebCalNever=Nunca
+WebCalURL=Dirección (URL) de acceso al calendario
+WebCalServer=Servidor de la base de datos del calendario
+WebCalDatabaseName=Nombre de la base de datos
+WebCalUser=Usuario con acceso a la base
+WebCalSetupSaved=Los datos de enlace se han guardado correctamente.
+WebCalTestOk=La conexión al servidor '%s' en la base '%s' por el usuario '%s' ha sido satisfactoria.
+WebCalTestKo1=La conexión al servidor '%s' ha sido satisfactoria, pero la base '%s' no se ha podido comprobar.
+WebCalTestKo2=La conexión al servidor '%s' por el usuario '%s' ha fallado.
+WebCalErrorConnectOkButWrongDatabase=La conexión salió bien pero la base no parece ser una base Webcalendar.
+WebCalAddEventOnCreateActions=Añadir evento en el calendario en las creaciones de acciones
+WebCalAddEventOnCreateCompany=Añadir evento en el calendario en la creación de empresas
+WebCalAddEventOnStatusPropal=Añadir evento en el calendario en el cambio de estado de los presupuestos
+WebCalAddEventOnStatusContract=Añadir evento en el calendario en el cambio de estado de los contratos
+WebCalAddEventOnStatusBill=Añadir evento en el calendario en el cambio de estado de las facturas
+WebCalAddEventOnStatusMember=Añadir evento en el calendario en el cambio de estado de los miembros
+WebCalUrlForVCalExport=Un vínculo de exportación del calendario en formato <b>%s</b> estará disponible en la url: %s
+WebCalCheckWebcalSetup=La configuración del módulo Webcal puede ser incorrecta
 ##### Invoices #####
-BillsSetupConfiguración del módulo Facturas
-BillsDateFecha de las facturas
-BillsNumberingModuleMódulo de numeración de facturas y abonos
-BillsPDFModulesModelo de documento de facturas
-CreditNoteSetupConfiguración del módulo abonos
-CreditNotePDFModulesModelo de documento de abonos
-CreditNoteAbono
-CreditNotesAbonos
-ForceInvoiceDateForzar la fecha de factura a la fecha de validación
-DisableRepeatableDesactivar las facturas recurrentes
-SuggestedPaymentModesIfNotDefinedInInvoiceFormas de pago sugeridas para las facturas si no están definidas explícitamente
-EnableEditDeleteValidInvoiceActivar la posibilidad de editar/eliminar una factura validada sin pago
-SuggestPaymentByRIBOnAccountSugerir el pago por abono en cuenta
-SuggestPaymentByChequeToAddressSugerir el pago por cheque a
-FreeLegalTextOnInvoicesTexto libre en facturas
-WatermarkOnDraftInvoicesMarca de agua en las facturas borrador (en caso de estar vacío)
+BillsSetup=Configuración del módulo Facturas
+BillsDate=Fecha de las facturas
+BillsNumberingModule=Módulo de numeración de facturas y abonos
+BillsPDFModules=Modelo de documento de facturas
+CreditNoteSetup=Configuración del módulo abonos
+CreditNotePDFModules=Modelo de documento de abonos
+CreditNote=Abono
+CreditNotes=Abonos
+ForceInvoiceDate=Forzar la fecha de factura a la fecha de validación
+DisableRepeatable=Desactivar las facturas recurrentes
+SuggestedPaymentModesIfNotDefinedInInvoice=Formas de pago sugeridas para las facturas si no están definidas explícitamente
+EnableEditDeleteValidInvoice=Activar la posibilidad de editar/eliminar una factura validada sin pago
+SuggestPaymentByRIBOnAccount=Sugerir el pago por abono en cuenta
+SuggestPaymentByChequeToAddress=Sugerir el pago por cheque a
+FreeLegalTextOnInvoices=Texto libre en facturas
+WatermarkOnDraftInvoices=Marca de agua en las facturas borrador (en caso de estar vacío)
 ##### Proposals #####
-PropalSetupConfiguración del módulo Presupuestos
-CreateFormCreación formulario
-NumberOfProductLinesNumero de líneas de productos
-ProposalsNumberingModulesMódulos de numeración de presupuestos
-ProposalsPDFModulesModelos de documentos de presupuestos
-ClassifiedInvoicedClasificar facturado
-HideTreadedPropalOcultar los presupuestos procesados del listado
-AddShippingDateAbilityPosibilidad de determinar una fecha de entrega
-AddDeliveryAddressAbilityPosibilidad de seleccionar una dirección de envío
-UseOptionLineIfNoQuantityUna línea de producto/servicio que tiene una cantidad nula se considera como una opción
-FreeLegalTextOnProposalTexto libre en presupuestos
-WatermarkOnDraftProposalMarca de agua en presupuestos borrador (en caso de estar vacío)
+PropalSetup=Configuración del módulo Presupuestos
+CreateForm=Creación formulario
+NumberOfProductLines=Numero de líneas de productos
+ProposalsNumberingModules=Módulos de numeración de presupuestos
+ProposalsPDFModules=Modelos de documentos de presupuestos
+ClassifiedInvoiced=Clasificar facturado
+HideTreadedPropal=Ocultar los presupuestos procesados del listado
+AddShippingDateAbility=Posibilidad de determinar una fecha de entrega
+AddDeliveryAddressAbility=Posibilidad de seleccionar una dirección de envío
+UseOptionLineIfNoQuantity=Una línea de producto/servicio que tiene una cantidad nula se considera como una opción
+FreeLegalTextOnProposal=Texto libre en presupuestos
+WatermarkOnDraftProposal=Marca de agua en presupuestos borrador (en caso de estar vacío)
 ##### Orders #####
-OrdersSetupConfiguración del módulo pedidos
-OrdersNumberingModulesMódulos de numeración de los pedidos
-OrdersModelModuleModelos de documentos de pedidos
-HideTreadedOrdersOcultar los pedidos procesados o anulados del listado
-ValidOrderAfterPropalClosedValidar el pedido después del cierre del presupuesto, permite no pasar por el pedido provisional
-FreeLegalTextOnOrdersTexto libre en pedidos
-WatermarkOnDraftOrdersMarca de agua en pedidos borrador (en caso de estar vacío)
+OrdersSetup=Configuración del módulo pedidos
+OrdersNumberingModules=Módulos de numeración de los pedidos
+OrdersModelModule=Modelos de documentos de pedidos
+HideTreadedOrders=Ocultar los pedidos procesados o anulados del listado
+ValidOrderAfterPropalClosed=Validar el pedido después del cierre del presupuesto, permite no pasar por el pedido provisional
+FreeLegalTextOnOrders=Texto libre en pedidos
+WatermarkOnDraftOrders=Marca de agua en pedidos borrador (en caso de estar vacío)
 ##### Clicktodial #####
-ClickToDialSetupConfiguración del módulo Click To Dial
-ClickToDialUrlDescURL de llamada haciendo click en el icono teléfono. <br>La URL completa de llamada será: URL?login=...&password=...&caller=...&called=telellamada
+ClickToDialSetup=Configuración del módulo Click To Dial
+ClickToDialUrlDesc=URL de llamada haciendo click en el icono teléfono. <br>La URL completa de llamada será: URL?login=...&password=...&caller=...&called=telellamada
 ##### Bookmark4u #####
-Bookmark4uSetupConfiguración del módulo Bookmark4u
+Bookmark4uSetup=Configuración del módulo Bookmark4u
 ##### Interventions #####
-InterventionsSetupConfiguración del módulo intervenciones
-FreeLegalTextOnInterventionsTexto adicional en las fichas de intervención
-FicheinterNumberingModulesMódulos de numeración de las fichas de intervención
-TemplatePDFInterventionsModelo de documentos de las fichas de intervención
-WatermarkOnDraftInterventionCardsMarca de agua en fichas de intervención (en caso de estar vacío)
+InterventionsSetup=Configuración del módulo intervenciones
+FreeLegalTextOnInterventions=Texto adicional en las fichas de intervención
+FicheinterNumberingModules=Módulos de numeración de las fichas de intervención
+TemplatePDFInterventions=Modelo de documentos de las fichas de intervención
+WatermarkOnDraftInterventionCards=Marca de agua en fichas de intervención (en caso de estar vacío)
 ##### Contracts #####
-ContractsSetupConfiguración del módulo contratos
-ContractsNumberingModulesMódulos de numeración de los contratos
+ContractsSetup=Configuración del módulo contratos
+ContractsNumberingModules=Módulos de numeración de los contratos
 ##### Members #####
-MembersSetupConfiguración del módulo Asociaciones
-MemberMainOptionsOpciones principales
-AddSubscriptionIntoAccountProponer por defecto la creación de un movimiento, en el módulo bancos, en el registro de un pago de cotización
-AdherentLoginRequiredGestionar un login para cada miembro
-AdherentMailRequiredE-Mail obligatorio para crear un miembro nuevo
-MemberSendInformationByMailByDefaultCasilla de verificación para enviar el correo de confirmación (validación ó nueva cotización) a los miembros es por defecto "sí"
+MembersSetup=Configuración del módulo Asociaciones
+MemberMainOptions=Opciones principales
+AddSubscriptionIntoAccount=Proponer por defecto la creación de un movimiento, en el módulo bancos, en el registro de un pago de cotización
+AdherentLoginRequired=Gestionar un login para cada miembro
+AdherentMailRequired=E-Mail obligatorio para crear un miembro nuevo
+MemberSendInformationByMailByDefault=Casilla de verificación para enviar el correo de confirmación (validación ó nueva cotización) a los miembros es por defecto "sí"
 ##### LDAP setup #####
-LDAPSetupConfiguración del módulo LDAP
-LDAPGlobalParametersParámetros globales
-LDAPUsersSynchroUsuarios
-LDAPGroupsSynchroGrupos
-LDAPContactsSynchroContactos
-LDAPMembersSynchroMiembros
-LDAPSynchronizationSincronización LDAP
-LDAPFunctionsNotAvailableOnPHPLas funciones LDAP no están disponibles en su PHP
-LDAPToDolibarrLDAP -> Dolibarr
-DolibarrToLDAPDolibarr -> LDAP
-LDAPNamingAttributeClave en LDAP
-LDAPSynchronizeUsersOrganización de los usuarios en LDAP
-LDAPSynchronizeGroupsOrganización de los grupos en LDAP
-LDAPSynchronizeContactsOrganización de los contactos en LDAP
-LDAPSynchronizeMembersOrganización de los miembros en LDAP
-LDAPTypeExampleOpenLdap, Egroupware o Active Directory
-LDAPPrimaryServerServidor primario
-LDAPSecondaryServerServidor secundario
-LDAPServerPortPuerto del servidor
-LDAPServerPortExamplePuerto por defecto : 389
-LDAPServerProtocolVersionVersión de protocolo
-LDAPServerUseTLSUsuario TLS
-LDAPServerUseTLSExampleSu servidor utiliza TLS
-LDAPServerDnDN del servidor
-LDAPAdminDnDN del administrador
-LDAPAdminDnExampleDN completo (ej: cn=adminldap,dc=example,dc=com)
-LDAPPasswordContraseña del administrador
-LDAPUserDnDN de los usuarios
-LDAPUserDnExampleDN completo (ej: ou=users,dc=example,dc=com)
-LDAPGroupDnDN de los grupos
-LDAPGroupDnExampleDN completo (ej: ou=groups,dc=example,dc=com)
-LDAPServerExampleDirección del servidor (ej: localhost, 192.168.0.2, ldaps://ldap.example.com/)
-LDAPServerDnExampleDN completo (ej: dc=my-domain,dc=com)
-LDAPPasswordExampleContraseña del administrador
-LDAPDnSynchroActiveSincronización de usuarios y grupos
-LDAPDnSynchroActiveExampleSincronización LDAP hacia Dolibarr o Dolibarr hacia LDAP
-LDAPDnContactActiveSincronización de contactos
-LDAPDnContactActiveYesSincronización activada
-LDAPDnContactActiveExampleSincronización activada/desactivada
-LDAPDnMemberActiveSincronización de los miembros
-LDAPDnMemberActiveExampleSincronización activada/desactivada
-LDAPContactDnDN de los contactos Dolibarr
-LDAPContactDnExampleDN completo (ej: ou=contacts,dc=example,dc=com)
-LDAPMemberDnDN de los miembros
-LDAPMemberDnExampleDN completo (ex: ou=members,dc=society,dc=com)
-LDAPMemberObjectClassListLista de objectClass
-LDAPMemberObjectClassListExampleLista de ObjectClass que definen los atributos de un registro (ej: top,inetOrgPerson o top,user for active directory)
-LDAPUserObjectClassListLista de objectClass
-LDAPUserObjectClassListExampleLista de ObjectClass que definen los atributos de un registro (ej: top,inetOrgPerson o top,user for active directory)
-LDAPGroupObjectClassListLista de objectClass
-LDAPGroupObjectClassListExampleLista de ObjectClass que definen los atributos de un registro (ej: top,groupOfUniqueNames)
-LDAPContactObjectClassListLista de objectClass
-LDAPContactObjectClassListExampleLista de objectClass que definen los atributos de un registro (ej: top,inetOrgPerson o top,user for active directory)
-LDAPMemberTypeDnDN de los tipos de miembros
-LDAPMemberTypeDnExampleDN complet (ej: ou=type_members,dc=example,dc=com)
-LDAPTestConnectProbar la conexión LDAP
-LDAPTestSynchroContactProbar la sincronización de contactos
-LDAPTestSynchroUserProbar la sincronización de usuarios
-LDAPTestSynchroGroupProbar la sincronización de grupos
-LDAPTestSynchroMemberProbar la sincronización de miembros
-LDAPTestSearchProbar una búsqueda LDAP
-LDAPSynchroOKPrueba de sincronización realizada correctamente
-LDAPSynchroKOPrueba de sincronización erronea
-LDAPSynchroKOMayBePermissionsError de la prueba de sincronización. Compruebe que la conexión al servidor sea correcta y que permite las actualizaciones LDAP
-LDAPTCPConnectOKConexión TCP al servidor LDAP efectuada (Servidor=%s, Puerto=%s)
-LDAPTCPConnectKOFallo de conexión TCP al servidor LDAP (Servidor=%s, Puerto=%s)
-LDAPBindOKConexión/Autenticación al servidor LDAP conseguida (Servidor=%s, Puerto=%s, Admin=%s, Password=%s)
-LDAPBindKOFallo de conexión/autentificación al servidor LDAP (Servidor=%s, Puerto=%s, Admin=%s, Password=%s)
-LDAPUnbindSuccessfullDesconexión realizada
-LDAPUnbindFailedDesconexión fallada
-LDAPConnectToDNSuccessfullConexión a DN (%s) realizada
-LDAPConnectToDNFailedConnexión a DN (%s) fallada
-LDAPSetupForVersion3Servidor LDAP configurado en versión 3
-LDAPSetupForVersion2Servidor LDAP configurado en versión 2
-LDAPDolibarrMappingMapping Dolibarr
-LDAPLdapMappingMapping LDAP
-LDAPFieldLoginUnixLogin (unix)
-LDAPFieldLoginExampleEjemplo : uid
-LDAPFilterConnectionFiltro de búsqueda
-LDAPFilterConnectionExampleEjemplo : &(objectClass=inetOrgPerson)
-LDAPFieldLoginSambaLogin (samba, activedirectory)
-LDAPFieldLoginSambaExampleEjemplo : samaccountname
-LDAPFieldFullnameNombre completo
-LDAPFieldFullnameExampleEjemplo : cn
-LDAPFieldPasswordContraseña
-LDAPFieldPasswordNotCryptedContraseña no encriptada
-LDAPFieldPasswordCryptedContraseña encriptada
-LDAPFieldPasswordExampleEjemplo : userPassword
-LDAPFieldCommonNameNombre comun
-LDAPFieldCommonNameExampleEjemplo : cn
-LDAPFieldNameNombre
-LDAPFieldNameExampleEjemplo : sn
-LDAPFieldFirstNameNombre
-LDAPFieldFirstNameExampleEjemplo : givenName
-LDAPFieldMailE-Mail
-LDAPFieldMailExampleEjemplo : mail
-LDAPFieldPhoneTeléfono trabajo
-LDAPFieldPhoneExampleEjemplo : telephonenumber
-LDAPFieldHomePhoneTeléfono personal
-LDAPFieldHomePhoneExampleEjemplo : homephone
-LDAPFieldMobileTeléfono móvil
-LDAPFieldMobileExampleEjemplo : mobile
-LDAPFieldFaxFax
-LDAPFieldFaxExampleEjemplo : facsimiletelephonenumber
-LDAPFieldAddressDirección
-LDAPFieldAddressExampleEjemplo : street
-LDAPFieldZipCódigo postal
-LDAPFieldZipExampleEjemplo : postalcode
-LDAPFieldTownPoblación
-LDAPFieldTownExampleEjemplo : l
-LDAPFieldCountryPaís
-LDAPFieldCountryExampleEjemplo : c
-LDAPFieldDescriptionDescripción
-LDAPFieldDescriptionExampleEjemplo : description
-LDAPFieldGroupMembersMiembros del grupo
-LDAPFieldGroupMembersExampleEjemplo: uniqueMember
-LDAPFieldBirthdateFecha de nacimiento
-LDAPFieldBirthdateExampleEjemplo :
-LDAPFieldCompanyEmpresa
-LDAPFieldCompanyExampleEjemplo : o
-LDAPFieldSidSID
-LDAPFieldSidExampleEjemplo : objectsid
-LDAPFieldEndLastSubscriptionFecha finalización como miembro
-LDAPFieldTitlePuesto/Función
-LDAPFieldTitleExampleEjemplo:titulo
-LDAPParametersAreStillHardCodedLos parámetros LDAP son codificados en duro (en la clase contact)
-LDAPSetupNotCompleteConfiguración LDAP incompleta (a completar en las otras pestañas)
-LDAPNoUserOrPasswordProvidedAccessIsReadOnlyAdministrador o contraseña no indicados. Los accesos LDAP serán anónimos y en solo lectura.
-LDAPDescContactEsta página permite definir el nombre de los atributos del árbol LDAP para cada información de los contactos Dolibarr.
-LDAPDescUsersEsta página permite definir el nombre de los atributos del árbol LDAP para cada información de los usuarios Dolibarr.
-LDAPDescGroupsEsta página permite definir el nombre de los atributos del árbol LDAP para cada información de los grupos usuarios Dolibarr.
-LDAPDescMembersEsta página permite definir el nombre de los atributos del árbol LDAP para cada información de los miembros del módulo Asociaciones Dolibarr.
-LDAPDescValuesLos valores de ejemplos se adaptan a <b>OpenLDAP</b> con los schemas cargados: <b>core.schema, cosine.schema, inetorgperson.schema</b>). Si usted utiliza los a valores sugeridos y OpenLDAP, modifique su archivo de configuración LDAP <b>slapd.conf</b> para tener todos estos schemas activos.
-ForANonAnonymousAccessPara un acceso autentificado
+LDAPSetup=Configuración del módulo LDAP
+LDAPGlobalParameters=Parámetros globales
+LDAPUsersSynchro=Usuarios
+LDAPGroupsSynchro=Grupos
+LDAPContactsSynchro=Contactos
+LDAPMembersSynchro=Miembros
+LDAPSynchronization=Sincronización LDAP
+LDAPFunctionsNotAvailableOnPHP=Las funciones LDAP no están disponibles en su PHP
+LDAPToDolibarr=LDAP -> Dolibarr
+DolibarrToLDAP=Dolibarr -> LDAP
+LDAPNamingAttribute=Clave en LDAP
+LDAPSynchronizeUsers=Organización de los usuarios en LDAP
+LDAPSynchronizeGroups=Organización de los grupos en LDAP
+LDAPSynchronizeContacts=Organización de los contactos en LDAP
+LDAPSynchronizeMembers=Organización de los miembros en LDAP
+LDAPTypeExample=OpenLdap, Egroupware o Active Directory
+LDAPPrimaryServer=Servidor primario
+LDAPSecondaryServer=Servidor secundario
+LDAPServerPort=Puerto del servidor
+LDAPServerPortExample=Puerto por defecto : 389
+LDAPServerProtocolVersion=Versión de protocolo
+LDAPServerUseTLS=Usuario TLS
+LDAPServerUseTLSExample=Su servidor utiliza TLS
+LDAPServerDn=DN del servidor
+LDAPAdminDn=DN del administrador
+LDAPAdminDnExample=DN completo (ej: cn=adminldap,dc=example,dc=com)
+LDAPPassword=Contraseña del administrador
+LDAPUserDn=DN de los usuarios
+LDAPUserDnExample=DN completo (ej: ou=users,dc=example,dc=com)
+LDAPGroupDn=DN de los grupos
+LDAPGroupDnExample=DN completo (ej: ou=groups,dc=example,dc=com)
+LDAPServerExample=Dirección del servidor (ej: localhost, 192.168.0.2, ldaps://ldap.example.com/)
+LDAPServerDnExample=DN completo (ej: dc=my-domain,dc=com)
+LDAPPasswordExample=Contraseña del administrador
+LDAPDnSynchroActive=Sincronización de usuarios y grupos
+LDAPDnSynchroActiveExample=Sincronización LDAP hacia Dolibarr o Dolibarr hacia LDAP
+LDAPDnContactActive=Sincronización de contactos
+LDAPDnContactActiveYes=Sincronización activada
+LDAPDnContactActiveExample=Sincronización activada/desactivada
+LDAPDnMemberActive=Sincronización de los miembros
+LDAPDnMemberActiveExample=Sincronización activada/desactivada
+LDAPContactDn=DN de los contactos Dolibarr
+LDAPContactDnExample=DN completo (ej: ou=contacts,dc=example,dc=com)
+LDAPMemberDn=DN de los miembros
+LDAPMemberDnExample=DN completo (ex: ou=members,dc=society,dc=com)
+LDAPMemberObjectClassList=Lista de objectClass
+LDAPMemberObjectClassListExample=Lista de ObjectClass que definen los atributos de un registro (ej: top,inetOrgPerson o top,user for active directory)
+LDAPUserObjectClassList=Lista de objectClass
+LDAPUserObjectClassListExample=Lista de ObjectClass que definen los atributos de un registro (ej: top,inetOrgPerson o top,user for active directory)
+LDAPGroupObjectClassList=Lista de objectClass
+LDAPGroupObjectClassListExample=Lista de ObjectClass que definen los atributos de un registro (ej: top,groupOfUniqueNames)
+LDAPContactObjectClassList=Lista de objectClass
+LDAPContactObjectClassListExample=Lista de objectClass que definen los atributos de un registro (ej: top,inetOrgPerson o top,user for active directory)
+LDAPMemberTypeDn=DN de los tipos de miembros
+LDAPMemberTypeDnExample=DN complet (ej: ou=type_members,dc=example,dc=com)
+LDAPTestConnect=Probar la conexión LDAP
+LDAPTestSynchroContact=Probar la sincronización de contactos
+LDAPTestSynchroUser=Probar la sincronización de usuarios
+LDAPTestSynchroGroup=Probar la sincronización de grupos
+LDAPTestSynchroMember=Probar la sincronización de miembros
+LDAPTestSearch=Probar una búsqueda LDAP
+LDAPSynchroOK=Prueba de sincronización realizada correctamente
+LDAPSynchroKO=Prueba de sincronización erronea
+LDAPSynchroKOMayBePermissions=Error de la prueba de sincronización. Compruebe que la conexión al servidor sea correcta y que permite las actualizaciones LDAP
+LDAPTCPConnectOK=Conexión TCP al servidor LDAP efectuada (Servidor=%s, Puerto=%s)
+LDAPTCPConnectKO=Fallo de conexión TCP al servidor LDAP (Servidor=%s, Puerto=%s)
+LDAPBindOK=Conexión/Autenticación al servidor LDAP conseguida (Servidor=%s, Puerto=%s, Admin=%s, Password=%s)
+LDAPBindKO=Fallo de conexión/autentificación al servidor LDAP (Servidor=%s, Puerto=%s, Admin=%s, Password=%s)
+LDAPUnbindSuccessfull=Desconexión realizada
+LDAPUnbindFailed=Desconexión fallada
+LDAPConnectToDNSuccessfull=Conexión a DN (%s) realizada
+LDAPConnectToDNFailed=Connexión a DN (%s) fallada
+LDAPSetupForVersion3=Servidor LDAP configurado en versión 3
+LDAPSetupForVersion2=Servidor LDAP configurado en versión 2
+LDAPDolibarrMapping=Mapping Dolibarr
+LDAPLdapMapping=Mapping LDAP
+LDAPFieldLoginUnix=Login (unix)
+LDAPFieldLoginExample=Ejemplo : uid
+LDAPFilterConnection=Filtro de búsqueda
+LDAPFilterConnectionExample=Ejemplo : &(objectClass=inetOrgPerson)
+LDAPFieldLoginSamba=Login (samba, activedirectory)
+LDAPFieldLoginSambaExample=Ejemplo : samaccountname
+LDAPFieldFullname=Nombre completo
+LDAPFieldFullnameExample=Ejemplo : cn
+LDAPFieldPassword=Contraseña
+LDAPFieldPasswordNotCrypted=Contraseña no encriptada
+LDAPFieldPasswordCrypted=Contraseña encriptada
+LDAPFieldPasswordExample=Ejemplo : userPassword
+LDAPFieldCommonName=Nombre comun
+LDAPFieldCommonNameExample=Ejemplo : cn
+LDAPFieldName=Nombre
+LDAPFieldNameExample=Ejemplo : sn
+LDAPFieldFirstName=Nombre
+LDAPFieldFirstNameExample=Ejemplo : givenName
+LDAPFieldMail=E-Mail
+LDAPFieldMailExample=Ejemplo : mail
+LDAPFieldPhone=Teléfono trabajo
+LDAPFieldPhoneExample=Ejemplo : telephonenumber
+LDAPFieldHomePhone=Teléfono personal
+LDAPFieldHomePhoneExample=Ejemplo : homephone
+LDAPFieldMobile=Teléfono móvil
+LDAPFieldMobileExample=Ejemplo : mobile
+LDAPFieldFax=Fax
+LDAPFieldFaxExample=Ejemplo : facsimiletelephonenumber
+LDAPFieldAddress=Dirección
+LDAPFieldAddressExample=Ejemplo : street
+LDAPFieldZip=Código postal
+LDAPFieldZipExample=Ejemplo : postalcode
+LDAPFieldTown=Población
+LDAPFieldTownExample=Ejemplo : l
+LDAPFieldCountry=País
+LDAPFieldCountryExample=Ejemplo : c
+LDAPFieldDescription=Descripción
+LDAPFieldDescriptionExample=Ejemplo : description
+LDAPFieldGroupMembers=Miembros del grupo
+LDAPFieldGroupMembersExample=Ejemplo: uniqueMember
+LDAPFieldBirthdate=Fecha de nacimiento
+LDAPFieldBirthdateExample=Ejemplo :
+LDAPFieldCompany=Empresa
+LDAPFieldCompanyExample=Ejemplo : o
+LDAPFieldSid=SID
+LDAPFieldSidExample=Ejemplo : objectsid
+LDAPFieldEndLastSubscription=Fecha finalización como miembro
+LDAPFieldTitle=Puesto/Función
+LDAPFieldTitleExample=Ejemplo:titulo
+LDAPParametersAreStillHardCoded=Los parámetros LDAP son codificados en duro (en la clase contact)
+LDAPSetupNotComplete=Configuración LDAP incompleta (a completar en las otras pestañas)
+LDAPNoUserOrPasswordProvidedAccessIsReadOnly=Administrador o contraseña no indicados. Los accesos LDAP serán anónimos y en solo lectura.
+LDAPDescContact=Esta página permite definir el nombre de los atributos del árbol LDAP para cada información de los contactos Dolibarr.
+LDAPDescUsers=Esta página permite definir el nombre de los atributos del árbol LDAP para cada información de los usuarios Dolibarr.
+LDAPDescGroups=Esta página permite definir el nombre de los atributos del árbol LDAP para cada información de los grupos usuarios Dolibarr.
+LDAPDescMembers=Esta página permite definir el nombre de los atributos del árbol LDAP para cada información de los miembros del módulo Asociaciones Dolibarr.
+LDAPDescValues=Los valores de ejemplos se adaptan a <b>OpenLDAP</b> con los schemas cargados: <b>core.schema, cosine.schema, inetorgperson.schema</b>). Si usted utiliza los a valores sugeridos y OpenLDAP, modifique su archivo de configuración LDAP <b>slapd.conf</b> para tener todos estos schemas activos.
+ForANonAnonymousAccess=Para un acceso autentificado
 ##### Products/Services #####
-ProductSetupConfiguración del módulo Productos
-ServiceSetupConfiguración del módulo Servicios
-ProductServiceSetupConfiguración de los módulos Productos y Servicios
-NumberOfProductShowInSelectNº de productos máx. en las listas (0=sin límite)
-ConfirmDeleteProductLineAbilityConfirmación de eliminación de una línea de producido en los formularios
-ModifyProductDescAbilityPersonalización de las descripciones de los productos en los formularios
-ViewProductDescInFormAbilityVisualización de las descripciones de los productos en los formularios
-ViewProductDescInThirdpartyLanguageAbilityVisualización de las descripciones de productos en el idioma del tercero
-UseSearchToSelectProductUtilizar un formulario de búsqueda para la selección de un producto (en vez de la lista desplegable). Tenga en cuenta que si tiene un número importante de productos o servicios (> 100 000), puede mejorar el rendimiento definiendo la constante PRODUCT_DONOTSEARCH_ANYWHERE a 1 en Configuración->Varios. La búsqueda quedará limitada al inicio de la cadena.
-UseEcoTaxeAbilityAsumir ecotasa (DEEE)
-SetDefaultBarcodeTypeProductsTipo de código de barras utilizado por defecto para los productos
-SetDefaultBarcodeTypeThirdPartiesTipo de código de barras utilizado por defecto para los terceros
-ProductCodeCheckerMódulo para la generación y comprobación del código de un producto o servicio
-ProductOtherConfConfiguración de productos/servicios
+ProductSetup=Configuración del módulo Productos
+ServiceSetup=Configuración del módulo Servicios
+ProductServiceSetup=Configuración de los módulos Productos y Servicios
+NumberOfProductShowInSelect=Nº de productos máx. en las listas (0=sin límite)
+ConfirmDeleteProductLineAbility=Confirmación de eliminación de una línea de producido en los formularios
+ModifyProductDescAbility=Personalización de las descripciones de los productos en los formularios
+ViewProductDescInFormAbility=Visualización de las descripciones de los productos en los formularios
+ViewProductDescInThirdpartyLanguageAbility=Visualización de las descripciones de productos en el idioma del tercero
+UseSearchToSelectProduct=Utilizar un formulario de búsqueda para la selección de un producto (en vez de la lista desplegable). Tenga en cuenta que si tiene un número importante de productos o servicios (> 100 000), puede mejorar el rendimiento definiendo la constante PRODUCT_DONOTSEARCH_ANYWHERE a 1 en Configuración->Varios. La búsqueda quedará limitada al inicio de la cadena.
+UseEcoTaxeAbility=Asumir ecotasa (DEEE)
+SetDefaultBarcodeTypeProducts=Tipo de código de barras utilizado por defecto para los productos
+SetDefaultBarcodeTypeThirdParties=Tipo de código de barras utilizado por defecto para los terceros
+ProductCodeChecker=Módulo para la generación y comprobación del código de un producto o servicio
+ProductOtherConf=Configuración de productos/servicios
 ##### Syslog #####
-SyslogSetupConfiguración del módulo Syslog
-SyslogOutputSalida del log
-SyslogSyslogSyslog
-SyslogFacilityFacilidad
-SyslogLevelNivel
-SyslogSimpleFileArchivo
-SyslogFilenameNombre y ruta del archivo
-YouCanUseDOL_DATA_ROOTPuede utilizar DOL_DATA_ROOT/dolibarr.log para un registro en el directorio "documentos" de Dolibarr. Sin embargo, puede establecer un directorio diferente para guardar este archivo.
-ErrorUnknownSyslogConstantLa constante %s no es una constante syslog conocida
-OnlyWindowsLOG_USERWindows sólo soporta LOG_USER
+SyslogSetup=Configuración del módulo Syslog
+SyslogOutput=Salida del log
+SyslogSyslog=Syslog
+SyslogFacility=Facilidad
+SyslogLevel=Nivel
+SyslogSimpleFile=Archivo
+SyslogFilename=Nombre y ruta del archivo
+YouCanUseDOL_DATA_ROOT=Puede utilizar DOL_DATA_ROOT/dolibarr.log para un registro en el directorio "documentos" de Dolibarr. Sin embargo, puede establecer un directorio diferente para guardar este archivo.
+ErrorUnknownSyslogConstant=La constante %s no es una constante syslog conocida
+OnlyWindowsLOG_USER=Windows sólo soporta LOG_USER
 ##### Donations #####
-DonationsSetupConfiguración del módulo donaciones
-DonationsReceiptModelModelo recepción de donaciones
+DonationsSetup=Configuración del módulo donaciones
+DonationsReceiptModel=Modelo recepción de donaciones
 ##### Barcode #####
-BarcodeSetupConfiguración de los códigos de barras
-PaperFormatModuleMódulos de formatos de impresión
-BarcodeEncodeModuleMódulos de codificación de los códigos de barras
-UseBarcodeInProductModuleUtilizar los códigos de barras en los productos
-CodeBarGeneratorGenerador del código
-ChooseABarCodeNingún generador seleccionado
-FormatNotSupportedByGeneratorFormato no generado por este generador
-BarcodeDescEAN8Códigos de barras tipo EAN8
-BarcodeDescEAN13Códigos de barras tipo EAN13
-BarcodeDescUPCCódigos de barras tipo UPC
-BarcodeDescISBNCódigos de barras tipo ISBN
-BarcodeDescC39Códigos de barras tipo C39
-BarcodeDescC128Códigos de barras tipo C128
-GenbarcodeLocationHerramienta de generación de códigos de barras en líneas de pedidos (utilizado por el motor phpbar para determinados tipos de códigos de barras)
-BarcodeInternalEngineMotor interno
+BarcodeSetup=Configuración de los códigos de barras
+PaperFormatModule=Módulos de formatos de impresión
+BarcodeEncodeModule=Módulos de codificación de los códigos de barras
+UseBarcodeInProductModule=Utilizar los códigos de barras en los productos
+CodeBarGenerator=Generador del código
+ChooseABarCode=Ningún generador seleccionado
+FormatNotSupportedByGenerator=Formato no generado por este generador
+BarcodeDescEAN8=Códigos de barras tipo EAN8
+BarcodeDescEAN13=Códigos de barras tipo EAN13
+BarcodeDescUPC=Códigos de barras tipo UPC
+BarcodeDescISBN=Códigos de barras tipo ISBN
+BarcodeDescC39=Códigos de barras tipo C39
+BarcodeDescC128=Códigos de barras tipo C128
+GenbarcodeLocation=Herramienta de generación de códigos de barras en líneas de pedidos (utilizado por el motor phpbar para determinados tipos de códigos de barras)
+BarcodeInternalEngine=Motor interno
 ##### Prelevements #####
-WithdrawalsSetupConfiguración del módulo domiciliaciones
+WithdrawalsSetup=Configuración del módulo domiciliaciones
 ##### ExternalRSS #####
-ExternalRSSSetupConfiguración de las importaciones del flujo RSS
-NewRSSSindicación de un nuevo flujo RSS
-RSSUrlURL del RSS
-RSSUrlExampleUn flujo RSS interesante
+ExternalRSSSetup=Configuración de las importaciones del flujo RSS
+NewRSS=Sindicación de un nuevo flujo RSS
+RSSUrl=URL del RSS
+RSSUrlExample=Un flujo RSS interesante
 ##### Mailing #####
-MailingSetupConfiguración del módulo E-Mailing
-MailingEMailFromE-Mail emisor (From) de los correos enviados por E-Mailing
-MailingEMailErrorE-Mail de respuesta (Errors-to) para las respuestas acerca de envíos por e-mailing con error.
+MailingSetup=Configuración del módulo E-Mailing
+MailingEMailFrom=E-Mail emisor (From) de los correos enviados por E-Mailing
+MailingEMailError=E-Mail de respuesta (Errors-to) para las respuestas acerca de envíos por e-mailing con error.
 ##### Notification #####
-NotificationSetupConfiguración del módulo notificaciones
-NotificationEMailFromE-Mail emisor (From) de los correos enviados a través de notificaciones
-ListOfAvailableNotificationsListado de notificaciones disponibles (depende de los módulos activados)
+NotificationSetup=Configuración del módulo notificaciones
+NotificationEMailFrom=E-Mail emisor (From) de los correos enviados a través de notificaciones
+ListOfAvailableNotifications=Listado de notificaciones disponibles (depende de los módulos activados)
 ##### Sendings #####
-SendingsSetupConfiguración del módulo Expediciones
-SendingsReceiptModelModelo de notas de entrega
-SendingsNumberingModulesMódulos de numeración de notas de entrega
-SendingsAbilityUso de notas de entrega para los envíos a clientes
-NoNeedForDeliveryReceiptsEn la mayoría de los casos, las notas de entrega (lista de productos enviados) también actúan como notas de recepción y son firmadas por el cliente. La gestión de las notas de recepción es por lo tanto redundante y rara vez se activará.
-FreeLegalTextOnShippingsMención complementaria en las notas de entrega
+SendingsSetup=Configuración del módulo Expediciones
+SendingsReceiptModel=Modelo de notas de entrega
+SendingsNumberingModules=Módulos de numeración de notas de entrega
+SendingsAbility=Uso de notas de entrega para los envíos a clientes
+NoNeedForDeliveryReceipts=En la mayoría de los casos, las notas de entrega (lista de productos enviados) también actúan como notas de recepción y son firmadas por el cliente. La gestión de las notas de recepción es por lo tanto redundante y rara vez se activará.
+FreeLegalTextOnShippings=Mención complementaria en las notas de entrega
 ##### Deliveries #####
-DeliveryOrderNumberingModulesMódulo de numeración de las notas de entraga
-DeliveryOrderModelModelo de notas de recepción
-DeliveriesOrderAbilityUso de notas de recepción
-FreeLegalTextOnDeliveryReceiptsTexto libre en las notas de recepción
+DeliveryOrderNumberingModules=Módulo de numeración de las notas de entraga
+DeliveryOrderModel=Modelo de notas de recepción
+DeliveriesOrderAbility=Uso de notas de recepción
+FreeLegalTextOnDeliveryReceipts=Texto libre en las notas de recepción
 ##### FCKeditor #####
-AdvancedEditorEditor avanzado
-ActivateFCKeditorActivar editor avanzado para :
-FCKeditorForCompanyCreación/edición WYSIWIG de la descripción y notas de los terceros
-FCKeditorForProductCreación/edición WYSIWIG de la descripción y notas de los productos/servicios
-FCKeditorForProductDetailsCreación/edición WYSIWIG de las líneas de detalle de los productos (en pedidos, presupuestos, facturas, etc.)
-FCKeditorForMailingCreación/edición WYSIWIG de los E-Mails (Utilidades->E-Mailings)
-FCKeditorForUserSignatureCreación/edición WYSIWIG de la firma de usuarios
-FCKeditorForMailCreación/edición WYSIWIG de todos los E-Mails (excepto Utilidades->E-Mailings)
+AdvancedEditor=Editor avanzado
+ActivateFCKeditor=Activar editor avanzado para :
+FCKeditorForCompany=Creación/edición WYSIWIG de la descripción y notas de los terceros
+FCKeditorForProduct=Creación/edición WYSIWIG de la descripción y notas de los productos/servicios
+FCKeditorForProductDetails=Creación/edición WYSIWIG de las líneas de detalle de los productos (en pedidos, presupuestos, facturas, etc.)
+FCKeditorForMailing=Creación/edición WYSIWIG de los E-Mails (Utilidades->E-Mailings)
+FCKeditorForUserSignature=Creación/edición WYSIWIG de la firma de usuarios
+FCKeditorForMail=Creación/edición WYSIWIG de todos los E-Mails (excepto Utilidades->E-Mailings)
 ##### OSCommerce 1 #####
-OSCommerceErrorConnectOkButWrongDatabaseLa conexión se ha establecido, pero la base de datos no parece de OSCommerce.
-OSCommerceTestOkLa conexión al servidor '%s' sobre la base '%s' por el usuario '%s' es correcta.
-OSCommerceTestKo1La conexión al servidor '%s' sobre la base '%s' por el usuario '%s' no se pudo efectuar.
-OSCommerceTestKo2La conexión al servidor '%s' por el usuario '%s' ha fallado.
+OSCommerceErrorConnectOkButWrongDatabase=La conexión se ha establecido, pero la base de datos no parece de OSCommerce.
+OSCommerceTestOk=La conexión al servidor '%s' sobre la base '%s' por el usuario '%s' es correcta.
+OSCommerceTestKo1=La conexión al servidor '%s' sobre la base '%s' por el usuario '%s' no se pudo efectuar.
+OSCommerceTestKo2=La conexión al servidor '%s' por el usuario '%s' ha fallado.
 ##### Mantis #####
-MantisSetupConfiguración del enlace con el sistema de seguimiento Mantis
-MantisURLDirección (URL) de acceso a Mantis
-MantisServerServidor de la base de datos Mantis
-MantisDatabaseNameNombre de la base de datos Mantis
-MantisUserIdentificador de acceso a la base
-MantisSetupSavedLos identificadores Mantis se han guardado correctamente
-MantisTestOkLa conexión al servidor '%s' sobre la base de datos  '%s' por el usuario '%s' es correcta.
-MantisTestKo1La conexión al servidor '%s' es correcta pero la base de datos' %s ' no pudo comprobarse.
-MantisTestKo2La conexión al servidor '%s' por el usuario '%s' a fallado.
-MantisErrorConnectOkButWrongDatabaseLa conexión es correcta pero la base de datos no parece ser una base de datos Mantis.
+MantisSetup=Configuración del enlace con el sistema de seguimiento Mantis
+MantisURL=Dirección (URL) de acceso a Mantis
+MantisServer=Servidor de la base de datos Mantis
+MantisDatabaseName=Nombre de la base de datos Mantis
+MantisUser=Identificador de acceso a la base
+MantisSetupSaved=Los identificadores Mantis se han guardado correctamente
+MantisTestOk=La conexión al servidor '%s' sobre la base de datos  '%s' por el usuario '%s' es correcta.
+MantisTestKo1=La conexión al servidor '%s' es correcta pero la base de datos' %s ' no pudo comprobarse.
+MantisTestKo2=La conexión al servidor '%s' por el usuario '%s' a fallado.
+MantisErrorConnectOkButWrongDatabase=La conexión es correcta pero la base de datos no parece ser una base de datos Mantis.
 ##### Stock #####
-StockSetupConfiguración del módulo Stocks
-UserWarehouseUtilizar los stocks personales de usuarios
+StockSetup=Configuración del módulo Stocks
+UserWarehouse=Utilizar los stocks personales de usuarios
 ##### Menu #####
-MenuDeletedMenú eliminado
-TreeMenuEstructura de los menús
-MenusMenús
-TreeMenuPersonalizedMenús personalizados
-NewMenuNuevo menú
-MenuConfConfiguración de los menús
-MenuSelección de los menús
-MenuHandlerGestor de menús
-MenuModuleMódulo origen
-HideUnauthorizedMenuOcultar también los menús no autorizados a usuarios internos (si no sólo atenuados)
-DetailIdIdentificador del menú
-DetailMenuHandlerNombre del gestor de menús
-DetailMenuModuleNombre del módulo si la entrada del menú es resultante de un módulo
-DetailTypeTipo de menú (superior o izquierdo)
-DetailTitreEtiqueta de menú
-DetailMainmenuGrupo al cual pertenece (obsoleto)
-DetailUrlURL de la página hacia la cual el menú apunta
-DetailLeftmenuCondición de visualización o no (obsoleto)
-DetailEnabledCondición de mostrar o no
-DetailRightCondición de visualización completa o restringida
-DetailLangsArchivo .lang para la traducción del título
-DetailUserInterno / Externo / Todos
-TargetObjetivo
-DetailTargetComportamiento del enlace (_blank para abrir una nueva ventana)
-DetailLevelNivel (-1:menú superior, 0:principal, >0 menú y submenú)
-ModifMenuModificación del menú
-DeleteMenuEliminar entrada de menú
-ConfirmDeleteMenuEstá seguro de querer eliminar la entrada de menú <b>%s</b> ?
-DeleteLineEliminación de línea
-ConfirmDeleteLine¿Está seguro de querer eliminar esta línea?
+MenuDeleted=Menú eliminado
+TreeMenu=Estructura de los menús
+Menus=Menús
+TreeMenuPersonalized=Menús personalizados
+NewMenu=Nuevo menú
+MenuConf=Configuración de los menús
+Menu=Selección de los menús
+MenuHandler=Gestor de menús
+MenuModule=Módulo origen
+HideUnauthorizedMenu=Ocultar también los menús no autorizados a usuarios internos (si no sólo atenuados)
+DetailId=Identificador del menú
+DetailMenuHandler=Nombre del gestor de menús
+DetailMenuModule=Nombre del módulo si la entrada del menú es resultante de un módulo
+DetailType=Tipo de menú (superior o izquierdo)
+DetailTitre=Etiqueta de menú
+DetailMainmenu=Grupo al cual pertenece (obsoleto)
+DetailUrl=URL de la página hacia la cual el menú apunta
+DetailLeftmenu=Condición de visualización o no (obsoleto)
+DetailEnabled=Condición de mostrar o no
+DetailRight=Condición de visualización completa o restringida
+DetailLangs=Archivo .lang para la traducción del título
+DetailUser=Interno / Externo / Todos
+Target=Objetivo
+DetailTarget=Comportamiento del enlace (_blank para abrir una nueva ventana)
+DetailLevel=Nivel (-1:menú superior, 0:principal, >0 menú y submenú)
+ModifMenu=Modificación del menú
+DeleteMenu=Eliminar entrada de menú
+ConfirmDeleteMenu=Está seguro de querer eliminar la entrada de menú <b>%s</b> ?
+DeleteLine=Eliminación de línea
+ConfirmDeleteLine=¿Está seguro de querer eliminar esta línea?
 ##### Tax #####
-TaxSetupConfiguración del módulo Impuestos, cargas sociales y dividendos
-OptionVatModeOpción de carga de IVA
-OptionVATDefaultEstándar
-OptionVATDebitOptionOpción servicios a débito
-OptionVatDefaultDescLa carga del IVA es: <br>-en el envío de los bienes (en la práctica se usa la fecha de la factura)<br>-sobre el pago por los servicios
-OptionVatDebitOptionDescLa carga del IVA es: <br>-en el envío de los bienes (en la práctica se usa la fecha de la factura)<br>-sobre la facturación de los servicios
-SummaryOfVatExigibilityUsedByDefaultMomento de exigibilidad por defecto el IVA para la opción escogida:
-OnDeliveryEn la entrega
-OnPaymentEn el pago
-OnInvoiceEn la factura
-SupposedToBePaymentDateFecha de pago usada
-SupposedToBeInvoiceDateFecha de factura usada
-BuyCompra
-SellVenta
-InvoiceDateUsedFecha usada de factura
-YourCompanyDoesNotUseVATSu empresa está configurada como no sujeta al IVA (Inicio - Configuración - Empresa/Institución), por lo que no hay opción para la paremetrización del IVA.
-AccountancyCodeCódigo contable
-AccountancyCodeSellCódigo contable ventas
-AccountancyCodeBuyCódigo contable compras
+TaxSetup=Configuración del módulo Impuestos, cargas sociales y dividendos
+OptionVatMode=Opción de carga de IVA
+OptionVATDefault=Estándar
+OptionVATDebitOption=Opción servicios a débito
+OptionVatDefaultDesc=La carga del IVA es: <br>-en el envío de los bienes (en la práctica se usa la fecha de la factura)<br>-sobre el pago por los servicios
+OptionVatDebitOptionDesc=La carga del IVA es: <br>-en el envío de los bienes (en la práctica se usa la fecha de la factura)<br>-sobre la facturación de los servicios
+SummaryOfVatExigibilityUsedByDefault=Momento de exigibilidad por defecto el IVA para la opción escogida:
+OnDelivery=En la entrega
+OnPayment=En el pago
+OnInvoice=En la factura
+SupposedToBePaymentDate=Fecha de pago usada
+SupposedToBeInvoiceDate=Fecha de factura usada
+Buy=Compra
+Sell=Venta
+InvoiceDateUsed=Fecha usada de factura
+YourCompanyDoesNotUseVAT=Su empresa está configurada como no sujeta al IVA (Inicio - Configuración - Empresa/Institución), por lo que no hay opción para la paremetrización del IVA.
+AccountancyCode=Código contable
+AccountancyCodeSell=Código contable ventas
+AccountancyCodeBuy=Código contable compras
 ##### Agenda #####
-AgendaSetupMódulo configuración de acciones y agenda
-PasswordTogetVCalExportClave de autorización vcal export link
-PastDelayVCalExportNo exportar los eventos de más de
-AGENDA_USE_EVENT_TYPEUsar los tipos de eventos (administrables desde Configuración->Diccionarios->llx_c_actioncomm)
+AgendaSetup=Módulo configuración de acciones y agenda
+PasswordTogetVCalExport=Clave de autorización vcal export link
+PastDelayVCalExport=No exportar los eventos de más de
+AGENDA_USE_EVENT_TYPE=Usar los tipos de eventos (administrables desde Configuración->Diccionarios->llx_c_actioncomm)
 ##### ClickToDial #####
-ClickToDialDescEste módulo permite agregar un icono después del número de teléfono de contactos Dolibarr. Un clic en este icono, Llama a un servidor con una URL que se indica a continuación. Esto puede ser usado para llamar al sistema call center de Dolibarr que puede llamar al número de teléfono en un sistema SIP, por ejemplo.
+ClickToDialDesc=Este módulo permite agregar un icono después del número de teléfono de contactos Dolibarr. Un clic en este icono, Llama a un servidor con una URL que se indica a continuación. Esto puede ser usado para llamar al sistema call center de Dolibarr que puede llamar al número de teléfono en un sistema SIP, por ejemplo.
 ##### Point Of Sales (CashDesk) #####
-CashDeskTPV
-CashDeskSetupConfiguración del módulo Terminal Punto de Venta
-CashDeskThirdPartyForSellTercero genérico a usar para la venta
-CashDeskBankAccountForSellCuenta por defecto a utilizar para los cobros en efectivo (caja)
-CashDeskBankAccountForChequeCuenta por defecto a utilizar para los cobros con cheques
-CashDeskBankAccountForCBCuenta por defecto a utilizar para los cobros con tarjeta de crédito
-CashDeskIdWareHouseAlmacén a utilizar para las ventas
+CashDesk=TPV
+CashDeskSetup=Configuración del módulo Terminal Punto de Venta
+CashDeskThirdPartyForSell=Tercero genérico a usar para la venta
+CashDeskBankAccountForSell=Cuenta por defecto a utilizar para los cobros en efectivo (caja)
+CashDeskBankAccountForCheque=Cuenta por defecto a utilizar para los cobros con cheques
+CashDeskBankAccountForCB=Cuenta por defecto a utilizar para los cobros con tarjeta de crédito
+CashDeskIdWareHouse=Almacén a utilizar para las ventas
 ##### Bookmark #####
-BookmarkSetupConfiguración del módulo Marcadores
-BookmarkDescEste módulo le permite gestionar los enlaces y accesos directos. También permite añadir cualquier página de Dolibarr o enlace web en el menú de acceso rápido de la izquierda.
-NbOfBoomarkToShowNúmero máximo de marcadores que se mostrará en el menú
+BookmarkSetup=Configuración del módulo Marcadores
+BookmarkDesc=Este módulo le permite gestionar los enlaces y accesos directos. También permite añadir cualquier página de Dolibarr o enlace web en el menú de acceso rápido de la izquierda.
+NbOfBoomarkToShow=Número máximo de marcadores que se mostrará en el menú
 ##### WebServices #####
-WebServicesSetupConfiguración del módulo Web services
-WebServicesDescMediante la activación de este módulo, Dolibarr se convierte en servidor de servicios web ofreciendo diversos servicios web.
-WSDLCanBeDownloadedHereLa descripción WSDL de los servicios prestados se pueden recuperar aquí
-EndPointIsLos clientes SOAP deberán enviar sus solicitudes al punto final en la URL Dolibarr
+WebServicesSetup=Configuración del módulo Web services
+WebServicesDesc=Mediante la activación de este módulo, Dolibarr se convierte en servidor de servicios web ofreciendo diversos servicios web.
+WSDLCanBeDownloadedHere=La descripción WSDL de los servicios prestados se pueden recuperar aquí
+EndPointIs=Los clientes SOAP deberán enviar sus solicitudes al punto final en la URL Dolibarr
 ##### Bank #####
-BankSetupModuleConfiguración del módulo Banco
-FreeLegalTextOnChequeReceiptsMención complementaria en las remesas de cheques
-BankOrderShowOrden de visualización de la información bancaria al usar la "cuenta bancaria detallada"
-BankOrderGlobalGeneral
-BankOrderGlobalDescOrden de visualización general
-BankOrderESEspañol
-BankOrderESDescOrden de visualización español
+BankSetupModule=Configuración del módulo Banco
+FreeLegalTextOnChequeReceipts=Mención complementaria en las remesas de cheques
+BankOrderShow=Orden de visualización de la información bancaria al usar la "cuenta bancaria detallada"
+BankOrderGlobal=General
+BankOrderGlobalDesc=Orden de visualización general
+BankOrderES=Español
+BankOrderESDesc=Orden de visualización español
 ##### Multicompany #####
-MultiCompanySetupConfiguración del módulo Multi-empresa
+MultiCompanySetup=Configuración del módulo Multi-empresa
 ##### Suppliers #####
-SuppliersSetupConfiguración del módulo Proveedores
-SuppliersCommandModelModelo de pedidos a proveedores completo (logo...)
-SuppliersInvoiceModelModelo de facturas de proveedores completo (logo...)
-SuppliersInvoiceNumberingModelModelos de numeración de facturas de proveedor
+SuppliersSetup=Configuración del módulo Proveedores
+SuppliersCommandModel=Modelo de pedidos a proveedores completo (logo...)
+SuppliersInvoiceModel=Modelo de facturas de proveedores completo (logo...)
+SuppliersInvoiceNumberingModel=Modelos de numeración de facturas de proveedor
 ##### GeoIPMaxmind #####
-GeoIPMaxmindSetupConfiguración del módulo GeoIP Maxmind
-PathToGeoIPMaxmindCountryDataFileRuta del archivo Maxmind que contiene las conversiones IP->País.<br>Ejemplo: /usr/local/share/GeoIP/GeoIP.dat
-NoteOnPathLocationTenga en cuenta que este archivo debe estar en un directorio accesible desde su PHP (Compruebe la configuración de open_basedir de su PHP y los permisos de archivo/directorios).
-YouCanDownloadFreeDatFileToPuede descargarse una <b>versión demo gratuita</b> del archivo de países Maxmind GeoIP en la dirección %s.
-YouCanDownloadAdvancedDatFileToTambién puede descargarse una <b>versión más completa</b> del archivo de países Maxmind GeoIP en la dirección %s.
-TestGeoIPResultTest de conversión IP -> País
+GeoIPMaxmindSetup=Configuración del módulo GeoIP Maxmind
+PathToGeoIPMaxmindCountryDataFile=Ruta del archivo Maxmind que contiene las conversiones IP->País.<br>Ejemplo: /usr/local/share/GeoIP/GeoIP.dat
+NoteOnPathLocation=Tenga en cuenta que este archivo debe estar en un directorio accesible desde su PHP (Compruebe la configuración de open_basedir de su PHP y los permisos de archivo/directorios).
+YouCanDownloadFreeDatFileTo=Puede descargarse una <b>versión demo gratuita</b> del archivo de países Maxmind GeoIP en la dirección %s.
+YouCanDownloadAdvancedDatFileTo=También puede descargarse una <b>versión más completa</b> del archivo de países Maxmind GeoIP en la dirección %s.
+TestGeoIPResult=Test de conversión IP -> País
 ##### Projects #####
-ProjectsNumberingModulesMódulo de numeración para las referencias de los proyectos
-ProjectsSetupConfiguración del módulo Proyectos
-ProjectsModelModuleModelo de documento para informes de proyectos
+ProjectsNumberingModules=Módulo de numeración para las referencias de los proyectos
+ProjectsSetup=Configuración del módulo Proyectos
+ProjectsModelModule=Modelo de documento para informes de proyectos
 #### Accountancy ####
-ChartofaccountsPlan contable
-DefinechartofaccountsDefinir un plan contable
-SelectchartofaccountsSelección de un plan contable
-DoNotSuggestChartNo sugerir un plan contable
+Chartofaccounts=Plan contable
+Definechartofaccounts=Definir un plan contable
+Selectchartofaccounts=Selección de un plan contable
+DoNotSuggestChart=No sugerir un plan contable
 ##### ECM (GED) #####
-ECMSetupConfiguración del módulo GED
-ECMAutoTreeEl árbol automático está disponible
+ECMSetup=Configuración del módulo GED
+ECMAutoTree=El árbol automático está disponible
