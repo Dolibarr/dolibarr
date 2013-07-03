@@ -122,6 +122,8 @@ ErrorFailedToAddToMailmanList=Ha ocurrido un error al intentar añadir un regist
 ErrorFailedToRemoveToMailmanList=Error en la eliminación de %s de la lista Mailmain %s o base SPIP
 ErrorNewValueCantMatchOldValue=El nuevo valor no puede ser igual al antiguo
 ErrorFailedToValidatePasswordReset=No se ha podido restablecer la contraseña. Es posible que este enlace ya se haya utilizado (este enlace sólo puede usarse una vez). Si no es el caso, trate de reiniciar el proceso de restablecimiento de contraseña desde el principio.
+ErrorToConnectToMysqlCheckInstance=Error de conexión con el servidor de la base de datos. Compruebe que MySQL está funcionando (en la mayoría de los casos, puede ejecutarlo desde la línea de comandos utilizando el comando  'etc sudo /etc/init.d/mysql start.
+ErrorFailedToAddContact=Error en la adición del contacto
 ErrorDateMustBeBeforeToday=La fecha no puede ser superior a hoy
 
 # Warnings
@@ -139,3 +141,4 @@ WarningUntilDirRemoved=Las alertas de seguridad sólo son visibles a los adminis
 WarningCloseAlways=Aviso, el cierre es realizado aunque la cantidad total difiera entre los elementos de origen y destino. Active esta funcionalidad con precaución.
 WarningUsingThisBoxSlowDown=Atención, el uso de este panel provoca serias ralentizaciones en las páginas  que muestran este panel.
 WarningClickToDialUserSetupNotComplete=La configuración de ClickToDial para su cuenta de usuario no está completa (vea la pestaña ClickToDial en su ficha de usuario)
+WarningNotRelevant=Operación irrelevante para este conjunto de datos

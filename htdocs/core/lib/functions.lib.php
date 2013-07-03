@@ -698,7 +698,7 @@ function dol_bc($var,$moreclass='')
 function dol_format_address($object,$withcountry=0,$sep="\n")
 {
 	$ret='';
-	$countriesusingstate=array('AU','US','IN','GB','ES','UK');
+	$countriesusingstate=array('AU','US','IN','GB','ES','UK','TR');
 
 	// Address
 	$ret .= $object->address;
@@ -721,7 +721,7 @@ function dol_format_address($object,$withcountry=0,$sep="\n")
 		}
 		if ($object->zip) $ret .= ($ret ? $sep : '' ).$object->zip;
 	}
-	else if (in_array($object->country_code,array('ES'))) // ES: title firstname name \n address lines \n zip town \n state \n country
+	else if (in_array($object->country_code,array('ES','TR'))) // ES: title firstname name \n address lines \n zip town \n state \n country
 	{
 		$ret .= ($ret ? $sep : '' ).$object->zip;
 		$ret .= ' '.$object->town;
@@ -2812,9 +2812,9 @@ function get_localtax($tva, $local, $thirdparty_buyer="", $thirdparty_seller="")
 			}
 		}
 
-		if ($local == 2) 
+		if ($local == 2)
 		{
-			
+
 			if ($thirdparty_seller->id==$mysoc->id)
 			{
 				if (! $thirdparty_buyer->localtax2_assuj) return 0;

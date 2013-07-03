@@ -1,6 +1,5 @@
 # Dolibarr language file - es_ES - margins
 CHARSET=UTF-8
-
 Margin=Margen
 Margins=Márgenes
 TotalMargin=Margen total
@@ -11,25 +10,19 @@ MarkRate=Margen sobre venta
 DisplayMarginRates=Mostrar el margen sobre costes
 DisplayMarkRates=Mostrar el margen sobre ventas
 InputPrice=Introducir un precio
-
 margin=Gestión de márgenes
 margesSetup=Configuración de la gestión de márgenes
-
 MarginDetails=Detalles de márgenes realizados
-
 ProductMargins=Márgenes por producto
 CustomerMargins=Márgenes por cliente
 AgentMargins=Márgenes por comercial
-
 ProductService=Producto o servicio
 AllProducts=Todos los productos y servicios
 ChooseProduct/Service=Elija el producto o servicio
 CommercialAgent=Agente comercial
-
 StartDate=Fecha de inicio
 EndDate=Fecha de fin
 Launch=Comenzar
-
 ForceBuyingPriceIfNull=Forzar el precio de compra si no se ha indicado
 ForceBuyingPriceIfNullDetails=Con "ON", la línea se considerará como un margen nulo (se forzará el precio de compra con el precio de venta) , con ("OFF") el margen será igual al precio de venta (precio de compra a 0).
 MARGIN_METHODE_FOR_DISCOUNT=Método de gestión de descuentos globales
@@ -37,16 +30,13 @@ UseDiscountAsProduct=Como un producto
 UseDiscountAsService=Como un servicio
 UseDiscountOnTotal=Sobre el total
 MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Indica si un descuento global se toma en cuenta como un producto, servicio o sólo en el total a la hora de calcular los márgenes.
-
 MARGIN_TYPE=Tipo de margen gestionado
 MargeBrute=Margen bruto
 MargeNette=Margen neto
 MARGIN_TYPE_DETAILS=Margen bruto: Precio de venta sin IVA - Precio de compra sin IVA<br/>Margen neto: Precio de venta sin IVA - Costos
-
+BuyingPrice=Precio de compra
 CostPrice=Precio de compra
-BuyingCost=Costos
 UnitCharges=Carga unitaria
 Charges=Cargas
-
 AgentContactType=Tipo de contacto comisionado
 AgentContactTypeDetails=Indica el tipo de contacto enlazado a las facturas que serán asociados a los agentes comerciales

@@ -16,3 +16,6 @@ PAYPAL_ADD_PAYMENT_URL=Afegir la url del pagament Paypal en enviar un document p
 PAYPAL_IPN_MAIL_ADDRESS=Adreça e-mail per les notificacions instantànies de pagament (IPN)
 PredefinedMailContentLink=Podeu fer clic a l'enllaç assegurança de sota per realitzar el seu pagament a través de PayPal\n\n%s\n\n
 YouAreCurrentlyInSandboxMode=Actualment es troba en mode "sandbox"
+NewPaypalPaymentReceived=Nou pagament Paypal rebut
+NewPaypalPaymentFailed=Nou intent de pagament Paypal sense èxit
+PAYPAL_PAYONLINE_SENDEMAIL=E-Mail a avisar en cas de pagament (amb èxit o no)
