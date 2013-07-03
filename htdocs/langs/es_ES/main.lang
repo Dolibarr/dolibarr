@@ -478,6 +478,8 @@ Report=Informe
 Keyword=Clave
 Legend=Leyenda
 FillTownFromZip=Indicar población
+Fill=Rellenar
+Reset=Vaciar
 ShowLog=Ver histórico
 File=Archivo
 Files=Archivos
@@ -646,8 +648,9 @@ ModulesSystemTools=Módulos utilidades
 View=Ver
 Test=Prueba
 Element=Elemento
+NoPhotoYet=No hay fotografía disponible
+HomeDashboard=Resumen
 Deductible=Deducible
-
 # Week day
 Monday=Lunes
 Tuesday=Martes

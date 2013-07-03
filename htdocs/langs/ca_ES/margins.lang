@@ -1,6 +1,5 @@
 # Dolibarr language file - ca_ES - margins
 CHARSET=UTF-8
-
 Margin=Marge
 Margins=Marges
 TotalMargin=Marge total
@@ -11,25 +10,19 @@ MarkRate=Marge sobre venda
 DisplayMarginRates=Mostrar els marges sobre cost
 DisplayMarkRates=Mostrar els marges sobre venda
 InputPrice=Introduir un preu
-
 margin=Gestió de marges
 margesSetup=Configuració de la gestió de marges
-
 MarginDetails=Detalls de marges realitzats
-
 ProductMargins=Marges per producte
 CustomerMargins=Marges per client
 AgentMargins=Marges per comercial
-
 ProductService=Producte o servei
 AllProducts=Tots els productes i serveis
 ChooseProduct/Service=Trieu el producte o servei
 CommercialAgent=Agent comercial
-
 StartDate=Data d'inici
 EndDate=Data de fi
 Launch=Començar
-
 ForceBuyingPriceIfNull=Forçar el preu de compra si no s'ha indicat
 ForceBuyingPriceIfNullDetails=Amb "ON", la línia es considera un marge nul (es forçarà el preu de compra amb el preu de venda), amb ("OFF") el marge és igual al preu de venda (preu de compra a 0).
 MARGIN_METHODE_FOR_DISCOUNT=Mètode de gestió de descomptes globals
@@ -37,15 +30,13 @@ UseDiscountAsProduct=Com un producte
 UseDiscountAsService=Com un servei
 UseDiscountOnTotal=Sobre el total
 MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Indica si un descompte global es pren en compte com un producte, servei o només en el total a l'hora de calcular els marges.
-
 MARGIN_TYPE=Tipus de marge gestionat
 MargeBrute=Marge brut
 MargeNette=Marge net
 MARGIN_TYPE_DETAILS=Marge brut: Preu de venda sense IVA - Preu de compra sense IVA <br/> Marge net: Preu de venda sense IVA - Costos
-
-BuyingCost=Costos
+BuyingPrice=Preu de compra
+CostPrice=Preu de compra
 UnitCharges=Càrrega unitària
 Charges=Càrreges
-
 AgentContactType=Tipus de contacte comissionat
 AgentContactTypeDetails=Indica el tipus de contacte enllaçat a les factures que seran associats als agents comercials

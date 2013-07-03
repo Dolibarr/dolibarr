@@ -50,6 +50,7 @@ ConfirmAjax=Utilitzar els popups de confirmació Ajax
 UseSearchToSelectCompany=Utilitzar un formulari de cerca per buscar tercers (en comptes de llista desplegable)<br><br>Tingueu en compte que si té un gran nombre de productes o serveis (> 100 000), pot millorar el rendiment mitjançant la constant SOCIETE_DONOTSEARCH_ANYWHERE a 1 a Configuració-> Varis. La recerca es limitarà llavors a l'inici de la cadena.
 ActivityStateToSelectCompany=Afegir un filtre en la recerca per mostrar/ocultar els tercers en actiu o que hagin deixat d'exercir
 UseSearchToSelectContact=Utilitzar un formulari de cerca (en lloc d'una llista desplegable). <br> Tingueu en compte que si té un gran nombre de contactes (> 100 000), pot millorar el rendiment mitjançant la constant CONTACT_DONOTSEARCH_ANYWHERE a 1 a Configuració-> Diversos. La recerca es limitarà llavors a l'inici de la cadena.
+HideClosedThirdpartyComboBox=No mostrar els clients amb estat "Tancat" en els desplegables (o formulari autocompletat)
 SearchFilter=Opcions filtres de cerca
 NumberOfKeyToSearch=Nombre de caràcters per a desencadenar la cerca: %s
 ViewFullDateActions=Veure les dades de les accions en la seva totalitat en la fitxa de tercer

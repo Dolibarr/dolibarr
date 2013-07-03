@@ -227,13 +227,14 @@ function pdf_getPDFFontSize($outputlangs)
  * Return height to use for Logo onot PDF
  *
  * @param	string		$logo		Full path to logo file to use
+ * @param	bool		$url		Image with url (true or false)
  * @return	number
  */
-function pdf_getHeightForLogo($logo)
+function pdf_getHeightForLogo($logo, $url = false)
 {
 	$height=22; $maxwidth=130;
 	include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
-	$tmp=dol_getImageSize($logo);
+	$tmp=dol_getImageSize($logo, $url);
 	if ($tmp['height'])
 	{
 		$width=round($height*$tmp['width']/$tmp['height']);

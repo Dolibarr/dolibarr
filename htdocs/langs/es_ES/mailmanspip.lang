@@ -1,8 +1,7 @@
 # Dolibarr language file - es_ES - mailmanspip
 CHARSET=UTF-8
-MailmanSpipSetup=Configuración del módulo Mailman y SPIP
 MailmanTitle=Sistema de listas de correo Mailman
-DescADHERENT_MAILMAN_LISTS=Lista(s) para la suscripción automática de los nuevos miembros (separados por comas)
+MailmanSpipSetup=Configuración del módulo Mailman y SPIP
 TestSubscribe=Para comprobar la suscripción a listas Mailman
 TestUnSubscribe=Para comprobar la cancelación de suscripciones a listas Mailman
 MailmanCreationSuccess=La prueba de suscripción ha sido realizada con éxito
@@ -24,3 +23,5 @@ DeleteIntoSpip=Borrar de SPIP
 DeleteIntoSpipConfirmation=¿Está seguro de querer borrar este miembro de SPIP?
 DeleteIntoSpipError=Ha ocurrido un error al borrar el miembro de SPIP
 SPIPConnectionFailed=Error al conectar con SPIP
+SuccessToAddToMailmanList=Adición de %s a la lista Mailman %s o base SPIP realizada
+SuccessToRemoveToMailmanList=Eliminación de %s de la lista Mailman %s o base SPIP realizada

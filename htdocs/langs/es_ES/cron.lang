@@ -41,6 +41,7 @@ CronAction=Accion
 CronStatus=Status
 CronStatusActive=Activo
 CronStatusInactive=Inactivo
+CronEach=Toda(s)
 CronNoJobs=Sin trabajos registrados
 CronPriority=Prioridad
 CronLabel=Descripcion
