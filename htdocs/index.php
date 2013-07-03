@@ -106,6 +106,7 @@ print "</table>\n";
 $langs->load("commercial");
 $langs->load("bills");
 $langs->load("orders");
+$langs->load("contracts");
 
 //print memory_get_usage();
 if ($user->societe_id == 0)
