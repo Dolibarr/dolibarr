@@ -1468,15 +1468,18 @@ abstract class CommonObject
     }
 
     /**
-     *	Update total_ht, total_ttc and total_vat for an object (sum of lines)
+     *	Update total_ht, total_ttc, total_vat, total_localtax1, total_localtax2 for an object (sum of lines).
+     *  Must be called at end of methods addline, updateline.
      *
      *	@param	int		$exclspec          	Exclude special product (product_type=9)
-     *  @param  int		$roundingadjust    	-1=Use default method (MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND or 0), 0=Use total of rounding, 1=Use rounding of total
+     *  @param  int		$roundingadjust    	-1=Use default method (MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND if defined, or 0), 0=Force use total of rounding, 1=Force use rounding of total
      *  @param	int		$nodatabaseupdate	1=Do not update database. Update only properties of object.
      *	@return	int    			           	<0 if KO, >0 if OK
      */
     function update_price($exclspec=0,$roundingadjust=-1,$nodatabaseupdate=0)
     {
+    	global $conf;
+
         include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 
         if ($roundingadjust < 0 && isset($conf->global->MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND)) $roundingadjust=$conf->global->MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND;
@@ -1490,7 +1493,7 @@ abstract class CommonObject
         $fieldlocaltax2='total_localtax2';
         if ($this->element == 'facture_fourn' || $this->element == 'invoice_supplier') $fieldtva='tva';
 
-        $sql = 'SELECT qty, total_ht, '.$fieldtva.' as total_tva, total_ttc, '.$fieldlocaltax1.' as total_localtax1, '.$fieldlocaltax2.' as total_localtax2,';
+        $sql = 'SELECT rowid, qty, total_ht, '.$fieldtva.' as total_tva, total_ttc, '.$fieldlocaltax1.' as total_localtax1, '.$fieldlocaltax2.' as total_localtax2,';
         $sql.= ' tva_tx as vatrate, localtax1_tx, localtax2_tx, localtax1_type, localtax2_type';
         $sql.= ' FROM '.MAIN_DB_PREFIX.$this->table_element_line;
         $sql.= ' WHERE '.$this->fk_element.' = '.$this->id;
@@ -1500,6 +1503,7 @@ abstract class CommonObject
             if ($this->table_element_line == 'contratdet') $product_field='';    // contratdet table has no product_type field
             if ($product_field) $sql.= ' AND '.$product_field.' <> 9';
         }
+        $sql.= ' ORDER by rowid';	// We want to be sure to always use same order of line to not change lines differently when option MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND is used
 
         dol_syslog(get_class($this)."::update_price sql=".$sql);
         $resql = $this->db->query($sql);
@@ -1510,8 +1514,9 @@ abstract class CommonObject
             $this->total_localtax1 = 0;
             $this->total_localtax2 = 0;
             $this->total_ttc = 0;
-            $vatrates = array();
-            $vatrates_alllines = array();
+            $total_ht_by_vats  = array();
+            $total_tva_by_vats = array();
+            $total_ttc_by_vats = array();
 
             $num = $this->db->num_rows($resql);
             $i = 0;
@@ -1519,54 +1524,34 @@ abstract class CommonObject
             {
                 $obj = $this->db->fetch_object($resql);
 
-                $this->total_ht        += $obj->total_ht;
+                $this->total_ht        += $obj->total_ht;	// The only field visible at line level
                 $this->total_tva       += $obj->total_tva;
                 $this->total_localtax1 += $obj->total_localtax1;
                 $this->total_localtax2 += $obj->total_localtax2;
                 $this->total_ttc       += $obj->total_ttc;
+                $total_ht_by_vats[$obj->vatrate]  += $obj->total_ht;
+                $total_tva_by_vats[$obj->vatrate] += $obj->total_tva;
+                $total_ttc_by_vats[$obj->vatrate] += $obj->total_ttc;
 
-                // Check if there is a global invoice tax for this vat rate
-                // FIXME: We should have no database access into this function. Also localtax 7 seems to have problem so i add condition to avoid it into standard usage without loosing it.
-                if (! empty($conf->global->MAIN_USE_LOCALTAX_TYPE_7))
+                if ($roundingadjust)	// Check if we need adjustement onto line for vat
                 {
-                	if ($this->total_localtax1 == 0)
-                    {
-						// Search to know if there is a localtax of type 7
-                    	// TODO : store local taxes types into object lines and remove this. We should use here $obj->localtax1_type but it is not yet filled into database, so we search into table of vat rate
-                		global $mysoc;
-                    	$localtax1_array=getLocalTaxesFromRate($vatrate,1,$mysoc);
-                    	if (empty($obj->localtax1_type))
-                    	{
-                    		$obj->localtax1_type = $localtax1_array[0];
-                    		$obj->localtax1_tx = $localtax1_array[1];
-                    	}
-                    	//end TODO
+                    $tmpvat=price2num($total_ht_by_vats[$obj->vatrate] * $obj->vatrate / 100, 'MT', 1);
+                	$diff=price2num($total_tva_by_vats[$obj->vatrate]-$tmpvat, 'MT', 1);
+                	//print 'Line '.$i.' rowid='.$obj->rowid.' vat_rate='.$obj->vatrate.' total_ht='.$obj->total_ht.' total_tva='.$obj->total_tva.' total_ttc='.$obj->total_ttc.' total_ht_by_vats='.$total_ht_by_vats[$obj->vatrate].' total_tva_by_vats='.$total_tva_by_vats[$obj->vatrate].' (new calculation = '.$tmpvat.') total_ttc_by_vats='.$total_ttc_by_vats[$obj->vatrate].($diff?" => DIFF":"")."<br>\n";
+                	if ($diff)
+                	{
+                		if ($diff > 0.1) { dol_print_error('','A rounding difference was detected but is to high to be corrected'); exit; }
+                		$sqlfix="UPDATE ".MAIN_DB_PREFIX.$this->table_element_line." SET ".$fieldtva." = ".($obj->total_tva - $diff).", total_ttc = ".($obj->total_ttc - $diff)." WHERE rowid = ".$obj->rowid;
+						//print 'We found a difference of '.$diff.' for line rowid = '.$obj->rowid.". Run sqlfix = ".$sqlfix."<br>\n";
+                		dol_syslog('We found a difference of '.$diff.' for line rowid = '.$obj->rowid.". Run sqlfix = ".$sqlfix);
+						$resqlfix=$this->db->query($sqlfix);
+						if (! $resqlfix) dol_print_error($this->db,'Failed to update line');
+						$this->total_tva -= $diff;
+						$this->total_ttc -= $diff;
+						$total_tva_by_vats[$obj->vatrate] -= $diff;
+						$total_ttc_by_vats[$obj->vatrate] -= $diff;
 
-						if ($obj->localtax1_type == '7')
-						{
-							$this->total_localtax1 += $obj->localtax1_tx;
-							$this->total_ttc       += $obj->localtax1_tx;
-						}
-					}
-                    if ($this->total_localtax2 == 0)
-                    {
-						// Search to know if there is a localtax of type 7
-                    	// TODO : store local taxes types into object lines and remove this. We should use here $obj->localtax1_type but it is not yet filled into database, so we search into table of vat rate
-                		global $mysoc;
-                    	$localtax2_array=getLocalTaxesFromRate($vatrate,2,$mysoc);
-                    	if (empty($obj->localtax2_type))
-                    	{
-                    		$obj->localtax2_type = $localtax2_array[0];
-                    		$obj->localtax2_tx = $localtax2_array[1];
-                    	}
-                    	//end TODO
-
-                    	if ($obj->localtax2_type == '7')
-						{
-							$this->total_localtax2 += $obj->localtax2_tx;
-							$this->total_ttc       += $obj->localtax2_tx;
-						}
-                    }
+                	}
                 }
 
                 $i++;
@@ -1580,6 +1565,7 @@ abstract class CommonObject
             $fieldlocaltax1='localtax1';
             $fieldlocaltax2='localtax2';
             $fieldttc='total_ttc';
+            // Specific code for backward compatibility with old field names
             if ($this->element == 'facture' || $this->element == 'facturerec')             $fieldht='total';
             if ($this->element == 'facture_fourn' || $this->element == 'invoice_supplier') $fieldtva='total_tva';
             if ($this->element == 'propal')                                                $fieldttc='total';

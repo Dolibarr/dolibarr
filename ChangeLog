@@ -2,6 +2,7 @@
 English Dolibarr ChangeLog
 --------------------------------------------------------------
 
+
 ***** ChangeLog for 3.3.3 compared to 3.3.2 *****
 
 - Fix: [ bug #903 ] Fatal error: Call to undefined function dol_get_first_day() in htdocs/commande/liste.php
