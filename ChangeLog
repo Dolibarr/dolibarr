@@ -37,6 +37,7 @@ For developers:
 - New: Show version of client lib used by mysql drivers.
 - New: Add function to get content of an url (using all dolibarr setup like timeout, proxies...)
 - New: Upgrade lib of TCPDF to 6.0
+- New: Upgrade jquery flot library to 0.8.1
 - New: Add property "hidden" into module descriptors to allow to hide a module according to
   some dynamic conditions.
 - New: Add option MAIN_MOTD_SETUPPAGE to add a content onto setup page. Also content for
