@@ -105,3 +105,6 @@ TypeContact_project_task_internal_CONTRIBUTOR=Participante
 TypeContact_project_task_external_CONTRIBUTOR=Participante
 # Documents models
 DocumentModelBaleine=Modelo de informe de proyecto completo (logo...)
+SelectElement=Elementos vinculables al proyecto :
+AddElement=Vincular
+ProjectReferers=Objetos vinculados

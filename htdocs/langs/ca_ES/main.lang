@@ -1,4 +1,4 @@
-# Dolibarr language file - ca_ES - main
+# Dolibarr language file - ca_ES - main 
 CHARSET=UTF-8
 DIRECTION=ltr
 SeparatorDecimal=,
@@ -478,6 +478,8 @@ Report=Informe
 Keyword=Clau
 Legend=Llegenda
 FillTownFromZip=Indicar població
+Fill=Omplir
+Reset=Buidar
 ShowLog=Veure històric
 File=Arxiu
 Files=Arxius
@@ -646,8 +648,9 @@ ModulesSystemTools=Mòduls utilitats
 View=Veure
 Test=Prova
 Element=Element
+NoPhotoYet=No hi ha fotografia disponible
+HomeDashboard=Resum
 Deductible=Deduïble
-
 # Week day
 Monday=Dilluns
 Tuesday=Dimarts

@@ -60,6 +60,9 @@ ErrorFileSizeTooLarge=La mida del fitxer és massa gran.
 ErrorSizeTooLongForIntType=Longitud del camp massa llarg per al tipus int (màxim %s xifres)
 ErrorSizeTooLongForVarcharType=Longitud del camp massa llarg per al tipus cadena (màxim %s xifres)
 ErrorNoValueForSelectType=Els valors de la llista han de ser indicats
+ErrorNoValueForCheckBoxType=Els valors de la llista han de ser indicats
+ErrorNoValueForRadioType=Els valors de la llista han de ser indicats
+ErrorBadFormatValueList=Els valors de la llista no peudo contenir més d'una coma: <u>%s </u>, però necessita una: clau, valors
 ErrorFieldCanNotContainSpecialCharacters=El camp <b>%s</b> no ha de contenir caràcters especials
 ErrorNoAccountancyModuleLoaded=Mòdul de comptabilitat no activat
 ErrorExportDuplicateProfil=El nom del perfil ja existeix per a aquest lot d'exportació
@@ -119,6 +122,8 @@ ErrorFailedToAddToMailmanList=S'ha produït un error en intentar afegir un regis
 ErrorFailedToRemoveToMailmanList=Error en l'eliminació de %s de la llista Mailmain %s o base SPIP
 ErrorNewValueCantMatchOldValue=El Nou valor no pot ser igual al antic
 ErrorFailedToValidatePasswordReset=No s'ha pogut restablir la contrasenya. És possible que aquest enllaç ja s'hagi utilitzat (aquest enllaç només es pot utilitzar una vegada). Si no és el cas prova de reiniciar el procés de restabliment de contrasenya des del principi.
+ErrorToConnectToMysqlCheckInstance=Error de connexió amb el servidor de la base de dades. Comprovi que MySQL està funcionant (en la majoria dels casos, pot executar des de la línia d'ordres utilitzant el comandament 'etc sudo /etc/ init.d/mysql start).
+ErrorFailedToAddContact=Error en l'addició del contacte
 ErrorDateMustBeBeforeToday=La data no pot ser superior a avui
 
 # Warnings
@@ -136,3 +141,4 @@ WarningUntilDirRemoved=Aquesta alerta seguirà activa mentre la carpeta existeix
 WarningCloseAlways=Avís, el tancament és realitzat encara que la quantitat total difereixi entre els elements d'origen i destí. Activi aquesta funcionalitat amb precaució.
 WarningUsingThisBoxSlowDown=Atenció, l'ús d'aquest panell provoca serioses alentiments en les pàgines que mostren aquest panell.
 WarningClickToDialUserSetupNotComplete=La configuració de ClickToDial per al compte d'usuari no està completa (vegeu la pestanya ClickToDial en la seva fitxa d'usuari)
+WarningNotRelevant=Operació irrellevant per a aquest conjunt de dades

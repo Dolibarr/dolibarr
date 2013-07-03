@@ -17,3 +17,5 @@ DescADHERENT_SPIP_SERVEUR=Servidor SPIP
 DescADHERENT_SPIP_DB=Nom de la base de dades d'SPIP
 DescADHERENT_SPIP_USER=Usuari de la base de dades d'SPIP
 DescADHERENT_SPIP_PASS=Contrasenya de la base de dades d'SPIP
+SuccessToAddToMailmanList=Addició de %s a la llista Mailman %s o base SPIP realitzada
+SuccessToRemoveToMailmanList=Eliminació de %s de la llista Mailman %s o base SPIP realitzada
