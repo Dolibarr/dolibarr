@@ -27,6 +27,7 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
+require_once './lib/replenishment.lib.php';
 
 $langs->load("products");
 $langs->load("stocks");
@@ -39,34 +40,7 @@ if ($user->societe_id) {
 $result=restrictedArea($user,'produit|service');
 
 //checks if a product has been ordered
-function ordered($product_id)
-{
-    global $db;
-    $sql = 'SELECT DISTINCT cfd.fk_product, SUM(cfd.qty) from ';
-    $sql .= MAIN_DB_PREFIX . 'commande_fournisseurdet as cfd ';
-    $sql .= 'LEFT JOIN ' . MAIN_DB_PREFIX . 'commande_fournisseur as cf';
-    $sql .= ' ON cfd.fk_commande = cf.rowid WHERE cf.source = 42 ';
-    $sql .= 'AND cf.fk_statut < 5 AND cfd.fk_product = ' . $product_id;
-    $sql .= ' GROUP BY cfd.fk_product';
 
-    $resql = $db->query($sql);
-    if ($resql) {
-        $exists = $db->num_rows($resql);
-        if ($exists) {
-            $obj = $db->fetch_array($resql);
-
-            return $obj['SUM(cfd.qty)'] . ' ' . img_picto('','tick');
-        } else {
-            return img_picto('', 'stcomm-1');
-        }
-    } else {
-        $error = $db->lasterror();
-        dol_print_error($db);
-        dol_syslog('replenish.php: ' . $error, LOG_ERROR);
-
-        return $langs->trans('error');
-    }
-}
 
 $action = GETPOST('action','alpha');
 $sref = GETPOST('sref', 'alpha');
@@ -94,6 +68,7 @@ $offset = $limit * $page ;
  */
 
 //orders creation
+//could go in the lib
 if ($action == 'order') {
     $linecount = GETPOST('linecount', 'int');
     unset($_POST['linecount']);
@@ -280,7 +255,7 @@ if ($resql) {
 
     // Lignes des titres
     echo '<tr class="liste_titre">',
-         '<td>&nbsp;</td>';
+         '<td><input type="checkbox" onClick="toggle(this)" /></td>';
     print_liste_field_titre($langs->trans('Ref'),
                             'replenish.php',
                             'p.ref',
@@ -415,28 +390,7 @@ if ($resql) {
             $prod->ref = $objp->ref;
             $prod->id = $objp->rowid;
             $prod->type = $objp->fk_product_type;
-            echo '<tr ' . $bc[$var] . '>',
-                 '<td><input type="checkbox" name="' . $i . '"></td>',
-                 '<td class="nowrap">',
-                 $prod->getNomUrl(1, '', 16),
-                 '</td>',
-                 '<td>' . $objp->label . '</td>',
-                 '<input type="hidden" name="desc' . $i . '" value="' . $objp->label . '" >';
-
-            if (!empty($conf->service->enabled) && $type == 1) {
-                if (preg_match('/([0-9]+)y/i', $objp->duration, $regs)) {
-                    $duration =  $regs[1] . ' ' . $langs->trans('DurationYear');
-                } elseif (preg_match('/([0-9]+)m/i', $objp->duration, $regs)) {
-                    $duration =  $regs[1] . ' ' . $langs->trans('DurationMonth');
-                } elseif (preg_match('/([0-9]+)d/i', $objp->duration, $regs)) {
-                    $duration =  $regs[1] . ' ' . $langs->trans('DurationDay');
-                } else {
-                    $duration = $objp->duration;
-                }
-                echo '<td align="center">',
-                     $duration,
-                     '</td>';
-            }
+            $ordered = ordered($prod->id);
 
             if (!$objp->stock_physique) {
                 $objp->stock_physique = 0;
@@ -466,6 +420,38 @@ if ($resql) {
             //depending on conf, use either physical stock or
             //virtual stock to compute the stock to buy value
             $stocktobuy = $objp->desiredstock - $stock;
+
+            if($ordered) {
+                $picto = img_picto('','tick');
+                if($ordered >= $stocktobuy) {
+                    $disabled = 'disabled="disabled"';
+                }
+            } else {
+                $picto = img_picto('', 'stcomm-1');
+            }
+            echo '<tr ' . $bc[$var] . '>',
+                 '<td><input type="checkbox" class="check" name="' . $i . '"' . $disabled . '></td>',
+                 '<td class="nowrap">',
+                 $prod->getNomUrl(1, '', 16),
+                 '</td>',
+                 '<td>' . $objp->label . '</td>',
+                 '<input type="hidden" name="desc' . $i . '" value="' . $objp->label . '" >';
+
+            if (!empty($conf->service->enabled) && $type == 1) {
+                if (preg_match('/([0-9]+)y/i', $objp->duration, $regs)) {
+                    $duration =  $regs[1] . ' ' . $langs->trans('DurationYear');
+                } elseif (preg_match('/([0-9]+)m/i', $objp->duration, $regs)) {
+                    $duration =  $regs[1] . ' ' . $langs->trans('DurationMonth');
+                } elseif (preg_match('/([0-9]+)d/i', $objp->duration, $regs)) {
+                    $duration =  $regs[1] . ' ' . $langs->trans('DurationDay');
+                } else {
+                    $duration = $objp->duration;
+                }
+                echo '<td align="center">',
+                     $duration,
+                     '</td>';
+            }
+
             echo '<td align="right">' . $objp->desiredstock . '</td>',
                  '<td align="right">',
                  $stock,
@@ -473,7 +459,7 @@ if ($resql) {
                  '<td align="right">', $warning, $stocktobuy , '</td>',
                  '<input type="hidden" name="tobuy' . $i . '" value="' . $stocktobuy . '" >',
                  '<td align="right">',
-                 ordered($prod->id),
+                 $ordered, ' ', $picto,
                  '</td>',
                  '<td align="right">',
                  $form->select_product_fourn_price($prod->id,
@@ -529,7 +515,15 @@ if ($resql) {
     }
 
     $db->free($resql);
-
+echo ' <script type="text/javascript">
+     function toggle(source) {
+       checkboxes = document.getElementsByClassName("check");
+       for(var i=0; i < checkboxes.length;i++) {
+         if(!checkboxes[i].disabled) {
+            checkboxes[i].checked = source.checked;
+        }
+       }
+     } </script>';
 } else {
     dol_print_error($db);
 }

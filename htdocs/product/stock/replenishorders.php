@@ -27,6 +27,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
+require_once './lib/replenishment.lib.php';
 
 $langs->load("products");
 $langs->load("stocks");
@@ -75,7 +76,7 @@ if (!$sortfield) {
 $offset = $conf->liste_limit * $page ;
 
 $sql = 'SELECT s.rowid as socid, s.nom, cf.date_creation as dc,';
-$sql .= ' cf.rowid,cf.ref, cf.fk_statut, cf.total_ttc';
+$sql .= ' cf.rowid, cf.ref, cf.fk_statut, cf.total_ttc';
 $sql .= ", cf.fk_user_author, u.login";
 $sql .= ' FROM (' . MAIN_DB_PREFIX . 'societe as s,';
 $sql .= ' ' . MAIN_DB_PREFIX . 'commande_fournisseur as cf';
@@ -90,7 +91,14 @@ $sql .= 'ON cf.fk_user_author = u.rowid';
 $sql .= ' WHERE cf.fk_soc = s.rowid ';
 $sql .= ' AND cf.entity = ' . $conf->entity;
 $sql .= ' AND cf.source = 42';
-$sql .= ' AND cf.fk_statut < 5';
+
+if ($conf->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER) {
+    $sql .= ' AND cf.fk_statut < 3';
+} else if ($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER) {
+    $sql .= ' AND cf.fk_statut < 6';
+} else {
+    $sql .= ' AND cf.fk_statut < 5';
+}
 
 if (!$user->rights->societe->client->voir && !$socid) {
     $sql .= ' AND s.rowid = sc.fk_soc AND sc.fk_user = ' . $user->id;
@@ -149,11 +157,11 @@ if ($socid) {
 if (GETPOST('statut', 'int')) {
     $sql .= ' AND fk_statut = ' . GETPOST('statut', 'int');
 }
-
+$sql .= ' GROUP BY cf.rowid, cf.ref, cf.date_creation, cf.fk_statut';
+$sql .= ', cf.total_ttc, cf.fk_user_author, u.login, s.rowid, s.nom';
 $sql .= ' ORDER BY ' . $sortfield . ' ' . $sortorder  . ' ';
 $sql .= $db->plimit($conf->liste_limit+1, $offset);
 $resql = $db->query($sql);
-
 if ($resql) {
     $num = $db->num_rows($resql);
     $i = 0;
@@ -256,50 +264,52 @@ if ($resql) {
         $obj = $db->fetch_object($resql);
         $var = !$var;
 
-        $href = DOL_URL_ROOT . '/fourn/commande/fiche.php?id=' . $obj->rowid;
-        echo '<tr ' . $bc[$var] . '>',
-        // Ref
-             '<td>',
-             '<a href="' . $href . '">',
-             img_object($langs->trans('ShowOrder'), 'order') . ' ' . $obj->ref,
-             '</a></td>';
+        if(!dispatched($obj->rowid)) {
+            $href = DOL_URL_ROOT . '/fourn/commande/fiche.php?id=' . $obj->rowid;
+            echo '<tr ' . $bc[$var] . '>',
+            // Ref
+                 '<td>',
+                 '<a href="' . $href . '">',
+                 img_object($langs->trans('ShowOrder'), 'order') . ' ' . $obj->ref,
+                 '</a></td>';
 
-        // Company
-        $href = DOL_URL_ROOT . '/fourn/fiche.php?socid=' . $obj->socid;
-        echo '<td>',
-             '<a href="' . $href .'">',
-             img_object($langs->trans('ShowCompany'), 'company'), ' ',
-             $obj->nom . '</a></td>';
+            // Company
+            $href = DOL_URL_ROOT . '/fourn/fiche.php?socid=' . $obj->socid;
+            echo '<td>',
+                 '<a href="' . $href .'">',
+                 img_object($langs->trans('ShowCompany'), 'company'), ' ',
+                 $obj->nom . '</a></td>';
 
-        // Author
-        $userstatic->id = $obj->fk_user_author;
-        $userstatic->login = $obj->login;
-        if ($userstatic->id) {
-            $txt = $userstatic->getLoginUrl(1);
-        } else {
-            $txt =  '&nbsp;';
+            // Author
+            $userstatic->id = $obj->fk_user_author;
+            $userstatic->login = $obj->login;
+            if ($userstatic->id) {
+                $txt = $userstatic->getLoginUrl(1);
+            } else {
+                $txt =  '&nbsp;';
+            }
+            echo '<td>',
+                 $txt,
+                 '</td>',
+            // Amount
+                 '<td>',
+                 price($obj->total_ttc),
+                 '</td>';
+            // Date
+            if ($obj->dc) {
+                $date =  dol_print_date($db->jdate($obj->dc), 'day');
+            } else {
+                $date =  '-';
+            }
+            echo '<td>',
+                 $date,
+                 '</td>',
+            // Statut
+                 '<td align="right">',
+                 $commandestatic->LibStatut($obj->fk_statut, 5),
+                 '</td>',
+                 '</tr>';
         }
-        echo '<td>',
-             $txt,
-             '</td>',
-        // Amount
-             '<td>',
-             price($obj->total_ttc),
-             '</td>';
-        // Date
-        if ($obj->dc) {
-            $date =  dol_print_date($db->jdate($obj->dc), 'day');
-        } else {
-            $date =  '-';
-        }
-        echo '<td>',
-             $date,
-             '</td>',
-        // Statut
-             '<td align="right">',
-             $commandestatic->LibStatut($obj->fk_statut, 5),
-             '</td>',
-             '</tr>';
         $i++;
     }
     echo '</table>',
