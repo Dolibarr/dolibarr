@@ -55,7 +55,7 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 		$langs->load("companies");
 
 		$this->db = $db;
-		$this->name = "ODT templates";
+		$this->name = "ODT/ODS templates";
 		$this->description = $langs->trans("DocumentModelOdt");
 		$this->scandir = 'FACTURE_ADDON_PDF_ODT_PATH';	// Name of constant that is used to save list of directories to scan
 
@@ -114,6 +114,7 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 		'object_source_invoice_ref'=>$invoice_source->ref,
         'object_hour'=>dol_print_date($object->date,'hour'),
 		'object_date'=>dol_print_date($object->date,'day'),
+		'object_date_rfc'=>dol_print_date($object->date,'dayrfc'),
 		'object_date_limit'=>dol_print_date($object->date_lim_reglement,'day'),
 		'object_date_creation'=>dol_print_date($object->date_creation,'day'),
 		'object_date_modification'=>(! empty($object->date_modification)?dol_print_date($object->date_modification,'day'):''),
@@ -220,7 +221,7 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 			if (! is_dir($tmpdir)) $texttitle.=img_warning($langs->trans("ErrorDirNotFound",$tmpdir),0);
 			else
 			{
-				$tmpfiles=dol_dir_list($tmpdir,'files',0,'\.odt');
+				$tmpfiles=dol_dir_list($tmpdir,'files',0,'\.(ods|odt)');
 				if (count($tmpfiles)) $listoffiles=array_merge($listoffiles,$tmpfiles);
 			}
 		}

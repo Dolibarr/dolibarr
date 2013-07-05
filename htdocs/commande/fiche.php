@@ -315,7 +315,7 @@ else if ($action == 'add' && $user->rights->commande->creer)
 						}
 
 						//Extrafields
-						if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+						if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)  && method_exists($lines[$i],'fetch_optionals') ) // For avoid conflicts if trigger used
 						{
 							$lines[$i]->fetch_optionals($lines[$i]->rowid);
 							$array_option=$lines[$i]->array_options;

@@ -1,9 +1,9 @@
-# Dolibarr language file - Source file is en_US - orders
+# Dolibarr language file - tr_TR - orders
 CHARSET=UTF-8
 OrdersArea=Müşteri siparişleri alanı
 SuppliersOrdersArea=Tedarikçi siparişleri alanı
 OrderCard=Sipariş kartı
-# OrderId=Order Id
+OrderId=Sipariş No
 Order=Sipariş
 Orders=Siparişler
 OrderLine=Sipariş kalemi
@@ -115,7 +115,7 @@ PaymentOrderRef=Sipariş %s ödemesi
 CloneOrder=Siparişi klonla
 ConfirmCloneOrder=Bu <b>%s</b> siparişi klonlamak istediğinizden emin misiniz?
 DispatchSupplierOrder=%s tedarikçi siparişini al
-##### Types de contacts #####
+##### Kişi türleri #####
 TypeContact_commande_internal_SALESREPFOLL=Müşteri siparişi izleme temsilcisi
 TypeContact_commande_internal_SHIPPING=Sevkiyat izleme temsilcisi
 TypeContact_commande_external_BILLING=Müşteri fatura yetkilisi
@@ -134,7 +134,7 @@ Error_FailedToLoad_COMMANDE_ADDON_File=Modül dosyası %s yüklenemedi
 Error_OrderNotChecked=Faturalanacak seçilmiş sipariş yok
 
 
-# Sources
+# Kaynaklar
 OrderSource0=Teklif
 OrderSource1=Internet
 OrderSource2=Posta kampanyası
@@ -145,10 +145,10 @@ OrderSource6=Mağaza
 QtyOrdered=Sipariş miktarı
 AddDeliveryCostLine=Siparişin ağırlığını belirten bir teslimat satırı ekleyin
 
-# Documents models
+# Belge modelleri
 PDFEinsteinDescription=Bir tam sipariş modeli (logo. ..)
 PDFEdisonDescription=Basit bir sipariş modeli
-# Orders modes
+# Sipariş verme şekli
 OrderByMail=Posta
 OrderByFax=Faks
 OrderByEMail=Eposta

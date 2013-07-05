@@ -10,8 +10,8 @@
 //---------------------------------------------------------------------------
 // 06/09/09	1.0		Laurent Destailleur	   Creation
 //---------------------------------------------------------------------------
-#define PROG	"UsedPort"
-#define VERSION	"1.0"
+#define PROG	 "UsedPort"
+#define VERSION "1.0"
 
 // If GNU GCC CYGWIN: _WIN32 to defined manually,  __GNUC__ is defined,     _MSC_VER not defined
 // If GNU GCC MINGW:  _WIN32 automaticaly defined, __GNUC__ is defined,     _MSC_VER not defined

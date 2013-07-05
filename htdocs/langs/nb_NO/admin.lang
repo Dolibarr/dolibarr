@@ -291,7 +291,6 @@ GenericMaskCodes3=Alle andre tegn i masken vil være intakt. <br> Mellomrom er i
 GenericMaskCodes4a=<u>Eksempel på 99nde %s av tredje part TheCompany gjort 2007-01-31:</u> <br>
 GenericMaskCodes4b=<u>Eksempel på tredjeparts opprettet på 2007-03-01:</u> <br>
 # GenericMaskCodes4c=<u>Example on product created on 2007-03-01:</u><br>
-GenericMaskCodes5=<b>ABC (åå) (mm) - (000000)</b> vil gi <b>ABC0701-000099</b> <br> <b>(0000)-ZZZ 100 / dd () / XXX</b> vil gi <b>0199-ZZZ/31/XXX</b>
 GenericNumRefModelDesc=Gir et egendefinert nummer etter en definert mal.
 ServerAvailableOnIPOrPort=Serveren er tilgjengelig på adressen <b>%s</b> på port <b>%s</b>
 ServerNotAvailableOnIPOrPort=Serveren er ikke tilgjengelig på adressen  <b>%s</b> på port <b>%s</b>

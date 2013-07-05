@@ -1,4 +1,4 @@
-# Dolibarr language file - Source file is en_US - members
+# Dolibarr language file - tr_TR - members
 CHARSET=UTF-8
 MembersArea=Üye alanı
 PublicMembersArea=Genel üye alanı
@@ -111,12 +111,12 @@ FollowingLinksArePublic=Aşağıdaki bağlantılar açık sayfalar olup herhangi
 PublicMemberList=Genel üye listesi
 BlankSubscriptionForm=Genel oto-abonelik formu
 # BlankSubscriptionFormDesc=Dolibarr can provide you a public URL to allow external visitors to ask to subscribe to the foundation. If an online payment module is enabled, a payment form will also be automatically provided.
-# EnablePublicSubscriptionForm=Enable the public auto-subscription form
+EnablePublicSubscriptionForm=Genel oto abonelik formunu etkinleştir
 MemberPublicLinks=Genel bağlantılar/sayfalar
 ExportDataset_member_1=Üyeler ve abonelikleri
-# ImportDataset_member_1=Members
+ImportDataset_member_1=Üyeler
 LastMembers=Son % s üye
-# LastMembersModified=Last %s modified members
+LastMembersModified=Değiştirilen son %s üye
 LastSubscriptionsModified=Sondeğiştirilen  %s abonelik
 AttributeName=Öznitelik adı
 FieldEdition=%s Alanının düzenlenmesi
@@ -157,7 +157,7 @@ NoThirdPartyAssociatedToMember=Bu üye ile ilintili üçüncü parti yok
 ThirdPartyDolibarr=Dolibarr üçüncü partisi
 MembersAndSubscriptions= Üyeler ve abonelikler
 MoreActions=Kayıt üzerinde tamamlayıcı işlem
-# MoreActionsOnSubscription=Complementary action, suggested by default when recording a subscription
+MoreActionsOnSubscription=Tamamlayıcı eylem, bir abonelik kaydı yaparken varsayılan olarak önerilir
 MoreActionBankDirect=Hesap üzerinde doğrudan bir işlem kaydı oluşturun
 MoreActionBankViaInvoice=Hesaba bir fatura ve ödeme oluştur
 MoreActionInvoiceOnly=Ödeme yapılmamış bir fatura oluştur
@@ -169,7 +169,7 @@ DocForLabels=Adres çizelgeleri oluştur (Çıkış formatı için gerçek ayar 
 SubscriptionPayment=Abonelik ödemesi
 LastSubscriptionDate=Son abonelik tarihi
 LastSubscriptionAmount=Son abonelik tutarı
-# MembersStatisticsByCountries=Members statistics by country
+MembersStatisticsByCountries=Ülkeye göre üye istatistikleri
 MembersStatisticsByState=Eyalete/ile göre üyelik istatistikleri
 MembersStatisticsByTown=İlçelere göre üyelik istatistikleri
 NbOfMembers=Üye sayısı
@@ -196,10 +196,10 @@ Associations=Dernekler
 Collectivités=Kurumlar
 Particuliers=Kişisel
 Entreprises=Firmalar
-# DOLIBARRFOUNDATION_PAYMENT_FORM=To make your subscription payment using a bank transfer, see page <a target="_blank" href="http://wiki.dolibarr.org/index.php/Subscribe#To_subscribe_making_a_bank_transfer">http://wiki.dolibarr.org/index.php/Subscribe</a>.<br>To pay using a Credit Card or Paypal, click on button at bottom of this page.<br>
+DOLIBARRFOUNDATION_PAYMENT_FORM=Banka havalesi ile abonelik ödemesi yapmak için bu sayfaya bakın <a target="_blank" href="http://wiki.dolibarr.org/index.php/Subscribe#To_subscribe_making_a_bank_transfer">http://wiki.dolibarr.org/index.php/Subscribe</a>.<br>Kredi Kartı ya da PayPal ile ödemek için bu sayfanın altındaki düğmeye tıklayın.<br>
 ByProperties=Özelliklere göre
 MembersStatisticsByProperties=Özelliklere göre üye istatistikleri
 MembersByNature=Doğal üyeler
-# VATToUseForSubscriptions=VAT rate to use for subscriptions
-# NoVatOnSubscription=No TVA for subscriptions
-# MEMBER_PAYONLINE_SENDEMAIL=Email to warn when Dolibarr receive a confirmation of a validated payment for subscription
+VATToUseForSubscriptions=Abonelikler için KDV oranı
+NoVatOnSubscription=KDV olmayan abonelikler
+MEMBER_PAYONLINE_SENDEMAIL=Dolibarr abonelik için doğrulanmış bir ödeme onayı aldığındaki eposta uyarısı

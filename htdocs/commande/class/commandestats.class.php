@@ -95,7 +95,6 @@ class CommandeStats extends Stats
 	 */
 	function getNbByMonth($year)
 	{
-		global $conf;
 		global $user;
 
 		$sql = "SELECT date_format(c.date_commande,'%m') as dm, count(*) nb";
@@ -117,7 +116,6 @@ class CommandeStats extends Stats
 	 */
 	function getNbByYear()
 	{
-		global $conf;
 		global $user;
 
 		$sql = "SELECT date_format(c.date_commande,'%Y') as dm, count(*), sum(c.".$this->field.")";
@@ -138,7 +136,6 @@ class CommandeStats extends Stats
 	 */
 	function getAmountByMonth($year)
 	{
-		global $conf;
 		global $user;
 
 		$sql = "SELECT date_format(c.date_commande,'%m') as dm, sum(c.".$this->field.")";
@@ -160,7 +157,6 @@ class CommandeStats extends Stats
 	 */
 	function getAverageByMonth($year)
 	{
-		global $conf;
 		global $user;
 
 		$sql = "SELECT date_format(c.date_commande,'%m') as dm, avg(c.".$this->field.")";

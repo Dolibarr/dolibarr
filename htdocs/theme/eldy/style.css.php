@@ -279,12 +279,17 @@ textarea:disabled {
 	background:#ddd;
 }
 input[type=checkbox] { background-color: transparent; border: none; box-shadow: none; }
-input[type=image] { background-color: transparent; border: none; box-shadow: none; }
+input[type=radio]    { background-color: transparent; border: none; box-shadow: none; }
+input[type=image]    { background-color: transparent; border: none; box-shadow: none; }
 input:-webkit-autofill {
 	background-color: <?php echo empty($dol_use_jmobile)?'#FBFFEA':'#FFFFFF' ?> !important;
 	background-image:none !important;
 	-webkit-box-shadow: 0 0 0 50px <?php echo empty($dol_use_jmobile)?'#FBFFEA':'#FFFFFF' ?> inset;
 }
+::-webkit-input-placeholder { color:#ccc; }
+::-moz-placeholder { color:#ccc; } /* firefox 19+ */
+:-ms-input-placeholder { color:#ccc; } /* ie */
+input:-moz-placeholder { color:#ccc; }
 
 <?php if (! empty($dol_use_jmobile)) { ?>
 legend { margin-bottom: 8px; }
@@ -1571,7 +1576,7 @@ span.butAction, span.butActionDelete {
 }
 
 
-table.border {
+table.border, table.dataTable {
 	border: 1px solid #9CACBB;
 	border-collapse: collapse;
 }
@@ -1687,11 +1692,11 @@ table.liste td {
 .tagtr { display: table-row; }
 .tagtd { display: table-cell; }
 
-tr.liste_titre, tr.liste_titre_sel, form.liste_titre, form.liste_titre_sel
+tr.liste_titre, tr.liste_titre_sel, form.liste_titre, form.liste_titre_sel, table.dataTable.tr
 {
 	height: 20px !important;
 }
-div.liste_titre, tr.liste_titre, tr.liste_titre_sel, form.liste_titre, form.liste_titre_sel
+div.liste_titre, tr.liste_titre, tr.liste_titre_sel, form.liste_titre, form.liste_titre_sel, table.dataTable thead tr
 {
     background: rgb(<?php echo $colorbacktitle1; ?>);
     background-repeat: repeat-x;
@@ -1709,13 +1714,16 @@ div.liste_titre, tr.liste_titre, tr.liste_titre_sel, form.liste_titre, form.list
     white-space: <?php echo $dol_optimize_smallscreen?'normal':'nowrap'; ?>;
     text-align: <?php echo $left; ?>;
 }
-tr.liste_titre th, th.liste_titre, tr.liste_titre td, td.liste_titre, form.liste_titre div
+tr.liste_titre th, th.liste_titre, tr.liste_titre td, td.liste_titre, form.liste_titre div, div.liste_titre
 {
     font-family: <?php print $fontlist ?>;
     /*font-weight: normal;*/
     border-bottom: 1px solid #FDFFFF;
     white-space: <?php echo $dol_optimize_smallscreen?'normal':'nowrap'; ?>;
 	text-shadow:1px 0px 1px #ffffff;
+}
+div.liste_titre {
+	padding-left: 3px;
 }
 tr.liste_titre_sel th, th.liste_titre_sel, tr.liste_titre_sel td, td.liste_titre_sel, form.liste_titre_sel div
 {
@@ -1954,6 +1962,12 @@ a.impayee:hover { font-weight: bold; color: #550000; }
 .product_line_stock_too_low { color: #664400; }
 
 .fieldrequired { font-weight: bold; color: #000055; }
+
+.dolgraphtitle { margin-top: 6px; margin-bottom: 4px; }
+.dolgraphtitlecssboxes { margin: 0px; }
+.legendColorBox, .legendLabel { border: none !important; }
+div.dolgraph div.legend, div.dolgraph div.legend div { background-color: rgba(255,255,255,0) !important; }
+div.dolgraph div.legend table tbody tr { height: auto; }
 
 .photo {
 border: 0px;
@@ -2700,15 +2714,19 @@ a.ui-link {
 	background: #fff;
 }
 
-div.ui-radio
+div.ui-radio, div.ui-checkbox
 {
 	display: inline-block;
+	border-bottom: 0px !important;
 }
-.ui-radio input {
+.ui-checkbox input, .ui-radio input {
 	height: auto;
 	width: auto;
-	margin: 0;
+	margin: 4px;
 	position: static;
+}
+div.ui-checkbox label+input, div.ui-radio label+input {
+	position: absolute;
 }
 .ui-mobile fieldset
 {

@@ -1,4 +1,4 @@
-# Dolibarr language file - Source file is en_US - commercial
+# Dolibarr language file - tr_TR - commercial
 CHARSET=UTF-8
 Commercial=Ticari
 CommercialArea=Ticari alan
@@ -31,7 +31,7 @@ SalesRepresentativeFollowUp=Satış temsilcisi (takipçi)
 SalesRepresentativeSignature=Satış temsilcisi (imza yetkilisi)
 CommercialInterlocutor=Ticari muhatap
 ErrorWrongCode=Yanlış kod
-NoSalesRepresentativeAffected=Etkilenen özel bir satış temsilcisi yok
+NoSalesRepresentativeAffected=Görevlendirilen özel bir satış temsilcisi yok
 ShowCustomer=Müşteri göster
 ShowProspect=Aday göster
 ListOfProspects=Aday listesi
@@ -60,10 +60,10 @@ LastProspectNeverContacted=Hiç görüşülmedi
 LastProspectToContact=Görüşülecek
 LastProspectContactInProcess=Kişi işlemde
 LastProspectContactDone=Görüşme yapıldı
-DateActionPlanned=Planlanan eylem tarihi
+DateActionPlanned=Planlanan etkinlik tarihi
 DateActionDone=Etkinliğin yapıldığı tarih
-ActionAskedBy=Etkinliği sunan
-ActionAffectedTo=Etkinlikten etkilenen
+ActionAskedBy=Etkinliği raporlayan
+ActionAffectedTo=Etkinliğe görevlendirilen
 ActionDoneBy=Etkinliği yapan
 ActionUserAsk=Raporlayan
 ErrorStatusCantBeZeroIfStarted=Eğer <b>Yapıldığı tarih</b> alanı doluysa, etkinlik başlamıştır (veya bitmiştir),  bu durumda '<b>Durum</b>' alanı 0%% olamaz.
@@ -81,9 +81,9 @@ ActionAC_SHIP=Sevkiyatı postayla gönder
 ActionAC_SUP_ORD=Tedarikçi siparişini postayla gönder
 ActionAC_SUP_INV=Tedarikçi faturasını postayla gönder
 ActionAC_OTH=Diğer
-ActionAC_OTH_AUTO=Diğer otomatikman eklenen etkinlikler)
+ActionAC_OTH_AUTO=Diğer (otomatikman eklenen etkinlikler)
 ActionAC_MANUAL=Elle eklenen etkinlikler
-ActionAC_AUTO=Otomatikman eklenen etkinlikler
+ActionAC_AUTO=Otomatikman araya eklenen etkinlikler
 Stats=Satış istatistikleri
 CAOrder=Satış hacmi (doğrulanmış siparişler)
 FromTo=İlk: %s Son: %s
@@ -93,4 +93,5 @@ NoData=Veri yok
 StatusProsp=Aday durumu
 DraftPropals=Taslak teklifler
 SearchPropal=Bir teklif ara
-# CommercialDashboard=Commercial summary
+CommercialDashboard=Ticari özet
+

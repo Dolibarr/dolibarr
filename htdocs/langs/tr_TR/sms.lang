@@ -1,7 +1,7 @@
-# Dolibarr language file - Source file is en_US - sms
+# Dolibarr language file - tr_TR - sms
 CHARSET=UTF-8
 Sms=Sms
-SmsSetup=Sms kurulums
+SmsSetup=Sms ayarları
 SmsDesc=Bu sayfa, SMS özelliklerinin genel seçeneklerini tanımlamanıza olanak tanır
 SmsCard=SMS Kartı
 AllSms=Tüm SMS kampanyaları
@@ -51,4 +51,3 @@ SmsInfoCharRemain=Kalan karakter sayısı
 SmsInfoNumero= (Uluslar arası biçim örneği: +33899701761)
 DelayBeforeSending=Gönderimden önceki süre (Dakika)
 SmsNoPossibleRecipientFound=Hedef yok. SMS sağlayıcı kurulumu kontrol edin.
-

@@ -24,3 +24,5 @@ DeleteIntoSpip=SPIP ten kaldır
 DeleteIntoSpipConfirmation=Bu üyeyi SPIP ten kaldırmak istediğinizden emin misiniz?
 DeleteIntoSpipError=Kullanıcı SPIP ten menedilemedi
 SPIPConnectionFailed=SPIP e bağlanılamadı
+SuccessToAddToMailmanList=Add of %s to mailman list %s or SPIP database done
+SuccessToRemoveToMailmanList=Removal of %s from mailman list %s or SPIP database done

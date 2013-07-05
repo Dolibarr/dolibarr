@@ -327,7 +327,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 		    $var=!$var;
 		    print "<tr ".$bc[$var].">";
 
-		    // Third party
+		    // Product
 		     $fullname=$name[$key];
 		    if ($key >= 0) {
 			$linkname='<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$key.'">'.img_object($langs->trans("ShowProduct"),'product').' '.$fullname.'</a>';
@@ -339,23 +339,24 @@ if ($modecompta == 'CREANCES-DETTES') {
 
 		// Amount w/o VAT
 		print '<td align="right">';
-		if ($key > 0) {
+		/*if ($key > 0) {
 		    print '<a href="'.DOL_URL_ROOT.'/compta/facture/list.php?productid='.$key.'">';
 		} else {
 		    print '<a href="#">';
-		}
+		}*/
 		print price($amount_ht[$key]);
+		//print '</a>';
 		print '</td>';
 
 		// Amount with VAT
 		print '<td align="right">';
-		if ($key > 0) {
+		/*if ($key > 0) {
 		    print '<a href="'.DOL_URL_ROOT.'/compta/facture/list.php?productid='.$key.'">';
 		} else {
 		    print '<a href="#">';
-		}
+		}*/
 		print price($amount[$key]);
-		print '</a>';
+		//print '</a>';
 		print '</td>';
 
 		// Percent;

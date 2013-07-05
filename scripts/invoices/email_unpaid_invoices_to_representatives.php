@@ -80,7 +80,7 @@ $sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
 $sql .= " , ".MAIN_DB_PREFIX."societe as s";
 $sql .= " , ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql .= " , ".MAIN_DB_PREFIX."user as u";
-$sql .= " WHERE f.fk_statut != 0 AND f.paye = 0";
+$sql .= " WHERE f.fk_statut = 1 AND f.paye = 0";
 $sql .= " AND f.fk_soc = s.rowid";
 if (is_numeric($duration_value)) $sql .= " AND f.date_lim_reglement < '".$db->idate(dol_time_plus_duree($now, $duration_value, "d"))."'";
 $sql .= " AND sc.fk_soc = s.rowid";

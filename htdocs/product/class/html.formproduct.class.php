@@ -101,9 +101,9 @@ class FormProduct
 	}
 
 	/**
-	 *  Return list of possible payments modes
+	 *  Return list of warehouses
 	 *
-	 *  @param	int		$selected       Id du mode de paiement pre-selectionne
+	 *  @param	int		$selected       Id of preselected warehouse ('' for no value, 'ifone'=select value if one value otherwise no value)
 	 *  @param  string	$htmlname       Name of html select html
 	 *  @param  string	$filtertype     For filter
 	 *  @param  int		$empty			1=Can be empty, 0 if not
@@ -119,23 +119,22 @@ class FormProduct
 		dol_syslog(get_class($this)."::selectWarehouses $selected, $htmlname, $filtertype, $empty, $disabled, $fk_product",LOG_DEBUG);
 
 		$this->loadWarehouses($fk_product);
-
+		$nbofwarehouses=count($this->cache_warehouses);
+		
 		$out='<select class="flat"'.($disabled?' disabled="disabled"':'').' id="'.$htmlname.'" name="'.($htmlname.($disabled?'_disabled':'')).'">';
 		if ($empty) $out.='<option value="-1">'.($empty_label?$empty_label:'&nbsp;').'</option>';
 		foreach($this->cache_warehouses as $id => $arraytypes)
 		{
 			$out.='<option value="'.$id.'"';
-			// Si selected est text, on compare avec code, sinon avec id
-			if ($selected == $id) $out.=' selected="selected"';
+			if ($selected == $id || ($selected == 'ifone' && $nbofwarehouses == 1)) $out.=' selected="selected"';
 			$out.='>';
 			$out.=$arraytypes['label'];
 			if ($fk_product) $out.=' ('.$langs->trans("Stock").': '.($arraytypes['stock']>0?$arraytypes['stock']:'?').')';
 			$out.='</option>';
 		}
 		$out.='</select>';
-		if ($disabled) $out.='<input type="hidden" name="'.$htmlname.'" value="'.$selected.'">';
+		if ($disabled) $out.='<input type="hidden" name="'.$htmlname.'" value="'.(($selected>0)?$selected:'').'">';
 
-		//count($this->cache_warehouses);
 		return $out;
 	}
 

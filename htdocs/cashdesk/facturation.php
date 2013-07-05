@@ -138,10 +138,10 @@ $sql.= " AND t.active = 1";
 $sql.= " AND p.code = '".$mysoc->country_code."'";
 //print $request;
 
-$res = $db->query($sql);
-if ($res)
+$resql = $db->query($sql);
+if ($resql)
 {
-	while ( $tab = $db->fetch_array($res) )
+	while ( $tab = $db->fetch_array($resql) )
 	{
 		foreach ( $tab as $cle => $valeur )
 		{

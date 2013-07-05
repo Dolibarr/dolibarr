@@ -205,9 +205,9 @@ function societe_admin_prepare_head($object)
 
 
 /**
- *    Return country label, code or id from an id or a code
+ *    Return country label, code or id from an id, code or label
  *
- *    @param      int		$id            	Id or code of country
+ *    @param      int		$searchkey      Id or code of country to search
  *    @param      int		$withcode   	'0'=Return label,
  *    										'1'=Return code + label,
  *    										'2'=Return code from id,
@@ -215,15 +215,16 @@ function societe_admin_prepare_head($object)
  * 	   										'all'=Return array('id'=>,'code'=>,'label'=>)
  *    @param      DoliDB	$dbtouse       	Database handler (using in global way may fail because of conflicts with some autoload features)
  *    @param      Translate	$outputlangs	Langs object for output translation
- *    @param      int		$entconv       	0=Return value without entities and not converted to output charset
+ *    @param      int		$entconv       	0=Return value without entities and not converted to output charset, 1=Ready for html output
+ *    @param      int		$searchlabel    Label of country to search (warning: searching on label is not reliable)
  *    @return     mixed       				String with country code or translated country name or Array('id','code','label')
  */
-function getCountry($id,$withcode='',$dbtouse=0,$outputlangs='',$entconv=1)
+function getCountry($searchkey,$withcode='',$dbtouse=0,$outputlangs='',$entconv=1,$searchlabel='')
 {
     global $db,$langs;
 
     // Check parameters
-    if (empty($id))
+    if (empty($searchkey) && empty($searchlabel))
     {
     	if ($withcode === 'all') return array('id'=>'','code'=>'','label'=>'');
     	else return '';
@@ -232,8 +233,9 @@ function getCountry($id,$withcode='',$dbtouse=0,$outputlangs='',$entconv=1)
     if (! is_object($outputlangs)) $outputlangs=$langs;
 
     $sql = "SELECT rowid, code, libelle FROM ".MAIN_DB_PREFIX."c_pays";
-    if (is_numeric($id)) $sql.= " WHERE rowid=".$id;
-    else $sql.= " WHERE code='".$db->escape($id)."'";
+    if (is_numeric($searchkey)) $sql.= " WHERE rowid=".$searchkey;
+    elseif (! empty($searchkey)) $sql.= " WHERE code='".$db->escape($searchkey)."'";
+    else $sql.= " WHERE libelle='".$db->escape($searchlabel)."'";
 
     dol_syslog("Company.lib::getCountry sql=".$sql);
     $resql=$dbtouse->query($sql);
@@ -259,6 +261,7 @@ function getCountry($id,$withcode='',$dbtouse=0,$outputlangs='',$entconv=1)
         {
             return 'NotDefined';
         }
+        $dbtouse->free($resql);
     }
     else dol_print_error($dbtouse,'');
     return 'Error';

@@ -142,12 +142,17 @@ textarea:disabled {
 	background:#ddd;
 }
 input[type=checkbox] { background-color: transparent; border: none; box-shadow: none; }
-input[type=image] { background-color: transparent; border: none; box-shadow: none; }
+input[type=radio]    { background-color: transparent; border: none; box-shadow: none; }
+input[type=image]    { background-color: transparent; border: none; box-shadow: none; }
 input:-webkit-autofill {
 	background-color: <?php echo empty($dol_use_jmobile)?'#FBFFEA':'#FFFFFF' ?> !important;
 	background-image:none !important;
 	-webkit-box-shadow: 0 0 0 50px <?php echo empty($dol_use_jmobile)?'#FBFFEA':'#FFFFFF' ?> inset;
 }
+::-webkit-input-placeholder { color:#ccc; }
+::-moz-placeholder { color:#ccc; } /* firefox 19+ */
+:-ms-input-placeholder { color:#ccc; } /* ie */
+input:-moz-placeholder { color:#ccc; }
 
 <?php if (! empty($dol_use_jmobile)) { ?>
 legend { margin-bottom: 8px; }
@@ -1548,6 +1553,9 @@ a.impayee:hover { font-weight: bold; color: #550000; }
 
 .fieldrequired { font-weight: bold; color: #000055; }
 
+.dolgraphtitle { margin-top: 6px; margin-bottom: 4px; }
+.dolgraphtitlecssboxes { margin: 0px; }
+
 .photo {
 border: 0px;
 /* filter:alpha(opacity=55); */
@@ -2283,12 +2291,16 @@ div.ui-radio
 {
 	display: inline-block;
 }
-.ui-radio input {
+.ui-checkbox input, .ui-radio input {
 	height: auto;
 	width: auto;
-	margin: 0;
+	margin: 4px;
 	position: static;
 }
+div.ui-checkbox label+input, div.ui-radio label+input {
+	position: absolute;
+}
+
 .ui-mobile fieldset
 {
 	padding-bottom: 10px; margin-bottom: 4px; border-bottom: 1px solid #AAAAAA !important;

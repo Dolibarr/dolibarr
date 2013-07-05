@@ -1,4 +1,4 @@
-# Dolibarr language file - Source file is en_US - withdrawals
+# Dolibarr language file - tr_TR - withdrawals
 CHARSET=UTF-8
 StandingOrdersArea=Ödeme talimatları alanı
 CustomersStandingOrdersArea=Müşteri ödeme talimatları alanı
@@ -85,7 +85,7 @@ WithdrawalFile=Para çekme dosyası
 SetToStatusSent="Dosya Gönderildi" durumuna ayarla
 ThisWillAlsoAddPaymentOnInvoice=Bu aynı zamanda faturalara ödeme oluşturur ve onları ödendi olarak sınıflandırı
 
-### Notifications
+### Bildirimler
 InfoCreditSubject=Banka tarafından ödenen %s ödeme talimatı
 InfoCreditMessage=%s Ödeme talimatı banka tarafından ödenmiştir<br>Ödeme tarihi: %s
 InfoTransSubject=%s Ödeme talimatının bankaya iletilmesi

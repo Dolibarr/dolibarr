@@ -266,6 +266,9 @@ class Adherent extends CommonObject
 
         $now=dol_now();
 
+        // Clean parameters
+        $this->import_key = trim($this->import_key);
+        
         // Check parameters
         if (! empty($conf->global->ADHERENT_MAIL_REQUIRED) && ! isValidEMail($this->email))
         {
@@ -287,7 +290,7 @@ class Adherent extends CommonObject
 
         // Insert member
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."adherent";
-        $sql.= " (datec,login,fk_user_author,fk_user_mod,fk_user_valid,morphy,fk_adherent_type,entity)";
+        $sql.= " (datec,login,fk_user_author,fk_user_mod,fk_user_valid,morphy,fk_adherent_type,entity,import_key)";
         $sql.= " VALUES (";
         $sql.= " '".$this->db->idate($this->datec)."'";
         $sql.= ", ".($this->login?"'".$this->db->escape($this->login)."'":"null");
@@ -295,6 +298,7 @@ class Adherent extends CommonObject
         $sql.= ", null, null, '".$this->morphy."'";
         $sql.= ", '".$this->typeid."'";
         $sql.= ", ".$conf->entity;
+        $sql.= ", ".(! empty($this->import_key) ? "'".$this->import_key."'":"null");
         $sql.= ")";
 
         dol_syslog(get_class($this)."::create sql=".$sql);
@@ -998,16 +1002,47 @@ class Adherent extends CommonObject
         }
     }
 
-
+    /**
+     *	Method to load member from its name
+     *
+     *	@param	string	$firstname	Firstname
+     **	@param	string	$lastname	Lastname
+     *	@return	void
+     */
+    function fetch_name($firstname,$lastname)
+    {
+    	global $conf;
+    
+    	$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."adherent";
+    	$sql.= " WHERE firstname='".$this->db->escape($firstname)."'";
+    	$sql.= " AND lastname='".$this->db->escape($lastname)."'";
+    	$sql.= " AND entity = ".$conf->entity;
+    
+    	$resql=$this->db->query($sql);
+    	if ($resql)
+    	{
+    		if ($this->db->num_rows($resql))
+    		{
+    			$obj = $this->db->fetch_object($resql);
+    			$this->fetch($obj->rowid);
+    		}
+    	}
+    	else
+    	{
+    		dol_print_error($this->db);
+    	}
+    }
+    
     /**
      *	Load member from database
      *
      *	@param	int		$rowid      Id of object to load
      * 	@param	string	$ref		To load member from its ref
      * 	@param	int		$fk_soc		To load member from its link to third party
+     * 	@param	int		$ref_ext	External reference
      *	@return int         		>0 if OK, 0 if not found, <0 if KO
      */
-    function fetch($rowid,$ref='',$fk_soc='')
+    function fetch($rowid,$ref='',$fk_soc='',$ref_ext='')
     {
         global $langs;
 
@@ -1035,6 +1070,10 @@ class Adherent extends CommonObject
         	$sql.= " AND d.entity IN (".getEntity().")";
         	if ($ref) $sql.= " AND d.rowid='".$ref."'";
         	elseif ($fk_soc) $sql.= " AND d.fk_soc='".$fk_soc."'";
+        }
+        elseif ($ref_ext)
+        {
+        	$sql.= " AND d.ref_ext='".$this->db->escape($ref_ext)."'";
         }
 
         dol_syslog(get_class($this)."::fetch sql=".$sql);
@@ -1500,11 +1539,12 @@ class Adherent extends CommonObject
      */
     function getCivilityLabel()
     {
-        global $langs;
-        $langs->load("dict");
-
-        $code=$this->civilite_id;
-        return $langs->getLabelFromKey($this->db, "Civility".$code, "c_civilite", "code", "civilite", $code);
+    	global $langs;
+    	$langs->load("dict");
+    	
+    	$code=(! empty($this->civilite_id)?$this->civilite_id:(! empty($this->civility_id)?$this->civility_id:''));
+    	if (empty($code)) return '';
+    	return $langs->getLabelFromKey($this->db, "Civility".$code, "c_civilite", "code", "civilite", $code);
     }
 
     /**
