@@ -43,7 +43,7 @@ $texte = $langs->trans('ReplenishmentOrders');
 llxHeader('', $texte, $helpurl, $texte);
 $head = array();
 $head[0][0] = DOL_URL_ROOT.'/product/stock/replenish.php';
-$head[0][1] = $langs->trans('Replenishment');
+$head[0][1] = $langs->trans('Status');
 $head[0][2] = 'replenish';
 $head[1][0] = DOL_URL_ROOT.'/product/stock/replenishorders.php';
 $head[1][1] = $texte;

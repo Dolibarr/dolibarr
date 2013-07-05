@@ -146,7 +146,7 @@ if ($action == 'order') {
 /*
  * View
  */
-$title = $langs->trans('Replenishment');
+$title = $langs->trans('Status');
 
 $sql = 'SELECT p.rowid, p.ref, p.label, p.price';
 $sql .= ', p.price_ttc, p.price_base_type,p.fk_product_type';
@@ -217,7 +217,7 @@ if ($resql) {
     $head[1][0] = DOL_URL_ROOT.'/product/stock/replenishorders.php';
     $head[1][1] = $langs->trans("ReplenishmentOrders");
     $head[1][2] = 'replenishorders';
-    dol_fiche_head($head, 'replenish', $title, 0, 'stock');
+    dol_fiche_head($head, 'replenish', $langs->trans('Replenishment'), 0, 'stock');
     if ($sref || $snom || $sall || GETPOST('search', 'alpha')) {
         $filters = '&sref=' . $sref . '&snom=' . $snom;
         $filters .= '&amp;sall=' . $sall;
