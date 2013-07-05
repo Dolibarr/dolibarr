@@ -132,7 +132,6 @@ This is features that Dolibarr does not support completely yet:
 - No accountancy (only bank management).
 - Dolibarr manage one currency at once (mono-currency).
 - Dolibarr manage one company/foundation (mono-company). If you want to manage several companies or foundations, you must install several time the software (on same server or not). Another solution is to extend Dolibarr with the addon Module MultiCompany that allows to manage several companies in one Dolibarr instance (one database but with a logical isolation of datas).
-- Does not support double VAT (Federal / provincial) for Canada.
 - Dolibarr does not contains Payroll module.
 - Tasks on module project can't have dependencies between each other.
 - Dolibarr does not include any Webmail.
