@@ -185,9 +185,6 @@ $sql .= ' AND p.tobuy = 1';
 if (!empty($canvas)) {
     $sql .= ' AND p.canvas = "' . $db->escape($canvas) . '"';
 }
-
-    $sql .= ' AND p.rowid = pf.fk_product';
-
 $sql .= ' GROUP BY p.rowid, p.ref, p.label, p.price';
 $sql .= ', p.price_ttc, p.price_base_type,p.fk_product_type, p.tms';
 $sql .= ', p.duration, p.tobuy, p.seuil_stock_alerte';
