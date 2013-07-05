@@ -120,6 +120,7 @@ CurrentHour=Heure PHP (serveur)
 CompanyTZ=Fuseau horaire société (maison mère)
 CompanyHour=Heure société (maison mère)
 CurrentSessionTimeOut=Délai expiration session actuelle
+YouCanEditPHPTZ=Pour définir un autre timezone PHP (non obligatoire), vous pouvez essayer d'ajouter un fichier .htaccess avec une ligne du type "SetEnv TZ Europe/Paris"
 OSEnv=Environnement OS
 Box=Boîte
 Boxes=Boîtes

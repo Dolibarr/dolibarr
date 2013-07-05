@@ -119,6 +119,7 @@ CurrentHour=PHP Time (server)
 CompanyTZ=Company Time Zone (main company)
 CompanyHour=Company Time (main company)
 CurrentSessionTimeOut=Current session timeout
+YouCanEditPHPTZ=To set a different PHP timezone (not required), you can try to add a file .htacces with a line like this "SetEnv TZ Europe/Paris"
 OSEnv=OS Environment
 Box=Box
 Boxes=Boxes
