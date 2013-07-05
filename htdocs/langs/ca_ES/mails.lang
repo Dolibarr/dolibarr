@@ -1,4 +1,4 @@
-# Dolibarr language file - ca_ES - mails 
+# Dolibarr language file - ca_ES - mails
 CHARSET=UTF-8
 Mailing=E-Mailing
 EMailing=E-Mailing
@@ -44,8 +44,10 @@ MailingStatusSentCompletely=Enviat completament
 MailingStatusError=Error
 MailingStatusNotSent=No enviat
 MailSuccessfulySent=E-mail enviat correctament (de %s a %s)
+MailingSuccessfullyValidated=E-mailing validat correctament
 MailUnsubcribe=Desubscriure
 Unsuscribe=Desubscriure
+MailingStatusNotContact=No contactar
 ErrorMailRecipientIsEmpty=L'adreça del destinatari és buida
 WarningNoEMailsAdded=Cap nou e-mail a afegir a la llista destinataris.
 ConfirmValidMailing=Confirmeu la validació del E-Mailing?
@@ -78,12 +80,12 @@ MailtoEMail=mailto email (hyperlink)
 ActivateCheckRead=Activar confirmació de lectura i opció de Desubscripció
 ActivateCheckReadKey=Clau usada per xifrar la URL de la confirmació de lectura i la funció de desubscripció
 EMailSentToNRecipients=E-Mail enviat a %s destinataris.
-
 # Libelle des modules de liste de destinataires mailing==
 MailingModuleDescContactCompanies=Contactes de tercers (clients potencials, clients, proveïdors ...)
 MailingModuleDescDolibarrUsers=Usuaris de Dolibarr
 MailingModuleDescFundationMembers=Membres
 MailingModuleDescEmailsFromFile=E-Mails d'un arxiu (e-mail;nom;varis)
+MailingModuleDescEmailsFromUser=E-mails introduïts per l'usuari (email, cognoms, nom, altres)
 MailingModuleDescContactsCategories=Tercers (per categoria)
 MailingModuleDescDolibarrContractsLinesExpired=Tercers amb línies de contractes de serveis expirats
 MailingModuleDescContactsByCompanyCategory=Contactes de tercers (per categoria de tercers)
@@ -112,7 +114,11 @@ NbOfEMailingsReceived=E-Mailings en massa rebuts
 IdRecord=ID registre
 DeliveryReceipt=Justificant de recepció
 YouCanUseCommaSeparatorForSeveralRecipients=Podeu usar el caràcter de separació <b>coma</b> per especificar múltiples destinataris.
-# Module Notifications==
+TagCheckMail=Seguiment de l'obertura del email
+TagUnsubscribe=Link de Desubscripció
+TagSignature=Signatura de l'usuari remitent
+TagMailtoEmail=Email del destinatario
+# Module Notifications
 Notifications=Notificacions
 NoNotificationsWillBeSent=Cap notificació per e-mail està prevista per a aquest esdeveniment i empresa
 ANotificationsWillBeSent=1 notificació serà enviada per e-mail

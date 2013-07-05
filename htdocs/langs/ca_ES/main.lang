@@ -477,8 +477,8 @@ Report=Informe
 Keyword=Clau
 Legend=Llegenda
 FillTownFromZip=Indicar població
-# Fill=Fill
-# Reset=Reset
+Fill=Omplir
+Reset=Buidar
 ShowLog=Veure històric
 File=Arxiu
 Files=Arxius
@@ -646,12 +646,9 @@ NoResults=Cap resultat
 ModulesSystemTools=Mòduls utilitats
 Test=Prova
 Element=Element
-# NoPhotoYet=No pictures available yet
-# HomeDashboard=Home summary
+NoPhotoYet=No hi ha fotografia disponible
+HomeDashboard=Resum
 Deductible=Deduïble
-# from=from
-# toward=toward
-
 # Week day
 Monday=Dilluns
 Tuesday=Dimarts
