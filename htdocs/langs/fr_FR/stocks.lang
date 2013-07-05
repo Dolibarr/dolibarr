@@ -94,3 +94,4 @@ Replenishment=Réapprovisionnement
 ReplenishmentOrders=Commandes de réapprovisionnement
 UseVirtualStock=Utiliser le stock théorique à la place du stock physique
 RuleForStockReplenishment=Règle de gestion du réapprovisionnement des stocks
+SelectProduct=Sélectionnez au moins un produit

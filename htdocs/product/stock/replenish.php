@@ -71,12 +71,14 @@ $offset = $limit * $page ;
 //could go in the lib
 if ($action == 'order') {
     $linecount = GETPOST('linecount', 'int');
+    $box = 0;
     unset($_POST['linecount']);
     if ($linecount > 0) {
         $suppliers = array();
         for ($i = 0; $i < $linecount; $i++) {
             if(GETPOST($i, 'alpha') === 'on'
               && GETPOST('fourn' . $i, 'int') > 0) { //one line
+                $box = $i;
                 $supplierpriceid = GETPOST('fourn'.$i, 'int');
                 //get all the parameters needed to create a line
                 $qty = GETPOST('tobuy'.$i, 'int');
@@ -135,6 +137,9 @@ if ($action == 'order') {
             header('Location: replenishorders.php');
             exit;
         }
+    } 
+    if ($box == 0){
+        setEventMessage($langs->trans('SelectProduct'), 'warnings');
     }
 }
 

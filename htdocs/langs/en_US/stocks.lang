@@ -94,3 +94,4 @@ Replenishment=Replenishment
 ReplenishmentOrders=Replenishment orders
 UseVirtualStock=Use virtual stock instead of physical stock
 RuleForStockReplenishment=Rule for stocks replenishment
+SelectProduct=Select at least one product
