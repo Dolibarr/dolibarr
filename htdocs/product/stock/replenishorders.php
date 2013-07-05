@@ -93,7 +93,7 @@ $sql .= ' AND cf.entity = ' . $conf->entity;
 
 if ($conf->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER) {
     $sql .= ' AND cf.fk_statut < 3';
-} else if ($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER) {
+} elseif ($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER) {
     $sql .= ' AND cf.fk_statut < 6';
 } else {
     $sql .= ' AND cf.fk_statut < 5';
@@ -129,16 +129,13 @@ if ($sdate) {
     } else {
         $elts = explode('/', $sdate);
         $datearray = array();
-        if($elts[2])
-        {
+        if ($elts[2]) {
             $datearray[0] = $elts[2];
         }
-        if($elts[1])
-        {
+        if ($elts[1]) {
             $datearray[1] = $elts[1];
         }
-        if($elts[0])
-        {
+        if ($elts[0]) {
             $datearray[2] = $elts[0];
         }
         $date = implode('-', $datearray);
@@ -263,7 +260,7 @@ if ($resql) {
         $obj = $db->fetch_object($resql);
         $var = !$var;
 
-        if(!dispatched($obj->rowid)) {
+        if (!dispatched($obj->rowid)) {
             $href = DOL_URL_ROOT . '/fourn/commande/fiche.php?id=' . $obj->rowid;
             echo '<tr ' . $bc[$var] . '>',
             // Ref

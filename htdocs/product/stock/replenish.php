@@ -41,7 +41,6 @@ $result=restrictedArea($user,'produit|service');
 
 //checks if a product has been ordered
 
-
 $action = GETPOST('action','alpha');
 $sref = GETPOST('sref', 'alpha');
 $snom = GETPOST('snom', 'alpha');
@@ -137,8 +136,8 @@ if ($action == 'order') {
             header('Location: replenishorders.php');
             exit;
         }
-    } 
-    if ($box == 0){
+    }
+    if ($box == 0) {
         setEventMessage($langs->trans('SelectProduct'), 'warnings');
     }
 }
@@ -423,9 +422,9 @@ if ($resql) {
             //virtual stock to compute the stock to buy value
             $stocktobuy = max($objp->desiredstock - $stock - $ordered, 0);
             $disabled = '';
-            if($ordered > 0) {
+            if ($ordered > 0) {
                 $picto = img_picto('','tick');
-                if($ordered + $stock >= $objp->desiredstock) {
+                if ($ordered + $stock >= $objp->desiredstock) {
                     $disabled = 'disabled="disabled"';
                 }
             } else {
@@ -519,10 +518,11 @@ if ($resql) {
 
     $db->free($resql);
 echo ' <script type="text/javascript">
-     function toggle(source) {
+     function toggle(source)
+     {
        checkboxes = document.getElementsByClassName("check");
-       for(var i=0; i < checkboxes.length;i++) {
-         if(!checkboxes[i].disabled) {
+       for (var i=0; i < checkboxes.length;i++) {
+         if (!checkboxes[i].disabled) {
             checkboxes[i].checked = source.checked;
         }
        }
