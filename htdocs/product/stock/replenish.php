@@ -68,7 +68,7 @@ $offset = $limit * $page ;
  */
 
 //orders creation
-//could go in the lib
+//FIXME: could go in the lib
 if ($action == 'order') {
     $linecount = GETPOST('linecount', 'int');
     $box = 0;
@@ -159,7 +159,6 @@ $sql .= ' ON p.rowid = pf.fk_product';
 $sql .= ' LEFT JOIN ' . MAIN_DB_PREFIX . 'product_stock as s';
 $sql .= ' ON p.rowid = s.fk_product';
 $sql.= ' WHERE p.entity IN (' . getEntity("product", 1) . ')';
-
 if ($sall) {
     $sql .= ' AND (p.ref LIKE "%'.$db->escape($sall).'%" ';
     $sql .= 'OR p.label LIKE "%'.$db->escape($sall).'%" ';
@@ -363,7 +362,8 @@ if ($resql) {
          '<td class="liste_titre">&nbsp;</td>',
          '<td class="liste_titre">&nbsp;</td>',
          '<td class="liste_titre" align="right">',
-         '<input type="image" class="liste_titre" name="button_search" src="' . DOL_URL_ROOT . '/theme/' . $conf->theme . '/img/search.png" alt="' . $langs->trans("Search") . '">',
+         '<input type="image" class="liste_titre" name="button_search"',
+         'src="' . DOL_URL_ROOT . '/theme/' . $conf->theme . '/img/search.png" alt="' . $langs->trans("Search") . '">',
          '</td>',
          '</tr>';
 
