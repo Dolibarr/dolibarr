@@ -308,7 +308,7 @@ if ($resql) {
                             $sortfield,
                             $sortorder
                             );
-    print_liste_field_titre($langs->trans('StockToBuy'),
+    print_liste_field_titre($langs->trans('Ordered'),
                             'replenish.php',
                             '',
                             $param,
@@ -317,7 +317,7 @@ if ($resql) {
                             $sortfield,
                             $sortorder
                             );
-    print_liste_field_titre($langs->trans('Ordered'),
+    print_liste_field_titre($langs->trans('StockToBuy'),
                             'replenish.php',
                             '',
                             $param,
@@ -419,11 +419,11 @@ if ($resql) {
             }
             //depending on conf, use either physical stock or
             //virtual stock to compute the stock to buy value
-            $stocktobuy = $objp->desiredstock - $stock;
-
-            if($ordered) {
+            $stocktobuy = max($objp->desiredstock - $stock - $ordered, 0);
+            $disabled = '';
+            if($ordered > 0) {
                 $picto = img_picto('','tick');
-                if($ordered >= $stocktobuy) {
+                if($ordered + $stock >= $objp->desiredstock) {
                     $disabled = 'disabled="disabled"';
                 }
             } else {
@@ -456,10 +456,11 @@ if ($resql) {
                  '<td align="right">',
                  $stock,
                  '</td>',
-                 '<td align="right">', $warning, $stocktobuy , '</td>',
-                 '<input type="hidden" name="tobuy' . $i . '" value="' . $stocktobuy . '" >',
                  '<td align="right">',
                  $ordered, ' ', $picto,
+                 '</td>',
+                 '<td align="right">', $warning,
+                 '<input type="text" name="tobuy' . $i . '" value="' . $stocktobuy . '" ' . $disabled . '>',
                  '</td>',
                  '<td align="right">',
                  $form->select_product_fourn_price($prod->id,

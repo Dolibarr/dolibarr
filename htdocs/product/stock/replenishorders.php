@@ -90,7 +90,6 @@ $sql .= ') LEFT JOIN ' . MAIN_DB_PREFIX . 'user as u ';
 $sql .= 'ON cf.fk_user_author = u.rowid';
 $sql .= ' WHERE cf.fk_soc = s.rowid ';
 $sql .= ' AND cf.entity = ' . $conf->entity;
-$sql .= ' AND cf.source = 42';
 
 if ($conf->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER) {
     $sql .= ' AND cf.fk_statut < 3';
