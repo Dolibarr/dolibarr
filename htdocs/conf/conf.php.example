@@ -38,20 +38,20 @@ $dolibarr_main_document_root='';
 
 // dolibarr_main_url_root_alt
 // This parameter defines the alternative URL of your Dolibarr.
-// It must link to a secondary directory htdocs.
+// It must link to some other secondary htdocs directories, separated by a coma.
 // Examples:
-// $dolibarr_main_url_root_alt='http://localhost/custom';
-// $dolibarr_main_url_root_alt='http://mydolibarrvirtualhost/custom';
-// $dolibarr_main_url_root_alt='http://myserver/dolibarr/htdocs/custom';
+// $dolibarr_main_url_root_alt='http://localhost/extensions';
+// $dolibarr_main_url_root_alt='http://mydolibarrvirtualhost/extensions1,http://mydolibarrvirtualhost/extensions2';
 //
 $dolibarr_main_url_root_alt='';
 
 
 // dolibarr_main_document_root_alt
 // This parameter contains absolute alternative file system directory of Dolibarr
+// It must link to url to other secondary htdocs directories, separated by a coma.
 // Examples:
-// $dolibarr_main_document_root_alt='/var/www/dolibarr/htdocs/custom';
-// $dolibarr_main_document_root_alt='C:/My web sites/dolibarr/htdocs/custom';
+// $dolibarr_main_document_root_alt='/var/www/dolibarr/htdocs/extensions';
+// $dolibarr_main_document_root_alt='C:/My web sites/dolibarr/htdocs/extensions1,C:/My web sites/dolibarr/htdocs/extensions2';
 //
 $dolibarr_main_document_root_alt='';
 
