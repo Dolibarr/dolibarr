@@ -2746,7 +2746,7 @@ abstract class CommonObject
 	 *	@param  string	    $seller            	Object of seller third party
 	 *	@param  string	    $buyer             	Object of buyer third party
 	 *	@param	string		$selected		   	Object line selected
-	 *  @param  object		$extrafieldline		Object of extrafield line attribute
+	 *  @param  object		$extrafieldsline	Object of extrafield line attribute
 	 *	@return	void
 	 */
 	function printObjectLine($action,$line,$var,$num,$i,$dateSelector,$seller,$buyer,$selected=0,$extrafieldsline=0)
@@ -3013,9 +3013,10 @@ abstract class CommonObject
 
 
 	/**
+	 *	get Margin info
 	 *
-	 * @param string $force_price
-	 * @return multitype:number string NULL
+	 * 	@param 	string 	$force_price	True of not
+	 * 	@return mixed					Array with info
 	 */
 	function getMarginInfos($force_price=false) {
 		global $conf;

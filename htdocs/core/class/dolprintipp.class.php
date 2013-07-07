@@ -79,7 +79,7 @@ class dolprintIPP
 
     /**
      *  Print selected file
-     *  
+     *
      * @param   string      $file       file
      * @param   string      $module     module
      *
@@ -181,6 +181,8 @@ class dolprintIPP
     /**
      *  Get printer detail
      *
+     *	@param	string	$uri	URI
+     *	@return	array			List of attributes
      */
     function get_printer_detail($uri)
     {

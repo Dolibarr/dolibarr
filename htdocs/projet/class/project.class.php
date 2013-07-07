@@ -53,7 +53,7 @@ class Project extends CommonObject
     var $statuts_short;
     var $statuts;
     var $oldcopy;
-    
+
 
     /**
      *  Constructor
@@ -147,7 +147,7 @@ class Project extends CommonObject
             dol_syslog(get_class($this)."::create error -2 " . $this->error, LOG_ERR);
             $error++;
         }
-        
+
         //Update extrafield
         if (!$error) {
         	if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
@@ -225,7 +225,7 @@ class Project extends CommonObject
                     }
                     // End call triggers
                 }
-                
+
                 //Update extrafield
                 if (!$error) {
                 	if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
@@ -478,10 +478,10 @@ class Project extends CommonObject
 
         $sql = "DELETE FROM " . MAIN_DB_PREFIX . "projet_task_extrafields";
         $sql.= " WHERE fk_object IN (SELECT rowid FROM " . MAIN_DB_PREFIX . "projet_task WHERE fk_projet=" . $this->id . ")";
-        
+
         dol_syslog(get_class($this) . "::delete sql=" . $sql, LOG_DEBUG);
         $resql = $this->db->query($sql);
-        
+
         $sql = "DELETE FROM " . MAIN_DB_PREFIX . "projet_task";
         $sql.= " WHERE fk_projet=" . $this->id;
 
@@ -493,13 +493,13 @@ class Project extends CommonObject
 
         dol_syslog(get_class($this) . "::delete sql=" . $sql, LOG_DEBUG);
         $resql = $this->db->query($sql);
-        
+
         $sql = "DELETE FROM " . MAIN_DB_PREFIX . "projet_extrafields";
         $sql.= " WHERE fk_object=" . $this->id;
-        
+
         dol_syslog(get_class($this) . "::delete sql=" . $sql, LOG_DEBUG);
         $resql = $this->db->query($sql);
-        
+
         if ($resql)
         {
             // We remove directory
@@ -1277,20 +1277,19 @@ class Project extends CommonObject
 	    }
 	    return $result;
 	}
-	
+
 	/**
 	 * Clean task not linked to a parent
 	 *
-	 * @param	DoliDB	$db     Database handler
 	 * @return	int				Nb of records deleted
 	 */
 	function clean_orphelins()
 	{
 		$nb=0;
-	
+
 		// There is orphelins. We clean that
 		$listofid=array();
-	
+
 		// Get list of id in array listofid
 		$sql='SELECT rowid FROM '.MAIN_DB_PREFIX.'projet_task';
 		$resql = $this->db->query($sql);
@@ -1309,22 +1308,22 @@ class Project extends CommonObject
 		{
 			dol_print_error($this->db);
 		}
-	
+
 		if (count($listofid))
 		{
 			// Removed orphelins records
 			print 'Some orphelins were found and restored to be parents so records are visible again: ';
 			print join(',',$listofid);
-	
+
 			$sql = "UPDATE ".MAIN_DB_PREFIX."projet_task";
 			$sql.= " SET fk_task_parent = 0";
 			$sql.= " WHERE fk_task_parent NOT IN (".join(',',$listofid).")";
-	
+
 			$resql = $this->db->query($sql);
 			if ($resql)
 			{
 				$nb=$this->db->affected_rows($sql);
-	
+
 				return $nb;
 			}
 			else
@@ -1333,19 +1332,19 @@ class Project extends CommonObject
 			}
 		}
 	}
-	
-	
+
+
 	 /**
 	  *    Associate element to a project
 	  *
-	  *    @param	TableName		Table of the element to update
-	  *    @param	ElementSelectId		Key-rowid of the line of the element to update
-	  *    @return	int				1 if OK or < 0 if KO
+	  *    @param	string	$TableName			Table of the element to update
+	  *    @param	int		$ElementSelectId	Key-rowid of the line of the element to update
+	  *    @return	int							1 if OK or < 0 if KO
 	  */
 	function update_element($TableName, $ElementSelectId)
 	{
 		$sql="UPDATE ".MAIN_DB_PREFIX.$TableName;
-		
+
 		if ($TableName=="actioncomm")
 		{
 			$sql.= " SET fk_project=".$this->id;
@@ -1356,17 +1355,17 @@ class Project extends CommonObject
 			$sql.= " SET fk_projet=".$this->id;
 			$sql.= " WHERE rowid=".$ElementSelectId;
 		}
-		
+
 		dol_syslog(get_class($this)."::update_element sql=" . $sql, LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if (!$resql) {
-			$this->error=$this->db->lasterror();	
+			$this->error=$this->db->lasterror();
 			dol_syslog(get_class($this)."::update_element error : " . $this->error, LOG_ERR);
 			return -1;
 		}else {
 			return 1;
 		}
-			
+
 	}
 }
 

@@ -2076,7 +2076,7 @@ class ContratLigne
 	/**
 	 *      Load elements linked to contract (only intervention for the moment)
 	 *
-	 *      @param	User	$user           Objet type
+	 *      @param	string	$type           Object type
 	 *      @return array 	$elements		array of linked elements
 	 */
 	function get_element_list($type)

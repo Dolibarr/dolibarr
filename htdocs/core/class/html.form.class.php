@@ -1372,7 +1372,7 @@ class Form
 							$objp->remise = $objp2->remise;
 							$objp->price_by_qty_rowid = $objp2->rowid;
 
-							$this->_construct_product_list_option($objp, $opt, $optJson, 0, $selected);
+							$this->constructProductListOption($objp, $opt, $optJson, 0, $selected);
 
 							$j++;
 
@@ -1386,7 +1386,7 @@ class Form
 				}
 				else
 				{
-					$this->_construct_product_list_option($objp, $opt, $optJson, $price_level, $selected);
+					$this->constructProductListOption($objp, $opt, $optJson, $price_level, $selected);
 					// Add new entry
 					// "key" value of json key array is used by jQuery automatically as selected value
 					// "label" value of json key array is used by jQuery automatically as text for combo box
@@ -1411,16 +1411,16 @@ class Form
     }
 
     /**
-     * _construct_product_list_option
+     * constructProductListOption
      *
-     * @param 	resultset		&$objp			Resultset of fetch
-     * @param 	string		$opt			Option
-     * @param 	string		$optJson		Option
+     * @param 	resultset	&$objp			Resultset of fetch
+     * @param 	string		&$opt			Option
+     * @param 	string		&$optJson		Option
      * @param 	int			$price_level	Price level
      * @param 	string		$selected		Preselected value
-     * @return
+     * @return	void
      */
-	private function _construct_product_list_option(&$objp, &$opt, &$optJson, $price_level, $selected)
+	private function constructProductListOption(&$objp, &$opt, &$optJson, $price_level, $selected)
 	{
 		global $langs,$conf,$user,$db;
 
@@ -1475,7 +1475,7 @@ class Form
             $sql.= " ORDER BY date_price";
             $sql.= " DESC LIMIT 1";
 
-            dol_syslog(get_class($this)."::_construct_product_list_option search price for level '.$price_level.' sql=".$sql);
+            dol_syslog(get_class($this)."::constructProductListOption search price for level '.$price_level.' sql=".$sql);
             $result2 = $this->db->query($sql);
             if ($result2)
             {
