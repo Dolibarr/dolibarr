@@ -2468,22 +2468,32 @@ class Propal extends CommonObject
         global $conf, $db, $langs;
         $langs->load("propal");
 
-        $dir = DOL_DOCUMENT_ROOT . "/core/modules/propale/";
-
         if (! empty($conf->global->PROPALE_ADDON))
         {
-            $file = $conf->global->PROPALE_ADDON.".php";
+        	$mybool=false;
 
-            // Chargement de la classe de numerotation
+            $file = $conf->global->PROPALE_ADDON.".php";
             $classname = $conf->global->PROPALE_ADDON;
-            require_once $dir.$file;
+
+            // Include file with class
+            foreach ($conf->file->dol_document_root as $dirroot)
+            {
+            	$dir = $dirroot."/core/modules/propale/";
+            	// Load file with numbering class (if found)
+            	$mybool|=@include_once $dir.$file;
+            }
+
+            if (! $mybool)
+            {
+            	dol_print_error('',"Failed to include file ".$file);
+            	return '';
+            }
 
             $obj = new $classname();
-
             $numref = "";
             $numref = $obj->getNextValue($soc,$this);
 
-            if ( $numref != "")
+            if ($numref != "")
             {
                 return $numref;
             }

@@ -44,7 +44,9 @@ For developers:
 - New: Add option MAIN_MOTD_SETUPPAGE to add a content onto setup page. Also content for
   MAIN_MOTD_SETUPPAGE, MAIN_MOTD_SETUPPAGE, MAIN_HOME now accept "|langfile" into translation
   key to use a specific language file.
- 
+- New: Make some changes to allow usage of several alternative $dolibarr_main_url_root variables.
+  Fix also several bugs with old code. 
+   
 
 ***** ChangeLog for 3.4 compared to 3.3.2 *****
 For users:

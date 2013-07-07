@@ -203,8 +203,6 @@ class CoreTest extends PHPUnit_Framework_TestCase
 
 		print __METHOD__." DOL_MAIN_URL_ROOT=".DOL_MAIN_URL_ROOT."\n";
 		print __METHOD__." DOL_URL_ROOT=".DOL_URL_ROOT."\n";
-        print __METHOD__." DOL_MAIN_URL_ROOT_ALT=".DOL_MAIN_URL_ROOT_ALT."\n";
-		print __METHOD__." DOL_URL_ROOT_ALT=".DOL_URL_ROOT_ALT."\n";
 		$this->assertEquals(DOL_URL_ROOT,$expectedresult);
 
 		return true;

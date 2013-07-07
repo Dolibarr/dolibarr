@@ -192,7 +192,7 @@ function print_eldy_menu($db,$atarget,$type_user,&$tabMenu,&$menu,$noout=0)
 		if (empty($noout)) print_end_menu_entry($showmode);
 		$menu->add('/projet/index.php?mainmenu=project&amp;leftmenu=', $langs->trans("Projects"), 0, $showmode, $atarget, "project", '');
 	}
-	
+
 	// HRM
 	$tmpentry=array('enabled'=>(! empty($conf->holiday->enabled)),
 	'perms'=>(! empty($user->rights->holiday->write)),
@@ -201,19 +201,19 @@ function print_eldy_menu($db,$atarget,$type_user,&$tabMenu,&$menu,$noout=0)
 	if ($showmode)
 	{
 		$langs->load("holiday");
-	
+
 		$classname="";
 		if ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "hrm") { $classname='class="tmenusel"'; $_SESSION['idmenu']=''; }
 		else $classname = 'class="tmenu"';
 		$idsel='hrm';
-	
+
 		if (empty($noout)) print_start_menu_entry($idsel,$classname,$showmode);
 		if (empty($noout)) print_text_menu_entry($langs->trans("HRM"), $showmode, DOL_URL_ROOT.'/holiday/index.php?mainmenu=hrm&amp;leftmenu=', $id, $idsel, $classname, $atarget);
 		if (empty($noout)) print_end_menu_entry($showmode);
 		$menu->add('/holiday/index.php?mainmenu=holiday&amp;leftmenu=', $langs->trans("HRM"), 0, $showmode, $atarget, "hrm", '');
 	}
-	
-	
+
+
 
 	// Tools
 	$tmpentry=array('enabled'=>(! empty($conf->mailing->enabled) || ! empty($conf->export->enabled) || ! empty($conf->import->enabled)),
@@ -289,16 +289,14 @@ function print_eldy_menu($db,$atarget,$type_user,&$tabMenu,&$menu,$noout=0)
 			$url = $shorturl = $newTabMenu[$i]['url'];
 			if (! preg_match("/^(http:\/\/|https:\/\/)/i",$newTabMenu[$i]['url']))
 			{
-				$param='';
-				if (! preg_match('/mainmenu/i',$url) || ! preg_match('/leftmenu/i',$url))
-				{
-					if (! preg_match('/\?/',$url)) $param.='?';
-					else $param.='&';
-					$param.='mainmenu='.$newTabMenu[$i]['mainmenu'].'&amp;leftmenu=';
-				}
+				$tmp=explode('?',$newTabMenu[$i]['url'],2);
+				$url = $shorturl = $tmp[0];
+				$param = (isset($tmp[1])?$tmp[1]:'');
+
+				if (! preg_match('/mainmenu/i',$url) || ! preg_match('/leftmenu/i',$url)) $param.=($param?'&':'').'mainmenu='.$newTabMenu[$i]['mainmenu'].'&amp;leftmenu=';
 				//$url.="idmenu=".$newTabMenu[$i]['rowid'];    // Already done by menuLoad
-				$url = dol_buildpath($url,1).$param;
-				$shorturl = $newTabMenu[$i]['url'].$param;
+				$url = dol_buildpath($url,1).($param?'?'.$param:'');
+				$shorturl = $shorturl.($param?'?'.$param:'');
 			}
 			$url=preg_replace('/__LOGIN__/',$user->login,$url);
 			$shorturl=preg_replace('/__LOGIN__/',$user->login,$shorturl);
@@ -1099,7 +1097,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 				$newmenu->add("/projet/activity/list.php", $langs->trans("NewTimeSpent"), 1, $user->rights->projet->creer && $user->rights->projet->creer);
 			}
 		}
-		
+
 		/*
 		 * Menu HRM
 		*/
@@ -1108,14 +1106,14 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 			if (! empty($conf->holiday->enabled))
 			{
 				$langs->load("holiday");
-		
+
 				// HRM: Holiday module
 				$newmenu->add("/holiday/index.php?&leftmenu=hrm", $langs->trans("CPTitreMenu"), 0, $user->rights->holiday->write, '', $mainmenu, 'hrm');
 				$newmenu->add("/holiday/fiche.php?&action=request", $langs->trans("MenuAddCP"), 1,$user->rights->holiday->write);
 				$newmenu->add("/holiday/define_holiday.php?&action=request", $langs->trans("MenuConfCP"), 1, $user->rights->holiday->define_holiday);
 				$newmenu->add("/holiday/view_log.php?&action=request", $langs->trans("MenuLogCP"), 1, $user->rights->holiday->view_log);
 				$newmenu->add("/holiday/month_report.php?&action=request", $langs->trans("MenuReportMonth"), 1, $user->rights->holiday->view_log);
-		
+
 			}
 		}
 
@@ -1302,7 +1300,11 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 			}
 
 			// For external modules
-			$url = dol_buildpath($menu_array[$i]['url'], 1);
+			$tmp=explode('?',$menu_array[$i]['url'],2);
+			$url = $tmp[0];
+			$param = (isset($tmp[1])?$tmp[1]:'');
+			$url = dol_buildpath($url,1).($param?'?'.$param:'');
+
 			$url=preg_replace('/__LOGIN__/',$user->login,$url);
 			$url=preg_replace('/__USERID__/',$user->id,$url);
 

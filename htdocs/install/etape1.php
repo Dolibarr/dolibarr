@@ -359,6 +359,7 @@ if (! $error && $db->connected && $action == "set")
             $dir[5] = $main_data_dir."/ficheinter";
             $dir[6] = $main_data_dir."/produit";
             $dir[7] = $main_data_dir."/doctemplates";
+            $dir[7] = $main_data_dir."/extensions";
 
             // Boucle sur chaque repertoire de dir[] pour les creer s'ils nexistent pas
             $num=count($dir);

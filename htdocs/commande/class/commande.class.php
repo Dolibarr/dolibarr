@@ -129,36 +129,39 @@ class Commande extends CommonOrder
         global $db, $langs, $conf;
         $langs->load("order");
 
-        $dir = DOL_DOCUMENT_ROOT . "/core/modules/commande";
-
         if (! empty($conf->global->COMMANDE_ADDON))
         {
-            $file = $conf->global->COMMANDE_ADDON.".php";
+        	$mybool=false;
 
-            // Chargement de la classe de numerotation
+            $file = $conf->global->COMMANDE_ADDON.".php";
             $classname = $conf->global->COMMANDE_ADDON;
 
-            $result=include_once $dir.'/'.$file;
-            if ($result)
+            // Include file with class
+            foreach ($conf->file->dol_document_root as $dirroot)
             {
-                $obj = new $classname();
-                $numref = "";
-                $numref = $obj->getNextValue($soc,$this);
+            	$dir = $dirroot."/core/modules/commande/";
+            	// Load file with numbering class (if found)
+            	$mybool|=@include_once $dir.$file;
+            }
 
-                if ( $numref != "")
-                {
-                    return $numref;
-                }
-                else
-                {
-                    dol_print_error($db,get_class($this)."::getNextNumRef ".$obj->error);
-                    return "";
-                }
+            if (! $mybool)
+            {
+            	dol_print_error('',"Failed to include file ".$file);
+            	return '';
+            }
+
+            $obj = new $classname();
+            $numref = "";
+            $numref = $obj->getNextValue($soc,$this);
+
+            if ($numref != "")
+            {
+            	return $numref;
             }
             else
-            {
-                print $langs->trans("Error")." ".$langs->trans("Error_COMMANDE_ADDON_NotDefined");
-                return "";
+			{
+            	dol_print_error($db,get_class($this)."::getNextNumRef ".$obj->error);
+            	return "";
             }
         }
         else

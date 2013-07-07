@@ -2540,11 +2540,10 @@ class Facture extends CommonInvoice
 		}
 
 		$obj = new $classname();
-
 		$numref = "";
 		$numref = $obj->getNumRef($soc,$this,$mode);
 
-		if ( $numref != "")
+		if ($numref != "")
 		{
 			return $numref;
 		}
