@@ -56,6 +56,8 @@ For users:
 - New: [ task #823 ] Shipping_validate email notification.
 - New: [ task #900 ] Review code of ficheinter.class.php
 - Fix: [Bug #958] LocalTax2 for Spain fails on Suppliers
+- Fix: [ bug #972 ] Auto completion contact field do not take account the min caract number before search
+- Fix : [ bug #971 ] html.form.class.php select_contact with autocomplete do not exclude id from exclude array
 
 For translators:
 - Update language files.
