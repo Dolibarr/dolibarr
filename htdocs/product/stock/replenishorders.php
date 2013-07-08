@@ -61,7 +61,7 @@ $sttc = GETPOST('search_ttc', 'int');
 $sall = GETPOST('search_all', 'alpha');
 $sdate = GETPOST('search_date', 'alpha');
 $page = GETPOST('page', 'int');
-
+$sproduct = GETPOST('sproduct', 'int');
 $sortorder = GETPOST('sortorder', 'alpha');
 $sortfield = GETPOST('sortfield', 'alpha');
 
@@ -259,8 +259,8 @@ if ($resql) {
     while ($i < min($num,$conf->liste_limit)) {
         $obj = $db->fetch_object($resql);
         $var = !$var;
-
-        if (!dispatched($obj->rowid)) {
+        if(!dispatched($obj->rowid) && 
+          (!$sproduct || in_array($sproduct, getProducts($obj->rowid)))) {
             $href = DOL_URL_ROOT . '/fourn/commande/fiche.php?id=' . $obj->rowid;
             echo '<tr ' . $bc[$var] . '>',
             // Ref

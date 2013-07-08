@@ -21,6 +21,7 @@
  *  \ingroup    produit
  *  \brief      Contains functions used in replenish.php and replenishorders.php
  */
+require_once DOL_DOCUMENT_ROOT . '/fourn/class/fournisseur.commande.class.php';
 
 function dispatched($order_id)
 {
@@ -101,6 +102,22 @@ function ordered($product_id)
 
         return $langs->trans('error');
     }
+}
+
+function getProducts($order_id)
+{
+    global $db;
+    $order = new CommandeFournisseur($db);
+    $f = $order->fetch($order_id);
+    $products = array();
+    if($f) {
+        foreach($order->lines as $line) {
+            if (!in_array($line->fk_product, $products)) {
+                $products[] = $line->fk_product;
+            }
+        }
+    }
+    return $products;
 }
 
 ?>

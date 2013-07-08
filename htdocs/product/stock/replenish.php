@@ -422,10 +422,13 @@ if ($resql) {
             //virtual stock to compute the stock to buy value
             $stocktobuy = max($objp->desiredstock - $stock - $ordered, 0);
             $disabled = '';
-            if ($ordered > 0) {
-                $picto = img_picto('', './img/yes', '', 1);
+            if($ordered > 0) {
                 if($ordered + $stock >= $objp->desiredstock) {
+                    $picto = img_picto('', './img/yes', '', 1);
                     $disabled = 'disabled="disabled"';
+                }
+                else {
+                    $picto = img_picto('', './img/no', '', 1);
                 }
             } else {
                 $picto = img_picto('', './img/no', '', 1);
@@ -458,10 +461,12 @@ if ($resql) {
                  $warning, $stock,
                  '</td>',
                  '<td align="right">',
-                 $ordered, ' ', $picto,
+                 '<a href="replenishorders.php?sproduct=' , $prod->id, '">',
+                 $ordered, '</a> ', $picto,
                  '</td>',
                  '<td align="right">',
-                 '<input type="text" name="tobuy' . $i . '" value="' . $stocktobuy . '" ' . $disabled . '>',
+                 '<input type="text" name="tobuy' . $i .
+                 '" value="' . $stocktobuy . '" ' . $disabled . '>',
                  '</td>',
                  '<td align="right">',
                  $form->select_product_fourn_price($prod->id,
