@@ -1422,7 +1422,7 @@ SuppliersInvoiceModel=Modèle de factures fournisseur complet (logo…)
 SuppliersInvoiceNumberingModel=Modèles de numérotation des factures fournisseur
 ##### GeoIPMaxmind #####
 GeoIPMaxmindSetup=Configuration du module GeoIP Maxmind
-PathToGeoIPMaxmindCountryDataFile=Chemin du fichier Maxmind contenant les conversions IP->Pays.<br>Exemple: /usr/local/share/GeoIP/GeoIP.dat
+PathToGeoIPMaxmindCountryDataFile=Chemin du fichier Maxmind contenant les conversions IP->Pays.<br>Exemples<br>/usr/local/share/GeoIP/GeoIP.dat<br>/usr/share/GeoIP/GeoIP.dat
 NoteOnPathLocation=Notez que ce fichier doit être dans un répertoire accessible à votre PHP (Vérifiez le paramètre open_basedir de votre PHP et les permissions du fichier/répertoires).
 YouCanDownloadFreeDatFileTo=Vous pouvez télécharger une <b>version démo gratuite</b> de la base Maxmind à l'adresse %s.
 YouCanDownloadAdvancedDatFileTo=Vous pouvez aussi télécharger une <b>version plus complète avec mise à jours</b> de la base Maxmind à l'adresse %s.
