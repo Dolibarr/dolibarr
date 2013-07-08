@@ -423,12 +423,12 @@ if ($resql) {
             $stocktobuy = max($objp->desiredstock - $stock - $ordered, 0);
             $disabled = '';
             if ($ordered > 0) {
-                $picto = img_picto('','tick');
-                if ($ordered + $stock >= $objp->desiredstock) {
+                $picto = img_picto('', './img/yes', '', 1);
+                if($ordered + $stock >= $objp->desiredstock) {
                     $disabled = 'disabled="disabled"';
                 }
             } else {
-                $picto = img_picto('', 'stcomm-1');
+                $picto = img_picto('', './img/no', '', 1);
             }
             echo '<tr ' . $bc[$var] . '>',
                  '<td><input type="checkbox" class="check" name="' . $i . '"' . $disabled . '></td>',
