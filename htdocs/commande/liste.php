@@ -285,6 +285,7 @@ if ($resql)
 	print_liste_field_titre($langs->trans('DeliveryDate'),$_SERVER["PHP_SELF"],'c.date_livraison','',$param, 'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans('AmountHT'),$_SERVER["PHP_SELF"],'c.total_ht','',$param, 'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre ($langs->trans('Facture HT'));
+	print_liste_field_titre ($langs->trans('A facture HT'));
 	print_liste_field_titre($langs->trans('Status'),$_SERVER["PHP_SELF"],'c.fk_statut','',$param,'align="center"',$sortfield,$sortorder);
 	
 	print '<td colspan="1">';
@@ -300,7 +301,7 @@ if ($resql)
 	print '<td colspan ="2">';
 	print '</td><td class="liste_titre" align="left">';
 	print '<input class="flat"  type="text" size="10" name="search_montant_ht" value="'.$search_montant_ht.'">';
-	print '</td><td class="liste_titre" colspan="2">';
+	print '</td><td class="liste_titre" colspan="3">';
 	print '<input type="image" align="right" class="liste_titre" name="button_search" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png"  value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 	print '<td colspan="2">';
 	print '</td></tr>';
@@ -406,6 +407,11 @@ if ($resql)
 		
 		print '<td align="right">'.price($total_facture)."</td>\n";
 		
+		//Reste a facturer
+		$reste_facture=$objp->total_ht - $total_facture;
+		
+		print '<td align="right">'.price($reste_facture)."</td>\n";
+
 		// Statut
 		print '<td align="right" nowrap="nowrap">'.$generic_commande->LibStatut($objp->fk_statut,$objp->facturee,5).'</td>';
 
@@ -415,6 +421,7 @@ if ($resql)
 
 		$total+=$objp->total_ht;
 		$subtotal+=$total_facture;
+		$reste+=$reste_facture;
 		$i++;
 	}
 	if($num >= $limit)
@@ -424,6 +431,7 @@ if ($resql)
 		print '<td colspan="5" align="left">'.$langs->trans("Total for this page").'</td>';
 		print '<td align="right"><b>'.price($total).''.getCurrencySymbol($conf->currency).'</b></td>';
 		print '<td align="right"><b>'.price($subtotal).''.getCurrencySymbol($conf->currency).'</b></td>';
+		print '<td align="right"><b>'.price($reste).''.getCurrencySymbol($conf->currency).'</b></td>';
 		print '<td colspan="2">';
 	}
 	else
@@ -432,6 +440,7 @@ if ($resql)
 		print '<td colspan="5" align="left">'.$langs->trans("Total").'</td>';
 		print '<td align="right"><b>'.price($total).''.getCurrencySymbol($conf->currency).'</b></td>';
 		print '<td align="right"><b>'.price($subtotal).''.getCurrencySymbol($conf->currency).'</b></td>';
+		print '<td align="right"><b>'.price($reste).''.getCurrencySymbol($conf->currency).'</b></td>';
 		print '<td colspan="2">';
 	}
 		
