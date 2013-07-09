@@ -285,7 +285,7 @@ function dol_buildpath($path, $type=0)
 			if (! empty($regs[1]))
 			{
 				//print $key.'-'.$dirroot.'/'.$path.'-'.$conf->file->dol_url_root[$type].'<br>'."\n";
-				if (file_exists($dirroot.'/'.$path))
+				if (file_exists($dirroot.'/'.$regs[1]))
 				{
 					if ($type == 1)
 					{
