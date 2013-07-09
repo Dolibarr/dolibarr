@@ -2263,7 +2263,14 @@ else
 		$formmail->withto=GETPOST("sendto")?GETPOST("sendto"):$liste;
 		$formmail->withtocc=$liste;
 		$formmail->withtoccc=(! empty($conf->global->MAIN_EMAIL_USECCC)?$conf->global->MAIN_EMAIL_USECCC:false);
-		$formmail->withtopic=$langs->trans('SendPropalRef','__PROPREF__');
+		if(empty($object->ref_client))
+		{
+			$formmail->withtopic=$langs->trans('SendPropalRef','__PROPREF__');
+		}
+		else if(!empty($object->ref_client))
+		{
+			$formmail->withtopic=$langs->trans('SendPropalRef','__PROPREF__(__REFCLIENT__)');
+		}
 		$formmail->withfile=2;
 		$formmail->withbody=1;
 		$formmail->withdeliveryreceipt=1;
@@ -2272,6 +2279,7 @@ else
 		// Tableau des substitutions
 		$formmail->substit['__PROPREF__']=$object->ref;
 		$formmail->substit['__SIGNATURE__']=$user->signature;
+		$formmail->substit['__REFCLIENT__']=$object->ref_client;
 		$formmail->substit['__PERSONALIZED__']='';
 		$formmail->substit['__CONTACTCIVNAME__']='';
 
@@ -2299,8 +2307,6 @@ else
 		$formmail->param['models']='propal_send';
 		$formmail->param['id']=$object->id;
 		$formmail->param['returnurl']=$_SERVER["PHP_SELF"].'?id='.$object->id;
-
-
 		// Init list of files
 		if (GETPOST("mode")=='init')
 		{
