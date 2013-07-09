@@ -65,18 +65,18 @@ class DolGeoIP
 			print $this->errorlabel;
 			return 0;
 		}
-		if (! file_exists($datfile))
+		if (! file_exists($datfile) || ! is_readable($datfile))
 		{
 			//dol_syslog("DolGeoIP::DolGeoIP datafile ".$datfile." can not be read", LOG_ERR);
 			$this->error='ErrorGeoIPClassNotInitialized';
 			$this->errorlabel="Datafile ".$datfile." not found";
-			print $this->errorlabel;
+			print $this->errorlabel;	// To be sure to understand when it fails on screens
 			return 0;
 		}
 
 		if (function_exists('geoip_open'))
 		{
-		    $this->gi = geoip_open($datfile,GEOIP_STANDARD);
+			$this->gi = geoip_open($datfile,GEOIP_STANDARD);
 		}
 		else
 		{
@@ -133,7 +133,7 @@ class DolGeoIP
 	function getVersion()
 	{
 	    if ($this->gi == 'NOGI') return geoip_database_info();
-		return '';
+		return 'Not available (not using PHP internal geo functions)';
 	}
 
 	/**
