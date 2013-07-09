@@ -138,7 +138,7 @@ if (! empty($conf->contrat->enabled) && $user->rights->contrat->lire)
  */
 if (! empty($conf->propal->enabled) && $user->rights->propal->lire)
 {
-	$sql = "SELECT p.rowid, p.ref, p.total_ht, s.rowid as socid, s.nom as name, s.client, s.canvas";
+	$sql = "SELECT p.rowid, p.ref, p.total_ht,p.datep, s.rowid as socid, s.nom as name, s.client, s.canvas";
 	$sql.= " FROM ".MAIN_DB_PREFIX."propal as p";
 	$sql.= ", ".MAIN_DB_PREFIX."societe as s";
 	if (! $user->rights->societe->client->voir && ! $socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -153,7 +153,7 @@ if (! empty($conf->propal->enabled) && $user->rights->propal->lire)
 	{
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
-		print '<td colspan="3">'.$langs->trans("ProposalsDraft").'</td></tr>';
+		print '<td colspan="4">'.$langs->trans("ProposalsDraft").'</td></tr>';
 
 		$total = 0;
 		$num = $db->num_rows($resql);
@@ -177,14 +177,15 @@ if (! empty($conf->propal->enabled) && $user->rights->propal->lire)
 				$companystatic->canvas=$obj->canvas;
 				print $companystatic->getNomUrl(1,'customer',16);
 				print '</td>';
-				print '<td align="right" nowrap="nowrap">'.price($obj->total_ht).'</td></tr>';
+				print '<td align="right" nowrap="nowrap">'.price($obj->total_ht).'</td>';
+				print '<td align="right" nowrap="nowrap">'.dol_print_date($obj->datep,'day').'</td></tr>';
 				$i++;
 				$total += $obj->total_ht;
 			}
 			if ($total>0)
 			{
 				$var=!$var;
-				print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td colspan="2" align="right">'.price($total)."</td></tr>";
+				print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td colspan="2" align="right">'.price($total).'<td colspan="1"></tr>';
 			}
 		}
 		print "</table><br>";
@@ -205,7 +206,7 @@ if (! empty($conf->commande->enabled) && $user->rights->commande->lire)
 {
 	$langs->load("orders");
 
-	$sql = "SELECT c.rowid, c.ref, c.total_ttc, s.rowid as socid, s.nom as name, s.client, s.canvas";
+	$sql = "SELECT c.rowid, c.ref,c.date_creation, c.total_ttc, s.rowid as socid, s.nom as name, s.client, s.canvas";
 	$sql.= " FROM ".MAIN_DB_PREFIX."commande as c";
 	$sql.= ", ".MAIN_DB_PREFIX."societe as s";
 	if (! $user->rights->societe->client->voir && ! $socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -220,7 +221,7 @@ if (! empty($conf->commande->enabled) && $user->rights->commande->lire)
 	{
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
-		print '<td colspan="3">'.$langs->trans("DraftOrders").'</td></tr>';
+		print '<td colspan="4">'.$langs->trans("DraftOrders").'</td></tr>';
 
 		$total = 0;
 		$num = $db->num_rows($resql);
@@ -240,14 +241,15 @@ if (! empty($conf->commande->enabled) && $user->rights->commande->lire)
                 $companystatic->canvas=$obj->canvas;
 				print $companystatic->getNomUrl(1,'customer',16);
 				print '</td>';
-				print '<td align="right" nowrap="nowrap">'.price($obj->total_ttc).'</td></tr>';
+				print '<td align="right" nowrap="nowrap">'.price($obj->total_ttc).'</td>';
+				print '<td align="right" nowrap="nowrap">'.dol_print_date($obj->date_creation,'day').'</tr>';
 				$i++;
 				$total += $obj->total_ttc;
 			}
 			if ($total>0)
 			{
 				$var=!$var;
-				print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td colspan="2" align="right">'.price($total)."</td></tr>";
+				print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td colspan="2" align="right">'.price($total).'<td colspan="1"></tr>';
 			}
 		}
 		print "</table><br>";
