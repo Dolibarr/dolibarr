@@ -56,7 +56,7 @@ if (function_exists('socket_create'))
     print 'XDEBUG_PORT: '.$port."<br>\n";
     print "<br>\n";
     $socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
-    if (empty($socket)) die('Unable to preapre a socket');
+    if (empty($socket)) die('Unable to prepare a socket');
     //socket_bind($sock, $address, $port) or die('Unable to bind on address='.$address.' port='.$port);
     //socket_listen($sock);
     //$client = socket_accept($sock);
