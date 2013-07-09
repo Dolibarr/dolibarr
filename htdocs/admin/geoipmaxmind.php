@@ -118,12 +118,12 @@ print '<br>';
 
 print $langs->trans("NoteOnPathLocation").'<br>';
 
-$url1='http://www.maxmind.com/app/perl?rId=awstats';
+$url1='http://www.maxmind.com/en/city?rId=awstats';
 print $langs->trans("YouCanDownloadFreeDatFileTo",'<a href="'.$url1.'" target="_blank">'.$url1.'</a>');
 
 print '<br>';
 
-$url2='http://www.maxmind.com/app/perl?rId=awstats';
+$url2='http://www.maxmind.com/en/city?rId=awstats';
 print $langs->trans("YouCanDownloadAdvancedDatFileTo",'<a href="'.$url2.'" target="_blank">'.$url2.'</a>');
 
 if ($geoip)
