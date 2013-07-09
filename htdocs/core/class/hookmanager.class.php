@@ -159,13 +159,13 @@ class HookManager
                     	{
                     		$error++;
                     		$this->error=$actionclassinstance->error; $this->errors=array_merge($this->errors, (array) $actionclassinstance->errors);
-
-                    		// TODO remove this. Change must be inside the method of hook if required
+                    		// TODO remove this.
+                    		/* Change must be inside the method of hook if required. Only hook must decide if $action must be modified or not.
                     		if ($method == 'doActions')
                     		{
                     			if ($action=='add')    $action='create';
                     			if ($action=='update') $action='edit';
-                    		}
+                    		}*/
                     	}
 
                     	if (is_array($actionclassinstance->results))  $this->resArray =array_merge($this->resArray, $actionclassinstance->results);
@@ -181,11 +181,10 @@ class HookManager
 
                     	if (! empty($actionclassinstance->results) && is_array($actionclassinstance->results)) $this->resArray =array_merge($this->resArray, $actionclassinstance->results);
                     	if (! empty($actionclassinstance->resprints)) $this->resPrint.=$actionclassinstance->resprints;
-
                     	// TODO. remove this. array result must be set into $actionclassinstance->results
-                    	if (is_array($result)) $this->resArray = array_merge($this->resArray, $result);
+                    	//if (is_array($result)) $this->resArray = array_merge($this->resArray, $result);
                     	// TODO. remove this. result must not be a string. we must use $actionclassinstance->resprint to return a string
-                    	if (! is_array($result) && ! is_numeric($result)) $this->resPrint.=$result;
+                    	//if (! is_array($result) && ! is_numeric($result)) $this->resPrint.=$result;
                     }
 
                     //print "After hook  ".get_class($actionclassinstance)." method=".$method." results=".count($actionclassinstance->results)." resprints=".count($actionclassinstance->resprints)." result=".$result." resaction=".$resaction."<br>\n";
