@@ -1273,6 +1273,33 @@ print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref', '');
 print '</td></tr>';
 
 // Ref client
+
+print '<tr><td>';
+print '<table class="nobordernopadding" width="100%"><tr><td nowrap="nowrap">';
+print $langs->trans('RefCustomer').'</td>';
+
+		
+print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=refclient&amp;id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('RefCustomer')).'</a></td>';
+print '</td>';
+if ($action != 'refclient' && ! empty($object->brouillon)) print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=refclient&amp;id='.$object->id.'">'.img_edit($langs->trans('Modify')).'</a></td>';
+print '</tr></table>';
+print '</td><td colspan="5">';
+if ($user->rights->propal->creer && $action == 'refclient')
+{
+	print '<form action="propal.php?id='.$object->id.'" method="post">';
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="action" value="set_ref_client">';
+	print '<input type="text" class="flat" size="20" name="ref_client" value="'.$object->ref_client.'">';
+	print ' <input type="submit" class="button" value="'.$langs->trans('Modify').'">';
+	print '</form>';
+}
+else
+{
+	print $object->ref_client;
+}
+print '</td>';
+print '</tr>';
+/*
 print '<tr><td>';
 print '<table class="nobordernopadding" width="100%"><tr><td nowrap="nowrap">';
 print $langs->trans('RefCustomer').'</td><td align="left">';
@@ -1295,7 +1322,7 @@ else
 }
 print '</td>';
 print '</tr>';
-
+*/
 // Company
 print '<tr><td>'.$langs->trans('Company').'</td><td colspan="5">'.$soc->getNomUrl(1).'</td>';
 print '</tr>';
