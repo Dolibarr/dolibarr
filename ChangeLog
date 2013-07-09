@@ -46,7 +46,15 @@ For developers:
   key to use a specific language file.
 - New: Make some changes to allow usage of several alternative $dolibarr_main_url_root variables.
   Fix also several bugs with old code. 
-   
+
+WARNING: We started to clean hooks code. If your hook want to modify value of $actions, it's role
+of your hook to modify it. Dolibarr hook code will not decide this for your module anymore.
+If your action class for hook was returning a string or an array, instead your module must 
+set $actionclassinstance->results (to return array) 
+or $actionclassinstance->resprints (to return string)
+to return same thing. The return value must be replaced by a "return 0";
+Goal is to fix old compatibility code that does not match hook
+specification: http://wiki.dolibarr.org/index.php/Hooks_system   
 
 ***** ChangeLog for 3.4 compared to 3.3.2 *****
 For users:

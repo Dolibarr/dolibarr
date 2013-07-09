@@ -183,7 +183,7 @@ class HookManager
                     	if (! empty($actionclassinstance->resprints)) $this->resPrint.=$actionclassinstance->resprints;
                     	// TODO. remove this. array result must be set into $actionclassinstance->results
                     	//if (is_array($result)) $this->resArray = array_merge($this->resArray, $result);
-                    	// TODO. remove this. result must not be a string. we must use $actionclassinstance->resprint to return a string
+                    	// TODO. remove this. result must not be a string. we must use $actionclassinstance->resprints to return a string
                     	//if (! is_array($result) && ! is_numeric($result)) $this->resPrint.=$result;
                     }
 
