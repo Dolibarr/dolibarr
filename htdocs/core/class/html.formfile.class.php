@@ -64,7 +64,8 @@ class FormFile
      */
     function form_attach_new_file($url, $title='', $addcancel=0, $sectionid=0, $perm=1, $size=50, $object='', $options='', $useajax=true)
     {
-        global $conf,$langs;
+        global $conf,$langs, $hookmanager;
+        $hookmanager->initHooks(array('formfile'));
 
         if (! empty($conf->browser->phone)) return 0;
 
@@ -139,6 +140,8 @@ class FormFile
             if (empty($sectionid)) print '<br>';
 
             print "\n<!-- End form attach new file -->\n\n";
+            $parameters = array('socid'=>(isset($GLOBALS['socid'])?$GLOBALS['socid']:''),'id'=>(isset($GLOBALS['id'])?$GLOBALS['id']:''), 'url'=>$url);
+            print $hookmanager->executeHooks('formattachOptions',$parameters,$object);
 
             return 1;
         }
