@@ -3397,7 +3397,14 @@ else if ($id > 0 || ! empty($ref))
             $formmail->withtoccsocid=0;
             $formmail->withtoccc=$conf->global->MAIN_EMAIL_USECCC;
             $formmail->withtocccsocid=0;
-            $formmail->withtopic=$langs->transnoentities($topicmail,'__FACREF__');
+            if(empty($object->ref_client))
+            {
+				$formmail->withtopic=$langs->transnoentities($topicmail,'__FACREF__');
+			}
+			else if(!empty($object->ref_client))
+			{
+				$formmail->withtopic=$langs->transnoentities($topicmail,'__FACREF__(__REFCLIENT__)');
+			}
             $formmail->withfile=2;
             $formmail->withbody=1;
             $formmail->withdeliveryreceipt=1;
@@ -3405,6 +3412,7 @@ else if ($id > 0 || ! empty($ref))
             // Tableau des substitutions
             $formmail->substit['__FACREF__']=$object->ref;
             $formmail->substit['__SIGNATURE__']=$user->signature;
+            $formmail->substit['__REFCLIENT__']=$object->ref_client;
             $formmail->substit['__PERSONALIZED__']='';
             // Tableau des parametres complementaires du post
             $formmail->param['action']=$action;

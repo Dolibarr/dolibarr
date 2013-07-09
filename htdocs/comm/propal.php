@@ -1872,7 +1872,14 @@ if ($action == 'presend')
 	$formmail->withtoccsocid=0;
 	$formmail->withtoccc=(! empty($conf->global->MAIN_EMAIL_USECCC)?$conf->global->MAIN_EMAIL_USECCC:false);
 	$formmail->withtocccsocid=0;
-	$formmail->withtopic=$langs->trans('SendPropalRef','__PROPREF__');
+	if(empty($object->ref_client))
+	{
+		$formmail->withtopic=$langs->trans('SendPropalRef','__PROPREF__');
+	}
+	else if(!empty($object->ref_client))
+	{
+		$formmail->withtopic=$langs->trans('SendPropalRef','__PROPREF__(__REFCLIENT__)');
+	}
 	$formmail->withfile=2;
 	$formmail->withbody=1;
 	$formmail->withdeliveryreceipt=1;
@@ -1881,6 +1888,7 @@ if ($action == 'presend')
 	// Tableau des substitutions
 	$formmail->substit['__PROPREF__']=$object->ref;
     $formmail->substit['__SIGNATURE__']=$user->signature;
+    $formmail->substit['__REFCLIENT__']=$object->ref_client;
     $formmail->substit['__PERSONALIZED__']='';
 	// Tableau des parametres complementaires
 	$formmail->param['action']='send';

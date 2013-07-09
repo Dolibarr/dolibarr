@@ -2403,7 +2403,14 @@ if ($action == 'send' && ! GETPOST('addfile') && ! GETPOST('removedfile') && ! G
 				$formmail->withtoccsocid=0;
 				$formmail->withtoccc=$conf->global->MAIN_EMAIL_USECCC;
 				$formmail->withtocccsocid=0;
-				$formmail->withtopic=$langs->trans('SendOrderRef','__ORDERREF__');
+				if(empty($object->ref_client))
+				{
+					$formmail->withtopic=$langs->trans('SendOrderRef','__ORDERREF__');
+				}
+				else if(!empty($object->ref_client))
+				{
+					$formmail->withtopic=$langs->trans('SendOrderRef','__ORDERREF__(__REFCLIENT__)');
+				}
 				$formmail->withfile=2;
 				$formmail->withbody=1;
 				$formmail->withdeliveryreceipt=1;
@@ -2411,6 +2418,7 @@ if ($action == 'send' && ! GETPOST('addfile') && ! GETPOST('removedfile') && ! G
 				// Tableau des substitutions
 				$formmail->substit['__ORDERREF__']=$object->ref;
 				$formmail->substit['__SIGNATURE__']=$user->signature;
+				$formmail->substit['__REFCLIENT__']=$object->ref_client;
 				$formmail->substit['__PERSONALIZED__']='';
 				// Tableau des parametres complementaires
 				$formmail->param['action']='send';
