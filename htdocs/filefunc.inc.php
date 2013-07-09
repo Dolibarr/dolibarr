@@ -175,22 +175,6 @@ $suburi = strstr($uri, '/');												// $suburi contains url without domain:p
 if ($suburi == '/') $suburi = '';											// If $suburi is /, it is now ''
 define('DOL_URL_ROOT', $suburi);											// URL relative root ('', '/dolibarr', ...)
 
-/*
-// Define DOL_MAIN_URL_ROOT_ALT and DOL_URL_ROOT_ALT (deprecated)
-if (! empty($dolibarr_main_url_root_alt))
-{
-    $altpart=str_replace($dolibarr_main_url_root,'',$dolibarr_main_url_root_alt);
-    if (! preg_match('/^\//',$altpart) && ! empty($altpart)) { $tmp_alt=$dolibarr_main_url_root_alt; }	// Manage case url=http://localhost/aaa and url_alt=http://localhost/aaabbb
-    else $tmp_alt=$tmp.((preg_match('/\/$/',$tmp)||preg_match('/^\//',$altpart))?'':'/').$altpart;
-	//$tmp_alt=$dolibarr_main_url_root_alt;
-    define('DOL_MAIN_URL_ROOT_ALT', $tmp_alt);           							// URL absolute root (https://sss/dolibarr/custom, ...)
-	$uri=preg_replace('/^http(s?):\/\//i','',constant('DOL_MAIN_URL_ROOT_ALT'));    // $uri contains url without http*
-	$suburi = strstr($uri, '/');        											// $suburi contains url without domain:port
-	if ($suburi == '/') $suburi = '';   											// If $suburi is /, it is now ''
-	define('DOL_URL_ROOT_ALT', $suburi);    										// URL relative root ('', '/dolibarr/custom', ...)
-}
-*/
-
 //print DOL_URL_ROOT;
 
 // Define prefix MAIN_DB_PREFIX
