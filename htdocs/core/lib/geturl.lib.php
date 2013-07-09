@@ -83,7 +83,7 @@ function getURLContent($url,$postorget='GET',$param='')
     $rep['content']=$response;
     $rep['curl_error_no']='';
     $rep['curl_error_msg']='';
-
+    
     dol_syslog("getURLContent response=".$response);
 
     if (curl_errno($ch))
@@ -96,7 +96,10 @@ function getURLContent($url,$postorget='GET',$param='')
     }
     else
     {
-        //closing the curl
+    	$info = curl_getinfo($ch);
+    	$rep['header_size']=$info['header_size'];
+    	
+    	//closing the curl
         curl_close($ch);
     }
 
