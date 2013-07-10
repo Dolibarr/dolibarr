@@ -1,5 +1,5 @@
 <?php
-/* Copyright (c) 2008-2011 Laurent Destailleur	<eldy@users.sourceforge.net>
+/* Copyright (c) 2008-2013 Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2010-2012 Regis Houssin		<regis.houssin@capnetworks.com>
  * Copyright (c) 2010      Juanjo Menent		<jmenent@2byte.es>
  *
@@ -142,10 +142,11 @@ class FormFile
             $out .= "\n<!-- End form attach new file -->\n\n";
             $parameters = array('socid'=>(isset($GLOBALS['socid'])?$GLOBALS['socid']:''),'id'=>(isset($GLOBALS['id'])?$GLOBALS['id']:''), 'url'=>$url);
             $res = $hookmanager->executeHooks('formattachOptions',$parameters,$object);
-            if(!$res) {
-                echo $out;
+            if (empty($res))
+            {
+            	print $out;
             }
-            echo $hookmanager->resPrint;
+            print $hookmanager->resprint;
 
             return 1;
         }
@@ -502,7 +503,7 @@ class FormFile
 					// Autre cas
 					if ($modulepart == 'donation')            { $relativepath = get_exdir($filename,2).$file["name"]; }
 					if ($modulepart == 'export')              { $relativepath = $file["name"]; }
-					
+
 					$out.= "<tr ".$bc[$var].">";
 
 					// Show file name with link to download
@@ -540,7 +541,7 @@ class FormFile
                         $out.= ($param?'&'.$param:'');
                         $out.= '">'.img_printer().'</a></td>';
                     }
-                    if (is_object($hookmanager)) 
+                    if (is_object($hookmanager))
                     {
             			$parameters=array('socid'=>(isset($GLOBALS['socid'])?$GLOBALS['socid']:''),'id'=>(isset($GLOBALS['id'])?$GLOBALS['id']:''),'modulepart'=>$modulepart,'relativepath'=>$relativepath);
                     	$res = $hookmanager->executeHooks('formBuilddocLineOptions',$parameters,$file);
