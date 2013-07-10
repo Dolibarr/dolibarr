@@ -533,8 +533,9 @@ class Fichinter extends CommonObject
 	/**
 	 *	Return clicable name (with picto eventually)
 	 *
-	 *	@param		int			$withpicto		0=_No picto, 1=Includes the picto in the linkn, 2=Picto only
-	 *	@return		string						String with URL
+	 *	@param		int		$withpicto		0=_No picto, 1=Includes the picto in the linkn, 2=Picto only
+	 *	@param		string	$option			Options
+	 *	@return		string					String with URL
 	 */
 	function getNomUrl($withpicto=0,$option='')
 	{
@@ -659,8 +660,9 @@ class Fichinter extends CommonObject
 	/**
 	 *	Delete intervetnion
 	 *
-	 *	@param      User	$user	Object user who delete
-	 *	@return		int				<0 if KO, >0 if OK
+	 *	@param      User	$user			Object user who delete
+	 *	@param		int		$notrigger		Disable trigger
+	 *	@return		int						<0 if KO, >0 if OK
 	 */
 	function delete($user, $notrigger=0)
 	{
@@ -830,8 +832,8 @@ class Fichinter extends CommonObject
 	 *	Define the label of the contract
 	 *
 	 *	@param      User	$user			Object user who modify
-	 *	@param      string	$description    description
-	 *	@return     int		<0 if ko, >0 if ok
+	 *	@param      int		$contractid		Description
+	 *	@return     int						<0 if ko, >0 if ok
 	 */
 	function set_contrat($user, $contratid)
 	{

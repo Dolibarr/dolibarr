@@ -122,7 +122,6 @@ Voici un liste de fonctionnalites pas encore gérées par Dolibarr:
 - Pas de compta analytique (uniquement gestion de trésorerie).
 - Dolibarr ne gère qu'une seule monnaie à la fois (mono-devise).
 - Dolibarr ne gère en standard qu'une société/institution/association mère (mono-société). Pour en gérer plusieurs (comme vos filiales), il faut, soit faire plusieurs installations de Dolibarr, soit installer le module MultiCompany qui permet de gérer n société/institutions/associations dans une seule instance par une isolation logique des données.
-- Ne gère pas la double tva (Fédérale / provinciale) du canada.
 - Dolibarr ne contient pas de module de Gestion de la paie.
 - Les taches du module de gestion de projets n'ont pas de dépendance entre elle.
 - Dolibarr ne contient pas de Webmail.

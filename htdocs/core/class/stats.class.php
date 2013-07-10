@@ -417,8 +417,7 @@ abstract class Stats
 	 *	   Renvoie le montant moyen par mois pour une annee donnee
 	 *
      *     @param	int		$year       Year
-     *     @param  string	$sql        SQL
-     *     @param	int		$format		0=Label of absiss is a translated text, 1=Label of absiss is a number
+     *     @param  	string	$sql        SQL
      *     @return	array
 	 */
 	function _getAverageByMonth($year, $sql)

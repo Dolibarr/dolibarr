@@ -145,10 +145,6 @@ if (empty($dolibarr_main_data_root))
 define('DOL_CLASS_PATH', 'class/');									// Filesystem path to class dir (defined only for some code that want to be compatible with old versions without this parameter)
 define('DOL_DATA_ROOT', $dolibarr_main_data_root);					// Filesystem data (documents)
 define('DOL_DOCUMENT_ROOT', $dolibarr_main_document_root);			// Filesystem core php (htdocs)
-if (! empty($dolibarr_main_document_root_alt))
-{
-	define('DOL_DOCUMENT_ROOT_ALT', $dolibarr_main_document_root_alt);	// Filesystem paths to alternate core php (alternate htdocs)
-}
 // Define DOL_MAIN_URL_ROOT and DOL_URL_ROOT
 $tmp='';
 $found=0;
@@ -175,25 +171,11 @@ else $tmp='http'.(((empty($_SERVER["HTTPS"]) || $_SERVER["HTTPS"] != 'on') && (e
 if (! empty($dolibarr_main_force_https)) $tmp=preg_replace('/^http:/i','https:',$tmp);
 define('DOL_MAIN_URL_ROOT', $tmp);											// URL absolute root (https://sss/dolibarr, ...)
 $uri=preg_replace('/^http(s?):\/\//i','',constant('DOL_MAIN_URL_ROOT'));	// $uri contains url without http*
-$suburi = strstr($uri, '/');												// $suburi contains url without domain
+$suburi = strstr($uri, '/');												// $suburi contains url without domain:port
 if ($suburi == '/') $suburi = '';											// If $suburi is /, it is now ''
 define('DOL_URL_ROOT', $suburi);											// URL relative root ('', '/dolibarr', ...)
 
-// Define DOL_MAIN_URL_ROOT_ALT and DOL_URL_ROOT_ALT
-if (! empty($dolibarr_main_url_root_alt))
-{
-    $altpart=str_replace($dolibarr_main_url_root,'',$dolibarr_main_url_root_alt);
-    if (! preg_match('/^\//',$altpart) && ! empty($altpart)) { $tmp_alt=$dolibarr_main_url_root_alt; }	// Manage case url=http://localhost/aaa and url_alt=http://localhost/aaabbb
-    else $tmp_alt=$tmp.((preg_match('/\/$/',$tmp)||preg_match('/^\//',$altpart))?'':'/').$altpart;
-	//$tmp_alt=$dolibarr_main_url_root_alt;
-    define('DOL_MAIN_URL_ROOT_ALT', $tmp_alt);           							// URL absolute root (https://sss/dolibarr/custom, ...)
-	$uri=preg_replace('/^http(s?):\/\//i','',constant('DOL_MAIN_URL_ROOT_ALT'));    // $uri contains url without http*
-	$suburi = strstr($uri, '/');        											// $suburi contains url without domain
-	if ($suburi == '/') $suburi = '';   											// If $suburi is /, it is now ''
-	define('DOL_URL_ROOT_ALT', $suburi);    										// URL relative root ('', '/dolibarr/custom', ...)
-}
-
-//print DOL_URL_ROOT.'-'.DOL_URL_ROOT_ALT;
+//print DOL_URL_ROOT;
 
 // Define prefix MAIN_DB_PREFIX
 define('MAIN_DB_PREFIX',$dolibarr_main_db_prefix);

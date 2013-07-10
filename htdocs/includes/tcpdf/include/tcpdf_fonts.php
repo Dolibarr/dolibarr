@@ -1840,6 +1840,16 @@ class TCPDF_FONTS {
 		if ($isunicode) {
 			// requires PCRE unicode support turned on
 			$chars = preg_split("//u", $str, -1, PREG_SPLIT_NO_EMPTY);
+			// DOL_CHANGE_LDR - FIX BUG WITH PHP 5.2.4
+			if (count(preg_split('//u', "\nx", -1, PREG_SPLIT_NO_EMPTY)) == 1)	// If function preg_split is bugged
+			{
+				$tmp=array();
+				$len = mb_strlen($str, "UTF-8");
+    		    for ($i = 0; $i < $len; $i++) {
+	            	$tmp[] = mb_substr($str, $i, 1, "UTF-8");
+        		}
+				$chars=$tmp;
+			}
 			$carr = array_map(array('self', 'uniord'), $chars);
 		} else {
 			$chars = str_split($str);

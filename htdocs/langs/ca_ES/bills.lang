@@ -386,6 +386,8 @@ AllCompletelyPayedInvoiceWillBeClosed=Totes les factures amb una resta a pagar 0
 ToMakePayment=Pagar
 ToMakePaymentBack=Reemborsar
 ListOfYourUnpaidInvoices=Llistat de factures impagades
+NoteListOfYourUnpaidInvoices=Nota: Aquest llistat inclou només els tercers dels que vostè és comercial.
+RevenueStamp=Timbre fiscal
 ##### Types de contacts #####
 TypeContact_facture_internal_SALESREPFOLL=Responsable seguiment factura a client
 TypeContact_facture_external_BILLING=Contacte client facturació

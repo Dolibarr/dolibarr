@@ -160,8 +160,9 @@ LinkedElementsInvalidDeleted=han estat eliminats <b>%s</b> enllaços invàlids
 NothingToDelete=No s'ha trobat enllaços invàlids
 SourceType=Origen
 TargetType=Destí
-#########
-# upgrade=
+ShowEditTechnicalParameters=Premi aquí per veure/editar els paràmetres tècnics (mode expert)
+#########=undefined=
+# upgrade=undefined=
 MigrationFixData=Correcció de dades desnormalitzades
 MigrationOrder=Migració de dades de les comandes clients
 MigrationSupplierOrder=Migració de dades de les comandes a proveïdors
@@ -171,58 +172,43 @@ MigrationContract=Migració de dades dels contractes
 MigrationSuccessfullUpdate=Actualització finalitzada
 MigrationUpdateFailed=L'actualització ha fallat
 MigrationRelationshipTables=Migració de les taules de relació (%s)
-# Payments Update
 MigrationPaymentsUpdate=Actualització dels pagaments (vincle nn pagaments-factures)
 MigrationPaymentsNumberToUpdate=%s pagament(s) a actualitzar
 MigrationProcessPaymentUpdate=Actualització pagament(s) %s
 MigrationPaymentsNothingToUpdate=No hi ha més pagaments orfes que hagin de corregir.
 MigrationPaymentsNothingUpdatable=Cap pagament orfe de correcció.
-# Contracts Update
 MigrationContractsUpdate=Actualització dels contractes sense detalls (gestió del contracte + detall de contracte)
 MigrationContractsNumberToUpdate=%s contracte(s) a actualitzar
 MigrationContractsLineCreation=Creació linia contracte per contracte Ref. %s
 MigrationContractsNothingToUpdate=No hi ha més contractes (vinculats a un producte) sense línies de detalls que hagin de corregir.
 MigrationContractsFieldDontExist=Els camps fk_facture no existeixen ja. No hi ha operació pendent.
-# Contracts Empty Dates Update
 MigrationContractsEmptyDatesUpdate=Actualització de les dades de contractes no indicades
 MigrationContractsEmptyDatesUpdateSuccess=Ok per data de contracte
 MigrationContractsEmptyDatesNothingToUpdate=No hi ha més properes dates de contractes.
 MigrationContractsEmptyCreationDatesUpdateSuccess=Ok per la data de creació
 MigrationContractsEmptyCreationDatesNothingToUpdate=No hi ha més properes dates de creació.
-# Contracts Invalid Dates Update
 MigrationContractsInvalidDatesUpdate=Actualització dades contracte incorrectes (per contractes amb detall en servei)
 MigrationContractsInvalidDateFix=Corregir contracte %s (data contracte=%s, Data posada en servei min=%s)
 MigrationContractsInvalidDatesNumber=%s contractes modificats
 MigrationContractsInvalidDatesNothingToUpdate=No hi ha més de contractes que hagin de corregir-se.
-# Contracts Incoherent Dates Update
 MigrationContractsIncoherentCreationDateUpdate=Actualització de les dades de creació de contracte que tenen un valor incoherent
 MigrationContractsIncoherentCreationDateUpdateSuccess=Ok
 MigrationContractsIncoherentCreationDateNothingToUpdate=No hi ha més dades de contractes.
-# Reopening Contracts
 MigrationReopeningContracts=Reobertura dels contractes que tenen almenys un servei actiu no tancat
 MigrationReopenThisContract=Reobertura contracte %s
 MigrationReopenedContractsNumber=%s contractes modificats
 MigrationReopeningContractsNothingToUpdate=No hi ha més contractes que hagin de reobrirse.
-# Migration transfert
 MigrationBankTransfertsUpdate=Actualització dels vincles entre registres bancaris i una transferència entre compte
 MigrationBankTransfertsNothingToUpdate=Cap vincle desfasat
-# Migration delivery
 MigrationShipmentOrderMatching=Actualitzar notes d'expedició
 MigrationDeliveryOrderMatching=Actualitzar recepcions
 MigrationDeliveryDetail=Actualitzar recepcions
-# Migration stock
 MigrationStockDetail=Actualitzar valor en stock dels productes
-# Migration menus
 MigrationMenusDetail=Actualització de la taula de menús dinàmics
-# Migration delivery address
 MigrationDeliveryAddress=Actualització de les adreces d'enviament en les notes de lliurament
-# Migration project task actors
 MigrationProjectTaskActors=Migració de la taula llx_projet_task_actors
-# Migration project user resp
 MigrationProjectUserResp=Migració del camp fk_user_resp de llx_projet a llx_element_contact
-# Migration project task time
 MigrationProjectTaskTime=Actualització de temps dedicat en segons
-# Migration Acctioncom
 MigrationActioncommElement=Actualització de les dades de accions sobre elements
-# Migration payment mode
 MigrationPaymentMode=Actualització de les formes de pagament
+MigrationCategorieAssociation=Actualització de les categories

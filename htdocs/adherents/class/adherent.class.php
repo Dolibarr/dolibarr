@@ -268,7 +268,7 @@ class Adherent extends CommonObject
 
         // Clean parameters
         $this->import_key = trim($this->import_key);
-        
+
         // Check parameters
         if (! empty($conf->global->ADHERENT_MAIL_REQUIRED) && ! isValidEMail($this->email))
         {
@@ -1006,18 +1006,18 @@ class Adherent extends CommonObject
      *	Method to load member from its name
      *
      *	@param	string	$firstname	Firstname
-     **	@param	string	$lastname	Lastname
+     *	@param	string	$lastname	Lastname
      *	@return	void
      */
     function fetch_name($firstname,$lastname)
     {
     	global $conf;
-    
+
     	$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."adherent";
     	$sql.= " WHERE firstname='".$this->db->escape($firstname)."'";
     	$sql.= " AND lastname='".$this->db->escape($lastname)."'";
     	$sql.= " AND entity = ".$conf->entity;
-    
+
     	$resql=$this->db->query($sql);
     	if ($resql)
     	{
@@ -1032,7 +1032,7 @@ class Adherent extends CommonObject
     		dol_print_error($this->db);
     	}
     }
-    
+
     /**
      *	Load member from database
      *
@@ -1541,7 +1541,7 @@ class Adherent extends CommonObject
     {
     	global $langs;
     	$langs->load("dict");
-    	
+
     	$code=(! empty($this->civilite_id)?$this->civilite_id:(! empty($this->civility_id)?$this->civility_id:''));
     	if (empty($code)) return '';
     	return $langs->getLabelFromKey($this->db, "Civility".$code, "c_civilite", "code", "civilite", $code);

@@ -48,6 +48,7 @@ if (!empty($conf->projet->enabled)) {
 $langs->load('bills');
 $langs->load('suppliers');
 $langs->load('companies');
+$langs->load('products');
 
 $mesg='';
 $errors=array();
@@ -1173,7 +1174,7 @@ if ($action == 'create')
 	if (! empty($conf->projet->enabled))
 	{
 		$formproject=new FormProjets($db);
-		
+
 		$langs->load('projects');
 		print '<tr><td>'.$langs->trans('Project').'</td><td colspan="2">';
 		$formproject->select_projects(-1, $projectid, 'projectid');

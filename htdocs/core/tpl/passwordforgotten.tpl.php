@@ -45,7 +45,7 @@ $(document).ready(function () {
 <input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>">
 <input type="hidden" name="action" value="buildnewpassword">
 
-<table class="login_table_title" summary="<?php echo dol_escape_htmltag($title); ?>" cellpadding="0" cellspacing="0" border="0" align="center">
+<table class="login_table_title" summary="<?php echo dol_escape_htmltag($title); ?>" align="center">
 <tr class="vmenu"><td align="center"><?php echo $title; ?></td></tr>
 </table>
 <br>

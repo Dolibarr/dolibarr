@@ -691,10 +691,10 @@ Permission1237=Exportar pedidos de proveedores junto con sus detalles
 Permission1251=Lanzar las importaciones en masa a la base de datos (carga de datos)
 Permission1321=Exportar facturas a clientes, atributos y cobros
 Permission1421=Exportar pedidos de clientes y atributos
-Permission23001 = Ver tareas programadas
-Permission23002 = Crear/actualizar tareas programadas
-Permission23003 = Borrar tareas programadas
-Permission23004 = Ejecutar tareas programadas
+Permission23001=Ver tareas programadas
+Permission23002=Crear/actualizar tareas programadas
+Permission23003=Borrar tareas programadas
+Permission23004=Ejecutar tareas programadas
 Permission2401=Leer acciones (eventos o tareas) vinculadas a su cuenta
 Permission2402=Crear/eliminar acciones (eventos o tareas) vinculadas a su cuenta
 Permission2403=Modificar acciones (eventos o tareas) vinculadas a su cuenta
@@ -978,9 +978,8 @@ ClassNotFoundIntoPathWarning=No se ha encontrado la clase %s en su path PHP
 YesInSummer=Sí en verano
 OnlyFollowingModulesAreOpenedToExternalUsers=Tenga en cuenta que sólo los módulos siguientes están abiertos a usuarios externos (sean cuales sean los permisos de los usuarios):
 SuhosinSessionEncrypt=Almacenamiento de sesiones cifradas por Suhosin
-# ConditionIsCurrently=Condition is currently %s
-
-##### Module password generation
+ConditionIsCurrently=Actualmente la condición es %s
+##### Module password generation= undefined=
 PasswordGenerationStandard=Devuelve una contraseña generada por el algoritmo interno Dolibarr: 8 caracteres, números y caracteres en minúsculas mezcladas.
 PasswordGenerationNone=No ofrece contraseñas. La contraseña se introduce manualmente.
 ##### Users setup #####

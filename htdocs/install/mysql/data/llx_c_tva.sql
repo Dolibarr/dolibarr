@@ -211,8 +211,8 @@ INSERT INTO llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) VALUES (20
 INSERT INTO llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) VALUES (2013, 201,  '0', '0', 'VAT Rate 0', 1);
 
 -- SLOVENIA (id country=202)
-INSERT INTO llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) VALUES (2021, 202, '20', '0', 'VAT standard rate', 1);
-INSERT INTO llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) VALUES (2022, 202,'8.5', '0', 'VAT reduced rate', 1);
+INSERT INTO llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) VALUES (2021, 202, '22', '0', 'VAT standard rate', 1);
+INSERT INTO llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) VALUES (2022, 202,'9.5', '0', 'VAT reduced rate', 1);
 INSERT INTO llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) VALUES (2023, 202,  '0', '0', 'VAT Rate 0', 1);
 
 -- SPAIN (id country=4)
@@ -267,7 +267,11 @@ insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (19
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (2461,246,  '0','0','VAT Rate 0',1);
 
 
--- MAURITIUS (id country=15)
+-- MAURITANIA (id country=151)
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (1511,151,  '0','0','VAT Rate 0',1);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (1512,151,  '14','0','VAT Rate 14',1);
+
+-- MAURITIUS (id country=152)
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (1521,152,  '0','0','VAT Rate 0',1);
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (1522,152,  '15','0','VAT Rate 15',1);
 

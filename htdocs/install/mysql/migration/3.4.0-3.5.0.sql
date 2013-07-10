@@ -72,3 +72,6 @@ DELETE FROM llx_boxes where box_id IN (SELECT rowid FROM llx_boxes_def where fil
 DELETE FROM llx_boxes_def where file='box_activity.php' AND note IS NULL;
   
 ALTER TABLE llx_cronjob ADD libname VARCHAR(255);
+
+INSERT INTO llx_c_action_trigger (rowid,code,label,description,elementtype,rang) values (30,'PROJECT_CREATE','Project creation','Executed when a project is created','project',30);
+

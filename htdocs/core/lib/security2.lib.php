@@ -270,12 +270,13 @@ function dol_loginfunction($langs,$conf,$mysoc)
 	if (! empty($conf->global->MAIN_HOME))
 	{
 		$i=0;
-		while (preg_match('/__\(([a-zA-Z]+)\)__/i',$conf->global->MAIN_HOME,$reg) && $i < 100)
+		while (preg_match('/__\(([a-zA-Z|@]+)\)__/i',$conf->global->MAIN_HOME,$reg) && $i < 100)
 		{
-			$conf->global->MAIN_HOME=preg_replace('/__\('.$reg[1].'\)__/i',$langs->trans($reg[1]),$conf->global->MAIN_HOME);
+			$tmp=explode('|',$reg[1]);
+			if (! empty($tmp[1])) $langs->load($tmp[1]);
+			$conf->global->MAIN_HOME=preg_replace('/__\('.preg_quote($reg[1]).'\)__/i',$langs->trans($tmp[0]),$conf->global->MAIN_HOME);
 			$i++;
 		}
-
 		$main_home=dol_htmlcleanlastbr($conf->global->MAIN_HOME);
 	}
 

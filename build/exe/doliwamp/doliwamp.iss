@@ -1018,5 +1018,3 @@ Type: filesandordirs; Name: "{app}\www\dolibarr"
 [UninstallRun]
 Filename: "{app}\uninstall_services.bat"; Flags: runhidden
 
-
-

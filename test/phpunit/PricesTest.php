@@ -200,6 +200,8 @@ class PricesTest extends PHPUnit_Framework_TestCase
 		$this->savlangs=$langs;
 		$this->savdb=$db;
 
+		$conf->global->MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND=0;
+
 		// Two lines of 1.24 give 2.48 HT and 2.72 TTC with standard vat rounding mode
 		$localobject=new Facture($this->savdb);
         $localobject->initAsSpecimen('nolines');
