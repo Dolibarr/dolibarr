@@ -340,7 +340,6 @@ if ($result)
     {
         $obj = $db->fetch_object($result);
         
-
        
 	if ($obj->statut == 0)
         {
@@ -402,6 +401,7 @@ if ($result)
 
         print "</tr>\n";
 	}
+
         $i++;
     }
 
