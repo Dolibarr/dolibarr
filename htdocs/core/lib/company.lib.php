@@ -552,7 +552,8 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
     }
     print "</tr>";
 
-    $sql = "SELECT p.rowid, p.lastname, p.firstname, p.fk_pays, p.poste, p.phone, p.phone_mobile, p.fax, p.email ";
+
+    $sql = "SELECT p.rowid, p.lastname, p.firstname, p.fk_pays, p.poste, p.phone, p.phone_mobile, p.fax, p.email, p.note ";
     $sql .= " FROM ".MAIN_DB_PREFIX."socpeople as p";
     $sql .= " WHERE p.fk_soc = ".$object->id;
     $sql .= " ORDER by p.datec";
@@ -568,6 +569,8 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
         while ($i < $num)
         {
             $obj = $db->fetch_object($result);
+            if($obj->statut == 0)
+            {
             $var = !$var;
 
             print "<tr ".$bc[$var].">";
@@ -618,8 +621,8 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
                 print img_edit();
                 print '</a></td>';
             }
-
             print "</tr>\n";
+		}
             $i++;
         }
     }
