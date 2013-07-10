@@ -636,7 +636,7 @@ class Commande extends CommonOrder
         $sql.= ", remise_absolue, remise_percent";
         $sql.= ", entity";
         $sql.= ")";
-        $sql.= " VALUES ('(PROV)',".$this->socid.", ".$this->db->idate($now).", ".$user->id;
+        $sql.= " VALUES ('(PROV)',".$this->socid.", '".$this->db->idate($now)."', ".$user->id;
         $sql.= ", ".($this->fk_project?$this->fk_project:"null");
         $sql.= ", ".$this->db->idate($date);
         $sql.= ", ".($this->source>=0 && $this->source != '' ?$this->source:'null');
