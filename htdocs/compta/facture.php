@@ -758,7 +758,7 @@ else if ($action == 'add' && $user->rights->facture->creer)
 					$product->fetch($_POST['idprod'.$i]);
 					$startday=dol_mktime(12, 0, 0, $_POST['date_start'.$i.'month'], $_POST['date_start'.$i.'day'], $_POST['date_start'.$i.'year']);
 					$endday=dol_mktime(12, 0, 0, $_POST['date_end'.$i.'month'], $_POST['date_end'.$i.'day'], $_POST['date_end'.$i.'year']);
-					$result=$object->addline($id,$product->description,$product->price, $_POST['qty'.$i], $product->tva_tx, $product->localtax1_tx, $product->localtax2_tx, $_POST['idprod'.$i], $_POST['remise_percent'.$i], $startday, $endday, 0, 0, '', $product->price_base_type, $product->price_ttc, $product->type);
+					$result=$object->addline($object->id,$product->description,$product->price, $_POST['qty'.$i], $product->tva_tx, $product->localtax1_tx, $product->localtax2_tx, $_POST['idprod'.$i], $_POST['remise_percent'.$i], $startday, $endday, 0, 0, '', $product->price_base_type, $product->price_ttc, $product->type);
 				}
 			}
 		}
@@ -913,7 +913,7 @@ else if ($action == 'add' && $user->rights->facture->creer)
 						}
 
 						$result = $object->addline(
-							$id,
+							$object->id,
 							$langs->trans('Deposit'),
 							$amountdeposit, //subprice
 							1, //quantity
@@ -1016,7 +1016,7 @@ else if ($action == 'add' && $user->rights->facture->creer)
 									}
 
 									$result = $object->addline(
-										$id,
+										$object->id,
 										$desc,
 										$lines[$i]->subprice,
 										$lines[$i]->qty,
@@ -1093,7 +1093,7 @@ else if ($action == 'add' && $user->rights->facture->creer)
 						$product->fetch($_POST['idprod'.$i]);
 						$startday=dol_mktime(12, 0, 0, $_POST['date_start'.$i.'month'], $_POST['date_start'.$i.'day'], $_POST['date_start'.$i.'year']);
 						$endday=dol_mktime(12, 0, 0, $_POST['date_end'.$i.'month'], $_POST['date_end'.$i.'day'], $_POST['date_end'.$i.'year']);
-						$result=$object->addline($id,$product->description,$product->price, $_POST['qty'.$i], $product->tva_tx, $product->localtax1_tx, $product->localtax2_tx, $_POST['idprod'.$i], $_POST['remise_percent'.$i], $startday, $endday, 0, 0, '', $product->price_base_type, $product->price_ttc, $product->type);
+						$result=$object->addline($object->id,$product->description,$product->price, $_POST['qty'.$i], $product->tva_tx, $product->localtax1_tx, $product->localtax2_tx, $_POST['idprod'.$i], $_POST['remise_percent'.$i], $startday, $endday, 0, 0, '', $product->price_base_type, $product->price_ttc, $product->type);
 					}
 				}
 			}
@@ -1311,7 +1311,7 @@ else if (($action == 'addline' || $action == 'addline_predef') && $user->rights-
 		{
 			// Insert line
 			$result = $object->addline(
-				$id,
+				$object->id,
 				$desc,
 				$pu_ht,
 				GETPOST('qty'),
