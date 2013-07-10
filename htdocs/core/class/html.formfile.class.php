@@ -77,22 +77,22 @@ class FormFile
         {
             $maxlength=$size;
 
-            print "\n\n<!-- Start form attach new file -->\n";
+            $out = "\n\n<!-- Start form attach new file -->\n";
 
             if (empty($title)) $title=$langs->trans("AttachANewFile");
             if ($title != 'none') print_titre($title);
 
-            print '<form name="formuserfile" action="'.$url.'" enctype="multipart/form-data" method="POST">';
-            print '<input type="hidden" id="formuserfile_section_dir" name="section_dir" value="">';
-            print '<input type="hidden" id="formuserfile_section_id"  name="section_id" value="'.$sectionid.'">';
-            print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+            $out .= '<form name="formuserfile" action="'.$url.'" enctype="multipart/form-data" method="POST">';
+            $out .= '<input type="hidden" id="formuserfile_section_dir" name="section_dir" value="">';
+            $out .= '<input type="hidden" id="formuserfile_section_id"  name="section_id" value="'.$sectionid.'">';
+            $out .= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
-            print '<table width="100%" class="nobordernopadding">';
-            print '<tr>';
+            $out .= '<table width="100%" class="nobordernopadding">';
+            $out .= '<tr>';
 
-            if (! empty($options)) print '<td>'.$options.'</td>';
+            if (! empty($options)) $out .= '<td>'.$options.'</td>';
 
-            print '<td valign="middle" class="nowrap">';
+            $out .= '<td valign="middle" class="nowrap">';
 
             $max=$conf->global->MAIN_UPLOAD_DOC;		// En Kb
             $maxphp=@ini_get('upload_max_filesize');	// En inconnu
@@ -103,20 +103,20 @@ class FormFile
 
             if ($max > 0)
             {
-                print '<input type="hidden" name="max_file_size" value="'.($max*1024).'">';
+                $out .= '<input type="hidden" name="max_file_size" value="'.($max*1024).'">';
             }
-            print '<input class="flat" type="file" name="userfile" size="'.$maxlength.'"';
-            print (empty($conf->global->MAIN_UPLOAD_DOC) || empty($perm)?' disabled="disabled"':'');
-            print '>';
-            print ' &nbsp; ';
-            print '<input type="submit" class="button" name="sendit" value="'.$langs->trans("Upload").'"';
-            print (empty($conf->global->MAIN_UPLOAD_DOC) || empty($perm)?' disabled="disabled"':'');
-            print '>';
+            $out .= '<input class="flat" type="file" name="userfile" size="'.$maxlength.'"';
+            $out .= (empty($conf->global->MAIN_UPLOAD_DOC) || empty($perm)?' disabled="disabled"':'');
+            $out .= '>';
+            $out .= ' &nbsp; ';
+            $out .= '<input type="submit" class="button" name="sendit" value="'.$langs->trans("Upload").'"';
+            $out .= (empty($conf->global->MAIN_UPLOAD_DOC) || empty($perm)?' disabled="disabled"':'');
+            $out .= '>';
 
             if ($addcancel)
             {
-                print ' &nbsp; ';
-                print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+                $out .= ' &nbsp; ';
+                $out .= '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
             }
 
             if (! empty($conf->global->MAIN_UPLOAD_DOC))
@@ -124,24 +124,28 @@ class FormFile
                 if ($perm)
                 {
                 	$langs->load('other');
-                    print ' ('.$langs->trans("MaxSize").': '.$max.' '.$langs->trans("Kb");
-                    print ' '.info_admin($langs->trans("ThisLimitIsDefinedInSetup",$max,$maxphp),1);
-                    print ')';
+                    $out .= ' ('.$langs->trans("MaxSize").': '.$max.' '.$langs->trans("Kb");
+                    $out .= ' '.info_admin($langs->trans("ThisLimitIsDefinedInSetup",$max,$maxphp),1);
+                    $out .= ')';
                 }
             }
             else
             {
-                print ' ('.$langs->trans("UploadDisabled").')';
+                $out .= ' ('.$langs->trans("UploadDisabled").')';
             }
-            print "</td></tr>";
-            print "</table>";
+            $out .= "</td></tr>";
+            $out .= "</table>";
 
-            print '</form>';
-            if (empty($sectionid)) print '<br>';
+            $out .= '</form>';
+            if (empty($sectionid)) $out .= '<br>';
 
-            print "\n<!-- End form attach new file -->\n\n";
+            $out .= "\n<!-- End form attach new file -->\n\n";
             $parameters = array('socid'=>(isset($GLOBALS['socid'])?$GLOBALS['socid']:''),'id'=>(isset($GLOBALS['id'])?$GLOBALS['id']:''), 'url'=>$url);
-            print $hookmanager->executeHooks('formattachOptions',$parameters,$object);
+            $res = $hookmanager->executeHooks('formattachOptions',$parameters,$object);
+            if(!$res) {
+                echo $out;
+            }
+            echo $hookmanager->resPrint;
 
             return 1;
         }
@@ -539,7 +543,10 @@ class FormFile
                     if (is_object($hookmanager)) 
                     {
             			$parameters=array('socid'=>(isset($GLOBALS['socid'])?$GLOBALS['socid']:''),'id'=>(isset($GLOBALS['id'])?$GLOBALS['id']:''),'modulepart'=>$modulepart,'relativepath'=>$relativepath);
-                    	$out.= $hookmanager->executeHooks('formBuilddocLineOptions',$parameters,$file);
+                    	$res = $hookmanager->executeHooks('formBuilddocLineOptions',$parameters,$file);
+                        if(!$res) {
+                            $out .= $hookmanager->resPrint;
+                        }
                     }
 				}
 
