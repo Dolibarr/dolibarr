@@ -401,7 +401,6 @@ if ($result)
 
         print "</tr>\n";
 	}
-
         $i++;
     }
 
