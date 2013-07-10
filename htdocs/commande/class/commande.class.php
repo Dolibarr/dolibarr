@@ -636,9 +636,9 @@ class Commande extends CommonOrder
         $sql.= ", remise_absolue, remise_percent";
         $sql.= ", entity";
         $sql.= ")";
-        $sql.= " VALUES ('(PROV)',".$this->socid.", ".$this->db->idate($now).", ".$user->id;
+        $sql.= " VALUES ('(PROV)',".$this->socid.", '".$this->db->idate($now)."', ".$user->id;
         $sql.= ", ".($this->fk_project?$this->fk_project:"null");
-        $sql.= ", ".$this->db->idate($date);
+        $sql.= ", '".$this->db->idate($date)."'";
         $sql.= ", ".($this->source>=0 && $this->source != '' ?$this->source:'null');
         $sql.= ", '".$this->db->escape($this->note_private)."'";
         $sql.= ", '".$this->db->escape($this->note_public)."'";
@@ -989,7 +989,7 @@ class Commande extends CommonOrder
                         $this->fetch($ret);
                         $this->valid($user);
                     }
-                    return 1;
+                    return $ret;
                 }
                 else return -1;
             }
