@@ -58,7 +58,7 @@ class Contact extends CommonObject
 	var $country;				// Label of country
 
 	var $socid;					// fk_soc
-	var $status;				// 0=brouillon, 1=4=actif, 5=inactif
+	var $statut;				// 0=brouillon, 1=4=actif, 5=inactif
 
 	var $code;
 	var $email;
@@ -481,8 +481,9 @@ class Contact extends CommonObject
 
 		$langs->load("companies");
 
+
 		$sql = "SELECT c.rowid, c.fk_soc, c.civilite as civilite_id, c.lastname, c.firstname,";
-		$sql.= " c.address, c.zip, c.town,";
+		$sql.= " c.address, c.statut, c.zip, c.town,";
 		$sql.= " c.fk_pays as country_id,";
 		$sql.= " c.fk_departement,";
 		$sql.= " c.birthday,";
@@ -531,6 +532,7 @@ class Contact extends CommonObject
 				$this->socid			= $obj->fk_soc;
 				$this->socname			= $obj->socname;
 				$this->poste			= $obj->poste;
+				$this->statut			= $obj->statut;
 
 				$this->phone_pro		= trim($obj->phone);
 				$this->fax				= trim($obj->fax);
@@ -896,7 +898,12 @@ class Contact extends CommonObject
 	 */
 	function getLibStatut($mode)
 	{
-		return $this->LibStatut($this->status,$mode);
+		return $this->LibStatut($this->statut,$mode);
+	}
+	
+	function getLibStatutcontact($mode)
+	{
+		return $this->LibStatutcontact($this->statut,$mode);
 	}
 
 	/**
@@ -906,7 +913,7 @@ class Contact extends CommonObject
 	 *  @param      int			$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
 	 *  @return     string					Libelle
 	 */
-	function LibStatut($statut, $mode)
+	function LibStatut($statut)
 	{
 		global $langs;
 
@@ -952,9 +959,14 @@ class Contact extends CommonObject
 			elseif ($statut==4) return '<span class="hideonsmartphone">'.$langs->trans('StatusContactValidatedShort').' </span>'.img_picto($langs->trans('StatusContactValidatedShort'),'statut4');
 			elseif ($statut==5) return '<span class="hideonsmartphone">'.$langs->trans('StatusContactValidatedShort').' </span>'.img_picto($langs->trans('StatusContactValidatedShort'),'statut5');
 		}
+		
 	}
 
-
+	function LibStatutcontact($mode)
+		{
+			if ($statut==1) return img_picto($langs->trans('StatusContactDraft'),'statut0').' '.$langs->trans('Disabled');
+			else return img_picto($langs->trans('StatusContactValidated'),'statut1').' '.$langs->trans('Enabled');
+		}
 	/**
 	 *	Return translated label of Public or Private
 	 *
@@ -1020,7 +1032,57 @@ class Contact extends CommonObject
 
 		$socid = rand(1, $num_socs);
 		$this->socid = $socids[$socid];
+		$this->statut=1;
 	}
+	
+	/**
+	 *  Change status of a user
+	 *
+	 *	@param	int		$statut		Status to set
+	 *  @return int     			<0 if KO, 0 if nothing is done, >0 if OK
+	 */
+	function setstatus($statut)
+	{
+		global $conf,$langs,$user;
+
+		$error=0;
+
+		// Check parameters
+		if ($this->statut == $statut) return 0;
+		else $this->statut = $statut;
+
+		$this->db->begin();
+
+		// Desactive utilisateur
+		$sql = "UPDATE ".MAIN_DB_PREFIX."socpeople";
+		$sql.= " SET statut = ".$this->statut;
+		$sql.= " WHERE rowid = ".$this->id;
+		$result = $this->db->query($sql);
+
+		dol_syslog(get_class($this)."::setstatus sql=".$sql);
+		if ($result)
+		{
+			// Appel des triggers
+			include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
+			$interface=new Interfaces($this->db);
+			$result=$interface->run_triggers('USER_ENABLEDISABLE',$this,$user,$langs,$conf);
+			if ($result < 0) { $error++; $this->errors=$interface->errors; }
+			// Fin appel triggers
+		}
+
+		if ($error)
+		{
+			$this->db->rollback();
+			return -$error;
+		}
+		else
+		{
+			$this->db->commit();
+			return 1;
+		}
+	}
+
+
 
 }
 ?>
