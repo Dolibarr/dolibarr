@@ -989,7 +989,7 @@ class Commande extends CommonOrder
                         $this->fetch($ret);
                         $this->valid($user);
                     }
-                    return 1;
+                    return $ret;
                 }
                 else return -1;
             }
