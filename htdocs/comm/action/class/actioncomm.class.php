@@ -40,9 +40,9 @@ class ActionComm extends CommonObject
     var $id;
 
     var $type_id;		// id into parent table llx_c_actioncomm (will be deprecated into future, link should not be required)
-    var $type_code;		// code into parent table llx_c_actioncomm (will be deprecated into future, link should not be required)
+    var $type_code;		// code into parent table llx_c_actioncomm (will be deprecated into future, link should not be required). With defautl setup, should be AC_OTH_AUTO or AC_OTH
     var $type;			// label into parent table llx_c_actioncomm (will be deprecated into future, link should not be required)
-    var $code;
+    var $code;			// Free code to identify action. Ie: Agenda trigger add here AC_TRIGGERNAME ('AC_COMPANY_CREATE', 'AC_PROPAL_VALIDATE', ...)
     var $label;
 
     var $datec;			// Date creation record (datec)

@@ -26,6 +26,7 @@ For users:
 - New: Add a cron module to define scheduled jobs.
 - New: Add new graphical boxes (customer invoices and orders per month).
 - New: [ task #286 ] Enhance rounding function of prices to allow round of sum instead of sum of rounding.
+- New: Can add an event automatically when a projet is create. 
 - Qual: Implement same rule for return value of all command line scripts (0 when success, <>0 if error).
 
 For translators:
