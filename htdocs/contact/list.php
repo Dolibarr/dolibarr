@@ -49,6 +49,8 @@ $search_fax=GETPOST("search_fax");
 $search_email=GETPOST("search_email");
 $search_priv=GETPOST("search_priv");
 $search_categ = GETPOST("search_categ",'int');
+$search_statut=GETPOST("search_statut");
+
 
 $type=GETPOST("type");
 $view=GETPOST("view");
@@ -114,7 +116,7 @@ $form=new Form($db);
 $formother=new FormOther($db);
 
 $sql = "SELECT s.rowid as socid, s.nom as name,";
-$sql.= " p.rowid as cidp, p.lastname as lastname, p.firstname, p.poste, p.email,";
+$sql.= " p.rowid as cidp, p.lastname as lastname, p.statut, p.firstname, p.poste, p.email,";
 $sql.= " p.phone, p.phone_mobile, p.fax, p.fk_pays, p.priv, p.tms,";
 $sql.= " cp.code as country_code";
 $sql.= " FROM ".MAIN_DB_PREFIX."socpeople as p";
@@ -288,6 +290,7 @@ if ($result)
     print_liste_field_titre($langs->trans("EMail"),$_SERVER["PHP_SELF"],"p.email", $begin, $param, '', $sortfield,$sortorder);
     print_liste_field_titre($langs->trans("DateModificationShort"),$_SERVER["PHP_SELF"],"p.tms", $begin, $param, 'align="center"', $sortfield,$sortorder);
     print_liste_field_titre($langs->trans("ContactVisibility"),$_SERVER["PHP_SELF"],"p.priv", $begin, $param, 'align="center"', $sortfield,$sortorder);
+    
     print '<td class="liste_titre">&nbsp;</td>';
     print "</tr>\n";
 
@@ -336,9 +339,12 @@ if ($result)
     while ($i < min($num,$limit))
     {
         $obj = $db->fetch_object($result);
+        
 
-        $var=!$var;
-
+       
+	if ($obj->statut == 0)
+        {
+			$var=!$var;
         print "<tr ".$bc[$var].">";
 
 		// Name
@@ -395,6 +401,7 @@ if ($result)
         print '</a></td>';
 
         print "</tr>\n";
+	}
         $i++;
     }
 
