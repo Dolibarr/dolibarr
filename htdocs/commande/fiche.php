@@ -322,7 +322,6 @@ else if ($action == 'add' && $user->rights->commande->creer)
 						}
 
 						$result = $object->addline(
-							$object_id,
 							$desc,
 							$lines[$i]->subprice,
 							$lines[$i]->qty,
@@ -739,7 +738,6 @@ else if ($action == 'addline' && $user->rights->commande->creer)
 		{
 			// Insert line
 			$result = $object->addline(
-				$object->id,
 				$desc,
 				$pu_ht,
 				GETPOST('qty'),

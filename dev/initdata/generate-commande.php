@@ -186,7 +186,7 @@ for ($s = 0 ; $s < GEN_NUMBER_COMMANDE ; $s++)
                 $prodid = rand(1, $num_prods);
                 $product=new Product($db);
                 $result=$product->fetch($prodids[$prodid]);
-                $result=$com->addline($com->id, $product->description, $product->price, rand(1,5), 0, 0, 0, $prodids[$prodid], 0, 0, 0,  $product->price_base_type, $product->price_ttc, '', '', $product->type);
+                $result=$com->addline($product->description, $product->price, rand(1,5), 0, 0, 0, $prodids[$prodid], 0, 0, 0,  $product->price_base_type, $product->price_ttc, '', '', $product->type);
                 if ($result < 0)
                 {
                     dol_print_error($db,$propal->error);
