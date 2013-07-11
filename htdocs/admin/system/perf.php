@@ -400,17 +400,10 @@ if ($conf->db->type == 'mysql' || $conf->db->type == 'mysqli')
 	}
 	print '<br>';
 }
-<<<<<<< HEAD
-
-// Product search
-=======
 
 // Product search
 print '<br>';
 print '<strong>'.$langs->trans("SearchOptim").'</strong>: ';
->>>>>>> 7485192cfbca23027d10cfdc41a33a14f332d23c
-print '<br>';
-print '<strong>'.$langs->trans("ProductSearch").'</strong>: ';
 print '<br>';
 $tab = array();
 $sql = "SELECT COUNT(*) as nb";
@@ -440,18 +433,6 @@ if ($resql)
 }
 
 // Browser
-<<<<<<< HEAD
-print '<br>';
-print '<strong>'.$langs->trans("Browser").'</strong>: ';
-var_dump($conf->browser);
-print '<br>';
-
-// Database statistics update
-print '<br>';
-print '<strong>'.$langs->trans("DatabaseStatistics").'</strong>: ';
-print '<br>';
-
-=======
 print '<br>';
 print '<strong>'.$langs->trans("Browser").'</strong>:<br>';
 if (! in_array($conf->browser->name, array('chrome','opera','safari','firefox')))
@@ -470,7 +451,6 @@ print '<br>';
 print '<strong>'.$langs->trans("DatabaseStatistics").'</strong>: ';
 print '<br>';
 */
->>>>>>> 7485192cfbca23027d10cfdc41a33a14f332d23c
 
 
 llxFooter();
