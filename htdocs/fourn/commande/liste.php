@@ -33,6 +33,10 @@ $sref=GETPOST('search_ref');
 $snom=GETPOST('search_nom');
 $suser=GETPOST('search_user');
 $sttc=GETPOST('search_ttc');
+$search_ref=GETPOST('search_ref');
+$search_nom=GETPOST('search_nom');
+$search_user=GETPOST('search_user');
+$search_ttc=GETPOST('search_ttc');
 $sall=GETPOST('search_all');
 
 $page  = GETPOST('page','int');
@@ -119,9 +123,13 @@ if ($resql)
 	$num = $db->num_rows($resql);
 	$i = 0;
 
-
-	print_barre_liste($title, $page, "liste.php", "", $sortfield, $sortorder, '', $num);
-	print '<form action="liste.php" method="GET">';
+	$param="";
+	if ($search_ref)   $param.="&search_ref=".$search_ref;
+	if ($search_nom)   $param.="&search_nom=".$search_nom;
+	if ($search_user)  $param.="&search_user=".$search_user;
+	if ($search_ttc)   $param.="&search_ttc=".$search_ttc;
+	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num);
+	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"cf.ref","","",'',$sortfield,$sortorder);

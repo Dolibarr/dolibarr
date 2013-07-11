@@ -165,3 +165,5 @@ Pcg_type=Tipo de cuenta
 Pcg_subtype=Subtipo de cuenta
 InvoiceLinesToDispatch=Líneas de facturas a desglosar
 InvoiceDispatched=Facturas desglosadas
+AccountancyDashboard=Resumen financiero
+ByProductsAndServices=Por productos y servicios

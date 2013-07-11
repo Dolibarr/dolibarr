@@ -804,7 +804,6 @@ else if ($action == "addline" && $user->rights->propal->creer)
 		{
 			// Insert line
 			$result=$object->addline(
-				$id,
 				$desc,
 				$pu_ht,
 				GETPOST('qty'),

@@ -163,3 +163,5 @@ Pcg_type=Tipus de compte
 Pcg_subtype=Subtipus de compte
 InvoiceLinesToDispatch=Línies de factures a desglossar
 InvoiceDispatched=Factures desglossades
+AccountancyDashboard=Resum financer
+ByProductsAndServices=Per productes i serveis
