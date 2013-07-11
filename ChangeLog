@@ -26,6 +26,7 @@ For users:
 - New: Add a cron module to define scheduled jobs.
 - New: Add new graphical boxes (customer invoices and orders per month).
 - New: [ task #286 ] Enhance rounding function of prices to allow round of sum instead of sum of rounding.
+- New: Can add an event automatically when a projet is create. 
 - Qual: Implement same rule for return value of all command line scripts (0 when success, <>0 if error).
 
 For translators:
@@ -46,7 +47,23 @@ For developers:
   key to use a specific language file.
 - New: Make some changes to allow usage of several alternative $dolibarr_main_url_root variables.
   Fix also several bugs with old code. 
-   
+
+WARNING: This may create regression for some external modules, but was necessary to make
+Dolibarr better:
+
+- We started to clean hooks code. If your hook want to modify value of $actions, it's role
+of your hook to modify it. Dolibarr hook code will not decide this for your module anymore.
+If your action class for hook was returning a string or an array, instead your module must 
+set $actionclassinstance->results (to return array) 
+or $actionclassinstance->resprints (to return string)
+to return same thing. The return value must be replaced by a "return 0";
+Goal is to fix old compatibility code that does not match hook
+specification: http://wiki.dolibarr.org/index.php/Hooks_system   
+
+- Some methods object->addline used a first parameter that was object->id, some not. Of course
+this was not a good pratice, since object->id is already known so no need to provide it as 
+parameter. All methods addline in this case were modified to remove this information. 
+
 
 ***** ChangeLog for 3.4 compared to 3.3.2 *****
 For users:

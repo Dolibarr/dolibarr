@@ -88,6 +88,8 @@ if ($result)
 
     $title=$langs->trans("ListOfSubscriptions");
     if (! empty($date_select)) $title.=' ('.$langs->trans("Year").' '.$date_select.')';
+
+    $param="";
     $param.="&amp;statut=$statut&amp;date_select=$date_select";
     print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder,'',$num);
 

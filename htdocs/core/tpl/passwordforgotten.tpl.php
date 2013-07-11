@@ -144,9 +144,9 @@ if (! empty($hookmanager->resArray['options'])) {
 <br>
 
 <?php if ($message) { ?>
-	<center><div align="center" style="max-width: 680px; margin-left: 10px; margin-right: 10px;"><div class="error">
-	<?php echo $message; ?>
-	</div></div></center>
+	<center><div align="center" style="max-width: 680px; margin-left: 10px; margin-right: 10px;">
+	<?php echo dol_htmloutput_mesg($message,'','',1); ?>
+	</div></center>
 <?php } ?>
 
 </center>	<!-- end of center -->

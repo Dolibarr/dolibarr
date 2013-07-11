@@ -161,8 +161,9 @@ if (! empty($triggers))
 		if ($module == 'order_supplier' || $module == 'invoice_supplier') $module = 'fournisseur';
 		if ($module == 'shipping') $module = 'expedition_bon';
 		if ($module == 'member') $module = 'adherent';
+		if ($module == 'project') $module = 'projet';
 		//print 'module='.$module.'<br>';
-		if ($conf->$module->enabled)
+		if (! empty($conf->$module->enabled))
 		{
 			$var=!$var;
 			print '<tr '.$bc[$var].'>';

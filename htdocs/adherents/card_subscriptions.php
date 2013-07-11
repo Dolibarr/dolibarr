@@ -368,7 +368,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'cotisation' && ! $
                 	$vattouse=get_default_tva($mysoc, $mysoc, $idprodsubscription);
                 }
                 //print xx".$vattouse." - ".$mysoc." - ".$customer;exit;
-                $result=$invoice->addline($invoice->id,$label,0,1,$vattouse,0,0,$idprodsubscription,0,$datecotisation,$datesubend,0,0,'','TTC',$cotisation,1);
+                $result=$invoice->addline($label,0,1,$vattouse,0,0,$idprodsubscription,0,$datecotisation,$datesubend,0,0,'','TTC',$cotisation,1);
                 if ($result <= 0)
                 {
                     $errmsg=$invoice->error;
@@ -538,7 +538,7 @@ if ($rowid)
 
     // EMail
     print '<tr><td>'.$langs->trans("EMail").'</td><td class="valeur">'.dol_print_email($object->email,0,$object->fk_soc,1).'</td></tr>';
-    
+
     // Status
     print '<tr><td>'.$langs->trans("Status").'</td><td class="valeur">'.$object->getLibStatut(4).'</td></tr>';
 
