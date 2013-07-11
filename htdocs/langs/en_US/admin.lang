@@ -986,7 +986,10 @@ YouUseBestDriver=You use driver %s that is best driver available currently.
 YouDoNotUseBestDriver=You use drive %s but driver %s is recommanded.
 SearchProduct=Optimisation recherche produits
 NbOfProductIsLowerThanNoPb=You have only %s products/services into database. This does not required any particular optimization.
-
+SearchOptim=Search optimization
+YouHaveXProductUseSearchOptim=You have %s product into database. You should add the constant PRODUCT_DONOTSEARCH_ANYWHERE to 1 into Home-Setup-Other, you limit the search to the beginning of strings making possible for database to use index and you should get an immediate response.
+BrowserIsOK=You are using the web browser %s. This browser is ok for security and performance.
+BrowserIsKO=You are using the web browser %s. This browser is known to be a bad choice for security, performance and reliability. We recommand you to use Firefox, Chrome, Opera or Safari.
 ##### Module password generation
 PasswordGenerationStandard=Return a password generated according to internal Dolibarr algorithm: 8 characters containing shared numbers and characters in lowercase.
 PasswordGenerationNone=Do not suggest any generated password. Password must be type in manually.

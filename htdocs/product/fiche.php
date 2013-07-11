@@ -450,7 +450,6 @@ if (empty($reshook))
         }
 
         $result = $propal->addline(
-            $propal->id,
             $desc,
             $pu_ht,
             GETPOST('qty'),
@@ -524,7 +523,6 @@ if (empty($reshook))
         }
 
         $result =  $commande->addline(
-            $commande->id,
             $desc,
             $pu_ht,
             GETPOST('qty'),
@@ -598,7 +596,6 @@ if (empty($reshook))
         }
 
         $result = $facture->addline(
-            $facture->id,
             $desc,
             $pu_ht,
             GETPOST('qty'),

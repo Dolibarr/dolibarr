@@ -281,7 +281,7 @@ class doc_generic_shipment_odt extends ModelePdfExpedition
 		$outputlangs->load("companies");
 		$outputlangs->load("bills");
 
-		if ($conf->expedition->dir_output)
+		if ($conf->expedition->dir_output."/sending")
 		{
 			// If $object is id instead of object
 			if (! is_object($object))
@@ -296,7 +296,7 @@ class doc_generic_shipment_odt extends ModelePdfExpedition
 				}
 			}
 
-			$dir = $conf->expedition->dir_output;
+			$dir = $conf->expedition->dir_output."/sending";
 			$objectref = dol_sanitizeFileName($object->ref);
 			if (! preg_match('/specimen/i',$objectref)) $dir.= "/" . $objectref;
 			$file = $dir . "/" . $objectref . ".odt";
