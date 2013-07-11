@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005-2013	Laurent Destailleur		<eldy@users.sourceforge.net>
+/* Copyright (C) 2013	Laurent Destailleur		<eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -403,7 +403,7 @@ if ($conf->db->type == 'mysql' || $conf->db->type == 'mysqli')
 
 // Product search
 print '<br>';
-print '<strong>'.$langs->trans("ProductSearch").'</strong>: ';
+print '<strong>'.$langs->trans("SearchOptim").'</strong>: ';
 print '<br>';
 $tab = array();
 $sql = "SELECT COUNT(*) as nb";
@@ -434,15 +434,23 @@ if ($resql)
 
 // Browser
 print '<br>';
-print '<strong>'.$langs->trans("Browser").'</strong>: ';
-var_dump($conf->browser);
+print '<strong>'.$langs->trans("Browser").'</strong>:<br>';
+if (! in_array($conf->browser->name, array('chrome','opera','safari','firefox')))
+{
+	print img_picto('','warning.png').' '.$langs->trans("BrowserIsKO",$conf->browser->name); 
+}
+else
+{
+	print img_picto('','tick.png').' '.$langs->trans("BrowserIsOK",$conf->browser->name);
+}
 print '<br>';
 
 // Database statistics update
+/*
 print '<br>';
 print '<strong>'.$langs->trans("DatabaseStatistics").'</strong>: ';
 print '<br>';
-
+*/
 
 
 llxFooter();
