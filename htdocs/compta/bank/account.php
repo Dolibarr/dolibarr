@@ -326,7 +326,8 @@ if ($id > 0 || ! empty($ref))
 	{
 		$navig.= '<a href="'.$_SERVER["PHP_SELF"].'?'.$param.'&amp;page='.($page-1).'">'.img_next().'</a>';
 	}
-	$navig.='</fieldset></div>';
+	$navig.='</div>';
+
 	//var_dump($navig);
 
 	print '<table class="notopnoleftnoright" width="100%">';
