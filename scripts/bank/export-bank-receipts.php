@@ -407,7 +407,6 @@ if ($resql)
 		$rec->accountelem=$accountelem;
 		$rec->debit=$debit;
 		$rec->credit=$credit;
-		$rec->sold=$sold;
 		$rec->comment=$comment;
 		$rec->soldbefore=price2num($totalbefore);
 		$rec->soldafter=price2num($total);
