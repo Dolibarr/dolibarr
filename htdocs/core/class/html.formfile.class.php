@@ -184,8 +184,8 @@ class FormFile
      *      Return a string to show the box with list of available documents for object.
      *      This also set the property $this->numoffiles
      *
-     *      @param      string				$modulepart         propal, facture, facture_fourn, ...
-     *      @param      string				$filename           Sub-directory to scan (Example: '0/1/10', 'FA/DD/MM/YY/9999'). Use '' if $filedir is already complete)
+     *      @param      string				$modulepart         Module the files are related to ('propal', 'facture', 'facture_fourn', 'mymodule', 'mymodule_temp', ...)
+     *      @param      string				$filename           Existing (so sanitized) sub-directory to scan (Example: '0/1/10', 'FA/DD/MM/YY/9999'). Use '' if $filedir is already complete)
      *      @param      string				$filedir            Directory to scan
      *      @param      string				$urlsource          Url of origin page (for return)
      *      @param      int					$genallowed         Generation is allowed (1/0 or array list of templates)
@@ -200,9 +200,10 @@ class FormFile
      * 		@param		string				$title				Title to show on top of form
      * 		@param		string				$buttonlabel		Label on submit button
      * 		@param		string				$codelang			Default language code to use on lang combo box if multilang is enabled
+     * 		@param		string				$morepicto			Add more HTML content into cell with picto
      * 		@return		string              					Output string with HTML array of documents (might be empty string)
      */
-    function showdocuments($modulepart,$filename,$filedir,$urlsource,$genallowed,$delallowed=0,$modelselected='',$allowgenifempty=1,$forcenomultilang=0,$iconPDF=0,$maxfilenamelength=28,$noform=0,$param='',$title='',$buttonlabel='',$codelang='')
+    function showdocuments($modulepart,$filename,$filedir,$urlsource,$genallowed,$delallowed=0,$modelselected='',$allowgenifempty=1,$forcenomultilang=0,$iconPDF=0,$maxfilenamelength=28,$noform=0,$param='',$title='',$buttonlabel='',$codelang='',$morepicto='')
     {
         global $langs,$conf,$hookmanager;
         global $bc;
@@ -220,7 +221,6 @@ class FormFile
         $out='';
         $var=true;
 
-        //$filename = dol_sanitizeFileName($filename);    //Must be sanitized before calling show_documents
         $headershown=0;
         $showempty=0;
         $i=0;
@@ -231,7 +231,7 @@ class FormFile
         $out.= "\n".'<!-- Start show_document -->'."\n";
         //print 'filedir='.$filedir;
 
-        // Affiche en-tete tableau
+        // Show table
         if ($genallowed)
         {
             $modellist=array();
@@ -390,19 +390,6 @@ class FormFile
             $buttonlabeltoshow=$buttonlabel;
             if (empty($buttonlabel)) $buttonlabel=$langs->trans('Generate');
 
-
-// Keep this. Used for test with jmobile
-/*print '
-<form id="form1" name="form1">
-<select id="custom-select2a" name="custom-select2a">
-<option value="" data-placeholder="true">Choose One...</option>
-<option value="option1">Option #1</option>
-<option value="option2">Option #2</option>
-<option value="option3">Option #3 - This is a really f fsd f gdfgdgd gd gd gd fgd gd gd fgd fgfdreally really really really long label.</option>
-</select>
-</form>
-';*/
-
             if (empty($noform)) $out.= '<form action="'.$urlsource.(empty($conf->global->MAIN_JUMP_TAG)?'':'#builddoc').'" name="'.$forname.'" id="'.$forname.'_form" method="post">';
             $out.= '<input type="hidden" name="action" value="builddoc">';
             $out.= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -448,7 +435,8 @@ class FormFile
             $out.= '</th>';
 
             // Button
-            $out.= '<th align="center" colspan="'.($delallowed?'2':'1').'" class="formdocbutton liste_titre">';
+            $addcolumforpicto=($delallowed || $printer || $morepicto);
+            $out.= '<th align="center" colspan="'.($addcolumforpicto?'2':'1').'" class="formdocbutton liste_titre">';
             $genbutton = '<input class="button" id="'.$forname.'_generatebutton"';
             $genbutton.= ' type="submit" value="'.$buttonlabel.'"';
             if (! $allowgenifempty && ! is_array($modellist) && empty($modellist)) $genbutton.= ' disabled="disabled"';
@@ -462,7 +450,6 @@ class FormFile
             $out.= $genbutton;
             $out.= '</th>';
 
-            if ($printer) $out.= '<th></th>';
             if($hookmanager->hooks['formfile'])
             {
                 foreach($hookmanager->hooks['formfile'] as $module)
@@ -524,22 +511,30 @@ class FormFile
 					$date=(! empty($file['date'])?$file['date']:dol_filemtime($filedir."/".$file["name"]));
 					$out.= '<td align="right" class="nowrap">'.dol_print_date($date, 'dayhour').'</td>';
 
-					if ($delallowed)
+					if ($delallowed || $printer || $morepicto)
 					{
 						$out.= '<td align="right">';
-						$out.= '<a href="'.$urlsource.(strpos($urlsource,'?')?'&':'?').'action=remove_file&file='.urlencode($relativepath);
-						$out.= ($param?'&'.$param:'');
-						//$out.= '&modulepart='.$modulepart; // TODO obsolete ?
-						//$out.= '&urlsource='.urlencode($urlsource); // TODO obsolete ?
-						$out.= '">'.img_delete().'</a></td>';
-					}
-                    // Printer Icon
-                    if ($printer)
-                    {
-                        $out.= '<td align="right">';
-                        $out.= '&nbsp;<a href="'.$urlsource.'&action=print_file&amp;printer='.$modulepart.'&amp;file='.urlencode($relativepath);
-                        $out.= ($param?'&'.$param:'');
-                        $out.= '">'.img_printer().'</a></td>';
+						if ($delallowed)
+						{
+							$out.= '<a href="'.$urlsource.(strpos($urlsource,'?')?'&':'?').'action=remove_file&file='.urlencode($relativepath);
+							$out.= ($param?'&'.$param:'');
+							//$out.= '&modulepart='.$modulepart; // TODO obsolete ?
+							//$out.= '&urlsource='.urlencode($urlsource); // TODO obsolete ?
+							$out.= '">'.img_picto($langs->trans("Delete"), 'delete.png').'</a>';
+							//$out.='</td>';
+						}
+						if ($printer)
+						{
+							//$out.= '<td align="right">';
+    	                    $out.= '&nbsp;<a href="'.$urlsource.(strpos($urlsource,'?')?'&':'?').'action=print_file&amp;printer='.$modulepart.'&amp;file='.urlencode($relativepath);
+        	                $out.= ($param?'&'.$param:'');
+            	            $out.= '">'.img_picto($langs->trans("Print"),'printer.png').'</a>';
+						}
+						if ($morepicto)
+						{
+                        	$out.=$morepicto;
+						}
+                        $out.='</td>';
                     }
                     if (is_object($hookmanager))
                     {

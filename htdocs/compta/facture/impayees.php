@@ -414,7 +414,6 @@ if ($resql)
 		print '<td align="right"><b>'.price($total_paid).'</b></td>';
 		print '<td align="center">&nbsp;</td>';
 		print '<td align="center">&nbsp;</td>';
-		print '<td align="center">&nbsp;</td>';
 		print "</tr>\n";
 	}
 

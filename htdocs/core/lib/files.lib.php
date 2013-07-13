@@ -1233,7 +1233,7 @@ function dol_most_recent_file($dir,$regexfilter='',$excludefilter=array('\.meta$
 /**
  * Security check when accessing to a document (used by document.php, viewimage.php and webservices)
  *
- * @param	string	$modulepart			Module of document
+ * @param	string	$modulepart			Module of document (module, module_user_temp, module_user or module_temp)
  * @param	string	$original_file		Relative path with filename
  * @param	string	$entity				Restrict onto entity
  * @param  	User	$fuser				User object (forced)

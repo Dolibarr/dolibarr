@@ -810,7 +810,7 @@ function confirmConstantAction(action, url, code, input, box, entity, yesButton,
                     minLength: this.options.minLengthToAutocomplete,
                     source: function( request, response ) {
                         var matcher = new RegExp( $.ui.autocomplete.escapeRegex(request.term), "i" );
-                        response( select.children( "option" ).map(function() {
+                        response( select.children( "option:enabled" ).map(function() {
                             var text = $( this ).text();
                             if ( this.value && ( !request.term || matcher.test(text) ) )
                                 return {
