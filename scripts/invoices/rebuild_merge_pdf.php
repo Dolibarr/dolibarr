@@ -125,7 +125,7 @@ foreach ($argv as $key => $value)
 		$paymentdatebefore=dol_stringtotime($argv[$key+2]);
 		if (empty($paymentdateafter) || empty($paymentdatebefore))
 		{
-			print 'Error: Bad date format'."\n";
+			print 'Error: Bad date format or value'."\n";
 			exit(-1);
 		}
 		print 'Rebuild PDF for invoices with at least one payment between '.dol_print_date($paymentdateafter,'day')." and ".dol_print_date($paymentdatebefore,'day').".\n";
