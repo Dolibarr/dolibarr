@@ -146,7 +146,7 @@ class FormFile
             {
             	print $out;
             }
-            print $hookmanager->resprint;
+            print $hookmanager->resPrint;
 
             return 1;
         }
