@@ -758,7 +758,7 @@ class FormFile
         print '<table width="100%" class="nobordernopadding">';
         print '<tr class="liste_titre">';
         $sortref="fullname";
-        if ($modulepart == 'invoice_supplier') $sortref='';    // No sort for supplier invoices as path name is not
+        if ($modulepart == 'invoice_supplier') $sortref='level1name';
         print_liste_field_titre($langs->trans("Ref"),$url,$sortref,"",$param,'align="left"',$sortfield,$sortorder);
         print_liste_field_titre($langs->trans("Documents2"),$url,"name","",$param,'align="left"',$sortfield,$sortorder);
         print_liste_field_titre($langs->trans("Size"),$url,"size","",$param,'align="right"',$sortfield,$sortorder);
