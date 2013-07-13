@@ -380,11 +380,18 @@ class pdf_azur extends ModelePDFPropales
 
 							if (!empty($realpath))
 							{
+								//$pdf->setImageScale(PDF_IMAGE_SCALE_RATIO);
 								$tmp=pdf_getHeightForImage($realpath);
-								//var_dump($tmp['height']);exit;
-								$pdf->Image($realpath, $curX, $curY-1, $tmp['width'], $tmp['height'],'','','',2, 300);	// Use 300 dpi
+								//var_dump(constant('PDF_IMAGE_SCALE_RATIO'));var_dump($pdf->getImageScale());var_dump($tmp['width']);var_dump($pdf->pixelsToUnits($tmp['width']));exit;
+								// measures 1/72 of an inch, i.e. approximately 0.0139 inch or 25.4/72 = 0.3528 mm
+								var_dump($this->page_largeur);exit;
+								//var_dump(tmp['height']);exit;
+								$pdf->Line($this->posxtva,10,$this->posxtva+0.5,10);
+								$pdf->Image($realpath, $this->posxtva, 10, $tmp['width'], $tmp['height'],'','','',2,0);	// Use 300 dpi
+								$pdf->Line($this->posxtva+$pdf->pixelsToUnits($tmp['width']),10,$this->posxtva+$pdf->pixelsToUnits($tmp['width'])+0.5,10);
+								$pdf->Image($realpath, $curX + ($this->posxtva-$this->posxpicture-($pdf->pixelsToUnits($tmp['width'])))/2, $curY-1, $tmp['width'], $tmp['height'],'','','',2, 300);	// Use 300 dpi
 								//$nexY += 7;	// +7 for height = 12
-								$nexY += round($tmp['height'] / 12 * 7);
+								$nexY += round($pdf->pixelsToUnits($tmp['height']));
 								//var_dump($nexY);exit;
 							}
 						}

@@ -1553,4 +1553,31 @@ function pdf_getLinkedObjects($object,$outputlangs)
 	return $linkedobjects;
 }
 
+/**
+ * Return dimensions to use for images onto PDF
+ *
+ * @param	string		$realpath		Full path to photo file to use
+ * @return	array						Height/Width to use to output image (in pixel)
+ */
+function pdf_getHeightForImage($realpath)
+{
+	$maxheight=12; $maxwidth=16;
+	include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
+	$tmp=dol_getImageSize($realpath);
+	if ($tmp['height'])
+	{
+		$width=(int) round($maxheight*$tmp['width']/$tmp['height']);
+		if ($width > $maxwidth)
+		{
+			$height=(int) round($height*$maxwidth/$width);
+			$width=$maxwidth;
+		}
+		else
+		{
+			$height=$maxheight;
+		}
+	}
+	return array('width'=>$width,'height'=>$height);
+}
+
 ?>
