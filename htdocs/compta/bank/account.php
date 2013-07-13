@@ -120,7 +120,7 @@ if ($action == 'add' && $id && ! isset($_POST["cancel"]) && $user->rights->banqu
 if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->banque->modifier)
 {
 	$accline=new AccountLine($db);
-	$accline->fetch($_GET["rowid"]);
+	$result=$accline->fetch(GETPOST("rowid"));
 	$result=$accline->delete();
 }
 
@@ -295,6 +295,14 @@ if ($id > 0 || ! empty($ref))
 	 */
 	$param.='&amp;account='.$object->id.'&amp;vline='.$vline;
 
+	// Confirmation delete
+	if ($action == 'delete')
+	{
+		$text=$langs->trans('ConfirmDeleteTransaction');
+		$ret=$form->form_confirm($_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;rowid='.GETPOST("rowid"),$langs->trans('DeleteTransaction'),$text,'confirm_delete');
+		if ($ret == 'html') print '<br>';
+	}
+
 	// Define transaction list navigation string
 	print '<form action="'.$_SERVER["PHP_SELF"].'" name="newpage" method="POST">';
 	print '<input type="hidden" name="token"        value="'.$_SESSION['newtoken'].'">';
@@ -320,14 +328,6 @@ if ($id > 0 || ! empty($ref))
 	}
 	$navig.='</fieldset></div>';
 	//var_dump($navig);
-
-	// Confirmation delete
-	if ($action == 'delete')
-	{
-		$text=$langs->trans('ConfirmDeleteTransaction');
-		$ret=$form->form_confirm($_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;rowid='.$_GET["rowid"],$langs->trans('DeleteTransaction'),$text,'confirm_delete');
-		if ($ret == 'html') print '<br>';
-	}
 
 	print '<table class="notopnoleftnoright" width="100%">';
 
