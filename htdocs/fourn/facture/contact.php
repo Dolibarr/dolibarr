@@ -51,7 +51,7 @@ $object = new FactureFournisseur($db);
 
 if ($action == 'addcontact' && $user->rights->fournisseur->facture->creer)
 {
-	$result = $object->fetch($id);
+	$result = $object->fetch($id, $ref);
 
     if ($result > 0 && $id > 0)
     {
