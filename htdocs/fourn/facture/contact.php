@@ -146,7 +146,7 @@ if ($id > 0 || ! empty($ref))
 
 		// Reference du facture
 		print '<tr><td width="20%">'.$langs->trans("Ref").'</td><td colspan="3">';
-		print $form->showrefnav($object, 'facid', $linkback, 1, 'rowid', 'ref', $morehtmlref);
+		print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
 		print "</td></tr>";
 
         // Ref supplier
@@ -161,10 +161,10 @@ if ($id > 0 || ! empty($ref))
 		print '</div>';
 
 		print '<br>';
-		
+
 		// Contacts lines
 		include DOL_DOCUMENT_ROOT.'/core/tpl/contacts.tpl.php';
-		
+
 	}
 	else
 	{
