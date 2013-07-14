@@ -33,7 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 
 
 /**
- *	Classe permettant de generer les propales au modele Azur
+ *	Class to generate PDF proposal Azur
  */
 class pdf_azur extends ModelePDFPropales
 {
@@ -102,6 +102,7 @@ class pdf_azur extends ModelePDFPropales
 
 		// Define position of columns
 		$this->posxdesc=$this->marge_gauche+1;
+		$this->posxpicture=95;
 		$this->posxtva=111;
 		$this->posxup=126;
 		$this->posxqty=145;
@@ -282,7 +283,15 @@ class pdf_azur extends ModelePDFPropales
 					$showpricebeforepagebreak=1;
 
 					$pdf->startTransaction();
-					pdf_writelinedesc($pdf,$object,$i,$outputlangs,$this->posxtva-$curX,3,$curX,$curY,$hideref,$hidedesc,0,$hookmanager);
+					if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITH_PICTURE))
+					{
+						pdf_writelinedesc($pdf,$object,$i,$outputlangs,$this->posxtva-$curX,3,$curX,$curY,$hideref,$hidedesc,0,$hookmanager);
+					}
+					else
+					{
+						pdf_writelinedesc($pdf,$object,$i,$outputlangs,$this->posxpicture-$curX,3,$curX,$curY,$hideref,$hidedesc,0,$hookmanager);
+					}
+
 					$pageposafter=$pdf->getPage();
 					if ($pageposafter > $pageposbefore)	// There is a pagebreak
 					{
@@ -290,7 +299,15 @@ class pdf_azur extends ModelePDFPropales
 						$pageposafter=$pageposbefore;
 						//print $pageposafter.'-'.$pageposbefore;exit;
 						$pdf->setPageOrientation('', 1, $heightforfooter);	// The only function to edit the bottom margin of current page to set it.
-						pdf_writelinedesc($pdf,$object,$i,$outputlangs,$this->posxtva-$curX,4,$curX,$curY,$hideref,$hidedesc,0,$hookmanager);
+						if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITH_PICTURE))
+						{
+							pdf_writelinedesc($pdf,$object,$i,$outputlangs,$this->posxtva-$curX,3,$curX,$curY,$hideref,$hidedesc,0,$hookmanager);
+						}
+						else
+						{
+							pdf_writelinedesc($pdf,$object,$i,$outputlangs,$this->posxpicture-$curX,3,$curX,$curY,$hideref,$hidedesc,0,$hookmanager);
+						}
+
 						$pageposafter=$pdf->getPage();
 						$posyafter=$pdf->GetY();
 						if ($posyafter > ($this->page_hauteur - ($heightforfooter+$heightforfreetext+$heightforinfotot)))	// There is no space left for total+free text
@@ -326,6 +343,53 @@ class pdf_azur extends ModelePDFPropales
 					}
 
 					$pdf->SetFont('','', $default_font_size - 1);   // On repositionne la police par defaut
+
+					// Photo
+					if (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITH_PICTURE))
+					{
+						$curX = $this->posxpicture-1;
+						if ($object->lines[$i]->fk_product)
+						{
+							$objphoto = new Product($this->db);
+							$objphoto->fetch($object->lines[$i]->fk_product);
+
+							$pdir = get_exdir($object->lines[$i]->fk_product,2) . $object->lines[$i]->fk_product ."/photos/";
+							$dir = $conf->product->dir_output.'/'.$pdir;
+
+							$realpath='';
+							if ($object->ref == 'SPECIMEN')
+							{
+								$realpath = DOL_DOCUMENT_ROOT.'/theme/common/nophoto.jpg';
+							}
+							else
+							{
+								foreach ($objphoto->liste_photos($dir,1) as $key => $obj)
+								{
+									if ($obj['photo_vignette'])
+									{
+										$filename='thumbs/'.$obj['photo_vignette'];
+									}
+									else
+									{
+										$filename=$obj['photo'];
+									}
+
+									$realpath = $dir.$filename;
+									break;
+								}
+							}
+
+							if (!empty($realpath))
+							{
+								$tmp=pdf_getHeightForImage($realpath);
+								//var_dump($tmp['height']);exit;
+								$pdf->Image($realpath, $curX, $curY-1, $tmp['width'], $tmp['height'],'','','',2, 300);	// Use 300 dpi
+								//$nexY += 7;	// +7 for height = 12
+								$nexY += round($tmp['height'] / 12 * 7);
+								//var_dump($nexY);exit;
+							}
+						}
+					}
 
 					// VAT Rate
 					if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT))
@@ -755,7 +819,7 @@ class pdf_azur extends ModelePDFPropales
 				//{
 					foreach( $this->localtax1 as $localtax_type => $localtax_rate )
 					{
-						if (in_array((string) $localtax_type, array('1','3','5','7'))) continue;
+						if (in_array((string) $localtax_type, array('1','3','5'))) continue;
 
 						foreach( $localtax_rate as $tvakey => $tvaval )
 						{
@@ -787,7 +851,7 @@ class pdf_azur extends ModelePDFPropales
 				//{
 					foreach( $this->localtax2 as $localtax_type => $localtax_rate )
 					{
-						if (in_array((string) $localtax_type, array('1','3','5','7'))) continue;
+						if (in_array((string) $localtax_type, array('1','3','5'))) continue;
 
 						foreach( $localtax_rate as $tvakey => $tvaval )
 						{
@@ -1031,6 +1095,16 @@ class pdf_azur extends ModelePDFPropales
 
 			$pdf->SetXY($this->posxdesc-1, $tab_top+1);
 			$pdf->MultiCell(108,2, $outputlangs->transnoentities("Designation"),'','L');
+		}
+
+		if (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITH_PICTURE))
+		{
+			$pdf->line($this->posxpicture-1, $tab_top, $this->posxpicture-1, $tab_top + $tab_height);
+			if (empty($hidetop))
+			{
+				$pdf->SetXY($this->posxpicture-1, $tab_top+1);
+				$pdf->MultiCell($this->posxtva-$this->posxpicture-1,2, $outputlangs->transnoentities("Photo"),'','C');
+			}
 		}
 
 		if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT))
