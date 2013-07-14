@@ -94,6 +94,13 @@ class modExpedition extends DolibarrModules
 		$this->const[$r][3] = 'Nom du gestionnaire de numerotation des expeditions';
 		$this->const[$r][4] = 0;
 		$r++;
+		
+		$r++;
+		$this->const[$r][0] = "EXPEDITION_ADDON_PDF_ODT_PATH";
+		$this->const[$r][1] = "chaine";
+		$this->const[$r][2] = "DOL_DATA_ROOT/doctemplates/shipment";
+		$this->const[$r][3] = "";
+		$this->const[$r][4] = 0;
 
 		$this->const[$r][0] = "LIVRAISON_ADDON_PDF";
 		$this->const[$r][1] = "chaine";
@@ -108,6 +115,13 @@ class modExpedition extends DolibarrModules
 		$this->const[$r][3] = 'Nom du gestionnaire de numerotation des bons de reception';
 		$this->const[$r][4] = 0;
 		$r++;
+		
+		$r++;
+		$this->const[$r][0] = "EXPEDITION_ADDON_PDF_ODT_PATH";
+		$this->const[$r][1] = "chaine";
+		$this->const[$r][2] = "DOL_DATA_ROOT/doctemplates/delivery";
+		$this->const[$r][3] = "";
+		$this->const[$r][4] = 0;
 
 		// Boxes
 		$this->boxes = array();
@@ -229,6 +243,24 @@ class modExpedition extends DolibarrModules
 
 		// Permissions
 		$this->remove($options);
+		
+		//ODT template
+		$src=DOL_DOCUMENT_ROOT.'/install/doctemplates/shipment/template_shipment.odt';
+		$dirodt=DOL_DATA_ROOT.'/doctemplates/shipment';
+		$dest=$dirodt.'/template_shipment.odt';
+
+		if (file_exists($src) && ! file_exists($dest))
+		{
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+			dol_mkdir($dirodt);
+			$result=dol_copy($src,$dest,0,0);
+			if ($result < 0)
+			{
+				$langs->load("errors");
+				$this->error=$langs->trans('ErrorFailToCopyFile',$src,$dest);
+				return 0;
+			}
+		}
 
 		$sql = array();
 
