@@ -19,7 +19,7 @@
  */
 
 /**
- *	\file       htdocs/core/modules/expedition/doc/pdf_expedition_rouget.modules.php
+ *	\file       htdocs/core/modules/expedition/doc/pdf_rouget.modules.php
  *	\ingroup    expedition
  *	\brief      Fichier de la classe permettant de generer les bordereaux envoi au modele Rouget
  */
@@ -32,7 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 /**
  *	Classe permettant de generer les borderaux envoi au modele Rouget
  */
-class pdf_expedition_rouget extends ModelePdfExpedition
+class pdf_rouget extends ModelePdfExpedition
 {
 	var $emetteur;	// Objet societe qui emet
 
