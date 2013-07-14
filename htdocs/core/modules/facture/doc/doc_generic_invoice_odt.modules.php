@@ -105,34 +105,35 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 		$sumpayed = $object->getSommePaiement();
 		$alreadypayed=price($sumpayed,0,$outputlangs);
 
-		$resarray=array(
-		'object_id'=>$object->id,
-		'object_ref'=>$object->ref,
-		'object_ref_ext'=>$object->ref_ext,
-		'object_ref_customer'=>$object->ref_client,
-		'object_ref_supplier'=>(! empty($object->ref_fournisseur)?$object->ref_fournisseur:''),
-		'object_source_invoice_ref'=>$invoice_source->ref,
-		'object_date'=>dol_print_date($object->date,'day'),
-		'object_date_limit'=>dol_print_date($object->date_lim_reglement,'day'),
-		'object_date_creation'=>dol_print_date($object->date_creation,'day'),
-		'object_date_modification'=>(! empty($object->date_modification)?dol_print_date($object->date_modification,'day'):''),
-		'object_date_validation'=>(! empty($object->date_validation)?dol_print_date($object->date_validation,'dayhour'):''),
-		'object_date_delivery_planed'=>(! empty($object->date_livraison)?dol_print_date($object->date_livraison,'day'):''),
-		'object_payment_mode_code'=>$object->mode_reglement_code,
-		'object_payment_mode'=>($outputlangs->transnoentitiesnoconv('PaymentType'.$object->mode_reglement_code)!='PaymentType'.$object->mode_reglement_code?$outputlangs->transnoentitiesnoconv('PaymentType'.$object->mode_reglement_code):$object->mode_reglement),
-		'object_payment_term_code'=>$object->cond_reglement_code,
-		'object_payment_term'=>($outputlangs->transnoentitiesnoconv('PaymentCondition'.$object->cond_reglement_code)!='PaymentCondition'.$object->cond_reglement_code?$outputlangs->transnoentitiesnoconv('PaymentCondition'.$object->cond_reglement_code):$object->cond_reglement),
-		'object_total_ht'=>price2num($object->total_ht),
-		'object_total_vat'=>price2num($object->total_tva),
-		'object_total_ttc'=>price2num($object->total_ttc),
-		'object_total_discount_ht' => price2num($object->getTotalDiscount(), 0, $outputlangs),
-		'object_vatrate'=>(isset($object->tva)?vatrate($object->tva):''),
-		'object_note_private'=>$object->note,
-		'object_note'=>$object->note_public,
-		// Payments
-		'object_already_payed'=>$alreadypayed,
-		'object_remain_to_pay'=>price2num($object->total_ttc - $sumpayed)
-		);
+        $resarray=array(
+            'object_id'=>$object->id,
+            'object_ref'=>$object->ref,
+            'object_ref_ext'=>$object->ref_ext,
+        	'object_ref_customer'=>$object->ref_client,
+            'object_ref_supplier'=>(! empty($object->ref_fournisseur)?$object->ref_fournisseur:''),
+            'object_source_invoice_ref'=>$invoice_source->ref,
+        	'object_hour'=>dol_print_date($object->date,'hour'),
+        	'object_date'=>dol_print_date($object->date,'day'),
+        	'object_date_limit'=>dol_print_date($object->date_lim_reglement,'day'),
+        	'object_date_creation'=>dol_print_date($object->date_creation,'day'),
+            'object_date_modification'=>(! empty($object->date_modification)?dol_print_date($object->date_modification,'day'):''),
+            'object_date_validation'=>(! empty($object->date_validation)?dol_print_date($object->date_validation,'dayhour'):''),
+			'object_date_delivery_planed'=>(! empty($object->date_livraison)?dol_print_date($object->date_livraison,'day'):''),
+	        'object_payment_mode_code'=>$object->mode_reglement_code,
+        	'object_payment_mode'=>($outputlangs->transnoentitiesnoconv('PaymentType'.$object->mode_reglement_code)!='PaymentType'.$object->mode_reglement_code?$outputlangs->transnoentitiesnoconv('PaymentType'.$object->mode_reglement_code):$object->mode_reglement),
+        	'object_payment_term_code'=>$object->cond_reglement_code,
+        	'object_payment_term'=>($outputlangs->transnoentitiesnoconv('PaymentCondition'.$object->cond_reglement_code)!='PaymentCondition'.$object->cond_reglement_code?$outputlangs->transnoentitiesnoconv('PaymentCondition'.$object->cond_reglement_code):$object->cond_reglement),
+			'object_total_ht'=>price2num($object->total_ht),
+			'object_total_vat'=>price2num($object->total_tva),
+			'object_total_ttc'=>price2num($object->total_ttc),
+			'object_total_discount_ht' => price2num($object->getTotalDiscount()),
+            'object_vatrate'=>(isset($object->tva)?vatrate($object->tva):''),
+            'object_note_private'=>$object->note,
+            'object_note'=>$object->note_public,
+        	// Payments
+            'object_already_payed'=>$alreadypayed,
+            'object_remain_to_pay'=>price2num($object->total_ttc - $sumpayed)
+        );
 
 		// Add vat by rates
 		foreach ($object->lines as $line)
@@ -339,9 +340,9 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 				$newfiletmp=preg_replace('/\.od(t|s)/i','',$newfile);
 				$newfiletmp=preg_replace('/template_/i','',$newfiletmp);
 				$newfiletmp=preg_replace('/modele_/i','',$newfiletmp);
-				
+
 				$newfiletmp=$objectref.'_'.$newfiletmp;
-				
+
 				// Get extension (ods or odt)
 				$newfileformat=substr($newfile, strrpos($newfile, '.')+1);
 				if ( ! empty($conf->global->MAIN_DOC_USE_TIMING))
@@ -524,7 +525,7 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 						$this->error=$e->getMessage();
 						return -1;
 					}
-				}	
+				}
 
 				if (! empty($conf->global->MAIN_UMASK))
 					@chmod($file, octdec($conf->global->MAIN_UMASK));

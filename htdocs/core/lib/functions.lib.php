@@ -3748,6 +3748,7 @@ function get_date_range($date_start,$date_end,$format = '',$outputlangs='')
 	return $out;
 }
 
+
 /**
  * Return firstname and lastname in correct order
  *
