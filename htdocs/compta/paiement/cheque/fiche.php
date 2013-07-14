@@ -344,8 +344,8 @@ if ($action == 'new')
 	$sql.= " AND ba.entity = ".$conf->entity;
 	$sql.= " AND b.fk_bordereau = 0";
 	$sql.= " AND b.amount > 0";
-	if ($filterdate)      $sql.=" AND b.dateo = '".$db->idate($filterdate)."'";
-    if ($filteraccountid) $sql.=" AND ba.rowid= '".$filteraccountid."'";
+	if ($filterdate)          $sql.=" AND b.dateo = '".$db->idate($filterdate)."'";
+    if ($filteraccountid > 0) $sql.=" AND ba.rowid= '".$filteraccountid."'";
 	$sql.= $db->order("b.dateo,b.rowid","ASC");
 
 	$resql = $db->query($sql);
@@ -602,10 +602,10 @@ else
 
 print '<div class="tabsAction">';
 
-if ($user->societe_id == 0 && count($accounts) == 1 && $action == 'new' && $user->rights->banque->cheque)
+/*if ($user->societe_id == 0 && count($accounts) == 1 && $action == 'new' && $user->rights->banque->cheque)
 {
 	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=create&amp;accountid='.$account_id.'">'.$langs->trans('NewCheckReceipt').'</a>';
-}
+}*/
 
 if ($user->societe_id == 0 && ! empty($object->id) && $object->statut == 0 && $user->rights->banque->cheque)
 {
