@@ -83,6 +83,7 @@ if (! empty($dolibarr_main_document_root_alt))
 			print "Should found something like following examples:<br>\n";
 			print "\"/extensions\"<br>\n";
 			print "\"/extensions1,/extensions2,...\"<br>\n";
+			print "\"/../extensions\"<br>\n";
 			print "\"/custom\"<br>\n";
 			exit;
 		}

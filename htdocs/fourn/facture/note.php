@@ -41,7 +41,7 @@ if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'fournisseur', $id, 'facture_fourn', 'facture');
 
 $object = new FactureFournisseur($db);
-$object->fetch($id,$ref);
+$object->fetch($id, $ref);
 
 
 
@@ -71,13 +71,13 @@ if ($action == 'setlabel' && $user->rights->fournisseur->facture->creer)
 
 /*
  * View
-*/
+ */
 
 $form = new Form($db);
 
 llxHeader();
 
-if ($id)
+if ($object->id > 0)
 {
 	$object->fetch_thirdparty();
 
@@ -92,7 +92,7 @@ if ($id)
 
 	// Ref
 	print '<tr><td width="20%" class="nowrap">'.$langs->trans("Ref").'</td><td colspan="3">';
-	print $form->showrefnav($object, 'facid', $linkback, 1, 'rowid', 'ref', $morehtmlref);
+	print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
 	print '</td>';
 	print "</tr>\n";
 

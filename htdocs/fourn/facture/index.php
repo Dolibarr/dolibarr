@@ -73,7 +73,7 @@ if ($mode == 'search')
 	if ($modesearch == 'soc')
 	{
 		$sql = "SELECT s.rowid FROM ".MAIN_DB_PREFIX."societe as s ";
-		$sql.= " WHERE s.nom LIKE '%".$db->escape(strtolower($socname))."%'";
+		$sql.= " WHERE s.nom LIKE '%".$db->escape($socname)."%'";
 		$sql.= " AND s.entity IN (".getEntity('societe', 1).")";
 	}
 
@@ -127,7 +127,8 @@ if (GETPOST('filtre'))
 
 if (GETPOST("search_ref"))
 {
-	$sql .= " AND fac.rowid = ".$db->escape(GETPOST("search_ref"));
+	if (is_numeric(GETPOST("search_ref"))) $sql .= " AND (fac.rowid = ".GETPOST("search_ref",'int')." OR fac.ref = '".$db->escape(GETPOST("search_ref"))."')";	// For backward compatibility
+	else $sql .= " AND fac.ref LIKE '%".$db->escape(GETPOST("search_ref"))."%'";
 }
 if (GETPOST("search_ref_supplier"))
 {

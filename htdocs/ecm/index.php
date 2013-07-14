@@ -63,6 +63,7 @@ $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="fullname";
+if ($module == 'invoice_supplier' && $sortfield == "fullname") $sortfield="level1name";
 
 $ecmdir = new EcmDirectory($db);
 if ($section)
