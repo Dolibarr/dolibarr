@@ -286,26 +286,12 @@ class pdf_azur extends ModelePDFPropales
 							$dir = $conf->product->dir_output.'/'.$pdir;
 
 							$realpath='';
-							if ($object->ref == 'SPECIMEN' && $i == 1)
+							foreach ($objphoto->liste_photos($dir,1) as $key => $obj)
 							{
-								$realpath = DOL_DOCUMENT_ROOT.'/theme/common/nophoto.jpg';
-							}
-							else
-							{
-								foreach ($objphoto->liste_photos($dir,1) as $key => $obj)
-								{
-									if ($obj['photo_vignette'])
-									{
-										$filename='thumbs/'.$obj['photo_vignette'];
-									}
-									else
-									{
-										$filename=$obj['photo'];
-									}
-
-									$realpath = $dir.$filename;
-									break;
-								}
+								$filename=$obj['photo'];
+								//if ($obj['photo_vignette']) $filename='thumbs/'.$obj['photo_vignette'];
+								$realpath = $dir.$filename;
+								break;
 							}
 
 							if (!empty($realpath))	$imglinesize=pdf_getSizeForImage($realpath);
@@ -335,7 +321,7 @@ class pdf_azur extends ModelePDFPropales
 					if (isset($imglinesize['width']) && isset($imglinesize['height']))
 					{
 						$curX = $this->posxpicture-1;
-						$pdf->Image($realpath, $curX + (($this->posxtva-$this->posxpicture-$imglinesize['width'])/2), $curY, $imglinesize['width'], $imglinesize['height'],'','','',2, 300);	// Use 300 dpi
+						$pdf->Image($realpath, $curX + (($this->posxtva-$this->posxpicture-$imglinesize['width'])/2), $curY, $imglinesize['width'], $imglinesize['height'], '', '', '', 2, 300);	// Use 300 dpi
 						// $pdf->Image does not increase value return by getY, so we save it manually
 						$posYAfterImage=$curY+$imglinesize['height'];
 					}
