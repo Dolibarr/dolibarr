@@ -60,9 +60,10 @@ $error=0;
 
 @set_time_limit(0);
 print "***** ".$script_file." (".$version.") pid=".getmypid()." *****\n";
+dol_syslog($script_file." launched with arg ".join(',',$argv));
 
 if (! isset($argv[3]) || ! $argv[3]) {
-	print "Usage: ".$script_file." bank_ref bank_receipt_number (csv|tsv|excel|excel2007) [lang=xx_XX]\n";
+	print "Usage: ".$script_file." bank_ref [bank_receipt_number|all] (csv|tsv|excel|excel2007) [lang=xx_XX]\n";
 	exit(-1);
 }
 $bankref=$argv[1];
@@ -172,26 +173,31 @@ $array_export_TypeFields=array(
 );
 
 
-// Recherche les ecritures pour le releve
-$listofnum="'";
-$arraynum=explode(',',$num);
-foreach($arraynum as $val)
+// Build request to find records for a bank account/receipt
+$listofnum="";
+if (! empty($num) && $num != "all")
 {
-	if ($listofnum != "'") $listofnum.="','";
-	$listofnum.=$val;
+	$listofnum.="'";
+	$arraynum=explode(',',$num);
+	foreach($arraynum as $val)
+	{
+		if ($listofnum != "'") $listofnum.="','";
+		$listofnum.=$val;
+	}
+	$listofnum.="'";
 }
-$listofnum.="'";
 $sql = "SELECT b.rowid, b.dateo as do, b.datev as dv,";
 $sql.= " b.amount, b.label, b.rappro, b.num_releve, b.num_chq, b.fk_type,";
 $sql.= " ba.rowid as bankid, ba.ref as bankref, ba.label as banklabel";
 $sql.= " FROM ".MAIN_DB_PREFIX."bank_account as ba";
 $sql.= ", ".MAIN_DB_PREFIX."bank as b";
-$sql.= " WHERE b.num_releve IN (".$listofnum.")";
-if (!isset($num))	$sql.= " OR b.num_releve is null";
-$sql.= " AND b.fk_account = ".$acct->id;
+$sql.= " WHERE b.fk_account = ".$acct->id;
+if ($listofnum) $sql.= " AND b.num_releve IN (".$listofnum.")";
+if (!isset($num)) $sql.= " OR b.num_releve is null";
 $sql.= " AND b.fk_account = ba.rowid";
 $sql.= $db->order("b.num_releve, b.datev, b.datec", "ASC");  // We add date of creation to have correct order when everything is done the same day
 //print $sql;
+
 $resql=$db->query($sql);
 if ($resql)
 {
@@ -401,7 +407,6 @@ if ($resql)
 		$rec->accountelem=$accountelem;
 		$rec->debit=$debit;
 		$rec->credit=$credit;
-		$rec->sold=$sold;
 		$rec->comment=$comment;
 		$rec->soldbefore=price2num($totalbefore);
 		$rec->soldafter=price2num($total);

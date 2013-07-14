@@ -57,6 +57,7 @@ $error=0;
 
 @set_time_limit(0);
 print "***** ".$script_file." (".$version.") pid=".getmypid()." *****\n";
+dol_syslog($script_file." launched with arg ".join(',',$argv));
 
 // Check parameters
 if (! isset($argv[1]))
@@ -124,7 +125,7 @@ foreach ($argv as $key => $value)
 		$paymentdatebefore=dol_stringtotime($argv[$key+2]);
 		if (empty($paymentdateafter) || empty($paymentdatebefore))
 		{
-			print 'Error: Bad date format'."\n";
+			print 'Error: Bad date format or value'."\n";
 			exit(-1);
 		}
 		print 'Rebuild PDF for invoices with at least one payment between '.dol_print_date($paymentdateafter,'day')." and ".dol_print_date($paymentdatebefore,'day').".\n";

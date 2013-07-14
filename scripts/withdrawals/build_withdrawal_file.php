@@ -51,8 +51,9 @@ $error=0;
 
 @set_time_limit(0);
 print "***** ".$script_file." (".$version.") pid=".getmypid()." *****\n";
+dol_syslog($script_file." launched with arg ".join(',',$argv));
 
-$datetimeprev = time();
+$datetimeprev = dol_now();
 
 $month = strftime("%m", $datetimeprev);
 $year = strftime("%Y", $datetimeprev);
@@ -60,8 +61,6 @@ $year = strftime("%Y", $datetimeprev);
 $user = new user($db);
 $user->fetch($conf->global->PRELEVEMENT_USER);
 
-
-print "***** ".$script_file." (".$version.") *****\n";
 if (! isset($argv[1])) {	// Check parameters
     print "This script check invoices with a withdrawal request and\n";
     print "then create payment and build a withdraw file.\n";

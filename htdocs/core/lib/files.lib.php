@@ -135,8 +135,11 @@ function dol_dir_list($path, $types="all", $recursive=0, $filter="", $excludefil
 
 							if (! $filter || preg_match('/'.$filter.'/i',$file))	// We do not search key $filter into $path, only into $file
 							{
+								preg_match('/([^\/]+)\/[^\/]+$/',$path.'/'.$file,$reg);
+								$level1name=(isset($reg[1])?$reg[1]:'');
 								$file_list[] = array(
 										"name" => $file,
+										"level1name" => $level1name,
 										"fullname" => $path.'/'.$file,
 										"date" => $filedate,
 										"size" => $filesize,
@@ -159,8 +162,11 @@ function dol_dir_list($path, $types="all", $recursive=0, $filter="", $excludefil
 
 						if (! $filter || preg_match('/'.$filter.'/i',$file))	// We do not search key $filter into $path, only into $file
 						{
+							preg_match('/([^\/]+)\/[^\/]+$/',$path.'/'.$file,$reg);
+							$level1name=(isset($reg[1])?$reg[1]:'');
 							$file_list[] = array(
 									"name" => $file,
+									"level1name" => $level1name,
 									"fullname" => $path.'/'.$file,
 									"date" => $filedate,
 									"size" => $filesize,

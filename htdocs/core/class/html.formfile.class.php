@@ -146,7 +146,7 @@ class FormFile
             {
             	print $out;
             }
-            print $hookmanager->resprint;
+            print $hookmanager->resPrint;
 
             return 1;
         }
@@ -774,7 +774,7 @@ class FormFile
         print '<table width="100%" class="nobordernopadding">';
         print '<tr class="liste_titre">';
         $sortref="fullname";
-        if ($modulepart == 'invoice_supplier') $sortref='';    // No sort for supplier invoices as path name is not
+        if ($modulepart == 'invoice_supplier') $sortref='level1name';
         print_liste_field_titre($langs->trans("Ref"),$url,$sortref,"",$param,'align="left"',$sortfield,$sortorder);
         print_liste_field_titre($langs->trans("Documents2"),$url,"name","",$param,'align="left"',$sortfield,$sortorder);
         print_liste_field_titre($langs->trans("Size"),$url,"size","",$param,'align="right"',$sortfield,$sortorder);
@@ -852,7 +852,7 @@ class FormFile
                 // To show ref or specific information according to view to show (defined by $module)
                 if ($modulepart == 'company')          { preg_match('/(\d+)\/[^\/]+$/',$relativefile,$reg); $id=(isset($reg[1])?$reg[1]:''); }
                 if ($modulepart == 'invoice')          { preg_match('/(.*)\/[^\/]+$/',$relativefile,$reg);  $ref=(isset($reg[1])?$reg[1]:''); }
-                if ($modulepart == 'invoice_supplier') { preg_match('/(\d+)\/[^\/]+$/',$relativefile,$reg); $id=(isset($reg[1])?$reg[1]:''); }
+                if ($modulepart == 'invoice_supplier') { preg_match('/([^\/]+)\/[^\/]+$/',$relativefile,$reg); $ref=(isset($reg[1])?$reg[1]:''); if (is_numeric($ref)) { $id=$ref; $ref=''; } }	// $ref may be also id with old supplier invoices
                 if ($modulepart == 'propal')           { preg_match('/(.*)\/[^\/]+$/',$relativefile,$reg);  $ref=(isset($reg[1])?$reg[1]:''); }
                 if ($modulepart == 'order')            { preg_match('/(.*)\/[^\/]+$/',$relativefile,$reg);  $ref=(isset($reg[1])?$reg[1]:''); }
                 if ($modulepart == 'order_supplier')   { preg_match('/(.*)\/[^\/]+$/',$relativefile,$reg);  $ref=(isset($reg[1])?$reg[1]:''); }

@@ -309,10 +309,10 @@ else
 			print img_next().'</a>';
 			print "</td>\n";
 
-			// Num cheque
+			// Type and num
 			print '<td class="nowrap">'.$objp->fk_type.' '.($objp->num_chq?$objp->num_chq:'').'</td>';
 
-			// Libelle
+			// Description
 			print '<td valign="center"><a href="'.DOL_URL_ROOT.'/compta/bank/ligne.php?rowid='.$objp->rowid.'&amp;account='.$acct->id.'">';
 			$reg=array();
 			preg_match('/\((.+)\)/i',$objp->label,$reg);	// Si texte entoure de parenthese on tente recherche de traduction
@@ -355,7 +355,7 @@ else
 				{
 					$paymentvatstatic->id=$links[$key]['url_id'];
 					$paymentvatstatic->ref=$langs->trans("Payment");
-					print ' '.$paymentvatstatic->getNomUrl(2);
+					print ' '.$paymentvatstatic->getNomUrl(1);
 				}
 				elseif ($links[$key]['type']=='banktransfert') {
 					// Do not show link to transfer since there is no transfer card (avoid confusion). Can already be accessed from transaction detail.

@@ -120,7 +120,8 @@ class FactureFournisseur extends CommonInvoice
 		$error=0;
         $now=dol_now();
 
-        // Clear parameters
+        // Clean parameters
+        if (isset($this->ref_supplier)) $this->ref_supplier=trim($this->ref_supplier);
         if (empty($this->date)) $this->date=$now;
 
         $socid = $this->socid;
