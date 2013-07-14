@@ -37,8 +37,10 @@ $dolibarr_main_document_root='';
 
 
 // dolibarr_main_url_root_alt
-// This parameter defines the relative sub URLs of alternative Dolibarr root directories.
-// It can be links to some other secondary htdocs directories, separated by a coma.
+// This parameter defines the relative sub URLs to add to $dolibarr_main_url_root to
+// forge alternative root directories (used by modules developers).
+// You can put several values, separated by a coma, but number of entries must match 
+// number of entries into $dolibarr_main_document_root_alt.
 // Examples:
 // $dolibarr_main_url_root_alt='/extensions';
 // $dolibarr_main_url_root_alt='/extensions1,/extensions2';
@@ -47,7 +49,10 @@ $dolibarr_main_url_root_alt='';
 
 
 // dolibarr_main_document_root_alt
-// This parameter contains absolute alternative root file system directories of Dolibarr
+// This parameter contains absolute alternative root file system directories (used by
+// modules developers).
+// You can put several values, separated by a coma, but number of entries must match 
+// number of entries into $dolibarr_main_url_root_alt.
 // Examples:
 // $dolibarr_main_document_root_alt='/var/www/dolibarr/htdocs/extensions';
 // $dolibarr_main_document_root_alt='C:/My web sites/dolibarr/htdocs/extensions1,C:/My web sites/dolibarr/htdocs/extensions2';

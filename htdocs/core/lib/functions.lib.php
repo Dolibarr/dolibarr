@@ -1729,7 +1729,7 @@ function img_picto($alt, $picto, $options = '', $pictoisfullpath = false, $srcon
 			if ($type == 'main') continue;
 			if (file_exists($dirroot.'/'.$path.'/img/'.$picto))
 			{
-				$url=$conf->file->dol_url_root[$type];
+				$url=DOL_URL_ROOT.$conf->file->dol_url_root[$type];
 				break;
 			}
 		}
