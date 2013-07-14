@@ -200,14 +200,6 @@ else if ($action=='setModuleOptions') {
 		$conf->global->COMMANDE_ADDON_PDF_ODT_PATH = GETPOST('value1');
 	}
 }
-else if ($action=='setModuleOptions') {
-	if (dolibarr_set_const($db, "COMMANDE_ADDON_PDF_ODT_PATH",GETPOST('value1'),'chaine',0,'',$conf->entity))
-	{
-		// La constante qui a ete lue en avant du nouveau set
-		// on passe donc par une variable pour avoir un affichage coherent
-		$conf->global->COMMANDE_ADDON_PDF_ODT_PATH = GETPOST('value1');
-	}
-}
 
 
 /*
