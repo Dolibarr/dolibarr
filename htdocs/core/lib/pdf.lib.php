@@ -199,8 +199,8 @@ function pdf_getInstance($format='',$metric='mm',$pagetype='P')
 			{
 				$this->SetXY($x,$y);
 				$val=str_replace('<br>',"\n",$html);
-				$val=dol_string_nohtmltag($val,false,'ISO-8859-1');
-				//print 'eee'.$val;exit;
+				//$val=dol_string_nohtmltag($val,false,'ISO-8859-1');
+				$val=dol_string_nohtmltag($val,false,'UTF-8');
 				$this->MultiCell($w,$h,$val,$border,$align,$fill);
 			}
 		}
@@ -1554,25 +1554,29 @@ function pdf_getLinkedObjects($object,$outputlangs)
 }
 
 /**
- * Return dimensions to use for images onto PDF
+ * Return dimensions to use for images onto PDF checking that width and height are not higher than
+ * maximum (16x32 by default).
  *
  * @param	string		$realpath		Full path to photo file to use
- * @return	array						Height/Width to use to output image (in pixel)
+ * @return	array						Height and width to use to output image (in pdf user unit, so mm)
  */
-function pdf_getHeightForImage($realpath)
+function pdf_getSizeForImage($realpath)
 {
-	$maxheight=12; $maxwidth=16;
+	global $conf;
+
+	$maxwidth=(empty($conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH)?16:$conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH);
+	$maxheight=(empty($conf->global->MAIN_DOCUMENTS_WITH_PICTURE_HEIGHT)?32:$conf->global->MAIN_DOCUMENTS_WITH_PICTURE_HEIGHT);
 	include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 	$tmp=dol_getImageSize($realpath);
 	if ($tmp['height'])
 	{
-		$width=(int) round($maxheight*$tmp['width']/$tmp['height']);
-		if ($width > $maxwidth)
+		$width=(int) round($maxheight*$tmp['width']/$tmp['height']);	// I try to use maxheight
+		if ($width > $maxwidth)	// Pb with maxheight, so i use maxwidth
 		{
-			$height=(int) round($height*$maxwidth/$width);
 			$width=$maxwidth;
+			$height=(int) round($maxwidth*$tmp['height']/$tmp['width']);
 		}
-		else
+		else	// No pb with maxheight
 		{
 			$height=$maxheight;
 		}
