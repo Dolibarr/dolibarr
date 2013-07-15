@@ -107,7 +107,7 @@ foreach ($argv as $key => $value)
 
 		$dateafterdate=dol_stringtotime($argv[$key+1]);
 		$datebeforedate=dol_stringtotime($argv[$key+2]);
-		print 'Rebuild PDF for invoices validated between '.dol_print_date($dateafterdate,'day')." and ".dol_print_date($datebeforedate,'day').".\n";
+		print 'Rebuild PDF for invoices validated between '.dol_print_date($dateafterdate,'day','gmt')." and ".dol_print_date($datebeforedate,'day','gmt').".\n";
 	}
 
 	if ($value == 'filter=payments')
@@ -116,9 +116,14 @@ foreach ($argv as $key => $value)
 		$option.=(empty($option)?'':'_').'payments_'.$argv[$key+1].'_'.$argv[$key+2];
 		$filter[]='payments';
 
-		$paymentdateafter=dol_stringtotime($argv[$key+1]);
-		$paymentdatebefore=dol_stringtotime($argv[$key+2]);
-		print 'Rebuild PDF for invoices with at least one payment between '.dol_print_date($paymentdateafter,'day')." and ".dol_print_date($paymentdatebefore,'day').".\n";
+		$paymentdateafter=dol_stringtotime($argv[$key+1].'000000');
+		$paymentdatebefore=dol_stringtotime($argv[$key+2].'235959');
+		if (empty($paymentdateafter) || empty($paymentdatebefore))
+		{
+			print 'Error: Bad date format or value'."\n";
+			exit(-1);
+		}
+		print 'Rebuild PDF for invoices with at least one payment between '.dol_print_date($paymentdateafter,'day','gmt')." and ".dol_print_date($paymentdatebefore,'day','gmt').".\n";
 	}
 
 	if ($value == 'filter=nopayment')
