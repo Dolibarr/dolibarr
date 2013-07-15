@@ -186,20 +186,22 @@ foreach ($argv as $key => $value)
     if ($value == 'filter=excludethirdparties')
     {
     	$found=true;
-    	$option.=(empty($option)?'':'_').'excludethirdparties'.explode('-',$argv[$key+1]);
     	$filter[]='excludethirdparties';
 
     	$thirdpartiesid=explode(',',$argv[$key+1]);
     	print 'Exclude thirdparties with id in list ('.join(',',$thirdpartiesid).").\n";
+
+    	$option.=(empty($option)?'':'_').'excludethirdparties'.join('-',$thirdpartiesid);
     }
     if ($value == 'filter=onlythirdparties')
     {
     	$found=true;
-    	$option.=(empty($option)?'':'_').'onlythirdparty'.explode('-',$argv[$key+1]);
     	$filter[]='onlythirdparties';
 
     	$thirdpartiesid=explode(',',$argv[$key+1]);
     	print 'Only thirdparties with id in list ('.join(',',$thirdpartiesid).").\n";
+
+    	$option.=(empty($option)?'':'_').'onlythirdparty'.join('-',$thirdpartiesid);
     }
 
 	if (! $found && preg_match('/filter=/i',$value))
