@@ -272,14 +272,61 @@ class pdf_azur extends ModelePDFPropales
 					$pdf->SetFont('','', $default_font_size - 1);   // Into loop to work with multipage
 					$pdf->SetTextColor(0,0,0);
 
+					// Define size of image if we need it
+					$imglinesize=array(); $realpath='';
+					if (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITH_PICTURE))
+					{
+						if ($object->lines[$i]->fk_product)
+						{
+							$objphoto = new Product($this->db);
+							$objphoto->fetch($object->lines[$i]->fk_product);
+
+							$pdir = get_exdir($object->lines[$i]->fk_product,2) . $object->lines[$i]->fk_product ."/photos/";
+							$dir = $conf->product->dir_output.'/'.$pdir;
+
+							$realpath='';
+							foreach ($objphoto->liste_photos($dir,1) as $key => $obj)
+							{
+								$filename=$obj['photo'];
+								//if ($obj['photo_vignette']) $filename='thumbs/'.$obj['photo_vignette'];
+								$realpath = $dir.$filename;
+								break;
+							}
+
+							if (!empty($realpath))	$imglinesize=pdf_getSizeForImage($realpath);
+						}
+					}
+
 					$pdf->setTopMargin($tab_top_newpage);
 					$pdf->setPageOrientation('', 1, $heightforfooter+$heightforfreetext+$heightforinfotot);	// The only function to edit the bottom margin of current page to set it.
 					$pageposbefore=$pdf->getPage();
 
+					$showpricebeforepagebreak=1;
+					$posYAfterImage=0;
+					$posYAfterDescription=0;
+
+					// We start with Photo of product line
+					if (($curY + $imglinesize['height']) > ($this->page_hauteur-($heightforfooter+$heightforfreetext+$heightforinfotot)))	// If photo to high, we moved completely on new page
+					{
+						$pdf->AddPage('','',true);
+						if (! empty($tplidx)) $pdf->useTemplate($tplidx);
+						if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
+						$pdf->setPage($pagenb+1);
+
+						$curY = $tab_top_newpage;
+						$showpricebeforepagebreak=0;
+					}
+
+					if (isset($imglinesize['width']) && isset($imglinesize['height']))
+					{
+						$curX = $this->posxpicture-1;
+						$pdf->Image($realpath, $curX + (($this->posxtva-$this->posxpicture-$imglinesize['width'])/2), $curY, $imglinesize['width'], $imglinesize['height'], '', '', '', 2, 300);	// Use 300 dpi
+						// $pdf->Image does not increase value return by getY, so we save it manually
+						$posYAfterImage=$curY+$imglinesize['height'];
+					}
+
 					// Description of product line
 					$curX = $this->posxdesc-1;
-
-					$showpricebeforepagebreak=1;
 
 					$pdf->startTransaction();
 					if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITH_PICTURE))
@@ -329,6 +376,7 @@ class pdf_azur extends ModelePDFPropales
 					{
 						$pdf->commitTransaction();
 					}
+					$posYAfterDescription=$pdf->GetY();
 
 					$nexY = $pdf->GetY();
 					$pageposafter=$pdf->getPage();
@@ -336,66 +384,12 @@ class pdf_azur extends ModelePDFPropales
 					$pdf->setTopMargin($this->marge_haute);
 					$pdf->setPageOrientation('', 1, 0);	// The only function to edit the bottom margin of current page to set it.
 
-					// We suppose that a too long description is moved completely on next page
+					// We suppose that a too long description or photo were moved completely on next page
 					if ($pageposafter > $pageposbefore && empty($showpricebeforepagebreak)) {
 						$pdf->setPage($pageposafter); $curY = $tab_top_newpage;
 					}
 
 					$pdf->SetFont('','', $default_font_size - 1);   // On repositionne la police par defaut
-
-					// Photo
-					if (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITH_PICTURE))
-					{
-						$curX = $this->posxpicture-1;
-						if ($object->lines[$i]->fk_product)
-						{
-							$objphoto = new Product($this->db);
-							$objphoto->fetch($object->lines[$i]->fk_product);
-
-							$pdir = get_exdir($object->lines[$i]->fk_product,2) . $object->lines[$i]->fk_product ."/photos/";
-							$dir = $conf->product->dir_output.'/'.$pdir;
-
-							$realpath='';
-							if ($object->ref == 'SPECIMEN')
-							{
-								$realpath = DOL_DOCUMENT_ROOT.'/theme/common/nophoto.jpg';
-							}
-							else
-							{
-								foreach ($objphoto->liste_photos($dir,1) as $key => $obj)
-								{
-									if ($obj['photo_vignette'])
-									{
-										$filename='thumbs/'.$obj['photo_vignette'];
-									}
-									else
-									{
-										$filename=$obj['photo'];
-									}
-
-									$realpath = $dir.$filename;
-									break;
-								}
-							}
-
-							if (!empty($realpath))
-							{
-								//$pdf->setImageScale(PDF_IMAGE_SCALE_RATIO);
-								$tmp=pdf_getHeightForImage($realpath);
-								//var_dump(constant('PDF_IMAGE_SCALE_RATIO'));var_dump($pdf->getImageScale());var_dump($tmp['width']);var_dump($pdf->pixelsToUnits($tmp['width']));exit;
-								// measures 1/72 of an inch, i.e. approximately 0.0139 inch or 25.4/72 = 0.3528 mm
-								var_dump($this->page_largeur);exit;
-								//var_dump(tmp['height']);exit;
-								$pdf->Line($this->posxtva,10,$this->posxtva+0.5,10);
-								$pdf->Image($realpath, $this->posxtva, 10, $tmp['width'], $tmp['height'],'','','',2,0);	// Use 300 dpi
-								$pdf->Line($this->posxtva+$pdf->pixelsToUnits($tmp['width']),10,$this->posxtva+$pdf->pixelsToUnits($tmp['width'])+0.5,10);
-								$pdf->Image($realpath, $curX + ($this->posxtva-$this->posxpicture-($pdf->pixelsToUnits($tmp['width'])))/2, $curY-1, $tmp['width'], $tmp['height'],'','','',2, 300);	// Use 300 dpi
-								//$nexY += 7;	// +7 for height = 12
-								$nexY += round($pdf->pixelsToUnits($tmp['height']));
-								//var_dump($nexY);exit;
-							}
-						}
-					}
 
 					// VAT Rate
 					if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT))
@@ -458,6 +452,8 @@ class pdf_azur extends ModelePDFPropales
 					if (($object->lines[$i]->info_bits & 0x01) == 0x01) $vatrate.='*';
 					if (! isset($this->tva[$vatrate]))				$this->tva[$vatrate]='';
 					$this->tva[$vatrate] += $tvaligne;
+
+					if ($posYAfterImage > $posYAfterDescription) $nexY=$posYAfterImage;
 
 					// Add line
 					if (! empty($conf->global->MAIN_PDF_DASH_BETWEEN_LINES) && $i < ($nblignes - 1))
@@ -1063,7 +1059,7 @@ class pdf_azur extends ModelePDFPropales
 			$pdf->MultiCell(($pdf->GetStringWidth($titre) + 3), 2, $titre);
 
 			//$conf->global->MAIN_PDF_TITLE_BACKGROUND_COLOR='230,230,230';
-			if (! empty($conf->global->MAIN_PDF_TITLE_BACKGROUND_COLOR)) $pdf->Rect($this->marge_gauche, $tab_top, $this->page_largeur-$this->marge_droite-$this->marge_gauche, 5, 'F', null, explode(',',$conf->global->MAIN_PDF_TITLE_BACKGROUND_COLOR));
+			if (! empty($conf->global->MAIN_PDF_TITLE_BACKGROUND_COLOR)) $pdf->Rect($this->marge_gauche, $tab_top, $this->page_largeur-$this->marge_droite-$this->marge_gauche, 6, 'F', null, explode(',',$conf->global->MAIN_PDF_TITLE_BACKGROUND_COLOR));
 		}
 
 		$pdf->SetDrawColor(128,128,128);
@@ -1074,7 +1070,7 @@ class pdf_azur extends ModelePDFPropales
 
 		if (empty($hidetop))
 		{
-			$pdf->line($this->marge_gauche, $tab_top+5, $this->page_largeur-$this->marge_droite, $tab_top+5);	// line prend une position y en 2eme param et 4eme param
+			$pdf->line($this->marge_gauche, $tab_top+6, $this->page_largeur-$this->marge_droite, $tab_top+6);	// line prend une position y en 2eme param et 4eme param
 
 			$pdf->SetXY($this->posxdesc-1, $tab_top+1);
 			$pdf->MultiCell(108,2, $outputlangs->transnoentities("Designation"),'','L');
@@ -1085,8 +1081,8 @@ class pdf_azur extends ModelePDFPropales
 			$pdf->line($this->posxpicture-1, $tab_top, $this->posxpicture-1, $tab_top + $tab_height);
 			if (empty($hidetop))
 			{
-				$pdf->SetXY($this->posxpicture-1, $tab_top+1);
-				$pdf->MultiCell($this->posxtva-$this->posxpicture-1,2, $outputlangs->transnoentities("Photo"),'','C');
+				//$pdf->SetXY($this->posxpicture-1, $tab_top+1);
+				//$pdf->MultiCell($this->posxtva-$this->posxpicture-1,2, $outputlangs->transnoentities("Photo"),'','C');
 			}
 		}
 
