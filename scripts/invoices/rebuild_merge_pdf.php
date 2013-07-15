@@ -183,6 +183,15 @@ foreach ($argv as $key => $value)
         print 'Exclude credit note invoices'."\n";
     }
 
+    if ($value == 'filter=excludethirdparties')
+    {
+    	$found=true;
+    	$filter[]='excludethirdparties';
+
+    	$excludethirdpartiesid=explode(',',$argv[$key+1]);
+    	print 'Exclude thirdparties with id in list ('.join(',',$excludethirdpartiesid).").\n";
+    }
+
 	if (! $found && preg_match('/filter=/i',$value))
 	{
 		usage();
@@ -211,7 +220,7 @@ if (in_array('bank',$filter) && in_array('nopayment',$filter))
 
 // Define SQL and SQL request to select invoices
 // Use $filter, $dateafterdate, datebeforedate, $paymentdateafter, $paymentdatebefore
-$result=rebuild_merge_pdf($db, $langs, $conf, $diroutputpdf, $newlangid, $filter, $dateafterdate, $datebeforedate, $paymentdateafter, $paymentdatebefore, 1, $regenerate, $option, $paymentonbankid);
+$result=rebuild_merge_pdf($db, $langs, $conf, $diroutputpdf, $newlangid, $filter, $dateafterdate, $datebeforedate, $paymentdateafter, $paymentdatebefore, 1, $regenerate, $option, $paymentonbankid, $excludethirdpartiesid);
 
 
 
@@ -258,6 +267,7 @@ function usage()
     print "To exclude credit notes, use filter=nocreditnote\n";
     print "To exclude replacement invoices, use filter=noreplacement\n";
     print "To exclude deposit invoices, use filter=nodeposit\n";
+    print "To exclude some thirdparties, use filter=excludethirdparties id1,id2...\n";
     print "To regenerate existing PDF, use regenerate=crabe\n";
     print "To generate invoices in a language, use lang=xx_XX\n";
     print "\n";
