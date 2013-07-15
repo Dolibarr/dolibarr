@@ -1603,7 +1603,7 @@ class Propal extends CommonObject
         $error=0;
 
         $sql = "UPDATE ".MAIN_DB_PREFIX."propal";
-        $sql.= " SET fk_statut = ".$statut.",";
+        $sql.= " SET fk_statut = ".$this->statut.",";
 		if (! empty ( $note )) {
 			$sql .= " note_private = '" . $this->db->escape ( $note ) . "',";
 		}
