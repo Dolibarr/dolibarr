@@ -408,7 +408,7 @@ else if ($action == 'confirm_reopen' && $user->rights->propal->cloturer && ! GET
 	// prevent browser refresh from reopening proposal several times
 	if ($object->statut==2 || $object->statut==3)
 	{
-		$object->setStatut(1);
+		$object->reopen($user,1);
 	}
 }
 
