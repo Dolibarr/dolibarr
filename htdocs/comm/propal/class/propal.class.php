@@ -1583,33 +1583,68 @@ class Propal extends CommonObject
 
 
 
-    /**
-     *	Close the commercial proposal
+/**
+     *	Reopen the commercial proposal
      *
      *	@param      User	$user		Object user that close
      *	@param      int		$statut		Statut
      *	@param      text	$note		Comment
+     *  @param		int		$notrigger	1=Does not execute triggers, 0= execuete triggers
      *	@return     int         		<0 if KO, >0 if OK
      */
-    function reopen($user, $statut, $note)
+    function reopen($user, $statut, $note, $notrigger=0)
     {
         global $langs,$conf;
 
         $this->statut = $statut;
         $error=0;
-        $now=dol_now();
-
-        $this->db->begin();
 
         $sql = "UPDATE ".MAIN_DB_PREFIX."propal";
-        $sql.= " SET fk_statut = ".$statut.", note_private = '".$this->db->escape($note)."', date_cloture=".$this->db->idate($now).", fk_user_cloture=".$user->id;
+        $sql.= " SET fk_statut = ".$this->statut.",";
+		if (! empty ( $note )) {
+			$sql .= " note_private = '" . $this->db->escape ( $note ) . "',";
+		}
+        $sql.= " date_cloture=NULL, fk_user_cloture=NULL";
         $sql.= " WHERE rowid = ".$this->id;
 
-        $resql=$this->db->query($sql);
-        if ($resql)
-        {
+    	$this->db->begin();
 
-        }
+		dol_syslog(get_class($this)."::reopen sql=".$sql, LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if (! $resql) {
+			$error++; $this->errors[]="Error ".$this->db->lasterror();
+		}
+		if (! $error)
+		{
+			if (! $notrigger)
+			{
+				// Appel des triggers
+                include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
+                $interface=new Interfaces($this->db);
+                $result=$interface->run_triggers('PROPAL_REOPEN',$this,$user,$langs,$conf);
+                if ($result < 0) {
+                    $error++; $this->errors=$interface->errors;
+                }
+                // Fin appel triggers
+			}
+		}
+
+		// Commit or rollback
+		if ($error)
+		{
+			foreach($this->errors as $errmsg)
+			{
+				dol_syslog(get_class($this)."::update ".$errmsg, LOG_ERR);
+				$this->error.=($this->error?', '.$errmsg:$errmsg);
+			}
+			$this->db->rollback();
+			return -1*$error;
+		}
+		else
+		{
+			$this->db->commit();
+			return 1;
+		}
     }
 
 
