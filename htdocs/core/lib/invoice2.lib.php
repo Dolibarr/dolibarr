@@ -43,10 +43,10 @@ require_once(DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php');
  * @param	int			$regenerate				''=Use existing PDF files, 'nameofpdf'=Regenerate all PDF files using the template
  * @param	string		$option					Suffix to add into file name of generated PDF
  * @param	string		$paymentbankid			Only if payment on this bank account id
- * @param	array		$excludethirdpartiesid	Exclude thirdparties from select
+ * @param	array		$thirdpartiesid			List of thirdparties id when using filter excludethirdpartiesid	or onlythirdpartiesid
  * @return	int									Error code
  */
-function rebuild_merge_pdf($db, $langs, $conf, $diroutputpdf, $newlangid, $filter, $dateafterdate, $datebeforedate, $paymentdateafter, $paymentdatebefore, $usestdout, $regenerate=0, $option='', $paymentbankid='', $excludethirdpartiesid='')
+function rebuild_merge_pdf($db, $langs, $conf, $diroutputpdf, $newlangid, $filter, $dateafterdate, $datebeforedate, $paymentdateafter, $paymentdatebefore, $usestdout, $regenerate=0, $option='', $paymentbankid='', $thirdpartiesid='')
 {
 	$sql = "SELECT DISTINCT f.rowid, f.facnumber";
 	$sql.= " FROM ".MAIN_DB_PREFIX."facture as f";
@@ -112,11 +112,17 @@ function rebuild_merge_pdf($db, $langs, $conf, $diroutputpdf, $newlangid, $filte
 	    else $sqlwhere.=" AND";
 	    $sqlwhere.=' type <> 2';
 	}
-	if (in_array('excludethirdparties',$filter) && is_array($excludethirdpartiesid))
+	if (in_array('excludethirdparties',$filter) && is_array($thirdpartiesid))
 	{
 	    if (empty($sqlwhere)) $sqlwhere=' WHERE ';
 	    else $sqlwhere.=" AND";
-	    $sqlwhere.=' f.fk_soc NOT IN ('.join(',',$excludethirdpartiesid).')';
+	    $sqlwhere.=' f.fk_soc NOT IN ('.join(',',$thirdpartiesid).')';
+	}
+	if (in_array('onlythirdparties',$filter) && is_array($thirdpartiesid))
+	{
+	    if (empty($sqlwhere)) $sqlwhere=' WHERE ';
+	    else $sqlwhere.=" AND";
+	    $sqlwhere.=' f.fk_soc IN ('.join(',',$thirdpartiesid).')';
 	}
 	if ($sqlwhere) $sql.=$sqlwhere;
 	if ($sqlorder) $sql.=$sqlorder;
