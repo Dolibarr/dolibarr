@@ -105,7 +105,8 @@ function societe_prepare_head($object)
         }
 
         // Attached files
-        $nbFiles = count(dol_dir_list($upload_dir = $conf->societe->multidir_output[$object->entity] . "/" . $object->id));
+        $upload_dir = $conf->societe->multidir_output[$object->entity] . "/" . $object->id;
+        $nbFiles = count(dol_dir_list($upload_dir));
         $head[$h][0] = DOL_URL_ROOT.'/societe/document.php?socid='.$object->id;
         $head[$h][1] = $langs->trans("Documents");
 		if($nbFiles > 0) $head[$h][1].= ' ('.$nbFiles.')';
