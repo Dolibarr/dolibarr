@@ -37,8 +37,8 @@ require_once(DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php');
  * @param 	array		$filter					Array with filters
  * @param 	date		$dateafterdate			Invoice after date
  * @param 	date 		$datebeforedate			Invoice before date
- * @param 	date		$paymentdateafter		Payment after date
- * @param 	date		$paymentdatebefore		Payment before date
+ * @param 	date		$paymentdateafter		Payment after date (must includes hour)
+ * @param 	date		$paymentdatebefore		Payment before date (must includes hour)
  * @param	int			$usestdout				Add information onto standard output
  * @param	int			$regenerate				''=Use existing PDF files, 'nameofpdf'=Regenerate all PDF files using the template
  * @param	string		$option					Suffix to add into file name of generated PDF
