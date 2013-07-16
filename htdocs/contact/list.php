@@ -27,6 +27,7 @@
 
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
 $langs->load("companies");
 $langs->load("suppliers");
@@ -47,6 +48,7 @@ $search_phonemob=GETPOST("search_phonemob");
 $search_fax=GETPOST("search_fax");
 $search_email=GETPOST("search_email");
 $search_priv=GETPOST("search_priv");
+$search_categ = GETPOST("search_categ",'int');
 
 $type=GETPOST("type");
 $view=GETPOST("view");
@@ -109,6 +111,7 @@ $title = (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("
 llxHeader('',$title,'EN:Module_Third_Parties|FR:Module_Tiers|ES:M&oacute;dulo_Empresas');
 
 $form=new Form($db);
+$formother=new FormOther($db);
 
 $sql = "SELECT s.rowid as socid, s.nom as name,";
 $sql.= " p.rowid as cidp, p.lastname as lastname, p.firstname, p.poste, p.email,";
@@ -117,6 +120,7 @@ $sql.= " cp.code as country_code";
 $sql.= " FROM ".MAIN_DB_PREFIX."socpeople as p";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_pays as cp ON cp.rowid = p.fk_pays";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = p.fk_soc";
+if (! empty($search_categ)) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_contact as cs ON s.rowid = cs.fk_socpeople"; // We need this table joined to the select in order to filter by categ
 if (!$user->rights->societe->client->voir && !$socid) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
 $sql.= ' WHERE p.entity IN ('.getEntity('societe', 1).')';
 if (!$user->rights->societe->client->voir && !$socid) //restriction
@@ -138,6 +142,9 @@ else
 	if ($search_priv == '0') $sql .= " AND p.priv='0'";
 	if ($search_priv == '1') $sql .= " AND (p.priv='1' AND p.fk_user_creat=".$user->id.")";
 }
+
+if ($search_categ > 0)   $sql.= " AND cs.fk_categorie = ".$search_categ;
+if ($search_categ == -2) $sql.= " AND cs.fk_categorie IS NULL";
 
 if ($search_lastname)        // filter on lastname
 {
@@ -235,7 +242,8 @@ if ($result)
 
     $param ='&begin='.urlencode($begin).'&view='.urlencode($view).'&userid='.urlencode($userid).'&contactname='.urlencode($sall);
     $param.='&type='.urlencode($type).'&view='.urlencode($view).'&search_lastname='.urlencode($search_lastname).'&search_firstname='.urlencode($search_firstname).'&search_societe='.urlencode($search_societe).'&search_email='.urlencode($search_email);
-	if ($search_priv == '0' || $search_priv == '1') $param.="&search_priv=".urlencode($search_priv);
+    if (!empty($search_categ)) $param.='&search_categ='.$search_categ;
+    if ($search_priv == '0' || $search_priv == '1') $param.="&search_priv=".urlencode($search_priv);
 
 	$num = $db->num_rows($result);
     $i = 0;
@@ -248,6 +256,19 @@ if ($result)
     print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
     print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 
+    if (! empty($conf->categorie->enabled))
+    {
+    	$moreforfilter.=$langs->trans('Categories'). ': ';
+    	$moreforfilter.=$formother->select_categories(4,$search_categ,'search_categ',1);
+    	$moreforfilter.=' &nbsp; &nbsp; &nbsp; ';
+    }
+    if ($moreforfilter)
+    {
+    	print '<div class="liste_titre">';
+    	print $moreforfilter;
+    	print '</div>';
+    }
+    
     if ($sall)
     {
         print $langs->trans("Filter")." (".$langs->trans("Lastname").", ".$langs->trans("Firstname")." ".$langs->trans("or")." ".$langs->trans("EMail")."): ".$sall;

@@ -5,6 +5,7 @@
  * Copyright (C) 2006-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2007      Patrick Raguin  		<patrick.raguin@gmail.com>
  * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2013      Florian Henry        <florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,6 +26,10 @@
  *  \ingroup    category
  *  \brief      Page to show category tab
  */
+
+error_reporting(E_ALL);
+ini_set('display_errors', true);
+ini_set('html_errors', false);
 
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
@@ -79,6 +84,13 @@ if ($id || $ref)
 		$dbtablename = 'adherent';
 		$fieldid = ! empty($ref)?'ref':'rowid';
 	}
+	elseif ($type == 4) {
+		$elementtype = 'societe';
+		$objecttype = 'contact';
+		$objectid = isset($id)?$id:(isset($ref)?$ref:'');
+		$dbtablename = 'socpeople&societe';
+		$fieldid = ! empty($ref)?'ref':'rowid';
+	}
 }
 
 // Security check
@@ -128,6 +140,13 @@ if (empty($reshook))
 			$result = $object->fetch($objectid);
 			$elementtype = 'member';
 		}
+		if ($type == 4 && $user->rights->societe->creer)
+		{
+			require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+			$object = new Contact($db);
+			$result = $object->fetch($objectid);
+			$elementtype = 'contact';
+		}
 		$cat = new Categorie($db);
 		$result=$cat->fetch($removecat);
 
@@ -162,6 +181,13 @@ if (empty($reshook))
 			$object = new Adherent($db);
 			$result = $object->fetch($objectid);
 			$elementtype = 'member';
+		}
+		if ($type == 4 && $user->rights->societe->creer)
+		{
+			require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+			$object = new Contact($db);
+			$result = $object->fetch($objectid);
+			$elementtype = 'contact';
 		}
 		$cat = new Categorie($db);
 		$result=$cat->fetch($parent);
@@ -431,6 +457,154 @@ else if ($id || $ref)
 
 		formCategory($db,$member,3);
 	}
+	if ($type == 4)
+	{
+		$langs->load("contact");
+	
+		/*
+		 * Fiche categorie d'contact
+		*/
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/contact.lib.php';
+		require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+	
+		// Produit
+		$object = new Contact($db);
+		$result = $object->fetch($id, $ref);
+		$object->fetch_thirdparty();
+	
+		llxHeader("","",$langs->trans("Contact"));
+	
+	
+		$head=contact_prepare_head($object, $user);
+		$titre=$langs->trans("Contact");
+		$picto='user';
+		dol_fiche_head($head, 'tabCategorie', $titre,0,$picto);
+	
+		$rowspan=5;
+		if (! empty($conf->societe->enabled)) $rowspan++;
+	
+		print '<table class="border" width="100%">';
+	
+		// Ref
+		print '<tr><td width="20%">'.$langs->trans("Ref").'</td>';
+		print '<td class="valeur">';
+		print $form->showrefnav($object,'rowid');
+		print '</td></tr>';
+	
+	  // Name
+        print '<tr><td width="20%">'.$langs->trans("Lastname").' / '.$langs->trans("Label").'</td><td width="30%">'.$object->lastname.'</td>';
+        print '<td width="20%">'.$langs->trans("Firstname").'</td><td width="30%">'.$object->firstname.'</td></tr>';
+
+        // Company
+        if (empty($conf->global->SOCIETE_DISABLE_CONTACTS))
+        {
+            print '<tr><td>'.$langs->trans("Company").'</td><td colspan="3">';
+            if (!empty($object->thirdparty->id))
+            {
+                print $object->thirdparty->getNomUrl(1);
+            }
+            else
+            {
+                print $langs->trans("ContactNotLinkedToCompany");
+            }
+            print '</td></tr>';
+        }
+
+        // Civility
+        print '<tr><td width="15%">'.$langs->trans("UserTitle").'</td><td colspan="3">';
+        print $object->getCivilityLabel();
+        print '</td></tr>';
+
+        // Role
+        print '<tr><td>'.$langs->trans("PostOrFunction").'</td><td colspan="3">'.$object->poste.'</td>';
+
+        // Address
+        print '<tr><td>'.$langs->trans("Address").'</td><td colspan="3">';
+        dol_print_address($object->address,'gmap','contact',$object->id);
+        print '</td></tr>';
+
+        // Zip/Town
+        print '<tr><td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td colspan="3">';
+        print $object->zip;
+        if ($object->zip) print '&nbsp;';
+        print $object->town.'</td></tr>';
+
+        // Country
+        print '<tr><td>'.$langs->trans("Country").'</td><td colspan="3">';
+        $img=picto_from_langcode($object->country_code);
+        if ($img) print $img.' ';
+        print $object->country;
+        print '</td></tr>';
+
+        // State
+        if (empty($conf->global->SOCIETE_DISABLE_STATE))
+        {
+            print '<tr><td>'.$langs->trans('State').'</td><td colspan="3">'.$object->state.'</td>';
+        }
+
+        // Phone
+        print '<tr><td>'.$langs->trans("PhonePro").'</td><td>'.dol_print_phone($object->phone_pro,$object->country_code,$object->id,$object->socid,'AC_TEL').'</td>';
+        print '<td>'.$langs->trans("PhonePerso").'</td><td>'.dol_print_phone($object->phone_perso,$object->country_code,$object->id,$object->socid,'AC_TEL').'</td></tr>';
+
+        print '<tr><td>'.$langs->trans("PhoneMobile").'</td><td>'.dol_print_phone($object->phone_mobile,$object->country_code,$object->id,$object->socid,'AC_TEL').'</td>';
+        print '<td>'.$langs->trans("Fax").'</td><td>'.dol_print_phone($object->fax,$object->country_code,$object->id,$object->socid,'AC_FAX').'</td></tr>';
+
+        // Email
+        print '<tr><td>'.$langs->trans("EMail").'</td><td>'.dol_print_email($object->email,$object->id,$object->socid,'AC_EMAIL').'</td>';
+        if (! empty($conf->mailing->enabled))
+        {
+            $langs->load("mails");
+            print '<td nowrap>'.$langs->trans("NbOfEMailingsReceived").'</td>';
+            print '<td><a href="'.DOL_URL_ROOT.'/comm/mailing/liste.php?filteremail='.urlencode($object->email).'">'.$object->getNbOfEMailings().'</a></td>';
+        }
+        else
+        {
+            print '<td colspan="2">&nbsp;</td>';
+        }
+        print '</tr>';
+
+        // Instant message and no email
+        print '<tr><td>'.$langs->trans("IM").'</td><td>'.$object->jabberid.'</td>';
+        if (!empty($conf->mailing->enabled))
+        {
+        	print '<td>'.$langs->trans("No_Email").'</td><td>'.yn($object->no_email).'</td>';
+        }
+        else
+       {
+	       	print '<td colspan="2">&nbsp;</td>';
+        }
+        print '</tr>';
+
+        print '<tr><td>'.$langs->trans("ContactVisibility").'</td><td colspan="3">';
+        print $object->LibPubPriv($object->priv);
+        print '</td></tr>';
+
+        // Note Public
+        print '<tr><td valign="top">'.$langs->trans("NotePublic").'</td><td colspan="3">';
+        print nl2br($object->note_public);
+        print '</td></tr>';
+
+        // Note Private
+        print '<tr><td valign="top">'.$langs->trans("NotePrivate").'</td><td colspan="3">';
+        print nl2br($object->note_private);
+        print '</td></tr>';
+
+        // Other attributes
+        $parameters=array('socid'=>$socid, 'colspan' => ' colspan="3"');
+        $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+        if (empty($reshook) && ! empty($extrafields->attribute_label))
+        {
+        	print $object->showOptionals($extrafields);
+        }
+	
+		print '</table>';
+	
+		dol_fiche_end();
+	
+		dol_htmloutput_mesg($mesg);
+	
+		formCategory($db,$object,4);
+	}
 }
 
 
@@ -451,6 +625,7 @@ function formCategory($db,$object,$typeid,$socid=0)
 	if ($typeid == 1) $title = $langs->trans("SuppliersCategoriesShort");
 	if ($typeid == 2) $title = $langs->trans("CustomersProspectsCategoriesShort");
 	if ($typeid == 3) $title = $langs->trans("MembersCategoriesShort");
+	if ($typeid == 4) $title = $langs->trans("ContactCategoriesShort");
 
 	// Formulaire ajout dans une categorie
 	print '<br>';
@@ -490,6 +665,7 @@ function formCategory($db,$object,$typeid,$socid=0)
 		if ($typeid == 1) $title=$langs->trans("CompanyIsInSuppliersCategories");
 		if ($typeid == 2) $title=$langs->trans("CompanyIsInCustomersCategories");
 		if ($typeid == 3) $title=$langs->trans("MemberIsInCategories");
+		if ($typeid == 4) $title=$langs->trans("ContactIsInCategories");
 		print "\n";
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre"><td colspan="2">'.$title.':</td></tr>';
@@ -517,6 +693,7 @@ function formCategory($db,$object,$typeid,$socid=0)
 				if ($typeid == 1) $permission=$user->rights->societe->creer;
 				if ($typeid == 2) $permission=$user->rights->societe->creer;
 				if ($typeid == 3) $permission=$user->rights->adherent->creer;
+				if ($typeid == 4) $permission=$user->rights->societe->creer;
 				if ($permission)
 				{
 					print "<a href= '".$_SERVER['PHP_SELF']."?".(empty($socid)?'id':'socid')."=".$object->id."&amp;type=".$typeid."&amp;removecat=".$cat->id."'>";
@@ -544,6 +721,7 @@ function formCategory($db,$object,$typeid,$socid=0)
 		if ($typeid == 1) $title=$langs->trans("CompanyHasNoCategory");
 		if ($typeid == 2) $title=$langs->trans("CompanyHasNoCategory");
 		if ($typeid == 3) $title=$langs->trans("MemberHasNoCategory");
+		if ($typeid == 4) $title=$langs->trans("ContactHasNoCategory");
 		print $title;
 		print "<br/>";
 	}
