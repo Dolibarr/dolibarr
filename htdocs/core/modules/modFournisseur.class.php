@@ -108,20 +108,13 @@ class modFournisseur extends DolibarrModules
 			$r++;
 
             // Boxes
-            $this->boxes = array();
-            $r=0;
-
-            $this->boxes[$r][1] = "box_fournisseurs.php";
-            $r++;
-
-            $this->boxes[$r][1] = "box_factures_fourn_imp.php";
-            $r++;
-
-            $this->boxes[$r][1] = "box_factures_fourn.php";
-            $r++;
-
-            $this->boxes[$r][1] = "box_supplier_orders.php";
-            $r++;
+            $this->boxes = array(
+            	0=>array('file'=>'box_graph_invoices_supplier_permonth.php','enabledbydefaulton'=>'Home'),
+            	1=>array('file'=>'box_fournisseurs.php','enabledbydefaulton'=>'Home'),
+            	2=>array('file'=>'box_factures_fourn_imp.php','enabledbydefaulton'=>'Home'),
+            	3=>array('file'=>'box_factures_fourn.php','enabledbydefaulton'=>'Home'),
+            	4=>array('file'=>'box_supplier_orders.php','enabledbydefaulton'=>'Home'),
+            );
 
             // Permissions
             $this->rights = array();

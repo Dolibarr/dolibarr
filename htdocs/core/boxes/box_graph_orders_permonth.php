@@ -16,7 +16,7 @@
  */
 
 /**
- *	\file       htdocs/core/boxes/box_order_permonth.php
+ *	\file       htdocs/core/boxes/box_graph_orders_permonth.php
  *	\ingroup    commandes
  *	\brief      Box to show graph of orders per month
  */

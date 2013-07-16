@@ -142,7 +142,8 @@ elseif ($action == 'confirm_valid' && $confirm == 'yes' && $user->rights->fourni
         $result = $object->validate($user,'',$idwarehouse);
         if ($result < 0)
         {
-            $mesg='<div class="error">'.$object->error.'</div>';
+            setEventMessage($object->error,'errors');
+            setEventMessage($object->errors,'errors');
         }
     }
 }

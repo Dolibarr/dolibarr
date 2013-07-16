@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (c) 2008-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (c) 2008-2013	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2012		Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2012       Marcos García           <marcosgdf@gmail.com>
  *
@@ -31,7 +31,7 @@ abstract class Stats
 {
 	protected $db;
 	var $_lastfetchdate=array();	// Dates of cache file read by methods
-
+	var $cachefilesuffix='';		// Suffix to add to name of cache file (to avoid file name conflicts) 
 
 	/**
 	 * Return nb of elements by month for several years
@@ -56,7 +56,7 @@ abstract class Stats
 	    	include_once DOL_DOCUMENT_ROOT.'/core/lib/json.lib.php';
 	    }
 
-		$newpathofdestfile=$conf->user->dir_temp.'/'.get_class($this).'_'.__FUNCTION__.'_'.$langs->defaultlang.'_user'.$user->id.'.cache';
+		$newpathofdestfile=$conf->user->dir_temp.'/'.get_class($this).'_'.__FUNCTION__.'_'.(empty($this->cachefilesuffix)?'':$this->cachefilesuffix.'_').$langs->defaultlang.'_user'.$user->id.'.cache';
 		$newmask='0644';
 
 		$nowgmt = dol_now();
@@ -147,7 +147,7 @@ abstract class Stats
         	include_once DOL_DOCUMENT_ROOT.'/core/lib/json.lib.php';
         }
 
-        $newpathofdestfile=$conf->user->dir_temp.'/'.get_class($this).'_'.__FUNCTION__.'_'.$langs->defaultlang.'_user'.$user->id.'.cache';
+        $newpathofdestfile=$conf->user->dir_temp.'/'.get_class($this).'_'.__FUNCTION__.'_'.(empty($this->cachefilesuffix)?'':$this->cachefilesuffix.'_').$langs->defaultlang.'_user'.$user->id.'.cache';
         $newmask='0644';
 
         $nowgmt = dol_now();
