@@ -31,6 +31,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
+$langs->load("projects");
+$langs->load("companies");
+
 $id=GETPOST('id','int');
 $ref=GETPOST('ref','alpha');
 $action=GETPOST('action','alpha');
@@ -38,6 +41,8 @@ $confirm=GETPOST('confirm','alpha');
 $withproject=GETPOST('withproject','int');
 $project_ref=GETPOST('project_ref','alpha');
 $planned_workload=GETPOST('planned_workloadhour');
+$taskid = GETPOST("id",'int');
+$taskref = GETPOST("ref",'int');
 
 // Security check
 $socid=0;
@@ -134,16 +139,63 @@ if (! empty($project_ref) && ! empty($withproject))
 	}
 }
 
+// Build doc
+if ($action == 'builddoc' && $user->rights->projet->creer)
+{
+	if ($object->fetch($id) >= 0 )
+	{
+		if (GETPOST('model'))
+		{
+			$object->setDocModel($user, GETPOST('model'));
+		}
+
+		$outputlangs = $langs;
+		if (GETPOST('lang_id'))
+		{
+			$outputlangs = new Translate("",$conf);
+			$outputlangs->setDefaultLang(GETPOST('lang_id'));
+		}
+		$result=task_pdf_create($db, $object, $object->modelpdf, $outputlangs);
+		if ($result <= 0)
+		{
+			dol_print_error($db,$result);
+			exit;
+		}
+		else
+		{
+			header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.(empty($conf->global->MAIN_JUMP_TAG)?'':'#builddoc'));
+			exit;
+		}
+	}
+}
+
+// Delete file in doc form
+if ($action == 'remove_file' && $user->rights->projet->creer)
+{
+	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+
+	if ($object->fetch($id) >= 0 )
+	{
+		$langs->load("other");
+		$upload_dir =	$conf->projet->dir_output;
+		$file =	$upload_dir	. '/' .	GETPOST('file');
+
+		$ret=dol_delete_file($file);
+		if ($ret) setEventMessage($langs->trans("FileWasRemoved", GETPOST('urlfile')));
+		else setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), 'errors');
+	}
+}
+
 /*
  * View
 */
 
-$langs->load('projects');
 
 llxHeader('', $langs->trans("Task"));
 
 $form = new Form($db);
 $formother = new FormOther($db);
+$formfile = new FormFile($db);
 
 if ($id > 0 || ! empty($ref))
 {
@@ -434,6 +486,25 @@ if ($id > 0 || ! empty($ref))
 			}
 
 			print '</div>';
+			
+			print '<table width="100%"><tr><td width="50%" valign="top">';
+			print '<a name="builddoc"></a>'; // ancre
+			
+			/*
+			 * Documents generes
+			*/
+			$filename=dol_sanitizeFileName($projectstatic->ref). "/". dol_sanitizeFileName($object->ref);
+			$filedir=$conf->projet->dir_output . "/" . dol_sanitizeFileName($projectstatic->ref). "/" .dol_sanitizeFileName($object->ref);
+			$urlsource=$_SERVER["PHP_SELF"]."?id=".$object->id;
+			$genallowed=($user->rights->projet->lire);
+			$delallowed=($user->rights->projet->creer);
+				
+			$var=true;
+				
+			$somethingshown=$formfile->show_documents('project_task',$filename,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf);
+				
+				
+			print '</td></tr></table>';
 		}
 	}
 }
