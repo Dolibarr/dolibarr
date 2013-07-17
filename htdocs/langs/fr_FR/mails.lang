@@ -90,6 +90,7 @@ MailingModuleDescEmailsFromUser=Emails saisis manuellement (email;nom;prenom;aut
 MailingModuleDescContactsCategories=Tiers (par catégorie)
 MailingModuleDescDolibarrContractsLinesExpired=Tiers avec lignes de contrats de services expirées
 MailingModuleDescContactsByCompanyCategory=Contacts de tiers (par catégorie de tiers)
+MailingModuleDescContactsByCategory=Contacts de tiers par catégorie de contact
 MailingModuleDescMembersCategories=Adhérents (par catégorie)
 MailingModuleDescContactsByFunction=Contacts de tiers (par poste/fonction)
 
