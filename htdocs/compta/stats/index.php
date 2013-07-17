@@ -118,6 +118,7 @@ if ($result)
 	while ($i < $num)
 	{
 		$obj = $db->fetch_object($result);
+		$cum_ht[$obj->dm] = !empty($obj->amount) ? $obj->amount : 0;
 		$cum[$obj->dm] = $obj->amount_ttc;
 		if ($obj->amount_ttc)
 		{
@@ -180,7 +181,8 @@ print '<tr class="liste_titre"><td>&nbsp;</td>';
 
 for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 {
-	print '<td align="center" width="10%" colspan="2">';
+	if ($modecompta == 'CREANCES-DETTES') print '<td align="center" width="10%" colspan="3">';
+	else print '<td align="center" width="10%" colspan="2">';
 	print '<a href="casoc.php?year='.$annee.'">';
 	print $annee;
     if ($conf->global->SOCIETE_FISCAL_MONTH_START > 1) print '-'.($annee+1);
@@ -192,6 +194,7 @@ print '</tr>';
 print '<tr class="liste_titre"><td>'.$langs->trans("Month").'</td>';
 for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 {
+	if ($modecompta == 'CREANCES-DETTES') print '<td align="right">'.$langs->trans("AmountHT").'</td>';
 	print '<td align="right">'.$langs->trans("AmountTTC").'</td>';
 	print '<td align="right">'.$langs->trans("Delta").'</td>';
 	if ($annee != $year_end) print '<td width="15">&nbsp;</td>';
@@ -224,6 +227,22 @@ for ($mois = 1+$nb_mois_decalage ; $mois <= 12+$nb_mois_decalage ; $mois++)
 		$case = dol_print_date(dol_mktime(1,1,1,$mois_modulo,1,$annee_decalage),"%Y-%m");
 		$caseprev = dol_print_date(dol_mktime(1,1,1,$mois_modulo,1,$annee_decalage-1),"%Y-%m");
 
+		if ($modecompta == 'CREANCES-DETTES') {
+			// Valeur CA du mois w/o VAT
+			print '<td align="right">';
+			if ($cum_ht[$case])
+			{
+				$now_show_delta=1;  // On a trouve le premier mois de la premiere annee generant du chiffre.
+				print '<a href="casoc.php?year='.$annee_decalage.'&month='.$mois_modulo.($modecompta?'&modecompta='.$modecompta:'').'">'.price($cum_ht[$case],1).'</a>';
+			}
+			else
+			{
+				if ($minyearmonth < $case && $case <= max($maxyearmonth,$nowyearmonth)) { print '0'; }
+				else { print '&nbsp;'; }
+			}
+			print "</td>";
+		}
+		
 		// Valeur CA du mois
 		print '<td align="right">';
 		if ($cum[$case])
@@ -273,6 +292,7 @@ for ($mois = 1+$nb_mois_decalage ; $mois <= 12+$nb_mois_decalage ; $mois++)
 			print '</td>';
 		}
 
+		$total_ht[$annee]+=!empty($cum_ht[$case]) ? $cum_ht[$case] : 0;;
 		$total[$annee]+=$cum[$case];
 		if ($annee_decalage != $year_end) print '<td width="15">&nbsp;</td>';
 	}
@@ -349,6 +369,18 @@ for ($mois = 1+$nb_mois_decalage ; $mois <= 12+$nb_mois_decalage ; $mois++)
 print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td>';
 for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 {
+	if ($modecompta == 'CREANCES-DETTES') {
+		// Montant total HT
+		if ($total_ht[$annee] || ($annee >= $minyear && $annee <= max($nowyear,$maxyear)))
+		{
+			print '<td align="right" class="nowrap">'.($total_ht[$annee]?price($total_ht[$annee]):"0")."</td>";
+		}
+		else
+		{
+			print '<td>&nbsp;</td>';
+		}
+	}
+	
 	// Montant total
 	if ($total[$annee] || ($annee >= $minyear && $annee <= max($nowyear,$maxyear)))
 	{
