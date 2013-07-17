@@ -339,7 +339,6 @@ if ($result)
     while ($i < min($num,$limit))
     {
         $obj = $db->fetch_object($result);
-        
        
 	if ($obj->statut == 0)
         {

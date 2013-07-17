@@ -1583,7 +1583,6 @@ class Societe extends CommonObject
 
 
         $sql = "SELECT rowid, email, statut, phone_mobile, lastname, firstname";
-
         $sql.= " FROM ".MAIN_DB_PREFIX."socpeople";
         $sql.= " WHERE fk_soc = '".$this->id."'";
 
