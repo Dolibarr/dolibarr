@@ -617,6 +617,13 @@ class FactureFournisseur extends CommonInvoice
         else {
         	$error++;
         }
+		
+		if (! $error)
+		{
+			// Delete linked object
+			$res = $this->deleteObjectLinked();
+			if ($res < 0) $error++;
+		}
 
         if (! $error)
         {
