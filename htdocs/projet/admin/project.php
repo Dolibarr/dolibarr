@@ -68,6 +68,25 @@ if ($action == 'updateMask')
 	}
 }
 
+if ($action == 'updateMaskTask')
+{
+	$maskconstmasktask=GETPOST('maskconsttask','alpha');
+	$masktaskt=GETPOST('masktask','alpha');
+
+	if ($maskconstmasktask)  $res = dolibarr_set_const($db,$maskconstmasktask,$masktaskt,'chaine',0,'',$conf->entity);
+
+	if (! $res > 0) $error++;
+
+	if (! $error)
+	{
+		$mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
+	}
+	else
+	{
+		$mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
+	}
+}
+
 else if ($action == 'specimen')
 {
 	$modele=GETPOST('module','alpha');
