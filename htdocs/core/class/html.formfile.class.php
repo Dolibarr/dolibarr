@@ -532,6 +532,7 @@ class FormFile
 						}
 						if ($morepicto)
 						{
+							$morepicto=preg_replace('/__FILENAMEURLENCODED__/',urlencode($relativepath),$morepicto);
                         	$out.=$morepicto;
 						}
                         $out.='</td>';

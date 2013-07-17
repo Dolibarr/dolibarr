@@ -16,8 +16,8 @@
  */
 
 /**
- *	\file       htdocs/core/boxes/box_graph_invoices_permonth.php
- *	\ingroup    factures
+ *	\file       htdocs/core/boxes/box_graph_invoices_supplier_permonth.php
+ *	\ingroup    fournisseur
  *	\brief      Box to show graph of invoices per month
  */
 include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
@@ -26,12 +26,12 @@ include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
 /**
  * Class to manage the box to show last invoices
  */
-class box_graph_invoices_permonth extends ModeleBoxes
+class box_graph_invoices_supplier_permonth extends ModeleBoxes
 {
-	var $boxcode="invoicespermonth";
+	var $boxcode="invoicessupplierpermonth";
 	var $boximg="object_bill";
-	var $boxlabel="BoxCustomersInvoicesPerMonth";
-	var $depends = array("facture");
+	var $boxlabel="BoxSuppliersInvoicesPerMonth";
+	var $depends = array("fournisseur");
 
 	var $db;
 
@@ -66,10 +66,10 @@ class box_graph_invoices_permonth extends ModeleBoxes
 
 		$refreshaction='refresh_'.$this->boxcode;
 
-		include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+		include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 		$facturestatic=new Facture($db);
 
-		$text = $langs->trans("BoxCustomersInvoicesPerMonth",$max);
+		$text = $langs->trans("BoxSuppliersInvoicesPerMonth",$max);
 		$this->info_box_head = array(
 				'text' => $text,
 				'limit'=> dol_strlen($text),
@@ -80,7 +80,7 @@ class box_graph_invoices_permonth extends ModeleBoxes
 				'target'=>'none'
 		);
 
-		if ($user->rights->facture->lire)
+		if ($user->rights->fournisseur->facture->lire)
 		{
 			include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 			include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facturestats.class.php';
@@ -90,7 +90,7 @@ class box_graph_invoices_permonth extends ModeleBoxes
 			$nowarray=dol_getdate(dol_now(),true);
 			$endyear=$nowarray['year'];
 			$startyear=$endyear-1;
-			$mode='customer';
+			$mode='supplier';
 			$userid=0;
 			$WIDTH='256';
 			$HEIGHT='192';
@@ -102,7 +102,7 @@ class box_graph_invoices_permonth extends ModeleBoxes
 			{
 				$data1 = $stats->getNbByMonthWithPrevYear($endyear,$startyear,(GETPOST('action')==$refreshaction?-1:(3600*24)));
 
-				$filenamenb = $dir."/invoicesnbinyear-".$year.".png";
+				$filenamenb = $dir."/invoicessuppliernbinyear-".$year.".png";
 				if ($mode == 'customer') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=billstats&amp;file=invoicesnbinyear-'.$year.'.png';
 				if ($mode == 'supplier') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=billstatssupplier&amp;file=invoicessuppliernbinyear-'.$year.'.png';
 
@@ -140,7 +140,7 @@ class box_graph_invoices_permonth extends ModeleBoxes
 			{
 				$data2 = $stats->getAmountByMonthWithPrevYear($endyear,$startyear,(GETPOST('action')==$refreshaction?-1:(3600*24)));
 
-				$filenamenb = $dir."/invoicesamountinyear-".$year.".png";
+				$filenamenb = $dir."/invoicessupplieramountinyear-".$year.".png";
 				if ($mode == 'customer') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=billstats&amp;file=invoicesamountinyear-'.$year.'.png';
 				if ($mode == 'supplier') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=billstatssupplier&amp;file=invoicessupplieramountinyear-'.$year.'.png';
 

@@ -622,9 +622,10 @@ class InterfaceActionsAuto
 			}
 			else
 			{
-                $error ="Failed to insert : ".$actioncomm->error." ";
+                $error ="Failed to insert event : ".$actioncomm->error." ".join(',',$actioncomm->errors);
                 $this->error=$error;
-
+                $this->errors=$actioncomm->errors;
+                
                 dol_syslog("interface_modAgenda_ActionsAuto.class.php: ".$this->error, LOG_ERR);
                 return -1;
 			}

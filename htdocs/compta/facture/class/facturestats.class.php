@@ -39,7 +39,7 @@ class FactureStats extends Stats
     var $from;
     var $field;
     var $where;
-
+	
 
 	/**
      * 	Constructor
@@ -57,7 +57,8 @@ class FactureStats extends Stats
 		$this->db = $db;
         $this->socid = ($socid > 0 ? $socid : 0);
         $this->userid = $userid;
-
+		$this->cachefilesuffix = $mode; 
+		
 		if ($mode == 'customer')
 		{
 			$object=new Facture($this->db);
