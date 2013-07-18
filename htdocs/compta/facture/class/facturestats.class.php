@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (c) 2005-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (c) 2005-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -46,10 +46,9 @@ class FactureStats extends Stats
      * 	Constructor
      *
 	 * 	@param	DoliDB		$db			Database handler
-	 * 	@param 	int			$socid		Id third party
-	 * 	@param 	string		$mode	   	Option
+	 * 	@param 	int			$socid		Id third party for filter
+	 * 	@param 	string		$mode	   	Option ('customer', 'supplier')
      * 	@param	int			$userid    	Id user for filter (creation user)
-	 * 	@return FactureStats
 	 */
 	function __construct($db, $socid, $mode, $userid=0)
 	{
@@ -74,7 +73,7 @@ class FactureStats extends Stats
 
 		$this->where = " f.fk_statut > 0";
 		$this->where.= " AND f.entity = ".$conf->entity;
-		if (!$user->rights->societe->client->voir && !$user->societe_id) $this->where .= " AND f.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
+		if (!$user->rights->societe->client->voir && !$this->socid) $this->where .= " AND f.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
 		if ($mode == 'customer') $this->where.=" AND (f.fk_statut <> 3 OR f.close_code <> 'replaced')";	// Exclude replaced invoices as they are duplicated (we count closed invoices for other reasons)
 		if ($this->socid)
 		{
@@ -85,7 +84,7 @@ class FactureStats extends Stats
 
 
 	/**
-	 * 	Renvoie le nombre de facture par mois pour une annee donnee
+	 * 	Return orders number by month for a year
 	 *
 	 *	@param	int		$year	Year to scan
 	 *	@return	array			Array of values
@@ -94,7 +93,7 @@ class FactureStats extends Stats
 	{
 		global $user;
 
-		$sql = "SELECT MONTH(f.datef) as dm, COUNT(*)";
+		$sql = "SELECT date_format(f.datef,'%m') as dm, COUNT(*) as nb";
 		$sql.= " FROM ".$this->from;
 		if (!$user->rights->societe->client->voir && !$this->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		$sql.= " WHERE f.datef BETWEEN '".$this->db->idate(dol_get_first_day($year))."' AND '".$this->db->idate(dol_get_last_day($year))."'";
@@ -109,15 +108,15 @@ class FactureStats extends Stats
 
 
 	/**
-	 * 	Renvoie le nombre de facture par annee
+	 * 	Return invoices number per year
 	 *
-	 *	@return		array	Array of values
+	 *	@return		array	Array with number by year
 	 */
 	function getNbByYear()
 	{
 		global $user;
 
-		$sql = "SELECT YEAR(f.datef) as dm, COUNT(*)";
+		$sql = "SELECT date_format(f.datef,'%Y') as dm, COUNT(*), SUM(c.".$this->field.")";
 		$sql.= " FROM ".$this->from;
 		if (!$user->rights->societe->client->voir && !$this->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		$sql.= " WHERE ".$this->where;
@@ -129,10 +128,10 @@ class FactureStats extends Stats
 
 
 	/**
-	 * 	Renvoie le montant de facture par mois pour une annee donnee
+	 * 	Return the invoices amount by month for a year
 	 *
 	 *	@param	int		$year	Year to scan
-	 *	@return	array			Array of values
+	 *	@return	array			Array with amount by month
 	 */
 	function getAmountByMonth($year)
 	{
@@ -140,7 +139,7 @@ class FactureStats extends Stats
 
 		$sql = "SELECT date_format(datef,'%m') as dm, SUM(f.".$this->field.")";
 		$sql.= " FROM ".$this->from;
-		if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+		if (!$user->rights->societe->client->voir && !$this->socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		$sql.= " WHERE f.datef BETWEEN '".$this->db->idate(dol_get_first_day($year))."' AND '".$this->db->idate(dol_get_last_day($year))."'";
 		$sql.= " AND ".$this->where;
         $sql.= " GROUP BY dm";
