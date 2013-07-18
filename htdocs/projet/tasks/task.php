@@ -23,6 +23,10 @@
  *	\brief      Page of a project task
  */
 
+error_reporting(E_ALL);
+ini_set('display_errors', true);
+ini_set('html_errors', false);
+
 require ("../../main.inc.php");
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
@@ -30,6 +34,11 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/modules/project/task/modules_task.php';
+
+$langs->load("projects");
+$langs->load("companies");
 
 $id=GETPOST('id','int');
 $ref=GETPOST('ref','alpha');
@@ -68,7 +77,7 @@ if ($action == 'update' && ! $_POST["cancel"] && $user->rights->projet->creer)
 	}
 	if (! $error)
 	{
-		$object->fetch($id);
+		$object->fetch($id,$ref);
 
 		$tmparray=explode('_',$_POST['task_parent']);
 		$task_parent=$tmparray[1];
@@ -95,7 +104,7 @@ if ($action == 'update' && ! $_POST["cancel"] && $user->rights->projet->creer)
 
 if ($action == 'confirm_delete' && $confirm == "yes" && $user->rights->projet->supprimer)
 {
-	if ($object->fetch($id) >= 0 )
+	if ($object->fetch($id,$ref) >= 0 )
 	{
 		$result=$projectstatic->fetch($object->fk_projet);
 		if (! empty($projectstatic->socid))
@@ -134,20 +143,67 @@ if (! empty($project_ref) && ! empty($withproject))
 	}
 }
 
+// Build doc
+if ($action == 'builddoc' && $user->rights->projet->creer)
+{
+	if ($object->fetch($id,$ref) >= 0 )
+	{
+		if (GETPOST('model'))
+		{
+			$object->setDocModel($user, GETPOST('model'));
+		}
+
+		$outputlangs = $langs;
+		if (GETPOST('lang_id'))
+		{
+			$outputlangs = new Translate("",$conf);
+			$outputlangs->setDefaultLang(GETPOST('lang_id'));
+		}
+		$result=task_pdf_create($db, $object, $object->modelpdf, $outputlangs);
+		if ($result <= 0)
+		{
+			dol_print_error($db,$result);
+			exit;
+		}
+		else
+		{
+			header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.(empty($conf->global->MAIN_JUMP_TAG)?'':'#builddoc'));
+			exit;
+		}
+	}
+}
+
+// Delete file in doc form
+if ($action == 'remove_file' && $user->rights->projet->creer)
+{
+	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+
+	if ($object->fetch($id,$ref) >= 0 )
+	{
+		$langs->load("other");
+		$upload_dir =	$conf->projet->dir_output;
+		$file =	$upload_dir	. '/' .	GETPOST('file');
+
+		$ret=dol_delete_file($file);
+		if ($ret) setEventMessage($langs->trans("FileWasRemoved", GETPOST('urlfile')));
+		else setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), 'errors');
+	}
+}
+
 /*
  * View
 */
 
-$langs->load('projects');
 
 llxHeader('', $langs->trans("Task"));
 
 $form = new Form($db);
 $formother = new FormOther($db);
+$formfile = new FormFile($db);
 
 if ($id > 0 || ! empty($ref))
 {
-	if ($object->fetch($id) > 0)
+	if ($object->fetch($id,$ref) > 0)
 	{
 		$res=$object->fetch_optionals($object->id,$extralabels);
 
@@ -345,7 +401,7 @@ if ($id > 0 || ! empty($ref))
 				$object->next_prev_filter=" fk_projet in (".$projectsListId.")";
 			}
 			else $object->next_prev_filter=" fk_projet = ".$projectstatic->id;
-			print $form->showrefnav($object,'id',$linkback,1,'rowid','ref','',$param);
+			print $form->showrefnav($object,'ref',$linkback,1,'ref','ref','',$param);
 			print '</td>';
 			print '</tr>';
 
@@ -434,6 +490,26 @@ if ($id > 0 || ! empty($ref))
 			}
 
 			print '</div>';
+			
+			print '<table width="100%"><tr><td width="50%" valign="top">';
+			print '<a name="builddoc"></a>'; // ancre
+			
+			/*
+			 * Documents generes
+			*/
+			$filename=dol_sanitizeFileName($projectstatic->ref). "/". dol_sanitizeFileName($object->ref);
+			$filedir=$conf->projet->dir_output . "/" . dol_sanitizeFileName($projectstatic->ref). "/" .dol_sanitizeFileName($object->ref);
+			$urlsource=$_SERVER["PHP_SELF"]."?id=".$object->id;
+			$genallowed=($user->rights->projet->lire);
+			$delallowed=($user->rights->projet->creer);
+				
+			$var=true;
+				
+			$somethingshown=$formfile->show_documents('project_task',$filename,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf);
+			
+				
+				
+			print '</td></tr></table>';
 		}
 	}
 }

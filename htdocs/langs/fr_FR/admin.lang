@@ -1454,6 +1454,8 @@ TestGeoIPResult=Test de conversion IP -> Pays
 ProjectsNumberingModules=Modèles de numérotation des références projets
 ProjectsSetup=Configuration du module Projets
 ProjectsModelModule=Modèles de document de rapport projets
+TasksNumberingModules==Modèles de numérotation des références taches
+TaskModelModule=Modèles de document de rapport taches
 ##### ECM (GED) #####
 ECMSetup = Configuration du module GED
 ECMAutoTree = L'arborescence automatique est disponible

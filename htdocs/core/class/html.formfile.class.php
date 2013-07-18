@@ -309,6 +309,15 @@ class FormFile
                     $modellist=ModelePDFProjects::liste_modeles($this->db);
                 }
             }
+            elseif ($modulepart == 'project_task')
+            {
+            	if (is_array($genallowed)) $modellist=$genallowed;
+            	else
+            	{
+            		include_once DOL_DOCUMENT_ROOT.'/core/modules/project/task/modules_task.php';
+            		$modellist=ModelePDFTask::liste_modeles($this->db);
+            	}
+            }
             elseif ($modulepart == 'export')
             {
                 if (is_array($genallowed)) $modellist=$genallowed;
