@@ -1338,7 +1338,7 @@ if ($object->id && ($action == '' || $action == 'view') && $object->status)
         $langs->load("propal");
 
         $html .= '<tr class="liste_titre">';
-        $html .= '<td class="liste_titre">'.$langs->trans("AddToOtherProposals").'</td>';
+        $html .= '<td class="liste_titre">'.$langs->trans("AddToDraftProposals").'</td>';
         $html .= '</tr><tr>';
         $html .= '<td valign="top">';
 
@@ -1365,7 +1365,7 @@ if ($object->id && ($action == '' || $action == 'view') && $object->status)
         else
         {
         	$html .= "<tr ".$bc[!$var]."><td>";
-        	$html .= $langs->trans("NoOtherOpenedPropals");
+        	$html .= $langs->trans("NoDraftProposals");
         	$html .= '</td></tr>';
         }
         $html .= '</table>';
@@ -1383,7 +1383,7 @@ if ($object->id && ($action == '' || $action == 'view') && $object->status)
         $langs->load("orders");
 
         $html .= '<tr class="liste_titre">';
-        $html .= '<td class="liste_titre">'.$langs->trans("AddToOtherOrders").'</td>';
+        $html .= '<td class="liste_titre">'.$langs->trans("AddToDraftOrders").'</td>';
         $html .= '</tr><tr>';
         $html .= '<td valign="top">';
 
@@ -1410,7 +1410,7 @@ if ($object->id && ($action == '' || $action == 'view') && $object->status)
         else
 		{
         	$html .= "<tr ".$bc[!$var]."><td>";
-        	$html .= $langs->trans("NoOtherOpenedOrders");
+        	$html .= $langs->trans("NoDraftOrders");
         	$html .= '</td></tr>';
         }
         $html .= '</table>';
@@ -1428,7 +1428,7 @@ if ($object->id && ($action == '' || $action == 'view') && $object->status)
     	$langs->load("bills");
 
     	$html .= '<tr class="liste_titre">';
-    	$html .= '<td class="liste_titre">'.$langs->trans("AddToOtherBills").'</td>';
+    	$html .= '<td class="liste_titre">'.$langs->trans("AddToDraftInvoices").'</td>';
         $html .= '</tr><tr>';
     	$html .= '<td valign="top">';
 
@@ -1455,7 +1455,7 @@ if ($object->id && ($action == '' || $action == 'view') && $object->status)
     	else
     	{
     		$html .= "<tr ".$bc[!$var]."><td>";
-    		$html .= $langs->trans("NoOtherDraftBills");
+    		$html .= $langs->trans("NoDraftInvoices");
     		$html .= '</td></tr>';
     	}
     	$html .= '</table>';

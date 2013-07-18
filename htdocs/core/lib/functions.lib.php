@@ -641,11 +641,11 @@ function dol_get_fiche_head($links=array(), $active='0', $title='', $notab=0, $p
 			if ((is_numeric($active) && $i == $active)
 			|| (! is_numeric($active) && $active == $links[$i][2]))
 			{
-				$out.='<a data-role="button" id="active" class="tab" href="'.$links[$i][0].'">'.$links[$i][1].'</a>'."\n";
+				$out.='<a data-role="button" id="active" class="tab inline-block" href="'.$links[$i][0].'">'.$links[$i][1].'</a>'."\n";
 			}
 			else
 			{
-				$out.='<a data-role="button"'.(! empty($links[$i][2])?' id="'.$links[$i][2].'"':'').' class="tab" href="'.$links[$i][0].'">'.$links[$i][1].'</a>'."\n";
+				$out.='<a data-role="button"'.(! empty($links[$i][2])?' id="'.$links[$i][2].'"':'').' class="tab inline-block" href="'.$links[$i][0].'">'.$links[$i][1].'</a>'."\n";
 			}
 		}
 		$out.='</div>';
