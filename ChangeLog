@@ -30,6 +30,9 @@ For users:
 - New: Add option MAIN_GENERATE_DOCUMENT_WITH_PICTURE.
 - New: Add option excludethirdparties and onlythirdparties into merge pdf scripts.
 - Qual: Implement same rule for return value of all command line scripts (0 when success, <>0 if error).
+- New : [ task #925 ] Add ODT document generation for Tasks in project module
+- New : [ task #924 ] Add numbering rule on task
+
 
 For translators:
 - Normalized sort order of all languages files with english reference files.
