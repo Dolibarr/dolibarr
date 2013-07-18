@@ -8,7 +8,7 @@ script to build a package, ready to be distributed,
 with format .DEB (for Debian, Ubuntu, ...).
 
 # To build a debian package, you need first
-# apt-get -i debhelper dpkg-source gpg lintian
+# apt-get -i debhelper dpkg-source gpg lintian git-buildpackage
 
 
 # This is standard command to work on Debian packaging:
@@ -59,11 +59,53 @@ http://bugs.debian.org/package
 
 
 ##########################################################
-To use Alioth.debian.org
-Create a login
-Setup your ssh as described into page: http://wiki.debian.org/Alioth/SSH
-Ask to be included into project collab-maint: http://alioth.debian.org/projects/collab-maint/
-Then you can git clone tcpdf
-git clone git.debian.org:/git/collab-maint/tcpdf.git
 
+To create a gpg key for email used into changelog
+Check your existing keys/emails
+* gpg --list-key
+Generate a new one
+* gpg --gen-key
+
+
+To use Alioth.debian.org
+* Create a login
+* Setup your ssh as described into page: http://wiki.debian.org/Alioth/SSH
+* Ask to be included into project collab-maint: http://alioth.debian.org/projects/collab-maint/
+
+
+To update tcpdf package:
+
+* You can git clone tcpdf
+git clone git.debian.org:/git/collab-maint/tcpdf.git [tcpdf-debian]
+
+* Into root dir, launch:
+debian/get-orig-source.sh
+
+* Créer un fichier ~/.gpb.conf par
+cat >~/.gbp.conf <<END
+[DEFAULT]
+pristine-tar = True
+
+[git-buildpackage]
+sign-tags = True
+export-dir = ../build-area/
+
+[git-import-orig]
+filter-pristine-tar = True
+END
+
+* Create branch upstream from origin/upstream
+
+* Staying into git root directory, run
+git-import-orig -vv ../tcpdf_6.0.020+dfsg.orig.tar.xz
+
+* Add an entry into debian/changelog and commit by amending previous commit.
+
+* We try to build package
+git-buildpackage -us -uc
+
+* If package .deb is ok:
+git-buildpackage --git-tag
+git push
+git push --tags
 
