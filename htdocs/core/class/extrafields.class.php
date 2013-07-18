@@ -673,8 +673,10 @@ class ExtraFields
 			$out='<select class="flat" name="options_'.$key.'">';
 			foreach ($param['options'] as $key=>$val )
 			{
+				list($val, $parent) = explode('|', $val);
 				$out.='<option value="'.$key.'"';
-				$out.= ($value==$key?'selected="selected"':'');
+				$out.= ($value==$key?' selected="selected"':'');
+				$out.= (!empty($parent)?' parent="'.$parent.'"':'');
 				$out.='>'.$val.'</option>';
 			}
 			$out.='</select>';
@@ -688,11 +690,16 @@ class ExtraFields
 			// 0 1 : tableName
 			// 1 2 : label field name Nom du champ contenant le libelle
 			// 2 3 : key fields name (if differ of rowid)
+			// 3 4 : key field parent (for dependent lists)
 
 			$keyList='rowid';
 
-			if (count($InfoFieldList)==3)
+			if (count($InfoFieldList)>=3)
 				$keyList=$InfoFieldList[2].' as rowid';
+			if (count($InfoFieldList)>=4) {
+				list($parentName, $parentField) = explode('|', $InfoFieldList[3]);
+				$keyList.= ', '.$parentField;
+			}
 
 			$sql = 'SELECT '.$keyList.', '.$InfoFieldList[1];
 			$sql.= ' FROM '.MAIN_DB_PREFIX .$InfoFieldList[0];
@@ -717,15 +724,16 @@ class ExtraFields
 						}else {
 							$labeltoshow=dol_trunc($obj->$InfoFieldList[1],18);
 						}
+						
+						if(!empty($InfoFieldList[3])) {
+							$parent = $parentName.':'.$obj->{$parentField};
+						}
 
-						if ($value==$obj->rowid)
-						{
-							$out.='<option value="'.$obj->rowid.'" selected="selected">'.$labeltoshow.'</option>';
-						}
-						else
-						{
-							$out.='<option value="'.$obj->rowid.'" >'.$labeltoshow.'</option>';
-						}
+						$out.='<option value="'.$obj->rowid.'"';
+						$out.= ($value==$obj->rowid?' selected="selected"':'');
+						$out.= (!empty($parent)?' parent="'.$parent.'"':'');
+						$out.='>'.$labeltoshow.'</option>';
+						
 						$i++;
 					}
 				}
