@@ -16,22 +16,22 @@
  */
 
 /**
- *	\file       htdocs/core/boxes/box_graph_orders_permonth.php
- *	\ingroup    commandes
- *	\brief      Box to show graph of orders per month
+ *	\file       htdocs/core/boxes/box_graph_propales_permonth.php
+ *	\ingroup    propales
+ *	\brief      Box to show graph of proposals per month
  */
 include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
 
 
 /**
- * Class to manage the box to show last orders
+ * Class to manage the box to show last propals
  */
-class box_graph_orders_permonth extends ModeleBoxes
+class box_graph_propales_permonth extends ModeleBoxes
 {
-	var $boxcode="orderspermonth";
-	var $boximg="object_order";
-	var $boxlabel="BoxCustomersOrdersPerMonth";
-	var $depends = array("commande");
+	var $boxcode="propalpermonth";
+	var $boximg="object_propal";
+	var $boxlabel="BoxProposalsPerMonth";
+	var $depends = array("propal");
 
 	var $db;
 
@@ -66,10 +66,10 @@ class box_graph_orders_permonth extends ModeleBoxes
 
 		$refreshaction='refresh_'.$this->boxcode;
 
-		include_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
-		$commandestatic=new Commande($db);
+		include_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
+		$commandestatic=new Propal($db);
 
-		$text = $langs->trans("BoxCustomersOrdersPerMonth",$max);
+		$text = $langs->trans("BoxProposalsPerMonth",$max);
 		$this->info_box_head = array(
 				'text' => $text,
 				'limit'=> dol_strlen($text),
@@ -83,10 +83,10 @@ class box_graph_orders_permonth extends ModeleBoxes
 		if ($user->rights->commande->lire)
 		{
 			include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
-			include_once DOL_DOCUMENT_ROOT.'/commande/class/commandestats.class.php';
+			include_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propalestats.class.php';
 
-			$shownb=(! empty($conf->global->COMMANDE_BOX_GRAPH_SHOW_NB));
-			$showtot=(! isset($conf->global->COMMANDE_BOX_GRAPH_SHOW_TOT) || ! empty($conf->global->COMMANDE_BOX_GRAPH_SHOW_TOT));
+			$shownb=(! empty($conf->global->PROPAL_BOX_GRAPH_SHOW_NB));
+			$showtot=(! isset($conf->global->PROPAL_BOX_GRAPH_SHOW_TOT) || ! empty($conf->global->PROPAL_BOX_GRAPH_SHOW_TOT));
 			$nowarray=dol_getdate(dol_now(),true);
 			$endyear=$nowarray['year'];
 			$startyear=$endyear-1;
@@ -95,16 +95,16 @@ class box_graph_orders_permonth extends ModeleBoxes
 			$WIDTH='256';
 			$HEIGHT='192';
 
-			$stats = new CommandeStats($this->db, 0, $mode, ($userid>0?$userid:0));
+			$stats = new PropaleStats($this->db, 0, $mode, ($userid>0?$userid:0));
 
 			// Build graphic number of object. $data = array(array('Lib',val1,val2,val3),...)
 			if ($shownb)
 			{
 				$data1 = $stats->getNbByMonthWithPrevYear($endyear,$startyear,(GETPOST('action')==$refreshaction?-1:(3600*24)));
 
-				$filenamenb = $dir."/ordersnbinyear-".$year.".png";
-				if ($mode == 'customer') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&amp;file=ordersnbinyear-'.$year.'.png';
-				if ($mode == 'supplier') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstatssupplier&amp;file=ordersnbinyear-'.$year.'.png';
+				$filenamenb = $dir."/propalsnbinyear-".$year.".png";
+				if ($mode == 'customer') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=propalstats&amp;file=propalsnbinyear-'.$year.'.png';
+				if ($mode == 'supplier') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=propalstatssupplier&amp;file=propalsnbinyear-'.$year.'.png';
 
 				$px1 = new DolGraph();
 				$mesg = $px1->isGraphKo();
@@ -123,13 +123,13 @@ class box_graph_orders_permonth extends ModeleBoxes
 					$px1->SetMaxValue($px1->GetCeilMaxValue());
 					$px1->SetWidth($WIDTH);
 					$px1->SetHeight($HEIGHT);
-					$px1->SetYLabel($langs->trans("NumberOfOrders"));
+					$px1->SetYLabel($langs->trans("NumberOfProposals"));
 					$px1->SetShading(3);
 					$px1->SetHorizTickIncrement(1);
 					$px1->SetPrecisionY(0);
 					$px1->SetCssPrefix("cssboxes");
 					$px1->mode='depth';
-					$px1->SetTitle($langs->trans("NumberOfOrdersByMonth"));
+					$px1->SetTitle($langs->trans("NumberOfProposalsByMonth"));
 
 					$px1->draw($filenamenb,$fileurlnb);
 				}
@@ -140,9 +140,9 @@ class box_graph_orders_permonth extends ModeleBoxes
 			{
 				$data2 = $stats->getAmountByMonthWithPrevYear($endyear,$startyear,(GETPOST('action')==$refreshaction?-1:(3600*24)));
 
-				$filenamenb = $dir."/ordersamountinyear-".$year.".png";
-				if ($mode == 'customer') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&amp;file=ordersamountinyear-'.$year.'.png';
-				if ($mode == 'supplier') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstatssupplier&amp;file=ordersamountinyear-'.$year.'.png';
+				$filenamenb = $dir."/propalsamountinyear-".$year.".png";
+				if ($mode == 'customer') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=propalstats&amp;file=propalsamountinyear-'.$year.'.png';
+				if ($mode == 'supplier') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=propalstatssupplier&amp;file=propalsamountinyear-'.$year.'.png';
 
 				$px2 = new DolGraph();
 				$mesg = $px2->isGraphKo();
@@ -161,13 +161,13 @@ class box_graph_orders_permonth extends ModeleBoxes
 					$px2->SetMaxValue($px2->GetCeilMaxValue());
 					$px2->SetWidth($WIDTH);
 					$px2->SetHeight($HEIGHT);
-					$px2->SetYLabel($langs->trans("AmountOfOrdersHT"));
+					$px2->SetYLabel($langs->trans("AmountOfProposalsHT"));
 					$px2->SetShading(3);
 					$px2->SetHorizTickIncrement(1);
 					$px2->SetPrecisionY(0);
 					$px2->SetCssPrefix("cssboxes");
 					$px2->mode='depth';
-					$px2->SetTitle($langs->trans("AmountOfOrdersByMonthHT"));
+					$px2->SetTitle($langs->trans("AmountOfProposalsByMonthHT"));
 
 					$px2->draw($filenamenb,$fileurlnb);
 				}
