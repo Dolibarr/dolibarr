@@ -378,10 +378,16 @@ class Categorie
 	function add_type($obj,$type)
 	{
 		if ($this->id == -1) return -2;
+		
 		if ($type == 'company')     $type='societe';
 		if ($type == 'fournisseur') $type='societe';
+		
+		$column_name=$type;
+        if ($type=='contact') {
+			$column_name='socpeople';
+		}
 
-		$sql  = "INSERT INTO ".MAIN_DB_PREFIX."categorie_".$type." (fk_categorie, fk_".$type.")";
+		$sql  = "INSERT INTO ".MAIN_DB_PREFIX."categorie_".$type." (fk_categorie, fk_".$column_name.")";
 		$sql .= " VALUES (".$this->id.", ".$obj->id.")";
 
 		dol_syslog(get_class($this).'::add_type sql='.$sql);
@@ -413,9 +419,16 @@ class Categorie
 	 */
 	function del_type($obj,$type)
 	{
+
+		if ($type == 'company')     $type='societe';
+		if ($type == 'fournisseur') $type='societe';
+		
+		$column_name=$type;
+        if ($type=='contact') $column_name='socpeople';
+
 		$sql  = "DELETE FROM ".MAIN_DB_PREFIX."categorie_".$type;
 		$sql .= " WHERE fk_categorie = ".$this->id;
-		$sql .= " AND   fk_".($type=='fournisseur'?'societe':$type)."   = ".$obj->id;
+		$sql .= " AND   fk_".$column_name."   = ".$obj->id;
 
 		dol_syslog(get_class($this).'::del_type sql='.$sql);
 		if ($this->db->query($sql))
@@ -972,6 +985,7 @@ class Categorie
 		else if ($typeid == 1 || $typeid == 'supplier')  { $typeid=1; $table='societe'; $type='fournisseur'; }
 		else if ($typeid == 2 || $typeid == 'customer')  { $typeid=2; $table='societe'; $type='societe'; }
 		else if ($typeid == 3 || $typeid == 'member')    { $typeid=3; $table='member';  $type='member'; }
+        else if ($typeid == 4 || $typeid == 'contact')    { $typeid=4; $table='socpeople';  $type='contact'; }
 
 		$sql = "SELECT ct.fk_categorie, c.label";
 		$sql.= " FROM ".MAIN_DB_PREFIX."categorie_".$type." as ct, ".MAIN_DB_PREFIX."categorie as c";

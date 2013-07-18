@@ -156,7 +156,7 @@ class FormFile
      *      Show the box with list of available documents for object
      *
      *      @param      string				$modulepart         propal, facture, facture_fourn, ...
-     *      @param      string				$filename           Sub-directory to scan (Example: '0/1/10', 'FA/DD/MM/YY/9999'). Use '' if $filedir is already complete)
+     *      @param      string				$modulesubdir       Sub-directory to scan (Example: '0/1/10', 'FA/DD/MM/YY/9999'). Use '' if file is not into subdir of module.
      *      @param      string				$filedir            Directory to scan
      *      @param      string				$urlsource          Url of origin page (for return)
      *      @param      int					$genallowed         Generation is allowed (1/0 or array of formats)
@@ -173,10 +173,10 @@ class FormFile
      * 		@param		string				$codelang			Default language code to use on lang combo box if multilang is enabled
      * 		@return		int										<0 if KO, number of shown files if OK
      */
-    function show_documents($modulepart,$filename,$filedir,$urlsource,$genallowed,$delallowed=0,$modelselected='',$allowgenifempty=1,$forcenomultilang=0,$iconPDF=0,$maxfilenamelength=28,$noform=0,$param='',$title='',$buttonlabel='',$codelang='')
+    function show_documents($modulepart,$modulesubdir,$filedir,$urlsource,$genallowed,$delallowed=0,$modelselected='',$allowgenifempty=1,$forcenomultilang=0,$iconPDF=0,$maxfilenamelength=28,$noform=0,$param='',$title='',$buttonlabel='',$codelang='')
     {
         $this->numoffiles=0;
-        print $this->showdocuments($modulepart,$filename,$filedir,$urlsource,$genallowed,$delallowed,$modelselected,$allowgenifempty,$forcenomultilang,$iconPDF,$maxfilenamelength,$noform,$param,$title,$buttonlabel,$codelang);
+        print $this->showdocuments($modulepart,$modulesubdir,$filedir,$urlsource,$genallowed,$delallowed,$modelselected,$allowgenifempty,$forcenomultilang,$iconPDF,$maxfilenamelength,$noform,$param,$title,$buttonlabel,$codelang);
         return $this->numoffiles;
     }
 
@@ -185,7 +185,7 @@ class FormFile
      *      This also set the property $this->numoffiles
      *
      *      @param      string				$modulepart         Module the files are related to ('propal', 'facture', 'facture_fourn', 'mymodule', 'mymodule_temp', ...)
-     *      @param      string				$filename           Existing (so sanitized) sub-directory to scan (Example: '0/1/10', 'FA/DD/MM/YY/9999'). Use '' if $filedir is already complete)
+     *      @param      string				$modulesubdir       Existing (so sanitized) sub-directory to scan (Example: '0/1/10', 'FA/DD/MM/YY/9999'). Use '' if file is not into subdir of module.
      *      @param      string				$filedir            Directory to scan
      *      @param      string				$urlsource          Url of origin page (for return)
      *      @param      int					$genallowed         Generation is allowed (1/0 or array list of templates)
@@ -203,7 +203,7 @@ class FormFile
      * 		@param		string				$morepicto			Add more HTML content into cell with picto
      * 		@return		string              					Output string with HTML array of documents (might be empty string)
      */
-    function showdocuments($modulepart,$filename,$filedir,$urlsource,$genallowed,$delallowed=0,$modelselected='',$allowgenifempty=1,$forcenomultilang=0,$iconPDF=0,$maxfilenamelength=28,$noform=0,$param='',$title='',$buttonlabel='',$codelang='',$morepicto='')
+    function showdocuments($modulepart,$modulesubdir,$filedir,$urlsource,$genallowed,$delallowed=0,$modelselected='',$allowgenifempty=1,$forcenomultilang=0,$iconPDF=0,$maxfilenamelength=28,$noform=0,$param='',$title='',$buttonlabel='',$codelang='',$morepicto='')
     {
         global $langs,$conf,$hookmanager;
         global $bc;
@@ -213,7 +213,7 @@ class FormFile
 
         // For backward compatibility
         if (! empty($iconPDF)) {
-        	return $this->getDocumentsLink($modulepart, $filename, $filedir);
+        	return $this->getDocumentsLink($modulepart, $modulesubdir, $filedir);
         }
         $printer = ($user->rights->printipp->read && $conf->printipp->enabled)?true:false;
         $hookmanager->initHooks(array('formfile'));
@@ -308,6 +308,15 @@ class FormFile
                     include_once DOL_DOCUMENT_ROOT.'/core/modules/project/modules_project.php';
                     $modellist=ModelePDFProjects::liste_modeles($this->db);
                 }
+            }
+            elseif ($modulepart == 'project_task')
+            {
+            	if (is_array($genallowed)) $modellist=$genallowed;
+            	else
+            	{
+            		include_once DOL_DOCUMENT_ROOT.'/core/modules/project/task/modules_task.php';
+            		$modellist=ModelePDFTask::liste_modeles($this->db);
+            	}
             }
             elseif ($modulepart == 'export')
             {
@@ -486,9 +495,9 @@ class FormFile
 
 					// Define relative path for download link (depends on module)
 					$relativepath=$file["name"];								// Cas general
-					if ($filename) $relativepath=$filename."/".$file["name"];	// Cas propal, facture...
+					if ($modulesubdir) $relativepath=$modulesubdir."/".$file["name"];	// Cas propal, facture...
 					// Autre cas
-					if ($modulepart == 'donation')            { $relativepath = get_exdir($filename,2).$file["name"]; }
+					if ($modulepart == 'donation')            { $relativepath = get_exdir($modulesubdir,2).$file["name"]; }
 					if ($modulepart == 'export')              { $relativepath = $file["name"]; }
 
 					$out.= "<tr ".$bc[$var].">";
@@ -571,11 +580,11 @@ class FormFile
      *	Show only Document icon with link
      *
      *	@param	string	$modulepart		propal, facture, facture_fourn, ...
-     *	@param	string	$filename		Sub-directory to scan (Example: '0/1/10', 'FA/DD/MM/YY/9999'). Use '' if $filedir is already complete)
+     *	@param	string	$modulesubdir	Sub-directory to scan (Example: '0/1/10', 'FA/DD/MM/YY/9999'). Use '' if file is not into subdir of module.
      *	@param	string	$filedir		Directory to scan
      *	@return	string              	Output string with HTML link of documents (might be empty string)
      */
-    function getDocumentsLink($modulepart, $filename, $filedir)
+    function getDocumentsLink($modulepart, $modulesubdir, $filedir)
     {
     	if (! function_exists('dol_dir_list')) {
     		include DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -585,10 +594,10 @@ class FormFile
 
     	$this->numoffiles=0;
 
-    	$file_list=dol_dir_list($filedir, 'files', 0, $filename.'.pdf', '\.meta$|\.png$');
+    	$file_list=dol_dir_list($filedir, 'files', 0, $modulesubdir.'.pdf', '\.meta$|\.png$');
 
     	// For ajax treatment
-    	$out.= '<div id="gen_pdf_'.$filename.'" class="linkobject hideobject">'.img_picto('', 'refresh').'</div>'."\n";
+    	$out.= '<div id="gen_pdf_'.$modulesubdir.'" class="linkobject hideobject">'.img_picto('', 'refresh').'</div>'."\n";
 
     	if (! empty($file_list))
     	{
@@ -597,10 +606,10 @@ class FormFile
     		{
     			// Define relative path for download link (depends on module)
     			$relativepath=$file["name"];								// Cas general
-    			if ($filename) $relativepath=$filename."/".$file["name"];	// Cas propal, facture...
+    			if ($modulesubdir) $relativepath=$modulesubdir."/".$file["name"];	// Cas propal, facture...
     			// Autre cas
     			if ($modulepart == 'donation')            {
-    				$relativepath = get_exdir($filename,2).$file["name"];
+    				$relativepath = get_exdir($modulesubdir,2).$file["name"];
     			}
     			if ($modulepart == 'export')              {
     				$relativepath = $file["name"];
