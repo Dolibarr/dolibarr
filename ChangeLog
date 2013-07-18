@@ -32,6 +32,9 @@ For users:
 - Qual: Implement same rule for return value of all command line scripts (0 when success, <>0 if error).
 - New : [ task #925 ] Add ODT document generation for Tasks in project module
 - New : [ task #924 ] Add numbering rule on task
+- New : [ task #165 ] Add import/export of multiprices
+- New: Add Maghreb regions and departments
+ 
 
 
 For translators:
