@@ -544,6 +544,7 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
     print '<td>'.$langs->trans("PhoneMobile").'</td>';
     print '<td>'.$langs->trans("Fax").'</td>';
     print '<td>'.$langs->trans("EMail").'</td>';
+    print '<td>'.$langs->trans("Status").'</td>';
     print "<td>&nbsp;</td>";
     if (! empty($conf->agenda->enabled) && $user->rights->agenda->myactions->create)
     {
@@ -569,8 +570,6 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
         while ($i < $num)
         {
             $obj = $db->fetch_object($result);
-            if($obj->statut == 0)
-            {
             $var = !$var;
             print "<tr ".$bc[$var].">";
 
@@ -599,6 +598,8 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
             print dol_print_email($obj->email,$obj->rowid,$object->id,'AC_EMAIL');
             print '</td>';
 
+			 if ($obj->statut==1) print '<td>'.$langs->trans('Disabled').' </span>'.img_picto($langs->trans('StatusContactDraftShort'),'statut0').'</td>';
+			elseif ($obj->statut==0) print '<td>'.$langs->trans('Enabled').' </span>'.img_picto($langs->trans('StatusContactValidatedShort'),'statut1').'</td>';
             if (! empty($conf->agenda->enabled) && $user->rights->agenda->myactions->create)
             {
                 print '<td align="center">';
@@ -613,6 +614,7 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
                 print '</a></td>';
             }
 
+			
             if ($user->rights->societe->contact->creer)
             {
                 print '<td align="right">';
@@ -620,8 +622,10 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
                 print img_edit();
                 print '</a></td>';
             }
+            
+        
+           
             print "</tr>\n";
-		}
             $i++;
         }
     }

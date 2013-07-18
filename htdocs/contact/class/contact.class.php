@@ -901,9 +901,9 @@ class Contact extends CommonObject
 		return $this->LibStatut($this->statut,$mode);
 	}
 	
-	function getLibStatutcontact($mode)
+	function getLibStatutcontact()
 	{
-		return $this->LibStatutcontact($this->statut,$mode);
+		return $this->LibStatutcontact($this->statut);
 	}
 
 	/**
@@ -962,10 +962,11 @@ class Contact extends CommonObject
 		
 	}
 
-	function LibStatutcontact($mode)
+	function LibStatutcontact($statut)
 		{
-			if ($statut==1) return img_picto($langs->trans('StatusContactDraft'),'statut0').' '.$langs->trans('Disabled');
-			else return img_picto($langs->trans('StatusContactValidated'),'statut1').' '.$langs->trans('Enabled');
+			global $langs;
+			if ($statut==1) return '<span class="hideonsmartphone">'.$langs->trans('Disabled').' </span>'.img_picto($langs->trans('StatusContactDraftShort'),'statut0');
+			else return '<span class="hideonsmartphone">'.$langs->trans('Enabled').' </span>'.img_picto($langs->trans('StatusContactValidatedShort'),'statut1');
 		}
 	/**
 	 *	Return translated label of Public or Private
