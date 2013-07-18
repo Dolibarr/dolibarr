@@ -182,6 +182,11 @@ else if ($action == 'set')
 {
 	$ret = addDocumentModel($value, $type, $label, $scandir);
 }
+// Activate a model for task
+else if ($action == 'settask')
+{
+	$ret = addDocumentModel($value,'project_task', $label, $scandir);
+}
 
 else if ($action == 'del')
 {

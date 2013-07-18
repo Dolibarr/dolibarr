@@ -90,4 +90,12 @@ ALTER TABLE llx_categorie_contact ADD INDEX idx_categorie_contact_fk_socpeople (
 ALTER TABLE llx_categorie_contact ADD CONSTRAINT fk_categorie_contact_categorie_rowid FOREIGN KEY (fk_categorie) REFERENCES llx_categorie (rowid);
 ALTER TABLE llx_categorie_contact ADD CONSTRAINT fk_categorie_contact_fk_socpeople   FOREIGN KEY (fk_socpeople) REFERENCES llx_socpeople (rowid);
 
+insert into llx_const (name, value, type, note, visible, entity) values ('PROJECT_TASK_ADDON_PDF','','chaine','Name of PDF/ODT tasks manager class',0,1);
+insert into llx_const (name, value, type, note, visible, entity) values ('PROJECT_TASK_ADDON','mod_task_simple','chaine','Name of Numbering Rule task manager class',0,1);
+insert into llx_const (name, value, type, note, visible, entity) values ('PROJECT_TASK_ADDON_PDF_ODT_PATH','DOL_DATA_ROOT/doctemplates/tasks','chaine','',0,1);
+
+ALTER TABLE llx_projet_task ADD COLUMN ref varchar(50) AFTER rowid;
+UPDATE llx_projet_task SET ref=rowid;
+ALTER TABLE llx_projet_task ADD COLUMN  model_pdf varchar(255);
+
 

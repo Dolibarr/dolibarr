@@ -76,14 +76,14 @@ class modProjet extends DolibarrModules
 		$this->const[$r][0] = "PROJECT_ADDON_PDF";
 		$this->const[$r][1] = "chaine";
 		$this->const[$r][2] = "baleine";
-		$this->const[$r][3] = 'Nom du gestionnaire de generation des projets en PDF';
+		$this->const[$r][3] = 'Name of PDF/ODT project manager class';
 		$this->const[$r][4] = 0;
 		$r++;
 
 		$this->const[$r][0] = "PROJECT_ADDON";
 		$this->const[$r][1] = "chaine";
 		$this->const[$r][2] = "mod_project_simple";
-		$this->const[$r][3] = 'Nom du gestionnaire de numerotation des projets';
+		$this->const[$r][3] = 'Name of Numbering Rule project manager class';
 		$this->const[$r][4] = 0;
 		$r++;
 
@@ -96,15 +96,15 @@ class modProjet extends DolibarrModules
 		
 		$this->const[$r][0] = "PROJECT_TASK_ADDON_PDF";
 		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "baleine";
-		$this->const[$r][3] = 'Nom du gestionnaire de generation des task en PDF';
+		$this->const[$r][2] = "";
+		$this->const[$r][3] = 'Name of PDF/ODT tasks manager class';
 		$this->const[$r][4] = 0;
 		$r++;
 		
 		$this->const[$r][0] = "PROJECT_TASK_ADDON";
 		$this->const[$r][1] = "chaine";
 		$this->const[$r][2] = "mod_task_simple";
-		$this->const[$r][3] = 'Nom du gestionnaire de numerotation des taches';
+		$this->const[$r][3] = 'Name of Numbering Rule task manager class';
 		$this->const[$r][4] = 0;
 		$r++;
 		

@@ -23,6 +23,10 @@
  *	\brief      Page of a project task
  */
 
+error_reporting(E_ALL);
+ini_set('display_errors', true);
+ini_set('html_errors', false);
+
 require ("../../main.inc.php");
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
@@ -30,6 +34,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/modules/project/task/modules_task.php';
 
 $langs->load("projects");
 $langs->load("companies");
@@ -41,8 +47,6 @@ $confirm=GETPOST('confirm','alpha');
 $withproject=GETPOST('withproject','int');
 $project_ref=GETPOST('project_ref','alpha');
 $planned_workload=GETPOST('planned_workloadhour');
-$taskid = GETPOST("id",'int');
-$taskref = GETPOST("ref",'int');
 
 // Security check
 $socid=0;
@@ -73,7 +77,7 @@ if ($action == 'update' && ! $_POST["cancel"] && $user->rights->projet->creer)
 	}
 	if (! $error)
 	{
-		$object->fetch($id);
+		$object->fetch($id,$ref);
 
 		$tmparray=explode('_',$_POST['task_parent']);
 		$task_parent=$tmparray[1];
@@ -100,7 +104,7 @@ if ($action == 'update' && ! $_POST["cancel"] && $user->rights->projet->creer)
 
 if ($action == 'confirm_delete' && $confirm == "yes" && $user->rights->projet->supprimer)
 {
-	if ($object->fetch($id) >= 0 )
+	if ($object->fetch($id,$ref) >= 0 )
 	{
 		$result=$projectstatic->fetch($object->fk_projet);
 		if (! empty($projectstatic->socid))
@@ -142,7 +146,7 @@ if (! empty($project_ref) && ! empty($withproject))
 // Build doc
 if ($action == 'builddoc' && $user->rights->projet->creer)
 {
-	if ($object->fetch($id) >= 0 )
+	if ($object->fetch($id,$ref) >= 0 )
 	{
 		if (GETPOST('model'))
 		{
@@ -174,7 +178,7 @@ if ($action == 'remove_file' && $user->rights->projet->creer)
 {
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
-	if ($object->fetch($id) >= 0 )
+	if ($object->fetch($id,$ref) >= 0 )
 	{
 		$langs->load("other");
 		$upload_dir =	$conf->projet->dir_output;
@@ -199,7 +203,7 @@ $formfile = new FormFile($db);
 
 if ($id > 0 || ! empty($ref))
 {
-	if ($object->fetch($id) > 0)
+	if ($object->fetch($id,$ref) > 0)
 	{
 		$res=$object->fetch_optionals($object->id,$extralabels);
 
@@ -397,7 +401,7 @@ if ($id > 0 || ! empty($ref))
 				$object->next_prev_filter=" fk_projet in (".$projectsListId.")";
 			}
 			else $object->next_prev_filter=" fk_projet = ".$projectstatic->id;
-			print $form->showrefnav($object,'id',$linkback,1,'rowid','ref','',$param);
+			print $form->showrefnav($object,'ref',$linkback,1,'ref','ref','',$param);
 			print '</td>';
 			print '</tr>';
 
@@ -502,6 +506,7 @@ if ($id > 0 || ! empty($ref))
 			$var=true;
 				
 			$somethingshown=$formfile->show_documents('project_task',$filename,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf);
+			
 				
 				
 			print '</td></tr></table>';
