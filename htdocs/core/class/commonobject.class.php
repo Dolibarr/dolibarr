@@ -736,31 +736,35 @@ abstract class CommonObject
     }
 
     /**
-     *	Update a specific field from an object
+     *	Update a specific field into database
      *
      *	@param	string	$field		Field to update
      *	@param	mixte	$value		New value
-     *	@param	string	$table		To force other table element or element line
-     *	@param	int		$id			To force other object id
-     *	@param	string	$format		Data format ('text' by default, 'date')
-     *	@param	string	$id_field	To force rowid field name
+     *	@param	string	$table		To force other table element or element line (should not be used)
+     *	@param	int		$id			To force other object id (should not be used)
+     *	@param	string	$format		Data format ('text', 'date'). 'text' is used if not defined
+     *	@param	string	$id_field	To force rowid field name. 'rowid' is used it not defined
+     *	@param	string	$user		Update last update fields also if user object provided
      *	@return	int					<0 if KO, >0 if OK
      */
-    function setValueFrom($field, $value, $table='', $id='', $format='text', $id_field='rowid')
+    function setValueFrom($field, $value, $table='', $id='', $format='', $id_field='', $user='')
     {
         global $conf;
 
-        if (empty($table)) $table=$this->table_element;
-        if (empty($id))    $id=$this->id;
+        if (empty($table)) 	$table=$this->table_element;
+        if (empty($id))    	$id=$this->id;
+		if (empty($format)) 	$format='text';
+		if (empty($id_field)) 	$id_field='rowid';
 
         $this->db->begin();
 
         $sql = "UPDATE ".MAIN_DB_PREFIX.$table." SET ";
         if ($format == 'text') $sql.= $field." = '".$this->db->escape($value)."'";
         else if ($format == 'date') $sql.= $field." = '".$this->db->idate($value)."'";
+        if (is_object($user)) $sql.=", fk_user_modif = ".$user->id;
         $sql.= " WHERE ".$id_field." = ".$id;
 
-        dol_syslog(get_class($this)."::setValueFrom sql=".$sql, LOG_DEBUG);
+        dol_syslog(get_class($this)."::".__FUNCTION__." sql=".$sql, LOG_DEBUG);
         $resql = $this->db->query($sql);
         if ($resql)
         {
@@ -2296,7 +2300,7 @@ abstract class CommonObject
 								});
 					    	});
 						}
-						
+
 						setListDependencies();
 				    });
 				</script>';

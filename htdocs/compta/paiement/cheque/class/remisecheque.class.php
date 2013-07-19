@@ -21,13 +21,13 @@
 /**
  *	\file       htdocs/compta/paiement/cheque/class/remisecheque.class.php
  *	\ingroup    compta
- *	\brief      Fichier de la classe des bordereau de remise de cheque
+ *	\brief      File with class to manage cheque delivery receipts
  */
 require_once DOL_DOCUMENT_ROOT .'/core/class/commonobject.class.php';
 
 
 /**
- *	Classe permettant la gestion des remises de cheque
+ *	Class to manage cheque delivery receipts
  */
 class RemiseCheque extends CommonObject
 {
@@ -580,25 +580,25 @@ class RemiseCheque extends CommonObject
 		if ( $resql )
 		{
 			while ( $row = $this->db->fetch_row($resql) )
-	  {
-	  	$total += $row[0];
-	  	$nb++;
-	  }
+			{
+				$total += $row[0];
+				$nb++;
+			}
 
-	  $this->db->free($resql);
+			$this->db->free($resql);
 
-	  $sql = "UPDATE ".MAIN_DB_PREFIX."bordereau_cheque";
-	  $sql.= " SET amount = '".price2num($total)."'";
-	  $sql.= ", nbcheque = ".$nb;
-	  $sql.= " WHERE rowid = ".$this->id;
-	  $sql.= " AND entity = ".$conf->entity;
+			$sql = "UPDATE ".MAIN_DB_PREFIX."bordereau_cheque";
+			$sql.= " SET amount = '".price2num($total)."'";
+			$sql.= ", nbcheque = ".$nb;
+			$sql.= " WHERE rowid = ".$this->id;
+			$sql.= " AND entity = ".$conf->entity;
 
-	  $resql = $this->db->query($sql);
-	  if (!$resql)
-	  {
-	  	$this->errno = -1030;
-	  	dol_syslog("RemiseCheque::updateAmount ERREUR UPDATE ($this->errno)");
-	  }
+			$resql = $this->db->query($sql);
+			if (!$resql)
+			{
+				$this->errno = -1030;
+				dol_syslog("RemiseCheque::updateAmount ERREUR UPDATE ($this->errno)");
+			}
 		}
 		else
 		{
@@ -724,41 +724,6 @@ class RemiseCheque extends CommonObject
             return -2;
         }
     }
-	
-	/**
-     *      Set the external ref
-     *
-     *      @param	User		$user           Object user
-     *      @param  timestamp   $ref_rext       External ref
-     *      @return int                 		<0 if KO, >0 if OK
-     */
-    function set_ref_ext($user, $ref_ext)
-    {
-        if ($user->rights->banque->cheque)
-        {
-            $sql = "UPDATE ".MAIN_DB_PREFIX."bordereau_cheque";
-            $sql.= " SET ref_ext = '".$ref_ext."'";
-            $sql.= " WHERE rowid = ".$this->id;
-
-            dol_syslog("RemiseCheque::set_ref_ext sql=$sql",LOG_DEBUG);
-            $resql=$this->db->query($sql);
-            if ($resql)
-            {
-                $this->ref_ext = $ref_ext;
-                return 1;
-            }
-            else
-            {
-                $this->error=$this->db->error();
-                dol_syslog("RemiseCheque::set_ref_ext ".$this->error,LOG_ERR);
-                return -1;
-            }
-        }
-        else
-        {
-            return -2;
-        }
-    }
 
 
 	/**
@@ -780,7 +745,7 @@ class RemiseCheque extends CommonObject
 		if ($withpicto) $result.=($lien.img_object($langs->trans("ShowCheckReceipt"),'payment').$lienfin);
 		if ($withpicto && $withpicto != 2) $result.=' ';
 		if ($withpicto != 2) $result.=$lien.$this->ref.$lienfin;
-		
+
 		return $result;
 	}
 

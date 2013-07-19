@@ -100,7 +100,7 @@ if ($action == 'setrefext' && $user->rights->banque->cheque)
     {
         $ref_ext = GETPOST('ref_ext');
 
-        $result=$object->set_ref_ext($user, $ref_ext);
+        $result=$object->setValueFrom('ref_ext', $ref_ext);
         if ($result < 0)
         {
             $mesg='<div class="error">'.$object->error.'</div>';
@@ -514,10 +514,10 @@ else
 
 	print '</td>';
 	print '</tr>';
-	
+
 	// External ref
 	print '<tr><td>';
-	
+
 	print '<table class="nobordernopadding" width="100%"><tr><td>';
     print $langs->trans('RefExt');
     print '</td>';
