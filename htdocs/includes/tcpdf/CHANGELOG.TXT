@@ -1,3 +1,6 @@
+6.0.021 (2013-07-18)
+	- The bug caused by the preg_split function on some PHP 5.2.x versions was fixed.
+
 6.0.020 (2013-06-04)
 	- The method addTTFfont() was fixed (Bug item #813 Undefined offset).
 

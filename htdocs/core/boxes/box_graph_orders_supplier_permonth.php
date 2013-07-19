@@ -16,8 +16,8 @@
  */
 
 /**
- *	\file       htdocs/core/boxes/box_graph_orders_permonth.php
- *	\ingroup    commandes
+ *	\file       htdocs/core/boxes/box_graph_orders_supplier_permonth.php
+ *	\ingroup    fournisseur
  *	\brief      Box to show graph of orders per month
  */
 include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
@@ -26,12 +26,12 @@ include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
 /**
  * Class to manage the box to show last orders
  */
-class box_graph_orders_permonth extends ModeleBoxes
+class box_graph_orders_supplier_permonth extends ModeleBoxes
 {
-	var $boxcode="orderspermonth";
+	var $boxcode="orderssupplierpermonth";
 	var $boximg="object_order";
-	var $boxlabel="BoxCustomersOrdersPerMonth";
-	var $depends = array("commande");
+	var $boxlabel="BoxSuppliersOrdersPerMonth";
+	var $depends = array("fournisseur");
 
 	var $db;
 
@@ -66,10 +66,10 @@ class box_graph_orders_permonth extends ModeleBoxes
 
 		$refreshaction='refresh_'.$this->boxcode;
 
-		include_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
-		$commandestatic=new Commande($db);
+		include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
+		$facturestatic=new Facture($db);
 
-		$text = $langs->trans("BoxCustomersOrdersPerMonth",$max);
+		$text = $langs->trans("BoxSuppliersOrdersPerMonth",$max);
 		$this->info_box_head = array(
 				'text' => $text,
 				'limit'=> dol_strlen($text),
@@ -80,7 +80,7 @@ class box_graph_orders_permonth extends ModeleBoxes
 				'target'=>'none'
 		);
 
-		if ($user->rights->commande->lire)
+		if ($user->rights->fournisseur->commande->lire)
 		{
 			include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 			include_once DOL_DOCUMENT_ROOT.'/commande/class/commandestats.class.php';
@@ -90,7 +90,7 @@ class box_graph_orders_permonth extends ModeleBoxes
 			$nowarray=dol_getdate(dol_now(),true);
 			$endyear=$nowarray['year'];
 			$startyear=$endyear-1;
-			$mode='customer';
+			$mode='supplier';
 			$userid=0;
 			$WIDTH='256';
 			$HEIGHT='192';
@@ -102,9 +102,9 @@ class box_graph_orders_permonth extends ModeleBoxes
 			{
 				$data1 = $stats->getNbByMonthWithPrevYear($endyear,$startyear,(GETPOST('action')==$refreshaction?-1:(3600*24)));
 
-				$filenamenb = $dir."/ordersnbinyear-".$year.".png";
+				$filenamenb = $dir."/orderssuppliernbinyear-".$year.".png";
 				if ($mode == 'customer') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&amp;file=ordersnbinyear-'.$year.'.png';
-				if ($mode == 'supplier') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstatssupplier&amp;file=ordersnbinyear-'.$year.'.png';
+				if ($mode == 'supplier') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstatssupplier&amp;file=orderssuppliernbinyear-'.$year.'.png';
 
 				$px1 = new DolGraph();
 				$mesg = $px1->isGraphKo();
@@ -140,9 +140,9 @@ class box_graph_orders_permonth extends ModeleBoxes
 			{
 				$data2 = $stats->getAmountByMonthWithPrevYear($endyear,$startyear,(GETPOST('action')==$refreshaction?-1:(3600*24)));
 
-				$filenamenb = $dir."/ordersamountinyear-".$year.".png";
+				$filenamenb = $dir."/orderssupplieramountinyear-".$year.".png";
 				if ($mode == 'customer') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&amp;file=ordersamountinyear-'.$year.'.png';
-				if ($mode == 'supplier') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstatssupplier&amp;file=ordersamountinyear-'.$year.'.png';
+				if ($mode == 'supplier') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstatssupplier&amp;file=orderssupplieramountinyear-'.$year.'.png';
 
 				$px2 = new DolGraph();
 				$mesg = $px2->isGraphKo();

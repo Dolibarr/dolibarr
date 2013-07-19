@@ -38,3 +38,4 @@ AddSupplierOrder=Créer commande fournisseur
 AddSupplierInvoice=Créer facture fournisseur
 ListOfSupplierProductForSupplier=Liste des produits et prix du fournisseurs <b>%s</b>
 NoneOrBatchFileNeverRan=Aucun ou traitement par lot <b>%s</b> non exécuté récemment
+SentToSuppliers=Envoyés aux fournisseurs

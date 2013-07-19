@@ -78,13 +78,13 @@ function user_prepare_head($object)
 	    $head[$h][2] = 'clicktodial';
         $h++;
     }
-    
+
     // Show more tabs from modules
     // Entries must be declared in modules descriptor with line
     // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
     // $this->tabs = array('entity:-tabname);   												to remove a tab
     complete_head_from_modules($conf,$langs,$object,$head,$h,'user');
-	
+
     //Info on users is visible only by internal user
     if (empty($user->societe_id))
     {
@@ -164,17 +164,17 @@ function user_admin_prepare_head()
 
 	$langs->load("users");
 	$h=0;
-	
+
     $head[$h][0] = DOL_URL_ROOT.'/admin/user.php';
     $head[$h][1] = $langs->trans("Parameters");
     $head[$h][2] = 'card';
     $h++;
-	
+
     $head[$h][0] = DOL_URL_ROOT.'/user/admin/user_extrafields.php';
     $head[$h][1] = $langs->trans("ExtraFields");
     $head[$h][2] = 'attributes';
     $h++;
-    
+
 	// Show more tabs from modules
 	// Entries must be declared in modules descriptor with line
 	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
@@ -234,7 +234,8 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
     	}
     }
     $dirthemes=array_unique($dirthemes);
-    
+	// Now dir_themes=array('/themes') or dir_themes=array('/theme','/mymodule/theme')
+
     $selected_theme='';
     if (empty($foruserprofile)) $selected_theme=$conf->global->MAIN_THEME;
     else $selected_theme=empty($fuser->conf->MAIN_THEME)?'':$fuser->conf->MAIN_THEME;
@@ -290,10 +291,10 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
     print '<table class="nobordernopadding" width="100%">';
 
     $i=0;
-
     foreach($dirthemes as $dir)
     {
-    	$dirtheme=dol_buildpath($dir,0);
+    	//print $dirroot.$dir;exit;
+    	$dirtheme=dol_buildpath($dir,0);	// This include loop on $conf->file->dol_document_root
     	$urltheme=dol_buildpath($dir,1);
 
     	if (is_dir($dirtheme))
