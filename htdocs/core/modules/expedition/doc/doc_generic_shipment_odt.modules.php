@@ -98,29 +98,29 @@ class doc_generic_shipment_odt extends ModelePdfExpedition
 		global $conf;
 
 		$resarray=array(
-		'object_id'=>$object->id,
-		'object_ref'=>$object->ref,
-		'object_ref_ext'=>$object->ref_ext,
-		'object_ref_customer'=>$object->ref_client,
-        'object_hour'=>dol_print_date($object->date,'hour'),
-		'object_date'=>dol_print_date($object->date,'day'),
-		'object_date_delivery'=>dol_print_date($object->date_livraison,'dayhour'),
-		'object_date_creation'=>dol_print_date($object->date_creation,'day'),
-		'object_date_modification'=>(! empty($object->date_modification)?dol_print_date($object->date_modification,'day'):''),
-		'object_date_validation'=>(! empty($object->date_validation)?dol_print_date($object->date_validation,'dayhour'):''),
-		'object_date_delivery_planed'=>(! empty($object->date_livraison)?dol_print_date($object->date_livraison,'day'):''),
-		'object_date_close'=>dol_print_date($object->date_cloture,'dayhour'),
-		'object_payment_mode_code'=>$object->mode_reglement_code,
-		'object_payment_mode'=>($outputlangs->transnoentitiesnoconv('PaymentType'.$object->mode_reglement_code)!='PaymentType'.$object->mode_reglement_code?$outputlangs->transnoentitiesnoconv('PaymentType'.$object->mode_reglement_code):$object->mode_reglement),
-		'object_payment_term_code'=>$object->cond_reglement_code,
-		'object_payment_term'=>($outputlangs->transnoentitiesnoconv('PaymentCondition'.$object->cond_reglement_code)!='PaymentCondition'.$object->cond_reglement_code?$outputlangs->transnoentitiesnoconv('PaymentCondition'.$object->cond_reglement_code):$object->cond_reglement),
-		'object_total_ht'=>price($object->total_ht,0,$outputlangs),
-		'object_total_vat'=>price($object->total_tva,0,$outputlangs),
-		'object_total_ttc'=>price($object->total_ttc,0,$outputlangs),
-		'object_total_discount_ht' => price($object->getTotalDiscount(), 0, $outputlangs),
-		'object_vatrate'=>vatrate($object->tva),
-		'object_note_private'=>$object->note,
-		'object_note'=>$object->note_public,
+			'object_id'=>$object->id,
+			'object_ref'=>$object->ref,
+			'object_ref_ext'=>$object->ref_ext,
+			'object_ref_customer'=>$object->ref_client,
+	        'object_hour'=>dol_print_date($object->date,'hour'),
+			'object_date'=>dol_print_date($object->date,'day'),
+			'object_date_delivery'=>dol_print_date($object->date_livraison,'dayhour'),
+			'object_date_creation'=>dol_print_date($object->date_creation,'day'),
+			'object_date_modification'=>(! empty($object->date_modification)?dol_print_date($object->date_modification,'day'):''),
+			'object_date_validation'=>(! empty($object->date_validation)?dol_print_date($object->date_validation,'dayhour'):''),
+			'object_date_delivery_planed'=>(! empty($object->date_livraison)?dol_print_date($object->date_livraison,'day'):''),
+			'object_date_close'=>dol_print_date($object->date_cloture,'dayhour'),
+			'object_payment_mode_code'=>$object->mode_reglement_code,
+			'object_payment_mode'=>($outputlangs->transnoentitiesnoconv('PaymentType'.$object->mode_reglement_code)!='PaymentType'.$object->mode_reglement_code?$outputlangs->transnoentitiesnoconv('PaymentType'.$object->mode_reglement_code):$object->mode_reglement),
+			'object_payment_term_code'=>$object->cond_reglement_code,
+			'object_payment_term'=>($outputlangs->transnoentitiesnoconv('PaymentCondition'.$object->cond_reglement_code)!='PaymentCondition'.$object->cond_reglement_code?$outputlangs->transnoentitiesnoconv('PaymentCondition'.$object->cond_reglement_code):$object->cond_reglement),
+			'object_total_ht'=>price($object->total_ht,0,$outputlangs),
+			'object_total_vat'=>price($object->total_tva,0,$outputlangs),
+			'object_total_ttc'=>price($object->total_ttc,0,$outputlangs),
+			'object_total_discount_ht' => price($object->getTotalDiscount(), 0, $outputlangs),
+			'object_vatrate'=>vatrate($object->tva),
+			'object_note_private'=>$object->note,
+			'object_note'=>$object->note_public,
 		);
 
 		// Add vat by rates
@@ -468,7 +468,7 @@ class doc_generic_shipment_odt extends ModelePdfExpedition
 					}
 				}
 				// Replace tags of object + external modules
-				$tmparray=$this->get_substitutionarray_object($object,$outputlangs);
+				$tmparray=$this->get_substitutionarray_shipment($object,$outputlangs);
 				complete_substitutions_array($tmparray, $outputlangs, $object);
 				// Call the ODTSubstitution hook
 				$parameters=array('file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs,'substitutionarray'=>&$tmparray);
@@ -496,7 +496,7 @@ class doc_generic_shipment_odt extends ModelePdfExpedition
 					$listlines = $odfHandler->setSegment('lines');
 					foreach ($object->lines as $line)
 					{
-						$tmparray=$this->get_substitutionarray_lines($line,$outputlangs);
+						$tmparray=$this->get_substitutionarray_shipment_lines($line,$outputlangs);
 						complete_substitutions_array($tmparray, $outputlangs, $object, $line, "completesubstitutionarray_lines");
 						// Call the ODTSubstitutionLine hook
 						$parameters=array('odfHandler'=>&$odfHandler,'file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs,'substitutionarray'=>&$tmparray,'line'=>$line);

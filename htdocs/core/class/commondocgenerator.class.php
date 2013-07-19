@@ -304,6 +304,99 @@ abstract class CommonDocGenerator
     	'line_date_end'=>$line->date_end
     	);
     }
+	
+    /**
+     * Define array with couple substitution key => substitution value
+     *
+     * @param   Object			$object             Main object to use as data source
+     * @param   Translate		$outputlangs        Lang object to use for output
+     * @param   array_key		$array_key	        Name of the key for return array
+     * @return	array								Array of substitution
+     */
+    function get_substitutionarray_shipment($object,$outputlangs,$array_key='object')
+    {
+    	global $conf;
+		dol_include_once('/core/lib/product.lib.php');
+		$object->list_delivery_methods($object->shipping_method_id);
+		$calculatedVolume=($object->trueWidth * $object->trueHeight * $object->trueDepth);
+
+    	$array_shipment=array(
+	    	$array_key.'_id'=>$object->id,
+	    	$array_key.'_ref'=>$object->ref,
+	    	$array_key.'_ref_ext'=>$object->ref_ext,
+	    	$array_key.'_ref_customer'=>$object->ref_customer,
+	    	$array_key.'_date_delivery'=>dol_print_date($object->date_delivery,'day'),
+	    	$array_key.'_hour_delivery'=>dol_print_date($object->date_delivery,'hour'),
+	    	$array_key.'_date_creation'=>dol_print_date($object->date_creation,'day'),
+	    	$array_key.'_total_ht'=>price($object->total_ht),
+	    	$array_key.'_total_vat'=>price($object->total_tva),
+	    	$array_key.'_total_ttc'=>price($object->total_ttc),
+	    	$array_key.'_total_discount_ht' => price($object->getTotalDiscount()),
+	    	$array_key.'_note_private'=>$object->note_private,
+	    	$array_key.'_note'=>$object->note_public,
+	    	$array_key.'_tracking_number'=>$object->tracking_number,
+	    	$array_key.'_tracking_url'=>$object->tracking_url,
+	    	$array_key.'_shipping_method'=>$object->listmeths[0]['libelle'],
+	    	$array_key.'_weight'=>$object->trueWeight.' '.measuring_units_string($object->weight_units, 'weight'),
+	    	$array_key.'_width'=>$object->trueWidth.' '.measuring_units_string($object->width_units, 'size'),
+	    	$array_key.'_height'=>$object->trueHeight.' '.measuring_units_string($object->height_units, 'size'),
+	    	$array_key.'_depth'=>$object->trueDepth.' '.measuring_units_string($object->depth_units, 'size'),
+	    	$array_key.'_size'=>$calculatedVolume.' '.measuring_units_string(0, 'volume'),
+    	);
+
+    	// Add vat by rates
+    	foreach ($object->lines as $line)
+    	{
+    		if (empty($array_shipment[$array_key.'_total_vat_'.$line->tva_tx])) $array_shipment[$array_key.'_total_vat_'.$line->tva_tx]=0;
+    		$array_shipment[$array_key.'_total_vat_'.$line->tva_tx]+=$line->total_tva;
+    	}
+
+    	// Retrieve extrafields
+    	/*if(is_array($object->array_options) && count($object->array_options))
+    	{
+    		require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+    		$extrafields = new ExtraFields($this->db);
+    		$extralabels = $extrafields->fetch_name_optionals_label('shipment',true);
+    		$object->fetch_optionals($object->id,$extralabels);
+
+    		$array_shipment = $this->fill_substitutionarray_with_extrafields($object,$array_shipment,$extrafields,$array_key,$outputlangs);
+    	}*/
+    	return $array_shipment;
+    }
+
+
+    /**
+     *	Define array with couple substitution key => substitution value
+     *
+     *	@param  array			$line				Array of lines
+     *	@param  Translate		$outputlangs        Lang object to use for output
+     *	@return	array								Substitution array
+     */
+    function get_substitutionarray_shipment_lines($line,$outputlangs)
+    {
+    	global $conf;
+		dol_include_once('/core/lib/product.lib.php');
+
+    	return array(
+	    	'line_fulldesc'=>doc_getlinedesc($line,$outputlangs),
+	    	'line_product_ref'=>$line->product_ref,
+	    	'line_product_label'=>$line->product_label,
+	    	'line_desc'=>$line->desc,
+	    	'line_vatrate'=>vatrate($line->tva_tx,true,$line->info_bits),
+	    	'line_up'=>price($line->subprice),
+	    	'line_qty'=>$line->qty,
+	    	'line_qty_shipped'=>$line->qty_shipped,
+	    	'line_qty_asked'=>$line->qty_asked,
+	    	'line_discount_percent'=>($line->remise_percent?$line->remise_percent.'%':''),
+	    	'line_price_ht'=>price($line->total_ht),
+	    	'line_price_ttc'=>price($line->total_ttc),
+	    	'line_price_vat'=>price($line->total_tva),
+	    	'line_weight'=>empty($line->weight) ? '' : $line->weight*$line->qty_shipped.' '.measuring_units_string($line->weight_units, 'weight'),
+	    	'line_length'=>empty($line->length) ? '' : $line->length*$line->qty_shipped.' '.measuring_units_string($line->length_units, 'size'),
+	    	'line_surface'=>empty($line->surface) ? '' : $line->surface*$line->qty_shipped.' '.measuring_units_string($line->surface_units, 'surface'),
+	    	'line_volume'=>empty($line->volume) ? '' : $line->volume*$line->qty_shipped.' '.measuring_units_string($line->volume_units, 'volume'),
+    	);
+    }
 
     /**
      *	Fill array with couple extrafield key => extrafield value
