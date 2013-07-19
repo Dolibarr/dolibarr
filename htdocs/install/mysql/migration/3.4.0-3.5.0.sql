@@ -276,5 +276,7 @@ INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, nc
 INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES('TN23', 1001, '', 0, '', 'Tunis', 1);
 INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES('TN24', 1001, '', 0, '', 'Zaghouan', 1);
 
-# Add ref_ext on bordereau_cheque
-ALTER TABLE `llx_bordereau_cheque` ADD `ref_ext` VARCHAR( 255 ) NOT NULL;
+-- Add ref_ext on bordereau_cheque
+ALTER TABLE llx_bordereau_cheque ADD ref_ext VARCHAR(255);
+ALTER TABLE llx_bordereau_cheque ADD tms timestamp;
+
