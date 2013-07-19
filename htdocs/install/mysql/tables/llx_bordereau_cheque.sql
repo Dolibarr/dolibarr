@@ -33,6 +33,7 @@ create table llx_bordereau_cheque
   fk_bank_account   integer,
   fk_user_author    integer,
   note              text,
-  statut            smallint NOT NULL DEFAULT 0
+  statut            smallint NOT NULL DEFAULT 0,
+  ref_ext	    varchar(255)
   
 )ENGINE=innodb;
