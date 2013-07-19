@@ -165,3 +165,4 @@ InvoiceLinesToDispatch=Lignes de factures à ventiler
 InvoiceDispatched=Factures ventilées
 AccountancyDashboard=Synthèse compta/tréso
 ByProductsAndServices=Par produits et services
+RefExt=Référence externe
