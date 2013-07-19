@@ -1538,6 +1538,10 @@ background: #c0c4c7;
 border: 0px;
 }
 
+tr.impair td.nohover, form.impair div.nohover {
+	background: #eaeaea;
+}
+
 .pair	{
 background: #FFFFFF;
 font-family: <?php print $fontlist ?>;
@@ -1547,6 +1551,10 @@ border: 0px;
 .pair:hover {
 background: #c0c4c7;
 border: 0px;
+}
+
+tr.pair td.nohover {
+	background: #FFFFFF;
 }
 
 .pair td, .impair td {
@@ -1608,6 +1616,10 @@ font-family: <?php print $fontlist ?>;
 tr.box_impair:hover {
 background: #c0c4c7;
 border: 0px;
+}
+
+tr.box_impair .nohover {
+background: #eaeaea;
 }
 
 tr.box_pair {
