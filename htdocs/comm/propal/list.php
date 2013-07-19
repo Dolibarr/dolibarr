@@ -54,7 +54,7 @@ $search_refcustomer=GETPOST('search_refcustomer','alpha');
 $search_societe=GETPOST('search_societe','alpha');
 $search_montant_ht=GETPOST('search_montant_ht','alpha');
 $search_author=GETPOST('search_author','alpha');
-$search_ville=GETPOST('search_ville','alpha');
+$search_town=GETPOST('search_town','alpha');
 
 $sall=GETPOST("sall");
 $mesg=(GETPOST("msg") ? GETPOST("msg") : GETPOST("mesg"));
@@ -102,7 +102,7 @@ if (GETPOST("button_removefilter_x"))
     $search_societe='';
     $search_montant_ht='';
     $search_author='';
-    $search_ville='';
+    $search_town='';
     $year='';
     $month='';
 }
@@ -159,9 +159,9 @@ if (! $user->rights->societe->client->voir && ! $socid) //restriction
 {
 	$sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 }
-if ($search_ville) //restriction
+if ($search_town) //restriction
 {
-	$sql.= " AND s.town LIKE '%".$db->escape(trim($search_ville))."%'";
+	$sql.= " AND s.town LIKE '%".$db->escape(trim($search_town))."%'";
 }
 if ($search_ref)
 {
@@ -235,7 +235,7 @@ if ($result)
 	if ($search_sale > 0)    $param.='&search_sale='.$search_sale;
 	if ($search_montant_ht)  $param.='&search_montant_ht='.$search_montant_ht;
 	if ($search_author)  	 $param.='&search_author='.$search_author;
-	if ($search_ville)		 $param.='&search_ville='.$search_ville;
+	if ($search_town)		 $param.='&search_town='.$search_town;
 	print_barre_liste($langs->trans('ListOfProposals').' '.($socid?'- '.$soc->nom:''), $page, $_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num);
 
 	// Lignes des champs de filtre
@@ -288,7 +288,7 @@ if ($result)
 	print '<td class="liste_titre" align="left">';
 	print '<input class="flat" type="text" size="16" name="search_societe" value="'.$search_societe.'">';
 	print '</td>';
-	print '<td colspan="1"></td>';
+	print '<td>&nbsp;</td>';
 	print '<td class="liste_titre">';
 	print '<input class="flat" size="10" type="text" name="search_refcustomer" value="'.$search_refcustomer.'">';
 	print '</td>';
@@ -302,7 +302,7 @@ if ($result)
 	print '<td class="liste_titre" align="center">';
 	print '<input class="flat" type="text" size="10" name="search_montant_ht" value="'.$search_montant_ht.'">';
 	print '</td>';
-	
+
 	print '<td class="liste_titre" align="right">';
 	print '<input class="flat" size="10" type="text" name="search_author" value="'.$search_author.'">';
 	print '</td>';
@@ -353,16 +353,18 @@ if ($result)
 		print '<td>';
 		print $companystatic->getNomUrl(1,'customer');
 		print '</td>';
-		
+
+		// Town
 		print '<td class="nocellnopadd">';
 		print $objp->town;
 		print '</td>';
+		
 		// Customer ref
-		print '<td class="nocellnopadd">';
+		print '<td class="nocellnopadd nowrap">';
 		print $objp->ref_client;
 		print '</td>';
 
-		// Date propale
+		// Date proposal
 		print '<td align="center">';
 		$y = dol_print_date($db->jdate($objp->dp),'%Y');
 		$m = dol_print_date($db->jdate($objp->dp),'%m');
@@ -374,7 +376,7 @@ if ($result)
 		print ' <a href="'.$_SERVER["PHP_SELF"].'?year='.$y.'">';
 		print $y."</a></td>\n";
 
-		// Date fin validite
+		// Date end validity
 		if ($objp->dfv)
 		{
 			print '<td align="center">'.dol_print_date($db->jdate($objp->dfv),'day');
@@ -421,9 +423,9 @@ if ($result)
 					print '<td colspan="6" align="right"">'.price($total).'<td colspan="3"</td>';
 					print '</tr>';
 				}
-					
+
 			}
-	
+
 	print '</table>';
 
 	print '</form>';
