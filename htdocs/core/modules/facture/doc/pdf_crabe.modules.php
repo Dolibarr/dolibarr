@@ -695,13 +695,7 @@ class pdf_crabe extends ModelePDFFactures
 			&& ! $conf->global->FACTURE_CHQ_NUMBER
 			&& ! $conf->global->FACTURE_RIB_NUMBER)
 			{
-				$pdf->SetXY($this->marge_gauche, $posy);
-				$pdf->SetTextColor(200,0,0);
-				$pdf->SetFont('','B', $default_font_size - 2);
-				$pdf->MultiCell(80, 3, $outputlangs->transnoentities("ErrorNoPaiementModeConfigured"),0,'L',0);
-				$pdf->SetTextColor(0,0,0);
-
-				$posy=$pdf->GetY()+1;
+				$this->error = $outputlangs->transnoentities("ErrorNoPaiementModeConfigured");
 			}
 
 			// Show payment mode
