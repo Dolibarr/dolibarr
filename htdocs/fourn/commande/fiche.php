@@ -1226,8 +1226,8 @@ elseif (! empty($object->id))
 	// Conditions de reglement par defaut
 	$langs->load('bills');
 	$form = new Form($db);
-	print '<tr><td nowrap>';
-	print '<table width="100%" class="nobordernopadding"><tr><td nowrap>';
+	print '<tr><td class="nowrap">';
+	print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
 	print $langs->trans('PaymentConditions');
 	print '<td>';
 	if ($action != 'editconditions') print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editconditions&amp;id='.$object->id.'">'.img_edit($langs->trans('SetConditions'),1).'</a></td>';
@@ -1247,8 +1247,8 @@ elseif (! empty($object->id))
 	// Mode of payment
 	$langs->load('bills');
 	$form = new Form($db);
-	print '<tr><td nowrap>';
-	print '<table width="100%" class="nobordernopadding"><tr><td nowrap>';
+	print '<tr><td class="nowrap">';
+	print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
 	print $langs->trans('PaymentMode');
 	print '</td>';
 	if ($action != 'editmode') print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editmode&amp;id='.$object->id.'">'.img_edit($langs->trans('SetMode'),1).'</a></td>';

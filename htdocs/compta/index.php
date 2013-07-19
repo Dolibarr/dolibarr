@@ -288,7 +288,7 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture-
 			while ($i < $num && $i < 20)
 			{
 				$obj = $db->fetch_object($resql);
-				print '<tr '.$bc[$var].'><td nowrap>';
+				print '<tr '.$bc[$var].'><td class="nowrap">';
 				$facturesupplierstatic->ref=$obj->ref;
 				$facturesupplierstatic->id=$obj->rowid;
 				$facturesupplierstatic->type=$obj->type;

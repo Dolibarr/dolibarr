@@ -56,9 +56,9 @@ if ($result)
 
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre">';
-    print '<td nowrap align="left">'.$langs->trans("Ref").'</td>';
+    print '<td class="nowrap" align="left">'.$langs->trans("Ref").'</td>';
     print "<td>".$langs->trans("Label")."</td>";
-    print '<td nowrap align="left">'.$langs->trans("DatePayment").'</td>';
+    print '<td class="nowrap" align="left">'.$langs->trans("DatePayment").'</td>';
     print "<td align=\"right\">".$langs->trans("PayedByThisPayment")."</td>";
     print "</tr>\n";
     $var=1;
