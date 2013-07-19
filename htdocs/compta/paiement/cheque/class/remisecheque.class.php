@@ -764,7 +764,7 @@ class RemiseCheque extends CommonObject
 	/**
 	 *    	Renvoie nom clicable (avec eventuellement le picto)
 	 *
-	 *		@param	int		$withpicto		Inclut le picto dans le lien
+	 *		@param	int		$withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
 	 *		@param	string	$option			Sur quoi pointe le lien
 	 *		@return	string					Chaine avec URL
 	 */
@@ -774,14 +774,13 @@ class RemiseCheque extends CommonObject
 
 		$result='';
 
-		$number=$this->ref;
-		if ($this->statut == 0) $number='(PROV'.$this->id.')';
-
 		$lien = '<a href="'.DOL_URL_ROOT.'/compta/paiement/cheque/fiche.php?id='.$this->id.'">';
 		$lienfin='</a>';
 
-		if ($withpicto) $result.=($lien.img_object($langs->trans("ShowCheckReceipt"),'payment').$lienfin.' ');
-		$result.=$lien.$number.$lienfin;
+		if ($withpicto) $result.=($lien.img_object($langs->trans("ShowCheckReceipt"),'payment').$lienfin);
+		if ($withpicto && $withpicto != 2) $result.=' ';
+		if ($withpicto != 2) $result.=$lien.$this->ref.$lienfin;
+		
 		return $result;
 	}
 

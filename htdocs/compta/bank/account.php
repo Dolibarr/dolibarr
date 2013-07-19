@@ -432,7 +432,7 @@ if ($id > 0 || ! empty($ref))
      */
 
 	$sql = "SELECT b.rowid, b.dateo as do, b.datev as dv,";
-	$sql.= " b.amount, b.label, b.rappro, b.num_releve, b.num_chq, b.fk_type,";
+	$sql.= " b.amount, b.label, b.rappro, b.num_releve, b.num_chq, b.fk_type, b.fk_bordereau,";
 	$sql.= " ba.rowid as bankid, ba.ref as bankref, ba.label as banklabel";
 	if ($mode_search)
 	{
@@ -518,15 +518,21 @@ if ($id > 0 || ! empty($ref))
 				print "</td>\n";
 
 				// Payment type
-				print "<td nowrap>";
+				print '<td class="nowrap">';
 				$label=($langs->trans("PaymentTypeShort".$objp->fk_type)!="PaymentTypeShort".$objp->fk_type)?$langs->trans("PaymentTypeShort".$objp->fk_type):$objp->fk_type;
 
 				if ($objp->fk_type == 'SOLD') $label='&nbsp;';
+				if ($objp->fk_type == 'CHQ' && $objp->fk_bordereau > 0) {
+					dol_include_once('/compta/paiement/cheque/class/remisecheque.class.php');
+					$bordereaustatic = new RemiseCheque($db);
+					$bordereaustatic->id = $objp->fk_bordereau;
+					$label .= ' '.$bordereaustatic->getNomUrl(2);
+				}
 				print $label;
 				print "</td>\n";
 
 				// Num
-				print '<td nowrap>'.($objp->num_chq?$objp->num_chq:"")."</td>\n";
+				print '<td class="nowrap">'.($objp->num_chq?$objp->num_chq:"")."</td>\n";
 
 				// Description
 				print '<td>';
