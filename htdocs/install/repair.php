@@ -180,7 +180,7 @@ if ($ok)
     // Loop on each file
     foreach($filelist as $file)
     {
-        print '<tr><td nowrap>';
+        print '<tr><td class="nowrap">';
         print $langs->trans("Script").'</td><td align="right">'.$file.'</td></tr>';
 
         $name = substr($file, 0, dol_strlen($file) - 4);

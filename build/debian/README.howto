@@ -98,17 +98,26 @@ END
 
 * Staying into git root directory, run
 git-import-orig -vv ../tcpdf_6.0.020+dfsg.orig.tar.xz
+git-commit
 
-* Add an entry into debian/changelog and commit by amending previous commit.
+* Add an entry into debian/changelog
+date -R will return formated string date to use into changelog
 
 * We try to build package
 git-buildpackage -us -uc
 
 * If package .deb is ok:
+git-commit 					(but do not use option "amend" previous commit)
 git-buildpackage --git-tag
 git push
 git push --tags
 
-* Then ???
+* Compilation par un développeur debian et envoi par
+sbuild ...
+dput ...
+
+* Go into page. You should see new package into unstable.
 http://packages.qa.debian.org/t/tcpdf.html
+
+* Package will be into release when test will be moved as stable.
 

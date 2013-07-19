@@ -2253,7 +2253,7 @@ if ($action == 'create')
 	print '</td></tr>';
 
 	// Payment term
-	print '<tr><td nowrap>'.$langs->trans('PaymentConditionsShort').'</td><td colspan="2">';
+	print '<tr><td class="nowrap">'.$langs->trans('PaymentConditionsShort').'</td><td colspan="2">';
 	$form->select_conditions_paiements(isset($_POST['cond_reglement_id'])?$_POST['cond_reglement_id']:$cond_reglement_id,'cond_reglement_id');
 	print '</td></tr>';
 
@@ -3763,7 +3763,14 @@ else if ($id > 0 || ! empty($ref))
 				$formmail->withto=GETPOST('sendto')?GETPOST('sendto'):$liste;
 				$formmail->withtocc=$liste;
 				$formmail->withtoccc=$conf->global->MAIN_EMAIL_USECCC;
-				$formmail->withtopic=$langs->transnoentities($topicmail,'__FACREF__');
+				if(empty($object->ref_client))
+				{
+					$formmail->withtopic=$langs->transnoentities($topicmail,'__FACREF__');
+				}
+				else if(!empty($object->ref_client))
+				{
+					$formmail->withtopic=$langs->transnoentities($topicmail,'__FACREF__(__REFCLIENT__)');
+				}
 				$formmail->withfile=2;
 				$formmail->withbody=1;
 				$formmail->withdeliveryreceipt=1;
@@ -3771,6 +3778,7 @@ else if ($id > 0 || ! empty($ref))
 				// Tableau des substitutions
 				$formmail->substit['__FACREF__']=$object->ref;
 				$formmail->substit['__SIGNATURE__']=$user->signature;
+				$formmail->substit['__REFCLIENT__']=$object->ref_client;
 				$formmail->substit['__PERSONALIZED__']='';
 				$formmail->substit['__CONTACTCIVNAME__']='';
 

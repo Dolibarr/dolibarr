@@ -124,6 +124,7 @@ ErrorFailedToValidatePasswordReset=Failed to reinit password. May be the reinit 
 ErrorToConnectToMysqlCheckInstance=Connect to database fails. Check Mysql server is running (in most cases, you can launch it from command line with 'sudo /etc/init.d/mysql start').
 ErrorFailedToAddContact=Failed to add contact
 ErrorDateMustBeBeforeToday=The date can not be greater than today
+ErrorPaymentModeDefinedToWithoutSetup=A payment mode was set to type %s but setup of module Invoice was not completed to define information to show for this payment mode.
 
 # Warnings
 WarningMandatorySetupNotComplete=Mandatory setup parameters are not yet defined

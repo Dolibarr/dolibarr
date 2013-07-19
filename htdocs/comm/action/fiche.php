@@ -537,7 +537,7 @@ if ($action == 'create')
 	// Realised by
 	if ($conf->global->AGENDA_ENABLE_DONEBY)
 	{
-		print '<tr><td nowrap>'.$langs->trans("ActionDoneBy").'</td><td>';
+		print '<tr><td class="nowrap">'.$langs->trans("ActionDoneBy").'</td><td>';
 		$form->select_users(GETPOST("doneby")?GETPOST("doneby"):(! empty($actioncomm->userdone->id) && $percent==100?$actioncomm->userdone->id:0),'doneby',1);
 		print '</td></tr>';
 	}
@@ -570,7 +570,7 @@ if ($action == 'create')
 	// If company is forced, we propose contacts (may be contact is also forced)
 	if (GETPOST("contactid") > 0 || GETPOST('socid','int') > 0)
 	{
-		print '<tr><td nowrap>'.$langs->trans("ActionOnContact").'</td><td>';
+		print '<tr><td class="nowrap">'.$langs->trans("ActionOnContact").'</td><td>';
 		$form->select_contacts(GETPOST('socid','int'),GETPOST('contactid'),'contactid',1);
 		print '</td></tr>';
 	}
@@ -600,7 +600,7 @@ if ($action == 'create')
 	}
 
 	// Priority
-	print '<tr><td nowrap>'.$langs->trans("Priority").'</td><td colspan="3">';
+	print '<tr><td class="nowrap">'.$langs->trans("Priority").'</td><td colspan="3">';
 	print '<input type="text" name="priority" value="'.(GETPOST('priority')?GETPOST('priority'):($actioncomm->priority?$actioncomm->priority:'')).'" size="5">';
 	print '</td></tr>';
 

@@ -82,7 +82,7 @@ if (! defined('DONOTLOADCONF') && file_exists($conffile))
     $result=include_once $conffile;	// Load conf file
     if ($result)
     {
-		if (empty($dolibarr_main_db_type)) $dolibarr_main_db_type='mysql';	// For backward compatibility
+		if (empty($dolibarr_main_db_type)) $dolibarr_main_db_type='mysqli';	// For backward compatibility
 
 		// Clean parameters
     	$dolibarr_main_data_root        =isset($dolibarr_main_data_root)?trim($dolibarr_main_data_root):'';

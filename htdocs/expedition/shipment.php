@@ -185,7 +185,7 @@ if ($id > 0 || ! empty($ref))
 
 		// Ref commande client
 		print '<tr><td>';
-		print '<table class="nobordernopadding" width="100%"><tr><td nowrap>';
+		print '<table class="nobordernopadding" width="100%"><tr><td class="nowrap">';
 		print $langs->trans('RefCustomer').'</td><td align="left">';
 		print '</td>';
 		if ($action != 'RefCustomerOrder' && $commande->brouillon) print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=RefCustomerOrder&amp;id='.$commande->id.'">'.img_edit($langs->trans('Modify')).'</a></td>';

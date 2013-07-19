@@ -224,6 +224,12 @@ div.inline-block
 .nowrap {
 	white-space: <?php print ($dol_optimize_smallscreen?'normal':'nowrap'); ?>;
 }
+.nobold {
+	font-weight: normal !important;
+}
+.nounderline {
+    text-decoration: none;
+}
 
 
 /* ============================================================================== */
@@ -1532,6 +1538,10 @@ background: #c0c4c7;
 border: 0px;
 }
 
+tr.impair td.nohover, form.impair div.nohover {
+	background: #eaeaea;
+}
+
 .pair	{
 background: #FFFFFF;
 font-family: <?php print $fontlist ?>;
@@ -1541,6 +1551,10 @@ border: 0px;
 .pair:hover {
 background: #c0c4c7;
 border: 0px;
+}
+
+tr.pair td.nohover {
+	background: #FFFFFF;
 }
 
 .pair td, .impair td {
@@ -1557,6 +1571,19 @@ border: 0px;
 /*
  *  Boxes
  */
+
+.boxstats {
+    <?php print "float: ".$left.";\n"; ?>
+    margin: 4px;
+    padding: 4px;
+	/*-moz-box-shadow: 4px 4px 4px #DDD;
+    -webkit-box-shadow: 4px 4px 4px #DDD;
+    box-shadow: 4px 4px 4px #DDD;
+    margin-bottom: 8px !important;*/
+    border: 1px solid #AAA;
+    text-align: center;
+    border-radius: 5px;
+}
 
 .box {
 	padding-right: 0px;
@@ -1589,6 +1616,10 @@ font-family: <?php print $fontlist ?>;
 tr.box_impair:hover {
 background: #c0c4c7;
 border: 0px;
+}
+
+tr.box_impair .nohover {
+background: #eaeaea;
 }
 
 tr.box_pair {

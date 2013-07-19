@@ -1070,8 +1070,8 @@ else
             if ($showbarcode)
             {
                 // Barcode type
-                print '<tr><td nowrap>';
-                print '<table width="100%" class="nobordernopadding"><tr><td nowrap>';
+                print '<tr><td class="nowrap">';
+                print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
                 print $langs->trans("BarcodeType");
                 print '<td>';
                 if (($action != 'editbarcodetype') && $user->rights->barcode->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editbarcodetype&amp;id='.$object->id.'">'.img_edit($langs->trans('Edit'),1).'</a></td>';
@@ -1091,8 +1091,8 @@ else
                 print '</td></tr>'."\n";
 
                 // Barcode value
-                print '<tr><td nowrap>';
-                print '<table width="100%" class="nobordernopadding"><tr><td nowrap>';
+                print '<tr><td class="nowrap">';
+                print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
                 print $langs->trans("BarcodeValue");
                 print '<td>';
                 if (($action != 'editbarcode') && $user->rights->barcode->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editbarcode&amp;id='.$object->id.'">'.img_edit($langs->trans('Edit'),1).'</a></td>';

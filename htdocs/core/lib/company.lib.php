@@ -86,9 +86,13 @@ function societe_prepare_head($object)
 
     if ($user->societe_id == 0)
     {
-    	// Notes
+        // Notes
+        $nbNote = 0;
+        if(!empty($object->note_private)) $nbNote++;
+		if(!empty($object->note_public)) $nbNote++;
         $head[$h][0] = DOL_URL_ROOT.'/societe/note.php?id='.$object->id;
         $head[$h][1] = $langs->trans("Note");
+		if($nbNote > 0) $head[$h][1].= ' ('.$nbNote.')';
         $head[$h][2] = 'note';
         $h++;
 
@@ -101,8 +105,12 @@ function societe_prepare_head($object)
         }
 
         // Attached files
+        require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+        $upload_dir = $conf->societe->multidir_output[$object->entity] . "/" . $object->id;
+        $nbFiles = count(dol_dir_list($upload_dir));
         $head[$h][0] = DOL_URL_ROOT.'/societe/document.php?socid='.$object->id;
         $head[$h][1] = $langs->trans("Documents");
+		if($nbFiles > 0) $head[$h][1].= ' ('.$nbFiles.')';
         $head[$h][2] = 'document';
         $h++;
 

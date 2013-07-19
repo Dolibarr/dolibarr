@@ -261,7 +261,7 @@ print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Name")."</td>\n";
 print '<td>'.$langs->trans("Description")."</td>\n";
-print '<td nowrap>'.$langs->trans("Example")."</td>\n";
+print '<td class="nowrap">'.$langs->trans("Example")."</td>\n";
 print '<td align="center" width="60">'.$langs->trans("Status").'</td>';
 print '<td align="center" width="16">'.$langs->trans("ShortInfo").'</td>';
 print '</tr>'."\n";

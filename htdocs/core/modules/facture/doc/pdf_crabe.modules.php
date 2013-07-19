@@ -692,13 +692,22 @@ class pdf_crabe extends ModelePDFFactures
 		{
 			// Check a payment mode is defined
 			if (empty($object->mode_reglement_code)
-			&& ! $conf->global->FACTURE_CHQ_NUMBER
-			&& ! $conf->global->FACTURE_RIB_NUMBER)
+			&& empty($conf->global->FACTURE_CHQ_NUMBER)
+			&& empty($conf->global->FACTURE_RIB_NUMBER))
 			{
+				$this->error = $outputlangs->transnoentities("ErrorNoPaiementModeConfigured");
+			}
+			// Avoid having any valid PDF with setup that is not complete
+			elseif (($object->mode_reglement_code == 'CHQ' && empty($conf->global->FACTURE_CHQ_NUMBER))
+				|| ($object->mode_reglement_code == 'VIR' && empty($conf->global->FACTURE_RIB_NUMBER)))
+			{
+				$outputlangs->load("errors");
+
 				$pdf->SetXY($this->marge_gauche, $posy);
 				$pdf->SetTextColor(200,0,0);
 				$pdf->SetFont('','B', $default_font_size - 2);
-				$pdf->MultiCell(80, 3, $outputlangs->transnoentities("ErrorNoPaiementModeConfigured"),0,'L',0);
+				$this->error = $outputlangs->transnoentities("ErrorPaymentModeDefinedToWithoutSetup",$object->mode_reglement_code);
+				$pdf->MultiCell(80, 3, $this->error,0,'L',0);
 				$pdf->SetTextColor(0,0,0);
 
 				$posy=$pdf->GetY()+1;

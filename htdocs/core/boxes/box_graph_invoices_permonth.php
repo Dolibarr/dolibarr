@@ -192,11 +192,11 @@ class box_graph_invoices_permonth extends ModeleBoxes
 					$stringtoshow.='</div>';
 					$stringtoshow.='</div>';
 				}
-				$this->info_box_contents[0][0] = array('td' => 'align="center"','textnoformat'=>$stringtoshow);
+				$this->info_box_contents[0][0] = array('td' => 'align="center" class="nohover"','textnoformat'=>$stringtoshow);
 			}
 			else
 			{
-				$this->info_box_contents[0][0] = array(	'td' => 'align="left"',
+				$this->info_box_contents[0][0] = array(	'td' => 'align="left" class="nohover"',
     	        										'maxlength'=>500,
 	            										'text' => $mesg);
 			}

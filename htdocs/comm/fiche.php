@@ -293,7 +293,7 @@ if ($id > 0)
 	}
 
 	// TVA Intra
-	print '<tr><td nowrap>'.$langs->trans('VATIntra').'</td><td colspan="3">';
+	print '<tr><td class="nowrap">'.$langs->trans('VATIntra').'</td><td colspan="3">';
 	print $object->tva_intra;
 	print '</td></tr>';
 
@@ -319,8 +319,8 @@ if ($id > 0)
 	print '</tr>';
 
 	// Mode de reglement par defaut
-	print '<tr><td nowrap>';
-	print '<table width="100%" class="nobordernopadding"><tr><td nowrap>';
+	print '<tr><td class="nowrap">';
+	print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
 	print $langs->trans('PaymentMode');
 	print '<td>';
 	if (($action != 'editmode') && $user->rights->societe->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editmode&amp;socid='.$object->id.'">'.img_edit($langs->trans('SetMode'),1).'</a></td>';
@@ -338,8 +338,8 @@ if ($id > 0)
 	print '</tr>';
 
 	// Relative discounts (Discounts-Drawbacks-Rebates)
-	print '<tr><td nowrap>';
-	print '<table width="100%" class="nobordernopadding"><tr><td nowrap>';
+	print '<tr><td class="nowrap">';
+	print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
 	print $langs->trans("CustomerRelativeDiscountShort");
 	print '<td><td align="right">';
 	if ($user->rights->societe->creer && !$user->societe_id > 0)
@@ -351,9 +351,9 @@ if ($id > 0)
 	print '</tr>';
 
 	// Absolute discounts (Discounts-Drawbacks-Rebates)
-	print '<tr><td nowrap>';
+	print '<tr><td class="nowrap">';
 	print '<table width="100%" class="nobordernopadding">';
-	print '<tr><td nowrap>';
+	print '<tr><td class="nowrap">';
 	print $langs->trans("CustomerAbsoluteDiscountShort");
 	print '<td><td align="right">';
 	if ($user->rights->societe->creer && !$user->societe_id > 0)
@@ -373,8 +373,8 @@ if ($id > 0)
 	// Multiprice level
 	if (! empty($conf->global->PRODUIT_MULTIPRICES))
 	{
-		print '<tr><td nowrap>';
-		print '<table width="100%" class="nobordernopadding"><tr><td nowrap>';
+		print '<tr><td class="nowrap">';
+		print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
 		print $langs->trans("PriceLevel");
 		print '<td><td align="right">';
 		if ($user->rights->societe->creer)
@@ -389,8 +389,8 @@ if ($id > 0)
 	// Level of prospect
 	if ($object->client == 2 || $object->client == 3)
 	{
-		print '<tr><td nowrap>';
-		print '<table width="100%" class="nobordernopadding"><tr><td nowrap>';
+		print '<tr><td class="nowrap">';
+		print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
 		print $langs->trans('ProspectLevel');
 		print '<td>';
 		if ($action != 'editlevel' && $user->rights->societe->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editlevel&amp;socid='.$object->id.'">'.img_edit($langs->trans('Modify'),1).'</a></td>';

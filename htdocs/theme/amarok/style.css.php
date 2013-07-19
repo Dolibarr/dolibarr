@@ -333,7 +333,12 @@ th .button {
 .nowrap {
 	white-space: <?php print ($dol_optimize_smallscreen?'normal':'nowrap'); ?>;
 }
-
+.nobold {
+	font-weight: normal !important;
+}
+.nounderline {
+    text-decoration: none;
+}
 
 .blockvmenubookmarks .menu_contenu {
 	background-color: transparent;
@@ -1297,6 +1302,19 @@ tr.impair table.nobordernopadding td, tr.pair table.nobordernopadding td { paddi
 /*
  *  Boxes
  */
+
+.boxstats {
+    <?php print "float: ".$left.";\n"; ?>
+    margin: 4px;
+    padding: 4px;
+	/*-moz-box-shadow: 4px 4px 4px #DDD;
+    -webkit-box-shadow: 4px 4px 4px #DDD;
+    box-shadow: 4px 4px 4px #DDD;
+    margin-bottom: 8px !important;*/
+    border: 1px solid #AAA;
+    text-align: center;
+    border-radius: 5px;
+}
 
 .boxtable {
 	-moz-box-shadow:2px 4px 2px #cccccc;

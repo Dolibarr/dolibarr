@@ -1597,7 +1597,8 @@ else
 	// Ref client
 	print '<tr><td>';
 	print '<table class="nobordernopadding" width="100%"><tr><td class="nowrap">';
-	print $langs->trans('RefCustomer').'</td><td align="left">';
+	print $langs->trans('RefCustomer').'</td>';
+	print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=refclient&amp;id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('RefCustomer')).'</a></td>';
 	print '</td>';
 	if ($action != 'refclient' && ! empty($object->brouillon)) print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=refclient&amp;id='.$object->id.'">'.img_edit($langs->trans('Modify')).'</a></td>';
 	print '</tr></table>';
@@ -1617,7 +1618,6 @@ else
 	}
 	print '</td>';
 	print '</tr>';
-
 	// Company
 	print '<tr><td>'.$langs->trans('Company').'</td><td colspan="5">'.$soc->getNomUrl(1).'</td>';
 	print '</tr>';
@@ -1932,7 +1932,7 @@ else
 
 	// Amount HT
 	print '<tr><td height="10" width="25%">'.$langs->trans('AmountHT').'</td>';
-	print '<td align="right" nowrap><b>'.price($object->total_ht).'</b></td>';
+	print '<td align="right" class="nowrap"><b>'.price($object->total_ht).'</b></td>';
 	print '<td>'.$langs->trans("Currency".$conf->currency).'</td>';
 
 	// Margin Infos
@@ -1945,27 +1945,27 @@ else
 
 	// Amount VAT
 	print '<tr><td height="10">'.$langs->trans('AmountVAT').'</td>';
-	print '<td align="right" nowrap>'.price($object->total_tva).'</td>';
+	print '<td align="right" class="nowrap">'.price($object->total_tva).'</td>';
 	print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
 
 	// Amount Local Taxes
 	if ($mysoc->localtax1_assuj=="1") //Localtax1
 	{
 		print '<tr><td height="10">'.$langs->transcountry("AmountLT1",$mysoc->country_code).'</td>';
-		print '<td align="right" nowrap>'.price($object->total_localtax1).'</td>';
+		print '<td align="right" class="nowrap">'.price($object->total_localtax1).'</td>';
 		print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
 	}
 	if ($mysoc->localtax2_assuj=="1") //Localtax2
 	{
 		print '<tr><td height="10">'.$langs->transcountry("AmountLT2",$mysoc->country_code).'</td>';
-		print '<td align="right" nowrap>'.price($object->total_localtax2).'</td>';
+		print '<td align="right" class="nowrap">'.price($object->total_localtax2).'</td>';
 		print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
 	}
 
 
 	// Amount TTC
 	print '<tr><td height="10">'.$langs->trans('AmountTTC').'</td>';
-	print '<td align="right" nowrap>'.price($object->total_ttc).'</td>';
+	print '<td align="right" class="nowrap">'.price($object->total_ttc).'</td>';
 	print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
 
 	// Statut
@@ -2263,7 +2263,14 @@ else
 		$formmail->withto=GETPOST("sendto")?GETPOST("sendto"):$liste;
 		$formmail->withtocc=$liste;
 		$formmail->withtoccc=(! empty($conf->global->MAIN_EMAIL_USECCC)?$conf->global->MAIN_EMAIL_USECCC:false);
-		$formmail->withtopic=$langs->trans('SendPropalRef','__PROPREF__');
+		if(empty($object->ref_client))
+		{
+			$formmail->withtopic=$langs->trans('SendPropalRef','__PROPREF__');
+		}
+		else if(!empty($object->ref_client))
+		{
+			$formmail->withtopic=$langs->trans('SendPropalRef','__PROPREF__(__REFCLIENT__)');
+		}
 		$formmail->withfile=2;
 		$formmail->withbody=1;
 		$formmail->withdeliveryreceipt=1;
@@ -2272,6 +2279,7 @@ else
 		// Tableau des substitutions
 		$formmail->substit['__PROPREF__']=$object->ref;
 		$formmail->substit['__SIGNATURE__']=$user->signature;
+		$formmail->substit['__REFCLIENT__']=$object->ref_client;
 		$formmail->substit['__PERSONALIZED__']='';
 		$formmail->substit['__CONTACTCIVNAME__']='';
 
@@ -2299,8 +2307,6 @@ else
 		$formmail->param['models']='propal_send';
 		$formmail->param['id']=$object->id;
 		$formmail->param['returnurl']=$_SERVER["PHP_SELF"].'?id='.$object->id;
-
-
 		// Init list of files
 		if (GETPOST("mode")=='init')
 		{
