@@ -37,6 +37,7 @@ class RemiseCheque extends CommonObject
 	var $id;
 	var $num;
 	var $intitule;
+	var $ref_ext;
 	//! Numero d'erreur Plage 1024-1279
 	var $errno;
 
@@ -63,7 +64,7 @@ class RemiseCheque extends CommonObject
 	{
 		global $conf;
 
-		$sql = "SELECT bc.rowid, bc.datec, bc.fk_user_author, bc.fk_bank_account, bc.amount, bc.number, bc.statut, bc.nbcheque";
+		$sql = "SELECT bc.rowid, bc.datec, bc.fk_user_author, bc.fk_bank_account, bc.amount, bc.number, bc.statut, bc.nbcheque, bc.ref_ext";
 		$sql.= ", bc.date_bordereau as date_bordereau";
 		$sql.= ", ba.label as account_label";
 		$sql.= " FROM ".MAIN_DB_PREFIX."bordereau_cheque as bc";
@@ -86,6 +87,7 @@ class RemiseCheque extends CommonObject
 				$this->author_id      = $obj->fk_user_author;
 				$this->nbcheque       = $obj->nbcheque;
 				$this->statut         = $obj->statut;
+				$this->ref_ext        = $obj->ref_ext;
 
 				if ($this->statut == 0)
 				{
@@ -139,6 +141,7 @@ class RemiseCheque extends CommonObject
 		$sql.= ", number";
 		$sql.= ", entity";
 		$sql.= ", nbcheque";
+		$sql.= ", ref_ext";
 		$sql.= ") VALUES (";
 		$sql.= $this->db->idate($now);
 		$sql.= ", ".$this->db->idate($now);
@@ -149,6 +152,7 @@ class RemiseCheque extends CommonObject
 		$sql.= ", 0";
 		$sql.= ", ".$conf->entity;
 		$sql.= ", 0";
+		$sql.= ", ''";
 		$sql.= ")";
 
 		dol_syslog("RemiseCheque::Create sql=".$sql, LOG_DEBUG);
@@ -720,12 +724,47 @@ class RemiseCheque extends CommonObject
             return -2;
         }
     }
+	
+	/**
+     *      Set the external ref
+     *
+     *      @param	User		$user           Object user
+     *      @param  timestamp   $ref_rext       External ref
+     *      @return int                 		<0 if KO, >0 if OK
+     */
+    function set_ref_ext($user, $ref_ext)
+    {
+        if ($user->rights->banque->cheque)
+        {
+            $sql = "UPDATE ".MAIN_DB_PREFIX."bordereau_cheque";
+            $sql.= " SET ref_ext = '".$ref_ext."'";
+            $sql.= " WHERE rowid = ".$this->id;
+
+            dol_syslog("RemiseCheque::set_ref_ext sql=$sql",LOG_DEBUG);
+            $resql=$this->db->query($sql);
+            if ($resql)
+            {
+                $this->ref_ext = $ref_ext;
+                return 1;
+            }
+            else
+            {
+                $this->error=$this->db->error();
+                dol_syslog("RemiseCheque::set_ref_ext ".$this->error,LOG_ERR);
+                return -1;
+            }
+        }
+        else
+        {
+            return -2;
+        }
+    }
 
 
 	/**
 	 *    	Renvoie nom clicable (avec eventuellement le picto)
 	 *
-	 *		@param	int		$withpicto		Inclut le picto dans le lien
+	 *		@param	int		$withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
 	 *		@param	string	$option			Sur quoi pointe le lien
 	 *		@return	string					Chaine avec URL
 	 */
@@ -735,14 +774,13 @@ class RemiseCheque extends CommonObject
 
 		$result='';
 
-		$number=$this->ref;
-		if ($this->statut == 0) $number='(PROV'.$this->id.')';
-
 		$lien = '<a href="'.DOL_URL_ROOT.'/compta/paiement/cheque/fiche.php?id='.$this->id.'">';
 		$lienfin='</a>';
 
-		if ($withpicto) $result.=($lien.img_object($langs->trans("ShowCheckReceipt"),'payment').$lienfin.' ');
-		$result.=$lien.$number.$lienfin;
+		if ($withpicto) $result.=($lien.img_object($langs->trans("ShowCheckReceipt"),'payment').$lienfin);
+		if ($withpicto && $withpicto != 2) $result.=' ';
+		if ($withpicto != 2) $result.=$lien.$this->ref.$lienfin;
+		
 		return $result;
 	}
 
