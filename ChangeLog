@@ -4,6 +4,7 @@ English Dolibarr ChangeLog
 
 ***** ChangeLog for 3.5 compared to 3.4 *****
 For users:
+- New: Can edit customer ref at eny time.
 - New: [ task #877 ] Reorganize menus.
 - New: [ task #858 ] Holiday module: note on manual holiday assignation.
 - New: [ task #892 ] Add hidden option in thirdparty customer/supplier module to hide non active
