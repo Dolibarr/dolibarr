@@ -71,3 +71,5 @@ DocumentModelSirocco=Modèle de bon de réception/livraison simple
 DocumentModelTyphon=Modèle de bon de réception/livraison complet (logo…)
 
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=Constante EXPEDITION_ADDON_NUMBER non définie
+SumOfProductVolumes=Somme des volumes des produits
+SumOfProductWeights=Somme des poids des produits
