@@ -2566,7 +2566,14 @@ else
 			$formmail->withto=GETPOST('sendto')?GETPOST('sendto'):$liste;
 			$formmail->withtocc=$liste;
 			$formmail->withtoccc=$conf->global->MAIN_EMAIL_USECCC;
-			$formmail->withtopic=$langs->trans('SendOrderRef','__ORDERREF__');
+			if(empty($object->ref_client))
+			{
+				$formmail->withtopic=$langs->trans('SendOrderRef','__ORDERREF__');
+			}
+			else if(!empty($object->ref_client))
+			{
+				$formmail->withtopic=$langs->trans('SendOrderRef','__ORDERREF__(__REFCLIENT__)');
+			}
 			$formmail->withfile=2;
 			$formmail->withbody=1;
 			$formmail->withdeliveryreceipt=1;
@@ -2574,6 +2581,7 @@ else
 			// Tableau des substitutions
 			$formmail->substit['__ORDERREF__']=$object->ref;
 			$formmail->substit['__SIGNATURE__']=$user->signature;
+			$formmail->substit['__REFCLIENT__']=$object->ref_client;
 			$formmail->substit['__PERSONALIZED__']='';
 			$formmail->substit['__CONTACTCIVNAME__']='';
 
