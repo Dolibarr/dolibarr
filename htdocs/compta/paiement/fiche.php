@@ -260,7 +260,7 @@ if (! empty($conf->banque->enabled))
 			print '<tr>';
 	    	print '<td>'.$langs->trans('CheckReceipt').'</td>';
 			print '<td colspan="3">';
-			print $bordereau->getNomUrl(1,0,'showall');
+			print $bordereau->getNomUrl(1);
 	    	print '</td>';
 	    	print '</tr>';
 		}

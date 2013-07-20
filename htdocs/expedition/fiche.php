@@ -1115,6 +1115,12 @@ else
             print '<tr><td>'.$form->editfieldkey("Weight",'trueWeight',$object->trueWeight,$object,$user->rights->expedition->creer).'</td><td colspan="3">';
             print $form->editfieldval("Weight",'trueWeight',$object->trueWeight,$object,$user->rights->expedition->creer);
             print ($object->trueWeight && $object->weight_units!='')?' '.measuring_units_string($object->weight_units,"weight"):'';
+			if ($totalWeight > 0)
+            {
+            	if (!empty($object->trueWeight)) print ' ('.$langs->trans("SumOfProductWeights").': ';
+				print $totalWeight.' '.measuring_units_string(0,"weight");
+            	if (!empty($object->trueWeight)) print ')';
+            }
             print '</td></tr>';
 
             // Width
@@ -1152,7 +1158,7 @@ else
             if ($totalVolume > 0)
             {
             	if ($calculatedVolume) print ' ('.$langs->trans("SumOfProductVolumes").': ';
-				print $totalVolume;
+				print $totalVolume.' '.measuring_units_string(0,"volume");
             	if ($calculatedVolume) print ')';
             }
             print "</td>\n";
