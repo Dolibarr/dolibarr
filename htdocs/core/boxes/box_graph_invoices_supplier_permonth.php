@@ -67,7 +67,6 @@ class box_graph_invoices_supplier_permonth extends ModeleBoxes
 		$refreshaction='refresh_'.$this->boxcode;
 
 		include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
-		$facturestatic=new Facture($db);
 
 		$text = $langs->trans("BoxSuppliersInvoicesPerMonth",$max);
 		$this->info_box_head = array(
