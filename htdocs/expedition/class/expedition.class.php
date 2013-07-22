@@ -978,13 +978,14 @@ class Expedition extends CommonObject
 				$line->volume_units   	= $obj->volume_units;
 
 				// For invoicing
+				$tabprice = calcul_price_total($obj->qty_shipped, $obj->subprice, $obj->remise_percent, $obj->tva_tx, $obj->localtax1_tx, $obj->localtax2_tx, 0, 'HT', $info_bits, $obj->fk_product_type);	// We force type to 0
 				$line->desc	         	= $obj->description;		// We need ->desc because some code into CommonObject use desc (property defined for other elements)
 				$line->qty 				= $obj->qty_shipped;
-				$line->total_ht			= $obj->total_ht;
-				$line->total_localtax1 	= $obj->total_localtax1;
-				$line->total_localtax2 	= $obj->total_localtax2;
-				$line->total_ttc	 	= $obj->total_ttc;
-				$line->total_tva	 	= $obj->total_tva;
+				$line->total_ht			= $tabprice[0];
+				$line->total_localtax1 	= $tabprice[9];
+				$line->total_localtax2 	= $tabprice[10];
+				$line->total_ttc	 	= $tabprice[2];
+				$line->total_tva	 	= $tabprice[1];
 				$line->tva_tx 		 	= $obj->tva_tx;
 				$line->localtax1_tx 	= $obj->localtax1_tx;
 				$line->localtax2_tx 	= $obj->localtax2_tx;
@@ -992,7 +993,6 @@ class Expedition extends CommonObject
 				$line->subprice			= $obj->subprice;
 				$line->remise_percent	= $obj->remise_percent;
 
-				$tabprice = calcul_price_total($obj->qty_shipped, $obj->subprice, $obj->remise_percent, $obj->tva_tx, $obj->localtax1_tx, $obj->localtax2_tx, 0, 'HT', $info_bits, $obj->fk_product_type);	// We force type to 0
 				$this->total_ht+= $tabprice[0];
 				$this->total_tva+= $tabprice[1];
 				$this->total_ttc+= $tabprice[2];
