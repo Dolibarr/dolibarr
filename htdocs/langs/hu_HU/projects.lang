@@ -1,4 +1,4 @@
-# Dolibarr language file - hu_HU - projects
+# Dolibarr language file - Source file is en_US - projects
 CHARSET=UTF-8
 Project=Projekt
 Projects=Projektek
@@ -28,6 +28,7 @@ NoProject=Nincs létrehozott vagy tulajdonolt projekt
 NbOpenTasks=Nyitott feladatok száma
 NbOfProjects=Projektek száma
 TimeSpent=Eltöltött idő
+TimesSpent=Töltött idő
 RefTask=Feladat ref#
 LabelTask=Feladat cimkéje
 NewTimeSpent=Új eltöltött idő
@@ -80,6 +81,19 @@ TaskRessourceLinks=Erőforrások
 ProjectsDedicatedToThisThirdParty=Harmadik félhnek dedikált projektek
 NoTasks=Nincs a projekthez tartozó feladat
 LinkedToAnotherCompany=Harmadik félhez kapcsolva
+TaskIsNotAffectedToYou=Feladat nem osztottak neked
+ErrorTimeSpentIsEmpty=Töltött idő üres
+ThisWillAlsoRemoveTasks=Ez a művelet is törli az összes feladatot a projekt <b>(%s</b> feladatokat a pillanatban), és az összes bemenet eltöltött idő.
+IfNeedToUseOhterObjectKeepEmpty=Ha egyes tárgyakat (számla, megrendelés, ...), amelyek egy másik harmadik félnek kell kapcsolódniuk a projekt létrehozásához, tartsa ezt az üres, hogy a projekt, hogy több harmadik fél.
+# CloneProject=Clone project
+# CloneTasks=Clone tasks
+# CloneContacts=Clone contacts
+# CloneNotes=Clone notes
+# CloneFiles=Clone joined files
+# ConfirmCloneProject=Are you sure to clone this project ?
+# ProjectReportDate=Change task date according project start date
+# ErrorShiftTaskDate=Impossible to shift task date according to new project start date
+# ProjectsAndTasksLines=Projects and tasks
 ##### Types de contacts #####
 TypeContact_project_internal_PROJECTLEADER=Projekt vezető
 TypeContact_project_external_PROJECTLEADER=Projekt vezető
@@ -91,13 +105,5 @@ TypeContact_project_task_internal_CONTRIBUTOR=Hozzájáruló
 TypeContact_project_task_external_CONTRIBUTOR=Hozzájáruló
 # Documents models
 DocumentModelBaleine=Teljes jelentés modell (logo, ...)
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 16:13:31).
-// Reference language: en_US -> hu_HU
-TimesSpent=Töltött idő
-TaskIsNotAffectedToYou=Feladat nem osztottak neked
-ErrorTimeSpentIsEmpty=Töltött idő üres
-ThisWillAlsoRemoveTasks=Ez a művelet is törli az összes feladatot a projekt <b>(%s</b> feladatokat a pillanatban), és az összes bemenet eltöltött idő.
-IfNeedToUseOhterObjectKeepEmpty=Ha egyes tárgyakat (számla, megrendelés, ...), amelyek egy másik harmadik félnek kell kapcsolódniuk a projekt létrehozásához, tartsa ezt az üres, hogy a projekt, hogy több harmadik fél.
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:25:33).
+# PlannedWorkload = Planned workload
+# WorkloadOccupation= Workload affectation

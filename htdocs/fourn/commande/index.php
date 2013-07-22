@@ -64,7 +64,7 @@ print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("SearchOrder").'</td></tr>';
 print '<tr '.$bc[$var].'><td>';
 print $langs->trans("Ref").':</td><td><input type="text" class="flat" name="search_ref" size=18></td><td rowspan="2"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
-print '<tr '.$bc[$var].'><td nowrap>'.$langs->trans("Other").':</td><td><input type="text" class="flat" name="search_all" size="18"></td>';
+print '<tr '.$bc[$var].'><td class="nowrap">'.$langs->trans("Other").':</td><td><input type="text" class="flat" name="search_all" size="18"></td>';
 print '</tr>';
 print "</form></table><br>\n";
 
@@ -182,7 +182,7 @@ if ($resql)
         $row = $db->fetch_row($resql);
         $var=!$var;
 
-        print "<tr $bc[$var]>";
+        print "<tr ".$bc[$var].">";
         print '<td>'.$langs->trans($commandestatic->statuts[$row[1]]).'</td>';
         print '<td align="right"><a href="liste.php?statut='.$row[1].'">'.$row[0].' '.$commandestatic->LibStatut($row[1],3).'</a></td>';
 
@@ -230,7 +230,7 @@ if (! empty($conf->fournisseur->enabled))
             {
                 $var=!$var;
                 $obj = $db->fetch_object($resql);
-                print "<tr $bc[$var]>";
+                print "<tr ".$bc[$var].">";
                 print '<td class="nowrap">';
                 print "<a href=\"fiche.php?id=".$obj->rowid."\">".img_object($langs->trans("ShowOrder"),"order").' '.$obj->ref."</a></td>";
                 print '<td><a href="'.DOL_URL_ROOT.'/fourn/fiche.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dol_trunc($obj->nom,24).'</a></td></tr>';
@@ -273,7 +273,7 @@ if ($resql)
         $obj = $db->fetch_object($resql);
         $var=!$var;
 
-        print "<tr $bc[$var]>";
+        print "<tr ".$bc[$var].">";
         print '<td>';
         $userstatic->id=$obj->rowid;
         $userstatic->lastname=$obj->lastname;
@@ -329,7 +329,7 @@ if ($resql)
             $var=!$var;
             $obj = $db->fetch_object($resql);
 
-            print "<tr $bc[$var]>";
+            print "<tr ".$bc[$var].">";
             print '<td width="20%" class="nowrap">';
 
             $commandestatic->id=$obj->rowid;
@@ -397,7 +397,7 @@ while ($i < $num)
 {
 $var=!$var;
 $obj = $db->fetch_object($resql);
-print "<tr $bc[$var]>";
+print "<tr ".$bc[$var].">";
 print '<td class="nowrap">';
 
 $commandestatic->id=$obj->rowid;

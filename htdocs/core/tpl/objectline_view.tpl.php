@@ -2,6 +2,7 @@
 /* Copyright (C) 2010-2012	Regis Houssin		<regis.houssin@capnetworks.com>
  * Copyright (C) 2010-2011	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2012		Christophe Battarel	<christophe.battarel@altairis.fr>
+ * Copyright (C) 2013		Florian Henry		<florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,13 +21,13 @@
  * $type, $text, $description, $line
  */
 ?>
-
+<?php $coldisplay=0; ?>
 <!-- BEGIN PHP TEMPLATE objectline_view.tpl.php -->
 <tr <?php echo 'id="row-'.$line->id.'" '.$bcdd[$var]; ?>>
 	<?php if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) { ?>
-	<td align="center"><?php echo ($i+1); ?></td>
+	<td align="center"><?php $coldisplay++; ?><?php echo ($i+1); ?></td>
 	<?php } ?>
-	<td><div id="<?php echo $line->rowid; ?>"></div>
+	<td><?php $coldisplay++; ?><div id="<?php echo $line->rowid; ?>"></div>
 	<?php if (($line->info_bits & 2) == 2) { ?>
 		<a href="<?php echo DOL_URL_ROOT.'/comm/remx.php?id='.$this->socid; ?>">
 		<?php
@@ -95,15 +96,15 @@
 	?>
 	</td>
 
-	<td align="right" class="nowrap"><?php echo vatrate($line->tva_tx,'%',$line->info_bits); ?></td>
+	<td align="right" class="nowrap"><?php $coldisplay++; ?><?php echo vatrate($line->tva_tx,'%',$line->info_bits); ?></td>
 
-	<td align="right" class="nowrap"><?php echo price($line->subprice); ?></td>
+	<td align="right" class="nowrap"><?php $coldisplay++; ?><?php echo price($line->subprice); ?></td>
 
 	<?php if ($conf->global->MAIN_FEATURES_LEVEL > 1) { ?>
-	<td align="right" class="nowrap">&nbsp;</td>
+	<td align="right" class="nowrap"><?php $coldisplay++; ?>&nbsp;</td>
 	<?php } ?>
 
-	<td align="right" class="nowrap">
+	<td align="right" class="nowrap"><?php $coldisplay++; ?>
 	<?php if ((($line->info_bits & 2) != 2) && $line->special_code != 3) {
 			// I comment this because it shows info even when not required
 			// for example always visible on invoice but must be visible only if stock module on and stock decrease option is on invoice validation and status is not validated
@@ -114,30 +115,30 @@
 	</td>
 
 	<?php if (!empty($line->remise_percent) && $line->special_code != 3) { ?>
-	<td align="right"><?php echo dol_print_reduction($line->remise_percent,$langs); ?></td>
+	<td align="right"><?php $coldisplay++; ?><?php echo dol_print_reduction($line->remise_percent,$langs); ?></td>
 	<?php } else { ?>
-	<td>&nbsp;</td>
+	<td><?php $coldisplay++; ?>&nbsp;</td>
 	<?php }
 
   if (! empty($conf->margin->enabled) && empty($user->societe_id)) {
   ?>
-  	<td align="right" class="nowrap"><?php echo price($line->pa_ht); ?></td>
+  	<td align="right" class="nowrap"><?php $coldisplay++; ?><?php echo price($line->pa_ht); ?></td>
   	<?php if (! empty($conf->global->DISPLAY_MARGIN_RATES)) {?>
-  	  <td align="right" class="nowrap"><?php echo (($line->pa_ht == 0)?'n/a':price($line->marge_tx).'%'); ?></td>
+  	  <td align="right" class="nowrap"><?php $coldisplay++; ?><?php echo (($line->pa_ht == 0)?'n/a':price($line->marge_tx).'%'); ?></td>
   	<?php
   }
   if (! empty($conf->global->DISPLAY_MARK_RATES)) {?>
-  	  <td align="right" class="nowrap"><?php echo price($line->marque_tx).'%'; ?></td>
+  	  <td align="right" class="nowrap"><?php $coldisplay++; ?><?php echo price($line->marque_tx).'%'; ?></td>
   <?php } } ?>
 
 	<?php if ($line->special_code == 3)	{ ?>
-	<td align="right" class="nowrap"><?php echo $langs->trans('Option'); ?></td>
+	<td align="right" class="nowrap"><?php $coldisplay++; ?><?php echo $langs->trans('Option'); ?></td>
 	<?php } else { ?>
-	<td align="right" class="nowrap"><?php echo price($line->total_ht); ?></td>
+	<td align="right" class="nowrap"><?php $coldisplay++; ?><?php echo price($line->total_ht); ?></td>
 	<?php } ?>
 
 	<?php if ($this->statut == 0  && $user->rights->$element->creer) { ?>
-	<td align="center">
+	<td align="center"><?php $coldisplay++; ?>
 		<?php if (($line->info_bits & 2) == 2) { ?>
 		<?php } else { ?>
 		<a href="<?php echo $_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=editline&amp;lineid='.$line->id.'#'.$line->id; ?>">
@@ -146,14 +147,14 @@
 		<?php } ?>
 	</td>
 
-	<td align="center">
+	<td align="center"><?php $coldisplay++; ?>
 		<a href="<?php echo $_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=ask_deleteline&amp;lineid='.$line->id; ?>">
 		<?php echo img_delete(); ?>
 		</a>
 	</td>
 
 	<?php if ($num > 1 && empty($conf->browser->phone)) { ?>
-	<td align="center" class="tdlineupdown">
+	<td align="center" class="tdlineupdown"><?php $coldisplay++; ?>
 		<?php if ($i > 0) { ?>
 		<a class="lineupdown" href="<?php echo $_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=up&amp;rowid='.$line->id; ?>">
 		<?php echo img_up(); ?>
@@ -166,11 +167,18 @@
 		<?php } ?>
 	</td>
     <?php } else { ?>
-    <td align="center"<?php echo (empty($conf->browser->phone)?' class="tdlineupdown"':''); ?>></td>
+    <td align="center"<?php echo (empty($conf->browser->phone)?' class="tdlineupdown"':''); ?>><?php $coldisplay++; ?></td>
 	<?php } ?>
 <?php } else { ?>
-	<td colspan="3"></td>
+	<td colspan="3"><?php $coldisplay=$coldisplay+3; ?></td>
 <?php } ?>
+
+<?php
+//Line extrafield
+if (!empty($extrafieldsline)) {
+	print $line->showOptionals($extrafieldsline,'view',array('style'=>$bcdd[$var],'colspan'=>$coldisplay));
+}
+?>
 
 </tr>
 <!-- END PHP TEMPLATE objectline_view.tpl.php -->

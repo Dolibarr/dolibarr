@@ -1,12 +1,4 @@
-/*
- * Language code: et_EE
- * Automatic generated via autotranslator.php tool
- * Generation date 2012-02-29 22:15:30
- */
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 22:15:30).
-// Reference language: en_US -> et_EE
+# Dolibarr language file - Source file is en_US - sendings
 CHARSET=UTF-8
 RefSending=Ref. saadetis
 Sending=Saadetis
@@ -39,9 +31,11 @@ SendingsToValidate=Saadetiste kinnitamiseks
 StatusSendingCanceled=Tühistatud
 StatusSendingDraft=Eelnõu
 StatusSendingValidated=Kinnitatud (tooted laevale või juba veetud)
+# StatusSendingProcessed=Processed
 StatusSendingCanceledShort=Tühistatud
 StatusSendingDraftShort=Eelnõu
 StatusSendingValidatedShort=Valideeritud
+# StatusSendingProcessedShort=Processed
 SendingSheet=Saates lehed
 Carriers=Vedajad
 Carrier=Kandja
@@ -63,10 +57,17 @@ SendShippingRef=Saada saadetise %s
 ActionsOnShipping=Sündmuste saadetise
 LinkToTrackYourPackage=Seos jälgida oma paketi
 ShipmentCreationIsDoneFromOrder=Praegu uue saadetise tehakse alates tellimuse kaart.
+# RelatedShippings=Related shippings
+# ShipmentLine=Shipment line
+# CarrierList=List of transporters
+
+# Sending methods
 SendingMethodCATCH=Saak kliendi
 SendingMethodTRANS=Transportija
 SendingMethodCOLSUI=Colissimo
+
+# ModelDocument
 DocumentModelSirocco=Simple dokumendi mudel kohaletoimetamisteatised
 DocumentModelTyphon=Täiuslikum dokument mudel kohaletoimetamisteatised (logo. ..)
+
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=Pidev EXPEDITION_ADDON_NUMBER ole määratletud
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 22:46:09).

@@ -63,16 +63,14 @@ function print_auguria_menu($db,$atarget,$type_user,&$tabMenu,&$menu,$noout=0)
 			$url = $shorturl = $newTabMenu[$i]['url'];
 			if (! preg_match("/^(http:\/\/|https:\/\/)/i",$newTabMenu[$i]['url']))
 			{
-				$param='';
-				if (! preg_match('/mainmenu/i',$url) || ! preg_match('/leftmenu/i',$url))
-				{
-					if (! preg_match('/\?/',$url)) $param.='?';
-					else $param.='&';
-					$param.='mainmenu='.$newTabMenu[$i]['mainmenu'].'&leftmenu=';
-				}
+				$tmp=explode('?',$newTabMenu[$i]['url'],2);
+				$url = $shorturl = $tmp[0];
+				$param = (isset($tmp[1])?$tmp[1]:'');
+
+				if (! preg_match('/mainmenu/i',$url) || ! preg_match('/leftmenu/i',$url)) $param.=($param?'&':'').'mainmenu='.$newTabMenu[$i]['mainmenu'].'&amp;leftmenu=';
 				//$url.="idmenu=".$newTabMenu[$i]['rowid'];    // Already done by menuLoad
-				$url=dol_buildpath($url,1).$param;
-				$shorturl = $newTabMenu[$i]['url'].$param;
+				$url = dol_buildpath($url,1).($param?'?'.$param:'');
+				$shorturl = $shorturl.($param?'?'.$param:'');
 			}
 			$url=preg_replace('/__LOGIN__/',$user->login,$url);
 			$shorturl=preg_replace('/__LOGIN__/',$user->login,$shorturl);
@@ -246,15 +244,15 @@ function print_left_auguria_menu($db,$menu_array_before,$menu_array_after,&$tabM
 		$sql.= " WHERE entity = ".$conf->entity;
 		$sql.= " AND clos = 0";
 		$sql.= " ORDER BY label";
-	
+
 		$resql = $db->query($sql);
 		if ($resql)
 		{
 			$numr = $db->num_rows($resql);
 			$i = 0;
-	
+
 			if ($numr > 0) 	$newmenu->add('/compta/bank/index.php',$langs->trans("BankAccounts"),0,$user->rights->banque->lire);
-	
+
 			while ($i < $numr)
 			{
 				$objp = $db->fetch_object($resql);
@@ -281,14 +279,14 @@ function print_left_auguria_menu($db,$menu_array_before,$menu_array_after,&$tabM
 			if (! empty($conf->global->$paramkey))
 			{
 				$link="/ftp/index.php?idmenu=".$_SESSION["idmenu"]."&numero_ftp=".$i;
-		
+
 				$newmenu->add($link, dol_trunc($conf->global->$paramkey,24));
 			}
 			$i++;
 		}
-	}	
+	}
 
-	
+
 	// Build final $menu_array = $menu_array_before +$newmenu->liste + $menu_array_after
 	//var_dump($menu_array_before);exit;
 	//var_dump($menu_array_after);exit;
@@ -301,7 +299,7 @@ function print_left_auguria_menu($db,$menu_array_before,$menu_array_after,&$tabM
 	// Show menu
 	if (empty($noout))
 	{
-		$alt=0;
+		$alt=0; $blockvmenuopened=false;
 		$num=count($menu_array);
 		for ($i = 0; $i < $num; $i++)
 		{
@@ -311,6 +309,7 @@ function print_left_auguria_menu($db,$menu_array_before,$menu_array_after,&$tabM
 			$alt++;
 			if (empty($menu_array[$i]['level']) && $showmenu)
 			{
+				$blockvmenuopened=true;
 				if (($alt%2==0))
 				{
 					print '<div class="blockvmenuimpair">'."\n";
@@ -344,7 +343,7 @@ function print_left_auguria_menu($db,$menu_array_before,$menu_array_after,&$tabM
 				$url.='mainmenu='.$mainmenu;
 			}
 
-			print '<!-- Add menu entry with mainmenu='.$menu_array[$i]['mainmenu'].', leftmenu='.$menu_array[$i]['leftmenu'].', level='.$menu_array[$i]['level'].' -->'."\n";
+			print '<!-- Process menu entry with mainmenu='.$menu_array[$i]['mainmenu'].', leftmenu='.$menu_array[$i]['leftmenu'].', level='.$menu_array[$i]['level'].' enabled='.$menu_array[$i]['enabled'].' -->'."\n";
 
 			// Menu niveau 0
 			if ($menu_array[$i]['level'] == 0)
@@ -379,12 +378,12 @@ function print_left_auguria_menu($db,$menu_array_before,$menu_array_after,&$tabM
 				}
 			}
 
-			// If next is a new block or end
+			// If next is a new block or if there is nothing after
 			if (empty($menu_array[$i+1]['level']))
 			{
 				if ($showmenu)
 					print '<div class="menu_end"></div>'."\n";
-				print "</div>\n";
+				if ($blockvmenuopened) { print "</div>\n"; $blockvmenuopened=false; }
 			}
 		}
 	}

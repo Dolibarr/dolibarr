@@ -1,13 +1,5 @@
-/*
- * Language code: ru_RU
- * Automatic generated via autotranslator.php tool
- * Generation date 2012-02-29 17:28:02
- */
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 17:28:02).
-// Reference language: en_US -> ru_RU
+# Dolibarr language file - Source file is en_US - externalsite
 CHARSET=UTF-8
 ExternalSiteSetup=Установка ссылки на внешние веб-сайт
 ExternalSiteURL=Внешний URL сайта
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:28:49).
+# ExternalSiteModuleNotComplete=Module ExternalSite was not configured properly.

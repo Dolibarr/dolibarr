@@ -1,9 +1,9 @@
-# Dolibarr language file - pt_PT - trips
+# Dolibarr language file - Source file is en_US - trips
 CHARSET=UTF-8
 Trip=Deslocação
 Trips=Deslocações
 TripsAndExpenses=Deslocações e Despesas
-TripId=Id Deslocação
+TripsAndExpensesStatistics=Viagens e estatísticas despesas
 TripCard=Ficha de Deslocação
 AddTrip=Adicionar Deslocação
 ListOfTrips=Lista de Deslocações
@@ -17,17 +17,6 @@ ConfirmDeleteTrip=Está seguro de querer eliminar esta deslocação?
 TF_OTHER=Outro
 TF_LUNCH=Alimentação
 TF_TRIP=Viagem
-
-
-// START - Lines generated via autotranslator.php tool (2010-09-04 02:09:13).
-// Reference language: en_US -> pt_PT
-TripsAndExpensesStatistics=Viagens e estatísticas despesas
 ListTripsAndExpenses=Lista de viagens e despesas
-// STOP - Lines generated via autotranslator.php tool (2010-09-04 02:20:12).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 15:45:52).
-// Reference language: en_US -> pt_PT
 ExpensesArea=Viagens e área de despesas
 SearchATripAndExpense=Procure uma viagem e despesas
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 15:46:23).

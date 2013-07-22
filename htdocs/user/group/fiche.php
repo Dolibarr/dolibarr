@@ -420,7 +420,7 @@ else
             	{
             		$var=!$var;
 
-            		print "<tr $bc[$var]>";
+            		print "<tr ".$bc[$var].">";
             		print '<td>';
             		print '<a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$useringroup->id.'">'.img_object($langs->trans("ShowUser"),"user").' '.$useringroup->login.'</a>';
             		if ($useringroup->admin  && ! $useringroup->entity) print img_picto($langs->trans("SuperAdministrator"),'redstar');

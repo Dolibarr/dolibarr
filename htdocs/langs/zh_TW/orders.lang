@@ -1,16 +1,9 @@
-/*
- * Language code: zh_CN
- * Automatic generated via autotranslator.php tool
- * Generation date 2010-06-08 21:22:55
- */
-
-
-// START - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).
-// Reference language: en_US
+# Dolibarr language file - Source file is en_US - orders
 CHARSET=UTF-8
 OrdersArea=客戶訂單面積
 SuppliersOrdersArea=供應商的訂單面積
 OrderCard=訂單資訊
+# OrderId=Order Id
 Order=訂單
 Orders=訂單
 OrderLine=在線訂單
@@ -31,12 +24,16 @@ OrdersToValid=常規驗證
 OrdersToBill=訂單To帳單
 OrdersInProcess=訂單流程
 OrdersToProcess=待處理的客戶訂單
+SuppliersOrdersToProcess=待處理的供應商的訂單
 StatusOrderCanceledShort=已取消
 StatusOrderDraftShort=草案階段
 StatusOrderValidatedShort=驗證階段
+StatusOrderSentShort=在過程
+# StatusOrderSent=Shipment in process
 StatusOrderOnProcessShort=處理中
 StatusOrderProcessedShort=處理完畢
 StatusOrderToBillShort=等待帳單
+# StatusOrderToBill2Short=To bill
 StatusOrderApprovedShort=核準
 StatusOrderRefusedShort=拒絕
 StatusOrderToProcessShort=要處理
@@ -48,13 +45,16 @@ StatusOrderValidated=驗證階段
 StatusOrderOnProcess=處理中
 StatusOrderProcessed=處理完畢
 StatusOrderToBill=等待帳單
+# StatusOrderToBill2=To bill
 StatusOrderApproved=已核準
 StatusOrderRefused=已拒絕
 StatusOrderReceivedPartially=部分收到
 StatusOrderReceivedAll=一切都收到
+ShippingExist=A貨存在
 DraftOrWaitingApproved=草案尚未下令或批準
 DraftOrWaitingShipped=草案或審定尚未運
 MenuOrdersToBill=訂單To帳單
+# MenuOrdersToBill2=Orders to bill
 SearchOrder=搜尋訂單
 Sending=發出
 Sendings=出貨清單
@@ -64,6 +64,7 @@ CreateOrder=創建訂單
 RefuseOrder=拒絕訂單
 ApproveOrder=接受訂單
 ValidateOrder=驗證訂單
+UnvalidateOrder=Unvalidate秩序
 DeleteOrder=刪除訂單
 CancelOrder=取消訂單
 AddOrder=新增訂單
@@ -88,9 +89,11 @@ ConfirmCloseOrder=您確定要關閉這個秩序？一旦訂單是封閉的，�
 ConfirmCloseOrderIfSending=您確定要關閉這個訂單？你必須關閉，只有當所有航運完成的訂單。
 ConfirmDeleteOrder=你確定要刪除這個訂單？
 ConfirmValidateOrder=你確定您要驗證這個訂單<b>%s</b>嗎？
+ConfirmUnvalidateOrder=你是否確定要還原訂單<b>%s</b>草案狀態？
 ConfirmCancelOrder=您確定要取消此訂單？
 ConfirmMakeOrder=請確認您是否想要確認您於 <b>%s</b> 製作的訂單？
 GenerateBill=生成發票
+# ClassifyShipped=Classify delivered
 ClassifyBilled=分類“帳單”
 ComptaCard=會計證
 DraftOrders=草案訂單
@@ -111,6 +114,8 @@ UserWithApproveOrderGrant=被授予核准權限的用戶
 PaymentOrderRef=清繳秩序％
 CloneOrder=複製訂單
 ConfirmCloneOrder=你確定要複製這個 <b>%s</b> 訂單嗎?
+DispatchSupplierOrder=接收供應商的訂單%s
+##### Types de contacts #####
 TypeContact_commande_internal_SALESREPFOLL=代替客戶下單
 TypeContact_commande_internal_SHIPPING=代替客戶寄送
 TypeContact_commande_external_BILLING=客戶 Invoice 聯絡人
@@ -121,10 +126,15 @@ TypeContact_order_supplier_internal_SHIPPING=利用貨運方式
 TypeContact_order_supplier_external_BILLING=供應商利用發票(invoice)方式
 TypeContact_order_supplier_external_SHIPPING=供應商利用貨運方式
 TypeContact_order_supplier_external_CUSTOMER=供應商來訪的方式
+
 Error_COMMANDE_SUPPLIER_ADDON_NotDefined=常COMMANDE_SUPPLIER_ADDON沒有定義
 Error_COMMANDE_ADDON_NotDefined=常COMMANDE_ADDON沒有定義
 Error_FailedToLoad_COMMANDE_SUPPLIER_ADDON_File=無法加載模塊文件'％s'的
 Error_FailedToLoad_COMMANDE_ADDON_File=無法加載模塊文件'％s'的
+# Error_OrderNotChecked=No orders to invoice selected
+
+
+# Sources
 OrderSource0=商業建議
 OrderSource1=因特網
 OrderSource2=郵件活動
@@ -134,30 +144,18 @@ OrderSource5=商業
 OrderSource6=商店
 QtyOrdered=訂購數量
 AddDeliveryCostLine=添加交貨成本線，顯示該命令的重量
+
+# Documents models
 PDFEinsteinDescription=可產生一份完整的訂單範本（logo. ..）
 PDFEdisonDescription=可產生一份簡單的訂單範本
-// STOP - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).
-
-
-// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
-// Reference language: en_US -> zh_CN
-DispatchSupplierOrder=接收供應商的訂單%s
-// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:34:42).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 17:37:09).
-// Reference language: en_US -> zh_CN
-SuppliersOrdersToProcess=待處理的供應商的訂單
-StatusOrderSentShort=在過程
-ShippingExist=A貨存在
-UnvalidateOrder=Unvalidate秩序
-ConfirmUnvalidateOrder=你是否確定要還原訂單<b>%s</b>草案狀態？
+# Orders modes
 OrderByMail=郵件
 OrderByFax=傳真
 OrderByEMail=電子郵件
 OrderByWWW=網頁
 OrderByPhone=電話
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:37:37).
 
-// 委外加工單
-Outsourced=委外加工單
+# CreateInvoiceForThisCustomer=Bill orders
+# NoOrdersToInvoice=No orders billable
+# CloseProcessedOrdersAutomatically=Classify "Processed" all selected orders.
+# MenuOrdersToBill2=Orders to bill

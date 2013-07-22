@@ -72,26 +72,26 @@ dol_syslog("POST=".$tracepost, LOG_DEBUG, 0, '_paypal');
 
 
 // Send an email
-if (! empty($conf->global->MEMBER_PAYONLINE_SENDEMAIL) && preg_match('/MEM=',$fulltag))
+if (! empty($conf->global->PAYPAL_PAYONLINE_SENDEMAIL))
 {
-	$sendto=$conf->global->MEMBER_PAYONLINE_SENDEMAIL;
+	$sendto=$conf->global->PAYPAL_PAYONLINE_SENDEMAIL;
 	$from=$conf->global->MAILING_EMAIL_FROM;
 	require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 	$mailfile = new CMailFile(
-		'New subscription payed',
+		'['.$conf->global->MAIN_APPLICATION_TITLE.'] '.$langs->trans("NewPaypalPaymentFailed"),
 		$sendto,
 		$from,
-		'New subscription payed '.$fulltag
-		);
+		$langs->trans("NewPaypalPaymentFailed")."\ntag=".$fulltag."\ntoken=".$token." paymentType=".$paymentType." currencycodeType=".$currencyCodeType." payerId=".$payerID." ipaddress=".$ipaddress." FinalPaymentAmt=".$FinalPaymentAmt
+	);
 
 	$result=$mailfile->sendfile();
 	if ($result)
 	{
-		dol_syslog("EMail sent to ".$sendto);
+		dol_syslog("EMail sent to ".$sendto, LOG_DEBUG, 0, '_paypal');
 	}
 	else
 	{
-		dol_syslog("Failed to send EMail to ".$sendto, LOG_ERR);
+		dol_syslog("Failed to send EMail to ".$sendto, LOG_ERR, 0, '_paypal');
 	}
 }
 

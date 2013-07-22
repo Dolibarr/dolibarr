@@ -183,6 +183,7 @@ class RssParser
 
         include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
+        $rss='';
         $str='';    // This will contain content of feed
 
         // Check parameters
@@ -213,7 +214,7 @@ class RssParser
             }
             else
             {
-                dol_syslog("RssParser::parser cache file ".$newpathofdestfile." is not found or older than now - cachedelay (".$nowgmt." - ".$cachedelay.") so we can't use it.");
+                dol_syslog(get_class($this)."::parser cache file ".$newpathofdestfile." is not found or older than now - cachedelay (".$nowgmt." - ".$cachedelay.") so we can't use it.");
             }
         }
 
@@ -235,7 +236,6 @@ class RssParser
                 //var_dump($opts);exit;
                 $context = stream_context_create($opts);
 
-                // FIXME avoid error if no connection
                 $str = file_get_contents($this->_urlRSS, false, $context);
             }
             catch (Exception $e) {
@@ -243,36 +243,39 @@ class RssParser
             }
         }
 
-        // Convert $str into xml
-        if (! empty($conf->global->EXTERNALRSS_USE_SIMPLEXML))
+        if ($str !== false)
         {
-            //print 'xx'.LIBXML_NOCDATA;
-            libxml_use_internal_errors(false);
-            $rss = simplexml_load_string($str, "SimpleXMLElement", LIBXML_NOCDATA);
+	        // Convert $str into xml
+	        if (! empty($conf->global->EXTERNALRSS_USE_SIMPLEXML))
+	        {
+	            //print 'xx'.LIBXML_NOCDATA;
+	            libxml_use_internal_errors(false);
+	            $rss = simplexml_load_string($str, "SimpleXMLElement", LIBXML_NOCDATA);
+	        }
+	        else
+	        {
+	            $xmlparser=xml_parser_create('');
+	            if (!is_resource($xmlparser)) {
+	                $this->error="ErrorFailedToCreateParser"; return -1;
+	            }
+	
+	            xml_set_object($xmlparser, $this);
+	            xml_set_element_handler($xmlparser, 'feed_start_element', 'feed_end_element');
+	            xml_set_character_data_handler($xmlparser, 'feed_cdata');
+	            $status = xml_parse($xmlparser, $str);
+	            xml_parser_free($xmlparser);
+	            $rss=$this;
+	            //var_dump($rss->_format);exit;
+	        }
         }
-        else
-        {
-            $xmlparser=xml_parser_create('');
-            if (!is_resource($xmlparser)) {
-                $this->error="ErrorFailedToCreateParser"; return -1;
-            }
-
-            xml_set_object($xmlparser, $this);
-            xml_set_element_handler($xmlparser, 'feed_start_element', 'feed_end_element');
-            xml_set_character_data_handler($xmlparser, 'feed_cdata');
-            $status = xml_parse($xmlparser, $str);
-            xml_parser_free($xmlparser);
-            $rss=$this;
-            //var_dump($rss->_format);exit;
-        }
-
+        
         // If $rss loaded
         if ($rss)
         {
             // Save file into cache
             if (empty($foundintocache) && $cachedir)
             {
-                dol_syslog("RssParser::parser cache file ".$newpathofdestfile." is saved onto disk.");
+                dol_syslog(get_class($this)."::parser cache file ".$newpathofdestfile." is saved onto disk.");
                 if (! dol_is_dir($cachedir)) dol_mkdir($cachedir);
                 $fp = fopen($newpathofdestfile, 'w');
                 fwrite($fp, $str);

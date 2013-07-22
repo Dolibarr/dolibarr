@@ -1,12 +1,4 @@
-/*
- * Language code: el_GR
- * Automatic generated via autotranslator.php tool
- * Generation date 2011-06-26 15:35:22
- */
-
-
-// START - Lines generated via autotranslator.php tool (2011-06-26 15:35:22).
-// Reference language: en_US -> el_GR
+# Dolibarr language file - Source file is en_US - ldap
 CHARSET=UTF-8
 DomainPassword=Κωδικός πρόσβασης για τον τομέα
 YouMustChangePassNextLogon=Κωδικός πρόσβασης για <b>%s</b> χρήστη στο <b>%s</b> τομέα πρέπει να αλλάξει.
@@ -36,4 +28,3 @@ MemberSynchronized=Συγχρονισμένη μέλος
 ContactSynchronized=Επικοινωνία συγχρονισμένη
 ForceSynchronize=Δύναμη συγχρονισμό Dolibarr -> LDAP
 ErrorFailedToReadLDAP=Αποτυχία ανάγνωσης LDAP βάση δεδομένων. Ελέγξτε LDAP εγκατάσταση μονάδας και την προσβασιμότητα της βάσης δεδομένων.
-// STOP - Lines generated via autotranslator.php tool (2011-06-26 15:41:07).

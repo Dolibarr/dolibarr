@@ -51,7 +51,8 @@ $year = GETPOST('year')>0?GETPOST('year'):$nowyear;
 $startyear=$year-1;
 $endyear=$year;
 
-$langs->load("orders");
+$langs->load('orders');
+$langs->load('other');
 
 
 /*
@@ -69,7 +70,7 @@ if ($mode == 'customer')
 }
 if ($mode == 'supplier')
 {
-    $title=$langs->trans("OrdersStatisticsSuppliers");
+    $title=$langs->trans("OrdersStatisticsSuppliers").' ('.$langs->trans("SentToSuppliers").")";
     $dir=$conf->fournisseur->dir_output.'/commande/temp';
 }
 

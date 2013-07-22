@@ -3,7 +3,7 @@
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -22,13 +22,12 @@
 
 /**
  *  \file           htdocs/core/modules/DolibarrModules.class.php
- *  \brief          Fichier de description et activation des modules Dolibarr
+ *  \brief          File of parent class of module descriptor class files
  */
 
 
 /**
- *  \class      DolibarrModules
- *  \brief      Classe mere des classes de description et activation des modules Dolibarr
+ *  Parent class of module descriptor class files
  */
 abstract class DolibarrModules
 {
@@ -420,7 +419,7 @@ abstract class DolibarrModules
 		if (empty($reldir)) return 1;
 
         include_once DOL_DOCUMENT_ROOT .'/core/lib/admin.lib.php';
-
+        
         $ok = 1;
         foreach($conf->file->dol_document_root as $dirroot)
         {
@@ -606,9 +605,11 @@ abstract class DolibarrModules
             foreach ($this->boxes as $key => $value)
             {
                 //$titre = $this->boxes[$key][0];
-                $file  = $this->boxes[$key][1];
+                $file  = $this->boxes[$key]['file'];
                 //$note  = $this->boxes[$key][2];
 
+                if (empty($file)) $file  = isset($this->boxes[$key][1])?$this->boxes[$key][1]:'';	// For backward compatibility
+                
                 $sql = "DELETE FROM ".MAIN_DB_PREFIX."boxes";
                 $sql.= " USING ".MAIN_DB_PREFIX."boxes, ".MAIN_DB_PREFIX."boxes_def";
                 $sql.= " WHERE ".MAIN_DB_PREFIX."boxes.box_id = ".MAIN_DB_PREFIX."boxes_def.rowid";
@@ -892,11 +893,12 @@ abstract class DolibarrModules
                         if ($this->db->errno() != "DB_ERROR_RECORD_ALREADY_EXISTS")
                         {
                             $this->error=$this->db->lasterror();
-                            dol_syslog(get_class($this)."::insert_permissions error ".$this->error, LOG_ERR);
+                            dol_syslog(get_class($this)."::insert_permissions errno = ".$this->db->errno()." error ".$this->error, LOG_ERR);
                             $err++;
                             break;
                         }
                         else dol_syslog(get_class($this)."::insert_permissions record already exists", LOG_INFO);
+                        
                     }
                     $this->db->free($resqlinsert);
 

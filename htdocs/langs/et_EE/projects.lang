@@ -1,12 +1,4 @@
-/*
- * Language code: et_EE
- * Automatic generated via autotranslator.php tool
- * Generation date 2012-02-29 22:15:30
- */
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 22:15:30).
-// Reference language: en_US -> et_EE
+# Dolibarr language file - Source file is en_US - projects
 CHARSET=UTF-8
 Project=Projekt
 Projects=Projektid
@@ -93,6 +85,16 @@ TaskIsNotAffectedToYou=Ülesanne ei eraldata te
 ErrorTimeSpentIsEmpty=Aega on tühi
 ThisWillAlsoRemoveTasks=Toetatakse ka kustutada kõik ülesanded projekti <b>(%s</b> ülesandeid hetkel) ja kõik sisendid aega.
 IfNeedToUseOhterObjectKeepEmpty=Kui mõned objektid (arve, et, ...), mis kuuluvad teisele kolmandale osapoolele, peab olema seotud projekti luua, hoida seda tühjaks lasta projekt on multi kolmandatele isikutele.
+# CloneProject=Clone project
+# CloneTasks=Clone tasks
+# CloneContacts=Clone contacts
+# CloneNotes=Clone notes
+# CloneFiles=Clone joined files
+# ConfirmCloneProject=Are you sure to clone this project ?
+# ProjectReportDate=Change task date according project start date
+# ErrorShiftTaskDate=Impossible to shift task date according to new project start date
+# ProjectsAndTasksLines=Projects and tasks
+##### Types de contacts #####
 TypeContact_project_internal_PROJECTLEADER=Projektijuht
 TypeContact_project_external_PROJECTLEADER=Projektijuht
 TypeContact_project_internal_CONTRIBUTOR=Toetaja
@@ -101,5 +103,7 @@ TypeContact_project_task_internal_TASKEXECUTIVE=Task kommenteeritud
 TypeContact_project_task_external_TASKEXECUTIVE=Task kommenteeritud
 TypeContact_project_task_internal_CONTRIBUTOR=Toetaja
 TypeContact_project_task_external_CONTRIBUTOR=Toetaja
+# Documents models
 DocumentModelBaleine=Kogu projekti aruande mudel (logo. ..)
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 22:45:51).
+# PlannedWorkload = Planned workload
+# WorkloadOccupation= Workload affectation

@@ -19,6 +19,10 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+error_reporting(E_ALL);
+ini_set('display_errors', true);
+ini_set('html_errors', false);
+
 /**
  *  \file       htdocs/comm/action/index.php
  *  \ingroup    agenda
@@ -31,7 +35,9 @@ require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
-if (! empty($conf->projet->enabled)) require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
+if (! empty($conf->projet->enabled)) {
+	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
+}
 
 if (! isset($conf->global->AGENDA_MAX_EVENTS_DAY_VIEW)) $conf->global->AGENDA_MAX_EVENTS_DAY_VIEW=3;
 
@@ -753,7 +759,9 @@ if (empty($action) || $action == 'show_month')      // View by month
     $newparam=preg_replace('/day=[0-9]+&?/i','',$newparam);
     $newparam=preg_replace('/month=[0-9]+&?/i','',$newparam);
     $newparam=preg_replace('/year=[0-9]+&?/i','',$newparam);
+    $newparam=preg_replace('/viewcal=[0-9]+&?/i','',$newparam);
     $newparam=preg_replace('/showbirthday_=/i','showbirthday=',$newparam);	// Restore correct parameter
+    $newparam.='&viewcal=1';
     echo '<table width="100%" class="nocellnopadd cal_month">';
     echo ' <tr class="liste_titre">';
     $i=0;
@@ -824,7 +832,9 @@ elseif ($action == 'show_week') // View by week
     $newparam=preg_replace('/day=[0-9]+&?/i','',$newparam);
     $newparam=preg_replace('/month=[0-9]+&?/i','',$newparam);
     $newparam=preg_replace('/year=[0-9]+&?/i','',$newparam);
+    $newparam=preg_replace('/viewweek=[0-9]+&?/i','',$newparam);
     $newparam=preg_replace('/showbirthday_=/i','showbirthday=',$newparam);	// Restore correct parameter
+    $newparam.='&viewweek=1';
     echo '<table width="100%" class="nocellnopadd cal_month">';
     echo ' <tr class="liste_titre">';
     $i=0;
@@ -878,6 +888,8 @@ else    // View by day
     $newparam=$param;   // newparam is for birthday links
     $newparam=preg_replace('/action=show_month&?/i','',$newparam);
     $newparam=preg_replace('/action=show_week&?/i','',$newparam);
+    $newparam=preg_replace('/viewday=[0-9]+&?/i','',$newparam);
+    $newparam.='&viewday=1';
     // Code to show just one day
     $style='cal_current_month';
     $today=0;
@@ -944,6 +956,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
     global $theme_datacolor;
     global $cachethirdparties, $cachecontacts, $colorindexused;
 
+
     print '<div id="dayevent_'.sprintf("%04d",$year).sprintf("%02d",$month).sprintf("%02d",$day).'" class="dayevent">'."\n";
     $curtime = dol_mktime(0, 0, 0, $month, $day, $year);
     print '<table class="nobordernopadding" width="100%">';
@@ -951,7 +964,6 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
     print '<a href="'.DOL_URL_ROOT.'/comm/action/index.php?';
     print 'action=show_day&day='.str_pad($day, 2, "0", STR_PAD_LEFT).'&month='.str_pad($month, 2, "0", STR_PAD_LEFT).'&year='.$year;
     print $newparam;
-    //.'&month='.$month.'&year='.$year;
     print '">';
     if ($showinfo) print dol_print_date($curtime,'daytext');
     else print dol_print_date($curtime,'%d');
@@ -959,6 +971,8 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
     print '</td><td align="right" class="nowrap">';
     if ($user->rights->agenda->myactions->create || $user->rights->agenda->allactions->create)
     {
+    	$newparam.='&month='.str_pad($month, 2, "0", STR_PAD_LEFT).'&year='.$year;
+
         //$param='month='.$monthshown.'&year='.$year;
         $hourminsec='100000';
         print '<a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&datep='.sprintf("%04d%02d%02d",$year,$month,$day).$hourminsec.'&backtopage='.urlencode($_SERVER["PHP_SELF"].($newparam?'?'.$newparam:'')).'">';

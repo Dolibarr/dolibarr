@@ -1,4 +1,4 @@
-# Dolibarr language file - el_GR - interventions
+# Dolibarr language file - Source file is en_US - interventions
 CHARSET=UTF-8
 Intervention=Intervention
 Interventions=Interventions
@@ -7,6 +7,7 @@ NewIntervention=New intervention
 AddIntervention=Προσθ. παρέμβασης
 ListOfInterventions=List of interventions
 EditIntervention=Edit intervention
+ActionsOnFicheInter=Δράσεις για την παρέμβαση
 LastInterventions=Last %s interventions
 AllInterventions=All interventions
 CreateDraftIntervention=Create draft
@@ -23,6 +24,11 @@ ConfirmDeleteInterventionLine=Are you sure you want to delete this intervention 
 NameAndSignatureOfInternalContact=Name and signature of intervening :
 NameAndSignatureOfExternalContact=Name and signature of customer :
 DocumentModelStandard=Standard document model for interventions
+# InterventionCardsAndInterventionLines=Interventions and lines of interventions
+ClassifyBilled=Ταξινομήστε &quot;Χρεώσεις&quot;
+StatusInterInvoiced=Τιμολογείται
+RelatedInterventions=Οι παρεμβάσεις που σχετίζονται
+ShowIntervention=Εμφάνιση παρέμβαση
 ##### Types de contacts #####
 TypeContact_fichinter_internal_INTERREPFOLL=Representative following-up intervention
 TypeContact_fichinter_internal_INTERVENING=Intervening
@@ -33,18 +39,5 @@ ArcticNumRefModelDesc1=Generic number model
 ArcticNumRefModelError=Failed to activate
 PacificNumRefModelDesc1=Return numero with format %syymm-nnnn where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
 PacificNumRefModelError=An intervention card starting with $syymm already exists and is not compatible with this model of sequence. Remove it or rename it to activate this module.
-
-
-// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
-// Reference language: en_US -> el_GR
-ActionsOnFicheInter=Δράσεις για την παρέμβαση
-ClassifyBilled=Ταξινομήστε &quot;Χρεώσεις&quot;
-StatusInterInvoiced=Τιμολογείται
-RelatedInterventions=Οι παρεμβάσεις που σχετίζονται
-// STOP - Lines generated via autotranslator.php tool (2011-10-10 05:19:27).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 16:06:57).
-// Reference language: en_US -> el_GR
-ShowIntervention=Εμφάνιση παρέμβαση
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:07:08).
+# PrintProductsOnFichinter=Print products on intervention card
+# PrintProductsOnFichinterDetails=forinterventions generated from orders

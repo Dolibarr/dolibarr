@@ -1,12 +1,4 @@
-/*
- * Language code: et_EE
- * Automatic generated via autotranslator.php tool
- * Generation date 2012-02-29 22:15:30
- */
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 22:15:30).
-// Reference language: en_US -> et_EE
+# Dolibarr language file - Source file is en_US - deliveries
 CHARSET=UTF-8
 Delivery=Tarne
 Deliveries=Kohale
@@ -25,10 +17,10 @@ DeleteDeliveryReceiptConfirm=Oled kindel, et soovite kustutada tarne kättesaami
 DeliveryMethod=Edastamise meetod
 TrackingNumber=Tracking number
 DeliveryNotValidated=Toimetaja ei ole kinnitatud
+# merou PDF model
 NameAndSignature=Nimi ja allkiri:
 ToAndDate=To___________________________________ on ____ / _____ / __________
 GoodStatusDeclaration=On saanud kauba üle heas seisukorras,
 Deliverer=Üleandjale:
 Sender=Saatja
 Recipient=Saaja
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 22:37:47).

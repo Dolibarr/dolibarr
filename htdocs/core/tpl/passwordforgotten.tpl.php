@@ -45,7 +45,7 @@ $(document).ready(function () {
 <input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>">
 <input type="hidden" name="action" value="buildnewpassword">
 
-<table class="login_table_title" summary="<?php echo dol_escape_htmltag($title); ?>" cellpadding="0" cellspacing="0" border="0" align="center">
+<table class="login_table_title" summary="<?php echo dol_escape_htmltag($title); ?>" align="center">
 <tr class="vmenu"><td align="center"><?php echo $title; ?></td></tr>
 </table>
 <br>
@@ -144,9 +144,9 @@ if (! empty($hookmanager->resArray['options'])) {
 <br>
 
 <?php if ($message) { ?>
-	<center><div align="center" style="max-width: 680px; margin-left: 10px; margin-right: 10px;"><div class="error">
-	<?php echo $message; ?>
-	</div></div></center>
+	<center><div align="center" style="max-width: 680px; margin-left: 10px; margin-right: 10px;">
+	<?php echo dol_htmloutput_mesg($message,'','',1); ?>
+	</div></center>
 <?php } ?>
 
 </center>	<!-- end of center -->

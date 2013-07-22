@@ -255,7 +255,7 @@ if ($_GET["action"] == 'create')
 
 		$var=!$var;
 
-		print "<tr $bc[$var]>";
+		print "<tr ".$bc[$var].">";
 
 		//print '<td>'.$charge->getNomUrl(1)."</td>\n";
 

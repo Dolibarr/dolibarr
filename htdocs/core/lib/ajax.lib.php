@@ -310,6 +310,20 @@ function ajax_combobox($htmlname, $event=array(), $minLengthToAutocomplete=0)
 
 	if (! empty($conf->browser->phone)) return '';	// combobox disabled for smartphones (does not works)
 
+	/* Some properties for combobox:
+	minLengthToAutocomplete: 2,
+	comboboxContainerClass: "comboboxContainer",
+	comboboxValueContainerClass: "comboboxValueContainer",
+	comboboxValueContentClass: "comboboxValueContent",
+	comboboxDropDownClass: "comboboxDropDownContainer",
+	comboboxDropDownButtonClass: "comboboxDropDownButton",
+	comboboxDropDownItemClass: "comboboxItem",
+	comboboxDropDownItemHoverClass: "comboboxItemHover",
+	comboboxDropDownGroupItemHeaderClass: "comboboxGroupItemHeader",
+	comboboxDropDownGroupItemContainerClass: "comboboxGroupItemContainer",
+	animationType: "slide",
+	width: "500px" */
+
 	$msg = '<script type="text/javascript">
     $(function() {
     	$("#'.$htmlname.'").combobox({

@@ -1,4 +1,4 @@
-# Dolibarr language file - el_GR - deliveries
+# Dolibarr language file - Source file is en_US - deliveries
 CHARSET=UTF-8
 Delivery=Διανομή
 Deliveries=Διανομές
@@ -12,21 +12,15 @@ QtyDelivered=Ποσότητα που παραδόθηκε
 SetDeliveryDate=Ορισμός ημερ. αποστολής
 ValidateDeliveryReceipt=Επικύρωση παράδοσης παραλαβής
 ValidateDeliveryReceiptConfirm=Are you sure you want to validate this delivery receipt ?
-DeliveryMethod=Μέθοδος διανομής
-TrackingNumber=Αριθμός παρακολούθησης
-=
-# merou PDF model						   
-NameAndSignature=Όνομα και υπογραφή : 
-ToAndDate=Σε ___________________________________ στις ____/_____/__________
-GoodStatusDeclaration=Παραδόθηκαν τα παραπάνω σε καλή κατάσταση
-Deliverer=Διανομέας : 
-Sender=Αποστολέας
-Recipient=Παραλήπτης
-
-
-// START - Lines generated via autotranslator.php tool (2011-06-26 15:35:22).
-// Reference language: en_US -> el_GR
 DeleteDeliveryReceipt=Διαγραφή αποδεικτικό παράδοσης
 DeleteDeliveryReceiptConfirm=Είστε σίγουροι ότι θέλετε να διαγράψετε <b>%s</b> παραλαβής παράδοσης;
+DeliveryMethod=Μέθοδος διανομής
+TrackingNumber=Αριθμός παρακολούθησης
 DeliveryNotValidated=Η παράδοση δεν επικυρώνονται
-// STOP - Lines generated via autotranslator.php tool (2011-06-26 15:37:25).
+# merou PDF model
+NameAndSignature=Όνομα και υπογραφή :
+ToAndDate=Σε ___________________________________ στις ____/_____/__________
+GoodStatusDeclaration=Παραδόθηκαν τα παραπάνω σε καλή κατάσταση
+Deliverer=Διανομέας :
+Sender=Αποστολέας
+Recipient=Παραλήπτης

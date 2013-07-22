@@ -30,7 +30,7 @@
  */
 function contact_prepare_head($object)
 {
-	global $langs, $conf;
+	global $langs, $conf, $user;
 
 	$h = 0;
 	$head = array();
@@ -66,6 +66,22 @@ function contact_prepare_head($object)
     // $this->tabs = array('entity:-tabname);   												to remove a tab
     complete_head_from_modules($conf,$langs,$object,$head,$h,'contact');
 
+    // Notes
+    $head[$h][0] = DOL_URL_ROOT.'/contact/note.php?id='.$object->id;
+    $head[$h][1] = $langs->trans("Note");
+    $head[$h][2] = 'note';
+    $h++;
+    
+    if (! empty($conf->categorie->enabled)  && ! empty($user->rights->categorie->lire))
+    {
+    	$type = 4;
+    	$head[$h][0] = DOL_URL_ROOT.'/categories/categorie.php?id='.$object->id."&type=".$type;
+    	$head[$h][1] = $langs->trans('Categories');
+    	$head[$h][2] = 'category';
+    	$h++;
+    }
+    
+    // Info
     $head[$h][0] = DOL_URL_ROOT.'/contact/info.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("Info");
 	$head[$h][2] = 'info';

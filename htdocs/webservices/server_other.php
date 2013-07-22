@@ -175,7 +175,7 @@ function getVersions($authentication)
 
 /**
  * Method to get a document by webservice
- * 
+ *
  * @param 	array	$authentication		Array with permissions
  * @param 	string	$modulepart		 	Properties of document
  * @param	string	$file				Relative path
@@ -224,7 +224,7 @@ function getDocument($authentication, $modulepart, $file, $refname='')
 		if (empty($refname)) $refname=basename(dirname($original_file)."/");
 
 		// Security check
-		$check_access = dol_check_secure_access_document($modulepart,$original_file,$conf->entity,$refname);
+		$check_access = dol_check_secure_access_document($modulepart,$original_file,$conf->entity,$refname,$fuser);
 		$accessallowed              = $check_access['accessallowed'];
 		$sqlprotectagainstexternals = $check_access['sqlprotectagainstexternals'];
 		$original_file              = $check_access['original_file'];

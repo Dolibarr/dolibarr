@@ -1,4 +1,4 @@
-# Dolibarr language file - en_US - sendings
+# Dolibarr language file - Source file is en_US - sendings
 CHARSET=UTF-8
 RefSending=Ref. shipment
 Sending=Shipment
@@ -71,3 +71,5 @@ DocumentModelSirocco=Simple document model for delivery receipts
 DocumentModelTyphon=More complete document model for delivery receipts (logo...)
 
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=Constant EXPEDITION_ADDON_NUMBER not defined
+SumOfProductVolumes=Sum of product volumes
+SumOfProductWeights=Sum of product weights

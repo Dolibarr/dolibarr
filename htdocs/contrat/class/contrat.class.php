@@ -1531,6 +1531,7 @@ class Contrat extends CommonObject
 			{
 				$this->nb["Contracts"]=$obj->nb;
 			}
+            $this->db->free($resql);
 			return 1;
 		}
 		else
@@ -2071,6 +2072,48 @@ class ContratLigne
 			return -2;
 		}
 	}
+
+	/**
+	 *      Load elements linked to contract (only intervention for the moment)
+	 *
+	 *      @param	string	$type           Object type
+	 *      @return array 	$elements		array of linked elements
+	 */
+	function get_element_list($type)
+	{
+		$elements = array();
+
+		$sql = '';
+		if ($type == 'intervention')
+			$sql = "SELECT rowid FROM " . MAIN_DB_PREFIX . "fichinter WHERE fk_contrat=" . $this->id;
+		if (! $sql) return -1;
+
+		//print $sql;
+		dol_syslog(get_class($this)."::get_element_list sql=" . $sql);
+		$result = $this->db->query($sql);
+		if ($result)
+		{
+			$nump = $this->db->num_rows($result);
+			if ($nump)
+			{
+				$i = 0;
+				while ($i < $nump)
+				{
+					$obj = $this->db->fetch_object($result);
+					$elements[$i] = $obj->rowid;
+					$i++;
+				}
+				$this->db->free($result);
+				/* Return array */
+				return $elements;
+			}
+		}
+		else
+		{
+		    dol_print_error($this->db);
+		}
+	}
+
 }
 
 

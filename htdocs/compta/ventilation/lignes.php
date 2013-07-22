@@ -104,7 +104,7 @@ if ($result)
 		$var=!$var;
 		$codeCompta = $objp->numero.' '.$objp->intitule;
 
-		print "<tr $bc[$var]>";
+		print "<tr ".$bc[$var].">";
 
 		// Ref facture
 		$facture_static->ref=$objp->facnumber;

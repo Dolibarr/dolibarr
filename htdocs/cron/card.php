@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2012      Nicolas Villa aka Boyquotes http://informetic.fr
  * Copyright (C) 2013      Florian Henry <florian.henry@open-concpt.pro>
+ * Copyright (C) 2013      Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,55 +44,66 @@ $confirm=GETPOST('confirm','alpha');
 $cancel=GETPOST('cancel');
 
 $object = new Cronjob($db);
-if (!empty($id)) {
+if (!empty($id))
+{
 	$result=$object->fetch($id);
-	if ($result < 0) {
+	if ($result < 0)
+	{
 		setEventMessage($object->error,'errors');
 	}
 }
 
-if(!empty($cancel)) {
-	if (!empty($id)) {
+if(!empty($cancel))
+{
+	if (!empty($id))
+	{
 		$action='';
-	}else {
-		Header("Location: ".dol_buildpath('/cron/cron/list.php',1).'?status=1');
 	}
-
+	else
+	{
+		Header("Location: ".DOL_URL_ROOT.'/cron/list.php?status=1');
+		exit;
+	}
 }
 
 // Delete jobs
-if ($action == 'confirm_delete' && $confirm == "yes" && $user->rights->cron->delete){
-
-
+if ($action == 'confirm_delete' && $confirm == "yes" && $user->rights->cron->delete)
+{
 	$result = $object->delete($user);
 
-	if ($result < 0) {
+	if ($result < 0)
+	{
 		setEventMessage($object->error,'errors');
 		$action='edit';
-	}else {
-		Header("Location: ".dol_buildpath('/cron/cron/list.php',1).'?status=1');
+	}
+	else
+	{
+		Header("Location: ".DOL_URL_ROOT.'/cron/list.php?status=1');
+		exit;
 	}
 }
 
 // Execute jobs
-if ($action == 'confirm_execute' && $confirm == "yes" && $user->rights->cron->execute){
-
+if ($action == 'confirm_execute' && $confirm == "yes" && $user->rights->cron->execute)
+{
 	$result=$object->run_jobs($user->login);
 
-	if ($result < 0) {
+	if ($result < 0)
+	{
 		setEventMessage($object->error,'errors');
 		$action='';
-	}else {
+	}
+	else
+	{
 		if ($object->lastresult > 0) setEventMessage($langs->trans("JobFinished"),'warnings');
 		else setEventMessage($langs->trans("JobFinished"),'mesgs');
 		$action='';
 	}
-
 }
 
 
-if ($action=='add') {
-
+if ($action=='add')
+{
 	$object->jobtype=GETPOST('jobtype','alpha');
 	$object->label=GETPOST('label','alpha');
 	$object->command=GETPOST('command','alpha');
@@ -123,7 +135,8 @@ if ($action=='add') {
 }
 
 // Save parameters
-if ($action=='update') {
+if ($action=='update')
+{
 	$object->id=$id;
 	$object->jobtype=GETPOST('jobtype');
 	$object->label=GETPOST('label');
@@ -155,7 +168,8 @@ if ($action=='update') {
 	}
 }
 
-if ($action=='activate') {
+if ($action=='activate')
+{
 	$object->status=1;
 
 	//Ajout de la tache cron
@@ -172,7 +186,8 @@ if ($action=='activate') {
 	}
 }
 
-if ($action=='inactive') {
+if ($action=='inactive')
+{
 	$object->status=0;
 	//Ajout de la tache cron
 	$result = $object->update($user);
@@ -199,7 +214,7 @@ llxHeader('',$langs->trans("CronAdd"));
 if ($action=='edit' || empty($action) || $action=='delete' || $action=='execute')
 {
 	$head=cron_prepare_head($object);
-	dol_fiche_head($head, 'card', $langs->trans("CronTask"), 0, 'bill');
+	print dol_get_fiche_head($head, 'card', $langs->trans("CronTask"), 0, 'bill');
 }
 elseif ($action=='create')
 {
@@ -441,16 +456,12 @@ if (($action=="create") || ($action=="edit"))
 	print "</td>";
 	print "</tr>\n";
 
-
-	print '<tr><td colspan="2" align="center">';
-	print "<input type=\"submit\" name=\"save\" class=\"button\" value=\"".$langs->trans("Save")."\">";
-	print "<input type=\"submit\" name=\"cancel\" class=\"button\" value=\"".$langs->trans("Cancel")."\">";
-	print "</td>";
-	print "<td>";
-	print "</td>";
-	print "</tr>\n";
-
 	print '</table>';
+
+	print '<div align="center"><br>';
+	print '<input type="submit" name="save" class="button" value="'.$langs->trans("Save").'">';
+	print '<input type="submit" name="cancel" class="button" value="'.$langs->trans("Cancel").'">';
+	print "</center>";
 
 	print "</form>\n";
 
@@ -608,5 +619,8 @@ if (($action=="create") || ($action=="edit"))
 	print '<br><br></div>';
 }
 
-$db->close();
+
 llxFooter();
+
+$db->close();
+?>

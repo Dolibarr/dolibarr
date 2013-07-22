@@ -369,7 +369,7 @@ if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
         foreach($filelist as $file)
         {
         	print '<tr><td colspan="2"><hr></td></tr>';
-            print '<tr><td nowrap>'.$langs->trans("ChoosedMigrateScript").'</td><td align="right">'.$file.'</td></tr>'."\n";
+            print '<tr><td class="nowrap">'.$langs->trans("ChoosedMigrateScript").'</td><td align="right">'.$file.'</td></tr>'."\n";
 
             // Run sql script
             $ok=run_sql($dir.$file, 0, '', 1);
@@ -399,7 +399,7 @@ if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
             foreach ($modulesfile as $modulefilelong => $modulefileshort)
             {
             	print '<tr><td colspan="2"><hr></td></tr>';
-            	print '<tr><td nowrap>'.$langs->trans("ChoosedMigrateScript").' (external modules)</td><td align="right">'.$modulefileshort.'</td></tr>'."\n";
+            	print '<tr><td class="nowrap">'.$langs->trans("ChoosedMigrateScript").' (external modules)</td><td align="right">'.$modulefileshort.'</td></tr>'."\n";
 
 	            // Run sql script
             	$okmodule=run_sql($modulefilelong, 0, '', 1);	// Note: Result of migration of external module should not decide if we continue migration of Dolibarr or not.

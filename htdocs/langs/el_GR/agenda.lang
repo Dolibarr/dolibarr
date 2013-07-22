@@ -1,44 +1,58 @@
-# Dolibarr language file - el_GR - agenda 
+# Dolibarr language file - Source file is en_US - agenda
 CHARSET=UTF-8
-Actions= Ενέργειες
-ActionsArea= Περιοχή Ενεργειών (γεγονότα και εργασίες)
+Actions=Ενέργειες
+ActionsArea=Περιοχή Ενεργειών (γεγονότα και εργασίες)
 Agenda= Ημερολόγιο
 Agendas= Ημερολόγια
 Calendar= Ημερολόγιο
 Calendars= Ημερολόγια
+LocalAgenda=Τοπικό ημερολόγιο
 AffectedTo= Ανάθεση σε
 DoneBy= Έγινε από
 Events= Γεγονότα
+# EventsNb=Number of events
+MyEvents=Εκδηλώσεις μου
+OtherEvents=Άλλες εκδηλώσεις
 ListOfActions=Λίστα γεγονότων
 Location=Τοποθεσία
 EventOnFullDay=Ολοήμερο Γεγονός
 SearchAnAction= Αναζήτηση ενέργειας/εργασίας
 MenuToDoActions= Όλες οι ημιτελής ενέργειες
 MenuDoneActions= Όλες οι ολοκληρ. ενέργειες
-MenuToDoMyActions=Ημιτελής ενέργειες
-MenuDoneMyActions=Ολοκληρωμένες ενέργειες
+MenuToDoMyActions= Ημιτελής ενέργειες
+MenuDoneMyActions= Ολοκληρωμένες ενέργειες
 ListOfEvents= Λίστα γεγονότων του Dolibarr
-ActionsAskedBy= Ενέργειες που καταχωρήθηκαν από
-ActionsToDoBy= Ενέργειες που ανατέθηκαν σε
-ActionsDoneBy= Ενέργειες που ολοκληρώθηκαν από
+ActionsAskedBy=Ενέργειες που καταχωρήθηκαν από
+ActionsToDoBy=Ενέργειες που ανατέθηκαν σε
+ActionsDoneBy=Ενέργειες που ολοκληρώθηκαν από
 AllMyActions= Όλες οι ενέργειες/εργασίες
 AllActions= Όλες οι ενέργειες/εργασίες
-ViewList= Εμφάνιση Λίστας
-ViewCal= Εμφάνιση Ημερολογίου
+ViewList=Εμφάνιση Λίστας
+ViewCal=Εμφάνιση Ημερολογίου
+ViewDay=Προβολή ημέρας
+ViewWeek=Προβολή εβδομάδας
 ViewWithPredefinedFilters= Εμφάνιση με προκαθορισμένα φίλτρα
 AutoActions= Αυτόματη συμπλήρωση ημερολογίου
-AgendaAutoActionDesc=Εδώ ορίζετε γεγονότα για το οποία θέλετε το  Dolibarrνα δημιουργεί αυτόματα μια ενέργεια στην ατζέντα.Αν τίποτα δεν είναι τσεκαρισμένο (προεπιλογή), τότε, μόνο χειροκίνητες ενέργειες θα συμπεριληφθούν στην ατζέντα.
-AgendaSetupOtherDesc=Αυτή η σελίδα, σας επιτρέπει να ρυθμίσετε άλλες παραμέτρους του αρθρώματος της ατζέντας (ημερολόγιο)
+AgendaAutoActionDesc= Εδώ ορίζετε γεγονότα για το οποία θέλετε το  Dolibarrνα δημιουργεί αυτόματα μια ενέργεια στην ατζέντα.Αν τίποτα δεν είναι τσεκαρισμένο (προεπιλογή), τότε, μόνο χειροκίνητες ενέργειες θα συμπεριληφθούν στην ατζέντα.
+AgendaSetupOtherDesc= Αυτή η σελίδα, σας επιτρέπει να ρυθμίσετε άλλες παραμέτρους του αρθρώματος της ατζέντας (ημερολόγιο)
+AgendaExtSitesDesc=Αυτή η σελίδα σας επιτρέπει να ρυθμίσετε εξωτερικά ημερολόγια.
 ActionsEvents= Γεγονότα για τα οποία θα δημιουργηθεί εγγραφή στο ημερολόγιο, αυτόματα
 PropalValidatedInDolibarr= Η πρόταση %s επικυρώθηκε
 InvoiceValidatedInDolibarr= Το τιμολόγιο %s επικυρώθηκε
+InvoiceBackToDraftInDolibarr=Τιμολόγιο %s να επιστρέψετε στην κατάσταση του σχεδίου
+# InvoiceDeleteDolibarr=Invoice %s deleted
 OrderValidatedInDolibarr= Η παραγγελία %s επικυρώθηκε
+OrderApprovedInDolibarr=%s Παραγγελία εγκριθεί
+OrderBackToDraftInDolibarr=%s Τάξης να επιστρέψετε στην κατάσταση σχέδιο
+OrderCanceledInDolibarr=%s για ακυρώσεις
 InterventionValidatedInDolibarr=Η παρέμβαση %s επικυρώθηκε
 ProposalSentByEMail=Η εμπορική πρόταση %s στάλθηκε με e-mail
 OrderSentByEMail=Η παραγγελία του πελάτη %s εστάλει με EMail
 InvoiceSentByEMail=Το τιμολόγιο του πελάτη %s εστάλει με EMail
 SupplierOrderSentByEMail=Η παραγγελία προμηθευτή %s στάλθηκε με e-mail
 SupplierInvoiceSentByEMail=Το τιμολόγιο προμηθευτή %s στάλθηκε με e-mail
+ShippingSentByEMail=Αποστολές %s αποστέλλονται με ηλεκτρονικό ταχυδρομείο
+InterventionSentByEMail=Παρέμβαση %s αποστέλλονται με ηλεκτρονικό ταχυδρομείο
 NewCompanyToDolibarr= Το στοιχείο δημιουργήθηκε
 DateActionPlannedStart= Προγρ/σμένη ημερομηνία έναρξης
 DateActionPlannedEnd= Προγρ/σμένη ημερομηνία λήξης
@@ -53,33 +67,13 @@ AgendaUrlOptions4=<b>logint=%s</b> για να περιορίσετε τα απ�
 AgendaUrlOptions5=<b>logind=%s</b> για να περιορίσετε τα αποτελέσματα σε ενέργειες που έγιναν από τον χρήστη <b>%s</b>.
 AgendaShowBirthdayEvents=Εμφάνιση γενεθλίων των προσώπων επικοινωνίας
 AgendaHideBirthdayEvents=Απόκρυψη γενεθλίων των προσώπων επικοινωνίας
+# Busy=Busy
 
-
-// START - Lines generated via autotranslator.php tool (2011-06-26 15:35:22).
-// Reference language: en_US -> el_GR
-ViewDay=Προβολή ημέρας
-ViewWeek=Προβολή εβδομάδας
-AgendaExtSitesDesc=Αυτή η σελίδα σας επιτρέπει να ρυθμίσετε εξωτερικά ημερολόγια.
-InvoiceBackToDraftInDolibarr=Τιμολόγιο %s να επιστρέψετε στην κατάσταση του σχεδίου
-ShippingSentByEMail=Αποστολές %s αποστέλλονται με ηλεκτρονικό ταχυδρομείο
+# External Sites ical
+ExportCal=Εξαγωγή ημερολογίου
 ExtSites=Εξωτερικές ημερολόγια
-ExtSites=Εξωτερικές Ημερολόγια
 ExtSitesEnableThisTool=πώς εξωτερικά ημερολόγια σε ημερήσια διάταξη
 ExtSitesNbOfAgenda=Αριθμός των ημερολογίων
 AgendaExtNb=Ημερολόγιο nb %s
 ExtSiteUrlAgenda=URL για να αποκτήσετε πρόσβαση. ICal αρχείο
 ExtSiteNoLabel=Χωρίς Περιγραφή
-// STOP - Lines generated via autotranslator.php tool (2011-06-26 15:36:34).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 16:06:57).
-// Reference language: en_US -> el_GR
-LocalAgenda=Τοπικό ημερολόγιο
-MyEvents=Εκδηλώσεις μου
-OtherEvents=Άλλες εκδηλώσεις
-OrderApprovedInDolibarr=%s Παραγγελία εγκριθεί
-OrderBackToDraftInDolibarr=%s Τάξης να επιστρέψετε στην κατάσταση σχέδιο
-OrderCanceledInDolibarr=%s για ακυρώσεις
-InterventionSentByEMail=Παρέμβαση %s αποστέλλονται με ηλεκτρονικό ταχυδρομείο
-ExportCal=Εξαγωγή ημερολογίου
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:08:30).

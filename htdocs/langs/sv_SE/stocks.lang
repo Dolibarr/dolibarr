@@ -1,21 +1,16 @@
-/*
- * Language code: sv_SV
- * Automatic generated via autotranslator.php tool
- * Generation date 2010-08-27 08:47:44
- */
-
-
-// START - Lines generated via autotranslator.php tool (2010-08-27 08:47:44).
-// Reference language: en_US
+# Dolibarr language file - Source file is en_US - stocks
 CHARSET=UTF-8
 WarehouseCard=Warehouse kort
 Warehouse=Warehouse
+# Warehouses=Warehouses
 NewWarehouse=Nytt lager / Lager område
 WarehouseEdit=Ändra lager
 MenuNewWarehouse=Nya lager
 WarehouseOpened=Warehouse öppnade
 WarehouseClosed=Lager stängt
 WarehouseSource=Källa lager
+# WarehouseSourceNotDefined=No warehouse defined,
+# AddOne=Add one
 WarehouseTarget=Mål lager
 ValidateSending=Radera skicka
 CancelSending=Avbryt sändning
@@ -41,8 +36,10 @@ StockCorrection=Rätt lager
 StockMovement=Överföring
 StockMovements=Stock överföringar
 NumberOfUnit=Antal enheter
+# UnitPurchaseValue=Unit purchase price
 TotalStock=Totalt finns i lager
 StockTooLow=Lager för låg
+# StockLowerThanLimit=Stock lower than alert limit
 EnhancedValue=Värde
 PMPValue=Vägda genomsnittliga priset
 PMPValueShort=WAP
@@ -58,6 +55,7 @@ DeStockOnShipment=Minska riktiga lager på transporten validering
 ReStockOnBill=Reell ökning av lager på leverantörer fakturor / kreditnotor validering
 ReStockOnValidateOrder=Reell ökning av lagren av leverantörer order gillande
 ReStockOnDispatchOrder=Reell ökning av lagren på manuell distributionscentraler i lager, efter leverantör för mottagande
+# ReStockOnDeleteInvoice=Increase real stocks on invoice deletion
 OrderStatusNotReadyToDispatch=Beställ ännu inte eller inte mer en ställning som innebär sändningar av produkter i lager lager.
 StockDiffPhysicTeoric=Orsak till skillnad lager fysiska och teoretiska
 NoPredefinedProductToDispatch=Inga fördefinierade produkter för det här objektet. Så ingen distributionscentraler i lager krävs.
@@ -78,20 +76,16 @@ LieuWareHouse=Lokalisering lager
 WarehousesAndProducts=Lager och produkter
 AverageUnitPricePMPShort=Vägt genomsnittligt ingång pris
 AverageUnitPricePMP=Vägt genomsnittligt ingång pris
+SellPriceMin=Sälja Enhetspris
+EstimatedStockValueSellShort=Värde att sälja
+EstimatedStockValueSell=Värde att sälja
 EstimatedStockValueShort=Uppskattat värde av lager
 EstimatedStockValue=Uppskattat värde av lager
 DeleteAWarehouse=Ta bort ett lager
 ConfirmDeleteWarehouse=Är du säker på att du vill ta bort lagret <b>%s?</b>
 PersonalStock=Personlig lager %s
 ThisWarehouseIsPersonalStock=Detta lager representerar personliga beståndet av %s %s
-// STOP - Lines generated via autotranslator.php tool (2010-08-27 08:49:30).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 17:32:03).
-// Reference language: en_US -> sv_SE
-SellPriceMin=Sälja Enhetspris
-EstimatedStockValueSellShort=Värde att sälja
-EstimatedStockValueSell=Värde att sälja
 SelectWarehouseForStockDecrease=Välj lagret som ska användas för beståndet minskar
 SelectWarehouseForStockIncrease=Välj lagret som ska användas för lagerökningen
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:32:27).
+# NoStockAction=No stock action
+# LastWaitingSupplierOrders=Orders waiting for receptions

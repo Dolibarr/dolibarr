@@ -27,6 +27,7 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
+require_once DOL_DOCUMENT_ROOT.'/adherents/class/cotisation.class.php';
 
 $langs->load("companies");
 $langs->load("members");
@@ -134,15 +135,15 @@ print '<tr class="liste_titre">';
 print '<td colspan="3">'.$langs->trans("SearchAMember").'</td>';
 print "</tr>\n";
 $var=false;
-print "<tr $bc[$var]>";
+print "<tr ".$bc[$var].">";
 print '<td>';
 print $langs->trans("Ref").':</td><td><input type="text" name="search_ref" class="flat" size="16">';
 print '</td><td rowspan="3"><input class="button" type="submit" value="'.$langs->trans("Search").'"></td></tr>';
-print "<tr $bc[$var]>";
+print "<tr ".$bc[$var].">";
 print '<td>';
 print $langs->trans("Name").':</td><td><input type="text" name="search_lastname" class="flat" size="16">';
 print '</td></tr>';
-print "<tr $bc[$var]>";
+print "<tr ".$bc[$var].">";
 print '<td>';
 print $langs->trans("Other").':</td><td><input type="text" name="sall" class="flat" size="16">';
 print '</td></tr>';
@@ -337,7 +338,7 @@ print "</tr>\n";
 foreach ($AdherentType as $key => $adhtype)
 {
 	$var=!$var;
-	print "<tr $bc[$var]>";
+	print "<tr ".$bc[$var].">";
 	print '<td>'.$adhtype->getNomUrl(1, dol_size(32)).'</td>';
 	print '<td align="right">'.(isset($MemberToValidate[$key]) && $MemberToValidate[$key] > 0?$MemberToValidate[$key]:'').' '.$staticmember->LibStatut(-1,$adhtype->cotisation,0,3).'</td>';
 	print '<td align="right">'.(isset($MembersValidated[$key]) && ($MembersValidated[$key]-(isset($MemberUpToDate[$key])?$MemberUpToDate[$key]:0) > 0) ? $MembersValidated[$key]-(isset($MemberUpToDate[$key])?$MemberUpToDate[$key]:0):'').' '.$staticmember->LibStatut(1,$adhtype->cotisation,0,3).'</td>';
@@ -401,7 +402,7 @@ krsort($Total);
 foreach ($Total as $key=>$value)
 {
 	$var=!$var;
-	print "<tr $bc[$var]>";
+	print "<tr ".$bc[$var].">";
 	print "<td><a href=\"cotisations.php?date_select=$key\">$key</a></td>";
 	print "<td align=\"right\">".$Number[$key]."</td>";
 	print "<td align=\"right\">".price($value)."</td>";

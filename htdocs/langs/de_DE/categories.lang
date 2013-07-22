@@ -1,12 +1,5 @@
-/*
-* Language code: de_DE
-* Manually translated by modula71.de
-* Generation date 2012-05-23
-* QA release date 2012-05-27
-*/
-
+# Dolibarr language file - Source file is en_US - categories
 CHARSET=UTF-8
-
 Category=Kategorie
 Categories=Kategorien
 Rubrique=Kategorie
@@ -48,7 +41,7 @@ ErrForgotField=Sie haben ein oder mehrere Felder nicht ausgefüllt
 ErrCatAlreadyExists=Dieser Name wird bereits verwendet
 AddProductToCat=Dieses Produkt einer Kategorie zuweisen?
 ImpossibleAddCat=Das Hinzufügen dieser Kategorie ist nicht möglich
-ImpossibleAssociateCategory=Kann die Kategorie nicht zuweisen zu 
+ImpossibleAssociateCategory=Kann die Kategorie nicht zuweisen zu
 WasAddedSuccessfully=<b> %s</b> wurde erfolgreich hinzugefügt.
 ObjectAlreadyLinkedToCategory=Element ist bereits mit dieser Kategorie verknüpft.
 CategorySuccessfullyCreated=Die Kategorie %s wurde erfolgreich hinzugefügt.
@@ -63,6 +56,7 @@ CompanyHasNoCategory=Diese Organisation ist keiner Kategorie zugewiesen
 MemberHasNoCategory=Dieses Mitglied ist in keiner Kategorie
 ClassifyInCategory=Folgender Kategorie zuweisen
 NoneCategory=Keine
+# NotCategorized=Without category
 CategoryExistsAtSameLevel=Diese Kategorie existiert bereits auf diesem Level
 ReturnInProduct=Zurück zur Produktkarte
 ReturnInSupplier=Zurück zur Anbieterkarte
@@ -98,3 +92,11 @@ CatSupList=Liste der Lieferantenkategorien
 CatCusList=Liste der Kunden-/ Leadkategorien
 CatProdList=Liste der Produktkategorien
 CatMemberList=Liste der Kategoriemitglieder
+# CatSupLinks=Links between suppliers and categories
+# CatCusLinks=Links between customers/prospects and categories
+# CatProdLinks=Links between products/services and categories
+# CatMemberLinks=Links between members and categories
+# CatProdLinks=Links between products/services and categories
+# CatCusLinks=Links between customers/prospects and categories
+# CatSupLinks=Links between suppliers and categories
+# DeleteFromCat=Remove from category

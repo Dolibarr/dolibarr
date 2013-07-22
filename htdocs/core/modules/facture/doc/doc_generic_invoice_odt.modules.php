@@ -55,7 +55,7 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 		$langs->load("companies");
 
 		$this->db = $db;
-		$this->name = "ODT templates";
+		$this->name = "ODT/ODS templates";
 		$this->description = $langs->trans("DocumentModelOdt");
 		$this->scandir = 'FACTURE_ADDON_PDF_ODT_PATH';	// Name of constant that is used to save list of directories to scan
 
@@ -112,7 +112,9 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 		'object_ref_customer'=>$object->ref_client,
 		'object_ref_supplier'=>(! empty($object->ref_fournisseur)?$object->ref_fournisseur:''),
 		'object_source_invoice_ref'=>$invoice_source->ref,
+        'object_hour'=>dol_print_date($object->date,'hour'),
 		'object_date'=>dol_print_date($object->date,'day'),
+		'object_date_rfc'=>dol_print_date($object->date,'dayrfc'),
 		'object_date_limit'=>dol_print_date($object->date_lim_reglement,'day'),
 		'object_date_creation'=>dol_print_date($object->date_creation,'day'),
 		'object_date_modification'=>(! empty($object->date_modification)?dol_print_date($object->date_modification,'day'):''),
@@ -144,8 +146,7 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 		// Retrieve extrafields
 		if(is_array($object->array_options) && count($object->array_options))
 		{
-			if(!class_exists('Extrafields'))
-				require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+			require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 			$extrafields = new ExtraFields($this->db);
 			$extralabels = $extrafields->fetch_name_optionals_label('facture',true);
 			$object->fetch_optionals($object->id,$extralabels);
@@ -220,7 +221,7 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 			if (! is_dir($tmpdir)) $texttitle.=img_warning($langs->trans("ErrorDirNotFound",$tmpdir),0);
 			else
 			{
-				$tmpfiles=dol_dir_list($tmpdir,'files',0,'\.odt');
+				$tmpfiles=dol_dir_list($tmpdir,'files',0,'\.(ods|odt)');
 				if (count($tmpfiles)) $listoffiles=array_merge($listoffiles,$tmpfiles);
 			}
 		}
@@ -339,9 +340,9 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 				$newfiletmp=preg_replace('/\.od(t|s)/i','',$newfile);
 				$newfiletmp=preg_replace('/template_/i','',$newfiletmp);
 				$newfiletmp=preg_replace('/modele_/i','',$newfiletmp);
-				
+
 				$newfiletmp=$objectref.'_'.$newfiletmp;
-				
+
 				// Get extension (ods or odt)
 				$newfileformat=substr($newfile, strrpos($newfile, '.')+1);
 				if ( ! empty($conf->global->MAIN_DOC_USE_TIMING))
@@ -524,7 +525,7 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 						$this->error=$e->getMessage();
 						return -1;
 					}
-				}	
+				}
 
 				if (! empty($conf->global->MAIN_UMASK))
 					@chmod($file, octdec($conf->global->MAIN_UMASK));

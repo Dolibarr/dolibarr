@@ -67,7 +67,6 @@ if ($action == 'set')
 }
 
 
-
 /*
  * View
  */
@@ -85,6 +84,13 @@ $geoip='';
 if (! empty($conf->global->GEOIPMAXMIND_COUNTRY_DATAFILE))
 {
 	$geoip=new DolGeoIP('country',$conf->global->GEOIPMAXMIND_COUNTRY_DATAFILE);
+	//if ($geoip->error) print dol_htmloutput_errors($geoip->errorlabel,'',1);
+	if ($geoip->gi == 'NOGI') $geointernal=true;
+	else $geointernal=false;
+}
+else
+{
+	if (function_exists('geoip_country_code_by_name')) 	$geointernal=true;
 }
 
 // Mode
@@ -102,6 +108,8 @@ print "</tr>\n";
 $var=!$var;
 print '<tr '.$bc[$var].'><td width=\"50%\">'.$langs->trans("PathToGeoIPMaxmindCountryDataFile").'</td>';
 print '<td colspan="2">';
+
+if ($geointernal) print 'Using geoip PHP internal functions. Value must be '.geoip_db_filename(GEOIP_COUNTRY_EDITION).' or '.geoip_db_filename(GEOIP_CITY_EDITION_REV1).'<br>';
 print '<input size="50" type="text" name="GEOIPMAXMIND_COUNTRY_DATAFILE" value="'.$conf->global->GEOIPMAXMIND_COUNTRY_DATAFILE.'">';
 if ($geoip) $version=$geoip->getVersion();
 if ($version)
@@ -118,12 +126,12 @@ print '<br>';
 
 print $langs->trans("NoteOnPathLocation").'<br>';
 
-$url1='http://www.maxmind.com/app/perl?rId=awstats';
+$url1='http://www.maxmind.com/en/city?rId=awstats';
 print $langs->trans("YouCanDownloadFreeDatFileTo",'<a href="'.$url1.'" target="_blank">'.$url1.'</a>');
 
 print '<br>';
 
-$url2='http://www.maxmind.com/app/perl?rId=awstats';
+$url2='http://www.maxmind.com/en/city?rId=awstats';
 print $langs->trans("YouCanDownloadAdvancedDatFileTo",'<a href="'.$url2.'" target="_blank">'.$url2.'</a>');
 
 if ($geoip)

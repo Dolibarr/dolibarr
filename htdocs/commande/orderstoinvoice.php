@@ -34,7 +34,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/report.lib.php';
-if (! empty($conf->projet->enabled)) require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
+if (! empty($conf->projet->enabled)) {
+	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
+}
 
 $langs->load('orders');
 $langs->load('deliveries');
@@ -77,6 +79,12 @@ if ($action == 'create')
 		$originid = GETPOST('originid');
 	}
 }
+
+// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+$hookmanager=new HookManager($db);
+$hookmanager->initHooks(array('orderstoinvoice'));
+
 
 /*
  * Actions
@@ -200,18 +208,18 @@ if (($action == 'create' || $action == 'add') && empty($mesgs))
 
 						while ($ii < $nn)
 						{
-							dol_include_once('/commande/class/commande.class.php');
-							$srcobject = new Commande($db);
+							include_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
+							$objectsrc = new Commande($db);
 							dol_syslog("Try to find source object origin=".$object->origin." originid=".$object->origin_id." to add lines");
-							$result=$srcobject->fetch($orders_id[$ii]);
+							$result=$objectsrc->fetch($orders_id[$ii]);
 							if ($result > 0)
 							{
 								if($closeOrders) {
-									$srcobject->classer_facturee();
-									$srcobject->setStatut(3);
+									$objectsrc->classer_facturee();
+									$objectsrc->setStatut(3);
 								}
-								$lines = $srcobject->lines;
-								if (empty($lines) && method_exists($srcobject,'fetch_lines'))  $lines = $srcobject->fetch_lines();
+								$lines = $objectsrc->lines;
+								if (empty($lines) && method_exists($objectsrc,'fetch_lines'))  $lines = $objectsrc->fetch_lines();
 								$fk_parent_line=0;
 								$num=count($lines);
 								for ($i=0;$i<$num;$i++)
@@ -261,7 +269,6 @@ if (($action == 'create' || $action == 'add') && empty($mesgs))
 											$fk_parent_line = 0;
 										}
 										$result = $object->addline(
-												$id,
 												$desc,
 												$lines[$i]->subprice,
 												$lines[$i]->qty,
@@ -306,7 +313,7 @@ if (($action == 'create' || $action == 'add') && empty($mesgs))
 							}
 							else
 							{
-								$mesgs[]=$srcobject->error;
+								$mesgs[]=$objectsrc->error;
 								$error++;
 							}
 							$ii++;
@@ -409,7 +416,7 @@ if ($action == 'create' && empty($mesgs))
 	$html->select_date(0,'','','','',"add",1,1);
 	print '</td></tr>';
 	// Payment term
-	print '<tr><td nowrap>'.$langs->trans('PaymentConditionsShort').'</td><td colspan="2">';
+	print '<tr><td class="nowrap">'.$langs->trans('PaymentConditionsShort').'</td><td colspan="2">';
 	$html->select_conditions_paiements(isset($_POST['cond_reglement_id'])?$_POST['cond_reglement_id']:$cond_reglement_id,'cond_reglement_id');
 	print '</td></tr>';
 	// Payment mode
@@ -419,11 +426,30 @@ if ($action == 'create' && empty($mesgs))
 	// Project
 	if (! empty($conf->projet->enabled))
 	{
+		$formproject=new FormProjets($db);
+
 		$langs->load('projects');
 		print '<tr><td>'.$langs->trans('Project').'</td><td colspan="2">';
-		select_projects($soc->id, $projectid, 'projectid');
+		$formproject->select_projects($soc->id, $projectid, 'projectid');
 		print '</td></tr>';
 	}
+
+	include_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
+	$objectsrc = new Commande($db);
+	$listoforders = array();
+	foreach ($selected as $sel)
+	{
+		$result=$objectsrc->fetch($sel);
+		if ($result > 0)
+		{
+			$listoforders[] = $objectsrc->ref;
+		}
+	}
+
+	// Other attributes
+	$parameters=array('objectsrc' => $objectsrc, 'idsrc' => $listoforders, 'colspan' => ' colspan="3"');
+	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+
 	// Modele PDF
 	print '<tr><td>'.$langs->trans('Model').'</td>';
 	print '<td>';
@@ -438,18 +464,7 @@ if ($action == 'create' && empty($mesgs))
 	print '<td valign="top" colspan="2">';
 	print '<textarea name="note_public" wrap="soft" cols="70" rows="'.ROWS_3.'">';
 
-	dol_include_once('/commande/class/commande.class.php');
-	$srcobject = new Commande($db);
-	$listoforders = '';
-	foreach ($selected as $sel)
-	{
-		$result=$srcobject->fetch($sel);
-		if ($result > 0)
-		{
-			$listoforders .= ($listoforders?', ':'').$srcobject->ref;
-		}
-	}
-	print $langs->trans("Orders").": ".$listoforders;
+	print $langs->trans("Orders").": ".implode(', ', $listoforders);
 
 	print '</textarea></td></tr>';
 	// Private note

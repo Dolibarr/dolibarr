@@ -88,6 +88,8 @@ if ($result)
 
     $title=$langs->trans("ListOfSubscriptions");
     if (! empty($date_select)) $title.=' ('.$langs->trans("Year").' '.$date_select.')';
+
+    $param="";
     $param.="&amp;statut=$statut&amp;date_select=$date_select";
     print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder,'',$num);
 
@@ -136,7 +138,7 @@ if ($result)
             print "<form method=\"post\" action=\"cotisations.php\">";
             print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
         }
-        print "<tr $bc[$var]>";
+        print "<tr ".$bc[$var].">";
 
         // Ref
         print '<td>'.$cotisation->getNomUrl(1).'</td>';

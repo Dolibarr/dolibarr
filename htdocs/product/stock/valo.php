@@ -103,7 +103,7 @@ if ($result)
         while ($i < min($num,$limit))
         {
             $objp = $db->fetch_object($result);
-            print "<tr $bc[$var]>";
+            print "<tr ".$bc[$var].">";
             print '<td><a href="fiche.php?id='.$objp->ref.'">'.img_object($langs->trans("ShowWarehouse"),'stock').' '.$objp->label.'</a></td>';
             print '<td>'.$objp->lieu.'</td>';
             // PMP value
@@ -127,8 +127,8 @@ if ($result)
 
         print '<tr class="liste_total">';
         print '<td colspan="2" align="right">'.$langs->trans("Total").'</td>';
-        print '<td align="right">'.price(price2num($total,'MT')).' '.$langs->trans('Currency'.$conf->currency).'</td>';
-        print '<td align="right">'.price(price2num($totalsell,'MT')).' '.$langs->trans('Currency'.$conf->currency).'</td>';
+        print '<td align="right">'.price(price2num($total,'MT'),1,$langs,0,0,-1,$conf->currency).'</td>';
+        print '<td align="right">'.price(price2num($totalsell,'MT'),1,$langs,0,0,-1,$conf->currency).'</td>';
         print '<td align="right">&nbsp;</td>';
         print "</tr>\n";
 
@@ -158,7 +158,8 @@ else
     dol_print_error($db);
 }
 
-$db->close();
 
 llxFooter();
+
+$db->close();
 ?>

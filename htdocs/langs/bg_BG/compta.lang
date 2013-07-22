@@ -1,12 +1,4 @@
-/*
- * Language code: bg_BG
- * Automatic generated via autotranslator.php tool
- * Generation date 2012-09-08 17:16:45
- */
-
-
-// START - Lines generated via autotranslator.php tool (2012-09-08 17:16:45).
-// Reference language: en_US -> bg_BG
+# Dolibarr language file - Source file is en_US - compta
 CHARSET=UTF-8
 Accountancy=Счетоводство
 AccountancyCard=Счетоводството карта
@@ -88,11 +80,11 @@ TotalToPay=Всичко за плащане
 TotalVATReceived=Общо ДДС
 CustomerAccountancyCode=Код на клиенти счетоводство
 SupplierAccountancyCode=Код доставчик счетоводство
-AlreadyPaid=Вече е платена
 AccountNumberShort=Номер на сметка
 AccountNumber=Номер на сметка
 NewAccount=Нов акаунт
 SalesTurnover=Продажби оборот
+# SalesTurnoverMinimum=Minimum sales turnover
 ByThirdParties=Bu трети страни
 ByUserAuthorOfInvoice=С фактура автор
 AccountancyExport=Счетоводството износ
@@ -117,6 +109,7 @@ AnnualByCompaniesDueDebtMode=Баланс на приходи и разходи,
 AnnualByCompaniesInputOutputMode=Баланс на приходи и разходи, подробно от трети страни, каза режим <b>%sIncomes Expense%sS отчитане на касова основа.</b>
 SeeReportInInputOutputMode=Виж доклада <b>%sIncomes-Expense%sS</b> каза <b>за отчитане на касова основа</b> за изчисляване на действителните плащания
 SeeReportInDueDebtMode=Виж доклада <b>%sClaims-Debt%sS ангажимент счетоводство</b> за изчисляване на издадените фактури
+# RulesAmountWithTaxIncluded=- Amounts shown are with all taxes included
 RulesResultDue=- Показани Сумите са с включени всички такси <br> - Тя включва неплатените фактури, разходи и ДДС, независимо дали са платени или не. <br> - Тя се основава на датата на утвърждаване на фактури и ДДС и на датата на падежа за разходи.
 RulesResultInOut=- Показани Сумите са с включени всички такси <br> - Тя включва реалните плащания по фактури, разходи и ДДС. <br> - Тя се основава на датите на изплащане на фактури, разходи за ДДС ANF. <br>
 RulesCADue=- Тя включва дължимите на клиента фактури, независимо дали са платени или не. <br> - Тя се основава на датата на валидиране тези фактури. <br>
@@ -151,9 +144,13 @@ DescPurchasesJournal=Покупките вестник
 InvoiceRef=Фактура с реф.
 CodeNotDef=Не е определена
 AddRemind=Изпращането наличната сума
-RemainToDivide=Останете изпращането:
+RemainToDivide= Останете изпращането:
 WarningDepositsNotIncluded=Депозити фактури не са включени в тази версия с този модул за счетоводството.
+# DatePaymentTermCantBeLowerThanObjectDate=Payment term date can't be lower than object date.
 Pcg_version=PCG версия
 Pcg_type=PCG тип
 Pcg_subtype=PCG подтип
-// STOP - Lines generated via autotranslator.php tool (2012-09-08 17:42:05).
+# InvoiceLinesToDispatch=Invoice lines to dispatch
+# InvoiceDispatched=Dispatched invoices
+# AccountancyDashboard=Accountancy summary
+# ByProductsAndServices=By products and services

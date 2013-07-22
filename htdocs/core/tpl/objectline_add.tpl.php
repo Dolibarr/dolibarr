@@ -161,8 +161,8 @@ if (! empty($conf->margin->enabled)) {
 	</td>
 	<td align="right"><input type="text" size="3" id="qty" name="qty" value="<?php echo (GETPOST('qty')?GETPOST('qty'):1); ?>"></td>
 	<td align="right" class="nowrap">
-		<input type="text" size="1" value="<?php echo $buyer->remise_client; ?>" id="remise_percent" name="remise_percent">%
-		<input type="hidden" id="origin_remise_percent" name="origin_remise_percent" value="<?php echo $buyer->remise_client; ?>" />
+		<input type="text" size="1" value="<?php echo $buyer->remise_percent; ?>" id="remise_percent" name="remise_percent">%
+		<input type="hidden" id="origin_remise_percent" name="origin_remise_percent" value="<?php echo $buyer->remise_percent; ?>" />
 	</td>
 <?php
 $colspan = 4;

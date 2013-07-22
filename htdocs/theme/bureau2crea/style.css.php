@@ -57,7 +57,13 @@ $left=($langs->trans("DIRECTION")=='rtl'?'right':'left');
 $fontsize=empty($conf->dol_optimize_smallscreen)?'12':'12';
 $fontsizesmaller=empty($conf->dol_optimize_smallscreen)?'11':'11';
 
-$fontlist='arial,tahoma,verdana,helvetica';
+
+$path='';    			// This value may be used in future for external module to overwrite theme
+$theme='bureau2crea';	// Value of theme
+if (! empty($conf->global->MAIN_OVERWRITE_THEME_RES)) { $path='/'.$conf->global->MAIN_OVERWRITE_THEME_RES; $theme=$conf->global->MAIN_OVERWRITE_THEME_RES; }
+
+// Define image path files
+$fontlist='arial, sans-serif, verdana, helvetica';
 //$fontlist='Verdana,Helvetica,Arial,sans-serif';
 
 $dol_hide_topmenu=$conf->dol_hide_topmenu;
@@ -66,9 +72,6 @@ $dol_optimize_smallscreen=$conf->dol_optimize_smallscreen;
 $dol_no_mouse_hover=$conf->dol_no_mouse_hover;
 $dol_use_jmobile=$conf->dol_use_jmobile;
 
-$path='';    			// This value may be used in future for external module to overwrite theme
-$theme='bureau2crea';	// Value of theme
-if (! empty($conf->global->MAIN_OVERWRITE_THEME_RES)) { $path='/'.$conf->global->MAIN_OVERWRITE_THEME_RES; $theme=$conf->global->MAIN_OVERWRITE_THEME_RES; }
 
 ?>
 
@@ -79,8 +82,10 @@ if (! empty($conf->global->MAIN_OVERWRITE_THEME_RES)) { $path='/'.$conf->global-
 body {
 /*	background-color: #FFFFFF; */
 	color: #101010;
-	font-size: 12px;
-    font-family: arial, sans-serif, verdana, helvetica;
+	<?php if (empty($dol_use_jmobile) || 1==1) { ?>
+	font-size: <?php print $fontsize ?>px;
+    <?php } ?>
+    font-family: <?php print $fontlist ?>;
     margin-top: 0;
     margin-bottom: 0;
     margin-right: 0;
@@ -149,9 +154,15 @@ textarea:disabled {
 	background:#ddd;
 }
 
-
 input[type=checkbox] { background-color: transparent; border: none; box-shadow: none; }
-input[type=image] { background-color: transparent; border: none; box-shadow: none; }
+input[type=radio]    { background-color: transparent; border: none; box-shadow: none; }
+input[type=image]    { background-color: transparent; border: none; box-shadow: none; }
+input:-webkit-autofill {
+	background-color: <?php echo empty($dol_use_jmobile)?'#FBFFEA':'#FFFFFF' ?> !important;
+	background-image:none !important;
+	-webkit-box-shadow: 0 0 0 50px <?php echo empty($dol_use_jmobile)?'#FBFFEA':'#FFFFFF' ?> inset;
+}
+
 input.button[type=submit] {
 	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/bg_btnGreen.jpg',1); ?>);
     display: block;
@@ -166,6 +177,14 @@ input.button[type=submit] {
     font-size: 10px;
     display: inline;
 }
+::-webkit-input-placeholder { color:#ccc; }
+::-moz-placeholder { color:#ccc; } /* firefox 19+ */
+:-ms-input-placeholder { color:#ccc; } /* ie */
+input:-moz-placeholder { color:#ccc; }
+
+<?php if (! empty($dol_use_jmobile)) { ?>
+legend { margin-bottom: 8px; }
+<?php } ?>
 
 .button {
     font-family: <?php print $fontlist ?>;
@@ -226,6 +245,12 @@ div.inline-block
 }
 .nowrap {
 	white-space: <?php print ($dol_optimize_smallscreen?'normal':'nowrap'); ?>;
+}
+.nobold {
+	font-weight: normal !important;
+}
+.nounderline {
+    text-decoration: none;
 }
 
 
@@ -294,7 +319,7 @@ div.fichethirdleft {
 	<?php if (empty($conf->dol_optimize_smallscreen)) { print "width: 35%;\n"; } ?>
 }
 div.fichetwothirdright {
-	<?php if (empty($conf->dol_optimize_smallscreen)) { print "float: ".$left.";\n"; } ?>
+	<?php if (empty($conf->dol_optimize_smallscreen)) { print "float: ".$right.";\n"; } ?>
 	<?php if (empty($conf->dol_optimize_smallscreen)) { print "width: 65%;\n"; } ?>
 }
 div.fichehalfleft {
@@ -302,7 +327,7 @@ div.fichehalfleft {
 	<?php if (empty($conf->dol_optimize_smallscreen)) { print "width: 50%;\n"; } ?>
 }
 div.fichehalfright {
-	<?php if (empty($conf->dol_optimize_smallscreen)) { print "float: ".$left.";\n"; } ?>
+	<?php if (empty($conf->dol_optimize_smallscreen)) { print "float: ".$right.";\n"; } ?>
 	<?php if (empty($conf->dol_optimize_smallscreen)) { print "width: 50%;\n"; } ?>
 }
 div.ficheaddleft {
@@ -369,63 +394,8 @@ div.mainmenu {
 }
 */
 
-<?php if (empty($conf->dol_optimize_smallscreen)) { ?>
+<?php if (empty($conf->dol_optimize_smallscreen)) {
 
-/*
-div.mainmenu.home{
-	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/home.png',1); ?>);
-}
-
-div.mainmenu.companies {
-	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/company.png',1); ?>);
-}
-
-div.mainmenu.products {
-	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/products.png',1); ?>);
-	margin-left: 10px;
-}
-
-div.mainmenu.commercial {
-	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/commercial.png',1); ?>);
-}
-
-div.mainmenu.accountancy {
-	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/money.png',1); ?>);
-}
-
-div.mainmenu.bank {
-    background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/bank.png',1); ?>);
-}
-
-div.mainmenu.project {
-	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/project.png',1); ?>);
-}
-
-div.mainmenu.tools {
-	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/tools.png',1); ?>);
-}
-
-div.mainmenu.members {
-	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/members.png',1); ?>);
-}
-
-div.mainmenu.shop {
-	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/shop.png',1); ?>);
-}
-
-div.mainmenu.agenda {
-	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/agenda.png',1); ?>);
-}
-
-div.mainmenu.ecm {
-	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/ecm.png',1); ?>);
-}
-
-div.mainmenu.cashdesk {
-	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/pointofsale.png',1); ?>);
-}
-*/
-<?php
 // Add here more div for other menu entries. moduletomainmenu=array('module name'=>'name of class for div')
 
 $moduletomainmenu=array('user'=>'','syslog'=>'','societe'=>'companies','projet'=>'project','propale'=>'commercial','commande'=>'commercial',
@@ -561,7 +531,7 @@ li.tmenu a.tmenudisabled {
 /* Login */
 
 form#login {
-	margin-top: 70px;
+	margin-top: <?php echo $dol_optimize_smallscreen?'30':'60' ?>px;
 	margin-bottom: 30px;
 	font-size: 13px;
 }
@@ -787,7 +757,7 @@ div.blockvmenusearch div.menu_titre {
 {
 	padding-top: 1px;
 	padding-bottom: 1px;
-	height: 16px;
+	min-height: 14px;
 }
 
 div.blockvmenubookmarks
@@ -950,7 +920,7 @@ img.toolbarbutton {
  *  RESIZER-BARS
  */
 .ui-layout-resizer  { /* all 'resizer-bars' */
-	width: 8px !important;
+	width: <?php echo (empty($conf->dol_optimize_smallscreen)?'8':'24'); ?>px !important;
 }
 .ui-layout-resizer-hover    {   /* affects both open and closed states */
 }
@@ -959,7 +929,7 @@ img.toolbarbutton {
 /*.ui-layout-resizer-open-hover ,*/ /* hover-color to 'resize' */
 .ui-layout-resizer-dragging {   /* resizer beging 'dragging' */
     background: #DDD;
-    width: 8px;
+    width: <?php echo (empty($conf->dol_optimize_smallscreen)?'8':'24'); ?>px;
 }
 .ui-layout-resizer-dragging {   /* CLONED resizer being dragged */
     border-left:  1px solid #BBB;
@@ -1072,6 +1042,8 @@ img.toolbarbutton {
     border:         1px solid #BBB;
     border-width:   0;
     }
+.ecm-layout-resizer-closed {
+}
 
 .ecm-in-layout-center {
     border-left: 1px !important;
@@ -1143,20 +1115,6 @@ div.tabs a.tab#active {
 
 }
 
-div.tabs a.tab span {
-	padding: 0px 10px 0px 10px;
-    background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/bg_ssmenu_btnG.jpg',1); ?>);
-    background-position: left;
-    background-repeat: no-repeat;
-    display: block;
-    height: 18px;
-    width: auto;
-}
-
-div.tabs a.tab#active span {
-    background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/bg_ssmenusel_btnG.jpg',1); ?>);
-}
-
 div.tabs a.tab:hover {
 	color: #FFFFFF;
     background-color: #505050;
@@ -1169,10 +1127,10 @@ div.tabs a.tab:hover {
     text-align: <?php print $left; ?>;
 }
 
+*/
+
 div.tabBar {
-    color: #234046;
     margin: 0px 0px 10px 0px;
-    background: #dee7ec url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/tab_background.png',1); ?>) repeat-x;
 }
 
 div.tabsAction {
@@ -1181,7 +1139,7 @@ div.tabsAction {
     text-align: right;
 }
 
-
+/*
 a.tabTitle {
     background: #5088A9;
     color: white;
@@ -1299,8 +1257,7 @@ div.divButAction { margin-bottom: 1.4em; }
 	margin: 0px 10px 0px 10px;
 	text-decoration: none;
 	white-space: nowrap;
-    float: right;
-    font-size: 10px;
+    font-size: 12px;
     height: 18px;
     line-height: 18px;
     cursor: pointer;
@@ -1330,8 +1287,7 @@ div.divButAction { margin-bottom: 1.4em; }
 	margin: 0px 10px 0px 10px;
 	text-decoration: none;
 	white-space: nowrap;
-    float: right;
-    font-size: 10px;
+    font-size: 12px;
     height: 18px;
     line-height: 18px;
     margin-bottom: 10px;
@@ -1435,7 +1391,7 @@ border-left: 1px solid #000000;
 
 /* Main boxes */
 
-table.noborder {
+table.noborder, div.noborder form {
 	/*box-shadow: 2px 4px 2px #CCCCCC;
 	-moz-box-shadow: 2px 4px 2px #CCCCCC;
 	-webkit-box-shadow: 2px 4px 2px #CCCCCC; */
@@ -1444,10 +1400,10 @@ table.noborder {
 
 }
 
-table.noborder tr {
+table.noborder tr, div.noborder form {
 }
 
-table.noborder td {
+table.noborder td, div.noborder div {
 }
 
 table.nobordernopadding {
@@ -1483,7 +1439,13 @@ table.noborder {
     vertical-align: text-top;
 }
 
-tr.liste_titre {
+.tagtable { display: table; }
+.tagtable form { display: table-row; }
+.tagtable form div { display: table-cell; }
+.tagtr { display: table-row; }
+.tagtd { display: table-cell; }
+
+tr.liste_titre, form.liste_titre {
     height: 25px;
     background-repeat: no-repeat;
     background-color: #C8C8C8;
@@ -1492,10 +1454,7 @@ tr.liste_titre {
     font-weight: normal;
     /* text-decoration: underline; */
     /* border-bottom: 1px solid #FDFFFF; */
-}
-
-tr.liste_titre {
-    background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/bg_centerBlock-title.jpg',1); ?>);
+    background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/bg_centerBlock-title2.jpg',1); ?>);
     background-position: top right;
 }
 
@@ -1503,28 +1462,24 @@ th.liste_titre_sel, td.liste_titre_sel, th.liste_titre {
     color: #FFFFFF !important;
 }
 
-tr.liste_titre {
-    background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/bg_centerBlock-title2.jpg',1); ?>);
-}
-
-tr.liste_total {
-height: 25px;
-border-top: 1px solid #333;
+tr.liste_total, form.liste_total {
+	height: 25px;
+	border-top: 1px solid #333;
 }
 
 div#stats {
 }
 
-div.liste_titre, tr.liste_titre {
+div.liste_titre, tr.liste_titre, form.liste_titre {
     text-align: <?php echo $left; ?>;
 }
 
-div.liste_titre a, tr.liste_titre a {
+div.liste_titre a, tr.liste_titre a, form.liste_titre a {
 	color: #333333;
 	margin: 0px 5px;
 }
 
-div.liste_titre td, tr.liste_titre td {
+div.liste_titre td, tr.liste_titre td, form.liste_titre div {
 	padding: 0px 5px;
     vertical-align: middle;
     background: none !important;
@@ -1540,13 +1495,13 @@ div.liste_titre, th.liste_titre, td.liste_titre
     background: none;
 }
 
-div.liste_titre input.button, tr.liste_titre input.button {
+div.liste_titre input.button, tr.liste_titre input.button, form.liste_titre input.button {
 	float: left;
     position: relative;
     /*margin: 30px 10px 10px 0px;*/
 }
 
-th.liste_titre_sel, td.liste_titre_sel
+th.liste_titre_sel, td.liste_titre_sel, div.liste_titre_sel
 {
     background: #505050;
     background-repeat: repeat-x;
@@ -1563,47 +1518,47 @@ input.liste_titre {
     border: 0px;
 }
 
-tr.liste_total td {
-border-top: 1px solid #DDDDDD;
-background: #F0F0F0;
-/* background-image: url(<?php echo dol_buildpath($path.'/theme/login_background.png',1); ?>); */
-background-repeat: repeat-x;
-color: #332266;
-font-weight: normal;
-padding: 5px;
+tr.liste_total td, form.liste_total div {
+	border-top: 1px solid #DDDDDD;
+	background: #F0F0F0;
+	/* background-image: url(<?php echo dol_buildpath($path.'/theme/login_background.png',1); ?>); */
+	background-repeat: repeat-x;
+	color: #332266;
+	font-weight: normal;
+	padding: 5px;
 }
 
 .impair {
-background: #eaeaea;
-font-family: <?php print $fontlist ?>;
-border: 0px;
+	background: #eaeaea;
+	font-family: <?php print $fontlist ?>;
+	border: 0px;
 }
 
 .impair:hover {
-background: #c0c4c7;
-border: 0px;
+	background: #c0c4c7;
+	border: 0px;
 }
 
-tr.impair td.nohover {
-background: #eaeaea;
+tr.impair td.nohover, form.impair div.nohover {
+	background: #eaeaea;
 }
 
 .pair	{
-background: #FFFFFF;
-font-family: <?php print $fontlist ?>;
-border: 0px;
+	background: #FFFFFF;
+	font-family: <?php print $fontlist ?>;
+	border: 0px;
 }
 
 .pair:hover {
-background: #c0c4c7;
-border: 0px;
+	background: #c0c4c7;
+	border: 0px;
 }
 
 tr.pair td.nohover {
 	background: #FFFFFF;
 }
 
-.pair td, .impair td
+.pair td, .impair td, .pair div, .impair div
 {
 	padding: 2px 3px !important;
 }
@@ -1618,6 +1573,19 @@ tr.pair td.nohover {
 /*
  *  Boxes
  */
+
+.boxstats {
+    <?php print "float: ".$left.";\n"; ?>
+    margin: 4px;
+    padding: 4px;
+	/*-moz-box-shadow: 4px 4px 4px #DDD;
+    -webkit-box-shadow: 4px 4px 4px #DDD;
+    box-shadow: 4px 4px 4px #DDD;
+    margin-bottom: 8px !important;*/
+    border: 1px solid #AAA;
+    text-align: center;
+    border-radius: 5px;
+}
 
 .box {
 	padding-right: 0px;
@@ -1734,6 +1702,9 @@ a.impayee:hover { font-weight: bold; color: #550000; }
 
 .fieldrequired { font-weight: bold; color: #000055; }
 
+.dolgraphtitle { margin-top: 6px; margin-bottom: 4px; }
+.dolgraphtitlecssboxes { margin: 0px; }
+
 .photo {
 border: 0px;
 /* filter:alpha(opacity=55); */
@@ -1741,7 +1712,7 @@ border: 0px;
 }
 
 div.titre {
-	font-family: "Trebuchet MS",Arial,Helvetica,sans-serif;
+	font-family: <?php print $fontlist ?>;
 	font-weight: normal;
 	color: #842F00;
     font-size: 16px;
@@ -1816,6 +1787,8 @@ opacity: 1;
 /* Calendar                                                                       */
 /* ============================================================================== */
 
+img.datecallink { padding-left: 2px !important; padding-right: 2px !important; padding-bottom: 2px !important; }
+
 .ui-datepicker-trigger {
 	vertical-align: middle;
 	cursor: pointer;
@@ -1840,15 +1813,16 @@ table.dp {
 /* Barre titre */
 .dpHead,.tpHead,.tpHour td:Hover .tpHead{
 	font-weight:bold;
-	background-color:#b3c5cc;
-	color:white;
+	background-color:#BB6644;
+	color:white !important;
 	font-size:11px;
 	cursor:auto;
+	text-align: center;
 }
 /* Barre navigation */
 .dpButtons,.tpButtons {
 	text-align:center;
-	background-color:#617389;
+	background-color:#BB6644;
 	color:#FFFFFF;
 	font-weight:bold;
 	border: 1px outset black;
@@ -1859,16 +1833,14 @@ table.dp {
 .dpExplanation{ font-weight:normal; font-size:11px;}
 .dpWeek td{text-align:center}
 
-.dpToday,.dpReg,.dpSelected{
-	cursor:pointer;
-}
+.dpToday,.dpReg,.dpSelected { cursor:pointer; }
 .dpToday{font-weight:bold; color:black; background-color:#DDDDDD;}
 .dpReg:Hover,.dpToday:Hover{background-color:black;color:white}
 
 /* Jour courant */
-.dpSelected{background-color:#0B63A2;color:white;font-weight:bold; }
+.dpSelected {background-color:#BB6644;color:white;font-weight:bold; }
 
-.tpHour{border-top:1px solid #DDDDDD; border-right:1px solid #DDDDDD;}
+.tpHour {border-top:1px solid #DDDDDD; border-right:1px solid #DDDDDD;}
 .tpHour td {border-left:1px solid #DDDDDD; border-bottom:1px solid #DDDDDD; cursor:pointer;}
 .tpHour td:Hover {background-color:black;color:white;}
 
@@ -1938,9 +1910,30 @@ li.cal_event       { border: none; list-style-type: none; }
 /*  Ajax - Liste deroulante de l'autocompletion                                   */
 /* ============================================================================== */
 
-.ui-widget { font-family: Verdana,Arial,sans-serif; font-size: 0.9em; }
 .ui-autocomplete-loading { background: white url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/working.gif',1); ?>) right center no-repeat; }
-
+.ui-autocomplete {
+	       position:absolute;
+	       width:auto;
+	       font-size: 1.0em;
+	       background-color:white;
+	       border:1px solid #888;
+	       margin:0px;
+	       padding:0px;
+	     }
+.ui-autocomplete ul {
+	       list-style-type:none;
+	       margin:0px;
+	       padding:0px;
+	     }
+.ui-autocomplete ul li.selected { background-color: #D3E5EC;}
+.ui-autocomplete ul li {
+	       list-style-type:none;
+	       display:block;
+	       margin:0;
+	       padding:2px;
+	       height:18px;
+	       cursor:pointer;
+	     }
 
 /* ============================================================================== */
 /*  jQuery - jeditable                                                            */
@@ -2115,13 +2108,22 @@ A.none, A.none:active, A.none:visited, A.none:hover {
     line-height:1.5;
     zoom:1;
     font-weight: normal;
-    font-family:Verdana,Arial,sans-serif;
+    font-family:<?php echo $fontlist; ?>;
     font-size:1em;
 }
-
-div.tabsAction {
-	margin-top: 10px;
+.ui-widget {
+    font-family:<?php echo $fontlist; ?>;
+    font-size:<?php echo $fontsize; ?>px;
 }
+.ui-button { margin-left: -1px; padding-top: 1px; }
+.ui-button-icon-only .ui-button-text { height: 8px; }
+.ui-button-icon-only .ui-button-text, .ui-button-icons-only .ui-button-text { padding: 2px 0px 6px 0px; }
+.ui-button-text
+{
+    line-height: 1em !important;
+}
+.ui-autocomplete-input { margin: 0; padding: 1px; }
+
 
 table.noborder {
 	margin-bottom: 10px;
@@ -2419,7 +2421,7 @@ div.ecmjqft {
 /* Core Styles */
 .ecmjqft LI.directory { font-weight:normal; background: url(<?php echo dol_buildpath($path.'/theme/common/treemenu/folder2.png',1); ?>) left top no-repeat; }
 .ecmjqft LI.expanded { font-weight:normal; background: url(<?php echo dol_buildpath($path.'/theme/common/treemenu/folder2-expanded.png',1); ?>) left top no-repeat; }
-.ecmjqft LI.wait { font-weight:normal; background: url(<?php echo dol_buildpath('/theme/eldy/img/working.gif',1); ?>) left top no-repeat; }
+.ecmjqft LI.wait { font-weight:normal; background: url(<?php echo dol_buildpath('/theme/'.$theme.'/img/working.gif',1); ?>) left top no-repeat; }
 
 
 /* ============================================================================== */
@@ -2444,56 +2446,98 @@ div.ecmjqft {
 /*  JMobile                                                                       */
 /* ============================================================================== */
 
+li.ui-li-divider .ui-link {
+	color: #FFF !important;
+}
+.ui-btn {
+	margin: 0.1em 2px
+}
+a.ui-link, a.ui-link:hover, .ui-btn:hover, span.ui-btn-text:hover, span.ui-btn-inner:hover {
+	text-decoration: none !important;
+}
+
 .ui-btn-inner {
 	padding-left: 10px;
 	padding-right: 10px;
-	white-space: normal;
+	/* white-space: normal; */		/* Warning, enable this break the truncate feature */
+}
+.ui-select .ui-btn-icon-right .ui-btn-inner {
+	padding-right: 36px;
+}
+.ui-select .ui-btn-icon-left .ui-btn-inner {
+	padding-left: 36px;
 }
 
-div.ui-controlgroup
+.fiche .ui-controlgroup {
+	margin: 0px;
+	padding-bottom: 0px;
+}
+div.ui-controlgroup-controls div.tabsElem
 {
-	height: auto;
-	background-image: none;
+	margin-top: 2px;
 }
-
-div.ui-controlgroup-controls div.tabsElem, div.ui-controlgroup-controls div.tabsElem a.tab
+div.ui-controlgroup-controls div.tabsElem a
 {
-	height: auto;
+	-moz-box-shadow: 0 -3px 6px rgba(0,0,0,.2);
+	-webkit-box-shadow: 0 -3px 6px rgba(0,0,0,.2);
+	box-shadow: 0 -3px 6px rgba(0,0,0,.2);
+	border: none;
 }
-
 a.tab span.ui-btn-inner
 {
 	border: none;
 	padding: 0;
 }
-div.tabs a.tab#active span.ui-btn-inner, div.tabs a.tab#active span.ui-btn-text, div.tabs a.tab span.ui-btn-inner, div.tabs a.tab span.ui-btn-text {
-	background-image: none;
-	color: #D45416;
-	height: auto;
-}
 
 .ui-body-c {
-	border: none;
+	border: 1px solid #CCC;
 	text-shadow: none;
 }
-
-.ui-btn-icon-left .ui-icon {
-	left: 8px;
+.ui-link {
+	color: rgb(<?php print $colortext; ?>) !important;
 }
-.ui-btn-icon-right .ui-icon {
-	right: 8px;
+
+a.ui-link {
+	word-wrap: break-word;
+}
+
+/* force wrap possible onto field overflow does not works */
+.formdoc .ui-btn-inner
+{
+	white-space: normal;
+	overflow: hidden;
+	text-overflow: hidden;
+}
+
+/* Warning: setting this may make screen not beeing refreshed after a combo selection */
+.ui-body-c {
+	background: #fff;
 }
 
 div.ui-radio
 {
 	display: inline-block;
 }
-.ui-radio input {
+.ui-checkbox input, .ui-radio input {
 	height: auto;
 	width: auto;
-	margin: 0;
+	margin: 4px;
 	position: static;
 }
+div.ui-checkbox label+input, div.ui-radio label+input {
+	position: absolute;
+}
+
+.ui-mobile fieldset
+{
+	padding-bottom: 10px; margin-bottom: 4px; border-bottom: 1px solid #AAAAAA !important;
+}
+
+ul.ulmenu {
+	border-radius: 0;
+	-webkit-border-radius: 0;
+}
+
 
 <?php
 if (is_object($db)) $db->close();

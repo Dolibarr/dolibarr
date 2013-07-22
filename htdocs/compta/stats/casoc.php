@@ -177,7 +177,7 @@ report_header($nom,$nomlink,$period,$periodlink,$description,$builddate,$exportl
 $catotal=0;
 if ($modecompta == 'CREANCES-DETTES') {
 	$sql = "SELECT DISTINCT s.rowid as socid, s.nom as name,";
-	$sql.= " sum(DISTINCT f.total) as amount, sum(DISTINCT f.total_ttc) as amount_ttc";
+	$sql.= " sum(f.total) as amount, sum(f.total_ttc) as amount_ttc";
 	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 	$sql.= " JOIN ".MAIN_DB_PREFIX."facture as f";
 	if ($selected_cat === -2) {
@@ -227,6 +227,7 @@ $sql.= " AND f.entity = ".$conf->entity;
 if ($socid) $sql.= " AND f.fk_soc = ".$socid;
 $sql.= " GROUP BY s.rowid, s.nom";
 $sql.= " ORDER BY s.rowid";
+echo $sql;
 
 $result = $db->query($sql);
 if ($result) {
@@ -406,13 +407,13 @@ if (count($amount)) {
 		print '<td align="right">';
 		if ($modecompta != 'CREANCES-DETTES') {
                     if ($key > 0) {
-			print '<a href="'.DOL_URL_ROOT.'/compta/paiement/liste.php?userid='.$key.'">';
+			print '<a href="'.DOL_URL_ROOT.'/compta/paiement/liste.php?socid='.$key.'">';
 		    } else {
-			print '<a href="'.DOL_URL_ROOT.'/compta/paiement/liste.php?userid=-1">';
+			print '<a href="'.DOL_URL_ROOT.'/compta/paiement/liste.php?socid=-1">';
 		    }
 		} else {
 		    if ($key > 0) {
-			print '<a href="'.DOL_URL_ROOT.'/compta/facture/list.php?userid='.$key.'">';
+			print '<a href="'.DOL_URL_ROOT.'/compta/facture/list.php?socid='.$key.'">';
 		    } else {
 			print '<a href="#">';
 		    }

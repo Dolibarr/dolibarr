@@ -144,7 +144,7 @@ if ($resql)
 		{
 			$var=!$var;
 			$obj = $db->fetch_object($resql);
-			print "<tr $bc[$var]>";
+			print "<tr ".$bc[$var].">";
 			print '<td class="nowrap">';
 			$orderstatic->id=$obj->rowid;
 			$orderstatic->ref=$obj->ref;
@@ -196,7 +196,7 @@ if ( $resql )
 		{
 			$var=!$var;
 			$obj = $db->fetch_object($resql);
-			print "<tr $bc[$var]><td width=\"30%\">";
+			print "<tr ".$bc[$var]."><td width=\"30%\">";
 			$orderstatic->id=$obj->rowid;
 			$orderstatic->ref=$obj->ref;
 			print $orderstatic->getNomUrl(1);

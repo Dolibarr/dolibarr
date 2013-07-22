@@ -62,14 +62,14 @@ class modMailmanSpip extends DolibarrModules
 		$this->requiredby = array();
 
 		// Config pages
-		$this->config_page_url = array('mailman.php@adherents');
+		$this->config_page_url = array('mailman.php');
 
 		// Constants
 		$this->const = array();
 		$this->const[1] = array("ADHERENT_MAILMAN_UNSUB_URL","chaine","http://lists.domain.com/cgi-bin/mailman/admin/%LISTE%/members?adminpw=%MAILMAN_ADMINPW%&user=%EMAIL%","Url de désinscription aux listes mailman");
 		$this->const[2] = array("ADHERENT_MAILMAN_URL","chaine","http://lists.domain.com/cgi-bin/mailman/admin/%LISTE%/members?adminpw=%MAILMAN_ADMINPW%&send_welcome_msg_to_this_batch=1&subscribees=%EMAIL%","Url pour les inscriptions mailman");
 		$this->const[3] = array("ADHERENT_MAILMAN_LISTS","chaine","","Mailing-list to subscribe new members to");
-		
+
 		// Boxes
 		$this->boxes = array();
 

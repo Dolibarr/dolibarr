@@ -145,7 +145,7 @@ class CommActionRapport
 
 			$nbpage = $this->_pages($pdf, $outputlangs);
 
-			$pdf->AliasNbPages();
+			if (method_exists($pdf,'AliasNbPages')) $pdf->AliasNbPages();
 			$pdf->Close();
 
 			$pdf->Output($file,'F');

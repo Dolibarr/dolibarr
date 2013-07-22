@@ -247,3 +247,27 @@ INSERT INTO llx_c_regions (rowid, fk_pays, code_region, cheflieu, tncc, nom, act
 INSERT INTO llx_c_regions (rowid, fk_pays, code_region, cheflieu, tncc, nom, active) VALUES (23207,  232, 23207, '', 0, 'Los Llanos', 1);
 INSERT INTO llx_c_regions (rowid, fk_pays, code_region, cheflieu, tncc, nom, active) VALUES (23208,  232, 23208, '', 0, 'Nor-Oriental', 1);
 INSERT INTO llx_c_regions (rowid, fk_pays, code_region, cheflieu, tncc, nom, active) VALUES (23209,  232, 23209, '', 0, 'Zuliana', 1);
+
+-- Regions Algeria (id country=13)
+INSERT INTO  llx_c_regions (rowid, fk_pays, code_region, cheflieu, tncc, nom, active) VALUES(1301, 13, 1301, '', 0, 'Algerie', 1);
+
+-- Regions Maroc (id country=12)
+INSERT INTO  llx_c_regions (rowid, fk_pays, code_region, cheflieu, tncc, nom, active) VALUES(1201, 12, 1201, '', 0, 'Tanger-Tétouan', 1);
+INSERT INTO  llx_c_regions (rowid, fk_pays, code_region, cheflieu, tncc, nom, active) VALUES(1202, 12, 1202, '', 0, 'Gharb-Chrarda-Beni Hssen', 1);
+INSERT INTO  llx_c_regions (rowid, fk_pays, code_region, cheflieu, tncc, nom, active) VALUES(1203, 12, 1203, '', 0, 'Taza-Al Hoceima-Taounate', 1);
+INSERT INTO  llx_c_regions (rowid, fk_pays, code_region, cheflieu, tncc, nom, active) VALUES(1204, 12, 1204, '', 0, 'L''Oriental', 1);
+INSERT INTO  llx_c_regions (rowid, fk_pays, code_region, cheflieu, tncc, nom, active) VALUES(1205, 12, 1205, '', 0, 'Fès-Boulemane', 1);
+INSERT INTO  llx_c_regions (rowid, fk_pays, code_region, cheflieu, tncc, nom, active) VALUES(1206, 12, 1206, '', 0, 'Meknès-Tafialet', 1);
+INSERT INTO  llx_c_regions (rowid, fk_pays, code_region, cheflieu, tncc, nom, active) VALUES(1207, 12, 1207, '', 0, 'Rabat-Salé-Zemour-Zaër', 1);
+INSERT INTO  llx_c_regions (rowid, fk_pays, code_region, cheflieu, tncc, nom, active) VALUES(1208, 12, 1208, '', 0, 'Grand Cassablanca', 1);
+INSERT INTO  llx_c_regions (rowid, fk_pays, code_region, cheflieu, tncc, nom, active) VALUES(1209, 12, 1209, '', 0, 'Chaouia-Ouardigha', 1);
+INSERT INTO  llx_c_regions (rowid, fk_pays, code_region, cheflieu, tncc, nom, active) VALUES(1210, 12, 1210, '', 0, 'Doukahla-Adba', 1);
+INSERT INTO  llx_c_regions (rowid, fk_pays, code_region, cheflieu, tncc, nom, active) VALUES(1211, 12, 1211, '', 0, 'Marrakech-Tensift-Al Haouz', 1);
+INSERT INTO  llx_c_regions (rowid, fk_pays, code_region, cheflieu, tncc, nom, active) VALUES(1212, 12, 1212, '', 0, 'Tadla-Azilal', 1);
+INSERT INTO  llx_c_regions (rowid, fk_pays, code_region, cheflieu, tncc, nom, active) VALUES(1213, 12, 1213, '', 0, 'Sous-Massa-Drâa', 1);
+INSERT INTO  llx_c_regions (rowid, fk_pays, code_region, cheflieu, tncc, nom, active) VALUES(1214, 12, 1214, '', 0, 'Guelmim-Es Smara', 1);
+INSERT INTO  llx_c_regions (rowid, fk_pays, code_region, cheflieu, tncc, nom, active) VALUES(1215, 12, 1215, '', 0, 'Laâyoune-Boujdour-Sakia el Hamra', 1);
+INSERT INTO  llx_c_regions (rowid, fk_pays, code_region, cheflieu, tncc, nom, active) VALUES(1216, 12, 1216, '', 0, 'Oued Ed-Dahab Lagouira', 1);
+
+-- Regions Tunisia (id country=10)
+INSERT INTO  llx_c_regions (rowid, fk_pays, code_region, cheflieu, tncc, nom, active) VALUES(1001, 10, 1001, '', 0, 'Algerie', 1);

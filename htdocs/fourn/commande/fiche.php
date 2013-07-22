@@ -336,10 +336,11 @@ else if ($action == 'addline' && $user->rights->fournisseur->commande->creer)
  */
 else if ($action == 'updateligne' && $user->rights->fournisseur->commande->creer &&	$_POST['save'] == $langs->trans('Save'))
 {
-    $product=new Product($db);
     if ($_POST["elrowid"])
     {
-        if ($product->fetch($_POST["elrowid"]) < 0) dol_print_error($db);
+        $line = new CommandeFournisseurLigne($db);
+        $res = $line->fetch($_POST["elrowid"]);
+        if (!$res) dol_print_error($db);
     }
 
     $localtax1_tx=get_localtax($_POST['tva_tx'],1,$mysoc,$object->thirdparty);
@@ -356,9 +357,18 @@ else if ($action == 'updateligne' && $user->rights->fournisseur->commande->creer
         $localtax2_tx,
         'HT',
         0,
-        isset($_POST["type"])?$_POST["type"]:$product->type
+        isset($_POST["type"])?$_POST["type"]:$line->product_type
     );
-
+    unset($_POST['qty']);
+    unset($_POST['type']);
+    unset($_POST['idprodfournprice']);
+    unset($_POST['remmise_percent']);
+    unset($_POST['dp_desc']);
+    unset($_POST['np_desc']);
+    unset($_POST['pu']);
+    unset($_POST['tva_tx']);
+    unset($localtax1_tx);
+    unset($localtax2_tx);
     if ($result	>= 0)
     {
         $outputlangs = $langs;
@@ -1099,7 +1109,7 @@ elseif (! empty($object->id))
 					//'text' => $langs->trans("ConfirmClone"),
 					//array('type' => 'checkbox', 'name' => 'clone_content',   'label' => $langs->trans("CloneMainAttributes"),   'value' => 1),
 					//array('type' => 'checkbox', 'name' => 'update_prices',   'label' => $langs->trans("PuttingPricesUpToDate"),   'value' => 1),
-					array('type' => 'other', 'name' => 'idwarehouse',   'label' => $langs->trans("SelectWarehouseForStockDecrease"),   'value' => $formproduct->selectWarehouses(GETPOST('idwarehouse'),'idwarehouse','',1))
+					array('type' => 'other', 'name' => 'idwarehouse',   'label' => $langs->trans("SelectWarehouseForStockIncrease"),   'value' => $formproduct->selectWarehouses(GETPOST('idwarehouse'),'idwarehouse','',1))
 			);
 		}
 
@@ -1216,8 +1226,8 @@ elseif (! empty($object->id))
 	// Conditions de reglement par defaut
 	$langs->load('bills');
 	$form = new Form($db);
-	print '<tr><td nowrap>';
-	print '<table width="100%" class="nobordernopadding"><tr><td nowrap>';
+	print '<tr><td class="nowrap">';
+	print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
 	print $langs->trans('PaymentConditions');
 	print '<td>';
 	if ($action != 'editconditions') print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editconditions&amp;id='.$object->id.'">'.img_edit($langs->trans('SetConditions'),1).'</a></td>';
@@ -1237,8 +1247,8 @@ elseif (! empty($object->id))
 	// Mode of payment
 	$langs->load('bills');
 	$form = new Form($db);
-	print '<tr><td nowrap>';
-	print '<table width="100%" class="nobordernopadding"><tr><td nowrap>';
+	print '<tr><td class="nowrap">';
+	print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
 	print $langs->trans('PaymentMode');
 	print '</td>';
 	if ($action != 'editmode') print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editmode&amp;id='.$object->id.'">'.img_edit($langs->trans('SetMode'),1).'</a></td>';
@@ -1596,7 +1606,7 @@ elseif (! empty($object->id))
 		print '</td>';
 		print '<td align="right"><input type="text" name="pu" size="5" value="'.GETPOST('pu').'"></td>';
 		print '<td align="right"><input type="text" name="qty" value="'.(GETPOST('qty')?GETPOST('qty'):'1').'" size="2"></td>';
-		print '<td align="right" class="nowrap"><input type="text" name="remise_percent" size="1" value="'.(GETPOST('remise_percent')?GETPOST('remise_percent'):$object->thirdparty->remise_client).'"><span class="hideonsmartphone">%</span></td>';
+		print '<td align="right" class="nowrap"><input type="text" name="remise_percent" size="1" value="'.(GETPOST('remise_percent')?GETPOST('remise_percent'):$object->thirdparty->remise_percent).'"><span class="hideonsmartphone">%</span></td>';
 		print '<td align="center" colspan="4"><input type="submit" class="button" value="'.$langs->trans('Add').'"></td>';
 		print '</tr>';
 
@@ -1653,7 +1663,7 @@ elseif (! empty($object->id))
 
 			print '</td>';
 			print '<td align="right"><input type="text" size="2" id="pqty" name="pqty" value="'.(GETPOST('pqty')?GETPOST('pqty'):'1').'"></td>';
-			print '<td align="right" class="nowrap"><input type="text" size="1" id="p_remise_percent" name="p_remise_percent" value="'.(GETPOST('p_remise_percent')?GETPOST('p_remise_percent'):$object->thirdparty->remise_client).'"><span class="hideonsmartphone">%</span></td>';
+			print '<td align="right" class="nowrap"><input type="text" size="1" id="p_remise_percent" name="p_remise_percent" value="'.(GETPOST('p_remise_percent')?GETPOST('p_remise_percent'):$object->thirdparty->remise_percent).'"><span class="hideonsmartphone">%</span></td>';
 			print '<td align="center" colspan="4"><input type="submit" id="addPredefinedProductButton" class="button" value="'.$langs->trans('Add').'"></td>';
 			print '</tr>';
 

@@ -131,7 +131,8 @@ class HookManager
         // Define type of hook ('output', 'returnvalue' or 'addreplace'). 'addreplace' should be type for all hooks. 'output' and 'returnvalue' are deprecated.
         $hooktype='output';
         if (preg_match('/^pdf_/',$method)) $hooktype='returnvalue';	// pdf_xxx except pdf_writelinedesc are returnvalue hooks. When there is 2 hooks of this type, only last one win.
-        if (in_array($method,array('doActions','formObjectOptions','moveUploadedFile','pdf_writelinedesc','paymentsupplierinvoices','printSearchForm'))) $hooktype='addreplace';
+        if (in_array($method,array('addStatisticLine','doActions','formObjectOptions','moveUploadedFile','pdf_writelinedesc','paymentsupplierinvoices',
+        							'printSearchForm', 'formattachOptions', 'formBuilddocLineOptions'))) $hooktype='addreplace';
 
         // Loop on each hook to qualify modules that declared context
         $modulealreadyexecuted=array();
@@ -143,6 +144,8 @@ class HookManager
             {
                 foreach($modules as $module => $actionclassinstance)
                 {
+                	//print "Before hook ".get_class($actionclassinstance)." method=".$method." results=".count($actionclassinstance->results)." resprints=".count($actionclassinstance->resprints)." result=".$result." resaction=".$resaction."<br>\n";
+
                 	//print 'class='.get_class($actionclassinstance).' method='.$method.' action='.$action;
                 	// jump to next class if method does not exists
                     if (! method_exists($actionclassinstance,$method)) continue;
@@ -157,13 +160,13 @@ class HookManager
                     	{
                     		$error++;
                     		$this->error=$actionclassinstance->error; $this->errors=array_merge($this->errors, (array) $actionclassinstance->errors);
-
-                    		// TODO remove this. Change must be inside the method of hook if required
+                    		// TODO remove this.
+                    		/* Change must be inside the method of hook if required. Only hook must decide if $action must be modified or not.
                     		if ($method == 'doActions')
                     		{
                     			if ($action=='add')    $action='create';
                     			if ($action=='update') $action='edit';
-                    		}
+                    		}*/
                     	}
 
                     	if (is_array($actionclassinstance->results))  $this->resArray =array_merge($this->resArray, $actionclassinstance->results);
@@ -179,14 +182,16 @@ class HookManager
 
                     	if (! empty($actionclassinstance->results) && is_array($actionclassinstance->results)) $this->resArray =array_merge($this->resArray, $actionclassinstance->results);
                     	if (! empty($actionclassinstance->resprints)) $this->resPrint.=$actionclassinstance->resprints;
-
                     	// TODO. remove this. array result must be set into $actionclassinstance->results
-                    	if (is_array($result)) $this->resArray = array_merge($this->resArray, $result);
-                    	// TODO. remove this. result must not be a string. we must use $actionclassinstance->resprint to return a string
-                    	if (! is_array($result) && ! is_numeric($result)) $this->resPrint.=$result;
+                    	//if (is_array($result)) $this->resArray = array_merge($this->resArray, $result);
+                    	// TODO. remove this. result must not be a string. we must use $actionclassinstance->resprints to return a string
+                    	//if (! is_array($result) && ! is_numeric($result)) $this->resPrint.=$result;
                     }
 
-                    //print "method=".$method." results=".count($actionclassinstance->results)." resprints=".count($actionclassinstance->resprints)." result=".$result." resaction=".$resaction;
+                    //print "After hook  ".get_class($actionclassinstance)." method=".$method." results=".count($actionclassinstance->results)." resprints=".count($actionclassinstance->resprints)." result=".$result." resaction=".$resaction."<br>\n";
+
+                    unset($actionclassinstance->results);
+                    unset($actionclassinstance->resprints);
                 }
             }
         }

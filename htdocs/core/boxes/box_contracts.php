@@ -123,6 +123,8 @@ class box_contracts extends ModeleBoxes
     			}
 
     			if ($num==0) $this->info_box_contents[$i][0] = array('td' => 'align="center"','text'=>$langs->trans("NoRecordedContracts"));
+
+				$db->free($resql);
     		}
     		else
     		{

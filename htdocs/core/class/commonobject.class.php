@@ -37,11 +37,11 @@ abstract class CommonObject
     public $errors;
     public $canvas;                // Contains canvas name if it is
 
+    public $name;
     public $lastname;
     public $firstname;
-    public $name;
-    public $nom;
     public $civility_id;
+    public $import_key;
 
     public $array_options=array();
 
@@ -50,6 +50,16 @@ abstract class CommonObject
 
     // No constructor as it is an abstract class
 
+
+    /**
+     * Method to output saved errors
+     *
+     * @return	string		String with errors
+     */
+    function errorsToString()
+    {
+    	return $this->error.(is_array($this->errors)?(($this->error!=''?' ':'').join(',',$this->errors)):'');
+    }
 
     /**
      *	Return full name (civility+' '+name+' '+lastname)
@@ -64,6 +74,7 @@ abstract class CommonObject
     {
         global $conf;
 
+        //print "lastname=".$this->lastname." name=".$this->name." nom=".$this->nom."<br>\n";
         $lastname=$this->lastname;
         $firstname=$this->firstname;
         if (empty($lastname))  $lastname=($this->lastname?$this->lastname:($this->name?$this->name:$this->nom));
@@ -725,31 +736,35 @@ abstract class CommonObject
     }
 
     /**
-     *	Update a specific field from an object
+     *	Update a specific field into database
      *
      *	@param	string	$field		Field to update
      *	@param	mixte	$value		New value
-     *	@param	string	$table		To force other table element or element line
-     *	@param	int		$id			To force other object id
-     *	@param	string	$format		Data format ('text' by default, 'date')
-     *	@param	string	$id_field	To force rowid field name
+     *	@param	string	$table		To force other table element or element line (should not be used)
+     *	@param	int		$id			To force other object id (should not be used)
+     *	@param	string	$format		Data format ('text', 'date'). 'text' is used if not defined
+     *	@param	string	$id_field	To force rowid field name. 'rowid' is used it not defined
+     *	@param	string	$user		Update last update fields also if user object provided
      *	@return	int					<0 if KO, >0 if OK
      */
-    function setValueFrom($field, $value, $table='', $id='', $format='text', $id_field='rowid')
+    function setValueFrom($field, $value, $table='', $id='', $format='', $id_field='', $user='')
     {
         global $conf;
 
-        if (empty($table)) $table=$this->table_element;
-        if (empty($id))    $id=$this->id;
+        if (empty($table)) 	$table=$this->table_element;
+        if (empty($id))    	$id=$this->id;
+		if (empty($format)) 	$format='text';
+		if (empty($id_field)) 	$id_field='rowid';
 
         $this->db->begin();
 
         $sql = "UPDATE ".MAIN_DB_PREFIX.$table." SET ";
         if ($format == 'text') $sql.= $field." = '".$this->db->escape($value)."'";
         else if ($format == 'date') $sql.= $field." = '".$this->db->idate($value)."'";
+        if (is_object($user)) $sql.=", fk_user_modif = ".$user->id;
         $sql.= " WHERE ".$id_field." = ".$id;
 
-        dol_syslog(get_class($this)."::setValueFrom sql=".$sql, LOG_DEBUG);
+        dol_syslog(get_class($this)."::".__FUNCTION__." sql=".$sql, LOG_DEBUG);
         $resql = $this->db->query($sql);
         if ($resql)
         {
@@ -909,7 +924,6 @@ abstract class CommonObject
     		if ($this->db->query($sql))
     		{
     			$this->mode_reglement_id = $id;
-    			$this->mode_reglement = $id;	// for compatibility
     			return 1;
     		}
     		else
@@ -1078,8 +1092,7 @@ abstract class CommonObject
 			// We first search all lines that are parent lines (for multilevel details lines)
 			$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.$this->table_element_line;
 			$sql.= ' WHERE '.$this->fk_element.' = '.$this->id;
-			if ($fk_parent_line)
-				$sql.= ' AND fk_parent_line IS NULL';
+			if ($fk_parent_line) $sql.= ' AND fk_parent_line IS NULL';
 			$sql.= ' ORDER BY rang ASC, rowid '.$rowidorder;
 
 			dol_syslog(get_class($this)."::line_order search all parent lines sql=".$sql, LOG_DEBUG);
@@ -1455,15 +1468,18 @@ abstract class CommonObject
     }
 
     /**
-     *	Update total_ht, total_ttc and total_vat for an object (sum of lines)
+     *	Update total_ht, total_ttc, total_vat, total_localtax1, total_localtax2 for an object (sum of lines).
+     *  Must be called at end of methods addline, updateline.
      *
      *	@param	int		$exclspec          	Exclude special product (product_type=9)
-     *  @param  int		$roundingadjust    	-1=Use default method (MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND or 0), 0=Use total of rounding, 1=Use rounding of total
+     *  @param  int		$roundingadjust    	-1=Use default method (MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND if defined, or 0), 0=Force use total of rounding, 1=Force use rounding of total
      *  @param	int		$nodatabaseupdate	1=Do not update database. Update only properties of object.
      *	@return	int    			           	<0 if KO, >0 if OK
      */
     function update_price($exclspec=0,$roundingadjust=-1,$nodatabaseupdate=0)
     {
+    	global $conf;
+
         include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 
         if ($roundingadjust < 0 && isset($conf->global->MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND)) $roundingadjust=$conf->global->MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND;
@@ -1477,7 +1493,7 @@ abstract class CommonObject
         $fieldlocaltax2='total_localtax2';
         if ($this->element == 'facture_fourn' || $this->element == 'invoice_supplier') $fieldtva='tva';
 
-        $sql = 'SELECT qty, total_ht, '.$fieldtva.' as total_tva, total_ttc, '.$fieldlocaltax1.' as total_localtax1, '.$fieldlocaltax2.' as total_localtax2,';
+        $sql = 'SELECT rowid, qty, total_ht, '.$fieldtva.' as total_tva, total_ttc, '.$fieldlocaltax1.' as total_localtax1, '.$fieldlocaltax2.' as total_localtax2,';
         $sql.= ' tva_tx as vatrate, localtax1_tx, localtax2_tx, localtax1_type, localtax2_type';
         $sql.= ' FROM '.MAIN_DB_PREFIX.$this->table_element_line;
         $sql.= ' WHERE '.$this->fk_element.' = '.$this->id;
@@ -1487,6 +1503,7 @@ abstract class CommonObject
             if ($this->table_element_line == 'contratdet') $product_field='';    // contratdet table has no product_type field
             if ($product_field) $sql.= ' AND '.$product_field.' <> 9';
         }
+        $sql.= ' ORDER by rowid';	// We want to be sure to always use same order of line to not change lines differently when option MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND is used
 
         dol_syslog(get_class($this)."::update_price sql=".$sql);
         $resql = $this->db->query($sql);
@@ -1497,8 +1514,9 @@ abstract class CommonObject
             $this->total_localtax1 = 0;
             $this->total_localtax2 = 0;
             $this->total_ttc = 0;
-            $vatrates = array();
-            $vatrates_alllines = array();
+            $total_ht_by_vats  = array();
+            $total_tva_by_vats = array();
+            $total_ttc_by_vats = array();
 
             $num = $this->db->num_rows($resql);
             $i = 0;
@@ -1506,54 +1524,34 @@ abstract class CommonObject
             {
                 $obj = $this->db->fetch_object($resql);
 
-                $this->total_ht        += $obj->total_ht;
+                $this->total_ht        += $obj->total_ht;	// The only field visible at line level
                 $this->total_tva       += $obj->total_tva;
                 $this->total_localtax1 += $obj->total_localtax1;
                 $this->total_localtax2 += $obj->total_localtax2;
                 $this->total_ttc       += $obj->total_ttc;
+                $total_ht_by_vats[$obj->vatrate]  += $obj->total_ht;
+                $total_tva_by_vats[$obj->vatrate] += $obj->total_tva;
+                $total_ttc_by_vats[$obj->vatrate] += $obj->total_ttc;
 
-                // Check if there is a global invoice tax for this vat rate
-                // FIXME: We should have no database access into this function. Also localtax 7 seems to have problem so i add condition to avoid it into standard usage without loosing it.
-                if (! empty($conf->global->MAIN_USE_LOCALTAX_TYPE_7))
+                if ($roundingadjust)	// Check if we need adjustement onto line for vat
                 {
-                	if ($this->total_localtax1 == 0)
-                    {
-						// Search to know if there is a localtax of type 7
-                    	// TODO : store local taxes types into object lines and remove this. We should use here $obj->localtax1_type but it is not yet filled into database, so we search into table of vat rate
-                		global $mysoc;
-                    	$localtax1_array=getLocalTaxesFromRate($vatrate,1,$mysoc);
-                    	if (empty($obj->localtax1_type))
-                    	{
-                    		$obj->localtax1_type = $localtax1_array[0];
-                    		$obj->localtax1_tx = $localtax1_array[1];
-                    	}
-                    	//end TODO
+                	$tmpvat=price2num($total_ht_by_vats[$obj->vatrate] * $obj->vatrate / 100, 'MT', 1);
+                	$diff=price2num($total_tva_by_vats[$obj->vatrate]-$tmpvat, 'MT', 1);
+                	//print 'Line '.$i.' rowid='.$obj->rowid.' vat_rate='.$obj->vatrate.' total_ht='.$obj->total_ht.' total_tva='.$obj->total_tva.' total_ttc='.$obj->total_ttc.' total_ht_by_vats='.$total_ht_by_vats[$obj->vatrate].' total_tva_by_vats='.$total_tva_by_vats[$obj->vatrate].' (new calculation = '.$tmpvat.') total_ttc_by_vats='.$total_ttc_by_vats[$obj->vatrate].($diff?" => DIFF":"")."<br>\n";
+                	if ($diff)
+                	{
+                		if ($diff > 0.1) { dol_print_error('','A rounding difference was detected but is to high to be corrected'); exit; }
+                		$sqlfix="UPDATE ".MAIN_DB_PREFIX.$this->table_element_line." SET ".$fieldtva." = ".($obj->total_tva - $diff).", total_ttc = ".($obj->total_ttc - $diff)." WHERE rowid = ".$obj->rowid;
+						//print 'We found a difference of '.$diff.' for line rowid = '.$obj->rowid.". Run sqlfix = ".$sqlfix."<br>\n";
+                		dol_syslog('We found a difference of '.$diff.' for line rowid = '.$obj->rowid.". Run sqlfix = ".$sqlfix);
+						$resqlfix=$this->db->query($sqlfix);
+						if (! $resqlfix) dol_print_error($this->db,'Failed to update line');
+						$this->total_tva -= $diff;
+						$this->total_ttc -= $diff;
+						$total_tva_by_vats[$obj->vatrate] -= $diff;
+						$total_ttc_by_vats[$obj->vatrate] -= $diff;
 
-						if ($obj->localtax1_type == '7')
-						{
-							$this->total_localtax1 += $obj->localtax1_tx;
-							$this->total_ttc       += $obj->localtax1_tx;
-						}
-					}
-                    if ($this->total_localtax2 == 0)
-                    {
-						// Search to know if there is a localtax of type 7
-                    	// TODO : store local taxes types into object lines and remove this. We should use here $obj->localtax1_type but it is not yet filled into database, so we search into table of vat rate
-                		global $mysoc;
-                    	$localtax2_array=getLocalTaxesFromRate($vatrate,2,$mysoc);
-                    	if (empty($obj->localtax2_type))
-                    	{
-                    		$obj->localtax2_type = $localtax2_array[0];
-                    		$obj->localtax2_tx = $localtax2_array[1];
-                    	}
-                    	//end TODO
-
-                    	if ($obj->localtax2_type == '7')
-						{
-							$this->total_localtax2 += $obj->localtax2_tx;
-							$this->total_ttc       += $obj->localtax2_tx;
-						}
-                    }
+                	}
                 }
 
                 $i++;
@@ -1570,6 +1568,7 @@ abstract class CommonObject
             $fieldlocaltax1='localtax1';
             $fieldlocaltax2='localtax2';
             $fieldttc='total_ttc';
+            // Specific code for backward compatibility with old field names
             if ($this->element == 'facture' || $this->element == 'facturerec')             $fieldht='total';
             if ($this->element == 'facture_fourn' || $this->element == 'invoice_supplier') $fieldtva='total_tva';
             if ($this->element == 'propal')                                                $fieldttc='total';
@@ -2202,10 +2201,11 @@ abstract class CommonObject
      *
      * @param	object	$extrafields	extrafield Object
      * @param	string	$mode			Show output (view) or input (edit) for extrafield
+	 * @param	array	$params			optionnal parameters
      *
      * @return string
      */
-    function showOptionals($extrafields,$mode='view')
+    function showOptionals($extrafields,$mode='view',$params=0)
     {
 		global $_POST;
 
@@ -2220,7 +2220,13 @@ abstract class CommonObject
 			$e = 0;
 			foreach($extrafields->attribute_label as $key=>$label)
 			{
-				$colspan='3';
+				if (is_array($params) && count($params)>0) {
+					if (array_key_exists('colspan',$params)) {
+						$colspan=$params['colspan'];
+					}
+				}else {
+					$colspan='3';
+				}
 				$value=(isset($_POST["options_".$key])?$_POST["options_".$key]:$this->array_options["options_".$key]);
 				if ($extrafields->attribute_type[$key] == 'separate')
 				{
@@ -2228,14 +2234,20 @@ abstract class CommonObject
 				}
 				else
 				{
+					$csstyle='';
+					if (is_array($params) && count($params)>0) {
+						if (array_key_exists('style',$params)) {
+							$csstyle=$params['style'];
+						}
+					}
 					if ( !empty($conf->global->MAIN_EXTRAFIELDS_USE_TWO_COLUMS) && ($e % 2) == 0)
 					{
-						$out .= '<tr>';
+						$out .= '<tr '.$csstyle.'>';
 						$colspan='0';
 					}
 					else
 					{
-						$out .= '<tr>';
+						$out .= '<tr '.$csstyle.'>';
 					}
 					// Convert date into timestamp format
 					if (in_array($extrafields->attribute_type[$key],array('date','datetime')))
@@ -2263,6 +2275,35 @@ abstract class CommonObject
 			}
 			$out .= "\n";
 			$out .= '<!-- /showOptionalsInput --> ';
+			$out .= '
+				<script type="text/javascript">
+				    jQuery(document).ready(function() {
+				    	function showOptions(child_list, parent_list)
+				    	{
+				    		var val = $("select[name=\"options_"+parent_list+"\"]").val();
+				    		var parentVal = parent_list + ":" + val;
+							if(val > 0) {
+					    		$("select[name=\""+child_list+"\"] option[parent]").hide();
+					    		$("select[name=\""+child_list+"\"] option[parent=\""+parentVal+"\"]").show();
+							} else {
+								$("select[name=\""+child_list+"\"] option").show();
+							}
+				    	}
+						function setListDependencies() {
+					    	jQuery("select option[parent]").parent().each(function() {
+					    		var child_list = $(this).attr("name");
+								var parent = $(this).find("option[parent]:first").attr("parent");
+								var infos = parent.split(":");
+								var parent_list = infos[0];
+								$("select[name=\"options_"+parent_list+"\"]").change(function() {
+									showOptions(child_list, parent_list);
+								});
+					    	});
+						}
+
+						setListDependencies();
+				    });
+				</script>';
 		}
 		return $out;
 	}
@@ -2462,87 +2503,6 @@ abstract class CommonObject
     // TODO: All functions here must be redesigned and moved as they are not business functions but output functions
     // --------------------
 
-
-    /**
-     * List urls of element
-     *
-     * @param 	int		$objectid		Id of record
-     * @param 	string	$objecttype		Type of object
-     * @param 	int		$withpicto		Picto to show
-     * @param 	string	$option			More options
-     * @return	void
-     */
-    function getElementUrl($objectid,$objecttype,$withpicto=0,$option='')
-    {
-        global $conf;
-
-        // Parse element/subelement (ex: project_task)
-        $module = $element = $subelement = $objecttype;
-        if (preg_match('/^([^_]+)_([^_]+)/i',$objecttype,$regs))
-        {
-            $module = $element = $regs[1];
-            $subelement = $regs[2];
-        }
-
-        $classpath = $element.'/class';
-
-        // To work with non standard path
-        if ($objecttype == 'facture' || $objecttype == 'invoice') {
-            $classpath = 'compta/facture/class'; $module='facture'; $subelement='facture';
-        }
-        if ($objecttype == 'commande' || $objecttype == 'order') {
-            $classpath = 'commande/class'; $module='commande'; $subelement='commande';
-        }
-        if ($objecttype == 'propal')  {
-            $classpath = 'comm/propal/class';
-        }
-        if ($objecttype == 'shipping') {
-            $classpath = 'expedition/class'; $subelement = 'expedition'; $module = 'expedition_bon';
-        }
-        if ($objecttype == 'delivery') {
-            $classpath = 'livraison/class'; $subelement = 'livraison'; $module = 'livraison_bon';
-        }
-        if ($objecttype == 'invoice_supplier') {
-            $classpath = 'fourn/class';
-        }
-        if ($objecttype == 'order_supplier')   {
-            $classpath = 'fourn/class';
-        }
-        if ($objecttype == 'contract') {
-            $classpath = 'contrat/class'; $module='contrat'; $subelement='contrat';
-        }
-        if ($objecttype == 'member') {
-            $classpath = 'adherents/class'; $module='adherent'; $subelement='adherent';
-        }
-        if ($objecttype == 'cabinetmed_cons') {
-            $classpath = 'cabinetmed/class'; $module='cabinetmed'; $subelement='cabinetmedcons';
-        }
-        if ($objecttype == 'fichinter') {
-        	$classpath = 'fichinter/class'; $module='ficheinter'; $subelement='fichinter';
-        }
-
-        //print "objecttype=".$objecttype." module=".$module." subelement=".$subelement;
-
-        $classfile = strtolower($subelement); $classname = ucfirst($subelement);
-        if ($objecttype == 'invoice_supplier') {
-            $classfile = 'fournisseur.facture'; $classname='FactureFournisseur';
-        }
-        if ($objecttype == 'order_supplier')   {
-            $classfile = 'fournisseur.commande'; $classname='CommandeFournisseur';
-        }
-
-        if (! empty($conf->$module->enabled))
-        {
-            $res=dol_include_once('/'.$classpath.'/'.$classfile.'.class.php');
-            if ($res)
-            {
-                $object = new $classname($this->db);
-                $ret=$object->fetch($objectid);
-                if ($ret > 0) return $object->getNomUrl($withpicto,$option);
-            }
-        }
-    }
-
     /* This is to show linked object block */
 
     /**
@@ -2636,6 +2596,10 @@ abstract class CommonObject
     {
     	global $conf,$langs,$object,$hookmanager;
     	global $form,$bcnd,$var;
+    	//Line extrafield
+    	require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+    	$extrafieldsline = new ExtraFields($this->db);
+    	$extralabelslines=$extrafieldsline->fetch_name_optionals_label($this->table_element_line);
 
     	// Use global variables + $dateSelector + $seller and $buyer
     	include(DOL_DOCUMENT_ROOT.'/core/tpl/predefinedproductline_create.tpl.php');
@@ -2657,6 +2621,11 @@ abstract class CommonObject
     	global $conf,$langs,$object,$hookmanager;
     	global $form,$bcnd,$var;
 
+    	//Line extrafield
+    	require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+    	$extrafieldsline = new ExtraFields($this->db);
+    	$extralabelslines=$extrafieldsline->fetch_name_optionals_label($this->table_element_line);
+
     	// Use global variables + $dateSelector + $seller and $buyer
     	include(DOL_DOCUMENT_ROOT.'/core/tpl/freeproductline_create.tpl.php');
     }
@@ -2676,6 +2645,11 @@ abstract class CommonObject
 	{
 		global $conf,$user,$langs,$object,$hookmanager;
 		global $form,$bcnd,$var;
+
+		//Line extrafield
+		require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+		$extrafieldsline = new ExtraFields($this->db);
+		$extralabelslines=$extrafieldsline->fetch_name_optionals_label($this->table_element_line);
 
 		// Output template part (modules that overwrite templates must declare this into descriptor)
         // Use global variables + $dateSelector + $seller and $buyer
@@ -2763,8 +2737,16 @@ abstract class CommonObject
 		$var = true;
 		$i	 = 0;
 
+		//Line extrafield
+		require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+		$extrafieldsline = new ExtraFields($this->db);
+		$extralabelslines=$extrafieldsline->fetch_name_optionals_label($this->table_element_line);
+
 		foreach ($this->lines as $line)
 		{
+			//Line extrafield
+			$line->fetch_optionals($line->id,$extralabelslines);
+
 			$var=!$var;
 
 			if (is_object($hookmanager) && (($line->product_type == 9 && ! empty($line->special_code)) || ! empty($line->fk_parent_line)))
@@ -2777,7 +2759,7 @@ abstract class CommonObject
 			}
 			else
 			{
-				$this->printObjectLine($action,$line,$var,$num,$i,$dateSelector,$seller,$buyer,$selected,$hookmanager);
+				$this->printObjectLine($action,$line,$var,$num,$i,$dateSelector,$seller,$buyer,$selected,$extrafieldsline);
 			}
 
 			$i++;
@@ -2797,9 +2779,10 @@ abstract class CommonObject
 	 *	@param  string	    $seller            	Object of seller third party
 	 *	@param  string	    $buyer             	Object of buyer third party
 	 *	@param	string		$selected		   	Object line selected
+	 *  @param  object		$extrafieldsline	Object of extrafield line attribute
 	 *	@return	void
 	 */
-	function printObjectLine($action,$line,$var,$num,$i,$dateSelector,$seller,$buyer,$selected=0)
+	function printObjectLine($action,$line,$var,$num,$i,$dateSelector,$seller,$buyer,$selected=0,$extrafieldsline=0)
 	{
 		global $conf,$langs,$user,$hookmanager;
 		global $form,$bc,$bcdd;
@@ -3063,9 +3046,10 @@ abstract class CommonObject
 
 
 	/**
+	 *	get Margin info
 	 *
-	 * @param string $force_price
-	 * @return multitype:number string NULL
+	 * 	@param 	string 	$force_price	True of not
+	 * 	@return mixed					Array with info
 	 */
 	function getMarginInfos($force_price=false) {
 		global $conf;

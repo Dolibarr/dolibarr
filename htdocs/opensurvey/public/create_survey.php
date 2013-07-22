@@ -164,11 +164,11 @@ print '<br>'."\n";
 $cocheplus='';
 if ($_SESSION["canedit"]) $cocheplus="checked";
 
-print '<input type="checkbox" name="canedit" '.$cocheplus.'>'. $langs->trans("VotersCanModify") .'<br>'."\n";
+print '<input type="checkbox" name="canedit" '.$cocheplus.'> '. $langs->trans("VotersCanModify") .'<br>'."\n";
 
 if ($_SESSION["mailsonde"]) $cochemail="checked";
 
-print '<input type=checkbox name=mailsonde '.$cochemail.'>'. $langs->trans("ToReceiveEMailForEachVote") .'<br>'."\n";
+print '<input type=checkbox name=mailsonde '.$cochemail.'> '. $langs->trans("ToReceiveEMailForEachVote") .'<br>'."\n";
 
 if (GETPOST('choix_sondage'))
 {

@@ -1,12 +1,5 @@
-/*
-* Language code: de_DE
-* Manually translated by modula71.de
-* Generation date 2012-05-23
-* QA release date 2012-05-27
-*/
-
+# Dolibarr language file - Source file is en_US - banks
 CHARSET=UTF-8
-
 Bank=Bank
 Banks=Banken
 MenuBankCash=Finanzen
@@ -27,6 +20,8 @@ SavingAccount=Sparkonto
 SavingAccounts=Sparkonten
 ErrorBankLabelAlreadyExists=Kontenbezeichnung existiert bereits
 BankBalance=Kontostand
+# BankBalanceBefore=Balance before
+# BankBalanceAfter=Balance after
 BalanceMinimalAllowed=Mindestbestand
 BalanceMinimalDesired=Gewünschter Mindestbestand
 InitialBankBalance=Eröffnungsbestand
@@ -110,6 +105,7 @@ ConciliatedBy=Ausgeglichen durch
 DateConciliating=Ausgleichsdatum
 BankLineConciliated=Transaktion ausgeglichen
 CustomerInvoicePayment=Kundenzahlung
+# CustomerInvoicePaymentBack=Customer payment back
 SupplierInvoicePayment=Lieferantenzahlung
 WithdrawalPayment=Entnahme Zahlung
 SocialContributionPayment=Sozialbeitragszahlung
@@ -143,9 +139,15 @@ PaymentNumberUpdateSucceeded=Zahlungsnummer erfolgreich aktualisiert
 PaymentNumberUpdateFailed=Zahlungsnummer konnte nicht aktualisiert werden
 PaymentDateUpdateSucceeded=Zahlungsdatum erfolgreich aktualisiert
 PaymentDateUpdateFailed=Zahlungsdatum konnte nicht aktualisiert werden
+# Transactions=Transactions
 BankTransactionLine=Banküberweisung
 AllAccounts=Alle Finanzkonten
 BackToAccount=Zurück zum Konto
 ShowAllAccounts=Alle Finanzkonten
 FutureTransaction=Zukünftige Transaktionen.
 SelectChequeTransactionAndGenerate=Schecks auswählen/filtern um Sie in den Einzahlungsbeleg zu integrieren und auf "Erstellen" klicken.
+# InputReceiptNumber=Choose the bank statement related with the conciliation. Use a sortable numeric value (such as, YYYYMM)
+# EventualyAddCategory=Eventually, specify a category in which to classify the records
+# ToConciliate=To conciliate?
+# ThenCheckLinesAndConciliate=Then, check the lines present in the bank statement and click
+# BankDashboard=Bank accounts summary

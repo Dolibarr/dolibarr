@@ -1,19 +1,25 @@
-# Dolibarr language file - pt_PT - compta
+# Dolibarr language file - Source file is en_US - compta
 CHARSET=UTF-8
 Accountancy=Contabilidade
 AccountancyCard=Ficha Contabilidade
 Treasury=Tesouraria
 MenuFinancial=Financeira
+TaxModuleSetupToModifyRules=Ir para o <a href="%s">módulo de configuração</a> para modificar as regras para o cálculo
 OptionMode=Opção de Gestão Contabilidade
 OptionModeTrue=Opção Depósitos/Despesas
 OptionModeVirtual=Opção Créditos/Dividas
 OptionModeTrueDesc=Neste método, o balanço calcula-se sobre a base das facturas pagas.\n A validade dos valores não está garantida pois a Gestão da Contabilidade passa rigorosamente pelas entradas/saídas das contas mediante as facturas.\n Nota : Nesta Versão, Dolibarr utiliza a data da factura ao estado ' Validada ' e não a data do estado ' paga '.
 OptionModeVirtualDesc=Neste método, o balanço calcula-se sobre a base das facturas validadas. Pagas ou não, aparecem no resultado.
 FeatureIsSupportedInInOutModeOnly=Função disponível somente ao modo contas CREDITOS-dividas (Ver a configuração do módulo contas)
+VATReportBuildWithOptionDefinedInModule=Montantes apresentados aqui são calculadas usando as regras definidas pelo Imposto de configuração do módulo.
 Param=Parametrização
+RemainingAmountPayment=Saldo pagamento:
+AmountToBeCharged=Montante total a pagar:
 AccountsGeneral=Contas Gerais
 Account=Conta
 Accounts=Contas
+# Accountparent=Account parent
+# Accountsparent=Accounts parent
 BillsForSuppliers=Facturas de Fornecedores
 Income=Depósitos
 Outcome=Despesas
@@ -33,7 +39,11 @@ VATToPay=IVA a Pagar
 VATReceived=IVA Recebido
 VATToCollect=IVA a Recuperar
 VATSummary=Resumo IVA
+LT2SummaryES=Balanço IRPF
 VATPaid=IVA Pago
+LT2PaidES=IRPF Pago
+LT2CustomerES=Vendas IRPF
+LT2SupplierES=Compras IRPF
 VATCollected=IVA Recuperado
 ToPay=A Pagar
 ToGet=Para Voltar
@@ -59,18 +69,22 @@ ListOfCustomerPayments=Lista de pagamentos de clientes
 ListOfSupplierPayments=Lista de pagamentos a Fornecedores
 DatePayment=Data de Pagamento
 NewVATPayment=Novo Pagamento de IVA
+newLT2PaymentES=Nova pagamento IRPF
+LT2PaymentES=Pagamento IRPF
+LT2PaymentsES=Pagamentos IRPF
 VATPayment=Pagamento IVA
 VATPayments=Pagamentos IVA
+SocialContributionsPayments=Contribuições de pagamentos Social
 ShowVatPayment=Ver Pagamentos IVA
 TotalToPay=Total a Pagar
 TotalVATReceived=Total do IVA Recebido
 CustomerAccountancyCode=Código contabilidade cliente
 SupplierAccountancyCode=Código contabilidade fornecedor
-AlreadyPaid=Já Pago
 AccountNumberShort=Nº de conta
 AccountNumber=Número de conta
 NewAccount=Nova conta
 SalesTurnover=Volume de Negócio
+# SalesTurnoverMinimum=Minimum sales turnover
 ByThirdParties=Por Terceiro
 ByUserAuthorOfInvoice=Por autor da factura
 AccountancyExport=Exportação Contabilidade
@@ -95,73 +109,48 @@ AnnualByCompaniesDueDebtMode=Balanço de depósitos e despesas, quebrado por Ter
 AnnualByCompaniesInputOutputMode=Balanço de depósitos e despesas, quebrado por Terceiros, em modo <b>%sdepositos-despesas%s</b> chamada <b>Contabilidade de Caixa</b>.
 SeeReportInInputOutputMode=Ver o Relatório <b>%sdepositos-despesas%s</b> chamado <b>Contabilidade de Caixa</b> para um cálculo sobre as facturas pagas
 SeeReportInDueDebtMode=Ver o Relatório <b>%sCréditos-dividas%s</b> chamada <b>Contabilidade de compromisso</b> para um cálculo das facturas Pendentes de pagamento
+# RulesAmountWithTaxIncluded=- Amounts shown are with all taxes included
 RulesResultDue=- Os montantes mostrados são montantes totais<br>- Inclui as facturas, gastos e IVA devido, que estão pagas ou não.<br>- Se baseia na data de validação para as facturas e o IVA e na data de vencimento para as gastos.<br>
 RulesResultInOut=- Os montantes mostrados são montantes totais<br>- Inclui os pagamentos realizados para as facturas, gastos e IVA.<br>- Se baseia na data de pagamento das mesmas.<br>
 RulesCADue=- Inclui as facturas a clientes,  estejam pagas ou não.<br>- Se baseia na data de validação das mesmas.<br>
 RulesCAIn=- Inclui os pagamentos efectuados das facturas a clientes.<br>- Se baseia na data de pagamento das mesmas<br>
+DepositsAreNotIncluded=- Facturas de depósito não são incluídas
+DepositsAreIncluded=- Facturas de Depósito estão incluídas
+LT2ReportByCustomersInInputOutputModeES=Relatório de terceiros IRPF
 VATReportByCustomersInInputOutputMode=Relatório por cliente do IVA repercutido e pago (IVA pago)
 VATReportByCustomersInDueDebtMode=Relatório por cliente do IVA repercutido e pago (IVA devido)
 VATReportByQuartersInInputOutputMode=Relatório por trimestre do IVA repercutido e pago (IVA pago)
 VATReportByQuartersInDueDebtMode=Relatório por trimestre do IVA repercutido e pago (IVA devido)
 SeeVATReportInInputOutputMode=Ver o Relatório <b>%sIVA pago%s</b> para um modo de cálculo Standard
 SeeVATReportInDueDebtMode=Ver o Relatório <b>%sIVA devido%s</b> para um modo de cálculo com a Opção sobre o devido
-RulesVATIn=- Para os serviços, o Relatório Inclui o IVA dos pagamentos efectivamente recebidos ou emitidos baseando-se na data do pagamento.<br>- Para os bens materiais, Inclui o IVA das facturas baseando-se na data de validação da factura.
-RulesVATDue=- Para os serviços, o Relatório Inclui o IVA das facturas em divida, pagas o não baseando-se na data de validação de estas facturas.<br>- Para os bens materiais, Inclui o IVA das facturas baseando-se na data de validação da factura.
-OptionVatInfoModuleComptabilite=Nota: Para os bens materiais, seria necessário utilizar a data de entregas para ser mais justo.
-PercentOfInvoice=%%/factura
-Dispatch=Repartição
-Dispatched=Repartições
-ToDispatch=A Repartir
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 21:10:10).
-// Reference language: en_US
-NotUsedForGoods=Não utilizados em bens
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:10:10).
-
-
-// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
-// Reference language: en_US -> pt_PT
-TaxModuleSetupToModifyRules=Ir para o <a href="%s">módulo de configuração</a> para modificar as regras para o cálculo
-VATReportBuildWithOptionDefinedInModule=Montantes apresentados aqui são calculadas usando as regras definidas pelo Imposto de configuração do módulo.
-SocialContributionsPayments=Contribuições de pagamentos Social
-ThirdPartyMustBeEditAsCustomer=Terceiro deve ser definido como um cliente
-// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:52:50).
-
-
-// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
-// Reference language: en_US -> pt_PT
-ProposalStats=Estatísticas sobre as propostas
-OrderStats=Estatísticas sobre encomendas
-InvoiceStats=Estatísticas sobre as contas
-SellsJournal= Relatório vendas
-PurchasesJournal= Relatório compras
-DescSellsJournal= Relatório vendas
-DescPurchasesJournal=Relatório compras
-InvoiceRef=Ref fatura.
-CodeNotDef=Não definido
-AddRemind=Despacho montante disponível
-// STOP - Lines generated via autotranslator.php tool (2011-10-10 06:17:49).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 15:45:52).
-// Reference language: en_US -> pt_PT
-RemainingAmountPayment=Saldo pagamento:
-AmountToBeCharged=Montante total a pagar:
-LT2SummaryES=Balanço IRPF
-LT2PaidES=IRPF Pago
-LT2CustomerES=Vendas IRPF
-LT2SupplierES=Compras IRPF
-newLT2PaymentES=Nova pagamento IRPF
-LT2PaymentES=Pagamento IRPF
-LT2PaymentsES=Pagamentos IRPF
-DepositsAreNotIncluded=- Facturas de depósito não são incluídas
-DepositsAreIncluded=- Facturas de Depósito estão incluídas
-LT2ReportByCustomersInInputOutputModeES=Relatório de terceiros IRPF
 RulesVATInServices=- Para os serviços, o relatório inclui os regulamentos de IVA efectivamente recebidas ou emitidas com base na data do pagamento. <br> - Para os bens materiais, que inclui as facturas do IVA com base na data da factura.
 RulesVATInProducts=- Para os bens materiais, que inclui as facturas do IVA com base na data da factura.
 RulesVATDueServices=- Para os serviços, o relatório inclui facturas de IVA devido, pago ou não, com base na data da factura.
 RulesVATDueProducts=- Para os bens materiais, que inclui as facturas de IVA, com base na data da factura.
-RemainToDivide=Permaneça a expedição:
+OptionVatInfoModuleComptabilite=Nota: Para os bens materiais, seria necessário utilizar a data de entregas para ser mais justo.
+PercentOfInvoice=%%/factura
+NotUsedForGoods=Não utilizados em bens
+ProposalStats=Estatísticas sobre as propostas
+OrderStats=Estatísticas sobre encomendas
+InvoiceStats=Estatísticas sobre as contas
+Dispatch=Repartição
+Dispatched=Repartições
+ToDispatch=A Repartir
+ThirdPartyMustBeEditAsCustomer=Terceiro deve ser definido como um cliente
+SellsJournal=Relatório vendas
+PurchasesJournal=Relatório compras
+DescSellsJournal=Relatório vendas
+DescPurchasesJournal=Relatório compras
+InvoiceRef=Ref fatura.
+CodeNotDef=Não definido
+AddRemind=Despacho montante disponível
+RemainToDivide= Permaneça a expedição:
 WarningDepositsNotIncluded=Facturas depósitos não estão incluídos nesta versão com este módulo de contabilidade.
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 15:45:57).
+# DatePaymentTermCantBeLowerThanObjectDate=Payment term date can't be lower than object date.
+# Pcg_version=Pcg version
+# Pcg_type=Pcg type
+# Pcg_subtype=Pcg subtype
+# InvoiceLinesToDispatch=Invoice lines to dispatch
+# InvoiceDispatched=Dispatched invoices
+# AccountancyDashboard=Accountancy summary
+# ByProductsAndServices=By products and services

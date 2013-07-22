@@ -115,15 +115,15 @@ if (empty($reshook))
         {
             $object->particulier       = GETPOST("private");
 
-            $object->name              = empty($conf->global->MAIN_FIRSTNAME_NAME_POSITION)?GETPOST('firstname').' '.GETPOST('nom'):GETPOST('nom').' '.GETPOST('firstname');
+            $object->name              = dolGetFirstLastname(GETPOST('firstname'),GETPOST('nom')?GETPOST('nom'):GETPOST('name'));
             $object->civilite_id       = GETPOST('civilite_id');
             // Add non official properties
-            $object->name_bis          = GETPOST('nom');
+            $object->name_bis          = GETPOST('name')?GETPOST('name'):GETPOST('nom');
             $object->firstname         = GETPOST('firstname');
         }
         else
         {
-            $object->name              = GETPOST('nom');
+            $object->name              = GETPOST('name')?GETPOST('name'):GETPOST('nom');
         }
         $object->address               = GETPOST('address');
         $object->zip                   = GETPOST('zipcode');
@@ -138,6 +138,8 @@ if (empty($reshook))
         $object->idprof2               = GETPOST('idprof2');
         $object->idprof3               = GETPOST('idprof3');
         $object->idprof4               = GETPOST('idprof4');
+        $object->idprof5               = GETPOST('idprof5');
+        $object->idprof6               = GETPOST('idprof6');
         $object->prefix_comm           = GETPOST('prefix_comm');
         $object->code_client           = GETPOST('code_client');
         $object->code_fournisseur      = GETPOST('code_fournisseur');
@@ -602,6 +604,8 @@ else
         $object->idprof2			= GETPOST('idprof2');
         $object->idprof3			= GETPOST('idprof3');
         $object->idprof4			= GETPOST('idprof4');
+        $object->idprof5			= GETPOST('idprof5');
+        $object->idprof6			= GETPOST('idprof6');
         $object->typent_id			= GETPOST('typent_id');
         $object->effectif_id		= GETPOST('effectif_id');
         $object->civility_id		= GETPOST('civilite_id');
@@ -1081,6 +1085,8 @@ else
                 $object->idprof2				= GETPOST('idprof2');
                 $object->idprof3				= GETPOST('idprof3');
                 $object->idprof4				= GETPOST('idprof4');
+        		$object->idprof5				= GETPOST('idprof5');
+        		$object->idprof6				= GETPOST('idprof6');
                 $object->typent_id				= GETPOST('typent_id');
                 $object->effectif_id			= GETPOST('effectif_id');
                 $object->barcode				= GETPOST('barcode');
@@ -1707,10 +1713,8 @@ else
             print '<table width="100%" class="nobordernopadding"><tr><td>';
             print $langs->trans('RIB');
             print '<td><td align="right">';
-            if ($user->rights->societe->creer)
-            print '<a href="'.DOL_URL_ROOT.'/societe/rib.php?socid='.$object->id.'">'.img_edit().'</a>';
-            else
-            print '&nbsp;';
+            if ($user->rights->societe->creer) print '<a href="'.DOL_URL_ROOT.'/societe/rib.php?socid='.$object->id.'">'.img_edit().'</a>';
+            else print '&nbsp;';
             print '</td></tr></table>';
             print '</td>';
             print '<td colspan="3">';
@@ -1793,7 +1797,6 @@ else
         }
 
         print '</div>'."\n";
-        print '<br>';
 
         if (empty($conf->global->SOCIETE_DISABLE_BUILDDOC))
         {
@@ -1820,6 +1823,8 @@ else
 
             print '<br>';
         }
+
+        print '<div class="fichecenter"><br></div>';
 
         // Subsidiaries list
         $result=show_subsidiaries($conf,$langs,$db,$object);

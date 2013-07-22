@@ -216,8 +216,10 @@ body {
 	background: <?php print $colorbackbody; ?>;
 <?php } ?>
 	color: #101010;
+	<?php if (empty($dol_use_jmobile) || 1==1) { ?>
 	font-size: <?php print $fontsize ?>px;
-    font-family: <?php print $fontlist ?>;
+	<?php } ?>
+	font-family: <?php print $fontlist ?>;
     margin-top: 0;
     margin-bottom: 0;
     margin-right: 0;
@@ -229,9 +231,12 @@ a:link, a:visited, a:hover, a:active { font-family: <?php print $fontlist ?>; fo
 
 a:hover { text-decoration: underline; color: #000000;}
 
+<?php if (empty($dol_use_jmobile)) { ?>
+
 input:focus, textarea:focus, button:focus, select:focus {
     box-shadow: 0 0 4px #8091BF;
 }
+
 input, input.flat, textarea, textarea.flat, form.flat select, select.flat {
     font-size: <?php print $fontsize ?>px;
 	font-family: <?php print $fontlist ?>;
@@ -242,6 +247,7 @@ input, input.flat, textarea, textarea.flat, form.flat select, select.flat {
     margin: 0px 0px 0px 0px;
     <?php } ?>
 }
+
 input, textarea, select {
 	border-radius:4px;
 	border:solid 1px rgba(0,0,0,.3);
@@ -253,15 +259,15 @@ input, textarea, select {
 	margin-bottom:1px;
 	margin-top:1px;
 	}
+<?php } ?>
+
 select.flat, form.flat select {
 	font-weight: normal;
 }
 input:disabled {
 	background:#ddd;
 }
-input:-webkit-autofill {
-	background-color: #FCFEFA !important; background-image:none !important;
-}
+
 input.liste_titre {
 	box-shadow: none !important;
 }
@@ -273,7 +279,22 @@ textarea:disabled {
 	background:#ddd;
 }
 input[type=checkbox] { background-color: transparent; border: none; box-shadow: none; }
-input[type=image] { background-color: transparent; border: none; box-shadow: none; }
+input[type=radio]    { background-color: transparent; border: none; box-shadow: none; }
+input[type=image]    { background-color: transparent; border: none; box-shadow: none; }
+input:-webkit-autofill {
+	background-color: <?php echo empty($dol_use_jmobile)?'#FBFFEA':'#FFFFFF' ?> !important;
+	background-image:none !important;
+	-webkit-box-shadow: 0 0 0 50px <?php echo empty($dol_use_jmobile)?'#FBFFEA':'#FFFFFF' ?> inset;
+}
+::-webkit-input-placeholder { color:#ccc; }
+::-moz-placeholder { color:#ccc; } /* firefox 19+ */
+:-ms-input-placeholder { color:#ccc; } /* ie */
+input:-moz-placeholder { color:#ccc; }
+
+<?php if (! empty($dol_use_jmobile)) { ?>
+legend { margin-bottom: 8px; }
+<?php } ?>
+
 
 .button {
     font-family: <?php print $fontlist ?>;
@@ -359,6 +380,12 @@ th .button {
 }
 .nowrap {
 	white-space: <?php print ($dol_optimize_smallscreen?'normal':'nowrap'); ?>;
+}
+.nobold {
+	font-weight: normal !important;
+}
+.nounderline {
+    text-decoration: none;
 }
 
 
@@ -668,7 +695,7 @@ div.mainmenu.gravatar {
 div.mainmenu.geopipmaxmind {
 }
 
-div.mainmenu.holiday {
+div.mainmenu.hrm {
 	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/holiday.png',1) ?>);
 }
 
@@ -903,7 +930,7 @@ font.vsmenudisabled { font-size:<?php print $fontsize ?>px; font-family: <?php p
 a.vsmenu:link, a.vsmenu:visited { color: #<?php echo $colortextmain; ?>; }
 font.vsmenudisabledmargin { margin: 1px 1px 1px 8px; }
 
-a.help:link, a.help:visited, a.help:hover, a.help:active { font-size:<?php print $fontsizesmaller ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: normal; color: #666666; }
+a.help:link, a.help:visited, a.help:hover, a.help:active { font-size:<?php print $fontsizesmaller ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: normal; color: #666666; text-decoration: none; }
 
 
 div.blockvmenupair, div.blockvmenuimpair, div.blockvmenubookmarks
@@ -919,19 +946,20 @@ div.blockvmenupair, div.blockvmenuimpair, div.blockvmenubookmarks
     margin: 1px 0px 8px 2px;
 
 <?php if ($usecss3) { ?>
-    background-image: -o-linear-gradient(bottom, rgb(<?php echo $colorbacktab2; ?>) 0px, rgb(<?php echo $colorbacktab1; ?>) 8px);
-    background-image: -moz-linear-gradient(bottom, rgb(<?php echo $colorbacktab2; ?>) 0px, rgb(<?php echo $colorbacktab1; ?>) 8px);
-/*    background-image: -webkit-linear-gradient(bottom, rgb(<?php echo $colorbacktab1; ?>) 90%, rgb(<?php echo $colorbacktab2; ?>) 100%); */
-    background-image: -webkit-linear-gradient(right, rgb(<?php echo $colorbacktab2; ?>) 0px, rgb(<?php echo $colorbacktab1; ?>) 8px);
-    background-image: -ms-linear-gradient(bottom, rgb(<?php echo $colorbacktab2; ?>) 0px, rgb(<?php echo $colorbacktab1; ?>) 8px);
-    background-image: linear-gradient(bottom, rgb(<?php echo $colorbacktab2; ?>) 0px, rgb(<?php echo $colorbacktab1; ?>) 8px);
+
+    background-image: -o-linear-gradient(bottom, rgb(<?php echo $colorbacktab2; ?>) 0px, rgb(<?php echo $colorbacktab1; ?>) 3px);
+    background-image: -moz-linear-gradient(bottom, rgb(<?php echo $colorbacktab2; ?>) 0px, rgb(<?php echo $colorbacktab1; ?>) 3px);
+    background-image: -webkit-linear-gradient(right, rgb(<?php echo $colorbacktab2; ?>) 0px, rgb(<?php echo $colorbacktab1; ?>) 3px);
+    background-image: -ms-linear-gradient(bottom, rgb(<?php echo $colorbacktab2; ?>) 0px, rgb(<?php echo $colorbacktab1; ?>) 3px);
+    background-image: linear-gradient(bottom, rgb(<?php echo $colorbacktab2; ?>) 0px, rgb(<?php echo $colorbacktab1; ?>) 3px);
+
 <?php } else { ?>
 	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/tmenu.jpg',1); ?>);
     background-position:top;
     background-repeat:repeat-x;
 <?php } ?>
     border-left: 1px solid #CCCCCC;
-    border-right: 1px solid #DDDDDD;
+    border-right: 1px solid #D0D0D0;
     border-bottom: 1px solid #DDDDDD;
     border-top: 1px solid #DDDDDD;
     border-radius: 5px;
@@ -1092,9 +1120,6 @@ td.photo {
     padding: 0 4px 0 4px !important;
 }
 
-.toolbar {
-    height: 34px !important;
-}
 
 a.toolbarbutton {
     margin-top: 0px;
@@ -1557,7 +1582,7 @@ span.butAction, span.butActionDelete {
 }
 
 
-table.border {
+table.border, table.dataTable {
 	border: 1px solid #9CACBB;
 	border-collapse: collapse;
 }
@@ -1577,7 +1602,7 @@ td.border {
 
 /* Main boxes */
 
-table.noborder, table.formdoc {
+table.noborder, table.formdoc, div.noborder {
 	width: 100%;
 
 	border-collapse: separate !important;
@@ -1607,7 +1632,7 @@ table.noborder, table.formdoc {
 	border-radius: 0.2em;
 }
 
-table.noborder tr {
+table.noborder tr, div.noborder form {
 	border-top-color: #FEFEFE;
 
 	border-right-width: 1px;
@@ -1620,7 +1645,7 @@ table.noborder tr {
 	height: 20px;
 }
 
-table.noborder th, table.noborder td {
+table.noborder th, table.noborder td, div.noborder form, div.noborder form div {
 	padding: 1px 2px 1px 3px;			/* t r b l */
 }
 
@@ -1667,11 +1692,17 @@ table.liste td {
 	padding-right: 2px;
 }
 
-tr.liste_titre, tr.liste_titre_sel
+.tagtable { display: table; }
+.tagtable form { display: table-row; }
+.tagtable form div { display: table-cell; }
+.tagtr { display: table-row; }
+.tagtd { display: table-cell; }
+
+tr.liste_titre, tr.liste_titre_sel, form.liste_titre, form.liste_titre_sel, table.dataTable.tr
 {
 	height: 20px !important;
 }
-div.liste_titre, tr.liste_titre, tr.liste_titre_sel
+div.liste_titre, tr.liste_titre, tr.liste_titre_sel, form.liste_titre, form.liste_titre_sel, table.dataTable thead tr
 {
     background: rgb(<?php echo $colorbacktitle1; ?>);
     background-repeat: repeat-x;
@@ -1689,7 +1720,7 @@ div.liste_titre, tr.liste_titre, tr.liste_titre_sel
     white-space: <?php echo $dol_optimize_smallscreen?'normal':'nowrap'; ?>;
     text-align: <?php echo $left; ?>;
 }
-tr.liste_titre th, th.liste_titre, tr.liste_titre td, td.liste_titre
+tr.liste_titre th, th.liste_titre, tr.liste_titre td, td.liste_titre, form.liste_titre div, div.liste_titre
 {
     font-family: <?php print $fontlist ?>;
     /*font-weight: normal;*/
@@ -1697,7 +1728,10 @@ tr.liste_titre th, th.liste_titre, tr.liste_titre td, td.liste_titre
     white-space: <?php echo $dol_optimize_smallscreen?'normal':'nowrap'; ?>;
 	text-shadow:1px 0px 1px #ffffff;
 }
-tr.liste_titre_sel th, th.liste_titre_sel, tr.liste_titre_sel td, td.liste_titre_sel
+div.liste_titre {
+	padding-left: 3px;
+}
+tr.liste_titre_sel th, th.liste_titre_sel, tr.liste_titre_sel td, td.liste_titre_sel, form.liste_titre_sel div
 {
     font-family: <?php print $fontlist ?>;
     font-weight: normal;
@@ -1711,10 +1745,10 @@ input.liste_titre {
     border: 0px;
 }
 
-tr.liste_total {
+tr.liste_total, form.liste_total {
 	background: #F0F0F0;
 }
-tr.liste_total td {
+tr.liste_total td, form.liste_total div {
     border-top: 1px solid #DDDDDD;
     color: #332266;
     font-weight: normal;
@@ -1789,6 +1823,31 @@ div.tabBar .noborder {
 /*
  *  Boxes
  */
+
+.tdboxstats {
+<?php if ($usecss3) { ?>
+    background: -o-linear-gradient(bottom, rgb(<?php echo $colorbacklinepair1; ?>) 85%, rgb(<?php echo $colorbacklinepair2; ?>) 100%) !important;
+    background: -moz-linear-gradient(bottom, rgb(<?php echo $colorbacklinepair1; ?>) 85%, rgb(<?php echo $colorbacklinepair2; ?>) 100%) !important;
+    background: -webkit-linear-gradient(bottom, rgb(<?php echo $colorbacklinepair1; ?>) 85%, rgb(<?php echo $colorbacklinepair2; ?>) 100%) !important;
+    background: -ms-linear-gradient(bottom, rgb(<?php echo $colorbacklinepair1; ?>) 85%, rgb(<?php echo $colorbacklinepair2; ?>) 100%) !important;
+    background: linear-gradient(bottom, rgb(<?php echo $colorbacklinepair1; ?>) 85%, rgb(<?php echo $colorbacklinepair2; ?>) 100%) !important;
+<?php } else { ?>
+	background: #ffffff !important;
+<?php } ?>
+}
+
+.boxstats {
+    <?php print "float: ".$left.";\n"; ?>
+    margin: 3px;
+    padding: 3px;
+	/*-moz-box-shadow: 4px 4px 4px #DDD;
+    -webkit-box-shadow: 4px 4px 4px #DDD;
+    box-shadow: 4px 4px 4px #DDD;
+    margin-bottom: 8px !important;*/
+    border: 1px solid #AAA;
+    text-align: center;
+    border-radius: 5px;
+}
 
 .boxtable {
     -moz-box-shadow: 4px 4px 4px #DDD;
@@ -1874,19 +1933,20 @@ div.ok {
 }
 
 div.warning {
-  color: #997711;
-  padding: 0.2em 0.2em 0.2em 0.2em;
+  color: #504020;
+  padding: 0.3em 0.3em 0.3em 0.3em;
   margin: 0.5em 0em 0.5em 0em;
-  border: 1px solid #e0e0d0;
+  border: 1px solid #e0d0b0;
   -moz-border-radius:6px;
   -webkit-border-radius: 6px;
   border-radius: 6px;
-  background: #efefd4;
+  background: #FFEF9A;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
 }
 
 div.error {
   color: #550000; font-weight: bold;
-  padding: 0.2em 0.2em 0.2em 0.2em;
+  padding: 0.3em 0.3em 0.3em 0.3em;
   margin: 0.5em 0em 0.5em 0em;
   border: 1px solid #DC9CAB;
   -moz-border-radius:6px;
@@ -1897,14 +1957,15 @@ div.error {
 
 /* Info admin */
 div.info {
-  color: #807050;
+  color: #302010;
   padding: 0.4em 0.4em 0.4em 0.4em;
   margin: 0.5em 0em 0.5em 0em;
-  border: 1px solid #DFDFA0;
+  border: 1px solid #DFBF9A;
   -moz-border-radius:6px;
   -webkit-border-radius: 6px;
   border-radius:6px;
-  background: #EFEFBA;
+  background: #EFCFAA;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
 }
 
 
@@ -1932,6 +1993,12 @@ a.impayee:hover { font-weight: bold; color: #550000; }
 .product_line_stock_too_low { color: #664400; }
 
 .fieldrequired { font-weight: bold; color: #000055; }
+
+.dolgraphtitle { margin-top: 6px; margin-bottom: 4px; }
+.dolgraphtitlecssboxes { margin: 0px; }
+.legendColorBox, .legendLabel { border: none !important; }
+div.dolgraph div.legend, div.dolgraph div.legend div { background-color: rgba(255,255,255,0) !important; }
+div.dolgraph div.legend table tbody tr { height: auto; }
 
 .photo {
 border: 0px;
@@ -2384,7 +2451,7 @@ A.none, A.none:active, A.none:visited, A.none:hover {
     font-family:<?php echo $fontlist; ?>;
     font-size:<?php echo $fontsize; ?>px;
 }
-.ui-button { margin-left: -1px; }
+.ui-button { margin-left: -2px; <?php print (preg_match('/chrome/',$conf->browser->name)?'padding-top: 1px;':''); ?> }
 .ui-button-icon-only .ui-button-text { height: 8px; }
 .ui-button-icon-only .ui-button-text, .ui-button-icons-only .ui-button-text { padding: 2px 0px 6px 0px; }
 .ui-button-text
@@ -2599,17 +2666,33 @@ div.dolEventError h1, div.dolEventError h2 {
 li.ui-li-divider .ui-link {
 	color: #FFF !important;
 }
+.ui-btn {
+	margin: 0.1em 2px
+}
 a.ui-link, a.ui-link:hover, .ui-btn:hover, span.ui-btn-text:hover, span.ui-btn-inner:hover {
 	text-decoration: none !important;
 }
 
 .ui-btn-inner {
+	min-width: .4em;
 	padding-left: 10px;
 	padding-right: 10px;
+	<?php if (empty($dol_use_jmobile) || 1==1) { ?>
+	font-size: <?php print $fontsize ?>px;
+    <?php } ?>
 	/* white-space: normal; */		/* Warning, enable this break the truncate feature */
 }
+.ui-btn-icon-right .ui-btn-inner {
+	padding-right: 34px;
+}
+.ui-btn-icon-left .ui-btn-inner {
+	padding-left: 34px;
+}
 .ui-select .ui-btn-icon-right .ui-btn-inner {
-	padding-right: 36px;
+	padding-right: 38px;
+}
+.ui-select .ui-btn-icon-left .ui-btn-inner {
+	padding-left: 38px;
 }
 .fiche .ui-controlgroup {
 	margin: 0px;
@@ -2624,8 +2707,13 @@ div.ui-controlgroup-controls div.tabsElem a
 	-moz-box-shadow: 0 -3px 6px rgba(0,0,0,.2);
 	-webkit-box-shadow: 0 -3px 6px rgba(0,0,0,.2);
 	box-shadow: 0 -3px 6px rgba(0,0,0,.2);
-	border: none;
 }
+div.ui-controlgroup-controls div.tabsElem a#active {
+	-moz-box-shadow: 0 -3px 6px rgba(0,0,0,.3);
+	-webkit-box-shadow: 0 -3px 6px rgba(0,0,0,.3);
+	box-shadow: 0 -3px 6px rgba(0,0,0,.3);
+}
+
 a.tab span.ui-btn-inner
 {
 	border: none;
@@ -2633,7 +2721,7 @@ a.tab span.ui-btn-inner
 }
 
 .ui-body-c {
-	border: none;
+	border: 1px solid #CCC;
 	text-shadow: none;
 }
 .ui-link {
@@ -2657,15 +2745,35 @@ a.ui-link {
 	background: #fff;
 }
 
-div.ui-radio
+div.ui-radio, div.ui-checkbox
 {
 	display: inline-block;
+	border-bottom: 0px !important;
 }
-.ui-radio input {
+.ui-checkbox input, .ui-radio input {
 	height: auto;
 	width: auto;
-	margin: 0;
+	margin: 4px;
 	position: static;
+}
+div.ui-checkbox label+input, div.ui-radio label+input {
+	position: absolute;
+}
+.ui-mobile fieldset
+{
+	padding-bottom: 10px; margin-bottom: 4px; border-bottom: 1px solid #AAAAAA !important;
+}
+
+ul.ulmenu {
+	border-radius: 0;
+	-webkit-border-radius: 0;
+}
+
+.ui-field-contain label.ui-input-text {
+	vertical-align: middle !important;
+}
+.ui-mobile fieldset {
+	border-bottom: none !important;
 }
 
 <?php

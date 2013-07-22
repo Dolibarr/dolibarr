@@ -223,10 +223,9 @@ function dol_getprefix()
 
 /**
  *	Make an include_once using default root and alternate root if it fails.
- *	WARNING: In most cases, you should not use this function:
  *  To link to a core file, use include(DOL_DOCUMENT_ROOT.'/pathtofile')
  *  To link to a module file from a module file, use include './mymodulefile';
- *  To link to a module file from a core file, then this function can be used
+ *  To link to a module file from a core file, then this function can be used (call by hook / trigger / speciales pages)
  *
  * 	@param	string	$relpath	Relative path to file (Ie: mydir/myfile, ../myfile, ...)
  * 	@param	string	$classname	Class name
@@ -245,20 +244,29 @@ function dol_include_once($relpath, $classname='')
 
 
 /**
- *	Return path of url or filesystem. Return default_root or alternate root if file_exist fails
+ *	Return path of url or filesystem. Return alternate root if exists
  *
- * 	@param	string	$path		Relative path to file (if mode=0, ie: mydir/myfile, ../myfile, ...) or relative url (if mode=1).
+ * 	@param	string	$path		Relative path to file (if mode=0) or relative url (if mode=1). Ie: mydir/myfile, ../myfile
  *  @param	int		$type		0=Used for a Filesystem path, 1=Used for an URL path (output relative), 2=Used for an URL path (output full path)
- *  @return string				Full filsystem path (if mode=0), Full url path (if mode=1)
+ *  @return string				Full filesystem path (if mode=0), Full url path (if mode=1)
  */
 function dol_buildpath($path, $type=0)
 {
+	global $conf;
+
+	$path=preg_replace('/^\//','',$path);
+
 	if (empty($type))	// For a filesystem path
 	{
-		$res = DOL_DOCUMENT_ROOT.$path;	// Standard value
-		if (defined('DOL_DOCUMENT_ROOT_ALT') && DOL_DOCUMENT_ROOT_ALT)	// We check only if alternate feature is used
+		$res = DOL_DOCUMENT_ROOT.'/'.$path;	// Standard value
+		foreach ($conf->file->dol_document_root as $key => $dirroot)	// ex: array(["main"]=>"/home/main/htdocs", ["alt0"]=>"/home/dirmod/htdocs", ...)
 		{
-			if (! file_exists(DOL_DOCUMENT_ROOT.$path)) $res = DOL_DOCUMENT_ROOT_ALT.$path;
+			if ($key == 'main') continue;
+			if (file_exists($dirroot.'/'.$path))
+			{
+				$res=$dirroot.'/'.$path;
+				break;
+			}
 		}
 	}
 	else				// For an url path
@@ -267,27 +275,27 @@ function dol_buildpath($path, $type=0)
 		// Note that trying to know if a file on disk exist by forging path on disk from url
 		// works only for some web server and some setup. This is bugged when
 		// using proxy, rewriting, virtual path, etc...
-		if ($type == 1)
+		$res='';
+		if ($type == 1) $res = DOL_URL_ROOT.'/'.$path;			// Standard value
+		if ($type == 2) $res = DOL_MAIN_URL_ROOT.'/'.$path;		// Standard value
+		foreach ($conf->file->dol_document_root as $key => $dirroot)	// ex: array(["main"]=>"/home/main/htdocs", ["alt0"]=>"/home/dirmod/htdocs", ...)
 		{
-			$res = DOL_URL_ROOT.$path;		// Standard value
-			if (defined('DOL_URL_ROOT_ALT') && DOL_URL_ROOT_ALT)			// We check only if alternate feature is used
+			if ($key == 'main') continue;
+			preg_match('/^([^\?]+(\.css\.php|\.css|\.js\.php|\.js|\.png|\.jpg|\.php)?)/i',$path,$regs);    // Take part before '?'
+			if (! empty($regs[1]))
 			{
-				preg_match('/^([^\?]+(\.css\.php|\.css|\.js\.php|\.js|\.png|\.jpg|\.php)?)/i',$path,$regs);    // Take part before '?'
-				if (! empty($regs[1]))
+				//print $key.'-'.$dirroot.'/'.$path.'-'.$conf->file->dol_url_root[$type].'<br>'."\n";
+				if (file_exists($dirroot.'/'.$regs[1]))
 				{
-					if (! file_exists(DOL_DOCUMENT_ROOT.$regs[1])) $res = DOL_URL_ROOT_ALT.$path;
-				}
-			}
-		}
-		else if ($type == 2)
-		{
-			$res = DOL_MAIN_URL_ROOT.$path;      // Standard value
-			if (defined('DOL_URL_ROOT_ALT') && DOL_URL_ROOT_ALT)            // We check only if alternate feature is used
-			{
-				preg_match('/^([^\?]+(\.css\.php|\.css|\.js\.php|\.js|\.png|\.jpg|\.php)?)/i',$path,$regs);    // Take part before '?'
-				if (! empty($regs[1]))
-				{
-					if (! file_exists(DOL_DOCUMENT_ROOT.$regs[1])) $res = DOL_MAIN_URL_ROOT_ALT.$path;
+					if ($type == 1)
+					{
+						$res=(preg_match('/^http/i',$conf->file->dol_url_root[$key])?'':DOL_URL_ROOT).$conf->file->dol_url_root[$key].'/'.$path;
+					}
+					if ($type == 2)
+					{
+						$res=(preg_match('/^http/i',$conf->file->dol_url_root[$key])?'':DOL_MAIN_URL_ROOT).$conf->file->dol_url_root[$key].'/'.$path;
+					}
+					break;
 				}
 			}
 		}
@@ -633,11 +641,11 @@ function dol_get_fiche_head($links=array(), $active='0', $title='', $notab=0, $p
 			if ((is_numeric($active) && $i == $active)
 			|| (! is_numeric($active) && $active == $links[$i][2]))
 			{
-				$out.='<a data-role="button" id="active" class="tab" href="'.$links[$i][0].'">'.$links[$i][1].'</a>'."\n";
+				$out.='<a data-role="button" id="active" class="tab inline-block" href="'.$links[$i][0].'">'.$links[$i][1].'</a>'."\n";
 			}
 			else
 			{
-				$out.='<a data-role="button"'.(! empty($links[$i][2])?' id="'.$links[$i][2].'"':'').' class="tab" href="'.$links[$i][0].'">'.$links[$i][1].'</a>'."\n";
+				$out.='<a data-role="button"'.(! empty($links[$i][2])?' id="'.$links[$i][2].'"':'').' class="tab inline-block" href="'.$links[$i][0].'">'.$links[$i][1].'</a>'."\n";
 			}
 		}
 		$out.='</div>';
@@ -699,12 +707,12 @@ function dol_bc($var,$moreclass='')
 function dol_format_address($object,$withcountry=0,$sep="\n")
 {
 	$ret='';
-	$countriesusingstate=array('AU','US','IN','GB','ES','UK');
+	$countriesusingstate=array('AU','US','IN','GB','ES','UK','TR');
 
 	// Address
 	$ret .= $object->address;
 	// Zip/Town/State
-	if (in_array($object->country_code,array('US','AU')))   	// US: title firstname name \n address lines \n town, state, zip \n country
+	if (in_array($object->country_code,array('US','AU')) || ! empty($conf->global->MAIN_FORCE_STATE_INTO_ADDRESS))   	// US: title firstname name \n address lines \n town, state, zip \n country
 	{
 		$ret .= ($ret ? $sep : '' ).$object->town;
 		if ($object->state && in_array($object->country_code,$countriesusingstate))
@@ -722,7 +730,7 @@ function dol_format_address($object,$withcountry=0,$sep="\n")
 		}
 		if ($object->zip) $ret .= ($ret ? $sep : '' ).$object->zip;
 	}
-	else if (in_array($object->country_code,array('ES'))) // ES: title firstname name \n address lines \n zip town \n state \n country
+	else if (in_array($object->country_code,array('ES','TR'))) // ES: title firstname name \n address lines \n zip town \n state \n country
 	{
 		$ret .= ($ret ? $sep : '' ).$object->zip;
 		$ret .= ' '.$object->town;
@@ -1715,8 +1723,16 @@ function img_picto($alt, $picto, $options = '', $pictoisfullpath = false, $srcon
 		}
 		// Clean parameters
 		if (! preg_match('/(\.png|\.gif)$/i',$picto)) $picto .= '.png';
-		// If img file is not into standard path, we use alternate path (Avoid using DOL_URL_ROOT_ALT for performane)
-		if (defined('DOL_URL_ROOT_ALT') && DOL_URL_ROOT_ALT && ! file_exists(DOL_DOCUMENT_ROOT.'/'.$path.'/img/'.$picto)) $url = DOL_URL_ROOT_ALT;
+		// If alt path are defined, define url where img file is, according to physical path
+		foreach ($conf->file->dol_document_root as $type => $dirroot)	// ex: array(["main"]=>"/home/maindir/htdocs", ["alt0"]=>"/home/moddir/htdocs", ...)
+		{
+			if ($type == 'main') continue;
+			if (file_exists($dirroot.'/'.$path.'/img/'.$picto))
+			{
+				$url=DOL_URL_ROOT.$conf->file->dol_url_root[$type];
+				break;
+			}
+		}
 
 		// $url is '' or '/custom', $path is current theme or
 		$fullpathpicto = $url.'/'.$path.'/img/'.$picto;
@@ -2041,15 +2057,16 @@ function img_up($alt = 'default', $selected = 0)
  *
  *	@param	string	$alt        Text to show on alt image
  *	@param  int		$selected	Selected
+ *	@param	string	$options	Add more attribute on img tag (For example 'style="float: right"')
  *	@return string      		Return img tag
  */
-function img_left($alt = 'default', $selected = 0)
+function img_left($alt = 'default', $selected = 0, $options='')
 {
 	global $conf, $langs;
 
 	if ($alt == 'default') $alt = $langs->trans('Left');
 
-	return img_picto($alt, ($selected ? '1leftarrow_selected.png' : '1leftarrow.png'));
+	return img_picto($alt, ($selected ? '1leftarrow_selected.png' : '1leftarrow.png'), $options);
 }
 
 /**
@@ -2057,15 +2074,16 @@ function img_left($alt = 'default', $selected = 0)
  *
  *	@param	string	$alt        Text to show on alt image
  *	@param  int		$selected	Selected
+ *	@param	string	$options	Add more attribute on img tag (For example 'style="float: right"')
  *	@return string      		Return img tag
  */
-function img_right($alt = 'default', $selected = 0)
+function img_right($alt = 'default', $selected = 0, $options='')
 {
 	global $conf, $langs;
 
 	if ($alt == 'default') $alt = $langs->trans('Right');
 
-	return img_picto($alt, ($selected ? '1rightarrow_selected.png' : '1rightarrow.png'));
+	return img_picto($alt, ($selected ? '1rightarrow_selected.png' : '1rightarrow.png'), $options);
 }
 
 /**
@@ -2615,8 +2633,8 @@ function vatrate($rate,$addpercent=false,$info_bits=0,$usestarfornpr=0)
  *		@param	string		$form			Type of format, HTML or not (not by default)
  *		@param	Translate	$outlangs		Object langs for output
  *		@param	int			$trunc			1=Truncate if there is too much decimals (default), 0=Does not truncate
- *		@param	int			$rounding		Minimum number of decimal to show. If not defined we use min($conf->global->MAIN_MAX_DECIMALS_UNIT,$conf->global->MAIN_MAX_DECIMALS_TOTAL)
- *		@param	int			$forcerounding	Force the number of decimal fo forcerounding decimal (-1=do not force)
+ *		@param	int			$rounding		Minimum number of decimal to show. If 0, no change, if -1, we use min($conf->global->MAIN_MAX_DECIMALS_UNIT,$conf->global->MAIN_MAX_DECIMALS_TOTAL)
+ *		@param	int			$forcerounding	Force the number of decimal to forcerounding decimal (-1=do not force)
  *		@param	string		$currency_code	To add currency symbol (''=add nothing, 'XXX'=add currency symbols for XXX currency)
  *		@return	string						Chaine avec montant formate
  *
@@ -2630,7 +2648,6 @@ function price($amount, $form=0, $outlangs='', $trunc=1, $rounding=-1, $forcerou
 	if (empty($amount)) $amount=0;	// To have a numeric value if amount not defined or = ''
 	$amount = (is_numeric($amount)?$amount:0); // Check if amount is numeric, for example, an error occured when amount value = o (letter) instead 0 (number)
 	if ($rounding < 0) $rounding=min($conf->global->MAIN_MAX_DECIMALS_UNIT,$conf->global->MAIN_MAX_DECIMALS_TOT);
-
 	$nbdecimal=$rounding;
 
 	// Output separators by default (french)
@@ -2642,7 +2659,7 @@ function price($amount, $form=0, $outlangs='', $trunc=1, $rounding=-1, $forcerou
 	if ($outlangs->transnoentitiesnoconv("SeparatorDecimal") != "SeparatorDecimal")  $dec=$outlangs->transnoentitiesnoconv("SeparatorDecimal");
 	if ($outlangs->transnoentitiesnoconv("SeparatorThousand")!= "SeparatorThousand") $thousand=$outlangs->transnoentitiesnoconv("SeparatorThousand");
 	if ($thousand == 'None') $thousand='';
-	//print "amount=".$amount." html=".$form." trunc=".$trunc." nbdecimal=".$nbdecimal." dec='".$dec."' thousand='".$thousand."'<br>";
+	//print "outlangs=".$outlangs->defaultlang." amount=".$amount." html=".$form." trunc=".$trunc." nbdecimal=".$nbdecimal." dec='".$dec."' thousand='".$thousand."'<br>";
 
 	//print "amount=".$amount."-";
 	$amount = str_replace(',','.',$amount);	// should be useless
@@ -2684,7 +2701,7 @@ function price($amount, $form=0, $outlangs='', $trunc=1, $rounding=-1, $forcerou
 		if (in_array($currency_code,$listofcurrenciesbefore)) $cursymbolbefore.=$outlangs->getCurrencySymbol($currency_code);
 		else $cursymbolafter.=$outlangs->getCurrencySymbol($currency_code);
 	}
-	$output.=$cursymbolbefore.$end.$cursymbolafter;
+	$output=$cursymbolbefore.$output.$end.$cursymbolafter;
 
 	return $output;
 }
@@ -2794,7 +2811,7 @@ function get_localtax($tva, $local, $thirdparty_buyer="", $thirdparty_seller="")
 
 	if (empty($thirdparty_seller) || ! is_object($thirdparty_seller)) $thirdparty_seller=$mysoc;
 
-	dol_syslog("get_localtax tva=".$tva." local=".$local." thirdparty_buyer id=".(is_object($thirdparty_buyer)?$thirdparty_buyer->id:'')." thirdparty_seller id=".$thirdparty_seller->id);
+	dol_syslog("get_localtax tva=".$tva." local=".$local." thirdparty_buyer id=".(is_object($thirdparty_buyer)?$thirdparty_buyer->id:'')."/country_code=".(is_object($thirdparty_buyer)?$thirdparty_buyer->country_code:'')." thirdparty_seller id=".$thirdparty_seller->id."/country_code=".$thirdparty_seller->country_code." thirdparty_seller localtax1_assuj=".$thirdparty_seller->localtax1_assuj."  thirdparty_seller localtax2_assuj=".$thirdparty_seller->localtax2_assuj);
 
 	// Some test to guess with no need to make database access
 	if ($mysoc->country_code == 'ES') // For spain localtaxes 1 and 2, tax is qualified if buyer use local taxe
@@ -2811,7 +2828,18 @@ function get_localtax($tva, $local, $thirdparty_buyer="", $thirdparty_seller="")
 			}
 		}
 
-		if ($local == 2 && ! $thirdparty_buyer->localtax2_assuj) return 0;
+		if ($local == 2)
+		{
+
+			if ($thirdparty_seller->id==$mysoc->id)
+			{
+				if (! $thirdparty_buyer->localtax2_assuj) return 0;
+			}
+			else
+			{
+				if (! $thirdparty_seller->localtax2_assuj) return 0;
+			}
+		}
 	}
 	else
 	{
@@ -2820,16 +2848,18 @@ function get_localtax($tva, $local, $thirdparty_buyer="", $thirdparty_seller="")
 	}
 	//if ($local == 0 && ! $thirdparty_seller->localtax1_assuj && ! $thirdparty_seller->localtax2_assuj) return array('localtax1'=>0,'localtax2'=>0);
 
-	$code_country=$thirdparty_seller->country_code;
+	// Do not enabled this. We want localtax that match the vat rate.
+	// If we forced a vat, we must also force local tax
+	/*
 	if (is_object($thirdparty_buyer))
 	{
-		if ($code_country != $thirdparty_buyer->country_code) return 0;
-	}
+		if ($thirdparty_seller->country_code != $thirdparty_buyer->country_code) return 0;
+	}*/
 
 	// Search local taxes
 	$sql  = "SELECT t.localtax1, t.localtax2, t.localtax1_type, t.localtax2_type";
 	$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_pays as p";
-	$sql .= " WHERE t.fk_pays = p.rowid AND p.code = '".$code_country."'";
+	$sql .= " WHERE t.fk_pays = p.rowid AND p.code = '".$thirdparty_seller->country_code."'";
 	$sql .= " AND t.taux = ".$tva." AND t.active = 1";
 
 	dol_syslog("get_localtax sql=".$sql);
@@ -2837,8 +2867,8 @@ function get_localtax($tva, $local, $thirdparty_buyer="", $thirdparty_seller="")
 	if ($resql)
 	{
 		$obj = $db->fetch_object($resql);
-		if ($local==1 && $obj->localtax1_type != '7') return $obj->localtax1;
-		elseif ($local==2 && $obj->localtax2_type != '7') return $obj->localtax2;
+		if ($local==1) return $obj->localtax1;
+		elseif ($local==2) return $obj->localtax2;
 	}
 
 	return 0;
@@ -3031,7 +3061,7 @@ function get_product_localtax_for_country($idprod, $local, $thirdparty_seller)
  *	@param  int			$idprod					Id product
  *	@param	int			$idprodfournprice		Id product_fournisseur_price (for supplier order/invoice)
  *	@return float         				      	Taux de tva a appliquer, -1 si ne peut etre determine
- *  @see get_default_localtax
+ *  @see get_default_npr, get_default_localtax
  */
 function get_default_tva($thirdparty_seller, $thirdparty_buyer, $idprod=0, $idprodfournprice=0)
 {
@@ -3112,6 +3142,7 @@ function get_default_tva($thirdparty_seller, $thirdparty_buyer, $idprod=0, $idpr
  *  @param  int			$idprod                 Id product
  *  @param	int			$idprodfournprice		Id supplier price for product
  *	@return float       			        	0 or 1
+ *  @see get_default_tva, get_default_localtax
  */
 function get_default_npr($thirdparty_seller, $thirdparty_buyer, $idprod=0, $idprodfournprice=0)
 {
@@ -3148,7 +3179,7 @@ function get_default_npr($thirdparty_seller, $thirdparty_buyer, $idprod=0, $idpr
  *  @param	int			$local					Localtax to process (1 or 2)
  *	@param  int			$idprod					Id product
  *	@return float        				       	localtax, -1 si ne peut etre determine
- *  @see get_default_tva
+ *  @see get_default_tva, get_default_npr
  */
 function get_default_localtax($thirdparty_seller, $thirdparty_buyer, $local, $idprod=0)
 {
@@ -4320,14 +4351,17 @@ function printCommonFooter($zone='private')
 	}
 
 	// End of tuning
-	if (! empty($_SERVER['DOL_TUNING']))
+	if (! empty($_SERVER['DOL_TUNING']) || ! empty($conf->global->MAIN_SHOW_TUNING_INFO))
 	{
-		$micro_end_time=dol_microtime_float(true);
 		print "\n".'<script type="text/javascript">'."\n";
 		print 'window.console && console.log("';
 		if (! empty($conf->global->MEMCACHED_SERVER)) print 'MEMCACHED_SERVER='.$conf->global->MEMCACHED_SERVER.' - ';
 		print 'MAIN_OPTIMIZE_SPEED='.(isset($conf->global->MAIN_OPTIMIZE_SPEED)?$conf->global->MAIN_OPTIMIZE_SPEED:'off');
-		print ' - Build time: '.ceil(1000*($micro_end_time-$micro_start_time)).' ms';
+		if ($micro_start_time)
+		{
+			$micro_end_time=dol_microtime_float(true);
+			print ' - Build time: '.ceil(1000*($micro_end_time-$micro_start_time)).' ms';
+		}
 		if (function_exists("memory_get_usage"))
 		{
 			print ' - Mem: '.memory_get_usage();

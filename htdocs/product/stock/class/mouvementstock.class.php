@@ -64,6 +64,9 @@ class MouvementStock
 		$error = 0;
 		dol_syslog(get_class($this)."::_create start userid=$user->id, fk_product=$fk_product, warehouse=$entrepot_id, qty=$qty, type=$type, price=$price label=$label");
 
+		// Clean parameters
+		if (empty($price)) $price=0;
+		
 		if (empty($fk_product)) return 0;
 
 		$now=(! empty($datem) ? $datem : dol_now());

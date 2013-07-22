@@ -1,12 +1,4 @@
-/*
- * Language code: et_EE
- * Automatic generated via autotranslator.php tool
- * Generation date 2012-02-29 22:15:30
- */
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 22:15:30).
-// Reference language: en_US -> et_EE
+# Dolibarr language file - Source file is en_US - paybox
 CHARSET=UTF-8
 PayBoxSetup=Paybox moodul setup
 PayBoxDesc=See moodul pakkumise leheküljed, mis võimaldab makse <a href="http://www.paybox.com" target="_blank">Paybox</a> kliendid. Seda saab kasutada tasuta makse või makse teatud Dolibarr objekti (arve, et ...)
@@ -41,4 +33,3 @@ VendorName=Nimi müüja
 CSSUrlForPaymentForm=CSS style sheet url maksmise vorm
 MessageOK=Sõnum on kontrollitud makse tagasi lehele
 MessageKO=Sõnum on tühistatud makse tagasi lehele
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 22:22:24).

@@ -103,7 +103,8 @@ print "</tr>\n";
 $var=!$var;
 print '<tr '.$bc[$var].'><td width=\"50%\">'.$langs->trans("CashDeskThirdPartyForSell").'</td>';
 print '<td colspan="2">';
-print $form->select_company($conf->global->CASHDESK_ID_THIRDPARTY,'socid','s.client in (1,3)',1,1);
+//print $form->select_company($conf->global->CASHDESK_ID_THIRDPARTY,'socid','s.client in (1,3)',1,1);
+print $form->select_thirdparty($conf->global->CASHDESK_ID_THIRDPARTY,'socid','s.client in (1,3)',0,array(),1);
 print '</td></tr>';
 if (! empty($conf->banque->enabled))
 {

@@ -74,6 +74,12 @@ $hideref 	 = (GETPOST('hideref','int') ? GETPOST('hideref','int') : (! empty($co
 
 $object = new Expedition($db);
 
+// Load object
+if ($id > 0 || ! empty($ref))
+{
+	$ret=$object->fetch($id, $ref);
+}
+
 /*
  * Actions
 */
@@ -297,14 +303,9 @@ else if ($action == 'settrackingnumber' || $action == 'settrackingurl'
 // Build document
 else if ($action == 'builddoc')	// En get ou en post
 {
-    // Sauvegarde le dernier modele choisi pour generer un document
-    $shipment = new Expedition($db);
-    $shipment->fetch($id);
-    $shipment->fetch_thirdparty();
-
     if (GETPOST('model','alpha'))
     {
-        $shipment->setDocModel($user, GETPOST('model','alpha'));
+        $object->setDocModel($user, GETPOST('model','alpha'));
     }
 
     // Define output language
@@ -317,7 +318,7 @@ else if ($action == 'builddoc')	// En get ou en post
         $outputlangs = new Translate("",$conf);
         $outputlangs->setDefaultLang($newlang);
     }
-    $result=expedition_pdf_create($db,$shipment,GETPOST('model','alpha'),$outputlangs);
+    $result=expedition_pdf_create($db,$object,$object->modelpdf,$outputlangs);
     if ($result <= 0)
     {
         dol_print_error($db,$result);
@@ -1114,6 +1115,12 @@ else
             print '<tr><td>'.$form->editfieldkey("Weight",'trueWeight',$object->trueWeight,$object,$user->rights->expedition->creer).'</td><td colspan="3">';
             print $form->editfieldval("Weight",'trueWeight',$object->trueWeight,$object,$user->rights->expedition->creer);
             print ($object->trueWeight && $object->weight_units!='')?' '.measuring_units_string($object->weight_units,"weight"):'';
+			if ($totalWeight > 0)
+            {
+            	if (!empty($object->trueWeight)) print ' ('.$langs->trans("SumOfProductWeights").': ';
+				print $totalWeight.' '.measuring_units_string(0,"weight");
+            	if (!empty($object->trueWeight)) print ')';
+            }
             print '</td></tr>';
 
             // Width
@@ -1151,7 +1158,7 @@ else
             if ($totalVolume > 0)
             {
             	if ($calculatedVolume) print ' ('.$langs->trans("SumOfProductVolumes").': ';
-				print $totalVolume;
+				print $totalVolume.' '.measuring_units_string(0,"volume");
             	if ($calculatedVolume) print ')';
             }
             print "</td>\n";

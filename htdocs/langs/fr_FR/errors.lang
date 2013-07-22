@@ -125,6 +125,7 @@ ErrorFailedToValidatePasswordReset=Echec de la réinitialisation du mot de passe
 ErrorToConnectToMysqlCheckInstance=Echec de la connection au serveur de base de donnée. Vérifier que Mysql est bien lancé (dans la plupart des cas, vous pouvez le lancer depuis la ligne de commande par la commande 'sudo /etc/init.d/mysql start').
 ErrorFailedToAddContact=Echec à l'ajout du contact
 ErrorDateMustBeBeforeToday=La date ne peut pas être supérieure à aujourd'hui
+ErrorPaymentModeDefinedToWithoutSetup=Un mode de paiement a été défini de type %s mais la configuration du module Facture n'a pas été complété pour définir les informations afficher pour ce mode de paiment.
 
 # Warnings
 WarningMandatorySetupNotComplete=Les informations de configuration obligatoire doivent être renseignées

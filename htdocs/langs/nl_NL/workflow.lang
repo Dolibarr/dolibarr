@@ -8,7 +8,7 @@
 // Reference language: en_US -> nl_NL
 CHARSET=UTF-8
 WorkflowSetup=Workflow module setup
-WorkflowDesc=Deze module is desinged om het gedrag van automatische acties die passen in de applicatie. Is standaard workflow geopend (je ding in volgorde die u wilt). Je kan ingeschakeld automatische acties die u interessant inch
+WorkflowDesc=Deze module is designed om het gedrag van automatische acties die passen in de applicatie. Is standaard workflow geopend (je ding in volgorde die u wilt). Je kan ingeschakeld automatische acties die u interessant inch
 ThereIsNoWorkflowToModify=Er is geen workflow die u kunt aanpassen aan je module hebt geactiveerd.
 descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Automatisch een bestelling van de klant na een commerciële voorstel is ondertekend
 descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Automatisch een factuur klant na een commerciële voorstel is ondertekend

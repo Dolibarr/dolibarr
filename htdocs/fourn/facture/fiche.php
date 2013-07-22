@@ -39,15 +39,16 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 if (!empty($conf->produit->enabled))
 	require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
-if (!empty($conf->projet->enabled))
+if (!empty($conf->projet->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
-if (! empty($conf->projet->enabled))
-	require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
+	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
+}
 
 
 $langs->load('bills');
 $langs->load('suppliers');
 $langs->load('companies');
+$langs->load('products');
 
 $mesg='';
 $errors=array();
@@ -95,7 +96,7 @@ if ($action == 'confirm_clone' && $confirm == 'yes')
         $result=$object->createFromClone($id);
         if ($result > 0)
         {
-            header("Location: ".$_SERVER['PHP_SELF'].'?action=editfacnumber&id='.$result);
+            header("Location: ".$_SERVER['PHP_SELF'].'?action=editref_supplier&id='.$result);
             exit;
         }
         else
@@ -114,8 +115,18 @@ elseif ($action == 'confirm_valid' && $confirm == 'yes' && $user->rights->fourni
     $object->fetch($id);
     $object->fetch_thirdparty();
 
+    $qualified_for_stock_change=0;
+    if (empty($conf->global->STOCK_SUPPORTS_SERVICES))
+    {
+    	$qualified_for_stock_change=$object->hasProductsOrServices(2);
+    }
+    else
+    {
+    	$qualified_for_stock_change=$object->hasProductsOrServices(1);
+    }
+
     // Check parameters
-    if (! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_BILL) && $object->hasProductsOrServices(1))
+    if (! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_BILL) && $qualified_for_stock_change)
     {
         $langs->load("stocks");
         if (! $idwarehouse || $idwarehouse == -1)
@@ -131,7 +142,8 @@ elseif ($action == 'confirm_valid' && $confirm == 'yes' && $user->rights->fourni
         $result = $object->validate($user,'',$idwarehouse);
         if ($result < 0)
         {
-            $mesg='<div class="error">'.$object->error.'</div>';
+            setEventMessage($object->error,'errors');
+            setEventMessage($object->errors,'errors');
         }
     }
 }
@@ -1158,13 +1170,15 @@ if ($action == 'create')
     print '<tr><td>'.$langs->trans('DateMaxPayment').'</td><td>';
     $form->select_date($datedue,'ech','','','',"add",1,1);
     print '</td></tr>';
-	
+
 	// Project
 	if (! empty($conf->projet->enabled))
 	{
+		$formproject=new FormProjets($db);
+
 		$langs->load('projects');
 		print '<tr><td>'.$langs->trans('Project').'</td><td colspan="2">';
-		select_projects(-1, $projectid, 'projectid');
+		$formproject->select_projects(-1, $projectid, 'projectid');
 		print '</td></tr>';
 	}
 
@@ -1273,7 +1287,7 @@ if ($action == 'create')
 }
 else
 {
-    if ($id > 0)
+    if ($id > 0 || ! empty($ref))
     {
         /* *************************************************************************** */
         /*                                                                             */
@@ -1285,7 +1299,7 @@ else
 
         $productstatic = new Product($db);
 
-        $object->fetch($id);
+        $object->fetch($id,$ref);
         $result=$object->fetch_thirdparty();
         if ($result < 0) dol_print_error($db);
 
@@ -1334,7 +1348,8 @@ else
                 if (! empty($conf->global->FAC_FORCE_DATE_VALIDATION))
                 {
                     $object->date=dol_now();
-                    $object->date_lim_reglement=$object->calculate_date_lim_reglement();
+                    //TODO: Possibly will have to control payment information into suppliers
+                    //$object->date_lim_reglement=$object->calculate_date_lim_reglement();
                 }
                 $numref = $object->getNextNumRef($soc);
             }

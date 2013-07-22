@@ -206,7 +206,7 @@ class FormCompany
 	 *    @param	string	$selected        	Code state preselected
 	 *    @param    string	$country_codeid    	Country code or id: 0=list for all countries, otherwise country code or country rowid to show
 	 *    @param    string	$htmlname			Id of department
-	 * 	  @return	void
+	 * 	  @return	string						String with HTML select
 	 */
 	function select_state($selected='',$country_codeid=0, $htmlname='departement_id')
 	{
@@ -352,9 +352,9 @@ class FormCompany
 	/**
 	 *  Return combo list with people title
 	 *
-	 *  @param  string	$selected   Title preselected
-	 * 	@param	string	$htmlname	Name of HTML select combo field
-	 *  @return	void
+	 *  @param  string	$selected   	Title preselected
+	 * 	@param	string	$htmlname		Name of HTML select combo field
+	 *  @return	string					String with HTML select
 	 */
 	function select_civility($selected='',$htmlname='civilite_id')
 	{

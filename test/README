@@ -33,18 +33,18 @@ If using Eclipse, select the test and click on menu "Run external tools and choo
 
 * Generate a report of Unit tests code coverage among tested classes only:
 > cd test
-> phpunit -d memory_limit=-1 -d max_execution_time=600 -d max_input_time=600 --configuration ./phpunit/phpunittest.xml --coverage-html ./report --coverage-clover ./report/logs/phpunit.coverage.xml --log-junit ./report/logs/phpunit.xml phpunit/MyClassTest.php
+> phpunit -d memory_limit=-1 -d max_input_time=600 -d max_execution_time=600 --configuration ./phpunit/phpunittest.xml --coverage-html ./report --coverage-clover ./report/logs/phpunit.coverage.xml --log-junit ./report/logs/phpunit.xml phpunit/MyClassTest.php
 Note that xdebug must be installed for this feature to work.
 
 * Generate a report of Unit tests code coverage among all Dolibarr classes:
 Increase your PHP memory (memory_limit in php.ini) to 512MB.
 Remove all files into dolibarr root found with "find . | grep CVS\/Base\/ | grep \.php"
 > cd test
-> phpunit -d memory_limit=-1 -d max_execution_time=0 -d max_input_time=0 --configuration ./phpunit/phpunittest.xml --coverage-html ./report --coverage-clover ./report/logs/phpunit.coverage.xml --log-junit ./report/logs/phpunit.xml phpunit/AllTests.php
+> phpunit -d memory_limit=-1 -d max_input_time=0 -d max_execution_time=0 --configuration ./phpunit/phpunittest.xml --coverage-html ./report --coverage-clover ./report/logs/phpunit.coverage.xml --log-junit ./report/logs/phpunit.xml phpunit/AllTests.php
 
 If there is a timeout before end, try this: 
 > cd test
-> php -d max_input_time=0 -d max_execution_time=0 /usr/bin/phpunit -d memory_limit=-1 -d max_input_time=0 -d max_execution_time=0 --configuration ./phpunit/phpunittest.xml --coverage-html ./report phpunit/AllTests.php
+> php -d memory_limit=-1 -d max_input_time=0 -d max_execution_time=0 /usr/bin/phpunit -d memory_limit=-1 -d max_input_time=0 -d max_execution_time=0 --configuration ./phpunit/phpunittest.xml --coverage-html ./report phpunit/AllTests.php
 puis renice -10 du process php
 
 

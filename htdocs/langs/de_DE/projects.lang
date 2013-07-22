@@ -1,12 +1,5 @@
-/*
-* Language code: de_DE
-* Manually translated by modula71.de
-* Generation date 2012-05-23
-* QA release date 2012-05-27
-*/
-
+# Dolibarr language file - Source file is en_US - projects
 CHARSET=UTF-8
-
 Project=Projekt
 Projects=Projekte
 SharedProject=Jeder
@@ -92,6 +85,15 @@ TaskIsNotAffectedToYou=Der Aufgabe sind sie nicht zugeordnet
 ErrorTimeSpentIsEmpty=Zeitaufwand ist leer
 ThisWillAlsoRemoveTasks=Diese Aktion löscht ebenfalls alle Aufgaben zum Projekt (<b>%s</b> akutelle Aufgaben) und alle Zeitaufwände.
 IfNeedToUseOhterObjectKeepEmpty=Wenn einige Zuordnungen (Rechnung, Bestellung, ...), einem Dritten gehören, müssen Sie erst alle mit dem Projekt verbinden, damit das Projekt auch Dritten zugänglich ist .
+# CloneProject=Clone project
+# CloneTasks=Clone tasks
+# CloneContacts=Clone contacts
+# CloneNotes=Clone notes
+# CloneFiles=Clone joined files
+# ConfirmCloneProject=Are you sure to clone this project ?
+# ProjectReportDate=Change task date according project start date
+# ErrorShiftTaskDate=Impossible to shift task date according to new project start date
+# ProjectsAndTasksLines=Projects and tasks
 ##### Types de contacts #####
 TypeContact_project_internal_PROJECTLEADER=Projektleiter
 TypeContact_project_external_PROJECTLEADER=Projektleiter
@@ -103,3 +105,5 @@ TypeContact_project_task_internal_CONTRIBUTOR=Mitwirkender
 TypeContact_project_task_external_CONTRIBUTOR=Mitwirkender
 # Documents models
 DocumentModelBaleine=Eine vollständige Projektberichtsvorlage (Logo, uwm.)
+# PlannedWorkload = Planned workload
+# WorkloadOccupation= Workload affectation

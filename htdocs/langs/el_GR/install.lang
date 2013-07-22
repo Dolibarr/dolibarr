@@ -1,4 +1,4 @@
-# Dolibarr language file - el_GR - install
+# Dolibarr language file - Source file is en_US - install
 CHARSET=UTF-8
 InstallEasy=Just follow the instructions step by step.
 MiscellaneousChecks=Prerequisites check
@@ -9,6 +9,7 @@ ConfFileDoesNotExistsAndCouldNotBeCreated=Configuration file <b>%s</b> does not 
 ConfFileCouldBeCreated=Configuration file <b>%s</b> could be created.
 ConfFileIsNotWritable=Configuration file <b>%s</b> is not writable. Check permissions. For first install, your web server must be granted to be able to write into this file during configuration process ("chmod 666" for example on a Unix like OS).
 ConfFileIsWritable=Configuration file <b>%s</b> is writable.
+ConfFileReload=Ανανέωση της όλες τις πληροφορίες από το αρχείο ρυθμίσεων.
 PHPSupportSessions=This PHP supports sessions.
 PHPSupportPOSTGETOk=This PHP supports variables POST and GET.
 PHPSupportPOSTGETKo=It's possible your PHP setup does not support variables POST and/or GET. Check your parameter <b>variables_order</b> in php.ini.
@@ -25,11 +26,14 @@ ErrorGoBackAndCorrectParameters=Go backward and correct wrong parameters.
 ErrorWrongValueForParameter=You may have typed a wrong value for parameter '%s'.
 ErrorFailedToCreateDatabase=Failed to create database '%s'.
 ErrorFailedToConnectToDatabase=Failed to connect to database '%s'.
+# ErrorDatabaseVersionTooLow=Database version (%s) too old. Version %s or higher is required.
 ErrorPHPVersionTooLow=PHP version too old. Version %s is required.
+WarningPHPVersionTooLow=PHP έκδοση πάρα πολύ παλιά. %s Έκδοση ή περισσότερα αναμένεται. Αυτή η έκδοση θα πρέπει να επιτρέψει την εγκατάσταση, αλλά δεν υποστηρίζεται.
 ErrorConnectedButDatabaseNotFound=Connection to server successfull but database '%s' not found.
 ErrorDatabaseAlreadyExists=Database '%s' already exists.
 IfDatabaseNotExistsGoBackAndUncheckCreate=If database does not exists, go back and check option "Create database".
 IfDatabaseExistsGoBackAndCheckCreate=If database already exists, go back and uncheck "Create database" option.
+# WarningBrowserTooOld=Too old version of browser. Upgrading your browser to a recent version of Firefox, Chrome or Opera is highly recommanded.
 PHPVersion=PHP Version
 YouCanContinue=You can continue...
 PleaseBePatient=Please be patient...
@@ -49,6 +53,7 @@ ServerAddressDescription=Name or ip address for database server, usually 'localh
 ServerPortDescription=Database server port. Keep empty if unknown.
 DatabaseServer=Database server
 DatabaseName=Database name
+DatabasePrefix=Βάση δεδομένων πίνακα πρόθεμα
 Login=Login
 AdminLogin=Login for Dolibarr database owner.
 Password=Password
@@ -86,7 +91,7 @@ YouNeedToPersonalizeSetup=You need to configure Dolibarr to suit your needs (app
 AdminLoginCreatedSuccessfuly=Dolibarr administrator login '<b>%s</b>' created successfuly.
 GoToDolibarr=Go to Dolibarr
 GoToSetupArea=Go to Dolibarr (setup area)
-MigrationNotFinished=Version of your database is not completely up to date, so you'll have to run the upgrade process again. 
+MigrationNotFinished=Version of your database is not completely up to date, so you'll have to run the upgrade process again.
 GoToUpgradePage=Go to upgrade page again
 Examples=Examples
 WithNoSlashAtTheEnd=Without the slash "/" at the end
@@ -131,20 +136,26 @@ RemoveItManuallyAndPressF5ToContinue=Remove it manually and press F5 to continue
 KeepDefaultValuesWamp=You use the Dolibarr setup wizard from DoliWamp, so values proposed here are already optimized. Change them only if you know what you do.
 KeepDefaultValuesDeb=You use the Dolibarr setup wizard from an Ubuntu or Debian package, so values proposed here are already optimized. Only the password of the database owner to create must be completed. Change other parameters only if you know what you do.
 KeepDefaultValuesMamp=You use the Dolibarr setup wizard from DoliMamp, so values proposed here are already optimized. Change them only if you know what you do.
+KeepDefaultValuesProxmox=Μπορείτε να χρησιμοποιήσετε τον οδηγό ρυθμίσεων Dolibarr από μια συσκευή Proxmox εικονική, οπότε οι τιμές που προτείνονται εδώ ήδη βελτιστοποιηθεί. Αλλάξτε τους μόνο εάν ξέρετε τι κάνετε.
 FieldRenamed=Field renamed
 IfLoginDoesNotExistsCheckCreateUser=If login does not exists yet, you must check option "Create user"
 ErrorConnection=Server "<b>%s</b>", database name "<b>%s</b>", login "<b>%s</b>", or database password may be wrong or PHP client version may be too old compared to database version.
 InstallChoiceRecommanded=Recommended choice to install version <b>%s</b> from your current version <b>%s</b>
 InstallChoiceSuggested=<b>Install choice suggested by installer</b>.
+MigrateIsDoneStepByStep=Η στοχευμένη έκδοση (%s) έχει ένα κενό διάφορες εκδόσεις, ώστε να εγκαταστήσετε οδηγός θα επανέλθει στο επόμενο μετανάστευση προτείνουμε μια φορά αυτό θα τελειώσει.
 CheckThatDatabasenameIsCorrect=Check that database name "<b>%s</b>" is correct.
 IfAlreadyExistsCheckOption=If this name is correct and that database does not exist yet, you must check option "Create database".
 OpenBaseDir=PHP openbasedir parameter
 YouAskToCreateDatabaseSoRootRequired=You checked the box "Create database". For this, you need to provide login/password of superuser (bottom of form).
 YouAskToCreateDatabaseUserSoRootRequired=You checked the box "Create database owner". For this, you need to provide login/password of superuser (bottom of form).
 NextStepMightLastALongTime=Current step may last several minutes. Please wait until the next screen is shown completely before continuing.
-MigrationCustomerOrderShipping=Migrate shipping for customer orders storage 
-MigrationShippingDelivery=Upgrade storage of shipping 
-MigrationShippingDelivery2=Upgrade storage of shipping 2 
+MigrationCustomerOrderShipping=Migrate shipping for customer orders storage
+MigrationShippingDelivery=Upgrade storage of shipping
+MigrationShippingDelivery2=Upgrade storage of shipping 2
+MigrationFinished=Μετανάστευση τελειώσει
+LastStepDesc=<strong>Τελευταίο βήμα:</strong> Καθορίστε εδώ login και password που σκοπεύετε να χρησιμοποιήσετε για να συνδεθείτε με το λογισμικό. Να μην χάσετε αυτή, όπως είναι ο λογαριασμός για να επιτρέψει να διαχειριστεί όλες τις άλλες.
+ActivateModule=Ενεργοποίηση %s ενότητα
+# ShowEditTechnicalParameters=Click here to show/edit advanced parameters (expert mode)
 
 #########
 # upgrade
@@ -158,87 +169,42 @@ MigrationContract=Data migration for contracts
 MigrationSuccessfullUpdate=Upgrade successful
 MigrationUpdateFailed=Failed upgrade process
 MigrationRelationshipTables=Data migration for relationship tables (%s)
-
-# Payments Update
 MigrationPaymentsUpdate=Payment data correction
 MigrationPaymentsNumberToUpdate=%s payment(s) to update
 MigrationProcessPaymentUpdate=Update payment(s) %s
 MigrationPaymentsNothingToUpdate=No more things to do
 MigrationPaymentsNothingUpdatable=No more payments that can be corrected
-
-# Contracts Update
 MigrationContractsUpdate=Contract data correction
 MigrationContractsNumberToUpdate=%s contract(s) to update
 MigrationContractsLineCreation=Create contract line for contract ref %s
 MigrationContractsNothingToUpdate=No more things to do
 MigrationContractsFieldDontExist=Field fk_facture does not exists anymore. Nothing to do.
-
-# Contracts Empty Dates Update
 MigrationContractsEmptyDatesUpdate=Contract empty date correction
 MigrationContractsEmptyDatesUpdateSuccess=Contract emtpy date correction done successfuly
 MigrationContractsEmptyDatesNothingToUpdate=No contract empty date to correct
 MigrationContractsEmptyCreationDatesNothingToUpdate=No contract creation date to correct
-
-# Contracts Invalid Dates Update
 MigrationContractsInvalidDatesUpdate=Bad value date contract correction
 MigrationContractsInvalidDateFix=Correct contract %s (Contract date=%s, Starting service date min=%s)
 MigrationContractsInvalidDatesNumber=%s contracts modified
 MigrationContractsInvalidDatesNothingToUpdate=No date with bad value to correct
-
-# Contracts Incoherent Dates Update
 MigrationContractsIncoherentCreationDateUpdate=Bad value contract creation date correction
 MigrationContractsIncoherentCreationDateUpdateSuccess=Bad value contract creation date correction done succesfuly
 MigrationContractsIncoherentCreationDateNothingToUpdate=No bad value for contract creation date to correct
-
-# Reopening Contracts
 MigrationReopeningContracts=Open contract closed by error
 MigrationReopenThisContract=Reopen contract %s
 MigrationReopenedContractsNumber=%s contracts modified
 MigrationReopeningContractsNothingToUpdate=No closed contract to open
-
-# Migration transfer
 MigrationBankTransfertsUpdate=Update links between bank transaction and a bank transfer
 MigrationBankTransfertsNothingToUpdate=All links are up to date
-
-# Migration delivery
 MigrationShipmentOrderMatching=Sendings receipt update
 MigrationDeliveryOrderMatching=Delivery receipt update
 MigrationDeliveryDetail=Delivery update
-
-# Migration stock
 MigrationStockDetail=Update stock value of products
-
-# Migration menus
 MigrationMenusDetail=Update dynamic menus tables
-
-# Migration delivery address
 MigrationDeliveryAddress=Update delivery address in shipments
-
-# Migration project task actors
 MigrationProjectTaskActors=Data migration for llx_projet_task_actors table
-
-# Migration project user resp
 MigrationProjectUserResp=Data migration field fk_user_resp of llx_projet to llx_element_contact
-
-# Migration project task time
 MigrationProjectTaskTime=Update time spent in seconds
-
-
-// START - Lines generated via autotranslator.php tool (2011-06-26 15:35:22).
-// Reference language: en_US -> el_GR
-ConfFileReload=Ανανέωση της όλες τις πληροφορίες από το αρχείο ρυθμίσεων.
-WarningPHPVersionTooLow=PHP έκδοση πάρα πολύ παλιά. %s Έκδοση ή περισσότερα αναμένεται. Αυτή η έκδοση θα πρέπει να επιτρέψει την εγκατάσταση, αλλά δεν υποστηρίζεται.
-KeepDefaultValuesProxmox=Μπορείτε να χρησιμοποιήσετε τον οδηγό ρυθμίσεων Dolibarr από μια συσκευή Proxmox εικονική, οπότε οι τιμές που προτείνονται εδώ ήδη βελτιστοποιηθεί. Αλλάξτε τους μόνο εάν ξέρετε τι κάνετε.
-MigrateIsDoneStepByStep=Η στοχευμένη έκδοση (%s) έχει ένα κενό διάφορες εκδόσεις, ώστε να εγκαταστήσετε οδηγός θα επανέλθει στο επόμενο μετανάστευση προτείνουμε μια φορά αυτό θα τελειώσει.
-MigrationFinished=Μετανάστευση τελειώσει
-LastStepDesc=<strong>Τελευταίο βήμα:</strong> Καθορίστε εδώ login και password που σκοπεύετε να χρησιμοποιήσετε για να συνδεθείτε με το λογισμικό. Να μην χάσετε αυτή, όπως είναι ο λογαριασμός για να επιτρέψει να διαχειριστεί όλες τις άλλες.
 MigrationActioncommElement=Ενημέρωση στοιχεία για τις δράσεις
-// STOP - Lines generated via autotranslator.php tool (2011-06-26 15:41:02).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 16:06:57).
-// Reference language: en_US -> el_GR
-DatabasePrefix=Βάση δεδομένων πίνακα πρόθεμα
-ActivateModule=Ενεργοποίηση %s ενότητα
 MigrationPaymentMode=Η μεταφορά δεδομένων για την κατάσταση πληρωμής
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:07:14).
+# MigrationCategorieAssociation=Migration of categories

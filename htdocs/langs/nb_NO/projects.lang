@@ -1,14 +1,24 @@
-# Dolibarr language file - no_NB - projects
+# Dolibarr language file - Source file is en_US - projects
 CHARSET=UTF-8
 Project=Prosjekt
 Projects=Prosjekter
+SharedProject=Alle
+PrivateProject=Kontaktpersoner for prosjektet
+MyProjectsDesc=Denne visningen er begrenset til prosjekter du er en kontakt for (hva er den type).
+ProjectsPublicDesc=Denne visningen presenterer alle prosjektene du har lov til å lese.
+ProjectsDesc=Denne visningen presenterer alle prosjekter (dine brukertillatelser gi deg tillatelse til å vise alt).
+MyTasksDesc=Denne visningen er begrenset til prosjekter eller oppgaver du er en kontakt for (hva er den type).
+TasksPublicDesc=Denne visningen presenterer alle prosjekter og oppgaver du har lov til å lese.
+TasksDesc=Denne visningen presenterer alle prosjekter og oppgaver (dine brukertillatelser gi deg tillatelse til å vise alt).
 Myprojects=Mine prosjekter
 ProjectsArea=Prosjektområde
 NewProject=Nytt prosjekt
 AddProject=Legg til prosjekt
 DeleteAProject=Slett et prosjekt
-OfficerProject=Officer prosjekt
+DeleteATask=Slette en oppgave
 ConfirmDeleteAProject=Er du sikker på at du vil slette dette prosjektet?
+ConfirmDeleteATask=Er du sikker på at du vil slette denne oppgaven?
+OfficerProject=Officer prosjekt
 LastProjects=Siste %s prosjekter
 AllProjects=Alle prosjekter
 ProjectsList=Oversikt over prosjekter
@@ -18,46 +28,28 @@ NoProject=Ingen prosjekter definert
 NbOpenTasks=Ant. åpne oppgaver
 NbOfProjects=Ant. prosjekter
 TimeSpent=Tid brukt
+TimesSpent=Tid brukt
 RefTask=Ref. oppgave
 LabelTask=Oppgave
 NewTimeSpent=Ny tid brukt
 MyTimeSpent=Mitt tidsforbruk
-Mytasks=Mine oppgaver
+MyTasks=Mine oppgaver
 Tasks=Oppgaver
 Task=Oppgave
 NewTask=Ny oppgave
 AddTask=Legg til oppgave
 AddDuration=Legg til varighet
 Activity=Aktivitet
+Activities=Oppgaver / aktiviteter
 MyActivity=Min aktivitet
+MyActivities=Mine oppgaver / aktiviteter
+MyProjects=Mine prosjekter
 DurationEffective=Effektiv varighet
+Progress=Progress
 Time=Tid
 ListProposalsAssociatedProject=Oversikt over tilbud relatert til dette prosjektet
 ListOrdersAssociatedProject=Oversikt over ordre relatert til dette prosjektet
 ListInvoicesAssociatedProject=Oversikt over fakturaer relatert til dette prosjektet
-ActivityOnProjectThisWeek=Aktiviteter i prosjektet denne uke
-ActivityOnProjectThisMonth=Aktiviteter i prosjektet denne måned
-ActivityOnProjectThisYear=Aktiviteter i prosjektet dette år
-ChildOfTask=barn av oppgaven
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:45:17).
-// Reference language: en_US
-SharedProject=Alle
-PrivateProject=Kontaktpersoner for prosjektet
-MyProjectsDesc=Denne visningen er begrenset til prosjekter du er en kontakt for (hva er den type).
-ProjectsPublicDesc=Denne visningen presenterer alle prosjektene du har lov til å lese.
-ProjectsDesc=Denne visningen presenterer alle prosjekter (dine brukertillatelser gi deg tillatelse til å vise alt).
-MyTasksDesc=Denne visningen er begrenset til prosjekter eller oppgaver du er en kontakt for (hva er den type).
-TasksPublicDesc=Denne visningen presenterer alle prosjekter og oppgaver du har lov til å lese.
-TasksDesc=Denne visningen presenterer alle prosjekter og oppgaver (dine brukertillatelser gi deg tillatelse til å vise alt).
-DeleteATask=Slette en oppgave
-ConfirmDeleteATask=Er du sikker på at du vil slette denne oppgaven?
-MyTasks=Mine oppgaver
-Activities=Oppgaver / aktiviteter
-MyActivities=Mine oppgaver / aktiviteter
-MyProjects=Mine prosjekter
-Progress=Progress
 ListPredefinedInvoicesAssociatedProject=Liste over kundens forhåndsdefinerte fakturaer knyttet til prosjektet
 ListSupplierOrdersAssociatedProject=Liste over leverandørens ordre knyttet til prosjektet
 ListSupplierInvoicesAssociatedProject=Liste over leverandørens fakturaer knyttet til prosjektet
@@ -65,6 +57,10 @@ ListContractAssociatedProject=Liste over kontrakter knyttet til prosjektet
 ListFichinterAssociatedProject=Liste over tiltak knyttet til prosjektet
 ListTripAssociatedProject=Liste over turer og utgifter knyttet til prosjektet
 ListActionsAssociatedProject=Liste over tiltak knyttet til prosjektet
+ActivityOnProjectThisWeek=Aktiviteter i prosjektet denne uke
+ActivityOnProjectThisMonth=Aktiviteter i prosjektet denne måned
+ActivityOnProjectThisYear=Aktiviteter i prosjektet dette år
+ChildOfTask=barn av oppgaven
 NotOwnerOfProject=Ikke eier av denne private prosjektet
 AffectedTo=Berørte til
 CantRemoveProject=Dette prosjektet kan ikke fjernes da det er referert av noen andre objekter (faktura, bestillinger eller annet). Se referanser kategorien.
@@ -85,6 +81,20 @@ TaskRessourceLinks=Ressurser
 ProjectsDedicatedToThisThirdParty=Prosjekter dedikert til denne tredje part
 NoTasks=Ingen oppgaver for dette prosjektet
 LinkedToAnotherCompany=Knyttet opp til andre tredjepart
+TaskIsNotAffectedToYou=Oppgaven ikke allokert til deg
+ErrorTimeSpentIsEmpty=Tid brukt er tom
+ThisWillAlsoRemoveTasks=Denne handlingen vil også slette alle oppgaver av prosjektet <b>(%s</b> oppgaver for øyeblikket) og alle innganger av medgått tid.
+IfNeedToUseOhterObjectKeepEmpty=Dersom noen objekter (faktura, orden, ...), som tilhører en annen tredjepart, må knyttes til prosjektet for å lage, beholde denne tomme for å få prosjektet blir flere tredjeparter.
+# CloneProject=Clone project
+# CloneTasks=Clone tasks
+# CloneContacts=Clone contacts
+# CloneNotes=Clone notes
+# CloneFiles=Clone joined files
+# ConfirmCloneProject=Are you sure to clone this project ?
+# ProjectReportDate=Change task date according project start date
+# ErrorShiftTaskDate=Impossible to shift task date according to new project start date
+# ProjectsAndTasksLines=Projects and tasks
+##### Types de contacts #####
 TypeContact_project_internal_PROJECTLEADER=Prosjektleder
 TypeContact_project_external_PROJECTLEADER=Prosjektleder
 TypeContact_project_internal_CONTRIBUTOR=Bidragsyter
@@ -93,15 +103,7 @@ TypeContact_project_task_internal_TASKEXECUTIVE=Oppgave Executive
 TypeContact_project_task_external_TASKEXECUTIVE=Oppgave Executive
 TypeContact_project_task_internal_CONTRIBUTOR=Bidragsyter
 TypeContact_project_task_external_CONTRIBUTOR=Bidragsyter
+# Documents models
 DocumentModelBaleine=En komplett prosjektets rapport modell (logo. ..)
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:47:17).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 17:06:43).
-// Reference language: en_US -> nb_NO
-TimesSpent=Tid brukt
-TaskIsNotAffectedToYou=Oppgaven ikke allokert til deg
-ErrorTimeSpentIsEmpty=Tid brukt er tom
-ThisWillAlsoRemoveTasks=Denne handlingen vil også slette alle oppgaver av prosjektet <b>(%s</b> oppgaver for øyeblikket) og alle innganger av medgått tid.
-IfNeedToUseOhterObjectKeepEmpty=Dersom noen objekter (faktura, orden, ...), som tilhører en annen tredjepart, må knyttes til prosjektet for å lage, beholde denne tomme for å få prosjektet blir flere tredjeparter.
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:09:21).
+# PlannedWorkload = Planned workload
+# WorkloadOccupation= Workload affectation

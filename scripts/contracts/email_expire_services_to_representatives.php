@@ -33,7 +33,7 @@ $path=dirname(__FILE__).'/';
 $sapi_type = php_sapi_name();
 if (substr($sapi_type, 0, 3) == 'cgi') {
     echo "Error: You are using PHP for CGI. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
-    exit;
+	exit(-1);
 }
 
 if (! isset($argv[1]) || ! $argv[1] || ! in_array($argv[1],array('test','confirm')))
@@ -43,7 +43,7 @@ if (! isset($argv[1]) || ! $argv[1] || ! in_array($argv[1],array('test','confirm
 	print "Send an email to remind all contracts services to expire, to users that are sale representative for.\n";
 	print "If you choose 'test' mode, no emails are sent.\n";
 	print "If you add a delay (nb of days), only services with expired date < today + delay are included.\n";
-	exit;
+	exit(-1);
 }
 $mode=$argv[1];
 
@@ -66,6 +66,7 @@ $error=0;
 
 @set_time_limit(0);
 print "***** ".$script_file." (".$version.") pid=".getmypid()." *****\n";
+dol_syslog($script_file." launched with arg ".join(',',$argv));
 
 $now=dol_now('tzserver');
 $duration_value=isset($argv[2])?$argv[2]:'none';
@@ -125,9 +126,15 @@ if ($resql)
                 if (empty($obj->email)) print "Warning: Sale representative ".$salerepresentative." has no email. Notice disabled.\n";
             }
 
+            // Define line content
+            $outputlangs=new Translate('',$conf);
+            $outputlangs->setDefaultLang(empty($obj->lang)?$langs->defaultlang:$obj->lang);	// By default language of sale representative
+            $outputlangs->load("bills");
+            $outputlangs->load("main");
+
             if (dol_strlen($obj->email))
             {
-            	$message .= $langs->trans("Contract")." ".$obj->ref.": ".$langs->trans("Service")." ".$obj->label." (".price($obj->total_ttc).") ".$obj->nom.", ".$langs->trans("DateEndPlannedShort")." ".dol_print_date($db->jdate($obj->date_fin_validite),'day')."\n\n";
+            	$message .= $langs->trans("Contract")." ".$obj->ref.": ".$langs->trans("Service")." ".$obj->label." (".price($obj->total_ttc,0,$outputlangs,0,0,-1,$conf->currency).") ".$obj->nom.", ".$langs->trans("DateEndPlannedShort")." ".dol_print_date($db->jdate($obj->date_fin_validite),'day')."\n\n";
             	dol_syslog("email_expire_services_to_representatives.php: ".$obj->email);
             	$foundtoprocess++;
             }
@@ -154,14 +161,18 @@ if ($resql)
         }
     }
     else
-    {
+	{
         print "No services to expire (for companies linked to a particular commercial dolibarr user) found\n";
     }
+
+    exit(0);
 }
 else
 {
     dol_print_error($db);
     dol_syslog("email_expire_services_to_representatives.php: Error");
+
+    exit(-1);
 }
 
 
@@ -197,7 +208,7 @@ function envoi_mail($mode,$oldemail,$message,$total,$userlang,$oldsalerepresenta
     $sendto = $oldemail;
     $from = $conf->global->MAIN_MAIL_EMAIL_FROM;
     $errorsto = $conf->global->MAIN_MAIL_ERRORS_TO;
-	$msgishtml = 0;
+	$msgishtml = -1;
 
     print "- Send email for ".$oldsalerepresentative." (".$oldemail."), total: ".$total."\n";
     dol_syslog("email_expire_services_to_representatives.php: send mail to ".$oldemail);
@@ -217,7 +228,7 @@ function envoi_mail($mode,$oldemail,$message,$total,$userlang,$oldsalerepresenta
     	$allmessage.= "Note: This list contains only services of contracts for third parties you are linked to as a sale representative.".($usehtml?"<br>\n":"\n").($usehtml?"<br>\n":"\n");
     }
     $allmessage.= $message.($usehtml?"<br>\n":"\n");
-    $allmessage.= $langs->trans("Total")." = ".price($total).($usehtml?"<br>\n":"\n");
+    $allmessage.= $langs->trans("Total")." = ".price($total,0,$userlang,0,0,-1,$conf->currency).($usehtml?"<br>\n":"\n");
     if (! empty($conf->global->SCRIPT_EMAIL_EXPIRE_SERVICES_SALESREPRESENTATIVES_FOOTER))
     {
     	$allmessage.=$conf->global->SCRIPT_EMAIL_EXPIRE_SERVICES_SALESREPRESENTATIVES_FOOTER;
@@ -267,6 +278,5 @@ function envoi_mail($mode,$oldemail,$message,$total,$userlang,$oldsalerepresenta
         return -1;
     }
 }
-
 
 ?>

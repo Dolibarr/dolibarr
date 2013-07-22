@@ -45,18 +45,28 @@ $left=($langs->trans("DIRECTION")=='rtl'?'right':'left');
  * View
  */
 
+$title=$langs->trans("Search");
+
 // URL http://mydolibarr/core/search_page?dol_use_jmobile=1 can be used for tests
-top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
+$head='<!-- Quick access -->'."\n";
+$arrayofjs=array();
+$arrayofcss=array();
+top_htmlhead($head, $title, 0, 0, $arrayofjs, $arrayofcss);
 
 
 
-print '<body style="margin: 30px; height: 100%;">'."\n";
+print '<body>'."\n";
+print '<div>';
 //print '<br>';
 
 $nbofsearch=0;
 
+// Instantiate hooks of thirdparty module
+$hookmanager->initHooks(array('searchform'));
+
 // Define $searchform
-if (! empty($conf->societe->enabled) && ! empty($conf->global->MAIN_SEARCHFORM_SOCIETE) && $user->rights->societe->lire)
+// TODO Mutualize code here with function left_menu into main.inc.php page
+if ((( ! empty($conf->societe->enabled) && (empty($conf->global->SOCIETE_DISABLE_PROSPECTS) || empty($conf->global->SOCIETE_DISABLE_CUSTOMERS))) || ! empty($conf->fournisseur->enabled)) && ! empty($conf->global->MAIN_SEARCHFORM_SOCIETE) && $user->rights->societe->lire)
 {
 	$langs->load("companies");
 	$searchform.=printSearchForm(DOL_URL_ROOT.'/societe/societe.php', DOL_URL_ROOT.'/societe/societe.php', img_object('','company').' '.$langs->trans("ThirdParties"), 'soc', 'socname');
@@ -102,16 +112,17 @@ else $searchform=$hookmanager->resPrint;
 
 print "\n";
 print "<!-- Begin SearchForm -->\n";
-print '<div class="center" data-role="page" style="padding-left: 2px;">';
-print '<style>.menu_titre { padding-top: 6px; }</style>';
+print '<div class="center" data-role="page" align="center"><div align="center" style="padding: 6px;">';
+print '<style>.menu_titre { padding-top: 7px; }</style>';
 //print '<div id="distance"></div><div id="container" class="center">';
 print '<div id="blockvmenusearch">'."\n";
 print $searchform;
 print '</div>'."\n";
 //print '</div></div>';
-print '</div>';
+print '</div></div>';
 print "<!-- End SearchForm -->\n";
 
+print '</div>';
 print '</body></html>'."\n";
 
 $db->close();

@@ -52,6 +52,7 @@ class Fichinter extends CommonObject
 	var $note_private;
 	var $note_public;
 	var $fk_project;
+	var $fk_contrat;
 	var $modelpdf;
 	var $extraparams=array();
 
@@ -67,6 +68,7 @@ class Fichinter extends CommonObject
 		$this->db = $db;
 		$this->products = array();
 		$this->fk_project = 0;
+		$this->fk_contrat = 0;
 		$this->statut = 0;
 
 		// List of language codes for status
@@ -137,6 +139,7 @@ class Fichinter extends CommonObject
 		$sql.= ", description";
 		$sql.= ", model_pdf";
 		$sql.= ", fk_projet";
+		$sql.= ", fk_contrat";
 		$sql.= ", fk_statut";
 		$sql.= ", note_private";
 		$sql.= ", note_public";
@@ -150,6 +153,7 @@ class Fichinter extends CommonObject
 		$sql.= ", ".($this->description?"'".$this->db->escape($this->description)."'":"null");
 		$sql.= ", '".$this->modelpdf."'";
 		$sql.= ", ".($this->fk_project ? $this->fk_project : 0);
+		$sql.= ", ".($this->fk_contrat ? $this->fk_contrat : 0);
 		$sql.= ", ".$this->statut;
 		$sql.= ", ".($this->note_private?"'".$this->db->escape($this->note_private)."'":"null");
 		$sql.= ", ".($this->note_public?"'".$this->db->escape($this->note_public)."'":"null");
@@ -253,7 +257,7 @@ class Fichinter extends CommonObject
 			}
 			// Fin appel triggers
 			}
-			
+
 			$this->db->commit();
 			return 1;
 		}
@@ -313,9 +317,7 @@ class Fichinter extends CommonObject
 				require_once(DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php');
 				$extrafields=new ExtraFields($this->db);
 				$extralabels=$extrafields->fetch_name_optionals_label($this->table_element,true);
-				if (count($extralabels)>0) {
-					$this->fetch_optionals($this->id,$extralabels);
-				}
+				$this->fetch_optionals($this->id,$extralabels);
 
 				/*
 				 * Lines
@@ -531,8 +533,9 @@ class Fichinter extends CommonObject
 	/**
 	 *	Return clicable name (with picto eventually)
 	 *
-	 *	@param		int			$withpicto		0=_No picto, 1=Includes the picto in the linkn, 2=Picto only
-	 *	@return		string						String with URL
+	 *	@param		int		$withpicto		0=_No picto, 1=Includes the picto in the linkn, 2=Picto only
+	 *	@param		string	$option			Options
+	 *	@return		string					String with URL
 	 */
 	function getNomUrl($withpicto=0,$option='')
 	{
@@ -657,8 +660,9 @@ class Fichinter extends CommonObject
 	/**
 	 *	Delete intervetnion
 	 *
-	 *	@param      User	$user	Object user who delete
-	 *	@return		int				<0 if KO, >0 if OK
+	 *	@param      User	$user			Object user who delete
+	 *	@param		int		$notrigger		Disable trigger
+	 *	@return		int						<0 if KO, >0 if OK
 	 */
 	function delete($user, $notrigger=0)
 	{
@@ -818,6 +822,40 @@ class Fichinter extends CommonObject
 			{
 				$this->error=$this->db->error();
 				dol_syslog("Fichinter::set_description Erreur SQL");
+				return -1;
+			}
+		}
+	}
+
+
+	/**
+	 *	Define the label of the contract
+	 *
+	 *	@param      User	$user			Object user who modify
+	 *	@param      int		$contractid		Description
+	 *	@return     int						<0 if ko, >0 if ok
+	 */
+	function set_contrat($user, $contratid)
+	{
+		global $conf;
+
+		if ($user->rights->ficheinter->creer)
+		{
+			$sql = "UPDATE ".MAIN_DB_PREFIX."fichinter ";
+			$sql.= " SET fk_contrat = '".$contratid."'";
+			$sql.= " WHERE rowid = ".$this->id;
+			$sql.= " AND entity = ".$conf->entity;
+			//$sql.= " AND fk_statut = 0";
+
+			if ($this->db->query($sql))
+			{
+				$this->fk_contrat = $contratid;
+				return 1;
+			}
+			else
+			{
+				$this->error=$this->db->error();
+				dol_syslog("Fichinter::set_contrat Erreur SQL");
 				return -1;
 			}
 		}

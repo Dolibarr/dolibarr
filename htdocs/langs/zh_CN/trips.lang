@@ -1,12 +1,4 @@
-/*
- * Language code: zh_CN
- * Automatic generated via autotranslator.php tool
- * Generation date 2010-06-08 21:22:55
- */
-
-
-// START - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).
-// Reference language: en_US
+# Dolibarr language file - Source file is en_US - trips
 CHARSET=UTF-8
 Trip=旅程
 Trips=旅游
@@ -26,11 +18,5 @@ TF_OTHER=其他
 TF_LUNCH=午餐
 TF_TRIP=旅程
 ListTripsAndExpenses=旅行和费用清单
-// STOP - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 17:37:09).
-// Reference language: en_US -> zh_CN
 ExpensesArea=与贸易有关的知识产权协定“和开支面积
 SearchATripAndExpense=寻找旅行和费用
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:37:52).

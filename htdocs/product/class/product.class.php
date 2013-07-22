@@ -1,11 +1,12 @@
 <?php
 /* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2013 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  * Copyright (C) 2007-2011 Jean Heimburger      <jean@tiaris.info>
  * Copyright (C) 2010-2011 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2013	   Cedric GROSS	        <c.gross@kreiz-it.fr>
+ * Copyright (C) 2013      Marcos García        <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -62,6 +63,7 @@ class Product extends CommonObject
 	var $multiprices_ttc=array();
 	var $multiprices_base_type=array();
 	var $multiprices_tva_tx=array();
+	var $multiprices_recuperableonly=array();
 	//! Price by quantity arrays
 	var $price_by_qty;
 	var $prices_by_qty=array();
@@ -226,7 +228,6 @@ class Product extends CommonObject
 
 		if (empty($this->status))    	$this->status = 0;
 		if (empty($this->status_buy))   $this->status_buy = 0;
-		if (empty($this->finished))  	$this->finished = 0;
 
 		$price_ht=0;
 		$price_ttc=0;
@@ -316,7 +317,7 @@ class Product extends CommonObject
 				$sql.= ", ".$this->status;
 				$sql.= ", ".$this->status_buy;
 				$sql.= ", '".$this->canvas."'";
-				$sql.= ", ".$this->finished;
+				$sql.= ", ".((empty($this->finished) || $this->finished < 0)?'null':$this->finished);
 				$sql.= ")";
 
 				dol_syslog(get_class($this)."::Create sql=".$sql);
@@ -336,19 +337,7 @@ class Product extends CommonObject
 						$result = $this->_log_price($user);
 						if ($result > 0)
 						{
-							if ($this->update($id, $user, true, 'add') > 0)
-							{
-								// FIXME: not use here
-								/*
-								if ($this->catid > 0)
-								{
-									require_once DOL_DOCUMENT_ROOT .'/categories/class/categorie.class.php';
-									$cat = new Categorie($this->db, $this->catid);
-									$cat->add_type($this,"product");
-								}
-								*/
-							}
-							else
+							if ($this->update($id, $user, true, 'add') <= 0)
 							{
 							    $error++;
 					            $this->error='ErrorFailedToUpdateRecord';
@@ -447,7 +436,6 @@ class Product extends CommonObject
 		if (empty($this->localtax1_tx))			$this->localtax1_tx = 0;
 		if (empty($this->localtax2_tx))			$this->localtax2_tx = 0;
 
-		if (empty($this->finished))  			$this->finished = 0;
         if (empty($this->country_id))           $this->country_id = 0;
 
 		$this->accountancy_code_buy = trim($this->accountancy_code_buy);
@@ -465,7 +453,7 @@ class Product extends CommonObject
 
 		$sql.= ",tosell = " . $this->status;
 		$sql.= ",tobuy = " . $this->status_buy;
-		$sql.= ",finished = " . ($this->finished<0 ? "null" : $this->finished);
+		$sql.= ",finished = " . ((empty($this->finished) || $this->finished < 0) ? "null" : $this->finished);
 		$sql.= ",weight = " . ($this->weight!='' ? "'".$this->weight."'" : 'null');
 		$sql.= ",weight_units = " . ($this->weight_units!='' ? "'".$this->weight_units."'": 'null');
 		$sql.= ",length = " . ($this->length!='' ? "'".$this->length."'" : 'null');
@@ -673,7 +661,7 @@ class Product extends CommonObject
                 		}
                 	}
                 }
-                
+
                 // Remove extrafields
                 if ((! $error) && (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED))) // For avoid conflicts if trigger used
                 {
@@ -834,13 +822,15 @@ class Product extends CommonObject
 	 */
 	function _log_price($user,$level=0)
 	{
+		global $conf;
+
 		$now=dol_now();
 
 		// Add new price
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_price(price_level,date_price,fk_product,fk_user_author,price,price_ttc,price_base_type,tosell,tva_tx,recuperableonly,";
-		$sql.= " localtax1_tx, localtax2_tx, price_min,price_min_ttc,price_by_qty) ";
+		$sql.= " localtax1_tx, localtax2_tx, price_min,price_min_ttc,price_by_qty,entity) ";
 		$sql.= " VALUES(".($level?$level:1).", '".$this->db->idate($now)."',".$this->id.",".$user->id.",".$this->price.",".$this->price_ttc.",'".$this->price_base_type."',".$this->status.",".$this->tva_tx.",".$this->tva_npr.",";
-		$sql.= " ".$this->localtax1_tx.",".$this->localtax2_tx.",".$this->price_min.",".$this->price_min_ttc.",".$this->price_by_qty;
+		$sql.= " ".$this->localtax1_tx.",".$this->localtax2_tx.",".$this->price_min.",".$this->price_min_ttc.",".$this->price_by_qty.",".$conf->entity;
 		$sql.= ")";
 
 		dol_syslog(get_class($this)."_log_price sql=".$sql);
@@ -969,7 +959,6 @@ class Product extends CommonObject
 	/**
 	 *	Modify price of a product/Service
 	 *
-	 *	@param  	int		$id          	Id of product/service to change
 	 *	@param  	double	$newprice		New price
 	 *	@param  	string	$newpricebase	HT or TTC
 	 *	@param  	User	$user        	Object user that make change
@@ -980,9 +969,11 @@ class Product extends CommonObject
 	 *  @param     	int		$newpsq         1 if it has price by quantity
 	 * 	@return		int						<0 if KO, >0 if OK
 	 */
-	function updatePrice($id, $newprice, $newpricebase, $user, $newvat='',$newminprice='', $level=0, $newnpr=0, $newpsq=0)
+	function updatePrice($newprice, $newpricebase, $user, $newvat='',$newminprice='', $level=0, $newnpr=0, $newpsq=0)
 	{
 		global $conf,$langs;
+
+		$id=$this->id;
 
 		dol_syslog(get_class($this)."update_price id=".$id." newprice=".$newprice." newpricebase=".$newpricebase." newminprice=".$newminprice." level=".$level." npr=".$newnpr);
 
@@ -1072,7 +1063,9 @@ class Product extends CommonObject
 				// Price by quantity
 				$this->price_by_qty = $newpsq;
 
-				$this->_log_price($user,$level);
+				$this->_log_price($user,$level);	// Save price for level into table product_price
+
+				$this->level = $level;				// Store level of price edited for trigger
 
 				// Appel des triggers
 				include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
@@ -1206,9 +1199,10 @@ class Product extends CommonObject
 					for ($i=1; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++)
 					{
 						$sql = "SELECT price, price_ttc, price_min, price_min_ttc,";
-						$sql.= " price_base_type, tva_tx, tosell, price_by_qty, rowid";
+						$sql.= " price_base_type, tva_tx, tosell, price_by_qty, rowid, recuperableonly";
 						$sql.= " FROM ".MAIN_DB_PREFIX."product_price";
-						$sql.= " WHERE price_level=".$i;
+						$sql.= " WHERE entity IN (".getEntity('productprice', 1).")";
+						$sql.= " AND price_level=".$i;
 						$sql.= " AND fk_product = '".$this->id."'";
 						$sql.= " ORDER BY date_price DESC";
 						$sql.= " LIMIT 1";
@@ -1223,6 +1217,7 @@ class Product extends CommonObject
 							$this->multiprices_min_ttc[$i]=$result["price_min_ttc"];
 							$this->multiprices_base_type[$i]=$result["price_base_type"];
 							$this->multiprices_tva_tx[$i]=$result["tva_tx"];
+							$this->multiprices_recuperableonly[$i]=$result["recuperableonly"];
 
 							// Price by quantity
 							$this->prices_by_qty[$i]=$result["price_by_qty"];
@@ -2085,6 +2080,24 @@ class Product extends CommonObject
 		return 1;
 	}
 
+	function clone_associations($fromId, $toId)
+	{
+		$this->db->begin();
+
+		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'product_association (rowid, fk_product_pere, fk_product_fils, qty)';
+		$sql.= " SELECT null, $toId, fk_product_fils, qty FROM ".MAIN_DB_PREFIX."product_association";
+		$sql.= " WHERE fk_product_pere = '".$fromId."'";
+
+		if (! $this->db->query($sql))
+		{
+			$this->db->rollback();
+			return -1;
+		}
+
+		$this->db->commit();
+		return 1;
+	}
+
 	/**
 	 *  Recopie les fournisseurs et prix fournisseurs d'un produit/service sur un autre
 	 *
@@ -2169,13 +2182,13 @@ class Product extends CommonObject
 					'fullpath' => $compl_path.$label,			// Label
 					'type'=>$type				// Nb of units that compose parent product
 				);
-			}
 
-			// Recursive call if child is an array
-			if (is_array($desc_pere['childs']))
-			{
-				//print 'YYY We go down for '.$desc_pere[3]." -> \n";
-				$this ->fetch_prod_arbo($desc_pere['childs'], $compl_path.$desc_pere[3]." -> ", $desc_pere[1]*$multiply, $level+1);
+				// Recursive call if child is an array
+				if (is_array($desc_pere['childs']))
+				{
+					//print 'YYY We go down for '.$desc_pere[3]." -> \n";
+					$this ->fetch_prod_arbo($desc_pere['childs'], $compl_path.$desc_pere[3]." -> ", $desc_pere[1]*$multiply, $level+1);
+				}
 			}
 		}
 	}
@@ -2973,6 +2986,7 @@ class Product extends CommonObject
 			{
 				$this->nb["products"]=$obj->nb;
 			}
+            $this->db->free($resql);
 			return 1;
 		}
 		else

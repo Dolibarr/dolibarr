@@ -1,15 +1,9 @@
-/*
- * Language code: et_EE
- * Automatic generated via autotranslator.php tool
- * Generation date 2012-02-29 22:15:30
- */
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 22:15:30).
-// Reference language: en_US -> et_EE
+# Dolibarr language file - Source file is en_US - languages
 CHARSET=UTF-8
+
 Language_ar_AR=Araabia
 Language_ar_SA=Araabia
+# Language_bg_BG=Bulgarian
 Language_ca_ES=Katalaani
 Language_da_DA=Taani
 Language_da_DK=Taani
@@ -20,18 +14,21 @@ Language_en_AU=Inglise (Austraalia)
 Language_en_GB=English (United Kingdom)
 Language_en_IN=Inglise (India)
 Language_en_NZ=Inglise (New-Meremaa)
+# Language_en_SA=English (Saudi Arabia)
 Language_en_US=Inglise (United States)
 Language_es_ES=Hispaania
 Language_es_AR=Hispaania (Argentina)
 Language_es_HN=Hispaania (Honduras)
 Language_es_MX=Hispaania (Mehhiko)
 Language_es_PR=Hispaania (Puerto Rico)
+# Language_et_EE=Estonian
 Language_fa_IR=Pärsia
 Language_fi_FI=Fins
 Language_fr_BE=Prantsuse (Belgia)
 Language_fr_CA=Prantsuse (Kanada)
 Language_fr_CH=Prantsuse (Šveits)
 Language_fr_FR=Prantsuse
+# Language_he_IL=Hebrew
 Language_hu_HU=Ungari
 Language_is_IS=Islandi
 Language_it_IT=Itaalia
@@ -50,5 +47,5 @@ Language_sl_SI=Sloveeni
 Language_sv_SV=Rootsi
 Language_sv_SE=Rootsi
 Language_zh_CN=Hiina
+# Language_zh_TW=Chinese (Traditional)
 Language_is_IS=Islandi
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 22:38:29).

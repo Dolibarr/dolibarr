@@ -1,12 +1,4 @@
-/*
- * Language code: sv_SV
- * Automatic generated via autotranslator.php tool
- * Generation date 2010-08-27 08:47:44
- */
-
-
-// START - Lines generated via autotranslator.php tool (2010-08-27 08:47:44).
-// Reference language: en_US
+# Dolibarr language file - Source file is en_US - sendings
 CHARSET=UTF-8
 RefSending=Ref. transporten
 Sending=Sändning
@@ -39,9 +31,11 @@ SendingsToValidate=Transporter för att validera
 StatusSendingCanceled=Annullerad
 StatusSendingDraft=Förslag
 StatusSendingValidated=Validerad (produkter till ett fartyg eller som redan sänts)
+# StatusSendingProcessed=Processed
 StatusSendingCanceledShort=Annullerad
 StatusSendingDraftShort=Förslag
 StatusSendingValidatedShort=Validerad
+# StatusSendingProcessedShort=Processed
 SendingSheet=Att skicka ark
 Carriers=Bärare
 Carrier=Carrier
@@ -58,20 +52,22 @@ WarningNoQtyLeftToSend=Varning, att inga produkter väntar sändas.
 StatsOnShipmentsOnlyValidated=Statistik som gjorts på transporter enda validerade
 DateDeliveryPlanned=Hyvlat leveransdatum
 DateReceived=Datum leverans fick
-SendingMethodCATCH=Fångst av kunden
-SendingMethodTRANS=Transporter
-SendingMethodCOLSUI=Colissimo
-DocumentModelSirocco=Enkel handling modell för leverans kvitton
-DocumentModelTyphon=Mer komplett dokument modell för leverans intäkter (logo. ..)
-// STOP - Lines generated via autotranslator.php tool (2010-08-27 08:50:37).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 17:32:03).
-// Reference language: en_US -> sv_SE
 SendShippingByEMail=Skicka leverans via e-post
 SendShippingRef=Skicka transport %s
 ActionsOnShipping=Evenemang på leverans
 LinkToTrackYourPackage=Länk till spåra ditt paket
 ShipmentCreationIsDoneFromOrder=För närvarande är skapandet av en ny leverans sker från ordern kortet.
+# RelatedShippings=Related shippings
+# ShipmentLine=Shipment line
+# CarrierList=List of transporters
+
+# Sending methods
+SendingMethodCATCH=Fångst av kunden
+SendingMethodTRANS=Transporter
+SendingMethodCOLSUI=Colissimo
+
+# ModelDocument
+DocumentModelSirocco=Enkel handling modell för leverans kvitton
+DocumentModelTyphon=Mer komplett dokument modell för leverans intäkter (logo. ..)
+
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=Konstant EXPEDITION_ADDON_NUMBER definieras inte
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:34:49).

@@ -1,13 +1,4 @@
-/*
- * Language code: ro_RO
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-01-19 21:32:52
- */
-
-
-// Date 2009-01-19 21:32:52
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
+# Dolibarr language file - Source file is en_US - banks
 CHARSET=UTF-8
 Bank=Banca
 Banks=Banci
@@ -29,6 +20,8 @@ SavingAccount=Cont de economii
 SavingAccounts=Conturile de economii
 ErrorBankLabelAlreadyExists=Contul financiar eticheta există deja
 BankBalance=Balanţa
+# BankBalanceBefore=Balance before
+# BankBalanceAfter=Balance after
 BalanceMinimalAllowed=Minimă permisă echilibru
 BalanceMinimalDesired=Minim dorit echilibru
 InitialBankBalance=Iniţială de echilibru
@@ -51,11 +44,11 @@ LastAccountStatements=Ultima cont declaraţii
 Rapprochement=Reconciliate
 IOMonthlyReporting=Lunar de raportare
 BankAccountDomiciliation=Contul adresa
+BankAccountCountry=Contul ţară
 BankAccountOwner=Contul numele proprietarului
 BankAccountOwnerAddress=Contul adresa proprietarului
+RIBControlError=Verifica integritatea de valori nu. Acest lucru înseamnă pentru acest număr de cont nu sunt complete sau greşite (verifica ţară, numere şi IBAN).
 CreateAccount=Crearea contului
-StandingOrderToProcess=Pentru a procesa
-StandingOrderProcessed=Prelucrate
 NewAccount=Cont nou
 NewBankAccount=Nou cont bancar
 NewFinancialAccount=New contul financiar
@@ -112,7 +105,9 @@ ConciliatedBy=Conciliated de
 DateConciliating=Împăca data
 BankLineConciliated=Tranzacţie conciliated
 CustomerInvoicePayment=Clientul de plată
+# CustomerInvoicePaymentBack=Customer payment back
 SupplierInvoicePayment=Furnizor de plată
+WithdrawalPayment=Retragerea de plată
 SocialContributionPayment=Social plata contribuţiei
 FinancialAccountJournal=Contul financiar Oficial
 BankTransfer=Transfer bancar
@@ -128,6 +123,7 @@ DeleteCheckReceipt=Ştergeţi acest verifica primirea?
 ConfirmDeleteCheckReceipt=Sunteţi sigur că doriţi să ştergeţi acest verifica primirea?
 BankChecks=Banca de cecuri
 BankChecksToReceipt=Cecuri de aşteptare pentru depozit
+ShowCheckReceipt=Arată a verifica primirea de depozit
 NumberOfCheques=Nb de cecuri
 DeleteTransaction=Ştergere tranzacţie
 ConfirmDeleteTransaction=Sunteţi sigur că doriţi să ştergeţi această tranzacţie?
@@ -135,43 +131,23 @@ ThisWillAlsoDeleteBankRecord=Aceasta va şterge, de asemenea, generate de tranza
 BankMovements=Mişcările
 CashBudget=Cash buget
 PlannedTransactions=Planificate tranzacţiilor
+Graph=Grafică
 ExportDataset_banque_1=Banca şi tranzacţiilor de cont
 TransactionOnTheOtherAccount=Tranzacţiei, pe de altă cont
+TransactionWithOtherAccount=Contul de transfer
 PaymentNumberUpdateSucceeded=Plata numărul fost actualizat cu succes
 PaymentNumberUpdateFailed=Numărul de plată nu a putut fi actualizate
 PaymentDateUpdateSucceeded=Plata data de actualizare cu succes
 PaymentDateUpdateFailed=Plata data nu a putut fi actualizate
+# Transactions=Transactions
 BankTransactionLine=Banca tranzacţie
 AllAccounts=Toate bancar / numerar conturi
 BackToAccount=Inapoi la cont
 ShowAllAccounts=Arata pentru toate conturile
-// Date 2009-01-19 21:32:52
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 21:12:07).
-// Reference language: en_US
-TransactionWithOtherAccount=Contul de transfer
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:12:07).
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:36:47).
-// Reference language: en_US
-BankAccountCountry=Contul ţară
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:37:09).
-
-
-// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
-// Reference language: en_US -> ro_RO
-Graph=Grafică
 FutureTransaction=Tranzacţie în futur. In nici un caz pentru a concilia.
 SelectChequeTransactionAndGenerate=Select / filtru controale pentru a include în primirea de depozit verifica şi faceţi clic pe &quot;Create&quot;.
-// STOP - Lines generated via autotranslator.php tool (2011-10-10 07:16:58).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 17:23:15).
-// Reference language: en_US -> ro_RO
-RIBControlError=Verifica integritatea de valori nu. Acest lucru înseamnă pentru acest număr de cont nu sunt complete sau greşite (verifica ţară, numere şi IBAN).
-WithdrawalPayment=Retragerea de plată
-ShowCheckReceipt=Arată a verifica primirea de depozit
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:23:26).
+# InputReceiptNumber=Choose the bank statement related with the conciliation. Use a sortable numeric value (such as, YYYYMM)
+# EventualyAddCategory=Eventually, specify a category in which to classify the records
+# ToConciliate=To conciliate?
+# ThenCheckLinesAndConciliate=Then, check the lines present in the bank statement and click
+# BankDashboard=Bank accounts summary

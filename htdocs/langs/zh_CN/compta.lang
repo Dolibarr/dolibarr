@@ -1,12 +1,4 @@
-/*
- * Language code: zh_CN
- * Automatic generated via autotranslator.php tool
- * Generation date 2010-06-08 21:22:55
- */
-
-
-// START - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).
-// Reference language: en_US
+# Dolibarr language file - Source file is en_US - compta
 CHARSET=UTF-8
 Accountancy=会计
 AccountancyCard=会计证
@@ -16,14 +8,18 @@ TaxModuleSetupToModifyRules=前往<a href="%s">模块设置</a>修改计算规�
 OptionMode=期权的会计
 OptionModeTrue=股权投入产出
 OptionModeVirtual=期权学分，转帐
-OptionModeTrueDesc=在这种情况下，营业额计算超过付款（付款日期）。 \ n此这些数字的有效性是有保证的只有当簿记审议通过输入/通过发票上的帐目输出。
+OptionModeTrueDesc=在这种情况下，营业额计算超过付款（付款日期）。 \\ n此这些数字的有效性是有保证的只有当簿记审议通过输入/通过发票上的帐目输出。
 OptionModeVirtualDesc=在这种情况下，营业额计算超过发票（验证的日期）。当这些发票是因为，不论是否已支付或没有，他们在输出中列出的营业额。
 FeatureIsSupportedInInOutModeOnly=功能只在信用额，债务提供会计模式（见会计模块的配置）
 VATReportBuildWithOptionDefinedInModule=这里显示的数额计算使用由税务模块设置定义的规则。
 Param=格局
+RemainingAmountPayment=付款金额其余：
+AmountToBeCharged=支付的总金额：
 AccountsGeneral=帐目
 Account=帐户
 Accounts=帐目
+# Accountparent=Account parent
+# Accountsparent=Accounts parent
 BillsForSuppliers=条例草案对供应商
 Income=收入
 Outcome=费用
@@ -43,7 +39,11 @@ VATToPay=增值税销售
 VATReceived=收到的增值税
 VATToCollect=购买增值税
 VATSummary=增值税平衡
+LT2SummaryES=IRPF平衡
 VATPaid=支付的增值税
+LT2PaidES=IRPF通知
+LT2CustomerES=IRPF销售
+LT2SupplierES=IRPF采购
 VATCollected=增值税征收
 ToPay=为了支付
 ToGet=取回
@@ -69,6 +69,9 @@ ListOfCustomerPayments=客户付款名单
 ListOfSupplierPayments=供应商付款的名单
 DatePayment=付款日期
 NewVATPayment=新的增值税纳税
+newLT2PaymentES=新IRPF付款
+LT2PaymentES=IRPF付款
+LT2PaymentsES=IRPF付款
 VATPayment=增值税纳税
 VATPayments=增值税付款
 SocialContributionsPayments=社会捐助金
@@ -77,11 +80,11 @@ TotalToPay=共支付
 TotalVATReceived=共收到增值税
 CustomerAccountancyCode=客户会计代码
 SupplierAccountancyCode=供应商会计代码
-AlreadyPaid=已支付
 AccountNumberShort=帐号
 AccountNumber=帐号
 NewAccount=新帐户
 SalesTurnover=销售营业额
+# SalesTurnoverMinimum=Minimum sales turnover
 ByThirdParties=布第三者
 ByUserAuthorOfInvoice=笔者按发票
 AccountancyExport=会计出口
@@ -106,61 +109,48 @@ AnnualByCompaniesDueDebtMode=平衡各方的收入和开支的三分之一，详
 AnnualByCompaniesInputOutputMode=平衡各方的收入和开支的三分之一，详细，模式<b>％sRevenues头奖％据说现金会计</b> 。
 SeeReportInInputOutputMode=见报告<b>％sIncomes头奖％据说占</b>实际支付的<b>现金</b>计算所取得的
 SeeReportInDueDebtMode=见报告<b>％sClaims -％s的债务承担会计</b>说发票计算的颁布
+# RulesAmountWithTaxIncluded=- Amounts shown are with all taxes included
 RulesResultDue=- 应收显示包含所有税金<br> - 它包括尚未发票，费用和增值税是否缴纳或者未。 <br> - 这是对发票和增值税，并在到期日确认为费用的日期为基础。
 RulesResultInOut=- 应收显示包含所有税金<br> - 它包括发票，费用和增值税的实际付款。 <br> - 这是对发票的付款日期的，费用心钠素增值税。 <br>
 RulesCADue=- 它包括客户端的他们是否缴纳或者未到期的发票。 <br> - 正是在这些发票日期计算验证。 <br>
 RulesCAIn=- 它包括所有从客户收到发票有效付款。 <br> - 这是对这些发票的付款日期为基础<br>
+DepositsAreNotIncluded=- 存款发票，也不包括
+DepositsAreIncluded=- 存款发票
+LT2ReportByCustomersInInputOutputModeES=报告由第三方IRPF
 VATReportByCustomersInInputOutputMode=报告由客户收取的增值税和支付（增值税收据）
 VATReportByCustomersInDueDebtMode=报告由客户收取的增值税和支付（增值税率）
 VATReportByQuartersInInputOutputMode=报告所收集的增值税率和支付（增值税收据）
 VATReportByQuartersInDueDebtMode=报告所收集的增值税率和支付（增值税率）
 SeeVATReportInInputOutputMode=见报告<b>％sVAT装箱％S</b>的标准计算
 SeeVATReportInDueDebtMode=见报告<b>流量％％sVAT S上</b>的流量计算与一选项
-RulesVATIn=在服务方面，该报告包括增值税规定或在实际收到的付款日期的基础上发出的。 <br> - 对于物质资产，它包括对审定的发票日期为基础的增值税发票。
-RulesVATDue=在服务方面，该报告包括增值税发票到期支付与否，对这些法案确认之日期为准。 <br> - 对于物质资产，它包括增值税专用发票，在发票验证的日期计算。
+RulesVATInServices=- 对于服务，该报告包括实际收到或发出的付款日期的基础上规定的增值税。 <br> - 对于重大资产，它包括增值税专用发票发票日期的基础上。
+RulesVATInProducts=- 对于重大资产，它包括增值税专用发票发票日期的基础上。
+RulesVATDueServices=- 对于服务，该报告包括增值税专用发票，根据发票日期到期，缴纳或者未。
+RulesVATDueProducts=- 对于重大资产，它包括增值税专用发票，根据发票日期。
 OptionVatInfoModuleComptabilite=注：对于实物资产，它应该使用的交货日期将更加公平。
 PercentOfInvoice=％％/发票
 NotUsedForGoods=未使用的货物
+ProposalStats=统计数据的建议
+OrderStats=订单统计
+InvoiceStats=法案的统计数字
 Dispatch=调度
 Dispatched=调度
 ToDispatch=派遣
 ThirdPartyMustBeEditAsCustomer=第三方必须定义为顾客
-// STOP - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).
-
-
-// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
-// Reference language: en_US -> zh_CN
-RemainingAmountPayment=付款金额其余：
+SellsJournal=销售杂志
+PurchasesJournal=购买杂志
 DescSellsJournal=销售杂志
 DescPurchasesJournal=购买杂志
 InvoiceRef=发票编号。
 CodeNotDef=没有定义
 AddRemind=调度可用金额
-RemainToDivide=保持派遣：
+RemainToDivide= 保持派遣：
 WarningDepositsNotIncluded=存款发票不包括在此版本与本会计模块。
-// STOP - Lines generated via autotranslator.php tool (2011-10-10 06:38:59).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 17:37:09).
-// Reference language: en_US -> zh_CN
-AmountToBeCharged=支付的总金额：
-LT2SummaryES=IRPF平衡
-LT2PaidES=IRPF通知
-LT2CustomerES=IRPF销售
-LT2SupplierES=IRPF采购
-newLT2PaymentES=新IRPF付款
-LT2PaymentES=IRPF付款
-LT2PaymentsES=IRPF付款
-DepositsAreNotIncluded=- 存款发票，也不包括
-DepositsAreIncluded=- 存款发票
-LT2ReportByCustomersInInputOutputModeES=报告由第三方IRPF
-RulesVATInServices=- 对于服务，该报告包括实际收到或发出的付款日期的基础上规定的增值税。 <br> - 对于重大资产，它包括增值税专用发票发票日期的基础上。
-RulesVATInProducts=- 对于重大资产，它包括增值税专用发票发票日期的基础上。
-RulesVATDueServices=- 对于服务，该报告包括增值税专用发票，根据发票日期到期，缴纳或者未。
-RulesVATDueProducts=- 对于重大资产，它包括增值税专用发票，根据发票日期。
-ProposalStats=统计数据的建议
-OrderStats=订单统计
-InvoiceStats=法案的统计数字
-SellsJournal=销售杂志
-PurchasesJournal=购买杂志
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:37:21).
+# DatePaymentTermCantBeLowerThanObjectDate=Payment term date can't be lower than object date.
+# Pcg_version=Pcg version
+# Pcg_type=Pcg type
+# Pcg_subtype=Pcg subtype
+# InvoiceLinesToDispatch=Invoice lines to dispatch
+# InvoiceDispatched=Dispatched invoices
+# AccountancyDashboard=Accountancy summary
+# ByProductsAndServices=By products and services

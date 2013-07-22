@@ -206,7 +206,7 @@ if ($resql)
 		if ($printline) {
 			$var=!$var;
 
-			print "<tr $bc[$var]>";
+			print "<tr ".$bc[$var].">";
 
 			// Ref
 			print '<td align="left" class="nowrap">';
@@ -227,7 +227,7 @@ if ($resql)
 	        print "</td>\n";
 
 	        // Num
-	        print '<td nowrap>'.($objp->num_chq?$objp->num_chq:"")."</td>\n";
+	        print '<td class="nowrap">'.($objp->num_chq?$objp->num_chq:"")."</td>\n";
 
 	        // Description
 			print "<td>";

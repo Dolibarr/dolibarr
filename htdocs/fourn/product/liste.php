@@ -216,7 +216,7 @@ if ($resql)
 	{
 		$objp = $db->fetch_object($resql);
 		$var=!$var;
-		print "<tr $bc[$var]>";
+		print "<tr ".$bc[$var].">";
 
 		print '<td>';
 		$productstatic->id=$objp->rowid;
@@ -231,7 +231,9 @@ if ($resql)
 
 		$companystatic->nom=$objp->nom;
 		$companystatic->id=$objp->socid;
-		print '<td>'.$companystatic->getNomUrl(1,'supplier').'</td>';
+		print '<td>';
+		if ($companystatic->id > 0) print $companystatic->getNomUrl(1,'supplier');
+		print '</td>';
 
 		print '<td align="right">'.price($objp->price).'</td>';
 

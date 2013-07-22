@@ -30,7 +30,7 @@ $path=dirname(__FILE__).'/';
 // Test if batch mode
 if (substr($sapi_type, 0, 3) == 'cgi') {
 	echo "Error: You are using PHP for CGI. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
-	exit;
+	exit(-1);
 }
 
 require_once($path."../../htdocs/master.inc.php");
@@ -60,10 +60,11 @@ $error=0;
 
 @set_time_limit(0);
 print "***** ".$script_file." (".$version.") pid=".getmypid()." *****\n";
+dol_syslog($script_file." launched with arg ".join(',',$argv));
 
 if (! isset($argv[3]) || ! $argv[3]) {
-	print "Usage: $script_file bank_ref bank_receipt_number (csv|tsv|excel|excel2007) [lang=xx_XX]\n";
-	exit;
+	print "Usage: ".$script_file." bank_ref [bank_receipt_number|all] (csv|tsv|excel|excel2007) [lang=xx_XX]\n";
+	exit(-1);
 }
 $bankref=$argv[1];
 $num=$argv[2];
@@ -120,7 +121,7 @@ $result=$acct->fetch('',$bankref);
 if ($result <= 0)
 {
 	print "Failed to find bank account with ref ".$bankref.".\n";
-	exit;
+	exit(-1);
 }
 else
 {
@@ -135,7 +136,7 @@ $classname = "Export".$model;
 if (! dol_is_file($dir.$file))
 {
 	print "No driver to export with format ".$model."\n";
-	exit;
+	exit(-1);
 }
 require_once $dir.$file;
 $objmodel = new $classname($db);
@@ -172,26 +173,31 @@ $array_export_TypeFields=array(
 );
 
 
-// Recherche les ecritures pour le releve
-$listofnum="'";
-$arraynum=explode(',',$num);
-foreach($arraynum as $val)
+// Build request to find records for a bank account/receipt
+$listofnum="";
+if (! empty($num) && $num != "all")
 {
-	if ($listofnum != "'") $listofnum.="','";
-	$listofnum.=$val;
+	$listofnum.="'";
+	$arraynum=explode(',',$num);
+	foreach($arraynum as $val)
+	{
+		if ($listofnum != "'") $listofnum.="','";
+		$listofnum.=$val;
+	}
+	$listofnum.="'";
 }
-$listofnum.="'";
 $sql = "SELECT b.rowid, b.dateo as do, b.datev as dv,";
 $sql.= " b.amount, b.label, b.rappro, b.num_releve, b.num_chq, b.fk_type,";
 $sql.= " ba.rowid as bankid, ba.ref as bankref, ba.label as banklabel";
 $sql.= " FROM ".MAIN_DB_PREFIX."bank_account as ba";
 $sql.= ", ".MAIN_DB_PREFIX."bank as b";
-$sql.= " WHERE b.num_releve IN (".$listofnum.")";
-if (!isset($num))	$sql.= " OR b.num_releve is null";
-$sql.= " AND b.fk_account = ".$acct->id;
+$sql.= " WHERE b.fk_account = ".$acct->id;
+if ($listofnum) $sql.= " AND b.num_releve IN (".$listofnum.")";
+if (!isset($num)) $sql.= " OR b.num_releve is null";
 $sql.= " AND b.fk_account = ba.rowid";
 $sql.= $db->order("b.num_releve, b.datev, b.datec", "ASC");  // We add date of creation to have correct order when everything is done the same day
 //print $sql;
+
 $resql=$db->query($sql);
 if ($resql)
 {
@@ -247,7 +253,7 @@ if ($resql)
 			else
 			{
 				dol_print_error($db);
-				exit;
+				exit(-1);
 			}
 
 			$total = $balancebefore[$objp->num_releve];
@@ -401,7 +407,6 @@ if ($resql)
 		$rec->accountelem=$accountelem;
 		$rec->debit=$debit;
 		$rec->credit=$credit;
-		$rec->sold=$sold;
 		$rec->comment=$comment;
 		$rec->soldbefore=price2num($totalbefore);
 		$rec->soldafter=price2num($total);
@@ -439,5 +444,5 @@ else
 
 $db->close();
 
-return $ret;
+exit($ret);
 ?>

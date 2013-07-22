@@ -4,6 +4,7 @@
  * Copyright (C) 2005      Simon TOSSER         <simon@kornog-computing.com>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2013      Florian Henry        <florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,14 +28,16 @@
 
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/action/class/cactioncomm.class.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
-require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+if (! empty($conf->projet->enabled)) {
+	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
+}
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
 $langs->load("companies");
@@ -53,7 +56,8 @@ $contactid=GETPOST('contactid','int');
 $socid = GETPOST('socid','int');
 $id = GETPOST('id','int');
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'agenda', $id, 'actioncomm&societe', 'myactions&allactions', '', 'id');
+$result = restrictedArea($user,'societe',$id,'&societe');
+//$result = restrictedArea($user, 'agenda', $id, 'actioncomm&societe', 'myactions&allactions', '', 'id');
 
 $error=GETPOST("error");
 $mesg='';
@@ -494,7 +498,11 @@ if ($action == 'create')
 	print '<tr><td width="10%">'.$langs->trans("Status").' / '.$langs->trans("Percentage").'</td>';
 	print '<td>';
 	$percent=-1;
-	if (isset($_GET['percentage']) || isset($_POST['percentage']))
+	if (isset($_GET['status']) || isset($_POST['status']))
+	{
+		$percent=GETPOST('status');
+	}
+	else if (isset($_GET['percentage']) || isset($_POST['percentage']))
 	{
 		$percent=GETPOST('percentage');
 	}
@@ -529,7 +537,7 @@ if ($action == 'create')
 	// Realised by
 	if ($conf->global->AGENDA_ENABLE_DONEBY)
 	{
-		print '<tr><td nowrap>'.$langs->trans("ActionDoneBy").'</td><td>';
+		print '<tr><td class="nowrap">'.$langs->trans("ActionDoneBy").'</td><td>';
 		$form->select_users(GETPOST("doneby")?GETPOST("doneby"):(! empty($actioncomm->userdone->id) && $percent==100?$actioncomm->userdone->id:0),'doneby',1);
 		print '</td></tr>';
 	}
@@ -562,7 +570,7 @@ if ($action == 'create')
 	// If company is forced, we propose contacts (may be contact is also forced)
 	if (GETPOST("contactid") > 0 || GETPOST('socid','int') > 0)
 	{
-		print '<tr><td nowrap>'.$langs->trans("ActionOnContact").'</td><td>';
+		print '<tr><td class="nowrap">'.$langs->trans("ActionOnContact").'</td><td>';
 		$form->select_contacts(GETPOST('socid','int'),GETPOST('contactid'),'contactid',1);
 		print '</td></tr>';
 	}
@@ -570,11 +578,15 @@ if ($action == 'create')
 	// Project
 	if (! empty($conf->projet->enabled))
 	{
+
+		$formproject=new FormProjets($db);
+
 		// Projet associe
 		$langs->load("project");
 
 		print '<tr><td valign="top">'.$langs->trans("Project").'</td><td>';
-		$numproject=select_projects((! empty($societe->id)?$societe->id:0),GETPOST("projectid")?GETPOST("projectid"):'','projectid');
+
+		$numproject=$formproject->select_projects((! empty($societe->id)?$societe->id:0),GETPOST("projectid")?GETPOST("projectid"):'','projectid');
 		if ($numproject==0)
 		{
 			print ' &nbsp; <a href="'.DOL_URL_ROOT.'/projet/fiche.php?socid='.$societe->id.'&action=create">'.$langs->trans("AddProject").'</a>';
@@ -588,7 +600,7 @@ if ($action == 'create')
 	}
 
 	// Priority
-	print '<tr><td nowrap>'.$langs->trans("Priority").'</td><td colspan="3">';
+	print '<tr><td class="nowrap">'.$langs->trans("Priority").'</td><td colspan="3">';
 	print '<input type="text" name="priority" value="'.(GETPOST('priority')?GETPOST('priority'):($actioncomm->priority?$actioncomm->priority:'')).'" size="5">';
 	print '</td></tr>';
 
@@ -797,11 +809,14 @@ if ($id > 0)
 		// Project
 		if (! empty($conf->projet->enabled))
 		{
+
+			$formproject=new FormProjets($db);
+
 			// Projet associe
 			$langs->load("project");
 
 			print '<tr><td width="30%" valign="top">'.$langs->trans("Project").'</td><td colspan="3">';
-			$numprojet=select_projects($act->societe->id,$act->fk_project,'projectid');
+			$numprojet=$formproject->select_projects($act->societe->id,$act->fk_project,'projectid');
 			if ($numprojet==0)
 			{
 				print ' &nbsp; <a href="../../projet/fiche.php?socid='.$societe->id.'&action=create">'.$langs->trans("AddProject").'</a>';
@@ -817,8 +832,9 @@ if ($id > 0)
 		// Object linked
 		if (! empty($act->fk_element) && ! empty($act->elementtype))
 		{
+			include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 			print '<tr><td>'.$langs->trans("LinkedObject").'</td>';
-			print '<td colspan="3">'.$act->getElementUrl($act->fk_element,$act->elementtype,1).'</td></tr>';
+			print '<td colspan="3">'.dolGetElementUrl($act->fk_element,$act->elementtype,1).'</td></tr>';
 		}
 
         // Description
@@ -888,7 +904,7 @@ if ($id > 0)
         print '<input type="hidden" name="month" value="'.dol_print_date($act->datep,'%m').'">';
         print '<input type="hidden" name="day" value="'.dol_print_date($act->datep,'%d').'">';
         //print '<input type="hidden" name="day" value="'.dol_print_date($act->datep,'%d').'">';
-        print img_picto($langs->trans("ViewCal"),'object_calendar','class="hideonsmartphone"').' <input type="submit" style="width: 120px" class="button" name="viewcal" value="'.$langs->trans("ViewCal").'">';
+        print img_picto($langs->trans("ViewCal"),'object_calendar','class="hideonsmartphone"').' <input type="submit" style="min-width: 120px" class="button" name="viewcal" value="'.$langs->trans("ViewCal").'">';
         print '</form>'."\n";
         print '<form name="listactionsfilterweek" action="'.DOL_URL_ROOT.'/comm/action/index.php" method="POST">';
         print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -897,7 +913,7 @@ if ($id > 0)
         print '<input type="hidden" name="month" value="'.dol_print_date($act->datep,'%m').'">';
         print '<input type="hidden" name="day" value="'.dol_print_date($act->datep,'%d').'">';
         //print '<input type="hidden" name="day" value="'.dol_print_date($act->datep,'%d').'">';
-        print img_picto($langs->trans("ViewCal"),'object_calendarweek','class="hideonsmartphone"').' <input type="submit" style="width: 120px" class="button" name="viewweek" value="'.$langs->trans("ViewWeek").'">';
+        print img_picto($langs->trans("ViewCal"),'object_calendarweek','class="hideonsmartphone"').' <input type="submit" style="min-width: 120px" class="button" name="viewweek" value="'.$langs->trans("ViewWeek").'">';
         print '</form>'."\n";
         print '<form name="listactionsfilterday" action="'.DOL_URL_ROOT.'/comm/action/index.php" method="POST">';
         print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -906,7 +922,7 @@ if ($id > 0)
         print '<input type="hidden" name="month" value="'.dol_print_date($act->datep,'%m').'">';
         print '<input type="hidden" name="day" value="'.dol_print_date($act->datep,'%d').'">';
         //print '<input type="hidden" name="day" value="'.dol_print_date($act->datep,'%d').'">';
-        print img_picto($langs->trans("ViewCal"),'object_calendarday','class="hideonsmartphone"').' <input type="submit" style="width: 120px" class="button" name="viewday" value="'.$langs->trans("ViewDay").'">';
+        print img_picto($langs->trans("ViewCal"),'object_calendarday','class="hideonsmartphone"').' <input type="submit" style="min-width: 120px" class="button" name="viewday" value="'.$langs->trans("ViewDay").'">';
         print '</form>'."\n";
         print '</td>';
 		print '</tr>';
@@ -1001,8 +1017,9 @@ if ($id > 0)
 		// Object linked
 		if (! empty($act->fk_element) && ! empty($act->elementtype))
 		{
+			include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 			print '<tr><td>'.$langs->trans("LinkedObject").'</td>';
-			print '<td colspan="3">'.$act->getElementUrl($act->fk_element,$act->elementtype,1).'</td></tr>';
+			print '<td colspan="3">'.dolGetElementUrl($act->fk_element,$act->elementtype,1).'</td></tr>';
 		}
 
 		// Description

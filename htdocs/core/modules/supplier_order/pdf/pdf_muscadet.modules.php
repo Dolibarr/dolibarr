@@ -381,12 +381,9 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 					//end TODO
 
 				    // retrieve global local tax
-					if ($localtax1_type == '7') $localtax1_rate = $localtaxtmp_array[1];
-					if ($localtax2_type == '7') $localtax2_rate = $localtaxtmp_array[3];
-
-					if ($localtax1_type && ($localtax1ligne != 0 || $localtax1_type == '7'))
+					if ($localtax1_type && $localtax1ligne != 0)
 						$this->localtax1[$localtax1_type][$localtax1_rate]+=$localtax1ligne;
-					if ($localtax2_type && ($localtax2ligne != 0 || $localtax2_type == '7'))
+					if ($localtax2_type && $localtax2ligne != 0)
 						$this->localtax2[$localtax2_type][$localtax2_rate]+=$localtax2ligne;
 
 					if (($object->lines[$i]->info_bits & 0x01) == 0x01) $vatrate.='*';
@@ -468,7 +465,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 
 				// Pied de page
 				$this->_pagefoot($pdf,$object,$outputlangs);
-				$pdf->AliasNbPages();
+				if (method_exists($pdf,'AliasNbPages')) $pdf->AliasNbPages();
 
 				$pdf->Close();
 
@@ -553,7 +550,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 
 			$pdf->SetFont('','', $default_font_size - 2);
 			$pdf->SetXY($posxval, $posy);
-			$lib_condition_paiement=$outputlangs->transnoentities("PaymentCondition".$object->cond_reglement_code)!=('PaymentCondition'.$object->cond_reglement_code)?$outputlangs->transnoentities("PaymentCondition".$object->cond_reglement_code):$outputlangs->convToOutputCharset($object->cond_reglement_doc);
+			$lib_condition_paiement=$outputlangs->transnoentities("PaymentCondition".$object->cond_reglement_code)!=('PaymentCondition'.$object->cond_reglement_code)?$outputlangs->transnoentities("PaymentCondition".$object->cond_reglement_code):$outputlangs->convToOutputCharset($object->cond_reglement);
 			$lib_condition_paiement=str_replace('\n',"\n",$lib_condition_paiement);
 			$pdf->MultiCell(80, 4, $lib_condition_paiement,0,'L');
 
@@ -576,7 +573,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
         	$posy=$pdf->GetY()+2;
         }
 
-		
+
 		return $posy;
 	}
 
@@ -1000,9 +997,10 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 			$pdf->SetXY($posx+2,$posy+3);
 			$pdf->SetFont('','B', $default_font_size);
 			$pdf->MultiCell(80, 4, $outputlangs->convToOutputCharset($this->emetteur->name), 0, 'L');
+			$posy=$pdf->getY();
 
 			// Show sender information
-			$pdf->SetXY($posx+2,$posy+4+(dol_nboflines_bis($this->emetteur->name,44)*4));
+			$pdf->SetXY($posx+2,$posy);
 			$pdf->SetFont('','', $default_font_size - 1);
 			$pdf->MultiCell(80, 4, $carac_emetteur, 0, 'L');
 

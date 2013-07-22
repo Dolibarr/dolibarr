@@ -48,8 +48,9 @@ class DolGraph
     private $_library='jflot';	// Graphic library to use (jflot, artichow)
 
     //! Array of data
-    var $data;				// array(array('abs1',valA1,valB1), array('abs2',valA2,valB2), ...)
-    var $title;
+    var $data;				// Data of graph: array(array('abs1',valA1,valB1), array('abs2',valA2,valB2), ...)
+    var $title;				// Title of graph
+    var $cssprefix='';		// To add into css styles
     var $width=380;
     var $height=200;
     var $MaxValue=0;
@@ -335,6 +336,17 @@ class DolGraph
     function SetShading($s)
     {
         $this->SetShading = $s;
+    }
+
+    /**
+     * Set shading
+     *
+     * @param 	string	$s				Shading
+     * @return	void
+     */
+    function SetCssPrefix($s)
+    {
+        $this->cssprefix = $s;
     }
 
     /**
@@ -785,8 +797,8 @@ class DolGraph
         $tag=dol_escape_htmltag(dol_string_unaccent(dol_string_nospecial(basename($file),'_',array('-','.'))));
 
         $this->_stringtoshow ='<!-- Build using '.$this->_library.' -->'."\n";
-        $this->_stringtoshow.='<br><div align="center">'.$this->title.'</div><br>';
-        $this->_stringtoshow.='<div id="placeholder_'.$tag.'" style="width:'.$this->width.'px;height:'.$this->height.'px;" class="dolgraph"></div>'."\n";
+        if (! empty($this->title)) $this->_stringtoshow.='<div align="center" class="dolgraphtitle'.(empty($this->cssprefix)?'':' dolgraphtitle'.$this->cssprefix).'">'.$this->title.'</div>';
+        $this->_stringtoshow.='<div id="placeholder_'.$tag.'" style="width:'.$this->width.'px;height:'.$this->height.'px;" class="dolgraph'.(empty($this->cssprefix)?'':' dolgraph'.$this->cssprefix).'"></div>'."\n";
         $this->_stringtoshow.='<script id="'.$tag.'">'."\n";
         $this->_stringtoshow.='$(function () {'."\n";
         $i=$firstlot;

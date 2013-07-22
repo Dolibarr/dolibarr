@@ -1,19 +1,15 @@
-/*
- * Lince Translation File
- * Filename: 
- * Language code: da_DA
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-01-19 21:26:39
- */
-
-
-// Date 2009-01-19 21:26:39
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
+# Dolibarr language file - Source file is en_US - projects
 CHARSET=UTF-8
 Project=Projekt
 Projects=Projekter
 SharedProject=Fælles projekt
+PrivateProject=Kontakter af projektet
+MyProjectsDesc=Dette synspunkt er begrænset til projekter, du er en kontaktperson for (hvad der er den type).
+ProjectsPublicDesc=Dette synspunkt præsenterer alle projekter du får lov til at læse.
+ProjectsDesc=Dette synspunkt præsenterer alle projekter (din brugertilladelser give dig tilladelse til at se alt).
+MyTasksDesc=Dette synspunkt er begrænset til projekter eller opgaver, du er en kontaktperson for (hvad der er den type).
+TasksPublicDesc=Dette synspunkt præsenterer alle projekter og opgaver, som du får lov til at læse.
+TasksDesc=Dette synspunkt præsenterer alle projekter og opgaver (din brugertilladelser give dig tilladelse til at se alt).
 Myprojects=Mine projekter
 ProjectsArea=Projekter område
 NewProject=Nyt projekt
@@ -32,6 +28,7 @@ NoProject=Nr. projektet defineret
 NbOpenTasks=Nb af åbnet opgaver
 NbOfProjects=Nb af projekter
 TimeSpent=Tid brugt
+TimesSpent=Tid brugt
 RefTask=Ref. opgave
 LabelTask=Label opgave
 NewTimeSpent=Ny tid
@@ -46,45 +43,27 @@ Activity=Aktivitet
 Activities=Opgaver / aktiviteter
 MyActivity=Min virksomhed
 MyActivities=Mine opgaver / aktiviteter
-DurationEffective=Effektiv varighed
 MyProjects=Mine projekter
+DurationEffective=Effektiv varighed
+Progress=Fremskridt
 Time=Tid
 ListProposalsAssociatedProject=Lister over de kommercielle forslag er forbundet med projektet
 ListOrdersAssociatedProject=Lister over de ordrer, er forbundet med projektet
 ListInvoicesAssociatedProject=Lister over de fakturaer forbundet med projektet
+ListPredefinedInvoicesAssociatedProject=Liste over kundernes foruddefineret fakturaer i forbindelse med projektet
 ListSupplierOrdersAssociatedProject=Liste over leverandører ordrer forbundet med projektet
 ListSupplierInvoicesAssociatedProject=Liste over leverandører fakturaer forbundet med projektet
 ListContractAssociatedProject=Liste over kontrakter i forbindelse med projektet
+ListFichinterAssociatedProject=Liste over interventioner i forbindelse med projektet
+ListTripAssociatedProject=Liste over rejser og udgifter forbundet med projektet
+ListActionsAssociatedProject=Liste over aktioner i forbindelse med projektet
 ActivityOnProjectThisWeek=Aktivitet på projektet i denne uge
 ActivityOnProjectThisMonth=Aktivitet på projektet i denne måned
 ActivityOnProjectThisYear=Aktivitet på projektet i år
 ChildOfTask=Barn af projekt / opgave
 NotOwnerOfProject=Ikke ejer af denne private projekt
 AffectedTo=Påvirkes i
-// Date 2009-01-19 21:26:39
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 20:39:59).
-// Reference language: en_US
-ListPredefinedInvoicesAssociatedProject=Liste over kundernes foruddefineret fakturaer i forbindelse med projektet
 CantRemoveProject=Dette projekt kan ikke fjernes, da det er der henvises til nogle andre objekter (faktura, ordrer eller andet). Se referers fane.
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:39:59).
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:19:38).
-// Reference language: en_US
-PrivateProject=Kontakter af projektet
-MyProjectsDesc=Dette synspunkt er begrænset til projekter, du er en kontaktperson for (hvad der er den type).
-ProjectsPublicDesc=Dette synspunkt præsenterer alle projekter du får lov til at læse.
-ProjectsDesc=Dette synspunkt præsenterer alle projekter (din brugertilladelser give dig tilladelse til at se alt).
-MyTasksDesc=Dette synspunkt er begrænset til projekter eller opgaver, du er en kontaktperson for (hvad der er den type).
-TasksPublicDesc=Dette synspunkt præsenterer alle projekter og opgaver, som du får lov til at læse.
-TasksDesc=Dette synspunkt præsenterer alle projekter og opgaver (din brugertilladelser give dig tilladelse til at se alt).
-Progress=Fremskridt
-ListFichinterAssociatedProject=Liste over interventioner i forbindelse med projektet
-ListTripAssociatedProject=Liste over rejser og udgifter forbundet med projektet
-ListActionsAssociatedProject=Liste over aktioner i forbindelse med projektet
 ValidateProject=Validér projet
 ConfirmValidateProject=Er du sikker på du vil validere dette projekt?
 CloseAProject=Luk projekt
@@ -102,6 +81,20 @@ TaskRessourceLinks=Ressources
 ProjectsDedicatedToThisThirdParty=Projekter dedikeret til denne tredjepart
 NoTasks=Ingen opgaver for dette projekt
 LinkedToAnotherCompany=Knyttet til tredjemand
+TaskIsNotAffectedToYou=Opgave ikke er allokeret til dig
+ErrorTimeSpentIsEmpty=Tilbragte Tiden er tom
+ThisWillAlsoRemoveTasks=Denne handling vil også slette alle opgaver i projektet <b>(%s</b> opgaver i øjeblikket), og alle indgange af tid.
+IfNeedToUseOhterObjectKeepEmpty=Hvis nogle objekter (faktura, ordre, ...), der tilhører en anden tredjepart, skal knyttet til projektet for at skabe, holde denne tomme for at få projektet er flere tredjeparter.
+# CloneProject=Clone project
+# CloneTasks=Clone tasks
+# CloneContacts=Clone contacts
+# CloneNotes=Clone notes
+# CloneFiles=Clone joined files
+# ConfirmCloneProject=Are you sure to clone this project ?
+# ProjectReportDate=Change task date according project start date
+# ErrorShiftTaskDate=Impossible to shift task date according to new project start date
+# ProjectsAndTasksLines=Projects and tasks
+##### Types de contacts #####
 TypeContact_project_internal_PROJECTLEADER=Projektleder
 TypeContact_project_external_PROJECTLEADER=Projektleder
 TypeContact_project_internal_CONTRIBUTOR=Bidragyder
@@ -110,15 +103,7 @@ TypeContact_project_task_internal_TASKEXECUTIVE=Task udøvende
 TypeContact_project_task_external_TASKEXECUTIVE=Task udøvende
 TypeContact_project_task_internal_CONTRIBUTOR=Bidragyder
 TypeContact_project_task_external_CONTRIBUTOR=Bidragyder
+# Documents models
 DocumentModelBaleine=En komplet projekt rapport model (logo. ..)
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:19:55).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 15:59:19).
-// Reference language: en_US -> da_DK
-TimesSpent=Tid brugt
-TaskIsNotAffectedToYou=Opgave ikke er allokeret til dig
-ErrorTimeSpentIsEmpty=Tilbragte Tiden er tom
-ThisWillAlsoRemoveTasks=Denne handling vil også slette alle opgaver i projektet <b>(%s</b> opgaver i øjeblikket), og alle indgange af tid.
-IfNeedToUseOhterObjectKeepEmpty=Hvis nogle objekter (faktura, ordre, ...), der tilhører en anden tredjepart, skal knyttet til projektet for at skabe, holde denne tomme for at få projektet er flere tredjeparter.
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:02:10).
+# PlannedWorkload = Planned workload
+# WorkloadOccupation= Workload affectation

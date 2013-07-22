@@ -105,7 +105,7 @@ if ( $resql )
 	{
 		$obj = $db->fetch_object($resql);
 		$var=!$var;
-		print "<tr $bc[$var]>";
+		print "<tr ".$bc[$var].">";
 		print '<td class="nowrap">';
 		if ($obj->socid)
 		{
@@ -182,7 +182,7 @@ if ( $resql )
 			$username = $userstatic->getNomUrl(0,0);
 		}
 
-		print "<tr $bc[$var]>";
+		print "<tr ".$bc[$var].">";
 		print '<td>'.$username.'</td>';
 		print '<td><a href="'.DOL_URL_ROOT.'/projet/fiche.php?id="'.$obj->projectid.'">'.$obj->title.'</a></td>';
 		print '<td><a href="'.DOL_URL_ROOT.'/projet/tasks/task.php?id='.$obj->taskid.'&withproject=1">'.$obj->label.'</a></td>';

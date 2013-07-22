@@ -1,13 +1,4 @@
-/*
- * Language code: ro_RO
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-01-19 21:32:52
- */
-
-
-// Date 2009-01-19 21:32:52
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
+# Dolibarr language file - Source file is en_US - ecm
 CHARSET=UTF-8
 MenuECM=Documente
 DocsMine=Documentele mele
@@ -29,7 +20,6 @@ ECMSections=Directoare
 ECMRoot=Root
 ECMNewSection=Nou director
 ECMAddSection=Adauga un manual directorul
-ECMNewSection=Nou director manual
 ECMNewDocument=Document nou
 ECMCreationDate=Data creării
 ECMNbOfFilesInDir=Numărul de fişiere în directorul de
@@ -46,12 +36,14 @@ ECMSearchByEntity=Cautati cu obiect
 ECMSectionOfDocuments=Directoare de documente
 ECMTypeManual=Manual
 ECMTypeAuto=Automat
+# ECMDocsBySocialContributions=Documents linked to social contributions
 ECMDocsByThirdParties=Documente legate de către terţe părţi
 ECMDocsByProposals=Documente legate de propuneri
 ECMDocsByOrders=Documente legate de ordinele de la clienţi
 ECMDocsByContracts=Documente legate de contractele de
 ECMDocsByInvoices=Documente legate de clienţi facturi
 ECMDocsByProducts=Documente legate de produse
+# ECMDocsByProjects=Documents linked to projects
 ECMNoDirectoryYet=Nu directorul creat
 ShowECMSection=Arata director
 DeleteSection=Eliminaţi director
@@ -60,5 +52,5 @@ ECMDirectoryForFiles=Relative directorul pentru fişiere
 CannotRemoveDirectoryContainsFiles=Ştearsă nu este posibil deoarece conţine câteva fişiere
 ECMFileManager=Manager fişiere
 ECMSelectASection=Selectaţi un director de pe stânga copac ...
-// Date 2009-01-19 21:32:52
-// STOP - Lines generated via parser
+# DirNotSynchronizedSyncFirst=This directory seems to be created or modified outside ECM module. You must click on "Refresh" button first to synchronize disk and database to get content of this directory.
+

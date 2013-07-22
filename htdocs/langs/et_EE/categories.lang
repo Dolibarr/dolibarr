@@ -1,12 +1,4 @@
-/*
- * Language code: et_EE
- * Automatic generated via autotranslator.php tool
- * Generation date 2012-02-29 22:15:30
- */
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 22:15:30).
-// Reference language: en_US -> et_EE
+# Dolibarr language file - Source file is en_US - categories
 CHARSET=UTF-8
 Category=Kategooria
 Categories=Kategooriad
@@ -64,6 +56,7 @@ CompanyHasNoCategory=See firma ei ole üheski kategoorias
 MemberHasNoCategory=See liige ei ole üheski kategoorias
 ClassifyInCategory=Liigitada kategooriasse
 NoneCategory=Mitte ükski
+# NotCategorized=Without category
 CategoryExistsAtSameLevel=See kategooria on juba olemas see ref
 ReturnInProduct=Tagasi toote / teenuse kaart
 ReturnInSupplier=Tagasi üles tarnija kaart
@@ -99,4 +92,11 @@ CatSupList=Loetelu pakkuja kategooriad
 CatCusList=Loetelu kliendi / väljavaade kategooriad
 CatProdList=Toodete nimekirja kategooriate
 CatMemberList=Liikmete nimekiri kategooriad
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 22:26:36).
+# CatSupLinks=Links between suppliers and categories
+# CatCusLinks=Links between customers/prospects and categories
+# CatProdLinks=Links between products/services and categories
+# CatMemberLinks=Links between members and categories
+# CatProdLinks=Links between products/services and categories
+# CatCusLinks=Links between customers/prospects and categories
+# CatSupLinks=Links between suppliers and categories
+# DeleteFromCat=Remove from category

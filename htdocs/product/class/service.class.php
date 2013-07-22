@@ -76,6 +76,7 @@ class Service extends CommonObject
 			{
 				$this->nb["services"]=$obj->nb;
 			}
+            $this->db->free($resql);
 			return 1;
 		}
 		else

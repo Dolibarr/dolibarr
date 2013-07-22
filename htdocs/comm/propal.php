@@ -43,7 +43,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 if (! empty($conf->projet->enabled))
 {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
-	require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
+	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
 
 $langs->load('companies');
@@ -408,7 +408,7 @@ else if ($action == 'confirm_reopen' && $user->rights->propal->cloturer && ! GET
 	// prevent browser refresh from reopening proposal several times
 	if ($object->statut==2 || $object->statut==3)
 	{
-		$object->setStatut(1);
+		$object->reopen($user,1);
 	}
 }
 
@@ -640,12 +640,27 @@ else if ($action == "addline" && $user->rights->propal->creer)
 	$tva_tx = (GETPOST('tva_tx')?GETPOST('tva_tx'):0);
 	$predef=((! empty($idprod) && $conf->global->MAIN_FEATURES_LEVEL < 2) ? '_predef' : '');
 
+	//Extrafields
+	$extrafieldsline = new ExtraFields($db);
+	$extralabelsline =$extrafieldsline->fetch_name_optionals_label($object->table_element_line);
+	$array_option = $extrafieldsline->getOptionalsFromPost($extralabelsline);
+	//Unset extrafield
+	if (is_array($extralabelsline))
+	{
+		// Get extra fields
+		foreach ($extralabelsline as $key => $value)
+		{
+			unset($_POST["options_".$key]);
+		}
+	}
+
 	if (empty($idprod) && GETPOST('type') < 0)
 	{
 		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Type")), 'errors');
 		$error++;
 	}
-	if ((empty($idprod) || GETPOST('usenewaddlineform')) && (!($price_ht != 0) || $price_ht == ''))	// Unit price can be 0 but not ''. Also price can be negative for proposal.
+
+	if ((empty($idprod) || GETPOST('usenewaddlineform')) && $price_ht == '')	// Unit price can be 0 but not ''. Also price can be negative for proposal.
 	{
 		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("UnitPriceHT")), 'errors');
 		$error++;
@@ -782,14 +797,13 @@ else if ($action == "addline" && $user->rights->propal->creer)
 
 		if (! empty($price_min) && (price2num($pu_ht)*(1-price2num(GETPOST('remise_percent'))/100) < price2num($price_min)))
 		{
-			$mesg = $langs->trans("CantBeLessThanMinPrice",price2num($price_min,'MU').$langs->getCurrencySymbol($conf->currency));
+			$mesg = $langs->trans("CantBeLessThanMinPrice",price(price2num($price_min,'MU'),0,$langs,0,0,-1,$conf->currency));
 			setEventMessage($mesg, 'errors');
 		}
 		else
 		{
 			// Insert line
 			$result=$object->addline(
-				$id,
 				$desc,
 				$pu_ht,
 				GETPOST('qty'),
@@ -809,7 +823,8 @@ else if ($action == "addline" && $user->rights->propal->creer)
 				$buyingprice,
 				$label,
 				$date_start,
-				$date_end
+				$date_end,
+				$array_option
 			);
 
 			if ($result > 0)
@@ -877,6 +892,20 @@ else if ($action == 'updateligne' && $user->rights->propal->creer && GETPOST('sa
 	$date_start=dol_mktime(0, 0, 0, GETPOST('date_startmonth'), GETPOST('date_startday'), GETPOST('date_startyear'));
 	$date_end=dol_mktime(0, 0, 0, GETPOST('date_endmonth'), GETPOST('date_endday'), GETPOST('date_endyear'));
 
+	//Extrafields
+	$extrafieldsline = new ExtraFields($db);
+	$extralabelsline =$extrafieldsline->fetch_name_optionals_label($object->table_element_line);
+	$array_option = $extrafieldsline->getOptionalsFromPost($extralabelsline);
+	//Unset extrafield
+	if (is_array($extralabelsline))
+	{
+		// Get extra fields
+		foreach ($extralabelsline as $key => $value)
+		{
+			unset($_POST["options_".$key]);
+		}
+	}
+
 	// Define special_code for special lines
 	$special_code=0;
 	if (! GETPOST('qty')) $special_code=3;
@@ -898,7 +927,7 @@ else if ($action == 'updateligne' && $user->rights->propal->creer && GETPOST('sa
 
 		if ($price_min && (price2num($pu_ht)*(1-price2num(GETPOST('remise_percent'))/100) < price2num($price_min)))
 		{
-			setEventMessage($langs->trans("CantBeLessThanMinPrice", price2num($price_min,'MU')).$langs->getCurrencySymbol($conf->currency), 'errors');
+			setEventMessage($langs->trans("CantBeLessThanMinPrice", price(price2num($price_min,'MU'),0,$langs,0,0,-1,$conf->currency)), 'errors');
 			$error++;
 		}
 	}
@@ -935,7 +964,8 @@ else if ($action == 'updateligne' && $user->rights->propal->creer && GETPOST('sa
 			$label,
 			$type,
 			$date_start,
-			$date_end
+			$date_end,
+			$array_option
 		);
 
 		if ($result >= 0)
@@ -1272,7 +1302,7 @@ if ($action == 'create')
 
 		// Ligne info remises tiers
 		print '<tr><td>'.$langs->trans('Discounts').'</td><td colspan="2">';
-		if ($soc->remise_client) print $langs->trans("CompanyHasRelativeDiscount",$soc->remise_client);
+		if ($soc->remise_percent) print $langs->trans("CompanyHasRelativeDiscount",$soc->remise_percent);
 		else print $langs->trans("CompanyHasNoRelativeDiscount");
 		$absolute_discount=$soc->getAvailableDiscounts();
 		print '. ';
@@ -1292,12 +1322,12 @@ if ($action == 'create')
 
 	// Terms of payment
 	print '<tr><td class="nowrap fieldrequired">'.$langs->trans('PaymentConditionsShort').'</td><td colspan="2">';
-	$form->select_conditions_paiements($soc->cond_reglement,'cond_reglement_id');
+	$form->select_conditions_paiements($soc->cond_reglement_id,'cond_reglement_id');
 	print '</td></tr>';
 
 	// Mode of payment
 	print '<tr><td>'.$langs->trans('PaymentMode').'</td><td colspan="2">';
-	$form->select_types_paiements($soc->mode_reglement,'mode_reglement_id');
+	$form->select_types_paiements($soc->mode_reglement_id,'mode_reglement_id');
 	print '</td></tr>';
 
 	// What trigger creation
@@ -1339,13 +1369,16 @@ if ($action == 'create')
 	// Project
 	if (! empty($conf->projet->enabled) && $socid>0)
 	{
+
+		$formproject=new FormProjets($db);
+
 		$projectid = 0;
 		if ($origin == 'project') $projectid = ($originid?$originid:0);
 
 		print '<tr>';
 		print '<td valign="top">'.$langs->trans("Project").'</td><td colspan="2">';
 
-		$numprojet=select_projects($soc->id,$projectid);
+		$numprojet=$formproject->select_projects($soc->id,$projectid);
 		if ($numprojet==0)
 		{
 			$langs->load("projects");
@@ -1443,7 +1476,7 @@ if ($action == 'create')
 					$form->select_produits('',"idprod".$i,'',$conf->product->limit_size);
 				print '</td>';
 				print '<td><input type="text" size="2" name="qty'.$i.'" value="1"></td>';
-				print '<td><input type="text" size="2" name="remise'.$i.'" value="'.$soc->remise_client.'">%</td>';
+				print '<td><input type="text" size="2" name="remise'.$i.'" value="'.$soc->remise_percent.'">%</td>';
 				print '</tr>';
 			}
 
@@ -1564,7 +1597,8 @@ else
 	// Ref client
 	print '<tr><td>';
 	print '<table class="nobordernopadding" width="100%"><tr><td class="nowrap">';
-	print $langs->trans('RefCustomer').'</td><td align="left">';
+	print $langs->trans('RefCustomer').'</td>';
+	print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=refclient&amp;id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('RefCustomer')).'</a></td>';
 	print '</td>';
 	if ($action != 'refclient' && ! empty($object->brouillon)) print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=refclient&amp;id='.$object->id.'">'.img_edit($langs->trans('Modify')).'</a></td>';
 	print '</tr></table>';
@@ -1584,14 +1618,13 @@ else
 	}
 	print '</td>';
 	print '</tr>';
-
 	// Company
 	print '<tr><td>'.$langs->trans('Company').'</td><td colspan="5">'.$soc->getNomUrl(1).'</td>';
 	print '</tr>';
 
 	// Ligne info remises tiers
 	print '<tr><td>'.$langs->trans('Discounts').'</td><td colspan="5">';
-	if ($soc->remise_client) print $langs->trans("CompanyHasRelativeDiscount",$soc->remise_client);
+	if ($soc->remise_percent) print $langs->trans("CompanyHasRelativeDiscount",$soc->remise_percent);
 	else print $langs->trans("CompanyHasNoRelativeDiscount");
 	print '. ';
 	$absolute_discount=$soc->getAvailableDiscounts('','fk_facture_source IS NULL');
@@ -1899,7 +1932,7 @@ else
 
 	// Amount HT
 	print '<tr><td height="10" width="25%">'.$langs->trans('AmountHT').'</td>';
-	print '<td align="right" nowrap><b>'.price($object->total_ht).'</b></td>';
+	print '<td align="right" class="nowrap"><b>'.price($object->total_ht).'</b></td>';
 	print '<td>'.$langs->trans("Currency".$conf->currency).'</td>';
 
 	// Margin Infos
@@ -1912,27 +1945,27 @@ else
 
 	// Amount VAT
 	print '<tr><td height="10">'.$langs->trans('AmountVAT').'</td>';
-	print '<td align="right" nowrap>'.price($object->total_tva).'</td>';
+	print '<td align="right" class="nowrap">'.price($object->total_tva).'</td>';
 	print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
 
 	// Amount Local Taxes
 	if ($mysoc->localtax1_assuj=="1") //Localtax1
 	{
 		print '<tr><td height="10">'.$langs->transcountry("AmountLT1",$mysoc->country_code).'</td>';
-		print '<td align="right" nowrap>'.price($object->total_localtax1).'</td>';
+		print '<td align="right" class="nowrap">'.price($object->total_localtax1).'</td>';
 		print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
 	}
 	if ($mysoc->localtax2_assuj=="1") //Localtax2
 	{
 		print '<tr><td height="10">'.$langs->transcountry("AmountLT2",$mysoc->country_code).'</td>';
-		print '<td align="right" nowrap>'.price($object->total_localtax2).'</td>';
+		print '<td align="right" class="nowrap">'.price($object->total_localtax2).'</td>';
 		print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
 	}
 
 
 	// Amount TTC
 	print '<tr><td height="10">'.$langs->trans('AmountTTC').'</td>';
-	print '<td align="right" nowrap>'.price($object->total_ttc).'</td>';
+	print '<td align="right" class="nowrap">'.price($object->total_ttc).'</td>';
 	print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
 
 	// Statut
@@ -2230,7 +2263,14 @@ else
 		$formmail->withto=GETPOST("sendto")?GETPOST("sendto"):$liste;
 		$formmail->withtocc=$liste;
 		$formmail->withtoccc=(! empty($conf->global->MAIN_EMAIL_USECCC)?$conf->global->MAIN_EMAIL_USECCC:false);
-		$formmail->withtopic=$langs->trans('SendPropalRef','__PROPREF__');
+		if(empty($object->ref_client))
+		{
+			$formmail->withtopic=$langs->trans('SendPropalRef','__PROPREF__');
+		}
+		else if(!empty($object->ref_client))
+		{
+			$formmail->withtopic=$langs->trans('SendPropalRef','__PROPREF__(__REFCLIENT__)');
+		}
 		$formmail->withfile=2;
 		$formmail->withbody=1;
 		$formmail->withdeliveryreceipt=1;
@@ -2239,6 +2279,7 @@ else
 		// Tableau des substitutions
 		$formmail->substit['__PROPREF__']=$object->ref;
 		$formmail->substit['__SIGNATURE__']=$user->signature;
+		$formmail->substit['__REFCLIENT__']=$object->ref_client;
 		$formmail->substit['__PERSONALIZED__']='';
 		$formmail->substit['__CONTACTCIVNAME__']='';
 
@@ -2266,8 +2307,6 @@ else
 		$formmail->param['models']='propal_send';
 		$formmail->param['id']=$object->id;
 		$formmail->param['returnurl']=$_SERVER["PHP_SELF"].'?id='.$object->id;
-
-
 		// Init list of files
 		if (GETPOST("mode")=='init')
 		{

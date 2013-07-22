@@ -1,12 +1,4 @@
-/*
- * Language code: et_EE
- * Automatic generated via autotranslator.php tool
- * Generation date 2012-02-29 22:15:30
- */
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 22:15:30).
-// Reference language: en_US -> et_EE
+# Dolibarr language file - Source file is en_US - compta
 CHARSET=UTF-8
 Accountancy=Raamatupidamine
 AccountancyCard=Raamatupidamine kaart
@@ -16,7 +8,7 @@ TaxModuleSetupToModifyRules=Mine <a href="%s">mooduli seadistuse</a> muutmiseks 
 OptionMode=Võimalus raamatupidamine
 OptionModeTrue=Võimalus Sissetulekud-kulud
 OptionModeVirtual=Võimalus Nõuded, võlad
-OptionModeTrueDesc=Selles kontekstis käive arvutatakse maksed (kuupäev maksed). \ NThe kehtivuse arvud on tagatud ainult siis, kui raamatupidamine on uurinud läbi sisend / väljund kontodel kaudu arveid.
+OptionModeTrueDesc=Selles kontekstis käive arvutatakse maksed (kuupäev maksed). \\ NThe kehtivuse arvud on tagatud ainult siis, kui raamatupidamine on uurinud läbi sisend / väljund kontodel kaudu arveid.
 OptionModeVirtualDesc=Selles kontekstis käive arvutatakse arvete (kinnitamise kuupäev). Kui need arved on tingitud, kas need on makstud või mitte, need on loetletud käibe toodangut.
 FeatureIsSupportedInInOutModeOnly=Funktsioon saadaval ainult CREDITS-võlad raamatupidamise režiimis (vt Raamatupidamise mooduli konfiguratsiooni)
 VATReportBuildWithOptionDefinedInModule=Summad on näidatud siin arvutatakse eeskirjade määratletud Maksu moodul setup.
@@ -26,6 +18,8 @@ AmountToBeCharged=Kogusumma maksma:
 AccountsGeneral=Raamatupidamise
 Account=Konto
 Accounts=Raamatupidamise
+# Accountparent=Account parent
+# Accountsparent=Accounts parent
 BillsForSuppliers=Arveid, mille alusel tarnijad
 Income=Tulu
 Outcome=Kulu
@@ -86,11 +80,11 @@ TotalToPay=Kokku maksta
 TotalVATReceived=Kokku laekuv käibemaks
 CustomerAccountancyCode=Klientide raamatupidamise kood
 SupplierAccountancyCode=Tarnija raamatupidamise kood
-AlreadyPaid=Juba makstud
 AccountNumberShort=Konto number
 AccountNumber=Konto number
 NewAccount=Uus konto
 SalesTurnover=Müügikäive
+# SalesTurnoverMinimum=Minimum sales turnover
 ByThirdParties=Bu kolmandatele osapooltele
 ByUserAuthorOfInvoice=Arve author
 AccountancyExport=Raamatupidamine eksport
@@ -115,6 +109,7 @@ AnnualByCompaniesDueDebtMode=Tasakaal tulude ja kulude, detail kolmandate isikut
 AnnualByCompaniesInputOutputMode=Tasakaal tulude ja kulude, detail kolmandate isikute poolt, mode <b>%sIncomes-Expense%sS</b> ütles <b>kassapõhist raamatupidamisarvestust.</b>
 SeeReportInInputOutputMode=Vaata aruanne <b>%sIncomes-Expense%sS</b> ütles <b>kassapõhise raamatupidamisarvestuse</b> jaoks arvutus tegelike maksete
 SeeReportInDueDebtMode=Vaata aruanne <b>%sClaims-Debt%sS</b> ütles <b>pühendumust moodustas</b> arvutuste väljastatud arved
+# RulesAmountWithTaxIncluded=- Amounts shown are with all taxes included
 RulesResultDue=- Summad on näidatud on koos kõigi maksudega <br> - See sisaldab tasumata arved, kulud ja käibemaks, kas need on tasutud või mitte. <br> - See põhineb kinnitamise päevast arved ja käibemaksu ning tähtpäev kulud.
 RulesResultInOut=- Summad on näidatud on koos kõigi maksudega <br> - See sisaldab päris tehtavaid väljamakseid arveid, kulud ja käibemaks. <br> - See põhineb maksmise kuupäevad arved, kulud ANF käibemaksuga. <br>
 RulesCADue=- See sisaldab kliendi tõttu arved, kas need on tasutud või mitte. <br> - See põhineb kinnitamise kuupäev need arved. <br>
@@ -149,6 +144,13 @@ DescPurchasesJournal=Ostud Teataja
 InvoiceRef=Arve ref.
 CodeNotDef=Määratlemata
 AddRemind=Lähetamiseks kättesaadavaks summa
-RemainToDivide=Veel saata:
+RemainToDivide= Veel saata:
 WarningDepositsNotIncluded=Hoiuste arved ei kuulu selles versioonis seda raamatupidamise moodul.
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 22:17:34).
+# DatePaymentTermCantBeLowerThanObjectDate=Payment term date can't be lower than object date.
+# Pcg_version=Pcg version
+# Pcg_type=Pcg type
+# Pcg_subtype=Pcg subtype
+# InvoiceLinesToDispatch=Invoice lines to dispatch
+# InvoiceDispatched=Dispatched invoices
+# AccountancyDashboard=Accountancy summary
+# ByProductsAndServices=By products and services

@@ -1,11 +1,4 @@
-* Manually generated
- * Generation date 2012-07-08 14:42:26
-
-
-// START - Lines manually generated (2012-07-08 14:42:26).
- */
-// Reference language: en_US -> TR – projects
-
+# Dolibarr language file - tr_TR - projects
 CHARSET=UTF-8
 Project=Proje
 Projects=Projeler
@@ -18,7 +11,7 @@ MyTasksDesc=Bu görünüm ilgilisi olduğunuz projelerle ya da görevlerle sın�
 TasksPublicDesc=Bu görünüm okuma izininiz olan tüm projeleri ve görevleri içerir.
 TasksDesc=Bu görünüm tüm projeleri ve görevleri içerir (size verilen kullanıcı izinleri her şeyi görmenizi sağlar).
 Myprojects=Projelerim
-ProjectsArea=Projeler alanı
+ProjectsArea=Proje alanı
 NewProject=Yeni proje
 AddProject=Proje ekle
 DeleteAProject=Bir proje sil
@@ -40,7 +33,7 @@ RefTask=Görev ref.
 LabelTask=Görev etiketi
 NewTimeSpent=Yeni harcanan süre
 MyTimeSpent=Harcadığım sürelerim
-MyTasks=Grevlerim
+MyTasks=Görevlerim
 Tasks=Görevler
 Task=Görev
 NewTask=Yeni görev
@@ -54,7 +47,7 @@ MyProjects=Projelerim
 DurationEffective=Etken süre
 Progress=İlerleme
 Time=Süre
-ListProposalsAssociatedProject=Proje ile ilgili ticari tekliflerin listesi
+ListProposalsAssociatedProject=Proje ile ilgili tekliflerin listesi
 ListOrdersAssociatedProject=Proje ile ilgili müşteri siparişleri listesi
 ListInvoicesAssociatedProject=Proje ile ilgili müşteri faturaları listesi
 ListPredefinedInvoicesAssociatedProject=Proje ile ilgili müşteri ön tanımlı faturalarının listesi
@@ -67,9 +60,9 @@ ListActionsAssociatedProject=Proje ile ilgili eylemlerin listesi
 ActivityOnProjectThisWeek=Projede bu haftaki etkinlik
 ActivityOnProjectThisMonth=Projede bu ayki etkinlik
 ActivityOnProjectThisYear=Projede bu yılki etkinlik
-ChildOfTask=Alt proje /görev
+ChildOfTask=Alt proje/görev
 NotOwnerOfProject=Bu özel projenin sahibi değil
-AffectedTo=Ayrılan
+AffectedTo=Tahsis edilen
 CantRemoveProject=Bu proje kaldırılamıyor çünkü Bazı diğer nesneler tarafından başvurulUYOR (fatura, sipariş veya diğerleri). Başvuru sekmesine bakın.
 ValidateProject=Proje doğrula
 ConfirmValidateProject=Bu projeyi doğrulamak  istediğinizden emin misiniz?
@@ -92,7 +85,16 @@ TaskIsNotAffectedToYou=Görev size ayrılmamış
 ErrorTimeSpentIsEmpty=Harcanan süre boş
 ThisWillAlsoRemoveTasks=Bu eylem aynı zamanda projenin tüm görevlerini (şu andaki <b>%s</b> görevleri) ve tüm harcanan süre girişlernii siler .
 IfNeedToUseOhterObjectKeepEmpty=Eğer bazı nesneler başka bir üçüncü partiye aitse  (fatura, sipariş, ...), oluşturulması  için bu projeye bağlanmalıdır, projenin birden çok üçüncü partiye bağlı olması için bunu boş bırakın.
-##### Kişi türleri #####
+CloneProject=Proje klonla
+CloneTasks=Görev klonla
+CloneContacts=Kişi klonla
+CloneNotes=Not klonla
+CloneFiles=Birleşmiş dosya klonla
+ConfirmCloneProject=Bu projeyi klonlamak istediğinizden emin misiniz?
+ProjectReportDate=Görevi proje başlama tarihine göre değiştir
+ErrorShiftTaskDate=Görev tarihini yeni proje başlama tarihine göre kaydırmak olası değil
+ProjectsAndTasksLines=Projeler ve görevler
+##### Tkişi türleri #####
 TypeContact_project_internal_PROJECTLEADER=Proje önderi
 TypeContact_project_external_PROJECTLEADER=Proje önderi
 TypeContact_project_internal_CONTRIBUTOR=Katılımcı
@@ -103,3 +105,5 @@ TypeContact_project_task_internal_CONTRIBUTOR=Katılımcı
 TypeContact_project_task_external_CONTRIBUTOR=Katılımcı
 # Belge modelleri
 DocumentModelBaleine=Eksiksiz bir proje rapor modeli (logo. ..)
+PlannedWorkload =Planlanan işyükü
+WorkloadOccupation=İşyükü etkilemesi

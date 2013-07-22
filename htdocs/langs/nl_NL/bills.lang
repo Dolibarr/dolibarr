@@ -196,7 +196,7 @@ SendReminderBillByMail = Stuur herinnering per e-mail
 RelatedCommercialProposals = Gerelateerde offertes
 MenuToValid = Valideer
 DateMaxPayment = Betaling vóór
-DateEcheance = Vervaldag beperken
+DateEcheance = Vervaldatum
 DateInvoice = Factuurdatum
 NoInvoice = Geen factuur
 ClassifyBill = Classifiseer factuur
@@ -278,14 +278,20 @@ RelatedBills = Gerelateerde facturen
 # PaymentConditions = 
 PaymentConditionShortRECEP = Direct
 PaymentConditionRECEP = Direct
-PaymentConditionShort30D = 30 dagen
-PaymentCondition30D = 30 dagen
-PaymentConditionShort30DENDMONTH = 30 dagen na einde van de maand
-PaymentCondition30DENDMONTH = 30 dagen na einde van de maand
-PaymentConditionShort60D = 60 dagen
-PaymentCondition60D = 60 dagen
-PaymentConditionShort60DENDMONTH = 60 dagen na einde van de maand
-PaymentCondition60DENDMONTH = 60 dagen na einde van de maand
+PaymentConditionShort30D=30 dagen
+PaymentCondition30D=30 dagen op factuurdatum
+PaymentConditionShort30DENDMONTH=30 D einde m.
+PaymentCondition30DENDMONTH=30 dagen einde maand
+PaymentConditionShort60D=60 dagen
+PaymentCondition60D=60 dagen op factuurdatum
+PaymentConditionShort60DENDMONTH=60 D einde m.
+PaymentCondition60DENDMONTH=60 dagen einde maand
+PaymentConditionShortPT_DELIVERY=Bij levering
+PaymentConditionPT_DELIVERY=Bij levering
+PaymentConditionShortPT_ORDER=Bij bestelling
+PaymentConditionPT_ORDER=Bij bestelling
+PaymentConditionShortPT_5050=50-50
+PaymentConditionPT_5050=50%% voorschot, 50%% bij levering
 # PaymentType = 
 PaymentTypeVIR = Bankstorting
 PaymentTypeShortVIR = Bankstorting
@@ -325,8 +331,8 @@ FullPhoneNumber = Telefoonnummer
 TeleFax = Fax
 PrettyLittleSentence = Accepteert de betaling van de verschuldigde bedragen per cheque te betalen in mijn naam in mijn hoedanigheid als lid van een boekhoudkundige organisatie goedgekeurd door de fiscale administratie.
 IntracommunityVATNumber = Intracommunautaire BTW-nummer
-PaymentByChequeOrderedTo = Betaling per cheque zijn betaald aan %s verzonden naar
-PaymentByChequeOrderedToShort = Betaling per cheque zijn betaald aan
+PaymentByChequeOrderedTo = Betaling per cheque (incl. BTW) aan %s, versturen naar
+PaymentByChequeOrderedToShort = Betaling per cheque (incl. BTW) aan
 SendTo = Verzonden naar
 PaymentByTransferOnThisBankAccount = Betaling via overschrijving op de volgende bankrekening
 VATIsNotUsedForInvoice = * BTW niet van toepassing
@@ -388,24 +394,14 @@ PDFOursinDescription = Model van complete factuur sjabloon (basis, beheert de mo
 PDFTourteauDescription = Modelfactuur zonder vervanging
 # NumRef Modules = 
 TerreNumRefModelDesc1 = Geeft het aantal als %syymm-nnnn voor facturen en %syymm-nnnn voor de activa is waar yy jaar, mm de maand en nnnn een opeenvolgend nummer is zonder vervangings 0 (nul)
-
-
-// START - Lines generated via autotranslator.php tool (2011-10-10 01:46:39).
-// Reference language: en_US -> nl_NL
-PaymentRule=Betaling regel
+PaymentRule=Betalingsvoorwaarde
 AddDiscount=Maak een korting
 AddRelativeDiscount=Maak een relatieve korting
-EditRelativelDiscount=Edit relatvie korting
-EditGlobalDiscounts=Edit absolute kortingen
+EditRelativelDiscount=Pas relatieve korting aan
+EditGlobalDiscounts=Pas absolute kortingen aan
 AddCreditNote=Maak een credit nota
-AllCompletelyPayedInvoiceWillBeClosed=Alle factuur zonder te blijven om te betalen zal automatisch worden gesloten om status &quot;Betaald&quot;.
-TerreNumRefModelError=Een wetsvoorstel te beginnen met $ syymm bestaat al en is niet compatibel met dit model van de reeks. Verwijderen of hernoemen naar deze module te activeren.
-ClosePaidInvoicesAutomatically=Classificeren &quot;Betaalde&quot; alle standaard of vervanging facturen entirely betaald.
-// STOP - Lines generated via autotranslator.php tool (2011-10-10 02:25:52).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 17:11:50).
-// Reference language: en_US -> nl_NL
-ConfirmUnvalidateBill=Weet u zeker dat u te factureren <b>%s</b> veranderen om ontwerp-status?
-UnvalidateBill=Unvalidate factuur
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:12:06).
+AllCompletelyPayedInvoiceWillBeClosed=Alle betaalde facturen zullen automatisch worden gesloten naar status &quot;Betaald&quot;.
+TerreNumRefModelError=Een factuur beginnende met $ syymm bestaat al en is niet compatibel met dit nummeringsmodel. Verwijderen of hernoemen om deze module te activeren.
+ClosePaidInvoicesAutomatically=Classeer betaalde facturen automatisch naar status &quot;Betaalde&quot;.
+ConfirmUnvalidateBill=Weet u zeker dat u factuur <b>%s</b> wil veranderen naar Concept?
+UnvalidateBill=Doe validatie factuur teniet.

@@ -160,7 +160,7 @@ class ModeleBoxes    // Can't be abtract as it is instanciated to build "empty" 
 			}
 			if (! empty($head['sublink']))
 			{
-				print ' <a href="'.$head['sublink'].'" target="_blank">'.img_picto($head['subtext'],$head['subpicto']).'</a>';
+				print ' <a href="'.$head['sublink'].'"'.(empty($head['target'])?' target="_blank"':'').'>'.img_picto($head['subtext'],$head['subpicto']).'</a>';
 			}
 			if ($conf->use_javascript_ajax)
 			{
@@ -203,19 +203,20 @@ class ModeleBoxes    // Can't be abtract as it is instanciated to build "empty" 
 						if (isset($contents[$i][$j]['td'])) $tdparam.=' '.$contents[$i][$j]['td'];
 
 						if (empty($contents[$i][$j]['text'])) $contents[$i][$j]['text']="";
-						$texte=isset($contents[$i][$j]['text'])?$contents[$i][$j]['text']:'';
-						$textewithnotags=preg_replace('/<([^>]+)>/i','',$texte);
-						$texte2=isset($contents[$i][$j]['text2'])?$contents[$i][$j]['text2']:'';
-						$texte2withnotags=preg_replace('/<([^>]+)>/i','',$texte2);
-						//print "xxx $textewithnotags y";
+						$text=isset($contents[$i][$j]['text'])?$contents[$i][$j]['text']:'';
+						$textwithnotags=preg_replace('/<([^>]+)>/i','',$text);
+						$text2=isset($contents[$i][$j]['text2'])?$contents[$i][$j]['text2']:'';
+						$text2withnotags=preg_replace('/<([^>]+)>/i','',$text2);
+						$textnoformat=isset($contents[$i][$j]['textnoformat'])?$contents[$i][$j]['textnoformat']:'';
+						//print "xxx $textwithnotags y";
 
 						print '<td'.$tdparam.'>';
 
 						// Url
 						if (! empty($contents[$i][$j]['url']))
 						{
-							print '<a href="'.$contents[$i][$j]['url'].'" title="'.$textewithnotags.'"';
-							//print ' alt="'.$textewithnotags.'"';      // Pas de alt sur un "<a href>"
+							print '<a href="'.$contents[$i][$j]['url'].'" title="'.$textwithnotags.'"';
+							//print ' alt="'.$textwithnotags.'"';      // Pas de alt sur un "<a href>"
 							print isset($contents[$i][$j]['target'])?' target="'.$contents[$i][$j]['target'].'"':'';
 							print '>';
 						}
@@ -230,16 +231,18 @@ class ModeleBoxes    // Can't be abtract as it is instanciated to build "empty" 
 						$maxlength=$MAXLENGTHBOX;
 						if (! empty($contents[$i][$j]['maxlength'])) $maxlength=$contents[$i][$j]['maxlength'];
 
-						if ($maxlength) $textewithnotags=dol_trunc($textewithnotags,$maxlength);
-						if (preg_match('/^<img/i',$texte) || ! empty($contents[$i][$j]['asis'])) print $texte;	// show text with no html cleaning
-						else print $textewithnotags;				// show text with html cleaning
+						if ($maxlength) $textwithnotags=dol_trunc($textwithnotags,$maxlength);
+						if (preg_match('/^<img/i',$text) || ! empty($contents[$i][$j]['asis'])) print $text;	// show text with no html cleaning
+						else print $textwithnotags;				// show text with html cleaning
 
 						// End Url
 						if (! empty($contents[$i][$j]['url'])) print '</a>';
 
-						if (preg_match('/^<img/i',$texte2) || ! empty($contents[$i][$j]['asis2'])) print $texte2;	// show text with no html cleaning
-						else print $texte2withnotags;				// show text with html cleaning
+						if (preg_match('/^<img/i',$text2) || ! empty($contents[$i][$j]['asis2'])) print $text2;	// show text with no html cleaning
+						else print $text2withnotags;				// show text with html cleaning
 
+						if (! empty($textnoformat)) print "\n".$textnoformat."\n";
+						
 						print "</td>";
 					}
 

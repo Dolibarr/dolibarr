@@ -1,12 +1,4 @@
-/*
- * Language code: zh_CN
- * Automatic generated via autotranslator.php tool
- * Generation date 2010-06-08 21:22:55
- */
-
-
-// START - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).
-// Reference language: en_US
+# Dolibarr language file - Source file is en_US - categories
 CHARSET=UTF-8
 Category=類別
 Categories=分類
@@ -64,6 +56,7 @@ CompanyHasNoCategory=這家公司沒有任何分類標籤
 MemberHasNoCategory=該成員沒有任何類別
 ClassifyInCategory=分類類別
 NoneCategory=無
+# NotCategorized=Without category
 CategoryExistsAtSameLevel=此類別已存在此號
 ReturnInProduct=返回產品/服務卡
 ReturnInSupplier=返回供應商卡
@@ -99,4 +92,11 @@ CatSupList=供應商分類列表
 CatCusList=客戶名單/前景類別
 CatProdList=產品類別列表
 CatMemberList=類別的成員名單
-// STOP - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).
+# CatSupLinks=Links between suppliers and categories
+# CatCusLinks=Links between customers/prospects and categories
+# CatProdLinks=Links between products/services and categories
+# CatMemberLinks=Links between members and categories
+# CatProdLinks=Links between products/services and categories
+# CatCusLinks=Links between customers/prospects and categories
+# CatSupLinks=Links between suppliers and categories
+# DeleteFromCat=Remove from category

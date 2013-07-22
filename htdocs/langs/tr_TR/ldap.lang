@@ -1,11 +1,4 @@
-/*
- * Language code: tr_TR
- * Manually generated
- * Generation date 2012-07-24 00:13:26
- */
-
-// START - Lines generated manually (2012-07-24 00:13:26).
-// Reference language: en_US->tr_TR - ldap
+# Dolibarr language file - tr_TR - ldap
 CHARSET=UTF-8
 DomainPassword=Etki alanı parolası
 YouMustChangePassNextLogon=<b>%s</b> Etki alanındaki <b>%s</b> kullanıcısının parolası değiştirilmelidir.

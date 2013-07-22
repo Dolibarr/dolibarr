@@ -1,4 +1,4 @@
-# Dolibarr language file - en_US - orders
+# Dolibarr language file - Source file is en_US - orders
 CHARSET=UTF-8
 OrdersArea=Customers orders area
 SuppliersOrdersArea=Suppliers orders area
@@ -70,9 +70,11 @@ CancelOrder=Cancel order
 AddOrder=Add order
 AddToMyOrders=Add to my orders
 AddToOtherOrders=Add to other orders
+AddToDraftOrders=Add to draft order
 ShowOrder=Show order
 NoOpenedOrders=No opened orders
 NoOtherOpenedOrders=No other opened orders
+NoDraftOrders=No draft orders
 OtherOrders=Other orders
 LastOrders=Last %s orders
 LastModifiedOrders=Last %s modified orders
@@ -82,7 +84,7 @@ NbOfOrders=Number of orders
 OrdersStatistics=Order's statistics
 OrdersStatisticsSuppliers=Supplier order's statistics
 NumberOfOrdersByMonth=Number of orders by month
-AmountOfOrdersByMonthHT=amount of orders by month (net of tax)
+AmountOfOrdersByMonthHT=Amount of orders by month (net of tax)
 ListOfOrders=List of orders
 CloseOrder=Close order
 ConfirmCloseOrder=Are you sure you want to set this order to deliverd ? Once an order is delivered, it can be set to billed.

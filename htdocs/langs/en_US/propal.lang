@@ -1,4 +1,4 @@
-# Dolibarr language file - en_US - propal
+# Dolibarr language file - Source file is en_US - propal
 CHARSET=UTF-8
 Proposals=Commercial proposals
 Proposal=Commercial proposal
@@ -71,6 +71,8 @@ ErrorPropalNotFound=Propal %s not found
 Estimate=Estimate :
 EstimateShort=Estimate
 OtherPropals=Other proposals
+AddToDraftProposals=Add to draft proposal
+NoDraftProposals=No draft proposals
 CopyPropalFrom=Create commercial proposal by copying existing proposal
 CreateEmptyPropal=Create empty commercial proposals vierge or from list of products/services
 DefaultProposalDurationValidity=Default commercial proposal validity duration (in days)

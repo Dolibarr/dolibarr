@@ -210,7 +210,7 @@ class pdf_paiement
 
 		$this->Body($pdf, 1, $lines, $outputlangs);
 
-		$pdf->AliasNbPages();
+		if (method_exists($pdf,'AliasNbPages')) $pdf->AliasNbPages();
 
 		$pdf->Close();
 

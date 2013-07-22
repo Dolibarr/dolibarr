@@ -237,16 +237,16 @@ if ($user->rights->fournisseur->facture->lire)
 				print "<tr ".$bc[$var].">";
 				$classname = "impayee";
 
-				print '<td nowrap>';
+				print '<td class="nowrap">';
 				$facturestatic->id=$objp->facid;
 				$facturestatic->ref=$objp->ref;
 				print $facturestatic->getNomUrl(1);
 				print "</td>\n";
 
-				print "<td nowrap>".dol_trunc($objp->ref_supplier,12)."</td>\n";
+				print '<td class="nowrap">'.dol_trunc($objp->ref_supplier,12)."</td>\n";
 
-				print "<td nowrap align=\"center\">".dol_print_date($db->jdate($objp->df),'day')."</td>\n";
-				print "<td nowrap align=\"center\">".dol_print_date($db->jdate($objp->datelimite),'day');
+				print '<td class="nowrap" align="center">'.dol_print_date($db->jdate($objp->df),'day')."</td>\n";
+				print '<td class="nowrap" align="center">'.dol_print_date($db->jdate($objp->datelimite),'day');
 				if ($objp->datelimite && $db->jdate($objp->datelimite) < ($now - $conf->facture->fournisseur->warning_delay) && ! $objp->paye && $objp->fk_statut == 1) print img_warning($langs->trans("Late"));
 				print "</td>\n";
 

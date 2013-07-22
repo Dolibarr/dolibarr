@@ -1,12 +1,4 @@
-/*
- * Language code: et_EE
- * Automatic generated via autotranslator.php tool
- * Generation date 2012-02-29 22:15:30
- */
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 22:15:30).
-// Reference language: en_US -> et_EE
+# Dolibarr language file - Source file is en_US - withdrawals
 CHARSET=UTF-8
 StandingOrdersArea=Püsikorraldused ala
 CustomersStandingOrdersArea=Kliendid püsikorralduste ala
@@ -56,7 +48,7 @@ RefusedData=Tagasilükkamise kuupäevast
 RefusedReason=Tagasilükkamise põhjuse
 RefusedInvoicing=Arve tagasilükkamine
 NoInvoiceRefused=Ärge laadige tagasilükkamine
-InvoiceRefused=Laadige tagasilükkamine kliendi
+InvoiceRefused=Arve keeldus
 Status=Staatus
 StatusUnknown=Tundmatu
 StatusWaiting=Ootan
@@ -89,6 +81,11 @@ WithdrawalFileNotCapable=Suutnud luua tühistamise saamist fail oma riigi
 ShowWithdraw=Näita Tõmmake
 IfInvoiceNeedOnWithdrawPaymentWontBeClosed=Siiski, kui arve on vähemalt üks tagasivõtmise makse ei ole veel töödeldud, siis ei tohiks seada payed võimaldab hallata taganeda enne.
 DoStandingOrdersBeforePayments=See kaarte saab taotleda püsikorraldus. Kui see valmib, saate tippida makse sulgeda arve.
+# WithdrawalFile=Withdrawal file
+# SetToStatusSent=Set to status "File Sent"
+# ThisWillAlsoAddPaymentOnInvoice=This will also create payments onto invoices and will classify them to paid
+
+### Notifications
 InfoCreditSubject=Maksmise püsikorraldus %s panga poolt
 InfoCreditMessage=Püsikorralduse %s makstud panga poolt <br> Andmed makse: %s
 InfoTransSubject=Edastamise püsikorraldus %s panga
@@ -98,4 +95,3 @@ InfoFoot=See on automatiseeritud sõnum saata Dolibarr
 InfoRejectSubject=Püsikorralduse keeldus
 InfoRejectMessage=Tere, <br><br> standig et arve %s seotud firma %s, mille summa %s lükatud panga poolt. <br><br> - <br> % $
 ModeWarning=Valik päris režiim ei olnud seatud, siis peatus pärast seda simulatsioon
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 22:26:06).

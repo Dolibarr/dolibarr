@@ -1,47 +1,60 @@
-/*
- * Language code: tr_TR
- * Manually generated
- * Generation date 2012-24-06 23:50:00
- */
-
-// START - Lines generated manually (2012-24-06 23:50:00).
-// Reference language: en_US – agenda
-
+# Dolibarr language file - en_US - agenda 
 CHARSET=UTF-8
-Actions=Eylemler
-ActionsArea=Eylem alanı (Olaylar ve görevler)
+Actions=Etkinlikler
+ActionsArea=Etkinlik alanı (Eylemler ve görevler)
 Agenda=Gündem
 Agendas=Gündemler
 Calendar=Takvim
 Calendars=Takvimler
-AffectedTo=Etkilenen
+LocalAgenda=Yerel takvim
+AffectedTo=Görevlendirilen
 DoneBy=Yapan
 Events=Etkinlikler
+EventsNb=Etkinlik sayısı
+MyEvents=Etkinliklerim
+OtherEvents=Diğer etkinlikler
 ListOfActions= Etkinlik listesi
 Location=Konum
-SearchAnAction=Bir eylem/görev ara 
-MenuToDoActions=Tüm eksik eylemler
-MenuDoneActions=Tüm bitmiş eylemler
-MenuToDoMyActions=Bitmemiş eylemlerim
-MenuDoneMyActions=Biten eylemlerim
-ListOfEvents=Dolibarr eylemleri listesi
-ActionsAskedBy=Eylemi bildiren 
-ActionsToDoBy=Eylemlerden etkilenen 
-ActionsDoneBy=Eylemleri yapan 
-AllMyActions=Tüm eylemlerim/görevlerim
-AllActions=Tüm eylemler/görevler
+EventOnFullDay=Tam gün etkinliği 
+SearchAnAction=Bir etkinlik/görev ara 
+MenuToDoActions=Tüm sonlanmamış etkinlik
+MenuDoneActions=Tüm sonlanmış etkinlik
+MenuToDoMyActions=Sonlanmamış etkinlikim
+MenuDoneMyActions=Sonlanmış etkinlikim
+ListOfEvents=Dolibarr etkinlik listesi
+ActionsAskedBy=Etkinliği bildiren 
+ActionsToDoBy=Etkinlik için görevlendirilen 
+ActionsDoneBy=Etkinliği yapan 
+AllMyActions=Tüm etkinliklerim/görevlerim
+AllActions=Tüm etkinlikler/görevler
 ViewList=Liste görünümü
 ViewCal=Ay görünümü
+ViewDay=Gün görünümü
+ViewWeek=Hafta görünümü
 ViewWithPredefinedFilters=Öntanımlı süzgeçler ile görünüm
-AutoActions=Gündemin otomatik doldurulması
-AgendaAutoActionDesc=Burada Dolibarr'ın otomatik olarak gündemde oluşturmasını istediğiniz olayları tanımlayın. İşaretli bir şey yoksa (varsayılan olarak) sadece el ile girilen eylemler gündeme dahil edilecektir.
-AgendaSetupOtherDesc=Bu sayfa Dolibarr eylemlerinin dış bir takvime aktarılması için seçenekler sağlar. (thunderbird, google calendar, ...) 
+AutoActions=Otomatik doldurma
+AgendaAutoActionDesc=Burada Dolibarr'ın otomatik olarak gündemde oluşturmasını istediğiniz olayları tanımlayın. İşaretli bir şey yoksa (varsayılan olarak) sadece el ile girilen etkinlikler gündeme dahil edilecektir.
+AgendaSetupOtherDesc=Bu sayfa Dolibarr etkinliklerinin dış bir takvime aktarılması için seçenekler sağlar. (thunderbird, google calendar, ...) 
+AgendaExtSitesDesc=Bu sayfa takvimlerin dış kaynaklarında Dolibarr gündemindeki etkinliklerinin görünmesini sağlar.
 ActionsEvents=Dolibarr'ın otomatik olarak gündemde bir etkinlik oluşturacağı eylemler 
 PropalValidatedInDolibarr=%s Teklifi doğrulandı
 InvoiceValidatedInDolibarr=%s Faturası doğrulandı
+InvoiceBackToDraftInDolibarr=%s Faturasını taslak durumuna geri götür
+InvoiceDeleteDolibarr=%s Faturası silindi
 OrderValidatedInDolibarr=%s Siparişi doğrulandı
+OrderApprovedInDolibarr=%s Siparişi onayladı
+OrderBackToDraftInDolibarr=%s Siparişini taslak durumuna geri götür
+OrderCanceledInDolibarr=%s Siparişi iptal edildi
+InterventionValidatedInDolibarr=%s Müdahalesi doğrulandı
+ProposalSentByEMail=%s Ticari teklifi Eposta ile gönderildi
+OrderSentByEMail=%s Müşteri siparişi Eposta ile gönderildi 
+InvoiceSentByEMail=%s Müşteri faturası Eposta ile gönderildi 
+SupplierOrderSentByEMail=%s Tedarikçi siparişi Eposta ile gönderildi 
+SupplierInvoiceSentByEMail=%s Tedarikçi faturası Eposta ile gönderildi 
+ShippingSentByEMail=%s Sevkiyatı Eposta ile gönderildi 
+InterventionSentByEMail=%s Müdahalesi Eposta ile gönderildi 
 NewCompanyToDolibarr=Üçüncü parti oluşturuldu
-DateActionPlannedStart=Planlanan başlama tarihi
+DateActionPlannedStart=Planlanan başlangıç tarihi
 DateActionPlannedEnd=Planlanan bitiş tarihi
 DateActionDoneStart=Gerçek başlama tarihi
 DateActionDoneEnd=Gerçek bitiş tarihi
@@ -54,30 +67,13 @@ AgendaUrlOptions4=Çıktıyı kullanıcı <b>%s</b> tarafından etkilenen etkinl
 AgendaUrlOptions5= Çıktıyı kullanıcı<b>%s</b> tarafından yapılan etkinliklerle sınırlamak için<b>logind=%s</b>.
 AgendaShowBirthdayEvents=Kişilerin doğum günlerini göster
 AgendaHideBirthdayEvents=Kişilerin doğum günlerini gizle
-InvoiceBackToDraftInDolibarr=%s Faturasını taslak durumuna geri götür
-InterventionValidatedInDolibarr=%s Müdahalesi doğrulandı
-ProposalSentByEMail=%s Ticari teklifi Eposta ile gönderildi
-OrderSentByEMail=%s Müşteri siparişi Eposta ile gönderildi 
-InvoiceSentByEMail=%s Müşteri faturası Eposta ile gönderildi 
-SupplierOrderSentByEMail=%s Tedarikçi siparişi Eposta ile gönderildi 
-SupplierInvoiceSentByEMail=%s Tedarikçi faturası Eposta ile gönderildi 
-ShippingSentByEMail=%s Sevkiyatı Eposta ile gönderildi 
-InterventionSentByEMail=%s Müdahalesi Eposta ile gönderildi 
-ExtSites=Dış takvimleri içeaktar
-EventOnFullDay=Tam gün etkinliği 
-ViewDay=Gün görünümü
-ViewWeek=Hafta görünümü
-AgendaExtSitesDesc=Bu sayfa takvimlerin dış kaynaklarında Dolibarr gündemindeki etkinliklerinin görünmesini sağlar.
+
+
+# Dış site ical
+ExportCal=Takvim dışaaktar
+ExtSites=Dış takvim içeaktar
 ExtSitesEnableThisTool=Dış takvimleri gündemde göster 
-ExtSitesNbOfAgenda=Takvimlerin sayısı
+ExtSitesNbOfAgenda=Takvim sayısı
 AgendaExtNb=Takvim sayısı %s
 ExtSiteUrlAgenda=.ical dosyasına erişmek için URL
 ExtSiteNoLabel=Tanımlama yok
-LocalAgenda=Yerel takvim
-MyEvents=Etkinliklerim
-OtherEvents=Diğer etkinlikler
-OrderApprovedInDolibarr=%s Siparişi onayladı
-OrderBackToDraftInDolibarr=%s Siparişini taslak durumuna döndür
-OrderCanceledInDolibarr=%s Siparişi iptal edildi
-ExportCal=Dışaaktarım takvimi
-

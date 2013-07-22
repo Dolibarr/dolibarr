@@ -1,13 +1,4 @@
-/*
- * Language code: ro_RO
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-01-19 21:32:52
- */
-
-
-// Date 2009-01-19 21:32:52
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
+# Dolibarr language file - Source file is en_US - commercial
 CHARSET=UTF-8
 Commercial=Comerciale
 CommercialArea=Zona comerciala
@@ -21,6 +12,8 @@ DeleteAction=Ştergeţi o acţiune / sarcina
 NewAction=New acţiune / sarcina
 AddAction=Adăugare acţiune / sarcina
 AddAnAction=Adăugaţi o acţiune / sarcina
+AddActionRendezVous=Adauga un loc de întâlnire sarcină
+Rendez-Vous=Loc de întâlnire
 ConfirmDeleteAction=Sunteţi sigur că doriţi să ştergeţi această sarcină?
 CardAction=Acţiunea carte
 PercentDone=Procentajul făcut
@@ -31,6 +24,7 @@ TaskRDVWith=Întâlnire cu %s
 ShowTask=Arata sarcină
 ShowAction=Arata acţiune
 ActionsReport=Acţiuni de raport
+# ThirdPartiesOfSaleRepresentative=Thirdparties with sales representative
 SalesRepresentative=Reprezentant vanzari
 SalesRepresentatives=Reprezentanţii de vânzări
 SalesRepresentativeFollowUp=Reprezentant vanzari (follow-up)
@@ -49,9 +43,11 @@ DoneAndToDoActionsFor=Pentru a face Adoptată şi sarcinile pentru %s
 DoneAndToDoActions=Pentru a face Adoptată şi sarcinile
 DoneActions=Adoptat acţiuni
 DoneActionsFor=Adoptat acţiuni pentru %s
+ToDoActions=acţiuni incomplete
+ToDoActionsFor=acţiuni incomplete pentru %s
 SendPropalRef=Trimite comerciale propunerea %s
 SendOrderRef=Trimite pentru %s
-NoRecordedProspects=Nu perspectiva înregistrate
+StatusNotApplicable=Nu se aplică
 StatusActionToDo=Pentru a face
 StatusActionDone=Făcut
 MyActionsAsked=Acţiuni am inregistrat
@@ -81,32 +77,20 @@ ActionAC_REL=Trimite facturare (memento)
 ActionAC_CLO=Închide
 ActionAC_EMAILING=Trimite email-uri în masă
 ActionAC_COM=Pentru a trimite prin e-mail
-// Date 2009-01-19 21:32:52
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-19 20:22:33).
-// Reference language: en_US
-AddActionRendezVous=Adauga un loc de întâlnire sarcină
-Rendez-Vous=Loc de întâlnire
-// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:22:33).
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:36:47).
-// Reference language: en_US
-ToDoActions=acţiuni incomplete
-ToDoActionsFor=acţiuni incomplete pentru %s
+ActionAC_SHIP=Trimite prin e-mail de transport maritim
 ActionAC_SUP_ORD=Trimite comanda prin e-mail cu furnizorul
 ActionAC_SUP_INV=Trimite factura prin e-mail cu furnizorul
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:38:43).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 17:23:15).
-// Reference language: en_US -> ro_RO
-StatusNotApplicable=Nu se aplică
-ActionAC_SHIP=Trimite prin e-mail de transport maritim
 ActionAC_OTH=Alte
+# ActionAC_OTH_AUTO=Other (automatically inserted events)
+# ActionAC_MANUAL=Manually inserted events
+# ActionAC_AUTO=Automatically inserted events
+# Stats=Sales statistics
+# CAOrder=Sales volume (validated orders)
+# FromTo=from %s to %s
+# MargeOrder=Margins (validated orders)
+# RecapAnnee=Summary of the year
+# NoData=There is no data
 StatusProsp=Prospect statutul
 DraftPropals=Proiectul de propuneri comerciale
 SearchPropal=Căutaţi o propunere comercială
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:24:34).
+# CommercialDashboard=Commercial summary

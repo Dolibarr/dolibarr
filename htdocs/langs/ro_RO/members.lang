@@ -1,13 +1,4 @@
-/*
- * Language code: ro_RO
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-01-19 21:32:52
- */
-
-
-// Date 2009-01-19 21:32:52
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
+# Dolibarr language file - Source file is en_US - members
 CHARSET=UTF-8
 MembersArea=Zona membrilor
 PublicMembersArea=Public zona membri
@@ -21,11 +12,16 @@ UserNotLinkedToMember=Utilizatorul nu legate de un membru
 MembersTickets=Membrii Bilete
 FundationMembers=Fundaţia membri
 Attributs=Atribute
-Person=Persoana
 ErrorMemberTypeNotDefined=Stat de tip nu este definită
 ListOfPublicMembers=Lista de membri publice
 ListOfValidatedPublicMembers=Lista de membri validate publice
 ErrorThisMemberIsNotPublic=Acest membru nu este public
+ErrorMemberIsAlreadyLinkedToThisThirdParty=Un alt membru <b>(numele: %s, login: %s)</b> este deja în legătură cu o terţă <b>parte %s.</b> Eliminaţi acest link pentru că primul la o terţă parte nu poate fi legat la numai un membru (şi invers).
+ErrorUserPermissionAllowsToLinksToItselfOnly=Din motive de securitate, trebuie să fie acordat pentru a edita permisiunile tuturor utilizatorilor de a fi capabil de a lega un membru către un utilizator care nu este a ta.
+ThisIsContentOfYourCard=Aceasta este cartea dvs. de credit de detalii
+CardContent=Continut de membru carte
+SetLinkToUser=Link de la un utilizator Dolibarr
+SetLinkToThirdParty=Link de la o terţă parte Dolibarr
 MembersCards=Membrii imprimare carduri
 MembersList=Lista de membri
 MembersListToValid=Lista de proiectul de membri (pentru a fi validate)
@@ -39,11 +35,14 @@ MenuMembersValidated=Validat membri
 MenuMembersUpToDate=Până la data de membri
 MenuMembersNotUpToDate=Din data de membri
 MenuMembersResiliated=Resiliated membri
+MembersWithSubscriptionToReceive=Membrii cu abonament pentru a primi
 DateAbonment=Abonamente data
 DateSubscription=Abonamente data
 DateNextSubscription=Înainte de abonament
 DateEndSubscription=Abonamente data de sfârşit
 EndSubscription=Sfarsit de abonament
+SubscriptionId=Abonamente id
+MemberId=Statele id
 NewMember=Membru nou
 NewType=Membru nou tip
 MemberType=Stat de tip
@@ -72,13 +71,12 @@ MembersStatusNotPaidShort=Din data de
 MembersStatusResiliated=Resiliated membri
 MembersStatusResiliatedShort=Resiliated membri
 NewCotisation=New contribuţie
+PaymentSubscription=New plata contribuţiei
 EditMember=Editare membru
 SubscriptionEndDate=Abonamente de data de final
-NewAttribute=New attribut
-AttributeCode=Atribut cod
-OptionalFieldsSetup=Câmpuri opţionale setup
 MembersTypeSetup=Membrii de tip setup
 NewSubscription=Nou abonament
+NewSubscriptionDesc=Acest formular vă permite să înregistraţi abonament ca un membru nou al Fundaţiei. Dacă doriţi să reînnoiţi abonamentul dumneavoastră (dacă este deja un membru), vă rugăm să contactaţi Fundaţia bord în locul de %s de e-mail.
 Subscription=Abonamente
 Subscriptions=Abonamente
 SubscriptionLate=Târziu
@@ -112,13 +110,16 @@ ConfirmValidateMember=Sunteţi sigur că doriţi pentru a valida acest stat?
 FollowingLinksArePublic=Link-urile următoare sunt deschise pagini nu protejate de orice Dolibarr permisiunea. Ele nu sunt formated pagini, cu condiţia ca exemplu pentru a demonstra modul de a lista membrilor de baze de date.
 PublicMemberList=Publică lista membru
 BlankSubscriptionForm=Abonamente forma
+BlankSubscriptionFormDesc=Dolibarr poate oferi un URL publicului pentru a permite vizitatorilor externe pentru a cere să se aboneze la fundaţie. Dacă un modul de plata online este activat, un formular de plată va fi, de asemenea, furnizate în mod automat.
+EnablePublicSubscriptionForm=Permite publicului Auto-abonament formă
 MemberPublicLinks=Link-uri publice / pagini
 ExportDataset_member_1=Membrii şi abonamente
+ImportDataset_member_1=Membrii
 LastMembers=Ultima %s membri
 LastMembersModified=Ultima %s modificate membri
+LastSubscriptionsModified=%s Ultima modificare abonamente
 AttributeName=Nume de atribut
 FieldEdition=Domeniul ediţie %s
-AlphaNumOnlyCharsAndNoSpace=numai alphanumericals caractere fără spaţiu
 String=String
 Text=Text
 Int=Int
@@ -130,6 +131,10 @@ AddSubscription=Adăugaţi abonament
 ShowSubscription=Arata abonament
 MemberModifiedInDolibarr=Statele modificate în Dolibarr
 SendAnEMailToMember=Trimite e-mail la informaţii membru
+# DescADHERENT_AUTOREGISTER_NOTIF_MAIL_SUBJECT=Subject of the e-mail received in case of auto-inscription of a guest
+# DescADHERENT_AUTOREGISTER_NOTIF_MAIL=E-mail received in case of auto-inscription of a guest
+DescADHERENT_AUTOREGISTER_MAIL_SUBJECT=obiectul e-mail pentru autosubscription membru
+DescADHERENT_AUTOREGISTER_MAIL=E-mail pentru autosubscription membru
 DescADHERENT_MAIL_VALID_SUBJECT=Email Subiect membru de validare
 DescADHERENT_MAIL_VALID=E-mail pentru membru de validare
 DescADHERENT_MAIL_COTIS_SUBJECT=Email Subiect de subscriere
@@ -138,45 +143,21 @@ DescADHERENT_MAIL_RESIL_SUBJECT=Email Subiect de membru resiliation
 DescADHERENT_MAIL_RESIL=E-mail pentru statele resiliation
 DescADHERENT_MAIL_FROM=Expeditorul e-mail pentru e-mail-uri automate
 DescADHERENT_ETIQUETTE_TYPE=Etichete format
+# DescADHERENT_ETIQUETTE_TEXT=Text printed on member address sheets
+DescADHERENT_CARD_TYPE=Formatul de carduri paginii
 DescADHERENT_CARD_HEADER_TEXT=Text imprimat pe sus de carduri de membru
 DescADHERENT_CARD_TEXT=Text imprimat pe carduri de membru
+DescADHERENT_CARD_TEXT_RIGHT=Text tipărit pe carduri de membru (alinia la dreapta)
 DescADHERENT_CARD_FOOTER_TEXT=Text imprimat pe jos de carduri de membru
+GlobalConfigUsedIfNotDefined=Textul este definit în modulul de configurare, Fundaţia va fi utilizat în cazul în care nu este definit aici
+MayBeOverwrited=Acest text poate fi overwrited de valoare definite pentru tipul de membru
 ShowTypeCard=Arată tipul ' %s'
 HTPasswordExport=htpassword fişier generaţie
-// Date 2009-01-19 21:32:52
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 21:12:07).
-// Reference language: en_US
-ErrorMemberIsAlreadyLinkedToThisThirdParty=Un alt membru <b>(numele: %s, login: %s)</b> este deja în legătură cu o terţă <b>parte %s.</b> Eliminaţi acest link pentru că primul la o terţă parte nu poate fi legat la numai un membru (şi invers).
-ErrorUserPermissionAllowsToLinksToItselfOnly=Din motive de securitate, trebuie să fie acordat pentru a edita permisiunile tuturor utilizatorilor de a fi capabil de a lega un membru către un utilizator care nu este a ta.
-ThisIsContentOfYourCard=Aceasta este cartea dvs. de credit de detalii
-CardContent=Continut de membru carte
-SetLinkToUser=Link de la un utilizator Dolibarr
-SetLinkToThirdParty=Link de la o terţă parte Dolibarr
-SubscriptionId=Abonamente id
-MemberId=Statele id
-PaymentSubscription=New plata contribuţiei
 NoThirdPartyAssociatedToMember=Nu părţi terţe asociate la prezenta membru
 ThirdPartyDolibarr=Dolibarr terţă parte
-MembersAndSubscriptions=Membrii şi Subscriptions
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:12:07).
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:36:47).
-// Reference language: en_US
-DescADHERENT_AUTOREGISTER_MAIL_SUBJECT=obiectul e-mail pentru autosubscription membru
-DescADHERENT_AUTOREGISTER_MAIL=E-mail pentru autosubscription membru
-DescADHERENT_CARD_TYPE=Formatul de carduri paginii
-DescADHERENT_CARD_TEXT_RIGHT=Text tipărit pe carduri de membru (alinia la dreapta)
-DescADHERENT_MAILMAN_LISTS=Lista (e) pentru insription automată a noi membri (separate prin virgula)
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:37:10).
-
-
-// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
-// Reference language: en_US -> ro_RO
+MembersAndSubscriptions= Membrii şi Subscriptions
 MoreActions=de măsuri complementare privind înregistrarea
+# MoreActionsOnSubscription=Complementary action, suggested by default when recording a subscription
 MoreActionBankDirect=Creaţi un înregistrează tranzacţia directe pe cont
 MoreActionBankViaInvoice=Creaţi o factură şi plata în cont
 MoreActionInvoiceOnly=Creaţi o factură cu nici o plată
@@ -185,19 +166,6 @@ LinkToGeneratedPagesDesc=Acest ecran vă permite să generaţi fişiere PDF cu c
 DocForAllMembersCards=carti de vizita Generaţi pentru toţi membrii (Format pentru producţia de fapt setup: <b>%s)</b>
 DocForOneMemberCards=Generaţi cărţi de vizită pentru un anumit membru (Format pentru producţia de fapt setup: <b>%s)</b>
 DocForLabels=Generaţi adresa foi (Format pentru producţia de fapt setup: <b>%s)</b>
-// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:38:32).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 17:23:15).
-// Reference language: en_US -> ro_RO
-MembersWithSubscriptionToReceive=Membrii cu abonament pentru a primi
-NewSubscriptionDesc=Acest formular vă permite să înregistraţi abonament ca un membru nou al Fundaţiei. Dacă doriţi să reînnoiţi abonamentul dumneavoastră (dacă este deja un membru), vă rugăm să contactaţi Fundaţia bord în locul de %s de e-mail.
-BlankSubscriptionFormDesc=Dolibarr poate oferi un URL publicului pentru a permite vizitatorilor externe pentru a cere să se aboneze la fundaţie. Dacă un modul de plata online este activat, un formular de plată va fi, de asemenea, furnizate în mod automat.
-EnablePublicSubscriptionForm=Permite publicului Auto-abonament formă
-ImportDataset_member_1=Membrii
-LastSubscriptionsModified=%s Ultima modificare abonamente
-GlobalConfigUsedIfNotDefined=Textul este definit în modulul de configurare, Fundaţia va fi utilizat în cazul în care nu este definit aici
-MayBeOverwrited=Acest text poate fi overwrited de valoare definite pentru tipul de membru
 SubscriptionPayment=Abonament de plată
 LastSubscriptionDate=Ultima data de abonament
 LastSubscriptionAmount=Ultima sumă abonament
@@ -229,4 +197,9 @@ Collectivités=Organizaţii
 Particuliers=Personal
 Entreprises=Companii
 DOLIBARRFOUNDATION_PAYMENT_FORM=Pentru a face plata abonamentului folosind un transfer bancar, a se vedea pagina <a target="_blank" href="http://wiki.dolibarr.org/index.php/Subscribe#To_subscribe_making_a_bank_transfer">http://wiki.dolibarr.org/index.php/Subscribe</a> . <br> Pentru a plăti cu un card de credit sau Paypal, faceţi clic pe butonul de la partea de jos a acestei pagini. <br>
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:26:10).
+# ByProperties=By characteristics
+# MembersStatisticsByProperties=Members statistics by characteristics
+# MembersByNature=Members by nature
+# VATToUseForSubscriptions=VAT rate to use for subscriptions
+# NoVatOnSubscription=No TVA for subscriptions
+# MEMBER_PAYONLINE_SENDEMAIL=Email to warn when Dolibarr receive a confirmation of a validated payment for subscription

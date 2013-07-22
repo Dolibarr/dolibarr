@@ -1,12 +1,4 @@
-/*
- * Language code: is_IS
- * Automatic generated via autotranslator.php tool
- * Generation date 2010-06-30 00:15:29
- */
-
-
-// START - Lines generated via autotranslator.php tool (2010-06-30 00:15:29).
-// Reference language: en_US
+# Dolibarr language file - Source file is en_US - categories
 CHARSET=UTF-8
 Category=Flokkur
 Categories=Flokkar
@@ -64,6 +56,7 @@ CompanyHasNoCategory=Þetta fyrirtæki er ekki í neinum flokkum
 MemberHasNoCategory=Þessi aðili er ekki í neinum flokkum
 ClassifyInCategory=Flokka í flokki
 NoneCategory=None
+# NotCategorized=Without category
 CategoryExistsAtSameLevel=Þessi flokkur er þegar til með þessu tilv
 ReturnInProduct=Til baka vöru / þjónustu kort
 ReturnInSupplier=Til baka birgir kort
@@ -99,4 +92,11 @@ CatSupList=Listi yfir flokka birgir
 CatCusList=Listi yfir viðskiptavini / horfur flokkar
 CatProdList=Listi yfir vörur flokkar
 CatMemberList=Listi yfir meðlimi flokkar
-// STOP - Lines generated via autotranslator.php tool (2010-06-30 00:15:29).
+# CatSupLinks=Links between suppliers and categories
+# CatCusLinks=Links between customers/prospects and categories
+# CatProdLinks=Links between products/services and categories
+# CatMemberLinks=Links between members and categories
+# CatProdLinks=Links between products/services and categories
+# CatCusLinks=Links between customers/prospects and categories
+# CatSupLinks=Links between suppliers and categories
+# DeleteFromCat=Remove from category

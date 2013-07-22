@@ -1,4 +1,4 @@
-# Dolibarr language file - el_GR - commercial
+# Dolibarr language file - Source file is en_US - commercial
 CHARSET=UTF-8
 Commercial=Εμπορικό
 CommercialArea=Περιοχή Εμπορικού
@@ -24,6 +24,7 @@ TaskRDVWith=Συνάντηση με %s
 ShowTask=Εμφάνιση Εργασίας
 ShowAction=Εμφάνιση Ενέργειας
 ActionsReport=Αναφορά Ενεργειών
+# ThirdPartiesOfSaleRepresentative=Thirdparties with sales representative
 SalesRepresentative=Αντιπρόσωπος πωλήσεων
 SalesRepresentatives=Αντιπρόσωποι πωλήσεων
 SalesRepresentativeFollowUp=Sales representative (follow-up)
@@ -46,6 +47,7 @@ ToDoActions=Ημιτελείς Ενέργειες
 ToDoActionsFor=Ημιτελείς Ενέργειες για %s
 SendPropalRef=Αποστολή εμπορικής πρότασης %s
 SendOrderRef=Αποστολή παραγγελίας %s
+StatusNotApplicable=Δεν ισχύει
 StatusActionToDo=Να γίνουν
 StatusActionDone=Ολοκληρωμένη
 MyActionsAsked=Ενέργειες που καταχώρησα
@@ -60,7 +62,7 @@ LastProspectContactInProcess=Επικοινωνία σε εξέλιξη
 LastProspectContactDone=Η επικοινωνία έγινε
 DateActionPlanned=Ημερ. προγραμματισμού
 DateActionDone=Ημερ. ολοκλήρωσης
-ActionAskedBy=Η ενέργεια ζητήθηκε από 
+ActionAskedBy=Η ενέργεια ζητήθηκε από
 ActionAffectedTo=Η ενέργεια αφορά τον/την
 ActionDoneBy=Η ενέργεια έγινε από τον/την
 ActionUserAsk=Καταγράφηκε από τον/την
@@ -71,20 +73,24 @@ ActionAC_PROP=Αποστολή πρότασης με email
 ActionAC_EMAIL=Αποστολή email
 ActionAC_RDV=Συναντήσεις
 ActionAC_FAC=Αποστολή Τιμολογίου στον πελάτη με email
-ActionAC_REL=Αποστολή Τιμολογίου στον πελάτη με	email (υπενθύμιση)
+ActionAC_REL=Αποστολή Τιμολογίου στον πελάτη με\temail (υπενθύμιση)
 ActionAC_CLO=Κλείσιμο
 ActionAC_EMAILING=Αποστολή μαζικών email
 ActionAC_COM=Αποστολή παραγγελίας πελάτη με email
+ActionAC_SHIP=Αποστολή ναυτιλία με e-mail
 ActionAC_SUP_ORD=Αποστολή παραγγελίας προμηθευτή με email
 ActionAC_SUP_INV=Αποστολή τιμολογίου προμηθευτή με email
-
-
-// START - Lines generated via autotranslator.php tool (2011-06-26 15:35:22).
-// Reference language: en_US -> el_GR
-StatusNotApplicable=Δεν ισχύει
-ActionAC_SHIP=Αποστολή ναυτιλία με e-mail
 ActionAC_OTH=Άλλο
+# ActionAC_OTH_AUTO=Other (automatically inserted events)
+# ActionAC_MANUAL=Manually inserted events
+# ActionAC_AUTO=Automatically inserted events
+# Stats=Sales statistics
+# CAOrder=Sales volume (validated orders)
+# FromTo=from %s to %s
+# MargeOrder=Margins (validated orders)
+# RecapAnnee=Summary of the year
+# NoData=There is no data
 StatusProsp=Κατάσταση Prospect
 DraftPropals=Σχέδιο εμπορικές προτάσεις
 SearchPropal=Αναζητήστε μία εμπορική πρόταση
-// STOP - Lines generated via autotranslator.php tool (2011-06-26 15:37:02).
+# CommercialDashboard=Commercial summary

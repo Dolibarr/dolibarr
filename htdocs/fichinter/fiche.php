@@ -31,10 +31,17 @@ require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/fichinter/modules_fichinter.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/fichinter.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+
 if (! empty($conf->projet->enabled))
 {
-	require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
+}
+
+if ($conf->contrat->enabled)
+{
+	require_once DOL_DOCUMENT_ROOT."/core/class/html.formcontract.class.php";
+	require_once DOL_DOCUMENT_ROOT."/contrat/class/contrat.class.php";
 }
 if (! empty($conf->global->FICHEINTER_ADDON) && is_readable(DOL_DOCUMENT_ROOT ."/core/modules/fichinter/mod_".$conf->global->FICHEINTER_ADDON.".php"))
 {
@@ -49,6 +56,7 @@ $langs->load("interventions");
 $id			= GETPOST('id','int');
 $ref		= GETPOST('ref','alpha');
 $socid		= GETPOST('socid','int');
+$contratid	= GETPOST('contratid','int');
 $action		= GETPOST('action','alpha');
 $confirm	= GETPOST('confirm','alpha');
 $mesg		= GETPOST('msg','alpha');
@@ -137,6 +145,7 @@ else if ($action == 'add' && $user->rights->ficheinter->creer)
     $object->socid			= $socid;
     $object->duree			= GETPOST('duree','int');
     $object->fk_project		= GETPOST('projectid','int');
+    $object->fk_contrat		= GETPOST('contratid','int');
     $object->author			= $user->id;
     $object->description	= GETPOST('description');
     $object->ref			= $ref;
@@ -304,6 +313,7 @@ else if ($action == 'update' && $user->rights->ficheinter->creer)
 
 	$object->socid			= $socid;
 	$object->fk_project		= GETPOST('projectid','int');
+	$object->fk_contrat		= GETPOST('contratid','int');
 	$object->author			= $user->id;
 	$object->description	= GETPOST('description','alpha');
 	$object->ref			= $ref;
@@ -369,6 +379,14 @@ else if ($action == 'classin' && $user->rights->ficheinter->creer)
 {
 	$object->fetch($id);
 	$result=$object->setProject(GETPOST('projectid','int'));
+	if ($result < 0) dol_print_error($db,$object->error);
+}
+
+// Set into a contract
+else if ($action == 'setcontrat' && $user->rights->contrat->creer)
+{
+	$object->fetch($id);
+	$result=$object->set_contrat($user,GETPOST('contratid','int'));
 	if ($result < 0) dol_print_error($db,$object->error);
 }
 
@@ -873,12 +891,13 @@ if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB) && $user->rights->ficheint
 
 /*
  * View
-*/
+ */
 
 $form = new Form($db);
 $formfile = new FormFile($db);
+$formcontract = new FormContract($db);
 
-llxHeader();
+llxHeader('',$langs->trans("Fichinter"));
 
 if ($action == 'create')
 {
@@ -987,6 +1006,8 @@ if ($action == 'create')
 		// Project
 		if (! empty($conf->projet->enabled))
 		{
+			$formproject=new FormProjets($db);
+			
 			$langs->load("project");
 
             print '<tr><td valign="top">'.$langs->trans("Project").'</td><td>';
@@ -996,13 +1017,26 @@ if ($action == 'create')
             else
             	$numprojet=select_projects($societe->id,$_POST["projectid"],'projectid');
             	*/
-            $numprojet=select_projects($soc->id,GETPOST('projectid','int'),'projectid');
+            $numprojet=$formproject->select_projects($soc->id,GETPOST('projectid','int'),'projectid');
             if ($numprojet==0)
             {
                 print ' &nbsp; <a href="'.DOL_DOCUMENT_ROOT.'/projet/fiche.php?socid='.$soc->id.'&action=create">'.$langs->trans("AddProject").'</a>';
             }
             print '</td></tr>';
         }
+
+		// Contract
+		if ($conf->contrat->enabled)
+		{
+			$langs->load("contrat");
+			print '<tr><td valign="top">'.$langs->trans("Contract").'</td><td>';
+			$numcontrat=$formcontract->select_contract($soc->id,GETPOST('contratid','int'),'contratid',0,1);
+			if ($numcontrat==0)
+			{
+				print ' &nbsp; <a href="'.DOL_URL_ROOT.'/contrat/fiche.php?socid='.$soc->id.'&action=create">'.$langs->trans("AddContract").'</a>';
+			}
+			print '</td></tr>';
+		}
 
         // Model
         print '<tr>';
@@ -1041,7 +1075,6 @@ if ($action == 'create')
 			print $object->showOptionals($extrafields,'edit');
 		}
 
-
         // Show link to origin object
         if (! empty($origin) && ! empty($originid) && is_object($objectsrc))
         {
@@ -1056,56 +1089,6 @@ if ($action == 'create')
 	    {
 	        print '<input type="hidden" name="origin"         value="'.$objectsrc->element.'">';
 	        print '<input type="hidden" name="originid"       value="'.$objectsrc->id.'">';
-		}
-
-		// Model
-		print '<tr>';
-		print '<td>'.$langs->trans("DefaultModel").'</td>';
-		print '<td colspan="2">';
-		$liste=ModelePDFFicheinter::liste_modeles($db);
-		print $form->selectarray('model',$liste,$conf->global->FICHEINTER_ADDON_PDF);
-		print "</td></tr>";
-
-		// Public note
-		print '<tr>';
-		print '<td class="border" valign="top">'.$langs->trans('NotePublic').'</td>';
-		print '<td valign="top" colspan="2">';
-		$doleditor = new DolEditor('note_public', $note_public, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, 70);
-		print $doleditor->Create(1);
-		//print '<textarea name="note_public" cols="80" rows="'.ROWS_3.'">'.$note_public.'</textarea>';
-		print '</td></tr>';
-
-		// Private note
-		if (!empty($user->societe_id))
-		{
-			print '<tr>';
-			print '<td class="border" valign="top">'.$langs->trans('NotePrivate').'</td>';
-			print '<td valign="top" colspan="2">';
-			$doleditor = new DolEditor('note_private', $note_private, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, 70);
-			print $doleditor->Create(1);
-			//print '<textarea name="note_private" cols="80" rows="'.ROWS_3.'">'.$note_private.'</textarea>';
-			print '</td></tr>';
-		}
-
-		// Other attributes
-		$parameters=array('colspan' => ' colspan="2"');
-		$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
-
-
-		// Show link to origin object
-		if (! empty($origin) && ! empty($originid) && is_object($objectsrc))
-		{
-			$newclassname=$classname;
-			if ($newclassname=='Propal') $newclassname='CommercialProposal';
-			print '<tr><td>'.$langs->trans($newclassname).'</td><td colspan="2">'.$objectsrc->getNomUrl(1).'</td></tr>';
-		}
-
-		print '</table>';
-
-		if (is_object($objectsrc))
-		{
-			print '<input type="hidden" name="origin"         value="'.$objectsrc->element.'">';
-			print '<input type="hidden" name="originid"       value="'.$objectsrc->id.'">';
 		}
 
 		print '<center><br>';
@@ -1245,6 +1228,57 @@ else if ($id > 0 || ! empty($ref))
 		else
 		{
 			$form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project,'none');
+		}
+		print '</td>';
+		print '</tr>';
+	}
+
+	// Contrat
+	if ($conf->contrat->enabled)
+	{
+		$langs->load('contrat');
+		print '<tr>';
+		print '<td>';
+
+		print '<table class="nobordernopadding" width="100%"><tr><td>';
+		print $langs->trans('Contract');
+		print '</td>';
+		if ($action != 'contrat')
+		{
+			print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=contrat&amp;id='.$object->id.'">';
+			print img_edit($langs->trans('SetContract'),1);
+			print '</a></td>';
+		}
+		print '</tr></table>';
+		print '</td><td colspan="3">';
+		if ($action == 'contrat')
+		{
+			print '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
+			print '<input type="hidden" name="action" value="setcontrat">';
+			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
+			print '<tr><td>';
+			$htmlcontract= new Formcontract($db);
+			//print "$socid,$selected,$htmlname";
+			$htmlcontract->select_contract($object->socid,$object->fk_contrat,'contratid');
+
+			print '</td>';
+			print '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
+			print '</tr></table></form>';
+		}
+		else
+		{
+			if ($object->fk_contrat)
+            {
+                $contratstatic = new Contrat($db);
+                $contratstatic->fetch($object->fk_contrat);
+                //print '<a href="'.DOL_URL_ROOT.'/projet/fiche.php?id='.$selected.'">'.$projet->title.'</a>';
+                print $contratstatic->getNomUrl(0,'',1);
+            }
+            else
+            {
+                print "&nbsp;";
+            }
 		}
 		print '</td>';
 		print '</tr>';

@@ -1,12 +1,5 @@
-/*
-* Language code: de_DE
-* Manually translated by modula71.de
-* Generation date 2012-05-23
-* QA release date 2012-05-27
-*/
-
+# Dolibarr language file - Source file is en_US - withdrawals
 CHARSET=UTF-8
-
 StandingOrdersArea=Dauerauftragsübersicht
 CustomersStandingOrdersArea=Dauerauftragsübersicht (Kunden)
 StandingOrders=Daueraufträge
@@ -54,8 +47,8 @@ WithdrawalRefusedConfirm=Möchten Sie wirklich eine Abbuchungsablehnung zu diese
 RefusedData=Ablehnungsdatum
 RefusedReason=Ablehnungsgrund
 RefusedInvoicing=Ablehnung in Rechnung stellen
-NoInvoiceRefused=Ablehnung nicht in Rechnung stellen 
-InvoiceRefused=Ablehnung in Rechnung stellen
+NoInvoiceRefused=Ablehnung nicht in Rechnung stellen
+InvoiceRefused=Rechnung abgelehnt
 Status=Status
 StatusUnknown=Unbekannt
 StatusWaiting=Wartend
@@ -80,7 +73,7 @@ NotifyEmision=Abbuchungsemission
 NotifyCredit=Abbuchungsgutschrift
 NumeroNationalEmetter=Nat. Überweisernummer
 PleaseSelectCustomerBankBANToWithdraw=Wählen Sie das Kundenkonto für die Abbuchung
-WithBankUsingRIB=Bankkonten mit RIB 
+WithBankUsingRIB=Bankkonten mit RIB
 WithBankUsingBANBIC=Bankkonten mit IBAN/BIC/SWIFT
 BankToReceiveWithdraw=Bankkonto für Abbuchungen
 CreditDate=Am
@@ -88,11 +81,14 @@ WithdrawalFileNotCapable=Abbuchungsformular für Ihr Land konnte nicht erstellt 
 ShowWithdraw=Zeige Abbuchung
 IfInvoiceNeedOnWithdrawPaymentWontBeClosed=Wenn eine Rechnung mindestens eine noch zu bearbeitende Verbuchung vorweist, kann diese nicht als bezahlt markiert werden.
 DoStandingOrdersBeforePayments=Dies erlaubt Ihnen, einen Dauerauftrag anzulegen.
+# WithdrawalFile=Withdrawal file
+# SetToStatusSent=Set to status "File Sent"
+# ThisWillAlsoAddPaymentOnInvoice=This will also create payments onto invoices and will classify them to paid
 
-### Notifications 
-InfoCreditSubject=Zahlung des Dauerauftrags %s 
+### Notifications
+InfoCreditSubject=Zahlung des Dauerauftrags %s
 InfoCreditMessage=Der Dauerauftrag %s wurde von der Bank gebucht<br>Zahlungsdaten: %s
-InfoTransSubject=Übertragung des Dauerauftrags %s 
+InfoTransSubject=Übertragung des Dauerauftrags %s
 InfoTransMessage=Der Dauerauftrag %s wurde von %s %s übertragen.<br><br>
 InfoTransData=Betrag: %s<br>Verwendungszweck: %s<br>Datum: %s
 InfoFoot=Dies ist eine automatisierte Nachricht von Dolibarr

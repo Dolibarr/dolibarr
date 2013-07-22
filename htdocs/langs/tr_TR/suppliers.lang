@@ -1,11 +1,4 @@
-/*
- * Language code: tr_TR
- * Manually generated
- * Generation date 2012-07-08 00:26:26
- */
-
-// START - Lines manually generated (2012-07-08 00:26:26).
-// Reference language: en_US -> TR – suppliers
+# Dolibarr language file - tr_TR - suppliers
 CHARSET=UTF-8
 Suppliers=Tedarikçiler
 Supplier=Tedarikçi
@@ -33,6 +26,7 @@ RefSupplierShort=Ref. tedarikçi
 Availability=Uygunluğu
 ExportDataset_fournisseur_1=Tedarikçi faturaları listesi ve fatura satırları
 ExportDataset_fournisseur_2=Tedarikçi faturaları ve ödemeleri
+ExportDataset_fournisseur_3=Tedarikçi siparişleri ve sipariş satırları
 ApproveThisOrder=Bu siparişi onayla
 ConfirmApproveThisOrder=<b>%s</b> siparişini onaylamak istediğinizden emin misiniz?
 DenyingThisOrder=Bu siparişi reddet
@@ -42,5 +36,5 @@ AddCustomerOrder=Müşteri siparişi oluştur
 AddCustomerInvoice=Müşteri faturası oluştur
 AddSupplierOrder=Tedarikçi siparişi oluştur
 AddSupplierInvoice=Tedarikçi faturası oluştur
-ListOfSupplierProductForSupplier=Tedarikçi <b>%s</b> ye ait ürün ve fiyat listesi
+ListOfSupplierProductForSupplier=Tedarikçi <b>%s</b> için ürün ve fiyat listesi
 NoneOrBatchFileNeverRan=Hiçbiri veya toplu <b>%s</b> yürütülmedi

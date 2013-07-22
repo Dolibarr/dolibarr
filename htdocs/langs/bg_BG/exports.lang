@@ -1,12 +1,4 @@
-/*
- * Language code: bg_BG
- * Automatic generated via autotranslator.php tool
- * Generation date 2012-09-08 17:16:45
- */
-
-
-// START - Lines generated via autotranslator.php tool (2012-09-08 17:16:45).
-// Reference language: en_US -> bg_BG
+# Dolibarr language file - Source file is en_US - exports
 CHARSET=UTF-8
 ExportsArea=Износът площ
 ImportArea=Внос област
@@ -124,4 +116,16 @@ Excel95FormatDesc=Файлов формат на <b>Excel</b> (XLS) <br> Тов�
 Excel2007FormatDesc=<b>Excel</b> файлов формат (XLSX) <br> Това е роден формат Excel 2007 (SpreadsheetML).
 TsvFormatDesc=<b>Tab раздяла</b> формат <b>стойност</b> файл (TSV) <br> Това е формат текстов файл, където полетата са разделени с табулатор [Tab].
 ExportFieldAutomaticallyAdded=Полеви <b>%s</b> добавят автоматично. Тя ще ви избягват да има подобни линии, които да бъдат третирани като дублирани записи (с тази област, добави всички Ligne ще притежава своя номер и ще се различават).
-// STOP - Lines generated via autotranslator.php tool (2012-09-08 17:40:42).
+# CsvOptions=Csv Options
+# Separator=Separator
+# Enclosure=Enclosure
+# SuppliersProducts=Suppliers Products
+# BankCode=Bank code
+# DeskCode=Desk code
+# BankAccountNumber=Account number
+# BankAccountNumberKey=Key
+## filters
+# SelectFilterFields=If you want to filter on some values, just input values here.
+# FilterableFields=Champs Filtrables
+# FilteredFields=Filtered fields
+# FilteredFieldsValues=Value for filter

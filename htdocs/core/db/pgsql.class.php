@@ -56,15 +56,16 @@ class DoliDBPgsql
 	//! >=1 if a transaction is opened, 0 otherwise
 	var $transaction_opened;
 	var $lastquery;
-	var $lastqueryerror;		// Ajout d'une variable en cas d'erreur
-
+	// Saved last error
+	var $lastqueryerror;
+	var $lasterror;
+	var $lasterrno;
+	
 	var $unescapeslashquot=0;              // By default we do not force the unescape of \'. This is used only to process sql with mysql escaped data.
 	var $standard_conforming_strings=1;    // Database has option standard_conforming_strings to on
 
 	var $ok;
 	var $error;
-	var $lasterror;
-
 
 
 	/**
@@ -177,6 +178,10 @@ class DoliDBPgsql
 		}
 		if ($line != "")
 		{
+			// group_concat support (PgSQL >= 9.1)
+			$line = preg_replace('/GROUP_CONCAT/i', 'STRING_AGG', $line);
+			$line = preg_replace('/ SEPARATOR/i', ',', $line);
+
 		    if ($type == 'auto')
 		    {
               if (preg_match('/ALTER TABLE/i',$line)) $type='dml';
@@ -452,6 +457,16 @@ class DoliDBPgsql
 		return explode('.',$this->getVersion());
 	}
 
+	/**
+	 *	Return version of database client driver
+	 *
+	 *	@return	        string      Version string
+	 */
+	function getDriverInfo()
+	{
+		return '';
+	}
+		
     /**
      *  Close database connexion
      *
@@ -583,17 +598,17 @@ class DoliDBPgsql
 		{
 			if (! $ret)
 			{
-			    if ($this->errno() != 'DB_ERROR_25P02')
+			    if ($this->errno() != 'DB_ERROR_25P02')	// Do not overwrite errors if this is a consecutive error
 			    {
     				$this->lastqueryerror = $query;
     				$this->lasterror = $this->error();
     				$this->lasterrno = $this->errno();
 			    }
-				dol_syslog(get_class($this)."::query SQL error usesavepoint = ".$usesavepoint." - ".$query." - ".pg_last_error($this->db)." = ".$this->errno(), LOG_WARNING);
+				dol_syslog(get_class($this)."::query SQL error usesavepoint = ".$usesavepoint." - ".$query." - ".pg_last_error($this->db)." => ".$this->errno(), LOG_WARNING);
 				//print "\n>> ".$query."<br>\n";
 				//print '>> '.$this->lasterrno.' - '.$this->lasterror.' - '.$this->lastqueryerror."<br>\n";
 
-				if ($usesavepoint && $this->transaction_opened)
+				if ($usesavepoint && $this->transaction_opened)	// Warning, after that errno will be erased
 				{
 					@pg_query($this->db, 'ROLLBACK TO SAVEPOINT mysavepoint');
 				}

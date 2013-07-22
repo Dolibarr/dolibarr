@@ -78,6 +78,40 @@ function pdf_getInstance($format='',$metric='mm',$pagetype='P')
 {
 	global $conf;
 
+	// Define constant for TCPDF
+	define('K_TCPDF_EXTERNAL_CONFIG',1);	// this avoid using tcpdf_config file
+	define('K_PATH_CACHE', DOL_DATA_ROOT.'/admin/temp/');
+	define('K_PATH_URL_CACHE', DOL_DATA_ROOT.'/admin/temp/');
+	dol_mkdir(K_PATH_CACHE);
+	define('K_BLANK_IMAGE', '_blank.png');
+	define('PDF_PAGE_FORMAT', 'A4');
+	define('PDF_PAGE_ORIENTATION', 'P');
+	define('PDF_CREATOR', 'TCPDF');
+	define('PDF_AUTHOR', 'TCPDF');
+	define('PDF_HEADER_TITLE', 'TCPDF Example');
+	define('PDF_HEADER_STRING', "by Dolibarr ERP CRM");
+	define('PDF_UNIT', 'mm');
+	define('PDF_MARGIN_HEADER', 5);
+	define('PDF_MARGIN_FOOTER', 10);
+	define('PDF_MARGIN_TOP', 27);
+	define('PDF_MARGIN_BOTTOM', 25);
+	define('PDF_MARGIN_LEFT', 15);
+	define('PDF_MARGIN_RIGHT', 15);
+	define('PDF_FONT_NAME_MAIN', 'helvetica');
+	define('PDF_FONT_SIZE_MAIN', 10);
+	define('PDF_FONT_NAME_DATA', 'helvetica');
+	define('PDF_FONT_SIZE_DATA', 8);
+	define('PDF_FONT_MONOSPACED', 'courier');
+	define('PDF_IMAGE_SCALE_RATIO', 1.25);
+	define('HEAD_MAGNIFICATION', 1.1);
+	define('K_CELL_HEIGHT_RATIO', 1.25);
+	define('K_TITLE_MAGNIFICATION', 1.3);
+	define('K_SMALL_RATIO', 2/3);
+	define('K_THAI_TOPCHARS', true);
+	define('K_TCPDF_CALLS_IN_HTML', true);
+	define('K_TCPDF_THROW_EXCEPTION_ERROR', false);
+
+
 	if (! empty($conf->global->MAIN_USE_FPDF) && ! empty($conf->global->MAIN_DISABLE_FPDI))
 		return "Error MAIN_USE_FPDF and MAIN_DISABLE_FPDI can't be set together";
 
@@ -165,8 +199,8 @@ function pdf_getInstance($format='',$metric='mm',$pagetype='P')
 			{
 				$this->SetXY($x,$y);
 				$val=str_replace('<br>',"\n",$html);
-				$val=dol_string_nohtmltag($val,false,'ISO-8859-1');
-				//print 'eee'.$val;exit;
+				//$val=dol_string_nohtmltag($val,false,'ISO-8859-1');
+				$val=dol_string_nohtmltag($val,false,'UTF-8');
 				$this->MultiCell($w,$h,$val,$border,$align,$fill);
 			}
 		}
@@ -227,13 +261,14 @@ function pdf_getPDFFontSize($outputlangs)
  * Return height to use for Logo onot PDF
  *
  * @param	string		$logo		Full path to logo file to use
+ * @param	bool		$url		Image with url (true or false)
  * @return	number
  */
-function pdf_getHeightForLogo($logo)
+function pdf_getHeightForLogo($logo, $url = false)
 {
 	$height=22; $maxwidth=130;
 	include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
-	$tmp=dol_getImageSize($logo);
+	$tmp=dol_getImageSize($logo, $url);
 	if ($tmp['height'])
 	{
 		$width=round($height*$tmp['width']/$tmp['height']);
@@ -1150,7 +1185,7 @@ function pdf_getlineupexcltax($object,$i,$outputlangs,$hidedetails=0)
 	}
 	else
 	{
-		if (empty($hidedetails) || $hidedetails > 1) return price($sign * $object->lines[$i]->subprice);
+		if (empty($hidedetails) || $hidedetails > 1) return price($sign * $object->lines[$i]->subprice, 0, $outputlangs);
 	}
 }
 
@@ -1178,7 +1213,7 @@ function pdf_getlineupwithtax($object,$i,$outputlangs,$hidedetails=0)
 	}
 	else
 	{
-		if (empty($hidedetails) || $hidedetails > 1) return price(($object->lines[$i]->subprice) + ($object->lines[$i]->subprice)*($object->lines[$i]->tva_tx)/100);
+		if (empty($hidedetails) || $hidedetails > 1) return price(($object->lines[$i]->subprice) + ($object->lines[$i]->subprice)*($object->lines[$i]->tva_tx)/100, 0, $outputlangs);
 	}
 }
 
@@ -1341,7 +1376,7 @@ function pdf_getlineremisepercent($object,$i,$outputlangs,$hidedetails=0)
  *	@param	int			$i					Current line number
  *  @param  Translate	$outputlangs		Object langs for output
  *  @param	int			$hidedetails		Hide details (0=no, 1=yes, 2=just special lines)
- * 	@return	void
+ * 	@return	string							Return total of line excl tax
  */
 function pdf_getlinetotalexcltax($object,$i,$outputlangs,$hidedetails=0)
 {
@@ -1366,9 +1401,10 @@ function pdf_getlinetotalexcltax($object,$i,$outputlangs,$hidedetails=0)
 		}
 		else
 		{
-			if (empty($hidedetails) || $hidedetails > 1) return price($sign * $object->lines[$i]->total_ht);
+			if (empty($hidedetails) || $hidedetails > 1) return price($sign * $object->lines[$i]->total_ht, 0, $outputlangs);
 		}
 	}
+	return '';
 }
 
 /**
@@ -1378,7 +1414,7 @@ function pdf_getlinetotalexcltax($object,$i,$outputlangs,$hidedetails=0)
  *	@param	int			$i					Current line number
  *  @param 	Translate	$outputlangs		Object langs for output
  *  @param	int			$hidedetails		Hide value (0 = no, 1 = yes, 2 = just special lines)
- *  @return	void
+ *  @return	string							Return total of line incl tax
  */
 function pdf_getlinetotalwithtax($object,$i,$outputlangs,$hidedetails=0)
 {
@@ -1394,17 +1430,16 @@ function pdf_getlinetotalwithtax($object,$i,$outputlangs,$hidedetails=0)
 		{
 			$special_code = $object->lines[$i]->special_code;
 			if (! empty($object->lines[$i]->fk_parent_line)) $special_code = $object->getSpecialCode($object->lines[$i]->fk_parent_line);
-			foreach($object->hooks as $modules)
-			{
-				if (method_exists($modules[$special_code],'pdf_getlinetotalwithtax')) return $modules[$special_code]->pdf_getlinetotalwithtax($object,$i,$outputlangs,$hidedetails);
-			}
+			$parameters = array('i'=>$i,'outputlangs'=>$outputlangs,'hidedetails'=>$hidedetails,'special_code'=>$special_code);
+			$action='';
+			return $hookmanager->executeHooks('pdf_getlinetotalwithtax',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 		}
 		else
 		{
-			if (empty($hidedetails) || $hidedetails > 1) return
-			price(($object->lines[$i]->total_ht) + ($object->lines[$i]->total_ht)*($object->lines[$i]->tva_tx)/100);
+			if (empty($hidedetails) || $hidedetails > 1) return price(($object->lines[$i]->total_ht) + ($object->lines[$i]->total_ht)*($object->lines[$i]->tva_tx)/100, 0, $outputlangs);
 		}
 	}
+	return '';
 }
 
 /**
@@ -1516,6 +1551,37 @@ function pdf_getLinkedObjects($object,$outputlangs)
 	}
 
 	return $linkedobjects;
+}
+
+/**
+ * Return dimensions to use for images onto PDF checking that width and height are not higher than
+ * maximum (16x32 by default).
+ *
+ * @param	string		$realpath		Full path to photo file to use
+ * @return	array						Height and width to use to output image (in pdf user unit, so mm)
+ */
+function pdf_getSizeForImage($realpath)
+{
+	global $conf;
+
+	$maxwidth=(empty($conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH)?16:$conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH);
+	$maxheight=(empty($conf->global->MAIN_DOCUMENTS_WITH_PICTURE_HEIGHT)?32:$conf->global->MAIN_DOCUMENTS_WITH_PICTURE_HEIGHT);
+	include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
+	$tmp=dol_getImageSize($realpath);
+	if ($tmp['height'])
+	{
+		$width=(int) round($maxheight*$tmp['width']/$tmp['height']);	// I try to use maxheight
+		if ($width > $maxwidth)	// Pb with maxheight, so i use maxwidth
+		{
+			$width=$maxwidth;
+			$height=(int) round($maxwidth*$tmp['height']/$tmp['width']);
+		}
+		else	// No pb with maxheight
+		{
+			$height=$maxheight;
+		}
+	}
+	return array('width'=>$width,'height'=>$height);
 }
 
 ?>

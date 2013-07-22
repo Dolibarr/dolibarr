@@ -1,13 +1,4 @@
-/*
- * Language code: ar_AR
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-08-11 13:27:01
- */
-
-
-// Date 2009-08-11 13:27:01
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
+# Dolibarr language file - Source file is en_US - oscommerce
 CHARSET=UTF-8
 OSCommerce=نظام التشغيل والتجارة
 OSCommerceSetup=نظام تشغيل وحدة التجارة الإعداد
@@ -16,5 +7,3 @@ OSCommerceServer=نظام تشغيل الخادم المضيف التجارة / 
 OSCommerceDatabaseName=اسم قاعدة بيانات نظام التشغيل والتجارة
 OSCommercePrefix=نظام التشغيل التجاري بادئة الجداول
 OSCommerceUser=قاعدة بيانات التجارة ادخل نظام التشغيل
-// Date 2009-08-11 13:27:01
-// STOP - Lines generated via parser

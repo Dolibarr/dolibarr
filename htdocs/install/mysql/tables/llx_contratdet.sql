@@ -52,9 +52,10 @@ create table llx_contratdet
   total_localtax1       double(24,8)  DEFAULT 0,	   		   -- Total Local tax 1 de la ligne
   total_localtax2       double(24,8)  DEFAULT 0,	   		   -- Total Local tax 2 de la ligne
   total_ttc             double(24,8)  DEFAULT 0,	   		   -- Total TTC de la ligne toute quantite et incluant remise ligne et globale
-  info_bits		               integer DEFAULT 0, 		       -- TVA NPR ou non
-  fk_product_fournisseur_price integer DEFAULT NULL,         -- supplier price id
-  buy_price_ht          double(24,8)  DEFAULT NULL,   -- buying price
+  info_bits		        integer DEFAULT 0, 		               -- TVA NPR ou non
+
+  buy_price_ht          double(24,8)  DEFAULT NULL,            -- buying price
+  fk_product_fournisseur_price integer DEFAULT NULL,           -- reference of supplier price when line was added was created (may be used to update buy_price_ht when future invoice will be created)
 
   fk_user_author        integer       NOT NULL DEFAULT 0,
   fk_user_ouverture     integer,

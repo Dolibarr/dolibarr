@@ -24,6 +24,10 @@
  *					This file contains all rare functions.
  */
 
+// Enable this line to trace path when function is called.
+//print xdebug_print_function_stack('Functions2.lib was called');exit;
+
+
 /**
  * Same function than javascript unescape() function but in PHP.
  *
@@ -607,12 +611,12 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
     	$maskraz=$yearoffsettype; // For backward compatibility
     else if ($yearoffsettype === '0' || (! empty($yearoffsettype) && ! is_numeric($yearoffsettype) && $conf->global->SOCIETE_FISCAL_MONTH_START > 1))
     	$maskraz = $conf->global->SOCIETE_FISCAL_MONTH_START;
-    //print "maskraz=".$maskraz;
+    //print "maskraz=".$maskraz;	// -1=no reset
 
     if ($maskraz > 0)    // A reset is required
     {
     	if ($maskraz == 99) {
-    		$maskraz = date('m');
+			$maskraz = date('m');
 			$resetEveryMonth = true;
 		}
         if ($maskraz > 12) return 'ErrorBadMaskBadRazMonth';
@@ -699,8 +703,8 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
             $sqlwhere.='(SUBSTRING('.$field.', '.(dol_strlen($reg[1])+1).', '.dol_strlen($reg[2]).") = '".$yearcomp."')";
         }
     }
-    //print "sqlwhere=".$sqlwhere."<br>\n";
-    //print "masktri=".$masktri." maskcounter=".$maskcounter." maskraz=".$maskraz." maskoffset=".$maskoffset." yearcomp=".$yearcomp."<br>\n";
+    //print "sqlwhere=".$sqlwhere." yearcomp=".$yearcomp."<br>\n";	// sqlwhere and yearcomp defined only if we ask a reset
+    //print "masktri=".$masktri." maskcounter=".$maskcounter." maskraz=".$maskraz." maskoffset=".$maskoffset."<br>\n";
 
     // Define $sqlstring
     $posnumstart=strpos($maskwithnocode,$maskcounter);	// Pos of counter in final string (from 0 to ...)
@@ -739,7 +743,10 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
         $counter = $obj->val;
     }
     else dol_print_error($db);
+
+    // Check if we must force counter to maskoffset
     if (empty($counter) || preg_match('/[^0-9]/i',$counter)) $counter=$maskoffset;
+    else if ($counter < $maskoffset && empty($conf->global->MAIN_NUMBERING_OFFSET_ONLY_FOR_FIRST)) $counter=$maskoffset;
 
     if ($mode == 'last')	// We found value for counter = last counter value. Now need to get corresponding ref of invoice.
     {
@@ -824,7 +831,7 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
             }
             else dol_print_error($db);
             if (empty($maskrefclient_counter) || preg_match('/[^0-9]/i',$maskrefclient_counter)) $maskrefclient_counter=$maskrefclient_maskoffset;
-            $maskrefclient_counter++;
+			$maskrefclient_counter++;
         }
 
         // Build numFinal
@@ -1414,4 +1421,89 @@ function getSoapParams()
         );
     }
     return $params;
+}
+
+
+/**
+ * List urls of element
+ *
+ * @param 	int		$objectid		Id of record
+ * @param 	string	$objecttype		Type of object ('invoice', 'order', 'expedition_bon', ...)
+ * @param 	int		$withpicto		Picto to show
+ * @param 	string	$option			More options
+ * @return	string					URL of link to object id/type
+ */
+function dolGetElementUrl($objectid,$objecttype,$withpicto=0,$option='')
+{
+	global $db,$conf;
+
+	$ret='';
+
+	// Parse element/subelement (ex: project_task)
+	$module = $element = $subelement = $objecttype;
+	if (preg_match('/^([^_]+)_([^_]+)/i',$objecttype,$regs))
+	{
+		$module = $element = $regs[1];
+		$subelement = $regs[2];
+	}
+
+	$classpath = $element.'/class';
+
+	// To work with non standard path
+	if ($objecttype == 'facture' || $objecttype == 'invoice') {
+		$classpath = 'compta/facture/class'; $module='facture'; $subelement='facture';
+	}
+	if ($objecttype == 'commande' || $objecttype == 'order') {
+		$classpath = 'commande/class'; $module='commande'; $subelement='commande';
+	}
+	if ($objecttype == 'propal')  {
+		$classpath = 'comm/propal/class';
+	}
+	if ($objecttype == 'shipping') {
+		$classpath = 'expedition/class'; $subelement = 'expedition'; $module = 'expedition_bon';
+	}
+	if ($objecttype == 'delivery') {
+		$classpath = 'livraison/class'; $subelement = 'livraison'; $module = 'livraison_bon';
+	}
+	if ($objecttype == 'invoice_supplier') {
+		$classpath = 'fourn/class';
+	}
+	if ($objecttype == 'order_supplier')   {
+		$classpath = 'fourn/class';
+	}
+	if ($objecttype == 'contract') {
+		$classpath = 'contrat/class'; $module='contrat'; $subelement='contrat';
+	}
+	if ($objecttype == 'member') {
+		$classpath = 'adherents/class'; $module='adherent'; $subelement='adherent';
+	}
+	if ($objecttype == 'cabinetmed_cons') {
+		$classpath = 'cabinetmed/class'; $module='cabinetmed'; $subelement='cabinetmedcons';
+	}
+	if ($objecttype == 'fichinter') {
+		$classpath = 'fichinter/class'; $module='ficheinter'; $subelement='fichinter';
+	}
+
+	//print "objecttype=".$objecttype." module=".$module." subelement=".$subelement;
+
+	$classfile = strtolower($subelement); $classname = ucfirst($subelement);
+	if ($objecttype == 'invoice_supplier') {
+		$classfile = 'fournisseur.facture'; $classname='FactureFournisseur';
+	}
+	if ($objecttype == 'order_supplier')   {
+		$classfile = 'fournisseur.commande'; $classname='CommandeFournisseur';
+	}
+
+	if (! empty($conf->$module->enabled))
+	{
+		$res=dol_include_once('/'.$classpath.'/'.$classfile.'.class.php');
+		if ($res)
+		{
+			$object = new $classname($db);
+			$res=$object->fetch($objectid);
+			if ($res > 0) $ret=$object->getNomUrl($withpicto,$option);
+			unset($object);
+		}
+	}
+	return $ret;
 }

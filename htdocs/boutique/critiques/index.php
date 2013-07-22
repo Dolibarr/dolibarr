@@ -70,7 +70,7 @@ if ($resql) {
 	while ($i < $num) {
 		$objp = $dbosc->fetch_object($resql);
 		$var=!$var;
-		print "<TR $bc[$var]>";
+		print "<tr ".$bc[$var].">";
 		print "<TD>".substr($objp->products_name, 0, 30)."</TD>\n";
 		print '<TD><a href="fiche.php?id='.$objp->reviews_id.'">'.substr($objp->reviews_text, 0, 40)." ...</a></td>\n";
 		print "<td align=\"center\">$objp->reviews_rating</TD>\n";

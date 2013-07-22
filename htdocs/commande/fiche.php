@@ -43,7 +43,7 @@ if (! empty($conf->propal->enabled))
 	require DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 if (! empty($conf->projet->enabled)) {
 	require DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
-	require DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
+	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 
@@ -79,7 +79,6 @@ $result=restrictedArea($user,'commande',$id);
 
 $object = new Commande($db);
 $extrafields = new ExtraFields($db);
-
 
 // fetch optionals attributes and labels
 $extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
@@ -315,8 +314,14 @@ else if ($action == 'add' && $user->rights->commande->creer)
 							$fk_parent_line = 0;
 						}
 
+						//Extrafields
+						if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)  && method_exists($lines[$i],'fetch_optionals') ) // For avoid conflicts if trigger used
+						{
+							$lines[$i]->fetch_optionals($lines[$i]->rowid);
+							$array_option=$lines[$i]->array_options;
+						}
+
 						$result = $object->addline(
-							$object_id,
 							$desc,
 							$lines[$i]->subprice,
 							$lines[$i]->qty,
@@ -337,7 +342,8 @@ else if ($action == 'add' && $user->rights->commande->creer)
 							$fk_parent_line,
 							$lines[$i]->fk_fournprice,
 							$lines[$i]->pa_ht,
-							$label
+							$label,
+							$array_option
 						);
 
 						if ($result < 0)
@@ -558,6 +564,20 @@ else if ($action == 'addline' && $user->rights->commande->creer)
 	$price_ht = GETPOST('price_ht');
 	$tva_tx = (GETPOST('tva_tx')?GETPOST('tva_tx'):0);
 
+	//Extrafields
+	$extrafieldsline = new ExtraFields($db);
+	$extralabelsline =$extrafieldsline->fetch_name_optionals_label($object->table_element_line);
+	$array_option = $extrafieldsline->getOptionalsFromPost($extralabelsline);
+	//Unset extrafield
+	if (is_array($extralabelsline))
+	{
+		// Get extra fields
+		foreach ($extralabelsline as $key => $value)
+		{
+			unset($_POST["options_".$key]);
+		}
+	}
+
 	if ((empty($idprod) || GETPOST('usenewaddlineform')) && ($price_ht < 0) && (GETPOST('qty') < 0))
 	{
 		setEventMessage($langs->trans('ErrorBothFieldCantBeNegative', $langs->transnoentitiesnoconv('UnitPriceHT'), $langs->transnoentitiesnoconv('Qty')), 'errors');
@@ -711,14 +731,13 @@ else if ($action == 'addline' && $user->rights->commande->creer)
 
 		if (! empty($price_min) && (price2num($pu_ht)*(1-price2num(GETPOST('remise_percent'))/100) < price2num($price_min)))
 		{
-			$mesg = $langs->trans("CantBeLessThanMinPrice",price2num($price_min,'MU').$langs->getCurrencySymbol($conf->currency));
+			$mesg = $langs->trans("CantBeLessThanMinPrice",price(price2num($price_min,'MU'),0,$langs,0,0,-1,$conf->currency));
 			setEventMessage($mesg, 'errors');
 		}
 		else
 		{
 			// Insert line
 			$result = $object->addline(
-				$object->id,
 				$desc,
 				$pu_ht,
 				GETPOST('qty'),
@@ -739,7 +758,8 @@ else if ($action == 'addline' && $user->rights->commande->creer)
 				GETPOST('fk_parent_line'),
 				$fournprice,
 				$buyingprice,
-				$label
+				$label,
+				$array_option
 			);
 
 			if ($result > 0)
@@ -813,6 +833,19 @@ else if ($action == 'updateligne' && $user->rights->commande->creer && GETPOST('
 	$fournprice=(GETPOST('fournprice')?GETPOST('fournprice'):'');
 	$buyingprice=(GETPOST('buying_price')?GETPOST('buying_price'):'');
 
+	//Extrafields Lines
+	$extrafieldsline = new ExtraFields($db);
+	$extralabelsline =$extrafieldsline->fetch_name_optionals_label($object->table_element_line);
+	$array_option = $extrafieldsline->getOptionalsFromPost($extralabelsline);
+	//Unset extrafield POST Data
+	if (is_array($extralabelsline))
+	{
+		foreach ($extralabelsline as $key => $value)
+		{
+			unset($_POST["options_".$key]);
+		}
+	}
+
 	// Check minimum price
 	$productid = GETPOST('productid', 'int');
 	if (! empty($productid))
@@ -830,7 +863,7 @@ else if ($action == 'updateligne' && $user->rights->commande->creer && GETPOST('
 
 		if ($price_min && (price2num($pu_ht)*(1-price2num(GETPOST('remise_percent'))/100) < price2num($price_min)))
 		{
-			setEventMessage($langs->trans("CantBeLessThanMinPrice", price2num($price_min,'MU')).$langs->getCurrencySymbol($conf->currency), 'errors');
+			setEventMessage($langs->trans("CantBeLessThanMinPrice", price(price2num($price_min,'MU'),0,$langs,0,0,-1,$conf->currency)), 'errors');
 			$error++;
 		}
 	}
@@ -866,7 +899,9 @@ else if ($action == 'updateligne' && $user->rights->commande->creer && GETPOST('
 			0,
 			$fournprice,
 			$buyingprice,
-			$label
+			$label,
+			0,
+			$array_option
 		);
 
 		if ($result >= 0)
@@ -1117,11 +1152,13 @@ else if ($action == 'remove_file')
 }
 
 // Print file
-else if ($action == 'print_file' AND $user->rights->printipp->use)
+else if ($action == 'print_file' AND $user->rights->printipp->read)
 {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/dolprintipp.class.php';
 	$printer = new dolPrintIPP($db,$conf->global->PRINTIPP_HOST,$conf->global->PRINTIPP_PORT,$user->login,$conf->global->PRINTIPP_USER,$conf->global->PRINTIPP_PASSWORD);
 	$printer->print_file(GETPOST('file','alpha'),GETPOST('printer','alpha'));
+    setEventMessage($langs->trans("FileWasSentToPrinter", GETPOST('file')));
+    $action='';
 }
 
 else if ($action == 'update_extras')
@@ -1496,7 +1533,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="add">';
 	print '<input type="hidden" name="socid" value="'.$soc->id.'">' ."\n";
-	print '<input type="hidden" name="remise_percent" value="'.$soc->remise_client.'">';
+	print '<input type="hidden" name="remise_percent" value="'.$soc->remise_percent.'">';
 	print '<input type="hidden" name="origin" value="'.$origin.'">';
 	print '<input type="hidden" name="originid" value="'.$originid.'">';
 
@@ -1540,7 +1577,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 
 		// Ligne info remises tiers
 		print '<tr><td>'.$langs->trans('Discounts').'</td><td colspan="2">';
-		if ($soc->remise_client) print $langs->trans("CompanyHasRelativeDiscount",$soc->remise_client);
+		if ($soc->remise_percent) print $langs->trans("CompanyHasRelativeDiscount",$soc->remise_percent);
 		else print $langs->trans("CompanyHasNoRelativeDiscount");
 		print '. ';
 		$absolute_discount=$soc->getAvailableDiscounts();
@@ -1587,8 +1624,10 @@ if ($action == 'create' && $user->rights->commande->creer)
 	// Project
 	if (! empty($conf->projet->enabled) && $socid>0)
 	{
+		$formproject=new FormProjets($db);
+
 		print '<tr><td>'.$langs->trans('Project').'</td><td colspan="2">';
-		$numprojet=select_projects($soc->id,$projectid);
+		$numprojet=$formproject->select_projects($soc->id,$projectid);
 		if ($numprojet==0)
 		{
 			print ' &nbsp; <a href="'.DOL_URL_ROOT.'/projet/fiche.php?socid='.$soc->id.'&action=create">'.$langs->trans("AddProject").'</a>';
@@ -1698,7 +1737,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 					print $form->select_produits('','idprod'.$i,'',$conf->product->limit_size);
 				print '</td>';
 				print '<td><input type="text" size="3" name="qty'.$i.'" value="1"></td>';
-				print '<td><input type="text" size="3" name="remise_percent'.$i.'" value="'.$soc->remise_client.'">%</td></tr>';
+				print '<td><input type="text" size="3" name="remise_percent'.$i.'" value="'.$soc->remise_percent.'">%</td></tr>';
 			}
 
 			print '</table>';
@@ -1952,7 +1991,7 @@ else
 		$addcreditnote='<a href="'.DOL_URL_ROOT.'/compta/facture.php?action=create&socid='.$soc->id.'&type=2&backtopage='.urlencode($_SERVER["PHP_SELF"]).'?facid='.$object->id.'">'.$langs->trans("AddCreditNote").'</a>';
 
 		print '<tr><td>'.$langs->trans('Discounts').'</td><td colspan="3">';
-		if ($soc->remise_client) print $langs->trans("CompanyHasRelativeDiscount",$soc->remise_client);
+		if ($soc->remise_percent) print $langs->trans("CompanyHasRelativeDiscount",$soc->remise_percent);
 		else print $langs->trans("CompanyHasNoRelativeDiscount");
 		print '. ';
 		$absolute_discount=$soc->getAvailableDiscounts('','fk_facture_source IS NULL');
@@ -2456,9 +2495,7 @@ else
 			$urlsource=$_SERVER["PHP_SELF"]."?id=".$object->id;
 			$genallowed=$user->rights->commande->creer;
 			$delallowed=$user->rights->commande->supprimer;
-			$printer = false;
-			if ($user->rights->printipp->use AND $conf->printipp->enabled) $printer = true;
-			$somethingshown=$formfile->show_documents('commande',$comref,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf,1,0,0,28,0,'','','',$soc->default_lang,$printer);
+			$somethingshown=$formfile->show_documents('commande',$comref,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf,1,0,0,28,0,'','','',$soc->default_lang);
 
 			/*
 			 * Linked object block
@@ -2529,7 +2566,14 @@ else
 			$formmail->withto=GETPOST('sendto')?GETPOST('sendto'):$liste;
 			$formmail->withtocc=$liste;
 			$formmail->withtoccc=$conf->global->MAIN_EMAIL_USECCC;
-			$formmail->withtopic=$langs->trans('SendOrderRef','__ORDERREF__');
+			if(empty($object->ref_client))
+			{
+				$formmail->withtopic=$langs->trans('SendOrderRef','__ORDERREF__');
+			}
+			else if(!empty($object->ref_client))
+			{
+				$formmail->withtopic=$langs->trans('SendOrderRef','__ORDERREF__(__REFCLIENT__)');
+			}
 			$formmail->withfile=2;
 			$formmail->withbody=1;
 			$formmail->withdeliveryreceipt=1;
@@ -2537,6 +2581,7 @@ else
 			// Tableau des substitutions
 			$formmail->substit['__ORDERREF__']=$object->ref;
 			$formmail->substit['__SIGNATURE__']=$user->signature;
+			$formmail->substit['__REFCLIENT__']=$object->ref_client;
 			$formmail->substit['__PERSONALIZED__']='';
 			$formmail->substit['__CONTACTCIVNAME__']='';
 

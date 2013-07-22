@@ -680,6 +680,7 @@ if (GETPOST('theme'))
 	$conf->css  = "/theme/".$conf->theme."/style.css.php";
 }
 
+
 // Set javascript option
 if (! GETPOST('nojs'))   // If javascript was not disabled on URL
 {
@@ -700,6 +701,20 @@ if (! empty($conf->browser->phone))
 {
 	$conf->dol_optimize_smallscreen=1;
 	$conf->dol_no_mouse_hover=1;
+}
+
+// Disabled bugged themes
+if (! empty($conf->dol_use_jmobile) && in_array($conf->theme,array('bureau2crea','cameleo')))
+{
+	$conf->theme='eldy';
+	$conf->css  =  "/theme/".$conf->theme."/style.css.php";
+}
+
+// Disabled bugged themes
+if (! empty($conf->dol_use_jmobile) && in_array($conf->theme,array('bureau2crea','cameleo')))
+{
+	$conf->theme='eldy';
+	$conf->css  =  "/theme/".$conf->theme."/style.css.php";
 }
 
 if (! defined('NOREQUIRETRAN'))
@@ -931,7 +946,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
     if (empty($disablehead))
     {
         print "<head>\n";
-
+		if (GETPOST('dol_basehref')) print '<base href="'.dol_escape_htmltag(GETPOST('dol_basehref')).'">'."\n";
         // Displays meta
         print '<meta name="robots" content="noindex,nofollow">'."\n";      // Evite indexation par robots
         print '<meta name="author" content="Dolibarr Development Team">'."\n";
@@ -984,8 +999,6 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
             if (! empty($conf->global->MAIN_USE_JQUERY_JMOBILE) || defined('REQUIRE_JQUERY_JMOBILE') || ! empty($conf->dol_use_jmobile))
             {
             	print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/mobile/jquery.mobile-latest.min.css" />'."\n";
-            	//$arrayofcss=array('/includes/jquery/plugins/jquerytreeview/jquery.treeview.css');
-            	print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/jquerytreeview/jquery.treeview.css" />'."\n";
             }
 
         }
@@ -1025,7 +1038,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
         		$filescss=(array) $filescss;	// To be sure filecss is an array
         		foreach($filescss as $cssfile)
         		{
-	        		// cssfile is a relative path
+        			// cssfile is a relative path
 	        		print '<!-- Includes CSS added by module '.$modcss. ' -->'."\n".'<link rel="stylesheet" type="text/css" title="default" href="'.dol_buildpath($cssfile,1);
 	        		// We add params only if page is not static, because some web server setup does not return content type text/css if url has parameters, so browser cache is not used.
 	        		if (!preg_match('/\.css$/i',$cssfile)) print $themeparam;
@@ -1056,7 +1069,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
             else print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/js/jquery-latest.min'.$ext.'"></script>'."\n";
             if (constant('JS_JQUERY_UI')) print '<script type="text/javascript" src="'.JS_JQUERY_UI.'jquery-ui.min.js"></script>'."\n";
             else print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/js/jquery-ui-latest.custom.min'.$ext.'"></script>'."\n";
-            print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/tablednd/jquery.tablednd_0_5'.$ext.'"></script>'."\n";
+            print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/tablednd/jquery.tablednd.0.6.min'.$ext.'"></script>'."\n";
             print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/tiptip/jquery.tipTip.min'.$ext.'"></script>'."\n";
             // jQuery Layout
             if (! empty($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT) || defined('REQUIRE_JQUERY_LAYOUT'))
@@ -1150,10 +1163,24 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
             // jQuery jMobile
             if (! empty($conf->global->MAIN_USE_JQUERY_JMOBILE) || defined('REQUIRE_JQUERY_JMOBILE') || (! empty($conf->dol_use_jmobile) && $conf->dol_use_jmobile > 0))
             {
+            	// We must force not using ajax because cache of jquery does not load js of other pages.
+            	// This also increase seriously speed onto mobile device where complex js code is very slow and memory very low.
+            	if (empty($conf->dol_use_jmobile) || $conf->dol_use_jmobile != 2)
+            	{
+            		print '<script type="text/javascript">
+	            		$(document).bind("mobileinit", function(){
+           				$.extend(  $.mobile , {
+           					autoInitializePage : true,	/* We need this to run jmobile */
+           					/* loadingMessage : \'xxxxx\', */
+           					touchOverflowEnabled : true,
+           					defaultPageTransition : \'none\',
+           					defaultDialogTransition : \'none\',
+           					ajaxEnabled : false			/* old param was ajaxFormsEnabled and ajaxLinksEnabled */
+           					});
+           				});
+            			</script>';
+            	}
             	print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/mobile/jquery.mobile-latest.min.js"></script>'."\n";
-            	//$arrayofjs=array('/includes/jquery/plugins/jquerytreeview/jquery.treeview.js', '/includes/jquery/plugins/jquerytreeview/lib/jquery.cookie.js');
-            	print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/jquerytreeview/jquery.treeview.js"></script>'."\n";
-            	print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/jquerytreeview/lib/jquery.cookie.js"></script>'."\n";
             }
         }
 
@@ -1440,9 +1467,8 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 
     if (! empty($conf->use_javascript_ajax) && ! empty($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT)) print "</div><!-- End top layout -->\n";
 
-    print "<!-- End top horizontal menu -->\n";
+    print "<!-- End top horizontal menu -->\n\n";
 
-	//XXX if (empty($conf->use_javascript_ajax) || empty($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT)) print '<table width="100%" class="notopnoleftnoright" summary="leftmenutable" id="undertopmenu"><tr>';
     if (empty($conf->dol_hide_leftmenu) && (empty($conf->use_javascript_ajax) || empty($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT))) print '<div id="id-container">';
 }
 
@@ -1468,19 +1494,18 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
     $searchform='';
     $bookmarks='';
 
-    // Instantiate hooks of thirdparty module
-    $hookmanager->initHooks(array('searchform','leftblock'));
-
     if (empty($conf->dol_hide_leftmenu))
     {
-	    if (! empty($conf->use_javascript_ajax) && ! empty($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT)) print "\n".'<div class="ui-layout-west"> <!-- Begin left layout -->'."\n";
-		//XXX else print '<td class="vmenu" valign="top">';
+	    // Instantiate hooks of thirdparty module
+	    $hookmanager->initHooks(array('searchform','leftblock'));
+
+    	if (! empty($conf->use_javascript_ajax) && ! empty($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT)) print "\n".'<div class="ui-layout-west"> <!-- Begin left layout -->'."\n";
 		else print '<div id="id-left">';
 
 	    print "\n";
 
 	    // Define $searchform
-	    if (! empty($conf->societe->enabled) && ! empty($conf->global->MAIN_SEARCHFORM_SOCIETE) && $user->rights->societe->lire)
+	    if ((( ! empty($conf->societe->enabled) && (empty($conf->global->SOCIETE_DISABLE_PROSPECTS) || empty($conf->global->SOCIETE_DISABLE_CUSTOMERS))) || ! empty($conf->fournisseur->enabled)) && ! empty($conf->global->MAIN_SEARCHFORM_SOCIETE) && $user->rights->societe->lire)
 	    {
 	        $langs->load("companies");
 	        $searchform.=printSearchForm(DOL_URL_ROOT.'/societe/societe.php', DOL_URL_ROOT.'/societe/societe.php', img_object('','company').' '.$langs->trans("ThirdParties"), 'soc', 'socname');
@@ -1533,7 +1558,7 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
 	    // Left column
 	    print '<!-- Begin left menu -->'."\n";
 
-	    print '<div class="vmenu">'."\n";
+	    print '<div class="vmenu">'."\n\n";
 
 	    $menumanager->menu_array = $menu_array_before;
     	$menumanager->menu_array_after = $menu_array_after;
@@ -1674,6 +1699,7 @@ function main_area($title='')
 
     print "\n";
 
+    if (! empty($conf->dol_use_jmobile)) print '<div data-role="page">';
     print '<div class="fiche"> <!-- begin div class="fiche" -->'."\n";
     if (! empty($conf->global->MAIN_ONLY_LOGIN_ALLOWED)) print info_admin($langs->trans("WarningYouAreInMaintenanceMode",$conf->global->MAIN_ONLY_LOGIN_ALLOWED));
 }
@@ -1762,10 +1788,11 @@ if (! function_exists("llxFooter"))
      * Show HTML footer
      * Close div /DIV data-role=page + /DIV class=fiche + /DIV /DIV main layout + /BODY + /HTML.
      *
-     * @param	string	$foot    		A text to add in HTML generated page
+     * @param	string	$comment    A text to add as HTML comment into HTML generated page
+	 * @param	string	$zone		'private' (for private pages) or 'public' (for public pages)
      * @return	void
      */
-    function llxFooter($foot='')
+    function llxFooter($comment='',$zone='pivate')
     {
         global $conf, $langs;
 
@@ -1793,16 +1820,16 @@ if (! function_exists("llxFooter"))
 
         print "\n\n";
         print '</div> <!-- end div class="fiche" -->'."\n";
-
+        if (! empty($conf->dol_use_jmobile)) print '</div>';	// end data-role="page"
 
 		//XXX print "\n".'</td></tr></table> <!-- end right area -->'."\n";
         if (! empty($conf->use_javascript_ajax) && ! empty($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT)) print '</div></div> <!-- end main layout -->'."\n";
 		if (empty($conf->dol_hide_leftmenu)) print '</div>'; // End div id-right
 
         print "\n";
-        if ($foot) print '<!-- '.$foot.' -->'."\n";
+        if ($comment) print '<!-- '.$comment.' -->'."\n";
 
-        printCommonFooter($foot);
+        printCommonFooter($zone);
 
         if (empty($conf->dol_hide_leftmenu)) print '</div>';	// End div container
 

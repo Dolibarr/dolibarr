@@ -1,4 +1,4 @@
-# Dolibarr language file - el_GR - members
+# Dolibarr language file - Source file is en_US - members
 CHARSET=UTF-8
 MembersArea=Περιοχή μελών
 PublicMembersArea=Public members area
@@ -42,7 +42,7 @@ DateNextSubscription=Next subscription
 DateEndSubscription=Subscription end date
 EndSubscription=Λήξη συνδρομής
 SubscriptionId=Κωδ. συνδρομής
-MemberId=Member id 
+MemberId=Member id
 NewMember=Νέο μέλος
 NewType=Νέος τύπος μέλους
 MemberType=Τύπος μέλους
@@ -74,11 +74,9 @@ NewCotisation=New contribution
 PaymentSubscription=New contribution payment
 EditMember=Επεξεργασία μέλους
 SubscriptionEndDate=Subscription's end date
-NewAttribute=Νέα ιδιότητα
-AttributeCode=Κωδικός ιδιότητας
-OptionalFieldsSetup=Optional fields setup
 MembersTypeSetup=Members type setup
 NewSubscription=New subscription
+NewSubscriptionDesc=Αυτή η φόρμα σας επιτρέπει να καταγράψετε την εγγραφή σας ως νέο μέλος του ιδρύματος. Αν θέλετε να ανανεώσετε τη συνδρομή σας (αν είναι ήδη μέλος), επικοινωνήστε με θεμέλιο του σκάφους, αντί μέσω e-mail %s.
 Subscription=Subscription
 Subscriptions=Subscriptions
 SubscriptionLate=Καθυστερημένη
@@ -109,17 +107,19 @@ ConfirmDeleteSubscription=Are you sure you want to delete this subscription ?
 Filehtpasswd=htpasswd file
 ValidateMember=Επικύρωση ενός μέλους
 ConfirmValidateMember=Are you sure you want to validate this member ?
-FollowingLinksArePublic=The following links are open pages not protected by any Dolibarr permission. They are not formated pages, provided as example to show how to list members database. 
+FollowingLinksArePublic=The following links are open pages not protected by any Dolibarr permission. They are not formated pages, provided as example to show how to list members database.
 PublicMemberList=Λίστα δημόσιων μελών
 BlankSubscriptionForm=Subscription form
+BlankSubscriptionFormDesc=Dolibarr μπορεί να σας παρέχει μια δημόσια διεύθυνση URL για να επιτρέψουν σε εξωτερικούς επισκέπτες να ζητήσει να εγγραφεί στο ίδρυμα. Εάν μια ηλεκτρονική πληρωμή μονάδα είναι ενεργοποιημένη, μια μορφή πληρωμής θα πρέπει επίσης να παρέχονται αυτόματα.
+EnablePublicSubscriptionForm=Ενεργοποιήστε το κοινό αυτόματη συνδρομή μορφή
 MemberPublicLinks=Public links/pages
 ExportDataset_member_1=Members and subscriptions
 ImportDataset_member_1=Μέλη
 LastMembers=Last %s members
 LastMembersModified=Last %s modified members
+LastSubscriptionsModified=Τελευταία τροποποίηση %s συνδρομές
 AttributeName=Attribute name
 FieldEdition=Field edition %s
-AlphaNumOnlyCharsAndNoSpace=only alphanumericals characters without space
 String=String
 Text=Text
 Int=Int
@@ -131,6 +131,8 @@ AddSubscription=Add subscription
 ShowSubscription=Show subscription
 MemberModifiedInDolibarr=Member modified in Dolibarr
 SendAnEMailToMember=Send information email to member
+# DescADHERENT_AUTOREGISTER_NOTIF_MAIL_SUBJECT=Subject of the e-mail received in case of auto-inscription of a guest
+# DescADHERENT_AUTOREGISTER_NOTIF_MAIL=E-mail received in case of auto-inscription of a guest
 DescADHERENT_AUTOREGISTER_MAIL_SUBJECT=EMail subject for member autosubscription
 DescADHERENT_AUTOREGISTER_MAIL=EMail for member autosubscription
 DescADHERENT_MAIL_VALID_SUBJECT=EMail subject for member validation
@@ -141,6 +143,7 @@ DescADHERENT_MAIL_RESIL_SUBJECT=EMail subject for member resiliation
 DescADHERENT_MAIL_RESIL=EMail for member resiliation
 DescADHERENT_MAIL_FROM=Sender EMail for automatic emails
 DescADHERENT_ETIQUETTE_TYPE=Format of labels page
+# DescADHERENT_ETIQUETTE_TEXT=Text printed on member address sheets
 DescADHERENT_CARD_TYPE=Format of cards page
 DescADHERENT_CARD_HEADER_TEXT=Text printed on top of member cards
 DescADHERENT_CARD_TEXT=Text printed on member cards (align on left)
@@ -154,6 +157,7 @@ NoThirdPartyAssociatedToMember=No third party associated to this member
 ThirdPartyDolibarr=Dolibarr third party
 MembersAndSubscriptions= Members and Subscriptions
 MoreActions=Complementary action on recording
+# MoreActionsOnSubscription=Complementary action, suggested by default when recording a subscription
 MoreActionBankDirect=Create a direct transaction record on account
 MoreActionBankViaInvoice=Create an invoice and payment on account
 MoreActionInvoiceOnly=Create an invoice with no payment
@@ -163,10 +167,6 @@ DocForAllMembersCards=Generate business cards for all members (Format for output
 DocForOneMemberCards=Generate business cards for a particular member (Format for output actually setup: <b>%s</b>)
 DocForLabels=Generate address sheets (Format for output actually setup: <b>%s</b>)
 SubscriptionPayment=Subscription payment
-
-
-// START - Lines generated via autotranslator.php tool (2011-06-26 15:35:22).
-// Reference language: en_US -> el_GR
 LastSubscriptionDate=Τελευταία ημερομηνία εγγραφής
 LastSubscriptionAmount=Τελευταία ποσό συνδρομής
 MembersStatisticsByCountries=Μέλη στατιστικές ανά χώρα
@@ -188,15 +188,6 @@ NewMemberForm=Νέα μορφή μέλος
 SubscriptionsStatistics=Στατιστικά στοιχεία για τις συνδρομές
 NbOfSubscriptions=Αριθμός συνδρομών
 AmountOfSubscriptions=Ποσό των συνδρομών
-// STOP - Lines generated via autotranslator.php tool (2011-06-26 15:41:20).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 16:06:57).
-// Reference language: en_US -> el_GR
-NewSubscriptionDesc=Αυτή η φόρμα σας επιτρέπει να καταγράψετε την εγγραφή σας ως νέο μέλος του ιδρύματος. Αν θέλετε να ανανεώσετε τη συνδρομή σας (αν είναι ήδη μέλος), επικοινωνήστε με θεμέλιο του σκάφους, αντί μέσω e-mail %s.
-BlankSubscriptionFormDesc=Dolibarr μπορεί να σας παρέχει μια δημόσια διεύθυνση URL για να επιτρέψουν σε εξωτερικούς επισκέπτες να ζητήσει να εγγραφεί στο ίδρυμα. Εάν μια ηλεκτρονική πληρωμή μονάδα είναι ενεργοποιημένη, μια μορφή πληρωμής θα πρέπει επίσης να παρέχονται αυτόματα.
-EnablePublicSubscriptionForm=Ενεργοποιήστε το κοινό αυτόματη συνδρομή μορφή
-LastSubscriptionsModified=Τελευταία τροποποίηση %s συνδρομές
 TurnoverOrBudget=Κύκλος εργασιών (για μια επιχείρηση), ή του προϋπολογισμού (για ένα ίδρυμα)
 DefaultAmount=Προεπιλογή ποσό της συνδρομής
 CanEditAmount=Επισκέπτης μπορεί να επιλέξει / επεξεργαστείτε το ποσό της συνδρομής του
@@ -206,4 +197,9 @@ Collectivités=Οργανισμοί
 Particuliers=Προσωπικά
 Entreprises=Εταιρείες
 DOLIBARRFOUNDATION_PAYMENT_FORM=Για να κάνετε την πληρωμή της συνδρομής σας χρησιμοποιώντας μια τραπεζική μεταφορά, δείτε τη σελίδα <a target="_blank" href="http://wiki.dolibarr.org/index.php/Subscribe#To_subscribe_making_a_bank_transfer">http://wiki.dolibarr.org/index.php/Subscribe</a> . <br> Για να πληρώσετε με πιστωτική κάρτα ή Paypal, κάντε κλικ στο κουμπί στο κάτω μέρος της σελίδας. <br>
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:08:13).
+# ByProperties=By characteristics
+# MembersStatisticsByProperties=Members statistics by characteristics
+# MembersByNature=Members by nature
+# VATToUseForSubscriptions=VAT rate to use for subscriptions
+# NoVatOnSubscription=No TVA for subscriptions
+# MEMBER_PAYONLINE_SENDEMAIL=Email to warn when Dolibarr receive a confirmation of a validated payment for subscription

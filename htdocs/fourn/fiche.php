@@ -102,13 +102,14 @@ if ($object->fetch($id))
 
 	if ($object->fournisseur)
 	{
-        print '<tr>';
+		print '<tr>';
         print '<td class="nowrap">'.$langs->trans("SupplierCode"). '</td><td colspan="3">';
         print $object->code_fournisseur;
         if ($object->check_codefournisseur() <> 0) print ' <font class="error">('.$langs->trans("WrongSupplierCode").')</font>';
         print '</td>';
         print '</tr>';
 
+		$langs->load('compta');
         print '<tr>';
         print '<td>';
         print $form->editfieldkey("SupplierAccountancyCode",'supplieraccountancycode',$object->code_compta_fournisseur,$object,$user->rights->societe->creer);
@@ -189,7 +190,7 @@ if ($object->fetch($id))
 	}
 
     // TVA Intra
-    print '<tr><td nowrap>'.$langs->trans('VATIntra').'</td><td colspan="3">';
+    print '<tr><td class="nowrap">'.$langs->trans('VATIntra').'</td><td colspan="3">';
     print $object->tva_intra;
     print '</td></tr>';
 
@@ -287,7 +288,7 @@ if ($object->fetch($id))
 				$obj = $db->fetch_object($resql);
 				$var=!$var;
 
-				print "<tr $bc[$var]>";
+				print "<tr ".$bc[$var].">";
 				print '<td><a href="commande/fiche.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowOrder"),"order")." ".$obj->ref.'</a></td>';
 				print '<td align="center" width="80">';
 				if ($obj->dc)

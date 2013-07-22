@@ -1,12 +1,4 @@
-/*
- * Language code: bg_BG
- * Automatic generated via autotranslator.php tool
- * Generation date 2012-09-08 17:16:45
- */
-
-
-// START - Lines generated via autotranslator.php tool (2012-09-08 17:16:45).
-// Reference language: en_US -> bg_BG
+# Dolibarr language file - Source file is en_US - help
 CHARSET=UTF-8
 CommunitySupport=Форум / Wiki подкрепа
 EMailSupport=Имейли подкрепа
@@ -34,4 +26,3 @@ LinkToGoldMember=Можете да се обадите на треньора, п
 PossibleLanguages=Поддържани езици
 MakeADonation=Помощ Dolibarr проекта, направете дарение
 SubscribeToFoundation=Да Помощ Dolibarr проект, за да се абонирате към фундамента
-// STOP - Lines generated via autotranslator.php tool (2012-09-08 17:37:07).

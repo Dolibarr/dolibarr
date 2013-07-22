@@ -65,7 +65,7 @@ if ($action == 'add')
 {
 	if (! GETPOST('titre'))
 	{
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->trans("Title")), 'errors');
+		setEventMessage($langs->transnoentities("ErrorFieldRequired",$langs->trans("Title")), 'errors');
 		$action = "create";
 		$error++;
 	}
@@ -138,7 +138,7 @@ if ($action == 'create')
 		print '</td></tr>';
 
 		// Title
-		print '<tr><td>'.$langs->trans("Title").'</td><td>';
+		print '<tr><td class="fieldrequired">'.$langs->trans("Title").'</td><td>';
 		print '<input class="flat" type="text" name="titre" size="24" value="'.$_POST["titre"].'">';
 		print '</td>';
 
@@ -437,7 +437,7 @@ else
 				if (! empty($objp->date_end)) $type=1;
 
 				// Show line
-				print "<tr $bc[$var]>";
+				print "<tr ".$bc[$var].">";
 				if ($object->lines[$i]->fk_product > 0)
 				{
 					print '<td>';
@@ -548,7 +548,7 @@ else
 					$objp = $db->fetch_object($result);
 					$var=!$var;
 
-					print "<tr $bc[$var]>";
+					print "<tr ".$bc[$var].">";
 
 					print '<td><a href="'.$_SERVER['PHP_SELF'].'?id='.$objp->facid.'">'.img_object($langs->trans("ShowBill"),"bill").' '.$objp->titre;
 					print "</a></td>\n";

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2005-2011	Laurent Destailleur		<eldy@users.sourceforge.org>
+ * Copyright (C) 2005-2013	Laurent Destailleur		<eldy@users.sourceforge.org>
  * Copyright (C) 2011-2012	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2011-2012  Juanjo Menent			<jmenent@2byte.es>
  *
@@ -63,11 +63,13 @@ if ($action == 'setvalue' && $user->admin)
 	if (! $result > 0) $error++;
     $result=dolibarr_set_const($db, "PAYPAL_ADD_PAYMENT_URL",GETPOST('PAYPAL_ADD_PAYMENT_URL','alpha'),'chaine',0,'',$conf->entity);
     if (! $result > 0) $error++;
-    $result=dolibarr_set_const($db, "PAYPAL_MESSAGE_OK",GETPOST('PAYPAL_MESSAGE_OK','alpha'),'chaine',0,'',$conf->entity);
+    $result=dolibarr_set_const($db, "PAYPAL_MESSAGE_OK",GETPOST('PAYPAL_MESSAGE_OK'),'chaine',0,'',$conf->entity);
     if (! $result > 0) $error++;
-    $result=dolibarr_set_const($db, "PAYPAL_MESSAGE_KO",GETPOST('PAYPAL_MESSAGE_KO','alpha'),'chaine',0,'',$conf->entity);
+    $result=dolibarr_set_const($db, "PAYPAL_MESSAGE_KO",GETPOST('PAYPAL_MESSAGE_KO'),'chaine',0,'',$conf->entity);
 	if (! $result > 0) $error++;
-
+	$result=dolibarr_set_const($db, "PAYPAL_PAYONLINE_SENDEMAIL",GETPOST('PAYPAL_PAYONLINE_SENDEMAIL'),'chaine',0,'',$conf->entity);
+	if (! $result > 0) $error++;
+	
 	if (! $error)
   	{
   		$db->commit();
@@ -96,7 +98,7 @@ print '<br>';
 
 $head=paypaladmin_prepare_head();
 
-dol_fiche_head($head, 'paypalaccount', $langs->trans("ModuleSetup"));
+dol_fiche_head($head, 'paypalaccount', '');
 
 print $langs->trans("PaypalDesc")."<br>\n";
 
@@ -201,6 +203,13 @@ $doleditor=new DolEditor('PAYPAL_MESSAGE_KO',$conf->global->PAYPAL_MESSAGE_KO,''
 $doleditor->Create();
 print '</td></tr>';
 
+$var=!$var;
+print '<tr '.$bc[$var].'><td>';
+print $langs->trans("PAYPAL_PAYONLINE_SENDEMAIL").'</td><td>';
+print '<input size="32" type="email" name="PAYPAL_PAYONLINE_SENDEMAIL" value="'.$conf->global->PAYPAL_PAYONLINE_SENDEMAIL.'">';
+print ' &nbsp; '.$langs->trans("Example").': myemail@myserver.com';
+print '</td></tr>';
+
 $var=true;
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("UrlGenerationParameters").'</td>';
@@ -241,9 +250,9 @@ $sandboxpaypalurl='developer.paypal.com';
 
 print '<div id="apidoc">';
 print 'Your API authentication information can be found with following steps. We recommend that you open a separate Web browser session when carrying out this procedure.<br>
-1. Log in to your PayPal Premier or Business account (on real paypal <a href="https://'.$realpaypalurl.'" target="_blank">'.$realpaypalurl.'</a> (or sandbox <a href="https://'.$sandboxpaypalurl.'" target="_blank">'.$sandboxpaypalurl.'</a>).<br>
-2. Click the Profile subtab located under the My Account heading.<br>
-3. Click the API Access link under the Account Information header.<br>
+1. Log in to your PayPal account (on real paypal <a href="https://'.$realpaypalurl.'" target="_blank">'.$realpaypalurl.'</a> (or sandbox <a href="https://'.$sandboxpaypalurl.'" target="_blank">'.$sandboxpaypalurl.'</a>).<br>
+2. Click the "Profile" or "Preferencies" subtab located under the My Account heading.<br>
+3. Click the link "API Access".<br>
 4. Click the View API Certificate link in the right column.<br>
 5. Click the Request API signature radio button on the Request API Credentials page.<br>
 6. Complete the Request API Credential Request form by clicking the agreement checkbox and clicking Submit.<br>

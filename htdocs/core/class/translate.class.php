@@ -759,6 +759,7 @@ class Translate
 		{
 			$this->load("dict");
 			$label=array();
+			foreach($this->cache_currencies as $key => $val) $label[$key]=$val['label'];
 
 			$num = $db->num_rows($resql);
 			$i = 0;
@@ -772,9 +773,9 @@ class Translate
 				$label[$obj->code_iso] = $this->cache_currencies[$obj->code_iso]['label'];
 				$i++;
 			}
-
+			//print count($label).' '.count($this->cache_currencies);
 			array_multisort($label, SORT_ASC, $this->cache_currencies);
-
+			//var_dump($this->cache_currencies);	$this->cache_currencies is now sorted onto label
 			return $num;
 		}
 		else

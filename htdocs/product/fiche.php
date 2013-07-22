@@ -6,6 +6,7 @@
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  * Copyright (C) 2006      Auguria SARL         <info@auguria.org>
  * Copyright (C) 2010-2011 Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2013      Marcos García        <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -312,7 +313,6 @@ if (empty($reshook))
                 $object->ref = GETPOST('clone_ref');
                 $object->status = 0;
                 $object->status_buy = 0;
-                $object->finished = 1;
                 $object->id = null;
 
                 if ($object->check())
@@ -320,6 +320,19 @@ if (empty($reshook))
                     $id = $object->create($user);
                     if ($id > 0)
                     {
+                        if (GETPOST('clone_composition'))
+                        {
+                            $result = $object->clone_associations($originalId, $id);
+
+                            if ($result < 1)
+                            {
+                                $db->rollback();
+                                setEventMessage($langs->trans('ErrorProductClone'), 'errors');
+                                header("Location: ".$_SERVER["PHP_SELF"]."?id=".$originalId);
+                                exit;
+                            }
+                        }
+
                         // $object->clone_fournisseurs($originalId, $id);
 
                         $db->commit();
@@ -437,7 +450,6 @@ if (empty($reshook))
         }
 
         $result = $propal->addline(
-            $propal->id,
             $desc,
             $pu_ht,
             GETPOST('qty'),
@@ -511,7 +523,6 @@ if (empty($reshook))
         }
 
         $result =  $commande->addline(
-            $commande->id,
             $desc,
             $pu_ht,
             GETPOST('qty'),
@@ -585,7 +596,6 @@ if (empty($reshook))
         }
 
         $result = $facture->addline(
-            $facture->id,
             $desc,
             $pu_ht,
             GETPOST('qty'),
@@ -732,7 +742,7 @@ else
         {
             print '<tr><td>'.$langs->trans("Nature").'</td><td>';
             $statutarray=array('1' => $langs->trans("Finished"), '0' => $langs->trans("RowMaterial"));
-            print $form->selectarray('finished',$statutarray,GETPOST('finished'));
+            print $form->selectarray('finished',$statutarray,GETPOST('finished'),1);
             print '</td></tr>';
         }
 
@@ -1060,8 +1070,8 @@ else
             if ($showbarcode)
             {
                 // Barcode type
-                print '<tr><td nowrap>';
-                print '<table width="100%" class="nobordernopadding"><tr><td nowrap>';
+                print '<tr><td class="nowrap">';
+                print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
                 print $langs->trans("BarcodeType");
                 print '<td>';
                 if (($action != 'editbarcodetype') && $user->rights->barcode->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editbarcodetype&amp;id='.$object->id.'">'.img_edit($langs->trans('Edit'),1).'</a></td>';
@@ -1081,8 +1091,8 @@ else
                 print '</td></tr>'."\n";
 
                 // Barcode value
-                print '<tr><td nowrap>';
-                print '<table width="100%" class="nobordernopadding"><tr><td nowrap>';
+                print '<tr><td class="nowrap">';
+                print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
                 print $langs->trans("BarcodeValue");
                 print '<td>';
                 if (($action != 'editbarcode') && $user->rights->barcode->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editbarcode&amp;id='.$object->id.'">'.img_edit($langs->trans('Edit'),1).'</a></td>';
@@ -1234,7 +1244,8 @@ $formquestionclone=array(
 	'text' => $langs->trans("ConfirmClone"),
     array('type' => 'text', 'name' => 'clone_ref','label' => $langs->trans("NewRefForClone"), 'value' => $langs->trans("CopyOf").' '.$object->ref, 'size'=>24),
     array('type' => 'checkbox', 'name' => 'clone_content','label' => $langs->trans("CloneContentProduct"), 'value' => 1),
-    array('type' => 'checkbox', 'name' => 'clone_prices', 'label' => $langs->trans("ClonePricesProduct").' ('.$langs->trans("FeatureNotYetAvailable").')', 'value' => 0, 'disabled' => true)
+    array('type' => 'checkbox', 'name' => 'clone_prices', 'label' => $langs->trans("ClonePricesProduct").' ('.$langs->trans("FeatureNotYetAvailable").')', 'value' => 0, 'disabled' => true),
+    array('type' => 'checkbox', 'name' => 'clone_composition', 'label' => $langs->trans('CloneCompositionProduct'), 'value' => 1)
 );
 
 // Confirm delete product
@@ -1246,7 +1257,7 @@ if ($action == 'delete' && empty($conf->use_javascript_ajax))
 // Clone confirmation
 if ($action == 'clone' && empty($conf->use_javascript_ajax))
 {
-    print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id,$langs->trans('CloneProduct'),$langs->trans('ConfirmCloneProduct',$object->ref),'confirm_clone',$formquestionclone,'yes','action-clone',230,600);
+    print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id,$langs->trans('CloneProduct'),$langs->trans('ConfirmCloneProduct',$object->ref),'confirm_clone',$formquestionclone,'yes','action-clone',250,600);
 }
 
 
@@ -1270,7 +1281,7 @@ if ($action == '' || $action == 'view')
             if (! empty($conf->use_javascript_ajax))
             {
                 print '<div class="inline-block divButAction"><span id="action-clone" class="butAction">'.$langs->trans('ToClone').'</span></div>'."\n";
-                print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id,$langs->trans('CloneProduct'),$langs->trans('ConfirmCloneProduct',$object->ref),'confirm_clone',$formquestionclone,'yes','action-clone',230,600);
+                print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id,$langs->trans('CloneProduct'),$langs->trans('ConfirmCloneProduct',$object->ref),'confirm_clone',$formquestionclone,'yes','action-clone',250,600);
             }
             else
             {
@@ -1315,7 +1326,8 @@ print "\n</div><br>\n";
 
 if ($object->id && ($action == '' || $action == 'view') && $object->status)
 {
-    print '<table width="100%" class="noborder">';
+    //Variable used to check if any text is going to be printed
+    $html = '';
 	//print '<div class="fichecenter"><div class="fichehalfleft">';
 
     // Propals
@@ -1325,42 +1337,42 @@ if ($object->id && ($action == '' || $action == 'view') && $object->status)
 
         $langs->load("propal");
 
-        print '<tr class="liste_titre">';
-        print '<td class="liste_titre">'.$langs->trans("AddToOtherProposals").'</td>';
-        print '</tr><tr>';
-        print '<td valign="top">';
+        $html .= '<tr class="liste_titre">';
+        $html .= '<td class="liste_titre">'.$langs->trans("AddToDraftProposals").'</td>';
+        $html .= '</tr><tr>';
+        $html .= '<td valign="top">';
 
         $var=true;
         $otherprop = $propal->liste_array(2,1,0);
-        print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'">';
-        print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-        print '<table class="nobordernopadding" width="100%">';
+        $html .= '<form method="POST" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'">';
+        $html .= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+        $html .= '<table class="nobordernopadding" width="100%">';
         if (is_array($otherprop) && count($otherprop))
         {
         	$var=!$var;
-        	print '<tr '.$bc[$var].'><td style="width: 200px;">';
-        	print '<input type="hidden" name="action" value="addinpropal">';
-        	print $langs->trans("Proposals").'</td><td colspan="2">';
-        	print $form->selectarray("propalid", $otherprop, 0, 1);
-        	print '</td></tr>';
-        	print '<tr '.$bc[$var].'><td class="nowrap">'.$langs->trans("Quantity").' ';
-        	print '<input type="text" class="flat" name="qty" size="1" value="1"></td><td class="nowrap">'.$langs->trans("ReductionShort").'(%) ';
-        	print '<input type="text" class="flat" name="remise_percent" size="1" value="0">';
-        	print '</td><td align="right">';
-        	print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
-        	print '</td></tr>';
+        	$html .= '<tr '.$bc[$var].'><td style="width: 200px;">';
+        	$html .= '<input type="hidden" name="action" value="addinpropal">';
+        	$html .= $langs->trans("Proposals").'</td><td colspan="2">';
+        	$html .= $form->selectarray("propalid", $otherprop, 0, 1);
+        	$html .= '</td></tr>';
+        	$html .= '<tr '.$bc[$var].'><td class="nowrap">'.$langs->trans("Quantity").' ';
+        	$html .= '<input type="text" class="flat" name="qty" size="1" value="1"></td><td class="nowrap">'.$langs->trans("ReductionShort").'(%) ';
+        	$html .= '<input type="text" class="flat" name="remise_percent" size="1" value="0">';
+        	$html .= '</td><td align="right">';
+        	$html .= '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
+        	$html .= '</td></tr>';
         }
         else
         {
-        	print "<tr ".$bc[!$var]."><td>";
-        	print $langs->trans("NoOtherOpenedPropals");
-        	print '</td></tr>';
+        	$html .= "<tr ".$bc[!$var]."><td>";
+        	$html .= $langs->trans("NoDraftProposals");
+        	$html .= '</td></tr>';
         }
-        print '</table>';
-        print '</form>';
+        $html .= '</table>';
+        $html .= '</form>';
 
-        print '</td>';
-        print '</tr>';
+        $html .= '</td>';
+        $html .= '</tr>';
     }
 
     // Commande
@@ -1370,42 +1382,42 @@ if ($object->id && ($action == '' || $action == 'view') && $object->status)
 
         $langs->load("orders");
 
-        print '<tr class="liste_titre">';
-        print '<td class="liste_titre">'.$langs->trans("AddToOtherOrders").'</td>';
-        print '</tr><tr>';
-        print '<td valign="top">';
+        $html .= '<tr class="liste_titre">';
+        $html .= '<td class="liste_titre">'.$langs->trans("AddToDraftOrders").'</td>';
+        $html .= '</tr><tr>';
+        $html .= '<td valign="top">';
 
         $var=true;
         $othercom = $commande->liste_array(2, 1, null);
-        print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'">';
-        print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-        print '<table class="nobordernopadding" width="100%">';
+        $html .= '<form method="POST" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'">';
+        $html .= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+        $html .= '<table class="nobordernopadding" width="100%">';
         if (is_array($othercom) && count($othercom))
         {
         	$var=!$var;
-        	print '<tr '.$bc[$var].'><td style="width: 200px;">';
-        	print '<input type="hidden" name="action" value="addincommande">';
-        	print $langs->trans("Orders").'</td><td colspan="2">';
-        	print $form->selectarray("commandeid", $othercom, 0, 1);
-        	print '</td></tr>';
-        	print '<tr '.$bc[$var].'><td class="nowrap">'.$langs->trans("Quantity").' ';
-        	print '<input type="text" class="flat" name="qty" size="1" value="1"></td><td class="nowrap">'.$langs->trans("ReductionShort").'(%) ';
-        	print '<input type="text" class="flat" name="remise_percent" size="1" value="0">';
-        	print '</td><td align="right">';
-        	print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
-        	print '</td></tr>';
+        	$html .= '<tr '.$bc[$var].'><td style="width: 200px;">';
+        	$html .= '<input type="hidden" name="action" value="addincommande">';
+        	$html .= $langs->trans("Orders").'</td><td colspan="2">';
+        	$html .= $form->selectarray("commandeid", $othercom, 0, 1);
+        	$html .= '</td></tr>';
+        	$html .= '<tr '.$bc[$var].'><td class="nowrap">'.$langs->trans("Quantity").' ';
+        	$html .= '<input type="text" class="flat" name="qty" size="1" value="1"></td><td class="nowrap">'.$langs->trans("ReductionShort").'(%) ';
+        	$html .= '<input type="text" class="flat" name="remise_percent" size="1" value="0">';
+        	$html .= '</td><td align="right">';
+        	$html .= '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
+        	$html .= '</td></tr>';
         }
         else
 		{
-        	print "<tr ".$bc[!$var]."><td>";
-        	print $langs->trans("NoOtherOpenedOrders");
-        	print '</td></tr>';
+        	$html .= "<tr ".$bc[!$var]."><td>";
+        	$html .= $langs->trans("NoDraftOrders");
+        	$html .= '</td></tr>';
         }
-        print '</table>';
-        print '</form>';
+        $html .= '</table>';
+        $html .= '</form>';
 
-        print '</td>';
-        print '</tr>';
+        $html .= '</td>';
+        $html .= '</tr>';
     }
 
     // Factures
@@ -1415,47 +1427,52 @@ if ($object->id && ($action == '' || $action == 'view') && $object->status)
 
     	$langs->load("bills");
 
-    	print '<tr class="liste_titre">';
-    	print '<td class="liste_titre">'.$langs->trans("AddToOtherOrders").'</td>';
-        print '</tr><tr>';
-    	print '<td valign="top">';
+    	$html .= '<tr class="liste_titre">';
+    	$html .= '<td class="liste_titre">'.$langs->trans("AddToDraftInvoices").'</td>';
+        $html .= '</tr><tr>';
+    	$html .= '<td valign="top">';
 
     	$var=true;
     	$otherinvoice = $invoice->liste_array(2, 1, null);
-    	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'">';
-    	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-    	print '<table class="nobordernopadding" width="100%">';
+    	$html .= '<form method="POST" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'">';
+    	$html .= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    	$html .= '<table class="nobordernopadding" width="100%">';
     	if (is_array($otherinvoice) && count($otherinvoice))
     	{
     		$var=!$var;
-    		print '<tr '.$bc[$var].'><td style="width: 200px;">';
-    		print '<input type="hidden" name="action" value="addinfacture">';
-    		print $langs->trans("Invoice").'</td><td colspan="2">';
-    		print $form->selectarray("factureid", $otherinvoice, 0, 1);
-    		print '</td></tr>';
-    		print '<tr '.$bc[$var].'><td class="nowrap">'.$langs->trans("Quantity").' ';
-    		print '<input type="text" class="flat" name="qty" size="1" value="1"></td><td class="nowrap">'.$langs->trans("ReductionShort").'(%) ';
-    		print '<input type="text" class="flat" name="remise_percent" size="1" value="0">';
-    		print '</td><td align="right">';
-    		print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
-    		print '</td></tr>';
+    		$html .= '<tr '.$bc[$var].'><td style="width: 200px;">';
+    		$html .= '<input type="hidden" name="action" value="addinfacture">';
+    		$html .= $langs->trans("Invoice").'</td><td colspan="2">';
+    		$html .= $form->selectarray("factureid", $otherinvoice, 0, 1);
+    		$html .= '</td></tr>';
+    		$html .= '<tr '.$bc[$var].'><td class="nowrap">'.$langs->trans("Quantity").' ';
+    		$html .= '<input type="text" class="flat" name="qty" size="1" value="1"></td><td class="nowrap">'.$langs->trans("ReductionShort").'(%) ';
+    		$html .= '<input type="text" class="flat" name="remise_percent" size="1" value="0">';
+    		$html .= '</td><td align="right">';
+    		$html .= '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
+    		$html .= '</td></tr>';
     	}
     	else
     	{
-    		print "<tr ".$bc[!$var]."><td>";
-    		print $langs->trans("NoOtherDraftBills");
-    		print '</td></tr>';
+    		$html .= "<tr ".$bc[!$var]."><td>";
+    		$html .= $langs->trans("NoDraftInvoices");
+    		$html .= '</td></tr>';
     	}
-    	print '</table>';
-    	print '</form>';
+    	$html .= '</table>';
+    	$html .= '</form>';
 
-    	print '</td>';
-    	print '</tr>';
+    	$html .= '</td>';
+    	$html .= '</tr>';
     }
 
-    print '</table>';
-
-    print '<br>';
+    //If any text is going to be printed, then we show the table
+    if (!empty($html))
+    {
+        print '<table width="100%" class="noborder">';
+        print $html;
+        print '</table>';
+        print '<br>';
+    }
 }
 
 

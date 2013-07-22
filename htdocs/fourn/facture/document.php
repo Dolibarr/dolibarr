@@ -39,6 +39,7 @@ $langs->load("companies");
 $id = GETPOST('facid','int')?GETPOST('facid','int'):GETPOST('id','int');
 $action=GETPOST('action','alpha');
 $confirm=GETPOST('confirm','alpha');
+$ref = GETPOST('ref','alpha');
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
@@ -58,7 +59,7 @@ if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="name";
 
 $object = new FactureFournisseur($db);
-if ($object->fetch($id))
+if ($object->fetch($id, $ref))
 {
 	$object->fetch_thirdparty();
 	$ref=dol_sanitizeFileName($object->ref);
@@ -130,7 +131,7 @@ if ($object->id > 0)
 
 	// Ref
 	print '<tr><td width="30%" class="nowrap">'.$langs->trans("Ref").'</td><td colspan="3">';
-	print $form->showrefnav($object, 'facid', $linkback, 1, 'rowid', 'ref');
+	print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref');
 	print '</td>';
 	print "</tr>\n";
 

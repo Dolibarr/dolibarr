@@ -108,20 +108,14 @@ class modFournisseur extends DolibarrModules
 			$r++;
 
             // Boxes
-            $this->boxes = array();
-            $r=0;
-
-            $this->boxes[$r][1] = "box_fournisseurs.php";
-            $r++;
-
-            $this->boxes[$r][1] = "box_factures_fourn_imp.php";
-            $r++;
-
-            $this->boxes[$r][1] = "box_factures_fourn.php";
-            $r++;
-
-            $this->boxes[$r][1] = "box_supplier_orders.php";
-            $r++;
+            $this->boxes = array(
+            	0=>array('file'=>'box_graph_invoices_supplier_permonth.php','enabledbydefaulton'=>'Home'),
+            	1=>array('file'=>'box_graph_orders_supplier_permonth.php','enabledbydefaulton'=>'Home'),
+            	2=>array('file'=>'box_fournisseurs.php','enabledbydefaulton'=>'Home'),
+            	3=>array('file'=>'box_factures_fourn_imp.php','enabledbydefaulton'=>'Home'),
+            	4=>array('file'=>'box_factures_fourn.php','enabledbydefaulton'=>'Home'),
+            	5=>array('file'=>'box_supplier_orders.php','enabledbydefaulton'=>'Home'),
+            );
 
             // Permissions
             $this->rights = array();
@@ -296,7 +290,7 @@ class modFournisseur extends DolibarrModules
             $this->export_icon[$r]='order';
             $this->export_permission[$r]=array(array("fournisseur","commande","export"));
             $this->export_fields_array[$r]=array('s.rowid'=>"IdCompany",'s.nom'=>'CompanyName','s.address'=>'Address','s.zip'=>'Zip','s.town'=>'Town','c.code'=>'CountryCode','s.phone'=>'Phone','s.siren'=>'ProfId1','s.siret'=>'ProfId2','s.ape'=>'ProfId3','s.idprof4'=>'ProfId4','s.idprof5'=>'ProfId5','s.idprof6'=>'ProfId6','s.tva_intra'=>'VATIntra','f.rowid'=>"OrderId",'f.ref'=>"Ref",'f.ref_supplier'=>"RefSupplier",'f.date_creation'=>"DateCreation",'f.date_commande'=>"OrderDate",'f.total_ht'=>"TotalHT",'f.total_ttc'=>"TotalTTC",'f.tva'=>"TotalVAT",'f.fk_statut'=>'Status','f.note'=>"Note",'fd.rowid'=>'LineId','fd.description'=>"LineDescription",'fd.tva_tx'=>"LineVATRate",'fd.qty'=>"LineQty",'fd.remise_percent'=>"Discount",'fd.total_ht'=>"LineTotalHT",'fd.total_ttc'=>"LineTotalTTC",'fd.total_tva'=>"LineTotalVAT",'fd.product_type'=>'TypeOfLineServiceOrProduct','fd.fk_product'=>'ProductId','p.ref'=>'ProductRef','p.label'=>'ProductLabel');
-            //$this->export_TypeFields_array[$r]=array(); // TODO add fields type
+            $this->export_TypeFields_array[$r]=array('s.rowid'=>"company",'s.nom'=>'Text','s.address'=>'Text','s.cp'=>'Text','s.ville'=>'Text','c.code'=>'Text','s.tel'=>'Text','s.siren'=>'Text','s.siret'=>'Text','s.ape'=>'Text','s.idprof4'=>'Text','s.idprof5'=>'Text','s.idprof6'=>'Text','s.tva_intra'=>'Text','f.ref'=>"Text",'f.ref_supplier'=>"Text",'f.date_creation'=>"Date",'f.date_commande'=>"Date",'f.total_ht'=>"Number",'f.total_ttc'=>"Number",'f.tva'=>"Number",'f.fk_statut'=>'Status','f.note'=>"Text",'fd.description'=>"Text",'fd.tva_tx'=>"Number",'fd.qty'=>"Number",'fd.remise_percent'=>"Number",'fd.total_ht'=>"Number",'fd.total_ttc'=>"Number",'fd.total_tva'=>"Number",'fd.product_type'=>'Boolean','fd.fk_product'=>'List:Product:label','p.ref'=>'Text','p.label'=>'Text');
             $this->export_entities_array[$r]=array('s.rowid'=>"company",'s.nom'=>'company','s.address'=>'company','s.zip'=>'company','s.town'=>'company','c.code'=>'company','s.phone'=>'company','s.siren'=>'company','s.siret'=>'company','s.ape'=>'company','s.idprof4'=>'company','s.idprof5'=>'company','s.idprof6'=>'company','s.tva_intra'=>'company','f.rowid'=>"order",'f.ref'=>"order",'f.ref_supplier'=>"order",'f.date_creation'=>"order",'f.date_commande'=>"order",'f.total_ht'=>"order",'f.total_ttc'=>"order",'f.tva'=>"order",'f.fk_statut'=>'order','f.note'=>"order",'fd.rowid'=>'order_line','fd.description'=>"order_line",'fd.tva_tx'=>"order_line",'fd.qty'=>"order_line",'fd.remise_percent'=>"order_line",'fd.total_ht'=>"order_line",'fd.total_ttc'=>"order_line",'fd.total_tva'=>"order_line",'fd.product_type'=>'order_line','fd.fk_product'=>'product','p.ref'=>'product','p.label'=>'product');
             $this->export_dependencies_array[$r]=array('order_line'=>'fd.rowid','product'=>'fd.rowid'); // To add unique key if we ask a field of a child to avoid the DISTINCT to discard them
 

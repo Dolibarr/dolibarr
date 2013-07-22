@@ -46,7 +46,6 @@ CREATE TABLE llx_cronjob
   	status 			integer NOT NULL DEFAULT 1,
   	fk_user_author 		integer DEFAULT NULL,
   	fk_user_mod 		integer DEFAULT NULL,
-	note text
+	note text,
+	libname			varchar(255)
 )ENGINE=innodb;
-
-

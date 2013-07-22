@@ -53,6 +53,8 @@ $search_ref=GETPOST('sf_ref')?GETPOST('sf_ref','alpha'):GETPOST('search_ref','al
 $search_refcustomer=GETPOST('search_refcustomer','alpha');
 $search_societe=GETPOST('search_societe','alpha');
 $search_montant_ht=GETPOST('search_montant_ht','alpha');
+$search_author=GETPOST('search_author','alpha');
+$search_town=GETPOST('search_town','alpha');
 
 $sall=GETPOST("sall");
 $mesg=(GETPOST("msg") ? GETPOST("msg") : GETPOST("mesg"));
@@ -77,13 +79,17 @@ $result = restrictedArea($user, $module, $objectid, $dbtable);
 
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
-$hookmanager->initHooks(array('propalcard'));
+$hookmanager->initHooks(array('propallist'));
 
 
 
 /*
  * Actions
  */
+
+
+$parameters=array('socid'=>$socid);
+$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 
 // Do we click on purge search criteria ?
 if (GETPOST("button_removefilter_x"))
@@ -95,6 +101,8 @@ if (GETPOST("button_removefilter_x"))
     $search_refcustomer='';
     $search_societe='';
     $search_montant_ht='';
+    $search_author='';
+    $search_town='';
     $year='';
     $month='';
 }
@@ -131,7 +139,7 @@ if (! $sortfield) $sortfield='p.datep';
 if (! $sortorder) $sortorder='DESC';
 $limit = $conf->liste_limit;
 
-$sql = 'SELECT s.rowid, s.nom, s.client, ';
+$sql = 'SELECT s.rowid, s.nom, s.town, s.client, ';
 $sql.= 'p.rowid as propalid, p.total_ht, p.ref, p.ref_client, p.fk_statut, p.fk_user_author, p.datep as dp, p.fin_validite as dfv,';
 if (! $user->rights->societe->client->voir && ! $socid) $sql .= " sc.fk_soc, sc.fk_user,";
 $sql.= ' u.login';
@@ -151,6 +159,10 @@ if (! $user->rights->societe->client->voir && ! $socid) //restriction
 {
 	$sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 }
+if ($search_town) //restriction
+{
+	$sql.= " AND s.town LIKE '%".$db->escape(trim($search_town))."%'";
+}
 if ($search_ref)
 {
 	$sql.= " AND p.ref LIKE '%".$db->escape(trim($search_ref))."%'";
@@ -162,6 +174,10 @@ if ($search_refcustomer)
 if ($search_societe)
 {
 	$sql.= " AND s.nom LIKE '%".$db->escape(trim($search_societe))."%'";
+}
+if ($search_author)
+{
+	$sql.= " AND u.login LIKE '%".$db->escape(trim($search_author))."%'";
 }
 if ($search_montant_ht)
 {
@@ -201,7 +217,6 @@ if ($result)
 {
 	$objectstatic=new Propal($db);
 	$userstatic=new User($db);
-
 	$num = $db->num_rows($result);
 
  	if ($socid)
@@ -219,6 +234,8 @@ if ($result)
 	if ($search_user > 0)    $param.='&search_user='.$search_user;
 	if ($search_sale > 0)    $param.='&search_sale='.$search_sale;
 	if ($search_montant_ht)  $param.='&search_montant_ht='.$search_montant_ht;
+	if ($search_author)  	 $param.='&search_author='.$search_author;
+	if ($search_town)		 $param.='&search_town='.$search_town;
 	print_barre_liste($langs->trans('ListOfProposals').' '.($socid?'- '.$soc->nom:''), $page, $_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num);
 
 	// Lignes des champs de filtre
@@ -246,7 +263,7 @@ if ($result)
 	if (! empty($moreforfilter))
 	{
 	    print '<tr class="liste_titre">';
-	    print '<td class="liste_titre" colspan="9">';
+	    print '<td class="liste_titre" colspan="10">';
 	    print $moreforfilter;
 	    print '</td></tr>';
 	}
@@ -254,6 +271,7 @@ if ($result)
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans('Ref'),$_SERVER["PHP_SELF"],'p.ref','',$param,'',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans('Company'),$_SERVER["PHP_SELF"],'s.nom','',$param,'',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans('Town'),$_SERVER["PHP_SELF"],'s.town','',$param,'',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans('RefCustomer'),$_SERVER["PHP_SELF"],'p.ref_client','',$param,'',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans('Date'),$_SERVER["PHP_SELF"],'p.datep','',$param, 'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans('DateEndPropalShort'),$_SERVER["PHP_SELF"],'dfv','',$param, 'align="center"',$sortfield,$sortorder);
@@ -270,6 +288,7 @@ if ($result)
 	print '<td class="liste_titre" align="left">';
 	print '<input class="flat" type="text" size="16" name="search_societe" value="'.$search_societe.'">';
 	print '</td>';
+	print '<td>&nbsp;</td>';
 	print '<td class="liste_titre">';
 	print '<input class="flat" size="10" type="text" name="search_refcustomer" value="'.$search_refcustomer.'">';
 	print '</td>';
@@ -280,10 +299,13 @@ if ($result)
 	$formother->select_year($syear,'year',1, 20, 5);
 	print '</td>';
 	print '<td class="liste_titre" colspan="1">&nbsp;</td>';
-	print '<td class="liste_titre" align="right">';
+	print '<td class="liste_titre" align="center">';
 	print '<input class="flat" type="text" size="10" name="search_montant_ht" value="'.$search_montant_ht.'">';
 	print '</td>';
-	print '<td class="liste_titre">&nbsp;</td>';
+
+	print '<td class="liste_titre" align="right">';
+	print '<input class="flat" size="10" type="text" name="search_author" value="'.$search_author.'">';
+	print '</td>';
 	print '<td class="liste_titre" align="right">';
 	$formpropal->select_propal_statut($viewstatut,1);
 	print '</td>';
@@ -332,12 +354,17 @@ if ($result)
 		print $companystatic->getNomUrl(1,'customer');
 		print '</td>';
 
+		// Town
+		print '<td class="nocellnopadd">';
+		print $objp->town;
+		print '</td>';
+		
 		// Customer ref
-		print '<td class="nowrap">';
+		print '<td class="nocellnopadd nowrap">';
 		print $objp->ref_client;
 		print '</td>';
 
-		// Date propale
+		// Date proposal
 		print '<td align="center">';
 		$y = dol_print_date($db->jdate($objp->dp),'%Y');
 		$m = dol_print_date($db->jdate($objp->dp),'%m');
@@ -349,7 +376,7 @@ if ($result)
 		print ' <a href="'.$_SERVER["PHP_SELF"].'?year='.$y.'">';
 		print $y."</a></td>\n";
 
-		// Date fin validite
+		// Date end validity
 		if ($objp->dfv)
 		{
 			print '<td align="center">'.dol_print_date($db->jdate($objp->dfv),'day');
@@ -380,6 +407,25 @@ if ($result)
 
 		$i++;
 	}
+
+	if ($total>0)
+			{
+				if($num<$limit){
+					$var=!$var;
+					print '<tr class="liste_total"><td align="left">'.$langs->trans("Total HT").'</td>';
+					print '<td colspan="6" align="right"">'.price($total).'<td colspan="3"</td>';
+					print '</tr>';
+				}
+				else
+				{
+					$var=!$var;
+					print '<tr class="liste_total"><td align="left">'.$langs->trans("Total HT for this page").'</td>';
+					print '<td colspan="6" align="right"">'.price($total).'<td colspan="3"</td>';
+					print '</tr>';
+				}
+
+			}
+
 	print '</table>';
 
 	print '</form>';

@@ -1,20 +1,16 @@
-/*
-* Language code: de_DE
-* Manually translated by modula71.de
-* Generation date 2012-05-23
-* QA release date 2012-05-27
-*/
-
+# Dolibarr language file - Source file is en_US - stocks
 CHARSET=UTF-8
-
 WarehouseCard=Warenlagerkarte
 Warehouse=Warenlager
+# Warehouses=Warehouses
 NewWarehouse=Neues Warenlager
 WarehouseEdit=Warenlager bearbeiten
 MenuNewWarehouse=Neues Warenlager
 WarehouseOpened=Warenlager aktiv
 WarehouseClosed=Warenlager geschlossen
 WarehouseSource=Ursprungslager
+# WarehouseSourceNotDefined=No warehouse defined,
+# AddOne=Add one
 WarehouseTarget=Ziellager
 ValidateSending=Sendung freigeben
 CancelSending=Sendung abbrechen
@@ -40,11 +36,13 @@ StockCorrection=Lageranpassung
 StockMovement=Lagerbewegung
 StockMovements=Lagerbewegungen
 NumberOfUnit=Anzahl der Einheiten
+# UnitPurchaseValue=Unit purchase price
 TotalStock=Gesamtbestand
 StockTooLow=Mindestbestand unterschritten
+# StockLowerThanLimit=Stock lower than alert limit
 EnhancedValue=Warenwert
-PMPValueShort=DSWP
 PMPValue=Gewichteter Warenwert
+PMPValueShort=DSWP
 EnhancedValueOfWarehouses=Lagerwert
 UserWarehouseAutoCreate=Beim Anlegen eines Benutzers automatisch neues Warenlager erstellen
 QtyDispatched=Menge
@@ -57,13 +55,13 @@ DeStockOnShipment=Verringere Lagerstände nach erfolgtem Versand (empfohlen)
 ReStockOnBill=Erhöhung der tatsächlichen Bestände in den Rechnungen / Gutschriften
 ReStockOnValidateOrder=Erhöhung der realen Bestände auf Bestellungen stellt fest
 ReStockOnDispatchOrder=Reale Bestände auf manuelle Dispatching in Hallen, nach Erhalt Lieferanten bestellen
-StockLimitShort=Mindestbestand
-StockLimit=Sicherungsbestand für autom. Benachrichtigung
+# ReStockOnDeleteInvoice=Increase real stocks on invoice deletion
 OrderStatusNotReadyToDispatch=Auftrag wurde noch nicht oder nicht mehr ein Status, der Erzeugnisse auf Lager Hallen Versand ermöglicht.
 StockDiffPhysicTeoric=Grund für die Differenz physisch. und theoret. Lagerbestand
 NoPredefinedProductToDispatch=Keine vordefinierten Produkte für dieses Objekt. Also kein Versand im Lager erforderlich ist.
 DispatchVerb=Versand
-
+StockLimitShort=Mindestbestand
+StockLimit=Sicherungsbestand für autom. Benachrichtigung
 PhysicalStock=Physisches Warenlager
 RealStock=Realer Lagerbestand
 TheoreticalStock=Theoretischer Lagerbestand
@@ -86,6 +84,8 @@ EstimatedStockValue=Eingangsmenge
 DeleteAWarehouse=Warenlager löschen
 ConfirmDeleteWarehouse=Möchten Sie das Warenlager <b>%s</b> wirklich löschen?
 PersonalStock=Persönlicher Warenbestand %s
-ThisWarehouseIsPersonalStock=Dieses Lager bezeichnet den persönlichen Bestand von %s %s 
+ThisWarehouseIsPersonalStock=Dieses Lager bezeichnet den persönlichen Bestand von %s %s
 SelectWarehouseForStockDecrease=Wählen Sie das Lager für die Entnahme
 SelectWarehouseForStockIncrease=Wählen Sie das Lager für den Wareneingang
+# NoStockAction=No stock action
+# LastWaitingSupplierOrders=Orders waiting for receptions

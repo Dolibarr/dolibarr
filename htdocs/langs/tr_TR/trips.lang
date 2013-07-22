@@ -1,15 +1,9 @@
-* Manually generated
- * Generation date 2012-07-08 17:42:26
-
-
-// START - Lines manually generated (2012-07-08 17:42:26).
- */
-// Reference language: en_US -> TR – trips
-
+Dolibarr language file - tr_TR - trips
 CHARSET=UTF-8
 Trip=Gezi
 Trips=Geziler
 TripsAndExpenses=Geziler ve giderler
+TripsAndExpensesStatistics=Gezi ve gider istatistikleri
 TripCard=Gezi kartı
 AddTrip=Gezi ekle
 ListOfTrips=Gezi listesi
@@ -24,7 +18,5 @@ TF_OTHER=Diğer
 TF_LUNCH=Öğle yemeği
 TF_TRIP=Gezi
 ListTripsAndExpenses=Geziler ve giderler listesi
-TripsAndExpensesStatistics=Gezi ve gider istatistikleri
-SearchATripAndExpense=Bir gezi ve gider ara
 ExpensesArea=Geziler ve giderler alanı
-
+SearchATripAndExpense=Bir gezi ve gider ara

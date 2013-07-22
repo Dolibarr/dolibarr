@@ -1,15 +1,4 @@
-/*
- * Lince Translation File
- * Filename: 
- * Language code: da_DA
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-01-19 21:26:39
- */
-
-
-// Date 2009-01-19 21:26:39
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
+# Dolibarr language file - Source file is en_US - oscommerce
 CHARSET=UTF-8
 OSCommerce=OS Commerce
 OSCommerceSetup=OS Commerce modul opsætning
@@ -18,5 +7,3 @@ OSCommerceServer=OS Commerce Server host / ip
 OSCommerceDatabaseName=OS Commerce databasenavn
 OSCommercePrefix=OS Commerce tabeller præfiks
 OSCommerceUser=OS Commerce database login
-// Date 2009-01-19 21:26:39
-// STOP - Lines generated via parser

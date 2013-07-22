@@ -89,7 +89,7 @@ class box_comptes extends ModeleBoxes
 			$sql.= " ORDER BY label";
 			$sql.= $db->plimit($max, 0);
 
-			dol_syslog("Box_comptes::loadBox sql=".$sql);
+			dol_syslog(get_class($this)."::loadBox sql=".$sql);
 			$result = $db->query($sql);
 			if ($result)
 			{
@@ -122,7 +122,7 @@ class box_comptes extends ModeleBoxes
 					);
 
 					$this->info_box_contents[$i][3] = array('td' => 'align="right"',
-					'text' => price($solde).' '.$langs->trans("Currency".$objp->currency_code)
+					'text' => price($solde, 1, $langs, 0, -1, 0, $objp->currency_code)
 					);
 
 					$listofcurrencies[$objp->currency_code]=1;
@@ -141,11 +141,13 @@ class box_comptes extends ModeleBoxes
 					$this->info_box_contents[$i][2] = array('td' => 'align="right" class="liste_total"',
 					'text' => '&nbsp;'
 					);
-					$totalamount=price($solde_total).' '.$langs->trans("Currency".$conf->currency);
+					$totalamount=price($solde_total,0,$langs,0,0,-1,$conf->currency);
 					$this->info_box_contents[$i][3] = array('td' => 'align="right" class="liste_total"',
 					'text' => $totalamount
 					);
 				}
+
+				$db->free($result);
 			}
 			else {
 				$this->info_box_contents[0][0] = array(	'td' => 'align="left"',

@@ -1,13 +1,4 @@
-/*
- * Language code: tr_TR
- * Manually generated
- * Generation date 2012-06-10 22:05:26
- */
-
-
-// START - Lines generated manually (2012-06-10 22:05:26).
-# Dolibarr language file - TR - shop 
-// Reference language: en_US
+# Dolibarr language file - tr_TR - shop
 CHARSET=UTF-8
 Shop=Mağaza
 ShopWeb=Web Mağazası

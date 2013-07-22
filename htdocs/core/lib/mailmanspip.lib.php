@@ -32,12 +32,12 @@ function mailmanspip_admin_prepare_head()
 
     return array(
         array(
-            DOL_URL_ROOT.'/adherents/admin/mailman.php',
+            DOL_URL_ROOT.'/admin/mailman.php',
             $langs->trans('Mailman'),
             'mailman'
         ),
         array(
-            DOL_URL_ROOT.'/adherents/admin/spip.php',
+            DOL_URL_ROOT.'/admin/spip.php',
             $langs->trans('SPIP'),
             'spip'
         )

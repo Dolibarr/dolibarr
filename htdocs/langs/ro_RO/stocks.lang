@@ -1,21 +1,16 @@
-/*
- * Language code: ro_RO
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-01-19 21:32:52
- */
-
-
-// Date 2009-01-19 21:32:52
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
+# Dolibarr language file - Source file is en_US - stocks
 CHARSET=UTF-8
 WarehouseCard=Depozit carte
 Warehouse=Warehouse
+# Warehouses=Warehouses
 NewWarehouse=Nou depozit / zona de stoc
+WarehouseEdit=Modificare depozit
 MenuNewWarehouse=Nou depozit
 WarehouseOpened=Warehouse deschis
 WarehouseClosed=Depozit închis
 WarehouseSource=Sursa de depozit
+# WarehouseSourceNotDefined=No warehouse defined,
+# AddOne=Add one
 WarehouseTarget=Target antrepozit
 ValidateSending=Ştergere trimiterea
 CancelSending=Anulare expediere
@@ -41,10 +36,13 @@ StockCorrection=Corect stoc
 StockMovement=Transfer
 StockMovements=Transferuri de stoc
 NumberOfUnit=Numărul de unităţi
+# UnitPurchaseValue=Unit purchase price
 TotalStock=Total în stoc
 StockTooLow=Stoc prea mică
+# StockLowerThanLimit=Stock lower than alert limit
 EnhancedValue=Valoare
 PMPValue=Valoare
+PMPValueShort=WAP
 EnhancedValueOfWarehouses=Depozite valoare
 UserWarehouseAutoCreate=Creaţi un stoc în mod automat atunci când se creează un utilizator
 QtyDispatched=Cantitate expediate
@@ -53,8 +51,15 @@ RuleForStockManagementDecrease=Norma de management al stocurilor scădere
 RuleForStockManagementIncrease=Norma de management al stocurilor creştere
 DeStockOnBill=Reducerea real stocurile de pe facturi / note de credit
 DeStockOnValidateOrder=Reducerea real stocurile de pe ordinele de note
+DeStockOnShipment=Scăderea stocurilor reale privind transferurile de validare
 ReStockOnBill=Creşterea reală stocurile de pe facturi / note de credit
 ReStockOnValidateOrder=Creşterea reală stocurile de pe ordinele de note
+ReStockOnDispatchOrder=Creşterea stocurilor real pe manualul de expediere în depozite, după ce furnizorul pentru primirea
+# ReStockOnDeleteInvoice=Increase real stocks on invoice deletion
+OrderStatusNotReadyToDispatch=Ordinul nu a fost încă sau nu mai mult de un statut care permite trimiterea produselor în depozite stoc.
+StockDiffPhysicTeoric=Motivul pentru stocul diferenţa fizice şi teoretice
+NoPredefinedProductToDispatch=Nu exista produse predefinite pentru acest obiect. Deci, nu de expediere în stoc este necesară.
+DispatchVerb=Expediere
 StockLimitShort=Limita de
 StockLimit=Stoc limită pentru alerte
 PhysicalStock=Stocul fizic
@@ -69,42 +74,18 @@ IdWarehouse=Id-ul antrepozit
 DescWareHouse=Descriere antrepozit
 LieuWareHouse=Localizare depozit
 WarehousesAndProducts=Depozite şi produse
-// Date 2009-01-19 21:32:52
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 21:12:07).
-// Reference language: en_US
-PMPValueShort=WAP
 AverageUnitPricePMPShort=Preţul mediu de intrare
 AverageUnitPricePMP=Preţul mediu de intrare
+SellPriceMin=Preţul de vânzare unitatii
+EstimatedStockValueSellShort=Valoarea de a vinde
+EstimatedStockValueSell=Valoarea de a vinde
 EstimatedStockValueShort=Valoare estimată de stoc
 EstimatedStockValue=Valoare estimată de stoc
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:12:07).
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:36:47).
-// Reference language: en_US
-WarehouseEdit=Modificare depozit
-DeStockOnShipment=Scăderea stocurilor reale privind transferurile de validare
-ReStockOnDispatchOrder=Creşterea stocurilor real pe manualul de expediere în depozite, după ce furnizorul pentru primirea
-OrderStatusNotReadyToDispatch=Ordinul nu a fost încă sau nu mai mult de un statut care permite trimiterea produselor în depozite stoc.
-StockDiffPhysicTeoric=Motivul pentru stocul diferenţa fizice şi teoretice
-NoPredefinedProductToDispatch=Nu exista produse predefinite pentru acest obiect. Deci, nu de expediere în stoc este necesară.
-DispatchVerb=Expediere
 DeleteAWarehouse=Ştergeţi-un antrepozit
 ConfirmDeleteWarehouse=Sunteţi sigur că doriţi să ştergeţi <b>%s</b> depozit?
 PersonalStock=%s personale stoc
 ThisWarehouseIsPersonalStock=Acest depozit reprezinta stocul personale ale %s %s
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:36:57).
-
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 17:23:15).
-// Reference language: en_US -> ro_RO
-SellPriceMin=Preţul de vânzare unitatii
-EstimatedStockValueSellShort=Valoarea de a vinde
-EstimatedStockValueSell=Valoarea de a vinde
 SelectWarehouseForStockDecrease=Alege depozit utilizat pentru scăderea stocului
 SelectWarehouseForStockIncrease=Alege depozit utilizat pentru creşterea stocului
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:24:31).
+# NoStockAction=No stock action
+# LastWaitingSupplierOrders=Orders waiting for receptions

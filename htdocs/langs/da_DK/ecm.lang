@@ -1,15 +1,4 @@
-/*
- * Lince Translation File
- * Filename: 
- * Language code: da_DA
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-01-19 21:26:39
- */
-
-
-// Date 2009-01-19 21:26:39
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
+# Dolibarr language file - Source file is en_US - ecm
 CHARSET=UTF-8
 MenuECM=Dokumenter
 DocsMine=Mine dokumenter
@@ -31,7 +20,6 @@ ECMSections=Abonnentfortegnelser
 ECMRoot=Rot
 ECMNewSection=Ny mappe
 ECMAddSection=Tilføj en håndbog bibliotek
-ECMNewSection=Ny håndbog bibliotek
 ECMNewDocument=Nyt dokument
 ECMCreationDate=Lavet dato
 ECMNbOfFilesInDir=Antallet af filer i mappen
@@ -48,12 +36,14 @@ ECMSearchByEntity=Søg på objektet
 ECMSectionOfDocuments=Abonnentfortegnelser af dokumenter
 ECMTypeManual=Manual
 ECMTypeAuto=Automatisk
+# ECMDocsBySocialContributions=Documents linked to social contributions
 ECMDocsByThirdParties=Dokumenter knyttet til tredjemand
 ECMDocsByProposals=Dokumenter knyttet til forslag
 ECMDocsByOrders=Dokumenter knyttet til kundernes ordrer
 ECMDocsByContracts=Dokumenter i forbindelse med kontrakter
 ECMDocsByInvoices=Dokumenter knyttet til kunder fakturaer
 ECMDocsByProducts=Dokumenter i tilknytning til produkter
+# ECMDocsByProjects=Documents linked to projects
 ECMNoDirectoryYet=Nr. bibliotek skabt
 ShowECMSection=Vis mappe
 DeleteSection=Fjern mappe
@@ -62,5 +52,5 @@ ECMDirectoryForFiles=Relativ mappe for filer
 CannotRemoveDirectoryContainsFiles=Fjernes ikke muligt, fordi den indeholder nogle filer
 ECMFileManager=Filhåndtering
 ECMSelectASection=Vælg en mappe på venstre-træ ...
-// Date 2009-01-19 21:26:39
-// STOP - Lines generated via parser
+# DirNotSynchronizedSyncFirst=This directory seems to be created or modified outside ECM module. You must click on "Refresh" button first to synchronize disk and database to get content of this directory.
+

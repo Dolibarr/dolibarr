@@ -1,12 +1,4 @@
-/*
- * Language code: sv_SV
- * Automatic generated via autotranslator.php tool
- * Generation date 2010-08-27 08:47:44
- */
-
-
-// START - Lines generated via autotranslator.php tool (2010-08-27 08:47:44).
-// Reference language: en_US
+# Dolibarr language file - Source file is en_US - categories
 CHARSET=UTF-8
 Category=Kategori
 Categories=Kategorier
@@ -64,6 +56,7 @@ CompanyHasNoCategory=Detta företag är inte på något kategorier
 MemberHasNoCategory=Denna medlem är inte på något kategorier
 ClassifyInCategory=Klassificera i kategorin
 NoneCategory=Ingen
+# NotCategorized=Without category
 CategoryExistsAtSameLevel=Denna kategori finns redan med denna ref
 ReturnInProduct=Tillbaka till produkt / tjänst kort
 ReturnInSupplier=Tillbaka till leverantör kort
@@ -99,4 +92,11 @@ CatSupList=Lista över leverantör kategorier
 CatCusList=Förteckning över kund / utsikterna kategorier
 CatProdList=Förteckning över produkter kategorier
 CatMemberList=Förteckning över medlemmar kategorier
-// STOP - Lines generated via autotranslator.php tool (2010-08-27 08:48:54).
+# CatSupLinks=Links between suppliers and categories
+# CatCusLinks=Links between customers/prospects and categories
+# CatProdLinks=Links between products/services and categories
+# CatMemberLinks=Links between members and categories
+# CatProdLinks=Links between products/services and categories
+# CatCusLinks=Links between customers/prospects and categories
+# CatSupLinks=Links between suppliers and categories
+# DeleteFromCat=Remove from category

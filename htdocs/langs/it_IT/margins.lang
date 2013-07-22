@@ -1,0 +1,54 @@
+# Dolibarr language file - en_US - marges
+CHARSET=UTF-8
+
+Module59000Name=Margini
+Module59000Desc=Gestione dei margini di profitto
+Margin=Margine
+Margins=Margini
+TotalMargin=Margine totale
+MarginOnProducts=Margine sui prodotti
+MarginOnServices=Margine sui servizi
+# MarginRate=Margin rate
+# MarkRate=Mark rate
+# DisplayMarginRates=Display margin rates
+# DisplayMarkRates=Display mark rates
+# InputPrice=Input price
+
+margin=Gestione margini di profitto
+margesSetup=Configurazione gestione margini di profitto
+
+MarginDetails=Specifiche del margine
+
+ProductMargins=Margini per prodotto
+CustomerMargins=Margini per cliente
+AgentMargins=Margini per agente
+
+ProductService=Prodotto o servizio
+AllProducts=Tutti i prodotti e servizi
+ChooseProduct/Service=Scegli prodotto o servizio
+CommercialAgent=Agente commerciale
+
+StartDate=Data di avvio
+EndDate=Data di fine
+Launch=Avvio
+
+# ForceBuyingPriceIfNull=Force buying price if null
+# ForceBuyingPriceIfNullDetails=if "ON", margin will be zero on line (buying price = selling price), otherwise ("OFF"), marge will be equal to selling price (buying price = 0)
+# MARGIN_METHODE_FOR_DISCOUNT=Margin method for global discounts
+UseDiscountAsProduct=Come prodotto
+UseDiscountAsService=Come servizio
+UseDiscountOnTotal=Sul subtotale
+MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Definisce se, ai fini del calcolo del margine, uno sconto globale debba essere trattato come un prodotto, un servizio o usato solo sul subtotale.
+
+MARGIN_TYPE=Tipo di margine
+MargeBrute=Margine lordo
+MargeNette=Margine netto
+MARGIN_TYPE_DETAILS=Margine lordo = Prezzo di vendita - Prezzo di acquisto<br/>Margine netto = Prezzo di vendita - Prezzo di costo
+
+CostPrice=Prezzo di costo
+BuyingCost=Prezzo di costo
+# UnitCharges=Unit charges
+# Charges=Charges
+
+AgentContactType=Tipo di contatto per i mandati di vendita
+AgentContactTypeDetails=Definisci che tipo di contatto (connesso alle fatture) associare agli agenti commerciali

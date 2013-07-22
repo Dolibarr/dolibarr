@@ -1,13 +1,4 @@
-/*
- * Language code: ro_RO
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-01-19 21:32:52
- */
-
-
-// Date 2009-01-19 21:32:52
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
+# Dolibarr language file - Source file is en_US - interventions
 CHARSET=UTF-8
 Intervention=De intervenţie
 Interventions=Intervenţiile
@@ -16,6 +7,7 @@ NewIntervention=New intervenţie
 AddIntervention=Adauga intervenţie
 ListOfInterventions=Lista de intervenţii
 EditIntervention=Editer intervenţie
+ActionsOnFicheInter=Acţiuni privind intervenţia
 LastInterventions=Ultima %s intervenţii
 AllInterventions=Toate intervenţiile
 CreateDraftIntervention=Creaţi proiect
@@ -23,6 +15,7 @@ CustomerDoesNotHavePrefix=Clientul nu are un prefix
 InterventionContact=Intervenţia de contact
 DeleteIntervention=Ştergere intervenţie
 ValidateIntervention=Validate intervenţie
+ModifyIntervention=Modificare de intervenţie
 DeleteInterventionLine=Ştergere intervenţie linie
 ConfirmDeleteIntervention=Sunteţi sigur că doriţi să ştergeţi această intervenţie?
 ConfirmValidateIntervention=Sunteţi sigur că doriţi să valideze această intervenţie?
@@ -31,34 +24,20 @@ ConfirmDeleteInterventionLine=Sunteţi sigur că doriţi să ştergeţi această
 NameAndSignatureOfInternalContact=Numele şi semnătura intervenit:
 NameAndSignatureOfExternalContact=Numele şi semnătura de client:
 DocumentModelStandard=Document standard model pentru intervenţii
+# InterventionCardsAndInterventionLines=Interventions and lines of interventions
+ClassifyBilled=Clasifice &quot;facturate&quot;
+StatusInterInvoiced=Facturat
+RelatedInterventions=Intervenţii similare
+ShowIntervention=Arată de intervenţie
+##### Types de contacts #####
 TypeContact_fichinter_internal_INTERREPFOLL=Reprezentant următoarele-up intervenţie
 TypeContact_fichinter_internal_INTERVENING=Interveniente
 TypeContact_fichinter_external_BILLING=Factură client de contact
 TypeContact_fichinter_external_CUSTOMER=După-up client de contact
+# Modele numérotation
 ArcticNumRefModelDesc1=Generic numărul model
 ArcticNumRefModelError=Nu a reuşit să activeze
 PacificNumRefModelDesc1=Întoarceţi-vă cu NUMERO format %syymm-NNNN în cazul în care este aa ani, mm este luna şi NNNN este o secvenţă fără nici o pauză şi a reveni la 0
 PacificNumRefModelError=O carte de intervenţie începând cu $ syymm există deja şi nu este compatibilă cu acest model de succesiune. Eliminaţi-o sau redenumiţi-o pentru a activa acest modul.
-// Date 2009-01-19 21:32:52
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 21:12:07).
-// Reference language: en_US
-ModifyIntervention=Modificare de intervenţie
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:12:07).
-
-
-// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
-// Reference language: en_US -> ro_RO
-ActionsOnFicheInter=Acţiuni privind intervenţia
-ClassifyBilled=Clasifice &quot;facturate&quot;
-// STOP - Lines generated via autotranslator.php tool (2011-10-10 05:28:00).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 17:23:15).
-// Reference language: en_US -> ro_RO
-StatusInterInvoiced=Facturat
-RelatedInterventions=Intervenţii similare
-ShowIntervention=Arată de intervenţie
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:23:21).
+# PrintProductsOnFichinter=Print products on intervention card
+# PrintProductsOnFichinterDetails=forinterventions generated from orders

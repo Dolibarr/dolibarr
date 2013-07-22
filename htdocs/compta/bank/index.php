@@ -59,7 +59,7 @@ $accounts = array();
 
 $sql  = "SELECT rowid, courant, rappro";
 $sql.= " FROM ".MAIN_DB_PREFIX."bank_account";
-$sql.= " WHERE entity = ".$conf->entity;
+$sql.= " WHERE entity IN (".getEntity('bank_account', 1).")";
 if ($statut != 'all') $sql.= " AND clos = 0";
 $sql.= $db->order('label', 'ASC');
 

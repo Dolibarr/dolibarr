@@ -1,4 +1,4 @@
-# Dolibarr language file - hu_HU - sendings
+# Dolibarr language file - Source file is en_US - sendings
 CHARSET=UTF-8
 RefSending=Szállítási Ref.
 Sending=Szállítás
@@ -31,9 +31,11 @@ SendingsToValidate=Hitelesítésre váró szállítások
 StatusSendingCanceled=Megszakítva
 StatusSendingDraft=Piszkozat
 StatusSendingValidated=Hitelesítve (már szállítva)
+# StatusSendingProcessed=Processed
 StatusSendingCanceledShort=Megszakítva
 StatusSendingDraftShort=Piszkozat
 StatusSendingValidatedShort=Hitelesítve
+# StatusSendingProcessedShort=Processed
 SendingSheet=Küldési adatlap
 Carriers=Fuvarozók
 Carrier=Fuvarozó
@@ -50,6 +52,14 @@ WarningNoQtyLeftToSend=Figyelem, nincs szállításra váró termék.
 StatsOnShipmentsOnlyValidated=A statisztika csak a hitelesített szállítmányokat veszi figyelembe
 DateDeliveryPlanned=Tervezett szállítási dátum
 DateReceived=Átvétel dátuma
+SendShippingByEMail=Küldés e-mailben szállítás
+SendShippingRef=Küldje szállítás %s
+ActionsOnShipping=Események a szállítás
+LinkToTrackYourPackage=Link követni a csomagot
+ShipmentCreationIsDoneFromOrder=Ebben a pillanatban, létrejön egy új szállítmány kerül sor a sorrendben kártyát.
+# RelatedShippings=Related shippings
+# ShipmentLine=Shipment line
+# CarrierList=List of transporters
 
 # Sending methods
 SendingMethodCATCH=Ügyfél fogád
@@ -60,13 +70,4 @@ SendingMethodCOLSUI=Futár szolgálat
 DocumentModelSirocco=Egyszerű dokumentum modell bizonylatokhoz
 DocumentModelTyphon=Teljesebb dokumentum modell bizonylatokhoz (logo...)
 
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 16:13:31).
-// Reference language: en_US -> hu_HU
-SendShippingByEMail=Küldés e-mailben szállítás
-SendShippingRef=Küldje szállítás %s
-ActionsOnShipping=Események a szállítás
-LinkToTrackYourPackage=Link követni a csomagot
-ShipmentCreationIsDoneFromOrder=Ebben a pillanatban, létrejön egy új szállítmány kerül sor a sorrendben kártyát.
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=Állandó EXPEDITION_ADDON_NUMBER nincs definiálva
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:25:34).

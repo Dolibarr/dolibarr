@@ -1,9 +1,9 @@
-# Dolibarr language file - es_ES - boxes 
+# Dolibarr language file - es_ES - boxes
 CHARSET=UTF-8
 BoxLastRssInfos=Hilos de información RSS
 BoxLastProducts=Los %s últimos productos/servicios
-BoxLastProductsInContract=Los %s últimos productos/servicios contratados
 BoxProductsAlertStock=Productos en alerta de stock
+BoxLastProductsInContract=Los %s últimos productos/servicios contratados
 BoxLastSupplierBills=Últimas facturas de proveedores
 BoxLastCustomerBills=Últimas facturas a clientes
 BoxOldestUnpaidCustomerBills=Facturas a clientes más antiguas pendientes de pago
@@ -56,7 +56,6 @@ BoxTitleLastActionsToDo=Los %s últimos eventos a realizar
 BoxTitleLastContracts=Los %s últimos contratos
 BoxTitleLastModifiedDonations=Las %s últimas donaciones modificadas
 BoxTitleLastModifiedExpenses=Los %s últimos honorarios modificados
-BoxTitleLatestSupplierOrders=Los %s últimos pedidos a proveedores
 BoxGlobalActivity=Actividad global
 FailedToRefreshDataInfoNotUpToDate=Error en el refresco del flujo RSS. Fecha del último refresco: %s
 LastRefreshDate=Fecha última actualización
@@ -77,6 +76,7 @@ NoRecordedProspects=Sin clientes potenciales registrados
 NoContractedProducts=Sin productos/servicios contratados
 NoRecordedContracts=Sin contratos registrados
 BoxLatestSupplierOrders=Últimos pedidos a proveedores
+BoxTitleLatestSupplierOrders=Los %s últimos pedidos a proveedores
 NoSupplierOrder=Sin pedidos a proveedores
 BoxInvoicesPerMonth=Facturas por mes
 BoxOrdersPerMonth=Pedidos por mes
