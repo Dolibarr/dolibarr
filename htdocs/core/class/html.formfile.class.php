@@ -528,9 +528,8 @@ class FormFile
                         $out.= ($param?'&'.$param:'');
                         $out.= '">'.img_printer().'</a></td>';
                     }
+                	$out.= '</tr>';
 				}
-
-                $out.= '</tr>';
 
                 $this->numoffiles++;
             }
