@@ -86,7 +86,7 @@ if ($socid > 0) {
 	{
 		print '<tr><td width="20%">'.$langs->trans('ThirdPartyName').'</td>';
 		print '<td colspan="4">';
-		$form->form_thirdparty($_SERVER['PHP_SELF'].'?socid='.$socid,$socid,'socid','client=1',1,0,1);
+		$form->form_thirdparty($_SERVER['PHP_SELF'].'?socid='.$socid,$socid,'socid','client=1 OR client=3',1,0,1);
 		print '</td></tr>';
 
 		$client = true;
@@ -97,7 +97,7 @@ if ($socid > 0) {
 else {
 	print '<tr><td width="20%">'.$langs->trans('ThirdPartyName').'</td>';
 	print '<td colspan="4">';
-	$form->form_thirdparty($_SERVER['PHP_SELF'].'?socid='.$socid,null,'socid','client=1',1,0,1);
+	$form->form_thirdparty($_SERVER['PHP_SELF'],null,'socid','client=1 OR client=3',1,0,1);
 	print '</td></tr>';
 }
 
@@ -176,9 +176,9 @@ $sql .= " AND d.buy_price_ht IS NOT NULL";
 if (isset($conf->global->ForceBuyingPriceIfNull) && $conf->global->ForceBuyingPriceIfNull == 1)
 	$sql .= " AND d.buy_price_ht <> 0";
 if ($client)
-  $sql.= " GROUP BY f.rowid";
+  $sql.= " GROUP BY f.rowid, s.rowid, s.nom, s.code_client, s.client, f.facnumber, f.total, f.datef, f.paye, f.fk_statut, f.type ";
 else
-  $sql.= " GROUP BY s.rowid, s.nom, s.code_client, s.client, f.facnumber, f.total, f.datef, f.paye, f.fk_statut, f.rowid ";
+  $sql.= " GROUP BY s.rowid, s.nom, s.code_client, s.client, f.facnumber, f.total, f.datef, f.paye, f.fk_statut, f.rowid, f.type ";
 $sql.= " ORDER BY $sortfield $sortorder ";
 // TODO: calculate total to display then restore pagination
 //$sql.= $db->plimit($conf->liste_limit +1, $offset);
