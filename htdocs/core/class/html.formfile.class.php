@@ -546,22 +546,25 @@ class FormFile
 						}
                         $out.='</td>';
                     }
+
                     if (is_object($hookmanager))
                     {
             			$parameters=array('socid'=>(isset($GLOBALS['socid'])?$GLOBALS['socid']:''),'id'=>(isset($GLOBALS['id'])?$GLOBALS['id']:''),'modulepart'=>$modulepart,'relativepath'=>$relativepath);
                     	$res = $hookmanager->executeHooks('formBuilddocLineOptions',$parameters,$file);
-                        if(!$res) {
-                            $out .= $hookmanager->resPrint;
+                        if (empty($res))
+                        {
+                            $out .= $hookmanager->resPrint;		// Complete line
+                            $out.= '</tr>';
                         }
-                    }
-                	$out.= '</tr>';
+                        else $out = $hookmanager->resPrint;		// Replace line
+              		}
 				}
 
-			 	if (count($file_list) == 0)  
+			 	if (count($file_list) == 0)
 	            {
     	        	$out.='<tr><td colspan="3">'.$langs->trans("None").'</td></tr>';
         	    }
-				
+
                 $this->numoffiles++;
             }
         }
