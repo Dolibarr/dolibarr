@@ -919,7 +919,7 @@ a.help:link, a.help:visited, a.help:hover, a.help:active { font-size:<?php print
 
 div.tabs {
 	margin: 0px 0px 0px 6px;
-	padding: 0px 6px 1px 0px;
+	padding: 0px 6px 0px 0px;
 	clear:both;
 	height:100%;
 }
@@ -957,7 +957,7 @@ a.tabTitle img {
 }
 
 a.tab {
-	padding: 5px 12px 2px;
+	padding: 5px 12px 3px;
 	margin: 0em 0.2em;
 	background-color:rgba(0,0,0,.2);
 	color:#666666;
@@ -1172,9 +1172,9 @@ table.noborder, div.noborder {
 	padding:0px;
 	margin:3px 0px 8px;
 	border-spacing:0px;
-	-moz-box-shadow:2px 4px 2px #cccccc;
-	-webkit-box-shadow:2px 4px 2px #cccccc;
-	box-shadow:2px 4px 2px #cccccc;
+	-moz-box-shadow: 2px 2px 2px #cccccc;
+	-webkit-box-shadow: 2px 2px 2px #cccccc;
+	box-shadow: 2px 2px 2px #cccccc;
 }
 
 table.noborder tr, div.noborder form {}
@@ -1299,9 +1299,9 @@ tr.impair table.nobordernopadding td, tr.pair table.nobordernopadding td { paddi
  */
 
 .boxtable {
-	-moz-box-shadow:2px 4px 2px #cccccc;
-	-webkit-box-shadow:2px 4px 2px #cccccc;
-	box-shadow:2px 4px 2px #cccccc;
+	-moz-box-shadow: 2px 2px 2px #cccccc;
+	-webkit-box-shadow: 2px 2px 2px #cccccc;
+	box-shadow: 2px 2px 2px #cccccc;
 	/*white-space:nowrap;*/
 }
 
@@ -1520,9 +1520,9 @@ table.dp {
 	background-color:#ffffff;
 	border:1px solid #bbbbbb;
 	border-spacing:0px;
-	-moz-box-shadow:2px 4px 2px #cccccc;
-	-webkit-box-shadow:2px 4px 2px #cccccc;
-	box-shadow:2px 4px 2px #cccccc;
+	-moz-box-shadow: 2px 2px 2px #cccccc;
+	-webkit-box-shadow: 2px 2px 2px #cccccc;
+	box-shadow: 2px 2px 2px #cccccc;
 }
 
 .dp td, .tpHour td, .tpMinute td {

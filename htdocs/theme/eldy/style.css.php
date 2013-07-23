@@ -116,7 +116,7 @@ $fontsizesmaller=empty($conf->dol_optimize_smallscreen)?'11':'14';
 // Eldy colors
 if (empty($conf->global->THEME_ELDY_ENABLE_PERSONALIZED))
 {
-	$conf->global->THEME_ELDY_TOPMENU_BACK1='200,216,246';    // topmenu
+	$conf->global->THEME_ELDY_TOPMENU_BACK1=($conf->browser->name == 'ie' && round($conf->browser->version,2) < 10)?'230,232,232':'200,216,246';    // topmenu
     $conf->global->THEME_ELDY_TOPMENU_BACK2='190,206,236';
 	$conf->global->THEME_ELDY_VERMENU_BACK1='255,255,255';    // vmenu
     $conf->global->THEME_ELDY_VERMENU_BACK1b='230,232,232';   // vmenu (not menu)
@@ -1353,7 +1353,7 @@ div.tabBar {
 	background-image: -ms-linear-gradient(bottom, rgb(<?php echo $colorbacktabcard1; ?>) 25%, rgb(<?php echo $colorbacktabcard2; ?>) 100%);
 	background-image: linear-gradient(bottom, rgb(<?php echo $colorbacktabcard1; ?>) 25%, rgb(<?php echo $colorbacktabcard2; ?>) 100%);
 <?php } else { ?>
-	background: #dee7ec url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/tab_background.png',1); ?>) repeat-x;
+	background: rgb(<?php echo $colorbacktabcard1; ?>) repeat-x;
 <?php } ?>
 <?php if (empty($dol_optimize_smallscreen)) { ?>
     -moz-box-shadow: 4px 4px 4px #DDD;
@@ -1411,7 +1411,7 @@ a.tab:link, a.tab:visited, a.tab:hover, a.tab#active {
     background-image: -ms-linear-gradient(bottom, rgb(<?php echo $colorbacktab1; ?>) 35%, rgb(<?php echo $colorbacktab2; ?>) 100%);
     background-image: linear-gradient(bottom, rgb(<?php echo $colorbacktab1; ?>) 35%, rgb(<?php echo $colorbacktab2; ?>) 100%);
 <?php } else { ?>
-	background: #dee7ec;
+	background: #ffffff;
 <?php } ?>
 }
 
@@ -1420,7 +1420,7 @@ a.tab#active {
     border-bottom: 1px solid rgb(<?php echo $colorbacktabactive; ?>) !important;
 	background-color: rgb(<?php echo $colorbacktabactive; ?>) !important;
 <?php } else { ?>
-	background: #ffffff;
+	background: rgb(<?php echo $colorbacktabcard1; ?>);
 <?php } ?>
 	background-image: none !important;
 }
