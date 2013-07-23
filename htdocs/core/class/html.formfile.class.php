@@ -554,10 +554,14 @@ class FormFile
                             $out .= $hookmanager->resPrint;
                         }
                     }
+                	$out.= '</tr>';
 				}
 
-                $out.= '</tr>';
-
+			 	if (count($file_list) == 0)  
+	            {
+    	        	$out.='<tr><td colspan="3">'.$langs->trans("None").'</td></tr>';
+        	    }
+				
                 $this->numoffiles++;
             }
         }

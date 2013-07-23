@@ -536,7 +536,9 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
 
     print "\n".'<table class="noborder" width="100%">'."\n";
 
-    print '<tr class="liste_titre"><td>'.$langs->trans("Name").'</td>';
+    $colspan=6;
+    print '<tr class="liste_titre">';
+    print '<td>'.$langs->trans("Name").'</td>';
     print '<td>'.$langs->trans("Poste").'</td>';
     print '<td>'.$langs->trans("PhonePro").'</td>';
     print '<td>'.$langs->trans("PhoneMobile").'</td>';
@@ -545,6 +547,7 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
     print "<td>&nbsp;</td>";
     if (! empty($conf->agenda->enabled) && $user->rights->agenda->myactions->create)
     {
+    	$colspan++;
         print '<td>&nbsp;</td>';
     }
     print "</tr>";
@@ -622,9 +625,9 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
     }
     else
     {
-        //print "<tr ".$bc[$var].">";
-        //print '<td>'.$langs->trans("NoContactsYetDefined").'</td>';
-        //print "</tr>\n";
+        print "<tr ".$bc[$var].">";
+        print '<td colspan="'.$colspan.'">'.$langs->trans("None").'</td>';
+        print "</tr>\n";
     }
     print "\n</table>\n";
 
