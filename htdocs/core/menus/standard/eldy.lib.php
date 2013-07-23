@@ -377,7 +377,7 @@ function print_text_menu_entry($text, $showmode, $url, $id, $idsel, $classname, 
 	}
 	if ($showmode == 2)
 	{
-		print '<div class="'.$id.' '.$idsel.'"><span class="'.$id.'" id="mainmenuspan_'.$idsel.'"></span></div>';
+		print '<div class="'.$id.' '.$idsel.' tmenudisabled"><span class="'.$id.'" id="mainmenuspan_'.$idsel.'"></span></div>';
 		print '<a class="tmenudisabled" id="mainmenua_'.$idsel.'" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">';
 		print '<span class="mainmenuaspan">';
 		print $text;
