@@ -192,7 +192,7 @@ if ($id > 0)
 
 		// Affiche formulaire upload
 		$formfile=new FormFile($db);
-		$formfile->form_attach_new_file(DOL_URL_ROOT.'/adherents/document.php?id='.$member->id,'',0,0,$user->rights->adherent->creer,50,$object);
+		$formfile->form_attach_new_file(DOL_URL_ROOT.'/adherents/document.php?id='.$member->id,'',0,0,$user->rights->adherent->creer,50,$member;
 
 
 		// List of document
