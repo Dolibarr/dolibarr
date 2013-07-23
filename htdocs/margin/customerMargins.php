@@ -86,7 +86,7 @@ if ($socid > 0) {
 	{
 		print '<tr><td width="20%">'.$langs->trans('ThirdPartyName').'</td>';
 		print '<td colspan="4">';
-		$form->form_thirdparty($_SERVER['PHP_SELF'].'?socid='.$socid,$socid,'socid','client=1',1,0,1);
+		$form->form_thirdparty($_SERVER['PHP_SELF'].'?socid='.$socid,$socid,'socid','client=1 OR client=3',1,0,1);
 		print '</td></tr>';
 
 		$client = true;
@@ -97,7 +97,7 @@ if ($socid > 0) {
 else {
 	print '<tr><td width="20%">'.$langs->trans('ThirdPartyName').'</td>';
 	print '<td colspan="4">';
-	$form->form_thirdparty($_SERVER['PHP_SELF'].'?socid='.$socid,null,'socid','client=1',1,0,1);
+	$form->form_thirdparty($_SERVER['PHP_SELF'],null,'socid','client=1 OR client=3',1,0,1);
 	print '</td></tr>';
 }
 
