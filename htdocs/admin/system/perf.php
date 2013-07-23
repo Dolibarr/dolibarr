@@ -56,10 +56,10 @@ print '<br>';
 print '<strong>'.$langs->trans("XDebug").'</strong>: ';
 $test=!function_exists('xdebug_is_enabled');
 if ($test) print img_picto('','tick.png').' '.$langs->trans("NotInstalled");
-else 
+else
 {
 	print img_picto('','warning').' '.$langs->trans("XDebugInstalled");
-	print $langs->trans("MoreInformation").' <a href="'.DOL_URL_ROOT.'/admin/xdebug.php'.'">XDebug admin page</a>';
+	print ' '.$langs->trans("MoreInformation").' <a href="'.DOL_URL_ROOT.'/admin/system/xdebug.php'.'">XDebug admin page</a>';
 }
 print '<br>';
 
@@ -67,12 +67,12 @@ print '<br>';
 print '<br>';
 print '<strong>'.$langs->trans("ApplicativeCache").'</strong>: ';
 $test=!empty($conf->memcached->enabled);
-if ($test) 
+if ($test)
 {
 	if (!empty($conf->global->MEMCACHED_SERVER))
 	{
 		print img_picto('','tick.png').' '.$langs->trans("MemcachedAvailableAndSetup");
-		print $langs->trans("MoreInformation").' <a href="'.dol_buildpath('/memcached/admin/memcached.php',1).'">Memcached module admin page</a>';
+		print ' '.$langs->trans("MoreInformation").' <a href="'.dol_buildpath('/memcached/admin/memcached.php',1).'">Memcached module admin page</a>';
 	}
 	else
 	{
@@ -86,12 +86,12 @@ print '</br>';
 print '<br>';
 print '<strong>'.$langs->trans("OPCodeCache").'</strong>: ';
 $test1=function_exists('xcache_info');
-if ($test1) 
+if ($test1)
 {
 	print img_picto('','tick.png').' '.$langs->trans("XCacheInstalled");
-	print $langs->trans("MoreInformation").' <a href="'.DOL_URL_ROOT.'/admin/xcache.php'.'">Xcache admin page</a>';
+	print ' '.$langs->trans("MoreInformation").' <a href="'.DOL_URL_ROOT.'/admin/xcache.php'.'">Xcache admin page</a>';
 }
-else 
+else
 {
 	$test2=function_exists('eaccelerator_info');
 	if ($test2) print img_picto('','tick.png').' '.$langs->trans("EAcceleratorInstalled");
@@ -140,7 +140,7 @@ jQuery(document).ready(function() {
       	}
 	}
   })
-  
+
   var getcssurl;
   var cachecssstring;
   var compcssstring;
@@ -181,7 +181,7 @@ jQuery(document).ready(function() {
   })
 
   var getcssphpurl;
-  var cachecssphpstring;  
+  var cachecssphpstring;
   var compcssphpstring;
   getcssphpurl = $.ajax({
     type: "GET",
@@ -218,7 +218,7 @@ jQuery(document).ready(function() {
       	}
     }
   })
-  
+
   var getimgurl;
   var cacheimgstring;
   var compimgstring;
@@ -254,7 +254,7 @@ jQuery(document).ready(function() {
       	{
       		jQuery("#httpcompimgok").show();
       		jQuery("#httpcompimgko").hide();
-      	}      	
+      	}
 	 }
   })
 
@@ -293,7 +293,7 @@ jQuery(document).ready(function() {
       	{
       		jQuery("#httpcompjsok").show();
       		jQuery("#httpcompjsko").hide();
-      	}      	
+      	}
     }
   })
 
@@ -332,7 +332,7 @@ jQuery(document).ready(function() {
       	{
       		jQuery("#httpcompjsphpok").show();
       		jQuery("#httpcompjsphpko").hide();
-      	}      	
+      	}
     }
   })
 
@@ -413,20 +413,22 @@ if ($resql)
 {
 	$limitforoptim=10000;
 	$num=$db->num_rows($resql);
+	$obj=$db->fetch_object($resql);
+	$nb=$obj->nb;
 	if ($nb > $limitforoptim)
 	{
 		if (empty($conf->global->PRODUCT_DONOTSEARCH_ANYWHERE))
 		{
-			print img_picto('','warning.png').' '.$langs->trans("YouHaveXProductUseSearchOptim",$num);
+			print img_picto('','warning.png').' '.$langs->trans("YouHaveXProductUseSearchOptim",$nb);
 		}
 		else
 		{
-			print img_picto('','tick.png').' '.$langs->trans("YouHaveXProductAndSearchOptimOn",$num);
+			print img_picto('','tick.png').' '.$langs->trans("YouHaveXProductAndSearchOptimOn",$nb);
 		}
 	}
-	else 
+	else
 	{
-		print img_picto('','tick.png').' '.$langs->trans("NbOfProductIsLowerThanNoPb",$limitforoptim);		
+		print img_picto('','tick.png').' '.$langs->trans("NbOfProductIsLowerThanNoPb",$nb);
 	}
 	print '<br>';
 	$db->free($resql);
@@ -437,7 +439,7 @@ print '<br>';
 print '<strong>'.$langs->trans("Browser").'</strong>:<br>';
 if (! in_array($conf->browser->name, array('chrome','opera','safari','firefox')))
 {
-	print img_picto('','warning.png').' '.$langs->trans("BrowserIsKO",$conf->browser->name); 
+	print img_picto('','warning.png').' '.$langs->trans("BrowserIsKO",$conf->browser->name);
 }
 else
 {
