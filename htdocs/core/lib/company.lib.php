@@ -86,7 +86,24 @@ function societe_prepare_head($object)
 
     if ($user->societe_id == 0)
     {
-        // Notes
+        if (! empty($conf->commande->enabled) || ! empty($conf->propal->enabled) || ! empty($conf->facture->enabled) || ! empty($conf->fournisseur->enabled))
+        {
+	        $head[$h][0] = DOL_URL_ROOT.'/societe/consumption.php?socid='.$object->id;
+	        $head[$h][1] = $langs->trans("Referers");
+	        $head[$h][2] = 'consumption';
+	        $h++;
+        }
+		
+        // Notifications
+        if (! empty($conf->notification->enabled))
+        {
+        	$head[$h][0] = DOL_URL_ROOT.'/societe/notify/fiche.php?socid='.$object->id;
+        	$head[$h][1] = $langs->trans("Notifications");
+        	$head[$h][2] = 'notify';
+        	$h++;
+        }
+		
+		// Notes
         $nbNote = 0;
         if(!empty($object->note_private)) $nbNote++;
 		if(!empty($object->note_public)) $nbNote++;
@@ -96,32 +113,15 @@ function societe_prepare_head($object)
         $head[$h][2] = 'note';
         $h++;
 
-        if (! empty($conf->commande->enabled) || ! empty($conf->propal->enabled) || ! empty($conf->facture->enabled) || ! empty($conf->fournisseur->enabled))
-        {
-	        $head[$h][0] = DOL_URL_ROOT.'/societe/consumption.php?socid='.$object->id;
-	        $head[$h][1] = $langs->trans("Referers");
-	        $head[$h][2] = 'consumption';
-	        $h++;
-        }
-
         // Attached files
         require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-        $upload_dir = $conf->societe->multidir_output[$object->entity] . "/" . $object->id;
+        $upload_dir = $conf->societe->dir_output . "/" . $object->id;
         $nbFiles = count(dol_dir_list($upload_dir));
         $head[$h][0] = DOL_URL_ROOT.'/societe/document.php?socid='.$object->id;
         $head[$h][1] = $langs->trans("Documents");
 		if($nbFiles > 0) $head[$h][1].= ' ('.$nbFiles.')';
         $head[$h][2] = 'document';
         $h++;
-
-        // Notifications
-        if (! empty($conf->notification->enabled))
-        {
-        	$head[$h][0] = DOL_URL_ROOT.'/societe/notify/fiche.php?socid='.$object->id;
-        	$head[$h][1] = $langs->trans("Notifications");
-        	$head[$h][2] = 'notify';
-        	$h++;
-        }
     }
 
     // Log
