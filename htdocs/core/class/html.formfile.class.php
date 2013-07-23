@@ -140,7 +140,7 @@ class FormFile
             if (empty($sectionid)) $out .= '<br>';
 
             $out .= "\n<!-- End form attach new file -->\n\n";
-            $parameters = array('socid'=>(isset($GLOBALS['socid'])?$GLOBALS['socid']:''),'id'=>(isset($GLOBALS['id'])?$GLOBALS['id']:''), 'url'=>$url);
+            $parameters = array('socid'=>(isset($GLOBALS['socid'])?$GLOBALS['socid']:''),'id'=>(isset($GLOBALS['id'])?$GLOBALS['id']:''), 'url'=>$url, 'perm'=>$perm);
             $res = $hookmanager->executeHooks('formattachOptions',$parameters,$object);
             if (empty($res))
             {
