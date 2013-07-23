@@ -89,6 +89,8 @@ FirstDayOfHoliday=Premier jour de congés
 LastDayOfHoliday=Dernier jour de congés
 HolidaysMonthlyUpdate=Mise à jour mensuelle
 ManualUpdate=Mise à jour manuelle
+Morning=Matin
+Afternoon=Après-midi
 
 ## Configuration du Module ##
 ConfCP=Configuration du module Congés
