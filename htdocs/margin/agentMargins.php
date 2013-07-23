@@ -158,7 +158,7 @@ $sql .= " AND d.buy_price_ht IS NOT NULL";
 if (isset($conf->global->ForceBuyingPriceIfNull) && $conf->global->ForceBuyingPriceIfNull == 1)
 	$sql .= " AND d.buy_price_ht <> 0";
 if ($agentid > 0)
-  $sql.= " GROUP BY s.rowid";
+  $sql.= " GROUP BY s.rowid, s.nom, s.code_client, s.client, u.rowid, u.login, u.lastname, u.firstname, f.type";
 else
   $sql.= " GROUP BY u.rowid, s.nom, s.rowid, s.code_client, s.client, u.login, u.lastname, u.firstname, f.type ";
 $sql.= " ORDER BY $sortfield $sortorder ";
