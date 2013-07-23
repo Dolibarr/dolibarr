@@ -166,10 +166,10 @@ class modBanque extends DolibarrModules
 		$this->export_label[$r]='Bordereaux remise Chq/Fact';
 		$this->export_permission[$r]=array(array("banque","export"));
 		$this->export_fields_array[$r]=array('ba.ref'=>'AccountRef','ba.label'=>'AccountLabel','b.datev'=>'DateValue','b.num_chq'=>'ChequeOrTransferNumber','b.amount'=>'Credit','b.num_releve'=>'AccountStatement','b.datec'=>"DateCreation",
-			"bu.url_id"=>"IdThirdParty","s.nom"=>"ThirdParty","bch.date_bordereau"=>"DateBordereau","bch.number"=>"NumeroBordereau","bch.amount"=>"TotalBordereau","bch.nbcheque"=>"NbCheque","f.facnumber"=>"NumFacture"
+			"bu.url_id"=>"IdThirdParty","s.nom"=>"ThirdParty","bch.date_bordereau"=>"DateBordereau","bch.number"=>"NumeroBordereau","bch.ref_ext"=>"RefExt","bch.amount"=>"TotalBordereau","bch.nbcheque"=>"NbCheque","f.facnumber"=>"NumFacture"
 			);
 		$this->export_TypeFields_array[$r]=array('ba.ref'=>'Text','ba.label'=>'Text','b.datev'=>'Date','b.num_chq'=>'Text','b.amount'=>'Number','b.num_releve'=>'Text','b.datec'=>"Date",
-			"bu.url_id"=>"Text","s.nom"=>"Text","bch.date_bordereau"=>"Date","bch.number"=>"Text","bch.amount"=>"Number","bch.nbcheque"=>"NumBer","f.facnumber"=>"Text"
+			"bu.url_id"=>"Text","s.nom"=>"Text","bch.date_bordereau"=>"Date","bch.number"=>"Number","bch.ref_ext"=>"Text","bch.amount"=>"Number","bch.nbcheque"=>"NumBer","f.facnumber"=>"Text"
 			);
 		$this->export_entities_array[$r]=array('ba.ref'=>'account','ba.label'=>'account','b.datev'=>'account','b.num_chq'=>'account','b.amount'=>'account','b.num_releve'=>'account','b.datec'=>"account",
 			"bu.url_id"=>"company","s.nom"=>"company","s.code_compta"=>"company","s.code_compta_fournisseur"=>"company","f.facnumber"=>"bill");
