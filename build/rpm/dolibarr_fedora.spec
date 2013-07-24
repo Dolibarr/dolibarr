@@ -297,28 +297,36 @@ echo "-------------------------------------------------------"
 echo
 
 
-#---- postun (after uninstall)
+#---- postun (after upgrade or uninstall)
 %postun
 
-# Define vars
-export apachelink="%{_sysconfdir}/httpd/conf.d/dolibarr.conf"
-
-# Remove apache link
-if [ -L $apachelink ] ;
+if [ "x$1" = "x0" ] ;
 then
-    echo "Delete apache config link for Dolibarr ($apachelink)"
-    %{__rm} -f $apachelink
-    status=purge
-fi
+	# Remove
+	echo "Removed package"
 
-# Restart web servers if required
-if [ "x$status" = "xpurge" ] ;
-then
-    # Restart web server
-    echo Restart web server
-    /sbin/service httpd restart
+	# Define vars
+	export apachelink="%{_sysconfdir}/httpd/conf.d/dolibarr.conf"
+	
+	# Remove apache link
+	if [ -L $apachelink ] ;
+	then
+	    echo "Delete apache config link for Dolibarr ($apachelink)"
+	    %{__rm} -f $apachelink
+	    status=purge
+	fi
+	
+	# Restart web servers if required
+	if [ "x$status" = "xpurge" ] ;
+	then
+	    # Restart web server
+	    echo Restart web server
+	    /sbin/service httpd restart
+	fi
+else
+	# Upgrade
+	echo "No remove ation done (this is an upgrade)"
 fi
-
 
 # version x.y.z-0.1.a for alpha, x.y.z-0.2.b for beta, x.y.z-0.3 for release
 %changelog
