@@ -997,18 +997,20 @@ function dol_add_file_process($upload_dir,$allowoverwrite=0,$donotupdatesession=
 
 	if (! empty($_FILES[$varfiles])) // For view $_FILES[$varfiles]['error']
 	{
+		dol_syslog('dol_add_file_process upload_dir='.$upload_dir.' allowoverwrite='.$allowoverwrite.' donotupdatesession='.$donotupdatesession, LOG_DEBUG);
 		if (dol_mkdir($upload_dir) >= 0)
 		{
 			$resupload = dol_move_uploaded_file($_FILES[$varfiles]['tmp_name'], $upload_dir . "/" . $_FILES[$varfiles]['name'], $allowoverwrite, 0, $_FILES[$varfiles]['error'], 0, $varfiles);
 			if (is_numeric($resupload) && $resupload > 0)
 			{
+				include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 				if (empty($donotupdatesession))
 				{
 					include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 					$formmail = new FormMail($db);
 					$formmail->add_attached_files($upload_dir . "/" . $_FILES[$varfiles]['name'],$_FILES[$varfiles]['name'],$_FILES[$varfiles]['type']);
 				}
-				else if (image_format_supported($upload_dir . "/" . $_FILES[$varfiles]['name']) == 1)
+				if (image_format_supported($upload_dir . "/" . $_FILES[$varfiles]['name']) == 1)
 				{
 					// Create small thumbs for image (Ratio is near 16/9)
 					// Used on logon for example
