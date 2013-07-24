@@ -19,8 +19,8 @@ with format RPM (for Redhat, OpenSuse, Mandriva, ...).
 #
 # On Fedora
 # rpm -i --test dolibarr-...rpm     To list dependencies of RPM   
-# yum install dolibarr-...rpm       To install package and dependencies   
-# yum erase dolibarr                To remove package
+# yum -v install dolibarr-...rpm       To install package and dependencies   
+# yum -v erase dolibarr                To remove package
 # chcon -R -h -t httpd_sys_script_rw_t /file					To add temporary context rw for httpd on /file    
 # semanage fcontext -a -t httpd_sys_script_rw_t "/dir/(.*)?" 	To add persistent context rw for httpd on /dir (this add file_contexts.local)
 # restorecon -R -v /file			Restore values into files (cancel chcon, validate semanage)    

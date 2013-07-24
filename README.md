@@ -78,15 +78,16 @@ See ChangeLog file found into package.
 
 - Customers, Prospects or Suppliers directory
 - Products and services catalog
-- Stock management
 - Bank accounts management
-- Orders management with PDF export
+- Orders management
 - Commercial proposals management
 - Contracts management
 - Invoices management
 - Payments management
 - Standing orders management
+- Stock management
 - Shipping management
+- PDF or ODT generation for invoice, proposals, orders...
 - Agenda with ical,vcal export for third tools integration
 - ECM (Electronic Content Management)
 - Foundations members management
@@ -100,10 +101,10 @@ See ChangeLog file found into package.
 - Bookmarks management
 - Donations management
 - Reporting
-- Data export/import tools
+- Data export/import
 - LDAP connectivity
 - Third parties or products categories 
-- ClickToDial phone numbers
+- ClickToDial integration
 - RSS integration
 
 ### Miscellaneous:
