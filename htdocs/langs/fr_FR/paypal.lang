@@ -21,4 +21,3 @@ YouAreCurrentlyInSandboxMode=Vous êtes actuellement dans le mode "sandbox"
 NewPaypalPaymentReceived=Nouveau paiement Paypal reçu
 NewPaypalPaymentFailed=Nouveau paiement Paypal tenté mais en échec
 PAYPAL_PAYONLINE_SENDEMAIL=EMail à prévenir en cas de paiement (succès ou non)
-
