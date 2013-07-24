@@ -13,7 +13,7 @@ Dolibarr is released under the terms of the GNU General Public License as publis
 
 ## INSTALL
 
-If you have no technical knowledge, and you are looking for an autoinstaller to install Dolibarr ERP/CRM in few clicks, you must download DoliWamp (the all-in-one package of Dolibarr for Windows), DoliDeb (the all-in-one package of Dolibarr for Debian or Ubuntu) or DoliRpm (the all-in-one package of Dolibarr for Fedora, Redhat, Opensue, Mandriva or Mageia).
+If you have no technical knowledge, and you are looking for an autoinstaller to install Dolibarr ERP/CRM in few clicks, you must download DoliWamp (the all-in-one package of Dolibarr for Windows), DoliDeb (the all-in-one package of Dolibarr for Debian or Ubuntu) or DoliRpm (the all-in-one package of Dolibarr for Fedora, Redhat, Opensuse, Mandriva or Mageia).
 
 You can download this at: [Official website] (http://www.dolibarr.org/downloads/)
 
