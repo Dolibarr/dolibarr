@@ -1204,6 +1204,8 @@ class pdf_einstein extends ModelePDFCommandes
 			$pdf->SetXY($posx+2,$posy+4+(dol_nboflines_bis($carac_client_name,50)*4));
 			$pdf->MultiCell($widthrecbox, 4, $carac_client, 0, 'L');
 		}
+
+		$pdf->SetTextColor(0,0,0);
 	}
 
 	/**
