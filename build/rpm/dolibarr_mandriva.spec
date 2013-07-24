@@ -280,6 +280,9 @@ echo Restart mysql
 if [ -f /etc/init.d/mysqld ]; then
     /etc/init.d/mysqld restart
 fi
+if [ -f /etc/init.d/mysql ]; then
+    /etc/init.d/mysql restart
+fi
 
 # Show result
 echo

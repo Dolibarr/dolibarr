@@ -463,9 +463,16 @@ echo Restart mysql server
 %if 0%{?fedora} || 0%{?rhel_version} || 0%{?centos_version} || 0%{?mdkversion}
 	/sbin/service mysqld restart
 %else
+%if 0%{?suse_version}
+	/sbin/service mysql restart
+%else
 if [ -f /etc/init.d/mysqld ]; then
     /etc/init.d/mysqld restart
 fi
+if [ -f /etc/init.d/mysql ]; then
+    /etc/init.d/mysql restart
+fi
+%endif
 %endif
 
 # Show result
