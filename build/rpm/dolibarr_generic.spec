@@ -478,57 +478,69 @@ echo
 
 
 
-#---- postun (after uninstall)
+#---- postun (after upgrade or uninstall)
 %postun
 
-# Define vars
-os='unknown';
-%if 0%{?fedora} || 0%{?rhel_version} || 0%{?centos_version} || 0%{?mdkversion}
-export apachelink="%{_sysconfdir}/httpd/conf.d/dolibarr.conf"
-%else
-%if 0%{?suse_version}
-export apachelink="%{_sysconfdir}/apache2/conf.d/dolibarr.conf"
-%else
-if [ -d %{_sysconfdir}/httpd/conf.d ]; then
-    export os='fedora-redhat';
-    export apachelink="%{_sysconfdir}/httpd/conf.d/dolibarr.conf"
-fi
-if [ -d %{_sysconfdir}/apache2/conf.d -a `grep ^wwwrun /etc/passwd | wc -l` -ge 1 ]; then
-    export os='opensuse';
-    export apachelink="%{_sysconfdir}/apache2/conf.d/dolibarr.conf"
-fi
-if [ -d %{_sysconfdir}/httpd/conf.d -a `grep -i "^mageia\|mandriva" /etc/issue | wc -l` -ge 1 ]; then
-    export os='mageia-mandriva';
-    export apachelink="%{_sysconfdir}/httpd/conf.d/dolibarr.conf"
-fi
-if [ -d %{_sysconfdir}/apache2/conf.d -a `grep ^www-data /etc/passwd | wc -l` -ge 1 ]; then
-    export os='ubuntu-debian';
-    export apachelink="%{_sysconfdir}/apache2/conf.d/dolibarr.conf"
-fi
-%endif
-%endif
-
-# Remove apache link
-if [ -L $apachelink ] ;
+if [ "x$1" = "x0" ] ;
 then
-    echo "Delete apache config link for Dolibarr ($apachelink)"
-    %{__rm} -f $apachelink
-    status=purge
-fi
+	# Remove
+	echo "Removed package"
 
-# Restart web servers if required
-if [ "x$status" = "xpurge" ] ;
-then
-    # Restart web server
-    echo Restart web server
-    if [ -f %{_sysconfdir}/init.d/httpd ]; then
-        %{_sysconfdir}/init.d/httpd restart
-    fi
-    if [ -f %{_sysconfdir}/init.d/apache2 ]; then
-        %{_sysconfdir}/init.d/apache2 restart
-    fi
+	# Define vars
+	os='unknown';
+	%if 0%{?fedora} || 0%{?rhel_version} || 0%{?centos_version} || 0%{?mdkversion}
+	export apachelink="%{_sysconfdir}/httpd/conf.d/dolibarr.conf"
+	%else
+	%if 0%{?suse_version}
+	export apachelink="%{_sysconfdir}/apache2/conf.d/dolibarr.conf"
+	%else
+	if [ -d %{_sysconfdir}/httpd/conf.d ]; then
+	    export os='fedora-redhat';
+	    export apachelink="%{_sysconfdir}/httpd/conf.d/dolibarr.conf"
+	fi
+	if [ -d %{_sysconfdir}/apache2/conf.d -a `grep ^wwwrun /etc/passwd | wc -l` -ge 1 ]; then
+	    export os='opensuse';
+	    export apachelink="%{_sysconfdir}/apache2/conf.d/dolibarr.conf"
+	fi
+	if [ -d %{_sysconfdir}/httpd/conf.d -a `grep -i "^mageia\|mandriva" /etc/issue | wc -l` -ge 1 ]; then
+	    export os='mageia-mandriva';
+	    export apachelink="%{_sysconfdir}/httpd/conf.d/dolibarr.conf"
+	fi
+	if [ -d %{_sysconfdir}/apache2/conf.d -a `grep ^www-data /etc/passwd | wc -l` -ge 1 ]; then
+	    export os='ubuntu-debian';
+	    export apachelink="%{_sysconfdir}/apache2/conf.d/dolibarr.conf"
+	fi
+	%endif
+	%endif
+	
+	# Remove apache link
+	if [ -L $apachelink ] ;
+	then
+	    echo "Delete apache config link for Dolibarr ($apachelink)"
+	    %{__rm} -f $apachelink
+	    status=purge
+	fi
+	
+	# Restart web servers if required
+	if [ "x$status" = "xpurge" ] ;
+	then
+	    # Restart web server
+	    echo Restart web server
+		%if 0%{?fedora} || 0%{?rhel_version} || 0%{?centos_version} || 0%{?mdkversion}
+	    /sbin/service httpd restart
+		%else
+	    if [ -f %{_sysconfdir}/init.d/httpd ]; then
+	        %{_sysconfdir}/init.d/httpd restart
+	    fi
+	    if [ -f %{_sysconfdir}/init.d/apache2 ]; then
+	        %{_sysconfdir}/init.d/apache2 restart
+	    fi
+	    %endif
+	fi
+else
+	# Upgrade
+	echo "No remove ation done (this is an upgrade)"
 fi
-
 
 
 %changelog
