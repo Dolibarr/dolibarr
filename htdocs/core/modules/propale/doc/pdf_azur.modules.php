@@ -102,14 +102,16 @@ class pdf_azur extends ModelePDFPropales
 
 		// Define position of columns
 		$this->posxdesc=$this->marge_gauche+1;
-		$this->posxpicture=95;
-		$this->posxtva=111;
+		$this->posxtva=112;
 		$this->posxup=126;
 		$this->posxqty=145;
 		$this->posxdiscount=162;
 		$this->postotalht=174;
+		if (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT)) $this->posxtva=$this->posxup;
+		$this->posxpicture=$this->posxtva - 16;	// width of images
 		if ($this->page_largeur < 210) // To work with US executive format
 		{
+			$this->posxpicture-=20;
 			$this->posxtva-=20;
 			$this->posxup-=20;
 			$this->posxqty-=20;
@@ -274,7 +276,7 @@ class pdf_azur extends ModelePDFPropales
 
 					// Define size of image if we need it
 					$imglinesize=array(); $realpath='';
-					if (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITH_PICTURE))
+					if (! empty($conf->global->MAIN_GENERATE_PROPOSALS_WITH_PICTURE))
 					{
 						if ($object->lines[$i]->fk_product)
 						{
@@ -329,7 +331,7 @@ class pdf_azur extends ModelePDFPropales
 					$curX = $this->posxdesc-1;
 
 					$pdf->startTransaction();
-					if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITH_PICTURE))
+					if (empty($conf->global->MAIN_GENERATE_PROPOSALS_WITH_PICTURE))
 					{
 						pdf_writelinedesc($pdf,$object,$i,$outputlangs,$this->posxtva-$curX,3,$curX,$curY,$hideref,$hidedesc);
 					}
@@ -345,7 +347,7 @@ class pdf_azur extends ModelePDFPropales
 						$pageposafter=$pageposbefore;
 						//print $pageposafter.'-'.$pageposbefore;exit;
 						$pdf->setPageOrientation('', 1, $heightforfooter);	// The only function to edit the bottom margin of current page to set it.
-						if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITH_PICTURE))
+						if (empty($conf->global->MAIN_GENERATE_PROPOSALS_WITH_PICTURE))
 						{
 							pdf_writelinedesc($pdf,$object,$i,$outputlangs,$this->posxtva-$curX,3,$curX,$curY,$hideref,$hidedesc);
 						}
@@ -396,18 +398,18 @@ class pdf_azur extends ModelePDFPropales
 					{
 						$vat_rate = pdf_getlinevatrate($object, $i, $outputlangs, $hidedetails);
 						$pdf->SetXY($this->posxtva, $curY);
-						$pdf->MultiCell($this->posxup-$this->posxtva-1, 3, $vat_rate, 0, 'R');
+						$pdf->MultiCell($this->posxup-$this->posxtva-0.8, 3, $vat_rate, 0, 'R');
 					}
 
 					// Unit price before discount
 					$up_excl_tax = pdf_getlineupexcltax($object, $i, $outputlangs, $hidedetails);
 					$pdf->SetXY($this->posxup, $curY);
-					$pdf->MultiCell($this->posxqty-$this->posxup-1, 3, $up_excl_tax, 0, 'R', 0);
+					$pdf->MultiCell($this->posxqty-$this->posxup-0.8, 3, $up_excl_tax, 0, 'R', 0);
 
 					// Quantity
 					$qty = pdf_getlineqty($object, $i, $outputlangs, $hidedetails);
 					$pdf->SetXY($this->posxqty, $curY);
-					$pdf->MultiCell($this->posxdiscount-$this->posxqty-1, 3, $qty, 0, 'R');	// Enough for 6 chars
+					$pdf->MultiCell($this->posxdiscount-$this->posxqty-0.8, 3, $qty, 0, 'R');	// Enough for 6 chars
 
 					// Discount on line
 					if ($object->lines[$i]->remise_percent)
@@ -1076,7 +1078,7 @@ class pdf_azur extends ModelePDFPropales
 			$pdf->MultiCell(108,2, $outputlangs->transnoentities("Designation"),'','L');
 		}
 
-		if (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITH_PICTURE))
+		if (! empty($conf->global->MAIN_GENERATE_PROPOSALS_WITH_PICTURE))
 		{
 			$pdf->line($this->posxpicture-1, $tab_top, $this->posxpicture-1, $tab_top + $tab_height);
 			if (empty($hidetop))

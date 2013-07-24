@@ -99,13 +99,16 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 
         // Defini position des colonnes
 		$this->posxdesc=$this->marge_gauche+1;
-		$this->posxtva=111;
+		$this->posxtva=112;
 		$this->posxup=126;
 		$this->posxqty=145;
 		$this->posxdiscount=162;
 		$this->postotalht=174;
+		//if (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT)) $this->posxtva=$this->posxup;
+		$this->posxpicture=$this->posxtva - 16;	// width of images
 		if ($this->page_largeur < 210) // To work with US executive format
 		{
+			$this->posxpicture-=20;
 			$this->posxtva-=20;
 			$this->posxup-=20;
 			$this->posxqty-=20;
@@ -296,16 +299,16 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
                     {
     					$vat_rate = pdf_getlinevatrate($object, $i, $outputlangs, $hidedetails);
                         $pdf->SetXY($this->posxtva, $curY);
-	       				$pdf->MultiCell($this->posxup-$this->posxtva-1, 3, $vat_rate, 0, 'R');
+	       				$pdf->MultiCell($this->posxup-$this->posxtva-0.8, 3, $vat_rate, 0, 'R');
                     }
 
 					// Unit price before discount
 					$pdf->SetXY($this->posxup, $curY);
-					$pdf->MultiCell($this->posxqty-$this->posxup-1, 3, price($object->lines[$i]->pu_ht), 0, 'R', 0);
+					$pdf->MultiCell($this->posxqty-$this->posxup-0.8, 3, price($object->lines[$i]->pu_ht), 0, 'R', 0);
 
 					// Quantity
 					$pdf->SetXY($this->posxqty, $curY);
-					$pdf->MultiCell($this->posxdiscount-$this->posxqty-1, 3, $object->lines[$i]->qty, 0, 'R');
+					$pdf->MultiCell($this->posxdiscount-$this->posxqty-0.8, 3, $object->lines[$i]->qty, 0, 'R');
 
 					// Discount on line
 					$pdf->SetXY($this->posxdiscount, $curY);
