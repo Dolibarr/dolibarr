@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2013      Cédric Salvador      <csalvador@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -60,47 +61,31 @@ if (! $sortfield) $sortfield="name";
 
 
 $upload_dir = $conf->adherent->dir_output . "/" . get_exdir($id,2,0,1) . '/' . $id;
-
-
-
+$form = new Form($db);
+$object=new Adherent($db);
+$membert=new AdherentType($db);
+$result=$object->fetch($id);
+if ($result < 0)
+{
+	dol_print_error($db);
+	exit;
+}
 /*
  * Actions
  */
 
-// Envoie fichier
-if (GETPOST('sendit') && ! empty($conf->global->MAIN_UPLOAD_DOC))
-{
-	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-
-	dol_add_file_process($upload_dir,0,1,'userfile');
-}
-
-// Suppression fichier
-if ($action == 'confirm_deletefile' && $confirm == 'yes')
-{
-    $langs->load("other");
-	$file = $upload_dir . "/" . GETPOST('urlfile');	// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
-	$ret=dol_delete_file($file);
-	if ($ret) setEventMessage($langs->trans("FileWasRemoved", GETPOST('urlfile')));
-	else setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), 'errors');
-    header('Location: '.$_SERVER["PHP_SELF"].'?id='.$id);
-    exit;
-}
+include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions.tpl.php';
 
 
 /*
  * View
  */
 
-$form = new Form($db);
-$object=new Adherent($db);
-$membert=new AdherentType($db);
 
 llxHeader();
 
 if ($id > 0)
 {
-    $result=$object->fetch($id);
     $result=$membert->fetch($object->typeid);
 	if ($result > 0)
 	{

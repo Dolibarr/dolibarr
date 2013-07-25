@@ -71,29 +71,7 @@ $modulepart='fichinter';
  * Actions
  */
 
-if (GETPOST('sendit','alpha') && ! empty($conf->global->MAIN_UPLOAD_DOC))
-{
-	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-
-	dol_add_file_process($upload_dir,0,1,'userfile');
-}
-
-// Delete
-else if ($action == 'confirm_deletefile' && $confirm == 'yes')
-{
-	if ($object->id > 0)
-	{
-		$langs->load("other");
-		$object->fetch_thirdparty();
-
-		$file = $upload_dir . '/' . GETPOST('urlfile');	// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
-		$ret=dol_delete_file($file,0,0,0,$object);
-		if ($ret) setEventMessage($langs->trans("FileWasRemoved", GETPOST('urlfile')));
-		else setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), 'errors');
-		header('Location: '.$_SERVER["PHP_SELF"].'?id='.$id);
-		exit;
-	}
-}
+include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions.tpl.php';
 
 
 /*

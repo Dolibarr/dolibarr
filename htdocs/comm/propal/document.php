@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2009 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
  * Copyright (C) 2005-2012 Regis Houssin         <regis.houssin@capnetworks.com>
+ * Copyright (C) 2013      Cédric Salvador       <csalvador@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -64,38 +65,14 @@ $object->fetch($id,$ref);
 if ($object->id > 0)
 {
 	$object->fetch_thirdparty();
+	$upload_dir = $conf->propal->dir_output.'/'.dol_sanitizeFileName($object->ref);
+	include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions.tpl.php';
 }
 
 /*
  * Actions
  */
 
-// Envoi fichier
-if (GETPOST('sendit') && ! empty($conf->global->MAIN_UPLOAD_DOC))
-{
-	if ($object->id > 0)
-    {
-    	$upload_dir = $conf->propal->dir_output . "/" . dol_sanitizeFileName($object->ref);
-    	dol_add_file_process($upload_dir,0,1,'userfile');
-    }
-}
-
-// Delete
-if ($action == 'confirm_deletefile' && $confirm == 'yes')
-{
-	if ($object->id > 0)
-    {
-        $langs->load("other");
-
-        $upload_dir = $conf->propal->dir_output . "/" . dol_sanitizeFileName($object->ref);
-    	$file = $upload_dir . '/' . GETPOST('urlfile');	// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
-    	$ret=dol_delete_file($file,0,0,0,$object);
-    	if ($ret) setEventMessage($langs->trans("FileWasRemoved", GETPOST('urlfile')));
-    	else setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), 'errors');
-    	header('Location: '.$_SERVER["PHP_SELF"].'?id='.$id);
-    	exit;
-    }
-}
 
 
 /*

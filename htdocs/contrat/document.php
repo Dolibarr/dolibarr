@@ -74,28 +74,9 @@ $modulepart='contract';
 
 
 /*
- * Action envoie fichier
+ * Actions
  */
-if (GETPOST('sendit') && ! empty($conf->global->MAIN_UPLOAD_DOC))
-{
-	dol_add_file_process($upload_dir,0,1,'userfile');
-}
-
-// Delete
-if ($action == 'confirm_deletefile' && $confirm == 'yes')
-{
-	if ($object->id)
-	{
-		$langs->load("other");
-
-		$file = $upload_dir . '/' . GETPOST('urlfile');	// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
-		$ret=dol_delete_file($file,0,0,0,$object);
-		if ($ret) setEventMessage($langs->trans("FileWasRemoved", GETPOST('urlfile')));
-		else setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), 'errors');
-		header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
-		exit;
-	}
-}
+include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions.tpl.php';
 
 
 /*

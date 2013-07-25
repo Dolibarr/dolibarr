@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2013      Cédric Salvador      <csalvador@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -72,31 +73,7 @@ if ($id > 0 || ! empty($ref))
  * Actions
  */
 
-// TODO Use an include to mutualize this code for action sendit and confirm_deletefile
-
-// Post file
-if (GETPOST('sendit') && ! empty($conf->global->MAIN_UPLOAD_DOC))
-{
-	if ($object->id)
-	{
-		dol_add_file_process($upload_dir,0,1,'userfile');
-	}
-}
-
-// Delete file
-if ($action == 'confirm_deletefile' && $confirm == 'yes')
-{
-	if ($object->id)
-	{
-		$file = $upload_dir . "/" . GETPOST('urlfile');	// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
-
-		$ret=dol_delete_file($file,0,0,0,$object);
-		if ($ret) setEventMessage($langs->trans("FileWasRemoved", GETPOST('urlfile')));
-		else setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), 'errors');
-    	header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
-    	exit;
-	}
-}
+include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions.tpl.php';
 
 
 /*
