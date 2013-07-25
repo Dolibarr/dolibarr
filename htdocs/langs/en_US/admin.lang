@@ -1061,7 +1061,7 @@ EnableEditDeleteValidInvoice=Enable the possibility to edit/delete valid invoice
 SuggestPaymentByRIBOnAccount=Suggest payment by withdraw on account
 SuggestPaymentByChequeToAddress=Suggest payment by cheque to
 FreeLegalTextOnInvoices=Free text on invoices
-WatermarkOnDraftInvoices=Watermark on draft invoices (any if empty)
+WatermarkOnDraftInvoices=Watermark on draft invoices (none if empty)
 ##### Proposals #####
 PropalSetup=Commercial proposals module setup
 CreateForm=Create forms
@@ -1074,7 +1074,7 @@ AddShippingDateAbility=Add shipping date ability
 AddDeliveryAddressAbility=Add delivery date ability
 UseOptionLineIfNoQuantity=A line of product/service with a zero amount is considered as an option
 FreeLegalTextOnProposal=Free text on commercial proposals
-WatermarkOnDraftProposal=Watermark on draft commercial proposals (any if empty)
+WatermarkOnDraftProposal=Watermark on draft commercial proposals (none if empty)
 ##### Orders #####
 OrdersSetup=Order management setup
 OrdersNumberingModules=Orders numbering models
@@ -1082,7 +1082,7 @@ OrdersModelModule=Order documents models
 HideTreadedOrders=Hide the treated or canceled orders in the list
 ValidOrderAfterPropalClosed=To validate the order after proposal closer, makes it possible not to step by the provisional order
 FreeLegalTextOnOrders=Free text on orders
-WatermarkOnDraftOrders=Watermark on draft orders (any if empty)
+WatermarkOnDraftOrders=Watermark on draft orders (none if empty)
 ##### Clicktodial #####
 ClickToDialSetup=Click To Dial module setup
 ClickToDialUrlDesc=Url called when a click on phone picto is done.  In URL, you can use tags<br><b>__PHONETO__</b> that will be replaced with the phone number of person to call<br><b>__PHONEFROM__</b> that will be replaced with phone number of calling person (yours)<br><b>__LOGIN__</b> that will be replaced with your clicktodial login (defined on your user card)<br><b>__PASS__</b> that will be replaced with your clicktodial password (defined on your user card).
@@ -1093,7 +1093,7 @@ InterventionsSetup=Interventions module setup
 FreeLegalTextOnInterventions=Free text on intervention documents
 FicheinterNumberingModules=Intervention numbering models
 TemplatePDFInterventions=Intervention card documents models
-WatermarkOnDraftInterventionCards=Watermark on intervention card documents (any if empty)
+WatermarkOnDraftInterventionCards=Watermark on intervention card documents (none if empty)
 ##### Contracts #####
 ContractsSetup=Contracts module setup
 ContractsNumberingModules=Contracts numbering modules
