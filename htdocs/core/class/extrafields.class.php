@@ -677,49 +677,52 @@ class ExtraFields
 		}
 		elseif ($type == 'sellist')
 		{
+			
 			$out='<select class="flat" name="options_'.$key.'">';
-			$param_list=array_keys($param['options']);
-			$InfoFieldList = explode(":", $param_list[0]);
-
-			// 0 1 : tableName
-			// 1 2 : label field name Nom du champ contenant le libelle
-			// 2 3 : key fields name (if differ of rowid)
-
-			$keyList='rowid';
-
-			if (count($InfoFieldList)==3)
-				$keyList=$InfoFieldList[2].' as rowid';
-
-			$sql = 'SELECT '.$keyList.', '.$InfoFieldList[1];
-			$sql.= ' FROM '.MAIN_DB_PREFIX .$InfoFieldList[0];
-			//$sql.= ' WHERE entity = '.$conf->entity;
-
-			dol_syslog(get_class($this).'::showInputField type=sellist sql='.$sql);
-			$resql = $this->db->query($sql);
-
-			if ($resql)
-			{
-				$out.='<option value="0">&nbsp;</option>';
-				$num = $this->db->num_rows($resql);
-				$i = 0;
-				if ($num)
+			if (is_array($param['options'])) {
+				$param_list=array_keys($param['options']);
+				$InfoFieldList = explode(":", $param_list[0]);
+	
+				// 0 1 : tableName
+				// 1 2 : label field name Nom du champ contenant le libelle
+				// 2 3 : key fields name (if differ of rowid)
+	
+				$keyList='rowid';
+	
+				if (count($InfoFieldList)==3)
+					$keyList=$InfoFieldList[2].' as rowid';
+	
+				$sql = 'SELECT '.$keyList.', '.$InfoFieldList[1];
+				$sql.= ' FROM '.MAIN_DB_PREFIX .$InfoFieldList[0];
+				//$sql.= ' WHERE entity = '.$conf->entity;
+	
+				dol_syslog(get_class($this).'::showInputField type=sellist sql='.$sql);
+				$resql = $this->db->query($sql);
+	
+				if ($resql)
 				{
-					while ($i < $num)
+					$out.='<option value="0">&nbsp;</option>';
+					$num = $this->db->num_rows($resql);
+					$i = 0;
+					if ($num)
 					{
-						$obj = $this->db->fetch_object($resql);
-						$labeltoshow=dol_trunc($obj->$InfoFieldList[1],18);
-						if ($value==$obj->rowid)
+						while ($i < $num)
 						{
-							$out.='<option value="'.$obj->rowid.'" selected="selected">'.$labeltoshow.'</option>';
+							$obj = $this->db->fetch_object($resql);
+							$labeltoshow=dol_trunc($obj->$InfoFieldList[1],18);
+							if ($value==$obj->rowid)
+							{
+								$out.='<option value="'.$obj->rowid.'" selected="selected">'.$labeltoshow.'</option>';
+							}
+							else
+							{
+								$out.='<option value="'.$obj->rowid.'" >'.$labeltoshow.'</option>';
+							}
+							$i++;
 						}
-						else
-						{
-							$out.='<option value="'.$obj->rowid.'" >'.$labeltoshow.'</option>';
-						}
-						$i++;
 					}
+					$this->db->free();
 				}
-				$this->db->free();
 			}
 			$out.='</select>';
 		}
@@ -824,23 +827,25 @@ class ExtraFields
 		}
 		elseif ($type == 'sellist')
 		{
-			$param_list=array_keys($params['options']);
-			$InfoFieldList = explode(":", $param_list[0]);
-			$keyList='rowid';
-			if (count($InfoFieldList)==3)
-				$keyList=$InfoFieldList[2];
-
-
-			$sql = 'SELECT '.$InfoFieldList[1];
-			$sql.= ' FROM '.MAIN_DB_PREFIX .$InfoFieldList[0];
-			$sql.= ' WHERE '.$keyList.'=\''.$this->db->escape($value).'\'';
-			//$sql.= ' AND entity = '.$conf->entity;
-			dol_syslog(get_class($this).':showOutputField:$type=sellist sql='.$sql);
-			$resql = $this->db->query($sql);
-			if ($resql)
-			{
-				$obj = $this->db->fetch_object($resql);
-				$value=$obj->$InfoFieldList[1];
+			if (is_array($params['options'])) {
+				$param_list=array_keys($params['options']);
+				$InfoFieldList = explode(":", $param_list[0]);
+				$keyList='rowid';
+				if (count($InfoFieldList)==3)
+					$keyList=$InfoFieldList[2];
+	
+	
+				$sql = 'SELECT '.$InfoFieldList[1];
+				$sql.= ' FROM '.MAIN_DB_PREFIX .$InfoFieldList[0];
+				$sql.= ' WHERE '.$keyList.'=\''.$this->db->escape($value).'\'';
+				//$sql.= ' AND entity = '.$conf->entity;
+				dol_syslog(get_class($this).':showOutputField:$type=sellist sql='.$sql);
+				$resql = $this->db->query($sql);
+				if ($resql)
+				{
+					$obj = $this->db->fetch_object($resql);
+					$value=$obj->$InfoFieldList[1];
+				}
 			}
 		}
 		elseif ($type == 'radio')
