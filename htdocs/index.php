@@ -191,7 +191,7 @@ if (empty($user->societe_id))
 	                  "Members",
 	                  "Products",
 	                  "Services",
-	                  "CommercialProposals",
+	                  "CommercialProposalsShort",
 	                  "CustomersOrders",
 	                  "BillsCustomers",
 	                  "Contracts");
