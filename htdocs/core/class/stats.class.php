@@ -76,7 +76,7 @@ abstract class Stats
 				dol_syslog(get_class($this).'_'.__FUNCTION__." cache file ".$newpathofdestfile." is not found or older than now - cachedelay (".$nowgmt." - ".$cachedelay.") so we can't use it.");
 			}
 		}
-
+		
 		// Load file into $data
 		if ($foundintocache)    // Cache file found and is not too old
 		{
@@ -184,14 +184,14 @@ abstract class Stats
 			}
 
 			$data = array();
-
+			// $data = array('xval'=>array(0=>xlabel,1=>yval1,2=>yval2...),...)
 			for ($i = 0 ; $i < 12 ; $i++)
 			{
-				$data[$i][]=$datay[$endyear][$i][0];
+				$data[$i][]=$datay[$endyear][$i][0];	// set label
 				$year=$startyear;
 				while($year <= $endyear)
 				{
-					$data[$i][]=$datay[$year][$i][1];
+					$data[$i][]=$datay[$year][$i][1];	// set yval for x=i
 					$year++;
 				}
 			}

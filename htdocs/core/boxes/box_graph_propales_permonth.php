@@ -74,10 +74,10 @@ class box_graph_propales_permonth extends ModeleBoxes
 				'text' => $text,
 				'limit'=> dol_strlen($text),
 				'graph'=> 1,
-				'sublink'=>$_SERVER["PHP_SELF"].'?action='.$refreshaction,
-				'subtext'=>$langs->trans("Refresh"),
-				'subpicto'=>'refresh.png',
-				'target'=>'none'
+				'sublink'=>'',
+				'subtext'=>$langs->trans("Filter"),
+				'subpicto'=>'filter.png',
+				'target'=>'none'	// Set '' to get target="_blank"
 		);
 
 		if ($user->rights->commande->lire)
@@ -88,11 +88,11 @@ class box_graph_propales_permonth extends ModeleBoxes
 			$shownb=(! empty($conf->global->PROPAL_BOX_GRAPH_SHOW_NB));
 			$showtot=(! isset($conf->global->PROPAL_BOX_GRAPH_SHOW_TOT) || ! empty($conf->global->PROPAL_BOX_GRAPH_SHOW_TOT));
 			$nowarray=dol_getdate(dol_now(),true);
-			$endyear=$nowarray['year'];
+			$endyear=(GETPOST('param'.$this->boxcode.'year')?GETPOST('param'.$this->boxcode.'year','int'):$nowarray['year']);
 			$startyear=$endyear-1;
 			$mode='customer';
 			$userid=0;
-			$WIDTH='256';
+			$WIDTH=($shownb && $showtot)?'256':'320';
 			$HEIGHT='192';
 
 			$stats = new PropaleStats($this->db, 0, $mode, ($userid>0?$userid:0));
@@ -101,7 +101,8 @@ class box_graph_propales_permonth extends ModeleBoxes
 			if ($shownb)
 			{
 				$data1 = $stats->getNbByMonthWithPrevYear($endyear,$startyear,(GETPOST('action')==$refreshaction?-1:(3600*24)));
-
+				$datatype1 = array_pad(array(), ($endyear-$startyear+1), 'bars'); 
+				
 				$filenamenb = $dir."/propalsnbinyear-".$year.".png";
 				if ($mode == 'customer') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=propalstats&amp;file=propalsnbinyear-'.$year.'.png';
 				if ($mode == 'supplier') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=propalstatssupplier&amp;file=propalsnbinyear-'.$year.'.png';
@@ -110,6 +111,7 @@ class box_graph_propales_permonth extends ModeleBoxes
 				$mesg = $px1->isGraphKo();
 				if (! $mesg)
 				{
+					$px1->SetType($datatype1);
 					$px1->SetData($data1);
 					unset($data1);
 					$px1->SetPrecisionY(0);
@@ -139,7 +141,9 @@ class box_graph_propales_permonth extends ModeleBoxes
 			if ($showtot)
 			{
 				$data2 = $stats->getAmountByMonthWithPrevYear($endyear,$startyear,(GETPOST('action')==$refreshaction?-1:(3600*24)));
-
+				$datatype2 = array_pad(array(), ($endyear-$startyear+1), 'bars');
+				//$datatype2 = array('lines','bars');
+				
 				$filenamenb = $dir."/propalsamountinyear-".$year.".png";
 				if ($mode == 'customer') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=propalstats&amp;file=propalsamountinyear-'.$year.'.png';
 				if ($mode == 'supplier') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=propalstatssupplier&amp;file=propalsamountinyear-'.$year.'.png';
@@ -148,6 +152,7 @@ class box_graph_propales_permonth extends ModeleBoxes
 				$mesg = $px2->isGraphKo();
 				if (! $mesg)
 				{
+					$px2->SetType($datatype2);
 					$px2->SetData($data2);
 					unset($data2);
 					$px2->SetPrecisionY(0);
@@ -175,9 +180,23 @@ class box_graph_propales_permonth extends ModeleBoxes
 
 			if (! $mesg)
 			{
+				$stringtoshow='';
+				$stringtoshow.='<script type="text/javascript" language="javascript">
+					jQuery(document).ready(function() {
+						jQuery("#idsubimg'.$this->boxcode.'").click(function() {
+							jQuery("#idfilter'.$this->boxcode.'").toggle();
+						});
+					});
+					</script>';
+				$stringtoshow.='<div class="center hideobject" id="idfilter'.$this->boxcode.'">';
+				$stringtoshow.=$langs->trans("Year").' <input class="flat" size="4" type="text" value="'.$endyear.'">';
+				$stringtoshow.='<a href="'.$_SERVER["PHP_SELF"].'?action='.$refreshaction.'">';
+				$stringtoshow.=img_picto($langs->trans("Refresh"),'refresh.png');
+				$stringtoshow.='</a>';
+				$stringtoshow.='</div>';
 				if ($shownb && $showtot)
 				{
-					$stringtoshow ='<div class="fichecenter">';
+					$stringtoshow.='<div class="fichecenter">';
 					$stringtoshow.='<div class="fichehalfleft">';
 				}
 				if ($shownb) $stringtoshow.=$px1->show();

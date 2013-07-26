@@ -43,7 +43,7 @@
 class DolGraph
 {
     //! Type of graph
-    var $type=array('bars');	// bars, lines, ...
+    var $type=array();			// Array with type of each series. Example: array('bars', 'lines', ...)
     var $mode='side';		    // Mode bars graph: side, depth
     private $_library='jflot';	// Graphic library to use (jflot, artichow)
 
@@ -578,8 +578,9 @@ class DolGraph
 
         // Create graph
         $classname='';
-        if ($this->type[0] == 'bars')  $classname='BarPlot';    // Only first type of type is supported by artichow
-        if ($this->type[0] == 'lines') $classname='LinePlot';
+        if (! isset($this->type[0]) || $this->type[0] == 'bars')  $classname='BarPlot';    // Only one type (first one) is supported by artichow
+        else if ($this->type[0] == 'lines') $classname='LinePlot';
+        else $classname='TypeUnknown';
         include_once ARTICHOW_PATH.$classname.'.class.php';
 
         // Definition de couleurs
