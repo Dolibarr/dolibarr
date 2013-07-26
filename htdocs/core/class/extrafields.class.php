@@ -707,6 +707,12 @@ class ExtraFields
 				$keyList .= implode(', ', $fields_label);
 			}
 
+			$fields_label = explode('|',$InfoFieldList[1]);
+			if(is_array($fields_label)) {
+				$keyList .=', ';
+				$keyList .= implode(', ', $fields_label);
+			}
+
 			$sql = 'SELECT '.$keyList;
 			$sql.= ' FROM '.MAIN_DB_PREFIX .$InfoFieldList[0];
 			//$sql.= ' WHERE entity = '.$conf->entity;
@@ -726,10 +732,22 @@ class ExtraFields
 						$labeltoshow='';
 						$obj = $this->db->fetch_object($resql);
 
-
 						// Several field into label (eq table:code|libelle:rowid)
 						$fields_label = explode('|',$InfoFieldList[1]);
 						if(is_array($fields_label))
+						{
+							foreach ($fields_label as $field_toshow)
+							{
+								$labeltoshow.= $obj->$field_toshow.' ';
+							}
+						}
+						else
+						{
+							$labeltoshow=$obj->$InfoFieldList[1];
+						}
+						$labeltoshow=dol_trunc($labeltoshow,45);
+
+						if ($value==$obj->rowid)
 						{
 							foreach ($fields_label as $field_toshow)
 							{
@@ -748,23 +766,24 @@ class ExtraFields
 								$labeltoshow=dol_trunc($translabel,18);
 							}else {
 								$labeltoshow=dol_trunc($obj->$InfoFieldList[1],18);
+							}
+
+							if ($value==$obj->rowid)
+							{
+								$out.='<option value="'.$obj->rowid.'" selected="selected">'.$labeltoshow.'</option>';
+							}
+
+							if(!empty($InfoFieldList[3])) {
+								$parent = $parentName.':'.$obj->{$parentField};
+							}
+
+							$out.='<option value="'.$obj->rowid.'"';
+							$out.= ($value==$obj->rowid?' selected="selected"':'');
+							$out.= (!empty($parent)?' parent="'.$parent.'"':'');
+							$out.='>'.$labeltoshow.'</option>';
+
+							$i++;
 						}
-
-						if ($value==$obj->rowid)
-						{
-							$out.='<option value="'.$obj->rowid.'" selected="selected">'.$labeltoshow.'</option>';
-						}
-
-						if(!empty($InfoFieldList[3])) {
-							$parent = $parentName.':'.$obj->{$parentField};
-						}
-
-						$out.='<option value="'.$obj->rowid.'"';
-						$out.= ($value==$obj->rowid?' selected="selected"':'');
-						$out.= (!empty($parent)?' parent="'.$parent.'"':'');
-						$out.='>'.$labeltoshow.'</option>';
-
-						$i++;
 					}
 				}
 				$this->db->free();
@@ -1062,4 +1081,3 @@ class ExtraFields
 		}
 	}
 }
-?>
