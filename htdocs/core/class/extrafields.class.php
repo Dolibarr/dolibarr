@@ -904,8 +904,7 @@ class ExtraFields
 			foreach ($extralabels as $key => $value)
 			{
 				$key_type = $this->attribute_type[$key];
-
-				if($this->attribute_required[$key] && !GETPOST($value))
+				if($this->attribute_required[$key] && !GETPOST("options_$key",2))
 				{
 					$nofillrequired++;
 					$error_field_required[] = $value;
