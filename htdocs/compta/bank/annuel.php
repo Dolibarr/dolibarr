@@ -299,7 +299,7 @@ if ($result < 0)
 else
 {
 	// Definition de $width et $height
-	$width = 550;
+	$width = 480;
 	$height = 300;
 
 	// Calcul de $min et $max
@@ -501,13 +501,12 @@ else
 	unset($tblyear[1]);
 	unset($tblyear[2]);
 
-	print '<table width=100% ><tr><td align="center">';
+	print '<div class="fichecenter"><div class="fichehalfleft"><center>';
 	print $show1;
-	print '</td>';
-	print '<td width=30px>&nbsp;</td>';
-	print '<td align="center">';
+	print '</center></div><div class="fichehalfright"><div class="ficheaddleft"><center>';
 	print $show2;
-	print '</td></tr></table>';
+	print '</center></div></div></div>';
+	print '<div style="clear:both"></div>';
 }
 
 
