@@ -403,3 +403,4 @@ PDFCrabeDescription=Model de factura complet (model recomanat per defecte)
 PDFOursinDescription=Model de factura complet (model alternatiu)
 # NumRef Modules
 TerreNumRefModelDesc1=Retorna el nombre sota el format %syymm-nnnn per a les factures i %syymm-nnnn per als abonaments on yy és l'any, mm. el mes i nnnn un comptador seqüencial sense ruptura i sense permanència a 0
+MarsNumRefModelDesc1=Retorna el nombre sota el format %syymm-nnnn per a les factures, %syymm-nnnn per a les factures rectificatives, %syymm-nnnn per a les factures proforma i %syymm-nnnn per als abonaments on yy és l'any, mm. el mes i nnnn un comptador seqüencial sense ruptura i sense permanència a 0
