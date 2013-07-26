@@ -2242,6 +2242,10 @@ abstract class CommonObject
 					{
 						$value = isset($_POST["options_".$key])?dol_mktime($_POST["options_".$key."hour"], $_POST["options_".$key."min"], 0, $_POST["options_".$key."month"], $_POST["options_".$key."day"], $_POST["options_".$key."year"]):$this->db->jdate($this->array_options['options_'.$key]);
 					}
+
+					if($extrafields->attribute_required[$key])
+						$label = '<span class="fieldrequired">'.$label.'</span>';
+
 					$out .= '<td>'.$label.'</td>';
 					$out .='<td colspan="'.$colspan.'">';
 
