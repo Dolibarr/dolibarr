@@ -1881,6 +1881,10 @@ if ($action == 'update_extras')
 		}
 		else if ($reshook < 0) $error++;
 	}
+	else
+	{
+		$action = 'edit_extras';
+	}
 
 }
 
