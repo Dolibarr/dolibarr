@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2013		Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2013      Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,8 +25,8 @@
  */
 require_once DOL_DOCUMENT_ROOT .'/core/modules/facture/modules_facture.php';
 
-/**	    \class      mod_facture_mars
- *		\brief      Classe du modele de numerotation de reference de facture Mars
+/**
+ * 	Classe du modele de numerotation de reference de facture Mars
  */
 class mod_facture_mars extends ModeleNumRefFactures
 {

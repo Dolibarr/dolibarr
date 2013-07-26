@@ -313,6 +313,7 @@ foreach ($dirmodels as $reldir)
                         $filebis = $file."/".$file.".modules.php";
                         $classname = "mod_facture_".$file;
                     }
+                    $classname = preg_replace('/\-.*$/','',$classname);
                     if (! class_exists($classname) && is_readable($dir.$filebis) && (preg_match('/mod_/',$filebis) || preg_match('/mod_/',$classname)) && substr($filebis, dol_strlen($filebis)-3, 3) == 'php')
                     {
                         // Chargement de la classe de numerotation
