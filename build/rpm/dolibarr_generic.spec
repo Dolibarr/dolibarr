@@ -544,5 +544,5 @@ fi
 
 
 %changelog
-* Mon Apr 22 2013 Laurent Destailleur 3.3.3-0.3
+* Mon Apr 22 2013 Laurent Destailleur 3.3.4-0.3
 - Initial version (#723326)
