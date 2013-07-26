@@ -64,6 +64,7 @@ $search_ref=GETPOST('sf_ref')?GETPOST('sf_ref','alpha'):GETPOST('search_ref','al
 $search_societe=GETPOST('search_societe','alpha');
 $search_montant_ht=GETPOST('search_montant_ht','alpha');
 $search_montant_ttc=GETPOST('search_montant_ttc','alpha');
+$search_status=GETPOST('search_status','alpha');
 
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
@@ -116,6 +117,8 @@ if (GETPOST("button_removefilter_x"))
     $search_refcustomer='';
     $search_societe='';
     $search_montant_ht='';
+    $search_montant_ttc='';
+    $search_status='';
     $year='';
     $month='';
 }
@@ -184,6 +187,10 @@ if ($search_montant_ht)
 if ($search_montant_ttc)
 {
     $sql.= ' AND f.total_ttc = \''.$db->escape(price2num(trim($search_montant_ttc))).'\'';
+}
+if ($search_status != '')
+{
+	$sql.= " AND f.fk_statut = '".$db->escape($search_status)."'";
 }
 if ($month > 0)
 {
