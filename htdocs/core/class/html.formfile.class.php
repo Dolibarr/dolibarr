@@ -509,7 +509,7 @@ class FormFile
 
 					// Show file date
 					$date=(! empty($file['date'])?$file['date']:dol_filemtime($filedir."/".$file["name"]));
-					$out.= '<td align="right" class="nowrap">'.dol_print_date($date, 'dayhour').'</td>';
+					$out.= '<td align="right" class="nowrap">'.dol_print_date($date, 'dayhour', 'tzuser').'</td>';
 
 					if ($delallowed)
 					{
