@@ -140,7 +140,7 @@ class FormFile
             if (empty($sectionid)) $out .= '<br>';
 
             $out .= "\n<!-- End form attach new file -->\n\n";
-            $parameters = array('socid'=>(isset($GLOBALS['socid'])?$GLOBALS['socid']:''),'id'=>(isset($GLOBALS['id'])?$GLOBALS['id']:''), 'url'=>$url);
+            $parameters = array('socid'=>(isset($GLOBALS['socid'])?$GLOBALS['socid']:''),'id'=>(isset($GLOBALS['id'])?$GLOBALS['id']:''), 'url'=>$url, 'perm'=>$perm);
             $res = $hookmanager->executeHooks('formattachOptions',$parameters,$object);
             if (empty($res))
             {
@@ -518,7 +518,7 @@ class FormFile
 
 					// Show file date
 					$date=(! empty($file['date'])?$file['date']:dol_filemtime($filedir."/".$file["name"]));
-					$out.= '<td align="right" class="nowrap">'.dol_print_date($date, 'dayhour').'</td>';
+					$out.= '<td align="right" class="nowrap">'.dol_print_date($date, 'dayhour', 'tzuser').'</td>';
 
 					if ($delallowed || $printer || $morepicto)
 					{
@@ -546,17 +546,24 @@ class FormFile
 						}
                         $out.='</td>';
                     }
+
                     if (is_object($hookmanager))
                     {
             			$parameters=array('socid'=>(isset($GLOBALS['socid'])?$GLOBALS['socid']:''),'id'=>(isset($GLOBALS['id'])?$GLOBALS['id']:''),'modulepart'=>$modulepart,'relativepath'=>$relativepath);
                     	$res = $hookmanager->executeHooks('formBuilddocLineOptions',$parameters,$file);
-                        if(!$res) {
-                            $out .= $hookmanager->resPrint;
+                        if (empty($res))
+                        {
+                            $out .= $hookmanager->resPrint;		// Complete line
+                            $out.= '</tr>';
                         }
-                    }
+                        else $out = $hookmanager->resPrint;		// Replace line
+              		}
 				}
 
-                $out.= '</tr>';
+			 	if (count($file_list) == 0)
+	            {
+    	        	$out.='<tr><td colspan="3">'.$langs->trans("None").'</td></tr>';
+        	    }
 
                 $this->numoffiles++;
             }

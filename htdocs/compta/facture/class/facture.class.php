@@ -2522,6 +2522,7 @@ class Facture extends CommonInvoice
 		{
 			$file = $conf->global->FACTURE_ADDON."/".$conf->global->FACTURE_ADDON.".modules.php";
 			$classname = "mod_facture_".$conf->global->FACTURE_ADDON;
+			$classname = preg_replace('/\-.*$/','',$classname);
 			// Include file with class
 			foreach ($conf->file->dol_document_root as $dirroot)
 			{

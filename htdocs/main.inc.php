@@ -1421,18 +1421,17 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 	    $logouthtmltext=$appli.' '.DOL_VERSION.'<br>';
 	    $logouthtmltext.=$langs->trans("Logout").'<br>';
 	    //$logouthtmltext.="<br>";
-	    if ($_SESSION["dol_authmode"] != 'forceuser'
-	    && $_SESSION["dol_authmode"] != 'http')
+	    if ($_SESSION["dol_authmode"] != 'forceuser' && $_SESSION["dol_authmode"] != 'http')
 	    {
 	        $logouttext .='<a href="'.DOL_URL_ROOT.'/user/logout.php"';
 	        //$logouttext .=empty($atarget?(' target="'.$atarget.'"'):'';
 	        $logouttext .='>';
-	        $logouttext .= img_picto($langs->trans('Logout'), 'logout.png', 'class="login"');
+	        $logouttext .= img_picto($langs->trans('Logout'), 'logout.png', 'class="login"', 0, 0, 1);
 	        $logouttext .='</a>';
 	    }
 	    else
 	    {
-	        $logouttext .= img_picto($langs->trans('Logout'), 'logout.png', 'class="login"');
+	        $logouttext .= img_picto($langs->trans('Logout'), 'logout.png', 'class="login"', 0, 0, 1);
 	    }
 
 	    print '<div class="login_block">'."\n";

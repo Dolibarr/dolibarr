@@ -288,9 +288,7 @@ fi
 
 # Restart mysql
 echo Restart mysql
-if [ -f /etc/init.d/mysqld ]; then
-    /etc/init.d/mysqld restart
-fi
+/sbin/service mysql restart
 
 # Show result
 echo
@@ -304,33 +302,41 @@ echo "-------------------------------------------------------"
 echo
 
 
-#---- postun (after uninstall)
+#---- postun (after upgrade or uninstall)
 %postun
 
-# Define vars
-export apachelink="%{_sysconfdir}/apache2/conf.d/dolibarr.conf"
-
-# Remove apache link
-if [ -L $apachelink ] ;
+if [ "x$1" = "x0" ] ;
 then
-    echo "Delete apache config link for Dolibarr ($apachelink)"
-    %{__rm} -f $apachelink
-    status=purge
+	# Remove
+	echo "Removed package"
+	
+	# Define vars
+	export apachelink="%{_sysconfdir}/apache2/conf.d/dolibarr.conf"
+	
+	# Remove apache link
+	if [ -L $apachelink ] ;
+	then
+	    echo "Delete apache config link for Dolibarr ($apachelink)"
+	    %{__rm} -f $apachelink
+	    status=purge
+	fi
+	
+	# Restart web servers if required
+	if [ "x$status" = "xpurge" ] ;
+	then
+	    # Restart web server
+	    echo Restart web server
+	    if [ -f %{_sysconfdir}/init.d/httpd ]; then
+	        %{_sysconfdir}/init.d/httpd restart
+	    fi
+	    if [ -f %{_sysconfdir}/init.d/apache2 ]; then
+	        %{_sysconfdir}/init.d/apache2 restart
+	    fi
+	fi
+else
+	# Upgrade
+	echo "No remove ation done (this is an upgrade)"
 fi
-
-# Restart web servers if required
-if [ "x$status" = "xpurge" ] ;
-then
-    # Restart web server
-    echo Restart web server
-    if [ -f %{_sysconfdir}/init.d/httpd ]; then
-        %{_sysconfdir}/init.d/httpd restart
-    fi
-    if [ -f %{_sysconfdir}/init.d/apache2 ]; then
-        %{_sysconfdir}/init.d/apache2 restart
-    fi
-fi
-
 
 
 # version x.y.z-0.1.a for alpha, x.y.z-0.2.b for beta, x.y.z-0.3 for release

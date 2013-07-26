@@ -444,7 +444,7 @@ foreach ($dirmodels as $reldir)
 						print '</td>';
 
 						// Show example of numbering module
-						print '<td class="nowrap"="nowrap">';
+						print '<td class="nowrap">';
 						$tmp=$module->getExample();
 						if (preg_match('/^Error/',$tmp)) print '<div class="error">'.$langs->trans($tmp).'</div>';
 						elseif ($tmp=='NotConfigured') print $langs->trans($tmp);
@@ -610,7 +610,7 @@ foreach ($dirmodels as $reldir)
 							$htmltooltip.='<br>'.$langs->trans("Width").'/'.$langs->trans("Height").': '.$module->page_largeur.'/'.$module->page_hauteur;
 							$htmltooltip.='<br><br><u>'.$langs->trans("FeaturesSupported").':</u>';
 							$htmltooltip.='<br>'.$langs->trans("Logo").': '.yn($module->option_logo,1,1);
-								
+
 							// Preview
 							print '<td align="center">';
 							if ($module->type == 'pdf')
@@ -748,7 +748,7 @@ foreach ($dirmodels as $reldir)
 							$htmltooltip.='<br>'.$langs->trans("Width").'/'.$langs->trans("Height").': '.$module->page_largeur.'/'.$module->page_hauteur;
 							$htmltooltip.='<br><br><u>'.$langs->trans("FeaturesSupported").':</u>';
 							$htmltooltip.='<br>'.$langs->trans("Logo").': '.yn($module->option_logo,1,1);
-								
+
 							// Preview
 							print '<td align="center">';
 							if ($module->type == 'pdf')

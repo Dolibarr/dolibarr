@@ -194,7 +194,7 @@ function task_pdf_create($db, $object, $modele, $outputlangs, $hidedetails=0, $h
     	    $file = $prefix."_".$modele.".modules.php";
 
     		// On verifie l'emplacement du modele
-	        $file=dol_buildpath($reldir."core/modules/project/task/pdf/".$file,0);
+	        $file=dol_buildpath($reldir."core/modules/project/pdf/".$file,0);
     		if (file_exists($file))
     		{
     			$filefound=1;
@@ -211,7 +211,6 @@ function task_pdf_create($db, $object, $modele, $outputlangs, $hidedetails=0, $h
 		require_once $file;
 
 		$obj = new $classname($db);
-		
 		// We save charset_output to restore it because write_file can change it if needed for
 		// output format that does not support UTF8.
 		$sav_charset_output=$outputlangs->charset_output;

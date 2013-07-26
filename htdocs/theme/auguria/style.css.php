@@ -260,6 +260,7 @@ td.showDragHandle {
 #id-container {
   display: table;
   table-layout: fixed;
+  margin-top: 6px;
 }
 #id-right, #id-left {
   display: table-cell;

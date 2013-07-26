@@ -2,6 +2,7 @@
 
 Dolibarr ERP & CRM is a modern software to manage your company or foundation activity (contacts, suppliers, invoices, orders, stocks, agenda, ...).It's an opensource software (wrote with PHP language) designed for small and medium companies, foundation and freelances. You can freely install, use and distribute it as a standalone application or as a web application to use it from every internet access and media.
 
+![ScreenShot](http://www.dolibarr.org/images/dolibarr_screenshot1_640x480.png)
 
 
 ## LICENSE
@@ -12,7 +13,7 @@ Dolibarr is released under the terms of the GNU General Public License as publis
 
 ## INSTALL
 
-If you have no technical knowledge, and you are looking for an autoinstaller to install Dolibarr ERP/CRM in few clicks, you must download DoliWamp (the all-in-one package of Dolibarr for Windows), DoliDeb (the all-in-one package of Dolibarr for Debian or Ubuntu) or DoliRpm (the all-in-one package of Dolibarr for Fedora, Redhat, Opensue, Mandriva or Mageia).
+If you have no technical knowledge, and you are looking for an autoinstaller to install Dolibarr ERP/CRM in few clicks, you must download DoliWamp (the all-in-one package of Dolibarr for Windows), DoliDeb (the all-in-one package of Dolibarr for Debian or Ubuntu) or DoliRpm (the all-in-one package of Dolibarr for Fedora, Redhat, Opensuse, Mandriva or Mageia).
 
 You can download this at: [Official website] (http://www.dolibarr.org/downloads/)
 
@@ -77,15 +78,16 @@ See ChangeLog file found into package.
 
 - Customers, Prospects or Suppliers directory
 - Products and services catalog
-- Stock management
 - Bank accounts management
-- Orders management with PDF export
+- Orders management
 - Commercial proposals management
 - Contracts management
 - Invoices management
 - Payments management
 - Standing orders management
+- Stock management
 - Shipping management
+- PDF or ODT generation for invoice, proposals, orders...
 - Agenda with ical,vcal export for third tools integration
 - ECM (Electronic Content Management)
 - Foundations members management
@@ -99,10 +101,10 @@ See ChangeLog file found into package.
 - Bookmarks management
 - Donations management
 - Reporting
-- Data export/import tools
+- Data export/import
 - LDAP connectivity
 - Third parties or products categories 
-- ClickToDial phone numbers
+- ClickToDial integration
 - RSS integration
 
 ### Miscellaneous:

@@ -990,6 +990,8 @@ SearchOptim=Search optimization
 YouHaveXProductUseSearchOptim=You have %s product into database. You should add the constant PRODUCT_DONOTSEARCH_ANYWHERE to 1 into Home-Setup-Other, you limit the search to the beginning of strings making possible for database to use index and you should get an immediate response.
 BrowserIsOK=You are using the web browser %s. This browser is ok for security and performance.
 BrowserIsKO=You are using the web browser %s. This browser is known to be a bad choice for security, performance and reliability. We recommand you to use Firefox, Chrome, Opera or Safari.
+XDebugInstalled=XDebug est chargé.
+XCacheInstalled=XCache is loaded.
 ##### Module password generation
 PasswordGenerationStandard=Return a password generated according to internal Dolibarr algorithm: 8 characters containing shared numbers and characters in lowercase.
 PasswordGenerationNone=Do not suggest any generated password. Password must be type in manually.
@@ -1059,7 +1061,7 @@ EnableEditDeleteValidInvoice=Enable the possibility to edit/delete valid invoice
 SuggestPaymentByRIBOnAccount=Suggest payment by withdraw on account
 SuggestPaymentByChequeToAddress=Suggest payment by cheque to
 FreeLegalTextOnInvoices=Free text on invoices
-WatermarkOnDraftInvoices=Watermark on draft invoices (any if empty)
+WatermarkOnDraftInvoices=Watermark on draft invoices (none if empty)
 ##### Proposals #####
 PropalSetup=Commercial proposals module setup
 CreateForm=Create forms
@@ -1072,7 +1074,7 @@ AddShippingDateAbility=Add shipping date ability
 AddDeliveryAddressAbility=Add delivery date ability
 UseOptionLineIfNoQuantity=A line of product/service with a zero amount is considered as an option
 FreeLegalTextOnProposal=Free text on commercial proposals
-WatermarkOnDraftProposal=Watermark on draft commercial proposals (any if empty)
+WatermarkOnDraftProposal=Watermark on draft commercial proposals (none if empty)
 ##### Orders #####
 OrdersSetup=Order management setup
 OrdersNumberingModules=Orders numbering models
@@ -1080,7 +1082,7 @@ OrdersModelModule=Order documents models
 HideTreadedOrders=Hide the treated or canceled orders in the list
 ValidOrderAfterPropalClosed=To validate the order after proposal closer, makes it possible not to step by the provisional order
 FreeLegalTextOnOrders=Free text on orders
-WatermarkOnDraftOrders=Watermark on draft orders (any if empty)
+WatermarkOnDraftOrders=Watermark on draft orders (none if empty)
 ##### Clicktodial #####
 ClickToDialSetup=Click To Dial module setup
 ClickToDialUrlDesc=Url called when a click on phone picto is done.  In URL, you can use tags<br><b>__PHONETO__</b> that will be replaced with the phone number of person to call<br><b>__PHONEFROM__</b> that will be replaced with phone number of calling person (yours)<br><b>__LOGIN__</b> that will be replaced with your clicktodial login (defined on your user card)<br><b>__PASS__</b> that will be replaced with your clicktodial password (defined on your user card).
@@ -1091,7 +1093,7 @@ InterventionsSetup=Interventions module setup
 FreeLegalTextOnInterventions=Free text on intervention documents
 FicheinterNumberingModules=Intervention numbering models
 TemplatePDFInterventions=Intervention card documents models
-WatermarkOnDraftInterventionCards=Watermark on intervention card documents (any if empty)
+WatermarkOnDraftInterventionCards=Watermark on intervention card documents (none if empty)
 ##### Contracts #####
 ContractsSetup=Contracts module setup
 ContractsNumberingModules=Contracts numbering modules
