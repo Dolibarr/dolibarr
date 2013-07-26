@@ -152,10 +152,40 @@ class pdf_azur extends ModelePDFPropales
 		$outputlangs->load("propal");
 		$outputlangs->load("products");
 
+		$nblignes = count($object->lines);
+		
+		// Loop on each lines to detect if there is at least one image to show
+		$realpatharray=array();
+		if (! empty($conf->global->MAIN_GENERATE_PROPOSALS_WITH_PICTURE))
+		{
+			for ($i = 0 ; $i < $nblignes ; $i++)
+			{
+				if (empty($object->lines[$i]->fk_product)) continue;
+				
+				$objphoto = new Product($this->db);
+				$objphoto->fetch($object->lines[$i]->fk_product);
+
+				$pdir = get_exdir($object->lines[$i]->fk_product,2) . $object->lines[$i]->fk_product ."/photos/";
+				$dir = $conf->product->dir_output.'/'.$pdir;
+
+				$realpath='';
+				foreach ($objphoto->liste_photos($dir,1) as $key => $obj)
+				{
+					$filename=$obj['photo'];
+					//if ($obj['photo_vignette']) $filename='thumbs/'.$obj['photo_vignette'];
+					$realpath = $dir.$filename;
+					break;
+				}
+
+				if ($realpath) $realpatharray[$i]=$realpath;
+			}
+		}
+		if (count($realpatharray) == 0) $this->posxpicture=$this->posxtva;
+
 		if ($conf->propal->dir_output)
 		{
 			$object->fetch_thirdparty();
-
+			
 			// $deja_regle = 0;
 
 			// Definition of $dir and $file
@@ -182,8 +212,6 @@ class pdf_azur extends ModelePDFPropales
 
 			if (file_exists($dir))
 			{
-				$nblignes = count($object->lines);
-
 				// Create pdf instance
                 $pdf=pdf_getInstance($this->format);
                 $default_font_size = pdf_getPDFFontSize($outputlangs);	// Must be after pdf_getInstance
@@ -275,29 +303,8 @@ class pdf_azur extends ModelePDFPropales
 					$pdf->SetTextColor(0,0,0);
 
 					// Define size of image if we need it
-					$imglinesize=array(); $realpath='';
-					if (! empty($conf->global->MAIN_GENERATE_PROPOSALS_WITH_PICTURE))
-					{
-						if ($object->lines[$i]->fk_product)
-						{
-							$objphoto = new Product($this->db);
-							$objphoto->fetch($object->lines[$i]->fk_product);
-
-							$pdir = get_exdir($object->lines[$i]->fk_product,2) . $object->lines[$i]->fk_product ."/photos/";
-							$dir = $conf->product->dir_output.'/'.$pdir;
-
-							$realpath='';
-							foreach ($objphoto->liste_photos($dir,1) as $key => $obj)
-							{
-								$filename=$obj['photo'];
-								//if ($obj['photo_vignette']) $filename='thumbs/'.$obj['photo_vignette'];
-								$realpath = $dir.$filename;
-								break;
-							}
-
-							if (!empty($realpath))	$imglinesize=pdf_getSizeForImage($realpath);
-						}
-					}
+					$imglinesize=array();
+					if (! empty($realpatharray[$i])) $imglinesize=pdf_getSizeForImage($realpatharray[$i]);
 
 					$pdf->setTopMargin($tab_top_newpage);
 					$pdf->setPageOrientation('', 1, $heightforfooter+$heightforfreetext+$heightforinfotot);	// The only function to edit the bottom margin of current page to set it.
@@ -322,7 +329,7 @@ class pdf_azur extends ModelePDFPropales
 					if (isset($imglinesize['width']) && isset($imglinesize['height']))
 					{
 						$curX = $this->posxpicture-1;
-						$pdf->Image($realpath, $curX + (($this->posxtva-$this->posxpicture-$imglinesize['width'])/2), $curY, $imglinesize['width'], $imglinesize['height'], '', '', '', 2, 300);	// Use 300 dpi
+						$pdf->Image($realpatharray[$i], $curX + (($this->posxtva-$this->posxpicture-$imglinesize['width'])/2), $curY, $imglinesize['width'], $imglinesize['height'], '', '', '', 2, 300);	// Use 300 dpi
 						// $pdf->Image does not increase value return by getY, so we save it manually
 						$posYAfterImage=$curY+$imglinesize['height'];
 					}
@@ -331,14 +338,7 @@ class pdf_azur extends ModelePDFPropales
 					$curX = $this->posxdesc-1;
 
 					$pdf->startTransaction();
-					if (empty($conf->global->MAIN_GENERATE_PROPOSALS_WITH_PICTURE))
-					{
-						pdf_writelinedesc($pdf,$object,$i,$outputlangs,$this->posxtva-$curX,3,$curX,$curY,$hideref,$hidedesc);
-					}
-					else
-					{
-						pdf_writelinedesc($pdf,$object,$i,$outputlangs,$this->posxpicture-$curX,3,$curX,$curY,$hideref,$hidedesc);
-					}
+					pdf_writelinedesc($pdf,$object,$i,$outputlangs,$this->posxpicture-$curX,3,$curX,$curY,$hideref,$hidedesc);
 
 					$pageposafter=$pdf->getPage();
 					if ($pageposafter > $pageposbefore)	// There is a pagebreak
@@ -347,14 +347,7 @@ class pdf_azur extends ModelePDFPropales
 						$pageposafter=$pageposbefore;
 						//print $pageposafter.'-'.$pageposbefore;exit;
 						$pdf->setPageOrientation('', 1, $heightforfooter);	// The only function to edit the bottom margin of current page to set it.
-						if (empty($conf->global->MAIN_GENERATE_PROPOSALS_WITH_PICTURE))
-						{
-							pdf_writelinedesc($pdf,$object,$i,$outputlangs,$this->posxtva-$curX,3,$curX,$curY,$hideref,$hidedesc);
-						}
-						else
-						{
-							pdf_writelinedesc($pdf,$object,$i,$outputlangs,$this->posxpicture-$curX,3,$curX,$curY,$hideref,$hidedesc);
-						}
+						pdf_writelinedesc($pdf,$object,$i,$outputlangs,$this->posxpicture-$curX,3,$curX,$curY,$hideref,$hidedesc);
 
 						$pageposafter=$pdf->getPage();
 						$posyafter=$pdf->GetY();
