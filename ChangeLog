@@ -32,12 +32,13 @@ For users:
 - New: Can add an event automatically when a projet is create. 
 - New: Add option MAIN_GENERATE_DOCUMENT_WITH_PICTURE.
 - New: Add option excludethirdparties and onlythirdparties into merge pdf scripts.
-- New : [ task #925 ] Add ODT document generation for Tasks in project module.
-- New : [ task #924 ] Add numbering rule on task.
-- New : [ task #165 ] Add import/export of multiprices.
+- New: [ task #925 ] Add ODT document generation for Tasks in project module.
+- New: [ task #924 ] Add numbering rule on task.
+- New: [ task #165 ] Add import/export of multiprices.
 - New: Add Maghreb regions and departments.
 - New: A more responsive desgin for statistic box of home page.
 - Qual: Implement same rule for return value of all command line scripts (0 when success, <>0 if error).
+- New:  [ task #1005 ] Adapting to Spanish legislation bill numbering
 
 
 For translators:
