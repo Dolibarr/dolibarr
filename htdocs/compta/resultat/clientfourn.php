@@ -331,7 +331,7 @@ if ($result) {
             $var=!$var;
 
             print "<tr ".$bc[$var]."><td>&nbsp;</td>";
-            print "<td>".$langs->trans("Bills")." <a href=\"".DOL_URL_ROOT."/fourn/facture/index.php?socid=".$objp->socid."\">".$objp->nom."</a></td>\n";
+            print "<td>".$langs->trans("Bills")." <a href=\"".DOL_URL_ROOT."/fourn/facture/list.php?socid=".$objp->socid."\">".$objp->nom."</a></td>\n";
 
             if ($modecompta == 'CREANCES-DETTES')
             	print "<td align=\"right\">".price(-$objp->amount_ht)."</td>\n";
