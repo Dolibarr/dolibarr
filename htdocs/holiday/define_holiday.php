@@ -133,7 +133,7 @@ if($cp_events == 1)
 	print $langs->trans('MotifCP').' : ';
 	print $holiday->selectEventCP();
 	print ' &nbsp; '.$langs->trans('UserCP').' : ';
-	print $form->select_users('',"userCP",1,"",0,'');
+	print $form->select_dolusers('',"userCP",1,"",0,'');
 	print ' <input type="submit" value="'.$langs->trans("addEventToUserCP").'" name="bouton" class="button"/>';
 
 	print '</form><br>';

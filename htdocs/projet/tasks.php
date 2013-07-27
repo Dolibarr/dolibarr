@@ -279,7 +279,7 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->socie
 	print '</td></tr>';
 
 	print '<tr><td>'.$langs->trans("AffectedTo").'</td><td>';
-	print $form->select_users($user->id,'userid',1);
+	print $form->select_dolusers($user->id,'userid',1);
 	print '</td></tr>';
 
 	// Date start

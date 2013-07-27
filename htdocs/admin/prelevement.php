@@ -142,7 +142,7 @@ print "</tr>";
 print '<tr class="impair"><td>'.$langs->trans("ResponsibleUser").'</td>';
 print '<td align="left">';
 print '<input type="hidden" name="nom0" value="PRELEVEMENT_USER">';
-print $form->select_users($conf->global->PRELEVEMENT_USER,'value0',1);
+print $form->select_dolusers($conf->global->PRELEVEMENT_USER,'value0',1);
 print '</td>';
 print '</tr>';
 

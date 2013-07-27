@@ -318,7 +318,7 @@ if ($id > 0 || ! empty($ref))
 			print '<td class="nowrap">';
 			$contactoftask=$object->getListContactId('internal');
 			print img_object('','user');
-			print $form->select_users($_POST["userid"]?$_POST["userid"]:$user->id,'userid',0,'',0,'',$contactoftask);
+			print $form->select_dolusers($_POST["userid"]?$_POST["userid"]:$user->id,'userid',0,'',0,'',$contactoftask);
 			print '</td>';
 
 			// Note
@@ -407,7 +407,7 @@ if ($id > 0 || ! empty($ref))
 			print '<td>';
 			if ($_GET['action'] == 'editline' && $_GET['lineid'] == $task_time->rowid)
 			{
-				print $form->select_users($task_time->fk_user,'userid_line');
+				print $form->select_dolusers($task_time->fk_user,'userid_line');
 			}
 			else
 			{
