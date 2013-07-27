@@ -262,8 +262,24 @@ class Product extends CommonObject
 		}
 		if (empty($this->ref))
 		{
-			$this->error='ErrorWrongParameters';
-		    return -2;
+			// Load object modCodeProduct
+			$module=(! empty($conf->global->PRODUCT_CODEPRODUCT_ADDON)?$conf->global->PRODUCT_CODEPRODUCT_ADDON:'mod_codeproduct_leopard');
+			
+			if (substr($module, 0, 16) == 'mod_codeproduct_' && substr($module, -3) == 'php')
+			{
+				$module = substr($module, 0, dol_strlen($module)-4);
+			}
+			
+			dol_include_once('/core/modules/product/'.$module.'.php');
+			$modCodeProduct = new $module;
+
+			if (! empty($modCodeProduct->code_auto))
+				$this->ref = $modCodeProduct->getNextValue($this,$this->type);
+			else
+			{
+				$this->error='ProductModuleNotSetupForAutoRef';
+				return -2;
+			}
 		}
 
 		dol_syslog(get_class($this)."::create ref=".$this->ref." price=".$this->price." price_ttc=".$this->price_ttc." tva_tx=".$this->tva_tx." price_base_type=".$this->price_base_type, LOG_DEBUG);
