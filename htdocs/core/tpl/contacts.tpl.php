@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2012 Regis Houssin <regis.houssin@capnetworks.com>
+/* Copyright (C) 2012 Regis Houssin       <regis.houssin@capnetworks.com>
+ * Copyright (C) 2013 Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -13,7 +14,6 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
- *
  */
 
 if (! class_exists('Contact')) {
@@ -40,83 +40,81 @@ $userstatic=new User($db);
 ?>
 
 <!-- BEGIN PHP TEMPLATE CONTACTS -->
-<table class="noborder allwidth">
+<div class="tagtable centpercent noborder allwidth">
 
 <?php if ($permission) { ?>
-	<tr class="liste_titre">
-		<td><?php echo $langs->trans("Source"); ?></td>
-		<td><?php echo $langs->trans("Company"); ?></td>
-		<td><?php echo $langs->trans("Contacts"); ?></td>
-		<td><?php echo $langs->trans("ContactType"); ?></td>
-		<td colspan="3">&nbsp;</td>
-	</tr>
+	<form class="liste_titre">
+		<div><?php echo $langs->trans("Source"); ?></div>
+		<div><?php echo $langs->trans("Company"); ?></div>
+		<div><?php echo $langs->trans("Contacts"); ?></div>
+		<div><?php echo $langs->trans("ContactType"); ?></div>
+		<div>&nbsp;</div>
+		<div>&nbsp;</div>
+	</form>
 
 	<?php $var=false; ?>
 
-	<form action="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id; ?>" method="POST">
+
+	<form <?php echo $bc[$var]; ?> action="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id; ?>" method="POST">
 	<input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>" />
 	<input type="hidden" name="id" value="<?php echo $object->id; ?>" />
 	<input type="hidden" name="action" value="addcontact" />
 	<input type="hidden" name="source" value="internal" />
-
-	<tr <?php echo $bc[$var]; ?>>
-		<td class="nowrap"><?php echo img_object('','user').' '.$langs->trans("Users"); ?></td>
-		<td><?php echo $conf->global->MAIN_INFO_SOCIETE_NOM; ?></td>
-		<td><?php echo $form->select_dolusers($user->id,'userid',0,(! empty($userAlreadySelected)?$userAlreadySelected:'')); ?></td>
-		<td><?php echo $formcompany->selectTypeContact($object, '', 'type','internal'); ?></td>
-		<td align="right" colspan="3" ><input type="submit" class="button" value="<?php echo $langs->trans("Add"); ?>"></td>
-	</tr>
+		<div class="nowrap"><?php echo img_object('','user').' '.$langs->trans("Users"); ?></div>
+		<div><?php echo $conf->global->MAIN_INFO_SOCIETE_NOM; ?></div>
+		<div><?php echo $form->select_dolusers($user->id, 'userid', 0, (! empty($userAlreadySelected)?$userAlreadySelected:null), 0, null, null, 0, 56); ?></div>
+		<div><?php echo $formcompany->selectTypeContact($object, '', 'type','internal'); ?></div>
+		<div>&nbsp;</div>
+		<div align="right"><input type="submit" class="button" value="<?php echo $langs->trans("Add"); ?>"></div>
 	</form>
-
-	<form action="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id; ?>" method="POST">
-	<input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>" />
-	<input type="hidden" name="id" value="<?php echo $object->id; ?>" />
-	<input type="hidden" name="action" value="addcontact" />
-	<input type="hidden" name="source" value="internal" />
 
 	<?php $var=!$var; ?>
 
-	<tr <?php echo $bc[$var]; ?>>
-		<td class="nowrap"><?php echo img_object('','contact').' '.$langs->trans("ThirdPartyContacts"); ?></td>
+	<form <?php echo $bc[$var]; ?> action="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id; ?>" method="POST">
+	<input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>" />
+	<input type="hidden" name="id" value="<?php echo $object->id; ?>" />
+	<input type="hidden" name="action" value="addcontact" />
+	<input type="hidden" name="source" value="external" />
+		<div class="nowrap"><?php echo img_object('','contact').' '.$langs->trans("ThirdPartyContacts"); ?></div>
 		<?php if ($conf->use_javascript_ajax && ! empty($conf->global->COMPANY_USE_SEARCH_TO_SELECT)) { ?>
-		<td>
+		<div class="nowrap">
 			<?php
 			$events=array();
 			$events[]=array('method' => 'getContacts', 'url' => dol_buildpath('/core/ajax/contacts.php',1), 'htmlname' => 'contactid', 'params' => array('add-customer-contact' => 'disabled'));
 			print $form->select_company($object->socid,'socid','',1,0,0,$events);
 			?>
-		</td>
-		<td>
+		</div>
+		<div>
 			<?php $nbofcontacts=$form->select_contacts($object->socid, '', 'contactid'); ?>
-		</td>
+		</div>
 		<?php } else { ?>
-		<td>
+		<div>
 			<?php $selectedCompany = isset($_GET["newcompany"])?$_GET["newcompany"]:$object->socid; ?>
 			<?php $selectedCompany = $formcompany->selectCompaniesForNewContact($object, 'id', $selectedCompany, 'newcompany'); ?>
-		</td>
-		<td>
+		</div>
+		<div>
 			<?php $nbofcontacts=$form->select_contacts($selectedCompany, '', 'contactid'); ?>
-		</td>
+		</div>
 		<?php } ?>
-		<td>
+		<div>
 			<?php $formcompany->selectTypeContact($object, '', 'type','external'); ?>
-		</td>
-		<td align="right" colspan="3" >
+		</div>
+		<div>&nbsp;</div>
+		<div align="right">
 			<input type="submit" id="add-customer-contact" class="button" value="<?php echo $langs->trans("Add"); ?>"<?php if (! $nbofcontacts) echo ' disabled="disabled"'; ?>>
-		</td>
-	</tr>
+		</div>
 	</form>
 
 <?php } ?>
 
-	<tr class="liste_titre">
-		<td><?php echo $langs->trans("Source"); ?></td>
-		<td><?php echo $langs->trans("Company"); ?></td>
-		<td><?php echo $langs->trans("Contacts"); ?></td>
-		<td><?php echo $langs->trans("ContactType"); ?></td>
-		<td align="center"><?php echo $langs->trans("Status"); ?></td>
-		<td colspan="2">&nbsp;</td>
-	</tr>
+	<form class="liste_titre">
+		<div><?php echo $langs->trans("Source"); ?></div>
+		<div><?php echo $langs->trans("Company"); ?></div>
+		<div><?php echo $langs->trans("Contacts"); ?></div>
+		<div><?php echo $langs->trans("ContactType"); ?></div>
+		<div align="center"><?php echo $langs->trans("Status"); ?></div>
+		<div>&nbsp;</div>
+	</form>
 
 	<?php $var=true; ?>
 
@@ -130,12 +128,12 @@ $userstatic=new User($db);
 			$var = !$var;
 	?>
 
-	<tr <?php echo $bc[$var]; ?> valign="top">
-		<td align="left">
+	<form <?php echo $bc[$var]; ?>>
+		<div align="left">
 			<?php if ($tab[$i]['source']=='internal') echo $langs->trans("User"); ?>
 			<?php if ($tab[$i]['source']=='external') echo $langs->trans("ThirdPartyContact"); ?>
-		</td>
-		<td align="left">
+		</div>
+		<div align="left">
 			<?php
 			if ($tab[$i]['socid'] > 0)
 			{
@@ -151,8 +149,8 @@ $userstatic=new User($db);
 				echo '&nbsp;';
 			}
 			?>
-		</td>
-		<td>
+		</div>
+		<div>
 			<?php
 			if ($tab[$i]['source']=='internal')
 			{
@@ -169,22 +167,22 @@ $userstatic=new User($db);
 				echo $contactstatic->getNomUrl(1);
 			}
 			?>
-		</td>
-		<td><?php echo $tab[$i]['libelle']; ?></td>
-		<td align="center">
+		</div>
+		<div><?php echo $tab[$i]['libelle']; ?></div>
+		<div align="center">
 			<?php if ($object->statut >= 0) echo '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=swapstatut&amp;ligne='.$tab[$i]['rowid'].'">'; ?>
 			<?php echo $contactstatic->LibStatut($tab[$i]['status'],3); ?>
 			<?php if ($object->statut >= 0) echo '</a>'; ?>
-		</td>
-		<td align="center" class="nowrap" colspan="2">
+		</div>
+		<div align="center" class="nowrap">
 			<?php if ($permission) { ?>
 				&nbsp;<a href="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=deletecontact&amp;lineid='.$tab[$i]['rowid']; ?>"><?php echo img_delete(); ?></a>
 			<?php } ?>
-		</td>
-	</tr>
+		</div>
+	</form>
 
 <?php $i++; ?>
 <?php } } ?>
 
-</table>
+</div>
 <!-- END PHP TEMPLATE CONTACTS -->
