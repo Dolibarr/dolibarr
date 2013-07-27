@@ -347,7 +347,7 @@ class FormOther
      *  @param	string	$selected     	Preselected value
      *  @param  string	$htmlname      	Name of combo list (example: 'search_sale')
      *  @param  User	$user           Object user
-     *  @param	int		$showstatus		Show user status into label
+     *  @param	int		$showstatus		0=show user status only if status is disabled, 1=always show user status into label, -1=never show user status
      *  @return string					Html combo list code
      */
     function select_salesrepresentatives($selected,$htmlname,$user,$showstatus=0)
@@ -386,12 +386,28 @@ class FormOther
                 if ($obj_usr->rowid == $selected) $moreforfilter.=' selected="selected"';
 
                 $moreforfilter.='>';
-                $moreforfilter.=dolGetFirstLastname($obj_usr->firstname,$obj_usr->name)." (".$obj_usr->login.')';
-                if ($showstatus)
+                $moreforfilter.=dolGetFirstLastname($obj_usr->firstname,$obj_usr->name);
+                // Complete name with more info
+                $moreinfo=0;
+                if (! empty($conf->global->MAIN_SHOW_LOGIN))
                 {
-					if ($obj_usr->statut == 1) $moreforfilter.=" ". img_picto($langs->trans('Enabled'),'statut4').' '.$langs->trans('Enabled');
-					else $moreforfilter.=" ". img_picto($langs->trans('Disabled'),'statut5').' '.$langs->trans('Disabled');
+                	$out.=($moreinfo?' - ':' (').$obj->login;
+                	$moreinfo++;
+                }
+                if ($showstatus >= 0)
+                {
+					if ($obj_usr->statut == 1 && $showstatus == 1)
+					{
+						$moreforfilter.=($moreinfo?' - ':' (').$langs->trans('Enabled');
+	                	$moreinfo++;
+					}
+					if ($obj_usr->statut == 0)
+					{
+						$moreforfilter.=($moreinfo?' - ':' (').$langs->trans('Disabled');
+                		$moreinfo++;
+					}
 				}
+				$moreforfilter.=($moreinfo?')':'');
                 $moreforfilter.='</option>';
             }
             $this->db->free($resql_usr);
