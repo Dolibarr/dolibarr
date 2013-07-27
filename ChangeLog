@@ -2,7 +2,7 @@
 English Dolibarr ChangeLog
 --------------------------------------------------------------
 
-***** ChangeLog for 3.4 compared to 3.3.2 *****
+***** ChangeLog for 3.4 compared to 3.3.* *****
 For users:
 - New: Can use ODS templates as document templates.
 - New: Add link to autofill/reset with quantity to ship when creating a
@@ -92,6 +92,8 @@ WARNING: If you used external modules, some of them may need to be upgraded due 
   function to keep same behaviour.
 
 
+***** ChangeLog for 3.3.4 compared to 3.3.3 *****
+- Fix: [ bug #1001 ] Social Contribution : State not correct
 
 ***** ChangeLog for 3.3.3 compared to 3.3.2 *****
 - Fix: [ bug #903 ] Fatal error: Call to undefined function dol_get_first_day() in htdocs/commande/liste.php
@@ -136,7 +138,7 @@ WARNING: If you used external modules, some of them may need to be upgraded due 
 - Fix: [ bug #762 ] Bad profit calculation in Reporting
 - Fix: bug dictionnary with wrong prefix table
 
-***** ChangeLog for 3.3 compared to 3.2.3 *****
+***** ChangeLog for 3.3 compared to 3.2.* *****
 For users:
 - New: Add holiday module, to declare and follow holidays of your employees.
 - New: Add margin management module.
@@ -314,7 +316,7 @@ Dolibarr license has also been updated from GPLv2+ to GPLv3+.
 
 
 
-***** ChangeLog for 3.2.0 compared to 3.1.3 *****
+***** ChangeLog for 3.2.0 compared to 3.1.* *****
 WARNING: PHP lower than 5.x are no more supported.
 WARNING: Because of a major datastructure change onto supplier prices tables, be aware
 to make a backup of your database before making upgrade.
@@ -555,7 +557,7 @@ For translators:
 
 
 
-***** ChangeLog for 3.0 compared to 2.9 *****
+***** ChangeLog for 3.0 compared to 2.9.* *****
 
 For users:
 - New: Can edit date of cheque receipts.
@@ -651,7 +653,7 @@ For developers:
 - Qual: Removed deprecated code.
 
 
-***** ChangeLog for 2.9 compared to 2.8 *****
+***** ChangeLog for 2.9 compared to 2.8.* *****
 
 For users:
 - New: POS module allow to choose which warehouse to use.
@@ -769,7 +771,7 @@ For users:
 - Fix: bug #29526 : Numérotation Proposition Incorrecte après duplication
 
 
-***** ChangeLog for 2.8 compared to 2.7 *****
+***** ChangeLog for 2.8 compared to 2.7.* *****
 
 For users:
 - New: Support note on trips module
@@ -833,7 +835,7 @@ For users:
 - Fix: Update member photo.
 
 
-***** ChangeLog for 2.7 compared to 2.6 *****
+***** ChangeLog for 2.7 compared to 2.6.* *****
 
 For users:
 - New: Add a print icon to show a page to print without menus.
@@ -932,7 +934,7 @@ For developers:
 - All install files are now in same directory /install.
 
 
-***** ChangeLog for 2.6 compared to 2.5 *****
+***** ChangeLog for 2.6 compared to 2.5.* *****
 
 For users:
 - New: Add filter on status in emailing selector for Dolibarr users.
@@ -1015,7 +1017,7 @@ For developers:
 - First change for future geoip module.
 
 
-***** ChangeLog for 2.5 compared to 2.4 *****
+***** ChangeLog for 2.5 compared to 2.4.* *****
 
 For users:
 - Sessions timeout can be configured to overwrite PHP setup.
@@ -1079,7 +1081,7 @@ For developers:
 
    
 
-***** ChangeLog for 2.4 compared to 2.2 *****
+***** ChangeLog for 2.4 compared to 2.2.* *****
 
 For users:
 - Add a calendar module (module agenda) with ical/vcal/rss export.
@@ -1134,7 +1136,7 @@ For developers:
   Windows with Apache and Mysql included.
 
 
-***** ChangeLog for 2.2 compared to 2.1 *****
+***** ChangeLog for 2.2 compared to 2.1.* *****
 
 - Add more statistics on main page.
 - Add option to add message on login page.
@@ -1168,7 +1170,7 @@ For developers:
 - Can drag and drop boxes on main page.
 
 
-***** ChangeLog for 2.1 compared to 2.0.1 *****
+***** ChangeLog for 2.1 compared to 2.0.* *****
 
 - Added a better installer.
 - Support user and groups permissions.
@@ -1239,7 +1241,7 @@ Minor bug fixes
 
 
 
-***** ChangeLog for 2.0 compared to 1.0 *****
+***** ChangeLog for 2.0 compared to 1.0.* *****
 
 ChangeLog file size is so important, that it is not included inside Dolibarr
 package. You can find it at www.dolibarr.org
