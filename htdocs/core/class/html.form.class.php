@@ -1096,7 +1096,7 @@ class Form
         $out='';
 
         // On recherche les utilisateurs
-        $sql = "SELECT DISTINCT u.rowid, u.lastname as lastname, u.firstname, u.login, u.admin, u.entity";
+        $sql = "SELECT DISTINCT u.rowid, u.lastname as lastname, u.firstname, u.statut, u.login, u.admin, u.entity";
         if (! empty($conf->multicompany->enabled) && $conf->entity == 1 && $user->admin && ! $user->entity)
         {
             $sql.= ", e.label";
@@ -1142,7 +1142,7 @@ class Form
                 while ($i < $num)
                 {
                     $obj = $this->db->fetch_object($resql);
-
+					
                     $userstatic->id=$obj->rowid;
                     $userstatic->lastname=$obj->lastname;
                     $userstatic->firstname=$obj->firstname;
@@ -1164,6 +1164,14 @@ class Form
                     }
 
                     $out.= $userstatic->getFullName($langs, 0, 0, $maxlength);
+                    if ($obj->statut == 1)
+                    {
+						$out.="  (".$langs->trans('Enabled').' '.img_picto($langs->trans('Enabled'),'statut4').")";
+					}
+					else
+					{ 
+						$out.="  (".$langs->trans('Disabled').' '.img_picto($langs->trans('Disabled'),'statut5').")";
+					}
 
                     if (! empty($conf->multicompany->enabled) && empty($conf->multicompany->transverse_mode) && $conf->entity == 1 && $user->admin && ! $user->entity)
                     {
@@ -1174,6 +1182,7 @@ class Form
                     //if ($obj->admin) $out.= ' *';
                     if (! empty($conf->global->MAIN_SHOW_LOGIN)) $out.= ' ('.$obj->login.')';
                     $out.= '</option>';
+				
                     $i++;
                 }
             }

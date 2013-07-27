@@ -351,14 +351,15 @@ class FormOther
      */
     function select_salesrepresentatives($selected,$htmlname,$user)
     {
-        global $conf;
+        global $conf,$langs;
+        $langs->load('users');
 
         // Select each sales and print them in a select input
         $moreforfilter ='<select class="flat" name="'.$htmlname.'">';
         $moreforfilter.='<option value="">&nbsp;</option>';
 
         // Get list of users allowed to be viewed
-        $sql_usr = "SELECT u.rowid, u.lastname as name, u.firstname, u.login";
+        $sql_usr = "SELECT u.rowid, u.lastname as name, u.statut, u.firstname, u.login";
         $sql_usr.= " FROM ".MAIN_DB_PREFIX."user as u";
         $sql_usr.= " WHERE u.entity IN (0,".$conf->entity.")";
         if (empty($user->rights->user->user->lire)) $sql_usr.=" AND u.fk_societe = ".($user->societe_id?$user->societe_id:0);
@@ -384,7 +385,14 @@ class FormOther
                 if ($obj_usr->rowid == $selected) $moreforfilter.=' selected="selected"';
 
                 $moreforfilter.='>';
-                $moreforfilter.=$obj_usr->firstname." ".$obj_usr->name." (".$obj_usr->login.')';
+				if ($obj_usr->statut == 1)
+				{
+					$moreforfilter.=$obj_usr->firstname." ".$obj_usr->name." (".$obj_usr->login.')'." ". img_picto($langs->trans('Enabled'),'statut4').' '.$langs->trans('Enabled');
+				}
+				else
+				{
+					$moreforfilter.=$obj_usr->firstname." ".$obj_usr->name." (".$obj_usr->login.')'." ". img_picto($langs->trans('Disabled'),'statut5').' '.$langs->trans('Disabled');
+				}
                 $moreforfilter.='</option>';
             }
             $this->db->free($resql_usr);
