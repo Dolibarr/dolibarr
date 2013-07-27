@@ -347,9 +347,10 @@ class FormOther
      *  @param	string	$selected     	Preselected value
      *  @param  string	$htmlname      	Name of combo list (example: 'search_sale')
      *  @param  User	$user           Object user
+     *  @param	int		$showstatus		Show user status into label
      *  @return string					Html combo list code
      */
-    function select_salesrepresentatives($selected,$htmlname,$user)
+    function select_salesrepresentatives($selected,$htmlname,$user,$showstatus=0)
     {
         global $conf,$langs;
         $langs->load('users');
@@ -385,13 +386,11 @@ class FormOther
                 if ($obj_usr->rowid == $selected) $moreforfilter.=' selected="selected"';
 
                 $moreforfilter.='>';
-				if ($obj_usr->statut == 1)
-				{
-					$moreforfilter.=$obj_usr->firstname." ".$obj_usr->name." (".$obj_usr->login.')'." ". img_picto($langs->trans('Enabled'),'statut4').' '.$langs->trans('Enabled');
-				}
-				else
-				{
-					$moreforfilter.=$obj_usr->firstname." ".$obj_usr->name." (".$obj_usr->login.')'." ". img_picto($langs->trans('Disabled'),'statut5').' '.$langs->trans('Disabled');
+                $moreforfilter.=dolGetFirstLastname($obj_usr->firstname,$obj_usr->name)." (".$obj_usr->login.')';
+                if ($showstatus)
+                {
+					if ($obj_usr->statut == 1) $moreforfilter.=" ". img_picto($langs->trans('Enabled'),'statut4').' '.$langs->trans('Enabled');
+					else $moreforfilter.=" ". img_picto($langs->trans('Disabled'),'statut5').' '.$langs->trans('Disabled');
 				}
                 $moreforfilter.='</option>';
             }

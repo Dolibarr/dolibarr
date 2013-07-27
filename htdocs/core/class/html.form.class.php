@@ -1061,6 +1061,7 @@ class Form
      * 	@param	int		$enableonly		Array list of users id to be enabled. All other must be disabled
      *  @param	int		$force_entity	0 or Id of environment to force
      * 	@return	void
+     *  @deprecated
      */
     function select_users($selected='',$htmlname='userid',$show_empty=0,$exclude='',$disabled=0,$include='',$enableonly='',$force_entity=0)
     {
@@ -1079,9 +1080,10 @@ class Form
      * 	@param	array	$enableonly		Array list of users id to be enabled. All other must be disabled
      *  @param	int		$force_entity	0 or Id of environment to force
      *  @param	int		$maxlength		Maximum length of string into list (0=no limit)
+     *  @param	int		$showstatus		Show user status into label
      * 	@return	string					HTML select string
      */
-    function select_dolusers($selected='', $htmlname='userid', $show_empty=0, $exclude='', $disabled=0, $include='', $enableonly='', $force_entity=0, $maxlength=0)
+    function select_dolusers($selected='', $htmlname='userid', $show_empty=0, $exclude='', $disabled=0, $include='', $enableonly='', $force_entity=0, $maxlength=0, $showstatus=0)
     {
         global $conf,$user,$langs;
 
@@ -1142,7 +1144,7 @@ class Form
                 while ($i < $num)
                 {
                     $obj = $this->db->fetch_object($resql);
-					
+
                     $userstatic->id=$obj->rowid;
                     $userstatic->lastname=$obj->lastname;
                     $userstatic->firstname=$obj->firstname;
@@ -1164,13 +1166,10 @@ class Form
                     }
 
                     $out.= $userstatic->getFullName($langs, 0, 0, $maxlength);
-                    if ($obj->statut == 1)
+                    if ($showstatus)
                     {
-						$out.="  (".$langs->trans('Enabled').' '.img_picto($langs->trans('Enabled'),'statut4').")";
-					}
-					else
-					{ 
-						$out.="  (".$langs->trans('Disabled').' '.img_picto($langs->trans('Disabled'),'statut5').")";
+                    	if ($obj->statut == 1) $out.="  (".$langs->trans('Enabled').' '.img_picto($langs->trans('Enabled'),'statut4').")";
+						else $out.="  (".$langs->trans('Disabled').' '.img_picto($langs->trans('Disabled'),'statut5').")";
 					}
 
                     if (! empty($conf->multicompany->enabled) && empty($conf->multicompany->transverse_mode) && $conf->entity == 1 && $user->admin && ! $user->entity)
@@ -1182,7 +1181,7 @@ class Form
                     //if ($obj->admin) $out.= ' *';
                     if (! empty($conf->global->MAIN_SHOW_LOGIN)) $out.= ' ('.$obj->login.')';
                     $out.= '</option>';
-				
+
                     $i++;
                 }
             }

@@ -220,7 +220,7 @@ print $form->select_company($socid,'socid',$filter,1,1);
 print '</td></tr>';
 // User
 print '<tr><td>'.$langs->trans("User").'/'.$langs->trans("SalesRepresentative").'</td><td>';
-print $form->select_users($userid,'userid',1);
+print $form->select_dolusers($userid,'userid',1);
 print '</td></tr>';
 // Year
 print '<tr><td>'.$langs->trans("Year").'</td><td>';

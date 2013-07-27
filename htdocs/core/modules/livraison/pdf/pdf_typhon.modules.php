@@ -787,6 +787,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 			$pdf->MultiCell($widthrecbox, 4, $carac_client, 0, 'L');
 		}
 
+		$pdf->SetTextColor(0,0,60);
 	}
 
 	/**

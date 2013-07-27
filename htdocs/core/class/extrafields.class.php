@@ -23,13 +23,13 @@
 
 /**
  * 	\file 		htdocs/core/class/extrafields.class.php
-*	\ingroup    core
-*	\brief      File of class to manage extra fields
-*/
+ *	\ingroup    core
+ *	\brief      File of class to manage extra fields
+ */
 
 /**
  *	Class to manage standard extra fields
-*/
+ */
 class ExtraFields
 {
 	var $db;
@@ -683,16 +683,18 @@ class ExtraFields
 		}
 		elseif ($type == 'sellist')
 		{
+
 			$out='<select class="flat" name="options_'.$key.'">';
-			$param_list=array_keys($param['options']);
-			$InfoFieldList = explode(":", $param_list[0]);
+			if (is_array($param['options'])) {
+				$param_list=array_keys($param['options']);
+				$InfoFieldList = explode(":", $param_list[0]);
 
-			// 0 1 : tableName
-			// 1 2 : label field name Nom du champ contenant le libelle
-			// 2 3 : key fields name (if differ of rowid)
-			// 3 4 : key field parent (for dependent lists)
+				// 0 1 : tableName
+				// 1 2 : label field name Nom du champ contenant le libelle
+				// 2 3 : key fields name (if differ of rowid)
+				// 3 4 : key field parent (for dependent lists)
 
-			$keyList='rowid';
+				$keyList='rowid';
 
 			if (count($InfoFieldList)>=3)
 				$keyList=$InfoFieldList[2].' as rowid';
@@ -717,17 +719,15 @@ class ExtraFields
 			$sql.= ' FROM '.MAIN_DB_PREFIX .$InfoFieldList[0];
 			//$sql.= ' WHERE entity = '.$conf->entity;
 
-			dol_syslog(get_class($this).'::showInputField type=sellist sql='.$sql);
-			$resql = $this->db->query($sql);
+				dol_syslog(get_class($this).'::showInputField type=sellist sql='.$sql);
+				$resql = $this->db->query($sql);
 
-			if ($resql)
-			{
-				$out.='<option value="0">&nbsp;</option>';
-				$num = $this->db->num_rows($resql);
-				$i = 0;
-				if ($num)
+				if ($resql)
 				{
-					while ($i < $num)
+					$out.='<option value="0">&nbsp;</option>';
+					$num = $this->db->num_rows($resql);
+					$i = 0;
+					if ($num)
 					{
 						$labeltoshow='';
 						$obj = $this->db->fetch_object($resql);
@@ -785,8 +785,8 @@ class ExtraFields
 							$i++;
 						}
 					}
+					$this->db->free();
 				}
-				$this->db->free();
 			}
 			$out.='</select>';
 		}
@@ -993,7 +993,9 @@ class ExtraFields
 	 */
 	function setOptionalsFromPost($extralabels,&$object)
 	{
-		global $_POST;
+		global $_POST, $langs;
+		$nofillrequired='';// For error when required field left blank
+		$error_field_required = array();
 
 		if (is_array($extralabels))
 		{
@@ -1001,6 +1003,11 @@ class ExtraFields
 			foreach ($extralabels as $key => $value)
 			{
 				$key_type = $this->attribute_type[$key];
+				if($this->attribute_required[$key] && !GETPOST("options_$key",2))
+				{
+					$nofillrequired++;
+					$error_field_required[] = $value;
+				}
 
 				if (in_array($key_type,array('date','datetime')))
 				{
@@ -1028,7 +1035,14 @@ class ExtraFields
 				$object->array_options["options_".$key]=$value_key;
 			}
 
-			return 1;
+			if($nofillrequired) {
+				$langs->load('errors');
+				setEventMessage($langs->trans('ErrorFieldsRequired').' : '.implode(', ',$error_field_required),'errors');
+				return -1;
+			}
+			else {
+				return 1;
+			}
 		}
 		else {
 			return 0;
