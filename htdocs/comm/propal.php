@@ -331,7 +331,7 @@ else if ($action == 'add' && $user->rights->propal->creer)
 			$object->origin		= GETPOST('origin');
 			$object->origin_id	= GETPOST('originid');
 
-			for ($i = 1 ; $i <= $conf->global->PRODUCT_SHOW_WHEN_CREATE; $i++)
+			for ($i = 1; $i <= $conf->global->PRODUCT_SHOW_WHEN_CREATE; $i++)
 			{
 				if ($_POST['idprod'.$i])
 				{
@@ -344,54 +344,60 @@ else if ($action == 'add' && $user->rights->propal->creer)
 
 			// Fill array 'array_options' with data from add form
 			$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
-
-			$id = $object->create($user);
+			if($ret < 0) {
+				$error++;
+				$action = 'create';
+			}
 		}
 
-		if ($id > 0)
-		{
-			// Insertion contact par defaut si defini
-			if (GETPOST('contactidp') > 0)
-			{
-				$result=$object->add_contact(GETPOST('contactidp'),'CUSTOMER','external');
-				if ($result < 0)
-				{
-					$error++;
-					setEventMessage($langs->trans("ErrorFailedToAddContact"), 'errors');
-				}
-			}
+		if(!$error) {
+			$id = $object->create($user);
 
-			if (! $error)
+			if ($id > 0)
 			{
-				$db->commit();
-
-				if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
+				// Insertion contact par defaut si defini
+				if (GETPOST('contactidp') > 0)
 				{
-					// Define output language
-					$outputlangs = $langs;
-					if (! empty($conf->global->MAIN_MULTILANGS))
+					$result=$object->add_contact(GETPOST('contactidp'),'CUSTOMER','external');
+					if ($result < 0)
 					{
-						$outputlangs = new Translate("",$conf);
-						$newlang=(GETPOST('lang_id') ? GETPOST('lang_id') : $object->client->default_lang);
-						$outputlangs->setDefaultLang($newlang);
+						$error++;
+						setEventMessage($langs->trans("ErrorFailedToAddContact"), 'errors');
 					}
-					$ret=$object->fetch($id);    // Reload to get new records
-					propale_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 				}
 
-				header('Location: '.$_SERVER["PHP_SELF"].'?id='.$id);
-				exit;
+				if (! $error)
+				{
+					$db->commit();
+
+					if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
+					{
+						// Define output language
+						$outputlangs = $langs;
+						if (! empty($conf->global->MAIN_MULTILANGS))
+						{
+							$outputlangs = new Translate("",$conf);
+							$newlang=(GETPOST('lang_id') ? GETPOST('lang_id') : $object->client->default_lang);
+							$outputlangs->setDefaultLang($newlang);
+						}
+						$ret=$object->fetch($id);    // Reload to get new records
+						propale_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+					}
+
+					header('Location: '.$_SERVER["PHP_SELF"].'?id='.$id);
+					exit;
+				}
+				else
+				{
+					$db->rollback();
+				}
 			}
 			else
 			{
+				dol_print_error($db,$object->error);
 				$db->rollback();
+				exit;
 			}
-		}
-		else
-		{
-			dol_print_error($db,$object->error);
-			$db->rollback();
-			exit;
 		}
 	}
 }
@@ -1121,24 +1127,30 @@ else if ($action == 'update_extras')
 	$extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
 	$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
 
-	// Actions on extra fields (by external module or standard code)
-	// FIXME le hook fait double emploi avec le trigger !!
-	$hookmanager->initHooks(array('propaldao'));
-	$parameters=array('id'=>$object->id);
-	$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
-	if (empty($reshook))
-	{
-		if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+	if($ret < 0) {
+		$error++;
+		$action = 'edit_extras';
+	}
+
+	if(!$error) {
+		// Actions on extra fields (by external module or standard code)
+		// FIXME le hook fait double emploi avec le trigger !!
+		$hookmanager->initHooks(array('propaldao'));
+		$parameters=array('id'=>$object->id);
+		$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+		if (empty($reshook))
 		{
-			$result=$object->insertExtraFields();
-			if ($result < 0)
+			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
 			{
-				$error++;
+				$result=$object->insertExtraFields();
+				if ($result < 0)
+				{
+					$error++;
+				}
 			}
 		}
+		else if ($reshook < 0) $error++;
 	}
-	else if ($reshook < 0) $error++;
-
 }
 
 if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB) && $user->rights->propal->creer)
