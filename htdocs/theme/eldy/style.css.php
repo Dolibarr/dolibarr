@@ -811,6 +811,10 @@ foreach($mainmenuusedarray as $val)
 
 /* Login */
 
+.bodylogin
+{
+	background: #ffffff url(<?php echo $img_head; ?>) 0 0 no-repeat;
+}
 form#login {
 	margin-top: <?php echo $dol_optimize_smallscreen?'30':'60' ?>px;
 	margin-bottom: 30px;
@@ -1429,7 +1433,7 @@ a.tab:link, a.tab:visited, a.tab:hover, a.tab#active {
     background-image: -ms-linear-gradient(bottom, rgb(<?php echo $colorbacktab1; ?>) 35%, rgb(<?php echo $colorbacktab2; ?>) 100%);
     background-image: linear-gradient(bottom, rgb(<?php echo $colorbacktab1; ?>) 35%, rgb(<?php echo $colorbacktab2; ?>) 100%);
 <?php } ?>
-	background-image: none !important; 
+	background-image: none !important;
 }
 
 a.tab#active {
@@ -1449,7 +1453,7 @@ a.tab:hover
 }
 a.tab:link, a.tab:visited
 {
-	color: #888;    
+	color: #888;
 	/* font-weight: normal !important; */
 }
 a.tabimage {
@@ -1742,7 +1746,7 @@ tr.liste_titre th, th.liste_titre, tr.liste_titre td, td.liste_titre, form.liste
 	text-shadow: 1px 0px 1px #<?php echo $colorshadowtitle; ?>;
 }
 .liste_titre td a {
-	text-shadow: none !important; 
+	text-shadow: none !important;
 }
 div.liste_titre {
 	padding-left: 3px;
@@ -1864,7 +1868,7 @@ div.tabBar .noborder {
     text-align: center;
     border-radius: 5px;
 }
- 
+
 .boxtable {
     -moz-box-shadow: 3px 3px 4px #DDD;
     -webkit-box-shadow: 3px 3px 4px #DDD;

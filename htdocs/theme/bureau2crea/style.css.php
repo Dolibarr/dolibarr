@@ -1521,7 +1521,6 @@ input.liste_titre {
 tr.liste_total td, form.liste_total div {
 	border-top: 1px solid #DDDDDD;
 	background: #F0F0F0;
-	/* background-image: url(<?php echo dol_buildpath($path.'/theme/login_background.png',1); ?>); */
 	background-repeat: repeat-x;
 	color: #332266;
 	font-weight: normal;
