@@ -41,7 +41,7 @@ else $typeofdata='textarea:12:100';
 ?>
 
 <!-- BEGIN PHP TEMPLATE NOTES -->
-<div class="table-border">
+<div class="border table-border centpercent">
 	<div class="table-border-row">
 		<div class="table-key-border-col"<?php echo ' style="width: '.$colwidth.'%"'; ?>><?php echo $form->editfieldkey("NotePublic", $note_public, $object->note_public, $object, $permission, $typeofdata, $moreparam); ?></div>
 		<div class="table-val-border-col"><?php echo $form->editfieldval("NotePublic", $note_public, $object->note_public, $object, $permission, $typeofdata, '', null, null, $moreparam); ?></div>

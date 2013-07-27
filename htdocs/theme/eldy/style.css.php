@@ -1599,9 +1599,10 @@ span.butAction, span.butActionDelete {
 }
 
 
-table.border, table.dataTable {
-	border: 1px solid #9CACBB;
+table.border, table.dataTable, .table-border, .table-border-col, .table-key-border-col, .table-val-border-col {
+	border: 1px solid #D0D0D0;
 	border-collapse: collapse;
+	padding: 1px 2px 1px 3px;			/* t r b l */
 }
 
 table.border td {
@@ -1615,6 +1616,14 @@ td.border {
 	border-right: 1px solid #000000;
 	border-bottom: 1px solid #000000;
 	border-left: 1px solid #000000;
+}
+
+.table-key-border-col {
+	width: 25%;
+	vertical-align:top;
+}
+.table-val-border-col {
+	width:auto;
 }
 
 /* Main boxes */
@@ -1709,11 +1718,11 @@ table.liste td {
 	padding-right: 2px;
 }
 
-.tagtable { display: table; }
+.tagtable, .table-border { display: table; }
+.tagtr, .table-border-row  { display: table-row; }
+.tagtd, .table-border-col, .table-key-border-col, .table-val-border-col { display: table-cell; }
 .tagtable form { display: table-row; }
 .tagtable form div { display: table-cell; }
-.tagtr { display: table-row; }
-.tagtd { display: table-cell; }
 
 tr.liste_titre, tr.liste_titre_sel, form.liste_titre, form.liste_titre_sel, table.dataTable.tr
 {
@@ -1740,10 +1749,11 @@ div.liste_titre, tr.liste_titre, tr.liste_titre_sel, form.liste_titre, form.list
 tr.liste_titre th, th.liste_titre, tr.liste_titre td, td.liste_titre, form.liste_titre div, div.liste_titre
 {
     font-family: <?php print $fontlist ?>;
-    /*font-weight: normal;*/
+    font-weight: bold;
     border-bottom: 1px solid #FDFFFF;
     white-space: <?php echo $dol_optimize_smallscreen?'normal':'nowrap'; ?>;
 	text-shadow: 1px 0px 1px #<?php echo $colorshadowtitle; ?>;
+    vertical-align: middle;
 }
 .liste_titre td a {
 	text-shadow: none !important;
@@ -2046,30 +2056,7 @@ div.titre {
 #divsubscribe { width: 700px; }
 #tablesubscribe { width: 100%; }
 
-div.table-border {
-	display:table;
-    width: 100%;
-    border-collapse: collapse;
-    border: 1px solid #9CACBB;
-}
-div.table-border-row {
-	display:table-row;
-}
-div.table-key-border-col {
-	display:table-cell;
-	width: 25%;
-	vertical-align:top;
-	padding: 1px 2px 1px 1px;
-	border: 1px solid #9CACBB;
-	border-collapse: collapse;
-}
-div.table-val-border-col {
-	display:table-cell;
-	width:auto;
-	padding: 1px 2px 1px 1px;
-	border: 1px solid #9CACBB;
-	border-collapse: collapse;
-}
+
 
 
 /* ============================================================================== */

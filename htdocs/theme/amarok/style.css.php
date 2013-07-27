@@ -1143,9 +1143,11 @@ table.notopnoleftnoright {
 	margin:0px;
 }
 
-table.border {
-	border:1px solid #bbbbbb;
+table.border, table.dataTable, .table-border, .table-border-col, .table-key-border-col, .table-val-border-col  {
+	border:1px solid #dddddd;
 	border-collapse:collapse;
+	padding:1px 0px;
+	padding-left:2px;
 }
 
 table.border td {
@@ -1155,11 +1157,13 @@ table.border td {
 	padding-left:2px;
 }
 
-/*
-td.border {
-	border:1px solid #000000;
+.table-key-border-col {
+	width: 25%;
+	vertical-align:top;
 }
-*/
+.table-val-border-col {
+	width:auto;
+}
 
 /* Main boxes */
 
@@ -1229,11 +1233,11 @@ table.liste {
 
 table.liste td {padding:1px 2px 1px 0px;}
 
-.tagtable { display: table; }
+.tagtable, .table-border { display: table; }
+.tagtr, .table-border-row  { display: table-row; }
+.tagtd, .table-border-col, .table-key-border-col, .table-val-border-col { display: table-cell; }
 .tagtable form { display: table-row; }
 .tagtable form div { display: table-cell; }
-.tagtr { display: table-row; }
-.tagtd { display: table-cell; }
 
 tr.liste_titre, tr.liste_titre_sel, form.liste_titre, form.liste_titre_sel
 {
@@ -1436,30 +1440,6 @@ div.titre {
 #divsubscribe { width: 700px; }
 #tablesubscribe { width: 100%; }
 
-div.table-border {
-	display:table;
-    width: 100%;
-    border-collapse: collapse;
-    border: 1px solid #DDD;
-}
-div.table-border-row {
-	display:table-row;
-}
-div.table-key-border-col {
-	display:table-cell;
-	width: 25%;
-	vertical-align:top;
-	padding: 1px 2px 1px 1px;
-	border: 1px solid #DDD;
-	border-collapse: collapse;
-}
-div.table-val-border-col {
-	display:table-cell;
-	width:auto;
-	padding: 1px 2px 1px 1px;
-	border: 1px solid #DDD;
-	border-collapse: collapse;
-}
 
 
 /* ============================================================================== */

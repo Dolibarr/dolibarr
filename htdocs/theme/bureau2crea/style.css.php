@@ -1350,43 +1350,53 @@ margin: 0px 0px 0px 0px;
 }
 
 
-table.border {
--webkit-box-shadow: #CCCCCC 2px 4px 2px;
-border: 2px solid #BBBBBB;
-border-collapse: collapse;
-padding: 10px;
-border-spacing: 2px;
+table.border, table.dataTable, .table-border, .table-border-col, .table-key-border-col, .table-val-border-col  {
+	border-collapse: collapse;
+	padding: 10px;
+	border-spacing: 2px;
+	border: 1px solid #EFEFEF;
 }
-
+table.border, table.dataTable, .table-border {
+	-webkit-box-shadow: #CCCCCC 2px 4px 2px;
+	border: 2px solid #BBBBBB;
+}
 table.border.formdoc {
-padding: 0px;
-border-collapse: collapse;
-border: 1px solid #666;
+	padding: 0px;
+	border-collapse: collapse;
+	border: 1px solid #666;
 }
 
 table.border.formdoc td {
-margin: 0px;
-padding: 0px;
-border: none;
+	margin: 0px;
+	padding: 0px;
+	border: none;
 }
 
 table.border td {
-padding: 4px;
-border: 1px solid #EFEFEF;
-border-spacing: 0px;
-/*border-collapse: collapse;*/
-margin: 0px;
+	padding: 4px;
+	border: 1px solid #EFEFEF;
+	border-spacing: 0px;
+	/*border-collapse: collapse;*/
+	margin: 0px;
 }
 
 table.border table td {
-border: none;
+	border: none;
 }
 
 td.border {
-border-top: 1px solid #000000;
-border-right: 1px solid #000000;
-border-bottom: 1px solid #000000;
-border-left: 1px solid #000000;
+	border-top: 1px solid #000000;
+	border-right: 1px solid #000000;
+	border-bottom: 1px solid #000000;
+	border-left: 1px solid #000000;
+}
+
+.table-key-border-col {
+	width: 25%;
+	vertical-align:top;
+}
+.table-val-border-col {
+	width:auto;
 }
 
 /* Main boxes */
@@ -1439,11 +1449,11 @@ table.noborder {
     vertical-align: text-top;
 }
 
-.tagtable { display: table; }
+.tagtable, .table-border { display: table; }
+.tagtr, .table-border-row  { display: table-row; }
+.tagtd, .table-border-col, .table-key-border-col, .table-val-border-col { display: table-cell; }
 .tagtable form { display: table-row; }
 .tagtable form div { display: table-cell; }
-.tagtr { display: table-row; }
-.tagtd { display: table-cell; }
 
 tr.liste_titre, form.liste_titre {
     height: 25px;
@@ -2169,36 +2179,6 @@ a.cke_dialog_ui_button
 
 .template-upload {
     height: 72px !important;
-}
-
-
-/* ============================================================================== */
-/*  Table with div                                                                */
-/* ============================================================================== */
-
-div.table-border {
-	display:table;
-    width: 100%;
-    border-collapse: collapse;
-    border: 1px solid #9CACBB;
-}
-div.table-border-row {
-	display:table-row;
-}
-div.table-key-border-col {
-	display:table-cell;
-	width: 25%;
-	vertical-align:top;
-	padding: 1px 2px 1px 1px;
-	border: 1px solid #9CACBB;
-	border-collapse: collapse;
-}
-div.table-val-border-col {
-	display:table-cell;
-	width:auto;
-	padding: 1px 2px 1px 1px;
-	border: 1px solid #9CACBB;
-	border-collapse: collapse;
 }
 
 
