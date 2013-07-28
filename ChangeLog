@@ -65,7 +65,8 @@ For developers:
 WARNING: This may create regression for some external modules, but was necessary to make
 Dolibarr better:
 
-- We started to clean hooks code. If your hook want to modify value of $actions, it's role
+1) We started to clean hooks code. 
+If your hook want to modify value of $actions, it's role
 of your hook to modify it. Dolibarr hook code will not decide this for your module anymore.
 If your action class for hook was returning a string or an array, instead your module must 
 set $actionclassinstance->results (to return array) 
@@ -74,7 +75,10 @@ to return same thing. The return value must be replaced by a "return 0";
 Goal is to fix old compatibility code that does not match hook specifications: 
  http://wiki.dolibarr.org/index.php/Hooks_system   
 
-- Some methods object->addline used a first parameter that was object->id, some not. Of course
+2) If you implemented hook printTopRightMenu, check that output does not include '<td>' tags anymore.
+All content added must be tagged by a '<div>' with css class="login_block_elem"
+
+3) Some methods object->addline used a first parameter that was object->id, some not. Of course
 this was not a good pratice, since object->id is already known so no need to provide it as 
 parameter. All methods addline in this case were modified to remove this information. 
 

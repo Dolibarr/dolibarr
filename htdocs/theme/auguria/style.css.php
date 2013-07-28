@@ -319,6 +319,10 @@ else
 }
 ?>
 
+div#tmenu_tooltip {
+	padding-right: 100px;
+}
+
 div.tmenu {
 <?php if (GETPOST("optioncss") == 'print') {  ?>
 	display:none;
@@ -539,6 +543,7 @@ form#login {
 }
 
 div.login_block {
+    width: 180px;
 	position: absolute;
 	<?php print $right; ?>: 5px;
 	top: 3px;
@@ -571,6 +576,14 @@ div.login a {
 div.login a:hover {
 	color: black;
 	text-decoration:underline;
+}
+.login_block_user {
+	float: right;
+}
+.login_block_elem {
+	float: right;
+	vertical-align: top;
+	padding: 0px 0px 0px 4px !important;
 }
 
 .alogin, .alogin:hover {
@@ -1018,7 +1031,7 @@ div.tabsAction {
 
 
 a.tabTitle {
-    background: #5088A9;
+    background: <? echo empty($dol_use_jmobile)?'#5088A9':'auto'; ?>;
     color: white;
 	font-family: <?php print $fontlist ?>;
     font-weight: normal;

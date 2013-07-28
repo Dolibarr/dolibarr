@@ -17,6 +17,10 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ *
+ * FIXME: This is a bugged theme:
+ * No wrapping of top menu entries when window not large enough
+ * Not compatible with jmobile
  */
 
 /**
@@ -362,6 +366,12 @@ else
 }
 ?>
 
+/* This theme is bugged. If width not large enough, menu are not wrapped on next line
+div#tmenu_tooltip {
+	padding-right: 100px;
+}
+*/
+
 div.tmenu {
 <?php if (GETPOST("optioncss") == 'print') {  ?>
 	display:none;
@@ -466,7 +476,6 @@ ul.tmenu {
 
 li.tmenu, li.tmenusel {
 	float: <?php print $left; ?>;
-	height: 22px;
 	position:relative;
 	display: block;
 	padding: 0px;
@@ -485,10 +494,9 @@ li.tmenu span, li.tmenusel span {
 li.tmenu a, li.tmenusel a {
 	position: relative;
 	display: block;
-    height: 22px;
     font-size: 12px;
     font-family: Geneva, Verdana, sans-serif;
-    line-height: 22px;
+    line-height: 20px;
     color: #FFF;
     font-weight: normal;
     float: <?php print $left; ?>;
@@ -575,6 +583,7 @@ form#login {
 }
 
 div.login_block {
+    width: 180px;
 	position: absolute;
 	<?php print $right; ?>: 5px;
 	top: 2px;
@@ -608,6 +617,14 @@ div.login a {
 div.login a:hover {
 	color: black;
 	text-decoration:underline;
+}
+.login_block_user {
+	float: right;
+}
+.login_block_elem {
+	float: right;
+	vertical-align: top;
+	padding: 0px 0px 0px 4px !important;
 }
 
 .alogin, .alogin:hover {

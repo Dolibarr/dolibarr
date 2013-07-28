@@ -328,6 +328,10 @@ else
 }
 ?>
 
+div#tmenu_tooltip {
+	padding-right: 100px;
+}
+
 div.tmenu {
 <?php if (GETPOST("optioncss") == 'print') {  ?>
 	display:none;
@@ -341,7 +345,7 @@ div.tmenu {
     padding: 0px 0px 0px 0px;	/* t r b l */
     margin: 0px 0px 5px 0px;	/* t r b l */
     font-weight: normal;
-    height: 47px;
+    height: 44px;
     background: #FFF;
     background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/bg_tmenu.jpg',1); ?>);
     background-position: center bottom;
@@ -649,6 +653,7 @@ form#login {
 }
 
 div.login_block {
+    width: 180px;
 	position: absolute;
 	<?php print $right; ?>: 5px;
 	top: 3px;
@@ -681,6 +686,14 @@ div.login a {
 div.login a:hover {
 	color: black;
 	text-decoration:underline;
+}
+.login_block_user {
+	float: right;
+}
+.login_block_elem {
+	float: right;
+	vertical-align: top;
+	padding: 0px 0px 0px 4px !important;
 }
 
 .alogin, .alogin:hover {

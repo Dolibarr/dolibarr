@@ -552,13 +552,14 @@ table.login_table .vmenu {
 
 div.login_block {
 	position:absolute;
-	top:5px;
-	right:10px;
+	top:0px;
+	right:8px;
 	z-index:100;
 	<?php if (GETPOST("optioncss") == 'print') {?>
 	display:none;
 	<?php } ?>
 }
+div.login_block_user, div.login_block_other { clear: both; }
 
 div.login_block a {color:rgba(255,255,255,.6);}
 div.login_block a:hover {color:#ffffff}
@@ -569,14 +570,24 @@ div.login_block table {
 
 div.login {
 	white-space:nowrap;
-	padding: <?php echo ($conf->dol_optimize_smallscreen?'0':'8')?>px 0px 0px 0px;
-	margin:0px 0px 0px 8px;
+	/* padding: <?php echo ($conf->dol_optimize_smallscreen?'0':'8')?>px 0px 0px 0px; */
+	/* margin:0px 0px 0px 8px; */
 	font-weight:bold;
+	float: right;
+}
+.login_block_user {
+	float: right;
+}
+.login_block_elem {
+	float: right;
+	vertical-align: top;
+	padding: 0px 0px 0px 8px !important;
+	height: 16px;
 }
 
 img.login, img.printer, img.entity {
-	padding: <?php echo ($conf->dol_optimize_smallscreen?'0':'8')?>px 0px 0px 0px;
-	margin:0px 0px 0px 8px;
+	/* padding: <?php echo ($conf->dol_optimize_smallscreen?'0':'8')?>px 0px 0px 0px; */
+	margin:2px 0px 0px 0px;
 	text-decoration:none;
 	color: white;
 	font-weight:bold;

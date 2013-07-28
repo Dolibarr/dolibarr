@@ -1369,15 +1369,15 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 
     if (empty($conf->dol_hide_topmenu))
     {
-	    print '<div id="tmenu_tooltip" class="tmenu">'."\n";
-
-	    // Show menu
+	    // Show menu entries
+    	print '<div id="tmenu_tooltip" class="tmenu">'."\n";
 	    $menumanager->atarget=$target;
 	    $menumanager->showmenu('top');      // This contains a \n
-
 	    print "</div>\n";
 
-	    // Link to login card
+	    $form=new Form($db);
+
+	    // Define link to login card
 	    $loginhtmltext=''; $logintext='';
 	    if ($user->societe_id)
 	    {
@@ -1434,18 +1434,26 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 	    }
 
 	    print '<div class="login_block">'."\n";
-	    print '<table class="nobordernopadding" summary=""><tr>';
+	    //print '<table class="nobordernopadding" summary=""><tr>';
 
-	    $form=new Form($db);
+	    $toprightmenu.='<div class="login_block_user">';
+	    // Add login user link
+	    $toprightmenu.=$form->textwithtooltip('',$loginhtmltext,2,1,$logintext,'login_block_elem2',2);	// This include div class="login"
+		$toprightmenu.='</div>';
 
-	    $toprightmenu.=$form->textwithtooltip('',$loginhtmltext,2,1,$logintext,'',1);
-
-	    // Execute hook printTopRightMenu (hooks should output string like '<td><div class="login"><a href="">mylink</a></div></td>')
+	    $toprightmenu.='<div class="login_block_other">';
+		// Execute hook printTopRightMenu (hooks should output string like '<div class="login"><a href="">mylink</a></div>')
 	    $parameters=array();
-	    $toprightmenu.=$hookmanager->executeHooks('printTopRightMenu',$parameters);    // Note that $action and $object may have been modified by some hooks
+	    $result=$hookmanager->executeHooks('printTopRightMenu',$parameters);    // Note that $action and $object may have been modified by some hooks
+		if (is_numeric($result))
+		{
+			if (empty($result)) $toprightmenu.=$hookmanager->resPrint;		// add
+			else  $toprightmenu=$hookmanager->resPrint;						// replace
+		}
+		else $toprightmenu.=$result;	// For backward compatibility
 
 	    // Logout link
-	    $toprightmenu.=$form->textwithtooltip('',$logouthtmltext,2,1,$logouttext,'',1);
+	    $toprightmenu.=$form->textwithtooltip('',$logouthtmltext,2,1,$logouttext,'login_block_elem',2);
 
 	    // Link to print main content area
 	    if (empty($conf->global->MAIN_PRINT_DISABLELINK) && empty($conf->browser->phone))
@@ -1454,13 +1462,16 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 	        $text ='<a href="'.$_SERVER["PHP_SELF"].'?'.$qs.($qs?'&amp;':'').'optioncss=print" target="_blank">';
 	        $text.= img_picto('', 'printer.png', 'class="printer"');
 	        $text.='</a>';
-	        $toprightmenu.=$form->textwithtooltip('',$langs->trans("PrintContentArea"),2,1,$text,'',1);
+	        $toprightmenu.=$form->textwithtooltip('',$langs->trans("PrintContentArea"),2,1,$text,'login_block_elem',2);
 	    }
+		$toprightmenu.='</div>';
 
 	    print $toprightmenu;
 
-	    print '</tr></table>'."\n";
+	    //print '</tr></table>'."\n";
 	    print "</div>\n";
+
+	    unset($form);
     }
 
     if (! empty($conf->use_javascript_ajax) && ! empty($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT)) print "</div><!-- End top layout -->\n";
