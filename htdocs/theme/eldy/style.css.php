@@ -497,6 +497,9 @@ else
 ?>
 
 div#tmenu_tooltip {
+<?php if (GETPOST("optioncss") == 'print') {  ?>
+	display:none;
+<?php } else { ?>
 	height: 40px;
 	/* margin-bottom: 24px; */
 	padding-right: 100px;
@@ -513,6 +516,7 @@ div#tmenu_tooltip {
 	background-image: rgb(<?php echo $colorbackhmenu1; ?>);
     border-bottom: 1px solid #CCC;
 	<?php } ?>
+<?php } ?>
 }
 
 div.tmenudiv {
@@ -907,6 +911,7 @@ div.login a:hover {
 	text-decoration:underline;
 }
 div.login_block_user, div.login_block_other { clear: both; }
+div.login_block_other { padding-top: 3px; }
 .login_block_elem {
 	float: right;
 	vertical-align: top;
