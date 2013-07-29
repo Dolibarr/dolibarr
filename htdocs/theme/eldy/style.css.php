@@ -543,14 +543,12 @@ div.tmenudisabled, a.tmenudisabled {
 	opacity: 0.6;
 }
 a.tmenudisabled:link, a.tmenudisabled:visited, a.tmenudisabled:hover, a.tmenudisabled:active {
-	color: #808080;
     font-weight: normal;
 	padding: 0px 5px 0px 5px;
-	margin: 0px 1px 2px 1px;
-	cursor: not-allowed;
-    font-weight: normal;
 	white-space: nowrap;
+	color: #<?php echo $colortextbackhmenu; ?>;
 	text-decoration: none;
+	cursor: not-allowed;
 }
 
 a.tmenu:link, a.tmenu:visited, a.tmenu:hover, a.tmenu:active {
@@ -561,31 +559,11 @@ a.tmenu:link, a.tmenu:visited, a.tmenu:hover, a.tmenu:active {
 	color: #<?php echo $colortextbackhmenu; ?>;
     text-decoration: none;
 }
-a.tmenu:link, a.tmenu:visited {
-	color: #<?php echo $colortextbackhmenu; ?>;
-}
-a.tmenu:hover, a.tmenu:active {
-	margin: 0px 0px 0px 0px;
-    /*	border-<?php print $right; ?>: 1px solid #555555; */
-    /*	border-<?php print $left; ?>: 1px solid #D8D8D8; */
-    /*	border-top: 1px solid #D8D8D8; */
-    /*	border-bottom: 2px solid #F4F4F4; */
-    /*	background: #F4F4F4; */
-    /*	text-shadow: 1px 1px 1px #FFFFFF !important; */
-	color: #<?php echo $colortextbackhmenu; ?>;
-}
-
 a.tmenusel:link, a.tmenusel:visited, a.tmenusel:hover, a.tmenusel:active {
 	font-weight: normal;
 	padding: 0px 5px 0px 5px;
 	margin: 0px 0px 0px 0px;
-    /*	background: #F4F4F4; */
-    /*	border-<?php print $right; ?>: 1px solid #555555; */
-    /*	border-top: 1px solid #D8D8D8; */
-    /*	border-<?php print $left; ?>: 1px solid #D8D8D8; */
-    /*	border-bottom: 2px solid #F4F4F4; */
 	white-space: nowrap;
-	/*	text-shadow: 1px 1px 1px #FFFFFF;*/
 	color: #<?php echo $colortextbackhmenu; ?>;
 	text-decoration: none !important;
 }
