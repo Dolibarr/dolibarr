@@ -155,6 +155,24 @@ class FormFile
             if (empty($sectionid)) $out .= '<br>';
 
             $out .= "\n<!-- End form attach new file -->\n\n";
+            $title = $langs->trans("LinkANewFile");
+            $out .= load_fiche_titre($title, null, null);
+            $out .= '<form name="formuserfile" action="'.$url.'" method="POST">';
+            $out .= '<input type="hidden" id="formuserfile_section_dir" name="section_dir" value="">';
+            $out .= '<input type="hidden" id="formuserfile_section_id"  name="section_id" value="'.$sectionid.'">';
+            $out .= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+
+            $out .= '<table width="100%" class="nobordernopadding">';
+            $out .= '<tr>';
+            $out .= '<td valign="middle" class="nowrap">';
+            $out .= '<input type="text" name="link" id="link">';
+            $out .= '<input type="submit" class="button" name="linkit" value="'.$langs->trans("Upload").'"';
+            $out .= (empty($conf->global->MAIN_UPLOAD_DOC) || empty($perm)?' disabled="disabled"':'');
+            $out .= '>';
+            $out .= '</td></tr>';
+            $out .= '</table>';
+
+            $out .= '</form><br>';
             $parameters = array('socid'=>(isset($GLOBALS['socid'])?$GLOBALS['socid']:''),'id'=>(isset($GLOBALS['id'])?$GLOBALS['id']:''), 'url'=>$url, 'perm'=>$perm);
             $res = $hookmanager->executeHooks('formattachOptions',$parameters,$object);
             if (empty($res))
