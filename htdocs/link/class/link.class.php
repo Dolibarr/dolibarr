@@ -36,6 +36,8 @@ class Link extends CommonObject
     public $datea;
     public $url;
     public $label;
+    public $objecttype;
+    public $objectid;
 
     /**
      *    Constructor
@@ -83,10 +85,12 @@ class Link extends CommonObject
 
         $this->db->begin();
 
-        $sql = "INSERT INTO ".MAIN_DB_PREFIX."links (entity, datea, url, label)";
+        $sql = "INSERT INTO ".MAIN_DB_PREFIX."links (entity, datea, url, label, objecttype, objectid)";
         $sql .= " VALUES ('".$conf->entity."', '".$this->db->idate($this->datea)."'";
         $sql .= ", '" . $this->db->escape($this->url) . "'";
-        $sql .= ", '" . $this->db->escape($this->label) . "')";
+        $sql .= ", '" . $this->db->escape($this->label) . "'";
+        $sql .= ", '" . $this->objecttype . "'";
+        $sql .= ", " . $this->objectid . ")";
 
         dol_syslog(get_class($this)."::create sql=".$sql);
         $result = $this->db->query($sql);
@@ -174,8 +178,10 @@ class Link extends CommonObject
         $sql  = "UPDATE " . MAIN_DB_PREFIX . "links SET ";
         $sql .= "entity = '" . $conf->entity ."'"; 
         $sql .= ", datea = '" . $this->db->idate(dol_now()) . "'";
-        $sql .= ", url = '" . $this->db->escape($this->url) ."'";
-        $sql .= ", label = '" . $this->db->escape($this->label) ."'";
+        $sql .= ", url = '" . $this->db->escape($this->url) . "'";
+        $sql .= ", label = '" . $this->db->escape($this->label) . "'";
+        $sql .= ", objecttype = '" . $this->objecttype . "'";
+        $sql .= ", objectid = " . $this->objectid;
         $sql .= " WHERE rowid = '" . $this->id ."'";
 
 
@@ -220,19 +226,30 @@ class Link extends CommonObject
 
     /**
      *  Loads all links from database
-     *  @return array of Link objects
+     *  @param $links array of Link objects to fill
+     *  @param $objecttype type of the associated object in dolibarr
+     *  @param $objectid id of the associated object in dolibarr
+     *  @return 1 if ok, 0 if no records, -1 if error
      * 
      * */
-    public function fetchAll()
+    public function fetchAll(&$links, $objecttype, $objectid, $sortfield=null, $sortorder=null)
     {
-        $sql = "SELECT rowid, entity, datea, url, label FROM " . MAIN_DB_PREFIX . "links";
+        global $conf;
+        $sql = "SELECT rowid, entity, datea, url, label , objecttype, objectid FROM " . MAIN_DB_PREFIX . "links";
+        $sql .= " WHERE objecttype = '" . $objecttype . "' AND objectid = " . $objectid;
+        if($conf->entity != 0) $sql .= " AND entity = " . $conf->entity;
+        if ($sortfield) {
+            if (empty($sortorder)) {
+                $sortorder = "ASC";
+            }
+            $sql .= " ORDER BY " . $sortfield . " " . $sortorder;
+        }
         $resql = $this->db->query($sql);
         dol_syslog(get_class($this)."::fetchAll " . $sql, LOG_DEBUG);
         if ($resql) {
             $num = $this->db->num_rows($resql);
             dol_syslog(get_class($this)."::fetchAll " . $num . "records", LOG_DEBUG);
             if ($num > 0) {
-                $links = array();
                 while ($obj = $this->db->fetch_object($resql)) {
                     $link = new Link($db);
                     $link->id = $obj->rowid;
@@ -242,7 +259,7 @@ class Link extends CommonObject
                     $link->label = $obj->label;
                     $links[] = $link;
                 }
-                return $links;
+                return 1;
             } else {
                 return 0;
             }
@@ -260,11 +277,13 @@ class Link extends CommonObject
      * */
     public function fetch($rowid=null)
     {
+        global $conf;
         if (empty($rowid)) {
             $rowid = $this->id;
         }
-        $sql = "SELECT rowid, entity, datea, url, label FROM " . MAIN_DB_PREFIX . "links";
+        $sql = "SELECT rowid, entity, datea, url, label, objecttype, objectid FROM " . MAIN_DB_PREFIX . "links";
         $sql .= " WHERE rowid = " . $rowid;
+        if($conf->entity != 0) $sql .= " AND entity = " . $conf->entity;
         $resql = $this->db->query($sql);
         dol_syslog(get_class($this)."::fetch " . $sql, LOG_DEBUG);
         if ($resql) {
