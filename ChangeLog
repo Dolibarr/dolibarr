@@ -61,17 +61,20 @@ For developers:
 - New: Make some changes to allow usage of several alternative $dolibarr_main_url_root variables.
   Fix also several bugs with old code. 
 - Qual: All nowrap properties are now using CSS class nowrap. 
+- New: Into POST forms, if you can add a parameter DOL_AUTOSET_COOKIE with a vlue that is list name,
+  separated by a coma, of other POST parameters, Dolibarr will automatically save this parameters
+  into user cookies.
 
-WARNING: This may create regression for some external modules, but was necessary to make
+
+WARNING: Following change may create regression for some external modules, but was necessary to make
 Dolibarr better:
 
 1) We started to clean hooks code. 
-If your hook want to modify value of $actions, it's role
-of your hook to modify it. Dolibarr hook code will not decide this for your module anymore.
-If your action class for hook was returning a string or an array, instead your module must 
-set $actionclassinstance->results (to return array) 
-or $actionclassinstance->resprints (to return string)
-to return same thing. The return value must be replaced by a "return 0";
+If your hook want to modify value of $actions, it's role of your hook to modify it. Dolibarr 
+hook code will no more decide this for your module. If your action class for hook was returning
+a string or an array, instead your module must set $actionclassinstance->results (to return array) 
+or $actionclassinstance->resprints (to return string) to return same thing. The return value must 
+be replaced by a "return 0";
 Goal is to fix old compatibility code that does not match hook specifications: 
  http://wiki.dolibarr.org/index.php/Hooks_system   
 
@@ -80,7 +83,7 @@ All content added must be tagged by a '<div>' with css class="login_block_elem"
 
 3) Some methods object->addline used a first parameter that was object->id, some not. Of course
 this was not a good pratice, since object->id is already known so no need to provide it as 
-parameter. All methods addline in this case were modified to remove this information. 
+parameter. All methods addline in this case were modified to remove this parameter. 
 
 
 ***** ChangeLog for 3.4 compared to 3.3.* *****

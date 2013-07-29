@@ -1557,7 +1557,6 @@ span.butAction, span.butActionDelete {
 }
 
 #undertopmenu {
-	/*	background-image: url("<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/gradient.gif',1) ?>"); */
 	background-repeat: repeat-x;
 	margin-top: <?php echo ($dol_hide_topmenu?'6':'0'); ?>px;
 }
@@ -1941,9 +1940,15 @@ tr.box_pair {
     font-family: <?php print $fontlist ?>;
 }
 
-tr.fiche {
-	font-family: <?php print $fontlist ?>;
+.formboxfilter {
+	vertical-align: middle;
 }
+.formboxfilter input[type=image]
+{
+	top: 5px;
+	position: relative;
+}
+
 
 
 

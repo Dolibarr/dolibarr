@@ -1354,9 +1354,15 @@ tr.box_pair {
 	font-family:<?php print $fontlist ?>;
 }
 
-tr.fiche {
-	font-family:<?php print $fontlist ?>;
+.formboxfilter {
+	vertical-align: middle;
 }
+.formboxfilter input[type=image]
+{
+	top: 5px;
+	position: relative;
+}
+
 
 /*
  *   Ok, Warning, Error

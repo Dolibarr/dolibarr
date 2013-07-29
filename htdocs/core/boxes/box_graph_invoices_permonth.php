@@ -77,18 +77,23 @@ class box_graph_invoices_permonth extends ModeleBoxes
 				'sublink'=>'',
 				'subtext'=>$langs->trans("Filter"),
 				'subpicto'=>'filter.png',
+				'subclass'=>'linkobject',
 				'target'=>'none'	// Set '' to get target="_blank"
 		);
 
 		if ($user->rights->facture->lire)
 		{
+			$param_year='DOLUSERCOOKIE_param'.$this->boxcode.'year';
+			$param_shownb='DOLUSERCOOKIE_param'.$this->boxcode.'shownb';
+			$param_showtot='DOLUSERCOOKIE_param'.$this->boxcode.'showtot';
+			
 			include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 			include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facturestats.class.php';
-
-			$shownb=(! empty($conf->global->FACTURE_BOX_GRAPH_SHOW_NB));
-			$showtot=(! isset($conf->global->FACTURE_BOX_GRAPH_SHOW_TOT) || ! empty($conf->global->FACTURE_BOX_GRAPH_SHOW_TOT));
+			$shownb=GETPOST($param_shownb,'alpha',4);
+			$showtot=GETPOST($param_showtot,'alpha',4);
+			if (empty($shownb) && empty($showtot)) $showtot=1;
 			$nowarray=dol_getdate(dol_now(),true);
-			$endyear=(GETPOST('param'.$this->boxcode.'year')?GETPOST('param'.$this->boxcode.'year','int'):$nowarray['year']);
+			$endyear=(GETPOST($param_year,'',4)?GETPOST($param_year,'int',4):$nowarray['year']);
 			$startyear=$endyear-1;
 			$mode='customer';
 			$userid=0;
@@ -183,11 +188,17 @@ class box_graph_invoices_permonth extends ModeleBoxes
 						});
 					});
 					</script>';
-				$stringtoshow.='<div class="center hideobject" id="idfilter'.$this->boxcode.'">';
-				$stringtoshow.=$langs->trans("Year").' <input class="flat" size="4" type="text" value="'.$endyear.'">';
-				$stringtoshow.='<a href="'.$_SERVER["PHP_SELF"].'?action='.$refreshaction.'">';
-				$stringtoshow.=img_picto($langs->trans("Refresh"),'refresh.png');
-				$stringtoshow.='</a>';
+				$stringtoshow.='<div class="center hideobject" id="idfilter'.$this->boxcode.'">';	// hideobject is to start hidden
+				$stringtoshow.='<form class="flat formboxfilter" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+				$stringtoshow.='<input type="hidden" name="action" value="'.$refreshaction.'">';
+				$stringtoshow.='<input type="hidden" name="DOL_AUTOSET_COOKIE" value="'.$param_year.','.$param_shownb.','.$param_showtot.'">';
+				$stringtoshow.='<input type="checkbox" name="'.$param_shownb.'"'.($shownb?' checked="true"':'').'"> '.$langs->trans("NumberOfBillsByMonth");
+				$stringtoshow.=' &nbsp; ';
+				$stringtoshow.='<input type="checkbox" name="'.$param_showtot.'"'.($showtot?' checked="true"':'').'"> '.$langs->trans("AmountOfBillsByMonthHT");
+				$stringtoshow.='<br>';
+				$stringtoshow.=$langs->trans("Year").' <input class="flat" size="4" type="text" name="'.$param_year.'" value="'.$endyear.'">';
+				$stringtoshow.='<input type="image" src="'.img_picto($langs->trans("Refresh"),'refresh.png','','',1).'">';
+				$stringtoshow.='</form>';
 				$stringtoshow.='</div>';
 				if ($shownb && $showtot)
 				{

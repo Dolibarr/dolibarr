@@ -171,8 +171,8 @@ function dol_shutdown()
  *
  *  @param	string	$paramname   Name of parameter to found
  *  @param	string	$check	     Type of check (''=no check,  'int'=check it's numeric, 'alpha'=check it's alpha only, 'array'=check it's array)
- *  @param	int		$method	     Type of method (0 = get then post, 1 = only get, 2 = only post, 3 = post then get)
- *  @return string      		 Value found or '' if check fails
+ *  @param	int		$method	     Type of method (0 = get then post, 1 = only get, 2 = only post, 3 = post then get, 4 = post then get then cookie)
+ *  @return string      		 Value found, or '' if check fails
  */
 function GETPOST($paramname,$check='',$method=0)
 {
@@ -180,16 +180,13 @@ function GETPOST($paramname,$check='',$method=0)
 	elseif ($method==1) $out = isset($_GET[$paramname])?$_GET[$paramname]:'';
 	elseif ($method==2) $out = isset($_POST[$paramname])?$_POST[$paramname]:'';
 	elseif ($method==3) $out = isset($_POST[$paramname])?$_POST[$paramname]:(isset($_GET[$paramname])?$_GET[$paramname]:'');
-	else return 'BadParameter';
+	elseif ($method==4) $out = isset($_POST[$paramname])?$_POST[$paramname]:(isset($_GET[$paramname])?$_GET[$paramname]:(isset($_COOKIE[$paramname])?$_COOKIE[$paramname]:''));
+	else return 'BadThirdParameterForGETPOST';
 
 	if (! empty($check))
 	{
 		// Check if numeric
-		if ($check == 'int' && ! preg_match('/^[-\.,0-9]+$/i',$out))
-		{
-			$out=trim($out);
-			$out='';
-		}
+		if ($check == 'int' && ! is_numeric($out)) $out='';
 		// Check if alpha
 		elseif ($check == 'alpha')
 		{

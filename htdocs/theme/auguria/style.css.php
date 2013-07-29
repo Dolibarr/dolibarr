@@ -1521,10 +1521,14 @@ tr.box_pair td, tr.box_impair td, td.box_pair, td.box_impair
 /*border-bottom: 1px solid white;*/
 }
 
-tr.fiche {
-font-family: <?php print $fontlist ?>;
+.formboxfilter {
+	vertical-align: middle;
 }
-
+.formboxfilter input[type=image]
+{
+	top: 3px;
+	position: relative;
+}
 
 
 

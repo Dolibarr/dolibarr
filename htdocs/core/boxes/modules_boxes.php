@@ -110,7 +110,7 @@ class ModeleBoxes    // Can't be abtract as it is instanciated to build "empty" 
 
 
 	/**
-	 *	Standard method to show a box (usage by boxes not mandatory, a box can still use its own function)
+	 *	Standard method to show a box (usage by boxes not mandatory, a box can still use its own showBox function)
 	 *
 	 *	@param	array	$head       Array with properties of box title
 	 *	@param  array	$contents   Array with properties of box lines
@@ -160,7 +160,7 @@ class ModeleBoxes    // Can't be abtract as it is instanciated to build "empty" 
 			}
 			print ' ';
 			if (! empty($head['sublink'])) print '<a href="'.$head['sublink'].'"'.(empty($head['target'])?' target="_blank"':'').'>';
-			if (! empty($head['subpicto'])) print img_picto($head['subtext'], $head['subpicto'], 'class="" id="idsubimg'.$this->boxcode.'"');
+			if (! empty($head['subpicto'])) print img_picto($head['subtext'], $head['subpicto'], 'class="'.(empty($head['subclass'])?'':$head['subclass']).'" id="idsubimg'.$this->boxcode.'"');
 			if (! empty($head['sublink'])) '</a>';
 			if ($conf->use_javascript_ajax)
 			{

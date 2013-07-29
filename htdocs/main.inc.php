@@ -162,10 +162,17 @@ if (! empty($_SERVER['DOCUMENT_ROOT'])) set_include_path($_SERVER['DOCUMENT_ROOT
 // Include the conf.php and functions.lib.php
 require_once 'filefunc.inc.php';
 
-/*var_dump("Define dolgetprefix ".$_SERVER["SERVER_NAME"]." - ".$_SERVER["DOCUMENT_ROOT"]." - ".DOL_DOCUMENT_ROOT." - ".DOL_URL_ROOT);
-var_dump("Cookie ".join($_COOKIE,','));
-var_dump("Cookie ".$_SERVER["HTTP_COOKIE"]);
-var_dump("Cookie ".$_SERVER["HTTP_USER_AGENT"]);*/
+// If there is a POST parameter to tell to save automatically some POST params into a cookies, we do it
+if (! empty($_POST["DOL_AUTOSET_COOKIE"]))
+{
+	$tmplist=explode(',',$_POST["DOL_AUTOSET_COOKIE"]);
+	foreach ($tmplist as $value)
+	{
+		//var_dump('setcookie key='.$value.' value='.$_POST[$value]);
+		setcookie($value, empty($_POST[$value])?'':$_POST[$value], empty($_POST[$value])?0:(time()+(86400*354)), '/');	// keep cookie 1 year
+		if (empty($_POST[$value])) unset($_COOKIE[$value]);
+	}
+}
 
 // Init session. Name of session is specific to Dolibarr instance.
 $prefix=dol_getprefix();
