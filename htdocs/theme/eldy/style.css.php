@@ -641,7 +641,7 @@ div.tmenuleft
 	float: <?php print $left; ?>;
     height: <?php print $heightmenu+4; ?>px;
 	background: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menutab-r.png',1); ?>) 0 0 no-repeat;
-	margin-top: -4px;
+	margin-top: 0px;
 }
 div.tmenucenter
 {
