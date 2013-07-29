@@ -162,10 +162,13 @@ if ($object->id)
 	// Show upload form
 	$formfile->form_attach_new_file($_SERVER["PHP_SELF"].'?id='.$object->id,'',0,0,$user->rights->societe->creer,50,$object);
 
+    //TODO FACTORIZE THIS
 	// List of document
 	$formfile->list_of_documents($filearray,$object,'societe');
 
-	print "<br><br>";
+	print "<br>";
+    $formfile->list_of_links($object);
+    print "<br>";
 }
 else
 {

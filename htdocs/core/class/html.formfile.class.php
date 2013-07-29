@@ -166,6 +166,8 @@ class FormFile
             $out .= '<tr>';
             $out .= '<td valign="middle" class="nowrap">';
             $out .= '<input type="text" name="link" id="link">';
+            $out .= '<input type="hidden" name="objecttype" value="' . $object->element . '">';
+            $out .= '<input type="hidden" name="objectid" value="' . $object->id . '">';
             $out .= '<input type="submit" class="button" name="linkit" value="'.$langs->trans("Upload").'"';
             $out .= (empty($conf->global->MAIN_UPLOAD_DOC) || empty($perm)?' disabled="disabled"':'');
             $out .= '>';
@@ -1010,6 +1012,85 @@ class FormFile
         // Include template
         include DOL_DOCUMENT_ROOT.'/core/tpl/ajax/fileupload_view.tpl.php';
 
+    }
+    
+    public function list_of_links($object, $permtodelete=1)
+    {
+
+        global $user, $conf, $langs, $hookmanager, $user;
+        global $bc;
+        global $sortfield, $sortorder, $maxheightmini;
+
+        require_once DOL_DOCUMENT_ROOT . '/link/class/link.class.php';
+        $link = new Link($this->db);
+        $links = array();
+        //HAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAXX
+        if ($sortfield == "name") {
+            $sortfield = "label";
+        } elseif ($sortfield == "date") {
+            $sortfield = "datea";
+        } else {
+            $sortfield = null;
+        }
+        $res = $link->fetchAll($links, $object->element, $object->id, $sortfield, $sortorder);
+        $param = (isset($object->id)?'&id='.$object->id:'').$param;
+
+        // Show list of associated links
+        print '<table width="100%" class="liste">';
+        print '<tr class="liste_titre">';
+        print_liste_field_titre($langs->trans("Documents2"),$_SERVER['PHP_SELF'],"name","",$param,'align="left"',$sortfield,$sortorder);
+        print_liste_field_titre($langs->trans("Size"),"","","","",'align="center"');
+        print_liste_field_titre($langs->trans("Date"),$_SERVER['PHP_SELF'],"date","",$param,'align="center"',$sortfield,$sortorder);
+        if (empty($useinecm)) print_liste_field_titre('',$_SERVER['PHP_SELF'],"","",$param,'align="center"');
+        print_liste_field_titre('','','');
+        print '</tr>';
+
+        
+        $nboflinks = count($links);
+
+        if ($nboflinks > 0) include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
+
+        $var = true;
+        foreach($links as $link) {
+            $var=!$var;
+            print '<tr '.$bc[$var].'>';
+            print '<td>';
+            //print "XX".$file['name'];	//$file['name'] must be utf8
+            print '<a data-ajax="false" href="'. $link->url . '">';
+            print $link->label;
+            print '</a>';
+            print "</td>\n";
+            print '<td align="right">&nbsp;</td>';
+            print '<td align="center">'.dol_print_date($link->datea, "dayhour", "tzuser").'</td>';
+            // Preview
+            /*if (empty($useinecm))
+            {
+                print '<td align="center">';
+                $tmp=explode('.',$file['name']);
+                $minifile=$tmp[0].'_mini.'.$tmp[1];
+                if (image_format_supported($file['name']) > 0) print '<img border="0" height="'.$maxheightmini.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&file='.urlencode($relativepath.'thumbs/'.$minifile).'" title="">';
+                else print '&nbsp;';
+                print '</td>';
+            }*/
+            print '<td align="center">&nbsp;</td>';
+            // Delete or view link
+            // ($param must start with &)
+            print '<td align="right">';
+            if ($permtodelete) print '<a href="'. $_SERVER['PHP_SELF'] .'?action=delete&linkid='. $link->id .'" class="deletefilelink" >'.img_delete().'</a>';
+            else print '&nbsp;';
+            print "</td>";
+            print "</tr>\n";
+        }
+        if ($nboflinks == 0)
+        {
+            print '<tr '.$bc[$var].'><td colspan="'.(empty($useinecm)?'5':'4').'">';
+            if (empty($textifempty)) print $langs->trans("NoLinkFound");
+            else print $textifempty;
+            print '</td></tr>';
+        }
+        print "</table>";
+
+        return $nboflinks;
     }
 
 }

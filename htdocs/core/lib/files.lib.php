@@ -1055,13 +1055,16 @@ function dol_add_file_process($upload_dir, $allowoverwrite=0, $donotupdatesessio
 			}
 		}
 	} elseif ($link) {
+        var_dump($_POST);
 		if (dol_mkdir($upload_dir) >= 0) {
 			require_once DOL_DOCUMENT_ROOT . '/link/class/link.class.php';
 			$linkObject = new Link($db);
 			$linkObject->entity = $conf->entity;
 			$linkObject->url = $link;
+            $linkObject->objecttype = GETPOST('objecttype', 'alpha');
+            $linkObject->objectid = GETPOST('objectid', 'int');
 			$res = $linkObject->create($user);
-			if ($res) {
+			if ($res > 0) {
 				setEventMessage($langs->trans("LinkComplete"));
 			} else {
 				setEventMessage($langs->trans("ErrorFileNotLinked"), 'errors');
