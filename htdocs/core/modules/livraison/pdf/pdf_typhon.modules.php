@@ -537,7 +537,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 	 */
 	function _tableau_info(&$pdf, $object, $posy, $outputlangs)
 	{
-		global $conf;
+		global $conf,$mysoc;
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
 		$pdf->SetFont('','', $default_font_size);
