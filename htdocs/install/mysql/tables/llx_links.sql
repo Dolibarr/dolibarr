@@ -20,7 +20,7 @@
 
 create table llx_links
 (
-  id                INTEGER AUTO_INCREMENT PRIMARY KEY,
+  rowid             INTEGER AUTO_INCREMENT PRIMARY KEY,
   entity            INTEGER DEFAULT 1 NOT NULL,     -- multi company id
   datea             DATETIME NOT NULL,              -- date start
   url               VARCHAR(255) NOT NULL,          -- link url
