@@ -59,6 +59,7 @@ class Livraison extends CommonObject
 	var $date_delivery;    // Date really received
 	var $date_creation;
 	var $date_valid;
+	var $model_pdf;
 
 
 	/**
@@ -89,6 +90,8 @@ class Livraison extends CommonObject
 		global $conf;
 
 		dol_syslog("Livraison::create");
+		
+		if (empty($this->model_pdf)) $this->model_pdf=$conf->global->LIVRAISON_ADDON_PDF;
 
 		$error = 0;
 
@@ -112,6 +115,7 @@ class Livraison extends CommonObject
 		$sql.= ", fk_address";
 		$sql.= ", note_private";
 		$sql.= ", note_public";
+		$sql.= ", model_pdf";
 		$sql.= ") VALUES (";
 		$sql.= "'(PROV)'";
 		$sql.= ", ".$conf->entity;
@@ -123,6 +127,7 @@ class Livraison extends CommonObject
 		$sql.= ", ".($this->fk_delivery_address > 0 ? $this->fk_delivery_address : "null");
 		$sql.= ", ".(!empty($this->note_private)?"'".$this->db->escape($this->note_private)."'":"null");
 		$sql.= ", ".(!empty($this->note_public)?"'".$this->db->escape($this->note_public)."'":"null");
+		$sql.= ", ".(!empty($this->model_pdf)?"'".$this->db->escape($this->model_pdf)."'":"null");
 		$sql.= ")";
 
 		dol_syslog("Livraison::create sql=".$sql, LOG_DEBUG);
