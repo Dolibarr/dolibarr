@@ -997,7 +997,7 @@ function dol_init_file_process($pathtoscan='')
  * @param	string	$savingdocmask			Mask to use to define output filename. For example 'XXXXX-__YYYYMMDD__-__file__'
  * @return	void
  */
-function dol_add_file_process($upload_dir, $allowoverwrite=0, $donotupdatesession=0, $varfiles='addedfile', $savingdocmask='')
+function dol_add_file_process($upload_dir, $allowoverwrite=0, $donotupdatesession=0, $varfiles='addedfile', $savingdocmask='', $link=null)
 {
 	global $db,$user,$conf,$langs;
 
@@ -1054,7 +1054,20 @@ function dol_add_file_process($upload_dir, $allowoverwrite=0, $donotupdatesessio
 				}
 			}
 		}
-	}
+	} elseif ($link) {
+		if (dol_mkdir($upload_dir) >= 0) {
+			require_once DOL_DOCUMENT_ROOT . '/link/class/link.class.php';
+			$linkObject = new Link($db);
+			$linkObject->entity = $conf->entity;
+			$linkObject->url = $link;
+			$res = $linkObject->create($user);
+			if ($res) {
+				setEventMessage($langs->trans("LinkComplete"));
+			} else {
+				setEventMessage($langs->trans("ErrorFileNotLinked"), 'errors');
+			}
+		}
+    }
 	else
 	{
 		$langs->load("errors");
