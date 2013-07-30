@@ -59,6 +59,7 @@ create table llx_facture_fourn
   fk_projet				integer,                       -- projet auquel est associee la facture
 
   fk_cond_reglement		integer  DEFAULT 1 NOT NULL,   -- condition de reglement (30 jours, fin de mois ...)
+  fk_mode_reglement		integer  DEFAULT 0 NOT NULL,   -- mode de reglement (CHQ, VIR, ...)
   date_lim_reglement 	date,                          -- date limite de reglement
 
   note_private			text,
