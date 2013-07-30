@@ -1400,7 +1400,7 @@ class Form
 							$objp->remise = $objp2->remise;
 							$objp->price_by_qty_rowid = $objp2->rowid;
 
-							$this->constructProductListOption($objp, $opt, $optJson, 0, $selected);
+							$this->_construct_product_list_option($objp, $opt, $optJson, 0, $selected);
 
 							$j++;
 
@@ -1414,7 +1414,7 @@ class Form
 				}
 				else
 				{
-					$this->constructProductListOption($objp, $opt, $optJson, $price_level, $selected);
+					$this->_construct_product_list_option($objp, $opt, $optJson, $price_level, $selected);
 					// Add new entry
 					// "key" value of json key array is used by jQuery automatically as selected value
 					// "label" value of json key array is used by jQuery automatically as text for combo box
@@ -1870,6 +1870,10 @@ class Form
                     $objp = $this->db->fetch_object($result);
 
                     $opt = '<option value="'.$objp->idprodfournprice.'"';
+                    //if there is only one supplier, preselect it
+                    if($num == 1) {
+                        $opt .= ' selected="selected"';
+                    }
                     $opt.= '>'.$objp->nom.' - '.$objp->ref_fourn.' - ';
 
                     if ($objp->quantity == 1)
