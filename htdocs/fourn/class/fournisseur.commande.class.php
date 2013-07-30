@@ -943,7 +943,8 @@ class CommandeFournisseur extends CommonOrder
         $sql.= ", fk_statut";
         $sql.= ", source";
         $sql.= ", model_pdf";
-        //$sql.= ", fk_mode_reglement";
+        $sql.= ", fk_mode_reglement";
+		$sql.= ", fk_cond_reglement";
         $sql.= ") ";
         $sql.= " VALUES (";
         $sql.= "''";
@@ -958,7 +959,8 @@ class CommandeFournisseur extends CommonOrder
         $sql.= ", 0";
         $sql.= ", " . $this->source;
         $sql.= ", '".$conf->global->COMMANDE_SUPPLIER_ADDON_PDF."'";
-        //$sql.= ", ".$this->mode_reglement_id;
+        $sql.= ", ".$this->mode_reglement_id;
+        $sql.= ", ".$this->cond_reglement_id;
         $sql.= ")";
 
         dol_syslog(get_class($this)."::create sql=".$sql);

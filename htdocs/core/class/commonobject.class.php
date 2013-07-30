@@ -916,6 +916,7 @@ abstract class CommonObject
     		// TODO uniformize field name
     		$fieldname = 'fk_mode_reglement';
     		if ($this->element == 'societe') $fieldname = 'mode_reglement';
+    		if (get_class($this) == 'Fournisseur') $fieldname = 'mode_reglement_supplier';
 
     		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
     		$sql .= ' SET '.$fieldname.' = '.$id;
@@ -955,6 +956,7 @@ abstract class CommonObject
     		// TODO uniformize field name
     		$fieldname = 'fk_cond_reglement';
     		if ($this->element == 'societe') $fieldname = 'cond_reglement';
+    		if (get_class($this) == 'Fournisseur') $fieldname = 'cond_reglement_supplier';
 
     		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
     		$sql .= ' SET '.$fieldname.' = '.$id;
