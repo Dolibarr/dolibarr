@@ -125,6 +125,7 @@ if ($type == 0) $title=$langs->trans("ProductsCategoryShort");
 elseif ($type == 1) $title=$langs->trans("SuppliersCategoryShort");
 elseif ($type == 2) $title=$langs->trans("CustomersCategoryShort");
 elseif ($type == 3) $title=$langs->trans("MembersCategoryShort");
+elseif ($type == 3) $title=$langs->trans("ContactCategoryShort");
 else $title=$langs->trans("Category");
 
 $head = categories_prepare_head($object,$type);
@@ -439,6 +440,58 @@ if ($object->type == 3)
 		else
 		{
 			print "<tr ".$bc[false].'><td colspan="3">'.$langs->trans("ThisCategoryHasNoMember")."</td></tr>";
+		}
+		print "</table>\n";
+	}
+}
+
+if($object->type == 4)
+{
+	$contacts = $object->get_type("socpeople","Contact",'contact',"socpeople");
+	if ($contacts < 0)
+	{
+		dol_print_error();
+	}
+	else
+	{
+		print "<br>";
+		print '<table class="noborder" width="100%">'."\n";
+		print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Contact")."</td></tr>\n";
+
+		if (count($contacts) > 0)
+		{
+			$i = 0;
+			$var=true;
+			foreach ($contacts as $key => $contact)
+			{
+				$i++;
+				$var=!$var;
+				print "\t<tr ".$bc[$var].">\n";
+				print '<td class="nowrap" valign="top">';
+				print $contact->getNomUrl(1,'category');
+				print "</td>\n";
+				// Link to delete from category
+				print '<td align="right">';
+				$typeid=$object->type;
+				$permission=0;
+				if ($typeid == 0) $permission=($user->rights->produit->creer || $user->rights->service->creer);
+				if ($typeid == 1) $permission=$user->rights->societe->creer;
+				if ($typeid == 2) $permission=$user->rights->societe->creer;
+				if ($typeid == 3) $permission=$user->rights->adherent->creer;
+				if ($typeid == 4) $permission=$user->rights->contact->creer;
+				if ($permission)
+				{
+					print "<a href= '".$_SERVER['PHP_SELF']."?".(empty($socid)?'id':'socid')."=".$object->id."&amp;type=".$typeid."&amp;removeelem=".$contact->id."'>";
+					print img_delete($langs->trans("DeleteFromCat")).' ';
+					print $langs->trans("DeleteFromCat")."</a>";
+				}
+				print '</td>';
+				print "</tr>\n";
+			}
+		}
+		else
+		{
+			print "<tr ".$bc[false]."><td>".$langs->trans("ThisCategoryHasNoCustomer")."</td></tr>";
 		}
 		print "</table>\n";
 	}
