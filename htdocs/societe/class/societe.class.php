@@ -106,6 +106,8 @@ class Societe extends CommonObject
     var $remise_percent;
     var $mode_reglement_id;
     var $cond_reglement_id;
+    var $mode_reglement_supplier_id;
+    var $cond_reglement_supplier_id;
 
     var $client;					// 0=no customer, 1=customer, 2=prospect, 3=customer and prospect
     var $prospect;					// 0=no prospect, 1=prospect
@@ -707,7 +709,7 @@ class Societe extends CommonObject
         $sql .= ', s.fk_forme_juridique as forme_juridique_code';
         $sql .= ', s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur, s.parent, s.barcode';
         $sql .= ', s.fk_departement, s.fk_pays as country_id, s.fk_stcomm, s.remise_client, s.mode_reglement, s.cond_reglement, s.tva_assuj';
-        $sql .= ', s.localtax1_assuj, s.localtax2_assuj, s.fk_prospectlevel, s.default_lang, s.logo';
+        $sql .= ', s.mode_reglement_supplier, s.cond_reglement_supplier, s.localtax1_assuj, s.localtax2_assuj, s.fk_prospectlevel, s.default_lang, s.logo';
         $sql .= ', s.import_key, s.canvas';
         $sql .= ', fj.libelle as forme_juridique';
         $sql .= ', e.libelle as effectif';
@@ -826,6 +828,8 @@ class Societe extends CommonObject
                 $this->remise_percent		= $obj->remise_client;
                 $this->mode_reglement_id 	= $obj->mode_reglement;
                 $this->cond_reglement_id 	= $obj->cond_reglement;
+                $this->mode_reglement_supplier_id 	= $obj->mode_reglement_supplier;
+                $this->cond_reglement_supplier_id 	= $obj->cond_reglement_supplier;
 
                 $this->client      = $obj->client;
                 $this->fournisseur = $obj->fournisseur;
