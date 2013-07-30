@@ -257,6 +257,8 @@ class Link extends CommonObject
                     $link->datea = $this->db->jdate($obj->datea);
                     $link->url = $obj->url;
                     $link->label = $obj->label;
+                    $link->objecttype = $obj->objecttype;
+                    $link->objectid = $obj->objectid;
                     $links[] = $link;
                 }
                 return 1;
@@ -293,6 +295,8 @@ class Link extends CommonObject
                 $this->datea = $this->db->jdate($obj->datea);
                 $this->url = $obj->url;
                 $this->label = $obj->label;
+                $this->objecttype = $obj->objecttype;
+                $this->objectid = $obj->objectid;
                 return 1;
             } else {
                 $this->error = 'Fetch no link found for id = ' . $rowid;
