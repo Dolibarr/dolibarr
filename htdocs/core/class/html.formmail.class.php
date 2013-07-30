@@ -575,9 +575,11 @@ class FormMail
         			}
         		}
 
+				$defaultmessage=str_replace('\n',"\n",$defaultmessage);
+				if($conf->global->FCKEDITOR_ENABLE_MAIL) $defaultmessage=nl2br($defaultmessage);
         		$defaultmessage=make_substitutions($defaultmessage,$this->substit);
         		if (isset($_POST["message"])) $defaultmessage=$_POST["message"];
-        		$defaultmessage=str_replace('\n',"\n",$defaultmessage);
+        		
 
         		$out.= '<tr>';
         		$out.= '<td width="180" valign="top">'.$langs->trans("MailText").'</td>';
