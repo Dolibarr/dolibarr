@@ -39,7 +39,8 @@ For users:
 - New: Add Maghreb regions and departments.
 - New: A more responsive desgin for statistic box of home page.
 - Qual: Implement same rule for return value of all command line scripts (0 when success, <>0 if error).
-- New:  [ task #1005 ] Adapting to Spanish legislation bill numbering
+- New: [ task #1005 ] Adapting to Spanish legislation bill numbering
+- New: [ task #1011 ] Now supplier order and invoice deal with payment terms and mode
 
 
 For translators:
