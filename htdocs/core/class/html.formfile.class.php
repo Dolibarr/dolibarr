@@ -155,6 +155,7 @@ class FormFile
             if (empty($sectionid)) $out .= '<br>';
 
             $out .= "\n<!-- End form attach new file -->\n\n";
+            $langs->load('link');
             $title = $langs->trans("LinkANewFile");
             $out .= load_fiche_titre($title, null, null);
             $out .= '<form name="formuserfile" action="'.$url.'" method="POST">';

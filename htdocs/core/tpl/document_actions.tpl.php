@@ -37,10 +37,11 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes') {
             $link->id = $linkid;
             $link->fetch();
             $res = $link->delete($user);
+            $langs->load('link');
             if ($res) {
-                setEventMessage($langs->trans("LinkWasRemoved", $link->label));
+                setEventMessage($langs->trans("LinkRemoved", $link->label));
             } else {
-                setEventMessage($langs->trans("ErrorFailToDeleteLink", $link->label), 'errors');
+                setEventMessage($langs->trans("ErrorFailedToDeleteLink", $link->label), 'errors');
             }
         }
         header('Location: ' . $_SERVER["PHP_SELF"] . '?id=' . $object->id);
