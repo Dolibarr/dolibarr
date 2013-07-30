@@ -6,6 +6,7 @@
  * Copyright (C) 2013      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2013      Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2013      Jean Heimburger   	<jean@tiaris.info>
+ * Copyright (C) 2013      Cédric Salvador      <csalvador@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -130,6 +131,7 @@ else
     $sql.= ' p.fk_product_type, p.tms as datem,';
     $sql.= ' p.duration, p.tosell, p.tobuy, p.seuil_stock_alerte,';
     $sql.= ' MIN(pfp.unitprice) as minsellprice';
+    $sql .= ', p.desiredstock';
     $sql.= ' FROM '.MAIN_DB_PREFIX.'product as p';
     if (! empty($search_categ) || ! empty($catid)) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_product as cp ON p.rowid = cp.fk_product"; // We'll need this table joined to the select in order to filter by categ
    	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as pfp ON p.rowid = pfp.fk_product";
@@ -195,6 +197,7 @@ else
     $sql.= " GROUP BY p.rowid, p.ref, p.label, p.barcode, p.price, p.price_ttc, p.price_base_type,";
     $sql.= " p.fk_product_type, p.tms,";
     $sql.= " p.duration, p.tosell, p.tobuy, p.seuil_stock_alerte";
+    $sql .= ', p.desiredstock';
     //if (GETPOST("toolowstock")) $sql.= " HAVING SUM(s.reel) < p.seuil_stock_alerte";    // Not used yet
     $sql.= $db->order($sortfield,$sortorder);
     $sql.= $db->plimit($limit + 1, $offset);
@@ -301,6 +304,7 @@ else
     		if (! empty($conf->service->enabled) && $type != 0) print_liste_field_titre($langs->trans("Duration"), $_SERVER["PHP_SELF"], "p.duration",$param,"",'align="center"',$sortfield,$sortorder);
     		if (empty($conf->global->PRODUIT_MULTIPRICES)) print_liste_field_titre($langs->trans("SellingPrice"), $_SERVER["PHP_SELF"], "p.price",$param,"",'align="right"',$sortfield,$sortorder);
     		print '<td class="liste_titre" align="right">'.$langs->trans("BuyingPriceMinShort").'</td>';
+    		if (! empty($conf->stock->enabled) && $user->rights->stock->lire && $type != 1) print '<td class="liste_titre" align="right">'.$langs->trans("DesiredStock").'</td>';
     		if (! empty($conf->stock->enabled) && $user->rights->stock->lire && $type != 1) print '<td class="liste_titre" align="right">'.$langs->trans("PhysicalStock").'</td>';
     		print_liste_field_titre($langs->trans("Sell"), $_SERVER["PHP_SELF"], "p.tosell",$param,"",'align="right"',$sortfield,$sortorder);
             print_liste_field_titre($langs->trans("Buy"), $_SERVER["PHP_SELF"], "p.tobuy",$param,"",'align="right"',$sortfield,$sortorder);
@@ -348,6 +352,10 @@ else
     		// Stock
     		if (! empty($conf->stock->enabled) && $user->rights->stock->lire && $type != 1)
     		{
+    			print '<td class="liste_titre">';
+    			print '&nbsp;';
+    			print '</td>';
+    			//desiredstock
     			print '<td class="liste_titre">';
     			print '&nbsp;';
     			print '</td>';
@@ -457,6 +465,9 @@ else
     				{
     					$product_static->id = $objp->rowid;
     					$product_static->load_stock();
+                        print '<td align="right">';
+                        print $objp->desiredstock;
+                        print '</td>';
     					print '<td align="right">';
                         if ($product_static->stock_reel < $objp->seuil_stock_alerte) print img_warning($langs->trans("StockTooLow")).' ';
         				print $product_static->stock_reel;

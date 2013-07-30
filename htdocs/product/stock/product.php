@@ -4,6 +4,7 @@
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005      Simon TOSSER         <simon@kornog-computing.com>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2013      Cédric Salvador      <csalvador.gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,6 +44,7 @@ $cancel=GETPOST('cancel');
 $id = GETPOST('id')?GETPOST('id'):GETPOST('ref');
 $ref = GETPOST('ref');
 $stocklimit = GETPOST('stocklimit');
+$desiredstock = GETPOST('desiredstock');
 $cancel = GETPOST('cancel');
 $fieldid = isset($_GET["ref"])?'ref':'rowid';
 if ($user->societe_id) $socid=$user->societe_id;
@@ -66,6 +68,19 @@ if ($action == 'setstocklimit')
     	setEventMessage($product->error, 'errors');
     $action='';
 }
+
+// Set desired stock
+if ($action == 'setdesiredstock')
+{
+    $product = new Product($db);
+    $result=$product->fetch($id);
+    $product->desiredstock=$desiredstock;
+    $result=$product->update($product->id,$user,1,0,1);
+    if ($result < 0)
+    	setEventMessage($product->error, 'errors');
+    $action='';
+}
+
 
 // Correct stock
 if ($action == "correct_stock" && ! $cancel)
@@ -246,6 +261,11 @@ if ($id > 0 || $ref)
         // Stock
         print '<tr><td>'.$form->editfieldkey("StockLimit",'stocklimit',$product->seuil_stock_alerte,$product,$user->rights->produit->creer).'</td><td colspan="2">';
         print $form->editfieldval("StockLimit",'stocklimit',$product->seuil_stock_alerte,$product,$user->rights->produit->creer);
+        print '</td></tr>';
+        
+        // Desired stock
+        print '<tr><td>'.$form->editfieldkey("DesiredStock",'desiredstock',$product->desiredstock,$product,$user->rights->produit->creer).'</td><td colspan="2">';
+        print $form->editfieldval("DesiredStock",'desiredstock',$product->desiredstock,$product,$user->rights->produit->creer);
         print '</td></tr>';
 
         // Real stock
