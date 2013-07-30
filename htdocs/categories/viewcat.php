@@ -72,24 +72,31 @@ if ($id > 0 && $removeelem > 0)
 		$result = $tmpobject->fetch($removeelem);
 		$elementtype = 'product';
 	}
-	if ($type==1 && $user->rights->societe->creer)
+	else if ($type==1 && $user->rights->societe->creer)
 	{
 		$tmpobject = new Societe($db);
 		$result = $tmpobject->fetch($removeelem);
 		$elementtype = 'fournisseur';
 	}
-	if ($type==2 && $user->rights->societe->creer)
+	else if ($type==2 && $user->rights->societe->creer)
 	{
 		$tmpobject = new Societe($db);
 		$result = $tmpobject->fetch($removeelem);
 		$elementtype = 'societe';
 	}
-	if ($type == 3 && $user->rights->adherent->creer)
+	else if ($type == 3 && $user->rights->adherent->creer)
 	{
 		require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 		$tmpobject = new Adherent($db);
 		$result = $tmpobject->fetch($removeelem);
 		$elementtype = 'member';
+	}
+	else if ($type == 4 && $user->rights->societe->creer) {
+		
+		require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+		$tmpobject = new Contact($db);
+		$result = $tmpobject->fetch($removeelem);
+		$elementtype = 'contact';
 	}
 	
 	$result=$object->del_type($tmpobject,$elementtype);
