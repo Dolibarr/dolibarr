@@ -1036,10 +1036,11 @@ class FormFile
         $param = (isset($object->id)?'&id='.$object->id:'').$param;
 
         // Show list of associated links
+        if (empty($useinecm)) print_titre($langs->trans("LinkedFiles"));
         print '<table width="100%" class="liste">';
         print '<tr class="liste_titre">';
         print_liste_field_titre($langs->trans("Documents2"),$_SERVER['PHP_SELF'],"name","",$param,'align="left"',$sortfield,$sortorder);
-        print_liste_field_titre($langs->trans("Size"),"","","","",'align="center"');
+        print_liste_field_titre($langs->trans("Size"),"","","","",'align="right"');
         print_liste_field_titre($langs->trans("Date"),$_SERVER['PHP_SELF'],"date","",$param,'align="center"',$sortfield,$sortorder);
         if (empty($useinecm)) print_liste_field_titre('',$_SERVER['PHP_SELF'],"","",$param,'align="center"');
         print_liste_field_titre('','','');
@@ -1060,7 +1061,7 @@ class FormFile
             print $link->label;
             print '</a>';
             print "</td>\n";
-            print '<td align="right">&nbsp;</td>';
+            print '<td align="right"></td>';
             print '<td align="center">'.dol_print_date($link->datea, "dayhour", "tzuser").'</td>';
             // Preview
             /*if (empty($useinecm))
@@ -1072,11 +1073,12 @@ class FormFile
                 else print '&nbsp;';
                 print '</td>';
             }*/
-            print '<td align="center">&nbsp;</td>';
+            print '<td align="center"></td>';
             // Delete or view link
             // ($param must start with &)
-            print '<td align="right">';
-            if ($permtodelete) print '<a href="'. $_SERVER['PHP_SELF'] .'?action=delete&linkid='. $link->id .'" class="deletefilelink" >'.img_delete().'</a>';
+            print '<td align="right" colspan="2">';
+            print '<a href="'. $_SERVER['PHP_SELF'] .'?action=update&linkid='. $link->id .'&id=' . $object->id . '" class="editfilelink" >'.img_edit().'</a>';
+            if ($permtodelete) print '<a href="'. $_SERVER['PHP_SELF'] .'?action=delete&linkid='. $link->id . '&id=' . $object->id . '" class="deletefilelink" >'.img_delete().'</a>';
             else print '&nbsp;';
             print "</td>";
             print "</tr>\n";

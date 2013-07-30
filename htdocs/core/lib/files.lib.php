@@ -1055,7 +1055,6 @@ function dol_add_file_process($upload_dir, $allowoverwrite=0, $donotupdatesessio
 			}
 		}
 	} elseif ($link) {
-        var_dump($_POST);
 		if (dol_mkdir($upload_dir) >= 0) {
 			require_once DOL_DOCUMENT_ROOT . '/link/class/link.class.php';
 			$linkObject = new Link($db);
