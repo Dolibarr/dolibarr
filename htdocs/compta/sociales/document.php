@@ -41,6 +41,7 @@ $langs->load("bills");
 
 $id = GETPOST('id','int');
 $action = GETPOST("action");
+$confirm = GETPOST('confirm', 'alpha');
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
@@ -159,16 +160,10 @@ if ($object->id)
 
     print '</div>';
 
-
-    // Affiche formulaire upload
-   	$formfile=new FormFile($db);
-   	$formfile->form_attach_new_file(DOL_URL_ROOT.'/compta/sociales/document.php?id='.$object->id,'',0,0,$user->rights->tax->charges->creer,50,$object);
-
-
-   	// List of document
-   	//$param='&id='.$object->id;
-   	$formfile->list_of_documents($filearray,$object,'tax',$param);
-
+    $modulepart = 'tax';
+    $permission = $user->rights->tax->charges->creer;
+    $param = '&id=' . $object->id;
+    include_once DOL_DOCUMENT_ROOT . '/core/tpl/doc2.tpl.php';
 }
 else
 {

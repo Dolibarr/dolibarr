@@ -140,15 +140,10 @@ if ($object->id)
 
     print '</div>';
 
-
-    // Affiche formulaire upload
-   	$formfile=new FormFile($db);
-	$formfile->form_attach_new_file(DOL_URL_ROOT.'/product/document.php?id='.$object->id,'',0,0,($user->rights->produit->creer||$user->rights->service->creer),50,$object);
-
-
-	// List of document
-	$formfile->list_of_documents($filearray,$object,'produit');
-
+    $modulepart = 'produit';
+    $permission = $user->rights->produit->creer;
+    $param = '&id=' . $object->id;
+    include_once DOL_DOCUMENT_ROOT . '/core/tpl/doc2.tpl.php';
 }
 else
 {

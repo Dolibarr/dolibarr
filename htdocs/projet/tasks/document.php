@@ -229,15 +229,18 @@ if ($object->id > 0)
 
 	print '<br>';
 
-
-	// Affiche formulaire upload
+    $modulepart = 'projet';
+	$permission = $user->rights->projet->creer;
+	$param = '&id=' . $object->id;
+	include_once DOL_DOCUMENT_ROOT . '/core/tpl/doc2.tpl.php';
+	/*// Affiche formulaire upload
 	$formfile=new FormFile($db);
 	$formfile->form_attach_new_file(DOL_URL_ROOT.'/projet/tasks/document.php?id='.$object->id.($withproject?'&withproject=1':''),'',0,0,$user->rights->projet->creer,50,$object);
 
 
 	// List of document
 	$param='&id='.$object->id;
-	$formfile->list_of_documents($filearray,$object,'projet',$param,0,dol_sanitizeFileName($projectstatic->ref).'/'.dol_sanitizeFileName($object->ref).'/');
+	$formfile->list_of_documents($filearray,$object,'projet',$param,0,dol_sanitizeFileName($projectstatic->ref).'/'.dol_sanitizeFileName($object->ref).'/');*/
 }
 else
 {
