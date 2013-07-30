@@ -36,7 +36,7 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes') {
             $link->fetch();
             $res = $link->delete($user);
             if ($res) {
-                setEventMessage($langs->trans("LinkWasRemoved", $link->label)
+                setEventMessage($langs->trans("LinkWasRemoved", $link->label));
             } else {
                 setEventMessage($langs->trans("ErrorFailToDeleteLink", $link->label), 'errors');
             }
