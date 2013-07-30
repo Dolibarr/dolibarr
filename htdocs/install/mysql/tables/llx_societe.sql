@@ -77,6 +77,8 @@ create table llx_societe
   remise_client            real           DEFAULT 0,            		-- remise systematique pour le client
   mode_reglement           tinyint,                             		-- mode de reglement
   cond_reglement           tinyint,                             		-- condition de reglement
+  mode_reglement_supplier  tinyint,                             		-- mode de reglement fournisseur
+  cond_reglement_supplier  tinyint,                             		-- condition de reglement fournisseur
   tva_assuj                tinyint        DEFAULT 1,	        		-- assujeti ou non a la TVA
   localtax1_assuj          tinyint        DEFAULT 0,	        		-- assujeti ou non a local tax 1
   localtax2_assuj          tinyint        DEFAULT 0,	        		-- assujeti ou non a local tax 2

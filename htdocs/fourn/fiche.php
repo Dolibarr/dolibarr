@@ -63,7 +63,20 @@ if ($action == 'setsupplieraccountancycode')
     }
     $action="";
 }
-
+// conditions de reglement
+if ($action == 'setconditions' && $user->rights->societe->creer)
+{
+	$object->fetch($id);
+	$result=$object->setPaymentTerms(GETPOST('cond_reglement_supplier_id','int'));
+	if ($result < 0) dol_print_error($db,$object->error);
+}
+// mode de reglement
+if ($action == 'setmode' && $user->rights->societe->creer)
+{
+	$object->fetch($id);
+	$result=$object->setPaymentMethods(GETPOST('mode_reglement_supplier_id','int'));
+	if ($result < 0) dol_print_error($db,$object->error);
+}
 
 
 /*
@@ -90,7 +103,7 @@ if ($object->fetch($id))
 	//print '<tr><td valign="top" width="50%" class="notopnoleft">';
 
 	print '<table width="100%" class="border">';
-	print '<tr><td width="20%">'.$langs->trans("ThirdPartyName").'</td><td width="80%" colspan="3">';
+	print '<tr><td width="30%">'.$langs->trans("ThirdPartyName").'</td><td width="70%" colspan="3">';
 	$object->next_prev_filter="te.fournisseur = 1";
 	print $form->showrefnav($object,'socid','',($user->societe_id?0:1),'rowid','nom','','');
 	print '</td></tr>';
@@ -193,6 +206,46 @@ if ($object->fetch($id))
     print '<tr><td class="nowrap">'.$langs->trans('VATIntra').'</td><td colspan="3">';
     print $object->tva_intra;
     print '</td></tr>';
+	
+	// Conditions de reglement par defaut
+	$langs->load('bills');
+	$form = new Form($db);
+	print '<tr><td>';
+	print '<table width="100%" class="nobordernopadding"><tr><td>';
+	print $langs->trans('PaymentConditions');
+	print '<td>';
+	if (($action != 'editconditions') && $user->rights->societe->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editconditions&amp;socid='.$object->id.'">'.img_edit($langs->trans('SetConditions'),1).'</a></td>';
+	print '</tr></table>';
+	print '</td><td colspan="3">';
+	if ($action == 'editconditions')
+	{
+		$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?socid='.$object->id,$object->cond_reglement_supplier_id,'cond_reglement_supplier_id',-1,1);
+	}
+	else
+	{
+		$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?socid='.$object->id,$object->cond_reglement_supplier_id,'none');
+	}
+	print "</td>";
+	print '</tr>';
+
+	// Mode de reglement par defaut
+	print '<tr><td class="nowrap">';
+	print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
+	print $langs->trans('PaymentMode');
+	print '<td>';
+	if (($action != 'editmode') && $user->rights->societe->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editmode&amp;socid='.$object->id.'">'.img_edit($langs->trans('SetMode'),1).'</a></td>';
+	print '</tr></table>';
+	print '</td><td colspan="3">';
+	if ($action == 'editmode')
+	{
+		$form->form_modes_reglement($_SERVER['PHP_SELF'].'?socid='.$object->id,$object->mode_reglement_supplier_id,'mode_reglement_supplier_id');
+	}
+	else
+	{
+		$form->form_modes_reglement($_SERVER['PHP_SELF'].'?socid='.$object->id,$object->mode_reglement_supplier_id,'none');
+	}
+	print "</td>";
+	print '</tr>';
 
     // Module Adherent
     if (! empty($conf->adherent->enabled))
