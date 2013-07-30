@@ -125,7 +125,7 @@ if ($type == 0) $title=$langs->trans("ProductsCategoryShort");
 elseif ($type == 1) $title=$langs->trans("SuppliersCategoryShort");
 elseif ($type == 2) $title=$langs->trans("CustomersCategoryShort");
 elseif ($type == 3) $title=$langs->trans("MembersCategoryShort");
-elseif ($type == 3) $title=$langs->trans("ContactCategoryShort");
+elseif ($type == 4) $title=$langs->trans("ContactCategoriesShort");
 else $title=$langs->trans("Category");
 
 $head = categories_prepare_head($object,$type);
@@ -445,6 +445,7 @@ if ($object->type == 3)
 	}
 }
 
+//Categorie contact
 if($object->type == 4)
 {
 	$contacts = $object->get_type("socpeople","Contact",'contact',"socpeople");
@@ -478,7 +479,7 @@ if($object->type == 4)
 				if ($typeid == 1) $permission=$user->rights->societe->creer;
 				if ($typeid == 2) $permission=$user->rights->societe->creer;
 				if ($typeid == 3) $permission=$user->rights->adherent->creer;
-				if ($typeid == 4) $permission=$user->rights->contact->creer;
+				if ($typeid == 4) $permission=$user->rights->societe->creer;
 				if ($permission)
 				{
 					print "<a href= '".$_SERVER['PHP_SELF']."?".(empty($socid)?'id':'socid')."=".$object->id."&amp;type=".$typeid."&amp;removeelem=".$contact->id."'>";
@@ -491,7 +492,7 @@ if($object->type == 4)
 		}
 		else
 		{
-			print "<tr ".$bc[false]."><td>".$langs->trans("ThisCategoryHasNoCustomer")."</td></tr>";
+			print "<tr ".$bc[false]."><td>".$langs->trans("ThisCategoryHasNoContact")."</td></tr>";
 		}
 		print "</table>\n";
 	}
