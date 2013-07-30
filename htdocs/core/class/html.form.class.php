@@ -1829,7 +1829,7 @@ class Form
      *  @param      string	$htmlname        Name of HTML field
      *  @return		void
      */
-    function select_product_fourn_price($productid,$htmlname='productfournpriceid', $showempty=0)
+    function select_product_fourn_price($productid,$htmlname='productfournpriceid')
     {
         global $langs,$conf;
 
@@ -1862,7 +1862,7 @@ class Form
             }
             else
             {
-                if($showempty && $num > 1) $form.= '<option value="0">&nbsp;</option>';
+                $form.= '<option value="0">&nbsp;</option>';
 
                 $i = 0;
                 while ($i < $num)
@@ -1870,6 +1870,10 @@ class Form
                     $objp = $this->db->fetch_object($result);
 
                     $opt = '<option value="'.$objp->idprodfournprice.'"';
+                    //if there is only one supplier, preselect it
+                    if($num == 1) {
+                        $opt .= ' selected="selected"';
+                    }
                     $opt.= '>'.$objp->nom.' - '.$objp->ref_fourn.' - ';
 
                     if ($objp->quantity == 1)
