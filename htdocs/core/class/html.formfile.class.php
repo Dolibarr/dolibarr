@@ -165,7 +165,10 @@ class FormFile
             $out .= '<table width="100%" class="nobordernopadding">';
             $out .= '<tr>';
             $out .= '<td valign="middle" class="nowrap">';
+            $out .= $langs->trans("Link") . ': ';
             $out .= '<input type="text" name="link" id="link">';
+            $out .= ' &nbsp; ' . $langs->trans("Label") . ': ';
+            $out .= '<input type="text" name="label" id="label">';
             $out .= '<input type="hidden" name="objecttype" value="' . $object->element . '">';
             $out .= '<input type="hidden" name="objectid" value="' . $object->id . '">';
             $out .= '<input type="submit" class="button" name="linkit" value="'.$langs->trans("Upload").'"';

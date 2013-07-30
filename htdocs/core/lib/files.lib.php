@@ -1062,6 +1062,7 @@ function dol_add_file_process($upload_dir, $allowoverwrite=0, $donotupdatesessio
 			$linkObject->url = $link;
             $linkObject->objecttype = GETPOST('objecttype', 'alpha');
             $linkObject->objectid = GETPOST('objectid', 'int');
+            $linkObject->label = GETPOST('label', 'alpha');
 			$res = $linkObject->create($user);
 			if ($res > 0) {
 				setEventMessage($langs->trans("LinkComplete"));
