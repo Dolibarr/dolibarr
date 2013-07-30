@@ -687,6 +687,8 @@ else if ($action == 'add' && $user->rights->fournisseur->commande->creer)
         // Creation commande
         $object->ref_supplier  	= GETPOST('refsupplier');
         $object->socid         	= $socid;
+		$object->cond_reglement_id = GETPOST('cond_reglement_id');
+        $object->mode_reglement_id = GETPOST('mode_reglement_id');
         $object->note_private	= GETPOST('note_private');
         $object->note_public   	= GETPOST('note_public');
 
@@ -980,6 +982,9 @@ if ($action=="create")
 		$societe=new Societe($db);
 		$societe->fetch($socid);
 	}
+	
+	$cond_reglement_id 	= $societe->cond_reglement_supplier_id;
+	$mode_reglement_id 	= $societe->mode_reglement_supplier_id;
 
 	print '<form name="add" action="'.$_SERVER["PHP_SELF"].'" method="post">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -1008,6 +1013,16 @@ if ($action=="create")
 	print '<tr><td>'.$langs->trans('RefSupplier').'</td><td><input name="refsupplier" type="text"></td>';
 	print '</tr>';
 
+	print '</td></tr>';
+	
+	// Payment term
+	print '<tr><td class="nowrap">'.$langs->trans('PaymentConditionsShort').'</td><td colspan="2">';
+	$form->select_conditions_paiements(isset($_POST['cond_reglement_id'])?$_POST['cond_reglement_id']:$cond_reglement_id,'cond_reglement_id');
+	print '</td></tr>';
+
+	// Payment mode
+	print '<tr><td>'.$langs->trans('PaymentMode').'</td><td colspan="2">';
+	$form->select_types_paiements(isset($_POST['mode_reglement_id'])?$_POST['mode_reglement_id']:$mode_reglement_id,'mode_reglement_id');
 	print '</td></tr>';
 
 	print '<tr><td>'.$langs->trans('NotePublic').'</td>';

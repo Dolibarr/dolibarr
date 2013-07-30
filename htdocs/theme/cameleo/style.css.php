@@ -745,10 +745,10 @@ a.vsmenu:hover      { font-size:11px; text-align:left; font-weight: normal; colo
 font.vsmenudisabled { font-size:11px; text-align:left; font-weight: normal; color: #202020; }
 font.vsmenudisabledmargin { margin: 1px 1px 1px 4px; }
 
-a.help:link         { font-size: 10px; font-weight: bold; background: #FFFFFF; border: 1px solid #8CACBB; color: #68ACCF; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
-a.help:visited      { font-size: 10px; font-weight: bold; background: #FFFFFF; border: 1px solid #8CACBB; color: #68ACCF; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
-a.help:active       { font-size: 10px; font-weight: bold; background: #FFFFFF; border: 1px solid #8CACBB; color: #6198BA; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
-a.help:hover        { font-size: 10px; font-weight: bold; background: #FFFFFF; border: 1px solid #8CACBB; color: #6198BA; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
+a.help:link         { font-size: 10px; font-weight: bold; background: #FFFFFF; color: #AAACAF; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
+a.help:visited      { font-size: 10px; font-weight: bold; background: #FFFFFF; color: #AAACAF; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
+a.help:active       { font-size: 10px; font-weight: bold; background: #FFFFFF; color: #9998A0; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
+a.help:hover        { font-size: 10px; font-weight: bold; background: #FFFFFF; color: #9998A0; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
 
 
 div.blockvmenupair
@@ -1654,10 +1654,14 @@ background: #c0c4c7;
 border: 0px;
 }
 
-tr.fiche {
-font-family: <?php print $fontlist ?>;
+.formboxfilter {
+	vertical-align: middle;
 }
-
+.formboxfilter input[type=image]
+{
+	top: 4px;
+	position: relative;
+}
 
 
 

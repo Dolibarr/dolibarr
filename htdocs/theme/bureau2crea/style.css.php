@@ -1648,10 +1648,14 @@ background: #f4f4f4;
 font-family: <?php print $fontlist ?>;
 }
 
-tr.fiche {
-font-family: <?php print $fontlist ?>;
+.formboxfilter {
+	vertical-align: middle;
 }
-
+.formboxfilter input[type=image]
+{
+	top: 3px;
+	position: relative;
+}
 
 
 

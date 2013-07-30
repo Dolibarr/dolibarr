@@ -31,6 +31,8 @@ create table llx_fichinter_extrafields
 ) ENGINE=innodb;
 
 ALTER TABLE llx_fichinter_extrafields ADD INDEX idx_ficheinter_extrafields (fk_object);
+ALTER TABLE llx_product ADD COLUMN desiredstock integer DEFAULT 0;
+
 
 create table llx_commandedet_extrafields
 (
@@ -280,3 +282,8 @@ INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, nc
 ALTER TABLE llx_bordereau_cheque ADD ref_ext VARCHAR(255);
 ALTER TABLE llx_bordereau_cheque ADD tms timestamp;
 
+
+-- Task 1011
+ALTER TABLE `llx_societe` ADD `mode_reglement_supplier` TINYINT NOT NULL AFTER `cond_reglement` ,
+ADD `cond_reglement_supplier` TINYINT NOT NULL AFTER `mode_reglement_supplier`;
+ALTER TABLE `llx_facture_fourn` ADD `fk_mode_reglement` TINYINT NOT NULL AFTER `fk_cond_reglement`;
