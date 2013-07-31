@@ -128,7 +128,7 @@ llxHeader();
 print_fiche_titre($langs->trans("DelaysOfToleranceBeforeWarning"),'','setup');
 
 print $langs->transnoentities("DelaysOfToleranceDesc",img_warning());
-print " ".$langs->trans("OnlyActiveElementsAreShown")."<br>\n";
+print " ".$langs->trans("OnlyActiveElementsAreShown",DOL_URL_ROOT.'/admin/modules.php')."<br>\n";
 print "<br>\n";
 
 $form = new Form($db);
