@@ -38,7 +38,7 @@ if (substr($sapi_type, 0, 3) == 'cgi') {
 
 if (! isset($argv[1]) || ! $argv[1] || ! in_array($argv[1],array('test','confirm')))
 {
-	print "Usage: $script_file [test|confirm] [delay]\n";
+	print "Usage: $script_file (test|confirm) [delay]\n";
 	print "\n";
 	print "Send an email to users to remind all unpaid customer invoices user is sale representative for.\n";
 	print "If you choose 'test' mode, no emails are sent.\n";
@@ -125,7 +125,7 @@ if ($resql)
                 $total = 0;
                 $foundtoprocess = 0;
                 $salerepresentative=dolGetFirstLastname($obj->firstname, $obj->lastname);
-                if (empty($obj->email)) print "Warning: Sal representative ".$salerepresentative." has no email. Notice disabled.\n";
+                if (empty($obj->email)) print "Warning: Sale representative ".$salerepresentative." has no email. Notice disabled.\n";
             }
 
             // Define line content
@@ -140,7 +140,7 @@ if ($resql)
             	dol_syslog("email_unpaid_invoices_to_representatives.php: ".$obj->email);
             	$foundtoprocess++;
             }
-            print "Unpaid invoice ".$obj->facnumber.", price ".price2num($obj->total_ttc).", due date ".dol_print_date($db->jdate($obj->due_date),'day')." (linked to company ".$obj->name.", sale representative ".dolGetFirstLastname($obj->firstname, $obj->lastname).", email ".$obj->email." lang ".$outputlangs->defaultlang."): ";
+            print "Unpaid invoice ".$obj->facnumber.", price ".price2num($obj->total_ttc).", due date ".dol_print_date($db->jdate($obj->due_date),'day')." (linked to company ".$obj->name.", sale representative ".dolGetFirstLastname($obj->firstname, $obj->lastname).", email ".$obj->email.", lang ".$outputlangs->defaultlang."): ";
             if (dol_strlen($obj->email)) print "qualified.";
             else print "disqualified (no email).";
 			print "\n";

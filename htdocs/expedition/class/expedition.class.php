@@ -59,6 +59,7 @@ class Expedition extends CommonObject
 	var $billed;
 	var $note_public;
 	var $note_private;
+	var $model_pdf;
 
 	var $trueWeight;
 	var $weight_units;
@@ -162,6 +163,8 @@ class Expedition extends CommonObject
 		global $conf, $langs;
 
 		$now=dol_now();
+		
+		if (empty($this->model_pdf)) $this->model_pdf=$conf->global->EXPEDITION_ADDON_PDF;
 
 		require_once DOL_DOCUMENT_ROOT .'/product/stock/class/mouvementstock.class.php';
 		$error = 0;
@@ -196,6 +199,7 @@ class Expedition extends CommonObject
 		$sql.= ", size_units";
 		$sql.= ", note_private";
 		$sql.= ", note_public";
+		$sql.= ", model_pdf";
 		$sql.= ") VALUES (";
 		$sql.= "'(PROV)'";
 		$sql.= ", ".$conf->entity;
@@ -217,6 +221,7 @@ class Expedition extends CommonObject
 		$sql.= ", ".$this->size_units;
 		$sql.= ", ".(!empty($this->note_private)?"'".$this->db->escape($this->note_private)."'":"null");
 		$sql.= ", ".(!empty($this->note_public)?"'".$this->db->escape($this->note_public)."'":"null");
+		$sql.= ", ".(!empty($this->model_pdf)?"'".$this->db->escape($this->model_pdf)."'":"null");
 		$sql.= ")";
 
 		$resql=$this->db->query($sql);
