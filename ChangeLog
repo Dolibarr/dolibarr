@@ -42,7 +42,7 @@ For users:
 - Qual: Implement same rule for return value of all command line scripts (0 when success, <>0 if error).
 - New: [ task #1005 ] Adapting to Spanish legislation bill numbering
 - New: [ task #1011 ] Now supplier order and invoice deal with payment terms and mode
-- New: [ task #1014 ] Add option to recursivly add parent cactegory
+- New: [ task #1014 ] Add option to recursivly add parent category
 
 
 For translators:
