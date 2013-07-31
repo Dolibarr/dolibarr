@@ -1018,7 +1018,7 @@ class FormFile
 
     }
     
-    public function list_of_links($object, $permtodelete=1)
+    public function list_of_links($object, $permtodelete=1, $action=null, $selected=null)
     {
 
         global $user, $conf, $langs, $hookmanager, $user;
@@ -1057,34 +1057,53 @@ class FormFile
 
         $var = true;
         foreach($links as $link) {
-            $var=!$var;
+            $var =! $var;
             print '<tr '.$bc[$var].'>';
-            print '<td>';
-            //print "XX".$file['name'];	//$file['name'] must be utf8
-            print '<a data-ajax="false" href="'. $link->url . '">';
-            print $link->label;
-            print '</a>';
-            print "</td>\n";
-            print '<td align="right"></td>';
-            print '<td align="center">'.dol_print_date($link->datea, "dayhour", "tzuser").'</td>';
-            // Preview
-            /*if (empty($useinecm))
-            {
-                print '<td align="center">';
-                $tmp=explode('.',$file['name']);
-                $minifile=$tmp[0].'_mini.'.$tmp[1];
-                if (image_format_supported($file['name']) > 0) print '<img border="0" height="'.$maxheightmini.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&file='.urlencode($relativepath.'thumbs/'.$minifile).'" title="">';
-                else print '&nbsp;';
+            //edit mode
+            if ($action == 'update' && $selected === $link->id) {
+                print '<form action="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '" method="post">';
+                print '<input type="hidden" name="linkid" value="' . $link->id . '">';
+                print '<input type="hidden" name="action" value="confirm_updateline">';
+                print '<td>';
+                print $langs->trans('Link') . ': <input type="text" name="link" value = "' . $link->url . '">';
                 print '</td>';
-            }*/
-            print '<td align="center"></td>';
-            // Delete or view link
-            // ($param must start with &)
-            print '<td align="right" colspan="2">';
-            print '<a href="'. $_SERVER['PHP_SELF'] .'?action=update&linkid='. $link->id .'&id=' . $object->id . '" class="editfilelink" >'.img_edit().'</a>';
-            if ($permtodelete) print '<a href="'. $_SERVER['PHP_SELF'] .'?action=delete&linkid='. $link->id . '&id=' . $object->id . '" class="deletefilelink" >'.img_delete().'</a>';
-            else print '&nbsp;';
-            print "</td>";
+                print '<td align="right">';
+                print $langs->trans('Label') . ': <input type="text" name="label" value = "' . $link->label . '">';
+                print '</td>';
+                print '<td align="center">' . dol_print_date(dol_now(), "dayhour", "tzuser") . '</td>';
+                print '<td align="right"></td>';
+                print '<td align="right" colspan="2"><input type="submit" name="save" class="button" value="' . $langs->trans('Save') . '">';
+                print '<input type="submit" name="cancel" class="button" value="' . $langs->trans('Cancel') . '"></td>';
+                print '</form>';
+            }
+            else {
+                print '<td>';
+                //print "XX".$file['name'];	//$file['name'] must be utf8
+                print '<a data-ajax="false" href="'. $link->url . '">';
+                print $link->label;
+                print '</a>';
+                print "</td>\n";
+                print '<td align="right"></td>';
+                print '<td align="center">'.dol_print_date($link->datea, "dayhour", "tzuser").'</td>';
+                // Preview
+                /*if (empty($useinecm))
+                {
+                    print '<td align="center">';
+                    $tmp=explode('.',$file['name']);
+                    $minifile=$tmp[0].'_mini.'.$tmp[1];
+                    if (image_format_supported($file['name']) > 0) print '<img border="0" height="'.$maxheightmini.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&file='.urlencode($relativepath.'thumbs/'.$minifile).'" title="">';
+                    else print '&nbsp;';
+                    print '</td>';
+                }*/
+                print '<td align="center"></td>';
+                // Delete or view link
+                // ($param must start with &)
+                print '<td align="right" colspan="2">';
+                print '<a href="'. $_SERVER['PHP_SELF'] .'?action=update&linkid='. $link->id .'&id=' . $object->id . '" class="editfilelink" >'.img_edit().'</a>';
+                if ($permtodelete) print '<a href="'. $_SERVER['PHP_SELF'] .'?action=delete&linkid='. $link->id . '&id=' . $object->id . '" class="deletefilelink" >'.img_delete().'</a>';
+                else print '&nbsp;';
+                print "</td>";
+            }
             print "</tr>\n";
         }
         if ($nboflinks == 0)

@@ -38,5 +38,5 @@ $formfile->list_of_documents($filearray,
 
 print "<br>";
 //List of links
-$formfile->list_of_links($object, $permission);
+$formfile->list_of_links($object, $permission, $action, GETPOST('linkid', 'int'));
 print "<br>";

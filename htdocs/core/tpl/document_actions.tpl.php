@@ -47,5 +47,24 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes') {
         header('Location: ' . $_SERVER["PHP_SELF"] . '?id=' . $object->id);
         exit;
     }
+} elseif ($action == 'confirm_updateline' && GETPOST('save') && GETPOST('link', 'alpha')) {
+    require_once DOL_DOCUMENT_ROOT . '/link/class/link.class.php';
+    $langs->load('link');
+    $link = new Link($db);
+    $link->id = GETPOST('linkid', 'int');
+    $f = $link->fetch();
+    if ($f) {
+        $link->url = GETPOST('link', 'alpha');
+        if (substr($link->url, 0, 7) != 'http://' && substr($link->url, 0, 8) != 'https://') {
+            $link->url = 'http://' . $link->url;
+        }
+        $link->label = GETPOST('label', 'alpha');
+        $res = $link->update($user);
+        if (!$res) {
+            setEventMessage($langs->trans("ErrorFailedToUpdateLink", $link->label));
+        }
+    } else {
+        //error fetching
+    }
 }
 
