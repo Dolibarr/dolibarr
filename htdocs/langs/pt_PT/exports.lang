@@ -65,7 +65,7 @@ ChooseFormatOfFileToImport=Escolha o formato de arquivo para usar como formato d
 ChooseFileToImport=Escolha ficheiro a importar, em seguida, clique em picto %s ...
 SourceFileFormat=Formato de arquivo de origem
 FieldsInSourceFile=Os campos em arquivo fonte
-FieldsInTargetDatabase=Alvo Dolibarr em campos de dados
+# FieldsInTargetDatabase=Target fields in Dolibarr database (bold=mandatory)
 Field=Campo
 NoFields=Nenhum campo
 MoveField=Mover %s campo número da coluna
@@ -120,10 +120,10 @@ CSVFormatDesc=<b>Comma Separated Value</b> formato de arquivo (. Csv). <br> Este
 # Separator=Separator
 # Enclosure=Enclosure
 # SuppliersProducts=Suppliers Products
-# BankCode=Bank code
-# DeskCode=Desk code
-# BankAccountNumber=Account number
-# BankAccountNumberKey=Key
+BankCode=Código banco
+DeskCode=Código sucursal
+BankAccountNumber=Número de conta
+BankAccountNumberKey=Dígito Control
 ## filters
 # SelectFilterFields=If you want to filter on some values, just input values here.
 # FilterableFields=Champs Filtrables

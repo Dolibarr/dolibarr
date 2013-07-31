@@ -9,7 +9,6 @@
 // Reference language: en_US -> he_IL
 CHARSET=UTF-8
 DIRECTION=rtl
-#FONTFORPDF=Freemono
 FONTFORPDF=DejaVuSans
 FONTSIZEFORPDF=9
 SeparatorDecimal=.

@@ -38,3 +38,4 @@ AddSupplierOrder=建立供应商的订单
 AddSupplierInvoice=创建供应商发票
 ListOfSupplierProductForSupplier=<b>％</b>产品供应商名单和价格<b>的</b> S
 NoneOrBatchFileNeverRan=无或批处理<b>％不是</b>最近跑
+# SentToSuppliers=Sent to suppliers

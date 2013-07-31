@@ -65,7 +65,7 @@ ChooseFormatOfFileToImport=利用點選 %s 圖示的方式，選擇欲匯入檔�
 ChooseFileToImport=上傳檔案，然後點選 %s 圖示來選擇欲匯入來源檔案
 SourceFileFormat=來源檔案格式
 FieldsInSourceFile=來源檔案的欄位清單
-FieldsInTargetDatabase=目標欄位清單（*為強制性目標欄位）
+# FieldsInTargetDatabase=Target fields in Dolibarr database (bold=mandatory)
 Field=欄位
 NoFields=沒有欄位
 MoveField=移動欄位的行號 %s
@@ -120,10 +120,10 @@ CSVFormatDesc=<b>逗號分隔</b>檔案格式（csv格式）。 <br>這是一個
 # Separator=Separator
 # Enclosure=Enclosure
 # SuppliersProducts=Suppliers Products
-# BankCode=Bank code
-# DeskCode=Desk code
-# BankAccountNumber=Account number
-# BankAccountNumberKey=Key
+BankCode=銀行代碼
+DeskCode=臺代碼
+BankAccountNumber=帳號
+BankAccountNumberKey=關鍵
 ## filters
 # SelectFilterFields=If you want to filter on some values, just input values here.
 # FilterableFields=Champs Filtrables

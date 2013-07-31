@@ -1,2 +1,4 @@
 
 See page http://demo.icu-project.org/icu-bin/locexp?d_=fr
+
+For number format, you can also see page http://en.wikipedia.org/wiki/Decimal_mark

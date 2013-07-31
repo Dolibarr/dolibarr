@@ -65,7 +65,7 @@ ChooseFormatOfFileToImport=Wybierz format pliku do wykorzystania jako format pli
 ChooseFileToImport=Wybierz plik do zaimportowania, a następnie kliknij przycisk picto %s ...
 SourceFileFormat=format pliku źródłowego
 FieldsInSourceFile=Obszary w pliku źródłowym
-FieldsInTargetDatabase=Docelowe Dolibarr pól w bazie danych
+# FieldsInTargetDatabase=Target fields in Dolibarr database (bold=mandatory)
 Field=Pole
 NoFields=Nie pól
 MoveField=Przenieś %s kolumnie polu numeru
@@ -120,10 +120,10 @@ CSVFormatDesc=Format pliku <b>oddzielonych przecinkami jakości</b> (. Csv). <br
 # Separator=Separator
 # Enclosure=Enclosure
 # SuppliersProducts=Suppliers Products
-# BankCode=Bank code
-# DeskCode=Desk code
-# BankAccountNumber=Account number
-# BankAccountNumberKey=Key
+BankCode=Kod banku
+DeskCode=Recepcja kod
+BankAccountNumber=Numer konta
+BankAccountNumberKey=Klucz
 ## filters
 # SelectFilterFields=If you want to filter on some values, just input values here.
 # FilterableFields=Champs Filtrables

@@ -65,7 +65,7 @@ ChooseFormatOfFileToImport=选择文件格式为导入文件格式使用的象�
 ChooseFileToImport=上传文件然后点击象形％s到选择导入文件作为源文件...
 SourceFileFormat=源文件格式
 FieldsInSourceFile=在源文件中的字段
-FieldsInTargetDatabase=在Dolibarr数据库（*=强制性目标字段）
+# FieldsInTargetDatabase=Target fields in Dolibarr database (bold=mandatory)
 Field=场
 NoFields=没有字段
 MoveField=移动领域的％s的列号
@@ -117,13 +117,13 @@ CSVFormatDesc=<b>逗号分隔值</b>文件格式（。csv格式）。 <br>这是
 # TsvFormatDesc=<b>Tab Separated Value</b> file format (.tsv)<br>This is a text file format where fields are separated by a tabulator [tab].
 # ExportFieldAutomaticallyAdded=Field <b>%s</b> was automatically added. It will avoid you to have similar lines to be treated as duplicate records (with this field added, all lines will own their own id and will differ).
 # CsvOptions=Csv Options
-# Separator=Separator
+Separator=分隔符
 # Enclosure=Enclosure
 # SuppliersProducts=Suppliers Products
-# BankCode=Bank code
-# DeskCode=Desk code
-# BankAccountNumber=Account number
-# BankAccountNumberKey=Key
+BankCode=银行代码
+DeskCode=台代码
+BankAccountNumber=帐号
+BankAccountNumberKey=关键
 ## filters
 # SelectFilterFields=If you want to filter on some values, just input values here.
 # FilterableFields=Champs Filtrables

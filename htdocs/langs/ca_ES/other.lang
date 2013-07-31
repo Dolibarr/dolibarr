@@ -1,4 +1,4 @@
-# Dolibarr language file - ca_ES - other 
+# Dolibarr language file - Source file is en_US - other
 CHARSET=UTF-8
 SecurityCode=Codi de seguretat
 Calendar=Calendari
@@ -8,8 +8,8 @@ ToolsDesc=Aquesta àrea està dedicada al reagrupament de diverses utilitats no 
 Birthday=Aniversari
 BirthdayDate=Data aniversari
 DateToBirth=Data de naiximent
-BirthdayAlertOn=alerta aniversari activada
-BirthdayAlertOff=alerta aniversari desactivada
+BirthdayAlertOn= alerta aniversari activada
+BirthdayAlertOff= alerta aniversari desactivada
 Notify_FICHINTER_VALIDATE=Validació fitxa intervenció
 Notify_FICHINTER_SENTBYMAIL=Enviament fitxa intervenció per e-mail
 Notify_BILL_VALIDATE=Validació factura
@@ -21,6 +21,7 @@ Notify_PROPAL_VALIDATE=Validació pressupost client
 Notify_WITHDRAW_TRANSMIT=Transmissió domiciliació
 Notify_WITHDRAW_CREDIT=Abonament domiciliació
 Notify_WITHDRAW_EMIT=Emissió domiciliació
+Notify_ORDER_SENTBYMAIL=Enviament comanda de client per e-mail
 Notify_COMPANY_CREATE=Creació tercer
 Notify_PROPAL_SENTBYMAIL=Enviament pressupost per e-mail
 Notify_ORDER_SENTBYMAIL=Enviament comanda de client per e-mail
@@ -58,7 +59,7 @@ PredefinedMailContentSendSupplierInvoice=__CONTACTCIVNAME__ \n\n Us adjuntem la 
 PredefinedMailContentSendShipping=__CONTACTCIVNAME__ \n\n Us adjuntem l'expedició __SHIPPINGREF__\n\n__PERSONALIZED__Cordialment\n\n__SIGNATURE__
 PredefinedMailContentSendFichInter=__CONTACTCIVNAME__ \n\n Us adjuntem l'intervenció __FICHINTERREF__\n\n__PERSONALIZED__Cordialment\n\n__SIGNATURE__
 DemoDesc=Dolibarr és un programari per a la gestió de negocis (professionals o associacions), compost de mòduls funcionals independents i opcionals. Una demostració que inclogui tots aquests mòduls no té sentit perquè no utilitzarà tots els mòduls. A més, té disponibles diversos tipus de perfils de demostració.
-ChooseYourDemoProfil=Seleccioneu el perfil de demostració que millor correspongui a la seva activitat ... 
+ChooseYourDemoProfil=Seleccioneu el perfil de demostració que millor correspongui a la seva activitat ...
 DemoFundation=Gestió de membres d'una associació
 DemoFundation2=Gestió de membres i tresoreria d'una associació
 DemoCompanyServiceOnly=Gestió d'un treballador per compte propi realitzant serveis
@@ -151,6 +152,7 @@ EMailTextOrderApproved=Comanda %s aprovada
 EMailTextOrderApprovedBy=Comanda %s aprovada per %s
 EMailTextOrderRefused=Comanda %s rebutjada
 EMailTextOrderRefusedBy=Comanda %s rebutjada per %s
+# EMailTextExpeditionValidated=The shipping %s has been validated.
 ImportedWithSet=Lot d'importació (import key)
 DolibarrNotification=Notificació automàtica
 ResizeDesc=Introduïu l'ample <b>O</b> la nova alçada. La relació es conserva en canviar la mida...
@@ -172,6 +174,7 @@ StartUpload=Transferir
 CancelUpload=Cancel·lar transferència
 FileIsTooBig=L'arxiu és massa gran
 PleaseBePatient=Preguem esperi uns instants...
+
 ##### Calendar common #####
 AddCalendarEntry=Afegir entrada al calendari
 NewCompanyToDolibarr=Empresa %s inserida en Dolibarr

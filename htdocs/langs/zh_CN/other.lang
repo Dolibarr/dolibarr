@@ -173,7 +173,7 @@ AddFiles=添加文件
 StartUpload=开始上传
 CancelUpload=取消上传
 FileIsTooBig=文件过大
-# PleaseBePatient=Please be patient...
+PleaseBePatient=请耐心等待...
 
 ##### Calendar common #####
 AddCalendarEntry=日历项中添加％s的
@@ -195,6 +195,7 @@ MemberResiliatedInDolibarr=成员％s resiliated在Dolibarr
 MemberDeletedInDolibarr=成员％s删除Dolibarr
 MemberSubscriptionAddedInDolibarr=对成员％认购s加入Dolibarr
 ShipmentValidatedInDolibarr=运费%s在Dolibarr验证
+# ShipmentDeletedInDolibarr=Shipment %s deleted from Dolibarr
 ##### Export #####
 Export=出口
 ExportsArea=出口地区

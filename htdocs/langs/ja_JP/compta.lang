@@ -154,3 +154,4 @@ WarningDepositsNotIncluded=預金請求書は、この会計モジュールで�
 # InvoiceDispatched=Dispatched invoices
 # AccountancyDashboard=Accountancy summary
 # ByProductsAndServices=By products and services
+# RefExt=External ref

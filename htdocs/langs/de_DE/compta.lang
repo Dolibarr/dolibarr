@@ -154,3 +154,4 @@ WarningDepositsNotIncluded=Abschlagsrechnungen werden in dieser Version des Rech
 # InvoiceDispatched=Dispatched invoices
 # AccountancyDashboard=Accountancy summary
 # ByProductsAndServices=By products and services
+# RefExt=External ref

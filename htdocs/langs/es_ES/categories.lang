@@ -1,4 +1,4 @@
-# Dolibarr language file - es_ES - categories
+# Dolibarr language file - Source file is en_US - categories
 CHARSET=UTF-8
 Category=Categoría
 Categories=Categorías
@@ -17,6 +17,7 @@ SuppliersCategoriesArea=Área categorías de proveedores
 CustomersCategoriesArea=Área categorías de clientes
 ThirdPartyCategoriesArea=Área categorías de terceros
 MembersCategoriesArea=Área categorías de miembros
+# ContactsCategoriesArea=Contacts categories area
 MainCats=Categorías principales
 SubCats=Subcategorías
 CatStatistics=Estadísticas
@@ -50,10 +51,12 @@ SupplierIsInCategories=Este proveedor se encuentra en las siguientes categorías
 CompanyIsInCustomersCategories=Esta empresa se encuentra en las siguientes categorías
 CompanyIsInSuppliersCategories=Esta empresa se encuentra en las siguientes categorías de proveedores
 MemberIsInCategories=Este miembro se encuentra en las siguientes categorías de miembros
+# ContactIsInCategories=This contact owns to following contacts categories
 ProductHasNoCategory=Este producto/servicio no se encuentra en ninguna categoría en particular
 SupplierHasNoCategory=Este proveedor no se encuentra en ninguna categoría en particular
 CompanyHasNoCategory=Esta empresa no se encuentra en ninguna categoría en particular
 MemberHasNoCategory=Este miembro no se encuentra en ninguna categoría en particular
+# ContactHasNoCategory=This contact is not in any categories
 ClassifyInCategory=Clasificar en la categoría
 NoneCategory=Ninguna
 NotCategorized=Sin categoría
@@ -79,10 +82,12 @@ CustomersCategoriesShort=Categorías clientes
 CustomersProspectsCategoriesShort=Categorías clientes
 ProductsCategoriesShort=Categorías productos
 MembersCategoriesShort=Categorías miembros
+# ContactCategoriesShort=Contacts categories
 ThisCategoryHasNoProduct=Esta categoría no contiene ningún producto.
 ThisCategoryHasNoSupplier=Esta categoría no contiene ningún proveedor.
 ThisCategoryHasNoCustomer=Esta categoría no contiene ningún cliente.
 ThisCategoryHasNoMember=Esta categoría no contiene ningún miembro.
+# ThisCategoryHasNoContact=This category does not contain any contact.
 AssignedToCustomer=Asignar a un cliente
 AssignedToTheCustomer=Asigado a un cliente
 InternalCategory=Categoría interna
@@ -92,9 +97,12 @@ CatSupList=Listado categorías de proveedores
 CatCusList=Listado categorías de clientes/potenciales
 CatProdList=Listado categorías de productos
 CatMemberList=Listado categorías de miembros
-
-# Imports
+# CatContactList=List of contact categories and contact
 CatSupLinks=Proveedores
 CatCusLinks=Clientes/Clientes potenciales
 CatProdLinks=Productos
 CatMemberLinks=Miembros
+CatProdLinks=Productos
+CatCusLinks=Clientes/Clientes potenciales
+CatSupLinks=Proveedores
+# DeleteFromCat=Remove from category

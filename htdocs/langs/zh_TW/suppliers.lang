@@ -38,3 +38,4 @@ AddSupplierOrder=建立供應商的訂單
 AddSupplierInvoice=創建供應商發票
 ListOfSupplierProductForSupplier=<b>供應商 %s 的產品及價格清單</b>
 NoneOrBatchFileNeverRan=無或批處理<b>％不是</b>最近跑
+# SentToSuppliers=Sent to suppliers

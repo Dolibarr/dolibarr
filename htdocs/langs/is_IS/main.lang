@@ -1,6 +1,12 @@
 # Dolibarr language file - Source file is en_US - main
 CHARSET=UTF-8
 DIRECTION=ltr
+# Note for chinese:
+# msungstdlight or cid0ct are for traditionnal chinese (traditionnal does not render with ubuntu pdf reader)
+# stsongstdlight or cid0cs are for simplified chinese
+# To read chinese pdf with linux: sudo apt-get install poppler-data
+FONTFORPDF=helvetica
+FONTSIZEFORPDF=10
 SeparatorDecimal=.
 SeparatorThousand=,
 FormatDateShort=%d/%m/%Y
@@ -19,7 +25,7 @@ FormatDateHourTextShort=%d %b %Y %H:%M
 FormatDateHourText=%d %B %Y %H:%M
 DatabaseConnection=Tengingin við gagnagrunninn
 # NoTranslation=No translation
-# NoRecordFound=Aucun enregistrement trouvé
+# NoRecordFound=No record found
 NoError=Engin villa
 Error=Villa
 ErrorFieldRequired=Field ' %s ' er krafist
@@ -331,7 +337,7 @@ Status=Status
 Ref=Tilv.
 RefSupplier=Tilv. birgir
 RefPayment=Tilv. greiðslu
-CommercialProposals=Auglýsing tillögur
+CommercialProposalsShort=Auglýsing tillögur
 Comment=Athugasemd
 Comments=Athugasemdir
 ActionsToDo=Aðgerðir til að gera

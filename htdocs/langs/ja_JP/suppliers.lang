@@ -38,3 +38,4 @@ AddSupplierOrder=サプライヤーの順序を作成します。
 AddSupplierInvoice=サプライヤの請求書を作成します。
 ListOfSupplierProductForSupplier=サプライヤー<b>%s</b>の製品と価格の一覧
 NoneOrBatchFileNeverRan=noneまたはバッチ<b>%sは</b>最近走っていない
+# SentToSuppliers=Sent to suppliers

@@ -2,7 +2,7 @@
 CHARSET= UTF-8
 
 # HRM=HRM
-# Holidays=Holidays
+Holidays=Tatiller
 CPTitreMenu=Tatiller
 MenuReportMonth=Aylık özet
 MenuAddCP=Tatil için başvur

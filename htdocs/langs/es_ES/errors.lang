@@ -124,6 +124,7 @@ ErrorFailedToValidatePasswordReset=No se ha podido restablecer la contraseña. E
 ErrorToConnectToMysqlCheckInstance=Error de conexión con el servidor de la base de datos. Compruebe que MySQL está funcionando (en la mayoría de los casos, puede ejecutarlo desde la línea de comandos utilizando el comando  'etc sudo /etc/init.d/mysql start.
 ErrorFailedToAddContact=Error en la adición del contacto
 ErrorDateMustBeBeforeToday=La fecha no puede ser superior a hoy
+# ErrorPaymentModeDefinedToWithoutSetup=A payment mode was set to type %s but setup of module Invoice was not completed to define information to show for this payment mode.
 
 # Warnings
 WarningMandatorySetupNotComplete=Los parámetros obligatorios de configuración no están todavía definidos

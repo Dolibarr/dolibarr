@@ -1,4 +1,4 @@
-# Dolibarr language file - fr_FR - projects
+# Dolibarr language file - Source file is en_US - projects
 CHARSET=UTF-8
 Project=Projet
 Projects=Projets
@@ -106,8 +106,6 @@ TypeContact_project_task_internal_CONTRIBUTOR=Intervenant
 TypeContact_project_task_external_CONTRIBUTOR=Intervenant
 # Documents models
 DocumentModelBaleine=Modèle de rapport de projet complet (logo...)
-SelectElement=Eléments associable au projet :
-AddElement=Associer
 PlannedWorkload = Charge de travail prévue
 WorkloadOccupation= Pourcentage affectation
 ProjectReferers=Objets associés

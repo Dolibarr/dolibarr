@@ -154,3 +154,4 @@ WarningDepositsNotIncluded=存款發票不包括在此版本與本會計模塊�
 # InvoiceDispatched=Dispatched invoices
 # AccountancyDashboard=Accountancy summary
 # ByProductsAndServices=By products and services
+# RefExt=External ref

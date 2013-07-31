@@ -1,16 +1,15 @@
-# Dolibarr language file - es_ES - propal 
+# Dolibarr language file - Source file is en_US - propal
 CHARSET=UTF-8
 Proposals=Presupuestos
 Proposal=Presupuesto
 ProposalShort=Presupuesto
 ProposalsDraft=Presupuestos borrador
 ProposalDraft=Presupuesto borrador
+ProposalsOpened=Presupuestos abiertos
 Prop=Presupuestos
 CommercialProposal=Presupuesto
 CommercialProposals=Presupuestos
-ProposalsOpened=Presupuestos abiertos
 ProposalCard=Ficha presupuesto
-NewProp=Nuevo presupuesto
 NewProp=Nuevo presupuesto
 NewProposal=Nuevo presupuesto
 NewPropal=Nuevo presupuesto
@@ -72,6 +71,8 @@ ErrorPropalNotFound=Presupuesto %s inexistente
 Estimate=Presupuesto:
 EstimateShort=Presupuesto
 OtherPropals=Otros presupuestos
+# AddToDraftProposals=Add to draft proposal
+# NoDraftProposals=No draft proposals
 CopyPropalFrom=Crear presupuesto por copia de uno existente
 CreateEmptyPropal=Crear presupuesto vacío
 DefaultProposalDurationValidity=Plazo de validez por defecto (en días)
@@ -94,7 +95,9 @@ AvailabilityTypeAV_1M=1 mes
 TypeContact_propal_internal_SALESREPFOLL=Comercial seguimiento presupuesto
 TypeContact_propal_external_BILLING=Contacto cliente de facturación presupuesto
 TypeContact_propal_external_CUSTOMER=Contacto cliente seguimiento presupuesto
-# Documents models
+# Document models
 DocModelAzurDescription=Modelo de presupuesto completo (logo...)
 DocModelJauneDescription=Modelo de presupuesto Jaune
-Numbershort=N°
+# DefaultModelPropalCreate=Default model creation
+# DefaultModelPropalToBill=Default template when closing a business proposal (to be invoiced)
+# DefaultModelPropalClosed=Default template when closing a business proposal (unbilled)

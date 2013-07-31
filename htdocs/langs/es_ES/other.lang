@@ -1,4 +1,4 @@
-# Dolibarr language file - es_ES - other
+# Dolibarr language file - Source file is en_US - other
 CHARSET=UTF-8
 SecurityCode=Código seguridad
 Calendar=Calendario
@@ -8,8 +8,8 @@ ToolsDesc=Esta área está dedicada al reagrupamiento de diversas utilidades no 
 Birthday=Aniversario
 BirthdayDate=Fecha aniversario
 DateToBirth=Fecha de nacimiento
-BirthdayAlertOn=alerta aniversario activada
-BirthdayAlertOff=alerta aniversario desactivada
+BirthdayAlertOn= alerta aniversario activada
+BirthdayAlertOff= alerta aniversario desactivada
 Notify_FICHINTER_VALIDATE=Validación ficha intervención
 Notify_FICHINTER_SENTBYMAIL=Envío ficha de intervención por e-mail
 Notify_BILL_VALIDATE=Validación factura
@@ -21,6 +21,7 @@ Notify_PROPAL_VALIDATE=Validación presupuesto cliente
 Notify_WITHDRAW_TRANSMIT=Transmisión domiciliación
 Notify_WITHDRAW_CREDIT=Abono domiciliación
 Notify_WITHDRAW_EMIT=Emisión domiciliación
+Notify_ORDER_SENTBYMAIL=Envío pedido de cliente por e-mail
 Notify_COMPANY_CREATE=Creación tercero
 Notify_PROPAL_SENTBYMAIL=Envío presupuesto por e-mail
 Notify_ORDER_SENTBYMAIL=Envío pedido de cliente por e-mail
@@ -173,6 +174,7 @@ StartUpload=Transferir
 CancelUpload=Cancelar la transferencia
 FileIsTooBig=El archivo es demasiado grande
 PleaseBePatient=Rogamos espere unos instantes...
+
 ##### Calendar common #####
 AddCalendarEntry=Añadir entrada en el calendario
 NewCompanyToDolibarr=Empresa %s insertada en Dolibarr

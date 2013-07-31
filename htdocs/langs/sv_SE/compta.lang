@@ -154,3 +154,4 @@ WarningDepositsNotIncluded=Insättningar fakturor ingår inte i denna version me
 # InvoiceDispatched=Dispatched invoices
 # AccountancyDashboard=Accountancy summary
 # ByProductsAndServices=By products and services
+# RefExt=External ref

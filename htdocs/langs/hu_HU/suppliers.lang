@@ -38,3 +38,4 @@ AddSupplierOrder=Beszállítói megrendelés létrehozása
 AddSupplierInvoice=Beszállítói számla létrehozása
 ListOfSupplierProductForSupplier=<b>%s</b> beszállító termékei és árai
 NoneOrBatchFileNeverRan=Nincs vagy a <b>%s</b> batch fájl nem futott az utóbbi időben
+# SentToSuppliers=Sent to suppliers

@@ -173,7 +173,7 @@ AddFiles=Legg til filer
 StartUpload=Starte opplasting
 CancelUpload=Avbryt opplasting
 FileIsTooBig=Filer er for stor
-# PleaseBePatient=Please be patient...
+PleaseBePatient=Vær tålmodig ...
 
 ##### Calendar common #####
 AddCalendarEntry=Legg oppføring til kalender %s
@@ -195,6 +195,7 @@ MemberResiliatedInDolibarr=Medlem %s resiliated i Dolibarr
 MemberDeletedInDolibarr=Medlem %s slettet fra Dolibarr
 MemberSubscriptionAddedInDolibarr=Medlemskap for %s lagt til i Dolibarr
 ShipmentValidatedInDolibarr=Forsendelse %s validert i Dolibarr
+# ShipmentDeletedInDolibarr=Shipment %s deleted from Dolibarr
 ##### Export #####
 Export=Eksport
 ExportsArea=Eksportområde

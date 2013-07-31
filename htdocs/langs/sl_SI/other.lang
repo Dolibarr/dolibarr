@@ -173,7 +173,7 @@ AddFiles=Dodaj datoteko
 StartUpload=Zaženi prenos
 CancelUpload=Prekliči prenos
 FileIsTooBig=Datoteke so prevelike
-# PleaseBePatient=Please be patient...
+PleaseBePatient=Prosim, bodite potrpežljivi...
 
 ##### Calendar common #####
 AddCalendarEntry=Dodaj vnos v koledar %s
@@ -195,6 +195,7 @@ MemberResiliatedInDolibarr=Član %s blokiran v Dolibarrju
 MemberDeletedInDolibarr=Član %s izbrisan iz Dolibarrja
 MemberSubscriptionAddedInDolibarr=Naročnina za člana %s dodana v Dolibarr
 ShipmentValidatedInDolibarr=Pošiljka %s potrjena v Dolibarr
+# ShipmentDeletedInDolibarr=Shipment %s deleted from Dolibarr
 ##### Export #####
 Export=Izvoz
 ExportsArea=Področje izvoza

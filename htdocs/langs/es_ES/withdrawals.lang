@@ -1,4 +1,4 @@
-# Dolibarr language file - es_ES - withdrawals 
+# Dolibarr language file - Source file is en_US - withdrawals
 CHARSET=UTF-8
 StandingOrdersArea=Área domiciliaciones
 CustomersStandingOrdersArea=Área domiciliaciones de clientes
@@ -48,7 +48,7 @@ RefusedData=Fecha de devolución
 RefusedReason=Motivo de devolución
 RefusedInvoicing=Facturación de la devolución
 NoInvoiceRefused=No facturar la devolución
-InvoiceRefused=Facturar la devolución al cliente
+InvoiceRefused=Factura devuelta
 Status=Estado
 StatusUnknown=Desconocido
 StatusWaiting=En espera
@@ -85,7 +85,7 @@ WithdrawalFile=Archivo de la domiciliación
 SetToStatusSent=Clasificar como "Archivo enviado"
 ThisWillAlsoAddPaymentOnInvoice=Se crearán los pagos de las facturas y las clasificará como pagadas
 
-### Notifications 
+### Notifications
 InfoCreditSubject=Abono de domiciliación %s por el banco
 InfoCreditMessage=La orden de domiciliación %s ha sido abonada por el banco<br>Fecha de abono: %s
 InfoTransSubject=Envío de domiciliación %s al banco

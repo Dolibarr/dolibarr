@@ -10,4 +10,4 @@ FailedToConnectToFTPServer=Nu a reuşit să se conecteze la serverul FTP (%s ser
 FailedToConnectToFTPServerWithCredentials=Nu a reuşit să login la serverul FTP cu login definite / parolă
 FTPFailedToRemoveFile=Nu reuşeau să îndepărteze <b>%s</b> fişier.
 FTPFailedToRemoveDir=Nu am putut şterge directorul <b>%s</b> (verificaţi permisiunile şi că directorul este gol).
-# FTPPassiveMode=Passive mode
+FTPPassiveMode=Mod pasiv

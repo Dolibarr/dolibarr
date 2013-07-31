@@ -154,3 +154,4 @@ WarningDepositsNotIncluded=Talletukset laskut eivät sisälly tähän versioon t
 # InvoiceDispatched=Dispatched invoices
 # AccountancyDashboard=Accountancy summary
 # ByProductsAndServices=By products and services
+# RefExt=External ref

@@ -1,4 +1,4 @@
-# Dolibarr language file - en_US - boxes
+# Dolibarr language file - Source file is en_US - boxes
 CHARSET=UTF-8
 BoxLastRssInfos=Flux d'information RSS
 BoxLastProducts=Les %s derniers produits/services enregistrés

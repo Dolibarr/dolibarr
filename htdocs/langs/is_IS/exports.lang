@@ -65,7 +65,7 @@ ChooseFormatOfFileToImport=Veldu skráarsnið til að nota sem flytja inn skrá 
 ChooseFileToImport=Hlaða inn skrá smelltu síðan á picto %s  til að velja skrá sem innflutningur frumskrár ...
 SourceFileFormat=Heimild skráarsnið
 FieldsInSourceFile=Reitir í frumskrár
-FieldsInTargetDatabase=Markmál reiti Dolibarr gagnasafn (*= skylda)
+# FieldsInTargetDatabase=Target fields in Dolibarr database (bold=mandatory)
 Field=Field
 NoFields=Engin svæði
 MoveField=Færa sviði dálki númer %s
@@ -120,10 +120,10 @@ CSVFormatDesc=<b>Comma Seperated Gildi</b> skráarsnið (. Csv). <br> Þetta er 
 # Separator=Separator
 # Enclosure=Enclosure
 # SuppliersProducts=Suppliers Products
-# BankCode=Bank code
-# DeskCode=Desk code
-# BankAccountNumber=Account number
-# BankAccountNumberKey=Key
+BankCode=Bankakóði
+DeskCode=Skrifborð kóða
+BankAccountNumber=Reikningsnúmer
+BankAccountNumberKey=Lykill
 ## filters
 # SelectFilterFields=If you want to filter on some values, just input values here.
 # FilterableFields=Champs Filtrables

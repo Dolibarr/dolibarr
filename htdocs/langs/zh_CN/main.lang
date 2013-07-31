@@ -1,6 +1,10 @@
 # Dolibarr language file - Source file is en_US - main
 CHARSET=UTF-8
 DIRECTION=ltr
+# Note for chinese:
+# msungstdlight or cid0ct are for traditionnal chinese (traditionnal does not render with ubuntu pdf reader)
+# stsongstdlight or cid0cs are for simplified chinese
+# To read chinese pdf with linux: sudo apt-get install poppler-data
 FONTFORPDF=stsongstdlight
 FONTSIZEFORPDF=9
 SeparatorDecimal=.
@@ -21,7 +25,7 @@ FormatDateHourTextShort=%b %d, %Y, %I:%M %p
 FormatDateHourText=%B %d, %Y, %I:%M %p
 DatabaseConnection=数据库连接
 # NoTranslation=No translation
-# NoRecordFound=Aucun enregistrement trouvé
+# NoRecordFound=No record found
 NoError=没有错误
 Error=错误
 ErrorFieldRequired=场'％s'的要求
@@ -333,7 +337,7 @@ Status=地位
 Ref=号码
 RefSupplier=号。供应商
 RefPayment=号。付款
-CommercialProposals=商业建议
+CommercialProposalsShort=报价单
 Comment=评论
 Comments=评论
 ActionsToDo=这样的行动
@@ -599,7 +603,7 @@ CloneMainAttributes=克隆的对象，其主要属性
 PDFMerge=PDF合并
 Merge=合并
 PrintContentArea=显示页面的主要内容打印区
-# MenuManager=Menu manager
+MenuManager=菜单管理器
 NoMenu=没有子菜单
 WarningYouAreInMaintenanceMode=警告，你是在维护模式，因此，只有登录<b>％s</b>是允许使用在目前的应用。
 CoreErrorTitle=系统错误

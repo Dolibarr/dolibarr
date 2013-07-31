@@ -65,7 +65,7 @@ ChooseFormatOfFileToImport=Choose file format to use as import file format by cl
 ChooseFileToImport=Upload file then click on picto %s to select file as source import file...
 SourceFileFormat=Source file format
 FieldsInSourceFile=Fields in source file
-FieldsInTargetDatabase=Target fields in Dolibarr database (*=mandatory)
+# FieldsInTargetDatabase=Target fields in Dolibarr database (bold=mandatory)
 Field=Field
 NoFields=No fields
 MoveField=Move field column number %s
@@ -120,10 +120,10 @@ CSVFormatDesc=<b>Comma Separated Value</b> file format (.csv).<br>This is a text
 # Separator=Separator
 # Enclosure=Enclosure
 # SuppliersProducts=Suppliers Products
-# BankCode=Bank code
-# DeskCode=Desk code
-# BankAccountNumber=Account number
-# BankAccountNumberKey=Key
+BankCode=Κωδικός τράπεζας
+DeskCode=Κωδικός γραφείου
+BankAccountNumber=Αριθμός Λογαριασμού
+BankAccountNumberKey=Κωδ.
 ## filters
 # SelectFilterFields=If you want to filter on some values, just input values here.
 # FilterableFields=Champs Filtrables

@@ -1,18 +1,16 @@
-# Dolibarr language file - en_US - marges
+# Dolibarr language file - Source file is en_US - marges
 CHARSET=UTF-8
 
-Module59000Name=Margini
-Module59000Desc=Gestione dei margini di profitto
 Margin=Margine
 Margins=Margini
 TotalMargin=Margine totale
 MarginOnProducts=Margine sui prodotti
 MarginOnServices=Margine sui servizi
-# MarginRate=Margin rate
+MarginRate=Tasso di margine
 # MarkRate=Mark rate
-# DisplayMarginRates=Display margin rates
+DisplayMarginRates=Visualizza i tassi di margine
 # DisplayMarkRates=Display mark rates
-# InputPrice=Input price
+InputPrice=Prezzo di ingresso
 
 margin=Gestione margini di profitto
 margesSetup=Configurazione gestione margini di profitto
@@ -32,9 +30,9 @@ StartDate=Data di avvio
 EndDate=Data di fine
 Launch=Avvio
 
-# ForceBuyingPriceIfNull=Force buying price if null
-# ForceBuyingPriceIfNullDetails=if "ON", margin will be zero on line (buying price = selling price), otherwise ("OFF"), marge will be equal to selling price (buying price = 0)
-# MARGIN_METHODE_FOR_DISCOUNT=Margin method for global discounts
+ForceBuyingPriceIfNull=Forza il prezzo di acquisto se vuoto
+ForceBuyingPriceIfNullDetails=se "ON", il margine sarà zero (prezzo di acquisto=prezzo di vendita), nel caso contrario ("OFF"), il margine sarà uguale al prezzo di vendita (prezzo di acquisto=0)
+MARGIN_METHODE_FOR_DISCOUNT=Metodo di margine per sconti globali
 UseDiscountAsProduct=Come prodotto
 UseDiscountAsService=Come servizio
 UseDiscountOnTotal=Sul subtotale
@@ -47,8 +45,8 @@ MARGIN_TYPE_DETAILS=Margine lordo = Prezzo di vendita - Prezzo di acquisto<br/>M
 
 CostPrice=Prezzo di costo
 BuyingCost=Prezzo di costo
-# UnitCharges=Unit charges
-# Charges=Charges
+UnitCharges=Carico unitario
+Charges=Carichi
 
 AgentContactType=Tipo di contatto per i mandati di vendita
 AgentContactTypeDetails=Definisci che tipo di contatto (connesso alle fatture) associare agli agenti commerciali

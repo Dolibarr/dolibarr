@@ -1,4 +1,4 @@
-# Dolibarr language file - en_US - admin
+# Dolibarr language file - Source file is en_US - admin
 CHARSET= UTF-8
 WorkflowSetup=Configuration du module workflow
 WorkflowDesc=Ce module vous permet de modifier le comportement d'enchaînement automatisé. Par défaut, le workflow est ouvert et non imposé. À vous d'activer les liens automatiques qui vous intéressent.

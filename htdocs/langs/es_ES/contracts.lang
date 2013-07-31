@@ -87,8 +87,9 @@ ExpiredSince=Expirado desde el
 RelatedContracts=Contratos asociados
 NoExpiredServices=Sin servicios activos expirados
 ListOfServicesToExpireWithDuration=Listado de servicios activos a expirar en %s días
+# ListOfServicesToExpireWithDurationNeg=List of Services expired from more than %s days
 ListOfServicesToExpire=Listado de servicios activos a expirar
-Service=Servicio
+# NoteListOfYourExpiredServices=This list contains only services of contracts for third parties you are linked to as a sale representative.
 
 ##### Types de contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Comercial firmante del contrato

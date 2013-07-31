@@ -198,3 +198,4 @@ UnitPmp=Precio de compra unitario
 CostPmpHT=Coste de compra sin IVA
 # ProductUsedForBuild=Auto consumed by production
 ProductBuilded=Producción completada
+# ProductsMultiPrice=Product multi-price

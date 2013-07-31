@@ -1,6 +1,10 @@
 # Dolibarr language file - Source file is en_US - main
 CHARSET=UTF-8
 DIRECTION=ltr
+# Note for chinese:
+# msungstdlight or cid0ct are for traditionnal chinese (traditionnal does not render with ubuntu pdf reader)
+# stsongstdlight or cid0cs are for simplified chinese
+# To read chinese pdf with linux: sudo apt-get install poppler-data
 FONTFORPDF=DejaVuSans
 FONTSIZEFORPDF=9
 SeparatorDecimal=.
@@ -21,7 +25,7 @@ FormatDateHourTextShort=%b %d, %Y, %I:%M %p
 FormatDateHourText=%B %d, %Y, %I:%M %p
 DatabaseConnection=Σϋνδεση Βάσης Δεδομένων
 # NoTranslation=No translation
-# NoRecordFound=Aucun enregistrement trouvé
+# NoRecordFound=No record found
 NoError=Κανένα Σφάλμα
 Error=Σφάλμα
 ErrorFieldRequired=Το πεδίο '%s' απαιτείται
@@ -333,7 +337,7 @@ Status=Κατάσταση
 Ref=Κωδ.
 RefSupplier=Κωδ. προμηθευτή
 RefPayment=Κωδ. πληρωμής
-CommercialProposals=Εμπορικές Προτάσεις
+CommercialProposalsShort=Εμπορικές προτάσεις
 Comment=Σχόλιο
 Comments=Σχόλια
 ActionsToDo=Ενέργειες που πρέπει να γίνουν

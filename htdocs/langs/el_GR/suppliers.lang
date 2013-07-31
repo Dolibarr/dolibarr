@@ -38,3 +38,4 @@ AddSupplierOrder=Δημιουργία παραγγελίας προμηθευτ�
 AddSupplierInvoice=Δημιουργία τιμολογίου προμηθευτή
 ListOfSupplierProductForSupplier=Λίστα προϊόντων και τιμών του προμηθευτή <b>%s</b>
 NoneOrBatchFileNeverRan=None or batch <b>%s</b> not ran recently
+# SentToSuppliers=Sent to suppliers

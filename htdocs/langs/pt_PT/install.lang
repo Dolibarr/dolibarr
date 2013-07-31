@@ -26,14 +26,14 @@ ErrorGoBackAndCorrectParameters=Ir para trás e corrigir errado parâmetros..
 ErrorWrongValueForParameter=Você pode ter digitado um valor incorreto para o parâmetro ' %s'.
 ErrorFailedToCreateDatabase=Erro ao criar a base de dados' %s'.
 ErrorFailedToConnectToDatabase=Falha ao conectar com o banco de dados' %s'.
-# ErrorDatabaseVersionTooLow=Database version (%s) too old. Version %s or higher is required.
+ErrorDatabaseVersionTooLow=Versão da Base de Dados (%s) muito antiga. A versão %s ou superior é necessário.
 ErrorPHPVersionTooLow=PHP versão muito antiga. Versão %s é requerida.
 WarningPHPVersionTooLow=PHP versão muito antiga. %s versão ou mais é o esperado. Esta versão deverá permitir instalar, mas não é suportado.
 ErrorConnectedButDatabaseNotFound=Ligação ao servidor com êxito, mas database ' %s' não foi encontrado.
 ErrorDatabaseAlreadyExists=Base de dados' %s' já existe.
 IfDatabaseNotExistsGoBackAndUncheckCreate=Se não existe base de dados, volte e verifique a opção "Criar uma base de dados".
 IfDatabaseExistsGoBackAndCheckCreate=Caso dados já existe, volte e desmarque "Criar uma base de dados" opção.
-# WarningBrowserTooOld=Too old version of browser. Upgrading your browser to a recent version of Firefox, Chrome or Opera is highly recommanded.
+WarningBrowserTooOld=Versão do browser demasiado antiga . Atualizar o seu navegador para uma versão mais recente do Firefox, Chrome ou Opera.
 PHPVersion=PHP versjon
 YouCanContinue=Pode continuar...
 PleaseBePatient=Por favor, seja paciente ...
@@ -155,7 +155,7 @@ MigrationShippingDelivery2=Upgrade de armazenamento do transporte 2
 MigrationFinished=Migração terminou
 LastStepDesc=<strong>Último passo:</strong> Defina aqui o login ea senha que você planeja usar para se conectar ao software. Não perca isso, pois é a conta para administrar todos os outros.
 ActivateModule=Ative %s módulo
-# ShowEditTechnicalParameters=Click here to show/edit advanced parameters (expert mode)
+ShowEditTechnicalParameters=Clique aqui para exibir / editar os parâmetros avançados (modo avançado)
 
 #########
 # upgrade
@@ -207,4 +207,4 @@ MigrationProjectUserResp=Dados fk_user_resp domínio da migração de llx_projet
 MigrationProjectTaskTime=Atualização de tempo gasto em segundos
 MigrationActioncommElement=Atualizar os dados sobre as ações
 MigrationPaymentMode=A migração de dados para o modo de pagamento
-# MigrationCategorieAssociation=Migration of categories
+MigrationCategorieAssociation=Migração de categorias

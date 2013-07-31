@@ -1,4 +1,4 @@
-# Dolibarr language file - es_ES - projects
+# Dolibarr language file - Source file is en_US - projects
 CHARSET=UTF-8
 Project=Proyecto
 Projects=Proyectos
@@ -94,6 +94,7 @@ ConfirmCloneProject=¿Está seguro de querer clonar este proyecto?
 ProjectReportDate=Cambiar las fechas de las tareas en función de la fecha de inicio del proyecto
 ErrorShiftTaskDate=Se ha producido un error en el cambio de las fechas de las tareas
 ProjectsAndTasksLines=Proyectos y tareas
+# ProjectCreatedInDolibarr=Project %s created
 ##### Types de contacts #####
 TypeContact_project_internal_PROJECTLEADER=Jefe de proyecto
 TypeContact_project_external_PROJECTLEADER=Jefe de proyecto
@@ -105,6 +106,6 @@ TypeContact_project_task_internal_CONTRIBUTOR=Participante
 TypeContact_project_task_external_CONTRIBUTOR=Participante
 # Documents models
 DocumentModelBaleine=Modelo de informe de proyecto completo (logo...)
-SelectElement=Elementos vinculables al proyecto :
-AddElement=Vincular
+# PlannedWorkload = Planned workload
+# WorkloadOccupation= Workload affectation
 ProjectReferers=Objetos vinculados

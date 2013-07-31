@@ -90,6 +90,7 @@ MailingModuleDescEmailsFromFile=رسائل البريد الإلكتروني م�
 MailingModuleDescContactsCategories=أطراف ثالثة مع رسائل البريد الإلكتروني (حسب الفئة)
 MailingModuleDescDolibarrContractsLinesExpired=أطراف ثالثة مع انتهاء العقد خطوط
 MailingModuleDescContactsByCompanyCategory=اتصالات من أطراف ثالثة (من قبل أطراف ثالثة الفئة)
+# MailingModuleDescContactsByCategory=Contacts/addresses of third parties by category
 MailingModuleDescMembersCategories=أعضاء مؤسسة (حسب الفئات)
 MailingModuleDescContactsByFunction=اتصالات من أطراف ثالثة (من قبل المنصب / الوظيفة)
 
@@ -106,10 +107,10 @@ SearchAMailing=البحث البريدية
 SendMailing=إرسال البريد الإلكتروني
 SendMail=إرسال بريد إلكتروني
 SentBy=أرسلها
-MailingNeedCommand=أوراق ولإرسال البريد الإلكتروني لا يمكن إلا أن يكون أداؤها من سطر الأوامر. اطلب من مدير لاطلاق التالي لإرسال البريد الإلكتروني لجميع المستفيدين :
+# MailingNeedCommand=For security reason, sending an emailing is better when performed from command line. If you have one, ask your server administrator to launch the following command to send the emailing to all recipients:
 MailingNeedCommand2=ولكن يمكنك إرسالها عبر الإنترنت عن طريق إضافة معلمة MAILING_LIMIT_SENDBYWEB مع قيمة الحد الأقصى لعدد من رسائل البريد الإلكتروني التي تريد إرسالها من خلال هذه الدورة.
-ConfirmSendingEmailing=هل أنت متأكد أنك تريد إرسال البريد؟ <br> على خط ارسال emailings محدودة لأسباب أمنية <b>ل٪ ق</b> المتلقين عن طريق إرسال والخمسين.
-LimitSendingEmailing=على خط ارسال emailings محدودة لأسباب أمنية ومهلة للمستفيدين عن طريق إرسال <b>%s</b> الدورة.
+# ConfirmSendingEmailing=If you can't or prefer sending them with your www browser, please confirm you are sure you want to send emailing now from your browser ?
+# LimitSendingEmailing=Note: On line sending of emailings are limited for security and timeout reasons to <b>%s</b> recipients by sending session.
 TargetsReset=لائحة واضحة
 ToClearAllRecipientsClickHere=من الواضح أن المستفيدين قائمة لهذا البريد الإلكتروني ، انقر على زر
 ToAddRecipientsChooseHere=إضافة إلى المتلقين ، وتختار في هذه القوائم

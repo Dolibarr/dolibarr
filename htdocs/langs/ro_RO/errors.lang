@@ -25,7 +25,7 @@ ErrorThisContactIsAlreadyDefinedAsThisType=Acest contact este deja definit ca pe
 ErrorCashAccountAcceptsOnlyCashMoney=Acest cont bancar este un cont de bani, aşa că acceptă plăţi de tip cash numai.
 ErrorFromToAccountsMustDiffers=Sursa obiective şi conturi bancare trebuie să fie diferite.
 ErrorBadThirdPartyName=Bad valoarea de terţă parte nume
-# ErrorProdIdIsMandatory=The %s is mandatory
+ErrorProdIdIsMandatory=%s este obligatoriu
 ErrorBadCustomerCodeSyntax=Bad sintaxă pentru codul de client
 ErrorCustomerCodeRequired=Clientul codul necesar
 ErrorCustomerCodeAlreadyUsed=Clientul codul folosit deja
@@ -122,8 +122,9 @@ ErrorNoActivatedBarcode=Nici un tip de coduri de bare activat
 # ErrorNewValueCantMatchOldValue=New value can't be equal to old one
 # ErrorFailedToValidatePasswordReset=Failed to reinit password. May be the reinit was already done (this link can be used only one time). If not, try to restart the reinit process.
 # ErrorToConnectToMysqlCheckInstance=Connect to database fails. Check Mysql server is running (in most cases, you can launch it from command line with 'sudo /etc/init.d/mysql start').
-# ErrorFailedToAddContact=Failed to add contact
+ErrorFailedToAddContact=Eşuare la adaugare contact
 # ErrorDateMustBeBeforeToday=The date can not be greater than today
+# ErrorPaymentModeDefinedToWithoutSetup=A payment mode was set to type %s but setup of module Invoice was not completed to define information to show for this payment mode.
 
 # Warnings
 # WarningMandatorySetupNotComplete=Mandatory setup parameters are not yet defined

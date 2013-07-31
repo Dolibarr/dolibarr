@@ -1,4 +1,4 @@
-# Dolibarr language file - en_US - other
+# Dolibarr language file - Source file is en_US - other
 CHARSET=UTF-8
 SecurityCode=Codice di sicurezza
 Calendar=Calendario
@@ -195,6 +195,7 @@ MemberResiliatedInDolibarr=Membro %s revocato su Dolibarr
 MemberDeletedInDolibarr=Membro eliminato da Dolibarr
 MemberSubscriptionAddedInDolibarr=Adesione membro %s aggiunta a Dolibarr
 ShipmentValidatedInDolibarr=%s spedizioni convalidate in Dolibarr
+# ShipmentDeletedInDolibarr=Shipment %s deleted from Dolibarr
 ##### Export #####
 Export=Esportazione
 ExportsArea=Area esportazioni

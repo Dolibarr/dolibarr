@@ -1,20 +1,20 @@
 # Dolibarr language file - Source file is en_US - cron
 CHARSET=UTF-8
-# Module2310Name=Cron
+Module2310Name=Cron
 Module2310Desc=Administración de tareas programadas
 
 #
 # About page
 #
 About = Acerca de
-# CronAbout = About Cron
-# CronAboutPage = Cron about page
+CronAbout = Acerca de Cron
+CronAboutPage = Acerca de Cron
 
 #
 # Right
 #
-# Permission23101 = Read Scheduled task
-# Permission23102 = Create/update Scheduled task
+Permission23101 = Leer tareas programadas
+Permission23102 = Crear/actualizar tareas programadas
 Permission23103 = Borrar tarea programada
 Permission23104 = Ejecutar tarea programada
 
@@ -33,6 +33,7 @@ CronExplainHowToRunWin=En un entorno de Microsoft(tm) Windows puedes usar el pro
 #
 # Menu
 #
+# CronJobs=Scheduled jobs
 CronListActive= Tareas Activas
 CronListInactive= Tareas Inactivas
 
@@ -66,11 +67,12 @@ CronAction=Accion
 CronStatus=Status
 CronStatusActive=Activo
 CronStatusInactive=Inactivo
-CronEach=Toda(s)
 CronNoJobs=Sin trabajos registrados
 CronPriority=Prioridad
 CronLabel=Descripcion
 CronNbRun=Nb. ejecutar
+CronEach=Toda(s)
+# JobFinished=Job launched and finished
 
 #
 #Page card

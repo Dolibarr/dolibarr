@@ -94,6 +94,7 @@ IfNeedToUseOhterObjectKeepEmpty=如果某些对象（发票，订单，...），
 # ProjectReportDate=Change task date according project start date
 # ErrorShiftTaskDate=Impossible to shift task date according to new project start date
 # ProjectsAndTasksLines=Projects and tasks
+# ProjectCreatedInDolibarr=Project %s created
 ##### Types de contacts #####
 TypeContact_project_internal_PROJECTLEADER=项目负责人
 TypeContact_project_external_PROJECTLEADER=项目负责人
@@ -107,3 +108,4 @@ TypeContact_project_task_external_CONTRIBUTOR=投稿
 DocumentModelBaleine=一个完整的项目报告模型（logo. ..）
 # PlannedWorkload = Planned workload
 # WorkloadOccupation= Workload affectation
+# ProjectReferers=Refering objects

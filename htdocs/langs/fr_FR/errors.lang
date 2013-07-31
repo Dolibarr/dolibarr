@@ -1,4 +1,4 @@
-# Dolibarr language file - fr_FR - errors
+# Dolibarr language file - Source file is en_US - errors
 CHARSET=UTF-8
 
 # No errors
@@ -13,11 +13,10 @@ ErrorBadUrl=Url %s invalide
 ErrorLoginAlreadyExists=Le login %s existe déjà.
 ErrorGroupAlreadyExists=Le groupe %s existe déjà.
 ErrorRecordNotFound=Enregistrement non trouvé.
-ErrorDuplicateTrigger=Un fichier trigger de classe '<b>%s</b>' est présent plusieurs fois. Supprimer le doublon du répertoire '<b>%s</b>'.
 ErrorFailToCopyFile=Echec de la copie du fichier '<b>%s</b>' en '<b>%s</b>'.
 ErrorFailToRenameFile=Echec du renommage du fichier '<b>%s</b>' en '<b>%s</b>'.
-ErrorFailToCreateFile=Echec de la création du fichier '<b>%s</b>'.
 ErrorFailToDeleteFile=Echec de l'effacement du fichier '<b>%s</b>'.
+ErrorFailToCreateFile=Echec de la création du fichier '<b>%s</b>'.
 ErrorFailToRenameDir=Echec du renommage du répertoire '<b>%s</b>' en '<b>%s</b>'.
 ErrorFailToCreateDir=Echec de création du répertoire '<b>%s</b>'.
 ErrorFailToDeleteDir=Echec de la suppression du répertoire '<b>%s</b>'.
@@ -48,8 +47,8 @@ ErrorNoMailDefinedForThisUser=EMail non défini pour cet utilisateur
 ErrorFeatureNeedJavascript=Cette fonctionnalité a besoin de javascript activé pour fonctionner. Modifier dans configuration - affichage.
 ErrorTopMenuMustHaveAParentWithId0=Un menu de type 'Top' ne peut avoir de menu père. Mettre 0 dans l'id père ou choisir un menu de type 'Left'.
 ErrorLeftMenuMustHaveAParentId=Un menu de type 'Left' doit avoir un id de père.
-ErrorFileNotFound=Fichier <b>%s</b> introuvable (Mauvais chemin, permissions incorrectes ou accès interdit par le paramètre PHP openbasedir ou safe_mode) 
-ErrorDirNotFound=Répertoire <b>%s</b> introuvable (Mauvais chemin, permissions incorrectes ou accès interdit par le paramètre PHP openbasedir ou safe_mode) 
+ErrorFileNotFound=Fichier <b>%s</b> introuvable (Mauvais chemin, permissions incorrectes ou accès interdit par le paramètre PHP openbasedir ou safe_mode)
+ErrorDirNotFound=Répertoire <b>%s</b> introuvable (Mauvais chemin, permissions incorrectes ou accès interdit par le paramètre PHP openbasedir ou safe_mode)
 ErrorFunctionNotAvailableInPHP=La fonction <b>%s</b> est requise pour cette fonctionnalité mais n'est pas disponible dans cette version/installation de PHP.
 ErrorDirAlreadyExists=Un répertoire portant ce nom existe déjà.
 ErrorFileAlreadyExists=Un fichier portant ce nom existe déjà.
@@ -137,7 +136,7 @@ WarningPassIsEmpty=Attention, le mot de passe de la base de données Dolibarr es
 WarningConfFileMustBeReadOnly=Attention, votre fichier de configuration (<b>htdocs/conf/conf.php</b>) est accessible en écriture au serveur Web. Ceci représente une faille sérieuse de sécurité. Modifiez les permissions pour qu'il soit en lecture seule pour le compte sous lequel tourne le serveur Web et non lisible pour les autres.<br>Si vous êtes sous Windows sur un disque dur utilisant un formatage FAT, sachez que ce système de fichier ne permet pas de protéger des fichiers et n'offre donc aucune solution pour réduire les risques de manipulation de ce fichier.
 WarningsOnXLines=Alertes sur <b>%s</b> enregistrement(s) source
 WarningNoDocumentModelActivated=Aucun modèle, pour la génération de document, n'a été activé. Un modèle sera pris par défaut en attendant la correction de configuration du module.
-WarningLockFileDoesNotExists=Attention, une fois l'installation terminée, les outils d'installation/migration doivent être désactivés en ajoutant un fichier <b>install.lock</b> dans le répertoire <b>%s</b>. L'absence de ce fichier représente une faille de sécurité. 
+WarningLockFileDoesNotExists=Attention, une fois l'installation terminée, les outils d'installation/migration doivent être désactivés en ajoutant un fichier <b>install.lock</b> dans le répertoire <b>%s</b>. L'absence de ce fichier représente une faille de sécurité.
 WarningUntilDirRemoved=Les alertes de sécurité sont visibles par les administrateurs uniquement et resteront actives tant que la vulnérabilité sera avérée (ou que la constante MAIN_REMOVE_INSTALL_WARNING aura été définie dans Configuration->Divers)
 WarningCloseAlways=Attention, la fermeture se fait même lorsque le montant diffère. N'activez cette fonctionnalité qu'en connaissance de cause.
 WarningUsingThisBoxSlowDown=Attention, l'utilisation de cette boite provoque de sérieux ralentissement des pages affichant cette boite.

@@ -65,7 +65,7 @@ ChooseFormatOfFileToImport=Velg filformatet du vil bruke som importere filformat
 ChooseFileToImport=Last opp fil klikk picto %s å velge filen som kilde importfil ...
 SourceFileFormat=Kilde filformat
 FieldsInSourceFile=Felt i kildefilen
-FieldsInTargetDatabase=Mål feltene i Dolibarr database (*= obligatorisk)
+# FieldsInTargetDatabase=Target fields in Dolibarr database (bold=mandatory)
 Field=Field
 NoFields=Ingen felt
 MoveField=Flytt feltet kolonnenummer %s
@@ -120,10 +120,10 @@ CSVFormatDesc=<b>Kommadelte Verdi</b> filformatet (. CSV). <br> Dette er en teks
 # Separator=Separator
 # Enclosure=Enclosure
 # SuppliersProducts=Suppliers Products
-# BankCode=Bank code
-# DeskCode=Desk code
-# BankAccountNumber=Account number
-# BankAccountNumberKey=Key
+BankCode=Bank code (ikke i Norge)
+DeskCode=Desk code (ikke i Norge)
+BankAccountNumber=Kontonummer
+BankAccountNumberKey=Nøkkel
 ## filters
 # SelectFilterFields=If you want to filter on some values, just input values here.
 # FilterableFields=Champs Filtrables

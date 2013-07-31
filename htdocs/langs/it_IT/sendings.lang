@@ -1,4 +1,4 @@
-# Dolibarr language file - en_US - sendings
+# Dolibarr language file - Source file is en_US - sendings
 CHARSET=UTF-8
 RefSending=Rif. spedizione
 Sending=Spedizione
@@ -13,6 +13,7 @@ LastSendings=Ultime %s spedizioni
 SearchASending=Ricerca di una spedizione
 StatisticsOfSendings=Statistiche spedizioni
 NbOfSendings=Numero di spedizioni
+# NumberOfShipmentsByMonth=Number of shipments by month
 SendingCard=Scheda di spedizione
 NewSending=Nuova spedizione
 CreateASending=Creazione di una spedizione
@@ -31,11 +32,11 @@ SendingsToValidate=Spedizione da convalidare
 StatusSendingCanceled=Annullato
 StatusSendingDraft=Bozza
 StatusSendingValidated=Convalidata (prodotti per la spedizione o già spediti)
-# StatusSendingProcessed=Processed
+StatusSendingProcessed=Processato
 StatusSendingCanceledShort=Annullato
 StatusSendingDraftShort=Bozza
 StatusSendingValidatedShort=Convalidata
-# StatusSendingProcessedShort=Processed
+StatusSendingProcessedShort=Processato
 SendingSheet=Documento di Trasporto (D.d.t.)
 Carriers=Vettori
 Carrier=Vettore
@@ -49,7 +50,7 @@ Enlevement=Ottenuto dal cliente
 DocumentModelSimple=Modello semplice di documento
 DocumentModelMerou=Merou modello A5
 WarningNoQtyLeftToSend=Attenzione, non sono rimasti prodotti per la spedizione.
-StatsOnShipmentsOnlyValidated=Statistiche sulle spedizioni (solo convalidate)
+# StatsOnShipmentsOnlyValidated=Statistics conducted on shipments only validated. Date used is date of validation of shipment (planed delivery date is not always known).
 DateDeliveryPlanned=Data di consegna prevista
 DateReceived=Data di consegna ricevuto
 SendShippingByEMail=Invia spedizione via EMail
@@ -57,9 +58,9 @@ SendShippingRef=Invia %s spedizione
 ActionsOnShipping=Acions sulla spedizione
 LinkToTrackYourPackage=Link a monitorare il tuo pacchetto
 ShipmentCreationIsDoneFromOrder=Per il momento, la creazione di una nuova spedizione viene effettuata dalla scheda dell'ordine.
-# RelatedShippings=Related shippings
-# ShipmentLine=Shipment line
-# CarrierList=List of transporters
+RelatedShippings=Spedizioni collegate
+ShipmentLine=Filiera di spedizione
+CarrierList=Elenco dei trasportatori
 
 # Sending methods
 SendingMethodCATCH=Ritiro da parte del Cliente
@@ -71,3 +72,5 @@ DocumentModelSirocco=Semplice modello di documento per le ricevute di consegna
 DocumentModelTyphon=Modello più completo di documento per le ricevute di consegna (logo. ..)
 
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=EXPEDITION_ADDON_NUMBER costante non definita
+# SumOfProductVolumes=Sum of product volumes
+# SumOfProductWeights=Sum of product weights

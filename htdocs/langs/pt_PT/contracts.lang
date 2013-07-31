@@ -39,7 +39,7 @@ ConfirmCloseService=Está seguro de querer Fechar este serviço?
 ValidateAContract=Confirmar um contrato
 ActivateService=Activar o serviço
 ConfirmActivateService=Está seguro de querer activar este serviço em data %s?
-# RefContract=Contract reference
+RefContract=referência de contrato
 DateContract=Data contrato
 DateServiceActivate=Data Activação do serviço
 DateServiceUnactivate=Data desactivação do serviço
@@ -86,9 +86,10 @@ PaymentRenewContractId=Renovação do Serviço (Numero %s)
 ExpiredSince=Expirado desde
 RelatedContracts=Contractos relacionados
 NoExpiredServices=Nenhum serviço activo expirou
-# ListOfServicesToExpireWithDuration=List of Services to expire in %s days
-# ListOfServicesToExpire=List of Services to expire
-# Service=Service
+ListOfServicesToExpireWithDuration=Lista de Serviços para expirar em% s dias
+# ListOfServicesToExpireWithDurationNeg=List of Services expired from more than %s days
+ListOfServicesToExpire=Lista de Serviços para expirar
+# NoteListOfYourExpiredServices=This list contains only services of contracts for third parties you are linked to as a sale representative.
 
 ##### Types de contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Comercial assinante do contrato
