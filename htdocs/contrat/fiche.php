@@ -916,19 +916,13 @@ else
     if ($id > 0 || ! empty($ref))
     {
         $result=$object->fetch($id,$ref);
-        if ($result > 0)
-        {
-            $result=$object->fetch_lines();
-        }
-        if ($result < 0)
-        {
-            dol_print_error($db,$object->error);
-            exit;
-        }
+        if ($result < 0) dol_print_error($db,$object->error);
+        $result=$object->fetch_lines();
+        if ($result < 0) dol_print_error($db,$object->error);
+        $result=$object->fetch_thirdparty();
+        if ($result < 0) dol_print_error($db,$object->error);
 
         dol_htmloutput_errors($mesg,'');
-
-        $object->fetch_thirdparty();
 
         $nbofservices=count($object->lines);
 
