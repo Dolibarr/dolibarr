@@ -4,6 +4,7 @@ English Dolibarr ChangeLog
 
 ***** ChangeLog for 3.5 compared to 3.4.* *****
 For users:
+- New: Add hidden option BANK_DISABLE_DIRECT_INPUT.
 - New: More options to select status of users into select user list.
 - New: [ task #862 ] Add ODT on shipments
 - New: [ task #149 ] Add # of notes and attachments in tabs
