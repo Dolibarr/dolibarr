@@ -389,6 +389,8 @@ class Categorie
 	 */
 	function add_type($obj,$type)
 	{
+		global $conf;
+		
 		if ($this->id == -1) return -2;
 		
 		if ($type == 'company')     $type='societe';
@@ -405,6 +407,32 @@ class Categorie
 		dol_syslog(get_class($this).'::add_type sql='.$sql);
 		if ($this->db->query($sql))
 		{
+			if (!empty($conf->global->CATEGORIE_RECURSIV_ADD)) {
+				$sql = 'SELECT fk_parent FROM '.MAIN_DB_PREFIX.'categorie';
+				$sql.= " WHERE rowid = '".$this->id."'";
+			
+				dol_syslog(get_class($this)."::add_type sql=".$sql);
+				$resql=$this->db->query($sql);
+				if ($resql)
+				{
+					if ($this->db->num_rows($resql) > 0)
+					{
+						$objparent = $this->db->fetch_object($resql);
+							
+						if (!empty($objparent->fk_parent)) {
+							$cat = new Categorie($this->db);
+							$cat->id=$objparent->fk_parent;
+							$cat->add_type($obj, $type);
+						}
+					}
+				}
+				else
+				{
+					$this->error=$this->db->error().' sql='.$sql;
+					return -1;
+				}
+			}
+			
 			return 1;
 		}
 		else
