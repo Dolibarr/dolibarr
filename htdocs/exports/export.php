@@ -729,7 +729,7 @@ if ($step == 3 && $datatoexport)
 
 		// Filter value
 		print '<td>';
-		if (! empty($Typefieldsarray[$code]))
+		if (! empty($Typefieldsarray[$code]))	// Example: Text, List:c_pays:libelle:rowid, Number, Boolean
 		{
 			$szInfoFiltre=$objexport->genDocFilter($Typefieldsarray[$code]);
 			if ($szInfoFiltre)	// Is there an info help for this filter ?
