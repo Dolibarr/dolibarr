@@ -489,11 +489,13 @@ if (! empty($conf->dol_optimize_smallscreen))
 {
 	$minwidthtmenu=0;
 	$heightmenu=19;
+	$heightmenu2=19;
 }
 else
 {
 	$minwidthtmenu=66;
 	$heightmenu=52;
+	$heightmenu2=40;
 }
 ?>
 
@@ -501,8 +503,7 @@ div#tmenu_tooltip {
 <?php if (GETPOST("optioncss") == 'print') {  ?>
 	display:none;
 <?php } else { ?>
-	height: 40px;
-	/* margin-bottom: 24px; */
+	height: <?php print ($heightmenu2+1); ?>px;
 	padding-right: 100px;
 	background: <?php echo $colorbackvmenu; ?>;
 	box-shadow: 0 0 6px rgba(0, 0, 0, .4) !important;
