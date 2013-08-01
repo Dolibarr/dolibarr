@@ -72,6 +72,7 @@ Mask=Masque
 NextValue=Prochaine valeur
 NextValueForInvoices=Prochaine valeur (factures)
 NextValueForCreditNotes=Prochaine valeur (avoirs)
+NextValueForDeposit=Prochaine valeur (acomptes)
 MustBeLowerThanPHPLimit=Remarque : Votre PHP limite la taille des envois à <b>%s</b> %s, quelle que soit la valeur de ce paramètre
 NoMaxSizeByPHPLimit=Aucune limite configurée dans votre serveur PHP
 MaxSizeForUploadedFiles=Taille maximum des fichiers envoyés (0 pour interdire l'envoi)
