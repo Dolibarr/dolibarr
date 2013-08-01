@@ -68,6 +68,13 @@ class modCategorie extends DolibarrModules
 
 		// Constantes
 		$this->const = array();
+		$r=0;
+		$this->const[$r][0] = "CATEGORIE_RECURSIV_ADD";
+		$this->const[$r][1] = "yesno";
+		$this->const[$r][2] = "0";
+		$this->const[$r][3] = 'Affect parent categories';
+		$this->const[$r][4] = 0;
+		$r++;
 
 		// Boxes
 		$this->boxes = array();
