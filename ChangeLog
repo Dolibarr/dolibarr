@@ -57,8 +57,44 @@ For users:
 - New: [ task #900 ] Review code of ficheinter.class.php
 - Fix: [Bug #958] LocalTax2 for Spain fails on Suppliers
 - Fix: [ bug #972 ] Auto completion contact field do not take account the min caract number before search
-- Fix : [ bug #971 ] html.form.class.php select_contact with autocomplete do not exclude id from exclude array
+- Fix: [ bug #971 ] html.form.class.php select_contact with autocomplete do not exclude id from exclude array
 
+For translators:
+- Update language files.
+
+For developers:
+- System of menu managers has been rewritten to reduce code to do same things. 
+- An external module can force its theme.
+- Add function dol_set_focus('#xxx').
+- A mymodule can bring its own core/modules/mymodule/modules_mymodule.php file.
+- Removed not used libraries.
+- More web services. 
+- Renamed some database fields, code variables and parameters from french to english.
+- First change to manage margins on contracts.
+- Add hook getFormMail.
+- Function plimit of databases drivers accept -1 as value (it means default value set
+  into conf->liste_limit).
+- New: Add option dol_hide_topmenu, dol_hide_leftmenu, dol_optimize_smallscreen,
+  dol_no_mouse_hover and dol_use_jmobile onto login page (to support different terminal).
+- New: dol_syslog method accept a suffix to use different log files for log. 
+- New: Type of fields are received by export format handlers.
+- New: when adding an action, we can define a free code to tag it for a specific need.
+- New: Enhance Dolibarr migration process to include migration script of external 
+  modules.
+- New: [ task #811 ] Uniformanize note field.
+  
+
+WARNING: If you used external modules, some of them may need to be upgraded due to:
+- Fields of classes were renamed to be normalized (nom, prenom, cp, ville, adresse, tel
+  were renamed into lastname, firstname, zip, town, address, phone).
+  This may also be true for some fields into web services.
+- If module use hook pdf_writelinedesc, module may have to add return 1 at end of 
+  function to keep same behaviour.
+
+TODO:
+backport commit 53672dff75f4fdaeeed037ff9d15f860968022ca to fix confirm with jmobile
+backport commit 384e3812eb73a15adafb472cacfb93397a54459b to fix W3C/edit contract
+ 
 
 
 ***** ChangeLog for 3.3.4 compared to 3.3.3 *****
