@@ -86,7 +86,7 @@ class box_graph_propales_permonth extends ModeleBoxes
 			$param_year='DOLUSERCOOKIE_param'.$this->boxcode.'year';
 			$param_shownb='DOLUSERCOOKIE_param'.$this->boxcode.'shownb';
 			$param_showtot='DOLUSERCOOKIE_param'.$this->boxcode.'showtot';
-			
+
 			include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 			include_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propalestats.class.php';
 			$shownb=GETPOST($param_shownb,'alpha',4);
@@ -97,7 +97,7 @@ class box_graph_propales_permonth extends ModeleBoxes
 			$startyear=$endyear-1;
 			$mode='customer';
 			$userid=0;
-			$WIDTH=($shownb && $showtot)?'256':'320';
+			$WIDTH=(($shownb && $showtot) || ! empty($conf->dol_optimize_smallscreen))?'256':'320';
 			$HEIGHT='192';
 
 			$stats = new PropaleStats($this->db, 0, $mode, ($userid>0?$userid:0));
@@ -106,8 +106,8 @@ class box_graph_propales_permonth extends ModeleBoxes
 			if ($shownb)
 			{
 				$data1 = $stats->getNbByMonthWithPrevYear($endyear,$startyear,(GETPOST('action')==$refreshaction?-1:(3600*24)));
-				$datatype1 = array_pad(array(), ($endyear-$startyear+1), 'bars'); 
-				
+				$datatype1 = array_pad(array(), ($endyear-$startyear+1), 'bars');
+
 				$filenamenb = $dir."/propalsnbinyear-".$year.".png";
 				if ($mode == 'customer') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=propalstats&amp;file=propalsnbinyear-'.$year.'.png';
 				if ($mode == 'supplier') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=propalstatssupplier&amp;file=propalsnbinyear-'.$year.'.png';
@@ -148,7 +148,7 @@ class box_graph_propales_permonth extends ModeleBoxes
 				$data2 = $stats->getAmountByMonthWithPrevYear($endyear,$startyear,(GETPOST('action')==$refreshaction?-1:(3600*24)));
 				$datatype2 = array_pad(array(), ($endyear-$startyear+1), 'bars');
 				//$datatype2 = array('lines','bars');
-				
+
 				$filenamenb = $dir."/propalsamountinyear-".$year.".png";
 				if ($mode == 'customer') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=propalstats&amp;file=propalsamountinyear-'.$year.'.png';
 				if ($mode == 'supplier') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=propalstatssupplier&amp;file=propalsamountinyear-'.$year.'.png';

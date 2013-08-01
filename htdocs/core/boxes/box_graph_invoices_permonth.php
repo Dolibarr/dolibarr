@@ -86,7 +86,7 @@ class box_graph_invoices_permonth extends ModeleBoxes
 			$param_year='DOLUSERCOOKIE_param'.$this->boxcode.'year';
 			$param_shownb='DOLUSERCOOKIE_param'.$this->boxcode.'shownb';
 			$param_showtot='DOLUSERCOOKIE_param'.$this->boxcode.'showtot';
-			
+
 			include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 			include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facturestats.class.php';
 			$shownb=GETPOST($param_shownb,'alpha',4);
@@ -97,7 +97,7 @@ class box_graph_invoices_permonth extends ModeleBoxes
 			$startyear=$endyear-1;
 			$mode='customer';
 			$userid=0;
-			$WIDTH=($shownb && $showtot)?'256':'320';
+			$WIDTH=(($shownb && $showtot) || ! empty($conf->dol_optimize_smallscreen))?'256':'320';
 			$HEIGHT='192';
 
 			$stats = new FactureStats($this->db, 0, $mode, ($userid>0?$userid:0));
