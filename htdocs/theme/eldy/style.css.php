@@ -2739,6 +2739,9 @@ a.tab span.ui-btn-inner
 .ui-link {
 	color: rgb(<?php print $colortext; ?>) !important;
 }
+.liste_titre .ui-link {
+	color: #<?php print $colortexttitle; ?> !important;
+}
 
 a.ui-link {
 	word-wrap: break-word;
