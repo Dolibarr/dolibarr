@@ -1,5 +1,6 @@
 # Dolibarr language file - fr_FR - agenda
 CHARSET=UTF-8
+IdAgenda=ID évènement
 Actions=Événements
 ActionsArea=Espace événements (actions et tâches)
 Agenda=Agenda
@@ -68,6 +69,7 @@ AgendaUrlOptions5=<b>logind=%s</b> pour limiter l'export aux actions réalisées
 AgendaShowBirthdayEvents=Afficher anniversaires contacts
 AgendaHideBirthdayEvents=Cacher anniversaires contacts
 Busy=Occupé
+ExportDataset_event1=Liste des évènements de l'agenda
 
 # External Sites ical
 ExportCal=Export calendrier
