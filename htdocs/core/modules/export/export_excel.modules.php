@@ -178,6 +178,17 @@ class ExportExcel extends ModeleExports
 		{
             require_once PHPEXCEL_PATH.'PHPExcel.php';
             require_once PHPEXCEL_PATH.'PHPExcel/Style/Alignment.php';
+
+		    if ($this->id == 'excel2007')
+		    {
+	            if (! class_exists('ZipArchive'))	// For Excel2007, PHPExcel need ZipArchive 
+	            {
+	            	$langs->load("errors");
+	            	$this->error=$langs->trans('ErrorPHPNeedModule','zip');
+	            	return -1;	
+	            }
+		    }            
+            
             $this->workbook = new PHPExcel();
             $this->workbook->getProperties()->setCreator($user->getFullName($outputlangs).' - Dolibarr '.DOL_VERSION);
             //$this->workbook->getProperties()->setLastModifiedBy('Dolibarr '.DOL_VERSION);
