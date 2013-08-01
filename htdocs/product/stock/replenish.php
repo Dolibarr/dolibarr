@@ -124,6 +124,8 @@ if ($action == 'order') {
             foreach ($supplier['lines'] as $line) {
                 $order->lines[] = $line;
             }
+            $order->cond_reglement_id = 0;
+            $order->mode_reglement_id = 0;
             $id = $order->create($user);
             if ($id < 0) {
                 $fail++;
