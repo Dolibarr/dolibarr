@@ -1021,14 +1021,13 @@ class FormFile
     public function list_of_links($object, $permtodelete=1, $action=null, $selected=null)
     {
 
-        global $user, $conf, $langs, $hookmanager, $user;
+        global $user, $conf, $langs, $user;
         global $bc;
-        global $sortfield, $sortorder, $maxheightmini;
+        global $sortfield, $sortorder;
 
         require_once DOL_DOCUMENT_ROOT . '/link/class/link.class.php';
         $link = new Link($this->db);
         $links = array();
-        //HAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAXX
         if ($sortfield == "name") {
             $sortfield = "label";
         } elseif ($sortfield == "date") {
@@ -1037,28 +1036,55 @@ class FormFile
             $sortfield = null;
         }
         $res = $link->fetchAll($links, $object->element, $object->id, $sortfield, $sortorder);
-        $param = (isset($object->id)?'&id='.$object->id:'').$param;
+        $param = (isset($object->id)?'&id=' . $object->id : '');
 
         // Show list of associated links
-        if (empty($useinecm)) print_titre($langs->trans("LinkedFiles"));
+        print_titre($langs->trans("LinkedFiles"));
         print '<table width="100%" class="liste">';
         print '<tr class="liste_titre">';
-        print_liste_field_titre($langs->trans("Documents2"),$_SERVER['PHP_SELF'],"name","",$param,'align="left"',$sortfield,$sortorder);
-        print_liste_field_titre($langs->trans("Size"),"","","","",'align="right"');
-        print_liste_field_titre($langs->trans("Date"),$_SERVER['PHP_SELF'],"date","",$param,'align="center"',$sortfield,$sortorder);
-        if (empty($useinecm)) print_liste_field_titre('',$_SERVER['PHP_SELF'],"","",$param,'align="center"');
+        print_liste_field_titre($langs->trans("Documents2"),
+                                $_SERVER['PHP_SELF'],
+                                "name",
+                                "",
+                                $param,
+                                'align="left"',
+                                $sortfield,
+                                $sortorder
+                                );
+        print_liste_field_titre($langs->trans("Size"),
+                                "",
+                                "",
+                                "",
+                                "",
+                                'align="right"'
+                                );
+        print_liste_field_titre($langs->trans("Date"),
+                                $_SERVER['PHP_SELF'],
+                                "date",
+                                "",
+                                $param,
+                                'align="center"',
+                                $sortfield,
+                                $sortorder
+                                );
+        print_liste_field_titre('',
+                                $_SERVER['PHP_SELF'],
+                                "",
+                                "",
+                                $param,
+                                'align="center"'
+                                );
         print_liste_field_titre('','','');
         print '</tr>';
-
-        
         $nboflinks = count($links);
-
-        if ($nboflinks > 0) include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
+        if ($nboflinks > 0) {
+            include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
+        }
 
         $var = true;
-        foreach($links as $link) {
+        foreach ($links as $link) {
             $var =! $var;
-            print '<tr '.$bc[$var].'>';
+            print '<tr ' . $bc[$var] . '>';
             //edit mode
             if ($action == 'update' && $selected === $link->id) {
                 print '<form action="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '" method="post">';
@@ -1078,39 +1104,29 @@ class FormFile
             }
             else {
                 print '<td>';
-                //print "XX".$file['name'];	//$file['name'] must be utf8
                 print '<a data-ajax="false" href="'. $link->url . '">';
                 print $link->label;
                 print '</a>';
                 print "</td>\n";
                 print '<td align="right"></td>';
-                print '<td align="center">'.dol_print_date($link->datea, "dayhour", "tzuser").'</td>';
-                // Preview
-                /*if (empty($useinecm))
-                {
-                    print '<td align="center">';
-                    $tmp=explode('.',$file['name']);
-                    $minifile=$tmp[0].'_mini.'.$tmp[1];
-                    if (image_format_supported($file['name']) > 0) print '<img border="0" height="'.$maxheightmini.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&file='.urlencode($relativepath.'thumbs/'.$minifile).'" title="">';
-                    else print '&nbsp;';
-                    print '</td>';
-                }*/
+                print '<td align="center">' . dol_print_date($link->datea, "dayhour", "tzuser") . '</td>';
                 print '<td align="center"></td>';
-                // Delete or view link
-                // ($param must start with &)
                 print '<td align="right" colspan="2">';
-                print '<a href="'. $_SERVER['PHP_SELF'] .'?action=update&linkid='. $link->id .'&id=' . $object->id . '" class="editfilelink" >'.img_edit().'</a>';
-                if ($permtodelete) print '<a href="'. $_SERVER['PHP_SELF'] .'?action=delete&linkid='. $link->id . '&id=' . $object->id . '" class="deletefilelink" >'.img_delete().'</a>';
-                else print '&nbsp;';
+                print '<a href="' . $_SERVER['PHP_SELF'] . '?action=update&linkid=' . $link->id
+                        . '&id=' . $object->id . '" class="editfilelink" >' . img_edit().'</a>';
+                if ($permtodelete) {
+                    print '<a href="'. $_SERVER['PHP_SELF'] .'?action=delete&linkid=' . $link->id
+                            . '&id=' . $object->id . '" class="deletefilelink" >' . img_delete() . '</a>';
+                } else {
+                    print '&nbsp;';
+                }
                 print "</td>";
             }
             print "</tr>\n";
         }
-        if ($nboflinks == 0)
-        {
-            print '<tr '.$bc[$var].'><td colspan="'.(empty($useinecm)?'5':'4').'">';
-            if (empty($textifempty)) print $langs->trans("NoLinkFound");
-            else print $textifempty;
+        if ($nboflinks == 0) {
+            print '<tr ' . $bc[$var] . '><td colspan="4">';
+            print $langs->trans("NoLinkFound");
             print '</td></tr>';
         }
         print "</table>";
