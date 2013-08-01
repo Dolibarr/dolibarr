@@ -32,6 +32,7 @@ class mod_facture_terre extends ModeleNumRefFactures
 	var $version='dolibarr';		// 'development', 'experimental', 'dolibarr'
 	var $prefixinvoice='FA';
 	var $prefixcreditnote='AV';
+	var $prefixdeposit='AC';
 	var $error='';
 
 	/**
@@ -43,7 +44,7 @@ class mod_facture_terre extends ModeleNumRefFactures
 	{
 		global $langs;
 		$langs->load("bills");
-		return $langs->trans('TerreNumRefModelDesc1',$this->prefixinvoice,$this->prefixcreditnote);
+		return $langs->trans('TerreNumRefModelDesc1',$this->prefixinvoice,$this->prefixcreditnote,$this->prefixdeposit);
 	}
 
 	/**
@@ -110,6 +111,27 @@ class mod_facture_terre extends ModeleNumRefFactures
 			$this->error=$langs->trans('ErrorNumRefModel',$max);
 			return false;
 		}
+		
+		// Check deposit num
+		$fayymm='';
+
+		$posindice=8;
+		$sql = "SELECT MAX(SUBSTRING(facnumber FROM ".$posindice.")) as max";	// This is standard SQL
+		$sql.= " FROM ".MAIN_DB_PREFIX."facture";
+		$sql.= " WHERE facnumber LIKE '".$this->prefixdeposit."____-%'";
+		$sql.= " AND entity = ".$conf->entity;
+
+		$resql=$db->query($sql);
+		if ($resql)
+		{
+			$row = $db->fetch_row($resql);
+			if ($row) { $fayymm = substr($row[0],0,6); $max=$row[0]; }
+		}
+		if ($fayymm && ! preg_match('/'.$this->prefixdeposit.'[0-9][0-9][0-9][0-9]/i',$fayymm))
+		{
+			$this->error=$langs->trans('ErrorNumRefModel',$max);
+			return false;
+		}
 
 		return true;
 	}
@@ -127,6 +149,7 @@ class mod_facture_terre extends ModeleNumRefFactures
 		global $db,$conf;
 
 		if ($facture->type == 2) $prefix=$this->prefixcreditnote;
+		else if ($facture->type == 3) $prefix=$this->prefixdeposit;
 		else $prefix=$this->prefixinvoice;
 
 		// D'abord on recupere la valeur max

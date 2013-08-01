@@ -53,10 +53,13 @@ if ($action == 'updateMask')
 {
     $maskconstinvoice=GETPOST('maskconstinvoice','alpha');
     $maskconstcredit=GETPOST('maskconstcredit','alpha');
+	$maskconstdeposit=GETPOST('maskconstdeposit','alpha');
     $maskinvoice=GETPOST('maskinvoice','alpha');
     $maskcredit=GETPOST('maskcredit','alpha');
+	$maskdeposit=GETPOST('maskdeposit','alpha');
     if ($maskconstinvoice) $res = dolibarr_set_const($db,$maskconstinvoice,$maskinvoice,'chaine',0,'',$conf->entity);
     if ($maskconstcredit)  $res = dolibarr_set_const($db,$maskconstcredit,$maskcredit,'chaine',0,'',$conf->entity);
+	if ($maskconstdeposit)  $res = dolibarr_set_const($db,$maskconstdeposit,$maskdeposit,'chaine',0,'',$conf->entity);
 
 	if (! $res > 0) $error++;
 
@@ -386,6 +389,21 @@ foreach ($dirmodels as $reldir)
                             if ("$nextval" != $langs->trans("NotAvailable"))	// Keep " on nextval
                             {
                                 $htmltooltip.=$langs->trans("NextValueForCreditNotes").': ';
+                                if ($nextval)
+                                {
+                                    $htmltooltip.=$nextval.'<br>';
+                                }
+                                else
+                                {
+                                    $htmltooltip.=$langs->trans($module->error).'<br>';
+                                }
+                            }
+                            // Example for deposit invoice
+                            $facture->type=3;
+                            $nextval=$module->getNextValue($mysoc,$facture);
+                            if ("$nextval" != $langs->trans("NotAvailable"))	// Keep " on nextval
+                            {
+                                $htmltooltip.=$langs->trans("NextValueForDeposit").': ';
                                 if ($nextval)
                                 {
                                     $htmltooltip.=$nextval;
