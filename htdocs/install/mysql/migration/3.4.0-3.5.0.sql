@@ -284,6 +284,6 @@ ALTER TABLE llx_bordereau_cheque ADD tms timestamp;
 
 
 -- Task 1011
-ALTER TABLE `llx_societe` ADD `mode_reglement_supplier` TINYINT NOT NULL AFTER `cond_reglement` ,
-ADD `cond_reglement_supplier` TINYINT NOT NULL AFTER `mode_reglement_supplier`;
-ALTER TABLE `llx_facture_fourn` ADD `fk_mode_reglement` TINYINT NOT NULL AFTER `fk_cond_reglement`;
+ALTER TABLE llx_societe ADD mode_reglement_supplier integer NULL AFTER cond_reglement;
+ALTER TABLE llx_societe ADD cond_reglement_supplier integer NULL AFTER mode_reglement_supplier;
+ALTER TABLE llx_facture_fourn ADD fk_mode_reglement integer NULL AFTER fk_cond_reglement;
