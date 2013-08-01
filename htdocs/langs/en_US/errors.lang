@@ -124,6 +124,7 @@ ErrorFailedToValidatePasswordReset=Failed to reinit password. May be the reinit 
 ErrorToConnectToMysqlCheckInstance=Connect to database fails. Check Mysql server is running (in most cases, you can launch it from command line with 'sudo /etc/init.d/mysql start').
 ErrorFailedToAddContact=Failed to add contact
 ErrorDateMustBeBeforeToday=The date can not be greater than today
+ErrorPHPNeedModule=Error, your PHP must have module <b>%s</b> installed to use this feature.
 
 # Warnings
 WarningMandatorySetupNotComplete=Mandatory setup parameters are not yet defined

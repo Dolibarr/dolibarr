@@ -125,6 +125,7 @@ ErrorFailedToValidatePasswordReset=Echec de la réinitialisation du mot de passe
 ErrorToConnectToMysqlCheckInstance=Echec de la connection au serveur de base de donnée. Vérifier que Mysql est bien lancé (dans la plupart des cas, vous pouvez le lancer depuis la ligne de commande par la commande 'sudo /etc/init.d/mysql start').
 ErrorFailedToAddContact=Echec à l'ajout du contact
 ErrorDateMustBeBeforeToday=La date ne peut pas être supérieure à aujourd'hui
+ErrorPHPNeedModule=Erreur, votre PHP doit avoir le module <b>%s</b> installé pour utiliser cette fonctionnalité.
 
 # Warnings
 WarningMandatorySetupNotComplete=Les informations de configuration obligatoire doivent être renseignées

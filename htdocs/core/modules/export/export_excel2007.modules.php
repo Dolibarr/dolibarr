@@ -179,6 +179,15 @@ class ExportExcel2007 extends ExportExcel
 		{
             require_once PHPEXCEL_PATH.'PHPExcel.php';
             require_once PHPEXCEL_PATH.'PHPExcel/Style/Alignment.php';
+            
+            // To use PCLZip
+            if (! class_exists('ZipArchive')) 
+            {
+            	$langs->load("errors");
+            	$this->error=$langs->trans('ErrorPHPNeedModule','zip');
+            	return -1;	
+            }
+            
             $this->workbook = new PHPExcel();
             $this->workbook->getProperties()->setCreator($user->getFullName($outputlangs).' - Dolibarr '.DOL_VERSION);
             //$this->workbook->getProperties()->setLastModifiedBy('Dolibarr '.DOL_VERSION);
