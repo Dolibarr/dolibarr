@@ -1438,7 +1438,7 @@ else
         dol_fiche_head($head, 'card', $langs->trans("ThirdParty"),0,'company');
 
         // Confirm delete third party
-        if ($action == 'delete' || $conf->use_javascript_ajax)
+        if ($action == 'delete' || ($conf->use_javascript_ajax && empty($conf->dol_use_jmobile)))
         {
             $form = new Form($db);
             $ret=$form->form_confirm($_SERVER["PHP_SELF"]."?socid=".$object->id,$langs->trans("DeleteACompany"),$langs->trans("ConfirmDeleteCompany"),"confirm_delete",'',0,"action-delete");
@@ -1788,7 +1788,7 @@ else
 
         if ($user->rights->societe->supprimer)
         {
-            if ($conf->use_javascript_ajax)
+            if ($conf->use_javascript_ajax && empty($conf->dol_use_jmobile))	// We can(t use preloaded confirm form with jmobile
             {
                 print '<div class="inline-block divButAction"><span id="action-delete" class="butActionDelete">'.$langs->trans('Delete').'</span></div>'."\n";
             }
