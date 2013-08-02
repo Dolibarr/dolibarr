@@ -33,7 +33,7 @@ class mod_facture_mars extends ModeleNumRefFactures
 	var $version='dolibarr';		// 'development', 'experimental', 'dolibarr'
 	var $prefixinvoice='FA';
 	var $prefixreplacement='FR';
-	var $prefixproforma='FP';
+	var $prefixdeposit='AC';
 	var $prefixcreditnote='AV';
 	var $error='';
 
@@ -46,7 +46,7 @@ class mod_facture_mars extends ModeleNumRefFactures
 	{
 		global $langs;
 		$langs->load("bills");
-		return $langs->trans('MarsNumRefModelDesc1',$this->prefixinvoice,$this->prefixreplacement,$this->prefixproforma,$this->prefixcreditnote);
+		return $langs->trans('MarsNumRefModelDesc1',$this->prefixinvoice,$this->prefixreplacement,$this->prefixdeposit,$this->prefixcreditnote);
 	}
 
 	/**
@@ -132,8 +132,9 @@ class mod_facture_mars extends ModeleNumRefFactures
 		$prefix=$this->prefixinvoice;
 		
 		if ($facture->type == 1) $prefix=$this->prefixreplacement;
-		elseif ($facture->type == 2) $prefix=$this->prefixcreditnote;
-		elseif ($facture->type == 4) $prefix=$this->prefixproforma; 
+		else if ($facture->type == 2) $prefix=$this->prefixcreditnote;
+		else if ($facture->type == 3) $prefix=$this->prefixdeposit;
+		else $prefix=$this->prefixinvoice;
 
 		// D'abord on recupere la valeur max
 		$posindice=8;
