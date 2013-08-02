@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2007 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2008      Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
+ * Copyright (C) 2013      Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -138,7 +139,7 @@ class mod_facture_mercure extends ModeleNumRefFactures
         if (is_object($facture) && $facture->type == 1) 
         {
         	$mask=$conf->global->FACTURE_MERCURE_MASK_REPLACEMENT;
-        	 if (! $mask)
+        	if (! $mask)
         	{
         		$mask=$conf->global->FACTURE_MERCURE_MASK_INVOICE;
         	}

@@ -411,7 +411,7 @@ PDFCrabeDescription=Modelo de factura completo (modelo recomendado por defecto)
 # oursin PDF Model
 PDFOursinDescription=Modelo de factura completo (modelo alternativo)
 # NumRef Modules
-TerreNumRefModelDesc1=Devuelve el número bajo el formato %syymm-nnnn para las facturas, %syymm-nnnn para los abonos y %syymm-nnnn para las facturas de anticipo donde yy es el año, mm. el mes y nnnn un contador secuencial sin ruptura y sin permanencia a 0
+TerreNumRefModelDesc1=Devuelve el número bajo el formato %syymm-nnnn para las facturas y facturas rectificativas, %syymm-nnnn para los abonos y %syymm-nnnn para las facturas de anticipo donde yy es el año, mm. el mes y nnnn un contador secuencial sin ruptura y sin permanencia a 0
 MarsNumRefModelDesc1=Devuelve el número bajo el formato %syymm-nnnn para las facturas, %syymm-nnnn para las facturas rectificativas, %syymm-nnnn para las facturas de anticipo y %syymm-nnnn para los abonos donde yy es el año, mm. el mes y nnnn un contador secuencial sin ruptura y sin permanencia a 0
 
 # TerreNumRefModelError=A bill starting with $syymm already exists and is not compatible with this model of sequence. Remove it or rename it to activate this module.
