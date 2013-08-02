@@ -55,6 +55,7 @@ class mod_facture_mercure extends ModeleNumRefFactures
         $texte.= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
         $texte.= '<input type="hidden" name="action" value="updateMask">';
         $texte.= '<input type="hidden" name="maskconstinvoice" value="FACTURE_MERCURE_MASK_INVOICE">';
+        $texte.= '<input type="hidden" name="maskconstreplacement" value="FACTURE_MERCURE_MASK_REPLACEMENT">';
         $texte.= '<input type="hidden" name="maskconstcredit" value="FACTURE_MERCURE_MASK_CREDIT">';
 		$texte.= '<input type="hidden" name="maskconstdeposit" value="FACTURE_MERCURE_MASK_DEPOSIT">';
         $texte.= '<table class="nobordernopadding" width="100%">';
@@ -73,6 +74,11 @@ class mod_facture_mercure extends ModeleNumRefFactures
 
         $texte.= '</tr>';
 
+        // Parametrage du prefix des replacement
+        $texte.= '<tr><td>'.$langs->trans("Mask").' ('.$langs->trans("InvoiceReplacement").'):</td>';
+        $texte.= '<td align="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskreplacement" value="'.$conf->global->FACTURE_MERCURE_MASK_REPLACEMENT.'">',$tooltip,1,1).'</td>';
+        $texte.= '</tr>';
+        
         // Parametrage du prefix des avoirs
         $texte.= '<tr><td>'.$langs->trans("Mask").' ('.$langs->trans("InvoiceAvoir").'):</td>';
         $texte.= '<td align="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskcredit" value="'.$conf->global->FACTURE_MERCURE_MASK_CREDIT.'">',$tooltip,1,1).'</td>';
@@ -129,7 +135,15 @@ class mod_facture_mercure extends ModeleNumRefFactures
 
         // Get Mask value
         $mask = '';
-        if (is_object($facture) && $facture->type == 2) $mask=$conf->global->FACTURE_MERCURE_MASK_CREDIT;
+        if (is_object($facture) && $facture->type == 1) 
+        {
+        	$mask=$conf->global->FACTURE_MERCURE_MASK_REPLACEMENT;
+        	 if (! $mask)
+        	{
+        		$mask=$conf->global->FACTURE_MERCURE_MASK_INVOICE;
+        	}
+        }
+        else if (is_object($facture) && $facture->type == 2) $mask=$conf->global->FACTURE_MERCURE_MASK_CREDIT;
 		else if (is_object($facture) && $facture->type == 3) $mask=$conf->global->FACTURE_MERCURE_MASK_DEPOSIT;
         else $mask=$conf->global->FACTURE_MERCURE_MASK_INVOICE;
         if (! $mask)

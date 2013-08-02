@@ -52,12 +52,15 @@ $type='invoice';
 if ($action == 'updateMask')
 {
     $maskconstinvoice=GETPOST('maskconstinvoice','alpha');
+    $maskconstreplacement=GETPOST('maskconstreplacement','alpha');
     $maskconstcredit=GETPOST('maskconstcredit','alpha');
 	$maskconstdeposit=GETPOST('maskconstdeposit','alpha');
     $maskinvoice=GETPOST('maskinvoice','alpha');
+    $maskreplacement=GETPOST('maskreplacement','alpha');
     $maskcredit=GETPOST('maskcredit','alpha');
 	$maskdeposit=GETPOST('maskdeposit','alpha');
     if ($maskconstinvoice) $res = dolibarr_set_const($db,$maskconstinvoice,$maskinvoice,'chaine',0,'',$conf->entity);
+    if ($maskconstreplacement) $res = dolibarr_set_const($db,$maskconstreplacement,$maskreplacement,'chaine',0,'',$conf->entity);
     if ($maskconstcredit)  $res = dolibarr_set_const($db,$maskconstcredit,$maskcredit,'chaine',0,'',$conf->entity);
 	if ($maskconstdeposit)  $res = dolibarr_set_const($db,$maskconstdeposit,$maskdeposit,'chaine',0,'',$conf->entity);
 
@@ -383,6 +386,22 @@ foreach ($dirmodels as $reldir)
                                     $htmltooltip.=$langs->trans($module->error).'<br>';
                                 }
                             }
+                            // Example for remplacement
+                            $facture->type=1;
+                            $nextval=$module->getNextValue($mysoc,$facture);
+                            if ("$nextval" != $langs->trans("NotAvailable"))	// Keep " on nextval
+                            {
+                            	$htmltooltip.=$langs->trans("NextValueForReplacements").': ';
+                            	if ($nextval)
+                            	{
+                            		$htmltooltip.=$nextval.'<br>';
+                            	}
+                            	else
+                            	{
+                            		$htmltooltip.=$langs->trans($module->error).'<br>';
+                            	}
+                            }
+                            
                             // Example for credit invoice
                             $facture->type=2;
                             $nextval=$module->getNextValue($mysoc,$facture);
