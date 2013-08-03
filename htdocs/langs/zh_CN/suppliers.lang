@@ -24,7 +24,7 @@ ChangeSupplierPrice=供应商的价格变化
 ErrorQtyTooLowForThisSupplier=数量过低，供应商或供应商在这此产品没有价格定义
 ErrorSupplierCountryIsNotDefined=此供应商国是没有定义。正确的这第一。
 ProductHasAlreadyReferenceInThisSupplier=该产品已在该企业产品参考
-ReferenceSupplierIsAlreadyAssociatedWithAProduct=该参考供应商已经与一参考：％s的
+ReferenceSupplierIsAlreadyAssociatedWithAProduct=该参考供应商已经与一参考：%s的
 NoRecordedSuppliers=没有供应商记录
 SupplierPayment=供应商付款
 SuppliersArea=供应商区
@@ -40,8 +40,8 @@ AddCustomerOrder=创建客户订单
 AddCustomerInvoice=创建客户发票
 AddSupplierOrder=建立供应商的订单
 AddSupplierInvoice=创建供应商发票
-ListOfSupplierProductForSupplier=<b>％</b>产品供应商名单和价格<b>的</b> S
-NoneOrBatchFileNeverRan=无或批处理<b>％不是</b>最近跑
+ListOfSupplierProductForSupplier=<b>%</b>产品供应商名单和价格<b>的</b> S
+NoneOrBatchFileNeverRan=无或批处理<b>%不是</b>最近跑
 // STOP - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).
 
 

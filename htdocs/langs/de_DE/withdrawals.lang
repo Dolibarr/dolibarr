@@ -97,5 +97,5 @@ InfoTransMessage=Der Dauerauftrag %s wurde von %s %s übertragen.<br><br>
 InfoTransData=Betrag: %s<br>Verwendungszweck: %s<br>Datum: %s
 InfoFoot=Dies ist eine automatisierte Nachricht von Dolibarr
 InfoRejectSubject=Dauerauftrag abgelehnt
-InfoRejectMessage=Hallo,<br><br>der Dauerauftrag zur Rechnung %s der Firma %s, über den Betrag von %s wurde abgelehnt.<br><br>--<br>%$
+InfoRejectMessage=Hallo,<br><br>der Dauerauftrag zur Rechnung %s der Firma %s, über den Betrag von %s wurde abgelehnt.<br><br>--<br>%s
 ModeWarning=Echtzeit-Modus wurde nicht aktiviert, wir stoppen nach der Simulation.

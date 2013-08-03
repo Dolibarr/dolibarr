@@ -49,10 +49,10 @@ DateActionDoneEnd=真正的結束日期
 DateActionStart=開始日期
 DateActionEnd=結束日期
 AgendaUrlOptions1=您還可以添加以下參數來篩選輸出：
-AgendaUrlOptions2=<b>登錄%s</b>到限制產量以行動來創造，受影響或將<b>使用者</b>與所做<b>％。</b>
-AgendaUrlOptions3=<b>logina =%s</b>到<b>％</b>限制輸出到用戶的操作創建<b>為</b> S。
-AgendaUrlOptions4=<b>logint =%s</b>到<b>％</b>限制輸出到行動<b>使用者</b>與受影響。
-AgendaUrlOptions5=<b>logind =%s</b>到<b>％</b>限制輸出到用戶的行為進行<b>由</b> S。
+AgendaUrlOptions2=<b>登錄%s</b>到限制產量以行動來創造，受影響或將<b>使用者</b>與所做<b>%。</b>
+AgendaUrlOptions3=<b>logina =%s</b>到<b>%</b>限制輸出到用戶的操作創建<b>為</b> S。
+AgendaUrlOptions4=<b>logint =%s</b>到<b>%</b>限制輸出到行動<b>使用者</b>與受影響。
+AgendaUrlOptions5=<b>logind =%s</b>到<b>%</b>限制輸出到用戶的行為進行<b>由</b> S。
 AgendaShowBirthdayEvents=顯示生日的接觸
 AgendaHideBirthdayEvents=隱藏生日的接觸
 // STOP - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).

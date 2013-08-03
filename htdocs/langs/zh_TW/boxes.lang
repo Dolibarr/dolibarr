@@ -47,7 +47,7 @@ BoxTitleSalesTurnover=銷售營業額
 BoxTitleTotalUnpaidCustomerBills=未付客戶的發票
 BoxTitleTotalUnpaidSuppliersBills=未付供應商的發票
 BoxMyLastBookmarks=我最後的%s的書簽
-FailedToRefreshDataInfoNotUpToDate=無法刷新的RSS流量。上次成功刷新日期：％s
+FailedToRefreshDataInfoNotUpToDate=無法刷新的RSS流量。上次成功刷新日期：%s
 LastRefreshDate=最後更新日期
 NoRecordedBookmarks=沒有書簽定義。點擊<a href="%s">這裏</a>添加書簽。
 NoRecordedCustomers=沒有記錄客戶

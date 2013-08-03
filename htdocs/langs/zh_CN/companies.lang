@@ -8,8 +8,8 @@
 // START - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).
 // Reference language: en_US
 CHARSET=UTF-8
-ErrorCompanyNameAlreadyExists=公司名称％s已经存在。选择另外一个。
-ErrorPrefixAlreadyExists=前缀％s已经存在。选择另外一个。
+ErrorCompanyNameAlreadyExists=公司名称%s已经存在。选择另外一个。
+ErrorPrefixAlreadyExists=前缀%s已经存在。选择另外一个。
 ErrorSetACountryFirst=集全国之首
 DeleteThirdParty=删除第三方
 ConfirmDeleteCompany=你确定要删除本公司及所有遗传信息？
@@ -45,7 +45,7 @@ ThirdParties=第三方
 ThirdPartyAll=第三方（全部）
 ThirdPartyProspects=前途
 ThirdPartyCustomers=客户
-ThirdPartyCustomersWithIdProf12=与％s或％客户s
+ThirdPartyCustomersWithIdProf12=与%s或%客户s
 ThirdPartySuppliers=供应商
 ThirdPartyType=第三方类型
 Company/Fundation=公司/基金会
@@ -83,7 +83,7 @@ LocalTax1IsUsedES=稀土用于
 LocalTax1IsNotUsedES=不使用可再生能源
 LocalTax2IsUsedES=IRPF使用
 LocalTax2IsNotUsedES=IRPF不使用
-ThirdPartyEMail=％s的
+ThirdPartyEMail=%s的
 WrongCustomerCode=客户代码无效
 WrongSupplierCode=供应商代码无效
 CustomerCodeModel=客户代码模型
@@ -155,10 +155,10 @@ CustomerRelativeDiscount=相对客户折扣
 CustomerAbsoluteDiscount=绝对客户折扣
 CustomerRelativeDiscountShort=相对折扣
 CustomerAbsoluteDiscountShort=绝对优惠
-CompanyHasRelativeDiscount=这个客户有一个<b>％s的％％</b>的折扣
+CompanyHasRelativeDiscount=这个客户有一个<b>%s的%%</b>的折扣
 CompanyHasNoRelativeDiscount=此客户没有默认相对折扣
-CompanyHasAbsoluteDiscount=此客户仍<b>％之</b>折扣学分为<b>％s</b>
-CompanyHasCreditNote=此客户仍然有信用票据<b>或s％％s</b>的前存款
+CompanyHasAbsoluteDiscount=此客户仍<b>%之</b>折扣学分为<b>%s</b>
+CompanyHasCreditNote=此客户仍然有信用票据<b>或s%%s</b>的前存款
 CompanyHasNoAbsoluteDiscount=此客户没有提供贴息贷款
 CustomerAbsoluteDiscountAllUsers=绝对优惠（所有用户授予）
 CustomerAbsoluteDiscountMy=绝对优惠（由自己授予）
@@ -188,7 +188,7 @@ ValidityControledByModule=有效性控制模块
 ThisIsModuleRules=这是本单元的规则
 LastProspect=最后
 ProspectToContact=展望接触
-CompanyDeleted=公司“％的”从数据库中删除。
+CompanyDeleted=公司“%的”从数据库中删除。
 ListOfContacts=联系人名单
 ListOfProspectsContacts=联系人名单前景
 ListOfCustomersContacts=客户联系名单
@@ -217,11 +217,11 @@ EditCompany=编辑公司
 EditDeliveryAddress=修改送货地址
 ThisUserIsNot=这个用户是不是一个前景，客户也不供应商
 VATIntraCheck=支票
-VATIntraCheckDesc=<b>％s的</b>允许该链接要求欧盟增值税检查服务。从服务器的外部网络连接需要这项服务工作。
+VATIntraCheckDesc=<b>%s的</b>允许该链接要求欧盟增值税检查服务。从服务器的外部网络连接需要这项服务工作。
 VATIntraCheckURL=http://ec.europa.eu/taxation_customs/vies/vieshome.do
 VATIntraCheckableOnEUSite=欧盟委员会现场检查Intracomunnautary增值税
-VATIntraManualCheck=您也可以手动检查站点从欧洲网站<a href="%s" target="_blank">％s的</a>
-ErrorVATCheckMS_UNAVAILABLE=检查不可能的。检查服务是没有提供的会员国（％s）中。
+VATIntraManualCheck=您也可以手动检查站点从欧洲网站<a href="%s" target="_blank">%s的</a>
+ErrorVATCheckMS_UNAVAILABLE=检查不可能的。检查服务是没有提供的会员国（%s）中。
 NorProspectNorCustomer=也不前景，也不客户
 JuridicalStatus=法律地位
 Staff=员工
@@ -294,7 +294,7 @@ YouMustCreateContactFirst=您必须创建电子邮件第三方接触首先可以
 ListSuppliersShort=供应商名单
 ListProspectsShort=名单前景
 ListCustomersShort=客户名单
-MonkeyNumRefModelDesc=返回格式％syymm为客户代码以及％syymm -○○○○供应商代码其中YY是年numero，MM是月，nnnn是一个没有休息，没有为0返回序列。
+MonkeyNumRefModelDesc=返回格式%syymm为客户代码以及%syymm -○○○○供应商代码其中YY是年numero，MM是月，nnnn是一个没有休息，没有为0返回序列。
 LeopardNumRefModelDesc=客户/供应商代码是免费的。此代码可以随时修改。
 // STOP - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).
 

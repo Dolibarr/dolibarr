@@ -9,11 +9,11 @@
 // Reference language: en_US
 CHARSET=UTF-8
 DomainPassword=密碼域
-YouMustChangePassNextLogon=<b>％</b>用戶密碼<b>％之S</b>必須改變對域。
-UserMustChangePassNextLogon=用戶必須更改密碼的域％s
+YouMustChangePassNextLogon=<b>%</b>用戶密碼<b>%之S</b>必須改變對域。
+UserMustChangePassNextLogon=用戶必須更改密碼的域%s
 LdapUacf_NORMAL_ACCOUNT=用戶帳戶
 LdapUacf_DONT_EXPIRE_PASSWORD=密碼永不過期
-LdapUacf_ACCOUNTDISABLE=帳戶是在域％傷殘s
+LdapUacf_ACCOUNTDISABLE=帳戶是在域%傷殘s
 LDAPInformationsForThisContact=在此LDAP數據庫信息聯系
 LDAPInformationsForThisUser=LDAP數據庫中該用戶信息
 LDAPInformationsForThisGroup=在LDAP數據庫的資料本組
