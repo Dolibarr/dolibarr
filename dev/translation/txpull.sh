@@ -4,13 +4,16 @@
 #
 # Laurent Destailleur - eldy@users.sourceforge.net
 #------------------------------------------------------
-# Usage: txpull.sh [all|xx_XX]
+# Usage: txpull.sh (all|xx_XX) [-r dolibarr.file] [-f]
 #------------------------------------------------------
 
 # Syntax
 if [ "x$1" = "x" ]
 then
-	echo "Usage: txpull.sh (all|xx_XX) [-r dolibarr.file]"
+	echo "This pull remote transifex files to local dir."
+	echo "Note:  If you push a language file (not source), file will be skipped if transifex file is newer."
+	echo "       Using -f will overwrite local file (does not work with 'all')."
+	echo "Usage: txpull.sh (all|xx_XX) [-r dolibarr.file] [-f]"
 	exit
 fi
 
@@ -23,7 +26,7 @@ then
 		tx pull -l $fic $2 $3
 	done
 else
-	echo "tx pull -l $1 $2 $3"
-	tx pull -l $1 $2 $3
+	echo "tx pull -l $1 $2 $3 $4"
+	tx pull -l $1 $2 $3 $4
 fi
 

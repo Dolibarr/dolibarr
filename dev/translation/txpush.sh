@@ -11,7 +11,7 @@
 if [ "x$1" = "x" ]
 then
 	echo "This push local files to transifex."
-	echo "Note:  If you push a langauge file (not source), file will be skipped if transifex file is newer."
+	echo "Note:  If you push a language file (not source), file will be skipped if transifex file is newer."
 	echo "       Using -f will overwrite translation but not memory."
 	echo "Usage: txpush.sh (source|all|xx_XX) [-r dolibarr.file] [-f]"
 	exit
