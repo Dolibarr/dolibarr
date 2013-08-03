@@ -47,7 +47,8 @@ For users:
 
 
 For translators:
-- Normalized sort order of all languages files with english reference files.
+- Qual: Normalized sort order of all languages files with english reference files.
+- New: Add language code files for South Africa.
 
 For developers:
 - New: DolGraph can build graph with three lines.
