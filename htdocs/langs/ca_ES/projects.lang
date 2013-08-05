@@ -104,6 +104,8 @@ TypeContact_project_task_internal_TASKEXECUTIVE=Responsable
 TypeContact_project_task_external_TASKEXECUTIVE=Responsable
 TypeContact_project_task_internal_CONTRIBUTOR=Participant
 TypeContact_project_task_external_CONTRIBUTOR=Participant
+SelectElement=Elements vinculables al projecte :
+AddElement=Vincular
 # Documents models
 DocumentModelBaleine=Model d'informe de projecte complet (logo...)
 PlannedWorkload=Càrrega de treball prevista
