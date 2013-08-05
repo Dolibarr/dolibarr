@@ -1,4 +1,4 @@
-# Dolibarr language file - Source file is en_US - contracts
+# Dolibarr language file - Source file is es_ES - contracts
 CHARSET=UTF-8
 ContractsArea=Área contratos
 ListOfContracts=Listado de contratos
@@ -54,7 +54,6 @@ ListOfRunningContractsLines=Listado de líneas de contratos en servicio
 ListOfRunningServices=Listado de servicios activos
 NotActivatedServices=Servicios no activados (con los contratos validados)
 BoardNotActivatedServices=Servicios a activar con los contratos validados
-LastContracts=Los % últimos contratos
 LastActivatedServices=Los %s últimos servicios activados
 LastModifiedServices=Los %s últimos servicios modificados
 EditServiceLine=Edición línea del servicio
@@ -87,10 +86,9 @@ ExpiredSince=Expirado desde el
 RelatedContracts=Contratos asociados
 NoExpiredServices=Sin servicios activos expirados
 ListOfServicesToExpireWithDuration=Listado de servicios activos a expirar en %s días
-# ListOfServicesToExpireWithDurationNeg=List of Services expired from more than %s days
+ListOfServicesToExpireWithDurationNeg=Listado de servicios expirados más de %s días
 ListOfServicesToExpire=Listado de servicios activos a expirar
-# NoteListOfYourExpiredServices=This list contains only services of contracts for third parties you are linked to as a sale representative.
-
+NoteListOfYourExpiredServices=Este listado contiene solamente los servicios de contratos de terceros de los que usted es comercial
 ##### Types de contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Comercial firmante del contrato
 TypeContact_contrat_internal_SALESREPFOLL=Comercial seguimiento del contrato
