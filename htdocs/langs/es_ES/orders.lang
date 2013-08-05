@@ -70,11 +70,11 @@ CancelOrder=Anular el pedido
 AddOrder=Crear pedido
 AddToMyOrders=Añadir a mis pedidos
 AddToOtherOrders=Añadir a otros pedidos
-# AddToDraftOrders=Add to draft order
+AddToDraftOrders=Añadir a pedido borrador
 ShowOrder=Mostrar pedido
 NoOpenedOrders=Níngun pedido borrador
 NoOtherOpenedOrders=Ningún otro pedido borrador
-# NoDraftOrders=No draft orders
+NoDraftOrders=Sin pedidos borrador
 OtherOrders=Otros pedidos
 LastOrders=Los %s últimos pedidos
 LastModifiedOrders=Los %s últimos pedidos modificados
@@ -103,7 +103,6 @@ RelatedOrders=Pedidos adjuntos
 OnProcessOrders=Pedidos en proceso
 RefOrder=Ref. pedido
 RefCustomerOrder=Ref. pedido cliente
-CustomerOrder=Pedido de cliente
 RefCustomerOrderShort=Ref. ped. cliente
 SendOrderByMail=Enviar pedido por e-mail
 ActionsOnOrder=Eventos sobre el pedido
@@ -128,14 +127,11 @@ TypeContact_order_supplier_internal_SHIPPING=Responsable recepción pedido a pro
 TypeContact_order_supplier_external_BILLING=Contacto proveedor facturación pedido
 TypeContact_order_supplier_external_SHIPPING=Contacto proveedor entrega pedido
 TypeContact_order_supplier_external_CUSTOMER=Contacto proveedor seguimiento pedido
-
 Error_COMMANDE_SUPPLIER_ADDON_NotDefined=Constante COMMANDE_SUPPLIER_ADDON no definida
 Error_COMMANDE_ADDON_NotDefined=Constante COMMANDE_ADDON no definida
 Error_FailedToLoad_COMMANDE_SUPPLIER_ADDON_File=Error en la carga del archivo módulo '%s'
 Error_FailedToLoad_COMMANDE_ADDON_File=Error en la carga del archivo módulo '%s'
 Error_OrderNotChecked=No se han seleccionado pedidos a facturar
-
-
 # Sources
 OrderSource0=Presupuesto
 OrderSource1=Internet
@@ -146,7 +142,6 @@ OrderSource5=Comercial
 OrderSource6=Revistas
 QtyOrdered=Cant. pedida
 AddDeliveryCostLine=Añadir una línea de gastos de portes indicando el peso del pedido
-
 # Documents models
 PDFEinsteinDescription=Modelo de pedido completo (logo...)
 PDFEdisonDescription=Modelo de pedido simple
@@ -156,13 +151,11 @@ OrderByFax=Fax
 OrderByEMail=E-Mail
 OrderByWWW=En línea
 OrderByPhone=Teléfono
-
 CreateInvoiceForThisCustomer=Facturar pedidos
 NoOrdersToInvoice=Sin pedidos facturables
 CloseProcessedOrdersAutomatically=Clasificar automáticamente como "Procesados" los pedidos seleccionados.
-MenuOrdersToBill2=Pedidos facturables
-# OrderCreation=Order creation
-# Ordered=Ordered
-# OrderCreated=Your orders have been created
-# OrderFail=An error happened during your orders creation
-# CreateOrders=Create orders
+OrderCreation=Creación pedido
+Ordered=Pedido
+OrderCreated=Sus pedidos han sido creados
+OrderFail=Se ha producido un error durante la creación de sus pedidos
+CreateOrders=Crear pedidos

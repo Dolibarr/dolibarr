@@ -70,11 +70,11 @@ CancelOrder=Anul·lar la comanda
 AddOrder=Crear comanda
 AddToMyOrders=afegir a les meves comandes
 AddToOtherOrders=Afegir a altres comandes
-# AddToDraftOrders=Add to draft order
+AddToDraftOrders=Afegir a comanda esborrany
 ShowOrder=Mostrar comanda
 NoOpenedOrders=Cap comanda esborrany
 NoOtherOpenedOrders=Cap altra comanda esborrany
-# NoDraftOrders=No draft orders
+NoDraftOrders=Sense comandes esborrany
 OtherOrders=Altres comandes
 LastOrders=Les %s darreres comandes
 LastModifiedOrders=Les %s darreres comandes modificades
@@ -103,7 +103,6 @@ RelatedOrders=Comandes adjuntes
 OnProcessOrders=Comandes en procés
 RefOrder=Ref. comanda
 RefCustomerOrder=Ref. comanda client
-CustomerOrder=Comada de client
 RefCustomerOrderShort=Ref. com. client
 SendOrderByMail=Enviar comanda per e-mail
 ActionsOnOrder=Esdeveniments sobre la comanda
@@ -128,14 +127,11 @@ TypeContact_order_supplier_internal_SHIPPING=Responsable recepció comanda a pro
 TypeContact_order_supplier_external_BILLING=Contacte proveïdor facturació comanda
 TypeContact_order_supplier_external_SHIPPING=Contacte proveïdor lliurament comanda
 TypeContact_order_supplier_external_CUSTOMER=Contacte proveïdor seguiment comanda
-
 Error_COMMANDE_SUPPLIER_ADDON_NotDefined=Constant COMMANDE_SUPPLIER_ADDON no definida
 Error_COMMANDE_ADDON_NotDefined=Constant COMMANDE_ADDON no definida
 Error_FailedToLoad_COMMANDE_SUPPLIER_ADDON_File=Error en la càrrega de l'arxiu mòdul '%s'
 Error_FailedToLoad_COMMANDE_ADDON_File=Error en la càrrega de l'arxiu mòdul '%s'
 Error_OrderNotChecked=No s'han seleccionat comandes a facturar
-
-
 # Sources
 OrderSource0=Pressupost
 OrderSource1=Internet
@@ -146,7 +142,6 @@ OrderSource5=Comercial
 OrderSource6=Revistes
 QtyOrdered=Qt. demanda
 AddDeliveryCostLine=Afegir una línia de despeses de ports indicant el pes de la comanda
-
 # Documents models
 PDFEinsteinDescription=Model de comanda complet (logo...)
 PDFEdisonDescription=Model de comanda simple
@@ -156,13 +151,11 @@ OrderByFax=Fax
 OrderByEMail=E-Mail
 OrderByWWW=En línia
 OrderByPhone=Telèfon
-
 CreateInvoiceForThisCustomer=Facturar comandes
 NoOrdersToInvoice=Sense comandes facturables
 CloseProcessedOrdersAutomatically=Classificar automàticament com "Processades" les comandes seleccionades.
-MenuOrdersToBill2=Comandes facturables
-# OrderCreation=Order creation
-# Ordered=Ordered
-# OrderCreated=Your orders have been created
-# OrderFail=An error happened during your orders creation
-# CreateOrders=Create orders
+OrderCreation=Creació comanda
+Ordered=Comandat
+OrderCreated=Les seves comandes han estat creats
+OrderFail=S'ha produït un error durant la creació de les seves comandes
+CreateOrders=Crear comandes
