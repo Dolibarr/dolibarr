@@ -8,7 +8,10 @@ script to build a package, ready to be distributed,
 with format .DEB (for Debian, Ubuntu, ...).
 
 # To build a debian package, you need first
-# apt-get -i debhelper dpkg-source gpg lintian git-buildpackage
+# With Ubuntu 12.04
+# apt-get install debhelper dpkg-source gpg lintian git-buildpackage pkg-php-tools
+# With Debian 7
+# apt-get install debhelper dpkg gnupg lintian git-buildpackage pkg-php-tools
 
 
 # This is standard command to work on Debian packaging:
