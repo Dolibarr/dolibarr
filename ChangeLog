@@ -44,6 +44,7 @@ For users:
 - New: [ task #1011 ] Now supplier order and invoice deal with payment terms and mode
 - New: [ task #1014 ] Add option to recursivly add parent category
 - New: [ task #1016 ] Can define a specific numbering for deposits 
+- New: [ task #918 ] Stock replenishment
 
 
 For translators:
