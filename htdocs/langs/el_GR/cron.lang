@@ -1,90 +1,115 @@
-/*  
-* Dolibarr language file - cron
-* Language code: el_GR
-* Manually translated by technicks.eu
-*/
-CHARSET = UTF-8
-Module2310Name = Cron
-Module2310Desc = Προγραμματισμένη διαχείριση των εργασιών
-# = undefined
-# About page = undefined
-About = Σχετικά
-CronAbout = σχετικά με Cron
-CronAboutPage = Cron σχετικά με τη σελίδα
-# Right = undefined
-Permission23101 = Διαβάστε προγραμματισμένη ενέργεια
-Permission23102 = Δημιουργία / ενημέρωση προγραμματισμένης ενέργειας
-Permission23103 = Διαγραφή προγραμματισμένης ενέργειας
-Permission23104 = Εκτέλεση προγραμματισμένης ενέργειας
-# Admin = undefined
-CronSetup = Διαμόρφωση Προγραμματισμένη διαχείριση των εργασιών
-URLToLaunchCronJobs = URL για να ξεκινήσει εργασίες cron
-OrToLaunchASpecificJob = Ή για να ξεκινήσει μια συγκεκριμένη εργασία
-KeyForCronAccess = Κλειδί ασφαλείας για το URL για να ξεκινήσει εργασίες cron
-FileToLaunchCronJobs = Εντολή για να ξεκινήσει εργασίες cron
-CronExplainHowToRunUnix = Σχετικά με το περιβάλλον Unix θα πρέπει να χρησιμοποιήσετε crontab να τρέχει γραμμή εντολών κάθε μερικά λεπτά
-CronExplainHowToRunWin = Στο Microsoft (tm) περιβάλλον Windows, μπορείτε να χρησιμοποιήσετε τα εργαλεία Προγραμματισμένη εργασία ώστε να εκτελεστεί γραμμής εντολών κάθε μερικά λεπτά
-# Menu = undefined
-CronListActive = Κατάλογος των ενεργών εργασιών
-CronListInactive = Κατάλογος των απενεργοποιημένων εργασιών
-# Page list = undefined
-CronDateLastRun = Τελευταία εκτέλεση
-CronLastOutput = Τελευταία εκτέλεση output
-CronLastResult = Τελευταίο κωδικό αποτελέσματος
-CronListOfCronJobs = Λίστα προγραμματισμένων εργασιών
-CronCommand = Εντολή
-CronList = Λίστα εργασιών
-CronDelete = Διαγραφή εργασίας cron
-CronConfirmDelete = Είστε σίγουροι ότι θέλετε διαγράψετε αυτό το cron εργασίας;
-CronExecute = Έναρξη εργασιών
-CronConfirmExecute = Είστε σίγουροι ότι θέλετε να εκτελέσει αυτήν την εργασία τώρα
-CronInfo = Εργασία επιτραπεί την εκτέλεση εργασιών που έχουν προγραμματιστεί
-CronWaitingJobs = Αναμονή εργασίας
-CronTask = Εργασία
-CronNone = Καμία
-CronDtStart = Ημερομηνία έναρξης
-CronDtEnd = Ημερομηνία τέλους
-CronDtNextLaunch = Επόμενη εκτέλεση
-CronDtLastLaunch = Τελευταία εκτέλεση
-CronFrequency = Συχνότητα
-CronClass = Classe
-CronMethod = Μέθοδος
-CronModule = Module
-CronAction = Ενέργεια
-CronStatus = Κατάσταση
-CronStatusActive = Ενεργή
-CronStatusInactive = Ανενεργή
-CronNoJobs = Δεν έχουν καταχωρηθεί εργασιες
-CronPriority = Προτεραιότητα
-CronLabel = Περιγραφή
-CronNbRun = Nb. launch
-#Page card = undefined
-CronAdd = Προσθήκη εργασίας
-CronHourStart = Έναρξη ώρας και ημερομηνίας της εργασίας
-CronEvery = Εκτελέσει εργασίας κάθε
-CronObject = Υπόσταση / αντικείμενο για να δημιουργήσετε
-CronArgs = Παράμετροι
-CronSaveSucess = Αποθήκευση με επιτυχία
-CronNote = Σχόλια
-CronFieldMandatory = Πεδία %s είναι υποχρεωτικό
-CronErrEndDateStartDt = Η ημερομηνία λήξης δεν μπορεί να είναι πριν από την ημερομηνία έναρξης
-CronStatusActiveBtn = Ενεργή
-CronStatusInactiveBtn = Ανενεργή
-CronTaskInactive = Το έργο αυτό είναι ανενεργό
-CronDtLastResult = Τελευταία ημερομηνία του αποτελέσματος
-CronId = Id
-CronClassFile = Κλάσεις (όνομα αρχείου)
-CronModuleHelp = Name of Dolibarr module directory (also work with external Dolibarr module). <BR> For exemple to fetch method of Dolibarr Product object /htdocs/<u>product</u>/class/product.class.php, the value of module is <i>product</i>
-CronClassFileHelp = The file name to load. <BR> For exemple to fetch method of Dolibarr Product object /htdocs/product/class/<u>product.class.php</u>, the value of class file name is <i>product.class.php</i>
-CronObjectHelp = The object name to load. <BR> For exemple to fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value of class file name is <i>Product</i>
-CronMethodHelp = The object method to launch. <BR> For exemple to fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value of method is  is <i>fecth</i>
-CronArgsHelp = The method arguments. <BR> For exemple to fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value of paramters can be <i>0, ProductRef</i>
-CronCommandHelp = Η γραμμή εντολών του συστήματος για την εκτέλεση.
-# Info = undefined
-CronInfoPage = Πληροφορίες
-# Common = undefined
-CronType = Τύπος εργασίας
-CronType_method = Καλέστε τη μέθοδο της κατηγορίας Dolibarr
-CronType_command = Shell εντολή
-CronMenu = Cron
-CronCannotLoadClass = Δεν είναι δυνατή η φόρτωση της κλάσης %s ή αντικείμενο %s
+# Dolibarr language file - Source file is en_US - cron
+CHARSET=UTF-8
+Module2310Name=Μενού
+Module2310Desc==
+
+#
+# About page
+#
+About = Πληροφορίες
+# CronAbout = About Cron
+# CronAboutPage = Cron about page
+
+#
+# Right
+#
+Permission23101 = =
+Permission23102 = =
+Permission23103 = =
+Permission23104 = =
+
+#
+# Admin
+#
+# CronSetup= Scheduled job management setup
+# URLToLaunchCronJobs=URL to launch cron jobs
+# OrToLaunchASpecificJob=Or to launch a specific job
+# KeyForCronAccess=Security key for URL to launch cron jobs
+# FileToLaunchCronJobs=Command line to launch cron jobs
+# CronExplainHowToRunUnix=On Unix environment you should use crontab to run Command line each minutes
+# CronExplainHowToRunWin=On Microsoft(tm) Windows environement you can use Scheduled task tools to run Command line each minutes
+
+
+#
+# Menu
+#
+# CronJobs=Scheduled jobs
+# CronListActive= List of active jobs
+# CronListInactive= List of disabled jobs
+
+
+#
+# Page list
+#
+# CronDateLastRun=Last run
+# CronLastOutput=Last run output
+# CronLastResult=Last result code
+# CronListOfCronJobs=List of scheduled jobs
+# CronCommand=Command
+# CronList= Job list
+# CronDelete= Delete cron jobs
+# CronConfirmDelete= Are you sure you want to delete this cron job ?
+# CronExecute=Launch job
+# CronConfirmExecute= Are you sure to execute this job now
+# CronInfo= Jobs allow to execute task that have been planned
+# CronWaitingJobs=Wainting jobs
+# CronTask=Job
+CronNone= None
+CronDtStart=Ημερ. έναρξης
+CronDtEnd=Ημερ. τέλους
+# CronDtNextLaunch=Next execution
+# CronDtLastLaunch=Last execution
+# CronFrequency=Frequancy
+# CronClass=Classe
+CronMethod=Μέθοδος
+CronModule=Άρθρωμα
+# CronAction=Action
+CronStatus=Κατάσταση
+CronStatusActive=Ενεργή
+CronStatusInactive=Ανενεργή
+# CronNoJobs=No jobs registered
+CronPriority=Προτεραιότητα
+CronLabel=Περιγραφή
+# CronNbRun=Nb. launch
+# CronEach=Every
+# JobFinished=Job launched and finished
+
+#
+#Page card
+#
+# CronAdd= Add jobs
+# CronHourStart= Start Hour and date of task
+# CronEvery= And execute task each
+# CronObject= Instance/Object to create
+CronArgs=Παράμετροι
+# CronSaveSucess=Save succesfully
+CronNote=Σχόλιο
+# CronFieldMandatory=Fields %s is mandatory
+# CronErrEndDateStartDt=End date cannot be before start date
+# CronStatusActiveBtn=Enable
+CronStatusInactiveBtn=Απενεργοποίηση
+# CronTaskInactive=This job is disabled
+# CronDtLastResult=Last result date
+# CronId=Id
+# CronClassFile=Classes (filename.class.php)
+# CronModuleHelp=Name of Dolibarr module directory (also work with external Dolibarr module). <BR> For exemple to fetch method of Dolibarr Product object /htdocs/<u>product</u>/class/product.class.php, the value of module is <i>product</i>
+# CronClassFileHelp=The file name to load. <BR> For exemple to fetch method of Dolibarr Product object /htdocs/product/class/<u>product.class.php</u>, the value of class file name is <i>product.class.php</i>
+# CronObjectHelp=The object name to load. <BR> For exemple to fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value of class file name is <i>Product</i>
+# CronMethodHelp=The object method to launch. <BR> For exemple to fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value of method is  is <i>fecth</i>
+# CronArgsHelp=The method arguments. <BR> For exemple to fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value of paramters can be <i>0, ProductRef</i>
+# CronCommandHelp=The system command line to execute.
+
+#
+# Info
+#
+# CronInfoPage=Information
+
+
+#
+# Common
+#
+# CronType=Task type
+# CronType_method=Call method of a Dolibarr Class
+# CronType_command=Shell command
+CronMenu=Μενού
+# CronCannotLoadClass=Cannot load class %s or object %s
