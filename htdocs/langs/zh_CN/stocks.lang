@@ -80,9 +80,9 @@ AverageUnitPricePMP=投入品平均价格
 EstimatedStockValueShort=估计值的股票
 EstimatedStockValue=估计值的股票
 DeleteAWarehouse=删除仓库
-ConfirmDeleteWarehouse=你确定要删除仓库<b>％s吗</b> ？
-PersonalStock=％s的个人股票
-ThisWarehouseIsPersonalStock=这个仓库代表的％s％的个人股票期权
+ConfirmDeleteWarehouse=你确定要删除仓库<b>%s吗</b> ？
+PersonalStock=%s的个人股票
+ThisWarehouseIsPersonalStock=这个仓库代表的%s%的个人股票期权
 // STOP - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).
 
 

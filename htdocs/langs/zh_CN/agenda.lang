@@ -37,10 +37,10 @@ AutoActions=全自动灌装议程
 AgendaAutoActionDesc=在此事件定义为要Dolibarr自动创建一个议程的行动。如果没有被选中（默认情况下），只有手动操作将被列入议程。
 AgendaSetupOtherDesc=这页允许配置议程模块其他参数。
 ActionsEvents=为此Dolibarr活动将创建一个自动行动议程
-PropalValidatedInDolibarr=建议％s的验证
-InvoiceValidatedInDolibarr=发票％s的验证
-OrderValidatedInDolibarr=订购％s的验证
-InterventionValidatedInDolibarr=％s的验证干预
+PropalValidatedInDolibarr=建议%s的验证
+InvoiceValidatedInDolibarr=发票%s的验证
+OrderValidatedInDolibarr=订购%s的验证
+InterventionValidatedInDolibarr=%s的验证干预
 NewCompanyToDolibarr=第三方创建
 DateActionPlannedStart=计划开始日期
 DateActionPlannedEnd=计划结束日期
@@ -49,10 +49,10 @@ DateActionDoneEnd=真正的结束日期
 DateActionStart=开始日期
 DateActionEnd=结束日期
 AgendaUrlOptions1=您还可以添加以下参数来筛选输出：
-AgendaUrlOptions2=<b>登录=％s</b>到限制产量以行动来创造，受影响或将<b>使用者</b>与所做<b>％。</b>
-AgendaUrlOptions3=<b>logina =％s</b>到<b>％</b>限制输出到用户的操作创建<b>为</b> S。
-AgendaUrlOptions4=<b>logint =％s</b>到<b>％</b>限制输出到行动<b>使用者</b>与受影响。
-AgendaUrlOptions5=<b>logind =％s</b>到<b>％</b>限制输出到用户的行为进行<b>由</b> S。
+AgendaUrlOptions2=<b>登录=%s</b>到限制产量以行动来创造，受影响或将<b>使用者</b>与所做<b>%。</b>
+AgendaUrlOptions3=<b>logina =%s</b>到<b>%</b>限制输出到用户的操作创建<b>为</b> S。
+AgendaUrlOptions4=<b>logint =%s</b>到<b>%</b>限制输出到行动<b>使用者</b>与受影响。
+AgendaUrlOptions5=<b>logind =%s</b>到<b>%</b>限制输出到用户的行为进行<b>由</b> S。
 AgendaShowBirthdayEvents=显示生日的接触
 AgendaHideBirthdayEvents=隐藏生日的接触
 // STOP - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).

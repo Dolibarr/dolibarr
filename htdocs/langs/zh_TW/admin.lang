@@ -193,7 +193,7 @@ Passwords=密碼
 DoNotStoreClearPassword=難道沒有明確的密碼存儲在數據庫，但只存儲加密值（活性炭推薦）
 MainDbPasswordFileConfEncrypted=數據庫密碼conf.php加密（活性炭推薦）
 InstrucToEncodePass=為了有密碼編碼到<b>conf.php</b>文件，替換行<br> <b>$ dolibarr_main_db_pass ="..."</b> <br>由<br> <b>$ dolibarr_main_db_pass =“加密的：%s的”</b>
-InstrucToClearPass=為了有密碼破譯（清除）到<b>conf.php</b>文件，替換行<br> <b>$ dolibarr_main_db_pass =“加密的:..."</b> <br>由<br> <b>$ dolibarr_main_db_pass =“％的”</b>
+InstrucToClearPass=為了有密碼破譯（清除）到<b>conf.php</b>文件，替換行<br> <b>$ dolibarr_main_db_pass =“加密的:..."</b> <br>由<br> <b>$ dolibarr_main_db_pass =“%的”</b>
 ProtectAndEncryptPdfFiles=保護生成的PDF文件（活性不推薦，休息質量PDF生成）
 ProtectAndEncryptPdfFilesDesc=一個PDF文檔保護不斷提供給閲讀和打印任何的PDF瀏覽器。然而，編輯和複製是不可能的了。請注意，使用此功能使全球累計PDF格式的建設工作不喜歡未付發票（）。
 Feature=功能特色
@@ -262,7 +262,7 @@ GenericMaskCodes5=參數:<b>ABC{yy}{mm}-{000000}</b> 編碼為 <b>ABC0701-000099
 
 GenericNumRefModelDesc=根據事先定義的遮罩值，回傳一個客制化的編號，詳細可參照說明。
 ServerAvailableOnIPOrPort=服務器可在地址<b>%s%s的</b>連接埠上
-ServerNotAvailableOnIPOrPort=服務器而不是<b>％</b>可在地址<b>的</b>港口<b>%s</b>對
+ServerNotAvailableOnIPOrPort=服務器而不是<b>%</b>可在地址<b>的</b>港口<b>%s</b>對
 DoTestServerAvailability=測試服務器連接
 DoTestSend=發送測試
 DoTestSendHTML=測試發送HTML
@@ -688,7 +688,7 @@ CompanyCurrency=主要貨幣
 DoNotShow=不顯示
 DoNotSuggestPaymentMode=不建議
 NoActiveBankAccountDefined=沒有定義有效的銀行帳戶
-OwnerOfBankAccount=銀行帳戶％342
+OwnerOfBankAccount=銀行帳戶%342
 BankModuleNotActive=銀行模組沒有啟用
 ShowBugTrackLink=顯示連結“報告錯誤”
 ShowWorkBoard=顯示“工作台”的網頁
@@ -728,7 +728,7 @@ DisplayDesc=您可以選擇相關的Dolibarr每個參數的外觀和感覺這裡
 AvailableModules=可用的模組
 ToActivateModule=要激活模組，繼續安裝區（首頁->安裝->模組）。
 SessionTimeOut=會話超時
-SessionExplanation=這個數字保證會議將永不過期此之前的延遲。在此期限後但PHP sessoin管理並不保證該屆會議上總是屆滿：如果出現這種情況的制度進行清理緩存會話運行。 <br>註：沒有特定的系統，內部PHP的過程將清除<b>之晤談</b>約每<b>％/%s的</b>訪問，但只在會議期間提出的其他訪問。
+SessionExplanation=這個數字保證會議將永不過期此之前的延遲。在此期限後但PHP sessoin管理並不保證該屆會議上總是屆滿：如果出現這種情況的制度進行清理緩存會話運行。 <br>註：沒有特定的系統，內部PHP的過程將清除<b>之晤談</b>約每<b>%/%s的</b>訪問，但只在會議期間提出的其他訪問。
 TriggersAvailable=可用的觸發器
 TriggersDesc=觸發器是文件，將修改工作流行為Dolibarr一旦<b>觸發</b>複製到該目錄<b>htdocs中/包括/。</b>他們認識到新的行動，對Dolibarr事件（新公司的建立，發票驗證，...).啟動
 TriggerDisabledByName=在這個文件觸發器被禁用的<b>，將NoRun</b>在其名稱尾碼。
@@ -858,7 +858,7 @@ FicheinterNumberingModules=干預編號模組
 TemplatePDFInterventions=干預卡文件模式
 WatermarkOnDraftInterventionCards=卡文件的任何干預，如果空（水印）
 ClickToDialSetup=點擊撥號模組設置
-ClickToDialUrlDesc=連結時調用一個電話象形點擊完成。丹斯l'網址，vous pouvez utiliser萊balises <br> <b>％％1 $ s的</b>誇血清remplacé電話桿樂德l' appelé <br> <b>％％2 $ s的</b>誇血清remplacé電話桿樂德l' appelant（樂votre） <br> <b>％％3 $ s的</b>誇血清remplacé桿votre登錄clicktodial（定義所涵蓋河畔votre膠片utilisateur） <br> <b>％％4 $ s的</b>誇血清remplacé桿votre摩托羅拉德過時clicktodial（定義所涵蓋河畔votre膠片utilisateur）。
+ClickToDialUrlDesc=連結時調用一個電話象形點擊完成。丹斯l'網址，vous pouvez utiliser萊balises <br> <b>%%1 $ s的</b>誇血清remplacé電話桿樂德l' appelé <br> <b>%%2 $ s的</b>誇血清remplacé電話桿樂德l' appelant（樂votre） <br> <b>%%3 $ s的</b>誇血清remplacé桿votre登錄clicktodial（定義所涵蓋河畔votre膠片utilisateur） <br> <b>%%4 $ s的</b>誇血清remplacé桿votre摩托羅拉德過時clicktodial（定義所涵蓋河畔votre膠片utilisateur）。
 Bookmark4uSetup=Bookmark4u模組設置
 InterventionsSetup=干預模組設置
 MembersSetup=委員模組設置
@@ -1055,7 +1055,7 @@ FCKeditorForMembers=成員描述及註解採用所見即所得的方式建立或
 FCKeditorForProductDetails=產品細部描述可以採用所見即所得的方式建立或編輯，並可給所有模組使用(proposals, orders, invoices, etc...)。<font class="warning">警告:使用這個選項可能會引起嚴重的問題，不建議使用。尤其是當中如果含有建立PDF檔案時，所需的特殊字元或頁面格式資訊，更容易產生問題</font>
 FCKeditorForProductDetailsPerso=產品細部描述可以採用所見即所得的方式建立或編輯，並可給所有模組使用(proposals, orders, invoices, etc...)。<font class="warning">警告:使用這個選項可能會引起嚴重的問題，不建議使用。尤其是當中如果含有建立PDF檔案時，所需的特殊字元或頁面格式資訊，更容易產生問題</font>
 FCKeditorForMailing=所見即所得創建/編輯的郵件
-OSCommerceErrorConnectOkButWrongDatabase=數據庫連接成功，但並不指望成為oscommerce的數據庫（關鍵％不是%s的表中找到）。
+OSCommerceErrorConnectOkButWrongDatabase=數據庫連接成功，但並不指望成為oscommerce的數據庫（關鍵%不是%s的表中找到）。
 OSCommerceTestOk=連接到服務器'%s'於資料庫'用戶'%s'的%s'的成功。
 OSCommerceTestKo1=連接到服務器'%s'的成功，但是數據庫'%s'的無法達成。
 OSCommerceTestKo2=連接到服務器'%s的與用戶'%s'的失敗。

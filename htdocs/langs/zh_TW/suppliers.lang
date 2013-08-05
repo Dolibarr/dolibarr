@@ -24,7 +24,7 @@ ChangeSupplierPrice=供應商的價格變化
 ErrorQtyTooLowForThisSupplier=數量過低，供應商或供應商在這此產品沒有價格定義
 ErrorSupplierCountryIsNotDefined=此供應商國是沒有定義。正確的這第一。
 ProductHasAlreadyReferenceInThisSupplier=該產品已在該企業產品參考
-ReferenceSupplierIsAlreadyAssociatedWithAProduct=該參考供應商已經與一參考：％s的
+ReferenceSupplierIsAlreadyAssociatedWithAProduct=該參考供應商已經與一參考：%s的
 NoRecordedSuppliers=沒有供應商記錄
 SupplierPayment=供應商付款
 SuppliersArea=供應商區
@@ -41,7 +41,7 @@ AddCustomerInvoice=創建客戶發票
 AddSupplierOrder=建立供應商的訂單
 AddSupplierInvoice=創建供應商發票
 ListOfSupplierProductForSupplier=<b>供應商 %s 的產品及價格清單</b>
-NoneOrBatchFileNeverRan=無或批處理<b>％不是</b>最近跑
+NoneOrBatchFileNeverRan=無或批處理<b>%不是</b>最近跑
 // STOP - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).
 
 

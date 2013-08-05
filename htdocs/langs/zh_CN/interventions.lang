@@ -15,7 +15,7 @@ NewIntervention=新的干预
 AddIntervention=添加干预
 ListOfInterventions=名单干预
 EditIntervention=编辑干预
-LastInterventions=上次％s的干预措施
+LastInterventions=上次%s的干预措施
 AllInterventions=所有发言
 CreateDraftIntervention=创建草案
 CustomerDoesNotHavePrefix=客户没有前缀
@@ -37,7 +37,7 @@ TypeContact_fichinter_external_BILLING=结算客户联系
 TypeContact_fichinter_external_CUSTOMER=随访客户联系
 ArcticNumRefModelDesc1=通用数模型
 ArcticNumRefModelError=无法启动
-PacificNumRefModelDesc1=返回格式％syymm，其中yy是二○○一年numero，MM是月，nnnn是一个没有休息，没有返回0序列
+PacificNumRefModelDesc1=返回格式%syymm，其中yy是二○○一年numero，MM是月，nnnn是一个没有休息，没有返回0序列
 PacificNumRefModelError=干预卡$ syymm起已经存在，而不是与此序列模型兼容。删除或重新命名它激活该模块。
 // STOP - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).
 
