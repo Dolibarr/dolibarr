@@ -2,59 +2,43 @@
 CHARSET=UTF-8
 Module2310Name=Cron
 Module2310Desc=Administración de tareas programadas
-
 #
 # About page
-#
-About = Acerca de
-CronAbout = Acerca de Cron
-CronAboutPage = Acerca de Cron
-
-#
+About=Acerca de
+CronAbout=Acerca de Cron
+CronAboutPage=Acerca de Cron
 # Right
-#
-Permission23101 = Leer tareas programadas
-Permission23102 = Crear/actualizar tareas programadas
-Permission23103 = Borrar tarea programada
-Permission23104 = Ejecutar tarea programada
-
-#
+Permission23101=Leer tareas programadas
+Permission23102=Crear/actualizar tareas programadas
+Permission23103=Borrar tarea programada
+Permission23104=Ejecutar tarea programada
 # Admin
-#
-CronSetup= Configuracion
+CronSetup=Configuracion
 URLToLaunchCronJobs=URL para ejecutar tareas Cron
 OrToLaunchASpecificJob=O para ejecutar una tarea en concreto
 KeyForCronAccess=clave para la URL para ejecutar tareas Cron
 FileToLaunchCronJobs=Comando para ejecutar tareas Cron
 CronExplainHowToRunUnix=En entorno Unix debes usar crontab para ejecutar el comando cada varios minutos
 CronExplainHowToRunWin=En un entorno de Microsoft(tm) Windows puedes usar el programador de tareas para ejecutar el comando cada varios minutos
-
-
-#
 # Menu
-#
-# CronJobs=Scheduled jobs
-CronListActive= Tareas Activas
-CronListInactive= Tareas Inactivas
-
-
-#
+CronJobs=Tareas programadas
+CronListActive=Tareas Activas
+CronListInactive=Tareas Inactivas
 # Page list
-#
 CronDateLastRun=Ultima ejecucion
 CronLastOutput=Resultado de la ultima ejecucion
 CronLastResult=Ultimo codigo de resultado
 CronListOfCronJobs=Lista de tareas programadas
 CronCommand=Comando
-CronList= Lista de tareas Cron
-CronDelete= Borrar tareas Cron
-CronConfirmDelete= Estas seguro de querer eliminar estas tareas ?
+CronList=Lista de tareas Cron
+CronDelete=Borrar tareas Cron
+CronConfirmDelete=Estas seguro de querer eliminar estas tareas ?
 CronExecute=Ejecutar Tarea
-CronConfirmExecute= Estas seguro de querer ejecutar esta tarea ahora ?
-CronInfo= Cron te permite ejecutar tareas que han sido programadas
+CronConfirmExecute=Estas seguro de querer ejecutar esta tarea ahora ?
+CronInfo=Cron te permite ejecutar tareas que han sido programadas
 CronWaitingJobs=Trabajos en espera
 CronTask=Tarea
-CronNone= Ninguna
+CronNone=Ninguna
 CronDtStart=Fecha inicio
 CronDtEnd=Fecha fin
 CronDtNextLaunch=Siguiente ejecucion
@@ -72,15 +56,12 @@ CronPriority=Prioridad
 CronLabel=Descripcion
 CronNbRun=Nb. ejecutar
 CronEach=Toda(s)
-# JobFinished=Job launched and finished
-
-#
+JobFinished=Tareas lanzadas y finalizadas
 #Page card
-#
-CronAdd= Tarea Nueva
-CronHourStart= Fecha y hora de inicio de la tarea
-CronEvery= Y ejecutar la tarea cada
-CronObject= Instancia/Objeto a crear
+CronAdd=Tarea Nueva
+CronHourStart=Fecha y hora de inicio de la tarea
+CronEvery=Y ejecutar la tarea cada
+CronObject=Instancia/Objeto a crear
 CronArgs=Parametros
 CronSaveSucess=Guardado con exito
 CronNote=Comentario
@@ -98,16 +79,9 @@ CronObjectHelp=The object name to load. <BR> For exemple to fetch method of Doli
 CronMethodHelp=The object method to launch. <BR> For exemple to fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value of method is  is <i>fecth</i>
 CronArgsHelp=The method arguments. <BR> For exemple to fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value of paramters can be <i>0, ProductRef</i>
 CronCommandHelp=The system command line to execute.
-
-#
 # Info
-#
 CronInfoPage=Informacion
-
-
-#
 # Common
-#
 CronType=Tipo de tarea
 CronType_method=Llamar a un metodo de clase Dolibarr
 CronType_command=Comando Shell

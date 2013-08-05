@@ -4,7 +4,7 @@
  * Copyright (C) 2005		Eric Seigne					<eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2012	Regis Houssin				<regis.houssin@capnetworks.com>
  * Copyright (C) 2008		Raphael Bertrand (Resultic)	<raphael.bertrand@resultic.fr>
- * Copyright (C) 2012		Juanjo Menent				<jmenent@2byte.es>
+ * Copyright (C) 2012-2013  Juanjo Menent				<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -52,11 +52,17 @@ $type='invoice';
 if ($action == 'updateMask')
 {
     $maskconstinvoice=GETPOST('maskconstinvoice','alpha');
+    $maskconstreplacement=GETPOST('maskconstreplacement','alpha');
     $maskconstcredit=GETPOST('maskconstcredit','alpha');
+	$maskconstdeposit=GETPOST('maskconstdeposit','alpha');
     $maskinvoice=GETPOST('maskinvoice','alpha');
+    $maskreplacement=GETPOST('maskreplacement','alpha');
     $maskcredit=GETPOST('maskcredit','alpha');
+	$maskdeposit=GETPOST('maskdeposit','alpha');
     if ($maskconstinvoice) $res = dolibarr_set_const($db,$maskconstinvoice,$maskinvoice,'chaine',0,'',$conf->entity);
+    if ($maskconstreplacement) $res = dolibarr_set_const($db,$maskconstreplacement,$maskreplacement,'chaine',0,'',$conf->entity);
     if ($maskconstcredit)  $res = dolibarr_set_const($db,$maskconstcredit,$maskcredit,'chaine',0,'',$conf->entity);
+	if ($maskconstdeposit)  $res = dolibarr_set_const($db,$maskconstdeposit,$maskdeposit,'chaine',0,'',$conf->entity);
 
 	if (! $res > 0) $error++;
 
@@ -380,12 +386,43 @@ foreach ($dirmodels as $reldir)
                                     $htmltooltip.=$langs->trans($module->error).'<br>';
                                 }
                             }
+                            // Example for remplacement
+                            $facture->type=1;
+                            $nextval=$module->getNextValue($mysoc,$facture);
+                            if ("$nextval" != $langs->trans("NotAvailable"))	// Keep " on nextval
+                            {
+                            	$htmltooltip.=$langs->trans("NextValueForReplacements").': ';
+                            	if ($nextval)
+                            	{
+                            		$htmltooltip.=$nextval.'<br>';
+                            	}
+                            	else
+                            	{
+                            		$htmltooltip.=$langs->trans($module->error).'<br>';
+                            	}
+                            }
+                            
                             // Example for credit invoice
                             $facture->type=2;
                             $nextval=$module->getNextValue($mysoc,$facture);
                             if ("$nextval" != $langs->trans("NotAvailable"))	// Keep " on nextval
                             {
                                 $htmltooltip.=$langs->trans("NextValueForCreditNotes").': ';
+                                if ($nextval)
+                                {
+                                    $htmltooltip.=$nextval.'<br>';
+                                }
+                                else
+                                {
+                                    $htmltooltip.=$langs->trans($module->error).'<br>';
+                                }
+                            }
+                            // Example for deposit invoice
+                            $facture->type=3;
+                            $nextval=$module->getNextValue($mysoc,$facture);
+                            if ("$nextval" != $langs->trans("NotAvailable"))	// Keep " on nextval
+                            {
+                                $htmltooltip.=$langs->trans("NextValueForDeposit").': ';
                                 if ($nextval)
                                 {
                                     $htmltooltip.=$nextval;
@@ -654,7 +691,7 @@ $sql = "SELECT rowid, label";
 $sql.= " FROM ".MAIN_DB_PREFIX."bank_account";
 $sql.= " WHERE clos = 0";
 $sql.= " AND courant = 1";
-$sql.= " AND entity = ".$conf->entity;
+$sql.= " AND entity IN (".getEntity('bank_account', 1).")";
 $var=True;
 $resql=$db->query($sql);
 if ($resql)

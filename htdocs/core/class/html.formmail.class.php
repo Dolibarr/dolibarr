@@ -576,7 +576,14 @@ class FormMail
         		}
 
 				$defaultmessage=str_replace('\n',"\n",$defaultmessage);
-				if($conf->global->FCKEDITOR_ENABLE_MAIL) $defaultmessage=nl2br($defaultmessage);
+				
+				// Deal with format differences between message and signature (text / HTML)
+				if(dol_textishtml($defaultmessage) && !dol_textishtml($this->substit['__SIGNATURE__'])) {
+					$this->substit['__SIGNATURE__'] = dol_nl2br($this->substit['__SIGNATURE__']);
+				} else if(!dol_textishtml($defaultmessage) && dol_textishtml($this->substit['__SIGNATURE__'])) {
+					$defaultmessage = dol_nl2br($defaultmessage);
+				}
+				
         		$defaultmessage=make_substitutions($defaultmessage,$this->substit);
         		if (isset($_POST["message"])) $defaultmessage=$_POST["message"];
 

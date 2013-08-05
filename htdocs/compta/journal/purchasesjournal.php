@@ -117,7 +117,7 @@ if ($result)
 	$num = $db->num_rows($result);
 	// les variables
 	$cptfour = (! empty($conf->global->COMPTA_ACCOUNT_SUPPLIER)?$conf->global->COMPTA_ACCOUNT_SUPPLIER:$langs->trans("CodeNotDef"));
-	$cpttva = (! empty($conf->global->COMPTA_VAT_ACCOUNT)?$conf->global->COMPTA_VAT_ACCOUNT:$langs->trans("CodeNotDef"));
+	$cpttva = (! empty($conf->global->COMPTA_VAT_BUY_ACCOUNT)?$conf->global->COMPTA_VAT_BUY_ACCOUNT:$langs->trans("CodeNotDef"));
 
 	$tabfac = array();
 	$tabht = array();

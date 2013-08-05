@@ -90,7 +90,7 @@ MailingModuleDescEmailsFromUser=E-mails introduïts per l'usuari (email, cognoms
 MailingModuleDescContactsCategories=Tercers (per categoria)
 MailingModuleDescDolibarrContractsLinesExpired=Tercers amb línies de contractes de serveis expirats
 MailingModuleDescContactsByCompanyCategory=Contactes de tercers (per categoria de tercers)
-# MailingModuleDescContactsByCategory=Contacts/addresses of third parties by category
+MailingModuleDescContactsByCategory=Contactes/adreces de tercers per categoria
 MailingModuleDescMembersCategories=Membres (per categoria)
 MailingModuleDescContactsByFunction=Contactes de tercers (per lloc/funció)
 

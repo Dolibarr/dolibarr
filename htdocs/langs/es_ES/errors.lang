@@ -1,9 +1,7 @@
-# Dolibarr language file - Source file is en_US - errors
+# Dolibarr language file - Source file is es_ES - errors
 CHARSET=UTF-8
-
 # No errors
 NoErrorCommitIsDone=Sin errores,  es válido
-
 # Errors
 Error=Error
 Errors=Errores
@@ -124,8 +122,8 @@ ErrorFailedToValidatePasswordReset=No se ha podido restablecer la contraseña. E
 ErrorToConnectToMysqlCheckInstance=Error de conexión con el servidor de la base de datos. Compruebe que MySQL está funcionando (en la mayoría de los casos, puede ejecutarlo desde la línea de comandos utilizando el comando  'etc sudo /etc/init.d/mysql start.
 ErrorFailedToAddContact=Error en la adición del contacto
 ErrorDateMustBeBeforeToday=La fecha no puede ser superior a hoy
-# ErrorPaymentModeDefinedToWithoutSetup=A payment mode was set to type %s but setup of module Invoice was not completed to define information to show for this payment mode.
-
+ErrorPaymentModeDefinedToWithoutSetup=Se ha establecido el modo de pago al tipo %s pero en la configuración del módulo de facturas no se ha indicado la información para mostrar de este modo de pago.
+ErrorPHPNeedModule=Error, su PHP debe tener instalado el módulo<b>%s</b> para utilizar esta característica.
 # Warnings
 WarningMandatorySetupNotComplete=Los parámetros obligatorios de configuración no están todavía definidos
 WarningSafeModeOnCheckExecDir=Atención, está activada la opción PHP <b>safe_mode</b>, el comando deberá estar dentro de un directorio declarado dentro del parámetro php <b>safe_mode_exec_dir</b>.

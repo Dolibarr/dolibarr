@@ -13,7 +13,7 @@ LastSendings=Els %s darrers enviaments
 SearchASending=Cerca enviament
 StatisticsOfSendings=Estadístiques d'enviaments
 NbOfSendings=Nombre d'enviaments
-# NumberOfShipmentsByMonth=Number of shipments by month
+NumberOfShipmentsByMonth=Nombre d'enviaments per mes
 SendingCard=Fitxa enviament
 NewSending=Nuevo envío
 CreateASending=Crear un enviament
@@ -61,16 +61,13 @@ ShipmentCreationIsDoneFromOrder=De moment, la creació d'una nova expedició es 
 RelatedShippings=Expedició(ns) associades
 ShipmentLine=Línia d'expedició
 CarrierList=Llistat de transportistes
-
 # Sending methods
 SendingMethodCATCH=Recollit pel client
 SendingMethodTRANS=Transportista
 SendingMethodCOLSUI=Colissimo
-
 # ModelDocument
 DocumentModelSirocco=Model simple nota de lliurament
 DocumentModelTyphon=Model complet de nota de lliurament (logo...)
-
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=Constant EXPEDITION_ADDON_NUMBER no definida
-# SumOfProductVolumes=Sum of product volumes
-# SumOfProductWeights=Sum of product weights
+SumOfProductVolumes=Suma del volum dels productes
+SumOfProductWeights=Suma del pes dels productes
