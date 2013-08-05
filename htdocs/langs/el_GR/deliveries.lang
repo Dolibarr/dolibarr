@@ -1,32 +1,30 @@
-# Dolibarr language file - el_GR - deliveries
-CHARSET=UTF-8
-Delivery=Διανομή
-Deliveries=Διανομές
-DeliveryCard=Καρτέλα διανομής
-DeliveryOrder=Παράδοση παραγγελίας
-DeliveryOrders=Παράδοση παραγγελιών
-DeliveryDate=Ημερ. παράδοσης
-DeliveryDateShort=Ημερ. παράδ.
-CreateDeliveryOrder=Δημιουργία παράδοσης παραγγελίας
-QtyDelivered=Ποσότητα που παραδόθηκε
-SetDeliveryDate=Ορισμός ημερ. αποστολής
-ValidateDeliveryReceipt=Επικύρωση παράδοσης παραλαβής
-ValidateDeliveryReceiptConfirm=Are you sure you want to validate this delivery receipt ?
-DeliveryMethod=Μέθοδος διανομής
-TrackingNumber=Αριθμός παρακολούθησης
-=
-# merou PDF model						   
-NameAndSignature=Όνομα και υπογραφή : 
-ToAndDate=Σε ___________________________________ στις ____/_____/__________
-GoodStatusDeclaration=Παραδόθηκαν τα παραπάνω σε καλή κατάσταση
-Deliverer=Διανομέας : 
-Sender=Αποστολέας
-Recipient=Παραλήπτης
-
-
-// START - Lines generated via autotranslator.php tool (2011-06-26 15:35:22).
-// Reference language: en_US -> el_GR
-DeleteDeliveryReceipt=Διαγραφή αποδεικτικό παράδοσης
-DeleteDeliveryReceiptConfirm=Είστε σίγουροι ότι θέλετε να διαγράψετε <b>%s</b> παραλαβής παράδοσης;
-DeliveryNotValidated=Η παράδοση δεν επικυρώνονται
-// STOP - Lines generated via autotranslator.php tool (2011-06-26 15:37:25).
+/*  
+* Dolibarr language file - deliveries
+* Language code: el_GR
+* Manually translated by technicks.eu
+*/
+CHARSET = UTF-8
+Delivery = Διανομή
+Deliveries = Διανομές
+DeliveryCard = Καρτέλα διανομής
+DeliveryOrder = Παράδοση παραγγελίας
+DeliveryOrders = Παράδοση παραγγελιών
+DeliveryDate = Ημερ. παράδοσης
+DeliveryDateShort = Ημερ. παράδ.
+CreateDeliveryOrder = Δημιουργία παράδοσης παραγγελίας
+QtyDelivered = Ποσότητα που παραδόθηκε
+SetDeliveryDate = Ορισμός ημερ. αποστολής
+ValidateDeliveryReceipt = Επικύρωση παράδοσης παραλαβής
+ValidateDeliveryReceiptConfirm = Είστε σίγουροι ότι θέλετε να επικυρώσετε την παράδοση παραλαβής;
+DeleteDeliveryReceipt = Διαγραφή αποδεικτικό παράδοσης
+DeleteDeliveryReceiptConfirm = Είστε σίγουροι ότι θέλετε να διαγράψετε <b>%s</b> παραλαβή παράδοσης;
+DeliveryMethod = Μέθοδος διανομής
+TrackingNumber = Αριθμός παρακολούθησης
+DeliveryNotValidated = Η παράδοση δεν επικυρώνονται
+# merou PDF model						    = undefined
+NameAndSignature = Όνομα και υπογραφή : 
+ToAndDate = Σε ___________________________________ στις ____/_____/__________
+GoodStatusDeclaration = Παραδόθηκαν τα παραπάνω σε καλή κατάσταση
+Deliverer = Διανομέας : 
+Sender = Αποστολέας
+Recipient = Παραλήπτης

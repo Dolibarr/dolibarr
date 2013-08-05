@@ -1,0 +1,46 @@
+/*  
+* Dolibarr language file - marges
+* Language code: el_GR
+* Manually translated by technicks.eu
+*/
+CHARSET = UTF-8
+Margin = Περιθώριο
+Margins = Περιθώρια
+TotalMargin = Συνολικό Περιθώριο
+MarginOnProducts = Περιθώριο / Προϊόντα
+MarginOnServices = Περιθώριο / Υπηρεσίες
+MarginRate = Τιμή Περιθωρίου
+MarkRate = Σημειώστε Τιμή
+DisplayMarginRates = Εμφάνιση τιμές περιθωρίου
+DisplayMarkRates = Εμφάνιση σημειωμένες τιμές
+InputPrice = Εισαγωγή τιμής
+margin = Κέρδη διαχείρισης περιθωρίων
+margesSetup = Τα περιθώρια κέρδους ρύθμιση διαχείρισης
+MarginDetails = Λεπτομέρειες Περιθωρίων
+ProductMargins = Περιθώρια προϊόντος
+CustomerMargins = Περιθώρια πελατών
+AgentMargins = Περιθώρια εκπρόσωπου
+ProductService = Προϊόν ή Υπηρεσία
+AllProducts = Όλα τα προϊόντα και οι υπηρεσίες
+ChooseProduct/Service = Επιλέξτε προϊόν ή υπηρεσία
+CommercialAgent = Εμπορικός αντιπρόσωπος
+StartDate = Ημερομηνία έναρξης
+EndDate = Ημερομηνία λήξης
+Launch = Έναρξη
+ForceBuyingPriceIfNull = Υποχρεωτική τιμής αγοράς, αν η τιμή είναι μηδενική
+ForceBuyingPriceIfNullDetails = Αν ειναι "ON", το περιθώριο θα είναι μηδενικό στη γραμμή (τιμή αγοράς = τιμή πώλησης), αν ειναι ("OFF"), θα είναι ίση με την τιμή πώλησης (τιμή αγοράς = 0)
+MARGIN_METHODE_FOR_DISCOUNT = Μέθοδος περιθωρίου για της γενικές εκπτώσεις
+UseDiscountAsProduct = Ως προϊόν
+UseDiscountAsService = Ως υπηρεσία
+UseDiscountOnTotal = Στο υποσύνολο
+MARGIN_METHODE_FOR_DISCOUNT_DETAILS = Καθορίζει αν η συνολική έκπτωση που θεωρείται ως ένα προϊόν, μια υπηρεσία, ή μόνον επί του υποσυνόλου για τον υπολογισμό του περιθωρίου κέρδους.
+MARGIN_TYPE = Τύπος περιθωρίου
+MargeBrute = Αρχικό περιθώριο
+MargeNette = Το καθαρό περιθώριο
+MARGIN_TYPE_DETAILS = Αρχικό περιθώριο: τιμή πώλησης - τιμή αγοράς<br/>Το καθαρό περιθώριο: τιμή πώλησης - τιμή κόστους
+CostPrice = Τιμή κόστους
+BuyingCost = Τιμή κόστους
+UnitCharges = Χρεώσεων
+Charges = Επιβαρύνσεις
+AgentContactType = Τύπος επικοινωνίας που χρησιμοποιείται για την ανάθεση
+AgentContactTypeDetails = Ορίστε τι είδους επικοινωνία (που συνδέεται στα τιμολόγια) θα συνδέεται με τους εμπορικούς αντιπροσώπους

@@ -1,56 +1,53 @@
-# Dolibarr language file - el_GR - languages
-CHARSET=UTF-8
-
-Language_ar_AR=Arabic
-Language_ca_ES=Catalan
-Language_da_DA=Danish
-Language_de_DE=German
-Language_el_GR=Ελληνικά
-Language_en_AU=Αγγλικά (Australia)
-Language_en_GB=Αγγλικά (United Kingdom)
-Language_en_IN=Αγγλικά (India)
-Language_en_US=Αγγλικά (United States)
-Language_es_ES=Spanish
-Language_es_AR=Spanish (Argentina)
-Language_fi_FI=Fins
-Language_fr_BE=Γαλλικά (Belgium)
-Language_fr_CA=Γαλλικά (Canada)
-Language_fr_CH=Γαλλικά (Switzerland)
-Language_fr_FR=Γαλλικά
-Language_is_IS=Icelandic
-Language_it_IT=Italian
-Language_nb_NO=Norwegian (Bokmål)
-Language_nl_BE=Γερμανικά (Belgium)
-Language_nl_NL=Γερμανικά (Netherlands)
-Language_pl_PL=Polish
-Language_pt_BR=Portuguese (Brazil)
-Language_pt_PT=Portuguese
-Language_ro_RO=Romanian
-Language_ru_RU=Russian
-Language_tr_TR=Turkish
-Language_sl_SI=Slovenian
-Language_sv_SV=Swedish
-Language_zh_CN=Chinese
-Language_is_IS=Icelandic
-
-
-// START - Lines generated via autotranslator.php tool (2011-06-26 15:35:22).
-// Reference language: en_US -> el_GR
-Language_ar_SA=Αραβικά
-Language_da_DK=Δανική
-Language_de_AT=Γερμανικά (Αυστρία)
-Language_en_NZ=Αγγλικά (Νέα Ζηλανδία)
-Language_es_HN=Ισπανικά (Ονδούρα)
-Language_es_MX=Ισπανικά (Μεξικό)
-Language_es_PR=Ισπανικά (Πουέρτο Ρίκο)
-Language_fa_IR=Πέρσης
-Language_hu_HU=Ουγγρικός
-Language_ja_JP=Ιαπωνικά
-Language_sv_SE=Σουηδικά
-// STOP - Lines generated via autotranslator.php tool (2011-06-26 15:41:03).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 16:06:57).
-// Reference language: en_US -> el_GR
-Language_ru_UA=Ρωσικά (Ουκρανία)
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:08:09).
+/*  
+* Dolibarr language file - languages
+* Language code: el_GR
+* Manually translated by technicks.eu
+*/
+CHARSET = UTF-8
+Language_ar_AR = Arabic
+Language_ar_SA = Αραβικά
+Language_bg_BG = Βουλγαρικά
+Language_ca_ES = Καταλανικά
+Language_da_DA = Δανική
+Language_da_DK = Δανική
+Language_de_DE = Γερμανικά
+Language_de_AT = Γερμανικά (Αυστρία)
+Language_el_GR = Ελληνικά
+Language_en_AU = Αγγλικά (Australia)
+Language_en_GB = Αγγλικά (United Kingdom)
+Language_en_IN = Αγγλικά (India)
+Language_en_NZ = Αγγλικά (Νέα Ζηλανδία)
+Language_en_SA = Αγγλικά (Saudi Arabia)
+Language_en_US = Αγγλικά (United States)
+Language_es_ES = Ισπανικά
+Language_es_AR = Ισπανικά (Argentina)
+Language_es_HN = Ισπανικά (Ονδούρα)
+Language_es_MX = Ισπανικά (Μεξικό)
+Language_es_PR = Ισπανικά (Πουέρτο Ρίκο)
+Language_et_EE = Εσθονίας
+Language_fa_IR = Περσικά
+Language_fi_FI = Fins
+Language_fr_BE = Γαλλικά (Belgium)
+Language_fr_CA = Γαλλικά (Canada)
+Language_fr_CH = Γαλλικά (Switzerland)
+Language_fr_FR = Γαλλικά
+Language_he_IL = Εβραϊκά
+Language_hu_HU = Ουγγρικά
+Language_is_IS = Ισλανδικά
+Language_it_IT = Ιταλικά
+Language_ja_JP = Ιαπωνικά
+Language_nb_NO = Νορβηγικά (Bokmål)
+Language_nl_BE = Γερμανικά (Belgium)
+Language_nl_NL = Γερμανικά (Netherlands)
+Language_pl_PL = Πολωνικά
+Language_pt_BR = Πορτογαλικά (Brazil)
+Language_pt_PT = Πορτογαλικά
+Language_ro_RO = Ρουμανικά
+Language_ru_RU = Ρωσικά
+Language_ru_UA = Ρωσικά (Ουκρανία)
+Language_tr_TR = Τούρκικα
+Language_sl_SI = Σλοβενικά
+Language_sv_SV = Σουηδικά
+Language_sv_SE = Σουηδικά
+Language_zh_CN = Κινέζικα
+Language_zh_TW = Κινέζικα (Traditional)

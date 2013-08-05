@@ -1,82 +1,88 @@
-# Dolibarr language file - el_GR - boxes
-CHARSET=UTF-8
-BoxLastRssInfos=Πληροφορίες Rss
-BoxLastProducts=%s τελευταία προϊόντα/υπηρεσίες
-BoxLastProductsInContract=%s τελευταία συμβόλαια με προϊόντα/υπηρεσίες
-BoxLastSupplierBills=Τελευταία τιμολόγια προμηθευτών
-BoxLastCustomerBills=Τελευταία τιμολόγια πελατών
-BoxOldestUnpaidCustomerBills=Παλαιότερα απλήρωτα τιμολόγια πελατών
-BoxOldestUnpaidSupplierBills=Παλαιότερα απλήρωτα τιμολόγια προμηθευτών
-BoxLastProposals=Τελευταίες εμπορικές προτάσεις
-BoxLastProspects=Τελευταίες τροποποιημένες προοπτικές
-BoxLastCustomers=Τελευταίοι τροποποιημένοι πελάτες
-BoxLastSuppliers=Τελευταίοι τροποποιημένοι προμηθευτές
-BoxLastCustomerOrders=Τελευταίες παραγγελίες πελατών
-BoxLastBooks=Τελευταία Βιβλία
-BoxLastActions=Τελευταίες Ενέργειες
-BoxLastContracts=Τελευταία συμβόλαια
-BoxCurrentAccounts=Τρέχοντα υπόλοιπα λογαρισμών
-BoxSalesTurnover=Κύκλος εργασιών
-BoxTotalUnpaidCustomerBills=Σύνολο απλήρωτων τιμολόγιων πελατών
-BoxTotalUnpaidSuppliersBills=Σύνολο απλήρωτων τιμολόγιων προμηθευτών
-BoxTitleLastBooks=Last %s recorded books
-BoxTitleNbOfCustomers=Πλήθος πελατών
-BoxTitleLastRssInfos=Τα %s πιο πρόσφατα νέα από %s
-BoxTitleLastProducts=Τα %s πιο πρόσφατα τροποποιημένα προϊόντα/υπηρεσίες
-BoxTitleLastCustomerOrders=Οι %s πιο πρόσφατα τροποποιημένες παραγγελίες πελατών
-BoxTitleLastSuppliers=Οι %s πιο πρόσφατα καταχωρημένοι προμηθευτές
-BoxTitleLastCustomers=Οι %s πιο πρόσφατα καταχωρημένοι πελάτες
-BoxTitleLastModifiedSuppliers=Οι %s πιο πρόσφατα τροποποιημένοι προμηθευτές
-BoxTitleLastModifiedCustomers=Οι %s πιο πρόσφατα τροποποιημένοι πελάτες
-BoxTitleLastCustomersOrProspects=Οι %s πιο πρόσφατα τροποποιημένοι πελάτες ή προοπτικές
-BoxTitleLastPropals=Οι %s πιο πρόσφατα καταχωρημένες προτάσεις
-BoxTitleLastCustomerBills=Τα %s πιο πρόσφατα τιμολόγια πελατών
-BoxTitleLastSupplierBills=Τα %s πιο πρόσφατα τιμολόγια προμηθευτών
-BoxTitleLastProspects=Οι %s πιο πρόσφατες προπτικές
-BoxTitleLastModifiedProspects=Οι %s πιο πρόσφατα τροποποιημένες προοπτικές
-BoxTitleLastProductsInContract=Τα %s πιο πρόσφατα συμβόλαια με προϊόντα/υπηρεσίες
-BoxTitleOldestUnpaidCustomerBills=Τα %s παλαιότερα απλήρωτα τιμολόγια πελατών
-BoxTitleOldestUnpaidSupplierBills=Τα %s παλαιότερα απλήρωτα τιμολόγια προμηθευτών
-BoxTitleCurrentAccounts=Υπόλοιπα λογαριασμών
-BoxTitleSalesTurnover=Κύκλος εργασιών των πωλήσεων
-BoxTitleTotalUnpaidCustomerBills=Απλήρωτα τιμολόγια πελατών
-BoxTitleTotalUnpaidSuppliersBills=Απλήρωτα τιμολόγια προμηθευτών
-BoxMyLastBookmarks=Οι %s νεότεροι σελιδοδείκτες μου
-FailedToRefreshDataInfoNotUpToDate=Failed to refresh RSS flux. Last successfull refresh date: %s
-LastRefreshDate=Τελευταία ημερομηνία ανανέωσης
-NoRecordedBookmarks=No bookmarks defined. Click <a href="%s">here</a> to add bookmarks.
-NoRecordedCustomers=Δεν υπάρχουν καταχωρημένοι πελάτες
-BoxTitleLastActionsToDo=Οι %s τελευταίες ενέργειες που πρέπει να γίνουν
-BoxTitleLastContracts=Τα %s πιο πρόσφατα συμβόλαια
-NoActionsToDo=Δεν υπάρχουν ενέργειες που πρέπει να γίνουν
-NoRecordedOrders=Δεν υπάρχουν καταχωρημένες παραγγελίες πελατών
-NoRecordedProposals=Δεν υπάρχουν καταχωρημένες προτάσεις
-NoRecordedInvoices=Δεν υπάρχουν καταχωρημένα τιμολόγια πελατών
-NoUnpaidCustomerBills=Δεν υπάρχουν απλήρωτα τιμολόγια πελατών
-NoRecordedSupplierInvoices=Δεν υπάρχουν καταχωρημένα τιμολόγια προμηθευτών
-NoUnpaidSupplierBills=Δεν υπάρχουν απλήρωτα τιμολόγια προμηθευτών
-NoModifiedSupplierBills=Δεν υπάρχουν τροποποιημένα τιμολόγια προμηθευτών
-NoRecordedProducts=Δεν υπάρχουν καταχωρημένα προϊόντα/υπηρεσίες
-NoRecordedProspects=Δεν υπάρχουν προοπτικές
-NoContractedProducts=Δεν υπάρχουν καταχωρημένα συμβόλαια με προϊόντα/υπηρεσίες
-NoRecordedContracts=Δεν υπάρχουν καταχωρημένα συμβόλαια
-
-
-// START - Lines generated via autotranslator.php tool (2011-06-26 15:35:22).
-// Reference language: en_US -> el_GR
-BoxLastContacts=Derniers επαφές / διευθύνσεις
-BoxLastMembers=Τελευταία μέλη
-BoxTitleLastModifiedMembers=Τελευταία %s τροποποίηση των μελών
-BoxTitleLastModifiedContacts=Τελευταία %s τροποποίηση επαφές / διευθύνσεις
-ClickToAdd=Πατήστε εδώ για προσθήκη.
-NoRecordedContacts=Δεν καταγράφονται επαφές
-// STOP - Lines generated via autotranslator.php tool (2011-06-26 15:36:52).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 16:06:57).
-// Reference language: en_US -> el_GR
-BoxOldestExpiredServices=Παλαιότερο ενεργό λήξει υπηρεσίες
-BoxLastExpiredServices=Τελευταία %s παλαιότερα επαφές με την ενεργό λήξει υπηρεσίες
-BoxTitleLastModifiedDonations=Τελευταία τροποποίηση %s δωρεές
-BoxTitleLastModifiedExpenses=Τελευταία τροποποίηση %s έξοδα
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:07:19).
+/*  
+* Dolibarr language file - boxes
+* Language code: el_GR
+* Manually translated by technicks.eu
+*/
+CHARSET = UTF-8
+BoxLastRssInfos = Πληροφορίες Rss
+BoxLastProducts = %s τελευταία προϊόντα/υπηρεσίες
+BoxProductsAlertStock = Προειδοποίηση προϊόντων σε απόθεμα
+BoxLastProductsInContract = %s τελευταία συμβόλαια με προϊόντα/υπηρεσίες
+BoxLastSupplierBills = Τελευταία τιμολόγια προμηθευτών
+BoxLastCustomerBills = Τελευταία τιμολόγια πελατών
+BoxOldestUnpaidCustomerBills = Παλαιότερα απλήρωτα τιμολόγια πελατών
+BoxOldestUnpaidSupplierBills = Παλαιότερα απλήρωτα τιμολόγια προμηθευτών
+BoxLastProposals = Τελευταίες εμπορικές προσφορές
+BoxLastProspects = Τελευταίες τροποποιημένες προοπτικές
+BoxLastCustomers = Τελευταίοι τροποποιημένοι πελάτες
+BoxLastSuppliers = Τελευταίοι τροποποιημένοι προμηθευτές
+BoxLastCustomerOrders = Τελευταίες παραγγελίες πελατών
+BoxLastBooks = Τελευταία Βιβλία
+BoxLastActions = Τελευταίες Ενέργειες
+BoxLastContracts = Τελευταία συμβόλαια
+BoxLastContacts = Τελευταίες επαφές/διευθύνσεις
+BoxLastMembers = Τελευταία μέλη
+BoxFicheInter = Τελευταίες παρεμβάσεις
+BoxCurrentAccounts = Τρέχοντα υπόλοιπα λογαριασμών
+BoxSalesTurnover = Κύκλος εργασιών
+BoxTotalUnpaidCustomerBills = Σύνολο απλήρωτων τιμολογίων πελατών
+BoxTotalUnpaidSuppliersBills = Σύνολο απλήρωτων τιμολογίων προμηθευτών
+BoxTitleLastBooks = Οι %s τελευταίες εγγραφές βιβλίων
+BoxTitleNbOfCustomers = Πλήθος πελατών
+BoxTitleLastRssInfos = Τα %s πιο πρόσφατα νέα από %s
+BoxTitleLastProducts = Τα %s πιο πρόσφατα τροποποιημένα προϊόντα/υπηρεσίες
+BoxTitleProductsAlertStock = Προειδοποίηση προϊόντων σε απόθεμα
+BoxTitleLastCustomerOrders = Οι %s πιο πρόσφατα τροποποιημένες παραγγελίες πελατών
+BoxTitleLastSuppliers = Οι %s πιο πρόσφατα καταχωρημένοι προμηθευτές
+BoxTitleLastCustomers = Οι %s πιο πρόσφατα καταχωρημένοι πελάτες
+BoxTitleLastModifiedSuppliers = Οι %s πιο πρόσφατα τροποποιημένοι προμηθευτές
+BoxTitleLastModifiedCustomers = Οι %s πιο πρόσφατα τροποποιημένοι πελάτες
+BoxTitleLastCustomersOrProspects = Οι %s πιο πρόσφατα τροποποιημένοι πελάτες ή προοπτικές
+BoxTitleLastPropals = Οι %s πιο πρόσφατα καταχωρημένες προσφορές
+BoxTitleLastCustomerBills = Τα %s πιο πρόσφατα τιμολόγια πελατών
+BoxTitleLastSupplierBills = Τα %s πιο πρόσφατα τιμολόγια προμηθευτών
+BoxTitleLastProspects = Οι %s πιο πρόσφατες προσφορές
+BoxTitleLastModifiedProspects = Οι %s πιο πρόσφατα τροποποιημένες προσφορές
+BoxTitleLastProductsInContract = Τα %s πιο πρόσφατα συμβόλαια με προϊόντα/υπηρεσίες
+BoxTitleLastModifiedMembers = Τελευταία %s τροποποίηση των μελών
+BoxTitleLastFicheInter = Τελευταία %s ενημέρωση παρέμβασης
+BoxTitleOldestUnpaidCustomerBills = Τα %s παλαιότερα απλήρωτα τιμολόγια πελατών
+BoxTitleOldestUnpaidSupplierBills = Τα %s παλαιότερα απλήρωτα τιμολόγια προμηθευτών
+BoxTitleCurrentAccounts = Υπόλοιπα λογαριασμών
+BoxTitleSalesTurnover = Κύκλος εργασιών των πωλήσεων
+BoxTitleTotalUnpaidCustomerBills = Απλήρωτα τιμολόγια πελατών
+BoxTitleTotalUnpaidSuppliersBills = Απλήρωτα τιμολόγια προμηθευτών
+BoxTitleLastModifiedContacts = Οι  τελευταίες %s τροποποιημένες επαφές / διευθύνσεις
+BoxMyLastBookmarks = Οι %s νεότεροι σελιδοδείκτες μου
+BoxOldestExpiredServices = Παλαιότερες ενεργές υπηρεσίες που έχουν λήξει
+BoxLastExpiredServices = Οι τελευταίες %s παλαιότερες επαφές με ενεργές υπηρεσίες που έχουν λήξει
+BoxTitleLastActionsToDo = Οι %s τελευταίες ενέργειες που πρέπει να γίνουν
+BoxTitleLastContracts = Τα %s πιο πρόσφατα συμβόλαια
+BoxTitleLastModifiedDonations = Οι τελευταίες %s τροποποιημένες δωρεές
+BoxTitleLastModifiedExpenses = Τελευταία τροποποίηση %s έξοδα
+BoxGlobalActivity = Η γενική δραστηριότητα για (τιμολόγια, προσφορές, παραγγελίες)
+FailedToRefreshDataInfoNotUpToDate = Αποτυχία ανανέωσης RSS ροής. Τελευταία ημερομηνία επιτυχημένης ανανέωσης: %s
+LastRefreshDate = Τελευταία ημερομηνία ανανέωσης
+NoRecordedBookmarks = Δεν υπάρχουν σελιδοδείκτες που ορίζονται. Κάντε κλικ <a href="%s">εδώ</a> για να προσθέσετε σελιδοδείκτες.
+ClickToAdd = Πατήστε εδώ για προσθήκη.
+NoRecordedCustomers = Δεν υπάρχουν καταχωρημένοι πελάτες
+NoRecordedContacts = Δεν υπάρχουν καταγεγραμμένες επαφές
+NoActionsToDo = Δεν υπάρχουν ενέργειες που πρέπει να γίνουν
+NoRecordedOrders = Δεν υπάρχουν καταχωρημένες παραγγελίες πελατών
+NoRecordedProposals = Δεν υπάρχουν καταχωρημένες προσφορές
+NoRecordedInvoices = Δεν υπάρχουν καταχωρημένα τιμολόγια πελατών
+NoUnpaidCustomerBills = Δεν υπάρχουν απλήρωτα τιμολόγια πελατών
+NoRecordedSupplierInvoices = Δεν υπάρχουν καταχωρημένα τιμολόγια προμηθευτών
+NoUnpaidSupplierBills = Δεν υπάρχουν απλήρωτα τιμολόγια προμηθευτών
+NoModifiedSupplierBills = Δεν υπάρχουν τροποποιημένα τιμολόγια προμηθευτών
+NoRecordedProducts = Δεν υπάρχουν καταχωρημένα προϊόντα/υπηρεσίες
+NoRecordedProspects = Δεν υπάρχουν προσφορές
+NoContractedProducts = Δεν υπάρχουν καταχωρημένα συμβόλαια με προϊόντα/υπηρεσίες
+NoRecordedContracts = Δεν υπάρχουν καταχωρημένα συμβόλαια
+BoxLatestSupplierOrders = Τελευταίες παραγγελίες προμηθευτών
+BoxTitleLatestSupplierOrders = Οι %s τελευταίες παραγγελίες προμηθευτών
+NoSupplierOrder = Δεν υπάρχουν καταχωρημένες παραγγελίες προμηθευτών
+BoxInvoicesPerMonth = Τιμολόγια ανά μήνα
+BoxOrdersPerMonth = Παραγγελίες ανά μήνα
+BoxProposalsPerMonth = Προσφορές ανά μήνα
+NoTooLowStockProducts = Κανένα προϊόν κάτω από το χαμηλό όριο του αποθέματος

@@ -1,48 +1,44 @@
-# Language file - en_US - cashdesk
-CHARSET=UTF-8
-CashDeskMenu=Point of sale
-CashDesk=Point of sale
-CashDesks=Point of sales
-CashDeskBank=Bank account
-CashDeskBankCash=Bank account (cash)
-CashDeskBankCB=Bank account (card)
-CashDeskBankCheque=Bank account (cheque)
-CashDeskWarehouse=Warehouse
-CashDeskThirdParty=Third party
-ShoppingCart=Shopping cart
-NewSell=New sell
-BackOffice=Back office
-AddThisArticle=Add this article
-RestartSelling=Go back on sell
-SellFinished=Sell finished
-PrintTicket=Print ticket
-NoResults=No results
-NoProductFound=No article found
-ProductFound=product found
-ProductsFound=products found
-NoArticle=No article
-
-// START - Lines generated via autotranslator.php tool (2011-06-26 15:35:22).
-// Reference language: en_US -> el_GR
-CashDeskProducts=Προϊόντα
-CashDeskStock=Χρηματιστήριο
-CashDeskOn=επί
-Identification=Αναγνώριση
-Article=Άρθρο
-Difference=Διαφορά
-TotalTicket=Σύνολο εισιτηρίων
-NoVAT=Δεν ΦΠΑ για την πώληση αυτή
-Change=Περίσσεια λάβει
-CalTip=Κάντε κλικ για να δείτε το ημερολόγιο
-CashDeskSetupStock=Ρωτάτε για να μειώσετε απόθεμα στο τιμολόγιο δημιουργία αποθήκης αλλά για αυτό είναι δεν ορίζεται <br> Αλλαγή απόθεμα εγκατάστασης μονάδας, ή επιλέξτε μια αποθήκη
-// STOP - Lines generated via autotranslator.php tool (2011-06-26 15:36:58).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 16:06:57).
-// Reference language: en_US -> el_GR
-CashdeskShowServices=Πώληση υπηρεσιών
-BankToPay=Πιστωτικός λογαριασμός
-ShowCompany=Εμφάνιση εταιρείας
-ShowStock=Εμφάνιση αποθήκη
-DeleteArticle=Κάντε κλικ για να καταργήσετε αυτό το άρθρο
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:08:15).
+/*  
+* Dolibarr language file - cashdesk
+* Language code: el_GR
+* Manually translated by technicks.eu
+*/
+CHARSET = UTF-8
+CashDeskMenu = Σημείο πώλησης
+CashDesk = Σημείο πώλησης
+CashDesks = Σημείο πωλήσεων
+CashDeskBank = Τραπεζικός λογαριασμός
+CashDeskBankCash = Τραπεζικός λογαριασμός (σε μετρητά)
+CashDeskBankCB = Τραπεζικός λογαριασμός (κάρτα)
+CashDeskBankCheque = Τραπεζικός λογαριασμός (επιταγή)
+CashDeskWarehouse = Αποθήκη
+CashdeskShowServices = Πώληση υπηρεσιών
+CashDeskProducts = Προϊόντα
+CashDeskStock = Απόθεμα
+CashDeskOn = επί
+CashDeskThirdParty = Στοιχεία
+CashdeskDashboard = Σημείο πρόσβασης πώλησης
+ShoppingCart = Καλάθι αγορών
+NewSell = Νέα Πώληση
+BackOffice = Back office
+AddThisArticle = Προσθέστε αυτό το προϊόν
+RestartSelling = Επιστρέψτε στην πώληση
+SellFinished = Ολοκλήρωση πώλησης
+PrintTicket = Εκτύπωση Απόδειξης
+NoProductFound = Το προϊόν δεν βρέθηκε
+ProductFound = Το προϊόν βρέθηκε
+ProductsFound = Τα προϊόντα βρέθηκαν
+NoArticle = Κανένα προϊόν
+Identification = Αναγνώριση
+Article = Πώληση
+Difference = Διαφορά
+TotalTicket = Σύνολο
+NoVAT = Χωρίς Φ.Π.Α. για αυτή την πώληση
+Change = Ρέστα
+CalTip = Κάντε κλικ για να δείτε το ημερολόγιο
+CashDeskSetupStock = Ρωτάτε για να μειώσετε απόθεμα στο τιμολόγιο δημιουργία αποθήκης αλλά για αυτό είναι δεν ορίζεται <br> Αλλαγή απόθεμα εγκατάστασης μονάδας, ή επιλέξτε μια αποθήκη
+BankToPay = Πιστωτικός λογαριασμός
+ShowCompany = Εμφάνιση εταιρείας
+ShowStock = Εμφάνιση αποθήκης
+DeleteArticle = Κάντε κλικ για να καταργήσετε αυτό το προϊόν
+FilterRefOrLabelOrBC = Αναζήτηση (Κωδ. / Ετικέτα)

@@ -1,39 +1,34 @@
-/*
- * Language code: el_GR
- * Automatic generated via autotranslator.php tool
- * Generation date 2011-06-26 15:35:22
- */
-
-
-// START - Lines generated via autotranslator.php tool (2011-06-26 15:35:22).
-// Reference language: en_US -> el_GR
-CHARSET=UTF-8
-DomainPassword=Κωδικός πρόσβασης για τον τομέα
-YouMustChangePassNextLogon=Κωδικός πρόσβασης για <b>%s</b> χρήστη στο <b>%s</b> τομέα πρέπει να αλλάξει.
-UserMustChangePassNextLogon=Ο χρήστης πρέπει να αλλάξετε τον κωδικό πρόσβασης για το %s τομέα
-LdapUacf_NORMAL_ACCOUNT=Λογαριασμός χρήστη
-LdapUacf_DONT_EXPIRE_PASSWORD=Κωδικός πρόσβασης δεν λήγει ποτέ
-LdapUacf_ACCOUNTDISABLE=Ο λογαριασμός είναι απενεργοποιημένη στον τομέα %s
-LDAPInformationsForThisContact=Πληροφορίες στο LDAP βάση δεδομένων για αυτήν την επαφή
-LDAPInformationsForThisUser=Πληροφορίες στη βάση δεδομένων LDAP για αυτό το χρήστη
-LDAPInformationsForThisGroup=Πληροφορίες στο LDAP βάση δεδομένων για αυτή την ομάδα
-LDAPInformationsForThisMember=Πληροφορίες στη βάση δεδομένων LDAP για αυτό το μέλος
-LDAPAttribute=LDAP χαρακτηριστικού
-LDAPAttributes=LDAP χαρακτηριστικά
-LDAPCard=LDAP κάρτα
-LDAPRecordNotFound=Εγγραφή δεν βρέθηκε στην βάση δεδομένων LDAP
-LDAPUsers=Οι χρήστες σε LDAP βάση δεδομένων
-LDAPGroups=Ομάδες στην βάση δεδομένων LDAP
-LDAPFieldStatus=Κατάσταση
-LDAPFieldFirstSubscriptionDate=Πρώτη ημερομηνία εγγραφής
-LDAPFieldFirstSubscriptionAmount=Γροθιά ποσό συνδρομής
-LDAPFieldLastSubscriptionDate=Τελευταία ημερομηνία εγγραφής
-LDAPFieldLastSubscriptionAmount=Τελευταία ποσό συνδρομής
-SynchronizeDolibarr2Ldap=Συγχρονισμός χρήστη (Dolibarr -> LDAP)
-UserSynchronized=Συγχρονισμένη χρήστη
-GroupSynchronized=Συγχρονισμένη ομάδα
-MemberSynchronized=Συγχρονισμένη μέλος
-ContactSynchronized=Επικοινωνία συγχρονισμένη
-ForceSynchronize=Δύναμη συγχρονισμό Dolibarr -> LDAP
-ErrorFailedToReadLDAP=Αποτυχία ανάγνωσης LDAP βάση δεδομένων. Ελέγξτε LDAP εγκατάσταση μονάδας και την προσβασιμότητα της βάσης δεδομένων.
-// STOP - Lines generated via autotranslator.php tool (2011-06-26 15:41:07).
+/*  
+* Dolibarr language file - ldap
+* Language code: el_GR
+* Manually translated by technicks.eu
+*/
+CHARSET = UTF-8
+DomainPassword = Κωδικός πρόσβασης για το Domain
+YouMustChangePassNextLogon = Κωδικός πρόσβασης για <b>%s</b> χρήστη στο <b>%s</b> Domain πρέπει να αλλάξει.
+UserMustChangePassNextLogon = Ο χρήστης πρέπει να αλλάξετε τον κωδικό πρόσβασης για το %s Domain
+LdapUacf_NORMAL_ACCOUNT = Λογαριασμός χρήστη
+LdapUacf_DONT_EXPIRE_PASSWORD = Κωδικός πρόσβασης δεν λήγει ποτέ
+LdapUacf_ACCOUNTDISABLE = Ο λογαριασμός είναι απενεργοποιημένο στο Domain %s
+LDAPInformationsForThisContact = Πληροφορίες στο LDAP βάση δεδομένων για αυτήν την επαφή
+LDAPInformationsForThisUser = Πληροφορίες στη βάση δεδομένων LDAP για αυτό το χρήστη
+LDAPInformationsForThisGroup = Πληροφορίες στο LDAP βάση δεδομένων για αυτή την ομάδα
+LDAPInformationsForThisMember = Πληροφορίες στη βάση δεδομένων LDAP για αυτό το μέλος
+LDAPAttribute = LDAP χαρακτηριστικό
+LDAPAttributes = LDAP χαρακτηριστικά
+LDAPCard = LDAP κάρτα
+LDAPRecordNotFound = Εγγραφή δεν βρέθηκε στην βάση δεδομένων LDAP
+LDAPUsers = Οι χρήστες σε LDAP βάση δεδομένων
+LDAPGroups = Ομάδες στην βάση δεδομένων LDAP
+LDAPFieldStatus = Κατάσταση
+LDAPFieldFirstSubscriptionDate = Πρώτη ημερομηνία εγγραφής
+LDAPFieldFirstSubscriptionAmount = Πρώτο ποσό εγγραφής
+LDAPFieldLastSubscriptionDate = Τελευταία ημερομηνία εγγραφής
+LDAPFieldLastSubscriptionAmount = Τελευταίο ποσό συνδρομής
+SynchronizeDolibarr2Ldap = Συγχρονισμός χρήστη (Dolibarr -> LDAP)
+UserSynchronized = Συγχρονισμένος χρήστης
+GroupSynchronized = Συγχρονισμένη ομάδα
+MemberSynchronized = Συγχρονισμένο μέλος
+ContactSynchronized = Επικοινωνία συγχρονισμένη
+ForceSynchronize = Δυναμικός συγχρονισμός Dolibarr -> LDAP
+ErrorFailedToReadLDAP = Αποτυχία ανάγνωσης LDAP βάση δεδομένων. Ελέγξτε LDAP εγκατάσταση μονάδας και την προσβασιμότητα της βάσης δεδομένων.

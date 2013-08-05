@@ -1,27 +1,26 @@
-# Dolibarr language file - el_GR - ταξίδια
-CHARSET=UTF-8
-Trip=Ταξίδι
-Trips=Ταξίδια
-TripsAndExpenses=Ταξίδια και έξοδα
-TripsAndExpensesStatistics=Στατιστικά ταξιδιών και εξόδων
-TripCard=Καρτέλα ταξιδιού
-AddTrip=Προσθήκη ταξιδιού
-ListOfTrips=Λίστα ταξιδιών
-ListOfFees=Λίστα φόρων
-NewTrip=Νέο ταξίδι
-CompanyVisited=Έγινε επίσκεψη σε εταιρία/οργανισμό
-Kilometers=Χιλιόμετρα
-FeesKilometersOrAmout=Σύνολο χλμ
-DeleteTrip=Διαγραφή ταξιδιού
-ConfirmDeleteTrip=Είστε σίγουροι ότι θέλετε να διαγράψετε το ταξίδι;
-TF_OTHER=Άλλο
-TF_LUNCH=Γεύμα
-TF_TRIP=Ταξίδι
-ListTripsAndExpenses=Λίστα ταξιδιών και εξόδων
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 16:06:57).
-// Reference language: en_US -> el_GR
-ExpensesArea=Ταξίδια και έξοδα περιοχή
-SearchATripAndExpense=Αναζήτηση ένα ταξίδι και τα έξοδα
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:07:28).
+/*  
+* Dolibarr language file - trips
+* Language code: el_GR
+* Manually translated by technicks.eu
+*/
+CHARSET = UTF-8
+Trip = Ταξίδι
+Trips = Ταξίδια
+TripsAndExpenses = Ταξίδια και έξοδα
+TripsAndExpensesStatistics = Στατιστικά ταξιδιών και εξόδων
+TripCard = Καρτέλα ταξιδιού
+AddTrip = Προσθήκη ταξιδιού
+ListOfTrips = Λίστα ταξιδιών
+ListOfFees = Λίστα φόρων
+NewTrip = Νέο ταξίδι
+CompanyVisited = Έγινε επίσκεψη σε εταιρία/οργανισμό
+Kilometers = Χιλιόμετρα
+FeesKilometersOrAmout = Σύνολο χλμ
+DeleteTrip = Διαγραφή ταξιδιού
+ConfirmDeleteTrip = Είστε σίγουροι ότι θέλετε να διαγράψετε το ταξίδι;
+TF_OTHER = Άλλο
+TF_LUNCH = Γεύμα
+TF_TRIP = Ταξίδι
+ListTripsAndExpenses = Λίστα ταξιδιών και εξόδων
+ExpensesArea = Περιοχή Ταξιδιών και Εξόδων
+SearchATripAndExpense = Αναζήτηση σε ταξίδια και έξοδα

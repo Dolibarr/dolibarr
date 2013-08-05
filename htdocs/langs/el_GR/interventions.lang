@@ -1,50 +1,45 @@
-# Dolibarr language file - el_GR - interventions
-CHARSET=UTF-8
-Intervention=Intervention
-Interventions=Interventions
-InterventionCard=Intervention card
-NewIntervention=New intervention
-AddIntervention=Προσθ. παρέμβασης
-ListOfInterventions=List of interventions
-EditIntervention=Edit intervention
-LastInterventions=Last %s interventions
-AllInterventions=All interventions
-CreateDraftIntervention=Create draft
-CustomerDoesNotHavePrefix=Customer does not have a prefix
-InterventionContact=Intervention contact
-DeleteIntervention=Delete intervention
-ValidateIntervention=Validate intervention
-ModifyIntervention=Modify intervention
-DeleteInterventionLine=Delete intervention line
-ConfirmDeleteIntervention=Are you sure you want to delete this intervention ?
-ConfirmValidateIntervention=Are you sure you want to validate this intervention ?
-ConfirmModifyIntervention=Are you sure you want to modify this intervention ?
-ConfirmDeleteInterventionLine=Are you sure you want to delete this intervention line ?
-NameAndSignatureOfInternalContact=Name and signature of intervening :
-NameAndSignatureOfExternalContact=Name and signature of customer :
-DocumentModelStandard=Standard document model for interventions
-##### Types de contacts #####
-TypeContact_fichinter_internal_INTERREPFOLL=Representative following-up intervention
-TypeContact_fichinter_internal_INTERVENING=Intervening
-TypeContact_fichinter_external_BILLING=Billing customer contact
-TypeContact_fichinter_external_CUSTOMER=Following-up customer contact
-# Modele numérotation
-ArcticNumRefModelDesc1=Generic number model
-ArcticNumRefModelError=Failed to activate
-PacificNumRefModelDesc1=Return numero with format %syymm-nnnn where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
-PacificNumRefModelError=An intervention card starting with $syymm already exists and is not compatible with this model of sequence. Remove it or rename it to activate this module.
-
-
-// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
-// Reference language: en_US -> el_GR
-ActionsOnFicheInter=Δράσεις για την παρέμβαση
-ClassifyBilled=Ταξινομήστε &quot;Χρεώσεις&quot;
-StatusInterInvoiced=Τιμολογείται
-RelatedInterventions=Οι παρεμβάσεις που σχετίζονται
-// STOP - Lines generated via autotranslator.php tool (2011-10-10 05:19:27).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 16:06:57).
-// Reference language: en_US -> el_GR
-ShowIntervention=Εμφάνιση παρέμβαση
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:07:08).
+/*  
+* Dolibarr language file - interventions
+* Language code: el_GR
+* Manually translated by technicks.eu
+*/
+CHARSET = UTF-8
+Intervention = Παρέμβαση
+Interventions = Παρεμβάσεις
+InterventionCard = Κάρτα Παρέμβασης 
+NewIntervention = Νέα παρέμβαση
+AddIntervention = Προσθ. παρέμβασης
+ListOfInterventions = Λίστα παρεμβάσεων
+EditIntervention = Επεξεργασία παρέμβαση
+ActionsOnFicheInter = Δράσεις για την παρέμβαση
+LastInterventions = Τελευταίες %s παρεμβάσεις
+AllInterventions = Όλες οι παρεμβάσεις
+CreateDraftIntervention = Δημιουργία σχεδίου
+CustomerDoesNotHavePrefix = Ο Πελάτης δεν έχει πρόθεμα
+InterventionContact = Επαφή παρέμβασης
+DeleteIntervention = Διαγραφή παρέμβασης
+ValidateIntervention = Επικύρωση παρέμβασης
+ModifyIntervention = Τροποποίηση παρέμβασης
+DeleteInterventionLine = Διαγραφή γραμμής παρέμβασης
+ConfirmDeleteIntervention = Είστε σίγουροι ότι θέλετε να διαγράψετε αυτή την παρέμβαση;
+ConfirmValidateIntervention = Είστε σίγουροι ότι θέλετε να κατοχυρωθεί η παρέμβαση αυτή;
+ConfirmModifyIntervention = Είστε σίγουροι ότι θέλετε να τροποποιήσετε αυτή την παρέμβαση;
+ConfirmDeleteInterventionLine = Είστε σίγουροι ότι θέλετε να διαγράψετε αυτή τη γραμμή παρέμβασης;
+NameAndSignatureOfInternalContact = Όνομα και υπογραφή της παρέμβασης :
+NameAndSignatureOfExternalContact = Όνομα και υπογραφή πελάτη :
+DocumentModelStandard = Πρότυπο μοντέλο εγγράφου για παρεμβάσεις
+InterventionCardsAndInterventionLines = Παρεμβάσεις και τις γραμμές παρεμβάσεων
+ClassifyBilled = Ταξινομήστε "Χρεώσεις"
+StatusInterInvoiced = Τιμολογείται
+RelatedInterventions = Οι παρεμβάσεις που σχετίζονται
+ShowIntervention = Εμφάνιση παρέμβαση
+##### Types de contacts ##### = undefined
+TypeContact_fichinter_internal_INTERREPFOLL = Εκπρόσωπος που ακολουθεί την παρέμβασης
+TypeContact_fichinter_internal_INTERVENING = Παρέμβαση
+TypeContact_fichinter_external_BILLING = Χρέωση επαφής του πελάτη
+TypeContact_fichinter_external_CUSTOMER = Παρακολούθηση επαφή με τον πελάτη
+# Modele numérotation = undefined
+ArcticNumRefModelDesc1 = Γενικός αριθμός μοντέλου
+ArcticNumRefModelError = Αποτυχία ενεργοποιήσεις
+PacificNumRefModelDesc1 = Return numero with format %syymm-nnnn where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
+PacificNumRefModelError = An intervention card starting with $syymm already exists and is not compatible with this model of sequence. Remove it or rename it to activate this module.
