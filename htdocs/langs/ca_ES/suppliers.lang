@@ -38,4 +38,4 @@ AddSupplierOrder=Crear comanda a proveïdor
 AddSupplierInvoice=Crear factura de proveïdor
 ListOfSupplierProductForSupplier=Llistat de productes i preus del proveïdor <b>%s</b>
 NoneOrBatchFileNeverRan=Cap o lot <b>%s</b> no s'ha executat recentment
-# SentToSuppliers=Sent to suppliers
+SentToSuppliers=Enviat a proveïdors
