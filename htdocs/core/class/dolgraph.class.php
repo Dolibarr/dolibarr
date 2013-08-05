@@ -742,7 +742,7 @@ class DolGraph
      * Build a graph onto disk using JFlot library. Input when calling this method should be:
      *	$this->data  = array(array(      0=>'labelxA',     1=>yA),  array('labelxB',yB)); or
      *  $this->data  = array(array('label'=>'labelxA','data'=>yA),  array('labelxB',yB));
-     *	$this->data  = array(array(0=>'labelxA',1=>yA1,...,n=>yAn), array('labelxB',yB1,...yBn));   // when there is n value to show for each x
+     *	$this->data  = array(array(0=>'labelxA',1=>yA1,...,n=>yAn), array('labelxB',yB1,...yBn));   // when there is n series to show for each x
      *  $this->legend= array("Val1",...,"Valn");													// list of n series name
      *  $this->type  = array('bars',...'lines'); or array('pie')
      *  $this->mode = 'depth' ???
@@ -759,54 +759,41 @@ class DolGraph
 
         dol_syslog(get_class($this)."::draw_jflot this->type=".join(',',$this->type));
 
-        // On boucle sur chaque lot de donnees
         $legends=array();
         $nblot=count($this->data[0])-1;    // -1 to remove legend
         if ($nblot < 0) dol_print_error('Bad value for property ->data. Must be set by mydolgraph->SetData before callinf mydolgrapgh->draw');
         $firstlot=0;
-        // work with line but not with bars
+        // Works with line but not with bars
         //if ($nblot > 2) $firstlot = ($nblot - 2);        // We limit nblot to 2 because jflot can't manage more than 2 bars on same x
 
 
         $i=$firstlot;
         $serie=array();
-        while ($i < $nblot)
+        while ($i < $nblot)	// Loop on each serie
         {
+            $values=array();	// Array with horizontal y values (specific values of a serie) for each abscisse x
+        	$serie[$i]="var d".$i." = [];\n";
+        	
+            // Fill array $values
             $x=0;
-            $values=array();
-            foreach($this->data as $key => $valarray)
+            foreach($this->data as $valarray)	// Loop on each x 
             {
                 $legends[$x] = $valarray[0];
-                $values[$x]  = $valarray[$i+1];
+                $values[$x]  = (is_numeric($valarray[$i+1]) ? $valarray[$i+1] : null);
                 $x++;
             }
 
-            // We fix unknown values to null
-            $newvalues=array();
-            foreach($values as $val)
-            {
-                $newvalues[]=(is_numeric($val) ? $val : null);
+            // TODO Avoid push by adding generating a long array...
+           	if (isset($this->type[$firstlot]) && $this->type[$firstlot] == 'pie')
+           	{
+           		foreach($values as $x => $y) { if (isset($y)) $serie[$i].='d'.$i.'.push({"label":"'.dol_escape_js($legends[$x]).'", "data":'.$y.'});'."\n"; }
+           	}
+           	else
+           	{
+               	foreach($values as $x => $y) { if (isset($y)) $serie[$i].='d'.$i.'.push(['.$x.', '.$y.']);'."\n"; }
             }
-
-            //print "Lot de donnees $i<br>";
-            //print_r($values);
-            //print '<br>';
-            // TODO Replace with json_encode
-            $serie[$i]="var d".$i." = [];\n";
-            $x=0;
-            foreach($newvalues as $key => $val)
-            {
-            	if (isset($this->type[$firstlot]) && $this->type[$firstlot] == 'pie')
-            	{
-            		if (isset($val)) $serie[$i].='d'.$i.'.push({"label":"'.dol_escape_js($legends[$x]).'", "data":'.$val.'});'."\n";
-            	}
-            	else
-            	{
-                	if (isset($val)) $serie[$i].='d'.$i.'.push(['.$x.', '.$val.']);'."\n";
-            	}
-                $x++;
-            }
-
+            
+			unset($values);
             $i++;
         }
         $tag=dol_escape_htmltag(dol_string_unaccent(dol_string_nospecial(basename($file),'_',array('-','.'))));
