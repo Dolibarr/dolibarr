@@ -69,7 +69,7 @@ For developers:
 - New: Into POST forms, if you can add a parameter DOL_AUTOSET_COOKIE with a vlue that is list name,
   separated by a coma, of other POST parameters, Dolibarr will automatically save this parameters
   into user cookies.
-
+- New: Add hook addHomeSetup.
 
 WARNING: Following change may create regression for some external modules, but was necessary to make
 Dolibarr better:
