@@ -8,7 +8,7 @@
 # Syntax
 if [ "x$1" = "x" ]
 then
-	echo "resize_windows.sh (list|0x99999999)"
+	echo "resize_windows.sh (list|0x99999999) [1280 1024]"
 fi
 
 # To list all windows
@@ -20,7 +20,19 @@ fi
 # To resize a specific window
 if [ "x$1" != "xlist" -a "x$1" != "x" ]
 then
-	wmctrl -i -r $1 -e 0,0,0,1280,1024
-	echo Size of windows $1 modified
+	if [ "x$2" = "x" ]
+	then
+		width=1280
+	else
+		width=$2
+	fi
+	if [ "x$3" = "x" ]
+	then
+		height=1024
+	else
+		height=$3
+	fi
+	wmctrl -i -r $1 -e 0,0,0,$width,$height
+	echo Size of windows $1 modified to $width x $height
 fi
 
