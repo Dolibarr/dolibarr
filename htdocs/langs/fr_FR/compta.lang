@@ -155,3 +155,4 @@ InvoiceDispatched=Factures ventilées
 AccountancyDashboard=Synthèse compta/tréso
 ByProductsAndServices=Par produits et services
 RefExt=Référence externe
+ToCreateAPredefinedInvoice=Pour créer une facture prédéfinie, créer une facture standard puis sans la valider, cliquer sur le bouton "Convertir en facture prédéfine".
