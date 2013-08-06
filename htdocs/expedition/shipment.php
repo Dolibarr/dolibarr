@@ -29,25 +29,11 @@ require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/order.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/sendings.lib.php';
-if (! empty($conf->projet->enabled))
-	require DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
-if (! empty($conf->stock->enabled))
-	require DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
-if (! empty($conf->propal->enabled)) {
-	if (! class_exists('Propal')) {
-		require DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
-	}
-}
-if (! empty($conf->commande->enabled)) {
-	if (! class_exists('Commande')) {
-		require DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
-	}
-}
-if (! empty($conf->product->enabled) || ! empty($conf->service->enabled)) {
-	if (! class_exists('Product')) {
-		require DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
-	}
-}
+require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
+if (! empty($conf->projet->enabled)) require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+if (! empty($conf->stock->enabled))  require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
+if (! empty($conf->propal->enabled)) require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
+if (! empty($conf->product->enabled) || ! empty($conf->service->enabled)) 	require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
 $langs->load('orders');
 $langs->load("companies");
