@@ -138,7 +138,7 @@ $facturestatic=new Facture($db);
 
 if (! $sall) $sql = 'SELECT';
 else $sql = 'SELECT DISTINCT';
-$sql.= ' f.rowid as facid, f.facnumber, f.type, f.increment, f.total as total_ht, f.tva as total_tva, f.total_ttc,';
+$sql.= ' f.rowid as facid, f.facnumber, f.type, f.note_private, f.increment, f.total as total_ht, f.tva as total_tva, f.total_ttc,';
 $sql.= ' f.datef as df, f.date_lim_reglement as datelimite,';
 $sql.= ' f.paye as paye, f.fk_statut,';
 $sql.= ' s.nom, s.rowid as socid';
@@ -365,6 +365,14 @@ if ($resql)
             $thirdparty->id=$objp->socid;
             $thirdparty->nom=$objp->nom;
             print $thirdparty->getNomUrl(1,'customer');
+            if(!empty($objp->note_private))
+            {
+				print '<br/>';
+				print '<ul>';
+				print '<span class="warning">'.$objp->note_private;
+				print '<a href="'.DOL_URL_ROOT.'/compta/facture/note.php?action=editnote&id='.$objp->facid.'">'.img_edit($langs->trans("Editnote")).'</a>';
+				print'</span></ul>';
+			}
             print '</td>';
 
             print '<td align="right">'.price($objp->total_ht,0,$langs).'</td>';
