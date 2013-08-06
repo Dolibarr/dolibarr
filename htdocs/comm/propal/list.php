@@ -139,8 +139,9 @@ if (! $sortfield) $sortfield='p.datep';
 if (! $sortorder) $sortorder='DESC';
 $limit = $conf->liste_limit;
 
+
 $sql = 'SELECT s.rowid, s.nom, s.town, s.client, ';
-$sql.= 'p.rowid as propalid, p.total_ht, p.ref, p.ref_client, p.fk_statut, p.fk_user_author, p.datep as dp, p.fin_validite as dfv,';
+$sql.= 'p.rowid as propalid, p.note_private, p.total_ht, p.ref, p.ref_client, p.fk_statut, p.fk_user_author, p.datep as dp, p.fin_validite as dfv,';
 if (! $user->rights->societe->client->voir && ! $socid) $sql .= " sc.fk_soc, sc.fk_user,";
 $sql.= ' u.login';
 $sql.= ' FROM '.MAIN_DB_PREFIX.'societe as s, '.MAIN_DB_PREFIX.'propal as p';
@@ -352,6 +353,16 @@ if ($result)
 		$companystatic->client=$objp->client;
 		print '<td>';
 		print $companystatic->getNomUrl(1,'customer');
+		if(!empty($objp->note_private))
+		{
+			print '<br/>';
+			print '<ul>';
+			print '<span class="warning">';
+			print $objp->note_private;
+			 print '<a href="'.DOL_URL_ROOT.'/comm/propal/note.php?action=editnote&id='.$objp->propalid.'">'.img_edit($langs->trans("Editnote")).'</a>';
+			print '</span></ul>';
+			
+		}
 		print '</td>';
 
 		// Town
