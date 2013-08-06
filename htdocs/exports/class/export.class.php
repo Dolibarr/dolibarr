@@ -505,13 +505,13 @@ class Export
 				{
 					$indice=$key;
 					$foundindice++;
-					print "Found indice = ".$indice." for dataset=".$datatoexport."\n";
+					//print "Found indice = ".$indice." for dataset=".$datatoexport."\n";
 					break;
 				}
 			}
 			if (empty($foundindice))
 			{
-				$this->error="ErrorBadParameter can't find dataset ".$datatoexport." into preload aray this->array_export_code";
+				$this->error="ErrorBadParameter can't find dataset ".$datatoexport." into preload arrays this->array_export_code";
 				return -1;
 			}
         	$sql=$this->build_sql($indice, $array_selected, $array_filterValue);
