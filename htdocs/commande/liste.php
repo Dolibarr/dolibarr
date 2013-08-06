@@ -111,7 +111,7 @@ $help_url="EN:Module_Customers_Orders|FR:Module_Commandes_Clients|ES:Módulo_Ped
 llxHeader('',$langs->trans("Orders"),$help_url);
 
 $sql = 'SELECT s.nom, s.rowid as socid, s.client, c.rowid, c.ref, c.total_ht, c.ref_client,';
-$sql.= ' c.date_valid, c.date_commande, c.date_livraison, c.fk_statut, c.facture as facturee';
+$sql.= ' c.date_valid, c.date_commande, c.note_private, c.date_livraison, c.fk_statut, c.facture as facturee';
 $sql.= ' FROM '.MAIN_DB_PREFIX.'societe as s';
 $sql.= ', '.MAIN_DB_PREFIX.'commande as c';
 // We'll need this table joined to the select in order to filter by sale
@@ -353,6 +353,15 @@ if ($resql)
 					print img_picto($langs->trans("CreateInvoiceForThisCustomer").' : '.$companystatic->nom, 'object_bill', 'hideonsmrtphone').'</a>';
 				}
 			}
+		}
+		if(!empty($objp->note_private))
+		{
+			print '<br/>';
+			print '<ul>';
+			print '<span class="warning">';
+			print $objp->note_private;
+			print '<a href="'.DOL_URL_ROOT.'/commande/note.php?action=editnote&id='.$objp->rowid.'">'.img_edit($langs->trans("Editnote")).'</a>';
+			print '</span></ul>';
 		}
 		print '</td>';
 
