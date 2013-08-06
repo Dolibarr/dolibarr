@@ -340,12 +340,18 @@ if ($resql)
             print $objp->increment;
             print '</td>';
 
-            print '<td width="16" align="right" class="nobordernopadding hideonsmartphone">';
+            print '<td style="min-width: 20px" class="nobordernopadding nowrap">';
+            if (! empty($objp->note_private))
+            {
+				print ' <span class="note">';
+				print '<a href="'.DOL_URL_ROOT.'/compta/facture/note.php?id='.$objp->facid.'">'.img_picto($langs->trans("ViewPrivateNote"),'object_generic').'</a>';
+				print '</span>';
+			}
             $filename=dol_sanitizeFileName($objp->facnumber);
             $filedir=$conf->facture->dir_output . '/' . dol_sanitizeFileName($objp->facnumber);
             $urlsource=$_SERVER['PHP_SELF'].'?id='.$objp->facid;
             print $formfile->getDocumentsLink($facturestatic->element, $filename, $filedir);
-            print '</td>';
+			print '</td>';
             print '</tr>';
             print '</table>';
 
@@ -369,14 +375,6 @@ if ($resql)
             $thirdparty->id=$objp->socid;
             $thirdparty->nom=$objp->nom;
             print $thirdparty->getNomUrl(1,'customer');
-            if(!empty($objp->note_private))
-            {
-				print '<br/>';
-				print '<ul>';
-				print '<span class="warning">'.$objp->note_private;
-				print '<a href="'.DOL_URL_ROOT.'/compta/facture/note.php?action=editnote&id='.$objp->facid.'">'.img_edit($langs->trans("Editnote")).'</a>';
-				print'</span></ul>';
-			}
             print '</td>';
 
             print '<td align="right">'.price($objp->total_ht,0,$langs).'</td>';

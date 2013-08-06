@@ -321,8 +321,14 @@ if ($resql)
 		print $generic_commande->getNomUrl(1,($viewstatut != 2?0:$objp->fk_statut));
 		print '</td>';
 
-		print '<td width="20" class="nobordernopadding nowrap">';
+		print '<td style="min-width: 20px" class="nobordernopadding nowrap">';
 		if (($objp->fk_statut > 0) && ($objp->fk_statut < 3) && $db->jdate($objp->date_valid) < ($now - $conf->commande->client->warning_delay)) print img_picto($langs->trans("Late"),"warning");
+		if(!empty($objp->note_private))
+		{
+			print ' <span class="note">';
+			print '<a href="'.DOL_URL_ROOT.'/commande/note.php?id='.$objp->rowid.'">'.img_picto($langs->trans("ViewPrivateNote"),'object_generic').'</a>';
+			print '</span>';
+		}
 		print '</td>';
 
 		print '<td width="16" align="right" class="nobordernopadding hideonsmartphone">';
@@ -353,15 +359,6 @@ if ($resql)
 					print img_picto($langs->trans("CreateInvoiceForThisCustomer").' : '.$companystatic->nom, 'object_bill', 'hideonsmrtphone').'</a>';
 				}
 			}
-		}
-		if(!empty($objp->note_private))
-		{
-			print '<br/>';
-			print '<ul>';
-			print '<span class="warning">';
-			print $objp->note_private;
-			print '<a href="'.DOL_URL_ROOT.'/commande/note.php?action=editnote&id='.$objp->rowid.'">'.img_edit($langs->trans("Editnote")).'</a>';
-			print '</span></ul>';
 		}
 		print '</td>';
 

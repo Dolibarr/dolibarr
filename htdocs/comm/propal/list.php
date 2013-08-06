@@ -334,11 +334,17 @@ if ($result)
 		print $objectstatic->getNomUrl(1);
 		print '</td>';
 
-		print '<td width="20" class="nobordernopadding nowrap">';
+		print '<td style="min-width: 20px" class="nobordernopadding nowrap">';
 		if ($objp->fk_statut == 1 && $db->jdate($objp->dfv) < ($now - $conf->propal->cloture->warning_delay)) print img_warning($langs->trans("Late"));
+		if (! empty($objp->note_private))
+		{
+			print ' <span class="note">';
+			print '<a href="'.DOL_URL_ROOT.'/comm/propal/note.php?id='.$objp->propalid.'">'.img_picto($langs->trans("ViewPrivateNote"),'object_generic').'</a>';
+			print '</span>';
+		}
 		print '</td>';
 
-		print '<td width="16" align="right" class="nobordernopadding">';
+		print '<td width="16" align="right" class="nobordernopadding hideonsmartphone">';
 		$filename=dol_sanitizeFileName($objp->ref);
 		$filedir=$conf->propal->dir_output . '/' . dol_sanitizeFileName($objp->ref);
 		$urlsource=$_SERVER['PHP_SELF'].'?id='.$objp->propalid;
@@ -353,23 +359,13 @@ if ($result)
 		$companystatic->client=$objp->client;
 		print '<td>';
 		print $companystatic->getNomUrl(1,'customer');
-		if(!empty($objp->note_private))
-		{
-			print '<br/>';
-			print '<ul>';
-			print '<span class="warning">';
-			print $objp->note_private;
-			 print '<a href="'.DOL_URL_ROOT.'/comm/propal/note.php?action=editnote&id='.$objp->propalid.'">'.img_edit($langs->trans("Editnote")).'</a>';
-			print '</span></ul>';
-			
-		}
 		print '</td>';
 
 		// Town
 		print '<td class="nocellnopadd">';
 		print $objp->town;
 		print '</td>';
-		
+
 		// Customer ref
 		print '<td class="nocellnopadd nowrap">';
 		print $objp->ref_client;
