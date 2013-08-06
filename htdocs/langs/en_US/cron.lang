@@ -110,3 +110,5 @@ CronType_method=Call method of a Dolibarr Class
 CronType_command=Shell command
 CronMenu=Cron
 CronCannotLoadClass=Cannot load class %s or object %s
+
+UseMenuModuleToolsToAddCronJobs=Go into menu "Home - Modules tools - Job list" to see and edit scheduled jobs.

@@ -110,3 +110,5 @@ CronType_method=Méthode d'appel d'une classe Dolibarr
 CronType_command=Commande terminal
 CronMenu=Cron
 CronCannotLoadClass=Impossible de charger la classe %s ou l'objet %s
+
+UseMenuModuleToolsToAddCronJobs=Aller dans le menu "Accueil - Outils Modules - Liste des travaux" pour voir ou ajouter des traitements programmés à heure fixe.
