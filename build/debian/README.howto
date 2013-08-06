@@ -127,3 +127,8 @@ http://packages.qa.debian.org/t/tcpdf.html
 
 * Package will be into release when test will be moved as stable.
 
+
+To update dolibarr debian package
+
+* You can git clone debian git repo
+git.debian.org:/git/collab-maint/dolibarr.git
