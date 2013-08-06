@@ -559,15 +559,13 @@ class FormFile
      */
     function getDocumentsLink($modulepart, $filename, $filedir)
     {
-    	if (! function_exists('dol_dir_list')) {
-    		include DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-    	}
+    	if (! function_exists('dol_dir_list')) include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
     	$out='';
 
     	$this->numoffiles=0;
 
-    	$file_list=dol_dir_list($filedir, 'files', 0, $filename.'.pdf', '\.meta$|\.png$');
+    	$file_list=dol_dir_list($filedir, 'files', 0, preg_quote($filename.'.pdf','/'), '\.meta$|\.png$');
 
     	// For ajax treatment
     	$out.= '<div id="gen_pdf_'.$filename.'" class="linkobject hideobject">'.img_picto('', 'refresh').'</div>'."\n";
