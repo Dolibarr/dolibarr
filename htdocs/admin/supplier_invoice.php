@@ -55,7 +55,7 @@ $specimenthirdparty->initAsSpecimen();
 if ($action == 'updateMask')
 {
     $maskconstinvoice=GETPOST('maskconstinvoice','alpha');
-    $maskvalue=GETPOST('maskvalue','alpha');
+    $maskvalue=GETPOST('maskinvoice','alpha');
 
     if ($maskconstinvoice)  $res = dolibarr_set_const($db,$maskconstinvoice,$maskvalue,'chaine',0,'',$conf->entity);
 
