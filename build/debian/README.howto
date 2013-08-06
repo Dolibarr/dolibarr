@@ -9,9 +9,9 @@ with format .DEB (for Debian, Ubuntu, ...).
 
 # To build a debian package, you need first
 # With Ubuntu 12.04
-# apt-get install debhelper dpkg-source gpg lintian git-buildpackage pkg-php-tools
+# apt-get install debhelper dpkg-source gpg lintian git-buildpackage pkg-php-tools schroot sbuild
 # With Debian 7
-# apt-get install debhelper dpkg gnupg lintian git-buildpackage pkg-php-tools
+# apt-get install debhelper dpkg gnupg lintian git-buildpackage pkg-php-tools schroot sbuild
 
 
 # This is standard command to work on Debian packaging:
@@ -63,12 +63,19 @@ http://bugs.debian.org/package
 
 ##########################################################
 
+Create a chroot called "unstable-amd64-sbuild"
+> sudo sbuild-createchroot --keyring= unstable /srv/chroot/unstable http://ftp.uk.debian.org/debian
+
+Puis pour se connecter 
+> schroot
+
+
 To create a gpg key for email used into changelog
 Check your existing keys/emails
-* gpg --list-key
+> gpg --list-key
 Generate a new one
-* gpg --gen-key
-
+> gpg --gen-key
+Files are saved int .gnupg directory
 
 To use Alioth.debian.org
 * Create a login
@@ -79,13 +86,13 @@ To use Alioth.debian.org
 To update tcpdf package:
 
 * You can git clone tcpdf
-git clone git.debian.org:/git/collab-maint/tcpdf.git [tcpdf-debian]
+> git clone git.debian.org:/git/collab-maint/tcpdf.git [tcpdf-debian]
 
 * Into root dir, launch:
-debian/get-orig-source.sh
+> debian/get-orig-source.sh
 
 * Créer un fichier ~/.gpb.conf par
-cat >~/.gbp.conf <<END
+> cat >~/.gbp.conf <<END
 [DEFAULT]
 pristine-tar = True
 
@@ -100,27 +107,27 @@ END
 * Create branch upstream from origin/upstream
 
 * Staying into git root directory, run
-git-import-orig -vv ../tcpdf_6.0.020+dfsg.orig.tar.xz
+> git-import-orig -vv ../tcpdf_6.0.020+dfsg.orig.tar.xz
 
 Note: If there was errors managed manually, you may need to make a git commit
 
 * Add an entry into debian/changelog
-date -R will return formated string date to use into changelog
+> date -R will return formated string date to use into changelog
 
-Warning: Entry added here is used by next step.
+Warning: Entry added here is used by next step. Name and email must match value into debian/control file.
 
 * We try to build package
-git-buildpackage -us -uc
+> git-buildpackage -us -uc
 
 * If package .deb is ok:
 Note: If there was errors managed manually, you may need to make a git commit but do not use option "amend" previous commit
-git-buildpackage --git-tag
-git push
-git push --tags
+> git-buildpackage --git-tag
+> git push
+> git push --tags
 
 * Compilation par un développeur debian et envoi par
-sbuild ...
-dput ...
+> sbuild ...
+> dput ...
 
 * Go into page. You should see new package into unstable.
 http://packages.qa.debian.org/t/tcpdf.html
@@ -132,3 +139,4 @@ To update dolibarr debian package
 
 * You can git clone debian git repo
 git.debian.org:/git/collab-maint/dolibarr.git
+
