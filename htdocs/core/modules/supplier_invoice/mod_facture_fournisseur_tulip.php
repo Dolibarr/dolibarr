@@ -124,7 +124,7 @@ class mod_facture_fournisseur_tulip extends ModeleNumRefSuppliersInvoices
 			return 0;
 		}
 
-		$numFinal=get_next_value($db,$mask,'facture_fournisseur','ref','',$objsoc->code_fournisseur,$object->datec);
+		$numFinal=get_next_value($db,$mask,'facture_fourn','ref','',$objsoc->code_fournisseur,$object->datef);
 
 		return  $numFinal;
 	}
