@@ -155,7 +155,7 @@ elseif ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->fourn
     $result=$object->delete($id);
     if ($result > 0)
     {
-        header('Location: index.php');
+        header('Location: list.php');
         exit;
     }
     else
