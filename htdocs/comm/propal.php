@@ -232,6 +232,11 @@ else if ($action == 'set_ref_client' && $user->rights->propal->creer)
 	$object->set_ref_client($user, $_POST['ref_client']);
 }
 
+else if ($action == 'set_type_propal' && $user->rights->propal->creer)
+{
+	$object->set_type_propal($user,$_POST['propal']);
+
+}
 else if ($action == 'setnote_public' && $user->rights->propal->creer)
 {
 	$result=$object->update_note(dol_html_entity_decode(GETPOST('note_public'), ENT_QUOTES),'_public');
@@ -301,6 +306,7 @@ else if ($action == 'add' && $user->rights->propal->creer)
 				$object->author    				= $user->id;			// deprecated
 				$object->note      				= GETPOST('note');
 				$object->statut    				= 0;
+				$object->type_propal			= GETPOST('type_propal');
 
 				$id = $object->create_from($user);
 			}
@@ -330,6 +336,7 @@ else if ($action == 'add' && $user->rights->propal->creer)
 
 			$object->origin		= GETPOST('origin');
 			$object->origin_id	= GETPOST('originid');
+			$object->type_propal = GETPOST('type_propal');
 
 			for ($i = 1; $i <= $conf->global->PRODUCT_SHOW_WHEN_CREATE; $i++)
 			{
@@ -1295,7 +1302,7 @@ if ($action == 'create')
 	print '<tr><td>'.$langs->trans('RefCustomer').'</td><td colspan="2">';
 	print '<input type="text" name="ref_client" value=""></td>';
 	print '</tr>';
-
+	
 	// Third party
 	print '<tr>';
 	print '<td class="fieldrequired">'.$langs->trans('Customer').'</td>';
@@ -1314,6 +1321,13 @@ if ($action == 'create')
 	}
 	print '</tr>'."\n";
 
+	 // Type of Propal
+	print '<tr><td valign="top">'.$langs->trans("TypePropal").'</td><td colspan="2">';
+	print '<select class ="flat" name="type_propal">';
+	print '<option value="0" selected>'.$langs->trans("FirmProposal").'</option>';
+	print '<option value="1">'.$langs->trans("Evaluation").'</option>';
+	print '</select>';
+	print '</td></tr>';
 	// Contacts
 	if($socid>0)
 	{
@@ -1619,8 +1633,7 @@ else
 	print '<tr><td>';
 	print '<table class="nobordernopadding" width="100%"><tr><td class="nowrap">';
 	print $langs->trans('RefCustomer').'</td>';
-	print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=refclient&amp;id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('RefCustomer')).'</a></td>';
-	print '</td>';
+	print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=refclient&amp;id='.$object->id.'">'.img_edit($langs->trans('Modify')).'</a></td>';
 	if ($action != 'refclient' && ! empty($object->brouillon)) print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=refclient&amp;id='.$object->id.'">'.img_edit($langs->trans('Modify')).'</a></td>';
 	print '</tr></table>';
 	print '</td><td colspan="5">';
@@ -1639,10 +1652,39 @@ else
 	}
 	print '</td>';
 	print '</tr>';
+	
+	
 	// Company
 	print '<tr><td>'.$langs->trans('Company').'</td><td colspan="5">'.$soc->getNomUrl(1).'</td>';
 	print '</tr>';
 
+	 // Type of Propal
+	print '<tr><td>';
+	print '<table class="nobordernopadding" width="100%"><tr><td class="nowrap">';
+	print $langs->trans('TypePropal').'</td>';
+	print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=type_propal&amp;id='.$object->id.'">'.img_edit($langs->trans('Modify')).'</a></td>';
+	if ($action != 'type_propal' && ! empty($object->brouillon)) print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=type_propal&amp;id='.$object->id.'">'.img_edit($langs->trans('Modify')).'</a></td>';
+	print '</tr></table>';
+	print '</td><td colspan="5">';
+	if ($action == 'type_propal')
+	{
+		print '<form action="propal.php?id='.$object->id.'" method="post">';
+		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		print '<input type="hidden" name="action" value="set_type_propal">';
+		print '<select class="flat" name=propal>';
+		print '<option value="0">'.$langs->trans("FirmProposal").'</option>';
+		print '<option value="1">'.$langs->trans("Evaluation").'</option>';
+		print '</select>';
+		print ' <input type="submit" class="button" value="'.$langs->trans('Modify').'">';
+		print '</form>';
+	}
+	else
+	{
+		print $object->getLibTypePropal();
+	}
+	print '</td>';
+	print '</tr>';
+	
 	// Ligne info remises tiers
 	print '<tr><td>'.$langs->trans('Discounts').'</td><td colspan="5">';
 	if ($soc->remise_percent) print $langs->trans("CompanyHasRelativeDiscount",$soc->remise_percent);

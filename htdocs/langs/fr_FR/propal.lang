@@ -101,3 +101,6 @@ DocModelJauneDescription=Modèle de proposition Jaune
 DefaultModelPropalCreate=Modèle par défaut à la création
 DefaultModelPropalToBill=Modèle par défaut lors de la clôture d'une proposition commerciale (à facturer)
 DefaultModelPropalClosed=Modèle par défaut lors de la clôture d'une proposition commerciale (non facturée)
+TypePropal=Type de proposition
+FirmProposal=Proposition ferme
+Evaluation=Evaluation de proposition
