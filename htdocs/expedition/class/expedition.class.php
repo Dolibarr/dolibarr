@@ -163,7 +163,7 @@ class Expedition extends CommonObject
 		global $conf, $langs;
 
 		$now=dol_now();
-		
+
 		if (empty($this->model_pdf)) $this->model_pdf=$conf->global->EXPEDITION_ADDON_PDF;
 
 		require_once DOL_DOCUMENT_ROOT .'/product/stock/class/mouvementstock.class.php';
@@ -791,25 +791,25 @@ class Expedition extends CommonObject
 	{
 		global $conf, $langs, $user;
         require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-		
+
 		$error=0;
-		
+
 		$this->db->begin();
-		
+
 		// Stock control
 		if ($conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_SHIPMENT && $this->statut > 0)
 		{
 			require_once(DOL_DOCUMENT_ROOT."/product/stock/class/mouvementstock.class.php");
-		
+
 			$langs->load("agenda");
-		
+
 			// Loop on each product line to add a stock movement
 			$sql = "SELECT cd.fk_product, cd.subprice, ed.qty, ed.fk_entrepot";
 			$sql.= " FROM ".MAIN_DB_PREFIX."commandedet as cd,";
 			$sql.= " ".MAIN_DB_PREFIX."expeditiondet as ed";
 			$sql.= " WHERE ed.fk_expedition = ".$this->id;
 			$sql.= " AND cd.rowid = ed.fk_origin_line";
-		
+
 			dol_syslog(get_class($this)."::delete select details sql=".$sql);
 			$resql=$this->db->query($sql);
 			if ($resql)
@@ -819,7 +819,7 @@ class Expedition extends CommonObject
 				{
 					dol_syslog(get_class($this)."::delete movement index ".$i);
 					$obj = $this->db->fetch_object($resql);
-					
+
 					//var_dump($this->lines[$i]);
 					$mouvS = new MouvementStock($this->db);
 					// We decrement stock of product (and sub-products)
@@ -837,27 +837,27 @@ class Expedition extends CommonObject
 				$error++;
 			}
 		}
-		
+
 		if(! $error)
 		{
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."expeditiondet";
 			$sql.= " WHERE fk_expedition = ".$this->id;
-	
+
 			if ( $this->db->query($sql) )
 			{
 				// Delete linked object
 				$res = $this->deleteObjectLinked();
 				if ($res < 0) $error++;
-	
+
 				if (! $error)
 				{
 					$sql = "DELETE FROM ".MAIN_DB_PREFIX."expedition";
 					$sql.= " WHERE rowid = ".$this->id;
-	
+
 					if ($this->db->query($sql))
 					{
 						$this->db->commit();
-	
+
 						// On efface le repertoire de pdf provisoire
 						$ref = dol_sanitizeFileName($this->ref);
 						if (! empty($conf->expedition->dir_output))
@@ -880,14 +880,14 @@ class Expedition extends CommonObject
 								}
 							}
 						}
-	
+
 						// Call triggers
 			            include_once DOL_DOCUMENT_ROOT.'/core/class/interfaces.class.php';
 			            $interface=new Interfaces($this->db);
 			            $result=$interface->run_triggers('SHIPPING_DELETE',$this,$user,$langs,$conf);
 			            if ($result < 0) { $error++; $this->errors=$interface->errors; }
 			            // End call triggers
-	
+
 						return 1;
 					}
 					else
@@ -911,12 +911,12 @@ class Expedition extends CommonObject
 				return -1;
 			}
 		}
-		else 
+		else
 		{
 			$this->db->rollback();
 			return -1;
 		}
-			
+
 	}
 
 	/**
@@ -1208,7 +1208,7 @@ class Expedition extends CommonObject
 			else
 			{
 				$this->error=$this->db->error();
-				dol_syslog("Commande::set_date_livraison ".$this->error,LOG_ERR);
+				dol_syslog(get_class($this)."::set_date_livraison ".$this->error,LOG_ERR);
 				return -1;
 			}
 		}

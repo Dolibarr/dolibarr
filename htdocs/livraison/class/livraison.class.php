@@ -50,7 +50,7 @@ class Livraison extends CommonObject
 	var $socid;
 	var $ref_customer;
 	var $statut;
-	
+
 	var $note_public;
 	var $note_private;
 
@@ -90,7 +90,7 @@ class Livraison extends CommonObject
 		global $conf;
 
 		dol_syslog("Livraison::create");
-		
+
 		if (empty($this->model_pdf)) $this->model_pdf=$conf->global->LIVRAISON_ADDON_PDF;
 
 		$error = 0;
@@ -899,6 +899,41 @@ class Livraison extends CommonObject
 			$this->error=$this->db->error()." - sql=$sqlSourceLine";
 			dol_syslog(get_class($this)."::getRemainingDelivered ".$this->error, LOG_ERR);
 			return -1;
+		}
+	}
+
+	/**
+	 *	Set the planned delivery date
+	 *
+	 *	@param      User			$user        		Objet utilisateur qui modifie
+	 *	@param      timestamp		$date_livraison     Date de livraison
+	 *	@return     int         						<0 if KO, >0 if OK
+	 */
+	function set_date_livraison($user, $date_livraison)
+	{
+		if ($user->rights->expedition->creer)
+		{
+			$sql = "UPDATE ".MAIN_DB_PREFIX."livraison";
+			$sql.= " SET date_delivery = ".($date_livraison ? "'".$this->db->idate($date_livraison)."'" : 'null');
+			$sql.= " WHERE rowid = ".$this->id;
+
+			dol_syslog(get_class($this)."::set_date_livraison sql=".$sql,LOG_DEBUG);
+			$resql=$this->db->query($sql);
+			if ($resql)
+			{
+				$this->date_delivery = $date_livraison;
+				return 1;
+			}
+			else
+			{
+				$this->error=$this->db->error();
+				dol_syslog(get_class($this)."::set_date_livraison ".$this->error,LOG_ERR);
+				return -1;
+			}
+		}
+		else
+		{
+			return -2;
 		}
 	}
 

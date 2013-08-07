@@ -540,9 +540,9 @@ class pdf_rouget extends ModelePdfExpedition
 				$Yoff = $Yoff+8;
 				$pdf->SetXY($this->page_largeur - $this->marge_droite - 100,$Yoff);
 				$pdf->MultiCell(100, 2, $outputlangs->transnoentities("RefOrder") ." : ".$outputlangs->transnoentities($text), 0, 'R');
-				$Yoff = $Yoff+4;
+				$Yoff = $Yoff+3;
 				$pdf->SetXY($this->page_largeur - $this->marge_droite - 60,$Yoff);
-				$pdf->MultiCell(60, 2, $outputlangs->transnoentities("Date")." : ".dol_print_date($object->commande->date,"daytext",false,$outputlangs,true), 0, 'R');
+				$pdf->MultiCell(60, 2, $outputlangs->transnoentities("OrderDate")." : ".dol_print_date($linkedobject->date,"day",false,$outputlangs,true), 0, 'R');
 			}
 		}
 
