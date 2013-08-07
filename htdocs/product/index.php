@@ -277,7 +277,7 @@ function activitytrim($product_type)
 	global $conf,$langs,$db;
 	
 	// on affiche les 3 dernières années 
-	$begindate=date('Y',dol_time_plus_duree(time(), -3, "y"));
+	$yearofbegindate=date('Y',dol_time_plus_duree(time(), -3, "y"));
 
 	// ventilation par trimestre
 	$sql = "SELECT DATE_FORMAT(p.datep,'%Y') as annee, DATE_FORMAT(p.datep,'%m') as mois, sum(fd.total_ht) as Mnttot";
@@ -289,7 +289,7 @@ function activitytrim($product_type)
 	$sql.= " AND pf.fk_paiement= p.rowid";
 	$sql.= " AND fd.product_type=".$product_type;
 	$sql.= " AND s.entity = ".$conf->entity;
-	$sql.= " AND DATE_FORMAT(p.datep,'%Y') > ".date('Y',$begindate)." and paye=1";
+	$sql.= " AND p.datep >= '".$db->idate(dol_get_first_day($yearofbegindate),1)."'";
 	$sql.= " GROUP BY annee, mois ";
 	$sql.= " ORDER BY annee, mois ";
 
