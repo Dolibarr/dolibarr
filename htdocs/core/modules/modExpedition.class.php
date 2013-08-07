@@ -65,7 +65,8 @@ class modExpedition extends DolibarrModules
 							"/expedition/sending",
 		                    "/expedition/sending/temp",
 		                    "/expedition/receipt",
-		                    "/expedition/receipt/temp"
+		                    "/expedition/receipt/temp",
+							"doctemplates/shipment"
 		                    );
 
 		// Config pages
@@ -117,7 +118,7 @@ class modExpedition extends DolibarrModules
 		$r++;
 
 		$r++;
-		$this->const[$r][0] = "EXPEDITION_ADDON_PDF_ODT_PATH";
+		$this->const[$r][0] = "LIVRAISON_ADDON_PDF_ODT_PATH";
 		$this->const[$r][1] = "chaine";
 		$this->const[$r][2] = "DOL_DATA_ROOT/doctemplates/delivery";
 		$this->const[$r][3] = "";
