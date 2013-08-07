@@ -66,7 +66,8 @@ class modExpedition extends DolibarrModules
 		                    "/expedition/sending/temp",
 		                    "/expedition/receipt",
 		                    "/expedition/receipt/temp",
-							"doctemplates/shipment"
+							"/doctemplates/shipment",
+							"/doctemplates/delivery"
 		                    );
 
 		// Config pages
