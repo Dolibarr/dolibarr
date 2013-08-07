@@ -154,7 +154,7 @@ class pdf_expedition_rouget extends ModelePdfExpedition
 				$pagenb=0;
 				$pdf->SetDrawColor(128,128,128);
 
-				$pdf->AliasNbPages();
+				if (method_exists($pdf,'AliasNbPages')) $pdf->AliasNbPages();
 
 				$pdf->SetTitle($outputlangs->convToOutputCharset($object->ref));
 				$pdf->SetSubject($outputlangs->transnoentities("Sending"));
@@ -321,7 +321,7 @@ class pdf_expedition_rouget extends ModelePdfExpedition
 
 				// Pied de page
 				$this->_pagefoot($pdf,$object,$outputlangs);
-				$pdf->AliasNbPages();
+				if (method_exists($pdf,'AliasNbPages')) $pdf->AliasNbPages();
 
 				$pdf->Close();
 
@@ -540,9 +540,9 @@ class pdf_expedition_rouget extends ModelePdfExpedition
 				$Yoff = $Yoff+8;
 				$pdf->SetXY($this->page_largeur - $this->marge_droite - 100,$Yoff);
 				$pdf->MultiCell(100, 2, $outputlangs->transnoentities("RefOrder") ." : ".$outputlangs->transnoentities($text), 0, 'R');
-				$Yoff = $Yoff+4;
+				$Yoff = $Yoff+3;
 				$pdf->SetXY($this->page_largeur - $this->marge_droite - 60,$Yoff);
-				$pdf->MultiCell(60, 2, $outputlangs->transnoentities("Date")." : ".dol_print_date($object->commande->date,"daytext",false,$outputlangs,true), 0, 'R');
+				$pdf->MultiCell(60, 2, $outputlangs->transnoentities("OrderDate")." : ".dol_print_date($linkedobject->date,"day",false,$outputlangs,true), 0, 'R');
 			}
 		}
 

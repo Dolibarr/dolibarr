@@ -385,3 +385,5 @@ ALTER TABLE llx_societe_address CHANGE COLUMN tel phone varchar(20);
 
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,localtax1,localtax1_type,note,active) values (143, 14,'5','0','9.975','1','TPS and TVQ rate',1);
 
+DELETE FROM llx_document_model WHERE nom ='elevement' AND type='delivery';
+DELETE FROM llx_document_model WHERE nom ='' AND type='delivery';

@@ -50,7 +50,7 @@ function shipping_prepare_head($object)
 	{
 		// delivery link
 		$object->fetchObjectLinked($object->id,$object->element);
-		if (! empty($object->linkedObjectsIds['delivery'][0]))
+		if (! empty($object->linkedObjectsIds['delivery'][0]))		// If there is a delivery
 		{
 			$head[$h][0] = DOL_URL_ROOT."/livraison/fiche.php?id=".$object->linkedObjectsIds['delivery'][0];
 			$head[$h][1] = $langs->trans("DeliveryCard");
@@ -63,7 +63,7 @@ function shipping_prepare_head($object)
 	$head[$h][1] = $langs->trans("ContactsAddresses");
 	$head[$h][2] = 'contact';
 	$h++;
-	
+
 	$head[$h][0] = DOL_URL_ROOT."/expedition/note.php?id=".$object->id;
 	$head[$h][1] = $langs->trans("Notes");
 	$head[$h][2] = 'note';
@@ -110,16 +110,29 @@ function delivery_prepare_head($object)
 	$head[$h][2] = 'delivery';
 	$h++;
 
+	/* We are on id of delivery, no shipment
+	$head[$h][0] = DOL_URL_ROOT."/expedition/contact.php?id=".$object->id;
+	$head[$h][1] = $langs->trans("ContactsAddresses");
+	$head[$h][2] = 'contact';
+	$h++;
+
+	$head[$h][0] = DOL_URL_ROOT."/expedition/note.php?id=".$object->id;
+	$head[$h][1] = $langs->trans("Notes");
+	$head[$h][2] = 'note';
+	$h++;*/
+
 	// Show more tabs from modules
 	// Entries must be declared in modules descriptor with line
     // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
     // $this->tabs = array('entity:-tabname);   				to remove a tab
-    	// complete_head_from_modules  use $object->id for this link so we temporary change it
-        $tmpObjectId = $object->id;
-	$object->id = $object->origin_id;
-	complete_head_from_modules($conf,$langs,$object,$head,$h,'delivery');
+    // complete_head_from_modules  use $object->id for this link so we temporary change it
+    $tmpObjectId = $object->id;
+    $object->id = $object->origin_id;
+
+    complete_head_from_modules($conf,$langs,$object,$head,$h,'delivery');
 
 	complete_head_from_modules($conf,$langs,$object,$head,$h,'delivery','remove');
+
 	$object->id = $tmpObjectId;
 	return $head;
 }
