@@ -309,10 +309,10 @@ function activitytrim($product_type)
 			print '<br>';
 			print '<table class="noborder" width="75%">';
 
-			if ($product_type==1)
+			if ($product_type==0)
 				print '<tr class="liste_titre"><td  align=left>'.$langs->trans("ProductSellByQuarterHT").'</td>';
 			else
-				print '<tr class="liste_titre"><td  align=left>'.$langs->trans("SerciceSellByQuarterHT").'</td>';
+				print '<tr class="liste_titre"><td  align=left>'.$langs->trans("ServiceSellByQuarterHT").'</td>';
 			print '<td align=right>'.$langs->trans("Quarter1").'</td>';
 			print '<td align=right>'.$langs->trans("Quarter2").'</td>';
 			print '<td align=right>'.$langs->trans("Quarter3").'</td>';
