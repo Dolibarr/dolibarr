@@ -496,7 +496,10 @@ class Form
                     $i++;
                 }
 
-                array_multisort($label, SORT_ASC, $countryArray);
+                // use the default locale
+                setlocale(LC_ALL, $conf->global->MAIN_LANG_DEFAULT);
+                // SORT_LOCALE_STRING, is available with PHP 5.3 and higher
+                array_multisort($label, SORT_ASC, SORT_LOCALE_STRING, $countryArray);
 
                 foreach ($countryArray as $row)
                 {
