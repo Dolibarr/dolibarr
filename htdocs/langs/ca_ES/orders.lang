@@ -145,6 +145,7 @@ AddDeliveryCostLine=Afegir una línia de despeses de ports indicant el pes de la
 # Documents models
 PDFEinsteinDescription=Model de comanda complet (logo...)
 PDFEdisonDescription=Model de comanda simple
+PDFProformaDescription=Model de factura proforma complet (logo...)
 # Orders modes
 OrderByMail=Correu
 OrderByFax=Fax
