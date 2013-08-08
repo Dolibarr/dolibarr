@@ -92,6 +92,10 @@ this was not a good pratice, since object->id is already known so no need to pro
 parameter. All methods addline in this case were modified to remove this parameter. 
 
 
+***** ChangeLog for 3.4.1 compared to 3.4.0 *****
+Fix: [ bug #1029 ] Tulip numbering mask
+
+
 ***** ChangeLog for 3.4 compared to 3.3.* *****
 For users:
 - New: Can use ODS templates as document templates.
