@@ -478,6 +478,10 @@ div.ficheaddleft {
 	<?php if (empty($conf->dol_optimize_smallscreen))   { print "padding-left: 16px;\n"; }
 	else print "margin-top: 10px;\n"; ?>
 }
+.containercenter {
+display : table;
+margin : 0px auto;
+}
 
 
 /* ============================================================================== */
