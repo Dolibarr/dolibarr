@@ -4,7 +4,7 @@
  * Copyright (C) 2005-2011 Regis Houssin           <regis.houssin@capnetworks.com>
  * Copyright (C) 2004      Sebastien Di Cintio     <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier          <benoit.mortier@opensides.be>
- * Copyright (C) 2010-2012 Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2010-2013 Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2011-2013 Philippe Grand          <philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -55,7 +55,7 @@ $specimenthirdparty->initAsSpecimen();
 if ($action == 'updateMask')
 {
     $maskconstinvoice=GETPOST('maskconstinvoice','alpha');
-    $maskvalue=GETPOST('maskvalue','alpha');
+    $maskvalue=GETPOST('maskinvoice','alpha');
 
     if ($maskconstinvoice)  $res = dolibarr_set_const($db,$maskconstinvoice,$maskvalue,'chaine',0,'',$conf->entity);
 
