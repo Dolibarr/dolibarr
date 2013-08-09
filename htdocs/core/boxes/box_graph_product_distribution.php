@@ -112,9 +112,14 @@ class box_graph_product_distribution extends ModeleBoxes
 			{
 				include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facturestats.class.php';
 				
+				$showpointvalue = 1;
 				$stats_invoice = new FactureStats($this->db, 0, $mode, ($userid>0?$userid:0));
 				$data1 = $stats_invoice->getAllByProductEntry($year,(GETPOST('action')==$refreshaction?-1:(3600*24)));
-
+				if (empty($data1)) 
+				{
+					$showpointvalue=0;
+					$data1=array(array(0=>$langs->trans("None"),1=>1));
+				}
 				$filenamenb = $dir."/prodserforinvoice-".$year.".png";
 				$fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=productstats&amp;file=prodserforinvoice-'.$year.'.png';
 
@@ -125,13 +130,16 @@ class box_graph_product_distribution extends ModeleBoxes
 					$px1->SetData($data1);
 					unset($data1);
 					$px1->SetPrecisionY(0);
-					$i=0;$tot=count($data2);$legend=array();
+					$i=0;$tot=count($data1);$legend=array();
 					while ($i <= $tot)
 					{
-						$legend[]=$data2[$i][0];
+						$legend[]=$data1[$i][0];
 						$i++;
 					}
 					$px1->SetLegend($legend);
+					$px1->setShowLegend(0);
+					$px1->setShowPointValue($showpointvalue);
+					$px1->setShowPercent(0);
 					$px1->SetMaxValue($px1->GetCeilMaxValue());
 					$px1->SetWidth($WIDTH);
 					$px1->SetHeight($HEIGHT);
@@ -143,7 +151,7 @@ class box_graph_product_distribution extends ModeleBoxes
 					//$px1->mode='depth';
 					$px1->SetType(array('pie'));
 					$px1->SetTitle($langs->trans("BoxProductDistributionFor",$paramtitle,$langs->transnoentitiesnoconv("Invoices")));
-
+				
 					$px1->draw($filenamenb,$fileurlnb);
 				}
 			}
@@ -156,9 +164,15 @@ class box_graph_product_distribution extends ModeleBoxes
 			{
 				include_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propalestats.class.php';
 				
+				$showpointvalue = 1;
 				$stats_proposal = new PropaleStats($this->db, 0, $mode, ($userid>0?$userid:0));
 				$data2 = $stats_proposal->getAllByProductEntry($year,(GETPOST('action')==$refreshaction?-1:(3600*24)));
-
+				if (empty($data2)) 
+				{
+					$showpointvalue = 0;
+					$data2=array(array(0=>$langs->trans("None"),1=>1));
+				}
+				
 				$filenamenb = $dir."/prodserforpropal-".$year.".png";
 				$fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=proposalstats&amp;file=prodserforpropal-'.$year.'.png';
 
@@ -176,6 +190,9 @@ class box_graph_product_distribution extends ModeleBoxes
 						$i++;
 					}
 					$px2->SetLegend($legend);
+					$px2->setShowLegend(0);
+					$px2->setShowPointValue($showpointvalue);
+					$px2->setShowPercent(0);
 					$px2->SetMaxValue($px2->GetCeilMaxValue());
 					$px2->SetWidth($WIDTH);
 					$px2->SetHeight($HEIGHT);
@@ -200,9 +217,15 @@ class box_graph_product_distribution extends ModeleBoxes
 			{
 				include_once DOL_DOCUMENT_ROOT.'/commande/class/commandestats.class.php';
 				
+				$showpointvalue = 1;
 				$stats_order = new CommandeStats($this->db, 0, $mode, ($userid>0?$userid:0));
 				$data3 = $stats_order->getAllByProductEntry($year,(GETPOST('action')==$refreshaction?-1:(3600*24)));
-
+				if (empty($data3)) 
+				{
+					$showpointvalue = 0;
+					$data3=array(array(0=>$langs->trans("None"),1=>1));
+				}
+				
 				$filenamenb = $dir."/prodserfororder-".$year.".png";
 				$fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&amp;file=prodserfororder-'.$year.'.png';
 
@@ -220,6 +243,9 @@ class box_graph_product_distribution extends ModeleBoxes
 						$i++;
 					}
 					$px3->SetLegend($legend);
+					$px3->setShowLegend(0);
+					$px3->setShowPointValue($showpointvalue);
+					$px3->setShowPercent(0);
 					$px3->SetMaxValue($px3->GetCeilMaxValue());
 					$px3->SetWidth($WIDTH);
 					$px3->SetHeight($HEIGHT);
