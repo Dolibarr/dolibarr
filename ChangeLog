@@ -46,6 +46,8 @@ For users:
 - New: [ task #1016 ] Can define a specific numbering for deposits 
 - New: [ task #918 ] Stock replenishment
 - Fix: [ bug #992 ] Proforma invoices don't have a separated numeric count
+- New : Add pdf link into supplier invoice list and supplier order list
+- New : Genrate auto the PDF for supplier invoice
 
 
 For translators:

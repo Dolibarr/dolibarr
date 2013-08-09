@@ -28,6 +28,10 @@
  *	\brief      Page for supplier invoice card (view, edit, validate)
  */
 
+error_reporting(E_ALL);
+ini_set('display_errors', true);
+ini_set('html_errors', false);
+
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
@@ -456,6 +460,16 @@ elseif ($action == 'add' && $user->rights->fournisseur->facture->creer)
         else
         {
             $db->commit();
+            
+            if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+            	$result=supplier_invoice_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+            	if ($result	<= 0)
+            	{
+            		dol_print_error($db,$result);
+            		exit;
+            	}
+            }
+            
             header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
             exit;
         }
@@ -608,7 +622,14 @@ elseif ($action == 'addline')
     		$outputlangs = new Translate("",$conf);
     		$outputlangs->setDefaultLang($newlang);
     	}
-        //if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) supplier_invoice_pdf_create($db, $object->id, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+        if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+        	$result=supplier_invoice_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+        	if ($result	<= 0)
+        	{
+        		dol_print_error($db,$result);
+        		exit;
+        	}
+        }
 
         unset($_POST['qty']);
         unset($_POST['type']);
@@ -659,7 +680,14 @@ elseif ($action == 'edit' && $user->rights->fournisseur->facture->creer)
             $outputlangs = new Translate("",$conf);
             $outputlangs->setDefaultLang($_REQUEST['lang_id']);
         }
-        //if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) supplier_invoice_pdf_create($db, $object->id, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+        if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+        	$result=supplier_invoice_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+        	if ($result	<= 0)
+        	{
+        		dol_print_error($db,$result);
+        		exit;
+        	}
+        }
 
         $action='';
     }
