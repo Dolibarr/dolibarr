@@ -1,4 +1,4 @@
-# Dolibarr language file - Source file is es_ES - admin
+# Dolibarr language file - Source file is en_US - admin
 CHARSET=UTF-8
 Foundation=Fundación
 Version=Versión
@@ -1252,7 +1252,7 @@ PerfDolibarr=Configuración rendimiento/informe de optimización
 YouMayFindPerfAdviceHere=En esta página encontrará varias pruebas y consejos relacionados con el rendimiento.
 NotInstalled=No instalado,  por lo que su servidor no baja de rendimiento con esto.
 ApplicativeCache=Aplicación caché
-MemcachédNotAvailable=No se ha encontrado aplicación caché. Puede mejorar el rendimiento mediante la instalación de un servidor de caché Memcachéd y un módulo capaz de utilizar este servidor de caché. Más información aquí http://wiki.dolibarr.org/index.php/M%C3%B3dulo_MemCached. Tenga en cuenta que una gran cantidad de proveedores de alojamiento web no proporcionan tales servidores de caché.
+MemcachedNotAvailable=Ninguna aplicación caché disponible. Puede acelerar el rendimiento de Dolibarr instalando un servidor de cache Memcached y un módulo de caché de aplicaciones en este servidor. Más información en la página http://wiki.dolibarr.org/index.php/M%C3%B3dulo_MemCached. Tenga en cuenta que muchos servidores web de bajo coste no ofrecen estos servidores de caché en su infraestructura.
 OPCodeCache=OPCode caché
 NoOPCodeCacheFound=No se ha encontrado ningún OPCode caché. Puede ser que esté usando otro OPCode como XCache o eAccelerator (mejor), o puede que no tenga OPCode caché (peor).
 HTTPCacheStaticResources=Caché HTTP para estadísticas de recursos (css, img, javascript)
