@@ -1,6 +1,5 @@
 # Dolibarr language file - Source file is en_US - holiday
-CHARSET= UTF-8
-
+CHARSET=UTF-8
 HRM=RRHH
 Holidays=Vacaciones
 CPTitreMenu=Vacaciones
@@ -36,7 +35,6 @@ ReturnCP=Volver a la página anterior
 ErrorUserViewCP=No está autorizado a leer esta petición de vacaciones.
 InfosCP=Información de la petición de vacaciones
 InfosWorkflowCP=Información del workflow
-DateCreateCP=Fecha de creación
 RequestByCP=Pedido por
 TitreRequestCP=Ficha vacaciones
 NbUseDaysCP=Número de días de vacaciones consumidos
@@ -89,7 +87,6 @@ FirstDayOfHoliday=Primer día libre
 LastDayOfHoliday=Último día libre
 HolidaysMonthlyUpdate=Actualización mensual
 ManualUpdate=Actualización manual
-
 ## Configuration du Module ##
 ConfCP=Configuración del módulo Vacaciones
 DescOptionCP=Descripción de la opción
@@ -101,14 +98,14 @@ UpdateConfCPOK=Actualización efectuada correctamente.
 ErrorUpdateConfCP=Se ha producido un error durante la actualización, vuélvalo a intentar.
 AddCPforUsers=Añada los saldos de vacaciones de los usuarios <a href="../define_holiday.php" style="font-weight: normal; color: red; text-decoration: underline;">haciendo clic aquí</a>.
 DelayForSubmitCP=Antelación mínima para solicitar vacaciones
-# AlertapprobatortorDelayCP=Prevent the approbator if the holiday request does not match the deadline
+AlertapprobatortorDelayCP=Advertir al validador si la petición no corresponde a la fecha límite
 AlertValidatorDelayCP=Advertir al usuario validador si la petición no respeta el límite previsto
 AlertValidorSoldeCP=Advertir al usuario validador si el usuario pide vacaciones superiores a su saldo
 nbUserCP=Número de usuarios tomados en cuenta en el módulo vacaciones
 nbHolidayDeductedCP=Número de días retribuídos a deducir por día de vacaciones
 nbHolidayEveryMonthCP=Número de vacaciones añadidas por mes
-Module27130Name= Gestion de las vacaciones
-# Module27130Desc= Management of holidays
+Module27130Name=Gestion de las vacaciones
+Module27130Desc=Gestión de días libres
 TitleOptionMainCP=Ajustes principales de vacaciones
 TitleOptionEventCP=Ajustes de vacaciones enlazados a eventos
 ValidEventCP=Validar
@@ -131,7 +128,6 @@ ErrorMailNotSend=Se ha producido un error en el envío del e-mail :
 NoCPforMonth=Sin vacaciones este mes.
 nbJours=Número de días
 TitleAdminCP=Configuración de las vacaciones
-
 #Messages
 Hello=Hola
 HolidaysToValidate=Días retribuidos a validar
@@ -144,7 +140,6 @@ HolidaysRefused=Días retribuidos denegados
 HolidaysRefusedBody=Su solicitud de días retribuidos desde el %s al %s ha sido denegada por el siguiente motivo :
 HolidaysCanceled=Días retribuidos cancelados
 HolidaysCanceledBody=Su solicitud de días retribuidos desde el %s al %s ha sido cancelada.
-
 Permission20001=Consultar/crear/modificar sus vacaciones
 Permission20002=Consultar/modificar todas las solicitudes de permisos retribuídos
 Permission20003=Eliminar las solicitudes de permisos retribuídos
