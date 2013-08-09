@@ -2506,12 +2506,6 @@ abstract class CommonObject
         if ($objecttype == 'delivery') {
             $classpath = 'livraison/class'; $subelement = 'livraison'; $module = 'livraison_bon';
         }
-        if ($objecttype == 'invoice_supplier') {
-            $classpath = 'fourn/class';
-        }
-        if ($objecttype == 'order_supplier')   {
-            $classpath = 'fourn/class';
-        }
         if ($objecttype == 'contract') {
             $classpath = 'contrat/class'; $module='contrat'; $subelement='contrat';
         }
@@ -2529,12 +2523,18 @@ abstract class CommonObject
 
         $classfile = strtolower($subelement); $classname = ucfirst($subelement);
         if ($objecttype == 'invoice_supplier') {
-            $classfile = 'fournisseur.facture'; $classname='FactureFournisseur';
+            $classfile = 'fournisseur.facture'; 
+            $classname='FactureFournisseur';
+            $classpath = 'fourn/class';
+            $module='fournisseur';
         }
         if ($objecttype == 'order_supplier')   {
-            $classfile = 'fournisseur.commande'; $classname='CommandeFournisseur';
+            $classfile = 'fournisseur.commande'; 
+            $classname='CommandeFournisseur';
+            $classpath = 'fourn/class';
+            $module='fournisseur';
         }
-
+		
         if (! empty($conf->$module->enabled))
         {
             $res=dol_include_once('/'.$classpath.'/'.$classfile.'.class.php');
