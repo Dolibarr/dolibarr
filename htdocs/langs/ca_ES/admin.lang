@@ -1,4 +1,4 @@
-# Dolibarr language file - Source file is ca_ES - admin 
+# Dolibarr language file - Source file is en_US - admin
 CHARSET=UTF-8
 Foundation=Fundació
 Version=Versió
@@ -1252,7 +1252,7 @@ PerfDolibarr=Configuració rendiment/informe d'optimització
 YouMayFindPerfAdviceHere=En aquesta pàgina trobareu diverses proves i consells relacionats amb el rendiment.
 NotInstalled=No instal·lat, de manera que el servidor no baixa de rendiment amb això.
 ApplicativeCache=Aplicació memòria cau
-Memmemòria caudNotAvailable=No s'ha trobat aplicació memòria cau. Pot millorar el rendiment mitjançant la instal.lació d'un servidor de memòria cau Memmemòria caud i un mòdul capaç d'utilitzar aquest servidor de memòria cau. Més informació aquí http://wiki.dolibarr.org/index.php/M%C3%B3dulo_MemCached. Tingueu en compte que una gran quantitat de proveïdors d'allotjament web no proporcionen aquestes servidors de memòria cau.
+MemcachedNotAvailable=Cap aplicació cau disponible. Pot accelerar el rendiment de Dolibarr instal · lant un servidor de memòria cau Memcached i un mòdul de memòria cau d'aplicacions en aquest servidor. Més informació a la pàgina http://wiki.dolibarr.org/index.php/M%C3%B3dulo_MemCached. Tingueu en compte que molts servidors web de baix cost no ofereixen aquests servidors de memòria cau en la seva infraestructura.
 OPCodeCache=OPCode memòria cau
 NoOPCodeCacheFound=No s'ha trobat cap opcode memòria cau. Pot ser que estigui utilitzant un altre opcode com XCache o eAccelerator (millor), o potser no tingui opcode memòria cau (pitjor).
 HTTPCacheStaticResources=Memòria cau HTTP per a estadístiques de recursos (css, img, javascript)
