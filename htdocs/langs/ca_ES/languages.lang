@@ -2,6 +2,7 @@
 CHARSET=UTF-8
 Language_ar_AR=Àrab
 Language_ar_SA=Àrab
+Language_bg_BG=Búlgar
 Language_ca_ES=Català
 Language_da_DA=Danès
 Language_da_DK=Danès
@@ -27,6 +28,7 @@ Language_fr_BE=Francès (Bèlgica)
 Language_fr_CA=Francès (Canadà)
 Language_fr_CH=Francès (Suïssa)
 Language_fr_FR=Francès
+Language_he_IL=Hebreu
 Language_hu_HU=Hongarès
 Language_is_IS=Islandès
 Language_it_IT=Italià
