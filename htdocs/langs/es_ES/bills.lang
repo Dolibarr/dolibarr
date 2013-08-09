@@ -1,4 +1,4 @@
-# Dolibarr language file - Source file is es_ES - bills
+# Dolibarr language file - Source file is en_US - bills
 CHARSET=UTF-8
 Bill=Factura
 Bills=Facturas
@@ -70,7 +70,7 @@ PaymentsReportsForYear=Informes de pagos de %s
 PaymentsReports=Informes de pagos
 PaymentsAlreadyDone=Pagos efectuados
 PaymentsBackAlreadyDone=Reembolsos ya efectuados
-PaymentRule=
+PaymentRule=Forma de pago
 PaymentMode=Forma de pago
 PaymentConditions=Condiciones de pago
 PaymentConditionsShort=Condiciones pago

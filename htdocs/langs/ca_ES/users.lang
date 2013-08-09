@@ -116,4 +116,4 @@ NbOfUsers=Nº d'usuaris
 DontDowngradeSuperAdmin=Només un superadmin pot degradar un superadmin
 HierarchicalResponsible=Responsable jeràrquic
 HierarchicView=Vista jeràrquica
-# UseTypeFieldToChange=Use field Type to change
+UseTypeFieldToChange=Modificar el camp Tipus per canviar

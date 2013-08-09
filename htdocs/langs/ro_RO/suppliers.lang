@@ -38,4 +38,4 @@ AddSupplierOrder=Creaţi furnizor pentru
 AddSupplierInvoice=Creaţi furnizor factura
 ListOfSupplierProductForSupplier=Lista de produse şi a preţurilor pentru <b>furnizor %s</b>
 NoneOrBatchFileNeverRan=Nici unul sau <b>lot %s</b> nu a fugit recent
-# SentToSuppliers=Sent to suppliers
+SentToSuppliers=Trimite la furnizori

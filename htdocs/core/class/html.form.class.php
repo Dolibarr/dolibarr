@@ -473,7 +473,7 @@ class Form
         $sql = "SELECT rowid, code as code_iso, libelle as label";
         $sql.= " FROM ".MAIN_DB_PREFIX."c_pays";
         $sql.= " WHERE active = 1";
-        $sql.= " ORDER BY code ASC";
+        //$sql.= " ORDER BY code ASC";
 
         dol_syslog(get_class($this)."::select_country sql=".$sql);
         $resql=$this->db->query($sql);
@@ -492,7 +492,7 @@ class Form
                     $countryArray[$i]['rowid'] 		= $obj->rowid;
                     $countryArray[$i]['code_iso'] 	= $obj->code_iso;
                     $countryArray[$i]['label']		= ($obj->code_iso && $langs->transnoentitiesnoconv("Country".$obj->code_iso)!="Country".$obj->code_iso?$langs->transnoentitiesnoconv("Country".$obj->code_iso):($obj->label!='-'?$obj->label:''));
-                    $label[$i] 	= $countryArray[$i]['label'];
+                    $label[$i] = dol_string_unaccent($countryArray[$i]['label']);
                     $i++;
                 }
 
@@ -507,7 +507,7 @@ class Form
                         $out.= '<option value="'.$row['rowid'].'" selected="selected">';
                     }
                     else
-                    {
+					{
                         $out.= '<option value="'.$row['rowid'].'">';
                     }
                     $out.= dol_trunc($row['label'],$maxlength,'middle');
@@ -518,7 +518,7 @@ class Form
             $out.= '</select>';
         }
         else
-        {
+		{
             dol_print_error($this->db);
         }
 

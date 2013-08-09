@@ -39,7 +39,7 @@ ConfirmCloseService=Sunteţi sigur că vreţi să închideţi acest serviciu cu 
 ValidateAContract=Validate un contract
 ActivateService=Activare serviciu
 ConfirmActivateService=Sunteţi sigur că doriţi să activaţi acest serviciu cu data <b>de %s?</b>
-# RefContract=Contract reference
+RefContract=Referinţă contract
 DateContract=Contract de data
 DateServiceActivate=Data de activare a serviciului
 DateServiceUnactivate=Data de serviciu unactivation
@@ -86,10 +86,10 @@ PaymentRenewContractId=Reînnoiţi contract linie (numărul %s)
 ExpiredSince=Data expirării
 RelatedContracts=contracte conexe
 NoExpiredServices=Nu expirate servicii active
-# ListOfServicesToExpireWithDuration=List of Services to expire in %s days
-# ListOfServicesToExpireWithDurationNeg=List of Services expired from more than %s days
-# ListOfServicesToExpire=List of Services to expire
-# NoteListOfYourExpiredServices=This list contains only services of contracts for third parties you are linked to as a sale representative.
+ListOfServicesToExpireWithDuration=Lista serviciilor care expiră în %s zile
+ListOfServicesToExpireWithDurationNeg=Lista serviciilor expirate de mai mult de %s zile
+ListOfServicesToExpire=Lista de servicii care expiră
+NoteListOfYourExpiredServices=Această listă conține numai serviciile pentru terții la care sunteţi reprezentant de vânzării.
 
 ##### Types de contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Reprezentant vanzari de semnare a contractului
