@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2013 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2013	   Philippe Grand		<philippe.grand@atoo-net.com>
+ * Copyright (C) 2013	   Florian Henry		<florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 
 if (!$user->rights->fournisseur->facture->lire) accessforbidden();
 
@@ -99,6 +101,7 @@ if ($mode == 'search')
 $now=dol_now();
 $form=new Form($db);
 $htmlother=new FormOther($db);
+$formfile = new FormFile($db);
 
 llxHeader('',$langs->trans("SuppliersInvoices"),'EN:Suppliers_Invoices|FR:FactureFournisseur|ES:Facturas_de_proveedores');
 
@@ -252,6 +255,9 @@ if ($resql)
 		$facturestatic->ref=$obj->ref;
 		$facturestatic->ref_supplier=$obj->ref_supplier;
 		print $facturestatic->getNomUrl(1);
+		$filename=dol_sanitizeFileName($obj->ref);
+		$filedir=$conf->fournisseur->dir_output.'/facture' . '/' . dol_sanitizeFileName($obj->facid).'/0/'.dol_sanitizeFileName($obj->ref);
+		print $formfile->getDocumentsLink($facturestatic->element, $filename, $filedir);
 		print "</td>\n";
 		print '<td class="nowrap">'.dol_trunc($obj->ref_supplier,10)."</td>";
 		print '<td align="center" class="nowrap">'.dol_print_date($db->jdate($obj->datef),'day').'</td>';
