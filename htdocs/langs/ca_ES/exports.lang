@@ -125,7 +125,7 @@ DeskCode=Codi oficina
 BankAccountNumber=Número compte
 BankAccountNumberKey=Dígit Control
 ## filters
-# SelectFilterFields=If you want to filter on some values, just input values here.
+SelectFilterFields=Si vol aplicar un filtre sobre alguns valors, introduïu-los aquí.
 FilterableFields=Camps filtrables
 FilteredFields=Campos filtrats
 FilteredFieldsValues=Valors de filtres

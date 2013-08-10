@@ -144,7 +144,7 @@ class FormActions
         global $bc;
 
         require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
-
+        
         $listofactions=ActionComm::getActions($this->db, $socid, $object->id, $typeelement);
 		if (! is_array($listofactions)) dol_print_error($this->db,'FailedToGetActions');
 

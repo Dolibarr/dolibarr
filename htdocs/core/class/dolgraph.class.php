@@ -68,7 +68,10 @@ class DolGraph
 
     var $Legend=array();
     var $LegendWidthMin=0;
-
+    var $showlegend=1;
+	var $showpointvalue=1;
+	var $showpercent=0;
+		
     var $graph;     			// Objet Graph (Artichow, Phplot...)
     var $error;
 
@@ -234,6 +237,7 @@ class DolGraph
      *
      * @param 	array	$data		Data
      * @return	void
+     * @see draw_jflot for syntax of data array
      */
     function SetData($data)
     {
@@ -379,7 +383,41 @@ class DolGraph
         return $this->error;
     }
 
+    /**
+     * Show legend or not
+     * 
+     * @param	int		$showlegend		1=Show legend (default), 0=Hide legend
+     * @return	void
+     */
+    function setShowLegend($showlegend)
+    {
+        $this->showlegend=$showlegend;
+    }
 
+    /**
+     * Show pointvalue or not
+     * 
+     * @param	int		$showpointvalue		1=Show value for each point, as tooltip or inline (default), 0=Hide value
+     * @return	void
+     */
+    function setShowPointValue($showpointvalue)
+    {
+        $this->showpointvalue=$showpointvalue;
+    }
+    
+    /**
+     * Show percent or not
+     * 
+     * @param	int		$showpercent		1=Show percent for each point, as tooltip or inline, 0=Hide percent (default)
+     * @return	void
+     */
+    function setShowPercent($showpercent)
+    {
+        $this->showpercent=$showpercent;
+    }
+    
+    
+    
     /**
      * Define background color of complete image
      *
@@ -766,14 +804,13 @@ class DolGraph
         // Works with line but not with bars
         //if ($nblot > 2) $firstlot = ($nblot - 2);        // We limit nblot to 2 because jflot can't manage more than 2 bars on same x
 
-
         $i=$firstlot;
         $serie=array();
         while ($i < $nblot)	// Loop on each serie
         {
             $values=array();	// Array with horizontal y values (specific values of a serie) for each abscisse x
         	$serie[$i]="var d".$i." = [];\n";
-        	
+
             // Fill array $values
             $x=0;
             foreach($this->data as $valarray)	// Loop on each x 
@@ -816,7 +853,12 @@ class DolGraph
 		{
 			$datacolor=array();
 			foreach($this->datacolor as $val) $datacolor[]="#".sprintf("%02x%02x%02x",$val[0],$val[1],$val[2]);
-						
+
+			$urltemp='';	// TODO Add support for url link into labels
+			$showlegend=$this->showlegend;
+			$showpointvalue=$this->showpointvalue;
+			$showpercent=$this->showpercent;
+			
 			$this->_stringtoshow.= '
 			function plotWithOptions_'.$tag.'() {
 				$.plot($("#placeholder_'.$tag.'"), d0,
@@ -833,11 +875,13 @@ class DolGraph
 										var number=series.data[0][1];
 										return \'';
 										$this->_stringtoshow.='<div style="font-size:8pt;text-align:center;padding:2px;color:white;">';
-										if ($url) $this->_stringtoshow.='<a style="color: #FFFFFF;" border="0" href="'.$url.'=">';
-										$this->_stringtoshow.='\'+'.($showlegend?'number':'label+\'<br/>\'+number');
-										if (! empty($showpercent)) $this->_stringtoshow.='+\'<br/>\'+percent+\'%\'';
-										$this->_stringtoshow.='+\'';
-										if ($url) $this->_stringtoshow.='</a>';
+										if ($urltemp) $this->_stringtoshow.='<a style="color: #FFFFFF;" border="0" href="'.$urltemp.'">';
+										$this->_stringtoshow.='\'+';
+										$this->_stringtoshow.=($showlegend?'':'label+\'<br/>\'+');	// Hide label if already shown in legend
+										$this->_stringtoshow.=($showpointvalue?'number+':'');
+										$this->_stringtoshow.=($showpercent?'\'<br/>\'+percent+\'%\'+':'');
+										$this->_stringtoshow.='\'';
+										if ($urltemp) $this->_stringtoshow.='</a>';
 										$this->_stringtoshow.='</div>\';
 									},
 									background: {
@@ -894,9 +938,12 @@ class DolGraph
 		                var x = item.datapoint[0].toFixed(2);
 		                var y = item.datapoint[1].toFixed(2);
 		                var z = item.series.xaxis.ticks[item.dataIndex].label;
-		
+						';
+						if ($this->showpointvalue > 0) $this->_stringtoshow.='
 		                showTooltip_'.$tag.'(item.pageX, item.pageY,
 		                            item.series.label + "<br>" + z + " => " + y);
+		                            ';
+						$this->_stringtoshow.='
 		            }
 		        }
 		        else {

@@ -86,29 +86,40 @@ class box_graph_product_distribution extends ModeleBoxes
 		$param_year='DOLUSERCOOKIE_param'.$this->boxcode.'year';
 		$param_showinvoicenb='DOLUSERCOOKIE_param'.$this->boxcode.'showinvoicenb';
 		$param_showpropalnb='DOLUSERCOOKIE_param'.$this->boxcode.'showpropalnb';
+		$param_showordernb='DOLUSERCOOKIE_param'.$this->boxcode.'showordernb';
 		$showinvoicenb=GETPOST($param_showinvoicenb,'alpha',4);
 		$showpropalnb=GETPOST($param_showpropalnb,'alpha',4);
-		if (empty($showinvoicenb) && empty($showpropalnb)) { $showpropalnb=1; $showinvoicenb=1; }
+		$showordernb=GETPOST($param_showordernb,'alpha',4);
+		if (empty($showinvoicenb) && empty($showpropalnb) && empty($showordernb)) { $showpropalnb=1; $showinvoicenb=1; $showordernb=1; }
 		$nowarray=dol_getdate(dol_now(),true);
 		$year=(GETPOST($param_year,'',4)?GETPOST($param_year,'int',4):$nowarray['year']);
 		
+		$paramtitle=$langs->trans("Products").'/'.$langs->trans("Services");
+		if (empty($conf->produit->enabled)) $paramtitle=$langs->trans("Services");
+		if (empty($conf->service->enabled)) $paramtitle=$langs->trans("Products");
+		
 		if ($user->rights->facture->lire)
 		{
-			
 			include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
-			include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facturestats.class.php';
+			
 			$mode='customer';
 			$userid=0;
-			$WIDTH=(($showinvoicenb && $showpropalnb) || ! empty($conf->dol_optimize_smallscreen))?'256':'320';
+			$WIDTH=(($showinvoicenb && $showpropalnb) || ! empty($conf->dol_optimize_smallscreen))?'160':'320';
 			$HEIGHT='192';
-
-			$stats = new FactureStats($this->db, 0, $mode, ($userid>0?$userid:0));
-
+	
 			// Build graphic number of object. $data = array(array('Lib',val1,val2,val3),...)
 			if ($showinvoicenb)
 			{
-				$data1 = $stats->getAllByProductEntry($year,(GETPOST('action')==$refreshaction?-1:(3600*24)));
-
+				include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facturestats.class.php';
+				
+				$showpointvalue = 1;
+				$stats_invoice = new FactureStats($this->db, 0, $mode, ($userid>0?$userid:0));
+				$data1 = $stats_invoice->getAllByProductEntry($year,(GETPOST('action')==$refreshaction?-1:(3600*24)));
+				if (empty($data1)) 
+				{
+					$showpointvalue=0;
+					$data1=array(array(0=>$langs->trans("None"),1=>1));
+				}
 				$filenamenb = $dir."/prodserforinvoice-".$year.".png";
 				$fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=productstats&amp;file=prodserforinvoice-'.$year.'.png';
 
@@ -119,13 +130,16 @@ class box_graph_product_distribution extends ModeleBoxes
 					$px1->SetData($data1);
 					unset($data1);
 					$px1->SetPrecisionY(0);
-					$i=0;$tot=count($data2);$legend=array();
+					$i=0;$tot=count($data1);$legend=array();
 					while ($i <= $tot)
 					{
-						$legend[]=$data2[$i][0];
+						$legend[]=$data1[$i][0];
 						$i++;
 					}
 					$px1->SetLegend($legend);
+					$px1->setShowLegend(0);
+					$px1->setShowPointValue($showpointvalue);
+					$px1->setShowPercent(0);
 					$px1->SetMaxValue($px1->GetCeilMaxValue());
 					$px1->SetWidth($WIDTH);
 					$px1->SetHeight($HEIGHT);
@@ -136,22 +150,31 @@ class box_graph_product_distribution extends ModeleBoxes
 					$px1->SetCssPrefix("cssboxes");
 					//$px1->mode='depth';
 					$px1->SetType(array('pie'));
-					$px1->SetTitle($langs->trans("BoxProductDistributionFor",$langs->trans("ProductsServices"),$langs->transnoentitiesnoconv("Invoices")));
-
+					$px1->SetTitle($langs->trans("BoxProductDistributionFor",$paramtitle,$langs->transnoentitiesnoconv("Invoices")));
+				
 					$px1->draw($filenamenb,$fileurlnb);
 				}
 			}
 		}
 			
-/*		if ($user->rights->propal->lire)
+		if ($user->rights->propal->lire)
 		{
 			// Build graphic number of object. $data = array(array('Lib',val1,val2,val3),...)
 			if ($showpropalnb)
 			{
-				$data2 = $stats->getAmountByMonthWithPrevYear($year,(GETPOST('action')==$refreshaction?-1:(3600*24)));
-
+				include_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propalestats.class.php';
+				
+				$showpointvalue = 1;
+				$stats_proposal = new PropaleStats($this->db, 0, $mode, ($userid>0?$userid:0));
+				$data2 = $stats_proposal->getAllByProductEntry($year,(GETPOST('action')==$refreshaction?-1:(3600*24)));
+				if (empty($data2)) 
+				{
+					$showpointvalue = 0;
+					$data2=array(array(0=>$langs->trans("None"),1=>1));
+				}
+				
 				$filenamenb = $dir."/prodserforpropal-".$year.".png";
-				$fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=billstats&amp;file=prodserforpropal-'.$year.'.png';
+				$fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=proposalstats&amp;file=prodserforpropal-'.$year.'.png';
 
 				$px2 = new DolGraph();
 				$mesg = $px2->isGraphKo();
@@ -167,6 +190,9 @@ class box_graph_product_distribution extends ModeleBoxes
 						$i++;
 					}
 					$px2->SetLegend($legend);
+					$px2->setShowLegend(0);
+					$px2->setShowPointValue($showpointvalue);
+					$px2->setShowPercent(0);
 					$px2->SetMaxValue($px2->GetCeilMaxValue());
 					$px2->SetWidth($WIDTH);
 					$px2->SetHeight($HEIGHT);
@@ -175,14 +201,67 @@ class box_graph_product_distribution extends ModeleBoxes
 					$px2->SetHorizTickIncrement(1);
 					$px2->SetPrecisionY(0);
 					$px2->SetCssPrefix("cssboxes");
-					$px2->mode='depth';
-					$px2->SetTitle($langs->trans("BoxProductDistributionFor",$langs->trans("ProductsServices"),$langs->transnoentitiesnoconv("Proposals")));
+					//$px2->mode='depth';
+					$px2->SetType(array('pie'));
+					$px2->SetTitle($langs->trans("BoxProductDistributionFor",$paramtitle,$langs->transnoentitiesnoconv("Proposals")));
 
 					$px2->draw($filenamenb,$fileurlnb);
 				}
 			}
 		}
-	*/		
+
+		if ($user->rights->commande->lire)
+		{
+			// Build graphic number of object. $data = array(array('Lib',val1,val2,val3),...)
+			if ($showordernb)
+			{
+				include_once DOL_DOCUMENT_ROOT.'/commande/class/commandestats.class.php';
+				
+				$showpointvalue = 1;
+				$stats_order = new CommandeStats($this->db, 0, $mode, ($userid>0?$userid:0));
+				$data3 = $stats_order->getAllByProductEntry($year,(GETPOST('action')==$refreshaction?-1:(3600*24)));
+				if (empty($data3)) 
+				{
+					$showpointvalue = 0;
+					$data3=array(array(0=>$langs->trans("None"),1=>1));
+				}
+				
+				$filenamenb = $dir."/prodserfororder-".$year.".png";
+				$fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&amp;file=prodserfororder-'.$year.'.png';
+
+				$px3 = new DolGraph();
+				$mesg = $px3->isGraphKo();
+				if (! $mesg)
+				{
+					$px3->SetData($data3);
+					unset($data3);
+					$px3->SetPrecisionY(0);
+					$i=0;$tot=count($data3);$legend=array();
+					while ($i <= $tot)
+					{
+						$legend[]=$data3[$i][0];
+						$i++;
+					}
+					$px3->SetLegend($legend);
+					$px3->setShowLegend(0);
+					$px3->setShowPointValue($showpointvalue);
+					$px3->setShowPercent(0);
+					$px3->SetMaxValue($px3->GetCeilMaxValue());
+					$px3->SetWidth($WIDTH);
+					$px3->SetHeight($HEIGHT);
+					//$px3->SetYLabel($langs->trans("AmountOfBillsHT"));
+					$px3->SetShading(3);
+					$px3->SetHorizTickIncrement(1);
+					$px3->SetPrecisionY(0);
+					$px3->SetCssPrefix("cssboxes");
+					//$px3->mode='depth';
+					$px3->SetType(array('pie'));
+					$px3->SetTitle($langs->trans("BoxProductDistributionFor",$paramtitle,$langs->transnoentitiesnoconv("Orders")));
+					$px3->draw($filenamenb,$fileurlnb);
+				}
+			}
+		}
+				
 		if (! $mesg)
 		{
 			$stringtoshow='';
@@ -197,33 +276,39 @@ class box_graph_product_distribution extends ModeleBoxes
 			$stringtoshow.='<form class="flat formboxfilter" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 			$stringtoshow.='<input type="hidden" name="action" value="'.$refreshaction.'">';
 			$stringtoshow.='<input type="hidden" name="DOL_AUTOSET_COOKIE" value="'.$param_year.','.$param_showinvoicenb.','.$param_showpropalnb.'">';
-			$stringtoshow.='<input type="checkbox" name="'.$param_showinvoicenb.'"'.($showinvoicenb?' checked="true"':'').'"> '.$langs->trans("ForInvoice");
+			$stringtoshow.='<input type="checkbox" name="'.$param_showinvoicenb.'"'.($showinvoicenb?' checked="true"':'').'"> '.$langs->trans("ForCustomersInvoices");
 			$stringtoshow.=' &nbsp; ';
 			$stringtoshow.='<input type="checkbox" name="'.$param_showpropalnb.'"'.($showpropalnb?' checked="true"':'').'"> '.$langs->trans("ForProposals");
 			$stringtoshow.='&nbsp;';
-			$stringtoshow.='<input type="checkbox" name="'.$param_showordernb.'"'.($showordernb?' checked="true"':'').'"> '.$langs->trans("ForOrders");
+			$stringtoshow.='<input type="checkbox" name="'.$param_showordernb.'"'.($showordernb?' checked="true"':'').'"> '.$langs->trans("ForCustomersOrders");
 			$stringtoshow.='<br>';
 			$stringtoshow.=$langs->trans("Year").' <input class="flat" size="4" type="text" name="'.$param_year.'" value="'.$year.'">';
 			$stringtoshow.='<input type="image" src="'.img_picto($langs->trans("Refresh"),'refresh.png','','',1).'">';
 			$stringtoshow.='</form>';
 			$stringtoshow.='</div>';
-			if ($showinvoicenb && $showpropalnb)
-			{
-				$stringtoshow.='<div class="fichecenter">';
-				$stringtoshow.='<div class="fichehalfleft">';
-			}
+			//if ($showinvoicenb && $showpropalnb && $showordernb)
+			//{
+				$stringtoshow.='<div class="fichecenter"><div class="containercenter">';
+				$stringtoshow.='<div class="fichehalfleftxxx">';
+			//}
 			if ($showinvoicenb) $stringtoshow.=$px1->show();
-			if ($showinvoicenb && $showpropalnb)
-			{
+			//if ($showinvoicenb && $showpropalnb)
+			//{
 				$stringtoshow.='</div>';
-				$stringtoshow.='<div class="fichehalfright">';
-			}
-//			if ($showpropalnb) $stringtoshow.=$px2->show();
-			if ($showinvoicenb && $showpropalnb)
-			{
+				$stringtoshow.='<div class="fichehalfrightxxx">';
+			//}
+			if ($showpropalnb) $stringtoshow.=$px2->show();
+			//if ($showinvoicenb && $showpropalnb)
+			//{
 				$stringtoshow.='</div>';
+				$stringtoshow.='<div class="fichehalfrightxxx">';
+			//}
+			if ($showordernb) $stringtoshow.=$px3->show();
+			//if ($showinvoicenb && $showpropalnb)
+			//{
+				$stringtoshow.='</div></div>';
 				$stringtoshow.='</div>';
-			}
+			//}
 			$this->info_box_contents[0][0] = array('td' => 'align="center" class="nohover"','textnoformat'=>$stringtoshow);
 		}
 		else

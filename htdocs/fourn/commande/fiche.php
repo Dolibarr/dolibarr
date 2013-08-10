@@ -1812,6 +1812,16 @@ elseif (! empty($object->id))
 		 * Linked object block
 		 */
 		$somethingshown=$object->showLinkedObjectBlock();
+		
+		print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+                
+
+        // List of actions on element
+        include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
+        $formactions=new FormActions($db);
+        $somethingshown=$formactions->showactions($object,'order_supplier',$socid);
+
+		print '</div></div></div>';
 
 		//print '</td><td valign="top" width="50%">';
 		print '</div><div class="fichehalfright"><div class="ficheaddleft">';
