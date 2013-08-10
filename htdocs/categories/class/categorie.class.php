@@ -390,16 +390,16 @@ class Categorie
 	function add_type($obj,$type)
 	{
 		global $conf;
-		
+
+		$error=0;
+
 		if ($this->id == -1) return -2;
-		
+
 		if ($type == 'company')     $type='societe';
 		if ($type == 'fournisseur') $type='societe';
-		
+
 		$column_name=$type;
-        if ($type=='contact') {
-			$column_name='socpeople';
-		}
+        if ($type=='contact') $column_name='socpeople';
 
 		$sql  = "INSERT INTO ".MAIN_DB_PREFIX."categorie_".$type." (fk_categorie, fk_".$column_name.")";
 		$sql .= " VALUES (".$this->id.", ".$obj->id.")";
@@ -407,10 +407,11 @@ class Categorie
 		dol_syslog(get_class($this).'::add_type sql='.$sql);
 		if ($this->db->query($sql))
 		{
-			if (!empty($conf->global->CATEGORIE_RECURSIV_ADD)) {
+			if (!empty($conf->global->CATEGORIE_RECURSIV_ADD))
+			{
 				$sql = 'SELECT fk_parent FROM '.MAIN_DB_PREFIX.'categorie';
 				$sql.= " WHERE rowid = '".$this->id."'";
-			
+
 				dol_syslog(get_class($this)."::add_type sql=".$sql);
 				$resql=$this->db->query($sql);
 				if ($resql)
@@ -418,7 +419,7 @@ class Categorie
 					if ($this->db->num_rows($resql) > 0)
 					{
 						$objparent = $this->db->fetch_object($resql);
-							
+
 						if (!empty($objparent->fk_parent)) {
 							$cat = new Categorie($this->db);
 							$cat->id=$objparent->fk_parent;
@@ -428,12 +429,23 @@ class Categorie
 				}
 				else
 				{
-					$this->error=$this->db->error().' sql='.$sql;
+					$this->error=$this->db->lasterror();
 					return -1;
 				}
 			}
-			
-			return 1;
+
+			// Save object we want to link category to into category instance to provide information to trigger
+			$this->linkto=$object;
+
+			// Appel des triggers
+			include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
+			$interface=new Interfaces($this->db);
+			$result=$interface->run_triggers('CATEGORY_LINK',$this,$user,$langs,$conf);
+			if ($result < 0) { $error++; $this->errors=$interface->errors; $this->error=join(',',$this->errors); }
+			// Fin appel triggers
+
+			if (! $error) return 1;
+			else return -2;
 		}
 		else
 		{
@@ -444,7 +456,7 @@ class Categorie
 			}
 			else
 			{
-				$this->error=$this->db->error().' sql='.$sql;
+				$this->error=$this->db->lasterror();
 			}
 			return -1;
 		}
@@ -459,10 +471,11 @@ class Categorie
 	 */
 	function del_type($obj,$type)
 	{
+		$error=0;
 
 		if ($type == 'company')     $type='societe';
 		if ($type == 'fournisseur') $type='societe';
-		
+
 		$column_name=$type;
         if ($type=='contact') $column_name='socpeople';
 
@@ -473,11 +486,22 @@ class Categorie
 		dol_syslog(get_class($this).'::del_type sql='.$sql);
 		if ($this->db->query($sql))
 		{
-			return 1;
+			// Save object we want to unlink category off into category instance to provide information to trigger
+			$this->unlinkoff=$obj;
+
+			// Appel des triggers
+			include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
+			$interface=new Interfaces($this->db);
+			$result=$interface->run_triggers('CATEGORY_UNLINK',$this,$user,$langs,$conf);
+			if ($result < 0) { $error++; $this->errors=$interface->errors; $this->error=join(',',$this->errors); }
+			// Fin appel triggers
+
+			if (! $error) return 1;
+			else return -2;
 		}
 		else
 		{
-			$this->error=$this->db->error().' sql='.$sql;
+			$this->error=$this->db->lasterror();
 			return -1;
 		}
 	}

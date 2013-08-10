@@ -47,7 +47,6 @@ For users:
 - New: [ task #918 ] Stock replenishment
 - Fix: [ bug #992 ] Proforma invoices don't have a separated numeric count
 
-
 For translators:
 - Qual: Normalized sort order of all languages files with english reference files.
 - New: Add language code files for South Africa.
@@ -72,6 +71,7 @@ For developers:
   separated by a coma, of other POST parameters, Dolibarr will automatically save this parameters
   into user cookies.
 - New: Add hook addHomeSetup.
+- New: Add trigger CATEGORY_LINK and CATEGORY_UNLINK.
 
 WARNING: Following change may create regression for some external modules, but was necessary to make
 Dolibarr better:
