@@ -266,20 +266,6 @@ class Product extends CommonObject
 		{
 			// Load object modCodeProduct
 			$module=(! empty($conf->global->PRODUCT_CODEPRODUCT_ADDON)?$conf->global->PRODUCT_CODEPRODUCT_ADDON:'mod_codeproduct_leopard');
-<<<<<<< HEAD
-			
-			if (substr($module, 0, 16) == 'mod_codeproduct_' && substr($module, -3) == 'php')
-			{
-				$module = substr($module, 0, dol_strlen($module)-4);
-			}
-			
-			dol_include_once('/core/modules/product/'.$module.'.php');
-			$modCodeProduct = new $module;
-
-			if (! empty($modCodeProduct->code_auto))
-				$this->ref = $modCodeProduct->getNextValue($this,$this->type);
-			else
-=======
 			if ($module != 'mod_codeproduct_leopard')	// Do not load module file
 			{
 				if (substr($module, 0, 16) == 'mod_codeproduct_' && substr($module, -3) == 'php')
@@ -295,7 +281,6 @@ class Product extends CommonObject
 				unset($modCodeProduct);
 			}
 			if (empty($this->ref))
->>>>>>> 5c2e62633887d513a042fd6c97727b4c61eae312
 			{
 				$this->error='ProductModuleNotSetupForAutoRef';
 				return -2;
