@@ -173,7 +173,7 @@ AddFiles=Lisa faile
 StartUpload=Alusta üles
 CancelUpload=Loobu laadida
 FileIsTooBig=Failid on liiga suur
-# PleaseBePatient=Please be patient...
+PleaseBePatient=Palun ole kannatlik ...
 
 ##### Calendar common #####
 AddCalendarEntry=Lisa kirje kalender %s
@@ -195,6 +195,7 @@ MemberResiliatedInDolibarr=Liikmesriigid %s resiliated sisse Dolibarr
 MemberDeletedInDolibarr=Liikmesriigid %s kustutatakse Dolibarr
 MemberSubscriptionAddedInDolibarr=Märkimise liige %s lisatud Dolibarr
 ShipmentValidatedInDolibarr=Vedu %s kinnitada Dolibarr
+# ShipmentDeletedInDolibarr=Shipment %s deleted from Dolibarr
 ##### Export #####
 Export=Eksport
 ExportsArea=Eksport ala

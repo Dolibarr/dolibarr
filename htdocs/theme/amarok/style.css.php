@@ -552,13 +552,14 @@ table.login_table .vmenu {
 
 div.login_block {
 	position:absolute;
-	top:5px;
-	right:10px;
+	top:0px;
+	right:8px;
 	z-index:100;
 	<?php if (GETPOST("optioncss") == 'print') {?>
 	display:none;
 	<?php } ?>
 }
+div.login_block_user, div.login_block_other { clear: both; }
 
 div.login_block a {color:rgba(255,255,255,.6);}
 div.login_block a:hover {color:#ffffff}
@@ -569,14 +570,24 @@ div.login_block table {
 
 div.login {
 	white-space:nowrap;
-	padding: <?php echo ($conf->dol_optimize_smallscreen?'0':'8')?>px 0px 0px 0px;
-	margin:0px 0px 0px 8px;
+	/* padding: <?php echo ($conf->dol_optimize_smallscreen?'0':'8')?>px 0px 0px 0px; */
+	/* margin:0px 0px 0px 8px; */
 	font-weight:bold;
+	float: right;
+}
+.login_block_user {
+	float: right;
+}
+.login_block_elem {
+	float: right;
+	vertical-align: top;
+	padding: 0px 0px 0px 8px !important;
+	height: 16px;
 }
 
 img.login, img.printer, img.entity {
-	padding: <?php echo ($conf->dol_optimize_smallscreen?'0':'8')?>px 0px 0px 0px;
-	margin:0px 0px 0px 8px;
+	/* padding: <?php echo ($conf->dol_optimize_smallscreen?'0':'8')?>px 0px 0px 0px; */
+	margin:2px 0px 0px 0px;
 	text-decoration:none;
 	color: white;
 	font-weight:bold;
@@ -1143,9 +1154,11 @@ table.notopnoleftnoright {
 	margin:0px;
 }
 
-table.border {
-	border:1px solid #bbbbbb;
+table.border, table.dataTable, .table-border, .table-border-col, .table-key-border-col, .table-val-border-col  {
+	border:1px solid #dddddd;
 	border-collapse:collapse;
+	padding:1px 0px;
+	padding-left:2px;
 }
 
 table.border td {
@@ -1155,11 +1168,13 @@ table.border td {
 	padding-left:2px;
 }
 
-/*
-td.border {
-	border:1px solid #000000;
+.table-key-border-col {
+	width: 25%;
+	vertical-align:top;
 }
-*/
+.table-val-border-col {
+	width:auto;
+}
 
 /* Main boxes */
 
@@ -1229,11 +1244,11 @@ table.liste {
 
 table.liste td {padding:1px 2px 1px 0px;}
 
-.tagtable { display: table; }
+.tagtable, .table-border { display: table; }
+.tagtr, .table-border-row  { display: table-row; }
+.tagtd, .table-border-col, .table-key-border-col, .table-val-border-col { display: table-cell; }
 .tagtable form { display: table-row; }
 .tagtable form div { display: table-cell; }
-.tagtr { display: table-row; }
-.tagtd { display: table-cell; }
 
 tr.liste_titre, tr.liste_titre_sel, form.liste_titre, form.liste_titre_sel
 {
@@ -1339,9 +1354,15 @@ tr.box_pair {
 	font-family:<?php print $fontlist ?>;
 }
 
-tr.fiche {
-	font-family:<?php print $fontlist ?>;
+.formboxfilter {
+	vertical-align: middle;
 }
+.formboxfilter input[type=image]
+{
+	top: 5px;
+	position: relative;
+}
+
 
 /*
  *   Ok, Warning, Error
@@ -1436,30 +1457,6 @@ div.titre {
 #divsubscribe { width: 700px; }
 #tablesubscribe { width: 100%; }
 
-div.table-border {
-	display:table;
-    width: 100%;
-    border-collapse: collapse;
-    border: 1px solid #DDD;
-}
-div.table-border-row {
-	display:table-row;
-}
-div.table-key-border-col {
-	display:table-cell;
-	width: 25%;
-	vertical-align:top;
-	padding: 1px 2px 1px 1px;
-	border: 1px solid #DDD;
-	border-collapse: collapse;
-}
-div.table-val-border-col {
-	display:table-cell;
-	width:auto;
-	padding: 1px 2px 1px 1px;
-	border: 1px solid #DDD;
-	border-collapse: collapse;
-}
 
 
 /* ============================================================================== */

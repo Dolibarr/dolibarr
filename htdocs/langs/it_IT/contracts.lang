@@ -1,4 +1,4 @@
-# Dolibarr language file - en_US - contracts
+# Dolibarr language file - Source file is en_US - contracts
 CHARSET=UTF-8
 ContractsArea=Area contratti
 ListOfContracts=Elenco dei contratti
@@ -86,6 +86,11 @@ PaymentRenewContractId=Rinnova riga di contratto (numero %s)
 ExpiredSince=Scaduto il
 RelatedContracts=Contratti relativi
 NoExpiredServices=Non ci sono servizi scaduti attivi
+ListOfServicesToExpireWithDuration=Lista di servizi in scadenza entro %s giorni
+# ListOfServicesToExpireWithDurationNeg=List of Services expired from more than %s days
+ListOfServicesToExpire=Lista dei servizi in scadenza
+# NoteListOfYourExpiredServices=This list contains only services of contracts for third parties you are linked to as a sale representative.
+
 ##### Types de contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Contatto interno per la firma del contratto
 TypeContact_contrat_internal_SALESREPFOLL=Contatto interno per i rapporti successivi alla firma

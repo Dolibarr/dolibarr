@@ -1,4 +1,4 @@
-# Dolibarr language file - en_US - orders
+# Dolibarr language file - Source file is en_US - orders
 CHARSET=UTF-8
 OrdersArea=Espace commandes clients
 SuppliersOrdersArea=Espace commandes fournisseurs
@@ -150,6 +150,7 @@ AddDeliveryCostLine=Ajouter une ligne de frais port indiquant le poids de la com
 # Documents models
 PDFEinsteinDescription=Modèle de commande complet (logo…)
 PDFEdisonDescription=Modèle de commande simple
+PDFProformaDescription=Modèle de facture proforma complet (logo…)
 # Orders modes
 OrderByMail=Courrier
 OrderByFax=Fax
@@ -161,3 +162,8 @@ CreateInvoiceForThisCustomer=Facturer commandes
 NoOrdersToInvoice=Pas de commandes facturables
 CloseProcessedOrdersAutomatically=Classer automatiquement à "Traitées" les commandes sélectionnées.
 MenuOrdersToBill2=Commandes à facturer
+OrderCreation=Date de création
+Ordered=Commandé
+OrderCreated=Vos commandes ont été générées
+OrderFail=Une erreur s'est produite pendant la création de vos commandes
+CreateOrders=Créer commandes

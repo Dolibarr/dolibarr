@@ -2,12 +2,12 @@
 CHARSET=UTF-8
 
 # No errors
-# NoErrorCommitIsDone=No error, we commit
+NoErrorCommitIsDone==
 
 # Errors
 Error=Σφάλμα
 Errors=Λάθη
-# ErrorButCommitIsDone=Errors found but we validate despite this
+ErrorButCommitIsDone==
 ErrorBadEMail=%s email είναι λάθος
 ErrorBadUrl=%s url είναι λάθος
 ErrorLoginAlreadyExists=Είσοδος %s υπάρχει ήδη.
@@ -25,7 +25,7 @@ ErrorThisContactIsAlreadyDefinedAsThisType=Η επαφή αυτή έχει ήδ�
 ErrorCashAccountAcceptsOnlyCashMoney=Αυτό τραπεζικός λογαριασμός είναι ένας λογαριασμός σε μετρητά, έτσι ώστε να δέχεται πληρωμές σε μετρητά τύπου μόνο.
 ErrorFromToAccountsMustDiffers=Πηγή και τους στόχους των τραπεζικών λογαριασμών πρέπει να είναι διαφορετικό.
 ErrorBadThirdPartyName=Bad αξία για τους υπηκόους τρίτων όνομα κόμματος
-# ErrorProdIdIsMandatory=The %s is mandatory
+ErrorProdIdIsMandatory==
 ErrorBadCustomerCodeSyntax=Bad σύνταξη για τον κωδικό πελάτη
 ErrorCustomerCodeRequired=Κωδικό πελάτη που απαιτούνται
 ErrorCustomerCodeAlreadyUsed=Κωδικό πελάτη που έχει ήδη χρησιμοποιηθεί
@@ -58,10 +58,10 @@ ErrorUploadBlockedByAddon=Ανεβάστε μπλοκαριστεί από έν�
 ErrorFileSizeTooLarge=Μέγεθος αρχείου είναι πολύ μεγάλο.
 ErrorSizeTooLongForIntType=Μέγεθος υπερβολικά μεγάλο χρονικό διάστημα για int τύπου (%s μέγιστη ψηφία)
 ErrorSizeTooLongForVarcharType=Μέγεθος υπερβολικά μεγάλο χρονικό διάστημα για τον τύπο εγχόρδων (%s μέγιστο χαρακτήρες)
-# ErrorNoValueForSelectType=Please fill value for select list
-# ErrorNoValueForCheckBoxType=Please fill value for checkbox list
-# ErrorNoValueForRadioType=Please fill value for radio list
-# ErrorBadFormatValueList=The list value cannot have more than one come : <u>%s</u>, but need at least one: llave,valores
+ErrorNoValueForSelectType==
+ErrorNoValueForCheckBoxType==
+ErrorNoValueForRadioType==
+ErrorBadFormatValueList==
 ErrorFieldCanNotContainSpecialCharacters=<b>%s</b> πεδίου δεν πρέπει να περιέχει ειδικούς χαρακτήρες.
 ErrorNoAccountancyModuleLoaded=Δεν λογιστική μονάδα ενεργοποιηθεί
 ErrorExportDuplicateProfil=Αυτό το όνομα προφίλ υπάρχει ήδη για αυτό το σύνολο των εξαγωγών.
@@ -112,21 +112,22 @@ ErrorBadValueForCode=Κακό αξία για τον κωδικό ασφαλεί
 ErrorBothFieldCantBeNegative=Πεδία %s %s και δεν μπορεί να είναι τόσο αρνητικές όσο
 ErrorWebServerUserHasNotPermission=Λογαριασμό χρήστη <b>%s</b> χρησιμοποιείται για την εκτέλεση του web server δεν έχει άδεια για τη συγκεκριμένη
 ErrorNoActivatedBarcode=Δεν ενεργοποιείται τύπου barcode
-# ErrUnzipFails=Failed to unzip %s with ZipArchive
-# ErrNoZipEngine=No engine to unzip %s file in this PHP
-# ErrorFileMustBeADolibarrPackage=The file %s must be a Dolibarr zip package
-# ErrorFileRequired=It takes a package Dolibarr file
-# ErrorPhpCurlNotInstalled=The PHP CURL is not installed, this is essential to talk with Paypal
-# ErrorFailedToAddToMailmanList=Failed to add record %s to Mailman list %s or SPIP base
-# ErrorFailedToRemoveToMailmanList=Failed to remove record %s to Mailman list %s or SPIP base
-# ErrorNewValueCantMatchOldValue=New value can't be equal to old one
-# ErrorFailedToValidatePasswordReset=Failed to reinit password. May be the reinit was already done (this link can be used only one time). If not, try to restart the reinit process.
-# ErrorToConnectToMysqlCheckInstance=Connect to database fails. Check Mysql server is running (in most cases, you can launch it from command line with 'sudo /etc/init.d/mysql start').
-# ErrorFailedToAddContact=Failed to add contact
-# ErrorDateMustBeBeforeToday=The date can not be greater than today
+ErrUnzipFails==
+ErrNoZipEngine==
+ErrorFileMustBeADolibarrPackage==
+ErrorFileRequired==
+ErrorPhpCurlNotInstalled==
+ErrorFailedToAddToMailmanList==
+ErrorFailedToRemoveToMailmanList==
+ErrorNewValueCantMatchOldValue==
+ErrorFailedToValidatePasswordReset==
+ErrorToConnectToMysqlCheckInstance==
+ErrorFailedToAddContact==
+ErrorDateMustBeBeforeToday==
+# ErrorPaymentModeDefinedToWithoutSetup=A payment mode was set to type %s but setup of module Invoice was not completed to define information to show for this payment mode.
 
 # Warnings
-# WarningMandatorySetupNotComplete=Mandatory setup parameters are not yet defined
+WarningMandatorySetupNotComplete==
 WarningSafeModeOnCheckExecDir=Προειδοποίηση, PHP <b>safe_mode</b> επιλογή είναι τόσο εντολή αυτή πρέπει να αποθηκεύονται σε ένα κατάλογο που δηλώνονται από <b>safe_mode_exec_dir</b> παράμετρο php.
 WarningAllowUrlFopenMustBeOn=<b>Allow_url_fopen</b> παράμετρος πρέπει να είναι <b>ενεργοποιημένη</b> στο <b>php.ini</b> filer για το γεγονός ότι αυτή την ενότητα εργασίας εντελώς. Θα πρέπει να τροποποιήσετε αυτό το αρχείο χειροκίνητα.
 WarningBuildScriptNotRunned=Σενάριο <b>%s</b> δεν ήταν ακόμη έτρεξε για την κατασκευή γραφικών, ή δεν υπάρχουν στοιχεία που να αποδεικνύουν.
@@ -135,9 +136,9 @@ WarningPassIsEmpty=Προειδοποίηση, password της βάσης δεδ
 WarningConfFileMustBeReadOnly=Προειδοποίηση, config αρχείο σας <b>(htdocs / conf / conf.php)</b> μπορούν να αντικατασταθούν από τον web server. Αυτό είναι ένα σοβαρό κενό ασφαλείας. Τροποποιήστε τα δικαιώματα στο αρχείο για να είναι σε λειτουργία μόνο για ανάγνωση για τη λειτουργία των χρηστών του συστήματος που χρησιμοποιείται από τον διακομιστή Web. Εάν χρησιμοποιείτε Windows και μορφή FAT για το δίσκο σας, πρέπει να ξέρετε ότι αυτό το σύστημα αρχείων δεν επιτρέπει να προσθέσετε δικαιώματα στο αρχείο, οπότε δεν μπορεί να είναι απολύτως ασφαλής.
 WarningsOnXLines=Προειδοποιήσεις στα <b>%s</b> γραμμές κώδικα
 WarningNoDocumentModelActivated=Κανένα μοντέλο, για την παραγωγή εγγράφων, έχει ενεργοποιηθεί. Ένα μοντέλο θα είναι επιλεγμένο από προεπιλογή μέχρι να ελέγξετε την εγκατάσταση μονάδας σας.
-# WarningLockFileDoesNotExists=Warning, once setup is finished, you must disable install/migrate tools by adding a file <b>install.lock</b> into directory <b>%s</b>. Missing this file is a security hole.
+WarningLockFileDoesNotExists==
 WarningUntilDirRemoved=Όλες οι προειδοποιήσεις ασφαλείας (ορατό από το admin χρήστες μόνο) θα παραμείνει ενεργό για όσο διάστημα η ευπάθεια είναι παρούσα (ή ότι η συνεχής MAIN_REMOVE_INSTALL_WARNING προστίθεται στο Setup-> Άλλες setup).
-# WarningCloseAlways=Warning, closing is done even if amount differs between source and target elements. Enable this feature with caution.
-# WarningUsingThisBoxSlowDown=Warning, using this box slow down seriously all pages showing the box.
-# WarningClickToDialUserSetupNotComplete=Setup of ClickToDial information for your user are not complete (see tab ClickToDial onto your user card).
-# WarningNotRelevant=Irrelevant operation for this dataset
+WarningCloseAlways==
+WarningUsingThisBoxSlowDown==
+WarningClickToDialUserSetupNotComplete==
+WarningNotRelevant==

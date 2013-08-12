@@ -38,3 +38,4 @@ AddSupplierOrder=من أجل خلق مورد
 AddSupplierInvoice=خلق مورد فاتورة
 ListOfSupplierProductForSupplier=قائمة المنتجات والأسعار لمورد <b>ق ٪</b>
 NoneOrBatchFileNeverRan=أو لا شيء دفعة <b>٪ ق</b> لا يتعارض مؤخرا
+# SentToSuppliers=Sent to suppliers

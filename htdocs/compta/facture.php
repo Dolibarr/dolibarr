@@ -26,9 +26,9 @@
 
 /**
  *	\file       htdocs/compta/facture.php
-*	\ingroup    facture
-*	\brief      Page to create/see an invoice
-*/
+ *	\ingroup    facture
+ *	\brief      Page to create/see an invoice
+ */
 
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
@@ -661,7 +661,8 @@ else if ($action == 'add' && $user->rights->facture->creer)
 	// Fill array 'array_options' with data from add form
 	$extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
 	$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
-
+	if($ret < 0)
+		$error++;
 
 	// Replacement invoice
 	if ($_POST['type'] == 1)
@@ -1906,24 +1907,32 @@ if ($action == 'update_extras')
 	// Fill array 'array_options' with data from add form
 	$extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
 	$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
+	if($ret < 0)
+		$error++;
 
-	// Actions on extra fields (by external module or standard code)
-	// FIXME le hook fait double emploi avec le trigger !!
-	$hookmanager->initHooks(array('invoicedao'));
-	$parameters=array('id'=>$object->id);
-	$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$object,$action); // Note that $action and $object may have been modified by some hooks
-	if (empty($reshook))
-	{
-		if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+	if(!$error) {
+		// Actions on extra fields (by external module or standard code)
+		// FIXME le hook fait double emploi avec le trigger !!
+		$hookmanager->initHooks(array('invoicedao'));
+		$parameters=array('id'=>$object->id);
+		$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$object,$action); // Note that $action and $object may have been modified by some hooks
+		if (empty($reshook))
 		{
-			$result=$object->insertExtraFields();
-			if ($result < 0)
+			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
 			{
-				$error++;
+				$result=$object->insertExtraFields();
+				if ($result < 0)
+				{
+					$error++;
+				}
 			}
 		}
+		else if ($reshook < 0) $error++;
 	}
-	else if ($reshook < 0) $error++;
+	else
+	{
+		$action = 'edit_extras';
+	}
 
 }
 
@@ -1943,9 +1952,9 @@ llxHeader('',$langs->trans('Bill'),'EN:Customers_Invoices|FR:Factures_Clients|ES
 
 /*********************************************************************
  *
-* Mode creation
-*
-**********************************************************************/
+ * Mode creation
+ *
+ **********************************************************************/
 if ($action == 'create')
 {
 	$facturestatic=new Facture($db);
@@ -2039,8 +2048,26 @@ if ($action == 'create')
 	// Ref
 	print '<tr><td class="fieldrequired">'.$langs->trans('Ref').'</td><td colspan="2">'.$langs->trans('Draft').'</td></tr>';
 
+	// Tiers
+	print '<tr>';
+	print '<td class="fieldrequired">'.$langs->trans('Customer').'</td>';
+	if($soc->id > 0)
+	{
+		print '<td colspan="2">';
+		print $soc->getNomUrl(1);
+		print '<input type="hidden" name="socid" value="'.$soc->id.'">';
+		print '</td>';
+	}
+	else
+	{
+		print '<td colspan="2">';
+		print $form->select_company('','socid','s.client = 1 OR s.client = 3',1);
+		print '</td>';
+	}
+	print '</tr>'."\n";
+
 	// Factures predefinies
-	if (empty($origin) && empty($originid) && $socid>0)
+	if (empty($origin) && empty($originid) && $socid > 0)
 	{
 		$sql = 'SELECT r.rowid, r.titre, r.total_ttc';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'facture_rec as r';
@@ -2074,24 +2101,6 @@ if ($action == 'create')
 			dol_print_error($db);
 		}
 	}
-
-	// Tiers
-	print '<tr>';
-	print '<td class="fieldrequired">'.$langs->trans('Customer').'</td>';
-	if($soc->id > 0)
-	{
-		print '<td colspan="2">';
-		print $soc->getNomUrl(1);
-		print '<input type="hidden" name="socid" value="'.$soc->id.'">';
-		print '</td>';
-	}
-	else
-	{
-		print '<td colspan="2">';
-		print $form->select_company('','socid','s.client = 1 OR s.client = 3',1);
-		print '</td>';
-	}
-	print '</tr>'."\n";
 
 	// Type de facture
 	$facids=$facturestatic->list_replacable_invoices($soc->id);

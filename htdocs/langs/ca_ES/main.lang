@@ -1,8 +1,14 @@
 # Dolibarr language file - Source file is en_US - main
 CHARSET=UTF-8
 DIRECTION=ltr
+# Note for chinese:
+# msungstdlight or cid0ct are for traditionnal chinese (traditionnal does not render with ubuntu pdf reader)
+# stsongstdlight or cid0cs are for simplified chinese
+# To read chinese pdf with linux: sudo apt-get install poppler-data
+FONTFORPDF=helvetica
+FONTSIZEFORPDF=10
 SeparatorDecimal=,
-# SeparatorThousand=,
+SeparatorThousand=None
 FormatDateShort=%d/%m/%Y
 FormatDateShortInput=%d/%m/%Y
 FormatDateShortJava=dd/MM/yyyy
@@ -65,8 +71,8 @@ RecordSaved=Registre guardat
 RecordDeleted=Registre eliminat
 LevelOfFeature=Nivell de funcions
 NotDefined=No definida
-# DefinedAndHasThisValue=Defined and value to
-# IsNotDefined=undefined
+DefinedAndHasThisValue=Definit i amb valor a
+IsNotDefined=no definit
 DolibarrInHttpAuthenticationSoPasswordUseless=Dolibarr està configurat en mode d'autenticació <b>%s</b> en el fitxer de configuració <b>conf.php</b>.<br> Això significa que la base de dades de les contrasenyes és externa a Dolibarr, per això tota modificació d'aquest camp pot resultar sense cap efecte.
 Administrator=Administrador
 Undefined=No definit
@@ -140,7 +146,7 @@ ConfirmClone=Seleccions dades que voleu copiar.
 NoCloneOptionsSpecified=no hi ha dades definits per copiar
 Of=de
 Go=Anar
-# Run=Run
+Run=llançar
 CopyOf=Còpia de
 Show=Veure
 ShowCardHere=Veure la fitxa aquí
@@ -331,13 +337,13 @@ ShortInfo=Info.
 Ref=Ref.
 RefSupplier=Ref. proveïdor
 RefPayment=Ref. pagament
-CommercialProposals=Pressupostos
+CommercialProposalsShort=Pressupostos
 Comment=Comentari
 Comments=Comentaris
 ActionsToDo=Esdeveniments a realitzar
 ActionsDone=Esdeveniments realitzats
 ActionsToDoShort=A realitzar
-# ActionsRunningshort=Started
+ActionsRunningshort=Començada
 ActionsDoneShort=Realitzades
 ActionNotApplicable=No aplicable
 ActionRunningNotStarted=No començat
@@ -649,6 +655,8 @@ Element=Element
 NoPhotoYet=No hi ha fotografia disponible
 HomeDashboard=Resum
 Deductible=Deduïble
+from=de
+toward=cap a
 # Week day
 Monday=Dilluns
 Tuesday=Dimarts

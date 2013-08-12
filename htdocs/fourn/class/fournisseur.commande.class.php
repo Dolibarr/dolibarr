@@ -7,6 +7,7 @@
  * Copyright (C) 2010-2013	Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2012       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
+ * Copyright (C) 2013       Cédric Salvador         <csalvador@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -921,6 +922,10 @@ class CommandeFournisseur extends CommonOrder
 
 		$error=0;
         $now=dol_now();
+        if(!$this->source)
+        {
+            $this->source = 0;
+        }
 
         /* On positionne en mode brouillon la commande */
         $this->brouillon = 1;
@@ -938,7 +943,8 @@ class CommandeFournisseur extends CommonOrder
         $sql.= ", fk_statut";
         $sql.= ", source";
         $sql.= ", model_pdf";
-        //$sql.= ", fk_mode_reglement";
+        $sql.= ", fk_mode_reglement";
+		$sql.= ", fk_cond_reglement";
         $sql.= ") ";
         $sql.= " VALUES (";
         $sql.= "''";
@@ -951,9 +957,10 @@ class CommandeFournisseur extends CommonOrder
 		//$sql.= ", ".$this->db->idate($now);
         $sql.= ", ".$user->id;
         $sql.= ", 0";
-        $sql.= ", 0";
+        $sql.= ", " . $this->source;
         $sql.= ", '".$conf->global->COMMANDE_SUPPLIER_ADDON_PDF."'";
-        //$sql.= ", ".$this->mode_reglement_id;
+        $sql.= ", ".$this->mode_reglement_id;
+        $sql.= ", ".$this->cond_reglement_id;
         $sql.= ")";
 
         dol_syslog(get_class($this)."::create sql=".$sql);

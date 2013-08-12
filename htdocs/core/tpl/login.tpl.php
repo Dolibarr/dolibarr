@@ -30,7 +30,7 @@ print top_htmlhead('',$langs->trans('Login').' '.$title,0,0,$arrayofjs);
 ?>
 <!-- BEGIN PHP TEMPLATE LOGIN.TPL.PHP -->
 
-<body class="body">
+<body class="body bodylogin">
 
 <script type="text/javascript">
 $(document).ready(function () {

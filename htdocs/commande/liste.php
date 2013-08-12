@@ -111,7 +111,7 @@ $help_url="EN:Module_Customers_Orders|FR:Module_Commandes_Clients|ES:Módulo_Ped
 llxHeader('',$langs->trans("Orders"),$help_url);
 
 $sql = 'SELECT s.nom, s.rowid as socid, s.client, c.rowid, c.ref, c.total_ht, c.ref_client,';
-$sql.= ' c.date_valid, c.date_commande, c.date_livraison, c.fk_statut, c.facture as facturee';
+$sql.= ' c.date_valid, c.date_commande, c.note_private, c.date_livraison, c.fk_statut, c.facture as facturee';
 $sql.= ' FROM '.MAIN_DB_PREFIX.'societe as s';
 $sql.= ', '.MAIN_DB_PREFIX.'commande as c';
 // We'll need this table joined to the select in order to filter by sale
@@ -321,8 +321,14 @@ if ($resql)
 		print $generic_commande->getNomUrl(1,($viewstatut != 2?0:$objp->fk_statut));
 		print '</td>';
 
-		print '<td width="20" class="nobordernopadding nowrap">';
+		print '<td style="min-width: 20px" class="nobordernopadding nowrap">';
 		if (($objp->fk_statut > 0) && ($objp->fk_statut < 3) && $db->jdate($objp->date_valid) < ($now - $conf->commande->client->warning_delay)) print img_picto($langs->trans("Late"),"warning");
+		if(!empty($objp->note_private))
+		{
+			print ' <span class="note">';
+			print '<a href="'.DOL_URL_ROOT.'/commande/note.php?id='.$objp->rowid.'">'.img_picto($langs->trans("ViewPrivateNote"),'object_generic').'</a>';
+			print '</span>';
+		}
 		print '</td>';
 
 		print '<td width="16" align="right" class="nobordernopadding hideonsmartphone">';

@@ -2,8 +2,10 @@
 English Dolibarr ChangeLog
 --------------------------------------------------------------
 
-***** ChangeLog for 3.5 compared to 3.4 *****
+***** ChangeLog for 3.5 compared to 3.4.* *****
 For users:
+- New: Add hidden option BANK_DISABLE_DIRECT_INPUT.
+- New: More options to select status of users into select user list.
 - New: [ task #862 ] Add ODT on shipments
 - New: [ task #149 ] Add # of notes and attachments in tabs
 - New: Can edit customer ref at eny time.
@@ -38,11 +40,18 @@ For users:
 - New: Add Maghreb regions and departments.
 - New: A more responsive desgin for statistic box of home page.
 - Qual: Implement same rule for return value of all command line scripts (0 when success, <>0 if error).
-- New:  [ task #1005 ] Adapting to Spanish legislation bill numbering
-
+- New: [ task #1005 ] Adapting to Spanish legislation bill numbering
+- New: [ task #1011 ] Now supplier order and invoice deal with payment terms and mode
+- New: [ task #1014 ] Add option to recursivly add parent category
+- New: [ task #1016 ] Can define a specific numbering for deposits 
+- New: [ task #918 ] Stock replenishment
+- Fix: [ bug #992 ] Proforma invoices don't have a separated numeric count
+- New : Add pdf link into supplier invoice list and supplier order list
+- New : Genrate auto the PDF for supplier invoice
 
 For translators:
-- Normalized sort order of all languages files with english reference files.
+- Qual: Normalized sort order of all languages files with english reference files.
+- New: Add language code files for South Africa.
 
 For developers:
 - New: DolGraph can build graph with three lines.
@@ -60,25 +69,37 @@ For developers:
 - New: Make some changes to allow usage of several alternative $dolibarr_main_url_root variables.
   Fix also several bugs with old code. 
 - Qual: All nowrap properties are now using CSS class nowrap. 
+- New: Into POST forms, if you can add a parameter DOL_AUTOSET_COOKIE with a vlue that is list name,
+  separated by a coma, of other POST parameters, Dolibarr will automatically save this parameters
+  into user cookies.
+- New: Add hook addHomeSetup.
+- New: Add trigger CATEGORY_LINK and CATEGORY_UNLINK.
 
-WARNING: This may create regression for some external modules, but was necessary to make
+WARNING: Following change may create regression for some external modules, but was necessary to make
 Dolibarr better:
 
-- We started to clean hooks code. If your hook want to modify value of $actions, it's role
-of your hook to modify it. Dolibarr hook code will not decide this for your module anymore.
-If your action class for hook was returning a string or an array, instead your module must 
-set $actionclassinstance->results (to return array) 
-or $actionclassinstance->resprints (to return string)
-to return same thing. The return value must be replaced by a "return 0";
+1) We started to clean hooks code. 
+If your hook want to modify value of $actions, it's role of your hook to modify it. Dolibarr 
+hook code will no more decide this for your module. If your action class for hook was returning
+a string or an array, instead your module must set $actionclassinstance->results (to return array) 
+or $actionclassinstance->resprints (to return string) to return same thing. The return value must 
+be replaced by a "return 0";
 Goal is to fix old compatibility code that does not match hook specifications: 
  http://wiki.dolibarr.org/index.php/Hooks_system   
 
-- Some methods object->addline used a first parameter that was object->id, some not. Of course
+2) If you implemented hook printTopRightMenu, check that output does not include '<td>' tags anymore.
+All content added must be tagged by a '<div>' with css class="login_block_elem"
+
+3) Some methods object->addline used a first parameter that was object->id, some not. Of course
 this was not a good pratice, since object->id is already known so no need to provide it as 
-parameter. All methods addline in this case were modified to remove this information. 
+parameter. All methods addline in this case were modified to remove this parameter. 
 
 
-***** ChangeLog for 3.4 compared to 3.3.2 *****
+***** ChangeLog for 3.4.1 compared to 3.4.0 *****
+Fix: [ bug #1029 ] Tulip numbering mask
+
+
+***** ChangeLog for 3.4 compared to 3.3.* *****
 For users:
 - New: Can use ODS templates as document templates.
 - New: Add link to autofill/reset with quantity to ship when creating a
@@ -133,7 +154,7 @@ For users:
 - New: [ task #900 ] Review code of ficheinter.class.php
 - Fix: [Bug #958] LocalTax2 for Spain fails on Suppliers
 - Fix: [ bug #972 ] Auto completion contact field do not take account the min caract number before search
-- Fix : [ bug #971 ] html.form.class.php select_contact with autocomplete do not exclude id from exclude array
+- Fix: [ bug #971 ] html.form.class.php select_contact with autocomplete do not exclude id from exclude array
 
 For translators:
 - Update language files.
@@ -143,8 +164,8 @@ For developers:
 - An external module can force its theme.
 - Add function dol_set_focus('#xxx').
 - A mymodule can bring its own core/modules/mymodule/modules_mymodule.php file.
-- Removed some not used libraries.
-- More web services.
+- Removed not used libraries.
+- More web services. 
 - Renamed some database fields, code variables and parameters from french to english.
 - First change to manage margins on contracts.
 - Add hook getFormMail.
@@ -167,7 +188,14 @@ WARNING: If you used external modules, some of them may need to be upgraded due 
 - If module use hook pdf_writelinedesc, module may have to add return 1 at end of 
   function to keep same behaviour.
 
+TODO:
+backport commit 53672dff75f4fdaeeed037ff9d15f860968022ca to fix confirm with jmobile
+backport commit 384e3812eb73a15adafb472cacfb93397a54459b to fix W3C/edit contract
+ 
 
+
+***** ChangeLog for 3.3.4 compared to 3.3.3 *****
+- Fix: [ bug #1001 ] Social Contribution : State not correct
 
 ***** ChangeLog for 3.3.3 compared to 3.3.2 *****
 - Fix: [ bug #903 ] Fatal error: Call to undefined function dol_get_first_day() in htdocs/commande/liste.php
@@ -212,7 +240,7 @@ WARNING: If you used external modules, some of them may need to be upgraded due 
 - Fix: [ bug #762 ] Bad profit calculation in Reporting
 - Fix: bug dictionnary with wrong prefix table
 
-***** ChangeLog for 3.3 compared to 3.2.3 *****
+***** ChangeLog for 3.3 compared to 3.2.* *****
 For users:
 - New: Add holiday module, to declare and follow holidays of your employees.
 - New: Add margin management module.
@@ -390,7 +418,7 @@ Dolibarr license has also been updated from GPLv2+ to GPLv3+.
 
 
 
-***** ChangeLog for 3.2.0 compared to 3.1.3 *****
+***** ChangeLog for 3.2.0 compared to 3.1.* *****
 WARNING: PHP lower than 5.x are no more supported.
 WARNING: Because of a major datastructure change onto supplier prices tables, be aware
 to make a backup of your database before making upgrade.
@@ -631,7 +659,7 @@ For translators:
 
 
 
-***** ChangeLog for 3.0 compared to 2.9 *****
+***** ChangeLog for 3.0 compared to 2.9.* *****
 
 For users:
 - New: Can edit date of cheque receipts.
@@ -727,7 +755,7 @@ For developers:
 - Qual: Removed deprecated code.
 
 
-***** ChangeLog for 2.9 compared to 2.8 *****
+***** ChangeLog for 2.9 compared to 2.8.* *****
 
 For users:
 - New: POS module allow to choose which warehouse to use.
@@ -845,7 +873,7 @@ For users:
 - Fix: bug #29526 : Numérotation Proposition Incorrecte après duplication
 
 
-***** ChangeLog for 2.8 compared to 2.7 *****
+***** ChangeLog for 2.8 compared to 2.7.* *****
 
 For users:
 - New: Support note on trips module
@@ -909,7 +937,7 @@ For users:
 - Fix: Update member photo.
 
 
-***** ChangeLog for 2.7 compared to 2.6 *****
+***** ChangeLog for 2.7 compared to 2.6.* *****
 
 For users:
 - New: Add a print icon to show a page to print without menus.
@@ -1008,7 +1036,7 @@ For developers:
 - All install files are now in same directory /install.
 
 
-***** ChangeLog for 2.6 compared to 2.5 *****
+***** ChangeLog for 2.6 compared to 2.5.* *****
 
 For users:
 - New: Add filter on status in emailing selector for Dolibarr users.
@@ -1091,7 +1119,7 @@ For developers:
 - First change for future geoip module.
 
 
-***** ChangeLog for 2.5 compared to 2.4 *****
+***** ChangeLog for 2.5 compared to 2.4.* *****
 
 For users:
 - Sessions timeout can be configured to overwrite PHP setup.
@@ -1155,7 +1183,7 @@ For developers:
 
    
 
-***** ChangeLog for 2.4 compared to 2.2 *****
+***** ChangeLog for 2.4 compared to 2.2.* *****
 
 For users:
 - Add a calendar module (module agenda) with ical/vcal/rss export.
@@ -1210,7 +1238,7 @@ For developers:
   Windows with Apache and Mysql included.
 
 
-***** ChangeLog for 2.2 compared to 2.1 *****
+***** ChangeLog for 2.2 compared to 2.1.* *****
 
 - Add more statistics on main page.
 - Add option to add message on login page.
@@ -1244,7 +1272,7 @@ For developers:
 - Can drag and drop boxes on main page.
 
 
-***** ChangeLog for 2.1 compared to 2.0.1 *****
+***** ChangeLog for 2.1 compared to 2.0.* *****
 
 - Added a better installer.
 - Support user and groups permissions.
@@ -1315,7 +1343,7 @@ Minor bug fixes
 
 
 
-***** ChangeLog for 2.0 compared to 1.0 *****
+***** ChangeLog for 2.0 compared to 1.0.* *****
 
 ChangeLog file size is so important, that it is not included inside Dolibarr
 package. You can find it at www.dolibarr.org

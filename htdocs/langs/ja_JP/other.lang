@@ -173,7 +173,7 @@ AddFiles=ファイルを追加
 StartUpload=アップロード開始
 CancelUpload=アップロードをキャンセル
 FileIsTooBig=ファイルが大きすぎる
-# PleaseBePatient=Please be patient...
+PleaseBePatient=しばらくお待ちください...
 
 ##### Calendar common #####
 AddCalendarEntry=カレンダー%sにエントリを追加します。
@@ -195,6 +195,7 @@ MemberResiliatedInDolibarr=Dolibarrでresiliatedメンバー%s
 MemberDeletedInDolibarr=Dolibarrから削除されたメンバーの%s
 MemberSubscriptionAddedInDolibarr=Dolibarrで追加されたメンバーの%sのためのサブスクリプション
 ShipmentValidatedInDolibarr=出荷%sはDolibarrで検証
+# ShipmentDeletedInDolibarr=Shipment %s deleted from Dolibarr
 ##### Export #####
 Export=輸出
 ExportsArea=輸出地域

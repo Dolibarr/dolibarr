@@ -65,7 +65,7 @@ ChooseFormatOfFileToImport=Выберите формат файла для ис�
 ChooseFileToImport=Выберите файл для импорта выберите пункт о picto %s ...
 SourceFileFormat=Формат исходного файла
 FieldsInSourceFile=Поля в исходном файле
-FieldsInTargetDatabase=Задача поля в базе данных Dolibarr
+# FieldsInTargetDatabase=Target fields in Dolibarr database (bold=mandatory)
 Field=Поле
 NoFields=Нет поля
 MoveField=Перемещение поля %s номер столбца
@@ -120,10 +120,10 @@ CSVFormatDesc=<b>Разделителями-запятыми</b> файл (фо�
 # Separator=Separator
 # Enclosure=Enclosure
 # SuppliersProducts=Suppliers Products
-# BankCode=Bank code
-# DeskCode=Desk code
-# BankAccountNumber=Account number
-# BankAccountNumberKey=Key
+BankCode=Код банка
+DeskCode=Код описания
+BankAccountNumber=Номер счета
+BankAccountNumberKey=Ключ
 ## filters
 # SelectFilterFields=If you want to filter on some values, just input values here.
 # FilterableFields=Champs Filtrables

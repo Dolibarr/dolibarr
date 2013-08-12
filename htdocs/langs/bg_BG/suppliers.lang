@@ -38,3 +38,4 @@ AddSupplierOrder=Създаване на поръчка за покупка
 AddSupplierInvoice=Създаване на фактура
 ListOfSupplierProductForSupplier=Списък на доставчици на стоки и цени <b>%s</b>
 NoneOrBatchFileNeverRan=Няма или не се изпълнява партида <b>%s</b> наскоро
+# SentToSuppliers=Sent to suppliers

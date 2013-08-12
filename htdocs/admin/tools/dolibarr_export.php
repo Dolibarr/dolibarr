@@ -359,9 +359,9 @@ print $langs->trans("BackupDescY").'<br><br>';
 
 </fieldset>
 
-
-
-<fieldset><label for="filename_template"> <?php echo $langs->trans("FileNameToGenerate"); ?></label>:
+<fieldset>
+<legend><?php echo $langs->trans("Destination"); ?></legend>
+<label for="filename_template"> <?php echo $langs->trans("FileNameToGenerate"); ?></label>:
  <input type="text" name="filename_template" size="60"
 	id="filename_template"
 	value="<?php
@@ -414,7 +414,7 @@ print "\n";
 
 ?></fieldset>
 
-
+<br>
 <div align="center"><input type="submit" class="button"
 	value="<?php echo $langs->trans("GenerateBackup") ?>" id="buttonGo" /><br>
 <br>

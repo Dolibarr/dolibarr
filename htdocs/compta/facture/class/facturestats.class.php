@@ -62,13 +62,17 @@ class FactureStats extends Stats
 		{
 			$object=new Facture($this->db);
 			$this->from = MAIN_DB_PREFIX.$object->table_element." as f";
+			$this->from_line = MAIN_DB_PREFIX.$object->table_element_line." as tl";
 			$this->field='total';
+			$this->field_line='total_ht';
 		}
 		if ($mode == 'supplier')
 		{
 			$object=new FactureFournisseur($this->db);
 			$this->from = MAIN_DB_PREFIX.$object->table_element." as f";
+			$this->from_line = MAIN_DB_PREFIX.$object->table_element_line." as tl";
 			$this->field='total_ht';
+			$this->field_line='total_ht';
 		}
 
 		$this->where = " f.fk_statut > 0";
@@ -189,6 +193,31 @@ class FactureStats extends Stats
 
 		return $this->_getAllByYear($sql);
 	}
+	
+	/**
+	 *	Return nb, amount of predefined product for year
+	 *
+	 *	@param	int		$year	Year to scan
+	 *	@return	array	Array of values
+	 */
+	function getAllByProduct($year)
+	{
+		global $user;
+
+		$sql = "SELECT product.ref, COUNT(product.ref) as nb, SUM(tl.".$this->field_line.") as total, AVG(tl.".$this->field_line.") as avg";
+		$sql.= " FROM ".$this->from.", ".$this->from_line.", ".MAIN_DB_PREFIX."product as product";
+		//if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+		$sql.= " WHERE ".$this->where;
+		$sql.= " AND f.rowid = tl.fk_facture AND tl.fk_product = product.rowid";
+    	$sql.= " AND f.datef BETWEEN '".$this->db->idate(dol_get_first_day($year,1,false))."' AND '".$this->db->idate(dol_get_last_day($year,12,false))."'";
+		$sql.= " GROUP BY product.ref";
+        $sql.= $this->db->order('nb','DESC');
+        $sql.= $this->db->plimit(20);
+
+		return $this->_getAllByProduct($sql);
+	}
+	
+	
 }
 
 ?>

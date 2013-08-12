@@ -90,6 +90,10 @@ function print_auguria_menu($db,$atarget,$type_user,&$tabMenu,&$menu,$noout=0)
 		$menu->add($shorturl, $newTabMenu[$i]['titre'], 0, $showmode, ($newTabMenu[$i]['target']?$newTabMenu[$i]['target']:$atarget), ($newTabMenu[$i]['mainmenu']?$newTabMenu[$i]['mainmenu']:$newTabMenu[$i]['rowid']), '');
 	}
 
+	$showmode=1;
+	if (empty($noout)) print_start_menu_entry('','class="tmenuend"',$showmode);
+	if (empty($noout)) print_end_menu_entry($showmode);
+
 	if (empty($noout)) print_end_menu_array_auguria();
 
 	print "\n";

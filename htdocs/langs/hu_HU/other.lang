@@ -173,7 +173,7 @@ AddFiles=Fájlok hozzáadása
 StartUpload=Első feltöltés
 CancelUpload=Mégsem feltöltési
 FileIsTooBig=Fájlok túl nagy
-# PleaseBePatient=Please be patient...
+PleaseBePatient=Kerjük legyen türelemmel...
 
 ##### Calendar common #####
 AddCalendarEntry=Add bejegyzés a naptárban %s
@@ -195,6 +195,7 @@ MemberResiliatedInDolibarr=Tagja %s resiliated a Dolibarr
 MemberDeletedInDolibarr=Tag %s törölni Dolibarr
 MemberSubscriptionAddedInDolibarr=Előfizetés a tag %s hozzáadott Dolibarr
 ShipmentValidatedInDolibarr=Szállítás %s hitelesítettek Dolibarr
+# ShipmentDeletedInDolibarr=Shipment %s deleted from Dolibarr
 ##### Export #####
 Export=Export
 ExportsArea=Az export területén

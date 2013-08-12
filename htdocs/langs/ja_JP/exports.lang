@@ -65,7 +65,7 @@ ChooseFormatOfFileToImport=それを選択するにはピクトの%sをクリッ
 ChooseFileToImport=ソースのインポートファイルとしてファイルを選択するピクトの%s]をクリックしてファイルをアップロード...
 SourceFileFormat=ソースファイルの形式
 FieldsInSourceFile=ソースファイル内のフィールド
-FieldsInTargetDatabase=Dolibarrデータベース内のターゲット·フィールド（* =必須）
+# FieldsInTargetDatabase=Target fields in Dolibarr database (bold=mandatory)
 Field=フィールド
 NoFields=Noフィールド
 MoveField=フィールドの列番号%sを移動
@@ -120,10 +120,10 @@ CSVFormatDesc=<b>カンマ区切りファイル</b>形式（。CSV）。 <br>こ
 # Separator=Separator
 # Enclosure=Enclosure
 # SuppliersProducts=Suppliers Products
-# BankCode=Bank code
-# DeskCode=Desk code
-# BankAccountNumber=Account number
-# BankAccountNumberKey=Key
+BankCode=銀行コード
+DeskCode=デスクのコード
+BankAccountNumber=口座番号
+BankAccountNumberKey=キー
 ## filters
 # SelectFilterFields=If you want to filter on some values, just input values here.
 # FilterableFields=Champs Filtrables

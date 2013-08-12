@@ -154,3 +154,4 @@ WarningDepositsNotIncluded=لا يتم تضمين فواتير الودائع ف
 # InvoiceDispatched=Dispatched invoices
 # AccountancyDashboard=Accountancy summary
 # ByProductsAndServices=By products and services
+# RefExt=External ref

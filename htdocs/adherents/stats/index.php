@@ -155,7 +155,7 @@ $filter='s.client in (1,2,3)';
 print $form->select_company($id,'memberid',$filter,1);
 print '</td></tr>';
 print '<tr><td>'.$langs->trans("User").'</td><td>';
-print $form->select_users($userid,'userid',1);
+print $form->select_dolusers($userid,'userid',1);
 print '</td></tr>';
 print '<tr><td align="center" colspan="2"><input type="submit" name="submit" class="button" value="'.$langs->trans("Refresh").'"></td></tr>';
 print '</table>';

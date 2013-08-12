@@ -1,4 +1,4 @@
-# Dolibarr language file - en_US - boxes
+# Dolibarr language file - Source file is en_US - boxes
 CHARSET=UTF-8
 BoxLastRssInfos=Flux d'information RSS
 BoxLastProducts=Les %s derniers produits/services enregistrés
@@ -84,3 +84,8 @@ BoxCustomersOrdersPerMonth=Commandes clients par mois
 BoxSuppliersOrdersPerMonth=Commandes fournisseurs par mois
 BoxProposalsPerMonth=Proposition par mois
 NoTooLowStockProducts=Pas de produits sous le seuil de stock minimal
+BoxProductDistribution=Répartition des produis/services
+BoxProductDistributionFor=Répartition des %s pour les %s
+ForCustomersInvoices=Factures clients
+ForCustomersOrders=Commandes clients
+ForProposals=Propositions

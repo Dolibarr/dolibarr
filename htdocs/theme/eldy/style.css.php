@@ -92,11 +92,11 @@ $colblue =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->globa
 $isred=max(0,(2*$colred-$colgreen-$colblue)/2);        // 0 - 255
 $isgreen=max(0,(2*$colgreen-$colred-$colblue)/2);      // 0 - 255
 $isblue=max(0,(2*$colblue-$colred-$colgreen)/2);       // 0 - 255
-$colorback1=($colred-3).','.($colgreen-3).','.($colblue-3);         // topmenu
-$colorback2=($colred+5).','.($colgreen+5).','.($colblue+5);
-$colorbacktab1=($colred+15).','.($colgreen+16).','.($colblue+17);      // vmenu
-$colorbacktab1b=($colred+5).','.($colgreen+6).','.($colblue+7);        // vmenu (not menu)
-$colorbacktab2=($colred-15).','.($colgreen-15).','.($colblue-15);
+$colorbackhmenu1=($colred-3).','.($colgreen-3).','.($colblue-3);         // topmenu
+$colorbackhmenu2=($colred+5).','.($colgreen+5).','.($colblue+5);
+$colorbackvmenu1=($colred+15).','.($colgreen+16).','.($colblue+17);      // vmenu
+$colorbackvmenu1b=($colred+5).','.($colgreen+6).','.($colblue+7);        // vmenu (not menu)
+$colorbackvmenu2=($colred-15).','.($colgreen-15).','.($colblue-15);
 $colorbacktitle1=($colred-5).','.($colgreen-5).','.($colblue-5);    // title of array
 $colorbacktitle2=($colred-15).','.($colgreen-15).','.($colblue-15);
 $colorbacktabcard1=($colred+15).','.($colgreen+16).','.($colblue+17);  // card
@@ -117,7 +117,7 @@ $fontsizesmaller=empty($conf->dol_optimize_smallscreen)?'11':'14';
 // Eldy colors
 if (empty($conf->global->THEME_ELDY_ENABLE_PERSONALIZED))
 {
-	$conf->global->THEME_ELDY_TOPMENU_BACK1='250,250,250';    // topmenu
+	$conf->global->THEME_ELDY_TOPMENU_BACK1='140,160,185';    // topmenu
     $conf->global->THEME_ELDY_TOPMENU_BACK2='236,236,236';
 	$conf->global->THEME_ELDY_VERMENU_BACK1='255,255,255';    // vmenu
     $conf->global->THEME_ELDY_VERMENU_BACK1b='230,232,232';   // vmenu (not menu)
@@ -144,11 +144,11 @@ if (empty($conf->global->THEME_ELDY_ENABLE_PERSONALIZED))
 	}
 }
 
-$colorback1          =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_TOPMENU_BACK1)?$colorback1:$conf->global->THEME_ELDY_TOPMENU_BACK1)        :(empty($user->conf->THEME_ELDY_TOPMENU_BACK1)?$colorback1:$user->conf->THEME_ELDY_TOPMENU_BACK1);
-$colorback2          =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_TOPMENU_BACK2)?$colorback2:$conf->global->THEME_ELDY_TOPMENU_BACK2)        :(empty($user->conf->THEME_ELDY_TOPMENU_BACK2)?$colorback2:$user->conf->THEME_ELDY_TOPMENU_BACK2);
-$colorbacktab1       =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_VERMENU_BACK1)?$colorbacktab1:$conf->global->THEME_ELDY_VERMENU_BACK1)     :(empty($user->conf->THEME_ELDY_VERMENU_BACK1)?$colorbacktab1:$user->conf->THEME_ELDY_VERMENU_BACK1);
-$colorbacktab1b      =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_VERMENU_BACK1b)?$colorbacktab1:$conf->global->THEME_ELDY_VERMENU_BACK1b)   :(empty($user->conf->THEME_ELDY_VERMENU_BACK1b)?$colorbacktab1b:$user->conf->THEME_ELDY_VERMENU_BACK1b);
-$colorbacktab2       =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_VERMENU_BACK2)?$colorbacktab2:$conf->global->THEME_ELDY_VERMENU_BACK2)     :(empty($user->conf->THEME_ELDY_VERMENU_BACK2)?$colorbacktab2:$user->conf->THEME_ELDY_VERMENU_BACK2);
+$colorbackhmenu1     =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_TOPMENU_BACK1)?$colorbackhmenu1:$conf->global->THEME_ELDY_TOPMENU_BACK1)   :(empty($user->conf->THEME_ELDY_TOPMENU_BACK1)?$colorbackhmenu1:$user->conf->THEME_ELDY_TOPMENU_BACK1);
+$colorbackhmenu2     =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_TOPMENU_BACK2)?$colorbackhmenu2:$conf->global->THEME_ELDY_TOPMENU_BACK2)   :(empty($user->conf->THEME_ELDY_TOPMENU_BACK2)?$colorbackhmenu2:$user->conf->THEME_ELDY_TOPMENU_BACK2);
+$colorbackvmenu1     =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_VERMENU_BACK1)?$colorbackvmenu1:$conf->global->THEME_ELDY_VERMENU_BACK1)   :(empty($user->conf->THEME_ELDY_VERMENU_BACK1)?$colorbackvmenu1:$user->conf->THEME_ELDY_VERMENU_BACK1);
+$colorbackvmenu1b    =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_VERMENU_BACK1b)?$colorbackvmenu1:$conf->global->THEME_ELDY_VERMENU_BACK1b) :(empty($user->conf->THEME_ELDY_VERMENU_BACK1b)?$colorbackvmenu1b:$user->conf->THEME_ELDY_VERMENU_BACK1b);
+$colorbackvmenu2     =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_VERMENU_BACK2)?$colorbackvmenu2:$conf->global->THEME_ELDY_VERMENU_BACK2)   :(empty($user->conf->THEME_ELDY_VERMENU_BACK2)?$colorbackvmenu2:$user->conf->THEME_ELDY_VERMENU_BACK2);
 $colorbacktitle1     =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_BACKTITLE1)   ?$colorbacktitle1:$conf->global->THEME_ELDY_BACKTITLE1)      :(empty($user->conf->THEME_ELDY_BACKTITLE1)?$colorbacktitle1:$user->conf->THEME_ELDY_BACKTITLE1);
 $colorbacktitle2     =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_BACKTITLE2)   ?$colorbacktitle2:$conf->global->THEME_ELDY_BACKTITLE2)      :(empty($user->conf->THEME_ELDY_BACKTITLE2)?$colorbacktitle2:$user->conf->THEME_ELDY_BACKTITLE2);
 $colorbacktabcard1   =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_BACKTABCARD1) ?$colorbacktabcard1:$conf->global->THEME_ELDY_BACKTABCARD1)  :(empty($user->conf->THEME_ELDY_BACKTABCARD1)?$colorbacktabcard1:$user->conf->THEME_ELDY_BACKTABCARD1);
@@ -173,20 +173,22 @@ if ((! empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) && empty($user->conf->
 }
 
 // Set text color to black or white
-$tmppart=explode(',',$colorback1);
-$tmpval=(! empty($tmppart[1]) ? $tmppart[1] : '');
-$tmpval+=(! empty($tmppart[2]) ? $tmppart[2] : '');
-$tmpval+=(! empty($tmppart[3]) ? $tmppart[3] : '');
-//print $tmpval;
-if ($tmpval < 340) $colortextback='FFF';
-else $colortextback='444';
+$tmppart=explode(',',$colorbackhmenu1);
+$tmpval=(! empty($tmppart[1]) ? $tmppart[1] : '')+(! empty($tmppart[2]) ? $tmppart[2] : '')+(! empty($tmppart[3]) ? $tmppart[3] : '');
+if ($tmpval <= 360) $colortextbackhmenu='FFF';
+else $colortextbackhmenu='444';
+$tmppart=explode(',',$colorbackvmenu1);
+$tmpval=(! empty($tmppart[1]) ? $tmppart[1] : '')+(! empty($tmppart[2]) ? $tmppart[2] : '')+(! empty($tmppart[3]) ? $tmppart[3] : '');
+if ($tmpval <= 360) { $colortextbackvmenu='FFF'; }
+else { $colortextbackvmenu='444'; }
 $tmppart=explode(',',$colorbacktitle1);
-$tmpval=(! empty($tmppart[1]) ? $tmppart[1] : '');
-$tmpval+=(! empty($tmppart[2]) ? $tmppart[2] : '');
-$tmpval+=(! empty($tmppart[3]) ? $tmppart[3] : '');
-//print 'xxx'.$tmpval; exit;
-if ($tmpval < 360) { $colortexttitle='FFF'; $colorshadowtitle='000'; }
+$tmpval=(! empty($tmppart[1]) ? $tmppart[1] : '')+(! empty($tmppart[2]) ? $tmppart[2] : '')+(! empty($tmppart[3]) ? $tmppart[3] : '');
+if ($tmpval <= 360) { $colortexttitle='FFF'; $colorshadowtitle='000'; }
 else { $colortexttitle='444'; $colorshadowtitle='FFF'; }
+$tmppart=explode(',',$colorbacktabcard1);
+$tmpval=(! empty($tmppart[1]) ? $tmppart[1] : '')+(! empty($tmppart[2]) ? $tmppart[2] : '')+(! empty($tmppart[3]) ? $tmppart[3] : '');
+if ($tmpval <= 340) { $colortextbacktab='FFF'; }
+else { $colortextbacktab='444'; }
 
 
 $usecss3=true;
@@ -303,6 +305,7 @@ input:-moz-placeholder { color:#ccc; }
 <?php if (! empty($dol_use_jmobile)) { ?>
 legend { margin-bottom: 8px; }
 <?php } ?>
+fieldset { border: 1px solid #AAAAAA !important; box-shadow: 2px 2px 3px #DDD; }
 
 
 .button {
@@ -430,13 +433,14 @@ td.showDragHandle {
 /* ============================================================================== */
 
 #id-container {
-  display: table;
-  table-layout: fixed;
+	margin-top: 8px;
+	display: table;
+	table-layout: fixed;
 }
 #id-right, #id-left {
-  display: table-cell;
-  float: none;
-  vertical-align: top;
+	display: table-cell;
+	float: none;
+	vertical-align: top;
 }
 #id-<?php echo $right; ?> {
 	width: 100%;
@@ -474,6 +478,10 @@ div.ficheaddleft {
 	<?php if (empty($conf->dol_optimize_smallscreen))   { print "padding-left: 16px;\n"; }
 	else print "margin-top: 10px;\n"; ?>
 }
+.containercenter {
+display : table;
+margin : 0px auto;
+}
 
 
 /* ============================================================================== */
@@ -485,27 +493,36 @@ if (! empty($conf->dol_optimize_smallscreen))
 {
 	$minwidthtmenu=0;
 	$heightmenu=19;
+	$heightmenu2=19;
 }
 else
 {
 	$minwidthtmenu=66;
 	$heightmenu=52;
+	$heightmenu2=40;
 }
 ?>
 
 div#tmenu_tooltip {
-<?php if (! empty($conf->global->THEME_ELDY_ENABLE_PERSONALIZED) || ! empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)) {
-    $colortexttopmenu=$colortextback;
-?>
-	background: rgb(<?php echo $colorback1 ?>);
-<?php } else {
-    $colortexttopmenu='000000';
-?>
-	background: rgb(<?php echo $colorback1 ?>);
-<?php
-    }
-?>
-	margin-bottom: 10px;
+<?php if (GETPOST("optioncss") == 'print') {  ?>
+	display:none;
+<?php } else { ?>
+	height: <?php print ($heightmenu2+1); ?>px;
+	padding-right: 100px;
+	background: <?php echo $colorbackvmenu; ?>;
+	box-shadow: 0 0 6px rgba(0, 0, 0, .4) !important;
+    <?php if ($usecss3) { ?>
+	background-image: linear-gradient(top, rgba(255,255,255,.3) 0%, rgba(128,128,128,.3) 100%);
+	background-image: -o-linear-gradient(top, rgba(255,255,255,.3) 0%, rgba(128,128,128,.3) 100%);
+	background-image: -moz-linear-gradient(top, rgba(255,255,255,.3) 0%, rgba(128,128,128,.3) 100%);
+	background-image: -webkit-linear-gradient(top, rgba(255,255,255,.3) 0%, rgba(128,128,128,.3) 100%);
+	background-image: -ms-linear-gradient(top, rgba(255,255,255,.3) 0%, rgba(128,128,128,.3) 100%);
+	background-image: -webkit-gradient( linear, left top, left bottom, color-stop(0, rgba(255,255,255,.3)), color-stop(1, rgba(128,128,128,.3)) );
+	<?php } else { ?>
+	background-image: rgb(<?php echo $colorbackhmenu1; ?>);
+    border-bottom: 1px solid #CCC;
+	<?php } ?>
+<?php } ?>
 }
 
 div.tmenudiv {
@@ -523,37 +540,20 @@ div.tmenudiv {
 	font-size: 13px;
     font-weight: normal;
     height: <?php print ($heightmenu+1); ?>px;
-
-<?php if ($usecss3) { ?>
-	background-image: linear-gradient(top, rgba(255,255,255,.3) 0%, rgba(160,160,160,.3) 100%);
-	background-image: -o-linear-gradient(top, rgba(255,255,255,.3) 0%, rgba(160,160,160,.3) 100%);
-	background-image: -moz-linear-gradient(top, rgba(255,255,255,.3) 0%, rgba(160,160,160,.3) 100%);
-	background-image: -webkit-linear-gradient(top, rgba(255,255,255,.3) 0%, rgba(160,160,160,.3) 100%);
-	background-image: -ms-linear-gradient(top, rgba(255,255,255,.3) 0%, rgba(160,160,160,.3) 100%);
-	background-image: -webkit-gradient( linear, left top, left bottom, color-stop(0, rgba(255,255,255,.3)), color-stop(1, rgba(160,160,160,.3)) );
-	box-shadow: 0 0 6px rgba(0, 0, 0, .4) !important;
-<?php } else { ?>
-	background-image: rgb(<?php echo $colorback1; ?>);
-    border-bottom: 1px solid #CCC;
-<?php } ?>
-
 	color: #000000;
     text-decoration: none;
 <?php } ?>
 }
-
 div.tmenudisabled, a.tmenudisabled {
 	opacity: 0.6;
 }
 a.tmenudisabled:link, a.tmenudisabled:visited, a.tmenudisabled:hover, a.tmenudisabled:active {
-	color: #808080;
     font-weight: normal;
 	padding: 0px 5px 0px 5px;
-	margin: 0px 1px 2px 1px;
-	cursor: not-allowed;
-    font-weight: normal;
 	white-space: nowrap;
+	color: #<?php echo $colortextbackhmenu; ?>;
 	text-decoration: none;
+	cursor: not-allowed;
 }
 
 a.tmenu:link, a.tmenu:visited, a.tmenu:hover, a.tmenu:active {
@@ -561,35 +561,15 @@ a.tmenu:link, a.tmenu:visited, a.tmenu:hover, a.tmenu:active {
 	padding: 0px 5px 0px 5px;
 	white-space: nowrap;
 	/*	text-shadow: 1px 1px 1px #000000; */
-	color: #<?php echo $colortexttopmenu; ?>;
+	color: #<?php echo $colortextbackhmenu; ?>;
     text-decoration: none;
 }
-a.tmenu:link, a.tmenu:visited {
-	color: #<?php echo $colortexttopmenu; ?>;
-}
-a.tmenu:hover, a.tmenu:active {
-	margin: 0px 0px 0px 0px;
-    /*	border-<?php print $right; ?>: 1px solid #555555; */
-    /*	border-<?php print $left; ?>: 1px solid #D8D8D8; */
-    /*	border-top: 1px solid #D8D8D8; */
-    /*	border-bottom: 2px solid #F4F4F4; */
-    /*	background: #F4F4F4; */
-    /*	text-shadow: 1px 1px 1px #FFFFFF !important; */
-	color: #<?php echo $colortexttopmenu; ?>;
-}
-
 a.tmenusel:link, a.tmenusel:visited, a.tmenusel:hover, a.tmenusel:active {
 	font-weight: normal;
 	padding: 0px 5px 0px 5px;
 	margin: 0px 0px 0px 0px;
-    /*	background: #F4F4F4; */
-    /*	border-<?php print $right; ?>: 1px solid #555555; */
-    /*	border-top: 1px solid #D8D8D8; */
-    /*	border-<?php print $left; ?>: 1px solid #D8D8D8; */
-    /*	border-bottom: 2px solid #F4F4F4; */
 	white-space: nowrap;
-	/*	text-shadow: 1px 1px 1px #FFFFFF;*/
-	color: #<?php echo $colortexttopmenu; ?>;
+	color: #<?php echo $colortextbackhmenu; ?>;
 	text-decoration: none !important;
 }
 
@@ -598,7 +578,23 @@ ul.tmenu {	/* t r b l */
     padding: 0px 0px 0px 0px;
     margin: 0px 0px 0px 0px;
 	list-style: none;
-    height: <?php print $heightmenu; ?>px;
+    /* height: <?php print $heightmenu; ?>px; */
+	box-shadow: 0 0 6px rgba(0, 0, 0, .4) !important;
+}
+ul.tmenu li {
+	background: rgb(<?php echo $colorbackhmenu1 ?>);
+
+    <?php if ($usecss3) { ?>
+	background-image: linear-gradient(top, rgba(255,255,255,.3) 0%, rgba(0,0,0,.3) 100%);
+	background-image: -o-linear-gradient(top, rgba(255,255,255,.3) 0%, rgba(0,0,0,.3) 100%);
+	background-image: -moz-linear-gradient(top, rgba(255,255,255,.3) 0%, rgba(0,0,0,.3) 100%);
+	background-image: -webkit-linear-gradient(top, rgba(255,255,255,.3) 0%, rgba(0,0,0,.3) 100%);
+	background-image: -ms-linear-gradient(top, rgba(255,255,255,.3) 0%, rgba(0,0,0,.3) 100%);
+	background-image: -webkit-gradient( linear, left top, left bottom, color-stop(0, rgba(255,255,255,.3)), color-stop(1, rgba(0,0,0,.3)) );
+	<?php } else { ?>
+	background-image: rgb(<?php echo $colorbackhmenu1; ?>);
+    border-bottom: 1px solid #CCC;
+	<?php } ?>
 }
 li.tmenu, li.tmenusel {
 	<?php print $minwidthtmenu?'min-width: '.$minwidthtmenu.'px;':''; ?>
@@ -608,27 +604,27 @@ li.tmenu, li.tmenusel {
     height: <?php print $heightmenu; ?>px;
 	position:relative;
 	display: block;
-	padding: 0px 0px 0px 0px;
+	padding: 0px 0px 2px 0px;
 	margin: 0px 0px 0px 0px;
 	font-weight: normal;
 }
-li.tmenu:hover, li.tmenusel {
-<?php if ($usecss3) { ?>
-    /*    background-image: -o-linear-gradient(bottom, rgb(<?php echo $colorback1; ?>) 75%, rgb(<?php echo $colorback2; ?>) 100%); */
-    /*    background-image: -moz-linear-gradient(bottom, rgb(<?php echo $colorback1; ?>) 75%, rgb(<?php echo $colorback2; ?>) 100%);*/
-    /*    background-image: -webkit-linear-gradient(bottom, rgb(<?php echo $colorback1; ?>) 40%, rgb(<?php echo $colorback2; ?>) 60%, rgb(<?php echo $colorback1; ?>) 100%); */
-    /*    background-image: -ms-linear-gradient(bottom, rgb(<?php echo $colorback1; ?>) 75%, rgb(<?php echo $colorback2; ?>) 100%);*/
-    /*    background-image: linear-gradient(bottom, rgb(<?php echo $colorback1; ?>) 75%, rgb(<?php echo $colorback2; ?>) 100%); */
-	background: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/nav-overlay3.png',1); ?>) 50% 0 repeat-x;
-<?php } ?>
+li.tmenusel, li.tmenu:hover {
+    background-image: -o-linear-gradient(bottom, rgba(250,250,250,0.3) 0%, rgba(0,0,0,0.3) 100%) !important;
+    background-image: -moz-linear-gradient(bottom, rgba(250,250,250,0.3) 0%, rgba(0,0,0,0.3) 100%) !important;
+    background-image: -webkit-linear-gradient(bottom, rgba(250,250,250,0.3) 0%, rgba(0,0,0,0.3) 100%) !important;
+    background-image: -ms-linear-gradient(bottom, rgba(250,250,250,0.3) 0%, rgba(0,0,0,0.3) 100%) !important;
+    background-image: linear-gradient(bottom, rgba(250,250,250,0.3) 0%, rgba(0,0,0,0.3) 100%) !important;
+	background: rgb(<?php echo $colorbackhmenu1 ?>);
+	/* background: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/nav-overlay3.png',1); ?>) 50% 0 repeat-x !important; Nicer but problem when menu wrap on 2 lines */
 }
+.tmenuend .tmenuleft { width: 0px; }
 div.tmenuleft
 {
 	width: 5px;
 	float: <?php print $left; ?>;
     height: <?php print $heightmenu+4; ?>px;
 	background: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menutab-r.png',1); ?>) 0 0 no-repeat;
-	margin-top: -4px;
+	margin-top: 0px;
 }
 div.tmenucenter
 {
@@ -641,7 +637,7 @@ div.tmenucenter
 .mainmenuaspan
 {
 	padding-right: 4px;
-	text-shadow: 1px 1px 1px #DDD;
+	/*text-shadow: 1px 1px 1px #DDD;*/
 }
 
 div.mainmenu {
@@ -811,6 +807,10 @@ foreach($mainmenuusedarray as $val)
 
 /* Login */
 
+.bodylogin
+{
+	background: #ffffff url(<?php echo $img_head; ?>) 0 0 no-repeat;
+}
 form#login {
 	margin-top: <?php echo $dol_optimize_smallscreen?'30':'60' ?>px;
 	margin-bottom: 30px;
@@ -872,27 +872,35 @@ div.login_block {
 	<?php print $right; ?>: 5px;
 	top: 3px;
 	font-weight: bold;
+	max-width: 110px;
 	<?php if (GETPOST("optioncss") == 'print') { ?>
 	display: none;
 	<?php } ?>
 }
-
 div.login_block table {
 	display: inline;
 }
-
 div.login {
 	white-space:nowrap;
-	padding: <?php echo ($conf->dol_optimize_smallscreen?'0':'8')?>px 0px 0px 0px;
-    margin: 0px 0px 0px 8px;
+	/* padding: <?php echo ($conf->dol_optimize_smallscreen?'0':'8')?>px 0px 0px 0px; */
+    /* margin: 0px 0px 0px 8px; */
 	font-weight: bold;
+	float: right;
 }
 div.login a {
-	color: #<?php echo $colortextback; ?>;
+	color: #<?php echo $colortextbackvmenu; ?>;
 }
 div.login a:hover {
-	color: #<?php echo $colortextback; ?>;
+	color: #<?php echo $colortextbackvmenu; ?>;
 	text-decoration:underline;
+}
+div.login_block_user, div.login_block_other { clear: both; }
+div.login_block_other { padding-top: 3px; }
+.login_block_elem {
+	float: right;
+	vertical-align: top;
+	padding: 0px 0px 0px 4px !important;
+	height: 16px;
 }
 .alogin, .alogin:hover {
 	color: #888 !important;
@@ -903,8 +911,8 @@ div.login a:hover {
 	text-decoration:underline !important;
 }
 img.login, img.printer, img.entity {
-	padding: <?php echo ($conf->dol_optimize_smallscreen?'0':'8')?>px 0px 0px 0px;
-	margin: 0px 0px 0px 8px;
+	/* padding: 0px 0px 0px 4px; */
+	/* margin: 0px 0px 0px 8px; */
 	text-decoration: none;
 	color: white;
 	font-weight: bold;
@@ -936,11 +944,11 @@ div.vmenu, td.vmenu {
 
 a.vmenu:link, a.vmenu:visited, a.vmenu:hover, a.vmenu:active { font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: bold; }
 font.vmenudisabled  { font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: bold; color: #93a5aa; }
-a.vmenu:link, a.vmenu:visited { color: #<?php echo $colortextback; ?>; }
+a.vmenu:link, a.vmenu:visited { color: #<?php echo $colortextbackvmenu; ?>; }
 
 a.vsmenu:link, a.vsmenu:visited, a.vsmenu:hover, a.vsmenu:active { font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: normal; color: #202020; margin: 1px 1px 1px 8px; }
 font.vsmenudisabled { font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: normal; color: #93a5aa; }
-a.vsmenu:link, a.vsmenu:visited { color: #<?php echo $colortextback; ?>; }
+a.vsmenu:link, a.vsmenu:visited { color: #<?php echo $colortextbackvmenu; ?>; }
 font.vsmenudisabledmargin { margin: 1px 1px 1px 8px; }
 
 a.help:link, a.help:visited, a.help:hover, a.help:active { font-size:<?php print $fontsizesmaller ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: normal; color: #666666; text-decoration: none; }
@@ -960,11 +968,11 @@ div.blockvmenupair, div.blockvmenuimpair, div.blockvmenubookmarks
 
 <?php if ($usecss3) { ?>
 
-    background-image: -o-linear-gradient(bottom, rgb(<?php echo $colorbacktab2; ?>) 0px, rgb(<?php echo $colorbacktab1; ?>) 3px);
-    background-image: -moz-linear-gradient(bottom, rgb(<?php echo $colorbacktab2; ?>) 0px, rgb(<?php echo $colorbacktab1; ?>) 3px);
-    background-image: -webkit-linear-gradient(right, rgb(<?php echo $colorbacktab2; ?>) 0px, rgb(<?php echo $colorbacktab1; ?>) 3px);
-    background-image: -ms-linear-gradient(bottom, rgb(<?php echo $colorbacktab2; ?>) 0px, rgb(<?php echo $colorbacktab1; ?>) 3px);
-    background-image: linear-gradient(bottom, rgb(<?php echo $colorbacktab2; ?>) 0px, rgb(<?php echo $colorbacktab1; ?>) 3px);
+    background-image: -o-linear-gradient(bottom, rgb(<?php echo $colorbackvmenu2; ?>) 0px, rgb(<?php echo $colorbackvmenu1; ?>) 3px);
+    background-image: -moz-linear-gradient(bottom, rgb(<?php echo $colorbackvmenu2; ?>) 0px, rgb(<?php echo $colorbackvmenu1; ?>) 3px);
+    background-image: -webkit-linear-gradient(right, rgb(<?php echo $colorbackvmenu2; ?>) 0px, rgb(<?php echo $colorbackvmenu1; ?>) 3px);
+    background-image: -ms-linear-gradient(bottom, rgb(<?php echo $colorbackvmenu2; ?>) 0px, rgb(<?php echo $colorbackvmenu1; ?>) 3px);
+    background-image: linear-gradient(bottom, rgb(<?php echo $colorbackvmenu2; ?>) 0px, rgb(<?php echo $colorbackvmenu1; ?>) 3px);
 
 <?php } else { ?>
     background-position:top;
@@ -995,11 +1003,11 @@ div.blockvmenusearch
 	background: #E3E6E8;
 
 <?php if ($usecss3) { ?>
-    background-image: -o-linear-gradient(bottom, rgb(<?php echo $colorbacktab1; ?>) 90%, rgb(<?php echo $colorbacktab2; ?>) 100%);
-    background-image: -moz-linear-gradient(bottom, rgb(<?php echo $colorbacktab1; ?>) 90%, rgb(<?php echo $colorbacktab2; ?>) 100%);
-    background-image: -webkit-linear-gradient(bottom, rgb(<?php echo $colorbacktab1; ?>) 90%, rgb(<?php echo $colorbacktab2; ?>) 100%);
-    background-image: -ms-linear-gradient(bottom, rgb(<?php echo $colorbacktab1; ?>) 90%, rgb(<?php echo $colorbacktab2; ?>) 100%);
-    background-image: linear-gradient(bottom, rgb(<?php echo $colorbacktab1; ?>) 90%, rgb(<?php echo $colorbacktab2; ?>) 100%);
+    background-image: -o-linear-gradient(bottom, rgb(<?php echo $colorbackvmenu1; ?>) 90%, rgb(<?php echo $colorbackvmenu2; ?>) 100%);
+    background-image: -moz-linear-gradient(bottom, rgb(<?php echo $colorbackvmenu1; ?>) 90%, rgb(<?php echo $colorbackvmenu2; ?>) 100%);
+    background-image: -webkit-linear-gradient(bottom, rgb(<?php echo $colorbackvmenu1; ?>) 90%, rgb(<?php echo $colorbackvmenu2; ?>) 100%);
+    background-image: -ms-linear-gradient(bottom, rgb(<?php echo $colorbackvmenu1; ?>) 90%, rgb(<?php echo $colorbackvmenu2; ?>) 100%);
+    background-image: linear-gradient(bottom, rgb(<?php echo $colorbackvmenu1; ?>) 90%, rgb(<?php echo $colorbackvmenu2; ?>) 100%);
 <?php } ?>
 
     border-left: 1px solid #DDDDDD;
@@ -1029,11 +1037,11 @@ div.blockvmenubookmarksold
     background: #E3E6E8;
 
 <?php if ($usecss3) { ?>
-    background-image: -o-linear-gradient(bottom, rgb(<?php echo $colorbacktab1b; ?>) 90%, rgb(<?php echo $colorbacktab2; ?>) 100%);
-    background-image: -moz-linear-gradient(bottom, rgb(<?php echo $colorbacktab1b; ?>) 90%, rgb(<?php echo $colorbacktab2; ?>) 100%);
-    background-image: -webkit-linear-gradient(bottom, rgb(<?php echo $colorbacktab1b; ?>) 90%, rgb(<?php echo $colorbacktab2; ?>) 100%);
-    background-image: -ms-linear-gradient(bottom, rgb(<?php echo $colorbacktab1b; ?>) 90%, rgb(<?php echo $colorbacktab2; ?>) 100%);
-    background-image: linear-gradient(bottom, rgb(<?php echo $colorbacktab1b; ?>) 90%, rgb(<?php echo $colorbacktab2; ?>) 100%);
+    background-image: -o-linear-gradient(bottom, rgb(<?php echo $colorbackvmenu1b; ?>) 90%, rgb(<?php echo $colorbackvmenu2; ?>) 100%);
+    background-image: -moz-linear-gradient(bottom, rgb(<?php echo $colorbackvmenu1b; ?>) 90%, rgb(<?php echo $colorbackvmenu2; ?>) 100%);
+    background-image: -webkit-linear-gradient(bottom, rgb(<?php echo $colorbackvmenu1b; ?>) 90%, rgb(<?php echo $colorbackvmenu2; ?>) 100%);
+    background-image: -ms-linear-gradient(bottom, rgb(<?php echo $colorbackvmenu1b; ?>) 90%, rgb(<?php echo $colorbackvmenu2; ?>) 100%);
+    background-image: linear-gradient(bottom, rgb(<?php echo $colorbackvmenu1b; ?>) 90%, rgb(<?php echo $colorbackvmenu2; ?>) 100%);
 <?php } ?>
 
     border-left: 1px solid #CCCCCC;
@@ -1111,23 +1119,22 @@ td.photo {
 
 .largebutton {
 <?php if ($usecss3) { ?>
-    background-image: -o-linear-gradient(bottom, rgb(<?php echo '240,240,240'; ?>) 15%, rgb(<?php echo '255,255,255'; ?>) 100%) !important;
-    background-image: -moz-linear-gradient(bottom, rgb(<?php echo '240,240,240'; ?>) 15%, rgb(<?php echo '255,255,255'; ?>) 100%) !important;
-    background-image: -webkit-linear-gradient(bottom, rgb(<?php echo '240,240,240'; ?>) 15%, rgb(<?php echo '255,255,255'; ?>) 100%) !important;
-    background-image: -ms-linear-gradient(bottom, rgb(<?php echo '240,240,240'; ?>) 15%, rgb(<?php echo '255,255,255'; ?>) 100%) !important;
-    background-image: linear-gradient(bottom, rgb(<?php echo '240,240,240'; ?>) 15%, rgb(<?php echo '255,255,255'; ?>) 100%) !important;
-<?php } else { ?>
-    background-image: url(<?php echo dol_buildpath($path.'/theme/'.$conf->theme.'/img/tmenu2.jpg',1); ?>) !important;
-    background-repeat: repeat-x !important;
+    background-image: -o-linear-gradient(bottom, rgba(200,200,200,0.1) 0%, rgba(255,255,255,0.3) 120%) !important;
+    background-image: -moz-linear-gradient(bottom, rgba(200,200,200,0.1) 0%, rgba(255,255,255,0.3) 120%) !important;
+    background-image: -webkit-linear-gradient(bottom, rgba(200,200,200,0.1) 0%, rgba(255,255,255,0.3) 120%) !important;
+    background-image: -ms-linear-gradient(bottom, rgba(200,200,200,0.1) 0%, rgba(255,255,255,0.3) 120%) !important;
+    background-image: linear-gradient(bottom, rgba(200,200,200,0.1) 0%, rgba(255,255,255,0.3) 120%) !important;
 <?php } ?>
-    border: 1px solid #CCC !important;
+    background: #FFF;
+    background-repeat: repeat-x !important;
+	border: 1px solid #CCC !important;
 
     -moz-border-radius: 5px 5px 5px 5px !important;
 	-webkit-border-radius: 5px 5px 5px 5px !important;
 	border-radius: 5px 5px 5px 5px !important;
-    -moz-box-shadow: 3px 3px 4px #DDD;
-    -webkit-box-shadow: 3px 3px 4px #DDD;
-    box-shadow: 3px 3px 4px #DDD;
+    -moz-box-shadow: 2px 2px 4px #DDD;
+    -webkit-box-shadow: 2px 2px 4px #DDD;
+    box-shadow: 2px 2px 4px #DDD;
 
     padding: 0 4px 0 4px !important;
 }
@@ -1350,7 +1357,7 @@ div.tabs {
 div.tabsElem { margin-top: 8px; }		/* To avoid overlap of tabs when not browser */
 
 div.tabBar {
-    color: #<?php echo $colortextback; ?>;
+    color: #<?php echo $colortextbacktab; ?>;
     padding-top: 9px;
     padding-left: <?php echo ($dol_optimize_smallscreen?'4':'8'); ?>px;
     padding-right: <?php echo ($dol_optimize_smallscreen?'4':'8'); ?>px;
@@ -1423,13 +1430,13 @@ a.tab:link, a.tab:visited, a.tab:hover, a.tab#active {
 	border-top: 1px solid #D8D8D8;
 
 <?php if ($usecss3) { ?>
-    background-image: -o-linear-gradient(bottom, rgb(<?php echo $colorbacktab1; ?>) 35%, rgb(<?php echo $colorbacktab2; ?>) 100%);
-    background-image: -moz-linear-gradient(bottom, rgb(<?php echo $colorbacktab1; ?>) 35%, rgb(<?php echo $colorbacktab2; ?>) 100%);
-    background-image: -webkit-linear-gradient(bottom, rgb(<?php echo $colorbacktab1; ?>) 35%, rgb(<?php echo $colorbacktab2; ?>) 100%);
-    background-image: -ms-linear-gradient(bottom, rgb(<?php echo $colorbacktab1; ?>) 35%, rgb(<?php echo $colorbacktab2; ?>) 100%);
-    background-image: linear-gradient(bottom, rgb(<?php echo $colorbacktab1; ?>) 35%, rgb(<?php echo $colorbacktab2; ?>) 100%);
+    background-image: -o-linear-gradient(bottom, rgb(<?php echo $colorbackvmenu1; ?>) 35%, rgb(<?php echo $colorbackvmenu2; ?>) 100%);
+    background-image: -moz-linear-gradient(bottom, rgb(<?php echo $colorbackvmenu1; ?>) 35%, rgb(<?php echo $colorbackvmenu2; ?>) 100%);
+    background-image: -webkit-linear-gradient(bottom, rgb(<?php echo $colorbackvmenu1; ?>) 35%, rgb(<?php echo $colorbackvmenu2; ?>) 100%);
+    background-image: -ms-linear-gradient(bottom, rgb(<?php echo $colorbackvmenu1; ?>) 35%, rgb(<?php echo $colorbackvmenu2; ?>) 100%);
+    background-image: linear-gradient(bottom, rgb(<?php echo $colorbackvmenu1; ?>) 35%, rgb(<?php echo $colorbackvmenu2; ?>) 100%);
 <?php } ?>
-	background-image: none !important; 
+	background-image: none !important;
 }
 
 a.tab#active {
@@ -1440,16 +1447,16 @@ a.tab#active {
 	background: rgb(<?php echo $colorbacktabactive; ?>)  url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/nav-overlay3.png',1); ?>) 50% 0 repeat-x;
 <?php } ?>
 	/*background-image: none !important; */
-	color: #<?php echo $colortextback; ?>;
+	color: #<?php echo $colortextbacktab; ?>;
 }
 a.tab:hover
 {
 	background: rgba(<?php echo $colorbacktabcard1; ?>, 0.5)  url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/nav-overlay3.png',1); ?>) 50% 0 repeat-x;
-	color: #<?php echo $colortextback; ?>;
+	color: #<?php echo $colortextbacktab; ?>;
 }
 a.tab:link, a.tab:visited
 {
-	color: #888;    
+	/* color: #888; */
 	/* font-weight: normal !important; */
 }
 a.tabimage {
@@ -1555,7 +1562,6 @@ span.butAction, span.butActionDelete {
 }
 
 #undertopmenu {
-	/*	background-image: url("<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/gradient.gif',1) ?>"); */
 	background-repeat: repeat-x;
 	margin-top: <?php echo ($dol_hide_topmenu?'6':'0'); ?>px;
 }
@@ -1595,9 +1601,10 @@ span.butAction, span.butActionDelete {
 }
 
 
-table.border, table.dataTable {
-	border: 1px solid #9CACBB;
+table.border, table.dataTable, .table-border, .table-border-col, .table-key-border-col, .table-val-border-col {
+	border: 1px solid #D0D0D0;
 	border-collapse: collapse;
+	padding: 1px 2px 1px 3px;			/* t r b l */
 }
 
 table.border td {
@@ -1611,6 +1618,14 @@ td.border {
 	border-right: 1px solid #000000;
 	border-bottom: 1px solid #000000;
 	border-left: 1px solid #000000;
+}
+
+.table-key-border-col {
+	width: 25%;
+	vertical-align:top;
+}
+.table-val-border-col {
+	width:auto;
 }
 
 /* Main boxes */
@@ -1705,11 +1720,11 @@ table.liste td {
 	padding-right: 2px;
 }
 
-.tagtable { display: table; }
+.tagtable, .table-border { display: table; }
+.tagtr, .table-border-row  { display: table-row; }
+.tagtd, .table-border-col, .table-key-border-col, .table-val-border-col { display: table-cell; }
 .tagtable form { display: table-row; }
 .tagtable form div { display: table-cell; }
-.tagtr { display: table-row; }
-.tagtd { display: table-cell; }
 
 tr.liste_titre, tr.liste_titre_sel, form.liste_titre, form.liste_titre_sel, table.dataTable.tr
 {
@@ -1720,11 +1735,11 @@ div.liste_titre, tr.liste_titre, tr.liste_titre_sel, form.liste_titre, form.list
     background: rgb(<?php echo $colorbacktitle1; ?>);
     background-repeat: repeat-x;
 	<?php if ($usecss3) { ?>
-	background-image: -o-linear-gradient(bottom, rgb(<?php echo $colorbacktitle1; ?>) 10%, rgb(<?php echo $colorbacktitle2; ?>) 120%);
-	background-image: -moz-linear-gradient(bottom, rgb(<?php echo $colorbacktitle1; ?>) 10%, rgb(<?php echo $colorbacktitle2; ?>) 120%);
-	background-image: -webkit-linear-gradient(bottom, rgb(<?php echo $colorbacktitle1; ?>) 40%, rgb(<?php echo $colorbacktitle2; ?>) 120%);
-	background-image: -ms-linear-gradient(bottom, rgb(<?php echo $colorbacktitle1; ?>) 40%, rgb(<?php echo $colorbacktitle2; ?>) 120%);
-	background-image: linear-gradient(bottom, rgb(<?php echo $colorbacktitle1; ?>) 40%, rgb(<?php echo $colorbacktitle2; ?>) 120%);
+	background-image: -o-linear-gradient(bottom, rgba(0,0,0,0.3) 0%, rgba(250,250,250,0.3) 100%);
+	background-image: -moz-linear-gradient(bottom, rgba(0,0,0,0.3) 0%, rgba(250,250,250,0.3) 100%);
+	background-image: -webkit-linear-gradient(bottom, rgba(0,0,0,0.3) 0%, rgba(250,250,250,0.3) 100%);
+	background-image: -ms-linear-gradient(bottom, rgba(0,0,0,0.3) 0%, rgba(250,250,250,0.3) 100%);
+	background-image: linear-gradient(bottom, rgba(0,0,0,0.3) 0%, rgba(250,250,250,0.3) 100%);
     font-weight: bold;
 	<?php } ?>
     color: #<?php echo $colortexttitle; ?>;
@@ -1736,13 +1751,14 @@ div.liste_titre, tr.liste_titre, tr.liste_titre_sel, form.liste_titre, form.list
 tr.liste_titre th, th.liste_titre, tr.liste_titre td, td.liste_titre, form.liste_titre div, div.liste_titre
 {
     font-family: <?php print $fontlist ?>;
-    /*font-weight: normal;*/
+    font-weight: bold;
     border-bottom: 1px solid #FDFFFF;
     white-space: <?php echo $dol_optimize_smallscreen?'normal':'nowrap'; ?>;
 	text-shadow: 1px 0px 1px #<?php echo $colorshadowtitle; ?>;
+    vertical-align: middle;
 }
 .liste_titre td a {
-	text-shadow: none !important; 
+	text-shadow: none !important;
 }
 div.liste_titre {
 	padding-left: 3px;
@@ -1863,8 +1879,14 @@ div.tabBar .noborder {
     border: 1px solid #AAA;
     text-align: center;
     border-radius: 5px;
+	background-image: linear-gradient(bottom, rgba(255,255,255,.3) 0%, rgba(164,164,164,.3) 100%);
+	background-image: -o-linear-gradient(bottom, rgba(255,255,255,.3) 0%, rgba(164,164,164,.3) 100%);
+	background-image: -moz-linear-gradient(bottom, rgba(255,255,255,.3) 0%, rgba(164,164,164,.3) 100%);
+	background-image: -webkit-linear-gradient(bottom, rgba(255,255,255,.3) 0%, rgba(164,164,164,.3) 100%);
+	background-image: -ms-linear-gradient(bottom, rgba(255,255,255,.3) 0%, rgba(164,164,164,.3) 100%);
+	background-image: -webkit-gradient( linear, left bottom, left top, color-stop(0, rgba(255,255,255,.3)), color-stop(1, rgba(164,164,164,.3)) );
 }
- 
+
 .boxtable {
     -moz-box-shadow: 3px 3px 4px #DDD;
     -webkit-box-shadow: 3px 3px 4px #DDD;
@@ -1884,11 +1906,12 @@ tr.box_titre {
     background: rgb(<?php echo $colorbacktitle1; ?>);
     background-repeat: repeat-x;
 	<?php if ($usecss3) { ?>
-    background-image: -o-linear-gradient(bottom, rgb(<?php echo $colorbacktitle1; ?>) 40%, rgb(<?php echo $colorbacktitle2; ?>) 120%);
-    background-image: -moz-linear-gradient(bottom, rgb(<?php echo $colorbacktitle1; ?>) 40%, rgb(<?php echo $colorbacktitle2; ?>) 120%);
-    background-image: -webkit-linear-gradient(bottom, rgb(<?php echo $colorbacktitle1; ?>) 40%, rgb(<?php echo $colorbacktitle2; ?>) 120%);
-    background-image: -ms-linear-gradient(bottom, rgb(<?php echo $colorbacktitle1; ?>) 40%, rgb(<?php echo $colorbacktitle2; ?>) 120%);
-    background-image: linear-gradient(bottom, rgb(<?php echo $colorbacktitle1; ?>) 40%, rgb(<?php echo $colorbacktitle2; ?>) 120%);
+	background-image: linear-gradient(top, rgba(255,255,255,.3) 0%, rgba(0,0,0,.3) 100%);
+	background-image: -o-linear-gradient(top, rgba(255,255,255,.3) 0%, rgba(0,0,0,.3) 100%);
+	background-image: -moz-linear-gradient(top, rgba(255,255,255,.3) 0%, rgba(0,0,0,.3) 100%);
+	background-image: -webkit-linear-gradient(top, rgba(255,255,255,.3) 0%, rgba(0,0,0,.3) 100%);
+	background-image: -ms-linear-gradient(top, rgba(255,255,255,.3) 0%, rgba(0,0,0,.3) 100%);
+	background-image: -webkit-gradient( linear, left top, left bottom, color-stop(0, rgba(255,255,255,.3)), color-stop(1, rgba(0,0,0,.3)) );
 	<?php } ?>
     color: #<?php echo $colortexttitle; ?>;
 	text-shadow: 1px 0px 1px #<?php echo $colorshadowtitle; ?>;
@@ -1928,9 +1951,15 @@ tr.box_pair {
     font-family: <?php print $fontlist ?>;
 }
 
-tr.fiche {
-	font-family: <?php print $fontlist ?>;
+.formboxfilter {
+	vertical-align: middle;
 }
+.formboxfilter input[type=image]
+{
+	top: 5px;
+	position: relative;
+}
+
 
 
 
@@ -2042,30 +2071,7 @@ div.titre {
 #divsubscribe { width: 700px; }
 #tablesubscribe { width: 100%; }
 
-div.table-border {
-	display:table;
-    width: 100%;
-    border-collapse: collapse;
-    border: 1px solid #9CACBB;
-}
-div.table-border-row {
-	display:table-row;
-}
-div.table-key-border-col {
-	display:table-cell;
-	width: 25%;
-	vertical-align:top;
-	padding: 1px 2px 1px 1px;
-	border: 1px solid #9CACBB;
-	border-collapse: collapse;
-}
-div.table-val-border-col {
-	display:table-cell;
-	width:auto;
-	padding: 1px 2px 1px 1px;
-	border: 1px solid #9CACBB;
-	border-collapse: collapse;
-}
+
 
 
 /* ============================================================================== */
@@ -2121,8 +2127,8 @@ opacity: 1;
 border-radius: 6px;
 }
 #tiptip_content {
-    background-color: rgb(250,240,220);
-	background-color: rgba(250,240,220,0.94);
+    background-color: rgb(252,248,246);
+	background-color: rgba(252,248,246,0.95);
 }
 
 /* ============================================================================== */
@@ -2743,6 +2749,9 @@ a.tab span.ui-btn-inner
 }
 .ui-link {
 	color: rgb(<?php print $colortext; ?>) !important;
+}
+.liste_titre .ui-link {
+	color: #<?php print $colortexttitle; ?> !important;
 }
 
 a.ui-link {

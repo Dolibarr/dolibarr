@@ -65,7 +65,7 @@ ChooseFormatOfFileToImport=اختيار تنسيق ملف لاستخدام تن�
 ChooseFileToImport=اختيار ملف لاستيراد ثم اضغط على picto ٪ ق...
 SourceFileFormat=مصدر تنسيق ملف
 FieldsInSourceFile=الحقول في ملف المصدر
-FieldsInTargetDatabase=Dolibarr المجالات المستهدفة في قاعدة البيانات
+# FieldsInTargetDatabase=Target fields in Dolibarr database (bold=mandatory)
 Field=حقل
 NoFields=لا الحقول
 MoveField=تحرك %s حقل رقم العمود
@@ -120,10 +120,10 @@ CSVFormatDesc=<b>فاصلة فصل</b> ملف <b>القيمة</b> تنسيق (cs
 # Separator=Separator
 # Enclosure=Enclosure
 # SuppliersProducts=Suppliers Products
-# BankCode=Bank code
-# DeskCode=Desk code
-# BankAccountNumber=Account number
-# BankAccountNumberKey=Key
+BankCode=رمز المصرف
+DeskCode=مدونة مكتبية
+BankAccountNumber=رقم الحساب
+BankAccountNumberKey=مفتاح
 ## filters
 # SelectFilterFields=If you want to filter on some values, just input values here.
 # FilterableFields=Champs Filtrables

@@ -1,4 +1,4 @@
-# Dolibarr language file - en_US - errors
+# Dolibarr language file - Source file is en_US - errors
 CHARSET=UTF-8
 
 # No errors
@@ -7,7 +7,7 @@ CHARSET=UTF-8
 # Errors
 Error=Errore
 Errors=Errori
-# ErrorButCommitIsDone=Errors found but we validate despite this
+ErrorButCommitIsDone=Sono stati trovati errori ma si convalida ugualmente
 ErrorBadEMail=L'indirizzo email %s è sbagliato
 ErrorBadUrl=L'URL %s è sbagliato
 ErrorLoginAlreadyExists=L'utente %s esiste già.
@@ -20,7 +20,7 @@ ErrorFailToCreateFile=Impossibile creare il file '<b>%s</b>'.
 ErrorFailToRenameDir=Impossibile rinominare la directory '<b>%s</b>' in '<b>%s</b>'.
 ErrorFailToCreateDir=Impossibile creare la directory '<b>%s</b>'.
 ErrorFailToDeleteDir=Impossibile eliminare la directory '<b>%s</b>'.
-# ErrorFailedToDeleteJoinedFiles=Can not delete environment because there is some joined files. Remove join files first.
+ErrorFailedToDeleteJoinedFiles=Questo ambiente non si può eliminare perché è collegato ad alcuni file. Prima rimuovere i file.
 ErrorThisContactIsAlreadyDefinedAsThisType=Questo contatto è già tra i contatti di questo tipo
 ErrorCashAccountAcceptsOnlyCashMoney=Questo conto corrente è un conto di cassa e accetta solo pagamenti in contanti.
 ErrorFromToAccountsMustDiffers=I conti bancari di origine e destinazione devono essere diversi.
@@ -58,10 +58,10 @@ ErrorUploadBlockedByAddon=Upload bloccato da un plugin di Apache/PHP
 ErrorFileSizeTooLarge=La dimensione del file è troppo grande.
 ErrorSizeTooLongForIntType=Numero troppo lungo (massimo %s cifre)
 ErrorSizeTooLongForVarcharType=Stringa troppo lunga (limite di %s caratteri)
-# ErrorNoValueForSelectType=Please fill value for select list
-# ErrorNoValueForCheckBoxType=Please fill value for checkbox list
-# ErrorNoValueForRadioType=Please fill value for radio list
-# ErrorBadFormatValueList=The list value cannot have more than one come : <u>%s</u>, but need at least one: llave,valores
+ErrorNoValueForSelectType=Per favore immetti un valore per la lista di selezione
+ErrorNoValueForCheckBoxType=Per favore immetti un valore per la lista di controllo
+ErrorNoValueForRadioType=Per favore immetti un valore per la lista radio
+ErrorBadFormatValueList=La lista non può avere più di un'entrata : <u>%s</u>, ma ne serve almeno una: llave,valores
 ErrorFieldCanNotContainSpecialCharacters=Il campo <b>%s</b> non può contenere caratteri speciali.
 ErrorNoAccountancyModuleLoaded=Modulo contabilità disattivato
 ErrorExportDuplicateProfil=Questo nome di profilo esiste già nell'esportazione.
@@ -113,15 +113,18 @@ ErrorBothFieldCantBeNegative=I campi %s e %s non possono essere entrambi negativ
 ErrorWebServerUserHasNotPermission=L'account utente <b>%s</b> utilizzato per eseguire il server web non ha i permessi necessari
 ErrorNoActivatedBarcode=Nessun tipo di codice a barre attivato
 ErrUnzipFails=Estrazione dell'archivio %s con ZipArchive fallita
-# ErrNoZipEngine=No engine to unzip %s file in this PHP
+ErrNoZipEngine=Non c'è modo di spacchettare i file %s in questo PHP
 ErrorFileMustBeADolibarrPackage=Il file %s deve essere un archivio zip Dolibarr
-# ErrorFileRequired=It takes a package Dolibarr file
+ErrorFileRequired=Ci vuole un file del pacchetto Dolibarr
 ErrorPhpCurlNotInstalled=PHP CURL non risulta installato, ma è necessario per comunicare con Paypal
 # ErrorFailedToAddToMailmanList=Failed to add record %s to Mailman list %s or SPIP base
 # ErrorFailedToRemoveToMailmanList=Failed to remove record %s to Mailman list %s or SPIP base
 ErrorNewValueCantMatchOldValue=Il nuovo valore non può essere uguale al precedente
-# ErrorFailedToValidatePasswordReset=Failed to reinit password. May be the reinit was already done (this link can be used only one time). If not, try to restart the reinit process.
+ErrorFailedToValidatePasswordReset=Cambio password fallito. Forse è già stato richiesto (questo link può essere usato una volta sola). Se no, prova a rifare la procedura dall'inizio.
 ErrorToConnectToMysqlCheckInstance=Connessione al database fallita. Controlla che il server Mysql sia in attività (nella maggior parte dei casi puoi avviarlo digitando 'sudo /etc/init.d/mysql start' in un terminale).
+# ErrorFailedToAddContact=Failed to add contact
+# ErrorDateMustBeBeforeToday=The date can not be greater than today
+# ErrorPaymentModeDefinedToWithoutSetup=A payment mode was set to type %s but setup of module Invoice was not completed to define information to show for this payment mode.
 
 # Warnings
 WarningMandatorySetupNotComplete=I parametri di configurazione obbligatori non sono ancora stati definiti
@@ -133,9 +136,9 @@ WarningPassIsEmpty=Attenzione, il database è accessibile senza password. Questa
 WarningConfFileMustBeReadOnly=Attenzione, il file di configurazione <b>htdocs/conf/conf.php</b> è scrivibile dal server web. Questa è una grave falla di sicurezza! Impostare il file in sola lettura per l'utente utilizzato dal server web. Se si utilizza Windows e il formato FAT per il disco, dovete sapere che tale filesystem non consente la gestione delle autorizzazioni sui file, quindi non può essere completamente sicuro.
 WarningsOnXLines=Warning su <b>%s</b> righe del sorgente
 WarningNoDocumentModelActivated=Nessun modello per la generazione di documenti attivato. Finché non si verifica la configurazione del modulo, verrà usato un modello predefinito.
-# WarningLockFileDoesNotExists=Warning, once setup is finished, you must disable install/migrate tools by adding a file <b>install.lock</b> into directory <b>%s</b>. Missing this file is a security hole.
+WarningLockFileDoesNotExists=Attenzione, una volta finito il setup, devi disabilitare gli strumenti install/nigrate aggiungendo un file  <b>install.lock</b> nella directory <b>%s</b>. La mancanza del file è un buco nella sicurezza.
 WarningUntilDirRemoved=Questo avviso sarà visualizzato fino a quando questa directory è presente (disponibile solo per gli utenti admin).
-# WarningCloseAlways=Warning, closing is done even if amount differs between source and target elements. Enable this feature with caution.
+WarningCloseAlways=Attenzione, la chiusura è effettiva anche se il numero degli elementi non coincide fra inizio e fine. Abilitare questa opzione con cautela.
 WarningUsingThisBoxSlowDown=Attenzione: l'uso di questo box rallenterà pesantemente tutte le pagine che lo visualizzano
 # WarningClickToDialUserSetupNotComplete=Setup of ClickToDial information for your user are not complete (see tab ClickToDial onto your user card).
 WarningNotRelevant=Operazione irrilevante per questo dataset

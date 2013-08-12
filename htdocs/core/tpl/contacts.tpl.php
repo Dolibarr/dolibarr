@@ -14,6 +14,9 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * 
+ * This template needs:
+ * $object
  */
 
 if (! class_exists('Contact')) {
@@ -30,6 +33,7 @@ if ($module == 'propal')				{ $permission=$user->rights->propale->creer; }
 elseif ($module == 'fichinter')			{ $permission=$user->rights->ficheinter->creer; }
 elseif ($module == 'invoice_supplier')	{ $permission=$user->rights->fournisseur->facture->creer; }
 elseif ($module == 'order_supplier')	{ $permission=$user->rights->fournisseur->commande->creer; }
+elseif ($module == 'project')			{ $permission=$user->rights->projet->creer; }
 elseif (! isset($permission))			{ $permission=$user->rights->$module->creer; } // If already defined by caller page
 
 $formcompany= new FormCompany($db);

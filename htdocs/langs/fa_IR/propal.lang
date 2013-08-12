@@ -71,6 +71,8 @@ ErrorPropalNotFound=Propal ق لم يتم العثور على ٪
 Estimate=التقدير :
 EstimateShort=التقدير
 OtherPropals=مقترحات أخرى
+# AddToDraftProposals=Add to draft proposal
+# NoDraftProposals=No draft proposals
 CopyPropalFrom=اقتراح إنشاء التجارية عن طريق نسخ وجود اقتراح
 CreateEmptyPropal=خلق خاليا التجارية vierge مقترحات أو من قائمة المنتجات / الخدمات
 DefaultProposalDurationValidity=تقصير مدة صلاحية اقتراح التجارية (أيام)
@@ -84,7 +86,7 @@ ProposalLine=اقتراح خط
 # SetAvailability=Set availability delay
 # AfterOrder=after order
 ##### Availability #####
-# AvailabilityTypeAV_NOW=Immediate
+AvailabilityTypeAV_NOW=فورا
 # AvailabilityTypeAV_1W=1 week
 # AvailabilityTypeAV_2W=2 weeks
 # AvailabilityTypeAV_3W=3 weeks

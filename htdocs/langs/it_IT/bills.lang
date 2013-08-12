@@ -1,4 +1,4 @@
-# Dolibarr language file - en_US - bills
+# Dolibarr language file - Source file is en_US - bills
 CHARSET=UTF-8
 Bill=Fattura
 Bills=Fatture
@@ -85,6 +85,7 @@ ClassifyCanceled=Classifica come "abbandonata"
 ClassifyClosed=Classifica come "chiusa"
 CreateBill=Crea fattura
 AddBill=Aggiungi fattura o nota di credito
+# AddToDraftInvoices=Add to draft invoice
 DeleteBill=Elimina fattura
 SearchACustomerInvoice=Cerca una fattura attiva
 SearchASupplierInvoice=Cerca una fattura fornitore
@@ -199,6 +200,7 @@ StandingOrders=Ordini permanenti
 StandingOrder=Ordine permanente
 NoDraftBills=Nessuna bozza di fatture
 NoOtherDraftBills=Nessun'altra bozza di fatture
+# NoDraftInvoices=No draft invoices
 RefBill=Rif. fattura
 ToBill=Da fatturare
 RemainderToBill=Restante da fatturare
@@ -393,6 +395,7 @@ AllCompletelyPayedInvoiceWillBeClosed=Tutte le fatture totalmente pagate saranno
 ToMakePayment=Paga
 ToMakePaymentBack=Rimborsa
 ListOfYourUnpaidInvoices=Elenco fatture non pagate
+NoteListOfYourUnpaidInvoices=Nota: questo elenco contiene solo fatture che hai collegato ad un rappresentante.
 RevenueStamp=Marca da bollo
 ##### Types de contacts #####
 TypeContact_facture_internal_SALESREPFOLL=Responsabile pagamenti clienti
@@ -409,4 +412,6 @@ PDFCrabeDescription=Modello di fattura Crabe. (Modello raccomandatoi)
 PDFOursinDescription=Modello di fattura oursin.
 # NumRef Modules
 TerreNumRefModelDesc1=Restituisce un numero nel formato %syymm-nnnn per le fatture e %syymm-nnnn per le note di credito, dove yy è l'anno, mm è il mese e nnnn è una sequenza progressiva che non si azzera
+# MarsNumRefModelDesc1=Return numero with format %syymm-nnnn for standard invoices, %syymm-nnnn for replacement invoices, %syymm-nnnn for proforma invoices and %syymm-nnnn for credit notes where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
+
 TerreNumRefModelError=Un altro modello di numerazione con sequenza $ syymm è già esistente e non è compatibile con questo modello. Rimuovere o rinominare per attivare questo modulo.

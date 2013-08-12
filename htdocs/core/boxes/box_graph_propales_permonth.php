@@ -73,26 +73,31 @@ class box_graph_propales_permonth extends ModeleBoxes
 		$this->info_box_head = array(
 				'text' => $text,
 				'limit'=> dol_strlen($text),
-				'graph'=> 1,
-				'sublink'=>$_SERVER["PHP_SELF"].'?action='.$refreshaction,
-				'subtext'=>$langs->trans("Refresh"),
-				'subpicto'=>'refresh.png',
-				'target'=>'none'
+				'graph'=> 1,		// Set to 1 if it's a box graph
+				'sublink'=>'',
+				'subtext'=>$langs->trans("Filter"),
+				'subpicto'=>'filter.png',
+				'subclass'=>'linkobject',
+				'target'=>'none'	// Set '' to get target="_blank"
 		);
 
 		if ($user->rights->commande->lire)
 		{
+			$param_year='DOLUSERCOOKIE_param'.$this->boxcode.'year';
+			$param_shownb='DOLUSERCOOKIE_param'.$this->boxcode.'shownb';
+			$param_showtot='DOLUSERCOOKIE_param'.$this->boxcode.'showtot';
+
 			include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 			include_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propalestats.class.php';
-
-			$shownb=(! empty($conf->global->PROPAL_BOX_GRAPH_SHOW_NB));
-			$showtot=(! isset($conf->global->PROPAL_BOX_GRAPH_SHOW_TOT) || ! empty($conf->global->PROPAL_BOX_GRAPH_SHOW_TOT));
+			$shownb=GETPOST($param_shownb,'alpha',4);
+			$showtot=GETPOST($param_showtot,'alpha',4);
+			if (empty($shownb) && empty($showtot)) $showtot=1;
 			$nowarray=dol_getdate(dol_now(),true);
-			$endyear=$nowarray['year'];
+			$endyear=(GETPOST($param_year,'',4)?GETPOST($param_year,'int',4):$nowarray['year']);
 			$startyear=$endyear-1;
 			$mode='customer';
 			$userid=0;
-			$WIDTH='256';
+			$WIDTH=(($shownb && $showtot) || ! empty($conf->dol_optimize_smallscreen))?'256':'320';
 			$HEIGHT='192';
 
 			$stats = new PropaleStats($this->db, 0, $mode, ($userid>0?$userid:0));
@@ -101,6 +106,7 @@ class box_graph_propales_permonth extends ModeleBoxes
 			if ($shownb)
 			{
 				$data1 = $stats->getNbByMonthWithPrevYear($endyear,$startyear,(GETPOST('action')==$refreshaction?-1:(3600*24)));
+				$datatype1 = array_pad(array(), ($endyear-$startyear+1), 'bars');
 
 				$filenamenb = $dir."/propalsnbinyear-".$year.".png";
 				if ($mode == 'customer') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=propalstats&amp;file=propalsnbinyear-'.$year.'.png';
@@ -110,6 +116,7 @@ class box_graph_propales_permonth extends ModeleBoxes
 				$mesg = $px1->isGraphKo();
 				if (! $mesg)
 				{
+					$px1->SetType($datatype1);
 					$px1->SetData($data1);
 					unset($data1);
 					$px1->SetPrecisionY(0);
@@ -139,6 +146,8 @@ class box_graph_propales_permonth extends ModeleBoxes
 			if ($showtot)
 			{
 				$data2 = $stats->getAmountByMonthWithPrevYear($endyear,$startyear,(GETPOST('action')==$refreshaction?-1:(3600*24)));
+				$datatype2 = array_pad(array(), ($endyear-$startyear+1), 'bars');
+				//$datatype2 = array('lines','bars');
 
 				$filenamenb = $dir."/propalsamountinyear-".$year.".png";
 				if ($mode == 'customer') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=propalstats&amp;file=propalsamountinyear-'.$year.'.png';
@@ -148,6 +157,7 @@ class box_graph_propales_permonth extends ModeleBoxes
 				$mesg = $px2->isGraphKo();
 				if (! $mesg)
 				{
+					$px2->SetType($datatype2);
 					$px2->SetData($data2);
 					unset($data2);
 					$px2->SetPrecisionY(0);
@@ -175,9 +185,29 @@ class box_graph_propales_permonth extends ModeleBoxes
 
 			if (! $mesg)
 			{
+				$stringtoshow='';
+				$stringtoshow.='<script type="text/javascript" language="javascript">
+					jQuery(document).ready(function() {
+						jQuery("#idsubimg'.$this->boxcode.'").click(function() {
+							jQuery("#idfilter'.$this->boxcode.'").toggle();
+						});
+					});
+					</script>';
+				$stringtoshow.='<div class="center hideobject divboxfilter" id="idfilter'.$this->boxcode.'">';	// hideobject is to start hidden
+				$stringtoshow.='<form class="flat formboxfilter" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+				$stringtoshow.='<input type="hidden" name="action" value="'.$refreshaction.'">';
+				$stringtoshow.='<input type="hidden" name="DOL_AUTOSET_COOKIE" value="'.$param_year.','.$param_shownb.','.$param_showtot.'">';
+				$stringtoshow.='<input type="checkbox" name="'.$param_shownb.'"'.($shownb?' checked="true"':'').'"> '.$langs->trans("NumberOfProposalsByMonth");
+				$stringtoshow.=' &nbsp; ';
+				$stringtoshow.='<input type="checkbox" name="'.$param_showtot.'"'.($showtot?' checked="true"':'').'"> '.$langs->trans("AmountOfProposalsByMonthHT");
+				$stringtoshow.='<br>';
+				$stringtoshow.=$langs->trans("Year").' <input class="flat" size="4" type="text" name="'.$param_year.'" value="'.$endyear.'">';
+				$stringtoshow.='<input type="image" src="'.img_picto($langs->trans("Refresh"),'refresh.png','','',1).'">';
+				$stringtoshow.='</form>';
+				$stringtoshow.='</div>';
 				if ($shownb && $showtot)
 				{
-					$stringtoshow ='<div class="fichecenter">';
+					$stringtoshow.='<div class="fichecenter">';
 					$stringtoshow.='<div class="fichehalfleft">';
 				}
 				if ($shownb) $stringtoshow.=$px1->show();

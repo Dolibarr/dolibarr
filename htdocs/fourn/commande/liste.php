@@ -23,9 +23,11 @@
  *   \brief      List of suppliers orders
  */
 
+
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 
 $langs->load("orders");
 
@@ -65,6 +67,7 @@ if ($socid > 0)
 llxHeader('',$title);
 
 $commandestatic=new CommandeFournisseur($db);
+$formfile = new FormFile($db);
 
 
 if ($sortorder == "") $sortorder="DESC";
@@ -132,12 +135,12 @@ if ($resql)
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
-	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"cf.ref","","",'',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","","",'',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Author"),$_SERVER["PHP_SELF"],"u.login","","",'',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("AmountTTC"),$_SERVER["PHP_SELF"],"total_ttc","","",'',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("OrderDate"),$_SERVER["PHP_SELF"],"dc","","",'align="center"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"cf.fk_statut","","",'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"cf.ref","",$param,'',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","",$param,'',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Author"),$_SERVER["PHP_SELF"],"u.login","",$param,'',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("AmountTTC"),$_SERVER["PHP_SELF"],"total_ttc","",$param,$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("OrderDate"),$_SERVER["PHP_SELF"],"dc","",$param,'align="center"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"cf.fk_statut","",$param,'align="right"',$sortfield,$sortorder);
 	print "</tr>\n";
 
 	print '<tr class="liste_titre">';
@@ -154,6 +157,7 @@ if ($resql)
 	$var=true;
 
 	$userstatic = new User($db);
+	$objectstatic=new CommandeFournisseur($db);
 
 	while ($i < min($num,$conf->liste_limit))
 	{
@@ -163,7 +167,11 @@ if ($resql)
 		print "<tr ".$bc[$var].">";
 
 		// Ref
-		print '<td><a href="'.DOL_URL_ROOT.'/fourn/commande/fiche.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowOrder"),"order").' '.$obj->ref.'</a></td>'."\n";
+		print '<td><a href="'.DOL_URL_ROOT.'/fourn/commande/fiche.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowOrder"),"order").' '.$obj->ref.'</a>';
+		$filename=dol_sanitizeFileName($obj->ref);
+		$filedir=$conf->fournisseur->dir_output.'/commande' . '/' . dol_sanitizeFileName($obj->ref);
+		print $formfile->getDocumentsLink($objectstatic->element, $filename, $filedir);
+		print '</td>'."\n";
 
 		// Company
 		print '<td><a href="'.DOL_URL_ROOT.'/fourn/fiche.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' ';

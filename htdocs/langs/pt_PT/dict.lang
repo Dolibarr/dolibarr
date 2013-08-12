@@ -304,7 +304,7 @@ DemandReasonTypeSRC_COMM=Contato comercial
 DemandReasonTypeSRC_SHOP=Loja contato
 # DemandReasonTypeSRC_WOM=Word of mouth
 # DemandReasonTypeSRC_PARTNER=Partner
-# DemandReasonTypeSRC_EMPLOYEE=Employee
+DemandReasonTypeSRC_EMPLOYEE=Empregado
 # DemandReasonTypeSRC_SPONSORING=Sponsorship
 
 #### Paper formats ####

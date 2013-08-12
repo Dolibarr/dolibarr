@@ -319,6 +319,10 @@ else
 }
 ?>
 
+div#tmenu_tooltip {
+	padding-right: 100px;
+}
+
 div.tmenu {
 <?php if (GETPOST("optioncss") == 'print') {  ?>
 	display:none;
@@ -539,6 +543,7 @@ form#login {
 }
 
 div.login_block {
+    width: 180px;
 	position: absolute;
 	<?php print $right; ?>: 5px;
 	top: 3px;
@@ -571,6 +576,14 @@ div.login a {
 div.login a:hover {
 	color: black;
 	text-decoration:underline;
+}
+.login_block_user {
+	float: right;
+}
+.login_block_elem {
+	float: right;
+	vertical-align: top;
+	padding: 0px 0px 0px 4px !important;
 }
 
 .alogin, .alogin:hover {
@@ -1018,7 +1031,7 @@ div.tabsAction {
 
 
 a.tabTitle {
-    background: #5088A9;
+    background: <? echo empty($dol_use_jmobile)?'#5088A9':'auto'; ?>;
     color: white;
 	font-family: <?php print $fontlist ?>;
     font-weight: normal;
@@ -1225,22 +1238,31 @@ margin: 0px 0px 0px 0px;
 }
 
 
-table.border {
-border: 1px solid #9CACBB;
-border-collapse: collapse;
+table.border, table.dataTable, .table-border, .table-border-col, .table-key-border-col, .table-val-border-col  {
+	border: 1px solid #9CACBB;
+	border-collapse: collapse;
+	padding: 1px 2px 2px 1px;			/* t r b l */
 }
 
 table.border td {
-padding: 1px 2px;
-border: 1px solid #9CACBB;
-border-collapse: collapse;
+	padding: 1px 2px;
+	border: 1px solid #9CACBB;
+	border-collapse: collapse;
 }
 
 td.border {
-border-top: 1px solid #000000;
-border-right: 1px solid #000000;
-border-bottom: 1px solid #000000;
-border-left: 1px solid #000000;
+	border-top: 1px solid #000000;
+	border-right: 1px solid #000000;
+	border-bottom: 1px solid #000000;
+	border-left: 1px solid #000000;
+}
+
+.table-key-border-col {
+	width: 25%;
+	vertical-align:top;
+}
+.table-val-border-col {
+	width:auto;
 }
 
 /* Main boxes */
@@ -1331,11 +1353,11 @@ table.liste td {
 	padding-right: 2px;
 }
 
-.tagtable { display: table; }
+.tagtable, .table-border { display: table; }
+.tagtr, .table-border-row  { display: table-row; }
+.tagtd, .table-border-col, .table-key-border-col, .table-val-border-col { display: table-cell; }
 .tagtable form { display: table-row; }
 .tagtable form div { display: table-cell; }
-.tagtr { display: table-row; }
-.tagtd { display: table-cell; }
 
 tr.liste_titre, tr.liste_titre_sel, form.liste_titre, form.liste_titre_sel
 {
@@ -1499,10 +1521,14 @@ tr.box_pair td, tr.box_impair td, td.box_pair, td.box_impair
 /*border-bottom: 1px solid white;*/
 }
 
-tr.fiche {
-font-family: <?php print $fontlist ?>;
+.formboxfilter {
+	vertical-align: middle;
 }
-
+.formboxfilter input[type=image]
+{
+	top: 3px;
+	position: relative;
+}
 
 
 
@@ -2008,34 +2034,7 @@ a.cke_dialog_ui_button
     height: 72px !important;
 }
 
-/* ============================================================================== */
-/*  Table with div                                                                */
-/* ============================================================================== */
 
-div.table-border {
-	display:table;
-    width: 100%;
-    border-collapse: collapse;
-    border: 1px solid #9CACBB;
-}
-div.table-border-row {
-	display:table-row;
-}
-div.table-key-border-col {
-	display:table-cell;
-	width: 25%;
-	vertical-align:top;
-	padding: 1px 2px 1px 1px;
-	border: 1px solid #9CACBB;
-	border-collapse: collapse;
-}
-div.table-val-border-col {
-	display:table-cell;
-	width:auto;
-	padding: 1px 2px 1px 1px;
-	border: 1px solid #9CACBB;
-	border-collapse: collapse;
-}
 
 /* ============================================================================== */
 /*  Test using div instead of tables                                              */

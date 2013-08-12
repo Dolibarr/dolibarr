@@ -7,6 +7,7 @@
  * Copyright (C) 2006      Auguria SARL         <info@auguria.org>
  * Copyright (C) 2010-2011 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2013      Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2013      Cédric Salvador      <csalvador@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -187,6 +188,7 @@ if (empty($reshook))
             $object->duration_value     	= GETPOST('duration_value');
             $object->duration_unit      	= GETPOST('duration_unit');
             $object->seuil_stock_alerte 	= GETPOST('seuil_stock_alerte')?GETPOST('seuil_stock_alerte'):0;
+            $object->desiredstock           = GETPOST('desiredstock')?GETPOST('desiredstock'):0;
             $object->canvas             	= GETPOST('canvas');
             $object->weight             	= GETPOST('weight');
             $object->weight_units       	= GETPOST('weight_units');
@@ -256,6 +258,7 @@ if (empty($reshook))
                 $object->status             = GETPOST('statut');
                 $object->status_buy         = GETPOST('statut_buy');
                 $object->seuil_stock_alerte = GETPOST('seuil_stock_alerte');
+                $object->desiredstock       = GETPOST('desiredstock');
                 $object->duration_value     = GETPOST('duration_value');
                 $object->duration_unit      = GETPOST('duration_unit');
                 $object->canvas             = GETPOST('canvas');
@@ -723,12 +726,17 @@ else
             print '<tr><td>'.$langs->trans("StockLimit").'</td><td>';
             print '<input name="seuil_stock_alerte" size="4" value="'.GETPOST('seuil_stock_alerte').'">';
             print '</td></tr>';
+            // Stock desired level
+            print '<tr><td>'.$langs->trans("DesiredStock").'</td><td>';
+            print '<input name="desiredstock" size="4" value="'.GETPOST('desiredstock').'">';
+            print '</td></tr>';
         }
         else
         {
             print '<input name="seuil_stock_alerte" type="hidden" value="0">';
+            print '<input name="desiredstock" type="hidden" value="0">';
         }
-
+        
         // Description (used in invoice, propal...)
         print '<tr><td valign="top">'.$langs->trans("Description").'</td><td>';
 
@@ -934,10 +942,15 @@ else
                 print "<tr>".'<td>'.$langs->trans("StockLimit").'</td><td colspan="2">';
                 print '<input name="seuil_stock_alerte" size="4" value="'.$object->seuil_stock_alerte.'">';
                 print '</td></tr>';
+                
+                print "<tr>".'<td>'.$langs->trans("DesiredStock").'</td><td colspan="2">';
+                print '<input name="desiredstock" size="4" value="'.$object->desiredstock.'">';
+                print '</td></tr>';
             }
             else
             {
                 print '<input name="seuil_stock_alerte" type="hidden" value="'.$object->seuil_stock_alerte.'">';
+                print '<input name="desiredstock" type="hidden" value="'.$object->desiredstock.'">';
             }
 
             if ($object->isservice())

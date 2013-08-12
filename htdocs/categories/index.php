@@ -50,6 +50,7 @@ if ($type == 0) $title=$langs->trans("ProductsCategoriesArea");
 elseif ($type == 1) $title=$langs->trans("SuppliersCategoriesArea");
 elseif ($type == 2) $title=$langs->trans("CustomersCategoriesArea");
 elseif ($type == 3) $title=$langs->trans("MembersCategoriesArea");
+elseif ($type == 4) $title=$langs->trans("ContactsCategoriesArea");
 else $title=$langs->trans("CategoriesArea");
 
 $arrayofjs=array('/includes/jquery/plugins/jquerytreeview/jquery.treeview.js', '/includes/jquery/plugins/jquerytreeview/lib/jquery.cookie.js');

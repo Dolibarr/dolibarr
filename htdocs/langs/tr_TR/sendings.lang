@@ -1,4 +1,4 @@
-# Dolibarr language file - tr_TR - sendings
+# Dolibarr language file - Source file is en_US - sendings
 CHARSET=UTF-8
 RefSending=Sevkiyat ref.
 Sending=Sevkiyat
@@ -13,6 +13,7 @@ LastSendings=Son %s sevkiyat
 SearchASending=Sevkiyat ara
 StatisticsOfSendings=Sevkiyat istatistikleri
 NbOfSendings=Sevkiyat sayısı
+# NumberOfShipmentsByMonth=Number of shipments by month
 SendingCard=Sevkiyat kartı
 NewSending=Yeni sevkiyat
 CreateASending=Bir sevkiyat oluştur
@@ -49,7 +50,7 @@ Enlevement=Müşteri tarafından alındı
 DocumentModelSimple=Basit belge modeli
 DocumentModelMerou=Merou A5 modeli
 WarningNoQtyLeftToSend=Uyarı, sevkiyat için bekleyen herhangi bir ürün yok.
-StatsOnShipmentsOnlyValidated=Yalnızca doğrulanmış sevkiyatlara ait istatistikler
+# StatsOnShipmentsOnlyValidated=Statistics conducted on shipments only validated. Date used is date of validation of shipment (planed delivery date is not always known).
 DateDeliveryPlanned=Planlanan teslim tarihi
 DateReceived=Teslim alınan tarih
 SendShippingByEMail=Sevkiyatı EPostayla gönder
@@ -59,15 +60,17 @@ LinkToTrackYourPackage=Paketinizi izleyeceğiniz bağlantı
 ShipmentCreationIsDoneFromOrder=Şu an için, yeni bir sevkiyat yaratılması amacıyla kart oluşturulur.
 RelatedShippings=İlgili sevkiyatlar
 ShipmentLine=Sevkiyat kalemi
-CarrierList=Taşımacı listesi
+# CarrierList=List of transporters
 
-# Gönderme yöntemleri
+# Sending methods
 SendingMethodCATCH=Müşteri tarafından
 SendingMethodTRANS=Nakliyeci tarafından
 SendingMethodCOLSUI=Colissimo
 
-# Belge modeli
+# ModelDocument
 DocumentModelSirocco=Teslimat makbuzları için basit belge modeli
 DocumentModelTyphon=Teslimat makbuzları için daha fazla eksiksiz doküman modeli (logo. ..)
 
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=EXPEDITION_ADDON_NUMBER değişmezi tanımlanmamış
+# SumOfProductVolumes=Sum of product volumes
+# SumOfProductWeights=Sum of product weights

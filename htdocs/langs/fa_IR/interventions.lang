@@ -26,7 +26,7 @@ NameAndSignatureOfExternalContact=اسم وتوقيع العميل :
 DocumentModelStandard=نموذج وثيقة موحدة للتدخلات
 # InterventionCardsAndInterventionLines=Interventions and lines of interventions
 # ClassifyBilled=Classify "Billed"
-# StatusInterInvoiced=Billed
+StatusInterInvoiced=فواتير
 # RelatedInterventions=Related interventions
 ShowIntervention=نمایش مداخله
 ##### Types de contacts #####

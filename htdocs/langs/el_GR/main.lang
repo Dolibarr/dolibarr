@@ -1,8 +1,12 @@
 # Dolibarr language file - Source file is en_US - main
 CHARSET=UTF-8
 DIRECTION=ltr
-FONTFORPDF=DejaVuSans
-FONTSIZEFORPDF=9
+# Note for chinese:
+# msungstdlight or cid0ct are for traditionnal chinese (traditionnal does not render with ubuntu pdf reader)
+# stsongstdlight or cid0cs are for simplified chinese
+# To read chinese pdf with linux: sudo apt-get install poppler-data
+# FONTFORPDF=helvetica
+# FONTSIZEFORPDF=10
 SeparatorDecimal=.
 SeparatorThousand=,
 FormatDateShort=%d/%m/%Y
@@ -21,7 +25,7 @@ FormatDateHourTextShort=%b %d, %Y, %I:%M %p
 FormatDateHourText=%B %d, %Y, %I:%M %p
 DatabaseConnection=Σϋνδεση Βάσης Δεδομένων
 # NoTranslation=No translation
-# NoRecordFound=Aucun enregistrement trouvé
+# NoRecordFound=No record found
 NoError=Κανένα Σφάλμα
 Error=Σφάλμα
 ErrorFieldRequired=Το πεδίο '%s' απαιτείται
@@ -333,7 +337,7 @@ Status=Κατάσταση
 Ref=Κωδ.
 RefSupplier=Κωδ. προμηθευτή
 RefPayment=Κωδ. πληρωμής
-CommercialProposals=Εμπορικές Προτάσεις
+CommercialProposalsShort=Εμπορικές προτάσεις
 Comment=Σχόλιο
 Comments=Σχόλια
 ActionsToDo=Ενέργειες που πρέπει να γίνουν
@@ -599,7 +603,7 @@ CloneMainAttributes=Κλωνοποίηση αντικειμένου με τα β
 PDFMerge=Ενσωμάτωση PDF
 Merge=Ενσωμάτωση
 PrintContentArea=Εμγάνιση σελίδας για εκτύπωση
-# MenuManager=Menu manager
+MenuManager==
 NoMenu=Δεν υπάρχει υπο-μενού
 WarningYouAreInMaintenanceMode=Warning, you are in a maintenance mode, so only login <b>%s</b> is allowed to use application at the moment.
 CoreErrorTitle=Σφάλμα συστήματος

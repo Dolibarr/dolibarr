@@ -37,3 +37,4 @@ BankToPay=負責帳戶
 ShowCompany=顯示公司
 ShowStock=顯示倉庫
 DeleteArticle=點擊刪除此文章
+# FilterRefOrLabelOrBC=Search (Ref/Label)

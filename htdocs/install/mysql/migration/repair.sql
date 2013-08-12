@@ -61,6 +61,7 @@ UPDATE llx_product SET canvas = NULL where canvas = 'service@product';
 DELETE FROM llx_boxes where box_id NOT IN (SELECT rowid FROM llx_boxes_def);
 
 DELETE FROM llx_document_model WHERE nom ='elevement' AND type='delivery';
+DELETE FROM llx_document_model WHERE nom ='' AND type='delivery';
 
 -- Fix: It seems this is missing for some users
 insert into llx_c_actioncomm (id, code, type, libelle, module, position) values ( 1,  'AC_TEL',     'system', 'Phone call'							,NULL, 2);

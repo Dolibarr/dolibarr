@@ -2,7 +2,7 @@
 CHARSET= UTF-8
 
 # HRM=HRM
-# Holidays=Holidays
+Holidays=Ваканция
 CPTitreMenu=Ваканция
 MenuReportMonth=Месечно извлечение
 MenuAddCP=Кандидатствайте за празниците

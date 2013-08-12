@@ -104,6 +104,7 @@ if ($action == 'add' && $id && ! isset($_POST["cancel"]) && $user->rights->banqu
 		$insertid = $object->addline($dateop, $operation, $label, $amount, $num_chq, $cat1, $user);
 		if ($insertid > 0)
 		{
+			setEventMessage($langs->trans("RecordSaved"));
 			header("Location: ".$_SERVER['PHP_SELF']."?id=".$id."&action=addline");
 			exit;
 		}
@@ -796,13 +797,20 @@ if ($id > 0 || ! empty($ref))
 
 		if ($action != 'addline')
 		{
-			if ($user->rights->banque->modifier)
+			if (empty($conf->global->BANK_DISABLE_DIRECT_INPUT))
 			{
-				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=addline&amp;id='.$object->id.'&amp;page='.$page.($vline?'&amp;vline='.$vline:'').'">'.$langs->trans("AddBankRecord").'</a>';
+				if ($user->rights->banque->modifier)
+				{
+					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=addline&amp;id='.$object->id.'&amp;page='.$page.($vline?'&amp;vline='.$vline:'').'">'.$langs->trans("AddBankRecord").'</a>';
+				}
+				else
+				{
+					print '<a class="butActionRefused" title="'.$langs->trans("NotEnoughPermissions").'" href="#">'.$langs->trans("AddBankRecord").'</a>';
+				}
 			}
 			else
 			{
-				print '<a class="butActionRefused" title="'.$langs->trans("NotEnoughPermissions").'" href="#">'.$langs->trans("AddBankRecord").'</a>';
+				print '<a class="butActionRefused" title="'.$langs->trans("FeatureDisabled").'" href="#">'.$langs->trans("AddBankRecord").'</a>';
 			}
 		}
 

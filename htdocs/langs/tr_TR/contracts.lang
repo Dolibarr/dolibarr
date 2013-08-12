@@ -1,4 +1,4 @@
-# Dolibarr language file - tr_TR - contracts
+# Dolibarr language file - Source file is en_US - contracts
 CHARSET=UTF-8
 ContractsArea=Sözleşmeler alanı
 ListOfContracts=Sözleşme Listesi
@@ -70,7 +70,7 @@ DateEndReal=Gerçek bitiş tarihi
 DateEndRealShort=Gerçek bitiş tarihi
 NbOfServices=Hizmet sayısı
 CloseService=Hizmet kapat
-ServicesNomberShort=%s hizmeti
+ServicesNomberShort=%s hizmet
 RunningServices=Yürürlükteki hizmetler
 BoardRunningServices=Süresi dolmuş yürürlükteki hizmetler
 ServiceStatus=Hizmet Durumu
@@ -86,9 +86,10 @@ PaymentRenewContractId=Sözleşme satırını yenile (sayı %s)
 ExpiredSince=Süre bitiş tarihi
 RelatedContracts=İlgili sözleşmeler
 NoExpiredServices=Süresi dolmamış etkin hizmetler
-ListOfServicesToExpireWithDuration=%s Günde sona erecek hizmetler listesi
-ListOfServicesToExpire=Sona erecek hizmetler listesi
-Service=Hizmet
+# ListOfServicesToExpireWithDuration=List of Services to expire in %s days
+# ListOfServicesToExpireWithDurationNeg=List of Services expired from more than %s days
+# ListOfServicesToExpire=List of Services to expire
+# NoteListOfYourExpiredServices=This list contains only services of contracts for third parties you are linked to as a sale representative.
 
 ##### Types de contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Sözleşme imzalalayacak satış temsilcisi

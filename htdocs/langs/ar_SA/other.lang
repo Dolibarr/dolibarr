@@ -173,7 +173,7 @@ AddFiles=إضافة الملفات
 StartUpload=بدء التحميل
 CancelUpload=إلغاء التحميل
 FileIsTooBig=ملفات كبيرة جدا
-# PleaseBePatient=Please be patient...
+PleaseBePatient=يرجى التحلي بالصبر...
 
 ##### Calendar common #####
 AddCalendarEntry=إضافة الدخول في التقويم ق ٪
@@ -195,6 +195,7 @@ MemberResiliatedInDolibarr=عضو في resiliated ٪ ق Dolibarr
 MemberDeletedInDolibarr=عضو ٪ ق حذفها من Dolibarr
 MemberSubscriptionAddedInDolibarr=الاكتتاب عضو ق ٪ وأضاف في Dolibarr
 ShipmentValidatedInDolibarr=%s شحنة التحقق من صحتها في Dolibarr
+# ShipmentDeletedInDolibarr=Shipment %s deleted from Dolibarr
 ##### Export #####
 Export=تصدير
 ExportsArea=صادرات المنطقة

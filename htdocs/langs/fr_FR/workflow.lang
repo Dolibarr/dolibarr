@@ -1,4 +1,4 @@
-# Dolibarr language file - en_US - admin
+# Dolibarr language file - Source file is en_US - admin
 CHARSET= UTF-8
 WorkflowSetup=Configuration du module workflow
 WorkflowDesc=Ce module vous permet de modifier le comportement d'enchaînement automatisé. Par défaut, le workflow est ouvert et non imposé. À vous d'activer les liens automatiques qui vous intéressent.
@@ -9,3 +9,4 @@ descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Créer une facture client automatiqueme
 descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Créer une facture client automatiquement à la clôture d'une commande client
 descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Classer facturée la proposition commerciale source quand la commande client dérivée est classée payée
 descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Classer facturée la ou les commandes clients source quand la facture client dérivée est classée payée
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Classer facturée la commande client source lorsque la facture ou les factures sont supérieures à la commande

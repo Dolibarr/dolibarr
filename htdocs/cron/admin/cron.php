@@ -106,6 +106,9 @@ dol_fiche_end();
 
 print '<br><br>';
 
+print $langs->trans("UseMenuModuleToolsToAddCronJobs").'<br>';
+
+print '<br><br>';
 
 dol_print_cron_urls();
 

@@ -38,3 +38,4 @@ AddSupplierOrder=Loo tarnija et
 AddSupplierInvoice=Loo tarnija arve
 ListOfSupplierProductForSupplier=Toodete nimekirja ja hinnad tarnija <b>%s</b>
 NoneOrBatchFileNeverRan=Puudub või partii <b>%s</b> ole jooksis hiljuti
+# SentToSuppliers=Sent to suppliers

@@ -3,7 +3,7 @@ CHARSET=UTF-8
 AddThisPageToBookmarks=這個頁面添加到書簽
 
 # Bookmark=Bookmark
-# Bookmarks=Bookmarks
+Bookmarks=書籤
 NewBookmark=新書簽
 # ShowBookmark=Show bookmark
 # OpenANewWindow=Open a new window

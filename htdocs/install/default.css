@@ -68,6 +68,11 @@ input[type=text]:focus, input[type=password]:focus, textarea:focus, select:focus
     border: 1px solid #ACBCBB;
 	box-shadow: 0 0 5px #C091AF;
 }
+input:-webkit-autofill {
+	background-color: #FBFFEA !important;
+	background-image: none !important;
+	-webkit-box-shadow: 0 0 0 50px #FBFFEA inset;
+}
 
 table.main {
 background: #F0F0F0 url(background.png) repeat-x; 

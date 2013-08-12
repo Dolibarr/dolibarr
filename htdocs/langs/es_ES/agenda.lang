@@ -1,5 +1,6 @@
-# Dolibarr language file - es_ES - agenda
+# Dolibarr language file - Source file is es_ES - agenda
 CHARSET=UTF-8
+IdAgenda=ID evento
 Actions=Eventos
 ActionsArea=Área de eventos (acciones y tareas)
 Agenda=Agenda
@@ -14,9 +15,8 @@ EventsNb=Número de eventos
 MyEvents=Mis eventos
 OtherEvents=Otros eventos
 ListOfActions=Listado de eventos
-EventOnFullDay=Evento para todo el día
-Busy=Ocupado
 Location=Localización
+EventOnFullDay=Evento para todo el día
 SearchAnAction=Buscar un evento/tarea
 MenuToDoActions=Eventos incompletos
 MenuDoneActions=Eventos terminados
@@ -68,7 +68,8 @@ AgendaUrlOptions4=<b>logint=%s</b> para restringir inserciones a acciones que af
 AgendaUrlOptions5=<b>logind=%s</b> para restringir inserciones a acciones realizadas por el usuario <b>%s</b>.
 AgendaShowBirthdayEvents=Mostrar cumpleaños de los contactos
 AgendaHideBirthdayEvents=Ocultar cumpleaños de los contactos
-
+Busy=Ocupado
+ExportDataset_event1=Listado eventos de la agenda
 # External Sites ical
 ExportCal=Exportar calendario
 ExtSites=Calendarios externos
@@ -77,7 +78,3 @@ ExtSitesNbOfAgenda=Número de calendarios
 AgendaExtNb=Calendario nº %s
 ExtSiteUrlAgenda=Url de acceso al archivo .ical
 ExtSiteNoLabel=Sin descripción
-
-# Type contacts
-TypeContact_agenda_internal_GUEST=Invitado
-TypeContact_agenda_external_GUEST=Invitado

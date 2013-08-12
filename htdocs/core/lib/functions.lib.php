@@ -171,8 +171,8 @@ function dol_shutdown()
  *
  *  @param	string	$paramname   Name of parameter to found
  *  @param	string	$check	     Type of check (''=no check,  'int'=check it's numeric, 'alpha'=check it's alpha only, 'array'=check it's array)
- *  @param	int		$method	     Type of method (0 = get then post, 1 = only get, 2 = only post, 3 = post then get)
- *  @return string      		 Value found or '' if check fails
+ *  @param	int		$method	     Type of method (0 = get then post, 1 = only get, 2 = only post, 3 = post then get, 4 = post then get then cookie)
+ *  @return string      		 Value found, or '' if check fails
  */
 function GETPOST($paramname,$check='',$method=0)
 {
@@ -180,16 +180,13 @@ function GETPOST($paramname,$check='',$method=0)
 	elseif ($method==1) $out = isset($_GET[$paramname])?$_GET[$paramname]:'';
 	elseif ($method==2) $out = isset($_POST[$paramname])?$_POST[$paramname]:'';
 	elseif ($method==3) $out = isset($_POST[$paramname])?$_POST[$paramname]:(isset($_GET[$paramname])?$_GET[$paramname]:'');
-	else return 'BadParameter';
+	elseif ($method==4) $out = isset($_POST[$paramname])?$_POST[$paramname]:(isset($_GET[$paramname])?$_GET[$paramname]:(isset($_COOKIE[$paramname])?$_COOKIE[$paramname]:''));
+	else return 'BadThirdParameterForGETPOST';
 
 	if (! empty($check))
 	{
 		// Check if numeric
-		if ($check == 'int' && ! preg_match('/^[-\.,0-9]+$/i',$out))
-		{
-			$out=trim($out);
-			$out='';
-		}
+		if ($check == 'int' && ! is_numeric($out)) $out='';
 		// Check if alpha
 		elseif ($check == 'alpha')
 		{
@@ -1357,30 +1354,37 @@ function dol_user_country()
  */
 function dol_print_address($address, $htmlid, $mode, $id)
 {
-	global $conf,$user,$langs;
+	global $conf, $user, $langs, $hookmanager;
 
 	if ($address)
 	{
-		print nl2br($address);
-		$showgmap=$showomap=0;
-		if ($mode=='thirdparty' && ! empty($conf->google->enabled) && ! empty($conf->global->GOOGLE_ENABLE_GMAPS)) $showgmap=1;
-		if ($mode=='contact' && ! empty($conf->google->enabled) && ! empty($conf->global->GOOGLE_ENABLE_GMAPS_CONTACTS)) $showgmap=1;
-		if ($mode=='member' && ! empty($conf->google->enabled) && ! empty($conf->global->GOOGLE_ENABLE_GMAPS_MEMBERS)) $showgmap=1;
-		if ($mode=='thirdparty' && ! empty($conf->openstreetmap->enabled) && ! empty($conf->global->OPENSTREETMAP_ENABLE_MAPS)) $showomap=1;
-		if ($mode=='contact' && ! empty($conf->openstreetmap->enabled) && ! empty($conf->global->OPENSTREETMAP_ENABLE_MAPS_CONTACTS)) $showomap=1;
-		if ($mode=='member' && ! empty($conf->openstreetmap->enabled) && ! empty($conf->global->OPENSTREETMAP_ENABLE_MAPS_MEMBERS)) $showomap=1;
+        if ($hookmanager) {
+            $parameters = array('element' => $mode, 'id' => $id);
+            $reshook = $hookmanager->executeHooks('printAddress', $parameters, $address, $action);
+            print $hookmanager->resPrint;
+        }
+        if (empty($reshook)) {
+            print nl2br($address);
+            $showgmap=$showomap=0;
+            if ($mode=='thirdparty' && ! empty($conf->google->enabled) && ! empty($conf->global->GOOGLE_ENABLE_GMAPS)) $showgmap=1;
+            if ($mode=='contact' && ! empty($conf->google->enabled) && ! empty($conf->global->GOOGLE_ENABLE_GMAPS_CONTACTS)) $showgmap=1;
+            if ($mode=='member' && ! empty($conf->google->enabled) && ! empty($conf->global->GOOGLE_ENABLE_GMAPS_MEMBERS)) $showgmap=1;
+            if ($mode=='thirdparty' && ! empty($conf->openstreetmap->enabled) && ! empty($conf->global->OPENSTREETMAP_ENABLE_MAPS)) $showomap=1;
+            if ($mode=='contact' && ! empty($conf->openstreetmap->enabled) && ! empty($conf->global->OPENSTREETMAP_ENABLE_MAPS_CONTACTS)) $showomap=1;
+            if ($mode=='member' && ! empty($conf->openstreetmap->enabled) && ! empty($conf->global->OPENSTREETMAP_ENABLE_MAPS_MEMBERS)) $showomap=1;
 
-		// TODO Add a hook here
-		if ($showgmap)
-		{
-			$url=dol_buildpath('/google/gmaps.php?mode='.$mode.'&id='.$id,1);
-			print ' <a href="'.$url.'" target="_gmaps"><img id="'.$htmlid.'" border="0" src="'.DOL_URL_ROOT.'/theme/common/gmap.png"></a>';
-		}
-		if ($showomap)
-		{
-			$url=dol_buildpath('/openstreetmap/maps.php?mode='.$mode.'&id='.$id,1);
-			print ' <a href="'.$url.'" target="_gmaps"><img id="'.$htmlid.'_openstreetmap" border="0" src="'.DOL_URL_ROOT.'/theme/common/gmap.png"></a>';
-		}
+            // TODO Add a hook here
+            if ($showgmap)
+            {
+                $url=dol_buildpath('/google/gmaps.php?mode='.$mode.'&id='.$id,1);
+                print ' <a href="'.$url.'" target="_gmaps"><img id="'.$htmlid.'" border="0" src="'.DOL_URL_ROOT.'/theme/common/gmap.png"></a>';
+            }
+            if ($showomap)
+            {
+                $url=dol_buildpath('/openstreetmap/maps.php?mode='.$mode.'&id='.$id,1);
+                print ' <a href="'.$url.'" target="_gmaps"><img id="'.$htmlid.'_openstreetmap" border="0" src="'.DOL_URL_ROOT.'/theme/common/gmap.png"></a>';
+            }
+        }
 	}
 }
 
@@ -1715,7 +1719,7 @@ function img_picto($alt, $picto, $options = '', $pictoisfullpath = false, $srcon
 
 		$path = 'theme/'.$theme;
 		if (! empty($conf->global->MAIN_OVERWRITE_THEME_RES)) $path = $conf->global->MAIN_OVERWRITE_THEME_RES.'/theme/'.$conf->global->MAIN_OVERWRITE_THEME_RES;
-		if (! empty($conf->global->MAIN_FORCETHEMEDIR)) $path = preg_replace('/^\//', '', $conf->global->MAIN_FORCETHEMEDIR).'/'.$path;	// TODO What if there is both FORCETHEMDIR and OVERWRITE_THEM_RES
+		//if (! empty($conf->global->MAIN_FORCETHEMEDIR)) $path = preg_replace('/^\//', '', $conf->global->MAIN_FORCETHEMEDIR).'/'.$path;	// TODO What if there is both FORCETHEMDIR and OVERWRITE_THEM_RES
 		// If we ask an image into $url/$mymodule/img (instead of default path)
 		if (preg_match('/^([^@]+)@([^@]+)$/i',$picto,$regs))
 		{

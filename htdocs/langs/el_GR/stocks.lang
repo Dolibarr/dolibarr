@@ -2,15 +2,15 @@
 CHARSET=UTF-8
 WarehouseCard=Αποθήκη κάρτα
 Warehouse=Αποθήκη
-# Warehouses=Warehouses
+Warehouses==
 NewWarehouse=Νέα αποθήκη / Χρηματιστήριο περιοχή
 WarehouseEdit=Τροποποίηση αποθήκη
 MenuNewWarehouse=Νέα αποθήκη
 WarehouseOpened=Αποθήκη άνοιξε
 WarehouseClosed=Αποθήκη κλειστό
 WarehouseSource=Αποθήκη Πηγή
-# WarehouseSourceNotDefined=No warehouse defined,
-# AddOne=Add one
+WarehouseSourceNotDefined==
+AddOne==
 WarehouseTarget=Στόχος αποθήκη
 ValidateSending=Διαγραφή αποστολή
 CancelSending=Ακύρωση αποστολής
@@ -36,10 +36,10 @@ StockCorrection=Σωστή απόθεμα
 StockMovement=Μεταφορά
 StockMovements=Μεταφορές Χρηματιστήριο
 NumberOfUnit=Αριθμός μονάδων
-# UnitPurchaseValue=Unit purchase price
+UnitPurchaseValue==
 TotalStock=Σύνολο σε απόθεμα
 StockTooLow=Χρηματιστήριο πολύ χαμηλή
-# StockLowerThanLimit=Stock lower than alert limit
+StockLowerThanLimit==
 EnhancedValue=Αξία
 PMPValue=Μέση σταθμική τιμή
 PMPValueShort=WAP
@@ -55,7 +55,7 @@ DeStockOnShipment=Μείωση πραγματικών αποθεμάτων γι�
 ReStockOnBill=Αύξηση πραγματικού αποθέματα για τους προμηθευτές τιμολόγια / πιστωτικά επικύρωση σημειώσεις
 ReStockOnValidateOrder=Αύξηση πραγματικού αποθεμάτων σχετικά με τις παραγγελίες τους προμηθευτές επιδοκιμασίας
 ReStockOnDispatchOrder=Αύξηση των αποθεμάτων σε πραγματικό εγχειρίδιο αποστολή σε αποθήκες, μετά από σειρά προμηθευτής που λαμβάνει
-# ReStockOnDeleteInvoice=Increase real stocks on invoice deletion
+ReStockOnDeleteInvoice==
 OrderStatusNotReadyToDispatch=Παραγγελία δεν έχει ακόμη ή όχι περισσότερο μια κατάσταση που επιτρέπει την αποστολή των προϊόντων σε αποθήκες αποθεμάτων.
 StockDiffPhysicTeoric=Λόγος αποθεμάτων διαφορά φυσική και θεωρητική
 NoPredefinedProductToDispatch=Δεν προκαθορισμένα προϊόντα για αυτό το αντικείμενο. Έτσι, δεν έχει αποστολή σε απόθεμα είναι απαραίτητη.
@@ -64,7 +64,6 @@ StockLimitShort=Όριο
 StockLimit=Χρηματιστήριο όριο για ειδοποιήσεις
 PhysicalStock=Φυσικό απόθεμα
 RealStock=Real Χρηματιστήριο
-TheoreticalStock=Therocial απόθεμα
 VirtualStock=Εικονική απόθεμα
 MininumStock=Ελάχιστο απόθεμα
 StockUp=Απόθεμα επάνω
@@ -87,5 +86,12 @@ PersonalStock=Προσωπικά %s απόθεμα
 ThisWarehouseIsPersonalStock=Αυτή η αποθήκη αποτελεί προσωπική απόθεμα %s %s
 SelectWarehouseForStockDecrease=Επιλέξτε αποθήκη που θα χρησιμοποιηθεί για μείωση αποθεμάτων
 SelectWarehouseForStockIncrease=Επιλέξτε αποθήκη που θα χρησιμοποιηθεί για αύξηση των αποθεμάτων
-# NoStockAction=No stock action
-# LastWaitingSupplierOrders=Orders waiting for receptions
+NoStockAction==
+LastWaitingSupplierOrders==
+# DesiredStock=Desired stock
+# StockToBuy=To order
+# Replenishment=Replenishment
+# ReplenishmentOrders=Replenishment orders
+# UseVirtualStock=Use virtual stock instead of physical stock
+# RuleForStockReplenishment=Rule for stocks replenishment
+# SelectProduct=Select at least one product

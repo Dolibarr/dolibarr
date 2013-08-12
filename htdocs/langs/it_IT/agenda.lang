@@ -1,4 +1,4 @@
-# Dolibarr language file - en_US - agenda
+# Dolibarr language file - Source file is en_US - agenda
 CHARSET=UTF-8
 Actions=Azioni
 ActionsArea=Area eventi (azioni e compiti)
@@ -10,7 +10,7 @@ LocalAgenda=Calendario locale
 AffectedTo= Azione assegnata a
 DoneBy= Fatto da
 Events= Eventi
-# EventsNb=Number of events
+EventsNb=Numero di eventi
 MyEvents=I miei eventi
 OtherEvents=Altri eventi
 ListOfActions=Lista delle azioni
@@ -40,7 +40,7 @@ ActionsEvents= Eventi per i quali creare un'azione
 PropalValidatedInDolibarr= Proposta convalidata
 InvoiceValidatedInDolibarr= Fattura convalidata
 InvoiceBackToDraftInDolibarr=Fattura %s riportata allo stato di bozza
-# InvoiceDeleteDolibarr=Invoice %s deleted
+InvoiceDeleteDolibarr=La fattura %s è stata cancellata
 OrderValidatedInDolibarr= Ordine convalidato
 OrderApprovedInDolibarr=Ordine %s approvato
 OrderBackToDraftInDolibarr=Ordine %s riportato allo stato di bozza

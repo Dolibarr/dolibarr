@@ -39,7 +39,7 @@ ConfirmCloseService=Are you sure you want to close this service with date <b>%s<
 ValidateAContract=Validate a contract
 ActivateService=Ενεργοποίηση Υπηρεσίας
 ConfirmActivateService=Are you sure you want to activate this service with date <b>%s</b> ?
-# RefContract=Contract reference
+RefContract==
 DateContract=Contract date
 DateServiceActivate=Service activation date
 DateServiceUnactivate=Service deactivation date
@@ -87,8 +87,9 @@ ExpiredSince=Expiration date
 RelatedContracts=Σχετιζόμενα συμβόλαια
 NoExpiredServices=Δεν έληξε ενεργές υπηρεσίες
 # ListOfServicesToExpireWithDuration=List of Services to expire in %s days
+# ListOfServicesToExpireWithDurationNeg=List of Services expired from more than %s days
 # ListOfServicesToExpire=List of Services to expire
-# Service=Service
+# NoteListOfYourExpiredServices=This list contains only services of contracts for third parties you are linked to as a sale representative.
 
 ##### Types de contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Σύμβαση πώλησης υπογραφή εκπροσώπου

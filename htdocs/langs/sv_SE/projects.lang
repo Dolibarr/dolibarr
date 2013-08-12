@@ -94,6 +94,7 @@ IfNeedToUseOhterObjectKeepEmpty=Om vissa objekt (faktura, order, ...), som tillh
 # ProjectReportDate=Change task date according project start date
 # ErrorShiftTaskDate=Impossible to shift task date according to new project start date
 # ProjectsAndTasksLines=Projects and tasks
+# ProjectCreatedInDolibarr=Project %s created
 ##### Types de contacts #####
 TypeContact_project_internal_PROJECTLEADER=Projektledare
 TypeContact_project_external_PROJECTLEADER=Projektledare
@@ -107,3 +108,4 @@ TypeContact_project_task_external_CONTRIBUTOR=Medarbetare
 DocumentModelBaleine=En fullständig projektets rapport modellen (logo. ..)
 # PlannedWorkload = Planned workload
 # WorkloadOccupation= Workload affectation
+# ProjectReferers=Refering objects

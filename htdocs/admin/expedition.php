@@ -64,7 +64,7 @@ if ($action == 'updateMask')
 
 	if (isset($res))
 	{
-		if ($res < 0)
+		if ($res > 0)
 			setEventMessage($langs->trans("SetupSaved"));
 		else
 			setEventMessage($langs->trans("Error"), 'errors');

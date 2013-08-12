@@ -1,4 +1,4 @@
-# Dolibarr language file - es_ES - stocks
+# Dolibarr language file - Source file is en_US - stocks
 CHARSET=UTF-8
 WarehouseCard=Ficha almacén
 Warehouse=Almacén
@@ -39,6 +39,7 @@ NumberOfUnit=Número de piezas
 UnitPurchaseValue=Precio de compra unitario
 TotalStock=Total en stock
 StockTooLow=Stock insuficiente
+StockLowerThanLimit=El stock es menor que el límite de la alerta
 EnhancedValue=Valor
 PMPValue=Valor (PMP)
 PMPValueShort=PMP
@@ -63,7 +64,6 @@ StockLimitShort=Límite
 StockLimit=Stock límite para alertas
 PhysicalStock=Stock físico
 RealStock=Stock real
-TheoreticalStock=Stock teórico
 VirtualStock=Stock virtual
 MininumStock=Stock mínimo
 StockUp=Stock máximo
@@ -88,3 +88,10 @@ SelectWarehouseForStockDecrease=Seleccione el almacén a usar en el decremento d
 SelectWarehouseForStockIncrease=Seleccione el almacén a usar en el incremento de stock
 NoStockAction=Sin acciones sobre el stock
 LastWaitingSupplierOrders=Pedidos en espera de recepción
+DesiredStock=Stock deseado
+StockToBuy=A pedir
+Replenishment=Reaprovisionamiento
+ReplenishmentOrders=Ordenes de reaprovisionamiento
+UseVirtualStock=Usar stock virtual en lugar de stock físico
+RuleForStockReplenishment=Regla para el reaprovisionamiento de stock
+SelectProduct=Seleccione al menos un producto

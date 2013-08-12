@@ -473,7 +473,7 @@ class Form
         $sql = "SELECT rowid, code as code_iso, libelle as label";
         $sql.= " FROM ".MAIN_DB_PREFIX."c_pays";
         $sql.= " WHERE active = 1";
-        $sql.= " ORDER BY code ASC";
+        //$sql.= " ORDER BY code ASC";
 
         dol_syslog(get_class($this)."::select_country sql=".$sql);
         $resql=$this->db->query($sql);
@@ -492,7 +492,7 @@ class Form
                     $countryArray[$i]['rowid'] 		= $obj->rowid;
                     $countryArray[$i]['code_iso'] 	= $obj->code_iso;
                     $countryArray[$i]['label']		= ($obj->code_iso && $langs->transnoentitiesnoconv("Country".$obj->code_iso)!="Country".$obj->code_iso?$langs->transnoentitiesnoconv("Country".$obj->code_iso):($obj->label!='-'?$obj->label:''));
-                    $label[$i] 	= $countryArray[$i]['label'];
+                    $label[$i] = dol_string_unaccent($countryArray[$i]['label']);
                     $i++;
                 }
 
@@ -507,7 +507,7 @@ class Form
                         $out.= '<option value="'.$row['rowid'].'" selected="selected">';
                     }
                     else
-                    {
+					{
                         $out.= '<option value="'.$row['rowid'].'">';
                     }
                     $out.= dol_trunc($row['label'],$maxlength,'middle');
@@ -518,7 +518,7 @@ class Form
             $out.= '</select>';
         }
         else
-        {
+		{
             dol_print_error($this->db);
         }
 
@@ -1061,6 +1061,7 @@ class Form
      * 	@param	int		$enableonly		Array list of users id to be enabled. All other must be disabled
      *  @param	int		$force_entity	0 or Id of environment to force
      * 	@return	void
+     *  @deprecated
      */
     function select_users($selected='',$htmlname='userid',$show_empty=0,$exclude='',$disabled=0,$include='',$enableonly='',$force_entity=0)
     {
@@ -1079,9 +1080,10 @@ class Form
      * 	@param	array	$enableonly		Array list of users id to be enabled. All other must be disabled
      *  @param	int		$force_entity	0 or Id of environment to force
      *  @param	int		$maxlength		Maximum length of string into list (0=no limit)
+     *  @param	int		$showstatus		0=show user status only if status is disabled, 1=always show user status into label, -1=never show user status
      * 	@return	string					HTML select string
      */
-    function select_dolusers($selected='', $htmlname='userid', $show_empty=0, $exclude='', $disabled=0, $include='', $enableonly='', $force_entity=0, $maxlength=0)
+    function select_dolusers($selected='', $htmlname='userid', $show_empty=0, $exclude='', $disabled=0, $include='', $enableonly='', $force_entity=0, $maxlength=0, $showstatus=0)
     {
         global $conf,$user,$langs;
 
@@ -1096,7 +1098,7 @@ class Form
         $out='';
 
         // On recherche les utilisateurs
-        $sql = "SELECT DISTINCT u.rowid, u.lastname as lastname, u.firstname, u.login, u.admin, u.entity";
+        $sql = "SELECT DISTINCT u.rowid, u.lastname as lastname, u.firstname, u.statut, u.login, u.admin, u.entity";
         if (! empty($conf->multicompany->enabled) && $conf->entity == 1 && $user->admin && ! $user->entity)
         {
             $sql.= ", e.label";
@@ -1164,16 +1166,42 @@ class Form
                     }
 
                     $out.= $userstatic->getFullName($langs, 0, 0, $maxlength);
-
+                    // Complete name with more info
+                    $moreinfo=0;
+                    if (! empty($conf->global->MAIN_SHOW_LOGIN))
+                    {
+                    	$out.= ($moreinfo?' - ':' (').$obj->login;
+                    	$moreinfo++;
+                    }
+                    if ($showstatus >= 0)
+                    {
+                    	if ($obj->statut == 1 && $showstatus == 1)
+                    	{
+                    		$out.=($moreinfo?' - ':' (').$langs->trans('Enabled');
+                    		$moreinfo++;
+                    	}
+						if ($obj->statut == 0)
+						{
+							$out.=($moreinfo?' - ':' (').$langs->trans('Disabled');
+							$moreinfo++;
+						}
+					}
                     if (! empty($conf->multicompany->enabled) && empty($conf->multicompany->transverse_mode) && $conf->entity == 1 && $user->admin && ! $user->entity)
                     {
-                        if ($obj->admin && ! $obj->entity) $out.=" (".$langs->trans("AllEntities").")";
-                        else $out.=" (".$obj->label.")";
+                        if ($obj->admin && ! $obj->entity)
+                        {
+                        	$out.=($moreinfo?' - ':' (').$langs->trans("AllEntities");
+                        	$moreinfo++;
+                        }
+                        else
+                     {
+                        	$out.=($moreinfo?' - ':' (').$obj->label;
+                        	$moreinfo++;
+                     	}
                     }
-
-                    //if ($obj->admin) $out.= ' *';
-                    if (! empty($conf->global->MAIN_SHOW_LOGIN)) $out.= ' ('.$obj->login.')';
+					$out.=($moreinfo?')':'');
                     $out.= '</option>';
+
                     $i++;
                 }
             }
@@ -1842,6 +1870,10 @@ class Form
                     $objp = $this->db->fetch_object($result);
 
                     $opt = '<option value="'.$objp->idprodfournprice.'"';
+                    //if there is only one supplier, preselect it
+                    if($num == 1) {
+                        $opt .= ' selected="selected"';
+                    }
                     $opt.= '>'.$objp->nom.' - '.$objp->ref_fourn.' - ';
 
                     if ($objp->quantity == 1)
@@ -2443,7 +2475,7 @@ class Form
      *     @param 	string		$action      	   	Action
      *	   @param  	array		$formquestion	   	An array with complementary inputs to add into forms: array(array('label'=> ,'type'=> , ))
      * 	   @param  	string		$selectedchoice  	"" or "no" or "yes"
-     * 	   @param  	int			$useajax		   	0=No, 1=Yes, 2=Yes but submit page with &confirm=no if choice is No, 'xxx'=preoutput confirm box with div id=dialog-confirm-xxx
+     * 	   @param  	int			$useajax		   	0=No, 1 or 'xxx'=Yes, 2=Yes but submit page with &confirm=no if choice is No, 'xxx'=preoutput confirm box with div id=dialog-confirm-xxx
      *     @param  	int			$height          	Force height of box
      *     @param	int			$width				Force width of bow
      *     @return 	string      	    			HTML ajax code if a confirm ajax popup is required, Pure HTML code if it's an html form
@@ -2530,6 +2562,8 @@ class Form
             }
             $more.='</table>'."\n";
         }
+
+        if (! empty($conf->dol_use_jmobile)) $useajax=0;	// JQUI method dialog is broken with jmobile, we use standard HTML. We also change code for button to have get on url with action=xxx and output confirm only when action=xxx
 
         if ($useajax && $conf->use_javascript_ajax)
         {
@@ -2622,9 +2656,8 @@ class Form
                     }
                 });
 
-
             	var button = "'.$button.'";
-                if (button.length > 0) {
+            	if (button.length > 0) {
                 	$( "#" + button ).click(function() {
                 		$("#'.$dialogconfirm.'").dialog("open");
         			});

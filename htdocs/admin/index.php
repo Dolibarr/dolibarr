@@ -18,7 +18,7 @@
 
 /**
  *   	\file       htdocs/admin/index.php
- *		\brief      Page d'accueil de l'espace administration/configuration
+ *		\brief      Home page of setup area
  */
 
 require '../main.inc.php';
@@ -27,6 +27,9 @@ $langs->load("admin");
 $langs->load("companies");
 
 if (!$user->admin) accessforbidden();
+
+// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+$hookmanager->initHooks(array('homesetup'));
 
 
 /*
@@ -66,14 +69,11 @@ if (! empty($conf->global->MAIN_MOTD_SETUPPAGE))
 
 print $langs->trans("SetupDescription1").' ';
 print $langs->trans("AreaForAdminOnly").' ';
-
-
-//print "<br>";
-//print "<br>";
 print $langs->trans("SetupDescription2")."<br><br>";
 
 print '<br>';
-//print '<hr style="color: #DDDDDD;">';
+
+// Show info setup company
 if (empty($conf->global->MAIN_INFO_SOCIETE_NOM) || empty($conf->global->MAIN_INFO_SOCIETE_COUNTRY)) $setupcompanynotcomplete=1;
 print img_picto('','puce').' '.$langs->trans("SetupDescription3",DOL_URL_ROOT.'/admin/company.php?mainmenu=home'.(empty($setupcompanynotcomplete)?'':'&action=edit'));
 if (! empty($setupcompanynotcomplete))
@@ -85,7 +85,8 @@ if (! empty($setupcompanynotcomplete))
 print '<br>';
 print '<br>';
 print '<br>';
-//print '<hr style="color: #DDDDDD;">';
+
+// Show info setup module
 print img_picto('','puce').' '.$langs->trans("SetupDescription4",DOL_URL_ROOT.'/admin/modules.php?mainmenu=home');
 if (count($conf->modules) <= (empty($conf->global->MAIN_MINNB_MODULE)?1:$conf->global->MAIN_MINNB_MODULE))	// If only user module enabled
 {
@@ -96,13 +97,19 @@ if (count($conf->modules) <= (empty($conf->global->MAIN_MINNB_MODULE)?1:$conf->g
 print '<br>';
 print '<br>';
 print '<br>';
-//print '<hr style="color: #DDDDDD;">';
-print $langs->trans("SetupDescription5")."<br>";
-//print '<hr style="color: #DDDDDD;">';
-print "<br>";
 
-// Show logo
-print '<center><div class="logo_setup"></div></center>';
+// Add hook to add information
+$reshook=$hookmanager->executeHooks('addHomeSetup',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+print $hookmanager->resPrint;
+if (empty($reshook))
+{
+	// Show into other
+	print $langs->trans("SetupDescription5")."<br>";
+	print "<br>";
+
+	// Show logo
+	print '<center><div class="logo_setup"></div></center>';
+}
 
 
 llxFooter();

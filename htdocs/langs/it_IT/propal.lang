@@ -1,4 +1,4 @@
-# Dolibarr language file - en_US - propal
+# Dolibarr language file - Source file is en_US - propal
 CHARSET=UTF-8
 Proposals=Preventivi/Proposte commerciali
 Proposal=Preventivo/Proposta commerciale
@@ -71,6 +71,8 @@ ErrorPropalNotFound=Proposta %s non trovata
 Estimate=Stima:
 EstimateShort=Stima
 OtherPropals=Altre proposte
+# AddToDraftProposals=Add to draft proposal
+# NoDraftProposals=No draft proposals
 CopyPropalFrom=Crea proposta commerciale da copia esistente
 CreateEmptyPropal=Crea proposta commerciale vuota o dalla lista dei prodotti / servizi
 DefaultProposalDurationValidity=Durata di validità predefinita per proposta commerciale (in giorni)

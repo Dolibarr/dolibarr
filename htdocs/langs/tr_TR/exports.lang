@@ -65,7 +65,7 @@ ChooseFormatOfFileToImport=%s Resmine  tıklayarak içeaktarılacak dosya biçim
 ChooseFileToImport=Dosyayı gönderin ve sonra %s resmine  tıklayarak içeaktarılacak dosya biçimi olarak kullanılacak dosya biçimini seçin...
 SourceFileFormat=Kaynak dosya biçimi
 FieldsInSourceFile=Kaynak dosyadaki alanlar
-FieldsInTargetDatabase=Dolibarr veritabanında hedef alanlar (*=zorunlu)
+# FieldsInTargetDatabase=Target fields in Dolibarr database (bold=mandatory)
 Field=Alan
 NoFields=Alan sayısı
 MoveField=%s Numaralı sütunu taşı

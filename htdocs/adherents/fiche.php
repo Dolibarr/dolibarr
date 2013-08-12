@@ -360,6 +360,7 @@ if ($action == 'update' && ! $_POST["cancel"] && $user->rights->adherent->creer)
 			}
 
 			// Rajoute l'utilisateur dans les divers abonnements (mailman, spip, etc...)
+			// TODO Move this into update trigger MEMBER_MODIFY
 			if (($object->oldcopy->email != $object->email) || ($object->oldcopy->typeid != $object->typeid))
 			{
 				if ($object->oldcopy->email != $object->email)    // If email has changed we delete mailman subscription for old email
@@ -914,7 +915,7 @@ else
 
 		// Login Dolibarr
 		print '<tr><td>'.$langs->trans("LinkedToDolibarrUser").'</td><td class="valeur">';
-		print $form->select_users($object->user_id,'userid',1);
+		print $form->select_dolusers($object->user_id,'userid',1);
 		print '</td></tr>';
 		*/
 
@@ -1411,7 +1412,7 @@ else
 
 		// EMail
 		print '<tr><td>'.$langs->trans("EMail").'</td><td class="valeur">'.dol_print_email($object->email,0,$object->fk_soc,1).'</td></tr>';
-		
+
 		// Password
 		if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED))
 		{

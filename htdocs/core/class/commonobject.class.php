@@ -673,11 +673,11 @@ abstract class CommonObject
         if ($this->origin == 'shipping') $this->origin = 'expedition';
         if ($this->origin == 'delivery') $this->origin = 'livraison';
 
-        $object = $this->origin;
+        $origin = $this->origin;
 
-        $classname = ucfirst($object);
-        $this->$object = new $classname($this->db);
-        $this->$object->fetch($this->origin_id);
+        $classname = ucfirst($origin);
+        $this->$origin = new $classname($this->db);
+        $this->$origin->fetch($this->origin_id);
     }
 
     /**
@@ -916,6 +916,7 @@ abstract class CommonObject
     		// TODO uniformize field name
     		$fieldname = 'fk_mode_reglement';
     		if ($this->element == 'societe') $fieldname = 'mode_reglement';
+    		if (get_class($this) == 'Fournisseur') $fieldname = 'mode_reglement_supplier';
 
     		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
     		$sql .= ' SET '.$fieldname.' = '.$id;
@@ -955,6 +956,7 @@ abstract class CommonObject
     		// TODO uniformize field name
     		$fieldname = 'fk_cond_reglement';
     		if ($this->element == 'societe') $fieldname = 'cond_reglement';
+    		if (get_class($this) == 'Fournisseur') $fieldname = 'cond_reglement_supplier';
 
     		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
     		$sql .= ' SET '.$fieldname.' = '.$id;
@@ -1651,7 +1653,7 @@ abstract class CommonObject
 	}
 
     /**
-     *	Fetch array of objects linked to current object. Links are loaded into this->linkedObjects array.
+     *	Fetch array of objects linked to current object. Links are loaded into this->linkedObjects array and this->linkedObjectsIds
      *
      *	@param	int		$sourceid		Object source id
      *	@param  string	$sourcetype		Object source type
@@ -2254,6 +2256,10 @@ abstract class CommonObject
 					{
 						$value = isset($_POST["options_".$key])?dol_mktime($_POST["options_".$key."hour"], $_POST["options_".$key."min"], 0, $_POST["options_".$key."month"], $_POST["options_".$key."day"], $_POST["options_".$key."year"]):$this->db->jdate($this->array_options['options_'.$key]);
 					}
+
+					if($extrafields->attribute_required[$key])
+						$label = '<span class="fieldrequired">'.$label.'</span>';
+
 					$out .= '<td>'.$label.'</td>';
 					$out .='<td colspan="'.$colspan.'">';
 

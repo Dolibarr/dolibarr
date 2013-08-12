@@ -1,4 +1,4 @@
-# Dolibarr language file - ca_ES - projects
+# Dolibarr language file - Source file is en_US - projects
 CHARSET=UTF-8
 Project=Projecte
 Projects=Projectes
@@ -94,7 +94,7 @@ ConfirmCloneProject=Esteu segur que voleu clonar aquest projecte?
 ProjectReportDate=Canviar les dates de les tasques en funció de la data d'inici del projecte
 ErrorShiftTaskDate=S'ha produït un error en el canvi de les dates de les tasques
 ProjectsAndTasksLines=Projectes i tasques
-
+ProjectCreatedInDolibarr=Projecte %s creat
 ##### Types de contacts #####
 TypeContact_project_internal_PROJECTLEADER=Cap de projecte
 TypeContact_project_external_PROJECTLEADER=Cap de projecte
@@ -104,8 +104,10 @@ TypeContact_project_task_internal_TASKEXECUTIVE=Responsable
 TypeContact_project_task_external_TASKEXECUTIVE=Responsable
 TypeContact_project_task_internal_CONTRIBUTOR=Participant
 TypeContact_project_task_external_CONTRIBUTOR=Participant
-# Documents models
-DocumentModelBaleine=Model d'informe de projecte complet (logo...)
 SelectElement=Elements vinculables al projecte :
 AddElement=Vincular
+# Documents models
+DocumentModelBaleine=Model d'informe de projecte complet (logo...)
+PlannedWorkload=Càrrega de treball prevista
+WorkloadOccupation=Percentatge afectat
 ProjectReferers=Objectes vinculats

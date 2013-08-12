@@ -65,7 +65,7 @@ ChooseFormatOfFileToImport=Vali failivormingut kasutada kui import vormingus kl�
 ChooseFileToImport=Lisa fail siis kl천psa eva %s valida faili allikas import file ...
 SourceFileFormat=Allikas failivorming
 FieldsInSourceFile=Valdkondades l채htefaili
-FieldsInTargetDatabase=Target v채ljad Dolibarr andmebaasi (* = kohustuslik)
+# FieldsInTargetDatabase=Target fields in Dolibarr database (bold=mandatory)
 Field=V채li
 NoFields=Ei v채lju
 MoveField=Liiguta valdkonnas veeru number %s
@@ -120,10 +120,10 @@ CSVFormatDesc=<b>Komadega eraldatud v채채rtused</b> vormingus (. Csv). <br> See 
 # Separator=Separator
 # Enclosure=Enclosure
 # SuppliersProducts=Suppliers Products
-# BankCode=Bank code
-# DeskCode=Desk code
-# BankAccountNumber=Account number
-# BankAccountNumberKey=Key
+BankCode=Panga kood
+DeskCode=Laud koodiga
+BankAccountNumber=Konto number
+BankAccountNumberKey=V천ti
 ## filters
 # SelectFilterFields=If you want to filter on some values, just input values here.
 # FilterableFields=Champs Filtrables

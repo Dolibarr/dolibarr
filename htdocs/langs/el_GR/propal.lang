@@ -71,6 +71,8 @@ ErrorPropalNotFound=Propal %s not found
 Estimate=Estimate :
 EstimateShort=Estimate
 OtherPropals=Άλλες προτάσεις
+# AddToDraftProposals=Add to draft proposal
+# NoDraftProposals=No draft proposals
 CopyPropalFrom=Δημιουργία εμπορική πρόταση με την αντιγραφή υφιστάμενη πρόταση
 CreateEmptyPropal=Δημιουργία κενών εμπορικών vierge προτάσεις ή από την λίστα των προϊόντων / υπηρεσιών
 DefaultProposalDurationValidity=Προεπιλογή εμπορική διάρκεια ισχύος πρόταση (σε ημέρες)
@@ -96,6 +98,6 @@ TypeContact_propal_external_CUSTOMER=Πελάτης επαφή την παρακ
 # Document models
 DocModelAzurDescription=Ένα πλήρες μοντέλο πρόταση (logo. ..)
 DocModelJauneDescription=Jaune μοντέλο πρόταση
-# DefaultModelPropalCreate=Default model creation
-# DefaultModelPropalToBill=Default template when closing a business proposal (to be invoiced)
-# DefaultModelPropalClosed=Default template when closing a business proposal (unbilled)
+DefaultModelPropalCreate==
+DefaultModelPropalToBill==
+DefaultModelPropalClosed==

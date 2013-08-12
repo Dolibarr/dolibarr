@@ -28,6 +28,10 @@
  *	\brief      Page for supplier invoice card (view, edit, validate)
  */
 
+error_reporting(E_ALL);
+ini_set('display_errors', true);
+ini_set('html_errors', false);
+
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
@@ -155,7 +159,7 @@ elseif ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->fourn
     $result=$object->delete($id);
     if ($result > 0)
     {
-        header('Location: index.php');
+        header('Location: list.php');
         exit;
     }
     else
@@ -192,6 +196,18 @@ if ($action == 'setref_supplier' && $user->rights->fournisseur->commande->creer)
     if ($result < 0) dol_print_error($db, $object->error);
 }
 
+// conditions de reglement
+if ($action == 'setconditions' && $user->rights->fournisseur->commande->creer)
+{
+    $result=$object->setPaymentTerms(GETPOST('cond_reglement_id','int'));
+}
+
+// mode de reglement
+else if ($action == 'setmode' && $user->rights->fournisseur->commande->creer)
+{
+    $result = $object->setPaymentMethods(GETPOST('mode_reglement_id','int'));
+}
+
 
 // Set label
 elseif ($action == 'setlabel' && $user->rights->fournisseur->facture->creer)
@@ -201,7 +217,6 @@ elseif ($action == 'setlabel' && $user->rights->fournisseur->facture->creer)
     $result=$object->update($user);
     if ($result < 0) dol_print_error($db);
 }
-
 elseif ($action == 'setdatef' && $user->rights->fournisseur->facture->creer)
 {
     $object->fetch($id);
@@ -293,6 +308,8 @@ elseif ($action == 'add' && $user->rights->fournisseur->facture->creer)
         $object->date_echeance = $datedue;
         $object->note_public   = GETPOST('note_public');
         $object->note_private  = GETPOST('note_private');
+		$object->cond_reglement_id = GETPOST('cond_reglement_id');
+        $object->mode_reglement_id = GETPOST('mode_reglement_id');
         $object->fk_project    = ($tmpproject > 0) ? $tmpproject : null;
 
         // If creation from another object of another module
@@ -443,6 +460,16 @@ elseif ($action == 'add' && $user->rights->fournisseur->facture->creer)
         else
         {
             $db->commit();
+            
+            if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+            	$result=supplier_invoice_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+            	if ($result	<= 0)
+            	{
+            		dol_print_error($db,$result);
+            		exit;
+            	}
+            }
+            
             header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
             exit;
         }
@@ -595,7 +622,14 @@ elseif ($action == 'addline')
     		$outputlangs = new Translate("",$conf);
     		$outputlangs->setDefaultLang($newlang);
     	}
-        //if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) supplier_invoice_pdf_create($db, $object->id, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+        if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+        	$result=supplier_invoice_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+        	if ($result	<= 0)
+        	{
+        		dol_print_error($db,$result);
+        		exit;
+        	}
+        }
 
         unset($_POST['qty']);
         unset($_POST['type']);
@@ -646,7 +680,14 @@ elseif ($action == 'edit' && $user->rights->fournisseur->facture->creer)
             $outputlangs = new Translate("",$conf);
             $outputlangs->setDefaultLang($_REQUEST['lang_id']);
         }
-        //if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) supplier_invoice_pdf_create($db, $object->id, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+        if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+        	$result=supplier_invoice_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+        	if ($result	<= 0)
+        	{
+        		dol_print_error($db,$result);
+        		exit;
+        	}
+        }
 
         $action='';
     }
@@ -1025,9 +1066,9 @@ if ($action == 'create')
             $projectid			= (!empty($objectsrc->fk_project)?$objectsrc->fk_project:'');
             //$ref_client			= (!empty($objectsrc->ref_client)?$object->ref_client:'');
 
-            $soc = $objectsrc->client;
-            $cond_reglement_id 	= (!empty($objectsrc->cond_reglement_id)?$objectsrc->cond_reglement_id:(!empty($soc->cond_reglement_id)?$soc->cond_reglement_id:1));
-            $mode_reglement_id 	= (!empty($objectsrc->mode_reglement_id)?$objectsrc->mode_reglement_id:(!empty($soc->mode_reglement_id)?$soc->mode_reglement_id:0));
+            $soc = $objectsrc->thirdparty;
+            $cond_reglement_id 	= (!empty($objectsrc->cond_reglement_id)?$objectsrc->cond_reglement_id:(!empty($soc->cond_reglement_supplier_id)?$soc->cond_reglement_supplier_id:1));
+            $mode_reglement_id 	= (!empty($objectsrc->mode_reglement_id)?$objectsrc->mode_reglement_id:(!empty($soc->mode_reglement_supplier_id)?$soc->mode_reglement_supplier_id:0));
             $remise_percent 	= (!empty($objectsrc->remise_percent)?$objectsrc->remise_percent:(!empty($soc->remise_percent)?$soc->remise_percent:0));
             $remise_absolue 	= (!empty($objectsrc->remise_absolue)?$objectsrc->remise_absolue:(!empty($soc->remise_absolue)?$soc->remise_absolue:0));
             $dateinvoice		= empty($conf->global->MAIN_AUTOFILL_DATE)?-1:0;
@@ -1040,6 +1081,8 @@ if ($action == 'create')
     }
     else
     {
+		$cond_reglement_id 	= $societe->cond_reglement_supplier_id;
+		$mode_reglement_id 	= $societe->mode_reglement_supplier_id;
         $datetmp=dol_mktime(12,0,0,$_POST['remonth'],$_POST['reday'],$_POST['reyear']);
         $dateinvoice=($datetmp==''?(empty($conf->global->MAIN_AUTOFILL_DATE)?-1:0):$datetmp);
         $datetmp=dol_mktime(12,0,0,$_POST['echmonth'],$_POST['echday'],$_POST['echyear']);
@@ -1170,6 +1213,16 @@ if ($action == 'create')
     print '<tr><td>'.$langs->trans('DateMaxPayment').'</td><td>';
     $form->select_date($datedue,'ech','','','',"add",1,1);
     print '</td></tr>';
+	
+	// Payment term
+	print '<tr><td class="nowrap">'.$langs->trans('PaymentConditionsShort').'</td><td colspan="2">';
+	$form->select_conditions_paiements(isset($_POST['cond_reglement_id'])?$_POST['cond_reglement_id']:$cond_reglement_id,'cond_reglement_id');
+	print '</td></tr>';
+
+	// Payment mode
+	print '<tr><td>'.$langs->trans('PaymentMode').'</td><td colspan="2">';
+	$form->select_types_paiements(isset($_POST['mode_reglement_id'])?$_POST['mode_reglement_id']:$mode_reglement_id,'mode_reglement_id');
+	print '</td></tr>';
 
 	// Project
 	if (! empty($conf->projet->enabled))
@@ -1584,6 +1637,47 @@ else
         print $form->editfieldval("DateMaxPayment",'date_lim_reglement',$object->date_echeance,$object,($object->statut<2 && $user->rights->fournisseur->facture->creer && $object->getSommePaiement() <= 0),'datepicker');
         if ($action != 'editdate_lim_reglement' && $object->statut < 2 && $object->date_echeance && $object->date_echeance < ($now - $conf->facture->fournisseur->warning_delay)) print img_warning($langs->trans('Late'));
         print '</td>';
+
+		// Conditions de reglement par defaut
+		$langs->load('bills');
+		$form = new Form($db);
+		print '<tr><td class="nowrap">';
+		print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
+		print $langs->trans('PaymentConditions');
+		print '<td>';
+		if ($action != 'editconditions') print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editconditions&amp;id='.$object->id.'">'.img_edit($langs->trans('SetConditions'),1).'</a></td>';
+		print '</tr></table>';
+		print '</td><td colspan="2">';
+		if ($action == 'editconditions')
+		{
+			$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?id='.$object->id,  $object->cond_reglement_id,'cond_reglement_id');
+		}
+		else
+		{
+			$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?id='.$object->id,  $object->cond_reglement_id,'none');
+		}
+		print "</td>";
+		print '</tr>';
+	
+		// Mode of payment
+		$langs->load('bills');
+		$form = new Form($db);
+		print '<tr><td class="nowrap">';
+		print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
+		print $langs->trans('PaymentMode');
+		print '</td>';
+		if ($action != 'editmode') print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editmode&amp;id='.$object->id.'">'.img_edit($langs->trans('SetMode'),1).'</a></td>';
+		print '</tr></table>';
+		print '</td><td colspan="2">';
+		if ($action == 'editmode')
+		{
+			$form->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$object->id,$object->mode_reglement_id,'mode_reglement_id');
+		}
+		else
+		{
+			$form->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$object->id,$object->mode_reglement_id,'none');
+		}
+		print '</td></tr>';
 
         // Status
         $alreadypaid=$object->getSommePaiement();

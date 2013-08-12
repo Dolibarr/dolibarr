@@ -1,4 +1,4 @@
-# Dolibarr language file - fr_FR - ecm
+# Dolibarr language file - Source file is en_US - ecm
 CHARSET=UTF-8
 MenuECM=Documents
 DocsMine=Els meus documents
@@ -43,6 +43,7 @@ ECMDocsByOrders=Documents associats a comandes
 ECMDocsByContracts=Documents associats a contractes
 ECMDocsByInvoices=Documents associats a factures
 ECMDocsByProducts=Documents enllaçats a productes
+ECMDocsByProjects=Documents enllaçats a projectes
 ECMNoDirectoryYet=No s'ha creat carpeta
 ShowECMSection=Mostrar carpeta
 DeleteSection=Eliminació carpeta
@@ -51,3 +52,4 @@ ECMDirectoryForFiles=Carpeta relativa per a fitxers
 CannotRemoveDirectoryContainsFiles=No es pot eliminar perquè té arxius
 ECMFileManager=Explorador de fitxers
 ECMSelectASection=Seleccioneu una carpeta en l'arbre de l'esquerra
+DirNotSynchronizedSyncFirst=Aquest directori va ser creat o modificat fora del mòdul GED. Feu clic al botó "Actualitza" per resincronitzar la informació del disc i la base de dades per veure el contingut d'aquest directori.

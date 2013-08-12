@@ -60,4 +60,35 @@ function categories_prepare_head($object,$type)
 }
 
 
+/**
+ * Prepare array with list of tabs
+ *
+ * @return  array				Array of tabs to show
+ */
+function categoriesadmin_prepare_head()
+{
+	global $langs, $conf, $user;
+
+	$langs->load("categories");
+
+	$h = 0;
+	$head = array();
+
+	$head[$h][0] = DOL_URL_ROOT.'/categories/admin/categorie.php';
+	$head[$h][1] = $langs->trans("Setup");
+	$head[$h][2] = 'setup';
+	$h++;
+
+	// Show more tabs from modules
+	// Entries must be declared in modules descriptor with line
+	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
+	// $this->tabs = array('entity:-tabname);   												to remove a tab
+	complete_head_from_modules($conf,$langs,$object,$head,$h,'categoriesadmin');
+
+	complete_head_from_modules($conf,$langs,$object,$head,$h,'categoriesadmin','remove');
+
+	return $head;
+}
+
+
 ?>

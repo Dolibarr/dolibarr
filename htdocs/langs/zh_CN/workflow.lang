@@ -1,6 +1,7 @@
 # Dolibarr language file - Source file is en_US - admin
 CHARSET= UTF-8
 WorkflowSetup=工作流模块的设置
+# WorkflowDesc=This module is designed to modify the behaviour of automatic actions into application. By default, workflow is opened (you make thing in order you want). You can enabled automatic actions that you are interesting in.
 ThereIsNoWorkflowToModify=没有工作流程，您可以修改你已激活的模块。
 descWORKFLOW_PROPAL_AUTOCREATE_ORDER=商业提案签署后自动创建一个客户订单
 descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=商业提案签署后自动创建一个客户发票

@@ -2,6 +2,7 @@
 /* Copyright (C) 2010-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2010      Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2012-2013 Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2013      Cédric Salvador      <csalvador@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -315,6 +316,10 @@ function print_eldy_menu($db,$atarget,$type_user,&$tabMenu,&$menu,$noout=0)
 		if (empty($noout)) print_end_menu_entry($showmode);
 		$menu->add($shorturl, $newTabMenu[$i]['titre'], 0, $showmode, ($newTabMenu[$i]['target']?$newTabMenu[$i]['target']:$atarget), ($newTabMenu[$i]['mainmenu']?$newTabMenu[$i]['mainmenu']:$newTabMenu[$i]['rowid']), '');
 	}
+
+	$showmode=1;
+	if (empty($noout)) print_start_menu_entry('','class="tmenuend"',$showmode);
+	if (empty($noout)) print_end_menu_entry($showmode);
 
 	if (empty($noout)) print_end_menu_array();
 }
@@ -1002,6 +1007,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 				if (empty($leftmenu) || $leftmenu=="stock") $newmenu->add("/product/stock/liste.php", $langs->trans("List"), 1, $user->rights->stock->lire);
 				if (empty($leftmenu) || $leftmenu=="stock") $newmenu->add("/product/stock/valo.php", $langs->trans("EnhancedValue"), 1, $user->rights->stock->lire);
 				if (empty($leftmenu) || $leftmenu=="stock") $newmenu->add("/product/stock/mouvement.php", $langs->trans("Movements"), 1, $user->rights->stock->mouvement->lire);
+                if (empty($leftmenu) || $leftmenu=="stock") $newmenu->add("/product/stock/replenish.php", $langs->trans("Replenishment"), 1, $user->rights->stock->mouvement->lire);
 			}
 
 			// Expeditions

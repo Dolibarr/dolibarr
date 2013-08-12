@@ -17,6 +17,10 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ *
+ * FIXME: This is a bugged theme:
+ * No wrapping of top menu entries when window not large enough
+ * Not compatible with jmobile
  */
 
 /**
@@ -362,6 +366,12 @@ else
 }
 ?>
 
+/* This theme is bugged. If width not large enough, menu are not wrapped on next line
+div#tmenu_tooltip {
+	padding-right: 100px;
+}
+*/
+
 div.tmenu {
 <?php if (GETPOST("optioncss") == 'print') {  ?>
 	display:none;
@@ -466,7 +476,6 @@ ul.tmenu {
 
 li.tmenu, li.tmenusel {
 	float: <?php print $left; ?>;
-	height: 22px;
 	position:relative;
 	display: block;
 	padding: 0px;
@@ -485,10 +494,9 @@ li.tmenu span, li.tmenusel span {
 li.tmenu a, li.tmenusel a {
 	position: relative;
 	display: block;
-    height: 22px;
     font-size: 12px;
     font-family: Geneva, Verdana, sans-serif;
-    line-height: 22px;
+    line-height: 20px;
     color: #FFF;
     font-weight: normal;
     float: <?php print $left; ?>;
@@ -575,6 +583,7 @@ form#login {
 }
 
 div.login_block {
+    width: 180px;
 	position: absolute;
 	<?php print $right; ?>: 5px;
 	top: 2px;
@@ -608,6 +617,14 @@ div.login a {
 div.login a:hover {
 	color: black;
 	text-decoration:underline;
+}
+.login_block_user {
+	float: right;
+}
+.login_block_elem {
+	float: right;
+	vertical-align: top;
+	padding: 0px 0px 0px 4px !important;
 }
 
 .alogin, .alogin:hover {
@@ -1350,43 +1367,53 @@ margin: 0px 0px 0px 0px;
 }
 
 
-table.border {
--webkit-box-shadow: #CCCCCC 2px 4px 2px;
-border: 2px solid #BBBBBB;
-border-collapse: collapse;
-padding: 10px;
-border-spacing: 2px;
+table.border, table.dataTable, .table-border, .table-border-col, .table-key-border-col, .table-val-border-col  {
+	border-collapse: collapse;
+	padding: 10px;
+	border-spacing: 2px;
+	border: 1px solid #EFEFEF;
 }
-
+table.border, table.dataTable, .table-border {
+	-webkit-box-shadow: #CCCCCC 2px 4px 2px;
+	border: 2px solid #BBBBBB;
+}
 table.border.formdoc {
-padding: 0px;
-border-collapse: collapse;
-border: 1px solid #666;
+	padding: 0px;
+	border-collapse: collapse;
+	border: 1px solid #666;
 }
 
 table.border.formdoc td {
-margin: 0px;
-padding: 0px;
-border: none;
+	margin: 0px;
+	padding: 0px;
+	border: none;
 }
 
 table.border td {
-padding: 4px;
-border: 1px solid #EFEFEF;
-border-spacing: 0px;
-/*border-collapse: collapse;*/
-margin: 0px;
+	padding: 4px;
+	border: 1px solid #EFEFEF;
+	border-spacing: 0px;
+	/*border-collapse: collapse;*/
+	margin: 0px;
 }
 
 table.border table td {
-border: none;
+	border: none;
 }
 
 td.border {
-border-top: 1px solid #000000;
-border-right: 1px solid #000000;
-border-bottom: 1px solid #000000;
-border-left: 1px solid #000000;
+	border-top: 1px solid #000000;
+	border-right: 1px solid #000000;
+	border-bottom: 1px solid #000000;
+	border-left: 1px solid #000000;
+}
+
+.table-key-border-col {
+	width: 25%;
+	vertical-align:top;
+}
+.table-val-border-col {
+	width:auto;
 }
 
 /* Main boxes */
@@ -1439,11 +1466,11 @@ table.noborder {
     vertical-align: text-top;
 }
 
-.tagtable { display: table; }
+.tagtable, .table-border { display: table; }
+.tagtr, .table-border-row  { display: table-row; }
+.tagtd, .table-border-col, .table-key-border-col, .table-val-border-col { display: table-cell; }
 .tagtable form { display: table-row; }
 .tagtable form div { display: table-cell; }
-.tagtr { display: table-row; }
-.tagtd { display: table-cell; }
 
 tr.liste_titre, form.liste_titre {
     height: 25px;
@@ -1521,7 +1548,6 @@ input.liste_titre {
 tr.liste_total td, form.liste_total div {
 	border-top: 1px solid #DDDDDD;
 	background: #F0F0F0;
-	/* background-image: url(<?php echo dol_buildpath($path.'/theme/login_background.png',1); ?>); */
 	background-repeat: repeat-x;
 	color: #332266;
 	font-weight: normal;
@@ -1622,10 +1648,14 @@ background: #f4f4f4;
 font-family: <?php print $fontlist ?>;
 }
 
-tr.fiche {
-font-family: <?php print $fontlist ?>;
+.formboxfilter {
+	vertical-align: middle;
 }
-
+.formboxfilter input[type=image]
+{
+	top: 3px;
+	position: relative;
+}
 
 
 
@@ -2170,36 +2200,6 @@ a.cke_dialog_ui_button
 
 .template-upload {
     height: 72px !important;
-}
-
-
-/* ============================================================================== */
-/*  Table with div                                                                */
-/* ============================================================================== */
-
-div.table-border {
-	display:table;
-    width: 100%;
-    border-collapse: collapse;
-    border: 1px solid #9CACBB;
-}
-div.table-border-row {
-	display:table-row;
-}
-div.table-key-border-col {
-	display:table-cell;
-	width: 25%;
-	vertical-align:top;
-	padding: 1px 2px 1px 1px;
-	border: 1px solid #9CACBB;
-	border-collapse: collapse;
-}
-div.table-val-border-col {
-	display:table-cell;
-	width:auto;
-	padding: 1px 2px 1px 1px;
-	border: 1px solid #9CACBB;
-	border-collapse: collapse;
 }
 
 

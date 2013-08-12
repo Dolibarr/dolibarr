@@ -160,7 +160,7 @@ if ($resql)
             	dol_syslog("email_unpaid_invoices_to_customers.php: ".$newemail." ".$message);
             	$foundtoprocess++;
             }
-            print "Unpaid invoice ".$obj->facnumber.", price ".price2num($obj->total_ttc).", due date ".dol_print_date($db->jdate($obj->due_date),'day')." customer id ".$obj->sid." ".$obj->name.", ".($obj->cid?"contact id ".$obj->cid." ".$obj->clastname." ".$obj->cfirstname.",":"")." email ".$newemail." lang ".$outputlangs->defaultlang.": ";
+            print "Unpaid invoice ".$obj->facnumber.", price ".price2num($obj->total_ttc).", due date ".dol_print_date($db->jdate($obj->due_date),'day').", customer id ".$obj->sid." ".$obj->name.", ".($obj->cid?"contact id ".$obj->cid." ".$obj->clastname." ".$obj->cfirstname.", ":"")."email ".$newemail.", lang ".$outputlangs->defaultlang.": ";
             if (dol_strlen($newemail)) print "qualified.";
             else print "disqualified (no email).";
             print "\n";

@@ -139,8 +139,9 @@ if (! $sortfield) $sortfield='p.datep';
 if (! $sortorder) $sortorder='DESC';
 $limit = $conf->liste_limit;
 
+
 $sql = 'SELECT s.rowid, s.nom, s.town, s.client, ';
-$sql.= 'p.rowid as propalid, p.total_ht, p.ref, p.ref_client, p.fk_statut, p.fk_user_author, p.datep as dp, p.fin_validite as dfv,';
+$sql.= 'p.rowid as propalid, p.note_private, p.total_ht, p.ref, p.ref_client, p.fk_statut, p.fk_user_author, p.datep as dp, p.fin_validite as dfv,';
 if (! $user->rights->societe->client->voir && ! $socid) $sql .= " sc.fk_soc, sc.fk_user,";
 $sql.= ' u.login';
 $sql.= ' FROM '.MAIN_DB_PREFIX.'societe as s, '.MAIN_DB_PREFIX.'propal as p';
@@ -333,11 +334,17 @@ if ($result)
 		print $objectstatic->getNomUrl(1);
 		print '</td>';
 
-		print '<td width="20" class="nobordernopadding nowrap">';
+		print '<td style="min-width: 20px" class="nobordernopadding nowrap">';
 		if ($objp->fk_statut == 1 && $db->jdate($objp->dfv) < ($now - $conf->propal->cloture->warning_delay)) print img_warning($langs->trans("Late"));
+		if (! empty($objp->note_private))
+		{
+			print ' <span class="note">';
+			print '<a href="'.DOL_URL_ROOT.'/comm/propal/note.php?id='.$objp->propalid.'">'.img_picto($langs->trans("ViewPrivateNote"),'object_generic').'</a>';
+			print '</span>';
+		}
 		print '</td>';
 
-		print '<td width="16" align="right" class="nobordernopadding">';
+		print '<td width="16" align="right" class="nobordernopadding hideonsmartphone">';
 		$filename=dol_sanitizeFileName($objp->ref);
 		$filedir=$conf->propal->dir_output . '/' . dol_sanitizeFileName($objp->ref);
 		$urlsource=$_SERVER['PHP_SELF'].'?id='.$objp->propalid;
@@ -358,7 +365,7 @@ if ($result)
 		print '<td class="nocellnopadd">';
 		print $objp->town;
 		print '</td>';
-		
+
 		// Customer ref
 		print '<td class="nocellnopadd nowrap">';
 		print $objp->ref_client;

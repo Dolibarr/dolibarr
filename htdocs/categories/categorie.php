@@ -323,12 +323,12 @@ else if ($id || $ref)
 		$langs->load("products");
 
 		/*
-		 * Fiche categorie de produit
+		 *  Category card for product
 		 */
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 		require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
-		// Produit
+		// Product
 		$product = new Product($db);
 		$result = $product->fetch($id, $ref);
 
@@ -378,7 +378,7 @@ else if ($id || $ref)
 		$langs->load("members");
 
 		/*
-		 * Fiche categorie d'adherent
+		 *  Category card for member
 		 */
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
 		require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
@@ -456,37 +456,37 @@ else if ($id || $ref)
 	if ($type == 4)
 	{
 		$langs->load("contact");
-	
+
 		/*
-		 * Fiche categorie d'contact
-		*/
+		 * Category card for contact
+		 */
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/contact.lib.php';
 		require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
-	
+
 		// Produit
 		$object = new Contact($db);
 		$result = $object->fetch($id, $ref);
 		$object->fetch_thirdparty();
-	
+
 		llxHeader("","",$langs->trans("Contact"));
-	
-	
+
+
 		$head=contact_prepare_head($object, $user);
-		$titre=$langs->trans("Contact");
-		$picto='user';
-		dol_fiche_head($head, 'tabCategorie', $titre,0,$picto);
-	
+		$titre=$langs->trans("ContactsAddresses");
+		$picto='contact';
+		dol_fiche_head($head, 'category', $titre,0,$picto);
+
 		$rowspan=5;
 		if (! empty($conf->societe->enabled)) $rowspan++;
-	
+
 		print '<table class="border" width="100%">';
-	
+
 		// Ref
 		print '<tr><td width="20%">'.$langs->trans("Ref").'</td>';
 		print '<td class="valeur">';
 		print $form->showrefnav($object,'rowid');
 		print '</td></tr>';
-	
+
 	  // Name
         print '<tr><td width="20%">'.$langs->trans("Lastname").' / '.$langs->trans("Label").'</td><td width="30%">'.$object->lastname.'</td>';
         print '<td width="20%">'.$langs->trans("Firstname").'</td><td width="30%">'.$object->firstname.'</td></tr>';
@@ -592,13 +592,13 @@ else if ($id || $ref)
         {
         	print $object->showOptionals($extrafields);
         }
-	
+
 		print '</table>';
-	
+
 		dol_fiche_end();
-	
+
 		dol_htmloutput_mesg($mesg);
-	
+
 		formCategory($db,$object,4);
 	}
 }

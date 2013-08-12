@@ -85,6 +85,7 @@ ClassifyCanceled=تصنيف 'المهجورة'
 ClassifyClosed=تصنيف 'مغلقة'
 CreateBill=إنشاء الفاتورة
 AddBill=تضيف المذكرة الائتمان أو فاتورة
+# AddToDraftInvoices=Add to draft invoice
 DeleteBill=شطب فاتورة
 SearchACustomerInvoice=البحث عن زبون فاتورة
 SearchASupplierInvoice=البحث عن مورد فاتورة
@@ -199,6 +200,7 @@ StandingOrders=أوامر دائمة
 StandingOrder=من أجل الوقوف
 NoDraftBills=أي مشروع الفواتير
 NoOtherDraftBills=أي مشروع الفواتير
+# NoDraftInvoices=No draft invoices
 RefBill=فاتورة المرجع
 ToBill=على مشروع قانون
 RemainderToBill=تبقى لمشروع قانون
@@ -305,8 +307,8 @@ PaymentConditionShort60D=60 يوما
 PaymentCondition60D=60 يوما
 PaymentConditionShort60DENDMONTH=60 يوما من نهاية الشهر
 PaymentCondition60DENDMONTH=60 يوما من نهاية الشهر
-# PaymentConditionShortPT_DELIVERY=Delivery
-# PaymentConditionPT_DELIVERY=On delivery
+PaymentConditionShortPT_DELIVERY=تسليم
+PaymentConditionPT_DELIVERY=التسليم
 # PaymentConditionShortPT_ORDER=On order
 # PaymentConditionPT_ORDER=On order
 # PaymentConditionShortPT_5050=50-50
@@ -410,4 +412,6 @@ PDFCrabeDescription=نموذج فاتورة Crabe. نموذج الفاتورة �
 PDFOursinDescription=نموذج فاتورة oursin
 # NumRef Modules
 TerreNumRefModelDesc1=عودة número مع الشكل nnnn - ٪ syymm القياسية للفواتير وnnnn - ٪ syymm للائتمان ويلاحظ فيها السنة هي السنة ، هو شهر ملم وnnnn هو كسر التسلسل وليس هناك عودة لل0
+# MarsNumRefModelDesc1=Return numero with format %syymm-nnnn for standard invoices, %syymm-nnnn for replacement invoices, %syymm-nnnn for proforma invoices and %syymm-nnnn for credit notes where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
+
 TerreNumRefModelError=وهناك مشروع قانون بدءا من دولار ويوجد بالفعل syymm لا تتفق مع هذا النموذج من التسلسل. إزالة أو تغيير تسميتها لتصبح لتفعيل هذه الوحدة.

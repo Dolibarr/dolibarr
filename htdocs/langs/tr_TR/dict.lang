@@ -1,4 +1,4 @@
-# Dolibarr language file - tr_TR - dict
+# Dolibarr language file - Source file is en_US - dict
 CHARSET=UTF-8
 CountryFR=Fransa
 CountryBE=Belçika
@@ -278,12 +278,8 @@ CurrencyMUR=Mauritius rupisi
 CurrencySingMUR=Mauritius Rupisi
 CurrencyNOK=Norveç Kronu
 CurrencySingNOK=Norveç Kronu
-CurrencySUR=Ruble
-CurrencySingSUR=Ruble
 CurrencyTND=Tunus dinarı
 CurrencySingTND=Tunus dinarı
-CurrencyTRL=Türk Lirası
-CurrencySingTRL=Türk Lirası
 CurrencyUSD=ABD Doları
 CurrencySingUSD=ABD Doları
 CurrencyUAH=Hryvnia
@@ -298,7 +294,7 @@ CurrencySingXPF=CFP Frangı
 CurrencyCentSingEUR=cent
 CurrencyThousandthSingTND=thousandth
 
-#### Giriş nedenleri #####
+#### Input reasons #####
 DemandReasonTypeSRC_INTE=Internet
 DemandReasonTypeSRC_CAMP_MAIL=Posta kampanyası
 DemandReasonTypeSRC_CAMP_EMAIL=Eposta kampanyası
@@ -311,7 +307,7 @@ DemandReasonTypeSRC_PARTNER=İş Ortağı
 DemandReasonTypeSRC_EMPLOYEE=Çalışan
 DemandReasonTypeSRC_SPONSORING=Destekçi
 
-#### Kağıt biçimleri ####
+#### Paper formats ####
 PaperFormatEU4A0=Biçim 4A0
 PaperFormatEU2A0=Biçim 2A0
 PaperFormatEUA0=Biçim A0
