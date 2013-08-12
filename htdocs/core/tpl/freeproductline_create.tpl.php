@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2010-2012	Regis Houssin		<regis.houssin@capnetworks.com>
  * Copyright (C) 2010-2013	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2012		Christophe Battarel	<christophe.battarel@altairis.fr>
+ * Copyright (C) 2012-2013	Christophe Battarel	<christophe.battarel@altairis.fr>
  * Copyright (C) 2013		Florian Henry		<florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -61,8 +61,14 @@ if (! empty($conf->margin->enabled) && ! empty($object->element) && in_array($ob
 		?>
 		</td>
 		<?php
-		if (! empty($conf->global->DISPLAY_MARGIN_RATES)) $colspan++;
-		if (! empty($conf->global->DISPLAY_MARK_RATES))   $colspan++;
+		if(! empty($conf->global->DISPLAY_MARGIN_RATES))
+		{
+			echo '<td align="right">'.$langs->trans('MarginRate').'</td>';
+		}
+		if(! empty($conf->global->DISPLAY_MARK_RATES))
+		{
+			echo '<td align="right">'.$langs->trans('MarkRate').'</td>';
+		}
 	}
 	?>
 	<td colspan="<?php echo $colspan; ?>">&nbsp;</td>
@@ -109,7 +115,7 @@ if (! empty($conf->margin->enabled) && ! empty($object->element) && in_array($ob
 	<td align="right"><input type="text" size="5" name="price_ht" class="flat" value="<?php echo (isset($_POST["price_ht"])?$_POST["price_ht"]:''); ?>">
 	</td>
 	<td align="right"><input type="text" size="2" name="qty" class="flat" value="<?php echo (isset($_POST["qty"])?$_POST["qty"]:1); ?>"></td>
-	<td align="right" class="nowrap"><input type="text" size="1" class="flat" value="<?php echo $buyer->remise_percent; ?>" name="remise_percent"><span class="hideonsmartphone">%</span></td>
+	<td align="right" class="nowrap"><input type="text" size="1" class="flat" value="<?php echo (isset($_POST["remise_percent"])?$_POST["remise_percent"]:$buyer->remise_client); ?>" name="remise_percent"><span class="hideonsmartphone">%</span></td>
 	<?php
 	$colspan = 4;
 	if (! empty($usemargins))
@@ -120,12 +126,10 @@ if (! empty($conf->margin->enabled) && ! empty($object->element) && in_array($ob
 		</td>
 		<?php
 			if (! empty($conf->global->DISPLAY_MARGIN_RATES)) {
-				$colspan++;
-				$coldisplay++;
+				echo '<td align="right"><input type="text" size="2" name="np_marginRate" value="'.(isset($_POST["np_marginRate"])?$_POST["np_marginRate"]:'').'">%</td>';
 			}
-			if (! empty($conf->global->DISPLAY_MARK_RATES)) {
-				$colspan++;
-				$coldisplay++;
+			elseif (! empty($conf->global->DISPLAY_MARK_RATES)) {
+				echo '<td align="right"><input type="text" size="2" name="np_markRate" value="'.(isset($_POST["np_markRate"])?$_POST["np_markRate"]:'').'">%</td>';
 			}
 	}
 	?>
@@ -185,4 +189,100 @@ if (! empty($conf->service->enabled) && $dateSelector)
 ?>
 
 </form>
+
+<?php if ($conf->margin->enabled) { ?>
+<script type="text/javascript">
+	var npRate = null;
+<?php
+			if (! empty($conf->global->DISPLAY_MARGIN_RATES)) { ?>
+				npRate = "np_marginRate";
+			<?php }
+			elseif (! empty($conf->global->DISPLAY_MARK_RATES)) { ?>
+				npRate = "np_markRate";
+			<?php }
+?>
+
+$("form#addproduct").submit(function(e) {
+	if (npRate) return checkFreeLine(e, npRate);
+	else return true;
+});
+if (npRate == 'np_marginRate') {
+	$("input[name='np_marginRate']:first").blur(function(e) {
+		return checkFreeLine(e, npRate);
+	});
+}
+else {
+	if (npRate == 'np_markRate') {
+		$("input[name='np_markRate']:first").blur(function(e) {
+			return checkFreeLine(e, npRate);
+		});
+	}
+}
+
+function checkFreeLine(e, npRate)
+{
+	var buying_price = $("input[name='buying_price']:first");
+	var remise = $("input[name='remise_percent']:first");
+
+	var rate = $("input[name='"+npRate+"']:first");
+	if (rate.val() == '')
+		return true;
+	if (! $.isNumeric(rate.val().replace(',','.')))
+	{
+		alert('<?php echo $langs->trans("rateMustBeNumeric"); ?>');
+		e.stopPropagation();
+		setTimeout(function () { rate.focus() }, 50);
+		return false;
+	}
+	if (npRate == "np_markRate" && rate.val() >= 100)
+	{
+		alert('<?php echo $langs->trans("markRateShouldBeLesserThan100"); ?>');
+		e.stopPropagation();
+		setTimeout(function () { rate.focus() }, 50);
+		return false;
+	}
+
+	var np_price = 0;
+	if (remise.val().replace(',','.') != 100)
+	{
+		if (npRate == "np_marginRate")
+			np_price = ((buying_price.val().replace(',','.') * (1 + rate.val().replace(',','.') / 100)) / (1 - remise.val().replace(',','.') / 100));
+		else {
+			if (npRate == "np_markRate")
+				np_price = ((buying_price.val().replace(',','.') / (1 - rate.val().replace(',','.') / 100)) / (1 - remise.val().replace(',','.') / 100));
+		}
+	}
+	$("input[name='price_ht']:first").val(formatFloat(np_price));
+
+	return true;
+}
+function roundFloat(num) {
+	var main_max_dec_shown = <?php echo $conf->global->MAIN_MAX_DECIMALS_SHOWN; ?>;
+	var main_rounding = <?php echo min($conf->global->MAIN_MAX_DECIMALS_UNIT,$conf->global->MAIN_MAX_DECIMALS_TOT); ?>;
+
+    var amount = num.toString().replace(',','.');	// should be useless
+	var nbdec = 0;
+	var rounding = main_rounding;
+	var pos = amount.indexOf('.');
+	var decpart = '';
+	if (pos >= 0)
+	    decpart = amount.substr(pos+1).replace('/0+$/i','');	// Supprime les 0 de fin de partie decimale
+	nbdec = decpart.length;
+	if (nbdec > rounding)
+	    rounding = nbdec;
+    // Si on depasse max
+    if (rounding > main_max_dec_shown)
+    {
+        rounding = main_max_dec_shown;
+    }
+  	//amount = parseFloat(amount) + (1 / Math.pow(100, rounding));  // to avoid floating-point errors
+	return parseFloat(amount).toFixed(rounding);
+}
+
+function formatFloat(num) {
+	return roundFloat(num).replace('.', ',');
+}
+
+</script>
+<?php } ?>
 <!-- END PHP TEMPLATE freeproductline_create.tpl.php -->
