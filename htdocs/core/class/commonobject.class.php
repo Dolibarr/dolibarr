@@ -2221,7 +2221,14 @@ abstract class CommonObject
 			foreach($extrafields->attribute_label as $key=>$label)
 			{
 				$colspan='3';
-				$value=(isset($_POST["options_".$key])?$_POST["options_".$key]:$this->array_options["options_".$key]);
+				switch($mode) {
+					case "view":
+						$value=$this->array_options["options_".$key];
+						break;
+					case "edit":
+						$value=(isset($_POST["options_".$key])?$_POST["options_".$key]:$this->array_options["options_".$key]);
+						break;
+				}
 				if ($extrafields->attribute_type[$key] == 'separate')
 				{
 					$out .= $extrafields->showSeparator($key);

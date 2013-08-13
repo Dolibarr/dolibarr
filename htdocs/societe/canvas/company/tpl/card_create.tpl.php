@@ -105,7 +105,7 @@
 
 <tr>
 	<td valign="top"><?php echo $langs->trans('Address'); ?></td>
-	<td colspan="3"><textarea name="adresse" cols="40" rows="3"><?php echo $this->control->tpl['address']; ?></textarea></td>
+	<td colspan="3"><textarea name="adress" cols="40" rows="3"><?php echo $this->control->tpl['address']; ?></textarea></td>
 </tr>
 
 <tr>
@@ -127,7 +127,7 @@
 
 <tr>
 	<td><?php echo $langs->trans('Phone'); ?></td>
-	<td><input type="text" name="tel" value="<?php echo $this->control->tpl['tel']; ?>"></td>
+	<td><input type="text" name="phone" value="<?php echo $this->control->tpl['phone']; ?>"></td>
 	<td><?php echo $langs->trans('Fax'); ?></td>
 	<td><input type="text" name="fax" value="<?php echo $this->control->tpl['fax']; ?>"></td>
 </tr>
