@@ -2,7 +2,7 @@
 /* Copyright (C) 2001-2007	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2013	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
- * Copyright (C) 2010		Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2010-2013	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2011		Philippe Grand			<philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -41,8 +41,7 @@ $langs->load("companies");
 
 if (! $user->admin) accessforbidden();
 
-$message='';
-
+$error=0;
 
 /*
  * Actions
@@ -122,18 +121,21 @@ if ( ($action == 'update' && empty($_POST["cancel"]))
                 }
                 else if (preg_match('/^ErrorFileIsInfectedWithAVirus/',$result))
                 {
+                	$error++;
                     $langs->load("errors");
                     $tmparray=explode(':',$result);
-                    $message .= '<div class="error">'.$langs->trans('ErrorFileIsInfectedWithAVirus',$tmparray[1]).'</div>';
+                    setEventMessage($langs->trans('ErrorFileIsInfectedWithAVirus',$tmparray[1]),'errors');
                 }
                 else
                 {
-                    $message .= '<div class="error">'.$langs->trans("ErrorFailedToSaveFile").'</div>';
+                	$error++;
+                    setEventMessage($langs->trans("ErrorFailedToSaveFile"),'errors');
                 }
             }
             else
             {
-                $message .= '<div class="error">'.$langs->trans("ErrorOnlyPngJpgSupported").'</div>';
+            	$error++;
+                setEventMessage($langs->trans("ErrorOnlyPngJpgSupported"),'errors');
             }
         }
     }
@@ -157,7 +159,7 @@ if ( ($action == 'update' && empty($_POST["cancel"]))
     dolibarr_set_const($db, "FACTURE_LOCAL_TAX1_OPTION",$_POST["optionlocaltax1"],'chaine',0,'',$conf->entity);
     dolibarr_set_const($db, "FACTURE_LOCAL_TAX2_OPTION",$_POST["optionlocaltax2"],'chaine',0,'',$conf->entity);
 
-    if ($action != 'updateedit' && ! $message)
+    if ($action != 'updateedit' && ! $error)
     {
         header("Location: ".$_SERVER["PHP_SELF"]);
         exit;
@@ -198,13 +200,15 @@ if ($action == 'addthumb')
         }
         else
         {
-            $message .= '<div class="error">'.$langs->trans("ErrorImageFormatNotSupported").'</div>';
+        	$error++;
+            setEventMessage($langs->trans("ErrorImageFormatNotSupported"),'errors');
             dol_syslog($langs->transnoentities("ErrorImageFormatNotSupported"),LOG_WARNING);
         }
     }
     else
     {
-        $message .= '<div class="error">'.$langs->trans("ErrorFileDoesNotExists",$_GET["file"]).'</div>';
+    	$error++;
+        setEventMessage($langs->trans("ErrorFileDoesNotExists",$_GET["file"]),'errors');
         dol_syslog($langs->transnoentities("ErrorFileDoesNotExists",$_GET["file"]),LOG_WARNING);
     }
 }
@@ -627,8 +631,6 @@ else
     /*
      * Show parameters
      */
-
-    dol_htmloutput_mesg($message);
 
     // Actions buttons
     //print '<div class="tabsAction">';

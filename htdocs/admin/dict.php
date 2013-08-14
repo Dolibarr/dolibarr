@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2010-2011 Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2010-2013 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2011      Philippe Grand       <philippe.grand@atoo-net.com>
  * Copyright (C) 2011      Remy Younes          <ryounes@gmail.com>
  * Copyright (C) 2012-2013 Marcos García        <marcosgdf@gmail.com>
@@ -404,7 +404,6 @@ if ($id == 10)
 	);
 	if (! empty($conf->global->MAIN_USE_LOCALTAX_TYPE_7)) $localtax_typeList["7"]= $langs->trans("Yes").' ('.$langs->trans("Type")." 7)";	//$langs->trans("AmountOnOrder")	// We will enable this later. For the moment, work only of invoice localtype
 }
-$msg='';
 
 
 // Actions ajout ou modification d'une entree dans un dictionnaire de donnee
@@ -442,20 +441,20 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
             if ($fieldnamekey == 'unicode') $fieldnamekey = 'Unicode';
             if ($fieldnamekey == 'deductible') $fieldnamekey = 'Deductible';
 
-            $msg.=$langs->transnoentities("ErrorFieldRequired", $langs->transnoentities($fieldnamekey)).'<br>';
+            setEventMessage($langs->transnoentities("ErrorFieldRequired", $langs->transnoentities($fieldnamekey)),'errors');
         }
     }
     // Other checks
     if ($tabname[$id] == MAIN_DB_PREFIX."c_actioncomm" && isset($_POST["type"]) && in_array($_POST["type"],array('system','systemauto'))) {
-        $ok=0;
-        $msg.= $langs->transnoentities('ErrorReservedTypeSystemSystemAuto').'<br>';
+        $ok=0;        
+        setEventMessage($langs->transnoentities('ErrorReservedTypeSystemSystemAuto'),'errors');
     }
     if (isset($_POST["code"]))
     {
     	if ($_POST["code"]=='0')
     	{
         	$ok=0;
-        	$msg.= $langs->transnoentities('ErrorCodeCantContainZero').'<br>';
+    		setEventMessage($langs->transnoentities('ErrorCodeCantContainZero'),'errors');
         }
         // FIXME regresion if code with not in numeric base
         /*if (!is_numeric($_POST['code']))
@@ -466,7 +465,7 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
     }
     if (isset($_POST["country"]) && $_POST["country"]=='0') {
         $ok=0;
-        $msg.=$langs->transnoentities("ErrorFieldRequired",$langs->transnoentities("Country")).'<br>';
+        setEventMessage($langs->transnoentities("ErrorFieldRequired",$langs->transnoentities("Country")),'errors');
     }
 
 	// Clean some parameters
@@ -530,7 +529,7 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
         else
         {
             if ($db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
-                $msg=$langs->transnoentities("ErrorRecordAlreadyExists").'<br>';
+                setEventMessage($langs->transnoentities("ErrorRecordAlreadyExists"),'errors');
             }
             else {
                 dol_print_error($db);
@@ -574,11 +573,9 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
         $resql = $db->query($sql);
         if (! $resql)
         {
-            $msg=$db->error();
+            setEventMessage($db->error(),'errors');
         }
     }
-
-    if ($msg) $msg='<div class="error">'.$msg.'</div>';
     //$_GET["id"]=GETPOST('id', 'int');       // Force affichage dictionnaire en cours d'edition
 }
 
@@ -600,7 +597,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes')       // delete
     {
         if ($db->errno() == 'DB_ERROR_CHILD_EXISTS')
         {
-            $msg='<div class="error">'.$langs->transnoentities("ErrorRecordIsUsedByChild").'</div>';
+            setEventMessage($langs->transnoentities("ErrorRecordIsUsedByChild"),'errors');
         }
         else
         {
@@ -688,7 +685,6 @@ if ($action == 'delete')
  */
 if ($id)
 {
-    dol_htmloutput_mesg($msg);
 
     // Complete requete recherche valeurs avec critere de tri
     $sql=$tabsql[$id];

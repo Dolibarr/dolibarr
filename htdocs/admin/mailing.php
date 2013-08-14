@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville 	<rodolphe@quiedeville.org>
  * Copyright (C) 2005-2012 Laurent Destailleur  	<eldy@users.sourceforge.org>
- * Copyright (C) 2011-2012 Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2011-2013 Juanjo Menent			<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -80,16 +80,16 @@ if ($action == 'setvalue')
 	}
 	$res=dolibarr_set_const($db, "MAILING_EMAIL_UNSUBSCRIBE_KEY",$checkread_key,'chaine',0,'',$conf->entity);
 	if (! $res > 0) $error++;
-
- 	if (! $error)
+    
+    if (! $error)
     {
     	$db->commit();
-        $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
+    	setEventMessage($langs->trans("SetupSaved"));
     }
     else
     {
     	$db->rollback();
-        $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
+    	setEventMessage($langs->trans("Error"),'errors');
     }
 }
 
@@ -112,9 +112,6 @@ $hselected=$h;
 $h++;
 
 dol_fiche_head($head, $hselected, $langs->trans("ModuleSetup"));
-
-dol_htmloutput_mesg($mesg);
-
 
 if (! empty($conf->use_javascript_ajax))
 {

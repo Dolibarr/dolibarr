@@ -2,6 +2,7 @@
 /* Copyright (C) 2003		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2013	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2013		Juanjo Menent			<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,7 +45,6 @@ $constnote=GETPOST('constnote','alpha');
 $consttype=(GETPOST('consttype','alpha')?GETPOST('consttype','alpha'):'chaine');
 
 $typeconst=array('yesno' => 'yesno', 'texte' => 'texte', 'chaine' => 'chaine');
-$mesg='';
 
 
 
@@ -58,12 +58,12 @@ if ($action == 'add')
 
 	if (empty($constname))
 	{
-		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Name")).'</div>';
+		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Name")),'errors');
 		$error++;
 	}
 	if ($constvalue == '')
 	{
-		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Value")).'</div>';
+		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Value")),'errors');
 		$error++;
 	}
 
@@ -173,8 +173,6 @@ print_fiche_titre($langs->trans("OtherSetup"),'','setup');
 
 print $langs->trans("ConstDesc")."<br>\n";
 print "<br>\n";
-
-dol_htmloutput_mesg($mesg);
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
