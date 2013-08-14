@@ -99,6 +99,8 @@ parameter. All methods addline in this case were modified to remove this paramet
 Fix: [ bug #1029 ] Tulip numbering mask
 Fix: Supplier invoice and supplier order are not displayed into object link into agenda event card
 Fix: [ bug #1033 ] SUPPLIER REF disappeared
+Fix: update extrafield do not display immediatly after update
+Fix: Fix bug with canvas thirdparty
 
 
 ***** ChangeLog for 3.4 compared to 3.3.* *****
