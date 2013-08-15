@@ -48,6 +48,7 @@ For users:
 - Fix: [ bug #992 ] Proforma invoices don't have a separated numeric count
 - New : Add pdf link into supplier invoice list and supplier order list
 - New : Genrate auto the PDF for supplier invoice
+- New : Add category into filter webservice thirdparty method getListOfThirdParties
 
 For translators:
 - Qual: Normalized sort order of all languages files with english reference files.
