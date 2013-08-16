@@ -27,7 +27,7 @@
 /**
  *		Parent class of boxes
  */
-class ModeleBoxes    // Can't be abtract as it is instanciated to build "empty" boxes
+class ModeleBoxes    // Can't be abtract as it is instantiated to build "empty" boxes
 {
 	var $db;
 	var $error='';
