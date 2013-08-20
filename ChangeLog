@@ -49,6 +49,8 @@ For users:
 - New : Add pdf link into supplier invoice list and supplier order list
 - New : Genrate auto the PDF for supplier invoice
 - New : Add category into filter webservice thirdparty method getListOfThirdParties
+- New : Allow to define margin or mark rate during quoting, ordering, invoicing
+- New : User permissions on margin module
 
 For translators:
 - Qual: Normalized sort order of all languages files with english reference files.
