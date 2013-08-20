@@ -63,14 +63,6 @@ jQuery(document).ready(function() {
 $colspan = 4;
 if (! empty($usemargins))
 {
-	if(! empty($conf->global->DISPLAY_MARGIN_RATES))
-	{
-	echo '<td align="right">'.$langs->trans('MarginRate').'</td>';
-	}
-	if(! empty($conf->global->DISPLAY_MARK_RATES))
-	{
-	echo '<td align="right">'.$langs->trans('MarkRate').'</td>';
-	}
 	?>
 	<td align="right">
 	<?php
@@ -78,6 +70,23 @@ if (! empty($usemargins))
 		echo $langs->trans('BuyingPrice');
 	else
 		echo $langs->trans('CostPrice');
+
+	if ($user->rights->margins->creer)
+	{
+		if(! empty($conf->global->DISPLAY_MARGIN_RATES))
+		{
+			echo '<td align="right">'.$langs->trans('MarginRate').'</td>';
+		}
+		if(! empty($conf->global->DISPLAY_MARK_RATES))
+		{
+			echo '<td align="right">'.$langs->trans('MarkRate').'</td>';
+		}
+	}
+	else
+	{
+		if (! empty($conf->global->DISPLAY_MARGIN_RATES)) $colspan++;
+		if (! empty($conf->global->DISPLAY_MARK_RATES))   $colspan++;
+	}
 	?>
 	</td>
 	<?php
@@ -125,18 +134,32 @@ else {
 	$colspan = 4;
 	if (! empty($usemargins))
 	{
-		if (! empty($conf->global->DISPLAY_MARGIN_RATES)) {
-			echo '<td align="right"><input type="text" size="2" name="np_marginRate" value="'.(isset($_POST["np_marginRate"])?$_POST["np_marginRate"]:'').'">%</td>';
-		}
-		elseif (! empty($conf->global->DISPLAY_MARK_RATES)) {
-			echo '<td align="right"><input type="text" size="2" name="np_markRate" value="'.(isset($_POST["np_markRate"])?$_POST["np_markRate"]:'').'">%</td>';
-		}
 		?>
 		<td align="right">
 			<select id="fournprice" name="fournprice" class="flat" style="display: none;"></select>
 			<input type="text" size="5" id="buying_price" name="buying_price" class="flat" value="<?php echo (isset($_POST["buying_price"])?$_POST["buying_price"]:''); ?>">
 		</td>
 		<?php
+		if ($user->rights->margins->creer)
+		{
+			if (! empty($conf->global->DISPLAY_MARGIN_RATES)) {
+				echo '<td align="right"><input type="text" size="2" name="np_marginRate" value="'.(isset($_POST["np_marginRate"])?$_POST["np_marginRate"]:'').'">%</td>';
+			}
+			elseif (! empty($conf->global->DISPLAY_MARK_RATES)) {
+				echo '<td align="right"><input type="text" size="2" name="np_markRate" value="'.(isset($_POST["np_markRate"])?$_POST["np_markRate"]:'').'">%</td>';
+			}
+		}
+		else
+		{
+			if (! empty($conf->global->DISPLAY_MARGIN_RATES)) {
+				$colspan++;
+				$coldisplay++;
+			}
+			if (! empty($conf->global->DISPLAY_MARK_RATES)) {
+				$colspan++;
+				$coldisplay++;
+			}
+		}
 	}
 	?>
 	<td align="center" valign="middle" colspan="<?php echo $colspan; ?>">
@@ -204,6 +227,10 @@ if (! empty($usemargins))
 {
 ?>
 	<script type="text/javascript">
+<?php
+	if ($user->rights->margins->creer)
+	{
+?>
 	var npRate = null;
 <?php
 	if (! empty($conf->global->DISPLAY_MARGIN_RATES)) { ?>
@@ -294,7 +321,9 @@ if (! empty($usemargins))
 	function formatFloat(num) {
 		return roundFloat(num).replace('.', ',');
 	}
-
+<?php
+	}
+?>
 	$("#idprod").change(function() {
 	  $("#fournprice options").remove();
 	  $("#fournprice").hide();

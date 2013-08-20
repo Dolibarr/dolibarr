@@ -123,11 +123,11 @@
   if (! empty($conf->margin->enabled) && empty($user->societe_id)) {
   ?>
   	<td align="right" class="nowrap"><?php $coldisplay++; ?><?php echo price($line->pa_ht); ?></td>
-  	<?php if (! empty($conf->global->DISPLAY_MARGIN_RATES)) {?>
+  	<?php if (! empty($conf->global->DISPLAY_MARGIN_RATES) && $user->rights->margins->liretous) {?>
   	  <td align="right" class="nowrap"><?php $coldisplay++; ?><?php echo (($line->pa_ht == 0)?'n/a':price($line->marge_tx).'%'); ?></td>
   	<?php
   }
-  if (! empty($conf->global->DISPLAY_MARK_RATES)) {?>
+  if (! empty($conf->global->DISPLAY_MARK_RATES) && $user->rights->margins->liretous) {?>
   	  <td align="right" class="nowrap"><?php $coldisplay++; ?><?php echo price($line->marque_tx).'%'; ?></td>
   <?php } } ?>
 

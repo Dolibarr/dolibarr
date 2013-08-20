@@ -2609,6 +2609,7 @@ abstract class CommonObject
     {
     	global $conf,$langs,$object,$hookmanager;
     	global $form,$bcnd,$var;
+    	global $user;
     	//Line extrafield
     	require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
     	$extrafieldsline = new ExtraFields($this->db);
@@ -2633,6 +2634,7 @@ abstract class CommonObject
     {
     	global $conf,$langs,$object,$hookmanager;
     	global $form,$bcnd,$var;
+    	global $user;
 
     	//Line extrafield
     	require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
@@ -2658,6 +2660,7 @@ abstract class CommonObject
 	{
 		global $conf,$user,$langs,$object,$hookmanager;
 		global $form,$bcnd,$var;
+    	global $user;
 
 		//Line extrafield
 		require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
@@ -2729,9 +2732,9 @@ abstract class CommonObject
 			else
 				print '<td align="right" width="80">'.$langs->trans('CostPrice').'</td>';
 
-			if (! empty($conf->global->DISPLAY_MARGIN_RATES))
+			if (! empty($conf->global->DISPLAY_MARGIN_RATES) && $user->rights->margins->liretous)
 				print '<td align="right" width="50">'.$langs->trans('MarginRate').'</td>';
-			if (! empty($conf->global->DISPLAY_MARK_RATES))
+			if (! empty($conf->global->DISPLAY_MARK_RATES) && $user->rights->margins->liretous)
 				print '<td align="right" width="50">'.$langs->trans('MarkRate').'</td>';
 		}
 
@@ -3167,6 +3170,8 @@ abstract class CommonObject
 		global $langs, $conf, $user;
 
     	if (! empty($user->societe_id)) return;
+    	
+    	if (! $user->rights->margins->liretous) return;
 
 		$marginInfo = $this->getMarginInfos($force_price);
 
@@ -3220,3 +3225,4 @@ abstract class CommonObject
 	}
 }
 ?>
+

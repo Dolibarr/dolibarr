@@ -61,13 +61,21 @@ if (! empty($conf->margin->enabled) && ! empty($object->element) && in_array($ob
 		?>
 		</td>
 		<?php
-		if(! empty($conf->global->DISPLAY_MARGIN_RATES))
+		if ($user->rights->margins->creer)
 		{
-			echo '<td align="right">'.$langs->trans('MarginRate').'</td>';
+			if(! empty($conf->global->DISPLAY_MARGIN_RATES))
+			{
+				echo '<td align="right">'.$langs->trans('MarginRate').'</td>';
+			}
+			if(! empty($conf->global->DISPLAY_MARK_RATES))
+			{
+				echo '<td align="right">'.$langs->trans('MarkRate').'</td>';
+			}
 		}
-		if(! empty($conf->global->DISPLAY_MARK_RATES))
+		else
 		{
-			echo '<td align="right">'.$langs->trans('MarkRate').'</td>';
+			if (! empty($conf->global->DISPLAY_MARGIN_RATES)) $colspan++;
+			if (! empty($conf->global->DISPLAY_MARK_RATES))   $colspan++;
 		}
 	}
 	?>
@@ -125,12 +133,26 @@ if (! empty($conf->margin->enabled) && ! empty($object->element) && in_array($ob
 			value="<?php echo (isset($_POST["buying_price"])?$_POST["buying_price"]:''); ?>">
 		</td>
 		<?php
+		if ($user->rights->margins->creer)
+		{
 			if (! empty($conf->global->DISPLAY_MARGIN_RATES)) {
 				echo '<td align="right"><input type="text" size="2" name="np_marginRate" value="'.(isset($_POST["np_marginRate"])?$_POST["np_marginRate"]:'').'">%</td>';
 			}
 			elseif (! empty($conf->global->DISPLAY_MARK_RATES)) {
 				echo '<td align="right"><input type="text" size="2" name="np_markRate" value="'.(isset($_POST["np_markRate"])?$_POST["np_markRate"]:'').'">%</td>';
 			}
+		}
+		else
+		{
+			if (! empty($conf->global->DISPLAY_MARGIN_RATES)) {
+				$colspan++;
+				$coldisplay++;
+			}
+			if (! empty($conf->global->DISPLAY_MARK_RATES)) {
+				$colspan++;
+				$coldisplay++;
+			}
+		}
 	}
 	?>
 	<td align="center" valign="middle" colspan="<?php echo $colspan; ?>"><input type="submit" class="button" value="<?php echo $langs->trans('Add'); ?>" name="addline"></td>
@@ -190,7 +212,9 @@ if (! empty($conf->service->enabled) && $dateSelector)
 
 </form>
 
-<?php if ($conf->margin->enabled) { ?>
+<?php if ($conf->margin->enabled && $user->rights->margins->creer)
+{
+?>
 <script type="text/javascript">
 	var npRate = null;
 <?php

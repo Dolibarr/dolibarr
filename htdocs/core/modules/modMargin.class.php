@@ -79,8 +79,8 @@ class modMargin extends DolibarrModules
 
 		// New pages on tabs
 		$this->tabs = array(
-				'product:+margin:Margins:margins:$conf->margin->enabled:/margin/tabs/productMargins.php?id=__ID__',
-				'thirdparty:+margin:Margins:margins:$conf->margin->enabled && empty($user->societe_id):/margin/tabs/thirdpartyMargins.php?socid=__ID__'
+				'product:+margin:Margins:margins:$user->rights->margins->liretous:/margin/tabs/productMargins.php?id=__ID__',
+				'thirdparty:+margin:Margins:margins:empty($user->societe_id) && $user->rights->margins->liretous:/margin/tabs/thirdpartyMargins.php?socid=__ID__'
 		);
 
 
@@ -106,11 +106,30 @@ class modMargin extends DolibarrModules
     			'url'=>'/margin/index.php',
     			'langs'=>'margins',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
     			'position'=>100,
-    			'enabled'=>'$conf->margin->enabled',			// Define condition to show or hide menu entry. Use '$conf->monmodule->enabled' if entry must be visible if module is enabled.
+    			'enabled'=>'$user->rights->margins->liretous',			// Define condition to show or hide menu entry. Use '$conf->monmodule->enabled' if entry must be visible if module is enabled.
     			'perms'=>'1',			// Use 'perms'=>'$user->rights->monmodule->level1->level2' if you want your menu with a permission rules
     			'target'=>'',
     			'user'=>2);				// 0=Menu for internal users, 1=external users, 2=both
 		$r++;
+
+		// Permissions
+		$this->rights = array();
+		$this->rights_class = 'margins';
+		$r=0;
+
+		$r++;
+		$this->rights[$r][0] = 59001; // id de la permission
+		$this->rights[$r][1] = 'Visualiser les marges'; // libelle de la permission
+		$this->rights[$r][2] = 'r'; // type de la permission (deprecie a ce jour)
+		$this->rights[$r][3] = 1; // La permission est-elle une permission par defaut
+		$this->rights[$r][4] = 'liretous';
+
+		$r++;
+		$this->rights[$r][0] = 59002; // id de la permission
+		$this->rights[$r][1] = 'Définir les marges'; // libelle de la permission
+		$this->rights[$r][2] = 'w'; // type de la permission (deprecie a ce jour)
+		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
+		$this->rights[$r][4] = 'creer';
 	}
 
 	/**
