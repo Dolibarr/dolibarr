@@ -242,9 +242,19 @@ class DolGraph
     function SetData($data)
     {
         $this->data = $data;
-        //var_dump($this->data);
     }
 
+    /**
+     * Set data
+     *
+     * @param 	array	$datacolor		Data color array(array(R,G,B),array(R,G,B)...)
+     * @return	void
+     */
+    function SetDataColor($datacolor)
+    {
+    	$this->datacolor = $datacolor;
+    }
+    
     /**
      * Set type
      *
@@ -779,7 +789,7 @@ class DolGraph
     /**
      * Build a graph onto disk using JFlot library. Input when calling this method should be:
      *	$this->data  = array(array(      0=>'labelxA',     1=>yA),  array('labelxB',yB)); or
-     *  $this->data  = array(array('label'=>'labelxA','data'=>yA),  array('labelxB',yB));
+     *  $this->data  = array(array('label'=>'labelxA','data'=>yA),  array('labelxB',yB));			// TODO Syntax not supported. Removed when dol_print_graph_removed
      *	$this->data  = array(array(0=>'labelxA',1=>yA1,...,n=>yAn), array('labelxB',yB1,...yBn));   // when there is n series to show for each x
      *  $this->legend= array("Val1",...,"Valn");													// list of n series name
      *  $this->type  = array('bars',...'lines'); or array('pie')
@@ -820,7 +830,7 @@ class DolGraph
                 $x++;
             }
 
-            // TODO Avoid push by adding generating a long array...
+            // TODO Avoid push by adding generated long array...
            	if (isset($this->type[$firstlot]) && $this->type[$firstlot] == 'pie')
            	{
            		foreach($values as $x => $y) { if (isset($y)) $serie[$i].='d'.$i.'.push({"label":"'.dol_escape_js($legends[$x]).'", "data":'.$y.'});'."\n"; }

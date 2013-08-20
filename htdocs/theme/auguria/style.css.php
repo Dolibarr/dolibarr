@@ -1523,6 +1523,7 @@ tr.box_pair td, tr.box_impair td, td.box_pair, td.box_impair
 
 .formboxfilter {
 	vertical-align: middle;
+	margin-bottom: 6px;
 }
 .formboxfilter input[type=image]
 {

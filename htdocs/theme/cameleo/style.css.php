@@ -1656,6 +1656,7 @@ border: 0px;
 
 .formboxfilter {
 	vertical-align: middle;
+	margin-bottom: 6px;
 }
 .formboxfilter input[type=image]
 {

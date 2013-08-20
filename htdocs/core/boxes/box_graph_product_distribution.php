@@ -112,12 +112,13 @@ class box_graph_product_distribution extends ModeleBoxes
 			{
 				include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facturestats.class.php';
 				
-				$showpointvalue = 1;
+				$showpointvalue = 1; $nocolor = 0;
 				$stats_invoice = new FactureStats($this->db, 0, $mode, ($userid>0?$userid:0));
 				$data1 = $stats_invoice->getAllByProductEntry($year,(GETPOST('action')==$refreshaction?-1:(3600*24)));
 				if (empty($data1)) 
 				{
 					$showpointvalue=0;
+					$nocolor=1;
 					$data1=array(array(0=>$langs->trans("None"),1=>1));
 				}
 				$filenamenb = $dir."/prodserforinvoice-".$year.".png";
@@ -129,6 +130,8 @@ class box_graph_product_distribution extends ModeleBoxes
 				{
 					$px1->SetData($data1);
 					unset($data1);
+					
+					if ($nocolor) $px1->SetDataColor(array(array(220,220,220)));
 					$px1->SetPrecisionY(0);
 					$i=0;$tot=count($data1);$legend=array();
 					while ($i <= $tot)
@@ -164,12 +167,13 @@ class box_graph_product_distribution extends ModeleBoxes
 			{
 				include_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propalestats.class.php';
 				
-				$showpointvalue = 1;
+				$showpointvalue = 1; $nocolor = 0;
 				$stats_proposal = new PropaleStats($this->db, 0, $mode, ($userid>0?$userid:0));
 				$data2 = $stats_proposal->getAllByProductEntry($year,(GETPOST('action')==$refreshaction?-1:(3600*24)));
 				if (empty($data2)) 
 				{
 					$showpointvalue = 0;
+					$nocolor = 1;
 					$data2=array(array(0=>$langs->trans("None"),1=>1));
 				}
 				
@@ -182,6 +186,8 @@ class box_graph_product_distribution extends ModeleBoxes
 				{
 					$px2->SetData($data2);
 					unset($data2);
+					
+					if ($nocolor) $px2->SetDataColor(array(array(220,220,220)));
 					$px2->SetPrecisionY(0);
 					$i=0;$tot=count($data2);$legend=array();
 					while ($i <= $tot)
@@ -217,12 +223,13 @@ class box_graph_product_distribution extends ModeleBoxes
 			{
 				include_once DOL_DOCUMENT_ROOT.'/commande/class/commandestats.class.php';
 				
-				$showpointvalue = 1;
+				$showpointvalue = 1; $nocolor = 0;
 				$stats_order = new CommandeStats($this->db, 0, $mode, ($userid>0?$userid:0));
 				$data3 = $stats_order->getAllByProductEntry($year,(GETPOST('action')==$refreshaction?-1:(3600*24)));
 				if (empty($data3)) 
 				{
 					$showpointvalue = 0;
+					$nocolor = 1;
 					$data3=array(array(0=>$langs->trans("None"),1=>1));
 				}
 				
@@ -235,6 +242,8 @@ class box_graph_product_distribution extends ModeleBoxes
 				{
 					$px3->SetData($data3);
 					unset($data3);
+					
+					if ($nocolor) $px3->SetDataColor(array(array(220,220,220)));
 					$px3->SetPrecisionY(0);
 					$i=0;$tot=count($data3);$legend=array();
 					while ($i <= $tot)

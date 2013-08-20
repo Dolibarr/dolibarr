@@ -1947,6 +1947,7 @@ tr.box_pair {
 
 .formboxfilter {
 	vertical-align: middle;
+	margin-bottom: 6px;
 }
 .formboxfilter input[type=image]
 {
