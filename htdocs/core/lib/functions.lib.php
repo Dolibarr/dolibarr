@@ -708,6 +708,7 @@ function dol_format_address($object,$withcountry=0,$sep="\n")
 
 	// Address
 	$ret .= $object->address;
+	$ret .="\n".$object->country;
 	// Zip/Town/State
 	if (in_array($object->country_code,array('US','AU')) || ! empty($conf->global->MAIN_FORCE_STATE_INTO_ADDRESS))   	// US: title firstname name \n address lines \n town, state, zip \n country
 	{

@@ -179,6 +179,7 @@ ShowSocialContribution=Show social contribution
 ShowBill=Show invoice
 ShowInvoice=Show invoice
 ShowInvoiceReplace=Show replacing invoice
+LiquidatedDamages=Compensation for recovery costs
 ShowInvoiceAvoir=Show credit note
 ShowInvoiceDeposit=Show deposit invoice
 ShowPayment=Show payment

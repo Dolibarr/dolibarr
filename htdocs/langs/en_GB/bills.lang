@@ -37,3 +37,4 @@ PaymentTypeVAD=On line payment
 PaymentTypeShortVAD=On line payment
 PaymentTypeTRA=Bill payment
 PaymentTypeShortTRA=Bill
+LiquidatedDamages=compensation for recovery costs

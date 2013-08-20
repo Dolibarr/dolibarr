@@ -415,3 +415,4 @@ TerreNumRefModelDesc1=Renvoie le numéro sous la forme %syymm-nnnn pour les fact
 MarsNumRefModelDesc1=Renvoie le numéro sous la forme %syymm-nnnn pour les factures, %syymm-nnnn pour les factures de remplacement, %syymm-nnnn pour les acomptes et %syymm-nnnn pour les avoirs où yy est l'année, mm le mois et nnnn un compteur séquentiel sans rupture et sans remise à 0
 
 TerreNumRefModelError=Une facture commençant par $syymm existe déjà et est incompatible avec cet modèle de numérotation. Supprimez-la ou renommez-la pour activer ce module.
+LiquidatedDamages= Indemnité pour frais de recouvrement
