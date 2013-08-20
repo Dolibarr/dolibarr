@@ -2609,6 +2609,7 @@ abstract class CommonObject
     {
     	global $conf,$langs,$object,$hookmanager;
     	global $form,$bcnd,$var;
+    	global $user;
     	//Line extrafield
     	require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
     	$extrafieldsline = new ExtraFields($this->db);
@@ -2633,6 +2634,7 @@ abstract class CommonObject
     {
     	global $conf,$langs,$object,$hookmanager;
     	global $form,$bcnd,$var;
+    	global $user;
 
     	//Line extrafield
     	require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
@@ -2658,6 +2660,7 @@ abstract class CommonObject
 	{
 		global $conf,$user,$langs,$object,$hookmanager;
 		global $form,$bcnd,$var;
+    	global $user;
 
 		//Line extrafield
 		require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
@@ -3220,3 +3223,4 @@ abstract class CommonObject
 	}
 }
 ?>
+
