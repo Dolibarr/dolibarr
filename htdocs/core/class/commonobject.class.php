@@ -2732,9 +2732,9 @@ abstract class CommonObject
 			else
 				print '<td align="right" width="80">'.$langs->trans('CostPrice').'</td>';
 
-			if (! empty($conf->global->DISPLAY_MARGIN_RATES))
+			if (! empty($conf->global->DISPLAY_MARGIN_RATES) && $user->rights->margins->liretous)
 				print '<td align="right" width="50">'.$langs->trans('MarginRate').'</td>';
-			if (! empty($conf->global->DISPLAY_MARK_RATES))
+			if (! empty($conf->global->DISPLAY_MARK_RATES) && $user->rights->margins->liretous)
 				print '<td align="right" width="50">'.$langs->trans('MarkRate').'</td>';
 		}
 
@@ -3170,6 +3170,8 @@ abstract class CommonObject
 		global $langs, $conf, $user;
 
     	if (! empty($user->societe_id)) return;
+    	
+    	if (! $user->rights->margins->liretous) return;
 
 		$marginInfo = $this->getMarginInfos($force_price);
 
