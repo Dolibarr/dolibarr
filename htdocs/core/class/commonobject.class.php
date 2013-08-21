@@ -2591,6 +2591,41 @@ abstract class CommonObject
         }
     }
 
+    
+    /*Pour relier la commande avec la liste des factures*/
+    function showLinkedObject($hookmanager=false)
+    {
+        global $conf,$langs,$bc,$linkedObject;
+
+        $this->fetchObjectLinked();
+
+        // Bypass the default method
+        if (! is_object($hookmanager))
+        {
+        	include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+        	$hookmanager=new HookManager($this->db);
+        }
+        $hookmanager->initHooks(array('commonobject'));
+        $parameters=array();
+        $reshook=$hookmanager->executeHooks('showLinkedObject',$parameters,$this,$action);    // Note that $action and $object may have been modified by hook
+
+        if (empty($reshook))
+        {
+        	$num = count($this->linkedObjects);
+
+        	foreach($this->linkedObjects as $objecttype => $objects)
+        	{
+				if ($objecttype == 'facture')
+				{
+        		$linkedObject = $objects;        		
+        		}
+        	}
+
+        	return $num;
+        }
+    }
+
+
 
     /* This is to show add lines */
 
