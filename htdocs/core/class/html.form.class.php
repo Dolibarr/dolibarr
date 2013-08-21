@@ -2407,7 +2407,7 @@ class Form
      *    Return list of categories having choosed type
      *
      *    @param	int		$type				Type de categories (0=product, 1=supplier, 2=customer, 3=member)
-     *    @param    string	$selected    		Id of category preselected
+     *    @param    string	$selected    		Id of category preselected or 'auto' (autoselect category if there is only one element)
      *    @param    string	$htmlname			HTML field name
      *    @param    int		$maxlength      	Maximum length for labels
      *    @param    int		$excludeafterid 	Exclude all categories after this leaf in category tree.
@@ -2430,7 +2430,7 @@ class Form
                 $output.= '<option value="-1">&nbsp;</option>';
                 foreach($cate_arbo as $key => $value)
                 {
-                    if ($cate_arbo[$key]['id'] == $selected)
+                    if ($cate_arbo[$key]['id'] == $selected || ($selected == 'auto' && count($cate_arbo) == 1))
                     {
                         $add = 'selected="selected" ';
                     }

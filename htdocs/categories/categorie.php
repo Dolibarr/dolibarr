@@ -2,7 +2,7 @@
 /* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005      Brice Davoleau       <brice.davoleau@gmail.com>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2006-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2007      Patrick Raguin  		<patrick.raguin@gmail.com>
  * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2013      Florian Henry        <florian.henry@open-concept.pro>
@@ -608,7 +608,7 @@ else if ($id || $ref)
 
 
 /**
- * 	Function to output a HTML select for a category
+ * 	Function to output a form to add object into a category
  *
  * 	@param		DoliDb		$db			Database handler
  * 	@param		Object		$object		Object we want to see categories it can be classified into
@@ -626,7 +626,7 @@ function formCategory($db,$object,$typeid,$socid=0)
 	if ($typeid == 3) $title = $langs->trans("MembersCategoriesShort");
 	if ($typeid == 4) $title = $langs->trans("ContactCategoriesShort");
 
-	// Formulaire ajout dans une categorie
+	// Form to add record into a category
 	print '<br>';
 	print_fiche_titre($title,'','');
 	print '<form method="post" action="'.DOL_URL_ROOT.'/categories/categorie.php">';
@@ -637,7 +637,7 @@ function formCategory($db,$object,$typeid,$socid=0)
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre"><td width="40%">';
 	print $langs->trans("ClassifyInCategory").' &nbsp;';
-	print $form->select_all_categories($typeid);
+	print $form->select_all_categories($typeid,'auto');
 	print '</td><td>';
 	print '<input type="submit" class="button" value="'.$langs->trans("Classify").'"></td>';
 	if ($user->rights->categorie->creer)

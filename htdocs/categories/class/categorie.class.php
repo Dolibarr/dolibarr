@@ -420,16 +420,27 @@ class Categorie
 					{
 						$objparent = $this->db->fetch_object($resql);
 
-						if (!empty($objparent->fk_parent)) {
+						if (!empty($objparent->fk_parent)) 
+						{
 							$cat = new Categorie($this->db);
 							$cat->id=$objparent->fk_parent;
-							$cat->add_type($obj, $type);
+							$result=$cat->add_type($obj, $type);
+							if ($result < 0) 
+							{
+								$this->error=$cat->error;
+								$error++;
+							}
 						}
 					}
 				}
 				else
 				{
+					$error++;
 					$this->error=$this->db->lasterror();
+				}
+
+				if ($error) 
+				{
 					return -1;
 				}
 			}
