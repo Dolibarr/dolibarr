@@ -75,21 +75,21 @@ class mailing_contacts3 extends MailingTargets
 
     	$target = array();
 
-        // La requete doit retourner: id, email, fk_contact, name, firstname, other
-        $sql = "SELECT sp.rowid as id, sp.email as email, sp.rowid as fk_contact,";
+     
+ $sql = "SELECT sp.rowid as id, sp.email as email, sp.rowid as fk_contact,";
         $sql.= " sp.lastname, sp.firstname, sp.civilite,";
         $sql.= " s.nom as companyname";
         $sql.= " FROM ".MAIN_DB_PREFIX."socpeople as sp";
-    	if ($filtersarray[0] <> 'all') $sql.= ", ".MAIN_DB_PREFIX."categorie as c";
-    	if ($filtersarray[0] <> 'all') $sql.= ", ".MAIN_DB_PREFIX."categorie_societe as cs";
+        if ($filtersarray[0] <> 'all')$sql.= " INNER JOIN ".MAIN_DB_PREFIX."categorie_societe as cs ON cs.fk_societe=sp.fk_soc";
+        if ($filtersarray[0] <> 'all') $sql.= " INNER JOIN ".MAIN_DB_PREFIX."categorie as c ON cs.fk_categorie = c.rowid";
     	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = sp.fk_soc";
     	$sql.= " WHERE sp.email != ''";     // Note that null != '' is false
     	$sql.= " AND sp.no_email = 0";
     	$sql.= " AND sp.entity IN (".getEntity('societe', 1).")";
-    	if ($filtersarray[0] <> 'all') $sql.= " AND cs.fk_categorie = c.rowid";
-    	if ($filtersarray[0] <> 'all') $sql.= " AND cs.fk_societe = sp.fk_soc";
     	if ($filtersarray[0] <> 'all') $sql.= " AND c.label = '".$this->db->escape($filtersarray[0])."'";
     	$sql.= " ORDER BY sp.lastname, sp.firstname";
+
+
 
     	$resql = $this->db->query($sql);
     	if ($resql)
