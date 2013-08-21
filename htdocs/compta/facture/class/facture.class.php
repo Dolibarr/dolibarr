@@ -695,6 +695,10 @@ class Facture extends CommonInvoice
 			$line->special_code		= $object->lines[$i]->special_code;
 			$line->fk_parent_line	= $object->lines[$i]->fk_parent_line;
 
+			$line->fk_fournprice	= $object->lines[$i]->fk_fournprice;
+			$marginInfos			= getMarginInfos($object->lines[$i]->subprice, $object->lines[$i]->remise_percent, $object->lines[$i]->tva_tx, $object->lines[$i]->localtax1_tx, $object->lines[$i]->localtax2_tx, $object->lines[$i]->fk_fournprice, $object->lines[$i]->pa_ht);
+			$line->pa_ht			= $marginInfos[0];
+
 			$this->lines[$i] = $line;
 		}
 
