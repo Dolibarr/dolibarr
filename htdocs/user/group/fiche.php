@@ -298,7 +298,7 @@ else
 
 			// Name
 			print '<tr><td width="25%" valign="top">'.$langs->trans("Name").'</td>';
-			print '<td width="75%" class="valeur">'.$object->nom;
+			print '<td width="75%" class="valeur">'.$object->name;
 			if (empty($object->entity))
 			{
 				print img_picto($langs->trans("GlobalGroup"),'redstar');
@@ -480,7 +480,7 @@ else
 
             print '<table class="border" width="100%">';
             print '<tr><td width="25%" valign="top" class="fieldrequired">'.$langs->trans("Name").'</td>';
-            print '<td width="75%" class="valeur"><input size="15" type="text" name="group" value="'.$object->nom.'">';
+            print '<td width="75%" class="valeur"><input size="15" type="text" name="group" value="'.$object->name.'">';
             print "</td></tr>\n";
 
             // Multicompany
