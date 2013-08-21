@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2011-2012      Juanjo Menent	    <jmenent@2byte.es>
+/* Copyright (C) 2011-2013      Juanjo Menent	    <jmenent@2byte.es>
  * Copyright (C) 2011-2013      Philippe Grand	    <philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -53,13 +53,13 @@ if ($action == 'updateMask')
 
     if (! $res > 0) $error++;
 
-    if (! $error)
+ 	if (! $error)
     {
-        $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
+        setEventMessage($langs->trans("SetupSaved"));
     }
     else
     {
-        $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
+        setEventMessage($langs->trans("Error"),'errors');
     }
 }
 
@@ -198,8 +198,6 @@ if (is_resource($handle))
 }
 
 print '</table><br>';
-
-dol_htmloutput_mesg($mesg);
 
 $db->close();
 

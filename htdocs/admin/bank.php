@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2009 		Laurent Destailleur            <eldy@users.sourceforge.net>
- * Copyright (C) 2010-2012  Juanjo Menent			       <jmenent@2byte.es>
+ * Copyright (C) 2010-2013  Juanjo Menent			       <jmenent@2byte.es>
  * Copyright (C) 2013       Philippe Grand                 <philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -54,11 +54,11 @@ if ($action == 'set_BANK_CHEQUERECEIPT_FREE_TEXT')
 
  	if (! $error)
     {
-        $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
+        setEventMessage($langs->trans("SetupSaved"));
     }
     else
     {
-        $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
+        setEventMessage($langs->trans("Error"),'errors');
     }
 }
 
@@ -177,13 +177,13 @@ while ($i < $nbofbank)
 	if ($conf->global->BANK_SHOW_ORDER_OPTION == $i)
 	{
 		print '<td align="center">';
-		print img_picto($langs->trans("Activated"),'on');
+		print img_picto($langs->trans("Activated"),'switch_on');
 		print '</td>';
 	}
 	else
 	{
 		print '<td align="center"><a href="'.$_SERVER['PHP_SELF'].'?action=setbankorder&amp;value='.$i.'">';
-		print img_picto($langs->trans("Disabled"),'off');
+		print img_picto($langs->trans("Disabled"),'switch_off');
 		print '</a></td>';
 	}
 	print '<td>&nbsp;</td>';
@@ -192,8 +192,6 @@ while ($i < $nbofbank)
 }
 
 print '</table>'."\n";
-
-dol_htmloutput_mesg($mesg);
 
 $db->close();
 

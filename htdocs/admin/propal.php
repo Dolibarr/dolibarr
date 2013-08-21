@@ -6,7 +6,7 @@
  * Copyright (C) 2004      Eric Seigne                 <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2012 Regis Houssin               <regis.houssin@capnetworks.com>
  * Copyright (C) 2008      Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
- * Copyright (C) 2011-2012 Juanjo Menent			   <jmenent@2byte.es>
+ * Copyright (C) 2011-2013 Juanjo Menent			   <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,7 +48,7 @@ $type='propal';
 /*
  * Actions
  */
-
+$error=0;
 if ($action == 'updateMask')
 {
 	$maskconstpropal=GETPOST('maskconstpropal','alpha');
@@ -58,13 +58,13 @@ if ($action == 'updateMask')
 	if (! $res > 0) $error++;
 
  	if (! $error)
-    {
-        $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
-    }
-    else
-    {
-        $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
-    }
+	{
+		setEventMessage($langs->trans("SetupSaved"));
+	}
+	else
+	{
+		setEventMessage($langs->trans("Error"),'errors');
+	}
 }
 
 if ($action == 'specimen')
@@ -101,13 +101,13 @@ if ($action == 'specimen')
 		}
 		else
 		{
-			$mesg='<font class="error">'.$module->error.'</font>';
+			setEventMessage($module->error,'errors');
 			dol_syslog($module->error, LOG_ERR);
 		}
 	}
 	else
 	{
-		$mesg='<font class="error">'.$langs->trans("ErrorModuleNotFound").'</font>';
+		setEventMessage($langs->trans("ErrorModuleNotFound"),'errors');
 		dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
 	}
 }
@@ -120,13 +120,13 @@ if ($action == 'set_PROPALE_DRAFT_WATERMARK')
 	if (! $res > 0) $error++;
 
  	if (! $error)
-    {
-        $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
-    }
-    else
-    {
-        $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
-    }
+	{
+		setEventMessage($langs->trans("SetupSaved"));
+	}
+	else
+	{
+		setEventMessage($langs->trans("Error"),'errors');
+	}
 }
 
 if ($action == 'set_PROPALE_FREE_TEXT')
@@ -138,13 +138,13 @@ if ($action == 'set_PROPALE_FREE_TEXT')
 	if (! $res > 0) $error++;
 
  	if (! $error)
-    {
-        $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
-    }
-    else
-    {
-        $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
-    }
+	{
+		setEventMessage($langs->trans("SetupSaved"));
+	}
+	else
+	{
+		setEventMessage($langs->trans("Error"),'errors');
+	}
 }
 
 if ($action == 'setdefaultduration')
@@ -154,13 +154,13 @@ if ($action == 'setdefaultduration')
 	if (! $res > 0) $error++;
 
  	if (! $error)
-    {
-        $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
-    }
-    else
-    {
-        $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
-    }
+	{
+		setEventMessage($langs->trans("SetupSaved"));
+	}
+	else
+	{
+		setEventMessage($langs->trans("Error"),'errors');
+	}
 }
 
 // Define constants for submodules that contains parameters (forms with param1, param2, ... and value1, value2, ...)
@@ -183,12 +183,12 @@ if ($action == 'setModuleOptions')
 	if (! $error)
     {
         $db->commit();
-        $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
+        setEventMessage($langs->trans("SetupSaved"));
     }
     else
     {
         $db->rollback();
-        $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
+        setEventMessage($langs->trans("Error"),'errors');
 	}
 }
 
@@ -600,8 +600,6 @@ print "  <td>".$langs->trans("Value")."</td>\n";
 print "</tr>\n";
 print "<tr ".$bc[false].">\n  <td width=\"140\">".$langs->trans("PathDirectory")."</td>\n  <td>".$conf->propal->dir_output."</td>\n</tr>\n";
 print "</table>\n<br>";
-
-dol_htmloutput_mesg($mesg);
 
 $db->close();
 

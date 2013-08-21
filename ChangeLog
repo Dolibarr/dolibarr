@@ -48,6 +48,9 @@ For users:
 - Fix: [ bug #992 ] Proforma invoices don't have a separated numeric count
 - New : Add pdf link into supplier invoice list and supplier order list
 - New : Genrate auto the PDF for supplier invoice
+- New : Add category into filter webservice thirdparty method getListOfThirdParties
+- New : Allow to define margin or mark rate during quoting, ordering, invoicing
+- New : User permissions on margin module
 
 For translators:
 - Qual: Normalized sort order of all languages files with english reference files.
@@ -99,6 +102,12 @@ parameter. All methods addline in this case were modified to remove this paramet
 
 ***** ChangeLog for 3.4.1 compared to 3.4.0 *****
 Fix: [ bug #1029 ] Tulip numbering mask
+Fix: Supplier invoice and supplier order are not displayed into object link into agenda event card
+Fix: [ bug #1033 ] SUPPLIER REF disappeared
+Fix: update extrafield do not display immediatly after update
+Fix: Fix bug with canvas thirdparty
+Fix: [ bug #1037 ] Consumption> Supplier invoices related
+Fix: User group name do not display in card (view or edit mode)
 
 
 ***** ChangeLog for 3.4 compared to 3.3.* *****

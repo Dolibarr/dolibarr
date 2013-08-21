@@ -84,13 +84,11 @@ if ($action == "save" && empty($cancel))
 
  	if (! $error)
     {
-    	$db->commit();
-        $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
+        setEventMessage($langs->trans("SetupSaved"));
     }
     else
     {
-    	$db->rollback();
-        $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
+        setEventMessage($langs->trans("Error"),'errors');
     }
 }
 
@@ -188,8 +186,6 @@ print "</form>\n";
 dol_fiche_end();
 
 print "<br>";
-
-dol_htmloutput_mesg($mesg);
 
 llxFooter();
 

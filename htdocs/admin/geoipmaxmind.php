@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2009-2012	Laurent Destailleur	<eldy@users.sourceforge.org>
- * Copyright (C) 2011	    Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2011-2013  Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,7 +46,7 @@ if ($action == 'set')
 
 	if (! $gimcdf && ! file_exists($gimcdf))
 	{
-		$mesg='<div class="error">'.$langs->trans("ErrorFileNotFound",$gimcdf).'</div>';
+		setEventMessage($langs->trans("ErrorFileNotFound",$gimcdf),'errors');
 		$error++;
 	}
 
@@ -56,13 +56,13 @@ if ($action == 'set')
 		if (! $res > 0) $error++;
 
 		if (! $error)
-	    {
-	        $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
-	    }
-	    else
-	    {
-	        $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
-	    }
+		{
+			setEventMessage($langs->trans("SetupSaved"));
+		}
+		else
+		{
+			setEventMessage($langs->trans("Error"),'errors');
+		}
 	}
 }
 
@@ -154,8 +154,6 @@ if ($geoip)
 	*/
 	$geoip->close();
 }
-
-dol_htmloutput_mesg($mesg);
 
 llxFooter();
 

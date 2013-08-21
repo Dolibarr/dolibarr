@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2007-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2009-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2013	   Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,7 +47,6 @@ $substitutionarrayfortest=array(
 complete_substitutions_array($substitutionarrayfortest, $langs);
 
 $action=GETPOST('action');
-$message='';
 
 
 /*
@@ -127,23 +127,12 @@ if (! empty($_POST['removedfile']) || ! empty($_POST['removedfilehtml']))
 }
 
 /*
- * Cancel
- */
-if (($action == 'send' || $action == 'sendhtml') && GETPOST('cancel'))
-{
-    $message='';
-}
-
-/*
  * Send mail
  */
 if (($action == 'send' || $action == 'sendhtml') && ! GETPOST('addfile') && ! GETPOST('addfilehtml') && ! GETPOST('removedfile') && ! GETPOST('cancel'))
 {
 	$error=0;
 	
-	
-	
-
 	$email_from='';
 	if (! empty($_POST["fromname"])) $email_from=$_POST["fromname"].' ';
 	if (! empty($_POST["frommail"])) $email_from.='<'.$_POST["frommail"].'>';
@@ -172,13 +161,13 @@ if (($action == 'send' || $action == 'sendhtml') && ! GETPOST('addfile') && ! GE
 
 	if (empty($_POST["frommail"]))
 	{
-		$message='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("MailFrom")).'</div>';
+		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("MailFrom")),'errors');
 		$action='test';
 		$error++;
 	}
 	if (empty($sendto))
 	{
-		$message='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("MailTo")).'</div>';
+		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("MailTo")),'errors');
 		$action='test';
 		$error++;
 	}
@@ -212,11 +201,11 @@ if (($action == 'send' || $action == 'sendhtml') && ! GETPOST('addfile') && ! GE
 
 		if ($result)
 		{
-			$message='<div class="ok">'.$langs->trans("MailSuccessfulySent",$mailfile->getValidAddress($email_from,2),$mailfile->getValidAddress($sendto,2)).'</div>';
+			setEventMessage($langs->trans("MailSuccessfulySent",$mailfile->getValidAddress($email_from,2),$mailfile->getValidAddress($sendto,2)));
 		}
 		else
 		{
-			$message='<div class="error">'.$langs->trans("ResultKo").'<br>'.$mailfile->error.' '.$result.'</div>';
+			setEventMessage($langs->trans("ResultKo").'<br>'.$mailfile->error.' '.$result,'errors');
 		}
 
 		$action='';
@@ -252,8 +241,6 @@ print_fiche_titre($langs->trans("EMailsSetup"),'','setup');
 
 print $langs->trans("EMailsDesc")."<br>\n";
 print "<br>\n";
-
-dol_htmloutput_mesg($message);
 
 // List of sending methods
 $listofmethods=array();

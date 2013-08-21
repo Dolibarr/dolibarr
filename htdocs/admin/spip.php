@@ -5,7 +5,7 @@
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2011 	   Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2011-2013 Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -70,11 +70,11 @@ if ($action == 'update' || $action == 'add')
 
 	if (! $error)
 	{
-		$mesg = '<div class="ok">'.$langs->trans("SetupSaved").'</div>';
+		setEventMessage($langs->trans("SetupSaved"));
 	}
 	else
 	{
-		$mesg = '<div class="error">'.$langs->trans("Error").'</div>';
+		setEventMessage($langs->trans("Error"),'errors');
 	}
 }
 
@@ -116,9 +116,6 @@ print_fiche_titre($langs->trans("MailmanSpipSetup"),$linkback,'setup');
 $head = mailmanspip_admin_prepare_head();
 
 dol_fiche_head($head, 'spip', $langs->trans("Setup"), 0, 'user');
-
-
-dol_htmloutput_mesg($mesg);
 
 /*
  * Spip
