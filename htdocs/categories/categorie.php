@@ -37,7 +37,6 @@ $socid	= GETPOST('socid','int');
 $id		= GETPOST('id','int');
 $ref	= GETPOST('ref');
 $type	= GETPOST('type');
-$mesg	= GETPOST('mesg');
 
 $removecat = GETPOST('removecat','int');
 $parent=GETPOST('parent','int');
@@ -147,6 +146,11 @@ if (empty($reshook))
 		$result=$cat->fetch($removecat);
 
 		$result=$cat->del_type($object,$elementtype);
+		if ($result < 0)
+		{
+			setEventMessage($cat->error,'errors');
+			setEventMessage($cat->errors,'errors');
+		}
 	}
 
 	// Add object into a category
@@ -191,12 +195,19 @@ if (empty($reshook))
 		$result=$cat->add_type($object,$elementtype);
 		if ($result >= 0)
 		{
-			$mesg='<div class="ok">'.$langs->trans("WasAddedSuccessfully",$cat->label).'</div>';
+			setEventMessage($langs->trans("WasAddedSuccessfully",$cat->label));
 		}
 		else
 		{
-			if ($cat->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') $mesg='<div class="error">'.$langs->trans("ObjectAlreadyLinkedToCategory").'</div>';
-			else $mesg=$langs->trans("Error").' '.$cat->error;
+			if ($cat->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') 
+			{
+				setEventMessage($langs->trans("ObjectAlreadyLinkedToCategory"),'warnings');
+			}
+			else 
+			{
+				setEventMessage($cat->error,'errors');
+				setEventMessage($cat->errors,'errors');
+			}
 		}
 	}
 }
@@ -308,8 +319,6 @@ if ($socid)
 
 	dol_fiche_end();
 
-	dol_htmloutput_mesg($mesg);
-
 	if ($soc->client) formCategory($db,$soc,2,$socid);
 
 	if ($soc->client && $soc->fournisseur) print '<br><br>';
@@ -367,8 +376,6 @@ else if ($id || $ref)
 		print '</table>';
 
 		dol_fiche_end();
-
-		dol_htmloutput_mesg($mesg);
 
 		formCategory($db,$product,0);
 	}
@@ -448,8 +455,6 @@ else if ($id || $ref)
 		print '</table>';
 
 		dol_fiche_end();
-
-		dol_htmloutput_mesg($mesg);
 
 		formCategory($db,$member,3);
 	}
@@ -597,8 +602,6 @@ else if ($id || $ref)
 
 		dol_fiche_end();
 
-		dol_htmloutput_mesg($mesg);
-
 		formCategory($db,$object,4);
 	}
 }
@@ -726,5 +729,6 @@ function formCategory($db,$object,$typeid,$socid=0)
 
 
 llxFooter();
+
 $db->close();
 ?>

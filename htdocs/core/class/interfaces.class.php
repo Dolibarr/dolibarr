@@ -167,7 +167,8 @@ class Interfaces
                     // Action KO
                     $nbtotal++;
                     $nbko++;
-                    $this->errors[]=$objMod->error;
+                    if (! empty($objMod->error))  $this->errors[]=$objMod->error;
+                    if (! empty($objMod->errors)) $this->errors=array_merge($this->errors,$objMod->errors);
                 }
             }
             else

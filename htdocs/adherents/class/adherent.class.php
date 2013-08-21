@@ -1419,8 +1419,7 @@ class Adherent extends CommonObject
 
 
     /**
-     *  Fonction qui ajoute l'adherent aux abonnements automatiques mailing-list, spip, etc.
-     *  TODO Move this into member creation trigger (trigger of mailmanspip module)
+     *  Function to add member into external tools mailing-list, spip, etc.
      *
      *  @return		int		<0 if KO, >0 if OK
      */
@@ -1439,7 +1438,7 @@ class Adherent extends CommonObject
             $result=$mailmanspip->add_to_mailman($this);
             if ($result < 0)
             {
-            	$this->error=$mailmanspip->error;
+            	if (! empty($mailmanspip->error)) $this->errors[]=$mailmanspip->error;
                 $err+=1;
             }
             foreach ($mailmanspip->mladded_ko as $tmplist => $tmpemail)
@@ -1460,7 +1459,7 @@ class Adherent extends CommonObject
             $result=$mailmanspip->add_to_spip($this);
             if ($result < 0)
             {
-            	$this->error=$mailmanspip->error;
+            	$this->errors[]=$mailmanspip->error;
             	$err+=1;
             }
         }
@@ -1476,8 +1475,7 @@ class Adherent extends CommonObject
 
 
     /**
-     *  Fonction qui supprime l'adherent des abonnements automatiques mailing-list, spip, etc.
-     *  TODO Move this into member deletion trigger (trigger of mailmanspip module)
+     *  Function to delete a member from external tools like mailing-list, spip, etc.
      *
      *  @return     int     <0 if KO, >0 if OK
      */
@@ -1496,7 +1494,7 @@ class Adherent extends CommonObject
             $result=$mailmanspip->del_to_mailman($this);
             if ($result < 0)
             {
-                $this->error=$mailmanspip->error;
+                if (! empty($mailmanspip->error)) $this->errors[]=$mailmanspip->error;
                 $err+=1;
             }
 
@@ -1517,6 +1515,7 @@ class Adherent extends CommonObject
             $result=$mailmanspip->del_to_spip($this);
             if ($result < 0)
             {
+            	$this->errors[]=$mailmanspip->error;
                 $err+=1;
             }
         }

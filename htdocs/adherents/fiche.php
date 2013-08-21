@@ -359,34 +359,6 @@ if ($action == 'update' && ! $_POST["cancel"] && $user->rights->adherent->creer)
 				}
 			}
 
-			// Rajoute l'utilisateur dans les divers abonnements (mailman, spip, etc...)
-			// TODO Move this into update trigger MEMBER_MODIFY
-			if (($object->oldcopy->email != $object->email) || ($object->oldcopy->typeid != $object->typeid))
-			{
-				if ($object->oldcopy->email != $object->email)    // If email has changed we delete mailman subscription for old email
-				{
-					if ($object->oldcopy->del_to_abo() < 0)
-					{
-						if (! empty($object->oldcopy->error)) setEventMessage($langs->trans("ErrorFailedToRemoveToMailmanList").': '.$object->oldcopy->error, 'errors');
-						setEventMessage($object->oldcopy->errors, 'errors');
-					}
-					else
-					{
-						setEventMessage($object->oldcopy->mesgs,'mesgs');
-					}
-				}
-    			// We add subscription if new email or new type (new type may means more mailing-list to subscribe)
-    			if ($object->add_to_abo() < 0)
-    			{
-    				 if (! empty($object->error)) setEventMessage($langs->trans("ErrorFailedToAddToMailmanList").': '.$object->error, 'errors');
-    				 setEventMessage($object->errors, 'errors');
-    			}
-				else
-				{
-					setEventMessage($object->mesgs, 'mesgs');
-				}
-			}
-
 			$rowid=$object->id;
 			$action='';
 
@@ -601,15 +573,6 @@ if ($user->rights->adherent->creer && $action == 'confirm_valid' && $confirm == 
 				$errmsg.=$object->error;
 			}
 		}
-
-		// Add user to other systems (mailman, spip, etc...)
-		// TODO Move this into trigger on validate action
-		if (! $error && $object->add_to_abo() < 0)
-		{
-			$langs->load("errors");
-			$error++;
-			$errmsg.= $langs->trans("ErrorFailedToAddToMailmanList").': '.$object->error." ".join(',',$object->errors)."<br>\n";
-		}
 	}
 	else
 	{
@@ -647,13 +610,6 @@ if ($user->rights->adherent->supprimer && $action == 'confirm_resign')
 			if ($result < 0)
 			{
 				$errmsg.=$object->error;
-			}
-
-			// supprime l'utilisateur des divers abonnements ..
-			if ($object->del_to_abo() < 0)
-			{
-				// error
-				$errmsg.=$langs->trans("FaildToRemoveFromMailmanList").': '.$object->error."<br>\n";
 			}
 		}
 		else

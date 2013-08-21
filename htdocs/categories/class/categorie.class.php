@@ -384,12 +384,12 @@ class Categorie
 	 * 	Link an object to the category
 	 *
 	 *	@param		Object	$obj	Object to link to category
-	 * 	@param		string	$type	Type of category (member, supplier, product, customer)
+	 * 	@param		string	$type	Type of category (member, supplier, product, customer, contact)
 	 * 	@return		int				1 : OK, -1 : erreur SQL, -2 : id not defined, -3 : Already linked
 	 */
 	function add_type($obj,$type)
 	{
-		global $conf;
+		global $user,$langs,$conf;
 
 		$error=0;
 
@@ -407,10 +407,10 @@ class Categorie
 		dol_syslog(get_class($this).'::add_type sql='.$sql);
 		if ($this->db->query($sql))
 		{
-			if (!empty($conf->global->CATEGORIE_RECURSIV_ADD))
+			if (! empty($conf->global->CATEGORIE_RECURSIV_ADD))
 			{
 				$sql = 'SELECT fk_parent FROM '.MAIN_DB_PREFIX.'categorie';
-				$sql.= " WHERE rowid = '".$this->id."'";
+				$sql.= " WHERE rowid = ".$this->id;
 
 				dol_syslog(get_class($this)."::add_type sql=".$sql);
 				$resql=$this->db->query($sql);
@@ -435,13 +435,13 @@ class Categorie
 			}
 
 			// Save object we want to link category to into category instance to provide information to trigger
-			$this->linkto=$object;
+			$this->linkto=$obj;
 
 			// Appel des triggers
 			include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
 			$interface=new Interfaces($this->db);
 			$result=$interface->run_triggers('CATEGORY_LINK',$this,$user,$langs,$conf);
-			if ($result < 0) { $error++; $this->errors=$interface->errors; $this->error=join(',',$this->errors); }
+			if ($result < 0) { $error++; $this->errors=$interface->errors; $this->error=$interface->error; }
 			// Fin appel triggers
 
 			if (! $error) return 1;
@@ -471,6 +471,8 @@ class Categorie
 	 */
 	function del_type($obj,$type)
 	{
+		global $user,$langs,$conf;
+		
 		$error=0;
 
 		if ($type == 'company')     $type='societe';
@@ -493,7 +495,7 @@ class Categorie
 			include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
 			$interface=new Interfaces($this->db);
 			$result=$interface->run_triggers('CATEGORY_UNLINK',$this,$user,$langs,$conf);
-			if ($result < 0) { $error++; $this->errors=$interface->errors; $this->error=join(',',$this->errors); }
+			if ($result < 0) { $error++; $this->errors=$interface->errors; $this->error=$this->error; }
 			// Fin appel triggers
 
 			if (! $error) return 1;
