@@ -2,6 +2,7 @@
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2013	   Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -111,7 +112,7 @@ if ($id > 0 || ! empty($ref))
         print '</div>';
 
 
-        $sql = "SELECT distinct s.nom, s.rowid as socid, s.code_client, f.facnumber, f.total_ht as total_ht,";
+        $sql = "SELECT distinct s.nom, s.rowid as socid, s.code_client, f.ref, f.total_ht as total_ht,";
         $sql.= " f.datef, f.paye, f.fk_statut as statut, f.rowid as facid";
         if (!$user->rights->societe->client->voir && !$socid) $sql.= ", sc.fk_soc, sc.fk_user ";
         $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";

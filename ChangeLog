@@ -8,6 +8,7 @@ Fix: Supplier invoice and supplier order are not displayed into object link into
 Fix: [ bug #1033 ] SUPPLIER REF disappeared
 Fix: update extrafield do not display immediatly after update
 Fix: Fix bug with canvas thirdparty
+Fix: [ bug #1037 ] Consumption> Supplier invoices related
 
 ***** ChangeLog for 3.4 compared to 3.3.* *****
 For users:
