@@ -16,7 +16,7 @@
  */
 
 /**
- *	\file       htdocs/core/boxes/box_graph_product_distribution.php.php
+ *	\file       htdocs/core/boxes/box_graph_product_distribution.php
  *	\ingroup    factures
  *	\brief      Box to show graph of invoices per month
  */
@@ -90,9 +90,15 @@ class box_graph_product_distribution extends ModeleBoxes
 		$showinvoicenb=GETPOST($param_showinvoicenb,'alpha',4);
 		$showpropalnb=GETPOST($param_showpropalnb,'alpha',4);
 		$showordernb=GETPOST($param_showordernb,'alpha',4);
+
 		if (empty($showinvoicenb) && empty($showpropalnb) && empty($showordernb)) { $showpropalnb=1; $showinvoicenb=1; $showordernb=1; }
 		$nowarray=dol_getdate(dol_now(),true);
 		$year=(GETPOST($param_year,'',4)?GETPOST($param_year,'int',4):$nowarray['year']);
+
+		$nbofgraph=0;
+		if ($showinvoicenb) $nbofgraph++;
+		if ($showpropalnb)  $nbofgraph++;
+		if ($showordernb)   $nbofgraph++;
 		
 		$paramtitle=$langs->trans("Products").'/'.$langs->trans("Services");
 		if (empty($conf->produit->enabled)) $paramtitle=$langs->trans("Services");
@@ -104,7 +110,7 @@ class box_graph_product_distribution extends ModeleBoxes
 			
 			$mode='customer';
 			$userid=0;
-			$WIDTH=(($showinvoicenb && $showpropalnb) || ! empty($conf->dol_optimize_smallscreen))?'160':'320';
+			$WIDTH=($nbofgraph >= 2 || ! empty($conf->dol_optimize_smallscreen))?'160':'320';
 			$HEIGHT='192';
 	
 			// Build graphic number of object. $data = array(array('Lib',val1,val2,val3),...)
@@ -284,40 +290,45 @@ class box_graph_product_distribution extends ModeleBoxes
 			$stringtoshow.='<div class="center hideobject" id="idfilter'.$this->boxcode.'">';	// hideobject is to start hidden
 			$stringtoshow.='<form class="flat formboxfilter" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 			$stringtoshow.='<input type="hidden" name="action" value="'.$refreshaction.'">';
-			$stringtoshow.='<input type="hidden" name="DOL_AUTOSET_COOKIE" value="'.$param_year.','.$param_showinvoicenb.','.$param_showpropalnb.'">';
-			$stringtoshow.='<input type="checkbox" name="'.$param_showinvoicenb.'"'.($showinvoicenb?' checked="true"':'').'"> '.$langs->trans("ForCustomersInvoices");
+			$stringtoshow.='<input type="hidden" name="DOL_AUTOSET_COOKIE" value="'.$param_year.','.$param_showinvoicenb.','.$param_showpropalnb.','.$param_showordernb.'">';
+			$stringtoshow.='<input type="checkbox" name="'.$param_showinvoicenb.'"'.($showinvoicenb?' checked="true"':'').'> '.$langs->trans("ForCustomersInvoices");
 			$stringtoshow.=' &nbsp; ';
-			$stringtoshow.='<input type="checkbox" name="'.$param_showpropalnb.'"'.($showpropalnb?' checked="true"':'').'"> '.$langs->trans("ForProposals");
+			$stringtoshow.='<input type="checkbox" name="'.$param_showpropalnb.'"'.($showpropalnb?' checked="true"':'').'> '.$langs->trans("ForProposals");
 			$stringtoshow.='&nbsp;';
-			$stringtoshow.='<input type="checkbox" name="'.$param_showordernb.'"'.($showordernb?' checked="true"':'').'"> '.$langs->trans("ForCustomersOrders");
+			$stringtoshow.='<input type="checkbox" name="'.$param_showordernb.'"'.($showordernb?' checked="true"':'').'> '.$langs->trans("ForCustomersOrders");
 			$stringtoshow.='<br>';
 			$stringtoshow.=$langs->trans("Year").' <input class="flat" size="4" type="text" name="'.$param_year.'" value="'.$year.'">';
 			$stringtoshow.='<input type="image" src="'.img_picto($langs->trans("Refresh"),'refresh.png','','',1).'">';
 			$stringtoshow.='</form>';
 			$stringtoshow.='</div>';
-			//if ($showinvoicenb && $showpropalnb && $showordernb)
-			//{
+
+			if ($nbofgraph == 1)
+			{
+				if ($showinvoicenb) $stringtoshow.=$px1->show();
+				else if ($showpropalnb) $stringtoshow.=$px2->show();
+				else $stringtoshow.=$px3->show();
+			}
+			if ($nbofgraph == 2)
+			{
+				$stringtoshow.='<div class="fichecenter"><div class="containercenter"><div class="fichehalfleft">';
+				if ($showinvoicenb) $stringtoshow.=$px1->show();
+				else if ($showpropalnb) $stringtoshow.=$px2->show();
+				$stringtoshow.='</div><div class="fichehalfright">';
+				if ($showordernb) $stringtoshow.=$px3->show();
+				else if ($showpropalnb) $stringtoshow.=$px2->show();
+				$stringtoshow.='</div></div></div>';
+			}
+			if ($nbofgraph == 3)
+			{
+				$stringtoshow.='<div class="fichecenter"><div class="containercenter"><div class="fichehalfleft">';
+				$stringtoshow.=$px1->show();
+				$stringtoshow.='</div><div class="fichehalfright">';
+				$stringtoshow.=$px2->show();
+				$stringtoshow.='</div></div></div>';
 				$stringtoshow.='<div class="fichecenter"><div class="containercenter">';
-				$stringtoshow.='<div class="fichehalfleftxxx">';
-			//}
-			if ($showinvoicenb) $stringtoshow.=$px1->show();
-			//if ($showinvoicenb && $showpropalnb)
-			//{
-				$stringtoshow.='</div>';
-				$stringtoshow.='<div class="fichehalfrightxxx">';
-			//}
-			if ($showpropalnb) $stringtoshow.=$px2->show();
-			//if ($showinvoicenb && $showpropalnb)
-			//{
-				$stringtoshow.='</div>';
-				$stringtoshow.='<div class="fichehalfrightxxx">';
-			//}
-			if ($showordernb) $stringtoshow.=$px3->show();
-			//if ($showinvoicenb && $showpropalnb)
-			//{
+				$stringtoshow.=$px3->show();
 				$stringtoshow.='</div></div>';
-				$stringtoshow.='</div>';
-			//}
+			}
 			$this->info_box_contents[0][0] = array('td' => 'align="center" class="nohover"','textnoformat'=>$stringtoshow);
 		}
 		else
