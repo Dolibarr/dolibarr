@@ -1600,7 +1600,7 @@ class Societe extends CommonObject
                     else if ($mode == 'mobile') $property=$obj->phone_mobile;
 
 
-                    if ($obj->statut == 0)
+                    if ($obj->statut == 1)
                     {
 						 $contact_property[$obj->rowid] = trim(dolGetFirstLastname($obj->firstname,$obj->lastname))." &lt;".$property."&gt;";
 

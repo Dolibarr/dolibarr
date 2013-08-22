@@ -965,7 +965,7 @@ class Contact extends CommonObject
 	function LibStatutcontact($statut)
 		{
 			global $langs;
-			if ($statut==1) return '<span class="hideonsmartphone">'.$langs->trans('Disabled').' </span>'.img_picto($langs->trans('StatusContactDraftShort'),'statut0');
+			if ($statut==0) return '<span class="hideonsmartphone">'.$langs->trans('Disabled').' </span>'.img_picto($langs->trans('StatusContactDraftShort'),'statut0');
 			else return '<span class="hideonsmartphone">'.$langs->trans('Enabled').' </span>'.img_picto($langs->trans('StatusContactValidatedShort'),'statut1');
 		}
 	/**
@@ -1066,7 +1066,7 @@ class Contact extends CommonObject
 			// Appel des triggers
 			include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
 			$interface=new Interfaces($this->db);
-			$result=$interface->run_triggers('USER_ENABLEDISABLE',$this,$user,$langs,$conf);
+			$result=$interface->run_triggers('CONTACT_ENABLEDISABLE',$this,$user,$langs,$conf);
 			if ($result < 0) { $error++; $this->errors=$interface->errors; }
 			// Fin appel triggers
 		}

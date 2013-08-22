@@ -22,6 +22,8 @@ DELETE FROM llx_menu where module='holiday';
 
 ALTER TABLE llx_projet_task ADD COLUMN planned_workload	real DEFAULT 0 NOT NULL AFTER duration_effective;
 
+ALTER TABLE llx_socpeople ADD COLUMN statut tinyint(4) DEFAULT 1 NOT NULL after import_key;
+
 create table llx_fichinter_extrafields
 (
   rowid                     integer AUTO_INCREMENT PRIMARY KEY,

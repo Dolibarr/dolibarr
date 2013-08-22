@@ -138,7 +138,7 @@ if (empty($reshook))
         if ($action == 'disable')
         {
             $object->fetch($id);
-			$object->setstatus(1);
+			$object->setstatus(0);
 			header("Location: ".$_SERVER['PHP_SELF'].'?id='.$id);
 			exit;
         }
@@ -149,7 +149,7 @@ if (empty($reshook))
         if ($action == 'enable')
         {
 			$object->fetch($id);
-			$object->setstatus(0);
+			$object->setstatus(1);
 			header("Location: ".$_SERVER['PHP_SELF'].'?id='.$id);
 			exit;
 			
@@ -1025,12 +1025,12 @@ else
                 print '<a class="butActionDelete" href="fiche.php?id='.$object->id.'&amp;action=delete">'.$langs->trans('Delete').'</a>';
             }
             // Activer
-            if ($object->statut == 1 && $user->rights->societe->contact->creer)
+            if ($object->statut == 0 && $user->rights->societe->contact->creer)
             {
                 print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=enable">'.$langs->trans("Reactivate").'</a>';
             }
             // Desactiver
-            if ($object->statut == 0 && $user->rights->societe->contact->creer)
+            if ($object->statut == 1 && $user->rights->societe->contact->creer)
             {
                 print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?action=disable&amp;id='.$object->id.'">'.$langs->trans("DisableUser").'</a>';
             }

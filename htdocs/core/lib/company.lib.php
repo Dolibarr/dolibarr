@@ -598,8 +598,8 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
             print dol_print_email($obj->email,$obj->rowid,$object->id,'AC_EMAIL');
             print '</td>';
 
-			 if ($obj->statut==1) print '<td>'.$langs->trans('Disabled').' </span>'.img_picto($langs->trans('StatusContactDraftShort'),'statut0').'</td>';
-			elseif ($obj->statut==0) print '<td>'.$langs->trans('Enabled').' </span>'.img_picto($langs->trans('StatusContactValidatedShort'),'statut1').'</td>';
+			 if ($obj->statut==0) print '<td>'.$langs->trans('Disabled').' </span>'.img_picto($langs->trans('StatusContactDraftShort'),'statut0').'</td>';
+			elseif ($obj->statut==1) print '<td>'.$langs->trans('Enabled').' </span>'.img_picto($langs->trans('StatusContactValidatedShort'),'statut1').'</td>';
             if (! empty($conf->agenda->enabled) && $user->rights->agenda->myactions->create)
             {
                 print '<td align="center">';
