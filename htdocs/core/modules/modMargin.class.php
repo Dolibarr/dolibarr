@@ -17,7 +17,7 @@
 
 /**     \defgroup   margin     Module margin
  *      \brief      Module to manage margins
- *      \file       htdocs/includes/modules/modMargin.class.php
+ *      \file       htdocs/core/modules/modMargin.class.php
  *      \ingroup    margin
  *      \brief      Description and activation file for module Margin
  */

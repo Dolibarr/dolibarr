@@ -283,14 +283,14 @@ function _unval($val)
 }
 
 /**
- * convert a string from one UTF-16 char to one UTF-8 char
+ * Convert a string from one UTF-16 char to one UTF-8 char
  *
  * Normally should be handled by mb_convert_encoding, but
  * provides a slower PHP-only method for installations
  * that lack the multibye string extension.
  *
- * @param    string  $utf16  UTF-16 character
- * @return   string  UTF-8 character
+ * @param    string  $utf16		UTF-16 character
+ * @return   string  			UTF-8 character
  */
 function utf162utf8($utf16)
 {
@@ -326,14 +326,14 @@ function utf162utf8($utf16)
 }
 
 /**
- * convert a string from one UTF-8 char to one UTF-16 char
+ * Convert a string from one UTF-8 char to one UTF-16 char
  *
  * Normally should be handled by mb_convert_encoding, but
  * provides a slower PHP-only method for installations
  * that lack the multibye string extension.
  *
- * @param    string  $utf8   UTF-8 character
- * @return   string  UTF-16 character
+ * @param    string  $utf8		UTF-8 character
+ * @return   string  			UTF-16 character
  */
 function utf82utf16($utf8)
 {

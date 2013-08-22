@@ -19,7 +19,7 @@
 /**
  * 	\defgroup   cron     Module cron
  *  \brief      cron module descriptor.
- *  \file       cron/core/modules/modCron.class.php
+ *  \file       htdocs/core/modules/modCron.class.php
  *  \ingroup    cron
  *  \brief      Description and activation file for module Jobs
  */

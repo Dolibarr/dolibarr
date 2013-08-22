@@ -3684,8 +3684,8 @@ function make_substitutions($chaine,$substitutionarray)
  *  @param  array		&$substitutionarray		Array substitution old value => new value value
  *  @param  Translate	$outputlangs            If we want substitution from special constants, we provide a language
  *  @param  Object		$object                 If we want substitution from special constants, we provide data in a source object
- *  @param  Object/array  $parameters       Add more parameters (useful to pass product lines)
- *  @param  string              $callfunc               What is the name of the custom function that will be called? (default: completesubstitutionarray)
+ *  @param  Mixed		$parameters       		Add more parameters (useful to pass product lines)
+ *  @param  string      $callfunc               What is the name of the custom function that will be called? (default: completesubstitutionarray)
  *  @return	void
  *  @see 	make_substitutions
  */

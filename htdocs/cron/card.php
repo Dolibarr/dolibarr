@@ -18,7 +18,7 @@
  */
 
 /**
- *  \file       cron/card.php
+ *  \file       htdocs/cron/card.php
  *  \ingroup    cron
  *  \brief      Cron Jobs Card
  */

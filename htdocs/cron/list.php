@@ -18,7 +18,7 @@
  */
 
 /**
- *  \file       cron/cron/list.php
+ *  \file       htdocs/cron/cron/list.php
  *  \ingroup    cron
  *  \brief      Lists Jobs
  */

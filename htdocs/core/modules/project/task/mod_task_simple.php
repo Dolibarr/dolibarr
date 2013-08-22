@@ -99,7 +99,7 @@ class mod_task_simple extends ModeleNumRefTask
 	*  Return next value
 	* 
 	*  @param   Societe	$objsoc		Object third party
-	*  @param   Task	$Task		Object Task
+	*  @param   Task	$task		Object Task
 	*  @return	string				Value if OK, 0 if KO
 	*/
     function getNextValue($objsoc,$task)

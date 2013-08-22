@@ -17,12 +17,19 @@
  */
 
 /**
- *  \file       htdocs/product/stock/replenishment.lib.php
+ *  \file       htdocs/product/stock/lib/replenishment.lib.php
  *  \ingroup    produit
  *  \brief      Contains functions used in replenish.php and replenishorders.php
  */
+
 require_once DOL_DOCUMENT_ROOT . '/fourn/class/fournisseur.commande.class.php';
 
+/**
+ * dispatched
+ * 
+ * @param 	int	$order_id	Id of order
+ * @return	boolean			
+ */
 function dispatched($order_id)
 {
     global $db;
@@ -32,7 +39,8 @@ function dispatched($order_id)
     $resql = $db->query($sql);
     $dispatched = array();
     $ordered = array();
-    if($resql && $db->num_rows($resql)) {
+    if($resql && $db->num_rows($resql)) 
+    {
         while($res = $db->fetch_object($resql))
             $dispatched[] = $res;
     }
@@ -47,6 +55,11 @@ function dispatched($order_id)
     return $dispatched == $ordered;
 }
 
+/**
+ * dispatchedOrders
+ * 
+ * @return Ambigous <string, multitype:NULL >
+ */
 function dispatchedOrders()
 {
     global $db;
@@ -69,6 +82,12 @@ function dispatchedOrders()
     return $res;
 }
 
+/**
+ * ordered
+ * 
+ * @param 	int		$product_id		Product id
+ * @return	void
+ */
 function ordered($product_id)
 {
     global $db, $langs, $conf;
@@ -104,6 +123,12 @@ function ordered($product_id)
     }
 }
 
+/**
+ * getProducts
+ * 
+ * @param 	int		$order_id		Order id
+ * @return	void
+ */
 function getProducts($order_id)
 {
     global $db;

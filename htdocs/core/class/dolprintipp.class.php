@@ -28,7 +28,7 @@ class dolprintIPP
 {
     var $host;
     var $port;
-    var $userid;
+    var $userid;	/* user login */
     var $user;
     var $password;
     var $error;
@@ -72,7 +72,7 @@ class dolprintIPP
         $ipp->setHost($this->host);
         $ipp->setPort($this->port);
         $ipp->setUserName($this->userid);
-        //$ipp->setAuthentication($this->user,$this->password);
+        if (! empty($this->user)) $ipp->setAuthentication($this->user,$this->password);
         $ipp->getPrinters();
         return $ipp->available_printers;
     }
@@ -95,7 +95,7 @@ class dolprintIPP
         $ipp->setPort($this->port);
         $ipp->setJobName($file,true);
         $ipp->setUserName($this->userid);
-        //$ipp->setAuthentication($this->user,$this->password);
+        if (! empty($this->user)) $ipp->setAuthentication($this->user,$this->password);
         // select printer uri for module order, propal,...
         $sql = 'SELECT rowid,printer_uri,copy FROM '.MAIN_DB_PREFIX.'printer_ipp WHERE module="'.$module.'"';
         $result = $this->db->query($sql);
@@ -133,6 +133,7 @@ class dolprintIPP
         $ipp->setHost($this->host);
         $ipp->setPort($this->port);
         $ipp->setUserName($this->userid);
+        if (! empty($this->user)) $ipp->setAuthentication($this->user,$this->password);
         // select printer uri for module order, propal,...
         $sql = 'SELECT rowid,printer_uri,printer_name FROM '.MAIN_DB_PREFIX.'printer_ipp WHERE module="'.$module.'"';
         $result = $this->db->query($sql);
@@ -194,6 +195,7 @@ class dolprintIPP
         $ipp->setHost($this->host);
         $ipp->setPort($this->port);
         $ipp->setUserName($this->userid);
+        if (! empty($this->user)) $ipp->setAuthentication($this->user,$this->password);
         $ipp->setPrinterURI($uri);
         $ipp->getPrinterAttributes();
         return $ipp->printer_attributes;

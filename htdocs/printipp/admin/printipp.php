@@ -17,7 +17,7 @@
 
 /**
  *      \file       htdocs/printipp/admin/printipp.php
- *      \ingroup    core
+ *      \ingroup    printipp
  *      \brief      Page to setup printipp module
  */
 
@@ -41,6 +41,7 @@ if (!$mode) $mode='config';
 /*
  * Action
  */
+
 if ($action == 'setvalue' && $user->admin)
 {
     $db->begin();
@@ -87,7 +88,7 @@ print $langs->trans("PrintIPPDesc")."<br>\n";
 
 print '<br>';
 
-if ($mode=='config'&& $user->admin)
+if ($mode == 'config' && $user->admin)
 {
     print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?mode=config">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -162,7 +163,7 @@ if ($mode=='config'&& $user->admin)
     print '</form>';
 }
 
-if ($mode=='test'&& $user->admin)
+if ($mode == 'test' && $user->admin)
 {
     print '<table class="nobordernopadding" width="100%">';
     $printer = new dolPrintIPP($db,$conf->global->PRINTIPP_HOST,$conf->global->PRINTIPP_PORT,$user->login,$conf->global->PRINTIPP_USER,$conf->global->PRINTIPP_PASSWORD);
@@ -180,9 +181,10 @@ if ($mode=='test'&& $user->admin)
     print '<td>Media</td>';
     print '<td>Supported</td>';
     print "</tr>\n";
+    
     $list = $printer->getlist_available_printers();
-    $var = True;
-    foreach ($list as $value )
+    $var = true;
+    foreach ($list as $value)
     {
         $var=!$var;
         $printer_det = $printer->get_printer_detail($value);
@@ -208,5 +210,6 @@ if ($mode=='test'&& $user->admin)
 dol_fiche_end();
 
 llxFooter();
+
 $db->close();
 ?>

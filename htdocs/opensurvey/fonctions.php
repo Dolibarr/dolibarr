@@ -16,7 +16,7 @@
 */
 
 /**
- *	\file       htdocs/opensurvey/fonction.php
+ *	\file       htdocs/opensurvey/fonctions.php
  *	\ingroup    opensurvey
  *	\brief      Functions for module
  */

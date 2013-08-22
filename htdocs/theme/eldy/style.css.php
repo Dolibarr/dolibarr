@@ -1810,6 +1810,7 @@ tr.liste_total td, form.liste_total div {
 	border: 0px;
 	margin-bottom: 1px;
 	color: #202020;
+	min-height: 18px; /* seems to not be used */
 }
 
 .pair:hover {

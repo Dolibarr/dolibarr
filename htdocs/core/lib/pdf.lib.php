@@ -1,31 +1,31 @@
 <?php
 /* Copyright (C) 2006-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2006      Rodolphe Quiedeville <rodolphe@quiedeville.org>
-* Copyright (C) 2007      Patrick Raguin       <patrick.raguin@gmail.com>
-* Copyright (C) 2010-2012 Regis Houssin        <regis.houssin@capnetworks.com>
-* Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
-* Copyright (C) 2012      Christophe Battarel  <christophe.battarel@altairis.fr>
-*
-* This program is free software; you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation; either version 3 of the License, or
-* (at your option) any later version.
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with this program. If not, see <http://www.gnu.org/licenses/>.
-* or see http://www.gnu.org/
-*/
+ * Copyright (C) 2007      Patrick Raguin       <patrick.raguin@gmail.com>
+ * Copyright (C) 2010-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2012      Christophe Battarel  <christophe.battarel@altairis.fr>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * or see http://www.gnu.org/
+ */
 
 /**
  *	\file       htdocs/core/lib/pdf.lib.php
-*	\brief      Set of functions used for PDF generation
-*	\ingroup    core
-*/
+ *	\brief      Set of functions used for PDF generation
+ *	\ingroup    core
+ */
 
 
 /**
@@ -72,7 +72,7 @@ function pdf_getFormat($outputlangs='')
  *      @param	string		$format         Array(width,height). Keep empty to use default setup.
  *      @param	string		$metric         Unit of format ('mm')
  *      @param  string		$pagetype       'P' or 'l'
- *      @return TPDF							PDF object
+ *      @return TPDF						PDF object
  */
 function pdf_getInstance($format='',$metric='mm',$pagetype='P')
 {
@@ -182,18 +182,18 @@ function pdf_getInstance($format='',$metric='mm',$pagetype='P')
 			/**
 			 * writeHTMLCell
 			 *
-			 * @param unknown_type $w			Width
-			 * @param unknown_type $h			Height
-			 * @param unknown_type $x			X
-			 * @param unknown_type $y			Y
-			 * @param unknown_type $html		Html
-			 * @param unknown_type $border		Border
-			 * @param unknown_type $ln			Ln
-			 * @param unknown_type $fill		Fill
-			 * @param unknown_type $reseth		Reseth
-			 * @param unknown_type $align		Align
-			 * @param unknown_type $autopadding	Autopadding
-			 * @return void
+			 * @param	int		$w				Width
+			 * @param 	int		$h				Height
+			 * @param 	int		$x				X
+			 * @param 	int		$y				Y
+			 * @param 	string	$html			Html
+			 * @param 	int		$border			Border
+			 * @param 	int		$ln				Ln
+			 * @param 	boolean	$fill			Fill
+			 * @param 	boolean	$reseth			Reseth
+			 * @param 	string	$align			Align
+			 * @param 	boolean	$autopadding	Autopadding
+			 * @return 	void
 			 */
 			public function writeHTMLCell($w, $h, $x, $y, $html = '', $border = 0, $ln = 0, $fill = false, $reseth = true, $align = '', $autopadding = true)
 			{

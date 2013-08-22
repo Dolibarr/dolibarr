@@ -19,7 +19,7 @@
  */
 
 /**
- *	\file       htdocs/core/modules/project/doc/doc_generic_project_odt.modules.php
+ *	\file       htdocs/core/modules/project/pdf/doc_generic_project_odt.modules.php
  *	\ingroup    project
  *	\brief      File of class to build ODT documents for third parties
  */

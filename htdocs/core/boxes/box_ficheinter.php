@@ -16,16 +16,16 @@
 */
 
 /**
- * 		\file       htdocs/core/boxes/box_intervention.php
+ * 		\file       htdocs/core/boxes/box_ficheinter.php
  * 		\ingroup    ficheinter
- * 		\brief      Module de generation de l'affichage de la box ficheinter
+ * 		\brief      Box to show last interventions
  */
 
 include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
 
 
 /**
- * Class to manage the box to show last contracts
+ * Class to manage the box to show last interventions
  */
 class box_ficheinter extends ModeleBoxes
 {
