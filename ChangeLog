@@ -3,6 +3,9 @@ English Dolibarr ChangeLog
 --------------------------------------------------------------
 
 ***** ChangeLog for 3.4.1 compared to 3.4.0 *****
+Fix: Display buying price on line edit when no supplier price is defined
+Fix: Retrieving of margin info when invoice created automatically from order
+Fix: Reordering supplier products in list by supplier or supplier ref was crashing
 Fix: [ bug #1029 ] Tulip numbering mask
 Fix: Supplier invoice and supplier order are not displayed into object link into agenda event card
 Fix: [ bug #1033 ] SUPPLIER REF disappeared
