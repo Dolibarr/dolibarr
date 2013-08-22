@@ -168,7 +168,8 @@ class MenuManager
         				print str_pad('',1).'<li data-role="list-divider" class="lilevel1 ui-btn-icon-right ui-btn">';	 // ui-btn to highlight on clic
         				print '<a href="'.$relurl.'">';
         				print str_pad('',12,'&nbsp;');
-        				print $langs->trans(ucfirst($val['mainmenu'])."Dashboard");
+        				if ($langs->trans(ucfirst($val['mainmenu'])."Dashboard") == ucfirst($val['mainmenu'])."Dashboard") print $langs->trans("Access");	// No translation
+        				else print $langs->trans(ucfirst($val['mainmenu'])."Dashboard");
         				print '</a>';
         				print '</li>'."\n";
         			}
