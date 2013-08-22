@@ -340,7 +340,7 @@ if ($result)
     {
         $obj = $db->fetch_object($result);
        
-	if ($obj->statut == 0)
+	if ($obj->statut == 1)
         {
 			$var=!$var;
         print "<tr ".$bc[$var].">";

@@ -991,7 +991,7 @@ class Form
                     $contactstatic->id=$obj->rowid;
                     $contactstatic->lastname=$obj->lastname;
                     $contactstatic->firstname=$obj->firstname;
-					if ($obj->statut == 0){
+					if ($obj->statut == 1){
                     if ($htmlname != 'none')
                     {
                         $disabled=0;
