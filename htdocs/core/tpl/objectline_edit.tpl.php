@@ -144,7 +144,7 @@ if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
 					echo '<td align="right"><input type="text" size="2" name="marginRate" value="'.$margin_rate.'">%</td>';
 					$coldisplay++;
 				  }
-				if (! empty($conf->global->DISPLAY_MARK_RATES))
+				elseif (! empty($conf->global->DISPLAY_MARK_RATES))
 				  {
 				    $mark_rate = (isset($_POST["markRate"])?$_POST["markRate"]:price($line->marque_tx));
 					echo '<td align="right"><input type="text" size="2" name="markRate" value="'.$mark_rate.'">%</td>';
