@@ -2371,7 +2371,7 @@ else
 				{
 					if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->commande->order_advance->send))
 					{
-						print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=presend&amp;mode=init">'.$langs->trans('SendByMail').'</a></div>';
+						print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=presend&amp;mode=init#mail">'.$langs->trans('SendByMail').'</a></div>';
 					}
 					else print '<div class="inline-block divButAction"><a class="butActionRefused" href="#">'.$langs->trans('SendByMail').'</a></div>';
 				}
@@ -2617,6 +2617,7 @@ else
 			}
 
 			// Show form
+			print '<a name="mail"></a>'; // ancre pour retourner sur la ligne
 			$formmail->show_form();
 
 			print '<br>';
