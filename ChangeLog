@@ -10,6 +10,7 @@ Fix: update extrafield do not display immediatly after update
 Fix: Fix bug with canvas thirdparty
 Fix: [ bug #1037 ] Consumption> Supplier invoices related
 Fix: User group name do not display in card (view or edit mode)
+Fix: Link "Show all supplier invoice" on suplier card not working 
 
 
 ***** ChangeLog for 3.4 compared to 3.3.* *****
