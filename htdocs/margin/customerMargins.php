@@ -178,7 +178,7 @@ if (isset($conf->global->ForceBuyingPriceIfNull) && $conf->global->ForceBuyingPr
 if ($client)
   $sql.= " GROUP BY f.rowid";
 else
-  $sql.= " GROUP BY s.rowid, s.nom, s.code_client, s.client, f.facnumber, f.total, f.datef, f.paye, f.fk_statut, f.rowid ";
+  $sql.= " GROUP BY s.rowid";
 $sql.= " ORDER BY $sortfield $sortorder ";
 // TODO: calculate total to display then restore pagination
 //$sql.= $db->plimit($conf->liste_limit +1, $offset);
@@ -293,7 +293,7 @@ $db->close();
 <script type="text/javascript">
 $(document).ready(function() {
 
-  $("div.fiche form input.button['type=submit']").hide();
+  $("div.fiche form input.button[type=submit]").hide();
 
   $("#socid").change(function() {
      $("div.fiche form").submit();
