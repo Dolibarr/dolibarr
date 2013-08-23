@@ -160,7 +160,7 @@ if (isset($conf->global->ForceBuyingPriceIfNull) && $conf->global->ForceBuyingPr
 if ($agentid > 0)
   $sql.= " GROUP BY s.rowid";
 else
-  $sql.= " GROUP BY u.rowid, s.nom, s.rowid, s.code_client, s.client, u.login, u.lastname, u.firstname, f.type ";
+  $sql.= " GROUP BY u.rowid";
 $sql.= " ORDER BY $sortfield $sortorder ";
 // TODO: calculate total to display then restore pagination
 //$sql.= $db->plimit($conf->liste_limit +1, $offset);
