@@ -41,17 +41,31 @@ if (! empty($conf->margin->enabled)) {
 ?>
 	<td align="right"><?php echo $langs->trans('BuyingPrice'); ?></td>
 <?php
-  if (! empty($conf->global->DISPLAY_MARGIN_RATES)) {
-  	$colspan++;
-  	$colspan2++;
-  }
-  if (! empty($conf->global->DISPLAY_MARK_RATES)) {
-  	$colspan++;
-  	$colspan2++;
-  }
-  if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
-  	$colspan2++;
-  }
+	if ($user->rights->margins->creer)
+	{
+		if(! empty($conf->global->DISPLAY_MARGIN_RATES))
+		{
+			echo '<td align="right">'.$langs->trans('MarginRate').'</td>';
+		}
+		if(! empty($conf->global->DISPLAY_MARK_RATES))
+		{
+			echo '<td align="right">'.$langs->trans('MarkRate').'</td>';
+		}
+	}
+	else
+	{
+		if (! empty($conf->global->DISPLAY_MARGIN_RATES)) {
+			$colspan++;
+   			$colspan2++;
+		}
+		if (! empty($conf->global->DISPLAY_MARK_RATES)) {
+			$colspan++;
+   			$colspan2++;
+		}
+	}
+	if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
+		$colspan2++;
+  	}
 }
 ?>
 	<td colspan="<?php echo $colspan; ?>">&nbsp;</td>
@@ -164,21 +178,35 @@ if (! empty($conf->margin->enabled)) {
 		<input type="text" size="1" value="<?php echo $buyer->remise_percent; ?>" id="remise_percent" name="remise_percent">%
 		<input type="hidden" id="origin_remise_percent" name="origin_remise_percent" value="<?php echo $buyer->remise_percent; ?>" />
 	</td>
-<?php
-$colspan = 4;
-if (! empty($conf->margin->enabled)) {
-?>
-	<td align="right">
-		<select id="fournprice" name="fournprice" style="display: none;"></select>
-		<input type="text" size="5" id="buying_price" name="buying_price" value="<?php echo (GETPOST('buying_price')?GETPOST('buying_price'):''); ?>">
-	</td>
-<?php
-  if (! empty($conf->global->DISPLAY_MARGIN_RATES))
-  	$colspan++;
-  if (! empty($conf->global->DISPLAY_MARK_RATES))
-  	$colspan++;
-}
-?>
+	<?php
+	$colspan = 4;
+	if (! empty($conf->margin->enabled)) {
+	?>
+		<td align="right">
+			<select id="fournprice" name="fournprice" style="display: none;"></select>
+			<input type="text" size="5" id="buying_price" name="buying_price" value="<?php echo (GETPOST('buying_price')?GETPOST('buying_price'):''); ?>">
+		</td>
+			<?php
+			if ($user->rights->margins->creer)
+			{
+				if (! empty($conf->global->DISPLAY_MARGIN_RATES)) {
+					echo '<td align="right"><input type="text" size="2" name="np_marginRate" value="'.(isset($_POST["np_marginRate"])?$_POST["np_marginRate"]:'').'">%</td>';
+				}
+				elseif (! empty($conf->global->DISPLAY_MARK_RATES)) {
+					echo '<td align="right"><input type="text" size="2" name="np_markRate" value="'.(isset($_POST["np_markRate"])?$_POST["np_markRate"]:'').'">%</td>';
+				}
+			}
+			else
+			{
+				if (! empty($conf->global->DISPLAY_MARGIN_RATES)) {
+					$colspan++;
+				}
+				if (! empty($conf->global->DISPLAY_MARK_RATES)) {
+					$colspan++;
+				}
+			}
+	}
+	?>
 	<td align="center" valign="middle" colspan="<?php echo $colspan; ?>"><input type="submit" class="button"  id="addlinebutton" name="addline" value="<?php echo $langs->trans('Add'); ?>"></td>
 </tr>
 
@@ -188,12 +216,7 @@ if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER))
 	$colspan = 12;
 else
 	$colspan = 11;
-if (! empty($conf->margin->enabled)) {
-	if (! empty($conf->global->DISPLAY_MARGIN_RATES))
-		$colspan++;
-	if (! empty($conf->global->DISPLAY_MARK_RATES))
-		$colspan++;
-}
+
 ?>
 <tr id="service_duration_area" <?php echo $bcnd[$var]; ?>>
 	<td colspan="<?php echo $colspan; ?>">
@@ -491,11 +514,7 @@ $(document).ready(function() {
 	});
 	<?php } ?>
 
-});
-</script>
-
 <?php if (! empty($conf->margin->enabled)) { ?>
-<script type="text/javascript">
 $("#idprod").change(function() {
 	$("#fournprice").empty();
 	$("#buying_price").show();
@@ -536,6 +555,99 @@ $("#idprod").change(function() {
 		$('#buying_price').val('');
     }
 });
-</script>
+	var npRate = null;
+<?php
+			if (! empty($conf->global->DISPLAY_MARGIN_RATES)) { ?>
+				npRate = "np_marginRate";
+			<?php }
+			elseif (! empty($conf->global->DISPLAY_MARK_RATES)) { ?>
+				npRate = "np_markRate";
+			<?php }
+?>
+
+$("form#addproduct").submit(function(e) {
+	if (npRate) return checkFreeLine(e, npRate);
+	else return true;
+});
+if (npRate == 'np_marginRate') {
+	$("input[name='np_marginRate']:first").blur(function(e) {
+		return checkFreeLine(e, npRate);
+	});
+}
+else {
+	if (npRate == 'np_markRate') {
+		$("input[name='np_markRate']:first").blur(function(e) {
+			return checkFreeLine(e, npRate);
+		});
+	}
+}
+
+function checkFreeLine(e, npRate)
+{
+	var buying_price = $("input[name='buying_price']:first");
+	var remise = $("input[name='remise_percent']:first");
+
+	var rate = $("input[name='"+npRate+"']:first");
+	if (rate.val() == '')
+		return true;
+	if (! $.isNumeric(rate.val().replace(',','.')))
+	{
+		alert('<?php echo $langs->trans("rateMustBeNumeric"); ?>');
+		e.stopPropagation();
+		setTimeout(function () { rate.focus() }, 50);
+		return false;
+	}
+	if (npRate == "np_markRate" && rate.val() >= 100)
+	{
+		alert('<?php echo $langs->trans("markRateShouldBeLesserThan100"); ?>');
+		e.stopPropagation();
+		setTimeout(function () { rate.focus() }, 50);
+		return false;
+	}
+
+	var np_price = 0;
+	if (remise.val().replace(',','.') != 100)
+	{
+		if (npRate == "np_marginRate")
+			np_price = ((buying_price.val().replace(',','.') * (1 + rate.val().replace(',','.') / 100)) / (1 - remise.val().replace(',','.') / 100));
+		else {
+			if (npRate == "np_markRate")
+				np_price = ((buying_price.val().replace(',','.') / (1 - rate.val().replace(',','.') / 100)) / (1 - remise.val().replace(',','.') / 100));
+		}
+	}
+	$("input[name='price_ht']:first").val(formatFloat(np_price));
+	update_price('price_ht', 'price_ttc');
+
+	return true;
+}
+function roundFloat(num) {
+	var main_max_dec_shown = <?php echo $conf->global->MAIN_MAX_DECIMALS_SHOWN; ?>;
+	var main_rounding = <?php echo min($conf->global->MAIN_MAX_DECIMALS_UNIT,$conf->global->MAIN_MAX_DECIMALS_TOT); ?>;
+
+    var amount = num.toString().replace(',','.');	// should be useless
+	var nbdec = 0;
+	var rounding = main_rounding;
+	var pos = amount.indexOf('.');
+	var decpart = '';
+	if (pos >= 0)
+	    decpart = amount.substr(pos+1).replace('/0+$/i','');	// Supprime les 0 de fin de partie decimale
+	nbdec = decpart.length;
+	if (nbdec > rounding)
+	    rounding = nbdec;
+    // Si on depasse max
+    if (rounding > main_max_dec_shown)
+    {
+        rounding = main_max_dec_shown;
+    }
+  	//amount = parseFloat(amount) + (1 / Math.pow(100, rounding));  // to avoid floating-point errors
+	return parseFloat(amount).toFixed(rounding);
+}
+
+function formatFloat(num) {
+	return roundFloat(num).replace('.', ',');
+}
 <?php } ?>
+});
+</script>
+
 <!-- END PHP TEMPLATE objectline_add.tpl.php -->
