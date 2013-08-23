@@ -755,7 +755,7 @@ class Export
 		global $conf, $langs;
 
 		$sql = "SELECT em.rowid, em.field, em.label, em.type, em.filter";
-		$sql.= " FROM ".MAIN_DB_PREFIX."export_model";
+		$sql.= " FROM ".MAIN_DB_PREFIX."export_model as em";
 		$sql.= " ORDER BY rowid";
 
 		$result = $this->db->query($sql);
