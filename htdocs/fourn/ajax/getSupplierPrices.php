@@ -115,8 +115,8 @@ if (! empty($idprod))
 			$db->free($result);
 		}
 	}
-
-	echo json_encode($prices);
 }
+
+echo json_encode($prices);
 
 ?>
