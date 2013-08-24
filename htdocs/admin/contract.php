@@ -330,7 +330,7 @@ print '</table><br>';
  *  Documents models for Contracts
  */
 
-print_titre($langs->trans("TemplatePDFInterventions"));
+print_titre($langs->trans("TemplatePDFContracts"));
 
 // Defini tableau def des modeles
 $type='contrat';
@@ -439,7 +439,7 @@ foreach ($dirmodels as $reldir)
 		    		print '</td>';
 		    		
 		    		// Preview
-		    		$link='<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"),'contrat').'</a>';
+		    		$link='<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"),'contract').'</a>';
 		    		print '<td align="center">';
 		    		print $link;
 		    		print '</td>';
