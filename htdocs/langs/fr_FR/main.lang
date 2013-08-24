@@ -651,6 +651,9 @@ Element=Élément
 NoPhotoYet=Pas de photo disponible pour l'instant
 HomeDashboard=Synthèse accueil
 Deductible=Déductible
+from=de
+toward=vers
+Access=Accès
 
 # Week day
 Monday=Lundi
