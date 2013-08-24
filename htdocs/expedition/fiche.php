@@ -919,10 +919,9 @@ else
 
 		dol_htmloutput_mesg($mesg);
 
-
 		/*
 		 * Confirmation de la suppression
-		 */
+		*/
 		if ($action == 'delete')
 		{
 			$ret=$form->form_confirm($_SERVER['PHP_SELF'].'?id='.$object->id,$langs->trans('DeleteSending'),$langs->trans("ConfirmDeleteSending",$object->ref),'confirm_delete','',0,1);
@@ -931,7 +930,7 @@ else
 
 		/*
 		 * Confirmation de la validation
-		 */
+		*/
 		if ($action == 'valid')
 		{
 			$objectref = substr($object->ref, 1, 4);
@@ -959,7 +958,7 @@ else
 		}
 		/*
 		 * Confirmation de l'annulation
-		 */
+		*/
 		if ($action == 'annuler')
 		{
 			$ret=$form->form_confirm($_SERVER['PHP_SELF'].'?id='.$object->id,$langs->trans('CancelSending'),$langs->trans("ConfirmCancelSending",$object->ref),'confirm_cancel','',0,1);
@@ -1328,10 +1327,9 @@ else
 
 	$object->fetchObjectLinked($object->id,$object->element);
 
-
 	/*
 	 *    Boutons actions
-	 */
+	*/
 
 	if (($user->societe_id == 0) && ($action!='presend'))
 	{
@@ -1404,7 +1402,7 @@ else
 
 	/*
 	 * Documents generated
-	 */
+	*/
 	if ($action != 'presend')
 	{
 		print '<table width="100%"><tr><td width="50%" valign="top">';
@@ -1421,7 +1419,7 @@ else
 
 		/*
 		 * Linked object block
-		 */
+		*/
 		$somethingshown=$object->showLinkedObjectBlock();
 
 		if ($genallowed && ! $somethingshown) $somethingshown=1;
@@ -1438,7 +1436,7 @@ else
 
 	/*
 	 * Action presend
-	 */
+	*/
 	if ($action == 'presend')
 	{
 		$ref = dol_sanitizeFileName($object->ref);
@@ -1558,5 +1556,6 @@ else
 
 
 llxFooter();
+
 $db->close();
 ?>

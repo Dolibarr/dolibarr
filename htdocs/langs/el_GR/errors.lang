@@ -2,12 +2,12 @@
 CHARSET=UTF-8
 
 # No errors
-NoErrorCommitIsDone==
+NoErrorCommitIsDone=Κανένα σφάλμα
 
 # Errors
 Error=Σφάλμα
 Errors=Λάθη
-ErrorButCommitIsDone==
+ErrorButCommitIsDone=Σφάλματα που διαπιστώθηκαν αλλά παρόλα αυτά επικυρώνει
 ErrorBadEMail=%s email είναι λάθος
 ErrorBadUrl=%s url είναι λάθος
 ErrorLoginAlreadyExists=Είσοδος %s υπάρχει ήδη.
@@ -25,16 +25,16 @@ ErrorThisContactIsAlreadyDefinedAsThisType=Η επαφή αυτή έχει ήδ�
 ErrorCashAccountAcceptsOnlyCashMoney=Αυτό τραπεζικός λογαριασμός είναι ένας λογαριασμός σε μετρητά, έτσι ώστε να δέχεται πληρωμές σε μετρητά τύπου μόνο.
 ErrorFromToAccountsMustDiffers=Πηγή και τους στόχους των τραπεζικών λογαριασμών πρέπει να είναι διαφορετικό.
 ErrorBadThirdPartyName=Bad αξία για τους υπηκόους τρίτων όνομα κόμματος
-ErrorProdIdIsMandatory==
-ErrorBadCustomerCodeSyntax=Bad σύνταξη για τον κωδικό πελάτη
-ErrorCustomerCodeRequired=Κωδικό πελάτη που απαιτούνται
-ErrorCustomerCodeAlreadyUsed=Κωδικό πελάτη που έχει ήδη χρησιμοποιηθεί
+ErrorProdIdIsMandatory=Το %s είναι υποχρεωτικό
+ErrorBadCustomerCodeSyntax=Λάθος σύνταξη για τον κωδικό πελάτη
+ErrorCustomerCodeRequired=Κωδικός πελάτη απαιτείτε
+ErrorCustomerCodeAlreadyUsed=Ο κωδικός πελάτη που έχει ήδη χρησιμοποιηθεί
 ErrorPrefixRequired=Απαιτείται Πρόθεμα
 ErrorUrlNotValid=Η διεύθυνση της ιστοσελίδας είναι λανθασμένη
 ErrorBadSupplierCodeSyntax=Bad σύνταξη για τον κωδικό προμηθευτή
 ErrorSupplierCodeRequired=Κωδικός προμηθευτή που απαιτούνται
 ErrorSupplierCodeAlreadyUsed=Κωδικός προμηθευτή που ήδη χρησιμοποιείται
-ErrorBadParameters=Bad παραμέτρους
+ErrorBadParameters=Λάθος παράμετρος
 ErrorBadValueForParameter=%s Λάθος τιμή για την παράμετρο λάθος %s
 ErrorBadImageFormat=Το αρχείο εικόνας δεν έχει μια μορφή που υποστηρίζεται
 ErrorBadDateFormat=«%s« Αξία έχει λάθος μορφή ημερομηνίας
@@ -124,7 +124,7 @@ ErrorFailedToValidatePasswordReset==
 ErrorToConnectToMysqlCheckInstance==
 ErrorFailedToAddContact==
 ErrorDateMustBeBeforeToday==
-# ErrorPaymentModeDefinedToWithoutSetup=A payment mode was set to type %s but setup of module Invoice was not completed to define information to show for this payment mode.
+ErrorPaymentModeDefinedToWithoutSetup=A payment mode was set to type %s but setup of module Invoice was not completed to define information to show for this payment mode.
 
 # Warnings
 WarningMandatorySetupNotComplete==

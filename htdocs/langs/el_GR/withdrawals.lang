@@ -81,9 +81,9 @@ WithdrawalFileNotCapable=Δεν είναι δυνατή η δημιουργία 
 ShowWithdraw=Εμφάνιση Ανάληψη
 IfInvoiceNeedOnWithdrawPaymentWontBeClosed=Ωστόσο, εάν τιμολόγιο δεν έχει τουλάχιστον μια πληρωμή απόσυρση ακόμη σε επεξεργασία, δεν θα πρέπει να θέσει ως payed να επιτρέπει να διαχειρίζεται την απόσυρση πριν.
 DoStandingOrdersBeforePayments=Αυτό καρτέλες σας επιτρέπει να ζητήσετε για μια πάγια εντολή. Από τη στιγμή που θα τελειώσει, μπορείτε να πληκτρολογήσετε την πληρωμή για να κλείσετε το τιμολόγιο.
-# WithdrawalFile=Withdrawal file
-# SetToStatusSent=Set to status "File Sent"
-# ThisWillAlsoAddPaymentOnInvoice=This will also create payments onto invoices and will classify them to paid
+WithdrawalFile=Απόσυρση αρχείο
+SetToStatusSent=Ρυθμίστε την κατάσταση "αποστολή αρχείου"
+ThisWillAlsoAddPaymentOnInvoice=This will also create payments onto invoices and will classify them to paid
 
 ### Notifications
 InfoCreditSubject=Η πληρωμή των πάγιων %s ώστε από την τράπεζα

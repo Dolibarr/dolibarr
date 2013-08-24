@@ -67,7 +67,7 @@ function pdf_getFormat($outputlangs='')
 }
 
 /**
- *      Return a PDF instance object. We create a FPDI instance that instanciate TCPDF.
+ *      Return a PDF instance object. We create a FPDI instance that instantiate TCPDF.
  *
  *      @param	string		$format         Array(width,height). Keep empty to use default setup.
  *      @param	string		$metric         Unit of format ('mm')

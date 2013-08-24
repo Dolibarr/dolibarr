@@ -88,10 +88,10 @@ SelectWarehouseForStockDecrease=Επιλέξτε αποθήκη που θα χρ
 SelectWarehouseForStockIncrease=Επιλέξτε αποθήκη που θα χρησιμοποιηθεί για αύξηση των αποθεμάτων
 NoStockAction==
 LastWaitingSupplierOrders==
-# DesiredStock=Desired stock
-# StockToBuy=To order
-# Replenishment=Replenishment
-# ReplenishmentOrders=Replenishment orders
-# UseVirtualStock=Use virtual stock instead of physical stock
-# RuleForStockReplenishment=Rule for stocks replenishment
-# SelectProduct=Select at least one product
+DesiredStock=Επιθυμητο απόθεμα
+StockToBuy=Για να παραγγείλετε
+Replenishment=Αναπλήρωση
+ReplenishmentOrders=Αναπλήρωση παραγγελίων
+UseVirtualStock=Χρησιμοποιήστε το εικονικό απόθεμα αντί των φυσικών αποθεμάτων
+RuleForStockReplenishment=Κανόνας για τα αποθέματα αναπλήρωσης
+SelectProduct=Επιλέξτε τουλάχιστον ένα προϊόν

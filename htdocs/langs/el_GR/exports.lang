@@ -65,7 +65,7 @@ ChooseFormatOfFileToImport=Choose file format to use as import file format by cl
 ChooseFileToImport=Upload file then click on picto %s to select file as source import file...
 SourceFileFormat=Source file format
 FieldsInSourceFile=Fields in source file
-# FieldsInTargetDatabase=Target fields in Dolibarr database (bold=mandatory)
+FieldsInTargetDatabase=Τομείς-στόχοι που Dolibarr δεδομένων (bold = υποχρεωτικό)
 Field=Field
 NoFields=No fields
 MoveField=Move field column number %s
@@ -112,20 +112,20 @@ SourceExample=Example of possible data value
 ExampleAnyRefFoundIntoElement=Κάθε σχ βρέθηκαν για <b>%s</b> στοιχείο
 ExampleAnyCodeOrIdFoundIntoDictionnary=Κάθε κωδικός (ή id) βρέθηκαν σε dictionnary <b>%s</b>
 CSVFormatDesc=<b>Comma Separated Value</b> file format (.csv).<br>This is a text file format where fields are separated by separator [ %s ]. If separator is found inside a field content, field is rounded by round character [ %s ]. Escape character to escape round character is [ %s ].
-# Excel95FormatDesc=<b>Excel</b> file format (.xls)<br>This is native Excel 95 format (BIFF5).
-# Excel2007FormatDesc=<b>Excel</b> file format (.xlsx)<br>This is native Excel 2007 format (SpreadsheetML).
-# TsvFormatDesc=<b>Tab Separated Value</b> file format (.tsv)<br>This is a text file format where fields are separated by a tabulator [tab].
-# ExportFieldAutomaticallyAdded=Field <b>%s</b> was automatically added. It will avoid you to have similar lines to be treated as duplicate records (with this field added, all lines will own their own id and will differ).
-# CsvOptions=Csv Options
+Excel95FormatDesc=<b>Excel</b> file format (.xls)<br>This is native Excel 95 format (BIFF5).
+Excel2007FormatDesc=<b>Excel</b> file format (.xlsx)<br>This is native Excel 2007 format (SpreadsheetML).
+TsvFormatDesc=<b>Tab Separated Value</b> file format (.tsv)<br>This is a text file format where fields are separated by a tabulator [tab].
+ExportFieldAutomaticallyAdded=Field <b>%s</b> was automatically added. It will avoid you to have similar lines to be treated as duplicate records (with this field added, all lines will own their own id and will differ).
+CsvOptions=Csv Επιλογές
 Separator==
-# Enclosure=Enclosure
-# SuppliersProducts=Suppliers Products
+Enclosure=Περίβλημα
+SuppliersProducts=Προϊόντα προμηθευτων
 BankCode=Κωδικός τράπεζας
 DeskCode=Κωδικός γραφείου
 BankAccountNumber=Αριθμός Λογαριασμού
 BankAccountNumberKey=Κωδ.
 ## filters
-# SelectFilterFields=If you want to filter on some values, just input values here.
-# FilterableFields=Champs Filtrables
-# FilteredFields=Filtered fields
-# FilteredFieldsValues=Value for filter
+SelectFilterFields=Αν θέλετε να φιλτράρετε ορισμένες τιμές, απλά εισάγετε τις τιμές εδώ.
+FilterableFields=Πεδία φιλτραρίσματος
+FilteredFields=Φιλτραρισμένα πεδία
+FilteredFieldsValues=Αξία φίλτρου

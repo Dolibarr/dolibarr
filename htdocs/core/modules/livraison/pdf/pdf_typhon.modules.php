@@ -729,6 +729,8 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 					$pdf->MultiCell(60, 2, $outputlangs->transnoentities("OrderDate")." : ".dol_print_date($linkedobject->date,"day",false,$outputlangs,true), 0, 'R');
 				}
 			}
+
+			$posy=$Yoff;
 		}
 
 		// Show list of linked objects

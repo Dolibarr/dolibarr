@@ -119,7 +119,7 @@ CurrentHour=PHP server hour
 CompanyTZ=Time Zone company (main company)
 CompanyHour=Hour company (main company)
 CurrentSessionTimeOut=Current session timeout
-# YouCanEditPHPTZ=To set a different PHP timezone (not required), you can try to add a file .htacces with a line like this "SetEnv TZ Europe/Paris"
+YouCanEditPHPTZ=Για να ορίσετε μια διαφορετική ζώνη ώρας της PHP (δεν απαιτείται), μπορείτε να δοκιμάσετε να προσθέσετε ένα αρχείο .htacces με μια γραμμή σαν αυτό "TZ setenv Europe / Paris"
 OSEnv=Περιβάλλον OS
 Box=Πλαίσιο
 Boxes=Πλαίσια
@@ -884,7 +884,7 @@ InfoOS==
 InfoWebServer==
 InfoDatabase==
 InfoPHP==
-# InfoPerf=Infos performances
+InfoPerf=Πληροφορίες επιδόσεων
 ListEvents==
 ListOfSecurityEvents==
 SecurityEventsPurged=Συμβάντα ασφαλείας εξαγνίζονται
@@ -956,7 +956,7 @@ MAIN_PROXY_USER=Σύνδεση για να χρησιμοποιήσετε το �
 MAIN_PROXY_PASS=Κωδικός πρόσβασης για να χρησιμοποιήσετε το διακομιστή μεσολάβησης
 DefineHereComplementaryAttributes=Ορίστε εδώ όλα τα χαρακτηριστικά, δεν είναι ήδη διαθέσιμη από προεπιλογή, και ότι θέλετε να υποστηριχθούν για %s.
 ExtraFields=Συμπληρωματικά χαρακτηριστικά
-# ExtraFieldsLines=Complementary attributes (lines)
+ExtraFieldsLines=Συμπληρωματικά χαρακτηριστικά (σειρές)
 ExtraFieldsThirdParties==
 ExtraFieldsContacts==
 ExtraFieldsMember==
@@ -981,16 +981,16 @@ YesInSummer==
 OnlyFollowingModulesAreOpenedToExternalUsers==
 SuhosinSessionEncrypt==
 ConditionIsCurrently==
-# TestNotPossibleWithCurrentBrowsers=Automatic detection not possible
-# YouUseBestDriver=You use driver %s that is best driver available currently.
-# YouDoNotUseBestDriver=You use drive %s but driver %s is recommanded.
-# NbOfProductIsLowerThanNoPb=You have only %s products/services into database. This does not required any particular optimization.
-# SearchOptim=Search optimization
-# YouHaveXProductUseSearchOptim=You have %s product into database. You should add the constant PRODUCT_DONOTSEARCH_ANYWHERE to 1 into Home-Setup-Other, you limit the search to the beginning of strings making possible for database to use index and you should get an immediate response.
-# BrowserIsOK=You are using the web browser %s. This browser is ok for security and performance.
-# BrowserIsKO=You are using the web browser %s. This browser is known to be a bad choice for security, performance and reliability. We recommand you to use Firefox, Chrome, Opera or Safari.
-# XDebugInstalled=XDebug est chargé.
-# XCacheInstalled=XCache is loaded.
+TestNotPossibleWithCurrentBrowsers=Αυτόματη ανίχνευση δεν είναι δυνατή
+YouUseBestDriver=Μπορείτε να χρησιμοποιήσετε το πρόγραμμα οδήγησης %s που είναι καλύτερος οδηγός που διατίθεται σήμερα.
+YouDoNotUseBestDriver=Μπορείτε να χρησιμοποιήσετε το πρόγραμμα οδήγησης %s αλλά και του οδηγού %s συνιστάται.
+NbOfProductIsLowerThanNoPb=You have only %s products/services into database. This does not required any particular optimization.
+SearchOptim=Βελτιστοποίηση αναζήτησης
+YouHaveXProductUseSearchOptim=You have %s product into database. You should add the constant PRODUCT_DONOTSEARCH_ANYWHERE to 1 into Home-Setup-Other, you limit the search to the beginning of strings making possible for database to use index and you should get an immediate response.
+BrowserIsOK=You are using the web browser %s. This browser is ok for security and performance.
+BrowserIsKO=You are using the web browser %s. This browser is known to be a bad choice for security, performance and reliability. We recommand you to use Firefox, Chrome, Opera or Safari.
+XDebugInstalled=Xdebug είναι φορτωμένο.
+XCacheInstalled=XCache είναι φορτωμένο.
 ##### Module password generation
 PasswordGenerationStandard==
 PasswordGenerationNone==
@@ -1238,22 +1238,22 @@ LDAPDescGroups==
 LDAPDescMembers==
 LDAPDescValues==
 ForANonAnonymousAccess==
-# PerfDolibarr=Performance setup/optimizing report
-# YouMayFindPerfAdviceHere=You will find on this page some checks or advices related to performance.
-# NotInstalled=Not installed, so your server is not slow down by this.
-# ApplicativeCache=Applicative cache
-# MemcachedNotAvailable=No applicative cache found. You can enhance performance by installing a cache server Memcached and a module able to use this cache server. More information here http://wiki.dolibarr.org/index.php/Module_MemCached_EN. Note that a lot of web hosting provider does not provide such cache server.
-# OPCodeCache=OPCode cache
-# NoOPCodeCacheFound=No OPCode cache found. May be you use another OPCode cache than XCache or eAccelerator (good), may be you don't have OPCode cache (very bad).
-# HTTPCacheStaticResources=HTTP cache for static resources (css, img, javascript)
-# FilesOfTypeCached=Files of type %s are cached by HTTP server
-# FilesOfTypeNotCached=Files of type %s are not cached by HTTP server
-# FilesOfTypeCompressed=Files of type %s are compressed by HTTP server
-# FilesOfTypeNotCompressed=Files of type %s are not compressed by HTTP server
-# CacheByServer=Cache by server
-# CacheByClient=Cache by browser
-# CompressionOfResources=Compression of HTTP responses
-# TestNotPossibleWithCurrentBrowsers=Automatic detection not possible
+PerfDolibarr=Επιδόσεις ρύθμισης/βελτιστοποίηση της αναφοράς
+YouMayFindPerfAdviceHere=Θα βρείτε σε αυτή τη σελίδα ορισμένους ελέγχους ή συμβουλές που σχετίζονται με την απόδοση.
+NotInstalled=Δεν έχει εγκατασταθεί, οπότε ο server σας δεν έχει επιβραδυνθεί από αυτό.
+ApplicativeCache=Εφαρμογή Cache
+MemcachedNotAvailable=No applicative cache found. You can enhance performance by installing a cache server Memcached and a module able to use this cache server. More information here http://wiki.dolibarr.org/index.php/Module_MemCached_EN. Note that a lot of web hosting provider does not provide such cache server.
+OPCodeCache=OPCode cache
+NoOPCodeCacheFound=No OPCode cache found. May be you use another OPCode cache than XCache or eAccelerator (good), may be you don't have OPCode cache (very bad).
+HTTPCacheStaticResources=HTTP cache for static resources (css, img, javascript)
+FilesOfTypeCached=Αρχεία τύπου %s αποθηκεύονται προσωρινά από το διακομιστή HTTP
+FilesOfTypeNotCached=Αρχεία τύπου %s δεν αποθηκεύονται προσωρινά από το διακομιστή HTTP
+FilesOfTypeCompressed=Τα αρχεία τύπου %s συμπιέζονται από το διακομιστή HTTP
+FilesOfTypeNotCompressed=Αρχεία τύπου %s δεν συμπιέζονται από το διακομιστή HTTP
+CacheByServer=Cache από τον server
+CacheByClient=Cache από τον browser
+CompressionOfResources=Συμπίεση HTTP απαντήσεων
+TestNotPossibleWithCurrentBrowsers=Αυτόματη ανίχνευση δεν είναι δυνατή
 ##### Products #####
 ProductSetup==
 ServiceSetup=Υπηρεσίες εγκατάστασης μονάδας
@@ -1455,8 +1455,8 @@ TestGeoIPResult==
 ProjectsNumberingModules==
 ProjectsSetup==
 ProjectsModelModule==
-# TasksNumberingModules=Tasks numbering module
-# TaskModelModule=Tasks reports document model
+TasksNumberingModules=Εργασίες αριθμοδότησης μονάδας
+TaskModelModule=Εργασίες υπόδειγμα εγγράφου αναφορών
 ##### ECM (GED) #####
 ECMSetup = =
 ECMAutoTree = =

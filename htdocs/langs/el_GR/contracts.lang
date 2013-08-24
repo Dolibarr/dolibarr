@@ -86,10 +86,10 @@ PaymentRenewContractId=Renew contract line (number %s)
 ExpiredSince=Expiration date
 RelatedContracts=Σχετιζόμενα συμβόλαια
 NoExpiredServices=Δεν έληξε ενεργές υπηρεσίες
-# ListOfServicesToExpireWithDuration=List of Services to expire in %s days
-# ListOfServicesToExpireWithDurationNeg=List of Services expired from more than %s days
-# ListOfServicesToExpire=List of Services to expire
-# NoteListOfYourExpiredServices=This list contains only services of contracts for third parties you are linked to as a sale representative.
+ListOfServicesToExpireWithDuration=Λίστα των Υπηρεσιών λήγει σε %s ημέρες
+ListOfServicesToExpireWithDurationNeg=Κατάλογος των υπηρεσιών έληξε από περισσότερες, από %s ημέρες
+ListOfServicesToExpire=Κατάλογος Υπηρεσιών προς λήξει
+NoteListOfYourExpiredServices=Αυτή η λίστα περιέχει μόνο τις υπηρεσίες των συμβάσεων για λογαριασμό ΠΕΛ./ΠΡΟΜ. που συνδέονται ως εκπρόσωπος πώληση.
 
 ##### Types de contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Σύμβαση πώλησης υπογραφή εκπροσώπου

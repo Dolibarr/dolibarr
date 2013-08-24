@@ -206,7 +206,7 @@ if ($object->fetch($id))
     print '<tr><td class="nowrap">'.$langs->trans('VATIntra').'</td><td colspan="3">';
     print $object->tva_intra;
     print '</td></tr>';
-	
+
 	// Conditions de reglement par defaut
 	$langs->load('bills');
 	$form = new Form($db);
@@ -396,7 +396,7 @@ if ($object->fetch($id))
 
 			    print '<tr class="liste_titre">';
     			print '<td colspan="4">';
-    			print '<table class="nobordernopadding" width="100%"><tr><td>'.$langs->trans('LastSuppliersBills',($num<=$MAXLIST?"":$MAXLIST)).'</td><td align="right"><a href="facture/index.php?socid='.$object->id.'">'.$langs->trans('AllBills').' ('.$num.')</td>';
+    			print '<table class="nobordernopadding" width="100%"><tr><td>'.$langs->trans('LastSuppliersBills',($num<=$MAXLIST?"":$MAXLIST)).'</td><td align="right"><a href="'.DOL_URL_ROOT.'/fourn/facture/list.php?socid='.$object->id.'">'.$langs->trans('AllBills').' ('.$num.')</td>';
                 print '<td width="20px" align="right"><a href="'.DOL_URL_ROOT.'/compta/facture/stats/index.php?mode=supplier&socid='.$object->id.'">'.img_picto($langs->trans("Statistics"),'stats').'</a></td>';
     			print '</tr></table>';
     			print '</td></tr>';

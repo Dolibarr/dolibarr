@@ -94,7 +94,7 @@ ConfirmCloneProject==
 ProjectReportDate==
 ErrorShiftTaskDate==
 ProjectsAndTasksLines==
-# ProjectCreatedInDolibarr=Project %s created
+ProjectCreatedInDolibarr=Έργο %s δημιουργήθηκε
 ##### Types de contacts #####
 TypeContact_project_internal_PROJECTLEADER=Επικεφαλής του σχεδίου
 TypeContact_project_external_PROJECTLEADER=Επικεφαλής του σχεδίου
@@ -106,6 +106,6 @@ TypeContact_project_task_internal_CONTRIBUTOR=Συνεισφέρων
 TypeContact_project_task_external_CONTRIBUTOR=Συνεισφέρων
 # Documents models
 DocumentModelBaleine=Μοντέλο έκθεση Μια πλήρης έργου (logo. ..)
-# PlannedWorkload = Planned workload
-# WorkloadOccupation= Workload affectation
-# ProjectReferers=Refering objects
+PlannedWorkload = Σχέδιο φόρτου εργασίας
+WorkloadOccupation= Επιτήδευση Φόρτου εργασίας
+ProjectReferers=Αναφορές από αντικείμενα
