@@ -25,6 +25,7 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/contract.lib.php';
 
 $langs->load("admin");
 $langs->load("errors");
@@ -90,15 +91,9 @@ print_fiche_titre($langs->trans("ContractsSetup"),$linkback,'setup');
 
 print "<br>";
 
-$h = 0;
+$head=contract_admin_prepare_head();
 
-$head[$h][0] = DOL_URL_ROOT."/admin/contract.php";
-$head[$h][1] = $langs->trans("Contracts");
-$head[$h][2] = 'Contract';
-$hselected=$h;
-$h++;
-
-dol_fiche_head($head, $hselected, $langs->trans("ModuleSetup"));
+dol_fiche_head($head, 'contract', $langs->trans("ModuleSetup"));
 
 /*
  * Contracts Numbering model
