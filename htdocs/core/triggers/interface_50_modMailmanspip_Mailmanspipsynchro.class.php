@@ -141,7 +141,7 @@ class InterfaceMailmanSpipsynchro
         {
         	dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
-        	// We add subscription if new email or new type (new type may means more mailing-list to subscribe)
+        	// We add subscription if we change category (new category may means more mailing-list to subscribe)
     		if ($object->linkto->add_to_abo() < 0)
     		{
     			$this->error=$object->linkto->error;
@@ -152,13 +152,14 @@ class InterfaceMailmanSpipsynchro
 			{
 				$return=1;
 			}
-        	
+
         	return $return;
         }
         elseif ($action == 'CATEGORY_UNLINK')
         {
         	dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
-        	
+
+        	// We remove subscription if we change category (lessw category may means less mailing-list to subscribe)
         	if ($object->unlinkoff->del_to_abo() < 0)
         	{
     			$this->error=$object->unlinkoff->error;
@@ -169,10 +170,10 @@ class InterfaceMailmanSpipsynchro
         	{
         		$return=1;
         	}
-        
+
         	return $return;
         }
-        
+
         // Members
         elseif ($action == 'MEMBER_VALIDATE' || $action == 'MEMBER_MODIFY')
         {
@@ -180,7 +181,7 @@ class InterfaceMailmanSpipsynchro
 
 			$return=0;
             // Add user into some linked tools (mailman, spip, etc...)
-			if (($object->oldcopy->email != $object->email) || ($object->oldcopy->typeid != $object->typeid))	// TODO Do del/add also if type change 
+			if (($object->oldcopy->email != $object->email) || ($object->oldcopy->typeid != $object->typeid))	// TODO Do del/add also if type change
 			{
 				if ($object->oldcopy->email != $object->email)    // If email has changed we delete mailman subscription for old email
 				{
@@ -207,7 +208,7 @@ class InterfaceMailmanSpipsynchro
 					$return=1;
 				}
 			}
-			
+
 			return $return;
         }
         elseif ($action == 'MEMBER_NEW_PASSWORD')
@@ -217,7 +218,7 @@ class InterfaceMailmanSpipsynchro
         elseif ($action == 'MEMBER_RESILIATE' || $action == 'MEMBER_DELETE')
         {
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
-			
+
             $return=0;
             // Remove from external tools (mailman, spip, etc...)
         	if ($object->del_to_abo() < 0)
