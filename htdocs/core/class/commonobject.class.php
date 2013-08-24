@@ -3169,7 +3169,7 @@ abstract class CommonObject
 		global $langs, $conf, $user;
 
     	if (! empty($user->societe_id)) return;
-    	
+
     	if (! $user->rights->margins->liretous) return;
 
 		$marginInfo = $this->getMarginInfos($force_price);
@@ -3224,4 +3224,3 @@ abstract class CommonObject
 	}
 }
 ?>
-
