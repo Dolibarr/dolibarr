@@ -951,7 +951,7 @@ class Form
         $out='';
 
         // On recherche les societes
-        $sql = "SELECT sp.rowid, sp.lastname, sp.firstname, sp.poste";
+        $sql = "SELECT sp.rowid, sp.lastname, sp.statut, sp.firstname, sp.poste";
         if ($showsoc > 0) {
         	$sql.= " , s.nom as company";
         }
@@ -991,7 +991,7 @@ class Form
                     $contactstatic->id=$obj->rowid;
                     $contactstatic->lastname=$obj->lastname;
                     $contactstatic->firstname=$obj->firstname;
-
+					if ($obj->statut == 1){
                     if ($htmlname != 'none')
                     {
                         $disabled=0;
@@ -1027,6 +1027,7 @@ class Form
                             if (($showsoc > 0) && $obj->company) $out.= ' - ('.$obj->company.')';
                         }
                     }
+				}
                     $i++;
                 }
             }
