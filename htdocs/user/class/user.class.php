@@ -96,7 +96,7 @@ class User extends CommonObject
 
 	var $users;						// To store all tree of users hierarchy
 	var $parentof;					// To store an array of all parents for all ids.
-	
+
 	var $accountancy_code;				// Accountancy code in prevision of the complete accountancy module
 
 
@@ -1457,7 +1457,6 @@ class User extends CommonObject
 
 		require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 
-		$subject = $langs->trans("SubjectNewPassword");
 		$msgishtml=0;
 
 		// Define $msg
@@ -1474,35 +1473,41 @@ class User extends CommonObject
 			$outputlangs=$langs;
 		}
 
+		$outputlangs->load("main");
+		$outputlangs->load("errors");
+		$outputlangs->load("users");
+		$outputlangs->load("other");
+
+		$subject = $outputlangs->trans("SubjectNewPassword");
+
 		// Define $urlwithroot
 		//$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
 		//$urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
 		$urlwithroot=DOL_MAIN_URL_ROOT;						// This is to use same domain name than current
 
-		// TODO Use outputlangs to translate messages
 		if (! $changelater)
 		{
-			$mesg.= "A request to change your Dolibarr password has been received.\n";
-			$mesg.= "This is your new keys to login:\n\n";
-			$mesg.= $langs->trans("Login")." : $this->login\n";
-			$mesg.= $langs->trans("Password")." : $password\n\n";
+			$mesg.= $outputlangs->transnoentitiesnoconv("RequestToResetPasswordReceived").".\n";
+			$mesg.= $outputlangs->transnoentitiesnoconv("NewKeyIs")." :\n\n";
+			$mesg.= $outputlangs->transnoentitiesnoconv("Login")." = ".$this->login."\n";
+			$mesg.= $outputlangs->transnoentitiesnoconv("Password")." = ".$password."\n\n";
 			$mesg.= "\n";
 			$url = $urlwithroot;
-			$mesg.= 'Click here to go to Dolibarr: '.$url."\n\n";
+			$mesg.= $outputlangs->transnoentitiesnoconv("ClickHereToGoTo", $conf->global->MAIN_APPLICATION_TITLE).': '.$url."\n\n";
 			$mesg.= "--\n";
-			$mesg.= $user->getFullName($langs);	// Username that make then sending
+			$mesg.= $user->getFullName($outputlangs);	// Username that make then sending
 		}
 		else
 		{
-			$mesg.= "A request to change your Dolibarr password has been received.\n";
-			$mesg.= "Your new key to login will be:\n\n";
-			$mesg.= $langs->trans("Login")." : $this->login\n";
-			$mesg.= $langs->trans("Password")." : $password\n\n";
+			$mesg.= $outputlangs->transnoentitiesnoconv("RequestToResetPasswordReceived")."\n";
+			$mesg.= $outputlangs->transnoentitiesnoconv("NewKeyWillBe")." :\n\n";
+			$mesg.= $outputlangs->transnoentitiesnoconv("Login")." = ".$this->login."\n";
+			$mesg.= $outputlangs->transnoentitiesnoconv("Password")." = ".$password."\n\n";
 			$mesg.= "\n";
-			$mesg.= "You must click on the folowing link to validate its change.\n";
+			$mesg.= $outputlangs->transnoentitiesnoconv("YouMustClickToChange")." :\n";
 			$url = $urlwithroot.'/user/passwordforgotten.php?action=validatenewpassword&username='.$this->login."&passwordmd5=".dol_hash($password);
 			$mesg.= $url."\n\n";
-			$mesg.= "If you didn't ask anything, just forget this email\n\n";
+			$mesg.= $outputlangs->transnoentitiesnoconv("ForgetIfNothing")."\n\n";
 			dol_syslog(get_class($this)."::send_password url=".$url);
 		}
         $mailfile = new CMailFile(
