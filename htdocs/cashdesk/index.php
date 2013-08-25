@@ -2,6 +2,7 @@
 /* Copyright (C) 2007-2008 Jeremie Ollivier    <jeremie.o@laposte.net>
  * Copyright (C) 2011	   Juanjo Menent   	   <jmenent@2byte.es>
  * Copyright (C) 2011      Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2013      masybit             <masybit@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -105,7 +106,7 @@ if (! empty($conf->stock->enabled))
 	print '<td class="label1">'.$langs->trans("Warehouse").'</td>';
 	print '<td>';
 	$disabled=0;
-	if (! empty($conf->global->CASHDESK_ID_WAREHOUSE)) $disabled=1;	// If a particular stock is defined, we disable choice
+	if (! empty($conf->global->CASHDESK_ID_WAREHOUSE) && $conf->global->CASHDESK_ID_WAREHOUSE > 0) $disabled=1;	// If a particular stock is defined, we disable choice
 	print $formproduct->selectWarehouses((GETPOST('warehouseid')?GETPOST('warehouseid'):(empty($conf->global->CASHDESK_ID_WAREHOUSE)?'ifone':$conf->global->CASHDESK_ID_WAREHOUSE)),'warehouseid','',!$disabled,$disabled);
 	//print '<input name="warehouse_id" class="texte_login" type="warehouse_id" value="" />';
 	print '</td>';
