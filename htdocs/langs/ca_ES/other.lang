@@ -173,6 +173,12 @@ StartUpload=Transferir
 CancelUpload=Cancel·lar transferència
 FileIsTooBig=L'arxiu és massa gran
 PleaseBePatient=Preguem esperi uns instants...
+RequestToResetPasswordReceived=S'ha rebut una petició de modificació de contrasenya
+NewKeyIs=Aquests són els nous identificadors per connectar
+NewKeyWillBe=Els nous identificadors per connectar-se a l'aplicació seran
+ClickHereToGoTo=Feu clic aquí per anar a %s
+YouMustClickToChange=Primer, però, ha de fer clic al següent enllaç per validar aquest canvi de contrasenya
+ForgetIfNothing=Si no ha realitzat la sol·licitud, simplement ignori aquest missatge. El seu accés es manté segur.
 ##### Calendar common #####
 AddCalendarEntry=Afegir entrada al calendari
 NewCompanyToDolibarr=Empresa %s inserida en Dolibarr
