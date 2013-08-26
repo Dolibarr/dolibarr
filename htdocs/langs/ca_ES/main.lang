@@ -649,7 +649,7 @@ LinkedToSpecificUsers=Enllaçat a un contacte d'usuari particular
 DeleteAFile=Eliminació d'arxiu
 ConfirmDeleteAFile=Confirme l'eliminació de l'arxiu
 NoResults=Cap resultat
-ModulesSystemTools=Mòduls utilitats
+ModulesSystemTools=Utilitats mòduls 
 Test=Prova
 Element=Element
 NoPhotoYet=No hi ha fotografia disponible
@@ -657,6 +657,7 @@ HomeDashboard=Resum
 Deductible=Deduïble
 from=de
 toward=cap a
+Access=Accés
 # Week day
 Monday=Dilluns
 Tuesday=Dimarts

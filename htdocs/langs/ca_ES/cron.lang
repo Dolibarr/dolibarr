@@ -87,3 +87,4 @@ CronType_method=Mètode d'una classe d'un mòdul Dolibarr
 CronType_command=Comando Shell
 CronMenu=Cron
 CronCannotLoadClass=impossible carregar la classe %s de l'objecte %s
+UseMenuModuleToolsToAddCronJobs=Anar a "Inici - Utilitats Mòduls - Llista de tasques cron" per veure i editar tasques programades.
