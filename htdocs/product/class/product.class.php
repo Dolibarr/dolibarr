@@ -585,7 +585,7 @@ class Product extends CommonObject
 
 		$error=0;
 
-		if ($user->rights->produit->supprimer)
+		if (($this->type == 0 && $user->rights->produit->supprimer) || ($this->type == 1 && $user->rights->service->supprimer))
 		{
 			$objectisused = $this->isObjectUsed($id);
 			if (empty($objectisused))
@@ -617,21 +617,10 @@ class Product extends CommonObject
         				if (! $result)
         				{
         				    $error++;
-        					$this->error = $this->db->lasterror();
+        					$this->errors[] = $this->db->lasterror();
         				    dol_syslog(get_class($this).'::delete error '.$this->error, LOG_ERR);
         				}
 				    }
-				}
-
-				// Removed extrafields
-				if ((! $error) && (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED))) // For avoid conflicts if trigger used
-				{
-					$result=$this->deleteExtraFields();
-					if ($result < 0)
-					{
-						$error++;
-						dol_syslog(get_class($this).'::delete error '.$this->error, LOG_ERR);
-					}
 				}
 
                 // Delete product
@@ -644,7 +633,7 @@ class Product extends CommonObject
        				if ( ! $resultz )
     				{
     					$error++;
-    					$this->error = $this->db->lasterror();
+    					$this->errors[] = $this->db->lasterror();
     				    dol_syslog(get_class($this).'::delete error '.$this->error, LOG_ERR);
     				}
                 }
@@ -661,7 +650,7 @@ class Product extends CommonObject
                 			$res=@dol_delete_dir_recursive($dir);
                 			if (! $res)
                 			{
-                				$this->error='ErrorFailToDeleteDir';
+                				$this->errors[] = 'ErrorFailToDeleteDir';
                 				$error++;
                 			}
                 		}
@@ -686,6 +675,11 @@ class Product extends CommonObject
 				}
 				else
 				{
+					foreach($this->errors as $errmsg)
+					{
+						dol_syslog(get_class($this)."::delete ".$errmsg, LOG_ERR);
+						$this->error.=($this->error?', '.$errmsg:$errmsg);
+					}
 					$this->db->rollback();
 					return -$error;
 				}
