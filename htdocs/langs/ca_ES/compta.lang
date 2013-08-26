@@ -155,3 +155,5 @@ InvoiceDispatched=Factures desglossades
 AccountancyDashboard=Resum financer
 ByProductsAndServices=Per productes i serveis
 RefExt=Ref. externa
+ToCreateAPredefinedInvoice=Per crear una factura recurrent, creï una factura estàndard i, sense validar, feu clic a "Convertir en recurrent".
+LinkedOrder=Enllaçar a comanda

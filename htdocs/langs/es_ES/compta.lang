@@ -155,3 +155,5 @@ InvoiceDispatched=Facturas desglosadas
 AccountancyDashboard=Resumen financiero
 ByProductsAndServices=Por productos y servicios
 RefExt=Ref. externa
+ToCreateAPredefinedInvoice=Para crear una factura predefinida, cree una factura estandard y, sin validarla, haga clic en "Convertir en recurrente".
+LinkedOrder=Enlazar a pedido
