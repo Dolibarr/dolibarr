@@ -9,3 +9,4 @@ descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Crear una factura a cliente automática
 descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Crear una factura a cliente automáticamente al cierre de un pedido de cliente
 descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Clasificar como facturado el presupuesto cuando el pedido de cliente relacionado se clasifique como pagado
 descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Clasificar como facturados los pedidos cuando la factura relacionada se clasifique como pagada
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Clasificar como facturado el pedido de cliente cuando la factura o las facturas son superiores al pedido
