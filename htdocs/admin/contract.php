@@ -190,23 +190,6 @@ else if ($action == 'set_CONTRAT_DRAFT_WATERMARK')
     }
 }
 
-elseif ($action == 'set_CONTRAT_PRINT_PRODUCTS')
-{
-	$val = GETPOST('CONTRAT_PRINT_PRODUCTS','alpha');
-	$res = dolibarr_set_const($db, "CONTRAT_PRINT_PRODUCTS",($val == 'on'),'bool',0,'',$conf->entity);
-
-	if (! $res > 0) $error++;
-
- 	if (! $error)
-    {
-        setEventMessage($langs->trans("SetupSaved"));
-    }
-    else
-    {
-        setEventMessage($langs->trans("Error"),'errors');
-    }
-}
-
 /*
  * View
  */
@@ -215,7 +198,6 @@ $dirmodels=array_merge(array('/'),(array) $conf->modules_parts['models']);
  
 llxHeader();
 
-$dir=DOL_DOCUMENT_ROOT."/core/modules/contract/";
 $form=new Form($db);
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
@@ -244,84 +226,90 @@ print "</tr>\n";
 
 clearstatcache();
 
-$dir = "../core/modules/contract/";
-$handle = opendir($dir);
-if (is_resource($handle))
+foreach ($dirmodels as $reldir)
 {
-    $var=true;
+	$dir = dol_buildpath($reldir."core/modules/contract/");
 
-    while (($file = readdir($handle))!==false)
-    {
-        if (substr($file, 0, 13) == 'mod_contract_' && substr($file, dol_strlen($file)-3, 3) == 'php')
-        {
-            $file = substr($file, 0, dol_strlen($file)-4);
+	if (is_dir($dir))
+	{
+		$handle = opendir($dir);
+		if (is_resource($handle))
+		{
+			$var=true;
 
-            require_once DOL_DOCUMENT_ROOT ."/core/modules/contract/".$file.'.php';
+			while (($file = readdir($handle))!==false)
+			{
+				if (substr($file, 0, 13) == 'mod_contract_' && substr($file, dol_strlen($file)-3, 3) == 'php')
+				{
+					$file = substr($file, 0, dol_strlen($file)-4);
 
-            $module = new $file;
+					require_once $dir.$file.'.php';
 
-            // Show modules according to features level
-            if ($module->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
-            if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
+					$module = new $file($db);
 
-            if ($module->isEnabled())
-            {
-                $var=!$var;
-                print '<tr '.$bc[$var].'><td>'.$module->nom."</td>\n";
-                print '<td>';
-                print $module->info();
-                print '</td>';
+					// Show modules according to features level
+					if ($module->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
+					if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
 
-                // Show example of numbering model
-                print '<td class="nowrap">';
-                $tmp=$module->getExample();
-                if (preg_match('/^Error/',$tmp)) { $langs->load("errors"); print '<div class="error">'.$langs->trans($tmp).'</div>'; }
-                elseif ($tmp=='NotConfigured') print $langs->trans($tmp);
-                else print $tmp;
-                print '</td>'."\n";
+					if ($module->isEnabled())
+					{
+						$var=!$var;
+						print '<tr '.$bc[$var].'><td>'.$module->nom."</td><td>\n";
+						print $module->info();
+						print '</td>';
 
-                print '<td align="center">';
-                if ($conf->global->CONTRACT_ADDON == "$file")
-                {
-                    print img_picto($langs->trans("Activated"),'switch_on');
-                }
-                else
-                {
-                    print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;value='.$file.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'">';
-                    print img_picto($langs->trans("Disabled"),'switch_off');
-                    print '</a>';
-                }
-                print '</td>';
+						// Show example of numbering model
+						print '<td class="nowrap">';
+						$tmp=$module->getExample();
+						if (preg_match('/^Error/',$tmp)) { $langs->load("errors"); print '<div class="error">'.$langs->trans($tmp).'</div>'; }
+						elseif ($tmp=='NotConfigured') print $langs->trans($tmp);
+						else print $tmp;
+						print '</td>'."\n";
 
-                $contract=new Contrat($db);
-                $contract->initAsSpecimen();
+						print '<td align="center">';
+						if ($conf->global->CONTRACT_ADDON == "$file")
+						{
+							print img_picto($langs->trans("Activated"),'switch_on');
+						}
+						else
+						{
+							print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;value='.$file.'">';
+							print img_picto($langs->trans("Disabled"),'switch_off');
+							print '</a>';
+						}
+						print '</td>';
 
-                // Info
-                $htmltooltip='';
-                $htmltooltip.=''.$langs->trans("Version").': <b>'.$module->getVersion().'</b><br>';
-                $nextval=$module->getNextValue($mysoc,$contract);
-                if ("$nextval" != $langs->trans("NotAvailable"))	// Keep " on nextval
-                {
-                    $htmltooltip.=''.$langs->trans("NextValue").': ';
-                    if ($nextval)
-                    {
-                        $htmltooltip.=$nextval.'<br>';
-                    }
-                    else
-                    {
-                        $htmltooltip.=$langs->trans($module->error).'<br>';
-                    }
-                }
+						$contract=new Contrat($db);
+						$contract->initAsSpecimen();
 
-                print '<td align="center">';
-                print $form->textwithpicto('',$htmltooltip,1,0);
-                print '</td>';
+						// Info
+						$htmltooltip='';
+						$htmltooltip.=''.$langs->trans("Version").': <b>'.$module->getVersion().'</b><br>';
+						$nextval=$module->getNextValue($mysoc,$contract);
+						if ("$nextval" != $langs->trans("NotAvailable"))	// Keep " on nextval
+						{
+							$htmltooltip.=''.$langs->trans("NextValue").': ';
+							if ($nextval)
+							{
+								$htmltooltip.=$nextval.'<br>';
+							}
+							else
+							{
+								$htmltooltip.=$langs->trans($module->error).'<br>';
+							}
+						}
 
-                print '</tr>';
-            }
-        }
-    }
-    closedir($handle);
+						print '<td align="center">';
+						print $form->textwithpicto('',$htmltooltip,1,0);
+						print '</td>';
+
+						print '</tr>';
+					}
+				}
+			}
+			closedir($handle);
+		}
+	}
 }
 
 print '</table><br>';
@@ -372,84 +360,116 @@ clearstatcache();
 $var=true;
 foreach ($dirmodels as $reldir)
 {
-	$dir = dol_buildpath($reldir."core/modules/contract/doc/");
+    foreach (array('','/doc') as $valdir)
+    {
+    	$dir = dol_buildpath($reldir."core/modules/contract".$valdir);
 
-	if (is_dir($dir))
-	{
-		$handle=opendir($dir);
-		if (is_resource($handle))
-		{
-		    while (($file = readdir($handle))!==false)
-		    {
-		    	if (substr($file, dol_strlen($file) -12) == '.modules.php' && substr($file,0,4) == 'pdf_')
-		    	{
-		    		$name = substr($file, 4, dol_strlen($file) -16);
-		    		$classname = substr($file, 0, dol_strlen($file) -12);
+        if (is_dir($dir))
+        {
+            $handle=opendir($dir);
+            if (is_resource($handle))
+            {
+                while (($file = readdir($handle))!==false)
+                {
+                    $filelist[]=$file;
+                }
+                closedir($handle);
+                arsort($filelist);
 
-		    		$var=!$var;
+                foreach($filelist as $file)
+                {
+                    if (preg_match('/\.modules\.php$/i',$file) && preg_match('/^(pdf_|doc_)/',$file))
+                    {
 
-		    		print '<tr '.$bc[$var].'><td>';
-		    		echo "$name";
-		    		print "</td><td>\n";
-		    		require_once $dir.$file;
-		    		$module = new $classname($db);
-		    		print $module->description;
-		    		print '</td>';
+                    	if (file_exists($dir.'/'.$file))
+                    	{
+                    		$name = substr($file, 4, dol_strlen($file) -16);
+	                        $classname = substr($file, 0, dol_strlen($file) -12);
 
-		    		// Active
-		    		if (in_array($name, $def))
-		    		{
-		    			print "<td align=\"center\">\n";
-		    			print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'">';
-		    			print img_picto($langs->trans("Enabled"),'switch_on');
-		    			print '</a>';
-		    			print "</td>";
-		    		}
-		    		else
-		    		{
-		    			print "<td align=\"center\">\n";
-		    			print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
-		    			print "</td>";
-		    		}
+	                        require_once $dir.'/'.$file;
+	                        $module = new $classname($db);
 
-		    		// Default
-		    		print "<td align=\"center\">";
-		    		if ($conf->global->CONTRACT_ADDON_PDF == "$name")
-		    		{
-		    			print img_picto($langs->trans("Default"),'on');
-		    		}
-		    		else
-		    		{
-		    			print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
-		    		}
-		    		print '</td>';
+	                        $modulequalified=1;
+	                        if ($module->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2) $modulequalified=0;
+	                        if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) $modulequalified=0;
 
-		    		// Info
-		    		$htmltooltip =    ''.$langs->trans("Name").': '.$module->name;
-		    		$htmltooltip.='<br>'.$langs->trans("Type").': '.($module->type?$module->type:$langs->trans("Unknown"));
-		    		$htmltooltip.='<br>'.$langs->trans("Width").'/'.$langs->trans("Height").': '.$module->page_largeur.'/'.$module->page_hauteur;
-		    		$htmltooltip.='<br><br><u>'.$langs->trans("FeaturesSupported").':</u>';
-		    		$htmltooltip.='<br>'.$langs->trans("Logo").': '.yn($module->option_logo,1,1);
-		    		$htmltooltip.='<br>'.$langs->trans("PaymentMode").': '.yn($module->option_modereg,1,1);
-		    		$htmltooltip.='<br>'.$langs->trans("PaymentConditions").': '.yn($module->option_condreg,1,1);
-		    		$htmltooltip.='<br>'.$langs->trans("MultiLanguage").': '.yn($module->option_multilang,1,1);
-		    		$htmltooltip.='<br>'.$langs->trans("WatermarkOnDraftOrders").': '.yn($module->option_draft_watermark,1,1);
-		    		print '<td align="center">';
-		    		print $form->textwithpicto('',$htmltooltip,-1,0);
-		    		print '</td>';
-		    		
-		    		// Preview
-		    		$link='<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"),'contract').'</a>';
-		    		print '<td align="center">';
-		    		print $link;
-		    		print '</td>';
+	                        if ($modulequalified)
+	                        {
+	                            $var = !$var;
+	                            print '<tr '.$bc[$var].'><td width="100">';
+	                            print (empty($module->name)?$name:$module->name);
+	                            print "</td><td>\n";
+	                            if (method_exists($module,'info')) print $module->info($langs);
+	                            else print $module->description;
+	                            print '</td>';
 
-		    		print '</tr>';
-		    	}
-		    }
-		    closedir($handle);
-		}
-	}
+	                            // Active
+	                            if (in_array($name, $def))
+	                            {
+	                            	print '<td align="center">'."\n";
+	                            	print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&value='.$name.'">';
+	                            	print img_picto($langs->trans("Enabled"),'switch_on');
+	                            	print '</a>';
+	                            	print '</td>';
+	                            }
+	                            else
+	                            {
+	                                print '<td align="center">'."\n";
+	                                print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
+	                                print "</td>";
+	                            }
+
+	                            // Defaut
+	                            print '<td align="center">';
+	                            if ($conf->global->CONTRACT_ADDON_PDF == $name)
+	                            {
+	                                print img_picto($langs->trans("Default"),'on');
+	                            }
+	                            else
+	                            {
+	                                print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
+	                            }
+	                            print '</td>';
+
+	                           // Info
+		    					$htmltooltip =    ''.$langs->trans("Name").': '.$module->name;
+					    		$htmltooltip.='<br>'.$langs->trans("Type").': '.($module->type?$module->type:$langs->trans("Unknown"));
+			                    if ($module->type == 'pdf')
+			                    {
+			                        $htmltooltip.='<br>'.$langs->trans("Width").'/'.$langs->trans("Height").': '.$module->page_largeur.'/'.$module->page_hauteur;
+			                    }
+					    		$htmltooltip.='<br><br><u>'.$langs->trans("FeaturesSupported").':</u>';
+					    		$htmltooltip.='<br>'.$langs->trans("Logo").': '.yn($module->option_logo,1,1);
+					    		$htmltooltip.='<br>'.$langs->trans("PaymentMode").': '.yn($module->option_modereg,1,1);
+					    		$htmltooltip.='<br>'.$langs->trans("PaymentConditions").': '.yn($module->option_condreg,1,1);
+					    		$htmltooltip.='<br>'.$langs->trans("MultiLanguage").': '.yn($module->option_multilang,1,1);
+					    		$htmltooltip.='<br>'.$langs->trans("WatermarkOnDraftOrders").': '.yn($module->option_draft_watermark,1,1);
+
+
+	                            print '<td align="center">';
+	                            print $form->textwithpicto('',$htmltooltip,1,0);
+	                            print '</td>';
+
+	                            // Preview
+	                            print '<td align="center">';
+	                            if ($module->type == 'pdf')
+	                            {
+	                                print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"),'contract').'</a>';
+	                            }
+	                            else
+	                            {
+	                                print img_object($langs->trans("PreviewNotAvailable"),'generic');
+	                            }
+	                            print '</td>';
+
+	                            print "</tr>\n";
+	                        }
+                    	}
+                    }
+                }
+            }
+        }
+    }
 }
 
 print '</table>';
@@ -492,24 +512,7 @@ print '<input size="50" class="flat" type="text" name="CONTRAT_DRAFT_WATERMARK" 
 print '</td><td align="right">';
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 print "</td></tr>\n";
-
-// print products on fichinter
-$var=! $var;
-print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print '<input type="hidden" name="action" value="set_CONTRAT_PRINT_PRODUCTS">';
-print '<tr '.$bc[$var].'><td>';
-print $langs->trans("PrintProductsOnContract").' ('.$langs->trans("PrintProductsOnContractDetails").')</td>';
-print '<td align="center"><input type="checkbox" name="CONTRAT_PRINT_PRODUCTS" ';
-if ($conf->global->CONTRAT_PRINT_PRODUCTS)
-	print 'checked="checked" ';
-print '/>';
-print '</td><td align="right">';
-print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
-print "</td></tr>\n";
-
 print '</form>';
-
 
 print '</table>';
 
