@@ -154,10 +154,10 @@ class ModelNumRefContracts
  *  @param  int			$hideref        Hide ref
  *  @return int         				0 if KO, 1 if OK
  */
-function contract_create($db, $object, $modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0)
+function contract_pdf_create($db, $object, $modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0)
 {
-	global $conf,$langs,$user;
-	$langs->load("contract");
+	global $conf,$langs,$user,$hookmanager;
+	$langs->load("contracts");
 
 	$error=0;
 
@@ -223,6 +223,9 @@ function contract_create($db, $object, $modele, $outputlangs, $hidedetails=0, $h
 			// We delete old preview
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 			dol_delete_preview($object);
+			
+			// Success in building document. We build meta file.
+			dol_meta_create($object);
 
 			// Appel des triggers
 			include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
