@@ -282,12 +282,7 @@ print "</table>";
 
 // BUILDING GRAPHICS
 
-$datetime = dol_now();
-$year = dol_print_date($datetime, "%Y");
-$month = dol_print_date($datetime, "%m");
-$day = dol_print_date($datetime, "%d");
-if (! empty($_GET["year"]))  $year=sprintf("%04d",$_GET["year"]);
-if (! empty($_GET["month"])) $month=sprintf("%02d",$_GET["month"]);
+$year = $year_end;
 
 $result=dol_mkdir($conf->banque->dir_temp);
 if ($result < 0)
