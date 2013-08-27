@@ -386,7 +386,7 @@ if (empty($reshook))
         {
             $result = $object->delete($object->id);
         }
-
+		 
         if ($result > 0)
         {
             header('Location: '.DOL_URL_ROOT.'/product/liste.php?delprod='.urlencode($object->ref));
