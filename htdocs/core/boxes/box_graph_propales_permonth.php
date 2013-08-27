@@ -66,8 +66,8 @@ class box_graph_propales_permonth extends ModeleBoxes
 
 		$refreshaction='refresh_'.$this->boxcode;
 
-		include_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
-		$commandestatic=new Propal($db);
+		//include_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
+		//$propalstatic=new Propal($db);
 
 		$text = $langs->trans("BoxProposalsPerMonth",$max);
 		$this->info_box_head = array(
@@ -81,7 +81,7 @@ class box_graph_propales_permonth extends ModeleBoxes
 				'target'=>'none'	// Set '' to get target="_blank"
 		);
 
-		if ($user->rights->commande->lire)
+		if ($user->rights->propal->lire)
 		{
 			$param_year='DOLUSERCOOKIE_param'.$this->boxcode.'year';
 			$param_shownb='DOLUSERCOOKIE_param'.$this->boxcode.'shownb';

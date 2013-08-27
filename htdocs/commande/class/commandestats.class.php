@@ -212,7 +212,7 @@ class CommandeStats extends Stats
     	$sql.= " AND c.date_commande BETWEEN '".$this->db->idate(dol_get_first_day($year,1,false))."' AND '".$this->db->idate(dol_get_last_day($year,12,false))."'";
 		$sql.= " GROUP BY product.ref";
         $sql.= $this->db->order('nb','DESC');
-        $sql.= $this->db->plimit(20);
+        //$sql.= $this->db->plimit(20);
 
 		return $this->_getAllByProduct($sql);
 	}

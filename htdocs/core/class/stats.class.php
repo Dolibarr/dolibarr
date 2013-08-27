@@ -537,10 +537,13 @@ abstract class Stats
 	 *	   Return number or total of product refs
 	 *
      *     @param  	string	$sql        SQL
+     *     @param	int		$limit		Limit
      *     @return	array
 	 */
-	function _getAllByProduct($sql)
+	function _getAllByProduct($sql, $limit=10)
 	{
+		global $langs;
+		
 		$result=array();
 		$res=array();
 
@@ -549,14 +552,15 @@ abstract class Stats
 		if ($resql)
 		{
 			$num = $this->db->num_rows($resql);
-			$i = 0; $j = 0;
+			$i = 0; $other=0;
 			while ($i < $num)
 			{
 		  		$row = $this->db->fetch_row($resql);
-		  		$result[$j] = array($row[0],$row[1]);	// Ref of product, nb
-		  		$j++;	
+		  		if ($i < $limit || $num == $limit) $result[$i] = array($row[0],$row[1]);	// Ref of product, nb
+		  		else $other += $row[1];
 		  		$i++;
 		  	}
+		  	if ($num > $limit) $result[$i] = array($langs->transnoentitiesnoconv("Other"),$other);
 		  	$this->db->free($resql);
 		}
         else dol_print_error($this->db);

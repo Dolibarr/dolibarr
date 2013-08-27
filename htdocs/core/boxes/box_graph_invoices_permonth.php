@@ -66,8 +66,8 @@ class box_graph_invoices_permonth extends ModeleBoxes
 
 		$refreshaction='refresh_'.$this->boxcode;
 
-		include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-		$facturestatic=new Facture($db);
+		//include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+		//$facturestatic=new Facture($db);
 
 		$text = $langs->trans("BoxCustomersInvoicesPerMonth",$max);
 		$this->info_box_head = array(

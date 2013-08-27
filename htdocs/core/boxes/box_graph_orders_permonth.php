@@ -66,8 +66,8 @@ class box_graph_orders_permonth extends ModeleBoxes
 
 		$refreshaction='refresh_'.$this->boxcode;
 
-		include_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
-		$commandestatic=new Commande($db);
+		//include_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
+		//$commandestatic=new Commande($db);
 
 		$text = $langs->trans("BoxCustomersOrdersPerMonth",$max);
 		$this->info_box_head = array(

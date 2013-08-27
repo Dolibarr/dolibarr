@@ -103,13 +103,14 @@ class box_graph_product_distribution extends ModeleBoxes
 		$paramtitle=$langs->trans("Products").'/'.$langs->trans("Services");
 		if (empty($conf->produit->enabled)) $paramtitle=$langs->trans("Services");
 		if (empty($conf->service->enabled)) $paramtitle=$langs->trans("Products");
+
+		$socid=empty($user->societe_id)?0:$user->societe_id;
+		$userid=0;	// No filter on user creation
 		
 		if ($user->rights->facture->lire)
 		{
 			include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 			
-			$mode='customer';
-			$userid=0;
 			$WIDTH=($nbofgraph >= 2 || ! empty($conf->dol_optimize_smallscreen))?'160':'320';
 			$HEIGHT='192';
 	
@@ -119,7 +120,8 @@ class box_graph_product_distribution extends ModeleBoxes
 				include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facturestats.class.php';
 				
 				$showpointvalue = 1; $nocolor = 0;
-				$stats_invoice = new FactureStats($this->db, 0, $mode, ($userid>0?$userid:0));
+				$mode='customer';
+				$stats_invoice = new FactureStats($this->db, $socid, $mode, ($userid>0?$userid:0));
 				$data1 = $stats_invoice->getAllByProductEntry($year,(GETPOST('action')==$refreshaction?-1:(3600*24)));
 				if (empty($data1)) 
 				{
@@ -134,17 +136,19 @@ class box_graph_product_distribution extends ModeleBoxes
 				$mesg = $px1->isGraphKo();
 				if (! $mesg)
 				{
+					$i=0;$tot=count($data1);$legend=array();
+					while ($i <= $tot)
+					{
+						$data1[$i][0]=dol_trunc($data1[$i][0],5);	// Required to avoid error "Could not draw pie with labels contained inside canvas"
+						$legend[]=$data1[$i][0];
+						$i++;
+					}
+					
 					$px1->SetData($data1);
 					unset($data1);
 					
 					if ($nocolor) $px1->SetDataColor(array(array(220,220,220)));
 					$px1->SetPrecisionY(0);
-					$i=0;$tot=count($data1);$legend=array();
-					while ($i <= $tot)
-					{
-						$legend[]=$data1[$i][0];
-						$i++;
-					}
 					$px1->SetLegend($legend);
 					$px1->setShowLegend(0);
 					$px1->setShowPointValue($showpointvalue);
@@ -174,7 +178,7 @@ class box_graph_product_distribution extends ModeleBoxes
 				include_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propalestats.class.php';
 				
 				$showpointvalue = 1; $nocolor = 0;
-				$stats_proposal = new PropaleStats($this->db, 0, $mode, ($userid>0?$userid:0));
+				$stats_proposal = new PropaleStats($this->db, $socid, ($userid>0?$userid:0));
 				$data2 = $stats_proposal->getAllByProductEntry($year,(GETPOST('action')==$refreshaction?-1:(3600*24)));
 				if (empty($data2)) 
 				{
@@ -190,17 +194,19 @@ class box_graph_product_distribution extends ModeleBoxes
 				$mesg = $px2->isGraphKo();
 				if (! $mesg)
 				{
+					$i=0;$tot=count($data2);$legend=array();
+					while ($i <= $tot)
+					{
+						$data2[$i][0]=dol_trunc($data2[$i][0],5);	// Required to avoid error "Could not draw pie with labels contained inside canvas"
+						$legend[]=$data2[$i][0];
+						$i++;
+					}
+					
 					$px2->SetData($data2);
 					unset($data2);
 					
 					if ($nocolor) $px2->SetDataColor(array(array(220,220,220)));
 					$px2->SetPrecisionY(0);
-					$i=0;$tot=count($data2);$legend=array();
-					while ($i <= $tot)
-					{
-						$legend[]=$data2[$i][0];
-						$i++;
-					}
 					$px2->SetLegend($legend);
 					$px2->setShowLegend(0);
 					$px2->setShowPointValue($showpointvalue);
@@ -230,7 +236,8 @@ class box_graph_product_distribution extends ModeleBoxes
 				include_once DOL_DOCUMENT_ROOT.'/commande/class/commandestats.class.php';
 				
 				$showpointvalue = 1; $nocolor = 0;
-				$stats_order = new CommandeStats($this->db, 0, $mode, ($userid>0?$userid:0));
+				$mode='customer';
+				$stats_order = new CommandeStats($this->db, $socid, $mode, ($userid>0?$userid:0));
 				$data3 = $stats_order->getAllByProductEntry($year,(GETPOST('action')==$refreshaction?-1:(3600*24)));
 				if (empty($data3)) 
 				{
@@ -246,17 +253,19 @@ class box_graph_product_distribution extends ModeleBoxes
 				$mesg = $px3->isGraphKo();
 				if (! $mesg)
 				{
+					$i=0;$tot=count($data3);$legend=array();
+					while ($i <= $tot)
+					{
+						$data3[$i][0]=dol_trunc($data3[$i][0],5);	// Required to avoid error "Could not draw pie with labels contained inside canvas"
+						$legend[]=$data3[$i][0];
+						$i++;
+					}
+					
 					$px3->SetData($data3);
 					unset($data3);
 					
 					if ($nocolor) $px3->SetDataColor(array(array(220,220,220)));
 					$px3->SetPrecisionY(0);
-					$i=0;$tot=count($data3);$legend=array();
-					while ($i <= $tot)
-					{
-						$legend[]=$data3[$i][0];
-						$i++;
-					}
 					$px3->SetLegend($legend);
 					$px3->setShowLegend(0);
 					$px3->setShowPointValue($showpointvalue);

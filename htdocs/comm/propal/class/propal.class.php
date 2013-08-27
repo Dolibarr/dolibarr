@@ -27,7 +27,7 @@
 
 /**
  *	\file       htdocs/comm/propal/class/propal.class.php
- *	\brief      Fichier de la classe des propales
+ *	\brief      File of class to manage proposals
  */
 
 require_once DOL_DOCUMENT_ROOT .'/core/class/commonobject.class.php';
@@ -36,8 +36,7 @@ require_once DOL_DOCUMENT_ROOT .'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT .'/margin/lib/margins.lib.php';
 
 /**
- *	\class      Propal
- *	\brief      Classe permettant la gestion des propales
+ *	Class to manage proposals
  */
 class Propal extends CommonObject
 {

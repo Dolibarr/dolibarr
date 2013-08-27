@@ -21,7 +21,7 @@
 /**
  *	\file       htdocs/comm/propal/class/propalestats.class.php
  *	\ingroup    propales
- *	\brief      Fichier de la classe de gestion des stats des propales
+ *	\brief      File of class to manage proposals statistics
  */
 
 include_once DOL_DOCUMENT_ROOT . '/core/class/stats.class.php';
@@ -30,7 +30,7 @@ include_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
 
 
 /**
- *	Class to manage proposal statistics
+ *	Class to manage proposals statistics
  */
 class PropaleStats extends Stats
 {
@@ -203,7 +203,7 @@ class PropaleStats extends Stats
     	$sql.= " AND p.datep BETWEEN '".$this->db->idate(dol_get_first_day($year,1,false))."' AND '".$this->db->idate(dol_get_last_day($year,12,false))."'";
 		$sql.= " GROUP BY product.ref";
         $sql.= $this->db->order('nb','DESC');
-        $sql.= $this->db->plimit(20);
+        //$sql.= $this->db->plimit(20);
 
 		return $this->_getAllByProduct($sql);
 	}	
