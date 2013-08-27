@@ -333,7 +333,12 @@ th .button {
 .nowrap {
 	white-space: <?php print ($dol_optimize_smallscreen?'normal':'nowrap'); ?>;
 }
-
+.nobold {
+	font-weight: normal !important;
+}
+.nounderline {
+    text-decoration: none;
+}
 
 .blockvmenubookmarks .menu_contenu {
 	background-color: transparent;
@@ -547,13 +552,14 @@ table.login_table .vmenu {
 
 div.login_block {
 	position:absolute;
-	top:5px;
-	right:10px;
+	top:0px;
+	right:8px;
 	z-index:100;
 	<?php if (GETPOST("optioncss") == 'print') {?>
 	display:none;
 	<?php } ?>
 }
+div.login_block_user, div.login_block_other { clear: both; }
 
 div.login_block a {color:rgba(255,255,255,.6);}
 div.login_block a:hover {color:#ffffff}
@@ -564,14 +570,24 @@ div.login_block table {
 
 div.login {
 	white-space:nowrap;
-	padding: <?php echo ($conf->dol_optimize_smallscreen?'0':'8')?>px 0px 0px 0px;
-	margin:0px 0px 0px 8px;
+	/* padding: <?php echo ($conf->dol_optimize_smallscreen?'0':'8')?>px 0px 0px 0px; */
+	/* margin:0px 0px 0px 8px; */
 	font-weight:bold;
+	float: right;
+}
+.login_block_user {
+	float: right;
+}
+.login_block_elem {
+	float: right;
+	vertical-align: top;
+	padding: 0px 0px 0px 8px !important;
+	height: 16px;
 }
 
 img.login, img.printer, img.entity {
-	padding: <?php echo ($conf->dol_optimize_smallscreen?'0':'8')?>px 0px 0px 0px;
-	margin:0px 0px 0px 8px;
+	/* padding: <?php echo ($conf->dol_optimize_smallscreen?'0':'8')?>px 0px 0px 0px; */
+	margin:2px 0px 0px 0px;
 	text-decoration:none;
 	color: white;
 	font-weight:bold;
@@ -919,7 +935,7 @@ a.help:link, a.help:visited, a.help:hover, a.help:active { font-size:<?php print
 
 div.tabs {
 	margin: 0px 0px 0px 6px;
-	padding: 0px 6px 1px 0px;
+	padding: 0px 6px 0px 0px;
 	clear:both;
 	height:100%;
 }
@@ -957,7 +973,7 @@ a.tabTitle img {
 }
 
 a.tab {
-	padding: 5px 12px 2px;
+	padding: 5px 12px 3px;
 	margin: 0em 0.2em;
 	background-color:rgba(0,0,0,.2);
 	color:#666666;
@@ -1138,9 +1154,11 @@ table.notopnoleftnoright {
 	margin:0px;
 }
 
-table.border {
-	border:1px solid #bbbbbb;
+table.border, table.dataTable, .table-border, .table-border-col, .table-key-border-col, .table-val-border-col  {
+	border:1px solid #dddddd;
 	border-collapse:collapse;
+	padding:1px 0px;
+	padding-left:2px;
 }
 
 table.border td {
@@ -1150,11 +1168,13 @@ table.border td {
 	padding-left:2px;
 }
 
-/*
-td.border {
-	border:1px solid #000000;
+.table-key-border-col {
+	width: 25%;
+	vertical-align:top;
 }
-*/
+.table-val-border-col {
+	width:auto;
+}
 
 /* Main boxes */
 
@@ -1172,9 +1192,9 @@ table.noborder, div.noborder {
 	padding:0px;
 	margin:3px 0px 8px;
 	border-spacing:0px;
-	-moz-box-shadow:2px 4px 2px #cccccc;
-	-webkit-box-shadow:2px 4px 2px #cccccc;
-	box-shadow:2px 4px 2px #cccccc;
+	-moz-box-shadow: 2px 2px 2px #cccccc;
+	-webkit-box-shadow: 2px 2px 2px #cccccc;
+	box-shadow: 2px 2px 2px #cccccc;
 }
 
 table.noborder tr, div.noborder form {}
@@ -1224,11 +1244,11 @@ table.liste {
 
 table.liste td {padding:1px 2px 1px 0px;}
 
-.tagtable { display: table; }
+.tagtable, .table-border { display: table; }
+.tagtr, .table-border-row  { display: table-row; }
+.tagtd, .table-border-col, .table-key-border-col, .table-val-border-col { display: table-cell; }
 .tagtable form { display: table-row; }
 .tagtable form div { display: table-cell; }
-.tagtr { display: table-row; }
-.tagtd { display: table-cell; }
 
 tr.liste_titre, tr.liste_titre_sel, form.liste_titre, form.liste_titre_sel
 {
@@ -1298,10 +1318,23 @@ tr.impair table.nobordernopadding td, tr.pair table.nobordernopadding td { paddi
  *  Boxes
  */
 
+.boxstats {
+    <?php print "float: ".$left.";\n"; ?>
+    margin: 4px;
+    padding: 4px;
+	/*-moz-box-shadow: 4px 4px 4px #DDD;
+    -webkit-box-shadow: 4px 4px 4px #DDD;
+    box-shadow: 4px 4px 4px #DDD;
+    margin-bottom: 8px !important;*/
+    border: 1px solid #AAA;
+    text-align: center;
+    border-radius: 5px;
+}
+
 .boxtable {
-	-moz-box-shadow:2px 4px 2px #cccccc;
-	-webkit-box-shadow:2px 4px 2px #cccccc;
-	box-shadow:2px 4px 2px #cccccc;
+	-moz-box-shadow: 2px 2px 2px #cccccc;
+	-webkit-box-shadow: 2px 2px 2px #cccccc;
+	box-shadow: 2px 2px 2px #cccccc;
 	/*white-space:nowrap;*/
 }
 
@@ -1321,9 +1354,16 @@ tr.box_pair {
 	font-family:<?php print $fontlist ?>;
 }
 
-tr.fiche {
-	font-family:<?php print $fontlist ?>;
+.formboxfilter {
+	vertical-align: middle;
+	margin-bottom: 6px;
 }
+.formboxfilter input[type=image]
+{
+	top: 5px;
+	position: relative;
+}
+
 
 /*
  *   Ok, Warning, Error
@@ -1418,30 +1458,6 @@ div.titre {
 #divsubscribe { width: 700px; }
 #tablesubscribe { width: 100%; }
 
-div.table-border {
-	display:table;
-    width: 100%;
-    border-collapse: collapse;
-    border: 1px solid #DDD;
-}
-div.table-border-row {
-	display:table-row;
-}
-div.table-key-border-col {
-	display:table-cell;
-	width: 25%;
-	vertical-align:top;
-	padding: 1px 2px 1px 1px;
-	border: 1px solid #DDD;
-	border-collapse: collapse;
-}
-div.table-val-border-col {
-	display:table-cell;
-	width:auto;
-	padding: 1px 2px 1px 1px;
-	border: 1px solid #DDD;
-	border-collapse: collapse;
-}
 
 
 /* ============================================================================== */
@@ -1523,9 +1539,9 @@ table.dp {
 	background-color:#ffffff;
 	border:1px solid #bbbbbb;
 	border-spacing:0px;
-	-moz-box-shadow:2px 4px 2px #cccccc;
-	-webkit-box-shadow:2px 4px 2px #cccccc;
-	box-shadow:2px 4px 2px #cccccc;
+	-moz-box-shadow: 2px 2px 2px #cccccc;
+	-webkit-box-shadow: 2px 2px 2px #cccccc;
+	box-shadow: 2px 2px 2px #cccccc;
 }
 
 .dp td, .tpHour td, .tpMinute td {

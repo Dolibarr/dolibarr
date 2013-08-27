@@ -158,7 +158,7 @@ for ($m = 1 ; $m < 13 ; $m++ )
 
     $var=!$var;
     print "<tr ".$bc[$var].">";
-    print '<td nowrap><a href="quadri_detail.php?leftmenu=tax_vat&month='.$m.'&year='.$y.'">'.dol_print_date(dol_mktime(0,0,0,$m,1,$y),"%b %Y").'</a></td>';
+    print '<td class="nowrap"><a href="quadri_detail.php?leftmenu=tax_vat&month='.$m.'&year='.$y.'">'.dol_print_date(dol_mktime(0,0,0,$m,1,$y),"%b %Y").'</a></td>';
 
     $x_coll = 0;
     foreach($coll_listsell as $vatrate=>$val)
@@ -166,7 +166,7 @@ for ($m = 1 ; $m < 13 ; $m++ )
         $x_coll+=$val['vat'];
     }
     $subtotalcoll = $subtotalcoll + $x_coll;
-    print "<td nowrap align=\"right\">".price($x_coll)."</td>";
+    print "<td class=\"nowrap\" align=\"right\">".price($x_coll)."</td>";
 
     $x_paye = 0;
     foreach($coll_listbuy as $vatrate=>$val)
@@ -174,13 +174,13 @@ for ($m = 1 ; $m < 13 ; $m++ )
         $x_paye+=$val['vat'];
     }
     $subtotalpaye = $subtotalpaye + $x_paye;
-    print "<td nowrap align=\"right\">".price($x_paye)."</td>";
+    print "<td class=\"nowrap\" align=\"right\">".price($x_paye)."</td>";
 
     $diff = $x_coll - $x_paye;
     $total = $total + $diff;
     $subtotal = $subtotal + $diff;
 
-    print "<td nowrap align=\"right\">".price($diff)."</td>\n";
+    print "<td class=\"nowrap\" align=\"right\">".price($diff)."</td>\n";
     print "<td>&nbsp;</td>\n";
     print "</tr>\n";
 

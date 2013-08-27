@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2006-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2010-2011 Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2010-2013 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2012      Christophe Battarel  <christophe.battarel@altairis.fr>
  * Copyright (C) 2011-2012 Philippe Grand	    <philippe.grand@atoo-net.com>
  * Copyright (C) 2012      Marcos García        <marcosgdf@gmail.com>
@@ -673,11 +673,11 @@ abstract class CommonObject
         if ($this->origin == 'shipping') $this->origin = 'expedition';
         if ($this->origin == 'delivery') $this->origin = 'livraison';
 
-        $object = $this->origin;
+        $origin = $this->origin;
 
-        $classname = ucfirst($object);
-        $this->$object = new $classname($this->db);
-        $this->$object->fetch($this->origin_id);
+        $classname = ucfirst($origin);
+        $this->$origin = new $classname($this->db);
+        $this->$origin->fetch($this->origin_id);
     }
 
     /**
@@ -736,31 +736,35 @@ abstract class CommonObject
     }
 
     /**
-     *	Update a specific field from an object
+     *	Update a specific field into database
      *
      *	@param	string	$field		Field to update
      *	@param	mixte	$value		New value
-     *	@param	string	$table		To force other table element or element line
-     *	@param	int		$id			To force other object id
-     *	@param	string	$format		Data format ('text' by default, 'date')
-     *	@param	string	$id_field	To force rowid field name
+     *	@param	string	$table		To force other table element or element line (should not be used)
+     *	@param	int		$id			To force other object id (should not be used)
+     *	@param	string	$format		Data format ('text', 'date'). 'text' is used if not defined
+     *	@param	string	$id_field	To force rowid field name. 'rowid' is used it not defined
+     *	@param	string	$user		Update last update fields also if user object provided
      *	@return	int					<0 if KO, >0 if OK
      */
-    function setValueFrom($field, $value, $table='', $id='', $format='text', $id_field='rowid')
+    function setValueFrom($field, $value, $table='', $id='', $format='', $id_field='', $user='')
     {
         global $conf;
 
-        if (empty($table)) $table=$this->table_element;
-        if (empty($id))    $id=$this->id;
+        if (empty($table)) 	$table=$this->table_element;
+        if (empty($id))    	$id=$this->id;
+		if (empty($format)) 	$format='text';
+		if (empty($id_field)) 	$id_field='rowid';
 
         $this->db->begin();
 
         $sql = "UPDATE ".MAIN_DB_PREFIX.$table." SET ";
         if ($format == 'text') $sql.= $field." = '".$this->db->escape($value)."'";
         else if ($format == 'date') $sql.= $field." = '".$this->db->idate($value)."'";
+        if (is_object($user)) $sql.=", fk_user_modif = ".$user->id;
         $sql.= " WHERE ".$id_field." = ".$id;
 
-        dol_syslog(get_class($this)."::setValueFrom sql=".$sql, LOG_DEBUG);
+        dol_syslog(get_class($this)."::".__FUNCTION__." sql=".$sql, LOG_DEBUG);
         $resql = $this->db->query($sql);
         if ($resql)
         {
@@ -912,6 +916,7 @@ abstract class CommonObject
     		// TODO uniformize field name
     		$fieldname = 'fk_mode_reglement';
     		if ($this->element == 'societe') $fieldname = 'mode_reglement';
+    		if (get_class($this) == 'Fournisseur') $fieldname = 'mode_reglement_supplier';
 
     		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
     		$sql .= ' SET '.$fieldname.' = '.$id;
@@ -951,6 +956,7 @@ abstract class CommonObject
     		// TODO uniformize field name
     		$fieldname = 'fk_cond_reglement';
     		if ($this->element == 'societe') $fieldname = 'cond_reglement';
+    		if (get_class($this) == 'Fournisseur') $fieldname = 'cond_reglement_supplier';
 
     		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
     		$sql .= ' SET '.$fieldname.' = '.$id;
@@ -1647,7 +1653,7 @@ abstract class CommonObject
 	}
 
     /**
-     *	Fetch array of objects linked to current object. Links are loaded into this->linkedObjects array.
+     *	Fetch array of objects linked to current object. Links are loaded into this->linkedObjects array and this->linkedObjectsIds
      *
      *	@param	int		$sourceid		Object source id
      *	@param  string	$sourcetype		Object source type
@@ -2223,7 +2229,14 @@ abstract class CommonObject
 				}else {
 					$colspan='3';
 				}
-				$value=(isset($_POST["options_".$key])?$_POST["options_".$key]:$this->array_options["options_".$key]);
+				switch($mode) {
+					case "view":
+						$value=$this->array_options["options_".$key];
+						break;
+					case "edit":
+						$value=(isset($_POST["options_".$key])?$_POST["options_".$key]:$this->array_options["options_".$key]);
+						break;
+				}
 				if ($extrafields->attribute_type[$key] == 'separate')
 				{
 					$out .= $extrafields->showSeparator($key);
@@ -2250,6 +2263,10 @@ abstract class CommonObject
 					{
 						$value = isset($_POST["options_".$key])?dol_mktime($_POST["options_".$key."hour"], $_POST["options_".$key."min"], 0, $_POST["options_".$key."month"], $_POST["options_".$key."day"], $_POST["options_".$key."year"]):$this->db->jdate($this->array_options['options_'.$key]);
 					}
+
+					if($extrafields->attribute_required[$key])
+						$label = '<span class="fieldrequired">'.$label.'</span>';
+
 					$out .= '<td>'.$label.'</td>';
 					$out .='<td colspan="'.$colspan.'">';
 
@@ -2271,6 +2288,35 @@ abstract class CommonObject
 			}
 			$out .= "\n";
 			$out .= '<!-- /showOptionalsInput --> ';
+			$out .= '
+				<script type="text/javascript">
+				    jQuery(document).ready(function() {
+				    	function showOptions(child_list, parent_list)
+				    	{
+				    		var val = $("select[name=\"options_"+parent_list+"\"]").val();
+				    		var parentVal = parent_list + ":" + val;
+							if(val > 0) {
+					    		$("select[name=\""+child_list+"\"] option[parent]").hide();
+					    		$("select[name=\""+child_list+"\"] option[parent=\""+parentVal+"\"]").show();
+							} else {
+								$("select[name=\""+child_list+"\"] option").show();
+							}
+				    	}
+						function setListDependencies() {
+					    	jQuery("select option[parent]").parent().each(function() {
+					    		var child_list = $(this).attr("name");
+								var parent = $(this).find("option[parent]:first").attr("parent");
+								var infos = parent.split(":");
+								var parent_list = infos[0];
+								$("select[name=\"options_"+parent_list+"\"]").change(function() {
+									showOptions(child_list, parent_list);
+								});
+					    	});
+						}
+
+						setListDependencies();
+				    });
+				</script>';
 		}
 		return $out;
 	}
@@ -2563,6 +2609,7 @@ abstract class CommonObject
     {
     	global $conf,$langs,$object,$hookmanager;
     	global $form,$bcnd,$var;
+    	global $user;
     	//Line extrafield
     	require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
     	$extrafieldsline = new ExtraFields($this->db);
@@ -2587,6 +2634,7 @@ abstract class CommonObject
     {
     	global $conf,$langs,$object,$hookmanager;
     	global $form,$bcnd,$var;
+    	global $user;
 
     	//Line extrafield
     	require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
@@ -2683,9 +2731,9 @@ abstract class CommonObject
 			else
 				print '<td align="right" width="80">'.$langs->trans('CostPrice').'</td>';
 
-			if (! empty($conf->global->DISPLAY_MARGIN_RATES))
+			if (! empty($conf->global->DISPLAY_MARGIN_RATES) && $user->rights->margins->liretous)
 				print '<td align="right" width="50">'.$langs->trans('MarginRate').'</td>';
-			if (! empty($conf->global->DISPLAY_MARK_RATES))
+			if (! empty($conf->global->DISPLAY_MARK_RATES) && $user->rights->margins->liretous)
 				print '<td align="right" width="50">'.$langs->trans('MarkRate').'</td>';
 		}
 
@@ -2746,7 +2794,7 @@ abstract class CommonObject
 	 *	@param  string	    $seller            	Object of seller third party
 	 *	@param  string	    $buyer             	Object of buyer third party
 	 *	@param	string		$selected		   	Object line selected
-	 *  @param  object		$extrafieldline		Object of extrafield line attribute
+	 *  @param  object		$extrafieldsline	Object of extrafield line attribute
 	 *	@return	void
 	 */
 	function printObjectLine($action,$line,$var,$num,$i,$dateSelector,$seller,$buyer,$selected=0,$extrafieldsline=0)
@@ -3013,9 +3061,10 @@ abstract class CommonObject
 
 
 	/**
+	 *	get Margin info
 	 *
-	 * @param string $force_price
-	 * @return multitype:number string NULL
+	 * 	@param 	string 	$force_price	True of not
+	 * 	@return mixed					Array with info
 	 */
 	function getMarginInfos($force_price=false) {
 		global $conf;
@@ -3120,6 +3169,8 @@ abstract class CommonObject
 		global $langs, $conf, $user;
 
     	if (! empty($user->societe_id)) return;
+
+    	if (! $user->rights->margins->liretous) return;
 
 		$marginInfo = $this->getMarginInfos($force_price);
 

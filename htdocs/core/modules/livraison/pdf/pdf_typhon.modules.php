@@ -97,8 +97,8 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 
 		// Define position of columns
 		$this->posxdesc=$this->marge_gauche+1;
-		$this->posxcomm=111;
-		//$this->posxtva=111;
+		$this->posxcomm=112;
+		//$this->posxtva=112;
 		//$this->posxup=126;
 		$this->posxqty=174;
 		//$this->posxdiscount=162;
@@ -432,6 +432,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 
 				// Pied de page
 				$this->_pagefoot($pdf,$object,$outputlangs);
+
 				if (method_exists($pdf,'AliasNbPages')) $pdf->AliasNbPages();
 
 				// Check product remaining to be delivered
@@ -537,7 +538,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 	 */
 	function _tableau_info(&$pdf, $object, $posy, $outputlangs)
 	{
-		global $conf;
+		global $conf,$mysoc;
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
 		$pdf->SetFont('','', $default_font_size);
@@ -695,6 +696,43 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 
 		$posy+=2;
 
+		// Add list of linked orders on shipment
+		if ($object->origin == 'expedition' || $object->origin == 'shipping')
+		{
+			$Yoff=$posy-5;
+
+			include_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
+			$shipment = new Expedition($this->db);
+			$shipment->fetch($object->origin_id);
+
+		    $origin 	= $shipment->origin;
+			$origin_id 	= $shipment->origin_id;
+
+		    // TODO move to external function
+			if ($conf->$origin->enabled)
+			{
+				$outputlangs->load('orders');
+
+				$classname = ucfirst($origin);
+				$linkedobject = new $classname($this->db);
+				$result=$linkedobject->fetch($origin_id);
+				if ($result >= 0)
+				{
+					$pdf->SetFont('','', $default_font_size - 2);
+					$text=$linkedobject->ref;
+					if ($linkedobject->ref_client) $text.=' ('.$linkedobject->ref_client.')';
+					$Yoff = $Yoff+8;
+					$pdf->SetXY($this->page_largeur - $this->marge_droite - 100,$Yoff);
+					$pdf->MultiCell(100, 2, $outputlangs->transnoentities("RefOrder") ." : ".$outputlangs->transnoentities($text), 0, 'R');
+					$Yoff = $Yoff+3;
+					$pdf->SetXY($this->page_largeur - $this->marge_droite - 60,$Yoff);
+					$pdf->MultiCell(60, 2, $outputlangs->transnoentities("OrderDate")." : ".dol_print_date($linkedobject->date,"day",false,$outputlangs,true), 0, 'R');
+				}
+			}
+
+			$posy=$Yoff;
+		}
+
 		// Show list of linked objects
 		$posy = pdf_writeLinkedObjects($pdf, $object, $outputlangs, $posx, $posy, 100, 3, 'R', $default_font_size);
 
@@ -786,6 +824,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 			$pdf->MultiCell($widthrecbox, 4, $carac_client, 0, 'L');
 		}
 
+		$pdf->SetTextColor(0,0,60);
 	}
 
 	/**

@@ -154,7 +154,8 @@ $var=!$var;
 print '<tr '.$bc[$var].'><td width="300">&nbsp; => price(1234.56)</td><td>'.price(1234.56).'</td></tr>'."\n";
 // Timezone
 $txt =$langs->trans("OSTZ").' (variable system TZ): '.(! empty($_ENV["TZ"])?$_ENV["TZ"]:$langs->trans("NotDefined")).'<br>'."\n";
-$txt.=$langs->trans("PHPTZ").' (php.ini date.timezone): '.(ini_get("date.timezone")?ini_get("date.timezone"):$langs->trans("NotDefined")).''."\n"; // date.timezone must be in valued defined in http://fr3.php.net/manual/en/timezones.europe.php
+$txt.=$langs->trans("PHPTZ").' (php.ini date.timezone): '.(ini_get("date.timezone")?ini_get("date.timezone"):$langs->trans("NotDefined")).''."<br>\n"; // date.timezone must be in valued defined in http://fr3.php.net/manual/en/timezones.europe.php
+$txt.=$langs->trans("YouCanEditPHPTZ");
 $var=!$var;
 print '<tr '.$bc[$var].'><td width="300">'.$langs->trans("CurrentTimeZone").'</td><td>';	// Timezone server PHP
 $a=getServerTimeZoneInt('now');
@@ -301,7 +302,6 @@ foreach($configfileparameters as $key => $value)
 			print "<td>";
 			if ($newkey == 'dolibarr_main_db_pass') print preg_replace('/./i','*',${$newkey});
 			else if ($newkey == 'dolibarr_main_url_root' && preg_match('/__auto__/',${$newkey})) print ${$newkey}.' => '.constant('DOL_MAIN_URL_ROOT');
-			else if ($newkey == 'dolibarr_main_url_root_alt' && preg_match('/__auto__/',${$newkey})) print ${$newkey}.' => '.constant('DOL_MAIN_URL_ROOT_ALT');
 			else print ${$newkey};
 			if ($newkey == 'dolibarr_main_url_root' && $newkey != DOL_MAIN_URL_ROOT) print ' (currently overwritten by autodetected value: '.DOL_MAIN_URL_ROOT.')';
 			print "</td>";

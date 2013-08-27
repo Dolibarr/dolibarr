@@ -38,3 +38,4 @@ AddSupplierOrder=Создать поставщиком порядка
 AddSupplierInvoice=Создать поставщику счет-фактуру
 ListOfSupplierProductForSupplier=Перечень продукции и цен для <b>поставщиков %s</b>
 NoneOrBatchFileNeverRan=Ни одна партия <b>или% не</b> побежал в последнее время
+# SentToSuppliers=Sent to suppliers

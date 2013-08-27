@@ -50,7 +50,7 @@ class Livraison extends CommonObject
 	var $socid;
 	var $ref_customer;
 	var $statut;
-	
+
 	var $note_public;
 	var $note_private;
 
@@ -59,6 +59,7 @@ class Livraison extends CommonObject
 	var $date_delivery;    // Date really received
 	var $date_creation;
 	var $date_valid;
+	var $model_pdf;
 
 
 	/**
@@ -90,6 +91,8 @@ class Livraison extends CommonObject
 
 		dol_syslog("Livraison::create");
 
+		if (empty($this->model_pdf)) $this->model_pdf=$conf->global->LIVRAISON_ADDON_PDF;
+
 		$error = 0;
 
         $now=dol_now();
@@ -112,6 +115,7 @@ class Livraison extends CommonObject
 		$sql.= ", fk_address";
 		$sql.= ", note_private";
 		$sql.= ", note_public";
+		$sql.= ", model_pdf";
 		$sql.= ") VALUES (";
 		$sql.= "'(PROV)'";
 		$sql.= ", ".$conf->entity;
@@ -123,6 +127,7 @@ class Livraison extends CommonObject
 		$sql.= ", ".($this->fk_delivery_address > 0 ? $this->fk_delivery_address : "null");
 		$sql.= ", ".(!empty($this->note_private)?"'".$this->db->escape($this->note_private)."'":"null");
 		$sql.= ", ".(!empty($this->note_public)?"'".$this->db->escape($this->note_public)."'":"null");
+		$sql.= ", ".(!empty($this->model_pdf)?"'".$this->db->escape($this->model_pdf)."'":"null");
 		$sql.= ")";
 
 		dol_syslog("Livraison::create sql=".$sql, LOG_DEBUG);
@@ -894,6 +899,41 @@ class Livraison extends CommonObject
 			$this->error=$this->db->error()." - sql=$sqlSourceLine";
 			dol_syslog(get_class($this)."::getRemainingDelivered ".$this->error, LOG_ERR);
 			return -1;
+		}
+	}
+
+	/**
+	 *	Set the planned delivery date
+	 *
+	 *	@param      User			$user        		Objet utilisateur qui modifie
+	 *	@param      timestamp		$date_livraison     Date de livraison
+	 *	@return     int         						<0 if KO, >0 if OK
+	 */
+	function set_date_livraison($user, $date_livraison)
+	{
+		if ($user->rights->expedition->creer)
+		{
+			$sql = "UPDATE ".MAIN_DB_PREFIX."livraison";
+			$sql.= " SET date_delivery = ".($date_livraison ? "'".$this->db->idate($date_livraison)."'" : 'null');
+			$sql.= " WHERE rowid = ".$this->id;
+
+			dol_syslog(get_class($this)."::set_date_livraison sql=".$sql,LOG_DEBUG);
+			$resql=$this->db->query($sql);
+			if ($resql)
+			{
+				$this->date_delivery = $date_livraison;
+				return 1;
+			}
+			else
+			{
+				$this->error=$this->db->error();
+				dol_syslog(get_class($this)."::set_date_livraison ".$this->error,LOG_ERR);
+				return -1;
+			}
+		}
+		else
+		{
+			return -2;
 		}
 	}
 

@@ -20,7 +20,7 @@
  */
 
 /**
- *	\file       htdocs/core/modules/expedition/doc/pdf_expedition_merou.modules.php
+ *	\file       htdocs/core/modules/expedition/doc/pdf_merou.modules.php
  *	\ingroup    expedition
  *	\brief      Fichier de la classe permettant de generer les bordereaux envoi au modele Merou
  */
@@ -34,7 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 /**
  *	Classe permettant de generer les borderaux envoi au modele Merou
  */
-class pdf_expedition_merou extends ModelePdfExpedition
+class pdf_merou extends ModelePdfExpedition
 {
 	var $emetteur;	// Objet societe qui emet
 

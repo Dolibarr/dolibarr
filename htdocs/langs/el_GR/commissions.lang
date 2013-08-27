@@ -1,0 +1,35 @@
+/*  
+* Dolibarr language file - commissions
+* Language code: el_GR
+* Manually translated by technicks.eu
+*/
+CHARSET = UTF-8
+Module60000Desc = Διαχείριση προμηθειών
+commissionsSetup = Ρύθμιση διαχείρισης προμηθειών
+ProductCommissionRate = Ποσοστό προμήθειας για τα προϊόντα
+ServiceCommissionRate = Ποσοστό προμήθειας για υπηρεσίες
+ProductCommissionRateDetails = Ποσοστό προμήθειας σχετικά με τις πωλήσεις του προϊόντος
+ServiceCommissionRateDetails = Ποσοστό προμήθειας σχετικά με τις πωλήσεις υπηρεσιών
+Commissions = Προμήθειες
+CommissionDetails = Λεπτομέρειες προμηθειών
+IncludeUnpayedInvoices = Συμπερίληψη ληξιπρόθεσμων τιμολογίων
+TotalCommission = Υποσύνολο προμηθειών
+ProductMargin = Περιθώριο / προϊόντων
+ServiceMargin = Περιθώριο / υπηρεσιών
+CommissionRate = Ποσοστό προμήθειας
+ProductCommission = Προμήθεια / προϊόντων
+ServiceCommission = Προμήθεια / υπηρεσιών
+CommissionBase = Βάση προμηθειών
+CommissionBasedOnTurnover = Προμήθειες βάση τον κύκλο εργασιών
+CommissionBasedOnMargins = Προμήθειες με βάση τα περιθώρια
+CommissionBaseDetails = Ορίστε τη μέθοδο υπολογισμού για τις προμήθειες
+CommissionBasedOnMarginsDetails = Προμήθειες με βάση τα περιθώρια χρειάζεται ενεργοποίηση της μονάδας.
+TurnoverTotal = Ο συνολικός κύκλος εργασιών
+ProductTurnover = Κύκλος εργασιών προϊόντων
+ServiceTurnover = Κύκλος εργασιών υπηρεσιών
+CommercialAgent = Εμπορικός αντιπρόσωπος
+StartDate = Ημερομηνία έναρξης
+EndDate = Ημερομηνία λήξης
+Launch = Έναρξη
+AgentContactType = Τύπος επικοινωνίας που χρησιμοποιείται για την ανάθεση
+AgentContactTypeDetails = Ορίστε τι είδους επικοινωνία (που συνδέονται στα τιμολόγια) θα συνδέεται με τους εμπορικούς αντιπροσώπους

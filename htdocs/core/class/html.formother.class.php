@@ -347,18 +347,20 @@ class FormOther
      *  @param	string	$selected     	Preselected value
      *  @param  string	$htmlname      	Name of combo list (example: 'search_sale')
      *  @param  User	$user           Object user
+     *  @param	int		$showstatus		0=show user status only if status is disabled, 1=always show user status into label, -1=never show user status
      *  @return string					Html combo list code
      */
-    function select_salesrepresentatives($selected,$htmlname,$user)
+    function select_salesrepresentatives($selected,$htmlname,$user,$showstatus=0)
     {
-        global $conf;
+        global $conf,$langs;
+        $langs->load('users');
 
         // Select each sales and print them in a select input
         $moreforfilter ='<select class="flat" name="'.$htmlname.'">';
         $moreforfilter.='<option value="">&nbsp;</option>';
 
         // Get list of users allowed to be viewed
-        $sql_usr = "SELECT u.rowid, u.lastname as name, u.firstname, u.login";
+        $sql_usr = "SELECT u.rowid, u.lastname as name, u.statut, u.firstname, u.login";
         $sql_usr.= " FROM ".MAIN_DB_PREFIX."user as u";
         $sql_usr.= " WHERE u.entity IN (0,".$conf->entity.")";
         if (empty($user->rights->user->user->lire)) $sql_usr.=" AND u.fk_societe = ".($user->societe_id?$user->societe_id:0);
@@ -384,7 +386,28 @@ class FormOther
                 if ($obj_usr->rowid == $selected) $moreforfilter.=' selected="selected"';
 
                 $moreforfilter.='>';
-                $moreforfilter.=$obj_usr->firstname." ".$obj_usr->name." (".$obj_usr->login.')';
+                $moreforfilter.=dolGetFirstLastname($obj_usr->firstname,$obj_usr->name);
+                // Complete name with more info
+                $moreinfo=0;
+                if (! empty($conf->global->MAIN_SHOW_LOGIN))
+                {
+                	$out.=($moreinfo?' - ':' (').$obj->login;
+                	$moreinfo++;
+                }
+                if ($showstatus >= 0)
+                {
+					if ($obj_usr->statut == 1 && $showstatus == 1)
+					{
+						$moreforfilter.=($moreinfo?' - ':' (').$langs->trans('Enabled');
+	                	$moreinfo++;
+					}
+					if ($obj_usr->statut == 0)
+					{
+						$moreforfilter.=($moreinfo?' - ':' (').$langs->trans('Disabled');
+                		$moreinfo++;
+					}
+				}
+				$moreforfilter.=($moreinfo?')':'');
                 $moreforfilter.='</option>';
             }
             $this->db->free($resql_usr);

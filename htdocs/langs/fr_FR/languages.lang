@@ -1,4 +1,4 @@
-# Dolibarr language file - en_US - languages
+# Dolibarr language file - Source file is en_US - languages
 CHARSET=UTF-8
 
 Language_ar_AR=Arabe
@@ -16,6 +16,7 @@ Language_en_IN=Anglais (Inde)
 Language_en_NZ=Anglais (Nouvelle Zeland)
 Language_en_SA=Anglais (Arabie Saoudite)
 Language_en_US=Anglais (Etats-Unis)
+Language_en_ZA=Anglais (Afrique du Sud)
 Language_es_ES=Espagnol
 Language_es_AR=Espagnol (Argentine)
 Language_es_HN=Espagnol (Honduras)
@@ -46,6 +47,6 @@ Language_tr_TR=Turque
 Language_sl_SI=Slovène
 Language_sv_SV=Suédois
 Language_sv_SE=Suédois
+Language_vi_VN=Vietnamien
 Language_zh_CN=Chinois
 Language_zh_TW=Chinois (Traditionel)
-Language_is_IS=Islandais

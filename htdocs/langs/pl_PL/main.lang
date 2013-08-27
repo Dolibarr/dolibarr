@@ -1,10 +1,14 @@
 # Dolibarr language file - Source file is en_US - main
 CHARSET=UTF-8
 DIRECTION=ltr
+# Note for chinese:
+# msungstdlight or cid0ct are for traditionnal chinese (traditionnal does not render with ubuntu pdf reader)
+# stsongstdlight or cid0cs are for simplified chinese
+# To read chinese pdf with linux: sudo apt-get install poppler-data
 FONTFORPDF=DejaVuSans
 FONTSIZEFORPDF=8
 SeparatorDecimal=,
-# SeparatorThousand=,
+SeparatorThousand=None
 FormatDateShort=%d-%m-%Y
 FormatDateShortInput=%d-%m-%Y
 FormatDateShortJava=dd-MM-yyyy
@@ -21,7 +25,7 @@ FormatDateHourTextShort=%d %b %Y %H:%M
 FormatDateHourText=%d %B %Y %H:%M
 DatabaseConnection=Połączenia z bazą danych
 # NoTranslation=No translation
-# NoRecordFound=Aucun enregistrement trouvé
+# NoRecordFound=No record found
 NoError=Brak błędów
 Error=Błąd
 ErrorFieldRequired=Pole ' %s' jest wymagane
@@ -333,7 +337,7 @@ Status=Stan
 Ref=Nr ref.
 RefSupplier=Nr ref. Dostawca
 RefPayment=Nr ref. płatności
-CommercialProposals=Commercial propozycje
+CommercialProposalsShort=Commercial propozycje
 Comment=Komentarz
 Comments=Komentarze
 ActionsToDo=Działania mające na celu nie

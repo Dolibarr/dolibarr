@@ -1,4 +1,4 @@
-# Dolibarr language file - tr_TR - other
+# Dolibarr language file - Source file is en_US - other
 CHARSET=UTF-8
 SecurityCode=Güvenlik kodu
 Calendar=Takvim
@@ -195,6 +195,7 @@ MemberResiliatedInDolibarr=%s Üyeliği Dolibarr’da bitirilmiştir
 MemberDeletedInDolibarr=%s Üyesi Dolibarr’dan tarafından silinmiştir
 MemberSubscriptionAddedInDolibarr=%s Üyesinin aboneliği Dolibarr’a eklenmiştir
 ShipmentValidatedInDolibarr=%s Sevkiyatı Dolibarr’da doğrulanmıştır
+# ShipmentDeletedInDolibarr=Shipment %s deleted from Dolibarr
 ##### Export #####
 Export=Dışaaktar
 ExportsArea=Dışaaktar alanı

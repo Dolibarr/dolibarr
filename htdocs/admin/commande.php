@@ -6,7 +6,7 @@
  * Copyright (C) 2004      Andre Cianfarani             <acianfa@free.fr>
  * Copyright (C) 2005-2012 Regis Houssin                <regis.houssin@capnetworks.com>
  * Copyright (C) 2008 	   Raphael Bertrand (Resultic)  <raphael.bertrand@resultic.fr>
- * Copyright (C) 2011-2012 Juanjo Menent			    <jmenent@2byte.es>
+ * Copyright (C) 2011-2013 Juanjo Menent			    <jmenent@2byte.es>
  * Copyright (C) 2011-2013 Philippe Grand			    <philippe.grand@atoo-net.com>
  * Copyright (C) 2013 	   Florian Henry			    <florian.henry@open-concept.pro>
  *
@@ -64,11 +64,11 @@ if ($action == 'updateMask')
 
  	if (! $error)
     {
-        $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
+        setEventMessage($langs->trans("SetupSaved"));
     }
     else
     {
-        $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
+        setEventMessage($langs->trans("Error"),'errors');
     }
 }
 
@@ -106,13 +106,13 @@ else if ($action == 'specimen')
 		}
 		else
 		{
-			$mesg='<font class="error">'.$module->error.'</font>';
+			setEventMessage($module->error,'errors');
 			dol_syslog($module->error, LOG_ERR);
 		}
 	}
 	else
 	{
-		$mesg='<font class="error">'.$langs->trans("ErrorModuleNotFound").'</font>';
+		setEventMessage($langs->trans("ErrorModuleNotFound"),'errors');
 		dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
 	}
 }
@@ -167,11 +167,11 @@ else if ($action == 'set_COMMANDE_DRAFT_WATERMARK')
 
  	if (! $error)
     {
-        $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
+        setEventMessage($langs->trans("SetupSaved"));
     }
     else
     {
-        $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
+        setEventMessage($langs->trans("Error"),'errors');
     }
 }
 
@@ -185,20 +185,12 @@ else if ($action == 'set_COMMANDE_FREE_TEXT')
 
  	if (! $error)
     {
-        $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
+        setEventMessage($langs->trans("SetupSaved"));
     }
     else
     {
-        $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
+        setEventMessage($langs->trans("Error"),'errors');
     }
-}
-else if ($action=='setModuleOptions') {
-	if (dolibarr_set_const($db, "COMMANDE_ADDON_PDF_ODT_PATH",GETPOST('value1'),'chaine',0,'',$conf->entity))
-	{
-		// La constante qui a ete lue en avant du nouveau set
-		// on passe donc par une variable pour avoir un affichage coherent
-		$conf->global->COMMANDE_ADDON_PDF_ODT_PATH = GETPOST('value1');
-	}
 }
 else if ($action=='setModuleOptions') {
 	if (dolibarr_set_const($db, "COMMANDE_ADDON_PDF_ODT_PATH",GETPOST('value1'),'chaine',0,'',$conf->entity))
@@ -538,8 +530,6 @@ print '</form>';
 print '</table>';
 
 print '<br>';
-
-dol_htmloutput_mesg($mesg);
 
 llxFooter();
 

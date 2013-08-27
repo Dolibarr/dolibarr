@@ -94,6 +94,7 @@ IfNeedToUseOhterObjectKeepEmpty=Caso alguns objetos (fatura, encomenda, ...), pe
 # ProjectReportDate=Change task date according project start date
 # ErrorShiftTaskDate=Impossible to shift task date according to new project start date
 # ProjectsAndTasksLines=Projects and tasks
+# ProjectCreatedInDolibarr=Project %s created
 ##### Types de contacts #####
 TypeContact_project_internal_PROJECTLEADER=Líder do projeto
 TypeContact_project_external_PROJECTLEADER=Líder do projeto
@@ -107,3 +108,4 @@ TypeContact_project_task_external_CONTRIBUTOR=Contribuinte
 DocumentModelBaleine=modelo de um projeto completo do relatório (logo. ..)
 # PlannedWorkload = Planned workload
 # WorkloadOccupation= Workload affectation
+# ProjectReferers=Refering objects

@@ -59,6 +59,7 @@ class Expedition extends CommonObject
 	var $billed;
 	var $note_public;
 	var $note_private;
+	var $model_pdf;
 
 	var $trueWeight;
 	var $weight_units;
@@ -163,6 +164,8 @@ class Expedition extends CommonObject
 
 		$now=dol_now();
 
+		if (empty($this->model_pdf)) $this->model_pdf=$conf->global->EXPEDITION_ADDON_PDF;
+
 		require_once DOL_DOCUMENT_ROOT .'/product/stock/class/mouvementstock.class.php';
 		$error = 0;
 
@@ -196,6 +199,7 @@ class Expedition extends CommonObject
 		$sql.= ", size_units";
 		$sql.= ", note_private";
 		$sql.= ", note_public";
+		$sql.= ", model_pdf";
 		$sql.= ") VALUES (";
 		$sql.= "'(PROV)'";
 		$sql.= ", ".$conf->entity;
@@ -217,6 +221,7 @@ class Expedition extends CommonObject
 		$sql.= ", ".$this->size_units;
 		$sql.= ", ".(!empty($this->note_private)?"'".$this->db->escape($this->note_private)."'":"null");
 		$sql.= ", ".(!empty($this->note_public)?"'".$this->db->escape($this->note_public)."'":"null");
+		$sql.= ", ".(!empty($this->model_pdf)?"'".$this->db->escape($this->model_pdf)."'":"null");
 		$sql.= ")";
 
 		$resql=$this->db->query($sql);
@@ -786,25 +791,25 @@ class Expedition extends CommonObject
 	{
 		global $conf, $langs, $user;
         require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-		
+
 		$error=0;
-		
+
 		$this->db->begin();
-		
+
 		// Stock control
 		if ($conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_SHIPMENT && $this->statut > 0)
 		{
 			require_once(DOL_DOCUMENT_ROOT."/product/stock/class/mouvementstock.class.php");
-		
+
 			$langs->load("agenda");
-		
+
 			// Loop on each product line to add a stock movement
 			$sql = "SELECT cd.fk_product, cd.subprice, ed.qty, ed.fk_entrepot";
 			$sql.= " FROM ".MAIN_DB_PREFIX."commandedet as cd,";
 			$sql.= " ".MAIN_DB_PREFIX."expeditiondet as ed";
 			$sql.= " WHERE ed.fk_expedition = ".$this->id;
 			$sql.= " AND cd.rowid = ed.fk_origin_line";
-		
+
 			dol_syslog(get_class($this)."::delete select details sql=".$sql);
 			$resql=$this->db->query($sql);
 			if ($resql)
@@ -814,7 +819,7 @@ class Expedition extends CommonObject
 				{
 					dol_syslog(get_class($this)."::delete movement index ".$i);
 					$obj = $this->db->fetch_object($resql);
-					
+
 					//var_dump($this->lines[$i]);
 					$mouvS = new MouvementStock($this->db);
 					// We decrement stock of product (and sub-products)
@@ -832,27 +837,27 @@ class Expedition extends CommonObject
 				$error++;
 			}
 		}
-		
+
 		if(! $error)
 		{
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."expeditiondet";
 			$sql.= " WHERE fk_expedition = ".$this->id;
-	
+
 			if ( $this->db->query($sql) )
 			{
 				// Delete linked object
 				$res = $this->deleteObjectLinked();
 				if ($res < 0) $error++;
-	
+
 				if (! $error)
 				{
 					$sql = "DELETE FROM ".MAIN_DB_PREFIX."expedition";
 					$sql.= " WHERE rowid = ".$this->id;
-	
+
 					if ($this->db->query($sql))
 					{
 						$this->db->commit();
-	
+
 						// On efface le repertoire de pdf provisoire
 						$ref = dol_sanitizeFileName($this->ref);
 						if (! empty($conf->expedition->dir_output))
@@ -875,14 +880,14 @@ class Expedition extends CommonObject
 								}
 							}
 						}
-	
+
 						// Call triggers
 			            include_once DOL_DOCUMENT_ROOT.'/core/class/interfaces.class.php';
 			            $interface=new Interfaces($this->db);
 			            $result=$interface->run_triggers('SHIPPING_DELETE',$this,$user,$langs,$conf);
 			            if ($result < 0) { $error++; $this->errors=$interface->errors; }
 			            // End call triggers
-	
+
 						return 1;
 					}
 					else
@@ -906,12 +911,12 @@ class Expedition extends CommonObject
 				return -1;
 			}
 		}
-		else 
+		else
 		{
 			$this->db->rollback();
 			return -1;
 		}
-			
+
 	}
 
 	/**
@@ -978,13 +983,14 @@ class Expedition extends CommonObject
 				$line->volume_units   	= $obj->volume_units;
 
 				// For invoicing
+				$tabprice = calcul_price_total($obj->qty_shipped, $obj->subprice, $obj->remise_percent, $obj->tva_tx, $obj->localtax1_tx, $obj->localtax2_tx, 0, 'HT', $info_bits, $obj->fk_product_type);	// We force type to 0
 				$line->desc	         	= $obj->description;		// We need ->desc because some code into CommonObject use desc (property defined for other elements)
 				$line->qty 				= $obj->qty_shipped;
-				$line->total_ht			= $obj->total_ht;
-				$line->total_localtax1 	= $obj->total_localtax1;
-				$line->total_localtax2 	= $obj->total_localtax2;
-				$line->total_ttc	 	= $obj->total_ttc;
-				$line->total_tva	 	= $obj->total_tva;
+				$line->total_ht			= $tabprice[0];
+				$line->total_localtax1 	= $tabprice[9];
+				$line->total_localtax2 	= $tabprice[10];
+				$line->total_ttc	 	= $tabprice[2];
+				$line->total_tva	 	= $tabprice[1];
 				$line->tva_tx 		 	= $obj->tva_tx;
 				$line->localtax1_tx 	= $obj->localtax1_tx;
 				$line->localtax2_tx 	= $obj->localtax2_tx;
@@ -992,7 +998,6 @@ class Expedition extends CommonObject
 				$line->subprice			= $obj->subprice;
 				$line->remise_percent	= $obj->remise_percent;
 
-				$tabprice = calcul_price_total($obj->qty_shipped, $obj->subprice, $obj->remise_percent, $obj->tva_tx, $obj->localtax1_tx, $obj->localtax2_tx, 0, 'HT', $info_bits, $obj->fk_product_type);	// We force type to 0
 				$this->total_ht+= $tabprice[0];
 				$this->total_tva+= $tabprice[1];
 				$this->total_ttc+= $tabprice[2];
@@ -1203,7 +1208,7 @@ class Expedition extends CommonObject
 			else
 			{
 				$this->error=$this->db->error();
-				dol_syslog("Commande::set_date_livraison ".$this->error,LOG_ERR);
+				dol_syslog(get_class($this)."::set_date_livraison ".$this->error,LOG_ERR);
 				return -1;
 			}
 		}

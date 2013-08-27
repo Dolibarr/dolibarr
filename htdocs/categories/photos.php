@@ -94,6 +94,7 @@ if ($object->id)
 	elseif ($type == 1) $title=$langs->trans("SuppliersCategoryShort");
 	elseif ($type == 2) $title=$langs->trans("CustomersCategoryShort");
 	elseif ($type == 3) $title=$langs->trans("MembersCategoryShort");
+	elseif ($type == 4) $title=$langs->trans("ContactCategoriesShort");
 
 	$head = categories_prepare_head($object,$type);
 	dol_fiche_head($head, 'photos', $title, 0, 'category');

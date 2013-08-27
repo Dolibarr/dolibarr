@@ -94,6 +94,7 @@ IfNeedToUseOhterObjectKeepEmpty=إذا كانت بعض الكائنات (فات�
 # ProjectReportDate=Change task date according project start date
 # ErrorShiftTaskDate=Impossible to shift task date according to new project start date
 # ProjectsAndTasksLines=Projects and tasks
+# ProjectCreatedInDolibarr=Project %s created
 ##### Types de contacts #####
 TypeContact_project_internal_PROJECTLEADER=مشروع زعيم
 TypeContact_project_external_PROJECTLEADER=مشروع زعيم
@@ -107,3 +108,4 @@ TypeContact_project_task_external_CONTRIBUTOR=مساهم
 DocumentModelBaleine=وهناك مشروع كامل لنموذج التقرير (logo...)
 # PlannedWorkload = Planned workload
 # WorkloadOccupation= Workload affectation
+# ProjectReferers=Refering objects

@@ -21,7 +21,7 @@
  */
 
 /**
- *      \file       htdocs/opensurvey/core/modules/modOpenSurvey.class.php
+ *      \file       htdocs/core/modules/modOpenSurvey.class.php
  *      \ingroup    opensurvey
  *      \brief      Description and activation file for module OpenSurvey
  */

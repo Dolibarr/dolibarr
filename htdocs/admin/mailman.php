@@ -5,7 +5,7 @@
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2011 	   Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2011-2013 Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -63,14 +63,14 @@ if ($action == 'update' || $action == 'add')
 		if (! $res > 0) $error++;
 	}
 
-	if (! $error)
-	{
-		$mesg = '<div class="ok">'.$langs->trans("SetupSaved").'</div>';
-	}
-	else
-	{
-		$mesg = '<div class="error">'.$langs->trans("Error").'</div>';
-	}
+ 	if (! $error)
+    {
+        setEventMessage($langs->trans("SetupSaved"));
+    }
+    else
+    {
+        setEventMessage($langs->trans("Error"),'errors');
+    }
 }
 
 // Action activation d'un sous module du module adherent
@@ -99,7 +99,7 @@ if (($action == 'testsubscribe' || $action == 'testunsubscribe') && ! empty($con
     if (! isValidEmail($email))
     {
         $langs->load("errors");
-        $mesg='<div class="error">'.$langs->trans("ErrorBadEMail",$email).'</div>';
+        setEventMessage($langs->trans("ErrorBadEMail",$email),'errors');
     }
     else
     {
@@ -115,28 +115,28 @@ if (($action == 'testsubscribe' || $action == 'testunsubscribe') && ! empty($con
         if ($action == 'testsubscribe')
         {
             $result=$mailmanspip->add_to_mailman($object);
-            if ($result < 0)
-            {
-                $error++;
-                $mesg='<div class="error">'.$mailmanspip->error.'</div>';
-            }
-            else
-            {
-                $mesg='MailmanCreationSuccess';
-            }
+			if ($result < 0)
+			{
+				$error++;
+				setEventMessage($mailmanspip->error,'errors');
+			}
+			else
+			{
+				setEventMessage($langs->trans("MailmanCreationSuccess"));
+			}
         }
         if ($action == 'testunsubscribe')
         {
             $result=$mailmanspip->del_to_mailman($object);
-            if ($result < 0)
-            {
-                $error++;
-                $mesg='<div class="error">'.$mailmanspip->error.'</div>';
-            }
-            else
-            {
-                $mesg='MailmanDeletionSuccess';
-            }
+        			if ($result < 0)
+			{
+				$error++;
+				setEventMessage($mailmanspip->error,'errors');
+			}
+			else
+			{
+				setEventMessage($langs->trans("MailmanDeletionSuccess"));
+			}
         }
     }
 }
@@ -154,14 +154,9 @@ llxHeader('',$langs->trans("MailmanSpipSetup"),$help_url);
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print_fiche_titre($langs->trans("MailmanSpipSetup"),$linkback,'setup');
 
-
 $head = mailmanspip_admin_prepare_head();
 
 dol_fiche_head($head, 'mailman', $langs->trans("Setup"), 0, 'user');
-
-
-dol_htmloutput_mesg($mesg);
-
 
 $var=!$var;
 if (! empty($conf->global->ADHERENT_USE_MAILMAN))

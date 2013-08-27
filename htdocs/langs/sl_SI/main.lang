@@ -1,6 +1,10 @@
 # Dolibarr language file - Source file is en_US - main
 CHARSET=UTF-8
 DIRECTION=ltr
+# Note for chinese:
+# msungstdlight or cid0ct are for traditionnal chinese (traditionnal does not render with ubuntu pdf reader)
+# stsongstdlight or cid0cs are for simplified chinese
+# To read chinese pdf with linux: sudo apt-get install poppler-data
 FONTFORPDF=DejaVuSans
 FONTSIZEFORPDF=8
 SeparatorDecimal=,
@@ -21,7 +25,7 @@ FormatDateHourTextShort=%d. %b, %Y, %I:%M %p
 FormatDateHourText=%d. %B, %Y, %I:%M %p
 DatabaseConnection=Povezave podatkovnih baz
 # NoTranslation=No translation
-# NoRecordFound=Aucun enregistrement trouvé
+# NoRecordFound=No record found
 NoError=Ni napake
 Error=Napaka
 ErrorFieldRequired=Polje '%s' je obvezno
@@ -333,7 +337,7 @@ Status=Status
 Ref=Ref.
 RefSupplier=Ref. dobavitelj
 RefPayment=Ref. plačilo
-CommercialProposals=Komercialne ponudbe
+CommercialProposalsShort=Komercialne ponudbe
 Comment=Komentar
 Comments=Komentarji
 ActionsToDo=Odprte aktivnosti

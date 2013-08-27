@@ -81,9 +81,9 @@ WithdrawalFileNotCapable=Não foi possível gerar ficheiro de recibo do levantam
 ShowWithdraw=Mostrar levantamento
 IfInvoiceNeedOnWithdrawPaymentWontBeClosed=No entanto, se não tiver factura, pelo menos, um pagamento levantamento ainda processado, que não irá ser definido como pago para permitir o levantamento antes de administrar.
 DoStandingOrdersBeforePayments=Estas abas permitem a você pedir uma ordem permanente. Uma vez que ele será terminado, você pode digitar o pagamento para fechar a fatura.
-# WithdrawalFile=Withdrawal file
-# SetToStatusSent=Set to status "File Sent"
-# ThisWillAlsoAddPaymentOnInvoice=This will also create payments onto invoices and will classify them to paid
+WithdrawalFile=arquivo retirado
+SetToStatusSent=Definir o estado como "arquivo enviado"
+ThisWillAlsoAddPaymentOnInvoice=Isso também irá criar pagamentos em facturas e classificá-los para pagar
 
 ### Notifications
 InfoCreditSubject=Pagamento de %s ordem permanente pelo banco

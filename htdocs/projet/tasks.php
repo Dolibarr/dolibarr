@@ -114,6 +114,7 @@ if ($action == 'createtask' && $user->rights->projet->creer)
 			$task = new Task($db);
 
 			$task->fk_project = $projectid;
+			$task->ref = GETPOST('ref','alpha');
 			$task->label = $label;
 			$task->description = $description;
 			$task->planned_workload = $planned_workload * 3600;//We set the planned workload into seconds
@@ -170,6 +171,7 @@ if ($action == 'createtask' && $user->rights->projet->creer)
 
 $form=new Form($db);
 $formother=new FormOther($db);
+$taskstatic = new Task($db);
 $userstatic=new User($db);
 
 $help_url="EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos";
@@ -266,10 +268,26 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->socie
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="createtask">';
 	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
+	
 	if (! empty($object->id)) print '<input type="hidden" name="id" value="'.$object->id.'">';
 	if (! empty($mode)) print '<input type="hidden" name="mode" value="'.$mode.'">';
 
 	print '<table class="border" width="100%">';
+
+	$defaultref='';
+	$obj = empty($conf->global->PROJECT_TASK_ADDON)?'mod_task_simple':$conf->global->PROJECT_TASK_ADDON;
+	if (! empty($conf->global->PROJECT_TASK_ADDON) && is_readable(DOL_DOCUMENT_ROOT ."/core/modules/project/task/".$conf->global->PROJECT_TASK_ADDON.".php"))
+	{
+		require_once DOL_DOCUMENT_ROOT ."/core/modules/project/task/".$conf->global->PROJECT_TASK_ADDON.'.php';
+		$modTask = new $obj;
+		$defaultref = $modTask->getNextValue($soc,$object);
+	}
+		
+	if (is_numeric($defaultref) && $defaultref <= 0) $defaultref='';
+		
+	// Ref
+	print '<input type="hidden" name="ref" value="'.($_POST["ref"]?$_POST["ref"]:$defaultref).'">';
+	print '<tr><td><span class="fieldrequired">'.$langs->trans("Ref").'</span></td><td>'.($_POST["ref"]?$_POST["ref"]:$defaultref).'</td></tr>';
 
 	print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td>';
 	print '<input type="text" size="25" name="label" class="flat" value="'.$label.'">';
@@ -281,7 +299,7 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->socie
 	print '</td></tr>';
 
 	print '<tr><td>'.$langs->trans("AffectedTo").'</td><td>';
-	print $form->select_users($user->id,'userid',1);
+	print $form->select_dolusers($user->id,'userid',1);
 	print '</td></tr>';
 
 	// Date start
@@ -394,7 +412,7 @@ else
 	print '<table id="tablelines" class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
 	// print '<td>'.$langs->trans("Project").'</td>';
-	print '<td width="80">'.$langs->trans("RefTask").'</td>';
+	print '<td width="100">'.$langs->trans("RefTask").'</td>';
 	print '<td>'.$langs->trans("LabelTask").'</td>';
 	print '<td align="center">'.$langs->trans("DateStart").'</td>';
 	print '<td align="center">'.$langs->trans("DateEnd").'</td>';

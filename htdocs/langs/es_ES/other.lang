@@ -1,4 +1,4 @@
-# Dolibarr language file - es_ES - other
+# Dolibarr language file - Source file is en_US - other
 CHARSET=UTF-8
 SecurityCode=Código seguridad
 Calendar=Calendario
@@ -21,9 +21,9 @@ Notify_PROPAL_VALIDATE=Validación presupuesto cliente
 Notify_WITHDRAW_TRANSMIT=Transmisión domiciliación
 Notify_WITHDRAW_CREDIT=Abono domiciliación
 Notify_WITHDRAW_EMIT=Emisión domiciliación
+Notify_ORDER_SENTBYMAIL=Envío pedido de cliente por e-mail
 Notify_COMPANY_CREATE=Creación tercero
 Notify_PROPAL_SENTBYMAIL=Envío presupuesto por e-mail
-Notify_ORDER_SENTBYMAIL=Envío pedido de cliente por e-mail
 Notify_BILL_PAYED=Cobro factura a cliente
 Notify_BILL_CANCEL=Cancelación factura a cliente
 Notify_BILL_SENTBYMAIL=Envío factura a cliente por e-mail
@@ -173,6 +173,12 @@ StartUpload=Transferir
 CancelUpload=Cancelar la transferencia
 FileIsTooBig=El archivo es demasiado grande
 PleaseBePatient=Rogamos espere unos instantes...
+RequestToResetPasswordReceived=Se ha recibido una petición de modificación de contraseña
+NewKeyIs=Estos son los nuevos identificadores para conectarse
+NewKeyWillBe=Los nuevos identificadores para conectarse a la aplicación serán
+ClickHereToGoTo=Haga clic aquí para ir a %s
+YouMustClickToChange=Sin embargo, primero debe hacer clic en el siguiente enlace para validar este cambio de contraseña
+ForgetIfNothing=Si no ha realizado la solicitud, simplemente ignore este mensaje. Su acceso se mantiene seguro.
 ##### Calendar common #####
 AddCalendarEntry=Añadir entrada en el calendario
 NewCompanyToDolibarr=Empresa %s insertada en Dolibarr

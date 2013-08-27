@@ -64,20 +64,27 @@ function project_prepare_head($object)
 	// $this->tabs = array('entity:-tabname);   												to remove a tab
 	complete_head_from_modules($conf,$langs,$object,$head,$h,'project');
 
+	if (empty($conf->global->MAIN_DISABLE_NOTES_TAB))
+    {
+    	$nbNote = 0;
+        if(!empty($object->note_private)) $nbNote++;
+		if(!empty($object->note_public)) $nbNote++;
+		$head[$h][0] = DOL_URL_ROOT.'/projet/note.php?id='.$object->id;
+		$head[$h][1] = $langs->trans('Notes');
+		if($nbNote > 0) $head[$h][1].= ' ('.$nbNote.')';
+		$head[$h][2] = 'notes';
+		$h++;
+    }
+	
+	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+	$upload_dir = $conf->projet->dir_output . "/" . dol_sanitizeFileName($object->ref);
+	$nbFiles = count(dol_dir_list($upload_dir,'files'));
 	$head[$h][0] = DOL_URL_ROOT.'/projet/document.php?id='.$object->id;
-	/*$filesdir = $conf->projet->dir_output . "/" . dol_sanitizeFileName($object->ref);
-	 include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-	$listoffiles=dol_dir_list($filesdir,'files',1);
-	$head[$h][1] = (count($listoffiles)?$langs->trans('DocumentsNb',count($listoffiles)):$langs->trans('Documents'));*/
 	$head[$h][1] = $langs->trans('Documents');
+	if($nbFiles > 0) $head[$h][1].= ' ('.$nbFiles.')';
 	$head[$h][2] = 'document';
 	$h++;
-
-	$head[$h][0] = DOL_URL_ROOT.'/projet/note.php?id='.$object->id;
-	$head[$h][1] = $langs->trans('Notes');
-	$head[$h][2] = 'notes';
-	$h++;
-
+	
 	// Then tab for sub level of projet, i mean tasks
 	$head[$h][0] = DOL_URL_ROOT.'/projet/tasks.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("Tasks");
@@ -281,12 +288,12 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 				print '<td>';
 				if ($showlineingray)
 				{
-					print '<i>'.img_object('','projecttask').' '.$lines[$i]->id.'</i>';
+					print '<i>'.img_object('','projecttask').' '.$lines[$i]->ref.'</i>';
 				}
 				else
 				{
 					$taskstatic->id=$lines[$i]->id;
-					$taskstatic->ref=$lines[$i]->id;
+					$taskstatic->ref=$lines[$i]->ref;
 					$taskstatic->label=($taskrole[$lines[$i]->id]?$langs->trans("YourRole").': '.$taskrole[$lines[$i]->id]:'');
 					print $taskstatic->getNomUrl(1,($showproject?'':'withproject'));
 				}

@@ -1,4 +1,4 @@
-# Dolibarr language file - en_US - exports
+# Dolibarr language file - Source file is en_US - exports
 CHARSET=UTF-8
 ExportsArea=Sezione esportazioni
 ImportArea=Sezione importazioni
@@ -65,7 +65,7 @@ ChooseFormatOfFileToImport=Scegliete il formato di file da utilizzare per l'impo
 ChooseFileToImport=Scegli il file da importare e poi clicca sull'icona %s
 SourceFileFormat=Fonte formato di file
 FieldsInSourceFile=Campi nel file sorgente
-FieldsInTargetDatabase=Campi del database applicazione
+# FieldsInTargetDatabase=Target fields in Dolibarr database (bold=mandatory)
 Field=Campo
 NoFields=N. campi
 MoveField=Spostare campo %s numero di colonna
@@ -117,13 +117,13 @@ CSVFormatDesc=Formato <b>Comma Separated Value</b> (.Csv).<br/>File di testo dov
 # TsvFormatDesc=<b>Tab Separated Value</b> file format (.tsv)<br>This is a text file format where fields are separated by a tabulator [tab].
 # ExportFieldAutomaticallyAdded=Field <b>%s</b> was automatically added. It will avoid you to have similar lines to be treated as duplicate records (with this field added, all lines will own their own id and will differ).
 # CsvOptions=Csv Options
-# Separator=Separator
+Separator=Separatore
 # Enclosure=Enclosure
 # SuppliersProducts=Suppliers Products
-# BankCode=Bank code
-# DeskCode=Desk code
-# BankAccountNumber=Account number
-# BankAccountNumberKey=Key
+BankCode=Codice banca
+DeskCode=Codice sportello
+BankAccountNumber=Num. conto
+BankAccountNumberKey=Chiave
 ## filters
 # SelectFilterFields=If you want to filter on some values, just input values here.
 # FilterableFields=Champs Filtrables

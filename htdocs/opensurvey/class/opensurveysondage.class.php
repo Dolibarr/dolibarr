@@ -16,8 +16,8 @@
  */
 
 /**
- *  \file       dev/skeletons/opensurveysondage.class.php
- *  \ingroup    mymodule othermodule1 othermodule2
+ *  \file       htdocs/opensurvey/class/opensurveysondage.class.php
+ *  \ingroup    opensurvey
  *  \brief      This file is an example for a CRUD class file (Create/Read/Update/Delete)
  *				Initialy built by build_class_from_table on 2013-03-10 00:32
  */

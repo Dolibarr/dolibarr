@@ -1,4 +1,4 @@
-# Dolibarr language file - en_US - propal
+# Dolibarr language file - Source file is en_US - propal
 CHARSET=UTF-8
 Proposals=Propositions commerciales
 Proposal=Proposition commerciale
@@ -71,6 +71,8 @@ ErrorPropalNotFound=Propale %s inexistante
 Estimate=Devis :
 EstimateShort=Devis
 OtherPropals=Autres propositions
+AddToDraftProposals=Ajouter à proposition brouillon
+NoDraftProposals=Pas de propositions brouillons
 CopyPropalFrom=Créer proposition/devis par recopie d'un proposition existante
 CreateEmptyPropal=Créer proposition/devis vierge
 DefaultProposalDurationValidity=Délai de validité par défaut (en jours)

@@ -173,7 +173,7 @@ AddFiles=Lisää tiedostoja
 StartUpload=Aloita lataaminen
 CancelUpload=Peruuta Lähetä
 FileIsTooBig=Files on liian suuri
-# PleaseBePatient=Please be patient...
+PleaseBePatient=Ole kärsivällinen ...
 
 ##### Calendar common #####
 AddCalendarEntry=Lisää merkintä kalenteri %s
@@ -195,6 +195,7 @@ MemberResiliatedInDolibarr=Jäsen %s resiliated vuonna Dolibarr
 MemberDeletedInDolibarr=Jäsen %s poistettu Dolibarr
 MemberSubscriptionAddedInDolibarr=Tilaus jäsenen %s Lisätään Dolibarr
 ShipmentValidatedInDolibarr=Toimitus %s validoitu Dolibarr
+# ShipmentDeletedInDolibarr=Shipment %s deleted from Dolibarr
 ##### Export #####
 Export=Vienti
 ExportsArea=Vienti alueen

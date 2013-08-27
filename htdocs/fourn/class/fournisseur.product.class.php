@@ -181,6 +181,7 @@ class ProductFournisseur extends Product
         {
 	  		$sql = "UPDATE ".MAIN_DB_PREFIX."product_fournisseur_price";
 			$sql.= " SET fk_user = " . $user->id." ,";
+            $sql.= " ref_fourn = \"" . $this->db->escape($ref_fourn) . "\",";
 			$sql.= " price = ".price2num($buyprice).",";
 			$sql.= " quantity = ".$qty.",";
 			$sql.= " remise_percent = ".$remise_percent.",";

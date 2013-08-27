@@ -28,6 +28,7 @@ global $conf,$user,$langs,$db;
 require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/exports/class/export.class.php';
+require_once dirname(__FILE__).'/../../htdocs/core/lib/files.lib.php';
 
 if (! defined('NOREQUIREUSER'))  define('NOREQUIREUSER','1');
 if (! defined('NOREQUIREDB'))    define('NOREQUIREDB','1');
@@ -118,7 +119,7 @@ class ExportTest extends PHPUnit_Framework_TestCase
 
 
     /**
-     * Test export function
+     * Test export function for a personalized dataset
      *
 	 * @return void
      */
@@ -166,15 +167,15 @@ class ExportTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test filtered export function
+     * Test export function for a personalized dataset with filters
      *
+     * @depends	testExportPersonalizedExport
      * @return void
      */
-    /*
-    public function testExportFilteredExport()
+    public function testExportPersonalizedWithFilter()
     {
     	global $conf,$user,$langs,$db;
-
+/*
     	$sql = "SELECT f.facnumber as f_facnumber, f.total as f_total, f.tva as f_tva FROM ".MAIN_DB_PREFIX."facture f";
 
     	$objexport=new Export($db);
@@ -212,31 +213,54 @@ class ExportTest extends PHPUnit_Framework_TestCase
     	$result=$objexport->build_file($user, $model, $datatoexport, $array_selected, $array_filtervalue, $sql);
     	$expectedresult=1;
     	$this->assertEquals($result,$expectedresult);
-
+*/
     	return true;
-    }*/
+    }
 
     /**
-     * Test export function
+     * Test export function for all dataset predefined into modules
      *
+     * @depends	testExportPersonalizedWithFilter
 	 * @return void
      */
-    public function testExportSociete()
+    public function testExportModulesDatasets()
     {
         global $conf,$user,$langs,$db;
 
-        $sql = "";
-        $datatoexport='societe_1';
-        $array_selected = array("s.rowid"=>1, "s.nom"=>2);	// Mut be fields found into declaration of dataset
         $model='csv';
 
-        $objexport=new Export($db);
-        $result=$objexport->load_arrays($user,$datatoexport);
+        $filterdatatoexport='';
+        //$filterdatatoexport='';
+        //$array_selected = array("s.rowid"=>1, "s.nom"=>2);	// Mut be fields found into declaration of dataset
 
-        // Build export file
-        $result=$objexport->build_file($user, $model, $datatoexport, $array_selected, array(), $sql);
-		$expectedresult=1;
-        $this->assertEquals($result,$expectedresult);
+        // Load properties of arrays to make export
+        $objexport=new Export($db);
+        $result=$objexport->load_arrays($user,$filterdatatoexport);	// This load ->array_export_xxx properties for datatoexport
+
+        // Loop on each dataset
+        foreach($objexport->array_export_code as $key => $datatoexport)
+        {
+        	$exportfile=$conf->export->dir_temp.'/'.$user->id.'/export_'.$datatoexport.'.csv';
+	        print "Process export for dataset ".$datatoexport." into ".$exportfile."\n";
+	        dol_delete_file($exportfile);
+
+	        // Generate $array_selected
+	        $i=0;
+	        $array_selected=array();
+			foreach($objexport->array_export_fields[$key] as $key => $val)
+			{
+				$array_selected[$key]=$i++;
+			}
+			//var_dump($array_selected);
+
+	        // Build export file
+        	$sql = "";
+			$result=$objexport->build_file($user, $model, $datatoexport, $array_selected, array(), $sql);
+			$expectedresult=1;
+	        $this->assertEquals($result, $expectedresult, 'Call build_file to export '.$exportfile.' failed');
+	        $result=dol_is_file($exportfile);
+	        $this->assertTrue($result, $expectedresult, 'File '.$exportfile.' not found');
+        }
 
         return true;
     }

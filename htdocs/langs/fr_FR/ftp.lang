@@ -1,4 +1,4 @@
-# Dolibarr language file - en_US - ftp
+# Dolibarr language file - Source file is en_US - ftp
 CHARSET=UTF-8
 FTPClientSetup=Configuration du module Client FTP
 NewFTPClient=Nouvelle configuration de connexion FTP

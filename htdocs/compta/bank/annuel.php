@@ -282,12 +282,7 @@ print "</table>";
 
 // BUILDING GRAPHICS
 
-$datetime = dol_now();
-$year = dol_print_date($datetime, "%Y");
-$month = dol_print_date($datetime, "%m");
-$day = dol_print_date($datetime, "%d");
-if (! empty($_GET["year"]))  $year=sprintf("%04d",$_GET["year"]);
-if (! empty($_GET["month"])) $month=sprintf("%02d",$_GET["month"]);
+$year = $year_end;
 
 $result=dol_mkdir($conf->banque->dir_temp);
 if ($result < 0)
@@ -299,7 +294,7 @@ if ($result < 0)
 else
 {
 	// Definition de $width et $height
-	$width = 550;
+	$width = 480;
 	$height = 300;
 
 	// Calcul de $min et $max
@@ -501,13 +496,12 @@ else
 	unset($tblyear[1]);
 	unset($tblyear[2]);
 
-	print '<table width=100% ><tr><td align="center">';
+	print '<div class="fichecenter"><div class="fichehalfleft"><center>';
 	print $show1;
-	print '</td>';
-	print '<td width=30px>&nbsp;</td>';
-	print '<td align="center">';
+	print '</center></div><div class="fichehalfright"><div class="ficheaddleft"><center>';
 	print $show2;
-	print '</td></tr></table>';
+	print '</center></div></div></div>';
+	print '<div style="clear:both"></div>';
 }
 
 

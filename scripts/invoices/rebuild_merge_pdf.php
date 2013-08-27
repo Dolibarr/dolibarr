@@ -57,6 +57,7 @@ $error=0;
 
 @set_time_limit(0);
 print "***** ".$script_file." (".$version.") pid=".getmypid()." *****\n";
+dol_syslog($script_file." launched with arg ".join(',',$argv));
 
 // Check parameters
 if (! isset($argv[1]))
@@ -111,7 +112,7 @@ foreach ($argv as $key => $value)
 
 		$dateafterdate=dol_stringtotime($argv[$key+1]);
 		$datebeforedate=dol_stringtotime($argv[$key+2]);
-		print 'Rebuild PDF for invoices validated between '.dol_print_date($dateafterdate,'day')." and ".dol_print_date($datebeforedate,'day').".\n";
+		print 'Rebuild PDF for invoices validated between '.dol_print_date($dateafterdate,'day','gmt')." and ".dol_print_date($datebeforedate,'day','gmt').".\n";
 	}
 
 	if ($value == 'filter=payments')
@@ -120,14 +121,14 @@ foreach ($argv as $key => $value)
 		$option.=(empty($option)?'':'_').'payments_'.$argv[$key+1].'_'.$argv[$key+2];
 		$filter[]='payments';
 
-		$paymentdateafter=dol_stringtotime($argv[$key+1]);
-		$paymentdatebefore=dol_stringtotime($argv[$key+2]);
+		$paymentdateafter=dol_stringtotime($argv[$key+1].'000000');
+		$paymentdatebefore=dol_stringtotime($argv[$key+2].'235959');
 		if (empty($paymentdateafter) || empty($paymentdatebefore))
 		{
-			print 'Error: Bad date format'."\n";
+			print 'Error: Bad date format or value'."\n";
 			exit(-1);
 		}
-		print 'Rebuild PDF for invoices with at least one payment between '.dol_print_date($paymentdateafter,'day')." and ".dol_print_date($paymentdatebefore,'day').".\n";
+		print 'Rebuild PDF for invoices with at least one payment between '.dol_print_date($paymentdateafter,'day','gmt')." and ".dol_print_date($paymentdatebefore,'day','gmt').".\n";
 	}
 
 	if ($value == 'filter=nopayment')
@@ -182,6 +183,27 @@ foreach ($argv as $key => $value)
         print 'Exclude credit note invoices'."\n";
     }
 
+    if ($value == 'filter=excludethirdparties')
+    {
+    	$found=true;
+    	$filter[]='excludethirdparties';
+
+    	$thirdpartiesid=explode(',',$argv[$key+1]);
+    	print 'Exclude thirdparties with id in list ('.join(',',$thirdpartiesid).").\n";
+
+    	$option.=(empty($option)?'':'_').'excludethirdparties'.join('-',$thirdpartiesid);
+    }
+    if ($value == 'filter=onlythirdparties')
+    {
+    	$found=true;
+    	$filter[]='onlythirdparties';
+
+    	$thirdpartiesid=explode(',',$argv[$key+1]);
+    	print 'Only thirdparties with id in list ('.join(',',$thirdpartiesid).").\n";
+
+    	$option.=(empty($option)?'':'_').'onlythirdparty'.join('-',$thirdpartiesid);
+    }
+
 	if (! $found && preg_match('/filter=/i',$value))
 	{
 		usage();
@@ -210,7 +232,7 @@ if (in_array('bank',$filter) && in_array('nopayment',$filter))
 
 // Define SQL and SQL request to select invoices
 // Use $filter, $dateafterdate, datebeforedate, $paymentdateafter, $paymentdatebefore
-$result=rebuild_merge_pdf($db, $langs, $conf, $diroutputpdf, $newlangid, $filter, $dateafterdate, $datebeforedate, $paymentdateafter, $paymentdatebefore, 1, $regenerate, $option, $paymentonbankid);
+$result=rebuild_merge_pdf($db, $langs, $conf, $diroutputpdf, $newlangid, $filter, $dateafterdate, $datebeforedate, $paymentdateafter, $paymentdatebefore, 1, $regenerate, $option, $paymentonbankid, $thirdpartiesid);
 
 
 
@@ -257,6 +279,8 @@ function usage()
     print "To exclude credit notes, use filter=nocreditnote\n";
     print "To exclude replacement invoices, use filter=noreplacement\n";
     print "To exclude deposit invoices, use filter=nodeposit\n";
+    print "To exclude some thirdparties, use filter=excludethirdparties id1,id2...\n";
+    print "To limit to some thirdparties, use filter=onlythirdparties id1,id2...\n";
     print "To regenerate existing PDF, use regenerate=crabe\n";
     print "To generate invoices in a language, use lang=xx_XX\n";
     print "\n";

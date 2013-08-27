@@ -173,7 +173,7 @@ AddFiles=Bæta við skrár
 StartUpload=Byrja senda
 CancelUpload=Hætta við
 FileIsTooBig=Skrár er of stór
-# PleaseBePatient=Please be patient...
+PleaseBePatient=Vinsamlegast sýnið þolinmæði ...
 
 ##### Calendar common #####
 AddCalendarEntry=Bæta við færslu í dagbók %s
@@ -195,6 +195,7 @@ MemberResiliatedInDolibarr=Aðildarríkin %s  resiliated í Dolibarr
 MemberDeletedInDolibarr=Aðildarríkin %s  eytt úr Dolibarr
 MemberSubscriptionAddedInDolibarr=Áskrift fyrir aðild %s  bætt í Dolibarr
 ShipmentValidatedInDolibarr=Sendingu %s staðfest í Dolibarr
+# ShipmentDeletedInDolibarr=Shipment %s deleted from Dolibarr
 ##### Export #####
 Export=Útflutningur
 ExportsArea=Útflutningur area

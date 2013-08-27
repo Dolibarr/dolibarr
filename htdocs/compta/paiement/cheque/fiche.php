@@ -89,6 +89,29 @@ if ($action == 'setdate' && $user->rights->banque->cheque)
     }
 }
 
+/*
+ * Actions
+ */
+
+if ($action == 'setrefext' && $user->rights->banque->cheque)
+{
+    $result = $object->fetch(GETPOST('id','int'));
+    if ($result > 0)
+    {
+        $ref_ext = GETPOST('ref_ext');
+
+        $result=$object->setValueFrom('ref_ext', $ref_ext);
+        if ($result < 0)
+        {
+            $mesg='<div class="error">'.$object->error.'</div>';
+        }
+    }
+    else
+    {
+        $mesg='<div class="error">'.$object->error.'</div>';
+    }
+}
+
 if ($action == 'create' && $_POST["accountid"] > 0 && $user->rights->banque->cheque)
 {
 	if (is_array($_POST['toRemise']))
@@ -344,8 +367,8 @@ if ($action == 'new')
 	$sql.= " AND ba.entity = ".$conf->entity;
 	$sql.= " AND b.fk_bordereau = 0";
 	$sql.= " AND b.amount > 0";
-	if ($filterdate)      $sql.=" AND b.dateo = '".$db->idate($filterdate)."'";
-    if ($filteraccountid) $sql.=" AND ba.rowid= '".$filteraccountid."'";
+	if ($filterdate)          $sql.=" AND b.dateo = '".$db->idate($filterdate)."'";
+    if ($filteraccountid > 0) $sql.=" AND ba.rowid= '".$filteraccountid."'";
 	$sql.= $db->order("b.dateo,b.rowid","ASC");
 
 	$resql = $db->query($sql);
@@ -492,6 +515,32 @@ else
 	print '</td>';
 	print '</tr>';
 
+	// External ref
+	print '<tr><td>';
+
+	print '<table class="nobordernopadding" width="100%"><tr><td>';
+    print $langs->trans('RefExt');
+    print '</td>';
+    if ($action != 'editrefext') print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editrefext&amp;id='.$object->id.'">'.img_edit($langs->trans('SetRefExt'),1).'</a></td>';
+    print '</tr></table>';
+    print '</td><td colspan="2">';
+    if ($action == 'editrefext')
+    {
+        print '<form name="setrefext" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
+        print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+        print '<input type="hidden" name="action" value="setrefext">';
+        print '<input type="text" name="ref_ext" value="'.$object->ref_ext.'">';
+        print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
+        print '</form>';
+    }
+    else
+    {
+        print $object->ref_ext;
+    }
+
+	print '</td>';
+	print '</tr>';
+
 	print '<tr><td>'.$langs->trans('Account').'</td><td colspan="2">';
 	print $accountstatic->getNomUrl(1);
 	print '</td></tr>';
@@ -602,10 +651,10 @@ else
 
 print '<div class="tabsAction">';
 
-if ($user->societe_id == 0 && count($accounts) == 1 && $action == 'new' && $user->rights->banque->cheque)
+/*if ($user->societe_id == 0 && count($accounts) == 1 && $action == 'new' && $user->rights->banque->cheque)
 {
 	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=create&amp;accountid='.$account_id.'">'.$langs->trans('NewCheckReceipt').'</a>';
-}
+}*/
 
 if ($user->societe_id == 0 && ! empty($object->id) && $object->statut == 0 && $user->rights->banque->cheque)
 {

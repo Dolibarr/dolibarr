@@ -478,10 +478,10 @@ class Export
 		$indice=0;
 		asort($array_selected);
 
-		dol_syslog("Export::build_file ".$model.", ".$datatoexport.", ".implode(",", $array_selected));
+		dol_syslog(get_class($this)."::".__FUNCTION__." ".$model.", ".$datatoexport.", ".implode(",", $array_selected));
 
 		// Check parameters or context properties
-		if (! is_array($this->array_export_fields[$indice]))
+		if (empty($this->array_export_fields) || ! is_array($this->array_export_fields))
 		{
 			$this->error="ErrorBadParameter";
 			return -1;
@@ -495,11 +495,31 @@ class Export
 		$objmodel = new $classname($this->db);
 
 		if (! empty($sqlquery)) $sql = $sqlquery;
-        else $sql=$this->build_sql($indice, $array_selected, $array_filterValue);
+        else
+		{
+			// Define value for indice from $datatoexport
+			$foundindice=0;
+			foreach($this->array_export_code as $key => $dataset)
+			{
+				if ($datatoexport == $dataset)
+				{
+					$indice=$key;
+					$foundindice++;
+					//print "Found indice = ".$indice." for dataset=".$datatoexport."\n";
+					break;
+				}
+			}
+			if (empty($foundindice))
+			{
+				$this->error="ErrorBadParameter can't find dataset ".$datatoexport." into preload arrays this->array_export_code";
+				return -1;
+			}
+        	$sql=$this->build_sql($indice, $array_selected, $array_filterValue);
+		}
 
 		// Run the sql
 		$this->sqlusedforexport=$sql;
-		dol_syslog("Export::build_file sql=".$sql);
+		dol_syslog(get_class($this)."::".__FUNCTION__." sql=".$sql);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -735,7 +755,7 @@ class Export
 		global $conf, $langs;
 
 		$sql = "SELECT em.rowid, em.field, em.label, em.type, em.filter";
-		$sql.= " FROM ".MAIN_DB_PREFIX."export_model";
+		$sql.= " FROM ".MAIN_DB_PREFIX."export_model as em";
 		$sql.= " ORDER BY rowid";
 
 		$result = $this->db->query($sql);

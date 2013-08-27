@@ -9,13 +9,13 @@ beta version of Dolibarr, step by step.
 
 - Check all files are commited.
 - Update version/info in /ChangeLog
-- Update version number with x.x.x-y in htdocs/filefunc.inc.php
-- Update version number with x.x.x-y in build/makepack-dolibarr.pl
-- Update version number with x.x.x-y in build/debian/changelog
-- Update version number with x.x.x-y in build/exe/doliwamp/doliwamp.iss
-- Update version number with x.x.x-y in build/rpm/*.spec
-- Update version number with x.x.x   in build/doxygen/dolibarr-doxygen.doxyfile
-- Update version number with x.x.x   in build/perl/virtualmin/dolibarr.pl
+- Update version number with x.y.z-w in htdocs/filefunc.inc.php
+- Update version number with x.y.z-w in build/makepack-dolibarr.pl
+- Update version number with x.y.z-w in build/debian/changelog
+- Update version number with x.y.z-w in build/exe/doliwamp/doliwamp.iss
+- Update version number with x.y.z-w in build/rpm/*.spec
+- Update version number with x.y.z   in build/doxygen/dolibarr-doxygen.doxyfile
+- Update version number with x.y.z   in build/perl/virtualmin/dolibarr.pl
 - Commit all changes.
 - Add a Tag (x.y.betaz_YYYYMMDD) and push it: git push --tags
 - Create a branch (x.y).
@@ -33,14 +33,14 @@ complete release of Dolibarr, step by step.
 
 - Check all files are commited.
 - Update version/info in ChangeLog
-- Update version number with x.x.x in htdocs/filefunc.inc.php
-- Update version number with x.x.x in build/makepack-dolibarr.pl
-- Update version number with x.x.x in build/debian/changelog
-- Update version number with x.x.x in build/exe/doliwamp/doliwamp.iss
-- Update version number with x.x.x in build/rpm/*.spec
+- Update version number with x.y.z in htdocs/filefunc.inc.php
+- Update version number with x.y.z in build/makepack-dolibarr.pl
+- Update version number with x.y.z in build/debian/changelog
+- Update version number with x.y.z in build/exe/doliwamp/doliwamp.iss
+- Update version number with x.y.z in build/rpm/*.spec
 - Update PAD files.
 - Commit all changes.
-- Add a Tag (DOLIBARR_x_y)
+- Add a Tag (x.y.z)
 
 - Build Dolibarr and DoliWamp packages with makepack-dolibarr.pl
 - Check content of built packages.

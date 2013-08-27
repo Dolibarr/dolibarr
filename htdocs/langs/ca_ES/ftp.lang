@@ -10,3 +10,4 @@ FailedToConnectToFTPServer=No s'ha pogut connectar amb el servidor FTP (servidor
 FailedToConnectToFTPServerWithCredentials=No s'ha pogut connectar amb el login/contrasenya FTP configurats
 FTPFailedToRemoveFile=No s'ha pogut suprimir el fitxer <b>%s</b>.
 FTPFailedToRemoveDir=No s'ha pogut suprimir la carpeta <b>%s</b> (Comproveu els permisos i que el directori està buit).
+FTPPassiveMode=Mode passiu

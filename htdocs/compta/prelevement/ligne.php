@@ -196,13 +196,13 @@ if ($id)
 		print '</td></tr>';
 
 		//Date
-		print '<tr><td class="fieldrequired" class="valid">'.$langs->trans("RefusedData").'</td>';
+		print '<tr><td class="fieldrequired valid">'.$langs->trans("RefusedData").'</td>';
 		print '<td colspan="2" class="valid">';
 		print $form->select_date('','','','','',"confirm_rejet");
 		print '</td></tr>';
 
 		//Reason
-		print '<tr><td class="fieldrequired" class="valid">'.$langs->trans("RefusedReason").'</td>';
+		print '<tr><td class="fieldrequired valid">'.$langs->trans("RefusedReason").'</td>';
 		print '<td class="valid">';
 		print $form->selectarray("motif", $rej->motifs);
 		print '</td></tr>';

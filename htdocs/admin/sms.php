@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2007-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2009      Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2013 	   Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -87,25 +88,25 @@ if ($action == 'send' && ! $_POST['cancel'])
 
 	if (! empty($formsms->error))
 	{
-	    $message='<div class="error">'.$formsms->error.'</div>';
+		setEventMessage($formsms->error,'errors');
 	    $action='test';
 	    $error++;
 	}
     if (empty($body))
     {
-        $message='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("Message")).'</div>';
+        setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Message")),'errors');
         $action='test';
         $error++;
     }
 	if (empty($smsfrom) || ! str_replace('+','',$smsfrom))
 	{
-		$message='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("SmsFrom")).'</div>';
+		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("SmsFrom")),'errors');
         $action='test';
 		$error++;
 	}
 	if (empty($sendto) || ! str_replace('+','',$sendto))
 	{
-		$message='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("SmsTo")).'</div>';
+		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("SmsTo")),'errors');
         $action='test';
 		$error++;
 	}
@@ -122,11 +123,11 @@ if ($action == 'send' && ! $_POST['cancel'])
 
 		if ($result)
 		{
-			$message='<div class="ok">'.$langs->trans("SmsSuccessfulySent",$smsfrom,$sendto).'</div>';
+			setEventMessage($langs->trans("SmsSuccessfulySent",$smsfrom,$sendto));
 		}
 		else
 		{
-			$message='<div class="error">'.$langs->trans("ResultKo").'<br>'.$smsfile->error.' '.$result.'</div>';
+			setEventMessage($langs->trans("ResultKo"),'errors');
 		}
 
 		$action='';
@@ -150,8 +151,6 @@ print_fiche_titre($langs->trans("SmsSetup"),'','setup');
 
 print $langs->trans("SmsDesc")."<br>\n";
 print "<br>\n";
-
-dol_htmloutput_mesg($message);
 
 // List of sending methods
 $listofmethods=(is_array($conf->modules_parts['sms'])?$conf->modules_parts['sms']:array());

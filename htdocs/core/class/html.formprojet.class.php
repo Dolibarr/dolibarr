@@ -45,20 +45,22 @@ class FormProjets
 	/**
 	 *	Show a combo list with projects qualified for a third party
 	 *
-	 *	@param	int		$socid      Id third party (-1=all, 0=only projects not linked to a third party, id=projects not linked or linked to third party id)
-	 *	@param  int		$selected   Id project preselected
-	 *	@param  string	$htmlname   Nom de la zone html
-	 *	@param	int		$maxlength	Maximum length of label
-	 *	@return int         		Nbre of project if OK, <0 if KO
+	 *	@param	int		$socid      	Id third party (-1=all, 0=only projects not linked to a third party, id=projects not linked or linked to third party id)
+	 *	@param  int		$selected   	Id project preselected
+	 *	@param  string	$htmlname   	Nom de la zone html
+	 *	@param	int		$maxlength		Maximum length of label
+	 *	@param	int		$option_only	Option only
+	 *	@param	int		$show_empty		Add an empty line
+	 *	@return int         			Nber of project if OK, <0 if KO
 	 */
 	function select_projects($socid=-1, $selected='', $htmlname='projectid', $maxlength=16, $option_only=0, $show_empty=1)
-	{		
+	{
 		global $user,$conf,$langs;
-		
+
 		require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
 		$out='';
-		
+
 		$hideunselectables = false;
 		if (! empty($conf->global->PROJECT_HIDE_UNSELECTABLES)) $hideunselectables = true;
 
@@ -146,7 +148,7 @@ class FormProjets
 				$out.= '</select>';
 			}
 			print $out;
-			
+
 			$this->db->free($resql);
 			return $num;
 		}
@@ -156,16 +158,16 @@ class FormProjets
 			return -1;
 		}
 	}
-	
+
 	/**
 	 *    Build Select List of element associable to a project
 	 *
-	 *    @param	TableName		Table of the element to update
-	 *    @return	string			The HTML select list of element
+	 *    @param	string	$table_element		Table of the element to update
+	 *    @return	string						The HTML select list of element
 	 */
 	function select_element($table_element)
 	{
-	
+
 		$projectkey="fk_projet";
 		switch ($table_element)
 		{
@@ -186,16 +188,16 @@ class FormProjets
 				$sql = "SELECT rowid, ref";
 				break;
 		}
-	
+
 		$sql.= " FROM ".MAIN_DB_PREFIX.$table_element;
 		$sql.= " WHERE ".$projectkey." is null";
 		if (!empty($this->societe->id)) {
 			$sql.= " AND fk_soc=".$this->societe->id;
 		}
 		$sql.= " ORDER BY ref DESC";
-	
+
 		dol_syslog(get_class($this).'::select_element sql='.$sql,LOG_DEBUG);
-	
+
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -213,10 +215,10 @@ class FormProjets
 				$sellist .='</select>';
 			}
 			return $sellist ;
-				
+
 			$this->db->free($resql);
 		}
 	}
-	
+
 
 }

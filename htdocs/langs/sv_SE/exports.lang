@@ -65,7 +65,7 @@ ChooseFormatOfFileToImport=Välj filformat som ska användas som importera filfo
 ChooseFileToImport=Ladda upp filer klicka sedan på Picto %s för att välja fil som källa importera filen ...
 SourceFileFormat=Källa filformat
 FieldsInSourceFile=Fält i källfilen
-FieldsInTargetDatabase=Mål fält i Dolibarr databas (*= obligatoriska)
+# FieldsInTargetDatabase=Target fields in Dolibarr database (bold=mandatory)
 Field=Fält
 NoFields=Inga fält
 MoveField=Flytta fält %s kolumn nummer
@@ -120,10 +120,10 @@ CSVFormatDesc=<b>Semikolonavgränsade</b> filformat (. Csv). <br> Detta är en t
 # Separator=Separator
 # Enclosure=Enclosure
 # SuppliersProducts=Suppliers Products
-# BankCode=Bank code
-# DeskCode=Desk code
-# BankAccountNumber=Account number
-# BankAccountNumberKey=Key
+BankCode=Bankkod
+DeskCode=Reception kod
+BankAccountNumber=Kontonummer
+BankAccountNumberKey=Nyckel
 ## filters
 # SelectFilterFields=If you want to filter on some values, just input values here.
 # FilterableFields=Champs Filtrables

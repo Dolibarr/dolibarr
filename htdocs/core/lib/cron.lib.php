@@ -17,7 +17,7 @@
  */
 
 /**
- *	\file       cron/lib/cron.lib.php
+ *	\file       core/lib/cron.lib.php
  *	\brief      Function for module cron
  *	\ingroup    cron
  */

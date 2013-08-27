@@ -37,15 +37,15 @@ AgendaAutoActionDesc= 在此事件定义为要Dolibarr自动创建一个议程�
 AgendaSetupOtherDesc= 这页允许配置议程模块其他参数。
 AgendaExtSitesDesc=此页面允许申报日历的外部来源，以他们的活动看到到Dolibarr议程。
 ActionsEvents= 为此Dolibarr活动将创建一个自动行动议程
-PropalValidatedInDolibarr= 建议％s的验证
-InvoiceValidatedInDolibarr= 发票％s的验证
+PropalValidatedInDolibarr= 建议%s的验证
+InvoiceValidatedInDolibarr= 发票%s的验证
 InvoiceBackToDraftInDolibarr=发票的%s去回到草案状态
 # InvoiceDeleteDolibarr=Invoice %s deleted
-OrderValidatedInDolibarr= 订购％s的验证
+OrderValidatedInDolibarr= 订购%s的验证
 OrderApprovedInDolibarr=为了%s批准
 OrderBackToDraftInDolibarr=为了%s回到草案状态
 OrderCanceledInDolibarr=为了%s取消
-InterventionValidatedInDolibarr=％s的验证干预
+InterventionValidatedInDolibarr=%s的验证干预
 ProposalSentByEMail=商业建议通过电子邮件发送%s
 OrderSentByEMail=客户订单通过电子邮件发送%s
 InvoiceSentByEMail=客户发票通过电子邮件发送%s
@@ -61,10 +61,10 @@ DateActionDoneEnd= 真正的结束日期
 DateActionStart= 开始日期
 DateActionEnd= 结束日期
 AgendaUrlOptions1=您还可以添加以下参数来筛选输出：
-AgendaUrlOptions2=<b>登录=％s</b>到限制产量以行动来创造，受影响或将<b>使用者</b>与所做<b>％。</b>
-AgendaUrlOptions3=<b>logina =％s</b>到<b>％</b>限制输出到用户的操作创建<b>为</b> S。
-AgendaUrlOptions4=<b>logint =％s</b>到<b>％</b>限制输出到行动<b>使用者</b>与受影响。
-AgendaUrlOptions5=<b>logind =％s</b>到<b>％</b>限制输出到用户的行为进行<b>由</b> S。
+AgendaUrlOptions2=<b>login=%s</b> 到限制产量以行动来创造，受影响或将使用者与所做<b>%s</b>。
+AgendaUrlOptions3=<b>logina=%s</b>到<b> 限制输出到用户的操作创建 为<b>%s</b>。
+AgendaUrlOptions4=<b>logint=%s</b>到<b> 限制输出到行动<b>使用者 与受影响<b>%s</b>。
+AgendaUrlOptions5=<b>logind=%s</b>到<b> 限制输出到用户的行为进行 由 <b>%s</b>。
 AgendaShowBirthdayEvents=显示生日的接触
 AgendaHideBirthdayEvents=隐藏生日的接触
 # Busy=Busy

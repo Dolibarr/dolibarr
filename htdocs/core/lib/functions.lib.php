@@ -171,8 +171,8 @@ function dol_shutdown()
  *
  *  @param	string	$paramname   Name of parameter to found
  *  @param	string	$check	     Type of check (''=no check,  'int'=check it's numeric, 'alpha'=check it's alpha only, 'array'=check it's array)
- *  @param	int		$method	     Type of method (0 = get then post, 1 = only get, 2 = only post, 3 = post then get)
- *  @return string      		 Value found or '' if check fails
+ *  @param	int		$method	     Type of method (0 = get then post, 1 = only get, 2 = only post, 3 = post then get, 4 = post then get then cookie)
+ *  @return string      		 Value found, or '' if check fails
  */
 function GETPOST($paramname,$check='',$method=0)
 {
@@ -180,16 +180,13 @@ function GETPOST($paramname,$check='',$method=0)
 	elseif ($method==1) $out = isset($_GET[$paramname])?$_GET[$paramname]:'';
 	elseif ($method==2) $out = isset($_POST[$paramname])?$_POST[$paramname]:'';
 	elseif ($method==3) $out = isset($_POST[$paramname])?$_POST[$paramname]:(isset($_GET[$paramname])?$_GET[$paramname]:'');
-	else return 'BadParameter';
+	elseif ($method==4) $out = isset($_POST[$paramname])?$_POST[$paramname]:(isset($_GET[$paramname])?$_GET[$paramname]:(isset($_COOKIE[$paramname])?$_COOKIE[$paramname]:''));
+	else return 'BadThirdParameterForGETPOST';
 
 	if (! empty($check))
 	{
 		// Check if numeric
-		if ($check == 'int' && ! preg_match('/^[-\.,0-9]+$/i',$out))
-		{
-			$out=trim($out);
-			$out='';
-		}
+		if ($check == 'int' && ! is_numeric($out)) $out='';
 		// Check if alpha
 		elseif ($check == 'alpha')
 		{
@@ -244,20 +241,29 @@ function dol_include_once($relpath, $classname='')
 
 
 /**
- *	Return path of url or filesystem. Return default_root or alternate root if file_exist fails
+ *	Return path of url or filesystem. Return alternate root if exists
  *
- * 	@param	string	$path		Relative path to file (if mode=0, ie: mydir/myfile, ../myfile, ...) or relative url (if mode=1).
+ * 	@param	string	$path		Relative path to file (if mode=0) or relative url (if mode=1). Ie: mydir/myfile, ../myfile
  *  @param	int		$type		0=Used for a Filesystem path, 1=Used for an URL path (output relative), 2=Used for an URL path (output full path)
- *  @return string				Full filsystem path (if mode=0), Full url path (if mode=1)
+ *  @return string				Full filesystem path (if mode=0), Full url path (if mode=1)
  */
 function dol_buildpath($path, $type=0)
 {
+	global $conf;
+
+	$path=preg_replace('/^\//','',$path);
+
 	if (empty($type))	// For a filesystem path
 	{
-		$res = DOL_DOCUMENT_ROOT.$path;	// Standard value
-		if (defined('DOL_DOCUMENT_ROOT_ALT') && DOL_DOCUMENT_ROOT_ALT)	// We check only if alternate feature is used
+		$res = DOL_DOCUMENT_ROOT.'/'.$path;	// Standard value
+		foreach ($conf->file->dol_document_root as $key => $dirroot)	// ex: array(["main"]=>"/home/main/htdocs", ["alt0"]=>"/home/dirmod/htdocs", ...)
 		{
-			if (! file_exists(DOL_DOCUMENT_ROOT.$path)) $res = DOL_DOCUMENT_ROOT_ALT.$path;
+			if ($key == 'main') continue;
+			if (file_exists($dirroot.'/'.$path))
+			{
+				$res=$dirroot.'/'.$path;
+				break;
+			}
 		}
 	}
 	else				// For an url path
@@ -266,27 +272,27 @@ function dol_buildpath($path, $type=0)
 		// Note that trying to know if a file on disk exist by forging path on disk from url
 		// works only for some web server and some setup. This is bugged when
 		// using proxy, rewriting, virtual path, etc...
-		if ($type == 1)
+		$res='';
+		if ($type == 1) $res = DOL_URL_ROOT.'/'.$path;			// Standard value
+		if ($type == 2) $res = DOL_MAIN_URL_ROOT.'/'.$path;		// Standard value
+		foreach ($conf->file->dol_document_root as $key => $dirroot)	// ex: array(["main"]=>"/home/main/htdocs", ["alt0"]=>"/home/dirmod/htdocs", ...)
 		{
-			$res = DOL_URL_ROOT.$path;		// Standard value
-			if (defined('DOL_URL_ROOT_ALT') && DOL_URL_ROOT_ALT)			// We check only if alternate feature is used
+			if ($key == 'main') continue;
+			preg_match('/^([^\?]+(\.css\.php|\.css|\.js\.php|\.js|\.png|\.jpg|\.php)?)/i',$path,$regs);    // Take part before '?'
+			if (! empty($regs[1]))
 			{
-				preg_match('/^([^\?]+(\.css\.php|\.css|\.js\.php|\.js|\.png|\.jpg|\.php)?)/i',$path,$regs);    // Take part before '?'
-				if (! empty($regs[1]))
+				//print $key.'-'.$dirroot.'/'.$path.'-'.$conf->file->dol_url_root[$type].'<br>'."\n";
+				if (file_exists($dirroot.'/'.$regs[1]))
 				{
-					if (! file_exists(DOL_DOCUMENT_ROOT.$regs[1])) $res = DOL_URL_ROOT_ALT.$path;
-				}
-			}
-		}
-		else if ($type == 2)
-		{
-			$res = DOL_MAIN_URL_ROOT.$path;      // Standard value
-			if (defined('DOL_URL_ROOT_ALT') && DOL_URL_ROOT_ALT)            // We check only if alternate feature is used
-			{
-				preg_match('/^([^\?]+(\.css\.php|\.css|\.js\.php|\.js|\.png|\.jpg|\.php)?)/i',$path,$regs);    // Take part before '?'
-				if (! empty($regs[1]))
-				{
-					if (! file_exists(DOL_DOCUMENT_ROOT.$regs[1])) $res = DOL_MAIN_URL_ROOT_ALT.$path;
+					if ($type == 1)
+					{
+						$res=(preg_match('/^http/i',$conf->file->dol_url_root[$key])?'':DOL_URL_ROOT).$conf->file->dol_url_root[$key].'/'.$path;
+					}
+					if ($type == 2)
+					{
+						$res=(preg_match('/^http/i',$conf->file->dol_url_root[$key])?'':DOL_MAIN_URL_ROOT).$conf->file->dol_url_root[$key].'/'.$path;
+					}
+					break;
 				}
 			}
 		}
@@ -632,11 +638,11 @@ function dol_get_fiche_head($links=array(), $active='0', $title='', $notab=0, $p
 			if ((is_numeric($active) && $i == $active)
 			|| (! is_numeric($active) && $active == $links[$i][2]))
 			{
-				$out.='<a data-role="button" id="active" class="tab" href="'.$links[$i][0].'">'.$links[$i][1].'</a>'."\n";
+				$out.='<a data-role="button" id="active" class="tab inline-block" href="'.$links[$i][0].'">'.$links[$i][1].'</a>'."\n";
 			}
 			else
 			{
-				$out.='<a data-role="button"'.(! empty($links[$i][2])?' id="'.$links[$i][2].'"':'').' class="tab" href="'.$links[$i][0].'">'.$links[$i][1].'</a>'."\n";
+				$out.='<a data-role="button"'.(! empty($links[$i][2])?' id="'.$links[$i][2].'"':'').' class="tab inline-block" href="'.$links[$i][0].'">'.$links[$i][1].'</a>'."\n";
 			}
 		}
 		$out.='</div>';
@@ -698,7 +704,7 @@ function dol_bc($var,$moreclass='')
 function dol_format_address($object,$withcountry=0,$sep="\n")
 {
 	$ret='';
-	$countriesusingstate=array('AU','US','IN','GB','ES','UK');
+	$countriesusingstate=array('AU','US','IN','GB','ES','UK','TR');
 
 	// Address
 	$ret .= $object->address;
@@ -721,7 +727,7 @@ function dol_format_address($object,$withcountry=0,$sep="\n")
 		}
 		if ($object->zip) $ret .= ($ret ? $sep : '' ).$object->zip;
 	}
-	else if (in_array($object->country_code,array('ES'))) // ES: title firstname name \n address lines \n zip town \n state \n country
+	else if (in_array($object->country_code,array('ES','TR'))) // ES: title firstname name \n address lines \n zip town \n state \n country
 	{
 		$ret .= ($ret ? $sep : '' ).$object->zip;
 		$ret .= ' '.$object->town;
@@ -1348,30 +1354,37 @@ function dol_user_country()
  */
 function dol_print_address($address, $htmlid, $mode, $id)
 {
-	global $conf,$user,$langs;
+	global $conf, $user, $langs, $hookmanager;
 
 	if ($address)
 	{
-		print nl2br($address);
-		$showgmap=$showomap=0;
-		if ($mode=='thirdparty' && ! empty($conf->google->enabled) && ! empty($conf->global->GOOGLE_ENABLE_GMAPS)) $showgmap=1;
-		if ($mode=='contact' && ! empty($conf->google->enabled) && ! empty($conf->global->GOOGLE_ENABLE_GMAPS_CONTACTS)) $showgmap=1;
-		if ($mode=='member' && ! empty($conf->google->enabled) && ! empty($conf->global->GOOGLE_ENABLE_GMAPS_MEMBERS)) $showgmap=1;
-		if ($mode=='thirdparty' && ! empty($conf->openstreetmap->enabled) && ! empty($conf->global->OPENSTREETMAP_ENABLE_MAPS)) $showomap=1;
-		if ($mode=='contact' && ! empty($conf->openstreetmap->enabled) && ! empty($conf->global->OPENSTREETMAP_ENABLE_MAPS_CONTACTS)) $showomap=1;
-		if ($mode=='member' && ! empty($conf->openstreetmap->enabled) && ! empty($conf->global->OPENSTREETMAP_ENABLE_MAPS_MEMBERS)) $showomap=1;
+        if ($hookmanager) {
+            $parameters = array('element' => $mode, 'id' => $id);
+            $reshook = $hookmanager->executeHooks('printAddress', $parameters, $address, $action);
+            print $hookmanager->resPrint;
+        }
+        if (empty($reshook)) {
+            print nl2br($address);
+            $showgmap=$showomap=0;
+            if ($mode=='thirdparty' && ! empty($conf->google->enabled) && ! empty($conf->global->GOOGLE_ENABLE_GMAPS)) $showgmap=1;
+            if ($mode=='contact' && ! empty($conf->google->enabled) && ! empty($conf->global->GOOGLE_ENABLE_GMAPS_CONTACTS)) $showgmap=1;
+            if ($mode=='member' && ! empty($conf->google->enabled) && ! empty($conf->global->GOOGLE_ENABLE_GMAPS_MEMBERS)) $showgmap=1;
+            if ($mode=='thirdparty' && ! empty($conf->openstreetmap->enabled) && ! empty($conf->global->OPENSTREETMAP_ENABLE_MAPS)) $showomap=1;
+            if ($mode=='contact' && ! empty($conf->openstreetmap->enabled) && ! empty($conf->global->OPENSTREETMAP_ENABLE_MAPS_CONTACTS)) $showomap=1;
+            if ($mode=='member' && ! empty($conf->openstreetmap->enabled) && ! empty($conf->global->OPENSTREETMAP_ENABLE_MAPS_MEMBERS)) $showomap=1;
 
-		// TODO Add a hook here
-		if ($showgmap)
-		{
-			$url=dol_buildpath('/google/gmaps.php?mode='.$mode.'&id='.$id,1);
-			print ' <a href="'.$url.'" target="_gmaps"><img id="'.$htmlid.'" border="0" src="'.DOL_URL_ROOT.'/theme/common/gmap.png"></a>';
-		}
-		if ($showomap)
-		{
-			$url=dol_buildpath('/openstreetmap/maps.php?mode='.$mode.'&id='.$id,1);
-			print ' <a href="'.$url.'" target="_gmaps"><img id="'.$htmlid.'_openstreetmap" border="0" src="'.DOL_URL_ROOT.'/theme/common/gmap.png"></a>';
-		}
+            // TODO Add a hook here
+            if ($showgmap)
+            {
+                $url=dol_buildpath('/google/gmaps.php?mode='.$mode.'&id='.$id,1);
+                print ' <a href="'.$url.'" target="_gmaps"><img id="'.$htmlid.'" border="0" src="'.DOL_URL_ROOT.'/theme/common/gmap.png"></a>';
+            }
+            if ($showomap)
+            {
+                $url=dol_buildpath('/openstreetmap/maps.php?mode='.$mode.'&id='.$id,1);
+                print ' <a href="'.$url.'" target="_gmaps"><img id="'.$htmlid.'_openstreetmap" border="0" src="'.DOL_URL_ROOT.'/theme/common/gmap.png"></a>';
+            }
+        }
 	}
 }
 
@@ -1674,7 +1687,7 @@ function dol_trunc($string,$size=40,$trunc='right',$stringencoding='UTF-8',$nodo
 /**
  *	Show picto whatever it's its name (generic function)
  *
- *	@param      string		$alt         		Text on alt and title of image
+ *	@param      string		$alt         		Text on alt and title of image (alt only if param notitle is set to 1)
  *	@param      string		$picto       		Name of image file to show ('filenew', ...)
  *												If no extension provided, we use '.png'. Image must be stored into theme/xxx/img directory.
  *                                  			Example: picto.png                  if picto.png is stored into htdocs/theme/mytheme/img
@@ -1683,10 +1696,11 @@ function dol_trunc($string,$size=40,$trunc='right',$stringencoding='UTF-8',$nodo
  *	@param		string		$options			Add more attribute on img tag (For example 'style="float: right"')
  *	@param		int			$pictoisfullpath	If 1, image path is a full path
  *	@param		int			$srconly			Return only content of the src attribute of img.
+ *  @param		int			$notitle			1=Disable tag title. Use it if you add js tooltip, to avoid duplicate tooltip.
  *  @return     string       				    Return img tag
  *  @see        #img_object, #img_picto_common
  */
-function img_picto($alt, $picto, $options = '', $pictoisfullpath = false, $srconly=0)
+function img_picto($alt, $picto, $options = '', $pictoisfullpath = false, $srconly=0, $notitle=0)
 {
 	global $conf;
 
@@ -1705,7 +1719,7 @@ function img_picto($alt, $picto, $options = '', $pictoisfullpath = false, $srcon
 
 		$path = 'theme/'.$theme;
 		if (! empty($conf->global->MAIN_OVERWRITE_THEME_RES)) $path = $conf->global->MAIN_OVERWRITE_THEME_RES.'/theme/'.$conf->global->MAIN_OVERWRITE_THEME_RES;
-		if (! empty($conf->global->MAIN_FORCETHEMEDIR)) $path = preg_replace('/^\//', '', $conf->global->MAIN_FORCETHEMEDIR).'/'.$path;	// TODO What if there is both FORCETHEMDIR and OVERWRITE_THEM_RES
+		//if (! empty($conf->global->MAIN_FORCETHEMEDIR)) $path = preg_replace('/^\//', '', $conf->global->MAIN_FORCETHEMEDIR).'/'.$path;	// TODO What if there is both FORCETHEMDIR and OVERWRITE_THEM_RES
 		// If we ask an image into $url/$mymodule/img (instead of default path)
 		if (preg_match('/^([^@]+)@([^@]+)$/i',$picto,$regs))
 		{
@@ -1714,15 +1728,23 @@ function img_picto($alt, $picto, $options = '', $pictoisfullpath = false, $srcon
 		}
 		// Clean parameters
 		if (! preg_match('/(\.png|\.gif)$/i',$picto)) $picto .= '.png';
-		// If img file is not into standard path, we use alternate path (Avoid using DOL_URL_ROOT_ALT for performane)
-		if (defined('DOL_URL_ROOT_ALT') && DOL_URL_ROOT_ALT && ! file_exists(DOL_DOCUMENT_ROOT.'/'.$path.'/img/'.$picto)) $url = DOL_URL_ROOT_ALT;
+		// If alt path are defined, define url where img file is, according to physical path
+		foreach ($conf->file->dol_document_root as $type => $dirroot)	// ex: array(["main"]=>"/home/maindir/htdocs", ["alt0"]=>"/home/moddir/htdocs", ...)
+		{
+			if ($type == 'main') continue;
+			if (file_exists($dirroot.'/'.$path.'/img/'.$picto))
+			{
+				$url=DOL_URL_ROOT.$conf->file->dol_url_root[$type];
+				break;
+			}
+		}
 
 		// $url is '' or '/custom', $path is current theme or
 		$fullpathpicto = $url.'/'.$path.'/img/'.$picto;
 	}
 
 	if ($srconly) return $fullpathpicto;
-	else return '<img src="'.$fullpathpicto.'" border="0" alt="'.dol_escape_htmltag($alt).'" title="'.dol_escape_htmltag($alt).'"'.(! empty($options)?' '.$options:'').'>';
+	else return '<img src="'.$fullpathpicto.'" border="0" alt="'.dol_escape_htmltag($alt).'"'.($notitle?'':' title="'.dol_escape_htmltag($alt).'"').($options?' '.$options:'').'>';
 }
 
 /**
@@ -3662,8 +3684,8 @@ function make_substitutions($chaine,$substitutionarray)
  *  @param  array		&$substitutionarray		Array substitution old value => new value value
  *  @param  Translate	$outputlangs            If we want substitution from special constants, we provide a language
  *  @param  Object		$object                 If we want substitution from special constants, we provide data in a source object
- *  @param  Object/array  $parameters       Add more parameters (useful to pass product lines)
- *  @param  string              $callfunc               What is the name of the custom function that will be called? (default: completesubstitutionarray)
+ *  @param  Mixed		$parameters       		Add more parameters (useful to pass product lines)
+ *  @param  string      $callfunc               What is the name of the custom function that will be called? (default: completesubstitutionarray)
  *  @return	void
  *  @see 	make_substitutions
  */

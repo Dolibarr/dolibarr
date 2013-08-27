@@ -1,4 +1,4 @@
-# Dolibarr language file - tr_TR - suppliers
+# Dolibarr language file - Source file is en_US - suppliers
 CHARSET=UTF-8
 Suppliers=Tedarikçiler
 Supplier=Tedarikçi
@@ -38,3 +38,4 @@ AddSupplierOrder=Tedarikçi siparişi oluştur
 AddSupplierInvoice=Tedarikçi faturası oluştur
 ListOfSupplierProductForSupplier=Tedarikçi <b>%s</b> için ürün ve fiyat listesi
 NoneOrBatchFileNeverRan=Hiçbiri veya toplu <b>%s</b> yürütülmedi
+# SentToSuppliers=Sent to suppliers

@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - externalsite
 CHARSET=UTF-8
-ExternalSiteSetup=Ρύθμιση συνδέσμου σε εξωτερικό δικτυακό τόπο
-ExternalSiteURL=Εξωτερικές διεύθυνση URL ιστοσελίδας
-# ExternalSiteModuleNotComplete=Module ExternalSite was not configured properly.
+ExternalSiteSetup=Ρύθμιση συνδέσμου σε εξωτερικό website
+ExternalSiteURL=Εξωτερικές διεύθυνσης URL ιστοσελίδας
+ExternalSiteModuleNotComplete=Η ενότητα Εξωτερικά Site δεν έχει ρυθμιστεί σωστά.

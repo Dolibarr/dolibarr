@@ -152,8 +152,74 @@ class ScriptsTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * testCompany
+     *
+     * @depends	testBank
+     * @return string
+     */
+    public function testCompany()
+    {
+    	global $conf,$user,$langs,$db;
+		$conf=$this->savconf;
+		$user=$this->savuser;
+		$langs=$this->savlangs;
+		$db=$this->savdb;
+
+		/*
+		$script=dirname(__FILE__).'/../../scripts/company/sync_contacts_dolibarr_2ldap now';
+		$result=exec($script, $output, $returnvar);
+
+		print __METHOD__." result=".$result."\n";
+		print __METHOD__." output=".join("\n",$output)."\n";
+		print __METHOD__." returnvar=".$returnvar."\n";
+		$this->assertEquals($result,'Failed to find bank account with ref BANKDUMMY.');
+		$this->assertEquals($returnvar,255);
+		*/
+        return $result;
+    }
+
+    /**
+     * testContracts
+     *
+     * @depends	testCompany
+     * @return string
+     */
+    public function testContracts()
+    {
+    	global $conf,$user,$langs,$db;
+    	$conf=$this->savconf;
+    	$user=$this->savuser;
+    	$langs=$this->savlangs;
+    	$db=$this->savdb;
+
+    	$script=dirname(__FILE__).'/../../scripts/contracts/email_expire_services_to_customers.php test thirdparties';
+    	$result=exec($script, $output, $returnvar);
+    	print __METHOD__." result=".$result."\n";
+    	print __METHOD__." output=".join("\n",$output)."\n";
+    	print __METHOD__." returnvar=".$returnvar."\n";
+    	$this->assertEquals($returnvar,0,'email_expire_services_to_customers.php thirdparties');
+
+    	$script=dirname(__FILE__).'/../../scripts/contracts/email_expire_services_to_customers.php test contacts -30';
+    	$result=exec($script, $output, $returnvar);
+    	print __METHOD__." result=".$result."\n";
+    	print __METHOD__." output=".join("\n",$output)."\n";
+    	print __METHOD__." returnvar=".$returnvar."\n";
+    	$this->assertEquals($returnvar,0,'email_expire_services_to_customers.php contacts');
+
+    	$script=dirname(__FILE__).'/../../scripts/contracts/email_expire_services_to_representatives.php test -30';
+    	$result=exec($script, $output, $returnvar);
+    	print __METHOD__." result=".$result."\n";
+    	print __METHOD__." output=".join("\n",$output)."\n";
+    	print __METHOD__." returnvar=".$returnvar."\n";
+    	$this->assertEquals($returnvar,0,'email_expire_services_to_representatives.php');
+
+    	return $result;
+    }
+
+    /**
      * testInvoices
      *
+     * @depends	testContracts
      * @return string
      */
     public function testInvoices()
@@ -166,11 +232,24 @@ class ScriptsTest extends PHPUnit_Framework_TestCase
 
     	$script=dirname(__FILE__).'/../../scripts/invoices/email_unpaid_invoices_to_customers.php test thirdparties';
     	$result=exec($script, $output, $returnvar);
-
     	print __METHOD__." result=".$result."\n";
     	print __METHOD__." output=".join("\n",$output)."\n";
     	print __METHOD__." returnvar=".$returnvar."\n";
-    	$this->assertEquals($returnvar,0);
+    	$this->assertEquals($returnvar,0,'email_unpaid_invoices_to_customers.php thirdparties');
+
+    	$script=dirname(__FILE__).'/../../scripts/invoices/email_unpaid_invoices_to_customers.php test contacts -30';
+    	$result=exec($script, $output, $returnvar);
+    	print __METHOD__." result=".$result."\n";
+    	print __METHOD__." output=".join("\n",$output)."\n";
+    	print __METHOD__." returnvar=".$returnvar."\n";
+    	$this->assertEquals($returnvar,0,'email_unpaid_invoices_to_customers.php contacts');
+
+    	$script=dirname(__FILE__).'/../../scripts/invoices/email_unpaid_invoices_to_representatives.php test thirdparties';
+    	$result=exec($script, $output, $returnvar);
+    	print __METHOD__." result=".$result."\n";
+    	print __METHOD__." output=".join("\n",$output)."\n";
+    	print __METHOD__." returnvar=".$returnvar."\n";
+    	$this->assertEquals($returnvar,0,'email_unpaid_invoices_to_customers.php thirdparties');
 
     	return $result;
     }

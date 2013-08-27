@@ -16,7 +16,7 @@
  */
 
 /**
- *	\file       htdocs/core/boxes/box_order_permonth.php
+ *	\file       htdocs/core/boxes/box_graph_orders_permonth.php
  *	\ingroup    commandes
  *	\brief      Box to show graph of orders per month
  */
@@ -29,7 +29,7 @@ include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
 class box_graph_orders_permonth extends ModeleBoxes
 {
 	var $boxcode="orderspermonth";
-	var $boximg="object_bill";
+	var $boximg="object_order";
 	var $boxlabel="BoxCustomersOrdersPerMonth";
 	var $depends = array("commande");
 
@@ -66,33 +66,38 @@ class box_graph_orders_permonth extends ModeleBoxes
 
 		$refreshaction='refresh_'.$this->boxcode;
 
-		include_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
-		$commandestatic=new Commande($db);
+		//include_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
+		//$commandestatic=new Commande($db);
 
 		$text = $langs->trans("BoxCustomersOrdersPerMonth",$max);
 		$this->info_box_head = array(
 				'text' => $text,
 				'limit'=> dol_strlen($text),
 				'graph'=> 1,
-				'sublink'=>$_SERVER["PHP_SELF"].'?action='.$refreshaction,
-				'subtext'=>$langs->trans("Refresh"),
-				'subpicto'=>'refresh.png',
-				'target'=>'none'
+				'sublink'=>'',
+				'subtext'=>$langs->trans("Filter"),
+				'subpicto'=>'filter.png',
+				'subclass'=>'linkobject',
+				'target'=>'none'	// Set '' to get target="_blank"
 		);
 
 		if ($user->rights->commande->lire)
 		{
+			$param_year='DOLUSERCOOKIE_param'.$this->boxcode.'year';
+			$param_shownb='DOLUSERCOOKIE_param'.$this->boxcode.'shownb';
+			$param_showtot='DOLUSERCOOKIE_param'.$this->boxcode.'showtot';
+
 			include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 			include_once DOL_DOCUMENT_ROOT.'/commande/class/commandestats.class.php';
-
-			$shownb=(! empty($conf->global->COMMANDE_BOX_GRAPH_SHOW_NB));
-			$showtot=(! isset($conf->global->COMMANDE_BOX_GRAPH_SHOW_TOT) || ! empty($conf->global->COMMANDE_BOX_GRAPH_SHOW_TOT));
+			$shownb=GETPOST($param_shownb,'alpha',4);
+			$showtot=GETPOST($param_showtot,'alpha',4);
+			if (empty($shownb) && empty($showtot)) $showtot=1;
 			$nowarray=dol_getdate(dol_now(),true);
-			$endyear=$nowarray['year'];
+			$endyear=(GETPOST($param_year,'',4)?GETPOST($param_year,'int',4):$nowarray['year']);
 			$startyear=$endyear-1;
 			$mode='customer';
 			$userid=0;
-			$WIDTH='256';
+			$WIDTH=(($shownb && $showtot) || ! empty($conf->dol_optimize_smallscreen))?'256':'320';
 			$HEIGHT='192';
 
 			$stats = new CommandeStats($this->db, 0, $mode, ($userid>0?$userid:0));
@@ -175,9 +180,29 @@ class box_graph_orders_permonth extends ModeleBoxes
 
 			if (! $mesg)
 			{
+				$stringtoshow='';
+				$stringtoshow.='<script type="text/javascript" language="javascript">
+					jQuery(document).ready(function() {
+						jQuery("#idsubimg'.$this->boxcode.'").click(function() {
+							jQuery("#idfilter'.$this->boxcode.'").toggle();
+						});
+					});
+					</script>';
+				$stringtoshow.='<div class="center hideobject" id="idfilter'.$this->boxcode.'">';	// hideobject is to start hidden
+				$stringtoshow.='<form class="flat formboxfilter" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+				$stringtoshow.='<input type="hidden" name="action" value="'.$refreshaction.'">';
+				$stringtoshow.='<input type="hidden" name="DOL_AUTOSET_COOKIE" value="'.$param_year.','.$param_shownb.','.$param_showtot.'">';
+				$stringtoshow.='<input type="checkbox" name="'.$param_shownb.'"'.($shownb?' checked="true"':'').'"> '.$langs->trans("NumberOfOrdersByMonth");
+				$stringtoshow.=' &nbsp; ';
+				$stringtoshow.='<input type="checkbox" name="'.$param_showtot.'"'.($showtot?' checked="true"':'').'"> '.$langs->trans("AmountOfOrdersByMonthHT");
+				$stringtoshow.='<br>';
+				$stringtoshow.=$langs->trans("Year").' <input class="flat" size="4" type="text" name="'.$param_year.'" value="'.$endyear.'">';
+				$stringtoshow.='<input type="image" src="'.img_picto($langs->trans("Refresh"),'refresh.png','','',1).'">';
+				$stringtoshow.='</form>';
+				$stringtoshow.='</div>';
 				if ($shownb && $showtot)
 				{
-					$stringtoshow ='<div class="fichecenter">';
+					$stringtoshow.='<div class="fichecenter">';
 					$stringtoshow.='<div class="fichehalfleft">';
 				}
 				if ($shownb) $stringtoshow.=$px1->show();
@@ -192,11 +217,11 @@ class box_graph_orders_permonth extends ModeleBoxes
 					$stringtoshow.='</div>';
 					$stringtoshow.='</div>';
 				}
-				$this->info_box_contents[0][0] = array('td' => 'align="center"','textnoformat'=>$stringtoshow);
+				$this->info_box_contents[0][0] = array('td' => 'align="center" class="nohover"','textnoformat'=>$stringtoshow);
 			}
 			else
 			{
-				$this->info_box_contents[0][0] = array(	'td' => 'align="left"',
+				$this->info_box_contents[0][0] = array(	'td' => 'align="left" class="nohover"',
     	        										'maxlength'=>500,
 	            										'text' => $mesg);
 			}

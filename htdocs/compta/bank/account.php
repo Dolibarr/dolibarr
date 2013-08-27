@@ -104,6 +104,7 @@ if ($action == 'add' && $id && ! isset($_POST["cancel"]) && $user->rights->banqu
 		$insertid = $object->addline($dateop, $operation, $label, $amount, $num_chq, $cat1, $user);
 		if ($insertid > 0)
 		{
+			setEventMessage($langs->trans("RecordSaved"));
 			header("Location: ".$_SERVER['PHP_SELF']."?id=".$id."&action=addline");
 			exit;
 		}
@@ -120,7 +121,7 @@ if ($action == 'add' && $id && ! isset($_POST["cancel"]) && $user->rights->banqu
 if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->banque->modifier)
 {
 	$accline=new AccountLine($db);
-	$accline->fetch($_GET["rowid"]);
+	$result=$accline->fetch(GETPOST("rowid"));
 	$result=$accline->delete();
 }
 
@@ -295,6 +296,14 @@ if ($id > 0 || ! empty($ref))
 	 */
 	$param.='&amp;account='.$object->id.'&amp;vline='.$vline;
 
+	// Confirmation delete
+	if ($action == 'delete')
+	{
+		$text=$langs->trans('ConfirmDeleteTransaction');
+		$ret=$form->form_confirm($_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;rowid='.GETPOST("rowid"),$langs->trans('DeleteTransaction'),$text,'confirm_delete');
+		if ($ret == 'html') print '<br>';
+	}
+
 	// Define transaction list navigation string
 	print '<form action="'.$_SERVER["PHP_SELF"].'" name="newpage" method="POST">';
 	print '<input type="hidden" name="token"        value="'.$_SESSION['newtoken'].'">';
@@ -318,16 +327,9 @@ if ($id > 0 || ! empty($ref))
 	{
 		$navig.= '<a href="'.$_SERVER["PHP_SELF"].'?'.$param.'&amp;page='.($page-1).'">'.img_next().'</a>';
 	}
-	$navig.='</fieldset></div>';
-	//var_dump($navig);
+	$navig.='</div>';
 
-	// Confirmation delete
-	if ($action == 'delete')
-	{
-		$text=$langs->trans('ConfirmDeleteTransaction');
-		$ret=$form->form_confirm($_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;rowid='.$_GET["rowid"],$langs->trans('DeleteTransaction'),$text,'confirm_delete');
-		if ($ret == 'html') print '<br>';
-	}
+	//var_dump($navig);
 
 	print '<table class="notopnoleftnoright" width="100%">';
 
@@ -431,7 +433,7 @@ if ($id > 0 || ! empty($ref))
      */
 
 	$sql = "SELECT b.rowid, b.dateo as do, b.datev as dv,";
-	$sql.= " b.amount, b.label, b.rappro, b.num_releve, b.num_chq, b.fk_type,";
+	$sql.= " b.amount, b.label, b.rappro, b.num_releve, b.num_chq, b.fk_type, b.fk_bordereau,";
 	$sql.= " ba.rowid as bankid, ba.ref as bankref, ba.label as banklabel";
 	if ($mode_search)
 	{
@@ -517,15 +519,21 @@ if ($id > 0 || ! empty($ref))
 				print "</td>\n";
 
 				// Payment type
-				print "<td nowrap>";
+				print '<td class="nowrap">';
 				$label=($langs->trans("PaymentTypeShort".$objp->fk_type)!="PaymentTypeShort".$objp->fk_type)?$langs->trans("PaymentTypeShort".$objp->fk_type):$objp->fk_type;
 
 				if ($objp->fk_type == 'SOLD') $label='&nbsp;';
+				if ($objp->fk_type == 'CHQ' && $objp->fk_bordereau > 0) {
+					dol_include_once('/compta/paiement/cheque/class/remisecheque.class.php');
+					$bordereaustatic = new RemiseCheque($db);
+					$bordereaustatic->id = $objp->fk_bordereau;
+					$label .= ' '.$bordereaustatic->getNomUrl(2);
+				}
 				print $label;
 				print "</td>\n";
 
 				// Num
-				print '<td nowrap>'.($objp->num_chq?$objp->num_chq:"")."</td>\n";
+				print '<td class="nowrap">'.($objp->num_chq?$objp->num_chq:"")."</td>\n";
 
 				// Description
 				print '<td>';
@@ -789,13 +797,20 @@ if ($id > 0 || ! empty($ref))
 
 		if ($action != 'addline')
 		{
-			if ($user->rights->banque->modifier)
+			if (empty($conf->global->BANK_DISABLE_DIRECT_INPUT))
 			{
-				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=addline&amp;id='.$object->id.'&amp;page='.$page.($vline?'&amp;vline='.$vline:'').'">'.$langs->trans("AddBankRecord").'</a>';
+				if ($user->rights->banque->modifier)
+				{
+					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=addline&amp;id='.$object->id.'&amp;page='.$page.($vline?'&amp;vline='.$vline:'').'">'.$langs->trans("AddBankRecord").'</a>';
+				}
+				else
+				{
+					print '<a class="butActionRefused" title="'.$langs->trans("NotEnoughPermissions").'" href="#">'.$langs->trans("AddBankRecord").'</a>';
+				}
 			}
 			else
 			{
-				print '<a class="butActionRefused" title="'.$langs->trans("NotEnoughPermissions").'" href="#">'.$langs->trans("AddBankRecord").'</a>';
+				print '<a class="butActionRefused" title="'.$langs->trans("FeatureDisabled").'" href="#">'.$langs->trans("AddBankRecord").'</a>';
 			}
 		}
 

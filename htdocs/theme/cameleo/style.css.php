@@ -224,6 +224,12 @@ div.inline-block
 .nowrap {
 	white-space: <?php print ($dol_optimize_smallscreen?'normal':'nowrap'); ?>;
 }
+.nobold {
+	font-weight: normal !important;
+}
+.nounderline {
+    text-decoration: none;
+}
 
 
 /* ============================================================================== */
@@ -322,6 +328,10 @@ else
 }
 ?>
 
+div#tmenu_tooltip {
+	padding-right: 100px;
+}
+
 div.tmenu {
 <?php if (GETPOST("optioncss") == 'print') {  ?>
 	display:none;
@@ -335,7 +345,7 @@ div.tmenu {
     padding: 0px 0px 0px 0px;	/* t r b l */
     margin: 0px 0px 5px 0px;	/* t r b l */
     font-weight: normal;
-    height: 47px;
+    height: 44px;
     background: #FFF;
     background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/bg_tmenu.jpg',1); ?>);
     background-position: center bottom;
@@ -643,6 +653,7 @@ form#login {
 }
 
 div.login_block {
+    width: 180px;
 	position: absolute;
 	<?php print $right; ?>: 5px;
 	top: 3px;
@@ -675,6 +686,14 @@ div.login a {
 div.login a:hover {
 	color: black;
 	text-decoration:underline;
+}
+.login_block_user {
+	float: right;
+}
+.login_block_elem {
+	float: right;
+	vertical-align: top;
+	padding: 0px 0px 0px 4px !important;
 }
 
 .alogin, .alogin:hover {
@@ -726,10 +745,10 @@ a.vsmenu:hover      { font-size:11px; text-align:left; font-weight: normal; colo
 font.vsmenudisabled { font-size:11px; text-align:left; font-weight: normal; color: #202020; }
 font.vsmenudisabledmargin { margin: 1px 1px 1px 4px; }
 
-a.help:link         { font-size: 10px; font-weight: bold; background: #FFFFFF; border: 1px solid #8CACBB; color: #68ACCF; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
-a.help:visited      { font-size: 10px; font-weight: bold; background: #FFFFFF; border: 1px solid #8CACBB; color: #68ACCF; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
-a.help:active       { font-size: 10px; font-weight: bold; background: #FFFFFF; border: 1px solid #8CACBB; color: #6198BA; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
-a.help:hover        { font-size: 10px; font-weight: bold; background: #FFFFFF; border: 1px solid #8CACBB; color: #6198BA; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
+a.help:link         { font-size: 10px; font-weight: bold; background: #FFFFFF; color: #AAACAF; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
+a.help:visited      { font-size: 10px; font-weight: bold; background: #FFFFFF; color: #AAACAF; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
+a.help:active       { font-size: 10px; font-weight: bold; background: #FFFFFF; color: #9998A0; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
+a.help:hover        { font-size: 10px; font-weight: bold; background: #FFFFFF; color: #9998A0; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
 
 
 div.blockvmenupair
@@ -1380,22 +1399,31 @@ margin: 0px 0px 0px 0px;
 }
 
 
-table.border {
-border: 1px solid #9CACBB;
-border-collapse: collapse;
+table.border, table.dataTable, .table-border, .table-border-col, .table-key-border-col, .table-val-border-col  {
+	border: 1px solid #9CACBB;
+	border-collapse: collapse;
+	padding: 1px 2px;
 }
 
 table.border td {
-padding: 1px 2px;
-border: 1px solid #9CACBB;
-border-collapse: collapse;
+	padding: 1px 2px;
+	border: 1px solid #9CACBB;
+	border-collapse: collapse;
 }
 
 td.border {
-border-top: 1px solid #000000;
-border-right: 1px solid #000000;
-border-bottom: 1px solid #000000;
-border-left: 1px solid #000000;
+	border-top: 1px solid #000000;
+	border-right: 1px solid #000000;
+	border-bottom: 1px solid #000000;
+	border-left: 1px solid #000000;
+}
+
+.table-key-border-col {
+	width: 25%;
+	vertical-align:top;
+}
+.table-val-border-col {
+	width:auto;
 }
 
 /* Main boxes */
@@ -1465,11 +1493,11 @@ table.liste td {
     padding-right: 2px;
 }
 
-.tagtable { display: table; }
+.tagtable, .table-border { display: table; }
+.tagtr, .table-border-row  { display: table-row; }
+.tagtd, .table-border-col, .table-key-border-col, .table-val-border-col { display: table-cell; }
 .tagtable form { display: table-row; }
 .tagtable form div { display: table-cell; }
-.tagtr { display: table-row; }
-.tagtd { display: table-cell; }
 
 tr.liste_titre, tr.liste_titre_sel, form.liste_titre, form.liste_titre_sel
 {
@@ -1513,7 +1541,6 @@ border: 0px;
 tr.liste_total td, form.liste_total div {
 border-top: 1px solid #DDDDDD;
 background: #F0F0F0;
-/* background-image: url(<?php echo dol_buildpath($path.'/theme/login_background.png',1); ?>); */
 background-repeat: repeat-x;
 color: #332266;
 font-weight: normal;
@@ -1532,6 +1559,10 @@ background: #c0c4c7;
 border: 0px;
 }
 
+tr.impair td.nohover, form.impair div.nohover {
+	background: #eaeaea;
+}
+
 .pair	{
 background: #FFFFFF;
 font-family: <?php print $fontlist ?>;
@@ -1541,6 +1572,10 @@ border: 0px;
 .pair:hover {
 background: #c0c4c7;
 border: 0px;
+}
+
+tr.pair td.nohover {
+	background: #FFFFFF;
 }
 
 .pair td, .impair td {
@@ -1557,6 +1592,19 @@ border: 0px;
 /*
  *  Boxes
  */
+
+.boxstats {
+    <?php print "float: ".$left.";\n"; ?>
+    margin: 4px;
+    padding: 4px;
+	/*-moz-box-shadow: 4px 4px 4px #DDD;
+    -webkit-box-shadow: 4px 4px 4px #DDD;
+    box-shadow: 4px 4px 4px #DDD;
+    margin-bottom: 8px !important;*/
+    border: 1px solid #AAA;
+    text-align: center;
+    border-radius: 5px;
+}
 
 .box {
 	padding-right: 0px;
@@ -1591,6 +1639,10 @@ background: #c0c4c7;
 border: 0px;
 }
 
+tr.box_impair .nohover {
+background: #eaeaea;
+}
+
 tr.box_pair {
 /* background: #d0d4d7; */
 background: #f4f4f4;
@@ -1602,10 +1654,15 @@ background: #c0c4c7;
 border: 0px;
 }
 
-tr.fiche {
-font-family: <?php print $fontlist ?>;
+.formboxfilter {
+	vertical-align: middle;
+	margin-bottom: 6px;
 }
-
+.formboxfilter input[type=image]
+{
+	top: 4px;
+	position: relative;
+}
 
 
 
@@ -2157,37 +2214,6 @@ a.cke_dialog_ui_button
 .template-upload {
     height: 72px !important;
 }
-
-
-/* ============================================================================== */
-/*  Table with div                                                                */
-/* ============================================================================== */
-
-div.table-border {
-	display:table;
-    width: 100%;
-    border-collapse: collapse;
-    border: 1px solid #9CACBB;
-}
-div.table-border-row {
-	display:table-row;
-}
-div.table-key-border-col {
-	display:table-cell;
-	width: 25%;
-	vertical-align:top;
-	padding: 1px 2px 1px 1px;
-	border: 1px solid #9CACBB;
-	border-collapse: collapse;
-}
-div.table-val-border-col {
-	display:table-cell;
-	width:auto;
-	padding: 1px 2px 1px 1px;
-	border: 1px solid #9CACBB;
-	border-collapse: collapse;
-}
-
 
 
 /* ============================================================================== */

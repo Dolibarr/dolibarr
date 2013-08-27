@@ -76,6 +76,10 @@ class FactureFournisseur extends CommonInvoice
     var $note_private;
     var $note_public;
     var $propalid;
+    var $cond_reglement_id;
+    var $cond_reglement_code;
+    var $mode_reglement_id;
+    var $mode_reglement_code;
 
     var $lines;
     var $fournisseur;	// deprecated
@@ -120,7 +124,8 @@ class FactureFournisseur extends CommonInvoice
 		$error=0;
         $now=dol_now();
 
-        // Clear parameters
+        // Clean parameters
+        if (isset($this->ref_supplier)) $this->ref_supplier=trim($this->ref_supplier);
         if (empty($this->date)) $this->date=$now;
 
         $socid = $this->socid;
@@ -142,6 +147,8 @@ class FactureFournisseur extends CommonInvoice
         $sql.= ", datec";
         $sql.= ", datef";
 		$sql.= ", fk_projet";
+		$sql.= ", fk_cond_reglement";
+		$sql.= ", fk_mode_reglement";
         $sql.= ", note_private";
         $sql.= ", note_public";
         $sql.= ", fk_user_author";
@@ -156,6 +163,8 @@ class FactureFournisseur extends CommonInvoice
         $sql.= ", '".$this->db->idate($now)."'";
         $sql.= ", '".$this->db->idate($this->date)."'";
 		$sql.= ", ".(isset($this->fk_project)?$this->fk_project:"null");
+		$sql.= ", ".(isset($this->cond_reglement_id)?$this->cond_reglement_id:"null");
+		$sql.= ", ".(isset($this->mode_reglement_id)?$this->mode_reglement_id:"null");
         $sql.= ", '".$this->db->escape($this->note_private)."'";
         $sql.= ", '".$this->db->escape($this->note_public)."'";
         $sql.= ", ".$user->id.",";
@@ -299,17 +308,22 @@ class FactureFournisseur extends CommonInvoice
         $sql.= " t.fk_facture_source,";
         $sql.= " t.fk_projet,";
         $sql.= " t.fk_cond_reglement,";
+		$sql.= " t.fk_mode_reglement,";
         $sql.= " t.date_lim_reglement,";
         $sql.= " t.note_private,";
         $sql.= " t.note_public,";
         $sql.= " t.model_pdf,";
         $sql.= " t.import_key,";
         $sql.= " t.extraparams,";
+        $sql.= " cr.code as cond_reglement_code, cr.libelle as cond_reglement_libelle,";
+        $sql.= " p.code as mode_reglement_code, p.libelle as mode_reglement_libelle,";
         $sql.= ' s.nom as socnom, s.rowid as socid';
-        $sql.= ' FROM '.MAIN_DB_PREFIX.'facture_fourn as t,'.MAIN_DB_PREFIX.'societe as s';
+        $sql.= ' FROM '.MAIN_DB_PREFIX.'facture_fourn as t';
+        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON (t.fk_soc = s.rowid)";
+        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_payment_term as cr ON (t.fk_cond_reglement = cr.rowid)";
+        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as p ON (t.fk_mode_reglement = p.id)";
         if ($id)  $sql.= " WHERE t.rowid=".$id;
         if ($ref) $sql.= " WHERE t.ref='".$this->db->escape($ref)."'";
-        $sql.= ' AND t.fk_soc = s.rowid';
 
         dol_syslog(get_class($this)."::fetch sql=".$sql, LOG_DEBUG);
         $resql=$this->db->query($sql);
@@ -351,7 +365,13 @@ class FactureFournisseur extends CommonInvoice
                 $this->fk_user_valid		= $obj->fk_user_valid;
                 $this->fk_facture_source	= $obj->fk_facture_source;
                 $this->fk_project			= $obj->fk_projet;
-                $this->fk_cond_reglement	= $obj->fk_cond_reglement;
+	            $this->cond_reglement_id	= $obj->fk_cond_reglement;
+	            $this->cond_reglement_code	= $obj->cond_reglement_code;
+	            $this->cond_reglement		= $obj->cond_reglement_libelle;
+	            $this->cond_reglement_doc	= $obj->cond_reglement_libelle;
+	            $this->mode_reglement_id	= $obj->fk_mode_reglement;
+	            $this->mode_reglement_code	= $obj->mode_reglement_code;
+	            $this->mode_reglement		= $obj->mode_reglement_libelle;
                 $this->date_echeance		= $this->db->jdate($obj->date_lim_reglement);
                 $this->note					= $obj->note_private;	// deprecated
                 $this->note_private			= $obj->note_private;
@@ -616,6 +636,13 @@ class FactureFournisseur extends CommonInvoice
         else {
         	$error++;
         }
+		
+		if (! $error)
+		{
+			// Delete linked object
+			$res = $this->deleteObjectLinked();
+			if ($res < 0) $error++;
+		}
 
         if (! $error)
         {
@@ -1422,11 +1449,10 @@ class FactureFournisseur extends CommonInvoice
         }
 
         $obj = new $classname();
-
         $numref = "";
         $numref = $obj->getNumRef($soc,$this,$mode);
 
-        if ( $numref != "")
+        if ($numref != "")
         {
         	return $numref;
         }

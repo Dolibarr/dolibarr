@@ -165,7 +165,7 @@ ImageEditor=صورة المحرر
 YouReceiveMailBecauseOfNotification=تلقيت هذه الرسالة لأنه قد تم إضافة البريد الإلكتروني الخاص بك إلى قائمة الأهداف التي يتعين على علم الأحداث ولا سيما في صناعة البرمجيات من %s %s.
 YouReceiveMailBecauseOfNotification2=هذا الحدث هو ما يلي :
 # ThisIsListOfModules=This is a list of modules preselected by this demo profile (only most common modules are visible in this demo). Edit this to have a more personalized demo and click on "Start".
-# ClickHere=Click here
+ClickHere=اضغط هنا
 # UseAdvancedPerms=Use the advanced permissions of some modules
 # FileFormat=File format
 # SelectAColor=Choose a color
@@ -173,7 +173,7 @@ AddFiles=اضافه کردن فایلها
 StartUpload=شروع آپلود
 CancelUpload=لغو بارگذاری
 FileIsTooBig=فایلها خیلی بزرگ
-# PleaseBePatient=Please be patient...
+PleaseBePatient=يرجى التحلي بالصبر...
 
 ##### Calendar common #####
 AddCalendarEntry=إضافة الدخول في التقويم ق ٪
@@ -195,6 +195,7 @@ MemberResiliatedInDolibarr=عضو في resiliated ٪ ق Dolibarr
 MemberDeletedInDolibarr=عضو ٪ ق حذفها من Dolibarr
 MemberSubscriptionAddedInDolibarr=الاكتتاب عضو ق ٪ وأضاف في Dolibarr
 # ShipmentValidatedInDolibarr=Shipment %s validated in Dolibarr
+# ShipmentDeletedInDolibarr=Shipment %s deleted from Dolibarr
 ##### Export #####
 Export=صادرات
 ExportsArea=صادرات المنطقة

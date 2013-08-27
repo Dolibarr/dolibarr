@@ -27,9 +27,10 @@
  *
  * @param	string	$url 			URL to call.
  * @param	string	$postorget		'post' = POST, 'get='GET'
+ * @param	string	$param			Paraemeters of URL (x=value1&y=value2)
  * @return	array					returns an associtive array containing the response from the server.
  */
-function getURLContent($url,$postorget='GET',$param)
+function getURLContent($url,$postorget='GET',$param='')
 {
     //declaring of global variables
     global $conf, $langs;
@@ -58,7 +59,7 @@ function getURLContent($url,$postorget='GET',$param)
 
     curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, empty($conf->global->MAIN_USE_CONNECT_TIMEOUT)?5:$conf->global->MAIN_USE_CONNECT_TIMEOUT);
     curl_setopt($ch, CURLOPT_TIMEOUT, empty($conf->global->MAIN_USE_RESPONSE_TIMEOUT)?30:$conf->global->MAIN_USE_RESPONSE_TIMEOUT);
-    
+
     curl_setopt($ch, CURLOPT_RETURNTRANSFER,1);
     if ($postorget == 'POST') curl_setopt($ch, CURLOPT_POST, 1);
     else curl_setopt($ch, CURLOPT_POST, 0);
@@ -95,7 +96,10 @@ function getURLContent($url,$postorget='GET',$param)
     }
     else
     {
-        //closing the curl
+    	$info = curl_getinfo($ch);
+    	$rep['header_size']=$info['header_size'];
+    	
+    	//closing the curl
         curl_close($ch);
     }
 

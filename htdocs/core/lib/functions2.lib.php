@@ -1451,47 +1451,63 @@ function dolGetElementUrl($objectid,$objecttype,$withpicto=0,$option='')
 
 	// To work with non standard path
 	if ($objecttype == 'facture' || $objecttype == 'invoice') {
-		$classpath = 'compta/facture/class'; $module='facture'; $subelement='facture';
+		$classpath = 'compta/facture/class'; 
+		$module='facture'; 
+		$subelement='facture';
 	}
 	if ($objecttype == 'commande' || $objecttype == 'order') {
-		$classpath = 'commande/class'; $module='commande'; $subelement='commande';
+		$classpath = 'commande/class'; 
+		$module='commande'; 
+		$subelement='commande';
 	}
 	if ($objecttype == 'propal')  {
 		$classpath = 'comm/propal/class';
 	}
 	if ($objecttype == 'shipping') {
-		$classpath = 'expedition/class'; $subelement = 'expedition'; $module = 'expedition_bon';
+		$classpath = 'expedition/class'; 
+		$subelement = 'expedition'; 
+		$module = 'expedition_bon';
 	}
 	if ($objecttype == 'delivery') {
-		$classpath = 'livraison/class'; $subelement = 'livraison'; $module = 'livraison_bon';
-	}
-	if ($objecttype == 'invoice_supplier') {
-		$classpath = 'fourn/class';
-	}
-	if ($objecttype == 'order_supplier')   {
-		$classpath = 'fourn/class';
+		$classpath = 'livraison/class'; 
+		$subelement = 'livraison'; 
+		$module = 'livraison_bon';
 	}
 	if ($objecttype == 'contract') {
-		$classpath = 'contrat/class'; $module='contrat'; $subelement='contrat';
+		$classpath = 'contrat/class'; 
+		$module='contrat'; 
+		$subelement='contrat';
 	}
 	if ($objecttype == 'member') {
-		$classpath = 'adherents/class'; $module='adherent'; $subelement='adherent';
+		$classpath = 'adherents/class'; 
+		$module='adherent'; 
+		$subelement='adherent';
 	}
 	if ($objecttype == 'cabinetmed_cons') {
-		$classpath = 'cabinetmed/class'; $module='cabinetmed'; $subelement='cabinetmedcons';
+		$classpath = 'cabinetmed/class'; 
+		$module='cabinetmed'; 
+		$subelement='cabinetmedcons';
 	}
 	if ($objecttype == 'fichinter') {
-		$classpath = 'fichinter/class'; $module='ficheinter'; $subelement='fichinter';
+		$classpath = 'fichinter/class'; 
+		$module='ficheinter'; 
+		$subelement='fichinter';
 	}
 
 	//print "objecttype=".$objecttype." module=".$module." subelement=".$subelement;
 
 	$classfile = strtolower($subelement); $classname = ucfirst($subelement);
 	if ($objecttype == 'invoice_supplier') {
-		$classfile = 'fournisseur.facture'; $classname='FactureFournisseur';
+		$classfile = 'fournisseur.facture'; 
+		$classname='FactureFournisseur';
+		$classpath = 'fourn/class';
+		$module='fournisseur';
 	}
 	if ($objecttype == 'order_supplier')   {
-		$classfile = 'fournisseur.commande'; $classname='CommandeFournisseur';
+		$classfile = 'fournisseur.commande'; 
+		$classname='CommandeFournisseur';
+		$classpath = 'fourn/class';
+		$module='fournisseur';
 	}
 
 	if (! empty($conf->$module->enabled))

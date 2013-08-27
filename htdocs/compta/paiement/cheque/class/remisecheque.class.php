@@ -21,13 +21,13 @@
 /**
  *	\file       htdocs/compta/paiement/cheque/class/remisecheque.class.php
  *	\ingroup    compta
- *	\brief      Fichier de la classe des bordereau de remise de cheque
+ *	\brief      File with class to manage cheque delivery receipts
  */
 require_once DOL_DOCUMENT_ROOT .'/core/class/commonobject.class.php';
 
 
 /**
- *	Classe permettant la gestion des remises de cheque
+ *	Class to manage cheque delivery receipts
  */
 class RemiseCheque extends CommonObject
 {
@@ -37,6 +37,7 @@ class RemiseCheque extends CommonObject
 	var $id;
 	var $num;
 	var $intitule;
+	var $ref_ext;
 	//! Numero d'erreur Plage 1024-1279
 	var $errno;
 
@@ -63,7 +64,7 @@ class RemiseCheque extends CommonObject
 	{
 		global $conf;
 
-		$sql = "SELECT bc.rowid, bc.datec, bc.fk_user_author, bc.fk_bank_account, bc.amount, bc.number, bc.statut, bc.nbcheque";
+		$sql = "SELECT bc.rowid, bc.datec, bc.fk_user_author, bc.fk_bank_account, bc.amount, bc.number, bc.statut, bc.nbcheque, bc.ref_ext";
 		$sql.= ", bc.date_bordereau as date_bordereau";
 		$sql.= ", ba.label as account_label";
 		$sql.= " FROM ".MAIN_DB_PREFIX."bordereau_cheque as bc";
@@ -86,6 +87,7 @@ class RemiseCheque extends CommonObject
 				$this->author_id      = $obj->fk_user_author;
 				$this->nbcheque       = $obj->nbcheque;
 				$this->statut         = $obj->statut;
+				$this->ref_ext        = $obj->ref_ext;
 
 				if ($this->statut == 0)
 				{
@@ -139,6 +141,7 @@ class RemiseCheque extends CommonObject
 		$sql.= ", number";
 		$sql.= ", entity";
 		$sql.= ", nbcheque";
+		$sql.= ", ref_ext";
 		$sql.= ") VALUES (";
 		$sql.= $this->db->idate($now);
 		$sql.= ", ".$this->db->idate($now);
@@ -149,6 +152,7 @@ class RemiseCheque extends CommonObject
 		$sql.= ", 0";
 		$sql.= ", ".$conf->entity;
 		$sql.= ", 0";
+		$sql.= ", ''";
 		$sql.= ")";
 
 		dol_syslog("RemiseCheque::Create sql=".$sql, LOG_DEBUG);
@@ -576,25 +580,25 @@ class RemiseCheque extends CommonObject
 		if ( $resql )
 		{
 			while ( $row = $this->db->fetch_row($resql) )
-	  {
-	  	$total += $row[0];
-	  	$nb++;
-	  }
+			{
+				$total += $row[0];
+				$nb++;
+			}
 
-	  $this->db->free($resql);
+			$this->db->free($resql);
 
-	  $sql = "UPDATE ".MAIN_DB_PREFIX."bordereau_cheque";
-	  $sql.= " SET amount = '".price2num($total)."'";
-	  $sql.= ", nbcheque = ".$nb;
-	  $sql.= " WHERE rowid = ".$this->id;
-	  $sql.= " AND entity = ".$conf->entity;
+			$sql = "UPDATE ".MAIN_DB_PREFIX."bordereau_cheque";
+			$sql.= " SET amount = '".price2num($total)."'";
+			$sql.= ", nbcheque = ".$nb;
+			$sql.= " WHERE rowid = ".$this->id;
+			$sql.= " AND entity = ".$conf->entity;
 
-	  $resql = $this->db->query($sql);
-	  if (!$resql)
-	  {
-	  	$this->errno = -1030;
-	  	dol_syslog("RemiseCheque::updateAmount ERREUR UPDATE ($this->errno)");
-	  }
+			$resql = $this->db->query($sql);
+			if (!$resql)
+			{
+				$this->errno = -1030;
+				dol_syslog("RemiseCheque::updateAmount ERREUR UPDATE ($this->errno)");
+			}
 		}
 		else
 		{
@@ -725,7 +729,7 @@ class RemiseCheque extends CommonObject
 	/**
 	 *    	Renvoie nom clicable (avec eventuellement le picto)
 	 *
-	 *		@param	int		$withpicto		Inclut le picto dans le lien
+	 *		@param	int		$withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
 	 *		@param	string	$option			Sur quoi pointe le lien
 	 *		@return	string					Chaine avec URL
 	 */
@@ -735,14 +739,13 @@ class RemiseCheque extends CommonObject
 
 		$result='';
 
-		$number=$this->ref;
-		if ($this->statut == 0) $number='(PROV'.$this->id.')';
-
 		$lien = '<a href="'.DOL_URL_ROOT.'/compta/paiement/cheque/fiche.php?id='.$this->id.'">';
 		$lienfin='</a>';
 
-		if ($withpicto) $result.=($lien.img_object($langs->trans("ShowCheckReceipt"),'payment').$lienfin.' ');
-		$result.=$lien.$number.$lienfin;
+		if ($withpicto) $result.=($lien.img_object($langs->trans("ShowCheckReceipt"),'payment').$lienfin);
+		if ($withpicto && $withpicto != 2) $result.=' ';
+		if ($withpicto != 2) $result.=$lien.$this->ref.$lienfin;
+
 		return $result;
 	}
 

@@ -173,7 +173,7 @@ AddFiles=Добавить файлы
 StartUpload=Начать загрузку
 CancelUpload=Отмена загрузки
 FileIsTooBig=Файлы слишком велик
-# PleaseBePatient=Please be patient...
+PleaseBePatient=Пожалуйста, будьте терпеливы ...
 
 ##### Calendar common #####
 AddCalendarEntry=Добавить запись в календаре %s
@@ -195,6 +195,7 @@ MemberResiliatedInDolibarr=Член %s resiliated в Dolibarr
 MemberDeletedInDolibarr=Член %s исключить из Dolibarr
 MemberSubscriptionAddedInDolibarr=Подписка на члена %s добавили в Dolibarr
 ShipmentValidatedInDolibarr=Отгрузка %s подтверждены в Dolibarr
+# ShipmentDeletedInDolibarr=Shipment %s deleted from Dolibarr
 ##### Export #####
 Export=Экспорт
 ExportsArea=Экспорт области

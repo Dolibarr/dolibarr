@@ -850,12 +850,12 @@ if ($action == 'create')
 
     // Commercial suivi
     print '<tr><td width="20%" nowrap><span class="fieldrequired">'.$langs->trans("TypeContact_contrat_internal_SALESREPFOLL").'</span></td><td>';
-    print $form->select_users(GETPOST("commercial_suivi_id")?GETPOST("commercial_suivi_id"):$user->id,'commercial_suivi_id',1,'');
+    print $form->select_dolusers(GETPOST("commercial_suivi_id")?GETPOST("commercial_suivi_id"):$user->id,'commercial_suivi_id',1,'');
     print '</td></tr>';
 
     // Commercial signature
     print '<tr><td width="20%" nowrap><span class="fieldrequired">'.$langs->trans("TypeContact_contrat_internal_SALESREPSIGN").'</span></td><td>';
-    print $form->select_users(GETPOST("commercial_signature_id")?GETPOST("commercial_signature_id"):$user->id,'commercial_signature_id',1,'');
+    print $form->select_dolusers(GETPOST("commercial_signature_id")?GETPOST("commercial_signature_id"):$user->id,'commercial_signature_id',1,'');
     print '</td></tr>';
 
     print '<tr><td><span class="fieldrequired">'.$langs->trans("Date").'</span></td><td>';
@@ -916,19 +916,13 @@ else
     if ($id > 0 || ! empty($ref))
     {
         $result=$object->fetch($id,$ref);
-        if ($result > 0)
-        {
-            $result=$object->fetch_lines();
-        }
-        if ($result < 0)
-        {
-            dol_print_error($db,$object->error);
-            exit;
-        }
+        if ($result < 0) dol_print_error($db,$object->error);
+        $result=$object->fetch_lines();
+        if ($result < 0) dol_print_error($db,$object->error);
+        $result=$object->fetch_thirdparty();
+        if ($result < 0) dol_print_error($db,$object->error);
 
         dol_htmloutput_errors($mesg,'');
-
-        $object->fetch_thirdparty();
 
         $nbofservices=count($object->lines);
 
@@ -1092,18 +1086,26 @@ else
         $productstatic=new Product($db);
 
         // Title line for service
-        print '<table class="notopnoleft allwidth">';	// Array with (n*2)+1 lines
+        //print '<table class="notopnoleft allwidth">';	// Array with (n*2)+1 lines
         $cursorline=1;
         while ($cursorline <= $nbofservices)
         {
-            print '<tr height="16" '.$bc[false].'>';
-            print '<td class="liste_titre" width="90" style="border-left: 1px solid #'.$colorb.'; border-top: 1px solid #'.$colorb.'; border-bottom: 1px solid #'.$colorb.';">';
-            print $langs->trans("ServiceNb",$cursorline).'</td>';
+            //print '<tr '.$bc[false].'>';
+            //print '<td width="90" style="border-left: 1px solid #'.$colorb.'; border-top: 1px solid #'.$colorb.'; border-bottom: 1px solid #'.$colorb.';">';
+            //print $langs->trans("ServiceNb",$cursorline).'</td>';
 
-            print '<td class="tab" style="border-right: 1px solid #'.$colorb.'; border-top: 1px solid #'.$colorb.'; border-bottom: 1px solid #'.$colorb.';" rowspan="2">';
+           // print '<td class="tab" style="border-right: 1px solid #'.$colorb.'; border-top: 1px solid #'.$colorb.'; border-bottom: 1px solid #'.$colorb.';" rowspan="2">';
+
+
+            print '<form name="update" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'" method="post">';
+            print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+            print '<input type="hidden" name="action" value="updateligne">';
+            print '<input type="hidden" name="elrowid" value="'.GETPOST('rowid').'">';
+            print '<input type="hidden" name="idprod" value="'.($objp->fk_product?$objp->fk_product:'0').'">';
+            print '<input type="hidden" name="fournprice" value="'.($objp->fk_fournprice?$objp->fk_fournprice:'0').'">';
 
             // Area with common detail of line
-            print '<table class="notopnoleft" width="100%">';
+            print '<table class="notopnoleft allwidth" width="100%">';
 
             $sql = "SELECT cd.rowid, cd.statut, cd.label as label_det, cd.fk_product, cd.description, cd.price_ht, cd.qty,";
             $sql.= " cd.tva_tx, cd.remise_percent, cd.info_bits, cd.subprice,";
@@ -1121,7 +1123,7 @@ else
                 $total = 0;
 
                 print '<tr class="liste_titre">';
-                print '<td>'.$langs->trans("Service").'</td>';
+                print '<td>'.$langs->trans("ServiceNb",$cursorline).'</td>';
                 print '<td width="50" align="center">'.$langs->trans("VAT").'</td>';
                 print '<td width="50" align="right">'.$langs->trans("PriceUHT").'</td>';
                 print '<td width="30" align="center">'.$langs->trans("Qty").'</td>';
@@ -1236,13 +1238,7 @@ else
                 }
                 // Ligne en mode update
                 else
-                {
-                    print '<form name="update" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'" method="post">';
-                    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-                    print '<input type="hidden" name="action" value="updateligne">';
-                    print '<input type="hidden" name="elrowid" value="'.GETPOST('rowid').'">';
-                    print '<input type="hidden" name="idprod" value="'.($objp->fk_product?$objp->fk_product:'0').'">';
-                    print '<input type="hidden" name="fournprice" value="'.($objp->fk_fournprice?$objp->fk_fournprice:'0').'">';
+              {
                     // Ligne carac
                     print "<tr ".$bc[$var].">";
                     print '<td>';
@@ -1293,14 +1289,12 @@ else
                     $form->select_date($db->jdate($objp->date_fin),"date_end_update",$usehm,$usehm,($db->jdate($objp->date_fin)>0?0:1),"update");
                     print '</td>';
                     print '</tr>';
-
-                    print "</form>\n";
                 }
 
                 $db->free($result);
             }
             else
-            {
+			{
                 dol_print_error($db);
             }
 
@@ -1312,6 +1306,7 @@ else
             }
 
             print "</table>";
+            print "</form>\n";
 
 
             /*
@@ -1521,13 +1516,14 @@ else
                 print '</form>';
             }
 
-            print '</td>';	// End td if line is 1
+           /* print '</td>';	// End td if line is 1
 
             print '</tr>';
-            print '<tr><td style="border-right: 1px solid #'.$colorb.'">&nbsp;</td></tr>';
+            print '<tr><td style="border-right: 1px solid #'.$colorb.'">&nbsp;</td></tr>';*/
+
             $cursorline++;
         }
-        print '</table>';
+        //print '</table>';
 
 		// Form to add new line
         if ($user->rights->contrat->creer && ($object->statut >= 0))

@@ -38,3 +38,4 @@ AddSupplierOrder=Skapa leverantör för
 AddSupplierInvoice=Skapa leverantörsfaktura
 ListOfSupplierProductForSupplier=Förteckning över produkter och priser för leverantör <b>%s</b>
 NoneOrBatchFileNeverRan=Ingen eller parti <b>%s</b> sprang inte nyligen
+# SentToSuppliers=Sent to suppliers

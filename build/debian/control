@@ -1,5 +1,6 @@
 Source: dolibarr
-Maintainer: Laurent Destailleur <eldy@users.sourceforge.net>
+Maintainer: Laurent Destailleur (eldy) <eldy@users.sourceforge.net>
+Uploaders: Laurent Destailleur (eldy) <eldy@users.sourceforge.net>
 Standards-Version: 3.9.2
 Section: web
 Priority: optional
@@ -13,6 +14,7 @@ Depends: libapache2-mod-php5 | libapache2-mod-php5filter | php5-cgi | php5-fpm |
 	libphp-adodb,
     libnusoap-php,
     libphp-pclzip,
+    libfpdi-php, libfpdf-tpl-php, php-fpdf,
     libjs-jquery, libjs-jquery-ui, libjs-flot, ckeditor,
     ttf-dejavu-core,
     xdg-utils,

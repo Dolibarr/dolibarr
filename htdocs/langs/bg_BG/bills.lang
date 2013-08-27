@@ -85,6 +85,7 @@ ClassifyCanceled=Класифицирайте &quot;Изоставен&quot;
 ClassifyClosed=Класифицира &quot;Затворено&quot;
 CreateBill=Създаване на фактура
 AddBill=Добави фактура или кредитно известие
+# AddToDraftInvoices=Add to draft invoice
 DeleteBill=Изтриване на фактура
 SearchACustomerInvoice=Търсене за клиент фактура
 SearchASupplierInvoice=Търсене за доставчик фактура
@@ -199,6 +200,7 @@ StandingOrders=Постоянните поръчки
 StandingOrder=Постоянния цел
 NoDraftBills=Няма тяга фактури
 NoOtherDraftBills=Никакви други фактури проекти
+# NoDraftInvoices=No draft invoices
 RefBill=Фактура код
 ToBill=На Бил
 RemainderToBill=Остатък за законопроект
@@ -410,4 +412,6 @@ PDFCrabeDescription=Фактура PDF Crabe шаблон. Пълна шабло
 PDFOursinDescription=Фактура PDF Oursin шаблон. Пълна шаблон фактура (Шаблон алтернатива)
 # NumRef Modules
 TerreNumRefModelDesc1=Връщане Numero с формат %syymm-NNNN за стандартни фактури и %syymm-NNNN за кредитни отбелязва, където YY е годината, mm е месец и NNNN е последователност, без почивка и няма връщане назад 0
+# MarsNumRefModelDesc1=Return numero with format %syymm-nnnn for standard invoices, %syymm-nnnn for replacement invoices, %syymm-nnnn for proforma invoices and %syymm-nnnn for credit notes where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
+
 TerreNumRefModelError=Законопроект, който започва с $ syymm вече съществува и не е съвместим с този модел на последователност. Извадете го или го преименувайте да се активира този модул.

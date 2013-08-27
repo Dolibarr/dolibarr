@@ -135,8 +135,11 @@ function dol_dir_list($path, $types="all", $recursive=0, $filter="", $excludefil
 
 							if (! $filter || preg_match('/'.$filter.'/i',$file))	// We do not search key $filter into $path, only into $file
 							{
+								preg_match('/([^\/]+)\/[^\/]+$/',$path.'/'.$file,$reg);
+								$level1name=(isset($reg[1])?$reg[1]:'');
 								$file_list[] = array(
 										"name" => $file,
+										"level1name" => $level1name,
 										"fullname" => $path.'/'.$file,
 										"date" => $filedate,
 										"size" => $filesize,
@@ -159,8 +162,11 @@ function dol_dir_list($path, $types="all", $recursive=0, $filter="", $excludefil
 
 						if (! $filter || preg_match('/'.$filter.'/i',$file))	// We do not search key $filter into $path, only into $file
 						{
+							preg_match('/([^\/]+)\/[^\/]+$/',$path.'/'.$file,$reg);
+							$level1name=(isset($reg[1])?$reg[1]:'');
 							$file_list[] = array(
 									"name" => $file,
+									"level1name" => $level1name,
 									"fullname" => $path.'/'.$file,
 									"date" => $filedate,
 									"size" => $filesize,
@@ -991,18 +997,20 @@ function dol_add_file_process($upload_dir,$allowoverwrite=0,$donotupdatesession=
 
 	if (! empty($_FILES[$varfiles])) // For view $_FILES[$varfiles]['error']
 	{
+		dol_syslog('dol_add_file_process upload_dir='.$upload_dir.' allowoverwrite='.$allowoverwrite.' donotupdatesession='.$donotupdatesession, LOG_DEBUG);
 		if (dol_mkdir($upload_dir) >= 0)
 		{
 			$resupload = dol_move_uploaded_file($_FILES[$varfiles]['tmp_name'], $upload_dir . "/" . $_FILES[$varfiles]['name'], $allowoverwrite, 0, $_FILES[$varfiles]['error'], 0, $varfiles);
 			if (is_numeric($resupload) && $resupload > 0)
 			{
+				include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 				if (empty($donotupdatesession))
 				{
 					include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 					$formmail = new FormMail($db);
 					$formmail->add_attached_files($upload_dir . "/" . $_FILES[$varfiles]['name'],$_FILES[$varfiles]['name'],$_FILES[$varfiles]['type']);
 				}
-				else if (image_format_supported($upload_dir . "/" . $_FILES[$varfiles]['name']) == 1)
+				if (image_format_supported($upload_dir . "/" . $_FILES[$varfiles]['name']) == 1)
 				{
 					// Create small thumbs for image (Ratio is near 16/9)
 					// Used on logon for example
@@ -1233,7 +1241,7 @@ function dol_most_recent_file($dir,$regexfilter='',$excludefilter=array('\.meta$
 /**
  * Security check when accessing to a document (used by document.php, viewimage.php and webservices)
  *
- * @param	string	$modulepart			Module of document
+ * @param	string	$modulepart			Module of document (module, module_user_temp, module_user or module_temp)
  * @param	string	$original_file		Relative path with filename
  * @param	string	$entity				Restrict onto entity
  * @param  	User	$fuser				User object (forced)

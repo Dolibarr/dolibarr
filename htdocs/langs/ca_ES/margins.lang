@@ -1,4 +1,4 @@
-# Dolibarr language file - ca_ES - margins
+# Dolibarr language file - Source file is en_US - marges
 CHARSET=UTF-8
 
 Margin=Marge
@@ -43,6 +43,7 @@ MargeBrute=Marge brut
 MargeNette=Marge net
 MARGIN_TYPE_DETAILS=Marge brut: Preu de venda sense IVA - Preu de compra sense IVA <br/> Marge net: Preu de venda sense IVA - Costos
 
+CostPrice=Preu de compra
 BuyingCost=Costos
 UnitCharges=Càrrega unitària
 Charges=Càrreges

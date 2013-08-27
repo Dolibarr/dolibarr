@@ -6,7 +6,7 @@
 * Copyright (C) 2006		Andre Cianfarani		<acianfa@free.fr>
 * Copyright (C) 2010-2013	Juanjo Menent			<jmenent@2byte.es>
 * Copyright (C) 2011		Philippe Grand			<philippe.grand@atoo-net.com>
-* Copyright (C) 2012		Christophe Battarel		<christophe.battarel@altairis.fr>
+* Copyright (C) 2012-2013	Christophe Battarel		<christophe.battarel@altairis.fr>
 * Copyright (C) 2012		Marcos García			<marcosgdf@gmail.com>
 * Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
 *
@@ -274,125 +274,137 @@ else if ($action == 'add' && $user->rights->commande->creer)
 
 			// Fill array 'array_options' with data from add form
 			$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
+			if($ret < 0)
+				$error++;
 
-			$object_id = $object->create($user);
+			if(!$error) {
+				$object_id = $object->create($user);
 
-			if ($object_id > 0)
-			{
-				dol_include_once('/'.$element.'/class/'.$subelement.'.class.php');
-
-				$classname = ucfirst($subelement);
-				$srcobject = new $classname($db);
-
-				dol_syslog("Try to find source object origin=".$object->origin." originid=".$object->origin_id." to add lines");
-				$result=$srcobject->fetch($object->origin_id);
-				if ($result > 0)
+				if ($object_id > 0)
 				{
-					$lines = $srcobject->lines;
-					if (empty($lines) && method_exists($srcobject,'fetch_lines'))  $lines = $srcobject->fetch_lines();
+					dol_include_once('/'.$element.'/class/'.$subelement.'.class.php');
 
-					$fk_parent_line=0;
-					$num=count($lines);
+					$classname = ucfirst($subelement);
+					$srcobject = new $classname($db);
 
-					for ($i=0;$i<$num;$i++)
+					dol_syslog("Try to find source object origin=".$object->origin." originid=".$object->origin_id." to add lines");
+					$result=$srcobject->fetch($object->origin_id);
+					if ($result > 0)
 					{
-						$label=(! empty($lines[$i]->label)?$lines[$i]->label:'');
-						$desc=(! empty($lines[$i]->desc)?$lines[$i]->desc:$lines[$i]->libelle);
-						$product_type=(! empty($lines[$i]->product_type)?$lines[$i]->product_type:0);
+						$lines = $srcobject->lines;
+						if (empty($lines) && method_exists($srcobject,'fetch_lines'))  $lines = $srcobject->fetch_lines();
 
-						// Dates
-						// TODO mutualiser
-						$date_start=$lines[$i]->date_debut_prevue;
-						if ($lines[$i]->date_debut_reel) $date_start=$lines[$i]->date_debut_reel;
-						if ($lines[$i]->date_start) $date_start=$lines[$i]->date_start;
-						$date_end=$lines[$i]->date_fin_prevue;
-						if ($lines[$i]->date_fin_reel) $date_end=$lines[$i]->date_fin_reel;
-						if ($lines[$i]->date_end) $date_end=$lines[$i]->date_end;
+						$fk_parent_line=0;
+						$num=count($lines);
 
-						// Reset fk_parent_line for no child products and special product
-						if (($lines[$i]->product_type != 9 && empty($lines[$i]->fk_parent_line)) || $lines[$i]->product_type == 9) {
-							$fk_parent_line = 0;
-						}
-
-						//Extrafields
-						if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)  && method_exists($lines[$i],'fetch_optionals') ) // For avoid conflicts if trigger used
+						for ($i=0;$i<$num;$i++)
 						{
-							$lines[$i]->fetch_optionals($lines[$i]->rowid);
-							$array_option=$lines[$i]->array_options;
+							$label=(! empty($lines[$i]->label)?$lines[$i]->label:'');
+							$desc=(! empty($lines[$i]->desc)?$lines[$i]->desc:$lines[$i]->libelle);
+							$product_type=(! empty($lines[$i]->product_type)?$lines[$i]->product_type:0);
+
+							// Dates
+							// TODO mutualiser
+							$date_start=$lines[$i]->date_debut_prevue;
+							if ($lines[$i]->date_debut_reel) $date_start=$lines[$i]->date_debut_reel;
+							if ($lines[$i]->date_start) $date_start=$lines[$i]->date_start;
+							$date_end=$lines[$i]->date_fin_prevue;
+							if ($lines[$i]->date_fin_reel) $date_end=$lines[$i]->date_fin_reel;
+							if ($lines[$i]->date_end) $date_end=$lines[$i]->date_end;
+
+							// Reset fk_parent_line for no child products and special product
+							if (($lines[$i]->product_type != 9 && empty($lines[$i]->fk_parent_line)) || $lines[$i]->product_type == 9) {
+								$fk_parent_line = 0;
+							}
+
+							//Extrafields
+							if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)  && method_exists($lines[$i],'fetch_optionals') ) // For avoid conflicts if trigger used
+							{
+								$lines[$i]->fetch_optionals($lines[$i]->rowid);
+								$array_option=$lines[$i]->array_options;
+							}
+							
+							$result = $object->addline(
+								$desc,
+								$lines[$i]->subprice,
+								$lines[$i]->qty,
+								$lines[$i]->tva_tx,
+								$lines[$i]->localtax1_tx,
+								$lines[$i]->localtax2_tx,
+								$lines[$i]->fk_product,
+								$lines[$i]->remise_percent,
+								$lines[$i]->info_bits,
+								$lines[$i]->fk_remise_except,
+								'HT',
+								0,
+								$date_start,
+								$date_end,
+								$product_type,
+								$lines[$i]->rang,
+								$lines[$i]->special_code,
+								$fk_parent_line,
+								$lines[$i]->fk_fournprice,
+								$lines[$i]->pa_ht,
+								$label,
+								$array_option
+							);
+
+							if ($result < 0)
+							{
+								$error++;
+								break;
+							}
+
+							// Defined the new fk_parent_line
+							if ($result > 0 && $lines[$i]->product_type == 9) {
+								$fk_parent_line = $result;
+							}
 						}
 
-						$result = $object->addline(
-							$object_id,
-							$desc,
-							$lines[$i]->subprice,
-							$lines[$i]->qty,
-							$lines[$i]->tva_tx,
-							$lines[$i]->localtax1_tx,
-							$lines[$i]->localtax2_tx,
-							$lines[$i]->fk_product,
-							$lines[$i]->remise_percent,
-							$lines[$i]->info_bits,
-							$lines[$i]->fk_remise_except,
-							'HT',
-							0,
-							$date_start,
-							$date_end,
-							$product_type,
-							$lines[$i]->rang,
-							$lines[$i]->special_code,
-							$fk_parent_line,
-							$lines[$i]->fk_fournprice,
-							$lines[$i]->pa_ht,
-							$label,
-							$array_option
-						);
-
-						if ($result < 0)
-						{
-							$error++;
-							break;
-						}
-
-						// Defined the new fk_parent_line
-						if ($result > 0 && $lines[$i]->product_type == 9) {
-							$fk_parent_line = $result;
-						}
+						// Hooks
+						$parameters=array('objFrom'=>$srcobject);
+						$reshook=$hookmanager->executeHooks('createFrom',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+						if ($reshook < 0) $error++;
 					}
-
-					// Hooks
-					$parameters=array('objFrom'=>$srcobject);
-					$reshook=$hookmanager->executeHooks('createFrom',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
-					if ($reshook < 0) $error++;
+					else
+					{
+						$mesg=$srcobject->error;
+						$error++;
+					}
 				}
 				else
 				{
-					$mesg=$srcobject->error;
+					$mesg=$object->error;
 					$error++;
 				}
 			}
 			else
 			{
-				$mesg=$object->error;
-				$error++;
+				// Required extrafield left blank, error message already defined by setOptionalsFromPost()
+				$action='create';
 			}
 		}
 		else
 		{
 			// Fill array 'array_options' with data from add form
 			$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
+			if($ret < 0)
+				$error++;
 
-			$object_id = $object->create($user);
+			if(!$error) {
+				$object_id = $object->create($user);
 
-			// If some invoice's lines already known
-			$NBLINES=8;
-			for ($i = 1 ; $i <= $NBLINES ; $i++)
-			{
-				if ($_POST['idprod'.$i])
+				// If some invoice's lines already known
+				$NBLINES=8;
+				for ($i = 1 ; $i <= $NBLINES ; $i++)
 				{
-					$xid = 'idprod'.$i;
-					$xqty = 'qty'.$i;
-					$xremise = 'remise_percent'.$i;
-					$object->add_product($_POST[$xid],$_POST[$xqty],$_POST[$xremise]);
+					if ($_POST['idprod'.$i])
+					{
+						$xid = 'idprod'.$i;
+						$xqty = 'qty'.$i;
+						$xremise = 'remise_percent'.$i;
+						$object->add_product($_POST[$xid],$_POST[$xqty],$_POST[$xremise]);
+					}
 				}
 			}
 		}
@@ -654,9 +666,16 @@ else if ($action == 'addline' && $user->rights->commande->creer)
 					$price_base_type = $prod->price_base_type;
 				}
 
+				// if price ht is forced (ie: calculated by margin rate and cost price)
+				if (!empty($price_ht))
+				{
+					$pu_ht	= price2num($price_ht, 'MU');
+					$pu_ttc	= price2num($pu_ht * (1 + ($tva_tx/100)), 'MU');
+				}
+
 				// On reevalue prix selon taux tva car taux tva transaction peut etre different
 				// de ceux du produit par defaut (par exemple si pays different entre vendeur et acheteur).
-				if ($tva_tx != $prod->tva_tx)
+				elseif ($tva_tx != $prod->tva_tx)
 				{
 					if ($price_base_type != 'HT')
 					{
@@ -739,7 +758,6 @@ else if ($action == 'addline' && $user->rights->commande->creer)
 		{
 			// Insert line
 			$result = $object->addline(
-				$object->id,
 				$desc,
 				$pu_ht,
 				GETPOST('qty'),
@@ -795,6 +813,8 @@ else if ($action == 'addline' && $user->rights->commande->creer)
 				unset($_POST['product_desc']);
 				unset($_POST['fournprice']);
 				unset($_POST['buying_price']);
+				unset($_POST['np_marginRate']);
+				unset($_POST['np_markRate']);
 
 				// old method
 				unset($_POST['np_desc']);
@@ -1169,23 +1189,32 @@ else if ($action == 'update_extras')
 	$extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
 	$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
 
-	// Actions on extra fields (by external module or standard code)
-	// FIXME le hook fait double emploi avec le trigger !!
-	$hookmanager->initHooks(array('orderdao'));
-	$parameters=array('id'=>$object->id);
-	$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
-	if (empty($reshook))
-	{
-		if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+	if($ret < 0)
+		$error++;
+
+	if(!$error) {
+		// Actions on extra fields (by external module or standard code)
+		// FIXME le hook fait double emploi avec le trigger !!
+		$hookmanager->initHooks(array('orderdao'));
+		$parameters=array('id'=>$object->id);
+		$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+		if (empty($reshook))
 		{
-			$result=$object->insertExtraFields();
-			if ($result < 0)
+			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
 			{
-				$error++;
+				$result=$object->insertExtraFields();
+				if ($result < 0)
+				{
+					$error++;
+				}
 			}
 		}
+		else if ($reshook < 0) $error++;
 	}
-	else if ($reshook < 0) $error++;
+	else
+	{
+		$action = 'edit_extras';
+	}
 
 }
 
@@ -1374,7 +1403,7 @@ if ($action == 'send' && ! GETPOST('addfile') && ! GETPOST('removedfile') && ! G
 	}
 }
 
-if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB) && $user->rights->commande->creer)
+if (! $error && ! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB) && $user->rights->commande->creer)
 {
 	if ($action == 'addcontact')
 	{
@@ -2568,7 +2597,14 @@ else
 			$formmail->withto=GETPOST('sendto')?GETPOST('sendto'):$liste;
 			$formmail->withtocc=$liste;
 			$formmail->withtoccc=$conf->global->MAIN_EMAIL_USECCC;
-			$formmail->withtopic=$langs->trans('SendOrderRef','__ORDERREF__');
+			if(empty($object->ref_client))
+			{
+				$formmail->withtopic=$langs->trans('SendOrderRef','__ORDERREF__');
+			}
+			else if(!empty($object->ref_client))
+			{
+				$formmail->withtopic=$langs->trans('SendOrderRef','__ORDERREF__(__REFCLIENT__)');
+			}
 			$formmail->withfile=2;
 			$formmail->withbody=1;
 			$formmail->withdeliveryreceipt=1;
@@ -2576,6 +2612,7 @@ else
 			// Tableau des substitutions
 			$formmail->substit['__ORDERREF__']=$object->ref;
 			$formmail->substit['__SIGNATURE__']=$user->signature;
+			$formmail->substit['__REFCLIENT__']=$object->ref_client;
 			$formmail->substit['__PERSONALIZED__']='';
 			$formmail->substit['__CONTACTCIVNAME__']='';
 

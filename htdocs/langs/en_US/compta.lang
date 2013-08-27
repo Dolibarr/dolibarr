@@ -154,3 +154,7 @@ InvoiceLinesToDispatch=Invoice lines to dispatch
 InvoiceDispatched=Dispatched invoices
 AccountancyDashboard=Accountancy summary
 ByProductsAndServices=By products and services
+RefExt=External ref
+ToCreateAPredefinedInvoice=To create a predefined invoice, create a standard invoice then, without validating it, click onto button "Convert to predefined invoice".
+LinkedOrder=linked to command
+

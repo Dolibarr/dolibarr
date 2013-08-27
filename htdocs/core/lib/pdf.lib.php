@@ -1,31 +1,31 @@
 <?php
 /* Copyright (C) 2006-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2006      Rodolphe Quiedeville <rodolphe@quiedeville.org>
-* Copyright (C) 2007      Patrick Raguin       <patrick.raguin@gmail.com>
-* Copyright (C) 2010-2012 Regis Houssin        <regis.houssin@capnetworks.com>
-* Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
-* Copyright (C) 2012      Christophe Battarel  <christophe.battarel@altairis.fr>
-*
-* This program is free software; you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation; either version 3 of the License, or
-* (at your option) any later version.
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with this program. If not, see <http://www.gnu.org/licenses/>.
-* or see http://www.gnu.org/
-*/
+ * Copyright (C) 2007      Patrick Raguin       <patrick.raguin@gmail.com>
+ * Copyright (C) 2010-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2012      Christophe Battarel  <christophe.battarel@altairis.fr>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * or see http://www.gnu.org/
+ */
 
 /**
  *	\file       htdocs/core/lib/pdf.lib.php
-*	\brief      Set of functions used for PDF generation
-*	\ingroup    core
-*/
+ *	\brief      Set of functions used for PDF generation
+ *	\ingroup    core
+ */
 
 
 /**
@@ -67,12 +67,12 @@ function pdf_getFormat($outputlangs='')
 }
 
 /**
- *      Return a PDF instance object. We create a FPDI instance that instanciate TCPDF.
+ *      Return a PDF instance object. We create a FPDI instance that instantiate TCPDF.
  *
  *      @param	string		$format         Array(width,height). Keep empty to use default setup.
  *      @param	string		$metric         Unit of format ('mm')
  *      @param  string		$pagetype       'P' or 'l'
- *      @return TPDF							PDF object
+ *      @return TPDF						PDF object
  */
 function pdf_getInstance($format='',$metric='mm',$pagetype='P')
 {
@@ -182,25 +182,25 @@ function pdf_getInstance($format='',$metric='mm',$pagetype='P')
 			/**
 			 * writeHTMLCell
 			 *
-			 * @param unknown_type $w			Width
-			 * @param unknown_type $h			Height
-			 * @param unknown_type $x			X
-			 * @param unknown_type $y			Y
-			 * @param unknown_type $html		Html
-			 * @param unknown_type $border		Border
-			 * @param unknown_type $ln			Ln
-			 * @param unknown_type $fill		Fill
-			 * @param unknown_type $reseth		Reseth
-			 * @param unknown_type $align		Align
-			 * @param unknown_type $autopadding	Autopadding
-			 * @return void
+			 * @param	int		$w				Width
+			 * @param 	int		$h				Height
+			 * @param 	int		$x				X
+			 * @param 	int		$y				Y
+			 * @param 	string	$html			Html
+			 * @param 	int		$border			Border
+			 * @param 	int		$ln				Ln
+			 * @param 	boolean	$fill			Fill
+			 * @param 	boolean	$reseth			Reseth
+			 * @param 	string	$align			Align
+			 * @param 	boolean	$autopadding	Autopadding
+			 * @return 	void
 			 */
 			public function writeHTMLCell($w, $h, $x, $y, $html = '', $border = 0, $ln = 0, $fill = false, $reseth = true, $align = '', $autopadding = true)
 			{
 				$this->SetXY($x,$y);
 				$val=str_replace('<br>',"\n",$html);
-				$val=dol_string_nohtmltag($val,false,'ISO-8859-1');
-				//print 'eee'.$val;exit;
+				//$val=dol_string_nohtmltag($val,false,'ISO-8859-1');
+				$val=dol_string_nohtmltag($val,false,'UTF-8');
 				$this->MultiCell($w,$h,$val,$border,$align,$fill);
 			}
 		}
@@ -458,19 +458,24 @@ function pdf_watermark(&$pdf, $outputlangs, $h, $w, $unit, $text)
 	elseif ($unit=='cm') $k=72/2.54;
 	elseif ($unit=='in') $k=72;
 
-	$watermark_angle=atan($h/$w);
-	$watermark_x=5;
-	$watermark_y=$h-50; // We must be sure to not print into margins
-	$watermark_width=$h;
-	$pdf->SetFont('','B',50);
+	$savx=$pdf->getX(); $savy=$pdf->getY();
+	
+	$watermark_angle=atan($h/$w)/2;
+	$watermark_x_pos=0;
+	$watermark_y_pos=$h/3;
+	$watermark_x=$w/2;
+	$watermark_y=$h/3;
+	$pdf->SetFont('','B',40);
 	$pdf->SetTextColor(255,192,203);
 	//rotate
 	$pdf->_out(sprintf('q %.5F %.5F %.5F %.5F %.2F %.2F cm 1 0 0 1 %.2F %.2F cm',cos($watermark_angle),sin($watermark_angle),-sin($watermark_angle),cos($watermark_angle),$watermark_x*$k,($h-$watermark_y)*$k,-$watermark_x*$k,-($h-$watermark_y)*$k));
 	//print watermark
-	$pdf->SetXY($watermark_x,$watermark_y);
-	$pdf->Cell($watermark_width,25,$outputlangs->convToOutputCharset($text),0,2,"C",0);
+	$pdf->SetXY($watermark_x_pos,$watermark_y_pos);
+	$pdf->Cell($w-20,25,$outputlangs->convToOutputCharset($text),"",2,"C",0);
 	//antirotate
 	$pdf->_out('Q');
+
+	$pdf->SetXY($savx,$savy);
 }
 
 
@@ -1551,6 +1556,37 @@ function pdf_getLinkedObjects($object,$outputlangs)
 	}
 
 	return $linkedobjects;
+}
+
+/**
+ * Return dimensions to use for images onto PDF checking that width and height are not higher than
+ * maximum (16x32 by default).
+ *
+ * @param	string		$realpath		Full path to photo file to use
+ * @return	array						Height and width to use to output image (in pdf user unit, so mm)
+ */
+function pdf_getSizeForImage($realpath)
+{
+	global $conf;
+
+	$maxwidth=(empty($conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH)?16:$conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH);
+	$maxheight=(empty($conf->global->MAIN_DOCUMENTS_WITH_PICTURE_HEIGHT)?32:$conf->global->MAIN_DOCUMENTS_WITH_PICTURE_HEIGHT);
+	include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
+	$tmp=dol_getImageSize($realpath);
+	if ($tmp['height'])
+	{
+		$width=(int) round($maxheight*$tmp['width']/$tmp['height']);	// I try to use maxheight
+		if ($width > $maxwidth)	// Pb with maxheight, so i use maxwidth
+		{
+			$width=$maxwidth;
+			$height=(int) round($maxwidth*$tmp['height']/$tmp['width']);
+		}
+		else	// No pb with maxheight
+		{
+			$height=$maxheight;
+		}
+	}
+	return array('width'=>$width,'height'=>$height);
 }
 
 ?>

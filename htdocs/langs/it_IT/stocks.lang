@@ -1,8 +1,8 @@
-# Dolibarr language file - en_US - stocks
+# Dolibarr language file - Source file is en_US - stocks
 CHARSET=UTF-8
 WarehouseCard=Scheda Magazzino
 Warehouse=Magazzino
-# Warehouses=Warehouses
+Warehouses=Magazzini
 NewWarehouse=Nuovo magazzino/deposito
 WarehouseEdit=Modifica magazzino
 MenuNewWarehouse=Nuovo Magazzino
@@ -64,7 +64,6 @@ StockLimitShort=Limite
 StockLimit=Limite minimo scorta per segnalazioni
 PhysicalStock=Scorta fisica
 RealStock=Scorta reale
-TheoreticalStock=Scorta teorica
 VirtualStock=Scorta virtuale
 MininumStock=Scorta minima
 StockUp=Scorta massima
@@ -89,3 +88,10 @@ SelectWarehouseForStockDecrease=Scegli magazzino da utilizzare per la riduzione 
 SelectWarehouseForStockIncrease=Scegli magazzino da utilizzare per l'aumento delle scorte
 # NoStockAction=No stock action
 # LastWaitingSupplierOrders=Orders waiting for receptions
+# DesiredStock=Desired stock
+# StockToBuy=To order
+# Replenishment=Replenishment
+# ReplenishmentOrders=Replenishment orders
+# UseVirtualStock=Use virtual stock instead of physical stock
+# RuleForStockReplenishment=Rule for stocks replenishment
+# SelectProduct=Select at least one product

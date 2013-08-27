@@ -1,9 +1,9 @@
-# Dolibarr language file - tr_TR - orders
+# Dolibarr language file - Source file is en_US - orders
 CHARSET=UTF-8
 OrdersArea=Müşteri siparişleri alanı
 SuppliersOrdersArea=Tedarikçi siparişleri alanı
 OrderCard=Sipariş kartı
-OrderId=Sipariş No
+# OrderId=Order Id
 Order=Sipariş
 Orders=Siparişler
 OrderLine=Sipariş kalemi
@@ -70,9 +70,11 @@ CancelOrder=Siparişi iptal et
 AddOrder=Sipariş ekle
 AddToMyOrders=Siparişlerime ekle
 AddToOtherOrders=Diğer siparişlere ekle
+# AddToDraftOrders=Add to draft order
 ShowOrder=Siparişi göster
 NoOpenedOrders=Açık sipariş yok
 NoOtherOpenedOrders=Başka açık sipariş yok
+# NoDraftOrders=No draft orders
 OtherOrders=Diğer siparişler
 LastOrders=Son %s sipariş
 LastModifiedOrders=Değiştirilen son %s sipariş
@@ -82,7 +84,7 @@ NbOfOrders=Sipariş sayısı
 OrdersStatistics=Sipariş istatistikleri
 OrdersStatisticsSuppliers=Tedarikçi siparişleri istatistikleri
 NumberOfOrdersByMonth=Aylık sipariş sayısı
-AmountOfOrdersByMonthHT=Aya göre sipariş tutarı (KDV yok)
+# AmountOfOrdersByMonthHT=Amount of orders by month (net of tax)
 ListOfOrders=Sipariş listesi
 CloseOrder=Siparişi kapat
 ConfirmCloseOrder=Bu siparişi kapatmak istediğinizden emin misiniz? Sipariş birkez kapatılırsa, yalnızca fatura edilebilir.
@@ -115,7 +117,7 @@ PaymentOrderRef=Sipariş %s ödemesi
 CloneOrder=Siparişi klonla
 ConfirmCloneOrder=Bu <b>%s</b> siparişi klonlamak istediğinizden emin misiniz?
 DispatchSupplierOrder=%s tedarikçi siparişini al
-##### Kişi türleri #####
+##### Types de contacts #####
 TypeContact_commande_internal_SALESREPFOLL=Müşteri siparişi izleme temsilcisi
 TypeContact_commande_internal_SHIPPING=Sevkiyat izleme temsilcisi
 TypeContact_commande_external_BILLING=Müşteri fatura yetkilisi
@@ -134,7 +136,7 @@ Error_FailedToLoad_COMMANDE_ADDON_File=Modül dosyası %s yüklenemedi
 Error_OrderNotChecked=Faturalanacak seçilmiş sipariş yok
 
 
-# Kaynaklar
+# Sources
 OrderSource0=Teklif
 OrderSource1=Internet
 OrderSource2=Posta kampanyası
@@ -145,10 +147,10 @@ OrderSource6=Mağaza
 QtyOrdered=Sipariş miktarı
 AddDeliveryCostLine=Siparişin ağırlığını belirten bir teslimat satırı ekleyin
 
-# Belge modelleri
+# Documents models
 PDFEinsteinDescription=Bir tam sipariş modeli (logo. ..)
 PDFEdisonDescription=Basit bir sipariş modeli
-# Sipariş verme şekli
+# Orders modes
 OrderByMail=Posta
 OrderByFax=Faks
 OrderByEMail=Eposta
@@ -159,3 +161,8 @@ CreateInvoiceForThisCustomer=Sipariş Faturala
 NoOrdersToInvoice=Faturalanabilir sipariş yok
 CloseProcessedOrdersAutomatically=Seçilen tüm siparişleri "İşlendi" olarak sınıflandır.
 MenuOrdersToBill2=Faturalanacak siparişler
+# OrderCreation=Order creation
+# Ordered=Ordered
+# OrderCreated=Your orders have been created
+# OrderFail=An error happened during your orders creation
+# CreateOrders=Create orders

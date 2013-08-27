@@ -134,6 +134,7 @@ Source: "COPYRIGHT"; DestDir: "{app}"; Flags: ignoreversion;
 [Icons]
 Name: "{group}\Dolibarr ERP-CRM"; Filename: "{app}\rundoliwamp.bat"; WorkingDir: "{app}"; IconFilename: {app}\www\dolibarr\doc\images\dolibarr.ico
 Name: "{group}\Tools\Help center"; Filename: "{app}\rundolihelp.bat"; WorkingDir: "{app}"; IconFilename: {app}\www\dolibarr\doc\images\dolihelp.ico
+Name: "{group}\Tools\Host your ERP-CRM in the Cloud"; Filename: "http://wiki.dolibarr.org/index.php/Cloud_Solutions"; WorkingDir: "{app}"; IconFilename: {app}\www\dolibarr\doc\images\dolihelp.ico
 Name: "{group}\Tools\Start DoliWamp server"; Filename: "{app}\startdoliwamp.bat"; WorkingDir: "{app}"; IconFilename: {app}\www\dolibarr\doc\images\doliwampon.ico
 Name: "{group}\Tools\Stop DoliWamp server"; Filename: "{app}\stopdoliwamp.bat"; WorkingDir: "{app}"; IconFilename: {app}\www\dolibarr\doc\images\doliwampoff.ico
 Name: "{group}\Tools\Admin DoliWamp server"; Filename: "{app}\rundoliadmin.bat"; WorkingDir: "{app}"; IconFilename: {app}\www\dolibarr\doc\images\doliadmin.ico
@@ -1017,6 +1018,4 @@ Type: filesandordirs; Name: "{app}\www\dolibarr"
 
 [UninstallRun]
 Filename: "{app}\uninstall_services.bat"; Flags: runhidden
-
-
 

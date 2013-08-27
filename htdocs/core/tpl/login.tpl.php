@@ -30,7 +30,7 @@ print top_htmlhead('',$langs->trans('Login').' '.$title,0,0,$arrayofjs);
 ?>
 <!-- BEGIN PHP TEMPLATE LOGIN.TPL.PHP -->
 
-<body class="body">
+<body class="body bodylogin">
 
 <script type="text/javascript">
 $(document).ready(function () {
@@ -58,7 +58,7 @@ $(document).ready(function () {
 <input type="hidden" name="dol_no_mouse_hover" id="dol_no_mouse_hover" value="<?php echo $dol_no_mouse_hover; ?>" />
 <input type="hidden" name="dol_use_jmobile" id="dol_use_jmobile" value="<?php echo $dol_use_jmobile; ?>" />
 
-<table class="login_table_title" summary="<?php echo dol_escape_htmltag($title); ?>" cellpadding="0" cellspacing="0" border="0" align="center">
+<table class="login_table_title" summary="<?php echo dol_escape_htmltag($title); ?>" align="center">
 <tr class="vmenu"><td align="center"><?php echo $title; ?></td></tr>
 </table>
 <br>

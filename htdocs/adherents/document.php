@@ -93,15 +93,15 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes')
  */
 
 $form = new Form($db);
-$member=new Adherent($db);
+$object=new Adherent($db);
 $membert=new AdherentType($db);
 
 llxHeader();
 
 if ($id > 0)
 {
-    $result=$member->fetch($id);
-    $result=$membert->fetch($member->typeid);
+    $result=$object->fetch($id);
+    $result=$membert->fetch($object->typeid);
 	if ($result > 0)
 	{
 		/*
@@ -110,7 +110,7 @@ if ($id > 0)
 		if (! empty($conf->notification->enabled))
 			$langs->load("mails");
 
-		$head = member_prepare_head($member);
+		$head = member_prepare_head($object);
 
 		$form=new Form($db);
 
@@ -133,19 +133,19 @@ if ($id > 0)
         // Ref
         print '<tr><td width="20%">'.$langs->trans("Ref").'</td>';
         print '<td class="valeur">';
-        print $form->showrefnav($member, 'rowid', $linkback);
+        print $form->showrefnav($object, 'rowid', $linkback);
         print '</td></tr>';
 
         // Login
         if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED))
         {
-            print '<tr><td>'.$langs->trans("Login").' / '.$langs->trans("Id").'</td><td class="valeur">'.$member->login.'&nbsp;</td></tr>';
+            print '<tr><td>'.$langs->trans("Login").' / '.$langs->trans("Id").'</td><td class="valeur">'.$object->login.'&nbsp;</td></tr>';
         }
 
         // Morphy
-        print '<tr><td>'.$langs->trans("Nature").'</td><td class="valeur" >'.$member->getmorphylib().'</td>';
+        print '<tr><td>'.$langs->trans("Nature").'</td><td class="valeur" >'.$object->getmorphylib().'</td>';
         /*print '<td rowspan="'.$rowspan.'" align="center" valign="middle" width="25%">';
-        print $form->showphoto('memberphoto',$member);
+        print $form->showphoto('memberphoto',$object);
         print '</td>';*/
         print '</tr>';
 
@@ -153,22 +153,22 @@ if ($id > 0)
         print '<tr><td>'.$langs->trans("Type").'</td><td class="valeur">'.$membert->getNomUrl(1)."</td></tr>\n";
 
         // Company
-        print '<tr><td>'.$langs->trans("Company").'</td><td class="valeur">'.$member->societe.'</td></tr>';
+        print '<tr><td>'.$langs->trans("Company").'</td><td class="valeur">'.$object->societe.'</td></tr>';
 
         // Civility
-        print '<tr><td>'.$langs->trans("UserTitle").'</td><td class="valeur">'.$member->getCivilityLabel().'&nbsp;</td>';
+        print '<tr><td>'.$langs->trans("UserTitle").'</td><td class="valeur">'.$object->getCivilityLabel().'&nbsp;</td>';
         print '</tr>';
 
         // Lastname
-        print '<tr><td>'.$langs->trans("Lastname").'</td><td class="valeur">'.$member->lastname.'&nbsp;</td>';
+        print '<tr><td>'.$langs->trans("Lastname").'</td><td class="valeur">'.$object->lastname.'&nbsp;</td>';
         print '</tr>';
 
         // Firstname
-        print '<tr><td>'.$langs->trans("Firstname").'</td><td class="valeur">'.$member->firstname.'&nbsp;</td>';
+        print '<tr><td>'.$langs->trans("Firstname").'</td><td class="valeur">'.$object->firstname.'&nbsp;</td>';
         print '</tr>';
 
         // Status
-        print '<tr><td>'.$langs->trans("Status").'</td><td class="valeur">'.$member->getLibStatut(4).'</td></tr>';
+        print '<tr><td>'.$langs->trans("Status").'</td><td class="valeur">'.$object->getLibStatut(4).'</td></tr>';
 
     	// Nbre fichiers
 		print '<tr><td>'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
@@ -185,18 +185,18 @@ if ($id > 0)
 		 */
 		if ($action == 'delete')
 		{
-			$ret=$form->form_confirm($_SERVER["PHP_SELF"].'?id='.$member->id.'&urlfile='.urlencode(GETPOST("urlfile")), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile', '', 0, 1);
+			$ret=$form->form_confirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&urlfile='.urlencode(GETPOST("urlfile")), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile', '', 0, 1);
 			if ($ret == 'html') print '<br>';
 		}
 
 
 		// Affiche formulaire upload
 		$formfile=new FormFile($db);
-		$formfile->form_attach_new_file(DOL_URL_ROOT.'/adherents/document.php?id='.$member->id,'',0,0,$user->rights->adherent->creer,50,$object);
+		$formfile->form_attach_new_file(DOL_URL_ROOT.'/adherents/document.php?id='.$object->id,'',0,0,$user->rights->adherent->creer,50,$object);
 
 
 		// List of document
-		$formfile->list_of_documents($filearray,$member,'member','', 0, get_exdir($member->id,2,0,1).'/'.$member->id.'/');
+		$formfile->list_of_documents($filearray,$object,'member','', 0, get_exdir($object->id,2,0,1).'/'.$object->id.'/');
 
 		print "<br><br>";
 	}

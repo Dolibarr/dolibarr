@@ -269,7 +269,6 @@ if (($action == 'create' || $action == 'add') && empty($mesgs))
 											$fk_parent_line = 0;
 										}
 										$result = $object->addline(
-												$id,
 												$desc,
 												$lines[$i]->subprice,
 												$lines[$i]->qty,
@@ -417,7 +416,7 @@ if ($action == 'create' && empty($mesgs))
 	$html->select_date(0,'','','','',"add",1,1);
 	print '</td></tr>';
 	// Payment term
-	print '<tr><td nowrap>'.$langs->trans('PaymentConditionsShort').'</td><td colspan="2">';
+	print '<tr><td class="nowrap">'.$langs->trans('PaymentConditionsShort').'</td><td colspan="2">';
 	$html->select_conditions_paiements(isset($_POST['cond_reglement_id'])?$_POST['cond_reglement_id']:$cond_reglement_id,'cond_reglement_id');
 	print '</td></tr>';
 	// Payment mode
@@ -428,7 +427,7 @@ if ($action == 'create' && empty($mesgs))
 	if (! empty($conf->projet->enabled))
 	{
 		$formproject=new FormProjets($db);
-		
+
 		$langs->load('projects');
 		print '<tr><td>'.$langs->trans('Project').'</td><td colspan="2">';
 		$formproject->select_projects($soc->id, $projectid, 'projectid');

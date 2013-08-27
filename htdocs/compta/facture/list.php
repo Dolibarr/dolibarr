@@ -64,6 +64,7 @@ $search_ref=GETPOST('sf_ref')?GETPOST('sf_ref','alpha'):GETPOST('search_ref','al
 $search_societe=GETPOST('search_societe','alpha');
 $search_montant_ht=GETPOST('search_montant_ht','alpha');
 $search_montant_ttc=GETPOST('search_montant_ttc','alpha');
+$search_status=GETPOST('search_status','alpha');
 
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
@@ -91,9 +92,6 @@ $fieldid = (! empty($ref)?'facnumber':'rowid');
 if (! empty($user->societe_id)) $socid=$user->societe_id;
 $result = restrictedArea($user, 'facture', $id,'','','fk_soc',$fieldid);
 
-// FIXME $usehm not used ?
-$usehm=(! empty($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE)?$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE:false);
-
 $object=new Facture($db);
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
@@ -119,6 +117,8 @@ if (GETPOST("button_removefilter_x"))
     $search_refcustomer='';
     $search_societe='';
     $search_montant_ht='';
+    $search_montant_ttc='';
+    $search_status='';
     $year='';
     $month='';
 }
@@ -138,7 +138,7 @@ $facturestatic=new Facture($db);
 
 if (! $sall) $sql = 'SELECT';
 else $sql = 'SELECT DISTINCT';
-$sql.= ' f.rowid as facid, f.facnumber, f.type, f.increment, f.total as total_ht, f.tva as total_tva, f.total_ttc,';
+$sql.= ' f.rowid as facid, f.facnumber, f.type, f.note_private, f.increment, f.total as total_ht, f.tva as total_tva, f.total_ttc,';
 $sql.= ' f.datef as df, f.date_lim_reglement as datelimite,';
 $sql.= ' f.paye as paye, f.fk_statut,';
 $sql.= ' s.nom, s.rowid as socid';
@@ -187,6 +187,10 @@ if ($search_montant_ht)
 if ($search_montant_ttc)
 {
     $sql.= ' AND f.total_ttc = \''.$db->escape(price2num(trim($search_montant_ttc))).'\'';
+}
+if ($search_status != '')
+{
+	$sql.= " AND f.fk_statut = '".$db->escape($search_status)."'";
 }
 if ($month > 0)
 {
@@ -336,12 +340,18 @@ if ($resql)
             print $objp->increment;
             print '</td>';
 
-            print '<td width="16" align="right" class="nobordernopadding hideonsmartphone">';
+            print '<td style="min-width: 20px" class="nobordernopadding nowrap">';
+            if (! empty($objp->note_private))
+            {
+				print ' <span class="note">';
+				print '<a href="'.DOL_URL_ROOT.'/compta/facture/note.php?id='.$objp->facid.'">'.img_picto($langs->trans("ViewPrivateNote"),'object_generic').'</a>';
+				print '</span>';
+			}
             $filename=dol_sanitizeFileName($objp->facnumber);
             $filedir=$conf->facture->dir_output . '/' . dol_sanitizeFileName($objp->facnumber);
             $urlsource=$_SERVER['PHP_SELF'].'?id='.$objp->facid;
             print $formfile->getDocumentsLink($facturestatic->element, $filename, $filedir);
-            print '</td>';
+			print '</td>';
             print '</tr>';
             print '</table>';
 

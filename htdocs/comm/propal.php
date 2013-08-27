@@ -7,7 +7,7 @@
  * Copyright (C) 2006      Andre Cianfarani      <acianfa@free.fr>
  * Copyright (C) 2010-2013 Juanjo Menent         <jmenent@2byte.es>
  * Copyright (C) 2010-2011 Philippe Grand        <philippe.grand@atoo-net.com>
- * Copyright (C) 2012      Christophe Battarel   <christophe.battarel@altairis.fr>
+ * Copyright (C) 2012-2013 Christophe Battarel   <christophe.battarel@altairis.fr>
  * Copyright (C) 2013      Florian Henry		 <florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -331,7 +331,7 @@ else if ($action == 'add' && $user->rights->propal->creer)
 			$object->origin		= GETPOST('origin');
 			$object->origin_id	= GETPOST('originid');
 
-			for ($i = 1 ; $i <= $conf->global->PRODUCT_SHOW_WHEN_CREATE; $i++)
+			for ($i = 1; $i <= $conf->global->PRODUCT_SHOW_WHEN_CREATE; $i++)
 			{
 				if ($_POST['idprod'.$i])
 				{
@@ -344,54 +344,60 @@ else if ($action == 'add' && $user->rights->propal->creer)
 
 			// Fill array 'array_options' with data from add form
 			$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
-
-			$id = $object->create($user);
+			if($ret < 0) {
+				$error++;
+				$action = 'create';
+			}
 		}
 
-		if ($id > 0)
-		{
-			// Insertion contact par defaut si defini
-			if (GETPOST('contactidp') > 0)
-			{
-				$result=$object->add_contact(GETPOST('contactidp'),'CUSTOMER','external');
-				if ($result < 0)
-				{
-					$error++;
-					setEventMessage($langs->trans("ErrorFailedToAddContact"), 'errors');
-				}
-			}
+		if(!$error) {
+			$id = $object->create($user);
 
-			if (! $error)
+			if ($id > 0)
 			{
-				$db->commit();
-
-				if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
+				// Insertion contact par defaut si defini
+				if (GETPOST('contactidp') > 0)
 				{
-					// Define output language
-					$outputlangs = $langs;
-					if (! empty($conf->global->MAIN_MULTILANGS))
+					$result=$object->add_contact(GETPOST('contactidp'),'CUSTOMER','external');
+					if ($result < 0)
 					{
-						$outputlangs = new Translate("",$conf);
-						$newlang=(GETPOST('lang_id') ? GETPOST('lang_id') : $object->client->default_lang);
-						$outputlangs->setDefaultLang($newlang);
+						$error++;
+						setEventMessage($langs->trans("ErrorFailedToAddContact"), 'errors');
 					}
-					$ret=$object->fetch($id);    // Reload to get new records
-					propale_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 				}
 
-				header('Location: '.$_SERVER["PHP_SELF"].'?id='.$id);
-				exit;
+				if (! $error)
+				{
+					$db->commit();
+
+					if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
+					{
+						// Define output language
+						$outputlangs = $langs;
+						if (! empty($conf->global->MAIN_MULTILANGS))
+						{
+							$outputlangs = new Translate("",$conf);
+							$newlang=(GETPOST('lang_id') ? GETPOST('lang_id') : $object->client->default_lang);
+							$outputlangs->setDefaultLang($newlang);
+						}
+						$ret=$object->fetch($id);    // Reload to get new records
+						propale_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+					}
+
+					header('Location: '.$_SERVER["PHP_SELF"].'?id='.$id);
+					exit;
+				}
+				else
+				{
+					$db->rollback();
+				}
 			}
 			else
 			{
+				dol_print_error($db,$object->error);
 				$db->rollback();
+				exit;
 			}
-		}
-		else
-		{
-			dol_print_error($db,$object->error);
-			$db->rollback();
-			exit;
 		}
 	}
 }
@@ -408,7 +414,7 @@ else if ($action == 'confirm_reopen' && $user->rights->propal->cloturer && ! GET
 	// prevent browser refresh from reopening proposal several times
 	if ($object->statut==2 || $object->statut==3)
 	{
-		$object->setStatut(1);
+		$object->reopen($user,1);
 	}
 }
 
@@ -718,9 +724,16 @@ else if ($action == "addline" && $user->rights->propal->creer)
 					$price_base_type = $prod->price_base_type;
 				}
 
+				// if price ht is forced (ie: calculated by margin rate and cost price)
+				if (!empty($price_ht))
+				{
+					$pu_ht	= price2num($price_ht, 'MU');
+					$pu_ttc	= price2num($pu_ht * (1 + ($tva_tx/100)), 'MU');
+				}
+
 				// On reevalue prix selon taux tva car taux tva transaction peut etre different
 				// de ceux du produit par defaut (par exemple si pays different entre vendeur et acheteur).
-				if ($tva_tx != $prod->tva_tx)
+				elseif ($tva_tx != $prod->tva_tx)
 				{
 					if ($price_base_type != 'HT')
 					{
@@ -804,7 +817,6 @@ else if ($action == "addline" && $user->rights->propal->creer)
 		{
 			// Insert line
 			$result=$object->addline(
-				$id,
 				$desc,
 				$pu_ht,
 				GETPOST('qty'),
@@ -856,6 +868,8 @@ else if ($action == "addline" && $user->rights->propal->creer)
 				unset($_POST['product_desc']);
 				unset($_POST['fournprice']);
 				unset($_POST['buying_price']);
+				unset($_POST['np_marginRate']);
+				unset($_POST['np_markRate']);
 
 				// old method
 				unset($_POST['np_desc']);
@@ -1151,24 +1165,30 @@ else if ($action == 'update_extras')
 	$extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
 	$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
 
-	// Actions on extra fields (by external module or standard code)
-	// FIXME le hook fait double emploi avec le trigger !!
-	$hookmanager->initHooks(array('propaldao'));
-	$parameters=array('id'=>$object->id);
-	$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
-	if (empty($reshook))
-	{
-		if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+	if($ret < 0) {
+		$error++;
+		$action = 'edit_extras';
+	}
+
+	if(!$error) {
+		// Actions on extra fields (by external module or standard code)
+		// FIXME le hook fait double emploi avec le trigger !!
+		$hookmanager->initHooks(array('propaldao'));
+		$parameters=array('id'=>$object->id);
+		$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+		if (empty($reshook))
 		{
-			$result=$object->insertExtraFields();
-			if ($result < 0)
+			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
 			{
-				$error++;
+				$result=$object->insertExtraFields();
+				if ($result < 0)
+				{
+					$error++;
+				}
 			}
 		}
+		else if ($reshook < 0) $error++;
 	}
-	else if ($reshook < 0) $error++;
-
 }
 
 if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB) && $user->rights->propal->creer)
@@ -1598,7 +1618,8 @@ else
 	// Ref client
 	print '<tr><td>';
 	print '<table class="nobordernopadding" width="100%"><tr><td class="nowrap">';
-	print $langs->trans('RefCustomer').'</td><td align="left">';
+	print $langs->trans('RefCustomer').'</td>';
+	print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=refclient&amp;id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('RefCustomer')).'</a></td>';
 	print '</td>';
 	if ($action != 'refclient' && ! empty($object->brouillon)) print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=refclient&amp;id='.$object->id.'">'.img_edit($langs->trans('Modify')).'</a></td>';
 	print '</tr></table>';
@@ -1618,7 +1639,6 @@ else
 	}
 	print '</td>';
 	print '</tr>';
-
 	// Company
 	print '<tr><td>'.$langs->trans('Company').'</td><td colspan="5">'.$soc->getNomUrl(1).'</td>';
 	print '</tr>';
@@ -1933,7 +1953,7 @@ else
 
 	// Amount HT
 	print '<tr><td height="10" width="25%">'.$langs->trans('AmountHT').'</td>';
-	print '<td align="right" nowrap><b>'.price($object->total_ht).'</b></td>';
+	print '<td align="right" class="nowrap"><b>'.price($object->total_ht).'</b></td>';
 	print '<td>'.$langs->trans("Currency".$conf->currency).'</td>';
 
 	// Margin Infos
@@ -1946,27 +1966,27 @@ else
 
 	// Amount VAT
 	print '<tr><td height="10">'.$langs->trans('AmountVAT').'</td>';
-	print '<td align="right" nowrap>'.price($object->total_tva).'</td>';
+	print '<td align="right" class="nowrap">'.price($object->total_tva).'</td>';
 	print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
 
 	// Amount Local Taxes
 	if ($mysoc->localtax1_assuj=="1") //Localtax1
 	{
 		print '<tr><td height="10">'.$langs->transcountry("AmountLT1",$mysoc->country_code).'</td>';
-		print '<td align="right" nowrap>'.price($object->total_localtax1).'</td>';
+		print '<td align="right" class="nowrap">'.price($object->total_localtax1).'</td>';
 		print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
 	}
 	if ($mysoc->localtax2_assuj=="1") //Localtax2
 	{
 		print '<tr><td height="10">'.$langs->transcountry("AmountLT2",$mysoc->country_code).'</td>';
-		print '<td align="right" nowrap>'.price($object->total_localtax2).'</td>';
+		print '<td align="right" class="nowrap">'.price($object->total_localtax2).'</td>';
 		print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
 	}
 
 
 	// Amount TTC
 	print '<tr><td height="10">'.$langs->trans('AmountTTC').'</td>';
-	print '<td align="right" nowrap>'.price($object->total_ttc).'</td>';
+	print '<td align="right" class="nowrap">'.price($object->total_ttc).'</td>';
 	print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
 
 	// Statut
@@ -2264,7 +2284,14 @@ else
 		$formmail->withto=GETPOST("sendto")?GETPOST("sendto"):$liste;
 		$formmail->withtocc=$liste;
 		$formmail->withtoccc=(! empty($conf->global->MAIN_EMAIL_USECCC)?$conf->global->MAIN_EMAIL_USECCC:false);
-		$formmail->withtopic=$langs->trans('SendPropalRef','__PROPREF__');
+		if(empty($object->ref_client))
+		{
+			$formmail->withtopic=$langs->trans('SendPropalRef','__PROPREF__');
+		}
+		else if(!empty($object->ref_client))
+		{
+			$formmail->withtopic=$langs->trans('SendPropalRef','__PROPREF__(__REFCLIENT__)');
+		}
 		$formmail->withfile=2;
 		$formmail->withbody=1;
 		$formmail->withdeliveryreceipt=1;
@@ -2273,6 +2300,7 @@ else
 		// Tableau des substitutions
 		$formmail->substit['__PROPREF__']=$object->ref;
 		$formmail->substit['__SIGNATURE__']=$user->signature;
+		$formmail->substit['__REFCLIENT__']=$object->ref_client;
 		$formmail->substit['__PERSONALIZED__']='';
 		$formmail->substit['__CONTACTCIVNAME__']='';
 
@@ -2300,8 +2328,6 @@ else
 		$formmail->param['models']='propal_send';
 		$formmail->param['id']=$object->id;
 		$formmail->param['returnurl']=$_SERVER["PHP_SELF"].'?id='.$object->id;
-
-
 		// Init list of files
 		if (GETPOST("mode")=='init')
 		{

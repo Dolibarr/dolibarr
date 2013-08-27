@@ -1,5 +1,6 @@
-# Dolibarr language file - ca_ES - agenda
+# Dolibarr language file - Source file is ca_ES - agenda
 CHARSET=UTF-8
+IdAgenda=ID esdeveniment
 Actions=Esdeveniments
 ActionsArea=Àrea d'esdeveniments (accions i tasques)
 Agenda=Agenda
@@ -10,11 +11,12 @@ LocalAgenda=Calendari local
 AffectedTo=Assignada a
 DoneBy=Realitzat per
 Events=Esdeveniments
+EventsNb=Nombre d'esdeveniments
 MyEvents=Els meus events
 OtherEvents=Altres events
 ListOfActions=Llista d'esdeveniments
-EventOnFullDay=Esdeveniment per tot el dia
 Location=Localització
+EventOnFullDay=Esdeveniment per tot el dia
 SearchAnAction=Cercar un esdeveniment/tasca
 MenuToDoActions=Esdeveniments incomplets
 MenuDoneActions=Esdeveniments acabats
@@ -39,6 +41,7 @@ ActionsEvents=Esdeveniments per a què Dolibarr crei una acció de forma automà
 PropalValidatedInDolibarr=Pressupost %s validat
 InvoiceValidatedInDolibarr=Factura %s validada
 InvoiceBackToDraftInDolibarr=Factura %s tornada a borrador
+InvoiceDeleteDolibarr=Factura %s eliminada
 OrderValidatedInDolibarr=Comanda %s validada
 OrderApprovedInDolibarr=Comanda %s aprovada
 OrderBackToDraftInDolibarr=Comanda %s tordada a borrador
@@ -65,7 +68,8 @@ AgendaUrlOptions4=<b>logint=%s</b> per a restringir insercions a accions que afe
 AgendaUrlOptions5=<b>logind=%s</b> per a restringir insercions a accions realitzades per l'usuari <b>%s</b>.
 AgendaShowBirthdayEvents=Mostra aniversari dels contactes
 AgendaHideBirthdayEvents=Amaga aniversari dels contacte
-
+Busy=Ocupat
+ExportDataset_event1=Llistat esdeveniments de l'agenda
 # External Sites ical
 ExportCal=Exportar calendari
 ExtSites=Calendaris externs

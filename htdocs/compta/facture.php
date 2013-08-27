@@ -6,7 +6,7 @@
  * Copyright (C) 2005-2012 Regis Houssin         <regis.houssin@capnetworks.com>
  * Copyright (C) 2006      Andre Cianfarani      <acianfa@free.fr>
  * Copyright (C) 2010-2013 Juanjo Menent         <jmenent@2byte.es>
- * Copyright (C) 2012      Christophe Battarel   <christophe.battarel@altairis.fr>
+ * Copyright (C) 2012-2013 Christophe Battarel   <christophe.battarel@altairis.fr>
  * Copyright (C) 2013      Jean-Francois FERRY   <jfefe@aternatik.fr>
  * Copyright (C) 2013      Florian Henry		 <florian.henry@open-concept.pro>
  *
@@ -26,9 +26,9 @@
 
 /**
  *	\file       htdocs/compta/facture.php
-*	\ingroup    facture
-*	\brief      Page to create/see an invoice
-*/
+ *	\ingroup    facture
+ *	\brief      Page to create/see an invoice
+ */
 
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
@@ -661,7 +661,8 @@ else if ($action == 'add' && $user->rights->facture->creer)
 	// Fill array 'array_options' with data from add form
 	$extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
 	$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
-
+	if($ret < 0)
+		$error++;
 
 	// Replacement invoice
 	if ($_POST['type'] == 1)
@@ -758,7 +759,7 @@ else if ($action == 'add' && $user->rights->facture->creer)
 					$product->fetch($_POST['idprod'.$i]);
 					$startday=dol_mktime(12, 0, 0, $_POST['date_start'.$i.'month'], $_POST['date_start'.$i.'day'], $_POST['date_start'.$i.'year']);
 					$endday=dol_mktime(12, 0, 0, $_POST['date_end'.$i.'month'], $_POST['date_end'.$i.'day'], $_POST['date_end'.$i.'year']);
-					$result=$object->addline($id,$product->description,$product->price, $_POST['qty'.$i], $product->tva_tx, $product->localtax1_tx, $product->localtax2_tx, $_POST['idprod'.$i], $_POST['remise_percent'.$i], $startday, $endday, 0, 0, '', $product->price_base_type, $product->price_ttc, $product->type);
+					$result=$object->addline($product->description,$product->price, $_POST['qty'.$i], $product->tva_tx, $product->localtax1_tx, $product->localtax2_tx, $_POST['idprod'.$i], $_POST['remise_percent'.$i], $startday, $endday, 0, 0, '', $product->price_base_type, $product->price_ttc, $product->type);
 				}
 			}
 		}
@@ -913,7 +914,6 @@ else if ($action == 'add' && $user->rights->facture->creer)
 						}
 
 						$result = $object->addline(
-							$id,
 							$langs->trans('Deposit'),
 							$amountdeposit, //subprice
 							1, //quantity
@@ -1016,7 +1016,6 @@ else if ($action == 'add' && $user->rights->facture->creer)
 									}
 
 									$result = $object->addline(
-										$id,
 										$desc,
 										$lines[$i]->subprice,
 										$lines[$i]->qty,
@@ -1093,7 +1092,7 @@ else if ($action == 'add' && $user->rights->facture->creer)
 						$product->fetch($_POST['idprod'.$i]);
 						$startday=dol_mktime(12, 0, 0, $_POST['date_start'.$i.'month'], $_POST['date_start'.$i.'day'], $_POST['date_start'.$i.'year']);
 						$endday=dol_mktime(12, 0, 0, $_POST['date_end'.$i.'month'], $_POST['date_end'.$i.'day'], $_POST['date_end'.$i.'year']);
-						$result=$object->addline($id,$product->description,$product->price, $_POST['qty'.$i], $product->tva_tx, $product->localtax1_tx, $product->localtax2_tx, $_POST['idprod'.$i], $_POST['remise_percent'.$i], $startday, $endday, 0, 0, '', $product->price_base_type, $product->price_ttc, $product->type);
+						$result=$object->addline($product->description,$product->price, $_POST['qty'.$i], $product->tva_tx, $product->localtax1_tx, $product->localtax2_tx, $_POST['idprod'.$i], $_POST['remise_percent'.$i], $startday, $endday, 0, 0, '', $product->price_base_type, $product->price_ttc, $product->type);
 					}
 				}
 			}
@@ -1228,9 +1227,16 @@ else if (($action == 'addline' || $action == 'addline_predef') && $user->rights-
 					$price_base_type = $prod->price_base_type;
 				}
 
+				// if price ht is forced (ie: calculated by margin rate and cost price)
+				if (!empty($price_ht))
+				{
+					$pu_ht	= price2num($price_ht, 'MU');
+					$pu_ttc	= price2num($pu_ht * (1 + ($tva_tx/100)), 'MU');
+				}
+
 				// On reevalue prix selon taux tva car taux tva transaction peut etre different
 				// de ceux du produit par defaut (par exemple si pays different entre vendeur et acheteur).
-				if ($tva_tx != $prod->tva_tx)
+				elseif ($tva_tx != $prod->tva_tx)
 				{
 					if ($price_base_type != 'HT')
 					{
@@ -1311,7 +1317,6 @@ else if (($action == 'addline' || $action == 'addline_predef') && $user->rights-
 		{
 			// Insert line
 			$result = $object->addline(
-				$id,
 				$desc,
 				$pu_ht,
 				GETPOST('qty'),
@@ -1369,6 +1374,8 @@ else if (($action == 'addline' || $action == 'addline_predef') && $user->rights-
 				unset($_POST['product_desc']);
 				unset($_POST['fournprice']);
 				unset($_POST['buying_price']);
+				unset($_POST['np_marginRate']);
+				unset($_POST['np_markRate']);
 
 				// old method
 				unset($_POST['np_desc']);
@@ -1909,24 +1916,32 @@ if ($action == 'update_extras')
 	// Fill array 'array_options' with data from add form
 	$extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
 	$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
+	if($ret < 0)
+		$error++;
 
-	// Actions on extra fields (by external module or standard code)
-	// FIXME le hook fait double emploi avec le trigger !!
-	$hookmanager->initHooks(array('invoicedao'));
-	$parameters=array('id'=>$object->id);
-	$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$object,$action); // Note that $action and $object may have been modified by some hooks
-	if (empty($reshook))
-	{
-		if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+	if(!$error) {
+		// Actions on extra fields (by external module or standard code)
+		// FIXME le hook fait double emploi avec le trigger !!
+		$hookmanager->initHooks(array('invoicedao'));
+		$parameters=array('id'=>$object->id);
+		$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$object,$action); // Note that $action and $object may have been modified by some hooks
+		if (empty($reshook))
 		{
-			$result=$object->insertExtraFields();
-			if ($result < 0)
+			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
 			{
-				$error++;
+				$result=$object->insertExtraFields();
+				if ($result < 0)
+				{
+					$error++;
+				}
 			}
 		}
+		else if ($reshook < 0) $error++;
 	}
-	else if ($reshook < 0) $error++;
+	else
+	{
+		$action = 'edit_extras';
+	}
 
 }
 
@@ -1946,9 +1961,9 @@ llxHeader('',$langs->trans('Bill'),'EN:Customers_Invoices|FR:Factures_Clients|ES
 
 /*********************************************************************
  *
-* Mode creation
-*
-**********************************************************************/
+ * Mode creation
+ *
+ **********************************************************************/
 if ($action == 'create')
 {
 	$facturestatic=new Facture($db);
@@ -2042,8 +2057,26 @@ if ($action == 'create')
 	// Ref
 	print '<tr><td class="fieldrequired">'.$langs->trans('Ref').'</td><td colspan="2">'.$langs->trans('Draft').'</td></tr>';
 
+	// Tiers
+	print '<tr>';
+	print '<td class="fieldrequired">'.$langs->trans('Customer').'</td>';
+	if($soc->id > 0)
+	{
+		print '<td colspan="2">';
+		print $soc->getNomUrl(1);
+		print '<input type="hidden" name="socid" value="'.$soc->id.'">';
+		print '</td>';
+	}
+	else
+	{
+		print '<td colspan="2">';
+		print $form->select_company('','socid','s.client = 1 OR s.client = 3',1);
+		print '</td>';
+	}
+	print '</tr>'."\n";
+
 	// Factures predefinies
-	if (empty($origin) && empty($originid) && $socid>0)
+	if (empty($origin) && empty($originid) && $socid > 0)
 	{
 		$sql = 'SELECT r.rowid, r.titre, r.total_ttc';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'facture_rec as r';
@@ -2077,24 +2110,6 @@ if ($action == 'create')
 			dol_print_error($db);
 		}
 	}
-
-	// Tiers
-	print '<tr>';
-	print '<td class="fieldrequired">'.$langs->trans('Customer').'</td>';
-	if($soc->id > 0)
-	{
-		print '<td colspan="2">';
-		print $soc->getNomUrl(1);
-		print '<input type="hidden" name="socid" value="'.$soc->id.'">';
-		print '</td>';
-	}
-	else
-	{
-		print '<td colspan="2">';
-		print $form->select_company('','socid','s.client = 1 OR s.client = 3',1);
-		print '</td>';
-	}
-	print '</tr>'."\n";
 
 	// Type de facture
 	$facids=$facturestatic->list_replacable_invoices($soc->id);
@@ -2256,7 +2271,7 @@ if ($action == 'create')
 	print '</td></tr>';
 
 	// Payment term
-	print '<tr><td nowrap>'.$langs->trans('PaymentConditionsShort').'</td><td colspan="2">';
+	print '<tr><td class="nowrap">'.$langs->trans('PaymentConditionsShort').'</td><td colspan="2">';
 	$form->select_conditions_paiements(isset($_POST['cond_reglement_id'])?$_POST['cond_reglement_id']:$cond_reglement_id,'cond_reglement_id');
 	print '</td></tr>';
 
@@ -3685,6 +3700,74 @@ else if ($id > 0 || ! empty($ref))
 				// Linked object block
 				$somethingshown=$object->showLinkedObjectBlock();
 
+
+				if (empty($somethingshown) && $object->statut > 0)
+				{
+				
+				print '<a href="#" onClick="lier_commande(commande)">'.$langs->trans('LinkedOrder').'</a>';
+				
+				print '<div id="commande" style="display:none">';
+					{
+					
+					$sql = "SELECT s.rowid as socid, s.nom as name, s.client, c.rowid, c.ref, c.ref_client, c.total_ht";
+					$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
+					$sql.= ", ".MAIN_DB_PREFIX."commande as c";
+					$sql.= ' WHERE c.fk_soc = '.$soc->id.'';
+				
+					$result = $db->query($sql);
+					if ($result)
+					{
+						$num = $db->num_rows($result);
+						$i = 0;
+					
+					
+					print_titre($langs->trans("LinkedOrder"));
+					print  	'<table><tr class="liste_titre">';
+					print   '<td class="nowrap"></td>';
+					print	'<td align="center">'.$langs->trans("Ref").'</td>';
+					print	'<td align="left">'.$langs->trans("RefCustomer").'</td>';
+					print	'<td align="left">'.$langs->trans("AmountHTShort").'</td>';
+					print   '<td align="left">'.$langs->trans("Company").'</td>
+						</tr>';
+						print '<form action=" " method="post" name="LinkedOrder">';
+						while ($i < $num)
+						{
+							$objp = $db->fetch_object($result);
+							if ($objp->socid == $soc->id)
+							{
+							$var=!$var;
+							print '<tr '.$bc[$var].'>';
+							print '<td aling="left">';
+							print  '<input type="radio" name="linkedOrder" value='.$objp->rowid.'>';
+							print '<td align="center">'.$objp->ref.'</td>';
+							print '<td>'.$objp->ref_client.'</td>';
+							print '<td>'.price($objp->total_ht).'</td>';
+							print '<td>'.$objp->name.'</td>';
+							print '</td>';	
+						}
+						
+							$i++;		
+					}
+						print '</table>';
+						print '</br>';
+						print '<br><center><input type="submit" class="button" value="'.$langs->trans('OK').'"></center>';
+							
+						
+						print '</form>';
+					}
+						else
+					{
+						dol_print_error($db);
+					}		
+				$result=$object->add_object_linked('commande',$_POST['linkedOrder']);
+				if($result>0)
+				{
+					echo '<meta http-equiv="refresh" content="0;URL=facture.php?facid='.$object->id.'">';
+				}
+				}
+				
+				print '</div>';	
+			}
 				// Link for paypal payment
 				if (! empty($conf->paypal->enabled) && $object->statut != 0)
 				{
@@ -3693,7 +3776,7 @@ else if ($id > 0 || ! empty($ref))
 				}
 
 				print '</div><div class="fichehalfright"><div class="ficheaddleft">';
-
+			
 				// List of actions on element
 				include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
 				$formactions=new FormActions($db);
@@ -3766,7 +3849,14 @@ else if ($id > 0 || ! empty($ref))
 				$formmail->withto=GETPOST('sendto')?GETPOST('sendto'):$liste;
 				$formmail->withtocc=$liste;
 				$formmail->withtoccc=$conf->global->MAIN_EMAIL_USECCC;
-				$formmail->withtopic=$langs->transnoentities($topicmail,'__FACREF__');
+				if(empty($object->ref_client))
+				{
+					$formmail->withtopic=$langs->transnoentities($topicmail,'__FACREF__');
+				}
+				else if(!empty($object->ref_client))
+				{
+					$formmail->withtopic=$langs->transnoentities($topicmail,'__FACREF__(__REFCLIENT__)');
+				}
 				$formmail->withfile=2;
 				$formmail->withbody=1;
 				$formmail->withdeliveryreceipt=1;
@@ -3774,6 +3864,7 @@ else if ($id > 0 || ! empty($ref))
 				// Tableau des substitutions
 				$formmail->substit['__FACREF__']=$object->ref;
 				$formmail->substit['__SIGNATURE__']=$user->signature;
+				$formmail->substit['__REFCLIENT__']=$object->ref_client;
 				$formmail->substit['__PERSONALIZED__']='';
 				$formmail->substit['__CONTACTCIVNAME__']='';
 
@@ -3816,7 +3907,7 @@ else if ($id > 0 || ! empty($ref))
 				$formmail->show_form();
 
 				print '<br>';
-			}
+			}		
 	}
 	else
 	{
@@ -3829,3 +3920,19 @@ dol_htmloutput_mesg('',$mesgs);
 llxFooter();
 $db->close();
 ?>
+
+<script>
+
+function lier_commande(commande)
+{
+	
+	if(commande.style.display=='none')
+	{
+		commande.style.display='inline';
+	}
+	else
+	{
+		commande.style.display="none";
+	}
+}
+</script>

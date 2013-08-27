@@ -81,9 +81,9 @@ WithdrawalFileNotCapable=Imposibil de a genera primirea fişier de retragere pen
 ShowWithdraw=Arată Retragere
 IfInvoiceNeedOnWithdrawPaymentWontBeClosed=Cu toate acestea, în cazul în care factura nu a cel puţin o plată de retragere încă prelucrate, aceasta nu va fi setat ca platiti pentru a permite retragerea înainte de a gestiona.
 DoStandingOrdersBeforePayments=Acest file vă permite să solicite pentru un ordin de plată. Odată ce va fi terminat, aveţi posibilitatea să tastaţi de plată pentru a închide factura.
-# WithdrawalFile=Withdrawal file
-# SetToStatusSent=Set to status "File Sent"
-# ThisWillAlsoAddPaymentOnInvoice=This will also create payments onto invoices and will classify them to paid
+WithdrawalFile=Fişier Retragere
+SetToStatusSent=Setează statusul "Fişier Trimis"
+ThisWillAlsoAddPaymentOnInvoice=Acest lucru va crea, de asemenea, plățile pe facturi și le va clasifica în plătit
 
 ### Notifications
 InfoCreditSubject=Plata %s comandă în picioare de către bancă

@@ -1,4 +1,4 @@
-# Dolibarr language file - es_ES - orders
+# Dolibarr language file - Source file is en_US - orders
 CHARSET=UTF-8
 OrdersArea=Área pedidos de clientes
 SuppliersOrdersArea=Área pedidos a proveedores
@@ -28,12 +28,12 @@ SuppliersOrdersToProcess=Pedidos a proveedores a procesar
 StatusOrderCanceledShort=Anulado
 StatusOrderDraftShort=Borrador
 StatusOrderValidatedShort=Validado
-StatusOrderOnProcessShort=En proceso
 StatusOrderSentShort=Expedición en curso
 StatusOrderSent=Envío en curso
+StatusOrderOnProcessShort=En proceso
 StatusOrderProcessedShort=Procesado
 StatusOrderToBillShort=Emitido
-StatusOrderToBillShort2=A facturar
+StatusOrderToBill2Short=A facturar
 StatusOrderApprovedShort=Aprobado
 StatusOrderRefusedShort=Rechazado
 StatusOrderToProcessShort=A procesar
@@ -53,8 +53,9 @@ StatusOrderReceivedAll=Recibido
 ShippingExist=Existe una expedición
 DraftOrWaitingApproved=Borrador o aprobado aún no controlado
 DraftOrWaitingShipped=Borrador o validado aún no expedido
-SearchOrder=Buscar un pedido
 MenuOrdersToBill=Pedidos a facturar
+MenuOrdersToBill2=Pedidos facturables
+SearchOrder=Buscar un pedido
 Sending=Envío
 Sendings=Envíos
 ShipProduct=Enviar producto
@@ -69,9 +70,11 @@ CancelOrder=Anular el pedido
 AddOrder=Crear pedido
 AddToMyOrders=Añadir a mis pedidos
 AddToOtherOrders=Añadir a otros pedidos
+AddToDraftOrders=Añadir a pedido borrador
 ShowOrder=Mostrar pedido
 NoOpenedOrders=Níngun pedido borrador
 NoOtherOpenedOrders=Ningún otro pedido borrador
+NoDraftOrders=Sin pedidos borrador
 OtherOrders=Otros pedidos
 LastOrders=Los %s últimos pedidos
 LastModifiedOrders=Los %s últimos pedidos modificados
@@ -113,7 +116,6 @@ PaymentOrderRef=Pago pedido %s
 CloneOrder=Clonar pedido
 ConfirmCloneOrder=¿Está seguro de querer clonar este pedido <b>%s</b>?
 DispatchSupplierOrder=Recepción del pedido a proveedor %s
-DateDeliveryPlanned=Fecha prevista de entrega
 ##### Types de contacts #####
 TypeContact_commande_internal_SALESREPFOLL=Responsable seguimiento pedido cliente
 TypeContact_commande_internal_SHIPPING=Responsable envío pedido cliente
@@ -125,13 +127,11 @@ TypeContact_order_supplier_internal_SHIPPING=Responsable recepción pedido a pro
 TypeContact_order_supplier_external_BILLING=Contacto proveedor facturación pedido
 TypeContact_order_supplier_external_SHIPPING=Contacto proveedor entrega pedido
 TypeContact_order_supplier_external_CUSTOMER=Contacto proveedor seguimiento pedido
-
 Error_COMMANDE_SUPPLIER_ADDON_NotDefined=Constante COMMANDE_SUPPLIER_ADDON no definida
 Error_COMMANDE_ADDON_NotDefined=Constante COMMANDE_ADDON no definida
 Error_FailedToLoad_COMMANDE_SUPPLIER_ADDON_File=Error en la carga del archivo módulo '%s'
 Error_FailedToLoad_COMMANDE_ADDON_File=Error en la carga del archivo módulo '%s'
 Error_OrderNotChecked=No se han seleccionado pedidos a facturar
-
 # Sources
 OrderSource0=Presupuesto
 OrderSource1=Internet
@@ -142,18 +142,21 @@ OrderSource5=Comercial
 OrderSource6=Revistas
 QtyOrdered=Cant. pedida
 AddDeliveryCostLine=Añadir una línea de gastos de portes indicando el peso del pedido
-SetDemandReason=Indicar origen del pedido
-CreateInvoiceForThisCustomer=Facturar pedidos
-NoOrdersToInvoice=Sin pedidos facturables
-CloseProcessedOrdersAutomatically=Clasificar automáticamente como "Procesados" los pedidos seleccionados.
-MenuOrdersToBill2=Pedidos facturables
-
-# Document models
+# Documents models
 PDFEinsteinDescription=Modelo de pedido completo (logo...)
 PDFEdisonDescription=Modelo de pedido simple
+PDFProformaDescription=Modelo de factura pro-forma completo (logo...)
 # Orders modes
 OrderByMail=Correo
 OrderByFax=Fax
 OrderByEMail=E-Mail
 OrderByWWW=En línea
 OrderByPhone=Teléfono
+CreateInvoiceForThisCustomer=Facturar pedidos
+NoOrdersToInvoice=Sin pedidos facturables
+CloseProcessedOrdersAutomatically=Clasificar automáticamente como "Procesados" los pedidos seleccionados.
+OrderCreation=Creación pedido
+Ordered=Pedido
+OrderCreated=Sus pedidos han sido creados
+OrderFail=Se ha producido un error durante la creación de sus pedidos
+CreateOrders=Crear pedidos

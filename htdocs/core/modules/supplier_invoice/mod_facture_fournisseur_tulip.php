@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2013      Philippe Grand       <philippe.grand@atoo-net.com>
+ * Copyright (C) 2013 	   Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -56,7 +57,7 @@ class mod_facture_fournisseur_tulip extends ModeleNumRefSuppliersInvoices
 		$texte = $langs->trans('GenericNumRefModelDesc')."<br>\n";
 		$texte.= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 		$texte.= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-		$texte.= '<input type="hidden" name="action" value="updateMaskInvoice">';
+		$texte.= '<input type="hidden" name="action" value="updateMask">';
 		$texte.= '<input type="hidden" name="maskconstinvoice" value="SUPPLIER_INVOICE_TULIP_MASK">';
 		$texte.= '<table class="nobordernopadding" width="100%">';
 
@@ -124,7 +125,7 @@ class mod_facture_fournisseur_tulip extends ModeleNumRefSuppliersInvoices
 			return 0;
 		}
 
-		$numFinal=get_next_value($db,$mask,'facture_fournisseur','ref','',$objsoc->code_fournisseur,$object->datec);
+		$numFinal=get_next_value($db,$mask,'facture_fourn','ref','',$objsoc->code_fournisseur,$object->datef);
 
 		return  $numFinal;
 	}

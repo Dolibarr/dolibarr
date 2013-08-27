@@ -39,7 +39,7 @@ ConfirmCloseService=Are you sure you want to close this service with date <b>%s<
 ValidateAContract=Validate a contract
 ActivateService=Ενεργοποίηση Υπηρεσίας
 ConfirmActivateService=Are you sure you want to activate this service with date <b>%s</b> ?
-# RefContract=Contract reference
+RefContract==
 DateContract=Contract date
 DateServiceActivate=Service activation date
 DateServiceUnactivate=Service deactivation date
@@ -86,9 +86,10 @@ PaymentRenewContractId=Renew contract line (number %s)
 ExpiredSince=Expiration date
 RelatedContracts=Σχετιζόμενα συμβόλαια
 NoExpiredServices=Δεν έληξε ενεργές υπηρεσίες
-# ListOfServicesToExpireWithDuration=List of Services to expire in %s days
-# ListOfServicesToExpire=List of Services to expire
-# Service=Service
+ListOfServicesToExpireWithDuration=Λίστα των Υπηρεσιών λήγει σε %s ημέρες
+ListOfServicesToExpireWithDurationNeg=Κατάλογος των υπηρεσιών έληξε από περισσότερες, από %s ημέρες
+ListOfServicesToExpire=Κατάλογος Υπηρεσιών προς λήξει
+NoteListOfYourExpiredServices=Αυτή η λίστα περιέχει μόνο τις υπηρεσίες των συμβάσεων για λογαριασμό ΠΕΛ./ΠΡΟΜ. που συνδέονται ως εκπρόσωπος πώληση.
 
 ##### Types de contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Σύμβαση πώλησης υπογραφή εκπροσώπου

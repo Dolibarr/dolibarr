@@ -7,6 +7,7 @@
  * Copyright (C) 2006      Auguria SARL         <info@auguria.org>
  * Copyright (C) 2010-2011 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2013      Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2013      Cédric Salvador      <csalvador@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -187,6 +188,7 @@ if (empty($reshook))
             $object->duration_value     	= GETPOST('duration_value');
             $object->duration_unit      	= GETPOST('duration_unit');
             $object->seuil_stock_alerte 	= GETPOST('seuil_stock_alerte')?GETPOST('seuil_stock_alerte'):0;
+            $object->desiredstock           = GETPOST('desiredstock')?GETPOST('desiredstock'):0;
             $object->canvas             	= GETPOST('canvas');
             $object->weight             	= GETPOST('weight');
             $object->weight_units       	= GETPOST('weight_units');
@@ -256,6 +258,7 @@ if (empty($reshook))
                 $object->status             = GETPOST('statut');
                 $object->status_buy         = GETPOST('statut_buy');
                 $object->seuil_stock_alerte = GETPOST('seuil_stock_alerte');
+                $object->desiredstock       = GETPOST('desiredstock');
                 $object->duration_value     = GETPOST('duration_value');
                 $object->duration_unit      = GETPOST('duration_unit');
                 $object->canvas             = GETPOST('canvas');
@@ -383,7 +386,7 @@ if (empty($reshook))
         {
             $result = $object->delete($object->id);
         }
-
+		 
         if ($result > 0)
         {
             header('Location: '.DOL_URL_ROOT.'/product/liste.php?delprod='.urlencode($object->ref));
@@ -450,7 +453,6 @@ if (empty($reshook))
         }
 
         $result = $propal->addline(
-            $propal->id,
             $desc,
             $pu_ht,
             GETPOST('qty'),
@@ -524,7 +526,6 @@ if (empty($reshook))
         }
 
         $result =  $commande->addline(
-            $commande->id,
             $desc,
             $pu_ht,
             GETPOST('qty'),
@@ -598,7 +599,6 @@ if (empty($reshook))
         }
 
         $result = $facture->addline(
-            $facture->id,
             $desc,
             $pu_ht,
             GETPOST('qty'),
@@ -726,12 +726,17 @@ else
             print '<tr><td>'.$langs->trans("StockLimit").'</td><td>';
             print '<input name="seuil_stock_alerte" size="4" value="'.GETPOST('seuil_stock_alerte').'">';
             print '</td></tr>';
+            // Stock desired level
+            print '<tr><td>'.$langs->trans("DesiredStock").'</td><td>';
+            print '<input name="desiredstock" size="4" value="'.GETPOST('desiredstock').'">';
+            print '</td></tr>';
         }
         else
         {
             print '<input name="seuil_stock_alerte" type="hidden" value="0">';
+            print '<input name="desiredstock" type="hidden" value="0">';
         }
-
+        
         // Description (used in invoice, propal...)
         print '<tr><td valign="top">'.$langs->trans("Description").'</td><td>';
 
@@ -937,10 +942,15 @@ else
                 print "<tr>".'<td>'.$langs->trans("StockLimit").'</td><td colspan="2">';
                 print '<input name="seuil_stock_alerte" size="4" value="'.$object->seuil_stock_alerte.'">';
                 print '</td></tr>';
+                
+                print "<tr>".'<td>'.$langs->trans("DesiredStock").'</td><td colspan="2">';
+                print '<input name="desiredstock" size="4" value="'.$object->desiredstock.'">';
+                print '</td></tr>';
             }
             else
             {
                 print '<input name="seuil_stock_alerte" type="hidden" value="'.$object->seuil_stock_alerte.'">';
+                print '<input name="desiredstock" type="hidden" value="'.$object->desiredstock.'">';
             }
 
             if ($object->isservice())
@@ -1073,8 +1083,8 @@ else
             if ($showbarcode)
             {
                 // Barcode type
-                print '<tr><td nowrap>';
-                print '<table width="100%" class="nobordernopadding"><tr><td nowrap>';
+                print '<tr><td class="nowrap">';
+                print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
                 print $langs->trans("BarcodeType");
                 print '<td>';
                 if (($action != 'editbarcodetype') && $user->rights->barcode->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editbarcodetype&amp;id='.$object->id.'">'.img_edit($langs->trans('Edit'),1).'</a></td>';
@@ -1094,8 +1104,8 @@ else
                 print '</td></tr>'."\n";
 
                 // Barcode value
-                print '<tr><td nowrap>';
-                print '<table width="100%" class="nobordernopadding"><tr><td nowrap>';
+                print '<tr><td class="nowrap">';
+                print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
                 print $langs->trans("BarcodeValue");
                 print '<td>';
                 if (($action != 'editbarcode') && $user->rights->barcode->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editbarcode&amp;id='.$object->id.'">'.img_edit($langs->trans('Edit'),1).'</a></td>';
@@ -1341,7 +1351,7 @@ if ($object->id && ($action == '' || $action == 'view') && $object->status)
         $langs->load("propal");
 
         $html .= '<tr class="liste_titre">';
-        $html .= '<td class="liste_titre">'.$langs->trans("AddToOtherProposals").'</td>';
+        $html .= '<td class="liste_titre">'.$langs->trans("AddToDraftProposals").'</td>';
         $html .= '</tr><tr>';
         $html .= '<td valign="top">';
 
@@ -1368,7 +1378,7 @@ if ($object->id && ($action == '' || $action == 'view') && $object->status)
         else
         {
         	$html .= "<tr ".$bc[!$var]."><td>";
-        	$html .= $langs->trans("NoOtherOpenedPropals");
+        	$html .= $langs->trans("NoDraftProposals");
         	$html .= '</td></tr>';
         }
         $html .= '</table>';
@@ -1386,7 +1396,7 @@ if ($object->id && ($action == '' || $action == 'view') && $object->status)
         $langs->load("orders");
 
         $html .= '<tr class="liste_titre">';
-        $html .= '<td class="liste_titre">'.$langs->trans("AddToOtherOrders").'</td>';
+        $html .= '<td class="liste_titre">'.$langs->trans("AddToDraftOrders").'</td>';
         $html .= '</tr><tr>';
         $html .= '<td valign="top">';
 
@@ -1413,7 +1423,7 @@ if ($object->id && ($action == '' || $action == 'view') && $object->status)
         else
 		{
         	$html .= "<tr ".$bc[!$var]."><td>";
-        	$html .= $langs->trans("NoOtherOpenedOrders");
+        	$html .= $langs->trans("NoDraftOrders");
         	$html .= '</td></tr>';
         }
         $html .= '</table>';
@@ -1431,7 +1441,7 @@ if ($object->id && ($action == '' || $action == 'view') && $object->status)
     	$langs->load("bills");
 
     	$html .= '<tr class="liste_titre">';
-    	$html .= '<td class="liste_titre">'.$langs->trans("AddToOtherBills").'</td>';
+    	$html .= '<td class="liste_titre">'.$langs->trans("AddToDraftInvoices").'</td>';
         $html .= '</tr><tr>';
     	$html .= '<td valign="top">';
 
@@ -1458,7 +1468,7 @@ if ($object->id && ($action == '' || $action == 'view') && $object->status)
     	else
     	{
     		$html .= "<tr ".$bc[!$var]."><td>";
-    		$html .= $langs->trans("NoOtherDraftBills");
+    		$html .= $langs->trans("NoDraftInvoices");
     		$html .= '</td></tr>';
     	}
     	$html .= '</table>';

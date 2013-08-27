@@ -83,7 +83,8 @@ class Product extends CommonObject
 	var $pmp;
     //! Stock alert
 	var $seuil_stock_alerte;
-
+	//! Ask for replenishment when $desiredstock < $stock_reel
+	public $desiredstock;
 	//! Duree de validite du service
 	var $duration_value;
 	//! Unite de duree
@@ -165,6 +166,7 @@ class Product extends CommonObject
 		$this->nbphoto = 0;
 		$this->stock_reel = 0;
 		$this->seuil_stock_alerte = 0;
+		$this->desiredstock = 0;
 		$this->canvas = '';
 	}
 
@@ -262,8 +264,27 @@ class Product extends CommonObject
 		}
 		if (empty($this->ref))
 		{
-			$this->error='ErrorWrongParameters';
-		    return -2;
+			// Load object modCodeProduct
+			$module=(! empty($conf->global->PRODUCT_CODEPRODUCT_ADDON)?$conf->global->PRODUCT_CODEPRODUCT_ADDON:'mod_codeproduct_leopard');
+			if ($module != 'mod_codeproduct_leopard')	// Do not load module file
+			{
+				if (substr($module, 0, 16) == 'mod_codeproduct_' && substr($module, -3) == 'php')
+				{
+					$module = substr($module, 0, dol_strlen($module)-4);
+				}
+				dol_include_once('/core/modules/product/'.$module.'.php');
+				$modCodeProduct = new $module;
+				if (! empty($modCodeProduct->code_auto))
+				{
+					$this->ref = $modCodeProduct->getNextValue($this,$this->type);
+				}
+				unset($modCodeProduct);
+			}
+			if (empty($this->ref))
+			{
+				$this->error='ProductModuleNotSetupForAutoRef';
+				return -2;
+			}
 		}
 
 		dol_syslog(get_class($this)."::create ref=".$this->ref." price=".$this->price." price_ttc=".$this->price_ttc." tva_tx=".$this->tva_tx." price_base_type=".$this->price_base_type, LOG_DEBUG);
@@ -470,6 +491,7 @@ class Product extends CommonObject
 		$sql.= ",duration = '" . $this->duration_value . $this->duration_unit ."'";
 		$sql.= ",accountancy_code_buy = '" . $this->accountancy_code_buy."'";
 		$sql.= ",accountancy_code_sell= '" . $this->accountancy_code_sell."'";
+		$sql.= ", desiredstock = " . ((isset($this->desiredstock) && $this->desiredstock != '') ? $this->desiredstock : "null");
 		$sql.= " WHERE rowid = " . $id;
 
 		dol_syslog(get_class($this)."update sql=".$sql);
@@ -575,121 +597,115 @@ class Product extends CommonObject
 
 		$error=0;
 
-		if (($this->type==0 && !$user->rights->produit->supprimer) || ($this->type==1 && !$user->rights->service->supprimer))
+		if (($this->type == 0 && empty($user->rights->produit->supprimer)) || ($this->type == 1 && empty($user->rights->service->supprimer)))
 		{
 			$this->error = "ErrorForbidden";
 			return 0;
 		}
 
-			$objectisused = $this->isObjectUsed($id);
-			if (empty($objectisused))
+		$objectisused = $this->isObjectUsed($id);
+		if (empty($objectisused))
+		{
+			$this->db->begin();
+
+			if (! $error)
 			{
-			    $this->db->begin();
-
-			    if (! $error)
-			    {
-			        // Appel des triggers
-			        include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-			        $interface=new Interfaces($this->db);
-			        $result=$interface->run_triggers('PRODUCT_DELETE',$this,$user,$langs,$conf);
-			        if ($result < 0) {
-			            $error++; $this->errors=$interface->errors;
-			        }
-			        // Fin appel triggers
-			    }
-
-                // Delete all child tables
-                $elements = array('product_fournisseur_price','product_price','product_lang','categorie_product');
-				foreach($elements as $table)
-				{
-				    if (! $error)
-				    {
-    					$sql = "DELETE FROM ".MAIN_DB_PREFIX.$table;
-    					$sql.= " WHERE fk_product = ".$id;
-        				dol_syslog(get_class($this).'::delete sql='.$sql, LOG_DEBUG);
-    					$result = $this->db->query($sql);
-        				if (! $result)
-        				{
-        				    $error++;
-        					$this->error = $this->db->lasterror();
-        				    dol_syslog(get_class($this).'::delete error '.$this->error, LOG_ERR);
-        				}
-				    }
+				// Appel des triggers
+				include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
+				$interface=new Interfaces($this->db);
+				$result=$interface->run_triggers('PRODUCT_DELETE',$this,$user,$langs,$conf);
+				if ($result < 0) {
+					$error++; $this->errors=$interface->errors;
 				}
+				// Fin appel triggers
+			}
 
-				// Removed extrafields
-				if ((! $error) && (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED))) // For avoid conflicts if trigger used
+			// Delete all child tables
+			$elements = array('product_fournisseur_price','product_price','product_lang','categorie_product');
+			foreach($elements as $table)
+			{
+				if (! $error)
 				{
-					$result=$this->deleteExtraFields();
-					if ($result < 0)
+					$sql = "DELETE FROM ".MAIN_DB_PREFIX.$table;
+					$sql.= " WHERE fk_product = ".$id;
+					dol_syslog(get_class($this).'::delete sql='.$sql, LOG_DEBUG);
+					$result = $this->db->query($sql);
+					if (! $result)
 					{
 						$error++;
+						$this->errors[] = $this->db->lasterror();
 						dol_syslog(get_class($this).'::delete error '.$this->error, LOG_ERR);
 					}
 				}
+			}
 
-                // Delete product
-                if (! $error)
-                {
-    				$sqlz = "DELETE FROM ".MAIN_DB_PREFIX."product";
-    				$sqlz.= " WHERE rowid = ".$id;
-                    dol_syslog(get_class($this).'::delete sql='.$sql, LOG_DEBUG);
-    				$resultz = $this->db->query($sqlz);
-       				if ( ! $resultz )
-    				{
-    					$error++;
-    					$this->error = $this->db->lasterror();
-    				    dol_syslog(get_class($this).'::delete error '.$this->error, LOG_ERR);
-    				}
-                }
-
-                if (! $error)
-                {
-                	// We remove directory
-                	$ref = dol_sanitizeFileName($this->ref);
-                	if ($conf->product->dir_output)
-                	{
-                		$dir = $conf->product->dir_output . "/" . $ref;
-                		if (file_exists($dir))
-                		{
-                			$res=@dol_delete_dir_recursive($dir);
-                			if (! $res)
-                			{
-                				$this->error='ErrorFailToDeleteDir';
-                				$error++;
-                			}
-                		}
-                	}
-                }
-
-                // Remove extrafields
-                if ((! $error) && (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED))) // For avoid conflicts if trigger used
-                {
-                	$result=$this->deleteExtraFields();
-                	if ($result < 0)
-                	{
-                		$error++;
-                		dol_syslog(get_class($this)."::delete error -4 ".$this->error, LOG_ERR);
-                	}
-                }
-
-				if (! $error)
+			// Delete product
+			if (! $error)
+			{
+				$sqlz = "DELETE FROM ".MAIN_DB_PREFIX."product";
+				$sqlz.= " WHERE rowid = ".$id;
+				dol_syslog(get_class($this).'::delete sql='.$sql, LOG_DEBUG);
+				$resultz = $this->db->query($sqlz);
+				if ( ! $resultz )
 				{
-					$this->db->commit();
-					return 1;
+					$error++;
+					$this->errors[] = $this->db->lasterror();
+					dol_syslog(get_class($this).'::delete error '.$this->error, LOG_ERR);
 				}
-				else
+			}
+
+			if (! $error)
+			{
+				// We remove directory
+				$ref = dol_sanitizeFileName($this->ref);
+				if ($conf->product->dir_output)
 				{
-					$this->db->rollback();
-					return -$error;
+					$dir = $conf->product->dir_output . "/" . $ref;
+					if (file_exists($dir))
+					{
+						$res=@dol_delete_dir_recursive($dir);
+						if (! $res)
+						{
+							$this->errors[] = 'ErrorFailToDeleteDir';
+							$error++;
+						}
+					}
 				}
+			}
+
+			// Remove extrafields
+			if ((! $error) && (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED))) // For avoid conflicts if trigger used
+			{
+				$result=$this->deleteExtraFields();
+				if ($result < 0)
+				{
+					$error++;
+					dol_syslog(get_class($this)."::delete error -4 ".$this->error, LOG_ERR);
+				}
+			}
+
+			if (! $error)
+			{
+				$this->db->commit();
+				return 1;
 			}
 			else
 			{
-				$this->error = "ErrorRecordHasChildren";
-				return 0;
+				foreach($this->errors as $errmsg)
+				{
+					dol_syslog(get_class($this)."::delete ".$errmsg, LOG_ERR);
+					$this->error.=($this->error?', '.$errmsg:$errmsg);
+				}
+				$this->db->rollback();
+				return -$error;
 			}
 		}
+		else
+		{
+			$this->error = "ErrorRecordHasChildren";
+			return 0;
+		}
+	}
 
 	/**
 	 *	Update ou cree les traductions des infos produits
@@ -1116,7 +1132,7 @@ class Product extends CommonObject
 		$sql.= " tobuy, fk_product_type, duration, seuil_stock_alerte, canvas,";
 		$sql.= " weight, weight_units, length, length_units, surface, surface_units, volume, volume_units, barcode, fk_barcode_type, finished,";
 		$sql.= " accountancy_code_buy, accountancy_code_sell, stock, pmp,";
-		$sql.= " datec, tms, import_key, entity";
+		$sql.= " datec, tms, import_key, entity, desiredstock";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product";
 		if ($id) $sql.= " WHERE rowid = '".$id."'";
 		else
@@ -1180,6 +1196,7 @@ class Product extends CommonObject
 				$this->accountancy_code_sell	= $obj->accountancy_code_sell;
 
 				$this->seuil_stock_alerte		= $obj->seuil_stock_alerte;
+				$this->desiredstock             = $obj->desiredstock;
 				$this->stock_reel				= $obj->stock;
 				$this->pmp						= $obj->pmp;
 
@@ -2180,7 +2197,8 @@ class Product extends CommonObject
 					'stock'=>$this->stock_warehouse[1]->real,	// Stock
 					'stock_alert'=>$this->seuil_stock_alerte,	// Stock alert
 					'fullpath' => $compl_path.$label,			// Label
-					'type'=>$type				// Nb of units that compose parent product
+					'type'=>$type,				// Nb of units that compose parent product
+					'desiredstock' => $this->desiredstock
 				);
 
 				// Recursive call if child is an array

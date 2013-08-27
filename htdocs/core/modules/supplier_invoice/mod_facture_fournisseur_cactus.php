@@ -19,7 +19,7 @@
  */
 
 /**
- *    	\file       htdocs/core/modules/supplier_order/mod_facture_fournisseur_cactus.php
+ *    	\file       htdocs/core/modules/supplier_invoice/mod_facture_fournisseur_cactus.php
  *		\ingroup    supplier invoice
  *		\brief      File containing the Cactus Class of numbering models of suppliers invoices references
  */

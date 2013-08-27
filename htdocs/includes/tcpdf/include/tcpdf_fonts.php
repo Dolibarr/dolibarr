@@ -1,9 +1,9 @@
 <?php
 //============================================================+
 // File name   : tcpdf_fonts.php
-// Version     : 1.0.007
+// Version     : 1.0.008
 // Begin       : 2008-01-01
-// Last Update : 2013-06-04
+// Last Update : 2013-07-18
 // Author      : Nicola Asuni - Tecnick.com LTD - www.tecnick.com - info@tecnick.com
 // License     : GNU-LGPL v3 (http://www.gnu.org/copyleft/lesser.html)
 // -------------------------------------------------------------------
@@ -42,7 +42,7 @@
  * @class TCPDF_FONTS
  * Font methods for TCPDF library.
  * @package com.tecnick.tcpdf
- * @version 1.0.007
+ * @version 1.0.008
  * @author Nicola Asuni - info@tecnick.com
  */
 class TCPDF_FONTS {
@@ -1815,7 +1815,7 @@ class TCPDF_FONTS {
 						// characters.
 						return 0xFFFD; // use replacement character
 					} else {
-						return $char; // add char to array
+						return $char;
 					}
 				}
 			} else {
@@ -1839,7 +1839,7 @@ class TCPDF_FONTS {
 	public static function UTF8StringToArray($str, $isunicode=true, &$currentfont) {
 		if ($isunicode) {
 			// requires PCRE unicode support turned on
-			$chars = preg_split("//u", $str, -1, PREG_SPLIT_NO_EMPTY);
+			$chars = TCPDF_STATIC::pregSplit('//','u', $str, -1, PREG_SPLIT_NO_EMPTY);
 			$carr = array_map(array('self', 'uniord'), $chars);
 		} else {
 			$chars = str_split($str);

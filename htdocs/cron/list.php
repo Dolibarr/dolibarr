@@ -18,7 +18,7 @@
  */
 
 /**
- *  \file       cron/cron/list.php
+ *  \file       htdocs/cron/cron/list.php
  *  \ingroup    cron
  *  \brief      Lists Jobs
  */
@@ -147,7 +147,7 @@ print "<br><br>";
 print '<form method="GET" action="'.$url_form.'" name="search_form">'."\n";
 print '<input type="hidden" name="status" value="'.$status.'" >';
 
-print '<table class="noborder">';
+print '<table width="100%" class="noborder">';
 print '<tr class="liste_titre">';
 $arg_url='&page='.$page.'&status='.$status.'&search_label='.$search_label;
 print_liste_field_titre($langs->trans("CronLabel"),$_SERVEUR['PHP_SELF'],"t.label","",$arg_url,'',$sortfield,$sortorder);

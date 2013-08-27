@@ -65,7 +65,7 @@ ChooseFormatOfFileToImport=Valitse tiedostomuoto käyttää kuin tuoda tiedostom
 ChooseFileToImport=Valitse tiedosto tuoda sitten picto %s ...
 SourceFileFormat=Lähde tiedostomuoto
 FieldsInSourceFile=Toimialoja lähdetiedostoa
-FieldsInTargetDatabase=Kohdekieli kentät Dolibarr tietokanta
+# FieldsInTargetDatabase=Target fields in Dolibarr database (bold=mandatory)
 Field=Kenttä
 NoFields=Ei kentät
 MoveField=Siirrä kenttä sarakkeeseen numero %s
@@ -120,10 +120,10 @@ CSVFormatDesc=<b>Pilkuin erotellut</b> tiedostomuodossa (. Csv). <br> Tämä on 
 # Separator=Separator
 # Enclosure=Enclosure
 # SuppliersProducts=Suppliers Products
-# BankCode=Bank code
-# DeskCode=Desk code
-# BankAccountNumber=Account number
-# BankAccountNumberKey=Key
+BankCode=Pankin koodi
+DeskCode=Työpöytä-koodi
+BankAccountNumber=Tilinumero
+BankAccountNumberKey=Avain
 ## filters
 # SelectFilterFields=If you want to filter on some values, just input values here.
 # FilterableFields=Champs Filtrables

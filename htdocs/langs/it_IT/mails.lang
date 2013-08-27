@@ -1,4 +1,4 @@
-# Dolibarr language file - en_US - mails
+# Dolibarr language file - Source file is en_US - mails
 CHARSET=UTF-8
 Mailing=Invio di massa
 EMailing=Invio email
@@ -90,6 +90,7 @@ MailingModuleDescEmailsFromFile=Email da un file (email;nome;cognome)
 MailingModuleDescContactsCategories=Contatti di tutti i soggetti terzi (per categoria)
 MailingModuleDescDolibarrContractsLinesExpired=Soggetti terzi con contratti scaduti
 MailingModuleDescContactsByCompanyCategory=Contatti di soggetti terzi (per categoria)
+# MailingModuleDescContactsByCategory=Contacts/addresses of third parties by category
 MailingModuleDescMembersCategories=Membri della Fondazione (per categoria)
 MailingModuleDescContactsByFunction=Contatti di soggetti terzi (per posizione/funzione)
 
@@ -106,10 +107,10 @@ SearchAMailing=Cerca invio
 SendMailing=Invia email massiva
 SendMail=Invia una email
 SentBy=Inviato da
-MailingNeedCommand=Per motivi di sicurezza, l'invio in massa di messaggi di posta elettronica può essere eseguito solo da riga di comando. Chiedi al tuo amministratore di lanciare il seguente comando per inviare il messaggio di posta elettronica a tutti i destinatari:
+# MailingNeedCommand=For security reason, sending an emailing is better when performed from command line. If you have one, ask your server administrator to launch the following command to send the emailing to all recipients:
 MailingNeedCommand2=Puoi inviare comunque online aggiungendo il parametro MAILING_LIMIT_SENDBYWEB impostato al valore massimo corrispondente al numero di email che si desidera inviare durante una sessione.
-ConfirmSendingEmailing=Sei sicuro di voler effettuare l'invio massivo di email?<br/>L'invio massivo di email è limitato a <b>%s</b> destinatari per sessione per motivi di sicurezza.
-LimitSendingEmailing=Gli invii online sono limitati per motivi di sicurezza e timeout a <b>%s</b> destinatari per sessione.
+# ConfirmSendingEmailing=If you can't or prefer sending them with your www browser, please confirm you are sure you want to send emailing now from your browser ?
+# LimitSendingEmailing=Note: On line sending of emailings are limited for security and timeout reasons to <b>%s</b> recipients by sending session.
 TargetsReset=Cancella elenco
 ToClearAllRecipientsClickHere=Per cancellare l'elenco destinatari per questa email, cliccare sul pulsante
 ToAddRecipientsChooseHere=Per aggiungere i destinatari, scegliere da questi elenchi

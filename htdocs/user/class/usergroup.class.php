@@ -2,6 +2,7 @@
 /* Copyright (c) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (c) 2005-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (c) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2012	   Florian Henry		<florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -97,6 +98,7 @@ class UserGroup extends CommonObject
 				$this->ref = $obj->rowid;
 				$this->entity = $obj->entity;
 				$this->name = $obj->name;
+				$this->nom = $obj->name; //Deprecated
 				$this->note = $obj->note;
 				$this->datec = $obj->datec;
 				$this->datem = $obj->datem;

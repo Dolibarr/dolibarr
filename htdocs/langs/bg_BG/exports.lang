@@ -65,7 +65,7 @@ ChooseFormatOfFileToImport=Изберете формат на файла, за �
 ChooseFileToImport=Качване на файл и след това кликнете върху %s икони, за да изберете файл като източник на внос файл ...
 SourceFileFormat=Изходния формат на файла
 FieldsInSourceFile=Полетата в файла източник
-FieldsInTargetDatabase=Целеви области в Dolibarr база данни (* = задължително)
+# FieldsInTargetDatabase=Target fields in Dolibarr database (bold=mandatory)
 Field=Област
 NoFields=Не полета
 MoveField=Преместете поле %s броя на колоните
@@ -120,10 +120,10 @@ ExportFieldAutomaticallyAdded=Полеви <b>%s</b> добавят автома
 # Separator=Separator
 # Enclosure=Enclosure
 # SuppliersProducts=Suppliers Products
-# BankCode=Bank code
-# DeskCode=Desk code
-# BankAccountNumber=Account number
-# BankAccountNumberKey=Key
+BankCode=Банков код
+DeskCode=Бюро код
+BankAccountNumber=Номер на сметка
+BankAccountNumberKey=Ключ
 ## filters
 # SelectFilterFields=If you want to filter on some values, just input values here.
 # FilterableFields=Champs Filtrables

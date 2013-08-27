@@ -2,7 +2,7 @@
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2010-2012 Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2010-2013 Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -76,15 +76,13 @@ if ($action == "set")
     else $error++;
 
     if (! $error)
-    {
-        $db->commit();
-        $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
-    }
-    else
-    {
-        $db->rollback();
-        $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
-    }
+	{
+		setEventMessage($langs->trans("SetupSaved"));
+	}
+	else
+	{
+		setEventMessage($langs->trans("Error"),'errors');
+	}
 }
 
 if ($action == "addnotif")
@@ -142,7 +140,7 @@ print "</tr>";
 print '<tr class="impair"><td>'.$langs->trans("ResponsibleUser").'</td>';
 print '<td align="left">';
 print '<input type="hidden" name="nom0" value="PRELEVEMENT_USER">';
-print $form->select_users($conf->global->PRELEVEMENT_USER,'value0',1);
+print $form->select_dolusers($conf->global->PRELEVEMENT_USER,'value0',1);
 print '</td>';
 print '</tr>';
 
@@ -277,8 +275,6 @@ if ($resql)
 
 print '</table>';
 print '</form>';
-
-dol_htmloutput_mesg($mesg);
 
 $db->close();
 

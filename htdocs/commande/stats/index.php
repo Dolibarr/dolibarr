@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (c) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2012      Marcos García        <marcosgdf@gmail.com>
  *
@@ -70,7 +70,7 @@ if ($mode == 'customer')
 }
 if ($mode == 'supplier')
 {
-    $title=$langs->trans("OrdersStatisticsSuppliers");
+    $title=$langs->trans("OrdersStatisticsSuppliers").' ('.$langs->trans("SentToSuppliers").")";
     $dir=$conf->fournisseur->dir_output.'/commande/temp';
 }
 
@@ -248,7 +248,7 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 	print '<form name="stats" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 	print '<input type="hidden" name="mode" value="'.$mode.'">';
 	print '<table class="border" width="100%">';
-	print '<tr><td class="liste_titre" colspan="2">'.$langs->trans("Filter").'</td></tr>';
+	print '<tr class="liste_titre"><td class="liste_titre" colspan="2">'.$langs->trans("Filter").'</td></tr>';
 	// Company
 	print '<tr><td align="left">'.$langs->trans("ThirdParty").'</td><td align="left">';
 	if ($mode == 'customer') $filter='s.client in (1,2,3)';
@@ -257,7 +257,7 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 	print '</td></tr>';
 	// User
 	print '<tr><td align="left">'.$langs->trans("CreatedBy").'</td><td align="left">';
-	print $form->select_users($userid,'userid',1);
+	print $form->select_dolusers($userid,'userid',1);
 	print '</td></tr>';
 	// Year
 	print '<tr><td align="left">'.$langs->trans("Year").'</td><td align="left">';

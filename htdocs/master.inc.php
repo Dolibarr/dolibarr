@@ -64,14 +64,30 @@ $conf->file->main_authentication		= empty($dolibarr_main_authentication)?'':$dol
 $conf->file->main_force_https			= empty($dolibarr_main_force_https)?'':$dolibarr_main_force_https;			// Force https
 $conf->file->strict_mode 				= empty($dolibarr_strict_mode)?'':$dolibarr_strict_mode;					// Force php strict mode (for debug)
 $conf->file->cookie_cryptkey			= empty($dolibarr_main_cookie_cryptkey)?'':$dolibarr_main_cookie_cryptkey;	// Cookie cryptkey
-$conf->file->dol_document_root			= array('main' => DOL_DOCUMENT_ROOT);										// Define array of document root directories
+$conf->file->dol_document_root			= array('main' => (string) DOL_DOCUMENT_ROOT);								// Define array of document root directories ('/home/htdocs')
+$conf->file->dol_url_root				= array('main' => (string) DOL_URL_ROOT);									// Define array of url root path ('' or '/dolibarr')
 if (! empty($dolibarr_main_document_root_alt))
 {
 	// dolibarr_main_document_root_alt can contains several directories
 	$values=preg_split('/[;,]/',$dolibarr_main_document_root_alt);
+	$i=0;
+	foreach($values as $value) $conf->file->dol_document_root['alt'.($i++)]=(string) $value;
+	$values=preg_split('/[;,]/',$dolibarr_main_url_root_alt);
+	$i=0;
 	foreach($values as $value)
 	{
-		$conf->file->dol_document_root['alt']=$value;
+		if (preg_match('/^http(s)?:/',$value))
+		{
+			print 'Error: values for <b>$dolibarr_main_url_root_alt</b> into <b>conf.php</b> file must contains relative path added to $dolibarr_main_url_root to get alternative URLs.<br>'."\n";
+			print "Found: \"".$value."\"<br>\n";
+			print "Should found something like following examples:<br>\n";
+			print "\"/extensions\"<br>\n";
+			print "\"/extensions1,/extensions2,...\"<br>\n";
+			print "\"/../extensions\"<br>\n";
+			print "\"/custom\"<br>\n";
+			exit;
+		}
+		$conf->file->dol_url_root['alt'.($i++)]=(string) $value;
 	}
 }
 

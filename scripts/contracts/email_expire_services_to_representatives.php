@@ -38,7 +38,7 @@ if (substr($sapi_type, 0, 3) == 'cgi') {
 
 if (! isset($argv[1]) || ! $argv[1] || ! in_array($argv[1],array('test','confirm')))
 {
-	print "Usage: $script_file [test|confirm] [delay]\n";
+	print "Usage: $script_file (test|confirm) [delay]\n";
 	print "\n";
 	print "Send an email to remind all contracts services to expire, to users that are sale representative for.\n";
 	print "If you choose 'test' mode, no emails are sent.\n";
@@ -66,24 +66,23 @@ $error=0;
 
 @set_time_limit(0);
 print "***** ".$script_file." (".$version.") pid=".getmypid()." *****\n";
+dol_syslog($script_file." launched with arg ".join(',',$argv));
 
 $now=dol_now('tzserver');
 $duration_value=isset($argv[2])?$argv[2]:'none';
 
-print $script_file." launched with mode ".$mode.(is_numeric($duration_value)?" delay=".$duration_value:"")."\n";
+print $script_file." launched with mode ".$mode." default lang=".$langs->defaultlang.(is_numeric($duration_value)?" delay=".$duration_value:"")."\n";
 
 if ($mode != 'confirm') $conf->global->MAIN_DISABLE_ALL_MAILS=1;
 
-$sql  = "SELECT DISTINCT s.nom, c.ref, cd.date_fin_validite, cd.total_ttc, p.label label, c.fk_soc,u.rowid AS uid, u.lastname, u.firstname, u.email, u.lang";
-$sql .= " FROM ".MAIN_DB_PREFIX."societe AS s, ".MAIN_DB_PREFIX."contrat AS c, ".MAIN_DB_PREFIX."contratdet AS cd";
-$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product AS p ON p.rowid = cd.fk_product, ".MAIN_DB_PREFIX."societe_commerciaux AS sc, ".MAIN_DB_PREFIX."user AS u";
-
-$sql .= " WHERE s.rowid = c.fk_soc AND c.rowid = cd.fk_contrat AND c.statut > 0 AND cd.statut<5";
-
+$sql  = "SELECT DISTINCT c.ref, c.fk_soc, cd.date_fin_validite, cd.total_ttc, cd.description as description, p.label as plabel, s.nom as name, s.email, s.default_lang,";
+$sql.= " u.rowid as uid, u.lastname, u.firstname, u.email, u.lang";
+$sql.= " FROM ".MAIN_DB_PREFIX."societe AS s, ".MAIN_DB_PREFIX."contrat AS c, ".MAIN_DB_PREFIX."contratdet AS cd";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product AS p ON p.rowid = cd.fk_product, ".MAIN_DB_PREFIX."societe_commerciaux AS sc, ".MAIN_DB_PREFIX."user AS u";
+$sql.= " WHERE s.rowid = c.fk_soc AND c.rowid = cd.fk_contrat AND c.statut > 0 AND cd.statut<5";
 if (is_numeric($duration_value)) $sql .= " AND cd.date_fin_validite < '".$db->idate(dol_time_plus_duree($now, $duration_value, "d"))."'";
-
-$sql .= " AND sc.fk_soc = s.rowid AND sc.fk_user = u.rowid";
-$sql .= " ORDER BY cd.date_fin_validite ASC, s.rowid ASC";
+$sql.= " AND sc.fk_soc = s.rowid AND sc.fk_user = u.rowid";
+$sql .= " ORDER BY u.email ASC, s.rowid ASC, c.ref ASC";	// Order by email to allow one message per email
 
 //print $sql;
 $resql=$db->query($sql);
@@ -130,19 +129,23 @@ if ($resql)
             $outputlangs->setDefaultLang(empty($obj->lang)?$langs->defaultlang:$obj->lang);	// By default language of sale representative
             $outputlangs->load("bills");
             $outputlangs->load("main");
-            
+    		$outputlangs->load("contracts");
+            $outputlangs->load("products");
+
             if (dol_strlen($obj->email))
             {
-            	$message .= $langs->trans("Contract")." ".$obj->ref.": ".$langs->trans("Service")." ".$obj->label." (".price($obj->total_ttc,0,$outputlangs,0,0,-1,$conf->currency).") ".$obj->nom.", ".$langs->trans("DateEndPlannedShort")." ".dol_print_date($db->jdate($obj->date_fin_validite),'day')."\n\n";
+            	$message .= $outputlangs->trans("Contract")." ".$obj->ref.": ".$langs->trans("Service")." ".dol_concatdesc($obj->plabel,$obj->description)." (".price($obj->total_ttc,0,$outputlangs,0,0,-1,$conf->currency).") ".$obj->name.", ".$outputlangs->trans("DateEndPlannedShort")." ".dol_print_date($db->jdate($obj->date_fin_validite),'day')."\n\n";
             	dol_syslog("email_expire_services_to_representatives.php: ".$obj->email);
             	$foundtoprocess++;
             }
-            print "Service to expire ".$obj->ref.", label ".$obj->label.", due date ".dol_print_date($db->jdate($obj->date_fin_validite),'day')." (linked to company ".$obj->nom.", sale representative ".dolGetFirstLastname($obj->firstname, $obj->lastname).", email ".$obj->email."): ";
+            print "Service to expire ".$obj->ref.", label ".dol_concatdesc($obj->plabel,$obj->description).", due date ".dol_print_date($db->jdate($obj->date_fin_validite),'day')." (linked to company ".$obj->name.", sale representative ".dolGetFirstLastname($obj->firstname, $obj->lastname).", email ".$obj->email."): ";
             if (dol_strlen($obj->email)) print "qualified.";
             else print "disqualified (no email).";
 			print "\n";
 
-            $total += $obj->total_ttc;
+			unset($outputlangs);
+
+			$total += $obj->total_ttc;
             $i++;
         }
 
@@ -199,11 +202,14 @@ function envoi_mail($mode,$oldemail,$message,$total,$userlang,$oldsalerepresenta
     $newlangs->load("contracts");
 
     if ($duration_value)
-    	$title=$newlangs->transnoentities("ListOfServicesToExpireWithDuration",$duration_value);
+    {
+    	if ($duration_value > 0) $title=$newlangs->transnoentities("ListOfServicesToExpireWithDuration",$duration_value);
+    	else $title=$newlangs->transnoentities("ListOfServicesToExpireWithDurationNeg",$duration_value);
+    }
     else
     	$title= $newlangs->transnoentities("ListOfServicesToExpire");
 
-    $subject = "[".(empty($conf->global->MAIN_APPLICATION_TITLE)?'Dolibarr':$conf->global->MAIN_APPLICATION_TITLE)."] ".$title;
+    $subject = (empty($conf->global->SCRIPT_EMAIL_EXPIRE_SERVICES_SALESREPRESENTATIVES_SUBJECT)?$title:$conf->global->SCRIPT_EMAIL_EXPIRE_SERVICES_SALESREPRESENTATIVES_SUBJECT);
     $sendto = $oldemail;
     $from = $conf->global->MAIN_MAIL_EMAIL_FROM;
     $errorsto = $conf->global->MAIN_MAIL_ERRORS_TO;
@@ -224,7 +230,7 @@ function envoi_mail($mode,$oldemail,$message,$total,$userlang,$oldsalerepresenta
     else
     {
     	$allmessage.= $title.($usehtml?"<br>\n":"\n").($usehtml?"<br>\n":"\n");
-    	$allmessage.= "Note: This list contains only services of contracts for third parties you are linked to as a sale representative.".($usehtml?"<br>\n":"\n").($usehtml?"<br>\n":"\n");
+    	$allmessage.= $newlangs->transnoentities("NoteListOfYourExpiredServices").($usehtml?"<br>\n":"\n").($usehtml?"<br>\n":"\n");
     }
     $allmessage.= $message.($usehtml?"<br>\n":"\n");
     $allmessage.= $langs->trans("Total")." = ".price($total,0,$userlang,0,0,-1,$conf->currency).($usehtml?"<br>\n":"\n");

@@ -19,7 +19,7 @@
  */
 
 /**
- *	\file       htdocs/core/modules/expedition/doc/pdf_expedition_rouget.modules.php
+ *	\file       htdocs/core/modules/expedition/doc/pdf_rouget.modules.php
  *	\ingroup    expedition
  *	\brief      Fichier de la classe permettant de generer les bordereaux envoi au modele Rouget
  */
@@ -32,7 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 /**
  *	Classe permettant de generer les borderaux envoi au modele Rouget
  */
-class pdf_expedition_rouget extends ModelePdfExpedition
+class pdf_rouget extends ModelePdfExpedition
 {
 	var $emetteur;	// Objet societe qui emet
 
@@ -540,9 +540,9 @@ class pdf_expedition_rouget extends ModelePdfExpedition
 				$Yoff = $Yoff+8;
 				$pdf->SetXY($this->page_largeur - $this->marge_droite - 100,$Yoff);
 				$pdf->MultiCell(100, 2, $outputlangs->transnoentities("RefOrder") ." : ".$outputlangs->transnoentities($text), 0, 'R');
-				$Yoff = $Yoff+4;
+				$Yoff = $Yoff+3;
 				$pdf->SetXY($this->page_largeur - $this->marge_droite - 60,$Yoff);
-				$pdf->MultiCell(60, 2, $outputlangs->transnoentities("Date")." : ".dol_print_date($object->commande->date,"daytext",false,$outputlangs,true), 0, 'R');
+				$pdf->MultiCell(60, 2, $outputlangs->transnoentities("OrderDate")." : ".dol_print_date($linkedobject->date,"day",false,$outputlangs,true), 0, 'R');
 			}
 		}
 

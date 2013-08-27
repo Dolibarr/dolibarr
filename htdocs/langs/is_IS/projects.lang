@@ -94,6 +94,7 @@ IfNeedToUseOhterObjectKeepEmpty=Ef sumir hlutir (nótum röð ...), sem tilheyra
 # ProjectReportDate=Change task date according project start date
 # ErrorShiftTaskDate=Impossible to shift task date according to new project start date
 # ProjectsAndTasksLines=Projects and tasks
+# ProjectCreatedInDolibarr=Project %s created
 ##### Types de contacts #####
 TypeContact_project_internal_PROJECTLEADER=Project leiðtogi
 TypeContact_project_external_PROJECTLEADER=Project leiðtogi
@@ -107,3 +108,4 @@ TypeContact_project_task_external_CONTRIBUTOR=Framlög
 DocumentModelBaleine=skýrslu lýkur verkefninu er líkan (logo. ..)
 # PlannedWorkload = Planned workload
 # WorkloadOccupation= Workload affectation
+# ProjectReferers=Refering objects

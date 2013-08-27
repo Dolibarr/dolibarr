@@ -38,3 +38,4 @@ AddSupplierOrder=Erzeuge Lieferantenbestellung
 AddSupplierInvoice=Lieferantenrechnung erstellen
 ListOfSupplierProductForSupplier=Produkt- und Preisliste für Anbieter <b>%s</b>
 NoneOrBatchFileNeverRan=Keiner oder Batch-Job <b>%s</b> wurde nie ausgeführt
+# SentToSuppliers=Sent to suppliers

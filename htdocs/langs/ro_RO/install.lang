@@ -26,14 +26,14 @@ ErrorGoBackAndCorrectParameters=Du-te înapoi şi de a corecta parametrii greşi
 ErrorWrongValueForParameter=Este posibil să fi tastat greşit o valoare pentru parametrul &quot;%s&quot;.
 ErrorFailedToCreateDatabase=Nu a reuşit să creeze &quot;%s&quot; bază de date.
 ErrorFailedToConnectToDatabase=Nu a reuşit să se conecteze la &quot;%s&quot; bază de date.
-# ErrorDatabaseVersionTooLow=Database version (%s) too old. Version %s or higher is required.
+ErrorDatabaseVersionTooLow=Versiunea bazei de date (%s) prea veche. Versiunea %s este necesară.
 ErrorPHPVersionTooLow=PHP versiune prea veche. %s versiune este necesar.
 WarningPHPVersionTooLow=PHP versiune prea veche. %s versiune sau mai mult este de aşteptat. Această versiune ar trebui să permită instalarea, dar nu este acceptat.
 ErrorConnectedButDatabaseNotFound=Conectarea la serverul de succes, dar &quot;%s&quot; bază de date nu a fost găsit.
 ErrorDatabaseAlreadyExists=&quot;%s&quot; baza de date există deja.
 IfDatabaseNotExistsGoBackAndUncheckCreate=Dacă baza de date nu există, du-te înapoi şi a verifica opţiunea &quot;Creare bază de date&quot;.
 IfDatabaseExistsGoBackAndCheckCreate=Dacă baza de date există deja, du-te înapoi şi debifaţi &quot;Crearea bazei de date&quot; opţiune.
-# WarningBrowserTooOld=Too old version of browser. Upgrading your browser to a recent version of Firefox, Chrome or Opera is highly recommanded.
+WarningBrowserTooOld=Versiune prea veche a browser-ului. Actualizarea browser-ul dvs. la o versiune recentă a Firefox, Chrome sau Opera este foarte recomandată.
 PHPVersion=Versiunea PHP
 YouCanContinue=Puteţi continua ...
 PleaseBePatient=Vă rugăm să aveţi răbdare ...
@@ -155,7 +155,7 @@ MigrationShippingDelivery2=Upgrade de depozitare de transport 2
 MigrationFinished=Migraţia terminat
 LastStepDesc=<strong>Ultimul pas:</strong> Definirea aici nume de utilizator şi parola pe care intenţionaţi să îl utilizaţi pentru conectarea la software-ul. Nu pierde aceasta ca este cont pentru a administra toate celelalte.
 ActivateModule=Activaţi modul %s
-# ShowEditTechnicalParameters=Click here to show/edit advanced parameters (expert mode)
+ShowEditTechnicalParameters=Click aici pentru a vedea / edita  parametrii avansaţi (mod expert)
 
 #########
 # upgrade
@@ -207,4 +207,4 @@ MigrationProjectUserResp=Migrarea datelor domeniul fk_user_resp de llx_projet la
 MigrationProjectTaskTime=Actualizare de timp petrecut în secunde
 MigrationActioncommElement=Actualiza datele privind acţiunile
 MigrationPaymentMode=Migrare de date pentru modul de plată
-# MigrationCategorieAssociation=Migration of categories
+MigrationCategorieAssociation=Migrarea categoriilor

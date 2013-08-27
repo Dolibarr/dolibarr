@@ -2,7 +2,7 @@
 /* Copyright (C) 2003-2004	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
- * Copyright (C) 2011		Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2011-2013	Juanjo Menent			<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -79,14 +79,14 @@ if($action && $action!='setcoder')
 {
 	if (! $res > 0) $error++;
 
-	if (! $error)
+ 	if (! $error)
     {
-        $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
+        setEventMessage($langs->trans("SetupSaved"));
     }
     else
     {
-        $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
-	}
+        setEventMessage($langs->trans("Error"),'errors');
+    }
 }
 
 /*
@@ -328,8 +328,6 @@ if (! empty($conf->product->enabled))
 print '</table>';
 
 print "<br>";
-
-dol_htmloutput_mesg($mesg);
 
 $db->close();
 

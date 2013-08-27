@@ -38,3 +38,4 @@ AddSupplierOrder=Tworzenie dostawcy celu
 AddSupplierInvoice=Tworzenie faktury dostawcy
 ListOfSupplierProductForSupplier=Wykaz produktów i cen <b>dostawcy %s</b>
 NoneOrBatchFileNeverRan=Brak lub <b>partii %s</b> nie prowadził niedawno
+# SentToSuppliers=Sent to suppliers

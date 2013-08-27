@@ -129,36 +129,39 @@ class Commande extends CommonOrder
         global $db, $langs, $conf;
         $langs->load("order");
 
-        $dir = DOL_DOCUMENT_ROOT . "/core/modules/commande";
-
         if (! empty($conf->global->COMMANDE_ADDON))
         {
-            $file = $conf->global->COMMANDE_ADDON.".php";
+        	$mybool=false;
 
-            // Chargement de la classe de numerotation
+            $file = $conf->global->COMMANDE_ADDON.".php";
             $classname = $conf->global->COMMANDE_ADDON;
 
-            $result=include_once $dir.'/'.$file;
-            if ($result)
+            // Include file with class
+            foreach ($conf->file->dol_document_root as $dirroot)
             {
-                $obj = new $classname();
-                $numref = "";
-                $numref = $obj->getNextValue($soc,$this);
+            	$dir = $dirroot."/core/modules/commande/";
+            	// Load file with numbering class (if found)
+            	$mybool|=@include_once $dir.$file;
+            }
 
-                if ( $numref != "")
-                {
-                    return $numref;
-                }
-                else
-                {
-                    dol_print_error($db,get_class($this)."::getNextNumRef ".$obj->error);
-                    return "";
-                }
+            if (! $mybool)
+            {
+            	dol_print_error('',"Failed to include file ".$file);
+            	return '';
+            }
+
+            $obj = new $classname();
+            $numref = "";
+            $numref = $obj->getNextValue($soc,$this);
+
+            if ($numref != "")
+            {
+            	return $numref;
             }
             else
-            {
-                print $langs->trans("Error")." ".$langs->trans("Error_COMMANDE_ADDON_NotDefined");
-                return "";
+			{
+            	dol_print_error($db,get_class($this)."::getNextNumRef ".$obj->error);
+            	return "";
             }
         }
         else
@@ -636,9 +639,9 @@ class Commande extends CommonOrder
         $sql.= ", remise_absolue, remise_percent";
         $sql.= ", entity";
         $sql.= ")";
-        $sql.= " VALUES ('(PROV)',".$this->socid.", ".$this->db->idate($now).", ".$user->id;
+        $sql.= " VALUES ('(PROV)',".$this->socid.", '".$this->db->idate($now)."', ".$user->id;
         $sql.= ", ".($this->fk_project?$this->fk_project:"null");
-        $sql.= ", ".$this->db->idate($date);
+        $sql.= ", '".$this->db->idate($date)."'";
         $sql.= ", ".($this->source>=0 && $this->source != '' ?$this->source:'null');
         $sql.= ", '".$this->db->escape($this->note_private)."'";
         $sql.= ", '".$this->db->escape($this->note_public)."'";
@@ -678,7 +681,6 @@ class Commande extends CommonOrder
                     }
 
                     $result = $this->addline(
-                        $this->id,
                         $this->lines[$i]->desc,
                         $this->lines[$i]->subprice,
                         $this->lines[$i]->qty,
@@ -989,7 +991,7 @@ class Commande extends CommonOrder
                         $this->fetch($ret);
                         $this->valid($user);
                     }
-                    return 1;
+                    return $ret;
                 }
                 else return -1;
             }
@@ -1002,7 +1004,6 @@ class Commande extends CommonOrder
     /**
      *	Add an order line into database (linked to product/service or not)
      *
-     *	@param      int				$commandeid      	Id of line
      *	@param      string			$desc            	Description of line
      *	@param      double			$pu_ht    	        Unit price (without tax)
      *	@param      double			$qty             	Quantite
@@ -1034,8 +1035,10 @@ class Commande extends CommonOrder
      *	par l'appelant par la methode get_default_tva(societe_vendeuse,societe_acheteuse,produit)
      *	et le desc doit deja avoir la bonne valeur (a l'appelant de gerer le multilangue)
      */
-	function addline($commandeid, $desc, $pu_ht, $qty, $txtva, $txlocaltax1=0, $txlocaltax2=0, $fk_product=0, $remise_percent=0, $info_bits=0, $fk_remise_except=0, $price_base_type='HT', $pu_ttc=0, $date_start='', $date_end='', $type=0, $rang=-1, $special_code=0, $fk_parent_line=0, $fk_fournprice=null, $pa_ht=0, $label='',$array_option=0)
+	function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1=0, $txlocaltax2=0, $fk_product=0, $remise_percent=0, $info_bits=0, $fk_remise_except=0, $price_base_type='HT', $pu_ttc=0, $date_start='', $date_end='', $type=0, $rang=-1, $special_code=0, $fk_parent_line=0, $fk_fournprice=null, $pa_ht=0, $label='',$array_option=0)
     {
+    	$commandeid=$this->id;
+
         dol_syslog(get_class($this)."::addline commandeid=$commandeid, desc=$desc, pu_ht=$pu_ht, qty=$qty, txtva=$txtva, fk_product=$fk_product, remise_percent=$remise_percent, info_bits=$info_bits, fk_remise_except=$fk_remise_except, price_base_type=$price_base_type, pu_ttc=$pu_ttc, date_start=$date_start, date_end=$date_end, type=$type", LOG_DEBUG);
 
         include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';

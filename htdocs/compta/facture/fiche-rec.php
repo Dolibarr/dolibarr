@@ -2,7 +2,8 @@
 /* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2013      Florian Henry		  	<florian.henry@open-concept.pro>
+ * Copyright (C) 2013      Florian Henry		<florian.henry@open-concept.pro>
+ * Copyright (C) 2013      Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -106,6 +107,7 @@ if ($action == 'delete' && $user->rights->facture->supprimer)
 llxHeader('',$langs->trans("RepeatableInvoices"),'ch-facture.html#s-fac-facture-rec');
 
 $form = new Form($db);
+$companystatic = new Societe($db);
 
 /*
  * Create mode
@@ -364,7 +366,13 @@ else
 			$author = new User($db);
 			$author->fetch($object->user_author);
 
-			dol_fiche_head($head, 'compta', $langs->trans("PredefinedInvoices"),0,'company');	// Add a div
+			$head=array();
+			$h=0;
+			$head[$h][0] = $_SERVER["PHP_SELF"].'?id='.$object->id;
+			$head[$h][1] = $langs->trans("CardBill");
+			$head[$h][2] = 'card';
+
+			dol_fiche_head($head, 'card', $langs->trans("PredefinedInvoices"),0,'bill');	// Add a div
 
 			print '<table class="border" width="100%">';
 
@@ -514,7 +522,6 @@ else
 		/*
 		 *  List mode
 		 */
-
 		$sql = "SELECT s.nom, s.rowid as socid, f.titre, f.total, f.rowid as facid";
 		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture_rec as f";
 		$sql.= " WHERE f.fk_soc = s.rowid";
@@ -524,12 +531,13 @@ else
 		//$sql .= " ORDER BY $sortfield $sortorder, rowid DESC ";
 		//	$sql .= $db->plimit($limit + 1,$offset);
 
-		$result = $db->query($sql);
-
-		if ($result)
+		$resql = $db->query($sql);
+		if ($resql)
 		{
-			$num = $db->num_rows($result);
+			$num = $db->num_rows($resql);
 			print_barre_liste($langs->trans("RepeatableInvoices"),$page,$_SERVER['PHP_SELF'],"&socid=$socid",$sortfield,$sortorder,'',$num);
+
+			print $langs->trans("ToCreateAPredefinedInvoice").'<br><br>';
 
 			$i = 0;
 			print '<table class="noborder" width="100%">';
@@ -545,14 +553,17 @@ else
 				$var=True;
 				while ($i < min($num,$limit))
 				{
-					$objp = $db->fetch_object($result);
+					$objp = $db->fetch_object($resql);
 					$var=!$var;
 
 					print "<tr ".$bc[$var].">";
 
 					print '<td><a href="'.$_SERVER['PHP_SELF'].'?id='.$objp->facid.'">'.img_object($langs->trans("ShowBill"),"bill").' '.$objp->titre;
 					print "</a></td>\n";
-					print '<td><a href="../fiche.php?socid='.$objp->socid.'">'.$objp->nom.'</a></td>';
+
+					$companystatic->id=$objp->socid;
+					$companystatic->name=$objp->nom;
+					print '<td>'.$companystatic->getNomUrl(1,'customer').'</td>';
 
 					print '<td align="right">'.price($objp->total).'</td>'."\n";
 
@@ -576,9 +587,10 @@ else
 					$i++;
 				}
 			}
+			else print '<tr><td>'.$langs->trans("NoneF").'</td></tr>';
 
 			print "</table>";
-			$db->free();
+			$db->free($resql);
 		}
 		else
 		{
@@ -591,5 +603,4 @@ else
 llxFooter();
 
 $db->close();
-
 ?>

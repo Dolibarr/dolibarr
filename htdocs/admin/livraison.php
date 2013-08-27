@@ -5,7 +5,7 @@
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2011-2012 Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2011-2013 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2011-2013 Philippe Grand       <philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -56,13 +56,13 @@ if ($action == 'updateMask')
 
     if (! $res > 0) $error++;
 
-    if (! $error)
+ 	if (! $error)
     {
-        $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
+        setEventMessage($langs->trans("SetupSaved"));
     }
     else
     {
-        $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
+        setEventMessage($langs->trans("Error"),'errors');
     }
 }
 
@@ -73,13 +73,13 @@ if ($action == 'set_DELIVERY_FREE_TEXT')
 
     if (! $res > 0) $error++;
 
-    if (! $error)
+ 	if (! $error)
     {
-        $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
+        setEventMessage($langs->trans("SetupSaved"));
     }
     else
     {
-        $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
+        setEventMessage($langs->trans("Error"),'errors');
     }
 }
 
@@ -117,13 +117,13 @@ if ($action == 'specimen')
         }
         else
         {
-            $mesg='<font class="error">'.$module->error.'</font>';
+            setEventMessage($module->error,'errors');
             dol_syslog($module->error, LOG_ERR);
         }
     }
     else
     {
-        $mesg='<font class="error">'.$langs->trans("ErrorModuleNotFound").'</font>';
+		setEventMessage($langs->trans("ErrorModuleNotFound"),'errors');
         dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
     }
 }
@@ -214,7 +214,7 @@ print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td width="100">'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Description").'</td>';
-print '<td nowrap>'.$langs->trans("Example").'</td>';
+print '<td class="nowrap">'.$langs->trans("Example").'</td>';
 print '<td align="center" width="60">'.$langs->trans("Status").'</td>';
 print '<td align="center" width="16">'.$langs->trans("ShortInfo").'</td>';
 print '</tr>'."\n";
@@ -457,8 +457,6 @@ print "</td></tr>\n";
 print '</form>';
 
 print '</table>';
-
-dol_htmloutput_mesg($mesg);
 
 $db->close();
 

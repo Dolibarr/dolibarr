@@ -166,6 +166,25 @@ class InterfaceWorkflowManager
         		return $ret;
         	}
         }
+        
+        // classify billed order
+        if ($action == 'BILL_VALIDATE')
+        {
+        	dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+
+        	if (! empty($conf->commande->enabled) && ! empty($conf->global->WORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER))
+        	{
+        		$object->fetchObjectLinked('','commande',$object->id,$object->element);
+        		if (! empty($object->linkedObjects))
+        		{
+        			foreach($object->linkedObjects['commande'] as $element)
+        			{
+        				$ret=$element->classifyBilled();
+        			}
+        		}
+        		return $ret;
+        	}
+        }
 
         return 0;
     }

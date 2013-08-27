@@ -7,8 +7,8 @@ DIRECTION=ltr
 # To read chinese pdf with linux: sudo apt-get install poppler-data
 FONTFORPDF=helvetica
 FONTSIZEFORPDF=10
-SeparatorDecimal=.
-SeparatorThousand=,
+SeparatorDecimal=,
+SeparatorThousand=None
 FormatDateShort=%m/%d/%Y
 FormatDateShortInput=%m/%d/%Y
 FormatDateShortJava=MM/dd/yyyy
@@ -337,7 +337,7 @@ ShortInfo=Info.
 Ref=Ref.
 RefSupplier=Ref. supplier
 RefPayment=Ref. payment
-CommercialProposals=Commercial proposals
+CommercialProposalsShort=Commercial proposals
 Comment=Comment
 Comments=Comments
 ActionsToDo=Events to do
@@ -657,6 +657,7 @@ HomeDashboard=Home summary
 Deductible=Deductible
 from=from
 toward=toward
+Access=Access
 
 # Week day
 Monday=Monday

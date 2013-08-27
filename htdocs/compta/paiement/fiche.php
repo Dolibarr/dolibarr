@@ -251,6 +251,19 @@ if (! empty($conf->banque->enabled))
 		print $bankline->getNomUrl(1,0,'showall');
     	print '</td>';
     	print '</tr>';
+		
+		if($object->type_code == 'CHQ' && $bankline->fk_bordereau > 0) {
+			dol_include_once('/compta/paiement/cheque/class/remisecheque.class.php');
+			$bordereau = new RemiseCheque($db);
+			$bordereau->fetch($bankline->fk_bordereau);
+			
+			print '<tr>';
+	    	print '<td>'.$langs->trans('CheckReceipt').'</td>';
+			print '<td colspan="3">';
+			print $bordereau->getNomUrl(1);
+	    	print '</td>';
+	    	print '</tr>';
+		}
     }
 }
 

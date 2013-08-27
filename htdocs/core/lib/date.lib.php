@@ -140,8 +140,8 @@ function getParentCompanyTimeZoneString()
  * Return parent company timezone int.
  * If $conf->global->MAIN_NEW_DATE is set, we use new behaviour: All convertions take care of dayling saving time.
  *
- * @param	string	$refdate	Reference date for timezone (timezone differs on winter and summer)
- * @return 	int					An offset in hour (+1 for Europe/Paris on winter and +2 for Europe/Paris on summer)
+ * @param	string	$refgmtdate		Reference date for timezone (timezone differs on winter and summer)
+ * @return 	int						An offset in hour (+1 for Europe/Paris on winter and +2 for Europe/Paris on summer)
  *
 function getParentCompanyTimeZoneInt($refgmtdate='now')
 {

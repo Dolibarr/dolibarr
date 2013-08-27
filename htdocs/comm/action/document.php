@@ -191,7 +191,7 @@ if ($act->id > 0)
 	print '</td></tr>';
 
 	// Status
-	print '<tr><td nowrap>'.$langs->trans("Status").' / '.$langs->trans("Percentage").'</td><td colspan="2">';
+	print '<tr><td class="nowrap">'.$langs->trans("Status").' / '.$langs->trans("Percentage").'</td><td colspan="2">';
 	print $act->getLibStatut(4);
 	print '</td></tr>';
 
@@ -246,7 +246,7 @@ if ($act->id > 0)
 	}
 
 	// Priority
-	print '<tr><td nowrap>'.$langs->trans("Priority").'</td><td colspan="3">';
+	print '<tr><td class="nowrap">'.$langs->trans("Priority").'</td><td colspan="3">';
 	print ($act->priority?$act->priority:'');
 	print '</td></tr>';
 

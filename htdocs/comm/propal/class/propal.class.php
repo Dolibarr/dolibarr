@@ -27,7 +27,7 @@
 
 /**
  *	\file       htdocs/comm/propal/class/propal.class.php
- *	\brief      Fichier de la classe des propales
+ *	\brief      File of class to manage proposals
  */
 
 require_once DOL_DOCUMENT_ROOT .'/core/class/commonobject.class.php';
@@ -36,8 +36,7 @@ require_once DOL_DOCUMENT_ROOT .'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT .'/margin/lib/margins.lib.php';
 
 /**
- *	\class      Propal
- *	\brief      Classe permettant la gestion des propales
+ *	Class to manage proposals
  */
 class Propal extends CommonObject
 {
@@ -314,9 +313,9 @@ class Propal extends CommonObject
      *
      *    	@see       	add_product
      */
-	function addline($propalid, $desc, $pu_ht, $qty, $txtva, $txlocaltax1=0, $txlocaltax2=0, $fk_product=0, $remise_percent=0, $price_base_type='HT', $pu_ttc=0, $info_bits=0, $type=0, $rang=-1, $special_code=0, $fk_parent_line=0, $fk_fournprice=0, $pa_ht=0, $label='',$date_start='', $date_end='',$array_option=0)
+	function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1=0, $txlocaltax2=0, $fk_product=0, $remise_percent=0, $price_base_type='HT', $pu_ttc=0, $info_bits=0, $type=0, $rang=-1, $special_code=0, $fk_parent_line=0, $fk_fournprice=0, $pa_ht=0, $label='',$date_start='', $date_end='',$array_option=0)
     {
-        global $conf;
+        $propalid=$this->id;
 
         dol_syslog(get_class($this)."::addline propalid=$propalid, desc=$desc, pu_ht=$pu_ht, qty=$qty, txtva=$txtva, fk_product=$fk_product, remise_except=$remise_percent, price_base_type=$price_base_type, pu_ttc=$pu_ttc, info_bits=$info_bits, type=$type");
         include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
@@ -414,7 +413,6 @@ class Propal extends CommonObject
 			$this->line->pa_ht = $pa_ht;
 
             // Mise en option de la ligne
-            //if ($conf->global->PROPALE_USE_OPTION_LINE && !$qty) $ligne->special_code=3;
             if (empty($qty) && empty($special_code)) $this->line->special_code=3;
 
             // TODO deprecated
@@ -762,7 +760,6 @@ class Propal extends CommonObject
                         }
 
 						$result = $this->addline(
-							$this->id,
 							$this->lines[$i]->desc,
 							$this->lines[$i]->subprice,
 							$this->lines[$i]->qty,
@@ -1589,32 +1586,67 @@ class Propal extends CommonObject
 
 
     /**
-     *	Close the commercial proposal
+     *	Reopen the commercial proposal
      *
      *	@param      User	$user		Object user that close
      *	@param      int		$statut		Statut
      *	@param      text	$note		Comment
+     *  @param		int		$notrigger	1=Does not execute triggers, 0= execuete triggers
      *	@return     int         		<0 if KO, >0 if OK
      */
-    function reopen($user, $statut, $note)
+    function reopen($user, $statut, $note, $notrigger=0)
     {
         global $langs,$conf;
 
         $this->statut = $statut;
         $error=0;
-        $now=dol_now();
-
-        $this->db->begin();
 
         $sql = "UPDATE ".MAIN_DB_PREFIX."propal";
-        $sql.= " SET fk_statut = ".$statut.", note_private = '".$this->db->escape($note)."', date_cloture=".$this->db->idate($now).", fk_user_cloture=".$user->id;
+        $sql.= " SET fk_statut = ".$this->statut.",";
+		if (! empty ( $note )) {
+			$sql .= " note_private = '" . $this->db->escape ( $note ) . "',";
+		}
+        $sql.= " date_cloture=NULL, fk_user_cloture=NULL";
         $sql.= " WHERE rowid = ".$this->id;
 
-        $resql=$this->db->query($sql);
-        if ($resql)
-        {
+    	$this->db->begin();
 
-        }
+		dol_syslog(get_class($this)."::reopen sql=".$sql, LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if (! $resql) {
+			$error++; $this->errors[]="Error ".$this->db->lasterror();
+		}
+		if (! $error)
+		{
+			if (! $notrigger)
+			{
+				// Appel des triggers
+                include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
+                $interface=new Interfaces($this->db);
+                $result=$interface->run_triggers('PROPAL_REOPEN',$this,$user,$langs,$conf);
+                if ($result < 0) {
+                    $error++; $this->errors=$interface->errors;
+                }
+                // Fin appel triggers
+			}
+		}
+
+		// Commit or rollback
+		if ($error)
+		{
+			foreach($this->errors as $errmsg)
+			{
+				dol_syslog(get_class($this)."::update ".$errmsg, LOG_ERR);
+				$this->error.=($this->error?', '.$errmsg:$errmsg);
+			}
+			$this->db->rollback();
+			return -1*$error;
+		}
+		else
+		{
+			$this->db->commit();
+			return 1;
+		}
     }
 
 
@@ -2468,22 +2500,32 @@ class Propal extends CommonObject
         global $conf, $db, $langs;
         $langs->load("propal");
 
-        $dir = DOL_DOCUMENT_ROOT . "/core/modules/propale/";
-
         if (! empty($conf->global->PROPALE_ADDON))
         {
-            $file = $conf->global->PROPALE_ADDON.".php";
+        	$mybool=false;
 
-            // Chargement de la classe de numerotation
+            $file = $conf->global->PROPALE_ADDON.".php";
             $classname = $conf->global->PROPALE_ADDON;
-            require_once $dir.$file;
+
+            // Include file with class
+            foreach ($conf->file->dol_document_root as $dirroot)
+            {
+            	$dir = $dirroot."/core/modules/propale/";
+            	// Load file with numbering class (if found)
+            	$mybool|=@include_once $dir.$file;
+            }
+
+            if (! $mybool)
+            {
+            	dol_print_error('',"Failed to include file ".$file);
+            	return '';
+            }
 
             $obj = new $classname();
-
             $numref = "";
             $numref = $obj->getNextValue($soc,$this);
 
-            if ( $numref != "")
+            if ($numref != "")
             {
                 return $numref;
             }

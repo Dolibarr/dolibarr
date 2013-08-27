@@ -173,7 +173,7 @@ $catotal=0;
 
 if ($modecompta == 'CREANCES-DETTES') {
     $sql = "SELECT DISTINCT p.rowid as rowid, p.ref as ref, p.label as label,";
-    $sql.= " sum(DISTINCT l.total_ht) as amount, sum(DISTINCT l.total_ttc) as amount_ttc";
+    $sql.= " sum(l.total_ht) as amount, sum(l.total_ttc) as amount_ttc";
     $sql.= " FROM ".MAIN_DB_PREFIX."product as p";
     $sql.= " JOIN ".MAIN_DB_PREFIX."facturedet as l";
     $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."facture as f ON l.fk_facture = f.rowid";

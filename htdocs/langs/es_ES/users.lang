@@ -1,4 +1,4 @@
-# Dolibarr language file - es_ES - users
+# Dolibarr language file - Source file is en_US - users
 CHARSET=UTF-8
 UserCard=Ficha usuario
 ContactCard=Ficha contacto
@@ -97,7 +97,7 @@ IdPhoneCaller=ID llamante (teléfono)
 UserLogged=Usuario %s conectado
 UserLogoff=Usuario %s desconectado
 NewUserCreated=usuario %s creado
-NewUserPassword=Passord cambiado para %s 
+NewUserPassword=Passord cambiado para %s
 EventUserModified=Usuario %s modificado
 UserDisabled=Usuario %s deshailitado
 UserEnabled=Usuario %s activado
@@ -115,3 +115,4 @@ NbOfUsers=Nº de usuarios
 DontDowngradeSuperAdmin=Sólo un superadmin puede degradar un superadmin
 HierarchicalResponsible=Responsable jerárquico
 HierarchicView=Vista jerárquica
+UseTypeFieldToChange=Modificar el campo Tipo para cambiar
