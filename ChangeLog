@@ -16,6 +16,7 @@ Fix: User group name do not display in card (view or edit mode)
 Fix: Link "Show all supplier invoice" on suplier card not working 
 Fix: [ bug #1039 ] Pre-defined invoices conversion
 Fix: If only service module is activated, it's impossible to delete service
+Fix: [ bug #1043 ] Bad interventions ref numbering
 
 ***** ChangeLog for 3.4 compared to 3.3.* *****
 For users:
