@@ -202,8 +202,9 @@ class mailing_contacts1 extends MailingTargets
 		$sql.= " FROM ".MAIN_DB_PREFIX."socpeople as c";
     	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = c.fk_soc";
 		$sql.= " WHERE c.entity IN (".getEntity('societe', 1).")";
-		$sql.= " AND c.email != ''";
+		$sql.= " AND c.email <> ''";
 		$sql.= " AND c.no_email = 0";
+		$sql.= " AND c.email NOT IN (SELECT email FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE fk_mailing=".$mailing_id.")";
 		foreach($filtersarray as $key)
 		{
 			if ($key == 'prospects') $sql.= " AND s.client=2";
