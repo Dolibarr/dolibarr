@@ -111,6 +111,7 @@ if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $sql.= " AND f.t
 else $sql.= " AND f.type IN (0,1,2,3)";
 if ($date_start && $date_end) $sql .= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
 
+dol_syslog("sql=".$sql);
 $result = $db->query($sql);
 if ($result)
 {
@@ -147,7 +148,7 @@ if ($result)
 		$compta_localtax1= (! empty($account_localtax1[2])?$account_localtax1[2]:$langs->trans("CodeNotDef"));
 		$account_localtax2=getLocalTaxesFromRate($obj->tva_tx, 2, $mysoc);
 		$compta_localtax2= (! empty($account_localtax2[2])?$account_localtax2[2]:$langs->trans("CodeNotDef"));
-		
+
 		$tabfac[$obj->rowid]["date"] = $obj->datef;
 		$tabfac[$obj->rowid]["ref"] = $obj->ref_supplier;
 		$tabfac[$obj->rowid]["type"] = $obj->type;
@@ -239,7 +240,7 @@ foreach ($tabfac as $key => $val)
 					print '<td align="right">'.($mt>=0?price($mt):'')."</td>";
 					print '<td align="right">'.($mt<0?price(-$mt):'')."</td>";
 				}
-				
+
 				print "</tr>";
 			}
 		}

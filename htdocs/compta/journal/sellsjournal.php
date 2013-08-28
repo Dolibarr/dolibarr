@@ -116,6 +116,7 @@ $sql.= " AND fd.product_type IN (0,1)";
 if ($date_start && $date_end) $sql .= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
 $sql.= " ORDER BY f.rowid";
 
+dol_syslog("sql=".$sql);
 $result = $db->query($sql);
 if ($result)
 {
@@ -151,7 +152,7 @@ if ($result)
 		$compta_localtax1= (! empty($account_localtax1[3])?$account_localtax1[3]:$langs->trans("CodeNotDef"));
 		$account_localtax2=getLocalTaxesFromRate($obj->tva_tx, 2, $mysoc);
 		$compta_localtax2= (! empty($account_localtax2[3])?$account_localtax2[3]:$langs->trans("CodeNotDef"));
-		
+
     	//la ligne facture
    		$tabfac[$obj->rowid]["date"] = $obj->datef;
    		$tabfac[$obj->rowid]["ref"] = $obj->facnumber;
@@ -225,7 +226,7 @@ foreach ($tabfac as $key => $val)
 		array(
 			'var' => $tablocaltax2[$key],
 			'label' => $langs->transcountry('LT2', $mysoc->country_code)
-		)	
+		)
 	);
 
 	foreach ($lines as $line)
