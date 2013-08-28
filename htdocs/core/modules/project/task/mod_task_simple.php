@@ -72,11 +72,11 @@ class mod_task_simple extends ModeleNumRefTask
         $coyymm=''; $max='';
 
 		$posindice=8;
-		$sql = "SELECT MAX(SUBSTRING(task.ref FROM ".$posindice.")) as max";
-        $sql.= " FROM ".MAIN_DB_PREFIX."projet_task AS task";
-        $sql.= " INNER JOIN ".MAIN_DB_PREFIX."projet AS project ON task.fk_projet=project.rowid";
-		$sql.= " WHERE task.ref LIKE '".$this->prefix."____-%'";
-        $sql.= " AND project.entity = ".$conf->entity;
+		$sql = "SELECT MAX(SUBSTRING(task.ref FROM " . $posindice . ")) as max";
+		$sql .= " FROM " . MAIN_DB_PREFIX . "projet_task AS task";
+		$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "projet AS project ON task.fk_projet=project.rowid";
+		$sql .= " WHERE task.ref LIKE '" . $this->prefix . "____-%'";
+		$sql .= " AND project.entity = " . $conf->entity;
         $resql=$db->query($sql);
         if ($resql)
         {
