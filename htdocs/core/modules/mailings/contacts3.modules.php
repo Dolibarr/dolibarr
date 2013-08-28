@@ -83,9 +83,10 @@ class mailing_contacts3 extends MailingTargets
     	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = sp.fk_soc";
         if ($filtersarray[0] <> 'all') $sql.= ", ".MAIN_DB_PREFIX."categorie as c";
     	if ($filtersarray[0] <> 'all') $sql.= ", ".MAIN_DB_PREFIX."categorie_societe as cs";
-    	$sql.= " WHERE sp.email != ''";     // Note that null != '' is false
+    	$sql.= " WHERE sp.email <> ''";     // Note that null != '' is false
     	$sql.= " AND sp.no_email = 0";
     	$sql.= " AND sp.entity IN (".getEntity('societe', 1).")";
+    	$sql.= " AND sp.email NOT IN (SELECT email FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE fk_mailing=".$mailing_id.")";
     	if ($filtersarray[0] <> 'all') $sql.= " AND cs.fk_categorie = c.rowid";
     	if ($filtersarray[0] <> 'all') $sql.= " AND cs.fk_societe = sp.fk_soc";
     	if ($filtersarray[0] <> 'all') $sql.= " AND c.label = '".$this->db->escape($filtersarray[0])."'";
