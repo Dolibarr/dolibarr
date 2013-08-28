@@ -150,8 +150,9 @@ class mailing_pomme extends MailingTargets
 		$sql = "SELECT u.rowid as id, u.email as email, null as fk_contact,";
 		$sql.= " u.lastname as name, u.firstname as firstname, u.login, u.office_phone";
 		$sql.= " FROM ".MAIN_DB_PREFIX."user as u";
-		$sql.= " WHERE u.email != ''"; // u.email IS NOT NULL est implicite dans ce test
+		$sql.= " WHERE u.email <> ''"; // u.email IS NOT NULL est implicite dans ce test
 		$sql.= " AND u.entity IN (0,".$conf->entity.")";
+		$sql.= " AND u.email NOT IN (SELECT email FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE fk_mailing=".$mailing_id.")";
 		foreach($filtersarray as $key)
 		{
 			if ($key == '1') $sql.= " AND u.statut=1";
