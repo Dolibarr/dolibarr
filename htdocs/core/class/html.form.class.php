@@ -800,7 +800,21 @@ class Form
                 while ($i < $num)
                 {
                     $obj = $this->db->fetch_object($resql);
-                    $label=$obj->nom;
+                    
+	                 if ($conf->global->SOCIETE_ADD_REF_IN_LIST) {
+                    	if (($obj->client) && (!empty($obj->code_client))) {
+                    		$label = $obj->code_client. ' - ';
+                    	}
+                    	if (($obj->fournisseur) && (!empty($obj->code_fournisseur))) {
+                    		$label .= $obj->code_fournisseur. ' - ';
+                    	}
+                    	$label.=' '.$obj->nom;
+                    }
+                    else 
+                    {
+                    	$label=$obj->nom;
+                    }
+                    
                     if ($showtype)
                     {
                         if ($obj->client || $obj->fournisseur) $label.=' (';

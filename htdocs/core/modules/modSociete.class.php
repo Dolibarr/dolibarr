@@ -116,6 +116,13 @@ class modSociete extends DolibarrModules
 		$this->const[$r][4] = 0;
 		$r++;
 
+		$this->const[$r][0] = "SOCIETE_ADD_REF_IN_LIST";
+		$this->const[$r][1] = "yesno";
+		$this->const[$r][2] = "0";
+		$this->const[$r][3] = "Display customer ref into select list";
+		$this->const[$r][4] = 0;
+		$r++;
+
 		/*
 		$this->const[$r][0] = "COMPANY_HIDE_INACTIVE_IN_COMBOBOX";
 		$this->const[$r][1] = "chaine";
