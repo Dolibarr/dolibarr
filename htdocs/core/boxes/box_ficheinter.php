@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2013 Florian Henry  <florian.henry@open-concept.pro>
+ * Copyright (C) 2013 Juanjo Menent  <jmenent@2byte.es>
  *
 * This program is free software; you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -25,7 +26,7 @@ include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
 
 
 /**
- * Class to manage the box to show last contracts
+ * Class to manage the box to show last interventions
  */
 class box_ficheinter extends ModeleBoxes
 {
@@ -95,11 +96,11 @@ class box_ficheinter extends ModeleBoxes
 					
 					$this->info_box_contents[$i][0] = array('td' => 'align="left" width="16"',
 					'logo' => $this->boximg,
-					'url' => DOL_URL_ROOT."/ficheinter/fiche.php?id=".$objp->rowid);
+					'url' => DOL_URL_ROOT."/fichinter/fiche.php?id=".$objp->rowid);
 
 					$this->info_box_contents[$i][1] = array('td' => 'align="left"',
-					'text' => ($objp->ref?$objp->ref:$objp->rowid),	// Some contracts have no ref
-					'url' => DOL_URL_ROOT."/contrat/fiche.php?id=".$objp->rowid);
+					'text' => ($objp->ref?$objp->ref:$objp->rowid),	// Some interventions have no ref
+					'url' => DOL_URL_ROOT."/fichinter/fiche.php?id=".$objp->rowid);
 
 					$this->info_box_contents[$i][2] = array('td' => 'align="left" width="16"',
 					'logo' => 'company',
@@ -120,7 +121,7 @@ class box_ficheinter extends ModeleBoxes
 					$i++;
 				}
 
-				if ($num==0) $this->info_box_contents[$i][0] = array('td' => 'align="center"','text'=>$langs->trans("NoRecordedContracts"));
+				if ($num==0) $this->info_box_contents[$i][0] = array('td' => 'align="center"','text'=>$langs->trans("NoRecordedInterventions"));
 			}
 			else
 			{
