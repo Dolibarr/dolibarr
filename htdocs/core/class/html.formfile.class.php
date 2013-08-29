@@ -1104,7 +1104,7 @@ class FormFile
             }
             else {
                 print '<td>';
-                print '<a data-ajax="false" href="'. $link->url . '">';
+                print '<a data-ajax="false" href="'. $link->url . '" target="_blank">';
                 print $link->label;
                 print '</a>';
                 print "</td>\n";
