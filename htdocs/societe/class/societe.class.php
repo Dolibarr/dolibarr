@@ -1433,6 +1433,16 @@ class Societe extends CommonObject
 
         $name=$this->name?$this->name:$this->nom;
 
+		if ($conf->global->SOCIETE_ADD_REF_IN_LIST) {
+			if (($this->client) && (! empty ( $this->code_client ))) {
+				$code = $this->code_client . ' - ';
+			}
+			if (($this->fournisseur) && (! empty ( $this->code_fournisseur ))) {
+				$code .= $this->code_fournisseur . ' - ';
+			}
+			$name =$code.' '.$name;
+		} 
+
         $result='';
         $lien=$lienfin='';
 
