@@ -2022,6 +2022,10 @@ if ($action == 'create')
 			$remise_percent 	= (! empty($objectsrc->remise_percent)?$objectsrc->remise_percent:(! empty($soc->remise_percent)?$soc->remise_percent:0));
 			$remise_absolue 	= (! empty($objectsrc->remise_absolue)?$objectsrc->remise_absolue:(! empty($soc->remise_absolue)?$soc->remise_absolue:0));
 			$dateinvoice		= empty($conf->global->MAIN_AUTOFILL_DATE)?-1:0;
+			
+			//Replicate extrafields
+			$objectsrc->fetch_optionals($originid);
+			$object->array_options=$objectsrc->array_options;
 		}
 	}
 	else
