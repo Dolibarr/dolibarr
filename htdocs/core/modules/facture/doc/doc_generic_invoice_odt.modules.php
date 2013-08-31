@@ -431,7 +431,7 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 
 				// Make substitutions into odt of freetext
 				try {
-					$odfHandler->setVars('free_text', $newfreetext, true, 'UTF-8');
+					$odfHandler->setVars('free_text', $newfreetext, 'auto', 'UTF-8');
 				}
 				catch(OdfException $e)
 				{
@@ -459,11 +459,11 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 						{
 							//var_dump($value);exit;
 							if (file_exists($value)) $odfHandler->setImage($key, $value);
-							else $odfHandler->setVars($key, 'ErrorFileNotFound', true, 'UTF-8');
+							else $odfHandler->setVars($key, 'ErrorFileNotFound', 'auto', 'UTF-8');
 						}
 						else    // Text
 						{
-							$odfHandler->setVars($key, $value, true, 'UTF-8');
+							$odfHandler->setVars($key, $value, 'auto', 'UTF-8');
 						}
 					}
 					catch(OdfException $e)

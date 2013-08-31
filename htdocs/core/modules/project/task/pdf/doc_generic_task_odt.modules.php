@@ -425,7 +425,7 @@ class doc_generic_task_odt extends ModelePDFTask
 					return -1;
 				}
 			}
-			
+
 
 			if (file_exists($dir))
 			{
@@ -483,11 +483,11 @@ class doc_generic_task_odt extends ModelePDFTask
 						{
 							//var_dump($value);exit;
 							if (file_exists($value)) $odfHandler->setImage($key, $value);
-							else $odfHandler->setVars($key, 'ErrorFileNotFound', true, 'UTF-8');
+							else $odfHandler->setVars($key, 'ErrorFileNotFound', 'auto', 'UTF-8');
 						}
 						else    // Text
 						{
-							$odfHandler->setVars($key, $value, true, 'UTF-8');
+							$odfHandler->setVars($key, $value, 'auto', 'UTF-8');
 						}
 					}
 					catch(OdfException $e)
@@ -504,11 +504,11 @@ class doc_generic_task_odt extends ModelePDFTask
 						{
 							//var_dump($value);exit;
 							if (file_exists($value)) $odfHandler->setImage($key, $value);
-							else $odfHandler->setVars($key, 'ErrorFileNotFound', true, 'UTF-8');
+							else $odfHandler->setVars($key, 'ErrorFileNotFound', 'auto', 'UTF-8');
 						}
 						else	// Text
 						{
-							$odfHandler->setVars($key, $value, true, 'UTF-8');
+							$odfHandler->setVars($key, $value, 'auto', 'UTF-8');
 						}
 					}
 					catch(OdfException $e)
@@ -524,11 +524,11 @@ class doc_generic_task_odt extends ModelePDFTask
 						if (preg_match('/logo$/',$key))	// Image
 						{
 							if (file_exists($value)) $odfHandler->setImage($key, $value);
-							else $odfHandler->setVars($key, 'ErrorFileNotFound', true, 'UTF-8');
+							else $odfHandler->setVars($key, 'ErrorFileNotFound', 'auto', 'UTF-8');
 						}
 						else	// Text
 						{
-							$odfHandler->setVars($key, $value, true, 'UTF-8');
+							$odfHandler->setVars($key, $value, 'auto', 'UTF-8');
 							$odfHandler->setVarsHeadFooter($key, $value, true, 'UTF-8');
 						}
 					}
@@ -546,11 +546,11 @@ class doc_generic_task_odt extends ModelePDFTask
 						if (preg_match('/logo$/',$key)) // Image
 						{
 							if (file_exists($value)) $odfHandler->setImage($key, $value);
-							else $odfHandler->setVars($key, 'ErrorFileNotFound', true, 'UTF-8');
+							else $odfHandler->setVars($key, 'ErrorFileNotFound', 'auto', 'UTF-8');
 						}
 						else    // Text
 						{
-							$odfHandler->setVars($key, $value, true, 'UTF-8');
+							$odfHandler->setVars($key, $value, 'auto', 'UTF-8');
 						}
 					}
 					catch(OdfException $e)
@@ -571,7 +571,7 @@ class doc_generic_task_odt extends ModelePDFTask
 					{
 						try
 						{
-							$odfHandler->setVars($key, $val, true, 'UTF-8');
+							$odfHandler->setVars($key, $val, 'auto', 'UTF-8');
 						}
 						catch(OdfException $e)
 						{
@@ -677,7 +677,7 @@ class doc_generic_task_odt extends ModelePDFTask
 							$i++;
 						}
 						$this->db->free($resql);
-						
+
 						$odfHandler->mergeSegment($listlinestasktime);
 					}
 
@@ -711,7 +711,7 @@ class doc_generic_task_odt extends ModelePDFTask
 					//$listlines->merge();
 
 					$odfHandler->mergeSegment($listtasksfiles);
-						
+
 				}
 				catch(OdfException $e)
 				{
@@ -793,7 +793,7 @@ class doc_generic_task_odt extends ModelePDFTask
 							$contact['fullname']=$objectdetail->getFullName($outputlangs,1);
 
 							$tmparray=$this->get_substitutionarray_project_contacts($contact,$outputlangs);
-								
+
 							foreach($tmparray as $key => $val)
 							{
 								try

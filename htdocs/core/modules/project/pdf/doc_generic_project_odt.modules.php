@@ -392,7 +392,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 		}
 		$hookmanager->initHooks(array('odtgeneration'));
 		global $action;
-		
+
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		$sav_charset_output=$outputlangs->charset_output;
 		$outputlangs->charset_output='UTF-8';
@@ -496,11 +496,11 @@ class doc_generic_project_odt extends ModelePDFProjects
 						{
 							//var_dump($value);exit;
 							if (file_exists($value)) $odfHandler->setImage($key, $value);
-							else $odfHandler->setVars($key, 'ErrorFileNotFound', true, 'UTF-8');
+							else $odfHandler->setVars($key, 'ErrorFileNotFound', 'auto', 'UTF-8');
 						}
 						else    // Text
 						{
-							$odfHandler->setVars($key, $value, true, 'UTF-8');
+							$odfHandler->setVars($key, $value, 'auto', 'UTF-8');
 						}
 					}
 					catch(OdfException $e)
@@ -517,11 +517,11 @@ class doc_generic_project_odt extends ModelePDFProjects
 						{
 							//var_dump($value);exit;
 							if (file_exists($value)) $odfHandler->setImage($key, $value);
-							else $odfHandler->setVars($key, 'ErrorFileNotFound', true, 'UTF-8');
+							else $odfHandler->setVars($key, 'ErrorFileNotFound', 'auto', 'UTF-8');
 						}
 						else	// Text
 						{
-							$odfHandler->setVars($key, $value, true, 'UTF-8');
+							$odfHandler->setVars($key, $value, 'auto', 'UTF-8');
 							$odfHandler->setVarsHeadFooter($key, $value, true, 'UTF-8');
 						}
 					}
@@ -538,11 +538,11 @@ class doc_generic_project_odt extends ModelePDFProjects
 						if (preg_match('/logo$/',$key))	// Image
 						{
 							if (file_exists($value)) $odfHandler->setImage($key, $value);
-							else $odfHandler->setVars($key, 'ErrorFileNotFound', true, 'UTF-8');
+							else $odfHandler->setVars($key, 'ErrorFileNotFound', 'auto', 'UTF-8');
 						}
 						else	// Text
 						{
-							$odfHandler->setVars($key, $value, true, 'UTF-8');
+							$odfHandler->setVars($key, $value, 'auto', 'UTF-8');
 						}
 					}
 					catch(OdfException $e)
@@ -562,11 +562,11 @@ class doc_generic_project_odt extends ModelePDFProjects
 						if (preg_match('/logo$/',$key)) // Image
 						{
 							if (file_exists($value)) $odfHandler->setImage($key, $value);
-							else $odfHandler->setVars($key, 'ErrorFileNotFound', true, 'UTF-8');
+							else $odfHandler->setVars($key, 'ErrorFileNotFound', 'auto', 'UTF-8');
 						}
 						else    // Text
 						{
-							$odfHandler->setVars($key, $value, true, 'UTF-8');
+							$odfHandler->setVars($key, $value, 'auto', 'UTF-8');
 						}
 					}
 					catch(OdfException $e)
@@ -586,7 +586,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 					if (!empty($object->fk_soc)) $socid = $object->fk_soc;
 
 					$tasksarray=$taskstatic->getTasksArray(0, 0, $object->id, $socid, 0);
-						
+
 
 					foreach ($tasksarray as $task)
 					{
@@ -910,14 +910,14 @@ class doc_generic_project_odt extends ModelePDFProjects
 								{
 									$ref_array=array();
 									$ref_array['type']=$langs->trans($classname);
-										
+
 									$element = new $classname($this->db);
 									$element->fetch($elementarray[$i]);
 									$element->fetch_thirdparty();
 
 									//Ref object
 									$ref_array['ref']=$element->ref;
-										
+
 									//Date object
 									$dateref=$element->date;
 									if (empty($dateref)) $dateref=$element->datep;
@@ -998,7 +998,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 						$this->error=$e->getMessage();
 						return -1;
 					}
-				}	
+				}
 
 				if (! empty($conf->global->MAIN_UMASK))
 					@chmod($file, octdec($conf->global->MAIN_UMASK));

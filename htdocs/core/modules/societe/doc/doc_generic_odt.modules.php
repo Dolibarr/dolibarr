@@ -258,12 +258,12 @@ class doc_generic_odt extends ModeleThirdPartyDoc
                         {
                             //var_dump($value);exit;
                             if (file_exists($value)) $odfHandler->setImage($key, $value);
-                            else $odfHandler->setVars($key, 'ErrorFileNotFound', true, 'UTF-8');
+                            else $odfHandler->setVars($key, 'ErrorFileNotFound', 'auto', 'UTF-8');
                         }
                         else    // Text
                         {
                             //print $key.' '.$value;exit;
-                            $odfHandler->setVars($key, $value, true, 'UTF-8');
+                            $odfHandler->setVars($key, $value, 'auto', 'UTF-8');
                         }
                     }
                     catch(OdfException $e)
@@ -281,11 +281,11 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 						{
 							//var_dump($value);exit;
 							if (file_exists($value)) $odfHandler->setImage($key, $value);
-							else $odfHandler->setVars($key, 'ErrorFileNotFound', true, 'UTF-8');
+							else $odfHandler->setVars($key, 'ErrorFileNotFound', 'auto', 'UTF-8');
 						}
 						else	// Text
 						{
-							$odfHandler->setVars($key, $value, true, 'UTF-8');
+							$odfHandler->setVars($key, $value, 'auto', 'UTF-8');
 						}
 					}
 					catch(OdfException $e)
@@ -306,11 +306,11 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 						if (preg_match('/logo$/',$key))	// Image
 						{
 							if (file_exists($value)) $odfHandler->setImage($key, $value);
-							else $odfHandler->setVars($key, 'ErrorFileNotFound', true, 'UTF-8');
+							else $odfHandler->setVars($key, 'ErrorFileNotFound', 'auto', 'UTF-8');
 						}
 						else	// Text
 						{
-							$odfHandler->setVars($key, $value, true, 'UTF-8');
+							$odfHandler->setVars($key, $value, 'auto', 'UTF-8');
 						}
 					}
 					catch(OdfException $e)
@@ -339,7 +339,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 						$this->error=$e->getMessage();
 						return -1;
 					}
-				}	
+				}
 
 				if (! empty($conf->global->MAIN_UMASK))
 				@chmod($file, octdec($conf->global->MAIN_UMASK));

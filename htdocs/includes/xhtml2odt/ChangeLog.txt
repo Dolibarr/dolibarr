@@ -1,0 +1,1100 @@
+2011-07-14  Aurélien Bompard <aurelien@bompard.org>
+
+	* debian/control, xhtml2odt.spec: Improve RPM package
+
+2011-07-15  Aurelien BOMPARD <aurelien.bompard@c-s.fr>
+
+	* NEWS.txt, tests/test_specific.py, xsl/specific.xsl,
+	xsl/specific/lyx.xsl: Add LyX support
+
+2011-07-15  Aurelien BOMPARD <aurelien.bompard@c-s.fr>
+
+	* xhtml2odt.spec: PhpDoc is in Mandriva, it's in
+	php-pear-PhpDocumentor
+
+2011-07-14  Aurélien Bompard <aurelien@bompard.org>
+
+	* NEWS.txt, debian/changelog, xhtml2odt.spec: Version 1.3
+
+2011-07-14  Aurélien Bompard <aurelien@bompard.org>
+
+	* tests/test_specific.py, xsl/specific.xsl, xsl/specific/elyxer.xsl: 
+	Add specific rendering code for Elyxer Exlyxer <http://elyxer.nongnu.org/> is a LyX to HTML converter. This
+	commit adapts to its use of div tags instead of p tags.  Thanks to Denis Prost for reporting.
+
+2011-07-14  Aurélien Bompard <aurelien@bompard.org>
+
+	* xsl/styles/main-styles.xsl: Add Title and Subtitle styles
+
+2011-07-14  Aurélien Bompard <aurelien@bompard.org>
+
+	* xhtml2odt.py: Make it easier to run from the extracted tarball
+
+2011-02-05  Aurélien Bompard <aurelien@bompard.org>
+
+	* xhtml2odt.php: PHP script: port the XML escaping method from the
+	Python script
+
+2010-10-29  Aurélien Bompard <aurelien@bompard.org>
+
+	* Makefile, debian/control, xhtml2odt.spec: Generate the man page at
+	release time
+
+2010-10-29  Aurélien Bompard <aurelien@bompard.org>
+
+	* LICENSE.txt, NEWS.txt, xhtml2odt.spec: Convert other text files to
+	dos format, for our friends on MS Windows
+
+2010-10-28  Aurélien Bompard <aurelien@bompard.org>
+
+	* tests/data/1.xml, tests/test_lists.py, tests/test_paragraph.py,
+	xsl/document-content/lists.xsl, xsl/document-content/paragraph.xsl,
+	xsl/styles/main-styles.xsl: Add individual styles to the definitions
+	lists (#10)
+
+2010-10-28  Aurélien Bompard <aurelien@bompard.org>
+
+	* xsl/document-content/lists.xsl, xsl/document-content/tables.xsl: 
+	Fix syntax errors
+
+2010-10-24  Aurélien Bompard <aurelien@bompard.org>
+
+	* tests/test_paragraph.py, xsl/document-content/ignore.xsl,
+	xsl/document-content/paragraph.xsl, xsl/document-content/tables.xsl: 
+	Fix xsl mode inside tables
+
+2010-10-21  Aurélien Bompard <aurelien@bompard.org>
+
+	* xhtml2odt.py: Update manifest.xml with added images
+
+2010-10-21  Aurélien Bompard <aurelien@bompard.org>
+
+	* xhtml2odt.py: Create safe image filenames
+
+2010-10-21  Aurélien Bompard <aurelien@bompard.org>
+
+	* xhtml2odt.py: Remove obsolete option
+
+2010-10-16  Aurélien Bompard <aurelien@bompard.org>
+
+	* tests/__init__.py, tests/data/1.xml, tests/data/2.xml,
+	tests/data/3.xml, tests/test_ignore.py, tests/test_inline.py,
+	tests/test_inline_styles.py, tests/test_link.py,
+	tests/test_media.py, tests/test_xhtml_inside_odt.py: Automatically
+	remove the namespaces in the tests to simplify
+
+2010-10-16  Aurélien Bompard <aurelien@bompard.org>
+
+	* tests/data/3.xml, tests/test_media.py,
+	xsl/document-content/media.xsl: Add a wrapper paragraph for images
+	outside paragraphs
+
+2010-10-14  Aurélien Bompard <aurelien@bompard.org>
+
+	* xsl/styles.xsl: Fix wrong xsl mode when there are tags below span
+	tags
+
+2010-10-14  Aurélien Bompard <aurelien@bompard.org>
+
+	* tests/test_inline_styles.py, xsl/document-content/ignore.xsl: 
+	Properly handle span tags with empty style attribute
+
+2010-10-01  Aurélien Bompard <aurelien@bompard.org>
+
+	* NEWS.txt: Typo
+
+2010-09-30  Aurélien Bompard <aurelien@bompard.org>
+
+	* debian/docs, debian/rules: Fix debian build of nightly tarballs
+
+2010-09-30  Aurélien Bompard <aurelien@bompard.org>
+
+	* xhtml2odt.spec: Add some conditionals to the spec file for
+	cross-distro building
+
+2010-09-29  Aurélien Bompard <aurelien@bompard.org>
+
+	* debian/rules: Small improvement in the debian package
+
+2010-09-28  Aurélien Bompard <aurelien@bompard.org>
+
+	* debian/control, debian/docs, debian/rules: Improve Debian
+	packaging
+
+2010-09-28  Aurélien Bompard <aurelien@bompard.org>
+
+	* Makefile, doc-py/_static/.placeholder,
+	doc-py/_templates/.placeholder: Improve documentation generation
+
+2010-09-28  Aurélien Bompard <aurelien@bompard.org>
+
+	* xhtml2odt.spec: Add buildrequires
+
+2010-09-28  Aurélien Bompard <aurelien@bompard.org>
+
+	* debian/changelog, debian/compat, debian/control,
+	debian/copyright, debian/docs, debian/rules, debian/watch: Add
+	Debian package directory
+
+2010-09-28  Aurélien Bompard <aurelien@bompard.org>
+
+	* xhtml2odt.spec: Add RPM spec file
+
+2010-09-28  Aurélien Bompard <aurelien@bompard.org>
+
+	* Makefile: Don't require a .git directory
+
+2010-09-25  Aurélien Bompard <aurelien@bompard.org>
+
+	* tests/data/1.xml, tests/test_lists.py, tests/test_paragraph.py,
+	xsl/document-content/lists.xsl: Improve the rendering of definition
+	lists (#10)
+
+2010-09-23  Aurélien Bompard <aurelien@bompard.org>
+
+	* tests/test_block.py, xsl/document-content/block.xsl: Convert tabs
+
+2010-08-29  Aurélien Bompard <aurelien@bompard.org>
+
+	* tests/test_paragraph.py, xsl/document-content/paragraph.xsl,
+	xsl/styles/automatic-styles.xsl: Allow more paragraph alignments
+
+2010-08-29  Aurélien Bompard <aurelien@bompard.org>
+
+	* tests/test_paragraph.py, xsl/document-content/paragraph.xsl: Allow
+	dl tags inside paragraphs
+
+2010-08-24  Aurélien Bompard <aurelien@bompard.org>
+
+	* NEWS.txt: update NEWS file
+
+2010-08-24  Aurélien Bompard <aurelien@bompard.org>
+
+	* tests/test_inline.py, xsl/document-content/inline.xsl: Allow <br>
+	tags outside paragraphs
+
+2010-08-24  Aurélien Bompard <aurelien@bompard.org>
+
+	* tests/test_tables.py, xsl/document-content/tables.xsl: Allow
+	nested tables
+
+2010-08-24  Aurélien Bompard <aurelien@bompard.org>
+
+	* xsl/document-content/media.xsl, xsl/param.xsl: Make image inline
+	threshold a parameter (#1), and remove the para.padding parameter
+
+2010-08-22  Aurélien Bompard <aurelien@bompard.org>
+
+	* tests/test_paragraph.py, xsl/document-content/paragraph.xsl: 
+	Accept paragraphs inside paragraph-like elements (like table cells)
+
+2010-08-22  Aurélien Bompard <aurelien@bompard.org>
+
+	* tests/test_tables.py, xsl/document-content/tables.xsl: Table
+	header styles can only be on the first line
+
+2010-08-22  Aurélien Bompard <aurelien@bompard.org>
+
+	* tests/test_tables.py, xsl/document-content/tables.xsl: Colspan and
+	basic rowspan support
+
+2010-08-21  Aurélien Bompard <aurelien@bompard.org>
+
+	* Makefile: Fix Makefile
+
+2010-08-21  Aurélien Bompard <aurelien@bompard.org>
+
+	* tests/test_tables.py, xsl/document-content/tables.xsl: Handle
+	borders for one-column tables
+
+2010-08-13  Aurélien Bompard <aurelien@bompard.org>
+
+	* .gitignore, Makefile: Add release-related commands
+
+2010-08-13  Aurélien Bompard <aurelien@bompard.org>
+
+	* xsl/specific.xsl, xsl/specific/geshi.xsl,
+	xsl/styles/main-styles.xsl: Add GeSHi-specific code for line
+	numbering
+
+2010-08-13  Aurélien Bompard <aurelien@bompard.org>
+
+	* xsl/document-content/block.xsl: Split the line-breaking and the
+	space-preserving code
+
+2010-08-13  Aurélien Bompard <aurelien@bompard.org>
+
+	* xsl/document-content/block.xsl: add some comments
+
+2010-08-13  Aurélien Bompard <aurelien@bompard.org>
+
+	* tests/data/1.xml, tests/test_block.py, tests/test_lists.py,
+	tests/test_paragraph.py, tests/test_specific.py,
+	xsl/document-content/block.xsl, xsl/specific/pygments.xsl,
+	xsl/styles/main-styles.xsl: Instead of having a margin on the
+	Preformatted style, insert a blank line after
+
+2010-08-13  Aurélien Bompard <aurelien@bompard.org>
+
+	* LICENSE, LICENSE.txt: add .txt extension to LICENCE
+
+2010-08-13  Aurélien Bompard <aurelien@bompard.org>
+
+	* tests/data/1.xml, tests/test_block.py: Fix tests broken by commit
+	83216a585c9
+
+2010-08-13  Aurélien Bompard <aurelien@bompard.org>
+
+	* README.txt: Convert README from markdown to RST
+
+2010-08-13  Aurélien Bompard <aurelien@bompard.org>
+
+	* NEWS.txt: Add news file
+
+2010-08-13  Aurélien Bompard <aurelien@bompard.org>
+
+	* .gitignore, Makefile: Add automatic changelog generation
+
+2010-08-13  Aurélien Bompard <aurelien@bompard.org>
+
+	* xhtml2odt.php, xhtml2odt.py, xsl/document-content.xsl,
+	xsl/document-content/block.xsl, xsl/document-content/html5.xsl,
+	xsl/document-content/ignore.xsl, xsl/document-content/inline.xsl,
+	xsl/document-content/link.xsl, xsl/document-content/lists.xsl,
+	xsl/document-content/media.xsl, xsl/document-content/paragraph.xsl,
+	xsl/document-content/section.xsl, xsl/document-content/tables.xsl,
+	xsl/param.xsl, xsl/specific.xsl, xsl/specific/pygments.xsl,
+	xsl/specific/trac.xsl, xsl/styles/automatic-styles.xsl,
+	xsl/styles/fonts.xsl, xsl/styles/highlight.xsl,
+	xsl/styles/main-styles.xsl, xsl/xhtml2odt.xsl: Remove trailing
+	whitespaces
+
+2010-08-12  Aurélien Bompard <aurelien@bompard.org>
+
+	* tests/test_styles.py, xsl/styles/highlight.xsl: Only add highlight
+	styles if they are necessary
+
+2010-08-12  Aurélien Bompard <aurelien@bompard.org>
+
+	* xsl/document-content/ignore.xsl: Leave alone the span tags with
+	styles attributes so they can be picked up by styles.xsl
+
+2010-08-12  Aurélien Bompard <aurelien@bompard.org>
+
+	* xsl/styles.xsl, xsl/xhtml2odt.xsl: documentation and cosmetics
+
+2010-08-12  Aurélien Bompard <aurelien@bompard.org>
+
+	* tests/test_inline_styles.py, xsl/styles.xsl,
+	xsl/styles/inline.xsl: Add initial support for inline CSS styles in
+	<span> tags
+
+2010-08-11  Aurélien Bompard <aurelien@bompard.org>
+
+	* xsl/document-content/ignore.xsl: Don't use non-breaking spaces
+	when they're not needed
+
+2010-08-11  Aurélien Bompard <aurelien@bompard.org>
+
+	* xsl/document-content/block.xsl: leftover debug
+
+2010-08-11  Aurélien Bompard <aurelien@bompard.org>
+
+	* xsl/document-content/ignore.xsl,
+	xsl/document-content/paragraph.xsl: allow div tags inside paragraphs
+	(use case: source code)
+
+2010-08-11  Aurélien Bompard <aurelien@bompard.org>
+
+	* tests/data/1.xml, tests/test_specific.py,
+	xsl/specific/pygments.xsl, xsl/styles/main-styles.xsl: Put source
+	code in its own paragraph style
+
+2010-08-11  Aurélien Bompard <aurelien@bompard.org>
+
+	* .gitignore, tests/test_full.py: Always save test results
+
+2010-08-11  Aurélien Bompard <aurelien@bompard.org>
+
+	* xsl/param.xsl: bizarre whitespace
+
+2010-08-11  Aurélien Bompard <aurelien@bompard.org>
+
+	* README.txt, xhtml2odt.sh: Add a simple bash script to run the
+	stylesheets
+
+2010-08-11  Aurélien Bompard <aurelien@bompard.org>
+
+	* xsl/styles.xsl: fix abusive cut-n-paste
+
+2010-08-11  Aurélien Bompard <aurelien@bompard.org>
+
+	* tests/test_specific.py, xsl/specific/pygments.xsl,
+	xsl/styles/highlight.xsl: Refactoring of the syntax highlighting
+	code
+
+2010-08-11  Aurélien Bompard <aurelien@bompard.org>
+
+	* tests/data/1.xml: fix unit test
+
+2010-08-10  Aurélien Bompard <aurelien@bompard.org>
+
+	* tests/test_specific.py, xsl/specific/pygments.xsl,
+	xsl/styles/highlight.xsl: More syntax coloration
+
+2010-08-10  Aurélien Bompard <aurelien@bompard.org>
+
+	* tests/data/1.xml, tests/test_specific.py,
+	xsl/specific/pygments.xsl, xsl/styles/highlight.xsl: More syntax
+	coloration
+
+2010-08-10  Aurélien Bompard <aurelien@bompard.org>
+
+	* xsl/styles/automatic-styles.xsl: Separate specific styles
+
+2010-08-10  Aurélien Bompard <aurelien@bompard.org>
+
+	* tests/data/1.xml, tests/test_specific.py, xsl/specific.xsl,
+	xsl/specific/pygments.xsl, xsl/styles.xsl, xsl/styles/highlight.xsl: 
+	Support for source code syntax highlighting This is only a beginning, many Pygments tokens are still
+	unsupported.
+
+2010-08-10  Aurélien Bompard <aurelien@bompard.org>
+
+	* tests/data/1.xml, tests/test_block.py,
+	xsl/document-content/block.xsl: Handle non-breaking spaces
+
+2010-08-10  Aurélien Bompard <aurelien@bompard.org>
+
+	* tests/test_block.py, xsl/document-content/block.xsl: Allow
+	subelements inside <pre> tags
+
+2010-08-08  Aurélien Bompard <aurelien@bompard.org>
+
+	* LICENSE, README.txt, xhtml2odt.php, xhtml2odt.py,
+	xsl/document-content.xsl, xsl/document-content/block.xsl,
+	xsl/document-content/html5.xsl, xsl/document-content/ignore.xsl,
+	xsl/document-content/inline.xsl, xsl/document-content/link.xsl,
+	xsl/document-content/lists.xsl, xsl/document-content/media.xsl,
+	xsl/document-content/paragraph.xsl,
+	xsl/document-content/section.xsl, xsl/document-content/tables.xsl,
+	xsl/param.xsl, xsl/specific.xsl, xsl/specific/trac.xsl,
+	xsl/styles.xsl, xsl/styles/automatic-styles.xsl,
+	xsl/styles/fonts.xsl, xsl/styles/main-styles.xsl, xsl/xhtml2odt.xsl: 
+	Latest LGPL version in the 2.x series is 2.1, not 2.0
+
+2010-08-08  Stefan Zeller <stefan.zeller@gmx.ch>
+
+	* xsl/document-content/inline.xsl: Add support for the "u" tag
+	(underline)
+
+2010-07-23  Aurélien Bompard <aurelien@bompard.org>
+
+	* Makefile, xhtml2odt.1.post: add uninstall target, and fix DATADIR
+	usage
+
+2010-07-23  Aurélien Bompard <aurelien@bompard.org>
+
+	* xhtml2odt.py: Use the default template if not specified on the
+	command line
+
+2010-07-23  Aurélien Bompard <aurelien@bompard.org>
+
+	* Makefile, xhtml2odt.php, xhtml2odt.py: Documentation improvements
+
+2010-07-22  Aurélien Bompard <aurelien@bompard.org>
+
+	* README.txt: Update the website's URL
+
+2010-07-22  Aurélien Bompard <aurelien@bompard.org>
+
+	* xhtml2odt.py: Remove debug prints
+
+2010-07-22  Aurélien Bompard <aurelien@bompard.org>
+
+	* xhtml2odt.py: Cosmetic changes to make pylint more happy
+
+2010-07-18  Aurélien Bompard <aurelien@bompard.org>
+
+	* TODO: TODO added to the projects' tickets
+
+2010-07-10  Aurélien Bompard <aurelien@bompard.org>
+
+	* .gitignore, Makefile, xhtml2odt.1.post, xhtml2odt.py: Generate and
+	install the man page
+
+2010-07-10  Aurélien Bompard <aurelien@bompard.org>
+
+	* LICENSE, README.txt, xhtml2odt.php, xhtml2odt.py,
+	xsl/document-content.xsl, xsl/document-content/block.xsl,
+	xsl/document-content/html5.xsl, xsl/document-content/ignore.xsl,
+	xsl/document-content/inline.xsl, xsl/document-content/link.xsl,
+	xsl/document-content/lists.xsl, xsl/document-content/media.xsl,
+	xsl/document-content/paragraph.xsl,
+	xsl/document-content/section.xsl, xsl/document-content/tables.xsl,
+	xsl/param.xsl, xsl/specific.xsl, xsl/specific/trac.xsl,
+	xsl/styles.xsl, xsl/styles/automatic-styles.xsl,
+	xsl/styles/fonts.xsl, xsl/styles/main-styles.xsl, xsl/xhtml2odt.xsl: 
+	License change: GPL to LGPL
+
+2010-07-10  Aurélien Bompard <aurelien@bompard.org>
+
+	* xhtml2odt.py: Python script: don't crash if the selected ID is not
+	found
+
+2010-06-11  Aurélien Bompard <aurelien@bompard.org>
+
+	* xhtml2odt.py: Add tidy definition for aside
+
+2010-06-11  Aurélien Bompard <aurelien@bompard.org>
+
+	* README, README.txt: Rename README and use DOS-style line endings
+	for our Windows friends
+
+2010-06-11  Aurélien Bompard <aurelien@bompard.org>
+
+	* README: Add download link
+
+2010-05-11  Aurélien Bompard <aurelien@bompard.org>
+
+	* tests/test_html5.py, xsl/document-content/html5.xsl,
+	xsl/styles/main-styles.xsl: Improve support for the HTML5 <aside>
+	element
+
+2010-05-10  Aurélien Bompard <aurelien@bompard.org>
+
+	* xsl/document-content.xsl, xsl/document-content/html5.xsl,
+	xsl/document-content/ignore.xsl: Initial support for HTML5
+
+2010-05-02  Aurélien Bompard <aurelien@bompard.org>
+
+	* TODO: Add todo for HTML5 support
+
+2010-04-20  Aurélien Bompard <aurelien@bompard.org>
+
+	* xhtml2odt.py: Add some exceptions handling
+
+2010-04-13  Aurélien Bompard <aurelien@bompard.org>
+
+	* xhtml2odt.py: Python script: remove debug
+
+2010-04-13  Aurélien Bompard <aurelien@bompard.org>
+
+	* xhtml2odt.py: Python script: don't generate absolute paths in the
+	zip file
+
+2010-04-13  Aurélien Bompard <aurelien@bompard.org>
+
+	* xhtml2odt.php: PHP script: better handling of the -u option
+
+2010-04-12  Aurélien Bompard <aurelien@bompard.org>
+
+	* xhtml2odt.php: PHP script: fix inverted usage of strpos()
+
+2010-04-12  Aurélien Bompard <aurelien@bompard.org>
+
+	* xhtml2odt.php: Add detection of the curl extension in the PHP
+	script, and fix a warning message.
+
+2010-04-12  Aurélien Bompard <aurelien@bompard.org>
+
+	* xhtml2odt.php: Add a check for XSLTProcessor in the PHP script
+
+2010-04-12  Aurélien Bompard <aurelien@bompard.org>
+
+	* xhtml2odt.php: Add verbose mode for PHP script
+
+2010-04-12  Aurélien Bompard <aurelien@bompard.org>
+
+	* xhtml2odt.php: PHP 5.2 compatibility: use short options for URL
+	and replace_keyword
+
+2010-04-12  Aurélien Bompard <aurelien@bompard.org>
+
+	* xhtml2odt.php: PHP 5.2 compatibility: use short options for URL
+	and replace_keyword
+
+2010-04-12  Aurélien Bompard <aurelien@bompard.org>
+
+	* xhtml2odt.py: Make the python script compatible with lxml < 2.2
+	(Debian Etch)
+
+2010-04-11  Aurélien Bompard <aurelien@bompard.org>
+
+	* README: Update README file
+
+2010-04-11  Aurélien Bompard <aurelien@bompard.org>
+
+	* xhtml2odt.php: Change license of the PHP script from AGPLv3 to
+	GPLv2+
+
+2010-04-11  Aurélien Bompard <aurelien@bompard.org>
+
+	* .gitignore, Makefile, doc-py/Makefile, doc-py/conf.py,
+	doc-py/index.rst: Add documentation generation
+
+2010-04-11  Aurélien Bompard <aurelien@bompard.org>
+
+	* TODO: Remove done items from the TODO
+
+2010-04-11  Aurélien Bompard <aurelien@bompard.org>
+
+	* xhtml2odt.php: Improve documentation
+
+2010-04-11  Aurélien Bompard <aurelien@bompard.org>
+
+	* xhtml2odt.php: Improve local images handling
+
+2010-04-10  Aurélien Bompard <aurelien@bompard.org>
+
+	* xhtml2odt.php: Make the PHP script executable
+
+2010-04-10  Aurélien Bompard <aurelien@bompard.org>
+
+	* xhtml2odt.php: Cleanups for xhtml2odt.php
+
+2010-04-09  Aurélien Bompard <aurelien@bompard.org>
+
+	* xhtml2odt.php: First basically working version of the PHP script
+
+2010-04-08  Aurélien Bompard <aurelien@bompard.org>
+
+	* xhtml2odt.py: Small documentation fix
+
+2010-04-08  Aurélien Bompard <aurelien@bompard.org>
+
+	* xhtml2odt.php: Start of a PHP-based conversion script
+
+2010-04-03  Aurélien Bompard <aurelien@bompard.org>
+
+	* xhtml2odt.py: Add extensive documentation
+
+2010-04-03  Aurélien Bompard <aurelien@bompard.org>
+
+	* xhtml2odt.py: Rename the tpldir option to stylesdir for clarity
+
+2010-04-03  Aurélien Bompard <aurelien@bompard.org>
+
+	* xhtml2odt.py: Minor style and formatting cleanups
+
+2010-04-03  Aurélien Bompard <aurelien@bompard.org>
+
+	* xhtml2odt.py: Add options to cut off a part of the ODT template In an ODT file, the only styles that will be saved are the styles
+	which are applied to some content in the document. If you want to
+	create an empty ODT document for this plugin, and still want to
+	define styles which will be applied to the HTML content, you have to
+	write some dummy text, apply the styles to this text, and surround
+	the text in the CUT-START and CUT-STOP tags. This way, the styles
+	will be retained in the ODT file, but the dummy text will be removed
+	on export.
+
+2010-03-19  Aurélien Bompard <aurelien@bompard.org>
+
+	* TODO, tests/data/1.xml, tests/data/2.xml, tests/data/3.xml,
+	tests/test_section.py, tests/test_xhtml_inside_odt.py,
+	xsl/document-content/section.xsl: Add text:outline-level attributes
+	to headings for validation
+
+2010-03-19  Aurélien Bompard <aurelien@bompard.org>
+
+	* tests/data/1.xml, tests/test_block.py,
+	xsl/document-content/block.xsl: Don't leave a line-break at the end
+	of preformatted paragraphs
+
+2010-03-19  Aurélien Bompard <aurelien@bompard.org>
+
+	* Makefile: Add a 'clean' target
+
+2010-03-19  Aurélien Bompard <aurelien@bompard.org>
+
+	* tests/test_inline.py, tests/test_link.py,
+	xsl/document-content.xsl, xsl/document-content/inline.xsl,
+	xsl/document-content/link.xsl: Split link handling off inline
+	elements for clarity
+
+2010-03-19  Aurélien Bompard <aurelien@bompard.org>
+
+	* tests/test_generic.py, tests/test_ignore.py,
+	tests/test_inline.py, tests/test_lists.py, tests/test_media.py,
+	tests/test_specific.py, xsl/document-content/block.xsl,
+	xsl/document-content/ignore.xsl, xsl/document-content/inline.xsl,
+	xsl/document-content/lists.xsl, xsl/document-content/media.xsl,
+	xsl/document-content/paragraph.xsl,
+	xsl/document-content/section.xsl, xsl/specific/trac.xsl: Handle a
+	'in paragraph' mode
+
+2010-03-19  Aurélien Bompard <aurelien@bompard.org>
+
+	* tests/data/2.xhtml, tests/data/2.xml, tests/data/3.xhtml,
+	tests/data/3.xml, tests/test_full.py: Add two functionnal tests
+
+2010-03-19  Aurélien Bompard <aurelien@bompard.org>
+
+	* xsl/document-content/ignore.xsl: Ignore some more tags
+
+2010-03-19  Aurélien Bompard <aurelien@bompard.org>
+
+	* tests/data/1.xhtml, tests/data/1.xml, tests/test_full.py: Fix
+	functional test 1
+
+2010-03-19  Aurélien Bompard <aurelien@bompard.org>
+
+	* tests/test_lists.py: Fix a small bug in the list test
+
+2010-03-19  Aurélien Bompard <aurelien@bompard.org>
+
+	* tests/data/1.xhtml, tests/data/1.xml, tests/test_full.py: Add full
+	functionnal test
+
+2010-03-12  Aurélien Bompard <aurelien@bompard.org>
+
+	* tests/test_lists.py, xsl/document-content/paragraph.xsl: Fix text
+	style in dt and dd tags.
+
+2010-03-12  Aurélien Bompard <aurelien@bompard.org>
+
+	* xsl/document-content/paragraph.xsl: Cleanups
+
+2010-03-12  Aurélien Bompard <aurelien@bompard.org>
+
+	* tests/test_paragraph.py: Don't try to fully support p/block groups
+	yet, it's too hard.
+
+2010-03-10  Aurélien Bompard <aurelien@bompard.org>
+
+	* tests/test_paragraph.py, xsl/document-content/paragraph.xsl: Even
+	better handling of text inside p/block-type groups. 1 bug left.
+
+2010-03-10  Aurélien Bompard <aurelien@bompard.org>
+
+	* tests/test_block.py, tests/test_lists.py, tests/test_tables.py,
+	xsl/document-content/paragraph.xsl: Better handling of text inside
+	p/block-type groups
+
+2010-03-10  Aurélien Bompard <aurelien@bompard.org>
+
+	* tests/test_lists.py, tests/test_paragraph.py,
+	tests/test_tables.py, xsl/document-content/paragraph.xsl,
+	xsl/document-content/tables.xsl: Handle text in p/p groups, and
+	factorize paragraph handling
+
+2010-03-10  Aurélien Bompard <aurelien@bompard.org>
+
+	* tests/test_paragraph.py: Rename some tests to be more explicit
+
+2010-01-09  Aurélien Bompard <aurelien@bompard.org>
+
+	* xhtml2odt.py: Better handling of image size
+
+2010-01-09  Aurélien Bompard <aurelien@bompard.org>
+
+	* tests/test_media.py, xhtml2odt.py, xsl/document-content/media.xsl: 
+	Allow defining image width and height
+
+2010-01-08  Aurélien Bompard <aurelien@bompard.org>
+
+	* xhtml2odt.py: Remove abusive escaping
+
+2010-01-07  Aurélien Bompard <aurelien@bompard.org>
+
+	* README: Update README
+
+2010-01-07  Aurélien Bompard <aurelien@bompard.org>
+
+	* TODO, tests/test_inline.py, xhtml2odt.py,
+	xsl/document-content/inline.xsl, xsl/param.xsl: Rename the root_url
+	param to url It was misleading, it should be the whole URL, not the domain part
+	only.
+
+2010-01-07  Aurélien Bompard <aurelien@bompard.org>
+
+	* tests/test_inline.py, tests/test_styles.py,
+	xsl/document-content/inline.xsl, xsl/styles/automatic-styles.xsl,
+	xsl/styles/main-styles.xsl: Move strong and emphasis to
+	automatic-styles It looks like we can't add two main styles on the same text, while
+	it's possible with automatic styles. It's needed to translate code
+	like <b><i>foobar</i></b>.
+
+2010-01-07  Aurélien Bompard <aurelien@bompard.org>
+
+	* DEVNOTES, TODO: add todo
+
+2010-01-07  Aurélien Bompard <aurelien@bompard.org>
+
+	* styles/big.txt, styles/caption.txt, styles/center.txt,
+	styles/citation.txt, styles/dejavu_sans_mono.txt,
+	styles/emphasis.txt, styles/footnote.txt, styles/heading1.txt,
+	styles/heading2.txt, styles/heading3.txt, styles/heading4.txt,
+	styles/heading5.txt, styles/heading6.txt,
+	styles/horizontal_line.txt, styles/image_center.txt,
+	styles/image_inline.txt, styles/image_left.txt,
+	styles/image_right.txt, styles/list_bullet.txt,
+	styles/list_item_bullet.txt, styles/list_item_number.txt,
+	styles/list_number.txt, styles/preformatted.txt,
+	styles/quotations.txt, styles/sender.txt, styles/small.txt,
+	styles/strike.txt, styles/strong_emphasis.txt,
+	styles/subscript.txt, styles/superscript.txt,
+	styles/table_cell_a1.txt, styles/table_cell_a2.txt,
+	styles/table_cell_a3.txt, styles/table_cell_a4.txt,
+	styles/table_cell_b1.txt, styles/table_cell_b2.txt,
+	styles/table_cell_b3.txt, styles/table_cell_b4.txt,
+	styles/table_cell_c1.txt, styles/table_cell_c2.txt,
+	styles/table_cell_c3.txt, styles/table_cell_c4.txt,
+	styles/table_cell_fa3.txt, styles/table_cell_fb3.txt,
+	styles/table_cell_fc3.txt, styles/table_cell_ha1.txt,
+	styles/table_cell_hb1.txt, styles/table_cell_hc1.txt,
+	styles/table_cell_single.txt, styles/table_contents.txt,
+	styles/table_default.txt, styles/table_heading.txt,
+	styles/teletype.txt, styles/underline.txt: Remove converted styles
+
+2010-01-07  Aurélien Bompard <aurelien@bompard.org>
+
+	* xhtml2odt.py: Adapt xhtml2odt.py to the XSL-based style adding 114 less lines, yay !
+
+2010-01-07  Aurélien Bompard <aurelien@bompard.org>
+
+	* tests/__init__.py, tests/test_styles.py: Add initial unit tests
+	for the styles
+
+2010-01-07  Aurélien Bompard <aurelien@bompard.org>
+
+	* xsl/addstyles.xsl, xsl/styles.xsl: rename the main stylesheet
+
+2010-01-07  Aurélien Bompard <aurelien@bompard.org>
+
+	* xsl/addstyles.xsl, xsl/styles.xml,
+	xsl/styles/automatic-styles.xsl, xsl/styles/fonts.xsl,
+	xsl/styles/main-styles.xsl: Adding styles seems to work But I'm adding all the available styles, regardless of their actual
+	usage in content.xml. I'm not overwriting already present styles
+	however, so I think it's acceptable.
+
+2010-01-07  Aurélien Bompard <aurelien@bompard.org>
+
+	* DEVNOTES, xsl/addstyles.xsl, xsl/styles.xml: First try to add
+	styles using only XSLT
+
+2010-01-07  Aurélien Bompard <aurelien@bompard.org>
+
+	* TODO: more todo
+
+2010-01-05  Aurélien Bompard <aurelien@bompard.org>
+
+	* styles/image_center.txt, styles/image_left.txt,
+	styles/image_right.txt, tests/test_media.py,
+	xsl/document-content/media.xsl: handle image positioning
+
+2010-01-04  Aurélien Bompard <aurelien@bompard.org>
+
+	* TODO, tests/__init__.py, tests/test_block.py,
+	tests/test_generic.py, tests/test_inline.py, tests/test_lists.py,
+	tests/test_media.py, tests/test_paragraph.py,
+	tests/test_section.py, tests/test_tables.py,
+	tests/test_xhtml_inside_odt.py: Add comments in tests
+
+2010-01-04  Aurélien Bompard <aurelien@bompard.org>
+
+	* TODO, tests/test_inline.py, xsl/document-content/inline.xsl: 
+	better handling of links with targets (hashes)
+
+2010-01-04  Aurélien Bompard <aurelien@bompard.org>
+
+	* tests/test_inline.py: Add tests for links with targets
+
+2010-01-04  Aurélien Bompard <aurelien@bompard.org>
+
+	* README, xhtml2odt.py: Make PyLint happier, and update README
+
+2010-01-03  Aurélien Bompard <aurelien@bompard.org>
+
+	* xhtml2odt.py: Improve script help
+
+2010-01-03  Aurélien Bompard <aurelien@bompard.org>
+
+	* TODO, tests/test_media.py: Update tests after image typo fix
+
+2010-01-03  Aurélien Bompard <aurelien@bompard.org>
+
+	* Makefile: Fix typos in the Makefile
+
+2010-01-03  Aurélien Bompard <aurelien@bompard.org>
+
+	* xhtml2odt.py, xsl/document-content/media.xsl: Two minor fixes  * Better handling of HTTP errors when downloading  * Fix typo in xsl
+
+2010-01-03  Aurélien Bompard <aurelien@bompard.org>
+
+	* xhtml2odt.py: Make absolute URLs when possible
+
+2010-01-03  Aurélien Bompard <aurelien@bompard.org>
+
+	* xhtml2odt.py, xsl/document-content/media.xsl: Default image size
+	in xhtml2odt.py
+
+2010-01-03  Aurélien Bompard <aurelien@bompard.org>
+
+	* xsl/document-content/media.xsl, xsl/param.xsl: Add params for the
+	default image size
+
+2010-01-03  Aurélien Bompard <aurelien@bompard.org>
+
+	* xsl/param.xsl, xsl/xhtml2odt.xsl: Add debug mode and fix params
+
+2010-01-02  Aurélien Bompard <aurelien@bompard.org>
+
+	* README: Improve the README It's full Markdown now ! http://daringfireball.net/projects/markdown
+
+2010-01-02  Aurélien Bompard <aurelien@bompard.org>
+
+	* Makefile, README, TODO, xhtml2odt.py: Add command-line script
+
+2010-01-01  Aurélien Bompard <aurelien@bompard.org>
+
+	* tests/test_generic.py, xsl/xhtml2odt.xsl: Don't strip spaces
+	finally It will glue together adjascent tags when spaces sometimes make
+	sense.  Example: <span>First</span> <span>Second</span> will be
+	glued together if we strip the spaces.  Add a unit test to make sure this never crosses my mind again.
+
+2010-01-01  Aurélien Bompard <aurelien@bompard.org>
+
+	* styles/big.txt, styles/caption.txt, styles/center.txt,
+	styles/citation.txt, styles/emphasis.txt, styles/footnote.txt,
+	styles/heading1.txt, styles/heading2.txt, styles/heading3.txt,
+	styles/heading4.txt, styles/heading5.txt, styles/heading6.txt,
+	styles/horizontal_line.txt, styles/image_inline.txt,
+	styles/list_bullet.txt, styles/list_number.txt,
+	styles/preformatted.txt, styles/quotations.txt, styles/sender.txt,
+	styles/small.txt, styles/strong_emphasis.txt, styles/subscript.txt,
+	styles/superscript.txt, styles/table_cell_a1.txt,
+	styles/table_cell_a2.txt, styles/table_cell_a3.txt,
+	styles/table_cell_a4.txt, styles/table_cell_b1.txt,
+	styles/table_cell_b2.txt, styles/table_cell_b3.txt,
+	styles/table_cell_b4.txt, styles/table_cell_c1.txt,
+	styles/table_cell_c2.txt, styles/table_cell_c3.txt,
+	styles/table_cell_c4.txt, styles/table_cell_fa3.txt,
+	styles/table_cell_fb3.txt, styles/table_cell_fc3.txt,
+	styles/table_cell_ha1.txt, styles/table_cell_hb1.txt,
+	styles/table_cell_hc1.txt, styles/table_cell_single.txt,
+	styles/table_contents.txt, styles/table_default.txt,
+	styles/table_heading.txt, styles/teletype.txt,
+	xsl/document-content.xsl, xsl/document-content/block.xsl,
+	xsl/document-content/ignore.xsl, xsl/document-content/inline.xsl,
+	xsl/document-content/lists.xsl, xsl/document-content/media.xsl,
+	xsl/document-content/paragraph.xsl,
+	xsl/document-content/section.xsl, xsl/document-content/tables.xsl,
+	xsl/param.xsl, xsl/specific.xsl, xsl/specific/trac.xsl,
+	xsl/xhtml2odt.xsl: Convert tabs to spaces
+
+2010-01-01  Aurélien Bompard <aurelien@bompard.org>
+
+	* tests/test_tables.py, xsl/xhtml2odt.xsl: Use strip-space
+
+2010-01-01  Aurélien Bompard <aurelien@bompard.org>
+
+	* TODO, styles/big.txt, styles/small.txt, styles/strike.txt,
+	styles/underline.txt, tests/test_inline.py, tests/test_specific.py,
+	xsl/document-content/inline.xsl, xsl/specific/trac.xsl: Standardize
+	style naming Capitalized for main styles and lowercase for autostyles
+
+2010-01-01  Aurélien Bompard <aurelien@bompard.org>
+
+	* xsl/document-content/block.xsl, xsl/document-content/inline.xsl,
+	xsl/specific/trac.xsl: Refactor the style-name definition
+
+2010-01-01  Aurélien Bompard <aurelien@bompard.org>
+
+	* TODO, styles/table_cell_fa1.txt, styles/table_cell_fa3.txt,
+	styles/table_cell_fa4.txt, styles/table_cell_fb1.txt,
+	styles/table_cell_fb3.txt, styles/table_cell_fb4.txt,
+	styles/table_cell_fc1.txt, styles/table_cell_fc3.txt,
+	styles/table_cell_fc4.txt, styles/table_cell_ha4.txt,
+	styles/table_cell_hb4.txt, styles/table_cell_hc4.txt,
+	styles/table_default.txt, tests/test_tables.py,
+	xsl/document-content/paragraph.xsl, xsl/document-content/tables.xsl: 
+	Make sure all the used styles have a template
+
+2010-01-01  Aurélien Bompard <aurelien@bompard.org>
+
+	* TODO, tests/test_tables.py, xsl/document-content/tables.xsl: Place
+	tfoot contents at the end of tables
+
+2010-01-01  Aurélien Bompard <aurelien@bompard.org>
+
+	* TODO, tests/test_tables.py, xsl/document-content/tables.xsl: Fix
+	cell borders (in rare cases)
+
+2010-01-01  Aurélien Bompard <aurelien@bompard.org>
+
+	* styles/table_cell_fa1.txt, styles/table_cell_fa4.txt,
+	styles/table_cell_fb1.txt, styles/table_cell_fb4.txt,
+	styles/table_cell_fc1.txt, styles/table_cell_fc4.txt: Add table
+	footer styles
+
+2010-01-01  Aurélien Bompard <aurelien@bompard.org>
+
+	* styles/table_cell_ha1.txt, styles/table_cell_ha4.txt,
+	styles/table_cell_hb1.txt, styles/table_cell_hb4.txt,
+	styles/table_cell_hc1.txt, styles/table_cell_hc4.txt: Add table
+	header styles
+
+2010-01-01  Aurélien Bompard <aurelien@bompard.org>
+
+	* tests/test_tables.py, xsl/document-content/tables.xsl: Fix wrong
+	cell position detection
+
+2010-01-01  Aurélien Bompard <aurelien@bompard.org>
+
+	* styles/table_cell_single.txt, tests/test_tables.py,
+	xsl/document-content/tables.xsl: Add support for single-cell table
+
+2009-12-31  Aurélien Bompard <aurelien@bompard.org>
+
+	* TODO, styles/list_bullet.txt, styles/list_level.txt,
+	styles/list_number.txt, styles/numbering_level.txt: Improve list
+	style templates
+
+2009-12-31  Aurélien Bompard <aurelien@bompard.org>
+
+	* styles/dejavu_sans_mono.txt, styles/preformatted.txt,
+	styles/teletype.txt, styles/vera_sans_mono.txt: Use DejaVu instead
+	of Bitstream Vera DejaVu is available by default on OpenOffice for Windows, Bitstream
+	Vera isn't any more. Checked on OpenOffice 3.1.
+
+2009-12-31  Aurélien Bompard <aurelien@bompard.org>
+
+	* TODO: Add some more todo...
+
+2009-12-31  Aurélien Bompard <aurelien@bompard.org>
+
+	* tests/test_inline.py, xsl/document-content/inline.xsl: add <q> tag
+	support
+
+2009-12-31  Aurélien Bompard <aurelien@bompard.org>
+
+	* tests/test_inline.py, xsl/document-content/inline.xsl: add <ins>
+	tag support
+
+2009-12-31  Aurélien Bompard <aurelien@bompard.org>
+
+	* styles/heading6.txt, tests/test_section.py,
+	xsl/document-content/section.xsl, xsl/xhtml2odt.xsl: add <h6> tag
+	support
+
+2009-12-31  Aurélien Bompard <aurelien@bompard.org>
+
+	* tests/test_inline.py, xsl/document-content/inline.xsl: add <samp>,
+	<kbd>, <dfn>, <var> tags support
+
+2009-12-31  Aurélien Bompard <aurelien@bompard.org>
+
+	* styles/citation.txt, tests/test_inline.py,
+	xsl/document-content/inline.xsl: add <cite> tag support
+
+2009-12-30  Aurélien Bompard <aurelien@bompard.org>
+
+	* tests/test_block.py, xsl/document-content/block.xsl,
+	xsl/document-content/paragraph.xsl: add <center> tag support
+
+2009-12-30  Aurélien Bompard <aurelien@bompard.org>
+
+	* styles/caption.txt, styles/sender.txt: Mark caption and sender as
+	main styles
+
+2009-12-30  Aurélien Bompard <aurelien@bompard.org>
+
+	* styles/caption.txt, tests/test_tables.py,
+	xsl/document-content/tables.xsl: improve table captions
+
+2009-12-30  Aurélien Bompard <aurelien@bompard.org>
+
+	* styles/big.txt, styles/small.txt, tests/test_inline.py,
+	xsl/document-content/inline.xsl: add <big> and <small> tags support
+
+2009-12-30  Aurélien Bompard <aurelien@bompard.org>
+
+	* styles/sender.txt, tests/test_block.py,
+	xsl/document-content/block.xsl, xsl/document-content/paragraph.xsl: 
+	add <address> tag support
+
+2009-12-30  Aurélien Bompard <aurelien@bompard.org>
+
+	* styles/footnote.txt, tests/test_inline.py,
+	xsl/document-content/inline.xsl: Add <abbr> and <acronym> support
+
+2009-12-30  Aurélien Bompard <aurelien@bompard.org>
+
+	* tests/test_inline.py: update tests for Source -> Teletype change
+
+2009-12-30  Aurélien Bompard <aurelien@bompard.org>
+
+	* README: Add Trac plugin reference
+
+2009-12-30  Aurélien Bompard <aurelien@bompard.org>
+
+	* LICENSE: add GPLv2 license
+
+2009-12-30  Aurélien Bompard <aurelien@bompard.org>
+
+	* xsl/xhtml2odt.xsl: formatting
+
+2009-12-30  Aurélien Bompard <aurelien@bompard.org>
+
+	* TODO: add todo
+
+2009-12-30  Aurélien Bompard <aurelien@bompard.org>
+
+	* styles/heading3.txt, styles/heading4.txt, styles/heading5.txt: 
+	Improve headings styles
+
+2009-12-30  Aurélien Bompard <aurelien@bompard.org>
+
+	* styles/quotations.txt: Add display-name to mark the quotations
+	style for styles.xml inclusion
+
+2009-12-30  Aurélien Bompard <aurelien@bompard.org>
+
+	* styles/exponent.txt, styles/superscript.txt: better superscript
+	style
+
+2009-12-30  Aurélien Bompard <aurelien@bompard.org>
+
+	* styles/source.txt, styles/teletype.txt,
+	xsl/document-content/inline.xsl: Use "Teletype" style insead of
+	"Source Code" style
+
+2009-12-30  Aurélien Bompard <aurelien@bompard.org>
+
+	* xsl/document-content.xsl, xsl/document-content/block.xsl,
+	xsl/document-content/ignore.xsl, xsl/document-content/inline.xsl,
+	xsl/document-content/lists.xsl, xsl/document-content/media.xsl,
+	xsl/document-content/paragraph.xsl,
+	xsl/document-content/section.xsl, xsl/document-content/tables.xsl,
+	xsl/param.xsl, xsl/specific.xsl, xsl/specific/trac.xsl: Remove
+	useless declarations
+
+2009-12-30  Aurélien Bompard <aurelien@bompard.org>
+
+	* README: Better README
+
+2009-12-29  Aurélien Bompard <aurelien@bompard.org>
+
+	* xsl/document-content/block.xsl, xsl/document-content/ignore.xsl,
+	xsl/document-content/inline.xsl,
+	xsl/document-content/paragraph.xsl,
+	xsl/document-content/tables.xsl, xsl/xhtml2odt.xsl: Various fixes
+
+2009-12-29  Aurélien Bompard <aurelien@bompard.org>
+
+	* .gitignore, tests/__init__.py, tests/test_block.py,
+	tests/test_generic.py, tests/test_ignore.py, tests/test_inline.py,
+	tests/test_lists.py, tests/test_media.py, tests/test_paragraph.py,
+	tests/test_section.py, tests/test_specific.py,
+	tests/test_tables.py, tests/test_xhtml_inside_odt.py: add unit tests
+
+2009-12-29  Aurélien Bompard <aurelien@bompard.org>
+
+	* README, xsl/document-content/tables.xsl, xsl/param.xsl,
+	xsl/specific/trac.xsl, xsl/xhtml2odt.xsl: Indentation and README
+
+2009-12-29  Aurélien Bompard <aurelien@bompard.org>
+
+	* Initial commit
+
