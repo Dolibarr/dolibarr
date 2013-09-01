@@ -2022,6 +2022,10 @@ if ($action == 'create')
 			$remise_percent 	= (! empty($objectsrc->remise_percent)?$objectsrc->remise_percent:(! empty($soc->remise_percent)?$soc->remise_percent:0));
 			$remise_absolue 	= (! empty($objectsrc->remise_absolue)?$objectsrc->remise_absolue:(! empty($soc->remise_absolue)?$soc->remise_absolue:0));
 			$dateinvoice		= empty($conf->global->MAIN_AUTOFILL_DATE)?-1:0;
+			
+			//Replicate extrafields
+			$objectsrc->fetch_optionals($originid);
+			$object->array_options=$objectsrc->array_options;
 		}
 	}
 	else
@@ -2174,7 +2178,7 @@ if ($action == 'create')
 		print '</td></tr>'."\n";
 	}
 
-	if ((empty($origin)) || (($origin=='propal') && (!empty($originid))))
+	if ((empty($origin)) || ((($origin=='propal') || ($origin=='commande')) && (!empty($originid))))
 	{
 		// Deposit
 		print '<tr height="18"><td width="16px" valign="middle">';
@@ -2182,7 +2186,7 @@ if ($action == 'create')
 		print '</td><td valign="middle" class="nowrap">';
 		$desc=$form->textwithpicto($langs->trans("InvoiceDeposit"),$langs->transnoentities("InvoiceDepositDesc"),1);
 		print '<table class="nobordernopadding"><tr><td>'.$desc.'</td>';
-		if (($origin=='propal') ) {
+		if (($origin=='propal') || ($origin=='commande')) {
 			print '<td><select name="typedeposit"><option value="amount">'.$langs->trans('FixAmount').'</option>';
 			print '<option value="variable">'.$langs->trans('VarAmount').'</option></select></td>';
 			print '<td>'.$langs->trans('Value').':<input type="text" name="valuedeposit" size="3" value="'.GETPOST('valuedeposit','int').'"/>';
