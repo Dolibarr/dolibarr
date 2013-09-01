@@ -718,7 +718,7 @@ class ExtraFields
 				$sql = 'SELECT '.$keyList;
 				$sql.= ' FROM '.MAIN_DB_PREFIX .$InfoFieldList[0];
 				//$sql.= ' WHERE entity = '.$conf->entity;
-				print $sql;
+				//print $sql;
 
 				dol_syslog(get_class($this).'::showInputField type=sellist sql='.$sql);
 				$resql = $this->db->query($sql);
