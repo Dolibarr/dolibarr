@@ -71,7 +71,7 @@ class DolGraph
     var $showlegend=1;
 	var $showpointvalue=1;
 	var $showpercent=0;
-		
+
     var $graph;     			// Objet Graph (Artichow, Phplot...)
     var $error;
 
@@ -254,7 +254,7 @@ class DolGraph
     {
     	$this->datacolor = $datacolor;
     }
-    
+
     /**
      * Set type
      *
@@ -395,7 +395,7 @@ class DolGraph
 
     /**
      * Show legend or not
-     * 
+     *
      * @param	int		$showlegend		1=Show legend (default), 0=Hide legend
      * @return	void
      */
@@ -406,7 +406,7 @@ class DolGraph
 
     /**
      * Show pointvalue or not
-     * 
+     *
      * @param	int		$showpointvalue		1=Show value for each point, as tooltip or inline (default), 0=Hide value
      * @return	void
      */
@@ -414,10 +414,10 @@ class DolGraph
     {
         $this->showpointvalue=$showpointvalue;
     }
-    
+
     /**
      * Show percent or not
-     * 
+     *
      * @param	int		$showpercent		1=Show percent for each point, as tooltip or inline, 0=Hide percent (default)
      * @return	void
      */
@@ -425,9 +425,9 @@ class DolGraph
     {
         $this->showpercent=$showpercent;
     }
-    
-    
-    
+
+
+
     /**
      * Define background color of complete image
      *
@@ -590,12 +590,18 @@ class DolGraph
     /**
      * Build a graph onto disk using correct library
      *
-     * @param	string	$file    	Image file name to use if we save onto disk
+     * @param	string	$file    	Image file name to use to save onto disk (also used as javascript unique id)
      * @param	string	$fileurl	Url path to show image if saved onto disk
      * @return	void
      */
     function draw($file,$fileurl='')
     {
+    	if (empty($file))
+        {
+            $this->error="Call to draw method was made with empty value for parameter file.";
+            dol_syslog(get_class($this)."::draw ".$this->error, LOG_ERR);
+            return -2;
+        }
         if (! is_array($this->data) || count($this->data) < 1)
         {
             $this->error="Call to draw method was made but SetData was not called or called with an empty dataset for parameters";
@@ -796,8 +802,8 @@ class DolGraph
      *  $this->mode = 'depth' ???
      *  $this->bgcolorgrid
      *  $this->datacolor
-     *  
-     * @param	string	$file    	Image file name to use if we save onto disk
+     *
+     * @param	string	$file    	Image file name to use to save onto disk (also used as javascript unique id)
      * @param	string	$fileurl	Url path to show image if saved onto disk
      * @return	void
      */
@@ -806,6 +812,12 @@ class DolGraph
         global $artichow_defaultfont;
 
         dol_syslog(get_class($this)."::draw_jflot this->type=".join(',',$this->type));
+
+        if (empty($this->width) && empty($this->height))
+        {
+        	print 'Error width or height not set';
+        	return;
+        }
 
         $legends=array();
         $nblot=count($this->data[0])-1;    // -1 to remove legend
@@ -823,7 +835,7 @@ class DolGraph
 
             // Fill array $values
             $x=0;
-            foreach($this->data as $valarray)	// Loop on each x 
+            foreach($this->data as $valarray)	// Loop on each x
             {
                 $legends[$x] = $valarray[0];
                 $values[$x]  = (is_numeric($valarray[$i+1]) ? $valarray[$i+1] : null);
@@ -839,12 +851,12 @@ class DolGraph
            	{
                	foreach($values as $x => $y) { if (isset($y)) $serie[$i].='d'.$i.'.push(['.$x.', '.$y.']);'."\n"; }
             }
-            
+
 			unset($values);
             $i++;
         }
         $tag=dol_escape_htmltag(dol_string_unaccent(dol_string_nospecial(basename($file),'_',array('-','.'))));
-        
+
         $this->_stringtoshow ='<!-- Build using '.$this->_library.' -->'."\n";
         if (! empty($this->title)) $this->_stringtoshow.='<div align="center" class="dolgraphtitle'.(empty($this->cssprefix)?'':' dolgraphtitle'.$this->cssprefix).'">'.$this->title.'</div>';
         $this->_stringtoshow.='<div id="placeholder_'.$tag.'" style="width:'.$this->width.'px;height:'.$this->height.'px;" class="dolgraph'.(empty($this->cssprefix)?'':' dolgraph'.$this->cssprefix).'"></div>'."\n";
@@ -868,7 +880,7 @@ class DolGraph
 			$showlegend=$this->showlegend;
 			$showpointvalue=$this->showpointvalue;
 			$showpercent=$this->showpercent;
-			
+
 			$this->_stringtoshow.= '
 			function plotWithOptions_'.$tag.'() {
 				$.plot($("#placeholder_'.$tag.'"), d0,
@@ -933,16 +945,16 @@ class DolGraph
 	                opacity: 0.80
 	            }).appendTo("body").fadeIn(20);
 	        }
-	
+
 	        var previousPoint = null;
 	    	$("#placeholder_'.$tag.'").bind("plothover", function (event, pos, item) {
 		        $("#x").text(pos.x.toFixed(2));
 		        $("#y").text(pos.y.toFixed(2));
-		
+
 		        if (item) {
 		            if (previousPoint != item.dataIndex) {
 		                previousPoint = item.dataIndex;
-		
+
 		                $("#tooltip").remove();
 		                /* console.log(item); */
 		                var x = item.datapoint[0].toFixed(2);
@@ -962,9 +974,9 @@ class DolGraph
 		        }
 	    	});
 	        ';
-	
+
 	        $this->_stringtoshow.='var stack = null, steps = false;'."\n";
-	
+
 	        $this->_stringtoshow.='function plotWithOptions_'.$tag.'() {'."\n";
 	        $this->_stringtoshow.='$.plot($("#placeholder_'.$tag.'"), [ '."\n";
 	        $i=$firstlot;
@@ -979,7 +991,7 @@ class DolGraph
 	            $i++;
 	        }
 	        $this->_stringtoshow.="\n".' ], { series: { stack: stack, lines: { fill: false, steps: steps }, bars: { barWidth: 0.6 } }'."\n";
-	
+
 	        // Xaxis
 	        $this->_stringtoshow.=', xaxis: { ticks: ['."\n";
 	        $x=0;
@@ -990,10 +1002,10 @@ class DolGraph
 	            $x++;
 	        }
 	        $this->_stringtoshow.='] }'."\n";
-	
+
 	        // Yaxis
 	        $this->_stringtoshow.=', yaxis: { min: '.$this->MinValue.', max: '.($this->MaxValue).' }'."\n";
-	
+
 	        // Background color
 	        $color1=sprintf("%02x%02x%02x",$this->bgcolorgrid[0],$this->bgcolorgrid[0],$this->bgcolorgrid[2]);
 	        $color2=sprintf("%02x%02x%02x",$this->bgcolorgrid[0],$this->bgcolorgrid[1],$this->bgcolorgrid[2]);
@@ -1001,7 +1013,7 @@ class DolGraph
 	        //$this->_stringtoshow.=', shadowSize: 20'."\n";    TODO Uncommet this
 	        $this->_stringtoshow.='});'."\n";
 	        $this->_stringtoshow.='}'."\n";
-	
+
 		}
 
 		$this->_stringtoshow.='plotWithOptions_'.$tag.'();'."\n";
