@@ -683,9 +683,9 @@ class ExtraFields
 		}
 		elseif ($type == 'sellist')
 		{
-
 			$out='<select class="flat" name="options_'.$key.'">';
-			if (is_array($param['options'])) {
+			if (is_array($param['options']))
+			{
 				$param_list=array_keys($param['options']);
 				$InfoFieldList = explode(":", $param_list[0]);
 
@@ -696,38 +696,38 @@ class ExtraFields
 
 				$keyList='rowid';
 
-			if (count($InfoFieldList)>=3)
-				$keyList=$InfoFieldList[2].' as rowid';
-			if (count($InfoFieldList)>=4) {
-				list($parentName, $parentField) = explode('|', $InfoFieldList[3]);
-				$keyList.= ', '.$parentField;
-			}
+				if (count($InfoFieldList)>=3)
+					$keyList=$InfoFieldList[2].' as rowid';
+				if (count($InfoFieldList)>=4) {
+					list($parentName, $parentField) = explode('|', $InfoFieldList[3]);
+					$keyList.= ', '.$parentField;
+				}
 
-			$fields_label = explode('|',$InfoFieldList[1]);
-			if(is_array($fields_label)) {
-				$keyList .=', ';
-				$keyList .= implode(', ', $fields_label);
-			}
+				$fields_label = explode('|',$InfoFieldList[1]);
+				if(is_array($fields_label)) {
+					$keyList .=', ';
+					$keyList .= implode(', ', $fields_label);
+				}
 
-			$fields_label = explode('|',$InfoFieldList[1]);
-			if(is_array($fields_label)) {
-				$keyList .=', ';
-				$keyList .= implode(', ', $fields_label);
-			}
+				$fields_label = explode('|',$InfoFieldList[1]);
+				if(is_array($fields_label)) {
+					$keyList .=', ';
+					$keyList .= implode(', ', $fields_label);
+				}
 
-			$sql = 'SELECT '.$keyList;
-			$sql.= ' FROM '.MAIN_DB_PREFIX .$InfoFieldList[0];
-			//$sql.= ' WHERE entity = '.$conf->entity;
+				$sql = 'SELECT '.$keyList;
+				$sql.= ' FROM '.MAIN_DB_PREFIX .$InfoFieldList[0];
+				//$sql.= ' WHERE entity = '.$conf->entity;
+				print $sql;
 
 				dol_syslog(get_class($this).'::showInputField type=sellist sql='.$sql);
 				$resql = $this->db->query($sql);
-
 				if ($resql)
 				{
 					$out.='<option value="0">&nbsp;</option>';
 					$num = $this->db->num_rows($resql);
 					$i = 0;
-					if ($num)
+					while ($i < $num)
 					{
 						$labeltoshow='';
 						$obj = $this->db->fetch_object($resql);
@@ -764,16 +764,18 @@ class ExtraFields
 							$translabel=$langs->trans($obj->$InfoFieldList[1]);
 							if ($translabel!=$obj->$InfoFieldList[1]) {
 								$labeltoshow=dol_trunc($translabel,18);
-							}else {
+							}
+							else {
 								$labeltoshow=dol_trunc($obj->$InfoFieldList[1],18);
 							}
-
+							if (empty($labeltoshow)) $labeltoshow='(not defined)';
 							if ($value==$obj->rowid)
 							{
 								$out.='<option value="'.$obj->rowid.'" selected="selected">'.$labeltoshow.'</option>';
 							}
 
-							if(!empty($InfoFieldList[3])) {
+							if (!empty($InfoFieldList[3]))
+							{
 								$parent = $parentName.':'.$obj->{$parentField};
 							}
 
@@ -781,9 +783,9 @@ class ExtraFields
 							$out.= ($value==$obj->rowid?' selected="selected"':'');
 							$out.= (!empty($parent)?' parent="'.$parent.'"':'');
 							$out.='>'.$labeltoshow.'</option>';
-
-							$i++;
 						}
+
+						$i++;
 					}
 					$this->db->free();
 				}
