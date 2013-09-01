@@ -199,3 +199,5 @@ CostPmpHT=Cout à l'achat HT
 ProductUsedForBuild=Consommé automatiquement par la fabrication
 ProductBuilded=Fabrication terminée
 ProductsMultiPrice=Produits multi-prix
+ProductSellByQuarterHT=Chiffre d'affaire trimestrielle HT des produits
+ServiceSellByQuarterHT=Chiffre d'affaire trimestrielle HT des services

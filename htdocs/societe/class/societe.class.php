@@ -1433,6 +1433,16 @@ class Societe extends CommonObject
 
         $name=$this->name?$this->name:$this->nom;
 
+		if ($conf->global->SOCIETE_ADD_REF_IN_LIST) {
+			if (($this->client) && (! empty ( $this->code_client ))) {
+				$code = $this->code_client . ' - ';
+			}
+			if (($this->fournisseur) && (! empty ( $this->code_fournisseur ))) {
+				$code .= $this->code_fournisseur . ' - ';
+			}
+			$name =$code.' '.$name;
+		} 
+
         $result='';
         $lien=$lienfin='';
 
@@ -1581,8 +1591,7 @@ class Societe extends CommonObject
         $contact_property = array();
 
 
-
-        $sql = "SELECT rowid, email, statut, phone_mobile, lastname, firstname";
+        $sql = "SELECT rowid, email, phone_mobile, lastname, poste, firstname";
         $sql.= " FROM ".MAIN_DB_PREFIX."socpeople";
         $sql.= " WHERE fk_soc = '".$this->id."'";
 
@@ -1604,6 +1613,12 @@ class Societe extends CommonObject
                     {
 						 $contact_property[$obj->rowid] = trim(dolGetFirstLastname($obj->firstname,$obj->lastname))." &lt;".$property."&gt;";
 
+                    if(!empty($obj->poste)){
+						$contact_property[$obj->rowid] = trim(dolGetFirstLastname($obj->firstname,$obj->lastname))."(".$obj->poste.")"." &lt;".$property."&gt;";
+					}
+					else
+					{
+						$contact_property[$obj->rowid] = trim(dolGetFirstLastname($obj->firstname,$obj->lastname))." &lt;".$property."&gt;";
 					}
                     $i++;
                 }

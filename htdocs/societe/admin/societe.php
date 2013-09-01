@@ -211,6 +211,22 @@ if ($action == 'setprofid')
 	}
 }
 
+//Activate Set ref in list
+if ($action=="setaddrefinlist") {
+	$setaddrefinlist = GETPOST('value','int');
+	$res = dolibarr_set_const($db, "SOCIETE_ADD_REF_IN_LIST", $setaddrefinlist,'yesno',0,'',$conf->entity);
+	if (! $res > 0) $error++;
+	if (! $error)
+	{
+		$mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
+	}
+	else
+	{
+		$mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
+	}
+}
+
+
 //Activate ProfId mandatory
 if ($action == 'setprofidmandatory')
 {
@@ -716,6 +732,23 @@ else
 }
 print '</tr>';
 print '</form>';
+
+$var=!$var;
+print "<tr ".$bc[$var].">";
+print '<td width="80%">'.$langs->trans("AddRefInList").'</td>';
+if (!empty($conf->global->SOCIETE_ADD_REF_IN_LIST))
+{
+	print '<td align="center" colspan="2"><a href="'.$_SERVER['PHP_SELF'].'?action=setaddrefinlist&value=0">';
+	print img_picto($langs->trans("Activated"),'switch_on');
+	print '</a></td>';
+}
+else
+{
+	print '<td align="center" colspan="2"><a href="'.$_SERVER['PHP_SELF'].'?action=setaddrefinlist&value=1">';
+	print img_picto($langs->trans("Disabled"),'switch_off');
+	print '</a></td>';
+}
+print '</tr>';
 
 
 $var=!$var;
