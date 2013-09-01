@@ -220,7 +220,12 @@ class Export
 
 			if ($i > 0) $sql.=', ';
 			else $i++;
-			$newfield=$key.' as '.str_replace(array('.', '-'),'_',$key);;
+			
+			if (strpos($key, ' as ')===false) {
+				$newfield=$key.' as '.str_replace(array('.', '-'),'_',$key);
+			} else {
+				$newfield=$key;
+			}
 
 			$sql.=$newfield;
 		}
