@@ -278,9 +278,9 @@ class doc_generic_proposal_odt extends ModelePDFPropales
 				$newfiletmp=preg_replace('/\.od(t|s)/i','',$newfile);
 				$newfiletmp=preg_replace('/template_/i','',$newfiletmp);
 				$newfiletmp=preg_replace('/modele_/i','',$newfiletmp);
-				
+
 				$newfiletmp=$objectref.'_'.$newfiletmp;
-				
+
 				// Get extension (ods or odt)
 				$newfileformat=substr($newfile, strrpos($newfile, '.')+1);
 				if ( ! empty($conf->global->MAIN_DOC_USE_TIMING))
@@ -362,7 +362,7 @@ class doc_generic_proposal_odt extends ModelePDFPropales
 
 				// Make substitutions into odt of freetext
 				try {
-					$odfHandler->setVars('free_text', $newfreetext, true, 'UTF-8');
+					$odfHandler->setVars('free_text', $newfreetext, 'auto', 'UTF-8');
 				}
 				catch(OdfException $e)
 				{
@@ -378,11 +378,11 @@ class doc_generic_proposal_odt extends ModelePDFPropales
 						{
 							//var_dump($value);exit;
 							if (file_exists($value)) $odfHandler->setImage($key, $value);
-							else $odfHandler->setVars($key, 'ErrorFileNotFound', true, 'UTF-8');
+							else $odfHandler->setVars($key, 'ErrorFileNotFound', 'auto', 'UTF-8');
 						}
 						else    // Text
 						{
-							$odfHandler->setVars($key, $value, true, 'UTF-8');
+							$odfHandler->setVars($key, $value, 'auto', 'UTF-8');
 						}
 					}
 					catch(OdfException $e)
@@ -399,11 +399,11 @@ class doc_generic_proposal_odt extends ModelePDFPropales
 						{
 							//var_dump($value);exit;
 							if (file_exists($value)) $odfHandler->setImage($key, $value);
-							else $odfHandler->setVars($key, 'ErrorFileNotFound', true, 'UTF-8');
+							else $odfHandler->setVars($key, 'ErrorFileNotFound', 'auto', 'UTF-8');
 						}
 						else	// Text
 						{
-							$odfHandler->setVars($key, $value, true, 'UTF-8');
+							$odfHandler->setVars($key, $value, 'auto', 'UTF-8');
 						}
 					}
 					catch(OdfException $e)
@@ -418,11 +418,11 @@ class doc_generic_proposal_odt extends ModelePDFPropales
 						if (preg_match('/logo$/',$key))	// Image
 						{
 							if (file_exists($value)) $odfHandler->setImage($key, $value);
-							else $odfHandler->setVars($key, 'ErrorFileNotFound', true, 'UTF-8');
+							else $odfHandler->setVars($key, 'ErrorFileNotFound', 'auto', 'UTF-8');
 						}
 						else	// Text
 						{
-							$odfHandler->setVars($key, $value, true, 'UTF-8');
+							$odfHandler->setVars($key, $value, 'auto', 'UTF-8');
 						}
 					}
 					catch(OdfException $e)
@@ -442,11 +442,11 @@ class doc_generic_proposal_odt extends ModelePDFPropales
 						if (preg_match('/logo$/',$key)) // Image
 						{
 							if (file_exists($value)) $odfHandler->setImage($key, $value);
-							else $odfHandler->setVars($key, 'ErrorFileNotFound', true, 'UTF-8');
+							else $odfHandler->setVars($key, 'ErrorFileNotFound', 'auto', 'UTF-8');
 						}
 						else    // Text
 						{
-							$odfHandler->setVars($key, $value, true, 'UTF-8');
+							$odfHandler->setVars($key, $value, 'auto', 'UTF-8');
 						}
 					}
 					catch(OdfException $e)
@@ -508,7 +508,7 @@ class doc_generic_proposal_odt extends ModelePDFPropales
 						$this->error=$e->getMessage();
 						return -1;
 					}
-				}	
+				}
 
 				if (! empty($conf->global->MAIN_UMASK))
 					@chmod($file, octdec($conf->global->MAIN_UMASK));

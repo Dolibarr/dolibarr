@@ -1,0 +1,49 @@
+Changes in XHTML2ODT
+====================
+
+Version 1.3
+-----------
+
+* Improve <dl> and <span> tags conversion
+* Improve image handling
+* Add RPM and Debian package metadata
+* Better XML escaping in the PHP script
+* Add support for Lyx and Elyxer
+* Other various improvements and bug fixes
+
+
+Version 1.2
+-----------
+
+* Allow nested tables
+* Make image inline threshold a parameter (#1), and remove the para.padding
+  parameter
+* Better support for tags inside table cells
+* Table colspan support, and basic rowspan support
+* Makefile fix
+
+
+Version 1.1
+-----------
+
+* Beginning of partial support for syntax highlighting.
+* Bugfixes in the handling of <pre> tags
+* Addition of a simple bash script to run the stylesheets
+* Source code paragraph have their own paragraph style, to ease customization
+
+*Note on syntax highlighting*: the supported highlighters are:
+
+* Pygments_ (partial support)
+* inline CSS in ``<span>`` tags (partial support, obviously), tested with
+  GeSHi_
+
+.. _Pygments: http://pygments.org/
+.. _GeSHi: http://qbnz.com/highlighter/
+
+
+Version 1.0
+-----------
+* Initial stable release, see the website for details
+
+
+# vim:syntax=rst
