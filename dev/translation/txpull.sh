@@ -11,7 +11,7 @@
 if [ "x$1" = "x" ]
 then
 	echo "This pull remote transifex files to local dir."
-	echo "Note:  If you push a language file (not source), file will be skipped if transifex file is newer."
+	echo "Note:  If you pull a language file (not source), file will be skipped if local file is newer."
 	echo "       Using -f will overwrite local file (does not work with 'all')."
 	echo "Usage: txpull.sh (all|xx_XX) [-r dolibarr.file] [-f]"
 	exit
