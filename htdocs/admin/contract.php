@@ -35,6 +35,8 @@ if (!$user->admin) accessforbidden();
 
 $action = GETPOST('action','alpha');
 $value = GETPOST('value','alpha');
+$scandir = GETPOST('scandir','alpha');
+$type='contrat';
 
 if (empty($conf->global->CONTRACT_ADDON))
 {
@@ -62,11 +64,6 @@ if ($action == 'updateMask')
     {
         setEventMessage($langs->trans("Error"),'errors');
     }
-}
-
-if ($action == 'setmod')
-{
-    dolibarr_set_const($db, "CONTRACT_ADDON",$value,'chaine',0,'',$conf->entity);
 }
 
 else if ($action == 'specimen') // For contract
