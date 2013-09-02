@@ -119,6 +119,7 @@ Fix: [ bug #1043 ] Bad interventions ref numbering
 Fix: Mailing module : if an email is already in destinaires list all other email from selector was not inserted
 Fix: Localtaxes balance not showing
 Fix: Intervention box links to contracts id
+Fix: Compatiblity with multicompany module
 
 ***** ChangeLog for 3.4 compared to 3.3.* *****
 For users:
