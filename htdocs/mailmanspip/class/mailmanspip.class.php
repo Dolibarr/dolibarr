@@ -395,6 +395,8 @@ class MailmanSpip
 	            if ($listes=='' && ! empty($conf->global->ADHERENT_MAILMAN_LISTS)) $lists=explode(',',$conf->global->ADHERENT_MAILMAN_LISTS);
 	            else $lists=explode(',',$listes);
 
+	            $categstatic=new Categorie($this->db);
+
 	            foreach ($lists as $list)
 	            {
 	            	// Filter on type something (ADHERENT_MAILMAN_LISTS = "mailinglist0,TYPE:typevalue:mailinglist1,CATEG:categvalue:mailinglist2")
