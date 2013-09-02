@@ -433,9 +433,9 @@ class pdf_strato extends ModelePDFContract
 		pdf_pagehead($pdf,$outputlangs,$this->page_hauteur);
 
 		//Affiche le filigrane brouillon - Print Draft Watermark
-		if($object->statut==0 && (! empty($conf->global->CONTRAT_DRAFT_WATERMARK)) )
+		if($object->statut==0 && (! empty($conf->global->CONTRACT_DRAFT_WATERMARK)) )
 		{
-			pdf_watermark($pdf,$outputlangs,$this->page_hauteur,$this->page_largeur,'mm',$conf->global->CONTRAT_DRAFT_WATERMARK);
+			pdf_watermark($pdf,$outputlangs,$this->page_hauteur,$this->page_largeur,'mm',$conf->global->CONTRACT_DRAFT_WATERMARK);
 		}
 
 		//Prepare la suite
@@ -601,7 +601,7 @@ class pdf_strato extends ModelePDFContract
 	 */
 	function _pagefoot(&$pdf,$object,$outputlangs,$hidefreetext=0)
 	{
-		return pdf_pagefoot($pdf,$outputlangs,'CONTRAT_FREE_TEXT',$this->emetteur,$this->marge_basse,$this->marge_gauche,$this->page_hauteur,$object,0,$hidefreetext);
+		return pdf_pagefoot($pdf,$outputlangs,'CONTRACT_FREE_TEXT',$this->emetteur,$this->marge_basse,$this->marge_gauche,$this->page_hauteur,$object,0,$hidefreetext);
 	}
 
 }
