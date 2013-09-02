@@ -122,10 +122,10 @@ class pdf_standard
 	 * @param    Translate  $outputlangs    Output langs
 	 * @param    string     $textright      Text right
 	 * @param    int        $idmember       Id member
-	 * @param    string     $photomember    Photo member
+	 * @param    string     $photo    		Photo member
 	 * @return   void
 	 */
-	function Add_PDF_card(&$pdf,$textleft,$header,$footer,$outputlangs,$textright='',$idmember=0,$photomember='')
+	function Add_PDF_card(&$pdf,$textleft,$header,$footer,$outputlangs,$textright='',$idmember=0,$photo='')
 	{
 		global $mysoc,$conf,$langs;
 
@@ -154,9 +154,9 @@ class pdf_standard
 
 		// Define photo
 		$dir=$conf->adherent->dir_output;
-		$file=get_exdir($idmember,2).'photos/'.$photomember;
+		$file=get_exdir($idmember,2).'photos/'.$photo;
 		$photo=$dir.'/'.$file;
-		if (empty($photomember) || ! is_readable($photo)) $photo='';
+		if (empty($photo) || ! is_readable($photo)) $photo='';
 
 		// Define background image
 		$backgroundimage='';
@@ -408,12 +408,13 @@ class pdf_standard
 	/**
 	 *	Function to build PDF on disk, then output on HTTP strem.
 	 *
-	 *	@param	array		$arrayofmembers		Array of members informations
+	 *	@param	array		$arrayofrecords		Array of record informations (array('textleft'=>,'textheader'=>, ...'id'=>,'photo'=>)
 	 *	@param	Translate	$outputlangs		Lang object for output language
      *  @param	string		$srctemplatepath	Full path of source filename for generator using a template file
+     *  @param	string		$mode				Tell if doc module is called for 'member, ...
 	 *	@return	int     						1=OK, 0=KO
 	 */
-	function write_file($arrayofmembers,$outputlangs,$srctemplatepath)
+	function write_file($arrayofrecords,$outputlangs,$srctemplatepath,$mode='member')
 	{
 		global $user,$conf,$langs,$mysoc,$_Avery_Labels;
 
@@ -433,9 +434,20 @@ class pdf_standard
 		$outputlangs->load("members");
 		$outputlangs->load("admin");
 
+		if (empty($mode) || $mode == 'member')
+		{
+	        $title=$outputlangs->transnoentities('MembersCards');
+	        $keywords=$outputlangs->transnoentities('MembersCards')." ".$outputlangs->transnoentities("Foundation")." ".$outputlangs->convToOutputCharset($mysoc->name);
+			$outputdir=$conf->adherent->dir_temp;
+		}
+		else
+		{
+			dol_print_error('','Bad value for $mode');
+			return -1;
+		}
 
-		$dir = (empty($outputdir)?$conf->adherent->dir_temp:$outputdir);
-		$filename='tmp_cards.pdf';
+		$dir = $outputdir;
+		$filename = 'tmp_cards.pdf';
 		$file = $dir."/".$filename;
 
 		if (! file_exists($dir))
@@ -456,11 +468,11 @@ class pdf_standard
         }
         $pdf->SetFont(pdf_getPDFFont($outputlangs));
 
-		$pdf->SetTitle($outputlangs->transnoentities('MembersCards'));
-		$pdf->SetSubject($outputlangs->transnoentities("MembersCards"));
+		$pdf->SetTitle($title);
+		$pdf->SetSubject($title);
 		$pdf->SetCreator("Dolibarr ".DOL_VERSION);
 		$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
-		$pdf->SetKeyWords($outputlangs->transnoentities('MembersCards')." ".$outputlangs->transnoentities("Foundation")." ".$outputlangs->convToOutputCharset($mysoc->name));
+		$pdf->SetKeyWords($keywords);
 		if (! empty($conf->global->MAIN_DISABLE_PDF_COMPRESSION)) $pdf->SetCompression(false);
 
 		$pdf->SetMargins(0,0);
@@ -482,7 +494,7 @@ class pdf_standard
 
 
 		// Add each record
-		foreach($arrayofmembers as $val)
+		foreach($arrayofrecords as $val)
 		{
 			// imprime le texte specifique sur la carte
 			$this->Add_PDF_card($pdf,$val['textleft'],$val['textheader'],$val['textfooter'],$langs,$val['textright'],$val['id'],$val['photo']);
@@ -497,7 +509,6 @@ class pdf_standard
 
 		if (! empty($conf->global->MAIN_UMASK))
 			@chmod($file, octdec($conf->global->MAIN_UMASK));
-
 
 
 		// Output to http stream
