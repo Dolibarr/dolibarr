@@ -1031,7 +1031,23 @@ function pdf_getlinedesc($object,$i,$outputlangs,$hideref=0,$hidedesc=0,$issuppl
 			$libelleproduitservice=$prefix_prodserv.$ref_prodserv.$libelleproduitservice;
 		}
 	}
-
+	
+	// Add an additional description for the category products
+	if ($conf->categorie->enabled)
+	{
+		include_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+		$categstatic=new Categorie($db);
+		// recovering the list of all the categories linked to product
+		$tblcateg=$categstatic->containing($idprod,0);
+		foreach ($tblcateg as $cate)
+		{
+			// Adding the descriptions if they are filled
+			$desccateg=$cate->add_description;
+			if ($desccateg)
+				$libelleproduitservice.='__N__'.$desccateg;
+		}
+	}
+	
 	if (! empty($object->lines[$i]->date_start) || ! empty($object->lines[$i]->date_end))
 	{
 		$format='day';
