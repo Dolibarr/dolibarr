@@ -69,7 +69,6 @@ class box_graph_product_distribution extends ModeleBoxes
 		include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 		include_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 		include_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
-		$facturestatic=new Facture($db);
 
 		$text = $langs->trans("BoxProductDistribution",$max);
 		$this->info_box_head = array(
@@ -90,8 +89,11 @@ class box_graph_product_distribution extends ModeleBoxes
 		$showinvoicenb=GETPOST($param_showinvoicenb,'alpha',4);
 		$showpropalnb=GETPOST($param_showpropalnb,'alpha',4);
 		$showordernb=GETPOST($param_showordernb,'alpha',4);
-
 		if (empty($showinvoicenb) && empty($showpropalnb) && empty($showordernb)) { $showpropalnb=1; $showinvoicenb=1; $showordernb=1; }
+		if (empty($conf->facture->enabled) || empty($user->rights->facture->lire)) $showinvoicenb=0;		
+		if (empty($conf->propal->enabled) || empty($user->rights->propal->lire)) $showpropalnb=0;		
+		if (empty($conf->commande->enabled) || empty($user->rights->commande->lire)) $showordernb=0;		
+
 		$nowarray=dol_getdate(dol_now(),true);
 		$year=(GETPOST($param_year,'',4)?GETPOST($param_year,'int',4):$nowarray['year']);
 
@@ -107,7 +109,7 @@ class box_graph_product_distribution extends ModeleBoxes
 		$socid=empty($user->societe_id)?0:$user->societe_id;
 		$userid=0;	// No filter on user creation
 		
-		if ($user->rights->facture->lire)
+		if (! empty($conf->facture->enabled) && ! empty($user->rights->facture->lire))
 		{
 			include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 			
@@ -170,7 +172,7 @@ class box_graph_product_distribution extends ModeleBoxes
 			}
 		}
 			
-		if ($user->rights->propal->lire)
+		if (! empty($conf->propal->enabled) && ! empty($user->rights->propal->lire))
 		{
 			// Build graphic number of object. $data = array(array('Lib',val1,val2,val3),...)
 			if ($showpropalnb)
@@ -228,7 +230,7 @@ class box_graph_product_distribution extends ModeleBoxes
 			}
 		}
 
-		if ($user->rights->commande->lire)
+		if (! empty($conf->commande->enabled) && ! empty($user->rights->commande->lire))
 		{
 			// Build graphic number of object. $data = array(array('Lib',val1,val2,val3),...)
 			if ($showordernb)
@@ -300,11 +302,20 @@ class box_graph_product_distribution extends ModeleBoxes
 			$stringtoshow.='<form class="flat formboxfilter" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 			$stringtoshow.='<input type="hidden" name="action" value="'.$refreshaction.'">';
 			$stringtoshow.='<input type="hidden" name="DOL_AUTOSET_COOKIE" value="'.$param_year.','.$param_showinvoicenb.','.$param_showpropalnb.','.$param_showordernb.'">';
-			$stringtoshow.='<input type="checkbox" name="'.$param_showinvoicenb.'"'.($showinvoicenb?' checked="true"':'').'> '.$langs->trans("ForCustomersInvoices");
-			$stringtoshow.=' &nbsp; ';
-			$stringtoshow.='<input type="checkbox" name="'.$param_showpropalnb.'"'.($showpropalnb?' checked="true"':'').'> '.$langs->trans("ForProposals");
-			$stringtoshow.='&nbsp;';
-			$stringtoshow.='<input type="checkbox" name="'.$param_showordernb.'"'.($showordernb?' checked="true"':'').'> '.$langs->trans("ForCustomersOrders");
+			if (! empty($conf->facture->enabled) || ! empty($user->rights->facture->lire))		
+			{
+				$stringtoshow.='<input type="checkbox" name="'.$param_showinvoicenb.'"'.($showinvoicenb?' checked="true"':'').'> '.$langs->trans("ForCustomersInvoices");
+				$stringtoshow.=' &nbsp; ';
+			}
+			if (! empty($conf->propal->enabled) || ! empty($user->rights->propal->lire))		
+			{
+				$stringtoshow.='<input type="checkbox" name="'.$param_showpropalnb.'"'.($showpropalnb?' checked="true"':'').'> '.$langs->trans("ForProposals");
+				$stringtoshow.='&nbsp;';
+			}
+			if (! empty($conf->commande->enabled) || ! empty($user->rights->commande->lire))		
+			{
+				$stringtoshow.='<input type="checkbox" name="'.$param_showordernb.'"'.($showordernb?' checked="true"':'').'> '.$langs->trans("ForCustomersOrders");
+			}
 			$stringtoshow.='<br>';
 			$stringtoshow.=$langs->trans("Year").' <input class="flat" size="4" type="text" name="'.$param_year.'" value="'.$year.'">';
 			$stringtoshow.='<input type="image" src="'.img_picto($langs->trans("Refresh"),'refresh.png','','',1).'">';
