@@ -21,6 +21,7 @@ Fix: Mailing module : if an email is already in destinaires list all other email
 Fix: Localtaxes balance not showing
 Fix: Intervention box links to contracts id
 Fix: Compatiblity with multicompany module
+Fix: Delete linked element to supplier invoice when deleted 
 
 ***** ChangeLog for 3.4 compared to 3.3.* *****
 For users:
