@@ -157,4 +157,9 @@ ByProductsAndServices=Par produits et services
 RefExt=Référence externe
 ToCreateAPredefinedInvoice=Pour créer une facture prédéfinie, créer une facture standard puis sans la valider, cliquer sur le bouton "Convertir en facture prédéfine".
 LinkedOrder=Lier à une commande
+ReCalculate=Recalculer
+Mode1=Mode 1
+Mode2=Mode 2
+CalculationRuleDesc=Pour calculer le total de TVA, il existe 2 modes:<br>Le mode 1 consiste à arrondir la tva de chaque ligne et à sommer cet arrondi.<br>Le mode 2 consiste à sommer la tva de chaque ligne puis à l'arrondir.<br>Les résultats peuvent différer de quelques centimes. Le mode par défaut est le mode <b>%s</b>.
+CalculationRuleDescSupplier=Selon le mode utilisé par le fournisseur, choisissez le mode adéquant afin d'appliquer la même règle et obtenir un résultat identique au mode appliqué par votre fournisseur.
 
