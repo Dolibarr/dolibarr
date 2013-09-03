@@ -75,6 +75,7 @@ NoRecordedProducts=Sin productos/servicios registrados
 NoRecordedProspects=Sin clientes potenciales registrados
 NoContractedProducts=Sin productos/servicios contratados
 NoRecordedContracts=Sin contratos registrados
+NoRecordedInterventions=Sin intervenciones registradas
 BoxLatestSupplierOrders=Últimos pedidos a proveedores
 BoxTitleLatestSupplierOrders=Los %s últimos pedidos a proveedores
 NoSupplierOrder=Sin pedidos a proveedores

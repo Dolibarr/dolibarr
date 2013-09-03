@@ -345,9 +345,9 @@ class Form
      *
      *	@param	string		$text				Text to show
      *	@param	string		$htmltext			HTML content of tooltip. Must be HTML/UTF8 encoded.
-     *	@param	int			$tooltipon			1=tooltip sur texte, 2=tooltip sur picto, 3=tooltip sur les 2
-     *	@param	int			$direction			-1=Le picto est avant, 0=pas de picto, 1=le picto est apres
-     *	@param	string		$img				Code img du picto (use img_xxx() function to get it)
+     *	@param	int			$tooltipon			1=tooltip on text, 2=tooltip on image, 3=tooltip sur les 2
+     *	@param	int			$direction			-1=image is before, 0=no image, 1=image is after
+     *	@param	string		$img				Html code for image (use img_xxx() function to get it)
      *	@param	string		$extracss			Add a CSS style to td tags
      *	@param	int			$notabs				0=Include table and tr tags, 1=Do not include table and tr tags, 2=use div, 3=use span
      *	@param	string		$incbefore			Include code before the text

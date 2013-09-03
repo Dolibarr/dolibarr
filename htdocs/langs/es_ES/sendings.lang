@@ -61,13 +61,16 @@ ShipmentCreationIsDoneFromOrder=De momento, la creación de una nueva expedició
 RelatedShippings=Expedición(es) asociada(s)
 ShipmentLine=Línea de expedición
 CarrierList=Listado de transportistas
+
 # Sending methods
 SendingMethodCATCH=Recogido por el cliente
 SendingMethodTRANS=Transportista
 SendingMethodCOLSUI=Colissimo
+
 # ModelDocument
 DocumentModelSirocco=Modelo simple de nota de entrega / recepción
 DocumentModelTyphon=Modelo completo de nota de entrega / recepción (logo...)
+
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=Constante EXPEDITION_ADDON_NUMBER no definida
 SumOfProductVolumes=Suma del volumen de los productos
 SumOfProductWeights=Suma del peso de los productos

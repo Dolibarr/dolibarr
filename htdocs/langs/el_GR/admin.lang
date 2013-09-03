@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - admin
 CHARSET=UTF-8
-Foundation=Ίδρυμα
+Foundation=Οργανισμός
 Version=Έκδοση
 VersionProgram=Έκδοση Προγράμματος
 VersionLastInstall=Έκδοση Τελευταίας Εγκατάστασης
@@ -8,7 +8,7 @@ VersionLastUpgrade=Έκδοση Τελευταίας Ενημέρωσης
 VersionExperimental=Πειραματική
 VersionDevelopment=Υπό ανάπτυξη
 VersionUnknown=Άγνωστη
-VersionRecommanded=Προτινώμενη
+VersionRecommanded=Προτεινόμενη
 SessionId=ID Συνόδου
 SessionSaveHandler=Φορέα εξυπηρέτησης για να σώσει συνεδρίες
 SessionSavePath=Αποθήκευση τοπικής προσαρμογής συνεδρίας
@@ -18,7 +18,7 @@ NoSessionListWithThisHandler=Save session handler configured in your PHP does no
 LockNewSessions=Κλειδώσετε τις νέες συνδέσεις
 ConfirmLockNewSessions=Είστε σίγουροι ότι θέλετε να περιορίσει κάθε νέα σύνδεση Dolibarr για τον εαυτό σας. Μόνο ο χρήστης <b>%s</b>  θα είναι σε θέση να συνδεθεί μετά από αυτό.
 UnlockNewSessions=Κατάργηση κλειδώματος σύνδεσης
-YourSession=Η σύνοδός σας
+YourSession=Η σύνοδος σας
 Sessions=Σύνοδοι χρηστών
 WebUserGroup=Διακομιστή Web χρήστη / ομάδα
 NoSessionFound=Your PHP seems to not allow to list active sessions. Directory used to save sessions (<b>%s</b>) might be protected (For example, by OS permissions or by PHP directive open_basedir).

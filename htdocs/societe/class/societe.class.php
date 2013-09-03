@@ -1441,7 +1441,7 @@ class Societe extends CommonObject
 				$code .= $this->code_fournisseur . ' - ';
 			}
 			$name =$code.' '.$name;
-		} 
+		}
 
         $result='';
         $lien=$lienfin='';
@@ -1581,18 +1581,18 @@ class Societe extends CommonObject
     }
 
     /**
-     *    Return list of contacts emails or mobile existing for third party
+     *  Return list of contacts emails or mobile existing for third party
      *
-     *    @param	string	$mode       'email' or 'mobile'
-     *    @return   array       		Array of contacts emails or mobile
+     *  @param	string	$mode       		'email' or 'mobile'
+	 * 	@param	int		$hidedisabled		1=Hide contact if disabled
+     *  @return array       				Array of contacts emails or mobile
      */
-    function contact_property_array($mode='email')
+    function contact_property_array($mode='email', $hidedisabled=0)
     {
         $contact_property = array();
 
 
-
-        $sql = "SELECT rowid, email, statut, phone_mobile, lastname, firstname";
+        $sql = "SELECT rowid, email, statut, phone_mobile, lastname, poste, firstname";
         $sql.= " FROM ".MAIN_DB_PREFIX."socpeople";
         $sql.= " WHERE fk_soc = '".$this->id."'";
 
@@ -1609,12 +1609,18 @@ class Societe extends CommonObject
                     if ($mode == 'email') $property=$obj->email;
                     else if ($mode == 'mobile') $property=$obj->phone_mobile;
 
-
-                    if ($obj->statut == 1)
+					// Show all contact. If hidedisabled is 1, showonly contacts with status = 1
+                    if ($obj->statut == 1 || empty($hidedisabled))
                     {
-						 $contact_property[$obj->rowid] = trim(dolGetFirstLastname($obj->firstname,$obj->lastname))." &lt;".$property."&gt;";
-
-					}
+	                    if (!empty($obj->poste))
+    	                {
+							$contact_property[$obj->rowid] = trim(dolGetFirstLastname($obj->firstname,$obj->lastname))."(".$obj->poste.")"." &lt;".$property."&gt;";
+						}
+						else
+						{
+							$contact_property[$obj->rowid] = trim(dolGetFirstLastname($obj->firstname,$obj->lastname))." &lt;".$property."&gt;";
+						}
+                    }
                     $i++;
                 }
             }

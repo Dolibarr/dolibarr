@@ -25,7 +25,7 @@
 /**
  *  \file       htdocs/core/modules/contract/modules_contract.php
  *  \ingroup    contract
- *  \brief      Fichier contenant la classe mere de generation des fiches interventions en PDF and File of class to manage contract numbering
+ *  \brief      File with parent class for generating contracts to PDF and File of class to manage contract numbering
  */
 
  require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
@@ -105,7 +105,7 @@ class ModelNumRefContracts
 	/**
 	 *	Test if existing numbers make problems with numbering
 	 *
-	 *	@return		boolean		false if conflit, true if ok
+	 *	@return		boolean		false if conflict, true if ok
 	 */
 	function canBeActivated()
 	{
