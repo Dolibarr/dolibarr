@@ -303,7 +303,9 @@ else
     		print_liste_field_titre($langs->trans("DateModification"), $_SERVER["PHP_SELF"], "p.tms",$param,"",'align="center"',$sortfield,$sortorder);
     		if (! empty($conf->service->enabled) && $type != 0) print_liste_field_titre($langs->trans("Duration"), $_SERVER["PHP_SELF"], "p.duration",$param,"",'align="center"',$sortfield,$sortorder);
     		if (empty($conf->global->PRODUIT_MULTIPRICES)) print_liste_field_titre($langs->trans("SellingPrice"), $_SERVER["PHP_SELF"], "p.price",$param,"",'align="right"',$sortfield,$sortorder);
-    		print '<td class="liste_titre" align="right">'.$langs->trans("BuyingPriceMinShort").'</td>';
+    		if ($user->rights->produit->creer) {
+                print '<td class="liste_titre" align="right">'.$langs->trans("BuyingPriceMinShort").'</td>';
+            }
     		if (! empty($conf->stock->enabled) && $user->rights->stock->lire && $type != 1) print '<td class="liste_titre" align="right">'.$langs->trans("DesiredStock").'</td>';
     		if (! empty($conf->stock->enabled) && $user->rights->stock->lire && $type != 1) print '<td class="liste_titre" align="right">'.$langs->trans("PhysicalStock").'</td>';
     		print_liste_field_titre($langs->trans("Sell"), $_SERVER["PHP_SELF"], "p.tosell",$param,"",'align="right"',$sortfield,$sortorder);
@@ -345,9 +347,11 @@ else
             }
 
     		// Minimum buying Price
-    		print '<td class="liste_titre">';
-    		print '&nbsp;';
-    		print '</td>';
+            if ($user->rights->produit->creer) {
+                print '<td class="liste_titre">';
+                print '&nbsp;';
+                print '</td>';
+            }
 
     		// Stock
     		if (! empty($conf->stock->enabled) && $user->rights->stock->lire && $type != 1)
@@ -442,21 +446,23 @@ else
     			}
 
     			// Better buy price
-                print  '<td align="right">';
-                if ($objp->minsellprice != '')
-                {
-                    //print price($objp->minsellprice).' '.$langs->trans("HT");
-        			if ($product_fourn->find_min_price_product_fournisseur($objp->rowid) > 0)
-        			{
-        			    if ($product_fourn->product_fourn_price_id > 0)
-        			    {
-        			        $htmltext=$product_fourn->display_price_product_fournisseur();
-                            if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->lire) print $form->textwithpicto(price($product_fourn->fourn_unitprice).' '.$langs->trans("HT"),$htmltext);
-                            else print price($product_fourn->fourn_unitprice).' '.$langs->trans("HT");
-        			    }
-        			}
+                if ($user->rights->produit->creer) {
+                    print  '<td align="right">';
+                    if ($objp->minsellprice != '')
+                    {
+                        //print price($objp->minsellprice).' '.$langs->trans("HT");
+                        if ($product_fourn->find_min_price_product_fournisseur($objp->rowid) > 0)
+                        {
+                            if ($product_fourn->product_fourn_price_id > 0)
+                            {
+                                $htmltext=$product_fourn->display_price_product_fournisseur();
+                                if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->lire) print $form->textwithpicto(price($product_fourn->fourn_unitprice).' '.$langs->trans("HT"),$htmltext);
+                                else print price($product_fourn->fourn_unitprice).' '.$langs->trans("HT");
+                            }
+                        }
+                    }
+                    print '</td>';
                 }
-                print '</td>';
 
     			// Show stock
     			if (! empty($conf->stock->enabled) && $user->rights->stock->lire && $type != 1)
