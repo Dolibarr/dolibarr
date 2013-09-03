@@ -5,7 +5,7 @@
  * Copyright (C) 2006-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2006-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2007      Patrick Raguin	  	<patrick.raguin@gmail.com>
- * Copyright (C) 2013      Juanjo Menent	  	<jmenent@2byte.es>
+ * Copyright (C) 2013      Philippe Grand	  	<philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,6 +44,7 @@ class Categorie
 	var $fk_parent;
 	var $label;
 	var $description;
+	var $add_description;       // For taxes like DEEE...
 	var $socid;
 	var $type;					// 0=Product, 1=Supplier, 2=Customer/Prospect, 3=Member
 	var $import_key;
@@ -73,7 +74,7 @@ class Categorie
 	{
 		global $conf;
 
-		$sql = "SELECT rowid, fk_parent, entity, label, description, fk_soc, visible, type";
+		$sql = "SELECT rowid, fk_parent, entity, label, description, add_description, fk_soc, visible, type";
 		$sql.= " FROM ".MAIN_DB_PREFIX."categorie";
 		if ($id)
 		{
@@ -93,14 +94,15 @@ class Categorie
 			{
 				$res = $this->db->fetch_array($resql);
 
-				$this->id			= $res['rowid'];
-				$this->fk_parent	= $res['fk_parent'];
-				$this->label		= $res['label'];
-				$this->description	= $res['description'];
-				$this->socid		= $res['fk_soc'];
-				$this->visible		= $res['visible'];
-				$this->type			= $res['type'];
-				$this->entity		= $res['entity'];
+				$this->id				= $res['rowid'];
+				$this->fk_parent		= $res['fk_parent'];
+				$this->label			= $res['label'];
+				$this->description		= $res['description'];
+				$this->add_description	= $res['add_description'];
+				$this->socid			= $res['fk_soc'];
+				$this->visible			= $res['visible'];
+				$this->type				= $res['type'];
+				$this->entity			= $res['entity'];
 
 				$this->db->free($resql);
 
@@ -156,6 +158,7 @@ class Categorie
 		$sql.= "fk_parent,";
 		$sql.= " label,";
 		$sql.= " description,";
+		$sql.= " add_description,";
 		if (! empty($conf->global->CATEGORY_ASSIGNED_TO_A_CUSTOMER))
 		{
 			$sql.= "fk_soc,";
@@ -168,6 +171,7 @@ class Categorie
 		$sql.= $this->fk_parent.",";
 		$sql.= "'".$this->db->escape($this->label)."',";
 		$sql.= "'".$this->db->escape($this->description)."',";
+		$sql.= "'".$this->db->escape($this->add_description)."',";
 		if (! empty($conf->global->CATEGORY_ASSIGNED_TO_A_CUSTOMER))
 		{
 			$sql.= ($this->socid != -1 ? $this->socid : 'null').",";
@@ -244,7 +248,14 @@ class Categorie
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."categorie";
 		$sql.= " SET label = '".$this->db->escape($this->label)."',";
-		$sql.= " description = '".$this->db->escape($this->description)."'";
+		if (! empty($this->description))
+		{
+			$sql .= ", description = '".$this->db->escape($this->description)."'";
+		}
+		if (! empty($this->add_description))
+		{
+			$sql .= ", add_description = '".$this->db->escape($this->add_description)."'";
+		}
 		if (! empty($conf->global->CATEGORY_ASSIGNED_TO_A_CUSTOMER))
 		{
 			$sql .= ", fk_soc = ".($this->socid != -1 ? $this->socid : 'null');
@@ -611,8 +622,8 @@ class Categorie
 		$sql = "SELECT fk_parent as id_parent, rowid as id_son";
 		$sql.= " FROM ".MAIN_DB_PREFIX."categorie";
 		$sql.= " WHERE fk_parent != 0";
-		$sql.= " AND entity IN (".getEntity('category',1).")";
-		
+		$sql.= " AND entity = ".$conf->entity;
+
 		dol_syslog(get_class($this)."::load_motherof sql=".$sql);
 		$resql = $this->db->query($sql);
 		if ($resql)
