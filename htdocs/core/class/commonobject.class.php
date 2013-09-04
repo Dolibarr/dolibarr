@@ -3222,5 +3222,17 @@ abstract class CommonObject
 		print '</tr>';
 		print '</table>';
 	}
+
+	function __clone()
+    {
+        // Force a copy of this->lines, otherwise it will point to same object.
+        if (isset($this->lines) && is_array($this->lines))
+        {
+        	for($i=0; $i < count($this->lines); $i++)
+        	{
+            	$this->lines[$i] = dol_clone($this->lines[$i]);
+        	}
+        }
+    }
 }
 ?>

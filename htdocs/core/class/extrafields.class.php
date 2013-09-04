@@ -787,7 +787,7 @@ class ExtraFields
 
 						$i++;
 					}
-					$this->db->free();
+					$this->db->free($resql);
 				}
 			}
 			$out.='</select>';
