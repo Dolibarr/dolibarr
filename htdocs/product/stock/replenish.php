@@ -199,11 +199,6 @@ $resql = $db->query($sql);
 if ($resql) {
     $num = $db->num_rows($resql);
     $i = 0;
-    if ($num == 1 && ($sall or $snom or $sref)) {
-        $objp = $db->fetch_object($resql);
-        header('Location: ../fiche.php?id=' . $objp->rowid);
-        exit;
-    }
 
     $helpurl = 'EN:Module_Stocks_En|FR:Module_Stock|';
     $helpurl .= 'ES:M&oacute;dulo_Stocks';
