@@ -210,6 +210,7 @@ $sql .= ' HAVING (p.desiredstock > SUM(s.reel) or SUM(s.reel) is NULL)';
 $sql .= ' AND p.desiredstock > 0';
 if ($salert == 'on') {
     $sql .= ' AND SUM(s.reel) < p.seuil_stock_alerte AND p.seuil_stock_alerte is not NULL';
+    $alertchecked = 'checked="checked"';
 }
 $sql .= $db->order($sortfield,$sortorder);
 $sql .= $db->plimit($limit + 1, $offset);
@@ -370,7 +371,7 @@ if ($resql) {
              '</td>';
     }
     echo '<td class="liste_titre">&nbsp;</td>',
-         '<td class="liste_titre" align="right">' . $langs->trans('AlertOnly') . '&nbsp;<input type="checkbox" name="salert"></td>',
+         '<td class="liste_titre" align="right">' . $langs->trans('AlertOnly') . '&nbsp;<input type="checkbox" name="salert" ' . $alertchecked . '></td>',
          '<td class="liste_titre" align="right">&nbsp;</td>',
          '<td class="liste_titre">&nbsp;</td>',
          '<td class="liste_titre">&nbsp;</td>',
