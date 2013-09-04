@@ -233,7 +233,7 @@ if ($resql) {
     dol_fiche_head($head, 'replenish', $langs->trans('Replenishment'), 0, 'stock');
     if ($sref || $snom || $sall || GETPOST('search', 'alpha')) {
         $filters = '&sref=' . $sref . '&snom=' . $snom;
-        $filters .= '&amp;sall=' . $sall;
+        $filters .= '&amp;sall=' . $sall . '&amp;salert=' . $salert;
         print_barre_liste($texte,
                           $page,
                           'replenish.php',
@@ -244,7 +244,7 @@ if ($resql) {
                           $num
                           );
     } else {
-        $filters = '&sref=' . $sref . '&snom=' . $snom;
+        $filters = '&sref=' . $sref . '&snom=' . $snom . '&salert=' . $salert;
         $filters .= '&fourn_id=' . $fourn_id;
         $filters .= (isset($type)?'&amp;type=' . $type:'');
         print_barre_liste($texte,
@@ -268,7 +268,7 @@ if ($resql) {
          '<table class="liste" width="100%">';
 
     $param = (isset($type)? '&type=' . $type : '');
-    $param .= '&fourn_id=' . $fourn_id . '&snom='. $snom;
+    $param .= '&fourn_id=' . $fourn_id . '&snom='. $snom . '&salert=' . $salert;
     $param .= '&sref=' . $sref;
 
     // Lignes des titres
