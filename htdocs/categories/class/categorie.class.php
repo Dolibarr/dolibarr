@@ -5,6 +5,7 @@
  * Copyright (C) 2006-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2006-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2007      Patrick Raguin	  	<patrick.raguin@gmail.com>
+ * Copyright (C) 2013      Juanjo Menent	  	<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -520,8 +521,8 @@ class Categorie
 		$sql = "SELECT fk_parent as id_parent, rowid as id_son";
 		$sql.= " FROM ".MAIN_DB_PREFIX."categorie";
 		$sql.= " WHERE fk_parent != 0";
-		$sql.= " AND entity = ".$conf->entity;
-
+		$sql.= " AND entity IN (".getEntity('category',1).")";
+		
 		dol_syslog(get_class($this)."::load_motherof sql=".$sql);
 		$resql = $this->db->query($sql);
 		if ($resql)
