@@ -65,8 +65,8 @@ if ($_POST["action"] == 'update' && ! $_POST["cancel"])
 	$account->bic             = $_POST["bic"];
 	$account->iban_prefix     = $_POST["iban_prefix"];
 	$account->domiciliation   = $_POST["domiciliation"];
-	$account->proprio 	      = $_POST["proprio"];
-	$account->adresse_proprio = $_POST["adresse_proprio"];
+	$account->proprio         = $_POST["proprio"];
+	$account->owner_address   = $_POST["owner_address"];
 
 	$result = $account->update($user);
 	if (! $result)
@@ -154,7 +154,7 @@ if ($_GET["socid"] && $_GET["action"] != 'edit')
 	print "</td></tr>\n";
 
 	print '<tr><td valign="top">'.$langs->trans("BankAccountOwnerAddress").'</td><td colspan="4">';
-	print $account->adresse_proprio;
+	print $account->owner_address;
 	print "</td></tr>\n";
 
 	print '</table>';
@@ -236,8 +236,8 @@ if ($_GET["socid"] && $_GET["action"] == 'edit' && $user->rights->societe->creer
 	print "</td></tr>\n";
 
 	print '<tr><td valign="top">'.$langs->trans("BankAccountOwnerAddress").'</td><td colspan="4">';
-	print "<textarea name=\"adresse_proprio\" rows=\"4\" cols=\"40\">";
-	print $account->adresse_proprio;
+	print "<textarea name=\"owner_address\" rows=\"4\" cols=\"40\">";
+	print $account->owner_address;
 	print "</textarea></td></tr>";
 
 	print '</table><br>';
