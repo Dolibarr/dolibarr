@@ -231,9 +231,10 @@ if ($resql) {
     $head[1][1] = $langs->trans("ReplenishmentOrders");
     $head[1][2] = 'replenishorders';
     dol_fiche_head($head, 'replenish', $langs->trans('Replenishment'), 0, 'stock');
-    if ($sref || $snom || $sall || GETPOST('search', 'alpha')) {
+    if ($sref || $snom || $sall || $salert || GETPOST('search', 'alpha')) {
         $filters = '&sref=' . $sref . '&snom=' . $snom;
-        $filters .= '&amp;sall=' . $sall . '&amp;salert=' . $salert;
+        $filters .= '&sall=' . $sall;
+        $filters .= '&salert=' . $salert;
         print_barre_liste($texte,
                           $page,
                           'replenish.php',
@@ -244,9 +245,10 @@ if ($resql) {
                           $num
                           );
     } else {
-        $filters = '&sref=' . $sref . '&snom=' . $snom . '&salert=' . $salert;
+        $filters = '&sref=' . $sref . '&snom=' . $snom;
         $filters .= '&fourn_id=' . $fourn_id;
-        $filters .= (isset($type)?'&amp;type=' . $type:'');
+        $filters .= (isset($type)?'&type=' . $type:'');
+        $filters .=  '&salert=' . $salert;
         print_barre_liste($texte,
                           $page,
                           'replenish.php',
@@ -506,9 +508,10 @@ if ($resql) {
          '</form>';
 
     if ($num > $conf->liste_limit) {
-        if ($sref || $snom || $sall || GETPOST('search', 'alpha')) {
+        if ($sref || $snom || $sall || $salert || GETPOST('search', 'alpha')) {
             $filters = '&sref=' . $sref . '&snom=' . $snom;
-            $filters .= '&amp;sall=' . $sall;
+            $filters .= '&sall=' . $sall;
+            $filters .= '&salert=' . $salert;
             print_barre_liste('',
                               $page,
                               'replenish.php',
@@ -523,7 +526,8 @@ if ($resql) {
         } else {
             $filters = '&sref=' . $sref . '&snom=' . $snom;
             $filters .= '&fourn_id=' . $fourn_id;
-            $filters .= (isset($type)? '&amp;type=' . $type : '');
+            $filters .= (isset($type)? '&type=' . $type : '');
+            $filters .= '&salert=' . $salert;
             print_barre_liste('',
                               $page,
                               'replenish.php',
