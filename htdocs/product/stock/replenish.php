@@ -181,10 +181,18 @@ if (dol_strlen($type)) {
     }
 }
 if ($sref) {
-    $sql .= ' AND p.ref LIKE "%' . $sref . '%"';
+    //natural search
+    $scrit = explode(' ', $sref);
+    foreach ($scrit as $crit) {
+        $sql .= ' AND p.ref LIKE "%' . $crit . '%"';
+    }
 }
 if ($snom) {
-    $sql .= ' AND p.label LIKE "%' . $db->escape($snom) . '%"';
+    //natural search
+    $scrit = explode(' ', $snom);
+    foreach ($scrit as $crit) {
+        $sql .= ' AND p.label LIKE "%' . $db->escape($crit) . '%"';
+    }
 }
 
 $sql .= ' AND p.tobuy = 1';
