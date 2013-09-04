@@ -47,7 +47,7 @@ $snom = GETPOST('snom', 'alpha');
 $sall = GETPOST('sall', 'alpha');
 $type = GETPOST('type','int');
 $tobuy = GETPOST('tobuy', 'int');
-$salerte = GETPOST('salerte', 'alpha');
+$salert = GETPOST('salert', 'alpha');
 
 $sortfield = GETPOST('sortfield','alpha');
 $sortorder = GETPOST('sortorder','alpha');
@@ -71,7 +71,7 @@ if (isset($_POST['button_removefilter']) || isset($_POST['valid'])) {
     $sref = '';
     $snom = '';
     $sal = '';
-    $salerte = '';
+    $salert = '';
 }
 
 //orders creation
@@ -208,7 +208,7 @@ $sql .= ', p.duration, p.tobuy, p.seuil_stock_alerte';
 $sql .= ', p.desiredstock';
 $sql .= ' HAVING (p.desiredstock > SUM(s.reel) or SUM(s.reel) is NULL)';
 $sql .= ' AND p.desiredstock > 0';
-if ($salerte == 'on') {
+if ($salert == 'on') {
     $sql .= ' AND SUM(s.reel) < p.seuil_stock_alerte AND p.seuil_stock_alerte is not NULL';
 }
 $sql .= $db->order($sortfield,$sortorder);
@@ -370,7 +370,7 @@ if ($resql) {
              '</td>';
     }
     echo '<td class="liste_titre">&nbsp;</td>',
-         '<td class="liste_titre" align="right">' . $langs->trans('AlertOnly') . '&nbsp;<input type="checkbox" name="salerte"></td>',
+         '<td class="liste_titre" align="right">' . $langs->trans('AlertOnly') . '&nbsp;<input type="checkbox" name="salert"></td>',
          '<td class="liste_titre" align="right">&nbsp;</td>',
          '<td class="liste_titre">&nbsp;</td>',
          '<td class="liste_titre">&nbsp;</td>',
