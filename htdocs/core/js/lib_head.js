@@ -790,7 +790,7 @@ function confirmConstantAction(action, url, code, input, box, entity, yesButton,
 (function( $ ) {
 	$.widget( "ui.combobox", {
 		options: {
-			minLengthToAutocomplete: 0,
+			minLengthToAutocomplete: 0
 		},
         _create: function() {
         	var savMinLengthToAutocomplete = this.options.minLengthToAutocomplete;
