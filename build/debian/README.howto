@@ -7,6 +7,7 @@ This directory contains files used by makepack-dolibarr.pl
 script to build a package, ready to be distributed,
 with format .DEB (for Debian, Ubuntu, ...).
 
+
 # To build a debian package, you need first
 # With Ubuntu 12.04
 # apt-get install debhelper dpkg-source gpg lintian git-buildpackage pkg-php-tools schroot sbuild
@@ -14,17 +15,42 @@ with format .DEB (for Debian, Ubuntu, ...).
 # apt-get install debhelper dpkg gnupg lintian git-buildpackage pkg-php-tools schroot sbuild
 
 
-# This is standard command to work on Debian packaging:
-#
-# gpg --gen-key                          Generate a GPG key (-> pubring.gpg + secring.gpg)
-#
+# To generate gpg key for email used into changelog
+* Check your existing keys/emails
+> gpg --list-key
+* Generate a new one, if none exists for email you use as author
+> gpg --gen-key							Generate a GPG key (-> pubring.gpg + secring.gpg)
+Files are saved int .gnupg directory
+* Create a file ~/.gpb.conf by
+> cat >~/.gbp.conf <<END
+[DEFAULT]
+pristine-tar = True
+
+[git-buildpackage]
+sign-tags = True
+export-dir = ../build-area/
+
+[git-import-orig]
+filter-pristine-tar = True
+END
+
+
+# To use Alioth.debian.org
+* Create a login
+* Setup your ssh as described into page: http://wiki.debian.org/Alioth/SSH
+* Ask to be included into project collab-maint: http://alioth.debian.org/projects/collab-maint/
+
+
+# To translate .po files
 # debconf-updatepo					     		To run into po dir to regenate templates.pot
 # podebconf-report-po --from email@email.com	To send email to ask translations
 # Edit manually file XX.po and remove all lines "#, fuzzy" when translation is complete
-# msgfmt -v -c -o /dev/null XX.po		 		To have status of translation for language XX 
-#
+# msgfmt -v -c -o /dev/null XX.po		 		To have status of translation for language XX
+ 
+# To check package integrity
 # lintian --pedantic -E -I package.deb   To test a package   
-#
+
+# To manipulate packages
 # dpkg -l                                List all packages
 # dpkg -b                                To build binary only package
 # dpkg -c package.deb                    List content of package
@@ -38,6 +64,9 @@ with format .DEB (for Debian, Ubuntu, ...).
 # dpkg-buildpackage -us -uc              Build a source and binary package
 #
 # gdebi package.deb						 Install a package + dependencies
+
+
+##########################################################
 
 To submit a package to Debian:
 
@@ -63,6 +92,8 @@ http://bugs.debian.org/package
 
 ##########################################################
 
+To generate a package
+
 Create a chroot called "unstable-amd64-sbuild"
 > sudo sbuild-createchroot --keyring= unstable /srv/chroot/unstable http://ftp.uk.debian.org/debian
 
@@ -70,44 +101,29 @@ Puis pour se connecter
 > schroot
 
 
-To create a gpg key for email used into changelog
-Check your existing keys/emails
-> gpg --list-key
-Generate a new one
-> gpg --gen-key
-Files are saved int .gnupg directory
 
-To use Alioth.debian.org
-* Create a login
-* Setup your ssh as described into page: http://wiki.debian.org/Alioth/SSH
-* Ask to be included into project collab-maint: http://alioth.debian.org/projects/collab-maint/
-
+##########################################################
 
 To update tcpdf package:
 
 * You can git clone tcpdf
 > git clone git.debian.org:/git/collab-maint/tcpdf.git [tcpdf-debian]
+or better
+> mkdir gitdebian
+> cd gitdebian
+> gbp-clone git.debian.org:/git/collab-maint/tcpdf.git
+
+* You can then create a PHP project from Eclipse called tcpdf-debian
+from git clone dir and make link to git.
+ 
+* If local branch upstream and pristine-tar does not exists, create it
+from origin/upstream and origin/pristine.
 
 * Into root dir, launch:
 > debian/get-orig-source.sh
 
-* Créer un fichier ~/.gpb.conf par
-> cat >~/.gbp.conf <<END
-[DEFAULT]
-pristine-tar = True
-
-[git-buildpackage]
-sign-tags = True
-export-dir = ../build-area/
-
-[git-import-orig]
-filter-pristine-tar = True
-END
-
-* Create branch upstream from origin/upstream
-
 * Staying into git root directory, run
-> git-import-orig -vv ../tcpdf_6.0.020+dfsg.orig.tar.xz
+> git-import-orig -vv ../tcpdf_x.y.z+dfsg.orig.tar.xz
 
 Note: If there was errors managed manually, you may need to make a git commit
 
@@ -135,8 +151,20 @@ http://packages.qa.debian.org/t/tcpdf.html
 * Package will be into release when test will be moved as stable.
 
 
+##########################################################
+
 To update dolibarr debian package
 
 * You can git clone debian git repo
-git.debian.org:/git/collab-maint/dolibarr.git
+> git clone git.debian.org:/git/collab-maint/dolibarr.git [dolibarr-debian]
+or better
+> mkdir gitdebian
+> cd gitdebian
+> gbp-clone git.debian.org:/git/collab-maint/dolibarr.git
+
+* You can then create a PHP project from Eclipse called dolibarr-debian
+from git clone dir and make link to git.
+
+* If local branch upstream and pristine-tar does not exists, create it
+from origin/upstream and origin/pristine.
 

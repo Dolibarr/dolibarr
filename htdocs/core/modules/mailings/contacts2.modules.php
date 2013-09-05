@@ -84,9 +84,10 @@ class mailing_contacts2 extends MailingTargets
     	$sql.= " FROM ".MAIN_DB_PREFIX."socpeople as sp";
     	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = sp.fk_soc";
         $sql.= " WHERE sp.entity IN (".getEntity('societe', 1).")";
-    	$sql.= " AND sp.email != ''";  // Note that null != '' is false
+    	$sql.= " AND sp.email <> ''";  // Note that null != '' is false
     	$sql.= " AND sp.no_email = 0";
     	//$sql.= " AND sp.poste != ''";
+    	$sql.= " AND sp.email NOT IN (SELECT email FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE fk_mailing=".$mailing_id.")";
     	if ($filtersarray[0]<>'all') $sql.= " AND sp.poste ='".$this->db->escape($filtersarray[0])."'";
     	$sql.= " ORDER BY sp.lastname, sp.firstname";
     	$resql = $this->db->query($sql);

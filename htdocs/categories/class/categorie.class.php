@@ -422,12 +422,12 @@ class Categorie
 					{
 						$objparent = $this->db->fetch_object($resql);
 
-						if (!empty($objparent->fk_parent)) 
+						if (!empty($objparent->fk_parent))
 						{
 							$cat = new Categorie($this->db);
 							$cat->id=$objparent->fk_parent;
 							$result=$cat->add_type($obj, $type);
-							if ($result < 0) 
+							if ($result < 0)
 							{
 								$this->error=$cat->error;
 								$error++;
@@ -441,7 +441,7 @@ class Categorie
 					$this->error=$this->db->lasterror();
 				}
 
-				if ($error) 
+				if ($error)
 				{
 					return -1;
 				}
@@ -485,7 +485,7 @@ class Categorie
 	function del_type($obj,$type)
 	{
 		global $user,$langs,$conf;
-		
+
 		$error=0;
 
 		if ($type == 'company')     $type='societe';
@@ -613,6 +613,7 @@ class Categorie
 		$sql.= " FROM ".MAIN_DB_PREFIX."categorie";
 		$sql.= " WHERE fk_parent != 0";
 		$sql.= " AND entity IN (".getEntity('category',1).")";
+
 		dol_syslog(get_class($this)."::load_motherof sql=".$sql);
 		$resql = $this->db->query($sql);
 		if ($resql)
