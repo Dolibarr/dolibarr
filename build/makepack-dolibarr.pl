@@ -10,7 +10,7 @@ use Cwd;
 $PROJECT="dolibarr";
 $MAJOR="3";
 $MINOR="4";
-$BUILD="0";		# Mettre x pour release, x-dev pour dev, x-beta pour beta, x-rc pour release candidate
+$BUILD="1";		# Mettre x pour release, x-dev pour dev, x-beta pour beta, x-rc pour release candidate
 $RPMSUBVERSION="auto";	# auto use value found into BUILD
 
 @LISTETARGET=("TGZ","ZIP","RPM_GENERIC","RPM_FEDORA","RPM_MANDRIVA","RPM_OPENSUSE","DEB","APS","EXEDOLIWAMP","SNAPSHOT");   # Possible packages
@@ -549,7 +549,7 @@ if ($nboftargetok) {
             $build = $newbuild;
             $build =~ s/-.*$//g;
 			# now build is 0 for example
-			$build .= '+nmu1';
+			# $build .= '+nmu1';
 			# now build is 0+nmu1 for example
 			
     		print "Remove target ${FILENAMEDEB}_all.deb...\n";
