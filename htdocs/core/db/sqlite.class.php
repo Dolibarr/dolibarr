@@ -685,7 +685,7 @@ class DoliDBSqlite
 	 */
     function escape($stringtoencode)
     {
-        return PDO::quote($stringtoencode);
+        return $this->db->quote($stringtoencode);
     }
 
     /**
