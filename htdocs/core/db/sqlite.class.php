@@ -856,7 +856,7 @@ class DoliDBSqlite
      */
     function last_insert_id($tab,$fieldid='rowid')
     {
-        return PDO::lastInsertId();
+        return $this->db->lastInsertId();
     }
 
     /**
