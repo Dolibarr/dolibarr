@@ -210,7 +210,7 @@ if (count($tasksarray)>0)
 		{
 			$s.=$langs->trans("Internals").': ';
 			$i=0;
-			foreach($idofusers as $key => $valid)
+			foreach($idofusers as $valid)
 			{
 				$userstatic->fetch($valid);
 				if ($i) $s.=',';
@@ -224,7 +224,7 @@ if (count($tasksarray)>0)
 			if ($s) $s.=' - ';
 			$s.=$langs->trans("Externals").': ';
 			$i=0;
-			foreach($idofthirdparty as $key => $valid)
+			foreach($idofthirdparty as $valid)
 			{
 				$companystatic->fetch($valid);
 				if ($i) $s.=',';

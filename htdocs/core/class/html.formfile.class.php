@@ -97,7 +97,6 @@ class FormFile
             $max=$conf->global->MAIN_UPLOAD_DOC;		// En Kb
             $maxphp=@ini_get('upload_max_filesize');	// En inconnu
             if (preg_match('/m$/i',$maxphp)) $maxphp=$maxphp*1024;
-            if (preg_match('/k$/i',$maxphp)) $maxphp=$maxphp;
             // Now $max and $maxphp are in Kb
             if ($maxphp > 0) $max=min($max,$maxphp);
 

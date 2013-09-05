@@ -2868,7 +2868,7 @@ class Facture extends CommonInvoice
 			$sql.= ' WHERE fk_facture = '.$this->id;
 			$sql.= ' AND traite = 0';
 
-			dol_syslot(get_clas($this)."::demande_prelevement sql=".$sql);
+			dol_syslog(get_class($this)."::demande_prelevement sql=".$sql);
 			$resql=$this->db->query($sql);
 			if ($resql)
 			{

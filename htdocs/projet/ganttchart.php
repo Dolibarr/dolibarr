@@ -23,7 +23,7 @@
 
 ?>
 
-<div id="principal_content" style="margin-left: 0px;">
+<div id="principal_content" style="margin-left: 0;">
 	<div style="margin-left: 0; position: relative;" class="gantt"
 		id="GanttChartDIV"></div>
 

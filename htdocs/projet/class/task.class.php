@@ -1036,7 +1036,7 @@ class Task extends CommonObject
         $clone_task->fk_project			= $project_id;
         $clone_task->fk_task_parent		= $parent_task_id;
         $clone_task->date_c				= $datec;
-        $clone_task->planned_workload	= $clone_task->planned_workload;
+        $clone_task->planned_workload	= $origin_task->planned_workload;
 		$clone_task->rang				= $origin_task->rang;
 
         //Manage Task Date

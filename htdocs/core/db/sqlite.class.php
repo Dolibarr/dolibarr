@@ -685,7 +685,7 @@ class DoliDBSqlite
 	 */
     function escape($stringtoencode)
     {
-        return PDO::quote($stringtoencode);
+        return $this->db->quote($stringtoencode);
     }
 
     /**
@@ -856,7 +856,7 @@ class DoliDBSqlite
      */
     function last_insert_id($tab,$fieldid='rowid')
     {
-        return PDO::lastInsertId();
+        return $this->db->lastInsertId();
     }
 
     /**
