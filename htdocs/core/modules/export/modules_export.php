@@ -46,7 +46,7 @@ class ModeleExports extends CommonDocGenerator    // This class can't be abstrac
      *  @param  string	$maxfilenamelength  Max length of value to show
      *  @return	array						List of templates
 	 */
-	function liste_modeles($db,$maxfilenamelength=0)
+	static function liste_modeles($db,$maxfilenamelength=0)
 	{
 		dol_syslog(get_class($this)."::liste_modeles");
 
