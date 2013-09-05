@@ -547,7 +547,7 @@ if ($nboftargetok) {
             $build = $newbuild;
             $build =~ s/-.*$//g;
 			# now build is 0 for example
-			$build .= '+nmu1';
+			# $build .= '+nmu1';
 			# now build is 0+nmu1 for example
 			
     		print "Remove target ${FILENAMEDEB}_all.deb...\n";
