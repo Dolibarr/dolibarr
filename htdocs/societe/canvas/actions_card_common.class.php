@@ -290,7 +290,6 @@ abstract class ActionsCardCommon
                     }
                     else
                     {
-                        $this->object->id = $this->object->id;
                         $reload = 0;
                         $this->errors = $this->object->errors;
                         $action = "edit";
