@@ -638,7 +638,7 @@ if (empty($id) || $action == 'add' || $action == 'request')
                 case 'nodatedebut' :
                     $errors[] = $langs->trans('NoDateDebut');
                     break;
-                case 'nodatedebut' :
+                case 'nodatefin' :
                     $errors[] = $langs->trans('NoDateFin');
                     break;
                 case 'DureeHoliday' :
@@ -808,7 +808,7 @@ else
                     case 'nodatedebut' :
                         $errors[] = $langs->transnoentitiesnoconv('NoDateDebut');
                         break;
-                    case 'nodatedebut' :
+                    case 'nodatefin' :
                         $errors[] = $langs->transnoentitiesnoconv('NoDateFin');
                         break;
                     case 'DureeHoliday' :

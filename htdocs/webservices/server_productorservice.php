@@ -358,8 +358,6 @@ function getProductOrService($authentication,$id='',$ref='',$ref_ext='')
 				        'localtax1_tx' => $product->localtax1_tx,
 				        'localtax2_tx' => $product->localtax2_tx,
 
-                		'price_base_type' => $product->price_base_type,
-
 				        'stock_real' => $product->stock_reel,
                 		'stock_alert' => $product->seuil_stock_alerte,
 				        'pmp' => $product->pmp,
