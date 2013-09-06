@@ -997,8 +997,7 @@ else
          */
         if ($action == 'password')
         {
-            $ret=$form->form_confirm("fiche.php?id=$object->id",$langs->trans("ReinitPassword"),$langs->trans("ConfirmReinitPassword",$object->login),"confirm_password", '', 0, 1);
-            if ($ret == 'html') print '<br>';
+            print $form->formconfirm("fiche.php?id=$object->id",$langs->trans("ReinitPassword"),$langs->trans("ConfirmReinitPassword",$object->login),"confirm_password", '', 0, 1);
         }
 
         /*
@@ -1006,8 +1005,7 @@ else
          */
         if ($action == 'passwordsend')
         {
-            $ret=$form->form_confirm("fiche.php?id=$object->id",$langs->trans("SendNewPassword"),$langs->trans("ConfirmSendNewPassword",$object->login),"confirm_passwordsend", '', 0, 1);
-            if ($ret == 'html') print '<br>';
+            print $form->formconfirm("fiche.php?id=$object->id",$langs->trans("SendNewPassword"),$langs->trans("ConfirmSendNewPassword",$object->login),"confirm_passwordsend", '', 0, 1);
         }
 
         /*
@@ -1015,8 +1013,7 @@ else
          */
         if ($action == 'disable')
         {
-            $ret=$form->form_confirm("fiche.php?id=$object->id",$langs->trans("DisableAUser"),$langs->trans("ConfirmDisableUser",$object->login),"confirm_disable", '', 0, 1);
-            if ($ret == 'html') print '<br>';
+            print $form->formconfirm("fiche.php?id=$object->id",$langs->trans("DisableAUser"),$langs->trans("ConfirmDisableUser",$object->login),"confirm_disable", '', 0, 1);
         }
 
         /*
@@ -1024,8 +1021,7 @@ else
          */
         if ($action == 'enable')
         {
-            $ret=$form->form_confirm("fiche.php?id=$object->id",$langs->trans("EnableAUser"),$langs->trans("ConfirmEnableUser",$object->login),"confirm_enable", '', 0, 1);
-            if ($ret == 'html') print '<br>';
+            print $form->formconfirm("fiche.php?id=$object->id",$langs->trans("EnableAUser"),$langs->trans("ConfirmEnableUser",$object->login),"confirm_enable", '', 0, 1);
         }
 
         /*
@@ -1033,8 +1029,7 @@ else
          */
         if ($action == 'delete')
         {
-            $ret=$form->form_confirm("fiche.php?id=$object->id",$langs->trans("DeleteAUser"),$langs->trans("ConfirmDeleteUser",$object->login),"confirm_delete", '', 0, 1);
-            if ($ret == 'html') print '<br>';
+            print $form->formconfirm("fiche.php?id=$object->id",$langs->trans("DeleteAUser"),$langs->trans("ConfirmDeleteUser",$object->login),"confirm_delete", '', 0, 1);
         }
 
         dol_htmloutput_mesg($message);

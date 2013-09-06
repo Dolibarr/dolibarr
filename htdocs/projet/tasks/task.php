@@ -385,8 +385,7 @@ if ($id > 0 || ! empty($ref))
 
 			if ($action == 'delete')
 			{
-				$ret=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$_GET["id"].'&withproject='.$withproject,$langs->trans("DeleteATask"),$langs->trans("ConfirmDeleteATask"),"confirm_delete");
-				if ($ret == 'html') print '<br>';
+				print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$_GET["id"].'&withproject='.$withproject,$langs->trans("DeleteATask"),$langs->trans("ConfirmDeleteATask"),"confirm_delete");
 			}
 
 			print '<table class="border" width="100%">';
