@@ -47,6 +47,7 @@ $snom = GETPOST('snom', 'alpha');
 $sall = GETPOST('sall', 'alpha');
 $type = GETPOST('type','int');
 $tobuy = GETPOST('tobuy', 'int');
+$salert = GETPOST('salert', 'alpha');
 
 $sortfield = GETPOST('sortfield','alpha');
 $sortorder = GETPOST('sortorder','alpha');
@@ -66,9 +67,16 @@ $offset = $limit * $page ;
  * Actions
  */
 
+if (isset($_POST['button_removefilter']) || isset($_POST['valid'])) {
+    $sref = '';
+    $snom = '';
+    $sal = '';
+    $salert = '';
+}
+
 //orders creation
 //FIXME: could go in the lib
-if ($action == 'order') {
+if ($action == 'order' && isset($_POST['valid'])) {
     $linecount = GETPOST('linecount', 'int');
     $box = 0;
     unset($_POST['linecount']);
@@ -105,7 +113,7 @@ if ($action == 'order') {
                 } else {
                     $error=$db->lasterror();
                     dol_print_error($db);
-                    dol_syslog('replenish.php: '.$error, LOG_ERROR);
+                    dol_syslog('replenish.php: '.$error, LOG_ERR);
                 }
                 $db->free($resql);
                 unset($_POST['fourn' . $i]);
@@ -152,7 +160,7 @@ $title = $langs->trans('Status');
 $sql = 'SELECT p.rowid, p.ref, p.label, p.price';
 $sql .= ', p.price_ttc, p.price_base_type,p.fk_product_type';
 $sql .= ', p.tms as datem, p.duration, p.tobuy, p.seuil_stock_alerte,';
-$sql .= ' SUM(s.reel) as stock_physique';
+$sql .= ' SUM(COALESCE(s.reel, 0)) as stock_physique';
 $sql .= ', p.desiredstock';
 $sql .= ' FROM ' . MAIN_DB_PREFIX . 'product as p';
 $sql .= ' LEFT JOIN ' . MAIN_DB_PREFIX . 'product_fournisseur_price as pf';
@@ -175,10 +183,18 @@ if (dol_strlen($type)) {
     }
 }
 if ($sref) {
-    $sql .= ' AND p.ref LIKE "%' . $sref . '%"';
+    //natural search
+    $scrit = explode(' ', $sref);
+    foreach ($scrit as $crit) {
+        $sql .= ' AND p.ref LIKE "%' . $crit . '%"';
+    }
 }
 if ($snom) {
-    $sql .= ' AND p.label LIKE "%' . $db->escape($snom) . '%"';
+    //natural search
+    $scrit = explode(' ', $snom);
+    foreach ($scrit as $crit) {
+        $sql .= ' AND p.label LIKE "%' . $db->escape($crit) . '%"';
+    }
 }
 
 $sql .= ' AND p.tobuy = 1';
@@ -190,8 +206,12 @@ $sql .= ' GROUP BY p.rowid, p.ref, p.label, p.price';
 $sql .= ', p.price_ttc, p.price_base_type,p.fk_product_type, p.tms';
 $sql .= ', p.duration, p.tobuy, p.seuil_stock_alerte';
 $sql .= ', p.desiredstock';
-$sql .= ' HAVING (p.desiredstock > SUM(s.reel) or SUM(s.reel) is NULL)';
+$sql .= ' HAVING p.desiredstock > SUM(COALESCE(s.reel, 0))';
 $sql .= ' AND p.desiredstock > 0';
+if ($salert == 'on') {
+    $sql .= ' AND SUM(COALESCE(s.reel, 0)) < p.seuil_stock_alerte AND p.seuil_stock_alerte is not NULL';
+    $alertchecked = 'checked="checked"';
+}
 $sql .= $db->order($sortfield,$sortorder);
 $sql .= $db->plimit($limit + 1, $offset);
 $resql = $db->query($sql);
@@ -199,11 +219,6 @@ $resql = $db->query($sql);
 if ($resql) {
     $num = $db->num_rows($resql);
     $i = 0;
-    if ($num == 1 && ($sall or $snom or $sref)) {
-        $objp = $db->fetch_object($resql);
-        header('Location: ../fiche.php?id=' . $objp->rowid);
-        exit;
-    }
 
     $helpurl = 'EN:Module_Stocks_En|FR:Module_Stock|';
     $helpurl .= 'ES:M&oacute;dulo_Stocks';
@@ -216,9 +231,10 @@ if ($resql) {
     $head[1][1] = $langs->trans("ReplenishmentOrders");
     $head[1][2] = 'replenishorders';
     dol_fiche_head($head, 'replenish', $langs->trans('Replenishment'), 0, 'stock');
-    if ($sref || $snom || $sall || GETPOST('search', 'alpha')) {
+    if ($sref || $snom || $sall || $salert || GETPOST('search', 'alpha')) {
         $filters = '&sref=' . $sref . '&snom=' . $snom;
-        $filters .= '&amp;sall=' . $sall;
+        $filters .= '&sall=' . $sall;
+        $filters .= '&salert=' . $salert;
         print_barre_liste($texte,
                           $page,
                           'replenish.php',
@@ -231,7 +247,8 @@ if ($resql) {
     } else {
         $filters = '&sref=' . $sref . '&snom=' . $snom;
         $filters .= '&fourn_id=' . $fourn_id;
-        $filters .= (isset($type)?'&amp;type=' . $type:'');
+        $filters .= (isset($type)?'&type=' . $type:'');
+        $filters .=  '&salert=' . $salert;
         print_barre_liste($texte,
                           $page,
                           'replenish.php',
@@ -253,7 +270,7 @@ if ($resql) {
          '<table class="liste" width="100%">';
 
     $param = (isset($type)? '&type=' . $type : '');
-    $param .= '&fourn_id=' . $fourn_id . '&snom='. $snom;
+    $param .= '&fourn_id=' . $fourn_id . '&snom='. $snom . '&salert=' . $salert;
     $param .= '&sref=' . $sref;
 
     // Lignes des titres
@@ -356,13 +373,15 @@ if ($resql) {
              '</td>';
     }
     echo '<td class="liste_titre">&nbsp;</td>',
-         '<td class="liste_titre">&nbsp;</td>',
+         '<td class="liste_titre" align="right">' . $langs->trans('AlertOnly') . '&nbsp;<input type="checkbox" name="salert" ' . $alertchecked . '></td>',
          '<td class="liste_titre" align="right">&nbsp;</td>',
          '<td class="liste_titre">&nbsp;</td>',
          '<td class="liste_titre">&nbsp;</td>',
          '<td class="liste_titre" align="right">',
          '<input type="image" class="liste_titre" name="button_search"',
          'src="' . DOL_URL_ROOT . '/theme/' . $conf->theme . '/img/search.png" alt="' . $langs->trans("Search") . '">',
+         '<input type="image" class="liste_titre" name="button_removefilter"
+          src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/searchclear.png" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">',
          '</td>',
          '</tr>';
 
@@ -396,9 +415,6 @@ if ($resql) {
             $prod->type = $objp->fk_product_type;
             $ordered = ordered($prod->id);
 
-            if (!$objp->stock_physique) {
-                $objp->stock_physique = 0;
-            }
             if ($conf->global->USE_VIRTUAL_STOCK) {
                 //compute virtual stock
                 $prod->fetch($prod->id);
@@ -487,14 +503,15 @@ if ($resql) {
          '</div>',
          '<table width="100%">',
          '<tr><td align="right">',
-         '<input class="butAction" type="submit" value="' . $value . '">',
+         '<input class="butAction" type="submit" name="valid" value="' . $value . '">',
          '</td></tr></table>',
          '</form>';
 
     if ($num > $conf->liste_limit) {
-        if ($sref || $snom || $sall || GETPOST('search', 'alpha')) {
+        if ($sref || $snom || $sall || $salert || GETPOST('search', 'alpha')) {
             $filters = '&sref=' . $sref . '&snom=' . $snom;
-            $filters .= '&amp;sall=' . $sall;
+            $filters .= '&sall=' . $sall;
+            $filters .= '&salert=' . $salert;
             print_barre_liste('',
                               $page,
                               'replenish.php',
@@ -509,7 +526,8 @@ if ($resql) {
         } else {
             $filters = '&sref=' . $sref . '&snom=' . $snom;
             $filters .= '&fourn_id=' . $fourn_id;
-            $filters .= (isset($type)? '&amp;type=' . $type : '');
+            $filters .= (isset($type)? '&type=' . $type : '');
+            $filters .= '&salert=' . $salert;
             print_barre_liste('',
                               $page,
                               'replenish.php',
