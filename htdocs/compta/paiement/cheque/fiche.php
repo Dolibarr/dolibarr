@@ -211,10 +211,8 @@ if ($action == 'builddoc' && $user->rights->banque->cheque)
 {
 	$result = $object->fetch($id);
 
-	/*if ($_REQUEST['model'])
-	{
-		$object->setDocModel($user, $_REQUEST['model']);
-	}*/
+	// Save last template used to generate document
+	//if (GETPOST('model')) $object->setDocModel($user, GETPOST('model','alpha'));
 
     $outputlangs = $langs;
     $newlang='';

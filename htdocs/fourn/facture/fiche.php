@@ -86,7 +86,7 @@ if ($id > 0 || ! empty($ref))
 
 /*
  * Actions
-*/
+ */
 
 // Action clone object
 if ($action == 'confirm_clone' && $confirm == 'yes')
@@ -898,31 +898,27 @@ if ($action == 'send' && ! $_POST['addfile'] && ! $_POST['removedfile'] && ! $_P
 }
 
 // Build document
-elseif ($action	== 'builddoc')
+elseif ($action == 'builddoc')
 {
-    // Save modele used
+	// Save modele used
     $object->fetch($id);
     $object->fetch_thirdparty();
-    if ($_REQUEST['model'])
-    {
-        $object->setDocModel($user, $_REQUEST['model']);
-    }
+
+	// Save last template used to generate document
+	if (GETPOST('model')) $object->setDocModel($user, GETPOST('model','alpha'));
 
     $outputlangs = $langs;
-    if (! empty($_REQUEST['lang_id']))
+    $newlang=GETPOST('lang_id','alpha');
+    if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->client->default_lang;
+    if (! empty($newlang))
     {
         $outputlangs = new Translate("",$conf);
-        $outputlangs->setDefaultLang($_REQUEST['lang_id']);
+        $outputlangs->setDefaultLang($newlang);
     }
     $result=supplier_invoice_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
     if ($result	<= 0)
     {
         dol_print_error($db,$result);
-        exit;
-    }
-    else
-    {
-        header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.(empty($conf->global->MAIN_JUMP_TAG)?'':'#builddoc'));
         exit;
     }
 }

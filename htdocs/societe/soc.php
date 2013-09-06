@@ -475,15 +475,10 @@ if (empty($reshook))
                 $outputlangs = new Translate("",$conf);
                 $outputlangs->setDefaultLang($newlang);
             }
-            $result=thirdparty_doc_create($db, $object, '', $_REQUEST['model'], $outputlangs);
+            $result=thirdparty_doc_create($db, $object, '', GETPOST('model','alpha'), $outputlangs);
             if ($result <= 0)
             {
                 dol_print_error($db,$result);
-                exit;
-            }
-            else
-            {
-                header('Location: '.$_SERVER["PHP_SELF"].'?socid='.$object->id.(empty($conf->global->MAIN_JUMP_TAG)?'':'#builddoc'));
                 exit;
             }
         }

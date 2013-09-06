@@ -628,13 +628,9 @@ else if ($action == 'builddoc' && $user->rights->fournisseur->commande->creer)	/
 {
     // Build document
 
-    // Sauvegarde le dernier module	choisi pour	generer	un document
-
-    if (GETPOST('model'))
-    {
-        $object->setDocModel($user, GETPOST('model'));
-    }
-
+	// Save last template used to generate document
+	if (GETPOST('model')) $object->setDocModel($user, GETPOST('model','alpha'));
+	
     $outputlangs = $langs;
     if (GETPOST('lang_id'))
     {
@@ -645,11 +641,6 @@ else if ($action == 'builddoc' && $user->rights->fournisseur->commande->creer)	/
     if ($result	<= 0)
     {
         dol_print_error($db,$result);
-        exit;
-    }
-    else
-    {
-        header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.(empty($conf->global->MAIN_JUMP_TAG)?'':'#builddoc'));
         exit;
     }
 }

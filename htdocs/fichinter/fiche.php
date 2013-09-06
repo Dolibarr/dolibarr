@@ -333,10 +333,8 @@ else if ($action == 'builddoc' && $user->rights->ficheinter->creer)	// En get ou
 	$object->fetch_thirdparty();
 	$object->fetch_lines();
 
-	if (GETPOST('model','alpha'))
-	{
-		$object->setDocModel($user, GETPOST('model','alpha'));
-	}
+	// Save last template used to generate document
+	if (GETPOST('model')) $object->setDocModel($user, GETPOST('model','alpha'));
 
 	// Define output language
 	$outputlangs = $langs;

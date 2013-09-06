@@ -225,7 +225,7 @@ if ($step == 1 || $action == 'cleanselect')
 if ($action == 'builddoc')
 {
     // Build export file
-	$result=$objexport->build_file($user, $_POST['model'], $datatoexport, $array_selected, $array_filtervalue);
+	$result=$objexport->build_file($user, GETPOST('model','alpha'), $datatoexport, $array_selected, $array_filtervalue);
 	if ($result < 0)
 	{
 		setEventMessage($objexport->error, 'errors');

@@ -294,10 +294,9 @@ else if ($action == 'settrackingnumber' || $action == 'settrackingurl'
 // Build document
 else if ($action == 'builddoc')	// En get ou en post
 {
-    if (GETPOST('model','alpha'))
-    {
-        $object->setDocModel($user, GETPOST('model','alpha'));
-    }
+
+	// Save last template used to generate document
+	if (GETPOST('model')) $object->setDocModel($user, GETPOST('model','alpha'));
 
     // Define output language
     $outputlangs = $langs;

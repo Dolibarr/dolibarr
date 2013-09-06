@@ -233,10 +233,8 @@ if ($action == 'update' && ! $_POST["cancel"] && $user->rights->projet->creer)
 // Build doc
 if ($action == 'builddoc' && $user->rights->projet->creer)
 {
-    if (GETPOST('model'))
-    {
-        $object->setDocModel($user, GETPOST('model'));
-    }
+	// Save last template used to generate document
+	if (GETPOST('model')) $object->setDocModel($user, GETPOST('model','alpha'));
 
     $outputlangs = $langs;
     if (GETPOST('lang_id'))
@@ -248,11 +246,6 @@ if ($action == 'builddoc' && $user->rights->projet->creer)
     if ($result <= 0)
     {
         dol_print_error($db,$result);
-        exit;
-    }
-    else
-    {
-        header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.(empty($conf->global->MAIN_JUMP_TAG)?'':'#builddoc'));
         exit;
     }
 }

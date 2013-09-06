@@ -184,15 +184,13 @@ if ($action == 'builddoc')	// En get ou en post
 	$object->fetch($id);
 	$object->fetch_thirdparty();
 
-	if ($_REQUEST['model'])
-	{
-		$object->setDocModel($user, $_REQUEST['model']);
-	}
+	// Save last template used to generate document
+	if (GETPOST('model')) $object->setDocModel($user, GETPOST('model','alpha'));
 
 	// Define output language
 	$outputlangs = $langs;
 	$newlang='';
-	if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
+	if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id')) $newlang=GETPOST('lang_id');
 	if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->client->default_lang;
 	if (! empty($newlang))
 	{
