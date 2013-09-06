@@ -59,6 +59,24 @@ License: GPL-3+
  `/usr/share/common-licenses/GPL-2'.
 
 
+Files: docs/images/*
+Copyright: Laurent Destailleur 
+License: CC-BY-SA-3.0
+ You are free:
+ to Share (to copy, distribute and transmit the work) and
+ to Remix (to adapt the work) under the following conditions:
+ .
+ Attribution - You must attribute the work in the manner specified by the
+ author or licensor (but not in any way that suggests that they endorse you
+ or your use of the work).
+ .
+ Share Alike - If you alter, transform, or build upon this work, you may
+ distribute the resulting work only under the same, similar or a compatible
+ license.
+ .
+ For more information, see http://creativecommons.org/licenses/by-sa/3.0/
+
+
 Files: htdocs/includes/fpdi/*
 Copyright: FPDFI team
 License: GPL-2+

@@ -196,8 +196,8 @@ if ($resql)
         }
     }
     else
-    {
-        print "No unpaid invoices found\n";
+	{
+        print "No services to expire found\n";
     }
 
     exit(0);
@@ -261,7 +261,7 @@ function envoi_mail($mode,$oldemail,$message,$total,$userlang,$oldtarget,$durati
     	$allmessage.=$conf->global->SCRIPT_EMAIL_EXPIRE_SERVICES_CUSTOMERS_HEADER;
     }
     else
-    {
+	{
     	$allmessage.= "Dear customer".($usehtml?"<br>\n":"\n").($usehtml?"<br>\n":"\n");
     	$allmessage.= "Please, find a summary of the services contracted by you that are about to expire.".($usehtml?"<br>\n":"\n").($usehtml?"<br>\n":"\n");
     }

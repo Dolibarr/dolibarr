@@ -460,7 +460,7 @@ elseif ($action == 'add' && $user->rights->fournisseur->facture->creer)
         else
         {
             $db->commit();
-            
+
             if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
             	$result=supplier_invoice_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
             	if ($result	<= 0)
@@ -469,7 +469,7 @@ elseif ($action == 'add' && $user->rights->fournisseur->facture->creer)
             		exit;
             	}
             }
-            
+
             header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
             exit;
         }
@@ -1213,7 +1213,7 @@ if ($action == 'create')
     print '<tr><td>'.$langs->trans('DateMaxPayment').'</td><td>';
     $form->select_date($datedue,'ech','','','',"add",1,1);
     print '</td></tr>';
-	
+
 	// Payment term
 	print '<tr><td class="nowrap">'.$langs->trans('PaymentConditionsShort').'</td><td colspan="2">';
 	$form->select_conditions_paiements(isset($_POST['cond_reglement_id'])?$_POST['cond_reglement_id']:$cond_reglement_id,'cond_reglement_id');
@@ -1656,7 +1656,7 @@ else
 		}
 		print "</td>";
 		print '</tr>';
-	
+
 		// Mode of payment
 		$langs->load('bills');
 		$form = new Form($db);
@@ -1683,7 +1683,7 @@ else
 
         print '<tr><td>'.$langs->trans('AmountHT').'</td><td align="right">'.price($object->total_ht,1,$langs,0,-1,-1,$conf->currency).'</td><td colspan="2" align="left">&nbsp;</td></tr>';
         print '<tr><td>'.$langs->trans('AmountVAT').'</td><td align="right">'.price($object->total_tva,1,$langs,0,-1,-1,$conf->currency).'</td><td colspan="2" align="left">';
-		if (! empty($conf->global->MAIN_FEATURES_LEVEL)) 
+		if (! empty($conf->global->MAIN_FEATURES_LEVEL))
 		{
 	        if (GETPOST('calculationrule')) $calculationrule=GETPOST('calculationrule','alpha');
 	        else $calculationrule=(empty($conf->global->MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND)?'totalofround':'roundoftotal');
@@ -2146,7 +2146,7 @@ else
             // Make payments
             if ($action != 'edit' && $object->statut == 1 && $object->paye == 0  && $user->societe_id == 0)
             {
-                print '<a class="butAction" href="paiement.php?id='.$object->id.'&amp;action=create">'.$langs->trans('DoPayment').'</a>';
+                print '<a class="butAction" href="paiement.php?facid='.$object->id.'&amp;action=create">'.$langs->trans('DoPayment').'</a>';	// must use facid because id is for payment id not invoice
             }
 
             // Classify paid
@@ -2276,7 +2276,7 @@ else
             $formmail->withfrom=1;
 			$liste=array();
 			foreach ($object->thirdparty->thirdparty_and_contact_email_array(1) as $key=>$value)	$liste[$key]=$value;
-			$formmail->withto=GETPOST("sendto")?GETOST("sendto"):$liste;
+			$formmail->withto=GETPOST("sendto")?GETPOST("sendto"):$liste;
 			$formmail->withtocc=$liste;
             $formmail->withtoccc=$conf->global->MAIN_EMAIL_USECCC;
             $formmail->withtopic=$langs->trans('SendBillRef','__FACREF__');

@@ -508,7 +508,7 @@ class Categorie
 			include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
 			$interface=new Interfaces($this->db);
 			$result=$interface->run_triggers('CATEGORY_UNLINK',$this,$user,$langs,$conf);
-			if ($result < 0) { $error++; $this->errors=$interface->errors; $this->error=$this->error; }
+			if ($result < 0) { $error++; $this->errors=$interface->errors; }
 			// Fin appel triggers
 
 			if (! $error) return 1;

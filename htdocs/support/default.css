@@ -20,15 +20,12 @@ font-size:12px;
 font-family: Verdana, Tahoma, Arial, Helvetica, sans-serif;
 background: #f9f9f9 url(headbg.jpg) 0 0 no-repeat;
 /* background-color: #F4F4F4; */
-margin-left: 10px;
-margin-right: 10px;
-margin-top: 5px;
-margin-bottom: 5px;
+margin: 5px 10px;
 }
 
 div.titre {
 padding: 5px 5px 5px 5px;
-margin: 0em 0em 0em 0em;
+margin: 0 0 0 0;
 }
 
 span.titre {
@@ -37,7 +34,7 @@ font-weight: bold;
 background: #FFFFFF;
 color: #4965B3;
 padding: 5px 5px 5px 5px;
-margin: 0em 0em 0em 0em;
+margin: 0 0 0 0;
 border: 1px solid #AAAAAA;
 }
 
@@ -45,19 +42,19 @@ div.soustitre {
 font-size: 15px;
 font-weight: bold;
 color: #4965B3;
-padding: 0em 1.2em 0.5em 2em;
+padding: 0 1.2em 0.5em 2em;
 margin: 1.2em 1.2em 1.2em 1.2em;
 border-bottom: 1px solid #8CACBB;
 border-right: 1px solid #8CACBB;
 text-align: right;
 }
 
-inputdisabled
+input:disabled
 {
 background: #FDFDFD;
 border: 1px solid #ACBCBB;
-padding: 0px 0px 0px 0px;
-margin: 0px 0px 0px 0px;
+padding: 0 0 0 0;
+margin: 0 0 0 0;
 }
 
 table.main {
@@ -77,7 +74,7 @@ color: #777711;
 div.error {
 color: #550000; font-weight: bold;
 padding: 0.2em 0.2em 0.2em 0.2em;
-margin: 0.5em 0em 0.5em 0em;
+margin: 0.5em 0 0.5em 0;
 border: 1px solid #6C7C8B;
 }
 
@@ -124,7 +121,7 @@ td.label {
 background: #dcdcd3;
 color: #5945A3;
 padding: 5px 5px 5px 5px;
-margin: 0em 0em 0em 0em;
+margin: 0 0 0 0;
 border-bottom: 1px solid #8CACBB;
 }
 
@@ -132,7 +129,7 @@ td.comment {
 background: #dcdcd3;
 color: black;
 padding: 5px 5px 5px 5px;
-margin: 0em 0em 0em 0em;
+margin: 0 0 0 0;
 text-decoration:none;
 font-size: 13px;
 border-bottom: 1px solid #8CACBB;

@@ -83,7 +83,7 @@ function pt ($db, $sql, $date)
         $db->free($result);
     }
     else {
-        dolibar_print_error($db);
+        dol_print_error($db);
     }
 }
 

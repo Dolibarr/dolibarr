@@ -128,8 +128,10 @@ from origin/upstream and origin/pristine.
 Note: If there was errors managed manually, you may need to make a git commit
 
 * Add an entry into debian/changelog
-> date -R will return formated string date to use into changelog
+> dh "My comment" will add entry.
+For example: dch -v x.y.z-1 "New upstream release." for a new version
 
+Warning: Date must have format reported by "date -R"
 Warning: Entry added here is used by next step. Name and email must match value into debian/control file.
 
 * We try to build package
@@ -138,7 +140,7 @@ Warning: Entry added here is used by next step. Name and email must match value 
 * If package .deb is ok:
 Note: If there was errors managed manually, you may need to make a git commit but do not use option "amend" previous commit
 > git-buildpackage --git-tag
-> git push
+> git push --all
 > git push --tags
 
 * Compilation par un développeur debian et envoi par

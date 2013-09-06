@@ -742,13 +742,18 @@ function dol_delete_file($file,$disableglob=0,$nophperrors=0,$nohook=0,$object=n
 		{
 			$globencoded=str_replace('[','\[',$file_osencoded);
 			$globencoded=str_replace(']','\]',$globencoded);
-			foreach (glob($globencoded) as $filename)
+			$listofdir=glob($globencoded);
+			if (! empty($listofdir) && is_array($listofdir))
 			{
-				if ($nophperrors) $ok=@unlink($filename);  // The unlink encapsulated by dolibarr
-				else $ok=unlink($filename);  // The unlink encapsulated by dolibarr
-				if ($ok) dol_syslog("Removed file ".$filename, LOG_DEBUG);
-				else dol_syslog("Failed to remove file ".$filename, LOG_WARNING);
+				foreach ($listofdir as $filename)
+				{
+					if ($nophperrors) $ok=@unlink($filename);  // The unlink encapsulated by dolibarr
+					else $ok=unlink($filename);  // The unlink encapsulated by dolibarr
+					if ($ok) dol_syslog("Removed file ".$filename, LOG_DEBUG);
+					else dol_syslog("Failed to remove file ".$filename, LOG_WARNING);
+				}
 			}
+			else dol_syslog("No files to delete found", LOG_WARNING);
 		}
 		else
 		{
