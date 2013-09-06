@@ -585,7 +585,7 @@ function cleanSerialize(expr) {
 	var reg = new RegExp("(&)", "g");
 	var reg2 = new RegExp("[^A-Z0-9,]", "g");
 	var liste1 = expr.replace(reg, ",");
-	return liste = liste1.replace(reg2, "");
+	return liste1.replace(reg2, "");
 }
 
 
