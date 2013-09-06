@@ -1,29 +1,29 @@
 <?php
 /* Copyright (C) 2002-2006 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Eric Seigne           <eric.seigne@ryxeo.com>
-* Copyright (C) 2004-2013 Laurent Destailleur   <eldy@users.sourceforge.net>
-* Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
-* Copyright (C) 2005-2012 Regis Houssin         <regis.houssin@capnetworks.com>
-* Copyright (C) 2006      Andre Cianfarani      <acianfa@free.fr>
-* Copyright (C) 2010-2013 Juanjo Menent         <jmenent@2byte.es>
-* Copyright (C) 2012      Christophe Battarel   <christophe.battarel@altairis.fr>
-* Copyright (C) 2013      Jean-Francois FERRY   <jfefe@aternatik.fr>
-* Copyright (C) 2013      Florian Henry		 <florian.henry@open-concept.pro>
-* Copyright (C) 2013      Cédric Salvador		<csalvador@gpcsolutions.fr>
-*
-* This program is free software; you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation; either version 3 of the License, or
-* (at your option) any later version.
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with this program. If not, see <http://www.gnu.org/licenses/>.
-*/
+ * Copyright (C) 2004-2013 Laurent Destailleur   <eldy@users.sourceforge.net>
+ * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
+ * Copyright (C) 2005-2012 Regis Houssin         <regis.houssin@capnetworks.com>
+ * Copyright (C) 2006      Andre Cianfarani      <acianfa@free.fr>
+ * Copyright (C) 2010-2013 Juanjo Menent         <jmenent@2byte.es>
+ * Copyright (C) 2012      Christophe Battarel   <christophe.battarel@altairis.fr>
+ * Copyright (C) 2013      Jean-Francois FERRY   <jfefe@aternatik.fr>
+ * Copyright (C) 2013      Florian Henry		 <florian.henry@open-concept.pro>
+ * Copyright (C) 2013      Cédric Salvador		<csalvador@gpcsolutions.fr>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 
 /**
  *	\file       htdocs/compta/facture.php
@@ -2649,16 +2649,16 @@ else if ($id > 0 || ! empty($ref))
 			{
 				$langs->load("stocks");
 				require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
-                require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
+				require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 				$formproduct=new FormProduct($db);
-                $warehouse = new Entrepot($db);
-                $warehouse_array = $warehouse->list_array();
-                if (count($warehouse_array) == 1) {
-                    $label = $object->type==2?$langs->trans("WarehouseForStockDecrease", current($warehouse_array)):$langs->trans("WarehouseForStockIncrease", current($warehouse_array));
-                    $value = '<input type="hidden" id="idwarehouse" name="idwarehouse" value="' . key($warehouse_array) . '">';
-                } else {
-                    $label=$object->type==2?$langs->trans("SelectWarehouseForStockDecrease"):$langs->trans("SelectWarehouseForStockIncrease");
-                    $value = $formproduct->selectWarehouses(GETPOST('idwarehouse'),'idwarehouse','',1);
+				$warehouse = new Entrepot($db);
+				$warehouse_array = $warehouse->list_array();
+				if (count($warehouse_array) == 1) {
+					$label = $object->type==2?$langs->trans("WarehouseForStockDecrease", current($warehouse_array)):$langs->trans("WarehouseForStockIncrease", current($warehouse_array));
+					$value = '<input type="hidden" id="idwarehouse" name="idwarehouse" value="' . key($warehouse_array) . '">';
+				} else {
+					$label=$object->type==2?$langs->trans("SelectWarehouseForStockDecrease"):$langs->trans("SelectWarehouseForStockIncrease");
+					$value = $formproduct->selectWarehouses(GETPOST('idwarehouse'),'idwarehouse','',1);
 				}
                 $formquestion=array(
 				//'text' => $langs->trans("ConfirmClone"),
