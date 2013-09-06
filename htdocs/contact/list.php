@@ -122,7 +122,7 @@ $sql.= " cp.code as country_code";
 $sql.= " FROM ".MAIN_DB_PREFIX."socpeople as p";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_pays as cp ON cp.rowid = p.fk_pays";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = p.fk_soc";
-if (! empty($search_categ)) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_contact as cs ON s.rowid = cs.fk_socpeople"; // We need this table joined to the select in order to filter by categ
+if (! empty($search_categ)) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_contact as cs ON p.rowid = cs.fk_socpeople"; // We need this table joined to the select in order to filter by categ
 if (!$user->rights->societe->client->voir && !$socid) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
 $sql.= ' WHERE p.entity IN ('.getEntity('societe', 1).')';
 if (!$user->rights->societe->client->voir && !$socid) //restriction
