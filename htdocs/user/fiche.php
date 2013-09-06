@@ -82,7 +82,6 @@ $langs->load("users");
 $langs->load("companies");
 $langs->load("ldap");
 
-$form = new Form($db);
 $object = new User($db);
 $extrafields = new ExtraFields($db);
 
@@ -566,9 +565,9 @@ if ($action == 'adduserldap')
  * View
  */
 
-llxHeader('',$langs->trans("UserCard"));
-
 $form = new Form($db);
+
+llxHeader('',$langs->trans("UserCard"));
 
 if (($action == 'create') || ($action == 'adduserldap'))
 {
@@ -1404,7 +1403,6 @@ else
 
                 if ($caneditgroup)
                 {
-                    $form = new Form($db);
                     print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$id.'" method="POST">'."\n";
                     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />';
                     print '<input type="hidden" name="action" value="addgroup" />';

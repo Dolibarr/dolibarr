@@ -171,7 +171,6 @@ if ($result)
                 {
                     print '<input type="hidden" name="action" value="2bank">';
                     print '<input type="hidden" name="rowid" value="'.$objp->crowid.'">';
-                    $form = new Form($db);
                     $form->select_comptes('','accountid',0,'',1);
                     print '<br>';
                     $form->select_types_paiements('','paymenttypeid');

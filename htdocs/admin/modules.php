@@ -66,6 +66,8 @@ if ($action == 'reset' && $user->admin)
  * View
  */
 
+$form = new Form($db);
+
 $_SESSION["mode"]=$mode;
 
 $help_url='EN:First_setup|FR:Premiers_paramétrages|ES:Primeras_configuraciones';
@@ -252,7 +254,6 @@ if (! empty($categ[$categidx]))
 $categidx='expdev';
 if (! empty($categ[$categidx]))
 {
-	$form = new Form($db);
 	$categidx='expdev';
     $head[$h][0] = DOL_URL_ROOT."/admin/modules.php?mode=".$categidx;
     $head[$h][1] = $form->textwithpicto($langs->trans("ModuleFamilyExperimental"), $langs->trans('DoNotUseInProduction'), 1, 'warning', '', 0, 3);

@@ -653,7 +653,7 @@ if ($user->rights->adherent->creer && $action == 'confirm_add_spip' && $confirm 
 
 /*
  * View
-*/
+ */
 
 $form = new Form($db);
 $formcompany = new FormCompany($db);
