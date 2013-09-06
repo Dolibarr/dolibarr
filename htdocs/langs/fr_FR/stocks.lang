@@ -96,3 +96,5 @@ UseVirtualStock=Utiliser le stock théorique à la place du stock physique
 RuleForStockReplenishment=Règle de gestion du réapprovisionnement des stocks
 SelectProduct=Sélectionnez au moins un produit
 AlertOnly = Alertes seulement
+WarehouseForStockDecrease=L'entrepôt <b>%s</b> sera utilisé pour la décrémentation du stock
+WarehouseForStockIncrease=L'entrepôt <b>%s</b> sera utilisé pour l'incrémentation du stock
