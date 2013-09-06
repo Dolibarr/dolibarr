@@ -6,10 +6,10 @@
  * Copyright (C) 2005-2012 Regis Houssin         <regis.houssin@capnetworks.com>
  * Copyright (C) 2006      Andre Cianfarani      <acianfa@free.fr>
  * Copyright (C) 2010-2013 Juanjo Menent         <jmenent@2byte.es>
- * Copyright (C) 2012      Christophe Battarel   <christophe.battarel@altairis.fr>
+ * Copyright (C) 2012-2013 Christophe Battarel   <christophe.battarel@altairis.fr>
  * Copyright (C) 2013      Jean-Francois FERRY   <jfefe@aternatik.fr>
- * Copyright (C) 2013      Florian Henry		 <florian.henry@open-concept.pro>
- * Copyright (C) 2013      Cédric Salvador		<csalvador@gpcsolutions.fr>
+ * Copyright (C) 2013      Florian Henry         <florian.henry@open-concept.pro>
+ * Copyright (C) 2013      Cédric Salvador       <csalvador@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -2660,7 +2660,7 @@ else if ($id > 0 || ! empty($ref))
 					$label=$object->type==2?$langs->trans("SelectWarehouseForStockDecrease"):$langs->trans("SelectWarehouseForStockIncrease");
 					$value = $formproduct->selectWarehouses(GETPOST('idwarehouse'),'idwarehouse','',1);
 				}
-                $formquestion=array(
+				$formquestion=array(
 				//'text' => $langs->trans("ConfirmClone"),
 				//array('type' => 'checkbox', 'name' => 'clone_content',   'label' => $langs->trans("CloneMainAttributes"),   'value' => 1),
 				//array('type' => 'checkbox', 'name' => 'update_prices',   'label' => $langs->trans("PuttingPricesUpToDate"),   'value' => 1),
