@@ -1,5 +1,6 @@
 Source: dolibarr
-Maintainer: Laurent Destailleur <eldy@users.sourceforge.net>
+Maintainer: Laurent Destailleur (eldy) <eldy@users.sourceforge.net>
+Uploaders: Laurent Destailleur (eldy) <eldy@users.sourceforge.net>
 Standards-Version: 3.9.2
 Section: web
 Priority: optional
