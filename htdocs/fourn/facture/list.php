@@ -192,7 +192,7 @@ if ($resql)
 	if (GETPOST("search_montant_ht"))   $param.='&amp;search_montant_ht='.urlencode(GETPOST("search_montant_ht"));
 	if (GETPOST("search_montant_ttc"))  $param.='&amp;search_montant_ttc='.urlencode(GETPOST("search_montant_ttc"));
 
-	print_barre_liste($langs->trans("BillsSuppliers").($socid?" $soc->nom":""),$page,"index.php",$param,$sortfield,$sortorder,'',$num);
+	print_barre_liste($langs->trans("BillsSuppliers").($socid?" $soc->nom":""),$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num);
 	print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">';
 	print '<table class="liste" width="100%">';
 	print '<tr class="liste_titre">';

@@ -2465,7 +2465,7 @@ function load_fiche_titre($titre, $mesg='', $picto='title.png', $pictoisfullpath
  *	Print a title with navigation controls for pagination
  *
  *	@param	string	$titre				Title to show (required)
- *	@param	string	$page				Numero of page (required)
+ *	@param	string	$page				Numero of page to show in navigation links (required)
  *	@param	string	$file				Url of page (required)
  *	@param	string	$options         	parametres complementaires lien ('' par defaut)
  *	@param	string	$sortfield       	champ de tri ('' par defaut)
@@ -2497,18 +2497,26 @@ function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $so
 	print "<!-- Begin title '".$titre."' -->\n";
 	print '<table width="100%" border="0" class="notopnoleftnoright" style="margin-bottom: 2px;"><tr>';
 
-	$pagelist = '';
-
 	// Left
+	if ($picto && $titre) print '<td class="nobordernopadding hideonsmartphone" width="40" align="left" valign="middle">'.img_picto('', $picto, '', $pictoisfullpath).'</td>';
+	print '<td class="nobordernopadding"><div class="titre">'.$titre.'</div></td>';
+
+	// Center
+	if ($center)
+	{
+		print '<td class="nobordernopadding" align="left" valign="middle">'.$center.'</td>';
+	}
+
+	// Right
+	print '<td class="nobordernopadding" align="right" valign="middle">';
+	if ($sortfield) $options .= "&amp;sortfield=".$sortfield;
+	if ($sortorder) $options .= "&amp;sortorder=".$sortorder;
+	// Show navigation bar
+	$pagelist = '';
 	if ($page > 0 || $num > $conf->liste_limit)
 	{
 		if ($totalnboflines)
 		{
-			if ($picto && $titre) print '<td class="nobordernopadding hideonsmartphone" width="40" align="left" valign="middle">'.img_picto('',$picto, '', $pictoisfullpath).'</td>';
-			print '<td class="nobordernopadding">';
-			print '<div class="titre">'.$titre.'</div>';
-			print '</td>';
-
 			$maxnbofpage=10;
 
 			$nbpages=ceil($totalnboflines/$conf->liste_limit);
@@ -2522,7 +2530,7 @@ function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $so
 			}
 			do
 			{
-				if($cpt==$page)
+				if ($cpt==$page)
 				{
 					$pagelist.= ' <u>'.($page+1).'</u>';
 				}
@@ -2541,30 +2549,9 @@ function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $so
 		}
 		else
 		{
-			if ($picto && $titre) print '<td class="nobordernopadding hideonsmartphone" width="40" align="left" valign="middle">'.img_picto('',$picto, '', $pictoisfullpath).'</td>';
-			print '<td class="nobordernopadding">';
-			print '<div class="titre">'.$titre.'</div>';
 			$pagelist.= $langs->trans('Page').' '.($page+1);
-			print '</td>';
 		}
 	}
-	else
-	{
-		if ($picto && $titre) print '<td class="nobordernopadding hideonsmartphone" width="40" align="left" valign="middle">'.img_picto('',$picto, '', $pictoisfullpath).'</td>';
-		print '<td class="nobordernopadding"><div class="titre">'.$titre.'</div></td>';
-	}
-
-	// Center
-	if ($center)
-	{
-		print '<td class="nobordernopadding" align="left" valign="middle">'.$center.'</td>';
-	}
-
-	// Right
-	print '<td class="nobordernopadding" align="right" valign="middle">';
-	if ($sortfield) $options .= "&amp;sortfield=".$sortfield;
-	if ($sortorder) $options .= "&amp;sortorder=".$sortorder;
-	// Affichage des fleches de navigation
 	print_fleche_navigation($page,$file,$options,$nextpage,$pagelist);
 	print '</td>';
 
