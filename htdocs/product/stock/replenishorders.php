@@ -103,10 +103,17 @@ if (!$user->rights->societe->client->voir && !$socid) {
     $sql .= ' AND s.rowid = sc.fk_soc AND sc.fk_user = ' . $user->id;
 }
 if ($sref) {
-    $sql .= ' AND cf.ref LIKE "%' . $db->escape($sref) . '%"';
+    //natural search
+    $scrit = explode(' ', $sref);
+    foreach ($scrit as $crit) {
+        $sql .= ' AND cf.ref LIKE "%' . $db->escape($crit) . '%"';
+    }
 }
 if ($snom) {
-    $sql .= ' AND s.nom LIKE "%' . $db->escape($snom) . '%"';
+    $scrit = explode(' ', $snom);
+    foreach ($scrit as $crit) {
+        $sql .= ' AND s.nom LIKE "%' . $db->escape($crit) . '%"';
+    }
 }
 if ($suser) {
     $sql .= ' AND u.login LIKE "%' . $db->escape($suser) . '%"';

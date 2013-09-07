@@ -217,33 +217,26 @@ if ($action == 'set_encaisse')
  */
 if ($action == 'builddoc')
 {
-	$donation = new Don($db);
-	$donation->fetch($id);
+	$object = new Don($db);
+	$object->fetch($id);
 
-	if ($_REQUEST['model'])
-	{
-		$donation->setDocModel($user, $_REQUEST['model']);
-	}
+	// Save last template used to generate document
+	if (GETPOST('model')) $object->setDocModel($user, GETPOST('model','alpha'));
 
 	// Define output language
 	$outputlangs = $langs;
 	$newlang='';
 	if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
-	if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$donation->client->default_lang;
+	if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->client->default_lang;
 	if (! empty($newlang))
 	{
 		$outputlangs = new Translate("",$conf);
 		$outputlangs->setDefaultLang($newlang);
 	}
-	$result=don_create($db, $donation->id, '', $donation->modelpdf, $outputlangs);
+	$result=don_create($db, $object->id, '', $object->modelpdf, $outputlangs);
 	if ($result <= 0)
 	{
 		dol_print_error($db,$result);
-		exit;
-	}
-	else
-	{
-		header('Location: '.$_SERVER["PHP_SELF"].'?id='.$donation->id.(empty($conf->global->MAIN_JUMP_TAG)?'':'#builddoc'));
 		exit;
 	}
 }

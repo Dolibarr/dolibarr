@@ -628,13 +628,9 @@ else if ($action == 'builddoc' && $user->rights->fournisseur->commande->creer)	/
 {
     // Build document
 
-    // Sauvegarde le dernier module	choisi pour	generer	un document
-
-    if (GETPOST('model'))
-    {
-        $object->setDocModel($user, GETPOST('model'));
-    }
-
+	// Save last template used to generate document
+	if (GETPOST('model')) $object->setDocModel($user, GETPOST('model','alpha'));
+	
     $outputlangs = $langs;
     if (GETPOST('lang_id'))
     {
@@ -645,11 +641,6 @@ else if ($action == 'builddoc' && $user->rights->fournisseur->commande->creer)	/
     if ($result	<= 0)
     {
         dol_print_error($db,$result);
-        exit;
-    }
-    else
-    {
-        header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.(empty($conf->global->MAIN_JUMP_TAG)?'':'#builddoc'));
         exit;
     }
 }
@@ -1069,8 +1060,8 @@ elseif (! empty($object->id))
 	 */
 	if ($action	== 'delete')
 	{
-		$ret=$form->form_confirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('DeleteOrder'), $langs->trans('ConfirmDeleteOrder'), 'confirm_delete', '', 0, 2);
-		if ($ret == 'html') print '<br>';
+		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('DeleteOrder'), $langs->trans('ConfirmDeleteOrder'), 'confirm_delete', '', 0, 2);
+		
 	}
 
 	// Clone confirmation
@@ -1081,8 +1072,8 @@ elseif (! empty($object->id))
 				//array('type' => 'checkbox', 'name' => 'update_prices',   'label' => $langs->trans("PuttingPricesUpToDate"),   'value' => 1)
 		);
 		// Paiement incomplet. On demande si motif = escompte ou autre
-		$ret=$form->form_confirm($_SERVER["PHP_SELF"].'?id='.$object->id,$langs->trans('CloneOrder'),$langs->trans('ConfirmCloneOrder',$object->ref),'confirm_clone',$formquestion,'yes',1);
-		if ($ret == 'html') print '<br>';
+		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id,$langs->trans('CloneOrder'),$langs->trans('ConfirmCloneOrder',$object->ref),'confirm_clone',$formquestion,'yes',1);
+		
 	}
 
 	/*
@@ -1105,8 +1096,8 @@ elseif (! empty($object->id))
 			$text.=$notify->confirmMessage('ORDER_SUPPLIER_APPROVE', $object->socid);
 		}
 
-		$ret=$form->form_confirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ValidateOrder'), $text, 'confirm_valid', '', 0, 1);
-		if ($ret == 'html') print '<br>';
+		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ValidateOrder'), $text, 'confirm_valid', '', 0, 1);
+		
 	}
 
 	/*
@@ -1128,8 +1119,8 @@ elseif (! empty($object->id))
 			);
 		}
 
-		$ret=$form->form_confirm($_SERVER['PHP_SELF']."?id=".$object->id,$langs->trans("ApproveThisOrder"),$langs->trans("ConfirmApproveThisOrder",$object->ref),"confirm_approve", $formquestion, 1, 1, 240);
-		if ($ret == 'html') print '<br>';
+		print $form->formconfirm($_SERVER['PHP_SELF']."?id=".$object->id,$langs->trans("ApproveThisOrder"),$langs->trans("ConfirmApproveThisOrder",$object->ref),"confirm_approve", $formquestion, 1, 1, 240);
+		
 	}
 
 	/*
@@ -1137,8 +1128,8 @@ elseif (! empty($object->id))
 	 */
 	if ($action	== 'refuse')
 	{
-		$ret=$form->form_confirm($_SERVER['PHP_SELF']."?id=$object->id",$langs->trans("DenyingThisOrder"),$langs->trans("ConfirmDenyingThisOrder",$object->ref),"confirm_refuse", '', 0, 1);
-		if ($ret == 'html') print '<br>';
+		print $form->formconfirm($_SERVER['PHP_SELF']."?id=$object->id",$langs->trans("DenyingThisOrder"),$langs->trans("ConfirmDenyingThisOrder",$object->ref),"confirm_refuse", '', 0, 1);
+		
 	}
 
 	/*
@@ -1146,8 +1137,8 @@ elseif (! empty($object->id))
 	 */
 	if ($action	== 'cancel')
 	{
-		$ret=$form->form_confirm($_SERVER['PHP_SELF']."?id=$object->id",$langs->trans("Cancel"),$langs->trans("ConfirmCancelThisOrder",$object->ref),"confirm_cancel", '', 0, 1);
-		if ($ret == 'html') print '<br>';
+		print $form->formconfirm($_SERVER['PHP_SELF']."?id=$object->id",$langs->trans("Cancel"),$langs->trans("ConfirmCancelThisOrder",$object->ref),"confirm_cancel", '', 0, 1);
+		
 	}
 
 	/*
@@ -1156,8 +1147,8 @@ elseif (! empty($object->id))
 	if ($action	== 'commande')
 	{
 		$date_com = dol_mktime(0,0,0,$_POST["remonth"],$_POST["reday"],$_POST["reyear"]);
-		$ret=$form->form_confirm($_SERVER['PHP_SELF']."?id=".$object->id."&datecommande=".$date_com."&methode=".$_POST["methodecommande"]."&comment=".urlencode($_POST["comment"]), $langs->trans("MakeOrder"),$langs->trans("ConfirmMakeOrder",dol_print_date($date_com,'day')),"confirm_commande",'',0,2);
-		if ($ret == 'html') print '<br>';
+		print $form->formconfirm($_SERVER['PHP_SELF']."?id=".$object->id."&datecommande=".$date_com."&methode=".$_POST["methodecommande"]."&comment=".urlencode($_POST["comment"]), $langs->trans("MakeOrder"),$langs->trans("ConfirmMakeOrder",dol_print_date($date_com,'day')),"confirm_commande",'',0,2);
+		
 	}
 
 	/*
@@ -1165,8 +1156,8 @@ elseif (! empty($object->id))
 	 */
 	if ($action == 'delete_product_line')
 	{
-		$ret=$form->form_confirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&lineid='.$_GET["lineid"], $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteproductline','',0,2);
-		if ($ret == 'html') print '<br>';
+		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&lineid='.$_GET["lineid"], $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteproductline','',0,2);
+		
 	}
 
 	/*
@@ -1240,7 +1231,6 @@ elseif (! empty($object->id))
 
 	// Conditions de reglement par defaut
 	$langs->load('bills');
-	$form = new Form($db);
 	print '<tr><td class="nowrap">';
 	print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
 	print $langs->trans('PaymentConditions');
@@ -1261,7 +1251,6 @@ elseif (! empty($object->id))
 
 	// Mode of payment
 	$langs->load('bills');
-	$form = new Form($db);
 	print '<tr><td class="nowrap">';
 	print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
 	print $langs->trans('PaymentMode');

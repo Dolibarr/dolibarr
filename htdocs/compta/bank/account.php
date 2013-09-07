@@ -300,8 +300,8 @@ if ($id > 0 || ! empty($ref))
 	if ($action == 'delete')
 	{
 		$text=$langs->trans('ConfirmDeleteTransaction');
-		$ret=$form->form_confirm($_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;rowid='.GETPOST("rowid"),$langs->trans('DeleteTransaction'),$text,'confirm_delete');
-		if ($ret == 'html') print '<br>';
+		print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;rowid='.GETPOST("rowid"),$langs->trans('DeleteTransaction'),$text,'confirm_delete');
+		
 	}
 
 	// Define transaction list navigation string

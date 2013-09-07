@@ -299,7 +299,6 @@ if ($id > 0)
 
 	// Conditions de reglement par defaut
 	$langs->load('bills');
-	$form = new Form($db);
 	print '<tr><td>';
 	print '<table width="100%" class="nobordernopadding"><tr><td>';
 	print $langs->trans('PaymentConditions');

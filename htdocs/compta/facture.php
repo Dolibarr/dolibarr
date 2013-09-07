@@ -1795,7 +1795,8 @@ else if ($action == 'builddoc')	// En get ou en post
 	$object->fetch($id);
 	$object->fetch_thirdparty();
 
-	if (GETPOST('model'))   $object->setDocModel($user, GETPOST('model'));
+	// Save last template used to generate document
+	if (GETPOST('model')) $object->setDocModel($user, GETPOST('model','alpha'));
 	if (GETPOST('fk_bank')) $object->fk_bank=GETPOST('fk_bank');
 
 	// Define output language
@@ -1812,11 +1813,6 @@ else if ($action == 'builddoc')	// En get ou en post
 	if ($result <= 0)
 	{
 		dol_print_error($db,$result);
-		exit;
-	}
-	else
-	{
-		header('Location: '.$_SERVER["PHP_SELF"].'?facid='.$object->id.(empty($conf->global->MAIN_JUMP_TAG)?'':'#builddoc'));
 		exit;
 	}
 }

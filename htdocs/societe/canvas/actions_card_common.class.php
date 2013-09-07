@@ -333,22 +333,17 @@ abstract class ActionsCardCommon
                 // Define output language
                 $outputlangs = $langs;
                 $newlang='';
-                if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id') ) $newlang=GETPOST('lang_id');
+                if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id')) $newlang=GETPOST('lang_id');
                 if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$this->object->default_lang;
                 if (! empty($newlang))
                 {
                     $outputlangs = new Translate("",$conf);
                     $outputlangs->setDefaultLang($newlang);
                 }
-                $result=thirdparty_doc_create($this->db, $this->object->id, '', GETPOST('model'), $outputlangs);
+                $result=thirdparty_doc_create($this->db, $this->object->id, '', GETPOST('model','alpha'), $outputlangs);
                 if ($result <= 0)
                 {
                     dol_print_error($this->db,$result);
-                    exit;
-                }
-                else
-                {
-                    header('Location: '.$_SERVER["PHP_SELF"].'?socid='.$this->object->id.(empty($conf->global->MAIN_JUMP_TAG)?'':'#builddoc'));
                     exit;
                 }
             }

@@ -2471,10 +2471,11 @@ class Form
      *     @param 	string		$action      	   	Action
      *	   @param	array		$formquestion	   	An array with forms complementary inputs
      * 	   @param	string		$selectedchoice		"" or "no" or "yes"
-     * 	   @param	int			$useajax		   	0=No, 1=Yes, 2=Yes but submit page with &confirm=no if choice is No
+     * 	   @param	int			$useajax		   	0=No, 1=Yes, 2=Yes but submit page with &confirm=no if choice is No, 'xxx'=preoutput confirm box with div id=dialog-confirm-xxx
      *     @param	int			$height          	Force height of box
      *     @param	int			$width				Force width of box
      *     @return 	void
+     *     @deprecated
      */
     function form_confirm($page, $title, $question, $action, $formquestion='', $selectedchoice="", $useajax=0, $height=170, $width=500)
     {
@@ -2482,7 +2483,15 @@ class Form
     }
 
     /**
-     *     Show a confirmation HTML form or AJAX popup
+     *     Show a confirmation HTML form or AJAX popup.
+     *     Easiest way to use this is with useajax=1. 
+     *     If you use useajax='xxx', you must also add jquery code to trigger opening of box (with correct parameters) 
+     *     just after calling this method. For example: 
+     *       print '<script type="text/javascript">'."\n";
+     *       print 'jQuery(document).ready(function() {'."\n";
+     *       print 'jQuery(".xxxlink").click(function(e) { jQuery("#aparamid").val(jQuery(this).attr("rel")); jQuery("#dialog-confirm-xxx").dialog("open"); return false; });'."\n";
+     *       print '});'."\n";
+     *       print '</script>'."\n";
      *
      *     @param  	string		$page        	   	Url of page to call if confirmation is OK
      *     @param	string		$title       	   	Title
@@ -2578,7 +2587,9 @@ class Form
             $more.='</table>'."\n";
         }
 
-        if (! empty($conf->dol_use_jmobile)) $useajax=0;	// JQUI method dialog is broken with jmobile, we use standard HTML. We also change code for button to have get on url with action=xxx and output confirm only when action=xxx
+		// JQUI method dialog is broken with jmobile, we use standard HTML. 
+		// Note: When using dol_use_jmobile, you must also check code for button use a GET url with action=xxx and output the confirm code only when action=xxx
+        if (! empty($conf->dol_use_jmobile)) $useajax=0;	
 
         if ($useajax && $conf->use_javascript_ajax)
         {

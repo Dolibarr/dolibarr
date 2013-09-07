@@ -294,10 +294,9 @@ else if ($action == 'settrackingnumber' || $action == 'settrackingurl'
 // Build document
 else if ($action == 'builddoc')	// En get ou en post
 {
-    if (GETPOST('model','alpha'))
-    {
-        $object->setDocModel($user, GETPOST('model','alpha'));
-    }
+
+	// Save last template used to generate document
+	if (GETPOST('model')) $object->setDocModel($user, GETPOST('model','alpha'));
 
     // Define output language
     $outputlangs = $langs;
@@ -924,8 +923,8 @@ else
 		*/
 		if ($action == 'delete')
 		{
-			$ret=$form->form_confirm($_SERVER['PHP_SELF'].'?id='.$object->id,$langs->trans('DeleteSending'),$langs->trans("ConfirmDeleteSending",$object->ref),'confirm_delete','',0,1);
-			if ($ret == 'html') print '<br>';
+			print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id,$langs->trans('DeleteSending'),$langs->trans("ConfirmDeleteSending",$object->ref),'confirm_delete','',0,1);
+			
 		}
 
 		/*
@@ -953,16 +952,16 @@ else
 				$text.=$notify->confirmMessage('SHIPPING_VALIDATE',$object->socid);
 			}
 
-			$ret=$form->form_confirm($_SERVER['PHP_SELF'].'?id='.$object->id,$langs->trans('ValidateSending'),$text,'confirm_valid','',0,1);
-			if ($ret == 'html') print '<br>';
+			print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id,$langs->trans('ValidateSending'),$text,'confirm_valid','',0,1);
+			
 		}
 		/*
 		 * Confirmation de l'annulation
 		*/
 		if ($action == 'annuler')
 		{
-			$ret=$form->form_confirm($_SERVER['PHP_SELF'].'?id='.$object->id,$langs->trans('CancelSending'),$langs->trans("ConfirmCancelSending",$object->ref),'confirm_cancel','',0,1);
-			if ($ret == 'html') print '<br>';
+			print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id,$langs->trans('CancelSending'),$langs->trans("ConfirmCancelSending",$object->ref),'confirm_cancel','',0,1);
+			
 		}
 
 		// Calculate true totalWeight and totalVolume for all products

@@ -122,8 +122,7 @@ if ($object->id > 0)
 
 	if ($action == 'delete')
 	{
-		$ret=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$object->id."&urlfile=".urlencode(GETPOST("urlfile")),$langs->trans("DeleteAFile"),$langs->trans("ConfirmDeleteAFile"),"confirm_delete",'','',1);
-		if ($ret == 'html') print '<br>';
+		print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id."&urlfile=".urlencode(GETPOST("urlfile")),$langs->trans("DeleteAFile"),$langs->trans("ConfirmDeleteAFile"),"confirm_delete",'','',1);
 	}
 
 	print '<table class="border" width="100%">';

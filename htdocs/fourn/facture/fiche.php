@@ -86,7 +86,7 @@ if ($id > 0 || ! empty($ref))
 
 /*
  * Actions
-*/
+ */
 
 // Action clone object
 if ($action == 'confirm_clone' && $confirm == 'yes')
@@ -168,7 +168,7 @@ elseif ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->fourn
     }
 }
 
-elseif ($action == 'confirm_deleteline' && $confirm == 'yes' && $user->rights->fournisseur->facture->creer)
+elseif ($action == 'confirm_delete_line' && $confirm == 'yes' && $user->rights->fournisseur->facture->creer)
 {
 	$object->fetch($id);
 	$ret = $object->deleteline(GETPOST('lineid'));
@@ -898,31 +898,27 @@ if ($action == 'send' && ! $_POST['addfile'] && ! $_POST['removedfile'] && ! $_P
 }
 
 // Build document
-elseif ($action	== 'builddoc')
+elseif ($action == 'builddoc')
 {
-    // Save modele used
+	// Save modele used
     $object->fetch($id);
     $object->fetch_thirdparty();
-    if ($_REQUEST['model'])
-    {
-        $object->setDocModel($user, $_REQUEST['model']);
-    }
+
+	// Save last template used to generate document
+	if (GETPOST('model')) $object->setDocModel($user, GETPOST('model','alpha'));
 
     $outputlangs = $langs;
-    if (! empty($_REQUEST['lang_id']))
+    $newlang=GETPOST('lang_id','alpha');
+    if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->client->default_lang;
+    if (! empty($newlang))
     {
         $outputlangs = new Translate("",$conf);
-        $outputlangs->setDefaultLang($_REQUEST['lang_id']);
+        $outputlangs->setDefaultLang($newlang);
     }
     $result=supplier_invoice_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
     if ($result	<= 0)
     {
         dol_print_error($db,$result);
-        exit;
-    }
-    else
-    {
-        header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.(empty($conf->global->MAIN_JUMP_TAG)?'':'#builddoc'));
         exit;
     }
 }
@@ -1373,8 +1369,7 @@ else
         // Confirmation de la suppression d'une ligne produit
         if ($action == 'confirm_delete_line')
         {
-            $ret=$form->form_confirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&lineid='.$_GET["lineid"], $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteline', '', 1, 1);
-            if ($ret == 'html') print '<br>';
+            print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&lineid='.$_GET["lineid"], $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_delete_line', '', 1, 1);
         }
 
         // Clone confirmation
@@ -1386,8 +1381,7 @@ else
             //array('type' => 'checkbox', 'name' => 'clone_content',   'label' => $langs->trans("CloneMainAttributes"),   'value' => 1)
             );
             // Paiement incomplet. On demande si motif = escompte ou autre
-            $ret=$form->form_confirm($_SERVER["PHP_SELF"].'?id='.$object->id,$langs->trans('CloneInvoice'),$langs->trans('ConfirmCloneInvoice',$object->ref),'confirm_clone',$formquestion,'yes', 1);
-            if ($ret == 'html') print '<br>';
+            print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id,$langs->trans('CloneInvoice'),$langs->trans('ConfirmCloneInvoice',$object->ref),'confirm_clone',$formquestion,'yes', 1);
         }
 
         // Confirmation de la validation
@@ -1433,22 +1427,22 @@ else
                 array('type' => 'other', 'name' => 'idwarehouse',   'label' => $langs->trans("SelectWarehouseForStockIncrease"),   'value' => $formproduct->selectWarehouses(GETPOST('idwarehouse'),'idwarehouse','',1)));
             }
 
-            $ret=$form->form_confirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ValidateBill'), $text, 'confirm_valid', $formquestion, 1, 1, 240);
-            if ($ret == 'html') print '<br>';
+            print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ValidateBill'), $text, 'confirm_valid', $formquestion, 1, 1, 240);
+            
         }
 
         // Confirmation set paid
         if ($action == 'paid')
         {
-            $ret=$form->form_confirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ClassifyPaid'), $langs->trans('ConfirmClassifyPaidBill', $object->ref), 'confirm_paid', '', 0, 1);
-            if ($ret == 'html') print '<br>';
+            print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ClassifyPaid'), $langs->trans('ConfirmClassifyPaidBill', $object->ref), 'confirm_paid', '', 0, 1);
+            
         }
 
         // Confirmation de la suppression de la facture fournisseur
         if ($action == 'delete')
         {
-            $ret=$form->form_confirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('DeleteBill'), $langs->trans('ConfirmDeleteBill'), 'confirm_delete', '', 0, 1);
-            if ($ret == 'html') print '<br>';
+            print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('DeleteBill'), $langs->trans('ConfirmDeleteBill'), 'confirm_delete', '', 0, 1);
+            
         }
 
 
@@ -1638,7 +1632,6 @@ else
 
 		// Conditions de reglement par defaut
 		$langs->load('bills');
-		$form = new Form($db);
 		print '<tr><td class="nowrap">';
 		print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
 		print $langs->trans('PaymentConditions');
@@ -1659,7 +1652,6 @@ else
 
 		// Mode of payment
 		$langs->load('bills');
-		$form = new Form($db);
 		print '<tr><td class="nowrap">';
 		print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
 		print $langs->trans('PaymentMode');
@@ -1787,7 +1779,7 @@ else
 
         /*
          * Lines
-        */
+         */
         print '<br>';
         print '<table class="noborder" width="100%">';
         $var=1;
@@ -1956,7 +1948,10 @@ else
                 print '</td>';
 
                 print '<td align="center" width="16">';
-                if ($object->statut == 0) print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=confirm_delete_line&amp;lineid='.$object->lines[$i]->rowid.'">'.img_delete().'</a>';
+                if ($object->statut == 0) 
+                {
+                	print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=confirm_delete_line&amp;lineid='.$object->lines[$i]->rowid.'">'.img_delete().'</a>';
+                }
                 else print '&nbsp;';
                 print '</td>';
 

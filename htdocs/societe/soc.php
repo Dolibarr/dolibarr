@@ -475,15 +475,10 @@ if (empty($reshook))
                 $outputlangs = new Translate("",$conf);
                 $outputlangs->setDefaultLang($newlang);
             }
-            $result=thirdparty_doc_create($db, $object, '', $_REQUEST['model'], $outputlangs);
+            $result=thirdparty_doc_create($db, $object, '', GETPOST('model','alpha'), $outputlangs);
             if ($result <= 0)
             {
                 dol_print_error($db,$result);
-                exit;
-            }
-            else
-            {
-                header('Location: '.$_SERVER["PHP_SELF"].'?socid='.$object->id.(empty($conf->global->MAIN_JUMP_TAG)?'':'#builddoc'));
                 exit;
             }
         }
@@ -871,7 +866,6 @@ else
         if ($j % 2 == 1) print '<td colspan="2"></td></tr>';
 
         // Assujeti TVA
-        $form = new Form($db);
         print '<tr><td>'.$langs->trans('VATIsUsed').'</td>';
         print '<td>';
         print $form->selectyesno('assujtva_value',1,1);     // Assujeti par defaut en creation
@@ -1440,9 +1434,7 @@ else
         // Confirm delete third party
         if ($action == 'delete' || ($conf->use_javascript_ajax && empty($conf->dol_use_jmobile)))
         {
-            $form = new Form($db);
-            $ret=$form->form_confirm($_SERVER["PHP_SELF"]."?socid=".$object->id,$langs->trans("DeleteACompany"),$langs->trans("ConfirmDeleteCompany"),"confirm_delete",'',0,"action-delete");
-            if ($ret == 'html') print '<br>';
+            print $form->formconfirm($_SERVER["PHP_SELF"]."?socid=".$object->id,$langs->trans("DeleteACompany"),$langs->trans("ConfirmDeleteCompany"),"confirm_delete",'',0,"action-delete");
         }
 
         dol_htmloutput_errors($error,$errors);
@@ -1595,7 +1587,6 @@ else
         if ($j % 2 == 1)  print '<td colspan="2"></td></tr>';
 
         // VAT payers
-        $form = new Form($db);
         print '<tr><td>';
         print $langs->trans('VATIsUsed');
         print '</td><td>';

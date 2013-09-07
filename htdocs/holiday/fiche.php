@@ -832,7 +832,7 @@ else
                 if ($action == 'delete' && $cp->statut == 1) {
                     if($user->rights->holiday->delete)
                     {
-                        $ret=$form->form_confirm("fiche.php?id=".$id,$langs->trans("TitleDeleteCP"),$langs->trans("ConfirmDeleteCP"),"confirm_delete", '', 0, 1);
+                        print $form->formconfirm("fiche.php?id=".$id,$langs->trans("TitleDeleteCP"),$langs->trans("ConfirmDeleteCP"),"confirm_delete", '', 0, 1);
                         if ($ret == 'html') print '<br />';
                     }
                 }
@@ -840,14 +840,14 @@ else
                 // Si envoi en validation
                 if ($action == 'sendToValidate' && $cp->statut == 1 && $user->id == $cp->fk_user)
                 {
-                    $ret=$form->form_confirm("fiche.php?id=".$id,$langs->trans("TitleToValidCP"),$langs->trans("ConfirmToValidCP"),"confirm_send", '', 1, 1);
+                    print $form->formconfirm("fiche.php?id=".$id,$langs->trans("TitleToValidCP"),$langs->trans("ConfirmToValidCP"),"confirm_send", '', 1, 1);
                     if ($ret == 'html') print '<br />';
                 }
 
                 // Si validation de la demande
                 if ($action == 'valid' && $cp->statut == 2 && $user->id == $cp->fk_validator)
                 {
-                    $ret=$form->form_confirm("fiche.php?id=".$id,$langs->trans("TitleValidCP"),$langs->trans("ConfirmValidCP"),"confirm_valid", '', 1, 1);
+                    print $form->formconfirm("fiche.php?id=".$id,$langs->trans("TitleValidCP"),$langs->trans("ConfirmValidCP"),"confirm_valid", '', 1, 1);
                     if ($ret == 'html') print '<br />';
                 }
 
@@ -855,14 +855,14 @@ else
                 if ($action == 'refuse' && $cp->statut == 2 && $user->id == $cp->fk_validator)
                 {
                     $array_input = array(array('type'=>"text",'label'=> $langs->trans('DetailRefusCP'),'name'=>"detail_refuse",'size'=>"50",'value'=>""));
-                    $ret=$form->form_confirm("fiche.php?id=".$id."&action=confirm_refuse", $langs->trans("TitleRefuseCP"), $langs->trans('ConfirmRefuseCP'), "confirm_refuse", $array_input, 1, 0);
+                    print $form->formconfirm("fiche.php?id=".$id."&action=confirm_refuse", $langs->trans("TitleRefuseCP"), $langs->trans('ConfirmRefuseCP'), "confirm_refuse", $array_input, 1, 0);
                     if ($ret == 'html') print '<br />';
                 }
 
                 // Si annulation de la demande
                 if ($action == 'cancel' && $cp->statut == 2 && ($user->id == $cp->fk_validator || $user->id == $cp->fk_user))
                 {
-                    $ret=$form->form_confirm("fiche.php?id=".$id,$langs->trans("TitleCancelCP"),$langs->trans("ConfirmCancelCP"),"confirm_cancel", '', 1, 1);
+                    print $form->formconfirm("fiche.php?id=".$id,$langs->trans("TitleCancelCP"),$langs->trans("ConfirmCancelCP"),"confirm_cancel", '', 1, 1);
                     if ($ret == 'html') print '<br />';
                 }
 

@@ -193,8 +193,9 @@ if (($action == 'add' || $action == 'confirmed') && $user->rights->categorie->cr
  * View
  */
 
-llxHeader("","",$langs->trans("Categories"));
 $form = new Form($db);
+
+llxHeader("","",$langs->trans("Categories"));
 
 if ($user->rights->categorie->creer)
 {

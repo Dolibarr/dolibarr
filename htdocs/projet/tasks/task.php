@@ -146,30 +146,22 @@ if (! empty($project_ref) && ! empty($withproject))
 // Build doc
 if ($action == 'builddoc' && $user->rights->projet->creer)
 {
-	if ($object->fetch($id,$ref) >= 0 )
-	{
-		if (GETPOST('model'))
-		{
-			$object->setDocModel($user, GETPOST('model'));
-		}
+	$object->fetch($id,$ref);
+	
+	// Save last template used to generate document
+	if (GETPOST('model')) $object->setDocModel($user, GETPOST('model','alpha'));
 
-		$outputlangs = $langs;
-		if (GETPOST('lang_id'))
-		{
-			$outputlangs = new Translate("",$conf);
-			$outputlangs->setDefaultLang(GETPOST('lang_id'));
-		}
-		$result=task_pdf_create($db, $object, $object->modelpdf, $outputlangs);
-		if ($result <= 0)
-		{
-			dol_print_error($db,$result);
-			exit;
-		}
-		else
-		{
-			header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.(empty($conf->global->MAIN_JUMP_TAG)?'':'#builddoc'));
-			exit;
-		}
+	$outputlangs = $langs;
+	if (GETPOST('lang_id'))
+	{
+		$outputlangs = new Translate("",$conf);
+		$outputlangs->setDefaultLang(GETPOST('lang_id'));
+	}
+	$result=task_pdf_create($db, $object, $object->modelpdf, $outputlangs);
+	if ($result <= 0)
+	{
+		dol_print_error($db,$result);
+		exit;
 	}
 }
 
@@ -385,8 +377,7 @@ if ($id > 0 || ! empty($ref))
 
 			if ($action == 'delete')
 			{
-				$ret=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$_GET["id"].'&withproject='.$withproject,$langs->trans("DeleteATask"),$langs->trans("ConfirmDeleteATask"),"confirm_delete");
-				if ($ret == 'html') print '<br>';
+				print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$_GET["id"].'&withproject='.$withproject,$langs->trans("DeleteATask"),$langs->trans("ConfirmDeleteATask"),"confirm_delete");
 			}
 
 			print '<table class="border" width="100%">';

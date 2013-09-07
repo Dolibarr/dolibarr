@@ -685,8 +685,7 @@ if ($id > 0)
 	// Confirmation suppression action
 	if ($action == 'delete')
 	{
-		$ret=$form->form_confirm("fiche.php?id=".$id,$langs->trans("DeleteAction"),$langs->trans("ConfirmDeleteAction"),"confirm_delete",'','',1);
-		if ($ret == 'html') print '<br>';
+		print $form->formconfirm("fiche.php?id=".$id,$langs->trans("DeleteAction"),$langs->trans("ConfirmDeleteAction"),"confirm_delete",'','',1);
 	}
 
 	if ($action == 'edit')

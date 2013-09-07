@@ -225,7 +225,7 @@ if ($step == 1 || $action == 'cleanselect')
 if ($action == 'builddoc')
 {
     // Build export file
-	$result=$objexport->build_file($user, $_POST['model'], $datatoexport, $array_selected, $array_filtervalue);
+	$result=$objexport->build_file($user, GETPOST('model','alpha'), $datatoexport, $array_selected, $array_filtervalue);
 	if ($result < 0)
 	{
 		setEventMessage($objexport->error, 'errors');
@@ -1025,8 +1025,8 @@ if ($step == 5 && $datatoexport)
      */
     if ($action == 'remove_file')
     {
-    	$ret=$form->form_confirm($_SERVER["PHP_SELF"].'?step=5&datatoexport='.$datatoexport.'&file='.urlencode(GETPOST("file")), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile', '', 0, 1);
-    	if ($ret == 'html') print '<br>';
+    	print $form->formconfirm($_SERVER["PHP_SELF"].'?step=5&datatoexport='.$datatoexport.'&file='.urlencode(GETPOST("file")), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile', '', 0, 1);
+    	
     }
 
     print '<table width="100%" class="border">';

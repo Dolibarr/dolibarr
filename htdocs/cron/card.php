@@ -209,6 +209,9 @@ if ($action=='inactive')
  * View
  */
 
+$form = new Form($db);
+$formCron = new FormCron($db);
+
 llxHeader('',$langs->trans("CronAdd"));
 
 if ($action=='edit' || empty($action) || $action=='delete' || $action=='execute')
@@ -244,19 +247,16 @@ if ($conf->use_javascript_ajax)
 	print '</script>'."\n";
 }
 
-$form = new Form($db);
-$formCron = new FormCron($db);
-
 if ($action == 'delete')
 {
-	$ret=$form->form_confirm($_SERVER['PHP_SELF']."?id=".$object->id,$langs->trans("CronDelete"),$langs->trans("CronConfirmDelete"),"confirm_delete",'','',1);
-	if ($ret == 'html') print '<br>';
+	print $form->formconfirm($_SERVER['PHP_SELF']."?id=".$object->id,$langs->trans("CronDelete"),$langs->trans("CronConfirmDelete"),"confirm_delete",'','',1);
+	
 	$action='';
 }
 
 if ($action == 'execute'){
-	$ret=$form->form_confirm($_SERVER['PHP_SELF']."?id=".$object->id,$langs->trans("CronExecute"),$langs->trans("CronConfirmExecute"),"confirm_execute",'','',1);
-	if ($ret == 'html') print '<br>';
+	print $form->formconfirm($_SERVER['PHP_SELF']."?id=".$object->id,$langs->trans("CronExecute"),$langs->trans("CronConfirmExecute"),"confirm_execute",'','',1);
+	
 	$action='';
 }
 

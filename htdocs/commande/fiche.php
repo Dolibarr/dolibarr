@@ -1123,14 +1123,11 @@ else if ($action == 'builddoc')	// In get or post
 {
 	/*
 	 * Generate order document
-	* define into /core/modules/commande/modules_commande.php
-	*/
+	 * define into /core/modules/commande/modules_commande.php
+	 */
 
-	// Sauvegarde le dernier modele choisi pour generer un document
-	if ($_REQUEST['model'])
-	{
-		$object->setDocModel($user, $_REQUEST['model']);
-	}
+	// Save last template used to generate document
+	if (GETPOST('model')) $object->setDocModel($user, GETPOST('model','alpha'));
 
 	// Define output language
 	$outputlangs = $langs;
@@ -1147,11 +1144,6 @@ else if ($action == 'builddoc')	// In get or post
 	if ($result <= 0)
 	{
 		dol_print_error($db,$result);
-		exit;
-	}
-	else
-	{
-		header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.(empty($conf->global->MAIN_JUMP_TAG)?'':'#builddoc'));
 		exit;
 	}
 }

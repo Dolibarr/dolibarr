@@ -653,7 +653,7 @@ if ($user->rights->adherent->creer && $action == 'confirm_add_spip' && $confirm 
 
 /*
  * View
-*/
+ */
 
 $form = new Form($db);
 $formcompany = new FormCompany($db);
@@ -1192,8 +1192,7 @@ else
 				if ($object->fk_soc > 0) $text.=$langs->trans("UserWillBeExternalUser");
 				else $text.=$langs->trans("UserWillBeInternalUser");
 			}
-			$ret=$form->form_confirm($_SERVER["PHP_SELF"]."?rowid=".$object->id,$langs->trans("CreateDolibarrLogin"),$text,"confirm_create_user",$formquestion,'yes');
-			if ($ret == 'html') print '<br>';
+			print $form->formconfirm($_SERVER["PHP_SELF"]."?rowid=".$object->id,$langs->trans("CreateDolibarrLogin"),$text,"confirm_create_user",$formquestion,'yes');
 		}
 
 		// Confirm create third party
@@ -1212,8 +1211,7 @@ else
 			// Create a form array
 			$formquestion=array(		array('label' => $langs->trans("NameToCreate"), 'type' => 'text', 'name' => 'companyname', 'value' => $name));
 
-			$ret=$form->form_confirm($_SERVER["PHP_SELF"]."?rowid=".$object->id,$langs->trans("CreateDolibarrThirdParty"),$langs->trans("ConfirmCreateThirdParty"),"confirm_create_thirdparty",$formquestion,1);
-			if ($ret == 'html') print '<br>';
+			print $form->formconfirm($_SERVER["PHP_SELF"]."?rowid=".$object->id,$langs->trans("CreateDolibarrThirdParty"),$langs->trans("ConfirmCreateThirdParty"),"confirm_create_thirdparty",$formquestion,1);
 		}
 
 		// Confirm validate member
@@ -1286,8 +1284,7 @@ else
 			$formquestion=array();
 			if ($object->email) $formquestion[]=array('type' => 'checkbox', 'name' => 'send_mail', 'label' => $label, 'value' => (! empty($conf->global->ADHERENT_DEFAULT_SENDINFOBYMAIL)?'true':'false'));
 			if ($backtopage)    $formquestion[]=array('type' => 'hidden', 'name' => 'backtopage', 'value' => ($backtopage != '1' ? $backtopage : $_SERVER["HTTP_REFERER"]));
-			$ret=$form->form_confirm("fiche.php?rowid=".$rowid,$langs->trans("ResiliateMember"),$langs->trans("ConfirmResiliateMember"),"confirm_resign",$formquestion);
-			if ($ret == 'html') print '<br>';
+			print $form->formconfirm("fiche.php?rowid=".$rowid,$langs->trans("ResiliateMember"),$langs->trans("ConfirmResiliateMember"),"confirm_resign",$formquestion);
 		}
 
 		// Confirm remove member
@@ -1295,8 +1292,7 @@ else
 		{
 			$formquestion=array();
 			if ($backtopage) $formquestion[]=array('type' => 'hidden', 'name' => 'backtopage', 'value' => ($backtopage != '1' ? $backtopage : $_SERVER["HTTP_REFERER"]));
-			$ret=$form->form_confirm("fiche.php?rowid=".$rowid,$langs->trans("DeleteMember"),$langs->trans("ConfirmDeleteMember"),"confirm_delete",$formquestion,0,1);
-			if ($ret == 'html') print '<br>';
+			print $form->formconfirm("fiche.php?rowid=".$rowid,$langs->trans("DeleteMember"),$langs->trans("ConfirmDeleteMember"),"confirm_delete",$formquestion,0,1);
 		}
 
 		/*
@@ -1304,8 +1300,7 @@ else
 		*/
 		if ($action == 'add_spip')
 		{
-			$ret=$form->form_confirm("fiche.php?rowid=".$rowid, $langs->trans('AddIntoSpip'), $langs->trans('AddIntoSpipConfirmation'), 'confirm_add_spip');
-			if ($ret == 'html') print '<br>';
+			print $form->formconfirm("fiche.php?rowid=".$rowid, $langs->trans('AddIntoSpip'), $langs->trans('AddIntoSpipConfirmation'), 'confirm_add_spip');
 		}
 
 		/*
@@ -1313,8 +1308,7 @@ else
 		*/
 		if ($action == 'del_spip')
 		{
-			$ret=$form->form_confirm("fiche.php?rowid=$rowid", $langs->trans('DeleteIntoSpip'), $langs->trans('DeleteIntoSpipConfirmation'), 'confirm_del_spip');
-			if ($ret == 'html') print '<br>';
+			print $form->formconfirm("fiche.php?rowid=$rowid", $langs->trans('DeleteIntoSpip'), $langs->trans('DeleteIntoSpipConfirmation'), 'confirm_del_spip');
 		}
 
 		$rowspan=17;

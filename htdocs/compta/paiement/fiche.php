@@ -192,8 +192,8 @@ dol_fiche_head($head, $hselected, $langs->trans("PaymentCustomerInvoice"), 0, 'p
  */
 if ($action == 'delete')
 {
-	$ret=$form->form_confirm($_SERVER['PHP_SELF'].'?id='.$object->id, $langs->trans("DeletePayment"), $langs->trans("ConfirmDeletePayment"), 'confirm_delete','',0,2);
-	if ($ret == 'html') print '<br>';
+	print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id, $langs->trans("DeletePayment"), $langs->trans("ConfirmDeletePayment"), 'confirm_delete','',0,2);
+	
 }
 
 /*
@@ -202,8 +202,8 @@ if ($action == 'delete')
 if ($action == 'valide')
 {
 	$facid = $_GET['facid'];
-	$ret=$form->form_confirm($_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;facid='.$facid, $langs->trans("ValidatePayment"), $langs->trans("ConfirmValidatePayment"), 'confirm_valide','',0,2);
-	if ($ret == 'html') print '<br>';
+	print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;facid='.$facid, $langs->trans("ValidatePayment"), $langs->trans("ConfirmValidatePayment"), 'confirm_valide','',0,2);
+	
 }
 
 

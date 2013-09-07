@@ -241,8 +241,7 @@ if ($id > 0 || ! empty($ref))
 
 		if ($action == 'deleteline')
 		{
-			$ret=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$object->id.'&lineid='.$_GET["lineid"].($withproject?'&withproject=1':''),$langs->trans("DeleteATimeSpent"),$langs->trans("ConfirmDeleteATimeSpent"),"confirm_delete",'','',1);
-			if ($ret == 'html') print '<br>';
+			print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id.'&lineid='.$_GET["lineid"].($withproject?'&withproject=1':''),$langs->trans("DeleteATimeSpent"),$langs->trans("ConfirmDeleteATimeSpent"),"confirm_delete",'','',1);
 		}
 
 		print '<table class="border" width="100%">';
