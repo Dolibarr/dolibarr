@@ -269,7 +269,7 @@ if ($result > 0)
 				print '<tr '.$bc[$var].'>';
 				// Ref
 				print '<td><a href="'.DOL_URL_ROOT.'/fourn/facture/fiche.php?facid='.$objp->facid.'">'.img_object($langs->trans('ShowBill'),'bill').' ';
-				print $objp->ref;
+				print ($objp->ref?$objp->ref:$objp->rowid);
 				print "</a></td>\n";
 				// Ref supplier
 				print '<td>'.$objp->ref_supplier."</td>\n";
