@@ -405,9 +405,10 @@ class Paiement extends CommonObject
             $acc = new Account($this->db);
             $result=$acc->fetch($this->fk_account);
 
-            if (empty($this->amount)) $totalamount=$this->total; // For backward compatibility
-            if ($mode == 'payment') $totalamount=$this->amount;
-            if ($mode == 'payment_supplier') $totalamount=-$this->amount;
+            $totalamount=$this->amount;
+            if (empty($totalamount)) $totalamount=$this->total; // For backward compatibility
+            if ($mode == 'payment') $totalamount=$totalamount;
+            if ($mode == 'payment_supplier') $totalamount=-$totalamount;
 
             // Insert payment into llx_bank
             $bank_line_id = $acc->addline(
