@@ -1,0 +1,44 @@
+# see http://about.travis-ci.org/docs/user/languages/php/ for more hints
+
+services:
+ - memcached # will start memcached
+
+# This will tell travis to run phpunit
+language: php
+php:
+ - "5.4"
+
+env:
+ - DB=mysql
+ - DB=postgres  
+
+before_script: 
+ - echo Start travis
+ - echo 'date.timezone = "Europe/Paris"' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
+ - echo "extension = apc.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
+ - echo "extension = memcache.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
+ - echo "extension = memcached.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
+ - echo "extension = xdebug.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
+ - echo Init database
+ - mysql -e 'create database myapp_test;'
+ - sh -c "if [ '$DB' = 'pgsql' ]; then psql -c 'DROP DATABASE IF EXISTS myapp_test;' -U postgres; fi"
+ - sh -c "if [ '$DB' = 'pgsql' ]; then psql -c 'create database myapp_test;' -U postgres; fi"
+ - sh -c "if [ '$DB' = 'mysql' ]; then mysql -e 'DROP DATABASE IF EXISTS myapp_test;' -U postgres; fi"
+ - sh -c "if [ '$DB' = 'mysql' ]; then mysql -e 'create database IF NOT EXISTS myapp_test;'; fi"
+ - echo Create config file 
+ - echo '<?php ' > htdocs/conf/conf.php
+ - sh -c "if [ '$DB' = 'pgsql' ]; then echo '$dolibarr_main_db_type=\'pgsql\';' >> htdocs/conf/conf.php
+ - sh -c "if [ '$DB' = 'mysql' ]; then echo '$dolibarr_main_db_type=\'mysqli\';' >> htdocs/conf/conf.php
+ - echo '$dolibarr_main_db_host=\'localhost\';' >> htdocs/conf/conf.php
+ - echo '$dolibarr_main_db_name=\'myapp_test\';' >> htdocs/conf/conf.php
+ - echo '$dolibarr_main_db_user=\'travis\';' >> htdocs/conf/conf.php
+ - echo '?>' >> htdocs/conf/conf.php
+ - echo Show conf.php content
+ - cat htdocs/conf/conf.php   
+
+# Omitting "script:" will default to phpunit
+# use the $DB env variable to determine the phpunit.xml to use
+script: phpunit --configuration test/phpunit/phpunittest.xml --coverage-text
+
+after_script:
+ - echo End travis
