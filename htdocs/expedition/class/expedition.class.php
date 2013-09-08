@@ -224,6 +224,7 @@ class Expedition extends CommonObject
 		$sql.= ", ".(!empty($this->model_pdf)?"'".$this->db->escape($this->model_pdf)."'":"null");
 		$sql.= ")";
 
+		dol_syslog(get_class($this)."::create sql=".$sql, LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -323,6 +324,7 @@ class Expedition extends CommonObject
 		$sql.= ", ".$qty;
 		$sql.= ")";
 
+		dol_syslog(get_class($this)."::create_line sql=".$sql, LOG_DEBUG);
 		if (! $this->db->query($sql))
 		{
 			$error++;

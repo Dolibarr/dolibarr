@@ -22,6 +22,7 @@ Fix: Localtaxes balance not showing
 Fix: Intervention box links to contracts id
 Fix: Compatiblity with multicompany module
 Fix: Edit propal line was losing product supplier price id
+Fix: Delete linked element to supplier invoice when deleted 
 
 ***** ChangeLog for 3.4 compared to 3.3.* *****
 For users:
@@ -79,6 +80,7 @@ For users:
 - Fix: [Bug #958] LocalTax2 for Spain fails on Suppliers
 - Fix: [ bug #972 ] Auto completion contact field do not take account the min caract number before search
 - Fix: [ bug #971 ] html.form.class.php select_contact with autocomplete do not exclude id from exclude array
+- Fix: Expedition creation, can retreive product from other expedition
 
 For translators:
 - Update language files.
