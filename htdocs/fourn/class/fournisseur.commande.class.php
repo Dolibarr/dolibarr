@@ -922,10 +922,9 @@ class CommandeFournisseur extends CommonOrder
 
 		$error=0;
         $now=dol_now();
-        if(!$this->source)
-        {
-            $this->source = 0;
-        }
+
+        // Clean parameters
+        if (empty($this->source)) $this->source = 0;
 
         /* On positionne en mode brouillon la commande */
         $this->brouillon = 1;
@@ -959,8 +958,8 @@ class CommandeFournisseur extends CommonOrder
         $sql.= ", 0";
         $sql.= ", " . $this->source;
         $sql.= ", '".$conf->global->COMMANDE_SUPPLIER_ADDON_PDF."'";
-        $sql.= ", ".$this->mode_reglement_id;
-        $sql.= ", ".$this->cond_reglement_id;
+        $sql.= ", ".($this->mode_reglement_id > 0 ? $this->mode_reglement_id : 'null');
+        $sql.= ", ".($this->cond_reglement_id > 0 ? $this->cond_reglement_id : 'null');
         $sql.= ")";
 
         dol_syslog(get_class($this)."::create sql=".$sql);
@@ -1084,7 +1083,7 @@ class CommandeFournisseur extends CommonOrder
         $this->user_valid         = '';
         $this->date_creation      = '';
         $this->date_validation    = '';
-        $this->ref_supplier         = '';
+        $this->ref_supplier       = '';
 
         // Create clone
         $result=$this->create($user);
