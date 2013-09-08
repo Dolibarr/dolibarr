@@ -31,7 +31,7 @@ before_script:
  - sh -c "if [ '$DB' = 'pgsql' ]; then psql -c 'CREATE DATABASE myapp_test;' -U postgres; fi"
  - sh -c "if [ '$DB' = 'mysql' ]; then mysql -e 'DROP DATABASE IF EXISTS myapp_test;'; fi"
  - sh -c "if [ '$DB' = 'mysql' ]; then mysql -e 'CREATE DATABASE IF NOT EXISTS myapp_test;'; fi"
- - sh -c "if [ '$DB' = 'mysql' ]; then mysql -D myapp_test < /home/travis/build/Dolibarr/dolibarr/dev/initdata/mysqldump_dolibarr_3.4.0.sql; fi"
+ - sh -c "if [ '$DB' = 'mysql' ]; then mysql -D myapp_test < /home/travis/build/Dolibarr/dolibarr/dev/initdata/mysqldump_dolibarr_3.5.0.sql; fi"
  - echo Create config file htdocs/conf/conf.php
  - echo '<?php ' > htdocs/conf/conf.php
  - sh -c "if [ '$DB' = 'pgsql' ]; then echo '$'dolibarr_main_db_type=\'pgsql\'';' >> htdocs/conf/conf.php; fi"
