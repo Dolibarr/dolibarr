@@ -10,7 +10,7 @@ php:
 
 env:
  - DB=mysql
- - DB=postgres  
+# - DB=postgres  
 
 before_script: 
  - echo Start travis
@@ -20,15 +20,14 @@ before_script:
  - echo "extension = memcached.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
  - echo "extension = xdebug.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
  - echo Init database
- - mysql -e 'create database myapp_test;'
  - sh -c "if [ '$DB' = 'pgsql' ]; then psql -c 'DROP DATABASE IF EXISTS myapp_test;' -U postgres; fi"
  - sh -c "if [ '$DB' = 'pgsql' ]; then psql -c 'create database myapp_test;' -U postgres; fi"
  - sh -c "if [ '$DB' = 'mysql' ]; then mysql -e 'DROP DATABASE IF EXISTS myapp_test;' -U postgres; fi"
  - sh -c "if [ '$DB' = 'mysql' ]; then mysql -e 'create database IF NOT EXISTS myapp_test;'; fi"
  - echo Create config file 
  - echo '<?php ' > htdocs/conf/conf.php
- - sh -c "if [ '$DB' = 'pgsql' ]; then echo '$dolibarr_main_db_type=\'pgsql\';' >> htdocs/conf/conf.php
- - sh -c "if [ '$DB' = 'mysql' ]; then echo '$dolibarr_main_db_type=\'mysqli\';' >> htdocs/conf/conf.php
+ - sh -c "if [ '$DB' = 'pgsql' ]; then echo '$dolibarr_main_db_type=\'pgsql\';' >> htdocs/conf/conf.php; fi"
+ - sh -c "if [ '$DB' = 'mysql' ]; then echo '$dolibarr_main_db_type=\'mysqli\';' >> htdocs/conf/conf.php; fi"
  - echo '$dolibarr_main_db_host=\'localhost\';' >> htdocs/conf/conf.php
  - echo '$dolibarr_main_db_name=\'myapp_test\';' >> htdocs/conf/conf.php
  - echo '$dolibarr_main_db_user=\'travis\';' >> htdocs/conf/conf.php
