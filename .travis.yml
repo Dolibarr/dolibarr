@@ -20,7 +20,7 @@ before_script:
  - echo Current dir is `pwd`
  - echo Home dir is `echo ~`
  - echo Create dir /home/travis/build/Dolibarr/dolibarr/documents
- - mkdir -p /home/travis/build/Dolibarr/dolibarr/documents; chmod a+rwx /home/travis/build/Dolibarr/dolibarr/documents;
+ - mkdir -p /home/travis/build/Dolibarr/dolibarr/documents/admin/temp; chmod -R a+rwx /home/travis/build/Dolibarr/dolibarr/documents;
  - echo 'date.timezone = "Europe/Paris"' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
  - echo "extension = apc.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
  - echo "extension = memcache.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
