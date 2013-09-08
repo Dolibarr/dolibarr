@@ -21,10 +21,10 @@ before_script:
  - echo "extension = xdebug.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
  - echo Init database
  - sh -c "if [ '$DB' = 'pgsql' ]; then psql -c 'DROP DATABASE IF EXISTS myapp_test;' -U postgres; fi"
- - sh -c "if [ '$DB' = 'pgsql' ]; then psql -c 'create database myapp_test;' -U postgres; fi"
- - sh -c "if [ '$DB' = 'mysql' ]; then mysql -e 'DROP DATABASE IF EXISTS myapp_test;' -U postgres; fi"
- - sh -c "if [ '$DB' = 'mysql' ]; then mysql -e 'create database IF NOT EXISTS myapp_test;'; fi"
- - echo Create config file 
+ - sh -c "if [ '$DB' = 'pgsql' ]; then psql -c 'CREATE DATABASE myapp_test;' -U postgres; fi"
+ - sh -c "if [ '$DB' = 'mysql' ]; then mysql -e 'DROP DATABASE IF EXISTS myapp_test;'; fi"
+ - sh -c "if [ '$DB' = 'mysql' ]; then mysql -e 'CREATE DATABASE IF NOT EXISTS myapp_test;'; fi"
+ - echo Create config file htdocs/conf/conf.php
  - echo '<?php ' > htdocs/conf/conf.php
  - sh -c "if [ '$DB' = 'pgsql' ]; then echo '$dolibarr_main_db_type=\'pgsql\';' >> htdocs/conf/conf.php; fi"
  - sh -c "if [ '$DB' = 'mysql' ]; then echo '$dolibarr_main_db_type=\'mysqli\';' >> htdocs/conf/conf.php; fi"
