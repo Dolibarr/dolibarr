@@ -1,4 +1,7 @@
-# see http://about.travis-ci.org/docs/user/languages/php/ for more hints
+# This script is used by Travis CI to run automatically Continuous test integration
+# from Dolibarr GitHub repository.
+# Command run is phpunit
+# For syntax, see http://about.travis-ci.org/docs/user/languages/php/
 
 services:
  - memcached # will start memcached
@@ -14,6 +17,8 @@ env:
 
 before_script: 
  - echo Start travis
+ - echo Current dir is `pwd`
+ - echo Home dir is `echo ~`
  - echo 'date.timezone = "Europe/Paris"' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
  - echo "extension = apc.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
  - echo "extension = memcache.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
@@ -28,9 +33,12 @@ before_script:
  - echo '<?php ' > htdocs/conf/conf.php
  - sh -c "if [ '$DB' = 'pgsql' ]; then echo '$'dolibarr_main_db_type=\'pgsql\'';' >> htdocs/conf/conf.php; fi"
  - sh -c "if [ '$DB' = 'mysql' ]; then echo '$'dolibarr_main_db_type=\'mysqli\'';' >> htdocs/conf/conf.php; fi"
+ - echo '$'dolibarr_main_url_root=\'http://localhost/dolibarr\'';' >> htdocs/conf/conf.php
+ - echo '$'dolibarr_main_document_root=\'/home/travis/Dolibarr/dolibarr\'';' >> htdocs/conf/conf.php
  - echo '$'dolibarr_main_db_host=\'localhost\'';' >> htdocs/conf/conf.php
  - echo '$'dolibarr_main_db_name=\'myapp_test\'';' >> htdocs/conf/conf.php
  - echo '$'dolibarr_main_db_user=\'travis\'';' >> htdocs/conf/conf.php
+ - echo '$'dolibarr_main_authentication=\'dolibarr\'';' >> htdocs/conf/conf.php
  - echo '?>' >> htdocs/conf/conf.php
  - echo Show conf.php content
  - cat htdocs/conf/conf.php   
