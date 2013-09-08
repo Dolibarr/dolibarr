@@ -37,7 +37,7 @@ before_script:
 
 # Omitting "script:" will default to phpunit
 # use the $DB env variable to determine the phpunit.xml to use
-script: phpunit --configuration test/phpunit/phpunittest.xml --coverage-text
+script: phpunit --configuration test/phpunit/phpunittest.xml --coverage-text test/phpunit/AllTests.php
 
 after_script:
  - echo End travis
