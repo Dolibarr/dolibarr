@@ -132,6 +132,7 @@ class PdfDocTest extends PHPUnit_Framework_TestCase
 		$localobject=new Facture($this->savdb);
 		$localobject->initAsSpecimen();
 		$localobject->lines=array();
+		$localobject->lines[0]=new FactureLigne($this->savdb);
 		$localobject->lines[0]->fk_product=1;
 		$localobject->lines[0]->label='Label 1';
 		$localobject->lines[0]->desc="This is a description with a é accent\n(Country of origin: France)";
