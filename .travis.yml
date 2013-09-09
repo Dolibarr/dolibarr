@@ -23,8 +23,9 @@ before_script:
  - mkdir -p $(pwd)/htdocs/documents/admin/temp;
  - touch $(pwd)/htdocs/documents/dolibarr.log;
  - sudo chmod a+rwx /home; sudo chmod a+rwx /home/travis; sudo chmod a+rwx /home/travis/build;
+ - sudo chmod a+rwx /home/travis/build/Dolibarr; sudo chmod a+rwx /home/travis/build/Dolibarr/dolibarr;
  - sudo chmod -R a+rwx $(pwd);
- - find $(pwd)/htdocs/documents -exec ls -alrt {} \;
+ - find /home/travis/build/ -exec ls -alrt {} \;
  - echo Edit php.ini file
  - echo 'date.timezone = "Europe/Paris"' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
  - echo "extension = apc.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
