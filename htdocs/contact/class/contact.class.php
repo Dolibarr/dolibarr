@@ -726,7 +726,7 @@ class Contact extends CommonObject
 		if (! $error)
 		{
 			// Remove category
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX."categorie_contact WHERE fk_socpeople = ".$rowid;
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."categorie_contact WHERE fk_socpeople = ".$this->id;
 			dol_syslog(get_class($this)."::delete sql=".$sql);
 			$resql=$this->db->query($sql);
 			if (! $resql)
@@ -734,8 +734,7 @@ class Contact extends CommonObject
 				$error++;
 				$this->error .= $this->db->lasterror();
 				$errorflag=-1;
-				dol_syslog(get_class($this)."::delete erreur ".$errorflag." ".$this->error, LOG_ERR);
-			
+				dol_syslog(get_class($this)."::delete error ".$errorflag." ".$this->error, LOG_ERR);
 			}
 		}
 
@@ -916,7 +915,7 @@ class Contact extends CommonObject
 	{
 		return $this->LibStatut($this->statut,$mode);
 	}
-	
+
 	function getLibStatutcontact()
 	{
 		return $this->LibStatutcontact($this->statut);
@@ -975,7 +974,7 @@ class Contact extends CommonObject
 			elseif ($statut==4) return '<span class="hideonsmartphone">'.$langs->trans('StatusContactValidatedShort').' </span>'.img_picto($langs->trans('StatusContactValidatedShort'),'statut4');
 			elseif ($statut==5) return '<span class="hideonsmartphone">'.$langs->trans('StatusContactValidatedShort').' </span>'.img_picto($langs->trans('StatusContactValidatedShort'),'statut5');
 		}
-		
+
 	}
 
 	function LibStatutcontact($statut)
@@ -1051,7 +1050,7 @@ class Contact extends CommonObject
 		$this->socid = $socids[$socid];
 		$this->statut=1;
 	}
-	
+
 	/**
 	 *  Change status of a user
 	 *
