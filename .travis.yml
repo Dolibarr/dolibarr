@@ -14,14 +14,14 @@ php:
 
 env:
  - DB=mysql
-# - DB=postgres  
+# - DB=postgres
 
-before_script: 
+before_script:
  - echo Start travis
  - echo Current dir is `pwd`
  - echo Home dir is `echo ~`
  - echo Update composer
-# - ~/.phpenv/versions/$(phpenv version-name)/bin/composer.phar self-update 
+# - ~/.phpenv/versions/$(phpenv version-name)/bin/composer.phar self-update
  - echo Create dir $(pwd)/htdocs/documents
  - sudo mkdir -p $(pwd)/htdocs/documents/admin/temp;
  - sudo touch $(pwd)/htdocs/documents/dolibarr.log;
@@ -79,4 +79,3 @@ after_script:
 # - echo Output dolibarr log file; cat $(pwd)/htdocs/documents/dolibarr.log
  - echo Output apache log file; sudo cat /var/log/apache2/error.log
  - echo End travis
-
