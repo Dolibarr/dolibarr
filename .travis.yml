@@ -9,34 +9,30 @@ services:
 # This will tell travis to run phpunit
 language: php
 php:
+ - "5.3"
  - "5.4"
 
 env:
  - DB=mysql
-# - DB=postgres  
+# - DB=postgres
 
-before_script: 
+before_script:
  - echo Start travis
  - echo Current dir is `pwd`
  - echo Home dir is `echo ~`
  - echo Update composer
-# - ~/.phpenv/versions/$(phpenv version-name)/bin/composer.phar self-update 
+# - ~/.phpenv/versions/$(phpenv version-name)/bin/composer.phar self-update
  - echo Create dir $(pwd)/htdocs/documents
  - sudo mkdir -p $(pwd)/htdocs/documents/admin/temp;
  - sudo touch $(pwd)/htdocs/documents/dolibarr.log;
-<<<<<<< HEAD
- - sudo chmod a+rwx /home; sudo chmod a+rwx /home/travis; sudo chmod a+rwx /home/travis/build;
- - sudo chmod a+rwx /home/travis/build/grandoc; sudo chmod a+rwx /home/travis/build/grandoc/dolibarr;
-=======
  - sudo chmod a+rwx /home; sudo chmod a+rwx /home/travis; sudo chmod -R a+rwx /home/travis/build;
->>>>>>> 4fa1e7eac9e8532f7efc5b9ad29794686614dd99
  - sudo chmod -R a+rwx $(pwd);
  - sudo chown -R www-data:travis $(pwd)/htdocs/documents;
  - find $(pwd)/htdocs/documents -type d -exec ls -alt {} \;
  - echo Edit php.ini file
  - echo 'date.timezone = "Europe/Paris"' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
  - echo "extension = apc.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
- - echo "extension = memcache.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
+# - echo "extension = memcache.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
  - echo "extension = memcached.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
  - echo "extension = xdebug.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
  - cat ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
@@ -80,9 +76,6 @@ script: phpunit -d memory_limit=-1 --configuration test/phpunit/phpunittest.xml 
 #script: phpunit -d memory_limit=-1 --configuration test/phpunit/phpunittest.xml test/phpunit/WebservicesOtherTest.php
 
 after_script:
- - echo Output dolibarr log file
-# - cat $(pwd)/htdocs/documents/dolibarr.log
- - echo Output apache log file
- - sudo cat /var/log/apache2/error.log
+# - echo Output dolibarr log file; cat $(pwd)/htdocs/documents/dolibarr.log
+ - echo Output apache log file; sudo cat /var/log/apache2/error.log
  - echo End travis
-
