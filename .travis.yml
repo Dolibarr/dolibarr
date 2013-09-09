@@ -38,7 +38,7 @@ before_script:
  - echo '<?php ' > htdocs/conf/conf.php
  - sh -c "if [ '$DB' = 'pgsql' ]; then echo '$'dolibarr_main_db_type=\'pgsql\'';' >> htdocs/conf/conf.php; fi"
  - sh -c "if [ '$DB' = 'mysql' ]; then echo '$'dolibarr_main_db_type=\'mysqli\'';' >> htdocs/conf/conf.php; fi"
- - echo '$'dolibarr_main_url_root=\'http://localhost/dolibarr\'';' >> htdocs/conf/conf.php
+ - echo '$'dolibarr_main_url_root=\'http://localhost/\'';' >> htdocs/conf/conf.php
  - echo '$'dolibarr_main_document_root=\'/home/travis/build/Dolibarr/dolibarr/htdocs\'';' >> htdocs/conf/conf.php
  - echo '$'dolibarr_main_data_root=\'/home/travis/build/Dolibarr/dolibarr/documents\'';' >> htdocs/conf/conf.php
  - echo '$'dolibarr_main_db_host=\'localhost\'';' >> htdocs/conf/conf.php
