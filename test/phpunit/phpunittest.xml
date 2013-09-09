@@ -13,6 +13,8 @@
 	<php>
 		<ini name="max_execution_time" value="600"/>
 		<ini name="max_input_time" value="600"/>
+        <ini name="memory_limit" value="4G" />
+        <!-- Also don't forget to change suhosin.memory_limit=4G -->
 	</php>
 	<filter>
 	  <blacklist>
