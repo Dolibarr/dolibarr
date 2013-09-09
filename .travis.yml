@@ -20,7 +20,9 @@ before_script:
  - echo Current dir is `pwd`
  - echo Home dir is `echo ~`
  - echo Create dir /home/travis/build/Dolibarr/dolibarr/documents
- - mkdir -p /home/travis/build/Dolibarr/dolibarr/documents/admin/temp; chmod -R a+rwx /home/travis/build/Dolibarr/dolibarr/documents;
+ - mkdir -p /home/travis/build/Dolibarr/dolibarr/documents/admin/temp;
+ - touch /home/travis/build/Dolibarr/dolibarr/documents/dolibarr.log;
+ - chmod -R a+rwx /home/travis/build/Dolibarr/dolibarr/documents;
  - echo 'date.timezone = "Europe/Paris"' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
  - echo "extension = apc.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
  - echo "extension = memcache.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
@@ -52,7 +54,7 @@ before_script:
  - sudo sed -i -e "s,/var/www,$(pwd)/htdocs,g" /etc/apache2/sites-available/default
  - sudo /etc/init.d/apache2 restart
  - wget http://localhost/
- - echo index.html
+ - cat index.html
  
 
 
