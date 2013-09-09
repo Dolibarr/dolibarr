@@ -70,5 +70,5 @@ after_script:
  - Output dolibarr log file
  - cat /home/travis/build/Dolibarr/dolibarr/htdocs/documents/dolibarr.log
  - Output apache log file
- - cat /var/log/apache2/error.log
+ - sudo cat /var/log/apache2/error.log
  - echo End travis
