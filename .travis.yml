@@ -19,8 +19,8 @@ before_script:
  - echo Start travis
  - echo Current dir is `pwd`
  - echo Home dir is `echo ~`
- - echo Create dir /home/travis/build/Dolibarr/dolibarr/htdocs/documents
- - mkdir -p /home/travis/build/Dolibarr/dolibarr/htdocs/documents/admin/temp;
+ - echo Create dir $(pwd)/htdocs/documents
+ - mkdir -p $(pwd)/htdocs/documents/admin/temp;
  - touch /home/travis/build/Dolibarr/dolibarr/htdocs/documents/dolibarr.log;
  - chmod -R a+rwx /home/travis/build/Dolibarr/dolibarr/htdocs/documents;
  - find /home/travis/build/Dolibarr/dolibarr/htdocs/documents -exec ls -alrt {} \;
