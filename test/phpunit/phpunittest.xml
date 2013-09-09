@@ -20,7 +20,9 @@
 	    <directory suffix=".php">../../dev/</directory>
 	    <directory suffix=".php">../../doc/</directory>
 	    <directory suffix=".php">../../test/</directory>
+	    <directory suffix=".php">../../documents/</directory>
 	    <directory suffix=".php">../../htdocs/custom/</directory>
+	    <directory suffix=".php">../../htdocs/documents/custom/</directory>
 	    <directory suffix=".php">../../htdocs/products/canvas/</directory>
 	    <directory suffix=".php">../../htdocs/contact/canvas/</directory>
 	    <directory suffix=".php">../../htdocs/societe/canvas/</directory>
@@ -41,7 +43,9 @@
 	    <directory suffix=".php">../../dev/</directory>
 	    <directory suffix=".php">../../doc/</directory>
 	    <directory suffix=".php">../../test/</directory>
+	    <directory suffix=".php">../../documents/</directory>
 	    <directory suffix=".php">../../htdocs/custom/</directory>
+	    <directory suffix=".php">../../htdocs/documents/custom/</directory>
 	    <directory suffix=".php">../../htdocs/products/canvas/</directory>
 	    <directory suffix=".php">../../htdocs/contact/canvas/</directory>
 	    <directory suffix=".php">../../htdocs/societe/canvas/</directory>
