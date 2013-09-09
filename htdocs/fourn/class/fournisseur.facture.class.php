@@ -631,6 +631,13 @@ class FactureFournisseur extends CommonInvoice
 
         if (! $error)
         {
+        	// Delete linked object
+        	$res = $this->deleteObjectLinked();
+        	if ($res < 0) $error++;
+        }
+
+        if (! $error)
+        {
         	// We remove directory
         	if ($conf->fournisseur->facture->dir_output)
         	{

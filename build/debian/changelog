@@ -1,9 +1,6 @@
-dolibarr (3.4.0+nmu1) unstable; urgency=low
+dolibarr (3.4.1) unstable; urgency=low
 
-  * Non-maintainer upload.
+  [ Laurent Destailleur (eldy) ]
   * New upstream release.
-    closes: bug#634783
     
- -- Dolibarr team <contact@dolibarr.org>  Mon, 22 Apr 2013 12:00:00 +0100     
-
-# For a changelog file dedicated to end users, see /usr/share/doc/dolibarr/ChangeLog.gz  
+ -- Laurent Destailleur (eldy) <eldy@users.sourceforge.net>  Mon, 22 Apr 2013 12:00:00 +0100     
