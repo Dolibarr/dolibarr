@@ -25,7 +25,7 @@ before_script:
  - sudo mkdir -p $(pwd)/htdocs/documents/admin/temp;
  - sudo touch $(pwd)/htdocs/documents/dolibarr.log;
  - sudo chmod a+rwx /home; sudo chmod a+rwx /home/travis; sudo chmod a+rwx /home/travis/build;
- - sudo chmod a+rwx /home/travis/build/Dolibarr; sudo chmod a+rwx /home/travis/build/Dolibarr/dolibarr;
+ - sudo chmod a+rwx /home/travis/build/grandoc; sudo chmod a+rwx /home/travis/build/grandoc/dolibarr;
  - sudo chmod -R a+rwx $(pwd);
  - sudo chown -R www-data:travis $(pwd)/htdocs/documents;
  - find $(pwd)/htdocs/documents -type d -exec ls -alt {} \;
