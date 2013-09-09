@@ -221,7 +221,7 @@ class BuildDocTest extends PHPUnit_Framework_TestCase
     	$newlangs5=new Translate("",$conf);
     	$newlangs5->setDefaultLang('ru_RU');
     	$localobject->modelpdf='crabe';
-    	$result=facture_pdf_create($db, $localobject, $localobject->modelpdf, $newlangs);
+    	$result=facture_pdf_create($db, $localobject, $localobject->modelpdf, $newlangs5);
     	$this->assertLessThan($result, 0);
     	print __METHOD__." result=".$result."\n";
 
