@@ -45,7 +45,16 @@ before_script:
  - echo '$'dolibarr_main_authentication=\'dolibarr\'';' >> htdocs/conf/conf.php
  - echo '?>' >> htdocs/conf/conf.php
  - echo Show conf.php content
- - cat htdocs/conf/conf.php   
+ - cat htdocs/conf/conf.php
+ - echo Install apache server
+ - sudo apt-get update > /dev/null
+ - sudo apt-get install -y --force-yes apache2 libapache2-mod-php5 php5-curl php5-mysql php5-pgsql php5-intl
+ - sudo sed -i -e "s,/var/www,$(pwd)/htdocs,g" /etc/apache2/sites-available/default
+ - sudo /etc/init.d/apache2 restart
+ - wget http://localhost/
+ - echo index.html
+ 
+
 
 # Omitting "script:" will default to phpunit
 # use the $DB env variable to determine the phpunit.xml to use
