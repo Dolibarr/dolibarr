@@ -96,3 +96,5 @@ UseVirtualStock=Use virtual stock instead of physical stock
 RuleForStockReplenishment=Rule for stocks replenishment
 SelectProduct=Select at least one product
 AlertOnly= Alerts only
+WarehouseForStockDecrease=The warehouse <b>%s</b> will be used for stock decrease
+WarehouseForStockIncrease=The warehouse <b>%s</b> will be used for stock increase
