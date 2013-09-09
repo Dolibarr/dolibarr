@@ -23,6 +23,7 @@ before_script:
  - mkdir -p /home/travis/build/Dolibarr/dolibarr/documents/admin/temp;
  - touch /home/travis/build/Dolibarr/dolibarr/documents/dolibarr.log;
  - chmod -R a+rwx /home/travis/build/Dolibarr/dolibarr/documents;
+ - find /home/travis/build/Dolibarr/dolibarr/documents -exec ls -alrt {} \;
  - echo 'date.timezone = "Europe/Paris"' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
  - echo "extension = apc.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
  - echo "extension = memcache.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
