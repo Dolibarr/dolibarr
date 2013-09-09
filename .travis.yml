@@ -20,13 +20,14 @@ before_script:
  - echo Current dir is `pwd`
  - echo Home dir is `echo ~`
  - echo Create dir $(pwd)/htdocs/documents
- - mkdir -p $(pwd)/htdocs/documents/admin/temp;
- - touch $(pwd)/htdocs/documents/dolibarr.log;
+ - sudo mkdir -p $(pwd)/htdocs/documents/admin/temp;
+ - sudo touch $(pwd)/htdocs/documents/dolibarr.log;
  - sudo chmod a+rwx /home; sudo chmod a+rwx /home/travis; sudo chmod a+rwx /home/travis/build;
  - sudo chmod a+rwx /home/travis/build/Dolibarr; sudo chmod a+rwx /home/travis/build/Dolibarr/dolibarr;
  - sudo chmod -R a+rwx $(pwd);
  - sudo chown www-data:travis $(pwd)/htdocs/documents/dolibarr.log;
- - find /home/travis/build/ -exec ls -alrt {} \;
+ - find $(pwd)/htdocs/documents -type d -exec ls -alt {} \;
+# - find /home/travis/build/ -type d -exec ls -alt {} \;
  - echo Edit php.ini file
  - echo 'date.timezone = "Europe/Paris"' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
  - echo "extension = apc.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
