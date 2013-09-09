@@ -131,11 +131,11 @@ class WebservicesOrdersTest extends PHPUnit_Framework_TestCase
     	$db=$this->savdb;
 
     	$WS_DOL_URL = DOL_MAIN_URL_ROOT.'/webservices/server_order.php';
-    	$WS_METHOD  = 'xxx';
+    	$WS_METHOD  = '';
     	$ns='http://www.dolibarr.org/ns/';
 
     	// Set the WebService URL
-    	print __METHOD__."Create nusoap_client for URL=".$WS_DOL_URL."\n";
+    	print __METHOD__." create nusoap_client for URL=".$WS_DOL_URL."\n";
     	$soapclient = new nusoap_client($WS_DOL_URL);
     	if ($soapclient)
     	{
@@ -155,7 +155,7 @@ class WebservicesOrdersTest extends PHPUnit_Framework_TestCase
     	if ($WS_METHOD)
     	{
     		$parameters = array('authentication'=>$authentication);
-    		print __METHOD__."Call method ".$WS_METHOD."\n";
+    		print __METHOD__." call method ".$WS_METHOD."\n";
     		$result = $soapclient->call($WS_METHOD,$parameters,$ns,'');
     		if (! $result)
     		{
@@ -165,12 +165,11 @@ class WebservicesOrdersTest extends PHPUnit_Framework_TestCase
     			print $soapclient->request;
     			print "<br>\n\n";
     			print $soapclient->response;
-    			exit;
     		}
-    	}
 
-    	print __METHOD__." result=".$result."\n";
-    	//$this->assertEquals('OK',$result['result']['result_code']);
+    		print __METHOD__." result=".$result."\n";
+	    	$this->assertEquals('OK',$result['result']['result_code']);
+    	}
 
     	return $result;
     }
@@ -195,7 +194,7 @@ class WebservicesOrdersTest extends PHPUnit_Framework_TestCase
     	$ns='http://www.dolibarr.org/ns/';
 
     	// Set the WebService URL
-    	print __METHOD__."Create nusoap_client for URL=".$WS_DOL_URL."\n";
+    	print __METHOD__." create nusoap_client for URL=".$WS_DOL_URL."\n";
     	$soapclient = new nusoap_client($WS_DOL_URL);
     	if ($soapclient)
     	{
@@ -212,10 +211,11 @@ class WebservicesOrdersTest extends PHPUnit_Framework_TestCase
     	'entity'=>'');
 
     	// Test URL
+    	$result='';
     	if ($WS_METHOD)
     	{
     		$parameters = array('authentication'=>$authentication);
-    		print __METHOD__."Call method ".$WS_METHOD."\n";
+    		print __METHOD__." call method ".$WS_METHOD."\n";
     		$result = $soapclient->call($WS_METHOD,$parameters,$ns,'');
     		if (! $result)
     		{
@@ -225,12 +225,11 @@ class WebservicesOrdersTest extends PHPUnit_Framework_TestCase
     			print $soapclient->request;
     			print "<br>\n\n";
     			print $soapclient->response;
-    			exit;
     		}
-    	}
 
-    	print __METHOD__." result=".$result."\n";
-    	$this->assertEquals('OK',$result['result']['result_code']);
+    		print __METHOD__." result=".$result."\n";
+    		$this->assertEquals('OK',$result['result']['result_code']);
+    	}
 
     	return $result;
     }
@@ -250,11 +249,11 @@ class WebservicesOrdersTest extends PHPUnit_Framework_TestCase
     	$db=$this->savdb;
 
     	$WS_DOL_URL = DOL_MAIN_URL_ROOT.'/webservices/server_thirdparty.php';
-    	$WS_METHOD  = 'xxx';
+    	$WS_METHOD  = '';
     	$ns='http://www.dolibarr.org/ns/';
 
     	// Set the WebService URL
-    	print __METHOD__."Create nusoap_client for URL=".$WS_DOL_URL."\n";
+    	print __METHOD__."create nusoap_client for URL=".$WS_DOL_URL."\n";
     	$soapclient = new nusoap_client($WS_DOL_URL);
     	if ($soapclient)
     	{
@@ -271,10 +270,11 @@ class WebservicesOrdersTest extends PHPUnit_Framework_TestCase
     	'entity'=>'');
 
     	// Test URL
+    	$result='';
     	if ($WS_METHOD)
     	{
     		$parameters = array('authentication'=>$authentication);
-    		print __METHOD__."Call method ".$WS_METHOD."\n";
+    		print __METHOD__." call method ".$WS_METHOD."\n";
     		$result = $soapclient->call($WS_METHOD,$parameters,$ns,'');
     		if (! $result)
     		{
@@ -284,12 +284,11 @@ class WebservicesOrdersTest extends PHPUnit_Framework_TestCase
     			print $soapclient->request;
     			print "<br>\n\n";
     			print $soapclient->response;
-    			exit;
     		}
-    	}
 
-    	print __METHOD__." result=".$result."\n";
-    	//$this->assertEquals('OK',$result['result']['result_code']);
+    		print __METHOD__." result=".$result."\n";
+	    	$this->assertEquals('OK',$result['result']['result_code']);
+    	}
 
     	return $result;
     }
@@ -309,11 +308,11 @@ class WebservicesOrdersTest extends PHPUnit_Framework_TestCase
     	$db=$this->savdb;
 
     	$WS_DOL_URL = DOL_MAIN_URL_ROOT.'/webservices/server_user.php';
-    	$WS_METHOD  = 'xxx';
+    	$WS_METHOD  = '';
     	$ns='http://www.dolibarr.org/ns/';
 
     	// Set the WebService URL
-    	print __METHOD__."Create nusoap_client for URL=".$WS_DOL_URL."\n";
+    	print __METHOD__." create nusoap_client for URL=".$WS_DOL_URL."\n";
     	$soapclient = new nusoap_client($WS_DOL_URL);
     	if ($soapclient)
     	{
@@ -330,10 +329,11 @@ class WebservicesOrdersTest extends PHPUnit_Framework_TestCase
     	'entity'=>'');
 
     	// Test URL
+    	$result='';
     	if ($WS_METHOD)
     	{
     		$parameters = array('authentication'=>$authentication);
-    		print __METHOD__."Call method ".$WS_METHOD."\n";
+    		print __METHOD__." call method ".$WS_METHOD."\n";
     		$result = $soapclient->call($WS_METHOD,$parameters,$ns,'');
     		if (! $result)
     		{
@@ -343,12 +343,11 @@ class WebservicesOrdersTest extends PHPUnit_Framework_TestCase
     			print $soapclient->request;
     			print "<br>\n\n";
     			print $soapclient->response;
-    			exit;
     		}
-    	}
 
-    	print __METHOD__." result=".$result."\n";
-    	//$this->assertEquals('OK',$result['result']['result_code']);
+    		print __METHOD__." result=".$result."\n";
+	    	//$this->assertEquals('OK',$result['result']['result_code']);
+    	}
 
     	return $result;
     }
