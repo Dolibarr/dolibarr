@@ -67,4 +67,6 @@ before_script:
 script: phpunit -d memory_limit=-1 --configuration test/phpunit/phpunittest.xml test/phpunit/WebservicesOtherTest.php
 
 after_script:
+ - Output log file
+ - cat /home/travis/build/Dolibarr/dolibarr/htdocs/documents/dolibarr.log
  - echo End travis
