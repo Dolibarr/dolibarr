@@ -9,6 +9,7 @@ services:
 # This will tell travis to run phpunit
 language: php
 php:
+ - "5.3"
  - "5.4"
 
 env:
@@ -31,7 +32,7 @@ before_script:
  - echo Edit php.ini file
  - echo 'date.timezone = "Europe/Paris"' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
  - echo "extension = apc.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
- - echo "extension = memcache.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
+# - echo "extension = memcache.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
  - echo "extension = memcached.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
  - echo "extension = xdebug.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
  - cat ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
@@ -75,9 +76,7 @@ script: phpunit -d memory_limit=-1 --configuration test/phpunit/phpunittest.xml 
 #script: phpunit -d memory_limit=-1 --configuration test/phpunit/phpunittest.xml test/phpunit/WebservicesOtherTest.php
 
 after_script:
- - echo Output dolibarr log file
-# - cat $(pwd)/htdocs/documents/dolibarr.log
- - echo Output apache log file
- - sudo cat /var/log/apache2/error.log
+# - echo Output dolibarr log file; cat $(pwd)/htdocs/documents/dolibarr.log
+ - echo Output apache log file; sudo cat /var/log/apache2/error.log
  - echo End travis
 
