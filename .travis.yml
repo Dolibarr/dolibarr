@@ -25,9 +25,8 @@ before_script:
  - sudo chmod a+rwx /home; sudo chmod a+rwx /home/travis; sudo chmod a+rwx /home/travis/build;
  - sudo chmod a+rwx /home/travis/build/Dolibarr; sudo chmod a+rwx /home/travis/build/Dolibarr/dolibarr;
  - sudo chmod -R a+rwx $(pwd);
- - sudo chown www-data:travis $(pwd)/htdocs/documents/dolibarr.log;
+ - sudo chown -R www-data:travis $(pwd)/htdocs/documents;
  - find $(pwd)/htdocs/documents -type d -exec ls -alt {} \;
-# - find /home/travis/build/ -type d -exec ls -alt {} \;
  - echo Edit php.ini file
  - echo 'date.timezone = "Europe/Paris"' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
  - echo "extension = apc.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
@@ -75,8 +74,8 @@ before_script:
 script: phpunit -d memory_limit=-1 --configuration test/phpunit/phpunittest.xml test/phpunit/WebservicesOtherTest.php
 
 after_script:
- - Output dolibarr log file
+ - echo Output dolibarr log file
  - cat $(pwd)/htdocs/documents/dolibarr.log
- - Output apache log file
+ - echo Output apache log file
  - sudo cat /var/log/apache2/error.log
  - echo End travis
