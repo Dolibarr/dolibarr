@@ -23,6 +23,7 @@ Fix: Intervention box links to contracts id
 Fix: Compatiblity with multicompany module
 Fix: Edit propal line was losing product supplier price id
 Fix: Delete linked element to supplier invoice when deleted 
+Qual: Add travis-ci integration
 
 ***** ChangeLog for 3.4 compared to 3.3.* *****
 For users:
