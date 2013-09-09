@@ -1117,7 +1117,7 @@ MemberMainOptions=Options principales
 AddSubscriptionIntoAccount=Proposer, par défaut, la création d'une écriture bancaire, dans le module banque à l'enregistrement d'une adhésion payante
 AdherentLoginRequired= Gérer un identifiant pour chaque adhérent
 AdherentMailRequired=Email obligatoire pour créer un nouvel adhérent
-MemberSendInformationByMailByDefault=Case à cocher pour envoyer un email de confirmation (validation ou nouvelle cotisation) aux adhérents. Est à oui par défaut.
+MemberSendInformationByMailByDefault=Case à cocher pour envoyer un email de confirmation (validation ou nouvelle cotisation) aux adhérents est à oui par défaut.
 ##### LDAP setup #####
 LDAPSetup=Configuration du module LDAP
 LDAPGlobalParameters=Paramètres globaux
