@@ -19,11 +19,11 @@ before_script:
  - echo Start travis
  - echo Current dir is `pwd`
  - echo Home dir is `echo ~`
- - echo Create dir /home/travis/build/Dolibarr/dolibarr/htdocs/documents
- - mkdir -p /home/travis/build/Dolibarr/dolibarr/htdocs/documents/admin/temp;
- - touch /home/travis/build/Dolibarr/dolibarr/htdocs/documents/dolibarr.log;
- - chmod -R a+rwx /home/travis/build/Dolibarr/dolibarr/htdocs/documents;
- - find /home/travis/build/Dolibarr/dolibarr/htdocs/documents -exec ls -alrt {} \;
+ - echo Create dir /home/travis/build/grandoc/dolibarr/htdocs/documents
+ - mkdir -p /home/travis/build/grandoc/dolibarr/htdocs/documents/admin/temp;
+ - touch /home/travis/build/grandoc/dolibarr/htdocs/documents/dolibarr.log;
+ - chmod -R a+rwx /home/travis/build/grandoc/dolibarr/htdocs/documents;
+ - find /home/travis/build/grandoc/dolibarr/htdocs/documents -exec ls -alrt {} \;
  - echo 'date.timezone = "Europe/Paris"' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
  - echo "extension = apc.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
  - echo "extension = memcache.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
@@ -34,14 +34,14 @@ before_script:
  - sh -c "if [ '$DB' = 'pgsql' ]; then psql -c 'CREATE DATABASE myapp_test;' -U postgres; fi"
  - sh -c "if [ '$DB' = 'mysql' ]; then mysql -e 'DROP DATABASE IF EXISTS myapp_test;'; fi"
  - sh -c "if [ '$DB' = 'mysql' ]; then mysql -e 'CREATE DATABASE IF NOT EXISTS myapp_test;'; fi"
- - sh -c "if [ '$DB' = 'mysql' ]; then mysql -D myapp_test < /home/travis/build/Dolibarr/dolibarr/dev/initdata/mysqldump_dolibarr_3.5.0.sql; fi"
+ - sh -c "if [ '$DB' = 'mysql' ]; then mysql -D myapp_test < /home/travis/build/grandoc/dolibarr/dev/initdata/mysqldump_dolibarr_3.5.0.sql; fi"
  - echo Create config file htdocs/conf/conf.php
  - echo '<?php ' > htdocs/conf/conf.php
  - sh -c "if [ '$DB' = 'pgsql' ]; then echo '$'dolibarr_main_db_type=\'pgsql\'';' >> htdocs/conf/conf.php; fi"
  - sh -c "if [ '$DB' = 'mysql' ]; then echo '$'dolibarr_main_db_type=\'mysqli\'';' >> htdocs/conf/conf.php; fi"
  - echo '$'dolibarr_main_url_root=\'http://localhost/\'';' >> htdocs/conf/conf.php
- - echo '$'dolibarr_main_document_root=\'/home/travis/build/Dolibarr/dolibarr/htdocs\'';' >> htdocs/conf/conf.php
- - echo '$'dolibarr_main_data_root=\'/home/travis/build/Dolibarr/dolibarr/htdocs/documents\'';' >> htdocs/conf/conf.php
+ - echo '$'dolibarr_main_document_root=\'/home/travis/build/grandoc/dolibarr/htdocs\'';' >> htdocs/conf/conf.php
+ - echo '$'dolibarr_main_data_root=\'/home/travis/build/grandoc/dolibarr/htdocs/documents\'';' >> htdocs/conf/conf.php
  - echo '$'dolibarr_main_db_host=\'localhost\'';' >> htdocs/conf/conf.php
  - echo '$'dolibarr_main_db_name=\'myapp_test\'';' >> htdocs/conf/conf.php
  - echo '$'dolibarr_main_db_user=\'travis\'';' >> htdocs/conf/conf.php
