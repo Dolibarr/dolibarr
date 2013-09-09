@@ -313,27 +313,24 @@ function getInvoice($authentication,$id='',$ref='',$ref_ext='')
 			        'invoice'=>array(
 				    	'id' => $invoice->id,
 			   			'ref' => $invoice->ref,
-			   			'ref_ext' => $invoice->ref_ext?$invoice->ref_ext:'',   // If not defined, field is not added into soap
-			            'fk_user_author' => $invoice->user_author?$invoice->user_author:'',
-			            'fk_user_valid' => $invoice->user_valid?$invoice->user_valid:'',
-                        'date' => $invoice->date?dol_print_date($invoice->date,'dayrfc'):'',
-                        'date_creation' => $invoice->date_creation?dol_print_date($invoice->date_creation,'dayhourrfc'):'',
-                        'date_validation' => $invoice->date_validation?dol_print_date($invoice->date_creation,'dayhourrfc'):'',
-                        'date_modification' => $invoice->datem?dol_print_date($invoice->datem,'dayhourrfc'):'',
-                        'type' => $invoice->type,
-                        'total_net' => $invoice->total_ht,
-                        'total_vat' => $invoice->total_tva,
-                        'total' => $invoice->total_ttc,
-                        'note_private' => $invoice->note_private?$invoice->note_private:'',
-                        'note_public' => $invoice->note_public?$invoice->note_public:'',
-                        'status'=> $invoice->statut,
-                        'close_code' => $invoice->close_code?$invoice->close_code:'',
-                        'close_note' => $invoice->close_note?$invoice->close_note:'',
-			            'lines' => $linesresp
-//					        'lines' => array('0'=>array('id'=>222,'type'=>1),
-//				        				 '1'=>array('id'=>333,'type'=>1))
-
-			    ));
+			        	'ref_ext' => $invoice->ref_ext?$invoice->ref_ext:'',   // If not defined, field is not added into soap
+			        	'fk_user_author' => $invoice->user_author?$invoice->user_author:'',
+			        	'fk_user_valid' => $invoice->user_valid?$invoice->user_valid:'',
+			        	'date' => $invoice->date?dol_print_date($invoice->date,'dayrfc'):'',
+			        	'date_creation' => $invoice->date_creation?dol_print_date($invoice->date_creation,'dayhourrfc'):'',
+			        	'date_validation' => $invoice->date_validation?dol_print_date($invoice->date_creation,'dayhourrfc'):'',
+			        	'date_modification' => $invoice->datem?dol_print_date($invoice->datem,'dayhourrfc'):'',
+			        	'type' => $invoice->type,
+			        	'total_net' => $invoice->total_ht,
+			        	'total_vat' => $invoice->total_tva,
+			        	'total' => $invoice->total_ttc,
+			        	'note_private' => $invoice->note_private?$invoice->note_private:'',
+			        	'note_public' => $invoice->note_public?$invoice->note_public:'',
+			        	'status'=> $invoice->statut,
+			        	'close_code' => $invoice->close_code?$invoice->close_code:'',
+			        	'close_note' => $invoice->close_note?$invoice->close_note:'',
+			        	'lines' => $linesresp
+			        ));
 			}
 			else
 			{
@@ -379,7 +376,7 @@ function getInvoicesForThirdParty($authentication,$idthirdparty)
     $fuser=check_authentication($authentication,$error,$errorcode,$errorlabel);
 
 	if ($fuser->societe_id) $socid=$fuser->societe_id;
-    
+
 	// Check parameters
 	if (! $error && empty($idthirdparty))
 	{
@@ -393,13 +390,9 @@ function getInvoicesForThirdParty($authentication,$idthirdparty)
 
 		$sql.='SELECT f.rowid as facid, facnumber as ref, ref_ext, type, fk_statut as status, total_ttc, total, tva';
 		$sql.=' FROM '.MAIN_DB_PREFIX.'facture as f';
-		//$sql.=', '.MAIN_DB_PREFIX.'societe as s';
-		//$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON pt.fk_product = p.rowid';
-		//$sql.=" WHERE f.fk_soc = s.rowid AND nom = '".$db->escape($idthirdparty)."'";
-		//$sql.=" WHERE f.fk_soc = s.rowid AND nom = '".$db->escape($idthirdparty)."'";
 		$sql.=" WHERE f.entity = ".$conf->entity;
 		if ($idthirdparty != 'all' ) $sql.=" AND f.fk_soc = ".$db->escape($idthirdparty);
-		
+
 		$resql=$db->query($sql);
 		if ($resql)
 		{
@@ -414,55 +407,58 @@ function getInvoicesForThirdParty($authentication,$idthirdparty)
 			    $invoice->fetch($obj->facid);
 
 			    // Sécurité pour utilisateur externe
-			    if( $socid && ( $socid != $order->socid) )
+			    if( $socid && ( $socid != $invoice->socid) )
 			    {
 			    	$error++;
-			    	$errorcode='PERMISSION_DENIED'; $errorlabel=$order->socid.' User does not have permission for this request';
+			    	$errorcode='PERMISSION_DENIED'; $errorlabel=$invoice->socid.' User does not have permission for this request';
 			    }
-			    			    
-				// Define lines of invoice
-				$linesresp=array();
-				foreach($invoice->lines as $line)
-				{
-   				    $linesresp[]=array(
-    					'id'=>$line->rowid,
-    					'type'=>$line->product_type,
-    					'total_net'=>$line->total_ht,
-    					'total_vat'=>$line->total_tva,
-    					'total'=>$line->total_ttc,
-                        'vat_rate'=>$line->tva_tx,
-                        'qty'=>$line->qty,
-   				        'product_ref'=>$line->product_ref,
-                        'product_label'=>$line->product_label,
-                        'product_desc'=>$line->product_desc,
-   				    );
-				}
 
-				// Now define invoice
-				$linesinvoice[]=array(
-                    'id' => $invoice->id,
-                    'ref' => $invoice->ref,
-                    'ref_ext' => $invoice->ref_ext?$invoice->ref_ext:'',   // If not defined, field is not added into soap
-                    'fk_user_author' => $invoice->user_author?$invoice->user_author:'',
-                    'fk_user_valid' => $invoice->user_valid?$invoice->user_valid:'',
-                    'date' => $invoice->date?dol_print_date($invoice->date,'dayrfc'):'',
-                    'date_due' => $invoice->date_lim_reglement?dol_print_date($invoice->date_lim_reglement,'dayrfc'):'',
-				    'date_creation' => $invoice->date_creation?dol_print_date($invoice->date_creation,'dayhourrfc'):'',
-                    'date_validation' => $invoice->date_validation?dol_print_date($invoice->date_creation,'dayhourrfc'):'',
-                    'date_modification' => $invoice->datem?dol_print_date($invoice->datem,'dayhourrfc'):'',
-                    'type' => $invoice->type,
-                    'total_net' => $invoice->total_ht,
-                    'total_vat' => $invoice->total_tva,
-                    'total' => $invoice->total_ttc,
-                    'note_private' => $invoice->note_private?$invoice->note_private:'',
-                    'note_public' => $invoice->note_public?$invoice->note_public:'',
-                    'status'=> $invoice->statut,
-                    'close_code' => $invoice->close_code?$invoice->close_code:'',
-                    'close_note' => $invoice->close_note?$invoice->close_note:'',
-		    		'lines' => $linesresp
-				);
+			    if(!$error)
+			    {
+			    	// Define lines of invoice
+			    	$linesresp=array();
+			    	foreach($invoice->lines as $line)
+			    	{
+			    		$linesresp[]=array(
+	    					'id'=>$line->rowid,
+	    					'type'=>$line->product_type,
+	    					'total_net'=>$line->total_ht,
+	    					'total_vat'=>$line->total_tva,
+	    					'total'=>$line->total_ttc,
+			    			'vat_rate'=>$line->tva_tx,
+			    			'qty'=>$line->qty,
+			    			'product_ref'=>$line->product_ref,
+			    			'product_label'=>$line->product_label,
+			    			'product_desc'=>$line->product_desc,
+			    		);
+			    	}
 
-				$i++;
+			    	// Now define invoice
+			    	$linesinvoice[]=array(
+			    		'id' => $invoice->id,
+			    		'ref' => $invoice->ref,
+			    		'ref_ext' => $invoice->ref_ext?$invoice->ref_ext:'',   // If not defined, field is not added into soap
+			    		'fk_user_author' => $invoice->user_author?$invoice->user_author:'',
+			    		'fk_user_valid' => $invoice->user_valid?$invoice->user_valid:'',
+			    		'date' => $invoice->date?dol_print_date($invoice->date,'dayrfc'):'',
+			    		'date_due' => $invoice->date_lim_reglement?dol_print_date($invoice->date_lim_reglement,'dayrfc'):'',
+					    'date_creation' => $invoice->date_creation?dol_print_date($invoice->date_creation,'dayhourrfc'):'',
+			    		'date_validation' => $invoice->date_validation?dol_print_date($invoice->date_creation,'dayhourrfc'):'',
+			    		'date_modification' => $invoice->datem?dol_print_date($invoice->datem,'dayhourrfc'):'',
+			    		'type' => $invoice->type,
+			    		'total_net' => $invoice->total_ht,
+			    		'total_vat' => $invoice->total_tva,
+			    		'total' => $invoice->total_ttc,
+			    		'note_private' => $invoice->note_private?$invoice->note_private:'',
+			    		'note_public' => $invoice->note_public?$invoice->note_public:'',
+			    		'status'=> $invoice->statut,
+			    		'close_code' => $invoice->close_code?$invoice->close_code:'',
+			    		'close_note' => $invoice->close_note?$invoice->close_note:'',
+			    		'lines' => $linesresp
+			    	);
+			    }
+
+			    $i++;
 			}
 
 			$objectresp=array(
