@@ -22,14 +22,16 @@ before_script:
  - echo Create dir $(pwd)/htdocs/documents
  - mkdir -p $(pwd)/htdocs/documents/admin/temp;
  - touch $(pwd)/htdocs/documents/dolibarr.log;
- - chmod a+rwx /home; chmod a+rwx /home/travis; chmod a+rwx /home/travis/build;
- - chmod -R a+rwx $(pwd);
+ - sudo chmod a+rwx /home; sudo chmod a+rwx /home/travis; sudo chmod a+rwx /home/travis/build;
+ - sudo chmod -R a+rwx $(pwd);
  - find $(pwd)/htdocs/documents -exec ls -alrt {} \;
+ - echo Edit php.ini file
  - echo 'date.timezone = "Europe/Paris"' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
  - echo "extension = apc.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
  - echo "extension = memcache.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
  - echo "extension = memcached.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
  - echo "extension = xdebug.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
+ - cat ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
  - echo Init database
  - sh -c "if [ '$DB' = 'pgsql' ]; then psql -c 'DROP DATABASE IF EXISTS myapp_test;' -U postgres; fi"
  - sh -c "if [ '$DB' = 'pgsql' ]; then psql -c 'CREATE DATABASE myapp_test;' -U postgres; fi"
