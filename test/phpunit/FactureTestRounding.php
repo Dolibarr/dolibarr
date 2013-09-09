@@ -143,7 +143,7 @@ class FactureTestRounding extends PHPUnit_Framework_TestCase
         // Add two lines
         for ($i=0; $i<2; $i++)
         {
-            $localobject->addline($result, 'Description '.$i, 1.24, 1, 10);
+            $localobject->addline('Description '.$i, 1.24, 1, 10);
         }
 
         $newlocalobject=new Facture($this->savdb);
@@ -186,7 +186,7 @@ class FactureTestRounding extends PHPUnit_Framework_TestCase
         // Add two lines
         for ($i=0; $i<2; $i++)
         {
-            $localobject->addline($result, 'Description '.$i, 1.24, 1, 10);
+            $localobject->addline('Description '.$i, 1.24, 1, 10);
         }
 
         $newlocalobject=new Facture($this->savdb);
