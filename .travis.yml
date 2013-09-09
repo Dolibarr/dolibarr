@@ -53,6 +53,9 @@ before_script:
  - sudo apt-get update > /dev/null
  - sudo apt-get install -y --force-yes apache2 libapache2-mod-php5 php5-curl php5-mysql php5-pgsql php5-intl
  - sudo sed -i -e "s,/var/www,$(pwd)/htdocs,g" /etc/apache2/sites-available/default
+ - sudo sed -i -e "s,/var/www,$(pwd)/htdocs,g" /etc/apache2/sites-available/default
+ - echo Show default virtual host
+ - sudo cat /etc/apache2/sites-available/default
  - sudo /etc/init.d/apache2 restart
  - wget http://localhost/
  - cat index.html
