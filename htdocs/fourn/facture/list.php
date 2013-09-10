@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2013 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2013	   Philippe Grand		<philippe.grand@atoo-net.com>
  * Copyright (C) 2013	   Florian Henry		<florian.henry@open-concept.pro>
+ * Copyright (C) 2013      Cédric Salvador      <csalvador@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -130,12 +131,12 @@ if (GETPOST('filtre'))
 
 if (GETPOST("search_ref"))
 {
-	if (is_numeric(GETPOST("search_ref"))) $sql .= " AND (fac.rowid = ".GETPOST("search_ref",'int')." OR fac.ref = '".$db->escape(GETPOST("search_ref"))."')";	// For backward compatibility
-	else $sql .= " AND fac.ref LIKE '%".$db->escape(GETPOST("search_ref"))."%'";
+	if (is_numeric(GETPOST("search_ref"))) $sql .= natural_search(array('fac.rowid', 'fac.ref'), GETPOST('search_ref'));// For backward compatibility
+	else $sql .= natural_search(array('fac.ref'), GETPOST("search_ref"));
 }
 if (GETPOST("search_ref_supplier"))
 {
-	$sql .= " AND fac.ref_supplier LIKE '%".$db->escape(GETPOST("search_ref_supplier"))."%'";
+	$sql .= natural_search(array('fac.ref_supplier'), GETPOST('search_ref_supplier'));
 }
 if ($month > 0)
 {
@@ -150,12 +151,12 @@ else if ($year > 0)
 }
 if (GETPOST("search_libelle"))
 {
-	$sql .= " AND fac.libelle LIKE '%".$db->escape(GETPOST("search_libelle"))."%'";
+    $sql .= natural_search(array('fac.libelle'), GETPOST('search_libelle'));
 }
 
 if (GETPOST("search_societe"))
 {
-	$sql .= " AND s.nom LIKE '%".$db->escape(GETPOST("search_societe"))."%'";
+    $sql .= natural_search(array('s.nom'), GETPOST('search_societe'));
 }
 
 if (GETPOST("search_montant_ht"))

@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2011      Philippe Grand       <philippe.grand@atoo-net.com>
+ * Copyright (C) 2013      Cédric Salvador      <csalvador@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -88,15 +89,18 @@ $sql.= " WHERE s.fk_stcomm = st.id AND s.fournisseur = 1";
 $sql.= " AND s.entity IN (".getEntity('societe', 1).")";
 if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 if ($socid) $sql .= " AND s.rowid = ".$socid;
-if ($socname)
-{
-	$sql .= " AND s.nom LIKE '%".$db->escape($socname)."%'";
+if ($socname) {
+	$sql .= natural_search(array('s.nom'), $socname);
 	$sortfield = "s.nom";
 	$sortorder = "ASC";
 }
-if ($search_nom)   $sql .= " AND s.nom LIKE '%".$db->escape($search_nom)."%'";
+if ($search_nom) {
+	$sql .= natural_search(array('s.nom'), $search_nom);
+}
 if ($search_zipcode) $sql .= " AND s.zip LIKE '".$db->escape($search_zipcode)."%'";
-if ($search_town) $sql .= " AND s.town LIKE '%".$db->escape($search_town)."%'";
+if ($search_town) {
+	$sql .= natural_search(array('s.town'), $search_town);
+}
 if ($search_code_fournisseur)   $sql .= " AND s.code_fournisseur LIKE '%".$db->escape($search_code_fournisseur)."%'";
 if ($search_compta_fournisseur) $sql .= " AND s.code_compta_fournisseur LIKE '%".$db->escape($search_compta_fournisseur)."%'";
 if ($search_datec)   $sql .= " AND s.datec LIKE '%".$db->escape($search_datec)."%'";

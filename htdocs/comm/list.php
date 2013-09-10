@@ -2,6 +2,7 @@
 /* Copyright (C) 2001-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2013      Cédric Salvador      <csalvador@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -115,9 +116,13 @@ if ($catid > 0)          $sql.= " AND cs.fk_categorie = ".$catid;
 if ($catid == -2)        $sql.= " AND cs.fk_categorie IS NULL";
 if ($search_categ > 0)   $sql.= " AND cs.fk_categorie = ".$search_categ;
 if ($search_categ == -2) $sql.= " AND cs.fk_categorie IS NULL";
-if ($search_nom)   $sql.= " AND s.nom LIKE '%".$db->escape($search_nom)."%'";
+if ($search_nom) {
+	$sql .= natural_search(array('s.nom'), $search_nom);
+}
 if ($search_zipcode) $sql.= " AND s.zip LIKE '".$db->escape($search_zipcode)."%'";
-if ($search_town) $sql.= " AND s.town LIKE '%".$db->escape($search_town)."%'";
+if ($search_town) {
+	$sql .= natural_search(array('s.town'), $search_town);
+}
 if ($search_code)  $sql.= " AND s.code_client LIKE '%".$db->escape($search_code)."%'";
 if ($search_compta) $sql.= " AND s.code_compta LIKE '%".$db->escape($search_compta)."%'";
 // Insert sale filter

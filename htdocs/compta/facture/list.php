@@ -8,6 +8,7 @@
  * Copyright (C) 2010-2012 Juanjo Menent         <jmenent@2byte.es>
  * Copyright (C) 2012      Christophe Battarel   <christophe.battarel@altairis.fr>
  * Copyright (C) 2013      Florian Henry		  	<florian.henry@open-concept.pro>
+ * Copyright (C) 2013      Cédric Salvador       <csalvador@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -174,11 +175,11 @@ if ($filtre)
 }
 if ($search_ref)
 {
-    $sql.= ' AND f.facnumber LIKE \'%'.$db->escape(trim($search_ref)).'%\'';
+    $sql .= natural_search(array('f.facnumber'), $search_ref);
 }
 if ($search_societe)
 {
-    $sql.= ' AND s.nom LIKE \'%'.$db->escape(trim($search_societe)).'%\'';
+    $sql .= natural_search(array('s.nom'), $search_societe);
 }
 if ($search_montant_ht)
 {
@@ -219,7 +220,7 @@ if (! $sall)
 }
 else
 {
-	$sql.= ' AND (s.nom LIKE \'%'.$db->escape($sall).'%\' OR f.facnumber LIKE \'%'.$db->escape($sall).'%\' OR f.note LIKE \'%'.$db->escape($sall).'%\' OR fd.description LIKE \'%'.$db->escape($sall).'%\')';
+    $sql .= natural_search(array('s.nom', 'f.facnumber', 'f.note_public', 'fd.description'), $sall);
 }
 $sql.= ' ORDER BY ';
 $listfield=explode(',',$sortfield);

@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2007 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2010	   Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2012      Christophe Battarel   <christophe.battarel@altairis.fr>
+ * Copyright (C) 2013      Cédric Salvador       <csalvador@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,35 +36,32 @@ $langs->load("suppliers");
 
 if (!$user->rights->produit->lire && !$user->rights->service->lire) accessforbidden();
 
-$sref=isset($_GET["sref"])?$_GET["sref"]:$_POST["sref"];
-$sRefSupplier=isset($_GET["srefsupplier"])?$_GET["srefsupplier"]:$_POST["srefsupplier"];
-$snom=isset($_GET["snom"])?$_GET["snom"]:$_POST["snom"];
+$sref = GETPOST('sref');
+$sRefSupplier = GETPOST('srefsupplier');
+$snom = GETPOST('snom');
+$type = GETPOST('type');
 
-$type=isset($_GET["type"])?$_GET["type"]:$_POST["type"];
-
-$sortfield = isset($_GET["sortfield"])?$_GET["sortfield"]:$_POST["sortfield"];
-$sortorder = isset($_GET["sortorder"])?$_GET["sortorder"]:$_POST["sortorder"];
-$page = $_GET["page"];
+$sortfield = GETPOST('sortfield');
+$sortorder = GETPOST('sortorder');
+$page = GETPOST('page');
 if ($page < 0) {
-$page = 0 ; }
+    $page = 0 ;
+}
 
 $limit = $conf->liste_limit;
 $offset = $limit * $page ;
 
-if (! $sortfield) $sortfield="p.ref";
-if (! $sortorder) $sortorder="DESC";
+if (! $sortfield) $sortfield = 'p.ref';
+if (! $sortorder) $sortorder = 'DESC';
 
-if (! empty($_POST["button_removefilter"]))
+if (! empty(GETPOST('button_removefilter')))
 {
-	$sref="";
-	$sRefSupplier="";
-	$snom="";
+	$sref = '';
+	$sRefSupplier = '';
+	$snom = '';
 }
 
-if ($_GET["fourn_id"] > 0 || $_POST["fourn_id"] > 0)
-{
-	$fourn_id = isset($_GET["fourn_id"])?$_GET["fourn_id"]:$_POST["fourn_id"];
-}
+$fourn_id = GETPOST('fourn_id', 'int');
 
 if (isset($_REQUEST['catid']))
 {
@@ -96,37 +94,32 @@ if ($catid) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON cp.f
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as ppf ON p.rowid = ppf.fk_product";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON ppf.fk_soc = s.rowid";
 $sql.= " WHERE p.entity IN (".getEntity('product', 1).")";
-if ($_POST["mode"] == 'search')
+if (GETPOST('mode', 'alpha') == 'search')
 {
-	$sql .= " AND (p.ref LIKE '%".$_POST["sall"]."%'";
-	$sql .= " OR p.label LIKE '%".$_POST["sall"]."%')";
-	if ($sRefSupplier)
-	{
-		$sql .= " AND ppf.ref_fourn LIKE '%".$sRefSupplier."%'";
-	}
+	$sql .= natural_search(array('p.ref', 'p.label'), GETPOST('mode', 'alpha'));
 }
 else
 {
-	if ($_GET["type"] || $_POST["type"])
+	if (GETPOST('type'))
 	{
-		$sql .= " AND p.fk_product_type = ".(isset($_GET["type"])?$_GET["type"]:$_POST["type"]);
+		$sql .= " AND p.fk_product_type = " . GETPOST('type'));
 	}
 	if ($sref)
 	{
-		$sql .= " AND p.ref LIKE '%".$sref."%'";
-	}
-	if ($sRefSupplier)
-	{
-		$sql .= " AND ppf.ref_fourn LIKE '%".$sRefSupplier."%'";
+		$sql .= natural_search(array('p.ref'), $sref);
 	}
 	if ($snom)
 	{
-		$sql .= " AND p.label LIKE '%".$snom."%'";
+		$sql .= natural_search(array('p.label'), $snom);
 	}
 	if($catid)
 	{
 		$sql .= " AND cp.fk_categorie = ".$catid;
 	}
+}
+if ($sRefSupplier)
+{
+	$sql .= natural_search(array('ppf.ref_fourn'), $sRefSupplier);
 }
 if ($fourn_id > 0)
 {

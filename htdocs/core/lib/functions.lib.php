@@ -8,6 +8,7 @@
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2008      Raphael Bertrand (Resultic)       <raphael.bertrand@resultic.fr>
  * Copyright (C) 2010-2011 Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2013      Cédric Salvador      <csalvador@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -4434,6 +4435,37 @@ if (! function_exists('getmypid'))
 	{
 		return rand(1,32768);
 	}
+}
+
+/**
+ * Natural search
+ * @param array[string] $fields array filled with the fields names in the SQL query
+ * @param string $value the value to look for
+ * @return string $res the statement to append to the SQL query
+ * */
+function natural_search($fields, $value)
+{
+    global $db;
+    $crits = explode(' ', $value);
+    $res = "";
+    $end = count($fields);
+    $end2 = count($crits);
+    $j = 0;
+    foreach ($crits as $crit) {
+        $i = 0;
+        foreach ($fields as $field) {
+            if ( $i > 0 && $i < $end){
+                $res .= " OR ";
+            }
+            $res .= $field . " LIKE '%" . $db->escape(trim($crit)) . "%'";
+            $i++;
+        }
+        if ($end > 1) $res .= ')';
+        if ($j < $end2 - 1) $res .= " AND ";
+        if ($end > 1 && $j < $end2 - 1) $res .= '(';
+        $j++;
+    }
+    return " AND " . ($end > 1? '(' : '') . $res;
 }
 
 ?>

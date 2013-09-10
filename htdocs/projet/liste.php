@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Bariley / Ocebo <marc@ocebo.com>
  * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2013      Cédric Salvador      <csalvador@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -84,17 +85,17 @@ if ($mine || ! $user->rights->projet->all->lire) $sql.= " AND p.rowid IN (".$pro
 // No need to check company, as filtering of projects must be done by getProjectsAuthorizedForUser
 //if ($socid || ! $user->rights->societe->client->voir)	$sql.= "  AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
 if ($socid) $sql.= "  AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
-if ($_GET["search_ref"])
+if ($search_ref)
 {
-	$sql.= " AND p.ref LIKE '%".$db->escape($search_ref)."%'";
+	$sql .= natural_search(array('p.ref'), $search_ref);
 }
-if ($_GET["search_label"])
+if ($search_label)
 {
-	$sql.= " AND p.title LIKE '%".$db->escape($search_label)."%'";
+	$sql .= natural_search(array('p.title'), $search_label);
 }
-if ($_GET["search_societe"])
+if ($search_societe)
 {
-	$sql.= " AND s.nom LIKE '%".$db->escape($search_societe)."%'";
+	$sql .= natural_search(array('s.nom'), $search_societe);
 }
 $sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit($conf->liste_limit+1, $offset);

@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2011      Philippe Grand       <philippe.grand@atoo-net.com>
  * Copyright (C) 2013      Florian Henry       <florian.henry@open-concept.pro>
+ * Copyright (C) 2013      Cédric Salvador      <csalvador@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -193,10 +194,16 @@ if ($catid > 0)          $sql.= " AND cs.fk_categorie = ".$catid;
 if ($catid == -2)        $sql.= " AND cs.fk_categorie IS NULL";
 if ($search_categ > 0)   $sql.= " AND cs.fk_categorie = ".$search_categ;
 if ($search_categ == -2) $sql.= " AND cs.fk_categorie IS NULL";
-if ($search_nom)   $sql .= " AND s.nom LIKE '%".$db->escape(strtolower($search_nom))."%'";
+if ($search_nom) {
+	$sql .= natural_search(array('s.nom'), $search_nom);
+}
 if ($search_zipcode) $sql .= " AND s.zip LIKE '".$db->escape(strtolower($search_zipcode))."%'";
-if ($search_town) $sql .= " AND s.town LIKE '%".$db->escape(strtolower($search_town))."%'";
-if ($search_state) $sql .= " AND d.nom LIKE '%".$db->escape(strtolower($search_state))."%'";
+if ($search_town) {
+	$sql .= natural_search(array('s.town'), $search_town);
+}
+if ($search_state) {
+	$sql .= natural_search(array('d.nom'), $search_state);
+}
 if ($search_datec) $sql .= " AND s.datec LIKE '%".$db->escape($search_datec)."%'";
 // Insert levels filters
 if ($search_levels)
@@ -208,9 +215,8 @@ if ($search_sale)
 {
 	$sql .= " AND sc.fk_user = ".$db->escape($search_sale);
 }
-if ($socname)
-{
-	$sql .= " AND s.nom LIKE '%".$db->escape($socname)."%'";
+if ($socname) {
+	$sql .= natural_search(array('s.nom'), $search_nom);
 	$sortfield = "s.nom";
 	$sortorder = "ASC";
 }
