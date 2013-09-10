@@ -75,10 +75,10 @@ before_script:
 # use the $DB env variable to determine the phpunit.xml to use
 #script: phpunit -d memory_limit=-1 --configuration test/phpunit/phpunittest.xml --coverage-text test/phpunit/AllTests.php
 #script: phpunit -d memory_limit=-1 --configuration test/phpunit/phpunittest.xml --coverage-text test/phpunit/BuildDocTest.php
-script: 
- - phpcs --report=xml --standard=dev/codesniffer --tab-width=4 scripts
- - phpunit -d memory_limit=-1 --configuration test/phpunit/phpunittest.xml test/phpunit/AllTests.php
 #script: phpunit -d memory_limit=-1 --configuration test/phpunit/phpunittest.xml test/phpunit/WebservicesOtherTest.php
+script: 
+ - phpcs --report=xml --standard=dev/codesniffer --tab-width=4 --exclude=./build/,./includes/ .
+ - phpunit -d memory_limit=-1 --configuration test/phpunit/phpunittest.xml test/phpunit/AllTests.php
 
 after_script:
 # - echo Output dolibarr log file; cat $(pwd)/htdocs/documents/dolibarr.log
