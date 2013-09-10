@@ -77,7 +77,7 @@ before_script:
 #script: phpunit -d memory_limit=-1 --configuration test/phpunit/phpunittest.xml --coverage-text test/phpunit/BuildDocTest.php
 #script: phpunit -d memory_limit=-1 --configuration test/phpunit/phpunittest.xml test/phpunit/WebservicesOtherTest.php
 script: 
- - phpcs --report=xml --standard=dev/codesniffer --tab-width=4 --ignore=./build/,./includes/ .
+ - phpcs -v --report=xml --standard=dev/codesniffer --tab-width=4 --ignore=/build/,/includes/ .
  - phpunit -d memory_limit=-1 --configuration test/phpunit/phpunittest.xml test/phpunit/AllTests.php
 
 after_script:
