@@ -22,6 +22,9 @@ before_script:
  - echo Home dir is `echo ~`
  - echo Update composer
 # - ~/.phpenv/versions/$(phpenv version-name)/bin/composer.phar self-update 
+ - echo Install phpcs
+ - pyrus install pear/PHP_CodeSniffer
+ - phpenv rehash
  - echo Create dir $(pwd)/htdocs/documents
  - sudo mkdir -p $(pwd)/htdocs/documents/admin/temp;
  - sudo touch $(pwd)/htdocs/documents/dolibarr.log;
@@ -72,7 +75,9 @@ before_script:
 # use the $DB env variable to determine the phpunit.xml to use
 #script: phpunit -d memory_limit=-1 --configuration test/phpunit/phpunittest.xml --coverage-text test/phpunit/AllTests.php
 #script: phpunit -d memory_limit=-1 --configuration test/phpunit/phpunittest.xml --coverage-text test/phpunit/BuildDocTest.php
-script: phpunit -d memory_limit=-1 --configuration test/phpunit/phpunittest.xml test/phpunit/AllTests.php
+script: 
+ - phpcs --report=xml --standard=dev/codesniffer --tab-width=4 scripts
+ - phpunit -d memory_limit=-1 --configuration test/phpunit/phpunittest.xml test/phpunit/AllTests.php
 #script: phpunit -d memory_limit=-1 --configuration test/phpunit/phpunittest.xml test/phpunit/WebservicesOtherTest.php
 
 after_script:
