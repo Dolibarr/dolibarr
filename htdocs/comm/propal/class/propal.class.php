@@ -287,7 +287,6 @@ class Propal extends CommonObject
      *		par l'appelant par la methode get_default_tva(societe_vendeuse,societe_acheteuse,'',produit)
      *		et le desc doit deja avoir la bonne valeur (a l'appelant de gerer le multilangue)
      *
-     * 		@param    	int			$propalid			Id de la propale
      * 		@param    	string		$desc				Description de la ligne
      * 		@param    	double		$pu_ht				Prix unitaire
      * 		@param    	double		$qty             	Quantite
@@ -1603,9 +1602,7 @@ class Propal extends CommonObject
 
         $sql = "UPDATE ".MAIN_DB_PREFIX."propal";
         $sql.= " SET fk_statut = ".$this->statut.",";
-		if (! empty ( $note )) {
-			$sql .= " note_private = '" . $this->db->escape ( $note ) . "',";
-		}
+		if (! empty($note)) $sql.= " note_private = '".$this->db->escape($note)."',";
         $sql.= " date_cloture=NULL, fk_user_cloture=NULL";
         $sql.= " WHERE rowid = ".$this->id;
 

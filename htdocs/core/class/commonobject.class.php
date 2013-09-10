@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2006-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2006-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2010-2013 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2012      Christophe Battarel  <christophe.battarel@altairis.fr>
@@ -3223,16 +3223,23 @@ abstract class CommonObject
 		print '</table>';
 	}
 
+	/**
+	 * Overwrite magic function to solve problem of cloning object that are kept as references
+	 * 
+	 * @return void
+	 */
 	function __clone()
     {
         // Force a copy of this->lines, otherwise it will point to same object.
         if (isset($this->lines) && is_array($this->lines))
         {
-        	for($i=0; $i < count($this->lines); $i++)
+        	$nboflines=count($this->lines);
+        	for($i=0; $i < $nboflines; $i++)
         	{
             	$this->lines[$i] = dol_clone($this->lines[$i]);
         	}
         }
     }
+    
 }
 ?>

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (c) 2003-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (c) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (c) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
 *
 * This program is free software; you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by

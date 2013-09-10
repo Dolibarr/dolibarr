@@ -235,37 +235,40 @@ if ($resql) {
         $filters = '&sref=' . $sref . '&snom=' . $snom;
         $filters .= '&sall=' . $sall;
         $filters .= '&salert=' . $salert;
-        print_barre_liste($texte,
-                          $page,
-                          'replenish.php',
-                          $filters,
-                          $sortfield,
-                          $sortorder,
-                          '',
-                          $num
-                          );
+        print_barre_liste(
+        		$texte,
+        		$page,
+        		'replenish.php',
+        		$filters,
+        		$sortfield,
+        		$sortorder,
+        		'',
+        		$num
+        );
     } else {
         $filters = '&sref=' . $sref . '&snom=' . $snom;
         $filters .= '&fourn_id=' . $fourn_id;
         $filters .= (isset($type)?'&type=' . $type:'');
         $filters .=  '&salert=' . $salert;
-        print_barre_liste($texte,
-                          $page,
-                          'replenish.php',
-                          $filters,
-                          $sortfield,
-                          $sortorder,
-                          '',
-                          $num);
+        print_barre_liste(
+        		$texte,
+        		$page,
+        		'replenish.php',
+        		$filters,
+        		$sortfield,
+        		$sortorder,
+        		'',
+        		$num
+        );
     }
 
-    echo '<form action="replenish.php" method="post" name="formulaire">',
-         '<input type="hidden" name="token" value="' .$_SESSION['newtoken'] . '">',
-         '<input type="hidden" name="sortfield" value="' . $sortfield . '">',
-         '<input type="hidden" name="sortorder" value="' . $sortorder . '">',
-         '<input type="hidden" name="type" value="' . $type . '">',
-         '<input type="hidden" name="linecount" value="' . $num . '">',
-         '<input type="hidden" name="action" value="order">',
+    print '<form action="replenish.php" method="post" name="formulaire">'.
+         '<input type="hidden" name="token" value="' .$_SESSION['newtoken'] . '">'.
+         '<input type="hidden" name="sortfield" value="' . $sortfield . '">'.
+         '<input type="hidden" name="sortorder" value="' . $sortorder . '">'.
+         '<input type="hidden" name="type" value="' . $type . '">'.
+         '<input type="hidden" name="linecount" value="' . $num . '">'.
+         '<input type="hidden" name="action" value="order">'.
 
          '<table class="liste" width="100%">';
 
@@ -274,115 +277,128 @@ if ($resql) {
     $param .= '&sref=' . $sref;
 
     // Lignes des titres
-    echo '<tr class="liste_titre">',
+    print '<tr class="liste_titre">'.
          '<td><input type="checkbox" onClick="toggle(this)" /></td>';
-    print_liste_field_titre($langs->trans('Ref'),
-                            'replenish.php',
-                            'p.ref',
-                            $param,
-                            '',
-                            '',
-                            $sortfield,
-                            $sortorder
-                            );
-    print_liste_field_titre($langs->trans('Label'),
-                            'replenish.php',
-                            'p.label',
-                            $param,
-                            '',
-                            '',
-                            $sortfield,
-                            $sortorder
-                            );
-    if (!empty($conf->service->enabled) && $type == 1) {
-        print_liste_field_titre($langs->trans('Duration'),
-                                'replenish.php',
-                                'p.duration',
-                                $param,
-                                '',
-                                'align="center"',
-                                $sortfield,
-                                $sortorder
-                                );
+    print_liste_field_titre(
+    		$langs->trans('Ref'),
+    		'replenish.php',
+    		'p.ref',
+    		$param,
+    		'',
+    		'',
+    		$sortfield,
+    		$sortorder
+    );
+    print_liste_field_titre(
+    		$langs->trans('Label'),
+    		'replenish.php',
+    		'p.label',
+    		$param,
+    		'',
+    		'',
+    		$sortfield,
+    		$sortorder
+    );
+    if (!empty($conf->service->enabled) && $type == 1) 
+    {
+    	print_liste_field_titre(
+    			$langs->trans('Duration'),
+    			'replenish.php',
+    			'p.duration',
+    			$param,
+    			'',
+    			'align="center"',
+    			$sortfield,
+    			$sortorder
+    	);
     }
-    print_liste_field_titre($langs->trans('DesiredStock'),
-                            'replenish.php',
-                            'p.desiredstock',
-                            $param,
-                            '',
-                            'align="right"',
-                            $sortfield,
-                            $sortorder
-                            );
-    if ($conf->global->USE_VIRTUAL_STOCK) {
+    print_liste_field_titre(
+    		$langs->trans('DesiredStock'),
+    		'replenish.php',
+    		'p.desiredstock',
+    		$param,
+    		'',
+    		'align="right"',
+    		$sortfield,
+    		$sortorder
+    );
+    if ($conf->global->USE_VIRTUAL_STOCK) 
+    {
         $stocklabel = $langs->trans('VirtualStock');
-    } else {
+    }
+    else 
+    {
         $stocklabel = $langs->trans('PhysicalStock');
     }
-    print_liste_field_titre($stocklabel,
-                            'replenish.php',
-                            'stock_physique',
-                            $param,
-                            '',
-                            'align="right"',
-                            $sortfield,
-                            $sortorder
-                            );
-    print_liste_field_titre($langs->trans('Ordered'),
-                            'replenish.php',
-                            '',
-                            $param,
-                            '',
-                            'align="right"',
-                            $sortfield,
-                            $sortorder
-                            );
-    print_liste_field_titre($langs->trans('StockToBuy'),
-                            'replenish.php',
-                            '',
-                            $param,
-                            '',
-                            'align="right"',
-                            $sortfield,
-                            $sortorder
-                            );
-    print_liste_field_titre($langs->trans('Supplier'),
-                            'replenish.php',
-                            '',
-                            $param,
-                            '',
-                            'align="right"',
-                            $sortfield,
-                            $sortorder
-                            );
-    echo '<td>&nbsp;</td>',
-         '</tr>',
+    print_liste_field_titre(
+    		$stocklabel,
+    		'replenish.php',
+    		'stock_physique',
+    		$param,
+    		'',
+    		'align="right"',
+    		$sortfield,
+    		$sortorder
+    );
+    print_liste_field_titre(
+    		$langs->trans('Ordered'),
+    		'replenish.php',
+    		'',
+    		$param,
+    		'',
+    		'align="right"',
+    		$sortfield,
+    		$sortorder
+    );
+    print_liste_field_titre(
+    		$langs->trans('StockToBuy'),
+    		'replenish.php',
+    		'',
+    		$param,
+    		'',
+    		'align="right"',
+    		$sortfield,
+    		$sortorder
+    );
+    print_liste_field_titre(
+    		$langs->trans('Supplier'),
+    		'replenish.php',
+    		'',
+    		$param,
+    		'',
+    		'align="right"',
+    		$sortfield,
+    		$sortorder
+    );
+    print '<td>&nbsp;</td>'.
+         '</tr>'.
 
-    // Lignes des champs de filtre
-         '<tr class="liste_titre">',
-         '<td class="liste_titre">&nbsp;</td>',
-         '<td class="liste_titre">',
-         '<input class="flat" type="text" name="sref" value="' . $sref . '">',
-         '</td>',
-         '<td class="liste_titre">',
-         '<input class="flat" type="text" name="snom" value="' . $snom . '">',
+	    // Lignes des champs de filtre
+         '<tr class="liste_titre">'.
+         '<td class="liste_titre">&nbsp;</td>'.
+         '<td class="liste_titre">'.
+         '<input class="flat" type="text" name="sref" value="' . $sref . '">'.
+         '</td>'.
+         '<td class="liste_titre">'.
+         '<input class="flat" type="text" name="snom" value="' . $snom . '">'.
          '</td>';
-    if (!empty($conf->service->enabled) && $type == 1) {
-        echo '<td class="liste_titre">',
-             '&nbsp;',
+    if (!empty($conf->service->enabled) && $type == 1) 
+    {
+        print '<td class="liste_titre">'.
+             '&nbsp;'.
              '</td>';
     }
-    echo '<td class="liste_titre">&nbsp;</td>',
-         '<td class="liste_titre" align="right">' . $langs->trans('AlertOnly') . '&nbsp;<input type="checkbox" name="salert" ' . $alertchecked . '></td>',
-         '<td class="liste_titre" align="right">&nbsp;</td>',
-         '<td class="liste_titre">&nbsp;</td>',
-         '<td class="liste_titre">&nbsp;</td>',
-         '<td class="liste_titre" align="right">',
-         '<input type="image" class="liste_titre" name="button_search"',
-         'src="' . DOL_URL_ROOT . '/theme/' . $conf->theme . '/img/search.png" alt="' . $langs->trans("Search") . '">',
+    print '<td class="liste_titre">&nbsp;</td>'.
+         '<td class="liste_titre" align="right">' . $langs->trans('AlertOnly') . '&nbsp;<input type="checkbox" name="salert" ' . $alertchecked . '></td>'.
+         '<td class="liste_titre" align="right">&nbsp;</td>'.
+         '<td class="liste_titre">&nbsp;</td>'.
+         '<td class="liste_titre">&nbsp;</td>'.
+         '<td class="liste_titre" align="right">'.
+         '<input type="image" class="liste_titre" name="button_search"'.
+         'src="' . DOL_URL_ROOT . '/theme/' . $conf->theme . '/img/search.png" alt="' . $langs->trans("Search") . '">'.
          '<input type="image" class="liste_titre" name="button_removefilter"
-          src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/searchclear.png" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">',
-         '</td>',
+          src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/searchclear.png" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">'.
+         '</td>'.
          '</tr>';
 
     $prod = new Product($db);
@@ -452,12 +468,12 @@ if ($resql) {
             } else {
                 $picto = img_picto('', './img/no', '', 1);
             }
-            echo '<tr ' . $bc[$var] . '>',
-                 '<td><input type="checkbox" class="check" name="' . $i . '"' . $disabled . '></td>',
-                 '<td class="nowrap">',
-                 $prod->getNomUrl(1, '', 16),
-                 '</td>',
-                 '<td>' . $objp->label . '</td>',
+            print '<tr ' . $bc[$var] . '>'.
+                 '<td><input type="checkbox" class="check" name="' . $i . '"' . $disabled . '></td>'.
+                 '<td class="nowrap">'.
+                 $prod->getNomUrl(1, '', 16).
+                 '</td>'.
+                 '<td>' . $objp->label . '</td>'.
                  '<input type="hidden" name="desc' . $i . '" value="' . $objp->label . '" >';
 
             if (!empty($conf->service->enabled) && $type == 1) {
@@ -470,80 +486,81 @@ if ($resql) {
                 } else {
                     $duration = $objp->duration;
                 }
-                echo '<td align="center">',
-                     $duration,
+                print '<td align="center">'.
+                     $duration.
                      '</td>';
             }
 
-            echo '<td align="right">' . $objp->desiredstock . '</td>',
-                 '<td align="right">',
-                 $warning, $stock,
-                 '</td>',
-                 '<td align="right">',
-                 '<a href="replenishorders.php?sproduct=' , $prod->id, '">',
-                 $ordered, '</a> ', $picto,
-                 '</td>',
-                 '<td align="right">',
+            print '<td align="right">' . $objp->desiredstock . '</td>'.
+                 '<td align="right">'.
+                 $warning . $stock.
+                 '</td>'.
+                 '<td align="right">'.
+                 '<a href="replenishorders.php?sproduct=' . $prod->id . '">'.
+                 $ordered . '</a> ' . $picto.
+                 '</td>'.
+                 '<td align="right">'.
                  '<input type="text" name="tobuy' . $i .
-                 '" value="' . $stocktobuy . '" ' . $disabled . '>',
-                 '</td>',
-                 '<td align="right">',
-                 $form->select_product_fourn_price($prod->id,
-                                                    'fourn' . $i,
-                                                    1
-                                                   ),
-                 '</td>',
-                 '<td>&nbsp</td>',
+                 '" value="' . $stocktobuy . '" ' . $disabled . '>'.
+                 '</td>'.
+                 '<td align="right">'.
+                 $form->select_product_fourn_price($prod->id, 'fourn'.$i, 1).
+                 '</td>'.
+                 '<td>&nbsp</td>'.
                  '</tr>';
         }
         $i++;
     }
     $value = $langs->trans("CreateOrders");
-    echo '</table>',
-         '</div>',
-         '<table width="100%">',
-         '<tr><td align="right">',
-         '<input class="butAction" type="submit" name="valid" value="' . $value . '">',
-         '</td></tr></table>',
+    print '</table>'.
+         '</div>'.
+         '<table width="100%">'.
+         '<tr><td align="right">'.
+         '<input class="butAction" type="submit" name="valid" value="' . $value . '">'.
+         '</td></tr></table>'.
          '</form>';
 
-    if ($num > $conf->liste_limit) {
-        if ($sref || $snom || $sall || $salert || GETPOST('search', 'alpha')) {
+    if ($num > $conf->liste_limit) 
+    {
+        if ($sref || $snom || $sall || $salert || GETPOST('search', 'alpha')) 
+        {
             $filters = '&sref=' . $sref . '&snom=' . $snom;
             $filters .= '&sall=' . $sall;
             $filters .= '&salert=' . $salert;
-            print_barre_liste('',
-                              $page,
-                              'replenish.php',
-                              $filters,
-                              $sortfield,
-                              $sortorder,
-                              '',
-                              $num,
-                              0,
-                              ''
-                              );
+            print_barre_liste(
+            		'',
+            		$page,
+            		'replenish.php',
+            		$filters,
+            		$sortfield,
+            		$sortorder,
+            		'',
+            		$num,
+            		0,
+            		''
+            );
         } else {
             $filters = '&sref=' . $sref . '&snom=' . $snom;
             $filters .= '&fourn_id=' . $fourn_id;
             $filters .= (isset($type)? '&type=' . $type : '');
             $filters .= '&salert=' . $salert;
-            print_barre_liste('',
-                              $page,
-                              'replenish.php',
-                              $filters,
-                              $sortfield,
-                              $sortorder,
-                              '',
-                              $num,
-                              0,
-                              ''
-                              );
+            print_barre_liste(
+            		'',
+            		$page,
+            		'replenish.php',
+            		$filters,
+            		$sortfield,
+            		$sortorder,
+            		'',
+            		$num,
+            		0,
+            		''
+            );
         }
     }
 
     $db->free($resql);
-echo ' <script type="text/javascript">
+print ' <script type="text/javascript">
      function toggle(source)
      {
        checkboxes = document.getElementsByClassName("check");
@@ -558,4 +575,6 @@ echo ' <script type="text/javascript">
 }
 
 llxFooter();
+
 $db->close();
+?>

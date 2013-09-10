@@ -906,19 +906,14 @@ class Contact extends CommonObject
 	}
 
 	/**
-	 *  Retourne le libelle du statut du contact
+	 *	Return label of contact status
 	 *
-	 *  @param      int			$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
-	 *  @return     string      			Libelle
+	 *	@param      int			$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 * 	@return 	string					Label of contact status
 	 */
 	function getLibStatut($mode)
 	{
 		return $this->LibStatut($this->statut,$mode);
-	}
-
-	function getLibStatutcontact()
-	{
-		return $this->LibStatutcontact($this->statut);
 	}
 
 	/**
@@ -928,7 +923,7 @@ class Contact extends CommonObject
 	 *  @param      int			$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
 	 *  @return     string					Libelle
 	 */
-	function LibStatut($statut)
+	function LibStatut($statut,$mode)
 	{
 		global $langs;
 
@@ -977,12 +972,7 @@ class Contact extends CommonObject
 
 	}
 
-	function LibStatutcontact($statut)
-		{
-			global $langs;
-			if ($statut==0) return '<span class="hideonsmartphone">'.$langs->trans('Disabled').' </span>'.img_picto($langs->trans('StatusContactDraftShort'),'statut0');
-			else return '<span class="hideonsmartphone">'.$langs->trans('Enabled').' </span>'.img_picto($langs->trans('StatusContactValidatedShort'),'statut1');
-		}
+	
 	/**
 	 *	Return translated label of Public or Private
 	 *
