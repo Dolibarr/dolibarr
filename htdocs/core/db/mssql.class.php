@@ -23,11 +23,12 @@
  *	\brief			Fichier de la classe permettant de gerer une base mssql
  */
 
+require_once DOL_DOCUMENT_ROOT .'/core/db/DoliDB.class.php';
 
 /**
  *	Classe de gestion de la database de dolibarr
  */
-class DoliDBMssql
+class DoliDBMssql extends DoliDB
 {
 	//! Database handler
 	var $db;

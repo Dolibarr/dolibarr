@@ -27,11 +27,12 @@
  *	\brief      Fichier de la classe permettant de gerer une base pgsql
  */
 
+require_once DOL_DOCUMENT_ROOT .'/core/db/DoliDB.class.php';
 
 /**
  *	Class to drive a Postgresql database for Dolibarr
  */
-class DoliDBPgsql
+class DoliDBPgsql extends DoliDB
 {
     //! Database handler
     var $db;
