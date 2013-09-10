@@ -20,20 +20,6 @@
  *	\file       htdocs/core/class/dolgraph.class.php
  *  \ingroup    core
  *	\brief      File for class to generate graph
- *
- *	Usage:
- *	$graph_data = array(array('labelxA',yA),array('labelxB',yB));
- *	$graph_data = array(array('labelxA',yA1,...,yAn),array('labelxB',yB1,...yBn));	when there is n value to show for each x
- *  $legend     = array("Val1",...,"Valn");											list of n series name
- *	$px = new DolGraph();
- *	$px->SetData($graph_data);
- *	$px->SetMaxValue($px->GetCeilMaxValue());
- *	$px->SetMinValue($px->GetFloorMinValue());
- *	$px->SetTitle("title");
- *	$px->SetLegend($legend);
- *	$px->SetWidth(width);
- *	$px->SetHeight(height);
- *	$px->draw("file.png","/viewdownload?...");
  */
 
 
