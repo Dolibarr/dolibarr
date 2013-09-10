@@ -79,7 +79,7 @@ before_script:
 #script: phpunit -d memory_limit=-1 --configuration test/phpunit/phpunittest.xml test/phpunit/WebservicesOtherTest.php
 script: 
 # - phpcs -v --report=xml --standard=dev/codesniffer/ruleset.xml --tab-width=4 --ignore=/build/,/documents/,/includes/,/report/ $(pwd)
-  - phpcs -v --report=xml --standard=dev/codesniffer/ruleset.xml --tab-width=4 /home/travis/build/Dolibarr/dolibarr/htdocs/*
+  - phpcs -v --report=xml --standard=dev/codesniffer/ruleset.xml --tab-width=4 --ignore=/build/,/documents/,/includes/,/report/ *
 # - phpunit -d memory_limit=-1 --configuration test/phpunit/phpunittest.xml test/phpunit/AllTests.php
 
 after_script:
