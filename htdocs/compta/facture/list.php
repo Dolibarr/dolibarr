@@ -215,7 +215,7 @@ if (! $sall)
     $sql.= ' GROUP BY f.rowid, f.facnumber, f.type, f.increment, f.total,f.tva, f.total_ttc,';
     $sql.= ' f.datef, f.date_lim_reglement,';
     $sql.= ' f.paye, f.fk_statut,';
-    $sql.= ' s.nom, s.rowid';
+    $sql.= ' s.nom, s.rowid, f.note_private';
 }
 else
 {
