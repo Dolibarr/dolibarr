@@ -895,20 +895,20 @@ class DolGraph
 			$this->_stringtoshow.='\'';
 			if ($urltemp) $this->_stringtoshow.='</a>';
 			$this->_stringtoshow.='</div>\';
-		},
-		background: {
-		opacity: 0.5,
-		color: \'#000000\'
-		}
-		}
-		}
-		},
-		zoom: {
-		interactive: true
-		},
-		pan: {
-		interactive: true
-		},';
+			},
+			background: {
+			opacity: 0.5,
+			color: \'#000000\'
+			}
+			}
+			}
+			},
+			zoom: {
+			interactive: true
+			},
+			pan: {
+			interactive: true
+			},';
 			if (count($datacolor))
 			{
 				$this->_stringtoshow.='colors: '.(! empty($data['seriescolor']) ? json_encode($data['seriescolor']) : json_encode($datacolor)).',';
@@ -923,47 +923,46 @@ class DolGraph
 			// Add code to support tooltips
 			$this->_stringtoshow.='
 			function showTooltip_'.$tag.'(x, y, contents) {
-			$(\'<div id="tooltip_'.$tag.'">\' + contents + \'</div>\').css({
-			position: \'absolute\',
-			display: \'none\',
-			top: y + 5,
-			left: x + 5,
-			border: \'1px solid #ddd\',
-			padding: \'2px\',
-			\'background-color\': \'#ffe\',
-			width: 200,
-			opacity: 0.80
-		}).appendTo("body").fadeIn(20);
-		}
-
-		var previousPoint = null;
-		$("#placeholder_'.$tag.'").bind("plothover", function (event, pos, item) {
-		$("#x").text(pos.x.toFixed(2));
-		$("#y").text(pos.y.toFixed(2));
-
-		if (item) {
-		if (previousPoint != item.dataIndex) {
-		previousPoint = item.dataIndex;
-
-		$("#tooltip").remove();
-		/* console.log(item); */
-		var x = item.datapoint[0].toFixed(2);
-		var y = item.datapoint[1].toFixed(2);
-		var z = item.series.xaxis.ticks[item.dataIndex].label;
-		';
-			if ($this->showpointvalue > 0) $this->_stringtoshow.='
-			showTooltip_'.$tag.'(item.pageX, item.pageY,
-			item.series.label + "<br>" + z + " => " + y);
+				$(\'<div id="tooltip_'.$tag.'">\' + contents + \'</div>\').css({
+					position: \'absolute\',
+					display: \'none\',
+					top: y + 5,
+					left: x + 5,
+					border: \'1px solid #ddd\',
+					padding: \'2px\',
+					\'background-color\': \'#ffe\',
+					width: 200,
+					opacity: 0.80
+				}).appendTo("body").fadeIn(20);
+			}
+	
+			var previousPoint = null;
+			$("#placeholder_'.$tag.'").bind("plothover", function (event, pos, item) {
+				$("#x").text(pos.x.toFixed(2));
+				$("#y").text(pos.y.toFixed(2));
+		
+				if (item) {
+					if (previousPoint != item.dataIndex) {
+						previousPoint = item.dataIndex;
+				
+						$("#tooltip").remove();
+						/* console.log(item); */
+						var x = item.datapoint[0].toFixed(2);
+						var y = item.datapoint[1].toFixed(2);
+						var z = item.series.xaxis.ticks[item.dataIndex].label;
+						';
+						if ($this->showpointvalue > 0) $this->_stringtoshow.='
+							showTooltip_'.$tag.'(item.pageX, item.pageY, item.series.label + "<br>" + z + " => " + y);
+						';
+						$this->_stringtoshow.='
+					}
+				}
+				else {
+					$("#tooltip_'.$tag.'").remove();
+					previousPoint = null;
+				}
+			});
 			';
-			$this->_stringtoshow.='
-		}
-		}
-		else {
-		$("#tooltip_'.$tag.'").remove();
-		previousPoint = null;
-		}
-		});
-		';
 
 			$this->_stringtoshow.='var stack = null, steps = false;'."\n";
 
@@ -1039,6 +1038,7 @@ class DolGraph
 		if ($direction == 'height') return ($conf->dol_optimize_smallscreen?'160':($defaultsize?$defaultsize:'200'));
 		return 0;
 	}
+
 }
 
 ?>
