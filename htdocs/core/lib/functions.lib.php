@@ -2868,12 +2868,15 @@ function get_localtax($tva, $local, $thirdparty_buyer="", $thirdparty_seller="")
 
 /**
  *  Get type and rate of localtaxes for a particular vat rate/country fo thirdparty
- *
+ *  TODO
+ *  This function is called to retrieve type for building PDF. Such call of function must be removed.
+ *  Instead this function must be called when adding a line to get array of localtax and type and
+ *  provide it to function calcul_price_total.
+ *  
  *  @param		real	$vatrate			VAT Rate
  *  @param		int		$local              Number of localtax (1 or 2, or 0 to return 1+2)
- *  @param		int		$thirdparty         company object
+ *  @param		int		$thirdparty         Company object
  *  @return		array    	  				array(Type of local tax (1 to 7 / 0 if not found), rate or amount of localtax)
- *  @deprecated	TODO We should remove this function by storing rate and type into detail lines.
  */
 function getLocalTaxesFromRate($vatrate, $local, $thirdparty)
 {
