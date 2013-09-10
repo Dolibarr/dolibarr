@@ -42,7 +42,6 @@
  */
 class DolGraph
 {
-	//! Type of graph
 	var $type=array();			// Array with type of each series. Example: array('bars', 'lines', ...)
 	var $mode='side';		    // Mode bars graph: side, depth
 	private $_library='jflot';	// Graphic library to use (jflot, artichow)
