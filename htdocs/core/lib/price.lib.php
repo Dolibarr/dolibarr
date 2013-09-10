@@ -46,6 +46,7 @@
  *		@param	int		$info_bits					Miscellaneous informations on line
  *		@param	int		$type						0/1=Product/service
  *		@param  string	$seller						Thirdparty seller (we need $seller->country_code property). Provided only if seller is the supplier.
+ *		@param  array	$localtaxes_type			Array with localtaxes info (loaded by getLocalTaxesFromRate function)
  *		@return result[ 0=total_ht,
  *						 1=total_vat,
  *						 2=total_ttc,
