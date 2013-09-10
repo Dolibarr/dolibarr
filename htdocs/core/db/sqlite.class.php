@@ -24,11 +24,12 @@
  *	\brief      Class file to manage Dolibarr database access for a Sqlite database
  */
 
+require_once DOL_DOCUMENT_ROOT .'/core/db/DoliDB.class.php';
 
 /**
  *	Class to manage Dolibarr database access for a Sqlite database
  */
-class DoliDBSqlite
+class DoliDBSqlite extends DoliDB
 {
     //! Database handler
     var $db;
