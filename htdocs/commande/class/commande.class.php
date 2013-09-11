@@ -3,10 +3,10 @@
  * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2013 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
- * Copyright (C) 2010-2012 Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2010-2013 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2011      Jean Heimburger      <jean@tiaris.info>
  * Copyright (C) 2012      Christophe Battarel  <christophe.battarel@altairis.fr>
- * Copyright (C) 2013      Florian Henry		  	<florian.henry@open-concept.pro>
+ * Copyright (C) 2013      Florian Henry		<florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU  *General Public License as published by
@@ -1597,7 +1597,7 @@ class Commande extends CommonOrder
         if ($filtre_statut >= 0) $sql.= ' ed.fk_expedition = e.rowid AND';
         $sql.= ' ed.fk_origin_line = cd.rowid';
         $sql.= ' AND cd.fk_commande =' .$this->id;
-        if ($filtre_statut >= 0) $sql.=' AND e.fk_statut = '.$filtre_statut;
+        if ($filtre_statut >= 0) $sql.=' AND e.fk_statut >= '.$filtre_statut;
         $sql.= ' GROUP BY cd.rowid, cd.fk_product';
         //print $sql;
 
