@@ -72,15 +72,13 @@ before_script:
  
 
 
-# Omitting "script:" will default to phpunit
-# use the $DB env variable to determine the phpunit.xml to use
-#script: phpunit -d memory_limit=-1 --configuration test/phpunit/phpunittest.xml --coverage-text test/phpunit/AllTests.php
-#script: phpunit -d memory_limit=-1 --configuration test/phpunit/phpunittest.xml --coverage-text test/phpunit/BuildDocTest.php
-#script: phpunit -d memory_limit=-1 --configuration test/phpunit/phpunittest.xml test/phpunit/WebservicesOtherTest.php
-#script: phpcs -s --report-checkstyle --report-summary --standard=dev/codesniffer/ruleset.xml --tab-width=4 --ignore=/build/html/,/documents/,/includes/,/test/report/ . 
 script: 
- - phpcs -s --report-checkstyle --report-checkstyle --report-summary --standard=dev/codesniffer/ruleset.xml --tab-width=4 --ignore=/build/html/,/documents/,/includes/,/test/report/ htdocs/core/class/dolgraph.class.php
-# - phpcs -s --report-checkstyle --report-summary --standard=dev/codesniffer/ruleset.xml --tab-width=4 --ignore=/build/html/,/documents/,/includes/,/test/report/ .
+# - phpunit -d memory_limit=-1 --configuration test/phpunit/phpunittest.xml --coverage-text test/phpunit/AllTests.php
+# - phpunit -d memory_limit=-1 --configuration test/phpunit/phpunittest.xml --coverage-text test/phpunit/BuildDocTest.php
+# - phpunit -d memory_limit=-1 --configuration test/phpunit/phpunittest.xml test/phpunit/WebservicesOtherTest.php
+# - phpcs -s --report-checkstyle --report-summary --standard=dev/codesniffer/ruleset.xml --tab-width=4 --ignore=/build/html/,/documents/,/includes/,/test/report/ . 
+# - phpcs -s --report-checkstyle --report-summary --standard=dev/codesniffer/ruleset.xml --tab-width=4 --ignore=/build/html/,/documents/,/includes/,/test/report/ htdocs/core/class/dolgraph.class.php
+ - phpcs -s --report-summary --standard=dev/codesniffer/ruleset.xml --tab-width=4 --ignore=/build/html/,/documents/,/includes/,/test/report/ .
  - phpunit -d memory_limit=-1 --configuration test/phpunit/phpunittest.xml test/phpunit/AllTests.php
 
 after_script:

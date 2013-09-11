@@ -1022,7 +1022,7 @@ class DolGraph
 		return $this->_stringtoshow;
 	}
 
-
+	
 	/**
 	 * getDefaultGraphSizeForStats
 	 *
@@ -1033,12 +1033,19 @@ class DolGraph
 	static function getDefaultGraphSizeForStats($direction,$defaultsize='')
 	{
 		global $conf;
-
-		if ($direction == 'width')  return ($conf->dol_optimize_smallscreen?(empty($_SESSION['dol_screen_width'])?'280':$_SESSION['dol_screen_width']-40):($defaultsize?$defaultsize:'500'));
-		if ($direction == 'height') return ($conf->dol_optimize_smallscreen?'160':($defaultsize?$defaultsize:'200'));
+	
+		if ($direction == 'width')
+		{
+			if (empty($conf->dol_optimize_smallscreen)) return ($defaultsize ? $defaultsize : '500');
+			else return (empty($_SESSION['dol_screen_width']) ? '280' : ($_SESSION['dol_screen_width']-40));
+		}
+		if ($direction == 'height') 
+		{
+			return (empty($conf->dol_optimize_smallscreen)?($defaultsize?$defaultsize:'200'):'160');
+		}
 		return 0;
 	}
-
+	
 }
 
 ?>
