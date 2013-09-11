@@ -4,7 +4,7 @@
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2006		Andre Cianfarani		<acianfa@free.fr>
  * Copyright (C) 2008		Raphael Bertrand		<raphael.bertrand@resultic.fr>
- * Copyright (C) 2010-2011	Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2010-2013	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2013       Christophe Battarel  <christophe.battarel@altairis.fr>
  * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
  *
@@ -901,7 +901,7 @@ class Contrat extends CommonObject
 	 */
 	function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1, $txlocaltax2, $fk_product, $remise_percent, $date_start, $date_end, $price_base_type='HT', $pu_ttc=0, $info_bits=0, $fk_fournprice=null, $pa_ht = 0)
 	{
-		global $user, $langs, $conf;
+		global $user, $langs, $conf, $mysoc;
 
 		dol_syslog(get_class($this)."::addline $desc, $pu_ht, $qty, $txtva, $txlocaltax1, $txlocaltax2, $fk_product, $remise_percent, $date_start, $date_end, $price_base_type, $pu_ttc, $info_bits");
 
@@ -936,12 +936,19 @@ class Contrat extends CommonObject
 			// qty, pu, remise_percent et txtva
 			// TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
 			// la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
-			$tabprice=calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, 1);
+			
+			$localtaxes_type=getLocalTaxesFromRate($txtva,0,$mysoc);
+			
+			$tabprice=calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, 1,'', $localtaxes_type);
 			$total_ht  = $tabprice[0];
 			$total_tva = $tabprice[1];
 			$total_ttc = $tabprice[2];
 			$total_localtax1= $tabprice[9];
 			$total_localtax2= $tabprice[10];
+			
+			$localtax1_type=$localtaxes_type[0];
+			$localtax2_type=$localtaxes_type[2];
+			
 			// TODO A virer
 			// Anciens indicateurs: $price, $remise (a ne plus utiliser)
 			$remise = 0;
@@ -963,7 +970,7 @@ class Contrat extends CommonObject
 			// Insertion dans la base
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."contratdet";
 			$sql.= " (fk_contrat, label, description, fk_product, qty, tva_tx,";
-			$sql.= " localtax1_tx, localtax2_tx, remise_percent, subprice,";
+			$sql.= " localtax1_tx, localtax2_tx, localtax1_type, localtax2_type, remise_percent, subprice,";
 			$sql.= " total_ht, total_tva, total_localtax1, total_localtax2, total_ttc,";
 			$sql.= " info_bits,";
 			$sql.= " price_ht, remise, fk_product_fournisseur_price, buy_price_ht";
@@ -975,6 +982,8 @@ class Contrat extends CommonObject
 			$sql.= " '".$txtva."',";
 			$sql.= " '".$txlocaltax1."',";
 			$sql.= " '".$txlocaltax2."',";
+			$sql.= " '".$localtax1_type."',";
+			$sql.= " '".$localtax2_type."',";
 			$sql.= " ".price2num($remise_percent).",".price2num($pu_ht).",";
 			$sql.= " ".price2num($total_ht).",".price2num($total_tva).",".price2num($total_localtax1).",".price2num($total_localtax2).",".price2num($total_ttc).",";
 			$sql.= " '".$info_bits."',";
@@ -1043,7 +1052,7 @@ class Contrat extends CommonObject
 	 */
 	function updateline($rowid, $desc, $pu, $qty, $remise_percent, $date_start, $date_end, $tvatx, $localtax1tx=0, $localtax2tx=0, $date_debut_reel='', $date_fin_reel='', $price_base_type='HT', $info_bits=0, $fk_fournprice=null, $pa_ht = 0)
 	{
-		global $user, $conf, $langs;
+		global $user, $conf, $langs, $mysoc;
 
 		// Nettoyage parametres
 		$qty=trim($qty);
@@ -1075,12 +1084,19 @@ class Contrat extends CommonObject
 		// qty, pu, remise_percent et txtva
 		// TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
 		// la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
-		$tabprice=calcul_price_total($qty, $pu, $remise_percent, $tvatx, $localtaxtx1, $txlocaltaxtx2, 0, $price_base_type, $info_bits, 1);
+		
+		$localtaxes_type=getLocalTaxesFromRate($txtva,0,$mysoc);
+		
+		$tabprice=calcul_price_total($qty, $pu, $remise_percent, $tvatx, $localtaxtx1, $txlocaltaxtx2, 0, $price_base_type, $info_bits, 1, '', $localtaxes_type );
 		$total_ht  = $tabprice[0];
 		$total_tva = $tabprice[1];
 		$total_ttc = $tabprice[2];
 		$total_localtax1= $tabprice[9];
 		$total_localtax2= $tabprice[10];
+		
+		$localtax1_type=$localtaxes_type[0];
+		$localtax2_type=$localtaxes_type[2];
+		
 		// TODO A virer
 		// Anciens indicateurs: $price, $remise (a ne plus utiliser)
 		$remise = 0;
@@ -1108,6 +1124,8 @@ class Contrat extends CommonObject
 		$sql.= ",tva_tx='".        price2num($tvatx)."'";
 		$sql.= ",localtax1_tx='".  price2num($localtax1tx)."'";
 		$sql.= ",localtax2_tx='".  price2num($localtax2tx)."'";
+		$sql.= ",localtax1_type='".$localtax1_type."'";
+		$sql.= ",localtax2_type='".$localtax2_type."'";
 		$sql.= ", total_ht='".     price2num($total_ht)."'";
 		$sql.= ", total_tva='".    price2num($total_tva)."'";
 		$sql.= ", total_localtax1='".price2num($total_localtax1)."'";
@@ -1666,6 +1684,8 @@ class ContratLigne
 	var $tva_tx;
 	var $localtax1_tx;
 	var $localtax2_tx;
+	var $localtax1_type;	// Local tax 1 type
+	var $localtax2_type;	// Local tax 2 type
 	var $qty;
 	var $remise_percent;
 	var $remise;
