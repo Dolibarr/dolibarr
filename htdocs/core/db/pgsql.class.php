@@ -209,7 +209,7 @@ class DoliDBPgsql extends DoliDB
     			}
 
     			// tinyint type conversion
-    			$line=str_replace('tinyint','smallint',$line);
+    			$line=preg_replace('/tinyint\(?[0-9]*\)?/','smallint',$line);
 
     			// nuke unsigned
     			$line=preg_replace('/(int\w+|smallint)\s+unsigned/i','\\1',$line);
