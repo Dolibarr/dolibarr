@@ -1037,6 +1037,8 @@ class Commande extends CommonOrder
      */
 	function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1=0, $txlocaltax2=0, $fk_product=0, $remise_percent=0, $info_bits=0, $fk_remise_except=0, $price_base_type='HT', $pu_ttc=0, $date_start='', $date_end='', $type=0, $rang=-1, $special_code=0, $fk_parent_line=0, $fk_fournprice=null, $pa_ht=0, $label='',$array_option=0)
     {
+    	global $mysoc;
+    	
     	$commandeid=$this->id;
 
         dol_syslog(get_class($this)."::addline commandeid=$commandeid, desc=$desc, pu_ht=$pu_ht, qty=$qty, txtva=$txtva, fk_product=$fk_product, remise_percent=$remise_percent, info_bits=$info_bits, fk_remise_except=$fk_remise_except, price_base_type=$price_base_type, pu_ttc=$pu_ttc, date_start=$date_start, date_end=$date_end, type=$type", LOG_DEBUG);
@@ -1083,7 +1085,10 @@ class Commande extends CommonOrder
             // qty, pu, remise_percent et txtva
             // TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
             // la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
-            $tabprice = calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type);
+            
+            $localtaxes_type=getLocalTaxesFromRate($txtva,0,$mysoc);
+            
+            $tabprice = calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type,'', $localtaxes_type);
             $total_ht  = $tabprice[0];
             $total_tva = $tabprice[1];
             $total_ttc = $tabprice[2];
@@ -1118,6 +1123,11 @@ class Commande extends CommonOrder
             $this->line->tva_tx=$txtva;
             $this->line->localtax1_tx=$txlocaltax1;
             $this->line->localtax2_tx=$txlocaltax2;
+			if(count($localtaxes_type))
+			{
+				$this->line->localtax1_type = $localtaxes_type[0];
+				$this->line->localtax2_type = $localtaxes_type[2];
+			}
             $this->line->fk_product=$fk_product;
             $this->line->fk_remise_except=$fk_remise_except;
             $this->line->remise_percent=$remise_percent;
@@ -2249,7 +2259,7 @@ class Commande extends CommonOrder
      */
 	function updateline($rowid, $desc, $pu, $qty, $remise_percent, $txtva, $txlocaltax1=0,$txlocaltax2=0, $price_base_type='HT', $info_bits=0, $date_start='', $date_end='', $type=0, $fk_parent_line=0, $skip_update_total=0, $fk_fournprice=null, $pa_ht=0, $label='', $special_code=0, $array_option=0)
     {
-        global $conf;
+        global $conf, $mysoc;
 
         dol_syslog(get_class($this)."::updateline $rowid, $desc, $pu, $qty, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, $price_base_type, $info_bits, $date_start, $date_end, $type");
         include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
@@ -2279,7 +2289,10 @@ class Commande extends CommonOrder
             // qty, pu, remise_percent et txtva
             // TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
             // la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
-            $tabprice=calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type);
+            
+            $localtaxes_type=getLocalTaxesFromRate($txtva,0,$mysoc);
+            
+            $tabprice=calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type, '', $localtaxes_type);
             $total_ht  = $tabprice[0];
             $total_tva = $tabprice[1];
             $total_ttc = $tabprice[2];
@@ -2318,6 +2331,13 @@ class Commande extends CommonOrder
             $this->line->tva_tx=$txtva;
             $this->line->localtax1_tx=$txlocaltax1;
             $this->line->localtax2_tx=$txlocaltax2;
+            
+        	if(count($localtaxes_type))
+			{
+				$this->line->localtax1_type = $localtaxes_type[0];
+				$this->line->localtax2_type = $localtaxes_type[2];
+			}
+			
             $this->line->remise_percent=$remise_percent;
             $this->line->subprice=$subprice;
             $this->line->info_bits=$info_bits;
@@ -2987,6 +3007,8 @@ class OrderLine extends CommonOrderLine
     var $tva_tx;			// VAT Rate for product/service (example 19.6)
     var $localtax1_tx; 		// Local tax 1
     var $localtax2_tx; 		// Local tax 2
+    var $localtax1_type;	// Local tax 1 type
+	var $localtax2_type;	// Local tax 2 type
     var $subprice;      	// U.P. HT (example 100)
     var $remise_percent;	// % for line discount (example 20%)
     var $fk_remise_except;
@@ -3164,6 +3186,8 @@ class OrderLine extends CommonOrderLine
         if (empty($this->tva_tx)) $this->tva_tx=0;
         if (empty($this->localtax1_tx)) $this->localtax1_tx=0;
         if (empty($this->localtax2_tx)) $this->localtax2_tx=0;
+		if (empty($this->localtax1_type)) $this->localtax1_type=0;
+		if (empty($this->localtax2_type)) $this->localtax2_type=0;
         if (empty($this->total_localtax1)) $this->total_localtax1=0;
         if (empty($this->total_localtax2)) $this->total_localtax2=0;
         if (empty($this->rang)) $this->rang=0;
@@ -3188,7 +3212,8 @@ class OrderLine extends CommonOrderLine
 
         // Insertion dans base de la ligne
         $sql = 'INSERT INTO '.MAIN_DB_PREFIX.'commandedet';
-        $sql.= ' (fk_commande, fk_parent_line, label, description, qty, tva_tx, localtax1_tx, localtax2_tx,';
+        $sql.= ' (fk_commande, fk_parent_line, label, description, qty, ';
+        $sql.= ' tva_tx, localtax1_tx, localtax2_tx, localtax1_type, localtax2_type,';
         $sql.= ' fk_product, product_type, remise_percent, subprice, price, remise, fk_remise_except,';
         $sql.= ' special_code, rang, fk_product_fournisseur_price, buy_price_ht,';
         $sql.= ' info_bits, total_ht, total_tva, total_localtax1, total_localtax2, total_ttc, date_start, date_end)';
@@ -3200,6 +3225,8 @@ class OrderLine extends CommonOrderLine
         $sql.= " '".price2num($this->tva_tx)."',";
         $sql.= " '".price2num($this->localtax1_tx)."',";
         $sql.= " '".price2num($this->localtax2_tx)."',";
+		$sql.= " '".$this->localtax1_type."',";
+		$sql.= " '".$this->localtax2_type."',";
         $sql.= ' '.(! empty($this->fk_product)?$this->fk_product:"null").',';
         $sql.= " '".$this->product_type."',";
         $sql.= " '".price2num($this->remise_percent)."',";
@@ -3275,6 +3302,8 @@ class OrderLine extends CommonOrderLine
 		if (empty($this->tva_tx)) $this->tva_tx=0;
 		if (empty($this->localtax1_tx)) $this->localtax1_tx=0;
 		if (empty($this->localtax2_tx)) $this->localtax2_tx=0;
+		if (empty($this->localtax1_type)) $this->localtax1_type=0;
+		if (empty($this->localtax2_type)) $this->localtax2_type=0;
 		if (empty($this->qty)) $this->qty=0;
 		if (empty($this->total_localtax1)) $this->total_localtax1=0;
 		if (empty($this->total_localtax2)) $this->total_localtax2=0;
@@ -3303,6 +3332,8 @@ class OrderLine extends CommonOrderLine
 		$sql.= " , tva_tx=".price2num($this->tva_tx);
 		$sql.= " , localtax1_tx=".price2num($this->localtax1_tx);
 		$sql.= " , localtax2_tx=".price2num($this->localtax2_tx);
+		$sql.= " , localtax1_type='".$this->localtax1_type."'";
+		$sql.= " , localtax2_type='".$this->localtax2_type."'";
 		$sql.= " , qty=".price2num($this->qty);
 		$sql.= " , subprice=".price2num($this->subprice)."";
 		$sql.= " , remise_percent=".price2num($this->remise_percent)."";

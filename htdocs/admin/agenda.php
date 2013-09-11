@@ -85,10 +85,12 @@ if ($action == "save" && empty($cancel))
  	if (! $error)
     {
         setEventMessage($langs->trans("SetupSaved"));
+        $db->commit();
     }
     else
     {
         setEventMessage($langs->trans("Error"),'errors');
+        $db->rollback();
     }
 }
 

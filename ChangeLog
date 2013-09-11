@@ -46,16 +46,17 @@ For users:
 - New: [ task #1016 ] Can define a specific numbering for deposits 
 - New: [ task #918 ] Stock replenishment
 - Fix: [ bug #992 ] Proforma invoices don't have a separated numeric count
-- New : Add pdf link into supplier invoice list and supplier order list
-- New : Genrate auto the PDF for supplier invoice
-- New : Add category into filter webservice thirdparty method getListOfThirdParties
-- New : Allow to define margin or mark rate during quoting, ordering, invoicing
-- New : User permissions on margin module
-- New : Add ref supplier into muscadet model
-
+- New: Add pdf link into supplier invoice list and supplier order list
+- New: Genrate auto the PDF for supplier invoice
+- New: Add category into filter webservice thirdparty method getListOfThirdParties
+- New: Allow to define margin or mark rate during quoting, ordering, invoicing
+- New: User permissions on margin module
+- New: Add ref supplier into muscadet model
+- New: Can use tag {mm} before {yy} even when there is a reset into numbering masks.
+ 
 For translators:
 - Qual: Normalized sort order of all languages files with english reference files.
-- New: Add language code files for South Africa.
+- New: Add language code files for South Africa, France new caledonia.
 - New: Translate the email to change password.
 
 For developers:
@@ -98,7 +99,7 @@ Goal is to fix old compatibility code that does not match hook specifications:
 All content added must be tagged by a '<div>' with css class="login_block_elem"
 
 3) Some methods object->addline used a first parameter that was object->id, some not. Of course
-this was not a good pratice, since object->id is already known so no need to provide it as 
+this was not a good pratice, since object->id is already known, there is no need to provide id as 
 parameter. All methods addline in this case were modified to remove this parameter. 
 
 

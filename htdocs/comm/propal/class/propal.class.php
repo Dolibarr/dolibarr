@@ -314,6 +314,7 @@ class Propal extends CommonObject
      */
 	function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1=0, $txlocaltax2=0, $fk_product=0, $remise_percent=0, $price_base_type='HT', $pu_ttc=0, $info_bits=0, $type=0, $rang=-1, $special_code=0, $fk_parent_line=0, $fk_fournprice=0, $pa_ht=0, $label='',$date_start='', $date_end='',$array_option=0)
     {
+    	global $mysoc;
         $propalid=$this->id;
 
         dol_syslog(get_class($this)."::addline propalid=$propalid, desc=$desc, pu_ht=$pu_ht, qty=$qty, txtva=$txtva, fk_product=$fk_product, remise_except=$remise_percent, price_base_type=$price_base_type, pu_ttc=$pu_ttc, info_bits=$info_bits, type=$type");
@@ -354,7 +355,10 @@ class Propal extends CommonObject
             // qty, pu, remise_percent et txtva
             // TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
             // la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
-            $tabprice=calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type);
+            
+            $localtaxes_type=getLocalTaxesFromRate($txtva,0,$mysoc);
+            
+            $tabprice=calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type, '', $localtaxes_type);
             $total_ht  = $tabprice[0];
             $total_tva = $tabprice[1];
             $total_ttc = $tabprice[2];
@@ -389,6 +393,11 @@ class Propal extends CommonObject
             $this->line->tva_tx=$txtva;
             $this->line->localtax1_tx=$txlocaltax1;
             $this->line->localtax2_tx=$txlocaltax2;
+			if(count($localtaxes_type))
+			{
+				$this->line->localtax1_type = $localtaxes_type[0];
+				$this->line->localtax2_type = $localtaxes_type[2];
+			}
             $this->line->fk_product=$fk_product;
             $this->line->remise_percent=$remise_percent;
             $this->line->subprice=$pu_ht;
@@ -480,7 +489,7 @@ class Propal extends CommonObject
      */
 	function updateline($rowid, $pu, $qty, $remise_percent, $txtva, $txlocaltax1=0, $txlocaltax2=0, $desc='', $price_base_type='HT', $info_bits=0, $special_code=0, $fk_parent_line=0, $skip_update_total=0, $fk_fournprice=0, $pa_ht=0, $label='', $type=0, $date_start='', $date_end='', $array_option=0)
     {
-        global $conf,$user,$langs;
+        global $conf,$user,$langs, $mysoc;
 
         dol_syslog(get_class($this)."::updateLine $rowid, $pu, $qty, $remise_percent, $txtva, $desc, $price_base_type, $info_bits");
         include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
@@ -504,7 +513,10 @@ class Propal extends CommonObject
             // qty, pu, remise_percent et txtva
             // TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
             // la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
-            $tabprice=calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type);
+            
+            $localtaxes_type=getLocalTaxesFromRate($txtva,0,$mysoc);
+            
+            $tabprice=calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type,'', $localtaxes_type);
             $total_ht  = $tabprice[0];
             $total_tva = $tabprice[1];
             $total_ttc = $tabprice[2];
@@ -541,6 +553,13 @@ class Propal extends CommonObject
             $this->line->tva_tx				= $txtva;
             $this->line->localtax1_tx		= $txlocaltax1;
             $this->line->localtax2_tx		= $txlocaltax2;
+			
+			if(count($localtaxes_type))
+			{
+				$this->line->localtax1_type = $localtaxes_type[0];
+				$this->line->localtax2_type = $localtaxes_type[2];
+			}
+			
             $this->line->remise_percent		= $remise_percent;
             $this->line->subprice			= $pu;
             $this->line->info_bits			= $info_bits;
@@ -2715,10 +2734,12 @@ class PropaleLigne  extends CommonObject
     var $libelle;       // Label produit
     var $product_desc;  // Description produit
 
-    var $localtax1_tx;
-    var $localtax2_tx;
-    var $total_localtax1;
-    var $total_localtax2;
+    var $localtax1_tx;		// Local tax 1
+    var $localtax2_tx;		// Local tax 2
+    var $localtax1_type;	// Local tax 1 type
+	var $localtax2_type;	// Local tax 2 type
+    var $total_localtax1;  	// Line total local tax 1
+    var $total_localtax2;	// Line total local tax 2
 
     var $date_start;
     var $date_end;
@@ -2822,6 +2843,8 @@ class PropaleLigne  extends CommonObject
         if (empty($this->tva_tx)) $this->tva_tx=0;
         if (empty($this->localtax1_tx)) $this->localtax1_tx=0;
         if (empty($this->localtax2_tx)) $this->localtax2_tx=0;
+        if (empty($this->localtax1_type)) $this->localtax1_type=0;
+		if (empty($this->localtax2_type)) $this->localtax2_type=0;
         if (empty($this->total_localtax1)) $this->total_localtax1=0;
         if (empty($this->total_localtax2)) $this->total_localtax2=0;
         if (empty($this->rang)) $this->rang=0;
@@ -2848,7 +2871,7 @@ class PropaleLigne  extends CommonObject
         // Insert line into database
         $sql = 'INSERT INTO '.MAIN_DB_PREFIX.'propaldet';
         $sql.= ' (fk_propal, fk_parent_line, label, description, fk_product, product_type,';
-		$sql.= ' fk_remise_except, qty, tva_tx, localtax1_tx, localtax2_tx,';
+		$sql.= ' fk_remise_except, qty, tva_tx, localtax1_tx, localtax2_tx, localtax1_type, localtax2_type,';
         $sql.= ' subprice, remise_percent, ';
         $sql.= ' info_bits, ';
         $sql.= ' total_ht, total_tva, total_localtax1, total_localtax2, total_ttc, fk_product_fournisseur_price, buy_price_ht, special_code, rang,';
@@ -2864,6 +2887,8 @@ class PropaleLigne  extends CommonObject
         $sql.= " ".price2num($this->tva_tx).",";
         $sql.= " ".price2num($this->localtax1_tx).",";
         $sql.= " ".price2num($this->localtax2_tx).",";
+		$sql.= " '".$this->localtax1_type."',";
+		$sql.= " '".$this->localtax2_type."',";
         $sql.= " ".($this->subprice?price2num($this->subprice):"null").",";
         $sql.= " ".price2num($this->remise_percent).",";
         $sql.= " ".(isset($this->info_bits)?"'".$this->info_bits."'":"null").",";
@@ -2989,6 +3014,8 @@ class PropaleLigne  extends CommonObject
         if (empty($this->localtax2_tx)) $this->localtax2_tx=0;
         if (empty($this->total_localtax1)) $this->total_localtax1=0;
         if (empty($this->total_localtax2)) $this->total_localtax2=0;
+		if (empty($this->localtax1_type)) $this->localtax1_type=0;
+		if (empty($this->localtax2_type)) $this->localtax2_type=0;
         if (empty($this->marque_tx)) $this->marque_tx=0;
         if (empty($this->marge_tx)) $this->marge_tx=0;
         if (empty($this->remise)) $this->remise=0;
@@ -3015,6 +3042,8 @@ class PropaleLigne  extends CommonObject
         $sql.= " , tva_tx='".price2num($this->tva_tx)."'";
         $sql.= " , localtax1_tx=".price2num($this->localtax1_tx);
         $sql.= " , localtax2_tx=".price2num($this->localtax2_tx);
+		$sql.= " , localtax1_type='".$this->localtax1_type."'";
+		$sql.= " , localtax2_type='".$this->localtax2_type."'";
         $sql.= " , qty='".price2num($this->qty)."'";
         $sql.= " , subprice=".price2num($this->subprice)."";
         $sql.= " , remise_percent=".price2num($this->remise_percent)."";
