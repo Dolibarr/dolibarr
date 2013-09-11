@@ -36,7 +36,7 @@ jQuery blockUI    2.43      GPL and MIT Licence         Yes             JS libra
 jQuery jPicker	  1.1.00	GPL and MIT	Licence			Yes				JS library for color picker with not defined list of colors
 jQuery Layout     1.3.0		GPL and MIT Licence			Yes				JS library plugin Layout (RC-29.15)
 jQuery TableDnD   0.5		GPL and MIT Licence			Yes				JS library plugin TableDnD (to reorder table rows)
-jQuery Mobile	  1.0rc2	GPL and MIT Licence			Yes				JS library for smartphone (not used)
+jQuery Mobile	  1.3.0		GPL and MIT Licence			Yes				JS library for smartphone (not used)
 jQuery Tiptip     1.3		GPL and MIT Licence			Yes				JS library for tooltips
 JSGantt           1.2		BSD Licence					Yes				JS library (to build Gantt reports)
 
