@@ -1228,26 +1228,37 @@ class CommandeFournisseur extends CommonOrder
             // qty, pu, remise_percent et txtva
             // TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
             // la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
-            $tabprice = calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $product_type, $this->thirdparty);
+            
+            $localtaxes_type=getLocalTaxesFromRate($txtva,0,$this->thirdparty);
+            
+            $tabprice = calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $product_type, $this->thirdparty, $localtaxes_type);
             $total_ht  = $tabprice[0];
             $total_tva = $tabprice[1];
             $total_ttc = $tabprice[2];
             $total_localtax1 = $tabprice[9];
             $total_localtax2 = $tabprice[10];
+            
+            $localtax1_type=$localtaxes_type[0];
+			$localtax2_type=$localtaxes_type[2];
 
             $subprice = price2num($pu,'MU');
 
             $sql = "INSERT INTO ".MAIN_DB_PREFIX."commande_fournisseurdet";
             $sql.= " (fk_commande, label, description,";
             $sql.= " fk_product, product_type,";
-            $sql.= " qty, tva_tx, localtax1_tx, localtax2_tx, remise_percent, subprice, ref,";
+            $sql.= " qty, tva_tx, localtax1_tx, localtax2_tx, localtax1_type, localtax2_type, remise_percent, subprice, ref,";
             $sql.= " total_ht, total_tva, total_localtax1, total_localtax2, total_ttc";
             $sql.= ")";
             $sql.= " VALUES (".$this->id.", '" . $this->db->escape($label) . "','" . $this->db->escape($desc) . "',";
             if ($fk_product) { $sql.= $fk_product.","; }
             else { $sql.= "null,"; }
             $sql.= "'".$product_type."',";
-            $sql.= "'".$qty."', ".$txtva.", ".$txlocaltax1.", ".$txlocaltax2.", ".$remise_percent.",'".price2num($subprice,'MU')."','".$ref."',";
+            $sql.= "'".$qty."', ".$txtva.", ".$txlocaltax1.", ".$txlocaltax2;
+            		
+           	$sql.= ", '".$localtax1_type."',";
+			$sql.= " '".$localtax2_type."'";
+            
+            $sql.= ", ".$remise_percent.",'".price2num($subprice,'MU')."','".$ref."',";
             $sql.= "'".price2num($total_ht)."',";
             $sql.= "'".price2num($total_tva)."',";
             $sql.= "'".price2num($total_localtax1)."',";
@@ -1778,12 +1789,18 @@ class CommandeFournisseur extends CommonOrder
             // qty, pu, remise_percent et txtva
             // TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
             // la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
-            $tabprice=calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type, $this->thirdparty);
+            
+            $localtaxes_type=getLocalTaxesFromRate($txtva,0,$this->thirdparty);
+            
+            $tabprice=calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type, $this->thirdparty, $localtaxes_type);
             $total_ht  = $tabprice[0];
             $total_tva = $tabprice[1];
             $total_ttc = $tabprice[2];
             $total_localtax1 = $tabprice[9];
             $total_localtax2 = $tabprice[10];
+            
+            $localtax1_type=$localtaxes_type[0];
+			$localtax2_type=$localtaxes_type[2];
 
             $subprice = price2num($pu,'MU');
 
@@ -1796,6 +1813,8 @@ class CommandeFournisseur extends CommonOrder
             $sql.= ",tva_tx='".price2num($txtva)."'";
             $sql.= ",localtax1_tx='".price2num($txlocaltax1)."'";
             $sql.= ",localtax2_tx='".price2num($txlocaltax2)."'";
+			$sql.= ",localtax1_type='".$localtax1_type."'";
+			$sql.= ",localtax2_type='".$localtax2_type."'";
             $sql.= ",qty='".price2num($qty)."'";
             /*if ($date_end) { $sql.= ",date_start='$date_end'"; }
             else { $sql.=',date_start=null'; }
