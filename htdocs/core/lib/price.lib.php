@@ -46,7 +46,7 @@
  *		@param	int		$info_bits					Miscellaneous informations on line
  *		@param	int		$type						0/1=Product/service
  *		@param  string	$seller						Thirdparty seller (we need $seller->country_code property). Provided only if seller is the supplier.
- *		@param  array	$localtaxes_type			Array with localtaxes info (loaded by getLocalTaxesFromRate function)
+ *		@param  array	$localtaxes_array			Array with localtaxes info (loaded by getLocalTaxesFromRate function)
  *		@return result[ 0=total_ht,
  *						 1=total_vat,
  *						 2=total_ttc,
@@ -64,7 +64,7 @@
  *						14=amount tax1 for total_ht_without_discount,
  *						15=amount tax1 for total_ht_without_discount]
  */
-function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocaltax1_rate, $uselocaltax2_rate, $remise_percent_global, $price_base_type, $info_bits, $type, $seller = '',$localtaxes_type=0)
+function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocaltax1_rate, $uselocaltax2_rate, $remise_percent_global, $price_base_type, $info_bits, $type, $seller = '',$localtaxes_array='')
 {
 	global $conf,$mysoc,$db;
 
@@ -94,12 +94,12 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocalt
 	$localtax1_type=0;
 	$localtax2_type=0;
 	
-	if(count($localtaxes_type))
+	if (is_array($localtaxes_array))
 	{
-		$localtax1_type = $localtaxes_type[0];
-		$localtax1_rate = $localtaxes_type[1];
-		$localtax2_type = $localtaxes_type[2];
-		$localtax2_rate = $localtaxes_type[3];
+		$localtax1_type = $localtaxes_array[0];
+		$localtax1_rate = $localtaxes_array[1];
+		$localtax2_type = $localtaxes_array[2];
+		$localtax2_rate = $localtaxes_array[3];
 	}
 	else
 	{
