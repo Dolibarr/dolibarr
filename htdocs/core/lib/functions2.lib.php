@@ -622,7 +622,7 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
         if ($maskraz > 12) return 'ErrorBadMaskBadRazMonth';
 
         // Define posy, posm and reg
-        if ($maskraz > 1)
+        if ($maskraz > 0)
         {
             if (! preg_match('/^(.*)\{(y+)\}\{(m+)\}/i',$maskwithonlyymcode)
             && ! preg_match('/^(.*)\{(m+)\}\{(y+)\}/i',$maskwithonlyymcode)) return 'ErrorCantUseRazInStartedYearIfNoYearMonthInMask';
