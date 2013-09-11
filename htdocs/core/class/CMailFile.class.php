@@ -962,7 +962,21 @@ class CMailFile
 						$this->html_images[$i]["name"] = $img;
 
 						// Content type
-						$ext = preg_replace('/^.*\.(\w{3,4})$/e', 'strtolower("$1")', $img);
+						/*
+						 * preg_replace /e modifier is deprecated in PHP 5.5
+						 * but anonymous functions for use in preg_replace_callback are only available from 5.3.0
+						 */
+						if (version_compare(PHP_VERSION, '5.3.0') >= 0) {
+							$ext = preg_replace_callback(
+								'/^.*\.(\w{3,4})$/',
+								function ($m) {
+									return strtolower($m[1]);
+								},
+								$img
+							);
+						} else {
+							$ext = preg_replace('/^.*\.(\w{3,4})$/e', 'strtolower("$1")', $img);
+						}
 						$this->html_images[$i]["content_type"] = $this->image_types[$ext];
 
 						// cid
