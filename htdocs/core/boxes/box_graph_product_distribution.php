@@ -21,7 +21,7 @@
  *	\brief      Box to show graph of invoices per month
  */
 include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
-
+include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 
 /**
  * Class to manage the box to show last invoices
@@ -111,7 +111,6 @@ class box_graph_product_distribution extends ModeleBoxes
 		
 		if (! empty($conf->facture->enabled) && ! empty($user->rights->facture->lire))
 		{
-			include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 			
 			$WIDTH=($nbofgraph >= 2 || ! empty($conf->dol_optimize_smallscreen))?'160':'320';
 			$HEIGHT='192';
