@@ -281,6 +281,7 @@ class Contrat extends CommonObject
 	 */
 	function validate($user)
 	{
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 		global $langs, $conf;
 
 		$error=0;
@@ -314,8 +315,37 @@ class Contrat extends CommonObject
 			$result=$interface->run_triggers('CONTRACT_VALIDATE',$this,$user,$langs,$conf);
 			if ($result < 0) { $error++; $this->errors=$interface->errors; }
 			// Fin appel triggers
+			
+			if (! $error)
+			{
+				// Rename directory if dir was a temporary ref
+				if (preg_match('/^[\(]?PROV/i', $this->ref))
+				{
+					// Rename of propal directory ($this->ref = old ref, $num = new ref)
+					// to  not lose the linked files
+					$facref = dol_sanitizeFileName($this->ref);
+					$snumfa = dol_sanitizeFileName($num);
+					$dirsource = $conf->contract->dir_output.'/'.$facref;
+					$dirdest = $conf->contract->dir_output.'/'.$snumfa;
+					if (file_exists($dirsource))
+					{
+						dol_syslog(get_class($this)."::validate rename dir ".$dirsource." into ".$dirdest);
+						
+						if (@rename($dirsource, $dirdest))
+						{
+							dol_syslog("Rename ok");
+							// Deleting old PDF in new rep
+							dol_delete_file($conf->contract->dir_output.'/'.$snumfa.'/'.$facref.'*.*');
+						}
+					}
+				}
 
-			return 1;
+				return 1;
+			}
+			else
+			{
+				return -1;
+			}
 		}
 		else
 		{
