@@ -1197,13 +1197,8 @@ class FactureFournisseur extends CommonInvoice
         $sql.= ", tva_tx = ".price2num($vatrate);
         $sql.= ", localtax1_tx = ".price2num($txlocaltax1);
         $sql.= ", localtax2_tx = ".price2num($txlocaltax2);
-        
-    	if(count($localtaxes_type))
-		{
-			$sql.= ", localtax1_type = '".$localtaxes_type[0]."'";
-			$sql.= ", localtax2_type = '".$localtaxes_type[2]."'";
-		}
-        
+		$sql.= ", localtax1_type = '".$localtaxes_type[0]."'";
+		$sql.= ", localtax2_type = '".$localtaxes_type[2]."'";
         $sql.= ", total_ht = ".price2num($total_ht);
         $sql.= ", tva= ".price2num($total_tva);
         $sql.= ", total_localtax1= ".price2num($total_localtax1);

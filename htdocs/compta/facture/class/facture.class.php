@@ -2073,11 +2073,8 @@ class Facture extends CommonInvoice
 			$this->line->total_tva=      (($this->type==2||$qty<0)?-abs($total_tva):$total_tva);
 			$this->line->total_localtax1=(($this->type==2||$qty<0)?-abs($total_localtax1):$total_localtax1);
 			$this->line->total_localtax2=(($this->type==2||$qty<0)?-abs($total_localtax2):$total_localtax2);
-			if(count($localtaxes_type))
-			{
-				$this->line->localtax1_type = $localtaxes_type[0];
-				$this->line->localtax2_type = $localtaxes_type[2];
-			}
+			$this->line->localtax1_type = $localtaxes_type[0];
+			$this->line->localtax2_type = $localtaxes_type[2];
 			$this->line->total_ttc=      (($this->type==2||$qty<0)?-abs($total_ttc):$total_ttc);
 			$this->line->special_code=$special_code;
 			$this->line->fk_parent_line=$fk_parent_line;
@@ -2224,13 +2221,8 @@ class Facture extends CommonInvoice
 			$this->line->tva_tx				= $txtva;
 			$this->line->localtax1_tx		= $txlocaltax1;
 			$this->line->localtax2_tx		= $txlocaltax2;
-			
-			if(count($localtaxes_type))
-			{
-				$this->line->localtax1_type = $localtaxes_type[0];
-				$this->line->localtax2_type = $localtaxes_type[2];
-			}
-			
+			$this->line->localtax1_type		= $localtaxes_type[0];
+			$this->line->localtax2_type		= $localtaxes_type[2];
 			$this->line->remise_percent		= $remise_percent;
 			$this->line->subprice			= ($this->type==2?-abs($pu_ht):$pu_ht); // For credit note, unit price always negative, always positive otherwise
 			$this->line->date_start			= $date_start;
