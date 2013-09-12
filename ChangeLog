@@ -24,6 +24,7 @@ Fix: Compatiblity with multicompany module
 Fix: Edit propal line was losing product supplier price id
 Fix: Delete linked element to supplier invoice when deleted 
 Fix: [ bug #1061 ] Bad info shipped products
+Fix: [ bug #1062 ] Documents lost in propals and contracts validating
 Qual: Add travis-ci integration
 
 

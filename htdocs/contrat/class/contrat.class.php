@@ -4,7 +4,7 @@
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2006		Andre Cianfarani		<acianfa@free.fr>
  * Copyright (C) 2008		Raphael Bertrand		<raphael.bertrand@resultic.fr>
- * Copyright (C) 2010-2011	Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2010-2013	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2013       Christophe Battarel  <christophe.battarel@altairis.fr>
  * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
  *
@@ -281,6 +281,7 @@ class Contrat extends CommonObject
 	 */
 	function validate($user)
 	{
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 		global $langs, $conf;
 
 		$error=0;
@@ -315,7 +316,36 @@ class Contrat extends CommonObject
 			if ($result < 0) { $error++; $this->errors=$interface->errors; }
 			// Fin appel triggers
 
-			return 1;
+			if (! $error)
+			{
+				// Rename directory if dir was a temporary ref
+				if (preg_match('/^[\(]?PROV/i', $this->ref))
+				{
+					// Rename of propal directory ($this->ref = old ref, $num = new ref)
+					// to  not lose the linked files
+					$facref = dol_sanitizeFileName($this->ref);
+					$snumfa = dol_sanitizeFileName($num);
+					$dirsource = $conf->contract->dir_output.'/'.$facref;
+					$dirdest = $conf->contract->dir_output.'/'.$snumfa;
+					if (file_exists($dirsource))
+					{
+						dol_syslog(get_class($this)."::validate rename dir ".$dirsource." into ".$dirdest);
+						
+						if (@rename($dirsource, $dirdest))
+						{
+							dol_syslog("Rename ok");
+							// Deleting old PDF in new rep
+							dol_delete_file($conf->contract->dir_output.'/'.$snumfa.'/'.$facref.'*.*');
+						}
+					}
+				}
+
+				return 1;
+			}
+			else
+			{
+				return -1;
+			}
 		}
 		else
 		{
