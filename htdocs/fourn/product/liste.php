@@ -54,7 +54,7 @@ $offset = $limit * $page ;
 if (! $sortfield) $sortfield = 'p.ref';
 if (! $sortorder) $sortorder = 'DESC';
 
-if (! empty(GETPOST('button_removefilter')))
+if (GETPOST('button_removefilter'))
 {
 	$sref = '';
 	$sRefSupplier = '';
