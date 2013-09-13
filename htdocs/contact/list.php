@@ -150,16 +150,16 @@ if ($search_categ > 0)   $sql.= " AND cs.fk_categorie = ".$search_categ;
 if ($search_categ == -2) $sql.= " AND cs.fk_categorie IS NULL";
 
 if ($search_lastname) {      // filter on lastname
-    $sql .= natural_search(array('p.lastname'), $search_lastname);
+    $sql .= natural_search('p.lastname', $search_lastname);
 }
 if ($search_firstname) {   // filter on firstname
-    $sql .= natural_search(array('p.firstname'), $search_firstname);
+    $sql .= natural_search('p.firstname', $search_firstname);
 }
 if ($search_societe) {  // filtre sur la societe
-    $sql .= natural_search(array('s.nom'), $search_societe);
+    $sql .= natural_search('s.nom', $search_societe);
 }
 if (strlen($search_poste)) {  // filtre sur la societe
-    $sql .= natural_search(array('p.poste'), $search_poste);
+    $sql .= natural_search('p.poste', $search_poste);
 }
 if (strlen($search_phone))
 {

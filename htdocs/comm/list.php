@@ -117,11 +117,11 @@ if ($catid == -2)        $sql.= " AND cs.fk_categorie IS NULL";
 if ($search_categ > 0)   $sql.= " AND cs.fk_categorie = ".$search_categ;
 if ($search_categ == -2) $sql.= " AND cs.fk_categorie IS NULL";
 if ($search_nom) {
-	$sql .= natural_search(array('s.nom'), $search_nom);
+	$sql .= natural_search('s.nom', $search_nom);
 }
 if ($search_zipcode) $sql.= " AND s.zip LIKE '".$db->escape($search_zipcode)."%'";
 if ($search_town) {
-	$sql .= natural_search(array('s.town'), $search_town);
+	$sql .= natural_search('s.town', $search_town);
 }
 if ($search_code)  $sql.= " AND s.code_client LIKE '%".$db->escape($search_code)."%'";
 if ($search_compta) $sql.= " AND s.code_compta LIKE '%".$db->escape($search_compta)."%'";

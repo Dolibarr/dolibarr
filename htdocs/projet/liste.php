@@ -87,15 +87,15 @@ if ($mine || ! $user->rights->projet->all->lire) $sql.= " AND p.rowid IN (".$pro
 if ($socid) $sql.= "  AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
 if ($search_ref)
 {
-	$sql .= natural_search(array('p.ref'), $search_ref);
+	$sql .= natural_search('p.ref', $search_ref);
 }
 if ($search_label)
 {
-	$sql .= natural_search(array('p.title'), $search_label);
+	$sql .= natural_search('p.title', $search_label);
 }
 if ($search_societe)
 {
-	$sql .= natural_search(array('s.nom'), $search_societe);
+	$sql .= natural_search('s.nom', $search_societe);
 }
 $sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit($conf->liste_limit+1, $offset);

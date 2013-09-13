@@ -106,11 +106,11 @@ else
 	}
 	if ($sref)
 	{
-		$sql .= natural_search(array('p.ref'), $sref);
+		$sql .= natural_search('p.ref', $sref);
 	}
 	if ($snom)
 	{
-		$sql .= natural_search(array('p.label'), $snom);
+		$sql .= natural_search('p.label', $snom);
 	}
 	if($catid)
 	{
@@ -119,7 +119,7 @@ else
 }
 if ($sRefSupplier)
 {
-	$sql .= natural_search(array('ppf.ref_fourn'), $sRefSupplier);
+	$sql .= natural_search('ppf.ref_fourn', $sRefSupplier);
 }
 if ($fourn_id > 0)
 {

@@ -162,16 +162,16 @@ if (! $user->rights->societe->client->voir && ! $socid) //restriction
 	$sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 }
 if ($search_town) {//restriction
-	$sql .= natural_search(array('s.town'), $search_town);
+	$sql .= natural_search('s.town', $search_town);
 }
 if ($search_ref) {
-	$sql .= natural_search(array('p.ref'), $search_ref);
+	$sql .= natural_search('p.ref', $search_ref);
 }
 if ($search_refcustomer) {
-	$sql .= natural_search(array('p.ref_client'), $search_refcustomer);
+	$sql .= natural_search('p.ref_client', $search_refcustomer);
 }
 if ($search_societe) {
-	$sql .= natural_search(array('s.nom'), $search_societe);
+	$sql .= natural_search('s.nom', $search_societe);
 }
 if ($search_author)
 {

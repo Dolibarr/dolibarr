@@ -113,7 +113,7 @@ else
     if (GETPOST("search_account") > 0)      $sql .=" AND b.fk_account=".GETPOST("search_account",'int');
     if (GETPOST("search_paymenttype") != "")  $sql .=" AND c.code='".GETPOST("search_paymenttype")."'";
     if (GETPOST("search_amount"))      		$sql .=" AND p.amount=".price2num(GETPOST("search_amount"));
-    if (GETPOST("search_company"))     		$sql .= natural_search(array('s.nom'), GETPOST('search_company'));
+    if (GETPOST("search_company"))     		$sql .= natural_search('s.nom', GETPOST('search_company'));
 }
 $sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit($limit+1, $offset);

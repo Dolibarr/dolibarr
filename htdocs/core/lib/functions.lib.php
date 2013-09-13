@@ -4439,7 +4439,7 @@ if (! function_exists('getmypid'))
 
 /**
  * Natural search
- * @param array[string] $fields array filled with the fields names in the SQL query
+ * @param mixed $fields string or array of strings filled with the fields names in the SQL query
  * @param string $value the value to look for
  * @return string $res the statement to append to the SQL query
  * */
@@ -4448,6 +4448,9 @@ function natural_search($fields, $value)
     global $db;
     $crits = explode(' ', $value);
     $res = "";
+    if (! is_array($fields)) {
+        $fields = array($fields);
+    }
     $end = count($fields);
     $end2 = count($crits);
     $j = 0;

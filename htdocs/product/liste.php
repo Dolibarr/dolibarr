@@ -162,7 +162,7 @@ else
     	else $sql.= " AND p.fk_product_type <> '1'";
     }
 	if ($sref) {
-		$sql .= natural_search(array('p.ref'), $sref);
+		$sql .= natural_search('p.ref', $sref);
 	}
     if ($sbarcode) $sql.= " AND p.barcode LIKE '%".$sbarcode."%'";
     if ($snom)

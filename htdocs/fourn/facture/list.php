@@ -132,11 +132,11 @@ if (GETPOST('filtre'))
 if (GETPOST("search_ref"))
 {
 	if (is_numeric(GETPOST("search_ref"))) $sql .= natural_search(array('fac.rowid', 'fac.ref'), GETPOST('search_ref'));// For backward compatibility
-	else $sql .= natural_search(array('fac.ref'), GETPOST("search_ref"));
+	else $sql .= natural_search('fac.ref', GETPOST("search_ref"));
 }
 if (GETPOST("search_ref_supplier"))
 {
-	$sql .= natural_search(array('fac.ref_supplier'), GETPOST('search_ref_supplier'));
+	$sql .= natural_search('fac.ref_supplier', GETPOST('search_ref_supplier'));
 }
 if ($month > 0)
 {
@@ -151,12 +151,12 @@ else if ($year > 0)
 }
 if (GETPOST("search_libelle"))
 {
-    $sql .= natural_search(array('fac.libelle'), GETPOST('search_libelle'));
+    $sql .= natural_search('fac.libelle', GETPOST('search_libelle'));
 }
 
 if (GETPOST("search_societe"))
 {
-    $sql .= natural_search(array('s.nom'), GETPOST('search_societe'));
+    $sql .= natural_search('s.nom', GETPOST('search_societe'));
 }
 
 if (GETPOST("search_montant_ht"))

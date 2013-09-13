@@ -127,7 +127,7 @@ $sql.= ' AND c.entity = '.$conf->entity;
 if ($socid)	$sql.= ' AND s.rowid = '.$socid;
 if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 if ($sref) {
-	$sql .= natural_search(array('c.ref'), $sref);
+	$sql .= natural_search('c.ref', $sref);
 }
 if ($sall)
 {
@@ -187,7 +187,7 @@ else if ($deliveryyear > 0)
 }
 if (!empty($snom))
 {
-	$sql .= natural_search(array('s.nom'), $snom);
+	$sql .= natural_search('s.nom', $snom);
 }
 if (!empty($sref_client))
 {

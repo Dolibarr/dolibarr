@@ -175,11 +175,11 @@ if ($filtre)
 }
 if ($search_ref)
 {
-    $sql .= natural_search(array('f.facnumber'), $search_ref);
+    $sql .= natural_search('f.facnumber', $search_ref);
 }
 if ($search_societe)
 {
-    $sql .= natural_search(array('s.nom'), $search_societe);
+    $sql .= natural_search('s.nom', $search_societe);
 }
 if ($search_montant_ht)
 {

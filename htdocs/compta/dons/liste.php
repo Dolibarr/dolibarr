@@ -76,7 +76,7 @@ if (trim($search_ref) != '')
 }
 if (trim($search_company) != '')
 {
-    $sql .= natural_search(array('d.societe'), $search_company);
+    $sql .= natural_search('d.societe', $search_company);
 }
 if (trim($search_name) != '')
 {

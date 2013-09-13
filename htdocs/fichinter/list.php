@@ -75,10 +75,10 @@ $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."fichinterdet as fd ON fd.fk_fichinter = f.r
 $sql.= " WHERE f.fk_soc = s.rowid ";
 $sql.= " AND f.entity = ".$conf->entity;
 if ($search_ref) {
-    $sql .= natural_search(array('f.ref'), $search_ref);
+    $sql .= natural_search('f.ref', $search_ref);
 }
 if ($search_company) {
-    $sql .= natural_search(array('s.nom'), $search_company);
+    $sql .= natural_search('s.nom', $search_company);
 }
 if ($search_desc) {
     $sql .= natural_search(array('f.description', 'fd.description'), $search_desc);

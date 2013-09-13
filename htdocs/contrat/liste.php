@@ -81,7 +81,7 @@ $sql.= " AND c.entity = ".$conf->entity;
 if ($socid) $sql.= " AND s.rowid = ".$socid;
 if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 if ($search_nom) {
-    $sql .= natural_search(array('s.nom'), $search_nom);
+    $sql .= natural_search('s.nom', $search_nom);
 }
 if ($search_contract) {
     $sql .= natural_search(array('c.rowid', 'c.ref'), $search_contract);
