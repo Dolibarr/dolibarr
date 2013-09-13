@@ -1272,8 +1272,8 @@ class Propal extends CommonObject
     function valid($user, $notrigger=0)
     {
     	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-    	
-        global $conf,$langs;
+
+    	global $conf,$langs;
 
         $error=0;
         $now=dol_now();
@@ -1319,7 +1319,6 @@ class Propal extends CommonObject
                     // Fin appel triggers
                 }
                 
-                
             	if (! $error)
 				{
 					// Rename directory if dir was a temporary ref
@@ -1359,7 +1358,7 @@ class Propal extends CommonObject
                 }
             }
             else
-            {
+			{
                 $this->db->rollback();
                 return -1;
             }
