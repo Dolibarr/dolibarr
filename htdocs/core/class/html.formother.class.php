@@ -368,7 +368,7 @@ class FormOther
         if (empty($user->rights->user->user->lire) && $user->societe_id)
         {
             $sql_usr.=" UNION ";
-            $sql_usr.= "SELECT u2.rowid, u2.name as name, u2.firstname, u2.login";
+            $sql_usr.= "SELECT u2.rowid, u2.lastname as name, u2.firstname, u2.login";
             $sql_usr.= " FROM ".MAIN_DB_PREFIX."user as u2, ".MAIN_DB_PREFIX."societe_commerciaux as sc";
             $sql_usr.= " WHERE u2.entity IN (0,".$conf->entity.")";
             $sql_usr.= " AND u2.rowid = sc.fk_user AND sc.fk_soc=".$user->societe_id;
