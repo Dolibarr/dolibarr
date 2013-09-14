@@ -176,6 +176,8 @@ class modProjet extends DolibarrModules
 		$this->export_code[$r]=$this->rights_class.'_'.$r;
 		$this->export_label[$r]='ProjectsAndTasksLines';	// Translation key (used only if key ExportDataset_xxx_z not found)
 		$this->export_permission[$r]=array(array("projet","export"));
+		$this->export_dependencies_array[$r]=array('task_time'=>'ppt.rowid');
+		
 		$this->export_fields_array[$r]=array('s.rowid'=>"IdCompany",'s.nom'=>'CompanyName','s.address'=>'Address','s.zip'=>'Zip','s.town'=>'Town','s.fk_pays'=>'Country',
 		's.phone'=>'Phone','s.siren'=>'ProfId1','s.siret'=>'ProfId2','s.ape'=>'ProfId3','s.idprof4'=>'ProfId4','s.code_compta'=>'CustomerAccountancyCode','s.code_compta_fournisseur'=>'SupplierAccountancyCode',
 		'p.rowid'=>"ProjectId",'p.ref'=>"ProjectRef",'p.datec'=>"DateCreation",'p.dateo'=>"DateDebutProjet",'p.datee'=>"DateFinProjet",'p.fk_statut'=>'ProjectStatus','p.description'=>"projectNote",
@@ -193,6 +195,7 @@ class modProjet extends DolibarrModules
 		'f.rowid'=>"project",'f.ref'=>"project",'f.datec'=>"project",'f.duree'=>"project",'f.fk_statut'=>"project",'f.description'=>"project",
 		'pt.rowid'=>'task','pt.dateo'=>"task",'pt.datee'=>"task",'pt.duration_effective'=>"task",'pt.planned_workload'=>"task",'pt.progress'=>"task",'pt.description'=>"task",
 		'ptt.task_date'=>'task_time','ptt.task_duration'=>"task_time",'ptt.fk_user'=>"task_time",'ptt.note'=>"task_time");
+		
 		
 		$this->export_sql_start[$r]='SELECT DISTINCT ';
 		$this->export_sql_end[$r]  =' FROM ('.MAIN_DB_PREFIX.'projet as p, '.MAIN_DB_PREFIX.'societe as s)';
