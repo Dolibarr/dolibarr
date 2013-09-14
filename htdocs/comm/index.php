@@ -445,13 +445,13 @@ if (! empty($conf->contrat->enabled) && $user->rights->contrat->lire && 0) // TO
 }
 
 /*
- * Opened proposals
+ * Opened Firm proposals
  */
 if (! empty($conf->propal->enabled) && $user->rights->propal->lire)
 {
 	$langs->load("propal");
 
-	$sql = "SELECT s.nom, s.rowid, p.rowid as propalid, p.total as total_ttc, p.total_ht, p.ref, p.fk_statut, p.datep as dp, p.fin_validite as dfv";
+	$sql = "SELECT s.nom, s.rowid, p.rowid as propalid, p.type_propal, p.total as total_ttc, p.total_ht, p.ref, p.fk_statut, p.datep as dp, p.fin_validite as dfv";
 	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 	$sql.= ", ".MAIN_DB_PREFIX."propal as p";
 	if (! $user->rights->societe->client->voir && ! $socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -477,6 +477,8 @@ if (! empty($conf->propal->enabled) && $user->rights->propal->lire)
 			while ($i < $num)
 			{
 				$obj = $db->fetch_object($result);
+				if ($obj->type_propal == 0)
+				{
 				$var=!$var;
 				print '<tr '.$bc[$var].'>';
 
@@ -508,11 +510,96 @@ if (! empty($conf->propal->enabled) && $user->rights->propal->lire)
 				print '<td align="right">'.price($obj->total_ttc).'</td>';
 				print '<td align="center" width="14">'.$propalstatic->LibStatut($obj->fk_statut,3).'</td>'."\n";
 				print '</tr>'."\n";
-				$i++;
 				$total += $obj->total_ttc;
+			}
+				$i++;
 			}
 			if ($total>0) {
 				print '<tr class="liste_total"><td colspan="3">'.$langs->trans("Total")."</td><td align=\"right\">".price($total)."</td><td>&nbsp;</td></tr>";
+			}
+			print "</table><br>";
+		}
+	}
+	else
+	{
+		dol_print_error($db);
+	}
+}
+
+
+/*
+ * Evaluation proposals
+ */
+if (! empty($conf->propal->enabled) && $user->rights->propal->lire)
+{
+	$langs->load("propal");
+
+	$sql = "SELECT s.nom, s.rowid, p.rowid as propalid, p.type_propal, p.total as total_ttc, p.total_ht, p.ref, p.fk_statut, p.datep as dp, p.fin_validite as dfv";
+	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
+	$sql.= ", ".MAIN_DB_PREFIX."propal as p";
+	if (! $user->rights->societe->client->voir && ! $socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+	$sql.= " WHERE p.fk_soc = s.rowid";
+	$sql.= " AND p.entity = ".$conf->entity;
+	$sql.= " AND p.fk_statut = 1";
+	if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+	if ($socid) $sql.= " AND s.rowid = ".$socid;
+	$sql.= " ORDER BY p.rowid DESC";
+
+	$result=$db->query($sql);
+	if ($result)
+	{
+		$total_ttc=0;
+		$num = $db->num_rows($result);
+		$i = 0;
+		if ($num > 0)
+		{
+			$var=true;
+
+			print '<table class="noborder" width="100%">';
+			print '<tr class="liste_titre"><td colspan="5">'.$langs->trans("Evaluation").'</td></tr>';
+			while ($i < $num)
+			{
+				$obj = $db->fetch_object($result);
+				if ($obj->type_propal == 1)
+				{
+					$var=!$var;
+					print '<tr '.$bc[$var].'>';
+
+					// Ref
+					print '<td class="nowrap" width="140">';
+
+					$propalstatic->id=$obj->propalid;
+					$propalstatic->ref=$obj->ref;
+
+					print '<table class="nobordernopadding"><tr class="nocellnopadd">';
+					print '<td class="nobordernopadding nowrap">';
+					print $propalstatic->getNomUrl(1);
+					print '</td>';
+					print '<td width="18" class="nobordernopadding nowrap">';
+					if ($db->jdate($obj->dfv) < ($now - $conf->propal->cloture->warning_delay)) print img_warning($langs->trans("Late"));
+					print '</td>';
+					print '<td width="16" align="center" class="nobordernopadding">';
+					$filename=dol_sanitizeFileName($obj->ref);
+					$filedir=$conf->propal->dir_output . '/' . dol_sanitizeFileName($obj->ref);
+					$urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->propalid;
+					print $formfile->getDocumentsLink($propalstatic->element, $filename, $filedir);
+					print '</td></tr></table>';
+
+					print "</td>";
+
+					print '<td align="left"><a href="fiche.php?socid='.$obj->rowid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dol_trunc($obj->nom,44).'</a></td>'."\n";
+					print '<td align="right">';
+					print dol_print_date($db->jdate($obj->dp),'day').'</td>'."\n";
+					print '<td align="right">'.price($obj->total_ttc).'</td>';
+					print '<td align="center" width="14">'.$propalstatic->LibStatut($obj->fk_statut,3).'</td>'."\n";
+					print '</tr>'."\n";
+					$total_ttc+=$obj->total_ttc;
+			}
+				$i++;
+				
+			}
+			if ($total_ttc>0) {
+				print '<tr class="liste_total"><td colspan="3">'.$langs->trans("Total")."</td><td align=\"right\">".price($total_ttc)."</td><td>&nbsp;</td></tr>";
 			}
 			print "</table><br>";
 		}

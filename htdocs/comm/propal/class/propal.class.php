@@ -56,6 +56,7 @@ class Propal extends CommonObject
     var $author;
     var $ref;
     var $ref_client;
+    var $type_propal;
     var $statut;					// 0 (draft), 1 (validated), 2 (signed), 3 (not signed), 4 (billed)
     var $datec;						// Date of creation
     var $datev;						// Date of validation
@@ -712,6 +713,7 @@ class Propal extends CommonObject
         $sql.= ", fk_input_reason";
         $sql.= ", fk_projet";
         $sql.= ", entity";
+        $sql.= ", type_propal";
         $sql.= ") ";
         $sql.= " VALUES (";
         $sql.= $this->socid;
@@ -737,6 +739,7 @@ class Propal extends CommonObject
         $sql.= ", ".$this->demand_reason_id;
         $sql.= ", ".($this->fk_project?$this->fk_project:"null");
         $sql.= ", ".$conf->entity;
+        $sql.= ", ".$this->db->escape($this->type_propal)."";
         $sql.= ")";
 
         dol_syslog(get_class($this)."::create sql=".$sql, LOG_DEBUG);
@@ -1028,7 +1031,7 @@ class Propal extends CommonObject
         $sql.= ", p.model_pdf, p.ref_client, p.extraparams";
         $sql.= ", p.note_private, p.note_public";
         $sql.= ", p.fk_projet, p.fk_statut";
-        $sql.= ", p.fk_user_author, p.fk_user_valid, p.fk_user_cloture";
+        $sql.= ", p.fk_user_author, p.fk_user_valid, p.type_propal, p.fk_user_cloture";
         $sql.= ", p.fk_delivery_address";
         $sql.= ", p.fk_availability";
         $sql.= ", p.fk_input_reason";
@@ -1078,6 +1081,7 @@ class Propal extends CommonObject
                 $this->note_public          = $obj->note_public;
                 $this->statut               = $obj->fk_statut;
                 $this->statut_libelle       = $obj->statut_label;
+                $this->type_propal			= $obj->type_propal;
 
                 $this->datec                = $this->db->jdate($obj->datec); // TODO obsolete
                 $this->datev                = $this->db->jdate($obj->datev); // TODO obsolete
@@ -1164,6 +1168,7 @@ class Propal extends CommonObject
                         $line->remise_percent   = $objp->remise_percent;
                         $line->price            = $objp->price;		// TODO deprecated
 
+						$line->type_propal		= $objp->type_propal;
                         $line->info_bits        = $objp->info_bits;
                         $line->total_ht         = $objp->total_ht;
                         $line->total_tva        = $objp->total_tva;
@@ -1549,8 +1554,8 @@ class Propal extends CommonObject
             return -1;
         }
     }
-
-    /**
+    
+	/**
      *	Set an overall discount on the proposal
      *
      *	@param      User	$user       Object user that modify
@@ -1578,6 +1583,29 @@ class Propal extends CommonObject
             {
                 $this->error=$this->db->error();
                 dol_syslog(get_class($this)."::set_remise_percent Error sql=$sql");
+                return -1;
+            }
+        }
+    }
+    
+    
+    function set_type_propal($user, $type_propal)
+    {
+   
+        if ($user->rights->propale->creer)
+        {
+            $sql = "UPDATE ".MAIN_DB_PREFIX."propal SET type_propal = ".$type_propal;
+            $sql.= " WHERE rowid = ".$this->id;
+
+            if ($this->db->query($sql) )
+            {
+                $this->type_propal = $type_propal;
+				return 1;
+            }
+            else
+            {
+                $this->error=$this->db->error();
+                dol_syslog(get_class($this)."::set_type_propal Error sql=$sql");
                 return -1;
             }
         }
@@ -1617,9 +1645,7 @@ class Propal extends CommonObject
             }
         }
     }
-
-
-
+    
     /**
      *	Reopen the commercial proposal
      *
@@ -2265,6 +2291,21 @@ class Propal extends CommonObject
         }
     }
 
+	function getLibTypePropal()
+	{
+		return $this->LibTypePropal($this->type_propal);
+	}
+	
+	function LibTypePropal($type_propal)
+	{
+		global $langs;
+		$langs->load("Propal");
+		 
+		if ($type_propal==0) return img_picto($langs->trans('FirmaProposal'),'statut1').' '.$langs->trans('FirmProposal');
+        else return img_picto($langs->trans('Evaluation'),'statut5').' '.$langs->trans('Evaluation');
+	
+	}
+		
 
     /**
      *    	Return label of status of proposal (draft, validated, ...)
@@ -2438,6 +2479,7 @@ class Propal extends CommonObject
         $this->demand_reason_code  = 'SRC_00';
         $this->note_public='This is a comment (public)';
         $this->note_private='This is a comment (private)';
+        $this->type_propal=0;
         // Lines
         $nbp = 5;
         $xnbp = 0;
