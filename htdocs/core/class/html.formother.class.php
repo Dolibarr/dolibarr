@@ -360,7 +360,7 @@ class FormOther
         $moreforfilter.='<option value="">&nbsp;</option>';
 
         // Get list of users allowed to be viewed
-        $sql_usr = "SELECT u.rowid, u.lastname as name, u.statut, u.firstname, u.login";
+        $sql_usr = "SELECT u.rowid, u.lastname, u.firstname, u.statut, u.login";
         $sql_usr.= " FROM ".MAIN_DB_PREFIX."user as u";
         $sql_usr.= " WHERE u.entity IN (0,".$conf->entity.")";
         if (empty($user->rights->user->user->lire)) $sql_usr.=" AND u.fk_societe = ".($user->societe_id?$user->societe_id:0);
@@ -368,12 +368,12 @@ class FormOther
         if (empty($user->rights->user->user->lire) && $user->societe_id)
         {
             $sql_usr.=" UNION ";
-            $sql_usr.= "SELECT u2.rowid, u2.lastname as name, u2.firstname, u2.login";
+            $sql_usr.= "SELECT u2.rowid, u2.lastname, u2.firstname, u2.statut, u2.login";
             $sql_usr.= " FROM ".MAIN_DB_PREFIX."user as u2, ".MAIN_DB_PREFIX."societe_commerciaux as sc";
             $sql_usr.= " WHERE u2.entity IN (0,".$conf->entity.")";
             $sql_usr.= " AND u2.rowid = sc.fk_user AND sc.fk_soc=".$user->societe_id;
         }
-        $sql_usr.= " ORDER BY name ASC";
+        $sql_usr.= " ORDER BY lastname ASC";
         //print $sql_usr;exit;
 
         $resql_usr = $this->db->query($sql_usr);
@@ -386,7 +386,7 @@ class FormOther
                 if ($obj_usr->rowid == $selected) $moreforfilter.=' selected="selected"';
 
                 $moreforfilter.='>';
-                $moreforfilter.=dolGetFirstLastname($obj_usr->firstname,$obj_usr->name);
+                $moreforfilter.=dolGetFirstLastname($obj_usr->firstname,$obj_usr->lastname);
                 // Complete name with more info
                 $moreinfo=0;
                 if (! empty($conf->global->MAIN_SHOW_LOGIN))
