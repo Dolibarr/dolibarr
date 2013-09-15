@@ -87,10 +87,10 @@ See ChangeLog file found into package.
 - Standing orders management
 - Shipping management
 - Agenda with ical,vcal export for third tools integration
-- ECM (Electronic Content Management)
+- EDM (Electronic Document Management)
 - Foundations members management
 - Employee's holidays management
-- Mass emailing
+- Mass Emailing
 - Realize surveys
 - Point of Sale
 

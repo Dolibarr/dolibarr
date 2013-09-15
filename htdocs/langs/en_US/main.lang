@@ -653,6 +653,9 @@ Element=Element
 NoPhotoYet=No pictures available yet
 HomeDashboard=Home summary
 Deductible=Deductible
+from=from
+toward=toward
+Access=Access
 
 # Week day
 Monday=Monday

@@ -217,8 +217,8 @@ abstract class CommonDocGenerator
 
     	return $array_other;
     }
-    
-    
+
+
     /**
      * Define array with couple substitution key => substitution value
      *
@@ -245,7 +245,7 @@ abstract class CommonDocGenerator
 	    	$array_key.'_payment_mode'=>($outputlangs->transnoentitiesnoconv('PaymentType'.$object->mode_reglement_code)!='PaymentType'.$object->mode_reglement_code?$outputlangs->transnoentitiesnoconv('PaymentType'.$object->mode_reglement_code):$object->mode_reglement),
 	    	$array_key.'_payment_term_code'=>$object->cond_reglement_code,
 	    	$array_key.'_payment_term'=>($outputlangs->transnoentitiesnoconv('PaymentCondition'.$object->cond_reglement_code)!='PaymentCondition'.$object->cond_reglement_code?$outputlangs->transnoentitiesnoconv('PaymentCondition'.$object->cond_reglement_code):$object->cond_reglement),
-	    	$array_key.'_total_ht'=>price($object->total_ht2),
+	    	$array_key.'_total_ht'=>price($object->total_ht),
 	    	$array_key.'_total_vat'=>price($object->total_tva),
 	    	$array_key.'_total_ttc'=>price($object->total_ttc),
 	    	$array_key.'_total_discount_ht' => price($object->getTotalDiscount()),

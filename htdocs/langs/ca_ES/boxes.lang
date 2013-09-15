@@ -75,6 +75,7 @@ NoRecordedProducts=Sense productes/serveis registrats
 NoRecordedProspects=Sense clients potencials registrats
 NoContractedProducts=Sense productes/serveis contractats
 NoRecordedContracts=Sense contractes registrats
+NoRecordedInterventions=Sense intervencions registrades
 BoxLatestSupplierOrders=Últimes comandes a proveïdors
 BoxTitleLatestSupplierOrders=Les %s últimes comandes a proveïdors
 NoSupplierOrder=Sense comandes a proveïdors

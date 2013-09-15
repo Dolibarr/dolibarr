@@ -1,0 +1,84 @@
+# This script is used by Travis CI to run automatically Continuous test integration
+# from Dolibarr GitHub repository.
+# Command run is phpunit
+# For syntax, see http://about.travis-ci.org/docs/user/languages/php/
+
+services:
+ - memcached # will start memcached
+
+# This will tell travis to run phpunit
+language: php
+php:
+ - "5.3"
+ - "5.4"
+
+env:
+ - DB=mysql
+# - DB=postgres  
+
+before_script: 
+ - echo Start travis
+ - echo Current dir is `pwd`
+ - echo Home dir is `echo ~`
+ - echo Update composer
+# - ~/.phpenv/versions/$(phpenv version-name)/bin/composer.phar self-update 
+ - echo Create dir $(pwd)/htdocs/documents
+ - sudo mkdir -p $(pwd)/htdocs/documents/admin/temp;
+ - sudo touch $(pwd)/htdocs/documents/dolibarr.log;
+ - sudo chmod a+rwx /home; sudo chmod a+rwx /home/travis; sudo chmod -R a+rwx /home/travis/build;
+ - sudo chmod -R a+rwx $(pwd);
+ - sudo chown -R www-data:travis $(pwd)/htdocs/documents;
+ - find $(pwd)/htdocs/documents -type d -exec ls -alt {} \;
+ - echo Edit php.ini file
+ - echo 'date.timezone = "Europe/Paris"' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
+ - echo "extension = apc.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
+# - echo "extension = memcache.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
+ - echo "extension = memcached.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
+ - echo "zend_extension_ts = xdebug.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
+ - cat ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
+ - echo Init database
+ - sh -c "if [ '$DB' = 'pgsql' ]; then psql -c 'DROP DATABASE IF EXISTS myapp_test;' -U postgres; fi"
+ - sh -c "if [ '$DB' = 'pgsql' ]; then psql -c 'CREATE DATABASE myapp_test;' -U postgres; fi"
+ - sh -c "if [ '$DB' = 'mysql' ]; then mysql -e 'DROP DATABASE IF EXISTS myapp_test;'; fi"
+ - sh -c "if [ '$DB' = 'mysql' ]; then mysql -e 'CREATE DATABASE IF NOT EXISTS myapp_test;'; fi"
+ - sh -c "if [ '$DB' = 'mysql' ]; then mysql -D myapp_test < $(pwd)/dev/initdata/mysqldump_dolibarr_3.4.0.sql; fi"
+ - echo Create config file htdocs/conf/conf.php
+ - echo '<?php ' > htdocs/conf/conf.php
+ - sh -c "if [ '$DB' = 'pgsql' ]; then echo '$'dolibarr_main_db_type=\'pgsql\'';' >> htdocs/conf/conf.php; fi"
+ - sh -c "if [ '$DB' = 'mysql' ]; then echo '$'dolibarr_main_db_type=\'mysqli\'';' >> htdocs/conf/conf.php; fi"
+ - echo '$'dolibarr_main_url_root=\'http://localhost/\'';' >> htdocs/conf/conf.php
+ - echo '$'dolibarr_main_document_root=\'$(pwd)/htdocs\'';' >> htdocs/conf/conf.php
+ - echo '$'dolibarr_main_data_root=\'$(pwd)/htdocs/documents\'';' >> htdocs/conf/conf.php
+ - echo '$'dolibarr_main_db_host=\'localhost\'';' >> htdocs/conf/conf.php
+ - echo '$'dolibarr_main_db_name=\'myapp_test\'';' >> htdocs/conf/conf.php
+ - echo '$'dolibarr_main_db_user=\'travis\'';' >> htdocs/conf/conf.php
+ - echo '$'dolibarr_main_authentication=\'dolibarr\'';' >> htdocs/conf/conf.php
+ - echo '?>' >> htdocs/conf/conf.php
+ - echo Show conf.php content
+ - cat htdocs/conf/conf.php
+ - echo Install apache server
+ - sudo apt-get update > /dev/null
+ - sudo apt-get install -y --force-yes apache2 libapache2-mod-php5 php5-curl php5-mysql php5-pgsql php5-intl
+ - sudo sed -i -e "s,/var/www,$(pwd)/htdocs,g" /etc/apache2/sites-available/default
+ - echo Show default virtual host
+ - sudo cat /etc/apache2/sites-available/default
+ - sudo /etc/init.d/apache2 restart
+ - wget http://localhost/
+ - cat index.html
+ 
+
+
+# Omitting "script:" will default to phpunit
+# use the $DB env variable to determine the phpunit.xml to use
+#script: phpunit -d memory_limit=-1 --configuration test/phpunit/phpunittest.xml --coverage-text test/phpunit/AllTests.php
+#script: phpunit -d memory_limit=-1 --configuration test/phpunit/phpunittest.xml --coverage-text test/phpunit/BuildDocTest.php
+#script: phpunit -d memory_limit=-1 --configuration test/phpunit/phpunittest.xml test/phpunit/WebservicesOtherTest.php
+script: 
+# - phpcs -s --report-summary --standard=dev/codesniffer/ruleset.xml --tab-width=4 --ignore=/build/html/,/documents/,/includes/,/test/report/ .
+ - phpunit -d memory_limit=-1 --configuration test/phpunit/phpunittest.xml test/phpunit/AllTests.php
+
+after_script:
+# - echo Output dolibarr log file; cat $(pwd)/htdocs/documents/dolibarr.log
+ - echo Output apache log file; sudo cat /var/log/apache2/error.log
+ - echo End travis
+

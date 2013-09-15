@@ -10,7 +10,7 @@ use Cwd;
 $PROJECT="dolibarr";
 $MAJOR="3";
 $MINOR="4";
-$BUILD="0";		# Mettre x pour release, x-dev pour dev, x-beta pour beta, x-rc pour release candidate
+$BUILD="1";		# Mettre x pour release, x-dev pour dev, x-beta pour beta, x-rc pour release candidate
 $RPMSUBVERSION="auto";	# auto use value found into BUILD
 
 @LISTETARGET=("TGZ","ZIP","RPM_GENERIC","RPM_FEDORA","RPM_MANDRIVA","RPM_OPENSUSE","DEB","APS","EXEDOLIWAMP","SNAPSHOT");   # Possible packages
@@ -18,6 +18,7 @@ $RPMSUBVERSION="auto";	# auto use value found into BUILD
 "SNAPSHOT"=>"tar",
 "TGZ"=>"tar",
 "ZIP"=>"7z",
+"XZ"=>"xz",
 "RPM_GENERIC"=>"rpmbuild",
 "RPM_FEDORA"=>"rpmbuild",
 "RPM_MANDRIVA"=>"rpmbuild",
@@ -35,6 +36,7 @@ $FILENAME="$PROJECT";
 $FILENAMESNAPSHOT="$PROJECT-snapshot";
 $FILENAMETGZ="$PROJECT-$MAJOR.$MINOR.$BUILD";
 $FILENAMEZIP="$PROJECT-$MAJOR.$MINOR.$BUILD";
+$FILENAMEXZ="$PROJECT-$MAJOR.$MINOR.$BUILD";
 $FILENAMERPM="$PROJECT-$MAJOR.$MINOR.$BUILD-$RPMSUBVERSION";
 $FILENAMEDEB="${PROJECT}_${MAJOR}.${MINOR}.${BUILD}";
 $FILENAMEAPS="$PROJECT-$MAJOR.$MINOR.$BUILD.app";
@@ -179,6 +181,7 @@ foreach my $target (keys %CHOOSEDTARGET) {
         print "Test requirement for target $target: Search '$req'... ";
         $newreq=$req; $newparam='';
         if ($newreq eq 'zip') { $newparam.='-h'; }
+        if ($newreq eq 'xz') { $newparam.='-h'; }
         $cmd="\"$newreq\" $newparam 2>&1";
         print "Test command ".$cmd."... ";
         $ret=`$cmd`;
@@ -274,6 +277,7 @@ if ($nboftargetok) {
         $ret=`rm -f  $BUILDROOT/$PROJECT/build/dolibarr-*.tar`;
         $ret=`rm -f  $BUILDROOT/$PROJECT/build/dolibarr-*.tar.gz`;
         $ret=`rm -f  $BUILDROOT/$PROJECT/build/dolibarr-*.tgz`;
+        $ret=`rm -f  $BUILDROOT/$PROJECT/build/dolibarr-*.xz`;
         $ret=`rm -f  $BUILDROOT/$PROJECT/build/dolibarr-*.zip`;
         $ret=`rm -f  $BUILDROOT/$PROJECT/build/doxygen/doxygen_warnings.log`;
         $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/cache.manifest`;
@@ -367,7 +371,7 @@ if ($nboftargetok) {
 
     		print "Compress $BUILDROOT into $FILENAMESNAPSHOT.tgz...\n";
    		    #$cmd="tar --exclude \"$BUILDROOT/tgz/tar_exclude.txt\" --exclude .cache --exclude .settings --exclude conf.php --directory \"$BUILDROOT\" -czvf \"$FILENAMESNAPSHOT.tgz\" $FILENAMESNAPSHOT";
-   		    $cmd="tar --exclude doli*.tgz --exclude doli*.deb --exclude doli*.exe --exclude doli*.zip --exclude doli*.rpm --exclude .cache --exclude .settings --exclude conf.php --exclude conf.php.mysql --exclude conf.php.old --exclude conf.php.postgres --directory \"$BUILDROOT\" --mode=go-w --group=500 --owner=500 -czvf \"$FILENAMESNAPSHOT.tgz\" $FILENAMESNAPSHOT";
+   		    $cmd="tar --exclude doli*.tgz --exclude doli*.deb --exclude doli*.exe --exclude doli*.xz --exclude doli*.zip --exclude doli*.rpm --exclude .cache --exclude .settings --exclude conf.php --exclude conf.php.mysql --exclude conf.php.old --exclude conf.php.postgres --directory \"$BUILDROOT\" --mode=go-w --group=500 --owner=500 -czvf \"$FILENAMESNAPSHOT.tgz\" $FILENAMESNAPSHOT";
 			print $cmd."\n";
 			$ret=`$cmd`;
 
@@ -403,6 +407,36 @@ if ($nboftargetok) {
     		next;
     	}
 
+    	if ($target eq 'XZ') 
+    	{
+    		$NEWDESTI=$DESTI;
+			if (-d $DESTI.'/standard') { $NEWDESTI=$DESTI.'/standard'; } 
+
+    		print "Remove target $FILENAMEXZ.xz...\n";
+    		unlink("$NEWDESTI/$FILENAMEXZ.xz");
+
+            #rmdir "$BUILDROOT/$FILENAMEXZ";
+    		$ret=`rm -fr $BUILDROOT/$FILENAMEXZ`;
+            print "Copy $BUILDROOT/$PROJECT to $BUILDROOT/$FILENAMEXZ\n";
+    		$cmd="cp -pr \"$BUILDROOT/$PROJECT\" \"$BUILDROOT/$FILENAMEXZ\"";
+            $ret=`$cmd`;
+
+    		print "Compress $FILENAMEXZ into $FILENAMEXZ.xz...\n";
+ 
+            print "Go to directory $BUILDROOT\n";
+     		$olddir=getcwd();
+     		chdir("$BUILDROOT");
+    		$cmd= "xz -9 -r $BUILDROOT/$FILENAMEAPS.xz \*";
+			print $cmd."\n";
+			$ret= `$cmd`;
+            chdir("$olddir");
+
+    		# Move to final dir
+            print "Move $FILENAMEXZ.xz to $NEWDESTI/$FILENAMEXZ.xz\n";
+            $ret=`mv "$BUILDROOT/$FILENAMEXZ.xz" "$NEWDESTI/$FILENAMEXZ.xz"`;
+    		next;
+    	}
+    	
     	if ($target eq 'ZIP') 
     	{
     		$NEWDESTI=$DESTI;
@@ -549,7 +583,7 @@ if ($nboftargetok) {
             $build = $newbuild;
             $build =~ s/-.*$//g;
 			# now build is 0 for example
-			$build .= '+nmu1';
+			# $build .= '+nmu1';
 			# now build is 0+nmu1 for example
 			
     		print "Remove target ${FILENAMEDEB}_all.deb...\n";
