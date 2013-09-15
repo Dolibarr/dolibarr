@@ -53,6 +53,7 @@ For users:
 - New: User permissions on margin module
 - New: Add ref supplier into muscadet model
 - New: Can use tag {mm} before {yy} even when there is a reset into numbering masks.
+- New: [ task #1060 ] Register fields localtax(1|2)_type into details tables
  
 For translators:
 - Qual: Normalized sort order of all languages files with english reference files.
