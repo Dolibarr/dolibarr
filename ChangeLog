@@ -53,6 +53,7 @@ For users:
 - New: User permissions on margin module
 - New: Add ref supplier into muscadet model
 - New: Can use tag {mm} before {yy} even when there is a reset into numbering masks.
+- New: [ task #1060 ] Register fields localtax(1|2)_type into details tables
  
 For translators:
 - Qual: Normalized sort order of all languages files with english reference files.
@@ -126,6 +127,7 @@ Fix: Edit propal line was losing product supplier price id
 Fix: Delete linked element to supplier invoice when deleted 
 Fix: [ bug #1061 ] Bad info shipped products
 Fix: [ bug #1062 ] Documents lost in propals and contracts validating
+Fix: Supplier price displayed on document lines didnt take discount
 Qual: Add travis-ci integration
 
 
