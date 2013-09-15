@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2004-2012 Laurent Destailleur   <eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2013 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2011 Regis Houssin         <regis.houssin@capnetworks.com>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
- * Copyright (C) 2010      Juanjo Menent         <jmenent@2byte.es>
+ * Copyright (C) 2010-2013 Juanjo Menent         <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -377,11 +377,15 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 					if (! empty($object->remise_percent)) $localtax2ligne-=($localtax2ligne*$object->remise_percent)/100;
 
 					$vatrate=(string) $object->lines[$i]->tva_tx;
-					// TODO : store local taxes types into object lines and remove this
-					$localtaxtmp_array=getLocalTaxesFromRate($vatrate,0,$mysoc);
-					if ((! isset($localtax1_type)) || $localtax1_type=='') $localtax1_type = $localtaxtmp_array[0];
-					if ((! isset($localtax2_type)) || $localtax2_type=='') $localtax2_type = $localtaxtmp_array[2];
-					//end TODO
+					
+					// Retrieve type from database for backward compatibility with old records
+					if ((! isset($localtax1_type) || $localtax1_type=='' || ! isset($localtax2_type) || $localtax2_type=='') // if tax type not defined
+					&& (! empty($localtax1_rate) || ! empty($localtax2_rate))) // and there is local tax
+					{
+						$localtaxtmp_array=getLocalTaxesFromRate($vatrate,0,$mysoc);
+						$localtax1_type = $localtaxtmp_array[0];
+						$localtax2_type = $localtaxtmp_array[2];
+					}
 
 				    // retrieve global local tax
 					if ($localtax1_type && $localtax1ligne != 0)
