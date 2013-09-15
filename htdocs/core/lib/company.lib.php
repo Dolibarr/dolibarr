@@ -537,7 +537,7 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
 
     print "\n".'<table class="noborder" width="100%">'."\n";
 
-    $colspan=6;
+    $colspan=8;
     print '<tr class="liste_titre">';
     print '<td>'.$langs->trans("Name").'</td>';
     print '<td>'.$langs->trans("Poste").'</td>';
@@ -552,11 +552,16 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
     	$colspan++;
         print '<td>&nbsp;</td>';
     }
+    if ($user->rights->societe->contact->creer)
+    {
+    	$colspan++;
+        print '<td>&nbsp;</td>';
+    }
     print "</tr>";
 
 
     $sql = "SELECT p.rowid, p.lastname, p.firstname, p.fk_pays, p.poste, p.phone, p.phone_mobile, p.fax, p.email, p.statut ";
-    $sql .= ", p.address, p.zip, p.town";
+    $sql .= ", p.civilite, p.address, p.zip, p.town";
     $sql .= " FROM ".MAIN_DB_PREFIX."socpeople as p";
     $sql .= " WHERE p.fk_soc = ".$object->id;
     $sql .= " ORDER by p.datec";
@@ -611,8 +616,8 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
 				$coords .= addslashes($obj->civilite).' ';
 			if (!empty($obj->firstname))
 				$coords .= addslashes($obj->firstname).' ';
-			if (!empty($obj->name))
-				$coords .= addslashes($obj->name);
+			if (!empty($obj->lastname))
+				$coords .= addslashes($obj->lastname);
 			$coords .= "<br />";
 			if (!empty($obj->address))
 			{
@@ -634,7 +639,7 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
 				if (!empty($object->country))
 					$coords .= "<br />".addslashes($object->country);
 			}
-            print '<td align="center"><a href="#" onclick="copyToClipboard(\''.$coords.'\');">';
+            print '<td align="center"><a href="#" onclick="return copyToClipboard(\''.$coords.'\');">';
             print img_picto($langs->trans("Address"), 'object_address.png');
             print '</a></td>';
 
@@ -677,16 +682,17 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
 
     print "<br>\n";
 ?>
-<div id="dialog" title="Coordonnées" style="display: none;">
+<div id="dialog" title="<?php echo $langs->trans('Address'); ?>" style="display: none;">
 </div>
 <?php
 	print '<script type="text/javascript">
 			function copyToClipboard (text) {
 			  text = text.replace(/<br \/>/g,"\n");
-			  var newElem = "<textarea id=\"coords\" style=\"border: none; width: 100%; height: 90px;\">"+text+"</textarea><br/><br/>Ctrl+C pour copier dans le presse-papier";
+			  var newElem = "<textarea id=\"coords\" style=\"border: none; width: 90%; height: 120px;\">"+text+"</textarea><br/><br/>'.$langs->trans('HelpCopyToClipboard').'";
 			  $("#dialog").html(newElem);
 			  $( "#dialog" ).dialog();
 			  $("#coords").select();
+			  return false;
 			}
 	</script>';
 
