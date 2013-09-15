@@ -2221,7 +2221,7 @@ else
 
                 /*
                  * Linked object block
-                */
+                 */
                 $somethingshown=$object->showLinkedObjectBlock();
 
 				print '</div><div class="fichehalfright"><div class="ficheaddleft">';
