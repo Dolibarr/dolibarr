@@ -137,7 +137,9 @@ if ($action == 'order' && isset($_POST['valid'])) {
             $id = $order->create($user);
             if ($id < 0) {
                 $fail++;
-                setEventMessage($langs->trans('OrderFail'), 'errors');
+                $msg = $langs->trans('OrderFail') . "&nbsp;:&nbsp;";
+                $msg .= $order->error;
+                setEventMessage($msg, 'errors');
             }
             $i++;
         }
