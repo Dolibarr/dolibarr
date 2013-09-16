@@ -103,6 +103,8 @@ All content added must be tagged by a '<div>' with css class="login_block_elem"
 this was not a good pratice, since object->id is already known, there is no need to provide id as 
 parameter. All methods addline in this case were modified to remove this parameter. 
 
+4) Method ->classer_facturee() is deprecated. It must be replace with ->classifyBilled().
+
 
 ***** ChangeLog for 3.4.1 compared to 3.4.0 *****
 Fix: Display buying price on line edit when no supplier price is defined
