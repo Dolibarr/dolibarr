@@ -163,8 +163,6 @@ $sql .= ', p.tms as datem, p.duration, p.tobuy, p.seuil_stock_alerte,';
 $sql .= ' SUM(COALESCE(s.reel, 0)) as stock_physique';
 $sql .= ', p.desiredstock';
 $sql .= ' FROM ' . MAIN_DB_PREFIX . 'product as p';
-$sql .= ' LEFT JOIN ' . MAIN_DB_PREFIX . 'product_fournisseur_price as pf';
-$sql .= ' ON p.rowid = pf.fk_product';
 $sql .= ' LEFT JOIN ' . MAIN_DB_PREFIX . 'product_stock as s';
 $sql .= ' ON p.rowid = s.fk_product';
 $sql.= ' WHERE p.entity IN (' . getEntity("product", 1) . ')';
@@ -205,7 +203,7 @@ if (!empty($canvas)) {
 $sql .= ' GROUP BY p.rowid, p.ref, p.label, p.price';
 $sql .= ', p.price_ttc, p.price_base_type,p.fk_product_type, p.tms';
 $sql .= ', p.duration, p.tobuy, p.seuil_stock_alerte';
-$sql .= ', p.desiredstock';
+$sql .= ', p.desiredstock, s.fk_product';
 $sql .= ' HAVING p.desiredstock > SUM(COALESCE(s.reel, 0))';
 $sql .= ' AND p.desiredstock > 0';
 if ($salert == 'on') {
