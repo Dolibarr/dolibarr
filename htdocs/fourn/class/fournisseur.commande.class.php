@@ -1200,7 +1200,8 @@ class CommandeFournisseur extends CommonOrder
                     }
                     if ($result == 0 || $result == -1)
                     {
-                        $this->error="No price found for this quantity. Quantity may be too low ?";
+                        $langs->load("errors");
+                        $this->error = "Ref " . $prod->ref . " " . $langs->trans("ErrorQtyTooLowForThisSupplier");
                         $this->db->rollback();
                         dol_syslog(get_class($this)."::addline result=".$result." - ".$this->error, LOG_DEBUG);
                         return -1;
