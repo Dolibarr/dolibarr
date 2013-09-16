@@ -95,7 +95,8 @@ class FactureRec extends Facture
 
 		// Clean parameters
 		$this->titre=trim($this->titre);
-
+		$this->usenewprice=empty($this->usenewprice)?0:$this->usenewprice;
+		
 		$this->db->begin();
 
 		// Charge facture modele
@@ -122,9 +123,9 @@ class FactureRec extends Facture
 			$sql.= ", usenewprice";
 			$sql.= ") VALUES (";
 			$sql.= "'".$this->titre."'";
-			$sql.= ", '".$facsrc->socid."'";
+			$sql.= ", ".$facsrc->socid;
 			$sql.= ", ".$conf->entity;
-			$sql.= ", ".$this->db->idate($now);
+			$sql.= ", '".$this->db->idate($now)."'";
 			$sql.= ", ".(!empty($facsrc->amount)?$facsrc->amount:'0');
 			$sql.= ", ".(!empty($facsrc->remise)?$this->remise:'0');
 			$sql.= ", ".(!empty($this->note_private)?("'".$this->db->escape($this->note_private)."'"):"NULL");
@@ -133,7 +134,7 @@ class FactureRec extends Facture
 			$sql.= ", ".(! empty($facsrc->fk_project)?"'".$facsrc->fk_project."'":"null");
 			$sql.= ", '".$facsrc->cond_reglement_id."'";
 			$sql.= ", '".$facsrc->mode_reglement_id."'";
-			$sql.= ", '".$this->usenewprice."'";
+			$sql.= ", ".$this->usenewprice;
 			$sql.= ")";
 
 			if ($this->db->query($sql))
@@ -575,5 +576,28 @@ class FactureRec extends Facture
 		return $result;
 	}
 
+	
+	/**
+	 *  Initialise an instance with random values.
+	 *  Used to build previews or test instances.
+	 *	id must be 0 if object instance is a specimen.
+	 *
+	 *	@param	string		$option		''=Create a specimen invoice with lines, 'nolines'=No lines
+	 *  @return	void
+	 */
+	function initAsSpecimen($option='')
+	{
+		global $user,$langs,$conf;
+
+		$now=dol_now();
+		$arraynow=dol_getdate($now);
+		$nownotime=dol_mktime(0, 0, 0, $arraynow['mon'], $arraynow['mday'], $arraynow['year']);
+
+		parent::initAsSpecimen($option);
+
+		$this->usenewprice = 1;		
+		
+	}
+		
 }
 ?>
