@@ -48,7 +48,7 @@ if (! empty($idprod))
 {
 	$sql = "SELECT p.rowid, p.label, p.ref, p.price, p.duration,";
 	$sql.= " pfp.ref_fourn,";
-	$sql.= " pfp.rowid as idprodfournprice, pfp.price as fprice, pfp.quantity, pfp.unitprice, pfp.charges, pfp.unitcharges,";
+	$sql.= " pfp.rowid as idprodfournprice, pfp.price as fprice, pfp.remise_percent, pfp.quantity, pfp.unitprice, pfp.charges, pfp.unitcharges,";
 	$sql.= " s.nom";
 	$sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price as pfp";
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON p.rowid = pfp.fk_product";
@@ -72,14 +72,15 @@ if (! empty($idprod))
 			{
 				$objp = $db->fetch_object($result);
 
+				$price = $objp->fprice * (1 - $objp->remise_percent / 100);
+				$unitprice = $objp->unitprice * (1 - $objp->remise_percent / 100);
+
 				$title = $objp->nom.' - '.$objp->ref_fourn.' - ';
 
 				if ($objp->quantity == 1)
 				{
-					$title.= price($objp->fprice);
+					$title.= price($price);
 					$title.= $langs->getCurrencySymbol($conf->currency)."/";
-
-					$price = $objp->fprice;
 				}
 
 				$title.= $objp->quantity.' ';
@@ -95,9 +96,9 @@ if (! empty($idprod))
 				if ($objp->quantity > 1)
 				{
 					$title.=" - ";
-					$title.= price($objp->unitprice).$langs->getCurrencySymbol($conf->currency)."/".strtolower($langs->trans("Unit"));
+					$title.= price($unitprice).$langs->getCurrencySymbol($conf->currency)."/".strtolower($langs->trans("Unit"));
 
-					$price = $objp->unitprice;
+					$price = $unitprice;
 				}
 				if ($objp->unitcharges > 0 && ($conf->global->MARGIN_TYPE == "2")) {
 					$title.=" + ";

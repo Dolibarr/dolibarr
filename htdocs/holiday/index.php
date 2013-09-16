@@ -269,6 +269,7 @@ print "</tr>\n";
 print '<tr class="liste_titre">';
 print '<td class="liste_titre" align="left" width="50">';
 print '<input class="flat" size="4" type="text" name="search_ref" value="'.$search_ref.'">';
+print '</td>';
 
 // DATE CREATE
 print '<td class="liste_titre" colspan="1" align="center">';
@@ -322,10 +323,13 @@ print '<td>&nbsp;</td>';
 print '<td class="liste_titre" width="70px;" align="center">';
 $holiday->selectStatutCP($search_statut);
 print '</td>';
+
 // ACTION
-print '<td>';
+print '<td align="right">';
 print '<input type="image" class="liste_titre" name="button_search" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" alt="'.$langs->trans('Search').'">';
-print "</td></tr>\n";
+print '</td>';
+
+print "</tr>\n";
 
 
 // Lines
@@ -364,7 +368,7 @@ if (! empty($holiday->holiday))
 		print '<td align="right">';
 		$nbopenedday=num_open_day($infos_CP['date_debut'], $infos_CP['date_fin'], 0, 1, $infos_CP['halfday']);
 		print $nbopenedday.' '.$langs->trans('DurationDays');
-		print '<td align="right">'.$holidaystatic->LibStatut($infos_CP['statut'],5).'</td>';
+		print '<td align="right" colspan="2">'.$holidaystatic->LibStatut($infos_CP['statut'],5).'</td>';
 		print '</tr>'."\n";
 
 	}
@@ -374,7 +378,7 @@ if (! empty($holiday->holiday))
 if($holiday_payes == '2')
 {
     print '<tr>';
-    print '<td colspan="8" class="pair" style="text-align: center; padding: 5px;">'.$langs->trans('None').'</td>';
+    print '<td colspan="9" class="pair" style="text-align: center; padding: 5px;">'.$langs->trans('None').'</td>';
     print '</tr>';
 }
 

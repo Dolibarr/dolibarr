@@ -103,7 +103,7 @@ function getMarginInfos($pvht, $remise_percent, $tva_tx, $localtax1_tx, $localta
 		require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
 		$product = new ProductFournisseur($db);
 		if ($product->fetch_product_fournisseur_price($fk_pa)) {
-			$paht_ret = $product->fourn_unitprice;
+			$paht_ret = $product->fourn_unitprice * (1 - $product->fourn_remise_percent / 100);
 			if ($conf->global->MARGIN_TYPE == "2" && $product->fourn_unitcharges > 0)
 				$paht_ret += $product->fourn_unitcharges;
 		}
