@@ -137,55 +137,44 @@ else
    	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as pfp ON p.rowid = pfp.fk_product";
 // multilang
 	if ($conf->global->MAIN_MULTILANGS) // si l'option est active
-    {
+	{
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_lang as pl ON pl.fk_product = p.rowid AND pl.lang = '".$langs->getDefaultLang() ."'";
 	}
-    $sql.= ' WHERE p.entity IN ('.getEntity('product', 1).')';
-    if ($sall)
-    {
-        // For natural search
-        $scrit = explode(' ', $sall);
+	$sql.= ' WHERE p.entity IN ('.getEntity('product', 1).')';
+	if ($sall) {
+		// For natural search
+		$params = array('p.ref', 'p.label', 'p.description', 'p.note');
 		// multilang
 		if ($conf->global->MAIN_MULTILANGS) // si l'option est active
-	    {
-			foreach ($scrit as $crit) {
-		        $sql.= " AND (p.ref LIKE '%".$db->escape($crit)."%' OR p.label LIKE '%".$db->escape($crit)."%' OR p.description LIKE '%".$db->escape($crit)."%' OR p.note LIKE '%".$db->escape($crit)."%'  OR pl.description LIKE '%".$db->escape($sall)."%' OR pl.note LIKE '%".$db->escape($sall)."%'";
-		        if (! empty($conf->barcode->enabled))
-		        {
-		            $sql.= " OR p.barcode LIKE '%".$db->escape($crit)."%'";
-		        }
-		        $sql.= ')';
-		    }
-		}
-		else
 		{
-		    foreach ($scrit as $crit) {
-		        $sql.= " AND (p.ref LIKE '%".$db->escape($crit)."%' OR p.label LIKE '%".$db->escape($crit)."%' OR p.description LIKE '%".$db->escape($crit)."%' OR p.note LIKE '%".$db->escape($crit)."%'";
-		        if (! empty($conf->barcode->enabled))
-		        {
-		            $sql.= " OR p.barcode LIKE '%".$db->escape($crit)."%'";
-		        }
-		        $sql.= ')';
-		    }
+			$params[] = 'pl.description';
+			$params[] = 'pl.note';
 		}
-    }
+		if (! empty($conf->barcode->enabled)) {
+			$params[] = 'p.barcode';
+		}
+		$sql .= natural_search($params, $sall);
+	}
     // if the type is not 1, we show all products (type = 0,2,3)
     if (dol_strlen($type))
     {
     	if ($type == 1) $sql.= " AND p.fk_product_type = '1'";
     	else $sql.= " AND p.fk_product_type <> '1'";
     }
-    if ($sref)     $sql.= " AND p.ref LIKE '%".$sref."%'";
+	if ($sref) {
+		$sql .= natural_search('p.ref', $sref);
+	}
     if ($sbarcode) $sql.= " AND p.barcode LIKE '%".$sbarcode."%'";
     if ($snom)
 	{
+		$params = array('p.label');
 		// multilang
 		if ($conf->global->MAIN_MULTILANGS) // si l'option est active
-	    {
-			$sql.= " AND (p.label LIKE '%".$db->escape($snom)."%' OR (pl.label IS NOT null AND pl.label LIKE '%".$db->escape($snom)."%'))";
+		{
+			$params[] = 'pl.label';
 		}
-		else $sql.= " AND p.label LIKE '%".$db->escape($snom)."%'";
-}
+		$sql .= natural_search($params, $snom);
+	}
     if (isset($tosell) && dol_strlen($tosell) > 0) $sql.= " AND p.tosell = ".$db->escape($tosell);
     if (isset($tobuy) && dol_strlen($tobuy) > 0)   $sql.= " AND p.tobuy = ".$db->escape($tobuy);
     if (dol_strlen($canvas) > 0)                    $sql.= " AND p.canvas = '".$db->escape($canvas)."'";
