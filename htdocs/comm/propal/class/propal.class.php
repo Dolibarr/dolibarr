@@ -1807,6 +1807,7 @@ class Propal extends CommonObject
      *	Class invoiced the Propal
      *
      *	@return     int     	<0 si ko, >0 si ok
+     *  @deprecated
      */
     function classer_facturee()
     {

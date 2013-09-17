@@ -2,6 +2,7 @@
 /* Copyright (C) 2001-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2013      Cédric Salvador      <csalvador@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -92,11 +93,11 @@ $sql.= " AND cf.entity = ".$conf->entity;
 if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 if ($sref)
 {
-	$sql.= " AND cf.ref LIKE '%".$db->escape($sref)."%'";
+	$sql .= natural_search('cf.ref', $sref);
 }
 if ($snom)
 {
-	$sql.= " AND s.nom LIKE '%".$db->escape($snom)."%'";
+	$sql .= natural_search('s.nom', $snom);
 }
 if ($suser)
 {
@@ -108,7 +109,7 @@ if ($sttc)
 }
 if ($sall)
 {
-	$sql.= " AND (cf.ref LIKE '%".$db->escape($sall)."%' OR cf.note LIKE '%".$db->escape($sall)."%')";
+	$sql .= natural_search(array('cf.ref', 'cf.note_public'), $sall);
 }
 if ($socid) $sql.= " AND s.rowid = ".$socid;
 
