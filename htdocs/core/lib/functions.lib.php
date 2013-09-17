@@ -2873,7 +2873,7 @@ function get_localtax($tva, $local, $thirdparty_buyer="", $thirdparty_seller="")
  *  This function is called to retrieve type for building PDF. Such call of function must be removed.
  *  Instead this function must be called when adding a line to get array of localtax and type and
  *  provide it to function calcul_price_total.
- *  
+ *
  *  @param		real	$vatrate			VAT Rate
  *  @param		int		$local              Number of localtax (1 or 2, or 0 to return 1+2)
  *  @param		int		$thirdparty         Company object
@@ -4437,12 +4437,14 @@ if (! function_exists('getmypid'))
 	}
 }
 
+
 /**
  * Natural search
- * @param mixed $fields string or array of strings filled with the fields names in the SQL query
- * @param string $value the value to look for
- * @return string $res the statement to append to the SQL query
- * */
+ *
+ * @param 	mixed 	$fields 	String or array of strings filled with the fields names in the SQL query
+ * @param 	string 	$value 		The value to look for
+ * @return 	string 	$res 		The statement to append to the SQL query
+ */
 function natural_search($fields, $value)
 {
     global $db;
