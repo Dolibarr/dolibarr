@@ -102,7 +102,7 @@ else
 {
 	if (GETPOST('type'))
 	{
-		$sql .= " AND p.fk_product_type = " . GETPOST('type'));
+		$sql .= " AND p.fk_product_type = " . GETPOST('type','int');
 	}
 	if ($sref)
 	{
