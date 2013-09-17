@@ -78,7 +78,7 @@ if ($socid)
 	print '<table class="border" width="100%">';
 
 	print '<tr><td width="25%">'.$langs->trans("ThirdPartyName").'</td><td colspan="3">';
-	print $form->showrefnav($soc,'socid','',($user->societe_id?0:1),'rowid','nom');
+	print $form->showrefnav($soc,'socid','',0,'rowid','nom');
 	print '</td></tr>';
 
     if (! empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
@@ -167,6 +167,9 @@ if ($socid)
 	print '</table>';
 
 	print '</div>';
+	
+	
+	// TODO: Improve and move to tpl
     
 	// Localtaxes
 	
@@ -188,8 +191,8 @@ if ($socid)
 		print '<td align="right" width="80">'.$langs->trans('Localtax2').' (%)</td>';
 
 	//print '<td width="10"></td>';
-
-	print '<td width="10" class="nowrap"></td>'; // No width to allow autodim
+	if ($user->rights->societe->creer)
+		print '<td width="10" class="nowrap"></td>'; // No width to allow autodim
 
 	print "</tr>\n";
 	
@@ -215,7 +218,7 @@ if ($socid)
 				
 				$obj = $db->fetch_object($resql);
 				
-				if ($action == 'edit' && $obj->rowid==$vatid)
+				if ($action == 'edit' && $obj->rowid==$vatid && $user->rights->societe->creer)
 				{
 					print '<form action="'.$_SERVER["PHP_SELF"].'?socid='.$soc->id.'" method="post">';
 					print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -247,7 +250,8 @@ if ($socid)
 						print '<td align="right">'.$obj->localtax1.'</td>';
 					if ($mysoc->localtax2_assuj=="1" && $soc->localtax2_assuj)
 						print '<td align="right">'.$obj->localtax2.'</td>';
-					print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=edit&socid='.$soc->id.'&vatid='.$obj->rowid.'">'.img_edit().'</a></td>';
+					if ($user->rights->societe->creer)
+						print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=edit&socid='.$soc->id.'&vatid='.$obj->rowid.'">'.img_edit().'</a></td>';
 					print "</tr>\n";
 				}
 				
