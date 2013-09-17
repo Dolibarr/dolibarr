@@ -16,9 +16,9 @@
  */
 
 /**
- *  \file       htdocs/societe/agenda.php
+ *  \file       htdocs/societe/localtaxes.php
  *  \ingroup    societe
- *  \brief      Page of third party events
+ *  \brief      Page of third party localtaxes rates
  */
 
 require '../main.inc.php';
@@ -143,22 +143,22 @@ if ($socid)
 	
 	if($mysoc->localtax1_assuj=="1" && $mysoc->localtax2_assuj=="1")
 		{
-			print '<tr><td class="nowrap">'.$langs->trans('LocalTax1IsUsedES').'</td><td colspan="3">';
+			print '<tr><td class="nowrap">'.$langs->transcountry('LocalTax1IsUsed',$mysoc->country_code).'</td><td colspan="3">';
 			print yn($soc->localtax1_assuj);
 			print '</td></tr>';
-			print '<tr><td class="nowrap">'.$langs->trans('LocalTax2IsUsedES').'</td><td colspan="3">';
+			print '<tr><td class="nowrap">'.$langs->transcountry('LocalTax2IsUsed',$mysoc->country_code).'</td><td colspan="3">';
 			print yn($soc->localtax2_assuj);
 			print '</td></tr>';
 		}
 		elseif($mysoc->localtax1_assuj=="1")
 		{
-			print '<tr><td>'.$langs->trans("LocalTax1IsUsedES").'</td><td colspan="3">';
+			print '<tr><td>'.$langs->transcountry('LocalTax1IsUsed',$mysoc->country_code).'</td><td colspan="3">';
 			print yn($soc->localtax1_assuj);
 			print '</td></tr>';
 		}
 		elseif($mysoc->localtax2_assuj=="1")
 		{
-			print '<tr><td>'.$langs->trans("LocalTax2IsUsedES").'</td><td colspan="3">';
+			print '<tr><td>'.$langs->transcountry('LocalTax2IsUsed',$mysoc->country_code).'</td><td colspan="3">';
 			print yn($soc->localtax2_assuj);
 			print '</td></tr>';
 		}
@@ -185,10 +185,10 @@ if ($socid)
 
 	// Localtax 1
 	if ($mysoc->localtax1_assuj=="1" && $soc->localtax1_assuj)
-		print '<td align="right" width="80">'.$langs->trans('Localtax1').' (%)</td>';
+		print '<td align="right" width="80">'.$langs->transcountry('LocalTax1',$mysoc->country_code).' (%)</td>';
 
 	if ($mysoc->localtax2_assuj=="1" && $soc->localtax2_assuj)
-		print '<td align="right" width="80">'.$langs->trans('Localtax2').' (%)</td>';
+		print '<td align="right" width="80">'.$langs->transcountry('LocalTax2',$mysoc->country_code).' (%)</td>';
 
 	//print '<td width="10"></td>';
 	if ($user->rights->societe->creer)
