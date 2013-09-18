@@ -1018,7 +1018,7 @@ class FormFile
 
     }
     
-    public function list_of_links($object, $permtodelete=1, $action=null, $selected=null)
+    public function listOfLinks($object, $permtodelete=1, $action=null, $selected=null)
     {
 
         global $user, $conf, $langs, $user;
@@ -1042,38 +1042,42 @@ class FormFile
         print_titre($langs->trans("LinkedFiles"));
         print '<table width="100%" class="liste">';
         print '<tr class="liste_titre">';
-        print_liste_field_titre($langs->trans("Documents2"),
-                                $_SERVER['PHP_SELF'],
-                                "name",
-                                "",
-                                $param,
-                                'align="left"',
-                                $sortfield,
-                                $sortorder
-                                );
-        print_liste_field_titre($langs->trans("Size"),
-                                "",
-                                "",
-                                "",
-                                "",
-                                'align="right"'
-                                );
-        print_liste_field_titre($langs->trans("Date"),
-                                $_SERVER['PHP_SELF'],
-                                "date",
-                                "",
-                                $param,
-                                'align="center"',
-                                $sortfield,
-                                $sortorder
-                                );
-        print_liste_field_titre('',
-                                $_SERVER['PHP_SELF'],
-                                "",
-                                "",
-                                $param,
-                                'align="center"'
-                                );
+        print_liste_field_titre(
+            $langs->trans("Documents2"),
+            $_SERVER['PHP_SELF'],
+            "name",
+            "",
+            $param,
+            'align="left"',
+            $sortfield,
+            $sortorder
+        );
+        print_liste_field_titre(
+            $langs->trans("Size"),
+            "",
+            "",
+            "",
+            "",
+            'align="right"'
+        );
+        print_liste_field_titre(
+            $langs->trans("Date"),
+            $_SERVER['PHP_SELF'],
+            "date",
+            "",
+            $param,
+            'align="center"',
+            $sortfield,
+            $sortorder
+        );
+        print_liste_field_titre(
+            '',
+            $_SERVER['PHP_SELF'],
+            "",
+            "",
+            $param,
+            'align="center"'
+        );
         print_liste_field_titre('','','');
         print '</tr>';
         $nboflinks = count($links);

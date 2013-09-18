@@ -226,9 +226,11 @@ class Link extends CommonObject
 
     /**
      *  Loads all links from database
-     *  @param $links array of Link objects to fill
-     *  @param $objecttype type of the associated object in dolibarr
-     *  @param $objectid id of the associated object in dolibarr
+     *  @param  array   $links      array of Link objects to fill
+     *  @param  string  $objecttype type of the associated object in dolibarr
+     *  @param  int     $objectid   id of the associated object in dolibarr
+     *  @param  string  $sortfield  field used to sort
+     *  @param  string  $sortorder
      *  @return 1 if ok, 0 if no records, -1 if error
      * 
      * */
