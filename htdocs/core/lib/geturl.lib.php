@@ -17,9 +17,8 @@
  */
 
 /**
- *	\file			htdocs/core/lib/functions2.lib.php
- *	\brief			A set of functions for Dolibarr
- *					This file contains all rare functions.
+ *	\file			htdocs/core/lib/geturl.lib.php
+ *	\brief			This file contains functions dedicated to get URL.
  */
 
 /**
@@ -29,7 +28,7 @@
  * @param	string	$postorget			'POST', 'GET', 'HEAD'
  * @param	string	$param				Paraemeters of URL (x=value1&y=value2)
  * @param	string	$followlocation		1=Follow location, 0=Do not follow
- * @param	array	$addhearers			Array of string to add into header. Example: ('Accept: application/xrds+xml', ....)
+ * @param	array	$addheaders			Array of string to add into header. Example: ('Accept: application/xrds+xml', ....)
  * @return	array						Returns an associative array containing the response from the server array('content'=>response,'curl_error_no'=>errno,'curl_error_msg'=>errmsg...)
  */
 function getURLContent($url,$postorget='GET',$param='',$followlocation=1,$addheaders=array())
@@ -125,3 +124,4 @@ function getURLContent($url,$postorget='GET',$param='',$followlocation=1,$addhea
     return $rep;
 }
 
+?>
