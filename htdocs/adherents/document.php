@@ -165,23 +165,10 @@ if ($id > 0)
 
 		print '</div>';
 
-		/*
-		 * Confirmation suppression fichier
-		 */
-		if ($action == 'delete')
-		{
-			print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&urlfile='.urlencode(GETPOST("urlfile")), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile', '', 0, 1);
-		}
-
-
-		// Affiche formulaire upload
-		$formfile=new FormFile($db);
-		$formfile->form_attach_new_file(DOL_URL_ROOT.'/adherents/document.php?id='.$object->id,'',0,0,$user->rights->adherent->creer,50,$object);
-
-
-		// List of document
-		$formfile->list_of_documents($filearray,$object,'member','', 0, get_exdir($object->id,2,0,1).'/'.$object->id.'/');
-
+		$modulepart = 'member';
+		$permission = $user->rights->adherent->creer;
+		$param = '&id=' . $object->id;
+		include_once DOL_DOCUMENT_ROOT . '/core/tpl/doc2.tpl.php';
 		print "<br><br>";
 	}
 	else
