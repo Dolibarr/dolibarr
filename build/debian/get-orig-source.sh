@@ -12,8 +12,8 @@ uscan --noconf --force-download --no-symlink --verbose --destdir=$tmpdir $uscan_
 
 cd $tmpdir
 
-tgzfile=$(echo *.tar.gz)
-version=$(echo "$tgzfile" | perl -pi -e 's/^dolibarr_//; s/\.zip$//; s/_/./g; s/\+nmu1//; s/$/+dfsg/;')
+tgzfile=$(echo *.tgz)
+version=$(echo "$tgzfile" | perl -pi -e 's/^dolibarr_//; s/\.zip$//; s/_/./g; s/\+nmu1//; ')
 
 # Extract the zip file
 tar -xvf $tgzfile
