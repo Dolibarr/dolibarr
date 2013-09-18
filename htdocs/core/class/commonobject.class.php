@@ -3118,7 +3118,7 @@ abstract class CommonObject
 			if (empty($line->pa_ht) && isset($line->fk_fournprice) && !$force_price) {
 				$product = new ProductFournisseur($this->db);
 				if ($product->fetch_product_fournisseur_price($line->fk_fournprice))
-					$line->pa_ht = $product->fourn_unitprice;
+					$line->pa_ht = $product->fourn_unitprice * (1 - $product->fourn_remise_percent / 100);
 				if (isset($conf->global->MARGIN_TYPE) && $conf->global->MARGIN_TYPE == "2" && $product->fourn_unitcharges > 0)
 					$line->pa_ht += $product->fourn_unitcharges;
 			}
