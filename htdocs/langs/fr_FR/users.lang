@@ -117,3 +117,5 @@ DontDowngradeSuperAdmin=Seul un superadministrateur peut rétrograder un superad
 HierarchicalResponsible=Responsable hiérarchique
 HierarchicView=Vue hiérarchique
 UseTypeFieldToChange=Modifier le champ Type pour changer
+OpenIDURL=URL de connexion OpenID
+LoginUsingOpenID=Se logguer via OpenID
