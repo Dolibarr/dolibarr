@@ -149,26 +149,10 @@ if ($object->id)
 
 	print '</div>';
 
-	/*
-	 * Confirmation suppression fichier
-	 */
-	if ($action == 'delete')
-	{
-		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&urlfile='.urlencode(GETPOST("urlfile")), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile', '', 0, 1);
-	}
-
-	$formfile=new FormFile($db);
-
-	// Show upload form
-	$formfile->form_attach_new_file($_SERVER["PHP_SELF"].'?id='.$object->id,'',0,0,$user->rights->societe->creer,50,$object);
-
-    //TODO FACTORIZE THIS
-	// List of document
-	$formfile->list_of_documents($filearray,$object,'societe');
-
-	print "<br>";
-    $formfile->list_of_links($object);
-    print "<br>";
+	$modulepart = 'societe';
+	$permission = $user->rights->societe->creer;
+	$param = '&id=' . $object->id;
+	include DOL_DOCUMENT_ROOT . '/core/tpl/doc2.tpl.php';
 }
 else
 {
