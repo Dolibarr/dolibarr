@@ -72,7 +72,7 @@ if ($object->fetch($id))
 	$upload_dir = $conf->commande->dir_output . "/" . dol_sanitizeFileName($object->ref);
 }
 
-include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions.tpl.php';
+include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_pre_headers.tpl.php';
 
 
 /*
@@ -122,7 +122,7 @@ if ($id > 0 || ! empty($ref))
 		$modulepart = 'commande';
 		$permission = $user->rights->commande->creer;
 		$param = '&id=' . $object->id;
-		include_once DOL_DOCUMENT_ROOT . '/core/tpl/doc2.tpl.php';
+		include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_post_headers.tpl.php';
 	}
 	else
 	{

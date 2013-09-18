@@ -83,7 +83,7 @@ if (! $sortfield) $sortfield="name";
 /*
  * Actions
  */
-include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions.tpl.php';
+include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_pre_headers.tpl.php';
 
 
 /*
@@ -256,7 +256,7 @@ if ($act->id > 0)
 	$modulepart = 'actions';
 	$permission = $user->rights->agenda->myactions->create||$user->rights->agenda->allactions->create;
 	$param = '&id=' . $act->id;
-	include_once DOL_DOCUMENT_ROOT . '/core/tpl/doc2.tpl.php';
+	include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_post_headers.tpl.php';
 }
 else
 {

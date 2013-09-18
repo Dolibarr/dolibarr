@@ -74,7 +74,7 @@ if ($result < 0)
  * Actions
  */
 
-include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions.tpl.php';
+include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_pre_headers.tpl.php';
 
 
 /*
@@ -168,7 +168,7 @@ if ($id > 0)
 		$modulepart = 'member';
 		$permission = $user->rights->adherent->creer;
 		$param = '&id=' . $object->id;
-		include_once DOL_DOCUMENT_ROOT . '/core/tpl/doc2.tpl.php';
+		include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_post_headers.tpl.php';
 		print "<br><br>";
 	}
 	else

@@ -108,7 +108,7 @@ if ($id > 0 || ! empty($ref))
 	}
 }
 
-include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions.tpl.php';
+include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_pre_headers.tpl.php';
 
 /*
  * View
@@ -232,7 +232,7 @@ if ($object->id > 0)
 	$modulepart = 'projet';
 	$permission = $user->rights->projet->creer;
 	$param = '&id=' . $object->id;
-	include_once DOL_DOCUMENT_ROOT . '/core/tpl/doc2.tpl.php';
+	include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_post_headers.tpl.php';
 }
 else
 {

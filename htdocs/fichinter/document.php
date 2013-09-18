@@ -72,7 +72,7 @@ $modulepart='fichinter';
  * Actions
  */
 
-include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions.tpl.php';
+include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_pre_headers.tpl.php';
 
 
 /*
@@ -123,7 +123,7 @@ if ($object->id)
     $modulepart = 'ficheinter';
     $permission = $user->rights->ficheinter->creer;
     $param = '&id=' . $object->id;
-    include_once DOL_DOCUMENT_ROOT . '/core/tpl/doc2.tpl.php';
+    include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_post_headers.tpl.php';
 
 }
 else
