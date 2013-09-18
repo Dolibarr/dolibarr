@@ -1471,14 +1471,15 @@ abstract class CommonObject
 
     /**
      *	Update total_ht, total_ttc, total_vat, total_localtax1, total_localtax2 for an object (sum of lines).
-     *  Must be called at end of methods addline, updateline.
+     *  Must be called at end of methods addline or updateline.
      *
      *	@param	int		$exclspec          	Exclude special product (product_type=9)
      *  @param  int		$roundingadjust    	-1=Use default method (MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND if defined, or 0), 0=Force use total of rounding, 1=Force use rounding of total
      *  @param	int		$nodatabaseupdate	1=Do not update database. Update only properties of object.
+     *  @param	Societe	$seller				If roundingadjust is 0, it means we recalculate total for lines before calculating total for object. For this, we need seller object.
      *	@return	int    			           	<0 if KO, >0 if OK
      */
-    function update_price($exclspec=0,$roundingadjust=-1,$nodatabaseupdate=0)
+    function update_price($exclspec=0,$roundingadjust=-1,$nodatabaseupdate=0,$seller='')
     {
     	global $conf;
 
@@ -1495,7 +1496,7 @@ abstract class CommonObject
         $fieldlocaltax1='total_localtax1';
         $fieldlocaltax2='total_localtax2';
         $fieldup='subprice';
-        if ($this->element == 'facture_fourn' || $this->element == 'invoice_supplier') 
+        if ($this->element == 'facture_fourn' || $this->element == 'invoice_supplier')
         {
         	$fieldtva='tva';
         	$fieldup='pu_ht';
@@ -1535,7 +1536,8 @@ abstract class CommonObject
                 // By default, no adjustement is required ($forcedroundingmode = -1)
                 if ($forcedroundingmode == 0)	// Check if we need adjustement onto line for vat
                 {
-                	$tmpcal=calcul_price_total($obj->qty, $obj->up, $obj->remise_percent, $obj->vatrate, $obj->localtax1_tx, $obj->localtax2_tx, 0, 'HT', $obj->info_bits, $obj->product_type);
+                	$localtax_array=array($obj->localtax1_type,$obj->localtax1_tx,$obj->localtax2_type,$obj->localtax2_tx);
+                	$tmpcal=calcul_price_total($obj->qty, $obj->up, $obj->remise_percent, $obj->vatrate, $obj->localtax1_tx, $obj->localtax2_tx, 0, 'HT', $obj->info_bits, $obj->product_type, $seller, $localtax_array);
                 	$diff=price2num($tmpcal[1] - $obj->total_tva, 'MT', 1);
                 	if ($diff)
                 	{
@@ -1549,7 +1551,7 @@ abstract class CommonObject
                 		//
                 	}
                 }
-                
+
                 $this->total_ht        += $obj->total_ht;		// The only field visible at end of line detail
                 $this->total_tva       += $obj->total_tva;
                 $this->total_localtax1 += $obj->total_localtax1;
@@ -3249,7 +3251,7 @@ abstract class CommonObject
 
 	/**
 	 * Overwrite magic function to solve problem of cloning object that are kept as references
-	 * 
+	 *
 	 * @return void
 	 */
 	function __clone()
@@ -3264,6 +3266,6 @@ abstract class CommonObject
         	}
         }
     }
-    
+
 }
 ?>

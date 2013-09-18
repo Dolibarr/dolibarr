@@ -926,10 +926,10 @@ elseif ($action == 'builddoc')
 elseif ($action == 'calculate')
 {
 	$calculationrule=GETPOST('calculationrule');
-	
+
     $object->fetch($id);
     $object->fetch_thirdparty();
-	$result=$object->update_price(0,($calculationrule=='totalofround'?0:1));
+	$result=$object->update_price(0, ($calculationrule=='totalofround'?0:1), 0, $object->thirdparty);
     if ($result	<= 0)
     {
         dol_print_error($db,$result);
@@ -1441,21 +1441,21 @@ else
             }
 
             print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ValidateBill'), $text, 'confirm_valid', $formquestion, 1, 1, 240);
-            
+
         }
 
         // Confirmation set paid
         if ($action == 'paid')
         {
             print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ClassifyPaid'), $langs->trans('ConfirmClassifyPaidBill', $object->ref), 'confirm_paid', '', 0, 1);
-            
+
         }
 
         // Confirmation de la suppression de la facture fournisseur
         if ($action == 'delete')
         {
             print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('DeleteBill'), $langs->trans('ConfirmDeleteBill'), 'confirm_delete', '', 0, 1);
-            
+
         }
 
 
@@ -1961,7 +1961,7 @@ else
                 print '</td>';
 
                 print '<td align="center" width="16">';
-                if ($object->statut == 0) 
+                if ($object->statut == 0)
                 {
                 	print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=confirm_delete_line&amp;lineid='.$object->lines[$i]->rowid.'">'.img_delete().'</a>';
                 }

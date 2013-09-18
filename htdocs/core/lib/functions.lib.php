@@ -2871,13 +2871,13 @@ function get_localtax($tva, $local, $thirdparty_buyer="", $thirdparty_seller="")
  *  Get type and rate of localtaxes for a particular vat rate/country fo thirdparty
  *  TODO
  *  This function is called to retrieve type for building PDF. Such call of function must be removed.
- *  Instead this function must be called when adding a line to get array of localtax and type and
- *  provide it to function calcul_price_total.
+ *  Instead this function must be called when adding a line to get (array of localtax and type) and
+ *  provide it to the function calcul_price_total.
  *
  *  @param		real	$vatrate			VAT Rate
- *  @param		int		$local              Number of localtax (1 or 2, or 0 to return 1+2)
+ *  @param		int		$local              Number of localtax (1 or 2, or 0 to return 1 & 2)
  *  @param		int		$thirdparty         Company object
- *  @return		array    	  				array(Type of local tax (1 to 7 / 0 if not found), rate or amount of localtax)
+ *  @return		array    	  				array(localtax_type1(1-6 / 0 if not found), rate of localtax1, ...)
  */
 function getLocalTaxesFromRate($vatrate, $local, $thirdparty)
 {
@@ -2886,7 +2886,7 @@ function getLocalTaxesFromRate($vatrate, $local, $thirdparty)
 	dol_syslog("getLocalTaxesFromRate vatrate=".$vatrate." local=".$local." thirdparty id=".(is_object($thirdparty)?$thirdparty->id:''));
 
 	// Search local taxes
-	$sql  = "SELECT t.localtax1, t.localtax1_type, t.localtax2, t.localtax2_type,t.accountancy_code_sell,t.accountancy_code_buy";
+	$sql  = "SELECT t.localtax1, t.localtax1_type, t.localtax2, t.localtax2_type, t.accountancy_code_sell, t.accountancy_code_buy";
 	$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_pays as p";
 	$sql .= " WHERE t.fk_pays = p.rowid AND p.code = '".$thirdparty->country_code."'";
 	$sql .= " AND t.taux = ".$vatrate." AND t.active = 1";
