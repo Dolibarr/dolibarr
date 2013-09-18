@@ -1072,7 +1072,7 @@ function dol_add_file_process($upload_dir, $allowoverwrite=0, $donotupdatesessio
 				setEventMessage($langs->trans("ErrorFileNotLinked"), 'errors');
 			}
 		}
-    }
+	}
 	else
 	{
 		$langs->load("errors");
