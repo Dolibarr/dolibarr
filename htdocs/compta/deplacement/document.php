@@ -120,23 +120,10 @@ if ($object->id)
 
     print '</div>';
 
-    /*
-     * Confirmation suppression fichier
-     */
-    if ($action == 'delete')
-    {
-    	print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&urlfile='.urlencode($_GET["urlfile"]), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile', '', 0, 1);
-    	
-    }
-
-    // Affiche formulaire upload
-   	$formfile=new FormFile($db);
-	$formfile->form_attach_new_file(DOL_URL_ROOT.'/compta/deplacement/document.php?id='.$object->id,'',0,0,$user->rights->deplacement->creer,50,$object);
-
-
-	// List of document
-	$param='&id='.$object->id;
-	$formfile->list_of_documents($filearray,$object,'deplacement',$param);
+    $modulepart = 'deplacement';
+    $permission = $user->rights->deplacement->creer;
+    $param = '&id=' . $object->id;
+    include_once DOL_DOCUMENT_ROOT . '/core/tpl/doc2.tpl.php';
 
 }
 else

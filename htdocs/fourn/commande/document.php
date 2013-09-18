@@ -158,23 +158,11 @@ if ($object->id > 0)
 
 	print "</div>\n";
 
-	/*
-	 * Confirmation suppression fichier
-	*/
-	if ($action == 'delete')
-	{
-		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&urlfile='.urlencode($_GET["urlfile"]), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile', '', 0, 1);
-		
-	}
+	$modulepart = 'commande_fournisseur';
+	$permission = $user->rights->fournisseur->commande->creer;
+	$param = '&id=' . $object->id;
+	include_once DOL_DOCUMENT_ROOT . '/core/tpl/doc2.tpl.php';
 
-	// Affiche formulaire upload
-	$formfile=new FormFile($db);
-	$formfile->form_attach_new_file(DOL_URL_ROOT.'/fourn/commande/document.php?id='.$object->id,'',0,0,$user->rights->fournisseur->commande->creer,50,$object);
-
-
-	// List of document
-	$param='&id='.$object->id;
-	$formfile->list_of_documents($filearray,$object,'commande_fournisseur',$param);
 }
 else
 {

@@ -152,7 +152,7 @@ if ($object->id)
 	$modulepart = 'societe';
 	$permission = $user->rights->societe->creer;
 	$param = '&id=' . $object->id;
-	include DOL_DOCUMENT_ROOT . '/core/tpl/doc2.tpl.php';
+	include_once DOL_DOCUMENT_ROOT . '/core/tpl/doc2.tpl.php';
 }
 else
 {

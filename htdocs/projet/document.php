@@ -104,11 +104,6 @@ if ($object->id > 0)
 		$totalsize+=$file['size'];
 	}
 
-	if ($action == 'delete')
-	{
-		print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id."&urlfile=".urlencode(GETPOST("urlfile")),$langs->trans("DeleteAFile"),$langs->trans("ConfirmDeleteAFile"),"confirm_delete",'','',1);
-	}
-
 	print '<table class="border" width="100%">';
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/projet/liste.php">'.$langs->trans("BackToList").'</a>';
@@ -149,14 +144,10 @@ if ($object->id > 0)
 	print "</table>\n";
 	print "</div>\n";
 
-	// Affiche formulaire upload
-	$formfile=new FormFile($db);
-	$formfile->form_attach_new_file(DOL_URL_ROOT.'/projet/document.php?id='.$object->id,'',0,0,($userWrite>0),50,$object);
-
-
-	// List of document
-	$param='&id='.$object->id;
-	$formfile->list_of_documents($filearray,$object,'projet',$param,0,'',($userWrite>0));
+	$modulepart = 'projet';
+	$permission = ($userWrite > 0);
+	$param = '&id=' . $object->id;
+	include_once DOL_DOCUMENT_ROOT . '/core/tpl/doc2.tpl.php';
 
 }
 else

@@ -177,17 +177,10 @@ if ($object->id > 0)
 	print '</table>';
 	print '</div>';
 
-	
-	// Affiche formulaire upload
-	$formfile=new FormFile($db);
-	$formfile->form_attach_new_file($_SERVER['PHP_SELF'].'?facid='.$object->id, '', 0, 0, $user->rights->fournisseur->facture->creer, 50, $object, '', 0, dol_sanitizeFileName($object->ref.'_'.$object->ref_supplier.'___file__'));
-
-
-	// List of document
-	$param='&facid='.$object->id;
-	$ref=dol_sanitizeFileName($object->ref);
-	$formfile->list_of_documents($filearray,$object,'facture_fournisseur',$param,0,get_exdir($object->id,2,0).$ref.'/');
-
+	$modulepart = 'facture_fournisseur';
+	$permission = $user->rights->fournisseur->facture->creer;
+	$param = '&facid=' . $object->id;
+	include_once DOL_DOCUMENT_ROOT . '/core/tpl/doc2.tpl.php';
 }
 else
 {

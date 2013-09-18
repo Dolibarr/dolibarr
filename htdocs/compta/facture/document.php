@@ -147,24 +147,10 @@ if ($id > 0 || ! empty($ref))
 		print "</table>\n";
 		print "</div>\n";
 
-    	/*
-		 * Confirmation suppression fichier
-		 */
-		if ($action == 'delete')
-		{
-			print $form->formconfirm($_SERVER["PHP_SELF"].'?facid='.$id.'&urlfile='.urlencode(GETPOST("urlfile")), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile', '', 0, 1);
-			
-		}
-
-
-		// Affiche formulaire upload
-		$formfile=new FormFile($db);
-		$formfile->form_attach_new_file(DOL_URL_ROOT.'/compta/facture/document.php?facid='.$object->id,'',0,0,$user->rights->facture->creer,50,$object);
-
-
-		// List of document
-		$param='&facid='.$object->id;
-		$formfile->list_of_documents($filearray,$object,'facture',$param);
+		$modulepart = 'facture';
+		$permission = $user->rights->facture->creer;
+		$param = '&id=' . $object->id;
+		include_once DOL_DOCUMENT_ROOT . '/core/tpl/doc2.tpl.php';
 
 	}
 	else
