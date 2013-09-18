@@ -123,10 +123,6 @@ if ($mode == 'search')
 	if ($search_type > 0 && in_array($search_type,array('1,3','2,3'))) $sql .= " AND s.client IN (".$db->escape($search_type).")";
 	if ($search_type > 0 && in_array($search_type,array('4')))         $sql .= " AND s.fournisseur = 1";
 	if ($search_type == '0') $sql .= " AND s.client = 0 AND s.fournisseur = 0";
-	if (!empty($conf->barcode->enabled))
-    {
-    	$sql.= "AND s.barcode LIKE '".$db->escape($crit)."'";
-    }
 
 	$result=$db->query($sql);
 	if ($result)
