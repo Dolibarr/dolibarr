@@ -1,4 +1,5 @@
 # watch control file for uscan
 version=3
+
 #http://sf.net/dolibarr/dolibarr-(.+)\.tgz
-http://www.dolibarr.org/files/stable/package_debian-ubuntu/dolibarr_(.+)\.tar\.gz
+http://www.dolibarr.org/files/stable/standard/dolibarr-(.+)\.tgz
