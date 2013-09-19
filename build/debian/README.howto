@@ -10,9 +10,9 @@ with format .DEB (for Debian, Ubuntu, ...).
 
 # To build a debian package, you need first
 # With Ubuntu 12.04
-# apt-get install debhelper dpkg-source gpg lintian git-buildpackage pkg-php-tools schroot sbuild
+# apt-get install debhelper dpkg-source gpg lintian git-buildpackage pkg-php-tools schroot sbuild dh-linktree dh-make-php
 # With Debian 7
-# apt-get install debhelper dpkg gnupg lintian git-buildpackage pkg-php-tools schroot sbuild
+# apt-get install debhelper dpkg gnupg lintian git-buildpackage pkg-php-tools schroot sbuild dh-linktree dh-make-php
 
 
 # To generate gpg key for email used into changelog
@@ -132,18 +132,22 @@ Note: If there was errors solved manually, you may need to make a git commit
 For example: dch -v x.y.z-1 "New upstream release." for a new version
 
 Warning: Date must have format reported by "date -R"
-Warning: Entry added here is used by next step. Name and email must match value into debian/control file.
+Warning: Name and email must match value into debian/control file (Entry added here is used by next step).
 
 * We try to build package
+> rm -fr ../build-area
 > git-buildpackage -us -uc
+
+Note: You can use git-buildpackage -us -uc --git-ignore-new if you want to test build with uncommited file
+
 
 * If package .deb is ok:
 Note: If there was errors managed manually, you may need to make a git commit but do not use option "amend" previous commit
 > git-buildpackage --git-tag
-> git push --all
+> git push --all ou git push origin --all
 > git push --tags
 
-* Compilation par un développeur debian et envoi par
+* Compilation is then done by a debian developer and sent
 > sbuild ...
 > dput ...
 
@@ -172,19 +176,39 @@ from origin/upstream and origin/pristine.
 
 * If new upstream is available onto sourceforge, launch:
 > debian/get-orig-source.sh
-otherwise, just unzip the official .tgz into workspace dir.
+
+* Staying into git root directory, run
+> git-import-orig -vv ../dolibarr-3.3.4.tgz
 
 Note: If there was errors solved manually after get-orig-sources.sh, you may need to make a git commit
 
 * Add an entry into debian/changelog
 > dh "My comment" will add entry.
 For example: dch -v x.y.z-1 "New upstream release." for a new version
+Then modify changelog to replace "unstable" with "UNRELEASED".
 
 Warning: Date must have format reported by "date -R"
-Warning: Entry added here is used by next step. Name and email must match value into debian/control file.
+Warning: Name and email must match value into debian/control file (Entry added here is used by next step).
 
 * We try to build package
+> rm -fr ../build-area
 > git-buildpackage -us -uc
 
+Note: You can use git-buildpackage -us -uc --git-ignore-new if you want to test build with uncommited file
+
+* If package .deb is ok:
+Note: If there was errors managed manually, you may need to make a git commit but do not use option "amend" previous commit
+> git-buildpackage --git-tag
+> git push --all ou git push origin --all
+> git push --tags
+
+* Compilation is then done by a debian developer and sent
+> sbuild ...
+> dput ...
+
+* Go into page. You should see new package into unstable.
+http://packages.qa.debian.org/t/tcpdf.html
+
+* Package will be into release when test will be moved as stable.
 
 
