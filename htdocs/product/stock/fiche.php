@@ -191,9 +191,9 @@ if ($action == 'create')
 
 	// Zip / Town
 	print '<tr><td>'.$langs->trans('Zip').'</td><td>';
-	print $formcompany->select_ziptown($object->zip,'zipcode',array('town','selectcountry_id','departement_id'),6);
+	print $formcompany->select_ziptown($object->zip,'zipcode',array('town','selectcountry_id','state_id'),6);
 	print '</td><td>'.$langs->trans('Town').'</td><td>';
-	print $formcompany->select_ziptown($object->town,'town',array('zipcode','selectcountry_id','departement_id'));
+	print $formcompany->select_ziptown($object->town,'town',array('zipcode','selectcountry_id','state_id'));
 	print '</td></tr>';
 
 	// Country
@@ -510,9 +510,9 @@ else
 
 			// Zip / Town
 			print '<tr><td>'.$langs->trans('Zip').'</td><td>';
-			print $formcompany->select_ziptown($object->zip,'zipcode',array('town','selectcountry_id','departement_id'),6);
+			print $formcompany->select_ziptown($object->zip,'zipcode',array('town','selectcountry_id','state_id'),6);
 			print '</td><td>'.$langs->trans('Town').'</td><td>';
-			print $formcompany->select_ziptown($object->town,'town',array('zipcode','selectcountry_id','departement_id'));
+			print $formcompany->select_ziptown($object->town,'town',array('zipcode','selectcountry_id','state_id'));
 			print '</td></tr>';
 
 			// Country

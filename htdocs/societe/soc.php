@@ -129,7 +129,7 @@ if (empty($reshook))
         $object->zip                   = GETPOST('zipcode');
         $object->town                  = GETPOST('town');
         $object->country_id            = GETPOST('country_id');
-        $object->state_id              = GETPOST('departement_id');
+        $object->state_id              = GETPOST('state_id');
         $object->phone                 = GETPOST('phone');
         $object->fax                   = GETPOST('fax');
         $object->email                 = GETPOST('email');
@@ -588,7 +588,7 @@ else
         $object->address			= GETPOST('address');
         $object->zip				= GETPOST('zipcode');
         $object->town				= GETPOST('town');
-        $object->state_id			= GETPOST('departement_id');
+        $object->state_id			= GETPOST('state_id');
         $object->phone				= GETPOST('phone');
         $object->fax				= GETPOST('fax');
         $object->email				= GETPOST('email');
@@ -812,9 +812,9 @@ else
 
         // Zip / Town
         print '<tr><td>'.$langs->trans('Zip').'</td><td>';
-        print $formcompany->select_ziptown($object->zip,'zipcode',array('town','selectcountry_id','departement_id'),6);
+        print $formcompany->select_ziptown($object->zip,'zipcode',array('town','selectcountry_id','state_id'),6);
         print '</td><td>'.$langs->trans('Town').'</td><td>';
-        print $formcompany->select_ziptown($object->town,'town',array('zipcode','selectcountry_id','departement_id'));
+        print $formcompany->select_ziptown($object->town,'town',array('zipcode','selectcountry_id','state_id'));
         print '</td></tr>';
 
         // Country
@@ -827,7 +827,7 @@ else
         if (empty($conf->global->SOCIETE_DISABLE_STATE))
         {
             print '<tr><td>'.$langs->trans('State').'</td><td colspan="3">';
-            if ($object->country_id) print $formcompany->select_state($object->state_id,$object->country_code,'departement_id');
+            if ($object->country_id) print $formcompany->select_state($object->state_id,$object->country_code,'state_id');
             else print $countrynotdefined;
             print '</td></tr>';
         }
@@ -1069,7 +1069,7 @@ else
                 $object->zip					= GETPOST('zipcode');
                 $object->town					= GETPOST('town');
                 $object->country_id				= GETPOST('country_id')?GETPOST('country_id'):$mysoc->country_id;
-                $object->state_id				= GETPOST('departement_id');
+                $object->state_id				= GETPOST('state_id');
                 $object->phone					= GETPOST('phone');
                 $object->fax					= GETPOST('fax');
                 $object->email					= GETPOST('email');
@@ -1230,9 +1230,9 @@ else
 
             // Zip / Town
             print '<tr><td>'.$langs->trans('Zip').'</td><td>';
-            print $formcompany->select_ziptown($object->zip,'zipcode',array('town','selectcountry_id','departement_id'),6);
+            print $formcompany->select_ziptown($object->zip,'zipcode',array('town','selectcountry_id','state_id'),6);
             print '</td><td>'.$langs->trans('Town').'</td><td>';
-            print $formcompany->select_ziptown($object->town,'town',array('zipcode','selectcountry_id','departement_id'));
+            print $formcompany->select_ziptown($object->town,'town',array('zipcode','selectcountry_id','state_id'));
             print '</td></tr>';
 
             // Country

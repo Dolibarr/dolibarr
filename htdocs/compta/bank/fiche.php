@@ -71,7 +71,7 @@ if ($_POST["action"] == 'add')
 
     $account->currency_code   = trim($_POST["account_currency_code"]);
 
-    $account->state_id  	  = $_POST["account_departement_id"];
+    $account->state_id  	  = $_POST["account_state_id"];
     $account->country_id      = $_POST["account_country_id"];
 
     $account->min_allowed     = $_POST["account_min_allowed"];
