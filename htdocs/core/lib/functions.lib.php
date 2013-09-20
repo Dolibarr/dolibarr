@@ -3480,10 +3480,11 @@ function dol_html_entity_decode($a,$b,$c='UTF-8')
  * Replace htmlentities functions to manage errors
  * http://php.net/manual/en/function.htmlentities.php
  *
- * @param   string	$string			The input string.
- * @param   int		$flags
- * @param   string	$encoding
- * @return  bool	$double_encode	When double_encode is turned off PHP will not encode existing html entities
+ * @param   string  $string         The input string.
+ * @param   int     $flags          Flags(see PHP doc above)
+ * @param   string  $encoding       Encoding
+ * @param   bool    $double_encode  When double_encode is turned off PHP will not encode existing html entities
+ * @return  string  $ret            Encoded string
  */
 function dol_htmlentities($string, $flags=null, $encoding='UTF-8', $double_encode=false)
 {
