@@ -1666,6 +1666,41 @@ class Societe extends CommonObject
     }
 
     /**
+     *    Renvoie la liste des contacts de cette societe
+     *
+     *    @return    array    $contacts    tableau des contacts
+     */
+    function contact_array_objects()
+    {
+        require_once DOL_DOCUMENT_ROOT . '/contact/class/contact.class.php';
+        $contacts = array();
+
+        $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."socpeople WHERE fk_soc = '".$this->id."'";
+        $resql=$this->db->query($sql);
+        if ($resql)
+        {
+            $nump = $this->db->num_rows($resql);
+            if ($nump)
+            {
+                $i = 0;
+                while ($i < $nump)
+                {
+                    $obj = $this->db->fetch_object($resql);
+                    $contact = new Contact($this->db);
+                    $contact->fetch($obj->rowid);
+                    $contacts[] = $contact;
+                    $i++;
+                }
+            }
+        }
+        else
+        {
+            dol_print_error($this->db);
+        }
+        return $contacts;
+    }
+
+    /**
      *  Return property of contact from its id
      *
      *  @param	int		$rowid      id of contact
