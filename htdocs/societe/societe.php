@@ -77,7 +77,7 @@ if ($mode == 'search')
 
 	$sql = "SELECT s.rowid";
 	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
-	if ($search_sale || !$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+	if ($search_sale || (!$user->rights->societe->client->voir && !$socid)) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
     // We'll need this table joined to the select in order to filter by categ
     if ($search_categ) $sql.= ", ".MAIN_DB_PREFIX."categorie_societe as cs";
     $sql.= " WHERE s.entity IN (".getEntity('societe', 1).")";
@@ -195,7 +195,7 @@ if ($search_categ) $sql .= ", cs.fk_categorie, cs.fk_societe";
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s,";
 $sql.= " ".MAIN_DB_PREFIX."c_stcomm as st";
 // We'll need this table joined to the select in order to filter by sale
-if ($search_sale || !$user->rights->societe->client->voir) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+if ($search_sale || (!$user->rights->societe->client->voir && !$socid)) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 // We'll need this table joined to the select in order to filter by categ
 if ($search_categ) $sql.= ", ".MAIN_DB_PREFIX."categorie_societe as cs";
 $sql.= " WHERE s.fk_stcomm = st.id";
