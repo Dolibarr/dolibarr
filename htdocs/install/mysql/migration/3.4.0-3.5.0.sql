@@ -46,6 +46,10 @@ create table llx_commandedet_extrafields
 
 ALTER TABLE llx_commandedet_extrafields ADD INDEX idx_commandedet_extrafields (fk_object);
 
+
+ALTER TABLE llx_facturedet_rec ADD COLUMN info_bits	integer DEFAULT 0 after total_ttc;	-- TVA NPR ou non
+
+
 create table llx_facturedet_extrafields
 (
   rowid            integer AUTO_INCREMENT PRIMARY KEY,

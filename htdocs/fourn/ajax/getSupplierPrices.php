@@ -90,7 +90,7 @@ if (! empty($idprod))
 
 					$price = $unitprice;
 				}
-				if ($objp->unitcharges > 0 && ($conf->global->MARGIN_TYPE == "2")) 
+				if ($objp->unitcharges > 0 && ($conf->global->MARGIN_TYPE == "2"))
 				{
 					$title.=" + ";
 					$title.= price($objp->unitcharges,0,$langs,0,0,-1,$conf->currency);

@@ -8,6 +8,7 @@
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2008      Raphael Bertrand (Resultic)       <raphael.bertrand@resultic.fr>
  * Copyright (C) 2010-2011 Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2013      Cédric Salvador      <csalvador@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -2870,13 +2871,13 @@ function get_localtax($tva, $local, $thirdparty_buyer="", $thirdparty_seller="")
  *  Get type and rate of localtaxes for a particular vat rate/country fo thirdparty
  *  TODO
  *  This function is called to retrieve type for building PDF. Such call of function must be removed.
- *  Instead this function must be called when adding a line to get array of localtax and type and
- *  provide it to function calcul_price_total.
- *  
+ *  Instead this function must be called when adding a line to get (array of localtax and type) and
+ *  provide it to the function calcul_price_total.
+ *
  *  @param		real	$vatrate			VAT Rate
- *  @param		int		$local              Number of localtax (1 or 2, or 0 to return 1+2)
+ *  @param		int		$local              Number of localtax (1 or 2, or 0 to return 1 & 2)
  *  @param		int		$thirdparty         Company object
- *  @return		array    	  				array(Type of local tax (1 to 7 / 0 if not found), rate or amount of localtax)
+ *  @return		array    	  				array(localtax_type1(1-6 / 0 if not found), rate of localtax1, ...)
  */
 function getLocalTaxesFromRate($vatrate, $local, $thirdparty)
 {
@@ -2885,7 +2886,7 @@ function getLocalTaxesFromRate($vatrate, $local, $thirdparty)
 	dol_syslog("getLocalTaxesFromRate vatrate=".$vatrate." local=".$local." thirdparty id=".(is_object($thirdparty)?$thirdparty->id:''));
 
 	// Search local taxes
-	$sql  = "SELECT t.localtax1, t.localtax1_type, t.localtax2, t.localtax2_type,t.accountancy_code_sell,t.accountancy_code_buy";
+	$sql  = "SELECT t.localtax1, t.localtax1_type, t.localtax2, t.localtax2_type, t.accountancy_code_sell, t.accountancy_code_buy";
 	$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_pays as p";
 	$sql .= " WHERE t.fk_pays = p.rowid AND p.code = '".$thirdparty->country_code."'";
 	$sql .= " AND t.taux = ".$vatrate." AND t.active = 1";
@@ -3477,16 +3478,18 @@ function dol_html_entity_decode($a,$b,$c='UTF-8')
 
 /**
  * Replace htmlentities functions to manage errors
+ * http://php.net/manual/en/function.htmlentities.php
  *
- * @param   string	$a		Operand a
- * @param   string	$b		Operand b
- * @param   string	$c		Operand c
- * @return  string      	String encoded
+ * @param   string  $string         The input string.
+ * @param   int     $flags          Flags(see PHP doc above)
+ * @param   string  $encoding       Encoding
+ * @param   bool    $double_encode  When double_encode is turned off PHP will not encode existing html entities
+ * @return  string  $ret            Encoded string
  */
-function dol_htmlentities($a,$b,$c='UTF-8')
+function dol_htmlentities($string, $flags=null, $encoding='UTF-8', $double_encode=false)
 {
 	// We use @ to avoid warning on PHP4 that does not support entity decoding to UTF8;
-	$ret=@htmlentities($a,$b,$c);
+	$ret=@htmlentities($string, $flags, $encoding, $double_encode);
 	return $ret;
 }
 
@@ -4434,6 +4437,42 @@ if (! function_exists('getmypid'))
 	{
 		return rand(1,32768);
 	}
+}
+
+
+/**
+ * Natural search
+ *
+ * @param 	mixed 	$fields 	String or array of strings filled with the fields names in the SQL query
+ * @param 	string 	$value 		The value to look for
+ * @return 	string 	$res 		The statement to append to the SQL query
+ */
+function natural_search($fields, $value)
+{
+    global $db;
+    $crits = explode(' ', $value);
+    $res = "";
+    if (! is_array($fields)) {
+        $fields = array($fields);
+    }
+    $end = count($fields);
+    $end2 = count($crits);
+    $j = 0;
+    foreach ($crits as $crit) {
+        $i = 0;
+        foreach ($fields as $field) {
+            if ( $i > 0 && $i < $end){
+                $res .= " OR ";
+            }
+            $res .= $field . " LIKE '%" . $db->escape(trim($crit)) . "%'";
+            $i++;
+        }
+        if ($end > 1) $res .= ')';
+        if ($j < $end2 - 1) $res .= " AND ";
+        if ($end > 1 && $j < $end2 - 1) $res .= '(';
+        $j++;
+    }
+    return " AND " . ($end > 1? '(' : '') . $res;
 }
 
 ?>

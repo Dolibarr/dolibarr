@@ -37,8 +37,6 @@ htdocs/customleave
 htdocs/customgoogle
 htdocs/document
 htdocs/documents
-htdocs/includes/ckeditor/_source
-htdocs/includes/ckeditor/*_source.js
 htdocs/includes/fckeditor/_samples
 htdocs/includes/fckeditor/_testcases
 htdocs/includes/nusoap/samples

@@ -1,6 +1,6 @@
 #!/bin/sh
-# run with
-# debian/get-orig-source.sh [x.y.z]
+# Scan for new official sources and download file
+# run with debian/get-orig-source.sh [x.y.z]
 
 tmpdir=$(mktemp -d)
 echo "tmpdir = $tmpdir"
@@ -12,29 +12,12 @@ uscan --noconf --force-download --no-symlink --verbose --destdir=$tmpdir $uscan_
 
 cd $tmpdir
 
-tgzfile=$(echo *.tar.gz)
-version=$(echo "$tgzfile" | perl -pi -e 's/^dolibarr_//; s/\.zip$//; s/_/./g; s/\+nmu1//; s/$/+dfsg/;')
-
-# Extract the zip file
-tar -xvf $tgzfile
-srcdir=$(find . -maxdepth 1 -mindepth 1 -type d | sed -e 's/\.\///')
-
-if [ ! -d "$srcdir" ]; then
-    echo "ERROR: Failed to identify the extracted directory in $tmpdir (got $srcdir)" >&2
-    rm -rf $tmpdir
-    exit 1
-fi
-
-# Repack as tar.xz
-tar Jcf dolibarr_${version}.orig.tar.xz $srcdir
+tgzfile=$(echo *.tgz)
+version=$(echo "$tgzfile" | perl -pi -e 's/^dolibarr-//; s/\.tgz$//; s/_/./g; s/\+nmu1//; ')
 
 cd - >/dev/null
 
-if [ -e ../dolibarr_${version}.orig.tar.xz ]; then
-    echo "Not overwriting ../dolibarr_${version}.orig.tar.xz";
-else
-    echo "Created ../dolibarr_${version}.orig.tar.xz"
-    mv $tmpdir/dolibarr_${version}.orig.tar.xz ../
-fi
+mv $tmpdir/dolibarr-${version}.tgz ../
+echo "File ../dolibarr-${version}.tgz is ready for git-import"
 
-#rm -rf $tmpdir
+rm -rf $tmpdir

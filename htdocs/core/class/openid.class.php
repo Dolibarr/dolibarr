@@ -1,6 +1,5 @@
 <?php
-/* Copyright (C) 2007-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2007-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+/* Copyright (C) 2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,101 +16,10 @@
  */
 
 /**
- *      \file       htdocs/core/login/functions_myopenid.php
+ *      \file       htdocs/core/class/openid.class.php
  *      \ingroup    core
- *      \brief      Authentication functions for OpenId mode
+ *      \brief      Class to manage authentication with OpenId
  */
-
-
-/**
- * Check validity of user/password/entity
- * If test is ko, reason must be filled into $_SESSION["dol_loginmesg"]
- *
- * @param	string	$usertotest		Login
- * @param	string	$passwordtotest	Password
- * @param   int		$entitytotest   Number of instance (always 1 if module multicompany not enabled)
- * @return	string					Login if OK, '' if KO
- */
-function check_user_password_myopenid($usertotest,$passwordtotest,$entitytotest)
-{
-    global $_POST,$db,$conf,$langs;
-
-    dol_syslog("functions_dolibarr::check_user_password_myopenid usertotest=".$usertotest);
-
-    $login='';
-
-    // Get identity from user and redirect browser to OpenID Server
-    if (isset($_POST['username']))
-    {
-        $openid = new SimpleOpenID();
-        $openid->SetIdentity($_POST['username']);
-        $protocol = ($conf->file->main_force_https ? 'https://' : 'http://');
-        $openid->SetTrustRoot($protocol . $_SERVER["HTTP_HOST"]);
-        $openid->SetRequiredFields(array('email','fullname'));
-        $_SESSION['dol_entity'] = $_POST["entity"];
-        //$openid->SetOptionalFields(array('dob','gender','postcode','country','language','timezone'));
-        if ($openid->GetOpenIDServer())
-        {
-            $openid->SetApprovedURL($protocol . $_SERVER["HTTP_HOST"] . $_SERVER["SCRIPT_NAME"]);      // Send Response from OpenID server to this script
-            $openid->Redirect();     // This will redirect user to OpenID Server
-        }
-        else
-        {
-            $error = $openid->GetError();
-            return false;
-        }
-        return false;
-    }
-    // Perform HTTP Request to OpenID server to validate key
-    elseif($_GET['openid_mode'] == 'id_res')
-    {
-        $openid = new SimpleOpenID();
-        $openid->SetIdentity($_GET['openid_identity']);
-        $openid_validation_result = $openid->ValidateWithServer();
-        if ($openid_validation_result == true)
-        {
-            // OK HERE KEY IS VALID
-
-            $sql ="SELECT login";
-            $sql.=" FROM ".MAIN_DB_PREFIX."user";
-            $sql.=" WHERE openid = '".$db->escape($_GET['openid_identity'])."'";
-            $sql.=" AND entity IN (0," . ($_SESSION["dol_entity"] ? $_SESSION["dol_entity"] : 1) . ")";
-
-            dol_syslog("functions_dolibarr::check_user_password_myopenid sql=".$sql);
-            $resql=$db->query($sql);
-            if ($resql)
-            {
-                $obj=$db->fetch_object($resql);
-                if ($obj)
-                {
-                    $login=$obj->login;
-                }
-            }
-        }
-        else if($openid->IsError() == true)
-        {
-            // ON THE WAY, WE GOT SOME ERROR
-            $error = $openid->GetError();
-            return false;
-        }
-        else
-        {
-            // Signature Verification Failed
-            //echo "INVALID AUTHORIZATION";
-            return false;
-        }
-    }
-    else if ($_GET['openid_mode'] == 'cancel')
-    {
-        // User Canceled your Request
-        //echo "USER CANCELED REQUEST";
-        return false;
-    }
-
-    return $login;
-}
-
-
 
 /**
  * 	Class to manage OpenID
@@ -416,9 +324,22 @@ class SimpleOpenID
         return $ret;
     }
 
-    function GetOpenIDServer()
+
+    /**
+     * Get openid server
+     *
+     * @param	string	$url	Url to found endpoint
+     * @return 	string			Endpoint
+     */
+    function GetOpenIDServer($url='')
     {
-        $response = $this->CURL_Request($this->openid_url_identity);
+    	global $conf;
+
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
+		if (empty($url)) $url=$conf->global->MAIN_AUTHENTICATION_OPENID_URL;
+
+        $response = getURLContent($url);
+
         list($servers, $delegates) = $this->HTML2OpenIDServer($response);
         if (count($servers) == 0){
             $this->ErrorStore('OPENID_NOSERVERSFOUND');
@@ -517,6 +438,61 @@ class SimpleOpenID
             return false;
         }
     }
+
+
+
+
+    /**
+     * Get XRDS response and set possible servers.
+     *
+     * @param	string	$url	Url of endpoint to request
+     * @return 	string			First endpoint OpenID server found. False if it failed to found.
+     */
+    function sendDiscoveryRequestToGetXRDS($url='')
+    {
+    	global $conf;
+
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
+		if (empty($url)) $url=$conf->global->MAIN_AUTHENTICATION_OPENID_URL;
+
+		dol_syslog(get_class($this).'::sendDiscoveryRequestToGetXRDS get XRDS');
+
+		$addheaders=array('Accept: application/xrds+xml');
+        $response = getURLContent($url, 'GET', '', 1, $addheaders);
+		/* response should like this:
+		<?xml version="1.0" encoding="UTF-8"?>
+		<xrds:XRDS xmlns:xrds="xri://$xrds" xmlns="xri://$xrd*($v*2.0)">
+		<XRD>
+		<Service priority="0">
+		<Type>http://specs.openid.net/auth/2.0/server</Type>
+		<Type>http://openid.net/srv/ax/1.0</Type>
+		...
+		<URI>https://www.google.com/accounts/o8/ud</URI>
+		</Service>
+		</XRD>
+		</xrds:XRDS>
+		*/
+		$content=$response['content'];
+
+        $server='';
+        if (preg_match('/'.preg_quote('<URI>','/').'(.*)'.preg_quote('</URI>','/').'/is', $content, $reg))
+        {
+        	$server=$reg[1];
+        }
+
+        if (empty($server))
+        {
+            $this->ErrorStore('OPENID_NOSERVERSFOUND');
+            return false;
+        }
+        else
+       {
+       		dol_syslog(get_class($this).'::sendDiscoveryRequestToGetXRDS found endpoint = '.$server);
+        	$this->SetOpenIDServer($server);
+        	return $server;
+	    }
+    }
+
 }
 
 ?>

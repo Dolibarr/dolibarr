@@ -126,6 +126,7 @@ ErrorFailedToAddContact=Echec à l'ajout du contact
 ErrorDateMustBeBeforeToday=La date ne peut pas être supérieure à aujourd'hui
 ErrorPaymentModeDefinedToWithoutSetup=Un mode de paiement a été défini de type %s mais la configuration du module Facture n'a pas été complété pour définir les informations afficher pour ce mode de paiment.
 ErrorPHPNeedModule=Erreur, votre PHP doit avoir le module <b>%s</b> installé pour utiliser cette fonctionnalité.
+ErrorOpenIDSetupNotComplete=Vous avez configuré Dolibarr pour accepter l'authentication OpenID, mais l'URL du service OpenID n'est pas défini dans la constante %s
 
 # Warnings
 WarningMandatorySetupNotComplete=Les informations de configuration obligatoire doivent être renseignées

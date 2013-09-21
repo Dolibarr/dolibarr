@@ -2222,6 +2222,7 @@ class Commande extends CommonOrder
 	 * Classify the order as invoiced
 	 *
 	 * @return     int     <0 if ko, >0 if ok
+	 * @deprecated
 	 */
 	function classer_facturee()
 	{

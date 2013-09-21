@@ -6,8 +6,8 @@ English Dolibarr ChangeLog
 For users:
 - New: Add hidden option BANK_DISABLE_DIRECT_INPUT.
 - New: More options to select status of users into select user list.
-- New: [ task #862 ] Add ODT on shipments
-- New: [ task #149 ] Add # of notes and attachments in tabs
+- New: [ task #862 ] Add ODT on shipments.
+- New: [ task #149 ] Add # of notes and attachments in tabs.
 - New: Can edit customer ref at eny time.
 - New: [ task #877 ] Reorganize menus.
 - New: [ task #858 ] Holiday module: note on manual holiday assignation.
@@ -40,21 +40,23 @@ For users:
 - New: Add Maghreb regions and departments.
 - New: A more responsive desgin for statistic box of home page.
 - Qual: Implement same rule for return value of all command line scripts (0 when success, <>0 if error).
-- New: [ task #1005 ] Adapting to Spanish legislation bill numbering
-- New: [ task #1011 ] Now supplier order and invoice deal with payment terms and mode
-- New: [ task #1014 ] Add option to recursivly add parent category
-- New: [ task #1016 ] Can define a specific numbering for deposits 
-- New: [ task #918 ] Stock replenishment
-- Fix: [ bug #992 ] Proforma invoices don't have a separated numeric count
-- New: Add pdf link into supplier invoice list and supplier order list
-- New: Genrate auto the PDF for supplier invoice
-- New: Add category into filter webservice thirdparty method getListOfThirdParties
-- New: Allow to define margin or mark rate during quoting, ordering, invoicing
-- New: User permissions on margin module
-- New: Add ref supplier into muscadet model
+- New: [ task #1005 ] Adapting to Spanish legislation bill numbering.
+- New: [ task #1011 ] Now supplier order and invoice deal with payment terms and mode.
+- New: [ task #1014 ] Add option to recursivly add parent category.
+- New: [ task #1016 ] Can define a specific numbering for deposits. 
+- New: [ task #918 ] Stock replenishment.
+- Fix: [ bug #992 ] Proforma invoices don't have a separated numeric count.
+- New: Add pdf link into supplier invoice list and supplier order list.
+- New: Genrate auto the PDF for supplier invoice.
+- New: Add category into filter webservice thirdparty method getListOfThirdParties.
+- New: Allow to define margin or mark rate during quoting, ordering, invoicing.
+- New: User permissions on margin module.
+- New: Add ref supplier into muscadet model.
 - New: Can use tag {mm} before {yy} even when there is a reset into numbering masks.
-- New: [ task #1060 ] Register fields localtax(1|2)_type into details tables
- 
+- New: [ task #1060 ] Register fields localtax(1|2)_type into details tables.
+- New: [ task #923 ] Localtax support for ODT templates. 
+- New: [ task #90 ] Barcode search.
+
 For translators:
 - Qual: Normalized sort order of all languages files with english reference files.
 - New: Add language code files for South Africa, France new caledonia.
@@ -103,6 +105,8 @@ All content added must be tagged by a '<div>' with css class="login_block_elem"
 this was not a good pratice, since object->id is already known, there is no need to provide id as 
 parameter. All methods addline in this case were modified to remove this parameter. 
 
+4) Method ->classer_facturee() is deprecated. It must be replace with ->classifyBilled().
+
 
 ***** ChangeLog for 3.4.1 compared to 3.4.0 *****
 Fix: Display buying price on line edit when no supplier price is defined
@@ -127,7 +131,7 @@ Fix: Edit propal line was losing product supplier price id
 Fix: Delete linked element to supplier invoice when deleted 
 Fix: [ bug #1061 ] Bad info shipped products
 Fix: [ bug #1062 ] Documents lost in propals and contracts validating
-Fix: Supplier price displayed on document lines didnt take discount
+Fix: Supplier price displayed on document lines and margin infos didnt take discount
 Qual: Add travis-ci integration
 
 

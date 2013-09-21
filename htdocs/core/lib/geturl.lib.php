@@ -17,20 +17,21 @@
  */
 
 /**
- *	\file			htdocs/core/lib/functions2.lib.php
- *	\brief			A set of functions for Dolibarr
- *					This file contains all rare functions.
+ *	\file			htdocs/core/lib/geturl.lib.php
+ *	\brief			This file contains functions dedicated to get URL.
  */
 
 /**
  * Function get content from an URL (use proxy if proxy defined)
  *
- * @param	string	$url 			URL to call.
- * @param	string	$postorget		'post' = POST, 'get='GET'
- * @param	string	$param			Paraemeters of URL (x=value1&y=value2)
- * @return	array					returns an associtive array containing the response from the server.
+ * @param	string	$url 				URL to call.
+ * @param	string	$postorget			'POST', 'GET', 'HEAD'
+ * @param	string	$param				Paraemeters of URL (x=value1&y=value2)
+ * @param	string	$followlocation		1=Follow location, 0=Do not follow
+ * @param	array	$addheaders			Array of string to add into header. Example: ('Accept: application/xrds+xml', ....)
+ * @return	array						Returns an associative array containing the response from the server array('content'=>response,'curl_error_no'=>errno,'curl_error_msg'=>errmsg...)
  */
-function getURLContent($url,$postorget='GET',$param='')
+function getURLContent($url,$postorget='GET',$param='',$followlocation=1,$addheaders=array())
 {
     //declaring of global variables
     global $conf, $langs;
@@ -52,6 +53,11 @@ function getURLContent($url,$postorget='GET',$param='')
     curl_setopt($ch, CURLOPT_URL, $url);
     curl_setopt($ch, CURLOPT_VERBOSE, 1);
     curl_setopt($ch, CURLOPT_SSLVERSION, 3); // Force SSLv3
+	curl_setopt($ch, CURLOPT_USERAGENT, 'Dolibarr geturl function');
+
+	curl_setopt($ch, CURLOPT_FOLLOWLOCATION, ($followlocation?true:false));
+	if (count($addheaders)) curl_setopt($ch, CURLOPT_HTTPHEADER, $addheaders);
+	curl_setopt($ch, CURLINFO_HEADER_OUT, true);	// To be able to retrieve request header and log it
 
     //turning off the server and peer verification(TrustManager Concept).
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
@@ -60,9 +66,21 @@ function getURLContent($url,$postorget='GET',$param='')
     curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, empty($conf->global->MAIN_USE_CONNECT_TIMEOUT)?5:$conf->global->MAIN_USE_CONNECT_TIMEOUT);
     curl_setopt($ch, CURLOPT_TIMEOUT, empty($conf->global->MAIN_USE_RESPONSE_TIMEOUT)?30:$conf->global->MAIN_USE_RESPONSE_TIMEOUT);
 
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER,1);
-    if ($postorget == 'POST') curl_setopt($ch, CURLOPT_POST, 1);
-    else curl_setopt($ch, CURLOPT_POST, 0);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER,1);		// We want response
+    if ($postorget == 'POST')
+    {
+    	curl_setopt($ch, CURLOPT_POST, 1);	// POST
+    	curl_setopt($ch, CURLOPT_POSTFIELDS, $param);	// Setting param x=a&y=z as POST fields
+    }
+    else if ($postorget == 'HEAD')
+    {
+    	curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'HEAD'); // HTTP request is 'HEAD'
+    	curl_setopt($ch, CURLOPT_NOBODY, true);
+    }
+    else
+    {
+    	curl_setopt($ch, CURLOPT_POST, 0);			// GET
+    }
 
     //if USE_PROXY constant set to TRUE in Constants.php, then only proxy will be enabled.
     if ($USE_PROXY)
@@ -73,18 +91,18 @@ function getURLContent($url,$postorget='GET',$param='')
         if ($PROXY_USER) curl_setopt($ch, CURLOPT_PROXYUSERPWD, $PROXY_USER. ":" . $PROXY_PASS);
     }
 
-    //setting the nvpreq as POST FIELD to curl
-    curl_setopt($ch, CURLOPT_POSTFIELDS, $param);
-
     //getting response from server
     $response = curl_exec($ch);
+
+    $status = curl_getinfo($ch, CURLINFO_HEADER_OUT);	// Reading of request must be done after sending request
+    dol_syslog("getURLContent request=".$status);
+
+    dol_syslog("getURLContent response=".$response);
 
     $rep=array();
     $rep['content']=$response;
     $rep['curl_error_no']='';
     $rep['curl_error_msg']='';
-    
-    dol_syslog("getURLContent response=".$response);
 
     if (curl_errno($ch))
     {
@@ -98,7 +116,7 @@ function getURLContent($url,$postorget='GET',$param='')
     {
     	$info = curl_getinfo($ch);
     	$rep['header_size']=$info['header_size'];
-    	
+
     	//closing the curl
         curl_close($ch);
     }
@@ -106,3 +124,4 @@ function getURLContent($url,$postorget='GET',$param='')
     return $rep;
 }
 
+?>

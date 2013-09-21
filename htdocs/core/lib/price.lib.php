@@ -72,9 +72,9 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocalt
 
 	// Clean parameters
 	if (empty($txtva)) $txtva=0;
-	
 	if (empty($seller) || ! is_object($seller))
 	{
+		dol_syslog("calcul_price_total Warning: function is called with parameter seller that is missing", LOG_WARNING);
 		if (! is_object($mysoc))	// mysoc may be not defined (during migration process)
 		{
 			$mysoc=new Societe($db);
@@ -83,9 +83,13 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocalt
 		$seller=$mysoc;	// If sell is done to a customer, $seller is not provided, we use $mysoc
 		//var_dump($seller->country_id);exit;
 	}
+	if (empty($localtaxes_array) || ! is_array($localtaxes_array))
+	{
+		dol_syslog("calcul_price_total Warning: function is called with parameter localtaxes_array that is missing", LOG_WARNING);
+	}
 	// Too verbose. Enable for debug only
 	//dol_syslog("calcul_price_total qty=".$qty." pu=".$pu." remiserpercent_ligne=".$remise_percent_ligne." txtva=".$txtva." uselocaltax1_rate=".$uselocaltax1_rate." uselocaltax2_rate=".$uselocaltax2_rate);
-	
+
 	$countryid=$seller->country_id;
 	if ($uselocaltax1_rate < 0) $uselocaltax1_rate=$seller->localtax1_assuj;
 	if ($uselocaltax2_rate < 0) $uselocaltax2_rate=$seller->localtax2_assuj;
@@ -93,7 +97,7 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocalt
 	// Now we search localtaxes information ourself (rates and types).
 	$localtax1_type=0;
 	$localtax2_type=0;
-	
+
 	if (is_array($localtaxes_array))
 	{
 		$localtax1_type = $localtaxes_array[0];

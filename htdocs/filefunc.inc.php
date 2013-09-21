@@ -145,12 +145,13 @@ if (empty($dolibarr_main_data_root))
 define('DOL_CLASS_PATH', 'class/');									// Filesystem path to class dir (defined only for some code that want to be compatible with old versions without this parameter)
 define('DOL_DATA_ROOT', $dolibarr_main_data_root);					// Filesystem data (documents)
 define('DOL_DOCUMENT_ROOT', $dolibarr_main_document_root);			// Filesystem core php (htdocs)
-// Define DOL_MAIN_URL_ROOT and DOL_URL_ROOT
+// Try to autodetec DOL_MAIN_URL_ROOT and DOL_URL_ROOT.
+// Note: autodetect works only in case 1, 2, 3 and 4 of phpunit test CoreTest.php. For case 5, 6, only setting value into conf.php will works.
 $tmp='';
 $found=0;
-$real_dolibarr_main_document_root=str_replace('\\','/',realpath($dolibarr_main_document_root));	// A) Ex: C:/xxx/dolibarr/htdocs
-$pathroot=$_SERVER["DOCUMENT_ROOT"];															// B) Ex: C:/Program Files/wamp/www/
-$paths=explode('/',str_replace('\\','/',$_SERVER["SCRIPT_NAME"]));								// C) Ex: /dolibarr/htdocs/admin/system/phpinfo.php
+$real_dolibarr_main_document_root=str_replace('\\','/',realpath($dolibarr_main_document_root));	// A) Value found into config file, to say where are store htdocs files. Ex: C:/xxx/dolibarr, C:/xxx/dolibarr/htdocs
+$pathroot=$_SERVER["DOCUMENT_ROOT"];															// B) Value reported by web server setup, to say where is root of web server instance. Ex: C:/xxx/dolibarr, C:/xxx/dolibarr/htdocs
+$paths=explode('/',str_replace('\\','/',$_SERVER["SCRIPT_NAME"]));								// C) Value reported by web server, to say full path on filesystem of a file. Ex: /dolibarr/htdocs/admin/system/phpinfo.php
 $concatpath='';
 foreach($paths as $tmppath)	// We check to find (B+start of C)=A
 {
