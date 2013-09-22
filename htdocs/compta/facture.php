@@ -875,14 +875,18 @@ else if ($action == 'add' && $user->rights->facture->creer)
 
 				if ($id > 0)
 				{
-					//If deposit invoice
-					if ($_POST['type'] == 3) {
+					// If deposit invoice
+					if ($_POST['type'] == 3)
+					{
 						$typeamount=GETPOST('typedeposit','alpha');
 						$valuedeposit=GETPOST('valuedeposit','int');
 
-						if ($typeamount=='amount') {
+						if ($typeamount=='amount')
+						{
 							$amountdeposit=$valuedeposit;
-						}else {
+						}
+						else
+						{
 							$amountdeposit=0;
 
 							dol_include_once('/'.$element.'/class/'.$subelement.'.class.php');
@@ -890,19 +894,20 @@ else if ($action == 'add' && $user->rights->facture->creer)
 							$classname = ucfirst($subelement);
 							$srcobject = new $classname($db);
 
-							dol_syslog("Try to find source object origin=".$object->origin." originid=".$object->origin_id." to add deposit line");
+							dol_syslog("Try to find source object origin=".$object->origin." originid=".$object->origin_id." to add deposit lines");
 							$result=$srcobject->fetch($object->origin_id);
 							if ($result > 0)
 							{
 								$totalamount=0;
 								$lines = $srcobject->lines;
-								$num=count($lines);
-								for ($i=0;$i<$num;$i++)
+								$numlines=count($lines);
+								for ($i=0; $i<$numlines; $i++)
 								{
-									$totalamount=+$lines[$i]->subprice;
+									$totalamount += $lines[$i]->subprice;
 								}
 
-								if ($totalamount!=0) {
+								if ($totalamount!=0)
+								{
 									$amountdeposit=($totalamount*$valuedeposit)/100;
 								}
 							}
@@ -1585,7 +1590,7 @@ else if ($action == 'down' && $user->rights->facture->creer)
 
 /*
  * Add file in email form
-*/
+ */
 if (GETPOST('addfile'))
 {
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -1600,7 +1605,7 @@ if (GETPOST('addfile'))
 
 /*
  * Remove file in email form
-*/
+ */
 if (! empty($_POST['removedfile']))
 {
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -1616,7 +1621,7 @@ if (! empty($_POST['removedfile']))
 
 /*
  * Send mail
-*/
+ */
 if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_POST['removedfile'] && ! $_POST['cancel'])
 {
 	$langs->load('mails');
@@ -1790,7 +1795,7 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 
 /*
  * Generate document
-*/
+ */
 else if ($action == 'builddoc')	// En get ou en post
 {
 	$object->fetch($id);
@@ -2019,7 +2024,7 @@ if ($action == 'create')
 			$remise_percent 	= (! empty($objectsrc->remise_percent)?$objectsrc->remise_percent:(! empty($soc->remise_percent)?$soc->remise_percent:0));
 			$remise_absolue 	= (! empty($objectsrc->remise_absolue)?$objectsrc->remise_absolue:(! empty($soc->remise_absolue)?$soc->remise_absolue:0));
 			$dateinvoice		= empty($conf->global->MAIN_AUTOFILL_DATE)?-1:0;
-			
+
 			//Replicate extrafields
 			$objectsrc->fetch_optionals($originid);
 			$object->array_options=$objectsrc->array_options;
@@ -2058,8 +2063,7 @@ if ($action == 'create')
 	// Ref
 	print '<tr><td class="fieldrequired">'.$langs->trans('Ref').'</td><td colspan="2">'.$langs->trans('Draft').'</td></tr>';
 
-	// Tiers
-	print '<tr>';
+	// Thirdparty
 	print '<td class="fieldrequired">'.$langs->trans('Customer').'</td>';
 	if($soc->id > 0)
 	{
@@ -2076,7 +2080,7 @@ if ($action == 'create')
 	}
 	print '</tr>'."\n";
 
-	// Factures predefinies
+	// Predefined invoices
 	if (empty($origin) && empty($originid) && $socid > 0)
 	{
 		$sql = 'SELECT r.rowid, r.titre, r.total_ttc';
@@ -2183,10 +2187,13 @@ if ($action == 'create')
 		print '</td><td valign="middle" class="nowrap">';
 		$desc=$form->textwithpicto($langs->trans("InvoiceDeposit"),$langs->transnoentities("InvoiceDepositDesc"),1);
 		print '<table class="nobordernopadding"><tr><td>'.$desc.'</td>';
-		if (($origin=='propal') || ($origin=='commande')) {
-			print '<td><select name="typedeposit"><option value="amount">'.$langs->trans('FixAmount').'</option>';
-			print '<option value="variable">'.$langs->trans('VarAmount').'</option></select></td>';
-			print '<td>'.$langs->trans('Value').':<input type="text" name="valuedeposit" size="3" value="'.GETPOST('valuedeposit','int').'"/>';
+		if (($origin=='propal') || ($origin=='commande'))
+		{
+			print '<td class="nowrap" style="padding-left: 5px">';
+			$arraylist=array('amount'=>'FixAmount','variable'=>'VarAmount');
+			print $form->selectarray('typedeposit',$arraylist, GETPOST('typedeposit'), 0, 0, 0, '', 1);
+			print '</td>';
+			print '<td class="nowrap" style="padding-left: 5px">'.$langs->trans('Value').':<input type="text" name="valuedeposit" size="3" value="'.GETPOST('valuedeposit','int').'"/>';
 		}
 		print '</td></tr></table>';
 		print '</td></tr>'."\n";
@@ -2455,6 +2462,7 @@ if ($action == 'create')
 		print '</table>';
 	}
 
+	print '<br>';
 }
 else if ($id > 0 || ! empty($ref))
 {
@@ -3722,24 +3730,24 @@ else if ($id > 0 || ! empty($ref))
 
 				if (empty($somethingshown) && $object->statut > 0)
 				{
-				
+
 				print '<a href="#" onClick="lier_commande(commande)">'.$langs->trans('LinkedOrder').'</a>';
-				
+
 				print '<div id="commande" style="display:none">';
 					{
-					
+
 					$sql = "SELECT s.rowid as socid, s.nom as name, s.client, c.rowid, c.ref, c.ref_client, c.total_ht";
 					$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 					$sql.= ", ".MAIN_DB_PREFIX."commande as c";
 					$sql.= ' WHERE c.fk_soc = '.$soc->id.'';
-				
+
 					$result = $db->query($sql);
 					if ($result)
 					{
 						$num = $db->num_rows($result);
 						$i = 0;
-					
-					
+
+
 					print_titre($langs->trans("LinkedOrder"));
 					print  	'<table><tr class="liste_titre">';
 					print   '<td class="nowrap"></td>';
@@ -3762,30 +3770,30 @@ else if ($id > 0 || ! empty($ref))
 							print '<td>'.$objp->ref_client.'</td>';
 							print '<td>'.price($objp->total_ht).'</td>';
 							print '<td>'.$objp->name.'</td>';
-							print '</td>';	
+							print '</td>';
 						}
-						
-							$i++;		
+
+							$i++;
 					}
 						print '</table>';
 						print '</br>';
 						print '<br><center><input type="submit" class="button" value="'.$langs->trans('OK').'"></center>';
-							
-						
+
+
 						print '</form>';
 					}
 						else
 					{
 						dol_print_error($db);
-					}		
+					}
 				$result=$object->add_object_linked('commande',$_POST['linkedOrder']);
 				if($result>0)
 				{
 					echo '<meta http-equiv="refresh" content="0;URL=facture.php?facid='.$object->id.'">';
 				}
 				}
-				
-				print '</div>';	
+
+				print '</div>';
 			}
 				// Link for paypal payment
 				if (! empty($conf->paypal->enabled) && $object->statut != 0)
@@ -3944,7 +3952,7 @@ $db->close();
 
 function lier_commande(commande)
 {
-	
+
 	if(commande.style.display=='none')
 	{
 		commande.style.display='inline';
