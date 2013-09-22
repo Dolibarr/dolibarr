@@ -1000,7 +1000,7 @@ if ($id > 0)
 			{
 				$project=new Project($db);
 				$project->fetch($act->fk_project);
-				print $project->getNomUrl(1);
+				print $project->getNomUrl(1,'',1);
 			}
 			print '</td></tr>';
 		}
