@@ -139,11 +139,11 @@ Warning: Name and email must match value into debian/control file (Entry added h
 > git-buildpackage -us -uc
 
 Note: You can use git-buildpackage -us -uc --git-ignore-new if you want to test build with uncommited file
-
+Note: Package is built into directory ../build-area
 
 * If package .deb is ok:
 Note: If there was errors managed manually, you may need to make a git commit but do not use option "amend" previous commit
-> git-buildpackage --git-tag
+> git-buildpackage --git-tag-only --git-retag
 > git push --all ou git push origin --all
 > git push --tags
 
@@ -195,10 +195,11 @@ Warning: Name and email must match value into debian/control file (Entry added h
 > git-buildpackage -us -uc
 
 Note: You can use git-buildpackage -us -uc --git-ignore-new if you want to test build with uncommited file
+Note: Package is built into directory ../build-area
 
 * If package .deb is ok:
 Note: If there was errors managed manually, you may need to make a git commit but do not use option "amend" previous commit
-> git-buildpackage --git-tag
+> git-buildpackage --git-tag-only --git-retag
 > git push --all ou git push origin --all
 > git push --tags
 
