@@ -432,7 +432,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 
 				// Pied de page
 				$this->_pagefoot($pdf,$object,$outputlangs);
-				$pdf->AliasNbPages();
+				if (method_exists($pdf,'AliasNbPages')) $pdf->AliasNbPages();
 
 				// Check product remaining to be delivered
 				// TODO doit etre modifie
@@ -492,7 +492,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 
 					$this->_pagefoot($pdf,$object,$outputlangs);
 
-					$pdf->AliasNbPages();
+					if (method_exists($pdf,'AliasNbPages')) $pdf->AliasNbPages();
 				}*/
 
 				$pdf->Close();
@@ -728,7 +728,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 					$pdf->MultiCell(60, 2, $outputlangs->transnoentities("OrderDate")." : ".dol_print_date($linkedobject->date,"day",false,$outputlangs,true), 0, 'R');
 				}
 			}
-			
+
 			$posy=$Yoff;
 		}
 
