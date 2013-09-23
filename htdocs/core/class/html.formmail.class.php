@@ -46,8 +46,8 @@ class FormMail
 
     var $withsubstit;			// Show substitution array
     var $withfrom;
-    var $withto;
-    var $withtofree;
+    var $withto;				// Show recipient emails
+    var $withtofree;			// Show free text for recipient emails
     var $withtocc;
     var $withtoccc;
     var $withtopic;

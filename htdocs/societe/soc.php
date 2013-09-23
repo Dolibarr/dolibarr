@@ -450,9 +450,12 @@ if (empty($reshook))
     	$result = $object->set_parent(GETPOST('editparentcompany','int'));
     }
 
+    
+    // Actions to send emails
     $id=$socid;
     $actiontypecode='AC_OTH_AUTO';
     include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
+    
     
     /*
      * Generate document
@@ -1824,6 +1827,7 @@ else
 				$liste=array();
 				foreach ($object->thirdparty_and_contact_email_array(1) as $key=>$value)	$liste[$key]=$value;
 				$formmail->withto=GETPOST('sendto')?GETPOST('sendto'):$liste;
+				$formmail->withtofree=0;
 				$formmail->withtocc=$liste;
 				$formmail->withtoccc=$conf->global->MAIN_EMAIL_USECCC;
 				$formmail->withfile=2;
