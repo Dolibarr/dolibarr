@@ -56,7 +56,7 @@ $contactid=GETPOST('contactid','int');
 $socid = GETPOST('socid','int');
 $id = GETPOST('id','int');
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'agenda', $id, 'actioncomm&societe', 'myactions&allactions', '', 'id');
+$result = restrictedArea($user, 'agenda', $id, 'actioncomm&societe', 'myactions&allactions', 'fk_soc', 'id');
 if ($user->societe_id && $socid) $result = restrictedArea($user,'societe',$socid);
 
 $error=GETPOST("error");
