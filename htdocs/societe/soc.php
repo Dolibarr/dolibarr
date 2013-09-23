@@ -1804,7 +1804,7 @@ else
 				 */
 
 				// By default if $action=='presend'
-				$titreform='SendEMail';
+				$titreform='SendMail';
 				$topicmail='';
 				$action='send';
 				$modelmail='thirdparty';
