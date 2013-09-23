@@ -450,6 +450,10 @@ if (empty($reshook))
     	$result = $object->set_parent(GETPOST('editparentcompany','int'));
     }
 
+    $id=$socid;
+    $actiontypecode='AC_OTH_AUTO';
+    include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
+    
     /*
      * Generate document
      */
@@ -1771,6 +1775,8 @@ else
          */
         print '<div class="tabsAction">'."\n";
 
+		print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?socid='.$object->id.'&amp;action=presend&amp;mode=init">'.$langs->trans('SendMail').'</a></div>';
+		
         if ($user->rights->societe->creer)
         {
             print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&amp;action=edit">'.$langs->trans("Modify").'</a></div>'."\n";
@@ -1790,51 +1796,137 @@ else
 
         print '</div>'."\n";
 
-        if (empty($conf->global->SOCIETE_DISABLE_BUILDDOC))
-        {
-			print '<div class="fichecenter"><div class="fichethirdleft">';
-        	//print '<table width="100%"><tr><td valign="top" width="50%">';
-            print '<a name="builddoc"></a>'; // ancre
+        
+		if ($action == 'presend')
+		{
+        		/*
+				 * Affiche formulaire mail
+				 */
 
-            /*
-             * Documents generes
-             */
-            $filedir=$conf->societe->multidir_output[$object->entity].'/'.$object->id;
-            $urlsource=$_SERVER["PHP_SELF"]."?socid=".$object->id;
-            $genallowed=$user->rights->societe->creer;
-            $delallowed=$user->rights->societe->supprimer;
+				// By default if $action=='presend'
+				$titreform='SendEMail';
+				$topicmail='';
+				$action='send';
+				$modelmail='thirdparty';
 
-            $var=true;
+				print '<br>';
+				print_titre($langs->trans($titreform));
 
-            $somethingshown=$formfile->show_documents('company',$object->id,$filedir,$urlsource,$genallowed,$delallowed,'',0,0,0,28,0,'',0,'',$object->default_lang);
+				// Cree l'objet formulaire mail
+				include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+				$formmail = new FormMail($db);
+				$formmail->fromtype = 'user';
+				$formmail->fromid   = $user->id;
+				$formmail->fromname = $user->getFullName($langs);
+				$formmail->frommail = $user->email;
+				$formmail->withfrom=1;
+				$formmail->withtopic=1;
+				$liste=array();
+				foreach ($object->thirdparty_and_contact_email_array(1) as $key=>$value)	$liste[$key]=$value;
+				$formmail->withto=GETPOST('sendto')?GETPOST('sendto'):$liste;
+				$formmail->withtocc=$liste;
+				$formmail->withtoccc=$conf->global->MAIN_EMAIL_USECCC;
+				$formmail->withfile=2;
+				$formmail->withbody=1;
+				$formmail->withdeliveryreceipt=1;
+				$formmail->withcancel=1;
+				// Tableau des substitutions
+				$formmail->substit['__SIGNATURE__']=$user->signature;
+				$formmail->substit['__PERSONALIZED__']='';
+				$formmail->substit['__CONTACTCIVNAME__']='';
 
-			print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
+				//Find the good contact adress
+				/*
+				$custcontact='';
+				$contactarr=array();
+				$contactarr=$object->liste_contact(-1,'external');
+
+				if (is_array($contactarr) && count($contactarr)>0) 
+				{
+					foreach($contactarr as $contact) 
+					{
+						if ($contact['libelle']==$langs->trans('TypeContact_facture_external_BILLING')) {
+
+							require_once DOL_DOCUMENT_ROOT . '/contact/class/contact.class.php';
+
+							$contactstatic=new Contact($db);
+							$contactstatic->fetch($contact['id']);
+							$custcontact=$contactstatic->getFullName($langs,1);
+						}
+					}
+
+					if (!empty($custcontact)) {
+						$formmail->substit['__CONTACTCIVNAME__']=$custcontact;
+					}
+				}*/
 
 
-			print '</div></div></div>';
+				// Tableau des parametres complementaires du post
+				$formmail->param['action']=$action;
+				$formmail->param['models']=$modelmail;
+				$formmail->param['socid']=$object->id;
+				$formmail->param['returnurl']=$_SERVER["PHP_SELF"].'?socid='.$object->id;
 
-            print '<br>';
-        }
+				// Init list of files
+				if (GETPOST("mode")=='init')
+				{
+					$formmail->clear_attached_files();
+					$formmail->add_attached_files($file,basename($file),dol_mimetype($file));
+				}
 
-        print '<div class="fichecenter"><br></div>';
+				$formmail->show_form();
 
-        // Subsidiaries list
-        $result=show_subsidiaries($conf,$langs,$db,$object);
-
-        // Contacts list
-        if (empty($conf->global->SOCIETE_DISABLE_CONTACTS))
-        {
-            $result=show_contacts($conf,$langs,$db,$object,$_SERVER["PHP_SELF"].'?socid='.$object->id);
-        }
-
-        // Addresses list
-        if (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT))
-        {
-        	$result=show_addresses($conf,$langs,$db,$object,$_SERVER["PHP_SELF"].'?socid='.$object->id);
-        }
-
-        // Projects list
-        $result=show_projects($conf,$langs,$db,$object,$_SERVER["PHP_SELF"].'?socid='.$object->id);
+				print '<br>';
+		}
+		else
+		{
+	        
+	        if (empty($conf->global->SOCIETE_DISABLE_BUILDDOC))
+	        {
+				print '<div class="fichecenter"><div class="fichethirdleft">';
+	        	//print '<table width="100%"><tr><td valign="top" width="50%">';
+	            print '<a name="builddoc"></a>'; // ancre
+	
+	            /*
+	             * Documents generes
+	             */
+	            $filedir=$conf->societe->multidir_output[$object->entity].'/'.$object->id;
+	            $urlsource=$_SERVER["PHP_SELF"]."?socid=".$object->id;
+	            $genallowed=$user->rights->societe->creer;
+	            $delallowed=$user->rights->societe->supprimer;
+	
+	            $var=true;
+	
+	            $somethingshown=$formfile->show_documents('company',$object->id,$filedir,$urlsource,$genallowed,$delallowed,'',0,0,0,28,0,'',0,'',$object->default_lang);
+	
+				print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
+	
+	
+				print '</div></div></div>';
+	
+	            print '<br>';
+	        }
+	
+	        print '<div class="fichecenter"><br></div>';
+	
+	        // Subsidiaries list
+	        $result=show_subsidiaries($conf,$langs,$db,$object);
+	
+	        // Contacts list
+	        if (empty($conf->global->SOCIETE_DISABLE_CONTACTS))
+	        {
+	            $result=show_contacts($conf,$langs,$db,$object,$_SERVER["PHP_SELF"].'?socid='.$object->id);
+	        }
+	
+	        // Addresses list
+	        if (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT))
+	        {
+	        	$result=show_addresses($conf,$langs,$db,$object,$_SERVER["PHP_SELF"].'?socid='.$object->id);
+	        }
+	
+	        // Projects list
+	        $result=show_projects($conf,$langs,$db,$object,$_SERVER["PHP_SELF"].'?socid='.$object->id);
+		}
     }
 
 }

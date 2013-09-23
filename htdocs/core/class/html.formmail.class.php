@@ -493,7 +493,7 @@ class FormMail
         		}
         		else
         		{
-        			$out.= '<input type="text" size="60" id="subject" name="subject" value="'. (isset($_POST["subject"])?$_POST["subject"]:$this->withtopic) .'" />';
+        			$out.= '<input type="text" size="60" id="subject" name="subject" value="'. (isset($_POST["subject"])?$_POST["subject"]:(is_numeric($this->withtopic)?'':$this->withtopic)) .'" />';
         		}
         		$out.= "</td></tr>\n";
         	}
