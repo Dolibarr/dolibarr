@@ -1091,6 +1091,7 @@ class FormOther
      *  @param	string	$dictionnarytable	Dictionnary table
      *  @param	string	$keyfield			Field for key
      *  @param	string	$labelfield			Label field
+     *  @param	string	$selected			Selected value
      *  @param  int		$useempty          	1=Add an empty value in list, 2=Add an empty value in list only if there is more than 2 entries.
      * 	@return	void
      */

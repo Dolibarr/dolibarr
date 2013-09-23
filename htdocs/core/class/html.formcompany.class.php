@@ -191,7 +191,7 @@ class FormCompany
 	 *   @param     string	$htmlname			Id of department
 	 *   @return	void
 	 */
-	function select_departement($selected='',$country_codeid=0, $htmlname='departement_id')
+	function select_departement($selected='',$country_codeid=0, $htmlname='state_id')
 	{
 		print $this->select_state($selected,$country_codeid, $htmlname);
 	}
@@ -208,7 +208,7 @@ class FormCompany
 	 *    @param    string	$htmlname			Id of department
 	 * 	  @return	string						String with HTML select
 	 */
-	function select_state($selected='',$country_codeid=0, $htmlname='departement_id')
+	function select_state($selected='',$country_codeid=0, $htmlname='state_id')
 	{
 		global $conf,$langs,$user;
 

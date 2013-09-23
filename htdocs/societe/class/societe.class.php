@@ -54,10 +54,9 @@ class Societe extends CommonObject
     var $town;
     var $status;   // 0=activity ceased, 1= in activity
 
-    var $state_id;
+    var $state_id;		// Id of department
     var $state_code;
     var $state;
-    var $departement_id;     // deprecated
     var $departement_code;   // deprecated
     var $departement;        // deprecated
 

@@ -46,8 +46,8 @@ class FormMail
 
     var $withsubstit;			// Show substitution array
     var $withfrom;
-    var $withto;
-    var $withtofree;
+    var $withto;				// Show recipient emails
+    var $withtofree;			// Show free text for recipient emails
     var $withtocc;
     var $withtoccc;
     var $withtopic;
@@ -493,7 +493,7 @@ class FormMail
         		}
         		else
         		{
-        			$out.= '<input type="text" size="60" id="subject" name="subject" value="'. (isset($_POST["subject"])?$_POST["subject"]:$this->withtopic) .'" />';
+        			$out.= '<input type="text" size="60" id="subject" name="subject" value="'. (isset($_POST["subject"])?$_POST["subject"]:(is_numeric($this->withtopic)?'':$this->withtopic)) .'" />';
         		}
         		$out.= "</td></tr>\n";
         	}
