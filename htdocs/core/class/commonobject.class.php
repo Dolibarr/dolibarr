@@ -461,6 +461,7 @@ abstract class CommonObject
         $sql = "SELECT DISTINCT tc.rowid, tc.code, tc.libelle";
         $sql.= " FROM ".MAIN_DB_PREFIX."c_type_contact as tc";
         $sql.= " WHERE tc.element='".$this->element."'";
+        $sql.= " AND tc.active=1"; // only the active type
         if (! empty($source)) $sql.= " AND tc.source='".$source."'";
         $sql.= " ORDER by tc.".$order;
 
