@@ -692,7 +692,7 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
 
     print "<br>\n";
 ?>
-<div id="dialog" title="<?php echo $langs->trans('Address'); ?>" style="display: none;">
+<div id="dialog" title="<?php echo dol_escape_htmltag($langs->trans('Address')); ?>" style="display: none;">
 </div>
 <?php
 	print '<script type="text/javascript">
