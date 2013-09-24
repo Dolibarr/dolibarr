@@ -658,6 +658,7 @@ Deductible=Déductible
 from=de
 toward=vers
 Access=Accès
+HelpCopyToClipboard=Ctrl+C pour copier dans le presse-papier
 
 # Week day
 Monday=Lundi
