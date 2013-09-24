@@ -658,6 +658,7 @@ Deductible=Deductible
 from=from
 toward=toward
 Access=Access
+HelpCopyToClipboard=Use Ctrl+C to copy to clipboard
 
 # Week day
 Monday=Monday
