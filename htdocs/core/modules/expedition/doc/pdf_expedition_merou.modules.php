@@ -169,7 +169,7 @@ class pdf_expedition_merou extends ModelePdfExpedition
 				$pagenb=0;
 				$pdf->SetDrawColor(128,128,128);
 
-				$pdf->AliasNbPages();
+				if (method_exists($pdf,'AliasNbPages')) $pdf->AliasNbPages();
 
 				$pdf->SetTitle($outputlangs->convToOutputCharset($object->ref));
 				$pdf->SetSubject($outputlangs->transnoentities("Sending"));
@@ -323,7 +323,7 @@ class pdf_expedition_merou extends ModelePdfExpedition
 
 				// Pied de page
 				$this->_pagefoot($pdf, $object, $outputlangs);
-				$pdf->AliasNbPages();
+				if (method_exists($pdf,'AliasNbPages')) $pdf->AliasNbPages();
 
 				$pdf->Close();
 

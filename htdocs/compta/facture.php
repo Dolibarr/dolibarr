@@ -1,28 +1,28 @@
 <?php
 /* Copyright (C) 2002-2006 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Eric Seigne           <eric.seigne@ryxeo.com>
-* Copyright (C) 2004-2013 Laurent Destailleur   <eldy@users.sourceforge.net>
-* Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
-* Copyright (C) 2005-2012 Regis Houssin         <regis.houssin@capnetworks.com>
-* Copyright (C) 2006      Andre Cianfarani      <acianfa@free.fr>
-* Copyright (C) 2010-2013 Juanjo Menent         <jmenent@2byte.es>
-* Copyright (C) 2012      Christophe Battarel   <christophe.battarel@altairis.fr>
-* Copyright (C) 2013      Jean-Francois FERRY   <jfefe@aternatik.fr>
-* Copyright (C) 2013      Florian Henry		 <florian.henry@open-concept.pro>
-*
-* This program is free software; you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation; either version 3 of the License, or
-* (at your option) any later version.
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with this program. If not, see <http://www.gnu.org/licenses/>.
-*/
+ * Copyright (C) 2004-2013 Laurent Destailleur   <eldy@users.sourceforge.net>
+ * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
+ * Copyright (C) 2005-2012 Regis Houssin         <regis.houssin@capnetworks.com>
+ * Copyright (C) 2006      Andre Cianfarani      <acianfa@free.fr>
+ * Copyright (C) 2010-2013 Juanjo Menent         <jmenent@2byte.es>
+ * Copyright (C) 2012      Christophe Battarel   <christophe.battarel@altairis.fr>
+ * Copyright (C) 2013      Jean-Francois FERRY   <jfefe@aternatik.fr>
+ * Copyright (C) 2013      Florian Henry		 <florian.henry@open-concept.pro>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 
 /**
  *	\file       htdocs/compta/facture.php
@@ -100,7 +100,7 @@ $hookmanager->initHooks(array('invoicecard'));
 
 /*
  * Actions
-*/
+ */
 
 $parameters=array('socid'=>$socid);
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
@@ -872,14 +872,18 @@ else if ($action == 'add' && $user->rights->facture->creer)
 
 				if ($id > 0)
 				{
-					//If deposit invoice
-					if ($_POST['type'] == 3) {
+					// If deposit invoice
+					if ($_POST['type'] == 3)
+					{
 						$typeamount=GETPOST('typedeposit','alpha');
 						$valuedeposit=GETPOST('valuedeposit','int');
 
-						if ($typeamount=='amount') {
+						if ($typeamount=='amount')
+						{
 							$amountdeposit=$valuedeposit;
-						}else {
+						}
+						else
+						{
 							$amountdeposit=0;
 
 							dol_include_once('/'.$element.'/class/'.$subelement.'.class.php');
@@ -887,19 +891,20 @@ else if ($action == 'add' && $user->rights->facture->creer)
 							$classname = ucfirst($subelement);
 							$srcobject = new $classname($db);
 
-							dol_syslog("Try to find source object origin=".$object->origin." originid=".$object->origin_id." to add deposit line");
+							dol_syslog("Try to find source object origin=".$object->origin." originid=".$object->origin_id." to add deposit lines");
 							$result=$srcobject->fetch($object->origin_id);
 							if ($result > 0)
 							{
 								$totalamount=0;
 								$lines = $srcobject->lines;
-								$num=count($lines);
-								for ($i=0;$i<$num;$i++)
+								$numlines=count($lines);
+								for ($i=0; $i<$numlines; $i++)
 								{
-									$totalamount=+$lines[$i]->subprice;
+									$totalamount += $lines[$i]->subprice;
 								}
 
-								if ($totalamount!=0) {
+								if ($totalamount!=0) 
+								{
 									$amountdeposit=($totalamount*$valuedeposit)/100;
 								}
 							}
@@ -1537,7 +1542,7 @@ else if ($action == 'down' && $user->rights->facture->creer)
 
 /*
  * Add file in email form
-*/
+ */
 if (GETPOST('addfile'))
 {
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -1552,7 +1557,7 @@ if (GETPOST('addfile'))
 
 /*
  * Remove file in email form
-*/
+ */
 if (! empty($_POST['removedfile']))
 {
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -1568,7 +1573,7 @@ if (! empty($_POST['removedfile']))
 
 /*
  * Send mail
-*/
+ */
 if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_POST['removedfile'] && ! $_POST['cancel'])
 {
 	$langs->load('mails');
@@ -1742,7 +1747,7 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 
 /*
  * Generate document
-*/
+ */
 else if ($action == 'builddoc')	// En get ou en post
 {
 	$object->fetch($id);
@@ -2000,8 +2005,7 @@ if ($action == 'create')
 	// Ref
 	print '<tr><td class="fieldrequired">'.$langs->trans('Ref').'</td><td colspan="2">'.$langs->trans('Draft').'</td></tr>';
 
-	// Tiers
-	print '<tr>';
+	// Thirdparty
 	print '<td class="fieldrequired">'.$langs->trans('Customer').'</td>';
 	if($soc->id > 0)
 	{
@@ -2018,7 +2022,7 @@ if ($action == 'create')
 	}
 	print '</tr>'."\n";
 
-	// Factures predefinies
+	// Predefined invoices
 	if (empty($origin) && empty($originid) && $socid > 0)
 	{
 		$sql = 'SELECT r.rowid, r.titre, r.total_ttc';
@@ -2125,10 +2129,13 @@ if ($action == 'create')
 		print '</td><td valign="middle" class="nowrap">';
 		$desc=$form->textwithpicto($langs->trans("InvoiceDeposit"),$langs->transnoentities("InvoiceDepositDesc"),1);
 		print '<table class="nobordernopadding"><tr><td>'.$desc.'</td>';
-		if (($origin=='propal') ) {
-			print '<td><select name="typedeposit"><option value="amount">'.$langs->trans('FixAmount').'</option>';
-			print '<option value="variable">'.$langs->trans('VarAmount').'</option></select></td>';
-			print '<td>'.$langs->trans('Value').':<input type="text" name="valuedeposit" size="3" value="'.GETPOST('valuedeposit','int').'"/>';
+		if (($origin=='propal'))
+		{
+			print '<td class="nowrap" style="padding-left: 5px">';
+			$arraylist=array('amount'=>'FixAmount','variable'=>'VarAmount');
+			print $form->selectarray('typedeposit',$arraylist, GETPOST('typedeposit'), 0, 0, 0, '', 1);
+			print '</td>';
+			print '<td class="nowrap" style="padding-left: 5px">'.$langs->trans('Value').':<input type="text" name="valuedeposit" size="3" value="'.GETPOST('valuedeposit','int').'"/>';
 		}
 		print '</td></tr></table>';
 		print '</td></tr>'."\n";
@@ -2395,6 +2402,7 @@ if ($action == 'create')
 		print '</table>';
 	}
 
+	print '<br>';
 }
 else if ($id > 0 || ! empty($ref))
 {
