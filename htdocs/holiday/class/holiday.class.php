@@ -47,7 +47,7 @@ class Holiday extends CommonObject
     var $date_debut='';
     var $date_fin='';
     var $halfday='';
-    var $statut='';
+    var $statut='';			// 1=draft, 2=validated, 3=approved
     var $fk_validator;
     var $date_valid='';
     var $fk_user_valid;
@@ -871,7 +871,7 @@ class Holiday extends CommonObject
      *
      *	@param		int		$userID		Id of user
      *	@param		int		$nbHoliday	Nb of days
-     *  @return     void
+     *  @return     int					0=Nothing done, 1=OK, -1=KO
      */
     function updateSoldeCP($userID='',$nbHoliday='')
     {
@@ -907,7 +907,7 @@ class Holiday extends CommonObject
 
                 $i = 0;
 
-                while($i < $nbUser)
+                while ($i < $nbUser)
                 {
                     $now_holiday = $this->getCPforUser($users[$i]['rowid']);
                     $new_solde = $now_holiday + $this->getConfCP('nbHolidayEveryMonth');
@@ -922,11 +922,18 @@ class Holiday extends CommonObject
                 $sql2.= " nb_holiday = nb_holiday + ".$nb_holiday;
 
                 dol_syslog(get_class($this).'::updateSoldeCP sql='.$sql2);
-                $this->db->query($sql2);
+                $result= $this->db->query($sql2);
+                
+	            if ($result) return 1;
+    	        else return -1;
             }
-        } else {
+            
+            return 0;
+        } 
+        else
+        {
             // Mise à jour pour un utilisateur
-            $nbHoliday = number_format($nbHoliday,2,'.','');
+            $nbHoliday = price2num($nbHoliday,2);
 
             // Mise à jour pour un utilisateur
             $sql = "UPDATE ".MAIN_DB_PREFIX."holiday_users SET";
@@ -934,7 +941,10 @@ class Holiday extends CommonObject
             $sql.= " WHERE fk_user = '".$userID."'";
 
 			dol_syslog(get_class($this).'::updateSoldeCP sql='.$sql);
-            $this->db->query($sql);
+            $result = $this->db->query($sql);
+            
+            if ($result) return 1;
+            else return -1;
         }
 
     }

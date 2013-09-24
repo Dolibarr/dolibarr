@@ -57,6 +57,7 @@ For users:
 - New: [ task #923 ] Localtax support for ODT templates. 
 - New: [ task #90 ] Barcode search.
 - New: Can send an email from thirdparty card.
+- New: Can cancel holidays that were previously validated.
 
 For translators:
 - Qual: Normalized sort order of all languages files with english reference files.
