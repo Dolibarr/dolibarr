@@ -141,13 +141,21 @@ if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
 				if (! empty($conf->global->DISPLAY_MARGIN_RATES))
 				  {
 				    $margin_rate = (isset($_POST["marginRate"])?$_POST["marginRate"]:(($line->pa_ht == 0)?'':price($line->marge_tx)));
-					echo '<td align="right"><input type="text" size="2" name="marginRate" value="'.$margin_rate.'">%</td>';
+				    // if credit note, dont allow to modify margin
+					if ($line->subprice < 0)
+						echo '<td align="right">'.$margin_rate.'%</td>';
+					else
+						echo '<td align="right"><input type="text" size="2" name="marginRate" value="'.$margin_rate.'">%</td>';
 					$coldisplay++;
 				  }
 				elseif (! empty($conf->global->DISPLAY_MARK_RATES))
 				  {
 				    $mark_rate = (isset($_POST["markRate"])?$_POST["markRate"]:price($line->marque_tx));
-					echo '<td align="right"><input type="text" size="2" name="markRate" value="'.$mark_rate.'">%</td>';
+				    // if credit note, dont allow to modify margin
+					if ($line->subprice < 0)
+						echo '<td align="right">'.$mark_rate.'%</td>';
+					else
+						echo '<td align="right"><input type="text" size="2" name="markRate" value="'.$mark_rate.'">%</td>';
 					$coldisplay++;
 				  }
 			  }
