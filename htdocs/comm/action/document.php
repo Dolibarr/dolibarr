@@ -44,14 +44,14 @@ $objectid = GETPOST('id','int');
 $action=GETPOST('action','alpha');
 
 // Security check
+$socid = GETPOST('socid','int');
+if ($user->societe_id) $socid=$user->societe_id;
 if ($user->societe_id > 0)
 {
 	unset($_GET["action"]);
 	$action='';
-	$socid = $user->societe_id;
 }
-
-$result = restrictedArea($user, 'agenda', $objectid, 'actioncomm&societe', 'myactions&allactions', '', 'id');
+$result = restrictedArea($user, 'agenda', $objectid, 'actioncomm&societe', 'myactions&allactions', 'fk_soc', 'id');
 
 $act = new ActionComm($db);
 
