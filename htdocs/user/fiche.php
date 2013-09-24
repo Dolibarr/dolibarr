@@ -1049,7 +1049,7 @@ else
             print '</td>';
             print '</tr>'."\n";
 
-            if (isset($conf->authmode) && preg_match('/myopenid/',$conf->authmode)) $rowspan++;
+            if (isset($conf->file->main_authentication) && preg_match('/openid/',$conf->file->main_authentication) && ! empty($conf->global->MAIN_OPENIDURL_PERUSER)) $rowspan++;
             if (! empty($conf->societe->enabled)) $rowspan++;
             if (! empty($conf->adherent->enabled)) $rowspan++;
 
@@ -1188,7 +1188,7 @@ else
             }
             print '</td>';
             print "</tr>\n";
-			
+
 			// Accountancy code
 			if (! empty($conf->global->USER_ENABLE_ACCOUNTANCY_CODE))	// For the moment field is not used so must not appeared.
 			{
@@ -1196,7 +1196,7 @@ else
             	print '<tr><td valign="top">'.$langs->trans("AccountancyCode").'</td>';
             	print '<td>'.$object->accountancy_code.'</td>';
 			}
-            
+
             // Status
             print '<tr><td valign="top">'.$langs->trans("Status").'</td>';
             print '<td>';
@@ -1212,10 +1212,9 @@ else
             print '<td>'.dol_print_date($object->datepreviouslogin,"dayhour").'</td>';
             print "</tr>\n";
 
-
-            if (isset($conf->authmode) && preg_match('/myopenid/',$conf->authmode))
+            if (isset($conf->file->main_authentication) && preg_match('/openid/',$conf->file->main_authentication) && ! empty($conf->global->MAIN_OPENIDURL_PERUSER))
             {
-                print '<tr><td valign="top">'.$langs->trans("url_openid").'</td>';
+                print '<tr><td valign="top">'.$langs->trans("OpenIDURL").'</td>';
                 print '<td>'.$object->openid.'</td>';
                 print "</tr>\n";
             }
@@ -1512,16 +1511,16 @@ else
          */
         if ($action == 'edit' && ($canedituser || $caneditfield || $caneditpassword || ($user->id == $object->id)))
         {
-            $rowspan=14;
+            $rowspan=15;
+            if (isset($conf->file->main_authentication) && preg_match('/openid/',$conf->file->main_authentication) && ! empty($conf->global->MAIN_OPENIDURL_PERUSER)) $rowspan++;
+            if (! empty($conf->societe->enabled)) $rowspan++;
+            if (! empty($conf->adherent->enabled)) $rowspan++;
 
         	print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'" method="POST" name="updateuser" enctype="multipart/form-data">';
             print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
             print '<input type="hidden" name="action" value="update">';
             print '<input type="hidden" name="entity" value="'.$object->entity.'">';
             print '<table width="100%" class="border">';
-
-            if (! empty($conf->societe->enabled)) $rowspan++;
-            if (! empty($conf->adherent->enabled)) $rowspan++;
 
             print '<tr><td width="25%" valign="top">'.$langs->trans("Ref").'</td>';
             print '<td colspan="2">';
@@ -1791,17 +1790,17 @@ else
             }
             print '</td></tr>';
 
-            // openid
-            if (isset($conf->authmode) && preg_match('/myopenid/',$conf->authmode))
+            // OpenID url
+            if (isset($conf->file->main_authentication) && preg_match('/openid/',$conf->file->main_authentication) && ! empty($conf->global->MAIN_OPENIDURL_PERUSER))
             {
-                print "<tr>".'<td valign="top">'.$langs->trans("url_openid").'</td>';
+                print "<tr>".'<td valign="top">'.$langs->trans("OpenIDURL").'</td>';
                 print '<td>';
-                if ($caneditfield  && !$object->ldap_sid)
+                if ($caneditfield)
                 {
-                    print '<input size="40" type="text" name="openid" class="flat" value="'.$object->openid.'">';
+                    print '<input size="40" type="url" name="openid" class="flat" value="'.$object->openid.'">';
                 }
                 else
-                {
+              {
                     print '<input type="hidden" name="openid" value="'.$object->openid.'">';
                     print $object->openid;
                 }
@@ -1824,7 +1823,7 @@ else
             }
             print '</td>';
             print "</tr>\n";
-			
+
 			// Accountancy code
             print "<tr>";
             print '<td valign="top">'.$langs->trans("AccountancyCode").'</td>';

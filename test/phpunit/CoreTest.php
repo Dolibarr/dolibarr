@@ -135,6 +135,7 @@ class CoreTest extends PHPUnit_Framework_TestCase
 		global $dolibarr_main_db_type;
 		global $dolibarr_main_db_prefix;
 
+		// Case 1:
 		// Test for subdir dolibarr (that point to htdocs) in root directory /var/www
 		// URL: http://localhost/dolibarrnew/admin/system/phpinfo.php
     	$_SERVER["HTTPS"]='';
@@ -143,11 +144,9 @@ class CoreTest extends PHPUnit_Framework_TestCase
         $_SERVER["DOCUMENT_ROOT"]='/var/www';
 		$_SERVER["SCRIPT_NAME"]='/dolibarrnew/admin/system/phpinfo.php';
 		$expectedresult='/dolibarrnew';
-		// Put this into conf.php if you want to test alt
-		//$dolibarr_main_url_root='http://localhost/dolibarralias';
-		//$dolibarr_main_url_root_alt='http://localhost/dolibarralias/custom2';
 
-    	// Test for subdir aaa (that point to dolibarr) in root directory /var/www
+		// Case 2:
+		// Test for subdir aaa (that point to dolibarr) in root directory /var/www
 		// URL: http://localhost/aaa/htdocs/admin/system/phpinfo.php
         $_SERVER["HTTPS"]='';
         $_SERVER["SERVER_NAME"]='localhost';
@@ -155,10 +154,8 @@ class CoreTest extends PHPUnit_Framework_TestCase
         $_SERVER["DOCUMENT_ROOT"]='/var/www';
 		$_SERVER["SCRIPT_NAME"]='/aaa/htdocs/admin/system/phpinfo.php';
 		$expectedresult='/aaa/htdocs';
-		// Put this into conf.php if you want to test alt
-		//$dolibarr_main_url_root='http://localhost/dolibarralias';
-		//$dolibarr_main_url_root_alt='http://localhost/dolibarralias/custom2';
 
+		// Case 3:
 		// Test for virtual host localhostdolibarrnew that point to htdocs directory with
 		// a direct document root
 		// URL: http://localhostdolibarrnew/admin/system/phpinfo.php
@@ -168,10 +165,8 @@ class CoreTest extends PHPUnit_Framework_TestCase
         $_SERVER["DOCUMENT_ROOT"]='/home/ldestail/workspace/dolibarr/htdocs';
 		$_SERVER["SCRIPT_NAME"]='/admin/system/phpinfo.php';
 		$expectedresult='';
-		// Put this into conf.php if you want to test alt
-		//$dolibarr_main_url_root='http://localhost/dolibarralias';
-		//$dolibarr_main_url_root_alt='http://localhost/dolibarralias/custom2';
 
+		// Case 4:
 		// Test for virtual host localhostdolibarrnew that point to htdocs directory with
 		// a symbolic link
 		// URL: http://localhostdolibarrnew/admin/system/phpinfo.php
@@ -181,10 +176,8 @@ class CoreTest extends PHPUnit_Framework_TestCase
         $_SERVER["DOCUMENT_ROOT"]='/var/www/dolibarr';	// This is a link that point to /home/ldestail/workspace/dolibarr/htdocs
 		$_SERVER["SCRIPT_NAME"]='/admin/system/phpinfo.php';
 		$expectedresult='';
-		// Put this into conf.php if you want to test alt
-		//$dolibarr_main_url_root='http://localhost/dolibarralias';
-		//$dolibarr_main_url_root_alt='http://localhost/dolibarralias/custom2';
 
+		// Case 5:
 		// Test for alias /dolibarralias
 		// URL: http://localhost/dolibarralias/admin/system/phpinfo.php
         $_SERVER["HTTPS"]='';
@@ -195,8 +188,18 @@ class CoreTest extends PHPUnit_Framework_TestCase
 		$expectedresult='/dolibarralias';
 		// Put this into conf.php because autodetect will fails in this case
 		//$dolibarr_main_url_root='http://localhost/dolibarralias';
-		//$dolibarr_main_url_root_alt='http://localhost/dolibarralias/custom2';
 
+		// Case 6:
+		// Test when using nginx
+		// URL: https://localhost/dolibarr/admin/system/phpinfo.php
+		$_SERVER["HTTPS"]='';
+        $_SERVER["SERVER_NAME"]='localhost';
+        $_SERVER["SERVER_PORT"]='80';
+		$_SERVER["DOCUMENT_ROOT"]='/var/www/dolibarr/htdocs';
+		$_SERVER["SCRIPT_NAME"]='/dolibarr/admin/system/phpinfo.php';
+		$expectedresult='/dolibarr';
+		// Put this into conf.php because autodetect will fails in this case
+		//$dolibarr_main_url_root='http://localhost/dolibarr';
 
 		// Force to rerun filefunc.inc.php
 		include dirname(__FILE__).'/../../htdocs/filefunc.inc.php';

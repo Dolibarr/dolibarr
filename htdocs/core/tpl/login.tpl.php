@@ -152,6 +152,27 @@ if ($forgetpasslink || $helpcenterlink)
 	}
 	echo '</div>';
 }
+
+if (isset($conf->file->main_authentication) && preg_match('/openid/',$conf->file->main_authentication))
+{
+	$langs->load("users");
+
+	//if (! empty($conf->global->MAIN_OPENIDURL_PERUSER)) $url=
+	echo '<br>';
+	echo '<div align="center" style="margin-top: 4px;">';
+
+	$url=$conf->global->MAIN_AUTHENTICATION_OPENID_URL;
+	if (! empty($url)) print '<a class="alogin" href="'.$url.'">'.$langs->trans("LoginUsingOpenID").'</a>';
+	else
+	{
+		$langs->load("errors");
+		print '<font class="warning">'.$langs->trans("ErrorOpenIDSetupNotComplete",'MAIN_AUTHENTICATION_OPENID_URL').'</font>';
+	}
+
+	echo '</div>';
+}
+
+
 ?>
 
 </div>

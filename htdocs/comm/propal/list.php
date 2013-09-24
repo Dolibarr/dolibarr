@@ -8,6 +8,7 @@
  * Copyright (C) 2010-2011 Juanjo Menent         <jmenent@2byte.es>
  * Copyright (C) 2010-2011 Philippe Grand        <philippe.grand@atoo-net.com>
  * Copyright (C) 2012      Christophe Battarel   <christophe.battarel@altairis.fr>
+ * Copyright (C) 2013      Cédric Salvador       <csalvador@gpcsolutions.fr>
 *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -160,21 +161,17 @@ if (! $user->rights->societe->client->voir && ! $socid) //restriction
 {
 	$sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 }
-if ($search_town) //restriction
-{
-	$sql.= " AND s.town LIKE '%".$db->escape(trim($search_town))."%'";
+if ($search_town) {//restriction
+	$sql .= natural_search('s.town', $search_town);
 }
-if ($search_ref)
-{
-	$sql.= " AND p.ref LIKE '%".$db->escape(trim($search_ref))."%'";
+if ($search_ref) {
+	$sql .= natural_search('p.ref', $search_ref);
 }
-if ($search_refcustomer)
-{
-	$sql.= " AND p.ref_client LIKE '%".$db->escape(trim($search_refcustomer))."%'";
+if ($search_refcustomer) {
+	$sql .= natural_search('p.ref_client', $search_refcustomer);
 }
-if ($search_societe)
-{
-	$sql.= " AND s.nom LIKE '%".$db->escape(trim($search_societe))."%'";
+if ($search_societe) {
+	$sql .= natural_search('s.nom', $search_societe);
 }
 if ($search_author)
 {
@@ -184,7 +181,13 @@ if ($search_montant_ht)
 {
 	$sql.= " AND p.total_ht='".$db->escape(price2num(trim($search_montant_ht)))."'";
 }
-if ($sall) $sql.= " AND (s.nom LIKE '%".$db->escape($sall)."%' OR p.note LIKE '%".$db->escape($sall)."%' OR pd.description LIKE '%".$db->escape($sall)."%')";
+if ($sall) {
+    /*$scrit = explode(' ', $sall);
+    foreach ($scrit as $crit) {
+        $sql.= " AND (s.nom LIKE '%".$db->escape($crit)."%' OR p.note LIKE '%".$db->escape($crit)."%' OR pd.description LIKE '%".$db->escape($crit)."%')";
+    }*/
+    $sql .= natural_search(array('s.nom', 'p.note_private', 'pd.description'), $sall);
+}
 if ($socid) $sql.= ' AND s.rowid = '.$socid;
 if ($viewstatut <> '')
 {
@@ -289,7 +292,7 @@ if ($result)
 	print '<td class="liste_titre" align="left">';
 	print '<input class="flat" type="text" size="16" name="search_societe" value="'.$search_societe.'">';
 	print '</td>';
-	print '<td>&nbsp;</td>';
+	print '<td class="liste_titre"><input class="flat" type="text" size="16" name="search_town" value="'.$search_town.'"></td>';
 	print '<td class="liste_titre">';
 	print '<input class="flat" size="10" type="text" name="search_refcustomer" value="'.$search_refcustomer.'">';
 	print '</td>';

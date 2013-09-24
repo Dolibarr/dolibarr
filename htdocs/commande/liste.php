@@ -5,6 +5,7 @@
  * Copyright (C) 2005-2012 Regis Houssin          <regis.houssin@capnetworks.com>
  * Copyright (C) 2012      Juanjo Menent          <jmenent@2byte.es>
  * Copyright (C) 2013      Christophe Battarel    <christophe.battarel@altairis.fr>
+ * Copyright (C) 2013      Cédric Salvador        <csalvador@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -125,13 +126,12 @@ $sql.= ' WHERE c.fk_soc = s.rowid';
 $sql.= ' AND c.entity = '.$conf->entity;
 if ($socid)	$sql.= ' AND s.rowid = '.$socid;
 if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-if ($sref)
-{
-	$sql.= " AND c.ref LIKE '%".$db->escape($sref)."%'";
+if ($sref) {
+	$sql .= natural_search('c.ref', $sref);
 }
 if ($sall)
 {
-	$sql.= " AND (c.ref LIKE '%".$db->escape($sall)."%' OR c.note LIKE '%".$db->escape($sall)."%')";
+	$sql .= natural_search(array('c.ref', 'c.note_private'), $sall);
 }
 if ($viewstatut <> '')
 {
@@ -187,7 +187,7 @@ else if ($deliveryyear > 0)
 }
 if (!empty($snom))
 {
-	$sql.= ' AND s.nom LIKE \'%'.$db->escape($snom).'%\'';
+	$sql .= natural_search('s.nom', $snom);
 }
 if (!empty($sref_client))
 {

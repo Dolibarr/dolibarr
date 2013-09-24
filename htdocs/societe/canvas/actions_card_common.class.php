@@ -133,7 +133,7 @@ abstract class ActionsCardCommon
             $this->object->zip					= $_POST["zipcode"];
             $this->object->town					= $_POST["town"];
             $this->object->country_id			= $_POST["country_id"];
-            $this->object->state_id				= $_POST["departement_id"];
+            $this->object->state_id				= $_POST["state_id"];
             $this->object->tel					= $_POST["tel"];
             $this->object->fax					= $_POST["fax"];
             $this->object->email				= trim($_POST["email"]);
@@ -483,10 +483,10 @@ abstract class ActionsCardCommon
             }
 
             // Zip
-            $this->tpl['select_zip'] = $formcompany->select_ziptown($this->object->zip,'zipcode',array('town','selectcountry_id','departement_id'),6);
+            $this->tpl['select_zip'] = $formcompany->select_ziptown($this->object->zip,'zipcode',array('town','selectcountry_id','state_id'),6);
 
             // Town
-            $this->tpl['select_town'] = $formcompany->select_ziptown($this->object->town,'town',array('zipcode','selectcountry_id','departement_id'));
+            $this->tpl['select_town'] = $formcompany->select_ziptown($this->object->town,'town',array('zipcode','selectcountry_id','state_id'));
 
             // Country
             $this->object->country_id = ($this->object->country_id ? $this->object->country_id : $mysoc->country_id);
@@ -670,7 +670,7 @@ abstract class ActionsCardCommon
         $this->object->zip					=	$_POST["zipcode"];
         $this->object->town					=	$_POST["town"];
         $this->object->country_id			=	$_POST["country_id"]?$_POST["country_id"]:$mysoc->country_id;
-        $this->object->state_id		        =	$_POST["departement_id"];
+        $this->object->state_id		        =	$_POST["state_id"];
         $this->object->tel					=	$_POST["tel"];
         $this->object->fax					=	$_POST["fax"];
         $this->object->email				=	$_POST["email"];

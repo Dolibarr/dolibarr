@@ -576,8 +576,8 @@ class BonPrelevement extends CommonObject
     /**
      *	Get invoice list
      *
-     *  @param $amounts If you want to get the amount of the order for each invoice
-     *	@return	array id of invoices
+     *  @param 	int		$amounts 	If you want to get the amount of the order for each invoice
+     *	@return	array 				Id of invoices
      */
     private function getListInvoices($amounts=0)
     {

@@ -166,14 +166,16 @@ class MenuManager
 					{
         				// We add sub entry
         				print str_pad('',1).'<li data-role="list-divider" class="lilevel1 ui-btn-icon-right ui-btn">';	 // ui-btn to highlight on clic
-        				print '<a href="'.$relurl.'">';
+        				print '<a href="'.$relurl.'"';
+        				//print ' data-ajax="false"'; 
+        				print '>';
         				print str_pad('',12,'&nbsp;');
         				if ($langs->trans(ucfirst($val['mainmenu'])."Dashboard") == ucfirst($val['mainmenu'])."Dashboard") print $langs->trans("Access");	// No translation
         				else print $langs->trans(ucfirst($val['mainmenu'])."Dashboard");
         				print '</a>';
         				print '</li>'."\n";
         			}
-       				foreach($submenu->liste as $key2 => $val2)		// $val['url','titre','level','enabled'=0|1|2,'target','mainmenu','leftmenu'
+       				foreach($submenu->liste as $key2 => $val2)		// $val['url','titre','level','enabled'=0|1|2,'target','mainmenu','leftmenu']
        				{
         				$relurl2=dol_buildpath($val2['url'],1);
 	        			$relurl2=preg_replace('/__LOGIN__/',$user->login,$relurl2);
@@ -183,7 +185,12 @@ class MenuManager
         				if (in_array($canonurl2,array('/admin/index.php','/admin/tools/index.php','/core/tools.php'))) $relurl2='';
         				if ($val2['level']==0) print str_pad('',$val2['level']+1).'<li'.($val2['level']==0?' data-role="list-divider"':'').' class="lilevel'.($val2['level']+1).' ui-btn-icon-right ui-btn">';	 // ui-btn to highlight on clic
         				else print str_pad('',$val2['level']+1).'<li class="lilevel'.($val2['level']+1).'">';	 // ui-btn to highlight on clic
-        				if ($relurl2) print '<a href="'.$relurl2.'">';
+        				if ($relurl2) 
+        				{
+        					print '<a href="'.$relurl2.'"';
+        					//print ' data-ajax="false"'; 
+        					print '>';
+        				}
 						print str_pad('',($val2['level']+1)*12,'&nbsp;');
         				print $val2['titre'];
         				if ($relurl2) print '</a>';

@@ -2,6 +2,7 @@
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2013      Cédric Salvador      <csalvador@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -79,9 +80,15 @@ $sql.= " WHERE c.fk_soc = s.rowid ";
 $sql.= " AND c.entity = ".$conf->entity;
 if ($socid) $sql.= " AND s.rowid = ".$socid;
 if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-if ($search_nom)      $sql.= " AND s.nom LIKE '%".$db->escape($search_nom)."%'";
-if ($search_contract) $sql.= " AND (".(is_numeric($search_contract)?"c.rowid = ".$db->escape($search_contract)." OR ":'')." c.ref LIKE '%".$db->escape($search_contract)."%')";
-if ($sall)            $sql.= " AND (s.nom LIKE '%".$db->escape($sall)."%' OR cd.label LIKE '%".$db->escape($sall)."%' OR cd.description LIKE '%".$db->escape($sall)."%')";
+if ($search_nom) {
+    $sql .= natural_search('s.nom', $search_nom);
+}
+if ($search_contract) {
+    $sql .= natural_search(array('c.rowid', 'c.ref'), $search_contract);
+}
+if ($sall) {
+    $sql .= natural_search(array('s.nom', 'cd.label', 'cd.description'), $sall);
+}
 $sql.= " GROUP BY c.rowid, c.ref, c.datec, c.date_contrat, c.statut,";
 $sql.= " s.nom, s.rowid";
 $sql.= " ORDER BY $sortfield $sortorder";

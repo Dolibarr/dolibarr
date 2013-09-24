@@ -143,7 +143,7 @@ class FactureTestRounding extends PHPUnit_Framework_TestCase
         // Add two lines
         for ($i=0; $i<2; $i++)
         {
-            $localobject->addline($result, 'Description '.$i, 1.24, 1, 10);
+            $localobject->addline('Description '.$i, 1.24, 1, 10);
         }
 
         $newlocalobject=new Facture($this->savdb);
@@ -186,7 +186,7 @@ class FactureTestRounding extends PHPUnit_Framework_TestCase
         // Add two lines
         for ($i=0; $i<2; $i++)
         {
-            $localobject->addline($result, 'Description '.$i, 1.24, 1, 10);
+            $localobject->addline('Description '.$i, 1.24, 1, 10);
         }
 
         $newlocalobject=new Facture($this->savdb);
@@ -219,7 +219,7 @@ class FactureTestRounding extends PHPUnit_Framework_TestCase
     	$localobject1a=new Facture($this->savdb);
     	$localobject1a->initAsSpecimen('nolines');
     	$facid=$localobject1a->create($user);
-    	$localobject1a->addline($facid, 'Line 1', 6.36, 15, 21);	// This include update_price
+    	$localobject1a->addline('Line 1', 6.36, 15, 21);	// This include update_price
     	print __METHOD__." id=".$facid." total_ttc=".$localobject1a->total_ttc."\n";
     	$this->assertEquals(95.40, $localobject1a->total_ht);
     	$this->assertEquals(20.03, $localobject1a->total_tva);
@@ -231,7 +231,7 @@ class FactureTestRounding extends PHPUnit_Framework_TestCase
     	$localobject1b=new Facture($this->savdb);
     	$localobject1b->initAsSpecimen('nolines');
     	$facid=$localobject1b->create($user);
-    	$localobject1b->addline($facid, 'Line 1', 6.36, 15, 21);	// This include update_price
+    	$localobject1b->addline('Line 1', 6.36, 15, 21);	// This include update_price
     	print __METHOD__." id=".$facid." total_ttc=".$localobject1b->total_ttc."\n";
     	$this->assertEquals(95.40, $localobject1b->total_ht, 'testFactureAddLine1 total_ht');
     	$this->assertEquals(20.03, $localobject1b->total_tva, 'testFactureAddLine1 total_tva');
@@ -260,9 +260,9 @@ class FactureTestRounding extends PHPUnit_Framework_TestCase
     	$localobject2=new Facture($this->savdb);
     	$localobject2->initAsSpecimen('nolines');
     	$facid=$localobject2->create($user);
-    	$localobject2->addline($facid, 'Line 1', 6.36, 5, 21);
-    	$localobject2->addline($facid, 'Line 2', 6.36, 5, 21);
-    	$localobject2->addline($facid, 'Line 3', 6.36, 5, 21);
+    	$localobject2->addline('Line 1', 6.36, 5, 21);
+    	$localobject2->addline('Line 2', 6.36, 5, 21);
+    	$localobject2->addline('Line 3', 6.36, 5, 21);
     	print __METHOD__." id=".$facid." total_ttc=".$localobject2->total_ttc."\n";
     	$this->assertEquals(95.40, $localobject2->total_ht);
     	$this->assertEquals(20.04, $localobject2->total_tva);
@@ -274,9 +274,9 @@ class FactureTestRounding extends PHPUnit_Framework_TestCase
     	$localobject2=new Facture($this->savdb);
     	$localobject2->initAsSpecimen('nolines');
     	$facid=$localobject2->create($user);
-    	$localobject2->addline($facid, 'Line 1', 6.36, 5, 21);
-    	$localobject2->addline($facid, 'Line 2', 6.36, 5, 21);
-    	$localobject2->addline($facid, 'Line 3', 6.36, 5, 21);
+    	$localobject2->addline('Line 1', 6.36, 5, 21);
+    	$localobject2->addline('Line 2', 6.36, 5, 21);
+    	$localobject2->addline('Line 3', 6.36, 5, 21);
     	print __METHOD__." id=".$facid." total_ttc=".$localobject2->total_ttc."\n";
     	$this->assertEquals(95.40, $localobject2->total_ht);
     	$this->assertEquals(20.03, $localobject2->total_tva);
@@ -305,11 +305,11 @@ class FactureTestRounding extends PHPUnit_Framework_TestCase
     	$localobject3=new Facture($this->savdb);
     	$localobject3->initAsSpecimen('nolines');
     	$facid=$localobject3->create($user);
-    	$localobject3->addline($facid, 'Line 1', 6.36, 3, 21);
-    	$localobject3->addline($facid, 'Line 2', 6.36, 3, 21);
-    	$localobject3->addline($facid, 'Line 3', 6.36, 3, 21);
-    	$localobject3->addline($facid, 'Line 4', 6.36, 3, 21);
-    	$localobject3->addline($facid, 'Line 5', 6.36, 3, 21);
+    	$localobject3->addline('Line 1', 6.36, 3, 21);
+    	$localobject3->addline('Line 2', 6.36, 3, 21);
+    	$localobject3->addline('Line 3', 6.36, 3, 21);
+    	$localobject3->addline('Line 4', 6.36, 3, 21);
+    	$localobject3->addline('Line 5', 6.36, 3, 21);
     	print __METHOD__." id=".$facid." total_ttc=".$localobject3->total_ttc."\n";
     	$this->assertEquals(95.40, $localobject3->total_ht);
     	$this->assertEquals(20.05, $localobject3->total_tva);
@@ -321,11 +321,11 @@ class FactureTestRounding extends PHPUnit_Framework_TestCase
     	$localobject3=new Facture($this->savdb);
     	$localobject3->initAsSpecimen('nolines');
     	$facid=$localobject3->create($user);
-    	$localobject3->addline($facid, 'Line 1', 6.36, 3, 21);
-    	$localobject3->addline($facid, 'Line 2', 6.36, 3, 21);
-    	$localobject3->addline($facid, 'Line 3', 6.36, 3, 21);
-    	$localobject3->addline($facid, 'Line 4', 6.36, 3, 21);
-    	$localobject3->addline($facid, 'Line 5', 6.36, 3, 21);
+    	$localobject3->addline('Line 1', 6.36, 3, 21);
+    	$localobject3->addline('Line 2', 6.36, 3, 21);
+    	$localobject3->addline('Line 3', 6.36, 3, 21);
+    	$localobject3->addline('Line 4', 6.36, 3, 21);
+    	$localobject3->addline('Line 5', 6.36, 3, 21);
     	print __METHOD__." id=".$facid." total_ttc=".$localobject3->total_ttc."\n";
     	$this->assertEquals(95.40, $localobject3->total_ht);
     	$this->assertEquals(20.03, $localobject3->total_tva);

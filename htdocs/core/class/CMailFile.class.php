@@ -962,8 +962,11 @@ class CMailFile
 						$this->html_images[$i]["name"] = $img;
 
 						// Content type
-						$ext = preg_replace('/^.*\.(\w{3,4})$/e', 'strtolower("$1")', $img);
-						$this->html_images[$i]["content_type"] = $this->image_types[$ext];
+						if (preg_match('/^.+\.(\w{3,4})$/', $img, $reg))
+						{
+							$ext=strtolower($reg[1]);
+							$this->html_images[$i]["content_type"] = $this->image_types[$ext];
+						}
 
 						// cid
 						$this->html_images[$i]["cid"] = dol_hash(uniqid(time()));

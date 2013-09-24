@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
@@ -739,7 +739,7 @@ else
             // Statut
             print '<tr><td valign="top">'.$langs->trans("Status").'</td>';
             print '<td>';
-            print $object->getLibStatutcontact();
+            print $object->getLibStatut(5);
             print '</td></tr>';
 
             // Other attributes
@@ -946,10 +946,10 @@ else
         print nl2br($object->note);
         print '</td></tr>';
 		
-	 // Statut
+	 	// Statut
 		print '<tr><td valign="top">'.$langs->trans("Status").'</td>';
 		print '<td>';
-		print $object->getLibStatutcontact();
+		print $object->getLibStatut(5);
 		print '</td>';
 		print '</tr>'."\n";
         // Other attributes

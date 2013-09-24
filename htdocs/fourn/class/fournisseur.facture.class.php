@@ -4,7 +4,7 @@
  * Copyright (C) 2004		Christophe Combelles	<ccomb@free.fr>
  * Copyright (C) 2005		Marc Barilley			<marc@ocebo.com>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
- * Copyright (C) 2010-2011	Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2010-2013	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2013		Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
  *
@@ -658,6 +658,13 @@ class FactureFournisseur extends CommonInvoice
 
         if (! $error)
         {
+        	// Delete linked object
+        	$res = $this->deleteObjectLinked();
+        	if ($res < 0) $error++;
+        }
+
+        if (! $error)
+        {
         	// We remove directory
         	if ($conf->fournisseur->facture->dir_output)
         	{
@@ -1156,7 +1163,10 @@ class FactureFournisseur extends CommonInvoice
         // qty, pu, remise_percent et txtva
         // TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
         // la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
-        $tabprice = calcul_price_total($qty, $pu, $remise_percent, $vatrate, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type, $this->thirdparty);
+        
+        $localtaxes_type=getLocalTaxesFromRate($vatrate,0,$this->thirdparty);
+        
+        $tabprice = calcul_price_total($qty, $pu, $remise_percent, $vatrate, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type, $this->thirdparty,$localtaxes_type);
         $total_ht  = $tabprice[0];
         $total_tva = $tabprice[1];
         $total_ttc = $tabprice[2];
@@ -1187,6 +1197,8 @@ class FactureFournisseur extends CommonInvoice
         $sql.= ", tva_tx = ".price2num($vatrate);
         $sql.= ", localtax1_tx = ".price2num($txlocaltax1);
         $sql.= ", localtax2_tx = ".price2num($txlocaltax2);
+		$sql.= ", localtax1_type = '".$localtaxes_type[0]."'";
+		$sql.= ", localtax2_type = '".$localtaxes_type[2]."'";
         $sql.= ", total_ht = ".price2num($total_ht);
         $sql.= ", tva= ".price2num($total_tva);
         $sql.= ", total_localtax1= ".price2num($total_localtax1);

@@ -4,8 +4,9 @@
  * Copyright (C) 2007		Patrick Raguin			<patrick.raguin@gmail.com>
  * Copyright (C) 2010-2012	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
- * Copyright (C) 2013       Christophe Battarel	  	<contact@altairis.fr>
- *
+ * Copyright (C) 2013       Juanjo Menent		  	<jmenent@2byte.es>
+ * Copyright (C) 2013       Christophe Battarel		<contact@altairis.fr>
+ *  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
@@ -61,6 +62,15 @@ function societe_prepare_head($object)
         $head[$h][2] = 'supplier';
         $h++;
     }
+    
+	if (($object->localtax1_assuj || $object->localtax2_assuj) && (isset($conf->global->MAIN_FEATURES_LEVEL) && $conf->global->MAIN_FEATURES_LEVEL > 0) )
+	{
+		$head[$h][0] = DOL_URL_ROOT.'/societe/localtaxes.php?socid='.$object->id;
+		$head[$h][1] = $langs->trans("LocalTaxes");
+		$head[$h][2] = 'localtaxes';
+		$h++;
+	}
+    
     if (! empty($conf->agenda->enabled) && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read) ))
      {
     	$head[$h][0] = DOL_URL_ROOT.'/societe/agenda.php?socid='.$object->id;

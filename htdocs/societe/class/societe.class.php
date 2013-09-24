@@ -54,10 +54,9 @@ class Societe extends CommonObject
     var $town;
     var $status;   // 0=activity ceased, 1= in activity
 
-    var $state_id;
+    var $state_id;		// Id of department
     var $state_code;
     var $state;
-    var $departement_id;     // deprecated
     var $departement_code;   // deprecated
     var $departement;        // deprecated
 
@@ -1654,6 +1653,41 @@ class Societe extends CommonObject
                 {
                     $obj = $this->db->fetch_object($resql);
                     $contacts[$obj->rowid] = dolGetFirstLastname($obj->firstname,$obj->lastname);
+                    $i++;
+                }
+            }
+        }
+        else
+        {
+            dol_print_error($this->db);
+        }
+        return $contacts;
+    }
+
+    /**
+     *    Renvoie la liste des contacts de cette societe
+     *
+     *    @return    array    $contacts    tableau des contacts
+     */
+    function contact_array_objects()
+    {
+        require_once DOL_DOCUMENT_ROOT . '/contact/class/contact.class.php';
+        $contacts = array();
+
+        $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."socpeople WHERE fk_soc = '".$this->id."'";
+        $resql=$this->db->query($sql);
+        if ($resql)
+        {
+            $nump = $this->db->num_rows($resql);
+            if ($nump)
+            {
+                $i = 0;
+                while ($i < $nump)
+                {
+                    $obj = $this->db->fetch_object($resql);
+                    $contact = new Contact($this->db);
+                    $contact->fetch($obj->rowid);
+                    $contacts[] = $contact;
                     $i++;
                 }
             }

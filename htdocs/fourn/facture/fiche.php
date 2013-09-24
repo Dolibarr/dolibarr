@@ -922,7 +922,20 @@ elseif ($action == 'builddoc')
         exit;
     }
 }
+// Make calculation according to calculationrule
+elseif ($action == 'calculate')
+{
+	$calculationrule=GETPOST('calculationrule');
 
+    $object->fetch($id);
+    $object->fetch_thirdparty();
+	$result=$object->update_price(0, ($calculationrule=='totalofround'?0:1), 0, $object->thirdparty);
+    if ($result	<= 0)
+    {
+        dol_print_error($db,$result);
+        exit;
+    }
+}
 // Delete file in doc form
 elseif ($action == 'remove_file')
 {
@@ -1428,21 +1441,21 @@ else
             }
 
             print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ValidateBill'), $text, 'confirm_valid', $formquestion, 1, 1, 240);
-            
+
         }
 
         // Confirmation set paid
         if ($action == 'paid')
         {
             print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ClassifyPaid'), $langs->trans('ConfirmClassifyPaidBill', $object->ref), 'confirm_paid', '', 0, 1);
-            
+
         }
 
         // Confirmation de la suppression de la facture fournisseur
         if ($action == 'delete')
         {
             print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('DeleteBill'), $langs->trans('ConfirmDeleteBill'), 'confirm_delete', '', 0, 1);
-            
+
         }
 
 
@@ -1684,7 +1697,7 @@ else
 	        $s=$langs->trans("ReCalculate").' ';
 	        $s.='<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=calculate&calculationrule=totalofround">'.$langs->trans("Mode1").'</a>';
 	        $s.=' / ';
-	        $s.='<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=calculate&calculationrule=roundototal">'.$langs->trans("Mode2").'</a>';
+	        $s.='<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=calculate&calculationrule=roundoftotal">'.$langs->trans("Mode2").'</a>';
 	        print $form->textwithtooltip($s, $langs->trans("CalculationRuleDesc",$calculationrulenum).'<br>'.$langs->trans("CalculationRuleDescSupplier"), 2, 1, img_picto('','help'));
 		}
         print '</td></tr>';
@@ -1948,7 +1961,7 @@ else
                 print '</td>';
 
                 print '<td align="center" width="16">';
-                if ($object->statut == 0) 
+                if ($object->statut == 0)
                 {
                 	print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=confirm_delete_line&amp;lineid='.$object->lines[$i]->rowid.'">'.img_delete().'</a>';
                 }
@@ -2208,7 +2221,7 @@ else
 
                 /*
                  * Linked object block
-                */
+                 */
                 $somethingshown=$object->showLinkedObjectBlock();
 
 				print '</div><div class="fichehalfright"><div class="ficheaddleft">';

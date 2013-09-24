@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2006-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2006-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2010-2013 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2012      Christophe Battarel  <christophe.battarel@altairis.fr>
@@ -1471,21 +1471,23 @@ abstract class CommonObject
 
     /**
      *	Update total_ht, total_ttc, total_vat, total_localtax1, total_localtax2 for an object (sum of lines).
-     *  Must be called at end of methods addline, updateline.
+     *  Must be called at end of methods addline or updateline.
      *
      *	@param	int		$exclspec          	Exclude special product (product_type=9)
      *  @param  int		$roundingadjust    	-1=Use default method (MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND if defined, or 0), 0=Force use total of rounding, 1=Force use rounding of total
      *  @param	int		$nodatabaseupdate	1=Do not update database. Update only properties of object.
+     *  @param	Societe	$seller				If roundingadjust is 0, it means we recalculate total for lines before calculating total for object. For this, we need seller object.
      *	@return	int    			           	<0 if KO, >0 if OK
      */
-    function update_price($exclspec=0,$roundingadjust=-1,$nodatabaseupdate=0)
+    function update_price($exclspec=0,$roundingadjust=-1,$nodatabaseupdate=0,$seller='')
     {
     	global $conf;
 
         include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 
-        if ($roundingadjust < 0 && isset($conf->global->MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND)) $roundingadjust=$conf->global->MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND;
-        if ($roundingadjust < 0) $roundingadjust=0;
+        $forcedroundingmode=$roundingadjust;
+        if ($forcedroundingmode < 0 && isset($conf->global->MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND)) $forcedroundingmode=$conf->global->MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND;
+        if ($forcedroundingmode < 0) $forcedroundingmode=0;
 
         $error=0;
 
@@ -1493,10 +1495,15 @@ abstract class CommonObject
         $fieldtva='total_tva';
         $fieldlocaltax1='total_localtax1';
         $fieldlocaltax2='total_localtax2';
-        if ($this->element == 'facture_fourn' || $this->element == 'invoice_supplier') $fieldtva='tva';
+        $fieldup='subprice';
+        if ($this->element == 'facture_fourn' || $this->element == 'invoice_supplier')
+        {
+        	$fieldtva='tva';
+        	$fieldup='pu_ht';
+        }
 
-        $sql = 'SELECT rowid, qty, total_ht, '.$fieldtva.' as total_tva, total_ttc, '.$fieldlocaltax1.' as total_localtax1, '.$fieldlocaltax2.' as total_localtax2,';
-        $sql.= ' tva_tx as vatrate, localtax1_tx, localtax2_tx, localtax1_type, localtax2_type';
+        $sql = 'SELECT rowid, qty, '.$fieldup.' as up, remise_percent, total_ht, '.$fieldtva.' as total_tva, total_ttc, '.$fieldlocaltax1.' as total_localtax1, '.$fieldlocaltax2.' as total_localtax2,';
+        $sql.= ' tva_tx as vatrate, localtax1_tx, localtax2_tx, localtax1_type, localtax2_type, info_bits, product_type';
         $sql.= ' FROM '.MAIN_DB_PREFIX.$this->table_element_line;
         $sql.= ' WHERE '.$this->fk_element.' = '.$this->id;
         if ($exclspec)
@@ -1526,7 +1533,26 @@ abstract class CommonObject
             {
                 $obj = $this->db->fetch_object($resql);
 
-                $this->total_ht        += $obj->total_ht;	// The only field visible at line level
+                // By default, no adjustement is required ($forcedroundingmode = -1)
+                if ($forcedroundingmode == 0)	// Check if we need adjustement onto line for vat
+                {
+                	$localtax_array=array($obj->localtax1_type,$obj->localtax1_tx,$obj->localtax2_type,$obj->localtax2_tx);
+                	$tmpcal=calcul_price_total($obj->qty, $obj->up, $obj->remise_percent, $obj->vatrate, $obj->localtax1_tx, $obj->localtax2_tx, 0, 'HT', $obj->info_bits, $obj->product_type, $seller, $localtax_array);
+                	$diff=price2num($tmpcal[1] - $obj->total_tva, 'MT', 1);
+                	if ($diff)
+                	{
+                	    if (abs($diff) > 0.1) { dol_syslog('','A rounding difference was detected', LOG_WARNING); }
+                		$sqlfix="UPDATE ".MAIN_DB_PREFIX.$this->table_element_line." SET ".$fieldtva." = ".$tmpcal[1].", total_ttc = ".$tmpcal[2]." WHERE rowid = ".$obj->rowid;
+                		dol_syslog('We found a difference of '.$diff.' for line rowid = '.$obj->rowid.". We fix the vat and total_ttc by running sqlfix = ".$sqlfix);
+						$resqlfix=$this->db->query($sqlfix);
+						if (! $resqlfix) dol_print_error($this->db,'Failed to update line');
+						$obj->total_tva = $tmpcal[1];
+						$obj->total_ttc = $tmpcal[2];
+                		//
+                	}
+                }
+
+                $this->total_ht        += $obj->total_ht;		// The only field visible at end of line detail
                 $this->total_tva       += $obj->total_tva;
                 $this->total_localtax1 += $obj->total_localtax1;
                 $this->total_localtax2 += $obj->total_localtax2;
@@ -1535,17 +1561,17 @@ abstract class CommonObject
                 $total_tva_by_vats[$obj->vatrate] += $obj->total_tva;
                 $total_ttc_by_vats[$obj->vatrate] += $obj->total_ttc;
 
-                if ($roundingadjust)	// Check if we need adjustement onto line for vat
+                if ($forcedroundingmode == 1)	// Check if we need adjustement onto line for vat
                 {
                 	$tmpvat=price2num($total_ht_by_vats[$obj->vatrate] * $obj->vatrate / 100, 'MT', 1);
                 	$diff=price2num($total_tva_by_vats[$obj->vatrate]-$tmpvat, 'MT', 1);
                 	//print 'Line '.$i.' rowid='.$obj->rowid.' vat_rate='.$obj->vatrate.' total_ht='.$obj->total_ht.' total_tva='.$obj->total_tva.' total_ttc='.$obj->total_ttc.' total_ht_by_vats='.$total_ht_by_vats[$obj->vatrate].' total_tva_by_vats='.$total_tva_by_vats[$obj->vatrate].' (new calculation = '.$tmpvat.') total_ttc_by_vats='.$total_ttc_by_vats[$obj->vatrate].($diff?" => DIFF":"")."<br>\n";
                 	if ($diff)
                 	{
-                		if ($diff > 0.1) { dol_print_error('','A rounding difference was detected but is to high to be corrected'); exit; }
+                		if (abs($diff) > 0.1) { dol_syslog('','A rounding difference was detected but is too high to be corrected', LOG_WARNING); exit; }
                 		$sqlfix="UPDATE ".MAIN_DB_PREFIX.$this->table_element_line." SET ".$fieldtva." = ".($obj->total_tva - $diff).", total_ttc = ".($obj->total_ttc - $diff)." WHERE rowid = ".$obj->rowid;
 						//print 'We found a difference of '.$diff.' for line rowid = '.$obj->rowid.". Run sqlfix = ".$sqlfix."<br>\n";
-                		dol_syslog('We found a difference of '.$diff.' for line rowid = '.$obj->rowid.". Run sqlfix = ".$sqlfix);
+                		dol_syslog('We found a difference of '.$diff.' for line rowid = '.$obj->rowid.". We fix the vat and total_ttc by running sqlfix = ".$sqlfix);
 						$resqlfix=$this->db->query($sqlfix);
 						if (! $resqlfix) dol_print_error($this->db,'Failed to update line');
 						$this->total_tva -= $diff;
@@ -3092,7 +3118,7 @@ abstract class CommonObject
 			if (empty($line->pa_ht) && isset($line->fk_fournprice) && !$force_price) {
 				$product = new ProductFournisseur($this->db);
 				if ($product->fetch_product_fournisseur_price($line->fk_fournprice))
-					$line->pa_ht = $product->fourn_unitprice;
+					$line->pa_ht = $product->fourn_unitprice * (1 - $product->fourn_remise_percent / 100);
 				if (isset($conf->global->MARGIN_TYPE) && $conf->global->MARGIN_TYPE == "2" && $product->fourn_unitcharges > 0)
 					$line->pa_ht += $product->fourn_unitcharges;
 			}
@@ -3223,16 +3249,23 @@ abstract class CommonObject
 		print '</table>';
 	}
 
+	/**
+	 * Overwrite magic function to solve problem of cloning object that are kept as references
+	 *
+	 * @return void
+	 */
 	function __clone()
     {
         // Force a copy of this->lines, otherwise it will point to same object.
         if (isset($this->lines) && is_array($this->lines))
         {
-        	for($i=0; $i < count($this->lines); $i++)
+        	$nboflines=count($this->lines);
+        	for($i=0; $i < $nboflines; $i++)
         	{
             	$this->lines[$i] = dol_clone($this->lines[$i]);
         	}
         }
     }
+
 }
 ?>

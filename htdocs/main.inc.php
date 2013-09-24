@@ -165,13 +165,21 @@ require_once 'filefunc.inc.php';
 // If there is a POST parameter to tell to save automatically some POST params into a cookies, we do it
 if (! empty($_POST["DOL_AUTOSET_COOKIE"]))
 {
-	$tmplist=explode(',',$_POST["DOL_AUTOSET_COOKIE"]);
-	foreach ($tmplist as $value)
+	require_once DOL_DOCUMENT_ROOT.'/core/lib/json.lib.php';
+	$tmpautoset=explode(':',$_POST["DOL_AUTOSET_COOKIE"],2);
+	$tmplist=explode(',',$tmpautoset[1]);
+	$cookiearrayvalue='';
+	foreach ($tmplist as $tmpkey)
 	{
-		//var_dump('setcookie key='.$value.' value='.$_POST[$value]);
-		setcookie($value, empty($_POST[$value])?'':$_POST[$value], empty($_POST[$value])?0:(time()+(86400*354)), '/');	// keep cookie 1 year
-		if (empty($_POST[$value])) unset($_COOKIE[$value]);
+		$postkey=$tmpautoset[0].'_'.$tmpkey;
+		//var_dump('tmpkey='.$tmpkey.' postkey='.$postkey.' value='.$_POST[$postkey]);
+		if (! empty($_POST[$postkey])) $cookiearrayvalue[$tmpkey]=$_POST[$postkey];
 	}
+	$cookiename=$tmpautoset[0];
+	$cookievalue=dol_json_encode($cookiearrayvalue);
+	//var_dump('setcookie cookiename='.$cookiename.' cookievalue='.$cookievalue);
+	setcookie($cookiename, empty($cookievalue)?'':$cookievalue, empty($cookievalue)?0:(time()+(86400*354)), '/');	// keep cookie 1 year
+	if (empty($cookievalue)) unset($_COOKIE[$cookiename]);
 }
 
 // Init session. Name of session is specific to Dolibarr instance.
@@ -435,7 +443,7 @@ if (! defined('NOLOGIN'))
         	$login = checkLoginPassEntity($usertotest,$passwordtotest,$entitytotest,$authmode);
         	if ($login)
             {
-                $dol_authmode=$conf->authmode;	// This properties is defined only when logged to say what mode was successfully used
+                $dol_authmode=$conf->authmode;	// This properties is defined only when logged, to say what mode was successfully used
                 $dol_tz=$_POST["tz"];
                 $dol_tz_string=$_POST["tz_string"];
                 $dol_dst=0;

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville   	<rodolphe@quiedeville.org>
- * Copyright (C) 2004-2011 Laurent Destailleur   	<eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2013 Laurent Destailleur   	<eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Barilley / Ocebo  	<marc@ocebo.com>
  * Copyright (C) 2005-2012 Regis Houssin          	<regis.houssin@capnetworks.com>
  * Copyright (C) 2012	   Andreu Bisquerra Gaya  	<jove@bisquerra.com>
@@ -96,9 +96,8 @@ if (($action == 'create' || $action == 'add') && empty($mesgs))
 	require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/invoice.lib.php';
-	if (! empty($conf->projet->enabled)) {
-		require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
-	}
+	if (! empty($conf->projet->enabled)) require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+	
 	$langs->load('bills');
 	$langs->load('products');
 	$langs->load('main');
@@ -127,7 +126,7 @@ if (($action == 'create' || $action == 'add') && empty($mesgs))
 	$lineid			= GETPOST('lineid','int');
 	$userid			= GETPOST('userid','int');
 	$search_ref		= GETPOST('sf_ref')?GETPOST('sf_ref'):GETPOST('search_ref');
-	$closeOrders	= GETPOST('autocloseorders') != '' ? true : false;
+	$closeOrders	= GETPOST('autocloseorders') ? true : false;
 
 	// Security check
 	$fieldid = GETPOST('ref','alpha')?'facnumber':'rowid';
@@ -214,8 +213,9 @@ if (($action == 'create' || $action == 'add') && empty($mesgs))
 							$result=$objectsrc->fetch($orders_id[$ii]);
 							if ($result > 0)
 							{
-								if($closeOrders) {
-									$objectsrc->classer_facturee();
+								if ($closeOrders) 
+								{
+									$objectsrc->classifyBilled();
 									$objectsrc->setStatut(3);
 								}
 								$lines = $objectsrc->lines;

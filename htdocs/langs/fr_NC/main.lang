@@ -1,0 +1,8 @@
+# Dolibarr language file - fr_NC - main
+CHARSET=UTF-8
+AmountVAT=Montant TSS
+TotalVAT=Total TSS
+IncludedVAT=Dont TSS
+VAT=TSS
+VATRate=Taux TSS
+ErrorNoVATRateDefinedForSellerCountry=Erreur, aucun taux de taxe défini pour le pays '%s'.

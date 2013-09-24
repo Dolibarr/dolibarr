@@ -207,8 +207,8 @@ class PricesTest extends PHPUnit_Framework_TestCase
         $localobject->initAsSpecimen('nolines');
         $invoiceid=$localobject->create($user);
 
-        $localobject->addline($invoiceid,'Desc',1.24,1,10,0,0,0,0,'','',0,0,0,'HT');
-        $localobject->addline($invoiceid,'Desc',1.24,1,10,0,0,0,0,'','',0,0,0,'HT');
+        $localobject->addline('Desc',1.24,1,10,0,0,0,0,'','',0,0,0,'HT');
+        $localobject->addline('Desc',1.24,1,10,0,0,0,0,'','',0,0,0,'HT');
 
         $newlocalobject=new Facture($this->savdb);
         $newlocalobject->fetch($invoiceid);
@@ -223,8 +223,8 @@ class PricesTest extends PHPUnit_Framework_TestCase
         $localobject->initAsSpecimen('nolines');
         $invoiceid=$localobject->create($user);
 
-        $localobject->addline($invoiceid,'Desc',1.24,1,10,0,0,0,0,'','',0,0,0,'HT');
-        $localobject->addline($invoiceid,'Desc',1.24,1,10,0,0,0,0,'','',0,0,0,'HT');
+        $localobject->addline('Desc',1.24,1,10,0,0,0,0,'','',0,0,0,'HT');
+        $localobject->addline('Desc',1.24,1,10,0,0,0,0,'','',0,0,0,'HT');
 
         $newlocalobject=new Facture($this->savdb);
         $newlocalobject->fetch($invoiceid);
