@@ -5,6 +5,8 @@ English Dolibarr ChangeLog
 ***** ChangeLog for 3.3.4 compared to 3.3.3 *****
 
 - Fix: [ bug #1001 ] Social Contribution : State not correct
+- Fix: Better management of pdf generation when tcpdf is not available.
+- Fix: Change to be more debian compliant natively.
 
 ***** ChangeLog for 3.3.3 compared to 3.3.2 *****
 
