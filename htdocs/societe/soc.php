@@ -131,6 +131,7 @@ if (empty($reshook))
         $object->country_id            = GETPOST('country_id');
         $object->state_id              = GETPOST('state_id');
         $object->phone                 = GETPOST('phone');
+        $object->tel                   = GETPOST('phone');
         $object->fax                   = GETPOST('fax');
         $object->email                 = GETPOST('email');
         $object->url                   = GETPOST('url');
