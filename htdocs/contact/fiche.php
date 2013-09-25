@@ -130,7 +130,7 @@ if (empty($reshook))
             $error=$object->error; $errors=$object->errors;
         }
     }
-	
+
 
         /*
          * Confirmation desactivation
@@ -152,7 +152,7 @@ if (empty($reshook))
 			$object->setstatus(1);
 			header("Location: ".$_SERVER['PHP_SELF'].'?id='.$id);
 			exit;
-			
+
         }
     // Add contact
     if ($action == 'add' && $user->rights->societe->contact->creer)
@@ -344,7 +344,7 @@ else
         if ($action == 'delete')
         {
             print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$_GET["id"],$langs->trans("DeleteContact"),$langs->trans("ConfirmDeleteContact"),"confirm_delete",'',0,1);
-            
+
         }
     }
 
@@ -499,7 +499,7 @@ else
             }
 
             // Phone / Fax
-            if (($objsoc->typent_code == 'TE_PRIVATE' || ! empty($conf->global->CONTACT_USE_COMPANY_ADDRESS)) && dol_strlen(trim($object->phone_pro)) == 0) $object->phone_pro = $objsoc->tel;	// Predefined with third party
+            if (($objsoc->typent_code == 'TE_PRIVATE' || ! empty($conf->global->CONTACT_USE_COMPANY_ADDRESS)) && dol_strlen(trim($object->phone_pro)) == 0) $object->phone_pro = $objsoc->phone;	// Predefined with third party
             print '<tr><td>'.$langs->trans("PhonePro").'</td><td><input name="phone_pro" id="phone_pro" type="text" size="18" maxlength="80" value="'.(isset($_POST["phone_pro"])?$_POST["phone_pro"]:$object->phone_pro).'"></td>';
             print '<td>'.$langs->trans("PhonePerso").'</td><td><input name="phone_perso" id="phone_perso" type="text" size="18" maxlength="80" value="'.(isset($_POST["phone_perso"])?$_POST["phone_perso"]:$object->phone_perso).'"></td></tr>';
 
@@ -735,7 +735,7 @@ else
             print '<textarea name="note" cols="70" rows="'.ROWS_3.'">';
             print isset($_POST["note"])?$_POST["note"]:$object->note;
             print '</textarea></td></tr>';
-            
+
             // Statut
             print '<tr><td valign="top">'.$langs->trans("Status").'</td>';
             print '<td>';
@@ -840,7 +840,7 @@ else
                 else $text.=$langs->trans("UserWillBeInternalUser");
             }
             print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id,$langs->trans("CreateDolibarrLogin"),$text,"confirm_create_user",$formquestion,'yes');
-            
+
         }
 
         print '<table class="border" width="100%">';
@@ -945,7 +945,7 @@ else
         print '<tr><td valign="top">'.$langs->trans("Note").'</td><td colspan="3">';
         print nl2br($object->note);
         print '</td></tr>';
-		
+
 	 	// Statut
 		print '<tr><td valign="top">'.$langs->trans("Status").'</td>';
 		print '<td>';

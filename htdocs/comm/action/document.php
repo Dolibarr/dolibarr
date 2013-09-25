@@ -208,7 +208,7 @@ if ($act->id > 0)
 	{
 		if ($act->societe->fetch($act->societe->id))
 		{
-			print "<br>".dol_print_phone($act->societe->tel);
+			print "<br>".dol_print_phone($act->societe->phone);
 		}
 	}
 	print '</td>';

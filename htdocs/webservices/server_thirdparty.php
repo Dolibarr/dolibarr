@@ -312,7 +312,7 @@ function getThirdParty($authentication,$id='',$ref='',$ref_ext='')
 				        'country_id' => $thirdparty->country_id,
 				        'country_code' => $thirdparty->country_code,
 				        'country' => $thirdparty->country,
-			            'phone' => $thirdparty->tel,
+			            'phone' => $thirdparty->phone,
 				        'fax' => $thirdparty->fax,
 				        'email' => $thirdparty->email,
 				        'url' => $thirdparty->url,
