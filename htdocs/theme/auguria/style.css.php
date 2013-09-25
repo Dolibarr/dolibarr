@@ -610,6 +610,7 @@ img.login, img.printer, img.entity {
 
 div.vmenu, td.vmenu {
     margin-<?php print $right; ?>: 2px;
+  	margin-<?php print $left; ?>: 2px;
     padding: 0px;
     padding-bottom: 0px;
     width: 164px;
@@ -726,11 +727,8 @@ div.blockvmenuhelp
 
 div.menu_contenu {
 	background: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/bg-rubrique.png',1); ?>);
-	padding: 8px 0px 0px 0px;
+	padding: 2px 1px 1px 3px;
 	margin: 0px;
-	padding: 1px;
-
-	padding-right: 8px;
     font-size : 11px;
     font-weight:normal;
     color : #000000;
