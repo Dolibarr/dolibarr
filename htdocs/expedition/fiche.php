@@ -87,7 +87,7 @@ if ($id > 0 || ! empty($ref))
 if ($action == 'add')
 {
     $error=0;
-    
+
     $object = new Expedition($db);
 
     $db->begin();
@@ -517,7 +517,7 @@ else if ($action == 'classifybilled')
  * View
  */
 
-llxHeader('',$langs->trans('Sending'),'Expedition');
+llxHeader('',$langs->trans('Shipment'),'Expedition');
 
 $form = new Form($db);
 $formfile = new FormFile($db);
@@ -916,7 +916,7 @@ else
 		$soc->fetch($object->socid);
 
 		$head=shipping_prepare_head($object);
-		dol_fiche_head($head, 'shipping', $langs->trans("Sending"), 0, 'sending');
+		dol_fiche_head($head, 'shipping', $langs->trans("Shipment"), 0, 'sending');
 
 		dol_htmloutput_mesg($mesg);
 
@@ -926,7 +926,7 @@ else
 		if ($action == 'delete')
 		{
 			print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id,$langs->trans('DeleteSending'),$langs->trans("ConfirmDeleteSending",$object->ref),'confirm_delete','',0,1);
-			
+
 		}
 
 		/*
@@ -955,7 +955,7 @@ else
 			}
 
 			print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id,$langs->trans('ValidateSending'),$text,'confirm_valid','',0,1);
-			
+
 		}
 		/*
 		 * Confirmation de l'annulation
@@ -963,7 +963,7 @@ else
 		if ($action == 'annuler')
 		{
 			print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id,$langs->trans('CancelSending'),$langs->trans("ConfirmCancelSending",$object->ref),'confirm_cancel','',0,1);
-			
+
 		}
 
 		// Calculate true totalWeight and totalVolume for all products
