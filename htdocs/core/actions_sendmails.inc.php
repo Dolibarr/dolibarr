@@ -69,15 +69,18 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 	$subject='';$actionmsg='';$actionmsg2='';
 
 	$result=$object->fetch($id);
-	
+
+	$sendtosocid=0;
 	if (method_exists($object,"fetch_thirdparty") && $object->element != 'societe')
 	{
 		$result=$object->fetch_thirdparty();
 		$thirdparty=$object->thirdparty;
+		$sendtosocid=$thirdparty->id;
 	}
 	else if ($object->element == 'societe')
 	{
-		$thirdparty=$object;	
+		$thirdparty=$object;
+		$sendtosocid=$thirdparty->id;
 	}
 	else dol_print_error('','Use actions_sendmails.in.php for a type that is not supported');
 
@@ -114,28 +117,17 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 			$sendtocc = $_POST['sendtocc'];
 			$deliveryreceipt = $_POST['deliveryreceipt'];
 
-			if ($action == 'send')
+			if ($action == 'send' || $action == 'relance')
 			{
 				if (dol_strlen($_POST['subject'])) $subject = $_POST['subject'];
-				$actionmsg=$langs->transnoentities('MailSentBy').' '.$from.' '.$langs->transnoentities('To').' '.$sendto.".\n";
+				$actionmsg2=$langs->transnoentities('MailSentBy').' '.$from.' '.$langs->transnoentities('To').' '.$sendto.".\n";
 				if ($message)
 				{
+					$actionmsg=$langs->transnoentities('MailSentBy').' '.$from.' '.$langs->transnoentities('To').' '.$sendto.".\n";
 					$actionmsg.=$langs->transnoentities('MailTopic').": ".$subject."\n";
 					$actionmsg.=$langs->transnoentities('TextUsedInTheMessageBody').":\n";
 					$actionmsg.=$message;
 				}
-				//$actionmsg2=$langs->transnoentities('Action'.$actiontypecode);
-			}
-			if ($action == 'relance')
-			{
-				if (dol_strlen($_POST['subject'])) $subject = $_POST['subject'];
-				$actionmsg=$langs->transnoentities('MailSentBy').' '.$from.' '.$langs->transnoentities('To').' '.$sendto.".\n";
-				if ($message) {
-					$actionmsg.=$langs->transnoentities('MailTopic').": ".$subject."\n";
-					$actionmsg.=$langs->transnoentities('TextUsedInTheMessageBody').":\n";
-					$actionmsg.=$message;
-				}
-				//$actionmsg2=$langs->transnoentities('Action'.$actiontypecode);
 			}
 
 			// Create form object
@@ -162,7 +154,8 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 					$error=0;
 
 					// Initialisation donnees
-					$object->sendtoid		= $sendtoid;
+					$object->socid			= $sendtosocid;	// To link to a company
+					$object->sendtoid		= $sendtoid;	// To link to a contact/address
 					$object->actiontypecode	= $actiontypecode;
 					$object->actionmsg		= $actionmsg;  // Long text
 					$object->actionmsg2		= $actionmsg2; // Short text
@@ -172,7 +165,7 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 					// Appel des triggers
 					include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
 					$interface=new Interfaces($db);
-					$result=$interface->run_triggers('THIRDPARTY_EMAILSENT',$object,$user,$langs,$conf);
+					$result=$interface->run_triggers('COMPANY_SENTBYMAIL',$object,$user,$langs,$conf);
 					if ($result < 0) {
 						$error++; $this->errors=$interface->errors;
 					}
@@ -188,7 +181,7 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 						// This avoid sending mail twice if going out and then back to page
 						$mesg=$langs->trans('MailSuccessfulySent',$mailfile->getValidAddress($from,2),$mailfile->getValidAddress($sendto,2));
 						setEventMessage($mesg);
-						header('Location: '.$_SERVER["PHP_SELF"].'?facid='.$object->id);
+						header('Location: '.$_SERVER["PHP_SELF"].'?'.($paramname?$paramname:'id').'='.$object->id);
 						exit;
 					}
 				}
@@ -206,7 +199,7 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 						$mesg.='No mail sent. Feature is disabled by option MAIN_DISABLE_ALL_MAILS';
 					}
 					$mesg.='</div>';
-					
+
 					setEventMessage($mesg,'warnings');
 					$action = 'presend';
 				}

@@ -298,3 +298,6 @@ ALTER TABLE llx_facture_fourn ADD fk_mode_reglement integer NULL AFTER fk_cond_r
 ALTER TABLE llx_facture_fourn MODIFY COLUMN fk_mode_reglement	integer NULL;
 ALTER TABLE llx_facture_fourn MODIFY COLUMN fk_cond_reglement	integer NULL;
 
+
+insert into llx_c_action_trigger (rowid,code,label,description,elementtype,rang) values (9,'COMPANY_SENTBYMAIL','Mails sent from third party card','Executed when you send email from third party card','societe',1);
+
