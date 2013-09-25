@@ -627,7 +627,7 @@ class FormCompany
 	{
 		if (is_object($object) && method_exists($object, 'liste_type_contact'))
 		{
-			$lesTypes = $object->liste_type_contact($source, $order);
+			$lesTypes = $object->liste_type_contact($source, $order, 0, 1);
 			print '<select class="flat" name="'.$htmlname.'" id="'.$htmlname.'">';
 			if ($showempty) print '<option value="0"></option>';
 			foreach($lesTypes as $key=>$value)
