@@ -451,9 +451,10 @@ abstract class CommonObject
      *      @param	string	$source     'internal', 'external' or 'all'
      *      @param	string	$order		Sort order by : 'code' or 'rowid'
      *      @param  string	$option     0=Return array id->label, 1=Return array code->label
+     *      @param  string	$activeonly    0=all type of contact, 1=only the active
      *      @return array       		Array list of type of contacts (id->label if option=0, code->label if option=1)
      */
-    function liste_type_contact($source='internal', $order='code', $option=0)
+    function liste_type_contact($source='internal', $order='code', $option=0, $activeonly=0)
     {
         global $langs;
 
@@ -461,6 +462,9 @@ abstract class CommonObject
         $sql = "SELECT DISTINCT tc.rowid, tc.code, tc.libelle";
         $sql.= " FROM ".MAIN_DB_PREFIX."c_type_contact as tc";
         $sql.= " WHERE tc.element='".$this->element."'";
+        if ($activeonly == 1)
+        	$sql.= " AND tc.active=1"; // only the active type
+        	
         if (! empty($source)) $sql.= " AND tc.source='".$source."'";
         $sql.= " ORDER by tc.".$order;
 
