@@ -73,8 +73,10 @@ $hookmanager->initHooks(array('actioncard'));
 
 
 /*
- * Action creation de l'action
+ * Actions
  */
+
+// Add action
 if ($action == 'add_action')
 {
 	$error=0;
