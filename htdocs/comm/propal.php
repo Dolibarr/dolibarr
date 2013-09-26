@@ -2106,11 +2106,10 @@ else
 				if (count($object->lines) > 0) print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=validate">'.$langs->trans('Validate').'</a></div>';
 				//else print '<a class="butActionRefused" href="#">'.$langs->trans('Validate').'</a>';
 			}
-			//Creer un evenement
-			 if ($conf->agenda->enabled)
+			// Create event
+			if ($conf->agenda->enabled && ! empty($conf->global->MAIN_ADD_EVENT_ON_ELEMENT_CARD))	// Add hidden condition because this is not a "workflow" action so should appears somewhere else on page.
 			{
 				print '<a class="butAction" href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid.'">'.$langs->trans("AddAction").'</a>';
-				
 			}
 			// Edit
 			if ($object->statut == 1 && $user->rights->propal->creer)
