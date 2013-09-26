@@ -158,7 +158,7 @@ if (empty($reshook))
         $object->effectif_id           = GETPOST('effectif_id');
         if (GETPOST("private") == 1)
         {
-            $object->typent_id         = 8; // TODO predict another method if the field "special" change of rowid
+            $object->typent_id         = dol_getIdFromCode($db,'TE_PRIVATE','c_typent');
         }
         else
         {

@@ -160,7 +160,7 @@ abstract class ActionsCardCommon
             $this->object->effectif_id			= $_POST["effectif_id"];
             if (GETPOST("private") == 1)
             {
-                $this->object->typent_id		= 8; // TODO predict another method if the field "special" change of rowid
+                $this->object->typent_id		= dol_getIdFromCode($db,'TE_PRIVATE','c_typent');
             }
             else
             {
