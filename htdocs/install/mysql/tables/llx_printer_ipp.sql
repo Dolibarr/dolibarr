@@ -23,7 +23,7 @@ CREATE TABLE llx_printer_ipp
  datec 	datetime,
  printer_name text NOT NULL, 
  printer_location text NOT NULL,
- printer_uri varchar(256) NOT NULL,
+ printer_uri varchar(255) NOT NULL,
  copy integer NOT NULL DEFAULT '1',
  module varchar(16) NOT NULL,
  login varchar(32) NOT NULL

@@ -102,7 +102,7 @@ ALTER TABLE llx_expedition DROP FOREIGN KEY fk_expedition_fk_shipping_method;
 ALTER TABLE llx_expedition DROP INDEX idx_expedition_fk_expedition_methode;
 ALTER TABLE llx_expedition CHANGE COLUMN fk_expedition_methode fk_shipping_method integer;
 
-ALTER TABLE llx_c_shipment_mode ADD COLUMN tracking VARCHAR(256) NOT NULL DEFAULT '' AFTER description;
+ALTER TABLE llx_c_shipment_mode ADD COLUMN tracking VARCHAR(255) NOT NULL DEFAULT '' AFTER description;
 
 --ALTER TABLE llx_c_shipment_mode DROP COLUMN CASCADE;
 --ALTER TABLE llx_c_shipment_mode ADD COLUMN rowid INTEGER AUTO_INCREMENT PRIMARY KEY;
@@ -249,7 +249,7 @@ CREATE TABLE llx_printer_ipp
 	datec 	datetime,
 	printer_name text NOT NULL, 
 	printer_location text NOT NULL,
-	printer_uri varchar(256) NOT NULL,
+	printer_uri varchar(255) NOT NULL,
 	copy integer NOT NULL DEFAULT '1',
 	module varchar(16) NOT NULL,
 	login varchar(32) NOT NULL

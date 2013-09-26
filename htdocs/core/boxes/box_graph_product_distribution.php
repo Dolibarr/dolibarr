@@ -82,20 +82,33 @@ class box_graph_product_distribution extends ModeleBoxes
 				'target'=>'none'	// Set '' to get target="_blank"
 		);
 
-		$param_year='DOLUSERCOOKIE_param'.$this->boxcode.'year';
-		$param_showinvoicenb='DOLUSERCOOKIE_param'.$this->boxcode.'showinvoicenb';
-		$param_showpropalnb='DOLUSERCOOKIE_param'.$this->boxcode.'showpropalnb';
-		$param_showordernb='DOLUSERCOOKIE_param'.$this->boxcode.'showordernb';
-		$showinvoicenb=GETPOST($param_showinvoicenb,'alpha',4);
-		$showpropalnb=GETPOST($param_showpropalnb,'alpha',4);
-		$showordernb=GETPOST($param_showordernb,'alpha',4);
+		$param_year='DOLUSERCOOKIE_box_'.$this->boxcode.'_year';
+		$param_showinvoicenb='DOLUSERCOOKIE_box_'.$this->boxcode.'_showinvoicenb';
+		$param_showpropalnb='DOLUSERCOOKIE_box_'.$this->boxcode.'_showpropalnb';
+		$param_showordernb='DOLUSERCOOKIE_box_'.$this->boxcode.'_showordernb';
+		if (GETPOST('DOL_AUTOSET_COOKIE'))
+		{
+			$year=GETPOST($param_year,'int');
+			$showinvoicenb=GETPOST($param_showinvoicenb,'alpha');
+			$showpropalnb=GETPOST($param_showpropalnb,'alpha');
+			$showordernb=GETPOST($param_showordernb,'alpha');
+		}
+		else
+		{
+			include_once DOL_DOCUMENT_ROOT.'/core/lib/json.lib.php';
+			$tmparray=dol_json_decode($_COOKIE['DOLUSERCOOKIE_box_'.$this->boxcode],true);
+			$year=$tmparray['year'];
+			$showinvoicenb=$tmparray['showinvoicenb'];
+			$showpropalnb=$tmparray['showpropalnb'];
+			$showordernb=$tmparray['showordernb'];
+		}
 		if (empty($showinvoicenb) && empty($showpropalnb) && empty($showordernb)) { $showpropalnb=1; $showinvoicenb=1; $showordernb=1; }
 		if (empty($conf->facture->enabled) || empty($user->rights->facture->lire)) $showinvoicenb=0;		
 		if (empty($conf->propal->enabled) || empty($user->rights->propal->lire)) $showpropalnb=0;		
 		if (empty($conf->commande->enabled) || empty($user->rights->commande->lire)) $showordernb=0;		
 
 		$nowarray=dol_getdate(dol_now(),true);
-		$year=(GETPOST($param_year,'',4)?GETPOST($param_year,'int',4):$nowarray['year']);
+		if (empty($year)) $year=$nowarray['year'];
 
 		$nbofgraph=0;
 		if ($showinvoicenb) $nbofgraph++;
@@ -300,7 +313,7 @@ class box_graph_product_distribution extends ModeleBoxes
 			$stringtoshow.='<div class="center hideobject" id="idfilter'.$this->boxcode.'">';	// hideobject is to start hidden
 			$stringtoshow.='<form class="flat formboxfilter" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 			$stringtoshow.='<input type="hidden" name="action" value="'.$refreshaction.'">';
-			$stringtoshow.='<input type="hidden" name="DOL_AUTOSET_COOKIE" value="'.$param_year.','.$param_showinvoicenb.','.$param_showpropalnb.','.$param_showordernb.'">';
+			$stringtoshow.='<input type="hidden" name="DOL_AUTOSET_COOKIE" value="DOLUSERCOOKIE_box_'.$this->boxcode.':year,showinvoicenb,showpropalnb,showordernb">';
 			if (! empty($conf->facture->enabled) || ! empty($user->rights->facture->lire))		
 			{
 				$stringtoshow.='<input type="checkbox" name="'.$param_showinvoicenb.'"'.($showinvoicenb?' checked="true"':'').'> '.$langs->trans("ForCustomersInvoices");

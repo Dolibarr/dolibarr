@@ -197,7 +197,7 @@ class SocieteTest extends PHPUnit_Framework_TestCase
 		$localobject->town='New town';
 		$localobject->country_id=2;
 		$localobject->status=0;
-		$localobject->tel='New tel';
+		$localobject->phone='New tel';
 		$localobject->fax='New fax';
 		$localobject->email='newemail@newemail.com';
 		$localobject->url='New url';
@@ -205,15 +205,15 @@ class SocieteTest extends PHPUnit_Framework_TestCase
 		$localobject->idprof2='new idprof2';
 		$localobject->idprof3='new idprof3';
 		$localobject->idprof4='new idprof4';
-		
+
 		$result=$localobject->update($localobject->id,$user);
     	print __METHOD__." id=".$localobject->id." result=".$result."\n";
     	$this->assertLessThan($result, 0);
-		
+
     	$result=$localobject->update_note($localobject->note_private,'_private');
     	print __METHOD__." id=".$localobject->id." result=".$result."\n";
     	$this->assertLessThan($result, 0, 'Holiday::update_note_private error');
-		
+
     	$result=$localobject->update_note_public($localobject->note_public);
     	print __METHOD__." id=".$localobject->id." result=".$result."\n";
     	$this->assertLessThan($result, 0, 'Holiday::update_note_public error');
@@ -232,7 +232,7 @@ class SocieteTest extends PHPUnit_Framework_TestCase
     	$this->assertEquals($localobject->country_id, $newobject->country_id);
     	$this->assertEquals('BE', $newobject->country_code);
     	$this->assertEquals($localobject->status, $newobject->status);
-    	$this->assertEquals($localobject->tel, $newobject->tel);
+    	$this->assertEquals($localobject->phone, $newobject->phone);
     	$this->assertEquals($localobject->fax, $newobject->fax);
     	$this->assertEquals($localobject->email, $newobject->email);
     	$this->assertEquals($localobject->url, $newobject->url);

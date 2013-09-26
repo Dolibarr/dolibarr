@@ -48,7 +48,7 @@ function propal_prepare_head($object)
 	{
 		$langs->load("sendings");
 		$head[$h][0] = DOL_URL_ROOT.'/expedition/propal.php?id='.$object->id;
-		if ($conf->expedition_bon->enabled) $text=$langs->trans("Sendings");
+		if ($conf->expedition_bon->enabled) $text=$langs->trans("Shipment");
 		if ($conf->livraison_bon->enabled)  $text.='/'.$langs->trans("Receivings");
 		$head[$h][1] = $text;
 		$head[$h][2] = 'shipping';
@@ -135,7 +135,7 @@ function propal_admin_prepare_head($object)
 	$head[$h][1] = $langs->trans("ExtraFields");
     $head[$h][2] = 'attributes';
     $h++;
-    
+
     $head[$h][0] = DOL_URL_ROOT.'/comm/admin/propaldet_extrafields.php';
     $head[$h][1] = $langs->trans("ExtraFieldsLines");
     $head[$h][2] = 'attributeslines';

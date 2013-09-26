@@ -377,7 +377,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 					if (! empty($object->remise_percent)) $localtax2ligne-=($localtax2ligne*$object->remise_percent)/100;
 
 					$vatrate=(string) $object->lines[$i]->tva_tx;
-					
+
 					// Retrieve type from database for backward compatibility with old records
 					if ((! isset($localtax1_type) || $localtax1_type=='' || ! isset($localtax2_type) || $localtax2_type=='') // if tax type not defined
 					&& (! empty($localtax1_rate) || ! empty($localtax2_rate))) // and there is local tax
@@ -470,8 +470,8 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 					$posy=$this->_tableau_versements($pdf, $object, $posy, $outputlangs);
 				}
 
-				// Pied de page
-				$this->_pagefoot($pdf,$object,$outputlangs);
+                // Pied de page
+				$this->_pagefoot($pdf, $object, $outputlangs);
 				if (method_exists($pdf,'AliasNbPages')) $pdf->AliasNbPages();
 
 				$pdf->Close();
@@ -963,7 +963,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 			$pdf->SetTextColor(0,0,60);
 			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("RefSupplier")." : " . $outputlangs->convToOutputCharset($object->ref_supplier), '', 'R');
 		}
-		
+
 		$posy+=2;
 		$pdf->SetFont('','', $default_font_size -1);
 

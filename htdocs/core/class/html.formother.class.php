@@ -1084,6 +1084,68 @@ class FormOther
     }
 
 
+    /**
+     *  Return a HTML select list of bank accounts
+     *
+     *  @param  string	$htmlname          	Name of select zone
+     *  @param	string	$dictionnarytable	Dictionnary table
+     *  @param	string	$keyfield			Field for key
+     *  @param	string	$labelfield			Label field
+     *  @param	string	$selected			Selected value
+     *  @param  int		$useempty          	1=Add an empty value in list, 2=Add an empty value in list only if there is more than 2 entries.
+     * 	@return	void
+     */
+    function select_dictionnary($htmlname,$dictionnarytable,$keyfield='code',$labelfield='label',$selected='',$useempty=0)
+    {
+        global $langs, $conf;
+
+        $langs->load("admin");
+
+        $sql = "SELECT rowid, ".$keyfield.", ".$labelfield;
+        $sql.= " FROM ".MAIN_DB_PREFIX.$dictionnarytable;
+        $sql.= " ORDER BY ".$labelfield;
+
+        dol_syslog(get_class($this)."::select_dictionnary sql=".$sql);
+        $result = $this->db->query($sql);
+        if ($result)
+        {
+            $num = $this->db->num_rows($result);
+            $i = 0;
+            if ($num)
+            {
+                print '<select id="select'.$htmlname.'" class="flat selectdictionnary" name="'.$htmlname.'"'.($moreattrib?' '.$moreattrib:'').'>';
+                if ($useempty == 1 || ($useempty == 2 && $num > 1))
+                {
+                    print '<option value="-1">&nbsp;</option>';
+                }
+
+                while ($i < $num)
+                {
+                    $obj = $this->db->fetch_object($result);
+                    if ($selected == $obj->rowid || $selected == $obj->$keyfield)
+                    {
+                        print '<option value="'.$obj->$keyfield.'" selected="selected">';
+                    }
+                    else
+                    {
+                        print '<option value="'.$obj->$keyfield.'">';
+                    }
+                    print $obj->$labelfield;
+                    print '</option>';
+                    $i++;
+                }
+                print "</select>";
+            }
+            else
+			{
+                print $langs->trans("DictionnaryEmpty");
+            }
+        }
+        else {
+            dol_print_error($this->db);
+        }
+    }
+
 }
 
 ?>

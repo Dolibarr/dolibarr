@@ -83,17 +83,29 @@ class box_graph_invoices_permonth extends ModeleBoxes
 
 		if ($user->rights->facture->lire)
 		{
-			$param_year='DOLUSERCOOKIE_param'.$this->boxcode.'year';
-			$param_shownb='DOLUSERCOOKIE_param'.$this->boxcode.'shownb';
-			$param_showtot='DOLUSERCOOKIE_param'.$this->boxcode.'showtot';
+			$param_year='DOLUSERCOOKIE_box_'.$this->boxcode.'_year';
+			$param_shownb='DOLUSERCOOKIE_box_'.$this->boxcode.'_shownb';
+			$param_showtot='DOLUSERCOOKIE_box_'.$this->boxcode.'_showtot';
 
 			include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 			include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facturestats.class.php';
-			$shownb=GETPOST($param_shownb,'alpha',4);
-			$showtot=GETPOST($param_showtot,'alpha',4);
+			if (GETPOST('DOL_AUTOSET_COOKIE'))
+			{
+				$endyear=GETPOST($param_year,'int');
+				$shownb=GETPOST($param_shownb,'alpha');
+				$showtot=GETPOST($param_showtot,'alpha');
+			}
+			else
+			{
+				include_once DOL_DOCUMENT_ROOT.'/core/lib/json.lib.php';
+				$tmparray=dol_json_decode($_COOKIE['DOLUSERCOOKIE_box_'.$this->boxcode],true);
+				$endyear=$tmparray['year'];
+				$shownb=$tmparray['shownb'];
+				$showtot=$tmparray['showtot'];
+			}
 			if (empty($shownb) && empty($showtot)) $showtot=1;
 			$nowarray=dol_getdate(dol_now(),true);
-			$endyear=(GETPOST($param_year,'',4)?GETPOST($param_year,'int',4):$nowarray['year']);
+			if (empty($endyear)) $endyear=$nowarray['year'];
 			$startyear=$endyear-1;
 			$mode='customer';
 			$userid=0;
@@ -191,7 +203,7 @@ class box_graph_invoices_permonth extends ModeleBoxes
 				$stringtoshow.='<div class="center hideobject" id="idfilter'.$this->boxcode.'">';	// hideobject is to start hidden
 				$stringtoshow.='<form class="flat formboxfilter" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 				$stringtoshow.='<input type="hidden" name="action" value="'.$refreshaction.'">';
-				$stringtoshow.='<input type="hidden" name="DOL_AUTOSET_COOKIE" value="'.$param_year.','.$param_shownb.','.$param_showtot.'">';
+				$stringtoshow.='<input type="hidden" name="DOL_AUTOSET_COOKIE" value="DOLUSERCOOKIE_box_'.$this->boxcode.':year,shownb,showtot">';
 				$stringtoshow.='<input type="checkbox" name="'.$param_shownb.'"'.($shownb?' checked="true"':'').'"> '.$langs->trans("NumberOfBillsByMonth");
 				$stringtoshow.=' &nbsp; ';
 				$stringtoshow.='<input type="checkbox" name="'.$param_showtot.'"'.($showtot?' checked="true"':'').'"> '.$langs->trans("AmountOfBillsByMonthHT");

@@ -210,7 +210,7 @@ function ajax_multiautocompleter($htmlname,$fields,$url,$option='',$minLength=2,
 										jQuery("#'.$htmlname.'").val(item.value);
 										// TODO move this to specific request
 										if (item.states) {
-											jQuery("#departement_id").html(item.states);
+											jQuery("#state_id").html(item.states);
 										}
 										for (i=0;i<length;i++) {
 											if (item[fields[i]]) {   // If defined
@@ -233,12 +233,12 @@ function ajax_multiautocompleter($htmlname,$fields,$url,$option='',$minLength=2,
 								    {
 								        jQuery("#" + fields[i]).val(ui.item[fields[i]]);
 								        // If we set new country and new state, we need to set a new list of state to allow change
-                                        if (ui.item.states && ui.item["departement_id"] != jQuery("#departement_id").value) {
-                                            jQuery("#departement_id").html(ui.item.states);
+                                        if (ui.item.states && ui.item["state_id"] != jQuery("#state_id").value) {
+                                            jQuery("#state_id").html(ui.item.states);
                                         }
 								    }
 								}
-                                else if (fields[i]=="state_id" || fields[i]=="departement_id")
+                                else if (fields[i]=="state_id" || fields[i]=="state_id")
                                 {
                                     if (ui.item[fields[i]] > 0)     // Do not erase state if unknown
                                     {

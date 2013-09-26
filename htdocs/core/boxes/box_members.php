@@ -79,7 +79,7 @@ class box_members extends ModeleBoxes
 
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastModifiedMembers",$max));
 
-		if ($user->rights->societe->lire)
+		if ($user->rights->adherent->lire)
 		{
 			$sql = "SELECT a.rowid, a.lastname, a.firstname, a.societe as company, a.fk_soc,";
 			$sql.= " a.datec, a.tms, a.statut as status, a.datefin as date_end_subscription,";

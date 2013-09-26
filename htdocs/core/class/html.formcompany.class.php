@@ -191,7 +191,7 @@ class FormCompany
 	 *   @param     string	$htmlname			Id of department
 	 *   @return	void
 	 */
-	function select_departement($selected='',$country_codeid=0, $htmlname='departement_id')
+	function select_departement($selected='',$country_codeid=0, $htmlname='state_id')
 	{
 		print $this->select_state($selected,$country_codeid, $htmlname);
 	}
@@ -208,7 +208,7 @@ class FormCompany
 	 *    @param    string	$htmlname			Id of department
 	 * 	  @return	string						String with HTML select
 	 */
-	function select_state($selected='',$country_codeid=0, $htmlname='departement_id')
+	function select_state($selected='',$country_codeid=0, $htmlname='state_id')
 	{
 		global $conf,$langs,$user;
 
@@ -627,7 +627,7 @@ class FormCompany
 	{
 		if (is_object($object) && method_exists($object, 'liste_type_contact'))
 		{
-			$lesTypes = $object->liste_type_contact($source, $order);
+			$lesTypes = $object->liste_type_contact($source, $order, 0, 1);
 			print '<select class="flat" name="'.$htmlname.'" id="'.$htmlname.'">';
 			if ($showempty) print '<option value="0"></option>';
 			foreach($lesTypes as $key=>$value)

@@ -697,6 +697,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 		$posy+=2;
 
 		// Add list of linked orders on shipment
+		// Currently not supported by pdf_writeLinkedObjects, link for delivery to order is done through shipment)
 		if ($object->origin == 'expedition' || $object->origin == 'shipping')
 		{
 			$Yoff=$posy-5;
@@ -708,7 +709,6 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 		    $origin 	= $shipment->origin;
 			$origin_id 	= $shipment->origin_id;
 
-		    // TODO move to external function
 			if ($conf->$origin->enabled)
 			{
 				$outputlangs->load('orders');
