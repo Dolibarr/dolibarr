@@ -3589,7 +3589,7 @@ else if ($id > 0 || ! empty($ref))
 						{
 							if (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->facture->invoice_advance->send)
 							{
-								print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?facid='.$object->id.'&amp;action=presend&amp;mode=init">'.$langs->trans('SendByMail').'</a></div>';
+								print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?facid='.$object->id.'&amp;action=presend&amp;mode=init#mail">'.$langs->trans('SendByMail').'</a></div>';
 							}
 							else print '<div class="inline-block divButAction"><a class="butActionRefused" href="#">'.$langs->trans('SendByMail').'</a></div>';
 						}
@@ -3940,6 +3940,7 @@ else if ($id > 0 || ! empty($ref))
 					$formmail->add_attached_files($file,basename($file),dol_mimetype($file));
 				}
 
+				print '<a name="mail"></a>'; // ancre pour retourner sur la ligne
 				$formmail->show_form();
 
 				print '<br>';
