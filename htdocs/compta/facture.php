@@ -3303,6 +3303,11 @@ else if ($id > 0 || ! empty($ref))
 			{
 				$form->form_modes_reglement($_SERVER['PHP_SELF'].'?facid='.$object->id,$object->mode_reglement_id,'none');
 			}
+		//
+			if (($object->mode_reglement_code == 'VIR' && $user->rights->facture->creer) || ($object->mode_reglement_code == 'CHQ' && $user->rights->facture->creer))
+			{   
+				print '<a href="banque.php?facid='.$object->id.'&amp;action=create">'.$langs->trans('  ( Ordre de reglement )').'</a>';
+			}
 			print '</td></tr>';
 
 			// Amount
