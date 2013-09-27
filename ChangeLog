@@ -26,6 +26,8 @@ Fix: Delete linked element to supplier invoice when deleted
 Fix: [ bug #1061 ] Bad info shipped products
 Fix: [ bug #1062 ] Documents lost in propals and contracts validating
 Fix: Supplier price displayed on document lines and margin infos didnt take discount
+Fix: sorting on qty did not work in supplier product list
+Fix: there was no escaping on filter fields in supplier product list
 Qual: Add travis-ci integration
 
 

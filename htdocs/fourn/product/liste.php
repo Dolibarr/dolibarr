@@ -113,15 +113,15 @@ else
 	}
 	if ($sref)
 	{
-		$sql .= " AND p.ref LIKE '%".$sref."%'";
+		$sql .= " AND p.ref LIKE '%".$db->escape($sref)."%'";
 	}
 	if ($sRefSupplier)
 	{
-		$sql .= " AND ppf.ref_fourn LIKE '%".$sRefSupplier."%'";
+		$sql .= " AND ppf.ref_fourn LIKE '%".$db->escape($sRefSupplier)."%'";
 	}
 	if ($snom)
 	{
-		$sql .= " AND p.label LIKE '%".$snom."%'";
+		$sql .= " AND p.label LIKE '%".$db->escape($snom)."%'";
 	}
 	if($catid)
 	{
@@ -181,7 +181,7 @@ if ($resql)
 	print_liste_field_titre($langs->trans("Label"),"liste.php", "p.label",$param,"","",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Supplier"),"liste.php", "ppf.fk_soc",$param,"","",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("BuyingPrice"),"liste.php", "ppf.price",$param,"",'align="right"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("QtyMin"),"liste.php", "ppf.qty",$param,"",'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("QtyMin"),"liste.php", "ppf.quantity",$param,"",'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("UnitPrice"),"liste.php", "ppf.unitprice",$param,"",'align="right"',$sortfield,$sortorder);
 	print "</tr>\n";
 
