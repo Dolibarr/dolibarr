@@ -1884,6 +1884,18 @@ else
 		print '</tr>';
 	}
 
+	if ($soc->outstandingbill)
+	{
+		// Outstanding Bill
+		print '<tr><td>';
+		print $langs->trans('OutstandingBill');
+		print '</td><td align=right>';
+		print price($soc->get_OutstandingBill()).' / ';
+		print price($soc->outstandingbill).'</td><td colspan=2>'.$langs->trans("Currency".$conf->currency);
+		print '</td>';
+		print '</tr>';
+	}
+
 	// Other attributes
 	$res=$object->fetch_optionals($object->id,$extralabels);
 	$parameters=array('colspan' => ' colspan="3"');
