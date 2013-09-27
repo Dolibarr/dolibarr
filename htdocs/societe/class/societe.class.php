@@ -2778,6 +2778,28 @@ class Societe extends CommonObject
 		}
 	}
 
+    /**
+     *  return amount of bill not paid
+     *
+     *  @return		boolean			Yes or no
+     */
+    function get_OutstandingBill()
+    {
+		$sql  = "SELECT sum(total) as amount FROM ".MAIN_DB_PREFIX."facture as f";
+		$sql .= " WHERE fk_soc = ". $this->id; 
+		$sql .= " AND paye = 0";
+		$sql .= " AND fk_statut <> 0";
+
+		dol_syslog("get_OutstandingBill sql=".$sql);
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+			$obj=$this->db->fetch_object($resql);
+   			return ($obj->amount);
+		}
+		else
+			return 0;
+	}
 
 	/**
 	 *    Return label of status customer is prospect/customer
