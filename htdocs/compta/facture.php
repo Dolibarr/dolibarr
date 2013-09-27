@@ -2292,6 +2292,18 @@ if ($action == 'create')
 		print '</td></tr>';
 	}
 
+	if ($soc->outstandingbill)
+	{
+		// Outstanding Bill
+		print '<tr><td>';
+		print $langs->trans('OutstandingBill');
+		print '</td><td align=right>';
+		print price($soc->get_OutstandingBill()).' / ';
+		print price($soc->outstandingbill).'</td><td colspan=2>';
+		print '</td>';
+		print '</tr>';
+	}
+
 	// Other attributes
 	$parameters=array('objectsrc' => $objectsrc, 'colspan' => ' colspan="3"');
 	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
