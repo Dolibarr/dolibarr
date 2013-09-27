@@ -132,7 +132,7 @@ if ($action == 'cstc')
 if ($action == 'setOutstandingBill')
 {
 	$object->fetch($id);
-	$object->stcomm_id=GETPOST('OutstandingBill');
+	$object->outstanding=GETPOST('OutstandingBill');
 	$result=$object->set_OutstandingBill($user);
 	if ($result < 0) setEventMessage($object->error,'errors');
 }
