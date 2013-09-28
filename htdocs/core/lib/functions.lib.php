@@ -2908,17 +2908,15 @@ function getLocalTaxesFromRate($vatrate, $local, $thirdparty)
  *
  *  @param	int			$idprod          	Id of product or 0 if not a predefined product
  *  @param  Societe		$thirdparty_seller  Thirdparty with a ->country_code defined (FR, US, IT, ...)
- *	@param	int			$idprodfournprice	Id product_fournisseur_price (for supplier order/invoice)
+ *	@param	int			$idprodfournprice	Id product_fournisseur_price (for "supplier" order/invoice)
  *  @return int					         	<0 if KO, Vat rate if OK
  *  @see get_product_localtax_for_country
  */
 function get_product_vat_for_country($idprod, $thirdparty_seller, $idprodfournprice=0)
 {
-	global $db,$mysoc;
+	global $db,$conf,$mysoc;
 
-	if (! class_exists('Product')) {
-		require DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
-	}
+	require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
 
 	$ret=0;
 	$found=0;
@@ -2931,7 +2929,7 @@ function get_product_vat_for_country($idprod, $thirdparty_seller, $idprodfournpr
 
 		if ($mysoc->country_code == $thirdparty_seller->country_code) // If selling country is ours
 		{
-			if ($idprodfournprice > 0)     // We want vat for product for a supplier order or invoice
+			if ($idprodfournprice > 0)     // We want vat for product for a "supplier" order or invoice
 			{
 				$product->get_buyprice($idprodfournprice,0,0,0);
 				$ret=$product->vatrate_supplier;
@@ -2952,23 +2950,28 @@ function get_product_vat_for_country($idprod, $thirdparty_seller, $idprodfournpr
 
 	if (! $found)
 	{
-		// If vat of product for the country not found or not defined, we return higher vat of country.
-		$sql = "SELECT taux as vat_rate";
-		$sql.= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_pays as p";
-		$sql.= " WHERE t.active=1 AND t.fk_pays = p.rowid AND p.code='".$thirdparty_seller->country_code."'";
-		$sql.= " ORDER BY t.taux DESC, t.recuperableonly ASC";
-		$sql.= $db->plimit(1);
-
-		$resql=$db->query($sql);
-		if ($resql)
+		if (empty($conf->global->MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS))
 		{
-			$obj=$db->fetch_object($resql);
-			if ($obj)
+			// If vat of product for the country not found or not defined, we return higher vat of country.
+			$sql = "SELECT taux as vat_rate";
+			$sql.= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_pays as p";
+			$sql.= " WHERE t.active=1 AND t.fk_pays = p.rowid AND p.code='".$thirdparty_seller->country_code."'";
+			$sql.= " ORDER BY t.taux DESC, t.recuperableonly ASC";
+			$sql.= $db->plimit(1);
+	
+			$resql=$db->query($sql);
+			if ($resql)
 			{
-				$ret=$obj->vat_rate;
+				$obj=$db->fetch_object($resql);
+				if ($obj)
+				{
+					$ret=$obj->vat_rate;
+				}
+				$db->free($sql);
 			}
+			else dol_print_error($db);
 		}
-		else dol_print_error($db);
+		else $ret=$conf->global->MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS;
 	}
 
 	dol_syslog("get_product_vat_for_country: ret=".$ret);

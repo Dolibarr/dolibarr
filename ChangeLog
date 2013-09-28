@@ -56,6 +56,7 @@ For users:
 - New: [ task #1060 ] Register fields localtax(1|2)_type into details tables.
 - New: [ task #923 ] Localtax support for ODT templates. 
 - New: [ task #90 ] Barcode search.
+- New: Add hidden option MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS.
 
 For translators:
 - Qual: Normalized sort order of all languages files with english reference files.
