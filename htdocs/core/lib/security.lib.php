@@ -215,7 +215,7 @@ function restrictedArea($user, $features, $objectid=0, $dbtablename='', $feature
             {
             	foreach($feature2 as $subfeature)
             	{
-            		if (empty($user->rights->$feature->$subfeature->creer) 
+            		if (empty($user->rights->$feature->$subfeature->creer)
             		&& empty($user->rights->$feature->$subfeature->write)
             		&& empty($user->rights->$feature->$subfeature->create)) $createok=0;
             		else { $createok=1; break; } // For bypass the second test if the first is ok
@@ -411,7 +411,8 @@ function restrictedArea($user, $features, $objectid=0, $dbtablename='', $feature
                 // If external user: Check permission for external users
                 if ($user->societe_id > 0)
                 {
-                    $sql = "SELECT dbt.".$dbt_keyfield;
+                	if (empty($dbt_keyfield)) dol_print_error('','Param dbt_keyfield is required but not defined');
+                	$sql = "SELECT dbt.".$dbt_keyfield;
                     $sql.= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
                     $sql.= " WHERE dbt.rowid = ".$objectid;
                     $sql.= " AND dbt.".$dbt_keyfield." = ".$user->societe_id;
@@ -419,6 +420,7 @@ function restrictedArea($user, $features, $objectid=0, $dbtablename='', $feature
                 // If internal user: Check permission for internal users that are restricted on their objects
                 else if (! empty($conf->societe->enabled) && ($user->rights->societe->lire && ! $user->rights->societe->client->voir))
                 {
+                	if (empty($dbt_keyfield)) dol_print_error('','Param dbt_keyfield is required but not defined');
                     $sql = "SELECT sc.fk_soc";
                     $sql.= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
                     $sql.= ", ".MAIN_DB_PREFIX."societe as s";

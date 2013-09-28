@@ -51,12 +51,14 @@ $action=GETPOST('action','alpha');
 $cancel=GETPOST('cancel','alpha');
 $backtopage=GETPOST('backtopage','alpha');
 $contactid=GETPOST('contactid','int');
+$origin=GETPOST('origin','alpha');
+$originid=GETPOST('originid','int');
 
 // Security check
 $socid = GETPOST('socid','int');
 $id = GETPOST('id','int');
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'agenda', $id, 'actioncomm&societe', 'myactions&allactions', '', 'id');
+$result = restrictedArea($user, 'agenda', $id, 'actioncomm&societe', 'myactions&allactions', 'fk_soc', 'id');
 if ($user->societe_id && $socid) $result = restrictedArea($user,'societe',$socid);
 
 $error=GETPOST("error");
@@ -77,8 +79,10 @@ $hookmanager->initHooks(array('actioncard'));
 
 
 /*
- * Action creation de l'action
+ * Actions
  */
+
+// Add action
 if ($action == 'add_action')
 {
 	$error=0;
@@ -142,6 +146,8 @@ if ($action == 'add_action')
 	$actioncomm->location = GETPOST("location");
 	$actioncomm->transparency = (GETPOST("transparency")=='on'?1:0);
 	$actioncomm->label = trim(GETPOST('label'));
+	$actioncomm->fk_element = GETPOST("fk_element");
+	$actioncomm->elementtype = GETPOST("elementtype");
 	if (! GETPOST('label'))
 	{
 		if (GETPOST('actioncode') == 'AC_RDV' && $contact->getFullName($langs))
@@ -327,7 +333,8 @@ if ($action == 'update')
 		$actioncomm->fk_project  = $_POST["projectid"];
 		$actioncomm->note        = $_POST["note"];
 		$actioncomm->pnote       = $_POST["note"];
-
+		$actioncomm->fk_element	 = $_POST["fk_element"];
+		$actioncomm->elementtype = $_POST["elementtype"];
 		if (! $datef && $percentage == 100)
 		{
 			$error=$langs->trans("ErrorFieldRequired",$langs->trans("DateEnd"));
@@ -476,7 +483,7 @@ if ($action == 'create')
 
     // Full day
     print '<tr><td class="fieldrequired">'.$langs->trans("EventOnFullDay").'</td><td><input type="checkbox" id="fullday" name="fullday" '.(GETPOST('fullday')?' checked="checked"':'').'></td></tr>';
-
+	
 	// Date start
 	$datep=$actioncomm->datep;
 	if (GETPOST('datep','int',1)) $datep=dol_stringtotime(GETPOST('datep','int',1),0);
@@ -593,6 +600,11 @@ if ($action == 'create')
 		}
 		print '</td></tr>';
 	}
+	if(!empty($origin) && !empty($originid))
+	{
+		print '<input type="hidden" name="fk_element" size="10" value="'.GETPOST('originid').'">';
+		print '<input type="hidden" name="elementtype" size="10" value="'.GETPOST('origin').'">';
+	}
 
 	if (GETPOST("datep") && preg_match('/^([0-9][0-9][0-9][0-9])([0-9][0-9])([0-9][0-9])$/',GETPOST("datep"),$reg))
 	{
@@ -610,6 +622,7 @@ if ($action == 'create')
     $doleditor=new DolEditor('note',(GETPOST('note')?GETPOST('note'):$actioncomm->note),'',240,'dolibarr_notes','In',true,true,$conf->fckeditor->enabled,ROWS_7,90);
     $doleditor->Create();
     print '</td></tr>';
+    
 
     // Other attributes
     $parameters=array();
@@ -971,7 +984,7 @@ if ($id > 0)
 			{
 				if ($act->societe->fetch($act->societe->id))
 				{
-					print "<br>".dol_print_phone($act->societe->tel);
+					print "<br>".dol_print_phone($act->societe->phone);
 				}
 			}
 			print '</td>';

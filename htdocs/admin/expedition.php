@@ -210,7 +210,7 @@ $head[$h][1] = $langs->trans("Setup");
 $h++;
 
 $head[$h][0] = DOL_URL_ROOT."/admin/expedition.php";
-$head[$h][1] = $langs->trans("Sending");
+$head[$h][1] = $langs->trans("Shipment");
 $hselected=$h;
 $h++;
 
@@ -225,7 +225,7 @@ dol_fiche_head($head, $hselected, $langs->trans("ModuleSetup"));
 
 /*
  * Expedition numbering model
- */ 
+ */
 
 print_titre($langs->trans("SendingsNumberingModules"));
 
@@ -260,13 +260,13 @@ foreach ($dirmodels as $reldir)
 					require_once $dir.$file.'.php';
 
 					$module = new $file;
-					
+
 					if ($module->isEnabled())
 					{
 						// Show modules according to features level
 						if ($module->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
 						if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
-					
+
 						$var=!$var;
 						print '<tr '.$bc[$var].'><td>'.$module->nom."</td>\n";
 						print '<td>';
@@ -276,8 +276,8 @@ foreach ($dirmodels as $reldir)
                         // Show example of numbering module
                         print '<td class="nowrap">';
                         $tmp=$module->getExample();
-                        if (preg_match('/^Error/',$tmp)) { 
-							$langs->load("errors"); print '<div class="error">'.$langs->trans($tmp).'</div>'; 
+                        if (preg_match('/^Error/',$tmp)) {
+							$langs->load("errors"); print '<div class="error">'.$langs->trans($tmp).'</div>';
 						}
                         elseif ($tmp=='NotConfigured') print $langs->trans($tmp);
                         else print $tmp;

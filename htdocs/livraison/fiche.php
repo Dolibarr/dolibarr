@@ -479,7 +479,7 @@ else
 			$soc->fetch($delivery->socid);
 
 			$head=delivery_prepare_head($delivery);
-			dol_fiche_head($head, 'delivery', $langs->trans("Sending"), 0, 'sending');
+			dol_fiche_head($head, 'delivery', $langs->trans("Shipment"), 0, 'sending');
 
 			/*
 			 * Confirmation de la suppression
@@ -489,7 +489,7 @@ else
 			{
 				$expedition_id = $_GET["expid"];
 				print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$delivery->id.'&amp;expid='.$expedition_id,$langs->trans("DeleteDeliveryReceipt"),$langs->trans("DeleteDeliveryReceiptConfirm",$delivery->ref),'confirm_delete','','',1);
-				
+
 			}
 
 			/*
@@ -499,7 +499,7 @@ else
 			if ($action == 'valid')
 			{
 				print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$delivery->id,$langs->trans("ValidateDeliveryReceipt"),$langs->trans("ValidateDeliveryReceiptConfirm",$delivery->ref),'confirm_valid','','',1);
-				
+
 			}
 
 

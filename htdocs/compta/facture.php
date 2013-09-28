@@ -1588,6 +1588,15 @@ else if ($action == 'down' && $user->rights->facture->creer)
 	exit;
 }
 
+// Link invoice to order
+if (GETPOST('linkedOrder'))
+{
+	$object->fetch($id);
+	$object->fetch_thirdparty();
+	$result=$object->add_object_linked('commande',GETPOST('linkedOrder'));
+}
+
+
 /*
  * Add file in email form
  */
@@ -1959,6 +1968,16 @@ $bankaccountstatic=new Account($db);
 $now=dol_now();
 
 llxHeader('',$langs->trans('Bill'),'EN:Customers_Invoices|FR:Factures_Clients|ES:Facturas_a_clientes');
+
+print '
+<script type="text/javascript" language="javascript">
+jQuery(document).ready(function() {
+	jQuery("#linktoorder").click(function() {
+		jQuery("#commande").toggle();
+	});
+});
+</script>
+';
 
 
 /*********************************************************************
@@ -3727,74 +3746,64 @@ else if ($id > 0 || ! empty($ref))
 				// Linked object block
 				$somethingshown=$object->showLinkedObjectBlock();
 
-
 				if (empty($somethingshown) && $object->statut > 0)
 				{
+					print '<br><a href="#" id="linktoorder">'.$langs->trans('LinkedOrder').'</a>';
 
-				print '<a href="#" onClick="lier_commande(commande)">'.$langs->trans('LinkedOrder').'</a>';
-
-				print '<div id="commande" style="display:none">';
-					{
+					print '<div id="commande" style="display:none">';
 
 					$sql = "SELECT s.rowid as socid, s.nom as name, s.client, c.rowid, c.ref, c.ref_client, c.total_ht";
 					$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 					$sql.= ", ".MAIN_DB_PREFIX."commande as c";
 					$sql.= ' WHERE c.fk_soc = '.$soc->id.'';
 
-					$result = $db->query($sql);
-					if ($result)
+					$resqlorderlist = $db->query($sql);
+					if ($resqlorderlist)
 					{
-						$num = $db->num_rows($result);
+						$num = $db->num_rows($resqlorderlist);
 						$i = 0;
 
-
-					print_titre($langs->trans("LinkedOrder"));
-					print  	'<table><tr class="liste_titre">';
-					print   '<td class="nowrap"></td>';
-					print	'<td align="center">'.$langs->trans("Ref").'</td>';
-					print	'<td align="left">'.$langs->trans("RefCustomer").'</td>';
-					print	'<td align="left">'.$langs->trans("AmountHTShort").'</td>';
-					print   '<td align="left">'.$langs->trans("Company").'</td>
-						</tr>';
-						print '<form action=" " method="post" name="LinkedOrder">';
+						print '<form action="" method="POST" name="LinkedOrder">';
+						print '<table class="noborder">';
+						print '<tr class="liste_titre">';
+						print '<td class="nowrap"></td>';
+						print '<td align="center">'.$langs->trans("Ref").'</td>';
+						print '<td align="left">'.$langs->trans("RefCustomer").'</td>';
+						print '<td align="left">'.$langs->trans("AmountHTShort").'</td>';
+						print '<td align="left">'.$langs->trans("Company").'</td>';
+						print '</tr>';
 						while ($i < $num)
 						{
-							$objp = $db->fetch_object($result);
+							$objp = $db->fetch_object($resqlorderlist);
 							if ($objp->socid == $soc->id)
 							{
-							$var=!$var;
-							print '<tr '.$bc[$var].'>';
-							print '<td aling="left">';
-							print  '<input type="radio" name="linkedOrder" value='.$objp->rowid.'>';
-							print '<td align="center">'.$objp->ref.'</td>';
-							print '<td>'.$objp->ref_client.'</td>';
-							print '<td>'.price($objp->total_ht).'</td>';
-							print '<td>'.$objp->name.'</td>';
-							print '</td>';
-						}
-
+								$var=!$var;
+								print '<tr '.$bc[$var].'>';
+								print '<td aling="left">';
+								print '<input type="radio" name="linkedOrder" value='.$objp->rowid.'>';
+								print '<td align="center">'.$objp->ref.'</td>';
+								print '<td>'.$objp->ref_client.'</td>';
+								print '<td>'.price($objp->total_ht).'</td>';
+								print '<td>'.$objp->name.'</td>';
+								print '</td>';
+								print '</tr>';
+							}
+	
 							$i++;
-					}
+						}
 						print '</table>';
-						print '</br>';
-						print '<br><center><input type="submit" class="button" value="'.$langs->trans('OK').'"></center>';
-
-
+						print '<br><center><input type="submit" class="button" value="'.$langs->trans('ToLink').'"></center>';
 						print '</form>';
+						$db->free($resqlorderlist);
 					}
-						else
+					else
 					{
 						dol_print_error($db);
 					}
-				$result=$object->add_object_linked('commande',$_POST['linkedOrder']);
-				if($result>0)
-				{
-					echo '<meta http-equiv="refresh" content="0;URL=facture.php?facid='.$object->id.'">';
+					
+					print '</div>';
 				}
-				}
-
-				print '</div>';
-			}
+				
 				// Link for paypal payment
 				if (! empty($conf->paypal->enabled) && $object->statut != 0)
 				{
@@ -3947,19 +3956,3 @@ dol_htmloutput_mesg('',$mesgs);
 llxFooter();
 $db->close();
 ?>
-
-<script>
-
-function lier_commande(commande)
-{
-
-	if(commande.style.display=='none')
-	{
-		commande.style.display='inline';
-	}
-	else
-	{
-		commande.style.display="none";
-	}
-}
-</script>

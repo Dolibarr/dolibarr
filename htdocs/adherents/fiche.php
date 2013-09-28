@@ -691,7 +691,7 @@ else
 		/*                                                                            */
 		/* ************************************************************************** */
 		$object->canvas=$canvas;
-		$object->state_id = GETPOST('departement_id', 'int');
+		$object->state_id = GETPOST('state_id', 'int');
 
 		// We set country_id, country_code and country for the selected country
 		$object->country_id=GETPOST('country_id','int')?GETPOST('country_id','int'):$mysoc->country_id;

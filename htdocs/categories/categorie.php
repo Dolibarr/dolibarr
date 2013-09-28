@@ -199,11 +199,11 @@ if (empty($reshook))
 		}
 		else
 		{
-			if ($cat->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') 
+			if ($cat->error == 'DB_ERROR_RECORD_ALREADY_EXISTS')
 			{
 				setEventMessage($langs->trans("ObjectAlreadyLinkedToCategory"),'warnings');
 			}
-			else 
+			else
 			{
 				setEventMessage($cat->error,'errors');
 				setEventMessage($cat->errors,'errors');
@@ -305,7 +305,7 @@ if ($socid)
 	print '</td></tr>';
 
 	// Phone
-	print '<tr><td>'.$langs->trans('Phone').'</td><td>'.dol_print_phone($soc->tel,$soc->country_code,0,$soc->id,'AC_TEL').'</td>';
+	print '<tr><td>'.$langs->trans('Phone').'</td><td>'.dol_print_phone($soc->phone,$soc->country_code,0,$soc->id,'AC_TEL').'</td>';
 	print '<td>'.$langs->trans('Fax').'</td><td>'.dol_print_phone($soc->fax,$soc->country_code,0,$soc->id,'AC_FAX').'</td></tr>';
 
 	// Assujeti a TVA ou pas

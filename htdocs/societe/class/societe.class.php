@@ -54,10 +54,9 @@ class Societe extends CommonObject
     var $town;
     var $status;   // 0=activity ceased, 1= in activity
 
-    var $state_id;
+    var $state_id;		// Id of department
     var $state_code;
     var $state;
-    var $departement_id;     // deprecated
     var $departement_code;   // deprecated
     var $departement;        // deprecated
 
@@ -404,10 +403,9 @@ class Societe extends CommonObject
         $this->town			= $this->town?trim($this->town):trim($this->town);
         $this->state_id		= trim($this->state_id);
         $this->country_id	= ($this->country_id > 0)?$this->country_id:$this->country_id;
-        $this->phone		= trim($this->phone?$this->phone:$this->tel);
+        $this->phone		= trim($this->phone);
         $this->phone		= preg_replace("/\s/","",$this->phone);
         $this->phone		= preg_replace("/\./","",$this->phone);
-        $this->tel          = $this->phone;			// TODO obsolete
         $this->fax			= trim($this->fax);
         $this->fax			= preg_replace("/\s/","",$this->fax);
         $this->fax			= preg_replace("/\./","",$this->fax);
@@ -780,7 +778,6 @@ class Societe extends CommonObject
 
                 $this->email = $obj->email;
                 $this->url = $obj->url;
-                $this->tel = $obj->phone; // TODO obsolete
                 $this->phone = $obj->phone;
                 $this->fax = $obj->fax;
 
@@ -1567,8 +1564,6 @@ class Societe extends CommonObject
     function thirdparty_and_contact_phone_array()
     {
         global $langs;
-
-        if (empty($this->phone) && ! empty($this->tel)) $this->phone=$this->tel;
 
         $contact_phone = $this->contact_property_array('mobile');
         if ($this->phone)
@@ -2410,7 +2405,6 @@ class Societe extends CommonObject
         $this->town=$member->town;
         $this->country_code=$member->country_code;
         $this->country_id=$member->country_id;
-        $this->tel=$member->phone;				// deprecated
         $this->phone=$member->phone;       // Prof phone
         $this->email=$member->email;
 
@@ -2498,7 +2492,6 @@ class Societe extends CommonObject
     	$this->country=$country_label;
     	if (is_object($langs)) $this->country=($langs->trans('Country'.$country_code)!='Country'.$country_code)?$langs->trans('Country'.$country_code):$country_label;
 
-    	$this->tel=empty($conf->global->MAIN_INFO_SOCIETE_TEL)?'':$conf->global->MAIN_INFO_SOCIETE_TEL;   // TODO deprecated
     	$this->phone=empty($conf->global->MAIN_INFO_SOCIETE_TEL)?'':$conf->global->MAIN_INFO_SOCIETE_TEL;
     	$this->fax=empty($conf->global->MAIN_INFO_SOCIETE_FAX)?'':$conf->global->MAIN_INFO_SOCIETE_FAX;
     	$this->url=empty($conf->global->MAIN_INFO_SOCIETE_WEB)?'':$conf->global->MAIN_INFO_SOCIETE_WEB;

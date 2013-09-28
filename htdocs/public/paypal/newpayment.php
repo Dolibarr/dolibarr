@@ -476,7 +476,7 @@ if (GETPOST("source") == 'order' && $valid)
     $shipToCountryCode=$order->thirdparty->country_code;
     $shipToZip=$order->thirdparty->zip;
     $shipToStreet2='';
-    $phoneNum=$order->thirdparty->tel;
+    $phoneNum=$order->thirdparty->phone;
     if ($shipToName && $shipToStreet && $shipToCity && $shipToCountryCode && $shipToZip)
     {
         print '<input type="hidden" name="shipToName" value="'.$shipToName.'">'."\n";
@@ -583,7 +583,7 @@ if (GETPOST("source") == 'invoice' && $valid)
     $shipToCountryCode=$invoice->thirdparty->country_code;
     $shipToZip=$invoice->thirdparty->zip;
     $shipToStreet2='';
-    $phoneNum=$invoice->thirdparty->tel;
+    $phoneNum=$invoice->thirdparty->phone;
     if ($shipToName && $shipToStreet && $shipToCity && $shipToCountryCode && $shipToZip)
     {
         print '<input type="hidden" name="shipToName" value="'.$shipToName.'">'."\n";
@@ -778,7 +778,7 @@ if (GETPOST("source") == 'contractline' && $valid)
     $shipToCountryCode=$contract->thirdparty->country_code;
     $shipToZip=$contract->thirdparty->zip;
     $shipToStreet2='';
-    $phoneNum=$contract->thirdparty->tel;
+    $phoneNum=$contract->thirdparty->phone;
     if ($shipToName && $shipToStreet && $shipToCity && $shipToCountryCode && $shipToZip)
     {
         print '<input type="hidden" name="shipToName" value="'.$shipToName.'">'."\n";
@@ -908,7 +908,7 @@ if (GETPOST("source") == 'membersubscription' && $valid)
     $shipToCountryCode=$member->country_code;
     $shipToZip=$member->zip;
     $shipToStreet2='';
-    $phoneNum=$member->tel;
+    $phoneNum=$member->phone;
     if ($shipToName && $shipToStreet && $shipToCity && $shipToCountryCode && $shipToZip)
     {
         print '<input type="hidden" name="shipToName" value="'.$shipToName.'">'."\n";

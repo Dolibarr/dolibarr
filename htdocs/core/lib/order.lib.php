@@ -52,7 +52,7 @@ function commande_prepare_head($object)
 	|| ($conf->livraison_bon->enabled && $user->rights->expedition->livraison->lire))
 	{
 		$head[$h][0] = DOL_URL_ROOT.'/expedition/shipment.php?id='.$object->id;
-		if ($conf->expedition_bon->enabled) $text=$langs->trans("Sendings");
+		if ($conf->expedition_bon->enabled) $text=$langs->trans("Shipment");
 		if ($conf->expedition_bon->enabled && $conf->livraison_bon->enabled) $text.='/';
 		if ($conf->livraison_bon->enabled)  $text.=$langs->trans("Receivings");
 		$head[$h][1] = $text;
@@ -93,7 +93,7 @@ function commande_prepare_head($object)
 		$head[$h][2] = 'note';
 		$h++;
 	}
-	
+
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 	$upload_dir = $conf->commande->dir_output . "/" . dol_sanitizeFileName($object->ref);
 	$nbFiles = count(dol_dir_list($upload_dir,'files'));
@@ -137,7 +137,7 @@ function order_admin_prepare_head($object)
 	$head[$h][1] = $langs->trans("ExtraFields");
 	$head[$h][2] = 'attributes';
 	$h++;
-	
+
 	$head[$h][0] = DOL_URL_ROOT.'/admin/orderdet_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFieldsLines");
 	$head[$h][2] = 'attributeslines';

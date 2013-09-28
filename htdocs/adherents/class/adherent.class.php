@@ -564,7 +564,7 @@ class Adherent extends CommonObject
                         $lthirdparty->zip=$this->zip;
                         $lthirdparty->town=$this->town;
                         $lthirdparty->email=$this->email;
-                        $lthirdparty->tel=$this->phone;
+                        $lthirdparty->phone=$this->phone;
                         $lthirdparty->state_id=$this->state_id;
                         $lthirdparty->country_id=$this->country_id;
                         $lthirdparty->country_id=$this->country_id;

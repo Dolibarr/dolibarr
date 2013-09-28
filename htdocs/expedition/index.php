@@ -39,7 +39,7 @@ $companystatic=new Societe($db);
 $shipment=new Expedition($db);
 
 $helpurl='EN:Module_Shipments|FR:Module_Exp&eacute;ditions|ES:M&oacute;dulo_Expediciones';
-llxHeader('',$langs->trans("Sendings"),$helpurl);
+llxHeader('',$langs->trans("Shipment"),$helpurl);
 
 print_fiche_titre($langs->trans("SendingsArea"));
 

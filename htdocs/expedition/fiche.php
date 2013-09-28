@@ -61,9 +61,6 @@ $socid='';
 if ($user->societe_id) $socid=$user->societe_id;
 $result=restrictedArea($user, $origin, $origin_id);
 
-// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
-$hookmanager->initHooks(array('expeditioncard'));
-
 $action		= GETPOST('action','alpha');
 $confirm	= GETPOST('confirm','alpha');
 
@@ -73,6 +70,11 @@ $hidedesc 	 = (GETPOST('hidedesc','int') ? GETPOST('hidedesc','int') : (! empty(
 $hideref 	 = (GETPOST('hideref','int') ? GETPOST('hideref','int') : (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF) ? 1 : 0));
 
 $object = new Expedition($db);
+// Load object
+if ($id > 0 || ! empty($ref))
+{
+	$ret=$object->fetch($id, $ref);
+}
 
 // Load object
 if ($id > 0 || ! empty($ref))
@@ -80,14 +82,19 @@ if ($id > 0 || ! empty($ref))
 	$ret=$object->fetch($id, $ref);
 }
 
+// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+$hookmanager->initHooks(array('expeditioncard'));
+
 /*
  * Actions
  */
+$parameters=array();
+$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 
 if ($action == 'add')
 {
     $error=0;
-    
+
     $object = new Expedition($db);
 
     $db->begin();
@@ -517,7 +524,7 @@ else if ($action == 'classifybilled')
  * View
  */
 
-llxHeader('',$langs->trans('Sending'),'Expedition');
+llxHeader('',$langs->trans('Shipment'),'Expedition');
 
 $form = new Form($db);
 $formfile = new FormFile($db);
@@ -916,7 +923,7 @@ else
 		$soc->fetch($object->socid);
 
 		$head=shipping_prepare_head($object);
-		dol_fiche_head($head, 'shipping', $langs->trans("Sending"), 0, 'sending');
+		dol_fiche_head($head, 'shipping', $langs->trans("Shipment"), 0, 'sending');
 
 		dol_htmloutput_mesg($mesg);
 
@@ -926,7 +933,7 @@ else
 		if ($action == 'delete')
 		{
 			print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id,$langs->trans('DeleteSending'),$langs->trans("ConfirmDeleteSending",$object->ref),'confirm_delete','',0,1);
-			
+
 		}
 
 		/*
@@ -955,7 +962,7 @@ else
 			}
 
 			print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id,$langs->trans('ValidateSending'),$text,'confirm_valid','',0,1);
-			
+
 		}
 		/*
 		 * Confirmation de l'annulation
@@ -963,7 +970,7 @@ else
 		if ($action == 'annuler')
 		{
 			print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id,$langs->trans('CancelSending'),$langs->trans("ConfirmCancelSending",$object->ref),'confirm_cancel','',0,1);
-			
+
 		}
 
 		// Calculate true totalWeight and totalVolume for all products
