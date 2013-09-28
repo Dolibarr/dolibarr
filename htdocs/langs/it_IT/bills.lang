@@ -34,7 +34,6 @@ ReplacementInvoice=Sostituzione fattura
 ReplacedByInvoice=Sostituita dalla fattura %s
 ReplacementByInvoice=Sostituzione della fattura
 CorrectInvoice=Corretta fattura %s
-CorrectInvoice=Corretta fattura %s
 CorrectionInvoice=Correzione fattura
 UsedByInvoice=Usato per pagare fattura %s
 ConsumedBy=Consumati da
@@ -85,7 +84,7 @@ ClassifyCanceled=Classifica come "abbandonata"
 ClassifyClosed=Classifica come "chiusa"
 CreateBill=Crea fattura
 AddBill=Aggiungi fattura o nota di credito
-# AddToDraftInvoices=Add to draft invoice
+AddToDraftInvoices=Aggiungi alle bozze di fattture
 DeleteBill=Elimina fattura
 SearchACustomerInvoice=Cerca una fattura attiva
 SearchASupplierInvoice=Cerca una fattura fornitore
@@ -200,7 +199,7 @@ StandingOrders=Ordini permanenti
 StandingOrder=Ordine permanente
 NoDraftBills=Nessuna bozza di fatture
 NoOtherDraftBills=Nessun'altra bozza di fatture
-# NoDraftInvoices=No draft invoices
+NoDraftInvoices=Nessuna bozza di fatture
 RefBill=Rif. fattura
 ToBill=Da fatturare
 RemainderToBill=Restante da fatturare
@@ -411,7 +410,7 @@ PDFCrabeDescription=Modello di fattura Crabe. (Modello raccomandatoi)
 # oursin PDF Model
 PDFOursinDescription=Modello di fattura oursin.
 # NumRef Modules
-TerreNumRefModelDesc1=Restituisce un numero nel formato %syymm-nnnn per le fatture e %syymm-nnnn per le note di credito, dove yy è l'anno, mm è il mese e nnnn è una sequenza progressiva che non si azzera
-# MarsNumRefModelDesc1=Return numero with format %syymm-nnnn for standard invoices, %syymm-nnnn for replacement invoices, %syymm-nnnn for proforma invoices and %syymm-nnnn for credit notes where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
+# TerreNumRefModelDesc1=Return numero with format %syymm-nnnn for standard and replacement invoices, %syymm-nnnn for credit notes and %syymm-nnnn for deposits where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
+# MarsNumRefModelDesc1=Return numero with format %syymm-nnnn for standard invoices, %syymm-nnnn for replacement invoices, %syymm-nnnn for credit notes and %syymm-nnnn for credit notes where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
 
 TerreNumRefModelError=Un altro modello di numerazione con sequenza $ syymm è già esistente e non è compatibile con questo modello. Rimuovere o rinominare per attivare questo modulo.

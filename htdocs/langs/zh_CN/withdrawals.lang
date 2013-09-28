@@ -81,9 +81,9 @@ WithdrawalFileNotCapable=无法生成撤出贵国收到文件
 ShowWithdraw=显示撤柜
 IfInvoiceNeedOnWithdrawPaymentWontBeClosed=然而，如果发票已至少有一个撤出支付尚未处理的，它不会被设置为支付最高允许管理撤出之前。
 DoStandingOrdersBeforePayments=这个标签允许你为一个固定的订单要求。一旦完成，你可以键入付款，收发票。
-# WithdrawalFile=Withdrawal file
-# SetToStatusSent=Set to status "File Sent"
-# ThisWillAlsoAddPaymentOnInvoice=This will also create payments onto invoices and will classify them to paid
+WithdrawalFile=撤回文件
+SetToStatusSent=设置状态“发送的文件”
+ThisWillAlsoAddPaymentOnInvoice=这也将创造在付款发票上，将它们归类支付
 
 ### Notifications
 InfoCreditSubject=由银行支付的长期订单%s

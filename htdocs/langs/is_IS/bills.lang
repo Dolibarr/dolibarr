@@ -34,7 +34,6 @@ ReplacementInvoice=Skipti Reikningar
 ReplacedByInvoice=Komi% Reikningar s
 ReplacementByInvoice=Skipt eftir nótum
 CorrectInvoice=Rétt Reikningar %s
-CorrectInvoice=Rétt Reikningar %s
 CorrectionInvoice=Leiðrétting reiknings
 UsedByInvoice=Notað til að borga reikning %s
 ConsumedBy=Neyta
@@ -411,7 +410,7 @@ PDFCrabeDescription=Invoice líkan Crabe. A heill Reikningar líkan (styður VSK
 # oursin PDF Model
 PDFOursinDescription=Invoice líkan oursin
 # NumRef Modules
-TerreNumRefModelDesc1=Fara aftur numero með snið %s yymm-NNNN standard nótur og %s yymm-NNNN fyrir minnismiða kredit þar sem YY er ári, mm er mánuður og NNNN er röð án brot og ekki aftur snúið til 0
-# MarsNumRefModelDesc1=Return numero with format %syymm-nnnn for standard invoices, %syymm-nnnn for replacement invoices, %syymm-nnnn for proforma invoices and %syymm-nnnn for credit notes where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
+# TerreNumRefModelDesc1=Return numero with format %syymm-nnnn for standard and replacement invoices, %syymm-nnnn for credit notes and %syymm-nnnn for deposits where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
+# MarsNumRefModelDesc1=Return numero with format %syymm-nnnn for standard invoices, %syymm-nnnn for replacement invoices, %syymm-nnnn for credit notes and %syymm-nnnn for credit notes where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
 
 TerreNumRefModelError=A frumvarpið hófst með $ syymm er til nú þegar og er ekki með þessari tegund af röð. Fjarlægja hana eða gefa henni nýtt heiti þess að virkja þessa einingu.

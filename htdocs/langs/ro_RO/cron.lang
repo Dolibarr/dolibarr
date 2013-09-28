@@ -25,7 +25,7 @@ CronSetup= Setare Managementul joburilor programate
 URLToLaunchCronJobs=URL pentru lansare joburi cron
 OrToLaunchASpecificJob=Sau la lansarea unui specific job
 KeyForCronAccess=Cheie de securitate pentru URL de lansare a joburilor cron
-FileToLaunchCronJobs=Linie de comandă pentru lansare joburi cron 
+FileToLaunchCronJobs=Linie de comandă pentru lansare joburi cron
 CronExplainHowToRunUnix=Pe mediul Unix veţi  utiliza instrumentul crontab pentru a rula linia de comanda la fiecare minut
 CronExplainHowToRunWin=Pe mediul Microsoft(tm) Windows puteţi utiliza instrumentul Scheduled task pentru a rula linia de comanda la fiecare minut
 

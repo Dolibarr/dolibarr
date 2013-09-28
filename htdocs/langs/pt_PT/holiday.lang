@@ -2,7 +2,7 @@
 CHARSET= UTF-8
 
 # HRM=HRM
-Holidays=Férias 
+Holidays=Férias
 CPTitreMenu=Férias
 # MenuReportMonth=Monthly statement
 # MenuAddCP=Apply for holidays

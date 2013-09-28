@@ -77,7 +77,7 @@ PaymentConditionsShort=Condicions pagament
 PaymentAmount=Import pagament
 ValidatePayment=Validar aquest pagament
 PaymentHigherThanReminderToPay=Pagament superior a la resta a pagar
-HelpPaymentHigherThanReminderToPay=Atenció, l'import del pagament d'una o més factures és superior a la resta a pagar.<br>Corregiu la entrada, en cas contrari, confirmeu i pensi en crear un abonament d'allò percebut en excés per cada factura sobrepagada.
+HelpPaymentHigherThanReminderToPay= Atenció, l'import del pagament d'una o més factures és superior a la resta a pagar.<br>Corregiu la entrada, en cas contrari, confirmeu i pensi en crear un abonament d'allò percebut en excés per cada factura sobrepagada.
 ClassifyPaid=Classificar 'Pagat'
 ClassifyPaidPartially=Classificar 'Pagat parcialment'
 ClassifyCanceled=Classificar 'Abandonat'
@@ -133,6 +133,7 @@ BillFrom=Emissor
 BillTo=Enviar a
 ActionsOnBill=Eventos sobre la factura
 NewBill=Nova factura
+Prélèvements=Domiciliacions
 Prélèvements=Domiciliacions
 LastBills=Les %s últimes factures
 LastCustomersBills=Les %s últimes factures a clients
@@ -215,10 +216,11 @@ NoSupplierBillsUnpaid=Cap factura de proveïdor pendent de pagament
 SupplierBillsToPay=Factures de proveïdors a pagar
 CustomerBillsUnpaid=Factures a clients pendents de cobrament
 DispenseMontantLettres=Les factures redactactades per processos mecànics estan exemptes de l'ordre en lletres
+DispenseMontantLettres=Les factures redactactades per processos mecànics estan exemptes de l'ordre en lletres
 NonPercuRecuperable=No percebut recuperable
 SetConditions=Definir condicions de pagament
 SetMode=Definir mode de pagament
-SetDate=Definir data
+SetDate= Definir data
 SelectDate=Seleccioneu una data
 Billed=Facturat
 RepeatableInvoice=Factura recurrent
@@ -292,6 +294,7 @@ TotalOfTwoDiscountMustEqualsOriginal=La suma de l'import dels 2 nous descomptes 
 ConfirmRemoveDiscount=Esteu segur de voler eliminar aquest descompte?
 RelatedBill=Factura associada
 RelatedBills=Factures associades
+
 # PaymentConditions
 PaymentConditionShortRECEP=A la recepció
 PaymentConditionRECEP=A la recepció de la factura
@@ -311,6 +314,7 @@ PaymentConditionShortPT_5050=50/50
 PaymentConditionPT_5050=Pagament 50%% per avançat, 50%% al lliurament
 FixAmount=Import fixe
 VarAmount=Import variable (%% total)
+
 # PaymentType
 PaymentTypeVIR=Transferència bancària
 PaymentTypeShortVIR=Transferència
@@ -406,6 +410,7 @@ PDFCrabeDescription=Model de factura complet (model recomanat per defecte)
 # oursin PDF Model
 PDFOursinDescription=Model de factura complet (model alternatiu)
 # NumRef Modules
-TerreNumRefModelDesc1=Retorna el nombre sota el format %syymm-nnnn per a les factures i factures rectificatives,  %syymm-nnnn per als abonaments i %syymm-nnnn per a les factures de bestreta on yy és l'any, mm. el mes i nnnn un comptador seqüencial sense ruptura i sense permanència a 0
-MarsNumRefModelDesc1=Retorna el nombre sota el format %syymm-nnnn per a les factures, %syymm-nnnn per a les factures rectificatives, %syymm-nnnn per a les factures de bestreta i %syymm-nnnn per als abonaments on yy és l'any, mm. el mes i nnnn un comptador seqüencial sense ruptura i sense permanència a 0
+# TerreNumRefModelDesc1=Return numero with format %syymm-nnnn for standard and replacement invoices, %syymm-nnnn for credit notes and %syymm-nnnn for deposits where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
+# MarsNumRefModelDesc1=Return numero with format %syymm-nnnn for standard invoices, %syymm-nnnn for replacement invoices, %syymm-nnnn for credit notes and %syymm-nnnn for credit notes where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
+
 TerreNumRefModelError=Ja hi ha una factura amb $syymm i no és compatible amb aquest model de seqüència. Elimineu o renómbrela per poder activar aquest mòdul

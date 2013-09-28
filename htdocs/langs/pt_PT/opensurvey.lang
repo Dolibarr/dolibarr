@@ -1,9 +1,9 @@
 # Dolibarr language file - Source file is en_US - opensurvey
 CHARSET=UTF-8
-Survey=Inquérito 
-Surveys=Inquéritos 
+Survey=Inquérito
+Surveys=Inquéritos
 OrganizeYourMeetingEasily=Organize as suas reuniões e pesquisas com facilidade. Primeiro, selecione o tipo de pesquisa ...
-NewSurvey=Novo inquérito 
+NewSurvey=Novo inquérito
 NoSurveysInDatabase=%s inquérito(s) na base de dados.
 # OpenSurveyArea=Surveys area
 # AddACommentForPoll=You can add a comment into survey...

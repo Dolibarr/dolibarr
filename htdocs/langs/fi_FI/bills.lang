@@ -34,7 +34,6 @@ ReplacementInvoice=Korvaus lasku
 ReplacedByInvoice=Korvaaminen laskun %s
 ReplacementByInvoice=Korvaaminen lasku
 CorrectInvoice=Oikea laskun %s
-CorrectInvoice=Oikea laskun %s
 CorrectionInvoice=Oikaistaan lasku
 UsedByInvoice=Käytetyt maksaa laskun %s
 ConsumedBy=Kuluttamaan
@@ -411,7 +410,7 @@ PDFCrabeDescription=Laskun malli Crabe. Täydellinen laskun malli (Tuki alv vaih
 # oursin PDF Model
 PDFOursinDescription=Laskun malli oursin
 # NumRef Modules
-TerreNumRefModelDesc1=Paluu numero on muodossa %syymm-nnnn vakiolisäysaineiston laskut ja %syymm-nnnn luotto toteaa jossa VV on vuosi, mm kuukausi ja nnnn on sarja ilman taukoa eikä palata 0
-# MarsNumRefModelDesc1=Return numero with format %syymm-nnnn for standard invoices, %syymm-nnnn for replacement invoices, %syymm-nnnn for proforma invoices and %syymm-nnnn for credit notes where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
+# TerreNumRefModelDesc1=Return numero with format %syymm-nnnn for standard and replacement invoices, %syymm-nnnn for credit notes and %syymm-nnnn for deposits where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
+# MarsNumRefModelDesc1=Return numero with format %syymm-nnnn for standard invoices, %syymm-nnnn for replacement invoices, %syymm-nnnn for credit notes and %syymm-nnnn for credit notes where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
 
 TerreNumRefModelError=A bill alkaen $ syymm jo olemassa, ja ei ole yhteensopiva tämän mallin järjestyksessä. Poistaa sen tai nimetä sen aktivoida tämän moduulin.

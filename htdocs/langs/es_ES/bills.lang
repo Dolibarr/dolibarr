@@ -77,7 +77,7 @@ PaymentConditionsShort=Condiciones pago
 PaymentAmount=Importe pago
 ValidatePayment=Validar este pago
 PaymentHigherThanReminderToPay=Pago superior al resto a pagar
-HelpPaymentHigherThanReminderToPay=Atención, el importe del pago de una o más facturas es superior al resto a pagar.<br> Corrija su entrada, de lo contrario, confirme y piense en crear un abono de lo percibido en exceso para cada factura sobre-pagada.
+HelpPaymentHigherThanReminderToPay= Atención, el importe del pago de una o más facturas es superior al resto a pagar.<br> Corrija su entrada, de lo contrario, confirme y piense en crear un abono de lo percibido en exceso para cada factura sobre-pagada.
 ClassifyPaid=Clasificar 'Pagado'
 ClassifyPaidPartially=Clasificar 'Pagado parcialmente'
 ClassifyCanceled=Clasificar 'Abandonado'
@@ -133,6 +133,7 @@ BillFrom=Emisor
 BillTo=Enviar a
 ActionsOnBill=Eventos sobre la factura
 NewBill=Nueva factura
+Prélèvements=Domiciliaciones
 Prélèvements=Domiciliaciones
 LastBills=Las %s últimas facturas
 LastCustomersBills=Las %s últimas facturas a clientes
@@ -215,10 +216,11 @@ NoSupplierBillsUnpaid=Ninguna factura de proveedor pendiente de pago
 SupplierBillsToPay=Facturas de proveedores a pagar
 CustomerBillsUnpaid=Facturas a clientes pendientes de cobro
 DispenseMontantLettres=Las facturas redactadas por procesos mecánicos están exentas del orden en letras
+DispenseMontantLettres=Las facturas redactadas por procesos mecánicos están exentas del orden en letras
 NonPercuRecuperable=No percibido recuperable
 SetConditions=Definir condiciones de pago
 SetMode=Definir modo de pago
-SetDate=Definir fecha
+SetDate= Definir fecha
 SelectDate=Seleccione una fecha
 Billed=Facturado
 RepeatableInvoice=Factura recurrente
@@ -292,6 +294,7 @@ TotalOfTwoDiscountMustEqualsOriginal=La suma del importe de los 2 nuevos descuen
 ConfirmRemoveDiscount=¿Está seguro de querer eliminar este descuento?
 RelatedBill=Factura asociada
 RelatedBills=Facturas asociadas
+
 # PaymentConditions
 PaymentConditionShortRECEP=A la recepción
 PaymentConditionRECEP=A la recepción de la factura
@@ -311,6 +314,7 @@ PaymentConditionShortPT_5050=50/50
 PaymentConditionPT_5050=Pago 50%% por adelantado, 50%% a la entrega
 FixAmount=Importe fijo
 VarAmount=Importe variable (%% total)
+
 # PaymentType
 PaymentTypeVIR=Transferencia bancaria
 PaymentTypeShortVIR=Transferencia
@@ -406,6 +410,7 @@ PDFCrabeDescription=Modelo de factura completo (modelo recomendado por defecto)
 # oursin PDF Model
 PDFOursinDescription=Modelo de factura completo (modelo alternativo)
 # NumRef Modules
-TerreNumRefModelDesc1=Devuelve el número bajo el formato %syymm-nnnn para las facturas y facturas rectificativas, %syymm-nnnn para los abonos y %syymm-nnnn para las facturas de anticipo donde yy es el año, mm. el mes y nnnn un contador secuencial sin ruptura y sin permanencia a 0
-MarsNumRefModelDesc1=Devuelve el número bajo el formato %syymm-nnnn para las facturas, %syymm-nnnn para las facturas rectificativas, %syymm-nnnn para las facturas de anticipo y %syymm-nnnn para los abonos donde yy es el año, mm. el mes y nnnn un contador secuencial sin ruptura y sin permanencia a 0
+# TerreNumRefModelDesc1=Return numero with format %syymm-nnnn for standard and replacement invoices, %syymm-nnnn for credit notes and %syymm-nnnn for deposits where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
+# MarsNumRefModelDesc1=Return numero with format %syymm-nnnn for standard invoices, %syymm-nnnn for replacement invoices, %syymm-nnnn for credit notes and %syymm-nnnn for credit notes where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
+
 TerreNumRefModelError=Ya existe una factura con $syymm y no es compatible con este modelo de secuencia. Elimínela o renómbrela para poder activar este módulo

@@ -10,4 +10,4 @@ FailedToConnectToFTPServer=Falha ao ligar ao servidor de FTP (servidor: %s, port
 FailedToConnectToFTPServerWithCredentials=Falha de login do servidor de FTP com login definido e senha
 FTPFailedToRemoveFile=Falha ao remover o ficheiro: <b>%s</b>.
 FTPFailedToRemoveDir=Falha ao remover o directório: <b>%s</b> (Verifique as permissões do diretório e que está vazia).
-# FTPPassiveMode=Passive mode
+FTPPassiveMode=Modo passivo

@@ -4,22 +4,22 @@ Accountancy=Λογιστική
 AccountancyCard=Καρτέλα λογιστικής
 Treasury=Περιουσιακά
 MenuFinancial=Οικονομικά
-TaxModuleSetupToModifyRules==
+TaxModuleSetupToModifyRules=Go to <a href="%s">module setup</a> to modify rules for calculation
 OptionMode=Επιλογές λογιστικής
 OptionModeTrue=Επιλογές εσόδων-εξόδων
-OptionModeVirtual==
-OptionModeTrueDesc==
-OptionModeVirtualDesc==
-FeatureIsSupportedInInOutModeOnly==
-VATReportBuildWithOptionDefinedInModule==
+OptionModeVirtual=Option Claims-Debts
+OptionModeTrueDesc=In this context, the turnover is calculated over payments (date of payments). The validity of the figures is assured only if the book-keeping is scrutinized through the input/output on the accounts via invoices.
+OptionModeVirtualDesc=In this context, the turnover is calculated over invoices (date of validation). When these invoices are due, whether they have been paid or not, they are listed in the turnover output.
+FeatureIsSupportedInInOutModeOnly=Feature only available in CREDITS-DEBTS accountancy mode (See Accountancy module configuration)
+VATReportBuildWithOptionDefinedInModule=Amounts shown here are calculated using rules defined by Tax module setup.
 Param=Παραμετροποίηση
 RemainingAmountPayment=Ποσό πληρωμής που απομένουν:
 AmountToBeCharged=Συνολικό ποσό για να πληρώσει:
 AccountsGeneral=Λογαριασμοί
 Account=Λογαριασμός
 Accounts=Λογαριασμοί
-Accountparent==
-Accountsparent==
+Accountparent=Account parent
+Accountsparent=Accounts parent
 BillsForSuppliers=Λογαριασμοί για προμηθευτές
 Income=Έσοδα
 Outcome=Έξοδα
@@ -84,7 +84,7 @@ AccountNumberShort=Αριθμός Λογαριασμού
 AccountNumber=Αριθμός Λογαριασμού
 NewAccount=Νέος Λογαριασμός
 SalesTurnover=Κύκλος εργασιών πωλήσεων
-SalesTurnoverMinimum==
+SalesTurnoverMinimum=Minimum sales turnover
 ByThirdParties=από στοιχεία
 ByUserAuthorOfInvoice=Ανά συντάκτη τιμολογίου
 AccountancyExport=Accountancy export
@@ -109,7 +109,7 @@ AnnualByCompaniesDueDebtMode=Balance of income and expenses, detail by third par
 AnnualByCompaniesInputOutputMode=Balance of income and expenses, detail by third parties, mode <b>%sIncomes-Expenses%s</b> said <b>cash accounting</b>.
 SeeReportInInputOutputMode=See report <b>%sIncomes-Expenses%s</b> said <b>cash accounting</b> for a calculation on actual payments made
 SeeReportInDueDebtMode=See report <b>%sClaims-Debts%s</b> said <b>commitment accounting</b> for a calculation on issued invoices
-RulesAmountWithTaxIncluded==
+RulesAmountWithTaxIncluded=- Amounts shown are with all taxes included
 RulesResultDue=- Amounts shown are with all taxes included<br>- It includes outstanding invoices, expenses and VAT whether they are paid or not. <br>- It is based on the validation date of invoices and VAT and on the due date for expenses.
 RulesResultInOut=- Amounts shown are with all taxes included<br>- It includes the real payments made on invoices, expenses and VAT. <br>- It is based on the payment dates of the invoices, expenses anf VAT.<br>
 RulesCADue=- It includes the client's due invoices whether they are paid or not. <br>- It is based on the validation date of these invoices. <br>
@@ -146,12 +146,12 @@ CodeNotDef=Δεν προσδιορίζεται
 AddRemind=Αποστολή διαθέσιμο ποσό
 RemainToDivide= Παραμείνετε από την αποστολή:
 WarningDepositsNotIncluded=Καταθέσεις τιμολόγια δεν περιλαμβάνονται σε αυτή την έκδοση με αυτή την ενότητα λογιστικής.
-DatePaymentTermCantBeLowerThanObjectDate==
-Pcg_version==
-Pcg_type==
-Pcg_subtype==
-InvoiceLinesToDispatch==
-InvoiceDispatched==
-AccountancyDashboard==
-ByProductsAndServices==
+DatePaymentTermCantBeLowerThanObjectDate=Payment term date can't be lower than object date.
+Pcg_version=Pcg version
+Pcg_type=Pcg type
+Pcg_subtype=Pcg subtype
+InvoiceLinesToDispatch=Invoice lines to dispatch
+InvoiceDispatched=Dispatched invoices
+AccountancyDashboard=Accountancy summary
+ByProductsAndServices=By products and services
 RefExt=Εξωτερικές αναφορές

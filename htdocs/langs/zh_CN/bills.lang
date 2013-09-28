@@ -34,7 +34,6 @@ ReplacementInvoice=更换发票
 ReplacedByInvoice=按发票取代s%
 ReplacementByInvoice=取代发票
 CorrectInvoice=%s的正确发票
-CorrectInvoice=%s的正确发票
 CorrectionInvoice=发票的更正
 UsedByInvoice=用于支付发票%s的
 ConsumedBy=消耗
@@ -200,7 +199,7 @@ StandingOrders=常年订单
 StandingOrder=长期订单
 NoDraftBills=没有发票草案
 NoOtherDraftBills=没有其他发票草案
-# NoDraftInvoices=No draft invoices
+NoDraftInvoices=没有发票草案
 RefBill=发票号
 ToBill=为了法案
 RemainderToBill=其余部分法案
@@ -411,7 +410,7 @@ PDFCrabeDescription=发票模型Crabe。一个完整的发票模式（支援增�
 # oursin PDF Model
 PDFOursinDescription=发票模型乌尔桑
 # NumRef Modules
-TerreNumRefModelDesc1=返回格式%syymm为标准的发票和信用票据其中YY是年%syymm，○○○○numero，MM是月，nnnn是一个没有休息，没有返回0序列
-# MarsNumRefModelDesc1=Return numero with format %syymm-nnnn for standard invoices, %syymm-nnnn for replacement invoices, %syymm-nnnn for proforma invoices and %syymm-nnnn for credit notes where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
+# TerreNumRefModelDesc1=Return numero with format %syymm-nnnn for standard and replacement invoices, %syymm-nnnn for credit notes and %syymm-nnnn for deposits where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
+# MarsNumRefModelDesc1=Return numero with format %syymm-nnnn for standard invoices, %syymm-nnnn for replacement invoices, %syymm-nnnn for credit notes and %syymm-nnnn for credit notes where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
 
 TerreNumRefModelError=美元的法案syymm起已经存在，而不是与此序列模型兼容。删除或重新命名它激活该模块。
