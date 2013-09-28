@@ -1,8 +1,5 @@
 # Dolibarr language file - Source file is en_US - cron
 CHARSET=UTF-8
-Module2310Name=Cron
-Module2310Desc=Managementul taskurilor programate
-
 #
 # About page
 #
@@ -113,3 +110,5 @@ CronType_method=Apel metodă a Clasei Dolibarr
 CronType_command=Comandă shell
 CronMenu=Cron
 CronCannotLoadClass=Nu pot încărca clasa %s sau  obiectul %s
+
+# UseMenuModuleToolsToAddCronJobs=Go into menu "Home - Modules tools - Job list" to see and edit scheduled jobs.

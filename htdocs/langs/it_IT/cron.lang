@@ -1,8 +1,5 @@
 # Dolibarr language file - Source file is en_US - cron
 CHARSET=UTF-8
-Module2310Name=Cron
-Module2310Desc=Gestione dei task programmati
-
 #
 # About page
 #
@@ -113,3 +110,5 @@ CronType=Tipo di compito
 CronType_command=Comando da shell
 CronMenu=Cron
 CronCannotLoadClass=Non posso caricare la classe %s o l'oggetto %s
+
+# UseMenuModuleToolsToAddCronJobs=Go into menu "Home - Modules tools - Job list" to see and edit scheduled jobs.
