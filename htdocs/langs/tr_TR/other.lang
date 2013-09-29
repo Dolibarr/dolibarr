@@ -152,7 +152,7 @@ EMailTextOrderApproved=Sipariş %s onaylanmıştır.
 EMailTextOrderApprovedBy=%s Siparişi %s tarafından onaylanmıştır.
 EMailTextOrderRefused=%s Teklifi reddedilmiştir.
 EMailTextOrderRefusedBy=%s Teklifi %tarafından reddedilmiştir.
-# EMailTextExpeditionValidated=The shipping %s has been validated.
+EMailTextExpeditionValidated=%s sevkiyatı onaylandı.
 ImportedWithSet=Ver setinin içeaktarımı
 DolibarrNotification=Otomatik bilgilendirme
 ResizeDesc=Yeni genişliği <b>VEYA</b> yeni yüksekliği gir. Yeniden boyutlandırma sırasında oran kotunacaktır...
@@ -195,7 +195,7 @@ MemberResiliatedInDolibarr=%s Üyeliği Dolibarr’da bitirilmiştir
 MemberDeletedInDolibarr=%s Üyesi Dolibarr’dan tarafından silinmiştir
 MemberSubscriptionAddedInDolibarr=%s Üyesinin aboneliği Dolibarr’a eklenmiştir
 ShipmentValidatedInDolibarr=%s Sevkiyatı Dolibarr’da doğrulanmıştır
-# ShipmentDeletedInDolibarr=Shipment %s deleted from Dolibarr
+ShipmentDeletedInDolibarr=%s sevkiyatı Dolibarr üzerinden silindi
 ##### Export #####
 Export=Dışaaktar
 ExportsArea=Dışaaktar alanı
