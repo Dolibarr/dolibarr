@@ -34,7 +34,6 @@ ReplacementInvoice=Erstatningsfaktura
 ReplacedByInvoice=Erstattet av faktura %s
 ReplacementByInvoice=Erstattet av faktura
 CorrectInvoice=Korriger faktura %s
-CorrectInvoice=Korriger faktura %s
 CorrectionInvoice=Korrigeringsfaktura
 UsedByInvoice=Brukes til å betale faktura %s
 ConsumedBy=Konsumert av
@@ -411,7 +410,7 @@ PDFCrabeDescription=Fakturamal Crabe. En komplett mal (Støtter MVA, rabatter, b
 # oursin PDF Model
 PDFOursinDescription=Fakturamal oursin
 # NumRef Modules
-TerreNumRefModelDesc1=Gir nummer med formatet %sååmm-nnnn for standardfakturaer og %sååmm-nnnn for kreditnotaer hvor åå er år, mm er måned og nnnn er et sekvensielt nummer uten brudd og som aldri settes tilbake til 0
-# MarsNumRefModelDesc1=Return numero with format %syymm-nnnn for standard invoices, %syymm-nnnn for replacement invoices, %syymm-nnnn for proforma invoices and %syymm-nnnn for credit notes where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
+# TerreNumRefModelDesc1=Return numero with format %syymm-nnnn for standard and replacement invoices, %syymm-nnnn for credit notes and %syymm-nnnn for deposits where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
+# MarsNumRefModelDesc1=Return numero with format %syymm-nnnn for standard invoices, %syymm-nnnn for replacement invoices, %syymm-nnnn for credit notes and %syymm-nnnn for credit notes where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
 
 TerreNumRefModelError=En faktura som starter med $sååmm finnes allerede og er ikke kompatibel med denne nummereringsmodulen. Du må slette den eller gi den ett nytt navn for å aktivere denne modulen.

@@ -39,7 +39,7 @@ ConfirmCloseService=Are you sure you want to close this service with date <b>%s<
 ValidateAContract=Validate a contract
 ActivateService=Ενεργοποίηση Υπηρεσίας
 ConfirmActivateService=Are you sure you want to activate this service with date <b>%s</b> ?
-RefContract==
+RefContract=Contract reference
 DateContract=Contract date
 DateServiceActivate=Service activation date
 DateServiceUnactivate=Service deactivation date

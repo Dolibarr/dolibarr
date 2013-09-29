@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - agenda
 CHARSET=UTF-8
-Actions=行动
-ActionsArea=行动区（事件和任务）
+Actions=事件
+ActionsArea=事件区域（事件和任务）
 Agenda= 议程
 Agendas= 议程
 Calendar= 日历
@@ -9,23 +9,23 @@ Calendars= 日历
 LocalAgenda=本地日历
 AffectedTo= 受影响
 DoneBy= 做的
-Events= 活动
-# EventsNb=Number of events
-MyEvents=我的活动
-OtherEvents=其他活动
-ListOfActions=名单事件
+Events= 事件
+EventsNb=事件数
+MyEvents=我的事件
+OtherEvents=其他事件
+ListOfActions=事件列表
 Location=位置
 EventOnFullDay=全天事件
-SearchAnAction= 搜索行动/任务
-MenuToDoActions= 所有不完整的行动
-MenuDoneActions= 所有终止行动
-MenuToDoMyActions= 我不完整的行动
-MenuDoneMyActions= 我的行动终止
-ListOfEvents= 名单Dolibarr事件
+SearchAnAction= 搜索事件/任务
+MenuToDoActions= 所有未完成的事件
+MenuDoneActions= 所有终止事件
+MenuToDoMyActions= 我的未完成事件
+MenuDoneMyActions= 我的已经终结的事件
+ListOfEvents= Dolibarr事件列表
 ActionsAskedBy=记录操作
 ActionsToDoBy=受影响的行动
 ActionsDoneBy=做的动作
-AllMyActions= 我所有的行动/任务
+AllMyActions= 我所有的事件/任务
 AllActions= 所有/任务行动
 ViewList=查看列表
 ViewCal=查看日历
@@ -40,7 +40,7 @@ ActionsEvents= 为此Dolibarr活动将创建一个自动行动议程
 PropalValidatedInDolibarr= 建议%s的验证
 InvoiceValidatedInDolibarr= 发票%s的验证
 InvoiceBackToDraftInDolibarr=发票的%s去回到草案状态
-# InvoiceDeleteDolibarr=Invoice %s deleted
+InvoiceDeleteDolibarr=删除  %s  发票
 OrderValidatedInDolibarr= 订购%s的验证
 OrderApprovedInDolibarr=为了%s批准
 OrderBackToDraftInDolibarr=为了%s回到草案状态
@@ -67,7 +67,7 @@ AgendaUrlOptions4=<b>logint=%s</b>到<b> 限制输出到行动<b>使用者 与�
 AgendaUrlOptions5=<b>logind=%s</b>到<b> 限制输出到用户的行为进行 由 <b>%s</b>。
 AgendaShowBirthdayEvents=显示生日的接触
 AgendaHideBirthdayEvents=隐藏生日的接触
-# Busy=Busy
+Busy=忙碌
 
 # External Sites ical
 ExportCal=出口日历

@@ -78,7 +78,7 @@ CheckRead=Confirmarea de primire
 YourMailUnsubcribeOK=Emailul  <b>%s</b>  este dezabonat din mailing list
 MailtoEMail=Hyper link către email
 ActivateCheckRead=Permite utiliyarea linkului  "Dezabonare"
-ActivateCheckReadKey=Utilizaţi cheia pentru a cripta URL-ul folosit pentru funcţiunile "Confirmare de citire" și "Dezabonare" 
+ActivateCheckReadKey=Utilizaţi cheia pentru a cripta URL-ul folosit pentru funcţiunile "Confirmare de citire" și "Dezabonare"
 EMailSentToNRecipients=EMail trimis la %s destinatari.
 
 # Libelle des modules de liste de destinataires mailing

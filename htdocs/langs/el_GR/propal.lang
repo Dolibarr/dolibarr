@@ -98,6 +98,6 @@ TypeContact_propal_external_CUSTOMER=Πελάτης επαφή την παρακ
 # Document models
 DocModelAzurDescription=Ένα πλήρες μοντέλο πρόταση (logo. ..)
 DocModelJauneDescription=Jaune μοντέλο πρόταση
-DefaultModelPropalCreate==
-DefaultModelPropalToBill==
-DefaultModelPropalClosed==
+DefaultModelPropalCreate=Default model creation
+DefaultModelPropalToBill=Default template when closing a business proposal (to be invoiced)
+DefaultModelPropalClosed=Default template when closing a business proposal (unbilled)

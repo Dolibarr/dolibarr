@@ -26,14 +26,14 @@ ErrorGoBackAndCorrectParameters=后退和纠正错误的参数。
 ErrorWrongValueForParameter=您可能输入一个参数的错误值%s'的。
 ErrorFailedToCreateDatabase=无法创建数据库'%s'的。
 ErrorFailedToConnectToDatabase=无法连接到数据库'%s'的。
-# ErrorDatabaseVersionTooLow=Database version (%s) too old. Version %s or higher is required.
+ErrorDatabaseVersionTooLow=数据库版本 (%s) 太低了，需要 %s 版或更高版本。
 ErrorPHPVersionTooLow=PHP的版本太旧。版本%s是必需的。
 WarningPHPVersionTooLow=PHP版本太旧。预计或以上版本%s。这个版本应该允许安装，但不支持。
 ErrorConnectedButDatabaseNotFound=连接到数据库服务器的成功，但'%s'不存在。
 ErrorDatabaseAlreadyExists=数据库'%s'已经存在。
 IfDatabaseNotExistsGoBackAndUncheckCreate=如果数据库不存在，请返回并检查选择“创建数据库”。
 IfDatabaseExistsGoBackAndCheckCreate=如果数据库已经存在，请返回并取消选中“创建数据库”选项。
-# WarningBrowserTooOld=Too old version of browser. Upgrading your browser to a recent version of Firefox, Chrome or Opera is highly recommanded.
+WarningBrowserTooOld=浏览器的版本太旧，您的浏览器需升级到最新版本，建议使用Firefox，Chrome或Opera浏览器。
 PHPVersion=PHP版本
 YouCanContinue=您可以继续...
 PleaseBePatient=请耐心等待...
@@ -155,7 +155,7 @@ MigrationShippingDelivery2=升级存储航运2
 MigrationFinished=迁移完成
 LastStepDesc=<strong>最后一步</strong> ：此处定义的登录名和密码，您打算使用连接到软件。不松，因为它是帐户管理所有其他。
 ActivateModule=激活模块%s
-# ShowEditTechnicalParameters=Click here to show/edit advanced parameters (expert mode)
+ShowEditTechnicalParameters=点击此处显示/编辑高级参数（专家模式）
 
 #########
 # upgrade
@@ -207,4 +207,4 @@ MigrationProjectUserResp=数据迁移llx_projet领域fk_user_resp到llx_element_
 MigrationProjectTaskTime=更新时间花费在几秒钟内
 MigrationActioncommElement=在行动上的更新数据
 MigrationPaymentMode=付款方式的数据迁移
-# MigrationCategorieAssociation=Migration of categories
+MigrationCategorieAssociation=迁移类别

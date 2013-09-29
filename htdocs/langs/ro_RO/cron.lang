@@ -1,8 +1,5 @@
 # Dolibarr language file - Source file is en_US - cron
 CHARSET=UTF-8
-Module2310Name=Cron
-Module2310Desc=Managementul taskurilor programate
-
 #
 # About page
 #
@@ -25,7 +22,7 @@ CronSetup= Setare Managementul joburilor programate
 URLToLaunchCronJobs=URL pentru lansare joburi cron
 OrToLaunchASpecificJob=Sau la lansarea unui specific job
 KeyForCronAccess=Cheie de securitate pentru URL de lansare a joburilor cron
-FileToLaunchCronJobs=Linie de comandă pentru lansare joburi cron 
+FileToLaunchCronJobs=Linie de comandă pentru lansare joburi cron
 CronExplainHowToRunUnix=Pe mediul Unix veţi  utiliza instrumentul crontab pentru a rula linia de comanda la fiecare minut
 CronExplainHowToRunWin=Pe mediul Microsoft(tm) Windows puteţi utiliza instrumentul Scheduled task pentru a rula linia de comanda la fiecare minut
 
@@ -113,3 +110,5 @@ CronType_method=Apel metodă a Clasei Dolibarr
 CronType_command=Comandă shell
 CronMenu=Cron
 CronCannotLoadClass=Nu pot încărca clasa %s sau  obiectul %s
+
+# UseMenuModuleToolsToAddCronJobs=Go into menu "Home - Modules tools - Job list" to see and edit scheduled jobs.

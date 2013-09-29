@@ -16,7 +16,7 @@ InterventionContact=Contact Intervenţie
 DeleteIntervention=Şterge intervenţie
 ValidateIntervention=Validează  intervenţie
 ModifyIntervention=Modifică intervenţie
-DeleteInterventionLine=Şterge intervenţie 
+DeleteInterventionLine=Şterge intervenţie
 ConfirmDeleteIntervention=Sigur doriţi să ştergeţi această intervenţie?
 ConfirmValidateIntervention=Sigur doriţi să  validaţi  această intervenţie <b>%s </b>?
 ConfirmModifyIntervention=Sigur doriţi să modificaţi această intervenţie?
@@ -35,7 +35,7 @@ TypeContact_fichinter_internal_INTERVENING=Realizator intervenţie
 TypeContact_fichinter_external_BILLING=Contact client facturare intervenţie
 TypeContact_fichinter_external_CUSTOMER=Contact client urmărire intervenţie
 # Modele numérotation
-ArcticNumRefModelDesc1=Model de numerotaţie generic 
+ArcticNumRefModelDesc1=Model de numerotaţie generic
 ArcticNumRefModelError=Activare nereuşită
 PacificNumRefModelDesc1=Numărul retrimis sub forma%syymm-nnnn unde yy este anul, mm este luna şi NNNN este o secvenţă continuă  şi niciodată  0
 PacificNumRefModelError=O fişă de intervenţie începând cu $syymm există deja şi nu este compatibilă cu acest model al succesiunii. Eliminaţi-o sau redenumiţi-o pentru a activa acest modul.

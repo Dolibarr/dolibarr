@@ -34,7 +34,6 @@ ReplacementInvoice=Remplacement facture
 ReplacedByInvoice=Remplacée par la facture %s
 ReplacementByInvoice=Remplacée par facture
 CorrectInvoice=Correction facture %s
-CorrectInvoice=Correction facture %s
 CorrectionInvoice=Correction facture
 UsedByInvoice=Appliqué sur facture %s
 ConsumedBy=Consommé par

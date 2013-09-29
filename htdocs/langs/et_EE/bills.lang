@@ -34,7 +34,6 @@ ReplacementInvoice=Asendamine arve
 ReplacedByInvoice=Asendatakse arve %s
 ReplacementByInvoice=Asendatakse arve
 CorrectInvoice=Õige arve %s
-CorrectInvoice=Õige arve %s
 CorrectionInvoice=Correction arve
 UsedByInvoice=Kasutatud maksma arve %s
 ConsumedBy=Tarbitud
@@ -411,7 +410,7 @@ PDFCrabeDescription=Arve PDF malli Crabe. Täieliku arve malli (mall soovitatud,
 # oursin PDF Model
 PDFOursinDescription=Arve PDF malli Oursin. Täieliku arve malli (mall alternatiiv)
 # NumRef Modules
-TerreNumRefModelDesc1=Tagasi numero koos formaadis %syymm-nnnn välja standardsete arvete ja %syymm-nnnn kreeditarvete kus YY aastat, KK kuud ja nnnn on jada, millel ei ole katki ja ei ole tagasi 0
-# MarsNumRefModelDesc1=Return numero with format %syymm-nnnn for standard invoices, %syymm-nnnn for replacement invoices, %syymm-nnnn for proforma invoices and %syymm-nnnn for credit notes where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
+# TerreNumRefModelDesc1=Return numero with format %syymm-nnnn for standard and replacement invoices, %syymm-nnnn for credit notes and %syymm-nnnn for deposits where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
+# MarsNumRefModelDesc1=Return numero with format %syymm-nnnn for standard invoices, %syymm-nnnn for replacement invoices, %syymm-nnnn for credit notes and %syymm-nnnn for credit notes where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
 
 TerreNumRefModelError=Bill alates $ syymm juba olemas ja ei sobi see mudel jada. Eemaldada või ümber nimetada aktiveerimiseks mooduli.

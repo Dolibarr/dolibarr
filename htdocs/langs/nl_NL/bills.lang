@@ -34,7 +34,6 @@ ReplacementInvoice=Vervangingsfactuur
 ReplacedByInvoice=Vervangen door factuur %s
 ReplacementByInvoice=Vervangen door factuur
 CorrectInvoice=Correcte factuur %s
-CorrectInvoice=Correcte factuur %s
 CorrectionInvoice=Correctiefactuur
 UsedByInvoice=Gebruikt voor de betaling van de factuur %s
 ConsumedBy=Verbruikt door
@@ -411,7 +410,7 @@ PDFCrabeDescription=Model van complete factuur (Beheert de mogelijkheid van de B
 # oursin PDF Model
 PDFOursinDescription=Model van complete factuur sjabloon (basis, beheert de mogelijkheid van heffing van de BTW belasting, de kortingen, de projectnaam, de referenties, logo, etc)
 # NumRef Modules
-TerreNumRefModelDesc1=Geeft het aantal als %syymm-nnnn voor facturen en %syymm-nnnn voor de activa is waar yy jaar, mm de maand en nnnn een opeenvolgend nummer is zonder vervangings 0 (nul)
-# MarsNumRefModelDesc1=Return numero with format %syymm-nnnn for standard invoices, %syymm-nnnn for replacement invoices, %syymm-nnnn for proforma invoices and %syymm-nnnn for credit notes where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
+# TerreNumRefModelDesc1=Return numero with format %syymm-nnnn for standard and replacement invoices, %syymm-nnnn for credit notes and %syymm-nnnn for deposits where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
+# MarsNumRefModelDesc1=Return numero with format %syymm-nnnn for standard invoices, %syymm-nnnn for replacement invoices, %syymm-nnnn for credit notes and %syymm-nnnn for credit notes where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
 
 TerreNumRefModelError=Een wetsvoorstel te beginnen met $ syymm bestaat al en is niet compatibel met dit model van de reeks. Verwijderen of hernoemen naar deze module te activeren.

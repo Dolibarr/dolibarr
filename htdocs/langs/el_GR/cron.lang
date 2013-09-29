@@ -1,8 +1,5 @@
 # Dolibarr language file - Source file is en_US - cron
 CHARSET=UTF-8
-Module2310Name=Μενού
-Module2310Desc=Προγραμματισμένη διαχείριση των εργασιών
-
 #
 # About page
 #
@@ -113,3 +110,5 @@ CronType_method=Καλέστε τη μέθοδο της κατηγορίας Dol
 CronType_command=Εντολή Shell
 CronMenu=Μενού
 CronCannotLoadClass=Cannot load class %s or object %s
+
+# UseMenuModuleToolsToAddCronJobs=Go into menu "Home - Modules tools - Job list" to see and edit scheduled jobs.

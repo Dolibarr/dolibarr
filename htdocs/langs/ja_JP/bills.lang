@@ -34,7 +34,6 @@ ReplacementInvoice=交換用の請求書
 ReplacedByInvoice=請求書%sによって置き換えられ
 ReplacementByInvoice=請求書に置き換えられ
 CorrectInvoice=正しい請求書%s
-CorrectInvoice=正しい請求書%s
 CorrectionInvoice=訂正請求書
 UsedByInvoice=請求書%sを支払うために使用さ
 ConsumedBy=によって消費される
@@ -411,7 +410,7 @@ PDFCrabeDescription=請求書PDFテンプレートのカニ。完全な請求書
 # oursin PDF Model
 PDFOursinDescription=請求書PDFテンプレートOursin。完全な請求書テンプレート（テンプレートの代替）
 # NumRef Modules
-TerreNumRefModelDesc1=yyは年である貸方の標準的な請求書と%syymm-nnnnの形式%syymm-NNNN withニュメロを返し、mmは月とnnnnはありません休憩0〜ノーリターンでシーケンスです。
-# MarsNumRefModelDesc1=Return numero with format %syymm-nnnn for standard invoices, %syymm-nnnn for replacement invoices, %syymm-nnnn for proforma invoices and %syymm-nnnn for credit notes where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
+# TerreNumRefModelDesc1=Return numero with format %syymm-nnnn for standard and replacement invoices, %syymm-nnnn for credit notes and %syymm-nnnn for deposits where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
+# MarsNumRefModelDesc1=Return numero with format %syymm-nnnn for standard invoices, %syymm-nnnn for replacement invoices, %syymm-nnnn for credit notes and %syymm-nnnn for credit notes where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
 
 TerreNumRefModelError=$ syymm始まる法案はすでに存在し、シーケンスのこのモデルと互換性がありません。それを削除するか、このモジュールを有効にするために名前を変更します。

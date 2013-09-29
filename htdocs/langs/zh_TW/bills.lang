@@ -34,7 +34,6 @@ ReplacementInvoice=更換發票
 ReplacedByInvoice=按發票取代%s
 ReplacementByInvoice=取代發票
 CorrectInvoice=%s的正確發票
-CorrectInvoice=%s的正確發票
 CorrectionInvoice=發票的更正
 UsedByInvoice=用於支付發票%s的
 ConsumedBy=消耗
@@ -411,7 +410,7 @@ PDFCrabeDescription=一個完整的PDF發票(invoice)文件範本（支援營業
 # oursin PDF Model
 PDFOursinDescription=一個完整的PDF發票(invoice)文件範本
 # NumRef Modules
-TerreNumRefModelDesc1=用以下固定的方式回傳發票和信用票據編號:<br> %syymm-nnnn 為發票和信用票據編號生成格式。<br>   yy 是年、mm是月、nnnn是一個不為0的序號。
-# MarsNumRefModelDesc1=Return numero with format %syymm-nnnn for standard invoices, %syymm-nnnn for replacement invoices, %syymm-nnnn for proforma invoices and %syymm-nnnn for credit notes where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
+# TerreNumRefModelDesc1=Return numero with format %syymm-nnnn for standard and replacement invoices, %syymm-nnnn for credit notes and %syymm-nnnn for deposits where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
+# MarsNumRefModelDesc1=Return numero with format %syymm-nnnn for standard invoices, %syymm-nnnn for replacement invoices, %syymm-nnnn for credit notes and %syymm-nnnn for credit notes where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
 
 TerreNumRefModelError=美元的法案syymm起已經存在，而不是與此序列模型兼容。刪除或重新命名它激活該模塊。
