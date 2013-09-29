@@ -281,9 +281,9 @@ jQuery(document).ready(function() {
       		jQuery("#httpcachejsok").show();
       		jQuery("#httpcachejsko").hide();
       	}
-      	compjstring=getjsurl.getResponseHeader(\'Content-Encoding\');
-      	/* alert(\'php:\'+getjsurl.getAllResponseHeaders()); */
-      	/*alert(\'php:\'+compjsstring);*/
+      	compjsstring=getjsurl.getResponseHeader(\'Content-Encoding\');
+      	/* alert(\'js:\'+getjsurl.getAllResponseHeaders()); */
+      	/*alert(\'js:\'+compjsstring);*/
       	if (compjsstring == null || (compjsstring.indexOf("gzip") == -1 && compjsstring.indexOf("deflate") == -1))
       	{
 	      	jQuery("#httpcompjsok").hide();
