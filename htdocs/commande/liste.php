@@ -285,6 +285,7 @@ if ($resql)
 	print_liste_field_titre($langs->trans('OrderDate'),$_SERVER["PHP_SELF"],'c.date_commande','',$param, 'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans('DeliveryDate'),$_SERVER["PHP_SELF"],'c.date_livraison','',$param, 'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans('AmountHT'),$_SERVER["PHP_SELF"],'c.total_ht','',$param, 'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans('Billing'));
 	print_liste_field_titre($langs->trans('Status'),$_SERVER["PHP_SELF"],'c.fk_statut','',$param,'align="right"',$sortfield,$sortorder);
 	print '</tr>';
 	print '<tr class="liste_titre">';
@@ -297,7 +298,7 @@ if ($resql)
 	print '</td><td class="liste_titre">&nbsp;';
 	print '</td><td class="liste_titre">&nbsp;';
 	print '</td><td class="liste_titre">&nbsp;';
-	print '</td><td align="right" class="liste_titre">';
+	print '</td><td/><td align="right" class="liste_titre">';
 	print '<input type="image" class="liste_titre" name="button_search" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png"  value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 	print '</td></tr>';
 
@@ -388,6 +389,22 @@ if ($resql)
 
 		// Amount HT
 		print '<td align="right" class="nowrap">'.price($objp->total_ht).'</td>';
+		$result = mysql_query("SELECT sum(total) from llx_facture where rowid in(SELECT fk_target from llx_element_element where fk_source=$objp->rowid and sourcetype='commande' and targettype='facture')");
+
+
+		while($row=mysql_fetch_array($result)){
+			$reste=$objp->total_ht - $row['sum(total)'];
+			if ( $reste >= 0) print '<td align="right" class="nowrap">'.price($reste).'</td>';
+			else 
+			{
+				$reste = 0;
+				print '<td align="right" class="nowrap">'.price($reste).'</td>';
+			}
+		}
+		
+
+
+
 
 		// Statut
 		print '<td align="right" class="nowrap">'.$generic_commande->LibStatut($objp->fk_statut,$objp->facturee,5).'</td>';
@@ -395,17 +412,18 @@ if ($resql)
 		print '</tr>';
 
 		$total+=$objp->total_ht;
-		$subtotal+=$objp->total_ht;
+		$subtotal+=$reste;
 		$i++;
 	}
 
-	if (! empty($conf->global->MAIN_SHOW_TOTAL_FOR_LIMITED_LIST))
+	if ( $total > 0)
 	{
 		$var=!$var;
-		print '<tr '.$bc[$var].'>';
-		print '<td class="nowrap" colspan="5">'.$langs->trans('TotalHT').'</td>';
+		print '<tr class="liste_total"><td align="left" colspan="5">'.$langs->trans('TotalHT').'</td>';
 		// Total HT
 		print '<td align="right" class="nowrap">'.price($total).'</td>';
+		//reste
+		print '<td align="right" class="nowrap">'.price($subtotal).'</td>';
 		print '<td class="nowrap">&nbsp;</td>';
 		print '</tr>';
 	}
