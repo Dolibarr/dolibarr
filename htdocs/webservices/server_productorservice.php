@@ -548,7 +548,7 @@ function updateProductOrService($authentication,$product)
         include_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
         $newobject=new Product($db);
-        $newobject->fetch($product['id'],$product['ref']);
+        $newobject->fetch($product['id']);
         
         if (isset($product['ref']))     $newobject->ref=$product['ref'];
         if (isset($product['ref_ext'])) $newobject->ref_ext=$product['ref_ext'];
