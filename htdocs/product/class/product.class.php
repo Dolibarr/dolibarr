@@ -453,10 +453,11 @@ class Product extends CommonObject
 		$this->volume_units = trim($this->volume_units);
 		if (empty($this->tva_tx))    			$this->tva_tx = 0;
 		if (empty($this->tva_npr))    			$this->tva_npr = 0;
-		//Local taxes
 		if (empty($this->localtax1_tx))			$this->localtax1_tx = 0;
 		if (empty($this->localtax2_tx))			$this->localtax2_tx = 0;
-
+		if (empty($this->status))				$this->status = 0;
+		if (empty($this->status_buy))			$this->status_buy = 0;
+		
         if (empty($this->country_id))           $this->country_id = 0;
 
 		$this->accountancy_code_buy = trim($this->accountancy_code_buy);
@@ -464,33 +465,32 @@ class Product extends CommonObject
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."product";
 		$sql.= " SET label = '" . $this->db->escape($this->libelle) ."'";
-		$sql.= ",ref = '" . $this->ref ."'";
-		$sql.= ",tva_tx = " . $this->tva_tx;
-		$sql.= ",recuperableonly = " . $this->tva_npr;
+		$sql.= ", ref = '" . $this->ref ."'";
+		$sql.= ", ref_ext = ".(! empty($this->ref_ext)?"'".$this->db->escape($this->ref_ext)."'":"null");
+		$sql.= ", tva_tx = " . $this->tva_tx;
+		$sql.= ", recuperableonly = " . $this->tva_npr;
+		$sql.= ", localtax1_tx = " . $this->localtax1_tx;
+		$sql.= ", localtax2_tx = " . $this->localtax2_tx;
 
-		//Local taxes
-		$sql.= ",localtax1_tx = " . $this->localtax1_tx;
-		$sql.= ",localtax2_tx = " . $this->localtax2_tx;
-
-		$sql.= ",tosell = " . $this->status;
-		$sql.= ",tobuy = " . $this->status_buy;
-		$sql.= ",finished = " . ((empty($this->finished) || $this->finished < 0) ? "null" : $this->finished);
-		$sql.= ",weight = " . ($this->weight!='' ? "'".$this->weight."'" : 'null');
-		$sql.= ",weight_units = " . ($this->weight_units!='' ? "'".$this->weight_units."'": 'null');
-		$sql.= ",length = " . ($this->length!='' ? "'".$this->length."'" : 'null');
-		$sql.= ",length_units = " . ($this->length_units!='' ? "'".$this->length_units."'" : 'null');
-		$sql.= ",surface = " . ($this->surface!='' ? "'".$this->surface."'" : 'null');
-		$sql.= ",surface_units = " . ($this->surface_units!='' ? "'".$this->surface_units."'" : 'null');
-		$sql.= ",volume = " . ($this->volume!='' ? "'".$this->volume."'" : 'null');
-		$sql.= ",volume_units = " . ($this->volume_units!='' ? "'".$this->volume_units."'" : 'null');
-		$sql.= ",seuil_stock_alerte = " . ((isset($this->seuil_stock_alerte) && $this->seuil_stock_alerte != '') ? "'".$this->seuil_stock_alerte."'" : "null");
-		$sql.= ",description = '" . $this->db->escape($this->description) ."'";
-        $sql.= ",customcode = '" .        $this->db->escape($this->customcode) ."'";
-        $sql.= ",fk_country = " . ($this->country_id > 0 ? $this->country_id : 'null');
-        $sql.= ",note = '" .        $this->db->escape($this->note) ."'";
-		$sql.= ",duration = '" . $this->duration_value . $this->duration_unit ."'";
-		$sql.= ",accountancy_code_buy = '" . $this->accountancy_code_buy."'";
-		$sql.= ",accountancy_code_sell= '" . $this->accountancy_code_sell."'";
+		$sql.= ", tosell = " . $this->status;
+		$sql.= ", tobuy = " . $this->status_buy;
+		$sql.= ", finished = " . ((empty($this->finished) || $this->finished < 0) ? "null" : $this->finished);
+		$sql.= ", weight = " . ($this->weight!='' ? "'".$this->weight."'" : 'null');
+		$sql.= ", weight_units = " . ($this->weight_units!='' ? "'".$this->weight_units."'": 'null');
+		$sql.= ", length = " . ($this->length!='' ? "'".$this->length."'" : 'null');
+		$sql.= ", length_units = " . ($this->length_units!='' ? "'".$this->length_units."'" : 'null');
+		$sql.= ", surface = " . ($this->surface!='' ? "'".$this->surface."'" : 'null');
+		$sql.= ", surface_units = " . ($this->surface_units!='' ? "'".$this->surface_units."'" : 'null');
+		$sql.= ", volume = " . ($this->volume!='' ? "'".$this->volume."'" : 'null');
+		$sql.= ", volume_units = " . ($this->volume_units!='' ? "'".$this->volume_units."'" : 'null');
+		$sql.= ", seuil_stock_alerte = " . ((isset($this->seuil_stock_alerte) && $this->seuil_stock_alerte != '') ? "'".$this->seuil_stock_alerte."'" : "null");
+		$sql.= ", description = '" . $this->db->escape($this->description) ."'";
+        $sql.= ", customcode = '" .        $this->db->escape($this->customcode) ."'";
+        $sql.= ", fk_country = " . ($this->country_id > 0 ? $this->country_id : 'null');
+        $sql.= ", note = '" .        $this->db->escape($this->note) ."'";
+		$sql.= ", duration = '" . $this->duration_value . $this->duration_unit ."'";
+		$sql.= ", accountancy_code_buy = '" . $this->accountancy_code_buy."'";
+		$sql.= ", accountancy_code_sell= '" . $this->accountancy_code_sell."'";
 		$sql.= ", desiredstock = " . ((isset($this->desiredstock) && $this->desiredstock != '') ? $this->desiredstock : "null");
 		$sql.= " WHERE rowid = " . $id;
 

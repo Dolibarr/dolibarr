@@ -564,23 +564,23 @@ if ($action == 'create')
 	}
 	else
 	{
+		
+		$events=array();
+		$events[]=array('method' => 'getContacts', 'url' => dol_buildpath('/core/ajax/contacts.php',1), 'htmlname' => 'contactid', 'params' => array('add-customer-contact' => 'disabled'));
 		//For external user force the company to user company
 		if (!empty($user->societe_id)) {
-			print $form->select_company($user->societe_id,'socid','',1,1);
+			print $form->select_company($user->societe_id,'socid','',1,1,0,$events);
 		} else {
-			print $form->select_company('','socid','',1,1);
+			print $form->select_company('','socid','',1,1,0,$events);
 		}
 
 	}
 	print '</td></tr>';
 
-	// If company is forced, we propose contacts (may be contact is also forced)
-	if (GETPOST("contactid") > 0 || GETPOST('socid','int') > 0)
-	{
-		print '<tr><td class="nowrap">'.$langs->trans("ActionOnContact").'</td><td>';
-		$form->select_contacts(GETPOST('socid','int'),GETPOST('contactid'),'contactid',1);
-		print '</td></tr>';
-	}
+	print '<tr><td class="nowrap">'.$langs->trans("ActionOnContact").'</td><td>';
+	$form->select_contacts(GETPOST('socid','int'),GETPOST('contactid'),'contactid',1);
+	print '</td></tr>';
+	
 
 	// Project
 	if (! empty($conf->projet->enabled))
@@ -809,12 +809,14 @@ if ($id > 0)
 		{
 			print '<tr><td width="30%">'.$langs->trans("ActionOnCompany").'</td>';
 			print '<td>';
-			print $form->select_company($act->societe->id,'socid','',1,1);
+			$events=array();
+			$events[]=array('method' => 'getContacts', 'url' => dol_buildpath('/core/ajax/contacts.php',1), 'htmlname' => 'contactid', 'params' => array('add-customer-contact' => 'disabled'));
+			print $form->select_company($act->societe->id,'socid','',1,1,0,$events);
 			print '</td>';
 
 			// Contact
 			print '<td>'.$langs->trans("Contact").'</td><td width="30%">';
-			print $form->selectarray("contactid", (empty($act->societe->id)?array():$act->societe->contact_array()), $act->contact->id, 1);
+			$form->select_contacts($act->societe->id, $act->contact->id,'contactid',1);
 			print '</td></tr>';
 		}
 

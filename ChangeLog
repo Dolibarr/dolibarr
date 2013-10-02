@@ -61,6 +61,7 @@ For users:
 - New: Can send an email from thirdparty card.
 - New: Can cancel holidays that were previously validated.
 - Fix: [bug #1022] correct margin calculation for credit notes.
+- New: Can choose contact on event (action com) creation, and filtred by thirdparty
 
 For translators:
 - Qual: Normalized sort order of all languages files with english reference files.
@@ -91,6 +92,7 @@ For developers:
 - New: Add trigger CATEGORY_LINK and CATEGORY_UNLINK.
 - New: A trigger can return an array of error strings instead of one error string.
 - New: Add method to use a dictionnary as a combo box.
+- New: Add update method for web service product.
 
 WARNING: Following change may create regression for some external modules, but was necessary to make
 Dolibarr better:
