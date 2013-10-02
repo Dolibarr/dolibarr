@@ -236,7 +236,13 @@ if ($resql)
         // Status
         print '<tr><td>'.$langs->trans("Status").'</td><td colspan="3">'.$entrepot->getLibStatut(4).'</td></tr>';
 
+        $calcproductsunique=$entrepot->nb_different_products();
         $calcproducts=$entrepot->nb_products();
+
+        // Total nb of different products
+        print '<tr><td valign="top">'.$langs->trans("NumberOfDifferentProducts").'</td><td colspan="3">';
+        print empty($calcproductsunique['nb'])?'0':$calcproductsunique['nb'];
+        print "</td></tr>";
 
         // Nb of products
         print '<tr><td valign="top">'.$langs->trans("NumberOfProducts").'</td><td colspan="3">';

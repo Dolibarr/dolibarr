@@ -27,6 +27,7 @@ ListOfStockMovements=Liste des mouvements de stock
 StocksArea=Espace stocks
 Location=Lieu
 LocationSummary=Nom court du lieu
+NumberOfDifferentProducts=Nombre de produits différents
 NumberOfProducts=Nombre total de produits
 LastMovement=Dernier mouvement
 LastMovements=Derniers mouvements
