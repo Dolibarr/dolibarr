@@ -190,8 +190,8 @@ if ($resql)
 
     $help_url='EN:Module_Stocks_En|FR:Module_Stock|ES:M&oacute;dulo_Stocks';
     $texte = $langs->trans("ListOfStockMovements");
+    $texte.=' ('.$langs->trans("ForThisWarehouse").')';
     llxHeader("",$texte,$help_url);
-
 
     /*
      * Show tab only if we ask a particular warehouse
@@ -236,7 +236,13 @@ if ($resql)
         // Status
         print '<tr><td>'.$langs->trans("Status").'</td><td colspan="3">'.$entrepot->getLibStatut(4).'</td></tr>';
 
+        $calcproductsunique=$entrepot->nb_different_products();
         $calcproducts=$entrepot->nb_products();
+
+        // Total nb of different products
+        print '<tr><td valign="top">'.$langs->trans("NumberOfDifferentProducts").'</td><td colspan="3">';
+        print empty($calcproductsunique['nb'])?'0':$calcproductsunique['nb'];
+        print "</td></tr>";
 
         // Nb of products
         print '<tr><td valign="top">'.$langs->trans("NumberOfProducts").'</td><td colspan="3">';
@@ -392,8 +398,8 @@ if ($resql)
     if ($snom) $param.='&snom='.urlencode($snom);
     if ($search_user)    $param.='&search_user='.urlencode($search_user);
     if ($idproduct > 0)  $param.='&idproduct='.$idproduct;
-    if ($id) print_barre_liste($texte, $page, "mouvement.php", $param, $sortfield, $sortorder,'',$num,0,'');
-    else print_barre_liste($texte, $page, "mouvement.php", $param, $sortfield, $sortorder,'',$num);
+    if ($id) print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder,'',$num,0,'');
+    else print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder,'',$num);
 
     print '<table class="noborder" width="100%">';
     print "<tr class=\"liste_titre\">";
@@ -401,7 +407,7 @@ if ($resql)
     print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"], "m.datem","",$param,"",$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Label"),$_SERVER["PHP_SELF"], "m.label","",$param,"",$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Product"),$_SERVER["PHP_SELF"], "p.ref","",$param,"",$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Warehouse"),$_SERVER["PHP_SELF"], "e.label","",$param,"",$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Warehouse"),$_SERVER["PHP_SELF"], "","",$param,"",$sortfield,$sortorder);	// We are on a specific warehouse card, no filter on other should be possible
     print_liste_field_titre($langs->trans("Author"),$_SERVER["PHP_SELF"], "m.fk_user_author","",$param,"",$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Units"),$_SERVER["PHP_SELF"], "m.value","",$param,'align="right"',$sortfield,$sortorder);
     print "</tr>\n";
@@ -426,7 +432,7 @@ if ($resql)
     print '<input class="flat" type="text" size="12" name="search_product" value="'.($idproduct?$product->libelle:$search_product).'">';
     print '</td>';
     print '<td class="liste_titre" align="left">';
-    print '<input class="flat" type="text" size="10" name="search_warehouse" value="'.($search_warehouse).'">';
+    //print '<input class="flat" type="text" size="10" name="search_warehouse" value="'.($search_warehouse).'">';	// We are on a specific warehouse card, no filter on other should be possible
     print '</td>';
     print '<td class="liste_titre" align="left">';
     print '<input class="flat" type="text" size="6" name="search_user" value="'.($search_user).'">';
