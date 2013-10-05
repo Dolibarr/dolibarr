@@ -128,13 +128,13 @@ if ($id > 0 || ! empty($ref))
 		print '</div>';
 
 
-		$sql = "SELECT DISTINCT s.nom, s.rowid as socid, s.code_client,";
+		$sql = "SELECT s.nom, s.rowid as socid, s.code_client,";
 		$sql.= " f.facnumber, f.total as total_ht,";
-		$sql.= " d.total_ht as selling_price,";
-        $sql.= $db->ifsql('f.type =2','(d.buy_price_ht * d.qty *-1)','(d.buy_price_ht * d.qty)')." as buying_price, ";
-        $sql.= $db->ifsql('f.type =2','d.qty *-1','d.qty')." as qty,";
-        $sql.= $db->ifsql('f.type =2','d.total_ht + (d.buy_price_ht * d.qty)','d.total_ht - (d.buy_price_ht * d.qty)')." as marge," ;
-		$sql.= " f.datef, f.paye, f.fk_statut as statut, f.rowid as facid";
+		$sql.= " sum(d.total_ht) as selling_price,";
+        $sql.= $db->ifsql('f.type =2','sum(d.qty *-1)','sum(d.qty)')." as qty,";
+		$sql.= " f.datef, f.paye, f.fk_statut as statut, f.rowid as facid,";
+		$sql.= $db->ifsql('f.type =2','sum(d.qty * d.buy_price_ht *-1)','sum(d.qty * d.buy_price_ht)')." as buying_price,";
+        $sql.= $db->ifsql('f.type =2','sum(-1 * (abs(d.total_ht) - (d.buy_price_ht * d.qty)))','sum(d.total_ht - (d.buy_price_ht * d.qty))')." as marge" ;
 		if (!$user->rights->societe->client->voir && !$socid) $sql.= ", sc.fk_soc, sc.fk_user ";
 		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 		$sql.= ", ".MAIN_DB_PREFIX."facture as f";
@@ -150,6 +150,7 @@ if ($id > 0 || ! empty($ref))
 		$sql .= " AND d.buy_price_ht IS NOT NULL";
 		if (isset($conf->global->ForceBuyingPriceIfNull) && $conf->global->ForceBuyingPriceIfNull == 1)
 			$sql .= " AND d.buy_price_ht <> 0";
+		$sql.= " GROUP BY f.rowid";
 		$sql.= " ORDER BY $sortfield $sortorder ";
 		// TODO: calculate total to display then restore pagination
 		//$sql.= $db->plimit($conf->liste_limit +1, $offset);
@@ -193,9 +194,18 @@ if ($id > 0 || ! empty($ref))
 					$objp = $db->fetch_object($result);
 					$var=!$var;
 
-					$marginRate = ($objp->buying_price != 0)?(100 * round($objp->marge / $objp->buying_price, 5)):'' ;
-					$markRate = ($objp->selling_price != 0)?(100 * round($objp->marge / $objp->selling_price, 5)):'' ;
-					print "<tr $bc[$var]>";
+					if ($objp->marge < 0)
+					{
+						$marginRate = ($objp->buying_price != 0)?-1*(100 * round($objp->marge / $objp->buying_price, 5)):'' ;
+						$markRate = ($objp->selling_price != 0)?-1*(100 * round($objp->marge / $objp->selling_price, 5)):'' ;
+					}
+					else
+					{
+						$marginRate = ($objp->buying_price != 0)?(100 * round($objp->marge / $objp->buying_price, 5)):'' ;
+						$markRate = ($objp->selling_price != 0)?(100 * round($objp->marge / $objp->selling_price, 5)):'' ;
+					}
+
+					print "<tr ".$bc[$var].">";
 					print '<td>';
 					$invoicestatic->id=$objp->facid;
 					$invoicestatic->ref=$objp->facnumber;
@@ -225,8 +235,16 @@ if ($id > 0 || ! empty($ref))
 			// affichage totaux marges
 			$var=!$var;
 			$totalMargin = $cumul_vente - $cumul_achat;
-			$marginRate = ($cumul_achat != 0)?(100 * round($totalMargin / $cumul_achat, 5)):'';
-			$markRate = ($cumul_vente != 0)?(100 * round($totalMargin / $cumul_vente, 5)):'';
+			if ($totalMargin < 0)
+			{
+				$marginRate = ($cumul_achat != 0)?-1*(100 * round($totalMargin / $cumul_achat, 5)):'';
+				$markRate = ($cumul_vente != 0)?-1*(100 * round($totalMargin / $cumul_vente, 5)):'';
+			}
+			else
+			{
+				$marginRate = ($cumul_achat != 0)?(100 * round($totalMargin / $cumul_achat, 5)):'';
+				$markRate = ($cumul_vente != 0)?(100 * round($totalMargin / $cumul_vente, 5)):'';
+			}
 			print '<tr '.$bc[$var].' style="border-top: 1px solid #ccc; font-weight: bold">';
 			print '<td colspan=4>'.$langs->trans('TotalMargin')."</td>";
 			print "<td align=\"right\">".price($cumul_vente)."</td>\n";
