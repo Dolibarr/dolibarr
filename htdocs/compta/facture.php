@@ -2292,14 +2292,14 @@ if ($action == 'create')
 		print '</td></tr>';
 	}
 
-	if ($soc->outstandingbill)
+	if ($soc->outstanding_limit)
 	{
 		// Outstanding Bill
 		print '<tr><td>';
 		print $langs->trans('OutstandingBill');
 		print '</td><td align=right>';
 		print price($soc->get_OutstandingBill()).' / ';
-		print price($soc->outstandingbill).'</td><td colspan=2>';
+		print price($soc->outstanding_limit).'</td><td colspan=2>';
 		print '</td>';
 		print '</tr>';
 	}
