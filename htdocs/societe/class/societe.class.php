@@ -2785,6 +2785,13 @@ class Societe extends CommonObject
      */
     function get_OutstandingBill()
     {
+		/* Accurate value of remain to pay is to sum remaintopay for each invoice 
+		$paiement = $invoice->getSommePaiement();
+		$creditnotes=$invoice->getSumCreditNotesUsed();
+		$deposits=$invoice->getSumDepositsUsed();
+		$alreadypayed=price2num($paiement + $creditnotes + $deposits,'MT');
+		$remaintopay=price2num($invoice->total_ttc - $paiement - $creditnotes - $deposits,'MT');
+		*/
 		$sql  = "SELECT sum(total) as amount FROM ".MAIN_DB_PREFIX."facture as f";
 		$sql .= " WHERE fk_soc = ". $this->id; 
 		$sql .= " AND paye = 0";
