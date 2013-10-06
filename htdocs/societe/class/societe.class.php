@@ -126,7 +126,7 @@ class Societe extends CommonObject
     var $statut_commercial;
 
     var $price_level;
-    var $outstanding;
+    var $outstanding_limit;
 
     var $datec;
     var $date_update;
@@ -711,7 +711,7 @@ class Societe extends CommonObject
         $sql .= ', s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur, s.parent, s.barcode';
         $sql .= ', s.fk_departement, s.fk_pays as country_id, s.fk_stcomm, s.remise_client, s.mode_reglement, s.cond_reglement, s.tva_assuj';
         $sql .= ', s.mode_reglement_supplier, s.cond_reglement_supplier, s.localtax1_assuj, s.localtax2_assuj, s.fk_prospectlevel, s.default_lang, s.logo';
-        $sql .= ', s.outstanding, s.import_key, s.canvas';
+        $sql .= ', s.outstanding_limit, s.import_key, s.canvas';
         $sql .= ', fj.libelle as forme_juridique';
         $sql .= ', e.libelle as effectif';
         $sql .= ', p.code as country_code, p.libelle as country';
@@ -841,7 +841,7 @@ class Societe extends CommonObject
                 $this->default_lang = $obj->default_lang;
                 $this->logo = $obj->logo;
 
-                $this->outstanding		= $obj->outstanding;
+                $this->outstanding_limit		= $obj->outstanding_limit;
 
                 // multiprix
                 $this->price_level = $obj->price_level;
@@ -2757,11 +2757,11 @@ class Societe extends CommonObject
 
 			$now=dol_now();
 			
-			$outstanding = price2num($this->outstanding);
+			$outstanding = price2num($this->outstanding_limit);
 			
 			// Positionne l'encours de facturaiton
 			$sql = "UPDATE ".MAIN_DB_PREFIX."societe SET ";
-			$sql.= " outstanding=".$outstanding;
+			$sql.= " outstanding_limit=".$outstanding;
 			$sql.= " WHERE rowid = ".$this->id;
 
 			dol_syslog(get_class($this)."::set_outstanding sql=".$sql);
