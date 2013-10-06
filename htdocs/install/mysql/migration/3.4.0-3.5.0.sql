@@ -295,4 +295,4 @@ ALTER TABLE llx_facture_fourn MODIFY COLUMN fk_mode_reglement	integer NULL;
 ALTER TABLE llx_facture_fourn MODIFY COLUMN fk_cond_reglement	integer NULL;
 
 -- add outstanding bill
-ALTER TABLE llx_societe ADD outstanding double(24,8) 0 AFTER mode_reglement_supplier;
+ALTER TABLE llx_societe ADD outstanding_limit double(24,8) 0 AFTER mode_reglement_supplier;
