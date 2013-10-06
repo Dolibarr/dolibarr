@@ -85,7 +85,7 @@ create table llx_societe
   barcode                  varchar(255),                        		-- barcode
   fk_barcode_type          integer NULL   DEFAULT 0,                    -- barcode type
   price_level              integer NULL,                        		-- level of price for multiprices
-  outstanding							 double(24,8) DEFAULT 0,
+  outstanding_limit				 double(24,8) DEFAULT 0,
   default_lang             varchar(6),									-- default language
   logo                     varchar(255),
   canvas				   varchar(32),			                        -- type of canvas if used (null by default)
