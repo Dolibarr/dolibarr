@@ -1884,14 +1884,14 @@ else
 		print '</tr>';
 	}
 
-	if ($soc->outstandingbill)
+	if ($soc->outstanding_limit)
 	{
 		// Outstanding Bill
 		print '<tr><td>';
 		print $langs->trans('OutstandingBill');
-		print '</td><td align=right>';
+		print '</td><td align=right colspan=3>';
 		print price($soc->get_OutstandingBill()).' / ';
-		print price($soc->outstandingbill).'</td><td colspan=2>'.$langs->trans("Currency".$conf->currency);
+		print price($soc->outstanding_limit, 0, '', 1, -1, -1, $conf->currency);
 		print '</td>';
 		print '</tr>';
 	}
