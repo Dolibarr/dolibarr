@@ -132,7 +132,7 @@ if ($action == 'cstc')
 if ($action == 'setOutstandingBill')
 {
 	$object->fetch($id);
-	$object->outstanding=GETPOST('OutstandingBill');
+	$object->outstanding_limit=GETPOST('OutstandingBill');
 	$result=$object->set_OutstandingBill($user);
 	if ($result < 0) setEventMessage($object->error,'errors');
 }
@@ -381,9 +381,9 @@ if ($id > 0)
 	{
 		print '<tr>';
 		print '<td>';
-		print $form->editfieldkey("OutstandingBill",'OutstandingBill',$object->outstanding,$object,$user->rights->societe->creer);
+		print $form->editfieldkey("OutstandingBill",'OutstandingBill',$object->outstanding_limit,$object,$user->rights->societe->creer);
 		print '</td><td colspan="3">';
-		print $form->editfieldval("OutstandingBill",'OutstandingBill',$object->outstanding,$object,$user->rights->societe->creer);
+		print $form->editfieldval("OutstandingBill",'OutstandingBill',$object->outstanding_limit,$object,$user->rights->societe->creer);
 		print '</td>';
 		print '</tr>';
 	}
