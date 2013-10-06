@@ -2195,6 +2195,19 @@ else
 			print '</td></tr>';
 		}
 
+
+		if ($soc->outstanding_limit)
+		{
+			// Outstanding Bill
+			print '<tr><td>';
+			print $langs->trans('OutstandingBill');
+			print '</td><td align=right colspan=3>';
+			print price($soc->get_OutstandingBill()).' / ';
+			print price($soc->outstanding_limit, 0, '', 1, -1, -1, $conf->currency);
+			print '</td>';
+			print '</tr>';
+		}
+
 		// Other attributes
 		$res=$object->fetch_optionals($object->id,$extralabels);
 		$parameters=array('colspan' => ' colspan="3"');
