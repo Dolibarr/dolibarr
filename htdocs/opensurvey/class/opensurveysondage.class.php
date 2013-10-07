@@ -114,17 +114,17 @@ class Opensurveysondage extends CommonObject
 		$sql.= "canedit";
         $sql.= ") VALUES (";
 
-		$sql.= " ".(! isset($this->id_sondage)?'NULL':"'".$this->id_sondage."'").",";
+		$sql.= " ".(! isset($this->id_sondage)?'NULL':"'".$this->db->escape($this->id_sondage)."'").",";
 		$sql.= " ".(! isset($this->commentaires)?'NULL':"'".$this->db->escape($this->commentaires)."'").",";
 		$sql.= " ".(! isset($this->mail_admin)?'NULL':"'".$this->db->escape($this->mail_admin)."'").",";
 		$sql.= " ".(! isset($this->nom_admin)?'NULL':"'".$this->db->escape($this->nom_admin)."'").",";
 		$sql.= " ".(! isset($this->titre)?'NULL':"'".$this->db->escape($this->titre)."'").",";
-		$sql.= " ".(! isset($this->id_sondage_admin)?'NULL':"'".$this->id_sondage_admin."'").",";
+		$sql.= " ".(! isset($this->id_sondage_admin)?'NULL':"'".$this->db->escape($this->id_sondage_admin)."'").",";
 		$sql.= " ".(! isset($this->date_fin) || dol_strlen($this->date_fin)==0?'NULL':$this->db->idate($this->date_fin)).",";
 		$sql.= " ".(! isset($this->format)?'NULL':"'".$this->db->escape($this->format)."'").",";
-		$sql.= " ".(! isset($this->mailsonde)?'NULL':"'".$this->mailsonde."'").",";
-		$sql.= " ".(! isset($this->survey_link_visible)?'NULL':"'".$this->survey_link_visible."'").",";
-		$sql.= " ".(! isset($this->canedit)?'NULL':"'".$this->canedit."'")."";
+		$sql.= " ".(! isset($this->mailsonde)?'NULL':"'".$this->db->escape($this->mailsonde)."'").",";
+		$sql.= " ".(! isset($this->survey_link_visible)?'NULL':"'".$this->db->escape($this->survey_link_visible)."'").",";
+		$sql.= " ".(! isset($this->canedit)?'NULL':"'".$this->db->escape($this->canedit)."'")."";
 
 		$sql.= ")";
 
@@ -198,9 +198,9 @@ class Opensurveysondage extends CommonObject
 		$sql.= " t.sujet,";
 		$sql.= " t.tms";
         $sql.= " FROM ".MAIN_DB_PREFIX."opensurvey_sondage as t";
-        if ($id > 0) $sql.= " WHERE t.rowid = ".$id;
-        else if (strlen($numsurvey) == 16) $sql.= " WHERE t.id_sondage = '".$numsurvey."'";
-        else $sql.= " WHERE t.id_sondage_admin = '".$numsurvey."'";
+        if ($id > 0) $sql.= " WHERE t.rowid = ".$this->db->escape($id);
+        else if (strlen($numsurvey) == 16) $sql.= " WHERE t.id_sondage = '".$this->db->escape($numsurvey)."'";
+        else $sql.= " WHERE t.id_sondage_admin = '".$this->db->escape($numsurvey)."'";
 
     	dol_syslog(get_class($this)."::fetch sql=".$sql, LOG_DEBUG);
         $resql=$this->db->query($sql);
@@ -276,20 +276,20 @@ class Opensurveysondage extends CommonObject
         // Update request
         $sql = "UPDATE ".MAIN_DB_PREFIX."opensurvey_sondage SET";
 
-		$sql.= " id_sondage='".(isset($this->id_sondage)?$this->id_sondage:"null")."',";
+		$sql.= " id_sondage=".(isset($this->id_sondage)?"'".$this->db->escape($this->id_sondage)."'":"null").",";
 		$sql.= " commentaires=".(isset($this->commentaires)?"'".$this->db->escape($this->commentaires)."'":"null").",";
 		$sql.= " mail_admin=".(isset($this->mail_admin)?"'".$this->db->escape($this->mail_admin)."'":"null").",";
 		$sql.= " nom_admin=".(isset($this->nom_admin)?"'".$this->db->escape($this->nom_admin)."'":"null").",";
 		$sql.= " titre=".(isset($this->titre)?"'".$this->db->escape($this->titre)."'":"null").",";
-		$sql.= " id_sondage_admin='".(isset($this->id_sondage_admin)?$this->id_sondage_admin:"null")."',";
+		$sql.= " id_sondage_admin=".(isset($this->id_sondage_admin)?"'".$this->db->escape($this->id_sondage_admin)."'":"null").",";
 		$sql.= " date_fin=".(dol_strlen($this->date_fin)!=0 ? "'".$this->db->idate($this->date_fin)."'" : 'null').",";
 		$sql.= " format=".(isset($this->format)?"'".$this->db->escape($this->format)."'":"null").",";
-		$sql.= " mailsonde=".(isset($this->mailsonde)?$this->mailsonde:"null").",";
-		$sql.= " survey_link_visible=".(isset($this->survey_link_visible)?$this->survey_link_visible:"null").",";
-		$sql.= " canedit=".(isset($this->canedit)?$this->canedit:"null")."";
+		$sql.= " mailsonde=".(isset($this->mailsonde)?$this->db->escape($this->mailsonde):"null").",";
+		$sql.= " survey_link_visible=".(isset($this->survey_link_visible)?$this->db->escape($this->survey_link_visible):"null").",";
+		$sql.= " canedit=".(isset($this->canedit)?$this->db->escape($this->canedit):"null")."";
 
         //$sql.= " WHERE rowid=".$this->id;
-		$sql.= " WHERE id_sondage_admin='".$this->id_sondage_admin."'";
+		$sql.= " WHERE id_sondage_admin='".$this->db->escape($this->id_sondage_admin)."'";
 
 		$this->db->begin();
 
@@ -346,7 +346,7 @@ class Opensurveysondage extends CommonObject
 		$error=0;
 
 		$numsondage=substr($numsondageadmin, 0, 16);
-		
+
 		$this->db->begin();
 
 		if (! $error)
@@ -368,15 +368,15 @@ class Opensurveysondage extends CommonObject
 		if (! $error)
 		{
 
-			$sql='DELETE FROM '.MAIN_DB_PREFIX."opensurvey_comments WHERE id_sondage = '".$numsondage."'";
+			$sql='DELETE FROM '.MAIN_DB_PREFIX."opensurvey_comments WHERE id_sondage = '".$this->db->escape($numsondage)."'";
 			dol_syslog(get_class($this)."::delete sql=".$sql, LOG_DEBUG);
 			$resql=$this->db->query($sql);
-			$sql='DELETE FROM '.MAIN_DB_PREFIX."opensurvey_user_studs WHERE id_sondage = '".$numsondage."'";
+			$sql='DELETE FROM '.MAIN_DB_PREFIX."opensurvey_user_studs WHERE id_sondage = '".$this->db->escape($numsondage)."'";
 			dol_syslog(get_class($this)."::delete sql=".$sql, LOG_DEBUG);
 			$resql=$this->db->query($sql);
 
     		$sql = "DELETE FROM ".MAIN_DB_PREFIX."opensurvey_sondage";
-    		$sql.= " WHERE id_sondage_admin = '".$numsondageadmin."'";
+    		$sql.= " WHERE id_sondage_admin = '".$this->db->escape($numsondageadmin)."'";
 
     		dol_syslog(get_class($this)."::delete sql=".$sql);
     		$resql = $this->db->query($sql);
@@ -410,7 +410,7 @@ class Opensurveysondage extends CommonObject
 	{
 		$ret=array();
 		$sql = "SELECT id_users, nom, reponses FROM ".MAIN_DB_PREFIX."opensurvey_user_studs";
-		$sql.= " WHERE id_sondage = '".$this->id_sondage."'";
+		$sql.= " WHERE id_sondage = '".$this->db->escape($this->id_sondage)."'";
 		$resql=$this->db->query($sql);
 
 		if ($resql)
