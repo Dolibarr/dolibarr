@@ -114,7 +114,7 @@ if ($action == 'add' || $action == 'update')
     // Update address
     else if ($action == 'update')
     {
-        $result 	= $object->update($_POST["id"], $socid, $user);
+        $result 	= $object->update($id, $socid, $user);
 
         if ($result >= 0)
         {
