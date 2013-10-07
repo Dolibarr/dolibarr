@@ -192,12 +192,12 @@ class Address
 			$sql.= ", address = ".($this->address?"'".$this->db->escape($this->address)."'":"null");
 			$sql.= ", zip = ".($this->zip?"'".$this->db->escape($this->zip)."'":"null");
 			$sql.= ", town = ".($this->town?"'".$this->db->escape($this->town)."'":"null");
-			$sql.= ", fk_pays = '" . ($this->country_id?$this->country_id:'0') ."'";
+			$sql.= ", fk_pays = '" . ($this->country_id?$this->db->escape($this->country_id):'0') ."'";
 			$sql.= ", note = ".($this->note?"'".$this->db->escape($this->note)."'":"null");
 			$sql.= ", phone = ".($this->phone?"'".$this->db->escape($this->phone)."'":"null");
 			$sql.= ", fax = ".($this->fax?"'".$this->db->escape($this->fax)."'":"null");
 			if ($user) $sql .= ",fk_user_modif = '".$user->id."'";
-			$sql .= " WHERE fk_soc = '" . $socid ."' AND rowid = '" . $id ."'";
+			$sql .= " WHERE fk_soc = '" . $socid ."' AND rowid = '" . $this->db->escape($id) ."'";
 
 			dol_syslog(get_class($this)."::Update sql=".$sql, LOG_DEBUG);
 			$resql=$this->db->query($sql);
