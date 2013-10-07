@@ -142,6 +142,9 @@ Fix: Delete linked element to supplier invoice when deleted
 Fix: [ bug #1061 ] Bad info shipped products
 Fix: [ bug #1062 ] Documents lost in propals and contracts validating
 Fix: Supplier price displayed on document lines and margin infos didnt take discount
+Fix: sorting on qty did not work in supplier product list
+Fix: there was no escaping on filter fields in supplier product list
+Fix: bugs on margin reports and better margin calculation on credit notes
 Qual: Add travis-ci integration
 
 
@@ -243,6 +246,8 @@ backport commit 384e3812eb73a15adafb472cacfb93397a54459b to fix W3C/edit contrac
 
 ***** ChangeLog for 3.3.4 compared to 3.3.3 *****
 - Fix: [ bug #1001 ] Social Contribution : State not correct
+- Fix: Better management of pdf generation when tcpdf is not available.
+- Fix: Change to be more debian compliant natively.
 
 ***** ChangeLog for 3.3.3 compared to 3.3.2 *****
 - Fix: [ bug #903 ] Fatal error: Call to undefined function dol_get_first_day() in htdocs/commande/liste.php

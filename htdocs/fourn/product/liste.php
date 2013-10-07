@@ -108,6 +108,10 @@ else
 	{
 		$sql .= natural_search('p.ref', $sref);
 	}
+	if ($sRefSupplier)
+	{
+		$sql .= natural_search('ppf.ref_fourn', $sRefSupplier);
+	}
 	if ($snom)
 	{
 		$sql .= natural_search('p.label', $snom);
@@ -174,7 +178,7 @@ if ($resql)
 	print_liste_field_titre($langs->trans("Label"),"liste.php", "p.label",$param,"","",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Supplier"),"liste.php", "ppf.fk_soc",$param,"","",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("BuyingPrice"),"liste.php", "ppf.price",$param,"",'align="right"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("QtyMin"),"liste.php", "ppf.qty",$param,"",'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("QtyMin"),"liste.php", "ppf.quantity",$param,"",'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("UnitPrice"),"liste.php", "ppf.unitprice",$param,"",'align="right"',$sortfield,$sortorder);
 	print "</tr>\n";
 
