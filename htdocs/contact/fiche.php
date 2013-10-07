@@ -132,28 +132,25 @@ if (empty($reshook))
     }
 
 
-        /*
-         * Confirmation desactivation
-         */
-        if ($action == 'disable')
-        {
-            $object->fetch($id);
-			$object->setstatus(0);
-			header("Location: ".$_SERVER['PHP_SELF'].'?id='.$id);
-			exit;
-        }
+    // Confirmation desactivation
+    if ($action == 'disable')
+    {
+    	$object->fetch($id);
+    	$object->setstatus(0);
+    	header("Location: ".$_SERVER['PHP_SELF'].'?id='.$id);
+    	exit;
+    }
 
-        /*
-         * Confirmation activation
-         */
-        if ($action == 'enable')
-        {
-			$object->fetch($id);
-			$object->setstatus(1);
-			header("Location: ".$_SERVER['PHP_SELF'].'?id='.$id);
-			exit;
+    // Confirmation activation
+    if ($action == 'enable')
+    {
+    	$object->fetch($id);
+    	$object->setstatus(1);
+    	header("Location: ".$_SERVER['PHP_SELF'].'?id='.$id);
+    	exit;
 
-        }
+    }
+
     // Add contact
     if ($action == 'add' && $user->rights->societe->contact->creer)
     {
