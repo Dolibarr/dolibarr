@@ -1,6 +1,6 @@
 <?php
-/*
- * Copyright (C) 2013   Cédric Salvador    <csalvador@gpcsolutions.fr>
+/* Copyright (C) 2013   Cédric Salvador    	<csalvador@gpcsolutions.fr>
+ * Copyright (C) 2013   Laurent Destaileur	<ely@users.sourceforge.net>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -173,14 +173,14 @@ if ($action == 'order' && isset($_POST['valid']))
 
 $title = $langs->trans('Status');
 
-$sql = 'SELECT p.rowid, p.ref, p.label, p.price';
-$sql .= ', p.price_ttc, p.price_base_type,p.fk_product_type';
-$sql .= ', p.tms as datem, p.duration, p.tobuy, p.seuil_stock_alerte,';
-$sql .= ' SUM(COALESCE(s.reel, 0)) as stock_physique';
-$sql .= ', p.desiredstock';
-$sql .= ' FROM ' . MAIN_DB_PREFIX . 'product as p';
-$sql .= ' LEFT JOIN ' . MAIN_DB_PREFIX . 'product_stock as s';
-$sql .= ' ON p.rowid = s.fk_product';
+$sql = 'SELECT p.rowid, p.ref, p.label, p.price,';
+$sql.= ' p.price_ttc, p.price_base_type,p.fk_product_type,';
+$sql.= ' p.tms as datem, p.duration, p.tobuy, p.seuil_stock_alerte,';
+$sql.= ' p.desiredstock,';
+$sql.= ' SUM('.$db->ifsql("s.reel IS NULL", "s.reel", "0").') as stock_physique';
+$sql.= ' FROM ' . MAIN_DB_PREFIX . 'product as p';
+$sql.= ' LEFT JOIN ' . MAIN_DB_PREFIX . 'product_stock as s';
+$sql.= ' ON p.rowid = s.fk_product';
 $sql.= ' WHERE p.entity IN (' . getEntity("product", 1) . ')';
 if ($sall) {
     $sql .= ' AND (p.ref LIKE "%'.$db->escape($sall).'%" ';
@@ -193,7 +193,7 @@ if (dol_strlen($type)) {
     if ($type == 1) {
         $sql .= ' AND p.fk_product_type = 1';
     } else {
-        $sql .= ' AND p.fk_product_type != 1';
+        $sql .= ' AND p.fk_product_type <> 1';
     }
 }
 if ($sref) {
@@ -210,21 +210,23 @@ if ($snom) {
         $sql .= ' AND p.label LIKE "%' . $db->escape($crit) . '%"';
     }
 }
-$sql .= ' AND p.tobuy = 1';
+$sql.= ' AND p.tobuy = 1';
 if (!empty($canvas)) $sql .= ' AND p.canvas = "' . $db->escape($canvas) . '"';
-$sql .= ' GROUP BY p.rowid, p.ref, p.label, p.price';
-$sql .= ', p.price_ttc, p.price_base_type,p.fk_product_type, p.tms';
-$sql .= ', p.duration, p.tobuy, p.seuil_stock_alerte';
-$sql .= ', p.desiredstock, s.fk_product';
-$sql .= ' HAVING p.desiredstock > SUM(COALESCE(s.reel, 0))';
-$sql .= ' AND p.desiredstock > 0';
-if ($salert == 'on')
+$sql.= ' GROUP BY p.rowid, p.ref, p.label, p.price';
+$sql.= ', p.price_ttc, p.price_base_type,p.fk_product_type, p.tms';
+$sql.= ', p.duration, p.tobuy, p.seuil_stock_alerte';
+$sql.= ', p.desiredstock, s.fk_product';
+$sql.= ' HAVING p.desiredstock > SUM('.$db->ifsql("s.reel IS NULL", "s.reel", "0").')';
+$sql.= ' AND p.desiredstock > 0';
+if ($salert == 'on')	// Option to see when stock is lower than alert
 {
-    $sql .= ' AND SUM(COALESCE(s.reel, 0)) < p.seuil_stock_alerte AND p.seuil_stock_alerte is not NULL';
+    $sql .= ' AND SUM('.$db->ifsql("s.reel IS NULL", "s.reel", "0").') < p.seuil_stock_alerte AND p.seuil_stock_alerte is not NULL';
     $alertchecked = 'checked="checked"';
 }
-$sql .= $db->order($sortfield,$sortorder);
-$sql .= $db->plimit($limit + 1, $offset);
+$sql.= $db->order($sortfield,$sortorder);
+$sql.= $db->plimit($limit + 1, $offset);
+
+dol_syslog('Execute request sql='.$sql);
 $resql = $db->query($sql);
 if (empty($resql))
 {
@@ -397,10 +399,10 @@ print '</tr>';
 print '<tr class="liste_titre">'.
 '<td class="liste_titre">&nbsp;</td>'.
 '<td class="liste_titre">'.
-'<input class="flat" type="text" name="sref" value="' . $sref . '">'.
+'<input class="flat" type="text" name="sref" size="8" value="'.dol_escape_htmltag($sref).'">'.
 '</td>'.
 '<td class="liste_titre">'.
-'<input class="flat" type="text" name="snom" value="' . $snom . '">'.
+'<input class="flat" type="text" name="snom" size="8" value="'.dol_escape_htmltag($snom).'">'.
 '</td>';
 if (!empty($conf->service->enabled) && $type == 1)
 {
@@ -491,11 +493,12 @@ while ($i < min($num, $limit))
 		} else {
 			$picto = img_picto('', './img/no', '', 1);
 		}
-		print '<tr ' . $bc[$var] . '>';
+
+		print '<tr '.$bc[$var].'>';
 
 		// Select field
 		//print '<td><input type="checkbox" class="check" name="' . $i . '"' . $disabled . '></td>';
-		print '<td><input type="checkbox" class="check" name="' . $i . '"></td>';
+		print '<td><input type="checkbox" class="check" name="'.$i.'"></td>';
 
 		print '<td class="nowrap">'.
 			$prod->getNomUrl(1, '', 16).
@@ -529,7 +532,7 @@ while ($i < min($num, $limit))
 
 		// To order
 		//print '<td align="right"><input type="text" name="tobuy'.$i.'" value="'.$stocktobuy.'" '.$disabled.'></td>';
-		print '<td align="right"><input type="text" name="tobuy'.$i.'" value="'.$stocktobuy.'"></td>';
+		print '<td align="right"><input type="text" size="4" name="tobuy'.$i.'" value="'.$stocktobuy.'"></td>';
 
 		// Supplier
 		print '<td align="right">'.	$form->select_product_fourn_price($prod->id, 'fourn'.$i, 1).'</td>';

@@ -100,5 +100,6 @@ AlertOnly = Alertes seulement
 WarehouseForStockDecrease=L'entrepôt <b>%s</b> sera utilisé pour la décrémentation du stock
 WarehouseForStockIncrease=L'entrepôt <b>%s</b> sera utilisé pour l'incrémentation du stock
 ForThisWarehouse=Pour cet entrepôt
-ReplenishmentStatusDesc=Cet écran permet de voir les produits avec un stock physique inférieure à la quantité minimale désirée et propose de créer des commandes fournisseurs pour compléter la différence
+ReplenishmentStatusDesc=Cet écran permet de voir les produits avec un stock physique inférieure à la quantité minimale désirée (ou à la quantité du seuil d'alerte si la case "Alertes seulement" est cochée) et propose de créer des commandes fournisseurs pour compléter la différence
 ReplenishmentOrdersDesc=Voici la liste des commandes fournisseurs en cours
+Replenishments=Réapprovisionnement
