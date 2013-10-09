@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -426,7 +426,7 @@ if ($resql)
     print '<input class="flat" type="text" size="12" name="search_product" value="'.($idproduct?$product->libelle:$search_product).'">';
     print '</td>';
     print '<td class="liste_titre" align="left">';
-    print '<input class="flat" type="text" size="10" name="search_warehouse" value="'.($search_warehouse).'">';
+    if (empty($idproduct) || $idproduct < 0) print '<input class="flat" type="text" size="10" name="search_warehouse" value="'.($search_warehouse).'">';	// We are on a specific warehouse card, no filter on other should be possible
     print '</td>';
     print '<td class="liste_titre" align="left">';
     print '<input class="flat" type="text" size="6" name="search_user" value="'.($search_user).'">';
