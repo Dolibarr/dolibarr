@@ -142,7 +142,8 @@ $formother = new FormOther($db);
 $nom=$langs->trans("SalesTurnover").', '.$langs->trans("ByProductsAndServices");
 
 if ($modecompta=="CREANCES-DETTES") {
-    $nom.='<br>('.$langs->trans("SeeReportInInputOutputMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&modecompta=RECETTES-DEPENSES">','</a>').')';
+	$calcmode=$langs->trans("CalcModeDebt");
+    $calcmode.='<br>('.$langs->trans("SeeReportInInputOutputMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&modecompta=RECETTES-DEPENSES">','</a>').')';
 
     $period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',0,0,0,'',1,0,1);
 
@@ -155,7 +156,8 @@ if ($modecompta=="CREANCES-DETTES") {
 
     $builddate=time();
 } else {
-    $nom.='<br>('.$langs->trans("SeeReportInDueDebtMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&modecompta=CREANCES-DETTES">','</a>').')';
+	$calcmode=$langs->trans("CalcModeEngagement");
+	$calcmode.='<br>('.$langs->trans("SeeReportInDueDebtMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&modecompta=CREANCES-DETTES">','</a>').')';
 
     $period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',0,0,0,'',1,0,1);
 
@@ -165,7 +167,7 @@ if ($modecompta=="CREANCES-DETTES") {
     $builddate=time();
 }
 
-report_header($nom,$nomlink,$period,$periodlink,$description,$builddate,$exportlink,$tableparams);
+report_header($nom,$nomlink,$period,$periodlink,$description,$builddate,$exportlink,$tableparams,$calcmode);
 
 
 // SQL request
@@ -382,8 +384,7 @@ if ($modecompta == 'CREANCES-DETTES') {
     print '</form>';
 } else {
     // $modecompta != 'CREANCES-DETTES'
-    // TODO: better message
-    print '<div class="warning">' . $langs->trans("WarningNotRelevant") . '</div>';
+    print '<br>'.$langs->trans("TurnoverPerProductInCommitmentAccountingNotRelevant") . '<br>';
 }
 
 llxFooter();
