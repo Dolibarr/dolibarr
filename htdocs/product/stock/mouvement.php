@@ -460,14 +460,14 @@ if ($resql)
     print '</form>';
 
     $arrayofuniqueproduct=array();
-    
+
     $var=True;
     while ($i < min($num,$conf->liste_limit))
     {
         $objp = $db->fetch_object($resql);
-        
+
         $arrayofuniqueproduct[$objp->rowid]=$objp->produit;
-        
+
         $var=!$var;
         print "<tr ".$bc[$var].">";
         // Id movement
@@ -517,7 +517,7 @@ if ($resql)
     if (count($arrayofuniqueproduct) == 1)
     {
     	$productidselected=0;
-    	foreach ($arrayofuniqueproduct as $key => $val) 
+    	foreach ($arrayofuniqueproduct as $key => $val)
     	{
     		$productidselected=$key;
     		$productlabelselected=$val;
@@ -533,16 +533,16 @@ if ($resql)
     	//print '<td class="liste_total" colspan="6" align="right">';
     	print ': '.$balancebefore;
     	print "<br>\n";
-    	//print '</td></tr>';	
+    	//print '</td></tr>';
     	//print '<tr class="total"><td class="liste_total">';
     	print $langs->trans("NbOfProductAfterPeriod", $productlabelselected, dol_print_date($dateafter,'day','gmt'));
     	//print '</td>';
     	//print '<td class="liste_total" colspan="6" align="right">';
     	print ': '.$balanceafter;
     	print "<br>\n";
-    	//print '</td></tr>';	
+    	//print '</td></tr>';
     }
-    
+
 
 }
 else
