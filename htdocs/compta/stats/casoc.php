@@ -227,7 +227,7 @@ $sql.= " AND f.entity = ".$conf->entity;
 if ($socid) $sql.= " AND f.fk_soc = ".$socid;
 $sql.= " GROUP BY s.rowid, s.nom";
 $sql.= " ORDER BY s.rowid";
-echo $sql;
+//echo $sql;
 
 $result = $db->query($sql);
 if ($result) {
