@@ -42,7 +42,7 @@ $id=GETPOST('id','int');
 $product_id=GETPOST("product_id");
 $action=GETPOST('action');
 $cancel=GETPOST('cancel');
-$idproduct = isset($_GET["idproduct"])?$_GET["idproduct"]:$_PRODUCT["idproduct"];
+$idproduct = GETPOST('idproduct','int');
 $year = isset($_GET["year"])?$_GET["year"]:$_POST["year"];
 $month = isset($_GET["month"])?$_GET["month"]:$_POST["month"];
 $search_movement = isset($_REQUEST["search_movement"])?$_REQUEST["search_movement"]:'';
@@ -190,7 +190,7 @@ if ($resql)
 
     $help_url='EN:Module_Stocks_En|FR:Module_Stock|ES:M&oacute;dulo_Stocks';
     $texte = $langs->trans("ListOfStockMovements");
-    $texte.=' ('.$langs->trans("ForThisWarehouse").')';
+    if ($id) $texte.=' ('.$langs->trans("ForThisWarehouse").')';
     llxHeader("",$texte,$help_url);
 
     /*
