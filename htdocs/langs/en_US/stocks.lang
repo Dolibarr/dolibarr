@@ -103,3 +103,5 @@ ForThisWarehouse=For this warehouse
 ReplenishmentStatusDesc=This is list of all product with a physical stock lower than desired stock (or alert value if checkbox "alert only" is checked) and suggest you to create supplier orders to fill the difference.
 ReplenishmentOrdersDesc=This is list of all opened supplier orders
 Replenishments=Replenishments
+NbOfProductBeforePeriod=Quantity of product %s in stock before selected period (< %s)
+NbOfProductAfterPeriod=Quantity of product %s in stock after selected period (> %s)

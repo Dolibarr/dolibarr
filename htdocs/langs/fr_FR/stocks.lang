@@ -103,3 +103,5 @@ ForThisWarehouse=Pour cet entrepôt
 ReplenishmentStatusDesc=Cet écran permet de voir les produits avec un stock physique inférieure à la quantité minimale désirée (ou à la quantité du seuil d'alerte si la case "Alertes seulement" est cochée) et propose de créer des commandes fournisseurs pour compléter la différence
 ReplenishmentOrdersDesc=Voici la liste des commandes fournisseurs en cours
 Replenishments=Réapprovisionnement
+NbOfProductBeforePeriod=Quantité du produit <b>%s</b> en stock avant la période sélectionnée (< <b>%s</b>)
+NbOfProductAfterPeriod=Quantité du produit <b>%s</b> en stock après la période sélectionnée (> <b>%s</b>)
