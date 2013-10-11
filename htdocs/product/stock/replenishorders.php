@@ -18,9 +18,10 @@
 
 /**
  *  \file       htdocs/product/stock/replenishorders.php
- *  \ingroup    produit
+ *  \ingroup    stock
  *  \brief      Page to list replenishment orders
  */
+
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
@@ -37,10 +38,18 @@ $langs->load("orders");
 if ($user->societe_id) $socid=$user->societe_id;
 $result=restrictedArea($user,'produit|service');
 
+
+
+/*
+ * View
+ */
+
 $helpurl = 'EN:Module_Stocks_En|FR:Module_Stock|';
 $helpurl .= 'ES:M&oacute;dulo_Stocks';
 $texte = $langs->trans('ReplenishmentOrders');
-llxHeader('', $texte, $helpurl, $texte);
+
+llxHeader('', $texte, $helpurl, '');
+
 $head = array();
 $head[0][0] = DOL_URL_ROOT.'/product/stock/replenish.php';
 $head[0][1] = $langs->trans('Status');
@@ -150,7 +159,7 @@ if ($resql)
     print_barre_liste(
     		'',
     		$page,
-    		'replenishorders.php',
+    		$_SERVER["PHP_SELF"],
     		'',
     		$sortfield,
     		$sortorder,
@@ -159,7 +168,7 @@ if ($resql)
     		0,
     		''
     );
-    print '<form action="replenishorders.php" method="GET">'.
+    print '<form action="'.$_SERVER["PHP_SELF"].'" method="GET">'.
          '<table class="noborder" width="100%">'.
          '<tr class="liste_titre">';
     print_liste_field_titre(
@@ -308,6 +317,8 @@ if ($resql)
          '</form>';
 
     $db->free($resql);
+    
+    dol_fiche_end();
 }
 else
 {
@@ -315,4 +326,6 @@ else
 }
 
 llxFooter();
+
 $db->close();
+?>
