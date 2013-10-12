@@ -207,8 +207,11 @@ Note: If there was errors managed manually, you may need to make a git commit bu
 > sbuild ...
 > dput ...
 
-* Go into page. You should see new package into unstable.
-http://packages.qa.debian.org/t/tcpdf.html
+* Package arrives into FTPmaster taskboard with status NEW (pending upload). You can view it at:
+http://ftp-master.debian.org/new/
+ 
+* Once package is validated, you should see it into area unstable at:
+http://packages.qa.debian.org
 
 * Package will be into release when test will be moved as stable.
 
