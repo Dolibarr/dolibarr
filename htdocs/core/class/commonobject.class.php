@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2006-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2013 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2010-2011 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2012      Christophe Battarel  <christophe.battarel@altairis.fr>
  * Copyright (C) 2011-2012 Philippe Grand	    <philippe.grand@atoo-net.com>
@@ -1093,9 +1093,9 @@ abstract class CommonObject
 					$row = $this->db->fetch_row($resql);
 					$rows[] = $row[0];	// Add parent line into array rows
 					$childrens = $this->getChildrenOfLine($row[0]);
-					if (! empty($children))
+					if (! empty($childrens))
 					{
-						foreach($children as $child)
+						foreach($childrens as $child)
 						{
 							array_push($rows, $child);
 						}

@@ -4,7 +4,7 @@
  * Copyright (C) 2004      Benoit Mortier        <benoit.mortier@opensides.be>
  * Copyright (C) 2004      Sebastien Di Cintio   <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Eric Seigne           <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2012 Regis Houssin         <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2013 Regis Houssin         <regis.houssin@capnetworks.com>
  * Copyright (C) 2006      Andre Cianfarani      <acianfa@free.fr>
  * Copyright (C) 2006      Marc Barilley/Ocebo   <marc@ocebo.com>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerker@telenet.be>
@@ -1332,15 +1332,15 @@ class Form
 
     /**
      * _construct_product_list_option
-     * 
+     *
      * @param 	resultset		&$objp			Resultset of fetch
      * @param 	string		$opt			Option
      * @param 	string		$optJson		Option
      * @param 	int			$price_level	Price level
      * @param 	string		$selected		Preselected value
-     * @return	
+     * @return
      */
-	private function _construct_product_list_option(&$objp, &$opt, &$optJson, $price_level, $selected) 
+	private function _construct_product_list_option(&$objp, &$opt, &$optJson, $price_level, $selected)
 	{
 		global $langs,$conf,$user,$db;
 
