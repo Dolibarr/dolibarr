@@ -43,6 +43,7 @@ create table llx_facturedet_rec
   total_localtax1	double(24,8) DEFAULT 0,			-- Total LocalTax1 for total quantity of line
   total_localtax2	double(24,8) DEFAULT 0,			-- total LocalTax2 for total quantity of line
   total_ttc			double(24,8),					-- Total TTC de la ligne toute quantity et incluant remise ligne et globale
+  info_bits			integer    DEFAULT 0,			-- TVA NPR ou non
   special_code		integer UNSIGNED DEFAULT 0,		-- code pour les lignes speciales
   rang				integer    DEFAULT 0			-- ordre d'affichage
   

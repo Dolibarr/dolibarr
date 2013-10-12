@@ -469,7 +469,7 @@ class Contact extends CommonObject
 
 
 	/**
-	 *  Charge l'objet contact
+	 *  Load object contact
 	 *
 	 *  @param      int		$id          id du contact
 	 *  @param      User	$user        Utilisateur (abonnes aux alertes) qui veut les alertes de ce contact
@@ -481,8 +481,7 @@ class Contact extends CommonObject
 
 		$langs->load("companies");
 
-
-		$sql = "SELECT c.rowid, c.fk_soc, c.civilite as civilite_id, c.lastname, c.firstname,";
+		$sql = "SELECT c.rowid, c.fk_soc, c.ref_ext, c.civilite as civilite_id, c.lastname, c.firstname,";
 		$sql.= " c.address, c.statut, c.zip, c.town,";
 		$sql.= " c.fk_pays as country_id,";
 		$sql.= " c.fk_departement,";
@@ -511,6 +510,7 @@ class Contact extends CommonObject
 
 				$this->id				= $obj->rowid;
 				$this->ref				= $obj->rowid;
+				$this->ref_ext			= $obj->ref_ext;
 				$this->civilite_id		= $obj->civilite_id;
 				$this->lastname			= $obj->lastname;
 				$this->firstname		= $obj->firstname;
@@ -725,6 +725,21 @@ class Contact extends CommonObject
 
 		if (! $error)
 		{
+			// Remove category
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."categorie_contact WHERE fk_socpeople = ".$this->id;
+			dol_syslog(get_class($this)."::delete sql=".$sql);
+			$resql=$this->db->query($sql);
+			if (! $resql)
+			{
+				$error++;
+				$this->error .= $this->db->lasterror();
+				$errorflag=-1;
+				dol_syslog(get_class($this)."::delete error ".$errorflag." ".$this->error, LOG_ERR);
+			}
+		}
+
+		if (! $error)
+		{
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."socpeople";
 			$sql .= " WHERE rowid=".$this->id;
 			dol_syslog(get_class($this)."::delete sql=".$sql);
@@ -891,19 +906,14 @@ class Contact extends CommonObject
 	}
 
 	/**
-	 *  Retourne le libelle du statut du contact
+	 *	Return label of contact status
 	 *
-	 *  @param      int			$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
-	 *  @return     string      			Libelle
+	 *	@param      int			$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 * 	@return 	string					Label of contact status
 	 */
 	function getLibStatut($mode)
 	{
 		return $this->LibStatut($this->statut,$mode);
-	}
-	
-	function getLibStatutcontact()
-	{
-		return $this->LibStatutcontact($this->statut);
 	}
 
 	/**
@@ -913,7 +923,7 @@ class Contact extends CommonObject
 	 *  @param      int			$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
 	 *  @return     string					Libelle
 	 */
-	function LibStatut($statut)
+	function LibStatut($statut,$mode)
 	{
 		global $langs;
 
@@ -959,15 +969,10 @@ class Contact extends CommonObject
 			elseif ($statut==4) return '<span class="hideonsmartphone">'.$langs->trans('StatusContactValidatedShort').' </span>'.img_picto($langs->trans('StatusContactValidatedShort'),'statut4');
 			elseif ($statut==5) return '<span class="hideonsmartphone">'.$langs->trans('StatusContactValidatedShort').' </span>'.img_picto($langs->trans('StatusContactValidatedShort'),'statut5');
 		}
-		
+
 	}
 
-	function LibStatutcontact($statut)
-		{
-			global $langs;
-			if ($statut==0) return '<span class="hideonsmartphone">'.$langs->trans('Disabled').' </span>'.img_picto($langs->trans('StatusContactDraftShort'),'statut0');
-			else return '<span class="hideonsmartphone">'.$langs->trans('Enabled').' </span>'.img_picto($langs->trans('StatusContactValidatedShort'),'statut1');
-		}
+
 	/**
 	 *	Return translated label of Public or Private
 	 *
@@ -1035,7 +1040,7 @@ class Contact extends CommonObject
 		$this->socid = $socids[$socid];
 		$this->statut=1;
 	}
-	
+
 	/**
 	 *  Change status of a user
 	 *

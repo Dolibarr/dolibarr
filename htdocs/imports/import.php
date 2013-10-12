@@ -135,7 +135,7 @@ if ($action=='downfield' || $action=='upfield')
 if ($action == 'builddoc')
 {
 	// Build import file
-	$result=$objimport->build_file($user, $_POST['model'], $datatoimport, $array_match_file_to_database);
+	$result=$objimport->build_file($user, GETPOST('model','alpha'), $datatoimport, $array_match_file_to_database);
 	if ($result < 0)
 	{
 		$mesg='<div class="error">'.$objimport->error.'</div>';
@@ -481,8 +481,8 @@ if ($step == 3 && $datatoimport)
 	 */
 	if ($action == 'delete')
 	{
-		$ret=$form->form_confirm($_SERVER["PHP_SELF"].'?urlfile='.urlencode(GETPOST('urlfile')).'&step=3'.$param, $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile', '', 0, 1);
-		if ($ret == 'html') print '<br>';
+		print $form->formconfirm($_SERVER["PHP_SELF"].'?urlfile='.urlencode(GETPOST('urlfile')).'&step=3'.$param, $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile', '', 0, 1);
+		
 	}
 
 	print '<table width="100%" class="border">';

@@ -3,6 +3,7 @@ CHARSET=UTF-8
 RefSending=Ref. shipment
 Sending=Shipment
 Sendings=Shipments
+Shipment=Shipment
 Shipments=Shipments
 Receivings=Receivings
 SendingsArea=Shipments area

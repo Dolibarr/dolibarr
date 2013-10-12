@@ -677,10 +677,24 @@ class Mail_mime
         foreach ($input as $hdr_name => $hdr_value) {
             preg_match_all('/(\w*[\x80-\xFF]+\w*)/', $hdr_value, $matches);
             foreach ($matches[1] as $value) {
-                $replacement = preg_replace('/([\x80-\xFF])/e',
-                                            '"=" .
-                                            strtoupper(dechex(ord("\1")))',
-                                            $value);
+                /*
+                 * preg_replace /e modifier is deprecated in PHP 5.5
+                 * but anonymous functions for use in preg_replace_callback are only available from 5.3.0
+                 */
+                if (version_compare(PHP_VERSION, '5.3.0') >= 0) {
+                    $replacement = preg_replace_callback(
+                        '/([\x80-\xFF])/',
+                        function ($m) {
+                            return "=" . strtoupper(dechex(ord($m[1])));
+                        },
+                        $value
+                    );
+                } else {
+                    $replacement = preg_replace('/([\x80-\xFF])/e',
+                                                '"=" .
+                                                strtoupper(dechex(ord("\1")))',
+                                                $value);
+                }
                 $hdr_value = str_replace($value, '=?' .
                                          $this->_build_params['head_charset'] .
                                          '?Q?' . $replacement . '?=',

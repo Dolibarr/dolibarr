@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2012      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2013      Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
@@ -22,7 +22,7 @@
 /**
  *	\file       htdocs/societe/societe.php
  *	\ingroup    societe
- *	\brief      Page to show a third party
+ *	\brief      Page to show list of third parties
  */
 
 require_once '../main.inc.php';
@@ -41,6 +41,7 @@ $result = restrictedArea($user,'societe',$socid,'');
 $search_nom=trim(GETPOST("search_nom"));
 $search_nom_only=trim(GETPOST("search_nom_only"));
 $search_all=trim(GETPOST("search_all"));
+$sbarcode=trim(GETPOST("sbarcode"));
 $search_town=trim(GETPOST("search_town"));
 $socname=trim(GETPOST("socname"));
 $search_idprof1=trim(GETPOST('search_idprof1'));
@@ -70,14 +71,14 @@ $pagenext = $page + 1;
  * Actions
  */
 
-// Recherche
+// special search
 if ($mode == 'search')
 {
 	$search_nom=$socname;
 
 	$sql = "SELECT s.rowid";
 	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
-	if ($search_sale || !$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+	if ($search_sale || (!$user->rights->societe->client->voir && !$socid)) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
     // We'll need this table joined to the select in order to filter by categ
     if ($search_categ) $sql.= ", ".MAIN_DB_PREFIX."categorie_societe as cs";
     $sql.= " WHERE s.entity IN (".getEntity('societe', 1).")";
@@ -158,6 +159,7 @@ if (GETPOST("button_removefilter_x"))
     $search_sale='';
     $socname="";
 	$search_nom="";
+	$sbarcode="";
 	$search_town="";
 	$search_idprof1='';
 	$search_idprof2='';
@@ -185,7 +187,7 @@ if ($socname)
  */
 $title=$langs->trans("ListOfThirdParties");
 
-$sql = "SELECT s.rowid, s.nom as name, s.town, s.datec, s.datea,";
+$sql = "SELECT s.rowid, s.nom as name, s.barcode, s.town, s.datec, s.datea,";
 $sql.= " st.libelle as stcomm, s.prefix_comm, s.client, s.fournisseur, s.canvas, s.status as status,";
 $sql.= " s.siren as idprof1, s.siret as idprof2, ape as idprof3, idprof4 as idprof4";
 // We'll need these fields in order to filter by sale (including the case where the user can only see his prospects)
@@ -195,7 +197,7 @@ if ($search_categ) $sql .= ", cs.fk_categorie, cs.fk_societe";
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s,";
 $sql.= " ".MAIN_DB_PREFIX."c_stcomm as st";
 // We'll need this table joined to the select in order to filter by sale
-if ($search_sale || !$user->rights->societe->client->voir) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+if ($search_sale || (!$user->rights->societe->client->voir && !$socid)) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 // We'll need this table joined to the select in order to filter by categ
 if ($search_categ) $sql.= ", ".MAIN_DB_PREFIX."categorie_societe as cs";
 $sql.= " WHERE s.fk_stcomm = st.id";
@@ -250,6 +252,7 @@ if ($search_idprof6) $sql .= " AND s.idprof6 LIKE '%".$db->escape($search_idprof
 if ($search_type > 0 && in_array($search_type,array('1,3','2,3'))) $sql .= " AND s.client IN (".$db->escape($search_type).")";
 if ($search_type > 0 && in_array($search_type,array('4')))         $sql .= " AND s.fournisseur = 1";
 if ($search_type == '0') $sql .= " AND s.client = 0 AND s.fournisseur = 0";
+if (!empty($conf->barcode->enabled) && $sbarcode) $sql.= " AND s.barcode LIKE '%".$db->escape($sbarcode)."%'";
 //print $sql;
 
 // Count total nb of records
@@ -270,6 +273,7 @@ if ($resql)
 	$i = 0;
 
 	$params = "&amp;socname=".$socname."&amp;search_nom=".$search_nom."&amp;search_town=".$search_town;
+	$params.= ($sbarcode?"&amp;sbarcode=".$sbarcode:"");
 	$params.= '&amp;search_idprof1='.$search_idprof1;
 	$params.= '&amp;search_idprof2='.$search_idprof2;
 	$params.= '&amp;search_idprof3='.$search_idprof3;
@@ -328,6 +332,7 @@ if ($resql)
     // Lines of titles
     print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","",$params,"",$sortfield,$sortorder);
+    if (! empty($conf->barcode->enabled)) print_liste_field_titre($langs->trans("BarCode"), $_SERVER["PHP_SELF"], "s.barcode",$param,'','',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Town"),$_SERVER["PHP_SELF"],"s.town","",$params,'',$sortfield,$sortorder);
 	print_liste_field_titre($form->textwithpicto($langs->trans("ProfId1Short"),$textprofid[1],1,0),$_SERVER["PHP_SELF"],"s.siren","",$params,'class="nowrap"',$sortfield,$sortorder);
 	print_liste_field_titre($form->textwithpicto($langs->trans("ProfId2Short"),$textprofid[2],1,0),$_SERVER["PHP_SELF"],"s.siret","",$params,'class="nowrap"',$sortfield,$sortorder);
@@ -344,24 +349,33 @@ if ($resql)
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 	if (! empty($search_nom_only) && empty($search_nom)) $search_nom=$search_nom_only;
 	print '<input class="flat" type="text" name="search_nom" value="'.$search_nom.'">';
-	print '</td><td class="liste_titre">';
+	print '</td>';
+	// Barcode
+	if (! empty($conf->barcode->enabled))
+	{
+    	print '<td class="liste_titre">';
+    	print '<input class="flat" type="text" name="sbarcode" size="6" value="'.$sbarcode.'">';
+    	print '</td>';
+    }
+	// Town
+	print '<td class="liste_titre">';
 	print '<input class="flat" size="10" type="text" name="search_town" value="'.$search_town.'">';
 	print '</td>';
 	// IdProf1
 	print '<td class="liste_titre">';
-	print '<input class="flat" size="8" type="text" name="search_idprof1" value="'.$search_idprof1.'">';
+	print '<input class="flat" size="4" type="text" name="search_idprof1" value="'.$search_idprof1.'">';
 	print '</td>';
 	// IdProf2
 	print '<td class="liste_titre">';
-	print '<input class="flat" size="8" type="text" name="search_idprof2" value="'.$search_idprof2.'">';
+	print '<input class="flat" size="4" type="text" name="search_idprof2" value="'.$search_idprof2.'">';
 	print '</td>';
 	// IdProf3
 	print '<td class="liste_titre">';
-	print '<input class="flat" size="8" type="text" name="search_idprof3" value="'.$search_idprof3.'">';
+	print '<input class="flat" size="4" type="text" name="search_idprof3" value="'.$search_idprof3.'">';
 	print '</td>';
 	// IdProf4
 	print '<td class="liste_titre">';
-	print '<input class="flat" size="8" type="text" name="search_idprof4" value="'.$search_idprof4.'">';
+	print '<input class="flat" size="4" type="text" name="search_idprof4" value="'.$search_idprof4.'">';
 	print '</td>';
 	// Type (customer/prospect/supplier)
 	print '<td class="liste_titre" align="middle">';
@@ -387,7 +401,8 @@ if ($resql)
 	{
 		$obj = $db->fetch_object($resql);
 		$var=!$var;
-		print "<tr ".$bc[$var]."><td>";
+		print "<tr ".$bc[$var].">";
+		print "<td>";
 		$companystatic->id=$obj->rowid;
 		$companystatic->name=$obj->name;
 		$companystatic->canvas=$obj->canvas;
@@ -395,6 +410,11 @@ if ($resql)
         $companystatic->status=$obj->status;
 		print $companystatic->getNomUrl(1,'',100);
 		print "</td>\n";
+		// Barcode
+		if (! empty($conf->barcode->enabled))
+		{
+			print '<td>'.$objp->barcode.'</td>';
+		}
 		print "<td>".$obj->town."</td>\n";
 		print "<td>".$obj->idprof1."</td>\n";
 		print "<td>".$obj->idprof2."</td>\n";

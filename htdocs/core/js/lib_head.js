@@ -190,9 +190,8 @@ function dpClickDay(year,month,day,format)
 	closeDPBox();
 }
 
-function dpHighlightDay(year,month,day,tradMonths){
+function dpHighlightDay(year,month,day,months){
 	var displayinfo=getObjectFromID("dpExp");
-	var months = tradMonths;
 	displayinfo.innerHTML=months[month-1]+" "+day+", "+year;
 }
 
@@ -478,9 +477,7 @@ function getDateFromFormat(val,format)
 	if (seconde==null||(seconde<0)||(seconde>60)) { return 0; }
 		
 	// alert(year+' '+month+' '+day+' '+hour+' '+minute+' '+seconde);
-	var newdate=new Date(year,month-1,day,hour,minute,seconde);
-
-	return newdate;
+	return new Date(year,month-1,day,hour,minute,seconde);
 }
 
 /*
@@ -588,8 +585,7 @@ function cleanSerialize(expr) {
 	var reg = new RegExp("(&)", "g");
 	var reg2 = new RegExp("[^A-Z0-9,]", "g");
 	var liste1 = expr.replace(reg, ",");
-	var liste = liste1.replace(reg2, "");
-	return liste;
+	return liste1.replace(reg2, "");
 }
 
 
@@ -794,7 +790,7 @@ function confirmConstantAction(action, url, code, input, box, entity, yesButton,
 (function( $ ) {
 	$.widget( "ui.combobox", {
 		options: {
-			minLengthToAutocomplete: 0,
+			minLengthToAutocomplete: 0
 		},
         _create: function() {
         	var savMinLengthToAutocomplete = this.options.minLengthToAutocomplete;

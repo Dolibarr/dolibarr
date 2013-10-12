@@ -54,10 +54,9 @@ class Societe extends CommonObject
     var $town;
     var $status;   // 0=activity ceased, 1= in activity
 
-    var $state_id;
+    var $state_id;		// Id of department
     var $state_code;
     var $state;
-    var $departement_id;     // deprecated
     var $departement_code;   // deprecated
     var $departement;        // deprecated
 
@@ -404,10 +403,9 @@ class Societe extends CommonObject
         $this->town			= $this->town?trim($this->town):trim($this->town);
         $this->state_id		= trim($this->state_id);
         $this->country_id	= ($this->country_id > 0)?$this->country_id:$this->country_id;
-        $this->phone		= trim($this->phone?$this->phone:$this->tel);
+        $this->phone		= trim($this->phone);
         $this->phone		= preg_replace("/\s/","",$this->phone);
         $this->phone		= preg_replace("/\./","",$this->phone);
-        $this->tel          = $this->phone;			// TODO obsolete
         $this->fax			= trim($this->fax);
         $this->fax			= preg_replace("/\s/","",$this->fax);
         $this->fax			= preg_replace("/\./","",$this->fax);
@@ -780,7 +778,6 @@ class Societe extends CommonObject
 
                 $this->email = $obj->email;
                 $this->url = $obj->url;
-                $this->tel = $obj->phone; // TODO obsolete
                 $this->phone = $obj->phone;
                 $this->fax = $obj->fax;
 
@@ -1433,6 +1430,16 @@ class Societe extends CommonObject
 
         $name=$this->name?$this->name:$this->nom;
 
+		if ($conf->global->SOCIETE_ADD_REF_IN_LIST) {
+			if (($this->client) && (! empty ( $this->code_client ))) {
+				$code = $this->code_client . ' - ';
+			}
+			if (($this->fournisseur) && (! empty ( $this->code_fournisseur ))) {
+				$code .= $this->code_fournisseur . ' - ';
+			}
+			$name =$code.' '.$name;
+		}
+
         $result='';
         $lien=$lienfin='';
 
@@ -1558,8 +1565,6 @@ class Societe extends CommonObject
     {
         global $langs;
 
-        if (empty($this->phone) && ! empty($this->tel)) $this->phone=$this->tel;
-
         $contact_phone = $this->contact_property_array('mobile');
         if ($this->phone)
         {
@@ -1571,18 +1576,18 @@ class Societe extends CommonObject
     }
 
     /**
-     *    Return list of contacts emails or mobile existing for third party
+     *  Return list of contacts emails or mobile existing for third party
      *
-     *    @param	string	$mode       'email' or 'mobile'
-     *    @return   array       		Array of contacts emails or mobile
+     *  @param	string	$mode       		'email' or 'mobile'
+	 * 	@param	int		$hidedisabled		1=Hide contact if disabled
+     *  @return array       				Array of contacts emails or mobile
      */
-    function contact_property_array($mode='email')
+    function contact_property_array($mode='email', $hidedisabled=0)
     {
         $contact_property = array();
 
 
-
-        $sql = "SELECT rowid, email, statut, phone_mobile, lastname, firstname";
+        $sql = "SELECT rowid, email, statut, phone_mobile, lastname, poste, firstname";
         $sql.= " FROM ".MAIN_DB_PREFIX."socpeople";
         $sql.= " WHERE fk_soc = '".$this->id."'";
 
@@ -1599,12 +1604,18 @@ class Societe extends CommonObject
                     if ($mode == 'email') $property=$obj->email;
                     else if ($mode == 'mobile') $property=$obj->phone_mobile;
 
-
-                    if ($obj->statut == 1)
+					// Show all contact. If hidedisabled is 1, showonly contacts with status = 1
+                    if ($obj->statut == 1 || empty($hidedisabled))
                     {
-						 $contact_property[$obj->rowid] = trim(dolGetFirstLastname($obj->firstname,$obj->lastname))." &lt;".$property."&gt;";
-
-					}
+	                    if (!empty($obj->poste))
+    	                {
+							$contact_property[$obj->rowid] = trim(dolGetFirstLastname($obj->firstname,$obj->lastname))."(".$obj->poste.")"." &lt;".$property."&gt;";
+						}
+						else
+						{
+							$contact_property[$obj->rowid] = trim(dolGetFirstLastname($obj->firstname,$obj->lastname))." &lt;".$property."&gt;";
+						}
+                    }
                     $i++;
                 }
             }
@@ -1638,6 +1649,41 @@ class Societe extends CommonObject
                 {
                     $obj = $this->db->fetch_object($resql);
                     $contacts[$obj->rowid] = dolGetFirstLastname($obj->firstname,$obj->lastname);
+                    $i++;
+                }
+            }
+        }
+        else
+        {
+            dol_print_error($this->db);
+        }
+        return $contacts;
+    }
+
+    /**
+     *    Renvoie la liste des contacts de cette societe
+     *
+     *    @return    array    $contacts    tableau des contacts
+     */
+    function contact_array_objects()
+    {
+        require_once DOL_DOCUMENT_ROOT . '/contact/class/contact.class.php';
+        $contacts = array();
+
+        $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."socpeople WHERE fk_soc = '".$this->id."'";
+        $resql=$this->db->query($sql);
+        if ($resql)
+        {
+            $nump = $this->db->num_rows($resql);
+            if ($nump)
+            {
+                $i = 0;
+                while ($i < $nump)
+                {
+                    $obj = $this->db->fetch_object($resql);
+                    $contact = new Contact($this->db);
+                    $contact->fetch($obj->rowid);
+                    $contacts[] = $contact;
                     $i++;
                 }
             }
@@ -2359,7 +2405,6 @@ class Societe extends CommonObject
         $this->town=$member->town;
         $this->country_code=$member->country_code;
         $this->country_id=$member->country_id;
-        $this->tel=$member->phone;				// deprecated
         $this->phone=$member->phone;       // Prof phone
         $this->email=$member->email;
 
@@ -2447,7 +2492,6 @@ class Societe extends CommonObject
     	$this->country=$country_label;
     	if (is_object($langs)) $this->country=($langs->trans('Country'.$country_code)!='Country'.$country_code)?$langs->trans('Country'.$country_code):$country_label;
 
-    	$this->tel=empty($conf->global->MAIN_INFO_SOCIETE_TEL)?'':$conf->global->MAIN_INFO_SOCIETE_TEL;   // TODO deprecated
     	$this->phone=empty($conf->global->MAIN_INFO_SOCIETE_TEL)?'':$conf->global->MAIN_INFO_SOCIETE_TEL;
     	$this->fax=empty($conf->global->MAIN_INFO_SOCIETE_FAX)?'':$conf->global->MAIN_INFO_SOCIETE_FAX;
     	$this->url=empty($conf->global->MAIN_INFO_SOCIETE_WEB)?'':$conf->global->MAIN_INFO_SOCIETE_WEB;

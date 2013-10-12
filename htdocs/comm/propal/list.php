@@ -8,6 +8,7 @@
  * Copyright (C) 2010-2011 Juanjo Menent         <jmenent@2byte.es>
  * Copyright (C) 2010-2011 Philippe Grand        <philippe.grand@atoo-net.com>
  * Copyright (C) 2012      Christophe Battarel   <christophe.battarel@altairis.fr>
+ * Copyright (C) 2013      Cédric Salvador       <csalvador@gpcsolutions.fr>
 *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -160,21 +161,17 @@ if (! $user->rights->societe->client->voir && ! $socid) //restriction
 {
 	$sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 }
-if ($search_town) //restriction
-{
-	$sql.= " AND s.town LIKE '%".$db->escape(trim($search_town))."%'";
+if ($search_town) {//restriction
+	$sql .= natural_search('s.town', $search_town);
 }
-if ($search_ref)
-{
-	$sql.= " AND p.ref LIKE '%".$db->escape(trim($search_ref))."%'";
+if ($search_ref) {
+	$sql .= natural_search('p.ref', $search_ref);
 }
-if ($search_refcustomer)
-{
-	$sql.= " AND p.ref_client LIKE '%".$db->escape(trim($search_refcustomer))."%'";
+if ($search_refcustomer) {
+	$sql .= natural_search('p.ref_client', $search_refcustomer);
 }
-if ($search_societe)
-{
-	$sql.= " AND s.nom LIKE '%".$db->escape(trim($search_societe))."%'";
+if ($search_societe) {
+	$sql .= natural_search('s.nom', $search_societe);
 }
 if ($search_author)
 {
@@ -184,7 +181,13 @@ if ($search_montant_ht)
 {
 	$sql.= " AND p.total_ht='".$db->escape(price2num(trim($search_montant_ht)))."'";
 }
-if ($sall) $sql.= " AND (s.nom LIKE '%".$db->escape($sall)."%' OR p.note LIKE '%".$db->escape($sall)."%' OR pd.description LIKE '%".$db->escape($sall)."%')";
+if ($sall) {
+    /*$scrit = explode(' ', $sall);
+    foreach ($scrit as $crit) {
+        $sql.= " AND (s.nom LIKE '%".$db->escape($crit)."%' OR p.note LIKE '%".$db->escape($crit)."%' OR pd.description LIKE '%".$db->escape($crit)."%')";
+    }*/
+    $sql .= natural_search(array('s.nom', 'p.note_private', 'pd.description'), $sall);
+}
 if ($socid) $sql.= ' AND s.rowid = '.$socid;
 if ($viewstatut <> '')
 {
@@ -230,7 +233,7 @@ if ($result)
 	if ($month)              $param.='&month='.$month;
 	if ($year)               $param.='&year='.$year;
     if ($search_ref)         $param.='&search_ref=' .$search_ref;
-    if ($search_refcustomer) $param.='&search_ref=' .$search_refcustomer;
+    if ($search_refcustomer) $param.='&search_refcustomer=' .$search_refcustomer;
     if ($search_societe)     $param.='&search_societe=' .$search_societe;
 	if ($search_user > 0)    $param.='&search_user='.$search_user;
 	if ($search_sale > 0)    $param.='&search_sale='.$search_sale;
@@ -271,9 +274,9 @@ if ($result)
 
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans('Ref'),$_SERVER["PHP_SELF"],'p.ref','',$param,'',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans('RefCustomer'),$_SERVER["PHP_SELF"],'p.ref_client','',$param,'',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans('Company'),$_SERVER["PHP_SELF"],'s.nom','',$param,'',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans('Town'),$_SERVER["PHP_SELF"],'s.town','',$param,'',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans('RefCustomer'),$_SERVER["PHP_SELF"],'p.ref_client','',$param,'',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans('Date'),$_SERVER["PHP_SELF"],'p.datep','',$param, 'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans('DateEndPropalShort'),$_SERVER["PHP_SELF"],'dfv','',$param, 'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans('AmountHT'),$_SERVER["PHP_SELF"],'p.total_ht','',$param, 'align="right"',$sortfield,$sortorder);
@@ -284,15 +287,15 @@ if ($result)
 
 	print '<tr class="liste_titre">';
 	print '<td class="liste_titre">';
-	print '<input class="flat" size="10" type="text" name="search_ref" value="'.$search_ref.'">';
+	print '<input class="flat" size="6" type="text" name="search_ref" value="'.$search_ref.'">';
+	print '</td>';
+	print '<td class="liste_titre">';
+	print '<input class="flat" size="6" type="text" name="search_refcustomer" value="'.$search_refcustomer.'">';
 	print '</td>';
 	print '<td class="liste_titre" align="left">';
 	print '<input class="flat" type="text" size="16" name="search_societe" value="'.$search_societe.'">';
 	print '</td>';
-	print '<td>&nbsp;</td>';
-	print '<td class="liste_titre">';
-	print '<input class="flat" size="10" type="text" name="search_refcustomer" value="'.$search_refcustomer.'">';
-	print '</td>';
+	print '<td class="liste_titre"><input class="flat" type="text" size="16" name="search_town" value="'.$search_town.'"></td>';
 	print '<td class="liste_titre" colspan="1" align="center">';
 	print $langs->trans('Month').': <input class="flat" type="text" size="1" maxlength="2" name="month" value="'.$month.'">';
 	print '&nbsp;'.$langs->trans('Year').': ';
@@ -344,12 +347,20 @@ if ($result)
 		}
 		print '</td>';
 
+		// Ref
 		print '<td width="16" align="right" class="nobordernopadding hideonsmartphone">';
 		$filename=dol_sanitizeFileName($objp->ref);
 		$filedir=$conf->propal->dir_output . '/' . dol_sanitizeFileName($objp->ref);
 		$urlsource=$_SERVER['PHP_SELF'].'?id='.$objp->propalid;
 		print $formfile->getDocumentsLink($objectstatic->element, $filename, $filedir);
 		print '</td></tr></table>';
+
+		print "</td>\n";
+
+		// Customer ref
+		print '<td class="nocellnopadd nowrap">';
+		print $objp->ref_client;
+		print '</td>';
 
 		$url = DOL_URL_ROOT.'/comm/fiche.php?socid='.$objp->rowid;
 
@@ -364,11 +375,6 @@ if ($result)
 		// Town
 		print '<td class="nocellnopadd">';
 		print $objp->town;
-		print '</td>';
-
-		// Customer ref
-		print '<td class="nocellnopadd nowrap">';
-		print $objp->ref_client;
 		print '</td>';
 
 		// Date proposal

@@ -351,11 +351,11 @@ function getOrder($authentication,$id='',$ref='',$ref_ext='')
 						'desc'=>$line->desc,
 						'qty'=>$line->qty,
 						'price'=>$line->price,
-						'subprice'=>$line->subprice,
+						'unitprice'=>$line->subprice,
 						'vat_rate'=>$line->tva_tx,
 						'remise'=>$line->remise,
 						'remise_percent'=>$line->remise_percent,
-						'fk_product'=>$line->fk_product,
+						'product_id'=>$line->fk_product,
 						'product_type'=>$line->product_type,
 						'total_net'=>$line->total_ht,
 						'total_vat'=>$line->total_tva,
@@ -515,7 +515,7 @@ function getOrdersForThirdParty($authentication,$idthirdparty)
 						'desc'=>$line->desc,
 						'qty'=>$line->qty,
 						'price'=>$line->price,
-						'subprice'=>$line->subprice,
+						'unitprice'=>$line->subprice,
 						'tva_tx'=>$line->tva_tx,
 						'remise'=>$line->remise,
 						'remise_percent'=>$line->remise_percent,
@@ -610,6 +610,8 @@ function createOrder($authentication,$order)
 {
 	global $db,$conf,$langs;
 
+	require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+
 	$now=dol_now();
 
 	dol_syslog("Function: createOrder login=".$authentication['login']." socid :".$order['socid']);
@@ -654,10 +656,11 @@ function createOrder($authentication,$order)
 
 			$newline->type=$line['type'];
 			$newline->desc=$line['desc'];
-			$newline->fk_product=$line['fk_product'];
+			$newline->fk_product=$line['product_id'];
 			$newline->tva_tx=$line['vat_rate'];
 			$newline->qty=$line['qty'];
-			$newline->subprice=$line['subprice'];
+			$newline->price=$line['price'];
+			$newline->subprice=$line['unitprice'];
 			$newline->total_ht=$line['total_net'];
 			$newline->total_tva=$line['total_vat'];
 			$newline->total_ttc=$line['total'];

@@ -603,7 +603,7 @@ CloneMainAttributes=Κλωνοποίηση αντικειμένου με τα β
 PDFMerge=Ενσωμάτωση PDF
 Merge=Ενσωμάτωση
 PrintContentArea=Εμγάνιση σελίδας για εκτύπωση
-MenuManager==
+MenuManager=Menu manager
 NoMenu=Δεν υπάρχει υπο-μενού
 WarningYouAreInMaintenanceMode=Warning, you are in a maintenance mode, so only login <b>%s</b> is allowed to use application at the moment.
 CoreErrorTitle=Σφάλμα συστήματος

@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - mailmanspip
 CHARSET=UTF-8
-MailmanSpipSetup= Setare Modul Mailman şi SPIP
+MailmanSpipSetup=Setare Modul Mailman şi SPIP
 MailmanTitle=Sistem mailing list Mailman
 TestSubscribe=Pentru testare inscriere la listele Mailman
 TestUnSubscribe=Pentru testarea dezabonarii la listele Mailman
@@ -9,8 +9,8 @@ MailmanDeletionSuccess=Test dezabonare executat cu succes
 SynchroMailManEnabled=O actualizare Mailman a fost realizată
 SynchroSpipEnabled=O actualizare Spip a fost realizată
 DescADHERENT_MAILMAN_ADMINPW=Parolă administrator Mailman
-DescADHERENT_MAILMAN_URL=URL pentru abonare Mailman 
-DescADHERENT_MAILMAN_UNSUB_URL=URL pentru dezabonare Mailman 
+DescADHERENT_MAILMAN_URL=URL pentru abonare Mailman
+DescADHERENT_MAILMAN_UNSUB_URL=URL pentru dezabonare Mailman
 DescADHERENT_MAILMAN_LISTS=Lista(e) pentru inscrierea automata a noilor mebrii ( separate de virgula)
 SPIPTitle=SPIP Content Management System
 DescADHERENT_SPIP_SERVEUR=SPIP Server

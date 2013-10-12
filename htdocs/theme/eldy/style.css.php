@@ -1759,6 +1759,7 @@ tr.liste_titre th, th.liste_titre, tr.liste_titre td, td.liste_titre, form.liste
 }
 .liste_titre td a {
 	text-shadow: none !important;
+	color: #<?php echo $colortexttitle; ?>;
 }
 div.liste_titre {
 	padding-left: 3px;
@@ -1880,12 +1881,6 @@ div.tabBar .noborder {
     border: 1px solid #AAA;
     text-align: center;
     border-radius: 5px;
-	background-image: linear-gradient(bottom, rgba(255,255,255,.3) 0%, rgba(164,164,164,.3) 100%);
-	background-image: -o-linear-gradient(bottom, rgba(255,255,255,.3) 0%, rgba(164,164,164,.3) 100%);
-	background-image: -moz-linear-gradient(bottom, rgba(255,255,255,.3) 0%, rgba(164,164,164,.3) 100%);
-	background-image: -webkit-linear-gradient(bottom, rgba(255,255,255,.3) 0%, rgba(164,164,164,.3) 100%);
-	background-image: -ms-linear-gradient(bottom, rgba(255,255,255,.3) 0%, rgba(164,164,164,.3) 100%);
-	background-image: -webkit-gradient( linear, left bottom, left top, color-stop(0, rgba(255,255,255,.3)), color-stop(1, rgba(164,164,164,.3)) );
 }
 
 .boxtable {

@@ -43,7 +43,7 @@ body.FileArea
 body, td, input, select
 {
 	font-size: 11px;
-	font-family: 'Microsoft Sans Serif' , Arial, Helvetica, Verdana;
+	font-family: 'Microsoft Sans Serif', Arial, Helvetica, Verdana, sans-serif;
 }
 
 .ActualFolder
@@ -68,12 +68,12 @@ body, td, input, select
 
 .FolderListCurrentFolder img
 {
-	background-image: url(../../../../themes/common/treemenu/folder-expanded.gif);
+	background-image: url(../../../../theme/common/treemenu/folder-expanded.gif);
 }
 
 .FolderListFolder img
 {
-	background-image: url(../../../../themes/common/treemenu/folder.gif);
+	background-image: url(../../../../theme/common/treemenu/folder.gif);
 }
 
 .fullHeight {

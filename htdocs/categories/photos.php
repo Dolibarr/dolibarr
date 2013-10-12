@@ -104,8 +104,7 @@ if ($object->id)
 	*/
 	if ($action == 'delete')
 	{
-		$ret=$form->form_confirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&type='.$type.'&file='.$_GET["file"], $langs->trans('DeletePicture'), $langs->trans('ConfirmDeletePicture'), 'confirm_delete', '', 0, 1);
-		if ($ret == 'html') print '<br>';
+		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&type='.$type.'&file='.$_GET["file"], $langs->trans('DeletePicture'), $langs->trans('ConfirmDeletePicture'), 'confirm_delete', '', 0, 1);
 	}
 
 	print($mesg);

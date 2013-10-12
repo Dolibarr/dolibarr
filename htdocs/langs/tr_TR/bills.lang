@@ -34,7 +34,6 @@ ReplacementInvoice=Fatura değiştirme
 ReplacedByInvoice=Değiştirilen fatura %s
 ReplacementByInvoice=Değiştirilen fatura
 CorrectInvoice=Fatura %s i düzelt
-CorrectInvoice=Fatura %s i düzelt
 CorrectionInvoice=Fatura düzeltme
 UsedByInvoice=%s Faturasını ödeme için kullan
 ConsumedBy=Tarafından tüketilen
@@ -411,7 +410,7 @@ PDFCrabeDescription=Fatura PDF şablonu Crabe. Tam fatura şablonu  (Önerilen �
 # oursin PDF Model
 PDFOursinDescription=Fatura şablonu oursin
 # NumRef Modules
-TerreNumRefModelDesc1=Standart faturalar için numarayı  %syymm-nnnn biçiminde ve iade faturaları için %syymm-nnnn biçiminde göster, yy yıl, mm ay ve nnnn boşluksuz ve sıfıra dönüşmeyen bir dizidir.
-# MarsNumRefModelDesc1=Return numero with format %syymm-nnnn for standard invoices, %syymm-nnnn for replacement invoices, %syymm-nnnn for proforma invoices and %syymm-nnnn for credit notes where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
+# TerreNumRefModelDesc1=Return numero with format %syymm-nnnn for standard and replacement invoices, %syymm-nnnn for credit notes and %syymm-nnnn for deposits where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
+# MarsNumRefModelDesc1=Return numero with format %syymm-nnnn for standard invoices, %syymm-nnnn for replacement invoices, %syymm-nnnn for credit notes and %syymm-nnnn for credit notes where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
 
 TerreNumRefModelError=$syymm ile başlayan bir fatura hali hazırda vardır ve bu sıra dizisi için uygun değildir. Bu modülü etkinleştirmek için onu kaldırın ya da adını değiştirin.

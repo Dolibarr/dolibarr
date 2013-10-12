@@ -4,7 +4,9 @@
  * Copyright (C) 2007		Patrick Raguin			<patrick.raguin@gmail.com>
  * Copyright (C) 2010-2012	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
- *
+ * Copyright (C) 2013       Juanjo Menent		  	<jmenent@2byte.es>
+ * Copyright (C) 2013       Christophe Battarel		<contact@altairis.fr>
+ *  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
@@ -60,6 +62,15 @@ function societe_prepare_head($object)
         $head[$h][2] = 'supplier';
         $h++;
     }
+    
+	if (($object->localtax1_assuj || $object->localtax2_assuj) && (isset($conf->global->MAIN_FEATURES_LEVEL) && $conf->global->MAIN_FEATURES_LEVEL > 0) )
+	{
+		$head[$h][0] = DOL_URL_ROOT.'/societe/localtaxes.php?socid='.$object->id;
+		$head[$h][1] = $langs->trans("LocalTaxes");
+		$head[$h][2] = 'localtaxes';
+		$h++;
+	}
+    
     if (! empty($conf->agenda->enabled) && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read) ))
      {
     	$head[$h][0] = DOL_URL_ROOT.'/societe/agenda.php?socid='.$object->id;
@@ -536,7 +547,7 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
 
     print "\n".'<table class="noborder" width="100%">'."\n";
 
-    $colspan=6;
+    $colspan=8;
     print '<tr class="liste_titre">';
     print '<td>'.$langs->trans("Name").'</td>';
     print '<td>'.$langs->trans("Poste").'</td>';
@@ -551,10 +562,16 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
     	$colspan++;
         print '<td>&nbsp;</td>';
     }
+    if ($user->rights->societe->contact->creer)
+    {
+    	$colspan++;
+        print '<td>&nbsp;</td>';
+    }
     print "</tr>";
 
 
     $sql = "SELECT p.rowid, p.lastname, p.firstname, p.fk_pays, p.poste, p.phone, p.phone_mobile, p.fax, p.email, p.statut ";
+    $sql .= ", p.civilite, p.address, p.zip, p.town";
     $sql .= " FROM ".MAIN_DB_PREFIX."socpeople as p";
     $sql .= " WHERE p.fk_soc = ".$object->id;
     $sql .= " ORDER by p.datec";
@@ -582,17 +599,17 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
 
             print '<td>'.$obj->poste.'</td>';
 
-            $country_code = getCountry($obj->fk_pays, 2);
+            $country_code = getCountry($obj->fk_pays, 'all');
 
             // Lien click to dial
             print '<td>';
-            print dol_print_phone($obj->phone,$country_code,$obj->rowid,$object->id,'AC_TEL');
+            print dol_print_phone($obj->phone,$country_code['code'],$obj->rowid,$object->id,'AC_TEL');
             print '</td>';
             print '<td>';
-            print dol_print_phone($obj->phone_mobile,$country_code,$obj->rowid,$object->id,'AC_TEL');
+            print dol_print_phone($obj->phone_mobile,$country_code['code'],$obj->rowid,$object->id,'AC_TEL');
             print '</td>';
             print '<td>';
-            print dol_print_phone($obj->fax,$country_code,$obj->rowid,$object->id,'AC_FAX');
+            print dol_print_phone($obj->fax,$country_code['code'],$obj->rowid,$object->id,'AC_FAX');
             print '</td>';
             print '<td>';
             print dol_print_email($obj->email,$obj->rowid,$object->id,'AC_EMAIL');
@@ -600,6 +617,42 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
 
 			 if ($obj->statut==0) print '<td>'.$langs->trans('Disabled').' </span>'.img_picto($langs->trans('StatusContactDraftShort'),'statut0').'</td>';
 			elseif ($obj->statut==1) print '<td>'.$langs->trans('Enabled').' </span>'.img_picto($langs->trans('StatusContactValidatedShort'),'statut1').'</td>';
+			
+			// copy in clipboard
+			$coords = '';
+			if (!empty($object->name))
+				$coords .= addslashes($object->name)."<br />";
+			if (!empty($obj->civilite))
+				$coords .= addslashes($obj->civilite).' ';
+			if (!empty($obj->firstname))
+				$coords .= addslashes($obj->firstname).' ';
+			if (!empty($obj->lastname))
+				$coords .= addslashes($obj->lastname);
+			$coords .= "<br />";
+			if (!empty($obj->address))
+			{
+				$coords .= addslashes(dol_nl2br($obj->address,1,true))."<br />";
+				if (!empty($obj->cp))
+					$coords .= addslashes($obj->zip).' ';
+				if (!empty($obj->ville))
+					$coords .= addslashes($obj->town);
+				if (!empty($obj->pays))
+					$coords .= "<br />".addslashes($country_code['label']);
+			}
+			elseif (!empty($object->address))
+			{
+				$coords .= addslashes(dol_nl2br($object->address,1,true))."<br />";
+				if (!empty($object->zip))
+					$coords .= addslashes($object->zip).' ';
+				if (!empty($object->town))
+					$coords .= addslashes($object->town);
+				if (!empty($object->country))
+					$coords .= "<br />".addslashes($object->country);
+			}
+            print '<td align="center"><a href="#" onclick="return copyToClipboard(\''.$coords.'\');">';
+            print img_picto($langs->trans("Address"), 'object_address.png');
+            print '</a></td>';
+
             if (! empty($conf->agenda->enabled) && $user->rights->agenda->myactions->create)
             {
                 print '<td align="center">';
@@ -638,6 +691,20 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
     print "\n</table>\n";
 
     print "<br>\n";
+?>
+<div id="dialog" title="<?php echo dol_escape_htmltag($langs->trans('Address')); ?>" style="display: none;">
+</div>
+<?php
+	print '<script type="text/javascript">
+			function copyToClipboard (text) {
+			  text = text.replace(/<br \/>/g,"\n");
+			  var newElem = "<textarea id=\"coords\" style=\"border: none; width: 90%; height: 120px;\">"+text+"</textarea><br/><br/>'.$langs->trans('HelpCopyToClipboard').'";
+			  $("#dialog").html(newElem);
+			  $( "#dialog" ).dialog();
+			  $("#coords").select();
+			  return false;
+			}
+	</script>';
 
     return $i;
 }

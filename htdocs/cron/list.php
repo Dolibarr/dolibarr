@@ -122,14 +122,14 @@ print $langs->trans('CronInfo');
 
 if ($action == 'delete')
 {
-	$ret=$form->form_confirm($_SERVER['PHP_SELF']."?id=".$id.'&status='.$status,$langs->trans("CronDelete"),$langs->trans("CronConfirmDelete"),"confirm_delete",'','',1);
-	if ($ret == 'html') print '<br>';
+	print $form->formconfirm($_SERVER['PHP_SELF']."?id=".$id.'&status='.$status,$langs->trans("CronDelete"),$langs->trans("CronConfirmDelete"),"confirm_delete",'','',1);
+	
 }
 
 if ($action == 'execute')
 {
-	$ret=$form->form_confirm($_SERVER['PHP_SELF']."?id=".$id.'&status='.$status,$langs->trans("CronExecute"),$langs->trans("CronConfirmExecute"),"confirm_execute",'','',1);
-	if ($ret == 'html') print '<br>';
+	print $form->formconfirm($_SERVER['PHP_SELF']."?id=".$id.'&status='.$status,$langs->trans("CronExecute"),$langs->trans("CronConfirmExecute"),"confirm_execute",'','',1);
+	
 }
 
 // liste des jobs creer

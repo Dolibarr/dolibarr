@@ -34,7 +34,6 @@ ReplacementInvoice=Заменяющий счет-фактура
 ReplacedByInvoice=Заменен счетом-фактурой %s
 ReplacementByInvoice=Заменен счетом-фактурой
 CorrectInvoice=Правильный счет-фактура %s
-CorrectInvoice=Правильный счет-фактура %s
 CorrectionInvoice=Корректирующий счет-фактура
 UsedByInvoice=Использован для оплаты счета-фактуры %s
 ConsumedBy=Использован
@@ -411,7 +410,7 @@ PDFCrabeDescription=Шаблон Счета-фактуры Crabe. Полный �
 # oursin PDF Model
 PDFOursinDescription=Шаблон Счета-фактуры Oursin. Полный шаблон (альтернативный)
 # NumRef Modules
-TerreNumRefModelDesc1=Возвращать Номер с форматом %syymm-nnnn для стандартных счетов-фактур и %syymm-nnnn для кредитовых авизо, где yy - это год, mm - месяц, и nnnn - последовательная нумерация без обнуления
-# MarsNumRefModelDesc1=Return numero with format %syymm-nnnn for standard invoices, %syymm-nnnn for replacement invoices, %syymm-nnnn for proforma invoices and %syymm-nnnn for credit notes where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
+# TerreNumRefModelDesc1=Return numero with format %syymm-nnnn for standard and replacement invoices, %syymm-nnnn for credit notes and %syymm-nnnn for deposits where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
+# MarsNumRefModelDesc1=Return numero with format %syymm-nnnn for standard invoices, %syymm-nnnn for replacement invoices, %syymm-nnnn for credit notes and %syymm-nnnn for credit notes where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
 
 TerreNumRefModelError=Документ, начинающийся с $syymm, уже существует и не совместим с этой моделью последовательности. Удалите или переименуйте его, чтобы активировать этот модуль.

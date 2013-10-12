@@ -74,7 +74,7 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 		$this->option_modereg = 0;                 // Affiche mode reglement
 		$this->option_condreg = 0;                 // Affiche conditions reglement
 		$this->option_codeproduitservice = 0;      // Affiche code produit-service
-		$this->option_multilang = 0;               // Dispo en plusieurs langues
+		$this->option_multilang = 1;               // Dispo en plusieurs langues
 		$this->option_escompte = 0;                // Affiche si il y a eu escompte
 		$this->option_credit_note = 0;             // Support credit notes
 		$this->option_freetext = 1;				   // Support add of a personalised text
@@ -124,10 +124,20 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 		'object_payment_mode'=>($outputlangs->transnoentitiesnoconv('PaymentType'.$object->mode_reglement_code)!='PaymentType'.$object->mode_reglement_code?$outputlangs->transnoentitiesnoconv('PaymentType'.$object->mode_reglement_code):$object->mode_reglement),
 		'object_payment_term_code'=>$object->cond_reglement_code,
 		'object_payment_term'=>($outputlangs->transnoentitiesnoconv('PaymentCondition'.$object->cond_reglement_code)!='PaymentCondition'.$object->cond_reglement_code?$outputlangs->transnoentitiesnoconv('PaymentCondition'.$object->cond_reglement_code):$object->cond_reglement),
+
+		'object_total_ht_locale'=>price($object->total_ht, 0, $outputlangs),
+		'object_total_vat_locale'=>price($object->total_tva, 0, $outputlangs),
+		'object_total_localtax1_locale'=>price($object->total_localtax1, 0, $outputlangs),
+		'object_total_localtax2_locale'=>price($object->total_localtax2, 0, $outputlangs),
+		'object_total_ttc_locale'=>price($object->total_ttc, 0, $outputlangs),
+		'object_total_discount_ht_locale' => price($object->getTotalDiscount(), 0, $outputlangs),
 		'object_total_ht'=>price2num($object->total_ht),
 		'object_total_vat'=>price2num($object->total_tva),
+		'object_total_localtax1'=>price2num($object->total_localtax1),
+		'object_total_localtax2'=>price2num($object->total_localtax2),
 		'object_total_ttc'=>price2num($object->total_ttc),
-		'object_total_discount_ht' => price2num($object->getTotalDiscount(), 0, $outputlangs),
+		'object_total_discount_ht' => price2num($object->getTotalDiscount()),
+
 		'object_vatrate'=>(isset($object->tva)?vatrate($object->tva):''),
 		'object_note_private'=>$object->note,
 		'object_note'=>$object->note_public,
@@ -503,6 +513,18 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 					$this->error=$e->getMessage();
 					dol_syslog($this->error, LOG_WARNING);
 					return -1;
+				}
+				
+				// Replace labels translated
+				$tmparray=$outputlangs->get_translations_for_substitutions();
+				foreach($tmparray as $key=>$value)
+				{
+					try {
+						$odfHandler->setVars($key, $value, true, 'UTF-8');
+					}
+					catch(OdfException $e)
+					{
+					}
 				}
 
 				// Call the beforeODTSave hook

@@ -84,6 +84,11 @@ if ((! empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) && empty($user->conf->
 	$colorbacklinepairhover='';
 }
 
+$usecss3=true;
+if ($conf->browser->name == 'ie' && round($conf->browser->version,2) < 10) $usecss3=false;
+elseif ($conf->browser->name == 'iceweasel') $usecss3=false;
+elseif ($conf->browser->name == 'epiphany')  $usecss3=false;
+
 print '/*'."\n";
 print 'colorbacklineimpairhover='.$colorbacklineimpairhover."\n";
 print 'colorbacklinepairhover='.$colorbacklinepairhover."\n";
@@ -506,7 +511,7 @@ form#login {
 	font-size: 13px;
 }
 .login_table_title {
-	width: 540px;
+	max-width: 540px;
 	color: #888888;
 	text-shadow: 1px 1px 1px #FFF;
 }
@@ -610,6 +615,7 @@ img.login, img.printer, img.entity {
 
 div.vmenu, td.vmenu {
     margin-<?php print $right; ?>: 2px;
+  	margin-<?php print $left; ?>: 2px;
     padding: 0px;
     padding-bottom: 0px;
     width: 164px;
@@ -726,11 +732,8 @@ div.blockvmenuhelp
 
 div.menu_contenu {
 	background: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/bg-rubrique.png',1); ?>);
-	padding: 8px 0px 0px 0px;
+	padding: 2px 1px 1px 3px;
 	margin: 0px;
-	padding: 1px;
-
-	padding-right: 8px;
     font-size : 11px;
     font-weight:normal;
     color : #000000;
@@ -1365,8 +1368,22 @@ tr.liste_titre, tr.liste_titre_sel, form.liste_titre, form.liste_titre_sel
 }
 div.liste_titre, tr.liste_titre, form.liste_titre
 {
-    background: #7699A9;
+	<?php $usecss3=1; if ($usecss3) { ?>
+    background: #82c6f9;
+	background-image: -o-linear-gradient(bottom, rgba(100,100,100,0.3) 0%, rgba(150,150,150,0.3) 100%);
+	background-image: -moz-linear-gradient(bottom, rgba(100,100,100,0.3) 0%, rgba(150,150,150,0.3) 100%);
+	background-image: -webkit-linear-gradient(bottom, rgba(100,100,100,0.3) 0%, rgba(1,150,150,0.3) 100%);
+	background-image: -ms-linear-gradient(bottom, rgba(100,100,100,0.3) 0%, rgba(150,150,150,0.3) 100%);
+	background-image: linear-gradient(bottom, rgba(1,100,100,0.3) 0%, rgba(150,150,150,0.3) 100%);
+    font-weight: bold;
+    border-top: 1px solid;
+    border-top-color: #57a0c9 !important;
+    border-bottom: 1px solid;
+    border-bottom-color: #57a0c9 !important;
+    <?php }	else { ?>
+	background: #82c6e9;
     background-image: url(<?php echo $img_liste_titre ?>);
+    <?php } ?>
     background-repeat: repeat-x;
     color: #FFFFFF;
     font-family: <?php print $fontlist ?>;
@@ -1376,28 +1393,57 @@ div.liste_titre, tr.liste_titre, form.liste_titre
 }
 th.liste_titre, td.liste_titre
 {
-    background: #7699A9;
+	<?php $usecss3=1; if ($usecss3) { ?>
+    background: #82c6f9;
+	background-image: -o-linear-gradient(bottom, rgba(100,100,100,0.3) 0%, rgba(150,150,150,0.3) 100%);
+	background-image: -moz-linear-gradient(bottom, rgba(100,100,100,0.3) 0%, rgba(150,150,150,0.3) 100%);
+	background-image: -webkit-linear-gradient(bottom, rgba(100,100,100,0.3) 0%, rgba(1,150,150,0.3) 100%);
+	background-image: -ms-linear-gradient(bottom, rgba(100,100,100,0.3) 0%, rgba(150,150,150,0.3) 100%);
+	background-image: linear-gradient(bottom, rgba(1,100,100,0.3) 0%, rgba(150,150,150,0.3) 100%);
+    font-weight: bold;
+    border-top: 1px solid #57a0c9;
+    border-bottom: 1px solid #57a0c9;
+    <?php }	else { ?>
+	background: #82c6e9;
     background-image: url(<?php echo $img_liste_titre ?>);
+    <?php } ?>
     background-repeat: repeat-x;
-    color: #FFFFFF;
     font-family: <?php print $fontlist ?>;
     font-weight: normal;
     /* border-bottom: 1px solid #FDFFFF; */
     white-space: nowrap;
 }
+th.liste_titre, td.liste_titre, th.liste_titre a, td.liste_titre a
+{
+	color: #FFFFFF !important;
+}
 th.liste_titre_sel, td.liste_titre_sel
 {
-    background: #7699A9;
+	<?php $usecss3=1; if ($usecss3) { ?>
+    background: #82c6f9;
+	background-image: -o-linear-gradient(bottom, rgba(100,100,100,0.3) 0%, rgba(150,150,150,0.3) 100%);
+	background-image: -moz-linear-gradient(bottom, rgba(100,100,100,0.3) 0%, rgba(150,150,150,0.3) 100%);
+	background-image: -webkit-linear-gradient(bottom, rgba(100,100,100,0.3) 0%, rgba(1,150,150,0.3) 100%);
+	background-image: -ms-linear-gradient(bottom, rgba(100,100,100,0.3) 0%, rgba(150,150,150,0.3) 100%);
+	background-image: linear-gradient(bottom, rgba(1,100,100,0.3) 0%, rgba(150,150,150,0.3) 100%);
+    font-weight: bold;
+    border-top: 1px solid #57a0c9;
+    border-bottom: 1px solid #57a0c9;
+    <?php }	else { ?>
+	background: #82c6e9;
     background-image: url(<?php echo $img_liste_titre ?>);
+    <?php } ?>
     background-repeat: repeat-x;
-    color: #FFFFFF;
     font-family: <?php print $fontlist ?>;
     font-weight: normal;
     /* text-decoration: underline; */
     /* border-bottom: 1px solid #FDFFFF; */
     white-space: nowrap;
 }
-
+th.liste_titre_sel, td.liste_titre_sel, th.liste_titre_sel a, td.liste_titre_sel a
+{
+    color: #FFFFFF !important;
+}
 input.liste_titre {
 	background: transparent;
 	background-repeat: repeat-x;

@@ -177,6 +177,7 @@ export list="
 	--ignore-table=$base.llx_bt_timestamps
 	--ignore-table=$base.llx_bt_webseedfiles
 	--ignore-table=$base.llx_dolicloud_customers
+	--ignore-table=$base.llx_dolicloud_stats
 	--ignore-table=$base.llx_c_dolicloud_plans
 	--ignore-table=$base.llx_cabinetmed_c_banques
 	--ignore-table=$base.llx_cabinetmed_c_ccam
@@ -189,9 +190,15 @@ export list="
 	--ignore-table=$base.llx_cabinetmed_motifcons
 	--ignore-table=$base.llx_cabinetmed_patient
 	--ignore-table=$base.llx_cabinetmed_societe
+	--ignore-table=$base.llx_fournisseur_ca
+	--ignore-table=$base.llx_google_maps
+	--ignore-table=$base.llx_pos_paiement_ticket
+	--ignore-table=$base.llx_pos_places
+	--ignore-table=$base.llx_pos_ticket
 	--ignore-table=$base.llx_publi_c_contact_list 
 	--ignore-table=$base.llx_publi_c_dnd_list
-	--ignore-table=$base.llx_publi_c_method_list 
+	--ignore-table=$base.llx_publi_c_method_list
+	--ignore-table=$base.llx_ultimatepdf 
 	" 
 echo "mysqldump -P$port -u$admin -p***** $list $base > $mydir/$dumpfile"
 mysqldump -P$port -u$admin $passwd $list $base > $mydir/$dumpfile

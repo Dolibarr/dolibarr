@@ -89,10 +89,10 @@ See ChangeLog file found into package.
 - Shipping management
 - PDF or ODT generation for invoice, proposals, orders...
 - Agenda with ical,vcal export for third tools integration
-- ECM (Electronic Content Management)
+- EDM (Electronic Document Management)
 - Foundations members management
 - Employee's holidays management
-- Mass emailing
+- Mass Emailing
 - Realize surveys
 - Point of Sale
 

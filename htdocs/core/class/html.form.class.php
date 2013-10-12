@@ -345,9 +345,9 @@ class Form
      *
      *	@param	string		$text				Text to show
      *	@param	string		$htmltext			HTML content of tooltip. Must be HTML/UTF8 encoded.
-     *	@param	int			$tooltipon			1=tooltip sur texte, 2=tooltip sur picto, 3=tooltip sur les 2
-     *	@param	int			$direction			-1=Le picto est avant, 0=pas de picto, 1=le picto est apres
-     *	@param	string		$img				Code img du picto (use img_xxx() function to get it)
+     *	@param	int			$tooltipon			1=tooltip on text, 2=tooltip on image, 3=tooltip sur les 2
+     *	@param	int			$direction			-1=image is before, 0=no image, 1=image is after
+     *	@param	string		$img				Html code for image (use img_xxx() function to get it)
      *	@param	string		$extracss			Add a CSS style to td tags
      *	@param	int			$notabs				0=Include table and tr tags, 1=Do not include table and tr tags, 2=use div, 3=use span
      *	@param	string		$incbefore			Include code before the text
@@ -800,7 +800,21 @@ class Form
                 while ($i < $num)
                 {
                     $obj = $this->db->fetch_object($resql);
-                    $label=$obj->nom;
+                    
+                    if ($conf->global->SOCIETE_ADD_REF_IN_LIST) {
+                    	if (($obj->client) && (!empty($obj->code_client))) {
+                    		$label = $obj->code_client. ' - ';
+                    	}
+                    	if (($obj->fournisseur) && (!empty($obj->code_fournisseur))) {
+                    		$label .= $obj->code_fournisseur. ' - ';
+                    	}
+                    	$label.=' '.$obj->nom;
+                    }
+                    else
+                    {
+                    	$label=$obj->nom;
+                    }
+                    
                     if ($showtype)
                     {
                         if ($obj->client || $obj->fournisseur) $label.=' (';
@@ -1761,8 +1775,8 @@ class Form
                     {
     	                $opt.= price($objp->fprice,1,$langs,0,0,-1,$conf->currency)."/".$objp->quantity;
 	                    $outval.= price($objp->fprice,0,$langs,0,0,-1,$conf->currency)."/".$objp->quantity;
-                    	$opt.= $langs->trans("Units");	// Do not use strtolower because it breaks utf8 encoding
-                        $outval.= $langs->transnoentities("Units");
+                    	$opt.= ' '.$langs->trans("Units");	// Do not use strtolower because it breaks utf8 encoding
+                        $outval.= ' '.$langs->transnoentities("Units");
                     }
 
                     if ($objp->quantity >= 1)
@@ -2457,10 +2471,11 @@ class Form
      *     @param 	string		$action      	   	Action
      *	   @param	array		$formquestion	   	An array with forms complementary inputs
      * 	   @param	string		$selectedchoice		"" or "no" or "yes"
-     * 	   @param	int			$useajax		   	0=No, 1=Yes, 2=Yes but submit page with &confirm=no if choice is No
+     * 	   @param	int			$useajax		   	0=No, 1=Yes, 2=Yes but submit page with &confirm=no if choice is No, 'xxx'=preoutput confirm box with div id=dialog-confirm-xxx
      *     @param	int			$height          	Force height of box
      *     @param	int			$width				Force width of box
      *     @return 	void
+     *     @deprecated
      */
     function form_confirm($page, $title, $question, $action, $formquestion='', $selectedchoice="", $useajax=0, $height=170, $width=500)
     {
@@ -2468,7 +2483,15 @@ class Form
     }
 
     /**
-     *     Show a confirmation HTML form or AJAX popup
+     *     Show a confirmation HTML form or AJAX popup.
+     *     Easiest way to use this is with useajax=1. 
+     *     If you use useajax='xxx', you must also add jquery code to trigger opening of box (with correct parameters) 
+     *     just after calling this method. For example: 
+     *       print '<script type="text/javascript">'."\n";
+     *       print 'jQuery(document).ready(function() {'."\n";
+     *       print 'jQuery(".xxxlink").click(function(e) { jQuery("#aparamid").val(jQuery(this).attr("rel")); jQuery("#dialog-confirm-xxx").dialog("open"); return false; });'."\n";
+     *       print '});'."\n";
+     *       print '</script>'."\n";
      *
      *     @param  	string		$page        	   	Url of page to call if confirmation is OK
      *     @param	string		$title       	   	Title
@@ -2564,7 +2587,9 @@ class Form
             $more.='</table>'."\n";
         }
 
-        if (! empty($conf->dol_use_jmobile)) $useajax=0;	// JQUI method dialog is broken with jmobile, we use standard HTML. We also change code for button to have get on url with action=xxx and output confirm only when action=xxx
+		// JQUI method dialog is broken with jmobile, we use standard HTML. 
+		// Note: When using dol_use_jmobile, you must also check code for button use a GET url with action=xxx and output the confirm code only when action=xxx
+        if (! empty($conf->dol_use_jmobile)) $useajax=0;	
 
         if ($useajax && $conf->use_javascript_ajax)
         {
@@ -3345,12 +3370,14 @@ class Form
         	// Comme ils sont tries par ordre croissant, dernier = plus eleve = taux courant
         	if ($defaulttx < 0 || dol_strlen($defaulttx) == 0)
         	{
-        		$defaulttx = $this->cache_vatrates[$num-1]['txtva'];
+        		if (empty($conf->global->MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS)) $defaulttx = $this->cache_vatrates[$num-1]['txtva'];
+        		else $defaulttx=$conf->global->MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS;
         	}
 
         	// Disabled if seller is not subject to VAT
         	$disabled=false; $title='';
-        	if (is_object($societe_vendeuse) && $societe_vendeuse->id == $mysoc->id && $societe_vendeuse->tva_assuj == "0") {
+        	if (is_object($societe_vendeuse) && $societe_vendeuse->id == $mysoc->id && $societe_vendeuse->tva_assuj == "0") 
+        	{
         		$title=' title="'.$langs->trans('VATIsNotUsed').'"';
         		$disabled=true;
         	}

@@ -124,7 +124,7 @@ TagSignature=Υπογραφή αποστολής χρήστη
 TagMailtoEmail=Email του παραλήπτη
 
 # Module Notifications
-Notifications==
+Notifications=Notifications
 # NoNotificationsWillBeSent=No email notifications are planned for this event and company
 # ANotificationsWillBeSent=1 notification will be sent by email
 # SomeNotificationsWillBeSent=%s notifications will be sent by email

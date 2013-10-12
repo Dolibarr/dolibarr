@@ -161,8 +161,8 @@ if ($result > 0)
 	 */
 	if ($action == 'delete')
 	{
-		$ret=$form->form_confirm($_SERVER['PHP_SELF'].'?id='.$object->id, $langs->trans("DeletePayment"), $langs->trans("ConfirmDeletePayment"), 'confirm_delete');
-		if ($ret == 'html') print '<br>';
+		print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id, $langs->trans("DeletePayment"), $langs->trans("ConfirmDeletePayment"), 'confirm_delete');
+		
 	}
 
 	/*
@@ -170,8 +170,8 @@ if ($result > 0)
 	 */
 	if ($action == 'valide')
 	{
-		$ret=$form->form_confirm($_SERVER['PHP_SELF'].'?id='.$object->id, $langs->trans("ValidatePayment"), $langs->trans("ConfirmValidatePayment"), 'confirm_valide');
-		if ($ret == 'html') print '<br>';
+		print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id, $langs->trans("ValidatePayment"), $langs->trans("ConfirmValidatePayment"), 'confirm_valide');
+		
 	}
 
 	print '<table class="border" width="100%">';
@@ -269,7 +269,7 @@ if ($result > 0)
 				print '<tr '.$bc[$var].'>';
 				// Ref
 				print '<td><a href="'.DOL_URL_ROOT.'/fourn/facture/fiche.php?facid='.$objp->facid.'">'.img_object($langs->trans('ShowBill'),'bill').' ';
-				print $objp->ref;
+				print ($objp->ref?$objp->ref:$objp->rowid);
 				print "</a></td>\n";
 				// Ref supplier
 				print '<td>'.$objp->ref_supplier."</td>\n";

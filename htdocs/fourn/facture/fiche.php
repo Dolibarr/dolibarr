@@ -86,7 +86,7 @@ if ($id > 0 || ! empty($ref))
 
 /*
  * Actions
-*/
+ */
 
 // Action clone object
 if ($action == 'confirm_clone' && $confirm == 'yes')
@@ -168,7 +168,7 @@ elseif ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->fourn
     }
 }
 
-elseif ($action == 'confirm_deleteline' && $confirm == 'yes' && $user->rights->fournisseur->facture->creer)
+elseif ($action == 'confirm_delete_line' && $confirm == 'yes' && $user->rights->fournisseur->facture->creer)
 {
 	$object->fetch($id);
 	$ret = $object->deleteline(GETPOST('lineid'));
@@ -460,7 +460,7 @@ elseif ($action == 'add' && $user->rights->fournisseur->facture->creer)
         else
         {
             $db->commit();
-            
+
             if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
             	$result=supplier_invoice_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
             	if ($result	<= 0)
@@ -469,7 +469,7 @@ elseif ($action == 'add' && $user->rights->fournisseur->facture->creer)
             		exit;
             	}
             }
-            
+
             header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
             exit;
         }
@@ -898,21 +898,22 @@ if ($action == 'send' && ! $_POST['addfile'] && ! $_POST['removedfile'] && ! $_P
 }
 
 // Build document
-elseif ($action	== 'builddoc')
+elseif ($action == 'builddoc')
 {
-    // Save modele used
+	// Save modele used
     $object->fetch($id);
     $object->fetch_thirdparty();
-    if ($_REQUEST['model'])
-    {
-        $object->setDocModel($user, $_REQUEST['model']);
-    }
+
+	// Save last template used to generate document
+	if (GETPOST('model')) $object->setDocModel($user, GETPOST('model','alpha'));
 
     $outputlangs = $langs;
-    if (! empty($_REQUEST['lang_id']))
+    $newlang=GETPOST('lang_id','alpha');
+    if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->client->default_lang;
+    if (! empty($newlang))
     {
         $outputlangs = new Translate("",$conf);
-        $outputlangs->setDefaultLang($_REQUEST['lang_id']);
+        $outputlangs->setDefaultLang($newlang);
     }
     $result=supplier_invoice_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
     if ($result	<= 0)
@@ -920,13 +921,21 @@ elseif ($action	== 'builddoc')
         dol_print_error($db,$result);
         exit;
     }
-    else
+}
+// Make calculation according to calculationrule
+elseif ($action == 'calculate')
+{
+	$calculationrule=GETPOST('calculationrule');
+
+    $object->fetch($id);
+    $object->fetch_thirdparty();
+	$result=$object->update_price(0, ($calculationrule=='totalofround'?0:1), 0, $object->thirdparty);
+    if ($result	<= 0)
     {
-        header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.(empty($conf->global->MAIN_JUMP_TAG)?'':'#builddoc'));
+        dol_print_error($db,$result);
         exit;
     }
 }
-
 // Delete file in doc form
 elseif ($action == 'remove_file')
 {
@@ -1213,7 +1222,7 @@ if ($action == 'create')
     print '<tr><td>'.$langs->trans('DateMaxPayment').'</td><td>';
     $form->select_date($datedue,'ech','','','',"add",1,1);
     print '</td></tr>';
-	
+
 	// Payment term
 	print '<tr><td class="nowrap">'.$langs->trans('PaymentConditionsShort').'</td><td colspan="2">';
 	$form->select_conditions_paiements(isset($_POST['cond_reglement_id'])?$_POST['cond_reglement_id']:$cond_reglement_id,'cond_reglement_id');
@@ -1373,8 +1382,7 @@ else
         // Confirmation de la suppression d'une ligne produit
         if ($action == 'confirm_delete_line')
         {
-            $ret=$form->form_confirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&lineid='.$_GET["lineid"], $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteline', '', 1, 1);
-            if ($ret == 'html') print '<br>';
+            print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&lineid='.$_GET["lineid"], $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_delete_line', '', 1, 1);
         }
 
         // Clone confirmation
@@ -1386,8 +1394,7 @@ else
             //array('type' => 'checkbox', 'name' => 'clone_content',   'label' => $langs->trans("CloneMainAttributes"),   'value' => 1)
             );
             // Paiement incomplet. On demande si motif = escompte ou autre
-            $ret=$form->form_confirm($_SERVER["PHP_SELF"].'?id='.$object->id,$langs->trans('CloneInvoice'),$langs->trans('ConfirmCloneInvoice',$object->ref),'confirm_clone',$formquestion,'yes', 1);
-            if ($ret == 'html') print '<br>';
+            print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id,$langs->trans('CloneInvoice'),$langs->trans('ConfirmCloneInvoice',$object->ref),'confirm_clone',$formquestion,'yes', 1);
         }
 
         // Confirmation de la validation
@@ -1433,22 +1440,22 @@ else
                 array('type' => 'other', 'name' => 'idwarehouse',   'label' => $langs->trans("SelectWarehouseForStockIncrease"),   'value' => $formproduct->selectWarehouses(GETPOST('idwarehouse'),'idwarehouse','',1)));
             }
 
-            $ret=$form->form_confirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ValidateBill'), $text, 'confirm_valid', $formquestion, 1, 1, 240);
-            if ($ret == 'html') print '<br>';
+            print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ValidateBill'), $text, 'confirm_valid', $formquestion, 1, 1, 240);
+
         }
 
         // Confirmation set paid
         if ($action == 'paid')
         {
-            $ret=$form->form_confirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ClassifyPaid'), $langs->trans('ConfirmClassifyPaidBill', $object->ref), 'confirm_paid', '', 0, 1);
-            if ($ret == 'html') print '<br>';
+            print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ClassifyPaid'), $langs->trans('ConfirmClassifyPaidBill', $object->ref), 'confirm_paid', '', 0, 1);
+
         }
 
         // Confirmation de la suppression de la facture fournisseur
         if ($action == 'delete')
         {
-            $ret=$form->form_confirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('DeleteBill'), $langs->trans('ConfirmDeleteBill'), 'confirm_delete', '', 0, 1);
-            if ($ret == 'html') print '<br>';
+            print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('DeleteBill'), $langs->trans('ConfirmDeleteBill'), 'confirm_delete', '', 0, 1);
+
         }
 
 
@@ -1521,13 +1528,11 @@ else
         /*
          * List of payments
          */
-        $nbrows=7; $nbcols=2;
+        $nbrows=9; $nbcols=2;
         if (! empty($conf->projet->enabled)) $nbrows++;
         if (! empty($conf->banque->enabled)) $nbcols++;
 
         // Local taxes
-        // TODO I use here $societe->localtax1_assuj. Before it was $mysoc->localtax1_assuj, but this is a supplier invoice, so made by supplier, so depends on supplier properties
-
         if ($mysoc->country_code=='ES')
         {
         	if($mysoc->localtax1_assuj=="1") $nbrows++;
@@ -1640,7 +1645,6 @@ else
 
 		// Conditions de reglement par defaut
 		$langs->load('bills');
-		$form = new Form($db);
 		print '<tr><td class="nowrap">';
 		print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
 		print $langs->trans('PaymentConditions');
@@ -1658,10 +1662,9 @@ else
 		}
 		print "</td>";
 		print '</tr>';
-	
+
 		// Mode of payment
 		$langs->load('bills');
-		$form = new Form($db);
 		print '<tr><td class="nowrap">';
 		print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
 		print $langs->trans('PaymentMode');
@@ -1683,8 +1686,21 @@ else
         $alreadypaid=$object->getSommePaiement();
         print '<tr><td>'.$langs->trans('Status').'</td><td colspan="3">'.$object->getLibStatut(4,$alreadypaid).'</td></tr>';
 
-        print '<tr><td>'.$langs->trans('AmountHT').'</td><td align="right">'.price($object->total_ht).'</td><td colspan="2" align="left">'.$langs->trans('Currency'.$conf->currency).'</td></tr>';
-        print '<tr><td>'.$langs->trans('AmountVAT').'</td><td align="right">'.price($object->total_tva).'</td><td colspan="2" align="left">'.$langs->trans('Currency'.$conf->currency).'</td></tr>';
+        print '<tr><td>'.$langs->trans('AmountHT').'</td><td align="right">'.price($object->total_ht,1,$langs,0,-1,-1,$conf->currency).'</td><td colspan="2" align="left">&nbsp;</td></tr>';
+        print '<tr><td>'.$langs->trans('AmountVAT').'</td><td align="right">'.price($object->total_tva,1,$langs,0,-1,-1,$conf->currency).'</td><td colspan="2" align="left">';
+		if (! empty($conf->global->MAIN_FEATURES_LEVEL))
+		{
+	        if (GETPOST('calculationrule')) $calculationrule=GETPOST('calculationrule','alpha');
+	        else $calculationrule=(empty($conf->global->MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND)?'totalofround':'roundoftotal');
+	        if ($calculationrule == 'totalofround') $calculationrulenum=1;
+	        else  $calculationrulenum=2;
+	        $s=$langs->trans("ReCalculate").' ';
+	        $s.='<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=calculate&calculationrule=totalofround">'.$langs->trans("Mode1").'</a>';
+	        $s.=' / ';
+	        $s.='<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=calculate&calculationrule=roundoftotal">'.$langs->trans("Mode2").'</a>';
+	        print $form->textwithtooltip($s, $langs->trans("CalculationRuleDesc",$calculationrulenum).'<br>'.$langs->trans("CalculationRuleDescSupplier"), 2, 1, img_picto('','help'));
+		}
+        print '</td></tr>';
 
         // Amount Local Taxes
         //TODO: Place into a function to control showing by country or study better option
@@ -1693,14 +1709,14 @@ else
         	if ($mysoc->localtax1_assuj=="1") //Localtax1 RE
 	        {
 	            print '<tr><td>'.$langs->transcountry("AmountLT1",$societe->country_code).'</td>';
-	            print '<td align="right">'.price($object->total_localtax1).'</td>';
-	            print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
+	            print '<td align="right">'.price($object->total_localtax1,1,$langs,0,-1,-1,$conf->currency).'</td>';
+	            print '<td colspan="2">&nbsp;</td></tr>';
 	        }
 	        if ($societe->localtax2_assuj=="1") //Localtax2 IRPF
 	        {
 	            print '<tr><td>'.$langs->transcountry("AmountLT2",$societe->country_code).'</td>';
-	            print '<td align="right">'.price($object->total_localtax2).'</td>';
-	            print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
+	            print '<td align="right">'.price($object->total_localtax2,1,$langs,0,-1,-1,$conf->currency).'</td>';
+	            print '<td colspan="2">&nbsp;</td></tr>';
 	        }
         }
         else
@@ -1708,17 +1724,17 @@ else
 	        if ($societe->localtax1_assuj=="1") //Localtax1 RE
 	        {
 	            print '<tr><td>'.$langs->transcountry("AmountLT1",$societe->country_code).'</td>';
-	            print '<td align="right">'.price($object->total_localtax1).'</td>';
-	            print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
+	            print '<td align="right">'.price($object->total_localtax1,1,$langs,0,-1,-1,$conf->currency).'</td>';
+	            print '<td colspan="2">&nbsp;</td></tr>';
 	        }
 	        if ($societe->localtax2_assuj=="1") //Localtax2 IRPF
 	        {
 	            print '<tr><td>'.$langs->transcountry("AmountLT2",$societe->country_code).'</td>';
-	            print '<td align="right">'.price($object->total_localtax2).'</td>';
-	            print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
+	            print '<td align="right">'.price($object->total_localtax2,1,$langs,0,-1,-1,$conf->currency).'</td>';
+	            print '<td colspan="2">&nbsp;</td></tr>';
 	        }
         }
-        print '<tr><td>'.$langs->trans('AmountTTC').'</td><td align="right">'.price($object->total_ttc).'</td><td colspan="2" align="left">'.$langs->trans('Currency'.$conf->currency).'</td></tr>';
+        print '<tr><td>'.$langs->trans('AmountTTC').'</td><td align="right">'.price($object->total_ttc,1,$langs,0,-1,-1,$conf->currency).'</td><td colspan="2" align="left">&nbsp;</td></tr>';
 
         // Project
         if (! empty($conf->projet->enabled))
@@ -1776,7 +1792,7 @@ else
 
         /*
          * Lines
-        */
+         */
         print '<br>';
         print '<table class="noborder" width="100%">';
         $var=1;
@@ -1945,7 +1961,10 @@ else
                 print '</td>';
 
                 print '<td align="center" width="16">';
-                if ($object->statut == 0) print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=confirm_delete_line&amp;lineid='.$object->lines[$i]->rowid.'">'.img_delete().'</a>';
+                if ($object->statut == 0)
+                {
+                	print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=confirm_delete_line&amp;lineid='.$object->lines[$i]->rowid.'">'.img_delete().'</a>';
+                }
                 else print '&nbsp;';
                 print '</td>';
 
@@ -2132,13 +2151,13 @@ else
             }
 
 
-            //Make payments
+            // Make payments
             if ($action != 'edit' && $object->statut == 1 && $object->paye == 0  && $user->societe_id == 0)
             {
-                print '<a class="butAction" href="paiement.php?facid='.$object->id.'&amp;action=create">'.$langs->trans('DoPayment').'</a>';
+                print '<a class="butAction" href="paiement.php?facid='.$object->id.'&amp;action=create">'.$langs->trans('DoPayment').'</a>';	// must use facid because id is for payment id not invoice
             }
 
-            //Classify paid
+            // Classify paid
             if ($action != 'edit' && $object->statut == 1 && $object->paye == 0  && $user->societe_id == 0)
             {
                 print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=paid"';
@@ -2147,7 +2166,7 @@ else
                 //print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=paid">'.$langs->trans('ClassifyPaid').'</a>';
             }
 
-            //Validate
+            // Validate
             if ($action != 'edit' && $object->statut == 0)
             {
                 if (count($object->lines))
@@ -2165,13 +2184,13 @@ else
                 }
             }
 
-            //Clone
+            // Clone
             if ($action != 'edit' && $user->rights->fournisseur->facture->creer)
             {
                 print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=clone&amp;socid='.$object->socid.'">'.$langs->trans('ToClone').'</a>';
             }
 
-            //Delete
+            // Delete
             if ($action != 'edit' && $user->rights->fournisseur->facture->supprimer)
             {
                 print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete">'.$langs->trans('Delete').'</a>';
@@ -2202,7 +2221,7 @@ else
 
                 /*
                  * Linked object block
-                */
+                 */
                 $somethingshown=$object->showLinkedObjectBlock();
 
 				print '</div><div class="fichehalfright"><div class="ficheaddleft">';
@@ -2265,7 +2284,7 @@ else
             $formmail->withfrom=1;
 			$liste=array();
 			foreach ($object->thirdparty->thirdparty_and_contact_email_array(1) as $key=>$value)	$liste[$key]=$value;
-			$formmail->withto=GETPOST("sendto")?GETOST("sendto"):$liste;
+			$formmail->withto=GETPOST("sendto")?GETPOST("sendto"):$liste;
 			$formmail->withtocc=$liste;
             $formmail->withtoccc=$conf->global->MAIN_EMAIL_USECCC;
             $formmail->withtopic=$langs->trans('SendBillRef','__FACREF__');

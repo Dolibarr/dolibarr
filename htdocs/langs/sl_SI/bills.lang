@@ -34,7 +34,6 @@ ReplacementInvoice=Nadomestni račun
 ReplacedByInvoice=Zamenjan z računom %s
 ReplacementByInvoice=Zamenjan z računom
 CorrectInvoice=Pravilen račun %s
-CorrectInvoice=Pravilen račun %s
 CorrectionInvoice=Račun za popravek
 UsedByInvoice=Uporabljen za plačilo računa %s
 ConsumedBy=Porabil
@@ -411,7 +410,7 @@ PDFCrabeDescription=Predloga računa Crabe. Predloga kompletnega računa (Podpor
 # oursin PDF Model
 PDFOursinDescription=Predloga računa oursin
 # NumRef Modules
-TerreNumRefModelDesc1=Predlaga številko v formatu %syymm-nnnn za standardne račune in %syymm-nnnn za dobropise kjer je yy leto, mm mesec in nnnn zaporedna številka brez presledkov in večja od 0
-# MarsNumRefModelDesc1=Return numero with format %syymm-nnnn for standard invoices, %syymm-nnnn for replacement invoices, %syymm-nnnn for proforma invoices and %syymm-nnnn for credit notes where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
+# TerreNumRefModelDesc1=Return numero with format %syymm-nnnn for standard and replacement invoices, %syymm-nnnn for credit notes and %syymm-nnnn for deposits where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
+# MarsNumRefModelDesc1=Return numero with format %syymm-nnnn for standard invoices, %syymm-nnnn for replacement invoices, %syymm-nnnn for credit notes and %syymm-nnnn for credit notes where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
 
 TerreNumRefModelError=Račun z začetkom $syymm že obstaja in ni kompatibilen s tem modelom zaporedja. Odstranite ga ali ga preimenujte za aktiviranje tega modula.

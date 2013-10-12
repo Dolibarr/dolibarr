@@ -34,7 +34,6 @@ ReplacementInvoice=Erstatning faktura
 ReplacedByInvoice=Erstattes af faktura %s
 ReplacementByInvoice=Erstattes af faktura
 CorrectInvoice=Korrekt faktura %s
-CorrectInvoice=Korrekt faktura %s
 CorrectionInvoice=Rettelse faktura
 UsedByInvoice=Anvendes til at betale fakturaen %s
 ConsumedBy=Forbruges af
@@ -411,7 +410,7 @@ PDFCrabeDescription=Faktura model Crabe. En fuldstændig faktura model (Support 
 # oursin PDF Model
 PDFOursinDescription=Faktura model oursin
 # NumRef Modules
-TerreNumRefModelDesc1=Retur numero med format %syymm-nnnn for standard fakturaer og %syymm-nnnn for kreditnotaer hvor ÅÅ er årstal, MM er måneden og nnnn er en sekvens uden pause, og ikke vende tilbage til 0
-# MarsNumRefModelDesc1=Return numero with format %syymm-nnnn for standard invoices, %syymm-nnnn for replacement invoices, %syymm-nnnn for proforma invoices and %syymm-nnnn for credit notes where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
+# TerreNumRefModelDesc1=Return numero with format %syymm-nnnn for standard and replacement invoices, %syymm-nnnn for credit notes and %syymm-nnnn for deposits where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
+# MarsNumRefModelDesc1=Return numero with format %syymm-nnnn for standard invoices, %syymm-nnnn for replacement invoices, %syymm-nnnn for credit notes and %syymm-nnnn for credit notes where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
 
 TerreNumRefModelError=Et lovforslag, der begynder med $ syymm allerede eksisterer og er ikke kompatible med denne model af sekvensinformation. Fjern den eller omdøbe den til at aktivere dette modul.

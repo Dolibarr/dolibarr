@@ -95,8 +95,6 @@ ProjectReportDate=Cambiar las fechas de las tareas en función de la fecha de in
 ErrorShiftTaskDate=Se ha producido un error en el cambio de las fechas de las tareas
 ProjectsAndTasksLines=Proyectos y tareas
 ProjectCreatedInDolibarr=Proyecto %s creado
-SelectElement=Elementos vinculables al proyecto:
-AddElement=Vincular
 ##### Types de contacts #####
 TypeContact_project_internal_PROJECTLEADER=Jefe de proyecto
 TypeContact_project_external_PROJECTLEADER=Jefe de proyecto
@@ -108,6 +106,6 @@ TypeContact_project_task_internal_CONTRIBUTOR=Participante
 TypeContact_project_task_external_CONTRIBUTOR=Participante
 # Documents models
 DocumentModelBaleine=Modelo de informe de proyecto completo (logo...)
-PlannedWorkload=Carga de trabajo prevista
-WorkloadOccupation=Porcentaje afectado
+PlannedWorkload = Carga de trabajo prevista
+WorkloadOccupation= Porcentaje afectado
 ProjectReferers=Objetos vinculados

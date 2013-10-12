@@ -6,8 +6,8 @@ English Dolibarr ChangeLog
 For users:
 - New: Add hidden option BANK_DISABLE_DIRECT_INPUT.
 - New: More options to select status of users into select user list.
-- New: [ task #862 ] Add ODT on shipments
-- New: [ task #149 ] Add # of notes and attachments in tabs
+- New: [ task #862 ] Add ODT on shipments.
+- New: [ task #149 ] Add # of notes and attachments in tabs.
 - New: Can edit customer ref at eny time.
 - New: [ task #877 ] Reorganize menus.
 - New: [ task #858 ] Holiday module: note on manual holiday assignation.
@@ -51,10 +51,21 @@ For users:
 - New : Add category into filter webservice thirdparty method getListOfThirdParties
 - New : Allow to define margin or mark rate during quoting, ordering, invoicing
 - New : User permissions on margin module
+- New : Add ref supplier into muscadet model
+- New : Add ability to copy contact address to clipboard
+- New: Can use tag {mm} before {yy} even when there is a reset into numbering masks.
+- New: [ task #1060 ] Register fields localtax(1|2)_type into details tables.
+- New: [ task #923 ] Localtax support for ODT templates. 
+- New: [ task #90 ] Barcode search.
+- New: Add hidden option MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS.
+- New: Can send an email from thirdparty card.
+- New: Can cancel holidays that were previously validated.
+- Fix: [bug #1022] correct margin calculation for credit notes.
+- New: Can choose contact on event (action com) creation, and filtred by thirdparty
 
 For translators:
 - Qual: Normalized sort order of all languages files with english reference files.
-- New: Add language code files for South Africa.
+- New: Add language code files for South Africa, France new caledonia.
 - New: Translate the email to change password.
 
 For developers:
@@ -80,6 +91,8 @@ For developers:
 - New: Add hook addHomeSetup.
 - New: Add trigger CATEGORY_LINK and CATEGORY_UNLINK.
 - New: A trigger can return an array of error strings instead of one error string.
+- New: Add method to use a dictionnary as a combo box.
+- New: Add update method for web service product.
 
 WARNING: Following change may create regression for some external modules, but was necessary to make
 Dolibarr better:
@@ -97,9 +110,13 @@ Goal is to fix old compatibility code that does not match hook specifications:
 All content added must be tagged by a '<div>' with css class="login_block_elem"
 
 3) Some methods object->addline used a first parameter that was object->id, some not. Of course
-this was not a good pratice, since object->id is already known so no need to provide it as 
+this was not a good pratice, since object->id is already known, there is no need to provide id as 
 parameter. All methods addline in this case were modified to remove this parameter. 
 
+4) Method ->classer_facturee() is deprecated. It must be replace with ->classifyBilled().
+
+5) Property ->tel on objects is now ->phone
+ 
 
 ***** ChangeLog for 3.4.1 compared to 3.4.0 *****
 Fix: Display buying price on line edit when no supplier price is defined
@@ -116,6 +133,20 @@ Fix: Link "Show all supplier invoice" on suplier card not working
 Fix: [ bug #1039 ] Pre-defined invoices conversion
 Fix: If only service module is activated, it's impossible to delete service
 Fix: [ bug #1043 ] Bad interventions ref numbering
+Fix: Mailing module : if an email is already in destinaires list all other email from selector was not inserted
+Fix: Localtaxes balance not showing
+Fix: Intervention box links to contracts id
+Fix: Compatiblity with multicompany module
+Fix: Edit propal line was losing product supplier price id
+Fix: Delete linked element to supplier invoice when deleted 
+Fix: [ bug #1061 ] Bad info shipped products
+Fix: [ bug #1062 ] Documents lost in propals and contracts validating
+Fix: Supplier price displayed on document lines and margin infos didnt take discount
+Fix: sorting on qty did not work in supplier product list
+Fix: there was no escaping on filter fields in supplier product list
+Fix: bugs on margin reports and better margin calculation on credit notes
+Qual: Add travis-ci integration
+
 
 ***** ChangeLog for 3.4 compared to 3.3.* *****
 For users:
@@ -173,6 +204,7 @@ For users:
 - Fix: [Bug #958] LocalTax2 for Spain fails on Suppliers
 - Fix: [ bug #972 ] Auto completion contact field do not take account the min caract number before search
 - Fix: [ bug #971 ] html.form.class.php select_contact with autocomplete do not exclude id from exclude array
+- Fix: Expedition creation, can retreive product from other expedition
 
 For translators:
 - Update language files.
@@ -214,6 +246,8 @@ backport commit 384e3812eb73a15adafb472cacfb93397a54459b to fix W3C/edit contrac
 
 ***** ChangeLog for 3.3.4 compared to 3.3.3 *****
 - Fix: [ bug #1001 ] Social Contribution : State not correct
+- Fix: Better management of pdf generation when tcpdf is not available.
+- Fix: Change to be more debian compliant natively.
 
 ***** ChangeLog for 3.3.3 compared to 3.3.2 *****
 - Fix: [ bug #903 ] Fatal error: Call to undefined function dol_get_first_day() in htdocs/commande/liste.php

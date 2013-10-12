@@ -103,7 +103,7 @@ function getMarginInfos($pvht, $remise_percent, $tva_tx, $localtax1_tx, $localta
 		require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
 		$product = new ProductFournisseur($db);
 		if ($product->fetch_product_fournisseur_price($fk_pa)) {
-			$paht_ret = $product->fourn_unitprice;
+			$paht_ret = $product->fourn_unitprice * (1 - $product->fourn_remise_percent / 100);
 			if ($conf->global->MARGIN_TYPE == "2" && $product->fourn_unitcharges > 0)
 				$paht_ret += $product->fourn_unitcharges;
 		}
@@ -117,12 +117,18 @@ function getMarginInfos($pvht, $remise_percent, $tva_tx, $localtax1_tx, $localta
 	// calcul pu_ht remisés
 	$tabprice=calcul_price_total(1, $pvht, $remise_percent, $tva_tx, $localtax1_tx, $localtax2_tx, 0, 'HT', 0, 0);	// FIXME Parameter type is missing, i put 0 to avoid blocking error
 	$pu_ht_remise = $tabprice[0];
+	// calcul marge
+	if ($pu_ht_remise < 0)
+		$marge = -1 * (abs($pu_ht_remise) - $paht_ret);
+	else
+		$marge = $pu_ht_remise - $paht_ret;
+
 	// calcul taux marge
 	if ($paht_ret != 0)
-		$marge_tx_ret = round((100 * ($pu_ht_remise - $paht_ret)) / $paht_ret, 3);
+		$marge_tx_ret = round((100 * $marge) / $paht_ret, 3);
 	// calcul taux marque
 	if ($pu_ht_remise != 0)
-		$marque_tx_ret = round((100 * ($pu_ht_remise - $paht_ret)) / $pu_ht_remise, 3);
+		$marque_tx_ret = round((100 * $marge) / $pu_ht_remise, 3);
 
 	return array($paht_ret, $marge_tx_ret, $marque_tx_ret);
 }

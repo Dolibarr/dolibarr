@@ -35,6 +35,8 @@ if (!$user->admin) accessforbidden();
 
 $action = GETPOST('action','alpha');
 $value = GETPOST('value','alpha');
+$scandir = GETPOST('scandir','alpha');
+$type='contrat';
 
 if (empty($conf->global->CONTRACT_ADDON))
 {
@@ -62,11 +64,6 @@ if ($action == 'updateMask')
     {
         setEventMessage($langs->trans("Error"),'errors');
     }
-}
-
-if ($action == 'setmod')
-{
-    dolibarr_set_const($db, "CONTRACT_ADDON",$value,'chaine',0,'',$conf->entity);
 }
 
 else if ($action == 'specimen') // For contract
@@ -155,10 +152,10 @@ else if ($action == 'setmod')
 	dolibarr_set_const($db, "CONTRACT_ADDON",$value,'chaine',0,'',$conf->entity);
 }
 
-else if ($action == 'set_CONTRAT_FREE_TEXT')
+else if ($action == 'set_CONTRACT_FREE_TEXT')
 {
-	$freetext= GETPOST('CONTRAT_FREE_TEXT','alpha');
-	$res = dolibarr_set_const($db, "CONTRAT_FREE_TEXT",$freetext,'chaine',0,'',$conf->entity);
+	$freetext= GETPOST('CONTRACT_FREE_TEXT','alpha');
+	$res = dolibarr_set_const($db, "CONTRACT_FREE_TEXT",$freetext,'chaine',0,'',$conf->entity);
 
 	if (! $res > 0) $error++;
 
@@ -172,11 +169,11 @@ else if ($action == 'set_CONTRAT_FREE_TEXT')
     }
 }
 
-else if ($action == 'set_CONTRAT_DRAFT_WATERMARK')
+else if ($action == 'set_CONTRACT_DRAFT_WATERMARK')
 {
-	$draft= GETPOST('CONTRAT_DRAFT_WATERMARK','alpha');
+	$draft= GETPOST('CONTRACT_DRAFT_WATERMARK','alpha');
 
-	$res = dolibarr_set_const($db, "CONTRAT_DRAFT_WATERMARK",trim($draft),'chaine',0,'',$conf->entity);
+	$res = dolibarr_set_const($db, "CONTRACT_DRAFT_WATERMARK",trim($draft),'chaine',0,'',$conf->entity);
 
 	if (! $res > 0) $error++;
 
@@ -492,10 +489,10 @@ $var=true;
 $var=! $var;
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print '<input type="hidden" name="action" value="set_CONTRAT_FREE_TEXT">';
+print '<input type="hidden" name="action" value="set_CONTRACT_FREE_TEXT">';
 print '<tr '.$bc[$var].'><td colspan="2">';
 print $langs->trans("FreeLegalTextOnContracts").' ('.$langs->trans("AddCRIfTooLong").')<br>';
-print '<textarea name="CONTRAT_FREE_TEXT" class="flat" cols="120">'.$conf->global->CONTRAT_FREE_TEXT.'</textarea>';
+print '<textarea name="CONTRACT_FREE_TEXT" class="flat" cols="120">'.$conf->global->CONTRACT_FREE_TEXT.'</textarea>';
 print '</td><td align="right">';
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 print "</td></tr>\n";
@@ -505,10 +502,10 @@ print '</form>';
 $var=!$var;
 print "<form method=\"post\" action=\"".$_SERVER["PHP_SELF"]."\">";
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print "<input type=\"hidden\" name=\"action\" value=\"set_CONTRAT_DRAFT_WATERMARK\">";
+print "<input type=\"hidden\" name=\"action\" value=\"set_CONTRACT_DRAFT_WATERMARK\">";
 print '<tr '.$bc[$var].'><td colspan="2">';
 print $langs->trans("WatermarkOnDraftContractCards").'<br>';
-print '<input size="50" class="flat" type="text" name="CONTRAT_DRAFT_WATERMARK" value="'.$conf->global->CONTRAT_DRAFT_WATERMARK.'">';
+print '<input size="50" class="flat" type="text" name="CONTRACT_DRAFT_WATERMARK" value="'.$conf->global->CONTRACT_DRAFT_WATERMARK.'">';
 print '</td><td align="right">';
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 print "</td></tr>\n";

@@ -46,6 +46,10 @@ create table llx_commandedet_extrafields
 
 ALTER TABLE llx_commandedet_extrafields ADD INDEX idx_commandedet_extrafields (fk_object);
 
+
+ALTER TABLE llx_facturedet_rec ADD COLUMN info_bits	integer DEFAULT 0 after total_ttc;	-- TVA NPR ou non
+
+
 create table llx_facturedet_extrafields
 (
   rowid            integer AUTO_INCREMENT PRIMARY KEY,
@@ -288,4 +292,12 @@ ALTER TABLE llx_bordereau_cheque ADD tms timestamp;
 -- Task 1011
 ALTER TABLE llx_societe ADD mode_reglement_supplier integer NULL AFTER cond_reglement;
 ALTER TABLE llx_societe ADD cond_reglement_supplier integer NULL AFTER mode_reglement_supplier;
+
 ALTER TABLE llx_facture_fourn ADD fk_mode_reglement integer NULL AFTER fk_cond_reglement;
+
+ALTER TABLE llx_facture_fourn MODIFY COLUMN fk_mode_reglement	integer NULL;
+ALTER TABLE llx_facture_fourn MODIFY COLUMN fk_cond_reglement	integer NULL;
+
+
+insert into llx_c_action_trigger (rowid,code,label,description,elementtype,rang) values (9,'COMPANY_SENTBYMAIL','Mails sent from third party card','Executed when you send email from third party card','societe',1);
+

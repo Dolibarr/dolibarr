@@ -4,6 +4,7 @@
  * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2013      Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2013      Cédric Salvador      <csalvador@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -122,7 +123,7 @@ $sql.= " cp.code as country_code";
 $sql.= " FROM ".MAIN_DB_PREFIX."socpeople as p";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_pays as cp ON cp.rowid = p.fk_pays";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = p.fk_soc";
-if (! empty($search_categ)) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_contact as cs ON s.rowid = cs.fk_socpeople"; // We need this table joined to the select in order to filter by categ
+if (! empty($search_categ)) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_contact as cs ON p.rowid = cs.fk_socpeople"; // We need this table joined to the select in order to filter by categ
 if (!$user->rights->societe->client->voir && !$socid) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
 $sql.= ' WHERE p.entity IN ('.getEntity('societe', 1).')';
 if (!$user->rights->societe->client->voir && !$socid) //restriction
@@ -148,21 +149,17 @@ else
 if ($search_categ > 0)   $sql.= " AND cs.fk_categorie = ".$search_categ;
 if ($search_categ == -2) $sql.= " AND cs.fk_categorie IS NULL";
 
-if ($search_lastname)        // filter on lastname
-{
-    $sql .= " AND p.lastname LIKE '%".$db->escape($search_lastname)."%'";
+if ($search_lastname) {      // filter on lastname
+    $sql .= natural_search('p.lastname', $search_lastname);
 }
-if ($search_firstname)     // filter on firstname
-{
-    $sql .= " AND p.firstname LIKE '%".$db->escape($search_firstname)."%'";
+if ($search_firstname) {   // filter on firstname
+    $sql .= natural_search('p.firstname', $search_firstname);
 }
-if ($search_societe)    // filtre sur la societe
-{
-    $sql .= " AND s.nom LIKE '%".$db->escape($search_societe)."%'";
+if ($search_societe) {  // filtre sur la societe
+    $sql .= natural_search('s.nom', $search_societe);
 }
-if (strlen($search_poste))    // filtre sur la societe
-{
-    $sql .= " AND p.poste LIKE '%".$db->escape($search_poste)."%'";
+if (strlen($search_poste)) {  // filtre sur la societe
+    $sql .= natural_search('p.poste', $search_poste);
 }
 if (strlen($search_phone))
 {
@@ -206,11 +203,7 @@ else if ($type == "p")        // filtre sur type
 }
 if ($sall)
 {
-    // For natural search
-    $scrit = explode(' ', $sall);
-    foreach ($scrit as $crit) {
-        $sql .= " AND (p.lastname LIKE '%".$db->escape($crit)."%' OR p.firstname LIKE '%".$db->escape($crit)."%' OR p.email LIKE '%".$db->escape($crit)."%')";
-    }
+    $sql .= natural_search(array('p.lastname', 'p.firstname', 'p.email'), $sall);
 }
 if (! empty($socid))
 {

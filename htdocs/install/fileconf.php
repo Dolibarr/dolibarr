@@ -302,6 +302,7 @@ if (! empty($force_install_message))
 		        if (is_readable($dir."/".$file) && preg_match('/^(.*)\.class\.php$/i',$file,$reg))
 		        {
 		            $type=$reg[1];
+                    if ($type === 'DoliDB') continue; // Skip abstract class
                     $class='DoliDB'.ucfirst($type);
                     include_once $dir."/".$file;
 

@@ -211,10 +211,8 @@ if ($action == 'builddoc' && $user->rights->banque->cheque)
 {
 	$result = $object->fetch($id);
 
-	/*if ($_REQUEST['model'])
-	{
-		$object->setDocModel($user, $_REQUEST['model']);
-	}*/
+	// Save last template used to generate document
+	//if (GETPOST('model')) $object->setDocModel($user, GETPOST('model','alpha'));
 
     $outputlangs = $langs;
     $newlang='';
@@ -306,8 +304,8 @@ else
 	 */
 	if ($action == 'delete')
 	{
-		$ret=$form->form_confirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans("DeleteCheckReceipt"), $langs->trans("ConfirmDeleteCheckReceipt"), 'confirm_delete','','',1);
-		if ($ret == 'html') print '<br>';
+		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans("DeleteCheckReceipt"), $langs->trans("ConfirmDeleteCheckReceipt"), 'confirm_delete','','',1);
+		
 	}
 
 	/*
@@ -315,8 +313,8 @@ else
 	 */
 	if ($action == 'valide')
 	{
-		$ret=$form->form_confirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans("ValidateCheckReceipt"), $langs->trans("ConfirmValidateCheckReceipt"), 'confirm_valide','','',1);
-		if ($ret == 'html') print '<br>';
+		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans("ValidateCheckReceipt"), $langs->trans("ConfirmValidateCheckReceipt"), 'confirm_valide','','',1);
+		
 	}
 }
 

@@ -61,9 +61,6 @@ $socid='';
 if ($user->societe_id) $socid=$user->societe_id;
 $result=restrictedArea($user, $origin, $origin_id);
 
-// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
-$hookmanager->initHooks(array('expeditioncard'));
-
 $action		= GETPOST('action','alpha');
 $confirm	= GETPOST('confirm','alpha');
 
@@ -73,6 +70,11 @@ $hidedesc 	 = (GETPOST('hidedesc','int') ? GETPOST('hidedesc','int') : (! empty(
 $hideref 	 = (GETPOST('hideref','int') ? GETPOST('hideref','int') : (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF) ? 1 : 0));
 
 $object = new Expedition($db);
+// Load object
+if ($id > 0 || ! empty($ref))
+{
+	$ret=$object->fetch($id, $ref);
+}
 
 // Load object
 if ($id > 0 || ! empty($ref))
@@ -80,13 +82,20 @@ if ($id > 0 || ! empty($ref))
 	$ret=$object->fetch($id, $ref);
 }
 
+// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+$hookmanager->initHooks(array('expeditioncard'));
+
 /*
  * Actions
  */
+$parameters=array();
+$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 
 if ($action == 'add')
 {
     $error=0;
+
+    $object = new Expedition($db);
 
     $db->begin();
 
@@ -294,10 +303,9 @@ else if ($action == 'settrackingnumber' || $action == 'settrackingurl'
 // Build document
 else if ($action == 'builddoc')	// En get ou en post
 {
-    if (GETPOST('model','alpha'))
-    {
-        $object->setDocModel($user, GETPOST('model','alpha'));
-    }
+
+	// Save last template used to generate document
+	if (GETPOST('model')) $object->setDocModel($user, GETPOST('model','alpha'));
 
     // Define output language
     $outputlangs = $langs;
@@ -516,7 +524,7 @@ else if ($action == 'classifybilled')
  * View
  */
 
-llxHeader('',$langs->trans('Sending'),'Expedition');
+llxHeader('',$langs->trans('Shipment'),'Expedition');
 
 $form = new Form($db);
 $formfile = new FormFile($db);
@@ -890,7 +898,7 @@ if ($action == 'create')
         }
     }
 }
-else
+else if ($id || $ref)
 /* *************************************************************************** */
 /*                                                                             */
 /* Edit and view mode                                                          */
@@ -915,7 +923,7 @@ else
 		$soc->fetch($object->socid);
 
 		$head=shipping_prepare_head($object);
-		dol_fiche_head($head, 'shipping', $langs->trans("Sending"), 0, 'sending');
+		dol_fiche_head($head, 'shipping', $langs->trans("Shipment"), 0, 'sending');
 
 		dol_htmloutput_mesg($mesg);
 
@@ -924,8 +932,8 @@ else
 		*/
 		if ($action == 'delete')
 		{
-			$ret=$form->form_confirm($_SERVER['PHP_SELF'].'?id='.$object->id,$langs->trans('DeleteSending'),$langs->trans("ConfirmDeleteSending",$object->ref),'confirm_delete','',0,1);
-			if ($ret == 'html') print '<br>';
+			print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id,$langs->trans('DeleteSending'),$langs->trans("ConfirmDeleteSending",$object->ref),'confirm_delete','',0,1);
+
 		}
 
 		/*
@@ -953,16 +961,16 @@ else
 				$text.=$notify->confirmMessage('SHIPPING_VALIDATE',$object->socid);
 			}
 
-			$ret=$form->form_confirm($_SERVER['PHP_SELF'].'?id='.$object->id,$langs->trans('ValidateSending'),$text,'confirm_valid','',0,1);
-			if ($ret == 'html') print '<br>';
+			print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id,$langs->trans('ValidateSending'),$text,'confirm_valid','',0,1);
+
 		}
 		/*
 		 * Confirmation de l'annulation
 		*/
 		if ($action == 'annuler')
 		{
-			$ret=$form->form_confirm($_SERVER['PHP_SELF'].'?id='.$object->id,$langs->trans('CancelSending'),$langs->trans("ConfirmCancelSending",$object->ref),'confirm_cancel','',0,1);
-			if ($ret == 'html') print '<br>';
+			print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id,$langs->trans('CancelSending'),$langs->trans("ConfirmCancelSending",$object->ref),'confirm_cancel','',0,1);
+
 		}
 
 		// Calculate true totalWeight and totalVolume for all products
@@ -1481,7 +1489,7 @@ else
 		$formmail->withfrom=1;
 		$liste=array();
 		foreach ($object->thirdparty->thirdparty_and_contact_email_array(1) as $key=>$value)	$liste[$key]=$value;
-		$formmail->withto=GETPOST("sendto")?GETOST("sendto"):$liste;
+		$formmail->withto=GETPOST("sendto")?GETPOST("sendto"):$liste;
 		$formmail->withtocc=$liste;
 		$formmail->withtoccc=$conf->global->MAIN_EMAIL_USECCC;
 		$formmail->withtopic=$langs->trans('SendShippingRef','__SHIPPINGREF__');

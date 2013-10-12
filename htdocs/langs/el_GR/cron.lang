@@ -1,8 +1,5 @@
 # Dolibarr language file - Source file is en_US - cron
 CHARSET=UTF-8
-Module2310Name=Μενού
-Module2310Desc==
-
 #
 # About page
 #
@@ -13,20 +10,20 @@ CronAboutPage = Σχετικά με τη σελίδα Cron
 #
 # Right
 #
-Permission23101 = =
-Permission23102 = =
-Permission23103 = =
-Permission23104 = =
+Permission23101 = Διαβάστε την προγραμματισμένη εργασία
+Permission23102 = Δημιουργία / ενημέρωση προγραμματισμένης εργασίας
+Permission23103 = Διαγραφή προγραμματισμένης εργασίας
+Permission23104 = Εκτέλεση Προγραμματισμένης εργασίας
 
 #
 # Admin
 #
-CronSetup= Προγραμματισμένη ρύθμιση διαχείρισης των εργασίων
+CronSetup= Προγραμματισμένη ρύθμιση διαχείρισης των εργασιών
 URLToLaunchCronJobs=URL για να ξεκινήσει εργασίες το cron
 OrToLaunchASpecificJob=Για να ξεκινήσει μια συγκεκριμένη εργασία
 KeyForCronAccess=Κλειδί ασφαλείας για το URL για να ξεκινήσει η εργασία cron
 FileToLaunchCronJobs=Γραμμής εντολών για να ξεκινήσει τις εργασίες
-CronExplainHowToRunUnix=Σχετικά με το περιβάλλον Unix θα πρέπει να χρησιμοποιήσετε crontab να τρέχει γραμμή εντολών κάθε λιγα λεπτά
+CronExplainHowToRunUnix=Σχετικά με το περιβάλλον Unix θα πρέπει να χρησιμοποιήσετε crontab να τρέχει γραμμή εντολών κάθε λίγα λεπτά
 CronExplainHowToRunWin=Στο Microsoft (tm) των Windows environement, μπορείτε να χρησιμοποιήσετε τα εργαλεία Προγραμματισμένη εργασία ώστε να εκτελεστεί μια γραμμή εντολών κάθε λιγα λεπτά
 
 
@@ -34,27 +31,27 @@ CronExplainHowToRunWin=Στο Microsoft (tm) των Windows environement, μπο
 # Menu
 #
 CronJobs=Προγραμματισμένες εργασίες
-CronListActive= Κατάλογος των ενεργών εργασίων
-CronListInactive= Λίστα με τις απενεργοποιημενες εργασιες
+CronListActive= Κατάλογος των ενεργών εργασιών
+CronListInactive= Λίστα με τις απενεργοποιημένες εργασίες
 
 
 #
 # Page list
 #
-CronDateLastRun=Τελευταία εκτελεση
-CronLastOutput=Τελευταία εκτελεση έξοδου
+CronDateLastRun=Τελευταία εκτέλεση
+CronLastOutput=Τελευταία εκτέλεση εξόδου
 CronLastResult=Τελευταίος κωδικός αποτελέσματος
-CronListOfCronJobs=Κατάλογος προγραμματισμένων εργασίων
+CronListOfCronJobs=Κατάλογος προγραμματισμένων εργασιών
 CronCommand=Εντολή
-CronList= Κατάλογος εργασίων
-CronDelete= Διαγραφή εργασίων cron
+CronList= Κατάλογος εργασιών
+CronDelete= Διαγραφή εργασιών cron
 CronConfirmDelete= Είστε σίγουροι ότι θέλετε να διαγράψετε αυτή την περιοδική εργασία;
 CronExecute=Έναρξη εργασίας
 CronConfirmExecute= Είστε σίγουροι για την εκτελέσει αυτής τις εργασίας τώρα;
 CronInfo= Jobs allow to execute task that have been planned
 CronWaitingJobs=Αναμονή εργασίας
-CronTask=Εργασια
-CronNone= None
+CronTask=Εργασία
+CronNone= Καμία
 CronDtStart=Ημερ. έναρξης
 CronDtEnd=Ημερ. τέλους
 CronDtNextLaunch=Επόμενη εκτέλεση
@@ -62,12 +59,12 @@ CronDtLastLaunch=Τελευταία εκτέλεση
 CronFrequency=Συχνότητα
 CronClass=Κατηγορία
 CronMethod=Μέθοδος
-CronModule=Άρθρωμα
+CronModule=Module
 CronAction=Ενέργεια
 CronStatus=Κατάσταση
 CronStatusActive=Ενεργή
 CronStatusInactive=Ανενεργή
-CronNoJobs=Δεν εχουν καταχωρηθεί εργασίες 
+CronNoJobs=Δεν έχουν καταχωρηθεί εργασίες
 CronPriority=Προτεραιότητα
 CronLabel=Περιγραφή
 CronNbRun=Nb. έναρξης
@@ -78,13 +75,13 @@ JobFinished=Ξεκίνησε και τελείωσε
 #Page card
 #
 CronAdd= Προσθήκη εργασίας
-CronHourStart= Εναρξη ώρας και ημερομηνία αποστολής
-CronEvery= Εκτελέσει εργασίας κάθε
+CronHourStart= Έναρξη ώρας και ημερομηνία αποστολής
+CronEvery= Εκτέλεση εργασίας κάθε
 CronObject= Instance/Object to create
 CronArgs=Παράμετροι
-CronSaveSucess=Επιτυχίς αποθήκευση
+CronSaveSucess=Επιτυχής αποθήκευση
 CronNote=Σχόλιο
-CronFieldMandatory=Τα πεδία %s είναι υποχρεωτικα
+CronFieldMandatory=Τα πεδία %s είναι υποχρεωτικά
 CronErrEndDateStartDt=Η ημερομηνία λήξης δεν μπορεί να είναι πριν από την ημερομηνία έναρξης
 CronStatusActiveBtn=Ενεργοποίηση
 CronStatusInactiveBtn=Απενεργοποίηση
@@ -113,3 +110,5 @@ CronType_method=Καλέστε τη μέθοδο της κατηγορίας Dol
 CronType_command=Εντολή Shell
 CronMenu=Μενού
 CronCannotLoadClass=Cannot load class %s or object %s
+
+# UseMenuModuleToolsToAddCronJobs=Go into menu "Home - Modules tools - Job list" to see and edit scheduled jobs.

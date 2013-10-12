@@ -144,8 +144,7 @@ dol_fiche_head($head, 'card', $title, 0, 'category');
  */
 if ($action == 'delete')
 {
-	$ret=$form->form_confirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;type='.$type,$langs->trans('DeleteCategory'),$langs->trans('ConfirmDeleteCategory'),'confirm_delete');
-	if ($ret == 'html') print '<br>';
+	print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;type='.$type,$langs->trans('DeleteCategory'),$langs->trans('ConfirmDeleteCategory'),'confirm_delete');
 }
 
 print '<table border="0" width="100%" class="border">';

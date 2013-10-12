@@ -312,7 +312,7 @@ function pdf_build_address($outputlangs,$sourcecompany,$targetcompany='',$target
 		if (empty($conf->global->MAIN_PDF_DISABLESOURCEDETAILS))
 		{
 			// Tel
-			if ($sourcecompany->tel) $stringaddress .= ($stringaddress ? "\n" : '' ).$outputlangs->transnoentities("Phone").": ".$outputlangs->convToOutputCharset($sourcecompany->tel);
+			if ($sourcecompany->phone) $stringaddress .= ($stringaddress ? "\n" : '' ).$outputlangs->transnoentities("Phone").": ".$outputlangs->convToOutputCharset($sourcecompany->phone);
 			// Fax
 			if ($sourcecompany->fax) $stringaddress .= ($stringaddress ? "\n" : '' ).$outputlangs->transnoentities("Fax").": ".$outputlangs->convToOutputCharset($sourcecompany->fax);
 			// EMail
@@ -345,7 +345,7 @@ function pdf_build_address($outputlangs,$sourcecompany,$targetcompany='',$target
 			if (! empty($conf->global->MAIN_PDF_ADDALSOTARGETDETAILS))
 			{
 				// Tel
-				if ($targetcontact->tel) $stringaddress .= ($stringaddress ? "\n" : '' ).$outputlangs->transnoentities("Phone").": ".$outputlangs->convToOutputCharset($targetcontact->tel);
+				if ($targetcontact->phone) $stringaddress .= ($stringaddress ? "\n" : '' ).$outputlangs->transnoentities("Phone").": ".$outputlangs->convToOutputCharset($targetcontact->phone);
 				// Fax
 				if ($targetcontact->fax) $stringaddress .= ($stringaddress ? "\n" : '' ).$outputlangs->transnoentities("Fax").": ".$outputlangs->convToOutputCharset($targetcontact->fax);
 				// EMail
@@ -363,7 +363,7 @@ function pdf_build_address($outputlangs,$sourcecompany,$targetcompany='',$target
 			if (! empty($conf->global->MAIN_PDF_ADDALSOTARGETDETAILS))
 			{
 				// Tel
-				if ($targetcompany->tel) $stringaddress .= ($stringaddress ? "\n" : '' ).$outputlangs->transnoentities("Phone").": ".$outputlangs->convToOutputCharset($targetcompany->tel);
+				if ($targetcompany->phone) $stringaddress .= ($stringaddress ? "\n" : '' ).$outputlangs->transnoentities("Phone").": ".$outputlangs->convToOutputCharset($targetcompany->phone);
 				// Fax
 				if ($targetcompany->fax) $stringaddress .= ($stringaddress ? "\n" : '' ).$outputlangs->transnoentities("Fax").": ".$outputlangs->convToOutputCharset($targetcompany->fax);
 				// EMail
@@ -459,7 +459,7 @@ function pdf_watermark(&$pdf, $outputlangs, $h, $w, $unit, $text)
 	elseif ($unit=='in') $k=72;
 
 	$savx=$pdf->getX(); $savy=$pdf->getY();
-	
+
 	$watermark_angle=atan($h/$w)/2;
 	$watermark_x_pos=0;
 	$watermark_y_pos=$h/3;
@@ -1029,6 +1029,22 @@ function pdf_getlinedesc($object,$i,$outputlangs,$hideref=0,$hidedesc=0,$issuppl
 			}
 
 			$libelleproduitservice=$prefix_prodserv.$ref_prodserv.$libelleproduitservice;
+		}
+	}
+
+	// Add an additional description for the category products
+	if (! empty($conf->global->CATEGORY_ADD_DESC_INTO_DOC) && $idprod && ! empty($conf->categorie->enabled))
+	{
+		include_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+		$categstatic=new Categorie($db);
+		// recovering the list of all the categories linked to product
+		$tblcateg=$categstatic->containing($idprod,0);
+		foreach ($tblcateg as $cate)
+		{
+			// Adding the descriptions if they are filled
+			$desccateg=$cate->add_description;
+			if ($desccateg)
+				$libelleproduitservice.='__N__'.$desccateg;
 		}
 	}
 

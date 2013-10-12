@@ -34,7 +34,6 @@ ReplacementInvoice=استبدال الفاتورة
 ReplacedByInvoice=بعبارة فاتورة ق ٪
 ReplacementByInvoice=استعيض عن الفاتورة
 CorrectInvoice=تصحيح الفاتورة ٪ ق
-CorrectInvoice=تصحيح الفاتورة ٪ ق
 CorrectionInvoice=تصحيح الفاتورة
 UsedByInvoice=وتستخدم لدفع فاتورة ق ٪
 ConsumedBy=يستهلكها
@@ -411,7 +410,7 @@ PDFCrabeDescription=نموذج فاتورة Crabe. نموذج الفاتورة �
 # oursin PDF Model
 PDFOursinDescription=نموذج فاتورة oursin
 # NumRef Modules
-TerreNumRefModelDesc1=عودة número مع الشكل nnnn - ٪ syymm القياسية للفواتير وnnnn - ٪ syymm للائتمان ويلاحظ فيها السنة هي السنة ، هو شهر ملم وnnnn هو كسر التسلسل وليس هناك عودة لل0
-# MarsNumRefModelDesc1=Return numero with format %syymm-nnnn for standard invoices, %syymm-nnnn for replacement invoices, %syymm-nnnn for proforma invoices and %syymm-nnnn for credit notes where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
+# TerreNumRefModelDesc1=Return numero with format %syymm-nnnn for standard and replacement invoices, %syymm-nnnn for credit notes and %syymm-nnnn for deposits where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
+# MarsNumRefModelDesc1=Return numero with format %syymm-nnnn for standard invoices, %syymm-nnnn for replacement invoices, %syymm-nnnn for credit notes and %syymm-nnnn for credit notes where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
 
 TerreNumRefModelError=وهناك مشروع قانون بدءا من دولار ويوجد بالفعل syymm لا تتفق مع هذا النموذج من التسلسل. إزالة أو تغيير تسميتها لتصبح لتفعيل هذه الوحدة.

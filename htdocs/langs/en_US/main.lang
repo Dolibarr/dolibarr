@@ -388,7 +388,7 @@ OtherInformations=Other informations
 Quantity=Quantity
 Qty=Qty
 ChangedBy=Changed by
-ReCalculate=Rebuild
+ReCalculate=Recalculate
 ResultOk=Success
 ResultKo=Failure
 Reporting=Reporting
@@ -658,6 +658,7 @@ Deductible=Deductible
 from=from
 toward=toward
 Access=Access
+HelpCopyToClipboard=Use Ctrl+C to copy to clipboard
 
 # Week day
 Monday=Monday

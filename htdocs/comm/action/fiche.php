@@ -51,13 +51,15 @@ $action=GETPOST('action','alpha');
 $cancel=GETPOST('cancel','alpha');
 $backtopage=GETPOST('backtopage','alpha');
 $contactid=GETPOST('contactid','int');
+$origin=GETPOST('origin','alpha');
+$originid=GETPOST('originid','int');
 
 // Security check
 $socid = GETPOST('socid','int');
 $id = GETPOST('id','int');
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user,'societe',$id,'&societe');
-//$result = restrictedArea($user, 'agenda', $id, 'actioncomm&societe', 'myactions&allactions', '', 'id');
+$result = restrictedArea($user, 'agenda', $id, 'actioncomm&societe', 'myactions&allactions', 'fk_soc', 'id');
+if ($user->societe_id && $socid) $result = restrictedArea($user,'societe',$socid);
 
 $error=GETPOST("error");
 $mesg='';
@@ -77,8 +79,10 @@ $hookmanager->initHooks(array('actioncard'));
 
 
 /*
- * Action creation de l'action
+ * Actions
  */
+
+// Add action
 if ($action == 'add_action')
 {
 	$error=0;
@@ -142,6 +146,8 @@ if ($action == 'add_action')
 	$actioncomm->location = GETPOST("location");
 	$actioncomm->transparency = (GETPOST("transparency")=='on'?1:0);
 	$actioncomm->label = trim(GETPOST('label'));
+	$actioncomm->fk_element = GETPOST("fk_element");
+	$actioncomm->elementtype = GETPOST("elementtype");
 	if (! GETPOST('label'))
 	{
 		if (GETPOST('actioncode') == 'AC_RDV' && $contact->getFullName($langs))
@@ -327,7 +333,8 @@ if ($action == 'update')
 		$actioncomm->fk_project  = $_POST["projectid"];
 		$actioncomm->note        = $_POST["note"];
 		$actioncomm->pnote       = $_POST["note"];
-
+		$actioncomm->fk_element	 = $_POST["fk_element"];
+		$actioncomm->elementtype = $_POST["elementtype"];
 		if (! $datef && $percentage == 100)
 		{
 			$error=$langs->trans("ErrorFieldRequired",$langs->trans("DateEnd"));
@@ -476,7 +483,7 @@ if ($action == 'create')
 
     // Full day
     print '<tr><td class="fieldrequired">'.$langs->trans("EventOnFullDay").'</td><td><input type="checkbox" id="fullday" name="fullday" '.(GETPOST('fullday')?' checked="checked"':'').'></td></tr>';
-
+	
 	// Date start
 	$datep=$actioncomm->datep;
 	if (GETPOST('datep','int',1)) $datep=dol_stringtotime(GETPOST('datep','int',1),0);
@@ -557,23 +564,23 @@ if ($action == 'create')
 	}
 	else
 	{
+		
+		$events=array();
+		$events[]=array('method' => 'getContacts', 'url' => dol_buildpath('/core/ajax/contacts.php',1), 'htmlname' => 'contactid', 'params' => array('add-customer-contact' => 'disabled'));
 		//For external user force the company to user company
 		if (!empty($user->societe_id)) {
-			print $form->select_company($user->societe_id,'socid','',1,1);
+			print $form->select_company($user->societe_id,'socid','',1,1,0,$events);
 		} else {
-			print $form->select_company('','socid','',1,1);
+			print $form->select_company('','socid','',1,1,0,$events);
 		}
 
 	}
 	print '</td></tr>';
 
-	// If company is forced, we propose contacts (may be contact is also forced)
-	if (GETPOST("contactid") > 0 || GETPOST('socid','int') > 0)
-	{
-		print '<tr><td class="nowrap">'.$langs->trans("ActionOnContact").'</td><td>';
-		$form->select_contacts(GETPOST('socid','int'),GETPOST('contactid'),'contactid',1);
-		print '</td></tr>';
-	}
+	print '<tr><td class="nowrap">'.$langs->trans("ActionOnContact").'</td><td>';
+	$form->select_contacts(GETPOST('socid','int'),GETPOST('contactid'),'contactid',1);
+	print '</td></tr>';
+	
 
 	// Project
 	if (! empty($conf->projet->enabled))
@@ -593,6 +600,11 @@ if ($action == 'create')
 		}
 		print '</td></tr>';
 	}
+	if(!empty($origin) && !empty($originid))
+	{
+		print '<input type="hidden" name="fk_element" size="10" value="'.GETPOST('originid').'">';
+		print '<input type="hidden" name="elementtype" size="10" value="'.GETPOST('origin').'">';
+	}
 
 	if (GETPOST("datep") && preg_match('/^([0-9][0-9][0-9][0-9])([0-9][0-9])([0-9][0-9])$/',GETPOST("datep"),$reg))
 	{
@@ -610,6 +622,7 @@ if ($action == 'create')
     $doleditor=new DolEditor('note',(GETPOST('note')?GETPOST('note'):$actioncomm->note),'',240,'dolibarr_notes','In',true,true,$conf->fckeditor->enabled,ROWS_7,90);
     $doleditor->Create();
     print '</td></tr>';
+    
 
     // Other attributes
     $parameters=array();
@@ -685,8 +698,7 @@ if ($id > 0)
 	// Confirmation suppression action
 	if ($action == 'delete')
 	{
-		$ret=$form->form_confirm("fiche.php?id=".$id,$langs->trans("DeleteAction"),$langs->trans("ConfirmDeleteAction"),"confirm_delete",'','',1);
-		if ($ret == 'html') print '<br>';
+		print $form->formconfirm("fiche.php?id=".$id,$langs->trans("DeleteAction"),$langs->trans("ConfirmDeleteAction"),"confirm_delete",'','',1);
 	}
 
 	if ($action == 'edit')
@@ -797,12 +809,14 @@ if ($id > 0)
 		{
 			print '<tr><td width="30%">'.$langs->trans("ActionOnCompany").'</td>';
 			print '<td>';
-			print $form->select_company($act->societe->id,'socid','',1,1);
+			$events=array();
+			$events[]=array('method' => 'getContacts', 'url' => dol_buildpath('/core/ajax/contacts.php',1), 'htmlname' => 'contactid', 'params' => array('add-customer-contact' => 'disabled'));
+			print $form->select_company($act->societe->id,'socid','',1,1,0,$events);
 			print '</td>';
 
 			// Contact
 			print '<td>'.$langs->trans("Contact").'</td><td width="30%">';
-			print $form->selectarray("contactid", (empty($act->societe->id)?array():$act->societe->contact_array()), $act->contact->id, 1);
+			$form->select_contacts($act->societe->id, $act->contact->id,'contactid',1);
 			print '</td></tr>';
 		}
 
@@ -972,7 +986,7 @@ if ($id > 0)
 			{
 				if ($act->societe->fetch($act->societe->id))
 				{
-					print "<br>".dol_print_phone($act->societe->tel);
+					print "<br>".dol_print_phone($act->societe->phone);
 				}
 			}
 			print '</td>';
@@ -1004,7 +1018,7 @@ if ($id > 0)
 			{
 				$project=new Project($db);
 				$project->fetch($act->fk_project);
-				print $project->getNomUrl(1);
+				print $project->getNomUrl(1,'',1);
 			}
 			print '</td></tr>';
 		}

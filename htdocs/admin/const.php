@@ -143,6 +143,8 @@ if ($action == 'delete')
  * View
  */
 
+$form = new Form($db);
+
 llxHeader('',$langs->trans("OtherSetup"));
 
 // Add logic to show/hide buttons
@@ -182,9 +184,6 @@ print '<td>'.$langs->trans("Comment").'</td>';
 if (! empty($conf->multicompany->enabled) && !$user->entity) print '<td>'.$langs->trans("Entity").'</td>';
 print '<td align="center">'.$langs->trans("Action").'</td>';
 print "</tr>\n";
-
-
-$form = new Form($db);
 
 
 // Line to add new record

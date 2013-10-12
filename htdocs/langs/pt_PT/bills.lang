@@ -34,7 +34,6 @@ ReplacementInvoice=Substituição da Factura
 ReplacedByInvoice=Substituído por Factura %s
 ReplacementByInvoice=Substituído por Factura
 CorrectInvoice=Correcção de Factura %s
-CorrectInvoice=Correcção de Factura %s
 CorrectionInvoice=Correcção de Factura
 UsedByInvoice=Usado para pagar factura %s
 ConsumedBy=Consumida por
@@ -411,7 +410,7 @@ PDFCrabeDescription=Modelo de factura completo (IVA,  método de pago a mostrar,
 # oursin PDF Model
 PDFOursinDescription=Modelo de factura completo (IVA, métodos de pago, entregas, nome do projecto, referencias de orçamento, logotipo...)
 # NumRef Modules
-TerreNumRefModelDesc1=Devolver o numero com formato %syymm-nnnn para facturas standard e %syymm-nnnn para notas de crédito onde yy é o ano, mm é o mês nnnn é a seuqencia numérica sem quebra e sem devolução de 0
-# MarsNumRefModelDesc1=Return numero with format %syymm-nnnn for standard invoices, %syymm-nnnn for replacement invoices, %syymm-nnnn for proforma invoices and %syymm-nnnn for credit notes where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
+# TerreNumRefModelDesc1=Return numero with format %syymm-nnnn for standard and replacement invoices, %syymm-nnnn for credit notes and %syymm-nnnn for deposits where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
+# MarsNumRefModelDesc1=Return numero with format %syymm-nnnn for standard invoices, %syymm-nnnn for replacement invoices, %syymm-nnnn for credit notes and %syymm-nnnn for credit notes where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
 
 TerreNumRefModelError=Uma conta a começar com $syymm já existe e não é compatível com este modelo de sequencia. Remove-o ou renomeia para activar este modulo

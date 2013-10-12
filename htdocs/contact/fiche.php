@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
@@ -130,30 +130,27 @@ if (empty($reshook))
             $error=$object->error; $errors=$object->errors;
         }
     }
-	
 
-        /*
-         * Confirmation desactivation
-         */
-        if ($action == 'disable')
-        {
-            $object->fetch($id);
-			$object->setstatus(0);
-			header("Location: ".$_SERVER['PHP_SELF'].'?id='.$id);
-			exit;
-        }
 
-        /*
-         * Confirmation activation
-         */
-        if ($action == 'enable')
-        {
-			$object->fetch($id);
-			$object->setstatus(1);
-			header("Location: ".$_SERVER['PHP_SELF'].'?id='.$id);
-			exit;
-			
-        }
+    // Confirmation desactivation
+    if ($action == 'disable')
+    {
+    	$object->fetch($id);
+    	$object->setstatus(0);
+    	header("Location: ".$_SERVER['PHP_SELF'].'?id='.$id);
+    	exit;
+    }
+
+    // Confirmation activation
+    if ($action == 'enable')
+    {
+    	$object->fetch($id);
+    	$object->setstatus(1);
+    	header("Location: ".$_SERVER['PHP_SELF'].'?id='.$id);
+    	exit;
+
+    }
+
     // Add contact
     if ($action == 'add' && $user->rights->societe->contact->creer)
     {
@@ -221,7 +218,7 @@ if (empty($reshook))
 
     if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->societe->contact->supprimer)
     {
-        $result=$object->fetch($_GET["id"]);
+        $result=$object->fetch($id);
 
         $object->old_lastname      = $_POST["old_lastname"];
         $object->old_firstname = $_POST["old_firstname"];
@@ -248,7 +245,9 @@ if (empty($reshook))
 
         if (! $error)
         {
-            $object->fetch($_POST["contactid"]);
+        	$contactid=GETPOST("contactid",'int');
+
+            $object->fetch($contactid);
 
             $object->oldcopy=dol_clone($object);
 
@@ -281,7 +280,7 @@ if (empty($reshook))
             // Fill array 'array_options' with data from add form
 			$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
 
-            $result = $object->update($_POST["contactid"], $user);
+            $result = $object->update($contactid, $user);
 
             if ($result > 0)
             {
@@ -343,8 +342,7 @@ else
     {
         if ($action == 'delete')
         {
-            $ret=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$_GET["id"],$langs->trans("DeleteContact"),$langs->trans("ConfirmDeleteContact"),"confirm_delete",'',0,1);
-            if ($ret == 'html') print '<br>';
+            print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$id,$langs->trans("DeleteContact"),$langs->trans("ConfirmDeleteContact"),"confirm_delete",'',0,1);
         }
     }
 
@@ -499,7 +497,7 @@ else
             }
 
             // Phone / Fax
-            if (($objsoc->typent_code == 'TE_PRIVATE' || ! empty($conf->global->CONTACT_USE_COMPANY_ADDRESS)) && dol_strlen(trim($object->phone_pro)) == 0) $object->phone_pro = $objsoc->tel;	// Predefined with third party
+            if (($objsoc->typent_code == 'TE_PRIVATE' || ! empty($conf->global->CONTACT_USE_COMPANY_ADDRESS)) && dol_strlen(trim($object->phone_pro)) == 0) $object->phone_pro = $objsoc->phone;	// Predefined with third party
             print '<tr><td>'.$langs->trans("PhonePro").'</td><td><input name="phone_pro" id="phone_pro" type="text" size="18" maxlength="80" value="'.(isset($_POST["phone_pro"])?$_POST["phone_pro"]:$object->phone_pro).'"></td>';
             print '<td>'.$langs->trans("PhonePerso").'</td><td><input name="phone_perso" id="phone_perso" type="text" size="18" maxlength="80" value="'.(isset($_POST["phone_perso"])?$_POST["phone_perso"]:$object->phone_perso).'"></td></tr>';
 
@@ -735,11 +733,11 @@ else
             print '<textarea name="note" cols="70" rows="'.ROWS_3.'">';
             print isset($_POST["note"])?$_POST["note"]:$object->note;
             print '</textarea></td></tr>';
-            
+
             // Statut
             print '<tr><td valign="top">'.$langs->trans("Status").'</td>';
             print '<td>';
-            print $object->getLibStatutcontact();
+            print $object->getLibStatut(5);
             print '</td></tr>';
 
             // Other attributes
@@ -839,8 +837,8 @@ else
                 if ($object->socid > 0) $text.=$langs->trans("UserWillBeExternalUser");
                 else $text.=$langs->trans("UserWillBeInternalUser");
             }
-            $ret=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$object->id,$langs->trans("CreateDolibarrLogin"),$text,"confirm_create_user",$formquestion,'yes');
-            if ($ret == 'html') print '<br>';
+            print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id,$langs->trans("CreateDolibarrLogin"),$text,"confirm_create_user",$formquestion,'yes');
+
         }
 
         print '<table class="border" width="100%">';
@@ -945,11 +943,11 @@ else
         print '<tr><td valign="top">'.$langs->trans("Note").'</td><td colspan="3">';
         print nl2br($object->note);
         print '</td></tr>';
-		
-	 // Statut
+
+	 	// Statut
 		print '<tr><td valign="top">'.$langs->trans("Status").'</td>';
 		print '<td>';
-		print $object->getLibStatutcontact();
+		print $object->getLibStatut(5);
 		print '</td>';
 		print '</tr>'."\n";
         // Other attributes

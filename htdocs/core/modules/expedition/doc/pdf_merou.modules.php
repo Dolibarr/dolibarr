@@ -172,10 +172,10 @@ class pdf_merou extends ModelePdfExpedition
 				if (method_exists($pdf,'AliasNbPages')) $pdf->AliasNbPages();
 
 				$pdf->SetTitle($outputlangs->convToOutputCharset($object->ref));
-				$pdf->SetSubject($outputlangs->transnoentities("Sending"));
+				$pdf->SetSubject($outputlangs->transnoentities("Shipment"));
 				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
 				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
-				$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("Sending"));
+				$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("Shipment"));
 				if (! empty($conf->global->MAIN_DISABLE_PDF_COMPRESSION)) $pdf->SetCompression(false);
 
 				$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite);   // Left, Top, Right
@@ -493,31 +493,11 @@ class pdf_merou extends ModelePdfExpedition
 		$pdf->MultiCell(0, 3, $outputlangs->transnoentities("RefSending").': '.$outputlangs->convToOutputCharset($object->ref), '', 'R');
 		//$this->Code39($Xoff+43, $Yoff+1, $object->ref,$ext = true, $cks = false, $w = 0.4, $h = 4, $wide = true);
 
-		// Add list of linked elements
-		// TODO possibility to use with other elements (business module,...)
-	    //$object->load_object_linked();
-
 		$origin 	= $object->origin;
 		$origin_id 	= $object->origin_id;
 
-	    // TODO move to external function
-		if ($conf->$origin->enabled)
-		{
-			$outputlangs->load('orders');
-
-			$classname = ucfirst($origin);
-			$linkedobject = new $classname($this->db);
-			$result=$linkedobject->fetch($origin_id);
-			if ($result >= 0)
-			{
-				$Yoff = $Yoff+4;
-				$pdf->SetXY($Xoff,$Yoff);
-				$pdf->SetFont('','', $default_font_size - 2);
-				$text=$linkedobject->ref;
-				if ($linkedobject->ref_client) $text.=' ('.$linkedobject->ref_client.')';
-				$pdf->MultiCell(0, 3, $outputlangs->transnoentities("RefOrder")." : ".$outputlangs->transnoentities($text), '', 'R');
-			}
-		}
+		// Add list of linked elements
+		$posy = pdf_writeLinkedObjects($pdf, $object, $outputlangs, $posx, $posy, 100, 3, 'R', $default_font_size, $hookmanager);
 
 		//$this->Code39($Xoff+43, $Yoff+1, $object->commande->ref,$ext = true, $cks = false, $w = 0.4, $h = 4, $wide = true);
 		//Definition Emplacement du bloc Societe

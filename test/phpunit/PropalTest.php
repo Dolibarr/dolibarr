@@ -178,7 +178,7 @@ class PropalTest extends PHPUnit_Framework_TestCase
     	$langs=$this->savlangs;
     	$db=$this->savdb;
 
-    	$result=$localobject->addline($localobject->id, 'Added line', 10, 2, 19.6);
+    	$result=$localobject->addline('Added line', 10, 2, 19.6);
 
     	$this->assertLessThan($result, 0);
     	print __METHOD__." id=".$localobject->id." result=".$result."\n";

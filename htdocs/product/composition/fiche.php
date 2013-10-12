@@ -157,7 +157,6 @@ $productstatic = new Product($db);
 $form = new Form($db);
 
 llxHeader("","",$langs->trans("CardProduct".$product->type));
-$form = new Form($db);
 
 
 dol_htmloutput_errors($mesg);

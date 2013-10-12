@@ -130,8 +130,8 @@ if (($_GET["id"] || $_GET["ref"]) && $action != 'edit')
 	// Confirmation de la suppression
 	if ($action == 'delete')
 	{
-		$ret=$form->form_confirm($_SERVER["PHP_SELF"].'?id='.$account->id,$langs->trans("DeleteAccount"),$langs->trans("ConfirmDeleteAccount"),"confirm_delete");
-		if ($ret == 'html') print '<br>';
+		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$account->id,$langs->trans("DeleteAccount"),$langs->trans("ConfirmDeleteAccount"),"confirm_delete");
+		
 	}
 
 

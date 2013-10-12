@@ -1,18 +1,18 @@
 # Dolibarr language file - Source file is en_US - admin
 CHARSET=UTF-8
-# Foundation=Foundation
+Foundation=Sihtasutus
 Version=Versioon
-VersionProgram=Version programm
-VersionLastInstall=Version esialgne install
-VersionLastUpgrade=Version viimane upgrade
+VersionProgram=Programmi versioon
+VersionLastInstall=Praeguse paigalduse versioon
+VersionLastUpgrade=Viimase uuenduse versioon
 VersionExperimental=Eksperimentaalne
-VersionDevelopment=Areng
+VersionDevelopment=Arendusversioon
 VersionUnknown=Tundmatu
 VersionRecommanded=Soovitatav
-SessionId=Session ID
-SessionSaveHandler=Handler päästa istungid
-SessionSavePath=Storage istungil lokaliseerimine
-PurgeSessions=Purge istungid
+SessionId=Sessioni ID
+SessionSaveHandler=Sessioonide haldus
+SessionSavePath=Salvestuse sesiooni lokaliseerimine
+PurgeSessions=Tühjenda sesioonid
 # ConfirmPurgeSessions=Do you really want to purge all sessions ? This will disconnect every user (except yourself).
 NoSessionListWithThisHandler=Salvesta sessiooni handler konfigureeritud PHP ei võimalda loetleda kõik töötab istungid.
 LockNewSessions=Lukustada uusi ühendusi

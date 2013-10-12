@@ -24,11 +24,12 @@
  *	\brief      Class file to manage Dolibarr database access for a Sqlite database
  */
 
+require_once DOL_DOCUMENT_ROOT .'/core/db/DoliDB.class.php';
 
 /**
  *	Class to manage Dolibarr database access for a Sqlite database
  */
-class DoliDBSqlite
+class DoliDBSqlite extends DoliDB
 {
     //! Database handler
     var $db;
@@ -685,7 +686,7 @@ class DoliDBSqlite
 	 */
     function escape($stringtoencode)
     {
-        return PDO::quote($stringtoencode);
+        return $this->db->quote($stringtoencode);
     }
 
     /**
@@ -856,7 +857,7 @@ class DoliDBSqlite
      */
     function last_insert_id($tab,$fieldid='rowid')
     {
-        return PDO::lastInsertId();
+        return $this->db->lastInsertId();
     }
 
     /**

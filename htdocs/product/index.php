@@ -25,6 +25,7 @@
 
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 $type=isset($_GET["type"])?$_GET["type"]:(isset($_POST["type"])?$_POST["type"]:'');
 if ($type =='' && !$user->rights->produit->lire) $type='1';	// Force global page on service page only
@@ -258,10 +259,128 @@ else
 	dol_print_error($db);
 }
 
+
+// TODO Move this into a page that should be available into menu "accountancy - report - turnover - per quarter"
+// Also method used for counting must provide the 2 possible methods like done by all other reports into menu "accountancy - report - turnover": 
+// "commitment engagment" method and "cash accounting" method
+if ($conf->global->MAIN_FEATURES_LEVEL)
+{
+	if (! empty($conf->product->enabled)) activitytrim(0);
+	if (! empty($conf->service->enabled)) activitytrim(1);
+}
+
+
 //print '</td></tr></table>';
 print '</div></div></div>';
 
 llxFooter();
 
 $db->close();
+
+
+
+
+function activitytrim($product_type)
+{
+	global $conf,$langs,$db;
+	
+	// on affiche les 3 dernières années 
+	$yearofbegindate=date('Y',dol_time_plus_duree(time(), -3, "y"));
+
+	// ventilation par trimestre
+	$sql = "SELECT DATE_FORMAT(p.datep,'%Y') as annee, DATE_FORMAT(p.datep,'%m') as mois, SUM(fd.total_ht) as Mnttot";
+	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."facturedet as fd";
+	$sql.= " , ".MAIN_DB_PREFIX."paiement as p,".MAIN_DB_PREFIX."paiement_facture as pf";
+	$sql.= " WHERE f.fk_soc = s.rowid";
+	$sql.= " AND f.rowid = fd.fk_facture";
+	$sql.= " AND pf.fk_facture = f.rowid";
+	$sql.= " AND pf.fk_paiement= p.rowid";
+	$sql.= " AND fd.product_type=".$product_type;
+	$sql.= " AND s.entity = ".$conf->entity;
+	$sql.= " AND p.datep >= '".$db->idate(dol_get_first_day($yearofbegindate),1)."'";
+	$sql.= " GROUP BY annee, mois ";
+	$sql.= " ORDER BY annee, mois ";
+
+	$result = $db->query($sql);
+	if ($result)
+	{
+		$tmpyear=$beginyear;
+		$trim1=0;
+		$trim2=0;
+		$trim3=0;
+		$trim4=0;
+		$lgn = 0;
+		$num = $db->num_rows($result);
+		
+		if ($num > 0 )
+		{
+			print '<br>';
+			print '<table class="noborder" width="75%">';
+
+			if ($product_type==0)
+				print '<tr class="liste_titre"><td  align=left>'.$langs->trans("ProductSellByQuarterHT").'</td>';
+			else
+				print '<tr class="liste_titre"><td  align=left>'.$langs->trans("ServiceSellByQuarterHT").'</td>';
+			print '<td align=right>'.$langs->trans("Quarter1").'</td>';
+			print '<td align=right>'.$langs->trans("Quarter2").'</td>';
+			print '<td align=right>'.$langs->trans("Quarter3").'</td>';
+			print '<td align=right>'.$langs->trans("Quarter4").'</td>';
+			print '<td align=right>'.$langs->trans("Total").'</td>';
+			print '</tr>';
+		}
+		$i = 0;
+
+		while ($i < $num)
+		{
+			$objp = $db->fetch_object($result);
+			if ($tmpyear != $objp->annee)
+			{
+				if ($trim1+$trim2+$trim3+$trim4 > 0)
+				{
+					print '<tr ><td align=left>'.$tmpyear.'</td>';
+					print '<td align=right>'.price($trim1).'</td>';
+					print '<td align=right>'.price($trim2).'</td>';
+					print '<td align=right>'.price($trim3).'</td>';
+					print '<td align=right>'.price($trim4).'</td>';
+					print '<td align=right>'.price($trim1+$trim2+$trim3+$trim4).'</td>';
+					print '</tr>';
+					$lgn++;
+				}
+				// on passe à l'année suivante
+				$tmpyear = $objp->annee;
+				$trim1=0;
+				$trim2=0;
+				$trim3=0;
+				$trim4=0;
+			}
+			
+			if ($objp->mois == "01" || $objp->mois == "02" || $objp->mois == "03")
+				$trim1 += $objp->Mnttot;
+
+			if ($objp->mois == "04" || $objp->mois == "05" || $objp->mois == "06")
+				$trim2 += $objp->Mnttot;
+
+			if ($objp->mois == "07" || $objp->mois == "08" || $objp->mois == "09")
+				$trim3 += $objp->Mnttot;
+
+			if ($objp->mois == "10" || $objp->mois == "11" || $objp->mois == "12")
+				$trim4 += $objp->Mnttot;
+
+			$i++;
+		}
+		if ($trim1+$trim2+$trim3+$trim4 > 0)
+		{
+			print '<tr ><td align=left>'.$tmpyear.'</td>';
+			print '<td align=right>'.price($trim1).'</td>';
+			print '<td align=right>'.price($trim2).'</td>';
+			print '<td align=right>'.price($trim3).'</td>';
+			print '<td align=right>'.price($trim4).'</td>';
+			print '<td align=right>'.price($trim1+$trim2+$trim3+$trim4).'</td>';
+			print '</tr>';
+		}
+		if ($num > 0 )
+			print '</table>';
+	}
+}
+
 ?>

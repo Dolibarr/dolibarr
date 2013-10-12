@@ -137,55 +137,44 @@ else
    	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as pfp ON p.rowid = pfp.fk_product";
 // multilang
 	if ($conf->global->MAIN_MULTILANGS) // si l'option est active
-    {
+	{
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_lang as pl ON pl.fk_product = p.rowid AND pl.lang = '".$langs->getDefaultLang() ."'";
 	}
-    $sql.= ' WHERE p.entity IN ('.getEntity('product', 1).')';
-    if ($sall)
-    {
-        // For natural search
-        $scrit = explode(' ', $sall);
+	$sql.= ' WHERE p.entity IN ('.getEntity('product', 1).')';
+	if ($sall) {
+		// For natural search
+		$params = array('p.ref', 'p.label', 'p.description', 'p.note');
 		// multilang
 		if ($conf->global->MAIN_MULTILANGS) // si l'option est active
-	    {
-			foreach ($scrit as $crit) {
-		        $sql.= " AND (p.ref LIKE '%".$db->escape($crit)."%' OR p.label LIKE '%".$db->escape($crit)."%' OR p.description LIKE '%".$db->escape($crit)."%' OR p.note LIKE '%".$db->escape($crit)."%'  OR pl.description LIKE '%".$db->escape($sall)."%' OR pl.note LIKE '%".$db->escape($sall)."%'";
-		        if (! empty($conf->barcode->enabled))
-		        {
-		            $sql.= " OR p.barcode LIKE '%".$db->escape($crit)."%'";
-		        }
-		        $sql.= ')';
-		    }
-		}
-		else
 		{
-		    foreach ($scrit as $crit) {
-		        $sql.= " AND (p.ref LIKE '%".$db->escape($crit)."%' OR p.label LIKE '%".$db->escape($crit)."%' OR p.description LIKE '%".$db->escape($crit)."%' OR p.note LIKE '%".$db->escape($crit)."%'";
-		        if (! empty($conf->barcode->enabled))
-		        {
-		            $sql.= " OR p.barcode LIKE '%".$db->escape($crit)."%'";
-		        }
-		        $sql.= ')';
-		    }
+			$params[] = 'pl.description';
+			$params[] = 'pl.note';
 		}
-    }
+		if (! empty($conf->barcode->enabled)) {
+			$params[] = 'p.barcode';
+		}
+		$sql .= natural_search($params, $sall);
+	}
     // if the type is not 1, we show all products (type = 0,2,3)
     if (dol_strlen($type))
     {
     	if ($type == 1) $sql.= " AND p.fk_product_type = '1'";
     	else $sql.= " AND p.fk_product_type <> '1'";
     }
-    if ($sref)     $sql.= " AND p.ref LIKE '%".$sref."%'";
+	if ($sref) {
+		$sql .= natural_search('p.ref', $sref);
+	}
     if ($sbarcode) $sql.= " AND p.barcode LIKE '%".$sbarcode."%'";
     if ($snom)
 	{
+		$params = array('p.label');
 		// multilang
 		if ($conf->global->MAIN_MULTILANGS) // si l'option est active
-	    {
-			$sql.= " AND (p.label LIKE '%".$db->escape($snom)."%' OR (pl.label IS NOT null AND pl.label LIKE '%".$db->escape($snom)."%'))";
+		{
+			$params[] = 'pl.label';
 		}
-		else $sql.= " AND p.label LIKE '%".$db->escape($snom)."%'";
-}
+		$sql .= natural_search($params, $snom);
+	}
     if (isset($tosell) && dol_strlen($tosell) > 0) $sql.= " AND p.tosell = ".$db->escape($tosell);
     if (isset($tobuy) && dol_strlen($tobuy) > 0)   $sql.= " AND p.tobuy = ".$db->escape($tobuy);
     if (dol_strlen($canvas) > 0)                    $sql.= " AND p.canvas = '".$db->escape($canvas)."'";
@@ -303,7 +292,9 @@ else
     		print_liste_field_titre($langs->trans("DateModification"), $_SERVER["PHP_SELF"], "p.tms",$param,"",'align="center"',$sortfield,$sortorder);
     		if (! empty($conf->service->enabled) && $type != 0) print_liste_field_titre($langs->trans("Duration"), $_SERVER["PHP_SELF"], "p.duration",$param,"",'align="center"',$sortfield,$sortorder);
     		if (empty($conf->global->PRODUIT_MULTIPRICES)) print_liste_field_titre($langs->trans("SellingPrice"), $_SERVER["PHP_SELF"], "p.price",$param,"",'align="right"',$sortfield,$sortorder);
-    		print '<td class="liste_titre" align="right">'.$langs->trans("BuyingPriceMinShort").'</td>';
+    		if ($user->rights->produit->creer) {
+    			print '<td class="liste_titre" align="right">'.$langs->trans("BuyingPriceMinShort").'</td>';
+    		}
     		if (! empty($conf->stock->enabled) && $user->rights->stock->lire && $type != 1) print '<td class="liste_titre" align="right">'.$langs->trans("DesiredStock").'</td>';
     		if (! empty($conf->stock->enabled) && $user->rights->stock->lire && $type != 1) print '<td class="liste_titre" align="right">'.$langs->trans("PhysicalStock").'</td>';
     		print_liste_field_titre($langs->trans("Sell"), $_SERVER["PHP_SELF"], "p.tosell",$param,"",'align="right"',$sortfield,$sortorder);
@@ -345,9 +336,11 @@ else
             }
 
     		// Minimum buying Price
-    		print '<td class="liste_titre">';
-    		print '&nbsp;';
-    		print '</td>';
+    		if ($user->rights->produit->creer) {
+    			print '<td class="liste_titre">';
+    			print '&nbsp;';
+    			print '</td>';
+    		}
 
     		// Stock
     		if (! empty($conf->stock->enabled) && $user->rights->stock->lire && $type != 1)
@@ -442,21 +435,23 @@ else
     			}
 
     			// Better buy price
-                print  '<td align="right">';
-                if ($objp->minsellprice != '')
-                {
-                    //print price($objp->minsellprice).' '.$langs->trans("HT");
-        			if ($product_fourn->find_min_price_product_fournisseur($objp->rowid) > 0)
+    			if ($user->rights->produit->creer) {
+        			print  '<td align="right">';
+        			if ($objp->minsellprice != '')
         			{
-        			    if ($product_fourn->product_fourn_price_id > 0)
-        			    {
-        			        $htmltext=$product_fourn->display_price_product_fournisseur();
-                            if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->lire) print $form->textwithpicto(price($product_fourn->fourn_unitprice).' '.$langs->trans("HT"),$htmltext);
-                            else print price($product_fourn->fourn_unitprice).' '.$langs->trans("HT");
-        			    }
+    					//print price($objp->minsellprice).' '.$langs->trans("HT");
+    					if ($product_fourn->find_min_price_product_fournisseur($objp->rowid) > 0)
+    					{
+    						if ($product_fourn->product_fourn_price_id > 0)
+    						{
+    							$htmltext=$product_fourn->display_price_product_fournisseur();
+    							if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->lire) print $form->textwithpicto(price($product_fourn->fourn_unitprice).' '.$langs->trans("HT"),$htmltext);
+    							else print price($product_fourn->fourn_unitprice).' '.$langs->trans("HT");
+    						}
+    					}
         			}
-                }
-                print '</td>';
+        			print '</td>';
+    			}
 
     			// Show stock
     			if (! empty($conf->stock->enabled) && $user->rights->stock->lire && $type != 1)

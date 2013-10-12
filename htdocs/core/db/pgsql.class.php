@@ -27,11 +27,12 @@
  *	\brief      Fichier de la classe permettant de gerer une base pgsql
  */
 
+require_once DOL_DOCUMENT_ROOT .'/core/db/DoliDB.class.php';
 
 /**
  *	Class to drive a Postgresql database for Dolibarr
  */
-class DoliDBPgsql
+class DoliDBPgsql extends DoliDB
 {
     //! Database handler
     var $db;
@@ -208,7 +209,7 @@ class DoliDBPgsql
     			}
 
     			// tinyint type conversion
-    			$line=str_replace('tinyint','smallint',$line);
+    			$line=preg_replace('/tinyint\(?[0-9]*\)?/','smallint',$line);
 
     			// nuke unsigned
     			$line=preg_replace('/(int\w+|smallint)\s+unsigned/i','\\1',$line);

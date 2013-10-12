@@ -1123,14 +1123,11 @@ else if ($action == 'builddoc')	// In get or post
 {
 	/*
 	 * Generate order document
-	* define into /core/modules/commande/modules_commande.php
-	*/
+	 * define into /core/modules/commande/modules_commande.php
+	 */
 
-	// Sauvegarde le dernier modele choisi pour generer un document
-	if ($_REQUEST['model'])
-	{
-		$object->setDocModel($user, $_REQUEST['model']);
-	}
+	// Save last template used to generate document
+	if (GETPOST('model')) $object->setDocModel($user, GETPOST('model','alpha'));
 
 	// Define output language
 	$outputlangs = $langs;
@@ -1147,11 +1144,6 @@ else if ($action == 'builddoc')	// In get or post
 	if ($result <= 0)
 	{
 		dol_print_error($db,$result);
-		exit;
-	}
-	else
-	{
-		header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.(empty($conf->global->MAIN_JUMP_TAG)?'':'#builddoc'));
 		exit;
 	}
 }
@@ -1521,6 +1513,10 @@ if ($action == 'create' && $user->rights->commande->creer)
 			$objectsrc->fetch($originid);
 			if (empty($objectsrc->lines) && method_exists($objectsrc,'fetch_lines'))  $objectsrc->fetch_lines();
 			$objectsrc->fetch_thirdparty();
+			
+			//Replicate extrafields
+			$objectsrc->fetch_optionals($originid);
+			$object->array_options=$objectsrc->array_options;
 
 			$projectid          = (!empty($objectsrc->fk_project)?$objectsrc->fk_project:'');
 			$ref_client         = (!empty($objectsrc->ref_client)?$objectsrc->ref_client:'');
@@ -2390,13 +2386,16 @@ else
 				{
 					print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=validate">'.$langs->trans('Validate').'</a></div>';
 				}
-
 				// Edit
 				if ($object->statut == 1 && $user->rights->commande->creer)
 				{
 					print '<div class="inline-block divButAction"><a class="butAction" href="fiche.php?id='.$object->id.'&amp;action=modif">'.$langs->trans('Modify').'</a></div>';
 				}
-
+				// Create event
+				if ($conf->agenda->enabled && ! empty($conf->global->MAIN_ADD_EVENT_ON_ELEMENT_CARD))	// Add hidden condition because this is not a "workflow" action so should appears somewhere else on page.
+				{
+					print '<a class="butAction" href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid.'">'.$langs->trans("AddAction").'</a>';
+				}
 				// Send
 				if ($object->statut > 0)
 				{

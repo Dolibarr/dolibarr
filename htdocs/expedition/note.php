@@ -88,7 +88,7 @@ if ($id > 0 || ! empty($ref))
 	$soc->fetch($object->socid);
 
 	$head=shipping_prepare_head($object);
-    dol_fiche_head($head, 'note', $langs->trans("Sending"), 0, 'sending');
+    dol_fiche_head($head, 'note', $langs->trans("Shipment"), 0, 'sending');
 
 	print '<table class="border" width="100%">';
 

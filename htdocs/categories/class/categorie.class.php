@@ -5,6 +5,8 @@
  * Copyright (C) 2006-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2006-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2007      Patrick Raguin	  	<patrick.raguin@gmail.com>
+ * Copyright (C) 2013      Juanjo Menent      	<jmenent@2byte.es>
+ * Copyright (C) 2013      Philippe Grand	  	<philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -420,12 +422,12 @@ class Categorie
 					{
 						$objparent = $this->db->fetch_object($resql);
 
-						if (!empty($objparent->fk_parent)) 
+						if (!empty($objparent->fk_parent))
 						{
 							$cat = new Categorie($this->db);
 							$cat->id=$objparent->fk_parent;
 							$result=$cat->add_type($obj, $type);
-							if ($result < 0) 
+							if ($result < 0)
 							{
 								$this->error=$cat->error;
 								$error++;
@@ -439,7 +441,7 @@ class Categorie
 					$this->error=$this->db->lasterror();
 				}
 
-				if ($error) 
+				if ($error)
 				{
 					return -1;
 				}
@@ -483,7 +485,7 @@ class Categorie
 	function del_type($obj,$type)
 	{
 		global $user,$langs,$conf;
-		
+
 		$error=0;
 
 		if ($type == 'company')     $type='societe';
@@ -506,7 +508,7 @@ class Categorie
 			include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
 			$interface=new Interfaces($this->db);
 			$result=$interface->run_triggers('CATEGORY_UNLINK',$this,$user,$langs,$conf);
-			if ($result < 0) { $error++; $this->errors=$interface->errors; $this->error=$this->error; }
+			if ($result < 0) { $error++; $this->errors=$interface->errors; }
 			// Fin appel triggers
 
 			if (! $error) return 1;
@@ -610,7 +612,7 @@ class Categorie
 		$sql = "SELECT fk_parent as id_parent, rowid as id_son";
 		$sql.= " FROM ".MAIN_DB_PREFIX."categorie";
 		$sql.= " WHERE fk_parent != 0";
-		$sql.= " AND entity = ".$conf->entity;
+		$sql.= " AND entity IN (".getEntity('category',1).")";
 
 		dol_syslog(get_class($this)."::load_motherof sql=".$sql);
 		$resql = $this->db->query($sql);

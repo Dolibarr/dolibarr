@@ -318,6 +318,18 @@ class doc_generic_odt extends ModeleThirdPartyDoc
                         // setVars failed, probably because key not found
 					}
 				}
+				
+				// Replace labels translated
+				$tmparray=$outputlangs->get_translations_for_substitutions();
+				foreach($tmparray as $key=>$value)
+				{
+					try {
+						$odfHandler->setVars($key, $value, true, 'UTF-8');
+					}
+					catch(OdfException $e)
+					{
+					}
+				}
 
                                 // Call the beforeODTSave hook
 				$parameters=array('odfHandler'=>&$odfHandler,'file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs);

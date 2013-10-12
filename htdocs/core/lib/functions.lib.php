@@ -8,6 +8,7 @@
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2008      Raphael Bertrand (Resultic)       <raphael.bertrand@resultic.fr>
  * Copyright (C) 2010-2011 Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2013      Cédric Salvador      <csalvador@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -2465,7 +2466,7 @@ function load_fiche_titre($titre, $mesg='', $picto='title.png', $pictoisfullpath
  *	Print a title with navigation controls for pagination
  *
  *	@param	string	$titre				Title to show (required)
- *	@param	string	$page				Numero of page (required)
+ *	@param	string	$page				Numero of page to show in navigation links (required)
  *	@param	string	$file				Url of page (required)
  *	@param	string	$options         	parametres complementaires lien ('' par defaut)
  *	@param	string	$sortfield       	champ de tri ('' par defaut)
@@ -2497,18 +2498,26 @@ function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $so
 	print "<!-- Begin title '".$titre."' -->\n";
 	print '<table width="100%" border="0" class="notopnoleftnoright" style="margin-bottom: 2px;"><tr>';
 
-	$pagelist = '';
-
 	// Left
+	if ($picto && $titre) print '<td class="nobordernopadding hideonsmartphone" width="40" align="left" valign="middle">'.img_picto('', $picto, '', $pictoisfullpath).'</td>';
+	print '<td class="nobordernopadding"><div class="titre">'.$titre.'</div></td>';
+
+	// Center
+	if ($center)
+	{
+		print '<td class="nobordernopadding" align="left" valign="middle">'.$center.'</td>';
+	}
+
+	// Right
+	print '<td class="nobordernopadding" align="right" valign="middle">';
+	if ($sortfield) $options .= "&amp;sortfield=".$sortfield;
+	if ($sortorder) $options .= "&amp;sortorder=".$sortorder;
+	// Show navigation bar
+	$pagelist = '';
 	if ($page > 0 || $num > $conf->liste_limit)
 	{
 		if ($totalnboflines)
 		{
-			if ($picto && $titre) print '<td class="nobordernopadding hideonsmartphone" width="40" align="left" valign="middle">'.img_picto('',$picto, '', $pictoisfullpath).'</td>';
-			print '<td class="nobordernopadding">';
-			print '<div class="titre">'.$titre.'</div>';
-			print '</td>';
-
 			$maxnbofpage=10;
 
 			$nbpages=ceil($totalnboflines/$conf->liste_limit);
@@ -2522,7 +2531,7 @@ function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $so
 			}
 			do
 			{
-				if($cpt==$page)
+				if ($cpt==$page)
 				{
 					$pagelist.= ' <u>'.($page+1).'</u>';
 				}
@@ -2541,30 +2550,9 @@ function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $so
 		}
 		else
 		{
-			if ($picto && $titre) print '<td class="nobordernopadding hideonsmartphone" width="40" align="left" valign="middle">'.img_picto('',$picto, '', $pictoisfullpath).'</td>';
-			print '<td class="nobordernopadding">';
-			print '<div class="titre">'.$titre.'</div>';
 			$pagelist.= $langs->trans('Page').' '.($page+1);
-			print '</td>';
 		}
 	}
-	else
-	{
-		if ($picto && $titre) print '<td class="nobordernopadding hideonsmartphone" width="40" align="left" valign="middle">'.img_picto('',$picto, '', $pictoisfullpath).'</td>';
-		print '<td class="nobordernopadding"><div class="titre">'.$titre.'</div></td>';
-	}
-
-	// Center
-	if ($center)
-	{
-		print '<td class="nobordernopadding" align="left" valign="middle">'.$center.'</td>';
-	}
-
-	// Right
-	print '<td class="nobordernopadding" align="right" valign="middle">';
-	if ($sortfield) $options .= "&amp;sortfield=".$sortfield;
-	if ($sortorder) $options .= "&amp;sortorder=".$sortorder;
-	// Affichage des fleches de navigation
 	print_fleche_navigation($page,$file,$options,$nextpage,$pagelist);
 	print '</td>';
 
@@ -2881,12 +2869,15 @@ function get_localtax($tva, $local, $thirdparty_buyer="", $thirdparty_seller="")
 
 /**
  *  Get type and rate of localtaxes for a particular vat rate/country fo thirdparty
+ *  TODO
+ *  This function is called to retrieve type for building PDF. Such call of function must be removed.
+ *  Instead this function must be called when adding a line to get (array of localtax and type) and
+ *  provide it to the function calcul_price_total.
  *
  *  @param		real	$vatrate			VAT Rate
- *  @param		int		$local              Number of localtax (1 or 2, or 0 to return 1+2)
- *  @param		int		$thirdparty         company object
- *  @return		array    	  				array(Type of local tax (1 to 7 / 0 if not found), rate or amount of localtax)
- *  @deprecated	TODO We should remove this function by storing rate and type into detail lines.
+ *  @param		int		$local              Number of localtax (1 or 2, or 0 to return 1 & 2)
+ *  @param		int		$thirdparty         Company object
+ *  @return		array    	  				array(localtax_type1(1-6 / 0 if not found), rate of localtax1, ...)
  */
 function getLocalTaxesFromRate($vatrate, $local, $thirdparty)
 {
@@ -2895,7 +2886,7 @@ function getLocalTaxesFromRate($vatrate, $local, $thirdparty)
 	dol_syslog("getLocalTaxesFromRate vatrate=".$vatrate." local=".$local." thirdparty id=".(is_object($thirdparty)?$thirdparty->id:''));
 
 	// Search local taxes
-	$sql  = "SELECT t.localtax1, t.localtax1_type, t.localtax2, t.localtax2_type,t.accountancy_code_sell,t.accountancy_code_buy";
+	$sql  = "SELECT t.localtax1, t.localtax1_type, t.localtax2, t.localtax2_type, t.accountancy_code_sell, t.accountancy_code_buy";
 	$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_pays as p";
 	$sql .= " WHERE t.fk_pays = p.rowid AND p.code = '".$thirdparty->country_code."'";
 	$sql .= " AND t.taux = ".$vatrate." AND t.active = 1";
@@ -2917,17 +2908,15 @@ function getLocalTaxesFromRate($vatrate, $local, $thirdparty)
  *
  *  @param	int			$idprod          	Id of product or 0 if not a predefined product
  *  @param  Societe		$thirdparty_seller  Thirdparty with a ->country_code defined (FR, US, IT, ...)
- *	@param	int			$idprodfournprice	Id product_fournisseur_price (for supplier order/invoice)
+ *	@param	int			$idprodfournprice	Id product_fournisseur_price (for "supplier" order/invoice)
  *  @return int					         	<0 if KO, Vat rate if OK
  *  @see get_product_localtax_for_country
  */
 function get_product_vat_for_country($idprod, $thirdparty_seller, $idprodfournprice=0)
 {
-	global $db,$mysoc;
+	global $db,$conf,$mysoc;
 
-	if (! class_exists('Product')) {
-		require DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
-	}
+	require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
 
 	$ret=0;
 	$found=0;
@@ -2940,7 +2929,7 @@ function get_product_vat_for_country($idprod, $thirdparty_seller, $idprodfournpr
 
 		if ($mysoc->country_code == $thirdparty_seller->country_code) // If selling country is ours
 		{
-			if ($idprodfournprice > 0)     // We want vat for product for a supplier order or invoice
+			if ($idprodfournprice > 0)     // We want vat for product for a "supplier" order or invoice
 			{
 				$product->get_buyprice($idprodfournprice,0,0,0);
 				$ret=$product->vatrate_supplier;
@@ -2961,23 +2950,28 @@ function get_product_vat_for_country($idprod, $thirdparty_seller, $idprodfournpr
 
 	if (! $found)
 	{
-		// If vat of product for the country not found or not defined, we return higher vat of country.
-		$sql = "SELECT taux as vat_rate";
-		$sql.= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_pays as p";
-		$sql.= " WHERE t.active=1 AND t.fk_pays = p.rowid AND p.code='".$thirdparty_seller->country_code."'";
-		$sql.= " ORDER BY t.taux DESC, t.recuperableonly ASC";
-		$sql.= $db->plimit(1);
-
-		$resql=$db->query($sql);
-		if ($resql)
+		if (empty($conf->global->MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS))
 		{
-			$obj=$db->fetch_object($resql);
-			if ($obj)
+			// If vat of product for the country not found or not defined, we return higher vat of country.
+			$sql = "SELECT taux as vat_rate";
+			$sql.= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_pays as p";
+			$sql.= " WHERE t.active=1 AND t.fk_pays = p.rowid AND p.code='".$thirdparty_seller->country_code."'";
+			$sql.= " ORDER BY t.taux DESC, t.recuperableonly ASC";
+			$sql.= $db->plimit(1);
+	
+			$resql=$db->query($sql);
+			if ($resql)
 			{
-				$ret=$obj->vat_rate;
+				$obj=$db->fetch_object($resql);
+				if ($obj)
+				{
+					$ret=$obj->vat_rate;
+				}
+				$db->free($sql);
 			}
+			else dol_print_error($db);
 		}
-		else dol_print_error($db);
+		else $ret=$conf->global->MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS;
 	}
 
 	dol_syslog("get_product_vat_for_country: ret=".$ret);
@@ -3487,16 +3481,18 @@ function dol_html_entity_decode($a,$b,$c='UTF-8')
 
 /**
  * Replace htmlentities functions to manage errors
+ * http://php.net/manual/en/function.htmlentities.php
  *
- * @param   string	$a		Operand a
- * @param   string	$b		Operand b
- * @param   string	$c		Operand c
- * @return  string      	String encoded
+ * @param   string  $string         The input string.
+ * @param   int     $flags          Flags(see PHP doc above)
+ * @param   string  $encoding       Encoding
+ * @param   bool    $double_encode  When double_encode is turned off PHP will not encode existing html entities
+ * @return  string  $ret            Encoded string
  */
-function dol_htmlentities($a,$b,$c='UTF-8')
+function dol_htmlentities($string, $flags=null, $encoding='UTF-8', $double_encode=false)
 {
 	// We use @ to avoid warning on PHP4 that does not support entity decoding to UTF8;
-	$ret=@htmlentities($a,$b,$c);
+	$ret=@htmlentities($string, $flags, $encoding, $double_encode);
 	return $ret;
 }
 
@@ -4099,14 +4095,14 @@ function dol_osencode($str)
 
 
 /**
- *      Return an id or code from a code or id. Store Code-Id in a cache.
+ *      Return an id or code from a code or id. Store also Code-Id into a cache for next use.
  *
  * 		@param	DoliDB	$db			Database handler
  * 		@param	string	$key		Code to get Id
  * 		@param	string	$tablename	Table name without prefix
  * 		@param	string	$fieldkey	Field for code
  * 		@param	string	$fieldid	Field for id
- *      @return int					Id of code
+ *      @return int					<0 if KO, Id of code if OK
  *      @see getLabelFromKey
  */
 function dol_getIdFromCode($db,$key,$tablename,$fieldkey='code',$fieldid='id')
@@ -4125,7 +4121,7 @@ function dol_getIdFromCode($db,$key,$tablename,$fieldkey='code',$fieldid='id')
 	$sql = "SELECT ".$fieldid." as id";
 	$sql.= " FROM ".MAIN_DB_PREFIX.$tablename;
 	$sql.= " WHERE ".$fieldkey." = '".$key."'";
-	dol_syslog('dol_getIdFromCode sql='.$sql,LOG_DEBUG);
+	dol_syslog('dol_getIdFromCode sql='.$sql, LOG_DEBUG);
 	$resql = $db->query($sql);
 	if ($resql)
 	{
@@ -4137,7 +4133,7 @@ function dol_getIdFromCode($db,$key,$tablename,$fieldkey='code',$fieldid='id')
 	}
 	else
 	{
-		dol_syslog("dol_getIdFromCode error=".$db->lasterror(),LOG_ERR);
+		dol_syslog("dol_getIdFromCode error=".$db->lasterror(), LOG_ERR);
 		return -1;
 	}
 }
@@ -4444,6 +4440,42 @@ if (! function_exists('getmypid'))
 	{
 		return rand(1,32768);
 	}
+}
+
+
+/**
+ * Natural search
+ *
+ * @param 	mixed 	$fields 	String or array of strings filled with the fields names in the SQL query
+ * @param 	string 	$value 		The value to look for
+ * @return 	string 	$res 		The statement to append to the SQL query
+ */
+function natural_search($fields, $value)
+{
+    global $db;
+    $crits = explode(' ', $value);
+    $res = "";
+    if (! is_array($fields)) {
+        $fields = array($fields);
+    }
+    $end = count($fields);
+    $end2 = count($crits);
+    $j = 0;
+    foreach ($crits as $crit) {
+        $i = 0;
+        foreach ($fields as $field) {
+            if ( $i > 0 && $i < $end){
+                $res .= " OR ";
+            }
+            $res .= $field . " LIKE '%" . $db->escape(trim($crit)) . "%'";
+            $i++;
+        }
+        if ($end > 1) $res .= ')';
+        if ($j < $end2 - 1) $res .= " AND ";
+        if ($end > 1 && $j < $end2 - 1) $res .= '(';
+        $j++;
+    }
+    return " AND " . ($end > 1? '(' : '') . $res;
 }
 
 ?>

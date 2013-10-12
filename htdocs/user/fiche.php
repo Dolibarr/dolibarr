@@ -82,7 +82,6 @@ $langs->load("users");
 $langs->load("companies");
 $langs->load("ldap");
 
-$form = new Form($db);
 $object = new User($db);
 $extrafields = new ExtraFields($db);
 
@@ -566,9 +565,9 @@ if ($action == 'adduserldap')
  * View
  */
 
-llxHeader('',$langs->trans("UserCard"));
-
 $form = new Form($db);
+
+llxHeader('',$langs->trans("UserCard"));
 
 if (($action == 'create') || ($action == 'adduserldap'))
 {
@@ -997,8 +996,7 @@ else
          */
         if ($action == 'password')
         {
-            $ret=$form->form_confirm("fiche.php?id=$object->id",$langs->trans("ReinitPassword"),$langs->trans("ConfirmReinitPassword",$object->login),"confirm_password", '', 0, 1);
-            if ($ret == 'html') print '<br>';
+            print $form->formconfirm("fiche.php?id=$object->id",$langs->trans("ReinitPassword"),$langs->trans("ConfirmReinitPassword",$object->login),"confirm_password", '', 0, 1);
         }
 
         /*
@@ -1006,8 +1004,7 @@ else
          */
         if ($action == 'passwordsend')
         {
-            $ret=$form->form_confirm("fiche.php?id=$object->id",$langs->trans("SendNewPassword"),$langs->trans("ConfirmSendNewPassword",$object->login),"confirm_passwordsend", '', 0, 1);
-            if ($ret == 'html') print '<br>';
+            print $form->formconfirm("fiche.php?id=$object->id",$langs->trans("SendNewPassword"),$langs->trans("ConfirmSendNewPassword",$object->login),"confirm_passwordsend", '', 0, 1);
         }
 
         /*
@@ -1015,8 +1012,7 @@ else
          */
         if ($action == 'disable')
         {
-            $ret=$form->form_confirm("fiche.php?id=$object->id",$langs->trans("DisableAUser"),$langs->trans("ConfirmDisableUser",$object->login),"confirm_disable", '', 0, 1);
-            if ($ret == 'html') print '<br>';
+            print $form->formconfirm("fiche.php?id=$object->id",$langs->trans("DisableAUser"),$langs->trans("ConfirmDisableUser",$object->login),"confirm_disable", '', 0, 1);
         }
 
         /*
@@ -1024,8 +1020,7 @@ else
          */
         if ($action == 'enable')
         {
-            $ret=$form->form_confirm("fiche.php?id=$object->id",$langs->trans("EnableAUser"),$langs->trans("ConfirmEnableUser",$object->login),"confirm_enable", '', 0, 1);
-            if ($ret == 'html') print '<br>';
+            print $form->formconfirm("fiche.php?id=$object->id",$langs->trans("EnableAUser"),$langs->trans("ConfirmEnableUser",$object->login),"confirm_enable", '', 0, 1);
         }
 
         /*
@@ -1033,8 +1028,7 @@ else
          */
         if ($action == 'delete')
         {
-            $ret=$form->form_confirm("fiche.php?id=$object->id",$langs->trans("DeleteAUser"),$langs->trans("ConfirmDeleteUser",$object->login),"confirm_delete", '', 0, 1);
-            if ($ret == 'html') print '<br>';
+            print $form->formconfirm("fiche.php?id=$object->id",$langs->trans("DeleteAUser"),$langs->trans("ConfirmDeleteUser",$object->login),"confirm_delete", '', 0, 1);
         }
 
         dol_htmloutput_mesg($message);
@@ -1055,7 +1049,7 @@ else
             print '</td>';
             print '</tr>'."\n";
 
-            if (isset($conf->authmode) && preg_match('/myopenid/',$conf->authmode)) $rowspan++;
+            if (isset($conf->file->main_authentication) && preg_match('/openid/',$conf->file->main_authentication) && ! empty($conf->global->MAIN_OPENIDURL_PERUSER)) $rowspan++;
             if (! empty($conf->societe->enabled)) $rowspan++;
             if (! empty($conf->adherent->enabled)) $rowspan++;
 
@@ -1194,7 +1188,7 @@ else
             }
             print '</td>';
             print "</tr>\n";
-			
+
 			// Accountancy code
 			if (! empty($conf->global->USER_ENABLE_ACCOUNTANCY_CODE))	// For the moment field is not used so must not appeared.
 			{
@@ -1202,7 +1196,7 @@ else
             	print '<tr><td valign="top">'.$langs->trans("AccountancyCode").'</td>';
             	print '<td>'.$object->accountancy_code.'</td>';
 			}
-            
+
             // Status
             print '<tr><td valign="top">'.$langs->trans("Status").'</td>';
             print '<td>';
@@ -1218,10 +1212,9 @@ else
             print '<td>'.dol_print_date($object->datepreviouslogin,"dayhour").'</td>';
             print "</tr>\n";
 
-
-            if (isset($conf->authmode) && preg_match('/myopenid/',$conf->authmode))
+            if (isset($conf->file->main_authentication) && preg_match('/openid/',$conf->file->main_authentication) && ! empty($conf->global->MAIN_OPENIDURL_PERUSER))
             {
-                print '<tr><td valign="top">'.$langs->trans("url_openid").'</td>';
+                print '<tr><td valign="top">'.$langs->trans("OpenIDURL").'</td>';
                 print '<td>'.$object->openid.'</td>';
                 print "</tr>\n";
             }
@@ -1409,7 +1402,6 @@ else
 
                 if ($caneditgroup)
                 {
-                    $form = new Form($db);
                     print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$id.'" method="POST">'."\n";
                     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />';
                     print '<input type="hidden" name="action" value="addgroup" />';
@@ -1519,16 +1511,16 @@ else
          */
         if ($action == 'edit' && ($canedituser || $caneditfield || $caneditpassword || ($user->id == $object->id)))
         {
-            $rowspan=14;
+            $rowspan=15;
+            if (isset($conf->file->main_authentication) && preg_match('/openid/',$conf->file->main_authentication) && ! empty($conf->global->MAIN_OPENIDURL_PERUSER)) $rowspan++;
+            if (! empty($conf->societe->enabled)) $rowspan++;
+            if (! empty($conf->adherent->enabled)) $rowspan++;
 
         	print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'" method="POST" name="updateuser" enctype="multipart/form-data">';
             print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
             print '<input type="hidden" name="action" value="update">';
             print '<input type="hidden" name="entity" value="'.$object->entity.'">';
             print '<table width="100%" class="border">';
-
-            if (! empty($conf->societe->enabled)) $rowspan++;
-            if (! empty($conf->adherent->enabled)) $rowspan++;
 
             print '<tr><td width="25%" valign="top">'.$langs->trans("Ref").'</td>';
             print '<td colspan="2">';
@@ -1798,17 +1790,17 @@ else
             }
             print '</td></tr>';
 
-            // openid
-            if (isset($conf->authmode) && preg_match('/myopenid/',$conf->authmode))
+            // OpenID url
+            if (isset($conf->file->main_authentication) && preg_match('/openid/',$conf->file->main_authentication) && ! empty($conf->global->MAIN_OPENIDURL_PERUSER))
             {
-                print "<tr>".'<td valign="top">'.$langs->trans("url_openid").'</td>';
+                print "<tr>".'<td valign="top">'.$langs->trans("OpenIDURL").'</td>';
                 print '<td>';
-                if ($caneditfield  && !$object->ldap_sid)
+                if ($caneditfield)
                 {
-                    print '<input size="40" type="text" name="openid" class="flat" value="'.$object->openid.'">';
+                    print '<input size="40" type="url" name="openid" class="flat" value="'.$object->openid.'">';
                 }
                 else
-                {
+              {
                     print '<input type="hidden" name="openid" value="'.$object->openid.'">';
                     print $object->openid;
                 }
@@ -1831,7 +1823,7 @@ else
             }
             print '</td>';
             print "</tr>\n";
-			
+
 			// Accountancy code
             print "<tr>";
             print '<td valign="top">'.$langs->trans("AccountancyCode").'</td>';

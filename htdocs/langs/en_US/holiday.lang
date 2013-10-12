@@ -89,6 +89,7 @@ FirstDayOfHoliday=First day of holiday
 LastDayOfHoliday=Last day of holiday
 HolidaysMonthlyUpdate=Monthly update
 ManualUpdate=Manual update
+HolidaysCancelation=Holidays cancelation
 
 ## Configuration du Module ##
 ConfCP=Configuration of holidays module

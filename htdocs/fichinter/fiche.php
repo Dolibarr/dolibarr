@@ -333,10 +333,8 @@ else if ($action == 'builddoc' && $user->rights->ficheinter->creer)	// En get ou
 	$object->fetch_thirdparty();
 	$object->fetch_lines();
 
-	if (GETPOST('model','alpha'))
-	{
-		$object->setDocModel($user, GETPOST('model','alpha'));
-	}
+	// Save last template used to generate document
+	if (GETPOST('model')) $object->setDocModel($user, GETPOST('model','alpha'));
 
 	// Define output language
 	$outputlangs = $langs;
@@ -1136,8 +1134,8 @@ else if ($id > 0 || ! empty($ref))
 	// Confirmation de la suppression de la fiche d'intervention
 	if ($action == 'delete')
 	{
-		$ret=$form->form_confirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('DeleteIntervention'), $langs->trans('ConfirmDeleteIntervention'), 'confirm_delete','',0,1);
-		if ($ret == 'html') print '<br>';
+		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('DeleteIntervention'), $langs->trans('ConfirmDeleteIntervention'), 'confirm_delete','',0,1);
+		
 	}
 
 	// Confirmation validation
@@ -1160,22 +1158,22 @@ else if ($id > 0 || ! empty($ref))
 		}
 		$text=$langs->trans('ConfirmValidateIntervention',$numref);
 
-		$ret=$form->form_confirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ValidateIntervention'), $text, 'confirm_validate','',0,1);
-		if ($ret == 'html') print '<br>';
+		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ValidateIntervention'), $text, 'confirm_validate','',0,1);
+		
 	}
 
 	// Confirmation de la validation de la fiche d'intervention
 	if ($action == 'modify')
 	{
-		$ret=$form->form_confirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ModifyIntervention'), $langs->trans('ConfirmModifyIntervention'), 'confirm_modify','',0,1);
-		if ($ret == 'html') print '<br>';
+		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ModifyIntervention'), $langs->trans('ConfirmModifyIntervention'), 'confirm_modify','',0,1);
+		
 	}
 
 	// Confirmation de la suppression d'une ligne d'intervention
 	if ($action == 'ask_deleteline')
 	{
-		$ret=$form->form_confirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&line_id='.GETPOST('line_id','int'), $langs->trans('DeleteInterventionLine'), $langs->trans('ConfirmDeleteInterventionLine'), 'confirm_deleteline','',0,1);
-		if ($ret == 'html') print '<br>';
+		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&line_id='.GETPOST('line_id','int'), $langs->trans('DeleteInterventionLine'), $langs->trans('ConfirmDeleteInterventionLine'), 'confirm_deleteline','',0,1);
+		
 	}
 
 	print '<table class="border" width="100%">';
@@ -1712,7 +1710,7 @@ else if ($id > 0 || ! empty($ref))
 		$formmail->withfrom=1;
 		$liste=array();
 		foreach ($object->thirdparty->thirdparty_and_contact_email_array(1) as $key=>$value)	$liste[$key]=$value;
-		$formmail->withto=GETPOST("sendto")?GETOST("sendto"):$liste;
+		$formmail->withto=GETPOST("sendto")?GETPOST("sendto"):$liste;
 		$formmail->withtocc=$liste;
 		$formmail->withtoccc=$conf->global->MAIN_EMAIL_USECCC;
 		$formmail->withtopic=$langs->trans('SendInterventionRef','__FICHINTERREF__');

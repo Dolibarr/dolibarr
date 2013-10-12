@@ -2,6 +2,7 @@
 /* Copyright (C) 2004-2009	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2006-2007	Yannick Warnier		<ywarnier@beeznest.org>
  * Copyright (C) 2011		Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2012		Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -372,8 +373,8 @@ function vat_by_date($db, $y, $q, $date_start, $date_end, $modetax, $direction, 
             {
                 if (! isset($list[$assoc['rate']]['totalht']))  $list[$assoc['rate']]['totalht']=0;
                 if (! isset($list[$assoc['rate']]['vat']))      $list[$assoc['rate']]['vat']=0;
-                if (! isset($list[$assoc['rate']]['locatax1']))      $list[$assoc['rate']]['localtax1']=0;
-                if (! isset($list[$assoc['rate']]['locatax2']))      $list[$assoc['rate']]['localtax2']=0;
+                if (! isset($list[$assoc['rate']]['localtax1']))      $list[$assoc['rate']]['localtax1']=0;
+                if (! isset($list[$assoc['rate']]['localtax2']))      $list[$assoc['rate']]['localtax2']=0;
 
                 if ($assoc['rowid'] != $oldrowid)       // Si rupture sur d.rowid
                 {
@@ -536,8 +537,8 @@ function vat_by_date($db, $y, $q, $date_start, $date_end, $modetax, $direction, 
             {
                 if (! isset($list[$assoc['rate']]['totalht']))  $list[$assoc['rate']]['totalht']=0;
                 if (! isset($list[$assoc['rate']]['vat']))      $list[$assoc['rate']]['vat']=0;
-				if (! isset($list[$assoc['rate']]['locatax1']))      $list[$assoc['rate']]['localtax1']=0;
-                if (! isset($list[$assoc['rate']]['locatax2']))      $list[$assoc['rate']]['localtax2']=0;
+				if (! isset($list[$assoc['rate']]['localtax1']))      $list[$assoc['rate']]['localtax1']=0;
+                if (! isset($list[$assoc['rate']]['localtax2']))      $list[$assoc['rate']]['localtax2']=0;
 
                 if ($assoc['rowid'] != $oldrowid)       // Si rupture sur d.rowid
                 {

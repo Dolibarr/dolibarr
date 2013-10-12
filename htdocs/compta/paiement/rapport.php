@@ -55,10 +55,10 @@ if ($action == 'builddoc')
     $rap = new pdf_paiement($db);
 
     $outputlangs = $langs;
-    if (! empty($_REQUEST['lang_id']))
+    if (! empty(GETPOST('lang_id')))
     {
         $outputlangs = new Translate("",$conf);
-        $outputlangs->setDefaultLang($_REQUEST['lang_id']);
+        $outputlangs->setDefaultLang(GETPOST('lang_id'));
     }
 
     // We save charset_output to restore it because write_file can change it if needed for

@@ -130,9 +130,7 @@ $result=$object->fetch($socid);
 
 if ($result > 0)
 {
-    $form = new Form($db);
     $langs->load("other");
-
 
     $head = societe_prepare_head($object);
 

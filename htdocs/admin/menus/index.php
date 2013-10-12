@@ -251,8 +251,7 @@ if ($action == 'delete')
 	$result = $db->query($sql);
 	$obj = $db->fetch_object($result);
 
-    $ret=$form->form_confirm("index.php?menu_handler=".$menu_handler."&menuId=".$_GET['menuId'],$langs->trans("DeleteMenu"),$langs->trans("ConfirmDeleteMenu",$obj->titre),"confirm_delete");
-    if ($ret == 'html') print '<br>';
+    print $form->formconfirm("index.php?menu_handler=".$menu_handler."&menuId=".$_GET['menuId'],$langs->trans("DeleteMenu"),$langs->trans("ConfirmDeleteMenu",$obj->titre),"confirm_delete");
 }
 
 

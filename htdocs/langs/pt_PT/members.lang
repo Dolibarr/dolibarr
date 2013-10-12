@@ -197,7 +197,7 @@ Collectivités=Organizações
 Particuliers=Pessoal
 Entreprises=Empresas
 DOLIBARRFOUNDATION_PAYMENT_FORM=Para fazer o seu pagamento de inscrição através de transferência bancária, consulte a página <a target="_blank" href="http://wiki.dolibarr.org/index.php/Subscribe#To_subscribe_making_a_bank_transfer">http://wiki.dolibarr.org/index.php/Subscribe</a> . <br> Para pagar com cartão de crédito ou Paypal, clique no botão na parte inferior desta página. <br>
-ByProperties=por categorias 
+ByProperties=por categorias
 MembersStatisticsByProperties=Estatísticas do utilizador por categorias
 MembersByNature=Membros, por categoria
 VATToUseForSubscriptions=Taxa de IVA a utilizar para assinaturas
