@@ -301,3 +301,12 @@ ALTER TABLE llx_facture_fourn MODIFY COLUMN fk_cond_reglement	integer NULL;
 
 insert into llx_c_action_trigger (rowid,code,label,description,elementtype,rang) values (9,'COMPANY_SENTBYMAIL','Mails sent from third party card','Executed when you send email from third party card','societe',1);
 
+
+create table llx_contrat_extrafields
+(
+  rowid                     integer AUTO_INCREMENT PRIMARY KEY,
+  tms                       timestamp,
+  fk_object                 integer NOT NULL,
+  import_key                varchar(14)                          		-- import key
+) ENGINE=innodb;
+
