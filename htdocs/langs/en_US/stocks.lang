@@ -105,3 +105,6 @@ ReplenishmentOrdersDesc=This is list of all opened supplier orders
 Replenishments=Replenishments
 NbOfProductBeforePeriod=Quantity of product %s in stock before selected period (< %s)
 NbOfProductAfterPeriod=Quantity of product %s in stock after selected period (> %s)
+MassStockMovement=Mass stock movement
+SelectProductInAndOutWareHouse=Select a product, a quantity, a source warehouse and a target warehouse, then click "Add". Once this is done for all required movements, click onto "Record Tranferts".
+RecordMovement=Record transfert

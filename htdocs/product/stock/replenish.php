@@ -18,7 +18,7 @@
 
 /**
  *  \file       htdocs/product/stock/replenish.php
- *  \ingroup    produit
+ *  \ingroup    stock
  *  \brief      Page to list stocks to replenish
  */
 
@@ -75,8 +75,7 @@ if (isset($_POST['button_removefilter']) || isset($_POST['valid']))
     $salert = '';
 }
 
-//orders creation
-//TODO: could go in the lib
+// Create orders
 if ($action == 'order' && isset($_POST['valid']))
 {
     $linecount = GETPOST('linecount', 'int');
@@ -240,7 +239,7 @@ $i = 0;
 $helpurl = 'EN:Module_Stocks_En|FR:Module_Stock|';
 $helpurl .= 'ES:M&oacute;dulo_Stocks';
 
-llxHeader('', $title, $helpurl, $title);
+llxHeader('', $title, $helpurl, '');
 
 $head = array();
 $head[0][0] = DOL_URL_ROOT.'/product/stock/replenish.php';
@@ -285,7 +284,7 @@ if ($sref || $snom || $sall || $salert || GETPOST('search', 'alpha')) {
 	);
 }
 
-print '<form action="replenish.php" method="post" name="formulaire">'.
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" name="formulaire">'.
 	'<input type="hidden" name="token" value="' .$_SESSION['newtoken'] . '">'.
 	'<input type="hidden" name="sortfield" value="' . $sortfield . '">'.
 	'<input type="hidden" name="sortorder" value="' . $sortorder . '">'.
@@ -304,7 +303,7 @@ print '<tr class="liste_titre">'.
 	'<td><input type="checkbox" onClick="toggle(this)" /></td>';
 print_liste_field_titre(
 	$langs->trans('Ref'),
-	'replenish.php',
+	$_SERVER["PHP_SELF"],
 	'p.ref',
 	$param,
 	'',
@@ -314,7 +313,7 @@ print_liste_field_titre(
 );
 print_liste_field_titre(
 	$langs->trans('Label'),
-	'replenish.php',
+	$_SERVER["PHP_SELF"],
 	'p.label',
 	$param,
 	'',
@@ -326,7 +325,7 @@ if (!empty($conf->service->enabled) && $type == 1)
 {
 	print_liste_field_titre(
 		$langs->trans('Duration'),
-		'replenish.php',
+		$_SERVER["PHP_SELF"],
 		'p.duration',
 		$param,
 		'',
@@ -337,7 +336,7 @@ if (!empty($conf->service->enabled) && $type == 1)
 }
 print_liste_field_titre(
 	$langs->trans('DesiredStock'),
-	'replenish.php',
+	$_SERVER["PHP_SELF"],
 	'p.desiredstock',
 	$param,
 	'',
@@ -355,7 +354,7 @@ else
 }
 print_liste_field_titre(
 	$stocklabel,
-	'replenish.php',
+	$_SERVER["PHP_SELF"],
 	'stock_physique',
 	$param,
 	'',
@@ -365,7 +364,7 @@ print_liste_field_titre(
 );
 print_liste_field_titre(
 	$langs->trans('Ordered'),
-	'replenish.php',
+	$_SERVER["PHP_SELF"],
 	'',
 	$param,
 	'',
@@ -375,7 +374,7 @@ print_liste_field_titre(
 );
 print_liste_field_titre(
 	$langs->trans('StockToBuy'),
-	'replenish.php',
+	$_SERVER["PHP_SELF"],
 	'',
 	$param,
 	'',
@@ -385,7 +384,7 @@ print_liste_field_titre(
 );
 print_liste_field_titre(
 	$langs->trans('Supplier'),
-	'replenish.php',
+	$_SERVER["PHP_SELF"],
 	'',
 	$param,
 	'',
@@ -427,7 +426,7 @@ while ($i < min($num, $limit))
 {
 	$objp = $db->fetch_object($resql);
 
-	if ($conf->global->STOCK_SUPPORTS_SERVICES || $objp->fk_product_type == 0)
+	if (! empty($conf->global->STOCK_SUPPORTS_SERVICES) || $objp->fk_product_type == 0)
 	{
 		// Multilangs
 		if (! empty($conf->global->MAIN_MULTILANGS))
@@ -541,14 +540,14 @@ while ($i < min($num, $limit))
 	}
 	$i++;
 }
-$value = $langs->trans("CreateOrders");
 print '</table>'.
-	'</div>'.
-	'<table width="100%">'.
-	'<tr><td align="center">'.
-	'<input class="button" type="submit" name="valid" value="' . $value . '">'.
-	'</td></tr></table>'.
-	'</form>';
+
+
+$value=$langs->trans("CreateOrders");
+print '<div class="center"><input class="button" type="submit" name="valid" value="'.$value.'"></div>';
+
+
+print '</form>';
 
 if ($num > $conf->liste_limit)
 {
@@ -591,6 +590,10 @@ if ($num > $conf->liste_limit)
 
 $db->free($resql);
 
+dol_fiche_end();
+
+
+// TODO Replace this with jquery
 print '
 <script type="text/javascript">
 function toggle(source)

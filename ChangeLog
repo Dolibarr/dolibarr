@@ -41,18 +41,18 @@ For users:
 - New: A more responsive desgin for statistic box of home page.
 - Qual: Implement same rule for return value of all command line scripts (0 when success, <>0 if error).
 - New: [ task #1005 ] Adapting to Spanish legislation bill numbering
-- New: [ task #1011 ] Now supplier order and invoice deal with payment terms and mode
-- New: [ task #1014 ] Add option to recursivly add parent category
-- New: [ task #1016 ] Can define a specific numbering for deposits 
-- New: [ task #918 ] Stock replenishment
-- Fix: [ bug #992 ] Proforma invoices don't have a separated numeric count
-- New : Add pdf link into supplier invoice list and supplier order list
-- New : Genrate auto the PDF for supplier invoice
-- New : Add category into filter webservice thirdparty method getListOfThirdParties
-- New : Allow to define margin or mark rate during quoting, ordering, invoicing
-- New : User permissions on margin module
-- New : Add ref supplier into muscadet model
-- New : Add ability to copy contact address to clipboard
+- New: [ task #1011 ] Now supplier order and invoice deal with payment terms and mode.
+- New: [ task #1014 ] Add option to recursivly add parent category.
+- New: [ task #1016 ] Can define a specific numbering for deposits.
+- New: [ task #918 ] Stock replenishment.
+- Fix: [ bug #992 ] Proforma invoices don't have a separated numeric count.
+- New : Add pdf link into supplier invoice list and supplier order list.
+- New : Genrate auto the PDF for supplier invoice.
+- New : Add category into filter webservice thirdparty method getListOfThirdParties.
+- New : Allow to define margin or mark rate during quoting, ordering, invoicing.
+- New : User permissions on margin module.
+- New : Add ref supplier into muscadet model/
+- New : Add ability to copy contact address to clipboard.
 - New: Can use tag {mm} before {yy} even when there is a reset into numbering masks.
 - New: [ task #1060 ] Register fields localtax(1|2)_type into details tables.
 - New: [ task #923 ] Localtax support for ODT templates. 
@@ -61,7 +61,8 @@ For users:
 - New: Can send an email from thirdparty card.
 - New: Can cancel holidays that were previously validated.
 - Fix: [bug #1022] correct margin calculation for credit notes.
-- New: Can choose contact on event (action com) creation, and filtred by thirdparty
+- New: Can choose contact on event (action com) creation, and filtred by thirdparty.
+- New: Add hidden option MAIN_FORCE_DEFAULT_STATE_ID.
 
 For translators:
 - Qual: Normalized sort order of all languages files with english reference files.

@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2010-2012	Regis Houssin		<regis.houssin@capnetworks.com>
+/* Copyright (C) 2010-2013	Regis Houssin		<regis.houssin@capnetworks.com>
  * Copyright (C) 2010-2011	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2012		Christophe Battarel	<christophe.battarel@altairis.fr>
  * Copyright (C) 2013		Florian Henry		<florian.henry@open-concept.pro>
@@ -65,7 +65,7 @@
 	{
 		if ($line->fk_product > 0) {
 
-			echo $form->textwithtooltip($text,$description,3,'','',$i,0,($line->fk_parent_line?img_picto('', 'rightarrow'):''));
+			echo $form->textwithtooltip($text,$description,3,'','',$i,0,(!empty($line->fk_parent_line)?img_picto('', 'rightarrow'):''));
 
 			// Show range
 			echo get_date_range($line->date_start, $line->date_end);
@@ -78,14 +78,14 @@
 
 		} else {
 
-			if (! empty($line->fk_parent_line)) echo img_picto('', 'rightarrow');
 			if ($type==1) $text = img_object($langs->trans('Service'),'service');
 			else $text = img_object($langs->trans('Product'),'product');
 
 			if (! empty($line->label)) {
 				$text.= ' <strong>'.$line->label.'</strong>';
-				echo $form->textwithtooltip($text,dol_htmlentitiesbr($line->description),3,'','',$i,0,($line->fk_parent_line?img_picto('', 'rightarrow'):''));
+				echo $form->textwithtooltip($text,dol_htmlentitiesbr($line->description),3,'','',$i,0,(!empty($line->fk_parent_line)?img_picto('', 'rightarrow'):''));
 			} else {
+				if (! empty($line->fk_parent_line)) echo img_picto('', 'rightarrow');
 				echo $text.' '.dol_htmlentitiesbr($line->description);
 			}
 

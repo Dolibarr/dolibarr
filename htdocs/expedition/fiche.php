@@ -51,9 +51,9 @@ $langs->load('propal');
 
 $origin		= GETPOST('origin','alpha')?GETPOST('origin','alpha'):'expedition';   // Example: commande, propal
 $origin_id 	= GETPOST('id','int')?GETPOST('id','int'):'';
+$id = $origin_id;
 if (empty($origin_id)) $origin_id  = GETPOST('origin_id','int');    // Id of order or propal
 if (empty($origin_id)) $origin_id  = GETPOST('object_id','int');    // Id of order or propal
-$id = $origin_id;
 $ref=GETPOST('ref','alpha');
 
 // Security check
@@ -70,11 +70,6 @@ $hidedesc 	 = (GETPOST('hidedesc','int') ? GETPOST('hidedesc','int') : (! empty(
 $hideref 	 = (GETPOST('hideref','int') ? GETPOST('hideref','int') : (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF) ? 1 : 0));
 
 $object = new Expedition($db);
-// Load object
-if ($id > 0 || ! empty($ref))
-{
-	$ret=$object->fetch($id, $ref);
-}
 
 // Load object
 if ($id > 0 || ! empty($ref))
@@ -94,8 +89,6 @@ $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);   
 if ($action == 'add')
 {
     $error=0;
-
-    $object = new Expedition($db);
 
     $db->begin();
 
