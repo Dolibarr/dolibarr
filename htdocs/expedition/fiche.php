@@ -70,11 +70,6 @@ $hidedesc 	 = (GETPOST('hidedesc','int') ? GETPOST('hidedesc','int') : (! empty(
 $hideref 	 = (GETPOST('hideref','int') ? GETPOST('hideref','int') : (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF) ? 1 : 0));
 
 $object = new Expedition($db);
-// Load object
-if ($id > 0 || ! empty($ref))
-{
-	$ret=$object->fetch($id, $ref);
-}
 
 // Load object
 if ($id > 0 || ! empty($ref))
@@ -94,8 +89,6 @@ $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);   
 if ($action == 'add')
 {
     $error=0;
-
-    $object = new Expedition($db);
 
     $db->begin();
 
