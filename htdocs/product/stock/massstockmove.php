@@ -25,9 +25,11 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/json.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
+require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 
 $langs->load("products");
 $langs->load("stocks");
@@ -42,12 +44,11 @@ $result=restrictedArea($user,'produit|service');
 //checks if a product has been ordered
 
 $action = GETPOST('action','alpha');
-$sref = GETPOST('sref', 'alpha');
-$snom = GETPOST('snom', 'alpha');
-$sall = GETPOST('sall', 'alpha');
-$type = GETPOST('type','int');
-$tobuy = GETPOST('tobuy', 'int');
-$salert = GETPOST('salert', 'alpha');
+$id_product = GETPOST('productid', 'productid');
+$id_sw = GETPOST('id_sw', 'id_sw');
+$id_tw = GETPOST('id_tw', 'id_tw');
+$qty = GETPOST('qty');
+$idline = GETPOST('idline');
 
 $sortfield = GETPOST('sortfield','alpha');
 $sortorder = GETPOST('sortorder','alpha');
@@ -63,16 +64,58 @@ if (!$sortorder) {
 $limit = $conf->liste_limit;
 $offset = $limit * $page ;
 
+$listofdata=array();
+if (! empty($_SESSION['massstockmove'])) $listofdata=dol_json_decode($_SESSION['massstockmove'],true);
+
+
 /*
  * Actions
  */
 
-if (isset($_POST['button_removefilter']) || isset($_POST['valid']))
+if ($action == 'addline')
 {
-    $sref = '';
-    $snom = '';
-    $sal = '';
-    $salert = '';
+	if (! ($id_product > 0)) 
+	{
+		$error++;
+		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Product")),'errors');
+	}
+	if (! $qty)
+	{
+		$error++;
+	    setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Qty")),'errors');
+	}
+	if (! ($id_sw > 0))
+	{
+		$error++;
+		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("WarehouseSource")),'errors');
+	}
+	if (! ($id_tw > 0))
+	{
+		$error++;
+		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("WarehouseTarget")),'errors');
+	}
+	if ($id_sw > 0 && $id_tw == $id_sw)	
+	{
+		$error++;
+		$langs->load("errors");
+		setEventMessage($langs->trans("ErrorWarehouseMustDiffers"),'errors');
+	}
+	
+	if (! $error)
+	{
+		$id=count($listofdata);
+		$listofdata[$id]=array('id'=>$id, 'id_product'=>$id_product, 'qty'=>$qty, 'id_sw'=>$id_sw, 'id_tw'=>$id_tw);
+		$_SESSION['massstockmove']=dol_json_encode($listofdata);
+	}
+}
+
+if ($action == 'delline' && $idline != '')
+{
+	if (! empty($listofdata[$idline])) unset($listofdata[$idline]);
+	var_dump($listofdata);
+	var_dump(dol_json_encode($listofdata)); exit;
+	if (count($listofdata) > 0) $_SESSION['massstockmove']=dol_json_encode($listofdata);
+	else unset($_SESSION['massstockmove']);
 }
 
 if ($action == 'createmovement' && isset($_POST['valid']))
@@ -84,13 +127,16 @@ if ($action == 'createmovement' && isset($_POST['valid']))
 }
 
 
+
 /*
  * View
  */
 
 $form=new Form($db);
-$prodstatic = new Product($db);
-$warehousestatic = new Entrepot($db);
+$formproduct=new FormProduct($db);
+$productstatic = new Product($db);
+$warehousestatics = new Entrepot($db);
+$warehousestatict = new Entrepot($db);
 
 $title = $langs->trans('MassMovement');
 
@@ -111,8 +157,8 @@ print '<table class="liste" width="100%">';
 print '<tr class="liste_titre">';
 print_liste_field_titre($langs->trans('Product'),$_SERVER["PHP_SELF"],'',$param,'','',$sortfield,$sortorder);
 print_liste_field_titre($langs->trans('Qty'),$_SERVER["PHP_SELF"],'',$param,'','align="center"',$sortfield,$sortorder);
-print_liste_field_titre($langs->trans('WarehouseSource'),$_SERVER["PHP_SELF"],'',$param,'','align="right"',$sortfield,$sortorder);
-print_liste_field_titre($langs->trans('WarehouseTarget'),$_SERVER["PHP_SELF"],'',$param,'','align="right"',$sortfield,$sortorder);
+print_liste_field_titre($langs->trans('WarehouseSource'),$_SERVER["PHP_SELF"],'',$param,'','align="center"',$sortfield,$sortorder);
+print_liste_field_titre($langs->trans('WarehouseTarget'),$_SERVER["PHP_SELF"],'',$param,'','align="center"',$sortfield,$sortorder);
 print_liste_field_titre('');
 print '</tr>';
 
@@ -121,15 +167,17 @@ print '<tr>';
 print '<td>';
 $filtertype=0;
 if (! empty($conf->global->STOCK_SUPPORTS_SERVICES)) $filtertype='';
-print $form->select_produits('','productid',$filtertype);
+print $form->select_produits($id_product,'productid',$filtertype);
 print '</td>';
 // Qty
-print '<td align="center"><input type="input" size="4" class="flat"></td>';
+print '<td align="center"><input type="input" size="4" class="flat" name="qty" value="'.$qty.'"></td>';
 // In warehouse
-print '<td>';
+print '<td align="center">';
+print $formproduct->selectWarehouses($id_sw,'id_sw','',1);
 print '</td>';
 // Out warehouse
-print '<td>';
+print '<td align="center">';
+print $formproduct->selectWarehouses($id_tw,'id_tw','',1);
 print '</td>';
 // Button to add line
 print '<td align="right"><input type="submit" class="button" name="addline" value="'.dol_escape_htmltag($langs->trans("Add")).'"></td>';
@@ -154,36 +202,34 @@ print_liste_field_titre($langs->trans('WarehouseTarget'),$_SERVER["PHP_SELF"],''
 print_liste_field_titre('');
 print '</tr>';
 
-// Lignes des champs de filtre
-/*print '<tr class="liste_titre">'.
-'<td class="liste_titre">&nbsp;</td>'.
-'<td class="liste_titre">'.
-'<input class="flat" type="text" name="sref" size="8" value="'.dol_escape_htmltag($sref).'">'.
-'</td>'.
-'<td class="liste_titre">'.
-'<input class="flat" type="text" name="snom" size="8" value="'.dol_escape_htmltag($snom).'">'.
-'</td>';
-if (!empty($conf->service->enabled) && $type == 1)
+$var=false;
+foreach($listofdata as $key => $val)
 {
-	print '<td class="liste_titre">&nbsp;</td>';
+	$var=!$var;
+	
+	$productstatic->fetch($val['id_product']);
+	$warehousestatics->fetch($val['id_sw']);
+	$warehousestatict->fetch($val['id_tw']);
+	
+	print '<tr '.$bc[$var].'>';
+	print '<td>'.$productstatic->getNomUrl(1).'</td>';
+	print '<td>';
+	$oldref=$productstatic->ref;
+	$productstatic->ref=$productstatic->label;
+	print $productstatic->getNomUrl(1);
+	$productstatic->ref=$oldref;
+	print '</td>';
+	print '<td align="right">'.$val['qty'].'</td>';
+	print '<td align="right">';
+	print $warehousestatics->getNomUrl(1);
+	print '</td>';
+	print '<td align="right">';
+	print $warehousestatict->getNomUrl(1);
+	print '</td>';
+	print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=delline&idline='.$val['id'].'">'.img_delete($langs->trans("Remove")).'</a></td>';
+	
+	print '</tr>';
 }
-print '<td class="liste_titre">&nbsp;</td>'.
-	'<td class="liste_titre" align="right">' . $langs->trans('AlertOnly') . '&nbsp;<input type="checkbox" name="salert" ' . $alertchecked . '></td>'.
-	'<td class="liste_titre" align="right">&nbsp;</td>'.
-	'<td class="liste_titre">&nbsp;</td>'.
-	'<td class="liste_titre" align="right">'.
-	'<input type="image" class="liste_titre" name="button_search"'.
-	'src="' . DOL_URL_ROOT . '/theme/' . $conf->theme . '/img/search.png" alt="' . $langs->trans("Search") . '">'.
-	'<input type="image" class="liste_titre" name="button_removefilter"
-	src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/searchclear.png" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">'.
-	'</td>'.
-	'</tr>';
-*/
-
-
-
-
-
 
 print '</table>';
 		
