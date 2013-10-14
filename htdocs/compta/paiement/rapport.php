@@ -55,7 +55,7 @@ if ($action == 'builddoc')
     $rap = new pdf_paiement($db);
 
     $outputlangs = $langs;
-    if (! empty(GETPOST('lang_id')))
+    if (GETPOST('lang_id'))
     {
         $outputlangs = new Translate("",$conf);
         $outputlangs->setDefaultLang(GETPOST('lang_id'));
