@@ -259,12 +259,16 @@ else
 	dol_print_error($db);
 }
 
-// ici le récap des ventes par trimestre de service et de produit
-if (! empty($conf->product->enabled))
-	activitytrim(0);
 
-if (! empty($conf->service->enabled))
-	activitytrim(1);
+// TODO Move this into a page that should be available into menu "accountancy - report - turnover - per quarter"
+// Also method used for counting must provide the 2 possible methods like done by all other reports into menu "accountancy - report - turnover": 
+// "commitment engagment" method and "cash accounting" method
+if ($conf->global->MAIN_FEATURES_LEVEL)
+{
+	if (! empty($conf->product->enabled)) activitytrim(0);
+	if (! empty($conf->service->enabled)) activitytrim(1);
+}
+
 
 //print '</td></tr></table>';
 print '</div></div></div>';
@@ -272,6 +276,9 @@ print '</div></div></div>';
 llxFooter();
 
 $db->close();
+
+
+
 
 function activitytrim($product_type)
 {
@@ -281,7 +288,7 @@ function activitytrim($product_type)
 	$yearofbegindate=date('Y',dol_time_plus_duree(time(), -3, "y"));
 
 	// ventilation par trimestre
-	$sql = "SELECT DATE_FORMAT(p.datep,'%Y') as annee, DATE_FORMAT(p.datep,'%m') as mois, sum(fd.total_ht) as Mnttot";
+	$sql = "SELECT DATE_FORMAT(p.datep,'%Y') as annee, DATE_FORMAT(p.datep,'%m') as mois, SUM(fd.total_ht) as Mnttot";
 	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."facturedet as fd";
 	$sql.= " , ".MAIN_DB_PREFIX."paiement as p,".MAIN_DB_PREFIX."paiement_facture as pf";
 	$sql.= " WHERE f.fk_soc = s.rowid";

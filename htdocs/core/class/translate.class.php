@@ -106,11 +106,12 @@ class Translate
 			// Array force long code from first part, even if long code is defined
 			$longforshort=array('ar'=>'ar_SA');
 			if (isset($longforshort[strtolower($langpart[0])])) $srclang=$longforshort[strtolower($langpart[0])];
-			else {
+			else if (! is_numeric($langpart[1])) {		// Second part YY may be a numeric with some Chrome browser
 				$srclang=strtolower($langpart[0])."_".strtoupper($langpart[1]);
 				$longforlong=array('no_nb'=>'nb_NO');
 				if (isset($longforlong[strtolower($srclang)])) $srclang=$longforlong[strtolower($srclang)];
 			}
+			else $srclang=strtolower($langpart[0])."_".strtoupper($langpart[0]);
 		}
 		else {						// If it's for a codetouse that is a short code xx
     	    // Array to convert short lang code into long code.
@@ -787,11 +788,11 @@ class Translate
 
 	function get_translations_for_substitutions() {
 		$substitutionarray = array();
-		
+
 		foreach($this->tab_translate as $code => $label) {
 			$substitutionarray['lang_'.$code] = $label;
 		}
-		
+
 		return $substitutionarray;
 	}
 }

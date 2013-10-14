@@ -3,3 +3,6 @@ CHARSET=UTF-8
 State=Estado
 Town=Municipio
 CompanyHasCreditNote=Este cliente tiene <b>%s %s</b> notas de crédito/anticipos disponibles
+VATIntra=RFC
+VATIntraShort=RFC
+VATIntraVeryShort=RFC

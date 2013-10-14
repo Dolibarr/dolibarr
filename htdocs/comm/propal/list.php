@@ -296,9 +296,6 @@ if ($result)
 	print '<input class="flat" type="text" size="16" name="search_societe" value="'.$search_societe.'">';
 	print '</td>';
 	print '<td class="liste_titre"><input class="flat" type="text" size="16" name="search_town" value="'.$search_town.'"></td>';
-	print '<td class="liste_titre">';
-	print '<input class="flat" size="10" type="text" name="search_refcustomer" value="'.$search_refcustomer.'">';
-	print '</td>';
 	print '<td class="liste_titre" colspan="1" align="center">';
 	print $langs->trans('Month').': <input class="flat" type="text" size="1" maxlength="2" name="month" value="'.$month.'">';
 	print '&nbsp;'.$langs->trans('Year').': ';

@@ -4,7 +4,7 @@
  * Copyright (C) 2004      Benoit Mortier        <benoit.mortier@opensides.be>
  * Copyright (C) 2004      Sebastien Di Cintio   <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Eric Seigne           <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2012 Regis Houssin         <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2013 Regis Houssin         <regis.houssin@capnetworks.com>
  * Copyright (C) 2006      Andre Cianfarani      <acianfa@free.fr>
  * Copyright (C) 2006      Marc Barilley/Ocebo   <marc@ocebo.com>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerker@telenet.be>
@@ -800,7 +800,7 @@ class Form
                 while ($i < $num)
                 {
                     $obj = $this->db->fetch_object($resql);
-                    
+
                     if ($conf->global->SOCIETE_ADD_REF_IN_LIST) {
                     	if (($obj->client) && (!empty($obj->code_client))) {
                     		$label = $obj->code_client. ' - ';
@@ -814,7 +814,7 @@ class Form
                     {
                     	$label=$obj->nom;
                     }
-                    
+
                     if ($showtype)
                     {
                         if ($obj->client || $obj->fournisseur) $label.=' (';
@@ -2484,9 +2484,9 @@ class Form
 
     /**
      *     Show a confirmation HTML form or AJAX popup.
-     *     Easiest way to use this is with useajax=1. 
-     *     If you use useajax='xxx', you must also add jquery code to trigger opening of box (with correct parameters) 
-     *     just after calling this method. For example: 
+     *     Easiest way to use this is with useajax=1.
+     *     If you use useajax='xxx', you must also add jquery code to trigger opening of box (with correct parameters)
+     *     just after calling this method. For example:
      *       print '<script type="text/javascript">'."\n";
      *       print 'jQuery(document).ready(function() {'."\n";
      *       print 'jQuery(".xxxlink").click(function(e) { jQuery("#aparamid").val(jQuery(this).attr("rel")); jQuery("#dialog-confirm-xxx").dialog("open"); return false; });'."\n";
@@ -2587,9 +2587,9 @@ class Form
             $more.='</table>'."\n";
         }
 
-		// JQUI method dialog is broken with jmobile, we use standard HTML. 
+		// JQUI method dialog is broken with jmobile, we use standard HTML.
 		// Note: When using dol_use_jmobile, you must also check code for button use a GET url with action=xxx and output the confirm code only when action=xxx
-        if (! empty($conf->dol_use_jmobile)) $useajax=0;	
+        if (! empty($conf->dol_use_jmobile)) $useajax=0;
 
         if ($useajax && $conf->use_javascript_ajax)
         {
@@ -3376,7 +3376,7 @@ class Form
 
         	// Disabled if seller is not subject to VAT
         	$disabled=false; $title='';
-        	if (is_object($societe_vendeuse) && $societe_vendeuse->id == $mysoc->id && $societe_vendeuse->tva_assuj == "0") 
+        	if (is_object($societe_vendeuse) && $societe_vendeuse->id == $mysoc->id && $societe_vendeuse->tva_assuj == "0")
         	{
         		$title=' title="'.$langs->trans('VATIsNotUsed').'"';
         		$disabled=true;
