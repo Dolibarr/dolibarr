@@ -62,7 +62,7 @@ $object=new Facture($db);
 // Load object
 if ($facid > 0)
 {
-	$ret=$object->fetch($id);
+	$ret=$object->fetch($facid);
 }
 
 // Initialize technical object to manage hooks of paiements. Note that conf->hooks_modules contains array array
