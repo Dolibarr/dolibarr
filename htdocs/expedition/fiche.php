@@ -51,9 +51,9 @@ $langs->load('propal');
 
 $origin		= GETPOST('origin','alpha')?GETPOST('origin','alpha'):'expedition';   // Example: commande, propal
 $origin_id 	= GETPOST('id','int')?GETPOST('id','int'):'';
+$id = $origin_id;
 if (empty($origin_id)) $origin_id  = GETPOST('origin_id','int');    // Id of order or propal
 if (empty($origin_id)) $origin_id  = GETPOST('object_id','int');    // Id of order or propal
-$id = $origin_id;
 $ref=GETPOST('ref','alpha');
 
 // Security check
