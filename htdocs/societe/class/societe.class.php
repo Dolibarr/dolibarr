@@ -404,7 +404,7 @@ class Societe extends CommonObject
         $this->zip			= $this->zip?trim($this->zip):trim($this->zip);
         $this->town			= $this->town?trim($this->town):trim($this->town);
         $this->state_id		= trim($this->state_id);
-        $this->country_id	= ($this->country_id > 0)?$this->country_id:$this->country_id;
+        $this->country_id	= ($this->country_id > 0)?$this->country_id:0;
         $this->phone		= trim($this->phone?$this->phone:$this->tel);
         $this->phone		= preg_replace("/\s/","",$this->phone);
         $this->phone		= preg_replace("/\./","",$this->phone);
