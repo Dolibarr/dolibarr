@@ -382,10 +382,10 @@ if ($resql)
         $event->type_code=$obj->code;
         $event->libelle=$obj->label;
         $event->percentage=$obj->percent;
-        $event->author->id=$obj->fk_user_author;
-        $event->usertodo->id=$obj->fk_user_action;
-        $event->userdone->id=$obj->fk_user_done;
-
+        $event->author->id=$obj->fk_user_author;	// user id of creator
+        $event->usertodo->id=$obj->fk_user_action;	// user id of owner
+        $event->userdone->id=$obj->fk_user_done;	// deprecated
+		// $event->userstodo=... with s after user, in future version, will be an array with all id of user assigned to event
         $event->priority=$obj->priority;
         $event->fulldayevent=$obj->fulldayevent;
         $event->location=$obj->location;
@@ -1009,6 +1009,11 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
                     || (! empty($event->userdone->id) && $event->userdone->id == $user->id))
                     {
                     	$nummytasks++; $cssclass='family_mytasks';
+                    	// TODO Set a color using user color
+                    	// Must defined rule to choose color of who to use.
+                    	// event->usertodo->id will still contains user id of owner
+                    	// event->userstodo will be an array in future.
+                    	// $color=$user->color; 
                     }
                     else if ($event->type_code == 'ICALEVENT')
                     {
