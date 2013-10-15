@@ -61,6 +61,7 @@ class MouvementStock
 	{
 		global $conf, $langs;
 
+		require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 		$error = 0;
 		dol_syslog(get_class($this)."::_create start userid=$user->id, fk_product=$fk_product, warehouse=$entrepot_id, qty=$qty, type=$type, price=$price label=$label");
 
