@@ -44,7 +44,7 @@ dol_include_once("/cron/class/cronjob.class.php");
 global $langs, $conf;
 
 // Check the key, avoid that a stranger starts cron
-$key = $_GET['securitykey'];
+$key = GETPOST('securitykey','alpha');
 if (empty($key)) {
 	echo 'securitykey is require';
 	exit;
@@ -55,7 +55,7 @@ if($key != $conf->global->CRON_KEY)
 	exit;
 }
 // Check the key, avoid that a stranger starts cron
-$userlogin = $_GET['userlogin'];
+$userlogin = GETPOST('userlogin','alpha');
 if (empty($userlogin)) {
 	echo 'userlogin is require';
 	exit;
@@ -74,7 +74,7 @@ if ($result<0) {
 		exit;
 	}
 }
-$id = $_GET['id'];
+$id = GETPOST('id','int');
 
 // Language Management
 $langs->load("admin");
