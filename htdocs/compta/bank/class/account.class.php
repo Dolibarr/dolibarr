@@ -1436,18 +1436,21 @@ class AccountLine extends CommonObject
         if ($withpicto) $result.=($lien.img_object($langs->trans("ShowTransaction"),'account').$lienfin.' ');
         $result.=$lien.$this->rowid.$lienfin;
 
+        if ($option == 'showall' || $option == 'showconciliated') $result.=' (';
         if ($option == 'showall')
         {
-            $result.=' (';
             $result.=$langs->trans("BankAccount").': ';
             $accountstatic=new Account($this->db);
             $accountstatic->id=$this->fk_account;
             $accountstatic->label=$this->bank_account_label;
             $result.=$accountstatic->getNomUrl(0).', ';
+        }
+        if ($option == 'showall' || $option == 'showconciliated')
+        {
             $result.=$langs->trans("BankLineConciliated").': ';
             $result.=yn($this->rappro);
-            $result.=')';
         }
+        if ($option == 'showall' || $option == 'showconciliated') $result.=')';
 
         return $result;
     }

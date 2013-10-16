@@ -195,7 +195,7 @@ if ($result > 0)
     print '</td></tr>';
 
 	// Amount
-	print '<tr><td valign="top" colspan="2">'.$langs->trans('Amount').'</td><td colspan="3">'.price($object->montant).'&nbsp;'.$langs->trans('Currency'.$conf->currency).'</td></tr>';
+	print '<tr><td valign="top" colspan="2">'.$langs->trans('Amount').'</td><td colspan="3">'.price($object->montant,'',$langs,0,0,-1,$conf->currency).'</td></tr>';
 
 	if (! empty($conf->global->BILL_ADD_PAYMENT_VALIDATION))
 	{
@@ -218,9 +218,19 @@ if ($result > 0)
             print '<tr>';
             print '<td colspan="2">'.$langs->trans('BankTransactionLine').'</td>';
             print '<td colspan="3">';
-            print $bankline->getNomUrl(1,0,'showall');
+            print $bankline->getNomUrl(1,0,'showconciliated');
             print '</td>';
             print '</tr>';
+
+	    	print '<tr>';
+	    	print '<td colspan="2">'.$langs->trans('BankAccount').'</td>';
+			print '<td colspan="3">';
+			$accountstatic=new Account($db);
+	        $accountstatic->id=$bankline->fk_account;
+	        $accountstatic->label=$bankline->bank_account_ref.' - '.$bankline->bank_account_label;
+	        print $accountstatic->getNomUrl(0);
+	    	print '</td>';
+	    	print '</tr>';
         }
     }
 
