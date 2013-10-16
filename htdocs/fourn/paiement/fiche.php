@@ -115,7 +115,7 @@ if ($action == 'setnum' && ! empty($_POST['num_paiement']))
 	}
 }
 
-if ($action == 'setdate' && ! empty($_POST['datepday']))
+if ($action == 'setdatep' && ! empty($_POST['datepday']))
 {
 	$object->fetch($id);
     $datepaye = dol_mktime(12, 0, 0, $_POST['datepmonth'], $_POST['datepday'], $_POST['datepyear']);
@@ -162,7 +162,7 @@ if ($result > 0)
 	if ($action == 'delete')
 	{
 		print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id, $langs->trans("DeletePayment"), $langs->trans("ConfirmDeletePayment"), 'confirm_delete');
-		
+
 	}
 
 	/*
@@ -171,7 +171,7 @@ if ($result > 0)
 	if ($action == 'valide')
 	{
 		print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id, $langs->trans("ValidatePayment"), $langs->trans("ConfirmValidatePayment"), 'confirm_valide');
-		
+
 	}
 
 	print '<table class="border" width="100%">';
