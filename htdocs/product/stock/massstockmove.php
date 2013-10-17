@@ -103,17 +103,21 @@ if ($action == 'addline')
 	
 	if (! $error)
 	{
-		$id=count($listofdata);
+		if (count(array_keys($listofdata)) > 0) $id=max(array_keys($listofdata)) + 1;
+		else $id=1;
 		$listofdata[$id]=array('id'=>$id, 'id_product'=>$id_product, 'qty'=>$qty, 'id_sw'=>$id_sw, 'id_tw'=>$id_tw);
 		$_SESSION['massstockmove']=dol_json_encode($listofdata);
+		
+		unset($id_product);
+		//unset($id_sw);
+		//unset($id_tw);
+		unset($qty);
 	}
 }
 
 if ($action == 'delline' && $idline != '')
 {
 	if (! empty($listofdata[$idline])) unset($listofdata[$idline]);
-	var_dump($listofdata);
-	var_dump(dol_json_encode($listofdata)); exit;
 	if (count($listofdata) > 0) $_SESSION['massstockmove']=dol_json_encode($listofdata);
 	else unset($_SESSION['massstockmove']);
 }
@@ -132,6 +136,8 @@ if ($action == 'createmovement' && isset($_POST['valid']))
  * View
  */
 
+$now=dol_now();
+
 $form=new Form($db);
 $formproduct=new FormProduct($db);
 $productstatic = new Product($db);
@@ -144,8 +150,14 @@ llxHeader('', $title, $helpurl, '');
 
 print_fiche_titre($langs->trans("MassStockMovement")).'<br><br>';
 
-print $langs->trans("SelectProductInAndOutWareHouse").'<br>'; 
+$titletoadd=$langs->trans("Select");
+$titletoaddnoent=$langs->transnoentitiesnoconv("Select");
+$buttonrecord=$langs->trans("RecordMovement");
+$buttonrecordnoent=$langs->trans("RecordMovement");
+print $langs->trans("SelectProductInAndOutWareHouse",$titletoaddnoent,$buttonrecordnoent).'<br>';
+print '<br>'."\n"; 
 
+$var=true;
 
 // Form to add a line
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" name="formulaire">';
@@ -153,56 +165,41 @@ print '<input type="hidden" name="token" value="' .$_SESSION['newtoken'] . '">';
 print '<input type="hidden" name="action" value="addline">';
 
 print '<table class="liste" width="100%">';
+//print '<div class="tagtable centpercent">';
 
 print '<tr class="liste_titre">';
-print_liste_field_titre($langs->trans('Product'),$_SERVER["PHP_SELF"],'',$param,'','',$sortfield,$sortorder);
-print_liste_field_titre($langs->trans('Qty'),$_SERVER["PHP_SELF"],'',$param,'','align="center"',$sortfield,$sortorder);
-print_liste_field_titre($langs->trans('WarehouseSource'),$_SERVER["PHP_SELF"],'',$param,'','align="center"',$sortfield,$sortorder);
-print_liste_field_titre($langs->trans('WarehouseTarget'),$_SERVER["PHP_SELF"],'',$param,'','align="center"',$sortfield,$sortorder);
-print_liste_field_titre('');
+print getTitleFieldOfList($langs->trans('ProductRef'),0,$_SERVER["PHP_SELF"],'',$param,'','class="tagtd"',$sortfield,$sortorder);
+print getTitleFieldOfList($langs->trans('ProductLabel'),0,$_SERVER["PHP_SELF"],'',$param,'','class="tagtd"',$sortfield,$sortorder);
+print getTitleFieldOfList($langs->trans('WarehouseSource'),0,$_SERVER["PHP_SELF"],'',$param,'','class="tagtd"',$sortfield,$sortorder);
+print getTitleFieldOfList($langs->trans('WarehouseTarget'),0,$_SERVER["PHP_SELF"],'',$param,'','class="tagtd"',$sortfield,$sortorder);
+print getTitleFieldOfList($langs->trans('Qty'),0,$_SERVER["PHP_SELF"],'',$param,'','align="center" class="tagtd"',$sortfield,$sortorder);
+print getTitleFieldOfList('',0);
 print '</tr>';
 
-print '<tr>';
+
+print '<tr '.$bc[$var].'>';
 // Product
-print '<td>';
+print '<td colspan="2">';
 $filtertype=0;
 if (! empty($conf->global->STOCK_SUPPORTS_SERVICES)) $filtertype='';
 print $form->select_produits($id_product,'productid',$filtertype);
 print '</td>';
-// Qty
-print '<td align="center"><input type="input" size="4" class="flat" name="qty" value="'.$qty.'"></td>';
 // In warehouse
-print '<td align="center">';
+print '<td>';
 print $formproduct->selectWarehouses($id_sw,'id_sw','',1);
 print '</td>';
 // Out warehouse
-print '<td align="center">';
+print '<td>';
 print $formproduct->selectWarehouses($id_tw,'id_tw','',1);
 print '</td>';
+// Qty
+print '<td align="center"><input type="text" size="4" class="flat" name="qty" value="'.$qty.'"></td>';
 // Button to add line
-print '<td align="right"><input type="submit" class="button" name="addline" value="'.dol_escape_htmltag($langs->trans("Add")).'"></td>';
+print '<td align="right"><input type="submit" class="button" name="addline" value="'.dol_escape_htmltag($titletoadd).'"></td>';
 
 print '</tr>';
-print '</table>';
 
-print '</form>';
 
-print '<br>';
-
-// List movement prepared
-print '<table class="liste" width="100%">';
-
-// Lignes des titres
-print '<tr class="liste_titre">';
-print_liste_field_titre($langs->trans('ProductRef'),$_SERVER["PHP_SELF"],'p.ref',$param,'','',$sortfield,$sortorder);
-print_liste_field_titre($langs->trans('ProductLabel'),$_SERVER["PHP_SELF"],'p.label',$param,'','',$sortfield,$sortorder);
-print_liste_field_titre($langs->trans('Qty'),$_SERVER["PHP_SELF"],'',$param,'','align="right"',$sortfield,$sortorder);
-print_liste_field_titre($langs->trans('WarehouseSource'),$_SERVER["PHP_SELF"],'',$param,'','align="right"',$sortfield,$sortorder);
-print_liste_field_titre($langs->trans('WarehouseTarget'),$_SERVER["PHP_SELF"],'',$param,'','align="right"',$sortfield,$sortorder);
-print_liste_field_titre('');
-print '</tr>';
-
-$var=false;
 foreach($listofdata as $key => $val)
 {
 	$var=!$var;
@@ -219,23 +216,35 @@ foreach($listofdata as $key => $val)
 	print $productstatic->getNomUrl(1);
 	$productstatic->ref=$oldref;
 	print '</td>';
-	print '<td align="right">'.$val['qty'].'</td>';
-	print '<td align="right">';
+	print '<td>';
 	print $warehousestatics->getNomUrl(1);
 	print '</td>';
-	print '<td align="right">';
+	print '<td>';
 	print $warehousestatict->getNomUrl(1);
 	print '</td>';
+	print '<td align="center">'.$val['qty'].'</td>';
 	print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=delline&idline='.$val['id'].'">'.img_delete($langs->trans("Remove")).'</a></td>';
 	
 	print '</tr>';
 }
 
 print '</table>';
-		
-// Generate
-$value=$langs->trans("RecordMovement");
-print '<div class="center"><input class="button" type="submit" name="valid" value="'.$value.'"></div>';
+
+print '<br>';
+
+// Button to record mass movement
+$labelmovement=GETPOST("label")?GETPOST('label'):$langs->trans("MassStockMovement").' '.dol_print_date($now,'%Y-%m-%d %H:%M');
+
+print '<table class="border" width="100%">';
+	print '<tr>';
+	print '<td width="20%">'.$langs->trans("LabelMovement").'</td>';
+	print '<td colspan="5">';
+	print '<input type="text" name="label" size="80" value="'.dol_escape_htmltag($labelmovement).'">';
+	print '</td>';
+	print '</tr>';
+print '</table>';	
+
+print '<div class="center"><input class="button" type="submit" name="valid" value="'.dol_escape_htmltag($buttonrecord).'"></div>';
 
 
 print '</form>';
