@@ -124,8 +124,8 @@ function analyse_sql_and_script(&$var, $type)
                 $var[$key] = $value;
             }
             else
-            {
-                print 'Access refused by SQL/Script injection protection in main.inc.php';
+			{
+                print 'Access refused by SQL/Script injection protection in main.inc.php (type='.htmlentities($type).' key='.htmlentities($key).' value='.htmlentities($value).' page='.htmlentities($_SERVER["REQUEST_URI"]).')';
                 exit;
             }
         }

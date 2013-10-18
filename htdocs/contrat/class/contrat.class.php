@@ -274,54 +274,63 @@ class Contrat extends CommonObject
 	}
 
 	/**
-	 *  Validate a contract
+	 * Validate a contract
 	 *
-	 *  @param	User		$user      	Objet User
-	 * 	@return	int						<0 if KO, >0 if OK
+	 * @param	User	$user      		Objet User
+	 * @param   string	$force_number	Reference to force on contract (not implemented yet)
+	 * @return	int						<0 if KO, >0 if OK
 	 */
-	function validate($user)
+	function validate($user, $force_number='')
 	{
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 		global $langs, $conf;
 
+		$now=dol_now();
+
 		$error=0;
+		dol_syslog(get_class($this).'::validate user='.$user->id.', force_number='.$force_number);
 
-		// Definition du nom de module de numerotation de commande
-		$soc = new Societe($this->db);
-		$soc->fetch($this->socid);
 
-		// Class of company linked to order
-		$result=$soc->set_as_client();
+		$this->db->begin();
+
+		$this->fetch_thirdparty();
+
+		// A contract is validated so we can move thirdparty to status customer
+		$result=$this->thirdparty->set_as_client();
 
 		// Define new ref
 		if (! $error && (preg_match('/^[\(]?PROV/i', $this->ref)))
 		{
-			$num = $this->getNextNumRef($soc);
+			$num = $this->getNextNumRef($this->thirdparty);
 		}
 		else
 		{
 			$num = $this->ref;
 		}
 
-		$sql = "UPDATE ".MAIN_DB_PREFIX."contrat SET ref = '".$num."', statut = 1";
-		$sql .= " WHERE rowid = ".$this->id . " AND statut = 0";
-
-		$resql = $this->db->query($sql);
-		if ($resql)
+		if ($num)
 		{
-			// Appel des triggers
-			include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-			$interface=new Interfaces($this->db);
-			$result=$interface->run_triggers('CONTRACT_VALIDATE',$this,$user,$langs,$conf);
-			if ($result < 0) { $error++; $this->errors=$interface->errors; }
-			// Fin appel triggers
-			
+			$sql = "UPDATE ".MAIN_DB_PREFIX."contrat SET ref = '".$num."', statut = 1";
+			//$sql.= ", fk_user_valid = ".$user->id.", date_valid = '".$this->db->idate($now)."'";
+			$sql .= " WHERE rowid = ".$this->id . " AND statut = 0";
+
+			dol_syslog(get_class($this)."::validate sql=".$sql);
+			$resql = $this->db->query($sql);
+			if (! $resql)
+			{
+				dol_syslog(get_class($this)."::validate Echec update - 10 - sql=".$sql, LOG_ERR);
+				dol_print_error($this->db);
+				$error++;
+			}
+
 			if (! $error)
 			{
+				$this->oldref = '';
+
 				// Rename directory if dir was a temporary ref
 				if (preg_match('/^[\(]?PROV/i', $this->ref))
 				{
-					// Rename of propal directory ($this->ref = old ref, $num = new ref)
+					// Rename of object directory ($this->ref = old ref, $num = new ref)
 					// to  not lose the linked files
 					$facref = dol_sanitizeFileName($this->ref);
 					$snumfa = dol_sanitizeFileName($num);
@@ -330,28 +339,56 @@ class Contrat extends CommonObject
 					if (file_exists($dirsource))
 					{
 						dol_syslog(get_class($this)."::validate rename dir ".$dirsource." into ".$dirdest);
-						
+
 						if (@rename($dirsource, $dirdest))
 						{
+							$this->oldref = $facref;
+
 							dol_syslog("Rename ok");
 							// Deleting old PDF in new rep
 							dol_delete_file($conf->contract->dir_output.'/'.$snumfa.'/'.$facref.'*.*');
 						}
 					}
 				}
-
-				return 1;
 			}
-			else
+
+			// Set new ref and define current statut
+			if (! $error)
 			{
-				return -1;
+				$this->ref = $num;
+				$this->statut=1;
+				$this->brouillon=0;
+				$this->date_validation=$now;
+			}
+
+			// Trigger calls
+			if (! $error)
+			{
+				// Appel des triggers
+				include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
+				$interface=new Interfaces($this->db);
+				$result=$interface->run_triggers('CONTRACT_VALIDATE',$this,$user,$langs,$conf);
+				if ($result < 0) { $error++; $this->errors=$interface->errors; }
+				// Fin appel triggers
 			}
 		}
 		else
 		{
-			$this->error=$this->db->error();
+			$error++;
+		}
+
+		if (! $error)
+		{
+			$this->db->commit();
+			return 1;
+		}
+		else
+		{
+			$this->db->rollback();
+			$this->error=$this->db->lasterror();
 			return -1;
 		}
+
 	}
 
 
@@ -966,19 +1003,19 @@ class Contrat extends CommonObject
 			// qty, pu, remise_percent et txtva
 			// TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
 			// la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
-			
+
 			$localtaxes_type=getLocalTaxesFromRate($txtva,0,$mysoc);
-			
+
 			$tabprice=calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, 1,'', $localtaxes_type);
 			$total_ht  = $tabprice[0];
 			$total_tva = $tabprice[1];
 			$total_ttc = $tabprice[2];
 			$total_localtax1= $tabprice[9];
 			$total_localtax2= $tabprice[10];
-			
+
 			$localtax1_type=$localtaxes_type[0];
 			$localtax2_type=$localtaxes_type[2];
-			
+
 			// TODO A virer
 			// Anciens indicateurs: $price, $remise (a ne plus utiliser)
 			$remise = 0;
@@ -1114,19 +1151,19 @@ class Contrat extends CommonObject
 		// qty, pu, remise_percent et txtva
 		// TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
 		// la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
-		
+
 		$localtaxes_type=getLocalTaxesFromRate($txtva,0,$mysoc);
-		
+
 		$tabprice=calcul_price_total($qty, $pu, $remise_percent, $tvatx, $localtaxtx1, $txlocaltaxtx2, 0, $price_base_type, $info_bits, 1, '', $localtaxes_type);
 		$total_ht  = $tabprice[0];
 		$total_tva = $tabprice[1];
 		$total_ttc = $tabprice[2];
 		$total_localtax1= $tabprice[9];
 		$total_localtax2= $tabprice[10];
-		
+
 		$localtax1_type=$localtaxes_type[0];
 		$localtax2_type=$localtaxes_type[2];
-		
+
 		// TODO A virer
 		// Anciens indicateurs: $price, $remise (a ne plus utiliser)
 		$remise = 0;
