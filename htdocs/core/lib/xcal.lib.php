@@ -519,7 +519,8 @@ function quotedPrintDecode($str)
 	 * preg_replace /e modifier is deprecated in PHP 5.5
 	 * but anonymous functions for use in preg_replace_callback are only available from 5.3.0
 	 */
-	if (version_compare(PHP_VERSION, '5.3.0') >= 0) {
+/*	if (version_compare(PHP_VERSION, '5.3.0') >= 0) 
+	{
 		$out = preg_replace_callback(
 			'/=([A-F0-9]{2})/',
 			function ($m) {
@@ -527,9 +528,11 @@ function quotedPrintDecode($str)
 			},
 			$out
 		);
-	} else {
-		$out = preg_replace('/=([A-F0-9]{2})/e', chr(hexdec('\\1')), $out);
 	}
+	else
+	{*/
+		$out = @preg_replace('/=([A-F0-9]{2})/e', chr(hexdec('\\1')), $out);
+//	}
 
 	return trim($out);
 }
