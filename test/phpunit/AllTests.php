@@ -78,6 +78,8 @@ class AllTests
 		$suite->addTestSuite('FunctionsTest');
 		require_once dirname(__FILE__).'/Functions2Test.php';
 		$suite->addTestSuite('Functions2Test');
+		require_once dirname(__FILE__).'/XCalLibTest.php';
+		$suite->addTestSuite('XCalLibTest');
 
         require_once dirname(__FILE__).'/SecurityTest.php';
         $suite->addTestSuite('SecurityTest');

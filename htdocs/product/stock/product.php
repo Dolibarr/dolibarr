@@ -429,7 +429,7 @@ if ($id > 0 || $ref)
 	 */
 	if ($action == "transfert")
 	{
-		print_titre($langs->trans("Transfer"));
+		print_titre($langs->trans("StockTransfer"));
 		print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$product->id.'" method="post">'."\n";
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="action" value="transfert_stock">';
@@ -442,21 +442,21 @@ if ($id > 0 || $ref)
 		print '<td width="20%" class="fieldrequired">'.$langs->trans("WarehouseTarget").'</td><td width="20%">';
 		print $formproduct->selectWarehouses(GETPOST('id_entrepot_destination'),'id_entrepot_destination','',1);
 		print '</td>';
-		print '<td width="20%" class="fieldrequired">'.$langs->trans("NumberOfUnit").'</td><td width="20%"><input name="nbpiece" size="10" value="'.GETPOST("nbpiece").'"></td>';
+		print '<td width="20%" class="fieldrequired">'.$langs->trans("NumberOfUnit").'</td><td width="20%"><input type="text" class="flat" name="nbpiece" size="10" value="'.dol_escape_htmltag(GETPOST("nbpiece")).'"></td>';
 		print '</tr>';
 
 		// Label
 		print '<tr>';
-		print '<td width="20%">'.$langs->trans("Label").'</td>';
+		print '<td width="20%">'.$langs->trans("LabelMovement").'</td>';
 		print '<td colspan="5">';
-		print '<input type="text" name="label" size="40" value="'.GETPOST("label").'">';
+		print '<input type="text" name="label" size="80" value="'.dol_escape_htmltag(GETPOST("label")).'">';
 		print '</td>';
 		print '</tr>';
 
 		print '</table>';
 
-		print '<center><input type="submit" class="button" value="'.$langs->trans('Save').'">&nbsp;';
-		print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></center>';
+		print '<center><input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans('Save')).'">&nbsp;';
+		print '<input type="submit" class="button" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'"></center>';
 
 		print '</form>';
 	}

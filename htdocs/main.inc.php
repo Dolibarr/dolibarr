@@ -72,7 +72,7 @@ if (function_exists('get_magic_quotes_gpc'))	// magic_quotes_* removed in PHP6
  *
  * @param		string		$val		Value
  * @param		string		$type		1=GET, 0=POST, 2=PHP_SELF
- * @return		boolean					true if there is an injection
+ * @return		int						>0 if there is an injection
  */
 function test_sql_and_script_inject($val, $type)
 {
@@ -102,7 +102,7 @@ function test_sql_and_script_inject($val, $type)
     }
     // For XSS Injection done by adding javascript closing html tags like with onmousemove, etc... (closing a src or href tag with not cleaned param)
     if ($type == 1) $sql_inj += preg_match('/"/i', $val);		// We refused " in GET parameters value
-    if ($type == 2) $sql_inj += preg_match('/[\s;"]/', $val);	// PHP_SELF is an url and must match url syntax
+    if ($type == 2) $sql_inj += preg_match('/[;"]/', $val);		// PHP_SELF is a file system path. It can contains spaces. 
     return $sql_inj;
 }
 
@@ -111,7 +111,7 @@ function test_sql_and_script_inject($val, $type)
  *
  * @param		string		&$var		Variable name
  * @param		string		$type		1=GET, 0=POST, 2=PHP_SELF
- * @return		boolean					true if ther is an injection
+ * @return		boolean					true if there is an injection
  */
 function analyse_sql_and_script(&$var, $type)
 {
@@ -124,8 +124,8 @@ function analyse_sql_and_script(&$var, $type)
                 $var[$key] = $value;
             }
             else
-            {
-                print 'Access refused by SQL/Script injection protection in main.inc.php';
+			{
+                print 'Access refused by SQL/Script injection protection in main.inc.php (type='.htmlentities($type).' key='.htmlentities($key).' value='.htmlentities($value).' page='.htmlentities($_SERVER["REQUEST_URI"]).')';
                 exit;
             }
         }
