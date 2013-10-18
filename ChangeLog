@@ -63,6 +63,7 @@ For users:
 - Fix: [bug #1022] correct margin calculation for credit notes.
 - New: Can choose contact on event (action com) creation, and filtred by thirdparty.
 - New: Add hidden option MAIN_FORCE_DEFAULT_STATE_ID.
+- New: Add page to make mass stock movement.
 
 For translators:
 - Qual: Normalized sort order of all languages files with english reference files.

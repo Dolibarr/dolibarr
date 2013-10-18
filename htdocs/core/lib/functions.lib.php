@@ -2329,7 +2329,7 @@ function print_liste_field_titre($name, $file="", $field="", $begin="", $morepar
  *	Get title line of an array
  *
  *	@param	string	$name        Label of field
- *	@param	int		$thead		 For thead format (0 by default)
+ *	@param	int		$thead		 0=To use with standard table forat, 1=To use inside <thead><tr>, 2=To use with <div> 
  *	@param	string	$file        Url used when we click on sort picto
  *	@param	string	$field       Field to use for new sorting. Empty if this field is not sortable.
  *	@param	string	$begin       ("" by defaut)
@@ -2347,10 +2347,13 @@ function getTitleFieldOfList($name, $thead=0, $file="", $field="", $begin="", $m
 	$sortorder=strtoupper($sortorder);
 	$out='';
 
+	$tag='th';
+	if ($thead==2) $tag='div';
+	
 	// If field is used as sort criteria we use a specific class
 	// Example if (sortfield,field)=("nom","xxx.nom") or (sortfield,field)=("nom","nom")
-	if ($field && ($sortfield == $field || $sortfield == preg_replace("/^[^\.]+\./","",$field))) $out.= '<th class="liste_titre_sel" '. $moreattrib.'>';
-	else $out.= '<th class="liste_titre" '. $moreattrib.'>';
+	if ($field && ($sortfield == $field || $sortfield == preg_replace("/^[^\.]+\./","",$field))) $out.= '<'.$tag.' class="liste_titre_sel" '. $moreattrib.'>';
+	else $out.= '<'.$tag.' class="liste_titre" '. $moreattrib.'>';
 
 	if (! empty($conf->dol_optimize_smallscreen) && empty($thead) && $field)    // If this is a sort field
 	{
@@ -2397,7 +2400,7 @@ function getTitleFieldOfList($name, $thead=0, $file="", $field="", $begin="", $m
 			}
 		}
 	}
-	$out.='</th>';
+	$out.='</'.$tag.'>';
 
 	return $out;
 }
