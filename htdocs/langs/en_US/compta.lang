@@ -168,3 +168,5 @@ CalculationRuleDesc=To calculate total VAT, there is two methods:<br>Method 1 is
 CalculationRuleDescSupplier=according to supplier, choose appropriate method to apply same calculation rule and get same result expected by your supplier.
 TurnoverPerProductInCommitmentAccountingNotRelevant=Turnover report per product, when using a <b>cash accountancy</b> mode is not relevant. This report is only available when using <b>engagement accountancy</b> mode (see setup of accountancy module).
 CalculationMode=Calculation mode
+COMPTA_ACCOUNT_CUSTOMER=Accountancy code by default for customer thirdparties
+COMPTA_ACCOUNT_SUPPLIER=Accountancy code by default for supplier thirdparties
