@@ -119,13 +119,13 @@ function analyse_sql_and_script(&$var, $type)
     {
         foreach ($var as $key => $value)
         {
-            if (analyse_sql_and_script($value,$type))
+            if (!analyse_sql_and_script($value,$type))
             {
                 $var[$key] = $value;
             }
             else
-            {
-                print 'Access refused by SQL/Script injection protection in main.inc.php';
+			{
+                print 'Access refused by SQL/Script injection protection in main.inc.php (when calling page '.htmlentities($_SERVER["REQUEST_URI"]).')';
                 exit;
             }
         }
