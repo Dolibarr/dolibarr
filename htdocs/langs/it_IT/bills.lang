@@ -84,7 +84,7 @@ ClassifyCanceled=Classifica come "abbandonata"
 ClassifyClosed=Classifica come "chiusa"
 CreateBill=Crea fattura
 AddBill=Aggiungi fattura o nota di credito
-AddToDraftInvoices=Aggiungi alle bozze di fattture
+AddToDraftInvoices=Aggiungi alle fattture in bozza
 DeleteBill=Elimina fattura
 SearchACustomerInvoice=Cerca una fattura attiva
 SearchASupplierInvoice=Cerca una fattura fornitore
@@ -199,7 +199,7 @@ StandingOrders=Ordini permanenti
 StandingOrder=Ordine permanente
 NoDraftBills=Nessuna bozza di fatture
 NoOtherDraftBills=Nessun'altra bozza di fatture
-NoDraftInvoices=Nessuna bozza di fatture
+NoDraftInvoices=Nessuna fattura in bozza
 RefBill=Rif. fattura
 ToBill=Da fatturare
 RemainderToBill=Restante da fatturare
@@ -410,7 +410,7 @@ PDFCrabeDescription=Modello di fattura Crabe. (Modello raccomandatoi)
 # oursin PDF Model
 PDFOursinDescription=Modello di fattura oursin.
 # NumRef Modules
-# TerreNumRefModelDesc1=Return numero with format %syymm-nnnn for standard and replacement invoices, %syymm-nnnn for credit notes and %syymm-nnnn for deposits where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
+TerreNumRefModelDesc1=Restituisce un numero nel formato %syymm-nnnn per le fatture, %syymm-nnnn per le note di credito e %syymm-nnnn per i versamenti, dove yy è l'anno, mm è il mese e nnnn è una sequenza progressiva, senza salti e che non si azzera.
 # MarsNumRefModelDesc1=Return numero with format %syymm-nnnn for standard invoices, %syymm-nnnn for replacement invoices, %syymm-nnnn for credit notes and %syymm-nnnn for credit notes where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
 
 TerreNumRefModelError=Un altro modello di numerazione con sequenza $ syymm è già esistente e non è compatibile con questo modello. Rimuovere o rinominare per attivare questo modulo.

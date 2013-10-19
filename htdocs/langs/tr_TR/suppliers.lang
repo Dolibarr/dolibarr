@@ -38,4 +38,4 @@ AddSupplierOrder=Tedarikçi siparişi oluştur
 AddSupplierInvoice=Tedarikçi faturası oluştur
 ListOfSupplierProductForSupplier=Tedarikçi <b>%s</b> için ürün ve fiyat listesi
 NoneOrBatchFileNeverRan=Hiçbiri veya toplu <b>%s</b> yürütülmedi
-# SentToSuppliers=Sent to suppliers
+SentToSuppliers=Tedarikçilere gönderilen

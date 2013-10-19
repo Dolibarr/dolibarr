@@ -252,7 +252,7 @@ CivilityMME=夫人
 CivilityMR=先生
 CivilityMLE=女士
 CivilityMTRE=主
-# CivilityDR=Doctor
+CivilityDR=医生
 
 ##### Currencies #####
 Currencyeuros=欧元
@@ -291,8 +291,8 @@ CurrencySingXOF=郎西非国家中央银行
 CurrencyXPF=CFP法郎
 CurrencySingXPF=太平洋法郎
 
-# CurrencyCentSingEUR=cent
-# CurrencyThousandthSingTND=thousandth
+CurrencyCentSingEUR=美分
+CurrencyThousandthSingTND=千分之一
 
 #### Input reasons #####
 DemandReasonTypeSRC_INTE=因特网
@@ -302,28 +302,28 @@ DemandReasonTypeSRC_CAMP_PHO=电话运动
 DemandReasonTypeSRC_CAMP_FAX=传真运动
 DemandReasonTypeSRC_COMM=商业联系
 DemandReasonTypeSRC_SHOP=商店联系
-# DemandReasonTypeSRC_WOM=Word of mouth
-# DemandReasonTypeSRC_PARTNER=Partner
-# DemandReasonTypeSRC_EMPLOYEE=Employee
-# DemandReasonTypeSRC_SPONSORING=Sponsorship
+DemandReasonTypeSRC_WOM=口碑
+DemandReasonTypeSRC_PARTNER=伙伴
+DemandReasonTypeSRC_EMPLOYEE=雇员
+DemandReasonTypeSRC_SPONSORING=赞助
 
 #### Paper formats ####
-# PaperFormatEU4A0=Format 4A0
-# PaperFormatEU2A0=Format 2A0
-# PaperFormatEUA0=Format A0
-# PaperFormatEUA1=Format A1
-# PaperFormatEUA2=Format A2
-# PaperFormatEUA3=Format A3
-# PaperFormatEUA4=Format A4
+PaperFormatEU4A0=4A0
+PaperFormatEU2A0=2A0
+PaperFormatEUA0=A0
+PaperFormatEUA1=A1
+PaperFormatEUA2=A2
+PaperFormatEUA3=A3
+PaperFormatEUA4=A4
 # PaperFormatEUA5=Format A5
-# PaperFormatEUA6=Format A6
-# PaperFormatUSLETTER=Format Letter US
-# PaperFormatUSLEGAL=Format Legal US
-# PaperFormatUSEXECUTIVE=Format Executive US
-# PaperFormatUSLEDGER=Format Ledger/Tabloid
-# PaperFormatCAP1=Format P1 Canada
-# PaperFormatCAP2=Format P2 Canada
-# PaperFormatCAP3=Format P3 Canada
-# PaperFormatCAP4=Format P4 Canada
-# PaperFormatCAP5=Format P5 Canada
-# PaperFormatCAP6=Format P6 Canada
+PaperFormatEUA6=A6
+PaperFormatUSLETTER=US 信签
+PaperFormatUSLEGAL=US 法律文书
+PaperFormatUSEXECUTIVE=US 公文
+PaperFormatUSLEDGER=总帐/小报
+PaperFormatCAP1=加拿大 P1
+PaperFormatCAP2=加拿大 P2
+PaperFormatCAP3=加拿大 P3
+PaperFormatCAP4=加拿大 P4
+PaperFormatCAP5=加拿大 P5
+PaperFormatCAP6=加拿大 P6

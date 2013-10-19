@@ -26,7 +26,7 @@ ErrorGoBackAndCorrectParameters=Gehen Sie zurück und korrigieren Sie die ungül
 ErrorWrongValueForParameter=Sie haben einen falschen Wert für den Parameter '%s' eingegeben.
 ErrorFailedToCreateDatabase=Fehler beim Erstellen der Datenbank '%s'.
 ErrorFailedToConnectToDatabase=Es konnte keine Verbindung zur Datenbank ' %s'.
-# ErrorDatabaseVersionTooLow=Database version (%s) too old. Version %s or higher is required.
+ErrorDatabaseVersionTooLow=Die Version ihrer Datenbank (%s) ist veraltet. Sie benötigen mindestens Version %s .
 ErrorPHPVersionTooLow=Ihre PHP-Version ist veraltet. Sie benötigen mindestens Version %s .
 WarningPHPVersionTooLow=Die PHP-Version ist zu alt. Es wird Version %s oder höher erwartet. Sie können unter dieser PHP-Version installieren, aber sie wird nicht unterstützt.
 ErrorConnectedButDatabaseNotFound=Die Verbindung zum Server wurde erfolgreich hergestellt, die Datenbank '%s' jedoch nicht gefunden.
@@ -155,7 +155,7 @@ MigrationShippingDelivery2=Aktualisiere die Speicherung von Lieferungen 2 (Versa
 MigrationFinished=Migration abgeschlossen
 LastStepDesc=<strong>Letzter Schritt</strong>: Legen Sie Ihr Logo und das Passwort fest, welches Sie für dolibarr verwenden möchten. Verlieren Sie diese Administrator-Passwort nicht, da es der "Generalschlüssel" ist.
 ActivateModule=Aktivieren von Modul %s
-# ShowEditTechnicalParameters=Click here to show/edit advanced parameters (expert mode)
+ShowEditTechnicalParameters=Hier klicken um erweiterte Funktionen zu zeigen/bearbeiten (Expertenmodus)
 
 #########
 # upgrade
@@ -207,4 +207,4 @@ MigrationProjectUserResp=Datenmigration des Feldes fk_user_resp von llx_projet n
 MigrationProjectTaskTime=Aktualisiere aufgewandte Zeit (in Sekunden)
 MigrationActioncommElement=Aktualisiere die Maßnahmen
 MigrationPaymentMode=Migration der Daten für die Zahlungsart
-# MigrationCategorieAssociation=Migration of categories
+MigrationCategorieAssociation=Kategorien verschieben

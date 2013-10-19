@@ -94,7 +94,7 @@ ConfirmCloneProject=Bu projeyi klonlamak istediğinizden emin misiniz?
 ProjectReportDate=Görevi proje başlama tarihine göre değiştir
 ErrorShiftTaskDate=Görev tarihini yeni proje başlama tarihine göre kaydırmak olası değil
 ProjectsAndTasksLines=Projeler ve görevler
-# ProjectCreatedInDolibarr=Project %s created
+ProjectCreatedInDolibarr=%s projesi oluşturuldu
 ##### Types de contacts #####
 TypeContact_project_internal_PROJECTLEADER=Proje önderi
 TypeContact_project_external_PROJECTLEADER=Proje önderi
@@ -106,6 +106,6 @@ TypeContact_project_task_internal_CONTRIBUTOR=Katılımcı
 TypeContact_project_task_external_CONTRIBUTOR=Katılımcı
 # Documents models
 DocumentModelBaleine=Eksiksiz bir proje rapor modeli (logo. ..)
-# PlannedWorkload = Planned workload
-# WorkloadOccupation= Workload affectation
-# ProjectReferers=Refering objects
+PlannedWorkload = Planlı işyükü
+WorkloadOccupation= İş yükü benzetmesi
+ProjectReferers=Yönlendirme nesneleri

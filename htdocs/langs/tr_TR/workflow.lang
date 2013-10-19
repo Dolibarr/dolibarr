@@ -1,11 +1,11 @@
 # Dolibarr language file - Source file is en_US - admin
 CHARSET= UTF-8
 WorkflowSetup=İş Akışı modülü kurulumu
-WorkflowDesc=Bu modül, uygulama içindeki otomatik eylemlerim davranışını değiştirmek için tasarlanmıştır. Varsayılan olarak, iş akışı açıktır (siz istediğiniz şeyi sırayla yaparsınız). İlginç bulduğunuz otomatik eylemleri etkinleştirebilirsiniz.
-ThereIsNoWorkflowToModify=Etkinleştirdiğiniz bu modül için değişitirilecek iş akışı yoktur.
-descWORKFLOW_PROPAL_AUTOCREATE_ORDER=BirTeklif imzalandıktan sonra otomatik olarak bir müşteri siparişi oluştur
-descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=BirTeklif imzalandıktan sonra otomatik olarak bir müşteri faturası oluştur
-descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Bir sözleşme doğrulandıktan sonra otomatik olarak bir müşteri faturası oluştur
-descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Bir müşteri siparişi kapatıldıktan sonra otomatik olarak bir müşteri faturası oluştur
-descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Bir müşteri siparişi ödendi olarak ayarlandığında bağlantılı kaynak teklifi faturalandı olarak sınıflandır
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Bir müşteri faturası ödendi olarak ayarlandığında bağlantılı kaynak siparişi faturalandı olarak sınıflandır
+WorkflowDesc=Bu modül, uygulama içinde kendiliğinden yapılacak işlemleri ayarlamak için tasarlanmıştır. Varsayılan olarak, iş akışı açıktır (işlemler istenen sırayla yapılabilir). Bununla birlikte kolaylık sağlayan işlemlerin kendiliğinden yapılması sağlanabilir.
+ThereIsNoWorkflowToModify=Etkinleştirdiğiniz bu modül için değişitirilebilecek bir iş akışı yok.
+descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Bir teklif imzalandıktan sonra kendiliğinden müşteri siparişi oluşturulsun
+descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Bir teklif imzalandıktan sonra kendiliğinden müşteri faturası oluşturulsun
+descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Bir sözleşme onaylandıktan sonra kendiliğinden müşteri faturası oluşturulsun
+descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Bir müşteri siparişi kapatıldıktan sonra kendiliğinden müşteri faturası oluşturulsun
+descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Bir müşteri siparişi ödenmiş olarak güncellendiğinde ilgili kaynak teklifi faturalanmış olarak dosyalansın
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Bir müşteri faturası ödenmiş olarak güncellendiğinde ilgili kaynak siparişi faturalanmış olarak dosyalansın

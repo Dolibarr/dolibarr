@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - holiday
 CHARSET= UTF-8
 
-# HRM=HRM
+HRM=IK
 Holidays=Tatiller
 CPTitreMenu=Tatiller
 MenuReportMonth=Aylık özet
@@ -16,7 +16,7 @@ DateDebCP=Başlama tarihi
 DateFinCP=Bitiş tarihi
 DateCreateCP=Oluşturma tarihi
 DraftCP=Taslak
-# ToReviewCP=Awaiting approval
+ToReviewCP=Onay bekliyor
 ApprovedCP=Onaylandı
 CancelCP=Şptal edildi
 RefuseCP=Reddedildi

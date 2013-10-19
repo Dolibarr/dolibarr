@@ -40,7 +40,7 @@ ActionsEvents= Dolibarr'ın otomatik olarak gündemde bir etkinlik oluşturacağ
 PropalValidatedInDolibarr= %s Teklifi doğrulandı
 InvoiceValidatedInDolibarr= %s Faturası doğrulandı
 InvoiceBackToDraftInDolibarr=%s Faturasını taslak durumuna geri götür
-# InvoiceDeleteDolibarr=Invoice %s deleted
+InvoiceDeleteDolibarr=%s faturası silindi
 OrderValidatedInDolibarr= %s Siparişi doğrulandı
 OrderApprovedInDolibarr=%s Siparişi onayladı
 OrderBackToDraftInDolibarr=%s Siparişini taslak durumuna geri götür
@@ -67,7 +67,7 @@ AgendaUrlOptions4=Çıktıyı kullanıcı <b>%s</b> tarafından etkilenen etkinl
 AgendaUrlOptions5=Çıktıyı kullanıcı<b>%s</b> tarafından yapılan etkinliklerle sınırlamak için<b>logind=%s</b>.
 AgendaShowBirthdayEvents=Kişilerin doğum günlerini göster
 AgendaHideBirthdayEvents=Kişilerin doğum günlerini gizle
-# Busy=Busy
+Busy=Meşgul
 
 # External Sites ical
 ExportCal=Dışaaktarım takvimi

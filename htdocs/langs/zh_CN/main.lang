@@ -5,7 +5,7 @@ DIRECTION=ltr
 # msungstdlight or cid0ct are for traditionnal chinese (traditionnal does not render with ubuntu pdf reader)
 # stsongstdlight or cid0cs are for simplified chinese
 # To read chinese pdf with linux: sudo apt-get install poppler-data
-FONTFORPDF=黑体
+FONTFORPDF=stsongstdlight
 FONTSIZEFORPDF=10
 SeparatorDecimal=.
 SeparatorThousand=None
@@ -20,7 +20,7 @@ FormatHourShortDuration=%H:%M
 FormatDateTextShort=%b %d, %Y
 FormatDateText=%B %d, %Y
 FormatDateHourShort=%d/%m/%Y %I:%M %p
-# FormatDateHourSecShort=%m/%d/%Y %I:%M:%S %p
+FormatDateHourSecShort=%m/%d/%Y %I:%M:%S %p
 FormatDateHourTextShort=%b %d, %Y, %I:%M %p
 FormatDateHourText=%B %d, %Y, %I:%M %p
 DatabaseConnection=数据库连接
@@ -145,7 +145,7 @@ ToClone=克隆
 ConfirmClone=选择你想要克隆的数据：
 NoCloneOptionsSpecified=没有数据克隆界定。
 Of=的
-# Go=Go
+Go=下一步
 Run=运行
 CopyOf=复制
 Show=显示
