@@ -4,111 +4,111 @@ CHARSET=UTF-8
 # About page
 #
 About = Hakkında
-# CronAbout = About Cron
-# CronAboutPage = Cron about page
+CronAbout = Cron hakkında
+CronAboutPage = Cron hakkında sayfası
 
 #
 # Right
 #
-# Permission23101 = Read Scheduled task
-# Permission23102 = Create/update Scheduled task
-# Permission23103 = Delete Scheduled task
-# Permission23104 = Execute Scheduled task
+Permission23101 = Planlı görev oku
+Permission23102 = Planlı görev oluştur/güncelle
+Permission23103 = Planlı görev sil
+Permission23104 = Planlı görev yürüt
 
 #
 # Admin
 #
-# CronSetup= Scheduled job management setup
-# URLToLaunchCronJobs=URL to launch cron jobs
-# OrToLaunchASpecificJob=Or to launch a specific job
-# KeyForCronAccess=Security key for URL to launch cron jobs
-# FileToLaunchCronJobs=Command line to launch cron jobs
-# CronExplainHowToRunUnix=On Unix environment you should use crontab to run Command line each minutes
-# CronExplainHowToRunWin=On Microsoft(tm) Windows environement you can use Scheduled task tools to run Command line each minutes
+CronSetup= Planlı iş yönetimi ayarları
+URLToLaunchCronJobs=Cron işlerini başlatan URL
+OrToLaunchASpecificJob=Ya da özel bir iş başlatmak için
+KeyForCronAccess=Cron işlerini başlatacak URL için güvenlik anahtarı
+FileToLaunchCronJobs=Cron işlerini başlatacak komut satırı
+CronExplainHowToRunUnix=Unix ortamında her dakika Komut satırını çalıştırmak için cron sekmesini kullanmalısınız
+CronExplainHowToRunWin=Microsoft (tm) Windows ortamında her dakika Komut satırı çalıştırmak için Planlı görev araçlarını kullanabilirsiniz
 
 
 #
 # Menu
 #
-# CronJobs=Scheduled jobs
-# CronListActive= List of active jobs
-# CronListInactive= List of disabled jobs
+CronJobs=Planlı işler
+CronListActive= Etkin işler listesi
+CronListInactive= Etkin olmayan işler listesi
 
 
 #
 # Page list
 #
-# CronDateLastRun=Last run
-# CronLastOutput=Last run output
-# CronLastResult=Last result code
-# CronListOfCronJobs=List of scheduled jobs
-# CronCommand=Command
-# CronList= Job list
-# CronDelete= Delete cron jobs
-# CronConfirmDelete= Are you sure you want to delete this cron job ?
-# CronExecute=Launch job
-# CronConfirmExecute= Are you sure to execute this job now
-# CronInfo= Jobs allow to execute task that have been planned
-# CronWaitingJobs=Wainting jobs
-# CronTask=Job
+CronDateLastRun=Son çalıştırma
+CronLastOutput=Son çalıştırma çıktısı
+CronLastResult=Son sonuç kodu
+CronListOfCronJobs=Planlı işler listesi
+CronCommand=Komut
+CronList= iş listesi
+CronDelete= Cron işi sil
+CronConfirmDelete= Bu cron işini silmek istediğinizden emin misiniz?
+CronExecute=İş başlat
+CronConfirmExecute= Şimdi bu işi yürütmek istediğinizden emin misiniz
+CronInfo= Planllanmış işi yürütecek görevi sağlayan işler
+CronWaitingJobs=Bekleyen işler
+CronTask=İş
 CronNone= Hiçbiri
 CronDtStart=Başlama tarihi
 CronDtEnd=Son tarih
-# CronDtNextLaunch=Next execution
-# CronDtLastLaunch=Last execution
-# CronFrequency=Frequancy
-# CronClass=Classe
+CronDtNextLaunch=Sonraki yürütme
+CronDtLastLaunch=Son yürütme
+CronFrequency=Sıklık
+CronClass=Sınıf
 CronMethod=Yöntem
 CronModule=Modül
-# CronAction=Action
+CronAction=İşlem
 CronStatus=Durum
 CronStatusActive=Etkin
 CronStatusInactive=Engelli
-# CronNoJobs=No jobs registered
+CronNoJobs=Kayıtlı iş yok
 CronPriority=Öncelik
 CronLabel=Açıklama
-# CronNbRun=Nb. launch
-# CronEach=Every
-# JobFinished=Job launched and finished
+CronNbRun=Başlatma sayısı
+CronEach=Her
+JobFinished=İş başlatıldı ve bitirildi
 
 #
 #Page card
 #
-# CronAdd= Add jobs
-# CronHourStart= Start Hour and date of task
-# CronEvery= And execute task each
-# CronObject= Instance/Object to create
+CronAdd= İş ekle
+CronHourStart= Görevin başlama saati ve tarihi
+CronEvery= Ve her işi yürüt
+CronObject= Oluşturulacak durum/nesne
 CronArgs=Parametreler
-# CronSaveSucess=Save succesfully
+CronSaveSucess=Kayıt başarılı
 CronNote=Yorum
-# CronFieldMandatory=Fields %s is mandatory
-# CronErrEndDateStartDt=End date cannot be before start date
-# CronStatusActiveBtn=Enable
+CronFieldMandatory=%s alanı zorunludur
+CronErrEndDateStartDt=Bitiş tarihi başlama tarihinden önce olamaz
+CronStatusActiveBtn=Etkin
 CronStatusInactiveBtn=Engelle
-# CronTaskInactive=This job is disabled
-# CronDtLastResult=Last result date
-# CronId=Id
-# CronClassFile=Classes (filename.class.php)
-# CronModuleHelp=Name of Dolibarr module directory (also work with external Dolibarr module). <BR> For exemple to fetch method of Dolibarr Product object /htdocs/<u>product</u>/class/product.class.php, the value of module is <i>product</i>
-# CronClassFileHelp=The file name to load. <BR> For exemple to fetch method of Dolibarr Product object /htdocs/product/class/<u>product.class.php</u>, the value of class file name is <i>product.class.php</i>
-# CronObjectHelp=The object name to load. <BR> For exemple to fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value of class file name is <i>Product</i>
-# CronMethodHelp=The object method to launch. <BR> For exemple to fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value of method is  is <i>fecth</i>
-# CronArgsHelp=The method arguments. <BR> For exemple to fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value of paramters can be <i>0, ProductRef</i>
-# CronCommandHelp=The system command line to execute.
+CronTaskInactive=Bu iş devre dışı
+CronDtLastResult=Son sonuç tarihi
+CronId=Id
+CronClassFile=Sınıflar (dosyaadı.sınıf.php)
+CronModuleHelp=Dolibarr modül dizini adı (aynı zamanda dış Dolibarr modülü ile de çalışır). <BR> Örneğin; Dolibarr Ürün nesnesi alım yöntemi /htdocs/<u>product</u>/class/product.class.php, modül değeri <i>product</i>
+CronClassFileHelp=Yüklenecek dosya adı. <BR> Örneğin; Dolibarr Ürün nesnesi alım yöntemi /htdocs/product/class/<u>product.class.php</u>, sınıf dosya adı değeri <i>product.class.php</i>
+CronObjectHelp=Yüklenecek nesne adı. <BR> Örneğin; Dolibarr Ürün nesnesi alım yöntemi /htdocs/product/class/product.class.php, sınıf dosya adı değeri <i>Product</i>
+CronMethodHelp=Çalıştırılacak nesne yöntemi. <BR> Örneğin; Dolibarr Ürün nesnesi alım yöntemi /htdocs/product/class/product.class.php, yöntem değeri <i>fecth</i>
+CronArgsHelp=Yöntem parametreleri. <BR> Örneğin; Dolibarr Ürün nesnesi alım yöntemi /htdocs/product/class/product.class.php, parametre değerleri <i>0, ProductRef</i> olabilir
+CronCommandHelp=Yürütülecek sistem komut satırı.
 
 #
 # Info
 #
-# CronInfoPage=Information
+CronInfoPage=Bilgi
 
 
 #
 # Common
 #
-# CronType=Task type
-# CronType_method=Call method of a Dolibarr Class
-# CronType_command=Shell command
-# CronMenu=Cron
-# CronCannotLoadClass=Cannot load class %s or object %s
+CronType=Görev türü
+CronType_method=Dolibarr Sınıfı çağırma yöntemi
+CronType_command=Kabuk komutu
+CronMenu=Kron
+CronCannotLoadClass=%s sınıfı ya da %s nesnesi yüklenemiyor
 
-# UseMenuModuleToolsToAddCronJobs=Go into menu "Home - Modules tools - Job list" to see and edit scheduled jobs.
+UseMenuModuleToolsToAddCronJobs=Planlı işleri görmek ve düzenlemek için "Giriş - Modül araçları - İş listesi" menüsüne gidin.

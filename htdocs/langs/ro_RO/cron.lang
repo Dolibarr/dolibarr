@@ -111,4 +111,4 @@ CronType_command=Comandă shell
 CronMenu=Cron
 CronCannotLoadClass=Nu pot încărca clasa %s sau  obiectul %s
 
-# UseMenuModuleToolsToAddCronJobs=Go into menu "Home - Modules tools - Job list" to see and edit scheduled jobs.
+UseMenuModuleToolsToAddCronJobs=Intrați în meniul ''Acasă - Instrumentele modulelor - Lista de job-uri'' pentru a vedea și edita job-urile programate.

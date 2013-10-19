@@ -7,7 +7,7 @@ DeliveryOrder=Teslimat emri
 DeliveryOrders=Teslimat emirleri
 DeliveryDate=Teslim tarihi
 DeliveryDateShort=Tes. tarihİ
-CreateDeliveryOrder=Teslimat emri olüştur
+CreateDeliveryOrder=Teslimat emri oluştur
 QtyDelivered=Teslimat Mik
 SetDeliveryDate=Nakliye tarihini ayarla
 ValidateDeliveryReceipt=Teslimat fişini doğrula
@@ -20,7 +20,7 @@ DeliveryNotValidated=Teslimat doğrulanmadı
 # merou PDF model
 NameAndSignature=Adı ve İmzası:
 ToAndDate=Teslim alan ___________________________________ Tarih _____ / _____ /__________
-GoodStatusDeclaration=Yukarıdaki malzemeleri iyi durumda aldım,
+GoodStatusDeclaration=Yukarıdaki malzemeleri iyi durumda teslim aldım,
 Deliverer=Teslim eden :
 Sender=Gönderen
 Recipient=Alıcı

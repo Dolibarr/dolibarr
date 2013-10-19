@@ -86,10 +86,10 @@ PaymentRenewContractId=Sözleşme satırını yenile (sayı %s)
 ExpiredSince=Süre bitiş tarihi
 RelatedContracts=İlgili sözleşmeler
 NoExpiredServices=Süresi dolmamış etkin hizmetler
-# ListOfServicesToExpireWithDuration=List of Services to expire in %s days
-# ListOfServicesToExpireWithDurationNeg=List of Services expired from more than %s days
-# ListOfServicesToExpire=List of Services to expire
-# NoteListOfYourExpiredServices=This list contains only services of contracts for third parties you are linked to as a sale representative.
+ListOfServicesToExpireWithDuration=%s günde süresi dolacak Hizmetler Listesi
+ListOfServicesToExpireWithDurationNeg=%s günden fazla günde süresi dolacak Hizmetler Listesi
+ListOfServicesToExpire=Süresi dolacak hizmetler listesi
+NoteListOfYourExpiredServices=Bu liste yalnızca satış temsilcisi olarak bağlı olduğunuz üçüncü partilere ait hizmet sözleşmelerini içerir.
 
 ##### Types de contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Sözleşme imzalalayacak satış temsilcisi

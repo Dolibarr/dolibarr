@@ -39,7 +39,7 @@ ConfirmCloseService=您确定要关闭这项服务与日期<b>%s吗</b> ？
 ValidateAContract=验证合同
 ActivateService=激活服务
 ConfirmActivateService=你确定要激活这项服务的日期<b>%s吗</b> ？
-# RefContract=Contract reference
+RefContract=合同参考
 DateContract=合同日期
 DateServiceActivate=服务激活日期
 DateServiceUnactivate=服务停用日期
@@ -86,10 +86,10 @@ PaymentRenewContractId=续订合同线（%s的数目）
 ExpiredSince=失效日期
 RelatedContracts=有关合同
 NoExpiredServices=没有过期的主动服务
-# ListOfServicesToExpireWithDuration=List of Services to expire in %s days
-# ListOfServicesToExpireWithDurationNeg=List of Services expired from more than %s days
-# ListOfServicesToExpire=List of Services to expire
-# NoteListOfYourExpiredServices=This list contains only services of contracts for third parties you are linked to as a sale representative.
+ListOfServicesToExpireWithDuration=在 %s 天内将期满的服务列表
+ListOfServicesToExpireWithDurationNeg=服务超过 %s 天过期列表
+ListOfServicesToExpire=服务到期列表
+NoteListOfYourExpiredServices=此列表只包含你作为一个销售代表与第三方的服务合同 。
 
 ##### Types de contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=销售代表签订合同

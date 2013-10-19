@@ -1,4 +1,4 @@
-# Dolibarr language file - tr_TR - paybox
+# Dolibarr language file - Source file is en_US - paybox
 CHARSET=UTF-8
 PayBoxSetup=PayBox modülü kurulumu
 PayBoxDesc=Bu modül <a href="http://www.paybox.com" target="_blank">Paybox</a> üzerinden müşteriler tarafından ödeme yapılmasını sağlar. Bu bir ücretsiz ödeme veya belirli bir Dolibarr nesnesine (fatura, siparş,…) bir ödeme yapmak için kullanılabilir
@@ -33,3 +33,6 @@ VendorName=Satıcının Adı
 CSSUrlForPaymentForm=Ödeme formu için CSS stil sayfası url'si
 MessageOK=Doğrulama sayfası mesajı
 MessageKO=İptal edilen ödeme sayfası mesajı
+NewPayboxPaymentReceived=Yeni Paybox ödemesi alındı
+NewPayboxPaymentFailed=Yeni Paybox ödemesi denendi ama başarısız oldu
+PAYBOX_PAYONLINE_SENDEMAIL=Ödeme sonrası uyarı Epostası (başarılı ya da başarısız)
