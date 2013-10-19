@@ -44,9 +44,9 @@ create table llx_actioncomm
   fk_contact		integer,
   fk_parent			integer NOT NULL default 0,
 
-  fk_user_action	integer,						-- user id of owner of action (currently also user id of actor that must do action. In future, actors assigned to action will be an array into table llx_actioncomm_actors)
+  fk_user_action	integer,						-- user id of owner of action (currently also user id of actor that must do action. In future, actors assigned to action will be an array into table llx_actioncomm_resources)
 
-  transparency      integer,						-- transparency (ical standard). used to say if people assigned to event are busy or not by event (in future version, this field is deprecated and will be stored into table llx_actioncomm_actors)
+  transparency      integer,						-- transparency (ical standard). used to say if people assigned to event are busy or not by event (in future version, this field is deprecated and will be stored into table llx_actioncomm_resources)
   fk_user_done		integer,						-- user id of people that has made action (deprecated)
   
   priority			smallint,

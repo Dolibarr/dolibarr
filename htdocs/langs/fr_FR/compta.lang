@@ -168,3 +168,5 @@ CalculationRuleDesc=Pour calculer le total de TVA, il existe 2 modes:<br>Le mode
 CalculationRuleDescSupplier=Selon le mode utilisé par le fournisseur, choisissez le mode adéquant afin d'appliquer la même règle et obtenir un résultat identique au mode appliqué par votre fournisseur.
 TurnoverPerProductInCommitmentAccountingNotRelevant=Le chiffre d'affaire par produit, dans une comptabilité en mode <b>comptabilité de caisse</b> n'est pas définissable. Ce rapport n'est disponible qu'en mode de comptabilité dit <b>comptabilité d'engagement</b> (voir la configuration du module de comptabilité).
 CalculationMode=Mode de calcul
+COMPTA_ACCOUNT_CUSTOMER=Code comptable par défaut des tiers clients
+COMPTA_ACCOUNT_SUPPLIER=Code comptable par défaut des tiers fournisseurs

@@ -122,12 +122,95 @@ if ($action == 'delline' && $idline != '')
 	else unset($_SESSION['massstockmove']);
 }
 
-if ($action == 'createmovement' && isset($_POST['valid']))
+if ($action == 'createmovements')
 {
+	$error=0;
+	
+	if (! GETPOST("label"))
+	{
+		$error++;
+		setEventMessage($langs->trans("ErrorFieldRequired"),$langs->transnoentitiesnoconv("LabelMovement"));
+	}
+	
+	$db->begin();
+	
+	if (! $error)
+	{
+		$product = new Product($db);
 
+		foreach($listofdata as $key => $val)	// Loop on each movement to do
+		{	
+			$id=$val['id'];
+			$id_product=$val['id_product'];
+			$id_sw=$val['id_sw'];
+			$id_tw=$val['id_tw'];
+			$qty=price2num($val['qty']);
+		
+			if (! $error && $id_sw <> $id_tw && is_numeric($qty) && $id_product)
+			{
+				$result=$product->fetch($id_product);
 
+				$product->load_stock();	// Load array product->stock_warehouse
 
+				// Define value of products moved
+				$pricesrc=0;
+				if (isset($product->stock_warehouse[$id_sw]->pmp)) $pricesrc=$product->stock_warehouse[$id_sw]->pmp;
+				$pricedest=$pricesrc;
 
+				//print 'price src='.$pricesrc.', price dest='.$pricedest;exit;
+
+				// Remove stock
+				$result1=$product->correct_stock(
+	    			$user,
+	    			$id_sw,
+	    			$qty,
+	    			1,
+	    			GETPOST("label"),
+	    			$pricesrc
+				);
+				if ($result1 < 0)
+				{
+					$error++;
+					setEventMessage($product->errors,'errors');	
+				}
+				
+				// Add stock
+				$result2=$product->correct_stock(
+	    			$user,
+	    			$id_tw,
+	    			$qty,
+	    			0,
+	    			GETPOST("label"),
+	    			$pricedest
+				);
+				if ($result2 < 0)
+				{
+					$error++;
+					setEventMessage($product->errors,'errors');	
+				}
+			}
+			else
+			{
+				dol_print_error('',"Bad value saved into sessions");
+				$error++;	
+			}
+		}
+	}
+	
+	if (! $error)
+	{
+		unset($_SESSION['massstockmove']);
+		
+		$db->commit();
+		setEventMessage($langs->trans("StockMovementRecorded"),'mesgs');
+		header("Location: ".DOL_URL_ROOT.'/product/stock/index.php');		// Redirect to avoid pb when using back
+		exit;
+	}
+	else
+	{
+		$db->rollback();
+		setEventMessage($langs->trans("Error"),'errors');
+	}
 }
 
 
@@ -230,7 +313,15 @@ foreach($listofdata as $key => $val)
 
 print '</table>';
 
+print '</form>';
+
+
 print '<br>';
+
+
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" name="formulaire2">';
+print '<input type="hidden" name="token" value="' .$_SESSION['newtoken'] . '">';
+print '<input type="hidden" name="action" value="createmovements">';
 
 // Button to record mass movement
 $labelmovement=GETPOST("label")?GETPOST('label'):$langs->trans("MassStockMovement").' '.dol_print_date($now,'%Y-%m-%d %H:%M');
@@ -245,7 +336,6 @@ print '<table class="border" width="100%">';
 print '</table>';	
 
 print '<div class="center"><input class="button" type="submit" name="valid" value="'.dol_escape_htmltag($buttonrecord).'"></div>';
-
 
 print '</form>';
 
