@@ -224,6 +224,16 @@ class ActionComm extends CommonObject
             	}
             }
             else if ($reshook < 0) $error++;
+            
+            if ($conf->global->AGENDA_USE_SEVERAL_CONTACTS && !$error) {
+            	if ((isset($this->usertodo->id) && $this->usertodo->id > 0)) {
+            		$this->add_contact($this->usertodo->id, 'ACTOR', 'internal');
+            	}
+            	
+            	if ((isset($this->contact->id) && $this->contact->id > 0)) {
+            		$this->add_contact($this->contact->id, 'GUEST', 'external');
+            	}
+            }
 
             if (! $error && ! $notrigger)
             {
@@ -385,6 +395,11 @@ class ActionComm extends CommonObject
            		dol_syslog(get_class($this)."::delete error -3 ".$this->error, LOG_ERR);
            	}
         }
+        
+        //Delete element contact if option is actiated
+    	if ($conf->global->AGENDA_USE_SEVERAL_CONTACTS && ! $error) {
+    		$this->delete_linked_contact();
+		}
 
         if (!$error)
         {
@@ -497,6 +512,17 @@ class ActionComm extends CommonObject
         		}
         	}
         	else if ($reshook < 0) $error++;
+        	
+        	
+        	if ($conf->global->AGENDA_USE_SEVERAL_CONTACTS && !$error) {
+        		if ((isset($this->usertodo->id) && $this->usertodo->id > 0)) {
+        			$this->add_contact($this->usertodo->id, 'ACTOR', 'internal');
+        		}
+        		 
+        		if ((isset($this->contact->id) && $this->contact->id > 0)) {
+        			$this->add_contact($this->contact->id, 'GUEST', 'external');
+        		}
+        	}
 
             if (! $notrigger)
             {

@@ -1425,6 +1425,7 @@ AgendaSetup=Configuration du module actions et agenda
 PasswordTogetVCalExport=Clé pour autoriser le lien d'exportation
 PastDelayVCalExport=Ne pas exporter les événements de plus de
 AGENDA_USE_EVENT_TYPE=Utilisez les types des évenements (administrable dans Configuration -> Dictionnaires -> Liste des types d'évenements de l'agenda)
+AGENDA_USE_SEVERAL_CONTACTS=Utilisez plusieurs contacts sur un évenement de l'agenda
 ##### ClickToDial #####
 ClickToDialDesc=Ce module permet d'ajouter la possibilité de cliquer sur les numéros de téléphones. Un clic provoque l'appel de l'URL définie dans ce paramétrage. Ceci permet de lancer des appels à un serveur de téléphonie depuis Dolibarr qui peut alors composer le numéro sur un système SIP par exemple.
 ##### Point Of Sales (CashDesk) #####

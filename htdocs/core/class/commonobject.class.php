@@ -467,8 +467,8 @@ abstract class CommonObject
 
         if (! empty($source)) $sql.= " AND tc.source='".$source."'";
         $sql.= " ORDER by tc.".$order;
-
-        //print "sql=".$sql;
+        
+		dol_syslog(get_class($this).'::liste_type_contact sql='.$sql);
         $resql=$this->db->query($sql);
         if ($resql)
         {
