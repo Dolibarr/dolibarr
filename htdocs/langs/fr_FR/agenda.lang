@@ -79,3 +79,8 @@ ExtSitesNbOfAgenda=Nombre de calendriers
 AgendaExtNb=Calendrier no %s
 ExtSiteUrlAgenda=URL d'accès au fichier ical
 ExtSiteNoLabel=Aucune description
+
+TypeContact_action_internal_GUEST=Invité(e)
+TypeContact_action_internal_ACTOR=Responsable
+TypeContact_action_external_GUEST=Invité(e)
+TypeContact_action_external_ACTOR=Responsable
