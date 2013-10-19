@@ -121,6 +121,29 @@ else
 }
 print '</td></tr>'."\n";
 
+$var=!$var;
+print '<tr '.$bc[$var].'>'."\n";
+print '<td>'.$langs->trans("AGENDA_USE_SEVERAL_CONTACTS").'</td>'."\n";
+print '<td align="center" width="20">&nbsp;</td>'."\n";
+
+print '<td align="center" width="100">'."\n";
+if ($conf->use_javascript_ajax)
+{
+	print ajax_constantonoff('AGENDA_USE_SEVERAL_CONTACTS');
+}
+else
+{
+	if($conf->global->AGENDA_USE_SEVERAL_CONTACTS == 0)
+	{
+		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_AGENDA_USE_SEVERAL_CONTACTS">'.img_picto($langs->trans("Disabled"),'off').'</a>';
+	}
+	else
+	{
+		print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_AGENDA_USE_SEVERAL_CONTACTS">'.img_picto($langs->trans("Enabled"),'on').'</a>';
+	}
+}
+print '</td></tr>'."\n";
+
 print '</table>';
 
 dol_fiche_end();

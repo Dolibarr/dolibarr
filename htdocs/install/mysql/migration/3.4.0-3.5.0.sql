@@ -311,3 +311,4 @@ create table llx_contrat_extrafields
   import_key                varchar(14)                          		-- import key
 ) ENGINE=innodb;
 
+UPDATE llx_c_type_contact SET element='action' where element='agenda';

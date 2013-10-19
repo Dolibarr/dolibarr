@@ -280,6 +280,7 @@ abstract class CommonObject
 
         $sql = "DELETE FROM ".MAIN_DB_PREFIX."element_contact";
         $sql.= " WHERE rowid =".$rowid;
+        $sql.= " AND (element_type='".$this->element."')";
 
         dol_syslog(get_class($this)."::delete_contact sql=".$sql);
         if ($this->db->query($sql))
@@ -467,8 +468,8 @@ abstract class CommonObject
 
         if (! empty($source)) $sql.= " AND tc.source='".$source."'";
         $sql.= " ORDER by tc.".$order;
-
-        //print "sql=".$sql;
+        
+		dol_syslog(get_class($this).'::liste_type_contact sql='.$sql);
         $resql=$this->db->query($sql);
         if ($resql)
         {
