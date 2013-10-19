@@ -3,14 +3,21 @@
 # Command run is phpunit
 # For syntax, see http://about.travis-ci.org/docs/user/languages/php/
 
+notifications:
+  email:
+    on_success: never # [always|never|change] default: change
+    on_failure: always # [always|never|change] default: always
+    
 services:
  - memcached # will start memcached
 
 # This will tell travis to run phpunit
 language: php
 php:
+# - "5.2" is not supported because pyrus to install PHP_Codesniffer is not available
  - "5.3"
  - "5.4"
+ - "5.5" 
 
 env:
  - DB=mysql
@@ -20,7 +27,9 @@ before_script:
  - echo Start travis
  - echo Current dir is `pwd`
  - echo Home dir is `echo ~`
- - echo Update composer
+ - export PHPV=`phpenv version-name`
+ - echo PHP version $PHPV 
+# - echo Update composer
 # - ~/.phpenv/versions/$(phpenv version-name)/bin/composer.phar self-update 
  - echo Install phpcs then show installed rules
  - pyrus install pear/PHP_CodeSniffer
@@ -35,10 +44,12 @@ before_script:
  - find $(pwd)/htdocs/documents -type d -exec ls -alt {} \;
  - echo Edit php.ini file
  - echo 'date.timezone = "Europe/Paris"' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
- - echo "extension = apc.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
 # - echo "extension = memcache.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
  - echo "extension = memcached.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
- - echo "zend_extension_ts = xdebug.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
+ - sh -c "if [ '$PHPV' = '5.3' ]; then echo 'extension = apc.so' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini; fi"
+ - sh -c "if [ '$PHPV' = '5.4' ]; then echo 'extension = apc.so' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini; fi"
+ - sh -c "if [ '$PHPV' = '5.3' ]; then echo 'zend_extension_ts = xdebug.so' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini; fi"
+ - sh -c "if [ '$PHPV' = '5.4' ]; then echo 'zend_extension_ts = xdebug.so' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini; fi"
  - cat ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
  - echo Init database
  - sh -c "if [ '$DB' = 'pgsql' ]; then psql -c 'DROP DATABASE IF EXISTS myapp_test;' -U postgres; fi"
