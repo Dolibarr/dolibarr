@@ -44,12 +44,12 @@ before_script:
  - find $(pwd)/htdocs/documents -type d -exec ls -alt {} \;
  - echo Edit php.ini file
  - echo 'date.timezone = "Europe/Paris"' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
- - sh -c "if [ '$PHPV' = '5.3' ]; then echo "extension = apc.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
- - sh -c "if [ '$PHPV' = '5.4' ]; then echo "extension = apc.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
 # - echo "extension = memcache.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
  - echo "extension = memcached.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
- - sh -c "if [ '$PHPV' = '5.3' ]; then - echo "zend_extension_ts = xdebug.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
- - sh -c "if [ '$PHPV' = '5.4' ]; then - echo "zend_extension_ts = xdebug.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
+ - sh -c "if [ '$PHPV' = '5.3' ]; then echo "extension = apc.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini"
+ - sh -c "if [ '$PHPV' = '5.4' ]; then echo "extension = apc.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini"
+ - sh -c "if [ '$PHPV' = '5.3' ]; then - echo "zend_extension_ts = xdebug.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini"
+ - sh -c "if [ '$PHPV' = '5.4' ]; then - echo "zend_extension_ts = xdebug.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini"
  - cat ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
  - echo Init database
  - sh -c "if [ '$DB' = 'pgsql' ]; then psql -c 'DROP DATABASE IF EXISTS myapp_test;' -U postgres; fi"
