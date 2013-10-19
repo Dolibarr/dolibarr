@@ -27,7 +27,9 @@ before_script:
  - echo Start travis
  - echo Current dir is `pwd`
  - echo Home dir is `echo ~`
- - echo Update composer
+ - export PHPV=`phpenv version-name`
+ - echo PHP version $PHPV 
+# - echo Update composer
 # - ~/.phpenv/versions/$(phpenv version-name)/bin/composer.phar self-update 
  - echo Install phpcs then show installed rules
  - pyrus install pear/PHP_CodeSniffer
@@ -42,7 +44,8 @@ before_script:
  - find $(pwd)/htdocs/documents -type d -exec ls -alt {} \;
  - echo Edit php.ini file
  - echo 'date.timezone = "Europe/Paris"' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
- - echo "extension = apc.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
+ - sh -c "if [ '$DB' = '5.3' ]; then echo "extension = apc.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
+ - sh -c "if [ '$DB' = '5.4' ]; then echo "extension = apc.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
 # - echo "extension = memcache.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
  - echo "extension = memcached.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
  - echo "zend_extension_ts = xdebug.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
