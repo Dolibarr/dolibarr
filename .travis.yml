@@ -3,6 +3,11 @@
 # Command run is phpunit
 # For syntax, see http://about.travis-ci.org/docs/user/languages/php/
 
+notifications:
+  email:
+    on_success: never # [always|never|change] default: change
+    on_failure: always # [always|never|change] default: always
+    
 services:
  - memcached # will start memcached
 
