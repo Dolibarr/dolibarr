@@ -299,7 +299,8 @@ ALTER TABLE llx_facture_fourn MODIFY COLUMN fk_mode_reglement	integer NULL;
 ALTER TABLE llx_facture_fourn MODIFY COLUMN fk_cond_reglement	integer NULL;
 
 
-insert into llx_c_action_trigger (rowid,code,label,description,elementtype,rang) values (9,'COMPANY_SENTBYMAIL','Mails sent from third party card','Executed when you send email from third party card','societe',1);
+INSERT INTO llx_c_action_trigger (rowid,code,label,description,elementtype,rang) values (9,'COMPANY_SENTBYMAIL','Mails sent from third party card','Executed when you send email from third party card','societe',1);
+
 
 ALTER TABLE llx_contratdet ADD column product_type integer DEFAULT 1 after total_ttc;
 
@@ -310,4 +311,8 @@ create table llx_contrat_extrafields
   fk_object                 integer NOT NULL,
   import_key                varchar(14)                          		-- import key
 ) ENGINE=innodb;
+
+
+-- add outstanding bill
+ALTER TABLE llx_societe ADD outstanding_limit double(24,8) DEFAULT NULL AFTER mode_reglement_supplier;
 

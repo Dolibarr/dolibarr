@@ -64,6 +64,7 @@ For users:
 - New: Can choose contact on event (action com) creation, and filtred by thirdparty.
 - New: Add hidden option MAIN_FORCE_DEFAULT_STATE_ID.
 - New: Add page to make mass stock movement.
+- New: Add field oustanding limit into thirdparty properties.
 
 For translators:
 - Qual: Normalized sort order of all languages files with english reference files.

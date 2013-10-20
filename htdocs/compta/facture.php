@@ -2318,6 +2318,18 @@ if ($action == 'create')
 		print '</td></tr>';
 	}
 
+	if ($soc->outstanding_limit)
+	{
+		// Outstanding Bill
+		print '<tr><td>';
+		print $langs->trans('OutstandingBill');
+		print '</td><td align=right>';
+		print price($soc->get_OutstandingBill()).' / ';
+		print price($soc->outstanding_limit).'</td><td colspan=2>';
+		print '</td>';
+		print '</tr>';
+	}
+
 	// Other attributes
 	$parameters=array('objectsrc' => $objectsrc, 'colspan' => ' colspan="3"');
 	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
@@ -3034,6 +3046,7 @@ else if ($id > 0 || ! empty($ref))
 		$nbrows=8; $nbcols=2;
 		if (! empty($conf->projet->enabled)) $nbrows++;
 		if (! empty($conf->banque->enabled)) $nbcols++;
+		if (! empty($soc->outstandingbill)) $nbrows++;
 		if($mysoc->localtax1_assuj=="1") $nbrows++;
 		if($mysoc->localtax2_assuj=="1") $nbrows++;
 		if ($selleruserevenustamp) $nbrows++;
@@ -3304,6 +3317,18 @@ else if ($id > 0 || ! empty($ref))
 				$form->form_modes_reglement($_SERVER['PHP_SELF'].'?facid='.$object->id,$object->mode_reglement_id,'none');
 			}
 			print '</td></tr>';
+
+			if ($soc->outstandingbill)
+			{
+				// Outstanding Bill
+				print '<tr><td>';
+				print $langs->trans('OutstandingBill');
+				print '</td><td align=right>';
+				print price($soc->get_OutstandingBill()).' / ';
+				print price($soc->outstandingbill);
+				print '</td>';
+				print '</tr>';
+			}
 
 			// Amount
 			print '<tr><td>'.$langs->trans('AmountHT').'</td>';

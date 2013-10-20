@@ -52,7 +52,7 @@ create table llx_societe
   fk_effectif              integer        DEFAULT 0,            		--
   fk_typent                integer        DEFAULT 0,            		--
   fk_forme_juridique       integer        DEFAULT 0,            		-- juridical status
-  fk_currency			   integer		  DEFAULT 0,					-- currency
+  fk_currency			   integer		   DEFAULT 0,					-- currency
   siren	                   varchar(128),                         		-- IDProf1: siren or RCS for france
   siret                    varchar(128),                         		-- IDProf2: siret for france
   ape                      varchar(128),                         		-- IDProf3: code ape for france
@@ -61,7 +61,7 @@ create table llx_societe
   idprof6                  varchar(128),                         		-- IDProf6: nu for france
   tva_intra                varchar(20),                         		-- tva
   capital                  real,                                		-- capital de la societe
-  fk_stcomm                integer        DEFAULT 0 NOT NULL,      		-- commercial statut
+  fk_stcomm                integer        DEFAULT 0 NOT NULL,      	-- commercial statut
   note_private             text,                                		--
   note_public              text,                                        --
   prefix_comm              varchar(5),                          		-- prefix commercial
@@ -85,6 +85,7 @@ create table llx_societe
   barcode                  varchar(255),                        		-- barcode
   fk_barcode_type          integer NULL   DEFAULT 0,                    -- barcode type
   price_level              integer NULL,                        		-- level of price for multiprices
+  outstanding_limit	       double(24,8)  DEFAULT NULL,				-- allowed outstanding limit
   default_lang             varchar(6),									-- default language
   logo                     varchar(255),
   canvas				   varchar(32),			                        -- type of canvas if used (null by default)
