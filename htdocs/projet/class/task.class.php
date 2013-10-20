@@ -1083,6 +1083,7 @@ class Task extends CommonObject
 			$this->db->commit();
 
 			$clone_task_id=$clone_task->id;
+			$clone_task_ref = $clone_task->ref;
 
        		//Note Update
 			if (!$clone_note)
@@ -1139,7 +1140,7 @@ class Task extends CommonObject
 	        		$clone_project_ref=$ori_project_ref;
 	        	}
 
-				$clone_task_dir = $conf->projet->dir_output . "/" . dol_sanitizeFileName($clone_project_ref). "/" . dol_sanitizeFileName($clone_task_id);
+				$clone_task_dir = $conf->projet->dir_output . "/" . dol_sanitizeFileName($clone_project_ref). "/" . dol_sanitizeFileName($clone_task_ref);
 				$ori_task_dir = $conf->projet->dir_output . "/" . dol_sanitizeFileName($ori_project_ref). "/" . dol_sanitizeFileName($fromid);
 
 				$filearray=dol_dir_list($ori_task_dir,"files",0,'','\.meta$','',SORT_ASC,1);
