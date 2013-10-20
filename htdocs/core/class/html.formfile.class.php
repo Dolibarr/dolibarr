@@ -2,6 +2,7 @@
 /* Copyright (c) 2008-2013 Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2010-2012 Regis Houssin		<regis.houssin@capnetworks.com>
  * Copyright (c) 2010      Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (c) 2013      Charles-Fr BENKE		<charles.fr@benke.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -717,8 +718,16 @@ class FormFile
 					print '<a data-ajax="false" href="'.DOL_URL_ROOT.'/document.php?modulepart='.$modulepart;
 					if ($forcedownload) print '&attachment=1';
 					if (! empty($object->entity)) print '&entity='.$object->entity;
-					print '&file='.urlencode($relativepath.$file['name']).'">';
+					//print '&file='.urlencode($relativepath.$file['name']).'">';
+					if ($file['level1name'] <> $object->id)
+						$filepath=urlencode($object->id.'/'.$file['level1name'].'/'.$file['name']);
+					else
+						$filepath=urlencode($object->id.'/'.$file['name']);
+					print '&file='.$filepath.'">';
+
 					print img_mime($file['name'],$file['name'].' ('.dol_print_size($file['size'],0,0).')').' ';
+					if ($file['level1name'] <> $object->id)
+						print $file['level1name'].'/';
 					print dol_trunc($file['name'],$maxlength,'middle');
 					print '</a>';
 					print "</td>\n";
@@ -738,7 +747,14 @@ class FormFile
 					// ($param must start with &)
 					print '<td align="right">';
 					if ($useinecm)     print '<a href="'.DOL_URL_ROOT.'/ecm/docfile.php?urlfile='.urlencode($file['name']).$param.'" class="editfilelink" rel="'.urlencode($file['name']).$param.'">'.img_view().'</a> &nbsp; ';
-					if ($permtodelete) print '<a href="'.(($useinecm && ! empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE_JS))?'#':$url.'?action=delete&urlfile='.urlencode($file['name']).$param).'" class="deletefilelink" rel="'.urlencode($file['name']).$param.'">'.img_delete().'</a>';
+					if ($permtodelete)
+					{
+						if ($file['level1name'] <> $object->id)
+							$filepath=urlencode($file['level1name'].'/'.$file['name']);
+						else
+							$filepath=urlencode($file['name']);
+						print '<a href="'.(($useinecm && ! empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE_JS))?'#':$url.'?action=delete&urlfile='.$filepath.$param).'" class="deletefilelink" rel="'.$filepath.$param.'">'.img_delete().'</a>';
+					}
 					else print '&nbsp;';
 					print "</td>";
 					print "</tr>\n";
