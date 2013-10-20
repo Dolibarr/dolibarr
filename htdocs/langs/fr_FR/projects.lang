@@ -105,7 +105,7 @@ TypeContact_project_task_internal_TASKEXECUTIVE=Responsable
 TypeContact_project_task_external_TASKEXECUTIVE=Responsable
 TypeContact_project_task_internal_CONTRIBUTOR=Intervenant
 TypeContact_project_task_external_CONTRIBUTOR=Intervenant
-SelectElement=Eléments associable au projet :
+SelectElement=Eléments associables au projet :
 AddElement=Associer
 # Documents models
 DocumentModelBaleine=Modèle de rapport de projet complet (logo...)
