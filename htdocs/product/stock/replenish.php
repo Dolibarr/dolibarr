@@ -540,7 +540,7 @@ while ($i < min($num, $limit))
 	}
 	$i++;
 }
-print '</table>'.
+print '</table>';
 
 
 $value=$langs->trans("CreateOrders");

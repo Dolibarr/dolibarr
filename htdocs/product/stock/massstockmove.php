@@ -18,8 +18,8 @@
 /**
  *  \file       htdocs/product/stock/massstockmove.php
  *  \ingroup    stock
- *  \brief      This page allows to select several products, then incoming warehouse and 
- *  			outgoing warehouse and create all stock movements for this.  
+ *  \brief      This page allows to select several products, then incoming warehouse and
+ *  			outgoing warehouse and create all stock movements for this.
  */
 
 require '../../main.inc.php';
@@ -74,7 +74,7 @@ if (! empty($_SESSION['massstockmove'])) $listofdata=dol_json_decode($_SESSION['
 
 if ($action == 'addline')
 {
-	if (! ($id_product > 0)) 
+	if (! ($id_product > 0))
 	{
 		$error++;
 		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Product")),'errors');
@@ -94,20 +94,20 @@ if ($action == 'addline')
 		$error++;
 		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("WarehouseTarget")),'errors');
 	}
-	if ($id_sw > 0 && $id_tw == $id_sw)	
+	if ($id_sw > 0 && $id_tw == $id_sw)
 	{
 		$error++;
 		$langs->load("errors");
 		setEventMessage($langs->trans("ErrorWarehouseMustDiffers"),'errors');
 	}
-	
+
 	if (! $error)
 	{
 		if (count(array_keys($listofdata)) > 0) $id=max(array_keys($listofdata)) + 1;
 		else $id=1;
 		$listofdata[$id]=array('id'=>$id, 'id_product'=>$id_product, 'qty'=>$qty, 'id_sw'=>$id_sw, 'id_tw'=>$id_tw);
 		$_SESSION['massstockmove']=dol_json_encode($listofdata);
-		
+
 		unset($id_product);
 		//unset($id_sw);
 		//unset($id_tw);
@@ -125,27 +125,27 @@ if ($action == 'delline' && $idline != '')
 if ($action == 'createmovements')
 {
 	$error=0;
-	
+
 	if (! GETPOST("label"))
 	{
 		$error++;
 		setEventMessage($langs->trans("ErrorFieldRequired"),$langs->transnoentitiesnoconv("LabelMovement"));
 	}
-	
+
 	$db->begin();
-	
+
 	if (! $error)
 	{
 		$product = new Product($db);
 
 		foreach($listofdata as $key => $val)	// Loop on each movement to do
-		{	
+		{
 			$id=$val['id'];
 			$id_product=$val['id_product'];
 			$id_sw=$val['id_sw'];
 			$id_tw=$val['id_tw'];
 			$qty=price2num($val['qty']);
-		
+
 			if (! $error && $id_sw <> $id_tw && is_numeric($qty) && $id_product)
 			{
 				$result=$product->fetch($id_product);
@@ -171,9 +171,9 @@ if ($action == 'createmovements')
 				if ($result1 < 0)
 				{
 					$error++;
-					setEventMessage($product->errors,'errors');	
+					setEventMessage($product->errors,'errors');
 				}
-				
+
 				// Add stock
 				$result2=$product->correct_stock(
 	    			$user,
@@ -186,21 +186,21 @@ if ($action == 'createmovements')
 				if ($result2 < 0)
 				{
 					$error++;
-					setEventMessage($product->errors,'errors');	
+					setEventMessage($product->errors,'errors');
 				}
 			}
 			else
 			{
 				dol_print_error('',"Bad value saved into sessions");
-				$error++;	
+				$error++;
 			}
 		}
 	}
-	
+
 	if (! $error)
 	{
 		unset($_SESSION['massstockmove']);
-		
+
 		$db->commit();
 		setEventMessage($langs->trans("StockMovementRecorded"),'mesgs');
 		header("Location: ".DOL_URL_ROOT.'/product/stock/index.php');		// Redirect to avoid pb when using back
@@ -238,7 +238,7 @@ $titletoaddnoent=$langs->transnoentitiesnoconv("Select");
 $buttonrecord=$langs->trans("RecordMovement");
 $buttonrecordnoent=$langs->trans("RecordMovement");
 print $langs->trans("SelectProductInAndOutWareHouse",$titletoaddnoent,$buttonrecordnoent).'<br>';
-print '<br>'."\n"; 
+print '<br>'."\n";
 
 $var=true;
 
@@ -286,11 +286,11 @@ print '</tr>';
 foreach($listofdata as $key => $val)
 {
 	$var=!$var;
-	
+
 	$productstatic->fetch($val['id_product']);
 	$warehousestatics->fetch($val['id_sw']);
 	$warehousestatict->fetch($val['id_tw']);
-	
+
 	print '<tr '.$bc[$var].'>';
 	print '<td>'.$productstatic->getNomUrl(1).'</td>';
 	print '<td>';
@@ -307,7 +307,7 @@ foreach($listofdata as $key => $val)
 	print '</td>';
 	print '<td align="center">'.$val['qty'].'</td>';
 	print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=delline&idline='.$val['id'].'">'.img_delete($langs->trans("Remove")).'</a></td>';
-	
+
 	print '</tr>';
 }
 
@@ -324,7 +324,7 @@ print '<input type="hidden" name="token" value="' .$_SESSION['newtoken'] . '">';
 print '<input type="hidden" name="action" value="createmovements">';
 
 // Button to record mass movement
-$labelmovement=GETPOST("label")?GETPOST('label'):$langs->trans("MassStockMovement").' '.dol_print_date($now,'%Y-%m-%d %H:%M');
+$labelmovement=GETPOST("label")?GETPOST('label'):$langs->trans("StockTransfer").' '.dol_print_date($now,'%Y-%m-%d %H:%M');
 
 print '<table class="border" width="100%">';
 	print '<tr>';
@@ -333,7 +333,7 @@ print '<table class="border" width="100%">';
 	print '<input type="text" name="label" size="80" value="'.dol_escape_htmltag($labelmovement).'">';
 	print '</td>';
 	print '</tr>';
-print '</table>';	
+print '</table>';
 
 print '<div class="center"><input class="button" type="submit" name="valid" value="'.dol_escape_htmltag($buttonrecord).'"></div>';
 

@@ -16,6 +16,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
  * Javascript code to activate drag and drop on lines
+ * You can use this if you want to be abale to drag and drop rows of a table.
+ * You must add id="tablelines" ont table level tag and have count($object->lines) or count($taskarray) > 0  
  */
 ?>
 
@@ -26,6 +28,7 @@ $fk_element=$object->fk_element;
 $table_element_line=$object->table_element_line;
 $nboflines=(isset($object->lines)?count($object->lines):(isset($tasksarray)?count($tasksarray):0));
 $forcereloadpage=empty($conf->global->MAIN_FORCE_RELOAD_PAGE)?0:1;
+$tagidfortablednd=(empty($tagidfortablednd)?'tablelines':$tagidfortablednd);
 
 if (GETPOST('action') != 'editline' && $nboflines > 1) { ?>
 <script type="text/javascript">
@@ -37,10 +40,10 @@ $(document).ready(function(){
     $(".tdlineupdown").css("background-repeat","no-repeat");
     $(".tdlineupdown").css("background-position","center center");
 
-    $("#tablelines").tableDnD({
+    $("#<?php echo $tagidfortablednd; ?>").tableDnD({
 		onDrop: function(table, row) {
 			var reloadpage = "<?php echo $forcereloadpage; ?>";
-			var roworder = cleanSerialize($("#tablelines").tableDnDSerialize());
+			var roworder = cleanSerialize($("#<?php echo $tagidfortablednd; ?>").tableDnDSerialize());
 			var table_element_line = "<?php echo $table_element_line; ?>";
 			var fk_element = "<?php echo $fk_element; ?>";
 			var element_id = "<?php echo $id; ?>";
@@ -55,7 +58,7 @@ $(document).ready(function(){
 						if (reloadpage == 1) {
 							location.href = '<?php echo $_SERVER['PHP_SELF'].'?'.$_SERVER['QUERY_STRING']; ?>';
 						} else {
-							$("#tablelines .drag").each(
+							$("#<?php echo $tagidfortablednd; ?> .drag").each(
 									function( intIndex ) {
 										$(this).removeClass("pair impair");
 										if (intIndex % 2 == 0) $(this).addClass('impair');

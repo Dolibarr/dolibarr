@@ -64,6 +64,7 @@ For users:
 - New: Can choose contact on event (action com) creation, and filtred by thirdparty.
 - New: Add hidden option MAIN_FORCE_DEFAULT_STATE_ID.
 - New: Add page to make mass stock movement.
+- New: Add field oustanding limit into thirdparty properties.
 
 For translators:
 - Qual: Normalized sort order of all languages files with english reference files.
@@ -315,7 +316,7 @@ For users:
 - New: Can list elements (invoices, orders or proposals) on a particular
   user contact). This allow to view a "basket" of its elements.
 - New: Show bank account on payment list of invoice card.
-- New: Cloning project allow to clones task, notes, files, contacts. 
+- New: Cloning project allow to clones task, notes, projects files, tasks files, contacts. 
 - New: Enhance default style.
 - New: Can edit and resiliate member status from list.
 - New: Can insert URL links into elements lines. Also reported into PDF.

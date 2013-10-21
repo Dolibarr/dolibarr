@@ -4,12 +4,13 @@ define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
 
 require '../../main.inc.php';
 
-if (empty($conf->global->MAIN_FEATURES_LEVEL))
+if (!empty($conf->global->MAIN_FEATURES_LEVEL))
 {
 	print "Page available onto dev environment only";
 	exit;
 }
 ?>
+
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 
@@ -17,7 +18,7 @@ if (empty($conf->global->MAIN_FEATURES_LEVEL))
 <meta name="robots" content="noindex,nofollow" />
 <meta name="author" content="Dolibarr Development Team">
 <link rel="shortcut icon" type="image/x-icon" href="<?php echo DOL_URL_ROOT ?>/theme/eldy/img/favicon.ico"/>
-<title>Login Dolibarr 3.4.0-alpha</title>
+<title>Test page</title>
 <!-- Includes for JQuery (Ajax library) -->
 <link rel="stylesheet" type="text/css" href="<?php echo DOL_URL_ROOT ?>/includes/jquery/css/smoothness/jquery-ui-latest.custom.css" />
 <link rel="stylesheet" type="text/css" href="<?php echo DOL_URL_ROOT ?>/includes/jquery/plugins/datatables/css/jquery.dataTables.css" />
@@ -25,6 +26,7 @@ if (empty($conf->global->MAIN_FEATURES_LEVEL))
 <link rel="stylesheet" type="text/css" title="default" href="<?php echo DOL_URL_ROOT ?>/theme/eldy/style.css.php?dol_use_jmobile=1" />
 <!-- Includes JS for JQuery -->
 <script type="text/javascript" src="<?php echo DOL_URL_ROOT ?>/includes/jquery/js/jquery-latest.min.js"></script>
+<script type="text/javascript" src="<?php echo DOL_URL_ROOT ?>/includes/jquery/plugins/tablednd/jquery.tablednd.0.6.min.js"></script>
 <script type="text/javascript" src="<?php echo DOL_URL_ROOT ?>/includes/jquery/plugins/datatables/js/jquery.dataTables.js"></script>
 <!--<script type="text/javascript" src="<?php echo DOL_URL_ROOT ?>/includes/jquery/plugins/mobile/jquery.mobile-latest.min.js"></script>-->
 </head>
@@ -37,32 +39,43 @@ if (empty($conf->global->MAIN_FEATURES_LEVEL))
 This page is a sample of page using tables. To make test with<br>
 - css (edit page to change)<br>
 - jmobile (edit page to enable/disable)<br>
-- dataTables.<br>
+- dataTables<br>
+- tablednd<br>
 <br>
-
 
 
 <br>
 Example 1 : Table using tags: div.tagtable+form+div or div.tagtable+div.tagtr+div.tagtd<br>
+<?php 
+	$tasksarray=array(1,2,3);	// To force having several lines
+	$tagidfortablednd='tablelines';
+	if (! empty($conf->use_javascript_ajax) && $object->statut == 0) include DOL_DOCUMENT_ROOT.'/core/tpl/ajaxrow.tpl.php';
+?>
 
-<div class="tagtable centpercent" id="abc">
-    <form class="liste_titre" method="POST" action="1.php">
-        <div>snake<input type="hidden" name="cartitem" value="1"></div>
+<div class="tagtable centpercent" id="tablelines">
+<form class="liste_titre" method="POST" action="1.php">
+        <div>line1<input type="hidden" name="cartitem" value="1"></div>
         <div><label><input type="checkbox" name="hidedetails" value="2"> A checkbox inside a cell</label></div>
         <div><input name="count" value="4"></div>
         <div><input type="submit" name="count" class="button noshadow" value="aaa"></div>
     </form>
     <form class="impair" method="POST" action="2.php">
-        <div>snagfdgfd  gd fgf ke<input type="hidden" name="cartitem" value="2"></div>
+        <div>line2<input type="hidden" name="cartitem" value="2"></div>
         <div>dfsdf</div>
         <div><input name="count" value="4"></div>
-        <div><input type="submit" value="xxx" class="button"></div>
+        <div class="tdlineupdown"><input type="submit" value="xxx" class="button"></div>
     </form>
     <div class="pair tagtr" method="GET" action="3.php">
-        <div>snagfdgfd  gd fgf ke<input type="hidden" name="cartitem" value="3"></div>
+        <div>line3<input type="hidden" name="cartitem" value="3"></div>
         <div>dfsdf</div>
         <div><input name="count" value="4"></div>
-        <div><input type="submit" value="zzz" class="button"></div>
+        <div class="tdlineupdown"><input type="submit" value="zzz" class="button"></div>
+    </div>
+    <div class="pair tagtr" method="GET" action="3.php">
+        <div>line4<input type="hidden" name="cartitem" value="3"></div>
+        <div>dfsdf</div>
+        <div><input name="count" value="4"></div>
+        <div class="tdlineupdown"><input type="submit" value="zzz" class="button"></div>
     </div>
 </div>
 
@@ -133,67 +146,88 @@ $('xxxth').replaceWith(
     </thead>
     <tbody>
     <tr>
-        <td>snagfdgfd  gd fgf ke</td>
+        <td>line1</td>
         <td>dfsdf</td>
 		<td> xxx </td>
     </tr>
     <tr>
-        <td>snagfdgfd  gd fgf ke</td>
+        <td>line2</td>
         <td>dfsdf</td>
         <td> xxx </td>
     </tr>
     <tr>
-        <td>snagfdgfd  gd fgf ke</td>
+        <td>line3</td>
         <td>dfsdf</td>
         <td> xxx </td>
     </tr>
     <tr>
-        <td>snagfdgfd  gd fgf ke</td>
+        <td>line4</td>
         <td>dfsdf</td>
         <td> xxx </td>
     </tr>
     <tr>
-        <td>snagfdgfd  gd fgf ke</td>
+        <td>line5</td>
         <td>dfsdf</td>
         <td> xxx </td>
     </tr>
     <tr>
-        <td>snagfdgfd  gd fgf ke</td>
+        <td>line6</td>
         <td>dfsdf</td>
         <td> xxx </td>
     </tr>
     <tr>
-        <td>snagfdgfd  gd fgf ke</td>
+        <td>line7</td>
         <td>dfsdf</td>
         <td> xxx </td>
     </tr>
     <tr>
-        <td>snagfdgfd  gd fgf ke</td>
+        <td>line8</td>
         <td>dfsdf</td>
         <td> xxx </td>
     </tr>
     <tr>
-        <td>snagfdgfd  gd fgf ke</td>
+        <td>line9</td>
         <td>dfsdf</td>
         <td> xxx </td>
     </tr>
     <tr>
-        <td>snagfdgfd  gd fgf ke</td>
+        <td>line10</td>
         <td>dfsdf</td>
         <td> xxx </td>
     </tr>
     <tr>
-        <td>snagfdgfd  gd fgf ke</td>
+        <td>line11</td>
         <td>dfsdf</td>
         <td> xxx </td>
     </tr>
     <tr>
-        <td>snagfdgfd  gd fgf ke</td>
+        <td>line12</td>
         <td>dfsdf</td>
         <td> xxx </td>
     </tr>
     </tbody>
 </table>
+
+
+<br><br>
+
+
+
+<br>
+Example 3 : Standard table<br>
+<?php 
+	$tasksarray=array(1,2,3);	// To force having several lines
+	$tagidfortablednd='tablelines3';
+	if (! empty($conf->use_javascript_ajax) && $object->statut == 0) include DOL_DOCUMENT_ROOT.'/core/tpl/ajaxrow.tpl.php';
+?>
+
+<table class="tagtable centpercent centpercent" id="tablelines3">
+<tr class="liste_titre"><td>title1</td><td class="tdlineupdown">title2</td></tr>
+<tr class="pair"><td class="pair">a1</td><td class="tdlineupdown pair">b1</td></tr>
+<tr class="impair"><td class="impair">a2</td><td class="tdlineupdown impair">b2</td></tr>
+</table>
+<br>
+
 
 </div>
 </body>

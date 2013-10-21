@@ -397,7 +397,7 @@ InActivity=En activité
 ActivityCeased=Clos
 ActivityStateFilter=Statut d'activité
 ProductsIntoElements=Liste des produits dans les %s
-
+OutstandingBill=Encours de facturation
 # Monkey
 MonkeyNumRefModelDesc=Renvoie le numéro sous la forme %syymm-nnnn pour les codes clients et %syymm-nnnn pour les codes fournisseurs où yy est l'année, mm le mois et nnnn un compteur séquentiel sans rupture et sans remise à 0.
 # Leopard
