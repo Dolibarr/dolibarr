@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - orders
-CHARSET=UTF-8
 OrdersArea=Espace commandes clients
 SuppliersOrdersArea=Espace commandes fournisseurs
 OrderCard=Fiche commande
@@ -148,7 +147,7 @@ AddDeliveryCostLine=Ajouter une ligne de frais port indiquant le poids de la com
 # Documents models
 PDFEinsteinDescription=Modèle de commande complet (logo…)
 PDFEdisonDescription=Modèle de commande simple
-PDFProformaDescription=Modèle de facture proforma complet (logo…)
+# PDFProformaDescription=A complete proforma invoice (logo…)
 # Orders modes
 OrderByMail=Courrier
 OrderByFax=Fax

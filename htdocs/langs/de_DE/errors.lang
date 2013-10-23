@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - errors
-CHARSET=UTF-8
 
 # No errors
 # NoErrorCommitIsDone=No error, we commit
@@ -125,6 +124,9 @@ ErrorNoActivatedBarcode=Kein Barcode aktiviert
 # ErrorFailedToAddContact=Failed to add contact
 # ErrorDateMustBeBeforeToday=The date can not be greater than today
 # ErrorPaymentModeDefinedToWithoutSetup=A payment mode was set to type %s but setup of module Invoice was not completed to define information to show for this payment mode.
+# ErrorPHPNeedModule=Error, your PHP must have module <b>%s</b> installed to use this feature.
+# ErrorOpenIDSetupNotComplete=You setup Dolibarr config file to allow OpenID authentication, but URL of OpenID service is not defined into constant %s
+# ErrorWarehouseMustDiffers=Source and target warehouses must differs
 
 # Warnings
 # WarningMandatorySetupNotComplete=Mandatory setup parameters are not yet defined

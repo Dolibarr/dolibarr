@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - paypal
-CHARSET=UTF-8
 PaypalSetup=PayPal modul beállítása
 PaypalDesc=Ez a modul ajánlat oldalakat, hogy fizetést <a href="http://www.paypal.com" target="_blank">PayPal</a> ügyfelek. Ezt fel lehet használni a szabad fizetés vagy a fizetés egy adott Dolibarr objektum (számla, megrendelés, ...)
 PaypalOrCBDoPayment=Fizessen hitelkártyával vagy Paypal
@@ -18,3 +17,6 @@ PAYPAL_ADD_PAYMENT_URL=Add az url a Paypal fizetési amikor a dokumentumot post�
 PAYPAL_IPN_MAIL_ADDRESS=E-mail cím az azonnali értesítést a fizetés (IPN)
 # PredefinedMailContentLink=You can click on the secure link below to make your payment (PayPal) if it is not already done.\n\n%s\n\n
 YouAreCurrentlyInSandboxMode=Ön jelenleg a &quot;sandbox&quot; mód
+# NewPaypalPaymentReceived=New Paypal payment received
+# NewPaypalPaymentFailed=New Paypal payment tried but failed
+# PAYPAL_PAYONLINE_SENDEMAIL=EMail to warn after a payment (success or not)

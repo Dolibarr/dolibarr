@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - orders
-CHARSET=UTF-8
 OrdersArea=客户订单面积
 SuppliersOrdersArea=供应商的订单面积
 OrderCard=订购卡
@@ -56,8 +55,6 @@ DraftOrWaitingShipped=草案或审定尚未运
 MenuOrdersToBill=比尔订单
 MenuOrdersToBill2=订单票据
 SearchOrder=搜索顺序
-Sending=发出
-Sendings=Sendings
 ShipProduct=船舶产品
 Discount=折扣
 CreateOrder=创建订单
@@ -150,6 +147,7 @@ AddDeliveryCostLine=添加交货成本线，显示该命令的重量
 # Documents models
 PDFEinsteinDescription=一个完整的命令模式（logo. ..）
 PDFEdisonDescription=一份简单的订购模式
+# PDFProformaDescription=A complete proforma invoice (logo…)
 # Orders modes
 OrderByMail=邮件
 OrderByFax=传真

@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - other
-CHARSET=UTF-8
 SecurityCode=Código seguridad
 Calendar=Calendario
 AddTrip=Crear honorario
@@ -8,8 +7,8 @@ ToolsDesc=Esta área está dedicada al reagrupamiento de diversas utilidades no 
 Birthday=Aniversario
 BirthdayDate=Fecha aniversario
 DateToBirth=Fecha de nacimiento
-BirthdayAlertOn=alerta aniversario activada
-BirthdayAlertOff=alerta aniversario desactivada
+BirthdayAlertOn= alerta aniversario activada
+BirthdayAlertOff= alerta aniversario desactivada
 Notify_FICHINTER_VALIDATE=Validación ficha intervención
 Notify_FICHINTER_SENTBYMAIL=Envío ficha de intervención por e-mail
 Notify_BILL_VALIDATE=Validación factura
@@ -24,6 +23,7 @@ Notify_WITHDRAW_EMIT=Emisión domiciliación
 Notify_ORDER_SENTBYMAIL=Envío pedido de cliente por e-mail
 Notify_COMPANY_CREATE=Creación tercero
 Notify_PROPAL_SENTBYMAIL=Envío presupuesto por e-mail
+Notify_ORDER_SENTBYMAIL=Envío pedido de cliente por e-mail
 Notify_BILL_PAYED=Cobro factura a cliente
 Notify_BILL_CANCEL=Cancelación factura a cliente
 Notify_BILL_SENTBYMAIL=Envío factura a cliente por e-mail
@@ -173,12 +173,13 @@ StartUpload=Transferir
 CancelUpload=Cancelar la transferencia
 FileIsTooBig=El archivo es demasiado grande
 PleaseBePatient=Rogamos espere unos instantes...
-RequestToResetPasswordReceived=Se ha recibido una petición de modificación de contraseña
-NewKeyIs=Estos son los nuevos identificadores para conectarse
-NewKeyWillBe=Los nuevos identificadores para conectarse a la aplicación serán
-ClickHereToGoTo=Haga clic aquí para ir a %s
-YouMustClickToChange=Sin embargo, primero debe hacer clic en el siguiente enlace para validar este cambio de contraseña
-ForgetIfNothing=Si no ha realizado la solicitud, simplemente ignore este mensaje. Su acceso se mantiene seguro.
+# RequestToResetPasswordReceived=A request to change your Dolibarr password has been received
+# NewKeyIs=This is your new keys to login
+# NewKeyWillBe=Your new key to login to software will be
+# ClickHereToGoTo=Click here to go to %s
+# YouMustClickToChange=You must however first click on the following link to validate this password change
+# ForgetIfNothing=If you didn't request this change, just forget this email. Your credentials are kept safe.
+
 ##### Calendar common #####
 AddCalendarEntry=Añadir entrada en el calendario
 NewCompanyToDolibarr=Empresa %s insertada en Dolibarr

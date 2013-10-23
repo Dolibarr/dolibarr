@@ -1,5 +1,4 @@
-# Dolibarr language file - pt_BR rev. 0.0 - ldap
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - ldap
 DomainPassword=Senha do Domínio
 YouMustChangePassNextLogon=A senha de <b>%s</b> ao domínio <b>%s</b> deve de ser modificada.
 UserMustChangePassNextLogon=O usuário deve alterar de senha na próxima login
@@ -23,7 +22,8 @@ LDAPFieldLastSubscriptionDate=Data da Última Adesão
 LDAPFieldLastSubscriptionAmount=Valor Última Adesão
 SynchronizeDolibarr2Ldap=Sincronizar usuário (Dolibarr -> LDAP)
 UserSynchronized=Usuário Sincronizado
+GroupSynchronized=Grupo sincronizado
+MemberSynchronized=Membro sincronizado
+ContactSynchronized=Contato sincronizado
 ForceSynchronize=forçar sincronização Dolibarr -> LDAP
 ErrorFailedToReadLDAP=Erro na leitura do anuário LDAP. Verificar a configuração do módulo LDAP e a acessibilidade do anuário.
-
-

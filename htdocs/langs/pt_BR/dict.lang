@@ -1,5 +1,4 @@
-# Dolibarr language file - pt_BR rev. 0.0 - dict
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - dict
 CountryFR=França
 CountryBE=Belgica
 CountryIT=Italia
@@ -252,22 +251,78 @@ CivilityMME=Sra.
 CivilityMR=Sr.
 CivilityMLE=Dr.
 CivilityMTRE=Eng.
+CivilityDR=Doutor
 
 ##### Currencies #####
 Currencyeuros=Euros
-CurrencyAUD=Dólar UA
-CurrencyCAD=Dólar CAN
+CurrencyAUD=Dólaros Australianos
+CurrencySingAUD=Dólaro Australiano
+CurrencyCAD=Dólaros CAN
+CurrencySingCAD=Dolaro Canadense
 CurrencyCHF=Francos suíços
+CurrencySingCHF=Franco Suico
 CurrencyEUR=Euros
+CurrencySingEUR=Euro
 CurrencyFRF=Francos Franceses
+CurrencySingFRF=Franco Frances
+CurrencyGBP=Esterlinas Inglesas
+CurrencySingGBP=Esterlina Inglesa
+CurrencyINR=Rupias India
+CurrencySingINR=Rupia India
 CurrencyMAD=Dirham
+CurrencySingMAD=Dirham
 CurrencyMGA=Ariary
-CurrencyGBP=GB Pounds
+CurrencySingMGA=Ariary
+CurrencyMUR=Mauritius rupias
+CurrencySingMUR=Mauritius rupia
+CurrencyNOK=Coroas Norwegas
+CurrencySingNOK=Coroa Norwega
 CurrencyTND=TND
-CurrencyUSD=Dólar E.U.
+CurrencySingTND=Dinaro Tunisino
+CurrencyUSD=Dólaros E.U.
+CurrencySingUSD=Dólar E.U.
+CurrencyUAH=Hryvnia
+CurrencySingUAH=Hryvnia
 CurrencyXAF=Francos CFA BEAC
+CurrencySingXAF=Franco CFA BEAC
 CurrencyXOF=Francos CFA BCEAO
+CurrencySingXOF=Franco CFA BCEAO
+CurrencyXPF=Francos CFP
+CurrencySingXPF=Franco CFP
 
+CurrencyCentSingEUR=centavo
+CurrencyThousandthSingTND=mil
 
+#### Input reasons #####
+DemandReasonTypeSRC_INTE=Internet
+DemandReasonTypeSRC_CAMP_MAIL=Campanha correio
+DemandReasonTypeSRC_CAMP_EMAIL=Campanha por E-mail
+DemandReasonTypeSRC_CAMP_PHO=Campanha Telefone
+DemandReasonTypeSRC_CAMP_FAX=Campanha Fax
+DemandReasonTypeSRC_COMM=Contato comercial
+DemandReasonTypeSRC_SHOP=Contato na loja
+DemandReasonTypeSRC_WOM=Palavra da boca
+DemandReasonTypeSRC_PARTNER=Parceiro
+DemandReasonTypeSRC_EMPLOYEE=Empregado
+DemandReasonTypeSRC_SPONSORING=Sponsorizacao
 
-
+#### Paper formats ####
+PaperFormatEU4A0=Formato 4A0
+PaperFormatEU2A0=Formato 2A0
+PaperFormatEUA0=Formato A0
+PaperFormatEUA1=Formato A1
+PaperFormatEUA2=Formato A2
+PaperFormatEUA3=Formato A3
+PaperFormatEUA4=Formato A4
+PaperFormatEUA5=Formato A5
+PaperFormatEUA6=Formato A6
+PaperFormatUSLETTER=Formato Carta E.U.A.
+PaperFormatUSLEGAL=Formato Legal E.U.A.
+PaperFormatUSEXECUTIVE=Formato Executivo E.U.A.
+PaperFormatUSLEDGER=Formato Ledger/Tabloid
+PaperFormatCAP1=Formato P1 Canada
+PaperFormatCAP2=Formato P2 Canada
+PaperFormatCAP3=Formato P3 Canada
+PaperFormatCAP4=Formato P4 Canada
+PaperFormatCAP5=Formato P5 Canada
+PaperFormatCAP6=Formato P6 Canada

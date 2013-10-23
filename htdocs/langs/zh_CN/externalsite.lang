@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - externalsite
-CHARSET=UTF-8
 ExternalSiteSetup=设置链接到外部网站
 ExternalSiteURL=外部网站网址
 ExternalSiteModuleNotComplete=外部网站模块配置不正确。

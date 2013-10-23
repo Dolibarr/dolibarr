@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - companies
-CHARSET=UTF-8
 ErrorCompanyNameAlreadyExists=Company name %s  er þegar til. Veldu annað.
 ErrorPrefixAlreadyExists=Forskeyti %s  er þegar til. Veldu annað.
 ErrorSetACountryFirst=Setja í landinu fyrst
@@ -85,6 +84,8 @@ LocalTax1IsUsedES= OR er notað
 LocalTax1IsNotUsedES= OR er ekki notaður
 LocalTax2IsUsedES= IRPF er notaður
 LocalTax2IsNotUsedES= IRPF er ekki notaður
+LocalTax1ES=RE
+LocalTax2ES=IRPF
 ThirdPartyEMail=%s
 WrongCustomerCode=Viðskiptavinur númer ógilt
 WrongSupplierCode=Birgir kóða ógilt
@@ -395,7 +396,7 @@ InActivity=Opnaðu
 ActivityCeased=Lokað
 ActivityStateFilter=Virkni stöðu
 # ProductsIntoElements=List of products into
-
+# OutstandingBill=Outstanding Bill
 # Monkey
 MonkeyNumRefModelDesc=Fara aftur numero með snið %s yymm-NNNN fyrir kóða viðskiptavina og %s yymm-NNNN fyrir númer birgja þar sem YY er ári, mm er mánuður og NNNN er röð án brot og ekki aftur snúið til 0.
 # Leopard

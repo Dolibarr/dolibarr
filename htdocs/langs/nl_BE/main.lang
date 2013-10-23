@@ -1,5 +1,4 @@
 # Dolibarr language file - nl_BE - main
-CHARSET=UTF-8
 SeparatorDecimal=,
 SeparatorThousand= 
 FormatDateShort=%d/%m/%Y

@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - boxes
-CHARSET=UTF-8
 BoxLastRssInfos=Rss bilgileri
 BoxLastProducts=Son %s ürün/hizmet
 BoxProductsAlertStock=Stoktaki ürün uyarısı
@@ -75,6 +74,7 @@ NoRecordedProducts=Kayıtlı ürün/hizmet yok
 NoRecordedProspects=Kayıtlı aday yok
 NoContractedProducts=Sözleşmeli ürün/hizmet yok
 NoRecordedContracts=Kayıtlı sözleşme yok
+# NoRecordedInterventions=No recorded interventions
 BoxLatestSupplierOrders=Son tedarikçi siparişleri
 BoxTitleLatestSupplierOrders=Son %s tedarikçi siparişi
 NoSupplierOrder=Kayıtlı tedarikçi siparişi yok
@@ -84,3 +84,8 @@ BoxCustomersOrdersPerMonth=Aylık müşteri siparişleri
 BoxSuppliersOrdersPerMonth=Aylık tedarikçi siparişleri
 BoxProposalsPerMonth=Aylık teklifler
 NoTooLowStockProducts=Düşük stok seviyesi altında stok yok
+# BoxProductDistribution=Products/Services distribution
+# BoxProductDistributionFor=Distribution of %s for %s
+ForCustomersInvoices=Müşterilerin faturaları
+# ForCustomersOrders=Customers orders
+ForProposals=Teklifler

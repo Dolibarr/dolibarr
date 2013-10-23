@@ -1,5 +1,4 @@
 # Dolibarr language file - fr_NC - main
-CHARSET=UTF-8
 AmountVAT=Montant TSS
 TotalVAT=Total TSS
 IncludedVAT=Dont TSS

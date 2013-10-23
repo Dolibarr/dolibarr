@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - orders
-CHARSET=UTF-8
 OrdersArea=Afnemersopdrachtenoverzicht
 SuppliersOrdersArea=Leveranciersopdrachtenoverzicht
 OrderCard=Opdrachtenkaart
@@ -56,8 +55,6 @@ DraftOrWaitingShipped=Concept of nog niet verzonden
 MenuOrdersToBill=Te factureren opdrachten
 # MenuOrdersToBill2=Orders to bill
 SearchOrder=Zoekopdracht
-Sending=Zending
-Sendings=Verzendingen
 ShipProduct=Verzend product
 Discount=Korting
 CreateOrder=Creeer opdracht
@@ -150,6 +147,7 @@ AddDeliveryCostLine=Voeg een verzendkostenregel toe die het gewicht van de goede
 # Documents models
 PDFEinsteinDescription=Een compleet opdrachtenmodel (incl. logo, etc)
 PDFEdisonDescription=Een eenvoudig opdrachtenmodel
+# PDFProformaDescription=A complete proforma invoice (logo…)
 # Orders modes
 OrderByMail=Mail
 OrderByFax=Fax

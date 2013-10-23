@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - orders
-CHARSET=UTF-8
 # OrdersArea=Customers orders area
 # SuppliersOrdersArea=Suppliers orders area
 # OrderCard=Order card
@@ -56,8 +55,6 @@ Order=Trật tự
 # MenuOrdersToBill=Orders delivered
 # MenuOrdersToBill2=Orders to bill
 # SearchOrder=Search order
-# Sending=Sending
-# Sendings=Sendings
 # ShipProduct=Ship product
 # Discount=Discount
 # CreateOrder=Create Order
@@ -150,6 +147,7 @@ Order=Trật tự
 # Documents models
 # PDFEinsteinDescription=A complete order model (logo...)
 # PDFEdisonDescription=A simple order model
+# PDFProformaDescription=A complete proforma invoice (logo…)
 # Orders modes
 # OrderByMail=Mail
 # OrderByFax=Fax

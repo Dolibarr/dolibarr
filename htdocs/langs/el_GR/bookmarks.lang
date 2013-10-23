@@ -1,12 +1,10 @@
 # Dolibarr language file - Source file is en_US - marque pages
-CHARSET=UTF-8
 AddThisPageToBookmarks=Προσθέστε αυτή τη σελίδα στους σελιδοδείκτες
-
 Bookmark=Σελιδοδείκτης
 Bookmarks=Σελιδοδείκτες
 NewBookmark=Νέος σελιδοδείκτης
 ShowBookmark=Εμφάνιση σελιδοδείκτη
-OpenANewWindow=Άνοιγμα νέου παραθύρου
+OpenANewWindow=Άνοιγμα σε νέο παράθυρο
 ReplaceWindow=Αντικατάσταση τρέχοντος παραθύρου
 BookmarkTargetNewWindowShort=Νέο παράθυρο
 BookmarkTargetReplaceWindowShort=Τρέχων παράθυρο

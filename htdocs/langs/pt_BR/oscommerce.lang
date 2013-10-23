@@ -1,5 +1,4 @@
-# Dolibarr language file - pt_BR rev. 0.0 - oscommerce
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - oscommerce
 OSCommerce=OS Commerce
 OSCommerceSetup=Configuração do módulo OS Commerce
 OSCommerceSetupSaved=Configuração OS Commerce guardada
@@ -7,5 +6,3 @@ OSCommerceServer=Nome/IP servidor da base de dados OS commerce
 OSCommerceDatabaseName=Nome da base de dados OS Commerce
 OSCommercePrefix=Prefixo Tabelas OS Commerce
 OSCommerceUser=Usuário da base de dados OS Commerce
-
-

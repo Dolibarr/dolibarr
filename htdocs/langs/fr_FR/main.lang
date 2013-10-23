@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - main
-CHARSET=UTF-8
 DIRECTION=ltr
 # Note for chinese:
 # msungstdlight or cid0ct are for traditionnal chinese (traditionnal does not render with ubuntu pdf reader)
@@ -8,7 +7,7 @@ DIRECTION=ltr
 FONTFORPDF=helvetica
 FONTSIZEFORPDF=10
 SeparatorDecimal=,
-SeparatorThousand= 
+SeparatorThousand=Aucune
 FormatDateShort=%d/%m/%Y
 FormatDateShortInput=%d/%m/%Y
 FormatDateShortJava=dd/MM/yyyy
@@ -388,7 +387,7 @@ OtherInformations=Autres informations
 Quantity=Quantité
 Qty=Qté
 ChangedBy=Modifié par
-ReCalculate=Re-calculer
+# ReCalculate=Recalculate
 ResultOk=Succès
 ResultKo=Échec
 Reporting=Rapport
@@ -657,8 +656,8 @@ HomeDashboard=Synthèse accueil
 Deductible=Déductible
 from=de
 toward=vers
-Access=Accès
-HelpCopyToClipboard=Ctrl+C pour copier dans le presse-papier
+# Access=Access
+# HelpCopyToClipboard=Use Ctrl+C to copy to clipboard
 
 # Week day
 Monday=Lundi

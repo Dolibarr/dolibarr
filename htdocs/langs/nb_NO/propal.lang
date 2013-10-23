@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - propal
-CHARSET=UTF-8
 Proposals=Tilbud
 Proposal=Tilbud
 ProposalShort=Forslag
@@ -34,7 +33,7 @@ ShowPropal=Vis tilbud
 PropalsDraft=Kladder
 PropalsOpened=Åpnede
 PropalsNotBilled=Lukkede men ikke fakturerte
-PropalStatusDraft=Kladder (trenger godkjenning)
+PropalStatusDraft=Kladd (trenger godkjenning)
 PropalStatusValidated=Godkjent (tilbudet er åpnet)
 PropalStatusOpened=Godkjent (tilbudet er åpnet)
 PropalStatusClosed=Lukket

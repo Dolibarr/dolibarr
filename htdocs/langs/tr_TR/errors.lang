@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - errors
-CHARSET=UTF-8
 
 # No errors
 NoErrorCommitIsDone=Hata yok, taahüt ediyoruz
@@ -125,6 +124,9 @@ ErrorToConnectToMysqlCheckInstance=Veritabanına bağlanılamadı. Mysql sunucus
 ErrorFailedToAddContact=Kişi eklenmesinde hata
 ErrorDateMustBeBeforeToday=Tarih bugünden büyük olamaz
 ErrorPaymentModeDefinedToWithoutSetup=Bir ödeme biçimi %s türüne ayarlanmış, ancak fatura modülü ayarı bu ödeme biçimi için tanımlanan bilgiyi gösterecek tamamlanmamış.
+# ErrorPHPNeedModule=Error, your PHP must have module <b>%s</b> installed to use this feature.
+# ErrorOpenIDSetupNotComplete=You setup Dolibarr config file to allow OpenID authentication, but URL of OpenID service is not defined into constant %s
+# ErrorWarehouseMustDiffers=Source and target warehouses must differs
 
 # Warnings
 WarningMandatorySetupNotComplete=Zorunlu kurulum parametreleri henüz tanımlanmamış

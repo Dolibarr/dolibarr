@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - admin
-CHARSET= UTF-8
 WorkflowSetup=İş Akışı modülü kurulumu
 WorkflowDesc=Bu modül, uygulama içinde kendiliğinden yapılacak işlemleri ayarlamak için tasarlanmıştır. Varsayılan olarak, iş akışı açıktır (işlemler istenen sırayla yapılabilir). Bununla birlikte kolaylık sağlayan işlemlerin kendiliğinden yapılması sağlanabilir.
 ThereIsNoWorkflowToModify=Etkinleştirdiğiniz bu modül için değişitirilebilecek bir iş akışı yok.
@@ -8,4 +7,5 @@ descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Bir teklif imzalandıktan sonra kendiliğ
 descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Bir sözleşme onaylandıktan sonra kendiliğinden müşteri faturası oluşturulsun
 descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Bir müşteri siparişi kapatıldıktan sonra kendiliğinden müşteri faturası oluşturulsun
 descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Bir müşteri siparişi ödenmiş olarak güncellendiğinde ilgili kaynak teklifi faturalanmış olarak dosyalansın
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Bir müşteri faturası ödenmiş olarak güncellendiğinde ilgili kaynak siparişi faturalanmış olarak dosyalansın
+# descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Classify linked source customer order(s) to billed when customer invoice is set to paid
+# descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Classify linked source customer order(s) to billed when customer invoice is validated

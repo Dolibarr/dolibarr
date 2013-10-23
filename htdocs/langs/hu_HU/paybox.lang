@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - paybox
-CHARSET=UTF-8
 PayBoxSetup=PayBox modul beállítás
 PayBoxDesc=Ez a nodul lehetővé teszi az oldalak számára a <a href="http://www.paybox.com" target="_blank">Paybox</a>-on keresztüli fizetést az ügyfelek számára. Ingyenes fizetési megoldás.
 FollowingUrlAreAvailableToMakePayments=Following URLs are available to offer a page to a customer to make a payment on Dolibarr objects
@@ -33,3 +32,6 @@ VendorName=Neve eladó
 CSSUrlForPaymentForm=CSS stíluslapot url fizetési forma
 MessageOK=Üzenet érvényesített fizetési vissza oldal
 MessageKO=Üzenet a törölt kifizetési visszatérés oldal
+# NewPayboxPaymentReceived=New Paybox payment received
+# NewPayboxPaymentFailed=New Paybox payment tried but failed
+# PAYBOX_PAYONLINE_SENDEMAIL=EMail to warn after a payment (success or failed)

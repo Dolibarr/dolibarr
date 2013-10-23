@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - companies
-CHARSET=UTF-8
 ErrorCompanyNameAlreadyExists=O nome da empresa %s já existe. Indique outro.
 ErrorPrefixAlreadyExists=O prefixo %s já existe. Indique outro.
 ErrorSetACountryFirst=Defina primeiro o país
@@ -85,6 +84,8 @@ LocalTax1IsUsedES= RE é usado
 LocalTax1IsNotUsedES= RE não é usada
 LocalTax2IsUsedES= IRPF é usado
 LocalTax2IsNotUsedES= IRPF não é usada
+LocalTax1ES=RE
+LocalTax2ES=IRPF
 ThirdPartyEMail=%s
 WrongCustomerCode=Código cliente incorrecto
 WrongSupplierCode=Código fornecedor incorrecto
@@ -395,7 +396,7 @@ InActivity=Aberto
 ActivityCeased=Fechado
 ActivityStateFilter=Status de atividade
 # ProductsIntoElements=List of products into
-
+# OutstandingBill=Outstanding Bill
 # Monkey
 MonkeyNumRefModelDesc=Devolve um número baixo o formato %syymm-nnnn para os códigos de clientes e %syymm-nnnn para os códigos dos Fornecedores, donde yy é o ano, mm o mês e nnnn um contador sequêncial sem ruptura e sem Voltar a 0.
 # Leopard

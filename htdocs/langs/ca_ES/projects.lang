@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - projects
-CHARSET=UTF-8
 Project=Projecte
 Projects=Projectes
 SharedProject=Projecte compartit
@@ -89,7 +88,8 @@ CloneProject=Clonar el projecte
 CloneTasks=Clonar les tasques
 CloneContacts=Clonar els contactes
 CloneNotes=Clonar les notes
-CloneFiles=Clonar els arxius adjunts
+# CloneProjectFiles=Clone project joined files
+# CloneTaskFiles=Clone task(s) joined files (if task(s) cloned)
 ConfirmCloneProject=Esteu segur que voleu clonar aquest projecte?
 ProjectReportDate=Canviar les dates de les tasques en funció de la data d'inici del projecte
 ErrorShiftTaskDate=S'ha produït un error en el canvi de les dates de les tasques
@@ -104,10 +104,10 @@ TypeContact_project_task_internal_TASKEXECUTIVE=Responsable
 TypeContact_project_task_external_TASKEXECUTIVE=Responsable
 TypeContact_project_task_internal_CONTRIBUTOR=Participant
 TypeContact_project_task_external_CONTRIBUTOR=Participant
-SelectElement=Elements vinculables al projecte :
-AddElement=Vincular
+# SelectElement=Elements to referring the project
+# AddElement=Refering
 # Documents models
 DocumentModelBaleine=Model d'informe de projecte complet (logo...)
-PlannedWorkload=Càrrega de treball prevista
-WorkloadOccupation=Percentatge afectat
+PlannedWorkload = Càrrega de treball prevista
+WorkloadOccupation= Percentatge afectat
 ProjectReferers=Objectes vinculats

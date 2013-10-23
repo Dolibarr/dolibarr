@@ -5,7 +5,6 @@
  */
 
 
-CHARSET=UTF-8
 ErrorCompanyNameAlreadyExists=Firmenname %s bereits vorhanden. Bitte wählen Sie einen anderen.
 ErrorPrefixAlreadyExists=Präfix %s bereits vorhanden. Bitte wählen Sie einen anderen.
 ErrorSetACountryFirst=Wählen sie zuerst das Land

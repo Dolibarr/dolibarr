@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - ecm
-CHARSET=UTF-8
 MenuECM=Документи
 DocsMine=Моите документи
 DocsGenerated=Генериране на документи
@@ -24,10 +23,10 @@ ECMNewDocument=Нов документ
 ECMCreationDate=Дата на създаване
 ECMNbOfFilesInDir=Брой на файловете в директорията
 ECMNbOfSubDir=Брой на под-директории
-ECMNbOfFilesInSubDir=Nunber на Iles в под-директории
+# ECMNbOfFilesInSubDir=Number of files in sub-directories
 ECMCreationUser=Създател
-ECMArea=ECM област
-ECMAreaDesc=ECM (Electronic Content Management) позволява да запишете, акции и бързо търсене на всички видове документи в Dolibarr.
+# ECMArea=EDM area
+# ECMAreaDesc=The EDM (Electronic Document Management) area allows you to save, share and search quickly all kind of documents in Dolibarr.
 ECMAreaDesc2=* Автоматично директории се попълват автоматично при добавяне на документи от карта на елемент. <br> * Ръчно директории могат да бъдат използвани, за да запазите документи, които не са свързани с определен елемент.
 ECMSectionWasRemoved=Directory <b>%s</b> е била изтрита.
 ECMDocumentsSection=Документ на директорията

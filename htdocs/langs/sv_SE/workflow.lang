@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - admin
-CHARSET= UTF-8
 WorkflowSetup=Arbetsflöde modul konfiguration
 WorkflowDesc=Denna modul är designade för att ändra beteendet hos automatiska åtgärder i programmet. Som standard är arbetsflödet öppnas (du gör något för att du vill). Du kan aktiveras automatiska åtgärder som du är intressanta i.
 ThereIsNoWorkflowToModify=Det finns ingen arbetsflöde du kan ändra för modul du har aktiverat.
@@ -8,4 +7,5 @@ descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Skapa en kundfaktura automatiskt efter en
 descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Skapa en kundfaktura automatiskt efter ett avtal validerad
 descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Skapa en kundfaktura automatiskt efter en kundorder är stängd
 # descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Classify linked source proposal to billed when customer order is set to paid
-# descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Classify linked source customer order to billed when customer invoice is set to paid
+# descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Classify linked source customer order(s) to billed when customer invoice is set to paid
+# descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Classify linked source customer order(s) to billed when customer invoice is validated

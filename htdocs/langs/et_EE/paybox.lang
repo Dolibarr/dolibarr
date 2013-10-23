@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - paybox
-CHARSET=UTF-8
 PayBoxSetup=Paybox moodul setup
 PayBoxDesc=See moodul pakkumise leheküljed, mis võimaldab makse <a href="http://www.paybox.com" target="_blank">Paybox</a> kliendid. Seda saab kasutada tasuta makse või makse teatud Dolibarr objekti (arve, et ...)
 FollowingUrlAreAvailableToMakePayments=Pärast URL-id on saadaval pakkuda leht kliendi teha makse Dolibarr esemeid
@@ -33,3 +32,6 @@ VendorName=Nimi müüja
 CSSUrlForPaymentForm=CSS style sheet url maksmise vorm
 MessageOK=Sõnum on kontrollitud makse tagasi lehele
 MessageKO=Sõnum on tühistatud makse tagasi lehele
+# NewPayboxPaymentReceived=New Paybox payment received
+# NewPayboxPaymentFailed=New Paybox payment tried but failed
+# PAYBOX_PAYONLINE_SENDEMAIL=EMail to warn after a payment (success or failed)

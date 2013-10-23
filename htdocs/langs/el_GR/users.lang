@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - users
-CHARSET=UTF-8
 UserCard=Καρτέλα Χρήστη
 ContactCard=Καρτέλα αντιπροσώπου
 GroupCard=Καρτέλα Ομάδας
@@ -117,3 +116,5 @@ DontDowngradeSuperAdmin=Μόνο μια superadmin μπορεί να προβε�
 HierarchicalResponsible=Ιεραρχική ευθύνη
 HierarchicView=Ιεραρχική προβολή
 UseTypeFieldToChange=Χρησιμοποιήστε είδος πεδίου για να αλλάξετε
+# OpenIDURL=OpenID URL
+# LoginUsingOpenID=Login using OpenID

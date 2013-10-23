@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - boxes
-CHARSET=UTF-8
 BoxLastRssInfos=Πληροφορίες Rss
 BoxLastProducts=%s τελευταία προϊόντα/υπηρεσίες
 BoxProductsAlertStock=Προειδοποίηση προϊόντων σε απόθεμα
@@ -75,6 +74,7 @@ NoRecordedProducts=Δεν υπάρχουν καταχωρημένα προϊόν
 NoRecordedProspects=Δεν υπάρχουν προσφορές
 NoContractedProducts=Δεν υπάρχουν καταχωρημένα συμβόλαια με προϊόντα/υπηρεσίες
 NoRecordedContracts=Δεν υπάρχουν καταχωρημένα συμβόλαια
+# NoRecordedInterventions=No recorded interventions
 BoxLatestSupplierOrders=Τελευταίες παραγγελίες προμηθευτών
 BoxTitleLatestSupplierOrders=Οι %s τελευταίες παραγγελίες προμηθευτών
 NoSupplierOrder=Δεν υπάρχουν καταχωρημένες παραγγελίες προμηθευτών
@@ -84,3 +84,8 @@ BoxCustomersOrdersPerMonth=Παραγγελίες πελατών ανά μήνα
 BoxSuppliersOrdersPerMonth=Παραγγελίες προμηθευτών ανά μήνα
 BoxProposalsPerMonth=Προσφορές ανά μήνα
 NoTooLowStockProducts=Κανένα προϊόν κάτω από το χαμηλό όριο του αποθέματος
+# BoxProductDistribution=Products/Services distribution
+# BoxProductDistributionFor=Distribution of %s for %s
+ForCustomersInvoices=Τιμολόγια Πελάτη
+# ForCustomersOrders=Customers orders
+ForProposals=Προτάσεις

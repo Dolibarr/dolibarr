@@ -1,5 +1,4 @@
-# Dolibarr language file - Source file is ca_ES - contracts
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - contracts
 ContractsArea=Àrea contractes
 ListOfContracts=Llistat de contractes
 LastContracts=Els % darrers contractes
@@ -54,6 +53,7 @@ ListOfRunningContractsLines=Llistat de línies de contractes en servei
 ListOfRunningServices=Llistat de serveis actius
 NotActivatedServices=Serveis no activats (amb els contractes validats)
 BoardNotActivatedServices=Serveis a activar amb els contractes validats
+LastContracts=Els % darrers contractes
 LastActivatedServices=Els %s darrers serveis activats
 LastModifiedServices=Els  %s darrers serveis modificats
 EditServiceLine=Edició línia del servei
@@ -89,6 +89,7 @@ ListOfServicesToExpireWithDuration=Llistat de serveis actius a expirar en %s die
 ListOfServicesToExpireWithDurationNeg=Llistat de serveis expirats més de %s dies
 ListOfServicesToExpire=Llistat de serveis actius a expirar
 NoteListOfYourExpiredServices=Aquest llistat conté només els serveis de contractes de tercers dels que vostè és comercial
+
 ##### Types de contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Comercial signant del contracte
 TypeContact_contrat_internal_SALESREPFOLL=Comercial seguiment del contracte

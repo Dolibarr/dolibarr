@@ -1,5 +1,4 @@
 # Dolibarr language file - nl_BE - bills
-CHARSET=UTF-8
 Bill=Factuur
 Bills=Facturen
 BillsCustomers=Facturen klanten

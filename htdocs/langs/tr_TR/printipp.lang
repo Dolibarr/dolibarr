@@ -1,5 +1,4 @@
 # Dolibarr language file - tr_TR - printipp
-CHARSET=UTF-8
 PrintIPPSetup=Doğrudan Yazdırma modülü kurulumu
 PrintIPPDesc=Bu modül, yazıcıya doğrudan belge yazdırma düğmesi ekler. Bu bir Cups içeren bir Linux sistemi gerektirir.
 PRINTIPP_ENABLED=Belge listesinde "Doğrudan yazdır" resim ikonunu göster

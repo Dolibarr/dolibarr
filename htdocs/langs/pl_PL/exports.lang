@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - exports
-CHARSET=UTF-8
 ExportsArea=Wywóz obszarze
 ImportArea=Import obszarze
 NewExport=Nowy eksport

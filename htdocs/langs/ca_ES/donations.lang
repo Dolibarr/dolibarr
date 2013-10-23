@@ -1,5 +1,4 @@
-# Dolibarr language file - ca_ES - donations
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - donations
 Donation=Donació
 Donations=Donacións
 DonationRef=Ref. donació
@@ -23,11 +22,11 @@ DonationStatusPromiseNotValidatedShort=No validada
 DonationStatusPromiseValidatedShort=Validada
 DonationStatusPaidShort=Pagada
 ValidPromess=Validar promesa
+DonationReceipt=Rebut de donació
 BuildDonationReceipt=Crear rebut
 DonationsModels=Model de document de recepció de donació
 LastModifiedDonations=Les %s últimes donacions modificades
 SearchADonation=Cercar una donació
-DonationReceipt=Rebut de donació
 DonationRecipient=Beneficiari
-IConfirmDonationReception=El beneficiari confirma la recepció, com a donació, de la següent quantitat
 ThankYou=Moltes gràcies
+IConfirmDonationReception=El beneficiari confirma la recepció, com a donació, de la següent quantitat

@@ -1,5 +1,4 @@
 # Language file - Source file is en_US - cashdesk
-CHARSET=UTF-8
 CashDeskMenu=Myyntipiste
 CashDesk=Myyntipiste
 CashDesks=Point of myynnin
@@ -37,3 +36,4 @@ BankToPay=Veloitustili
 ShowCompany=Näytä yrityksen
 ShowStock=Näytä varasto
 DeleteArticle=Poista napsauttamalla tämän artikkelin
+# FilterRefOrLabelOrBC=Search (Ref/Label)

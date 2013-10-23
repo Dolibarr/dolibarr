@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - ftp
-CHARSET=UTF-8
 FTPClientSetup=FTP客户端模块设置
 NewFTPClient=新的FTP连接建立
 FTPArea=的FTP区

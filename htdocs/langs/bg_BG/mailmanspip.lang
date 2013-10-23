@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - mailmanspip
-CHARSET=UTF-8
 MailmanSpipSetup=Пощальон и СПИП модул за настройка
 MailmanTitle=Пощальон система за пощенския списък
 TestSubscribe=За да тествате абонамент за пощальона списъци

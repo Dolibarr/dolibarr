@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - ftp
-CHARSET=UTF-8
 FTPClientSetup=FTP Client moodul setup
 NewFTPClient=Uus FTP ühendus setup
 FTPArea=FTP Area

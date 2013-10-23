@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - admin
-CHARSET= UTF-8
 WorkflowSetup=Workflow modul beállítása
 WorkflowDesc=Ez a modul terveztem, hogy módosítsa a viselkedését automatikus intézkedéseket alkalmazhassák. Alapértelmezésben a munkafolyamatok nyitva van (amit csinál, hogy ezt akarod). Tudod használ automatikus intézkedéseket, hogy érdekes be
 ThereIsNoWorkflowToModify=Nincs munkafolyamat akkor lehet módosítani a modul aktiválása.
@@ -8,4 +7,5 @@ descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Hozzon létre egy vásárlói számlát u
 descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Hozzon létre egy vásárlói számlát után automatikusan érvényesíti a szerződés
 descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Hozzon létre egy vásárlói számlát követően automatikusan az ügyfelek érdekében van zárva
 # descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Classify linked source proposal to billed when customer order is set to paid
-# descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Classify linked source customer order to billed when customer invoice is set to paid
+# descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Classify linked source customer order(s) to billed when customer invoice is set to paid
+# descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Classify linked source customer order(s) to billed when customer invoice is validated

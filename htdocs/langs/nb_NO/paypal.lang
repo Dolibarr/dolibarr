@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - paypal
-CHARSET=UTF-8
 PaypalSetup=PayPal modul oppsett
 PaypalDesc=Denne modulen tilbyr sider for å tillate betaling på <a href="http://www.paypal.com" target="_blank">PayPal</a> av kunder. Dette kan brukes til en gratis betaling eller for en betaling på en bestemt Dolibarr objekt (faktura, ordre, ...)
 PaypalOrCBDoPayment=Betal med kredittkort eller Paypal
@@ -18,3 +17,6 @@ PAYPAL_ADD_PAYMENT_URL=Legg til url av Paypal betaling når du sender et dokumen
 PAYPAL_IPN_MAIL_ADDRESS=E-post adressen for øyeblikkelig varsling av betaling (IPN)
 # PredefinedMailContentLink=You can click on the secure link below to make your payment (PayPal) if it is not already done.\n\n%s\n\n
 YouAreCurrentlyInSandboxMode=Du er for øyeblikket i &quot;sandbox&quot;-modus
+# NewPaypalPaymentReceived=New Paypal payment received
+# NewPaypalPaymentFailed=New Paypal payment tried but failed
+# PAYPAL_PAYONLINE_SENDEMAIL=EMail to warn after a payment (success or not)

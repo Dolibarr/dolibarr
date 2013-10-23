@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - paypal
-CHARSET=UTF-8
 PaypalSetup=Configuración del módulo PayPal
 PaypalDesc=Este módulo ofrece una página  de pago a través del proveedor <a href="http://www.paypal.com" target="_blank">Paypal</a> para realizar cualquier pago o un pago en relación con un objeto Dolibarr (facturas, pedidos ...)
 PaypalOrCBDoPayment=Continuar el pago mediante tarjeta o Paypal

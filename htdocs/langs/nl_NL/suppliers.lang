@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - suppliers
-CHARSET=UTF-8
 Suppliers=Leveranciers
 Supplier=Leverancier
 AddSupplier=Voeg een leverancier toe

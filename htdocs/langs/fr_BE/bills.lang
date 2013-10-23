@@ -1,5 +1,4 @@
 # Dolibarr language file - fr_BE - bills
-CHARSET=UTF-8
 InvoiceAvoir=Note de crédit
 InvoiceAvoirAsk=Note de crédit pour correction de la facture
 InvoiceAvoirDesc=La <b>note de crédit</b> en Belgique, (facture d'avoir en France) est une facture négative destinée à compenser un montant de facture qui diffère du montant réellement versé (suite à un trop versé par le client par erreur ou un manque non versé par le client suite à un retour produit par exemple). Concernant les règles d'édition des notes de crédits en Belgique, voir <a href="http://www.becompta.be/modules/dictionnaire/140-comptable-note-de-credit.html" target="_blank">becompta.be</a>.

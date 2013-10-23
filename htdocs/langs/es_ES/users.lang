@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - users
-CHARSET=UTF-8
 UserCard=Ficha usuario
 ContactCard=Ficha contacto
 GroupCard=Ficha grupo
@@ -103,6 +102,7 @@ UserDisabled=Usuario %s deshailitado
 UserEnabled=Usuario %s activado
 UserDeleted=Usuario %s eliminado
 NewGroupCreated=Grupo %s creado
+GroupModified=Grupo %s modificado
 GroupDeleted=Grupo %s eliminado
 ConfirmCreateContact=¿Está seguro de querer crear una cuenta Dolibarr para este contacto?
 ConfirmCreateLogin=¿Está seguro de que desea crear una cuenta Dolibarr para este miembro?
@@ -116,3 +116,5 @@ DontDowngradeSuperAdmin=Sólo un superadmin puede degradar un superadmin
 HierarchicalResponsible=Responsable jerárquico
 HierarchicView=Vista jerárquica
 UseTypeFieldToChange=Modificar el campo Tipo para cambiar
+# OpenIDURL=OpenID URL
+# LoginUsingOpenID=Login using OpenID

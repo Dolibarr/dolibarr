@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - propal
-CHARSET=UTF-8
 Proposals=Auglýsing tillögur
 Proposal=Auglýsing tillögu
 ProposalShort=Tillaga
@@ -34,7 +33,7 @@ ShowPropal=Sýna tillögu
 PropalsDraft=Drög
 PropalsOpened=Opnaður
 PropalsNotBilled=Lokað billed ekki
-PropalStatusDraft=Víxill (þarf staðfestingu)
+PropalStatusDraft=Víxill (þarf að vera staðfest)
 PropalStatusValidated=Staðfestar (Tillagan er opið)
 PropalStatusOpened=Staðfestar (Tillagan er opið)
 PropalStatusClosed=Loka

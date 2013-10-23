@@ -1,8 +1,7 @@
-# Dolibarr language file - en_US - donations
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - donations
 Donation=Donazione
 Donations=Donazioni
-# DonationRef=Donation ref.
+DonationRef=Riferimento donazione
 Donor=Donatore
 Donors=Donatori
 AddDonation=Aggiungi una donazione
@@ -28,6 +27,6 @@ BuildDonationReceipt=Genera ricevuta donazione
 DonationsModels=Modelli per ricevute donazione
 LastModifiedDonations=Ultime %s donazioni modificate
 SearchADonation=Cerca una donazione
-# DonationRecipient=Donation recipient
+DonationRecipient=Ricevente della donazione
 ThankYou=Grazie
 IConfirmDonationReception=Si dichiara di aver ricevuto la seguente cifra a titolo di donazione

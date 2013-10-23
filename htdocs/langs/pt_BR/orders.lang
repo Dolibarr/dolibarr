@@ -1,15 +1,14 @@
-# Dolibarr language file - pt_BR rev. 0.0 - orders
-# 2012      Vinícius Nogueira        <viniciusvgn@gmail.com>
-
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - orders
 OrdersArea=Área de Pedidos de Clientes
 SuppliersOrdersArea=Área de Pedidos a Fornecedores
 OrderCard=Ficha Pedido
+OrderId=ID Pedido
 Order=Pedido
 Orders=Pedidos
 OrderLine=Linha de Comando
 OrderFollow=Seguimento
 OrderDate=Data Pedido
+OrderToProcess=Pedido a se processar
 NewOrder=Novo Pedido
 ToOrder=Realizar Pedido
 MakeOrder=Realizar Pedido
@@ -24,18 +23,16 @@ OrdersToValid=Pedidos a Confirmar
 OrdersToBill=Pedidos por Faturar
 OrdersInProcess=Pedidos em Processo
 OrdersToProcess=Pedidos a Processar
-
-
-## Fazer a programa��o da NFE dentro do m�dulo de Pedidos. � o jeito indo pelos status. Ir pesquisando no src code pelo status Processado (StatusOrderProcessedShort)
-## Incluir o src code da NFE como os pedidos e propostasanexas na negocia��o.
-
-StatusOrderNFEProcessed=Nota Fiscal Emitida
+SuppliersOrdersToProcess=Pedidos de fornecedor a se processar
 StatusOrderCanceledShort=Anulado
 StatusOrderDraftShort=Rascunho
 StatusOrderValidatedShort=Validado
+StatusOrderSentShort=Em processo
+StatusOrderSent=Envio em processo
 StatusOrderOnProcessShort=Em curso
 StatusOrderProcessedShort=Processado
-StatusOrderToBillShort=A Faturar
+StatusOrderToBillShort=Entregue
+StatusOrderToBill2Short=A se faturar
 StatusOrderApprovedShort=Aprovado
 StatusOrderRefusedShort=Reprovado
 StatusOrderToProcessShort=A Processar
@@ -47,30 +44,34 @@ StatusOrderValidated=Validado
 StatusOrderOnProcess=Em processo
 StatusOrderProcessed=Processado
 StatusOrderToBill=A Faturar
+StatusOrderToBill2=A Faturar
 StatusOrderApproved=Aprovado
 StatusOrderRefused=Reprovado
 StatusOrderReceivedPartially=Recebido Parcialmente
 StatusOrderReceivedAll=Recebido
+ShippingExist=Existe envio
 DraftOrWaitingApproved=Rascunho aprovado mas ainda não controlado
 DraftOrWaitingShipped=Rascunho o validado mas ainda não expedido
-SearchOrder=Procurar um Pedido
 MenuOrdersToBill=Pedidos por Faturar
-Sending=Envio
-Sendings=Envíos
+MenuOrdersToBill2=Pedidos a se faturar
+SearchOrder=Procurar um Pedido
 ShipProduct=Enviar Produto
 Discount=Desconto
 CreateOrder=Criar Pedido
 RefuseOrder=Rejeitar o Pedido
 ApproveOrder=Aceitar o Pedido
 ValidateOrder=Confirmar o Pedido
+UnvalidateOrder=Desaprovar pedido
 DeleteOrder=Eliminar o pedido
 CancelOrder=Anular o Pedido
 AddOrder=Criar Pedido
 AddToMyOrders=Adicionar os meus Pedidos
 AddToOtherOrders=Adicionar a outros pedidos
+AddToDraftOrders=Adicionar a projeto de pedido
 ShowOrder=Mostrar Pedido
 NoOpenedOrders=Nenhum pedido em aberto
 NoOtherOpenedOrders=Nenhum outro pedido aberto
+NoDraftOrders=Não há projetos de pedidos
 OtherOrders=Outros Pedidos
 LastOrders=Os %s últimos pedidos
 LastModifiedOrders=Os %s últimos pedidos modificados
@@ -80,16 +81,18 @@ NbOfOrders=Número de Pedidos
 OrdersStatistics=Estatísticas de pedidos
 OrdersStatisticsSuppliers=Estatísticas de Pedidos a Fornecedores
 NumberOfOrdersByMonth=Número de Pedidos por Mês
-AmountOfOrdersByMonthHT=Valor total de pedidos por mês (sem ICMS)
+AmountOfOrdersByMonthHT=Numero de pedidos por mes (sem impostos)
 ListOfOrders=Lista de Pedidos
 CloseOrder=Fechar Pedido
 ConfirmCloseOrder=Tem certeza de que deseja fechar este pedido? Quando um pedido é fechado, ele só pode ser cobrado.
 ConfirmCloseOrderIfSending=Tem certeza de que deseja fechar este pedido? Veve fechar no somente quando todos os transfretes marítimos são feitos.
 ConfirmDeleteOrder=Tem certeza que quer eliminar este pedido?
 ConfirmValidateOrder=Tem certeza que quer Confirmar este pedido sobre a referencia <b>%s</b> ?
+ConfirmUnvalidateOrder=Tem certeza que quer reabrir este pedido <b>%s</b> para estado de rascunho ?
 ConfirmCancelOrder=Tem certeza que quer anular este pedido?
 ConfirmMakeOrder=Tem certeza que quer confirmar este pedido em data de<b>%s</b> ?
 GenerateBill=Faturar
+ClassifyShipped=Clasificar entregue
 ClassifyBilled=Classificar "Faturado"
 ComptaCard=Ficha Contabilidade
 DraftOrders=Rascunhos de Pedidos
@@ -97,7 +100,7 @@ RelatedOrders=Pedidos Anexos
 OnProcessOrders=Pedidos em Processo
 RefOrder=Ref. Pedido
 RefCustomerOrder=Ref. Pedido Cliente
-CustomerOrder=Pedido de cliente
+CustomerOrder=Pedido de Cliente
 RefCustomerOrderShort=Ref. Ped. Cliente
 SendOrderByMail=Enviar pedido por e-mail
 ActionsOnOrder=Ações sobre o pedido
@@ -110,11 +113,25 @@ UserWithApproveOrderGrant=Usuários autorizados a aprovar os pedidos.
 PaymentOrderRef=Pagamento de Pedido %s
 CloneOrder=Copiar o Pedido
 ConfirmCloneOrder=Tem certeza de que deseja clonar este<b>%s</b> ?
+DispatchSupplierOrder=Receber pedido de fornecedor %s
+##### Types de contacts #####
+TypeContact_commande_internal_SALESREPFOLL=Responsável do seguimento do pedido do cliente
+TypeContact_commande_internal_SHIPPING=Representante seguindo o envio
+TypeContact_commande_external_BILLING=Contato fatura cliente
+TypeContact_commande_external_SHIPPING=Contato envio cliente
+TypeContact_commande_external_CUSTOMER=Contato cliente seguindo o pedido
+TypeContact_order_supplier_internal_SALESREPFOLL=Representante seguindo o pedido do fornecedor
+TypeContact_order_supplier_internal_SHIPPING=Representante seguindo o envio
+TypeContact_order_supplier_external_BILLING=Contato fatura fornecedor
+TypeContact_order_supplier_external_SHIPPING=Contato envio fornecedor
+TypeContact_order_supplier_external_CUSTOMER=Contato fornecedor seguindo o pedido
 
 Error_COMMANDE_SUPPLIER_ADDON_NotDefined=Constante COMMANDE_SUPPLIER_ADDON não definida
 Error_COMMANDE_ADDON_NotDefined=Constante COMMANDE_ADDON não definida
 Error_FailedToLoad_COMMANDE_SUPPLIER_ADDON_File=Erro na carga do Arquivo módulo '%s'
 Error_FailedToLoad_COMMANDE_ADDON_File=Erro na carga de arquivo módulo '%s'
+Error_OrderNotChecked=Nenhum pedido seleçionado para se faturar
+
 
 # Sources
 OrderSource0=Orçamento Proposto
@@ -127,5 +144,23 @@ OrderSource6=Revistas
 QtyOrdered=Quant. Pedida
 AddDeliveryCostLine=Adicionar uma linha de despesas de fretes indicando o peso do pedido
 
-# Document models
-PDFEinsteinDescription=Modelo de orçamento completo (logo...)
+# Documents models
+PDFEinsteinDescription=Modelo de pedido completo (logo...)
+PDFEdisonDescription=O modelo simplificado do pedido
+# PDFProformaDescription=A complete proforma invoice (logo…)
+# Orders modes
+OrderByMail=Correio
+OrderByFax=Fax
+OrderByEMail=E-mail
+OrderByWWW=Online
+OrderByPhone=Telefone
+
+CreateInvoiceForThisCustomer=Faturar pedidos
+NoOrdersToInvoice=Nenhum pedido faturavel
+CloseProcessedOrdersAutomatically=Clasificar "processados" os pedidos selecionados.
+MenuOrdersToBill2=Pedidos a se faturar
+OrderCreation=Criação de pedidos
+Ordered=Pedido
+OrderCreated=Seus pedidos foram criados
+OrderFail=Um erro ocorreu durante a criação de seus pedidos
+CreateOrders=Criar pedidos

@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - suppliers
-CHARSET=UTF-8
 Suppliers=サプライヤー
 Supplier=サプライヤー
 AddSupplier=サプライヤーを追加します。

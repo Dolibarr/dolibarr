@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - errors
-CHARSET=UTF-8
 
 # No errors
 NoErrorCommitIsDone=没有错误，我们承诺
@@ -113,7 +112,7 @@ ErrorBothFieldCantBeNegative=领域的%s及%s可以不消极
 ErrorWebServerUserHasNotPermission=<b>%s</b>用来执行Web服务器用户帐户没有该权限
 ErrorNoActivatedBarcode=没有激活的条码类型
 ErrUnzipFails=%s 无法解压缩与解压缩
-ErrNoZipEngine=PHP没有引擎来解压缩文件%s 
+ErrNoZipEngine=PHP没有引擎来解压缩文件%s
 ErrorFileMustBeADolibarrPackage=%s 文件必须是Dolibarr zip格式包
 ErrorFileRequired=它需要一个Dolibarr格式包文件
 ErrorPhpCurlNotInstalled=PHP Curl没有安装，这需要与支付宝协调
@@ -125,6 +124,9 @@ ErrorToConnectToMysqlCheckInstance=连接到数据库失败。检查MySQL服务�
 ErrorFailedToAddContact=无法添加联系人
 ErrorDateMustBeBeforeToday=日期不能大于今天
 # ErrorPaymentModeDefinedToWithoutSetup=A payment mode was set to type %s but setup of module Invoice was not completed to define information to show for this payment mode.
+# ErrorPHPNeedModule=Error, your PHP must have module <b>%s</b> installed to use this feature.
+# ErrorOpenIDSetupNotComplete=You setup Dolibarr config file to allow OpenID authentication, but URL of OpenID service is not defined into constant %s
+# ErrorWarehouseMustDiffers=Source and target warehouses must differs
 
 # Warnings
 WarningMandatorySetupNotComplete=强制设置参数尚未定义

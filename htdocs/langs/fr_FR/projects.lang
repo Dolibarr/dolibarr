@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - projects
-CHARSET=UTF-8
 Project=Projet
 Projects=Projets
 SharedProject=Tout le monde
@@ -89,8 +88,8 @@ CloneProject=Cloner le projet
 CloneTasks=Cloner les tâches
 CloneContacts=Cloner les contacts
 CloneNotes=Cloner les notes
-CloneProjectFiles=Cloner les pièces jointes du projet
-CloneTaskFiles=Cloner les pièces jointes des tâche(s) (si tâche(s) cloner)
+# CloneProjectFiles=Clone project joined files
+# CloneTaskFiles=Clone task(s) joined files (if task(s) cloned)
 ConfirmCloneProject=Êtes-vous sûr de vouloir cloner ce projet ?
 ProjectReportDate=Reporter les dates des tâches en fonction de la date de départ.
 ErrorShiftTaskDate=Une erreur c'est produite dans le report des dates des tâches.
@@ -105,8 +104,8 @@ TypeContact_project_task_internal_TASKEXECUTIVE=Responsable
 TypeContact_project_task_external_TASKEXECUTIVE=Responsable
 TypeContact_project_task_internal_CONTRIBUTOR=Intervenant
 TypeContact_project_task_external_CONTRIBUTOR=Intervenant
-SelectElement=Eléments associables au projet :
-AddElement=Associer
+# SelectElement=Elements to referring the project
+# AddElement=Refering
 # Documents models
 DocumentModelBaleine=Modèle de rapport de projet complet (logo...)
 PlannedWorkload = Charge de travail prévue

@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - boxes
-CHARSET=UTF-8
 BoxLastRssInfos=Rss informaţii
 BoxLastProducts=Ultimele produse / servicii
 BoxProductsAlertStock=Alertă produse în stoc
@@ -75,6 +74,7 @@ NoRecordedProducts=Nu înregistrate produse / servicii
 NoRecordedProspects=Nu înregistrate perspectivele
 NoContractedProducts=Nu produse / servicii contractate
 NoRecordedContracts=Nr contracte înregistrate
+# NoRecordedInterventions=No recorded interventions
 BoxLatestSupplierOrders=Ultimele comenzi furnizori
 BoxTitleLatestSupplierOrders=Ultimele %s comenzi furnizori
 NoSupplierOrder=Nicio comandă furnizor inregistrată
@@ -84,3 +84,8 @@ BoxCustomersOrdersPerMonth=Comenzi clienţi pe lună
 BoxSuppliersOrdersPerMonth=Comenzi furnizori pe lună
 BoxProposalsPerMonth=Propuneri pe lună
 NoTooLowStockProducts=Niciun produs sub limita minima de stoc
+# BoxProductDistribution=Products/Services distribution
+# BoxProductDistributionFor=Distribution of %s for %s
+ForCustomersInvoices=Facturi Clienţi
+# ForCustomersOrders=Customers orders
+ForProposals=Propuneri comerciale

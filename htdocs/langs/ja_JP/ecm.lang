@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - ecm
-CHARSET=UTF-8
 MenuECM=ドキュメント
 DocsMine=マイドキュメント
 DocsGenerated=生成されたドキュメント
@@ -24,10 +23,10 @@ ECMNewDocument=新しいドキュメント
 ECMCreationDate=作成日
 ECMNbOfFilesInDir=ディレクトリ内のファイル数
 ECMNbOfSubDir=サブディレクトリの数
-ECMNbOfFilesInSubDir=サブディレクトリ内のIlesのNunber
+# ECMNbOfFilesInSubDir=Number of files in sub-directories
 ECMCreationUser=クリエイター
-ECMArea=ECMエリア
-ECMAreaDesc=ECM（電子コンテンツ管理）領域では、シェアを保存し、迅速にDolibarrの文書のすべての種類を検索することができます。
+# ECMArea=EDM area
+# ECMAreaDesc=The EDM (Electronic Document Management) area allows you to save, share and search quickly all kind of documents in Dolibarr.
 ECMAreaDesc2=要素のカードからドキュメントを追加するときに*自動ディレクトリは自動的に入力されます。 <br> *マニュアルのディレクトリは、特定の要素にリンクされていないドキュメントを保存するために使用することができます。
 ECMSectionWasRemoved=ディレクトリの<b>%sが</b>削除されています。
 ECMDocumentsSection=ディレクトリのドキュメント

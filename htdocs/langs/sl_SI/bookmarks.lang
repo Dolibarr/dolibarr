@@ -1,7 +1,5 @@
 # Dolibarr language file - Source file is en_US - marque pages
-CHARSET=UTF-8
 AddThisPageToBookmarks=Dodaj to stran med zaznamke
-
 Bookmark=Zaznamek
 Bookmarks=Zaznamki
 NewBookmark=Nov zaznamek

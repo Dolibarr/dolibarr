@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - users
-CHARSET=UTF-8
 UserCard=بطاقة مستخدم
 ContactCard=بطاقة الاتصال
 GroupCard=مجموعة البطاقات
@@ -117,3 +116,5 @@ YourQuotaOfUsersIsReached=يتم التوصل إلى حصة الخاص بك من
 # HierarchicalResponsible=Hierarchical responsible
 # HierarchicView=Hierarchical view
 # UseTypeFieldToChange=Use field Type to change
+# OpenIDURL=OpenID URL
+# LoginUsingOpenID=Login using OpenID

@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - propal
-CHARSET=UTF-8
 Proposals=Commercial ettepanekuid
 Proposal=Commercial ettepanek
 ProposalShort=Ettepanek
@@ -34,7 +33,7 @@ ShowPropal=Näita ettepanek
 PropalsDraft=Kabe
 PropalsOpened=Avatud
 PropalsNotBilled=Suletud ei maksustata
-PropalStatusDraft=Eelnõu (vajadused valideerimine)
+PropalStatusDraft=Eelnõu (tuleb kinnitada)
 PropalStatusValidated=Kinnitatud (ettepanek on avatud)
 PropalStatusOpened=Kinnitatud (ettepanek on avatud)
 PropalStatusClosed=Suletud

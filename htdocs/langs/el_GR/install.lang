@@ -1,17 +1,16 @@
 # Dolibarr language file - Source file is en_US - install
-CHARSET=UTF-8
-InstallEasy=Just follow the instructions step by step.
+InstallEasy=Απλά ακολουθήστε τις οδηγίες βήμα προς βήμα.
 MiscellaneousChecks=Prerequisites check
-DolibarrWelcome=Welcome to Dolibarr
+DolibarrWelcome=Καλώς ήρθατε στο Dolibarr
 ConfFileExists=Configuration file <b>%s</b> exists.
 ConfFileDoesNotExists=Configuration file <b>%s</b> does not exist !
 ConfFileDoesNotExistsAndCouldNotBeCreated=Configuration file <b>%s</b> does not exist and could not be created !
 ConfFileCouldBeCreated=Configuration file <b>%s</b> could be created.
 ConfFileIsNotWritable=Configuration file <b>%s</b> is not writable. Check permissions. For first install, your web server must be granted to be able to write into this file during configuration process ("chmod 666" for example on a Unix like OS).
 ConfFileIsWritable=Configuration file <b>%s</b> is writable.
-ConfFileReload=Ανανέωση της όλες τις πληροφορίες από το αρχείο ρυθμίσεων.
-PHPSupportSessions=This PHP supports sessions.
-PHPSupportPOSTGETOk=This PHP supports variables POST and GET.
+ConfFileReload=Φορτώσετε εκ νέου όλες τις πληροφορίες από το αρχείο ρυθμίσεων.
+PHPSupportSessions=Η PHP υποστηρίζει συνεδρίες.
+PHPSupportPOSTGETOk=Η PHP υποστηρίζει μεταβλητές POST και GET.
 PHPSupportPOSTGETKo=It's possible your PHP setup does not support variables POST and/or GET. Check your parameter <b>variables_order</b> in php.ini.
 PHPSupportGD=This PHP support GD graphical functions.
 PHPSupportUTF8=This PHP support UTF8 functions.

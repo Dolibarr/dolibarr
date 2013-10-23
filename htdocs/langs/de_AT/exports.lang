@@ -5,7 +5,6 @@
  */
 
 
-CHARSET=UTF-8
 ExportsArea=Exportübersicht
 ImportArea=Importübersicht
 NewExport=Neuer Export

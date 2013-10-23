@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - projects
-CHARSET=UTF-8
 Project=项目
 Projects=项目
 SharedProject=每个人
@@ -89,7 +88,8 @@ CloneProject=克隆项目
 CloneTasks=克隆任务
 CloneContacts=克隆往来
 CloneNotes=克隆票据
-CloneFiles=克隆加入文件
+# CloneProjectFiles=Clone project joined files
+# CloneTaskFiles=Clone task(s) joined files (if task(s) cloned)
 ConfirmCloneProject=你一定要克隆这个项目？
 ProjectReportDate=更改任务的日期，根据项目的开始日期
 ErrorShiftTaskDate=根据新项目的开始日期，不可能的改变任务日期
@@ -104,6 +104,8 @@ TypeContact_project_task_internal_TASKEXECUTIVE=执行任务
 TypeContact_project_task_external_TASKEXECUTIVE=执行任务
 TypeContact_project_task_internal_CONTRIBUTOR=投稿
 TypeContact_project_task_external_CONTRIBUTOR=投稿
+# SelectElement=Elements to referring the project
+# AddElement=Refering
 # Documents models
 DocumentModelBaleine=一个完整的项目报告模型（logo. ..）
 PlannedWorkload = 计划的工作量

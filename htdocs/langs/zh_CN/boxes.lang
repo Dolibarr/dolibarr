@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - boxes
-CHARSET=UTF-8
 BoxLastRssInfos=RSS 信息
 BoxLastProducts=最近的 %s 项产品/服务
 BoxProductsAlertStock=库存提醒
@@ -75,6 +74,7 @@ NoRecordedProducts=无产品/服务记录
 NoRecordedProspects=无潜在客户记录
 NoContractedProducts=无签订合同的产品
 NoRecordedContracts=无合同记录
+# NoRecordedInterventions=No recorded interventions
 BoxLatestSupplierOrders=最近的采购订单
 BoxTitleLatestSupplierOrders=最近的 %s 笔采购订单
 NoSupplierOrder=无采购订单记录
@@ -84,3 +84,8 @@ BoxCustomersOrdersPerMonth=客户每月的订单
 BoxSuppliersOrdersPerMonth=供应商每月的订单
 BoxProposalsPerMonth=笔报价/月
 NoTooLowStockProducts=无产品触发低库存提醒
+# BoxProductDistribution=Products/Services distribution
+# BoxProductDistributionFor=Distribution of %s for %s
+ForCustomersInvoices=客户的发票
+# ForCustomersOrders=Customers orders
+ForProposals=报价

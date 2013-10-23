@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - orders
-CHARSET=UTF-8
 OrdersArea=お客様の注文エリア
 SuppliersOrdersArea=仕入先の受注エリア
 OrderCard=注文カード
@@ -56,8 +55,6 @@ DraftOrWaitingShipped=ドラフトまたは検証まだ出荷されていない
 MenuOrdersToBill=法案に注文
 # MenuOrdersToBill2=Orders to bill
 SearchOrder=検索順序
-Sending=送信
-Sendings=Sendings
 ShipProduct=船積
 Discount=割引
 CreateOrder=順序を作成します。
@@ -150,6 +147,7 @@ AddDeliveryCostLine=注文の重量を示す配信コストの行を追加しま
 # Documents models
 PDFEinsteinDescription=完全受注モデル（logo. ..）
 PDFEdisonDescription=単純な次のモデル
+# PDFProformaDescription=A complete proforma invoice (logo…)
 # Orders modes
 OrderByMail=電子メール
 OrderByFax=ファックス

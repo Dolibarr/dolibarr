@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - ecm
-CHARSET=UTF-8
 MenuECM=Dokumenti
 DocsMine=Moji dokumenti
 DocsGenerated=Generirani dokumenti
@@ -24,10 +23,10 @@ ECMNewDocument=Nov dokument
 ECMCreationDate=Datum kreiranja
 ECMNbOfFilesInDir=Število datotek v mapi
 ECMNbOfSubDir=Število poddirektorijev
-ECMNbOfFilesInSubDir=Število datotek v poddirektorijih
+# ECMNbOfFilesInSubDir=Number of files in sub-directories
 ECMCreationUser=Kreator
-ECMArea=ECM področje
-ECMAreaDesc=Področje za upravljanje elektronskih vsebin (ECM - Electronic Content Management) omogoča shranjevanje, skupno rabo in hitro iskanje vseh vrst dokumentov v Dolibarrju.
+# ECMArea=EDM area
+# ECMAreaDesc=The EDM (Electronic Document Management) area allows you to save, share and search quickly all kind of documents in Dolibarr.
 ECMAreaDesc2=* Avtomatske mape se polnijo avtomatsko, ko se doda dokument s kartice elementa.<br>* Ročne mape se lahko uporabijo za shranitev dokumentov, ki niso vezani na določen element.
 ECMSectionWasRemoved=Mapa <b>%s</b> je bila izbrisana.
 ECMDocumentsSection=Dokument v mapi

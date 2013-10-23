@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - users
-CHARSET=UTF-8
 UserCard=Kullanıcı kartı
 ContactCard=Kişi kartı
 GroupCard=Grup kartı
@@ -117,3 +116,5 @@ DontDowngradeSuperAdmin=Yalnızca bir SuperAdmin, bir SuperAdmin’inin derecesi
 HierarchicalResponsible=Sorumlu sıradüzeni
 HierarchicView=Sıradüzeni görünümü
 UseTypeFieldToChange=Değiştirmek için Alan türünü kullan
+# OpenIDURL=OpenID URL
+# LoginUsingOpenID=Login using OpenID

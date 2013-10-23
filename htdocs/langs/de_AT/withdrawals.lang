@@ -5,7 +5,6 @@
  */
 
 
-CHARSET=UTF-8
 StandingOrdersArea=Dauerauftragsübersicht
 CustomersStandingOrdersArea=Dauerauftragsübersicht (Kunden)
 StandingOrders=Daueraufträge

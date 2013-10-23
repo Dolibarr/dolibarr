@@ -1,8 +1,8 @@
 # Dolibarr language file - Source file is en_US - sendings
-CHARSET=UTF-8
 RefSending=Ref. envío
 Sending=Envío
 Sendings=Envíos
+Shipment=Envío
 Shipments=Envíos
 Receivings=Recepciones
 SendingsArea=Área envíos

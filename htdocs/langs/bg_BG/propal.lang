@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - propal
-CHARSET=UTF-8
 Proposals=Търговски предложения
 Proposal=Търговско предложение
 ProposalShort=Предложение
@@ -34,7 +33,7 @@ ShowPropal=Покажи предложение
 PropalsDraft=Чернови
 PropalsOpened=Отворен
 PropalsNotBilled=Затворен не таксувани
-PropalStatusDraft=Проект (нужди валидиране)
+PropalStatusDraft=Проект (трябва да бъдат валидирани)
 PropalStatusValidated=Утвърден (предложението е отворен)
 PropalStatusOpened=Утвърден (предложението е отворен)
 PropalStatusClosed=Затворен

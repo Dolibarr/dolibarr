@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - orders
-CHARSET=UTF-8
 OrdersArea=أوامر منطقة العملاء
 SuppliersOrdersArea=الموردين أوامر المنطقة
 OrderCard=من أجل بطاقة
@@ -56,8 +55,6 @@ DraftOrWaitingShipped=مشروع مصادق عليه أو لم تشحن
 MenuOrdersToBill=أوامر لمشروع قانون
 # MenuOrdersToBill2=Orders to bill
 SearchOrder=من أجل البحث
-Sending=إرسال
-Sendings=الإرسال
 ShipProduct=سفينة المنتج
 Discount=الخصم
 CreateOrder=خلق أمر
@@ -150,6 +147,7 @@ AddDeliveryCostLine=تضاف تكلفة توصيل خط يبين الوزن من
 # Documents models
 PDFEinsteinDescription=من أجل نموذج كامل (logo...)
 PDFEdisonDescription=نموذج النظام بسيطة
+# PDFProformaDescription=A complete proforma invoice (logo…)
 # Orders modes
 OrderByMail=بريد
 OrderByFax=الفاكس

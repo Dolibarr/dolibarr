@@ -5,7 +5,6 @@
  */
 
 
-CHARSET=UTF-8
 Bill=Rechnung
 Bills=Rechnungen
 BillsCustomers=Kundenrechnungen

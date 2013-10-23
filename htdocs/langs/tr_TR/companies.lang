@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - companies
-CHARSET=UTF-8
 ErrorCompanyNameAlreadyExists=Firma adı zaten %s var. Başka bir tane seçin.
 ErrorPrefixAlreadyExists=Önek %s zaten var. Başka bir tane seçin.
 ErrorSetACountryFirst=Önce ülkeyi ayarla.
@@ -85,6 +84,8 @@ LocalTax1IsUsedES= RE kullanılır
 LocalTax1IsNotUsedES= RE kullanılmaz
 LocalTax2IsUsedES= IRPF kullanılır
 LocalTax2IsNotUsedES= IRPF kullanılmaz
+LocalTax1ES=RE
+LocalTax2ES=IRPF
 ThirdPartyEMail=%s
 WrongCustomerCode=Müşteri kodu geçersiz
 WrongSupplierCode=Tedarikçi kodu geçersiz
@@ -395,7 +396,7 @@ InActivity=Açık
 ActivityCeased=Kapalı
 ActivityStateFilter=Etkinlik durumu
 ProductsIntoElements=Girecek ürünler listesi
-
+# OutstandingBill=Outstanding Bill
 # Monkey
 MonkeyNumRefModelDesc=Sayı biçimini müşteri için %syymm-nnn, tedarikçi için %syymm-nnn gösterir, yy yıl, mm ay ve nnnn ise 0 olmayan bir dizidir
 # Leopard

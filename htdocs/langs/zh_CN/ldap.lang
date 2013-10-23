@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - ldap
-CHARSET=UTF-8
 DomainPassword=密码域
 YouMustChangePassNextLogon=<b>%</b>用户密码<b>%之S</b>必须改变对域。
 UserMustChangePassNextLogon=用户必须更改密码的域%s

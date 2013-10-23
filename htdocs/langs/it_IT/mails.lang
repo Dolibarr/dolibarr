@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - mails
-CHARSET=UTF-8
 Mailing=Invio di massa
 EMailing=Invio email
 Mailings=Invii di massa
@@ -74,7 +73,7 @@ DateLastSend=Data ultima spedizione
 DateSending=Data di spedizione
 SentTo=Inviata a <b>%s</b>
 MailingStatusRead=Da leggere
-# CheckRead=Read Receipt
+CheckRead=Conferma di lettura
 # YourMailUnsubcribeOK=The email <b>%s</b>  is correctly unsubcribe from mailing list
 # MailtoEMail=Hyper link to email
 # ActivateCheckRead=Allow to use the "Unsubcribe" link

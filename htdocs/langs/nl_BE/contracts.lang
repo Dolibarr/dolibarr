@@ -1,6 +1,5 @@
 /*
 # Dolibarr language file - nl_BE - contracts
-CHARSET=UTF-8
 ContractsArea=Contracten gebied
 ListOfContracts=Lijst van opdrachten
 LastContracts=Laatste %s bewerkte contracten
