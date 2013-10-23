@@ -1,5 +1,27 @@
-# Dolibarr language file - pt_BR rev. 0.0 - help
-CHARSET=UTF-8
-HelpInvoice=Facturação
-
-
+# Dolibarr language file - Source file is en_US - help
+# CommunitySupport=Forum/Wiki support
+# EMailSupport=Emails support
+# RemoteControlSupport=Online real time / remote support
+# OtherSupport=Other support
+# ToSeeListOfAvailableRessources=To contact/see available resources:
+ClickHere=Clickque aqui
+HelpCenter=Central de ajuda
+DolibarrHelpCenter=Centro de suporte e ajuda Dolibarr
+# ToGoBackToDolibarr=Otherwise, click <a href="%s">here to use Dolibarr</a>
+# TypeOfSupport=Source of support
+TypeSupportCommunauty=Comunidade (grátis)
+TypeSupportCommercial=Comercial
+TypeOfHelp=Tipo
+NeedHelpCenter=Precisa de ajuda ou suporte ?
+# Efficiency=Efficiency
+TypeHelpOnly=Somente ajuda
+# TypeHelpDev=Help+Development
+# TypeHelpDevForm=Help+Development+Formation
+ToGetHelpGoOnSparkAngels1=Algumas empresas podem prover um suporte online rápido (às vezes imediato) e mais eficiente ao assumirem o controle de seu computador. Tais ajudantes podem ser encontrados na página <b>%s</b>: 
+ToGetHelpGoOnSparkAngels3=Você também pode acessar a lista de todos os treinadores disponíveis para o Dolibarr, para isto clique no botão
+# ToGetHelpGoOnSparkAngels2=Sometimes, there is no company available at the moment you make your search, so think to change the filter to look for "all availability". You will be able to send more requests.
+# BackToHelpCenter=Otherwise, click here to go <a href="%s">back to help center home page</a>.
+# LinkToGoldMember=You can call one of the coach preselected by Dolibarr for your language (%s) by clicking his Widget (status and maximum price are automatically updated):
+# PossibleLanguages=Supported languages
+# MakeADonation=Help Dolibarr project, make a donation
+# SubscribeToFoundation=Help Dolibarr project, subscribe to the foundation

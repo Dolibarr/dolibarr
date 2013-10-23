@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - compta
-CHARSET=UTF-8
 VATToPay=TSS ventes
 VATReceived=TSS collectée
 VATToCollect=TSS achats

@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - errors
-CHARSET=UTF-8
 
 # No errors
 NoErrorCommitIsDone=Pas d'erreur, on valide
@@ -125,9 +124,9 @@ ErrorToConnectToMysqlCheckInstance=Echec de la connection au serveur de base de 
 ErrorFailedToAddContact=Echec à l'ajout du contact
 ErrorDateMustBeBeforeToday=La date ne peut pas être supérieure à aujourd'hui
 ErrorPaymentModeDefinedToWithoutSetup=Un mode de paiement a été défini de type %s mais la configuration du module Facture n'a pas été complété pour définir les informations afficher pour ce mode de paiment.
-ErrorPHPNeedModule=Erreur, votre PHP doit avoir le module <b>%s</b> installé pour utiliser cette fonctionnalité.
-ErrorOpenIDSetupNotComplete=Vous avez configuré Dolibarr pour accepter l'authentication OpenID, mais l'URL du service OpenID n'est pas défini dans la constante %s
-ErrorWarehouseMustDiffers=Les entrepôts source et destination doivent être différents
+# ErrorPHPNeedModule=Error, your PHP must have module <b>%s</b> installed to use this feature.
+# ErrorOpenIDSetupNotComplete=You setup Dolibarr config file to allow OpenID authentication, but URL of OpenID service is not defined into constant %s
+# ErrorWarehouseMustDiffers=Source and target warehouses must differs
 
 # Warnings
 WarningMandatorySetupNotComplete=Les informations de configuration obligatoire doivent être renseignées

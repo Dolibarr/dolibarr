@@ -1,5 +1,4 @@
-# Dolibarr language file - Source file is ca_ES - categories=
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - categories
 Category=Categoria
 Categories=categories
 Rubrique=Categoria
@@ -102,4 +101,7 @@ CatSupLinks=Proveïdors
 CatCusLinks=Clients/Clients potencials
 CatProdLinks=Productes
 CatMemberLinks=Membres
+CatProdLinks=Productes
+CatCusLinks=Clients/Clients potencials
+CatSupLinks=Proveïdors
 DeleteFromCat=Eliminar de la categoria

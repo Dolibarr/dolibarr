@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - companies
-CHARSET=UTF-8
 ErrorCompanyNameAlreadyExists=会社名%sはすでに存在しています。別のいずれかを選択します。
 ErrorPrefixAlreadyExists=プレフィックス%sはすでに存在しています。別のいずれかを選択します。
 ErrorSetACountryFirst=始めに国を設定する
@@ -85,6 +84,8 @@ LocalTax1IsUsedES= REが使用されます
 LocalTax1IsNotUsedES= REが使用されていない
 LocalTax2IsUsedES= IRPFが使用されます
 LocalTax2IsNotUsedES= IRPFは使用されていません
+LocalTax1ES=RE
+LocalTax2ES=IRPF
 ThirdPartyEMail=%s
 WrongCustomerCode=無効な顧客コード
 WrongSupplierCode=無効なサプライヤコード
@@ -395,7 +396,7 @@ InActivity=開く
 ActivityCeased=閉じた
 ActivityStateFilter=活動状況
 # ProductsIntoElements=List of products into
-
+# OutstandingBill=Outstanding Bill
 # Monkey
 MonkeyNumRefModelDesc=yyは年である顧客コードと仕入先コードの%syymm-nnnnの形式%syymm-NNNNとニュメロを返し、mmは月とnnnnはありません休憩0〜ノーリターンでシーケンスです。
 # Leopard

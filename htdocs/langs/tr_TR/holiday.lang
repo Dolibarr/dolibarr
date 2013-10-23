@@ -1,6 +1,4 @@
 # Dolibarr language file - Source file is en_US - holiday
-CHARSET= UTF-8
-
 HRM=IK
 Holidays=Tatiller
 CPTitreMenu=Tatiller
@@ -89,6 +87,7 @@ FirstDayOfHoliday=Tatilin ilk günü
 LastDayOfHoliday=Tatilin son günü
 HolidaysMonthlyUpdate=Aylık güncelleme
 ManualUpdate=Elle güncelleme
+# HolidaysCancelation=Holidays cancelation
 
 ## Configuration du Module ##
 ConfCP=Tatil modülünün yapılandırılması

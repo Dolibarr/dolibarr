@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - companies
-CHARSET=UTF-8
 ErrorCompanyNameAlreadyExists=%s Име на фирмата, която вече съществува. Избери друг.
 ErrorPrefixAlreadyExists=Префикс %s вече съществува. Избери друг.
 ErrorSetACountryFirst=Задайте страната на първо място
@@ -85,6 +84,8 @@ LocalTax1IsUsedES= RE се използва
 LocalTax1IsNotUsedES= RE не се използва
 LocalTax2IsUsedES= IRPF се използва
 LocalTax2IsNotUsedES= IRPF не се използва
+LocalTax1ES=RE
+LocalTax2ES=IRPF
 ThirdPartyEMail=%s
 WrongCustomerCode=Административна код невалиден
 WrongSupplierCode=Доставчик код невалиден
@@ -395,7 +396,7 @@ InActivity=Отворен
 ActivityCeased=Затворен
 ActivityStateFilter=Състоянието на дейността
 # ProductsIntoElements=List of products into
-
+# OutstandingBill=Outstanding Bill
 # Monkey
 MonkeyNumRefModelDesc=Връщане Numero с формат %syymm-NNNN за клиента код и %syymm-NNNN за доставчика код, където YY е годината, mm е месец и NNNN е последователност, без почивка и няма връщане назад до 0.
 # Leopard

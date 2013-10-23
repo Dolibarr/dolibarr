@@ -1,0 +1,113 @@
+# Dolibarr language file - Source file is en_US - cron
+#
+# About page
+#
+About = Sobre
+CronAbout = Sobre Cron
+CronAboutPage = Pagina sobre Cron
+
+#
+# Right
+#
+Permission23101 = Ler tarefa agendada
+Permission23102 = Criar/atualizar tarefa agendada
+Permission23103 = Apagar tarefa agendada
+Permission23104 = Executar tarefa agendada
+
+#
+# Admin
+#
+CronSetup= Configuração do gerenciamento de trabalho agendado
+URLToLaunchCronJobs=URL para lançar tarefas cron
+OrToLaunchASpecificJob=Ou lançar tarefa especifica
+KeyForCronAccess=Chave seguranca para URL que lanca tarefas cron
+FileToLaunchCronJobs=Linha de comando para iniciar tarefas agendadas
+CronExplainHowToRunUnix=No ambiente Unix você deve usar crontab para executar linha de comando a cada minuto
+CronExplainHowToRunWin=No ambiente Microsoft (tm) Windows você pode usar ferramentas tarefa agendada para executar a linha de comando cada minuto
+
+
+#
+# Menu
+#
+CronJobs=Trabalhos programados
+CronListActive= Lista de trabalhos ativos
+CronListInactive= Lista de trabalhos nao ativos
+
+
+#
+# Page list
+#
+CronDateLastRun=Ultimo acionamento
+CronLastOutput=Saida do ultimo acionamento
+CronLastResult=Codigo do ultimo resultado
+CronListOfCronJobs=Lista de tarefas agendadas
+CronCommand=Comando
+CronList= Lista tarefas
+CronDelete= Apagar tarefas cron
+CronConfirmDelete= Tem certeza que deseja apagar este trabalho cron ?
+CronExecute=Lançar trabalho
+CronConfirmExecute= Tem certeza que quer executar esta tarefa agora ?
+CronInfo= Tarefas permitem de executar aòoes nao planejadas 
+CronWaitingJobs=Trabalhos na espera
+CronTask=Trabalho
+CronNone= Nenhum
+CronDtStart=Data inicio
+CronDtEnd=Data fim
+CronDtNextLaunch=Proxima execuçao
+CronDtLastLaunch=Ultima execuçao
+CronFrequency=Frequencia
+CronClass=Clase
+CronMethod=Metodo
+CronModule=Modulo
+CronAction=Açao
+CronStatus=Estado
+CronStatusActive=Ativado
+CronStatusInactive=Desativado
+CronNoJobs=Nenhum trabalho registrado
+CronPriority=Prioridade
+CronLabel=Descriçao
+CronNbRun=Nr. execuçao
+CronEach=Cada
+JobFinished=Trabalho iniciado e terminado
+
+#
+#Page card
+#
+CronAdd= Adicionar trabalho
+CronHourStart= Hora e data do inicio do trabalho
+CronEvery= E execute cada tarefa
+CronObject= Instancia/Objeto a se criar
+CronArgs=Parametros
+CronSaveSucess=Salvo corretamente
+CronNote=Comentario
+CronFieldMandatory=Campos %s sao obrigatorios
+CronErrEndDateStartDt=Data fim nao pode ser antes da data do inicio
+CronStatusActiveBtn=Ativar
+CronStatusInactiveBtn=Desativar
+CronTaskInactive=Este trabalho foi desativado
+CronDtLastResult=Data ultimo resultado
+CronId=Id
+CronClassFile=Classe (nomearquivo.class.php)
+CronModuleHelp=Nome do diretório do módulo Dolibarr (também trabalha com módulo Dolibarr externo). Por exemplo para buscar método do objeto Dolibarr Product /htdocs/<u>produto</u>/class/product.class.php, o valor do módulo é o <i>produto</i>
+CronClassFileHelp=O nome do arquivo a ser carregado.<BR>Por exemplo para buscar método do objeto Dolibarr Product /htdocs/produtos/classe/<u>product.class.php</u>, o valor do nome do arquivo de classe é <i>product.class.php</i>
+CronObjectHelp=O nome do objeto a ser carregado. Por exemplo para buscar método do objeto Dolibarr Product /htdocs/produtos/class/product.class.php, o valor do nome do arquivo da classe é <i>Produtos</i>
+CronMethodHelp=O método de objeto para o lançamento. Por exemplo para buscar método do objeto Dolibarr Product /htdocs/produtos/class/product.class.php, o valor do método é <i>fecth</i>
+CronArgsHelp=Os argumentos do método. Por exemplo para buscar método do objeto Product do Dolibarr /htdocs/produto/class/product.class.php, o valor de paramtetros pode ser <i>0, ProductRef</i>
+CronCommandHelp=A linha de comando do sistema a se executar.
+
+#
+# Info
+#
+CronInfoPage=Informaçao
+
+
+#
+# Common
+#
+CronType=Tipo tarefa
+CronType_method=Chamar metodo da classe Dolibarr
+CronType_command=Comando Shell
+CronMenu=Cron
+CronCannotLoadClass=Nao e possivel carregar a classe %s ou o objeto %s
+
+UseMenuModuleToolsToAddCronJobs=Vá ao menu "Principal - Módulo de ferramentas - Lista de trabalhos" para ver e editar a programação dos trabalhos.

@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - banks
-CHARSET=UTF-8
 Bank=Banca
 Banks=Banche
 MenuBankCash=Banca/Cassa

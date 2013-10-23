@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - other
-CHARSET=UTF-8
 SecurityCode=Beveiligingscode
 Calendar=Kalender
 AddTrip=Reis toevoegen
@@ -174,6 +173,12 @@ StartUpload=Start uploaden
 CancelUpload=Uploaden annuleren
 FileIsTooBig=Bestanden is te groot
 PleaseBePatient=Even geduld a.u.b.
+# RequestToResetPasswordReceived=A request to change your Dolibarr password has been received
+# NewKeyIs=This is your new keys to login
+# NewKeyWillBe=Your new key to login to software will be
+# ClickHereToGoTo=Click here to go to %s
+# YouMustClickToChange=You must however first click on the following link to validate this password change
+# ForgetIfNothing=If you didn't request this change, just forget this email. Your credentials are kept safe.
 
 ##### Calendar common #####
 AddCalendarEntry=Nieuwe vermelding in de agenda %s

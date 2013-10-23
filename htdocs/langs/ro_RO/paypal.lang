@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - paypal
-CHARSET=UTF-8
 PaypalSetup=PayPal modul de configurare
 PaypalDesc=Această ofertă modul de pagini pentru a permite plata pe <a href="http://www.paypal.com" target="_blank">PayPal</a> de catre clientii. Acest lucru poate fi folosit pentru o plată gratuit sau pentru o plată pe un anumit obiect Dolibarr (facturi, ordine, ...)
 PaypalOrCBDoPayment=Plata cu card de credit sau Paypal
@@ -10,11 +9,14 @@ PAYPAL_API_USER=API numele de utilizator
 PAYPAL_API_PASSWORD=API parola
 PAYPAL_API_SIGNATURE=API semnătura
 PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Oferta de plată integral (carte de credit + Paypal) sau Paypal numai
-# PaypalModeIntegral=Integral
-# PaypalModeOnlyPaypal=PayPal only
+PaypalModeIntegral=Integral
+PaypalModeOnlyPaypal=Numai PayPal 
 PAYPAL_CSS_URL=Url-ul Optionnal de foaie de stil CSS pe pagina de plată
 ThisIsTransactionId=Acesta este ID-ul de tranzacţie: <b>%s</b>
 PAYPAL_ADD_PAYMENT_URL=Adăugaţi URL-ul de plată Paypal atunci când trimiteţi un document prin e-mail
 PAYPAL_IPN_MAIL_ADDRESS=E-mail pentru notificarea instant de plată (IPN)
-# PredefinedMailContentLink=You can click on the secure link below to make your payment (PayPal) if it is not already done.\n\n%s\n\n
+PredefinedMailContentLink=Puteţi da click pe linkul securizat de mai jos pentru a face plata (PayPal), în cazul în care acesta nu este deja făcută. ⏎\n⏎\n% s ⏎\n⏎\n
 YouAreCurrentlyInSandboxMode=Sunteţi în prezent în &quot;sandbox&quot; modul de
+NewPaypalPaymentReceived=O plată nouă Paypal primită
+NewPaypalPaymentFailed=O plată nouă Paypal încercată dar eşuată
+PAYPAL_PAYONLINE_SENDEMAIL=E-mail pentru avertizare după o plată (realizată sau nu)

@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - install
-CHARSET=UTF-8
 InstallEasy=Csak kövesse az utasitásokat lépésrõl lépésre.
 MiscellaneousChecks=Feltételek ellenörézse
 DolibarrWelcome=Üdvözöljük a Dolibarr rendszerében

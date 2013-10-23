@@ -1,5 +1,4 @@
 # Dolibarr language file - es_PU - companies
-CHARSET=UTF-8
 VATIsUsed=Sujeto a IGV
 VATIsNotUsed=No sujeto a IGV
 VATIntra=RUC

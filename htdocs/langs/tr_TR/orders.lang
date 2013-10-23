@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - orders
-CHARSET=UTF-8
 OrdersArea=Müşteri siparişleri alanı
 SuppliersOrdersArea=Tedarikçi siparişleri alanı
 OrderCard=Sipariş kartı
@@ -56,8 +55,6 @@ DraftOrWaitingShipped=Taslak veya onaylanmış henüz sevkedilmemiş
 MenuOrdersToBill=Teslim edilen siparişler
 MenuOrdersToBill2=Faturalanacak siparişler
 SearchOrder=Sipariş ara
-Sending=Gönderim
-Sendings=Gönderimler
 ShipProduct=Ürünü sevket
 Discount=İndirim
 CreateOrder=Sipariş oluştur
@@ -150,6 +147,7 @@ AddDeliveryCostLine=Siparişin ağırlığını belirten bir teslimat satırı e
 # Documents models
 PDFEinsteinDescription=Bir tam sipariş modeli (logo. ..)
 PDFEdisonDescription=Basit bir sipariş modeli
+# PDFProformaDescription=A complete proforma invoice (logo…)
 # Orders modes
 OrderByMail=Posta
 OrderByFax=Faks

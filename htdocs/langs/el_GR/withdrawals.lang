@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - withdrawals
-CHARSET=UTF-8
 StandingOrdersArea=Πάγιες εντολές περιοχή
 CustomersStandingOrdersArea=Οι πελάτες πάγιες εντολές περιοχή
 StandingOrders=Πάγιες εντολές
@@ -93,5 +92,5 @@ InfoTransMessage=Η διαρκής %s ώστε έχει μεταδίδει στ�
 InfoTransData=Ποσό: %s <br> Metode: %s <br> Ημερομηνία: %s
 InfoFoot=Αυτό είναι ένα αυτοματοποιημένο μήνυμα που αποστέλλεται από Dolibarr
 InfoRejectSubject=Μόνιμη προκειμένου αρνήθηκε
-InfoRejectMessage=Γεια σας, <br><br> το standig σειρά του τιμολογίου %s που σχετίζονται με την %s εταιρεία, με το ποσό των %s έχει απορριφθεί από την τράπεζα. <br><br> - <br> % $
+# InfoRejectMessage=Hello,<br><br>the standing order of invoice %s related to the company %s, with an amount of %s has been refused by the bank.<br><br>--<br>%s
 ModeWarning=Επιλογή για την πραγματική κατάσταση, δεν είχε καθοριστεί, σταματάμε μετά από αυτή την προσομοίωση

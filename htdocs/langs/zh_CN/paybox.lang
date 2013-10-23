@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - paybox
-CHARSET=UTF-8
 PayBoxSetup=PayBox模块设置
 PayBoxDesc=该模块提供的网页，以便在付款<a href="http://www.paybox.com" target="_blank">Paybox</a>客户。这可以用来为一个自由付款或就某一Dolibarr对象（发票，订货，付款...）
 FollowingUrlAreAvailableToMakePayments=以下网址可提供给客户的网页上，能够作出Dolibarr支付对象

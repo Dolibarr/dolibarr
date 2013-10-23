@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - paybox
-CHARSET=UTF-8
 PayBoxSetup=Paybox μονάδα ρύθμισης
 PayBoxDesc=Αυτή η ενότητα παρέχει τις σελίδες για να καταστεί δυνατή πληρωμή <a href="http://www.paybox.com" target="_blank">Paybox</a> από τους πελάτες. Αυτό μπορεί να χρησιμοποιηθεί για μια ελεύθερη πληρωμής ή πληρωμή σε ένα συγκεκριμένο αντικείμενο του Dolibarr (τιμολόγιο, ώστε, ...)
 FollowingUrlAreAvailableToMakePayments=Μετά από τις διευθύνσεις URL είναι διαθέσιμοι να προσφέρουν μια σελίδα σε έναν πελάτη να προβεί σε πληρωμή σε Dolibarr αντικείμενα

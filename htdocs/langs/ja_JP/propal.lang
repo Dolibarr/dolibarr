@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - propal
-CHARSET=UTF-8
 Proposals=商用の提案
 Proposal=商業的提案
 ProposalShort=提案
@@ -34,7 +33,7 @@ ShowPropal=提案を示す
 PropalsDraft=ドラフト
 PropalsOpened=開かれた
 PropalsNotBilled=閉じて請求しない
-PropalStatusDraft=ドラフト（要検証）
+PropalStatusDraft=ドラフト（検証する必要があります）
 PropalStatusValidated=（提案が開いている）を検証
 PropalStatusOpened=（提案が開いている）を検証
 PropalStatusClosed=閉じた

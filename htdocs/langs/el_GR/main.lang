@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - main
-CHARSET=UTF-8
 DIRECTION=ltr
 # Note for chinese:
 # msungstdlight or cid0ct are for traditionnal chinese (traditionnal does not render with ubuntu pdf reader)
@@ -7,8 +6,8 @@ DIRECTION=ltr
 # To read chinese pdf with linux: sudo apt-get install poppler-data
 FONTFORPDF=DejaVuSans
 FONTSIZEFORPDF=10
-SeparatorDecimal=,
-SeparatorThousand=.
+SeparatorDecimal=.
+SeparatorThousand=Καμία
 FormatDateShort=%d/%m/%Y
 FormatDateShortInput=%d/%m/%Y
 FormatDateShortJava=dd/MM/yyyy
@@ -138,7 +137,7 @@ Modify=Τροποποίηση
 Edit=Επεξεργασία
 Validate=Επικύρωση
 ToValidate=Προς Επικύρωση
-Save=Αποθήκευση
+Save=Save
 SaveAs=Αποθήκευση Ως
 TestConnection=Δοκιμή Σύνδεσης
 ToClone=Κλωνοποίηση
@@ -657,6 +656,8 @@ HomeDashboard=Αρχικη σύνοψη
 Deductible=Εκπίπτουν
 from=από
 toward=προς
+Access=Πρόσβαση
+HelpCopyToClipboard=Χρησιμοποιήστε το Ctrl + C για να αντιγράψετε στο πρόχειρο
 
 # Week day
 Monday=Δευτέρα

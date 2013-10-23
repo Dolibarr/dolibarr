@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - admin
-CHARSET= UTF-8
 WorkflowSetup=Configuració del mòdul workflow
 WorkflowDesc=Aquest mòdul us permet canviar el comportament automatitzat. Per defecte, el workflow és obert i no imposat. Activi els enllaços automàtics que li interessen.
 ThereIsNoWorkflowToModify=No hi ha workflow modificable per als mòduls que té activats.
@@ -8,5 +7,5 @@ descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Crear una factura a client automàticamen
 descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Crear una factura a client automàticament a la validació d'un contracte
 descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Crear una factura a client automàticament al tancament d'una comanda de client
 descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Classificar com facturat el pressupost quan la comanda de client relacionada es classifiqui com pagada
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Classificar com facturades les comandes quan la factura relacionada es classifiqui com a pagada
-descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Classificar com facturada la comanda de client quan la factura o les factures són superiors a la comanda
+# descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Classify linked source customer order(s) to billed when customer invoice is set to paid
+# descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Classify linked source customer order(s) to billed when customer invoice is validated

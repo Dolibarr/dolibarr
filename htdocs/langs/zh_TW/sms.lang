@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - sms
-CHARSET=UTF-8
 Sms=簡訊
 SmsSetup=SMS安裝
 SmsDesc=此頁面允許您定義全局選項上的短信功能

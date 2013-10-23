@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - ecm
-CHARSET=UTF-8
 MenuECM=Belgeler
 DocsMine=Belgelerim
 DocsGenerated=Oluşturulan belgeler
@@ -24,10 +23,10 @@ ECMNewDocument=Yeni belge
 ECMCreationDate=Oluşturma tarihi
 ECMNbOfFilesInDir=Dizindeki dosya sayısı
 ECMNbOfSubDir=Alt-dizin sayısı
-ECMNbOfFilesInSubDir=Alt dizinlerdeki dosya sayısı
+# ECMNbOfFilesInSubDir=Number of files in sub-directories
 ECMCreationUser=Oluşturan
-ECMArea=ECM alanı
-ECMAreaDesc=ECM (Elektronik İçerik Yönetimi) alanı her çeşit Dolibarr belgesini çabukça saklamanızı, paylaşmanızı ve aramanızı sağlar.
+# ECMArea=EDM area
+# ECMAreaDesc=The EDM (Electronic Document Management) area allows you to save, share and search quickly all kind of documents in Dolibarr.
 ECMAreaDesc2=* Otomatik dizinler, bir öğenin kartından belge eklenirken otomatikman doldurulur.<br> * Manuel dizinler, belirli bir öğeye bağlı olmayan belgelerin saklanması için kullanılabilir.
 ECMSectionWasRemoved=<b>%s</b>Dizini silindi.
 ECMDocumentsSection=Dizin belgesi

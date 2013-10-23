@@ -1,7 +1,5 @@
 # Dolibarr language file - Source file is en_US - marque pages
-CHARSET=UTF-8
 AddThisPageToBookmarks=Adăugaţi această pagină la marcajele
-
 Bookmark=Bookmark
 Bookmarks=Marcaje
 NewBookmark=Marcaj nou

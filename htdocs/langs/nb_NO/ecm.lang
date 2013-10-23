@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - ecm
-CHARSET=UTF-8
 MenuECM=Dokumenter
 DocsMine=Mine dokumenter
 DocsGenerated=Opprettede dokumenter
@@ -24,10 +23,10 @@ ECMNewDocument=Nytt dokument
 ECMCreationDate=Opprettet den
 ECMNbOfFilesInDir=Antall filer i mappen
 ECMNbOfSubDir=Antall undermapper
-ECMNbOfFilesInSubDir=Antall filer i undermapper
+# ECMNbOfFilesInSubDir=Number of files in sub-directories
 ECMCreationUser=Opprettet av
-ECMArea=ECM-område
-ECMAreaDesc=ECM-området (Electronic Content Management) lar deg lagre, dele og søke hurtig alle slags dokumenter i Dolibarr.
+# ECMArea=EDM area
+# ECMAreaDesc=The EDM (Electronic Document Management) area allows you to save, share and search quickly all kind of documents in Dolibarr.
 ECMAreaDesc2=* Automatiske mapper fylles automatisk når du legger til dokumenter fra et elementkort.<br>* Manuelle mapper kan du bruke til å lagre dokumenter som ikke er lenket til et spesielt element.
 ECMSectionWasRemoved=Mappen <b>%s</b> er slettet.
 ECMDocumentsSection=Dokument i mappen

@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - agenda
-CHARSET=UTF-8
+# IdAgenda=ID event
 Actions=事件
 ActionsArea=事件區（事件和任務）
 Agenda= 議程
@@ -68,6 +68,7 @@ AgendaUrlOptions5=<b>logind=%s</b>到限制輸出到用戶的行為進行由<b>%
 AgendaShowBirthdayEvents=顯示生日的接觸
 AgendaHideBirthdayEvents=隱藏生日的接觸
 # Busy=Busy
+# ExportDataset_event1=List of agenda events
 
 # External Sites ical
 ExportCal=出口日歷

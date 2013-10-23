@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - ecm
-CHARSET=UTF-8
 MenuECM=Asiakirjat
 DocsMine=Omat asiakirjat
 DocsGenerated=Muodostettu asiakirjat
@@ -24,10 +23,10 @@ ECMNewDocument=Uusi asiakirja
 ECMCreationDate=Luontipäivämäärä
 ECMNbOfFilesInDir=Määrä tiedostoja hakemistossa
 ECMNbOfSubDir=Useita osa-hakemistoja
-ECMNbOfFilesInSubDir=Nunber on iles osa-hakemistoja
+# ECMNbOfFilesInSubDir=Number of files in sub-directories
 ECMCreationUser=Creator
-ECMArea=ECM-alue
-ECMAreaDesc=The ECM (Electronic Content Management) alue voit tallentaa, jakaa ja etsiä nopeasti kaikenlaisia asiakirjoja Dolibarr.
+# ECMArea=EDM area
+# ECMAreaDesc=The EDM (Electronic Document Management) area allows you to save, share and search quickly all kind of documents in Dolibarr.
 ECMAreaDesc2=* Automaattinen hakemistoja täyttyvät automaattisesti kun lisäät dokumentteja kortin osa. <br> * Manuaalinen hakemistojen avulla voidaan tallentaa asiakirjoja, joita ei ole sidottu tiettyyn osa.
 ECMSectionWasRemoved=<b>Hakemiston %s</b> on poistettu.
 ECMDocumentsSection=Asiakirja luettelopalvelujen

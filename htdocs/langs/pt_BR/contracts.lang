@@ -1,5 +1,4 @@
-# Dolibarr language file - pt_BR rev. 0.0 - contratos
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - contracts
 ContractsArea=Área Contratos
 ListOfContracts=Lista de Contratos
 LastContracts=Os últimos %s contratos modificados
@@ -13,6 +12,8 @@ ContractStatusValidated=Validado
 ContractStatusClosed=Encerrado
 ServiceStatusInitial=Inativo
 ServiceStatusRunning=Em Serviço
+ServiceStatusNotLate=Rodando, nao vencido
+ServiceStatusNotLateShort=Nao vencido
 ServiceStatusLate=Em Serviço, Expirado
 ServiceStatusLateShort=Expirado
 ServiceStatusClosed=Encerrado
@@ -36,7 +37,8 @@ ConfirmCloseContract=Tem certeza que quer Fechar este contrato?
 ConfirmCloseService=Tem certeza que quer Fechar este serviço?
 ValidateAContract=Confirmar um contrato
 ActivateService=Ativar o serviço
-ConfirmActivateService=Tem certeza que quer ativar este serviço em data %s? 
+ConfirmActivateService=Tem certeza que quer ativar este serviço em data %s?
+RefContract=Referencia contrato
 DateContract=Data Contrato
 DateServiceActivate=Data Ativação do Serviço
 DateServiceUnactivate=Data Desativação do Serviço
@@ -44,11 +46,14 @@ DateServiceStart=Data Inicio do Serviço
 DateServiceEnd=Data Finalização do Serviço
 ShowContract=Mostrar Contrato
 ListOfServices=Lista de Serviços
+ListOfInactiveServices=Lista servicos inativos
+ListOfExpiredServices=Lista servicos ativos vencidos
+ListOfClosedServices=Lista servicos fechados
 ListOfRunningContractsLines=Lista de Linhas de Contratos em Serviço
 ListOfRunningServices=Lista de Serviços Ativos
 NotActivatedServices=Serviços Desativados (Com os Contratos Validados)
 BoardNotActivatedServices=Serviços a Ativar (Com os Contratos Validados)
-LastContracts=Os % últimos Contratos
+LastContracts=Os últimos %s contratos modificados
 LastActivatedServices=Os %s últimos Serviços Ativados
 LastModifiedServices=Os %s últimos Serviços Modificados
 EditServiceLine=Edição Linha do Serviço
@@ -71,16 +76,24 @@ ServiceStatus=Estado do Serviço
 DraftContracts=Contratos Rascunho
 CloseRefusedBecauseOneServiceActive=O contrato não pode ser encerrado já que contém ao menos um serviço aberto.
 CloseAllContracts=Fechar Todos os Contratos
+DeleteContractLine=Eliminar a linha do contrato
+ConfirmDeleteContractLine=Voce tem certeza que deseja apagar esta linha de contrato ?
 MoveToAnotherContract=Mover o serviço a outro contrato deste Fornecedor.
 ConfirmMoveToAnotherContract=Escolhi o contrato e confirmo o alterar de serviço ao presente contrato.
 ConfirmMoveToAnotherContractQuestion=Escolha qualquer outro contrato do mesmo Fornecedor, deseja mover este serviço?
 PaymentRenewContractId=Renovação do Serviço (Numero %s)
 ExpiredSince=Expirado desde
+RelatedContracts=Contratos relativos
+NoExpiredServices=Nao tem servicos ativos vencidos
+ListOfServicesToExpireWithDuration=Lista de servicos a vencer em %s dias
+ListOfServicesToExpireWithDurationNeg=Lista de serviços expirados a mais de %s dias
+ListOfServicesToExpire=Lista de servicos a vencer
+NoteListOfYourExpiredServices=Esta lista contém apenas contratos de serviços de terceiros as quais você está ligado como representante de vendas.
+
 ##### Types de contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Comercial assinante do contrato
 TypeContact_contrat_internal_SALESREPFOLL=Comercial seguimento do contrato
 TypeContact_contrat_external_BILLING=Contato cliente de faturação do contrato
 TypeContact_contrat_external_CUSTOMER=Contato cliente seguimento do contrato
 TypeContact_contrat_external_SALESREPSIGN=Contato cliente assinante do contrato
-
-
+Error_CONTRACT_ADDON_NotDefined=Contante CONTRACT_ADDON nao definida

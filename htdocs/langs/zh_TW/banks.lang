@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - banks
-CHARSET=UTF-8
 Bank=银行
 Banks=银行
 MenuBankCash=银行/现金

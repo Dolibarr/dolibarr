@@ -1,8 +1,8 @@
 # Dolibarr language file - Source file is en_US - sendings
-CHARSET=UTF-8
 RefSending=Реф. пратка
 Sending=Пратка
 Sendings=Превозите
+Shipment=Пратка
 Shipments=Превозите
 Receivings=Receivings
 SendingsArea=Превозите област

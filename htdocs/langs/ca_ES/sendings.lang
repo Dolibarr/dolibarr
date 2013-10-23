@@ -1,8 +1,8 @@
 # Dolibarr language file - Source file is en_US - sendings
-CHARSET=UTF-8
 RefSending=Ref enviament
 Sending=Enviament
 Sendings=Enviaments
+Shipment=Enviament
 Shipments=Enviaments
 Receivings=Recepcions
 SendingsArea=Àrea enviaments
@@ -61,13 +61,16 @@ ShipmentCreationIsDoneFromOrder=De moment, la creació d'una nova expedició es 
 RelatedShippings=Expedició(ns) associades
 ShipmentLine=Línia d'expedició
 CarrierList=Llistat de transportistes
+
 # Sending methods
 SendingMethodCATCH=Recollit pel client
 SendingMethodTRANS=Transportista
 SendingMethodCOLSUI=Colissimo
+
 # ModelDocument
 DocumentModelSirocco=Model simple nota de lliurament
 DocumentModelTyphon=Model complet de nota de lliurament (logo...)
+
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=Constant EXPEDITION_ADDON_NUMBER no definida
 SumOfProductVolumes=Suma del volum dels productes
 SumOfProductWeights=Suma del pes dels productes

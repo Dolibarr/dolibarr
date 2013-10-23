@@ -1,7 +1,5 @@
 # Dolibarr language file - Source file is en_US - marque pages
-CHARSET=UTF-8
 AddThisPageToBookmarks=Lisää tämä sivu kirjanmerkkeihin
-
 Bookmark=Lempparit
 Bookmarks=Kirjanmerkit
 NewBookmark=Uusi kirjanmerkki

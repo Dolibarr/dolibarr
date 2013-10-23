@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - orders
-CHARSET=UTF-8
 OrdersArea=客戶訂單面積
 SuppliersOrdersArea=供應商的訂單面積
 OrderCard=訂單資訊
@@ -56,8 +55,6 @@ DraftOrWaitingShipped=草案或審定尚未運
 MenuOrdersToBill=訂單To帳單
 # MenuOrdersToBill2=Orders to bill
 SearchOrder=搜尋訂單
-Sending=發出
-Sendings=出貨清單
 ShipProduct=船舶產品
 Discount=折扣
 CreateOrder=創建訂單
@@ -150,6 +147,7 @@ AddDeliveryCostLine=添加交貨成本線，顯示該命令的重量
 # Documents models
 PDFEinsteinDescription=可產生一份完整的訂單範本（logo. ..）
 PDFEdisonDescription=可產生一份簡單的訂單範本
+# PDFProformaDescription=A complete proforma invoice (logo…)
 # Orders modes
 OrderByMail=郵件
 OrderByFax=傳真

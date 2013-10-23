@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - companies
-CHARSET=UTF-8
 ErrorCompanyNameAlreadyExists=Le nom de société %s existe déjà. Veuillez en choisir un autre.
 ErrorPrefixAlreadyExists=Le préfixe %s existe déjà. Veuillez en choisir un autre.
 ErrorSetACountryFirst=Définissez d'abord le pays
@@ -397,7 +396,7 @@ InActivity=En activité
 ActivityCeased=Clos
 ActivityStateFilter=Statut d'activité
 ProductsIntoElements=Liste des produits dans les %s
-OutstandingBill=Encours de facturation
+# OutstandingBill=Outstanding Bill
 # Monkey
 MonkeyNumRefModelDesc=Renvoie le numéro sous la forme %syymm-nnnn pour les codes clients et %syymm-nnnn pour les codes fournisseurs où yy est l'année, mm le mois et nnnn un compteur séquentiel sans rupture et sans remise à 0.
 # Leopard

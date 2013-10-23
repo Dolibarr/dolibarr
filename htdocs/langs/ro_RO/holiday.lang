@@ -1,6 +1,4 @@
 # Dolibarr language file - Source file is en_US - holiday
-CHARSET= UTF-8
-
 HRM=HRM
 Holidays=Vacanţe
 CPTitreMenu=Vacanţe
@@ -89,6 +87,7 @@ FirstDayOfHoliday=Prima zi a concediului
 LastDayOfHoliday=Ultima zi a concediului
 HolidaysMonthlyUpdate=Actualizare lunară
 ManualUpdate=Actualizare manuală
+# HolidaysCancelation=Holidays cancelation
 
 ## Configuration du Module ##
 ConfCP=Configurarea modulului concedii

@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - withdrawals
-CHARSET=UTF-8
 StandingOrdersArea=Ödeme talimatları alanı
 CustomersStandingOrdersArea=Müşteri ödeme talimatları alanı
 StandingOrders=Ödeme talimatları
@@ -93,5 +92,5 @@ InfoTransMessage=%s Ödeme talimatı bankaya %s %s tarafından iletilmiştir.<br
 InfoTransData=Tutarı: %s<br> Yöntemi: %s<br>Tarihi: %s
 InfoFoot=Bu Dolibarr tarafından otomatik gönderilen bir mesajtır
 InfoRejectSubject=Ödeme talimatı reddedildi
-InfoRejectMessage=Merhaba, <br><br> %s firmasına ait %s faturasının %s tutarındaki ödeme talimatı banka tarafından reddedilmiştir.<br><br>--<br>%s
+# InfoRejectMessage=Hello,<br><br>the standing order of invoice %s related to the company %s, with an amount of %s has been refused by the bank.<br><br>--<br>%s
 ModeWarning=Gerçek mod için seçenek ayarlanmamış, bu simülasyondan sonra durdururuz

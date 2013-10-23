@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - paybox
-CHARSET=UTF-8
 PayBoxSetup=切符売り場のモジュールのセットアップ
 PayBoxDesc=このモジュールは、上の支払いを可能にするためにページを提供して<a href="http://www.paybox.com" target="_blank">切符売り場</a>の顧客によって。これはフリーの支払いのためにまたは特定のDolibarrオブジェクトの支払いに用いることができる（請求書、発注、...）
 FollowingUrlAreAvailableToMakePayments=以下のURLはDolibarrオブジェクト上で支払いをするために顧客にページを提供するために利用可能です
@@ -33,3 +32,6 @@ VendorName=ベンダーの名前
 CSSUrlForPaymentForm=支払いフォームのCSSスタイルシートのURL
 MessageOK=検証済みペイメントの戻りページでメッセージ
 MessageKO=キャンセル支払い戻りページでメッセージ
+# NewPayboxPaymentReceived=New Paybox payment received
+# NewPayboxPaymentFailed=New Paybox payment tried but failed
+# PAYBOX_PAYONLINE_SENDEMAIL=EMail to warn after a payment (success or failed)

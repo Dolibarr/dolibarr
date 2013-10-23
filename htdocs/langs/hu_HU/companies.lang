@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - companies
-CHARSET=UTF-8
 ErrorCompanyNameAlreadyExists=Cégnév %s már létezik. Válasszon egy másikat.
 ErrorPrefixAlreadyExists=Prefix %s már létezik. Válasszon egy másikat.
 ErrorSetACountryFirst=1. Állítsa be az országot
@@ -85,6 +84,8 @@ LocalTax1IsUsedES= RE használják
 LocalTax1IsNotUsedES= RE nem használják
 LocalTax2IsUsedES= IRPF használják
 LocalTax2IsNotUsedES= IRPF nem használják
+LocalTax1ES=RE
+LocalTax2ES=IRPF
 ThirdPartyEMail=%s
 WrongCustomerCode=Ügyfél kód érvénytelen
 WrongSupplierCode=Szállító kód érvénytelen
@@ -395,7 +396,7 @@ InActivity=Nyitva
 ActivityCeased=Zárva
 ActivityStateFilter=Gazdasági aktivitás
 # ProductsIntoElements=List of products into
-
+# OutstandingBill=Outstanding Bill
 # Monkey
 MonkeyNumRefModelDesc=Vissza a numero formátumban %syymm-nnnn kódot, és az ügyfelek %syymm-nnnn kódot, ahol a szállító yy év, hónap és mm nnnn sorozata szünet nélkül, és nincs visszaút 0-ra.
 # Leopard

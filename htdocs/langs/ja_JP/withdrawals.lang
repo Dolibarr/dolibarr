@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - withdrawals
-CHARSET=UTF-8
 StandingOrdersArea=立って受注エリア
 CustomersStandingOrdersArea=受注エリアに立ってお客さま
 StandingOrders=立っている受注
@@ -93,5 +92,5 @@ InfoTransMessage=スタンディングオーダー%s %s %sは、銀行にtransmi
 InfoTransData=金額：%s <br> Metode：%s <br>日付：%s
 InfoFoot=これはDolibarrによって送信される自動化されたメッセージです。
 InfoRejectSubject=拒否したため、立ち
-InfoRejectMessage=こんにちは、 <br><br> %sの量と、会社%sに関連した請求書%sのstandig順序は、銀行が拒否されました。 <br><br> - <br> %s
+# InfoRejectMessage=Hello,<br><br>the standing order of invoice %s related to the company %s, with an amount of %s has been refused by the bank.<br><br>--<br>%s
 ModeWarning=リアルモードのオプションが設定されていない、我々は、このシミュレーションの後に停止

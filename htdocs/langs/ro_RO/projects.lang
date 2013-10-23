@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - projects
-CHARSET=UTF-8
 Project=Proiect
 Projects=Proiecte
 SharedProject=Toată lumea
@@ -89,7 +88,8 @@ CloneProject=Clonează proiect
 CloneTasks=Clonează taskuri
 CloneContacts=Clonează contacte
 CloneNotes=Clonează note
-CloneFiles=Clonează fişiere ataşate
+# CloneProjectFiles=Clone project joined files
+# CloneTaskFiles=Clone task(s) joined files (if task(s) cloned)
 ConfirmCloneProject=Sigur vreţi să clonaţi acest proiect?
 ProjectReportDate=Schimbă data taskului conform cu data de debut a proiectului
 ErrorShiftTaskDate=Imposibil de schimbat data taskului conform cu noua data de debut a proiectului
@@ -104,6 +104,8 @@ TypeContact_project_task_internal_TASKEXECUTIVE=Responsabil
 TypeContact_project_task_external_TASKEXECUTIVE=Responsabil
 TypeContact_project_task_internal_CONTRIBUTOR=Contributor
 TypeContact_project_task_external_CONTRIBUTOR=Contributor
+# SelectElement=Elements to referring the project
+# AddElement=Refering
 # Documents models
 DocumentModelBaleine=Modelul de rapor al unui proiect complet t (logo. ..)
 PlannedWorkload = Volum de lucru Planificat

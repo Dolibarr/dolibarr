@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - main
-CHARSET=UTF-8
 # DIRECTION=ltr
 # Note for chinese:
 # msungstdlight or cid0ct are for traditionnal chinese (traditionnal does not render with ubuntu pdf reader)
@@ -7,8 +6,8 @@ CHARSET=UTF-8
 # To read chinese pdf with linux: sudo apt-get install poppler-data
 # FONTFORPDF=helvetica
 # FONTSIZEFORPDF=10
-# SeparatorDecimal=.
-# SeparatorThousand=,
+# SeparatorDecimal=,
+# SeparatorThousand=None
 # FormatDateShort=%m/%d/%Y
 # FormatDateShortInput=%m/%d/%Y
 # FormatDateShortJava=MM/dd/yyyy
@@ -388,7 +387,7 @@ Setup=Cài đặt
 # Quantity=Quantity
 # Qty=Qty
 # ChangedBy=Changed by
-# ReCalculate=Rebuild
+# ReCalculate=Recalculate
 # ResultOk=Success
 # ResultKo=Failure
 # Reporting=Reporting
@@ -657,6 +656,8 @@ Unknown=Chưa rõ
 # Deductible=Deductible
 # from=from
 # toward=toward
+# Access=Access
+# HelpCopyToClipboard=Use Ctrl+C to copy to clipboard
 
 # Week day
 # Monday=Monday

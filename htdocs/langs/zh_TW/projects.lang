@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - projects
-CHARSET=UTF-8
 Project=項目
 Projects=項目
 SharedProject=每個人
@@ -89,7 +88,8 @@ IfNeedToUseOhterObjectKeepEmpty=如果某些對象（發票，訂單，...），
 # CloneTasks=Clone tasks
 # CloneContacts=Clone contacts
 # CloneNotes=Clone notes
-# CloneFiles=Clone joined files
+# CloneProjectFiles=Clone project joined files
+# CloneTaskFiles=Clone task(s) joined files (if task(s) cloned)
 # ConfirmCloneProject=Are you sure to clone this project ?
 # ProjectReportDate=Change task date according project start date
 # ErrorShiftTaskDate=Impossible to shift task date according to new project start date
@@ -104,6 +104,8 @@ TypeContact_project_task_internal_TASKEXECUTIVE=執行任務
 TypeContact_project_task_external_TASKEXECUTIVE=執行任務
 TypeContact_project_task_internal_CONTRIBUTOR=投稿
 TypeContact_project_task_external_CONTRIBUTOR=投稿
+# SelectElement=Elements to referring the project
+# AddElement=Refering
 # Documents models
 DocumentModelBaleine=一個完整的項目報告模型（logo. ..）
 # PlannedWorkload = Planned workload

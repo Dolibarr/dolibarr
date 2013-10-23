@@ -1,4 +1,3 @@
 # Dolibarr language file - es_AR - stocks
-CHARSET=UTF-8
 DeStockOnBill=Decrementar los stocks físicos sobre las facturas/notas de crédito a clientes
 ReStockOnBill=Incrementar los stocks físicos sobre las facturas/notas de crédito de proveedores

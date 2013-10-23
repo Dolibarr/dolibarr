@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - users
-CHARSET=UTF-8
 UserCard=Brukerkort
 ContactCard=Kontaktperson-kort
 GroupCard=Guppekort
@@ -117,3 +116,5 @@ DontDowngradeSuperAdmin=Bare en superadmin kan nedgradere en superadmin
 # HierarchicalResponsible=Hierarchical responsible
 # HierarchicView=Hierarchical view
 # UseTypeFieldToChange=Use field Type to change
+# OpenIDURL=OpenID URL
+# LoginUsingOpenID=Login using OpenID

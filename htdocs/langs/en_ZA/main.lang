@@ -1,6 +1,5 @@
 # Dolibarr language file - en_ZA - main
 # This file contains only line that must differs from en_US file
-CHARSET=UTF-8
 SeparatorDecimal=.
 SeparatorThousand=,
 FormatDateShort=%Y/%m/%d

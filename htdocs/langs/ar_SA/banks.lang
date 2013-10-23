@@ -1,14 +1,4 @@
-/*
- * Language code: ar_AR
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-08-11 13:27:01
- */
-
-
-// Date 2009-08-11 13:27:01
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - banks
 Bank=البنك
 Banks=المصارف
 MenuBankCash=البنك / النقدية
@@ -29,6 +19,8 @@ SavingAccount=حساب توفير
 SavingAccounts=حسابات التوفير
 ErrorBankLabelAlreadyExists=الحساب المالي الملصق موجود بالفعل
 BankBalance=التوازن
+# BankBalanceBefore=Balance before
+# BankBalanceAfter=Balance after
 BalanceMinimalAllowed=الحد الأدنى المسموح التوازن
 BalanceMinimalDesired=الحد الأدنى من التوازن المطلوب
 InitialBankBalance=الرصيد الأولي
@@ -51,11 +43,11 @@ LastAccountStatements=كشوفات الحساب الأخير
 Rapprochement=المصالحة
 IOMonthlyReporting=تقارير شهرية
 BankAccountDomiciliation=معالجة حساب
+BankAccountCountry=حساب البلاد
 BankAccountOwner=اسم صاحب الحساب
 BankAccountOwnerAddress=معالجة حساب المالك
+RIBControlError=التحقق من تكامل القيم يفشل. وهذا يعني حصول على معلومات عن هذا رقم الحساب ليست كاملة أو خاطئة (ارجع البلد والأرقام وIBAN).
 CreateAccount=إنشاء حساب
-StandingOrderToProcess=لعملية
-StandingOrderProcessed=تجهيز
 NewAccount=حساب جديد
 NewBankAccount=حساب مصرفي جديد
 NewFinancialAccount=الحساب المالي الجديد
@@ -112,7 +104,9 @@ ConciliatedBy=طريق التصالح
 DateConciliating=التوفيق التاريخ
 BankLineConciliated=صفقة التصالح
 CustomerInvoicePayment=عملاء الدفع
+# CustomerInvoicePaymentBack=Customer payment back
 SupplierInvoicePayment=المورد الدفع
+WithdrawalPayment=انسحاب الدفع
 SocialContributionPayment=دفع المساهمة الاجتماعية
 FinancialAccountJournal=مجلة الحساب المالي
 BankTransfer=حوالة مصرفية
@@ -128,6 +122,7 @@ DeleteCheckReceipt=تأكد من ورود حذف هذا؟
 ConfirmDeleteCheckReceipt=هل أنت متأكد من أنك تريد حذف هذا التحقق من ورود؟
 BankChecks=الشيكات المصرفية
 BankChecksToReceipt=في انتظار إيداع الشيكات
+ShowCheckReceipt=الاختيار إظهار تلقي الودائع
 NumberOfCheques=ملاحظة : للشيكات
 DeleteTransaction=حذف المعاملات
 ConfirmDeleteTransaction=هل أنت متأكد من أنك تريد حذف هذه الصفقة؟
@@ -135,42 +130,23 @@ ThisWillAlsoDeleteBankRecord=وهذا من شأنه أيضا حذف المتول
 BankMovements=حركات
 CashBudget=الميزانية النقدية
 PlannedTransactions=المخطط المعاملات
+Graph=الرسومات
 ExportDataset_banque_1=المعاملات المصرفية وحساب
 TransactionOnTheOtherAccount=صفقة على حساب الآخرين
+TransactionWithOtherAccount=تحويل الحساب
 PaymentNumberUpdateSucceeded=دفع عدد تحديث بنجاح
 PaymentNumberUpdateFailed=دفع عددا لا يمكن تحديث
 PaymentDateUpdateSucceeded=تاريخ التحديث الدفع بنجاح
 PaymentDateUpdateFailed=دفع حتى الآن لا يمكن تحديث
+# Transactions=Transactions
 BankTransactionLine=المعاملات المصرفية
 AllAccounts=جميع المصرفية / حسابات نقدية
 BackToAccount=إلى حساب
 ShowAllAccounts=وتبين للجميع الحسابات
-// Date 2009-08-11 13:27:01
-// STOP - Lines generated via parser
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 20:13:59).
-// Reference language: en_US
-TransactionWithOtherAccount=تحويل الحساب
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:13:59).
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:13:51).
-// Reference language: en_US
-BankAccountCountry=حساب البلاد
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:14:16).
-
-
-// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
-// Reference language: en_US -> ar_SA
-RIBControlError=التحقق من تكامل القيم يفشل. وهذا يعني حصول على معلومات عن هذا رقم الحساب ليست كاملة أو خاطئة (ارجع البلد والأرقام وIBAN).
-WithdrawalPayment=انسحاب الدفع
-ShowCheckReceipt=الاختيار إظهار تلقي الودائع
-// STOP - Lines generated via autotranslator.php tool (2011-10-10 06:39:39).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 15:55:27).
-// Reference language: en_US -> ar_SA
-Graph=الرسومات
 FutureTransaction=الصفقة في أجل المستقبل. أي وسيلة للتوفيق.
 SelectChequeTransactionAndGenerate=حدد / تصفية الشيكات لتشمل في الاختيار استلام الودائع وانقر على &quot;إنشاء&quot;.
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 15:55:34).
+# InputReceiptNumber=Choose the bank statement related with the conciliation. Use a sortable numeric value (such as, YYYYMM)
+# EventualyAddCategory=Eventually, specify a category in which to classify the records
+# ToConciliate=To conciliate?
+# ThenCheckLinesAndConciliate=Then, check the lines present in the bank statement and click
+# BankDashboard=Bank accounts summary

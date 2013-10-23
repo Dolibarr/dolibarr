@@ -1,5 +1,4 @@
-# Dolibarr language file - en_US - deliveries
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - deliveries
 Delivery=Consegna
 Deliveries=Consegne
 DeliveryCard=Scheda consegna

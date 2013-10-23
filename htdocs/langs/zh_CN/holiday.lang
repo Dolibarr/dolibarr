@@ -1,6 +1,4 @@
 # Dolibarr language file - Source file is en_US - holiday
-CHARSET= UTF-8
-
 HRM=人力资源管理（HRM）
 Holidays=休假
 CPTitreMenu=休假
@@ -24,13 +22,13 @@ ValidatorCP=同意
 ListeCP=假期列表
 ReviewedByCP=将审查
 DescCP=描述
-# SendRequestCP=Creating demand for holidays
+SendRequestCP=创建请假条
 # DelayToRequestCP=Applications for holidays must be made at least <b>%s day(s)</b> before them.
 # MenuConfCP=Edit balance of holidays
 UpdateAllCP=更新假期
 # SoldeCPUser=Holidays balance is <b>%s</b> days.
 ErrorEndDateCP=你必须选择结束日期大于起始日期。
-# ErrorSQLCreateCP=An SQL error occurred during the creation:
+ErrorSQLCreateCP=创建过程中发生了一个SQL错误：
 ErrorIDFicheCP=发生了错误，请求节假日不存在。
 ReturnCP=返回前一页
 ErrorUserViewCP=您无权阅读申请假期。
@@ -47,8 +45,8 @@ ActionRefuseCP=拒绝
 ActionCancelCP=取消
 StatutCP=地位
 SendToValidationCP=发送到验证
-# TitleDeleteCP=Delete the request of holidays
-# ConfirmDeleteCP=Confirm the deletion of this request for holidays?
+TitleDeleteCP=删除请假请求
+ConfirmDeleteCP=您确定要删除该请假请求？
 # ErrorCantDeleteCP=Error you don't have the right to delete this holiday request.
 CantCreateCP=您无权申请假期。
 # InvalidValidatorCP=You must choose an approbator to your holiday request.
@@ -89,6 +87,7 @@ FirstDayOfHoliday=假期第一天
 LastDayOfHoliday=假期的最后一天
 HolidaysMonthlyUpdate=每月更新
 ManualUpdate=手动更新
+# HolidaysCancelation=Holidays cancelation
 
 ## Configuration du Module ##
 ConfCP=节假日模块的配置

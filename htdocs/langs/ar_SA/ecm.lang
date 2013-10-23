@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - ecm
-CHARSET=UTF-8
 MenuECM=وثائق
 DocsMine=بلدي وثائق
 DocsGenerated=ولدت وثائق
@@ -24,10 +23,10 @@ ECMNewDocument=وثيقة جديدة
 ECMCreationDate=تاريخ الإنشاء
 ECMNbOfFilesInDir=عدد من الملفات في دليل
 ECMNbOfSubDir=من دون أدلة
-ECMNbOfFilesInSubDir=إيليس في Nunber من دون أدلة
+# ECMNbOfFilesInSubDir=Number of files in sub-directories
 ECMCreationUser=مبدع
-ECMArea=مجال إدارة المحتوى في المؤسسة
-ECMAreaDesc=إدارة المحتوى في المؤسسة (إدارة المحتوى الالكتروني) تتيح لك المجال لانقاذ ، والبحث بسرعة حصة كل نوع من أنواع الوثائق في Dolibarr.
+# ECMArea=EDM area
+# ECMAreaDesc=The EDM (Electronic Document Management) area allows you to save, share and search quickly all kind of documents in Dolibarr.
 ECMAreaDesc2=* أدلة تلقائية تملأ تلقائيا عند إضافة الوثائق من بطاقة عنصر. <br> * دليل أدلة يمكن استخدامها لانقاذ وثائق ليست مرتبطة بشكل خاص عنصر.
 ECMSectionWasRemoved=دليل <b>٪ ق</b> حذفت.
 ECMDocumentsSection=وثيقة من وثائق ودليل

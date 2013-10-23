@@ -2,7 +2,6 @@
  * Language code: ru_UA
  */
 
-CHARSET=UTF-8
 DIRECTION=ltr
 FONTFORPDF=freemono
 FONTSIZEFORPDF=8

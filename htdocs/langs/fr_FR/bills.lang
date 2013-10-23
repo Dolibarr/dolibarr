@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - bills
-CHARSET=UTF-8
 Bill=Facture
 Bills=Factures
 BillsCustomers=Factures clients

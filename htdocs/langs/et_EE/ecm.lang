@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - ecm
-CHARSET=UTF-8
 MenuECM=Dokumendid
 DocsMine=Minu dokumendid
 DocsGenerated=Loodud dokumendid
@@ -24,10 +23,10 @@ ECMNewDocument=Uue dokumendi
 ECMCreationDate=Loomiskuupäev
 ECMNbOfFilesInDir=Failide arv kataloog
 ECMNbOfSubDir=Mitmeid sub-directories
-ECMNbOfFilesInSubDir=Nunber of Iles Sahara-kataloogid
+# ECMNbOfFilesInSubDir=Number of files in sub-directories
 ECMCreationUser=Looja
-ECMArea=ECM ala
-ECMAreaDesc=ECM (Electronic Content Management) valdkonnas võimaldab salvestada, jagada ja otsida kiiresti igasugu dokumentide Dolibarr.
+# ECMArea=EDM area
+# ECMAreaDesc=The EDM (Electronic Document Management) area allows you to save, share and search quickly all kind of documents in Dolibarr.
 ECMAreaDesc2=* Automaatne kataloogid täidetakse automaatselt kui lisad dokumente kaart element. <br> * Käsitsi katalooge saab salvestada dokumente ei ole seotud konkreetse element.
 ECMSectionWasRemoved=Directory <b>%s</b> on kustutatud.
 ECMDocumentsSection=Dokumendi kataloog

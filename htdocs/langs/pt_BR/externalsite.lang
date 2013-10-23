@@ -1,0 +1,4 @@
+# Dolibarr language file - Source file is en_US - externalsite
+ExternalSiteSetup=Link configuraçao ao site externo 
+ExternalSiteURL=URL site externo
+ExternalSiteModuleNotComplete=Modulo SiteExterno nao foi configurado corretamente.

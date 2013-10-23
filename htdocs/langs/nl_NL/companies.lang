@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - companies
-CHARSET=UTF-8
 ErrorCompanyNameAlreadyExists=De bedrijfsnaam %s bestaat al. kies een andere.
 ErrorPrefixAlreadyExists=De prefix %s bestaat al. kies een andere.
 ErrorSetACountryFirst=Stel eerst het land in
@@ -85,6 +84,8 @@ LocalTax1IsUsedES= RE wordt gebruikt
 LocalTax1IsNotUsedES= RE wordt niet gebruikt
 LocalTax2IsUsedES= Inkomstenbelasting wordt gebruikt
 LocalTax2IsNotUsedES= Inkomstenbelasting wordt niet gebruikt
+LocalTax1ES=RE
+LocalTax2ES=IRPF
 ThirdPartyEMail=E-mailadres
 WrongCustomerCode=Ongeldige afnemerscode
 WrongSupplierCode=Ongeldige leverancierscode
@@ -395,7 +396,7 @@ InActivity=Open
 ActivityCeased=Gesloten
 ActivityStateFilter=Activiteitsstatus
 # ProductsIntoElements=List of products into
-
+# OutstandingBill=Outstanding Bill
 # Monkey
 MonkeyNumRefModelDesc=Geeft een nummer als %syymm-nnnn voor afnemerscodes en %sjjmm-nnnn voor leverancierscodes waar jj het jaar is, mm de maand en nnnn een opeenvolgend nummer vanaf 0.
 # Leopard

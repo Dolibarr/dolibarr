@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - mailmanspip
-CHARSET=UTF-8
 MailmanSpipSetup=Configuración del módulo Mailman y SPIP
 MailmanTitle=Sistema de listas de correo Mailman
 TestSubscribe=Para comprobar la suscripción a listas Mailman

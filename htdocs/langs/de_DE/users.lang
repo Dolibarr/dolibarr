@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - users
-CHARSET=UTF-8
 UserCard=Benutzerkarte
 ContactCard=Kontaktkarte
 GroupCard=Firmenverbundkarte
@@ -116,4 +115,6 @@ NbOfUsers=Anzahl der Benutzer
 DontDowngradeSuperAdmin=Nur ein SuperAdmin kann einen SuperAdmin downgraden
 HierarchicalResponsible=In der Hierarchie verantwortlich
 HierarchicView=Hierarchische Ansicht
-UseTypeFieldToChange=Nutzen sie das Feld "Typ" zum ändern 
+UseTypeFieldToChange=Nutzen sie das Feld "Typ" zum ändern
+# OpenIDURL=OpenID URL
+# LoginUsingOpenID=Login using OpenID

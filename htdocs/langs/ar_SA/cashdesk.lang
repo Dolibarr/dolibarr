@@ -1,5 +1,4 @@
 # Language file - Source file is en_US - cashdesk
-CHARSET=UTF-8
 CashDeskMenu=نقطة بيع
 CashDesk=نقطة بيع
 CashDesks=نقاط البيع
@@ -37,3 +36,4 @@ BankToPay=تهمة حساب
 ShowCompany=عرض شركة
 ShowStock=عرض مستودع
 DeleteArticle=انقر لإزالة هذه المادة
+# FilterRefOrLabelOrBC=Search (Ref/Label)

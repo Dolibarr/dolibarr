@@ -236,16 +236,22 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 
 				// Open and load template
 				require_once ODTPHP_PATH.'odf.php';
-				$odfHandler = new odf(
-				    $srctemplatepath,
-				    array(
-    					'PATH_TO_TMP'	  => $conf->societe->multidir_temp[$object->entity],
-    					'ZIP_PROXY'		  => 'PclZipProxy',	// PhpZipProxy or PclZipProxy. Got "bad compression method" error when using PhpZipProxy.
-    					'DELIMITER_LEFT'  => '{',
-    					'DELIMITER_RIGHT' => '}'
-					)
-				);
-
+				try {
+					$odfHandler = new odf(
+					    $srctemplatepath,
+					    array(
+	    					'PATH_TO_TMP'	  => $conf->societe->multidir_temp[$object->entity],
+	    					'ZIP_PROXY'		  => 'PclZipProxy',	// PhpZipProxy or PclZipProxy. Got "bad compression method" error when using PhpZipProxy.
+	    					'DELIMITER_LEFT'  => '{',
+	    					'DELIMITER_RIGHT' => '}'
+						)
+					);
+				}
+				catch(Exception $e)
+				{
+					$this->error=$e->getMessage();
+					return -1;
+				}
 				//print $odfHandler->__toString()."\n";
 
 				// Make substitutions into odt of user info
@@ -318,7 +324,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
                         // setVars failed, probably because key not found
 					}
 				}
-				
+
 				// Replace labels translated
 				$tmparray=$outputlangs->get_translations_for_substitutions();
 				foreach($tmparray as $key=>$value)
@@ -351,7 +357,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 						$this->error=$e->getMessage();
 						return -1;
 					}
-				}	
+				}
 
 				if (! empty($conf->global->MAIN_UMASK))
 				@chmod($file, octdec($conf->global->MAIN_UMASK));

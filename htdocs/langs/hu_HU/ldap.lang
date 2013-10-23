@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - ldap
-CHARSET=UTF-8
 DomainPassword=Jelszó a domain-hez
 YouMustChangePassNextLogon=<b>%s</b> felhasználó jelszavát a <b>%s</b> domain-ben meg kell változtatni.
 UserMustChangePassNextLogon=%s domainben a felhasználónak meg kell változtatnia a jelszavát.

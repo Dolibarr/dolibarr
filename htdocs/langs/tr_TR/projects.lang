@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - projects
-CHARSET=UTF-8
 Project=Proje
 Projects=Projeler
 SharedProject=Herkes
@@ -89,7 +88,8 @@ CloneProject=Proje klonla
 CloneTasks=Görev klonla
 CloneContacts=Kişi klonla
 CloneNotes=Not klonla
-CloneFiles=Birleşmiş dosya klonla
+# CloneProjectFiles=Clone project joined files
+# CloneTaskFiles=Clone task(s) joined files (if task(s) cloned)
 ConfirmCloneProject=Bu projeyi klonlamak istediğinizden emin misiniz?
 ProjectReportDate=Görevi proje başlama tarihine göre değiştir
 ErrorShiftTaskDate=Görev tarihini yeni proje başlama tarihine göre kaydırmak olası değil
@@ -104,6 +104,8 @@ TypeContact_project_task_internal_TASKEXECUTIVE=Görev yöneticisi
 TypeContact_project_task_external_TASKEXECUTIVE=Görev yöneticisi
 TypeContact_project_task_internal_CONTRIBUTOR=Katılımcı
 TypeContact_project_task_external_CONTRIBUTOR=Katılımcı
+# SelectElement=Elements to referring the project
+# AddElement=Refering
 # Documents models
 DocumentModelBaleine=Eksiksiz bir proje rapor modeli (logo. ..)
 PlannedWorkload = Planlı işyükü

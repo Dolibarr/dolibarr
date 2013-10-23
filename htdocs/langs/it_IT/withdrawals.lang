@@ -1,5 +1,4 @@
-# Dolibarr language file - en_US - withdrawals
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - withdrawals
 StandingOrdersArea=Area ordini permanenti
 CustomersStandingOrdersArea=Area ordini permanenti clienti
 StandingOrders=Ordini permanenti
@@ -93,5 +92,5 @@ InfoTransMessage=L'ordine permanente %s è stato trasmesso alla banca da %s %s.<
 InfoTransData=Importo: %s <br> Metodo: %s <br> Data: %s
 InfoFoot=Questo è un messaggio automatico inviato da Dolibarr
 InfoRejectSubject=Ordine permanente rifiutato
-InfoRejectMessage=<br/><br/>L&#39;ordine permanente %s per la fattura relativa alla società %s , con un importo di %s è stato rifiutato dalla banca.<br/><br/>-<br/>% $
+# InfoRejectMessage=Hello,<br><br>the standing order of invoice %s related to the company %s, with an amount of %s has been refused by the bank.<br><br>--<br>%s
 ModeWarning=Non è stata impostata la modalità reale, ci fermiamo dopo questa simulazione

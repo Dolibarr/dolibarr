@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - contracts
-CHARSET=UTF-8
 ContractsArea=Περιοχή Συμβολαίων
 ListOfContracts=Λίστα Συμβολαίων
 LastContracts=%s συμβόλαια που τροποποιήθηκαν πρόσφατα

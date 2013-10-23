@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - orders
-CHARSET=UTF-8
 OrdersArea=Az ügyfelek megrendelések területén
 SuppliersOrdersArea=Beszállítók megrendelések területén
 OrderCard=Megrendelőlap
@@ -56,8 +55,6 @@ DraftOrWaitingShipped=Tervezet még nem hitelesített vagy szállított
 MenuOrdersToBill=Megrendelés Bill
 # MenuOrdersToBill2=Orders to bill
 SearchOrder=Keresés érdekében
-Sending=Küldése
-Sendings=Küldések
 ShipProduct=Hajó termék
 Discount=Kedvezmény
 CreateOrder=Rendet
@@ -150,6 +147,7 @@ AddDeliveryCostLine=Add a szállítási költség vonal jelzi a súlya a sorrend
 # Documents models
 PDFEinsteinDescription=A teljes order (logo. ..)
 PDFEdisonDescription=Egy egyszerű modell érdekében
+# PDFProformaDescription=A complete proforma invoice (logo…)
 # Orders modes
 OrderByMail=Mail
 OrderByFax=Fax

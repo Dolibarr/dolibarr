@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - ldap
-CHARSET=UTF-8
 DomainPassword=كلمة السر لالنطاق
 YouMustChangePassNextLogon=كلمة السر للمستخدم <b>٪</b> على النطاق <b>ق ق ٪</b> ويجب أن يتغير.
 UserMustChangePassNextLogon=يجب على المستخدم تغيير كلمة المرور على المجال ق ٪

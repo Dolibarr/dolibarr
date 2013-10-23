@@ -1,5 +1,4 @@
-# Dolibarr language file - ca_ES - ldap
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - ldap
 DomainPassword=Contrasenya del domini
 YouMustChangePassNextLogon=La contrasenya de <b>%s </b> en el domini <b>%s </b> ha de ser modificada.
 UserMustChangePassNextLogon=L'usuari ha de canviar de contrasenya en la propera connexió
@@ -23,8 +22,8 @@ LDAPFieldLastSubscriptionDate=Data última adhesió
 LDAPFieldLastSubscriptionAmount=Import darrera adhesió
 SynchronizeDolibarr2Ldap=Sincronitzar usuari (Dolibarr -> LDAP)
 UserSynchronized=Usuari sincronitzat
-GroupSynchronized= Grup sincronizado
-MemberSynchronized= Membre sincronitzat
-ContactSynchronized= Contacte sincronitzat
+GroupSynchronized=Grup sincronizado
+MemberSynchronized=Membre sincronitzat
+ContactSynchronized=Contacte sincronitzat
 ForceSynchronize=Forçar sincronització Dolibarr -> LDAP
 ErrorFailedToReadLDAP=Error de la lectura de l'anuari LDAP. Comprovar la configuració del mòdul LDAP i l'accessibilitat de l'anuari.

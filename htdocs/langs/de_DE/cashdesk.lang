@@ -1,5 +1,4 @@
 # Language file - Source file is en_US - cashdesk
-CHARSET=UTF-8
 CashDeskMenu=POS Kasse
 CashDesk=Kasse
 CashDesks=Kassen
@@ -37,3 +36,4 @@ BankToPay=Kundenkonto
 ShowCompany=Zeige Unternehmen
 ShowStock=Zeige Lager
 DeleteArticle=Klicken, um diesen Artikel zu entfernen
+# FilterRefOrLabelOrBC=Search (Ref/Label)

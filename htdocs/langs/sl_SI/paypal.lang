@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - paypal
-CHARSET=UTF-8
 PaypalSetup=Nastavitev modula PayPal
 PaypalDesc=Ta modul ponuja stran, ki kupcem omogoča plačila na <a href="http://www.paypal.com" target="_blank">PayPal</a>. Lahko se uporablja za prosta plačila ali za plačila določenih Dolibarr objektov (računi, naročila, ...)
 PaypalOrCBDoPayment=Plačilo s kreditnimi karticami ali Paypal
@@ -18,3 +17,6 @@ PAYPAL_ADD_PAYMENT_URL=Pri pošiljanju dokumenta po pošti dodaj url Paypal pla�
 PAYPAL_IPN_MAIL_ADDRESS=Naslov e-pošte za takojšnje obvestilo o plačilu (IPN)
 # PredefinedMailContentLink=You can click on the secure link below to make your payment (PayPal) if it is not already done.\n\n%s\n\n
 YouAreCurrentlyInSandboxMode=Trenutno ste v &quot;peskovniku&quot; načinu
+# NewPaypalPaymentReceived=New Paypal payment received
+# NewPaypalPaymentFailed=New Paypal payment tried but failed
+# PAYPAL_PAYONLINE_SENDEMAIL=EMail to warn after a payment (success or not)

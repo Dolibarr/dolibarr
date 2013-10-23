@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - orders
-CHARSET=UTF-8
 OrdersArea=Kunder order område
 SuppliersOrdersArea=Leverantörer order område
 OrderCard=Beställ kort
@@ -56,8 +55,6 @@ DraftOrWaitingShipped=Förslag eller godkännas ännu inte sändas
 MenuOrdersToBill=Order till faktura
 # MenuOrdersToBill2=Orders to bill
 SearchOrder=Sök ordning
-Sending=Sända
-Sendings=Sendings
 ShipProduct=Ship produkt
 Discount=Rabatt
 CreateOrder=Skapa ordning
@@ -150,6 +147,7 @@ AddDeliveryCostLine=Lägg till en line-kostnad som visar vikten av beslutet
 # Documents models
 PDFEinsteinDescription=En fullständig för-modellen (logo. ..)
 PDFEdisonDescription=En enkel ordning modell
+# PDFProformaDescription=A complete proforma invoice (logo…)
 # Orders modes
 OrderByMail=Post
 OrderByFax=Faxa

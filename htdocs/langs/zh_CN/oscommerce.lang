@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - oscommerce
-CHARSET=UTF-8
 OSCommerce=商务部操作系统
 OSCommerceSetup=商务部模块安装操作系统
 OSCommerceSetupSaved=商务部操作系统设置保存

@@ -1,5 +1,4 @@
 # Language file - Source file is en_US - cashdesk
-CHARSET=UTF-8
 CashDeskMenu=Ponto de venda
 CashDesk=Ponto de venda
 CashDesks=Pontos de venda
@@ -13,7 +12,7 @@ CashDeskProducts=Produtos
 CashDeskStock=Stock
 CashDeskOn=em
 CashDeskThirdParty=Terceiro
-# CashdeskDashboard=Point of sale access
+CashdeskDashboard=Acesso ao Ponte de Vendas
 ShoppingCart=Carrinho de compras
 NewSell=​​Nova Venda
 BackOffice=Back office
@@ -37,3 +36,4 @@ BankToPay=Conta corrente
 ShowCompany=Mostrar empresa
 ShowStock=Mostrar armazém
 DeleteArticle=Clique para remover este artigo
+# FilterRefOrLabelOrBC=Search (Ref/Label)

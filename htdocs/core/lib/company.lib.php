@@ -62,7 +62,7 @@ function societe_prepare_head($object)
         $head[$h][2] = 'supplier';
         $h++;
     }
-    
+
 	if (($object->localtax1_assuj || $object->localtax2_assuj) && (isset($conf->global->MAIN_FEATURES_LEVEL) && $conf->global->MAIN_FEATURES_LEVEL > 0) )
 	{
 		$head[$h][0] = DOL_URL_ROOT.'/societe/localtaxes.php?socid='.$object->id;
@@ -70,7 +70,7 @@ function societe_prepare_head($object)
 		$head[$h][2] = 'localtaxes';
 		$h++;
 	}
-    
+
     if (! empty($conf->agenda->enabled) && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read) ))
      {
     	$head[$h][0] = DOL_URL_ROOT.'/societe/agenda.php?socid='.$object->id;
@@ -104,7 +104,7 @@ function societe_prepare_head($object)
 	        $head[$h][2] = 'consumption';
 	        $h++;
         }
-		
+
         // Notifications
         if (! empty($conf->notification->enabled))
         {
@@ -113,7 +113,7 @@ function societe_prepare_head($object)
         	$head[$h][2] = 'notify';
         	$h++;
         }
-		
+
 		// Notes
         $nbNote = 0;
         if(!empty($object->note_private)) $nbNote++;
@@ -287,15 +287,15 @@ function getCountry($searchkey,$withcode='',$dbtouse=0,$outputlangs='',$entconv=
 }
 
 /**
- *    Return state translated from an id
+ *    Return state translated from an id. Return value is always utf8 encoded and without entities.
  *
- *    @param	int		$id         id of state (province/departement)
- *    @param    int		$withcode   '0'=Return label,
- *    								'1'=Return string code + label,
- *    						  		'2'=Return code,
- *    						  		'all'=return array('id'=>,'code'=>,'label'=>)
- *    @param	DoliDB	$dbtouse	Database handler (using in global way may fail because of conflicts with some autoload features)
- *    @return   string      		String with state code or translated state name
+ *    @param	int			$id         	id of state (province/departement)
+ *    @param    int			$withcode   	'0'=Return label,
+ *    										'1'=Return string code + label,
+ *    						  				'2'=Return code,
+ *    						  				'all'=return array('id'=>,'code'=>,'label'=>)
+ *    @param	DoliDB		$dbtouse		Database handler (using in global way may fail because of conflicts with some autoload features)
+ *    @return   string      				String with state code or state name (Return value is always utf8 encoded and without entities)
  */
 function getState($id,$withcode='',$dbtouse=0)
 {
@@ -617,7 +617,7 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
 
 			 if ($obj->statut==0) print '<td>'.$langs->trans('Disabled').' </span>'.img_picto($langs->trans('StatusContactDraftShort'),'statut0').'</td>';
 			elseif ($obj->statut==1) print '<td>'.$langs->trans('Enabled').' </span>'.img_picto($langs->trans('StatusContactValidatedShort'),'statut1').'</td>';
-			
+
 			// copy in clipboard
 			$coords = '';
 			if (!empty($object->name))
@@ -667,7 +667,7 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
                 print '</a></td>';
             }
 
-			
+
             if ($user->rights->societe->contact->creer)
             {
                 print '<td align="right">';
@@ -675,9 +675,9 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
                 print img_edit();
                 print '</a></td>';
             }
-            
-        
-           
+
+
+
             print "</tr>\n";
             $i++;
         }
