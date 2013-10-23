@@ -123,16 +123,16 @@ if (empty($reshook))
     if ($action == 'setaccountancy_code_buy')
     {
         $result = $object->setValueFrom('accountancy_code_buy', GETPOST('accountancy_code_buy'));
-        if ($result < 0)
-        	setEventMessage(join(',',$object->errors), 'errors');
+        if ($result < 0) setEventMessage(join(',',$object->errors), 'errors');
+        else $object->accountancy_code_buy=GETPOST('accountancy_code_buy');
         $action="";
     }
 
     if ($action == 'setaccountancy_code_sell')
     {
         $result = $object->setValueFrom('accountancy_code_sell', GETPOST('accountancy_code_sell'));
-        if ($result < 0)
-        	setEventMessage(join(',',$object->errors), 'errors');
+        if ($result < 0) setEventMessage(join(',',$object->errors), 'errors');
+        else $object->accountancy_code_sell=GETPOST('accountancy_code_sell');
         $action="";
     }
 
@@ -369,7 +369,7 @@ if (empty($reshook))
         {
             $result = $object->delete($object->id);
         }
-		 
+
         if ($result > 0)
         {
             header('Location: '.DOL_URL_ROOT.'/product/liste.php?delprod='.urlencode($object->ref));
