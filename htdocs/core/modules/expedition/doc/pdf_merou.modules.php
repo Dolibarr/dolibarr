@@ -524,14 +524,14 @@ class pdf_merou extends ModelePdfExpedition
 
 		if ($object->client->code_client)
 		{
-			$Yoff+=7;
+			$Yoff+=3;
 			$posy=$Yoff;
 			$pdf->SetXY(100,$posy);
-			$pdf->SetTextColor(0,0,60);
+			$pdf->SetTextColor(0,0,0);
 			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("CustomerCode")." : " . $outputlangs->transnoentities($object->client->code_client), '', 'R');
 		}
 
-		//Date Expedition
+		// Date Expedition
 		$Yoff = $Yoff+7;
 		$pdf->SetXY($blSocX-80,$blSocY+20);
 		$pdf->SetFont('','B', $default_font_size - 2);
