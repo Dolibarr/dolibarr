@@ -725,13 +725,6 @@ if (! empty($conf->dol_use_jmobile) && in_array($conf->theme,array('bureau2crea'
 	$conf->css  =  "/theme/".$conf->theme."/style.css.php";
 }
 
-// Disabled bugged themes
-if (! empty($conf->dol_use_jmobile) && in_array($conf->theme,array('bureau2crea','cameleo')))
-{
-	$conf->theme='eldy';
-	$conf->css  =  "/theme/".$conf->theme."/style.css.php";
-}
-
 if (! defined('NOREQUIRETRAN'))
 {
     if (! GETPOST('lang'))	// If language was not forced on URL

@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - products
-CHARSET=UTF-8
 ProductRef=Product ref.
 ProductLabel=Product label
 ProductServiceCard=Products/Services card

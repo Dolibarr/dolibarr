@@ -13,7 +13,7 @@ then
 	echo "This push local files to transifex."
 	echo "Note:  If you push a language file (not source), file will be skipped if transifex file is newer."
 	echo "       Using -f will overwrite translation but not memory."
-	echo "Usage: txpush.sh (source|all|xx_XX) [-r dolibarr.file] [-f]"
+	echo "Usage: txpush.sh (source|all|xx_XX) [-r dolibarr.file] [-f] [--skip] [--no-interactive]"
 	exit
 fi
 

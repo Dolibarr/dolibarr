@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - languages
-CHARSET=UTF-8
 
 Language_ar_AR=Arabic
 Language_ar_SA=Arabic
@@ -37,6 +36,7 @@ Language_hu_HU=Hungarian
 Language_is_IS=Icelandic
 Language_it_IT=Italian
 Language_ja_JP=Japanese
+Language_ko_KR=Korean
 Language_nb_NO=Norwegian (Bokmål)
 Language_nl_BE=Dutch (Belgium)
 Language_nl_NL=Dutch (Netherlands)
