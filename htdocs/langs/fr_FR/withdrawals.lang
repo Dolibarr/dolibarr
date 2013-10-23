@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - withdrawals
-CHARSET=UTF-8
 StandingOrdersArea=Espace prélèvements
 CustomersStandingOrdersArea=Espace prélèvements clients
 StandingOrders=Prélèvements
@@ -93,5 +92,5 @@ InfoTransMessage=Le bon de prélèvement %s a été transmis à la banque par %s
 InfoTransData=Montant : %s<br>Méthode : %s<br>Date : %s
 InfoFoot=Ceci est un message automatique envoyé par Dolibarr
 InfoRejectSubject=Prélèvement rejeté
-InfoRejectMessage=Bonjour,<br><br>Le prélèvement de la facture %s pour le compte de la société %s, d'un montant de %s a été rejeté par la banque.<br><br>--<br>%s
+# InfoRejectMessage=Hello,<br><br>the standing order of invoice %s related to the company %s, with an amount of %s has been refused by the bank.<br><br>--<br>%s
 ModeWarning=Option mode réel non établi, nous allons arrêter après cette simulation

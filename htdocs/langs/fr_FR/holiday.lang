@@ -1,6 +1,4 @@
 # Dolibarr language file - Source file is en_US - holiday
-CHARSET= UTF-8
-
 HRM=GRH
 Holidays=Congés
 CPTitreMenu=Congés
@@ -89,7 +87,7 @@ FirstDayOfHoliday=Premier jour de congés
 LastDayOfHoliday=Dernier jour de congés
 HolidaysMonthlyUpdate=Mise à jour mensuelle
 ManualUpdate=Mise à jour manuelle
-HolidaysCancelation=Annulation de congès
+# HolidaysCancelation=Holidays cancelation
 
 ## Configuration du Module ##
 ConfCP=Configuration du module Congés

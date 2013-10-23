@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - withdrawals
-CHARSET=UTF-8
 StandingOrdersArea=أوامر دائمة المنطقة
 CustomersStandingOrdersArea=أوامر دائمة منطقة العملاء
 StandingOrders=أوامر دائمة
@@ -93,5 +92,5 @@ InfoTransMessage=وقد transmited في %s أجل الوقوف على البنك
 InfoTransData=المبلغ: %s <br> Metode: %s <br> تاريخ: %s
 InfoFoot=هذه رسالة تلقائية ترسل من قبل Dolibarr
 InfoRejectSubject=ورفض النظام واقفا
-InfoRejectMessage=مرحبا، <br><br> تم رفض الطلب من standig %s فاتورة تتعلق %s شركة، مع مبلغ %s من قبل البنك. <br><br> - <br> ٪ $
+# InfoRejectMessage=Hello,<br><br>the standing order of invoice %s related to the company %s, with an amount of %s has been refused by the bank.<br><br>--<br>%s
 ModeWarning=لم يتم تعيين خيار الوضع الحقيقي، ونحن بعد توقف هذه المحاكاة

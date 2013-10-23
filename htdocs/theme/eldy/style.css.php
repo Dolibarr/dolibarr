@@ -220,6 +220,7 @@ if (! empty($conf->dol_optimize_smallscreen)) $fontsize=11;
 /* Default styles                                                                 */
 /* ============================================================================== */
 
+
 body {
 <?php if (GETPOST("optioncss") == 'print' || ! empty($conf->dol_optimize_smallscreen)) {  ?>
 	background-color: #FFFFFF;
@@ -292,6 +293,7 @@ textarea:disabled {
 input[type=checkbox] { background-color: transparent; border: none; box-shadow: none; }
 input[type=radio]    { background-color: transparent; border: none; box-shadow: none; }
 input[type=image]    { background-color: transparent; border: none; box-shadow: none; }
+input[type=text]     { min-width: 20px; }
 input:-webkit-autofill {
 	background-color: <?php echo empty($dol_use_jmobile)?'#FBFFEA':'#FFFFFF' ?> !important;
 	background-image:none !important;
@@ -425,6 +427,7 @@ td.showDragHandle {
 }
 .tdlineupdown {
 	white-space: nowrap;
+	min-width: 10px;
 }
 
 
@@ -1183,6 +1186,7 @@ img.toolbarbutton {
 	overflow:   auto; /* add scrolling to content-div */
 }
 
+
 /*
  *  RESIZER-BARS
  */
@@ -1723,8 +1727,8 @@ table.liste td {
 .tagtable, .table-border { display: table; }
 .tagtr, .table-border-row  { display: table-row; }
 .tagtd, .table-border-col, .table-key-border-col, .table-val-border-col { display: table-cell; }
-.tagtable form { display: table-row; }
-.tagtable form div { display: table-cell; }
+.tagtable form, .tagtable div { display: table-row; }
+.tagtable form div, .tagtable div div { display: table-cell; }
 
 tr.liste_titre, tr.liste_titre_sel, form.liste_titre, form.liste_titre_sel, table.dataTable.tr
 {
@@ -1956,6 +1960,7 @@ tr.box_pair {
 	top: 5px;
 	position: relative;
 }
+
 
 
 
@@ -2677,6 +2682,14 @@ div.dolEventError h1, div.dolEventError h2 {
 }
 
 
+/* ============================================================================== */
+/*  Datatable                                                                     */
+/* ============================================================================== */
+
+.sorting_asc  { background: url('<?php echo dol_buildpath('/theme/'.$theme.'/img/sort_asc.png',1); ?>') no-repeat center right; }
+.sorting_desc { background: url('<?php echo dol_buildpath('/theme/'.$theme.'/img/sort_desc.png',1); ?>') no-repeat center right; }
+.sorting_asc_disabled  { background: url('<?php echo dol_buildpath('/theme/'.$theme.'/img/sort_asc_disabled',1); ?>') no-repeat center right; }
+.sorting_desc_disabled { background: url('<?php echo dol_buildpath('/theme/'.$theme.'/img/sort_desc_disabled',1); ?>') no-repeat center right; }
 
 
 /* ============================================================================== */
@@ -2798,6 +2811,51 @@ ul.ulmenu {
 .ui-mobile fieldset {
 	border-bottom: none !important;
 }
+
+/* Style for first level menu with jmobile */
+.ui-bar-b, .lilevel0 {
+	border: 1px solid #456f9a;
+    background: rgb(<?php echo $colorbacktitle1; ?>);
+    background-repeat: repeat-x;
+	<?php if ($usecss3) { ?>
+	background-image: -o-linear-gradient(bottom, rgba(0,0,0,0.3) 0%, rgba(250,250,250,0.3) 100%);
+	background-image: -moz-linear-gradient(bottom, rgba(0,0,0,0.3) 0%, rgba(250,250,250,0.3) 100%);
+	background-image: -webkit-linear-gradient(bottom, rgba(0,0,0,0.3) 0%, rgba(250,250,250,0.3) 100%);
+	background-image: -ms-linear-gradient(bottom, rgba(0,0,0,0.3) 0%, rgba(250,250,250,0.3) 100%);
+	background-image: linear-gradient(bottom, rgba(0,0,0,0.3) 0%, rgba(250,250,250,0.3) 100%);
+    font-weight: bold;
+	<?php } ?>
+    color: #<?php echo $colortexttitle; ?> !important;
+}
+.alilevel0 {
+    color: #<?php echo $colortexttitle; ?> !important;
+	text-shadow: 1px 0px 1px #<?php echo $colorshadowtitle; ?>;
+}
+.ui-btn-up-c .vsmenudisabled {
+	color: #<?php echo $colorshadowtitle; ?> !important;
+	text-shadow: none !important;
+}
+.alilevel1 {
+    color: #<?php echo $colortexttitle; ?> !important;
+	text-shadow: 1px 0px 1px #<?php echo $colorshadowtitle; ?>;
+}
+.lilevel1 {
+	background-image: -webkit-gradient(linear,left top,left bottom,from( #eee ),to( #e1e1e1 )) !important;
+	background-image: -webkit-linear-gradient( #eee,#e1e1e1 ) !important;
+	background-image: -moz-linear-gradient( #eee,#e1e1e1 ) !important;
+	background-image: -ms-linear-gradient( #eee,#e1e1e1 ) !important;
+	background-image: -o-linear-gradient( #eee,#e1e1e1 ) !important;
+	background-image: linear-gradient( #eee,#e1e1e1 ) !important;
+}
+.lilevel1:hover, .lilevel2:hover, .lilevel3:hover, .lilevel4:hover {
+	background-image: -webkit-gradient(linear,left top,left bottom,from( #ddd ),to( #d1d1d1 )) !important;
+	background-image: -webkit-linear-gradient( #ddd,#d1d1d1 ) !important;
+	background-image: -moz-linear-gradient( #ddd,#d1d1d1 ) !important;
+	background-image: -ms-linear-gradient( #ddd,#d1d1d1 ) !important;
+	background-image: -o-linear-gradient( #ddd,#d1d1d1 ) !important;
+	background-image: linear-gradient( #ddd,#d1d1d1 ) !important;
+}
+
 
 <?php
 if (is_object($db)) $db->close();

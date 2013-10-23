@@ -1,5 +1,4 @@
 # Language file - Source file is en_US - cashdesk
-CHARSET=UTF-8
 CashDeskMenu=Prodajno mesto
 CashDesk=Prodajno mesto
 CashDesks=Prodajna mesta
@@ -37,3 +36,4 @@ BankToPay=Bremenitev računa
 ShowCompany=Prikaži podjetje
 ShowStock=Prikaži skladišče
 DeleteArticle=Kliknite za izbris tega artikla
+# FilterRefOrLabelOrBC=Search (Ref/Label)

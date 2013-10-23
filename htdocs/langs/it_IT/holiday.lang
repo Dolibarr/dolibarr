@@ -1,6 +1,4 @@
 # Dolibarr language file - Source file is en_US - holiday
-CHARSET= UTF-8
-
 # HRM=HRM
 Holidays=Ferie
 CPTitreMenu=Ferie
@@ -89,6 +87,7 @@ FirstDayOfHoliday=Primo giorno di ferie
 LastDayOfHoliday=Ultimo giorno di ferie
 HolidaysMonthlyUpdate=Aggiornamento mensile
 ManualUpdate=Aggiornamento manuale
+# HolidaysCancelation=Holidays cancelation
 
 ## Configuration du Module ##
 ConfCP=Configurazione del modulo ferie

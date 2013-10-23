@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - paypal
-CHARSET=UTF-8
 PaypalSetup=بايبال حدة الإعداد
 PaypalDesc=صفحات تقدم هذه الوحدة للسماح للدفع على <a href="http://www.paypal.com" target="_blank">بال</a> من قبل العملاء. ويمكن استخدام هذا لدفع مجانا أو مقابل دفع Dolibarr على كائن معين (الفاتورة ، والنظام ،...)
 PaypalOrCBDoPayment=الدفع بواسطة بطاقة الائتمان او باي بال
@@ -18,3 +17,6 @@ PAYPAL_ADD_PAYMENT_URL=إضافة رابط الدفع باي بال عند إر�
 PAYPAL_IPN_MAIL_ADDRESS=عنوان البريد الإلكتروني للإخطار لحظة الدفع (IPN)
 # PredefinedMailContentLink=You can click on the secure link below to make your payment (PayPal) if it is not already done.\n\n%s\n\n
 YouAreCurrentlyInSandboxMode=أنت حاليا في وضع &quot;رمل&quot;
+# NewPaypalPaymentReceived=New Paypal payment received
+# NewPaypalPaymentFailed=New Paypal payment tried but failed
+# PAYPAL_PAYONLINE_SENDEMAIL=EMail to warn after a payment (success or not)

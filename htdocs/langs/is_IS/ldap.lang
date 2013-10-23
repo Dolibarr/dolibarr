@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - ldap
-CHARSET=UTF-8
 DomainPassword=Lykilorð fyrir lén
 YouMustChangePassNextLogon=Lykilorð fyrir <b>notandann %s  í%</b> léni <b>s</b> verður að vera breytt.
 UserMustChangePassNextLogon=Notandi verður að breyta lykilorðinu á vefnum %s

@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - opensurvey
-CHARSET=UTF-8
 Survey=Sondage
 Surveys=Sondages
 OrganizeYourMeetingEasily=Organiser vos rendez-vous ou votes facilement, librement. Sélectionnez d'abord le type de sondage…

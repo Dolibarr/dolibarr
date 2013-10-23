@@ -1,11 +1,10 @@
 # Dolibarr language file - Source file is en_US - cron
-CHARSET=UTF-8
 #
 # About page
 #
 About = 关于
-# CronAbout = About Cron
-# CronAboutPage = Cron about page
+CronAbout = 关于cron
+CronAboutPage = cron的“关于”页面
 
 #
 # Right

@@ -203,7 +203,7 @@ class FormCompany
 	 *    un code donnee mais dans ce cas, le champ pays differe).
 	 *    Ainsi les liens avec les departements se font sur un departement independemment de son nom.
 	 *
-	 *    @param	string	$selected        	Code state preselected
+	 *    @param	string	$selected        	Code state preselected (mus be state id) 
 	 *    @param    string	$country_codeid    	Country code or id: 0=list for all countries, otherwise country code or country rowid to show
 	 *    @param    string	$htmlname			Id of department
 	 * 	  @return	string						String with HTML select
@@ -257,7 +257,8 @@ class FormCompany
 							}
 						}
 
-						if ($selected > 0 && $selected == $obj->rowid)
+						if ((! empty($selected) && $selected == $obj->rowid)
+						 || (empty($selected) && ! empty($conf->global->MAIN_FORCE_DEFAULT_STATE_ID) && $conf->global->MAIN_FORCE_DEFAULT_STATE_ID == $obj->rowid))
 						{
 							$out.= '<option value="'.$obj->rowid.'" selected="selected">';
 						}

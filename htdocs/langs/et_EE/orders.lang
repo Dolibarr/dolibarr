@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - orders
-CHARSET=UTF-8
 OrdersArea=Klientide tellimuste ala
 SuppliersOrdersArea=Tarnijatele tellimusi ala
 OrderCard=Selleks kaart
@@ -56,8 +55,6 @@ DraftOrWaitingShipped=Eelnõu või kinnitatud ei ole veel saadetud
 MenuOrdersToBill=Tellimuste bill
 # MenuOrdersToBill2=Orders to bill
 SearchOrder=Otsi et
-Sending=Saatmine
-Sendings=Edastuste
 ShipProduct=Laev toode
 Discount=Allahindlus
 CreateOrder=Loo Order
@@ -150,6 +147,7 @@ AddDeliveryCostLine=Lisa kohaletoimetamise kulu rida näitab kaal, et
 # Documents models
 PDFEinsteinDescription=Täielik, et mudel (logo. ..)
 PDFEdisonDescription=Lihtne, et mudel
+# PDFProformaDescription=A complete proforma invoice (logo…)
 # Orders modes
 OrderByMail=Post
 OrderByFax=Faksida

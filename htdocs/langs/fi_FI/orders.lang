@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - orders
-CHARSET=UTF-8
 OrdersArea=Asiakkaiden tilausten alueella
 SuppliersOrdersArea=Toimittajien tilaukset alueella
 OrderCard=Tilaa kortti
@@ -56,8 +55,6 @@ DraftOrWaitingShipped=Esitys tai validoitua ole vielä lähetetty
 MenuOrdersToBill=Tilaukset laskuttaa
 # MenuOrdersToBill2=Orders to bill
 SearchOrder=Haku jotta
-Sending=Lähettävä
-Sendings=Sendings
 ShipProduct=Laiva tuote
 Discount=Discount
 CreateOrder=Luo Tilaa
@@ -150,6 +147,7 @@ AddDeliveryCostLine=Lisää toimitus kustannukset linja ilmoitetaan paino, jotta
 # Documents models
 PDFEinsteinDescription=Täydellinen jotta malli (logo. ..)
 PDFEdisonDescription=Yksinkertainen, jotta malli
+# PDFProformaDescription=A complete proforma invoice (logo…)
 # Orders modes
 OrderByMail=Posti
 OrderByFax=Faksin

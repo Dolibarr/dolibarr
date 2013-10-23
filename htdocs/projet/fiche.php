@@ -314,9 +314,10 @@ if ($action == 'confirm_clone' && $user->rights->projet->creer && GETPOST('confi
 {
     $clone_contacts=GETPOST('clone_contacts')?1:0;
     $clone_tasks=GETPOST('clone_tasks')?1:0;
-    $clone_files=GETPOST('clone_files')?1:0;
+	$clone_project_files = GETPOST('clone_project_files') ? 1 : 0;
+	$clone_task_files = GETPOST('clone_task_files') ? 1 : 0;
     $clone_notes=GETPOST('clone_notes')?1:0;
-    $result=$object->createFromClone($object->id,$clone_contacts,$clone_tasks,$clone_files,$clone_notes);
+    $result=$object->createFromClone($object->id,$clone_contacts,$clone_tasks,$clone_project_files,$clone_task_files,$clone_notes);
     if ($result <= 0)
     {
         $mesg='<div class="error">'.$object->error.'</div>';
@@ -479,10 +480,11 @@ else
     {
         $formquestion=array(
     		'text' => $langs->trans("ConfirmClone"),
-            array('type' => 'checkbox', 'name' => 'clone_contacts','label' => $langs->trans("CloneContacts"), 'value' => true),
-            array('type' => 'checkbox', 'name' => 'clone_tasks',   'label' => $langs->trans("CloneTasks"), 'value' => true),
-            array('type' => 'checkbox', 'name' => 'clone_notes',   'label' => $langs->trans("CloneNotes"), 'value' => true),
-            array('type' => 'checkbox', 'name' => 'clone_files',   'label' => $langs->trans("CloneFiles"), 'value' => false)
+            array('type' => 'checkbox', 'name' => 'clone_contacts',		'label' => $langs->trans("CloneContacts"), 			'value' => true),
+            array('type' => 'checkbox', 'name' => 'clone_tasks',   		'label' => $langs->trans("CloneTasks"), 			'value' => true),
+            array('type' => 'checkbox', 'name' => 'clone_notes',   		'label' => $langs->trans("CloneNotes"), 			'value' => true),
+        	array('type' => 'checkbox', 'name' => 'clone_project_files','label' => $langs->trans("CloneProjectFiles"),	    'value' => false),
+        	array('type' => 'checkbox', 'name' => 'clone_task_files',	'label' => $langs->trans("CloneTaskFiles"),         'value' => false)
         );
 
         print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id, $langs->trans("CloneProject"), $langs->trans("ConfirmCloneProject"), "confirm_clone", $formquestion, '', 1, 240);

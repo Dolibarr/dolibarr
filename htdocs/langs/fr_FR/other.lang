@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - other
-CHARSET=UTF-8
 SecurityCode=Code de sécurité
 Calendar=Calendrier
 AddTrip=Créer note de frais
@@ -174,12 +173,12 @@ StartUpload=Transférer
 CancelUpload=Annuler le transfert
 FileIsTooBig=Le fichier est trop volumineux
 PleaseBePatient=Merci de patienter quelques instants…
-RequestToResetPasswordReceived=Une demande de modification de mot de passe a été reçue
-NewKeyIs=Voici vos nouveaux identifiants pour vous connecter
-NewKeyWillBe=Vos nouveaux identifiants pour vous connecter à l'application seront
-ClickHereToGoTo=Cliquez ici pour aller sur %s
-YouMustClickToChange=Vous devez toutefois auparavant cliquer sur le lien suivant, afin de valider ce changement de mot de passe
-ForgetIfNothing=Si vous n'êtes pas à l'origine de la demande, ignorez simplement ce mail. Votre accès reste sécurisé.
+# RequestToResetPasswordReceived=A request to change your Dolibarr password has been received
+# NewKeyIs=This is your new keys to login
+# NewKeyWillBe=Your new key to login to software will be
+# ClickHereToGoTo=Click here to go to %s
+# YouMustClickToChange=You must however first click on the following link to validate this password change
+# ForgetIfNothing=If you didn't request this change, just forget this email. Your credentials are kept safe.
 
 ##### Calendar common #####
 AddCalendarEntry=Ajouter entrée dans le calendrier %s

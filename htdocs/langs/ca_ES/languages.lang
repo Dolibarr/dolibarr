@@ -1,5 +1,5 @@
-# Dolibarr language file - ca_ES - languages
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - languages
+
 Language_ar_AR=Àrab
 Language_ar_SA=Àrab
 Language_bg_BG=Búlgar
@@ -15,11 +15,13 @@ Language_en_IN=Anglès (Índia)
 Language_en_NZ=Anglès (Nova Zelanda)
 Language_en_SA=Anglès (Aràbia Saudita)
 Language_en_US=Anglès (Estats Units)
-Language_en_ZA=Anglès (Sud-àfrica)
+# Language_en_ZA=English (South Africa)
 Language_es_ES=Espanyol
 Language_es_AR=Espanyol (Argentina)
 Language_es_HN=Espanyol (Honduras)
 Language_es_MX=Espanyol (Mèxic)
+# Language_es_PY=Spanish (Paraguay)
+# Language_es_PE=Spanish (Peru)
 Language_es_PR=Espanyol (Puerto Rico)
 Language_et_EE=Estonià
 Language_fa_IR=Persa
@@ -28,6 +30,7 @@ Language_fr_BE=Francès (Bèlgica)
 Language_fr_CA=Francès (Canadà)
 Language_fr_CH=Francès (Suïssa)
 Language_fr_FR=Francès
+# Language_fr_NC=French (New Caledonia)
 Language_he_IL=Hebreu
 Language_hu_HU=Hongarès
 Language_is_IS=Islandès
@@ -46,6 +49,6 @@ Language_tr_TR=Turc
 Language_sl_SI=Eslovè
 Language_sv_SV=Suec
 Language_sv_SE=Suec
-Language_vi_VN=Vietnamita
+# Language_vi_VN=Vietnamese
 Language_zh_CN=Xinès
 Language_zh_TW=Xinès (Tradicional)

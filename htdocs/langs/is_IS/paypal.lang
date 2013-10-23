@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - paypal
-CHARSET=UTF-8
 PaypalSetup=PayPal mát skipulag
 PaypalDesc=Þessi eining bjóða síður að leyfa greiðslu á <a href="http://www.paypal.com" target="_blank">PayPal</a> við viðskiptavini. Þetta er hægt að nota fyrir a frjáls greiðslu eða greiðslu á tilteknu Dolibarr hlut (Reikningar, til þess, ...)
 PaypalOrCBDoPayment=Borga með kreditkorti eða Paypal
@@ -18,3 +17,6 @@ PAYPAL_ADD_PAYMENT_URL=Bæta við slóð Paypal greiðslu þegar þú sendir skj
 PAYPAL_IPN_MAIL_ADDRESS=E-mail fyrir augnablik tilkynningu um greiðslu (IPN)
 # PredefinedMailContentLink=You can click on the secure link below to make your payment (PayPal) if it is not already done.\n\n%s\n\n
 YouAreCurrentlyInSandboxMode=Þú ert nú í &quot;sandkassi&quot; háttur
+# NewPaypalPaymentReceived=New Paypal payment received
+# NewPaypalPaymentFailed=New Paypal payment tried but failed
+# PAYPAL_PAYONLINE_SENDEMAIL=EMail to warn after a payment (success or not)

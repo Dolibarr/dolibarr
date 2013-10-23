@@ -1,5 +1,4 @@
 # Language file - Source file is en_US - cashdesk
-CHARSET=UTF-8
 CashDeskMenu=Point of sale
 CashDesk=Point of sale
 CashDesks=Point of salg
@@ -37,3 +36,4 @@ BankToPay=Debiteringskonto
 ShowCompany=Vis selskap
 ShowStock=Vis lager
 DeleteArticle=Klikk for å fjerne denne artikkelen
+# FilterRefOrLabelOrBC=Search (Ref/Label)

@@ -5,7 +5,6 @@
  */
 
 
-CHARSET=UTF-8
 OrdersArea=Kundenbestellungsübersicht
 SuppliersOrdersArea=Lieferantenbestellungsübersicht
 OrderCard=Bestell-Karte

@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - languages
-CHARSET=UTF-8
 
 Language_ar_AR=Arabic
 Language_ar_SA=Αραβικά
@@ -16,10 +15,13 @@ Language_en_IN=Αγγλικά (India)
 Language_en_NZ=Αγγλικά (Νέα Ζηλανδία)
 Language_en_SA=Αγγλικά (Saudi Arabia)
 Language_en_US=Αγγλικά (United States)
+# Language_en_ZA=English (South Africa)
 Language_es_ES=Ισπανικά
 Language_es_AR=Ισπανικά (Argentina)
 Language_es_HN=Ισπανικά (Ονδούρα)
 Language_es_MX=Ισπανικά (Μεξικό)
+# Language_es_PY=Spanish (Paraguay)
+# Language_es_PE=Spanish (Peru)
 Language_es_PR=Ισπανικά (Πουέρτο Ρίκο)
 Language_et_EE=Εσθονίας
 Language_fa_IR=Περσικά
@@ -28,6 +30,7 @@ Language_fr_BE=Γαλλικά (Belgium)
 Language_fr_CA=Γαλλικά (Canada)
 Language_fr_CH=Γαλλικά (Switzerland)
 Language_fr_FR=Γαλλικά
+# Language_fr_NC=French (New Caledonia)
 Language_he_IL=Εβραϊκά
 Language_hu_HU=Ουγγρικά
 Language_is_IS=Ισλανδικά
@@ -46,6 +49,6 @@ Language_tr_TR=Τούρκικα
 Language_sl_SI=Σλοβενικά
 Language_sv_SV=Σουηδικά
 Language_sv_SE=Σουηδικά
+# Language_vi_VN=Vietnamese
 Language_zh_CN=Κινέζικα
 Language_zh_TW=Κινέζικα (Traditional)
-Language_is_IS=Ισλανδικά

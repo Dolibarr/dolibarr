@@ -1,5 +1,4 @@
 # Dolibarr language file - nl_BE - trips
-CHARSET=UTF-8
 Trip=Verplaatsing
 Trips=Verplaatsingen
 TripsAndExpenses=Verplaatsingen en kosten

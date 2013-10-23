@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - orders
-CHARSET=UTF-8
 OrdersArea=Área pedidos de clientes
 SuppliersOrdersArea=Área pedidos a proveedores
 OrderCard=Ficha pedido
@@ -56,8 +55,6 @@ DraftOrWaitingShipped=Borrador o validado aún no expedido
 MenuOrdersToBill=Pedidos a facturar
 MenuOrdersToBill2=Pedidos facturables
 SearchOrder=Buscar un pedido
-Sending=Envío
-Sendings=Envíos
 ShipProduct=Enviar producto
 Discount=Descuento
 CreateOrder=Crear pedido
@@ -103,6 +100,7 @@ RelatedOrders=Pedidos adjuntos
 OnProcessOrders=Pedidos en proceso
 RefOrder=Ref. pedido
 RefCustomerOrder=Ref. pedido cliente
+CustomerOrder=Pedido de cliente
 RefCustomerOrderShort=Ref. ped. cliente
 SendOrderByMail=Enviar pedido por e-mail
 ActionsOnOrder=Eventos sobre el pedido
@@ -127,11 +125,14 @@ TypeContact_order_supplier_internal_SHIPPING=Responsable recepción pedido a pro
 TypeContact_order_supplier_external_BILLING=Contacto proveedor facturación pedido
 TypeContact_order_supplier_external_SHIPPING=Contacto proveedor entrega pedido
 TypeContact_order_supplier_external_CUSTOMER=Contacto proveedor seguimiento pedido
+
 Error_COMMANDE_SUPPLIER_ADDON_NotDefined=Constante COMMANDE_SUPPLIER_ADDON no definida
 Error_COMMANDE_ADDON_NotDefined=Constante COMMANDE_ADDON no definida
 Error_FailedToLoad_COMMANDE_SUPPLIER_ADDON_File=Error en la carga del archivo módulo '%s'
 Error_FailedToLoad_COMMANDE_ADDON_File=Error en la carga del archivo módulo '%s'
 Error_OrderNotChecked=No se han seleccionado pedidos a facturar
+
+
 # Sources
 OrderSource0=Presupuesto
 OrderSource1=Internet
@@ -142,19 +143,22 @@ OrderSource5=Comercial
 OrderSource6=Revistas
 QtyOrdered=Cant. pedida
 AddDeliveryCostLine=Añadir una línea de gastos de portes indicando el peso del pedido
+
 # Documents models
 PDFEinsteinDescription=Modelo de pedido completo (logo...)
 PDFEdisonDescription=Modelo de pedido simple
-PDFProformaDescription=Modelo de factura pro-forma completo (logo...)
+# PDFProformaDescription=A complete proforma invoice (logo…)
 # Orders modes
 OrderByMail=Correo
 OrderByFax=Fax
 OrderByEMail=E-Mail
 OrderByWWW=En línea
 OrderByPhone=Teléfono
+
 CreateInvoiceForThisCustomer=Facturar pedidos
 NoOrdersToInvoice=Sin pedidos facturables
 CloseProcessedOrdersAutomatically=Clasificar automáticamente como "Procesados" los pedidos seleccionados.
+MenuOrdersToBill2=Pedidos facturables
 OrderCreation=Creación pedido
 Ordered=Pedido
 OrderCreated=Sus pedidos han sido creados

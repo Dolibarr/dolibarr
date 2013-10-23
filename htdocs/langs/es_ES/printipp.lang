@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - printipp
-CHARSET=UTF-8
 PrintIPPSetup=Configuración del módulo Impresión directa IPP
 PrintIPPDesc=Este módulo permite añadir un botón de impresión directa de sus documentos hacia su impresora. Se requiere un sistema Linux equipado con Cups.
 PRINTIPP_ENABLED=Muestra el logo "Impresión directa" en los listados de documentos

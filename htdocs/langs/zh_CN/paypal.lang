@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - paypal
-CHARSET=UTF-8
 PaypalSetup=贝宝模块的设置
 PaypalDesc=该模块提供的网页，允许<a href="http://www.paypal.com" target="_blank">对贝</a>宝支付客户的。这可以使用一个免费的付款或支付上一个特定的Dolibarr对象（发票，订单，... ...）
 PaypalOrCBDoPayment=与信用卡或PayPal付款

@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - admin
-CHARSET= UTF-8
 WorkflowSetup=Configurare Modul Flux de Lucru
 WorkflowDesc=Acest modul vă permite modificarea comportamentului  acțiunilor automate în aplicaţie. În mod implicit, fluxul de lucru este deschis (puteţi face ce  doriţi în ordinea dorită). Puteți activa acțiunile\nautomate de care sunteti interesat
 ThereIsNoWorkflowToModify=Nu există nici un flux de lucru  modificabil pentru modulele  activate.
@@ -8,4 +7,5 @@ descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Crează o factură client automat, după 
 descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Crează o factură client automat, după ce un contract este validat
 descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Crează o factură client automat, după ce o comandă client este închisă
 descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Clasează propunere comercială legată ca facturată când comanda client este setată ca plătită
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Clasează  comanda client  legată ca facturată când factura client este setată ca plătită
+# descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Classify linked source customer order(s) to billed when customer invoice is set to paid
+# descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Classify linked source customer order(s) to billed when customer invoice is validated

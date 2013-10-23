@@ -1,5 +1,4 @@
-# Dolibarr language file - en_US - trips
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - trips
 Trip=Viaggio
 Trips=Viaggi
 TripsAndExpenses=Viaggi e spese

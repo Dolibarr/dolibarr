@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - paybox
-CHARSET=UTF-8
 PayBoxSetup=PayBox modul opsætning
 PayBoxDesc=Dette modul tilbyder sider at muliggøre betaling på <a href="http://www.paybox.com" target="_blank">Paybox</a> af kunderne. Dette kan bruges til en gratis betaling eller til en betaling på en bestemt Dolibarr genstand (faktura, ordre, ...)
 FollowingUrlAreAvailableToMakePayments=Følgende webadresser findes til at tilbyde en side til en kunde for at foretage en indbetaling på Dolibarr objekter
@@ -33,3 +32,6 @@ VendorName=Navn på leverandør
 CSSUrlForPaymentForm=CSS stylesheet url til indbetalingskort
 MessageOK=Besked på validerede betaling tilbage side
 MessageKO=Besked om annulleret betaling tilbage side
+# NewPayboxPaymentReceived=New Paybox payment received
+# NewPayboxPaymentFailed=New Paybox payment tried but failed
+# PAYBOX_PAYONLINE_SENDEMAIL=EMail to warn after a payment (success or failed)

@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - ecm
-CHARSET=UTF-8
 MenuECM=Dokumenty
 DocsMine=Moje dokumenty
 DocsGenerated=Wygenerowano dokumentów
@@ -24,10 +23,10 @@ ECMNewDocument=Nowy dokument
 ECMCreationDate=Data utworzenia
 ECMNbOfFilesInDir=Liczba plików w katalogu
 ECMNbOfSubDir=Liczba pod-katalogi
-ECMNbOfFilesInSubDir=Nunber z Iles subbazowe katalogów
+# ECMNbOfFilesInSubDir=Number of files in sub-directories
 ECMCreationUser=Twórca
-ECMArea=Obszaru ECM
-ECMAreaDesc=W ECM (Electronic Content Management) powierzchnia umożliwia zapisywanie, udostępnianie i szybkie wyszukiwanie wszelkiego rodzaju dokumentów w Dolibarr.
+# ECMArea=EDM area
+# ECMAreaDesc=The EDM (Electronic Document Management) area allows you to save, share and search quickly all kind of documents in Dolibarr.
 ECMAreaDesc2=* Automatyczne katalogi wypełnione automatycznie podczas dodawania dokumentów z karty elementu. <br> * Podręcznik katalogów mogą być wykorzystane do zapisywania dokumentów nie są powiązane z konkretnym elementem.
 ECMSectionWasRemoved=<b>Katalog %s</b> została usunięta.
 ECMDocumentsSection=Dokument katalogu

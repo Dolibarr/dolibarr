@@ -1,5 +1,4 @@
-# Dolibarr language file - pt_BR rev. 0.0 - suppliers
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - suppliers
 Suppliers=Fornecedores
 Supplier=Fornecedor
 AddSupplier=Adicionar Fornecedor
@@ -11,17 +10,22 @@ ListOfSuppliers=Lista de Fornecedores
 ShowSupplier=Mostrar Fornecedor
 OrderDate=Data Pedido
 BuyingPrice=Preço de Compra
+BuyingPriceMin=Preco de compra minimo
+BuyingPriceMinShort=Preco de compra min
 AddSupplierPrice=Adicionar Preço de Fornecedor
 ChangeSupplierPrice=Modificar Preço de Fornecedor
 ErrorQtyTooLowForThisSupplier=Quantidade insuficiente para este fornecedor
 ErrorSupplierCountryIsNotDefined=O país deste fornecedor não está definido, corrija na sua ficha
 ProductHasAlreadyReferenceInThisSupplier=Este produto já tem uma referencia neste fornecedor
+ReferenceSupplierIsAlreadyAssociatedWithAProduct=Esta referencia de fornecedor ja esta asociada com a referenca: %s
 NoRecordedSuppliers=Sem Fornecedores Registados
 SupplierPayment=Pagamento a Fornecedor
 SuppliersArea=Área Fornecedores
 RefSupplierShort=Ref. Fornecedor
+Availability=Entrega
 ExportDataset_fournisseur_1=Faturas de Fornecedores e Linhas de Fatura
 ExportDataset_fournisseur_2=Faturas Fornecedores e Pagamentos
+ExportDataset_fournisseur_3=Ordems de fornecedor e linhas de ordem
 ApproveThisOrder=Aprovar este Pedido
 ConfirmApproveThisOrder=Tem certeza que quer aprovar este pedido?
 DenyingThisOrder=Negar este Pedido
@@ -33,5 +37,4 @@ AddSupplierOrder=Criar Pedido a Fornecedor
 AddSupplierInvoice=Criar Fatura do Fornecedor
 ListOfSupplierProductForSupplier=Lista de produtos e preços do fornecedor <b>%s</b>
 NoneOrBatchFileNeverRan=Nenhum lote ou <b>%s</b> não foi executado recentemente
-
-
+SentToSuppliers=Enviado para fornecedores

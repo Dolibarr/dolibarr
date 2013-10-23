@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - main
-CHARSET=UTF-8
 DIRECTION=ltr
 # Note for chinese:
 # msungstdlight or cid0ct are for traditionnal chinese (traditionnal does not render with ubuntu pdf reader)
@@ -7,7 +6,7 @@ DIRECTION=ltr
 # To read chinese pdf with linux: sudo apt-get install poppler-data
 FONTFORPDF=helvetica
 FONTSIZEFORPDF=10
-SeparatorDecimal=,
+SeparatorDecimal=Ei mitään
 SeparatorThousand=Ei mitään
 FormatDateShort=%d.%m.%Y
 FormatDateShortInput=%d.%m.%Y
@@ -388,7 +387,7 @@ OtherInformations=Muut tiedot
 Quantity=Määrä
 Qty=Kpl
 ChangedBy=Muutettu
-ReCalculate=Rebuild
+# ReCalculate=Recalculate
 ResultOk=Onnistuminen
 ResultKo=Vika
 Reporting=Raportointi
@@ -657,6 +656,8 @@ BySalesRepresentative=By myyntiedustaja
 # Deductible=Deductible
 # from=from
 # toward=toward
+# Access=Access
+# HelpCopyToClipboard=Use Ctrl+C to copy to clipboard
 
 # Week day
 Monday=Maanantai

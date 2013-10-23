@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - propal
-CHARSET=UTF-8
 Proposals=Propuneri Comerciale
 Proposal=Propunerea Comercială
 ProposalShort=Propunere
@@ -34,7 +33,7 @@ ShowPropal=Afiţează  propunerea
 PropalsDraft=Schiţe
 PropalsOpened=Deschise
 PropalsNotBilled=Închise nefacturate
-PropalStatusDraft=Schiţe (de validat)
+PropalStatusDraft=Schiţă (de validat)
 PropalStatusValidated=Validată (propunere deschisă)
 PropalStatusOpened=Validată (propunere deschisă)
 PropalStatusClosed=Închisă

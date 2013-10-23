@@ -1,27 +1,32 @@
-# Dolibarr language file - pt_BR rev. 0.0 - donations
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - donations
 Donation=Doação
 Donations=Doações
+DonationRef=Doaçaõ ref.
 Donor=Dador
 Donors=Dadores
 AddDonation=Adicionar Doação
 NewDonation=Nova Doação
+ShowDonation=Mostrar doaçaõ
 DonationPromise=Promessa de Doação
 PromisesNotValid=Promessas Não Validadas
 PromisesValid=Promessas Validadas
-DonationsPayed=Doações Pagas
+DonationsPaid=Doações pagas
 DonationsReceived=Doações Recebidas
 PublicDonation=Doação Pública
 DonationsNumber=Número de Doações
 DonationsArea=Área de Doações
 DonationStatusPromiseNotValidated=Promessa Não Validada
 DonationStatusPromiseValidated=Promessa Validada
-DonationStatusPayed=Doação Paga
+DonationStatusPaid=Doaçaõ recebida
 DonationStatusPromiseNotValidatedShort=Não Validada
 DonationStatusPromiseValidatedShort=Validada
-DonationStatusPayedShort=Paga
-ValidPromise=Promessa Válida
+DonationStatusPaidShort=Recebido
+ValidPromess=Validar promessa
+DonationReceipt=Recibo doaçaõ
 BuildDonationReceipt=Criar Recibo
 DonationsModels=Modelo de documento de recepção de Doação
-
-
+LastModifiedDonations=As ultimas %s doações modificadaas 
+SearchADonation=Buscar doaçaõ
+DonationRecipient=Recipiente doaçaõ
+ThankYou=Obrigado
+IConfirmDonationReception=Declaro o recebimento como doaçaõ, de seguinte montante.

@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - withdrawals
-CHARSET=UTF-8
 StandingOrdersArea=区人大常委会订单
 CustomersStandingOrdersArea=站在客户的订单面积
 StandingOrders=常年订单
@@ -93,5 +92,5 @@ InfoTransMessage=%s %s银行长期订单的%s已被transmited。 <br><br>
 InfoTransData=金额：%s <br> metode：%s <br>日期：%s
 InfoFoot=这是一个自动发送的消息由Dolibarr
 InfoRejectSubject=站在为了拒绝
-InfoRejectMessage=您好！ <br><br>发票有关公司%s %s %s金额，standig秩序已被银行拒绝。 <br><br> - <br> %$
+# InfoRejectMessage=Hello,<br><br>the standing order of invoice %s related to the company %s, with an amount of %s has been refused by the bank.<br><br>--<br>%s
 ModeWarning=实模式下的选项没有设置，我们停止后，这个模拟

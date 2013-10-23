@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - orders
-CHARSET=UTF-8
 OrdersArea=Area ordini dei clienti
 SuppliersOrdersArea=Area ordini dei fornitori
 OrderCard=Scheda ordine
@@ -56,8 +55,6 @@ DraftOrWaitingShipped=In bozza o convalidato, ma non ancora spedito
 MenuOrdersToBill=Ordini spediti
 MenuOrdersToBill2=Ordini da fatturare
 SearchOrder=Ricerca ordine
-Sending=Invio
-Sendings=Invii
 ShipProduct=Spedisci prodotto
 Discount=Sconto
 CreateOrder=Crea ordine
@@ -150,6 +147,7 @@ AddDeliveryCostLine=Aggiungi un prezzo di consegna alla riga contenente il peso 
 # Documents models
 PDFEinsteinDescription=Un modello completo per gli ordini (logo,ecc...)
 PDFEdisonDescription=Un modello semplice per gli ordini
+# PDFProformaDescription=A complete proforma invoice (logo…)
 # Orders modes
 OrderByMail=Posta
 OrderByFax=Fax

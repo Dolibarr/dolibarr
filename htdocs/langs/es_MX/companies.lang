@@ -1,5 +1,4 @@
 # Dolibarr language file - es_MX - companies
-CHARSET=UTF-8
 State=Estado
 Town=Municipio
 CompanyHasCreditNote=Este cliente tiene <b>%s %s</b> notas de crédito/anticipos disponibles

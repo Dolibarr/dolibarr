@@ -1,5 +1,4 @@
-# Dolibarr language file - es_ES - dict
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - dict
 CountryFR=Francia
 CountryBE=Bélgica
 CountryIT=Italia
@@ -278,12 +277,8 @@ CurrencyMUR=Rupias mauritanas
 CurrencySingMUR=Rupia mauritana
 CurrencyNOK=Coronas noruegas
 CurrencySingNOK=Corona noruega
-CurrencySUR=Rublos
-CurrencySingSUR=Rublo
 CurrencyTND=Dinares tunecinos
 CurrencySingTND=Dinar tunecino
-CurrencyTRL=Libras turcas
-CurrencySingTRL=Libra turca
 CurrencyUSD=Dólares USA
 CurrencySingUSD=Dólar USA
 CurrencyUAH=Hryvnia
@@ -294,10 +289,11 @@ CurrencyXOF=Francos CFA BCEAO
 CurrencySingXOF=Franco CFA BCEAO
 CurrencyXPF=Francos CFP
 CurrencySingXPF=Franco CFP
+
 CurrencyCentSingEUR=céntimo
 CurrencyThousandthSingTND=milésimo
 
-#### Input reasons ####
+#### Input reasons #####
 DemandReasonTypeSRC_INTE=Internet
 DemandReasonTypeSRC_CAMP_MAIL=Campaña correo
 DemandReasonTypeSRC_CAMP_EMAIL=Campaña E-Mailing

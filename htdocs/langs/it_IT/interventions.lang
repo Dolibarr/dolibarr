@@ -1,5 +1,4 @@
-# Dolibarr language file - en_US - interventions
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - interventions
 Intervention=Intervento
 Interventions=Interventi
 InterventionCard=Scheda intervento
@@ -39,3 +38,5 @@ ArcticNumRefModelDesc1=Modello generico di numerazione
 ArcticNumRefModelError=Impossibile attivare
 PacificNumRefModelDesc1=Restituisce un numero nel formato %syymm-nnnn dove yy è l'anno, mm è il mese e nnnn è una sequenza senza pausa e che non ritorna a 0
 PacificNumRefModelError=Un modello di numerazione degli interventi che inizia con $syymm è già esistente e non è compatibile con questo modello di sequenza. Rimuovere o rinominare per attivare questo modulo.
+# PrintProductsOnFichinter=Print products on intervention card
+# PrintProductsOnFichinterDetails=forinterventions generated from orders

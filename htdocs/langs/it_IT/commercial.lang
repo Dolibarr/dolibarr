@@ -1,5 +1,4 @@
-# Dolibarr language file - en_US - commercial
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - commercial
 Commercial=Commerciale
 CommercialArea=Area commerciale
 CommercialCard=Scheda commerciale
@@ -93,4 +92,4 @@ NoData=Non ci sono dati
 StatusProsp=Stato del cliente potenziale
 DraftPropals=Bozze di proposte commerciali
 SearchPropal=Cerca una proposta commerciale
-# CommercialDashboard=Commercial summary
+CommercialDashboard=Riassunto commerciale

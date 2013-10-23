@@ -1,8 +1,8 @@
 # Dolibarr language file - Source file is en_US - sendings
-CHARSET=UTF-8
 RefSending=Ref. afsendelse
 Sending=Sender
 Sendings=Sendings
+Shipment=Sender
 Shipments=Forsendelser
 Receivings=Receivings
 SendingsArea=Sendings område

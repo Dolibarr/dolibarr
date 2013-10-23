@@ -1,6 +1,5 @@
 # Dolibarr language file - en_ZA - companies
 # This file contains only line that must differs from en_US
-CHARSET=UTF-8
 VATIsUsed=VAT is used
 VATIsNotUsed=VAT is not used
 VATIntra=VAT number

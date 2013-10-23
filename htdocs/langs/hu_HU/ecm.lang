@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - ecm
-CHARSET=UTF-8
 MenuECM=Dokumentumok
 DocsMine=Az én dokumentumaim
 DocsGenerated=Generált dokumentumok
@@ -24,10 +23,10 @@ ECMNewDocument=Új Dokumentuk
 ECMCreationDate=Létrehozás dátuma
 ECMNbOfFilesInDir=Fájlok száma a könyvtárban
 ECMNbOfSubDir=Alkönyvtárok száma
-ECMNbOfFilesInSubDir=Fájlok száma a alkönyvtárakban
+# ECMNbOfFilesInSubDir=Number of files in sub-directories
 ECMCreationUser=Létrehozó
-ECMArea=ETM Terület
-ECMAreaDesc=Az ETM (Elektronikus Tartalom Management) terület lehetővé teszi, hogy elmentsen, megosszon vagy keressen a rendszerben tárolt dokumentumok közül.
+# ECMArea=EDM area
+# ECMAreaDesc=The EDM (Electronic Document Management) area allows you to save, share and search quickly all kind of documents in Dolibarr.
 ECMAreaDesc2=* Az automatikus könyvtárak önmagukat töltik föl amikor dokumentumot adunk valamilyen elem kártyájához.<br>* A kézi könyvtárakban elmenthetünk dokumentumokat amik nincsenek csatolva egyetlen elemhez sem.
 ECMSectionWasRemoved=<b>%s</b> könyvtár törölve lett.
 ECMDocumentsSection=Könyvtár dokumentuma

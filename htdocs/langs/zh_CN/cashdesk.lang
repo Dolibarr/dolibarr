@@ -1,5 +1,4 @@
 # Language file - Source file is en_US - cashdesk
-CHARSET=UTF-8
 CashDeskMenu=销售点
 CashDesk=销售点
 CashDesks=销售点
@@ -13,7 +12,7 @@ CashDeskProducts=产品
 CashDeskStock=股票
 CashDeskOn=上
 CashDeskThirdParty=第三方
-# CashdeskDashboard=Point of sale access
+CashdeskDashboard=销售点访问
 ShoppingCart=购物车
 NewSell=新的销售
 BackOffice=回到办公室
@@ -37,4 +36,4 @@ BankToPay=负责帐户
 ShowCompany=显示公司
 ShowStock=显示仓库
 DeleteArticle=点击删除此文章
-# FilterRefOrLabelOrBC=Search (Ref/Label)
+FilterRefOrLabelOrBC=搜索 (REF /标签)

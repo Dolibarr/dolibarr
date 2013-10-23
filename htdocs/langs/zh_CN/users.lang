@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - users
-CHARSET=UTF-8
 UserCard=用户卡
 ContactCard=联系卡
 GroupCard=集团卡
@@ -117,3 +116,5 @@ DontDowngradeSuperAdmin=只有超级管理员可以降级超级管理员
 HierarchicalResponsible=责任分级
 HierarchicView=分层视图
 UseTypeFieldToChange=改变用户字段类型
+# OpenIDURL=OpenID URL
+# LoginUsingOpenID=Login using OpenID

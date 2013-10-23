@@ -52,6 +52,7 @@ create table llx_contratdet
   total_localtax1       double(24,8)  DEFAULT 0,	   		   -- Total Local tax 1 de la ligne
   total_localtax2       double(24,8)  DEFAULT 0,	   		   -- Total Local tax 2 de la ligne
   total_ttc             double(24,8)  DEFAULT 0,	   		   -- Total TTC de la ligne toute quantite et incluant remise ligne et globale
+  product_type			integer       DEFAULT 1,               -- Product type (1=service by default)
   info_bits		        integer DEFAULT 0, 		               -- TVA NPR ou non
 
   buy_price_ht          double(24,8)  DEFAULT NULL,            -- buying price

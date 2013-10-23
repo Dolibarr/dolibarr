@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - propal
-CHARSET=UTF-8
 Proposals=报价单
 Proposal=报价单
 ProposalShort=报价
@@ -34,7 +33,7 @@ ShowPropal=显示报价
 PropalsDraft=草稿
 PropalsOpened=已打开
 PropalsNotBilled=已关闭未付款
-PropalStatusDraft=草稿(待定)
+PropalStatusDraft=草案（需要验证）
 PropalStatusValidated=已确定(打开的报价单)
 PropalStatusOpened=已确定(打开的报价单)
 PropalStatusClosed=已关闭

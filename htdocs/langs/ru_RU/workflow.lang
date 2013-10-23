@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - admin
-CHARSET= UTF-8
 WorkflowSetup=Рабочий процесс установки модуля
 WorkflowDesc=Этот модуль является designed изменить поведение автоматического действия в приложении. По умолчанию рабочий процесс открыт (вы делаете вещь, чтобы вы хотите). Вы можете включить автоматическую действия, которые вам интересны дюйма
 ThereIsNoWorkflowToModify=Существует не рабочий процесс можно изменить для модуля активации.
@@ -8,4 +7,5 @@ descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Создать счет клиента а
 descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Создать счет клиента автоматически после контракт проверяется
 descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Создать счет клиента автоматически после заказа клиента закрыт
 # descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Classify linked source proposal to billed when customer order is set to paid
-# descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Classify linked source customer order to billed when customer invoice is set to paid
+# descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Classify linked source customer order(s) to billed when customer invoice is set to paid
+# descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Classify linked source customer order(s) to billed when customer invoice is validated

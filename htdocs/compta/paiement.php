@@ -57,6 +57,14 @@ if ($user->societe_id > 0)
     $socid = $user->societe_id;
 }
 
+$object=new Facture($db);
+
+// Load object
+if ($facid > 0)
+{
+	$ret=$object->fetch($facid);
+}
+
 // Initialize technical object to manage hooks of paiements. Note that conf->hooks_modules contains array array
 $hookmanager = new HookManager($db);
 $hookmanager->initHooks(array('paiementcard'));

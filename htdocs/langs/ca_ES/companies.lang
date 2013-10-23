@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - companies
-CHARSET=UTF-8
 ErrorCompanyNameAlreadyExists=El nom de l'empresa %s ja existeix. Indiqui altre.
 ErrorPrefixAlreadyExists=El prefix %s ja existeix. Indiqui altre.
 ErrorSetACountryFirst=Definiu en primer lloc el país
@@ -75,16 +74,16 @@ Fax=Fax
 Zip=Codi postal
 Town=Població
 Web=Web
-Poste=Lloc
+Poste= Lloc
 DefaultLang=Idioma per defecte
 VATIsUsed=Subjecte a IVA
 VATIsNotUsed=No subjecte a IVA
 CopyAddressFromSoc=Copiar l'adreça de l'empresa
 ##### Local Taxes #####
-LocalTax1IsUsedES=Subjecte a RE
-LocalTax1IsNotUsedES=No subjecte a RE
-LocalTax2IsUsedES=Subjecte a IRPF
-LocalTax2IsNotUsedES=No subjecte a IRPF
+LocalTax1IsUsedES= Subjecte a RE
+LocalTax1IsNotUsedES= No subjecte a RE
+LocalTax2IsUsedES= Subjecte a IRPF
+LocalTax2IsNotUsedES= No subjecte a IRPF
 LocalTax1ES=RE
 LocalTax2ES=IRPF
 ThirdPartyEMail=%s
@@ -397,6 +396,7 @@ InActivity=Actiu
 ActivityCeased=Tancat
 ActivityStateFilter=Estat d'activitat
 ProductsIntoElements=Llistat de productes en %s
+# OutstandingBill=Outstanding Bill
 # Monkey
 MonkeyNumRefModelDesc=Retorna un número sota el format %syymm-nnnn per als codis de clients  i %syymm-nnnn per als codis dels proveïdors, on yy és l'any, mm el mes i nnnn un comptador seqüencial sense ruptura i sense tornar a 0.
 # Leopard

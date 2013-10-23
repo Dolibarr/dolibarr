@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - install
-CHARSET=UTF-8
 InstallEasy=Hemos procurado que la instalación sea lo más simple posible, usted sólo tiene que seguir los pasos uno a uno.
 MiscellaneousChecks=Comprobación de los prerrequisitos
 DolibarrWelcome=Bienvenido a Dolibarr

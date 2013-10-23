@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - interventions
-CHARSET=UTF-8
 Intervention=Müdahale
 Interventions=Müdahaleler
 InterventionCard=Müdahale kartı
@@ -39,5 +38,5 @@ ArcticNumRefModelDesc1=Genel numaralandırma modeli
 ArcticNumRefModelError=Etkinleştirme başarısız
 PacificNumRefModelDesc1=Sayıyı %syymm-nnnn olarak gösterir, yy: yıl, mm: ay ve nnnn: 0 olmayan bir sayı dizisidir
 PacificNumRefModelError=$syymm Başlayan bir müdahale kartı zaten var ve sıra bu dizi modeli ile uyumlu değildir. Modülü etkinleştirmek için kaldırın ya da yeniden adlandırın.
-# PrintProductsOnFichinter=Print products on intervention card
-# PrintProductsOnFichinterDetails=forinterventions generated from orders
+PrintProductsOnFichinter=Müdahale kartında ürünleri yazdır
+PrintProductsOnFichinterDetails=siparişlerden oluşturulan müdahaleler için

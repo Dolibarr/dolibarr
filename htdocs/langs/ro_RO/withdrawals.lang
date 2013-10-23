@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - withdrawals
-CHARSET=UTF-8
 StandingOrdersArea=Permanent comenzi zona
 CustomersStandingOrdersArea=Clienţii ordine de plată zona
 StandingOrders=Ordine de plată
@@ -93,5 +92,5 @@ InfoTransMessage=%s pentru picioare a fost transmisa la banca de %s %s. <br><br>
 InfoTransData=Suma: %s <br> Metode: %s <br> Data: %s
 InfoFoot=Acesta este un mesaj automat trimis de Dolibarr
 InfoRejectSubject=Pentru a refuzat permanent
-InfoRejectMessage=Buna ziua, <br><br> standig ordinea de %s factură referitoare la %s companiei, cu o valoare de %s a fost refuzat de banca. <br><br> - <br> % $
+# InfoRejectMessage=Hello,<br><br>the standing order of invoice %s related to the company %s, with an amount of %s has been refused by the bank.<br><br>--<br>%s
 ModeWarning=Opţiunea pentru modul real, nu a fost stabilit, ne oprim după această simulare

@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - withdrawals
-CHARSET=UTF-8
 # StandingOrdersArea=Standing orders area
 # CustomersStandingOrdersArea=Customers standing orders area
 StandingOrders=הוראות קבע
@@ -93,5 +92,5 @@ StatusUnknown=לא ידוע
 # InfoTransData=Amount: %s<br>Metode: %s<br>Date: %s
 # InfoFoot=This is an automated message sent by Dolibarr
 # InfoRejectSubject=Standing order refused
-# InfoRejectMessage=Hello,<br><br>the standig order of invoice %s related to the company %s, with an amount of %s has been refused by the bank.<br><br>--<br>%$
+# InfoRejectMessage=Hello,<br><br>the standing order of invoice %s related to the company %s, with an amount of %s has been refused by the bank.<br><br>--<br>%s
 # ModeWarning=Option for real mode was not set, we stop after this simulation

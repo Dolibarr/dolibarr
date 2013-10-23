@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - oscommerce
-CHARSET=UTF-8
 OSCommerce=商務部操作系統
 OSCommerceSetup=商務部模塊安裝操作系統
 OSCommerceSetupSaved=商務部操作系統設置保存

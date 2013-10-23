@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - projects
-CHARSET=UTF-8
 Project=Проект
 Projects=Проекти
 SharedProject=Всички
@@ -89,7 +88,8 @@ CloneProject=Clone проект
 CloneTasks=Клонингите задачи
 CloneContacts=Клонингите контакти
 CloneNotes=Клонингите бележки
-CloneFiles=Clone присъедини файлове
+# CloneProjectFiles=Clone project joined files
+# CloneTaskFiles=Clone task(s) joined files (if task(s) cloned)
 ConfirmCloneProject=Сигурен ли сте, че за клониране на този проект?
 ProjectReportDate=Промяна задача дата според началната дата на проекта
 ErrorShiftTaskDate=Невъзможно е да се смени датата на задача в съответствие с нова дата за началото на проекта
@@ -104,6 +104,8 @@ TypeContact_project_task_internal_TASKEXECUTIVE=Задача изпълните�
 TypeContact_project_task_external_TASKEXECUTIVE=Задача изпълнителен
 TypeContact_project_task_internal_CONTRIBUTOR=Сътрудник
 TypeContact_project_task_external_CONTRIBUTOR=Сътрудник
+# SelectElement=Elements to referring the project
+# AddElement=Refering
 # Documents models
 DocumentModelBaleine=Доклад за цялостния проект модел (logo. ..)
 # PlannedWorkload = Planned workload

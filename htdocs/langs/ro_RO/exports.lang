@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - exports
-CHARSET=UTF-8
 ExportsArea=Exporturi zona
 ImportArea=Import zona
 NewExport=New export
@@ -115,7 +114,7 @@ CSVFormatDesc=<b>Comma Separated Value</b> formatul de fişier (). Csv. <br> Ace
 Excel95FormatDesc=<b>Excel</b> format fişier (.xls) <br>Acesta este format nativ Excel 95 (BIFF5).
 Excel2007FormatDesc=<b>Excel</b> format fişier (.xlsx) <br>Acesta este format nativ Excel 2007 (SpreadsheetML).
 TsvFormatDesc=<b> Tab Separat Valoare </ b> format de fișier (. TSV) <br> Acesta este un format de fișier text în care câmpurile sunt separate printr-un tabulator [tab].
-ExportFieldAutomaticallyAdded= Câmpul <b>%s </ b> a fost adăugat în mod automat. Se va evita ca linii similare să fie tratate ca înregistrări dublate (cu acest câmp adaugat, toate liniile vor avea propriul lor ID și vor diferi).
+ExportFieldAutomaticallyAdded=Câmpul <b>%s </ b> a fost adăugat în mod automat. Se va evita ca linii similare să fie tratate ca înregistrări dublate (cu acest câmp adaugat, toate liniile vor avea propriul lor ID și vor diferi).
 CsvOptions=Opţiuni Csv
 Separator=Separator
 Enclosure=Închidere

@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - propal
-CHARSET=UTF-8
 Proposals=Orçamentos
 Proposal=Orçamento
 ProposalShort=Proposta
@@ -34,7 +33,7 @@ ShowPropal=Ver Orçamento
 PropalsDraft=Rascunho
 PropalsOpened=Abertos
 PropalsNotBilled=Não Facturados
-PropalStatusDraft=Rascunho (A Confirmar)
+PropalStatusDraft=Rascunho (a Confirmar)
 PropalStatusValidated=Validado (Orçamento Aberto)
 PropalStatusOpened=Validado (Orçamento Aberto)
 PropalStatusClosed=Encerrado

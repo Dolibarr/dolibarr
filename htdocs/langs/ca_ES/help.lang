@@ -1,8 +1,7 @@
-# Dolibarr language file - ca_ES - help 
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - help
 CommunitySupport=Assistència Forums i Wiki
 EMailSupport=Assistència E-Mail
-RemoteControlSupport= Assistència en temps real a distància
+RemoteControlSupport=Assistència en temps real a distància
 OtherSupport=Altres tipus d'assistència
 ToSeeListOfAvailableRessources=Per contactar/veure els recursos disponibles:
 ClickHere=Click aquí
@@ -18,7 +17,7 @@ Efficiency=Eficàcia
 TypeHelpOnly=Només ajuda
 TypeHelpDev=Ajuda+Desenvolupament
 TypeHelpDevForm=Ajuda+Desenvolupament+Formació
-ToGetHelpGoOnSparkAngels1=Algunes empreses o independents ofereixen serveis de suport molt ràpid (de vegades d'immediat) i més eficients gràcies a la capacitat de control remot del seu equip per ajudar a diagnosticar i resoldre els seus problemes. Aquesta assistència es pot trobar a la borsa d'assistents de <b>%s</b>: 
+ToGetHelpGoOnSparkAngels1=Algunes empreses o independents ofereixen serveis de suport molt ràpid (de vegades d'immediat) i més eficients gràcies a la capacitat de control remot del seu equip per ajudar a diagnosticar i resoldre els seus problemes. Aquesta assistència es pot trobar a la borsa d'assistents de <b>%s</b>:
 ToGetHelpGoOnSparkAngels3=Per accedir a la recerca de <b>assistents disponibles</b>, feu clic aquí
 ToGetHelpGoOnSparkAngels2=En ocasions, cap operador es troba disponible en el moment de la seva recerca, no oblideu canviar el criteri de cerca indicant "tots els disponibles". Pot, doncs, posar-se en contacte en diferit.
 BackToHelpCenter=Sinó, feu clic aquí per <a href="%s"> tornar al centre d'assistència</a>.

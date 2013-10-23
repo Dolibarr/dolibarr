@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - bills
-CHARSET=UTF-8
 Bill=Factura
 Bills=Facturas
 BillsCustomers=Facturas a clientes
@@ -410,7 +409,7 @@ PDFCrabeDescription=Modelo de factura completo (modelo recomendado por defecto)
 # oursin PDF Model
 PDFOursinDescription=Modelo de factura completo (modelo alternativo)
 # NumRef Modules
-# TerreNumRefModelDesc1=Return numero with format %syymm-nnnn for standard and replacement invoices, %syymm-nnnn for credit notes and %syymm-nnnn for deposits where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
-# MarsNumRefModelDesc1=Return numero with format %syymm-nnnn for standard invoices, %syymm-nnnn for replacement invoices, %syymm-nnnn for credit notes and %syymm-nnnn for credit notes where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
+TerreNumRefModelDesc1=Devuelve el número bajo el formato %syymm-nnnn para las facturas, %syymm-nnnn para las facturas rectificativas y %syymm-nnnn para los abonos donde yy es el año, mm. el mes y nnnn un contador secuencial sin ruptura y sin permanencia a 0
+MarsNumRefModelDesc1=Devuelve el número bajo el formato %syymm-nnnn para las facturas, %syymm-nnnn para las facturas rectificativas, %syymm-nnnn para nota de crédito y %syymm-nnnn para los abonos donde yy es el año, mm. el mes y nnnn un contador secuencial sin ruptura y sin permanencia a 0
 
 TerreNumRefModelError=Ya existe una factura con $syymm y no es compatible con este modelo de secuencia. Elimínela o renómbrela para poder activar este módulo

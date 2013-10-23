@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - exports
-CHARSET=UTF-8
 ExportsArea=匯出區
 ImportArea=匯入區
 NewExport=建立新的匯出

@@ -1,5 +1,4 @@
 # Language file - Source file is en_US - cashdesk
-CHARSET=UTF-8
 CashDeskMenu=販売場所
 CashDesk=販売場所
 CashDesks=売上高のポイント
@@ -37,3 +36,4 @@ BankToPay=掛売口座
 ShowCompany=会社を表示
 ShowStock=倉庫を表示
 DeleteArticle=この記事を削除するときにクリックします
+# FilterRefOrLabelOrBC=Search (Ref/Label)

@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - withdrawals
-CHARSET=UTF-8
 StandingOrdersArea=Področje trajnikov
 CustomersStandingOrdersArea=Področje trajnikov kupcev
 StandingOrders=Trajniki
@@ -93,5 +92,5 @@ InfoTransMessage=Odprto naročilo %s je bilo preneseno na banko z %s %s.<br><br>
 InfoTransData=Znesek: %s<br>Način: %s<br>Datum: %s
 InfoFoot=To sporočilo je avtomatsko poslal Dolibarr
 InfoRejectSubject=Odprto naročilo zavrnjeno
-InfoRejectMessage=Pozdravljeni,<br><br>odprto naročilo računa %s za podjetje %s, v vrednosti %s, je zavrnila banka.<br><br>--<br>%$
+# InfoRejectMessage=Hello,<br><br>the standing order of invoice %s related to the company %s, with an amount of %s has been refused by the bank.<br><br>--<br>%s
 ModeWarning=Opcija za delo v živo ni bila nastavljena, zato se bo sistem ustavil po simulaciji

@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - withdrawals
-CHARSET=UTF-8
 StandingOrdersArea=Püsikorraldused ala
 CustomersStandingOrdersArea=Kliendid püsikorralduste ala
 StandingOrders=Püsikorraldused
@@ -93,5 +92,5 @@ InfoTransMessage=Püsikorralduse %s on transmited panga poolt %s %s. <br><br>
 InfoTransData=Summa: %s <br> Metode: %s <br> Kuupäev: %s
 InfoFoot=See on automatiseeritud sõnum saata Dolibarr
 InfoRejectSubject=Püsikorralduse keeldus
-InfoRejectMessage=Tere, <br><br> standig et arve %s seotud firma %s, mille summa %s lükatud panga poolt. <br><br> - <br> % $
+# InfoRejectMessage=Hello,<br><br>the standing order of invoice %s related to the company %s, with an amount of %s has been refused by the bank.<br><br>--<br>%s
 ModeWarning=Valik päris režiim ei olnud seatud, siis peatus pärast seda simulatsioon

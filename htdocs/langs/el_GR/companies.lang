@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - companies
-CHARSET=UTF-8
 ErrorCompanyNameAlreadyExists=Το όνομα εταιρίας %s υπάρχει ήδη. Επιλέξτε κάποιο άλλο.
 ErrorPrefixAlreadyExists=Το πρόθεμα  %s υπάρχει ήδη. Επιλέξτε κάποιο άλλο.
 ErrorSetACountryFirst=Πρώτα πρέπει να οριστεί η χώρα
@@ -85,6 +84,8 @@ LocalTax1IsUsedES= RE is used
 LocalTax1IsNotUsedES= RE is not used
 LocalTax2IsUsedES= IRPF is used
 LocalTax2IsNotUsedES= IRPF is not used
+LocalTax1ES=ΑΠΕ
+LocalTax2ES=IRPF
 ThirdPartyEMail=%s
 WrongCustomerCode=Άκυρος κωδικός πελάτη
 WrongSupplierCode=Άκυρος κωδικός προμηθευτή
@@ -395,7 +396,7 @@ InActivity=Ανοιχτό
 ActivityCeased=Κλειστό
 ActivityStateFilter=Το καθεστώς της δραστηριότητας
 ProductsIntoElements=Κατάλογος των προϊόντων σε
-
+OutstandingBill=Εξαιρετική Bill
 # Monkey
 MonkeyNumRefModelDesc=Return numero with format %syymm-nnnn for customer code and %syymm-nnnn for supplier code where yy is year, mm is month and nnnn is a sequence with no break and no return to 0.
 # Leopard

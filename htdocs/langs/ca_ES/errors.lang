@@ -1,7 +1,8 @@
-# Dolibarr language file - Source file is ca_ES - errors
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - errors
+
 # No errors
 NoErrorCommitIsDone=Sense errors, és vàlid
+
 # Errors
 Error=Error
 Errors=Errors
@@ -123,7 +124,10 @@ ErrorToConnectToMysqlCheckInstance=Error de connexió amb el servidor de la base
 ErrorFailedToAddContact=Error en l'addició del contacte
 ErrorDateMustBeBeforeToday=La data no pot ser superior a avui
 ErrorPaymentModeDefinedToWithoutSetup=S'ha establert la forma de pagament al tipus %s però a la configuració del mòdul de factures no s'ha indicat la informació per mostrar aquesta forma de pagament.
-ErrorPHPNeedModule=Error, la seva PHP ha de tenir instal·lat el mòdul <b>%s</b> per utilitzar aquesta característica.
+# ErrorPHPNeedModule=Error, your PHP must have module <b>%s</b> installed to use this feature.
+# ErrorOpenIDSetupNotComplete=You setup Dolibarr config file to allow OpenID authentication, but URL of OpenID service is not defined into constant %s
+# ErrorWarehouseMustDiffers=Source and target warehouses must differs
+
 # Warnings
 WarningMandatorySetupNotComplete=Els paràmetres obligatoris de configuració no estan encara definits
 WarningSafeModeOnCheckExecDir=Atenció, està activada l'opció PHP <b>safe_mode</b>, la comanda ha d'estar dins d'un directori declarat dins del paràmetre php <b>safe_mode_exec_dir</b>.

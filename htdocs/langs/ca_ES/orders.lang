@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - orders
-CHARSET=UTF-8
 OrdersArea=Àrea comandes de clients
 SuppliersOrdersArea=Àrea comandes a proveïdors
 OrderCard=Fitxa comanda
@@ -56,8 +55,6 @@ DraftOrWaitingShipped=Esborrany o validada encara no expedida
 MenuOrdersToBill=Comandes a facturar
 MenuOrdersToBill2=Comandes facturables
 SearchOrder=Cercar una comanda
-Sending=Enviament
-Sendings=Enviaments
 ShipProduct=Enviar producte
 Discount=Descompte
 CreateOrder=Crear comanda
@@ -103,6 +100,7 @@ RelatedOrders=Comandes adjuntes
 OnProcessOrders=Comandes en procés
 RefOrder=Ref. comanda
 RefCustomerOrder=Ref. comanda client
+CustomerOrder=Comada de client
 RefCustomerOrderShort=Ref. com. client
 SendOrderByMail=Enviar comanda per e-mail
 ActionsOnOrder=Esdeveniments sobre la comanda
@@ -127,11 +125,14 @@ TypeContact_order_supplier_internal_SHIPPING=Responsable recepció comanda a pro
 TypeContact_order_supplier_external_BILLING=Contacte proveïdor facturació comanda
 TypeContact_order_supplier_external_SHIPPING=Contacte proveïdor lliurament comanda
 TypeContact_order_supplier_external_CUSTOMER=Contacte proveïdor seguiment comanda
+
 Error_COMMANDE_SUPPLIER_ADDON_NotDefined=Constant COMMANDE_SUPPLIER_ADDON no definida
 Error_COMMANDE_ADDON_NotDefined=Constant COMMANDE_ADDON no definida
 Error_FailedToLoad_COMMANDE_SUPPLIER_ADDON_File=Error en la càrrega de l'arxiu mòdul '%s'
 Error_FailedToLoad_COMMANDE_ADDON_File=Error en la càrrega de l'arxiu mòdul '%s'
 Error_OrderNotChecked=No s'han seleccionat comandes a facturar
+
+
 # Sources
 OrderSource0=Pressupost
 OrderSource1=Internet
@@ -142,19 +143,22 @@ OrderSource5=Comercial
 OrderSource6=Revistes
 QtyOrdered=Qt. demanda
 AddDeliveryCostLine=Afegir una línia de despeses de ports indicant el pes de la comanda
+
 # Documents models
 PDFEinsteinDescription=Model de comanda complet (logo...)
 PDFEdisonDescription=Model de comanda simple
-PDFProformaDescription=Model de factura proforma complet (logo...)
+# PDFProformaDescription=A complete proforma invoice (logo…)
 # Orders modes
 OrderByMail=Correu
 OrderByFax=Fax
 OrderByEMail=E-Mail
 OrderByWWW=En línia
 OrderByPhone=Telèfon
+
 CreateInvoiceForThisCustomer=Facturar comandes
 NoOrdersToInvoice=Sense comandes facturables
 CloseProcessedOrdersAutomatically=Classificar automàticament com "Processades" les comandes seleccionades.
+MenuOrdersToBill2=Comandes facturables
 OrderCreation=Creació comanda
 Ordered=Comandat
 OrderCreated=Les seves comandes han estat creats

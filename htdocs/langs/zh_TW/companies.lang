@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - companies
-CHARSET=UTF-8
 ErrorCompanyNameAlreadyExists=公司名稱%s已經存在。選擇另外一個。
 ErrorPrefixAlreadyExists=前綴%s已經存在。選擇另外一個。
 ErrorSetACountryFirst=集全國之首
@@ -85,6 +84,8 @@ LocalTax1IsUsedES= 稀土用於
 LocalTax1IsNotUsedES= 不使用可再生能源
 LocalTax2IsUsedES= IRPF使用
 LocalTax2IsNotUsedES= IRPF不使用
+LocalTax1ES=稀土
+LocalTax2ES=IRPF
 ThirdPartyEMail=%s的
 WrongCustomerCode=客戶代碼無效
 WrongSupplierCode=供應商代號無效
@@ -395,7 +396,7 @@ InActivity=打開
 ActivityCeased=關閉
 ActivityStateFilter=活動狀態
 # ProductsIntoElements=List of products into
-
+# OutstandingBill=Outstanding Bill
 # Monkey
 MonkeyNumRefModelDesc=用以下固定的方式回傳編號:<br> %syymm-nnnn 為客戶編號生成格式。<br> %syymm-nnnn 為供應商編號生成格式。<br>   yy 是年、mm是月、nnnn是一個不為0的序號。
 # Leopard

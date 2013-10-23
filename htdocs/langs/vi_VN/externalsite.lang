@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - externalsite
-CHARSET=UTF-8
 ExternalSiteSetup=Thiết lập liên kết đến trang web bên ngoài
 ExternalSiteURL=Địa chỉ trang bên ngoài
 ExternalSiteModuleNotComplete=Mô-đun trang web bên ngoài được cấu hình không đúng.

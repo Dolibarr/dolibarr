@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - companies
-CHARSET=UTF-8
 VATIntra=RUC
 VATIntraShort=RUC
 VATIntraVeryShort=RUC

@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - companies
-CHARSET=UTF-8
 ErrorCompanyNameAlreadyExists=Firma nimi %s juba olemas. Vali teine.
 ErrorPrefixAlreadyExists=Eesliide %s juba olemas. Vali teine.
 ErrorSetACountryFirst=Seadke riik 1.
@@ -85,6 +84,8 @@ LocalTax1IsUsedES= RE kasutatakse
 LocalTax1IsNotUsedES= RE ei kasutata
 LocalTax2IsUsedES= IRPF kasutatakse
 LocalTax2IsNotUsedES= IRPF ei kasutata
+LocalTax1ES=RE
+LocalTax2ES=IRPF
 ThirdPartyEMail=%s
 WrongCustomerCode=Kliendi kood vigane
 WrongSupplierCode=Tarnija kood vigane
@@ -395,7 +396,7 @@ InActivity=Avatud
 ActivityCeased=Suletud
 ActivityStateFilter=Hõiveseisund
 # ProductsIntoElements=List of products into
-
+# OutstandingBill=Outstanding Bill
 # Monkey
 MonkeyNumRefModelDesc=Tagasi numero koos formaadis %syymm-nnnn kliendi kood ja %syymm-nnnn tarnija kood kus YY aastat, KK kuud ja nnnn on jada, millel ei ole katki ja ei naasmist 0.
 # Leopard

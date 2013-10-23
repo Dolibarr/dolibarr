@@ -20,7 +20,7 @@ fi
 
 if [ "x$1" = "xall" ]
 then
-	for fic in ar_SA bg_BG ca_ES da_DK de_DE el_GR es_ES et_EE fa_IR fi_FI fr_FR hu_HU is_IS it_IT ja_JP nb_NO nl_NL pl_PL pt_PT ro_RO ru_RU ru_UA sl_SI sv_SE tr_TR zh_CN zh_TW
+	for fic in ar_SA bg_BG ca_ES da_DK de_DE el_GR es_ES et_EE fa_IR fi_FI fr_FR he_IL hu_HU is_IS it_IT ja_JP ko_KR nb_NO nl_NL pl_PL pt_PT ro_RO ru_RU ru_UA sl_SI sv_SE tr_TR vi_VN zh_CN zh_TW
 	do
 		echo "tx pull -l $fic $2 $3"
 		tx pull -l $fic $2 $3

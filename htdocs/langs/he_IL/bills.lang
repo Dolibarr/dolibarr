@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - bills
-CHARSET=UTF-8
 # Bill=Invoice
 Bills=חשבוניות
 # BillsCustomers=Customer's invoices
@@ -33,7 +32,6 @@ InvoiceAvoir=כתב זכויות
 # ReplacementInvoice=Replacement invoice
 # ReplacedByInvoice=Replaced by invoice %s
 # ReplacementByInvoice=Replaced by invoice
-# CorrectInvoice=Correct invoice %s
 # CorrectInvoice=Correct invoice %s
 # CorrectionInvoice=Correction invoice
 # UsedByInvoice=Used to pay invoice %s
@@ -411,7 +409,7 @@ PaymentConditionPT_DELIVERY=על משלוח
 # oursin PDF Model
 # PDFOursinDescription=Invoice PDF template Oursin. A complete invoice template (Template alternative)
 # NumRef Modules
-# TerreNumRefModelDesc1=Return numero with format %syymm-nnnn for standard invoices and %syymm-nnnn for credit notes where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
-# MarsNumRefModelDesc1=Return numero with format %syymm-nnnn for standard invoices, %syymm-nnnn for replacement invoices, %syymm-nnnn for proforma invoices and %syymm-nnnn for credit notes where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
+# TerreNumRefModelDesc1=Return numero with format %syymm-nnnn for standard and replacement invoices, %syymm-nnnn for credit notes and %syymm-nnnn for deposits where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
+# MarsNumRefModelDesc1=Return numero with format %syymm-nnnn for standard invoices, %syymm-nnnn for replacement invoices, %syymm-nnnn for credit notes and %syymm-nnnn for credit notes where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
 
 # TerreNumRefModelError=A bill starting with $syymm already exists and is not compatible with this model of sequence. Remove it or rename it to activate this module.

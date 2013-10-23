@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - ecm
-CHARSET=UTF-8
 MenuECM=文件
 DocsMine=我的文件
 DocsGenerated=生成的文件
@@ -24,10 +23,10 @@ ECMNewDocument=新文件
 ECMCreationDate=创建日期
 ECMNbOfFilesInDir=在目录中的文件数
 ECMNbOfSubDir=数子目录
-ECMNbOfFilesInSubDir=Nunber在子目录尔斯
+# ECMNbOfFilesInSubDir=Number of files in sub-directories
 ECMCreationUser=创造者
-ECMArea=流脑区
-ECMAreaDesc=马华（电子内容管理）区域允许您保存，共享和快速搜索所有文件中Dolibarr实物。
+# ECMArea=EDM area
+# ECMAreaDesc=The EDM (Electronic Document Management) area allows you to save, share and search quickly all kind of documents in Dolibarr.
 ECMAreaDesc2=*自动填写目录时自动加入一个元素从卡的文件。 <br> *手动目录可以用来保存未链接到一个特定元素的文件。
 ECMSectionWasRemoved=目录<b>%s</b>已被删除。
 ECMDocumentsSection=文件的目录

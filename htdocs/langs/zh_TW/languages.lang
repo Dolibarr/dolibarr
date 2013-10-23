@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - languages
-CHARSET=UTF-8
 
 Language_ar_AR=阿拉伯語
 Language_ar_SA=阿拉伯語
@@ -16,10 +15,13 @@ Language_en_IN=英國（印度）
 Language_en_NZ=英語（新西蘭）
 # Language_en_SA=English (Saudi Arabia)
 Language_en_US=英語（美國）
+# Language_en_ZA=English (South Africa)
 Language_es_ES=西班牙語
 Language_es_AR=西班牙語（阿根廷）
 Language_es_HN=西班牙語（洪都拉斯）
 Language_es_MX=西班牙語（墨西哥）
+# Language_es_PY=Spanish (Paraguay)
+# Language_es_PE=Spanish (Peru)
 Language_es_PR=西班牙語（波多黎各）
 # Language_et_EE=Estonian
 Language_fa_IR=波斯語
@@ -28,6 +30,7 @@ Language_fr_BE=法語（比利時）
 Language_fr_CA=法語（加拿大）
 Language_fr_CH=法語（瑞士）
 Language_fr_FR=法國的
+# Language_fr_NC=French (New Caledonia)
 # Language_he_IL=Hebrew
 Language_hu_HU=匈牙利
 Language_is_IS=冰島
@@ -46,6 +49,6 @@ Language_tr_TR=土耳其
 Language_sl_SI=斯洛文尼亞
 Language_sv_SV=瑞典
 Language_sv_SE=瑞典
+# Language_vi_VN=Vietnamese
 Language_zh_CN=簡體中文
 Language_zh_TW=繁體中文
-Language_is_IS=冰島

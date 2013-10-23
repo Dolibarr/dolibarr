@@ -1,5 +1,4 @@
 # Dolibarr language file - fr_CH - bills
-CHARSET=UTF-8
 AlreadyPaidNoCreditNotesNoDeposits=Déjà réglé (hors notes de crédit et acomptes)
 ShowDiscount=Visualiser la note de crédit
 CreditNote=Note de crédit

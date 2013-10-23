@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - users
-CHARSET=UTF-8
 UserCard=Utilizator carte
 ContactCard=Contact carte
 GroupCard=Grupul de carte
@@ -117,3 +116,5 @@ DontDowngradeSuperAdmin=Numai un superadmin poate declasa un superadmin
 HierarchicalResponsible=Responsabil ierarhic
 HierarchicView=Vedere ierarhică
 UseTypeFieldToChange=Foloseşte câmpul Tip pentru schimbare
+# OpenIDURL=OpenID URL
+# LoginUsingOpenID=Login using OpenID

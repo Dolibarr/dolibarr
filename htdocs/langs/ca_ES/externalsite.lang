@@ -1,5 +1,4 @@
-# Dolibarr language file - ca_ES - externalsite
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - externalsite
 ExternalSiteSetup=Configuració de l'enllaç al lloc web extern
 ExternalSiteURL=URL del lloc extern
 ExternalSiteModuleNotComplete=El mòdul Lloc web extern no ha estat configurat correctament.

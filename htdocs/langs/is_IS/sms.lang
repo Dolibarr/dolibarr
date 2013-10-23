@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - sms
-CHARSET=UTF-8
 Sms=Sms
 SmsSetup=Sms skipulag
 SmsDesc=Þessi síða leyfir þér að skilgreina globals möguleika á SMS lögun

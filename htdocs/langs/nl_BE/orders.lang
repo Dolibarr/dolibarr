@@ -1,5 +1,4 @@
 # Dolibarr language file - nl_BE - orders
-CHARSET=UTF-8
 OrdersArea=Bestellings gebied
 OrderCard=Bestellingskaart
 Order=Orderbevestiging

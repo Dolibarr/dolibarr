@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - ldap
-CHARSET=UTF-8
 DomainPassword=Salasõna domeeni
 YouMustChangePassNextLogon=Salasõna kasutaja <b>%s</b> domeeni <b>%s</b> tuleb muuta.
 UserMustChangePassNextLogon=Kasutaja peab muutuma parooli domeeni %s

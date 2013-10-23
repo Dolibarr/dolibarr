@@ -1,6 +1,4 @@
 # Dolibarr language file - Source file is en_US - holiday
-CHARSET= UTF-8
-
 # HRM=HRM
 Holidays=Ваканция
 CPTitreMenu=Ваканция
@@ -89,6 +87,7 @@ Employee=Служителите
 # LastDayOfHoliday=Last day of holiday
 # HolidaysMonthlyUpdate=Monthly update
 # ManualUpdate=Manual update
+# HolidaysCancelation=Holidays cancelation
 
 ## Configuration du Module ##
 ConfCP=Конфигурация празници модул

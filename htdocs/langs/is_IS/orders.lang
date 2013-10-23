@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - orders
-CHARSET=UTF-8
 OrdersArea=Viðskiptavinir pantanir area
 SuppliersOrdersArea=Birgjar pantanir area
 OrderCard=Panta kort
@@ -56,8 +55,6 @@ DraftOrWaitingShipped=Drög eða viðurkennd ekki enn flutt
 MenuOrdersToBill=Pantanir við reikning
 # MenuOrdersToBill2=Orders to bill
 SearchOrder=Leita röð
-Sending=Senda
-Sendings=Sendings
 ShipProduct=Skip vöru
 Discount=Afsláttur
 CreateOrder=Búa Order
@@ -150,6 +147,7 @@ AddDeliveryCostLine=Bæta við kostnað sending línu sem gefur til kynna að þ
 # Documents models
 PDFEinsteinDescription=A heill til líkan (logo. ..)
 PDFEdisonDescription=Einföld röð líkan
+# PDFProformaDescription=A complete proforma invoice (logo…)
 # Orders modes
 OrderByMail=Póstur
 OrderByFax=Fax

@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - companies
-CHARSET=UTF-8
 ErrorCompanyNameAlreadyExists=Firmanavn %s eksisterer allerede. Vælg en anden.
 ErrorPrefixAlreadyExists=Prefix %s eksisterer allerede. Vælg en anden.
 ErrorSetACountryFirst=Indstil land første
@@ -85,6 +84,8 @@ LocalTax1IsUsedES= RE bruges
 LocalTax1IsNotUsedES= RE bruges ikke
 LocalTax2IsUsedES= IRPF bruges
 LocalTax2IsNotUsedES= IRPF ikke bruges
+LocalTax1ES=RE
+LocalTax2ES=IRPF
 ThirdPartyEMail=%s
 WrongCustomerCode=Kunden kode ugyldig
 WrongSupplierCode=Leverandør kode ugyldig
@@ -395,7 +396,7 @@ InActivity=Åbent
 ActivityCeased=Lukket
 ActivityStateFilter=Aktivitet status
 # ProductsIntoElements=List of products into
-
+# OutstandingBill=Outstanding Bill
 # Monkey
 MonkeyNumRefModelDesc=Retur numero med format %syymm-nnnn for kunde-kode og %syymm-nnnn for leverandøren kode hvor yy er årstal, MM er måneden og nnnn er en sekvens uden pause, og ikke vende tilbage til 0.
 # Leopard
