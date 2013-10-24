@@ -5,7 +5,6 @@
  */
 
 
-CHARSET=UTF-8
 Shop=Shop
 ShopWeb=Webshop
 LastOrders=Letzte Bestellungen
@@ -14,4 +13,4 @@ TreatmentInProgress=Abwicklung in Arbeit
 LastCustomers=Letzte Kunden
 OSCommerceShop=OsCommerce Shop
 OSCommerce=OSCommerce
-AddProd=Produkt hinzufügen
+AddProd=Produkt hinzufï¿½

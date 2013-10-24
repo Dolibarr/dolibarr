@@ -18,9 +18,10 @@
 
 /**
  *  \file       htdocs/product/stock/replenishorders.php
- *  \ingroup    produit
+ *  \ingroup    stock
  *  \brief      Page to list replenishment orders
  */
+
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
@@ -37,10 +38,18 @@ $langs->load("orders");
 if ($user->societe_id) $socid=$user->societe_id;
 $result=restrictedArea($user,'produit|service');
 
+
+
+/*
+ * View
+ */
+
 $helpurl = 'EN:Module_Stocks_En|FR:Module_Stock|';
 $helpurl .= 'ES:M&oacute;dulo_Stocks';
 $texte = $langs->trans('ReplenishmentOrders');
-llxHeader('', $texte, $helpurl, $texte);
+
+llxHeader('', $texte, $helpurl, '');
+
 $head = array();
 $head[0][0] = DOL_URL_ROOT.'/product/stock/replenish.php';
 $head[0][1] = $langs->trans('Status');
@@ -48,7 +57,9 @@ $head[0][2] = 'replenish';
 $head[1][0] = DOL_URL_ROOT.'/product/stock/replenishorders.php';
 $head[1][1] = $texte;
 $head[1][2] = 'replenishorders';
+
 dol_fiche_head($head, 'replenishorders', $langs->trans('Replenishment'), 0, 'stock');
+
 $commandestatic = new CommandeFournisseur($db);
 $sref = GETPOST('search_ref', 'alpha');
 $snom = GETPOST('search_nom', 'alpha');
@@ -72,21 +83,15 @@ if (!$sortfield) {
 $offset = $conf->liste_limit * $page ;
 
 $sql = 'SELECT s.rowid as socid, s.nom, cf.date_creation as dc,';
-$sql .= ' cf.rowid, cf.ref, cf.fk_statut, cf.total_ttc';
-$sql .= ", cf.fk_user_author, u.login";
-$sql .= ' FROM (' . MAIN_DB_PREFIX . 'societe as s,';
-$sql .= ' ' . MAIN_DB_PREFIX . 'commande_fournisseur as cf';
-
+$sql.= ' cf.rowid, cf.ref, cf.fk_statut, cf.total_ttc, cf.fk_user_author,';
+$sql.= ' u.login';
+$sql.= ' FROM '.MAIN_DB_PREFIX.'societe as s, '.MAIN_DB_PREFIX.'commande_fournisseur as cf';
+$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'user as u ON cf.fk_user_author = u.rowid';
 if (!$user->rights->societe->client->voir && !$socid) {
     $sql.= ', ' . MAIN_DB_PREFIX . 'societe_commerciaux as sc';
-
 }
-
-$sql .= ') LEFT JOIN ' . MAIN_DB_PREFIX . 'user as u ';
-$sql .= 'ON cf.fk_user_author = u.rowid';
-$sql .= ' WHERE cf.fk_soc = s.rowid ';
-$sql .= ' AND cf.entity = ' . $conf->entity;
-
+$sql.= ' WHERE cf.fk_soc = s.rowid ';
+$sql.= ' AND cf.entity = ' . $conf->entity;
 if ($conf->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER) {
     $sql .= ' AND cf.fk_statut < 3';
 } elseif ($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER) {
@@ -94,7 +99,6 @@ if ($conf->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER) {
 } else {
     $sql .= ' AND cf.fk_statut < 5';
 }
-
 if (!$user->rights->societe->client->voir && !$socid) {
     $sql .= ' AND s.rowid = sc.fk_soc AND sc.fk_user = ' . $user->id;
 }
@@ -117,13 +121,13 @@ if ($suser) {
 if ($sttc) {
     $sql .= ' AND cf.total_ttc = ' . price2num($sttc);
 }
-if ($sdate) 
+if ($sdate)
 {
-    if (GETPOST('search_datemonth', 'int') && GETPOST('search_dateday', 'int') && GETPOST('search_dateyear', 'int')) 
+    if (GETPOST('search_datemonth', 'int') && GETPOST('search_dateday', 'int') && GETPOST('search_dateyear', 'int'))
     {
 	    $date = dol_mktime(0, 0, 0, GETPOST('search_datemonth', 'int'), GETPOST('search_dateday', 'int'), GETPOST('search_dateyear', 'int'));
     }
-    else 
+    else
     {
         $date = dol_stringtotime($sdate);
     }
@@ -145,22 +149,26 @@ $sql .= ', cf.total_ttc, cf.fk_user_author, u.login, s.rowid, s.nom';
 $sql .= ' ORDER BY ' . $sortfield . ' ' . $sortorder  . ' ';
 $sql .= $db->plimit($conf->liste_limit+1, $offset);
 $resql = $db->query($sql);
-if ($resql) 
+if ($resql)
 {
     $num = $db->num_rows($resql);
     $i = 0;
 
+	print $langs->trans("ReplenishmentOrdersDesc").'<br><br>';
+
     print_barre_liste(
-    		$langs->trans('ReplenishmentOrders'),
+    		'',
     		$page,
-    		'replenishorders.php',
+    		$_SERVER["PHP_SELF"],
     		'',
     		$sortfield,
     		$sortorder,
     		'',
-    		$num
+    		$num,
+    		0,
+    		''
     );
-    print '<form action="replenishorders.php" method="GET">'.
+    print '<form action="'.$_SERVER["PHP_SELF"].'" method="GET">'.
          '<table class="noborder" width="100%">'.
          '<tr class="liste_titre">';
     print_liste_field_titre(
@@ -255,8 +263,7 @@ if ($resql)
     {
         $obj = $db->fetch_object($resql);
         $var = !$var;
-        if (!dispatched($obj->rowid) && 
-          (!$sproduct || in_array($sproduct, getProducts($obj->rowid)))) 
+        if (!dispatched($obj->rowid) && (!$sproduct || in_array($sproduct, getProducts($obj->rowid))))
         {
             $href = DOL_URL_ROOT . '/fourn/commande/fiche.php?id=' . $obj->rowid;
             print '<tr ' . $bc[$var] . '>'.
@@ -288,9 +295,10 @@ if ($resql)
                  '<td>'.
                  price($obj->total_ttc).
                  '</td>';
+
             // Date
             if ($obj->dc) {
-                $date =  dol_print_date($db->jdate($obj->dc), 'day');
+                $date =  dol_print_date($db->jdate($obj->dc), 'dayhour');
             } else {
                 $date =  '-';
             }
@@ -309,7 +317,15 @@ if ($resql)
          '</form>';
 
     $db->free($resql);
+    
+    dol_fiche_end();
+}
+else
+{
+	dol_print_error($db);
 }
 
 llxFooter();
+
 $db->close();
+?>

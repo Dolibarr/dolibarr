@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - ecm
-CHARSET=UTF-8
 MenuECM=Documenten
 DocsMine=Mijn documenten
 DocsGenerated=Gegenereerde documenten
@@ -24,10 +23,10 @@ ECMNewDocument=Nieuw document
 ECMCreationDate=Creatiedatum
 ECMNbOfFilesInDir=Aantal bestanden in de map
 ECMNbOfSubDir=Aantal onderliggende mappen
-ECMNbOfFilesInSubDir=Aantal bestanden in onderliggende mappen
+# ECMNbOfFilesInSubDir=Number of files in sub-directories
 ECMCreationUser=Ontwerper
-ECMArea=ECM-overzicht
-ECMAreaDesc=In het ECM (Electronic Content Management) scherm kunt u allerlei documenten in Dolibarr opslaan, delen en snel zoeken.
+# ECMArea=EDM area
+# ECMAreaDesc=The EDM (Electronic Document Management) area allows you to save, share and search quickly all kind of documents in Dolibarr.
 ECMAreaDesc2=* Automatische mappen zijn automatisch gevuld bij het toevoegen, vanaf een kaart van een element. <br> * Handmatige mappen kunnen worden gebruikt voor het opslaan van documenten die niet gekoppeld zijn aan een bepaald element.
 ECMSectionWasRemoved=Map <b>%s</b> is verwijderd.
 ECMDocumentsSection=Document uit map

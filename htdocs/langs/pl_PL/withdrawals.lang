@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - withdrawals
-CHARSET=UTF-8
 StandingOrdersArea=Stały dziedzinie zamówień
 CustomersStandingOrdersArea=Klienci stałych zleceń obszarze
 StandingOrders=Zlecenia stałe
@@ -93,5 +92,5 @@ InfoTransMessage=Stojąc %s zamówienie zostało przesłanych do banku przez %s 
 InfoTransData=Kwota: %s <br> Metode: %s <br> Data: %s
 InfoFoot=Jest to zautomatyzowany wiadomość wysłana przez Dolibarr
 InfoRejectSubject=Zlecenie stałe odmówił
-InfoRejectMessage=Witam, <br><br> standig aby fakturze %s związanych z %s firmy, w kwocie %s został odrzucony przez bank. <br><br> - <br> % $
+# InfoRejectMessage=Hello,<br><br>the standing order of invoice %s related to the company %s, with an amount of %s has been refused by the bank.<br><br>--<br>%s
 ModeWarning=Opcja dla trybu rzeczywistego nie był ustawiony, zatrzymujemy po tej symulacji

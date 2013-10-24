@@ -1,5 +1,4 @@
-# Dolibarr language file - tr_TR - shop
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - shop
 Shop=Mağaza
 ShopWeb=Web Mağazası
 LastOrders=Son siparişler

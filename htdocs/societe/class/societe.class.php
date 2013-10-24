@@ -65,7 +65,6 @@ class Societe extends CommonObject
     var $country_code;
     var $country;
 
-    var $tel;        // deprecated
     var $phone;
     var $fax;
     var $email;
@@ -125,6 +124,7 @@ class Societe extends CommonObject
     var $statut_commercial;
 
     var $price_level;
+    var $outstanding_limit;
 
     var $datec;
     var $date_update;
@@ -402,7 +402,7 @@ class Societe extends CommonObject
         $this->zip			= $this->zip?trim($this->zip):trim($this->zip);
         $this->town			= $this->town?trim($this->town):trim($this->town);
         $this->state_id		= trim($this->state_id);
-        $this->country_id	= ($this->country_id > 0)?$this->country_id:$this->country_id;
+        $this->country_id	= ($this->country_id > 0)?$this->country_id:0;
         $this->phone		= trim($this->phone);
         $this->phone		= preg_replace("/\s/","",$this->phone);
         $this->phone		= preg_replace("/\./","",$this->phone);
@@ -708,7 +708,7 @@ class Societe extends CommonObject
         $sql .= ', s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur, s.parent, s.barcode';
         $sql .= ', s.fk_departement, s.fk_pays as country_id, s.fk_stcomm, s.remise_client, s.mode_reglement, s.cond_reglement, s.tva_assuj';
         $sql .= ', s.mode_reglement_supplier, s.cond_reglement_supplier, s.localtax1_assuj, s.localtax2_assuj, s.fk_prospectlevel, s.default_lang, s.logo';
-        $sql .= ', s.import_key, s.canvas';
+        $sql .= ', s.outstanding_limit, s.import_key, s.canvas';
         $sql .= ', fj.libelle as forme_juridique';
         $sql .= ', e.libelle as effectif';
         $sql .= ', p.code as country_code, p.libelle as country';
@@ -836,6 +836,8 @@ class Societe extends CommonObject
                 $this->note_public = $obj->note_public;
                 $this->default_lang = $obj->default_lang;
                 $this->logo = $obj->logo;
+
+                $this->outstanding_limit		= $obj->outstanding_limit;
 
                 // multiprix
                 $this->price_level = $obj->price_level;
@@ -2766,6 +2768,71 @@ class Societe extends CommonObject
 			$this->db->commit();
 			return 1;
 		}
+	}
+
+	/**
+	 *  Set outstanding value
+	 *
+	 *  @param  User	$user		User making change
+	 *	@return	int					<0 if KO, >0 if OK
+	 */
+	function set_outstanding($user)
+	{
+		if ($this->id)
+		{
+			$this->db->begin();
+
+			$now=dol_now();
+			
+			$outstanding = price2num($this->outstanding_limit);
+			
+			// Positionne l'encours de facturaiton
+			$sql = "UPDATE ".MAIN_DB_PREFIX."societe SET ";
+			$sql.= " outstanding_limit=".$outstanding;
+			$sql.= " WHERE rowid = ".$this->id;
+
+			dol_syslog(get_class($this)."::set_outstanding sql=".$sql);
+			$resql=$this->db->query($sql);
+			if (! $resql)
+			{
+				$this->db->rollback();
+				$this->error=$this->db->error();
+				return -1;
+			}
+
+			$this->db->commit();
+			return 1;
+		}
+	}
+
+    /**
+     *  return amount of bill not paid
+     *
+     *  @return		boolean			Yes or no
+     */
+    function get_OutstandingBill()
+    {
+		/* Accurate value of remain to pay is to sum remaintopay for each invoice 
+		$paiement = $invoice->getSommePaiement();
+		$creditnotes=$invoice->getSumCreditNotesUsed();
+		$deposits=$invoice->getSumDepositsUsed();
+		$alreadypayed=price2num($paiement + $creditnotes + $deposits,'MT');
+		$remaintopay=price2num($invoice->total_ttc - $paiement - $creditnotes - $deposits,'MT');
+		*/
+		$sql  = "SELECT sum(total) as amount FROM ".MAIN_DB_PREFIX."facture as f";
+		$sql .= " WHERE fk_soc = ". $this->id; 
+		$sql .= " AND paye = 0";
+		$sql .= " AND fk_statut <> 0";
+
+		dol_syslog("get_OutstandingBill sql=".$sql);
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+			$obj=$this->db->fetch_object($resql);
+   			return ($obj->amount);
+		}
+		else
+			return 0;
 	}
 
 	/**

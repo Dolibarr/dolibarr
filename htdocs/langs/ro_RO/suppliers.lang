@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - suppliers
-CHARSET=UTF-8
 Suppliers=Furnizori
 Supplier=Furnizor
 AddSupplier=Adaugă  furnizor
@@ -20,8 +19,8 @@ ErrorSupplierCountryIsNotDefined=Ţara pentru acest furnizor nu este definită. 
 ProductHasAlreadyReferenceInThisSupplier=Acest produs are deja o referinţă la acest furnizor
 ReferenceSupplierIsAlreadyAssociatedWithAProduct=Acest furnizor este deja asociat cu referinta: % s
 NoRecordedSuppliers=Nici un furnizor înregistrat
-SupplierPayment=Plată Furnizor 
-SuppliersArea=Zona Furnizori 
+SupplierPayment=Plată Furnizor
+SuppliersArea=Zona Furnizori
 RefSupplierShort=Ref. furnizor
 Availability=Disponibilitate
 ExportDataset_fournisseur_1=Facturi furnizori şi linii facturi

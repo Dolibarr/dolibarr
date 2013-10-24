@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - ecm
-CHARSET=UTF-8
 MenuECM=Documentos
 DocsMine=Os Meus Documentos
 DocsGenerated=Documentos Gerados
@@ -24,10 +23,10 @@ ECMNewDocument=Novo Documento
 ECMCreationDate=Data Criação
 ECMNbOfFilesInDir=Número de Ficheiros na Pasta
 ECMNbOfSubDir=Número de Subpastas
-ECMNbOfFilesInSubDir=Número de Ficheiros em Subpastas
+# ECMNbOfFilesInSubDir=Number of files in sub-directories
 ECMCreationUser=Criador
-ECMArea=Área GED
-ECMAreaDesc=A área GED (Gestão Electrónica de Documentos) permite controlar rápidamente os documentos no Dolibarr.
+# ECMArea=EDM area
+# ECMAreaDesc=The EDM (Electronic Document Management) area allows you to save, share and search quickly all kind of documents in Dolibarr.
 ECMAreaDesc2=Pode criar pastas manuais e adicionar os documentos<br>as pastas automáticas são preenchidas automáticamente além de um documento numa ficha.
 ECMSectionWasRemoved=A pasta <b>%s</b> foi eliminada
 ECMDocumentsSection=Documento da Secção

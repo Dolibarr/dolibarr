@@ -82,7 +82,7 @@ $pid=GETPOST("projectid","int",3);
 $status=GETPOST("status");
 $type=GETPOST("type");
 $maxprint=(isset($_GET["maxprint"])?GETPOST("maxprint"):$conf->global->AGENDA_MAX_EVENTS_DAY_VIEW);
-$actioncode=GETPOST("actioncode","alpha",3)?GETPOST("actioncode","alpha",3):(GETPOST("actioncode")=="0"?'':(empty($conf->global->AGENDA_USE_EVENT_TYPE)?'AC_OTH':''));
+$actioncode=GETPOST("actioncode","alpha",3)?GETPOST("actioncode","alpha",3):(GETPOST("actioncode")=='0'?'0':(empty($conf->global->AGENDA_USE_EVENT_TYPE)?'AC_OTH':''));
 
 if (GETPOST('viewcal') && $action != 'show_day' && $action != 'show_week')  {
     $action='show_month'; $day='';
@@ -236,7 +236,7 @@ if ($filterd) $param.="&filterd=".$filterd;
 if ($socid)   $param.="&socid=".$socid;
 if ($showbirthday) $param.="&showbirthday=1";
 if ($pid)     $param.="&projectid=".$pid;
-if ($actioncode) $param.="&actioncode=".$actioncode;
+if ($actioncode != '') $param.="&actioncode=".$actioncode;
 if ($type)   $param.="&type=".$type;
 if ($action == 'show_day' || $action == 'show_week') $param.='&action='.$action;
 $param.="&maxprint=".$maxprint;
@@ -382,10 +382,10 @@ if ($resql)
         $event->type_code=$obj->code;
         $event->libelle=$obj->label;
         $event->percentage=$obj->percent;
-        $event->author->id=$obj->fk_user_author;
-        $event->usertodo->id=$obj->fk_user_action;
-        $event->userdone->id=$obj->fk_user_done;
-
+        $event->author->id=$obj->fk_user_author;	// user id of creator
+        $event->usertodo->id=$obj->fk_user_action;	// user id of owner
+        $event->userdone->id=$obj->fk_user_done;	// deprecated
+		// $event->userstodo=... with s after user, in future version, will be an array with all id of user assigned to event
         $event->priority=$obj->priority;
         $event->fulldayevent=$obj->fulldayevent;
         $event->location=$obj->location;
@@ -952,10 +952,9 @@ llxFooter();
 function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventarray, $maxprint=0, $maxnbofchar=16, $newparam='', $showinfo=0, $minheight=60)
 {
     global $user, $conf, $langs;
-    global $filter, $filtera, $filtert, $filterd, $status;
+    global $filter, $filtera, $filtert, $filterd, $status, $actioncode;	// Filters used into search form
     global $theme_datacolor;
     global $cachethirdparties, $cachecontacts, $colorindexused;
-
 
     print '<div id="dayevent_'.sprintf("%04d",$year).sprintf("%02d",$month).sprintf("%02d",$day).'" class="dayevent">'."\n";
     $curtime = dol_mktime(0, 0, 0, $month, $day, $year);
@@ -1009,6 +1008,11 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
                     || (! empty($event->userdone->id) && $event->userdone->id == $user->id))
                     {
                     	$nummytasks++; $cssclass='family_mytasks';
+                    	// TODO Set a color using user color
+                    	// Must defined rule to choose color of who to use.
+                    	// event->usertodo->id will still contains user id of owner
+                    	// event->userstodo will be an array in future.
+                    	// $color=$user->color; 
                     }
                     else if ($event->type_code == 'ICALEVENT')
                     {
@@ -1179,9 +1183,10 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
                 }
                 else
                 {
-                    print '<a href="'.DOL_URL_ROOT.'/comm/action/index.php?maxprint=0&month='.$monthshown.'&year='.$year;
+                	print '<a href="'.DOL_URL_ROOT.'/comm/action/index.php?maxprint=0&month='.$monthshown.'&year='.$year;
                     print ($status?'&status='.$status:'').($filter?'&filter='.$filter:'');
                     print ($filtera?'&filtera='.$filtera:'').($filtert?'&filtert='.$filtert:'').($filterd?'&filterd='.$filterd:'');
+                    print ($actioncode!=''?'&actioncode='.$actioncode:'');
                     print '">'.img_picto("all","1downarrow_selected.png").' ...';
                     print ' +'.(count($eventarray[$daykey])-$maxprint);
                     print '</a>';

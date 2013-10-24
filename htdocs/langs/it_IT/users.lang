@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - users
-CHARSET=UTF-8
 UserCard=Scheda utente
 ContactCard=Scheda contatto
 GroupCard=Scheda gruppo
@@ -117,3 +116,5 @@ DontDowngradeSuperAdmin=Solo un superadmin può declassare un superadmin
 # HierarchicalResponsible=Hierarchical responsible
 HierarchicView=Vista gerarchica
 UseTypeFieldToChange=cambia usando il campo Tipo
+# OpenIDURL=OpenID URL
+# LoginUsingOpenID=Login using OpenID

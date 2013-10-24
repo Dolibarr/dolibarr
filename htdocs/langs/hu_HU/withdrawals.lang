@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - withdrawals
-CHARSET=UTF-8
 StandingOrdersArea=Házszabályok terület
 CustomersStandingOrdersArea=Vásárlói házszabályok terület
 StandingOrders=Házszabályok
@@ -93,5 +92,5 @@ InfoTransMessage=A folyamatos rendelés %s már transmited a bank %s %s. <br><br
 InfoTransData=Összeg: %s <br> Metode: %s <br> Dátum: %s
 InfoFoot=Ez egy automatikus üzenetet küldött Dolibarr
 InfoRejectSubject=Állandó érdekében hajlandó
-InfoRejectMessage=Helló, <br><br> Az állva sorrendben számla %s kapcsolatos %s cég, amelynek összege %s már elutasította a bank. <br><br> - <br> % $
+# InfoRejectMessage=Hello,<br><br>the standing order of invoice %s related to the company %s, with an amount of %s has been refused by the bank.<br><br>--<br>%s
 ModeWarning=Opció a valós módban nem volt beállítva, akkor hagyja abba ezt követően szimuláció

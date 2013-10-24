@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - ldap
-CHARSET=UTF-8
 DomainPassword=Password for domæne
 YouMustChangePassNextLogon=Adgangskode for <b>bruger %s</b> på det <b>domæne %s</b> skal ændres.
 UserMustChangePassNextLogon=Brugeren skal skifte adgangskode på domænet %s

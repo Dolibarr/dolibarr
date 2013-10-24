@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - admin
-CHARSET= UTF-8
 WorkflowSetup=Workflow-moduuli asennus
 WorkflowDesc=Tämä moduuli on designed muuttaa käyttäytymistä automaattisen toimien soveltamisen. Oletuksena työnkulku avataan (teet asian, jotta haluat). Voit käyttöön automaattiset toiminnot, jotka ovat mielenkiintoisia sisään
 ThereIsNoWorkflowToModify=Ei työnkulkua voi muokata moduulien olet aktivoinut.
@@ -8,4 +7,5 @@ descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Luo asiakkaalle laskun automaattisesti ka
 descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Luo asiakkaalle laskun automaattisesti sopimus on vahvistettu
 descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Luo asiakkaalle laskun automaattisesti asiakkaan tilauksen suljetaan
 # descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Classify linked source proposal to billed when customer order is set to paid
-# descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Classify linked source customer order to billed when customer invoice is set to paid
+# descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Classify linked source customer order(s) to billed when customer invoice is set to paid
+# descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Classify linked source customer order(s) to billed when customer invoice is validated

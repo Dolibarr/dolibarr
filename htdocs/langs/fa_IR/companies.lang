@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - companies
-CHARSET=UTF-8
 ErrorCompanyNameAlreadyExists=اسم الشركة ل ٪ موجود بالفعل. اختيار آخر.
 ErrorPrefixAlreadyExists=بادئة ٪ ق موجود بالفعل. اختيار آخر.
 ErrorSetACountryFirst=المجموعة الأولى في البلد
@@ -85,6 +84,8 @@ LocalTax1IsUsedES= يتم استخدام الطاقة المتجددة
 LocalTax1IsNotUsedES= لا يتم استخدام الطاقة المتجددة
 LocalTax2IsUsedES= يستخدم IRPF
 LocalTax2IsNotUsedES= IRPF لا يستخدم
+# LocalTax1ES=RE
+# LocalTax2ES=IRPF
 ThirdPartyEMail=ق ٪
 WrongCustomerCode=رمز غير صالح العملاء
 WrongSupplierCode=رمز المورد غير صالحة
@@ -395,7 +396,7 @@ ListCustomersShort=قائمة العملاء
 ActivityCeased=مغلقة
 # ActivityStateFilter=Activity status
 # ProductsIntoElements=List of products into
-
+# OutstandingBill=Outstanding Bill
 # Monkey
 MonkeyNumRefModelDesc=عودة número مع الشكل nnnn - ٪ syymm الزبون ورمز وnnnn - ٪ syymm مورد للقانون حيث السنة هو السنة ، هو شهر ملم وnnnn هو تسلسل بلا كسر وعدم العودة إلى 0.
 # Leopard

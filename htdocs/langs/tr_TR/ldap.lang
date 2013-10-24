@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - ldap
-CHARSET=UTF-8
 DomainPassword=Etki alanı parolası
 YouMustChangePassNextLogon=<b>%s</b> Etki alanındaki <b>%s</b> kullanıcısının parolası değiştirilmelidir.
 UserMustChangePassNextLogon=Kullanıcı, %s etki alanındaki  parolasını değiştirmelidir

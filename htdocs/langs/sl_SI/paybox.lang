@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - paybox
-CHARSET=UTF-8
 PayBoxSetup=Nastavitev modula za online plačila Paybox
 PayBoxDesc=Ta modul omogoča kupcem plačevanje na <a href="http://www.paybox.com" target="_blank">Paybox</a>. Lahko se uporabi za prosto plačevanje ali za plačilo posameznih Dolibarr postavk (račun, naročilo, ...)
 FollowingUrlAreAvailableToMakePayments=Naslednji URL naslovi so na voljo kupcem za izvedbo plačil Dolibarr postavk
@@ -33,3 +32,6 @@ VendorName=Ime prodajalca
 CSSUrlForPaymentForm=url CSS vzorca obrazca plačila
 MessageOK=Sporočilo na strani za potrditev plačila
 MessageKO=Sporočilo na strani za preklic plačila
+# NewPayboxPaymentReceived=New Paybox payment received
+# NewPayboxPaymentFailed=New Paybox payment tried but failed
+# PAYBOX_PAYONLINE_SENDEMAIL=EMail to warn after a payment (success or failed)

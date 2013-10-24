@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - paybox
-CHARSET=UTF-8
 PayBoxSetup=PayBox mát skipulag
 PayBoxDesc=Þessi eining síður bjóða upp á til að heimila greiðslu á <a href="http://www.paybox.com" target="_blank">Paybox</a> við viðskiptavini. Þetta má nota til a frjáls greiðslu eða til greiðslu á tilteknum Dolibarr mótmæla (Reikningar, röð, ...)
 FollowingUrlAreAvailableToMakePayments=Eftirfarandi vefslóðir eru að bjóða upp síðu til viðskiptavina til að framkvæma greiðslu á Dolibarr mótmæla
@@ -33,3 +32,6 @@ VendorName=Nafn seljanda
 CSSUrlForPaymentForm=CSS stíll lak url fyrir formi greiðslu
 MessageOK=Skilaboð á staðfest greiðslu aftur síðu
 MessageKO=Skilaboð á niður greiðslu aftur síðu
+# NewPayboxPaymentReceived=New Paybox payment received
+# NewPayboxPaymentFailed=New Paybox payment tried but failed
+# PAYBOX_PAYONLINE_SENDEMAIL=EMail to warn after a payment (success or failed)

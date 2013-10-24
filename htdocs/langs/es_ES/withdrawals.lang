@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - withdrawals
-CHARSET=UTF-8
 StandingOrdersArea=Área domiciliaciones
 CustomersStandingOrdersArea=Área domiciliaciones de clientes
 StandingOrders=Domiciliaciones
@@ -93,5 +92,5 @@ InfoTransMessage=La orden de domiciliación %s ha sido enviada al banco por %s %
 InfoTransData=Importe: %s<br>Método: %s<br>Fecha: %s
 InfoFoot=Este es un mensaje automático enviado por Dolibarr
 InfoRejectSubject=Domiciliación devuelta
-InfoRejectMessage=Buenos días,<br><br>la domiciliación de la factura %s por cuenta de la empresa %s, con un importe de %s ha sido devuelta por el banco.<br><br>--<br>%s
+# InfoRejectMessage=Hello,<br><br>the standing order of invoice %s related to the company %s, with an amount of %s has been refused by the bank.<br><br>--<br>%s
 ModeWarning=No se ha establecido la opción de modo real, nos detendremos después de esta simulación

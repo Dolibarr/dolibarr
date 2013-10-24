@@ -1,14 +1,13 @@
 # Dolibarr language file - Source file is en_US - main
-CHARSET=UTF-8
 DIRECTION=ltr
 # Note for chinese:
 # msungstdlight or cid0ct are for traditionnal chinese (traditionnal does not render with ubuntu pdf reader)
 # stsongstdlight or cid0cs are for simplified chinese
 # To read chinese pdf with linux: sudo apt-get install poppler-data
-FONTFORPDF=黑体
+FONTFORPDF=stsongstdlight
 FONTSIZEFORPDF=10
-SeparatorDecimal=.
-SeparatorThousand=None
+SeparatorDecimal=None
+SeparatorThousand=无
 FormatDateShort=%d/%m/%Y
 FormatDateShortInput=%d/%m/%Y
 FormatDateShortJava=dd/MM/yyyy
@@ -20,7 +19,7 @@ FormatHourShortDuration=%H:%M
 FormatDateTextShort=%b %d, %Y
 FormatDateText=%B %d, %Y
 FormatDateHourShort=%d/%m/%Y %I:%M %p
-# FormatDateHourSecShort=%m/%d/%Y %I:%M:%S %p
+FormatDateHourSecShort=%m/%d/%Y %I:%M:%S %p
 FormatDateHourTextShort=%b %d, %Y, %I:%M %p
 FormatDateHourText=%B %d, %Y, %I:%M %p
 DatabaseConnection=数据库连接
@@ -145,7 +144,7 @@ ToClone=克隆
 ConfirmClone=选择你想要克隆的数据：
 NoCloneOptionsSpecified=没有数据克隆界定。
 Of=的
-# Go=Go
+Go=下一步
 Run=运行
 CopyOf=复制
 Show=显示
@@ -388,7 +387,7 @@ OtherInformations=其它信息
 Quantity=数量
 Qty=数量
 ChangedBy=改变
-ReCalculate=重建
+# ReCalculate=Recalculate
 ResultOk=成功
 ResultKo=失败
 Reporting=报告
@@ -657,6 +656,8 @@ HomeDashboard=首页摘要
 Deductible=可抵扣
 from=从
 toward=往
+# Access=Access
+# HelpCopyToClipboard=Use Ctrl+C to copy to clipboard
 
 # Week day
 Monday=星期一

@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - ecm
-CHARSET=UTF-8
 MenuECM=Skjöl
 DocsMine=My Documents
 DocsGenerated=Mynda skjöl
@@ -24,10 +23,10 @@ ECMNewDocument=Nýtt skjal
 ECMCreationDate=Creation dagsetning
 ECMNbOfFilesInDir=Fjöldi skrár í möppu
 ECMNbOfSubDir=Fjöldi undir-möppur
-ECMNbOfFilesInSubDir=Nunber af Iles í staðinn fyrir einhvern-framkvæmdarstjóra
+# ECMNbOfFilesInSubDir=Number of files in sub-directories
 ECMCreationUser=Creator
-ECMArea=ECM svæði
-ECMAreaDesc=The ECM (Rafræn Efnisstjórnun) svæði leyfir þér að vista, deila og leita fljótt allur góður af skjölum í Dolibarr.
+# ECMArea=EDM area
+# ECMAreaDesc=The EDM (Electronic Document Management) area allows you to save, share and search quickly all kind of documents in Dolibarr.
 ECMAreaDesc2=* Sjálfvirkar framkvæmdarstjóra eru fyllt sjálfkrafa þegar bætt skjölum frá kort af frumefni. <br> * Manual framkvæmdarstjóra hægt að nota til að vista skjölin ekki tengd við ákveðna hluti.
 ECMSectionWasRemoved=<b>Listinn %s </b> hefur verið eytt.
 ECMDocumentsSection=Skjal skrá

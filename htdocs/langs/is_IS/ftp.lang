@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - ftp
-CHARSET=UTF-8
 FTPClientSetup=FTP Viðskiptavinur mát skipulag
 NewFTPClient=Nýr FTP tengingu skipulag
 FTPArea=FTP svæði

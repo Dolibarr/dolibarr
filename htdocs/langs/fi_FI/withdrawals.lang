@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - withdrawals
-CHARSET=UTF-8
 StandingOrdersArea=Pysyvän tilaukset alueella
 CustomersStandingOrdersArea=Asiakkaat pysyvän tilaukset alueella
 StandingOrders=Pysyvän tilaukset
@@ -93,5 +92,5 @@ InfoTransMessage=Kestotilaus %s on transmited sen pankkiin %s %s. <br><br>
 InfoTransData=Määrä: %s <br> Metode: %s <br> Date: %s
 InfoFoot=Tämä on automaattinen viesti lähetetään Dolibarr
 InfoRejectSubject=Pysyvä järjestyksessä kieltäytyi
-InfoRejectMessage=Hei, <br><br> standig järjestys laskun %s liittyviä yrityksen %s, joiden määrä %s on evätty pankin. <br><br> - <br> % $
+# InfoRejectMessage=Hello,<br><br>the standing order of invoice %s related to the company %s, with an amount of %s has been refused by the bank.<br><br>--<br>%s
 ModeWarning=Vaihtoehto todellista tilaa ei ole asetettu, pysähdymme jälkeen simulointi

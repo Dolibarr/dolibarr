@@ -1,6 +1,4 @@
 # Dolibarr language file - Source file is en_US - holiday
-CHARSET= UTF-8
-
 HRM=HRM
 Holidays=Άδειες
 CPTitreMenu=Άδειες
@@ -89,6 +87,7 @@ FirstDayOfHoliday=Πρώτη μέρα άδειας
 LastDayOfHoliday=Τελευταία μέρα άδειας
 HolidaysMonthlyUpdate=Μηνιαία ενημέρωση
 ManualUpdate=Χειροκίνητη ενημέρωση
+# HolidaysCancelation=Holidays cancelation
 
 ## Configuration du Module ##
 ConfCP=Διαμόρφωση τις ενότητας αδειών

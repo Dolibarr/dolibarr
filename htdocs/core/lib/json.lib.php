@@ -54,14 +54,16 @@ function dol_json_encode($elements)
 	//var_dump($num);
 
 	// determine type
-	if (is_numeric(key($elements)))
+	if (is_numeric(key($elements)) && key($elements) == 0)
 	{
 		// indexed (list)
+		$keysofelements=array_keys($elements);	// Elements array mus have key that does not start with 0 and end with num-1, so we will use this later.
 		$output = '[';
-		for ($i = 0, $last = ($num - 1); isset($elements[$i]); ++$i)
+		for ($i = 0, $last = ($num - 1); $i < $num; $i++)
 		{
-			if (is_array($elements[$i]) || is_object($elements[$i])) $output.= json_encode($elements[$i]);
-			else $output .= _val($elements[$i]);
+			if (! isset($elements[$keysofelements[$i]])) continue;
+			if (is_array($elements[$keysofelements[$i]]) || is_object($elements[$keysofelements[$i]])) $output.= json_encode($elements[$keysofelements[$i]]);
+			else $output .= _val($elements[$keysofelements[$i]]);
 			if ($i !== $last) $output.= ',';
 		}
 		$output.= ']';

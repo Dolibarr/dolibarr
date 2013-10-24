@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - ldap
-CHARSET=UTF-8
 DomainPassword=ドメインのパスワード
 YouMustChangePassNextLogon=ドメイン<b>%s</b>のユーザー<b>%s</b>のパスワードを変更する必要があります。
 UserMustChangePassNextLogon=ユーザーは、ドメイン%sにパスワードを変更する必要があります。

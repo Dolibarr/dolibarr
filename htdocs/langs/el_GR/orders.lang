@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - orders
-CHARSET=UTF-8
 OrdersArea=Περιοχή παραγγελιών πελατών
 SuppliersOrdersArea=Περιοχή παραγγελιών προμηθευτών
 OrderCard=Καρτέλα παραγγελίας
@@ -56,8 +55,6 @@ DraftOrWaitingShipped=Draft or validated not yet shipped
 MenuOrdersToBill=Παραγγελίες προς χρέωση
 MenuOrdersToBill2=Παραγγελίες για τιμολόγηση
 SearchOrder=Εύρεση παραγγελίας
-Sending=Αποστολή
-Sendings=Αποστολές
 ShipProduct=Ship product
 Discount=Έκπτωση
 CreateOrder=Δημιουργία παραγγελίας
@@ -150,6 +147,7 @@ AddDeliveryCostLine=Add a delivery cost line indicating the weight of the order
 # Documents models
 PDFEinsteinDescription=Ολοκληρωμένο πρότυπο παραγγελίας (λογότυπο...)
 PDFEdisonDescription=Απλό πρότυπο παραγγελίας
+# PDFProformaDescription=A complete proforma invoice (logo…)
 # Orders modes
 OrderByMail=Ταχυδρομείο
 OrderByFax=Φαξ

@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - ecm
-CHARSET=UTF-8
 MenuECM=Documentos
 DocsMine=Mis documentos
 DocsGenerated=Documentos generados
@@ -24,10 +23,10 @@ ECMNewDocument=Nuevo documento
 ECMCreationDate=Fecha creación
 ECMNbOfFilesInDir=Número de archivos en el directorio
 ECMNbOfSubDir=Número de subdirectorios
-ECMNbOfFilesInSubDir=Número de archivos en los subdirectorios
+# ECMNbOfFilesInSubDir=Number of files in sub-directories
 ECMCreationUser=Creador
-ECMArea=Área GED
-ECMAreaDesc=El área GED (Gestión Electrónica de Documentos) le permite controlar rápidamente los documentos en Dolibarr.
+# ECMArea=EDM area
+# ECMAreaDesc=The EDM (Electronic Document Management) area allows you to save, share and search quickly all kind of documents in Dolibarr.
 ECMAreaDesc2=Puede crear directorios manuales y adjuntar los documentos<br>Los directorios automáticos son rellenados automáticamente en la adición de un documento en una ficha.
 ECMSectionWasRemoved=El directorio <b>%s</b> ha sido eliminado
 ECMDocumentsSection=Documento de la sección
@@ -53,3 +52,4 @@ CannotRemoveDirectoryContainsFiles=No se puede eliminar porque contiene archivos
 ECMFileManager=Explorador de archivos
 ECMSelectASection=Seleccione un directorio en el árbol de la izquierda
 DirNotSynchronizedSyncFirst=Este directorio fue creado o modificado fuera del módulo GED. Haga clic en el botón "Actualizar" para resincronizar la información del disco y la base  de datos para ver el contenido de ese directorio.
+

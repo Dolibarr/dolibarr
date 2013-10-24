@@ -1,5 +1,4 @@
-# Dolibarr language file - en_US - shop
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - shop
 Shop=Negozio
 ShopWeb=Negozio online
 LastOrders=Ultimi ordini

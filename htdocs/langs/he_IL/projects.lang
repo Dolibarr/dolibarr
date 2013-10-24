@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - projects
-CHARSET=UTF-8
 # Project=Project
 Projects=פרוייקטים
 # SharedProject=Everybody
@@ -89,7 +88,8 @@ Projects=פרוייקטים
 # CloneTasks=Clone tasks
 # CloneContacts=Clone contacts
 # CloneNotes=Clone notes
-# CloneFiles=Clone joined files
+# CloneProjectFiles=Clone project joined files
+# CloneTaskFiles=Clone task(s) joined files (if task(s) cloned)
 # ConfirmCloneProject=Are you sure to clone this project ?
 # ProjectReportDate=Change task date according project start date
 # ErrorShiftTaskDate=Impossible to shift task date according to new project start date
@@ -104,6 +104,8 @@ TypeContact_project_external_PROJECTLEADER=מנהל הפרויקט
 # TypeContact_project_task_external_TASKEXECUTIVE=Task executive
 # TypeContact_project_task_internal_CONTRIBUTOR=Contributor
 # TypeContact_project_task_external_CONTRIBUTOR=Contributor
+# SelectElement=Elements to referring the project
+# AddElement=Refering
 # Documents models
 # DocumentModelBaleine=A complete project's report model (logo...)
 # PlannedWorkload = Planned workload

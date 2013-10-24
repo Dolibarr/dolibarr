@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - projects
-CHARSET=UTF-8
 Project=Project
 Projects=Verkefni
 SharedProject=Allir
@@ -89,7 +88,8 @@ IfNeedToUseOhterObjectKeepEmpty=Ef sumir hlutir (nótum röð ...), sem tilheyra
 # CloneTasks=Clone tasks
 # CloneContacts=Clone contacts
 # CloneNotes=Clone notes
-# CloneFiles=Clone joined files
+# CloneProjectFiles=Clone project joined files
+# CloneTaskFiles=Clone task(s) joined files (if task(s) cloned)
 # ConfirmCloneProject=Are you sure to clone this project ?
 # ProjectReportDate=Change task date according project start date
 # ErrorShiftTaskDate=Impossible to shift task date according to new project start date
@@ -104,6 +104,8 @@ TypeContact_project_task_internal_TASKEXECUTIVE=Verkefni framkvæmdastjóri
 TypeContact_project_task_external_TASKEXECUTIVE=Verkefni framkvæmdastjóri
 TypeContact_project_task_internal_CONTRIBUTOR=Framlög
 TypeContact_project_task_external_CONTRIBUTOR=Framlög
+# SelectElement=Elements to referring the project
+# AddElement=Refering
 # Documents models
 DocumentModelBaleine=skýrslu lýkur verkefninu er líkan (logo. ..)
 # PlannedWorkload = Planned workload

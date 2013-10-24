@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - withdrawals
-CHARSET=UTF-8
 StandingOrdersArea=Periodieke overboekingenoverzicht
 CustomersStandingOrdersArea=Periodieke afnemersoverboekingenoverzicht
 StandingOrders=Periodieke overboekingen
@@ -93,5 +92,5 @@ InfoTransMessage=De periodieke overboeking %s is vernzonden naar de bank door %s
 InfoTransData=Bedrag: %s<br>Wijze: %s<br>Datum: %s
 InfoFoot=Dit is een geautomatiseerd bericht verzonden door Dolibarr
 InfoRejectSubject=Periodieke overboeking geweigerd
-InfoRejectMessage=Hallo,<br><br>de periodieke overboeking van factuur %s gerelateerd aan het bedrijf %s, met het bedrag van %s is geweigerd door de bank.<br><br>--<br>%s
+# InfoRejectMessage=Hello,<br><br>the standing order of invoice %s related to the company %s, with an amount of %s has been refused by the bank.<br><br>--<br>%s
 ModeWarning=Optie voor echte modus was niet ingesteld, we stoppen na deze simulatie

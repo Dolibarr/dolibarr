@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - holiday
-CHARSET=UTF-8
 HRM=RRHH
 Holidays=Vacacions
 CPTitreMenu=Vacacions
@@ -35,6 +34,7 @@ ReturnCP=Tornar a la pàgina anterior
 ErrorUserViewCP=No està autoritzat a llegir aquesta petició de vacances.
 InfosCP=Informació de la petició de vacances
 InfosWorkflowCP=Informació del workflow
+DateCreateCP=Data de creació
 RequestByCP=Comandada per
 TitreRequestCP=Fitxa vacances
 NbUseDaysCP=Nombre de dies de vacances consumits
@@ -87,6 +87,8 @@ FirstDayOfHoliday=Primer dia lliure
 LastDayOfHoliday=Últim dí lliure
 HolidaysMonthlyUpdate=Actualització mensual
 ManualUpdate=Actualització manual
+# HolidaysCancelation=Holidays cancelation
+
 ## Configuration du Module ##
 ConfCP=Configuració del mòdul Vacacions
 DescOptionCP=Descripció de l'opció
@@ -104,8 +106,8 @@ AlertValidorSoldeCP=Advertir a l'usuari validador si l'usuari demana vacances su
 nbUserCP=Nombre d'usuaris presos en compte en el mòdul vacances
 nbHolidayDeductedCP=Nombre de dies retribuïts a deduir per dia de vacances
 nbHolidayEveryMonthCP=Nombre de vacances afegides per mes
-Module27130Name=Gestió de les vacances
-Module27130Desc=Gestió de dies lliures
+Module27130Name= Gestió de les vacances
+Module27130Desc= Gestió de dies lliures
 TitleOptionMainCP=Ajustaments principals de vacances
 TitleOptionEventCP=Ajustaments de vacances enllaçats a esdeveniments
 ValidEventCP=Validar
@@ -128,6 +130,7 @@ ErrorMailNotSend=S'ha produït un error en l'enviament del correu electrònic:
 NoCPforMonth=Sense vacances aquest mes.
 nbJours=Número de dies
 TitleAdminCP=Configuració de les vacances
+
 #Messages
 Hello=Hola
 HolidaysToValidate=Dies retribuïts a validar
@@ -140,6 +143,7 @@ HolidaysRefused=Dies retribuïts denegats
 HolidaysRefusedBody=La seva sol·licitud de dies retribuïts des de %s al %s ha estat denegada pel següent motiu:
 HolidaysCanceled=Dies retribuïts cancel·lats
 HolidaysCanceledBody=La seva sol·licitud de dies retribuïts des de %s al %s ha estat cancel·lada.
+
 Permission20001=Consultar/crear/modificar les seves vacances
 Permission20002=Consultar/modificar totes les sol·licituds de permisos retribuïts
 Permission20003=Eliminar les sol·licituds de permisos retribuïts

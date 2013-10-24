@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - agenda
-CHARSET=UTF-8
+# IdAgenda=ID event
 Actions=Събития
 ActionsArea=Събития площ (действия и задачи)
 Agenda= Дневен ред
@@ -68,6 +68,7 @@ AgendaUrlOptions5=<b>logind = %s</b> да се ограничи производ
 AgendaShowBirthdayEvents=Покажи контакти рожден ден
 AgendaHideBirthdayEvents=Скриване на контакти рожден ден
 # Busy=Busy
+# ExportDataset_event1=List of agenda events
 
 # External Sites ical
 ExportCal=Export календар

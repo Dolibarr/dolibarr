@@ -280,8 +280,8 @@ if ($resql)
 
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans('Ref'),$_SERVER["PHP_SELF"],'c.ref','',$param,'width="25%"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans('Company'),$_SERVER["PHP_SELF"],'s.nom','',$param,'',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans('RefCustomerOrder'),$_SERVER["PHP_SELF"],'c.ref_client','',$param,'',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans('Company'),$_SERVER["PHP_SELF"],'s.nom','',$param,'',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans('OrderDate'),$_SERVER["PHP_SELF"],'c.date_commande','',$param, 'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans('DeliveryDate'),$_SERVER["PHP_SELF"],'c.date_livraison','',$param, 'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans('AmountHT'),$_SERVER["PHP_SELF"],'c.total_ht','',$param, 'align="right"',$sortfield,$sortorder);
@@ -289,12 +289,15 @@ if ($resql)
 	print '</tr>';
 	print '<tr class="liste_titre">';
 	print '<td class="liste_titre">';
-	print '<input class="flat" size="10" type="text" name="sref" value="'.$sref.'">';
-	print '</td><td class="liste_titre" align="left">';
+	print '<input class="flat" size="6" type="text" name="sref" value="'.$sref.'">';
+	print '</td>';
+	print '<td class="liste_titre" align="left">';
+	print '<input class="flat" type="text" size="6" name="sref_client" value="'.$sref_client.'">';
+	print '</td>';
+	print '<td class="liste_titre" align="left">';
 	print '<input class="flat" type="text" name="snom" value="'.$snom.'">';
-	print '</td><td class="liste_titre" align="left">';
-	print '<input class="flat" type="text" size="10" name="sref_client" value="'.$sref_client.'">';
-	print '</td><td class="liste_titre">&nbsp;';
+	print '</td>';
+	print '<td class="liste_titre">&nbsp;';
 	print '</td><td class="liste_titre">&nbsp;';
 	print '</td><td class="liste_titre">&nbsp;';
 	print '</td><td align="right" class="liste_titre">';
@@ -341,6 +344,9 @@ if ($resql)
 
 		print '</td>';
 
+		// Ref customer
+		print '<td>'.$objp->ref_client.'</td>';
+
 		// Company
 		$companystatic->id=$objp->socid;
 		$companystatic->nom=$objp->nom;
@@ -361,8 +367,6 @@ if ($resql)
 			}
 		}
 		print '</td>';
-
-		print '<td>'.$objp->ref_client.'</td>';
 
 		// Order date
 		$y = dol_print_date($db->jdate($objp->date_commande),'%Y');

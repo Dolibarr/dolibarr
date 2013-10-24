@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - agenda 
-CHARSET=UTF-8
 IdAgenda=ID event
 Actions=Events
 ActionsArea=Events area (Actions and tasks)

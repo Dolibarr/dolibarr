@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - withdrawals
-CHARSET=UTF-8
 StandingOrdersArea=Standandi fyrirmæli area
 CustomersStandingOrdersArea=Viðskiptavinir standandi fyrirmæli area
 StandingOrders=Standandi pantanir
@@ -93,5 +92,5 @@ InfoTransMessage=Það stendur til %s hefur verið transmited í bankann með %s
 InfoTransData=Upphæð: %s <br> Metode: %s <br> Date: %s
 InfoFoot=Þetta er sjálfvirkt skilaboð send með Dolibarr
 InfoRejectSubject=Standandi þess neitaði
-InfoRejectMessage=Halló, <br><br> að standig þess reiknings %s tengjast félaginu %s, með fjárhæð %s hefur verið hafnað af bankanum. <br><br> - <br> % $
+# InfoRejectMessage=Hello,<br><br>the standing order of invoice %s related to the company %s, with an amount of %s has been refused by the bank.<br><br>--<br>%s
 ModeWarning=Valkostur fyrir alvöru ham var ekki sett, að hætta við eftir þessa uppgerð

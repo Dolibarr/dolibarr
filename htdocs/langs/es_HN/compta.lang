@@ -1,5 +1,4 @@
 # Dolibarr language file - es_HN - compta 
-CHARSET=UTF-8
 VATToPay=ISV ventas
 VATReceived=ISV repercutido
 VATToCollect=ISV compras

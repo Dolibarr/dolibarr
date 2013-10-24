@@ -145,30 +145,33 @@ if (empty($dolibarr_main_data_root))
 define('DOL_CLASS_PATH', 'class/');									// Filesystem path to class dir (defined only for some code that want to be compatible with old versions without this parameter)
 define('DOL_DATA_ROOT', $dolibarr_main_data_root);					// Filesystem data (documents)
 define('DOL_DOCUMENT_ROOT', $dolibarr_main_document_root);			// Filesystem core php (htdocs)
-// Try to autodetec DOL_MAIN_URL_ROOT and DOL_URL_ROOT.
+// Try to autodetect DOL_MAIN_URL_ROOT and DOL_URL_ROOT.
 // Note: autodetect works only in case 1, 2, 3 and 4 of phpunit test CoreTest.php. For case 5, 6, only setting value into conf.php will works.
 $tmp='';
 $found=0;
 $real_dolibarr_main_document_root=str_replace('\\','/',realpath($dolibarr_main_document_root));	// A) Value found into config file, to say where are store htdocs files. Ex: C:/xxx/dolibarr, C:/xxx/dolibarr/htdocs
 $pathroot=$_SERVER["DOCUMENT_ROOT"];															// B) Value reported by web server setup, to say where is root of web server instance. Ex: C:/xxx/dolibarr, C:/xxx/dolibarr/htdocs
 $paths=explode('/',str_replace('\\','/',$_SERVER["SCRIPT_NAME"]));								// C) Value reported by web server, to say full path on filesystem of a file. Ex: /dolibarr/htdocs/admin/system/phpinfo.php
+// Try to detect if $_SERVER["DOCUMENT_ROOT"]+start of $_SERVER["SCRIPT_NAME"] is $dolibarr_main_document_root. If yes, relative url to add before dol files is this start part.
 $concatpath='';
 foreach($paths as $tmppath)	// We check to find (B+start of C)=A
 {
-    if ($tmppath) $concatpath.='/'.$tmppath;
+    if (empty($tmppath)) continue;
+    $concatpath.='/'.$tmppath;
+    //if ($tmppath) $concatpath.='/'.$tmppath;
     //print $_SERVER["SCRIPT_NAME"].'-'.$pathroot.'-'.$concatpath.'-'.$real_dolibarr_main_document_root.'-'.realpath($pathroot.$concatpath).'<br>';
     if ($real_dolibarr_main_document_root == @realpath($pathroot.$concatpath))    // @ avoid warning when safe_mode is on.
     {
-        $tmp3=$concatpath;
-        //print "Found relative url = ".$tmp3;
+        //print "Found relative url = ".$concatpath;
+    	$tmp3=$concatpath;
         $found=1;
         break;
     }
     //else print "Not found yet for concatpath=".$concatpath."<br>\n";
 }
-if (! $found) $tmp=$dolibarr_main_url_root; // If autodetect fails (Ie: when using apache alias that point outside default DOCUMENT_ROOT.
+if (! $found) $tmp=$dolibarr_main_url_root; // If autodetect fails (Ie: when using apache alias that point outside default DOCUMENT_ROOT).
 else $tmp='http'.(((empty($_SERVER["HTTPS"]) || $_SERVER["HTTPS"] != 'on') && (empty($_SERVER["SERVER_PORT"])||$_SERVER["SERVER_PORT"]!=443))?'':'s').'://'.$_SERVER["SERVER_NAME"].((empty($_SERVER["SERVER_PORT"])||$_SERVER["SERVER_PORT"]==80||$_SERVER["SERVER_PORT"]==443)?'':':'.$_SERVER["SERVER_PORT"]).($tmp3?(preg_match('/^\//',$tmp3)?'':'/').$tmp3:'');
-//print "tmp1=".$tmp1." tmp2=".$tmp2." tmp3=".$tmp3." tmp=".$tmp;
+//print "tmp1=".$tmp1." tmp2=".$tmp2." tmp3=".$tmp3." tmp=".$tmp."\n";
 if (! empty($dolibarr_main_force_https)) $tmp=preg_replace('/^http:/i','https:',$tmp);
 define('DOL_MAIN_URL_ROOT', $tmp);											// URL absolute root (https://sss/dolibarr, ...)
 $uri=preg_replace('/^http(s?):\/\//i','',constant('DOL_MAIN_URL_ROOT'));	// $uri contains url without http*
@@ -176,7 +179,7 @@ $suburi = strstr($uri, '/');												// $suburi contains url without domain:p
 if ($suburi == '/') $suburi = '';											// If $suburi is /, it is now ''
 define('DOL_URL_ROOT', $suburi);											// URL relative root ('', '/dolibarr', ...)
 
-//print DOL_URL_ROOT;
+//print DOL_MAIN_URL_ROOT.'-'.DOL_URL_ROOT."\n";
 
 // Define prefix MAIN_DB_PREFIX
 define('MAIN_DB_PREFIX',$dolibarr_main_db_prefix);

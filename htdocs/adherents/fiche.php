@@ -273,6 +273,8 @@ if ($action == 'update' && ! $_POST["cancel"] && $user->rights->adherent->creer)
 		$object->pass        = trim($_POST["pass"]);
 
 		$object->societe     = trim($_POST["societe"]);
+		$object->company     = trim($_POST["societe"]);
+
 		$object->address     = trim($_POST["address"]);
 		$object->zip         = trim($_POST["zipcode"]);
 		$object->town        = trim($_POST["town"]);

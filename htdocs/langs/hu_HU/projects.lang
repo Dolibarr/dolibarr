@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - projects
-CHARSET=UTF-8
 Project=Projekt
 Projects=Projektek
 SharedProject=Mindenki
@@ -89,7 +88,8 @@ IfNeedToUseOhterObjectKeepEmpty=Ha egyes tárgyakat (számla, megrendelés, ...)
 # CloneTasks=Clone tasks
 # CloneContacts=Clone contacts
 # CloneNotes=Clone notes
-# CloneFiles=Clone joined files
+# CloneProjectFiles=Clone project joined files
+# CloneTaskFiles=Clone task(s) joined files (if task(s) cloned)
 # ConfirmCloneProject=Are you sure to clone this project ?
 # ProjectReportDate=Change task date according project start date
 # ErrorShiftTaskDate=Impossible to shift task date according to new project start date
@@ -104,6 +104,8 @@ TypeContact_project_task_internal_TASKEXECUTIVE=Kivitelező
 TypeContact_project_task_external_TASKEXECUTIVE=Task Kivitelező
 TypeContact_project_task_internal_CONTRIBUTOR=Hozzájáruló
 TypeContact_project_task_external_CONTRIBUTOR=Hozzájáruló
+# SelectElement=Elements to referring the project
+# AddElement=Refering
 # Documents models
 DocumentModelBaleine=Teljes jelentés modell (logo, ...)
 # PlannedWorkload = Planned workload

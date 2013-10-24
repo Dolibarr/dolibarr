@@ -1,5 +1,4 @@
 # Dolibarr language file - nl_BE - stocks
-CHARSET=UTF-8
 WarehouseCard=Opslagplaats kaart
 Warehouse=Opslagplaats
 NewWarehouse=Nieuw opslagplaats / Stock gebied

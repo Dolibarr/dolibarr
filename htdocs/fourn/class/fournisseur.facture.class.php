@@ -636,7 +636,7 @@ class FactureFournisseur extends CommonInvoice
         else {
         	$error++;
         }
-		
+
 		if (! $error)
 		{
 			// Delete linked object
@@ -1153,6 +1153,7 @@ class FactureFournisseur extends CommonInvoice
         if ($type < 0) return -1;
 
         // Clean parameters
+		if (empty($vatrate)) $vatrate=0;
         if (empty($txlocaltax1)) $txlocaltax1=0;
         if (empty($txlocaltax2)) $txlocaltax2=0;
 
@@ -1163,9 +1164,9 @@ class FactureFournisseur extends CommonInvoice
         // qty, pu, remise_percent et txtva
         // TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
         // la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
-        
+
         $localtaxes_type=getLocalTaxesFromRate($vatrate,0,$this->thirdparty);
-        
+
         $tabprice = calcul_price_total($qty, $pu, $remise_percent, $vatrate, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type, $this->thirdparty,$localtaxes_type);
         $total_ht  = $tabprice[0];
         $total_tva = $tabprice[1];

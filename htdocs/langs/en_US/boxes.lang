@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - boxes
-CHARSET=UTF-8
 BoxLastRssInfos=Rss information
 BoxLastProducts=Last %s products/services
 BoxProductsAlertStock=Products in stock alert

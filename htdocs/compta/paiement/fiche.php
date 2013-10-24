@@ -193,7 +193,7 @@ dol_fiche_head($head, $hselected, $langs->trans("PaymentCustomerInvoice"), 0, 'p
 if ($action == 'delete')
 {
 	print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id, $langs->trans("DeletePayment"), $langs->trans("ConfirmDeletePayment"), 'confirm_delete','',0,2);
-	
+
 }
 
 /*
@@ -203,7 +203,7 @@ if ($action == 'valide')
 {
 	$facid = $_GET['facid'];
 	print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;facid='.$facid, $langs->trans("ValidatePayment"), $langs->trans("ConfirmValidatePayment"), 'confirm_valide','',0,2);
-	
+
 }
 
 
@@ -230,7 +230,7 @@ print $form->editfieldval("Numero",'num_paiement',$object->numero,$object,$objec
 print '</td></tr>';
 
 // Amount
-print '<tr><td valign="top">'.$langs->trans('Amount').'</td><td colspan="3">'.price($object->montant).'&nbsp;'.$langs->trans('Currency'.$conf->currency).'</td></tr>';
+print '<tr><td valign="top">'.$langs->trans('Amount').'</td><td colspan="3">'.price($object->montant,'',$langs,0,0,-1,$conf->currency).'</td></tr>';
 
 // Note
 print '<tr><td valign="top">'.$form->editfieldkey("Note",'note',$object->note,$object,$user->rights->facture->paiement).'</td><td colspan="3">';
@@ -248,15 +248,25 @@ if (! empty($conf->banque->enabled))
     	print '<tr>';
     	print '<td>'.$langs->trans('BankTransactionLine').'</td>';
 		print '<td colspan="3">';
-		print $bankline->getNomUrl(1,0,'showall');
+		print $bankline->getNomUrl(1,0,'showconciliated');
     	print '</td>';
     	print '</tr>';
-		
+
+    	print '<tr>';
+    	print '<td>'.$langs->trans('BankAccount').'</td>';
+		print '<td colspan="3">';
+		$accountstatic=new Account($db);
+        $accountstatic->id=$bankline->fk_account;
+	    $accountstatic->label=$bankline->bank_account_ref.' - '.$bankline->bank_account_label;
+        print $accountstatic->getNomUrl(0);
+    	print '</td>';
+    	print '</tr>';
+
 		if($object->type_code == 'CHQ' && $bankline->fk_bordereau > 0) {
 			dol_include_once('/compta/paiement/cheque/class/remisecheque.class.php');
 			$bordereau = new RemiseCheque($db);
 			$bordereau->fetch($bankline->fk_bordereau);
-			
+
 			print '<tr>';
 	    	print '<td>'.$langs->trans('CheckReceipt').'</td>';
 			print '<td colspan="3">';

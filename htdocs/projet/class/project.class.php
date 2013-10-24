@@ -970,11 +970,13 @@ class Project extends CommonObject
 	  *	@param	int		$fromid     	Id of object to clone
 	  *	@param	bool	$clone_contact	clone contact of project
 	  *	@param	bool	$clone_task		clone task of project
-	  *	@param	bool	$clone_file		clone file of project
+	  *	@param	bool	$clone_project_file		clone file of project
+	  *	@param	bool	$clone_task_file		clone file of task (if task are copied)
       *	@param	bool	$clone_note		clone note of project
+      *	@param	bool	$notrigger		no trigger flag
 	  * @return	int						New id of clone
 	  */
-	function createFromClone($fromid,$clone_contact=false,$clone_task=true,$clone_file=false,$clone_note=true)
+	function createFromClone($fromid,$clone_contact=false,$clone_task=true,$clone_project_file=false,$clone_task_file=false,$clone_note=true,$notrigger=0)
 	{
 		global $user,$langs,$conf;
 
@@ -1025,7 +1027,7 @@ class Project extends CommonObject
 		$clone_project->ref=$defaultref;
 
 		// Create clone
-		$result=$clone_project->create($user);
+		$result=$clone_project->create($user,$notrigger);
 
 		// Other options
 		if ($result < 0)
@@ -1088,7 +1090,7 @@ class Project extends CommonObject
 
 					foreach ($tab as $contacttoadd)
 					{
-						$clone_project->add_contact($contacttoadd['id'], $contacttoadd['code'], $contacttoadd['source']);
+						$clone_project->add_contact($contacttoadd['id'], $contacttoadd['code'], $contacttoadd['source'],$notrigger);
 						if ($clone_project->error == 'DB_ERROR_RECORD_ALREADY_EXISTS')
 						{
 							$langs->load("errors");
@@ -1108,7 +1110,7 @@ class Project extends CommonObject
 			}
 
 			//Duplicate file
-			if ($clone_file)
+			if ($clone_project_file)
 			{
 				require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
@@ -1151,7 +1153,7 @@ class Project extends CommonObject
 
 			    foreach ($tasksarray as $tasktoclone)
 			    {
-					$result_clone = $taskstatic->createFromClone($tasktoclone->id,$clone_project_id,$tasktoclone->fk_parent,true,true,false,true,true,false);
+					$result_clone = $taskstatic->createFromClone($tasktoclone->id,$clone_project_id,$tasktoclone->fk_parent,true,true,false,$clone_task_file,true,false);
 					if ($result_clone <= 0)
 				    {
 				    	$this->error.=$result_clone->error;
@@ -1181,7 +1183,7 @@ class Project extends CommonObject
 			    	{
 			    		$taskstatic->fk_task_parent=$tab_conv_child_parent[$taskstatic->fk_task_parent];
 			    	}
-			    	$res=$taskstatic->update($user);
+			    	$res=$taskstatic->update($user,$notrigger);
 			    	if ($result_clone <= 0)
 				    {
 				    	$this->error.=$taskstatic->error;

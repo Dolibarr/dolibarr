@@ -1,5 +1,4 @@
 # Dolibarr language file - nl_BE - errors
-CHARSET=UTF-8
 ErrorLoginAlreadyExists=Inloggen %s bestaat reeds.
 ErrorGroupAlreadyExists=Groep %s bestaat reeds.
 ErrorFailToDeleteFile=Mislukt om bestand '<b>%s</b>' te verwijderen

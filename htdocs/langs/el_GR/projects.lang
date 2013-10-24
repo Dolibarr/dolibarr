@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - projects
-CHARSET=UTF-8
 Project=Έργο
 Projects=Έργα
 SharedProject=Όλοι
@@ -89,7 +88,8 @@ CloneProject=Clone project
 CloneTasks=Clone tasks
 CloneContacts=Clone contacts
 CloneNotes=Clone notes
-CloneFiles=Clone joined files
+# CloneProjectFiles=Clone project joined files
+# CloneTaskFiles=Clone task(s) joined files (if task(s) cloned)
 ConfirmCloneProject=Are you sure to clone this project ?
 ProjectReportDate=Change task date according project start date
 ErrorShiftTaskDate=Impossible to shift task date according to new project start date
@@ -104,6 +104,8 @@ TypeContact_project_task_internal_TASKEXECUTIVE=Εκτελεστική ομάδ�
 TypeContact_project_task_external_TASKEXECUTIVE=Εκτελεστική ομάδα
 TypeContact_project_task_internal_CONTRIBUTOR=Συνεισφέρων
 TypeContact_project_task_external_CONTRIBUTOR=Συνεισφέρων
+# SelectElement=Elements to referring the project
+# AddElement=Refering
 # Documents models
 DocumentModelBaleine=Μοντέλο έκθεση Μια πλήρης έργου (logo. ..)
 PlannedWorkload = Σχέδιο φόρτου εργασίας

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2006-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2013 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2010-2013 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2012      Christophe Battarel  <christophe.battarel@altairis.fr>
  * Copyright (C) 2011-2012 Philippe Grand	    <philippe.grand@atoo-net.com>
@@ -464,7 +464,7 @@ abstract class CommonObject
         $sql.= " WHERE tc.element='".$this->element."'";
         if ($activeonly == 1)
         	$sql.= " AND tc.active=1"; // only the active type
-        	
+
         if (! empty($source)) $sql.= " AND tc.source='".$source."'";
         $sql.= " ORDER by tc.".$order;
 
@@ -1112,9 +1112,9 @@ abstract class CommonObject
 					$row = $this->db->fetch_row($resql);
 					$rows[] = $row[0];	// Add parent line into array rows
 					$childrens = $this->getChildrenOfLine($row[0]);
-					if (! empty($children))
+					if (! empty($childrens))
 					{
-						foreach($children as $child)
+						foreach($childrens as $child)
 						{
 							array_push($rows, $child);
 						}
@@ -2621,7 +2621,7 @@ abstract class CommonObject
         }
     }
 
-    
+
 
     /* This is to show add lines */
 

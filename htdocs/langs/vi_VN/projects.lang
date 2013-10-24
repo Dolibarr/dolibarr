@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - projects
-CHARSET=UTF-8
 Project=Dự án
 Projects=Các dự án
 SharedProject=Mọi người
@@ -89,7 +88,8 @@ CloneProject=Nhân bản dự án
 CloneTasks=Nhân bản tác vụ
 CloneContacts=Nhân bản liên lạc
 CloneNotes=Nhân bản các ghi chú
-CloneFiles=Nhân bản các tập tin đã kết nối
+# CloneProjectFiles=Clone project joined files
+# CloneTaskFiles=Clone task(s) joined files (if task(s) cloned)
 ConfirmCloneProject=Bạn có chắc rằng bạn muốn nhân bản dự án này?
 ProjectReportDate=Thay đổi thời gian tác vụ theo thời gian bắt đầu dự án
 ErrorShiftTaskDate=Không thể dịch chuyển ngày của phần tác vụ dựa theo ngày bắt đầu của dự án mới
@@ -104,6 +104,8 @@ TypeContact_project_task_internal_TASKEXECUTIVE=Thi hành tác vụ
 TypeContact_project_task_external_TASKEXECUTIVE=Thi hành tác vụ
 TypeContact_project_task_internal_CONTRIBUTOR=Người đóng góp
 TypeContact_project_task_external_CONTRIBUTOR=Người đóng góp
+# SelectElement=Elements to referring the project
+# AddElement=Refering
 # Documents models
 DocumentModelBaleine=Mô hình báo cáo hoàn chỉnh của dự án (lôgô...)
 PlannedWorkload = Tải tiến trình công việc đã dự định

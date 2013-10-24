@@ -1,5 +1,4 @@
 # Dolibarr language file - en_IN - admin
-CHARSET=UTF-8
 Module20Name=Quotations
 Module20Desc=Quotation's management
 Permission21=Read quotations

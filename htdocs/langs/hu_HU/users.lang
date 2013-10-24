@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - users
-CHARSET=UTF-8
 UserCard=Felhasználó kártya
 ContactCard=Kapcsolat kártya
 GroupCard=Csoport kártya
@@ -117,3 +116,5 @@ DontDowngradeSuperAdmin=Csak egy superadmin lehet downgrade 1 superadmin
 # HierarchicalResponsible=Hierarchical responsible
 # HierarchicView=Hierarchical view
 # UseTypeFieldToChange=Use field Type to change
+# OpenIDURL=OpenID URL
+# LoginUsingOpenID=Login using OpenID

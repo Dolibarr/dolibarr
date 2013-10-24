@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - withdrawals
-CHARSET=UTF-8
 StandingOrdersArea=Постоянни нареждания област
 CustomersStandingOrdersArea=Клиентите постоянни нареждания област
 StandingOrders=Постоянните поръчки
@@ -93,5 +92,5 @@ InfoTransMessage=Постоянната за %s е предавана до ба�
 InfoTransData=Размер: %s <br> Metode: %s <br> Дата: %s
 InfoFoot=Това е автоматично съобщение, изпратено от Dolibarr
 InfoRejectSubject=Постоянния за отказа
-InfoRejectMessage=Здравейте, <br><br> на standig реда на фактура %s, свързани на компанията %s, с размера на %s е било отказано от банката. <br><br> - <br> % $
+# InfoRejectMessage=Hello,<br><br>the standing order of invoice %s related to the company %s, with an amount of %s has been refused by the bank.<br><br>--<br>%s
 ModeWarning=Възможност за реален режим не е създаден, спираме след тази симулация

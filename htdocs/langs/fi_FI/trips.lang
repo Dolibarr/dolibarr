@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - trips
-CHARSET=UTF-8
 Trip=Matka
 Trips=Retket
 TripsAndExpenses=Matkat ja kulut

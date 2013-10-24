@@ -74,7 +74,7 @@ class doc_generic_order_odt extends ModelePDFCommandes
 		$this->option_modereg = 0;                 // Affiche mode reglement
 		$this->option_condreg = 0;                 // Affiche conditions reglement
 		$this->option_codeproduitservice = 0;      // Affiche code produit-service
-		$this->option_multilang = 0;               // Dispo en plusieurs langues
+		$this->option_multilang = 1;               // Dispo en plusieurs langues
 		$this->option_escompte = 0;                // Affiche si il y a eu escompte
 		$this->option_credit_note = 0;             // Support credit notes
 		$this->option_freetext = 1;				   // Support add of a personalised text
@@ -392,15 +392,22 @@ class doc_generic_order_odt extends ModelePDFCommandes
 
 				// Open and load template
 				require_once ODTPHP_PATH.'odf.php';
-				$odfHandler = new odf(
-					$srctemplatepath,
-					array(
-					'PATH_TO_TMP'	  => $conf->commande->dir_temp,
-					'ZIP_PROXY'		  => 'PclZipProxy',	// PhpZipProxy or PclZipProxy. Got "bad compression method" error when using PhpZipProxy.
-					'DELIMITER_LEFT'  => '{',
-					'DELIMITER_RIGHT' => '}'
-					)
-				);
+				try {
+					$odfHandler = new odf(
+						$srctemplatepath,
+						array(
+						'PATH_TO_TMP'	  => $conf->commande->dir_temp,
+						'ZIP_PROXY'		  => 'PclZipProxy',	// PhpZipProxy or PclZipProxy. Got "bad compression method" error when using PhpZipProxy.
+						'DELIMITER_LEFT'  => '{',
+						'DELIMITER_RIGHT' => '}'
+						)
+					);
+				}
+				catch(Exception $e)
+				{
+					$this->error=$e->getMessage();
+					return -1;
+				}
 				// After construction $odfHandler->contentXml contains content and
 				// [!-- BEGIN row.lines --]*[!-- END row.lines --] has been replaced by
 				// [!-- BEGIN lines --]*[!-- END lines --]
@@ -533,6 +540,18 @@ class doc_generic_order_odt extends ModelePDFCommandes
 					$this->error=$e->getMessage();
 					dol_syslog($this->error, LOG_WARNING);
 					return -1;
+				}
+
+				// Replace labels translated
+				$tmparray=$outputlangs->get_translations_for_substitutions();
+				foreach($tmparray as $key=>$value)
+				{
+					try {
+						$odfHandler->setVars($key, $value, true, 'UTF-8');
+					}
+					catch(OdfException $e)
+					{
+					}
 				}
 
 				// Call the beforeODTSave hook

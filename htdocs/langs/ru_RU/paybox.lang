@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - paybox
-CHARSET=UTF-8
 PayBoxSetup=PayBox модуль настройки
 PayBoxDesc=Этот модуль предложить страниц, чтобы платеж по <a href="http://www.paybox.com" target="_blank">Paybox</a> клиентами. Это может быть использовано для свободного платежа или за плату по тому или иному объекту Dolibarr (счетов-фактур, порядка, ...)
 FollowingUrlAreAvailableToMakePayments=После URL, можно предложить страницу к клиенту сделать платеж по Dolibarr объектов
@@ -33,3 +32,6 @@ VendorName=Имя поставщика
 CSSUrlForPaymentForm=CSS-стилей URL для оплаты форме
 MessageOK=Сообщение на странице проверки возвращение оплаты
 MessageKO=Сообщение на странице отменен возврат оплаты
+# NewPayboxPaymentReceived=New Paybox payment received
+# NewPayboxPaymentFailed=New Paybox payment tried but failed
+# PAYBOX_PAYONLINE_SENDEMAIL=EMail to warn after a payment (success or failed)

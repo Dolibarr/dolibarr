@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - propal
-CHARSET=UTF-8
 Proposals=Üzleti ajánlatok
 Proposal=Üzleti ajánlat
 ProposalShort=Javaslat
@@ -34,7 +33,7 @@ ShowPropal=Mutasd javaslat
 PropalsDraft=Piszkozatok
 PropalsOpened=Megnyitotta
 PropalsNotBilled=Zárt nem számlázzák
-PropalStatusDraft=Tervezet (igények érvényesítése)
+PropalStatusDraft=Tervezet (kell érvényesíteni)
 PropalStatusValidated=Jóváhagyott (javaslat nyitott)
 PropalStatusOpened=Jóváhagyott (javaslat nyitott)
 PropalStatusClosed=Zárva

@@ -515,22 +515,7 @@ function quotedPrintEncode($str,$forcal=0)
 function quotedPrintDecode($str)
 {
 	$out = preg_replace('/=\r?\n/', '', $str);
-	/*
-	 * preg_replace /e modifier is deprecated in PHP 5.5
-	 * but anonymous functions for use in preg_replace_callback are only available from 5.3.0
-	 */
-	if (version_compare(PHP_VERSION, '5.3.0') >= 0) {
-		$out = preg_replace_callback(
-			'/=([A-F0-9]{2})/',
-			function ($m) {
-				return chr(hexdec($m[1]));
-			},
-			$out
-		);
-	} else {
-		$out = preg_replace('/=([A-F0-9]{2})/e', chr(hexdec('\\1')), $out);
-	}
-
+	$out = quoted_printable_decode($out);	// Available with PHP 4+
 	return trim($out);
 }
 

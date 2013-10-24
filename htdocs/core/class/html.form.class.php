@@ -4,7 +4,7 @@
  * Copyright (C) 2004      Benoit Mortier        <benoit.mortier@opensides.be>
  * Copyright (C) 2004      Sebastien Di Cintio   <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Eric Seigne           <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2012 Regis Houssin         <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2013 Regis Houssin         <regis.houssin@capnetworks.com>
  * Copyright (C) 2006      Andre Cianfarani      <acianfa@free.fr>
  * Copyright (C) 2006      Marc Barilley/Ocebo   <marc@ocebo.com>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerker@telenet.be>
@@ -800,7 +800,7 @@ class Form
                 while ($i < $num)
                 {
                     $obj = $this->db->fetch_object($resql);
-                    
+
                     if ($conf->global->SOCIETE_ADD_REF_IN_LIST) {
                     	if (($obj->client) && (!empty($obj->code_client))) {
                     		$label = $obj->code_client. ' - ';
@@ -814,7 +814,7 @@ class Form
                     {
                     	$label=$obj->nom;
                     }
-                    
+
                     if ($showtype)
                     {
                         if ($obj->client || $obj->fournisseur) $label.=' (';
@@ -2484,9 +2484,9 @@ class Form
 
     /**
      *     Show a confirmation HTML form or AJAX popup.
-     *     Easiest way to use this is with useajax=1. 
-     *     If you use useajax='xxx', you must also add jquery code to trigger opening of box (with correct parameters) 
-     *     just after calling this method. For example: 
+     *     Easiest way to use this is with useajax=1.
+     *     If you use useajax='xxx', you must also add jquery code to trigger opening of box (with correct parameters)
+     *     just after calling this method. For example:
      *       print '<script type="text/javascript">'."\n";
      *       print 'jQuery(document).ready(function() {'."\n";
      *       print 'jQuery(".xxxlink").click(function(e) { jQuery("#aparamid").val(jQuery(this).attr("rel")); jQuery("#dialog-confirm-xxx").dialog("open"); return false; });'."\n";
@@ -2587,9 +2587,9 @@ class Form
             $more.='</table>'."\n";
         }
 
-		// JQUI method dialog is broken with jmobile, we use standard HTML. 
+		// JQUI method dialog is broken with jmobile, we use standard HTML.
 		// Note: When using dol_use_jmobile, you must also check code for button use a GET url with action=xxx and output the confirm code only when action=xxx
-        if (! empty($conf->dol_use_jmobile)) $useajax=0;	
+        if (! empty($conf->dol_use_jmobile)) $useajax=0;
 
         if ($useajax && $conf->use_javascript_ajax)
         {
@@ -3280,7 +3280,8 @@ class Form
      *                  					Si vendeur non assujeti a TVA, TVA par defaut=0. Fin de regle.
      *                  					Si le (pays vendeur = pays acheteur) alors la TVA par defaut=TVA du produit vendu. Fin de regle.
      *                  					Si (vendeur et acheteur dans Communaute europeenne) et bien vendu = moyen de transports neuf (auto, bateau, avion), TVA par defaut=0 (La TVA doit etre paye par l'acheteur au centre d'impots de son pays et non au vendeur). Fin de regle.
-     *                  					Si (vendeur et acheteur dans Communaute europeenne) et bien vendu autre que transport neuf alors la TVA par defaut=TVA du produit vendu. Fin de regle.
+	 *                                      Si vendeur et acheteur dans Communauté européenne et acheteur= particulier alors TVA par défaut=TVA du produit vendu. Fin de règle.
+	 *                                      Si vendeur et acheteur dans Communauté européenne et acheteur= entreprise alors TVA par défaut=0. Fin de règle.
      *                  					Sinon la TVA proposee par defaut=0. Fin de regle.
      *  @param	bool	$options_only		Return options only (for ajax treatment)
      *  @return	void
@@ -3376,7 +3377,7 @@ class Form
 
         	// Disabled if seller is not subject to VAT
         	$disabled=false; $title='';
-        	if (is_object($societe_vendeuse) && $societe_vendeuse->id == $mysoc->id && $societe_vendeuse->tva_assuj == "0") 
+        	if (is_object($societe_vendeuse) && $societe_vendeuse->id == $mysoc->id && $societe_vendeuse->tva_assuj == "0")
         	{
         		$title=' title="'.$langs->trans('VATIsNotUsed').'"';
         		$disabled=true;

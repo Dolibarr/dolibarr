@@ -125,16 +125,16 @@ if (empty($reshook))
     if ($action == 'setaccountancy_code_buy')
     {
         $result = $object->setValueFrom('accountancy_code_buy', GETPOST('accountancy_code_buy'));
-        if ($result < 0)
-        	setEventMessage(join(',',$object->errors), 'errors');
+        if ($result < 0) setEventMessage(join(',',$object->errors), 'errors');
+        else $object->accountancy_code_buy=GETPOST('accountancy_code_buy');
         $action="";
     }
 
     if ($action == 'setaccountancy_code_sell')
     {
         $result = $object->setValueFrom('accountancy_code_sell', GETPOST('accountancy_code_sell'));
-        if ($result < 0)
-        	setEventMessage(join(',',$object->errors), 'errors');
+        if ($result < 0) setEventMessage(join(',',$object->errors), 'errors');
+        else $object->accountancy_code_sell=GETPOST('accountancy_code_sell');
         $action="";
     }
 
@@ -386,7 +386,7 @@ if (empty($reshook))
         {
             $result = $object->delete($object->id);
         }
-		 
+
         if ($result > 0)
         {
             header('Location: '.DOL_URL_ROOT.'/product/liste.php?delprod='.urlencode($object->ref));
@@ -736,7 +736,7 @@ else
             print '<input name="seuil_stock_alerte" type="hidden" value="0">';
             print '<input name="desiredstock" type="hidden" value="0">';
         }
-        
+
         // Description (used in invoice, propal...)
         print '<tr><td valign="top">'.$langs->trans("Description").'</td><td>';
 
@@ -942,7 +942,7 @@ else
                 print "<tr>".'<td>'.$langs->trans("StockLimit").'</td><td colspan="2">';
                 print '<input name="seuil_stock_alerte" size="4" value="'.$object->seuil_stock_alerte.'">';
                 print '</td></tr>';
-                
+
                 print "<tr>".'<td>'.$langs->trans("DesiredStock").'</td><td colspan="2">';
                 print '<input name="desiredstock" size="4" value="'.$object->desiredstock.'">';
                 print '</td></tr>';

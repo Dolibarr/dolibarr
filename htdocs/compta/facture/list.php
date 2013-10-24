@@ -62,6 +62,7 @@ $confirm=GETPOST('confirm','alpha');
 $lineid=GETPOST('lineid','int');
 $userid=GETPOST('userid','int');
 $search_ref=GETPOST('sf_ref')?GETPOST('sf_ref','alpha'):GETPOST('search_ref','alpha');
+$search_refcustomer=GETPOST('search_refcustomer','alpha');
 $search_societe=GETPOST('search_societe','alpha');
 $search_montant_ht=GETPOST('search_montant_ht','alpha');
 $search_montant_ttc=GETPOST('search_montant_ttc','alpha');
@@ -139,7 +140,7 @@ $facturestatic=new Facture($db);
 
 if (! $sall) $sql = 'SELECT';
 else $sql = 'SELECT DISTINCT';
-$sql.= ' f.rowid as facid, f.facnumber, f.type, f.note_private, f.increment, f.total as total_ht, f.tva as total_tva, f.total_ttc,';
+$sql.= ' f.rowid as facid, f.facnumber, f.ref_client, f.type, f.note_private, f.increment, f.total as total_ht, f.tva as total_tva, f.total_ttc,';
 $sql.= ' f.datef as df, f.date_lim_reglement as datelimite,';
 $sql.= ' f.paye as paye, f.fk_statut,';
 $sql.= ' s.nom, s.rowid as socid';
@@ -176,6 +177,10 @@ if ($filtre)
 if ($search_ref)
 {
     $sql .= natural_search('f.facnumber', $search_ref);
+}
+if ($search_refcustomer)
+{
+	$sql .= natural_search('f.ref_client', $search_refcustomer);
 }
 if ($search_societe)
 {
@@ -244,6 +249,7 @@ if ($resql)
     if ($month)              $param.='&month='.$month;
     if ($year)               $param.='&year=' .$year;
     if ($search_ref)         $param.='&search_ref=' .$search_ref;
+    if ($search_refcustomer) $param.='&search_refcustomer=' .$search_refcustomer;
     if ($search_societe)     $param.='&search_societe=' .$search_societe;
     if ($search_sale > 0)    $param.='&search_sale=' .$search_sale;
     if ($search_user > 0)    $param.='&search_user=' .$search_user;
@@ -273,13 +279,14 @@ if ($resql)
     if ($moreforfilter)
     {
         print '<tr class="liste_titre">';
-        print '<td class="liste_titre" colspan="9">';
+        print '<td class="liste_titre" colspan="10">';
         print $moreforfilter;
         print '</td></tr>';
     }
 
     print '<tr class="liste_titre">';
     print_liste_field_titre($langs->trans('Ref'),$_SERVER['PHP_SELF'],'f.facnumber','',$param,'',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans('RefCustomer'),$_SERVER["PHP_SELF"],'f.ref_client','',$param,'',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans('Date'),$_SERVER['PHP_SELF'],'f.datef','',$param,'align="center"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("DateDue"),$_SERVER['PHP_SELF'],"f.date_lim_reglement",'',$param,'align="center"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans('Company'),$_SERVER['PHP_SELF'],'s.nom','',$param,'',$sortfield,$sortorder);
@@ -294,8 +301,11 @@ if ($resql)
     // Filters lines
     print '<tr class="liste_titre">';
     print '<td class="liste_titre" align="left">';
-    print '<input class="flat" size="10" type="text" name="search_ref" value="'.$search_ref.'">';
+    print '<input class="flat" size="6" type="text" name="search_ref" value="'.$search_ref.'">';
     print '</td>';
+	print '<td class="liste_titre">';
+	print '<input class="flat" size="6" type="text" name="search_refcustomer" value="'.$search_refcustomer.'">';
+	print '</td>';
     print '<td class="liste_titre" align="center">';
     if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat" type="text" size="1" maxlength="2" name="day" value="'.$day.'">';
     print '<input class="flat" type="text" size="1" maxlength="2" name="month" value="'.$month.'">';
@@ -358,13 +368,18 @@ if ($resql)
 
             print "</td>\n";
 
-            // Date
-            print '<td align="center" nowrap>';
+			// Customer ref
+			print '<td class="nowrap">';
+			print $objp->ref_client;
+			print '</td>';
+
+			// Date
+            print '<td align="center" class="nowrap">';
             print dol_print_date($db->jdate($objp->df),'day');
             print '</td>';
 
             // Date limit
-            print '<td align="center" nowrap="1">'.dol_print_date($datelimit,'day');
+            print '<td align="center" class="nowrap">'.dol_print_date($datelimit,'day');
             if ($datelimit < ($now - $conf->facture->client->warning_delay) && ! $objp->paye && $objp->fk_statut == 1 && ! $paiement)
             {
                 print img_warning($langs->trans('Late'));
@@ -403,7 +418,7 @@ if ($resql)
         {
             // Print total
             print '<tr class="liste_total">';
-            print '<td class="liste_total" colspan="4" align="left">'.$langs->trans('Total').'</td>';
+            print '<td class="liste_total" colspan="5" align="left">'.$langs->trans('Total').'</td>';
             print '<td class="liste_total" align="right">'.price($total_ht,0,$langs).'</td>';
             print '<td class="liste_total" align="right">'.price($total_tva,0,$langs).'</td>';
             print '<td class="liste_total" align="right">'.price($total_ttc,0,$langs).'</td>';

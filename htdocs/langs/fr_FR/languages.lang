@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - languages
-CHARSET=UTF-8
 
 Language_ar_AR=Arabe
 Language_ar_SA=Arabe
@@ -21,6 +20,8 @@ Language_es_ES=Espagnol
 Language_es_AR=Espagnol (Argentine)
 Language_es_HN=Espagnol (Honduras)
 Language_es_MX=Espagnol (Mexique)
+Language_es_PY=Espagnol (Paraguay)
+Language_es_PE=Espagnol (Peru)
 Language_es_PR=Espagnol (Puerto Rico)
 Language_et_EE=Estonien
 Language_fa_IR=Perse

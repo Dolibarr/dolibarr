@@ -621,7 +621,7 @@ class Product extends CommonObject
 			}
 
 			// Delete all child tables
-			$elements = array('product_fournisseur_price','product_price','product_lang','categorie_product');
+			$elements = array('product_fournisseur_price','product_price','product_lang','categorie_product','product_stock');
 			foreach($elements as $table)
 			{
 				if (! $error)
@@ -644,7 +644,7 @@ class Product extends CommonObject
 			{
 				$sqlz = "DELETE FROM ".MAIN_DB_PREFIX."product";
 				$sqlz.= " WHERE rowid = ".$id;
-				dol_syslog(get_class($this).'::delete sql='.$sql, LOG_DEBUG);
+				dol_syslog(get_class($this).'::delete sql='.$sqlz, LOG_DEBUG);
 				$resultz = $this->db->query($sqlz);
 				if ( ! $resultz )
 				{

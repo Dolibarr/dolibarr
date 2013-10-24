@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - ftp
-CHARSET=UTF-8
 FTPClientSetup=بروتوكول نقل الملفات العملاء الإعداد وحدة
 NewFTPClient=جديد الإعداد بروتوكول نقل الملفات الصدد
 FTPArea=بروتوكول نقل الملفات المنطقة

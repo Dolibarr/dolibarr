@@ -128,6 +128,14 @@ if ($action == 'cstc')
 	if ($result < 0) setEventMessage($object->error,'errors');
 }
 
+// Update communication level
+if ($action == 'setOutstandingBill')
+{
+	$object->fetch($id);
+	$object->outstanding_limit=GETPOST('OutstandingBill');
+	$result=$object->set_OutstandingBill($user);
+	if ($result < 0) setEventMessage($object->error,'errors');
+}
 
 
 /*
@@ -368,6 +376,18 @@ if ($id > 0)
 	else print $langs->trans("DiscountNone");
 	print '</td>';
 	print '</tr>';
+
+	if ($object->client)
+	{
+		print '<tr>';
+		print '<td>';
+		print $form->editfieldkey("OutstandingBill",'OutstandingBill',$object->outstanding_limit,$object,$user->rights->societe->creer);
+		print '</td><td colspan="3">';
+		print $form->editfieldval("OutstandingBill",'OutstandingBill',$object->outstanding_limit,$object,$user->rights->societe->creer);
+		print '</td>';
+		print '</tr>';
+	}
+
 
 	// Multiprice level
 	if (! empty($conf->global->PRODUIT_MULTIPRICES))

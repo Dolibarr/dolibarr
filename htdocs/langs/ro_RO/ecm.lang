@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - ecm
-CHARSET=UTF-8
 MenuECM=Documente
 DocsMine=Documentele mele
 DocsGenerated=Documente Generate
@@ -24,10 +23,10 @@ ECMNewDocument=Document nou
 ECMCreationDate=Data creării
 ECMNbOfFilesInDir=Număr fişiere în director
 ECMNbOfSubDir=Număr sub-directoare
-ECMNbOfFilesInSubDir=Număr de fişiere în sub-directoare
+# ECMNbOfFilesInSubDir=Number of files in sub-directories
 ECMCreationUser=Creator
-ECMArea=Zona ECM
-ECMAreaDesc=Zona ECM (Electronic Content Management)  vă permite să salvaţi, să partajaţi şi căutaţi rapid tot felul de documente în Dolibarr.
+# ECMArea=EDM area
+# ECMAreaDesc=The EDM (Electronic Document Management) area allows you to save, share and search quickly all kind of documents in Dolibarr.
 ECMAreaDesc2=* Directoarele automate sunt completate în mod automat atunci când se adaugă documentele din fişa acelui element. <br> * Directoarele manuale poate fi folosite pentru a salva documente ce nu sunt legate de un anumit element.
 ECMSectionWasRemoved=Directorul <b>%s</b> a fost ştears.
 ECMDocumentsSection=Document director

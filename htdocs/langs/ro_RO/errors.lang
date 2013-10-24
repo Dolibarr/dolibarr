@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - errors
-CHARSET=UTF-8
 
 # No errors
 NoErrorCommitIsDone=Ncio eroare, dăm commit
@@ -125,6 +124,9 @@ ErrorToConnectToMysqlCheckInstance=Conectarea la baza de date eșuează. Verific
 ErrorFailedToAddContact=Eşuare la adaugare contact
 ErrorDateMustBeBeforeToday=Data nu poate fi mai mare decât azi
 ErrorPaymentModeDefinedToWithoutSetup=Un modul de plată a fost setat la tipul% s, dar setarea modulului Facturi nu a fost finalizată  a arăta pentru acest mod de plată.
+# ErrorPHPNeedModule=Error, your PHP must have module <b>%s</b> installed to use this feature.
+# ErrorOpenIDSetupNotComplete=You setup Dolibarr config file to allow OpenID authentication, but URL of OpenID service is not defined into constant %s
+# ErrorWarehouseMustDiffers=Source and target warehouses must differs
 
 # Warnings
 WarningMandatorySetupNotComplete=Parametri de setare obligatorii nu sunt încă definiţi

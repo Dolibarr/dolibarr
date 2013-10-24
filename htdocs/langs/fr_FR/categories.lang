@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - categories
-CHARSET=UTF-8
 Category=Catégorie
 Categories=Catégories
 Rubrique=Rubrique
@@ -79,10 +78,10 @@ ProductsCategoryShort=Catégorie produits
 MembersCategoryShort=Catégorie adhérent
 SuppliersCategoriesShort=Catégories fournisseurs
 CustomersCategoriesShort=Catégories clients
-CustomersProspectsCategoriesShort=Catégories clients/prospects
+CustomersProspectsCategoriesShort=Catégories clients/prosp.
 ProductsCategoriesShort=Catégories produits
 MembersCategoriesShort=Catégories adhérents
-ContactCategoriesShort=Catégorie Contacts
+ContactCategoriesShort=Catégories contacts
 ThisCategoryHasNoProduct=Cette catégorie ne contient aucun produit.
 ThisCategoryHasNoSupplier=Cette catégorie ne contient aucun fournisseur.
 ThisCategoryHasNoCustomer=Cette catégorie ne contient aucun client.

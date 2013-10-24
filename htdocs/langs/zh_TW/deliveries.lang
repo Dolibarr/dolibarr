@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - deliveries
-CHARSET=UTF-8
 Delivery=交貨
 Deliveries=交付
 DeliveryCard=交付卡

@@ -1,8 +1,8 @@
 # Dolibarr language file - Source file is en_US - sendings
-CHARSET=UTF-8
 RefSending=Rif. spedizione
 Sending=Spedizione
 Sendings=Spedizioni
+Shipment=Spedizione
 Shipments=Spedizioni
 Receivings=Ricezioni
 SendingsArea=Sezione spedizioni
@@ -72,5 +72,5 @@ DocumentModelSirocco=Semplice modello di documento per le ricevute di consegna
 DocumentModelTyphon=Modello più completo di documento per le ricevute di consegna (logo. ..)
 
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=EXPEDITION_ADDON_NUMBER costante non definita
-# SumOfProductVolumes=Sum of product volumes
-# SumOfProductWeights=Sum of product weights
+SumOfProductVolumes=Totale volume prodotti
+SumOfProductWeights=Totale peso prodotti

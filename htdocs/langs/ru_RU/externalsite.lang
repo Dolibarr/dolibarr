@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - externalsite
-CHARSET=UTF-8
 ExternalSiteSetup=Установка ссылки на внешние веб-сайт
 ExternalSiteURL=Внешний URL сайта
 # ExternalSiteModuleNotComplete=Module ExternalSite was not configured properly.

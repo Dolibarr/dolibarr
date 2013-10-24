@@ -1,34 +1,5 @@
-/*
- * Language code: nl_NL
- * Automatic generated via autotranslator.php tool
- * Generation date 2011-10-10 01:46:39
- */
-
-
-// START - Lines generated via autotranslator.php tool (2011-10-10 01:46:39).
-// Reference language: en_US -> nl_NL
-CHARSET=UTF-8
-ShoppingCart=Winkelwagen
-NewSell=Nieuwe verkopen
-BackOffice=Back office
-AddThisArticle=Voeg dit artikel
-RestartSelling=Ga terug op de verkopen
-SellFinished=Verkoop klaar
-PrintTicket=Print ticket
-NoResults=Geen resultaten
-NoProductFound=Geen artikel gevonden
-ProductFound=product gevonden
+# Language file - Source file is en_US - cashdesk
 CashDeskMenu=Point of sale
-CashDeskStock=Voorraad
-CashDeskOn=op
-CashDeskThirdParty=Third party
-ProductsFound=producten gevonden
-NoArticle=Geen artikel
-Identification=Identificatie
-Article=Artikel
-Difference=Verschil
-TotalTicket=Totale ticketprijs
-NoVAT=Geen btw voor deze verkoop
 CashDesk=Point of sale
 CashDesks=Punt van de omzet
 CashDeskBank=Bankrekening
@@ -38,6 +9,26 @@ CashDeskBankCheque=Bankrekening (check)
 CashDeskWarehouse=Magazijn
 CashdeskShowServices=De verkoop van diensten
 CashDeskProducts=Producten
+CashDeskStock=Voorraad
+CashDeskOn=op
+CashDeskThirdParty=Third party
+# CashdeskDashboard=Point of sale access
+ShoppingCart=Winkelwagen
+NewSell=Nieuwe verkopen
+BackOffice=Back office
+AddThisArticle=Voeg dit artikel
+RestartSelling=Ga terug op de verkopen
+SellFinished=Verkoop klaar
+PrintTicket=Print ticket
+NoProductFound=Geen artikel gevonden
+ProductFound=product gevonden
+ProductsFound=producten gevonden
+NoArticle=Geen artikel
+Identification=Identificatie
+Article=Artikel
+Difference=Verschil
+TotalTicket=Totale ticketprijs
+NoVAT=Geen btw voor deze verkoop
 Change=Teveel ontvangen
 CalTip=Klik hier om de kalender te bekijken
 CashDeskSetupStock=U vraagt ​​om de balans op de factuur creatie, maar pakhuis daling want dit is was niet gedefinieerd <br> Verandering voorraad module setup, of kies een magazijn
@@ -45,4 +36,4 @@ BankToPay=Laad Account
 ShowCompany=Show Company
 ShowStock=Tonen magazijn
 DeleteArticle=Klik om dit artikel te verwijderen
-// STOP - Lines generated via autotranslator.php tool (2011-10-10 02:34:02).
+# FilterRefOrLabelOrBC=Search (Ref/Label)

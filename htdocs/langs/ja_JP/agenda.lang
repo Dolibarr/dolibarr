@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - agenda
-CHARSET=UTF-8
+# IdAgenda=ID event
 Actions=イベント
 ActionsArea=イベントエリア（アクションとタスク）
 Agenda= 議題
@@ -68,6 +68,7 @@ AgendaUrlOptions5=ユーザー<b>%s</b>によって行われたアクション�
 AgendaShowBirthdayEvents=誕生日の連絡先を表示する
 AgendaHideBirthdayEvents=誕生日の接点を隠す
 # Busy=Busy
+# ExportDataset_event1=List of agenda events
 
 # External Sites ical
 ExportCal=輸出カレンダー

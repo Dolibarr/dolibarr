@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - suppliers
-CHARSET=UTF-8
 Suppliers=供應商
 Supplier=供應商
 AddSupplier=新增供應商

@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - agenda
-CHARSET=UTF-8
+# IdAgenda=ID event
 Actions=Ενέργειες
 ActionsArea=Περιοχή Ενεργειών (γεγονότα και εργασίες)
 Agenda= Ημερολόγιο
@@ -68,6 +68,7 @@ AgendaUrlOptions5=<b>logind=%s</b> για να περιορίσετε τα απ�
 AgendaShowBirthdayEvents=Εμφάνιση γενεθλίων των προσώπων επικοινωνίας
 AgendaHideBirthdayEvents=Απόκρυψη γενεθλίων των προσώπων επικοινωνίας
 Busy=Απασχολ.
+# ExportDataset_event1=List of agenda events
 
 # External Sites ical
 ExportCal=Εξαγωγή ημερολογίου

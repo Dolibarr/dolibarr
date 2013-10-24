@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - ecm
-CHARSET=UTF-8
 MenuECM=Dokument
 DocsMine=Mina dokument
 DocsGenerated=Skapad dokument
@@ -24,10 +23,10 @@ ECMNewDocument=Nytt dokument
 ECMCreationDate=Datum för skapande
 ECMNbOfFilesInDir=Antalet filer i katalogen
 ECMNbOfSubDir=Antal underkataloger
-ECMNbOfFilesInSubDir=Nunber av Iles i underkataloger
+# ECMNbOfFilesInSubDir=Number of files in sub-directories
 ECMCreationUser=Creator
-ECMArea=ECM-området
-ECMAreaDesc=ECM (Electronic Content Management)-området kan du spara, dela och söka snabbt alla typer av dokument i Dolibarr.
+# ECMArea=EDM area
+# ECMAreaDesc=The EDM (Electronic Document Management) area allows you to save, share and search quickly all kind of documents in Dolibarr.
 ECMAreaDesc2=* Automatisk kataloger fylls automatiskt när man lägger till dokument från kort av ett element. <br> * Manuell kataloger kan användas för att spara dokument inte är knutna till ett visst element.
 ECMSectionWasRemoved=Nummer <b>%s</b> har tagits bort.
 ECMDocumentsSection=Dokument om katalogen

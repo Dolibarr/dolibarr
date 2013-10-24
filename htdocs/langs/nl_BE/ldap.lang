@@ -1,5 +1,4 @@
 # Dolibarr language file - nl_BE - ldap
-CHARSET=UTF-8
 DomainPassword=Wachtwoord voor het domein
 YouMustChangePassNextLogon=Wachtwoord voor <b>gebruiker %s</b> op het <b>domein %s</b> moet worden veranderd.
 UserMustChangePassNextLogon=Gebruiker moet wachtwoord wijzigen op het domein %s 

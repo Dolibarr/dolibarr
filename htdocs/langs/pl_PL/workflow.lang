@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - admin
-CHARSET= UTF-8
 WorkflowSetup=Workflow konfiguracji modułu
 WorkflowDesc=Moduł ten jest Zaprojektowane aby zmodyfikować zachowanie automatycznych działań w aplikacji. Domyślnie przepływ pracy jest otwarty (można zrobić coś w celu chcesz). Można włączyć automatyczne akcje, które są interesujące w.
 ThereIsNoWorkflowToModify=Nie ma przepływu pracy można modyfikować modułu został uaktywniony.
@@ -8,4 +7,5 @@ descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Tworzenie faktury klienta automatycznie p
 descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Tworzenie faktury klienta automatycznie po zatwierdzeniu umowy
 descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Tworzenie faktury klienta automatycznie po zamówienie klienta jest zamknięty
 # descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Classify linked source proposal to billed when customer order is set to paid
-# descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Classify linked source customer order to billed when customer invoice is set to paid
+# descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Classify linked source customer order(s) to billed when customer invoice is set to paid
+# descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Classify linked source customer order(s) to billed when customer invoice is validated

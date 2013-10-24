@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - help
-CHARSET=UTF-8
 CommunitySupport=Φόρουμ / Wiki υποστήριξη
 EMailSupport=Emails υποστήριξη
 RemoteControlSupport=Συνδεδεμένοι πραγματικό χρόνο / απομακρυσμένη υποστήριξη
@@ -16,7 +15,7 @@ TypeOfHelp=Τύπος
 NeedHelpCenter=Χρειάζεστε βοήθεια ή υποστήριξη;
 Efficiency=Αποδοτικότητα
 TypeHelpOnly=Βοήθεια μόνο
-TypeHelpDev=Βοήθεια + Ανάπτυξης
+TypeHelpDev=Βοήθεια + Ανάπτυξη
 TypeHelpDevForm=Βοήθεια + + Σύσταση Ανάπτυξης
 ToGetHelpGoOnSparkAngels1=Ορισμένες εταιρείες μπορεί να παρέχουν μια γρήγορη (άμεση κάποτε) και πιο αποτελεσματική online υποστήριξη, αναλαμβάνοντας τον έλεγχο του υπολογιστή σας. Οι βοηθοί μπορούν να βρεθούν στην ιστοσελίδα <b>%s:</b>
 ToGetHelpGoOnSparkAngels3=Μπορείτε επίσης να πάτε στη λίστα όλων των διαθέσιμων προπονητών για Dolibarr, γι 'αυτό κάντε κλικ στο κουμπί

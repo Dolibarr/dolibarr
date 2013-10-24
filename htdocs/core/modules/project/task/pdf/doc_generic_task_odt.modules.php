@@ -425,7 +425,7 @@ class doc_generic_task_odt extends ModelePDFTask
 					return -1;
 				}
 			}
-			
+
 
 			if (file_exists($dir))
 			{
@@ -455,15 +455,22 @@ class doc_generic_task_odt extends ModelePDFTask
 
 				// Open and load template
 				require_once ODTPHP_PATH.'odf.php';
-				$odfHandler = new odf(
-					$srctemplatepath,
-					array(
-					'PATH_TO_TMP'	  => $conf->projet->dir_temp,
-					'ZIP_PROXY'		  => 'PclZipProxy',	// PhpZipProxy or PclZipProxy. Got "bad compression method" error when using PhpZipProxy.
-					'DELIMITER_LEFT'  => '{',
-					'DELIMITER_RIGHT' => '}'
-					)
-				);
+				try {
+					$odfHandler = new odf(
+						$srctemplatepath,
+						array(
+						'PATH_TO_TMP'	  => $conf->projet->dir_temp,
+						'ZIP_PROXY'		  => 'PclZipProxy',	// PhpZipProxy or PclZipProxy. Got "bad compression method" error when using PhpZipProxy.
+						'DELIMITER_LEFT'  => '{',
+						'DELIMITER_RIGHT' => '}'
+						)
+					);
+				}
+				catch(Exception $e)
+				{
+					$this->error=$e->getMessage();
+					return -1;
+				}
 				// After construction $odfHandler->contentXml contains content and
 				// [!-- BEGIN row.lines --]*[!-- END row.lines --] has been replaced by
 				// [!-- BEGIN lines --]*[!-- END lines --]
@@ -677,7 +684,7 @@ class doc_generic_task_odt extends ModelePDFTask
 							$i++;
 						}
 						$this->db->free($resql);
-						
+
 						$odfHandler->mergeSegment($listlinestasktime);
 					}
 
@@ -711,7 +718,7 @@ class doc_generic_task_odt extends ModelePDFTask
 					//$listlines->merge();
 
 					$odfHandler->mergeSegment($listtasksfiles);
-						
+
 				}
 				catch(OdfException $e)
 				{
@@ -793,7 +800,7 @@ class doc_generic_task_odt extends ModelePDFTask
 							$contact['fullname']=$objectdetail->getFullName($outputlangs,1);
 
 							$tmparray=$this->get_substitutionarray_project_contacts($contact,$outputlangs);
-								
+
 							foreach($tmparray as $key => $val)
 							{
 								try

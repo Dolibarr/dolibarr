@@ -1,8 +1,8 @@
 # Dolibarr language file - Source file is en_US - sendings
-CHARSET=UTF-8
 RefSending=REF。出荷
 Sending=出荷
 Sendings=出荷
+Shipment=出荷
 Shipments=出荷
 Receivings=Receivings
 SendingsArea=出荷エリア

@@ -1,6 +1,5 @@
 # Dolibarr language file - en_ZA - compta
 # This file contains only line that must differs from en_US
-CHARSET=UTF-8
 AmountHTVATRealReceived=Amount excl VAT collected
 AmountHTVATRealPaid=Amount excl VAT paid
 VATToPay=VAT to pay

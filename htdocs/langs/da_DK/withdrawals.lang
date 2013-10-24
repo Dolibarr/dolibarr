@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - withdrawals
-CHARSET=UTF-8
 StandingOrdersArea=Stående ordrer område
 CustomersStandingOrdersArea=Kunder stående ordrer område
 StandingOrders=Stående ordrer
@@ -93,5 +92,5 @@ InfoTransMessage=Den stående ordre %s er transmited til bank ved %s %s. <br><br
 InfoTransData=Beløb: %s <br> Methodology: %s <br> Dato: %s
 InfoFoot=Dette er en automatisk sendes af Dolibarr
 InfoRejectSubject=Stående For nægtede
-InfoRejectMessage=Hej, <br><br> den standig rækkefølgen af ​​faktura %s relateret til selskabets %s, med et beløb på %s er blevet afvist af banken. <br><br> - <br> % $
+# InfoRejectMessage=Hello,<br><br>the standing order of invoice %s related to the company %s, with an amount of %s has been refused by the bank.<br><br>--<br>%s
 ModeWarning=Mulighed for real mode ikke var indstillet, vi stopper efter denne simulation

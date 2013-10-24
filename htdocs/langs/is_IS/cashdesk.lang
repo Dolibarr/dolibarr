@@ -1,5 +1,4 @@
 # Language file - Source file is en_US - cashdesk
-CHARSET=UTF-8
 CashDeskMenu=Sölustað
 CashDesk=Sölustað
 CashDesks=Benda á sölu
@@ -37,3 +36,4 @@ BankToPay=Gjald reiknings
 ShowCompany=Sýna fyrirtæki
 ShowStock=Sýna vöruhús
 DeleteArticle=Smelltu til að fjarlægja þessa grein
+# FilterRefOrLabelOrBC=Search (Ref/Label)

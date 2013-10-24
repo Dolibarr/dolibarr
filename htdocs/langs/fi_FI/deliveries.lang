@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - deliveries
-CHARSET=UTF-8
 Delivery=Toimitus
 Deliveries=Toimitukset
 DeliveryCard=Toimitus-kortti

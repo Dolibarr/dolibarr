@@ -1,5 +1,4 @@
 # Language file - Source file is en_US - cashdesk
-CHARSET=UTF-8
 CashDeskMenu=Az értékesítés helyén
 CashDesk=Az értékesítés helyén
 CashDesks=Értékesítési
@@ -37,3 +36,4 @@ BankToPay=Hitelszámla
 ShowCompany=Mutasd cég
 ShowStock=Mutasd raktár
 DeleteArticle=Kattintson, hogy távolítsa el ezt a cikket
+# FilterRefOrLabelOrBC=Search (Ref/Label)

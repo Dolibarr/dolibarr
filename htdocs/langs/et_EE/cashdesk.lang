@@ -1,5 +1,4 @@
 # Language file - Source file is en_US - cashdesk
-CHARSET=UTF-8
 CashDeskMenu=Müügikohas
 CashDesk=Müügikohas
 CashDesks=Müügikohtade
@@ -37,3 +36,4 @@ BankToPay=Charge Account
 ShowCompany=Näita ettevõte
 ShowStock=Näita ladu
 DeleteArticle=Vajuta, et eemaldada see artikkel
+# FilterRefOrLabelOrBC=Search (Ref/Label)

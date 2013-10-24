@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - admin
-CHARSET= UTF-8
 WorkflowSetup=Impostazioni flusso di lavoro
 WorkflowDesc=Questo modulo è progettato per impostare le azioni automatiche dell'applicazione. Per impostazione predefinita, il flusso di lavoro è aperto (puoi adattarlo alle tue esigenze). Puoi scegliere quali azioni automatiche abilitare.
 ThereIsNoWorkflowToModify=Non vi è alcun flusso di lavoro modificabile per il modulo.
@@ -8,4 +7,5 @@ descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Creare automaticamente una fattura attiva
 descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Creare automaticamente una fattura attiva alla convalida del contratto
 descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Creare automaticamente una fattura attiva alla chiusura dell'ordine cliente
 descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Classifica la proposta commerciale collegata come fatturare quando l'ordine cliente è impostato come pagato
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Classifica l'ordine del cliente come  fatturato quando la fattura attiva è impostata come pagata
+# descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Classify linked source customer order(s) to billed when customer invoice is set to paid
+# descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Classify linked source customer order(s) to billed when customer invoice is validated

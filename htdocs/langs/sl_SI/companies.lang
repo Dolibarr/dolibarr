@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - companies
-CHARSET=UTF-8
 ErrorCompanyNameAlreadyExists=Ime podjetja %s že obstaja. Izberite drugačno ime.
 ErrorPrefixAlreadyExists=Predpona %s že obstaja. Izberite drugačno predpono.
 ErrorSetACountryFirst=Najprej izberite državo
@@ -85,6 +84,8 @@ LocalTax1IsUsedES= RE is used
 LocalTax1IsNotUsedES= RE is not used
 LocalTax2IsUsedES= IRPF is used
 LocalTax2IsNotUsedES= IRPF is not used
+LocalTax1ES=RE
+LocalTax2ES=IRPF
 ThirdPartyEMail=%s
 WrongCustomerCode=Napačna koda kupca
 WrongSupplierCode=Napačna koda dobavitelja
@@ -395,7 +396,7 @@ InActivity=Aktiven
 ActivityCeased=Neaktiven
 ActivityStateFilter=Status aktivnosti
 # ProductsIntoElements=List of products into
-
+# OutstandingBill=Outstanding Bill
 # Monkey
 MonkeyNumRefModelDesc=Predlaga kodo kupca v formatu %syymm-nnnn in kodo dobavitelja v formatu %syymm-nnnn kjer je yy leto, mm mesec in nnnn zaporedna številka brez presledka, večja od 0.
 # Leopard

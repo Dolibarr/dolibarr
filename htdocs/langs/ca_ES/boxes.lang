@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - boxes
-CHARSET=UTF-8
 BoxLastRssInfos=Fils d'informació RSS
 BoxLastProducts=Els %s últims productes/serveis
 BoxProductsAlertStock=Productes en alerta d'estoc
@@ -75,7 +74,7 @@ NoRecordedProducts=Sense productes/serveis registrats
 NoRecordedProspects=Sense clients potencials registrats
 NoContractedProducts=Sense productes/serveis contractats
 NoRecordedContracts=Sense contractes registrats
-NoRecordedInterventions=Sense intervencions registrades
+# NoRecordedInterventions=No recorded interventions
 BoxLatestSupplierOrders=Últimes comandes a proveïdors
 BoxTitleLatestSupplierOrders=Les %s últimes comandes a proveïdors
 NoSupplierOrder=Sense comandes a proveïdors
@@ -85,8 +84,8 @@ BoxCustomersOrdersPerMonth=Comandes de clients per mes
 BoxSuppliersOrdersPerMonth=Comandes a proveïdors per mes
 BoxProposalsPerMonth=Pressupostos per mes
 NoTooLowStockProducts=Sense productes per sota de l'estoc mínim
-BoxProductDistribution=Repartiment de productes/serveis
-BoxProductDistributionFor=Repartiment de %s en %s
-ForCustomersInvoices=Factures a clients
-ForCustomersOrders=Comandes de clients
+# BoxProductDistribution=Products/Services distribution
+# BoxProductDistributionFor=Distribution of %s for %s
+ForCustomersInvoices=Factures a clientes
+# ForCustomersOrders=Customers orders
 ForProposals=Pressupostos

@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - withdrawals
-CHARSET=UTF-8
 StandingOrdersArea=Постоянные заказы области
 CustomersStandingOrdersArea=Клиенты Регламента области
 StandingOrders=Постоянные заказы
@@ -93,5 +92,5 @@ InfoTransMessage=Постоянное поручение %s был Переда�
 InfoTransData=Сумма: %s <br> Metode: %s <br> Дата: %s
 InfoFoot=Это автоматизированное сообщение, отправленное Dolibarr
 InfoRejectSubject=Постоянное платежное поручение отказался
-InfoRejectMessage=Добрый день, <br><br> standig порядок счета %s, связанные с компанией %s, с количеством %s было отказано в банке. <br><br> - <br> % $
+# InfoRejectMessage=Hello,<br><br>the standing order of invoice %s related to the company %s, with an amount of %s has been refused by the bank.<br><br>--<br>%s
 ModeWarning=Вариант для реального режима не был установлен, мы останавливаемся после этого моделирования

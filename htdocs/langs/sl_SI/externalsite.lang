@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - externalsite
-CHARSET=UTF-8
 ExternalSiteSetup=Setup se povezujejo na zunanji strani
 ExternalSiteURL=Zunanja stran URL
 # ExternalSiteModuleNotComplete=Module ExternalSite was not configured properly.

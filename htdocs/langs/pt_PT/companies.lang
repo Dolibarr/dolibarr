@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - companies
-CHARSET=UTF-8
 ErrorCompanyNameAlreadyExists=O nome da empresa %s já existe. Indique outro.
 ErrorPrefixAlreadyExists=O prefixo %s já existe. Indique outro.
 ErrorSetACountryFirst=Defina primeiro o país
@@ -85,6 +84,8 @@ LocalTax1IsUsedES= RE é usado
 LocalTax1IsNotUsedES= RE não é usada
 LocalTax2IsUsedES= IRPF é usado
 LocalTax2IsNotUsedES= IRPF não é usada
+LocalTax1ES=RE
+LocalTax2ES=IRPF
 ThirdPartyEMail=%s
 WrongCustomerCode=Código cliente incorrecto
 WrongSupplierCode=Código fornecedor incorrecto
@@ -104,7 +105,7 @@ ProfId3=ID profesional 3
 ProfId4=ID profesional 4
 ProfId5=Professional ID 5
 # ProfId6=Professional ID 6
-ProfId1AR=Prof Id 1 (CUIT / CUIL)
+ProfId1AR=Prof Id 1 (CUIL)
 ProfId2AR=Id Prof 2 (brutos Revenu)
 ProfId3AR=-
 ProfId4AR=-
@@ -224,9 +225,9 @@ ProfId3RU=Prof Id 3 (KPP)
 ProfId4RU=Prof Id 4 (OKPO)
 ProfId5RU=-
 # ProfId6RU=-
-VATIntra=IVA Intracomunitário
-VATIntraShort=IVA Intracomunitário Mínimo
-VATIntraVeryShort=IVA Intracomunitário Nulo
+VATIntra=CNPJ
+VATIntraShort=CNPJ
+VATIntraVeryShort=CNPJ
 VATIntraSyntaxIsValid=Sintaxe Válida
 VATIntraValueIsValid=Valor Válido
 ProspectCustomer=Cliente Potencial/Cliente
@@ -395,7 +396,7 @@ InActivity=Aberto
 ActivityCeased=Fechado
 ActivityStateFilter=Status de atividade
 # ProductsIntoElements=List of products into
-
+# OutstandingBill=Outstanding Bill
 # Monkey
 MonkeyNumRefModelDesc=Devolve um número baixo o formato %syymm-nnnn para os códigos de clientes e %syymm-nnnn para os códigos dos Fornecedores, donde yy é o ano, mm o mês e nnnn um contador sequêncial sem ruptura e sem Voltar a 0.
 # Leopard

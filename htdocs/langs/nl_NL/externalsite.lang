@@ -1,13 +1,4 @@
-/*
- * Language code: nl_NL
- * Automatic generated via autotranslator.php tool
- * Generation date 2011-10-10 01:46:39
- */
-
-
-// START - Lines generated via autotranslator.php tool (2011-10-10 01:46:39).
-// Reference language: en_US -> nl_NL
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - externalsite
 ExternalSiteSetup=Setup link naar externe website
 ExternalSiteURL=Externe Site URL
-// STOP - Lines generated via autotranslator.php tool (2011-10-10 02:13:05).
+# ExternalSiteModuleNotComplete=Module ExternalSite was not configured properly.

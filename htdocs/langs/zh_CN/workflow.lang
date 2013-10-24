@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - admin
-CHARSET= UTF-8
 WorkflowSetup=工作流模块的设置
 WorkflowDesc=这个模块是设计修改申请自动操作的行为。默认情况下，工作流被打开(你做的事情，你想要的顺序)。您有兴趣可以启用自动操作。
 ThereIsNoWorkflowToModify=没有工作流程，您可以修改你已激活的模块。
@@ -8,4 +7,5 @@ descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=商业提案签署后自动创建一个�
 descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=创建一个客户发票，合同验证后自动
 descWORKFLOW_ORDER_AUTOCREATE_INVOICE=创建一个客户发票，客户订单后自动关闭
 descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=分类链接来源建议，建立客户订单时设置支付
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=分类链接的来源客户，以建立客户发票时设置支付
+# descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Classify linked source customer order(s) to billed when customer invoice is set to paid
+# descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Classify linked source customer order(s) to billed when customer invoice is validated

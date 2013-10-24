@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - languages
-CHARSET=UTF-8
 
 Language_ar_AR=Arabski
 Language_ar_SA=Arabski
@@ -16,10 +15,13 @@ Language_en_IN=Angielski (Indie)
 Language_en_NZ=Angielski (Nowa Zelandia)
 # Language_en_SA=English (Saudi Arabia)
 Language_en_US=Angielski (Stany Zjednoczone)
+# Language_en_ZA=English (South Africa)
 Language_es_ES=Hiszpański
 Language_es_AR=Hiszpański (Argentyna)
 Language_es_HN=Hiszpański (Honduras)
 Language_es_MX=Hiszpański (Meksyk)
+# Language_es_PY=Spanish (Paraguay)
+# Language_es_PE=Spanish (Peru)
 Language_es_PR=Hiszpański (Portoryko)
 # Language_et_EE=Estonian
 Language_fa_IR=Perski
@@ -28,6 +30,7 @@ Language_fr_BE=Francuski (Belgia)
 Language_fr_CA=Francuski (Kanada)
 Language_fr_CH=Francuski (Szwajcaria)
 Language_fr_FR=Francuski
+# Language_fr_NC=French (New Caledonia)
 # Language_he_IL=Hebrew
 Language_hu_HU=Węgierski
 Language_is_IS=Islandzki
@@ -46,6 +49,6 @@ Language_tr_TR=Turecki
 Language_sl_SI=Słoweński
 Language_sv_SV=Szwedzki
 Language_sv_SE=Szwedzki
+# Language_vi_VN=Vietnamese
 Language_zh_CN=Chiński
 # Language_zh_TW=Chinese (Traditional)
-Language_is_IS=Islandzki

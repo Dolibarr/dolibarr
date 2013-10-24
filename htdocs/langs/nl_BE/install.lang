@@ -1,5 +1,4 @@
 # Dolibarr language file - nl_BE - install
-CHARSET=UTF-8
 InstallEasy=We hebben geprobeerd om de Dolibarr installatie zo eenvoudig mogelijk te maken. Volg de instructies stap voor stap.
 MiscellaneousChecks=Vereisten controleren
 DolibarrWelcome=Welkom bij Dolibarr

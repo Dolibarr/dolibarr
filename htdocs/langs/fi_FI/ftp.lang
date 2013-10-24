@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - ftp
-CHARSET=UTF-8
 FTPClientSetup=FTP Client-moduuli asennus
 NewFTPClient=Uusi FTP-yhteys asetukset
 FTPArea=FTP Area

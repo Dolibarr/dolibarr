@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - ldap
-CHARSET=UTF-8
 DomainPassword=Κωδικός πρόσβασης για το Domain
 YouMustChangePassNextLogon=Κωδικός πρόσβασης για <b>%s</b> χρήστη στο <b>%s</b> Domain πρέπει να αλλάξει.
 UserMustChangePassNextLogon=Ο χρήστης πρέπει να αλλάξετε τον κωδικό πρόσβασης για το %s Domain

@@ -1,5 +1,4 @@
-# Dolibarr language file - ca_ES - dict
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - dict
 CountryFR=França
 CountryBE=Bèlgica
 CountryIT=Itàlia
@@ -246,13 +245,15 @@ CountryJE=Jersey
 CountryME=Monténégro
 CountryBL=Saint-Barthélemy
 CountryMF=Saint-Martin
-##### Civilities #####=undefined
+
+##### Civilities #####
 CivilityMME=Senyora
 CivilityMR=Senyor
 CivilityMLE=Senyoreta
 CivilityMTRE=En
 CivilityDR=Doctor
-##### Currencies #####=undefined
+
+##### Currencies #####
 Currencyeuros=Euros
 CurrencyAUD=Dòlars Aus.
 CurrencySingAUD=Dòlar Aus.
@@ -276,12 +277,8 @@ CurrencyMUR=Rupies mauritanes
 CurrencySingMUR=Rupia mauritana
 CurrencyNOK=Corones noruegues
 CurrencySingNOK=Corona noruega
-CurrencySUR=Rubles
-CurrencySingSUR=Ruble
 CurrencyTND=TND
 CurrencySingTND=Dinar tunisià
-CurrencyTRL=Lliures turques
-CurrencySingTRL=Lliura turca
 CurrencyUSD=Dòlars USA
 CurrencySingUSD=Dòlar USA
 CurrencyUAH=Hryvnia
@@ -292,9 +289,11 @@ CurrencyXOF=Francs CFA BCEAO
 CurrencySingXOF=Franc CFA BCEAO
 CurrencyXPF=Francs CFP
 CurrencySingXPF=Franc CFP
+
 CurrencyCentSingEUR=cèntim
 CurrencyThousandthSingTND=mil·lèsim
-#### Input reasons ####
+
+#### Input reasons #####
 DemandReasonTypeSRC_INTE=Internet
 DemandReasonTypeSRC_CAMP_MAIL=Campanya correu
 DemandReasonTypeSRC_CAMP_EMAIL=Campanya E-Mailing
@@ -306,6 +305,7 @@ DemandReasonTypeSRC_WOM=Boca a boca
 DemandReasonTypeSRC_PARTNER=Soci
 DemandReasonTypeSRC_EMPLOYEE=Empleat
 DemandReasonTypeSRC_SPONSORING=Patrocinador
+
 #### Paper formats ####
 PaperFormatEU4A0=Format 4A0
 PaperFormatEU2A0=Format 2A0
