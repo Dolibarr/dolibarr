@@ -211,22 +211,42 @@ if ($action == 'update' && ! $_POST["cancel"] && $user->rights->projet->creer)
 
         // Fill array 'array_options' with data from add form
         $ret = $extrafields->setOptionalsFromPost($extralabels,$object);
+		if ($ret < 0)
+		{
+			$error++;
+		}
+    }
 
-        $result=$object->update($user);
+    if (! $error)
+    {
+    	$result=$object->update($user);
+    	if ($result < 0)
+    	{
+    		$error++;
+    		setEventMessage($object->errors,'errors');
+    	}
+    }
 
-        if (GETPOST("reportdate") && ($object->date_start!=$old_start_date))
-        {
-        	$result=$object->shiftTaskDate($old_start_date);
-        	if (!$result)
-        	{
-        		$error++;
-        		$mesg='<div class="error">'.$langs->trans("ErrorShiftTaskDate").':'.$object->error.'</div>';
-        	}
-        }
+    if (! $error)
+    {
+    	if (GETPOST("reportdate") && ($object->date_start!=$old_start_date))
+    	{
+    		$result=$object->shiftTaskDate($old_start_date);
+    		if ($result < 0)
+    		{
+    			$error++;
+    			$mesg='<div class="error">'.$langs->trans("ErrorShiftTaskDate").':'.$object->error.'</div>';
+    		}
+    	}
+    }
+
+    if ($error)
+    {
+    	$action='edit';
     }
     else
-    {
-        $action='edit';
+	{
+    	$object->societe->fetch(GETPOST('socid','int'));
     }
 }
 
