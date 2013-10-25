@@ -92,5 +92,5 @@ InfoTransMessage=Le bon de prélèvement %s a été transmis à la banque par %s
 InfoTransData=Montant : %s<br>Méthode : %s<br>Date : %s
 InfoFoot=Ceci est un message automatique envoyé par Dolibarr
 InfoRejectSubject=Prélèvement rejeté
-# InfoRejectMessage=Hello,<br><br>the standing order of invoice %s related to the company %s, with an amount of %s has been refused by the bank.<br><br>--<br>%s
+InfoRejectMessage=Bonjour,<br><br>l'ordre de virement de la facture %s du tiers %s, pour un montant de %s a été refusé par la banque.<br><br>--<br>%s
 ModeWarning=Option mode réel non établi, nous allons arrêter après cette simulation
