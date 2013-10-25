@@ -102,6 +102,7 @@ print '<br><br>';
 $webservices = array(
 		'user'				=> '',
 		'thirdparty'		=> '!empty($conf->societe->enabled)',
+		'contact'			=> '!empty($conf->societe->enabled)',
 		'productorservice'	=> '(!empty($conf->product->enabled) || !empty($conf->service->enabled))',
 		'order'				=> '!empty($conf->commande->enabled)',
 		'invoice'			=> '!empty($conf->facture->enabled)',
