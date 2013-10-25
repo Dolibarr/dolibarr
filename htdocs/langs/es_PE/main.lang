@@ -1,5 +1,7 @@
 Dolibarr language file - es_PU - main
 DIRECTION=ltr
+SeparatorDecimal=,
+SeparatorThousand=None
 AmountVAT=Importe IGV
 TotalVAT=Total IGV
 IncludedVAT=IGV incluido
