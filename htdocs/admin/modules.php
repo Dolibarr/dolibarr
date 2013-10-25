@@ -278,17 +278,16 @@ $var=true;
 if ($mode != 'marketplace')
 {
     print "<table summary=\"list_of_modules\" class=\"noborder\" width=\"100%\">\n";
-    //print "<tr class=\"liste_titre\">\n";
+
+    /*
     print '<tr class="liste_titre">'."\n";
-    //print "  <td>".$langs->trans("Family")."</td>\n";
     print "  <td colspan=\"2\">".$langs->trans("Module")."</td>\n";
     print "  <td>".$langs->trans("Description")."</td>\n";
     print "  <td align=\"center\">".$langs->trans("Version")."</td>\n";
-    //print "  <td align=\"center\">".$langs->trans("DbVersion")."</td>\n";
-    print "  <td align=\"center\">".$langs->trans("Status")."</td>\n";
-    print "  <td align=\"right\">".$langs->trans("SetupShort")."</td>\n";
+    print '  <td align="center">'.$langs->trans("Status").'</td>'."\n";
+    print '  <td align="right">'.$langs->trans("SetupShort").'</td>'."\n";
     print "</tr>\n";
-
+	*/
 
     // Show list of modules
 
@@ -338,139 +337,143 @@ if ($mode != 'marketplace')
         // Print a separator if we change family
         //print "<tr><td>xx".$oldfamily."-".$family."-".$atleastoneforfamily."<br></td><tr>";
         //if ($oldfamily && $family!=$oldfamily && $atleastoneforfamily) {
-        if ($family!=$oldfamily) {
-            print '<tr class="liste_titre">'."\n  <td colspan=\"6\">";
+        if ($family!=$oldfamily) 
+        {
+            print '<tr class="liste_titre">'."\n";
+            print '<td colspan="5">';
             $familytext=empty($familylib[$family])?$family:$familylib[$family];
             print $familytext;
-            print "</td>\n</tr>\n";
+            print "</td>\n";
+    		print '<td align="right">'.$langs->trans("SetupShort").'</td>'."\n";
+            print "</tr>\n";
             $atleastoneforfamily=0;
             //print "<tr><td>yy".$oldfamily."-".$family."-".$atleastoneforfamily."<br></td><tr>";
         }
 
-            $atleastoneforfamily++;
+        $atleastoneforfamily++;
 
-            if ($family!=$oldfamily)
-            {
-                $familytext=empty($familylib[$family])?$family:$familylib[$family];
-                //print $familytext;
-                $oldfamily=$family;
-            }
+        if ($family!=$oldfamily)
+        {
+        	$familytext=empty($familylib[$family])?$family:$familylib[$family];
+        	//print $familytext;
+        	$oldfamily=$family;
+        }
 
-            $var=!$var;
+        $var=!$var;
 
-            //print "\n<!-- Module ".$objMod->numero." ".$objMod->getName()." found into ".$dirmod[$key]." -->\n";
-            print '<tr '.$bc[$var].">\n";
+        //print "\n<!-- Module ".$objMod->numero." ".$objMod->getName()." found into ".$dirmod[$key]." -->\n";
+        print '<tr '.$bc[$var].">\n";
 
-            // Picto
-            print '  <td valign="top" width="14" align="center">';
-            $alttext='';
-            //if (is_array($objMod->need_dolibarr_version)) $alttext.=($alttext?' - ':'').'Dolibarr >= '.join('.',$objMod->need_dolibarr_version);
-            //if (is_array($objMod->phpmin)) $alttext.=($alttext?' - ':'').'PHP >= '.join('.',$objMod->phpmin);
-            if (! empty($objMod->picto))
-            {
-            	if (preg_match('/^\//i',$objMod->picto)) print img_picto($alttext,$objMod->picto,' width="14px"',1);
-            	else print img_object($alttext,$objMod->picto,' width="14px"');
-            }
-            else
-            {
-            	print img_object($alttext,'generic');
-            }
-            print '</td>';
+        // Picto
+        print '  <td valign="top" width="14" align="center">';
+        $alttext='';
+        //if (is_array($objMod->need_dolibarr_version)) $alttext.=($alttext?' - ':'').'Dolibarr >= '.join('.',$objMod->need_dolibarr_version);
+        //if (is_array($objMod->phpmin)) $alttext.=($alttext?' - ':'').'PHP >= '.join('.',$objMod->phpmin);
+        if (! empty($objMod->picto))
+        {
+        	if (preg_match('/^\//i',$objMod->picto)) print img_picto($alttext,$objMod->picto,' width="14px"',1);
+        	else print img_object($alttext,$objMod->picto,' width="14px"');
+        }
+        else
+        {
+        	print img_object($alttext,'generic');
+        }
+        print '</td>';
 
-            // Name
-            print '<td valign="top">'.$objMod->getName();
-            print "</td>\n";
+        // Name
+        print '<td valign="top">'.$objMod->getName();
+        print "</td>\n";
 
-            // Desc
-            print "<td valign=\"top\">";
-            print nl2br($objMod->getDesc());
-            print "</td>\n";
+        // Desc
+        print '<td valign="top">';
+        print nl2br($objMod->getDesc());
+        print "</td>\n";
 
-            // Version
-            print "<td align=\"center\" valign=\"top\" nowrap=\"nowrap\">";
-            print $objMod->getVersion();
-            print "</td>\n";
+        // Version
+        print '<td align="center" valign="top" class="nowrap">';
+        print $objMod->getVersion();
+        print "</td>\n";
 
-            // Activate/Disable and Setup (2 columns)
-            if (! empty($conf->global->$const_name))
-            {
-                $disableSetup = 0;
+        // Activate/Disable and Setup (2 columns)
+        if (! empty($conf->global->$const_name))
+        {
+        	$disableSetup = 0;
 
-                print "<td align=\"center\" valign=\"middle\">";
+        	print '<td align="center" valign="middle">';
 
-            	// Module actif
-                if (! empty($objMod->always_enabled) || ((! empty($conf->multicompany->enabled) && $objMod->core_enabled) && ($user->entity || $conf->entity!=1)))
-                {
-                	print $langs->trans("Required");
-                	if (! empty($conf->multicompany->enabled) && $user->entity) $disableSetup++;
-                	print '</td>'."\n";
-                }
-                else
-                {
-                	print '<a href="modules.php?id='.$objMod->numero.'&amp;action=reset&amp;value=' . $modName . '&amp;mode=' . $mode . '">';
-                	print img_picto($langs->trans("Activated"),'switch_on');
-                	print '</a></td>'."\n";
-                }
+        	// Module actif
+        	if (! empty($objMod->always_enabled) || ((! empty($conf->multicompany->enabled) && $objMod->core_enabled) && ($user->entity || $conf->entity!=1)))
+        	{
+        		print $langs->trans("Required");
+        		if (! empty($conf->multicompany->enabled) && $user->entity) $disableSetup++;
+        		print '</td>'."\n";
+        	}
+        	else
+        	{
+        		print '<a href="modules.php?id='.$objMod->numero.'&amp;action=reset&amp;value=' . $modName . '&amp;mode=' . $mode . '">';
+        		print img_picto($langs->trans("Activated"),'switch_on');
+        		print '</a></td>'."\n";
+        	}
 
-                if (! empty($objMod->config_page_url) && !$disableSetup)
-                {
-                    if (is_array($objMod->config_page_url))
-                    {
-                        print '  <td align="right" valign="top">';
-                        $i=0;
-                        foreach ($objMod->config_page_url as $page)
-                        {
-    						$urlpage=$page;
-                            if ($i++)
-                            {
-                                print '<a href="'.$urlpage.'" title="'.$langs->trans($page).'">'.img_picto(ucfirst($page),"setup").'</a>&nbsp;';
-                            //    print '<a href="'.$page.'">'.ucfirst($page).'</a>&nbsp;';
-                            }
-                            else
-                            {
-                            	if (preg_match('/^([^@]+)@([^@]+)$/i',$urlpage,$regs))
-                            	{
-                           			print '<a href="'.dol_buildpath('/'.$regs[2].'/admin/'.$regs[1],1).'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"),"setup").'</a>&nbsp;';
-                            	}
-                            	else
-                            	{
-                            		print '<a href="'.$urlpage.'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"),"setup").'</a>&nbsp;';
-                            	}
-                            }
-                        }
-                        print "</td>\n";
-                    }
-                    else if (preg_match('/^([^@]+)@([^@]+)$/i',$objMod->config_page_url,$regs))
-                    {
-                       	print '<td align="right" valign="top"><a href="'.dol_buildpath('/'.$regs[2].'/admin/'.$regs[1],1).'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"),"setup").'</a></td>';
-                    }
-                    else
-                    {
-                        print '<td align="right" valign="top"><a href="'.$objMod->config_page_url.'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"),"setup").'</a></td>';
-                    }
-                }
-                else
-                {
-                    print "<td>&nbsp;</td>";
-                }
+        	if (! empty($objMod->config_page_url) && !$disableSetup)
+        	{
+        		if (is_array($objMod->config_page_url))
+        		{
+        			print '  <td align="right" valign="top">';
+        			$i=0;
+        			foreach ($objMod->config_page_url as $page)
+        			{
+        				$urlpage=$page;
+        				if ($i++)
+        				{
+        					print '<a href="'.$urlpage.'" title="'.$langs->trans($page).'">'.img_picto(ucfirst($page),"setup").'</a>&nbsp;';
+        					//    print '<a href="'.$page.'">'.ucfirst($page).'</a>&nbsp;';
+        				}
+        				else
+        				{
+        					if (preg_match('/^([^@]+)@([^@]+)$/i',$urlpage,$regs))
+        					{
+        						print '<a href="'.dol_buildpath('/'.$regs[2].'/admin/'.$regs[1],1).'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"),"setup").'</a>&nbsp;';
+        					}
+        					else
+        					{
+        						print '<a href="'.$urlpage.'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"),"setup").'</a>&nbsp;';
+        					}
+        				}
+        			}
+        			print "</td>\n";
+        		}
+        		else if (preg_match('/^([^@]+)@([^@]+)$/i',$objMod->config_page_url,$regs))
+        		{
+        			print '<td align="right" valign="top"><a href="'.dol_buildpath('/'.$regs[2].'/admin/'.$regs[1],1).'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"),"setup").'</a></td>';
+        		}
+        		else
+        		{
+        			print '<td align="right" valign="top"><a href="'.$objMod->config_page_url.'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"),"setup").'</a></td>';
+        		}
+        	}
+        	else
+        	{
+        		print "<td>&nbsp;</td>";
+        	}
 
-            }
-            else
-            {
-                print "<td align=\"center\" valign=\"middle\">";
+        }
+        else
+        {
+        	print '<td align="center" valign="middle">';
 
-                if (! empty($objMod->always_enabled))
-                {
-                    // Ne devrait pas arriver.
-                }
+        	if (! empty($objMod->always_enabled))
+        	{
+        		// Ne devrait pas arriver.
+        	}
 
-                // Module non actif
-               	print '<a href="modules.php?id='.$objMod->numero.'&amp;action=set&amp;value=' . $modName . '&amp;mode=' . $mode . '">';
-               	print img_picto($langs->trans("Disabled"),'switch_off');
-               	print "</a></td>\n  <td>&nbsp;</td>\n";
-            }
+        	// Module non actif
+        	print '<a href="modules.php?id='.$objMod->numero.'&amp;action=set&amp;value=' . $modName . '&amp;mode=' . $mode . '">';
+        	print img_picto($langs->trans("Disabled"),'switch_off');
+        	print "</a></td>\n  <td>&nbsp;</td>\n";
+        }
 
-            print "</tr>\n";
+        print "</tr>\n";
 
     }
     print "</table>\n";
@@ -502,7 +505,7 @@ dol_fiche_end();
 
 
 // Show warning about external users
-if ($mode != 'marketplace') print showModulesExludedForExternal($modules).'<br>'."\n";
+if ($mode != 'marketplace') print '<div class="info">'.showModulesExludedForExternal($modules).'</div><br>'."\n";
 
 
 llxFooter();
