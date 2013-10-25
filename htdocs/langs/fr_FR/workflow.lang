@@ -7,5 +7,5 @@ descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Créer une facture client automatiquement
 descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Créer une facture client automatiquement à la validation d'un contrat
 descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Créer une facture client automatiquement à la clôture d'une commande client
 descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Classer facturée la proposition commerciale source quand la commande client dérivée est classée payée
-# descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Classify linked source customer order(s) to billed when customer invoice is set to paid
-# descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Classify linked source customer order(s) to billed when customer invoice is validated
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Classer facturée la ou les commandes clients source quand la facture client dérivée est classée payée
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Classer facturée la ou les commandes clients source lorsque la facture client dérivée est validée

@@ -104,8 +104,8 @@ TypeContact_project_task_internal_TASKEXECUTIVE=Task executive
 TypeContact_project_task_external_TASKEXECUTIVE=Task executive
 TypeContact_project_task_internal_CONTRIBUTOR=Contributor
 TypeContact_project_task_external_CONTRIBUTOR=Contributor
-SelectElement=Elements to referring the project
-AddElement=Refering
+SelectElement=Select element
+AddElement=Link to element
 # Documents models
 DocumentModelBaleine=A complete project's report model (logo...)
 PlannedWorkload = Planned workload

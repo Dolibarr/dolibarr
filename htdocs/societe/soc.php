@@ -1785,11 +1785,13 @@ else
 
         if (! empty($object->email))
         {
+        	$langs->load("mails");
         	print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?socid='.$object->id.'&amp;action=presend&amp;mode=init">'.$langs->trans('SendMail').'</a></div>';
         }
         else
-       {
-        	print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NoEmailDefined")).'">'.$langs->trans('SendMail').'</a></div>';
+		{
+        	$langs->load("mails");
+       		print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NoEmailDefined")).'">'.$langs->trans('SendMail').'</a></div>';
         }
 
         if ($user->rights->societe->creer)

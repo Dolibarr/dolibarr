@@ -89,6 +89,7 @@ ListOfServicesToExpireWithDuration=Liste des services actifs expirant dans %s jo
 ListOfServicesToExpireWithDurationNeg=Liste des services actifs expiré depuis plus de %s jours
 ListOfServicesToExpire=Liste des services actifs en expiration
 NoteListOfYourExpiredServices=Cette list ne contient que les contrats de services des tiers pour lesquels vous êtes liés comme représentant commercial.
+DocumentModelStandard=Modèle de contrat standard
 
 ##### Types de contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Commercial signataire du contrat
