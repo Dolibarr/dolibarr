@@ -34,8 +34,6 @@ $langs->load("bills");
 $id=GETPOST("id");
 $action=GETPOST('action');
 
-$mesg = '';
-
 // Security check
 $socid = isset($_GET["socid"])?$_GET["socid"]:'';
 if ($user->societe_id) $socid=$user->societe_id;
@@ -82,7 +80,7 @@ if ($action == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
     else
     {
         $db->rollback();
-        $mesg='<div class="error">'.$tva->error.'</div>';
+        setEventMessage($tva->error, 'errors');
         $action="create";
     }
 }
@@ -115,18 +113,18 @@ if ($action == 'delete')
 			{
 				$tva->error=$accountline->error;
 				$db->rollback();
-				$mesg='<div class="error">'.$tva->error.'</div>';
+				setEventMessage($tva->error,'errors');
 			}
 	    }
 	    else
 	    {
 	        $db->rollback();
-	        $mesg='<div class="error">'.$tva->error.'</div>';
+	        setEventMessage($tva->error,'errors');
 	    }
 	}
 	else
 	{
-        $mesg='<div class="error">Error try do delete a line linked to a conciliated bank transaction</div>';
+        setEventMessage('Error try do delete a line linked to a conciliated bank transaction','errors');
 	}
 }
 
@@ -158,8 +156,6 @@ if ($action == 'create')
     print '<input type="hidden" name="action" value="add">';
 
     print_fiche_titre($langs->trans("NewVATPayment"));
-
-    if ($mesg) print $mesg;
 
     print '<table class="border" width="100%">';
 
@@ -213,8 +209,6 @@ if ($action == 'create')
 
 if ($id)
 {
-    if ($mesg) print $mesg;
-
 	$h = 0;
 	$head[$h][0] = DOL_URL_ROOT.'/compta/tva/fiche.php?id='.$vatpayment->id;
 	$head[$h][1] = $langs->trans('Card');
@@ -274,9 +268,20 @@ if ($id)
 	*/
 	print "<div class=\"tabsAction\">\n";
 	if ($vatpayment->rappro == 0)
-		print '<a class="butActionDelete" href="fiche.php?id='.$vatpayment->id.'&action=delete">'.$langs->trans("Delete").'</a>';
+	{
+		if (! empty($user->rights->tax->charges->supprimer))
+		{
+			print '<a class="butActionDelete" href="fiche.php?id='.$vatpayment->id.'&action=delete">'.$langs->trans("Delete").'</a>';
+		}
+		else
+		{
+			print '<a class="butActionRefused" href="#" title="'.(dol_escape_htmltag($langs->trans("NotAllowed"))).'">'.$langs->trans("Delete").'</a>';
+		}
+	}
 	else
+	{
 		print '<a class="butActionRefused" href="#" title="'.$langs->trans("LinkedToAConcialitedTransaction").'">'.$langs->trans("Delete").'</a>';
+	}
 	print "</div>";
 }
 
