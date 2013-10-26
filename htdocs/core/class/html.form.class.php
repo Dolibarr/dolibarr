@@ -2499,7 +2499,7 @@ class Form
      *     @param 	string		$action      	   	Action
      *	   @param  	array		$formquestion	   	An array with complementary inputs to add into forms: array(array('label'=> ,'type'=> , ))
      * 	   @param  	string		$selectedchoice  	"" or "no" or "yes"
-     * 	   @param  	int			$useajax		   	0=No, 1 or 'xxx'=Yes, 2=Yes but submit page with &confirm=no if choice is No, 'xxx'=preoutput confirm box with div id=dialog-confirm-xxx
+     * 	   @param  	int			$useajax		   	0=No, 1=Yes, 2=Yes but submit page with &confirm=no if choice is No, 'xxx'=Yes and preoutput confirm box with div id=dialog-confirm-xxx
      *     @param  	int			$height          	Force height of box
      *     @param	int			$width				Force width of bow
      *     @return 	string      	    			HTML ajax code if a confirm ajax popup is required, Pure HTML code if it's an html form
@@ -2588,10 +2588,12 @@ class Form
         }
 
 		// JQUI method dialog is broken with jmobile, we use standard HTML.
-		// Note: When using dol_use_jmobile, you must also check code for button use a GET url with action=xxx and output the confirm code only when action=xxx
+		// Note: When using dol_use_jmobile or no js, you must also check code for button use a GET url with action=xxx and check that you also output the confirm code when action=xxx
+		// See page product/fiche.php for example
         if (! empty($conf->dol_use_jmobile)) $useajax=0;
+		if (empty($conf->use_javascript_ajax)) $useajax=0;
 
-        if ($useajax && $conf->use_javascript_ajax)
+        if ($useajax)
         {
             $autoOpen=true;
             $dialogconfirm='dialog-confirm';
