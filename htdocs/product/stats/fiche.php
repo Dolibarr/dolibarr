@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2007	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (c) 2004-2011	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (c) 2004-2013	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2005		Eric Seigne				<eric.seigne@ryxeo.com>
  *
@@ -66,8 +66,8 @@ if (! empty($id) || ! empty($ref))
 		$head=product_prepare_head($object, $user);
 		$titre=$langs->trans("CardProduct".$object->type);
 		$picto=($object->type==1?'service':'product');
-		dol_fiche_head($head, 'stats', $titre, 0, $picto);
 
+		dol_fiche_head($head, 'stats', $titre, 0, $picto);
 
 		print '<table class="border" width="100%">';
 
@@ -92,7 +92,8 @@ if (! empty($id) || ! empty($ref))
 		print '</td></tr>';
 
 		print '</table>';
-		print '</div>';
+
+		dol_fiche_end();
 
 
 		// Choice of stats
@@ -108,7 +109,7 @@ if (! empty($id) || ! empty($ref))
 
 		print '<br><br>';
 
-		print '<table width="100%">';
+		//print '<table width="100%">';
 
 		// Generation des graphs
 		$WIDTH=380;
@@ -197,10 +198,16 @@ if (! empty($id) || ! empty($ref))
 			if ($graphfiles == 'invoices_suppliers' && ! $user->rights->fournisseur->facture->lire) continue;
 
 
-			if ($i % 2 == 0) print '<tr>';
+			if ($i % 2 == 0)
+			{
+				print "\n".'<div class="fichecenter"><div class="fichehalfleft">'."\n";
+			}
+			else
+			{
+				print "\n".'<div class="fichehalfright"><div class="ficheaddleft">'."\n";
+			}
 
 			// Show graph
-			print '<td width="50%" align="center">';
 
 			print '<table class="border" width="100%">';
 			// Label
@@ -226,17 +233,19 @@ if (! empty($id) || ! empty($ref))
 			print '</tr>';
 			print '</table>';
 
-			print '</td>';
-
-			if ($i % 2 == 1) print '</tr>';
-
+			if ($i % 2 == 0)
+			{
+				print "\n".'</div>'."\n";
+			}
+			else
+			{
+				print "\n".'</div></div></div>';
+				print '<div class="clear"><div class="fichecenter"><br></div></div>'."\n";
+			}
 
 			$i++;
 		}
 
-		if ($i % 2 == 1) print '<td>&nbsp;</td></tr>';
-
-		print '</table>';
 
 		print '<div class="tabsAction">';
 		print '</div>';
