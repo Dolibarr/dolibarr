@@ -376,7 +376,7 @@ if ($id > 0 || ! empty($ref))
 			if (! empty($conf->categorie->enabled))
 			{
 				print '<tr><td>'.$langs->trans("CategoryFilter").' &nbsp; </td>';
-				print '<td>'.$form->select_all_categories(0, $parent).'</td></tr>';
+				print '<td class="overflowwithjm200">'.$form->select_all_categories(0, $parent).'</td></tr>';
 			}
 
 			print '</table>';
