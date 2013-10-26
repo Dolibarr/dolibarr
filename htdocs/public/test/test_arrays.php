@@ -69,6 +69,24 @@ Example 1 : Table using tags: div.tagtable+form+div or div.tagtable+div.tagtr+di
 
 
 <div class="tagtable centpercent" id="tablelines">
+    <div class="liste_titre">
+        <div>line3<input type="hidden" name="cartitem" value="3"></div>
+        <div>dfsdf</div>
+        <div>ffdsfsd</div>
+        <div class="tdlineupdown">aaaa</div>
+    </div>
+    <div class="impair tagtr">
+        <div>line4<input type="hidden" name="cartitem" value="3"></div>
+        <div>dfsdf</div>
+        <div><input name="count" value="4"></div>
+        <div class="tdlineupdown">bbbb</div>
+    </div>
+    <div class="pair tagtr">
+        <div>line5<input type="hidden" name="cartitemb" value="3"></div>
+        <div>dfsdf</div>
+        <div><input name="countb" value="4"></div>
+        <div class="tdlineupdown">bbbb</div>
+    </div>
 <!-- Using form into div make Firefox crazy (page loading does not end) -->
 <!--	<form class="liste_titre" method="POST" action="1.php">
         <div>line1<input type="hidden" name="cartitem" value="1"></div>
@@ -82,18 +100,6 @@ Example 1 : Table using tags: div.tagtable+form+div or div.tagtable+div.tagtr+di
         <div><input name="countb" value="4"></div>
         <div class="tdlineupdown"><input type="submit" value="xxx" class="button"></div>
     </form>-->
-    <div class="pair tagtr">
-        <div>line3<input type="hidden" name="cartitem" value="3"></div>
-        <div>dfsdf</div>
-        <div>ffdsfsd</div>
-        <div class="tdlineupdown">aaaa</div>
-    </div>
-    <div class="pair tagtr">
-        <div>line4<input type="hidden" name="cartitem" value="3"></div>
-        <div>dfsdf</div>
-        <div><input name="count" value="4"></div>
-        <div class="tdlineupdown">bbbb</div>
-    </div>
 </div>
 
 

@@ -1159,14 +1159,14 @@ table.notopnoleftnoright {
 	margin:0px;
 }
 
-table.border, table.dataTable, .table-border, .table-border-col, .table-key-border-col, .table-val-border-col  {
+table.border, table.dataTable, .table-border, .table-border-col, .table-key-border-col, .table-val-border-col, div.border {
 	border:1px solid #dddddd;
 	border-collapse:collapse;
 	padding:1px 0px;
 	padding-left:2px;
 }
 
-table.border td {
+table.border td, div.border div div.tagtd {
 	padding:1px 0px;
 	border:1px solid #dddddd;
 	border-collapse:collapse;
@@ -2225,6 +2225,9 @@ ul.ulmenu {
 }
 .ui-mobile fieldset {
 	border-bottom: none !important;
+}
+.ui-body-c, .ui-btn-up-c, .ui-btn-hover-c {
+	border: none !important;
 }
 
 /* Style for first level menu with jmobile */

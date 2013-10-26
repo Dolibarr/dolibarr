@@ -1245,19 +1245,19 @@ margin: 0px 0px 0px 0px;
 }
 
 
-table.border, table.dataTable, .table-border, .table-border-col, .table-key-border-col, .table-val-border-col  {
+table.border, table.dataTable, .table-border, .table-border-col, .table-key-border-col, .table-val-border-col, div.border {
 	border: 1px solid #9CACBB;
 	border-collapse: collapse;
 	padding: 1px 2px 2px 1px;			/* t r b l */
 }
 
-table.border td {
+table.border td, div.border div div.tagtd {
 	padding: 1px 2px;
 	border: 1px solid #9CACBB;
 	border-collapse: collapse;
 }
 
-td.border {
+td.border, div.tagtable div div.border {
 	border-top: 1px solid #000000;
 	border-right: 1px solid #000000;
 	border-bottom: 1px solid #000000;
@@ -2397,6 +2397,9 @@ ul.ulmenu {
 }
 .ui-mobile fieldset {
 	border-bottom: none !important;
+}
+.ui-body-c, .ui-btn-up-c, .ui-btn-hover-c {
+	border: none !important;
 }
 
 /* Style for first level menu with jmobile */

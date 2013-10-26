@@ -1605,19 +1605,19 @@ span.butAction, span.butActionDelete {
 }
 
 
-table.border, table.dataTable, .table-border, .table-border-col, .table-key-border-col, .table-val-border-col {
+table.border, table.dataTable, .table-border, .table-border-col, .table-key-border-col, .table-val-border-col, div.border {
 	border: 1px solid #D0D0D0;
 	border-collapse: collapse;
 	padding: 1px 2px 1px 3px;			/* t r b l */
 }
 
-table.border td {
+table.border td, div.border div div.tagtd {
 	padding: 1px 2px 1px 2px;
 	border: 1px solid #D0D0D0;
 	border-collapse: collapse;
 }
 
-td.border {
+td.border, div.tagtable div div.border {
 	border-top: 1px solid #000000;
 	border-right: 1px solid #000000;
 	border-bottom: 1px solid #000000;
@@ -2831,6 +2831,9 @@ ul.ulmenu {
     color: #<?php echo $colortexttitle; ?> !important;
 	text-shadow: 1px 0px 1px #<?php echo $colorshadowtitle; ?>;
 }
+.ui-body-c, .ui-btn-up-c, .ui-btn-hover-c {
+	border: none !important;
+}
 .ui-btn-up-c .vsmenudisabled {
 	color: #<?php echo $colorshadowtitle; ?> !important;
 	text-shadow: none !important;
@@ -2855,7 +2858,14 @@ ul.ulmenu {
 	background-image: -o-linear-gradient( #ccc,#c1c1c1 ) !important;
 	background-image: linear-gradient( #ccc,#c1c1c1 ) !important;
 }
-
+<?php if ($dol_use_jmobile) { ?>
+.overflowwithjm200
+{
+	max-width: 200px;
+	overflow: hidden;
+	white-space: nowrap;
+}
+<?php } ?>
 
 <?php
 if (is_object($db)) $db->close();

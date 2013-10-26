@@ -360,9 +360,6 @@ if ($id > 0 || ! empty($ref))
 	        print_fiche_titre($langs->trans("ProductToAddSearch"),'','');
 			print '<form action="'.DOL_URL_ROOT.'/product/composition/fiche.php?id='.$id.'" method="POST">';
 			print '<table class="border" width="100%"><tr><td>';
-			print '<table class="nobordernopadding">';
-
-			print '<tr><td>';
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print $langs->trans("KeywordFilter").' &nbsp; ';
 			print '</td>';
@@ -378,9 +375,7 @@ if ($id > 0 || ! empty($ref))
 				print '<tr><td>'.$langs->trans("CategoryFilter").' &nbsp; </td>';
 				print '<td class="overflowwithjm200">'.$form->select_all_categories(0, $parent).'</td></tr>';
 			}
-
 			print '</table>';
-			print '</td></td></table>';
 			print '</form>';
 		}
 
