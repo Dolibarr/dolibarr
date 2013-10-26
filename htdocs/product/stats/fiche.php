@@ -29,6 +29,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 
+$WIDTH=DolGraph::getDefaultGraphSizeForStats('width',380);
+$HEIGHT=DolGraph::getDefaultGraphSizeForStats('height',160);
+
 $langs->load("companies");
 $langs->load("products");
 $langs->load("bills");
@@ -97,23 +100,28 @@ if (! empty($id) || ! empty($ref))
 
 
 		// Choice of stats
+		if (! empty($conf->dol_use_jmobile)) print "\n".'<div class="fichecenter"><div class="nowrap">'."\n";
+
 		if ($mode == 'bynumber') print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&mode=byunit">';
 		else print img_picto('','tick').' ';
 		print $langs->trans("StatsByNumberOfUnits");
 		if ($mode == 'bynumber') print '</a>';
-		print ' &nbsp; &nbsp; &nbsp; ';
+
+		if (! empty($conf->dol_use_jmobile)) print '</div>'."\n".'<div class="nowrap">'."\n";
+		else print ' &nbsp; / &nbsp; ';
+
 		if ($mode == 'byunit') print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&mode=bynumber">';
 		else print img_picto('','tick').' ';
 		print $langs->trans("StatsByNumberOfEntities");
 		if ($mode == 'byunit') print '</a>';
 
-		print '<br><br>';
+		if (! empty($conf->dol_use_jmobile)) print '</div></div>';
+		else print '<br>';
+		print '<br>';
 
 		//print '<table width="100%">';
 
 		// Generation des graphs
-		$WIDTH=380;
-		$HEIGHT=160;
 		$dir = (! empty($conf->product->multidir_temp[$object->entity])?$conf->product->multidir_temp[$object->entity]:$conf->service->multidir_temp[$object->entity]);
 		if (! file_exists($dir.'/'.$object->id))
 		{
@@ -245,7 +253,13 @@ if (! empty($id) || ! empty($ref))
 
 			$i++;
 		}
-
+		// div not closed
+		if ($i % 2 == 1)
+		{
+			print "\n".'<div class="fichehalfright"><div class="ficheaddleft">'."\n";
+			print "\n".'</div></div></div>';
+			print '<div class="clear"><div class="fichecenter"><br></div></div>'."\n";
+		}
 
 		print '<div class="tabsAction">';
 		print '</div>';
