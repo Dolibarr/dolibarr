@@ -1,0 +1,27 @@
+# Dolibarr language file - Source file is en_US - help
+CommunitySupport=Forum / wiki podpora
+EMailSupport=E-maily podporu
+RemoteControlSupport=Online reálném čase / vzdálená podpora
+OtherSupport=Další podpora
+ToSeeListOfAvailableRessources=Chcete-li kontaktovat / zobrazení dostupných zdrojů:
+ClickHere=Klikněte zde
+HelpCenter=Nápověda centrum
+DolibarrHelpCenter=Dolibarr Help and Support Center
+ToGoBackToDolibarr=Jinak klepněte <a href="%s">zde využít Dolibarr</a>
+TypeOfSupport=Zdrojem podpory
+TypeSupportCommunauty=Společenství (zdarma)
+TypeSupportCommercial=Obchodní
+TypeOfHelp=Typ
+NeedHelpCenter=Potřebujete pomoc nebo podporu?
+Efficiency=Účinnost
+TypeHelpOnly=Nápověda pouze
+TypeHelpDev=Nápověda + Development
+TypeHelpDevForm=Nápověda + + Development Formation
+ToGetHelpGoOnSparkAngels1=Některé společnosti mohou poskytnout rychlý (někdy okamžité) a efektivnější online podporu tím, že vezme kontrolu nad vaším počítačem. Tyto pomocníky lze nalézt na internetových stránkách <b>%s:</b>
+ToGetHelpGoOnSparkAngels3=Můžete také přejít na seznam všech dostupných vozů pro Dolibarr, pro tuto kliknutím na
+ToGetHelpGoOnSparkAngels2=Někdy není společnost k dispozici v okamžiku, kdy provedete vyhledávání, tak si pro změnu filtr se podívat na &quot;všechny dostupnost&quot;. Budete mít možnost posílat více požadavků.
+BackToHelpCenter=V opačném případě, jděte zpět <a href="%s">vrátit na pomoc střední domovskou stránku</a> .
+LinkToGoldMember=Můžete zavolat jednu z předvolených trenéra o Dolibarr pro požadovaný jazyk (%s) kliknutím na jeho widget (stav a maximální cena automaticky aktualizována):
+PossibleLanguages=Podporované jazyky
+MakeADonation=Nápověda Dolibarr projekt, aby se dárcovství
+SubscribeToFoundation=Nápověda Dolibarr projekt, přihlaste se do základu
