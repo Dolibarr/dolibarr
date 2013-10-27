@@ -141,7 +141,7 @@ if (! $sortorder) $sortorder='DESC';
 $limit = $conf->liste_limit;
 
 
-$sql = 'SELECT s.rowid, s.nom, s.town, s.client, ';
+$sql = 'SELECT s.rowid, s.nom, s.town, s.client, s.code_client';
 $sql.= 'p.rowid as propalid, p.note_private, p.total_ht, p.ref, p.ref_client, p.fk_statut, p.fk_user_author, p.datep as dp, p.fin_validite as dfv,';
 if (! $user->rights->societe->client->voir && ! $socid) $sql .= " sc.fk_soc, sc.fk_user,";
 $sql.= ' u.login';
@@ -368,6 +368,7 @@ if ($result)
 		$companystatic->id=$objp->rowid;
 		$companystatic->nom=$objp->nom;
 		$companystatic->client=$objp->client;
+		$companystatic->code_client=$objp->code_client;
 		print '<td>';
 		print $companystatic->getNomUrl(1,'customer');
 		print '</td>';

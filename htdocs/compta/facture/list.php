@@ -143,7 +143,7 @@ else $sql = 'SELECT DISTINCT';
 $sql.= ' f.rowid as facid, f.facnumber, f.ref_client, f.type, f.note_private, f.increment, f.total as total_ht, f.tva as total_tva, f.total_ttc,';
 $sql.= ' f.datef as df, f.date_lim_reglement as datelimite,';
 $sql.= ' f.paye as paye, f.fk_statut,';
-$sql.= ' s.nom, s.rowid as socid';
+$sql.= ' s.nom, s.rowid as socid, s.code_client, s.client ';
 if (! $sall) $sql.= ', SUM(pf.amount) as am';   // To be able to sort on status
 $sql.= ' FROM '.MAIN_DB_PREFIX.'societe as s';
 $sql.= ', '.MAIN_DB_PREFIX.'facture as f';
@@ -390,6 +390,8 @@ if ($resql)
             $thirdparty=new Societe($db);
             $thirdparty->id=$objp->socid;
             $thirdparty->nom=$objp->nom;
+            $thirdparty->client=$objp->client;
+            $thirdparty->code_client=$objp->code_client;
             print $thirdparty->getNomUrl(1,'customer');
             print '</td>';
 
