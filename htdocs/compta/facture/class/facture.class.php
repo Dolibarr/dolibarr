@@ -1732,8 +1732,8 @@ class Facture extends CommonInvoice
 			$sql.= " SET facnumber='".$num."', fk_statut = 1, fk_user_valid = ".$user->id.", date_valid = '".$this->db->idate($now)."'";
 			if (! empty($conf->global->FAC_FORCE_DATE_VALIDATION))	// If option enabled, we force invoice date
 			{
-				$sql.= ', datef='.$this->db->idate($this->date);
-				$sql.= ', date_lim_reglement='.$this->db->idate($this->date_lim_reglement);
+				$sql.= ", datef='".$this->db->idate($this->date)."'";
+				$sql.= ", date_lim_reglement='".$this->db->idate($this->date_lim_reglement)."'";
 			}
 			$sql.= ' WHERE rowid = '.$this->id;
 

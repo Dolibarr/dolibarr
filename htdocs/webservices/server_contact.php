@@ -300,7 +300,7 @@ function getContact($authentication,$id,$ref='',$ref_ext='')
 	            	'ref_propal' => $contact->ref_propal,
 	            	'user_id' => $contact->user_id,
 	            	'user_login' => $contact->user_login,
-	            	'civility_id' => $contact->civility_id
+	            	'civilite_id' => $contact->civility_id
             	);
             	
             	//Retreive all extrafield for thirdsparty
@@ -379,7 +379,7 @@ function createContact($authentication,$contact)
 		$newobject=new Contact($db);
 		
 		$newobject->id=$contact['id'];
-		$newobject->civility_id=$contact['civility_id'];
+		$newobject->civilite_id=$contact['civility_id'];
 		$newobject->lastname=$contact['lastname'];
 		$newobject->firstname=$contact['firstname'];
 		$newobject->address=$contact['address'];
@@ -522,7 +522,7 @@ function getContactsForThirdParty($authentication,$idthirdparty)
 				$linescontact[]=array(
 				'id' => $contact->id,
 				'ref' => $contact->ref,
-				'civility_id' => $contact->civility_id?$contact->civility_id:'',  
+				'civility_id' => $contact->civilite_id?$contact->civilite_id:'',  
 				'lastname' => $contact->lastname?$contact->lastname:'',
 				'firstname' => $contact->firstname?$contact->firstname:'',
 				'address' => $contact->address?$contact->address:'',
@@ -652,6 +652,8 @@ function updateContact($authentication,$contact)
 			$object->phone_mobile=$contact['phone_mobile'];
 			$object->fax=$contact['fax'];
 			$object->email=$contact['email'];
+			
+			$object->civilite_id=$contact['civility_id'];
 			
 
 			//Retreive all extrafield for contact
