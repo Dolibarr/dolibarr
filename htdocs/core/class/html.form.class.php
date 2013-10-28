@@ -3719,9 +3719,10 @@ class Form
      *	@param  int		$translate		Translate and encode value
      * 	@param	int		$maxlen			Length maximum for labels
      * 	@param	int		$disabled		Html select box is disabled
+     *  @param	int		$sort			'ASC' or 'DESC' =Sort on label, '' or 'NONE'=Do not sort
      * 	@return	string					HTML select string
      */
-    function selectarray($htmlname, $array, $id='', $show_empty=0, $key_in_label=0, $value_as_key=0, $option='', $translate=0, $maxlen=0, $disabled=0)
+    function selectarray($htmlname, $array, $id='', $show_empty=0, $key_in_label=0, $value_as_key=0, $option='', $translate=0, $maxlen=0, $disabled=0, $sort='')
     {
         global $langs;
 
@@ -3736,28 +3737,30 @@ class Form
 
         if (is_array($array))
         {
+        	// Translate
+        	if ($translate)
+        	{
+	        	foreach($array as $key => $value) $array[$key]=$langs->trans($value);
+        	}
+
+        	// Sort
+			if ($sort == 'ASC') asort($array);
+			elseif ($sort == 'DESC') arsort($array);
+
             foreach($array as $key => $value)
             {
                 $out.='<option value="'.$key.'"';
-                // Si il faut pre-selectionner une valeur
-                if ($id != '' && $id == $key)
-                {
-                    $out.=' selected="selected"';
-                }
-
+                if ($id != '' && $id == $key) $out.=' selected="selected"';		// To preselect a value
                 $out.='>';
 
-                $newval=($translate?$langs->trans(ucfirst($value)):$value);
                 if ($key_in_label)
                 {
-                    $selectOptionValue = dol_htmlentitiesbr($key.' - '.($maxlen?dol_trunc($newval,$maxlen):$newval));
+                    $selectOptionValue = dol_htmlentitiesbr($key.' - '.($maxlen?dol_trunc($value,$maxlen):$value));
                 }
                 else
                 {
-                    $selectOptionValue = dol_htmlentitiesbr($maxlen?dol_trunc($newval,$maxlen):$newval);
-                    if ($value == '' || $value == '-') {
-                        $selectOptionValue='&nbsp;';
-                    }
+                    $selectOptionValue = dol_htmlentitiesbr($maxlen?dol_trunc($value,$maxlen):$value);
+                    if ($value == '' || $value == '-') $selectOptionValue='&nbsp;';
                 }
                 $out.=$selectOptionValue;
                 $out.="</option>\n";
