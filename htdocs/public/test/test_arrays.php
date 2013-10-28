@@ -4,7 +4,7 @@ define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
 
 require '../../main.inc.php';
 
-if (!empty($conf->global->MAIN_FEATURES_LEVEL))
+if (empty($conf->global->MAIN_FEATURES_LEVEL))
 {
 	print "Page available onto dev environment only";
 	exit;
@@ -28,7 +28,7 @@ if (!empty($conf->global->MAIN_FEATURES_LEVEL))
 <script type="text/javascript" src="<?php echo DOL_URL_ROOT ?>/includes/jquery/js/jquery-latest.min.js"></script>
 <script type="text/javascript" src="<?php echo DOL_URL_ROOT ?>/includes/jquery/plugins/tablednd/jquery.tablednd.0.6.min.js"></script>
 <script type="text/javascript" src="<?php echo DOL_URL_ROOT ?>/includes/jquery/plugins/datatables/js/jquery.dataTables.js"></script>
-<!--<script type="text/javascript" src="<?php echo DOL_URL_ROOT ?>/includes/jquery/plugins/mobile/jquery.mobile-latest.min.js"></script>-->
+<script type="text/javascript" src="<?php echo DOL_URL_ROOT ?>/includes/jquery/plugins/mobile/jquery.mobile-latest.min.js"></script>
 </head>
 
 
@@ -44,39 +44,62 @@ This page is a sample of page using tables. To make test with<br>
 <br>
 
 
+Example 0 : Table with div and table with table containg a select that should be overflowed and truncated<br>
+<div style="display: table;"><div style="display: table-row"><div style="display: table-cell; overflow: hidden; white-space: nowrap; max-width: 100px;"> <!-- If you remove max-width, the jmobile overflow does not work -->
+<select name="hidedetails"><option>aaaaaaaaaaaaaaafd sf sf gfd gfds fsd  gfd fhfg hf dhfg hg fhfgdhfgdh gh gfdhdgf h gfdh dfhg dfgh dfgh fdgh gfd hfd hfd gs fgdf gaaaa</option><option>gdfs gdf g sdfg dfg fdsg dsfg dfs gdfs gds fgs  gdfdf gd</option></select>
+</div></div></div>
+<br>
+<table width="100%">
+    <tr><td style="max-width:100px; overflow: hidden; white-space: nowrap;"> <!-- If you remove max-width, the jmobile overflow does not work -->
+	<select name="hidedetails"><option>aaaaaaaaaaaaaaafd sf sf gfd gfds fsd  gfd fhfg hf dhfg hg fhfgdhfgdh gh gfdhdgf h gfdh dfhg dfgh dfgh fdgh gfd hfd hfd gs fgdf gaaaa</option><option>gdfs gdf g sdfg dfg fdsg dsfg dfs gdfs gds fgs  gdfdf gd</option></select>
+    </td></tr>
+</table>
+
+
+
 <br>
 Example 1 : Table using tags: div.tagtable+form+div or div.tagtable+div.tagtr+div.tagtd<br>
-<?php 
+<?php
 	$tasksarray=array(1,2,3);	// To force having several lines
 	$tagidfortablednd='tablelines';
 	if (! empty($conf->use_javascript_ajax) && $object->statut == 0) include DOL_DOCUMENT_ROOT.'/core/tpl/ajaxrow.tpl.php';
 ?>
 
+
+
+
 <div class="tagtable centpercent" id="tablelines">
-<form class="liste_titre" method="POST" action="1.php">
-        <div>line1<input type="hidden" name="cartitem" value="1"></div>
-        <div><label><input type="checkbox" name="hidedetails" value="2"> A checkbox inside a cell</label></div>
-        <div><input name="count" value="4"></div>
-        <div><input type="submit" name="count" class="button noshadow" value="aaa"></div>
-    </form>
-    <form class="impair" method="POST" action="2.php">
-        <div>line2<input type="hidden" name="cartitem" value="2"></div>
-        <div>dfsdf</div>
-        <div><input name="count" value="4"></div>
-        <div class="tdlineupdown"><input type="submit" value="xxx" class="button"></div>
-    </form>
-    <div class="pair tagtr" method="GET" action="3.php">
+    <div class="liste_titre">
         <div>line3<input type="hidden" name="cartitem" value="3"></div>
         <div>dfsdf</div>
-        <div><input name="count" value="4"></div>
-        <div class="tdlineupdown"><input type="submit" value="zzz" class="button"></div>
+        <div>ffdsfsd</div>
+        <div class="tdlineupdown">aaaa</div>
     </div>
-    <div class="pair tagtr" method="GET" action="3.php">
+    <div class="impair tagtr">
         <div>line4<input type="hidden" name="cartitem" value="3"></div>
         <div>dfsdf</div>
         <div><input name="count" value="4"></div>
-        <div class="tdlineupdown"><input type="submit" value="zzz" class="button"></div>
+        <div class="tdlineupdown">bbbb</div>
     </div>
+    <div class="pair tagtr">
+        <div>line5<input type="hidden" name="cartitemb" value="3"></div>
+        <div>dfsdf</div>
+        <div><input name="countb" value="4"></div>
+        <div class="tdlineupdown">bbbb</div>
+    </div>
+<!-- Using form into div make Firefox crazy (page loading does not end) -->
+<!--	<form class="liste_titre" method="POST" action="1.php">
+        <div>line1<input type="hidden" name="cartitem" value="1"></div>
+        <div><label><input type="checkbox" name="hidedetails" value="2"> A checkbox inside a cell</label></div>
+        <div><input name="count" value="4"></div>
+        <div><input type="submit" name="count2" class="button noshadow" value="aaa"></div>
+    </form>
+    <form class="impair" method="POST" action="2.php">
+        <div>line2<input type="hidden" name="cartitem" value="2"></div>
+        <div><select name="hidedetails"><option>aaaaaaaaaaaaaaafd sf sf gfd gfd gs fgdf gaaaa</option><option>gdfs gdf g sdfg dfg fdsg dsfg dfs gdfs gds fgs  gdfdf gd</option></select></div>
+        <div><input name="countb" value="4"></div>
+        <div class="tdlineupdown"><input type="submit" value="xxx" class="button"></div>
+    </form>-->
 </div>
 
 
@@ -215,7 +238,7 @@ $('xxxth').replaceWith(
 
 <br>
 Example 3 : Standard table<br>
-<?php 
+<?php
 	$tasksarray=array(1,2,3);	// To force having several lines
 	$tagidfortablednd='tablelines3';
 	if (! empty($conf->use_javascript_ajax) && $object->statut == 0) include DOL_DOCUMENT_ROOT.'/core/tpl/ajaxrow.tpl.php';

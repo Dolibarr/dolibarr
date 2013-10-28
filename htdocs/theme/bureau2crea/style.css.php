@@ -1369,7 +1369,7 @@ margin: 0px 0px 0px 0px;
 }
 
 
-table.border, table.dataTable, .table-border, .table-border-col, .table-key-border-col, .table-val-border-col  {
+table.border, table.dataTable, .table-border, .table-border-col, .table-key-border-col, .table-val-border-col, div.border {
 	border-collapse: collapse;
 	padding: 10px;
 	border-spacing: 2px;
@@ -1391,7 +1391,7 @@ table.border.formdoc td {
 	border: none;
 }
 
-table.border td {
+table.border td, div.border div div.tagtd {
 	padding: 4px;
 	border: 1px solid #EFEFEF;
 	border-spacing: 0px;
@@ -1403,7 +1403,7 @@ table.border table td {
 	border: none;
 }
 
-td.border {
+td.border, div.tagtable div div.border {
 	border-top: 1px solid #000000;
 	border-right: 1px solid #000000;
 	border-bottom: 1px solid #000000;
@@ -2560,6 +2560,9 @@ div.ui-checkbox label+input, div.ui-radio label+input {
 ul.ulmenu {
 	border-radius: 0;
 	-webkit-border-radius: 0;
+}
+.ui-body-c, .ui-btn-up-c, .ui-btn-hover-c {
+	border: none !important;
 }
 
 /* Style for first level menu with jmobile */

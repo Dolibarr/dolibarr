@@ -6,8 +6,8 @@ DIRECTION=ltr
 # To read chinese pdf with linux: sudo apt-get install poppler-data
 FONTFORPDF=msungstdlight
 # FONTSIZEFORPDF=10
-SeparatorDecimal=None
-SeparatorThousand=無
+SeparatorDecimal=.
+SeparatorThousand=None
 FormatDateShort=%Y/%m/%d
 FormatDateShortInput=%Y/%m/%d
 FormatDateShortJava=yyyy/MM/dd

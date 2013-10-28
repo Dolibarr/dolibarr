@@ -39,13 +39,11 @@ For users:
 - New: [ task #165 ] Add import/export of multiprices.
 - New: Add Maghreb regions and departments.
 - New: A more responsive desgin for statistic box of home page.
-- Qual: Implement same rule for return value of all command line scripts (0 when success, <>0 if error).
 - New: [ task #1005 ] Adapting to Spanish legislation bill numbering
 - New: [ task #1011 ] Now supplier order and invoice deal with payment terms and mode.
 - New: [ task #1014 ] Add option to recursivly add parent category.
 - New: [ task #1016 ] Can define a specific numbering for deposits.
 - New: [ task #918 ] Stock replenishment.
-- Fix: [ bug #992 ] Proforma invoices don't have a separated numeric count.
 - New : Add pdf link into supplier invoice list and supplier order list.
 - New : Genrate auto the PDF for supplier invoice.
 - New : Add category into filter webservice thirdparty method getListOfThirdParties.
@@ -60,11 +58,15 @@ For users:
 - New: Add hidden option MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS.
 - New: Can send an email from thirdparty card.
 - New: Can cancel holidays that were previously validated.
-- Fix: [bug #1022] correct margin calculation for credit notes.
 - New: Can choose contact on event (action com) creation, and filtred by thirdparty.
 - New: Add hidden option MAIN_FORCE_DEFAULT_STATE_ID.
 - New: Add page to make mass stock movement.
 - New: Add field oustanding limit into thirdparty properties.
+- New: Can enter a vat payment of zero.
+- New: Add path to installed dir of external modules + Name and web of module provider.
+- Qual: Implement same rule for return value of all command line scripts (0 when success, <>0 if error).
+- Fix: [ bug #992 ] Proforma invoices don't have a separated numeric count.
+- Fix: [ bug #1022 ] correct margin calculation for credit notes.
 
 For translators:
 - Qual: Normalized sort order of all languages files with english reference files.
@@ -85,7 +87,6 @@ For developers:
   MAIN_MOTD_SETUPPAGE, MAIN_MOTD_SETUPPAGE, MAIN_HOME now accept "|langfile" into translation
   key to use a specific language file.
 - New: Make some changes to allow usage of several alternative $dolibarr_main_url_root variables.
-  Fix also several bugs with old code. 
 - Qual: All nowrap properties are now using CSS class nowrap.
 - Qual: Move hardcoded code of module mailmanspip into trigger.
 - New: Into POST forms, if you can add a parameter DOL_AUTOSET_COOKIE with a vlue that is list name,
@@ -96,6 +97,7 @@ For developers:
 - New: A trigger can return an array of error strings instead of one error string.
 - New: Add method to use a dictionnary as a combo box.
 - New: Add update method for web service product.
+- Fix also several bugs with old code. 
 
 WARNING: Following change may create regression for some external modules, but was necessary to make
 Dolibarr better:

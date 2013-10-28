@@ -1,4 +1,6 @@
 # Dolibarr language file - fr_NC - main
+SeparatorDecimal=,
+SeparatorThousand=None
 AmountVAT=Montant TSS
 TotalVAT=Total TSS
 IncludedVAT=Dont TSS

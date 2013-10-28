@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
@@ -168,15 +168,13 @@ $picto=($product->type==1?'service':'product');
 dol_fiche_head($head, 'subproduct', $titre, 0, $picto);
 
 
-if ($id || $ref)
+if ($id > 0 || ! empty($ref))
 {
-	if ($result)
+/*	if ($result)
 	{
 		if ($action <> 'edit' && $action <> 'search' && $action <> 're-edit')
 		{
-			/*
-			 *  En mode visu
-			 */
+			// mode visu
 
 			print '<table class="border" width="100%">';
 
@@ -262,11 +260,11 @@ if ($id || $ref)
 			dol_fiche_end();
 		}
 	}
-
+*/
 	/*
 	 * Fiche en mode edition
 	 */
-	if (($action == 'edit' || $action == 'search' || $action == 're-edit') && ($user->rights->produit->creer || $user->rights->service->creer))
+	if ($user->rights->produit->lire || $user->rights->service->lire)
 	{
 		print '<table class="border" width="100%">';
 
@@ -350,37 +348,39 @@ if ($id || $ref)
 
 		dol_fiche_end();
 
-		print '<br>';
 
-		$rowspan=1;
-		if (! empty($conf->categorie->enabled)) $rowspan++;
-
-        print_fiche_titre($langs->trans("ProductToAddSearch"),'','');
-		print '<form action="'.DOL_URL_ROOT.'/product/composition/fiche.php?id='.$id.'" method="post">';
-		print '<table class="border" width="100%"><tr><td>';
-		print '<table class="nobordernopadding">';
-
-		print '<tr><td>';
-		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-		print $langs->trans("KeywordFilter").' &nbsp; ';
-		print '</td>';
-		print '<td><input type="text" name="key" value="'.$key.'">';
-		print '<input type="hidden" name="action" value="search">';
-		print '<input type="hidden" name="id" value="'.$id.'">';
-		print '</td>';
-		print '<td rowspan="'.$rowspan.'" valign="middle">';
-		print '<input type="submit" class="button" value="'.$langs->trans("Search").'">';
-		print '</td></tr>';
-		if (! empty($conf->categorie->enabled))
+		// Form with product to add
+		if ((empty($action) || $action == 'view' || $action == 'edit' || $action == 'search' || $action == 're-edit') && ($user->rights->produit->creer || $user->rights->service->creer))
 		{
-			print '<tr><td>'.$langs->trans("CategoryFilter").' &nbsp; </td>';
-			print '<td>'.$form->select_all_categories(0, $parent).'</td></tr>';
+			print '<br>';
+
+			$rowspan=1;
+			if (! empty($conf->categorie->enabled)) $rowspan++;
+
+	        print_fiche_titre($langs->trans("ProductToAddSearch"),'','');
+			print '<form action="'.DOL_URL_ROOT.'/product/composition/fiche.php?id='.$id.'" method="POST">';
+			print '<table class="border" width="100%"><tr><td>';
+			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			print $langs->trans("KeywordFilter").' &nbsp; ';
+			print '</td>';
+			print '<td><input type="text" name="key" value="'.$key.'">';
+			print '<input type="hidden" name="action" value="search">';
+			print '<input type="hidden" name="id" value="'.$id.'">';
+			print '</td>';
+			print '<td rowspan="'.$rowspan.'" valign="middle">';
+			print '<input type="submit" class="button" value="'.$langs->trans("Search").'">';
+			print '</td></tr>';
+			if (! empty($conf->categorie->enabled))
+			{
+				print '<tr><td>'.$langs->trans("CategoryFilter").' &nbsp; </td>';
+				print '<td class="overflowwithjm200">'.$form->select_all_categories(0, $parent).'</td></tr>';
+			}
+			print '</table>';
+			print '</form>';
 		}
 
-		print '</table>';
-		print '</td></td></table>';
-		print '</form>';
 
+		// List of products
 		if ($action == 'search')
 		{
 			print '<br>';
@@ -491,7 +491,7 @@ if ($id || $ref)
 /* Barre d'action                                                             */
 /*                                                                            */
 /* ************************************************************************** */
-
+/*
 print "\n<div class=\"tabsAction\">\n";
 
 if ($action == '')
@@ -503,10 +503,9 @@ if ($action == '')
 }
 
 print "\n</div>\n";
-
+*/
 
 llxFooter();
 
 $db->close();
-
 ?>

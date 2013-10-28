@@ -396,7 +396,7 @@ InActivity=Aktiv
 ActivityCeased=Inaktiv
 ActivityStateFilter=Status
 ProductsIntoElements=Liste von Produkten in
-# OutstandingBill=Outstanding Bill
+OutstandingBill=Ausstehende Rechnung
 # Monkey
 MonkeyNumRefModelDesc=Zurück NUMERO mit Format %syymm-nnnn für den Kunden-Code und syymm%-nnnn für die Lieferanten-Code ist, wenn JJ Jahr, MM Monat und nnnn ist eine Folge ohne Pause und kein Zurück mehr gibt, auf 0 gesetzt.
 # Leopard

@@ -56,8 +56,9 @@ $langs->load("cron");
  */
 
 // Check the key, avoid that a stranger starts cron
-$key = $_GET['securitykey'];
-if (empty($key)) {
+$key = GETPOST('securitykey','alpha');
+if (empty($key))
+{
 	echo 'securitykey is require';
 	exit;
 }
@@ -67,7 +68,7 @@ if($key != $conf->global->CRON_KEY)
 	exit;
 }
 // Check the key, avoid that a stranger starts cron
-$userlogin = GETPOST('userlogin');
+$userlogin = GETPOST('userlogin','alpha');
 if (empty($userlogin))
 {
 	echo 'userlogin is require';
@@ -91,7 +92,8 @@ else
 		exit;
 	}
 }
-$id = GETPOST('id');
+$id = GETPOST('id','int');
+
 
 // create a jobs object
 $object = new Cronjob($db);

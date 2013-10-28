@@ -29,7 +29,7 @@ print top_htmlhead('',$langs->trans('Login').' '.$title);
 ?>
 <!-- BEGIN PHP TEMPLATE PASSWORDFORGOTTEN.TPL.PHP -->
 
-<body class="body">
+<body class="bodylogin">
 
 <!-- Javascript code on logon page only to detect user tz, dst_observed, dst_first, dst_second -->
 <script type="text/javascript">
