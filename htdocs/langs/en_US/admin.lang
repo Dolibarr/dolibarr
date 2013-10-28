@@ -379,6 +379,7 @@ LinkToTest=Clickable link generated for user <strong>%s</strong> (click phone nu
 KeepEmptyToUseDefault=Keep empty to use default value
 DefaultLink=Default link
 ValueOverwrittenByUserSetup=Warning, this value may be overwritten by user specific setup (each user can set his own clicktodial url)
+ExternalModule=External module - Installed into directory %s
 
 # Modules
 Module0Name=Users & groups
