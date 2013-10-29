@@ -658,6 +658,8 @@ from=from
 toward=toward
 Access=Access
 HelpCopyToClipboard=Use Ctrl+C to copy to clipboard
+SaveUploadedFileWithMask=Save file on server with name "<strong>%s</strong>" (otherwise "%s")
+OriginFileName=Nom d'origine
 
 # Week day
 Monday=Monday

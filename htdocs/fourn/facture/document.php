@@ -74,8 +74,9 @@ if ($object->fetch($id, $ref))
 // Envoi fichier
 if (GETPOST('sendit') && ! empty($conf->global->MAIN_UPLOAD_DOC))
 {
-    if ($object->id > 0) {
-    	dol_add_file_process($upload_dir, 0, 1, 'userfile');
+    if ($object->id > 0) 
+    {
+    	dol_add_file_process($upload_dir, 0, 1, 'userfile', GETPOST('savingdocmask'));
     }
 }
 
@@ -197,9 +198,10 @@ if ($object->id > 0)
 	print '</table>';
 	print '</div>';
 
+	
 	// Affiche formulaire upload
 	$formfile=new FormFile($db);
-	$formfile->form_attach_new_file($_SERVER['PHP_SELF'].'?facid='.$object->id,'',0,0,$user->rights->fournisseur->facture->creer, 50, $object);
+	$formfile->form_attach_new_file($_SERVER['PHP_SELF'].'?facid='.$object->id, '', 0, 0, $user->rights->fournisseur->facture->creer, 50, $object, '', 0, dol_sanitizeFileName($object->ref.'_'.$object->ref_supplier.'___file__'));
 
 
 	// List of document
