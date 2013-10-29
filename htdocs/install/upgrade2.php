@@ -331,8 +331,12 @@ if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
         	migrate_categorie_association($db,$langs,$conf);
         }
 
-        $afterversionarray=explode('.','3.3.9');
-        $beforeversionarray=explode('.','3.4.9');
+		// Script for VX (X<3.4) -> V3.4
+		// No specific scripts
+
+        // Tasks to do always and only into last targeted version
+        $afterversionarray=explode('.','3.4.9');	// target is after this
+        $beforeversionarray=explode('.','3.5.9');	// target is before this
         if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
         {
         	// Reload modules (this must be always and only into last targeted version)
@@ -3619,7 +3623,7 @@ function migrate_reload_modules($db,$langs,$conf)
         if ($res) {
             $mod=new modAgenda($db);
             $mod->remove('noboxes');
-            $mod->init('noboxes');
+            $mod->init('newboxdefonly');
         }
     }
     if (! empty($conf->global->MAIN_MODULE_SOCIETE))
@@ -3629,7 +3633,7 @@ function migrate_reload_modules($db,$langs,$conf)
         if ($res) {
             $mod=new modSociete($db);
             $mod->remove('noboxes');
-            $mod->init('noboxes');
+            $mod->init('newboxdefonly');
         }
     }
     if (! empty($conf->global->MAIN_MODULE_PRODUIT))    // Permission has changed into 2.7
@@ -3639,7 +3643,7 @@ function migrate_reload_modules($db,$langs,$conf)
         if ($res) {
             $mod=new modProduct($db);
             //$mod->remove('noboxes');
-            $mod->init('noboxes');
+            $mod->init('newboxdefonly');
         }
     }
     if (! empty($conf->global->MAIN_MODULE_SERVICE))    // Permission has changed into 2.7
@@ -3649,7 +3653,7 @@ function migrate_reload_modules($db,$langs,$conf)
             $res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modService.class.php';
             $mod=new modService($db);
             //$mod->remove('noboxes');
-            $mod->init('noboxes');
+            $mod->init('newboxdefonly');
         }
     }
     if (! empty($conf->global->MAIN_MODULE_COMMANDE))   // Permission has changed into 2.9
@@ -3659,7 +3663,7 @@ function migrate_reload_modules($db,$langs,$conf)
             $res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modCommande.class.php';
             $mod=new modCommande($db);
             //$mod->remove('noboxes');
-            $mod->init('noboxes');
+            $mod->init('newboxdefonly');
         }
     }
     if (! empty($conf->global->MAIN_MODULE_FACTURE))    // Permission has changed into 2.9
@@ -3669,7 +3673,7 @@ function migrate_reload_modules($db,$langs,$conf)
             $res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modFacture.class.php';
             $mod=new modFacture($db);
             //$mod->remove('noboxes');
-            $mod->init('noboxes');
+            $mod->init('newboxdefonly');
         }
     }
     if (! empty($conf->global->MAIN_MODULE_FOURNISSEUR))    // Permission has changed into 2.9
@@ -3679,7 +3683,7 @@ function migrate_reload_modules($db,$langs,$conf)
         if ($res) {
             $mod=new modFournisseur($db);
             //$mod->remove('noboxes');
-            $mod->init('noboxes');
+            $mod->init('newboxdefonly');
         }
     }
 
@@ -3690,7 +3694,7 @@ function migrate_reload_modules($db,$langs,$conf)
         if ($res) {
             $mod=new modUser($db);
             //$mod->remove('noboxes');  // We need to remove because id of module has changed
-            $mod->init('noboxes');
+            $mod->init('newboxdefonly');
         }
     }
     if (! empty($conf->global->MAIN_MODULE_DEPLACEMENT))    // Permission has changed into 3.0
@@ -3700,7 +3704,7 @@ function migrate_reload_modules($db,$langs,$conf)
         if ($res) {
             $mod=new modDeplacement($db);
             //$mod->remove('noboxes');	// We need to remove because a permission id has been removed
-            $mod->init('noboxes');
+            $mod->init('newboxdefonly');
         }
     }
     if (! empty($conf->global->MAIN_MODULE_DON))    // Permission has changed into 3.0
@@ -3710,7 +3714,7 @@ function migrate_reload_modules($db,$langs,$conf)
         if ($res) {
             $mod=new modDon($db);
             //$mod->remove('noboxes');	// We need to remove because a permission id has been removed
-            $mod->init('noboxes');
+            $mod->init('newboxdefonly');
         }
     }
     if (! empty($conf->global->MAIN_MODULE_ECM))    // Permission has changed into 3.0 and 3.1
@@ -3720,7 +3724,7 @@ function migrate_reload_modules($db,$langs,$conf)
             $res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modECM.class.php';
             $mod=new modECM($db);
             $mod->remove('noboxes');	// We need to remove because a permission id has been removed
-            $mod->init('noboxes');
+            $mod->init('newboxdefonly');
         }
     }
     if (! empty($conf->global->MAIN_MODULE_PAYBOX))    // Permission has changed into 3.0
@@ -3730,7 +3734,7 @@ function migrate_reload_modules($db,$langs,$conf)
         if ($res) {
             $mod=new modPaybox($db);
             $mod->remove('noboxes');  // We need to remove because id of module has changed
-            $mod->init('noboxes');
+            $mod->init('newboxdefonly');
         }
     }
 

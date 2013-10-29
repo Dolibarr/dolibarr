@@ -379,6 +379,7 @@ LinkToTest=Lien cliquable généré pour l'utilisateur <strong>%s</strong> (cliq
 KeepEmptyToUseDefault=Laisser ce champ vide pour utiliser la valeur par défaut
 DefaultLink=Lien par défaut
 ValueOverwrittenByUserSetup=Attention, cette valeur peut être écrasée par une valeur spécifique à la configuration de l'utilisateur (chaque utilisateur pouvant avoir sa propre URL « clicktodial »)
+ExternalModule=Module externe - Installé dans le répertoire %s
 
 # Modules
 Module0Name=Utilisateurs & groupes
@@ -1107,9 +1108,6 @@ WatermarkOnDraftInterventionCards=Filigrane sur les brouillons des fiches d'inte
 ##### Contracts #####
 ContractsSetup=Configuration du module contrats
 ContractsNumberingModules=Modèles de numérotation des contrats
-FreeLegalTextOnContracts=Mention complémentaire sur les contrats
-WatermarkOnDraftContractCards=Filigrane sur les brouillons des contrats (aucun si vide)
-TemplatePDFContracts=Modèles de document des contrats
 ##### Members #####
 MembersSetup=Configuration du module Adhérents
 MemberMainOptions=Options principales

@@ -63,6 +63,7 @@ For users:
 - New: Add page to make mass stock movement.
 - New: Add field oustanding limit into thirdparty properties.
 - New: Can enter a vat payment of zero.
+- New: Add path to installed dir of external modules + Name and web of module provider.
 - New: Add option to use a specific mask for uploaded filename
 - Qual: Implement same rule for return value of all command line scripts (0 when success, <>0 if error).
 - Fix: [ bug #992 ] Proforma invoices don't have a separated numeric count.
@@ -71,8 +72,8 @@ For users:
 
 For translators:
 - Qual: Normalized sort order of all languages files with english reference files.
-- New: Add language code files for South Africa, France new caledonia.
-- New: Translate the email to change password.
+- New: Add language code files for South Africa, France new caledonia, Vietnam.
+- New: Translate string for email to change password.
 
 For developers:
 - New: DolGraph can build graph with three lines.
@@ -88,7 +89,6 @@ For developers:
   MAIN_MOTD_SETUPPAGE, MAIN_MOTD_SETUPPAGE, MAIN_HOME now accept "|langfile" into translation
   key to use a specific language file.
 - New: Make some changes to allow usage of several alternative $dolibarr_main_url_root variables.
-  Fix also several bugs with old code. 
 - Qual: All nowrap properties are now using CSS class nowrap.
 - Qual: Move hardcoded code of module mailmanspip into trigger.
 - New: Into POST forms, if you can add a parameter DOL_AUTOSET_COOKIE with a vlue that is list name,
@@ -99,6 +99,7 @@ For developers:
 - New: A trigger can return an array of error strings instead of one error string.
 - New: Add method to use a dictionnary as a combo box.
 - New: Add update method for web service product.
+- Fix also several bugs with old code. 
 
 WARNING: Following change may create regression for some external modules, but was necessary to make
 Dolibarr better:

@@ -3,111 +3,111 @@
 # About page
 #
 About = Über
-# CronAbout = About Cron
-# CronAboutPage = Cron about page
+CronAbout = Über Cron
+CronAboutPage = Über cron Seite
 
 #
 # Right
 #
-# Permission23101 = Read Scheduled task
-# Permission23102 = Create/update Scheduled task
-# Permission23103 = Delete Scheduled task
-# Permission23104 = Execute Scheduled task
+Permission23101 = Lese geplante Aufgabe
+Permission23102 = Erstelle/aktualisiere geplante Aufgabe
+Permission23103 = Lösche geplante Aufgabe
+Permission23104 = Führe geplante Aufgabe aus
 
 #
 # Admin
 #
-# CronSetup= Scheduled job management setup
-# URLToLaunchCronJobs=URL to launch cron jobs
-# OrToLaunchASpecificJob=Or to launch a specific job
-# KeyForCronAccess=Security key for URL to launch cron jobs
-# FileToLaunchCronJobs=Command line to launch cron jobs
-# CronExplainHowToRunUnix=On Unix environment you should use crontab to run Command line each minutes
-# CronExplainHowToRunWin=On Microsoft(tm) Windows environement you can use Scheduled task tools to run Command line each minutes
+CronSetup= Jobverwaltungs-Konfiguration
+URLToLaunchCronJobs=URL zum Starten von Cronjobs
+OrToLaunchASpecificJob=Oder zum Starten von speziellen Jobs
+KeyForCronAccess=Sicherheitsschlüssel für URL zum Starten von Cronjobs
+FileToLaunchCronJobs=Kommandozeile zum Starten von Cronjobs
+CronExplainHowToRunUnix=In Unix-Umgebungen sollte man crontab benutzen um die Kommandozeile jede Minute auszuführen
+CronExplainHowToRunWin=In Microsoft(tm) Windows kannst Du die Aufgabenplanung benutzen um die Kommandozeile jede Minute aufzurufen
 
 
 #
 # Menu
 #
-# CronJobs=Scheduled jobs
-# CronListActive= List of active jobs
-# CronListInactive= List of disabled jobs
+CronJobs=Geplante Jobs
+CronListActive= Liste der aktiven Jobs
+CronListInactive= Liste der deaktivierten Jobs
 
 
 #
 # Page list
 #
-# CronDateLastRun=Last run
-# CronLastOutput=Last run output
-# CronLastResult=Last result code
-# CronListOfCronJobs=List of scheduled jobs
-# CronCommand=Command
-# CronList= Job list
-# CronDelete= Delete cron jobs
-# CronConfirmDelete= Are you sure you want to delete this cron job ?
-# CronExecute=Launch job
-# CronConfirmExecute= Are you sure to execute this job now
-# CronInfo= Jobs allow to execute task that have been planned
-# CronWaitingJobs=Wainting jobs
-# CronTask=Job
+CronDateLastRun=Letzte Ausführung
+CronLastOutput=Ausgabe der letzten Ausführung
+CronLastResult=Letzter Resultatcode
+CronListOfCronJobs=Liste der geplanten Jobs
+CronCommand=Befehl
+CronList= Jobliste
+CronDelete= Lösche Cronjobs
+CronConfirmDelete= Möchten Sie diesen Cronjob wirklich löschen?
+CronExecute=Starte Job
+CronConfirmExecute= Sind Sie sicher, dass Sie diesen Job jetzt ausführen wollen
+CronInfo= Jobs, die eine geplante Aufgabe ausführen dürfen
+CronWaitingJobs=Wartende Jobs
+CronTask=Job
 CronNone= Keine
-CronDtStart=Vertragsbeginn
+CronDtStart=Startdatum
 CronDtEnd=Vertragsende
-# CronDtNextLaunch=Next execution
-# CronDtLastLaunch=Last execution
-# CronFrequency=Frequancy
-# CronClass=Classe
+CronDtNextLaunch=Nächste Ausführung
+CronDtLastLaunch=Letzte Ausführung
+CronFrequency=Häufigkeit
+CronClass=Klasse
 CronMethod=Methode
 CronModule=Modul
-# CronAction=Action
+CronAction=Aktion
 CronStatus=Status
 CronStatusActive=Aktiviert
 CronStatusInactive=Deaktivert
-# CronNoJobs=No jobs registered
-CronPriority=Wichtigkeit
-CronLabel=Titel
-# CronNbRun=Nb. launch
-# CronEach=Every
-# JobFinished=Job launched and finished
+CronNoJobs=Keine Jobs eingetragen
+CronPriority=Rang
+CronLabel=Beschreibung
+CronNbRun=Anzahl Starts
+CronEach=Jede
+JobFinished=Job gestarted und beendet
 
 #
 #Page card
 #
-# CronAdd= Add jobs
-# CronHourStart= Start Hour and date of task
-# CronEvery= And execute task each
-# CronObject= Instance/Object to create
+CronAdd= Jobs hinzufügen
+CronHourStart= Startzeit und -datum für Aufgabe
+CronEvery= Und führe Aufgabe aus jeden
+CronObject= Instanz/Objekt zu erstellen
 CronArgs=Parameter
-# CronSaveSucess=Save succesfully
+CronSaveSucess=Speichern erfolgreich
 CronNote=Kommentar
-# CronFieldMandatory=Fields %s is mandatory
-# CronErrEndDateStartDt=End date cannot be before start date
-# CronStatusActiveBtn=Enable
-CronStatusInactiveBtn=Deaktiviere Gruppe
-# CronTaskInactive=This job is disabled
-# CronDtLastResult=Last result date
-# CronId=Id
-# CronClassFile=Classes (filename.class.php)
+CronFieldMandatory=Feld %s ist zwingend nötig
+CronErrEndDateStartDt=Enddatum kann nicht vor dem Startdatum liegen
+CronStatusActiveBtn=Aktivieren
+CronStatusInactiveBtn=Deaktivieren
+CronTaskInactive=Dieser Job ist deaktiviert
+CronDtLastResult=Datum letztes Resultat
+CronId=ID
+CronClassFile=Klassen (filenames.class.php)
 # CronModuleHelp=Name of Dolibarr module directory (also work with external Dolibarr module). <BR> For exemple to fetch method of Dolibarr Product object /htdocs/<u>product</u>/class/product.class.php, the value of module is <i>product</i>
 # CronClassFileHelp=The file name to load. <BR> For exemple to fetch method of Dolibarr Product object /htdocs/product/class/<u>product.class.php</u>, the value of class file name is <i>product.class.php</i>
 # CronObjectHelp=The object name to load. <BR> For exemple to fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value of class file name is <i>Product</i>
 # CronMethodHelp=The object method to launch. <BR> For exemple to fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value of method is  is <i>fecth</i>
 # CronArgsHelp=The method arguments. <BR> For exemple to fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value of paramters can be <i>0, ProductRef</i>
-# CronCommandHelp=The system command line to execute.
+CronCommandHelp=Die auszuführende System-Kommandozeile 
 
 #
 # Info
 #
-# CronInfoPage=Information
+CronInfoPage=Information
 
 
 #
 # Common
 #
-# CronType=Task type
-# CronType_method=Call method of a Dolibarr Class
-# CronType_command=Shell command
-# CronMenu=Cron
-# CronCannotLoadClass=Cannot load class %s or object %s
+CronType=Aufgaben-Typ
+CronType_method=Aufrufmethode einer Dolibarr Class
+CronType_command=Shell-Befehl
+CronMenu=Cron
+CronCannotLoadClass=Kann Klasse %s oder Object %s nicht laden
 
-# UseMenuModuleToolsToAddCronJobs=Go into menu "Home - Modules tools - Job list" to see and edit scheduled jobs.
+UseMenuModuleToolsToAddCronJobs=Rufe Menu "Home - Modules tools - Job Liste" auf um geplante Aufgaben zu sehen und zu verändern.

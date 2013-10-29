@@ -800,7 +800,7 @@ class Form
                 while ($i < $num)
                 {
                     $obj = $this->db->fetch_object($resql);
-
+                    $label='';
                     if ($conf->global->SOCIETE_ADD_REF_IN_LIST) {
                     	if (($obj->client) && (!empty($obj->code_client))) {
                     		$label = $obj->code_client. ' - ';
@@ -2499,7 +2499,7 @@ class Form
      *     @param 	string		$action      	   	Action
      *	   @param  	array		$formquestion	   	An array with complementary inputs to add into forms: array(array('label'=> ,'type'=> , ))
      * 	   @param  	string		$selectedchoice  	"" or "no" or "yes"
-     * 	   @param  	int			$useajax		   	0=No, 1 or 'xxx'=Yes, 2=Yes but submit page with &confirm=no if choice is No, 'xxx'=preoutput confirm box with div id=dialog-confirm-xxx
+     * 	   @param  	int			$useajax		   	0=No, 1=Yes, 2=Yes but submit page with &confirm=no if choice is No, 'xxx'=Yes and preoutput confirm box with div id=dialog-confirm-xxx
      *     @param  	int			$height          	Force height of box
      *     @param	int			$width				Force width of bow
      *     @return 	string      	    			HTML ajax code if a confirm ajax popup is required, Pure HTML code if it's an html form
@@ -2588,10 +2588,12 @@ class Form
         }
 
 		// JQUI method dialog is broken with jmobile, we use standard HTML.
-		// Note: When using dol_use_jmobile, you must also check code for button use a GET url with action=xxx and output the confirm code only when action=xxx
+		// Note: When using dol_use_jmobile or no js, you must also check code for button use a GET url with action=xxx and check that you also output the confirm code when action=xxx
+		// See page product/fiche.php for example
         if (! empty($conf->dol_use_jmobile)) $useajax=0;
+		if (empty($conf->use_javascript_ajax)) $useajax=0;
 
-        if ($useajax && $conf->use_javascript_ajax)
+        if ($useajax)
         {
             $autoOpen=true;
             $dialogconfirm='dialog-confirm';
@@ -3717,9 +3719,10 @@ class Form
      *	@param  int		$translate		Translate and encode value
      * 	@param	int		$maxlen			Length maximum for labels
      * 	@param	int		$disabled		Html select box is disabled
+     *  @param	int		$sort			'ASC' or 'DESC' =Sort on label, '' or 'NONE'=Do not sort
      * 	@return	string					HTML select string
      */
-    function selectarray($htmlname, $array, $id='', $show_empty=0, $key_in_label=0, $value_as_key=0, $option='', $translate=0, $maxlen=0, $disabled=0)
+    function selectarray($htmlname, $array, $id='', $show_empty=0, $key_in_label=0, $value_as_key=0, $option='', $translate=0, $maxlen=0, $disabled=0, $sort='')
     {
         global $langs;
 
@@ -3734,28 +3737,30 @@ class Form
 
         if (is_array($array))
         {
+        	// Translate
+        	if ($translate)
+        	{
+	        	foreach($array as $key => $value) $array[$key]=$langs->trans($value);
+        	}
+
+        	// Sort
+			if ($sort == 'ASC') asort($array);
+			elseif ($sort == 'DESC') arsort($array);
+
             foreach($array as $key => $value)
             {
                 $out.='<option value="'.$key.'"';
-                // Si il faut pre-selectionner une valeur
-                if ($id != '' && $id == $key)
-                {
-                    $out.=' selected="selected"';
-                }
-
+                if ($id != '' && $id == $key) $out.=' selected="selected"';		// To preselect a value
                 $out.='>';
 
-                $newval=($translate?$langs->trans(ucfirst($value)):$value);
                 if ($key_in_label)
                 {
-                    $selectOptionValue = dol_htmlentitiesbr($key.' - '.($maxlen?dol_trunc($newval,$maxlen):$newval));
+                    $selectOptionValue = dol_htmlentitiesbr($key.' - '.($maxlen?dol_trunc($value,$maxlen):$value));
                 }
                 else
                 {
-                    $selectOptionValue = dol_htmlentitiesbr($maxlen?dol_trunc($newval,$maxlen):$newval);
-                    if ($value == '' || $value == '-') {
-                        $selectOptionValue='&nbsp;';
-                    }
+                    $selectOptionValue = dol_htmlentitiesbr($maxlen?dol_trunc($value,$maxlen):$value);
+                    if ($value == '' || $value == '-') $selectOptionValue='&nbsp;';
                 }
                 $out.=$selectOptionValue;
                 $out.="</option>\n";

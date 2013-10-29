@@ -75,8 +75,10 @@ class modService extends DolibarrModules
 		$this->const = array();
 
 		// Boxes
-		$this->boxes = array();
-		$this->boxes[0][1] = "box_services_contracts.php";
+		$this->boxes = array(
+			0=>array('file'=>'box_services_contracts.php','enabledbydefaulton'=>'Home'),
+			1=>array('file'=>'box_graph_product_distribution.php','enabledbydefaulton'=>'Home')
+		);
 
 		// Permissions
 		$this->rights = array();
@@ -186,7 +188,7 @@ class modService extends DolibarrModules
 	 *		The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
 	 *		It also creates data directories
 	 *
-     *      @param      string	$options    Options when enabling module ('', 'noboxes')
+     *      @param      string	$options    Options when enabling module ('', 'newboxdefonly', 'noboxes')
 	 *      @return     int             	1 if OK, 0 if KO
 	 */
 	function init($options='')
@@ -204,7 +206,7 @@ class modService extends DolibarrModules
 	 *      Remove from database constants, boxes and permissions from Dolibarr database.
 	 *		Data directories are not deleted
 	 *
-     *      @param      string	$options    Options when enabling module ('', 'noboxes')
+     *      @param      string	$options    Options when enabling module ('', 'newboxdefonly', 'noboxes')
 	 *      @return     int             	1 if OK, 0 if KO
      */
     function remove($options='')

@@ -396,7 +396,7 @@ InActivity=Açık
 ActivityCeased=Kapalı
 ActivityStateFilter=Etkinlik durumu
 ProductsIntoElements=Girecek ürünler listesi
-# OutstandingBill=Outstanding Bill
+OutstandingBill=Bekleyen fatura
 # Monkey
 MonkeyNumRefModelDesc=Sayı biçimini müşteri için %syymm-nnn, tedarikçi için %syymm-nnn gösterir, yy yıl, mm ay ve nnnn ise 0 olmayan bir dizidir
 # Leopard

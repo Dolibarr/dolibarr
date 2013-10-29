@@ -52,12 +52,13 @@ abstract class DolibarrModules
 
     var $dbversion = "-";
 
+
     /**
-     *      Fonction d'activation. Insere en base les constantes et boites du module
+     *  Method to enable a module. Insert into database all constants, boxes of module
      *
-     *      @param      array	$array_sql  Array of SQL requests to execute when enabling module
-     *      @param      string	$options    Options when enabling module ('', 'noboxes')
-     *      @return     int              	1 if OK, 0 if KO
+     *  @param      array	$array_sql  	Array of SQL requests to execute when enabling module
+     *  @param      string	$options    	String with options when disabling module ('newboxdefonly|noboxes')
+     *  @return     int              		1 if OK, 0 if KO
      */
     function _init($array_sql, $options='')
     {
@@ -78,8 +79,8 @@ abstract class DolibarrModules
         // Insert constant defined by modules, into llx_const
         if (! $err) $err+=$this->insert_const();
 
-        // Insere les boites dans llx_boxes_def
-        if (! $err && $options != 'noboxes') $err+=$this->insert_boxes();
+        // Insert boxes def into llx_boxes_def and boxes setup into llx_boxes
+        if (! $err && ! preg_match('/noboxes/',$options)) $err+=$this->insert_boxes($options);
 
         // Insert permission definitions of module into llx_rights_def. If user is admin, grant this permission to user.
         if (! $err) $err+=$this->insert_permissions(1);
@@ -147,7 +148,7 @@ abstract class DolibarrModules
      *  Fonction de desactivation. Supprime de la base les constantes et boites du module
      *
      *  @param      array	$array_sql      Array of SQL requests to execute when disable module
-     *  @param      string	$options		Options when disabling module ('', 'noboxes')
+     *  @param      string	$options		String with options when disabling module ('newboxdefonly|noboxes')
      *  @return     int      		       	1 if OK, 0 if KO
      */
     function _remove($array_sql, $options='')
@@ -170,7 +171,7 @@ abstract class DolibarrModules
         if (! $err) $err+=$this->delete_const();
 
         // Remove list of module's available boxes (entry in llx_boxes)
-        if (! $err && $options != 'noboxes') $err+=$this->delete_boxes();
+        if (! $err && ! preg_match('/(newboxdefonly|noboxes)/',$options)) $err+=$this->delete_boxes();	// We don't have to delete if option ask to keep boxes safe or ask to add new box def only
 
         // Remove module's permissions from list of available permissions (entries in llx_rights_def)
         if (! $err) $err+=$this->delete_permissions();
@@ -261,7 +262,7 @@ abstract class DolibarrModules
 
 
     /**
-     *  Retourne la version du module.
+     *  Return module version.
      *  Pour les modules a l'etat 'experimental', retourne la traduction de 'experimental'
      *  Pour les modules 'dolibarr', retourne la version de Dolibarr
      *  Pour les autres modules, retourne la version du module
@@ -278,6 +279,20 @@ abstract class DolibarrModules
         elseif ($this->version == 'dolibarr') return DOL_VERSION;
         elseif ($this->version) return $this->version;
         else return $langs->trans("VersionUnknown");
+    }
+
+
+    /**
+     *  Return if a module is a core or external module
+     *
+     *  @return     string      'core', 'external' or 'unknown'
+     */
+    function isCoreOrExternalModule()
+    {
+        if ($this->version == 'dolibarr') return 'core';
+        if (! empty($this->version) && ! in_array($this->version,array('experimental','development'))) return 'external';
+        if (! empty($this->editor_name) || ! empty($this->editor_web)) return 'external';
+        return 'unknown';
     }
 
 
@@ -419,7 +434,7 @@ abstract class DolibarrModules
 		if (empty($reldir)) return 1;
 
         include_once DOL_DOCUMENT_ROOT .'/core/lib/admin.lib.php';
-        
+
         $ok = 1;
         foreach($conf->file->dol_document_root as $dirroot)
         {
@@ -497,9 +512,10 @@ abstract class DolibarrModules
     /**
      *  Insert boxes into llx_boxes_def
      *
-     *  @return     int     Nb of errors (0 if OK)
+     *	@param		string	$option		String with options when disabling module ('newboxdefonly'=insert only boxes definition)
+     *  @return     int     			Nb of errors (0 if OK)
      */
-    function insert_boxes()
+    function insert_boxes($option='')
     {
 		require_once DOL_DOCUMENT_ROOT.'/core/class/infobox.class.php';
 
@@ -518,11 +534,13 @@ abstract class DolibarrModules
             	if (empty($file)) $file  = isset($this->boxes[$key][1])?$this->boxes[$key][1]:'';	// For backward compatibility
                 if (empty($note)) $note  = isset($this->boxes[$key][2])?$this->boxes[$key][2]:'';	// For backward compatibility
 
+                // Search if boxes def already present
                 $sql = "SELECT count(*) as nb FROM ".MAIN_DB_PREFIX."boxes_def";
                 $sql.= " WHERE file = '".$this->db->escape($file)."'";
                 $sql.= " AND entity = ".$conf->entity;
                 if ($note) $sql.=" AND note ='".$this->db->escape($note)."'";
 
+                dol_syslog(get_class($this)."::insert_boxes sql=".$sql);
                 $result=$this->db->query($sql);
                 if ($result)
                 {
@@ -533,9 +551,9 @@ abstract class DolibarrModules
 
                         if (! $err)
                         {
-                            $sql = "INSERT INTO ".MAIN_DB_PREFIX."boxes_def (file,entity,note)";
-                            $sql.= " VALUES ('".$this->db->escape($file)."',";
-                            $sql.= $conf->entity.",";
+                            $sql = "INSERT INTO ".MAIN_DB_PREFIX."boxes_def (file, entity, note)";
+                            $sql.= " VALUES ('".$this->db->escape($file)."', ";
+                            $sql.= $conf->entity.", ";
                             $sql.= $note?"'".$this->db->escape($note)."'":"null";
                             $sql.= ")";
 
@@ -544,7 +562,7 @@ abstract class DolibarrModules
                             if (! $resql) $err++;
 
                         }
-                        if (! $err)
+                        if (! $err && ! preg_match('/newboxdefonly/',$options))
                         {
                             $lastid=$this->db->last_insert_id(MAIN_DB_PREFIX."boxes_def","rowid");
 
@@ -568,7 +586,7 @@ abstract class DolibarrModules
                             $this->db->commit();
                         }
                         else
-                        {
+						{
                             $this->error=$this->db->lasterror();
                             dol_syslog(get_class($this)."::insert_boxes ".$this->error, LOG_ERR);
                             $this->db->rollback();
@@ -609,7 +627,7 @@ abstract class DolibarrModules
                 //$note  = $this->boxes[$key][2];
 
                 if (empty($file)) $file  = isset($this->boxes[$key][1])?$this->boxes[$key][1]:'';	// For backward compatibility
-                
+
                 $sql = "DELETE FROM ".MAIN_DB_PREFIX."boxes";
                 $sql.= " USING ".MAIN_DB_PREFIX."boxes, ".MAIN_DB_PREFIX."boxes_def";
                 $sql.= " WHERE ".MAIN_DB_PREFIX."boxes.box_id = ".MAIN_DB_PREFIX."boxes_def.rowid";
@@ -898,7 +916,7 @@ abstract class DolibarrModules
                             break;
                         }
                         else dol_syslog(get_class($this)."::insert_permissions record already exists", LOG_INFO);
-                        
+
                     }
                     $this->db->free($resqlinsert);
 

@@ -1,0 +1,51 @@
+# Dolibarr language file - Source file is en_US - marges
+
+Margin=Okraj
+Margins=Okraje
+TotalMargin=Celková marže
+MarginOnProducts=Margin / Produkty
+MarginOnServices=Marže / služby
+MarginRate=Marže rychlost
+MarkRate=Mark rychlost
+DisplayMarginRates=Zobrazení okrajů ceny
+DisplayMarkRates=Zobrazit ceny značek
+InputPrice=Vstupní cena
+
+margin=Ziskové marže řízení
+margesSetup=Ziskové marže Nastavení řízení
+
+MarginDetails=Margin detaily
+
+ProductMargins=Produktové marže
+CustomerMargins=Zákazníků marže
+AgentMargins=Agent marže
+
+ProductService=Produkt nebo služba
+AllProducts=Všechny produkty a služby
+ChooseProduct/Service=Zvolte produkt nebo službu
+CommercialAgent=Obchodní zástupce
+
+StartDate=Datum zahájení
+EndDate=Datum ukončení
+Launch=Začátek
+
+ForceBuyingPriceIfNull=Force nákupu cena, pokud null
+ForceBuyingPriceIfNullDetails=pokud je &quot;ON&quot;, bude marže rovnat nule na lince (nákupní cena = prodejní cena), v opačném případě (&quot;OFF&quot;), bude Marge se rovná prodejní ceně (nákupní cena = 0)
+MARGIN_METHODE_FOR_DISCOUNT=Marže metoda pro globální slevy
+UseDiscountAsProduct=Jako produkt
+UseDiscountAsService=Jako služba
+UseDiscountOnTotal=Na mezisoučet
+MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Definuje, zda globální sleva je považován za výrobek, služba, nebo pouze na mezisoučet pro výpočet marže.
+
+MARGIN_TYPE=Marže typ
+MargeBrute=Raw marže
+MargeNette=Čistá marže
+MARGIN_TYPE_DETAILS=Raw margin: Konečná cena - nákupní cenou <br/> Čistá marže: Prodejní cena - pořizovací ceny,
+
+CostPrice=Velkoobchodní cena
+BuyingCost=Velkoobchodní cena
+UnitCharges=Jednotkové náklady
+Charges=Poplatky
+
+AgentContactType=Typ kontaktu použít pro uvedení do provozu
+AgentContactTypeDetails=Definovat, co typ kontaktu (svázána faktur) bude spojena s obchodními zástupci

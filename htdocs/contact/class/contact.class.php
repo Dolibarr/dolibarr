@@ -62,6 +62,10 @@ class Contact extends CommonObject
 
 	var $code;
 	var $email;
+	var $phone_pro;
+	var $phone_perso;
+	var $phone_mobile;
+
 	var $birthday;
 	var $default_lang;
     var $note_public;           // Public note
