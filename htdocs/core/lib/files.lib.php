@@ -994,18 +994,28 @@ function dol_init_file_process($pathtoscan='')
  * @param	int		$allowoverwrite			1=Allow overwrite existing file
  * @param	int		$donotupdatesession		1=Do no edit _SESSION variable
  * @param	string	$varfiles				_FILES var name
+ * @param	string	$savingdocmask			Mask to use to define output filename. For example 'XXXXX-__YYYYMMDD__-__file__'
  * @return	void
  */
-function dol_add_file_process($upload_dir,$allowoverwrite=0,$donotupdatesession=0,$varfiles='addedfile')
+function dol_add_file_process($upload_dir, $allowoverwrite=0, $donotupdatesession=0, $varfiles='addedfile', $savingdocmask='')
 {
 	global $db,$user,$conf,$langs;
 
 	if (! empty($_FILES[$varfiles])) // For view $_FILES[$varfiles]['error']
 	{
-		dol_syslog('dol_add_file_process upload_dir='.$upload_dir.' allowoverwrite='.$allowoverwrite.' donotupdatesession='.$donotupdatesession, LOG_DEBUG);
+		dol_syslog('dol_add_file_process upload_dir='.$upload_dir.' allowoverwrite='.$allowoverwrite.' donotupdatesession='.$donotupdatesession.' savingdocmask='.$savingdocmask, LOG_DEBUG);
 		if (dol_mkdir($upload_dir) >= 0)
 		{
-			$resupload = dol_move_uploaded_file($_FILES[$varfiles]['tmp_name'], $upload_dir . "/" . $_FILES[$varfiles]['name'], $allowoverwrite, 0, $_FILES[$varfiles]['error'], 0, $varfiles);
+			// Define $destpath (path to file including filename) and $destfile (only filename)
+			$destpath=$upload_dir . "/" . $_FILES[$varfiles]['name'];
+			$destfile=$_FILES[$varfiles]['name'];
+			if ($savingdocmask) 
+			{
+				$destpath=$upload_dir . "/" . preg_replace('/__file__/',$_FILES[$varfiles]['name'],$savingdocmask);
+				$destfile=preg_replace('/__file__/',$_FILES[$varfiles]['name'],$savingdocmask);
+			} 
+			
+			$resupload = dol_move_uploaded_file($_FILES[$varfiles]['tmp_name'], $destpath, $allowoverwrite, 0, $_FILES[$varfiles]['error'], 0, $varfiles);
 			if (is_numeric($resupload) && $resupload > 0)
 			{
 				include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
@@ -1013,16 +1023,16 @@ function dol_add_file_process($upload_dir,$allowoverwrite=0,$donotupdatesession=
 				{
 					include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 					$formmail = new FormMail($db);
-					$formmail->add_attached_files($upload_dir . "/" . $_FILES[$varfiles]['name'],$_FILES[$varfiles]['name'],$_FILES[$varfiles]['type']);
+					$formmail->add_attached_files($destpath, $destfile, $_FILES[$varfiles]['type']);
 				}
-				if (image_format_supported($upload_dir . "/" . $_FILES[$varfiles]['name']) == 1)
+				if (image_format_supported($destpath) == 1)
 				{
 					// Create small thumbs for image (Ratio is near 16/9)
 					// Used on logon for example
-					$imgThumbSmall = vignette($upload_dir . "/" . $_FILES[$varfiles]['name'], 160, 120, '_small', 50, "thumbs");
+					$imgThumbSmall = vignette($destpath, 160, 120, '_small', 50, "thumbs");
 					// Create mini thumbs for image (Ratio is near 16/9)
 					// Used on menu or for setup page for example
-					$imgThumbMini = vignette($upload_dir . "/" . $_FILES[$varfiles]['name'], 160, 120, '_mini', 50, "thumbs");
+					$imgThumbMini = vignette($destpath, 160, 120, '_mini', 50, "thumbs");
 				}
 
 				setEventMessage($langs->trans("FileTransferComplete"));
