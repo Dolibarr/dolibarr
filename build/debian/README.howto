@@ -8,6 +8,9 @@ script to build a package, ready to be distributed,
 with format .DEB (for Debian, Ubuntu, ...).
 
 
+
+##### Prepare linux env to work
+
 # To build a debian package, you need first
 # With Ubuntu 12.04
 # apt-get install debhelper dpkg-source gpg lintian git-buildpackage pkg-php-tools schroot sbuild dh-linktree dh-make-php
@@ -41,6 +44,9 @@ END
 * Ask to be included into project collab-maint: http://alioth.debian.org/projects/collab-maint/
 
 
+
+##### Some interesting command to know
+
 # To translate .po files
 # debconf-updatepo					     		To run into po dir to regenate templates.pot
 # podebconf-report-po --from email@email.com	To send email to ask translations
@@ -66,9 +72,8 @@ END
 # gdebi package.deb						 Install a package + dependencies
 
 
-##########################################################
 
-To submit a package to Debian:
+##### Global view of submit new package to Debian:
 
 - Post an ITP with reportbugs :
 > reportbug -B debian --email username@domain.tld wnpp
@@ -90,19 +95,28 @@ http://bugs.debian.org/package
 
 
 
-##########################################################
-
-To generate a package
+##### Testing a package into unstable env
 
 Create a chroot called "unstable-amd64-sbuild"
 > sudo sbuild-createchroot --keyring= unstable /srv/chroot/unstable http://ftp.uk.debian.org/debian
 
+Pour lister les env chroot
+> schroot -l
+
 Puis pour se connecter 
-> schroot
+> schroot -c name_of_chroot
+
+Pour tester un package
+> cp *.deb /srv/chroot/unstable/tmp
+> schroot -c name_of_chroot
+> dpkg -i dolibarr*.deb
+> sudo apt-get install -f
 
 
 
-##########################################################
+
+
+##### Create/Maintain TCPDF package
 
 To update tcpdf package:
 
@@ -157,7 +171,8 @@ http://packages.qa.debian.org/t/tcpdf.html
 * Package will be into release when test will be moved as stable.
 
 
-##########################################################
+
+##### Create/Maintain dolibarr package
 
 To update dolibarr debian package
 
