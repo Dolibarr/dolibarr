@@ -178,6 +178,7 @@ if (empty($reshook))
         $object->priv			= $_POST["priv"];
         $object->note_public	= GETPOST("note_public");
         $object->note_private	= GETPOST("note_private");
+        $object->status			= 1; //Defult status to Actif
 
         // Note: Correct date should be completed with location to have exact GM time of birth.
         $object->birthday = dol_mktime(0,0,0,$_POST["birthdaymonth"],$_POST["birthdayday"],$_POST["birthdayyear"]);

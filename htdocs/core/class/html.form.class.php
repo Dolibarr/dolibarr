@@ -975,6 +975,7 @@ class Form
         }
         $sql.= " WHERE sp.entity IN (".getEntity('societe', 1).")";
         if ($socid > 0) $sql.= " AND sp.fk_soc=".$socid;
+        if (! empty($conf->global->CONTACT_HIDE_INACTIVE_IN_COMBOBOX)) $sql.= " AND sp.statut<>0 ";
         $sql.= " ORDER BY sp.lastname ASC";
 
         dol_syslog(get_class($this)."::select_contacts sql=".$sql);
@@ -1141,6 +1142,7 @@ class Form
         if (! empty($user->societe_id)) $sql.= " AND u.fk_societe = ".$user->societe_id;
         if (is_array($exclude) && $excludeUsers) $sql.= " AND u.rowid NOT IN ('".$excludeUsers."')";
         if (is_array($include) && $includeUsers) $sql.= " AND u.rowid IN ('".$includeUsers."')";
+        if (! empty($conf->global->USER_HIDE_INACTIVE_IN_COMBOBOX)) $sql.= " AND u.statut<>0 ";
         $sql.= " ORDER BY u.lastname ASC";
 
         dol_syslog(get_class($this)."::select_dolusers sql=".$sql);
