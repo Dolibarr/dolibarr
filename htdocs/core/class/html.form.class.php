@@ -3659,18 +3659,19 @@ class Form
      *	@param	string	$prefix   	prefix
      *	@param  int		$iSecond  	Default preselected duration (number of seconds)
      * 	@param	int		$disabled	Disable the combo box
-     * 	@param	string	$typehour	if 'select' then input hour is a combo select, if 'text' input is in text
+     * 	@param	string	$typehour	if 'select' then input hour and input min is a combo, if 'text' input hour is in text and input min is a combo
      *  @return	void
      */
     function select_duration($prefix,$iSecond='',$disabled=0,$typehour='select')
     {
     	global $langs;
 
+    	$hourSelected=0; $minSelected=0;
         if ($iSecond)
         {
             require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
-            $hourSelected = convertSecondToTime($iSecond,'hour');
+            $hourSelected = convertSecondToTime($iSecond,'allhour');
             $minSelected = convertSecondToTime($iSecond,'min');
         }
 
@@ -3690,8 +3691,7 @@ class Form
         }
         elseif ($typehour=='text')
         {
-        	$fullhours=convertSecondToTime($iSecond,'fullhour');
-        	print '<input type="text" size="3" name="'.$prefix.'hour" class="flat" value="'.$fullhours.'">';
+        	print '<input type="text" size="3" name="'.$prefix.'hour" class="flat" value="'.((int) $hourSelected).'">';
         }
         print $langs->trans('Hours'). "&nbsp;";
         print '<select class="flat" name="'.$prefix.'min"'.($disabled?' disabled="disabled"':'').'>';

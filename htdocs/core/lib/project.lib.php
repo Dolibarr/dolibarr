@@ -322,13 +322,20 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 				print dol_print_date($lines[$i]->date_end,'day');
 				print '</td>';
 
-				// Planned Workload
+				// Planned Workload (in working hours)
 				print '<td align="center">';
-				if ($lines[$i]->planned_workload) print convertSecondToTime($lines[$i]->planned_workload,'all');
-				else print '--:--';
+				$fullhour=convertSecondToTime($lines[$i]->planned_workload,'allhourmin');
+				$workingdelay=convertSecondToTime($lines[$i]->planned_workload,'all',86400,7);	// TODO Replace 86400 and 7 to take account working hours per day and working day per weeks
+				if ($lines[$i]->planned_workload)
+				{
+					print $fullhour;
+					// TODO Add delay taking account of working hours per day and working day per week
+					//if ($workingdelay != $fullhour) print '<br>('.$workingdelay.')';
+				}
+				//else print '--:--';
 				print '</td>';
 
-				// Progress
+				// Progress declared
 				print '<td align="right">';
 				print $lines[$i]->progress.' %';
 				print '</td>';
@@ -337,10 +344,16 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 				print '<td align="right">';
 				if ($showlineingray) print '<i>';
 				else print '<a href="'.DOL_URL_ROOT.'/projet/tasks/time.php?id='.$lines[$i]->id.($showproject?'':'&withproject=1').'">';
-				if ($lines[$i]->duration) print convertSecondToTime($lines[$i]->duration,'all');
+				if ($lines[$i]->duration) print convertSecondToTime($lines[$i]->duration,'allhourmin');
 				else print '--:--';
 				if ($showlineingray) print '</i>';
 				else print '</a>';
+				print '</td>';
+
+				// Progress calculated
+				// Note: ->duration is in fact time spent i think
+				print '<td align="right">';
+				if ($lines[$i]->planned_workload) print round(100 * $lines[$i]->duration / $lines[$i]->planned_workload,2).' %';
 				print '</td>';
 
 				// Tick to drag and drop
@@ -376,7 +389,8 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 		print '<td></td>';
 		print '<td></td>';
 		if ($addordertick) print '<td class="hideonsmartphone"></td>';
-		print '<td align="right" class="nowrap liste_total">'.convertSecondToTime($total).'</td>';
+		print '<td align="right" class="nowrap liste_total">'.convertSecondToTime($total, 'allhourmin').'</td>';
+		print '<td></td>';
 		print '</tr>';
 	}
 
