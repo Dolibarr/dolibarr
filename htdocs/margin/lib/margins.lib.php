@@ -125,10 +125,10 @@ function getMarginInfos($pvht, $remise_percent, $tva_tx, $localtax1_tx, $localta
 
 	// calcul taux marge
 	if ($paht_ret != 0)
-		$marge_tx_ret = round((100 * $marge) / $paht_ret, 3);
+		$marge_tx_ret = (100 * $marge) / $paht_ret;
 	// calcul taux marque
 	if ($pu_ht_remise != 0)
-		$marque_tx_ret = round((100 * $marge) / $pu_ht_remise, 3);
+		$marque_tx_ret = (100 * $marge) / $pu_ht_remise;
 
 	return array($paht_ret, $marge_tx_ret, $marque_tx_ret);
 }

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2010-2013	Regis Houssin		<regis.houssin@capnetworks.com>
  * Copyright (C) 2010-2011	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2012		Christophe Battarel	<christophe.battarel@altairis.fr>
+ * Copyright (C) 2012-2013	Christophe Battarel	<christophe.battarel@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -120,14 +120,15 @@
 	<?php }
 
   if (! empty($conf->margin->enabled) && empty($user->societe_id)) {
+	$rounding = min($conf->global->MAIN_MAX_DECIMALS_UNIT,$conf->global->MAIN_MAX_DECIMALS_TOT);
   ?>
   	<td align="right" class="nowrap"><?php echo price($line->pa_ht); ?></td>
   	<?php if (! empty($conf->global->DISPLAY_MARGIN_RATES)) {?>
-  	  <td align="right" class="nowrap"><?php echo (($line->pa_ht == 0)?'n/a':price($line->marge_tx).'%'); ?></td>
+  	  <td align="right" class="nowrap"><?php echo (($line->pa_ht == 0)?'n/a':price($line->marge_tx, null, null, null, null, $rounding).'%'); ?></td>
   	<?php
   }
   if (! empty($conf->global->DISPLAY_MARK_RATES)) {?>
-  	  <td align="right" class="nowrap"><?php echo price($line->marque_tx).'%'; ?></td>
+  	  <td align="right" class="nowrap"><?php echo price($line->marque_tx, null, null, null, null, $rounding).'%'; ?></td>
   <?php } } ?>
 
 	<?php if ($line->special_code == 3)	{ ?>
