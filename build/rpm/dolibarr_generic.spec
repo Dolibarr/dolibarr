@@ -464,7 +464,11 @@ echo Restart mysql server
 	/sbin/service mysqld restart
 %else
 %if 0%{?suse_version}
+if [ -f /etc/init.d/mysqld ]; then
+    /etc/init.d/mysqld restart
+else
 	/sbin/service mysql restart
+fi
 %else
 if [ -f /etc/init.d/mysqld ]; then
     /etc/init.d/mysqld restart

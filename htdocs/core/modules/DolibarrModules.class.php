@@ -262,7 +262,7 @@ abstract class DolibarrModules
 
 
     /**
-     *  Retourne la version du module.
+     *  Return module version.
      *  Pour les modules a l'etat 'experimental', retourne la traduction de 'experimental'
      *  Pour les modules 'dolibarr', retourne la version de Dolibarr
      *  Pour les autres modules, retourne la version du module
@@ -279,6 +279,20 @@ abstract class DolibarrModules
         elseif ($this->version == 'dolibarr') return DOL_VERSION;
         elseif ($this->version) return $this->version;
         else return $langs->trans("VersionUnknown");
+    }
+
+
+    /**
+     *  Return if a module is a core or external module
+     *
+     *  @return     string      'core', 'external' or 'unknown'
+     */
+    function isCoreOrExternalModule()
+    {
+        if ($this->version == 'dolibarr') return 'core';
+        if (! empty($this->version) && ! in_array($this->version,array('experimental','development'))) return 'external';
+        if (! empty($this->editor_name) || ! empty($this->editor_web)) return 'external';
+        return 'unknown';
     }
 
 
