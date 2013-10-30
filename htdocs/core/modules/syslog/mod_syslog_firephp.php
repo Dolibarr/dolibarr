@@ -115,6 +115,10 @@ class mod_syslog_firephp extends LogHandler implements LogHandlerInterface
 	 */
 	public function export($content)
 	{
+		global $conf;
+
+		if (! empty($conf->global->MAIN_SYSLOG_DISABLE_FIREPHP)) return;	// Global option to disable output of this handler
+
 		//We check the configuration to avoid showing PHP warnings
 		if (count($this->checkConfiguration())) return false;
 
