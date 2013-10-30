@@ -75,7 +75,7 @@ function project_prepare_head($object)
 		$head[$h][2] = 'notes';
 		$h++;
     }
-	
+
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 	$upload_dir = $conf->projet->dir_output . "/" . dol_sanitizeFileName($object->ref);
 	$nbFiles = count(dol_dir_list($upload_dir,'files'));
@@ -84,7 +84,7 @@ function project_prepare_head($object)
 	if($nbFiles > 0) $head[$h][1].= ' ('.$nbFiles.')';
 	$head[$h][2] = 'document';
 	$h++;
-	
+
 	// Then tab for sub level of projet, i mean tasks
 	$head[$h][0] = DOL_URL_ROOT.'/projet/tasks.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("Tasks");
@@ -494,7 +494,7 @@ function projectLinesb(&$inc, $parent, $lines, &$level, &$projectsrole, &$tasksr
 			print '<td class="nowrap">';
 			$s =$form->select_date('',$lines[$i]->id,'','','',"addtime",1,0,1,$disabledtask);
 			$s.='&nbsp;&nbsp;&nbsp;';
-			$s.=$form->select_duration($lines[$i]->id,'',$disabledtask);
+			$s.=$form->select_duration($lines[$i]->id,'',$disabledtask,'text');
 			$s.='&nbsp;<input type="submit" class="button"'.($disabledtask?' disabled="disabled"':'').' value="'.$langs->trans("Add").'">';
 			print $s;
 			print '</td>';

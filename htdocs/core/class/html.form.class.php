@@ -3659,7 +3659,7 @@ class Form
      *	@param	string	$prefix   	prefix
      *	@param  int		$iSecond  	Default preselected duration (number of seconds)
      * 	@param	int		$disabled	Disable the combo box
-     * 	@param	string	$typehour	if select then hour in select if text input in text
+     * 	@param	string	$typehour	if 'select' then input hour is a combo select, if 'text' input is in text
      *  @return	void
      */
     function select_duration($prefix,$iSecond='',$disabled=0,$typehour='select')
