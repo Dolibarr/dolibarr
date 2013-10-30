@@ -65,6 +65,7 @@ END
 # dpkg-reconfigure -plow package		 Reconfigure package
 # dpkg -L packagename                    List content of installed package 
 # dpkg -r packagename                    Remove config files and interactive saved answers
+# dpkg -s packagename                    Give status of installed package
 # dpkg --purge                           Remove config files and interactive saved answers
 #
 # dpkg-buildpackage -us -uc              Build a source and binary package
@@ -108,7 +109,7 @@ Puis pour se connecter
 
 Pour tester un package
 > cp *.deb /srv/chroot/unstable/tmp
-> schroot -c name_of_chroot
+> sudo schroot -c name_of_chroot
 > dpkg -i dolibarr*.deb
 > sudo apt-get install -f
 
@@ -211,6 +212,8 @@ Warning: Name and email must match value into debian/control file (Entry added h
 
 Note: You can use git-buildpackage -us -uc --git-ignore-new if you want to test build with uncommited file
 Note: Package is built into directory ../build-area
+
+* Test package (see dedicated chapter to test it with debian unstable env)
 
 * If package .deb is ok:
 Note: If there was errors managed manually, you may need to make a git commit but do not use option "amend" previous commit
