@@ -316,3 +316,5 @@ create table llx_contrat_extrafields
 -- add outstanding bill
 ALTER TABLE llx_societe ADD outstanding_limit double(24,8) DEFAULT NULL AFTER mode_reglement_supplier;
 
+UPDATE llx_const SET name='COMPANY_DONOTSEARCH_ANYWHERE' WHERE name='SOCIETE_DONOTSEARCH_ANYWHERE';
+
