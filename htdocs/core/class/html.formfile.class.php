@@ -59,19 +59,23 @@ class FormFile
      *  @param  int		$size           Length of input file area
      *  @param	Object	$object			Object to use (when attachment is done on an element)
      *  @param	string	$options		Options
-     *  @param	boolean	$useajax		Use ajax if enabled
+     *  @param	boolean	$useajax		Use fileupload ajax (0=never, 1=if enabled, 2=always whatever is option). 2 should never be used.
+     *  @param	string	$savingdocmask	Mask to use to define output filename. For example 'XXXXX-__YYYYMMDD__-__file__'
      * 	@return	int						<0 if KO, >0 if OK
      */
-    function form_attach_new_file($url, $title='', $addcancel=0, $sectionid=0, $perm=1, $size=50, $object='', $options='', $useajax=true)
+    function form_attach_new_file($url, $title='', $addcancel=0, $sectionid=0, $perm=1, $size=50, $object='', $options='', $useajax=1, $savingdocmask='')
     {
         global $conf,$langs, $hookmanager;
         $hookmanager->initHooks(array('formfile'));
 
         if (! empty($conf->browser->phone)) return 0;
 
-		if (! empty($conf->global->MAIN_USE_JQUERY_FILEUPLOAD) && $useajax)
+		if ((! empty($conf->global->MAIN_USE_JQUERY_FILEUPLOAD) && $useajax) || ($useajax==2))
         {
-            return $this->_formAjaxFileUpload($object);
+        	// TODO: Cheeck this works with 2 forms on same page
+        	// TODO: Cheeck this works with GED module, otherwise, force useajax to 0
+        	// TODO: This does not support option savingdocmask
+        	return $this->_formAjaxFileUpload($object);
         }
         else
         {
@@ -133,6 +137,17 @@ class FormFile
                 $out .= ' ('.$langs->trans("UploadDisabled").')';
             }
             $out .= "</td></tr>";
+            
+            if ($savingdocmask)
+            {
+            	$out .= '<tr>';
+   	            if (! empty($options)) $out .= '<td>'.$options.'</td>';
+	            $out .= '<td valign="middle" class="nowrap">';
+				$out .= '<input type="checkbox" checked="checked" name="savingdocmask" value="'.dol_escape_js($savingdocmask).'"> '.$langs->trans("SaveUploadedFileWithMask", preg_replace('/__file__/',$langs->transnoentitiesnoconv("OriginFileName"),$savingdocmask), $langs->transnoentitiesnoconv("OriginFileName"));	            
+            	$out .= '</td>';
+            	$out .= '</tr>';	
+            }
+            
             $out .= "</table>";
 
             $out .= '</form>';

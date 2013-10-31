@@ -875,7 +875,7 @@ class ExtraFields
 			if (!empty($value)) {
 				$checked=' checked="checked" ';
 			}
-			$value='<input type="checkbox" '.$checked.' '.($moreparam?$moreparam:'').' readonly="readonly">';
+			$value='<input type="checkbox" '.$checked.' '.($moreparam?$moreparam:'').' readonly="readonly" disabled="disabled">';
 		}
 		elseif ($type == 'mail')
 		{

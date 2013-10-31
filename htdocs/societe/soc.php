@@ -910,11 +910,11 @@ else
 
         // Type - Size
         print '<tr><td>'.$langs->trans("ThirdPartyType").'</td><td>'."\n";
-        print $form->selectarray("typent_id",$formcompany->typent_array(0), $object->typent_id);
+        print $form->selectarray("typent_id", $formcompany->typent_array(0), $object->typent_id, 0, 0, 0, '', 0, 0, 0, (empty($conf->global->SOCIETE_SORT_ON_TYPEENT)?'ASC':$conf->global->SOCIETE_SORT_ON_TYPEENT));
         if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
         print '</td>';
         print '<td>'.$langs->trans("Staff").'</td><td>';
-        print $form->selectarray("effectif_id",$formcompany->effectif_array(0), $object->effectif_id);
+        print $form->selectarray("effectif_id", $formcompany->effectif_array(0), $object->effectif_id);
         if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
         print '</td></tr>';
 
@@ -1360,7 +1360,7 @@ else
 
             // Type - Size
             print '<tr><td>'.$langs->trans("ThirdPartyType").'</td><td>';
-            print $form->selectarray("typent_id",$formcompany->typent_array(0), $object->typent_id);
+            print $form->selectarray("typent_id",$formcompany->typent_array(0), $object->typent_id, 0, 0, 0, '', 0, 0, 0, (empty($conf->global->SOCIETE_SORT_ON_TYPEENT)?'ASC':$conf->global->SOCIETE_SORT_ON_TYPEENT));
             if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
             print '</td>';
             print '<td>'.$langs->trans("Staff").'</td><td>';
