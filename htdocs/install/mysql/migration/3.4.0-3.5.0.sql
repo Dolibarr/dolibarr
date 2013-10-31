@@ -318,3 +318,14 @@ ALTER TABLE llx_societe ADD outstanding_limit double(24,8) DEFAULT NULL AFTER mo
 
 UPDATE llx_const SET name='COMPANY_DONOTSEARCH_ANYWHERE' WHERE name='SOCIETE_DONOTSEARCH_ANYWHERE';
 
+--Task 172
+create table llx_actioncomm_resources
+(
+  rowid           	integer AUTO_INCREMENT PRIMARY KEY,  
+  fk_actioncomm		integer NOT NULL,
+  element_type		varchar(50) NOT NULL,
+  fk_element		integer NOT NULL,
+  fk_element_status	varchar(32) NULL
+) ENGINE=innodb;
+ALTER TABLE llx_actioncomm_resources ADD UNIQUE INDEX idx_actioncomm_resources_idx1 (fk_actioncomm, element_type, fk_element);
+ALTER TABLE llx_actioncomm_resources ADD INDEX idx_actioncomm_resources_fk_element (fk_element);
