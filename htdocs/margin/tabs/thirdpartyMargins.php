@@ -175,7 +175,7 @@ if ($socid > 0)
 
 			$cumul_achat = 0;
 			$cumul_vente = 0;
-			$cumul_qty = 0;
+			
 			$rounding = min($conf->global->MAIN_MAX_DECIMALS_UNIT,$conf->global->MAIN_MAX_DECIMALS_TOT);
 
 			if ($num > 0)
@@ -187,13 +187,13 @@ if ($socid > 0)
 
 					if ($objp->marge < 0)
 					{
-						$marginRate = ($objp->buying_price != 0)?-1*(100 * round($objp->marge / $objp->buying_price, 5)):'' ;
-						$markRate = ($objp->selling_price != 0)?-1*(100 * round($objp->marge / $objp->selling_price, 5)):'' ;
+						$marginRate = ($objp->buying_price != 0)?-1*(100 * $objp->marge / $objp->buying_price):'' ;
+						$markRate = ($objp->selling_price != 0)?-1*(100 * $objp->marge / $objp->selling_price):'' ;
 					}
 					else
 					{
-						$marginRate = ($objp->buying_price != 0)?(100 * round($objp->marge / $objp->buying_price, 5)):'' ;
-						$markRate = ($objp->selling_price != 0)?(100 * round($objp->marge / $objp->selling_price, 5)):'' ;
+						$marginRate = ($objp->buying_price != 0)?(100 * $objp->marge / $objp->buying_price):'' ;
+						$markRate = ($objp->selling_price != 0)?(100 * $objp->marge / $objp->selling_price):'' ;
 					}
 					
 					$var=!$var;
@@ -206,18 +206,18 @@ if ($socid > 0)
 					print "</td>\n";
 					print "<td align=\"center\">";
 					print dol_print_date($db->jdate($objp->datef),'day')."</td>";
-					print "<td align=\"right\">".price($objp->selling_price)."</td>\n";
-					print "<td align=\"right\">".price($objp->buying_price)."</td>\n";
-					print "<td align=\"right\">".price($objp->marge)."</td>\n";
+					print "<td align=\"right\">".price($objp->selling_price, null, null, null, null, $rounding)."</td>\n";
+					print "<td align=\"right\">".price($objp->buying_price, null, null, null, null, $rounding)."</td>\n";
+					print "<td align=\"right\">".price($objp->marge, null, null, null, null, $rounding)."</td>\n";
 					if (! empty($conf->global->DISPLAY_MARGIN_RATES))
-						print "<td align=\"right\">".(($marginRate === '')?'n/a':price($marginRate)."%")."</td>\n";
+						print "<td align=\"right\">".(($marginRate === '')?'n/a':price($marginRate, null, null, null, null, $rounding)."%")."</td>\n";
 					if (! empty($conf->global->DISPLAY_MARK_RATES))
-						print "<td align=\"right\">".(($markRate === '')?'n/a':price($markRate)."%")."</td>\n";
+						print "<td align=\"right\">".(($markRate === '')?'n/a':price($markRate, null, null, null, null, $rounding)."%")."</td>\n";
 					print '<td align="right">'.$invoicestatic->LibStatut($objp->paye,$objp->statut,5).'</td>';
 					print "</tr>\n";
 					$i++;
-					$cumul_achat += round($objp->buying_price, $rounding);
-					$cumul_vente += round($objp->selling_price, $rounding);
+					$cumul_achat += $objp->buying_price;
+					$cumul_vente += $objp->selling_price;
 				}
 			}
 
@@ -226,23 +226,23 @@ if ($socid > 0)
 			$totalMargin = $cumul_vente - $cumul_achat;
 			if ($totalMargin < 0)
 			{
-				$marginRate = ($cumul_achat != 0)?-1*(100 * round($totalMargin / $cumul_achat, 5)):'';
-				$markRate = ($cumul_vente != 0)?-1*(100 * round($totalMargin / $cumul_vente, 5)):'';
+				$marginRate = ($cumul_achat != 0)?-1*(100 * $totalMargin / $cumul_achat):'';
+				$markRate = ($cumul_vente != 0)?-1*(100 * $totalMargin / $cumul_vente):'';
 			}
 			else
 			{
-				$marginRate = ($cumul_achat != 0)?(100 * round($totalMargin / $cumul_achat, 5)):'';
-				$markRate = ($cumul_vente != 0)?(100 * round($totalMargin / $cumul_vente, 5)):'';
+				$marginRate = ($cumul_achat != 0)?(100 * $totalMargin / $cumul_achat):'';
+				$markRate = ($cumul_vente != 0)?(100 * $totalMargin / $cumul_vente):'';
 			}
 			print '<tr '.$bc[$var].' style="border-top: 1px solid #ccc; font-weight: bold">';
 			print '<td colspan=2>'.$langs->trans('TotalMargin')."</td>";
-			print "<td align=\"right\">".price($cumul_vente)."</td>\n";
-			print "<td align=\"right\">".price($cumul_achat)."</td>\n";
-			print "<td align=\"right\">".price($totalMargin)."</td>\n";
+			print "<td align=\"right\">".price($cumul_vente, null, null, null, null, $rounding)."</td>\n";
+			print "<td align=\"right\">".price($cumul_achat, null, null, null, null, $rounding)."</td>\n";
+			print "<td align=\"right\">".price($totalMargin, null, null, null, null, $rounding)."</td>\n";
 			if (! empty($conf->global->DISPLAY_MARGIN_RATES))
-				print "<td align=\"right\">".(($marginRate === '')?'n/a':price($marginRate)."%")."</td>\n";
+				print "<td align=\"right\">".(($marginRate === '')?'n/a':price($marginRate, null, null, null, null, $rounding)."%")."</td>\n";
 			if (! empty($conf->global->DISPLAY_MARK_RATES))
-				print "<td align=\"right\">".(($markRate === '')?'n/a':price($markRate)."%")."</td>\n";
+				print "<td align=\"right\">".(($markRate === '')?'n/a':price($markRate, null, null, null, null, $rounding)."%")."</td>\n";
 			print '<td align="right">&nbsp;</td>';
 			print "</tr>\n";
 		}

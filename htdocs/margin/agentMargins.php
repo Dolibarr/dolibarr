@@ -172,9 +172,6 @@ if ($result)
 		print_liste_field_titre($langs->trans("MarkRate"),$_SERVER["PHP_SELF"],"","","&amp;agentid=".$agentid,'align="right"',$sortfield,$sortorder);
 	print "</tr>\n";
 
-	$cumul_achat = 0;
-	$cumul_vente = 0;
-	$cumul_qty = 0;
 	$rounding = min($conf->global->MAIN_MAX_DECIMALS_UNIT,$conf->global->MAIN_MAX_DECIMALS_TOT);
 
 	if ($num > 0)
@@ -191,13 +188,13 @@ if ($result)
 
 			if ($marge < 0)
 			{
-				$marginRate = ($pa != 0)?-1*(100 * round($marge / $pa, 5)):'' ;
-				$markRate = ($pv != 0)?-1*(100 * round($marge / $pv, 5)):'' ;
+				$marginRate = ($pa != 0)?-1*(100 * $marge / $pa):'' ;
+				$markRate = ($pv != 0)?-1*(100 * $marge / $pv):'' ;
 			}
 			else
 			{
-				$marginRate = ($pa != 0)?(100 * round($marge / $pa, 5)):'' ;
-				$markRate = ($pv != 0)?(100 * round($marge / $pv, 5)):'' ;
+				$marginRate = ($pa != 0)?(100 * $marge / $pa):'' ;
+				$markRate = ($pv != 0)?(100 * $marge / $pv):'' ;
 			}
 
 			$var=!$var;
@@ -214,18 +211,16 @@ if ($result)
 				print "<td>".$userstatic->getFullName($langs,0,0,0)."</td>\n";
 			}
 
-			print "<td align=\"right\">".price($pv)."</td>\n";
-			print "<td align=\"right\">".price($pa)."</td>\n";
-			print "<td align=\"right\">".price($marge)."</td>\n";
+			print "<td align=\"right\">".price($pv, null, null, null, null, $rounding)."</td>\n";
+			print "<td align=\"right\">".price($pa, null, null, null, null, $rounding)."</td>\n";
+			print "<td align=\"right\">".price($marge, null, null, null, null, $rounding)."</td>\n";
 			if (! empty($conf->global->DISPLAY_MARGIN_RATES))
-				print "<td align=\"right\">".(($marginRate === '')?'n/a':price($marginRate)."%")."</td>\n";
+				print "<td align=\"right\">".(($marginRate === '')?'n/a':price($marginRate, null, null, null, null, $rounding)."%")."</td>\n";
 			if (! empty($conf->global->DISPLAY_MARK_RATES))
-				print "<td align=\"right\">".(($markRate === '')?'n/a':price($markRate)."%")."</td>\n";
+				print "<td align=\"right\">".(($markRate === '')?'n/a':price($markRate, null, null, null, null, $rounding)."%")."</td>\n";
 			print "</tr>\n";
 
 			$i++;
-			$cumul_achat += round($objp->buying_price, $rounding);
-			$cumul_vente += round($objp->selling_price, $rounding);
 		}
 	}
 	print "</table>";
