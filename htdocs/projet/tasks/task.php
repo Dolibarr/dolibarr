@@ -1,21 +1,21 @@
 <?php
 /* Copyright (C) 2005		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2006-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
-* Copyright (C) 2010-2012	Regis Houssin			<regis.houssin@capnetworks.com>
-*
-* This program is free software; you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation; either version 3 of the License, or
-* (at your option) any later version.
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with this program. If not, see <http://www.gnu.org/licenses/>.
-*/
+ * Copyright (C) 2006-2013	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2010-2012	Regis Houssin			<regis.houssin@capnetworks.com>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 
 /**
  *	\file       htdocs/projet/tasks/task.php
@@ -46,7 +46,7 @@ $action=GETPOST('action','alpha');
 $confirm=GETPOST('confirm','alpha');
 $withproject=GETPOST('withproject','int');
 $project_ref=GETPOST('project_ref','alpha');
-$planned_workload=GETPOST('planned_workloadhour');
+$planned_workload=GETPOST('planned_workloadhour')*3600+GETPOST('planned_workloadmin')*60;
 
 // Security check
 $socid=0;
@@ -86,7 +86,7 @@ if ($action == 'update' && ! $_POST["cancel"] && $user->rights->projet->creer)
 		$object->label = $_POST["label"];
 		$object->description = $_POST['description'];
 		$object->fk_task_parent = $task_parent;
-		$object->planned_workload = $planned_workload*3600; //We set the planned workload into seconds
+		$object->planned_workload = $planned_workload;
 		$object->date_start = dol_mktime(0,0,0,$_POST['dateomonth'],$_POST['dateoday'],$_POST['dateoyear']);
 		$object->date_end = dol_mktime(0,0,0,$_POST['dateemonth'],$_POST['dateeday'],$_POST['dateeyear']);
 		$object->progress = $_POST['progress'];
@@ -147,7 +147,7 @@ if (! empty($project_ref) && ! empty($withproject))
 if ($action == 'builddoc' && $user->rights->projet->creer)
 {
 	$object->fetch($id,$ref);
-	
+
 	// Save last template used to generate document
 	if (GETPOST('model')) $object->setDocModel($user, GETPOST('model','alpha'));
 
@@ -334,7 +334,7 @@ if ($id > 0 || ! empty($ref))
 			print $form->select_date($object->date_end?$object->date_end:-1,'datee');
 			print '</td></tr>';
 
-			// workload planned
+			// Planned workload
 			print '<tr><td>'.$langs->trans("PlannedWorkload").'</td><td>';
 			print $form->select_duration('planned_workload',$object->planned_workload,0,'text');
 			print '</td></tr>';
@@ -423,9 +423,9 @@ if ($id > 0 || ! empty($ref))
 			print dol_print_date($object->date_end,'day');
 			print '</td></tr>';
 
-			// planned Workload
+			// Planned workload
 			print '<tr><td>'.$langs->trans("PlannedWorkload").'</td><td colspan="3">';
-			print convertSecondToTime($object->planned_workload,'all');
+			print convertSecondToTime($object->planned_workload,'allhourmin');
 			print '</td></tr>';
 
 			// Progress
@@ -445,7 +445,7 @@ if ($id > 0 || ! empty($ref))
 			{
 				print $object->showOptionals($extrafields);
 			}
-			
+
 			print '</table>';
 
 		}
@@ -481,10 +481,10 @@ if ($id > 0 || ! empty($ref))
 			}
 
 			print '</div>';
-			
+
 			print '<table width="100%"><tr><td width="50%" valign="top">';
 			print '<a name="builddoc"></a>'; // ancre
-			
+
 			/*
 			 * Documents generes
 			*/
@@ -493,13 +493,13 @@ if ($id > 0 || ! empty($ref))
 			$urlsource=$_SERVER["PHP_SELF"]."?id=".$object->id;
 			$genallowed=($user->rights->projet->lire);
 			$delallowed=($user->rights->projet->creer);
-				
+
 			$var=true;
-				
+
 			$somethingshown=$formfile->show_documents('project_task',$filename,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf);
-			
-				
-				
+
+
+
 			print '</td></tr></table>';
 		}
 	}

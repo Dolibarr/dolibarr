@@ -1,21 +1,21 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
-* Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
-*
-* This program is free software; you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation; either version 3 of the License, or
-* (at your option) any later version.
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with this program. If not, see <http://www.gnu.org/licenses/>.
-*/
+ * Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 
 /**
  *	\file       htdocs/projet/tasks.php
@@ -57,7 +57,7 @@ if ($ref)
 if (!empty($id)) {
 	$extralabels_projet=$extrafields_project->fetch_name_optionals_label($object->table_element);
 	$extralabels_task=$extrafields_task->fetch_name_optionals_label($taskstatic->table_element);
-	
+
 }
 
 // Security check
@@ -71,7 +71,7 @@ $hookmanager->initHooks(array('projecttaskcard'));
 $progress=GETPOST('progress', 'int');
 $label=GETPOST('label', 'alpha');
 $description=GETPOST('description');
-$planned_workload=GETPOST('planned_workloadhour');
+$planned_workload=GETPOST('planned_workloadhour')*3600+GETPOST('planned_workloadmin')*60;
 
 $userAccess=0;
 
@@ -117,13 +117,13 @@ if ($action == 'createtask' && $user->rights->projet->creer)
 			$task->ref = GETPOST('ref','alpha');
 			$task->label = $label;
 			$task->description = $description;
-			$task->planned_workload = $planned_workload * 3600;//We set the planned workload into seconds
+			$task->planned_workload = $planned_workload;
 			$task->fk_task_parent = $task_parent;
 			$task->date_c = dol_now();
 			$task->date_start = $date_start;
 			$task->date_end = $date_end;
 			$task->progress = $progress;
-				
+
 			// Fill array 'array_options' with data from add form
 			$ret = $extrafields_task->setOptionalsFromPost($extralabels_task,$task);
 
@@ -241,7 +241,7 @@ if ($id > 0 || ! empty($ref))
 	print '<tr><td>'.$langs->trans("DateEnd").'</td><td>';
 	print dol_print_date($object->date_end,'day');
 	print '</td></tr>';
-	
+
 	// Other options
 	$parameters=array();
 	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action); // Note that $action and $object may have been modified by hook
@@ -268,7 +268,7 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->socie
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="createtask">';
 	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
-	
+
 	if (! empty($object->id)) print '<input type="hidden" name="id" value="'.$object->id.'">';
 	if (! empty($mode)) print '<input type="hidden" name="mode" value="'.$mode.'">';
 
@@ -282,9 +282,9 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->socie
 		$modTask = new $obj;
 		$defaultref = $modTask->getNextValue($soc,$object);
 	}
-		
+
 	if (is_numeric($defaultref) && $defaultref <= 0) $defaultref='';
-		
+
 	// Ref
 	print '<input type="hidden" name="ref" value="'.($_POST["ref"]?$_POST["ref"]:$defaultref).'">';
 	print '<tr><td><span class="fieldrequired">'.$langs->trans("Ref").'</span></td><td>'.($_POST["ref"]?$_POST["ref"]:$defaultref).'</td></tr>';
@@ -417,8 +417,9 @@ else
 	print '<td align="center">'.$langs->trans("DateStart").'</td>';
 	print '<td align="center">'.$langs->trans("DateEnd").'</td>';
 	print '<td align="center">'.$langs->trans("PlannedWorkload").'</td>';
-	print '<td align="right">'.$langs->trans("Progress").'</td>';
+	print '<td align="right">'.$langs->trans("ProgressDeclared").'</td>';
 	print '<td align="right">'.$langs->trans("TimeSpent").'</td>';
+	print '<td align="right">'.$langs->trans("ProgressCalculated").'</td>';
 	print '<td>&nbsp;</td>';
 	print "</tr>\n";
 	if (count($tasksarray) > 0)

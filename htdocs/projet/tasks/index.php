@@ -100,16 +100,20 @@ print '<td width="80">'.$langs->trans("RefTask").'</td>';
 print '<td>'.$langs->trans("LabelTask").'</td>';
 print '<td align="center">'.$langs->trans("DateStart").'</td>';
 print '<td align="center">'.$langs->trans("DateEnd").'</td>';
-print '<td align="center">'.$langs->trans("PlannedWorkload").'</td>';
-print '<td align="right">'.$langs->trans("Progress").'</td>';
+print '<td align="center">'.$langs->trans("PlannedWorkload");
+// TODO Replace 86400 and 7 to take account working hours per day and working day per weeks
+//print '<br>('.$langs->trans("DelayWorkHour").')';
+print '</td>';
+print '<td align="right">'.$langs->trans("ProgressDeclared").'</td>';
 print '<td align="right">'.$langs->trans("TimeSpent").'</td>';
+print '<td align="right">'.$langs->trans("ProgressCalculated").'</td>';
 print "</tr>\n";
 
 print '<tr class="liste_titre">';
 print '<td class="liste_titre">';
 print '<input type="text" class="flat" name="search_project" value="'.$search_project.'" size="8">';
 print '</td>';
-print '<td class="liste_titre" colspan="6">';
+print '<td class="liste_titre" colspan="7">';
 print '&nbsp;';
 print '</td>';
 print '<td class="liste_titre" align="right"><input class="liste_titre" type="image" name="button_search" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'"></td>';
