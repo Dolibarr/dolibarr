@@ -112,7 +112,8 @@ $contact_fields = array(
 	'ref_propal' => array('name'=>'ref_propal','type'=>'xsd:string'),
 	'user_id' => array('name'=>'user_id','type'=>'xsd:string'),
 	'user_login' => array('name'=>'user_login','type'=>'xsd:string'),
-	'civility_id' => array('name'=>'civility_id','type'=>'xsd:string')
+	'civility_id' => array('name'=>'civility_id','type'=>'xsd:string'),
+	'poste' => array('name'=>'poste','type'=>'xsd:string')
 	//...
 );
 //Retreive all extrafield for contact
@@ -300,7 +301,8 @@ function getContact($authentication,$id,$ref='',$ref_ext='')
 	            	'ref_propal' => $contact->ref_propal,
 	            	'user_id' => $contact->user_id,
 	            	'user_login' => $contact->user_login,
-	            	'civilite_id' => $contact->civility_id
+	            	'civilite_id' => $contact->civility_id,
+            		'poste' => $contact->poste
             	);
             	
             	//Retreive all extrafield for thirdsparty
@@ -409,6 +411,7 @@ function createContact($authentication,$contact)
 		$newobject->ref_propal=$contact['ref_propal'];
 		$newobject->user_id=$contact['user_id'];
 		$newobject->user_login=$contact['user_login'];
+		$newobject->poste=$contact['poste'];
 		
 		//Retreive all extrafield for thirdsparty
 		// fetch optionals attributes and labels
@@ -654,6 +657,7 @@ function updateContact($authentication,$contact)
 			$object->email=$contact['email'];
 			
 			$object->civilite_id=$contact['civility_id'];
+			$object->poste=$contact['poste'];
 			
 
 			//Retreive all extrafield for contact
