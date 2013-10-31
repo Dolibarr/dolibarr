@@ -51,5 +51,5 @@ create table llx_socpeople
   default_lang		varchar(6),
   canvas			varchar(32),			-- type of canvas if used (null by default)
   import_key		varchar(14),
-  statut			tinyint
+  statut			tinyint DEFAULT 1 NOT NULL
 )ENGINE=innodb;
