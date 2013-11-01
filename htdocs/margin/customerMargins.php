@@ -213,7 +213,7 @@ if ($result)
 
 	$cumul_achat = 0;
 	$cumul_vente = 0;
-	$cumul_qty = 0;
+	
 	$rounding = min($conf->global->MAIN_MAX_DECIMALS_UNIT,$conf->global->MAIN_MAX_DECIMALS_TOT);
 
 	if ($num > 0)
@@ -230,13 +230,13 @@ if ($result)
 
 			if ($marge < 0)
 			{
-				$marginRate = ($pa != 0)?-1*(100 * round($marge / $pa, 5)):'' ;
-				$markRate = ($pv != 0)?-1*(100 * round($marge / $pv, 5)):'' ;
+				$marginRate = ($pa != 0)?-1*(100 * $marge / $pa):'' ;
+				$markRate = ($pv != 0)?-1*(100 * $marge / $pv):'' ;
 			}
 			else
 			{
-				$marginRate = ($pa != 0)?(100 * round($marge / $pa, 5)):'' ;
-				$markRate = ($pv != 0)?(100 * round($marge / $pv, 5)):'' ;
+				$marginRate = ($pa != 0)?(100 * $marge / $pa):'' ;
+				$markRate = ($pv != 0)?(100 * $marge / $pv):'' ;
 			}
 
 			$var=!$var;
@@ -258,18 +258,18 @@ if ($result)
 		   		print "<td>".$companystatic->getNomUrl(1,'customer')."</td>\n";
 		  	}
 
-			print "<td align=\"right\">".price($pv)."</td>\n";
-			print "<td align=\"right\">".price($pa)."</td>\n";
-			print "<td align=\"right\">".price($marge)."</td>\n";
+			print "<td align=\"right\">".price($pv, null, null, null, null, $rounding)."</td>\n";
+			print "<td align=\"right\">".price($pa, null, null, null, null, $rounding)."</td>\n";
+			print "<td align=\"right\">".price($marge, null, null, null, null, $rounding)."</td>\n";
 			if (! empty($conf->global->DISPLAY_MARGIN_RATES))
-				print "<td align=\"right\">".(($marginRate === '')?'n/a':price($marginRate)."%")."</td>\n";
+				print "<td align=\"right\">".(($marginRate === '')?'n/a':price($marginRate, null, null, null, null, $rounding)."%")."</td>\n";
 			if (! empty($conf->global->DISPLAY_MARK_RATES))
-				print "<td align=\"right\">".(($markRate === '')?'n/a':price($markRate)."%")."</td>\n";
+				print "<td align=\"right\">".(($markRate === '')?'n/a':price($markRate, null, null, null, null, $rounding)."%")."</td>\n";
 			print "</tr>\n";
 
 			$i++;
-			$cumul_achat += round($objp->buying_price, $rounding);
-			$cumul_vente += round($objp->selling_price, $rounding);
+			$cumul_achat += $objp->buying_price;
+			$cumul_vente += $objp->selling_price;
 		}
 	}
 
@@ -278,13 +278,13 @@ if ($result)
 	$totalMargin = $cumul_vente - $cumul_achat;
 	if ($totalMargin < 0)
 	{
-		$marginRate = ($cumul_achat != 0)?-1*(100 * round($totalMargin / $cumul_achat, 5)):'';
-		$markRate = ($cumul_vente != 0)?-1*(100 * round($totalMargin / $cumul_vente, 5)):'';
+		$marginRate = ($cumul_achat != 0)?-1*(100 * $totalMargin / $cumul_achat):'';
+		$markRate = ($cumul_vente != 0)?-1*(100 * $totalMargin / $cumul_vente):'';
 	}
 	else
 	{
-		$marginRate = ($cumul_achat != 0)?(100 * round($totalMargin / $cumul_achat, 5)):'';
-		$markRate = ($cumul_vente != 0)?(100 * round($totalMargin / $cumul_vente, 5)):'';
+		$marginRate = ($cumul_achat != 0)?(100 * $totalMargin / $cumul_achat):'';
+		$markRate = ($cumul_vente != 0)?(100 * $totalMargin / $cumul_vente):'';
 	}
 
 	print '<tr '.$bc[$var].' style="border-top: 1px solid #ccc; font-weight: bold">';
@@ -293,13 +293,13 @@ if ($result)
   	else
     	print '<td>';
   	print $langs->trans('TotalMargin')."</td>";
-	print "<td align=\"right\">".price($cumul_vente)."</td>\n";
-	print "<td align=\"right\">".price($cumul_achat)."</td>\n";
-	print "<td align=\"right\">".price($totalMargin)."</td>\n";
+	print "<td align=\"right\">".price($cumul_vente, null, null, null, null, $rounding)."</td>\n";
+	print "<td align=\"right\">".price($cumul_achat, null, null, null, null, $rounding)."</td>\n";
+	print "<td align=\"right\">".price($totalMargin, null, null, null, null, $rounding)."</td>\n";
 	if (! empty($conf->global->DISPLAY_MARGIN_RATES))
-		print "<td align=\"right\">".(($marginRate === '')?'n/a':price($marginRate)."%")."</td>\n";
+		print "<td align=\"right\">".(($marginRate === '')?'n/a':price($marginRate, null, null, null, null, $rounding)."%")."</td>\n";
 	if (! empty($conf->global->DISPLAY_MARK_RATES))
-		print "<td align=\"right\">".(($markRate === '')?'n/a':price($markRate)."%")."</td>\n";
+		print "<td align=\"right\">".(($markRate === '')?'n/a':price($markRate, null, null, null, null, $rounding)."%")."</td>\n";
 	print "</tr>\n";
 
   print "</table>";
@@ -325,9 +325,9 @@ $(document).ready(function() {
      $("div.fiche form").submit();
   });
 
-	$("#totalMargin").html("<?php echo price($totalMargin); ?>");
-	$("#marginRate").html("<?php echo (($marginRate === '')?'n/a':price($marginRate)."%"); ?>");
-	$("#markRate").html("<?php echo (($markRate === '')?'n/a':price($markRate)."%"); ?>");
+	$("#totalMargin").html("<?php echo price($totalMargin, null, null, null, null, $rounding); ?>");
+	$("#marginRate").html("<?php echo (($marginRate === '')?'n/a':price($marginRate, null, null, null, null, $rounding)."%"); ?>");
+	$("#markRate").html("<?php echo (($markRate === '')?'n/a':price($markRate, null, null, null, null, $rounding)."%"); ?>");
 
 });
 </script>
