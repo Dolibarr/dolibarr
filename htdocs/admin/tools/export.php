@@ -134,7 +134,8 @@ if ($what == 'mysql')
     if (GETPOST("drop_database"))        $param.=" --add-drop-database";
     if (GETPOST("sql_structure"))
     {
-        if (GETPOST("drop"))			 $param.=" --add-drop-table";
+        if (GETPOST("drop"))			$param.=" --add-drop-table=TRUE";
+        else 							$param.=" --add-drop-table=FALSE";
     }
     else
     {
