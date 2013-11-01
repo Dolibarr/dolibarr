@@ -73,7 +73,7 @@ if ($id > 0 || ! empty($ref))
 $modulepart='produit';
 
 $parameters=array('id'=>$id);
-$reshook=$hookmanager->executeHooks('doActions',$parameters,$product,$action);    // Note that $action and $object may have been modified by some hooks
+$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 
 
 /*
@@ -114,7 +114,7 @@ if ($object->id)
 	$picto=($object->type==1?'service':'product');
 	dol_fiche_head($head, 'documents', $titre, 0, $picto);
 
-	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$product,$action);    // Note that $action and $object may have been modified by hook
+	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
 	
 
 	// Construit liste des fichiers
