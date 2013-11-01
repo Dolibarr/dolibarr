@@ -219,7 +219,7 @@ print $langs->trans("BackupDescY").'<br><br>';
 			<fieldset><legend> <input type="checkbox" name="sql_structure"
 				value="structure" id="checkbox_sql_structure" checked="checked" /> <label
 				for="checkbox_sql_structure"> <?php echo $langs->trans('ExportStructure') ?></label> </legend> <input
-				type="checkbox" name="drop" value="1" id="checkbox_dump_drop" /> <label
+				type="checkbox" name="drop"<?php echo ((! isset($_GET["drop"]) && ! isset($_POST["drop"])) || GETPOST('drop'))?' checked="checked"':''; ?> id="checkbox_dump_drop" /> <label
 				for="checkbox_dump_drop"><?php echo $langs->trans("AddDropTable"); ?></label><br>
 			</fieldset>
 
@@ -274,7 +274,7 @@ print $langs->trans("BackupDescY").'<br><br>';
 
                             <br>
                             <fieldset><legend><?php echo $langs->trans('ExportStructure') ?></legend> <input
-                                    type="checkbox" name="nobin_drop" value="1" id="checkbox_dump_drop" /> <label
+                                    type="checkbox" name="nobin_drop"<?php echo ((! isset($_GET["nobin_drop"]) && ! isset($_POST["nobin_drop"])) || GETPOST('nobin_drop'))?' checked="checked"':''; ?> id="checkbox_dump_drop" /> <label
                                     for="checkbox_dump_drop"><?php echo $langs->trans("AddDropTable"); ?></label><br>
                             </fieldset>
 
