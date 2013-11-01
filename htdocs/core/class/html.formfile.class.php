@@ -138,17 +138,17 @@ class FormFile
                 $out .= ' ('.$langs->trans("UploadDisabled").')';
             }
             $out .= "</td></tr>";
-            
+
             if ($savingdocmask)
             {
             	$out .= '<tr>';
    	            if (! empty($options)) $out .= '<td>'.$options.'</td>';
 	            $out .= '<td valign="middle" class="nowrap">';
-				$out .= '<input type="checkbox" checked="checked" name="savingdocmask" value="'.dol_escape_js($savingdocmask).'"> '.$langs->trans("SaveUploadedFileWithMask", preg_replace('/__file__/',$langs->transnoentitiesnoconv("OriginFileName"),$savingdocmask), $langs->transnoentitiesnoconv("OriginFileName"));	            
+				$out .= '<input type="checkbox" checked="checked" name="savingdocmask" value="'.dol_escape_js($savingdocmask).'"> '.$langs->trans("SaveUploadedFileWithMask", preg_replace('/__file__/',$langs->transnoentitiesnoconv("OriginFileName"),$savingdocmask), $langs->transnoentitiesnoconv("OriginFileName"));
             	$out .= '</td>';
-            	$out .= '</tr>';	
+            	$out .= '</tr>';
             }
-            
+
             $out .= "</table>";
 
             $out .= '</form>';
@@ -663,12 +663,13 @@ class FormFile
      * 	@param	 int	$permtodelete		Permission to delete
      * 	@param	 int	$useinecm			Change output for use in ecm module
      * 	@param	 string	$textifempty		Text to show if filearray is empty ('NoFileFound' if not defined)
-     *  @param  int		$maxlength          Maximum length of file name shown
+     *  @param   int	$maxlength          Maximum length of file name shown
      *  @param	 string	$title				Title before list
      *  @param	 string $url				Full url to use for click links ('' = autodetect)
+	 *  @param	 int	$showrelpart		0=Show only filename (default), 1=Show first level 1 dir
      * 	@return	 int						<0 if KO, nb of files shown if OK
      */
-	function list_of_documents($filearray,$object,$modulepart,$param='',$forcedownload=0,$relativepath='',$permtodelete=1,$useinecm=0,$textifempty='',$maxlength=0,$title='',$url='')
+	function list_of_documents($filearray,$object,$modulepart,$param='',$forcedownload=0,$relativepath='',$permtodelete=1,$useinecm=0,$textifempty='',$maxlength=0,$title='',$url='', $showrelpart=0)
 	{
 		global $user, $conf, $langs, $hookmanager;
 		global $bc;
@@ -741,8 +742,7 @@ class FormFile
 					print '&file='.$filepath.'">';
 
 					print img_mime($file['name'],$file['name'].' ('.dol_print_size($file['size'],0,0).')').' ';
-					if ($file['level1name'] <> $object->id)
-						print $file['level1name'].'/';
+					if ($showrelpart == 1) print $file['level1name'].'/';
 					print dol_trunc($file['name'],$maxlength,'middle');
 					print '</a>';
 					print "</td>\n";
