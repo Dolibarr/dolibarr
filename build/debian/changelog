@@ -1,4 +1,18 @@
+dolibarr (3.4.2) unstable; urgency=low
+
+  [ Laurent Destailleur (eldy) ]
+  * Maintenance release.
+    
+ -- Laurent Destailleur (eldy) <eldy@users.sourceforge.net>  Mon, 22 Apr 2013 12:00:00 +0100     
+
 dolibarr (3.4.1) unstable; urgency=low
+
+  [ Laurent Destailleur (eldy) ]
+  * Maintenance release.
+    
+ -- Laurent Destailleur (eldy) <eldy@users.sourceforge.net>  Mon, 22 Apr 2013 12:00:00 +0100     
+
+dolibarr (3.4.0) unstable; urgency=low
 
   [ Laurent Destailleur (eldy) ]
   * New upstream release.
