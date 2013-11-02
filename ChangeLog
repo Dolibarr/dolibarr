@@ -4,6 +4,8 @@ English Dolibarr ChangeLog
 ***** ChangeLog for 3.4.2 compared to 3.4.1 *****
 Fix: Bad rounding on margin calculations and display.
 Fix: Option drpo table into backup was broken.
+Fix: [ bug #1105 ] Searching Boxes other search option
+
 
 ***** ChangeLog for 3.4.1 compared to 3.4.0 *****
 Fix: Display buying price on line edit when no supplier price is defined
