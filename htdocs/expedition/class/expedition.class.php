@@ -569,7 +569,7 @@ class Expedition extends CommonObject
 			if (preg_match('/^[\(]?PROV/i', $this->ref))
 			{
 				// On renomme repertoire ($this->ref = ancienne ref, $numfa = nouvelle ref)
-				// afin de ne pas perdre les fichiers attaches
+				// In order not to loose attached files
 				$oldref = dol_sanitizeFileName($this->ref);
 				$newref = dol_sanitizeFileName($numref);
 				$dirsource = $conf->expedition->dir_output.'/sending/'.$oldref;

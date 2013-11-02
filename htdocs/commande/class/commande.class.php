@@ -266,7 +266,7 @@ class Commande extends CommonOrder
             if (preg_match('/^[\(]?PROV/i', $this->ref))
             {
                 // On renomme repertoire ($this->ref = ancienne ref, $numfa = nouvelle ref)
-                // afin de ne pas perdre les fichiers attaches
+                // in order not to lose the attachments
                 $comref = dol_sanitizeFileName($this->ref);
                 $snum = dol_sanitizeFileName($num);
                 $dirsource = $conf->commande->dir_output.'/'.$comref;
