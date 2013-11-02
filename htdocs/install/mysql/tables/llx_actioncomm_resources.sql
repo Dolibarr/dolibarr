@@ -27,5 +27,7 @@ create table llx_actioncomm_resources
   element_type		varchar(50) NOT NULL,
   fk_element		integer NOT NULL,
   fk_c_element_role	integer NOT NULL,
-  fk_c_element_status	varchar(32) NULL
+  fk_c_element_status	varchar(32) NULL,
+  mandatory		smallint,
+  transparent		smallint
 ) ENGINE=innodb;
