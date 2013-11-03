@@ -5,12 +5,12 @@ CHARSET=UTF-8
 # Admin
 #
 CronSetup = Page de configuration du module - Gestion de tâches planifiées
-URLToLaunchCronJobs=URL pour lancer les taches automatiques
-OrToLaunchASpecificJob=Ou pour lancer une tache spécifique
-KeyForCronAccess=Clé de sécurité pour l'URL de lancement des taches automatiques
-FileToLaunchCronJobs=Commande pour lancer les taches automatiques
+URLToLaunchCronJobs=URL pour lancer les tâches automatiques
+OrToLaunchASpecificJob=Ou pour lancer une tâche spécifique
+KeyForCronAccess=Clé de sécurité pour l'URL de lancement des tâches automatiques
+FileToLaunchCronJobs=Commande pour lancer les tâches automatiques
 CronExplainHowToRunUnix=Sur un environement Unix vous pouvez paramétrer CronTab pour executer cette commande toute les minutes.
-CronExplainHowToRunWin=Sur un environement Microsoft(tm) Windows vous pouvez utiliser le planificateur de tache pour lancer cette commande toute les minutes.
+CronExplainHowToRunWin=Sur un environement Microsoft(tm) Windows vous pouvez utiliser le planificateur de tâches pour lancer cette commande toute les minutes.
 
 #
 # Menu

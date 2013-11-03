@@ -77,7 +77,7 @@ if (!empty($search_label)) {
 // Delete jobs
 if ($action == 'confirm_delete' && $confirm == "yes" && $user->rights->cron->delete){
 
-	//Delete de la tache cron
+	//Delete cron task
 	$object = new Cronjob($db);
 	$object->id=$id;
 	$result = $object->delete($user);
