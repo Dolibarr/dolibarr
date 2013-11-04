@@ -116,6 +116,9 @@ $sql.= " AND fd.product_type IN (0,1)";
 if ($date_start && $date_end) $sql .= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
 $sql.= " ORDER BY f.rowid";
 
+// TODO Find a better trick to avoid problem with some mysql installations
+if (in_array($db->type, array('mysql', 'mysqli'))) $db->query('SET SQL_BIG_SELECTS=1');
+
 dol_syslog("sql=".$sql);
 $result = $db->query($sql);
 if ($result)
