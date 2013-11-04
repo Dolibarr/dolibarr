@@ -41,6 +41,7 @@ create table llx_user
   fk_state          integer        DEFAULT 0,            		--
   fk_country        integer        DEFAULT 0,            		--
   job				varchar(128),
+  skype             varchar(255),
   office_phone      varchar(20),
   office_fax        varchar(20),
   user_mobile       varchar(20),

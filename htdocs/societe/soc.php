@@ -4,8 +4,10 @@
  * Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2008	   Patrick Raguin       <patrick.raguin@auguria.net>
+ * Copyright (C) 2008	     Patrick Raguin       <patrick.raguin@auguria.net>
  * Copyright (C) 2010-2013 Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2011-2013 Alexandre Spangaro   <alexandre.spangaro@gmail.com> 
+ *  
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -130,6 +132,7 @@ if (empty($reshook))
         $object->town                  = GETPOST('town');
         $object->country_id            = GETPOST('country_id');
         $object->state_id              = GETPOST('state_id');
+        $object->skype                 = GETPOST('skype');
         $object->phone                 = GETPOST('phone');
         $object->fax                   = GETPOST('fax');
         $object->email                 = GETPOST('email');
@@ -254,7 +257,7 @@ if (empty($reshook))
                         dol_syslog("This thirdparty is a personal people",LOG_DEBUG);
                         $contact=new Contact($db);
 
-     					$contact->civilite_id		= $object->civilite_id;
+     					          $contact->civilite_id		= $object->civilite_id;
                         $contact->name				= $object->name_bis;
                         $contact->firstname			= $object->firstname;
                         $contact->address			= $object->address;
@@ -265,8 +268,9 @@ if (empty($reshook))
                         $contact->socid				= $object->id;	// fk_soc
                         $contact->status			= 1;
                         $contact->email				= $object->email;
-						$contact->phone_pro			= $object->phone;
-						$contact->fax				= $object->fax;
+						            $contact->skype       = $object->skype;
+                        $contact->phone_pro			= $object->phone;
+						            $contact->fax				= $object->fax;
                         $contact->priv				= 0;
 
                         $result=$contact->create($user);
@@ -598,6 +602,7 @@ else
         $object->zip				= GETPOST('zipcode');
         $object->town				= GETPOST('town');
         $object->state_id			= GETPOST('state_id');
+        $object->skype				= GETPOST('skype');
         $object->phone				= GETPOST('phone');
         $object->fax				= GETPOST('fax');
         $object->email				= GETPOST('email');
@@ -845,6 +850,12 @@ else
         print '<tr><td>'.$langs->trans('EMail').(! empty($conf->global->SOCIETE_MAIL_REQUIRED)?'*':'').'</td><td colspan="3"><input type="text" name="email" size="32" value="'.$object->email.'"></td></tr>';
         print '<tr><td>'.$langs->trans('Web').'</td><td colspan="3"><input type="text" name="url" size="32" value="'.$object->url.'"></td></tr>';
 
+        // Skype
+        if (! empty($conf->skype->enabled))
+        {
+            print '<tr><td>'.$langs->trans('Skype').'</td><td colspan="3"><input type="text" name="skype" size="32" value="'.$object->skype.'"></td></tr>';
+        }
+        
         // Phone / Fax
         print '<tr><td>'.$langs->trans('Phone').'</td><td><input type="text" name="phone" value="'.$object->phone.'"></td>';
         print '<td>'.$langs->trans('Fax').'</td><td><input type="text" name="fax" value="'.$object->fax.'"></td></tr>';
@@ -1079,6 +1090,7 @@ else
                 $object->town					= GETPOST('town');
                 $object->country_id				= GETPOST('country_id')?GETPOST('country_id'):$mysoc->country_id;
                 $object->state_id				= GETPOST('state_id');
+                $object->skype					= GETPOST('skype');
                 $object->phone					= GETPOST('phone');
                 $object->fax					= GETPOST('fax');
                 $object->email					= GETPOST('email');
@@ -1088,8 +1100,8 @@ else
                 $object->idprof2				= GETPOST('idprof2');
                 $object->idprof3				= GETPOST('idprof3');
                 $object->idprof4				= GETPOST('idprof4');
-        		$object->idprof5				= GETPOST('idprof5');
-        		$object->idprof6				= GETPOST('idprof6');
+        		    $object->idprof5				= GETPOST('idprof5');
+        		    $object->idprof6				= GETPOST('idprof6');
                 $object->typent_id				= GETPOST('typent_id');
                 $object->effectif_id			= GETPOST('effectif_id');
                 $object->barcode				= GETPOST('barcode');
@@ -1261,7 +1273,13 @@ else
             // EMail / Web
             print '<tr><td>'.$langs->trans('EMail').(! empty($conf->global->SOCIETE_MAIL_REQUIRED)?'*':'').'</td><td colspan="3"><input type="text" name="email" size="32" value="'.$object->email.'"></td></tr>';
             print '<tr><td>'.$langs->trans('Web').'</td><td colspan="3"><input type="text" name="url" size="32" value="'.$object->url.'"></td></tr>';
-
+            
+            // Skype
+            if (! empty($conf->skype->enabled))
+            {
+                print '<tr><td>'.$langs->trans('Skype').'</td><td colspan="3"><input type="text" name="skype" size="32" value="'.$object->skype.'"></td></tr>';
+            }
+            
             // Phone / Fax
             print '<tr><td>'.$langs->trans('Phone').'</td><td><input type="text" name="phone" value="'.$object->phone.'"></td>';
             print '<td>'.$langs->trans('Fax').'</td><td><input type="text" name="fax" value="'.$object->fax.'"></td></tr>';
@@ -1569,6 +1587,14 @@ else
         print '<tr><td>'.$langs->trans('Web').'</td><td colspan="3">';
         print dol_print_url($object->url);
         print '</td></tr>';
+        
+        // Skype
+        if (! empty($conf->skype->enabled))
+        {
+            print '<tr><td>'.$langs->trans('Skype').'</td><td colspan="3">';
+            print dol_print_skype($object->skype,0,$object->id,'AC_SKYPE');
+            print '</td></tr>';
+        }
 
         // Phone / Fax
         print '<tr><td>'.$langs->trans('Phone').'</td><td style="min-width: 25%;">'.dol_print_phone($object->phone,$object->country_code,0,$object->id,'AC_TEL').'</td>';

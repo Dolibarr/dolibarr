@@ -8,6 +8,7 @@
  * Copyright (C) 2008      Patrick Raguin       <patrick.raguin@auguria.net>
  * Copyright (C) 2010-2011 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2013      Florian Henry		  	<florian.henry@open-concept.pro>
+ * Copyright (C) 2013      Alexandre Spangaro 	<alexandre.spangaro@gmail.com> 
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -68,6 +69,7 @@ class Societe extends CommonObject
     var $phone;
     var $fax;
     var $email;
+    var $skype;
     var $url;
 
 	//! barcode
@@ -410,6 +412,7 @@ class Societe extends CommonObject
         $this->fax			= preg_replace("/\s/","",$this->fax);
         $this->fax			= preg_replace("/\./","",$this->fax);
         $this->email		= trim($this->email);
+        $this->skype		= trim($this->skype);
         $this->url			= $this->url?clean_url($this->url,0):'';
         $this->idprof1		= trim($this->idprof1);
         $this->idprof2		= trim($this->idprof2);
@@ -508,6 +511,7 @@ class Societe extends CommonObject
             $sql .= ",phone = ".(! empty($this->phone)?"'".$this->db->escape($this->phone)."'":"null");
             $sql .= ",fax = ".(! empty($this->fax)?"'".$this->db->escape($this->fax)."'":"null");
             $sql .= ",email = ".(! empty($this->email)?"'".$this->db->escape($this->email)."'":"null");
+            $sql .= ",skype = ".(! empty($this->skype)?"'".$this->db->escape($this->skype)."'":"null");
             $sql .= ",url = ".(! empty($this->url)?"'".$this->db->escape($this->url)."'":"null");
 
             $sql .= ",siren   = '". $this->db->escape($this->idprof1) ."'";
@@ -590,6 +594,7 @@ class Societe extends CommonObject
 		            		//$lmember->lastname=$this->lastname?$this->lastname:$lmember->lastname;		// We keep firstname and lastname of member unchanged
 		            		$lmember->address=$this->address;
 		            		$lmember->email=$this->email;
+                    $lmember->skype=$this->skype;
 		            		$lmember->phone=$this->phone;
 
 		            		$result=$lmember->update($user,0,1,1,1);	// Use nosync to 1 to avoid cyclic updates
@@ -699,7 +704,7 @@ class Societe extends CommonObject
         $sql .= ', s.status';
         $sql .= ', s.price_level';
         $sql .= ', s.tms as date_update';
-        $sql .= ', s.phone, s.fax, s.email, s.url, s.zip, s.town, s.note_private, s.note_public, s.client, s.fournisseur';
+        $sql .= ', s.phone, s.fax, s.email, s.skype, s.url, s.zip, s.town, s.note_private, s.note_public, s.client, s.fournisseur';
         $sql .= ', s.siren as idprof1, s.siret as idprof2, s.ape as idprof3, s.idprof4, s.idprof5, s.idprof6';
         $sql .= ', s.capital, s.tva_intra';
         $sql .= ', s.fk_typent as typent_id';
@@ -777,6 +782,7 @@ class Societe extends CommonObject
                 $this->statut_commercial = $libelle;    // libelle statut commercial
 
                 $this->email = $obj->email;
+                $this->skype = $obj->skype;
                 $this->url = $obj->url;
                 $this->phone = $obj->phone;
                 $this->fax = $obj->fax;
@@ -2409,6 +2415,7 @@ class Societe extends CommonObject
         $this->country_id=$member->country_id;
         $this->phone=$member->phone;       // Prof phone
         $this->email=$member->email;
+        $this->skype=$member->skype;
 
         $this->client = 1;				// A member is a customer by default
         $this->code_client = -1;
@@ -2548,6 +2555,7 @@ class Societe extends CommonObject
         $this->country_id=1;
         $this->country_code='FR';
         $this->email='specimen@specimen.com';
+        $this->skype='tom.hanson';
         $this->url='http://www.specimen.com';
 
         $this->phone='0909090901';

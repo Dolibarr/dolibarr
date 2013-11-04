@@ -6,6 +6,7 @@
  * Copyright (C) 2005-2012 Regis Houssin               <regis.houssin@capnetworks.com>
  * Copyright (C) 2008      Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
  * Copyright (C) 2010-2012 Juanjo Menent               <jmenent@2byte.es>
+ * Copyright (C) 2013      Alexandre Spangaro          <alexandre.spangaro@gmail.com> 
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -267,6 +268,12 @@ if ($id > 0)
 	// Fax
 	print '<td>'.$langs->trans('Fax').'</td><td style="min-width: 25%;">'.dol_print_phone($object->fax,$object->country_code,0,$object->id,'AC_FAX').'</td></tr>';
 
+  // Skype
+  if (! empty($conf->skype->enabled))
+  {
+	   print '<td>'.$langs->trans('Skype').'</td><td colspan="3">'.dol_print_skype($object->skype,0,$object->id,'AC_SKYPE').'</td></tr>';
+  }
+  
 	// Assujeti a TVA ou pas
 	print '<tr>';
 	print '<td class="nowrap">'.$langs->trans('VATIsUsed').'</td><td colspan="3">';
