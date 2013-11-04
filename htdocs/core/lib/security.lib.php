@@ -77,9 +77,11 @@ function dol_decode($chain)
  */
 function dol_hash($chain,$type=0)
 {
+	global $conf;
+	
 	if ($type == 1) return sha1($chain);
 	else if ($type == 2) return sha1(md5($chain));
-	else return md5($chain);
+	else return md5((empty($conf->global->MAIN_SECURITY_SALT)?'':$conf->global->MAIN_SECURITY_SALT).$chain);
 }
 
 
