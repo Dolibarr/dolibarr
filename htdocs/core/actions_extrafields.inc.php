@@ -87,7 +87,7 @@ if ($action == 'add')
         	$mesg[]=$langs->trans("ErrorNoValueForRadioType");
         	$action = 'create';
         }
-        if  (((GETPOST('type')=='radio') || (GETPOST('type')=='checkbox') || (GETPOST('type')=='radio')) && GETPOST('param')) 
+        if  (((GETPOST('type')=='radio') || (GETPOST('type')=='checkbox')) && GETPOST('param')) 
         {
         	// Construct array for parameter (value of select list)
     		$parameters = GETPOST('param');
@@ -124,11 +124,22 @@ if ($action == 'add')
         		$default_value = GETPOST('default_value');
     			$parameters = GETPOST('param');
     			$parameters_array = explode("\r\n",$parameters);
-    			foreach($parameters_array as $param_ligne)
+    			//In sellist we have only one line and it can have come to do SQL expression
+    			if (GETPOST('type')=='sellist') {
+    				foreach($parameters_array as $param_ligne)
+    				{
+    					$params['options'] = array($parameters=>null);
+    				}
+    			}
+    			else
     			{
-    				list($key,$value) = explode(',',$param_ligne);
-    				$params['options'][$key] = $value;
-    			}  			 
+    				//Esle it's separated key/value and coma list
+    				foreach($parameters_array as $param_ligne)
+    				{
+    					list($key,$value) = explode(',',$param_ligne);
+    					$params['options'][$key] = $value;
+    				}
+    			}		 
     			
                 $result=$extrafields->addExtraField($_POST['attrname'],$_POST['label'],$_POST['type'],$_POST['pos'],$extrasize,$elementtype,(GETPOST('unique')?1:0),(GETPOST('required')?1:0),$default_value,$params);
     			if ($result > 0)
@@ -215,7 +226,7 @@ if ($action == 'update')
         	$mesg[]=$langs->trans("ErrorNoValueForRadioType");
         	$action = 'edit';
         }
-        if  (((GETPOST('type')=='radio') || (GETPOST('type')=='checkbox') || (GETPOST('type')=='radio')) && GETPOST('param'))
+        if  (((GETPOST('type')=='radio') || (GETPOST('type')=='checkbox')) && GETPOST('param'))
         {
         	// Construct array for parameter (value of select list)
         	$parameters = GETPOST('param');
@@ -251,10 +262,21 @@ if ($action == 'update')
     			// Construct array for parameter (value of select list)
     			$parameters = GETPOST('param');
     			$parameters_array = explode("\r\n",$parameters);
-    			foreach($parameters_array as $param_ligne)
+    			//In sellist we have only one line and it can have come to do SQL expression
+    			if (GETPOST('type')=='sellist') {
+    				foreach($parameters_array as $param_ligne)
+    				{
+    					$params['options'] = array($parameters=>null);
+    				}
+    			}
+    			else
     			{
-    				list($key,$value) = explode(',',$param_ligne);
-    				$params['options'][$key] = $value;
+    				//Esle it's separated key/value and coma list
+    				foreach($parameters_array as $param_ligne)
+    				{
+    					list($key,$value) = explode(',',$param_ligne);
+    					$params['options'][$key] = $value;
+    				}
     			}
     			$result=$extrafields->update($_POST['attrname'],$_POST['label'],$_POST['type'],$extrasize,$elementtype,(GETPOST('unique')?1:0),(GETPOST('required')?1:0),$pos,$params);
     			if ($result > 0)
