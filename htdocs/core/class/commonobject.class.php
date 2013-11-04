@@ -2045,6 +2045,7 @@ abstract class CommonObject
 
     /**
      *  Function to get extra fields of a member into $this->array_options
+     *  This method is in most cases called by method fetch of objects but you can call it separately.
      *
      *  @param	int		$rowid			Id of line
      *  @param  array	$optionsArray   Array resulting of call of extrafields->fetch_name_optionals_label()
