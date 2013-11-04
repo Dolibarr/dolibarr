@@ -693,15 +693,23 @@ class ExtraFields
 				// 1 2 : label field name Nom du champ contenant le libelle
 				// 2 3 : key fields name (if differ of rowid)
 				// 3 4 : key field parent (for dependent lists)
+				// 4 5 : where clause filter on column or table extrafield, syntax field='value' or extra.field=value
+				
 
 				$keyList='rowid';
 
-				if (count($InfoFieldList)>=3)
-					$keyList=$InfoFieldList[2].' as rowid';
-				if (count($InfoFieldList)>=4) {
+				if (count($InfoFieldList)>=3) {
 					list($parentName, $parentField) = explode('|', $InfoFieldList[3]);
 					$keyList.= ', '.$parentField;
 				}
+				if (count($InfoFieldList)>=4 && !empty($InfoFieldList[4])) {
+					if (strpos($InfoFieldList[4], 'extra')!==false) {
+						$keyList='main.'.$InfoFieldList[2].' as rowid';
+					}else {
+						$keyList=$InfoFieldList[2].' as rowid';
+					}
+				}
+				
 
 				$fields_label = explode('|',$InfoFieldList[1]);
 				if(is_array($fields_label)) {
@@ -717,6 +725,16 @@ class ExtraFields
 
 				$sql = 'SELECT '.$keyList;
 				$sql.= ' FROM '.MAIN_DB_PREFIX .$InfoFieldList[0];
+				if (!empty($InfoFieldList[4])) {
+						
+					//We have to join on extrafield table
+					if (strpos($InfoFieldList[4], 'extra')!==false) {
+						$sql.= ' as main, '.MAIN_DB_PREFIX .$InfoFieldList[0].'_extrafields as extra';
+						$sql.= ' WHERE  extra.fk_object=main.'.$InfoFieldList[2]. ' AND '.$InfoFieldList[4];
+					}else {
+						$sql.= ' WHERE '.$InfoFieldList[4];
+					}
+				}
 				//$sql.= ' WHERE entity = '.$conf->entity;
 				//print $sql;
 
