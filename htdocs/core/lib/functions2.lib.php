@@ -205,13 +205,15 @@ function dol_print_object_info($object)
         print $langs->trans("CreatedBy").': ';
         if (is_object($object->user_creation))
         {
-            print $object->user_creation->getNomUrl(1);
+        	if ($object->user_creation->id) print $object->user_creation->getNomUrl(1);
+        	else print $langs->trans("Unknown");
         }
         else
         {
             $userstatic=new User($db);
             $userstatic->fetch($object->user_creation);
-            print $userstatic->getNomUrl(1);
+            if ($userstatic->id) print $userstatic->getNomUrl(1);
+        	else print $langs->trans("Unknown");
         }
         print '<br>';
     }
@@ -230,13 +232,15 @@ function dol_print_object_info($object)
         print $langs->trans("ModifiedBy").': ';
         if (is_object($object->user_modification))
         {
-            print $object->user_modification->getNomUrl(1);
+        	if ($object->user_modification->id) print $object->user_modification->getNomUrl(1);
+        	else print $langs->trans("Unknown");
         }
         else
         {
             $userstatic=new User($db);
             $userstatic->fetch($object->user_modification);
-            print $userstatic->getNomUrl(1);
+            if ($userstatic->id) print $userstatic->getNomUrl(1);
+        	else print $langs->trans("Unknown");
         }
         print '<br>';
     }
@@ -255,13 +259,15 @@ function dol_print_object_info($object)
         print $langs->trans("ValidatedBy").': ';
         if (is_object($object->user_validation))
         {
-            print $object->user_validation->getNomUrl(1);
+            if ($object->user_validation->id) print $object->user_validation->getNomUrl(1);
+        	else print $langs->trans("Unknown");
         }
         else
         {
             $userstatic=new User($db);
             $userstatic->fetch($object->user_validation);
-            print $userstatic->getNomUrl(1);
+			if ($userstatic->id) print $userstatic->getNomUrl(1);
+        	else print $langs->trans("Unknown");
         }
         print '<br>';
     }
@@ -280,13 +286,15 @@ function dol_print_object_info($object)
         print $langs->trans("ApprovedBy").': ';
         if (is_object($object->user_approve))
         {
-            print $object->user_approve->getNomUrl(1);
+            if ($object->user_approve->id) print $object->user_approve->getNomUrl(1);
+        	else print $langs->trans("Unknown");
         }
         else
         {
             $userstatic=new User($db);
             $userstatic->fetch($object->user_approve);
-            print $userstatic->getNomUrl(1);
+			if ($userstatic->id) print $userstatic->getNomUrl(1);
+        	else print $langs->trans("Unknown");
         }
         print '<br>';
     }
@@ -305,13 +313,15 @@ function dol_print_object_info($object)
         print $langs->trans("ClosedBy").': ';
         if (is_object($object->user_cloture))
         {
-            print $object->user_cloture->getNomUrl(1);
+			if ($object->user_cloture->id) print $object->user_cloture->getNomUrl(1);
+        	else print $langs->trans("Unknown");
         }
         else
         {
             $userstatic=new User($db);
             $userstatic->fetch($object->user_cloture);
-            print $userstatic->getNomUrl(1);
+			if ($userstatic->id) print $userstatic->getNomUrl(1);
+        	else print $langs->trans("Unknown");
         }
         print '<br>';
     }
@@ -330,13 +340,15 @@ function dol_print_object_info($object)
         print $langs->trans("ConciliatedBy").': ';
         if (is_object($object->user_rappro))
         {
-            print $object->user_rappro->getNomUrl(1);
+			if ($object->user_rappro->id) print $object->user_rappro->getNomUrl(1);
+        	else print $langs->trans("Unknown");
         }
         else
         {
             $userstatic=new User($db);
             $userstatic->fetch($object->user_rappro);
-            print $userstatic->getNomUrl(1);
+			if ($userstatic->id) print $userstatic->getNomUrl(1);
+        	else print $langs->trans("Unknown");
         }
         print '<br>';
     }

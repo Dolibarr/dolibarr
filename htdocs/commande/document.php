@@ -21,7 +21,7 @@
 /**
  *	\file       htdocs/commande/document.php
  *	\ingroup    order
- *	\brief      Page de gestion des documents attachees a une commande
+ *	\brief      Documents setup page attached to an order
  */
 
 require '../main.inc.php';

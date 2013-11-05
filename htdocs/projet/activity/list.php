@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2010      François Legastelois <flegastelois@teclib.com>
  *
@@ -56,35 +56,42 @@ if ($action == 'addtime' && $user->rights->projet->creer)
 {
     $task = new Task($db);
 
-    $timespent_duration=0;
+    $timespent_duration=array();
 
     foreach($_POST as $key => $time)
     {
-        if(intval($time)>0)
+        if (intval($time) > 0)
         {
             // Hours or minutes
-            if(preg_match("/([0-9]+)(hour|min)/",$key,$matches))
+            if (preg_match("/([0-9]+)(hour|min)/",$key,$matches))
             {
                 $id = $matches[1];
-
-                // We store HOURS in seconds
-                if($matches[2]=='hour') $timespent_duration += $time*60*60;
-
-                // We store MINUTES in seconds
-                if($matches[2]=='min') $timespent_duration += $time*60;
+				if ($id > 0)
+				{
+	                // We store HOURS in seconds
+	                if($matches[2]=='hour') $timespent_duration[$id] += $time*60*60;
+	
+	                // We store MINUTES in seconds
+	                if($matches[2]=='min') $timespent_duration[$id] += $time*60;
+				}
             }
         }
     }
 
-    if ($timespent_duration > 0)
+    if (count($timespent_duration) > 0)
     {
-        $task->fetch($id);
-        $task->timespent_duration = $timespent_duration;
-        $task->timespent_fk_user = $user->id;
-        $task->timespent_date = dol_mktime(12,0,0,$_POST["{$id}month"],$_POST["{$id}day"],$_POST["{$id}year"]);
-        $task->addTimeSpent($user);
-
-        // header to avoid submit twice on back
+    	foreach($timespent_duration as $key => $val)
+    	{
+	        $task->fetch($key);
+	        $task->timespent_duration = $val;
+	        $task->timespent_fk_user = $user->id;
+	        $task->timespent_date = dol_mktime(12,0,0,$_POST["{$key}month"],$_POST["{$key}day"],$_POST["{$key}year"]);
+	        $task->addTimeSpent($user);
+    	}
+    	
+    	setEventMessage($langs->trans("RecordSaved"));
+    	
+        // Redirect to avoid submit twice on back
         header('Location: '.$_SERVER["PHP_SELF"].'?id='.$projectid.($mode?'&mode='.$mode:''));
         exit;
     }
@@ -144,6 +151,7 @@ print '<td>'.$langs->trans("RefTask").'</td>';
 print '<td>'.$langs->trans("LabelTask").'</td>';
 print '<td align="center">'.$langs->trans("DateStart").'</td>';
 print '<td align="center">'.$langs->trans("DateEnd").'</td>';
+print '<td align="right">'.$langs->trans("PlannedWorkload").'</td>';
 print '<td align="right">'.$langs->trans("Progress").'</td>';
 print '<td align="right">'.$langs->trans("TimeSpent").'</td>';
 print '<td colspan="2">'.$langs->trans("AddDuration").'</td>';

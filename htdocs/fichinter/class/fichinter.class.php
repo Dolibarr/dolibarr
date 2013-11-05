@@ -607,9 +607,9 @@ class Fichinter extends CommonObject
 	}
 
 	/**
-	 * 	Information sur l'objet fiche intervention
+	 * 	Load information on object
 	 *
-	 *	@param	int		$id      Id de la fiche d'intervention
+	 *	@param	int		$id      Id of object
 	 *	@return	void
 	 */
 	function info($id)
@@ -625,13 +625,12 @@ class Fichinter extends CommonObject
 		$sql.= " WHERE f.rowid = ".$id;
 		$sql.= " AND f.entity = ".$conf->entity;
 
-		$result = $this->db->query($sql);
-
-		if ($result)
+		$resql = $this->db->query($sql);
+		if ($resql)
 		{
-			if ($this->db->num_rows($result))
+			if ($this->db->num_rows($resql))
 			{
-				$obj = $this->db->fetch_object($result);
+				$obj = $this->db->fetch_object($resql);
 
 				$this->id                = $obj->rowid;
 
@@ -649,7 +648,7 @@ class Fichinter extends CommonObject
 					$this->user_validation     = $vuser;
 				}
 			}
-			$this->db->free($result);
+			$this->db->free($resql);
 		}
 		else
 		{

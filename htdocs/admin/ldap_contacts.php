@@ -61,6 +61,7 @@ if ($action == 'setvalue' && $user->admin)
 	if (! dolibarr_set_const($db, 'LDAP_CONTACT_FIELD_PHONE',GETPOST("fieldphone"),'chaine',0,'',$conf->entity)) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_CONTACT_FIELD_HOMEPHONE',GETPOST("fieldhomephone"),'chaine',0,'',$conf->entity)) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_CONTACT_FIELD_MOBILE',GETPOST("fieldmobile"),'chaine',0,'',$conf->entity)) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_CONTACT_FIELD_SKYPE',GETPOST("fieldskype"),'chaine',0,'',$conf->entity)) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_CONTACT_FIELD_FAX',GETPOST("fieldfax"),'chaine',0,'',$conf->entity)) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_CONTACT_FIELD_ADDRESS',GETPOST("fieldaddress"),'chaine',0,'',$conf->entity)) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_CONTACT_FIELD_ZIP',GETPOST("fieldzip"),'chaine',0,'',$conf->entity)) $error++;
@@ -212,6 +213,14 @@ print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPFieldMobile").'</td><td>';
 print '<input size="25" type="text" name="fieldmobile" value="'.$conf->global->LDAP_CONTACT_FIELD_MOBILE.'">';
 print '</td><td>'.$langs->trans("LDAPFieldMobileExample").'</td>';
 print '<td align="right"><input type="radio" name="key" value="LDAP_CONTACT_FIELD_MOBILE"'.($conf->global->LDAP_KEY_CONTACTS && $conf->global->LDAP_KEY_CONTACTS==$conf->global->LDAP_CONTACT_FIELD_MOBILE?' checked="checked"':'')."></td>";
+print '</tr>';
+
+// Skype
+$var=!$var;
+print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPFieldSkype").'</td><td>';
+print '<input size="25" type="text" name="fieldskype" value="'.$conf->global->LDAP_CONTACT_FIELD_SKYPE.'">';
+print '</td><td>'.$langs->trans("LDAPFieldSkypeExample").'</td>';
+print '<td align="right"><input type="radio" name="key" value="LDAP_CONTACT_FIELD_SKYPE"'.($conf->global->LDAP_KEY_CONTACTS && $conf->global->LDAP_KEY_CONTACTS==$conf->global->LDAP_CONTACT_FIELD_SKYPE?' checked="checked"':'')."></td>";
 print '</tr>';
 
 // Fax

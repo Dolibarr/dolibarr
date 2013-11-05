@@ -1,14 +1,11 @@
 <?php
 /* Copyright (C) 2006-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2013 Regis Houssin        <regis.houssin@capnetworks.com>
-<<<<<<< HEAD
  * Copyright (C) 2010-2013 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2012      Christophe Battarel  <christophe.battarel@altairis.fr>
-=======
  * Copyright (C) 2010-2011 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2012-2013 Christophe Battarel  <christophe.battarel@altairis.fr>
->>>>>>> refs/remotes/origin/3.4
- * Copyright (C) 2011-2012 Philippe Grand	    <philippe.grand@atoo-net.com>
+ * Copyright (C) 2011-2012 Philippe Grand	      <philippe.grand@atoo-net.com>
  * Copyright (C) 2012      Marcos García        <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -2142,10 +2139,12 @@ abstract class CommonObject
      */
     function insertExtraFields()
     {
-        global $langs;
+        global $conf,$langs;
 
 		$error=0;
 
+		if (! empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) return 0;	// For avoid conflicts if trigger used
+		
         if (! empty($this->array_options))
         {
             // Check parameters
@@ -2249,7 +2248,7 @@ abstract class CommonObject
 
 		$out = '';
 
-		if(count($extrafields->attribute_label) > 0)
+		if (count($extrafields->attribute_label) > 0)
 		{
 			$out .= "\n";
 			$out .= '<!-- showOptionalsInput --> ';
