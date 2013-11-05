@@ -6,6 +6,7 @@
  * Copyright (C) 2005-2012 Regis Houssin               <regis.houssin@capnetworks.com>
  * Copyright (C) 2008      Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
  * Copyright (C) 2010-2012 Juanjo Menent               <jmenent@2byte.es>
+ * Copyright (C) 2013      Alexandre Spangaro          <alexandre.spangaro@gmail.com> 
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -196,9 +197,8 @@ if ($id > 0)
 
 
 	print '<div class="fichecenter"><div class="fichehalfleft">';
-	//print '<table width="100%" class="notopnoleftnoright">';
-	//print '<tr><td valign="top" class="notopnoleft">';
 
+	
 	print '<table class="border" width="100%">';
 
 	print '<tr><td width="30%">'.$langs->trans("ThirdPartyName").'</td><td width="70%" colspan="3">';
@@ -267,6 +267,12 @@ if ($id > 0)
 	// Fax
 	print '<td>'.$langs->trans('Fax').'</td><td style="min-width: 25%;">'.dol_print_phone($object->fax,$object->country_code,0,$object->id,'AC_FAX').'</td></tr>';
 
+  // Skype
+  if (! empty($conf->skype->enabled))
+  {
+	   print '<td>'.$langs->trans('Skype').'</td><td colspan="3">'.dol_print_skype($object->skype,0,$object->id,'AC_SKYPE').'</td></tr>';
+  }
+  
 	// Assujeti a TVA ou pas
 	print '<tr>';
 	print '<td class="nowrap">'.$langs->trans('VATIsUsed').'</td><td colspan="3">';
@@ -452,7 +458,7 @@ if ($id > 0)
         }
         else
         {
-            print $langs->trans("UserNotLinkedToMember");
+            print $langs->trans("ThirdpartyNotLinkedToMember");
         }
         print '</td>';
         print "</tr>\n";
@@ -462,8 +468,6 @@ if ($id > 0)
 
 
 	print '</div><div class="fichehalfright"><div class="ficheaddleft">';
-	//print "</td>\n";
-	//print '<td valign="top" width="50%" class="notopnoleftnoright">';
 
 
 	// Nbre max d'elements des petites listes
@@ -800,8 +804,6 @@ if ($id > 0)
 
 	print '</div></div></div>';
 	print '<div style="clear:both"></div>';
-	//print "</td></tr>";
-	//print "</table>";
 
 	dol_fiche_end();
 

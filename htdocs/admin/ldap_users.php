@@ -63,6 +63,7 @@ if ($action == 'setvalue' && $user->admin)
 	if (! dolibarr_set_const($db, 'LDAP_FIELD_MAIL',GETPOST("fieldmail"),'chaine',0,'',$conf->entity)) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_FIELD_PHONE',GETPOST("fieldphone"),'chaine',0,'',$conf->entity)) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_FIELD_MOBILE',GETPOST("fieldmobile"),'chaine',0,'',$conf->entity)) $error++;
+  if (! dolibarr_set_const($db, 'LDAP_FIELD_SKYPE',GETPOST("fieldskype"),'chaine',0,'',$conf->entity)) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_FIELD_FAX',GETPOST("fieldfax"),'chaine',0,'',$conf->entity)) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_FIELD_DESCRIPTION',GETPOST("fielddescription"),'chaine',0,'',$conf->entity)) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_FIELD_SID',GETPOST("fieldsid"),'chaine',0,'',$conf->entity)) $error++;
@@ -240,6 +241,14 @@ print '</td><td>'.$langs->trans("LDAPFieldMobileExample").'</td>';
 print '<td align="right"><input type="radio" name="key" value="LDAP_FIELD_MOBILE"'.(($conf->global->LDAP_KEY_USERS && $conf->global->LDAP_KEY_USERS==$conf->global->LDAP_FIELD_MOBILE)?' checked="checked"':'')."></td>";
 print '</tr>';
 
+// Skype
+$var=!$var;
+print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPFieldSkype").'</td><td>';
+print '<input size="25" type="text" name="fieldskype" value="'.$conf->global->LDAP_FIELD_SKYPE.'">';
+print '</td><td>'.$langs->trans("LDAPFieldSkypeExample").'</td>';
+print '<td align="right"><input type="radio" name="key" value="LDAP_FIELD_SKYPE"'.(($conf->global->LDAP_KEY_USERS && $conf->global->LDAP_KEY_USERS==$conf->global->LDAP_FIELD_SKYPE)?' checked="checked"':'')."></td>";
+print '</tr>';
+
 // Fax
 $var=!$var;
 print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPFieldFax").'</td><td>';
@@ -383,6 +392,7 @@ if (function_exists("ldap_connect"))
 				$conf->global->LDAP_FIELD_PASSWORD_CRYPTED,
 				$conf->global->LDAP_FIELD_PHONE,
 				$conf->global->LDAP_FIELD_FAX,
+        $conf->global->LDAP_FIELD_SKYPE,
 				$conf->global->LDAP_FIELD_MOBILE,
 				$conf->global->LDAP_FIELD_MAIL,
 				$conf->global->LDAP_FIELD_TITLE,

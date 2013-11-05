@@ -325,7 +325,15 @@ create table llx_actioncomm_resources
   fk_actioncomm		integer NOT NULL,
   element_type		varchar(50) NOT NULL,
   fk_element		integer NOT NULL,
-  fk_element_status	varchar(32) NULL
+  answer_status		varchar(50) NULL,
+  mandatory		smallint,
+  transparent		smallint
 ) ENGINE=innodb;
 ALTER TABLE llx_actioncomm_resources ADD UNIQUE INDEX idx_actioncomm_resources_idx1 (fk_actioncomm, element_type, fk_element);
 ALTER TABLE llx_actioncomm_resources ADD INDEX idx_actioncomm_resources_fk_element (fk_element);
+
+-- Task 157
+ALTER TABLE llx_user ADD skype VARCHAR(255) AFTER job;
+ALTER TABLE llx_socpeople ADD skype VARCHAR(255) AFTER jabberid;
+ALTER TABLE llx_societe ADD skype VARCHAR(255) AFTER email;
+ALTER TABLE llx_adherent ADD skype VARCHAR(255) AFTER email;

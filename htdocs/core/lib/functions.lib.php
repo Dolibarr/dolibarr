@@ -9,6 +9,7 @@
  * Copyright (C) 2008      Raphael Bertrand (Resultic)       <raphael.bertrand@resultic.fr>
  * Copyright (C) 2010-2011 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2013      Cédric Salvador      <csalvador@gpcsolutions.fr>
+ * Copyright (C) 2013      Alexandre Spangaro   <alexandre.spangaro@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1183,6 +1184,48 @@ function dol_print_email($email,$cid=0,$socid=0,$addlink=0,$max=64,$showinvalid=
 		}
 	}
 	return $newemail;
+}
+
+/**
+ * Show Skype link
+ *
+ * @param	string		$skype			Skype to show (only skype, without 'Name of recipient' before)
+ * @param int 			$cid 			Id of contact if known
+ * @param int 			$socid 			Id of third party if known
+ * @param int 			$addlink		0=no link to create action
+ * @param	int			  $max			Max number of characters to show
+ * @return	string						HTML Link
+ */
+function dol_print_skype($skype,$cid=0,$socid=0,$addlink=0,$max=64)
+{
+	global $conf,$user,$langs;
+
+	$newskype=$skype;
+
+	if (empty($skype)) return '&nbsp;';
+
+	if (! empty($addlink))
+	{
+		$newskype='<a href="skype:';
+		$newskype.=dol_trunc($skype,$max);
+		$newskype.='" alt="'.$langs->trans("Call").'&nbsp;'.$skype.'" title="'.$langs->trans("Call").'&nbsp;'.$skype.'">';
+    $newskype.='<img src="../theme/'.$conf->theme.'/img/object_skype.png" border="0">&nbsp;';
+		$newskype.=dol_trunc($skype,$max);
+		$newskype.='</a>';
+		
+		if (($cid || $socid) && ! empty($conf->agenda->enabled) && $user->rights->agenda->myactions->create)
+		{
+			$type='AC_SKYPE'; $link='';
+			if (! empty($conf->global->AGENDA_ADDACTIONFORSKYPE)) $link='<a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&amp;backtopage=1&amp;actioncode='.$type.'&amp;contactid='.$cid.'&amp;socid='.$socid.'">'.img_object($langs->trans("AddAction"),"calendar").'</a>';
+			$newskype='<table class="nobordernopadding"><tr><td>'.$newskype.' </td><td>&nbsp;'.$link.'</td></tr></table>';
+		}
+	}
+	else
+	{
+		$langs->load("errors");
+		$newskype.=img_warning($langs->trans("ErrorBadSkype",$skype));
+	}
+	return $newskype;
 }
 
 /**
