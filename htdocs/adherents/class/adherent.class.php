@@ -65,6 +65,7 @@ class Adherent extends CommonObject
     var $country;
 
     var $email;
+    var $skype;
     var $phone;
     var $phone_perso;
     var $phone_mobile;
@@ -430,6 +431,7 @@ class Adherent extends CommonObject
         $sql.= ", country=".($this->country_id>0?"'".$this->country_id."'":"null");
         $sql.= ", state_id=".($this->state_id>0?"'".$this->state_id."'":"null");
         $sql.= ", email='".$this->email."'";
+        $sql.= ", skype='".$this->skype."'";
         $sql.= ", phone="   .($this->phone?"'".$this->db->escape($this->phone)."'":"null");
         $sql.= ", phone_perso="  .($this->phone_perso?"'".$this->db->escape($this->phone_perso)."'":"null");
         $sql.= ", phone_mobile=" .($this->phone_mobile?"'".$this->db->escape($this->phone_mobile)."'":"null");
@@ -526,6 +528,7 @@ class Adherent extends CommonObject
                         $luser->societe_id=$this->societe;
 
                         $luser->email=$this->email;
+                        $luser->skype=$this->skype;
                         $luser->office_phone=$this->phone;
                         $luser->user_mobile=$this->phone_mobile;
 
@@ -564,6 +567,7 @@ class Adherent extends CommonObject
                         $lthirdparty->zip=$this->zip;
                         $lthirdparty->town=$this->town;
                         $lthirdparty->email=$this->email;
+                        $lthirdparty->skype=$this->skype;
                         $lthirdparty->phone=$this->phone;
                         $lthirdparty->state_id=$this->state_id;
                         $lthirdparty->country_id=$this->country_id;
@@ -1047,7 +1051,7 @@ class Adherent extends CommonObject
         global $langs;
 
         $sql = "SELECT d.rowid, d.ref_ext, d.civilite, d.firstname, d.lastname, d.societe as company, d.fk_soc, d.statut, d.public, d.address, d.zip, d.town, d.note,";
-        $sql.= " d.email, d.phone, d.phone_perso, d.phone_mobile, d.login, d.pass,";
+        $sql.= " d.email, d.skype, d.phone, d.phone_perso, d.phone_mobile, d.login, d.pass,";
         $sql.= " d.photo, d.fk_adherent_type, d.morphy, d.entity,";
         $sql.= " d.datec as datec,";
         $sql.= " d.tms as datem,";
@@ -1115,6 +1119,7 @@ class Adherent extends CommonObject
                 $this->phone_perso		= $obj->phone_perso;
                 $this->phone_mobile		= $obj->phone_mobile;
                 $this->email			= $obj->email;
+                $this->skype			= $obj->skype;
 
                 $this->photo			= $obj->photo;
                 $this->statut			= $obj->statut;
@@ -1782,6 +1787,7 @@ class Adherent extends CommonObject
         $this->country = 'France';
         $this->morphy = 1;
         $this->email = 'specimen@specimen.com';
+        $this->skype = 'tom.hanson';
         $this->phone        = '0999999999';
         $this->phone_perso  = '0999999998';
         $this->phone_mobile = '0999999997';
@@ -1853,6 +1859,7 @@ class Adherent extends CommonObject
         if ($this->town && ! empty($conf->global->LDAP_MEMBER_FIELD_TOWN))        $info[$conf->global->LDAP_MEMBER_FIELD_TOWN] = $this->town;
         if ($this->country_code && ! empty($conf->global->LDAP_MEMBER_FIELD_COUNTRY))     $info[$conf->global->LDAP_MEMBER_FIELD_COUNTRY] = $this->country_code;
         if ($this->email && ! empty($conf->global->LDAP_MEMBER_FIELD_MAIL))       $info[$conf->global->LDAP_MEMBER_FIELD_MAIL] = $this->email;
+        if ($this->skype && ! empty($conf->global->LDAP_MEMBER_FIELD_SKYPE))       $info[$conf->global->LDAP_MEMBER_FIELD_SKYPE] = $this->skype;
         if ($this->phone && ! empty($conf->global->LDAP_MEMBER_FIELD_PHONE))      $info[$conf->global->LDAP_MEMBER_FIELD_PHONE] = $this->phone;
         if ($this->phone_perso && ! empty($conf->global->LDAP_MEMBER_FIELD_PHONE_PERSO)) $info[$conf->global->LDAP_MEMBER_FIELD_PHONE_PERSO] = $this->phone_perso;
         if ($this->phone_mobile && ! empty($conf->global->LDAP_MEMBER_FIELD_MOBILE)) $info[$conf->global->LDAP_MEMBER_FIELD_MOBILE] = $this->phone_mobile;

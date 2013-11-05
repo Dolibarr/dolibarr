@@ -49,6 +49,7 @@ create table llx_societe
   fax                      varchar(20),                         		-- fax number
   url                      varchar(255),                        		--
   email                    varchar(128),                        		--
+  skype                    varchar(255),                        		--
   fk_effectif              integer        DEFAULT 0,            		--
   fk_typent                integer        DEFAULT 0,            		--
   fk_forme_juridique       integer        DEFAULT 0,            		-- juridical status
