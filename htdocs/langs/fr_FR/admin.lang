@@ -1017,6 +1017,7 @@ EncryptedPasswordInDatabase=Permettre le chiffrement des mots de passe dans la b
 DisableForgetPasswordLinkOnLogonPage=Ne pas afficher le lien "Mot de passe oublié" sur la page de connexion
 UsersSetup=Configuration du module utilisateurs
 UserMailRequired=Email requis pour créer un nouvel utilisateur
+FieldEdition=Édition du champ %s
 ##### Company setup #####
 CompanySetup=Configuration du module Tiers
 CompanyCodeChecker=Modèle de génération et contrôle des codes tiers (clients/fournisseurs)

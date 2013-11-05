@@ -1926,11 +1926,11 @@ if ($action == 'update_extras')
 {
 	// Fill array 'array_options' with data from add form
 	$extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
-	$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
-	if($ret < 0)
-		$error++;
+	$ret = $extrafields->setOptionalsFromPost($extralabels,$object,GETPOST('attribute'));
+	if ($ret < 0) $error++;
 
-	if(!$error) {
+	if (! $error) 
+	{
 		// Actions on extra fields (by external module or standard code)
 		// FIXME le hook fait double emploi avec le trigger !!
 		$hookmanager->initHooks(array('invoicedao'));
@@ -1938,22 +1938,16 @@ if ($action == 'update_extras')
 		$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$object,$action); // Note that $action and $object may have been modified by some hooks
 		if (empty($reshook))
 		{
-			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+			$result=$object->insertExtraFields();
+			if ($result < 0)
 			{
-				$result=$object->insertExtraFields();
-				if ($result < 0)
-				{
-					$error++;
-				}
+				$error++;
 			}
 		}
 		else if ($reshook < 0) $error++;
 	}
-	else
-	{
-		$action = 'edit_extras';
-	}
-
+	
+	if ($error) $action = 'edit_extras';
 }
 
 
@@ -3413,20 +3407,12 @@ else if ($id > 0 || ! empty($ref))
 				print '</tr>';
 			}
 
-			// Other attributes
+		    // Other attributes (TODO Move this into an include)
 			$res=$object->fetch_optionals($object->id,$extralabels);
 			$parameters=array('colspan' => ' colspan="2"');
 			$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action); // Note that $action and $object may have been modified by hook
 			if (empty($reshook) && ! empty($extrafields->attribute_label))
 			{
-
-				if ($action == 'edit_extras')
-				{
-					print '<form enctype="multipart/form-data" action="'.$_SERVER["PHP_SELF"].'" method="post" name="formsoc">';
-					print '<input type="hidden" name="action" value="update_extras">';
-					print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-					print '<input type="hidden" name="id" value="'.$object->id.'">';
-				}
 
 				foreach($extrafields->attribute_label as $key=>$label)
 				{
@@ -3450,33 +3436,25 @@ else if ($id > 0 || ! empty($ref))
 							$value = isset($_POST["options_".$key])?dol_mktime($_POST["options_".$key."hour"], $_POST["options_".$key."min"], 0, $_POST["options_".$key."month"], $_POST["options_".$key."day"], $_POST["options_".$key."year"]):$db->jdate($object->array_options['options_'.$key]);
 						}
 
-						if ($action == 'edit_extras' && $user->rights->facture->creer)
+						if ($action == 'edit_extras' && $user->rights->facture->creer && GETPOST('attribute') == $key)
 						{
+							print '<form enctype="multipart/form-data" action="'.$_SERVER["PHP_SELF"].'" method="post" name="formsoc">';
+							print '<input type="hidden" name="action" value="update_extras">';
+							print '<input type="hidden" name="attribute" value="'.$key.'">';
+							print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+							print '<input type="hidden" name="id" value="'.$object->id.'">';
+							
 							print $extrafields->showInputField($key,$value);
+							
+							print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
+							print '</form>';
 						}
 						else
 						{
 							print $extrafields->showOutputField($key,$value);
+							if ($object->statut == 0 && $user->rights->facture->creer) print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=edit_extras&attribute='.$key.'">'.img_picto('','edit').' '.$langs->trans('Modify').'</a>';
 						}
 						print '</td></tr>'."\n";
-					}
-				}
-
-				if(count($extrafields->attribute_label) > 0) {
-
-					if ($action == 'edit_extras' && $user->rights->facture->creer)
-					{
-						print '<tr><td></td><td colspan="5">';
-						print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
-						print '</form>';
-						print '</td></tr>';
-
-					}
-					else {
-						if ($object->statut == 0 && $user->rights->facture->creer)
-						{
-							print '<tr><td></td><td><a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=edit_extras">'.img_picto('','edit').' '.$langs->trans('Modify').'</a></td></tr>';
-						}
 					}
 				}
 			}

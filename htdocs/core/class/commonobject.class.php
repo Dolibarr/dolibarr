@@ -2142,10 +2142,12 @@ abstract class CommonObject
      */
     function insertExtraFields()
     {
-        global $langs;
+        global $conf,$langs;
 
 		$error=0;
 
+		if (! empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) return 0;	// For avoid conflicts if trigger used
+		
         if (! empty($this->array_options))
         {
             // Check parameters
@@ -2249,7 +2251,7 @@ abstract class CommonObject
 
 		$out = '';
 
-		if(count($extrafields->attribute_label) > 0)
+		if (count($extrafields->attribute_label) > 0)
 		{
 			$out .= "\n";
 			$out .= '<!-- showOptionalsInput --> ';
