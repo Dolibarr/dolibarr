@@ -65,10 +65,10 @@ class modSkype extends DolibarrModules
 
         // Dependancies
         //-------------
-		    $this->hidden = ! empty($conf->global->SKYPE_MODULE_DISABLED);	// A condition to disable module
-		    $this->depends = array(modSociete);		// List of modules id that must be enabled if this module is enabled
+	    $this->hidden = ! empty($conf->global->SKYPE_MODULE_DISABLED);	// A condition to disable module
+	    $this->depends = array('modSociete');		// List of modules id that must be enabled if this module is enabled
         $this->requiredby = array();	// List of modules id to disable if this one is disabled
-		    $this->conflictwith = array();	// List of modules id this module is in conflict with
+	    $this->conflictwith = array();	// List of modules id this module is in conflict with
         $this->langfiles = array();
 
         // Constantes
