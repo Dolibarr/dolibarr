@@ -703,7 +703,7 @@ class ExtraFields
 					$keyList.= ', '.$parentField;
 				}
 				if (count($InfoFieldList)>=4 && !empty($InfoFieldList[4])) {
-					if (strpos($InfoFieldList[4], 'extra')!==false) {
+					if (strpos($InfoFieldList[4], 'extra.')!==false) {
 						$keyList='main.'.$InfoFieldList[2].' as rowid';
 					}else {
 						$keyList=$InfoFieldList[2].' as rowid';
