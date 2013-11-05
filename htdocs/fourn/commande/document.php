@@ -22,7 +22,7 @@
 /**
  *	\file       htdocs/fourn/commande/document.php
  *	\ingroup    supplier
- *	\brief      Page de gestion des documents attachees a une commande fournisseur
+ *	\brief      Page de gestion des documents attaches a une commande fournisseur
  */
 
 require '../../main.inc.php';
