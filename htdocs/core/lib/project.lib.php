@@ -1,28 +1,28 @@
 <?php
-/* Copyright (C) 2006-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2006-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2010      Regis Houssin        <regis.houssin@capnetworks.com>
-* Copyright (C) 2011      Juanjo Menent        <jmenent@2byte.es>
-*
-* This program is free software; you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation; either version 3 of the License, or
-* (at your option) any later version.
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with this program. If not, see <http://www.gnu.org/licenses/>.
-* or see http://www.gnu.org/
-*/
+ * Copyright (C) 2011      Juanjo Menent        <jmenent@2byte.es>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * or see http://www.gnu.org/
+ */
 
 /**
  *	    \file       htdocs/core/lib/project.lib.php
  *		\brief      Functions used by project module
  *      \ingroup    project
-*/
+ */
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
 
@@ -473,19 +473,24 @@ function projectLinesb(&$inc, $parent, $lines, &$level, &$projectsrole, &$tasksr
 			print '</td>';
 
 			// Planned Workload
-			print '<td align="center">';
-			if ($lines[$i]->planned_workload) print convertSecondToTime($lines[$i]->planned_workload,'all');
+			print '<td align="right">';
+			if ($lines[$i]->planned_workload) print convertSecondToTime($lines[$i]->planned_workload,'allhourmin');
 			else print '--:--';
 			print '</td>';
 
-			// Progress
+			// Progress declared %
 			print '<td align="right">';
 			print $lines[$i]->progress.' %';
 			print '</td>';
 
 			// Time spent
 			print '<td align="right">';
-			if ($lines[$i]->duration) print convertSecondToTime($lines[$i]->duration,'all');
+			if ($lines[$i]->duration) 
+			{
+				print '<a href="'.DOL_URL_ROOT.'/projet/tasks/time.php?id='.$lines[$i]->id.'">';
+				print convertSecondToTime($lines[$i]->duration,'allhourmin');
+				print '</a>';
+			}
 			else print '--:--';
 			print "</td>\n";
 
