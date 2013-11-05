@@ -68,7 +68,7 @@ CronPriority=Priorité
 CronLabel=Description
 CronNbRun=Nb. exec.
 CronEach=Tous les
-JobFinished=Tache lancée et terminée
+JobFinished=Tâche lancée et terminée
 
 #
 #Page card

@@ -21,7 +21,7 @@
 /**
  *       \file       htdocs/fourn/facture/document.php
  *       \ingroup    facture, fournisseur
- *       \brief      Page de gestion des documents attachees a une facture fournisseur
+ *       \brief      Page de gestion des documents attaches a une facture fournisseur
  */
 
 require '../../main.inc.php';
