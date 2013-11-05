@@ -120,7 +120,7 @@ if ($action=='add')
 	$object->unitfrequency=GETPOST('unitfrequency','int');
 	$object->frequency=$object->unitfrequency * GETPOST('nbfrequency','int');
 
-	//Ajout de la tache cron
+	//Add cron task
 	$result = $object->create($user);
 
 	// test du Resultat de la requete
@@ -154,7 +154,7 @@ if ($action=='update')
 	$object->unitfrequency=GETPOST('unitfrequency','int');
 	$object->frequency=$object->unitfrequency * GETPOST('nbfrequency','int');
 
-	//Ajout de la tache cron
+	//Add cron task
 	$result = $object->update($user);
 
 	// test du Resultat de la requete
@@ -172,7 +172,7 @@ if ($action=='activate')
 {
 	$object->status=1;
 
-	//Ajout de la tache cron
+	//Add cron task
 	$result = $object->update($user);
 
 	// test du Resultat de la requete
@@ -189,7 +189,7 @@ if ($action=='activate')
 if ($action=='inactive')
 {
 	$object->status=0;
-	//Ajout de la tache cron
+	//Add cron task
 	$result = $object->update($user);
 
 	// test du Resultat de la requete
