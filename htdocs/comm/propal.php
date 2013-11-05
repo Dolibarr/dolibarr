@@ -100,7 +100,7 @@ $hookmanager->initHooks(array('propalcard'));
 
 /*
  * Actions
-*/
+ */
 
 $parameters=array('socid'=>$socid);
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
@@ -131,7 +131,7 @@ if ($action == 'confirm_clone' && $confirm == 'yes')
 	}
 }
 
-// Suppression de la propale
+// Delete proposal
 else if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->propal->supprimer)
 {
 	$result=$object->delete($user);
@@ -436,9 +436,7 @@ else if ($action == 'setstatut' && $user->rights->propal->cloturer && ! GETPOST(
 	}
 }
 
-/*
- * Add file in email form
-*/
+// Add file in email form
 if (GETPOST('addfile'))
 {
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -451,9 +449,7 @@ if (GETPOST('addfile'))
 	$action='presend';
 }
 
-/*
- * Remove file in email form
-*/
+// Remove file in email form
 if (GETPOST('removedfile'))
 {
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -469,7 +465,7 @@ if (GETPOST('removedfile'))
 
 /*
  * Send mail
-*/
+ */
 if ($action == 'send' && ! GETPOST('addfile') && ! GETPOST('removedfile') && ! GETPOST('cancel'))
 {
 	$langs->load('mails');
@@ -637,7 +633,7 @@ else if ($action == "setabsolutediscount" && $user->rights->propal->creer)
 	}
 }
 
-//Ajout d'une ligne produit dans la propale
+// Add line
 else if ($action == "addline" && $user->rights->propal->creer)
 {
 	$idprod=GETPOST('idprod', 'int');
@@ -1254,7 +1250,7 @@ if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB) && $user->rights->propal->
 
 /*
  * View
-*/
+ */
 
 llxHeader('',$langs->trans('Proposal'),'EN:Commercial_Proposals|FR:Proposition_commerciale|ES:Presupuestos');
 
@@ -1422,7 +1418,7 @@ if ($action == 'create')
 
 	/*
 	 * Combobox pour la fonction de copie
-	*/
+ 	 */
 
 	if (empty($conf->global->PROPAL_CLONE_ON_CREATE_PAGE))
 	{
@@ -1521,7 +1517,7 @@ else
 {
 	/*
 	 * Show object in view mode
-	*/
+	 */
 
 	$soc = new Societe($db);
 	$soc->fetch($object->socid);
@@ -1615,13 +1611,12 @@ else
 	print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref', '');
 	print '</td></tr>';
 
-	// Ref client
+	// Ref customer
 	print '<tr><td>';
 	print '<table class="nobordernopadding" width="100%"><tr><td class="nowrap">';
 	print $langs->trans('RefCustomer').'</td>';
-	print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=refclient&amp;id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('RefCustomer')).'</a></td>';
-	print '</td>';
 	if ($action != 'refclient' && ! empty($object->brouillon)) print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=refclient&amp;id='.$object->id.'">'.img_edit($langs->trans('Modify')).'</a></td>';
+	print '</td>';
 	print '</tr></table>';
 	print '</td><td colspan="5">';
 	if ($user->rights->propal->creer && $action == 'refclient')
@@ -1639,6 +1634,7 @@ else
 	}
 	print '</td>';
 	print '</tr>';
+
 	// Company
 	print '<tr><td>'.$langs->trans('Company').'</td><td colspan="5">'.$soc->getNomUrl(1).'</td>';
 	print '</tr>';
@@ -2024,7 +2020,7 @@ else
 
 	/*
 	 * Lines
-	*/
+	 */
 
 	if (! empty($conf->use_javascript_ajax) && $object->statut == 0)
 	{
@@ -2077,7 +2073,7 @@ else
 	{
 		/*
 		 * Formulaire cloture (signe ou non)
-		*/
+		 */
 		$form_close = '<form action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
 		$form_close.= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		$form_close.= '<table class="border" width="100%">';
@@ -2105,7 +2101,7 @@ else
 
 	/*
 	 * Boutons Actions
-	*/
+	 */
 	if ($action != 'presend')
 	{
 		print '<div class="tabsAction">';
@@ -2216,7 +2212,7 @@ else
 
 		/*
 		 * Documents generes
-		*/
+		 */
 		$filename=dol_sanitizeFileName($object->ref);
 		$filedir=$conf->propal->dir_output . "/" . dol_sanitizeFileName($object->ref);
 		$urlsource=$_SERVER["PHP_SELF"]."?id=".$object->id;
