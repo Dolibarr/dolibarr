@@ -220,11 +220,10 @@ $form=new Form($db);
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print_fiche_titre($langs->trans("InterventionsSetup"),$linkback,'setup');
 
-print "<br>";
 
 $head=fichinter_admin_prepare_head();
 
-dol_fiche_head($head, 'ficheinter', $langs->trans("ModuleSetup"));
+dol_fiche_head($head, 'ficheinter', $langs->trans("Interventions"), 0, 'intervention');
 
 // Interventions numbering model
 
