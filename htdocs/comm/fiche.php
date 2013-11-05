@@ -197,9 +197,8 @@ if ($id > 0)
 
 
 	print '<div class="fichecenter"><div class="fichehalfleft">';
-	//print '<table width="100%" class="notopnoleftnoright">';
-	//print '<tr><td valign="top" class="notopnoleft">';
 
+	
 	print '<table class="border" width="100%">';
 
 	print '<tr><td width="30%">'.$langs->trans("ThirdPartyName").'</td><td width="70%" colspan="3">';
@@ -459,7 +458,7 @@ if ($id > 0)
         }
         else
         {
-            print $langs->trans("UserNotLinkedToMember");
+            print $langs->trans("ThirdpartyNotLinkedToMember");
         }
         print '</td>';
         print "</tr>\n";
@@ -469,8 +468,6 @@ if ($id > 0)
 
 
 	print '</div><div class="fichehalfright"><div class="ficheaddleft">';
-	//print "</td>\n";
-	//print '<td valign="top" width="50%" class="notopnoleftnoright">';
 
 
 	// Nbre max d'elements des petites listes
@@ -807,8 +804,6 @@ if ($id > 0)
 
 	print '</div></div></div>';
 	print '<div style="clear:both"></div>';
-	//print "</td></tr>";
-	//print "</table>";
 
 	dol_fiche_end();
 

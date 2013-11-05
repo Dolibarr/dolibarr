@@ -1793,7 +1793,7 @@ else
             }
             else
             {
-                print $langs->trans("UserNotLinkedToMember");
+                print $langs->trans("ThirdpartyNotLinkedToMember");
             }
             print '</td>';
             print "</tr>\n";

@@ -8,6 +8,7 @@ Members=Adhérents
 MemberAccount=Login adhérent
 ShowMember=Afficher fiche adhérent
 UserNotLinkedToMember=Utilisateur non lié à un adhérent
+ThirdpartyNotLinkedToMember=Tiers non lié à un adhérent
 MembersTickets=Étiquettes d'adhérents
 FundationMembers=Membres de l'association
 Attributs=Attributs
