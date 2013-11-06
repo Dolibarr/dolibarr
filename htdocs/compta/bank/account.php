@@ -486,7 +486,7 @@ if ($id > 0 || ! empty($ref))
 		$var=true;
 
 		$num = $db->num_rows($result);
-		$i = 0; $total = 0; $sep = 0;
+		$i = 0; $total = 0; $sep = -1;
 
 		while ($i < $num)
 		{
@@ -499,13 +499,14 @@ if ($id > 0 || ! empty($ref))
 				// Is it a transaction in future ?
 				$dos=dol_print_date($db->jdate($objp->do),'%Y%m%d');
 				//print "dos=".$dos." nows=".$nows;
-				if ($dos > $nows && !$sep)		// Yes, we show a subtotal
+				if ($dos < $nows) $sep=0;		// 0 means there was at least one line before current date
+				if ($dos > $nows && ! $sep)		// We have found a line in future and we already found on line before current date
 				{
 					$sep = 1 ;
 					print '<tr class="liste_total"><td colspan="8">';
 					print $langs->trans("CurrentBalance");
 					print '</td>';
-					print '<td align="right" nowrap><b>'.price($total - $objp->amount).'</b></td>';
+					print '<td align="right" class="nowrap"><b>'.price($total - $objp->amount).'</b></td>';
 					print "<td>&nbsp;</td>";
 					print '</tr>';
 				}
@@ -747,10 +748,10 @@ if ($id > 0 || ! empty($ref))
 		if ($page == 0 && ! $mode_search)
 		{
 			print '<tr class="liste_total"><td align="left" colspan="8">';
-			if ($sep) print '&nbsp;';
+			if ($sep > 0) print '&nbsp;';	// If we had at least one line in future
 			else print $langs->trans("CurrentBalance");
 			print '</td>';
-			print '<td align="right" nowrap>'.price($total).'</td>';
+			print '<td align="right" nowrap><b>'.price($total).'</b></td>';
 			print '<td>&nbsp;</td>';
 			print '</tr>';
 		}
