@@ -98,20 +98,26 @@ http://bugs.debian.org/package
 
 ##### Testing a package into unstable env
 
+Check you have a mysql server available from another interface than localhost
+Uncomment line if required and restart mysql
+bind-address = 127.0.0.1
+
 Create a chroot called "unstable-amd64-sbuild"
 > sudo sbuild-createchroot --keyring= unstable /srv/chroot/unstable http://ftp.uk.debian.org/debian
 
 Pour lister les env chroot
 > schroot -l
 
-Puis pour se connecter 
+Puis pour se connecter et préparer l'environnement 
 > schroot -c name_of_chroot
+> vi /usr/sbin/policy-rc.d     and replace return code 101 (not allowed) into 0 (ok)
+> apt-get install links mysql-client
 
 Pour tester un package
 > cp *.deb /srv/chroot/unstable/tmp
 > sudo schroot -c name_of_chroot
 > dpkg -i dolibarr*.deb
-> sudo apt-get install -f
+> apt-get install -f
 
 
 
@@ -170,6 +176,12 @@ Note: If there was errors managed manually, you may need to make a git commit bu
 http://packages.qa.debian.org/t/tcpdf.html
 
 * Package will be into release when test will be moved as stable.
+
+
+
+##### Update but tracker system
+To set status of a bug to pending
+> bts tag 728235 +pending
 
 
 
