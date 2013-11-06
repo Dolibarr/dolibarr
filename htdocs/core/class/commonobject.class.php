@@ -3,7 +3,9 @@
  * Copyright (C) 2005-2013 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2010-2013 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2012      Christophe Battarel  <christophe.battarel@altairis.fr>
- * Copyright (C) 2011-2012 Philippe Grand	    <philippe.grand@atoo-net.com>
+ * Copyright (C) 2010-2011 Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2012-2013 Christophe Battarel  <christophe.battarel@altairis.fr>
+ * Copyright (C) 2011-2012 Philippe Grand	      <philippe.grand@atoo-net.com>
  * Copyright (C) 2012      Marcos García        <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -2043,6 +2045,7 @@ abstract class CommonObject
 
     /**
      *  Function to get extra fields of a member into $this->array_options
+     *  This method is in most cases called by method fetch of objects but you can call it separately.
      *
      *  @param	int		$rowid			Id of line
      *  @param  array	$optionsArray   Array resulting of call of extrafields->fetch_name_optionals_label()
@@ -2136,10 +2139,12 @@ abstract class CommonObject
      */
     function insertExtraFields()
     {
-        global $langs;
+        global $conf,$langs;
 
 		$error=0;
 
+		if (! empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) return 0;	// For avoid conflicts if trigger used
+		
         if (! empty($this->array_options))
         {
             // Check parameters
@@ -2243,7 +2248,7 @@ abstract class CommonObject
 
 		$out = '';
 
-		if(count($extrafields->attribute_label) > 0)
+		if (count($extrafields->attribute_label) > 0)
 		{
 			$out .= "\n";
 			$out .= '<!-- showOptionalsInput --> ';
@@ -3194,14 +3199,14 @@ abstract class CommonObject
 			}
 		}
 		if ($marginInfos['pa_products'] > 0)
-			$marginInfos['margin_rate_products'] = 100 * round($marginInfos['margin_on_products'] / $marginInfos['pa_products'],5);
+			$marginInfos['margin_rate_products'] = 100 * $marginInfos['margin_on_products'] / $marginInfos['pa_products'];
 		if ($marginInfos['pv_products'] > 0)
-			$marginInfos['mark_rate_products'] = 100 * round($marginInfos['margin_on_products'] / $marginInfos['pv_products'],5);
+			$marginInfos['mark_rate_products'] = 100 * $marginInfos['margin_on_products'] / $marginInfos['pv_products'];
 
 		if ($marginInfos['pa_services'] > 0)
-			$marginInfos['margin_rate_services'] = 100 * round($marginInfos['margin_on_services'] / $marginInfos['pa_services'],5);
+			$marginInfos['margin_rate_services'] = 100 * $marginInfos['margin_on_services'] / $marginInfos['pa_services'];
 		if ($marginInfos['pv_services'] > 0)
-			$marginInfos['mark_rate_services'] = 100 * round($marginInfos['margin_on_services'] / $marginInfos['pv_services'],5);
+			$marginInfos['mark_rate_services'] = 100 * $marginInfos['margin_on_services'] / $marginInfos['pv_services'];
 
 		// if credit note, margin = -1 * (abs(selling_price) - buying_price)
 		if ($marginInfos['pv_total'] < 0)
@@ -3209,9 +3214,9 @@ abstract class CommonObject
 		else
 			$marginInfos['total_margin'] = $marginInfos['pv_total'] - $marginInfos['pa_total'];
 		if ($marginInfos['pa_total'] > 0)
-			$marginInfos['total_margin_rate'] = 100 * round($marginInfos['total_margin'] / $marginInfos['pa_total'],5);
+			$marginInfos['total_margin_rate'] = 100 * $marginInfos['total_margin'] / $marginInfos['pa_total'];
 		if ($marginInfos['pv_total'] > 0)
-			$marginInfos['total_mark_rate'] = 100 * round($marginInfos['total_margin'] / $marginInfos['pv_total'],5);
+			$marginInfos['total_mark_rate'] = 100 * $marginInfos['total_margin'] / $marginInfos['pv_total'];
 
 		return $marginInfos;
 	}
@@ -3229,6 +3234,8 @@ abstract class CommonObject
     	if (! empty($user->societe_id)) return;
 
     	if (! $user->rights->margins->liretous) return;
+
+        $rounding = min($conf->global->MAIN_MAX_DECIMALS_UNIT,$conf->global->MAIN_MAX_DECIMALS_TOT);
 
 		$marginInfo = $this->getMarginInfos($force_price);
 
@@ -3249,34 +3256,34 @@ abstract class CommonObject
 		//if ($marginInfo['margin_on_products'] != 0 && $marginInfo['margin_on_services'] != 0) {
 		print '<tr class="impair">';
 		print '<td>'.$langs->trans('MarginOnProducts').'</td>';
-		print '<td align="right">'.price($marginInfo['pv_products']).'</td>';
-		print '<td align="right">'.price($marginInfo['pa_products']).'</td>';
-		print '<td align="right">'.price($marginInfo['margin_on_products']).'</td>';
+		print '<td align="right">'.price($marginInfo['pv_products'], null, null, null, null, $rounding).'</td>';
+		print '<td align="right">'.price($marginInfo['pa_products'], null, null, null, null, $rounding).'</td>';
+		print '<td align="right">'.price($marginInfo['margin_on_products'], null, null, null, null, $rounding).'</td>';
 		if (! empty($conf->global->DISPLAY_MARGIN_RATES))
-			print '<td align="right">'.(($marginInfo['margin_rate_products'] == '')?'n/a':price($marginInfo['margin_rate_products']).'%').'</td>';
+			print '<td align="right">'.(($marginInfo['margin_rate_products'] == '')?'n/a':price($marginInfo['margin_rate_products'], null, null, null, null, $rounding).'%').'</td>';
 		if (! empty($conf->global->DISPLAY_MARK_RATES))
-			print '<td align="right">'.(($marginInfo['mark_rate_products'] == '')?'n/a':price($marginInfo['mark_rate_products']).'%').'</td>';
+			print '<td align="right">'.(($marginInfo['mark_rate_products'] == '')?'n/a':price($marginInfo['mark_rate_products'], null, null, null, null, $rounding).'%').'</td>';
 		print '</tr>';
 		print '<tr class="pair">';
 		print '<td>'.$langs->trans('MarginOnServices').'</td>';
-		print '<td align="right">'.price($marginInfo['pv_services']).'</td>';
-		print '<td align="right">'.price($marginInfo['pa_services']).'</td>';
-		print '<td align="right">'.price($marginInfo['margin_on_services']).'</td>';
+		print '<td align="right">'.price($marginInfo['pv_services'], null, null, null, null, $rounding).'</td>';
+		print '<td align="right">'.price($marginInfo['pa_services'], null, null, null, null, $rounding).'</td>';
+		print '<td align="right">'.price($marginInfo['margin_on_services'], null, null, null, null, $rounding).'</td>';
 		if (! empty($conf->global->DISPLAY_MARGIN_RATES))
-			print '<td align="right">'.(($marginInfo['margin_rate_services'] == '')?'n/a':price($marginInfo['margin_rate_services']).'%').'</td>';
+			print '<td align="right">'.(($marginInfo['margin_rate_services'] == '')?'n/a':price($marginInfo['margin_rate_services'], null, null, null, null, $rounding).'%').'</td>';
 		if (! empty($conf->global->DISPLAY_MARK_RATES))
-			print '<td align="right">'.(($marginInfo['mark_rate_services'] == '')?'n/a':price($marginInfo['mark_rate_services']).'%').'</td>';
+			print '<td align="right">'.(($marginInfo['mark_rate_services'] == '')?'n/a':price($marginInfo['mark_rate_services'], null, null, null, null, $rounding).'%').'</td>';
 		print '</tr>';
 		//}
 		print '<tr class="impair">';
 		print '<td>'.$langs->trans('TotalMargin').'</td>';
-		print '<td align="right">'.price($marginInfo['pv_total']).'</td>';
-		print '<td align="right">'.price($marginInfo['pa_total']).'</td>';
-		print '<td align="right">'.price($marginInfo['total_margin']).'</td>';
+		print '<td align="right">'.price($marginInfo['pv_total'], null, null, null, null, $rounding).'</td>';
+		print '<td align="right">'.price($marginInfo['pa_total'], null, null, null, null, $rounding).'</td>';
+		print '<td align="right">'.price($marginInfo['total_margin'], null, null, null, null, $rounding).'</td>';
 		if (! empty($conf->global->DISPLAY_MARGIN_RATES))
-			print '<td align="right">'.(($marginInfo['total_margin_rate'] == '')?'n/a':price($marginInfo['total_margin_rate']).'%').'</td>';
+			print '<td align="right">'.(($marginInfo['total_margin_rate'] == '')?'n/a':price($marginInfo['total_margin_rate'], null, null, null, null, $rounding).'%').'</td>';
 		if (! empty($conf->global->DISPLAY_MARK_RATES))
-			print '<td align="right">'.(($marginInfo['total_mark_rate'] == '')?'n/a':price($marginInfo['total_mark_rate']).'%').'</td>';
+			print '<td align="right">'.(($marginInfo['total_mark_rate'] == '')?'n/a':price($marginInfo['total_mark_rate'], null, null, null, null, $rounding).'%').'</td>';
 		print '</tr>';
 		print '</table>';
 	}

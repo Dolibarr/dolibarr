@@ -2,6 +2,7 @@
 /* Copyright (c) 2008-2013 Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2010-2012 Regis Houssin		<regis.houssin@capnetworks.com>
  * Copyright (c) 2010      Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (c) 2013      Charles-Fr BENKE		<charles.fr@benke.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -137,17 +138,17 @@ class FormFile
                 $out .= ' ('.$langs->trans("UploadDisabled").')';
             }
             $out .= "</td></tr>";
-            
+
             if ($savingdocmask)
             {
             	$out .= '<tr>';
    	            if (! empty($options)) $out .= '<td>'.$options.'</td>';
 	            $out .= '<td valign="middle" class="nowrap">';
-				$out .= '<input type="checkbox" checked="checked" name="savingdocmask" value="'.dol_escape_js($savingdocmask).'"> '.$langs->trans("SaveUploadedFileWithMask", preg_replace('/__file__/',$langs->transnoentitiesnoconv("OriginFileName"),$savingdocmask), $langs->transnoentitiesnoconv("OriginFileName"));	            
+				$out .= '<input type="checkbox" checked="checked" name="savingdocmask" value="'.dol_escape_js($savingdocmask).'"> '.$langs->trans("SaveUploadedFileWithMask", preg_replace('/__file__/',$langs->transnoentitiesnoconv("OriginFileName"),$savingdocmask), $langs->transnoentitiesnoconv("OriginFileName"));
             	$out .= '</td>';
-            	$out .= '</tr>';	
+            	$out .= '</tr>';
             }
-            
+
             $out .= "</table>";
 
             $out .= '</form>';
@@ -662,12 +663,13 @@ class FormFile
      * 	@param	 int	$permtodelete		Permission to delete
      * 	@param	 int	$useinecm			Change output for use in ecm module
      * 	@param	 string	$textifempty		Text to show if filearray is empty ('NoFileFound' if not defined)
-     *  @param  int		$maxlength          Maximum length of file name shown
+     *  @param   int	$maxlength          Maximum length of file name shown
      *  @param	 string	$title				Title before list
      *  @param	 string $url				Full url to use for click links ('' = autodetect)
+	 *  @param	 int	$showrelpart		0=Show only filename (default), 1=Show first level 1 dir
      * 	@return	 int						<0 if KO, nb of files shown if OK
      */
-	function list_of_documents($filearray,$object,$modulepart,$param='',$forcedownload=0,$relativepath='',$permtodelete=1,$useinecm=0,$textifempty='',$maxlength=0,$title='',$url='')
+	function list_of_documents($filearray,$object,$modulepart,$param='',$forcedownload=0,$relativepath='',$permtodelete=1,$useinecm=0,$textifempty='',$maxlength=0,$title='',$url='', $showrelpart=0)
 	{
 		global $user, $conf, $langs, $hookmanager;
 		global $bc;
@@ -732,8 +734,15 @@ class FormFile
 					print '<a data-ajax="false" href="'.DOL_URL_ROOT.'/document.php?modulepart='.$modulepart;
 					if ($forcedownload) print '&attachment=1';
 					if (! empty($object->entity)) print '&entity='.$object->entity;
-					print '&file='.urlencode($relativepath.$file['name']).'">';
+					//print '&file='.urlencode($relativepath.$file['name']).'">';
+					if ($file['level1name'] <> $object->id)
+						$filepath=urlencode($object->id.'/'.$file['level1name'].'/'.$file['name']);
+					else
+						$filepath=urlencode($object->id.'/'.$file['name']);
+					print '&file='.$filepath.'">';
+
 					print img_mime($file['name'],$file['name'].' ('.dol_print_size($file['size'],0,0).')').' ';
+					if ($showrelpart == 1) print $file['level1name'].'/';
 					print dol_trunc($file['name'],$maxlength,'middle');
 					print '</a>';
 					print "</td>\n";
@@ -753,7 +762,14 @@ class FormFile
 					// ($param must start with &)
 					print '<td align="right">';
 					if ($useinecm)     print '<a href="'.DOL_URL_ROOT.'/ecm/docfile.php?urlfile='.urlencode($file['name']).$param.'" class="editfilelink" rel="'.urlencode($file['name']).$param.'">'.img_view().'</a> &nbsp; ';
-					if ($permtodelete) print '<a href="'.(($useinecm && ! empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE_JS))?'#':$url.'?action=delete&urlfile='.urlencode($file['name']).$param).'" class="deletefilelink" rel="'.urlencode($file['name']).$param.'">'.img_delete().'</a>';
+					if ($permtodelete)
+					{
+						if ($file['level1name'] <> $object->id)
+							$filepath=urlencode($file['level1name'].'/'.$file['name']);
+						else
+							$filepath=urlencode($file['name']);
+						print '<a href="'.(($useinecm && ! empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE_JS))?'#':$url.'?action=delete&urlfile='.$filepath.$param).'" class="deletefilelink" rel="'.$filepath.$param.'">'.img_delete().'</a>';
+					}
 					else print '&nbsp;';
 					print "</td>";
 					print "</tr>\n";

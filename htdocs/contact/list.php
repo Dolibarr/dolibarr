@@ -5,6 +5,7 @@
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2013      Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2013      Cédric Salvador      <csalvador@gpcsolutions.fr>
+ * Copyright (C) 2013      Alexandre Spangaro   <alexandre.spangaro@gmail.com> 
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,6 +49,7 @@ $search_phonepro=GETPOST("search_phonepro");
 $search_phonemob=GETPOST("search_phonemob");
 $search_fax=GETPOST("search_fax");
 $search_email=GETPOST("search_email");
+$search_skype=GETPOST("search_skype");
 $search_priv=GETPOST("search_priv");
 $search_categ = GETPOST("search_categ",'int');
 $search_statut=GETPOST("search_statut");
@@ -99,6 +101,7 @@ if (GETPOST('button_removefilter'))
     $search_phonemob="";
     $search_fax="";
     $search_email="";
+    $search_skype="";
     $search_priv="";
     $sall="";
 }
@@ -117,7 +120,7 @@ $form=new Form($db);
 $formother=new FormOther($db);
 
 $sql = "SELECT s.rowid as socid, s.nom as name,";
-$sql.= " p.rowid as cidp, p.lastname as lastname, p.statut, p.firstname, p.poste, p.email,";
+$sql.= " p.rowid as cidp, p.lastname as lastname, p.statut, p.firstname, p.poste, p.email, p.skype,";
 $sql.= " p.phone, p.phone_mobile, p.fax, p.fk_pays, p.priv, p.tms,";
 $sql.= " cp.code as country_code";
 $sql.= " FROM ".MAIN_DB_PREFIX."socpeople as p";
@@ -184,6 +187,10 @@ if (strlen($search_fax))
 if (strlen($search_email))      // filtre sur l'email
 {
     $sql .= " AND p.email LIKE '%".$db->escape($search_email)."%'";
+}
+if (strlen($search_skype))      // filtre sur skype
+{
+    $sql .= " AND p.skype LIKE '%".$db->escape($search_skype)."%'";
 }
 if ($type == "o")        // filtre sur type
 {
@@ -281,9 +288,10 @@ if ($result)
     print_liste_field_titre($langs->trans("PhoneMobile"),$_SERVER["PHP_SELF"],"p.phone_mob", $begin, $param, '', $sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Fax"),$_SERVER["PHP_SELF"],"p.fax", $begin, $param, '', $sortfield,$sortorder);
     print_liste_field_titre($langs->trans("EMail"),$_SERVER["PHP_SELF"],"p.email", $begin, $param, '', $sortfield,$sortorder);
+    if (! empty($conf->skype->enabled)) { print_liste_field_titre($langs->trans("Skype"),$_SERVER["PHP_SELF"],"p.skype", $begin, $param, '', $sortfield,$sortorder); }
     print_liste_field_titre($langs->trans("DateModificationShort"),$_SERVER["PHP_SELF"],"p.tms", $begin, $param, 'align="center"', $sortfield,$sortorder);
     print_liste_field_titre($langs->trans("ContactVisibility"),$_SERVER["PHP_SELF"],"p.priv", $begin, $param, 'align="center"', $sortfield,$sortorder);
-    
+    print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"p.statut", $begin, $param, 'align="center"', $sortfield,$sortorder);
     print '<td class="liste_titre">&nbsp;</td>';
     print "</tr>\n";
 
@@ -316,11 +324,18 @@ if ($result)
     print '<td class="liste_titre">';
     print '<input class="flat" type="text" name="search_email" size="8" value="'.$search_email.'">';
     print '</td>';
+    if (! empty($conf->skype->enabled))
+    {
+        print '<td class="liste_titre">';
+        print '<input class="flat" type="text" name="search_skype" size="8" value="'.$search_skype.'">';
+        print '</td>';
+    }    
 	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre" align="center">';
 	$selectarray=array('0'=>$langs->trans("ContactPublic"),'1'=>$langs->trans("ContactPrivate"));
 	print $form->selectarray('search_priv',$selectarray,$search_priv,1);
 	print '</td>';
+	print '<td class="liste_titre">&nbsp;</td>';
     print '<td class="liste_titre" align="right">';
     print '<input type="image" value="button_search" class="liste_titre" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" name="button_search" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
     print '&nbsp; ';
@@ -332,10 +347,8 @@ if ($result)
     while ($i < min($num,$limit))
     {
         $obj = $db->fetch_object($result);
-       
-	if ($obj->statut == 1)
-        {
-			$var=!$var;
+    
+		$var=!$var;
         print "<tr ".$bc[$var].">";
 
 		// Name
@@ -343,6 +356,7 @@ if ($result)
 		$contactstatic->lastname=$obj->lastname;
 		$contactstatic->firstname='';
 		$contactstatic->id=$obj->cidp;
+		$contactstatic->statut=$obj->statut;
 		print $contactstatic->getNomUrl(1,'',20);
 		print '</td>';
 
@@ -376,12 +390,17 @@ if ($result)
         print '<td>'.dol_print_phone($obj->fax,$obj->country_code,$obj->cidp,$obj->socid,'AC_TEL').'</td>';
         // EMail
         print '<td>'.dol_print_email($obj->email,$obj->cidp,$obj->socid,'AC_EMAIL',18).'</td>';
-
+        // Skype
+        if (! empty($conf->skype->enabled)) { print '<td>'.dol_print_skype($obj->skype,$obj->cidp,$obj->socid,'AC_SKYPE',18).'</td>'; }
+        
 		// Date
 		print '<td align="center">'.dol_print_date($db->jdate($obj->tms),"day").'</td>';
 
 		// Private/Public
 		print '<td align="center">'.$contactstatic->LibPubPriv($obj->priv).'</td>';
+		
+		// Status
+		print '<td align="center">'.$contactstatic->getLibStatut(3).'</td>';
 
 		// Links Add action and Export vcard
         print '<td align="right">';
@@ -392,7 +411,6 @@ if ($result)
         print '</a></td>';
 
         print "</tr>\n";
-	}
         $i++;
     }
 

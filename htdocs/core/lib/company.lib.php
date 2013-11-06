@@ -555,6 +555,11 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
     print '<td>'.$langs->trans("PhoneMobile").'</td>';
     print '<td>'.$langs->trans("Fax").'</td>';
     print '<td>'.$langs->trans("EMail").'</td>';
+    if (! empty($conf->skype->enabled)) 
+    { 
+      $colspan++;
+      print '<td>'.$langs->trans("Skype").'</td>';
+    }
     print '<td>'.$langs->trans("Status").'</td>';
     print "<td>&nbsp;</td>";
     if (! empty($conf->agenda->enabled) && $user->rights->agenda->myactions->create)
@@ -570,7 +575,7 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
     print "</tr>";
 
 
-    $sql = "SELECT p.rowid, p.lastname, p.firstname, p.fk_pays, p.poste, p.phone, p.phone_mobile, p.fax, p.email, p.statut ";
+    $sql = "SELECT p.rowid, p.lastname, p.firstname, p.fk_pays, p.poste, p.phone, p.phone_mobile, p.fax, p.email, p.skype, p.statut ";
     $sql .= ", p.civilite, p.address, p.zip, p.town";
     $sql .= " FROM ".MAIN_DB_PREFIX."socpeople as p";
     $sql .= " WHERE p.fk_soc = ".$object->id;
@@ -614,6 +619,12 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
             print '<td>';
             print dol_print_email($obj->email,$obj->rowid,$object->id,'AC_EMAIL');
             print '</td>';
+            if (! empty($conf->skype->enabled)) 
+            {
+                print '<td>';
+                print dol_print_skype($obj->skype,$obj->rowid,$object->id,'AC_SKYPE');
+                print '</td>';
+            }   
 
 			 if ($obj->statut==0) print '<td>'.$langs->trans('Disabled').' </span>'.img_picto($langs->trans('StatusContactDraftShort'),'statut0').'</td>';
 			elseif ($obj->statut==1) print '<td>'.$langs->trans('Enabled').' </span>'.img_picto($langs->trans('StatusContactValidatedShort'),'statut1').'</td>';

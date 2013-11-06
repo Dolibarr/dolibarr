@@ -116,7 +116,7 @@ function build_calfile($format,$title,$desc,$events_array,$outputfile)
                 LOCATION:
                 SEQUENCE:0
                 STATUS:CONFIRMED
-                SUMMARY:Tache 1 heure
+                SUMMARY:Tâche 1 heure
                 TRANSP:OPAQUE
                 END:VEVENT
 
@@ -132,7 +132,7 @@ function build_calfile($format,$title,$desc,$events_array,$outputfile)
                 LOCATION:
                 SEQUENCE:0
                 STATUS:CONFIRMED
-                SUMMARY:Tache 1 jour
+                SUMMARY:Tâche 1 jour
                 TRANSP:TRANSPARENT
                 END:VEVENT
                 */
