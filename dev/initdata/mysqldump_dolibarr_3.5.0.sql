@@ -1,8 +1,8 @@
--- MySQL dump 10.13  Distrib 5.5.32, for debian-linux-gnu (x86_64)
+-- MySQL dump 10.13  Distrib 5.5.34, for debian-linux-gnu (x86_64)
 --
--- Host: localhost    Database: dolibarr
+-- Host: localhost    Database: dolibarrnew
 -- ------------------------------------------------------
--- Server version	5.5.32-0ubuntu0.12.04.1
+-- Server version	5.5.34-0ubuntu0.12.04.1
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -302,6 +302,60 @@ LOCK TABLES `llx_adherent_extrafields` WRITE;
 /*!40000 ALTER TABLE `llx_adherent_extrafields` DISABLE KEYS */;
 INSERT INTO `llx_adherent_extrafields` VALUES (2,'2011-06-19 12:03:23',12,'aaa',NULL,NULL,NULL),(3,'2011-06-19 14:19:32',13,NULL,NULL,NULL,NULL),(8,'2011-06-19 18:08:09',7,'zzz',NULL,NULL,NULL),(34,'2011-06-22 10:06:51',14,'moo',NULL,NULL,NULL),(37,'2011-06-22 10:43:55',16,'z',NULL,NULL,NULL),(40,'2011-06-22 10:55:37',17,NULL,NULL,NULL,NULL),(41,'2011-06-22 10:56:07',18,'l',NULL,NULL,NULL),(43,'2011-06-23 07:40:56',19,NULL,NULL,NULL,NULL),(44,'2011-06-26 18:13:20',20,'gdfgdf',NULL,NULL,NULL),(46,'2011-06-26 19:29:23',22,'gdfgdf',NULL,NULL,NULL),(47,'2011-07-03 16:17:56',23,NULL,NULL,NULL,NULL),(48,'2011-07-03 16:21:05',24,NULL,NULL,NULL,NULL),(49,'2011-07-03 16:30:54',25,NULL,NULL,NULL,NULL),(50,'2011-07-03 16:48:13',26,NULL,NULL,NULL,NULL),(51,'2011-07-03 16:51:36',27,NULL,NULL,NULL,NULL),(52,'2011-07-03 16:53:37',28,NULL,NULL,NULL,NULL),(53,'2011-07-03 16:54:24',29,NULL,NULL,NULL,NULL),(54,'2011-07-05 08:21:35',30,NULL,NULL,NULL,NULL),(55,'2011-07-05 08:26:15',31,NULL,NULL,NULL,NULL),(59,'2011-07-13 11:18:55',46,NULL,NULL,NULL,NULL),(61,'2011-07-13 11:50:36',47,NULL,NULL,NULL,NULL),(62,'2011-07-18 19:10:09',3,NULL,NULL,NULL,NULL),(63,'2011-07-18 19:27:44',4,NULL,NULL,NULL,NULL);
 /*!40000 ALTER TABLE `llx_adherent_extrafields` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `llx_adherent_options`
+--
+
+DROP TABLE IF EXISTS `llx_adherent_options`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `llx_adherent_options` (
+  `rowid` int(11) NOT NULL AUTO_INCREMENT,
+  `tms` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `fk_member` int(11) NOT NULL,
+  PRIMARY KEY (`rowid`),
+  KEY `idx_adherent_options` (`fk_member`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `llx_adherent_options`
+--
+
+LOCK TABLES `llx_adherent_options` WRITE;
+/*!40000 ALTER TABLE `llx_adherent_options` DISABLE KEYS */;
+/*!40000 ALTER TABLE `llx_adherent_options` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `llx_adherent_options_label`
+--
+
+DROP TABLE IF EXISTS `llx_adherent_options_label`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `llx_adherent_options_label` (
+  `rowid` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(64) NOT NULL,
+  `entity` int(11) NOT NULL DEFAULT '1',
+  `tms` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `label` varchar(255) NOT NULL,
+  `type` varchar(8) DEFAULT NULL,
+  `size` int(11) DEFAULT '0',
+  `pos` int(11) DEFAULT '0',
+  PRIMARY KEY (`rowid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `llx_adherent_options_label`
+--
+
+LOCK TABLES `llx_adherent_options_label` WRITE;
+/*!40000 ALTER TABLE `llx_adherent_options_label` DISABLE KEYS */;
+/*!40000 ALTER TABLE `llx_adherent_options_label` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -7080,4 +7134,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2013-10-22  0:36:10
+-- Dump completed on 2013-11-07  0:28:00
