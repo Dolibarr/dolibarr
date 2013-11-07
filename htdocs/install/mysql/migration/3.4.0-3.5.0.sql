@@ -90,6 +90,17 @@ create table llx_categorie_contact
   import_key    varchar(14)
 )ENGINE=innodb;
 
+create table llx_links
+(
+  rowid             INTEGER AUTO_INCREMENT PRIMARY KEY,
+  entity            INTEGER DEFAULT 1 NOT NULL,     -- multi company id
+  datea             DATETIME NOT NULL,              -- date start
+  url               VARCHAR(255) NOT NULL,          -- link url
+  label             VARCHAR(255) NOT NULL,          -- link label
+  objecttype        VARCHAR(255) NOT NULL,          -- object type in Dolibarr
+  objectid          INTEGER NOT NULL
+)ENGINE=innodb;
+
 
 ALTER TABLE llx_categorie_contact ADD PRIMARY KEY pk_categorie_contact (fk_categorie, fk_socpeople);
 ALTER TABLE llx_categorie_contact ADD INDEX idx_categorie_contact_fk_categorie (fk_categorie);

@@ -953,24 +953,24 @@ class Contact extends CommonObject
 		}
 		elseif ($mode == 2)
 		{
-			if ($statut==0) return img_picto($langs->trans('Disabled'),'statut1').' '.$langs->trans('Disabled');
+			if ($statut==0) return img_picto($langs->trans('Disabled'),'statut5').' '.$langs->trans('Disabled');
 			elseif ($statut==1) return img_picto($langs->trans('Enabled'),'statut4').' '.$langs->trans('Enabled');
 
 		}
 		elseif ($mode == 3)
 		{
-			if ($statut==0) return img_picto($langs->trans('Disabled'),'statut1');
+			if ($statut==0) return img_picto($langs->trans('Disabled'),'statut5');
 			elseif ($statut==1) return img_picto($langs->trans('Enabled'),'statut4');
 		
 		}
 		elseif ($mode == 4)
 		{
-			if ($statut==0) return img_picto($langs->trans('Disabled'),'statut1').' '.$langs->trans('StatusContactDraft');
+			if ($statut==0) return img_picto($langs->trans('Disabled'),'statut5').' '.$langs->trans('StatusContactDraft');
 			elseif ($statut==1) return img_picto($langs->trans('Enabled'),'statut4').' '.$langs->trans('Enabled');
 		}
 		elseif ($mode == 5)
 		{
-			if ($statut==0) return '<span class="hideonsmartphone">'.$langs->trans('Disabled').' </span>'.img_picto($langs->trans('Disabled'),'statut1');
+			if ($statut==0) return '<span class="hideonsmartphone">'.$langs->trans('Disabled').' </span>'.img_picto($langs->trans('Disabled'),'statut5');
 			elseif ($statut==1) return '<span class="hideonsmartphone">'.$langs->trans('Enabled').' </span>'.img_picto($langs->trans('Enabled'),'statut4');
 		}
 

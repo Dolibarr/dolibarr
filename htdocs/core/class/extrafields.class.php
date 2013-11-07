@@ -695,14 +695,15 @@ class ExtraFields
 				// 4 : where clause filter on column or table extrafield, syntax field='value' or extra.field=value
 				$keyList=(empty($InfoFieldList[2])?'rowid':$InfoFieldList[2].' as rowid');
 
-				if (count($InfoFieldList) > 3 && ! empty($InfoFieldList[3])) 
+				if (count($InfoFieldList) > 3 && ! empty($InfoFieldList[3]))
 				{
 					list($parentName, $parentField) = explode('|', $InfoFieldList[3]);
 					$keyList.= ', '.$parentField;
 				}
-				if (count($InfoFieldList) > 4 && ! empty($InfoFieldList[4])) 
+				if (count($InfoFieldList) > 4 && ! empty($InfoFieldList[4]))
 				{
-					if (strpos($InfoFieldList[4], 'extra')!==false) {
+					if (strpos($InfoFieldList[4], 'extra.') !== false)
+					{
 						$keyList='main.'.$InfoFieldList[2].' as rowid';
 					} else {
 						$keyList=$InfoFieldList[2].' as rowid';
@@ -710,7 +711,7 @@ class ExtraFields
 				}
 
 				$fields_label = explode('|',$InfoFieldList[1]);
-				if (is_array($fields_label)) 
+				if (is_array($fields_label))
 				{
 					$keyList .=', ';
 					$keyList .= implode(', ', $fields_label);
@@ -722,12 +723,12 @@ class ExtraFields
 				if (!empty($InfoFieldList[4]))
 				{
 					//We have to join on extrafield table
-					if (strpos($InfoFieldList[4], 'extra')!==false) 
+					if (strpos($InfoFieldList[4], 'extra')!==false)
 					{
 						$sql.= ' as main, '.MAIN_DB_PREFIX .$InfoFieldList[0].'_extrafields as extra';
 						$sqlwhere.= ' AND extra.fk_object=main.'.$InfoFieldList[2]. ' AND '.$InfoFieldList[4];
 					}
-					else 
+					else
 					{
 						$sqlwhere.= ' AND '.$InfoFieldList[4];
 					}
@@ -806,7 +807,7 @@ class ExtraFields
 					$this->db->free($resql);
 				}
 				else {
-					print 'Error in request '.$sql.' '.$this->db->lasterror().'. Check setup of extra parameters.<br>';	
+					print 'Error in request '.$sql.' '.$this->db->lasterror().'. Check setup of extra parameters.<br>';
 				}
 			}
 			$out.='</select>';
