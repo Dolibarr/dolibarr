@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2008 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
  * Copyright (C) 2005-2011 Regis Houssin         <regis.houssin@capnetworks.com>
+ * Copyright (C) 2013      Cédric Salvador       <csalvador@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -64,40 +65,17 @@ if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="name";
 
 $object = new Facture($db);
-
+if ($object->fetch($id))
+{
+	$object->fetch_thirdparty();
+	$upload_dir = $conf->facture->dir_output . "/" . dol_sanitizeFileName($object->ref);
+}
 
 /*
  * Actions
  */
+include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_pre_headers.tpl.php';
 
-// Envoi fichier
-if (GETPOST('sendit') && ! empty($conf->global->MAIN_UPLOAD_DOC))
-{
-	if ($object->fetch($id))
-	{
-		$object->fetch_thirdparty();
-		$upload_dir = $conf->facture->dir_output . "/" . dol_sanitizeFileName($object->ref);
-		dol_add_file_process($upload_dir,0,1,'userfile');
-	}
-}
-
-// Delete
-if ($action == 'confirm_deletefile' && $confirm == 'yes')
-{
-	if ($object->fetch($id))
-	{
-	    $langs->load("other");
-		$object->fetch_thirdparty();
-
-		$upload_dir = $conf->facture->dir_output . "/" . dol_sanitizeFileName($object->ref);
-		$file = $upload_dir . '/' . GETPOST('urlfile');	// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
-		$ret=dol_delete_file($file,0,0,0,$object);
-		if ($ret) setEventMessage($langs->trans("FileWasRemoved", GETPOST('urlfile')));
-		else setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), 'errors');
-    	header('Location: '.$_SERVER["PHP_SELF"].'?id='.$id);
-    	exit;
-	}
-}
 
 /*
  * View
@@ -169,24 +147,10 @@ if ($id > 0 || ! empty($ref))
 		print "</table>\n";
 		print "</div>\n";
 
-    	/*
-		 * Confirmation suppression fichier
-		 */
-		if ($action == 'delete')
-		{
-			print $form->formconfirm($_SERVER["PHP_SELF"].'?facid='.$id.'&urlfile='.urlencode(GETPOST("urlfile")), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile', '', 0, 1);
-			
-		}
-
-
-		// Affiche formulaire upload
-		$formfile=new FormFile($db);
-		$formfile->form_attach_new_file(DOL_URL_ROOT.'/compta/facture/document.php?facid='.$object->id,'',0,0,$user->rights->facture->creer,50,$object);
-
-
-		// List of document
-		$param='&facid='.$object->id;
-		$formfile->list_of_documents($filearray,$object,'facture',$param);
+		$modulepart = 'facture';
+		$permission = $user->rights->facture->creer;
+		$param = '&id=' . $object->id;
+		include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_post_headers.tpl.php';
 
 	}
 	else

@@ -4,6 +4,7 @@
  * Copyright (C) 2005		Marc Barilley / Ocebo	<marc@ocebo.com>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2005		Simon TOSSER			<simon@kornog-computing.com>
+ * Copyright (C) 2013		Cédric Salvador			<csalvador@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -74,28 +75,9 @@ $modulepart='contract';
 
 
 /*
- * Action envoie fichier
+ * Actions
  */
-if (GETPOST('sendit') && ! empty($conf->global->MAIN_UPLOAD_DOC))
-{
-	dol_add_file_process($upload_dir,0,1,'userfile');
-}
-
-// Delete
-if ($action == 'confirm_deletefile' && $confirm == 'yes')
-{
-	if ($object->id)
-	{
-		$langs->load("other");
-
-		$file = $upload_dir . '/' . GETPOST('urlfile');	// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
-		$ret=dol_delete_file($file,0,0,0,$object);
-		if ($ret) setEventMessage($langs->trans("FileWasRemoved", GETPOST('urlfile')));
-		else setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), 'errors');
-		header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
-		exit;
-	}
-}
+include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_pre_headers.tpl.php';
 
 
 /*
@@ -140,24 +122,10 @@ if ($object->id)
 
     print '</div>';
 
-    /*
-     * Confirmation suppression fichier
-     */
-    if ($action == 'delete')
-    {
-    	print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$id.'&urlfile='.urlencode(GETPOST("urlfile")), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile', '', 0, 1);
-    	
-    }
-
-
-    // Affiche formulaire upload
-   	$formfile=new FormFile($db);
-	$formfile->form_attach_new_file($_SERVER['PHP_SELF'].'?id='.$object->id,'',0,0,$user->rights->contrat->creer,50,$object);
-
-
-	// List of document
-	$param='&id='.$object->id;
-	$formfile->list_of_documents($filearray,$object,'contract',$param);
+    $modulepart = 'contract';
+    $permission = $user->rights->contrat->creer;
+    $param = '&id=' . $object->id;
+    include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_post_headers.tpl.php';
 
 }
 else

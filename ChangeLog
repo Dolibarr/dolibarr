@@ -1,9 +1,6 @@
 --------------------------------------------------------------
 English Dolibarr ChangeLog
 --------------------------------------------------------------
-***** ChangeLog for 3.4.2 compared to 3.4.1 *****
-Fix: Bad rounding on margin calculations and display.
-Fix: Option drop table into backup was broken.
 
 ***** ChangeLog for 3.5 compared to 3.4.* *****
 For users:
@@ -129,7 +126,11 @@ parameter. All methods addline in this case were modified to remove this paramet
 4) Method ->classer_facturee() is deprecated. It must be replace with ->classifyBilled().
 
 5) Property ->tel on objects is now ->phone
+
  
+***** ChangeLog for 3.4.2 compared to 3.4.1 *****
+Fix: Bad rounding on margin calculations and display.
+Fix: Option drop table into backup was broken.
 
 ***** ChangeLog for 3.4.1 compared to 3.4.0 *****
 Fix: Display buying price on line edit when no supplier price is defined
