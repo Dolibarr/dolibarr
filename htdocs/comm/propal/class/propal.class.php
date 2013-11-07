@@ -1625,7 +1625,7 @@ class Propal extends CommonObject
      *
      *	@param      User	$user		Object user that close
      *	@param      int		$statut		Statut
-     *	@param      text	$note		Comment
+     *	@param      string	$note		Comment
      *  @param		int		$notrigger	1=Does not execute triggers, 0= execuete triggers
      *	@return     int         		<0 if KO, >0 if OK
      */
@@ -1688,7 +1688,7 @@ class Propal extends CommonObject
      *
      *	@param      User	$user		Object user that close
      *	@param      int		$statut		Statut
-     *	@param      text	$note		Comment
+     *	@param      string	$note		Comment
      *	@return     int         		<0 if KO, >0 if OK
      */
     function cloture($user, $statut, $note)
