@@ -45,7 +45,7 @@ if (! function_exists('json_encode'))
  *
  * @param	string 	$class		Class name
  * @param 	string 	$member		Name of property
- * @return 	string				Return value of static property.
+ * @return 	mixed				Return value of static property
  */
 function getStaticMember($class, $member)
 {
