@@ -3,6 +3,7 @@
  * Copyright (C) 2010-2012 Regis Houssin		<regis.houssin@capnetworks.com>
  * Copyright (c) 2010      Juanjo Menent		<jmenent@2byte.es>
  * Copyright (c) 2013      Charles-Fr BENKE		<charles.fr@benke.fr>
+ * Copyright (C) 2013      Cédric Salvador      <csalvador@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -155,6 +156,30 @@ class FormFile
             if (empty($sectionid)) $out .= '<br>';
 
             $out .= "\n<!-- End form attach new file -->\n\n";
+            $langs->load('link');
+            $title = $langs->trans("LinkANewFile");
+            $out .= load_fiche_titre($title, null, null);
+            $out .= '<form name="formuserfile" action="'.$url.'" method="POST">';
+            $out .= '<input type="hidden" id="formuserfile_section_dir" name="section_dir" value="">';
+            $out .= '<input type="hidden" id="formuserfile_section_id"  name="section_id" value="'.$sectionid.'">';
+            $out .= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+
+            $out .= '<table width="100%" class="nobordernopadding">';
+            $out .= '<tr>';
+            $out .= '<td valign="middle" class="nowrap">';
+            $out .= $langs->trans("Link") . ': ';
+            $out .= '<input type="text" name="link" id="link">';
+            $out .= ' &nbsp; ' . $langs->trans("Label") . ': ';
+            $out .= '<input type="text" name="label" id="label">';
+            $out .= '<input type="hidden" name="objecttype" value="' . $object->element . '">';
+            $out .= '<input type="hidden" name="objectid" value="' . $object->id . '">';
+            $out .= '<input type="submit" class="button" name="linkit" value="'.$langs->trans("Upload").'"';
+            $out .= (empty($conf->global->MAIN_UPLOAD_DOC) || empty($perm)?' disabled="disabled"':'');
+            $out .= '>';
+            $out .= '</td></tr>';
+            $out .= '</table>';
+
+            $out .= '</form><br>';
             $parameters = array('socid'=>(isset($GLOBALS['socid'])?$GLOBALS['socid']:''),'id'=>(isset($GLOBALS['id'])?$GLOBALS['id']:''), 'url'=>$url, 'perm'=>$perm);
             $res = $hookmanager->executeHooks('formattachOptions',$parameters,$object);
             if (empty($res))
@@ -992,6 +1017,126 @@ class FormFile
         // Include template
         include DOL_DOCUMENT_ROOT.'/core/tpl/ajax/fileupload_view.tpl.php';
 
+    }
+    
+    public function listOfLinks($object, $permtodelete=1, $action=null, $selected=null)
+    {
+
+        global $user, $conf, $langs, $user;
+        global $bc;
+        global $sortfield, $sortorder;
+
+        require_once DOL_DOCUMENT_ROOT . '/link/class/link.class.php';
+        $link = new Link($this->db);
+        $links = array();
+        if ($sortfield == "name") {
+            $sortfield = "label";
+        } elseif ($sortfield == "date") {
+            $sortfield = "datea";
+        } else {
+            $sortfield = null;
+        }
+        $res = $link->fetchAll($links, $object->element, $object->id, $sortfield, $sortorder);
+        $param = (isset($object->id)?'&id=' . $object->id : '');
+
+        // Show list of associated links
+        print_titre($langs->trans("LinkedFiles"));
+        print '<table width="100%" class="liste">';
+        print '<tr class="liste_titre">';
+        print_liste_field_titre(
+            $langs->trans("Documents2"),
+            $_SERVER['PHP_SELF'],
+            "name",
+            "",
+            $param,
+            'align="left"',
+            $sortfield,
+            $sortorder
+        );
+        print_liste_field_titre(
+            $langs->trans("Size"),
+            "",
+            "",
+            "",
+            "",
+            'align="right"'
+        );
+        print_liste_field_titre(
+            $langs->trans("Date"),
+            $_SERVER['PHP_SELF'],
+            "date",
+            "",
+            $param,
+            'align="center"',
+            $sortfield,
+            $sortorder
+        );
+        print_liste_field_titre(
+            '',
+            $_SERVER['PHP_SELF'],
+            "",
+            "",
+            $param,
+            'align="center"'
+        );
+        print_liste_field_titre('','','');
+        print '</tr>';
+        $nboflinks = count($links);
+        if ($nboflinks > 0) {
+            include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
+        }
+
+        $var = true;
+        foreach ($links as $link) {
+            $var =! $var;
+            print '<tr ' . $bc[$var] . '>';
+            //edit mode
+            if ($action == 'update' && $selected === $link->id) {
+                print '<form action="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '" method="post">';
+                print '<input type="hidden" name="linkid" value="' . $link->id . '">';
+                print '<input type="hidden" name="action" value="confirm_updateline">';
+                print '<td>';
+                print $langs->trans('Link') . ': <input type="text" name="link" value = "' . $link->url . '">';
+                print '</td>';
+                print '<td align="right">';
+                print $langs->trans('Label') . ': <input type="text" name="label" value = "' . $link->label . '">';
+                print '</td>';
+                print '<td align="center">' . dol_print_date(dol_now(), "dayhour", "tzuser") . '</td>';
+                print '<td align="right"></td>';
+                print '<td align="right" colspan="2"><input type="submit" name="save" class="button" value="' . $langs->trans('Save') . '">';
+                print '<input type="submit" name="cancel" class="button" value="' . $langs->trans('Cancel') . '"></td>';
+                print '</form>';
+            }
+            else {
+                print '<td>';
+                print '<a data-ajax="false" href="'. $link->url . '" target="_blank">';
+                print $link->label;
+                print '</a>';
+                print "</td>\n";
+                print '<td align="right"></td>';
+                print '<td align="center">' . dol_print_date($link->datea, "dayhour", "tzuser") . '</td>';
+                print '<td align="center"></td>';
+                print '<td align="right" colspan="2">';
+                print '<a href="' . $_SERVER['PHP_SELF'] . '?action=update&linkid=' . $link->id
+                        . '&id=' . $object->id . '" class="editfilelink" >' . img_edit().'</a>';
+                if ($permtodelete) {
+                    print '<a href="'. $_SERVER['PHP_SELF'] .'?action=delete&linkid=' . $link->id
+                            . '&id=' . $object->id . '" class="deletefilelink" >' . img_delete() . '</a>';
+                } else {
+                    print '&nbsp;';
+                }
+                print "</td>";
+            }
+            print "</tr>\n";
+        }
+        if ($nboflinks == 0) {
+            print '<tr ' . $bc[$var] . '><td colspan="4">';
+            print $langs->trans("NoLinkFound");
+            print '</td></tr>';
+        }
+        print "</table>";
+
+        return $nboflinks;
     }
 
 }
