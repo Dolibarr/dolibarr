@@ -166,10 +166,10 @@ function getParentCompanyTimeZoneInt($refgmtdate='now')
 /**
  *  Add a delay to a date
  *
- *  @param      timestamp	$time               Date timestamp (or string with format YYYY-MM-DD)
+ *  @param      int			$time               Date timestamp (or string with format YYYY-MM-DD)
  *  @param      int			$duration_value     Value of delay to add
  *  @param      int			$duration_unit      Unit of added delay (d, m, y, w)
- *  @return     timestamp      			        New timestamp
+ *  @return     int      			        New timestamp
  */
 function dol_time_plus_duree($time,$duration_value,$duration_unit)
 {
@@ -317,7 +317,7 @@ function convertSecondToTime($iSecond, $format='all', $lengthOfDay=86400, $lengt
  *		                		DD/MM/YY HH:MM:SS or DD/MM/YYYY HH:MM:SS (this format should not be used anymore)
  *  @param	int		$gm         1 =Input date is GM date,
  *                              0 =Input date is local date using PHP server timezone
- *  @return	date				Date
+ *  @return	int					Date as a timestamp
  *		                		19700101020000 -> 7200 with gm=1
  *
  *  @see    dol_print_date, dol_mktime, dol_getdate

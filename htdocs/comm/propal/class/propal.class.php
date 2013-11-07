@@ -305,8 +305,8 @@ class Propal extends CommonObject
      *      @param		int			$fk_fournprice		Id supplier price
      *      @param		int			$pa_ht				Buying price without tax
      *      @param		string		$label				???
-     *		@param      timestamp	$date_start       	Start date of the line
-     *		@param      timestamp	$date_end         	End date of the line
+     *		@param      int			$date_start       	Start date of the line
+     *		@param      int			$date_end         	End date of the line
      *      @param		array		$array_option		extrafields array
      *    	@return    	int         	    			>0 if OK, <0 if KO
      *
@@ -479,8 +479,8 @@ class Propal extends CommonObject
      *  @param		int			$pa_ht				Price (without tax) of product when it was bought
      *  @param		string		$label				???
      *  @param		int			$type				0/1=Product/service
-     *	@param      timestamp	$date_start       	Start date of the line
-     *	@param      timestamp	$date_end         	End date of the line
+     *	@param      int			$date_start       	Start date of the line
+     *	@param      int			$date_end         	End date of the line
 	 *  @param		array		$array_option		extrafields array
      *  @return     int     		        		0 if OK, <0 if KO
      */
@@ -1370,7 +1370,7 @@ class Propal extends CommonObject
      *  Define proposal date
      *
      *  @param  User		$user      		Object user that modify
-     *  @param  timestamp	$date			Date
+     *  @param  int			$date			Date
      *  @return	int         				<0 if KO, >0 if OK
      */
     function set_date($user, $date)
@@ -1407,7 +1407,7 @@ class Propal extends CommonObject
      *	Define end validity date
      *
      *	@param		User		$user        		Object user that modify
-     *	@param      timestamp	$date_fin_validite	End of validity date
+     *	@param      int			$date_fin_validite	End of validity date
      *	@return     int         					<0 if KO, >0 if OK
      */
     function set_echeance($user, $date_fin_validite)
@@ -1434,7 +1434,7 @@ class Propal extends CommonObject
      *	Set delivery date
      *
      *	@param      User 		$user        		Object user that modify
-     *	@param      timestamp	$date_livraison     Delivery date
+     *	@param      int			$date_livraison     Delivery date
      *	@return     int         					<0 if ko, >0 if ok
      */
     function set_date_livraison($user, $date_livraison)

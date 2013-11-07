@@ -461,7 +461,7 @@ function dol_filesize($pathoffile)
  * Return time of a file
  *
  * @param 	string		$pathoffile		Path of file
- * @return 	timestamp					Time of file
+ * @return 	int					Time of file
  */
 function dol_filemtime($pathoffile)
 {
