@@ -71,7 +71,7 @@ $ftp_user=$conf->global->$s_ftp_user;
 $ftp_password=$conf->global->$s_ftp_password;
 $ftp_passive=$conf->global->$s_ftp_passive;
 
-$conn_id=0;	// FTP connection ID
+$conn_id=null;	// FTP connection ID
 
 
 
