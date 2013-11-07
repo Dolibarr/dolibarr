@@ -167,7 +167,7 @@ if ($action == 'add_action')
 	$actioncomm->datep = $datep;
 	$actioncomm->datef = $datef;
 	$actioncomm->percentage = $percentage;
-	$actioncomm->duree=((GETPOST('dureehour') * 60) + GETPOST('dureemin')) * 60;
+	$actioncomm->duree=((float)(GETPOST('dureehour') * 60) + (float)GETPOST('dureemin')) * 60;
 
 	$usertodo=new User($db);
 	if ($_POST["affectedto"] > 0)
