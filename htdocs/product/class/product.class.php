@@ -1011,6 +1011,11 @@ class Product extends CommonObject
 
 		// Check parameters
 		if ($newvat == '') $newvat=$this->tva_tx;
+		if (! empty($newminprice) && ($newminprice > $newprice))
+		{
+			$this->error='ErrorPricCanBeLowerThanMinPrice';
+			return -1;
+		}
 
 		if ($newprice!='' || $newprice==0)
 		{

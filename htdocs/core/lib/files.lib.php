@@ -995,9 +995,10 @@ function dol_init_file_process($pathtoscan='')
  * @param	int		$donotupdatesession		1=Do no edit _SESSION variable
  * @param	string	$varfiles				_FILES var name
  * @param	string	$savingdocmask			Mask to use to define output filename. For example 'XXXXX-__YYYYMMDD__-__file__'
+ * @param	string	$link					Link to add
  * @return	void
  */
-function dol_add_file_process($upload_dir, $allowoverwrite=0, $donotupdatesession=0, $varfiles='addedfile', $savingdocmask='')
+function dol_add_file_process($upload_dir, $allowoverwrite=0, $donotupdatesession=0, $varfiles='addedfile', $savingdocmask='', $link=null)
 {
 	global $db,$user,$conf,$langs;
 
@@ -1052,6 +1053,23 @@ function dol_add_file_process($upload_dir, $allowoverwrite=0, $donotupdatesessio
 				{
 					setEventMessage($langs->trans($resupload), 'errors');
 				}
+			}
+		}
+	} elseif ($link) {
+		if (dol_mkdir($upload_dir) >= 0) {
+			require_once DOL_DOCUMENT_ROOT . '/link/class/link.class.php';
+			$linkObject = new Link($db);
+			$linkObject->entity = $conf->entity;
+			$linkObject->url = $link;
+			$linkObject->objecttype = GETPOST('objecttype', 'alpha');
+			$linkObject->objectid = GETPOST('objectid', 'int');
+			$linkObject->label = GETPOST('label', 'alpha');
+			$res = $linkObject->create($user);
+			$langs->load('link');
+			if ($res > 0) {
+				setEventMessage($langs->trans("LinkComplete"));
+			} else {
+				setEventMessage($langs->trans("ErrorFileNotLinked"), 'errors');
 			}
 		}
 	}
