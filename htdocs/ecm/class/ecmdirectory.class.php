@@ -642,8 +642,6 @@ class EcmDirectory // extends CommonObject
 				$this->build_path_from_id_categ($val,$protection);
 			}
 		}
-
-		return 1;
 	}
 
 	/**
