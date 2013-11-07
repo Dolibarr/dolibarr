@@ -406,7 +406,7 @@ print '</div>';
 if ($action == 'delete' && empty($conf->use_javascript_ajax))
 {
 	print $form->formconfirm($_SERVER["PHP_SELF"].'?section='.$section.'&urlfile='.urlencode($_GET["urlfile"]), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile','','',1);
-	
+
 }
 
 dol_htmloutput_mesg($mesg);
@@ -456,7 +456,7 @@ print '</div>';
 if ($action == 'delete_section')
 {
     print $form->formconfirm($_SERVER["PHP_SELF"].'?section='.$section, $langs->trans('DeleteSection'), $langs->trans('ConfirmDeleteSection',$ecmdir->label), 'confirm_deletesection','','',1);
-    
+
 }
 // End confirm
 
@@ -775,7 +775,7 @@ include_once DOL_DOCUMENT_ROOT.'/core/ajax/ajaxdirpreview.php';
 if ((! empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE_JS)) || ! empty($section))
 {
     $formfile=new FormFile($db);
-	$formfile->form_attach_new_file(DOL_URL_ROOT.'/ecm/index.php', 'none', 0, ($section?$section:-1), $user->rights->ecm->upload, 48);
+	$formfile->form_attach_new_file(DOL_URL_ROOT.'/ecm/index.php', 'none', 0, ($section?$section:-1), $user->rights->ecm->upload, 48, null, '', 0, '', 0);
 }
 else print '&nbsp;';
 

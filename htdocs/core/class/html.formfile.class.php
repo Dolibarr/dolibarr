@@ -60,12 +60,13 @@ class FormFile
      * 	@param	int		$perm			Value of permission to allow upload
      *  @param  int		$size           Length of input file area
      *  @param	Object	$object			Object to use (when attachment is done on an element)
-     *  @param	string	$options		Options
+     *  @param	string	$options		Add an option column
      *  @param	boolean	$useajax		Use fileupload ajax (0=never, 1=if enabled, 2=always whatever is option). 2 should never be used.
      *  @param	string	$savingdocmask	Mask to use to define output filename. For example 'XXXXX-__YYYYMMDD__-__file__'
+     *  @param	string	$linkfiles		1=Also add form to link files, 0=Do not show form to link files
      * 	@return	int						<0 if KO, >0 if OK
      */
-    function form_attach_new_file($url, $title='', $addcancel=0, $sectionid=0, $perm=1, $size=50, $object='', $options='', $useajax=1, $savingdocmask='')
+    function form_attach_new_file($url, $title='', $addcancel=0, $sectionid=0, $perm=1, $size=50, $object='', $options='', $useajax=1, $savingdocmask='', $linkfiles=1)
     {
         global $conf,$langs, $hookmanager;
         $hookmanager->initHooks(array('formfile'));
@@ -77,10 +78,11 @@ class FormFile
         	// TODO: Cheeck this works with 2 forms on same page
         	// TODO: Cheeck this works with GED module, otherwise, force useajax to 0
         	// TODO: This does not support option savingdocmask
+        	// TODO: This break feature to upload links too
         	return $this->_formAjaxFileUpload($object);
         }
         else
-        {
+       {
             $maxlength=$size;
 
             $out = "\n\n<!-- Start form attach new file -->\n";
@@ -155,37 +157,46 @@ class FormFile
             $out .= '</form>';
             if (empty($sectionid)) $out .= '<br>';
 
-            $out .= "\n<!-- End form attach new file -->\n\n";
-            $langs->load('link');
-            $title = $langs->trans("LinkANewFile");
-            $out .= load_fiche_titre($title, null, null);
-            $out .= '<form name="formuserfile" action="'.$url.'" method="POST">';
-            $out .= '<input type="hidden" id="formuserfile_section_dir" name="section_dir" value="">';
-            $out .= '<input type="hidden" id="formuserfile_section_id"  name="section_id" value="'.$sectionid.'">';
-            $out .= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+            $out .= "\n<!-- End form attach new file -->\n";
 
-            $out .= '<table width="100%" class="nobordernopadding">';
-            $out .= '<tr>';
-            $out .= '<td valign="middle" class="nowrap">';
-            $out .= $langs->trans("Link") . ': ';
-            $out .= '<input type="text" name="link" id="link">';
-            $out .= ' &nbsp; ' . $langs->trans("Label") . ': ';
-            $out .= '<input type="text" name="label" id="label">';
-            $out .= '<input type="hidden" name="objecttype" value="' . $object->element . '">';
-            $out .= '<input type="hidden" name="objectid" value="' . $object->id . '">';
-            $out .= '<input type="submit" class="button" name="linkit" value="'.$langs->trans("Upload").'"';
-            $out .= (empty($conf->global->MAIN_UPLOAD_DOC) || empty($perm)?' disabled="disabled"':'');
-            $out .= '>';
-            $out .= '</td></tr>';
-            $out .= '</table>';
+            if ($linkfiles)
+            {
+	            $out .= "\n<!-- Start form attach new link -->\n";
+	            $langs->load('link');
+	            $title = $langs->trans("LinkANewFile");
+	            $out .= load_fiche_titre($title, null, null);
+	            $out .= '<form name="formuserfile" action="'.$url.'" method="POST">';
+	            $out .= '<input type="hidden" id="formuserfile_section_dir" name="section_dir" value="">';
+	            $out .= '<input type="hidden" id="formuserfile_section_id"  name="section_id" value="'.$sectionid.'">';
+	            $out .= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
-            $out .= '</form><br>';
-            $parameters = array('socid'=>(isset($GLOBALS['socid'])?$GLOBALS['socid']:''),'id'=>(isset($GLOBALS['id'])?$GLOBALS['id']:''), 'url'=>$url, 'perm'=>$perm);
-            $res = $hookmanager->executeHooks('formattachOptions',$parameters,$object);
+	            $out .= '<table width="100%" class="nobordernopadding">';
+	            $out .= '<tr>';
+	            $out .= '<td valign="middle" class="nowrap">';
+	            $out .= $langs->trans("Link") . ': ';
+	            $out .= '<input type="text" name="link" id="link">';
+	            $out .= ' &nbsp; ' . $langs->trans("Label") . ': ';
+	            $out .= '<input type="text" name="label" id="label">';
+	            $out .= '<input type="hidden" name="objecttype" value="' . $object->element . '">';
+	            $out .= '<input type="hidden" name="objectid" value="' . $object->id . '">';
+	            $out .= '<input type="submit" class="button" name="linkit" value="'.$langs->trans("ToLink").'"';
+	            $out .= (empty($conf->global->MAIN_UPLOAD_DOC) || empty($perm)?' disabled="disabled"':'');
+	            $out .= '>';
+	            $out .= '</td></tr>';
+	            $out .= '</table>';
+
+	            $out .= '</form><br>';
+	            $parameters = array('socid'=>(isset($GLOBALS['socid'])?$GLOBALS['socid']:''),'id'=>(isset($GLOBALS['id'])?$GLOBALS['id']:''), 'url'=>$url, 'perm'=>$perm);
+	            $res = $hookmanager->executeHooks('formattachOptions',$parameters,$object);
+
+	            $out .= "\n<!-- End form attach new file -->\n";
+            }
+
             if (empty($res))
             {
             	print $out;
             }
+
             print $hookmanager->resPrint;
 
             return 1;
@@ -1018,10 +1029,18 @@ class FormFile
         include DOL_DOCUMENT_ROOT.'/core/tpl/ajax/fileupload_view.tpl.php';
 
     }
-    
+
+    /**
+     * Show array with linked files
+     *
+     * @param 	Object		$object			Object
+     * @param 	int			$permtodelete	Deletion is allowed
+     * @param 	string		$action			Action
+     * @param 	string		$selected		???
+     * @return 	int							Number of links
+     */
     public function listOfLinks($object, $permtodelete=1, $action=null, $selected=null)
     {
-
         global $user, $conf, $langs, $user;
         global $bc;
         global $sortfield, $sortorder;
