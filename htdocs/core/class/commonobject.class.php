@@ -2135,7 +2135,7 @@ abstract class CommonObject
      *	Add/Update all extra fields values for the current object.
      *  All data to describe values to insert are stored into $this->array_options=array('keyextrafield'=>'valueextrafieldtoadd')
      *
-     *  @return	void
+     *  @return int -1=error, O=did nothing, 1=OK
      */
     function insertExtraFields()
     {

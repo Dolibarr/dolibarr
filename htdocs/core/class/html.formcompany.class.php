@@ -509,7 +509,7 @@ class FormCompany
 	 *  @param  string		$htmlname       Name of HTML form
 	 * 	@param	array		$limitto		Disable answers that are not id in this array list
 	 *  @param	int			$forceid		This is to force another object id than object->id
-	 * 	@return	void
+	 * 	@return int The selected third party ID
 	 * 	TODO obsolete ?
 	 * 	cette fonction doit utiliser du javascript quoi qu'il en soit !
 	 * 	autant utiliser le système combobox sans rechargement de page non ?
