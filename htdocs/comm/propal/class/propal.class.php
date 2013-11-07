@@ -2368,6 +2368,7 @@ class Propal extends CommonObject
             if ($mode == 'opened') $delay_warning=$conf->propal->cloture->warning_delay;
             if ($mode == 'signed') $delay_warning=$conf->propal->facturation->warning_delay;
 
+            // This assignment in condition is not a bug. It allows walking the results.
             while ($obj=$this->db->fetch_object($resql))
             {
                 $this->nbtodo++;
@@ -2506,6 +2507,7 @@ class Propal extends CommonObject
         $resql=$this->db->query($sql);
         if ($resql)
         {
+            // This assignment in condition is not a bug. It allows walking the results.
             while ($obj=$this->db->fetch_object($resql))
             {
                 $this->nb["proposals"]=$obj->nb;

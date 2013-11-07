@@ -490,7 +490,8 @@ class EcmDirectory // extends CommonObject
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
-			while ($obj= $this->db->fetch_object($resql))
+			// This assignment in condition is not a bug. It allows walking the results.
+			while ($obj=$this->db->fetch_object($resql))
 			{
 				$this->motherof[$obj->id_son]=$obj->id_parent;
 			}
@@ -555,6 +556,7 @@ class EcmDirectory // extends CommonObject
 		{
 			$this->cats = array();
 			$i=0;
+			// This assignment in condition is not a bug. It allows walking the results.
 			while ($obj = $this->db->fetch_object($resql))
 			{
 				$this->cats[$obj->rowid]['id'] = $obj->rowid;
