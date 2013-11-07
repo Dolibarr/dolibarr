@@ -448,7 +448,7 @@ function dol_count_nb_of_line($file)
 /**
  * Return size of a file
  *
- * @param 	tring		$pathoffile		Path of file
+ * @param 	string		$pathoffile		Path of file
  * @return 	string						File size
  */
 function dol_filesize($pathoffile)

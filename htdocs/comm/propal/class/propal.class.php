@@ -296,7 +296,7 @@ class Propal extends CommonObject
      *		@param    	int			$fk_product      	Id du produit/service predefini
      * 		@param    	double		$remise_percent  	Pourcentage de remise de la ligne
      * 		@param    	string		$price_base_type	HT or TTC
-     * 		@param    	dobule		$pu_ttc             Prix unitaire TTC
+     * 		@param    	double		$pu_ttc             Prix unitaire TTC
      * 		@param    	int			$info_bits			Bits de type de lignes
      *      @param      int			$type               Type of line (product, service)
      *      @param      int			$rang               Position of line
