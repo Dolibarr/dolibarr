@@ -830,7 +830,7 @@ function dol_delete_dir_recursive($dir,$count=0,$nophperrors=0)
 /**
  *  Delete all preview files linked to object instance
  *
- *  @param	Object	$object		Object to clean
+ *  @param	object	$object		Object to clean
  *  @return	int					0 if error, 1 if OK
  */
 function dol_delete_preview($object)

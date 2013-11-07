@@ -503,7 +503,7 @@ class FormCompany
 	/**
 	 *    Return list of third parties
 	 *
-	 *  @param  Object		$object         Object we try to find contacts
+	 *  @param  object		$object         Object we try to find contacts
 	 *  @param  string		$var_id         Name of id field
 	 *  @param  string		$selected       Pre-selected third party
 	 *  @param  string		$htmlname       Name of HTML form
@@ -616,7 +616,7 @@ class FormCompany
     /**
      *  Return a select list with types of contacts
      *
-     *  @param	Object		$object         Object to use to find type of contact
+     *  @param	object		$object         Object to use to find type of contact
      *  @param  string		$selected       Default selected value
      *  @param  string		$htmlname		HTML select name
      *  @param  string		$source			Source ('internal' or 'external')
