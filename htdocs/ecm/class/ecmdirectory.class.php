@@ -39,11 +39,19 @@ class EcmDirectory // extends CommonObject
 	var $cachenbofdoc=-1;	// By default cache initialized with value 'not calculated'
 	var $date_c;
 	var $date_m;
+    public $fk_user_m;
+    public $fk_user_c;
+    public $ref;
 
 	var $cats=array();
 	var $motherof=array();
 
     var $forbiddenchars = array('<','>',':','/','\\','?','*','|','"');
+
+    public $full_arbo_loaded;
+
+    public $error;
+    public $errors;
 
 
 	/**
