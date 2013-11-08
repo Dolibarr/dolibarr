@@ -398,16 +398,17 @@ function dol_dir_is_emtpy($folder)
 	if (is_dir($newfolder))
 	{
 		$handle = opendir($newfolder);
+        $folder_content = '';
 		while ((gettype($name = readdir($handle)) != "boolean"))
 		{
 			$name_array[] = $name;
 		}
 		foreach($name_array as $temp) $folder_content .= $temp;
 
+        closedir($handle);
+
 		if ($folder_content == "...") return true;
 		else return false;
-
-		closedir($handle);
 	}
 	else
 	return true; // Dir does not exists
