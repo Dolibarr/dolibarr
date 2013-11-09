@@ -1,0 +1,21 @@
+# Dolibarr language file - Source file is en_US - trips
+Trip=Brauciens
+Trips=Braucieni
+TripsAndExpenses=Trips un izdevumi
+TripsAndExpensesStatistics=Trips un izdevumi statistika
+TripCard=Ceļojuma karte
+AddTrip=Pievienot ceļojumu
+ListOfTrips=Saraksts braucieniem
+ListOfFees=Saraksts maksu
+NewTrip=Jauns brauciens
+CompanyVisited=Kompānija / nodibinājums apmeklēja
+Kilometers=Kilometri
+FeesKilometersOrAmout=Summa vai kilometri
+DeleteTrip=Dzēst ceļojumu
+ConfirmDeleteTrip=Vai tiešām vēlaties dzēst šo braucienu?
+TF_OTHER=Cits
+TF_LUNCH=Pusdienas
+TF_TRIP=Brauciens
+ListTripsAndExpenses=Saraksts braucienu un izdevumu
+ExpensesArea=Trips un izdevumi zona
+SearchATripAndExpense=Meklēt ceļojumu un izdevumiem
