@@ -158,7 +158,7 @@ print '</form>';
 $sql = "SELECT p.label, p.rowid, p.fk_product_type, p.ref,";
 $sql.= " d.fk_product,";
 $sql.= " f.rowid as facid, f.facnumber, f.total as total_ht,";
-$sql.= " f.datef, f.paye, f.fk_statut as statut";
+$sql.= " f.datef, f.paye, f.fk_statut as statut,";
 $sql.= " sum(d.total_ht) as selling_price,";
 $sql.= " sum(".$db->ifsql('d.total_ht <=0','d.qty * d.buy_price_ht * -1','d.qty * d.buy_price_ht').") as buying_price,";
 $sql.= " sum(".$db->ifsql('d.total_ht <=0','-1 * (abs(d.total_ht) - (d.buy_price_ht * d.qty))','d.total_ht - (d.buy_price_ht * d.qty)').") as marge";
