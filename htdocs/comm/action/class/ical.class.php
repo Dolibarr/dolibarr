@@ -270,7 +270,7 @@ class ICal
      * Return Unix time from ical date time fomrat (YYYYMMDD[T]HHMMSS[Z] or YYYYMMDD[T]HHMMSS)
      *
      * @param 	string		$ical_date		String date
-     * @return 	timestamp
+     * @return 	int
      */
     function ical_date_to_unix($ical_date)
     {

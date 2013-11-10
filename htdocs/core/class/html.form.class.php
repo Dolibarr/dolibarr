@@ -3942,7 +3942,7 @@ class Form
      *    Return a HTML area with the reference of object and a navigation bar for a business object
      *    To add a particular filter on select, you must set $object->next_prev_filter to SQL criteria.
      *
-     *    @param	Object	$object			Object to show
+     *    @param	object	$object			Object to show
      *    @param   string	$paramid   		Name of parameter to use to name the id into the URL link
      *    @param   string	$morehtml  		More html content to output just before the nav bar
      *    @param	int		$shownav	  	Show Condition (navigation is shown if value is 1)

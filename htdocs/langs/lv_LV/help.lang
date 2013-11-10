@@ -1,0 +1,27 @@
+# Dolibarr language file - Source file is en_US - help
+CommunitySupport=Forums / Wiki atbalsts
+EMailSupport=E-pasti atbalstīt
+RemoteControlSupport=Tiešsaistes reālā laika / attālo atbalstu
+OtherSupport=Cits atbalsts
+ToSeeListOfAvailableRessources=Lai sazinātos / skatītu pieejamos resursus:
+ClickHere=Noklikšķiniet šeit
+HelpCenter=Palīdzības centrs
+DolibarrHelpCenter=Dolibarr palīdzības un atbalsta centrs
+ToGoBackToDolibarr=Pretējā gadījumā, klikšķiniet <a href="%s">šeit, lai izmantotu Dolibarr</a>
+TypeOfSupport=Atbalsta avots
+TypeSupportCommunauty=Kopiena (bezmaksas)
+TypeSupportCommercial=Tirdzniecības
+TypeOfHelp=Tips
+NeedHelpCenter=Nepieciešama palīdzība vai atbalsts?
+Efficiency=Efektivitāte
+TypeHelpOnly=Palīdzēt tikai
+TypeHelpDev=Palīdzēt + attīstības
+TypeHelpDevForm=Palīdzēt + attīstības + veidošanās
+ToGetHelpGoOnSparkAngels1=Daži uzņēmumi var nodrošināt ātru (dažkārt tūlītējas) un efektīvāku tiešsaistes atbalstu, veicot kontroli pār datoru. Šādus palīgi var atrast <b>%s</b> tīmekļa vietnē:
+ToGetHelpGoOnSparkAngels3=Jūs varat arī doties uz sarakstu ar visiem pieejamajiem treneri Dolibarr, šajā klikšķi uz pogas
+ToGetHelpGoOnSparkAngels2=Dažreiz, nav uzņēmums pieejama brīdī jūs veicat meklēšanu, tāpēc domāju, ka mainīt filtru, lai meklētu &quot;visiem pieejamību&quot;. Jums būs iespēja sūtīt vairāk pieprasījumu.
+BackToHelpCenter=Pretējā gadījumā, klikšķiniet šeit, lai dotos <a href="%s">atpakaļ, lai palīdzētu centra mājas lapā</a> .
+LinkToGoldMember=Jūs varat zvanīt vienu no autobusa izraudzītās Dolibarr jūsu valodā (%s), noklikšķinot uz savu logrīku (statuss un maksimālo cenu tiek atjauninātas automātiski):
+PossibleLanguages=Atbalstītās valodas
+MakeADonation=Palīdzība Dolibarr projektu, veikt ziedojumu
+SubscribeToFoundation=Palīdzība Dolibarr projektu, parakstīties fondam
