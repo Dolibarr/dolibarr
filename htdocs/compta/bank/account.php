@@ -582,7 +582,7 @@ if ($id > 0 || ! empty($ref))
 							$banklinestatic->fetch($links[$key]['url_id']);
 							$bankstatic->id=$banklinestatic->fk_account;
 							$bankstatic->label=$banklinestatic->bank_account_label;
-							print ' ('.$langs->trans("From ");
+							print ' ('.$langs->trans("TransferFrom").' ';
 							print $bankstatic->getNomUrl(1,'transactions');
 							print ' '.$langs->trans("toward").' ';
 							$bankstatic->id=$objp->bankid;
@@ -594,7 +594,7 @@ if ($id > 0 || ! empty($ref))
 						{
 							$bankstatic->id=$objp->bankid;
 							$bankstatic->label=$objp->bankref;
-							print ' ('.$langs->trans("From ");
+							print ' ('.$langs->trans("TransferFrom").' ';
 							print $bankstatic->getNomUrl(1,'');
 							print ' '.$langs->trans("toward").' ';
 							$banklinestatic->fetch($links[$key]['url_id']);
