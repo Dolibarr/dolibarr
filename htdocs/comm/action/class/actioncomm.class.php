@@ -611,6 +611,7 @@ class ActionComm extends CommonObject
         $resql=$this->db->query($sql);
         if ($resql)
         {
+            // This assignment in condition is not a bug. It allows walking the results.
             while ($obj=$this->db->fetch_object($resql))
             {
                 $this->nbtodo++;
@@ -933,6 +934,7 @@ class ActionComm extends CommonObject
             if ($resql)
             {
                 // Note: Output of sql request is encoded in $conf->file->character_set_client
+                // This assignment in condition is not a bug. It allows walking the results.
                 while ($obj=$this->db->fetch_object($resql))
                 {
                     $qualified=true;

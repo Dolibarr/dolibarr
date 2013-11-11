@@ -45,7 +45,7 @@ if (! function_exists('json_encode'))
  *
  * @param	string 	$class		Class name
  * @param 	string 	$member		Name of property
- * @return 	string				Return value of static property.
+ * @return 	mixed				Return value of static property
  */
 function getStaticMember($class, $member)
 {
@@ -776,7 +776,7 @@ function dol_strftime($fmt, $ts=false, $is_gmt=false)
  *	Output date in a string format according to outputlangs (or langs if not defined).
  * 	Return charset is always UTF-8, except if encodetoouput is defined. In this case charset is output charset
  *
- *	@param	timestamp	$time        	GM Timestamps date
+ *	@param	int			$time			GM Timestamps date
  *	@param	string		$format      	Output date format
  *										"%d %b %Y",
  *										"%d/%m/%Y %H:%M",
@@ -932,7 +932,7 @@ function dol_print_date($time,$format='',$tzoutput='tzserver',$outputlangs='',$e
  *  WARNING: This function always use PHP server timezone to return locale informations.
  *  Usage must be avoid.
  *
- *	@param	timestamp	$timestamp      Timestamp
+ *	@param	int			$timestamp      Timestamp
  *	@param	boolean		$fast           Fast mode
  *	@return	array						Array of informations
  *										If no fast mode:
@@ -989,7 +989,7 @@ function dol_getdate($timestamp,$fast=false)
  *	@param	int			$year			Year
  *	@param	int			$gm				1=Input informations are GMT values, otherwise local to server TZ
  *	@param	int			$check			0=No check on parameters (Can use day 32, etc...)
- *	@return	timestamp					Date as a timestamp, '' if error
+ *	@return	int					Date as a timestamp, '' if error
  * 	@see 								dol_print_date, dol_stringtotime, dol_getdate
  */
 function dol_mktime($hour,$minute,$second,$month,$day,$year,$gm=false,$check=1)
@@ -1048,7 +1048,7 @@ function dol_mktime($hour,$minute,$second,$month,$day,$year,$gm=false,$check=1)
  * 								'tzserver' => we add the PHP server timezone
  *  							'tzref' => we add the company timezone
  * 								'tzuser' => we add the user timezone
- *	@return timestamp   $date	Timestamp
+ *	@return int   $date	Timestamp
  */
 function dol_now($mode='gmt')
 {
@@ -2920,7 +2920,7 @@ function get_localtax($tva, $local, $thirdparty_buyer="", $thirdparty_seller="")
  *  Instead this function must be called when adding a line to get (array of localtax and type) and
  *  provide it to the function calcul_price_total.
  *
- *  @param		real	$vatrate			VAT Rate
+ *  @param		float	$vatrate			VAT Rate
  *  @param		int		$local              Number of localtax (1 or 2, or 0 to return 1 & 2)
  *  @param		int		$thirdparty         Company object
  *  @return		array    	  				array(localtax_type1(1-6 / 0 if not found), rate of localtax1, ...)

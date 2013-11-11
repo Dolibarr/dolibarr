@@ -8,6 +8,7 @@
  * Copyright (C) 2005      Lionel Cousteix      <etm_ltd@tiscali.co.uk>
  * Copyright (C) 2011      Herve Prot           <herve.prot@symeos.com>
  * Copyright (C) 2013      Philippe Grand       <philippe.grand@atoo-net.com>
+ * Copyright (C) 2013      Alexandre Spangaro   <alexandre.spangaro@gmail.com> 
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,6 +51,7 @@ class User extends CommonObject
 	var $firstname;
 	var $note;
 	var $email;
+  var $skype;
 	var $job;
 	var $signature;
 	var $office_phone;
@@ -140,7 +142,7 @@ class User extends CommonObject
 		$login=trim($login);
 
 		// Get user
-		$sql = "SELECT u.rowid, u.lastname, u.firstname, u.email, u.job, u.signature, u.office_phone, u.office_fax, u.user_mobile,";
+		$sql = "SELECT u.rowid, u.lastname, u.firstname, u.email, u.job, u.skype, u.signature, u.office_phone, u.office_fax, u.user_mobile,";
 		$sql.= " u.admin, u.login, u.note,";
 		$sql.= " u.pass, u.pass_crypted, u.pass_temp,";
 		$sql.= " u.fk_societe, u.fk_socpeople, u.fk_member, u.fk_user, u.ldap_sid,";
@@ -203,6 +205,7 @@ class User extends CommonObject
 				$this->office_fax   = $obj->office_fax;
 				$this->user_mobile  = $obj->user_mobile;
 				$this->email		= $obj->email;
+        $this->skype		= $obj->skype;
 				$this->job			= $obj->job;
 				$this->signature	= $obj->signature;
 				$this->admin		= $obj->admin;
@@ -917,6 +920,7 @@ class User extends CommonObject
 		$this->lastname		= $contact->lastname;
 		$this->firstname	= $contact->firstname;
 		$this->email		= $contact->email;
+    $this->skype 		= $contact->skype;
 		$this->office_phone	= $contact->phone_pro;
 		$this->office_fax	= $contact->fax;
 		$this->user_mobile	= $contact->phone_mobile;
@@ -1110,6 +1114,7 @@ class User extends CommonObject
 		$this->office_fax   = trim($this->office_fax);
 		$this->user_mobile  = trim($this->user_mobile);
 		$this->email        = trim($this->email);
+		$this->skype        = trim($this->skype);
 		$this->job    		= trim($this->job);
 		$this->signature    = trim($this->signature);
 		$this->note         = trim($this->note);
@@ -1145,6 +1150,7 @@ class User extends CommonObject
 		$sql.= ", office_fax = '".$this->db->escape($this->office_fax)."'";
 		$sql.= ", user_mobile = '".$this->db->escape($this->user_mobile)."'";
 		$sql.= ", email = '".$this->db->escape($this->email)."'";
+		$sql.= ", skype = '".$this->db->escape($this->skype)."'";
 		$sql.= ", job = '".$this->db->escape($this->job)."'";
 		$sql.= ", signature = '".$this->db->escape($this->signature)."'";
 		$sql.= ", accountancy_code = '".$this->db->escape($this->accountancy_code)."'";
@@ -1206,6 +1212,7 @@ class User extends CommonObject
 						$adh->societe=(empty($adh->societe) && $this->societe_id ? $this->societe_id : $adh->societe);
 
 						$adh->email=$this->email;
+						$adh->skype=$this->skype;
 						$adh->phone=$this->office_phone;
 						$adh->phone_mobile=$this->user_mobile;
 
@@ -1914,6 +1921,7 @@ class User extends CommonObject
 		if ($this->office_fax && ! empty($conf->global->LDAP_FIELD_FAX))	     $info[$conf->global->LDAP_FIELD_FAX] = $this->office_fax;
 		if ($this->note && ! empty($conf->global->LDAP_FIELD_DESCRIPTION))    $info[$conf->global->LDAP_FIELD_DESCRIPTION] = $this->note;
 		if ($this->email && ! empty($conf->global->LDAP_FIELD_MAIL))          $info[$conf->global->LDAP_FIELD_MAIL] = $this->email;
+    if ($this->skype && ! empty($conf->global->LDAP_FIELD_SKYPE))          $info[$conf->global->LDAP_FIELD_SKYPE] = $this->skype;
 
 		if ($conf->global->LDAP_SERVER_TYPE == 'egroupware')
 		{
@@ -1966,6 +1974,7 @@ class User extends CommonObject
 		$this->firstname='SPECIMEN';
 		$this->note='This is a note';
 		$this->email='email@specimen.com';
+    $this->skype='tom.hanson';
 		$this->office_phone='0999999999';
 		$this->office_fax='0999999998';
 		$this->user_mobile='0999999997';
@@ -2113,6 +2122,7 @@ class User extends CommonObject
 		$this->user_mobile=$ldapuser->{$conf->global->LDAP_FIELD_MOBILE};
 		$this->office_fax=$ldapuser->{$conf->global->LDAP_FIELD_FAX};
 		$this->email=$ldapuser->{$conf->global->LDAP_FIELD_MAIL};
+		$this->skype=$ldapuser->{$conf->global->LDAP_FIELD_SKYPE};
 		$this->ldap_sid=$ldapuser->{$conf->global->LDAP_FIELD_SID};
 
 		$this->job=$ldapuser->{$conf->global->LDAP_FIELD_TITLE};

@@ -398,16 +398,17 @@ function dol_dir_is_emtpy($folder)
 	if (is_dir($newfolder))
 	{
 		$handle = opendir($newfolder);
+        $folder_content = '';
 		while ((gettype($name = readdir($handle)) != "boolean"))
 		{
 			$name_array[] = $name;
 		}
 		foreach($name_array as $temp) $folder_content .= $temp;
 
+        closedir($handle);
+
 		if ($folder_content == "...") return true;
 		else return false;
-
-		closedir($handle);
 	}
 	else
 	return true; // Dir does not exists
@@ -448,7 +449,7 @@ function dol_count_nb_of_line($file)
 /**
  * Return size of a file
  *
- * @param 	tring		$pathoffile		Path of file
+ * @param 	string		$pathoffile		Path of file
  * @return 	string						File size
  */
 function dol_filesize($pathoffile)
@@ -461,7 +462,7 @@ function dol_filesize($pathoffile)
  * Return time of a file
  *
  * @param 	string		$pathoffile		Path of file
- * @return 	timestamp					Time of file
+ * @return 	int					Time of file
  */
 function dol_filemtime($pathoffile)
 {
@@ -830,7 +831,7 @@ function dol_delete_dir_recursive($dir,$count=0,$nophperrors=0)
 /**
  *  Delete all preview files linked to object instance
  *
- *  @param	Object	$object		Object to clean
+ *  @param	object	$object		Object to clean
  *  @return	int					0 if error, 1 if OK
  */
 function dol_delete_preview($object)

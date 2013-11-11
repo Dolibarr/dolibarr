@@ -404,7 +404,7 @@ function agenda_prepare_head()
 /**
  * Prepare array with list of tabs
  *
- * @param   Object	$object		Object related to tabs
+ * @param   object	$object		Object related to tabs
  * @return  array				Array of tabs to shoc
  */
 function actions_prepare_head($object)

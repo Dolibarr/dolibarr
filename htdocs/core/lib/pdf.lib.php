@@ -1512,7 +1512,7 @@ function pdf_getTotalQty($object,$type,$outputlangs)
  *
  * 	@param	object		$object			Object
  * 	@param	Translate	$outputlangs	Object lang for output
- * 	@return	void
+ * 	@return	array   Linked objects
  */
 function pdf_getLinkedObjects($object,$outputlangs)
 {

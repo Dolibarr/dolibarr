@@ -214,7 +214,7 @@ function getTop(theitem){
 		offsetTrail = offsetTrail.offsetParent;
 	}
 	if (navigator.userAgent.indexOf("Mac") != -1 && typeof document.body.leftMargin != "undefined") 
-		offsetLeft += document.body.TopMargin;
+		offsetTop += document.body.TopMargin;
 	return offsetTop;
 }
 
