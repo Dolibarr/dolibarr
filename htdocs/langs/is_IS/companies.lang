@@ -66,6 +66,8 @@ Country=Land
 CountryCode=Landsnúmer
 CountryId=Land id
 Phone=Sími
+# Skype=Skype
+# Call=Call
 PhonePro=Prófessor í síma
 PhonePerso=Pers. Síminn
 PhoneMobile=Mobile
@@ -396,7 +398,7 @@ InActivity=Opnaðu
 ActivityCeased=Lokað
 ActivityStateFilter=Virkni stöðu
 # ProductsIntoElements=List of products into
-# OutstandingBill=Outstanding Bill
+# OutstandingBill=Max. for outstanding bill
 # Monkey
 MonkeyNumRefModelDesc=Fara aftur numero með snið %s yymm-NNNN fyrir kóða viðskiptavina og %s yymm-NNNN fyrir númer birgja þar sem YY er ári, mm er mánuður og NNNN er röð án brot og ekki aftur snúið til 0.
 # Leopard

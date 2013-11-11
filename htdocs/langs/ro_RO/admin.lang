@@ -49,7 +49,7 @@ ErrorReservedTypeSystemSystemAuto=Valorile 'system' și 'systemauto' pentru  tip
 ErrorCodeCantContainZero=Codul nu poate conţine valoarea 0
 DisableJavascript=Dezactivează funcţiile  JavaScript si Ajax
 ConfirmAjax=Utilizaţi pop-up de confirmare  Ajax
-UseSearchToSelectCompany=Folositi un formular de căutare pentru a alege o societate (în loc de a utiliza o listă caseta)
+# UseSearchToSelectCompany=Use autocompletion fields to choose third parties (instead of using a list box).<br><br>Also if you have a large number of third parties (> 100 000), you can increase speed by setting constant COMPANY_DONOTSEARCH_ANYWHERE to 1 in Setup->Other. Search will then be limited to start of string.
 ActivityStateToSelectCompany= Adaugă o opţiune de filtru pentru a afişa / ascunde thirdparties, care sunt în prezent în activitate sau le-a încetat
 UseSearchToSelectContact=Utilizați un câmp cu autocompletare pentru a selecta un contact (în loc de lista derulantă). <br> Rețineți că, dacă aveți un număr mare de contacte (> 100 000), puteți îmbunătăți performanța prin setarea constantei CONTACT_DONOTSEARCH_ANYWHERE  la 1 în Setări-> Diverse. Căutarea se va limita la începutul șirului.
 SearchFilter=Opţiuni filtre de căutare
@@ -368,7 +368,7 @@ ExtrafieldRadio=Radio buton
 ExtrafieldParamHelpselect=Lista de parametri trebuie să fie ca cheie, valoare <br><br> pentru exemplul: <br> 1, valoare1 <br> 2, valoare2 <br> 3, value3 <br> ... <br><br> Pentru a avea listă în funcție de o alta:<br>1,value1|parent_list_code:parent_key<br>2,value2|parent_list_code:parent_key
 ExtrafieldParamHelpcheckbox=Lista de parametri trebuie să fie de tip  cheie, valoare <br><br> pentru exemplul: <br> 1, valoare1 <br> 2, valoare2 <br> 3, value3 <br> ...
 ExtrafieldParamHelpradio=Lista de parametri trebuie să fie de tip  cheie, valoare <br><br> pentru exemplul: <br> 1, valoare1 <br> 2, valoare2 <br> 3, value3 <br> ...
-ExtrafieldParamHelpsellist=Lista de parametri e adusă din tabelul<br><br> pentru exemplul: <br>c_typent:libelle:id<br><br> Pentru a avea lista în funcție de o alta: <br>c_typent:libelle:id:parent_list_code|parent_column
+# ExtrafieldParamHelpsellist=Parameters list have come from table<br><br> for exemple : <br>c_typent:libelle:id::filter<br><br>In order to have the list depending on another :<br>c_typent:libelle:id:parent_list_code|parent_column:filter <br> filter can be a simple test (eg active=1) to display only active value <br> if you want to filter on extrafields use syntaxt  extra.fieldcode=... (where field code is the code of extrafield)
 LibraryToBuildPDF=Librairie utilizată la construirea PDF ului
 WarningUsingFPDF=Atenție: <b>conf.php</b> contine Directiva <b>dolibarr_pdf_force_fpdf = 1.</b> Acest lucru înseamnă că utilizați biblioteca FPDF pentru a genera fișiere PDF. Această bibliotecă este vechi și nu suportă o mulțime de caracteristici (Unicode, transparența imagine, cu litere chirilice, limbi arabe și asiatice, ...), astfel încât este posibil să apară erori în timpul generație PDF. <br> Pentru a rezolva acest lucru și au un suport complet de generare PDF, vă rugăm să descărcați <a href="http://www.tcpdf.org/" target="_blank">biblioteca TCPDF</a> , atunci comentariu sau elimina linia <b>$ dolibarr_pdf_force_fpdf = 1,</b> și se adaugă în schimb <b>$ dolibarr_lib_TCPDF_PATH = &#39;path_to_TCPDF_dir&#39;</b>
 LocalTaxDesc=Unele țări aplică 2 sau 3 impozitele la fiecare linie de factura. Dacă este cazul, alege tipul de al doilea și al treilea de taxă și ratele lor. Tipuri posibile sunt: <br> 1: Taxa hoteliera se aplică pe produse și servicii, fără TVA (TVA nu este aplicată la taxa locala) <br> 2: taxa locala aplica pe produse și servicii fără TVA (TVA-ul este calculat la suma + localtax) <br> 3: Taxa locală se aplică la produsele fara TVA (TVA nu se aplică la taxa locala) <br> 4: Taxa locală se aplică la produsele fără TVA (TVA-ul este calculat la suma + localtax) <br> 5: Taxa locală  se aplică pe servicii fara TVA (TVA nu este aplicată la taxa locala) <br> 6: TTaxa locală  se aplică pe servicii fără TVA (TVA-ul este calculat la suma + localtax)
@@ -379,6 +379,7 @@ LinkToTest=Link accesibil generat pentru utilizatorul <strong>% s</strong> (face
 KeepEmptyToUseDefault=Lasă gol pentru utilizarea valorii implicite
 DefaultLink=Link implicit
 ValueOverwrittenByUserSetup=Atenție, această valoare poate fi suprascrisă de setările specifice utilizatorului (fiecare utilizator poate seta propriul url clicktodial)
+# ExternalModule=External module - Installed into directory %s
 
 # Modules
 Module0Name=Utilizatori & grupuri
@@ -486,6 +487,8 @@ Module2700Desc= Folosiţi serviciul online Gravatar (www.gravatar.com) pentru a 
 Module2800Desc=FTP Client
 Module2900Name= GeoIPMaxmind
 Module2900Desc= GeoIP conversii Maxmind capacităţile
+# Module3100Name= Skype
+# Module3100Desc= Add a Skype button into card of adherents / third parties / contacts
 Module5000Name=Multi-societate
 Module5000Desc=Vă permite să administraţi mai multe companii
 Module6000Name=Flux de lucru
@@ -971,6 +974,8 @@ ExtraFieldsThirdParties=Atribute complementare ( terţi)
 ExtraFieldsContacts=Atribute complementare (contact/addresă )
 ExtraFieldsMember=Atribute complementare (membri)
 ExtraFieldsMemberType=Atribute complementare (tip membri)
+# ExtraFieldsCustomerOrders=Complementary attributes (orders)
+# ExtraFieldsCustomerInvoices=Complementary attributes (invoices)
 ExtraFieldsSupplierOrders=Atribute complementare (comenzi)
 ExtraFieldsSupplierInvoices=Atribute complementare (facturi)
 ExtraFieldsProject=Atribute complementare (proiecte)
@@ -1002,6 +1007,7 @@ BrowserIsKO=Folosiţi  browser-ul % s. Acest browser-ul pare a fi o alegere proa
 XDebugInstalled=XDebug este încărcată.
 XCacheInstalled=XCache este încărcată.
 AddRefInList=Afişează referinţele clienţilor şi furnizorilor într-o listă ( selectează lista sau casutele ) si in plus a  linkurilor.
+# FieldEdition=Edition of field %s
 ##### Module password generation
 PasswordGenerationStandard=Întoarceţi-vă o parolă generate în funcţie de interne Dolibarr algoritmul: 8 caractere care conţin numere în comun şi în caractere minuscule.
 PasswordGenerationNone=Nu sugerează orice generate parola. Parola trebuie să fie de tip în manual.

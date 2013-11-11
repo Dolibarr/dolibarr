@@ -155,6 +155,7 @@ Valid=صحيح
 Approve=الموافقة
 ReOpen=إعادة فتح
 Upload=ارسال الملف
+# ToLink=Link
 Select=رتخا
 Choose=يختار
 ChooseLangage=من فضلك اختر اللغة
@@ -658,6 +659,8 @@ BySalesRepresentative=بواسطة مندوب مبيعات
 # toward=toward
 # Access=Access
 # HelpCopyToClipboard=Use Ctrl+C to copy to clipboard
+# SaveUploadedFileWithMask=Save file on server with name "<strong>%s</strong>" (otherwise "%s")
+# OriginFileName=Nom d'origine
 
 # Week day
 Monday=يوم الاثنين

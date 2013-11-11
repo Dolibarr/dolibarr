@@ -124,9 +124,9 @@ ErrorToConnectToMysqlCheckInstance=Veritabanına bağlanılamadı. Mysql sunucus
 ErrorFailedToAddContact=Kişi eklenmesinde hata
 ErrorDateMustBeBeforeToday=Tarih bugünden büyük olamaz
 ErrorPaymentModeDefinedToWithoutSetup=Bir ödeme biçimi %s türüne ayarlanmış, ancak fatura modülü ayarı bu ödeme biçimi için tanımlanan bilgiyi gösterecek tamamlanmamış.
-# ErrorPHPNeedModule=Error, your PHP must have module <b>%s</b> installed to use this feature.
-# ErrorOpenIDSetupNotComplete=You setup Dolibarr config file to allow OpenID authentication, but URL of OpenID service is not defined into constant %s
-# ErrorWarehouseMustDiffers=Source and target warehouses must differs
+ErrorPHPNeedModule=Hata, bu özelliği kulanmak için PHP nizde <b>%s</b> modülü kurulu olmalıdır.
+ErrorOpenIDSetupNotComplete=Dolibarr yapılandırma dosyasını OpenID kimlik doğrulamaya izin verecek şekilde ayarladınız, ancak OpenID hizmetine ait URL, %s değişmezine tanımlanmamıştır
+ErrorWarehouseMustDiffers=Kaynak ve hedef depo farklı olmalıdır
 
 # Warnings
 WarningMandatorySetupNotComplete=Zorunlu kurulum parametreleri henüz tanımlanmamış

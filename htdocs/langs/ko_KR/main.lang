@@ -155,6 +155,7 @@ ErrorOnlyPngJpgSupported=오류, .png 및 .jpg 이미지 파일 양식만을 지
 # Approve=Approve
 # ReOpen=Re-Open
 # Upload=Send file
+# ToLink=Link
 # Select=Select
 # Choose=Choose
 # ChooseLangage=Please choose your language
@@ -658,6 +659,8 @@ ErrorOnlyPngJpgSupported=오류, .png 및 .jpg 이미지 파일 양식만을 지
 # toward=toward
 # Access=Access
 # HelpCopyToClipboard=Use Ctrl+C to copy to clipboard
+# SaveUploadedFileWithMask=Save file on server with name "<strong>%s</strong>" (otherwise "%s")
+# OriginFileName=Nom d'origine
 
 # Week day
 Monday=월요일
