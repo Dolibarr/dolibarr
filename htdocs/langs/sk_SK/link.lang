@@ -1,0 +1,18 @@
+/*
+ * Language code: sk_SK
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2013-11-08 23:25:26
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2013-11-08 23:25:26).
+// Reference language: en_US -> sk_SK
+LinkANewFile=Prepojenie nový súbor / dokument
+LinkedFiles=Prepojené súbory a dokumenty
+NoLinkFound=Žiadny registrovaný odkazy
+LinkComplete=Súbor bol úspešne pripojil
+ErrorFileNotLinked=Súbor nemohol byť spojená
+LinkRemoved=Odkaz %s bol odstránený
+ErrorFailedToDeleteLink=Nepodarilo sa odstrániť odkaz <b>&quot;%s&quot;</b>
+ErrorFailedToUpdateLink=Nepodarilo sa aktualizovať odkaz <b>&quot;%s&quot;</b>
+// STOP - Lines generated via autotranslator.php tool (2013-11-08 23:35:10).

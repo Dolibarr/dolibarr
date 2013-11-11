@@ -398,16 +398,17 @@ function dol_dir_is_emtpy($folder)
 	if (is_dir($newfolder))
 	{
 		$handle = opendir($newfolder);
+        $folder_content = '';
 		while ((gettype($name = readdir($handle)) != "boolean"))
 		{
 			$name_array[] = $name;
 		}
 		foreach($name_array as $temp) $folder_content .= $temp;
 
+        closedir($handle);
+
 		if ($folder_content == "...") return true;
 		else return false;
-
-		closedir($handle);
 	}
 	else
 	return true; // Dir does not exists
@@ -448,7 +449,7 @@ function dol_count_nb_of_line($file)
 /**
  * Return size of a file
  *
- * @param 	tring		$pathoffile		Path of file
+ * @param 	string		$pathoffile		Path of file
  * @return 	string						File size
  */
 function dol_filesize($pathoffile)
@@ -461,7 +462,7 @@ function dol_filesize($pathoffile)
  * Return time of a file
  *
  * @param 	string		$pathoffile		Path of file
- * @return 	timestamp					Time of file
+ * @return 	int					Time of file
  */
 function dol_filemtime($pathoffile)
 {
@@ -830,7 +831,7 @@ function dol_delete_dir_recursive($dir,$count=0,$nophperrors=0)
 /**
  *  Delete all preview files linked to object instance
  *
- *  @param	Object	$object		Object to clean
+ *  @param	object	$object		Object to clean
  *  @return	int					0 if error, 1 if OK
  */
 function dol_delete_preview($object)
@@ -995,9 +996,10 @@ function dol_init_file_process($pathtoscan='')
  * @param	int		$donotupdatesession		1=Do no edit _SESSION variable
  * @param	string	$varfiles				_FILES var name
  * @param	string	$savingdocmask			Mask to use to define output filename. For example 'XXXXX-__YYYYMMDD__-__file__'
+ * @param	string	$link					Link to add
  * @return	void
  */
-function dol_add_file_process($upload_dir, $allowoverwrite=0, $donotupdatesession=0, $varfiles='addedfile', $savingdocmask='')
+function dol_add_file_process($upload_dir, $allowoverwrite=0, $donotupdatesession=0, $varfiles='addedfile', $savingdocmask='', $link=null)
 {
 	global $db,$user,$conf,$langs;
 
@@ -1052,6 +1054,23 @@ function dol_add_file_process($upload_dir, $allowoverwrite=0, $donotupdatesessio
 				{
 					setEventMessage($langs->trans($resupload), 'errors');
 				}
+			}
+		}
+	} elseif ($link) {
+		if (dol_mkdir($upload_dir) >= 0) {
+			require_once DOL_DOCUMENT_ROOT . '/link/class/link.class.php';
+			$linkObject = new Link($db);
+			$linkObject->entity = $conf->entity;
+			$linkObject->url = $link;
+			$linkObject->objecttype = GETPOST('objecttype', 'alpha');
+			$linkObject->objectid = GETPOST('objectid', 'int');
+			$linkObject->label = GETPOST('label', 'alpha');
+			$res = $linkObject->create($user);
+			$langs->load('link');
+			if ($res > 0) {
+				setEventMessage($langs->trans("LinkComplete"));
+			} else {
+				setEventMessage($langs->trans("ErrorFileNotLinked"), 'errors');
 			}
 		}
 	}

@@ -503,13 +503,13 @@ class FormCompany
 	/**
 	 *    Return list of third parties
 	 *
-	 *  @param  Object		$object         Object we try to find contacts
+	 *  @param  object		$object         Object we try to find contacts
 	 *  @param  string		$var_id         Name of id field
 	 *  @param  string		$selected       Pre-selected third party
 	 *  @param  string		$htmlname       Name of HTML form
 	 * 	@param	array		$limitto		Disable answers that are not id in this array list
 	 *  @param	int			$forceid		This is to force another object id than object->id
-	 * 	@return	void
+	 * 	@return int The selected third party ID
 	 * 	TODO obsolete ?
 	 * 	cette fonction doit utiliser du javascript quoi qu'il en soit !
 	 * 	autant utiliser le système combobox sans rechargement de page non ?
@@ -616,7 +616,7 @@ class FormCompany
     /**
      *  Return a select list with types of contacts
      *
-     *  @param	Object		$object         Object to use to find type of contact
+     *  @param	object		$object         Object to use to find type of contact
      *  @param  string		$selected       Default selected value
      *  @param  string		$htmlname		HTML select name
      *  @param  string		$source			Source ('internal' or 'external')

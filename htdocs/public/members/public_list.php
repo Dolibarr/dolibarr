@@ -92,7 +92,7 @@ $filter=GETPOST('filter');
 $statut=GETPOST('statut');
 
 if (! $sortorder) {  $sortorder="ASC"; }
-if (! $sortfield) {  $sortfield="nom"; }
+if (! $sortfield) {  $sortfield="lastname"; }
 
 
 /*

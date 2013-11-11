@@ -688,54 +688,53 @@ class ExtraFields
 			{
 				$param_list=array_keys($param['options']);
 				$InfoFieldList = explode(":", $param_list[0]);
+				// 0 : tableName
+				// 1 : label field name
+				// 2 : key fields name (if differ of rowid)
+				// 3 : key field parent (for dependent lists)
+				// 4 : where clause filter on column or table extrafield, syntax field='value' or extra.field=value
+				$keyList=(empty($InfoFieldList[2])?'rowid':$InfoFieldList[2].' as rowid');
 
-				// 0 1 : tableName
-				// 1 2 : label field name Nom du champ contenant le libelle
-				// 2 3 : key fields name (if differ of rowid)
-				// 3 4 : key field parent (for dependent lists)
-				// 4 5 : where clause filter on column or table extrafield, syntax field='value' or extra.field=value
-				
-
-				$keyList='rowid';
-
-				if (count($InfoFieldList)>=3) {
+				if (count($InfoFieldList) > 3 && ! empty($InfoFieldList[3]))
+				{
 					list($parentName, $parentField) = explode('|', $InfoFieldList[3]);
 					$keyList.= ', '.$parentField;
 				}
-				if (count($InfoFieldList)>=4 && !empty($InfoFieldList[4])) {
-					if (strpos($InfoFieldList[4], 'extra.')!==false) {
+				if (count($InfoFieldList) > 4 && ! empty($InfoFieldList[4]))
+				{
+					if (strpos($InfoFieldList[4], 'extra.') !== false)
+					{
 						$keyList='main.'.$InfoFieldList[2].' as rowid';
-					}else {
+					} else {
 						$keyList=$InfoFieldList[2].' as rowid';
 					}
 				}
-				
 
 				$fields_label = explode('|',$InfoFieldList[1]);
-				if(is_array($fields_label)) {
+				if (is_array($fields_label))
+				{
 					$keyList .=', ';
 					$keyList .= implode(', ', $fields_label);
 				}
 
-				$fields_label = explode('|',$InfoFieldList[1]);
-				if(is_array($fields_label)) {
-					$keyList .=', ';
-					$keyList .= implode(', ', $fields_label);
-				}
-
+				$sqlwhere='';
 				$sql = 'SELECT '.$keyList;
 				$sql.= ' FROM '.MAIN_DB_PREFIX .$InfoFieldList[0];
-				if (!empty($InfoFieldList[4])) {
-						
+				if (!empty($InfoFieldList[4]))
+				{
 					//We have to join on extrafield table
-					if (strpos($InfoFieldList[4], 'extra')!==false) {
+					if (strpos($InfoFieldList[4], 'extra')!==false)
+					{
 						$sql.= ' as main, '.MAIN_DB_PREFIX .$InfoFieldList[0].'_extrafields as extra';
-						$sql.= ' WHERE  extra.fk_object=main.'.$InfoFieldList[2]. ' AND '.$InfoFieldList[4];
-					}else {
-						$sql.= ' WHERE '.$InfoFieldList[4];
+						$sqlwhere.= ' AND extra.fk_object=main.'.$InfoFieldList[2]. ' AND '.$InfoFieldList[4];
+					}
+					else
+					{
+						$sqlwhere.= ' AND '.$InfoFieldList[4];
 					}
 				}
-				//$sql.= ' WHERE entity = '.$conf->entity;
+				if (in_array($InfoFieldList[0],array('tablewithentity'))) $sqlwhere.= ' AND entity = '.$conf->entity;	// Some tables may have field, some other not. For the moment we disable it.
+				$sql.=preg_replace('/^ AND /','',$sqlwhere);
 				//print $sql;
 
 				dol_syslog(get_class($this).'::showInputField type=sellist sql='.$sql);
@@ -806,6 +805,9 @@ class ExtraFields
 						$i++;
 					}
 					$this->db->free($resql);
+				}
+				else {
+					print 'Error in request '.$sql.' '.$this->db->lasterror().'. Check setup of extra parameters.<br>';
 				}
 			}
 			$out.='</select>';
@@ -1005,13 +1007,14 @@ class ExtraFields
 	}
 
 	/**
-	 * Fill array_options array for object by extrafields value (using for data send by forms)
+	 * Fill array_options property of object by extrafields value (using for data sent by forms)
 	 *
 	 * @param   array	$extralabels    $array of extrafields
-	 * @param   object	&$object         object
+	 * @param   object	&$object        Object
+	 * @param	string	$onlykey		Only following key is filled
 	 * @return	int						1 if array_options set / 0 if no value
 	 */
-	function setOptionalsFromPost($extralabels,&$object)
+	function setOptionalsFromPost($extralabels,&$object,$onlykey='')
 	{
 		global $_POST, $langs;
 		$nofillrequired='';// For error when required field left blank
@@ -1022,6 +1025,8 @@ class ExtraFields
 			// Get extra fields
 			foreach ($extralabels as $key => $value)
 			{
+				if (! empty($onlykey) && $key != $onlykey) continue;
+
 				$key_type = $this->attribute_type[$key];
 				if($this->attribute_required[$key] && !GETPOST("options_$key",2))
 				{

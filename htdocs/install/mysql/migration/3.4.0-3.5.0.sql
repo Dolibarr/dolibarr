@@ -90,6 +90,17 @@ create table llx_categorie_contact
   import_key    varchar(14)
 )ENGINE=innodb;
 
+create table llx_links
+(
+  rowid             INTEGER AUTO_INCREMENT PRIMARY KEY,
+  entity            INTEGER DEFAULT 1 NOT NULL,     -- multi company id
+  datea             DATETIME NOT NULL,              -- date start
+  url               VARCHAR(255) NOT NULL,          -- link url
+  label             VARCHAR(255) NOT NULL,          -- link label
+  objecttype        VARCHAR(255) NOT NULL,          -- object type in Dolibarr
+  objectid          INTEGER NOT NULL
+)ENGINE=innodb;
+
 
 ALTER TABLE llx_categorie_contact ADD PRIMARY KEY pk_categorie_contact (fk_categorie, fk_socpeople);
 ALTER TABLE llx_categorie_contact ADD INDEX idx_categorie_contact_fk_categorie (fk_categorie);
@@ -331,3 +342,9 @@ create table llx_actioncomm_resources
 ) ENGINE=innodb;
 ALTER TABLE llx_actioncomm_resources ADD UNIQUE INDEX idx_actioncomm_resources_idx1 (fk_actioncomm, element_type, fk_element);
 ALTER TABLE llx_actioncomm_resources ADD INDEX idx_actioncomm_resources_fk_element (fk_element);
+
+-- Task 157
+ALTER TABLE llx_user ADD skype VARCHAR(255) AFTER job;
+ALTER TABLE llx_socpeople ADD skype VARCHAR(255) AFTER jabberid;
+ALTER TABLE llx_societe ADD skype VARCHAR(255) AFTER email;
+ALTER TABLE llx_adherent ADD skype VARCHAR(255) AFTER email;

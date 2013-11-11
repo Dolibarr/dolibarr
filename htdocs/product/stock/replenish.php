@@ -215,7 +215,7 @@ $sql.= ' GROUP BY p.rowid, p.ref, p.label, p.price';
 $sql.= ', p.price_ttc, p.price_base_type,p.fk_product_type, p.tms';
 $sql.= ', p.duration, p.tobuy, p.seuil_stock_alerte';
 $sql.= ', p.desiredstock, s.fk_product';
-$sql.= ' HAVING p.desiredstock > SUM('.$db->ifsql("s.reel IS NULL", "s.reel", "0").')';
+$sql.= ' HAVING p.desiredstock > SUM('.$db->ifsql("s.reel IS NULL", "0", "s.reel").')';
 $sql.= ' AND p.desiredstock > 0';
 if ($salert == 'on')	// Option to see when stock is lower than alert
 {

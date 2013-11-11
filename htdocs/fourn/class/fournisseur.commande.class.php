@@ -355,7 +355,7 @@ class CommandeFournisseur extends CommonOrder
                 if (preg_match('/^[\(]?PROV/i', $this->ref))
                 {
                     // On renomme repertoire ($this->ref = ancienne ref, $num = nouvelle ref)
-                    // afin de ne pas perdre les fichiers attaches
+                    // in order not to lose the attached files
                     $oldref = dol_sanitizeFileName($this->ref);
                     $newref = dol_sanitizeFileName($num);
                     $dirsource = $conf->fournisseur->dir_output.'/commande/'.$oldref;

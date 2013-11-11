@@ -5,6 +5,7 @@
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
  * Copyright (C) 2013      Florian Henry		  	<florian.henry@open-concept.pro>
+ * Copyright (C) 2013      Alexandre Spangaro 	<alexandre.spangaro@gmail.com> 
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -168,13 +169,14 @@ if (empty($reshook))
         $object->town			= $_POST["town"];
         $object->country_id		= $_POST["country_id"];
         $object->state_id       = $_POST["state_id"];
+        $object->skype			= $_POST["skype"];
         $object->email			= $_POST["email"];
         $object->phone_pro		= $_POST["phone_pro"];
         $object->phone_perso	= $_POST["phone_perso"];
         $object->phone_mobile	= $_POST["phone_mobile"];
         $object->fax			= $_POST["fax"];
         $object->jabberid		= $_POST["jabberid"];
-		$object->no_email		= $_POST["no_email"];
+		    $object->no_email		= $_POST["no_email"];
         $object->priv			= $_POST["priv"];
         $object->note_public	= GETPOST("note_public");
         $object->note_private	= GETPOST("note_private");
@@ -268,6 +270,7 @@ if (empty($reshook))
             $object->country_id		= $_POST["country_id"];
 
             $object->email			= $_POST["email"];
+            $object->skype			= $_POST["skype"];
             $object->phone_pro		= $_POST["phone_pro"];
             $object->phone_perso	= $_POST["phone_perso"];
             $object->phone_mobile	= $_POST["phone_mobile"];
@@ -514,7 +517,7 @@ else
             	print '<td>'.$langs->trans("No_Email").'</td><td>'.$form->selectyesno('no_email',(isset($_POST["no_email"])?$_POST["no_email"]:$object->no_email), 1).'</td>';
             }
             else
-			{
+			      {
           		print '<td colspan="2">&nbsp;</td>';
             }
             print '</tr>';
@@ -522,6 +525,12 @@ else
             // Instant message and no email
             print '<tr><td>'.$langs->trans("IM").'</td><td colspan="3"><input name="jabberid" type="text" size="50" maxlength="80" value="'.(isset($_POST["jabberid"])?$_POST["jabberid"]:$object->jabberid).'"></td></tr>';
 
+            // Skype
+            if (! empty($conf->skype->enabled))
+            {   
+                print '<tr><td>'.$langs->trans("Skype").'</td><td colspan="3"><input name="skype" type="text" size="50" maxlength="80" value="'.(isset($_POST["skype"])?$_POST["skype"]:$object->skype).'"></td></tr>';
+            }
+            
             // Visibility
             print '<tr><td>'.$langs->trans("ContactVisibility").'</td><td colspan="3">';
             $selectarray=array('0'=>$langs->trans("ContactPublic"),'1'=>$langs->trans("ContactPrivate"));
@@ -712,7 +721,7 @@ else
             print '</tr>';
 
             // Jabberid
-            print '<tr><td>Jabberid</td><td><input name="jabberid" type="text" size="40" maxlength="80" value="'.(isset($_POST["jabberid"])?$_POST["jabberid"]:$object->jabberid).'"></td>';
+            print '<tr><td>'.$langs->trans("Jabberid").'</td><td><input name="jabberid" type="text" size="40" maxlength="80" value="'.(isset($_POST["jabberid"])?$_POST["jabberid"]:$object->jabberid).'"></td>';
             if (! empty($conf->mailing->enabled))
             {
             	print '<td>'.$langs->trans("No_Email").'</td><td>'.$form->selectyesno('no_email',(isset($_POST["no_email"])?$_POST["no_email"]:$object->no_email), 1).'</td>';
@@ -722,7 +731,13 @@ else
 				print '<td colspan="2">&nbsp;</td>';
 			}
             print '</tr>';
-
+            
+            // Skype
+            if (! empty($conf->skype->enabled))
+            {
+                print '<tr><td>'.$langs->trans("Skype").'</td><td><input name="skype" type="text" size="40" maxlength="80" value="'.(isset($_POST["skype"])?$_POST["skype"]:$object->skype).'"></td></tr>';
+            }
+            
             // Visibility
             print '<tr><td>'.$langs->trans("ContactVisibility").'</td><td colspan="3">';
             $selectarray=array('0'=>$langs->trans("ContactPublic"),'1'=>$langs->trans("ContactPrivate"));
@@ -935,6 +950,12 @@ else
 	       	print '<td colspan="2">&nbsp;</td>';
         }
         print '</tr>';
+        
+        // Skype
+        if (!empty($conf->skype->enabled))
+        {
+            print '<tr><td>'.$langs->trans("Skype").'</td><td colspan="3">'.dol_print_skype($object->skype,0,$object->fk_soc,1).'</td></tr>';
+        }
 
         print '<tr><td>'.$langs->trans("ContactVisibility").'</td><td colspan="3">';
         print $object->LibPubPriv($object->priv);

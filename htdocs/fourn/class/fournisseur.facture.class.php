@@ -897,7 +897,7 @@ class FactureFournisseur extends CommonInvoice
             	if (preg_match('/^[\(]?PROV/i', $this->ref))
             	{
             		// On renomme repertoire facture ($this->ref = ancienne ref, $num = nouvelle ref)
-            		// afin de ne pas perdre les fichiers attaches
+            		// in order not to lose the attached files
             		$facref = dol_sanitizeFileName($this->ref);
             		$snumfa = dol_sanitizeFileName($num);
 
