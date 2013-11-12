@@ -117,4 +117,4 @@ HierarchicalResponsible=Responsable jerárquico
 HierarchicView=Vista jerárquica
 UseTypeFieldToChange=Modificar el campo Tipo para cambiar
 OpenIDURL=Dirección OpenID
-# LoginUsingOpenID=Use OpenID to login
+LoginUsingOpenID=Usar OpenID para iniciar sesión

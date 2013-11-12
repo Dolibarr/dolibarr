@@ -155,7 +155,7 @@ Valid=Validar
 Approve=Aprobar
 ReOpen=Reabrir
 Upload=Enviar archivo
-# ToLink=Link
+ToLink=Enlace
 Select=Seleccionar
 Choose=Elegir
 ChooseLangage=Elegir su idioma
@@ -657,10 +657,10 @@ HomeDashboard=Resumen
 Deductible=Deducible
 from=de
 toward=hacia
-# Access=Access
+Access=Acceso
 HelpCopyToClipboard=Use Ctrl+C para copiar al portapapeles
-# SaveUploadedFileWithMask=Save file on server with name "<strong>%s</strong>" (otherwise "%s")
-# OriginFileName=Nom d'origine
+SaveUploadedFileWithMask=Guardar el archivo con el nombre "<strong>%s</strong>" (sino "%s")
+OriginFileName=Nombre del archivo origen
 
 # Week day
 Monday=Lunes

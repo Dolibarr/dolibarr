@@ -108,4 +108,4 @@ NbOfProductBeforePeriod=Cantidad de producto %s en stock antes del periodo selec
 NbOfProductAfterPeriod=Cantidad de producto %s en stock después del periodo seleccionado (< %s)
 MassStockMovement=Movimiento de stock masivo
 SelectProductInAndOutWareHouse=Seleccione un producto, una cantidad, un almacén de origen y un almacén de destino, después pulse "%s". Una vez esto sea realizado para todos los movimientos requeridos, pulse en "%s".
-# RecordMovement=Record transfert
+RecordMovement=Registrar transferencias
