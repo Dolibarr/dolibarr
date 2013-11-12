@@ -47,6 +47,8 @@ $search_town        = GETPOST("search_town");
 $search_state       = GETPOST("search_state");
 $search_datec       = GETPOST("search_datec");
 $search_categ       = GETPOST("search_categ",'int');
+$search_status		= GETPOST("search_status",'int');
+if ($search_status=='') $search_status=1; // always display activ customer first
 $catid              = GETPOST("catid",'int');
 
 $sortfield = GETPOST("sortfield",'alpha');
@@ -173,6 +175,7 @@ if ($action == 'cstc')
  */
 
 $formother=new FormOther($db);
+$form=new Form($db);
 
 $sql = "SELECT s.rowid, s.nom, s.zip, s.town, s.datec, s.datea, s.status as status,";
 $sql.= " st.libelle as stcomm, s.prefix_comm, s.fk_stcomm, s.fk_prospectlevel,";
@@ -205,6 +208,7 @@ if ($search_state) {
 	$sql .= natural_search('d.nom', $search_state);
 }
 if ($search_datec) $sql .= " AND s.datec LIKE '%".$db->escape($search_datec)."%'";
+if ($search_status!='') $sql .= " AND s.status = ".$db->escape($search_status);
 // Insert levels filters
 if ($search_levels)
 {
@@ -231,7 +235,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 
 $sql.= " ORDER BY $sortfield $sortorder, s.nom ASC";
 $sql.= $db->plimit($conf->liste_limit+1, $offset);
-
+dol_syslog('comm/prospect/list.php sql='.$sql,LOG_DEBUG);
 $resql = $db->query($sql);
 if ($resql)
 {
@@ -265,6 +269,7 @@ if ($resql)
  	if ($search_level_to != '') $param.='&amp;search_level_to='.$search_level_to;
  	if ($search_categ != '') $param.='&amp;search_categ='.$search_categ;
  	if ($search_sale != '') $param.='&amp;search_sale='.$search_sale;
+ 	if ($search_status != '') $param.='&amp;search_status='.$search_status;
  	// $param and $urladd should have the same value
  	$urladd = $param;
 
@@ -306,7 +311,8 @@ if ($resql)
 	print_liste_field_titre($langs->trans("ProspectLevelShort"),$_SERVER["PHP_SELF"],"s.fk_prospectlevel","",$param,'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("StatusProsp"),$_SERVER["PHP_SELF"],"s.fk_stcomm","",$param,'align="center"',$sortfield,$sortorder);
 	print '<td class="liste_titre">&nbsp;</td>';
-    print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"s.status","",$param,'align="right"',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"s.status","",$param,'align="center"',$sortfield,$sortorder);
+    print '<td class="liste_titre">&nbsp;</td>';
 
     $parameters=array();
     $formconfirm=$hookmanager->executeHooks('printFieldListTitle',$parameters);    // Note that $action and $object may have been modified by hook
@@ -368,6 +374,10 @@ if ($resql)
     print '&nbsp;';
     print '</td>';
 
+    print '<td class="liste_titre" align="center">';
+     print $form->selectarray('search_status', array('0'=>$langs->trans('ActivityCeased'),'1'=>$langs->trans('InActivity')),$search_status);
+    print '</td>';
+
     // Print the search button
     print '<td class="liste_titre" align="right">';
 	print '<input class="liste_titre" name="button_search" type="image" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
@@ -425,9 +435,10 @@ if ($resql)
 		}
 		print '</td>';
 
-        print '<td align="right">';
+        print '<td align="center">';
 		print $prospectstatic->LibStatut($prospectstatic->status,3);
         print '</td>';
+        print '<td></td>';
 
         $parameters=array('obj' => $obj);
         $formconfirm=$hookmanager->executeHooks('printFieldListValue',$parameters);    // Note that $action and $object may have been modified by hook
