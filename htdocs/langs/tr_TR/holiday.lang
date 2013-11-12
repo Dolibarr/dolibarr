@@ -87,7 +87,7 @@ FirstDayOfHoliday=Tatilin ilk günü
 LastDayOfHoliday=Tatilin son günü
 HolidaysMonthlyUpdate=Aylık güncelleme
 ManualUpdate=Elle güncelleme
-# HolidaysCancelation=Holidays cancelation
+HolidaysCancelation=Tatil iptali
 
 ## Configuration du Module ##
 ConfCP=Tatil modülünün yapılandırılması

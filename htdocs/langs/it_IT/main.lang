@@ -155,6 +155,7 @@ Valid=Convalida
 Approve=Approva
 ReOpen=Riapri
 Upload=Invia file
+# ToLink=Link
 Select=Seleziona
 Choose=Scegli
 ChooseLangage=Scegli la lingua
@@ -656,8 +657,10 @@ HomeDashboard=Sommario principale
 Deductible=Deducibile
 from=da
 toward=verso
-# Access=Access
-# HelpCopyToClipboard=Use Ctrl+C to copy to clipboard
+Access=Accesso
+HelpCopyToClipboard=Usa Ctrl+C per copiare negli appunti
+# SaveUploadedFileWithMask=Save file on server with name "<strong>%s</strong>" (otherwise "%s")
+# OriginFileName=Nom d'origine
 
 # Week day
 Monday=Lunedì

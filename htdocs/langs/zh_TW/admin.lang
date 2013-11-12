@@ -49,7 +49,7 @@ DictionnarySetup=設定選項清單
 # ErrorCodeCantContainZero=Code can't contain value 0
 DisableJavascript=禁用JavaScript和Ajax功能
 ConfirmAjax=使用Ajax確認彈出式窗口
-UseSearchToSelectCompany=使用自動完成欄位資訊的方式，來選擇客戶/供應商(而不是使用清單方式)<br><br>如果你有大於100000筆的客戶/供應商資訊，則可以藉由修改COMPANY_DONOTSEARCH_ANYWHERE常數為 1 來加快速度。此常數可以在設定->其他設置中設定。 這樣在搜尋的時候會被限制為字串開始輸入時。
+# UseSearchToSelectCompany=Use autocompletion fields to choose third parties (instead of using a list box).<br><br>Also if you have a large number of third parties (> 100 000), you can increase speed by setting constant COMPANY_DONOTSEARCH_ANYWHERE to 1 in Setup->Other. Search will then be limited to start of string.
 ActivityStateToSelectCompany= 添加一個篩選器的選項，以顯示/隱藏thirdparties，這是在目前的活動或已停止
 # UseSearchToSelectContact=Use autocompletion fields to choose contact (instead of using a list box).<br><br>Also if you have a large number of third parties (> 100 000), you can increase speed by setting constant CONTACT_DONOTSEARCH_ANYWHERE to 1 in Setup->Other. Search will then be limited to start of string.
 SearchFilter=搜尋過濾選項
@@ -368,7 +368,7 @@ ExtrafieldPrice = 價格
 # ExtrafieldParamHelpselect=Parameters list have to be like key,value<br><br> for exemple : <br>1,value1<br>2,value2<br>3,value3<br>...<br><br>In order to have the list depending on another :<br>1,value1|parent_list_code:parent_key<br>2,value2|parent_list_code:parent_key
 # ExtrafieldParamHelpcheckbox=Parameters list have to be like key,value<br><br> for exemple : <br>1,value1<br>2,value2<br>3,value3<br>...
 # ExtrafieldParamHelpradio=Parameters list have to be like key,value<br><br> for exemple : <br>1,value1<br>2,value2<br>3,value3<br>...
-# ExtrafieldParamHelpsellist=Parameters list have come from table<br><br> for exemple : <br>c_typent:libelle:id<br><br>In order to have the list depending on another :<br>c_typent:libelle:id:parent_list_code|parent_column
+# ExtrafieldParamHelpsellist=Parameters list have come from table<br><br> for exemple : <br>c_typent:libelle:id::filter<br><br>In order to have the list depending on another :<br>c_typent:libelle:id:parent_list_code|parent_column:filter <br> filter can be a simple test (eg active=1) to display only active value <br> if you want to filter on extrafields use syntaxt  extra.fieldcode=... (where field code is the code of extrafield)
 # LibraryToBuildPDF=Library used to build PDF
 # WarningUsingFPDF=Warning: Your <b>conf.php</b> contains directive <b>dolibarr_pdf_force_fpdf=1</b>. This means you use the FPDF library to generate PDF files. This library is old and does not support a lot of features (Unicode, image transparency, cyrillic, arab and asiatic languages, ...), so you may experience errors during PDF generation.<br>To solve this and have a full support of PDF generation, please download <a href="http://www.tcpdf.org/" target="_blank">TCPDF library</a>, then comment or remove the line <b>$dolibarr_pdf_force_fpdf=1</b>, and add instead <b>$dolibarr_lib_TCPDF_PATH='path_to_TCPDF_dir'</b>
 # LocalTaxDesc=Some countries apply 2 or 3 taxes on each invoice line. If this is the case, choose type for second and third tax and its rate. Possible type are:<br>1 : local tax apply on products and services without vat (vat is not applied on local tax)<br>2 : local tax apply on products and services before vat (vat is calculated on amount + localtax)<br>3 : local tax apply on products without vat (vat is not applied on local tax)<br>4 : local tax apply on products before vat (vat is calculated on amount + localtax)<br>5 : local tax apply on services without vat (vat is not applied on local tax)<br>6 : local tax apply on services before vat (vat is calculated on amount + localtax)
@@ -379,6 +379,7 @@ ExtrafieldPrice = 價格
 # KeepEmptyToUseDefault=Keep empty to use default value
 # DefaultLink=Default link
 # ValueOverwrittenByUserSetup=Warning, this value may be overwritten by user specific setup (each user can set his own clicktodial url)
+# ExternalModule=External module - Installed into directory %s
 
 # Modules
 Module0Name=用戶和組
@@ -486,6 +487,8 @@ Module2700Desc= 使用網上的Gravatar服務（www.gravatar.com），以顯示/
 # Module2800Desc=FTP Client
 Module2900Name= GeoIPMaxmind
 Module2900Desc= geoip的Maxmind轉換能力
+# Module3100Name= Skype
+# Module3100Desc= Add a Skype button into card of adherents / third parties / contacts
 Module5000Name=多公司
 Module5000Desc=允許你管理多個公司
 # Module6000Name=Workflow
@@ -971,6 +974,8 @@ ExtraFields=新增客制化欄位
 # ExtraFieldsContacts=Complementary attributes (contact/address)
 # ExtraFieldsMember=Complementary attributes (member)
 # ExtraFieldsMemberType=Complementary attributes (member type)
+# ExtraFieldsCustomerOrders=Complementary attributes (orders)
+# ExtraFieldsCustomerInvoices=Complementary attributes (invoices)
 # ExtraFieldsSupplierOrders=Complementary attributes (orders)
 # ExtraFieldsSupplierInvoices=Complementary attributes (invoices)
 # ExtraFieldsProject=Complementary attributes (projects)
@@ -1002,6 +1007,7 @@ SendmailOptionMayHurtBuggedMTA=功能使用方法“PHP的mail直接”發送電
 # XDebugInstalled=XDebug est chargé.
 # XCacheInstalled=XCache is loaded.
 # AddRefInList=Display customer/supplier ref into list (select list or combobox) and most of hyperlink
+# FieldEdition=Edition of field %s
 ##### Module password generation
 PasswordGenerationStandard=返回一個密碼生成算法根據內部Dolibarr：8個字元，包含共享小寫數字和字元。
 PasswordGenerationNone=不要提出任何生成的密碼。密碼必須手動鍵入。

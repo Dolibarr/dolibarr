@@ -155,6 +155,7 @@ Valid=Gildir
 Approve=Samþykkja
 ReOpen=Re-Open
 Upload=Senda skrá
+# ToLink=Link
 Select=Velja
 Choose=Veldu
 ChooseLangage=Vinsamlegast veldu tungumál
@@ -658,6 +659,8 @@ BySalesRepresentative=Með sölufulltrúa
 # toward=toward
 # Access=Access
 # HelpCopyToClipboard=Use Ctrl+C to copy to clipboard
+# SaveUploadedFileWithMask=Save file on server with name "<strong>%s</strong>" (otherwise "%s")
+# OriginFileName=Nom d'origine
 
 # Week day
 Monday=Mánudagur

@@ -1,0 +1,76 @@
+# Dolibarr language file - Source file is en_US - sendings
+RefSending=Ref náklad
+Sending=Náklad
+Sendings=Zásielky
+Shipment=Náklad
+Shipments=Zásielky
+Receivings=Receivings
+SendingsArea=Zásielky oblasť
+ListOfSendings=Zoznam zásielok
+SendingMethod=Spôsob dopravy
+SendingReceipt=Prepravný doklad
+LastSendings=Posledný %s zásielky
+SearchASending=Hľadať zásielky
+StatisticsOfSendings=Štatistika zásielok
+NbOfSendings=Počet zásielok
+NumberOfShipmentsByMonth=Počet zásielok podľa mesiaca
+SendingCard=Prepravné karty
+NewSending=Nová zásielka
+CreateASending=Vytvoriť zásielku
+CreateSending=Vytvoriť zásielku
+QtyOrdered=Množstvo objednať
+QtyShipped=Množstvo odoslané
+QtyToShip=Množstvo na loď
+QtyReceived=Množstvo prijatej
+KeepToShip=Majte na loď
+OtherSendingsForSameOrder=Ďalšie zásielky pre túto objednávku
+DateSending=Dátum odoslania, aby
+DateSendingShort=Dátum odoslania, aby
+SendingsForSameOrder=Zásielky pre túto objednávku
+SendingsAndReceivingForSameOrder=Zásielky a Receivings pre túto objednávku
+SendingsToValidate=Zásielky sa overujú
+StatusSendingCanceled=Zrušený
+StatusSendingDraft=Návrh
+StatusSendingValidated=Overené (výrobky na loď alebo už dodávané)
+StatusSendingProcessed=Spracované
+StatusSendingCanceledShort=Zrušený
+StatusSendingDraftShort=Návrh
+StatusSendingValidatedShort=Overené
+StatusSendingProcessedShort=Spracované
+SendingSheet=Odoslanie list
+Carriers=Dopravcovia
+Carrier=Nosič
+CarriersArea=Dopravcovia oblasti
+NewCarrier=Nový nosič
+ConfirmDeleteSending=Ste si istí, že chcete zmazať túto zásielku?
+ConfirmValidateSending=Ste si istí, že chcete overiť túto zásielku s referenčnými <b>%s?</b>
+ConfirmCancelSending=Ste si istí, že chcete zrušiť túto zásielku?
+GenericTransport=Generic doprava
+Enlevement=Dostal zákazník
+DocumentModelSimple=Jednoduché Vzor dokladu
+DocumentModelMerou=Mero A5 modelu
+WarningNoQtyLeftToSend=Varovanie: žiadny tovar majú byť dodané.
+StatsOnShipmentsOnlyValidated=Štatistiky vykonaná na zásielky iba overených. Dátum použité je dátum schválenia zásielky (plánovaný dátum dodania nie je vždy známe).
+DateDeliveryPlanned=Čelné termín dodania
+DateReceived=Dátum doručenia obdržal
+SendShippingByEMail=Poslať zásielku EMail
+SendShippingRef=Poslať zásielok %s
+ActionsOnShipping=Udalosti na zásielky
+LinkToTrackYourPackage=Odkaz pre sledovanie balíkov
+ShipmentCreationIsDoneFromOrder=Pre túto chvíľu, je vytvorenie novej zásielky vykonať z objednávky karty.
+RelatedShippings=Súvisiace shippings
+ShipmentLine=Zásielka linka
+CarrierList=Zoznam dopravcov
+
+# Sending methods
+SendingMethodCATCH=Chytiť zákazníka
+SendingMethodTRANS=Prepravca
+SendingMethodCOLSUI=Colissimo
+
+# ModelDocument
+DocumentModelSirocco=Jednoduchý model pre dokument o doručenie
+DocumentModelTyphon=Viac Celý dokument model pre potvrdenie o doručení (logo. ..)
+
+Error_EXPEDITION_ADDON_NUMBER_NotDefined=Konštantná EXPEDITION_ADDON_NUMBER nie je definované
+SumOfProductVolumes=Súčet objemov produktov
+SumOfProductWeights=Súčet hmotností produktov

@@ -49,7 +49,7 @@ DictionnarySetup=Constanten
 # ErrorCodeCantContainZero=Code can't contain value 0
 DisableJavascript=Schakel JavaScript en AJAX-functionaliteit uit
 ConfirmAjax=Gebruik AJAX bevestigingspopups
-UseSearchToSelectCompany=Gebruik 'autocompletion' velden om derde partijen te kiezen (In plaats van een selectielijst).<br><br>Wanneer u een groot aantal derde partijen (meer dan 100.000) heeft, kunt u de snelheid verhogen door de constante COMPANY_DONOTSEARCH_ANYWHERE op 1 in te stellen in Home->Instellingen->Overige instellingen. Het zoeken wordt dan beperkt tot het begin van een regel.
+# UseSearchToSelectCompany=Use autocompletion fields to choose third parties (instead of using a list box).<br><br>Also if you have a large number of third parties (> 100 000), you can increase speed by setting constant COMPANY_DONOTSEARCH_ANYWHERE to 1 in Setup->Other. Search will then be limited to start of string.
 ActivityStateToSelectCompany= Voeg een filter optie voor het tonen / verbergen thirdparties die momenteel in de activiteiten of niet langer het
 # UseSearchToSelectContact=Use autocompletion fields to choose contact (instead of using a list box).<br><br>Also if you have a large number of third parties (> 100 000), you can increase speed by setting constant CONTACT_DONOTSEARCH_ANYWHERE to 1 in Setup->Other. Search will then be limited to start of string.
 SearchFilter=Zoekfilters opties
@@ -368,7 +368,7 @@ ExtrafieldPrice = Prijs
 # ExtrafieldParamHelpselect=Parameters list have to be like key,value<br><br> for exemple : <br>1,value1<br>2,value2<br>3,value3<br>...<br><br>In order to have the list depending on another :<br>1,value1|parent_list_code:parent_key<br>2,value2|parent_list_code:parent_key
 # ExtrafieldParamHelpcheckbox=Parameters list have to be like key,value<br><br> for exemple : <br>1,value1<br>2,value2<br>3,value3<br>...
 # ExtrafieldParamHelpradio=Parameters list have to be like key,value<br><br> for exemple : <br>1,value1<br>2,value2<br>3,value3<br>...
-# ExtrafieldParamHelpsellist=Parameters list have come from table<br><br> for exemple : <br>c_typent:libelle:id<br><br>In order to have the list depending on another :<br>c_typent:libelle:id:parent_list_code|parent_column
+# ExtrafieldParamHelpsellist=Parameters list have come from table<br><br> for exemple : <br>c_typent:libelle:id::filter<br><br>In order to have the list depending on another :<br>c_typent:libelle:id:parent_list_code|parent_column:filter <br> filter can be a simple test (eg active=1) to display only active value <br> if you want to filter on extrafields use syntaxt  extra.fieldcode=... (where field code is the code of extrafield)
 # LibraryToBuildPDF=Library used to build PDF
 # WarningUsingFPDF=Warning: Your <b>conf.php</b> contains directive <b>dolibarr_pdf_force_fpdf=1</b>. This means you use the FPDF library to generate PDF files. This library is old and does not support a lot of features (Unicode, image transparency, cyrillic, arab and asiatic languages, ...), so you may experience errors during PDF generation.<br>To solve this and have a full support of PDF generation, please download <a href="http://www.tcpdf.org/" target="_blank">TCPDF library</a>, then comment or remove the line <b>$dolibarr_pdf_force_fpdf=1</b>, and add instead <b>$dolibarr_lib_TCPDF_PATH='path_to_TCPDF_dir'</b>
 # LocalTaxDesc=Some countries apply 2 or 3 taxes on each invoice line. If this is the case, choose type for second and third tax and its rate. Possible type are:<br>1 : local tax apply on products and services without vat (vat is not applied on local tax)<br>2 : local tax apply on products and services before vat (vat is calculated on amount + localtax)<br>3 : local tax apply on products without vat (vat is not applied on local tax)<br>4 : local tax apply on products before vat (vat is calculated on amount + localtax)<br>5 : local tax apply on services without vat (vat is not applied on local tax)<br>6 : local tax apply on services before vat (vat is calculated on amount + localtax)
@@ -379,6 +379,7 @@ ExtrafieldPrice = Prijs
 # KeepEmptyToUseDefault=Keep empty to use default value
 # DefaultLink=Default link
 # ValueOverwrittenByUserSetup=Warning, this value may be overwritten by user specific setup (each user can set his own clicktodial url)
+# ExternalModule=External module - Installed into directory %s
 
 # Modules
 Module0Name=Gebruikers & groepen
@@ -486,6 +487,8 @@ Module2700Desc= Gebruik de online dienst 'Gravatar' (www.gravatar.com) voor het 
 # Module2800Desc=FTP Client
 Module2900Name= GeoIPMaxmind
 Module2900Desc= Capaciteitconversie GeoIP Maxmind
+# Module3100Name= Skype
+# Module3100Desc= Add a Skype button into card of adherents / third parties / contacts
 Module5000Name=Multi-bedrijf
 Module5000Desc=Hiermee kunt meerdere bedrijven beheren in Dolibarr
 # Module6000Name=Workflow
@@ -971,6 +974,8 @@ ExtraFields=Aanvullende attributen
 # ExtraFieldsContacts=Complementary attributes (contact/address)
 # ExtraFieldsMember=Complementary attributes (member)
 # ExtraFieldsMemberType=Complementary attributes (member type)
+# ExtraFieldsCustomerOrders=Complementary attributes (orders)
+# ExtraFieldsCustomerInvoices=Complementary attributes (invoices)
 # ExtraFieldsSupplierOrders=Complementary attributes (orders)
 # ExtraFieldsSupplierInvoices=Complementary attributes (invoices)
 # ExtraFieldsProject=Complementary attributes (projects)
@@ -1002,6 +1007,7 @@ SendmailOptionMayHurtBuggedMTA=Feature om e-mails met behulp van methode &quot;P
 # XDebugInstalled=XDebug est chargé.
 # XCacheInstalled=XCache is loaded.
 # AddRefInList=Display customer/supplier ref into list (select list or combobox) and most of hyperlink
+# FieldEdition=Edition of field %s
 ##### Module password generation
 PasswordGenerationStandard=Geeft een wachtwoord terug dat gegenereerd is volgens het interne Dolibarr algoritme: 8 karakters met gedeelde nummers en tekens in kleine letters.
 PasswordGenerationNone=Doe geen wachtwoordsuggesties. Wachtwoord moet handmatig worden ingevoerd.

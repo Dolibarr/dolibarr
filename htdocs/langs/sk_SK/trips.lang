@@ -1,0 +1,21 @@
+# Dolibarr language file - Source file is en_US - trips
+Trip=Výlet
+Trips=Výlety
+TripsAndExpenses=Výlety a výdavky
+TripsAndExpensesStatistics=Výlety a výdavky štatistiky
+TripCard=Výlet karty
+AddTrip=Pridať výlet
+ListOfTrips=Zoznam ciest
+ListOfFees=Sadzobník poplatkov
+NewTrip=Nová cesta
+CompanyVisited=Firma / nadácie navštívil
+Kilometers=Kilometre
+FeesKilometersOrAmout=Množstvo alebo kilometrov
+DeleteTrip=Odstrániť výlet
+ConfirmDeleteTrip=Ste si istí, že chcete zmazať túto cestu?
+TF_OTHER=Ostatné
+TF_LUNCH=Obed
+TF_TRIP=Výlet
+ListTripsAndExpenses=Zoznam ciest a nákladov
+ExpensesArea=Výlety a náklady oblasť
+SearchATripAndExpense=Hľadať na výlet a náklady

@@ -8,6 +8,7 @@
  * Copyright (C) 2011      Herve Prot           <herve.prot@symeos.com>
  * Copyright (C) 2012      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2013      Florian Henry        <florian.henry@open-concept.pro>
+ * Copyright (C) 2013      Alexandre Spangaro   <alexandre.spangaro@gmail.com> 
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -184,6 +185,7 @@ if ($action == 'add' && $canadduser)
         $object->office_phone	= GETPOST("office_phone");
         $object->office_fax	    = GETPOST("office_fax");
         $object->user_mobile	= GETPOST("user_mobile");
+        $object->skype    	  = GETPOST("skype");
         $object->email		    = GETPOST("email");
         $object->job			= GETPOST("job");
         $object->signature	    = GETPOST("signature");
@@ -321,10 +323,11 @@ if ($action == 'update' && ! $_POST["cancel"])
             $object->office_phone=GETPOST("office_phone");
             $object->office_fax	= GETPOST("office_fax");
             $object->user_mobile= GETPOST("user_mobile");
+            $object->skype    =GETPOST("skype");
             $object->email		= GETPOST("email");
             $object->job		= GETPOST("job");
             $object->signature	= GETPOST("signature");
-			$object->accountancy_code	= GETPOST("accountancy_code");
+			      $object->accountancy_code	= GETPOST("accountancy_code");
             $object->openid		= GETPOST("openid");
             $object->fk_user    = GETPOST("fk_user")>0?GETPOST("fk_user"):0;
 
@@ -520,6 +523,7 @@ if ($action == 'adduserldap')
     $conf->global->LDAP_FIELD_PHONE,
     $conf->global->LDAP_FIELD_FAX,
     $conf->global->LDAP_FIELD_MOBILE,
+    $conf->global->LDAP_FIELD_SKYPE,
     $conf->global->LDAP_FIELD_MAIL,
     $conf->global->LDAP_FIELD_TITLE,
 	$conf->global->LDAP_FIELD_DESCRIPTION,
@@ -548,6 +552,7 @@ if ($action == 'adduserldap')
                 $ldap_phone			= $attribute[$conf->global->LDAP_FIELD_PHONE];
                 $ldap_fax			= $attribute[$conf->global->LDAP_FIELD_FAX];
                 $ldap_mobile		= $attribute[$conf->global->LDAP_FIELD_MOBILE];
+                $ldap_skype			= $attribute[$conf->global->LDAP_FIELD_SKYPE];
                 $ldap_mail			= $attribute[$conf->global->LDAP_FIELD_MAIL];
                 $ldap_sid			= $attribute[$conf->global->LDAP_FIELD_SID];
             }
@@ -605,9 +610,10 @@ if (($action == 'create') || ($action == 'adduserldap'))
 				$conf->global->LDAP_FIELD_LOGIN_SAMBA,
 				$conf->global->LDAP_FIELD_PASSWORD,
 				$conf->global->LDAP_FIELD_PASSWORD_CRYPTED,
-				$conf->global->LDAP_FIELD_PHONE,
+        $conf->global->LDAP_FIELD_PHONE,
 				$conf->global->LDAP_FIELD_FAX,
 				$conf->global->LDAP_FIELD_MOBILE,
+				$conf->global->LDAP_FIELD_SKYPE,
 				$conf->global->LDAP_FIELD_MAIL,
 				$conf->global->LDAP_FIELD_TITLE,
 				$conf->global->LDAP_FIELD_DESCRIPTION,
@@ -858,6 +864,23 @@ if (($action == 'create') || ($action == 'adduserldap'))
         print '<input size="20" type="text" name="office_fax" value="'.GETPOST('office_fax').'">';
     }
     print '</td></tr>';
+    
+    // Skype
+    if (! empty($conf->skype->enabled))
+    {
+        print '<tr><td valign="top">'.$langs->trans("Skype").'</td>';
+        print '<td>';
+        if (! empty($ldap_skype))
+        {
+            print '<input type="hidden" name="skype" value="'.$ldap_skype.'">';
+            print $ldap_skype;
+        }
+        else
+        {
+            print '<input size="40" type="text" name="skype" value="'.GETPOST('skype').'">';
+        }
+        print '</td></tr>';
+    }
 
     // EMail
     print '<tr><td valign="top"'.(! empty($conf->global->USER_MAIL_REQUIRED)?' class="fieldrequired"':'').'>'.$langs->trans("EMail").'</td>';
@@ -1166,6 +1189,14 @@ else
             print '<tr><td valign="top">'.$langs->trans("Fax").'</td>';
             print '<td>'.dol_print_phone($object->office_fax,'',0,0,1).'</td>';
             print '</tr>'."\n";
+            
+            // Skype
+            if (! empty($conf->skype->enabled))
+            {
+                print '<tr><td valign="top">'.$langs->trans("Skype").'</td>';
+                print '<td>'.dol_print_skype($object->skype,0,0,1).'</td>';
+                print "</tr>\n";
+            }
 
             // EMail
             print '<tr><td valign="top">'.$langs->trans("EMail").'</td>';
@@ -1761,6 +1792,23 @@ else
             }
             print '</td></tr>';
 
+            // Skype
+            if (! empty($conf->skype->enabled))
+            {
+                print '<tr><td valign="top">'.$langs->trans("Skype").'</td>';
+                print '<td>';
+                if ($caneditfield  && empty($object->ldap_sid))
+                {
+                    print '<input size="40" type="text" name="skype" class="flat" value="'.$object->skype.'">';
+                }
+                else
+                {
+                    print '<input type="hidden" name="skype" value="'.$object->skype.'">';
+                    print $object->skype;
+                }
+                print '</td></tr>';
+            }
+            
             // EMail
             print "<tr>".'<td valign="top"'.(! empty($conf->global->USER_MAIL_REQUIRED)?' class="fieldrequired"':'').'>'.$langs->trans("EMail").'</td>';
             print '<td>';

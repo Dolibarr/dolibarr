@@ -178,7 +178,7 @@ function dol_print_file($langs,$filename,$searchalt=0)
  *	Show informations on an object
  *  TODO Move this into html.formother
  *
- *	@param	Object	$object			Objet to show
+ *	@param	object	$object			Objet to show
  *	@return	void
  */
 function dol_print_object_info($object)

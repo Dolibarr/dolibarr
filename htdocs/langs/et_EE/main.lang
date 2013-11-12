@@ -155,6 +155,7 @@ Valid=Kehtiv
 Approve=Heaks kiitma
 ReOpen=Re-Open
 Upload=Saada fail
+# ToLink=Link
 Select=Vali
 Choose=Valima
 ChooseLangage=Valige oma keel
@@ -658,6 +659,8 @@ BySalesRepresentative=Poolt müügiesindaja
 # toward=toward
 # Access=Access
 # HelpCopyToClipboard=Use Ctrl+C to copy to clipboard
+# SaveUploadedFileWithMask=Save file on server with name "<strong>%s</strong>" (otherwise "%s")
+# OriginFileName=Nom d'origine
 
 # Week day
 Monday=Esmaspäev

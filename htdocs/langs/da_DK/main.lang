@@ -155,6 +155,7 @@ Valid=Gyldig
 Approve=Godkend
 ReOpen=Re-Open
 Upload=Send fil
+# ToLink=Link
 Select=Vælg
 Choose=Vælge
 ChooseLangage=Vælg dit sprog
@@ -658,6 +659,8 @@ BySalesRepresentative=Ved salgsrepræsentant
 # toward=toward
 # Access=Access
 # HelpCopyToClipboard=Use Ctrl+C to copy to clipboard
+# SaveUploadedFileWithMask=Save file on server with name "<strong>%s</strong>" (otherwise "%s")
+# OriginFileName=Nom d'origine
 
 # Week day
 Monday=Mandag
