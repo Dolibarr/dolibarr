@@ -20,6 +20,15 @@
 
 DELETE FROM llx_menu where module='holiday';
 
+
+-- Fix bad migration of 3.4 that make this text instead of varchar(50)
+alter table llx_don      MODIFY COLUMN town varchar(50);
+alter table llx_adherent MODIFY COLUMN town varchar(50);
+alter table llx_entrepot MODIFY COLUMN town varchar(50);
+alter table llx_societe  MODIFY COLUMN town varchar(50);
+alter table llx_societe_address MODIFY COLUMN town varchar(50);
+
+
 ALTER TABLE llx_projet_task ADD COLUMN planned_workload	real DEFAULT 0 NOT NULL AFTER duration_effective;
 
 ALTER TABLE llx_socpeople ADD COLUMN statut tinyint DEFAULT 1 NOT NULL AFTER import_key;

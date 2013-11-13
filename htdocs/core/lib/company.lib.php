@@ -576,12 +576,12 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
     print_liste_field_titre($langs->trans("PhoneMobile"),$_SERVER["PHP_SELF"],"p.phone_mobile","",$param,'',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Fax"),$_SERVER["PHP_SELF"],"p.fax","",$param,'',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("EMail"),$_SERVER["PHP_SELF"],"p.email","",$param,'',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"p.statut","",$param,'',$sortfield,$sortorder);
     if (! empty($conf->skype->enabled)) 
     { 
       $colspan++;
       print '<td>'.$langs->trans("Skype").'</td>';
     }
+    print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"p.statut","",$param,'',$sortfield,$sortorder);
     print "<td>&nbsp;</td>";
     if (! empty($conf->agenda->enabled) && $user->rights->agenda->myactions->create)
     {
@@ -610,21 +610,24 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
     
      print '<td>&nbsp;</td>';
     
-    print '<td class="liste_titre">';
-    print $form->selectarray('search_status', array('0'=>$langs->trans('ActivityCeased'),'1'=>$langs->trans('InActivity')),$search_status);
-    print '</td>';
+   
     
     if (! empty($conf->skype->enabled)) 
     { 
       $colspan++;
       print '<td>&nbsp;</td>';
     }
+    print '<td class="liste_titre">';
+    print $form->selectarray('search_status', array('0'=>$langs->trans('ActivityCeased'),'1'=>$langs->trans('InActivity')),$search_status);
+    print '</td>';
+      		
     print "<td>&nbsp;</td>";
     if (! empty($conf->agenda->enabled) && $user->rights->agenda->myactions->create)
     {
     	$colspan++;
         print '<td>&nbsp;</td>';
     }
+        		
     
     print '<td class="liste_titre" align="right">';
     print '<input type="image" class="liste_titre" name="button_search" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
@@ -688,9 +691,7 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
                 print '</td>';
             }   
 
-			print '<td>';
-            print $contactstatic->getLibStatut(3);
-            print '</td>';
+			print '<td>'.$contactstatic->getLibStatut(5).'</td>';
 
 			// copy in clipboard
 			$coords = '';
