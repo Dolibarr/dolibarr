@@ -491,7 +491,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 					}
 					$newmenu->add("/admin/company.php?mainmenu=home", $langs->trans("MenuCompanySetup").$warnpicto,1);
 					$warnpicto='';
-					if (count($conf->modules) <= 1)	// If only user module enabled
+					if (count($conf->modules) <= (empty($conf->global->MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING)?1:$conf->global->MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING))	// If only user module enabled
 					{
 						$langs->load("errors");
 						$warnpicto = ' '.img_warning($langs->trans("WarningMandatorySetupNotComplete"));
