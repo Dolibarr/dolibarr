@@ -64,7 +64,7 @@ ChooseFormatOfFileToImport=选择文件格式为导入文件格式使用的象�
 ChooseFileToImport=上传文件然后点击象形%s到选择导入文件作为源文件...
 SourceFileFormat=源文件格式
 FieldsInSourceFile=在源文件中的字段
-# FieldsInTargetDatabase=Target fields in Dolibarr database (bold=mandatory)
+FieldsInTargetDatabase=目标字段：Dolibarr数据库(粗体=强制)
 Field=场
 NoFields=没有字段
 MoveField=移动领域的%s的列号
@@ -111,9 +111,9 @@ SourceExample=例如可能的数据值
 ExampleAnyRefFoundIntoElement=任何ref元素<b>%s</b>
 ExampleAnyCodeOrIdFoundIntoDictionnary=发现任何代码（或ID）dictionnary <b>%s</b>
 CSVFormatDesc=<b>逗号分隔值</b>文件格式（。csv格式）。 <br>这是一个文本文件格式字段被分隔在[%s]分开。如果一个字段分隔符是里面的内容发现，现场是圆形的圆字[%s]。字符转义字符是为了逃避轮[%s]。
-# Excel95FormatDesc=<b>Excel</b> file format (.xls)<br>This is native Excel 95 format (BIFF5).
-# Excel2007FormatDesc=<b>Excel</b> file format (.xlsx)<br>This is native Excel 2007 format (SpreadsheetML).
-# TsvFormatDesc=<b>Tab Separated Value</b> file format (.tsv)<br>This is a text file format where fields are separated by a tabulator [tab].
+Excel95FormatDesc=<b>Excel</b> 文件格式 (.xls)<br>这是本地的Excel 95格式 (BIFF5).\n
+Excel2007FormatDesc=<b>Excel</b>文件格式(.XLSX)<br>这是本地的Excel 2007格式(SpreadsheetML)。
+TsvFormatDesc=<b>制表符分隔值</b>文件格式(.tsv)<br>这是一个字段之间用制表符[tab]分隔的文本文件格式。
 # ExportFieldAutomaticallyAdded=Field <b>%s</b> was automatically added. It will avoid you to have similar lines to be treated as duplicate records (with this field added, all lines will own their own id and will differ).
 CsvOptions=CSV选项
 Separator=分隔符
@@ -124,7 +124,7 @@ DeskCode=台代码
 BankAccountNumber=帐号
 BankAccountNumberKey=关键
 ## filters
-# SelectFilterFields=If you want to filter on some values, just input values here.
-# FilterableFields=Champs Filtrables
+SelectFilterFields=如果你想过滤一些值，这里只是输入值。
+FilterableFields=筛选字段
 FilteredFields=过滤字段
 FilteredFieldsValues=过滤值

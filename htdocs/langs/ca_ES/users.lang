@@ -117,4 +117,4 @@ HierarchicalResponsible=Responsable jeràrquic
 HierarchicView=Vista jeràrquica
 UseTypeFieldToChange=Modificar el camp Tipus per canviar
 # OpenIDURL=OpenID URL
-# LoginUsingOpenID=Login using OpenID
+# LoginUsingOpenID=Use OpenID to login

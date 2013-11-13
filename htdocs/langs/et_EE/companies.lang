@@ -66,6 +66,8 @@ Country=Riik
 CountryCode=Riigi kood
 CountryId=Riik id
 Phone=Telefon
+# Skype=Skype
+# Call=Call
 PhonePro=Prof telefoni
 PhonePerso=Pers. telefon
 PhoneMobile=Liikuv
@@ -396,7 +398,7 @@ InActivity=Avatud
 ActivityCeased=Suletud
 ActivityStateFilter=Hõiveseisund
 # ProductsIntoElements=List of products into
-# OutstandingBill=Outstanding Bill
+# OutstandingBill=Max. for outstanding bill
 # Monkey
 MonkeyNumRefModelDesc=Tagasi numero koos formaadis %syymm-nnnn kliendi kood ja %syymm-nnnn tarnija kood kus YY aastat, KK kuud ja nnnn on jada, millel ei ole katki ja ei naasmist 0.
 # Leopard

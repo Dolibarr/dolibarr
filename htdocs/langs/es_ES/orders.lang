@@ -147,7 +147,7 @@ AddDeliveryCostLine=Añadir una línea de gastos de portes indicando el peso del
 # Documents models
 PDFEinsteinDescription=Modelo de pedido completo (logo...)
 PDFEdisonDescription=Modelo de pedido simple
-# PDFProformaDescription=A complete proforma invoice (logo…)
+PDFProformaDescription=Una factura proforma completa (logo...)
 # Orders modes
 OrderByMail=Correo
 OrderByFax=Fax

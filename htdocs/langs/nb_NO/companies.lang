@@ -66,6 +66,8 @@ Country=Land
 CountryCode=Landkode
 CountryId=Land id
 Phone=Telefon
+# Skype=Skype
+# Call=Call
 PhonePro=Tlf. arbeid
 PhonePerso=Tlf. privat
 PhoneMobile=Tlf. mobil
@@ -396,7 +398,7 @@ InActivity=Åpent
 ActivityCeased=Stengt
 ActivityStateFilter=Aktivitet status
 # ProductsIntoElements=List of products into
-# OutstandingBill=Outstanding Bill
+# OutstandingBill=Max. for outstanding bill
 # Monkey
 MonkeyNumRefModelDesc=Tilbake numero med format %syymm-nnnn for kunden koden og %syymm-nnnn for leverandør koden der åå er året, er mm måned og nnnn er en sekvens uten pause og ingen retur til 0.
 # Leopard

@@ -409,7 +409,7 @@ PDFCrabeDescription=Πρότυπο τιμολογίου Crabe. Ένα ολοκλ
 # oursin PDF Model
 PDFOursinDescription=Πρότυπο τιμολογίου oursin
 # NumRef Modules
-# TerreNumRefModelDesc1=Return numero with format %syymm-nnnn for standard and replacement invoices, %syymm-nnnn for credit notes and %syymm-nnnn for deposits where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
-# MarsNumRefModelDesc1=Return numero with format %syymm-nnnn for standard invoices, %syymm-nnnn for replacement invoices, %syymm-nnnn for credit notes and %syymm-nnnn for credit notes where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
+TerreNumRefModelDesc1=Επιστροφή numero με τη μορφή% syymm-nnnn για το πρότυπο και την αντικατάσταση των τιμολογίων,% syymm-nnnn για πιστωτικά σημειώματα και% syymm-nnnn για τις καταθέσεις όπου YY είναι το έτος, MM ο μήνας και nnnn είναι μια ακολουθία χωρίς διάλειμμα και χωρίς επιστροφή στο 0
+MarsNumRefModelDesc1=Επέστρεψε το νούμερο με την μορφή %syymm-nnnn για τα τιμολόγια, %syymm-nnnn για τα τιμολόγια αντικατάστασης, %syymm-nnnn for credit notes and %syymm-nnnn για τις σημειώσεις όπου yy είναι ο χρόνος, mm ο μήνας και nnnn μια διαδικασία χωρίς διακοπές και επαναφορά στο 0
 
 TerreNumRefModelError=A bill starting with $syymm already exists and is not compatible with this model of sequence. Remove it or rename it to activate this module.

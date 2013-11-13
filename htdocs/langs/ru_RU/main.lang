@@ -155,6 +155,7 @@ Valid=Действительный
 Approve=Одобрить
 ReOpen=Переоткрыть
 Upload=Отправить файл
+# ToLink=Link
 Select=Выбор
 Choose=Выберите
 ChooseLangage=Пожалуйста, выберите Ваш язык
@@ -658,6 +659,8 @@ BySalesRepresentative=По торговым представителем
 # toward=toward
 # Access=Access
 # HelpCopyToClipboard=Use Ctrl+C to copy to clipboard
+# SaveUploadedFileWithMask=Save file on server with name "<strong>%s</strong>" (otherwise "%s")
+# OriginFileName=Nom d'origine
 
 # Week day
 Monday=Понедельник

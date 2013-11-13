@@ -155,6 +155,7 @@ Valid=Veljaven
 Approve=Potrdi
 ReOpen=Ponovno odpri
 Upload=Dodaj datoteko
+# ToLink=Link
 Select=Dodaj kot lastnika
 Choose=Izbira
 ChooseLangage=Prosimo, izberite vaš jezik
@@ -658,6 +659,8 @@ BySalesRepresentative=Z prodajni predstavnik
 # toward=toward
 # Access=Access
 # HelpCopyToClipboard=Use Ctrl+C to copy to clipboard
+# SaveUploadedFileWithMask=Save file on server with name "<strong>%s</strong>" (otherwise "%s")
+# OriginFileName=Nom d'origine
 
 # Week day
 Monday=Ponedeljek

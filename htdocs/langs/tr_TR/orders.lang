@@ -13,8 +13,8 @@ NewOrder=Yeni sipariş
 ToOrder=Sipariş yap
 MakeOrder=Sipariş yap
 SupplierOrder=Tedarikçi siparişi
-SuppliersOrders=Tedarikçilerin siparişleri
-SuppliersOrdersRunning=Mevcut tedarikçilerin siparişleri
+SuppliersOrders=Tedarikçi siparişleri
+SuppliersOrdersRunning=Mevcut tedarikçi siparişleri
 CustomerOrder=Müşteri siparişi
 CustomersOrders=Müşterilerin siparişleri
 CustomersOrdersRunning=Mevcut müşterilerin siparişleri
@@ -147,7 +147,7 @@ AddDeliveryCostLine=Siparişin ağırlığını belirten bir teslimat satırı e
 # Documents models
 PDFEinsteinDescription=Bir tam sipariş modeli (logo. ..)
 PDFEdisonDescription=Basit bir sipariş modeli
-# PDFProformaDescription=A complete proforma invoice (logo…)
+PDFProformaDescription=Eksiksiz bir proforma fatura (logo...)
 # Orders modes
 OrderByMail=Posta
 OrderByFax=Faks

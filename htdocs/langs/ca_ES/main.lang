@@ -155,6 +155,7 @@ Valid=Validar
 Approve=Aprovar
 ReOpen=Reobrir
 Upload=Enviar arxiu
+# ToLink=Link
 Select=Seleccionar
 Choose=Escollir
 ChooseLangage=Triar l'idioma
@@ -658,6 +659,8 @@ from=de
 toward=cap a
 # Access=Access
 # HelpCopyToClipboard=Use Ctrl+C to copy to clipboard
+# SaveUploadedFileWithMask=Save file on server with name "<strong>%s</strong>" (otherwise "%s")
+# OriginFileName=Nom d'origine
 
 # Week day
 Monday=Dilluns

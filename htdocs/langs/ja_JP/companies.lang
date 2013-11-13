@@ -66,6 +66,8 @@ Country=国
 CountryCode=国コード
 CountryId=国番号
 Phone=電話
+# Skype=Skype
+# Call=Call
 PhonePro=教授の携帯電話
 PhonePerso=PERS。電話
 PhoneMobile=携帯電話
@@ -396,7 +398,7 @@ InActivity=開く
 ActivityCeased=閉じた
 ActivityStateFilter=活動状況
 # ProductsIntoElements=List of products into
-# OutstandingBill=Outstanding Bill
+# OutstandingBill=Max. for outstanding bill
 # Monkey
 MonkeyNumRefModelDesc=yyは年である顧客コードと仕入先コードの%syymm-nnnnの形式%syymm-NNNNとニュメロを返し、mmは月とnnnnはありません休憩0〜ノーリターンでシーケンスです。
 # Leopard
