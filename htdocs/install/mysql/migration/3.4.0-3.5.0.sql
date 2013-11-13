@@ -348,3 +348,7 @@ ALTER TABLE llx_user ADD skype VARCHAR(255) AFTER job;
 ALTER TABLE llx_socpeople ADD skype VARCHAR(255) AFTER jabberid;
 ALTER TABLE llx_societe ADD skype VARCHAR(255) AFTER email;
 ALTER TABLE llx_adherent ADD skype VARCHAR(255) AFTER email;
+
+-- multi-rib
+ALTER TABLE llx_societe_rib ADD default_rib TINYINT NOT NULL DEFAULT 0 AFTER owner_address;
+UPDATE llx_societe_rib SET default_rib = 1;

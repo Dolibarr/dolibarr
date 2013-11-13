@@ -150,3 +150,7 @@ EventualyAddCategory=Eventuellement, saisissez une catégorie dans laquelle clas
 ToConciliate=A rapprocher ?
 ThenCheckLinesAndConciliate=Ensuite, cochez les lignes présentes sur le relevé et cliquez sur
 BankDashboard=Synthèse comptes bancaires
+DefaultRIB=RIB par défaut
+AllRIB=Tous les RIB
+LabelRIB=Nom du RIB
+NoBANRecord=Aucun RIB enregistré
