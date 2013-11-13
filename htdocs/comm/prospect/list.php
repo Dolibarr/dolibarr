@@ -177,7 +177,7 @@ if ($action == 'cstc')
 $formother=new FormOther($db);
 $form=new Form($db);
 
-$sql = "SELECT s.rowid, s.nom, s.zip, s.town, s.datec, s.datea, s.status as status,";
+$sql = "SELECT s.rowid, s.nom, s.zip, s.town, s.datec, s.datea, s.status as status, s.code_client, s.client,";
 $sql.= " st.libelle as stcomm, s.prefix_comm, s.fk_stcomm, s.fk_prospectlevel,";
 $sql.= " d.nom as departement";
 // Updated by Matelli
@@ -405,6 +405,8 @@ if ($resql)
 		$prospectstatic->id=$obj->rowid;
 		$prospectstatic->nom=$obj->nom;
         $prospectstatic->status=$obj->status;
+        $prospectstatic->code_client=$obj->code_client;
+        $prospectstatic->client=$obj->client;
         $prospectstatic->fk_prospectlevel=$obj->fk_prospectlevel;
 		print $prospectstatic->getNomUrl(1,'prospect');
         print '</td>';
