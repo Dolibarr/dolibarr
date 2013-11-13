@@ -555,10 +555,10 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
     print '<td>'.$langs->trans("PhoneMobile").'</td>';
     print '<td>'.$langs->trans("Fax").'</td>';
     print '<td>'.$langs->trans("EMail").'</td>';
-    if (! empty($conf->skype->enabled)) 
-    { 
-      $colspan++;
-      print '<td>'.$langs->trans("Skype").'</td>';
+    if (! empty($conf->skype->enabled))
+    {
+		$colspan++;
+		print '<td>'.$langs->trans("Skype").'</td>';
     }
     print '<td>'.$langs->trans("Status").'</td>';
     print "<td>&nbsp;</td>";
@@ -592,13 +592,16 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
         while ($i < $num)
         {
             $obj = $db->fetch_object($result);
+
+            $contactstatic->id = $obj->rowid;
+            $contactstatic->lastname = $obj->lastname;
+            $contactstatic->firstname = $obj->firstname;
+            $contactstatic->statut=$obj->statut;
+
             $var = !$var;
             print "<tr ".$bc[$var].">";
 
             print '<td>';
-            $contactstatic->id = $obj->rowid;
-            $contactstatic->lastname = $obj->lastname;
-            $contactstatic->firstname = $obj->firstname;
             print $contactstatic->getNomUrl(1);
             print '</td>';
 
@@ -619,15 +622,14 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
             print '<td>';
             print dol_print_email($obj->email,$obj->rowid,$object->id,'AC_EMAIL');
             print '</td>';
-            if (! empty($conf->skype->enabled)) 
+            if (! empty($conf->skype->enabled))
             {
                 print '<td>';
                 print dol_print_skype($obj->skype,$obj->rowid,$object->id,'AC_SKYPE');
                 print '</td>';
-            }   
+            }
 
-			 if ($obj->statut==0) print '<td>'.$langs->trans('Disabled').' </span>'.img_picto($langs->trans('StatusContactDraftShort'),'statut0').'</td>';
-			elseif ($obj->statut==1) print '<td>'.$langs->trans('Enabled').' </span>'.img_picto($langs->trans('StatusContactValidatedShort'),'statut1').'</td>';
+            print '<td>'.$contactstatic->getLibStatut(5).'</td>';
 
 			// copy in clipboard
 			$coords = '';
