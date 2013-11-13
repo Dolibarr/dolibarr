@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2010-2012	Regis Houssin		<regis.houssin@capnetworks.com>
- * Copyright (C) 2010-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2010-2013	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2012-2013	Christophe Battarel	<christophe.battarel@altairis.fr>
  * Copyright (C) 2013		Florian Henry		<florian.henry@open-concept.pro>
  *
@@ -16,7 +16,6 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
- *
  *
  * Need to have following variables defined:
  * $conf
@@ -39,15 +38,6 @@ if (! empty($conf->margin->enabled) && ! empty($object->element) && in_array($ob
 <input type="hidden" name="mode" value="predefined">
 <input type="hidden" name="id" value="<?php echo $this->id; ?>">
 
-<script type="text/javascript">
-jQuery(document).ready(function() {
-	jQuery('#idprod').change(function() {
-		  if (jQuery('#idprod').val() > 0) jQuery('#np_desc').focus();
-	});
-});
-</script>
-
-
 <tr class="liste_titre nodrag nodrop">
 	<td<?php echo (! empty($conf->global->MAIN_VIEW_LINE_NUMBER) ? ' colspan="4"' : ' colspan="3"'); ?>>
 	<?php
@@ -59,50 +49,59 @@ jQuery(document).ready(function() {
 	</td>
 	<td align="right"><?php echo $langs->trans('Qty'); ?></td>
 	<td align="right"><?php echo $langs->trans('ReductionShort'); ?></td>
-<?php
-$colspan = 4;
-if (! empty($usemargins))
-{
-	?>
-	<td align="right">
 	<?php
-	if ($conf->global->MARGIN_TYPE == "1")
-		echo $langs->trans('BuyingPrice');
-	else
-		echo $langs->trans('CostPrice');
-
-	if ($user->rights->margins->creer)
+	$colspan = 4;
+	if (! empty($usemargins))
 	{
-		if(! empty($conf->global->DISPLAY_MARGIN_RATES))
+		?>
+		<td align="right">
+		<?php
+		if ($conf->global->MARGIN_TYPE == "1")
+			echo $langs->trans('BuyingPrice');
+		else
+			echo $langs->trans('CostPrice');
+		?>
+		</td>
+		<?php
+		if ($user->rights->margins->creer)
 		{
-			echo '<td align="right">'.$langs->trans('MarginRate').'</td>';
+			if(! empty($conf->global->DISPLAY_MARGIN_RATES))
+			{
+				echo '<td align="right">'.$langs->trans('MarginRate').'</td>';
+			}
+			if(! empty($conf->global->DISPLAY_MARK_RATES))
+			{
+				echo '<td align="right">'.$langs->trans('MarkRate').'</td>';
+			}
 		}
-		if(! empty($conf->global->DISPLAY_MARK_RATES))
+		else
 		{
-			echo '<td align="right">'.$langs->trans('MarkRate').'</td>';
+			if (! empty($conf->global->DISPLAY_MARGIN_RATES)) $colspan++;
+			if (! empty($conf->global->DISPLAY_MARK_RATES))   $colspan++;
 		}
 	}
-	else
-	{
-		if (! empty($conf->global->DISPLAY_MARGIN_RATES)) $colspan++;
-		if (! empty($conf->global->DISPLAY_MARK_RATES))   $colspan++;
-	}
 	?>
-	</td>
-	<?php
-}
-?>
 	<td colspan="<?php echo $colspan; ?>">&nbsp;</td>
 </tr>
 
 <tr <?php echo $bcnd[$var]; ?>>
 <?php
 if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
-		$coldisplay=4; }
+	$coldisplay=4; }
 else {
-		$coldisplay=3; }
+	$coldisplay=3; }
 ?>
+
 	<td<?php echo (! empty($conf->global->MAIN_VIEW_LINE_NUMBER) ? ' colspan="4"' : ' colspan="3"'); ?>>
+
+	<script type="text/javascript">
+	jQuery(document).ready(function() {
+		jQuery('#idprod').change(function() {
+			  if (jQuery('#idprod').val() > 0) jQuery('#np_desc').focus();
+		});
+	});
+	</script>
+
 	<?php
 
 	echo '<span>';
@@ -128,8 +127,9 @@ else {
 	$doleditor->Create();
 	?>
 	</td>
+
 	<td align="right"><input type="hidden" name="price_ht"><input type="text" size="2" name="qty" class="flat" value="1"></td>
-	<td align="right" nowrap><input type="text" size="1" class="flat" name="remise_percent" value="<?php echo $buyer->remise_percent; ?>"><span class="hideonsmartphone">%</span></td>
+	<td align="right" class="nowrap"><input type="text" size="1" class="flat" name="remise_percent" value="<?php echo $buyer->remise_percent; ?>"><span class="hideonsmartphone">%</span></td>
 	<?php
 	$colspan = 4;
 	if (! empty($usemargins))
@@ -163,14 +163,15 @@ else {
 	}
 	?>
 	<td align="center" valign="middle" colspan="<?php echo $colspan; ?>">
-		<input type="submit" class="button" value="<?php echo $langs->trans("Add"); ?>" name="addline">
+		<input type="submit" class="button" value="<?php echo $langs->trans('Add'); ?>" name="addline_predefined">
 	</td>
 	<?php
 	//Line extrafield
 	if (!empty($extrafieldsline)) {
 		if ($this->table_element_line=='commandedet') {
 			$newline = new OrderLine($this->db);
-		}elseif ($this->table_element_line=='propaldet') {
+		}
+		elseif ($this->table_element_line=='propaldet') {
 			$newline = new PropaleLigne($this->db);
 		}
 		elseif ($this->table_element_line=='facturedet') {
@@ -209,9 +210,9 @@ if (! empty($conf->service->enabled) && $dateSelector)
 	else
 	{
 		echo $langs->trans('ServiceLimitedDuration').' '.$langs->trans('From').' ';
-		echo $form->select_date('','date_start_predef',$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE,$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE,1,"addpredefinedproduct");
+		echo $form->select_date('','date_start_predef',empty($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE)?0:1,empty($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE)?0:1,1,"addpredefinedproduct");
 		echo ' '.$langs->trans('to').' ';
-		echo $form->select_date('','date_end_predef',$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE,$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE,1,"addpredefinedproduct");
+		echo $form->select_date('','date_end_predef',empty($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE)?0:1,empty($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE)?0:1,1,"addpredefinedproduct");
 	}
 	?>
 	</td>
@@ -223,40 +224,39 @@ if (! empty($conf->service->enabled) && $dateSelector)
 </form>
 
 <?php
-if (! empty($usemargins))
+if (! empty($usemargins) && $user->rights->margins->creer)
 {
 ?>
 	<script type="text/javascript">
-<?php
-	if ($user->rights->margins->creer)
-	{
-?>
-	var npRate = null;
-<?php
-	if (! empty($conf->global->DISPLAY_MARGIN_RATES)) { ?>
-		npRate = "np_marginRate";
-	<?php }
-	elseif (! empty($conf->global->DISPLAY_MARK_RATES)) { ?>
-		npRate = "np_markRate";
-	<?php }
-?>
 
-	$("form#addpredefinedproduct").submit(function(e) {
-		if (npRate) return checkLine(e, npRate);
-		else return true;
-	});
-	if (npRate == 'np_marginRate') {
-		$("input[name='np_marginRate']:last").blur(function(e) {
-			return checkLine(e, npRate);
+	jQuery(document).ready(function() {
+		var npRate = null;
+		<?php
+		if (! empty($conf->global->DISPLAY_MARGIN_RATES)) { ?>
+			npRate = "np_marginRate";
+		<?php }
+		elseif (! empty($conf->global->DISPLAY_MARK_RATES)) { ?>
+			npRate = "np_markRate";
+		<?php }
+		?>
+
+		$("form#addpredefinedproduct").submit(function(e) {
+			if (npRate) return checkLine(e, npRate);
+			else return true;
 		});
-	}
-	else {
-		if (npRate == 'np_markRate') {
-			$("input[name='np_markRate']:last").blur(function(e) {
+		if (npRate == 'np_marginRate') {
+			$("input[name='np_marginRate']:last").blur(function(e) {
 				return checkLine(e, npRate);
 			});
 		}
-	}
+		else {
+			if (npRate == 'np_markRate') {
+				$("input[name='np_markRate']:last").blur(function(e) {
+					return checkLine(e, npRate);
+				});
+			}
+		}
+	});
 
 	function checkLine(e, npRate)
 	{
@@ -295,6 +295,7 @@ if (! empty($usemargins))
 
 		return true;
 	}
+
 	function roundFloat(num) {
 		var main_max_dec_shown = <?php echo $conf->global->MAIN_MAX_DECIMALS_SHOWN; ?>;
 		var main_rounding = <?php echo min($conf->global->MAIN_MAX_DECIMALS_UNIT,$conf->global->MAIN_MAX_DECIMALS_TOT); ?>;
@@ -321,40 +322,43 @@ if (! empty($usemargins))
 	function formatFloat(num) {
 		return roundFloat(num).replace('.', ',');
 	}
-<?php
-	}
-?>
-	$("#idprod").change(function() {
-	  $("#fournprice options").remove();
-	  $("#fournprice").hide();
-	  $("#buying_price").val("").show();
-	  $.post('<?php echo DOL_URL_ROOT; ?>/fourn/ajax/getSupplierPrices.php', {'idprod': $(this).val()}, function(data) {
-	    if (data && data.length > 0) {
-	      var options = '';
-	      var i = 0;
-	      $(data).each(function() {
-	        i++;
-	        options += '<option value="'+this.id+'" price="'+this.price+'"';
-	        if (i == 1) {
-	          options += ' selected';
-	          $("#buying_price").val(this.price);
-	        }
-	        options += '>'+this.label+'</option>';
-	      });
-	      options += '<option value=""><?php echo $langs->trans("InputPrice"); ?></option>';
-	      $("#buying_price").hide();
-	      $("#fournprice").html(options).show();
-	      $("#fournprice").change(function() {
-	        var selval = $(this).find('option:selected').attr("price");
-	        if (selval)
-	          $("#buying_price").val(selval).hide();
-	        else
-	          $('#buying_price').show();
-	      });
-	    }
-	  },
-	  'json');
+
+	jQuery(document).ready(function() {
+		$("#idprod").change(function()
+		{
+	  		$("#fournprice options").remove();
+			$("#fournprice").hide();
+			$("#buying_price").val("").show();
+	  		$.post('<?php echo DOL_URL_ROOT; ?>/fourn/ajax/getSupplierPrices.php', { 'idprod': $(this).val() }, function(data) {
+		    	if (data && data.length > 0)
+		    	{
+	    	  		var options = '';
+		      		var i = 0;
+		      		$(data).each(function() {
+		        		i++;
+		        		options += '<option value="'+this.id+'" price="'+this.price+'"';
+		        		if (i == 1) {
+		          			options += ' selected';
+		          			$("#buying_price").val(this.price);
+		        		}
+		        		options += '>'+this.label+'</option>';
+		      		});
+		      		options += '<option value=""><?php echo $langs->trans("InputPrice"); ?></option>';
+		      		$("#buying_price").hide();
+		      		$("#fournprice").html(options).show();
+		      		$("#fournprice").change(function() {
+		        		var selval = $(this).find('option:selected').attr("price");
+		        		if (selval)
+		          			$("#buying_price").val(selval).hide();
+		        		else
+		          			$('#buying_price').show();
+		      		});
+		    	}
+		  	},
+		  	'json');
+		});
 	});
+
 	</script>
 <?php
 }
