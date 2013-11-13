@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2008-2013	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2008-2012	Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2012		Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -100,7 +101,41 @@ print '</tr>';
 print '</table>'."\n";
 print "\n";
 
+print '</div><div class="inline-block">';
 
+
+// Official support
+print '<table class="login" width="100%">';
+print '<tr class="title">';
+print '<td width="100%" align="left" valign="top">';
+
+print '<table summary="community"><tr><td>'.img_picto('','internet.png','',1).'</td><td>';
+print '<font style="'.$style1.'">'.$langs->trans("OfficialSupport").'</font>';
+print '<br>'.$langs->trans("TypeOfSupport").': <font style="'.$style2.'">'.$langs->trans("TypeSupportCommercial").'</font>';
+print '<br>'.$langs->trans("TypeOfHelp").'/'.$langs->trans("Efficiency").'/'.$langs->trans("Price").': ';
+print $langs->trans("TypeHelpOnly").'/'.img_picto_common('','redstar','',1).img_picto_common('','redstar','',1).img_picto_common('','redstar','',1).img_picto_common('','redstar','',1).'/'.img_picto_common('','star','',1).img_picto_common('','star','',1);
+
+print '</td></tr></table>';
+
+print '</td>';
+print '</tr><tr>';
+print '<td align="center" valign="top">';
+print '<table class="nocellnopadd">';
+print '<tr><td align="center">';
+
+//TODO Create commercial dedicated page into dolibarr.org?
+$urlofficialsupport='http://wiki.dolibarr.org/index.php/Dolibarr_help_and_support';
+
+//TODO Create commercial dedicated page into dolibarr.fr?
+if (preg_match('/fr/i',$langs->defaultlang)) $urlofficialsupport='http://wiki.dolibarr.org/index.php/Assistance_Dolibarr';
+
+if (preg_match('/es/i',$langs->defaultlang)) $urlofficialsupport='http://www.dolibarr.es/soporte/';
+print '<br>'.$langs->trans("SeeOfficalSupport",$urlofficialsupport,$langs->transnoentities("ClickHere")).'<br>';
+print '</td></tr></table>';
+print '</td>';
+print '</tr>';
+print '</table>'."\n";
+print "\n";
 print '</div><div class="inline-block">';
 
 /*
