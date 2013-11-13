@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2008-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
+/* Copyright (C) 2008-2013	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2008-2012	Regis Houssin		<regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -84,9 +84,6 @@ print '<tr>';
 print '<td align="center" valign="top">';
 
 print '<table class="nocellnopadd">';
-/*print '<tr><td align="center" valign="top">';
-print img_picto_common('','who.png','',1);
-print '</td></tr>';*/
 print '<tr><td align="center">';
 $urlwiki='http://wiki.dolibarr.org';
 if (preg_match('/fr/i',$langs->defaultlang)) $urlwiki='http://wiki.dolibarr.org/index.php/Accueil';
@@ -95,6 +92,7 @@ print '<br>'.$langs->trans("ForDocumentationSeeWiki",$urlwiki,$urlwiki);
 print '<br>';
 $urlforum='http://www.dolibarr.org/forum/';
 if (preg_match('/fr/i',$langs->defaultlang)) $urlforum='http://www.dolibarr.fr/forum/';
+if (preg_match('/es/i',$langs->defaultlang)) $urlforum='http://www.dolibarr.es/index.php/foro/';
 print '<br>'.$langs->trans("ForAnswersSeeForum",$urlforum,$urlforum).'<br>';
 print '</td></tr></table>';
 print '</td>';
@@ -105,6 +103,7 @@ print "\n";
 
 print '</div><div class="inline-block">';
 
+/*
 
 // Online support
 print '<table class="login" width="100%">';
@@ -124,9 +123,6 @@ print '</td>';
 print '</tr><tr>';
 print '<td align="center" valign="top">';
 print '<table class="nocellnopadd">';
-/*print '<tr><td align="center" valign="top">';
-print img_picto_common('','internet.png','',1);
-print '</td></tr>';*/
 print '<tr><td align="center">';
 print '<br>'.$langs->trans("ToSeeListOfAvailableRessources").'<br>';
 print '<b><a href="online.php">'.$langs->trans("ClickHere").'</a></b><br>';
@@ -140,7 +136,7 @@ print '</table>'."\n";
 
 
 print '</div><div class="inline-block">';
-
+*/
 
 // EMail support
 print '<table class="login" width="100%">';
@@ -161,9 +157,6 @@ print '</tr><tr>';
 $urlwiki='http://wiki.dolibarr.org/index.php/List of Dolibarr partners and providers';
 print '<td align="center" valign="top">';
 print '<table class="nocellnopadd">';
-/*print '<tr><td align="center" valign="top">';
-print img_picto_common('','mail.png','',1);
-print '</td></tr>';*/
 print '<tr><td align="center">';
 print '<br>'.$langs->trans("ToSeeListOfAvailableRessources").'<br>';
 print '<b><a href="'.$urlwiki.'">'.$langs->trans("ClickHere").'</a></b><br>';
@@ -198,9 +191,6 @@ print '</tr><tr>';
 $urlwiki='http://wiki.dolibarr.org/index.php/List of Dolibarr partners and providers';
 print '<td align="center" valign="top">';
 print '<table class="nocellnopadd">';
-/*print '<tr><td align="center" valign="top">';
-print img_picto_common('','pagemaster.png','',1);
-print '</td></tr>';*/
 print '<tr><td align="center">';
 print '<br>'.$langs->trans("ToSeeListOfAvailableRessources").'<br>';
 print '<b><a href="'.$urlwiki.'">'.$langs->trans("ClickHere").'</a></b><br>';
