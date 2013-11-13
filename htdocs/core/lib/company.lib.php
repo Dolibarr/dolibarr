@@ -609,9 +609,6 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
     print '<td>&nbsp;</td>';
     
      print '<td>&nbsp;</td>';
-    
-   
-    
     if (! empty($conf->skype->enabled)) 
     { 
       $colspan++;
