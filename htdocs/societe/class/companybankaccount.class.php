@@ -207,6 +207,7 @@ class CompanyBankAccount extends Account
     /**
      * Return RIB
      *
+     * @param   boolean     $displayriblabel     Show or Hide Label
      * @return	string		RIB
      */
     function getRibLabel($displayriblabel = true)
