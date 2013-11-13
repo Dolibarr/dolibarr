@@ -658,6 +658,7 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
 
             print '<td>';
             $contactstatic->id = $obj->rowid;
+            $contactstatic->statut = $obj->statut;
             $contactstatic->lastname = $obj->lastname;
             $contactstatic->firstname = $obj->firstname;
             print $contactstatic->getNomUrl(1);
@@ -687,8 +688,9 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
                 print '</td>';
             }   
 
-			 if ($obj->statut==0) print '<td>'.$langs->trans('Disabled').' </span>'.img_picto($langs->trans('StatusContactDraftShort'),'statut0').'</td>';
-			elseif ($obj->statut==1) print '<td>'.$langs->trans('Enabled').' </span>'.img_picto($langs->trans('StatusContactValidatedShort'),'statut1').'</td>';
+			print '<td>';
+            print $contactstatic->getLibStatut(3);
+            print '</td>';
 
 			// copy in clipboard
 			$coords = '';
