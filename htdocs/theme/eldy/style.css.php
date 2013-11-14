@@ -1140,6 +1140,7 @@ td.photo {
     box-shadow: 2px 2px 4px #DDD;
 
     padding: 0 4px 0 4px !important;
+    min-height: 32px;
 }
 
 

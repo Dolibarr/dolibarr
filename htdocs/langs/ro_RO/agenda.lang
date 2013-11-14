@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - agenda
-# IdAgenda=ID event
+IdAgenda=ID eveniment
 Actions=Evenimente
 ActionsArea=Zona evenimente (acțiuni și sarcini)
 Agenda= Agenda
@@ -68,7 +68,7 @@ AgendaUrlOptions5=<b>logind=% s</b> ​​pentru a limita exportul de acțiuni e
 AgendaShowBirthdayEvents=Afişează ziua de naştere a contactelor
 AgendaHideBirthdayEvents=Ascunde ziua de naştere a contactelor
 Busy=Ocupat
-# ExportDataset_event1=List of agenda events
+ExportDataset_event1=Lista evenimentelor din agenda
 
 # External Sites ical
 ExportCal=Export calendar

@@ -64,7 +64,8 @@ For users:
 - New: Add field oustanding limit into thirdparty properties.
 - New: Can enter a vat payment of zero.
 - New: Add path to installed dir of external modules + Name and web of module provider.
-- New: Add option to use a specific mask for uploaded filename
+- New: Add option to use a specific mask for uploaded filename.
+- New: Can attach external links to objects as we can attach files.
 - Qual: Implement same rule for return value of all command line scripts (0 when success, <>0 if error).
 - Fix: [ bug #992 ] Proforma invoices don't have a separated numeric count.
 - Fix: [ bug #1022 ] correct margin calculation for credit notes.

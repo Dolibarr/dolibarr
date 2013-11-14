@@ -66,6 +66,8 @@ Country=Pais
 CountryCode=Codi pais
 CountryId=Id pais
 Phone=Telèfon
+# Skype=Skype
+# Call=Call
 PhonePro=Teléf. treball
 PhonePerso=Telèf. particular
 PhoneMobile=Mòbil
@@ -396,7 +398,7 @@ InActivity=Actiu
 ActivityCeased=Tancat
 ActivityStateFilter=Estat d'activitat
 ProductsIntoElements=Llistat de productes en %s
-# OutstandingBill=Outstanding Bill
+# OutstandingBill=Max. for outstanding bill
 # Monkey
 MonkeyNumRefModelDesc=Retorna un número sota el format %syymm-nnnn per als codis de clients  i %syymm-nnnn per als codis dels proveïdors, on yy és l'any, mm el mes i nnnn un comptador seqüencial sense ruptura i sense tornar a 0.
 # Leopard

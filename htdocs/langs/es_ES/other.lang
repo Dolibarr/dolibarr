@@ -173,12 +173,12 @@ StartUpload=Transferir
 CancelUpload=Cancelar la transferencia
 FileIsTooBig=El archivo es demasiado grande
 PleaseBePatient=Rogamos espere unos instantes...
-# RequestToResetPasswordReceived=A request to change your Dolibarr password has been received
-# NewKeyIs=This is your new keys to login
-# NewKeyWillBe=Your new key to login to software will be
-# ClickHereToGoTo=Click here to go to %s
-# YouMustClickToChange=You must however first click on the following link to validate this password change
-# ForgetIfNothing=If you didn't request this change, just forget this email. Your credentials are kept safe.
+RequestToResetPasswordReceived=Se ha recibido una solicitud para cambiar tu contraseña de Dolibarr
+NewKeyIs=Esta es su nueva contraseña para iniciar sesión
+NewKeyWillBe=Su nueva contraseña para iniciar sesión en el software será
+ClickHereToGoTo=Haga click aquí para ir a %s
+YouMustClickToChange=Sin embargo, debe hacer click primero en el siguiente enlace para validar este cambio de contraseña
+ForgetIfNothing=Si usted no ha solicitado este cambio, simplemente ignore este email. Sus credenciales son guardadas de forma segura.
 
 ##### Calendar common #####
 AddCalendarEntry=Añadir entrada en el calendario

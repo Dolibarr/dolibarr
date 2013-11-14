@@ -66,6 +66,8 @@ Country=قطر
 CountryCode=رمز البلد
 # CountryId=Country id
 Phone=الهاتف
+# Skype=Skype
+# Call=Call
 PhonePro=الأستاذ الهاتف
 PhonePerso=عدد الأفراد. الهاتف
 PhoneMobile=الجوال
@@ -396,7 +398,7 @@ ListCustomersShort=قائمة العملاء
 ActivityCeased=مغلقة
 # ActivityStateFilter=Activity status
 # ProductsIntoElements=List of products into
-# OutstandingBill=Outstanding Bill
+# OutstandingBill=Max. for outstanding bill
 # Monkey
 MonkeyNumRefModelDesc=عودة número مع الشكل nnnn - ٪ syymm الزبون ورمز وnnnn - ٪ syymm مورد للقانون حيث السنة هو السنة ، هو شهر ملم وnnnn هو تسلسل بلا كسر وعدم العودة إلى 0.
 # Leopard

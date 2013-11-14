@@ -770,15 +770,18 @@ class FormFile
 					print '<a data-ajax="false" href="'.DOL_URL_ROOT.'/document.php?modulepart='.$modulepart;
 					if ($forcedownload) print '&attachment=1';
 					if (! empty($object->entity)) print '&entity='.$object->entity;
-					//print '&file='.urlencode($relativepath.$file['name']).'">';
+					print '&file='.urlencode($relativepath.$file['name']);
+					/* Restore old code: When file is at level 2+, full relative path must be in url, not only level1
 					if ($file['level1name'] <> $object->id)
 						$filepath=urlencode($object->id.'/'.$file['level1name'].'/'.$file['name']);
 					else
 						$filepath=urlencode($object->id.'/'.$file['name']);
-					print '&file='.$filepath.'">';
+					print '&file='.$filepath;
+						*/
+					print '">';
 
 					print img_mime($file['name'],$file['name'].' ('.dol_print_size($file['size'],0,0).')').' ';
-					if ($showrelpart == 1) print $file['level1name'].'/';
+					if ($showrelpart == 1) print $relativepath;
 					print dol_trunc($file['name'],$maxlength,'middle');
 					print '</a>';
 					print "</td>\n";

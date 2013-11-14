@@ -2194,9 +2194,9 @@ class Product extends CommonObject
 
 		$product = new Product($this->db);
 		//var_dump($prod);
-		foreach($prod as $id_product => $desc_pere)	// nom_pere is 0 or id of sub_product
+		foreach($prod as $id_product => $desc_pere)	// $id_product is 0 (there is no mode sub_product) or an id of a sub_product
 		{
-			if (is_array($desc_pere))	// If this parent desc is an array, this is an array of childs
+			if (is_array($desc_pere))	// If desc_pere is an array, this means it's a child
 			{
 				$id=(! empty($desc_pere[0]) ? $desc_pere[0] :'');
 				$nb=(! empty($desc_pere[1]) ? $desc_pere[1] :'');
@@ -2205,20 +2205,23 @@ class Product extends CommonObject
 				if ($multiply < 1) $multiply=1;
 
 				//print "XXX We add id=".$id." - label=".$label." - nb=".$nb." - multiply=".$multiply." fullpath=".$compl_path.$label."\n";
-				$this->fetch($id);
-				$this->load_stock();
+				$this->fetch($id);		// Load product
+				$this->load_stock();	// Load stock
 				$this->res[]= array(
 					'id'=>$id,					// Id product
+					'ref'=>$this->ref,			// Ref product
 					'nb'=>$nb,					// Nb of units that compose parent product
 					'nb_total'=>$nb*$multiply,	// Nb of units for all nb of product
-					'stock'=>$this->stock_warehouse[1]->real,	// Stock
+					'stock'=>$this->stock_reel,	// Stock
 					'stock_alert'=>$this->seuil_stock_alerte,	// Stock alert
-					'fullpath' => $compl_path.$label,			// Label
+					'label'=>$label,
+					'fullpath'=>$compl_path.$label,			// Label
 					'type'=>$type,				// Nb of units that compose parent product
-					'desiredstock' => $this->desiredstock
+					'desiredstock'=>$this->desiredstock,
+					'level'=>$level
 				);
 
-				// Recursive call if child is an array
+				// Recursive call if there is childs to child
 				if (is_array($desc_pere['childs']))
 				{
 					//print 'YYY We go down for '.$desc_pere[3]." -> \n";

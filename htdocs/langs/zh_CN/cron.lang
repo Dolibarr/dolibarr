@@ -98,14 +98,14 @@ CronStatusInactiveBtn=禁用
 #
 # Info
 #
-# CronInfoPage=Information
+CronInfoPage=信息
 
 
 #
 # Common
 #
-# CronType=Task type
-# CronType_method=Call method of a Dolibarr Class
+CronType=任务类型
+CronType_method=一个Dolibarr类的调用方法
 # CronType_command=Shell command
 CronMenu=Cron
 # CronCannotLoadClass=Cannot load class %s or object %s

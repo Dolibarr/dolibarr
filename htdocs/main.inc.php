@@ -1611,8 +1611,13 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
 	        print "<!-- End Bookmarks -->\n";
 	    }
 
-	    //Dolibarr version
+		//Dolibarr version
 	    $doliurl='http://www.dolibarr.org';
+	    
+	    //local communities
+	    if (preg_match('/fr/i',$langs->defaultlang)) $doliurl='http://www.dolibarr.fr';
+		if (preg_match('/es/i',$langs->defaultlang)) $doliurl='http://www.dolibarr.es';
+	    
 	    $appli='Dolibarr';
 	    if (! empty($conf->global->MAIN_APPLICATION_TITLE)) {
 	    	$appli=$conf->global->MAIN_APPLICATION_TITLE; $doliurl='';
