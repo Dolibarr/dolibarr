@@ -53,10 +53,11 @@ $mesg = '';
 
 $product = new Product($db);
 $productid=0;
-if ($id || $ref)
+if ($id > 0 || ! empty($ref))
 {
 	$result = $product->fetch($id,$ref);
 	$productid=$product->id;
+	$id=$product->id;
 }
 
 
@@ -119,6 +120,10 @@ if ($cancel == $langs->trans("Cancel"))
  * View
  */
 
+$product_fourn = new ProductFournisseur($db);
+$productstatic = new Product($db);
+$form = new Form($db);
+
 // action recherche des produits par mot-cle et/ou par categorie
 if ($action == 'search')
 {
@@ -153,8 +158,6 @@ if ($action == 'search')
 }
 //print $sql;
 
-$productstatic = new Product($db);
-$form = new Form($db);
 
 llxHeader("","",$langs->trans("CardProduct".$product->type));
 
@@ -285,9 +288,36 @@ if ($id > 0 || ! empty($ref))
 		print '<tr><td>'.$langs->trans("Label").'</td><td>'.$product->libelle.'</td>';
 		print '</tr>';
 
+		if (empty($conf->global->PRODUIT_MULTIPRICES))
+		{	
+		    // Price
+			print '<tr><td>'.$langs->trans("SellingPrice").'</td><td>';
+			if ($object->price_base_type == 'TTC')
+			{
+				print price($object->price_ttc).' '.$langs->trans($object->price_base_type);
+			}
+			else
+			{
+				print price($object->price).' '.$langs->trans($object->price_base_type);
+			}
+			print '</td></tr>';
+		
+			// Price minimum
+			print '<tr><td>'.$langs->trans("MinPrice").'</td><td>';
+			if ($object->price_base_type == 'TTC')
+			{
+				print price($object->price_min_ttc).' '.$langs->trans($object->price_base_type);
+			}
+			else
+			{
+				print price($object->price_min).' '.$langs->trans($object->price_base_type);
+			}
+			print '</td></tr>';
+		}
+
 		// Number of subproducts
 		$prodsfather = $product->getFather(); //Parent Products
-		$product->get_sousproduits_arbo();
+		$product->get_sousproduits_arbo();			// Defined $product->sousprod
 		$prods_arbo=$product->get_arbo_each_prod();
 		$nbofsubproducts=count($prods_arbo);
 		print '<tr><td>'.$langs->trans("AssociatedProductsNumber").'</td><td>';
@@ -296,26 +326,55 @@ if ($id > 0 || ! empty($ref))
 		print '</tr>';
 
 		// List of subproducts
-		if(count($prods_arbo) > 0)
+		if (count($prods_arbo) > 0)
 		{
 			print '<tr><td colspan="2">';
-			print '<b>'.$langs->trans("ProductAssociationList").'</b><br>';
-			print '<table class="nobordernopadding">';
+			print $langs->trans("ProductAssociationList").'<br>';
+			print '<table class="nobordernopadding centpercent">';
 			foreach($prods_arbo as $value)
 			{
 				$productstatic->id=$value['id'];
 				$productstatic->type=$value['type'];
-				$productstatic->ref=$value['fullpath'];
-				if (! empty($conf->stock->enabled)) $productstatic->load_stock();
-				//var_dump($value);
 				//print '<pre>'.$productstatic->ref.'</pre>';
 				//print $productstatic->getNomUrl(1).'<br>';
-				//print $value[0];	// This contains a tr line.
+				//var_dump($value);
 				print '<tr>';
-				print '<td>'.$productstatic->getNomUrl(1,'composition').' ('.$value['nb'].') &nbsp &nbsp</td>';
-				if (! empty($conf->stock->enabled)) print '<td>'.$langs->trans("Stock").' : <b>'.$productstatic->stock_reel.'</b></td>';
+				if ($value['level'] <= 1)
+				{
+					$productstatic->ref=$value['fullpath'];
+					print '<td>'.$productstatic->getNomUrl(1,'composition').' ('.$value['nb'].') &nbsp;</td>';
+					print '<td align="right">';
+					if ($product_fourn->find_min_price_product_fournisseur($productstatic->id, $value['nb']) > 0)
+					{
+						print $langs->trans("BuyingPriceMinShort").': ';
+				    	if ($product_fourn->product_fourn_price_id > 0) print $product_fourn->display_price_product_fournisseur(0,0);
+				    	else print $langs->trans("NotDefined");
+					}
+					print '</td>';
+					$totalline=price2num($value['nb'] * $product_fourn->fourn_unitprice, 'MT');
+					$total+=$totalline;
+					print '<td align="right">'.price($totalline,'','',0,0,-1,$conf->currency).'</td>';
+					if (! empty($conf->stock->enabled)) print '<td align="right">'.$langs->trans("Stock").': '.$value['stock'].'</td>';	// Real stock
+				}
+				else {
+					$productstatic->ref=$value['label'];
+					print '<td>';
+					for ($i=0; $i < $value['level']; $i++)
+					{
+						print ' &nbsp; &nbsp; &nbsp; '; 
+					}
+					print $productstatic->getNomUrl(1,'composition').' ('.$value['nb'].') &nbsp;</td>';
+					print '<td><td>';	
+					print '<td><td>';	
+					if (! empty($conf->stock->enabled)) print '<td align="right"></td>';	// Real stock
+				}
 				print '</tr>';
 			}
+			print '<tr>';			
+			print '<td>'.$langs->trans("BuyingPriceMin").': '.price($total,'','',0,0,-1,$conf->currency).'</td>';
+			print '<td></td>';
+			if (! empty($conf->stock->enabled)) print '<td class="liste_total" align="right">&nbsp;</td>';
+			print '</tr>';
 			print '</table>';
 			print '</td></tr>';
 		}
@@ -328,7 +387,7 @@ if ($id > 0 || ! empty($ref))
 		if (count($prodsfather) > 0)
 		{
 			print '<tr><td colspan="2">';
-			print '<b>'.$langs->trans("ProductParentList").'</b><br>';
+			print $langs->trans("ProductParentList").'<br>';
 			print '<table class="nobordernopadding">';
 			foreach($prodsfather as $value)
 			{
@@ -393,7 +452,7 @@ if ($id > 0 || ! empty($ref))
 			print '<th class="liste_titre">'.$langs->trans("Ref").'</td>';
 			print '<th class="liste_titre">'.$langs->trans("Label").'</td>';
 			print '<th class="liste_titre" align="center">'.$langs->trans("AddDel").'</td>';
-			print '<th class="liste_titre" align="right">'.$langs->trans("Quantity").'</td>';
+			print '<th class="liste_titre" align="right">'.$langs->trans("Qty").'</td>';
 			print '</tr>';
 			if ($resql)
 			{
@@ -457,7 +516,7 @@ if ($id > 0 || ! empty($ref))
 						}
 						print '<td align="center"><input type="hidden" name="prod_id_'.$i.'" value="'.$objp->rowid.'">';
 						print '<input type="checkbox" '.$addchecked.'name="prod_id_chk'.$i.'" value="'.$objp->rowid.'"></td>';
-						print '<td align="right"><input type="text" size="3" name="prod_qty_'.$i.'" value="'.$qty.'"></td>';
+						print '<td align="right"><input type="text" size="2" name="prod_qty_'.$i.'" value="'.$qty.'"></td>';
 						print '</tr>';
 					}
 					$i++;
