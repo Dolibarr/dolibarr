@@ -1664,7 +1664,7 @@ class Propal extends CommonObject
         {
             if ($statut == 2)
             {
-                // Classe la societe rattachee comme client
+                // The connected company is classified as a client
                 $soc=new Societe($this->db);
                 $soc->id = $this->socid;
                 $result=$soc->set_as_client();

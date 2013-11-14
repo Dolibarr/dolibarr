@@ -21,7 +21,7 @@
 /**
  *       \file       htdocs/comm/propal/document.php
  *       \ingroup    propale
- *       \brief      Page de gestion des documents attaches a une proposition commerciale
+ *       \brief      Management page of documents attached to a business proposal
  */
 
 require '../../main.inc.php';
