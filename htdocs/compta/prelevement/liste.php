@@ -111,7 +111,7 @@ if ($result)
 
     print '<tr class="liste_titre">';
     print '<td class="liste_titre">'.$langs->trans("Line").'</td>';
-    print_liste_field_titre($langs->trans("WithdrawalReceipt"),$_SERVER["PHP_SELF"],"p.ref");
+    print_liste_field_titre($langs->trans("WithdrawalReceipts"),$_SERVER["PHP_SELF"],"p.ref");
     print_liste_field_titre($langs->trans("Bill"),$_SERVER["PHP_SELF"],"f.facnumber",'',$urladd);
     print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom");
     print_liste_field_titre($langs->trans("CustomerCode"),$_SERVER["PHP_SELF"],"s.code_client",'','','align="center"');

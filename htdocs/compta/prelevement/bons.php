@@ -79,7 +79,7 @@ if ($result)
   print '<table class="liste" width="100%">';
 
   print '<tr class="liste_titre">';
-  print_liste_field_titre($langs->trans("WithdrawalReceipt"),"bons.php","p.ref",'','','class="liste_titre"');
+  print_liste_field_titre($langs->trans("WithdrawalReceipts"),"bons.php","p.ref",'','','class="liste_titre"');
   print_liste_field_titre($langs->trans("Date"),"bons.php","p.datec","","",'class="liste_titre" align="center"');
   print '<td class="liste_titre" align="right">'.$langs->trans("Amount").'</td>';
   print '</tr>';
