@@ -266,7 +266,7 @@ if (empty($reshook))
                         $contact->state_id      	= $object->state_id;
                         $contact->country_id		= $object->country_id;
                         $contact->socid				= $object->id;	// fk_soc
-                        $contact->status			= 1;
+                        $contact->statut			= 1;
                         $contact->email				= $object->email;
 						            $contact->skype       = $object->skype;
                         $contact->phone_pro			= $object->phone;
