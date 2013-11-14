@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
@@ -289,7 +289,7 @@ if ($id > 0 || ! empty($ref))
 		print '</tr>';
 
 		if (empty($conf->global->PRODUIT_MULTIPRICES))
-		{	
+		{
 		    // Price
 			print '<tr><td>'.$langs->trans("SellingPrice").'</td><td>';
 			if ($object->price_base_type == 'TTC')
@@ -301,7 +301,7 @@ if ($id > 0 || ! empty($ref))
 				print price($object->price).' '.$langs->trans($object->price_base_type);
 			}
 			print '</td></tr>';
-		
+
 			// Price minimum
 			print '<tr><td>'.$langs->trans("MinPrice").'</td><td>';
 			if ($object->price_base_type == 'TTC')
@@ -341,6 +341,7 @@ if ($id > 0 || ! empty($ref))
 				print '<tr>';
 				if ($value['level'] <= 1)
 				{
+					$notdefined=0;
 					$productstatic->ref=$value['fullpath'];
 					print '<td>'.$productstatic->getNomUrl(1,'composition').' ('.$value['nb'].') &nbsp;</td>';
 					print '<td align="right">';
@@ -348,12 +349,12 @@ if ($id > 0 || ! empty($ref))
 					{
 						print $langs->trans("BuyingPriceMinShort").': ';
 				    	if ($product_fourn->product_fourn_price_id > 0) print $product_fourn->display_price_product_fournisseur(0,0);
-				    	else print $langs->trans("NotDefined");
+				    	else { print $langs->trans("NotDefined"); $notdefined=1; }
 					}
 					print '</td>';
 					$totalline=price2num($value['nb'] * $product_fourn->fourn_unitprice, 'MT');
 					$total+=$totalline;
-					print '<td align="right">'.price($totalline,'','',0,0,-1,$conf->currency).'</td>';
+					print '<td align="right">'.($notdefined?'':price($totalline,'','',0,0,-1,$conf->currency)).'</td>';
 					if (! empty($conf->stock->enabled)) print '<td align="right">'.$langs->trans("Stock").': '.$value['stock'].'</td>';	// Real stock
 				}
 				else {
@@ -361,16 +362,16 @@ if ($id > 0 || ! empty($ref))
 					print '<td>';
 					for ($i=0; $i < $value['level']; $i++)
 					{
-						print ' &nbsp; &nbsp; &nbsp; '; 
+						print ' &nbsp; &nbsp; ';
 					}
 					print $productstatic->getNomUrl(1,'composition').' ('.$value['nb'].') &nbsp;</td>';
-					print '<td><td>';	
-					print '<td><td>';	
+					print '<td><td>';
+					print '<td><td>';
 					if (! empty($conf->stock->enabled)) print '<td align="right"></td>';	// Real stock
 				}
 				print '</tr>';
 			}
-			print '<tr>';			
+			print '<tr>';
 			print '<td>'.$langs->trans("BuyingPriceMin").': '.price($total,'','',0,0,-1,$conf->currency).'</td>';
 			print '<td></td>';
 			if (! empty($conf->stock->enabled)) print '<td class="liste_total" align="right">&nbsp;</td>';
@@ -543,26 +544,6 @@ if ($id > 0 || ! empty($ref))
 	}
 }
 
-
-
-/* ************************************************************************** */
-/*                                                                            */
-/* Barre d'action                                                             */
-/*                                                                            */
-/* ************************************************************************** */
-/*
-print "\n<div class=\"tabsAction\">\n";
-
-if ($action == '')
-{
-	if ($user->rights->produit->creer || $user->rights->service->creer)
-	{
-		print '<a class="butAction" href="'.DOL_URL_ROOT.'/product/composition/fiche.php?action=edit&amp;id='.$productid.'">'.$langs->trans("EditAssociate").'</a>';
-	}
-}
-
-print "\n</div>\n";
-*/
 
 llxFooter();
 
