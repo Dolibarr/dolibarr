@@ -15,3 +15,5 @@ doxygen_warnings.log
 .DS_Store
 .idea
 *.iml
+Thumbs.db
+

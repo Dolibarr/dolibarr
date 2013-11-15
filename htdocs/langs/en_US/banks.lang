@@ -150,3 +150,7 @@ EventualyAddCategory=Eventually, specify a category in which to classify the rec
 ToConciliate=To conciliate?
 ThenCheckLinesAndConciliate=Then, check the lines present in the bank statement and click
 BankDashboard=Bank accounts summary
+DefaultRIB=Default BAN
+AllRIB=All BAN
+LabelRIB=BAN Label
+NoBANRecord=No BAN record

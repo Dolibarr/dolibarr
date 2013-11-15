@@ -40,6 +40,7 @@ class Contact extends CommonObject
 	protected $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
 	var $id;
+    var $ref_ext;
 	var $civilite_id;  // In fact we store civility_code
     var $lastname;
 	var $firstname;
@@ -64,9 +65,13 @@ class Contact extends CommonObject
 	var $code;
 	var $email;
   var $skype;
+    var $jabberid;
 	var $phone_pro;
 	var $phone_perso;
 	var $phone_mobile;
+    var $fax;
+
+    var $priv;
 
 	var $birthday;
 	var $default_lang;

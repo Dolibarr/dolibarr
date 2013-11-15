@@ -8,7 +8,8 @@
  * Copyright (C) 2008      Patrick Raguin       <patrick.raguin@auguria.net>
  * Copyright (C) 2010-2011 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2013      Florian Henry		  	<florian.henry@open-concept.pro>
- * Copyright (C) 2013      Alexandre Spangaro 	<alexandre.spangaro@gmail.com> 
+ * Copyright (C) 2013      Alexandre Spangaro 	<alexandre.spangaro@gmail.com>
+ * Copyright (C) 2013      Peter Fontaine       <contact@peterfontaine.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1751,6 +1752,34 @@ class Societe extends CommonObject
         $bac = new CompanyBankAccount($this->db);
         $bac->fetch(0,$this->id);
         return $bac->getRibLabel();
+    }
+
+    /**
+     * Return Array of RIB
+     *
+     * @return     array|int        0 if KO, Array of CompanyBanckAccount if OK
+     */
+    function get_all_rib()
+    {
+        require_once DOL_DOCUMENT_ROOT . '/societe/class/companybankaccount.class.php';
+        $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe_rib WHERE fk_soc = ".$this->id;
+        $result = $this->db->query($sql);
+        if (!$result) {
+            $this->error++;
+            $this->errors[] = $this->db->lasterror;
+            return 0;
+        } else {
+            $num_rows = $this->db->num_rows($result);
+            $rib_array = array();
+            if ($num_rows) {
+                while ($obj = $this->db->fetch_object($result)) {
+                    $rib = new CompanyBankAccount($this->db);
+                    $rib->fetch($obj->rowid);
+                    $rib_array[] = $rib;
+                }
+            }
+            return $rib_array;
+        }
     }
 
     /**
