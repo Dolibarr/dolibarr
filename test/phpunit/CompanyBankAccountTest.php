@@ -140,7 +140,7 @@ class CompanyBankAccountTest extends PHPUnit_Framework_TestCase
      * testCompanyBankAccountFetch
      *
      * @param	int		$id		Id of bank account
-     * @return	void
+     * @return	Object          Bank account object
      *
      * @depends	testCompanyBankAccountCreate
      * The depends says test is run only if previous is ok
@@ -159,6 +159,29 @@ class CompanyBankAccountTest extends PHPUnit_Framework_TestCase
     	$this->assertLessThan($result, 0);
     	print __METHOD__." id=".$id." result=".$result."\n";
     	return $localobject;
+    }
+
+    /**
+     * testCompanyBankAccountSetAsDefault
+     *
+     * @param   Object  $localobject    Bank account
+     * @return  int
+     *
+     * @depends testCompanyBankAccountFetch
+     */
+    public function testCompanyBankAccountSetAsDefault($localobject)
+    {
+        global $conf,$user,$langs,$db;
+        $conf=$this->savconf;
+        $user=$this->savuser;
+        $langs=$this->savlangs;
+        $db=$this->savdb;
+
+        $result=$localobject->setAsDefault($localobject->id);
+
+        print __METHOD__." id=".$localobject->id." result=".$result."\n";
+        $this->assertLessThan($result, 0);
+        return $localobject;
     }
 
     /**

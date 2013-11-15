@@ -6511,6 +6511,7 @@ CREATE TABLE `llx_societe_rib` (
   `domiciliation` varchar(255) DEFAULT NULL,
   `proprio` varchar(60) DEFAULT NULL,
   `owner_address` text,
+  `default_rib` tinyint NOT NULL DEFAULT 0,
   `import_key` varchar(14) DEFAULT NULL,
   PRIMARY KEY (`rowid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
