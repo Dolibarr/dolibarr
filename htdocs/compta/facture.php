@@ -2321,8 +2321,7 @@ if ($action == 'create')
 		print '</td><td align=right>';
 		print price($outstandigBills);
 		if (price($outstandigBills)>price($soc->outstanding_limit)) print img_warning($langs->trans("OutstandingBillReached"));
-		print ' / '.price($soc->outstanding_limit).'</td><td colspan=2>';
-		print '</td>';
+		print ' / '.price($soc->outstanding_limit).'</td>';
 		print '</tr>';
 	}
 
