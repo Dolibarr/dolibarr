@@ -2314,12 +2314,14 @@ if ($action == 'create')
 
 	if ($soc->outstanding_limit)
 	{
+		$outstandigBills=$soc->get_OutstandingBill();
 		// Outstanding Bill
 		print '<tr><td>';
 		print $langs->trans('OutstandingBill');
 		print '</td><td align=right>';
-		print price($soc->get_OutstandingBill()).' / ';
-		print price($soc->outstanding_limit).'</td><td colspan=2>';
+		print price($outstandigBills);
+		if (price($outstandigBills)>price($soc->outstanding_limit)) print img_warning($langs->trans("OutstandingBillReached"));
+		print ' / '.price($soc->outstanding_limit).'</td><td colspan=2>';
 		print '</td>';
 		print '</tr>';
 	}
