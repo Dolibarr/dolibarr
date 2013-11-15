@@ -133,7 +133,7 @@ if ($action == 'infocredit' && $user->rights->prelevement->bons->credit)
 $bon = new BonPrelevement($db,"");
 $form = new Form($db);
 
-llxHeader('',$langs->trans("WithdrawalReceipt"));
+llxHeader('',$langs->trans("WithdrawalReceipts"));
 
 
 if ($id > 0)
@@ -141,7 +141,7 @@ if ($id > 0)
 	$bon->fetch($id);
 
 	$head = prelevement_prepare_head($bon);
-	dol_fiche_head($head, 'prelevement', $langs->trans("WithdrawalReceipt"), '', 'payment');
+	dol_fiche_head($head, 'prelevement', $langs->trans("WithdrawalReceipts"), '', 'payment');
 
 	if (GETPOST('error','alpha')!='')
 	{
