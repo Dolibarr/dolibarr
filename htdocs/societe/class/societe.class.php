@@ -2820,9 +2820,9 @@ class Societe extends CommonObject
 			$this->db->begin();
 
 			$now=dol_now();
-			
+
 			$outstanding = price2num($this->outstanding_limit);
-			
+
 			// Positionne l'encours de facturaiton
 			$sql = "UPDATE ".MAIN_DB_PREFIX."societe SET ";
 			$sql.= " outstanding_limit=".$outstanding;
@@ -2843,13 +2843,13 @@ class Societe extends CommonObject
 	}
 
     /**
-     *  return amount of bill not paid
+     *  Return amount of bill not paid
      *
-     *  @return		boolean			Yes or no
+     *  @return		int				Amount in debt for thirdparty
      */
     function get_OutstandingBill()
     {
-		/* Accurate value of remain to pay is to sum remaintopay for each invoice 
+		/* Accurate value of remain to pay is to sum remaintopay for each invoice
 		$paiement = $invoice->getSommePaiement();
 		$creditnotes=$invoice->getSumCreditNotesUsed();
 		$deposits=$invoice->getSumDepositsUsed();
@@ -2857,7 +2857,7 @@ class Societe extends CommonObject
 		$remaintopay=price2num($invoice->total_ttc - $paiement - $creditnotes - $deposits,'MT');
 		*/
 		$sql  = "SELECT sum(total) as amount FROM ".MAIN_DB_PREFIX."facture as f";
-		$sql .= " WHERE fk_soc = ". $this->id; 
+		$sql .= " WHERE fk_soc = ". $this->id;
 		$sql .= " AND paye = 0";
 		$sql .= " AND fk_statut <> 0";
 
@@ -2873,9 +2873,9 @@ class Societe extends CommonObject
 	}
 
 	/**
-	 *    Return label of status customer is prospect/customer
+	 * Return label of status customer is prospect/customer
 	 *
-	 *    @return   string        		Libelle
+	 * @return   string        	Label
 	 */
 	function getLibCustProspStatut()
 	{

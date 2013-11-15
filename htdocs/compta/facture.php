@@ -1929,7 +1929,7 @@ if ($action == 'update_extras')
 	$ret = $extrafields->setOptionalsFromPost($extralabels,$object,GETPOST('attribute'));
 	if ($ret < 0) $error++;
 
-	if (! $error) 
+	if (! $error)
 	{
 		// Actions on extra fields (by external module or standard code)
 		// FIXME le hook fait double emploi avec le trigger !!
@@ -1946,7 +1946,7 @@ if ($action == 'update_extras')
 		}
 		else if ($reshook < 0) $error++;
 	}
-	
+
 	if ($error) $action = 'edit_extras';
 }
 
@@ -2320,8 +2320,9 @@ if ($action == 'create')
 		print $langs->trans('OutstandingBill');
 		print '</td><td align=right>';
 		print price($outstandigBills);
-		if (price($outstandigBills)>price($soc->outstanding_limit)) print img_warning($langs->trans("OutstandingBillReached"));
-		print ' / '.price($soc->outstanding_limit).'</td>';
+		if ($outstandigBills > $soc->outstanding_limit) print img_warning($langs->trans("OutstandingBillReached"));
+		print ' / '.price($soc->outstanding_limit);
+		print '</td>';
 		print '</tr>';
 	}
 
@@ -3444,9 +3445,9 @@ else if ($id > 0 || ! empty($ref))
 							print '<input type="hidden" name="attribute" value="'.$key.'">';
 							print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 							print '<input type="hidden" name="id" value="'.$object->id.'">';
-							
+
 							print $extrafields->showInputField($key,$value);
-							
+
 							print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
 							print '</form>';
 						}
@@ -3792,7 +3793,7 @@ else if ($id > 0 || ! empty($ref))
 								print '</td>';
 								print '</tr>';
 							}
-	
+
 							$i++;
 						}
 						print '</table>';
@@ -3804,10 +3805,10 @@ else if ($id > 0 || ! empty($ref))
 					{
 						dol_print_error($db);
 					}
-					
+
 					print '</div>';
 				}
-				
+
 				// Link for paypal payment
 				if (! empty($conf->paypal->enabled) && $object->statut != 0)
 				{
