@@ -52,7 +52,8 @@ $search_email=GETPOST("search_email");
 $search_skype=GETPOST("search_skype");
 $search_priv=GETPOST("search_priv");
 $search_categ = GETPOST("search_categ",'int');
-$search_statut=GETPOST("search_statut");
+$search_status		= GETPOST("search_status",'int');
+if ($search_status=='') $search_status=1; // always display activ customer first
 
 
 $type=GETPOST("type");
@@ -104,6 +105,7 @@ if (GETPOST('button_removefilter'))
     $search_skype="";
     $search_priv="";
     $sall="";
+    $seach_status=1;
 }
 if ($search_priv < 0) $search_priv='';
 
@@ -192,6 +194,7 @@ if (strlen($search_skype))      // filtre sur skype
 {
     $sql .= " AND p.skype LIKE '%".$db->escape($search_skype)."%'";
 }
+if ($search_status!='') $sql .= " AND p.statut = ".$db->escape($search_status);
 if ($type == "o")        // filtre sur type
 {
     $sql .= " AND p.fk_soc IS NULL";
@@ -245,6 +248,7 @@ if ($result)
     $param ='&begin='.urlencode($begin).'&view='.urlencode($view).'&userid='.urlencode($userid).'&contactname='.urlencode($sall);
     $param.='&type='.urlencode($type).'&view='.urlencode($view).'&search_lastname='.urlencode($search_lastname).'&search_firstname='.urlencode($search_firstname).'&search_societe='.urlencode($search_societe).'&search_email='.urlencode($search_email);
     if (!empty($search_categ)) $param.='&search_categ='.$search_categ;
+    if ($search_status != '') $param.='&amp;search_status='.$search_status;
     if ($search_priv == '0' || $search_priv == '1') $param.="&search_priv=".urlencode($search_priv);
 
 	$num = $db->num_rows($result);
@@ -335,7 +339,9 @@ if ($result)
 	$selectarray=array('0'=>$langs->trans("ContactPublic"),'1'=>$langs->trans("ContactPrivate"));
 	print $form->selectarray('search_priv',$selectarray,$search_priv,1);
 	print '</td>';
-	print '<td class="liste_titre">&nbsp;</td>';
+	 print '<td class="liste_titre" align="center">';
+    print $form->selectarray('search_status', array('0'=>$langs->trans('ActivityCeased'),'1'=>$langs->trans('InActivity')),$search_status);
+    print '</td>';
     print '<td class="liste_titre" align="right">';
     print '<input type="image" value="button_search" class="liste_titre" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" name="button_search" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
     print '&nbsp; ';
