@@ -341,7 +341,7 @@ Module70Name = Interventies
 Module70Desc = Interventiesbeheer
 Module75Name = Reisnotities en -kosten
 Module75Desc = Beheer van reisnotities en -kosten
-Module80Name = Verzendingen
+Module80Name = Verzend Adviezen
 Module80Desc = Beheer afnemersverzending en -ontvangst
 Module85Name = Bank en Contant
 Module85Desc = Beheer van bank- en / of kasrekeningen
@@ -1251,7 +1251,7 @@ ContractsNumberingModules=Contracten nummering modules
 AdherentLoginRequired=Beheren van een login voor elk lid
 ListOfAvailableNotifications=Lijst van beschikbare meldingen (Deze lijst is afhankelijk van geactiveerde modules)
 SendingsNumberingModules=Verzendingen nummering modules
-FreeLegalTextOnShippings=Vrije tekst op verzendingen
+FreeLegalTextOnShippings=Vrije tekst op verzend advies
 AdvancedEditor=Geavanceerde editor
 AccountancyCode=Accountancy Code
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 01:54:18).
