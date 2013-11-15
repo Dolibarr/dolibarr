@@ -154,22 +154,22 @@ class Link extends CommonObject
     {
         global $langs,$conf;
         require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+
         $langs->load("errors");
         $error=0;
 
         dol_syslog(get_class($this)."::Update id = " . $this->id . " call_trigger = " . $call_trigger);
 
         // Check parameters
-        if (empty($this->url)) {
+        if (empty($this->url)) 
+        {
             $this->error = $langs->trans("NoURL");
             return -1;
         }
         
         // Clean parameters
-        $this->url       = clean_url($this->url,0);
-        if(empty($this->label)) {
-            $this->label = basename($this->url);
-        }
+        $this->url       = clean_url($this->url,1);
+        if (empty($this->label)) $this->label = basename($this->url);
         $this->label     = trim($this->label);
 
 
@@ -189,7 +189,8 @@ class Link extends CommonObject
         $resql = $this->db->query($sql);
         if ($resql)
         {
-            if ($call_trigger) {
+            if ($call_trigger) 
+            {
                 // Appel des triggers
                 include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
                 $interface = new Interfaces($this->db);
@@ -201,7 +202,8 @@ class Link extends CommonObject
                 // Fin appel triggers
             }
 
-            if (! $error) {
+            if (! $error) 
+            {
                 dol_syslog(get_class($this) . "::Update success");
                 $this->db->commit();
                 return 1;
@@ -209,14 +211,19 @@ class Link extends CommonObject
                 $this->db->rollback();
                 return -1;
             }
-        } else {
-            if ($this->db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
+        } 
+        else 
+        {
+            if ($this->db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') 
+            {
                 // Doublon
                 $this->error = $langs->trans("ErrorDuplicateField");
                 $result =  -1;
-            } else {
+            }
+            else 
+            {
                 $this->error = $langs->trans("Error sql = " . $sql);
-                dol_syslog(get_class($this) . "::Update fails update sql = " . $sql, LOG_ERR);
+                dol_syslog(get_class($this) . "::Update fails update = " . $this->error, LOG_ERR);
                 $result =  -2;
             }
             $this->db->rollback();

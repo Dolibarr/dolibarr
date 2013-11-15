@@ -71,7 +71,7 @@ $cancel <> $langs->trans("Cancel") &&
 ($user->rights->produit->creer || $user->rights->service->creer))
 {
 	$error=0;
-	for($i=0;$i<$_POST["max_prod"];$i++)
+	for ($i=0; $i<$_POST["max_prod"]; $i++)
 	{
 		if ($_POST["prod_id_chk".$i] > 0)
 		{
@@ -328,6 +328,7 @@ if ($id > 0 || ! empty($ref))
 		// List of subproducts
 		if (count($prods_arbo) > 0)
 		{
+			$atleastonenotdefined=0;
 			print '<tr><td colspan="2">';
 			print $langs->trans("ProductAssociationList").'<br>';
 			print '<table class="nobordernopadding centpercent">';
@@ -343,13 +344,13 @@ if ($id > 0 || ! empty($ref))
 				{
 					$notdefined=0;
 					$productstatic->ref=$value['fullpath'];
-					print '<td>'.$productstatic->getNomUrl(1,'composition').' ('.$value['nb'].') &nbsp;</td>';
+					print '<td>'.$productstatic->getNomUrl(1,'composition').' ('.$value['nb'].')</td>';
 					print '<td align="right">';
 					if ($product_fourn->find_min_price_product_fournisseur($productstatic->id, $value['nb']) > 0)
 					{
 						print $langs->trans("BuyingPriceMinShort").': ';
 				    	if ($product_fourn->product_fourn_price_id > 0) print $product_fourn->display_price_product_fournisseur(0,0);
-				    	else { print $langs->trans("NotDefined"); $notdefined=1; }
+				    	else { print $langs->trans("NotDefined"); $notdefined++; $atleastonenotdefined++; }
 					}
 					print '</td>';
 					$totalline=price2num($value['nb'] * $product_fourn->fourn_unitprice, 'MT');
@@ -364,7 +365,7 @@ if ($id > 0 || ! empty($ref))
 					{
 						print ' &nbsp; &nbsp; ';
 					}
-					print $productstatic->getNomUrl(1,'composition').' ('.$value['nb'].') &nbsp;</td>';
+					print $productstatic->getNomUrl(1,'composition').' ('.$value['nb'].')</td>';
 					print '<td><td>';
 					print '<td><td>';
 					if (! empty($conf->stock->enabled)) print '<td align="right"></td>';	// Real stock
@@ -372,8 +373,10 @@ if ($id > 0 || ! empty($ref))
 				print '</tr>';
 			}
 			print '<tr>';
-			print '<td>'.$langs->trans("BuyingPriceMin").': '.price($total,'','',0,0,-1,$conf->currency).'</td>';
-			print '<td></td>';
+			print '<td colspan="2">'.$langs->trans("TotalBuyingPriceMin").': ';
+			if ($atleastonenotdefined) print $langs->trans("Unknown").' ('.$langs->trans("SomeSubProductHaveNoPrices").')';
+			print '</td>'; 
+			print '<td>'.($atleastonenotdefined?'':price($total,'','',0,0,-1,$conf->currency)).'</td>';
 			if (! empty($conf->stock->enabled)) print '<td class="liste_total" align="right">&nbsp;</td>';
 			print '</tr>';
 			print '</table>';

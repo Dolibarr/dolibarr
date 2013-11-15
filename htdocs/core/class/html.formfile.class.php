@@ -174,7 +174,7 @@ class FormFile
 	            $out .= '<tr>';
 	            $out .= '<td valign="middle" class="nowrap">';
 	            $out .= $langs->trans("Link") . ': ';
-	            $out .= '<input type="text" name="link" id="link">';
+	            $out .= '<input type="text" name="link" size="'.$maxlength.'" id="link">';
 	            $out .= ' &nbsp; ' . $langs->trans("Label") . ': ';
 	            $out .= '<input type="text" name="label" id="label">';
 	            $out .= '<input type="hidden" name="objecttype" value="' . $object->element . '">';
@@ -1063,6 +1063,9 @@ class FormFile
 
         // Show list of associated links
         print_titre($langs->trans("LinkedFiles"));
+        
+        print '<form action="' . $_SERVER['PHP_SELF'] . '" method="POST">';
+        
         print '<table width="100%" class="liste">';
         print '<tr class="liste_titre">';
         print_liste_field_titre(
@@ -1076,7 +1079,7 @@ class FormFile
             $sortorder
         );
         print_liste_field_titre(
-            $langs->trans("Size"),
+            "",
             "",
             "",
             "",
@@ -1104,30 +1107,30 @@ class FormFile
         print_liste_field_titre('','','');
         print '</tr>';
         $nboflinks = count($links);
-        if ($nboflinks > 0) {
-            include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
-        }
+        if ($nboflinks > 0) include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 
         $var = true;
-        foreach ($links as $link) {
+        foreach ($links as $link) 
+        {
             $var =! $var;
             print '<tr ' . $bc[$var] . '>';
             //edit mode
-            if ($action == 'update' && $selected === $link->id) {
-                print '<form action="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '" method="post">';
+            if ($action == 'update' && $selected === $link->id) 
+            {
+                print '<td>';
+                print '<input type="hidden" name="id" value="' . $object->id . '">';
                 print '<input type="hidden" name="linkid" value="' . $link->id . '">';
                 print '<input type="hidden" name="action" value="confirm_updateline">';
-                print '<td>';
-                print $langs->trans('Link') . ': <input type="text" name="link" value = "' . $link->url . '">';
+                print $langs->trans('Link') . ': <input type="text" name="link" size="50" value="' . $link->url . '">';
                 print '</td>';
                 print '<td align="right">';
-                print $langs->trans('Label') . ': <input type="text" name="label" value = "' . $link->label . '">';
+                print $langs->trans('Label') . ': <input type="text" name="label" value="' . $link->label . '">';
                 print '</td>';
                 print '<td align="center">' . dol_print_date(dol_now(), "dayhour", "tzuser") . '</td>';
                 print '<td align="right"></td>';
                 print '<td align="right" colspan="2"><input type="submit" name="save" class="button" value="' . $langs->trans('Save') . '">';
-                print '<input type="submit" name="cancel" class="button" value="' . $langs->trans('Cancel') . '"></td>';
-                print '</form>';
+                print '<input type="submit" name="cancel" class="button" value="' . $langs->trans('Cancel') . '">';
+                print '</td>';
             }
             else {
                 print '<td>';
@@ -1142,7 +1145,7 @@ class FormFile
                 print '<a href="' . $_SERVER['PHP_SELF'] . '?action=update&linkid=' . $link->id
                         . '&id=' . $object->id . '" class="editfilelink" >' . img_edit().'</a>';
                 if ($permtodelete) {
-                    print '<a href="'. $_SERVER['PHP_SELF'] .'?action=delete&linkid=' . $link->id
+                    print ' &nbsp; <a href="'. $_SERVER['PHP_SELF'] .'?action=delete&linkid=' . $link->id
                             . '&id=' . $object->id . '" class="deletefilelink" >' . img_delete() . '</a>';
                 } else {
                     print '&nbsp;';
@@ -1151,13 +1154,16 @@ class FormFile
             }
             print "</tr>\n";
         }
-        if ($nboflinks == 0) {
+        if ($nboflinks == 0) 
+        {
             print '<tr ' . $bc[$var] . '><td colspan="4">';
             print $langs->trans("NoLinkFound");
             print '</td></tr>';
         }
         print "</table>";
 
+        print '</form>';
+        
         return $nboflinks;
     }
 
