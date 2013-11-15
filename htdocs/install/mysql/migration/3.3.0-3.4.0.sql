@@ -58,7 +58,7 @@ ALTER TABLE llx_facture_fourn DROP INDEX uk_facture_fourn;
 ALTER TABLE llx_facture_fourn DROP INDEX uk_facture_fourn_ref;
 UPDATE llx_facture_fourn set ref = NULL where ref = '';
 ALTER TABLE llx_facture_fourn ADD UNIQUE INDEX uk_facture_fourn_ref (ref, entity);
-ALTER TABLE llx_facture_fourn CHANGE COLUMN facnumber ref_supplier varchar(30);
+ALTER TABLE llx_facture_fourn CHANGE COLUMN facnumber ref_supplier varchar(50);
 ALTER TABLE llx_facture_fourn ADD UNIQUE INDEX uk_facture_fourn_ref_supplier (ref_supplier, fk_soc, entity);
 
 
@@ -161,22 +161,22 @@ CREATE TABLE llx_c_revenuestamp
 
 insert into llx_c_revenuestamp(rowid,fk_pays,taux,note,active) values (101, 10, '0.4', 'Timbre fiscal', 1);
 
-ALTER TABLE llx_c_tva MODIFY COLUMN localtax1_type varchar(10)	NOT NULL DEFAULT '0';
-ALTER TABLE llx_c_tva MODIFY COLUMN localtax2_type varchar(10)	NOT NULL DEFAULT '0';
-ALTER TABLE llx_commande_fournisseurdet MODIFY COLUMN localtax1_type varchar(10)	NOT NULL DEFAULT '0';
-ALTER TABLE llx_commande_fournisseurdet MODIFY COLUMN localtax2_type varchar(10)	NOT NULL DEFAULT '0';
-ALTER TABLE llx_commandedet MODIFY COLUMN localtax1_type varchar(10)	NOT NULL DEFAULT '0';
-ALTER TABLE llx_commandedet MODIFY COLUMN localtax2_type varchar(10)	NOT NULL DEFAULT '0';
-ALTER TABLE llx_contratdet MODIFY COLUMN localtax1_type varchar(10)	NOT NULL DEFAULT '0';
-ALTER TABLE llx_contratdet MODIFY COLUMN localtax2_type varchar(10)	NOT NULL DEFAULT '0';
-ALTER TABLE llx_facture_fourn_det MODIFY COLUMN localtax1_type varchar(10)	NOT NULL DEFAULT '0';
-ALTER TABLE llx_facture_fourn_det MODIFY COLUMN localtax2_type varchar(10)	NOT NULL DEFAULT '0';
-ALTER TABLE llx_facturedet_rec MODIFY COLUMN localtax1_type varchar(10)	NOT NULL DEFAULT '0';
-ALTER TABLE llx_facturedet_rec MODIFY COLUMN localtax2_type varchar(10)	NOT NULL DEFAULT '0';
-ALTER TABLE llx_facturedet MODIFY COLUMN localtax1_type varchar(10)	NOT NULL DEFAULT '0';
-ALTER TABLE llx_facturedet MODIFY COLUMN localtax2_type varchar(10)	NOT NULL DEFAULT '0';
-ALTER TABLE llx_propaldet MODIFY COLUMN localtax1_type varchar(10)	NOT NULL DEFAULT '0';
-ALTER TABLE llx_propaldet MODIFY COLUMN localtax2_type varchar(10)	NOT NULL DEFAULT '0';
+ALTER TABLE llx_c_tva MODIFY COLUMN localtax1_type varchar(10) DEFAULT NULL;
+ALTER TABLE llx_c_tva MODIFY COLUMN localtax2_type varchar(10) DEFAULT NULL;
+ALTER TABLE llx_commande_fournisseurdet MODIFY COLUMN localtax1_type varchar(10) DEFAULT NULL;
+ALTER TABLE llx_commande_fournisseurdet MODIFY COLUMN localtax2_type varchar(10) DEFAULT NULL;
+ALTER TABLE llx_commandedet MODIFY COLUMN localtax1_type varchar(10) DEFAULT NULL;
+ALTER TABLE llx_commandedet MODIFY COLUMN localtax2_type varchar(10) DEFAULT NULL;
+ALTER TABLE llx_contratdet MODIFY COLUMN localtax1_type varchar(10) DEFAULT NULL;
+ALTER TABLE llx_contratdet MODIFY COLUMN localtax2_type varchar(10) DEFAULT NULL;
+ALTER TABLE llx_facture_fourn_det MODIFY COLUMN localtax1_type varchar(10) DEFAULT NULL;
+ALTER TABLE llx_facture_fourn_det MODIFY COLUMN localtax2_type varchar(10) DEFAULT NULL;
+ALTER TABLE llx_facturedet_rec MODIFY COLUMN localtax1_type varchar(10) DEFAULT NULL;
+ALTER TABLE llx_facturedet_rec MODIFY COLUMN localtax2_type varchar(10) DEFAULT NULL;
+ALTER TABLE llx_facturedet MODIFY COLUMN localtax1_type varchar(10) DEFAULT NULL;
+ALTER TABLE llx_facturedet MODIFY COLUMN localtax2_type varchar(10) DEFAULT NULL;
+ALTER TABLE llx_propaldet MODIFY COLUMN localtax1_type varchar(10) DEFAULT NULL;
+ALTER TABLE llx_propaldet MODIFY COLUMN localtax2_type varchar(10) DEFAULT NULL;
 -- No more use type 7, use revenuse stamp instead
 UPDATE llx_c_tva set localtax1=0, localtax1_type='0' where localtax1_type = '7';
 UPDATE llx_c_tva set localtax2=0, localtax2_type='0' where localtax2_type = '7';
