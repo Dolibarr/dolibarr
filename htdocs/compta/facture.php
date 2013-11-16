@@ -2312,19 +2312,22 @@ if ($action == 'create')
 		print '</td></tr>';
 	}
 
-	if ($soc->outstanding_limit)
+	// TODO This is nt a roperty of invoice so should not appears here but as a warning on thirdparty
+	/*
+	if ($soc->outstanding_limit)	
 	{
 		$outstandigBills=$soc->get_OutstandingBill();
 		// Outstanding Bill
 		print '<tr><td>';
 		print $langs->trans('OutstandingBill');
-		print '</td><td align=right>';
+		print '</td><td align="right" colspan="2">';
 		print price($outstandigBills);
 		if ($outstandigBills > $soc->outstanding_limit) print img_warning($langs->trans("OutstandingBillReached"));
 		print ' / '.price($soc->outstanding_limit);
 		print '</td>';
 		print '</tr>';
 	}
+	*/
 
 	// Other attributes
 	$parameters=array('objectsrc' => $objectsrc, 'colspan' => ' colspan="3"');
@@ -3042,7 +3045,7 @@ else if ($id > 0 || ! empty($ref))
 		$nbrows=8; $nbcols=2;
 		if (! empty($conf->projet->enabled)) $nbrows++;
 		if (! empty($conf->banque->enabled)) $nbcols++;
-		if (! empty($soc->outstandingbill)) $nbrows++;
+		//if (! empty($soc->outstandingbill)) $nbrows++;
 		if($mysoc->localtax1_assuj=="1") $nbrows++;
 		if($mysoc->localtax2_assuj=="1") $nbrows++;
 		if ($selleruserevenustamp) $nbrows++;
@@ -3314,18 +3317,23 @@ else if ($id > 0 || ! empty($ref))
 			}
 			print '</td></tr>';
 
+			// TODO This is nt a roperty of invoice so should not appears here but as a warning on thirdparty
+			/*
 			if ($soc->outstandingbill)
 			{
+				$outstandingBills=$soc->get_OutstandingBill();
 				// Outstanding Bill
 				print '<tr><td>';
 				print $langs->trans('OutstandingBill');
-				print '</td><td align=right>';
-				print price($soc->get_OutstandingBill()).' / ';
-				print price($soc->outstandingbill);
+				print '</td><td align="right">';
+				print price($outstandingBills);
+				if ($outstandigBills > $soc->outstanding_limit) print img_warning($langs->trans("OutstandingBillReached"));
+				print ' / '.price($soc->outstandingbill);
 				print '</td>';
 				print '</tr>';
 			}
-
+			*/
+			
 			// Amount
 			print '<tr><td>'.$langs->trans('AmountHT').'</td>';
 			print '<td align="right" colspan="3" nowrap>'.price($object->total_ht,1,'',1,-1,-1,$conf->currency).'</td></tr>';

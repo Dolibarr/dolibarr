@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville        <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2011 Laurent Destailleur         <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2013 Laurent Destailleur         <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne                 <eric.seigne@ryxeo.com>
  * Copyright (C) 2006      Andre Cianfarani            <acianfa@free.fr>
  * Copyright (C) 2005-2012 Regis Houssin               <regis.houssin@capnetworks.com>
@@ -389,7 +389,7 @@ if ($id > 0)
 		print '<td>';
 		print $form->editfieldkey("OutstandingBill",'OutstandingBill',$object->outstanding_limit,$object,$user->rights->societe->creer);
 		print '</td><td colspan="3">';
-		print price($form->editfieldval("OutstandingBill",'OutstandingBill',$object->outstanding_limit,$object,$user->rights->societe->creer));
+		print $form->editfieldval("OutstandingBill",'OutstandingBill',$object->outstanding_limit,$object,$user->rights->societe->creer,'amount',price($object->outstanding_limit));
 		print '</td>';
 		print '</tr>';
 	}
