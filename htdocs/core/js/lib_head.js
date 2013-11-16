@@ -1,4 +1,4 @@
-// Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+// Copyright (C) 2005-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
 // Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
 //
 // This program is free software; you can redistribute it and/or modify
@@ -290,8 +290,10 @@ function loadXMLDoc(url,readyStateFunction,async)
 	return req;
 }
 
-// To hide/show select Boxes with IE6 (and only IE6 because IE6 has a bug and
-// not put popup completely on the front)
+/* To hide/show select Boxes with IE6 (and only IE6 because IE6 has a bug and
+ * not put popup completely on the front)
+ * Used only bu popup calendar
+ */
 function hideSelectBoxes() {
 	var brsVersion = parseInt(window.navigator.appVersion.charAt(0), 10);
 	if (brsVersion <= 6 && window.navigator.userAgent.indexOf("MSIE 6") > -1) 
@@ -304,6 +306,10 @@ function hideSelectBoxes() {
 		}
 	}
 }
+/* To hide/show select Boxes with IE6 (and only IE6 because IE6 has a bug and
+ * not put popup completely on the front)
+ * Used only bu popup calendar
+ */
 function displaySelectBoxes() {
 	var brsVersion = parseInt(window.navigator.appVersion.charAt(0), 10);
 	if (brsVersion <= 6 && window.navigator.userAgent.indexOf("MSIE 6") > -1) 
@@ -354,9 +360,7 @@ function formatDate(date,format)
 		c=format.charAt(i);	// Recupere char du format
 		substr="";
 		j=i;
-		while ((format.charAt(j)==c) && (j < format.length))	// Recupere char
-																// successif
-																// identiques
+		while ((format.charAt(j)==c) && (j < format.length))	// Recupere char successif identiques
 		{
 			substr += format.charAt(j++);
 		}
@@ -623,8 +627,9 @@ function hideMessage(fieldId,message) {
 	if (textbox.value == message) textbox.value = '';
 }
 
+
 /*
- * 
+ * TODO Used by admin page only ? 
  */
 function setConstant(url, code, input, entity) {
 	$.get( url, {
@@ -679,7 +684,7 @@ function setConstant(url, code, input, entity) {
 }
 
 /*
- * 
+ * TODO Used by admin page only ? 
  */
 function delConstant(url, code, input, entity) {
 	$.get( url, {
@@ -733,7 +738,7 @@ function delConstant(url, code, input, entity) {
 }
 
 /*
- * 
+ * TODO Used by admin page only ? 
  */
 function confirmConstantAction(action, url, code, input, box, entity, yesButton, noButton) {
 	var boxConfirm = box;
@@ -784,7 +789,9 @@ function confirmConstantAction(action, url, code, input, box, entity, yesButton,
 /* 
  * ================================================================= 
  * This is to allow to transform all select box into ajax autocomplete box
- * with just one line: $(function() { $( "#idofmylist" ).combobox(); });
+ * with just one line: 
+ * $(function() { $( "#idofmylist" ).combobox(); });
+ * Do not use it on large combo boxes 
  * ================================================================= 
  */
 (function( $ ) {
@@ -894,6 +901,8 @@ function confirmConstantAction(action, url, code, input, box, entity, yesButton,
 
 /* 
  * Timer for delayed keyup function
+ * 
+ * TODO Who use this ?
  */
 (function($){
 	$.widget("ui.onDelayedKeyup", {

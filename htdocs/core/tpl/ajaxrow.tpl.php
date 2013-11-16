@@ -17,11 +17,11 @@
  *
  * Javascript code to activate drag and drop on lines
  * You can use this if you want to be abale to drag and drop rows of a table.
- * You must add id="tablelines" ont table level tag and have count($object->lines) or count($taskarray) > 0  
+ * You must add id="tablelines" ont table level tag and have count($object->lines) or count($taskarray) > 0
  */
 ?>
 
-<!-- BEGIN PHP TEMPLATE FOR JQUERY -->
+<!-- BEGIN PHP TEMPLATE AJAXROW.TPL.PHP -->
 <?php
 $id=$object->id;
 $fk_element=$object->fk_element;
@@ -84,4 +84,4 @@ $(document).ready(function(){
 });
 </script>
 <?php } ?>
-<!-- END PHP TEMPLATE -->
+<!-- END PHP TEMPLATE AJAXROW.TPL.PHP -->
