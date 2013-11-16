@@ -398,6 +398,7 @@ InActivity=Open
 ActivityCeased=Closed
 ActivityStateFilter=Activity status
 ProductsIntoElements=List of products into
+CurrentOutstandingBill=Current outstanding bill
 OutstandingBill=Max. for outstanding bill
 OutstandingBillReached=Reached max. for outstanding bill
 # Monkey

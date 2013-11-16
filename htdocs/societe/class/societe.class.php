@@ -2821,24 +2821,27 @@ class Societe extends CommonObject
 
 			$now=dol_now();
 
+			// Clean parameters
 			$outstanding = price2num($this->outstanding_limit);
 
-			// Positionne l'encours de facturaiton
+			// Set outstanding amount
 			$sql = "UPDATE ".MAIN_DB_PREFIX."societe SET ";
-			$sql.= " outstanding_limit=".$outstanding;
+			$sql.= " outstanding_limit= ".($outstanding!=''?$outstanding:'null');
 			$sql.= " WHERE rowid = ".$this->id;
 
 			dol_syslog(get_class($this)."::set_outstanding sql=".$sql);
 			$resql=$this->db->query($sql);
-			if (! $resql)
+			if ($resql)
+			{
+				$this->db->commit();
+				return 1;
+			}
+			else
 			{
 				$this->db->rollback();
-				$this->error=$this->db->error();
+				$this->error=$this->db->lasterror();
 				return -1;
 			}
-
-			$this->db->commit();
-			return 1;
 		}
 	}
 

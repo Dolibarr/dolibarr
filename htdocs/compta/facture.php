@@ -2083,6 +2083,16 @@ if ($action == 'create')
 		print '<td colspan="2">';
 		print $soc->getNomUrl(1);
 		print '<input type="hidden" name="socid" value="'.$soc->id.'">';
+		// Outstanding Bill
+		$outstandigBills=$soc->get_OutstandingBill();
+		print ' ('.$langs->trans('CurrentOutstandingBill').': ';
+		print price($outstandigBills,'',$langs,0,0,-1,$conf->currency);
+		if ($soc->outstanding_limit != '')
+		{
+			if ($outstandigBills > $soc->outstanding_limit) print img_warning($langs->trans("OutstandingBillReached"));
+			print ' / '.price($soc->outstanding_limit);
+		}
+		print ')';
 		print '</td>';
 	}
 	else
@@ -2311,23 +2321,6 @@ if ($action == 'create')
 		$formproject->select_projects($soc->id, $projectid, 'projectid');
 		print '</td></tr>';
 	}
-
-	// TODO This is nt a roperty of invoice so should not appears here but as a warning on thirdparty
-	/*
-	if ($soc->outstanding_limit)	
-	{
-		$outstandigBills=$soc->get_OutstandingBill();
-		// Outstanding Bill
-		print '<tr><td>';
-		print $langs->trans('OutstandingBill');
-		print '</td><td align="right" colspan="2">';
-		print price($outstandigBills);
-		if ($outstandigBills > $soc->outstanding_limit) print img_warning($langs->trans("OutstandingBillReached"));
-		print ' / '.price($soc->outstanding_limit);
-		print '</td>';
-		print '</tr>';
-	}
-	*/
 
 	// Other attributes
 	$parameters=array('objectsrc' => $objectsrc, 'colspan' => ' colspan="3"');
@@ -2877,7 +2870,18 @@ else if ($id > 0 || ! empty($ref))
 		else
 		{
 			print ' &nbsp;'.$soc->getNomUrl(1,'compta');
-			print ' &nbsp; (<a href="'.DOL_URL_ROOT.'/compta/facture/list.php?socid='.$object->socid.'">'.$langs->trans('OtherBills').'</a>)';
+			print ' &nbsp; ';
+			print '(<a href="'.DOL_URL_ROOT.'/compta/facture/list.php?socid='.$object->socid.'">'.$langs->trans('OtherBills').'</a>';
+			// Outstanding Bill
+			$outstandigBills=$soc->get_OutstandingBill();
+			print ' - '.$langs->trans('CurrentOutstandingBill').': ';
+			print price($outstandigBills,'',$langs,0,0,-1,$conf->currency);
+			if ($soc->outstanding_limit != '')
+			{
+				if ($outstandigBills > $soc->outstanding_limit) print img_warning($langs->trans("OutstandingBillReached"));
+				print ' / '.price($soc->outstanding_limit);
+			}
+			print ')';
 		}
 		print '</tr>';
 
@@ -3317,23 +3321,6 @@ else if ($id > 0 || ! empty($ref))
 			}
 			print '</td></tr>';
 
-			// TODO This is nt a roperty of invoice so should not appears here but as a warning on thirdparty
-			/*
-			if ($soc->outstandingbill)
-			{
-				$outstandingBills=$soc->get_OutstandingBill();
-				// Outstanding Bill
-				print '<tr><td>';
-				print $langs->trans('OutstandingBill');
-				print '</td><td align="right">';
-				print price($outstandingBills);
-				if ($outstandigBills > $soc->outstanding_limit) print img_warning($langs->trans("OutstandingBillReached"));
-				print ' / '.price($soc->outstandingbill);
-				print '</td>';
-				print '</tr>';
-			}
-			*/
-			
 			// Amount
 			print '<tr><td>'.$langs->trans('AmountHT').'</td>';
 			print '<td align="right" colspan="3" nowrap>'.price($object->total_ht,1,'',1,-1,-1,$conf->currency).'</td></tr>';

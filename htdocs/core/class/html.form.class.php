@@ -136,7 +136,7 @@ class Form
 
         // Check parameters
         if (empty($typeofdata)) return 'ErrorBadParameter';
-        
+
         // When option to edit inline is activated
         if (! empty($conf->global->MAIN_USE_JQUERY_JEDITABLE) && ! preg_match('/^select;|datehourpicker/',$typeofdata)) // FIXME add jquery timepicker
         {
@@ -194,9 +194,9 @@ class Form
                 $ret.='</form>'."\n";
             }
             else
-            {
+			{
                 if ($typeofdata == 'email')   $ret.=dol_print_email($value,0,0,0,0,1);
-                elseif ($typeofdata == 'amount')   $ret.=price($value,'',$langs);
+                elseif ($typeofdata == 'amount')   $ret.=($value != '' ? price($value,'',$langs) : '');
                 elseif (preg_match('/^text/',$typeofdata) || preg_match('/^note/',$typeofdata))  $ret.=dol_htmlentitiesbr($value);
                 elseif ($typeofdata == 'day' || $typeofdata == 'datepicker') $ret.=dol_print_date($value,'day');
                 elseif ($typeofdata == 'datehourpicker') $ret.=dol_print_date($value,'dayhour');
