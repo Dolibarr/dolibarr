@@ -232,7 +232,7 @@ class CompanyBankAccount extends Account
     /**
      * Set RIB as Default
      *
-     * @param   int     $rid    RIB id
+     * @param   int     $rib    RIB id
      * @return  int             0 if KO, 1 if OK
      */
     function setAsDefault($rib=0)
