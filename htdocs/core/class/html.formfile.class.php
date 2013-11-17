@@ -64,9 +64,10 @@ class FormFile
      *  @param	boolean	$useajax		Use fileupload ajax (0=never, 1=if enabled, 2=always whatever is option). 2 should never be used.
      *  @param	string	$savingdocmask	Mask to use to define output filename. For example 'XXXXX-__YYYYMMDD__-__file__'
      *  @param	string	$linkfiles		1=Also add form to link files, 0=Do not show form to link files
+     *  @param	string	$htmlname		Name and id of HTML form
      * 	@return	int						<0 if KO, >0 if OK
      */
-    function form_attach_new_file($url, $title='', $addcancel=0, $sectionid=0, $perm=1, $size=50, $object='', $options='', $useajax=1, $savingdocmask='', $linkfiles=1)
+    function form_attach_new_file($url, $title='', $addcancel=0, $sectionid=0, $perm=1, $size=50, $object='', $options='', $useajax=1, $savingdocmask='', $linkfiles=1, $htmlname='formuserfile')
     {
         global $conf,$langs, $hookmanager;
         $hookmanager->initHooks(array('formfile'));
@@ -90,9 +91,9 @@ class FormFile
             if (empty($title)) $title=$langs->trans("AttachANewFile");
             if ($title != 'none') print_titre($title);
 
-            $out .= '<form name="formuserfile" action="'.$url.'" enctype="multipart/form-data" method="POST">';
-            $out .= '<input type="hidden" id="formuserfile_section_dir" name="section_dir" value="">';
-            $out .= '<input type="hidden" id="formuserfile_section_id"  name="section_id" value="'.$sectionid.'">';
+            $out .= '<form name="'.$htmlname.'" id="'.$htmlname.'" action="'.$url.'" enctype="multipart/form-data" method="POST">';
+            $out .= '<input type="hidden" id="'.$htmlname.'_section_dir" name="section_dir" value="">';
+            $out .= '<input type="hidden" id="'.$htmlname.'_section_id"  name="section_id" value="'.$sectionid.'">';
             $out .= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
             $out .= '<table width="100%" class="nobordernopadding">';
@@ -165,9 +166,9 @@ class FormFile
 	            $langs->load('link');
 	            $title = $langs->trans("LinkANewFile");
 	            $out .= load_fiche_titre($title, null, null);
-	            $out .= '<form name="formuserfile" action="'.$url.'" method="POST">';
-	            $out .= '<input type="hidden" id="formuserfile_section_dir" name="section_dir" value="">';
-	            $out .= '<input type="hidden" id="formuserfile_section_id"  name="section_id" value="'.$sectionid.'">';
+	            $out .= '<form name="'.$htmlname.'_link" id="'.$htmlname.'_link" action="'.$url.'" method="POST">';
+	            $out .= '<input type="hidden" id="'.$htmlname.'_link_section_dir" name="link_section_dir" value="">';
+	            $out .= '<input type="hidden" id="'.$htmlname.'_link_section_id"  name="link_section_id" value="'.$sectionid.'">';
 	            $out .= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
 	            $out .= '<table width="100%" class="nobordernopadding">';
@@ -770,14 +771,14 @@ class FormFile
 					print '<a data-ajax="false" href="'.DOL_URL_ROOT.'/document.php?modulepart='.$modulepart;
 					if ($forcedownload) print '&attachment=1';
 					if (! empty($object->entity)) print '&entity='.$object->entity;
-					print '&file='.urlencode($relativepath.$file['name']);
-					/* Restore old code: When file is at level 2+, full relative path must be in url, not only level1
+					$filepath=$relativepath.$file['name'];
+					/* Restore old code: When file is at level 2+, full relative path (and not only level1) must be into url
 					if ($file['level1name'] <> $object->id)
-						$filepath=urlencode($object->id.'/'.$file['level1name'].'/'.$file['name']);
+						$filepath=$object->id.'/'.$file['level1name'].'/'.$file['name'];
 					else
-						$filepath=urlencode($object->id.'/'.$file['name']);
-					print '&file='.$filepath;
-						*/
+						$filepath=$object->id.'/'.$file['name'];
+					*/
+					print '&file='.urlencode($filepath);
 					print '">';
 
 					print img_mime($file['name'],$file['name'].' ('.dol_print_size($file['size'],0,0).')').' ';
@@ -800,14 +801,16 @@ class FormFile
 					// Delete or view link
 					// ($param must start with &)
 					print '<td align="right">';
-					if ($useinecm)     print '<a href="'.DOL_URL_ROOT.'/ecm/docfile.php?urlfile='.urlencode($file['name']).$param.'" class="editfilelink" rel="'.urlencode($file['name']).$param.'">'.img_view().'</a> &nbsp; ';
+					if ($useinecm)     print '<a href="'.DOL_URL_ROOT.'/ecm/docfile.php?urlfile='.urlencode($file['name']).$param.'" class="editfilelink" rel="'.urlencode($file['name']).'">'.img_view().'</a> &nbsp; ';
 					if ($permtodelete)
 					{
+						/*
 						if ($file['level1name'] <> $object->id)
-							$filepath=urlencode($file['level1name'].'/'.$file['name']);
+							$filepath=$file['level1name'].'/'.$file['name'];
 						else
-							$filepath=urlencode($file['name']);
-						print '<a href="'.(($useinecm && ! empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE_JS))?'#':$url.'?action=delete&urlfile='.$filepath.$param).'" class="deletefilelink" rel="'.$filepath.$param.'">'.img_delete().'</a>';
+							$filepath=$file['name'];
+						*/
+						print '<a href="'.(($useinecm && ! empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE_JS))?'#':$url.'?action=delete&urlfile='.urlencode($filepath).$param).'" class="deletefilelink" rel="'.$filepath.'">'.img_delete().'</a>';
 					}
 					else print '&nbsp;';
 					print "</td>";
@@ -831,7 +834,7 @@ class FormFile
     /**
      *	Show list of documents in a directory
      *
-     *  @param	 string	$upload_dir         Directory that was scanned
+     *  @param	string	$upload_dir         Directory that was scanned
      *  @param  array	$filearray          Array of files loaded by dol_dir_list function before calling this function
      *  @param  string	$modulepart         Value for modulepart used by download wrapper
      *  @param  string	$param              Parameters on sort links
@@ -841,7 +844,7 @@ class FormFile
      *  @param  int		$useinecm           Change output for use in ecm module
      *  @param  int		$textifempty        Text to show if filearray is empty
      *  @param  int		$maxlength          Maximum length of file name shown
-     *  @param	 string $url				Full url to use for click links ('' = autodetect)
+     *  @param	string $url				Full url to use for click links ('' = autodetect)
      *  @return int                 		<0 if KO, nb of files shown if OK
      */
     function list_of_autoecmfiles($upload_dir,$filearray,$modulepart,$param,$forcedownload=0,$relativepath='',$permtodelete=1,$useinecm=0,$textifempty='',$maxlength=0,$url='')
