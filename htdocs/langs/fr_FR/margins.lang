@@ -48,5 +48,5 @@ CostPrice=Prix de revient
 UnitCharges=Charge unitaire
 Charges=Charges
 
-AgentContactType=Type de contact commissionné
-AgentContactTypeDetails=Permet de définir le type de contact associé aux factures qui sera associé aux agents commerciaux
+AgentContactType=Type de contact agent commercial
+AgentContactTypeDetails=Permet de définir le type de contact associé aux factures qui sera utilisé pour le rapport de marges par agent commercial
