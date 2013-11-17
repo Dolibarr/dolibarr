@@ -67,13 +67,10 @@ $object->substitutionarray=array(
     '__OTHER4__' => 'Other4',
     '__OTHER5__' => 'Other5',
     '__SIGNATURE__' => 'TagSignature',
-    '__CHECK_READ__' => 'TagCheckMail'
+    '__CHECK_READ__' => 'TagCheckMail',
+	'__UNSUBSCRIBE__' => 'TagUnsubscribe'
 	//,'__PERSONALIZED__' => 'Personalized'	// Hidden because not used yet
 );
-if (! empty($conf->global->MAILING_EMAIL_UNSUBSCRIBE))
-{
-    $object->substitutionarray=array_merge($object->substitutionarray, array('__UNSUBSCRIBE__' => 'TagUnsubscribe'));
-}
 
 $object->substitutionarrayfortest=array(
     '__ID__' => 'TESTIdRecord',
@@ -86,19 +83,12 @@ $object->substitutionarrayfortest=array(
     '__OTHER3__' => 'TESTOther3',
     '__OTHER4__' => 'TESTOther4',
     '__OTHER5__' => 'TESTOther5',
-	'__SIGNATURE__' => (($user->signature && empty($conf->global->MAIN_MAIL_DO_NOT_USE_SIGN))?$user->signature:'')
-    //,'__PERSONALIZED__' => 'TESTPersonalized'	// Not used yet
+	'__SIGNATURE__' => (($user->signature && empty($conf->global->MAIN_MAIL_DO_NOT_USE_SIGN))?$user->signature:''),
+    '__CHECK_READ__' => 'TagCheckMail',
+	'__UNSUBSCRIBE__' => 'TagUnsubscribe'
+//,'__PERSONALIZED__' => 'TESTPersonalized'	// Not used yet
 );
-if (!empty($conf->global->MAILING_EMAIL_UNSUBSCRIBE))
-{
-    $object->substitutionarrayfortest=array_merge(
-        $object->substitutionarrayfortest,
-        array(
-            '__CHECK_READ__' => 'TESTCheckMail',
-            '__UNSUBSCRIBE__' => 'TESTUnsubscribe'
-        )
-    );
-}
+
 
 /*
  * Actions
@@ -221,8 +211,8 @@ if ($action == 'sendallconfirmed' && $confirm == 'yes')
 					$substitutionarray=array(
 							'__ID__' => $obj->source_id,
 							'__EMAIL__' => $obj->email,
-							'__CHECK_READ__' => '<img src="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php?tag='.$obj->tag.'" width="1" height="1" style="width:1px;height:1px" border="0"/>',
-							'__UNSUBSCRIBE__' => '<a href="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-unsubscribe.php?tag='.$obj->tag.'&unsuscrib=1" target="_blank">'.$langs->trans("MailUnsubcribe").'</a>',
+							'__CHECK_READ__' => '<img src="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php?tag='.$obj->tag.'&securitykey='.urlencode($conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY).'" width="1" height="1" style="width:1px;height:1px" border="0"/>',
+							'__UNSUBSCRIBE__' => '<a href="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-unsubscribe.php?tag='.$obj->tag.'&unsuscrib=1&securitykey='.urlencode($conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY).'" target="_blank">'.$langs->trans("MailUnsubcribe").'</a>',
 							'__MAILTOEMAIL__' => '<a href="mailto:'.$obj->email.'">'.$obj->email.'</a>',
 							'__LASTNAME__' => $obj->lastname,
 							'__FIRSTNAME__' => $obj->firstname,

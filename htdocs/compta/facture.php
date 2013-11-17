@@ -1929,7 +1929,7 @@ if ($action == 'update_extras')
 	$ret = $extrafields->setOptionalsFromPost($extralabels,$object,GETPOST('attribute'));
 	if ($ret < 0) $error++;
 
-	if (! $error) 
+	if (! $error)
 	{
 		// Actions on extra fields (by external module or standard code)
 		// FIXME le hook fait double emploi avec le trigger !!
@@ -1946,7 +1946,7 @@ if ($action == 'update_extras')
 		}
 		else if ($reshook < 0) $error++;
 	}
-	
+
 	if ($error) $action = 'edit_extras';
 }
 
@@ -2083,6 +2083,16 @@ if ($action == 'create')
 		print '<td colspan="2">';
 		print $soc->getNomUrl(1);
 		print '<input type="hidden" name="socid" value="'.$soc->id.'">';
+		// Outstanding Bill
+		$outstandigBills=$soc->get_OutstandingBill();
+		print ' ('.$langs->trans('CurrentOutstandingBill').': ';
+		print price($outstandigBills,'',$langs,0,0,-1,$conf->currency);
+		if ($soc->outstanding_limit != '')
+		{
+			if ($outstandigBills > $soc->outstanding_limit) print img_warning($langs->trans("OutstandingBillReached"));
+			print ' / '.price($soc->outstanding_limit);
+		}
+		print ')';
 		print '</td>';
 	}
 	else
@@ -2310,18 +2320,6 @@ if ($action == 'create')
 		print '<tr><td>'.$langs->trans('Project').'</td><td colspan="2">';
 		$formproject->select_projects($soc->id, $projectid, 'projectid');
 		print '</td></tr>';
-	}
-
-	if ($soc->outstanding_limit)
-	{
-		// Outstanding Bill
-		print '<tr><td>';
-		print $langs->trans('OutstandingBill');
-		print '</td><td align=right>';
-		print price($soc->get_OutstandingBill()).' / ';
-		print price($soc->outstanding_limit).'</td><td colspan=2>';
-		print '</td>';
-		print '</tr>';
 	}
 
 	// Other attributes
@@ -2872,7 +2870,18 @@ else if ($id > 0 || ! empty($ref))
 		else
 		{
 			print ' &nbsp;'.$soc->getNomUrl(1,'compta');
-			print ' &nbsp; (<a href="'.DOL_URL_ROOT.'/compta/facture/list.php?socid='.$object->socid.'">'.$langs->trans('OtherBills').'</a>)';
+			print ' &nbsp; ';
+			print '(<a href="'.DOL_URL_ROOT.'/compta/facture/list.php?socid='.$object->socid.'">'.$langs->trans('OtherBills').'</a>';
+			// Outstanding Bill
+			$outstandigBills=$soc->get_OutstandingBill();
+			print ' - '.$langs->trans('CurrentOutstandingBill').': ';
+			print price($outstandigBills,'',$langs,0,0,-1,$conf->currency);
+			if ($soc->outstanding_limit != '')
+			{
+				if ($outstandigBills > $soc->outstanding_limit) print img_warning($langs->trans("OutstandingBillReached"));
+				print ' / '.price($soc->outstanding_limit);
+			}
+			print ')';
 		}
 		print '</tr>';
 
@@ -3040,7 +3049,7 @@ else if ($id > 0 || ! empty($ref))
 		$nbrows=8; $nbcols=2;
 		if (! empty($conf->projet->enabled)) $nbrows++;
 		if (! empty($conf->banque->enabled)) $nbcols++;
-		if (! empty($soc->outstandingbill)) $nbrows++;
+		//if (! empty($soc->outstandingbill)) $nbrows++;
 		if($mysoc->localtax1_assuj=="1") $nbrows++;
 		if($mysoc->localtax2_assuj=="1") $nbrows++;
 		if ($selleruserevenustamp) $nbrows++;
@@ -3312,18 +3321,6 @@ else if ($id > 0 || ! empty($ref))
 			}
 			print '</td></tr>';
 
-			if ($soc->outstandingbill)
-			{
-				// Outstanding Bill
-				print '<tr><td>';
-				print $langs->trans('OutstandingBill');
-				print '</td><td align=right>';
-				print price($soc->get_OutstandingBill()).' / ';
-				print price($soc->outstandingbill);
-				print '</td>';
-				print '</tr>';
-			}
-
 			// Amount
 			print '<tr><td>'.$langs->trans('AmountHT').'</td>';
 			print '<td align="right" colspan="3" nowrap>'.price($object->total_ht,1,'',1,-1,-1,$conf->currency).'</td></tr>';
@@ -3443,9 +3440,9 @@ else if ($id > 0 || ! empty($ref))
 							print '<input type="hidden" name="attribute" value="'.$key.'">';
 							print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 							print '<input type="hidden" name="id" value="'.$object->id.'">';
-							
+
 							print $extrafields->showInputField($key,$value);
-							
+
 							print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
 							print '</form>';
 						}
@@ -3791,7 +3788,7 @@ else if ($id > 0 || ! empty($ref))
 								print '</td>';
 								print '</tr>';
 							}
-	
+
 							$i++;
 						}
 						print '</table>';
@@ -3803,10 +3800,10 @@ else if ($id > 0 || ! empty($ref))
 					{
 						dol_print_error($db);
 					}
-					
+
 					print '</div>';
 				}
-				
+
 				// Link for paypal payment
 				if (! empty($conf->paypal->enabled) && $object->statut != 0)
 				{
