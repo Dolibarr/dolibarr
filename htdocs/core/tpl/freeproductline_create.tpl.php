@@ -32,12 +32,6 @@ if (! empty($conf->margin->enabled) && ! empty($object->element) && in_array($ob
 
 <!-- BEGIN PHP TEMPLATE freeproductline_create.tpl.php -->
 
-<form name="addproduct" id="addproduct"	action="<?php echo $_SERVER["PHP_SELF"].'?id='.$this->id; ?>#add" method="POST">
-<input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>">
-<input type="hidden" name="action" value="addline">
-<input type="hidden" name="mode" value="libre">
-<input type="hidden" name="id" value="<?php echo $this->id; ?>">
-
 <tr class="liste_titre nodrag nodrop">
 	<td<?php echo (! empty($conf->global->MAIN_VIEW_LINE_NUMBER) ? ' colspan="2"' : ''); ?>>
 	<div id="add"></div>
@@ -116,7 +110,7 @@ else {
 	</td>
 
 	<td align="right"><?php
-	if ($seller->tva_assuj == "0") echo '<input type="hidden" name="np_tva_tx" value="0">0';
+	if ($seller->tva_assuj == "0") echo '<input type="hidden" name="tva_tx" value="0">0';
 	else echo $form->load_tva('tva_tx', (isset($_POST["tva_tx"])?$_POST["tva_tx"]:-1), $seller, $buyer);
 	?>
 	</td>
@@ -137,7 +131,7 @@ else {
 			if (! empty($conf->global->DISPLAY_MARGIN_RATES)) {
 				echo '<td align="right"><input type="text" size="2" name="np_marginRate" value="'.(isset($_POST["np_marginRate"])?$_POST["np_marginRate"]:'').'">%</td>';
 			}
-			elseif (! empty($conf->global->DISPLAY_MARK_RATES)) {
+			if (! empty($conf->global->DISPLAY_MARK_RATES)) {
 				echo '<td align="right"><input type="text" size="2" name="np_markRate" value="'.(isset($_POST["np_markRate"])?$_POST["np_markRate"]:'').'">%</td>';
 			}
 		}
@@ -155,7 +149,7 @@ else {
 	}
 	?>
 	<td align="center" valign="middle" colspan="<?php echo $colspan; ?>">
-		<input type="submit" class="button" value="<?php echo $langs->trans('Add'); ?>" name="addline_libre">
+		<input type="submit" class="button" value="<?php echo $langs->trans('Add'); ?>" name="addline_libre" id="addline_libre">
 	</td>
 	<?php
 	//Line extrafield
@@ -196,9 +190,9 @@ if (! empty($conf->service->enabled) && $dateSelector)
 	if (! empty($object->element) && $object->element == 'contrat')
 	{
 		print $langs->trans("DateStartPlanned").' ';
-		$form->select_date('',"date_start_sl",$usehm,$usehm,1,"addline_sl");
+		$form->select_date('',"date_start",$usehm,$usehm,1,"addline_sl");
 		print ' &nbsp; '.$langs->trans("DateEndPlanned").' ';
-		$form->select_date('',"date_end_sl",$usehm,$usehm,1,"addline_sl");
+		$form->select_date('',"date_end",$usehm,$usehm,1,"addline_sl");
 	}
 	else
 	{
@@ -214,7 +208,6 @@ if (! empty($conf->service->enabled) && $dateSelector)
 }
 ?>
 
-</form>
 
 <?php
 if (! empty($usemargins) && $user->rights->margins->creer)
@@ -223,34 +216,29 @@ if (! empty($usemargins) && $user->rights->margins->creer)
 	<script type="text/javascript">
 
 	jQuery(document).ready(function() {
-		var npRate = null;
 		<?php
 		if (! empty($conf->global->DISPLAY_MARGIN_RATES)) { ?>
-			npRate = "np_marginRate";
-		<?php }
-		elseif (! empty($conf->global->DISPLAY_MARK_RATES)) { ?>
-			npRate = "np_markRate";
-		<?php }
-		?>
-
-		$("form#addproduct").submit(function(e) {
-			if (npRate) return checkFreeLine(e, npRate);
-			else return true;
-		});
-		if (npRate == 'np_marginRate') {
-			$("input[name='np_marginRate']:first").blur(function(e) {
-				return checkFreeLine(e, npRate);
+			$('#addline_libre').click(function (e) {
+				return checkFreeLine(e, "np_marginRate");
 			});
+			$("input[name='np_marginRate']:first").blur(function(e) {
+				return checkFreeLine(e, "np_marginRate");
+			});
+		<?php
 		}
-		else {
-			if (npRate == 'np_markRate') {
-				$("input[name='np_markRate']:first").blur(function(e) {
-					return checkFreeLine(e, npRate);
-				});
-			}
+		if (! empty($conf->global->DISPLAY_MARK_RATES)) { ?>
+			$('#addline_libre').click(function (e) {
+				return checkFreeLine(e, "np_markRate");
+			});
+			$("input[name='np_markRate']:first").blur(function(e) {
+				return checkFreeLine(e, "np_markRate");
+			});
+		<?php
 		}
+		?>
 	});
 
+	// TODO This works for french numbers only
 	function checkFreeLine(e, npRate)
 	{
 		var buying_price = $("input[name='buying_price']:first");
@@ -261,14 +249,14 @@ if (! empty($usemargins) && $user->rights->margins->creer)
 			return true;
 		if (! $.isNumeric(rate.val().replace(',','.')))
 		{
-			alert('<?php echo $langs->trans("rateMustBeNumeric"); ?>');
+			alert('<?php echo dol_escape_js($langs->trans("rateMustBeNumeric")); ?>');
 			e.stopPropagation();
 			setTimeout(function () { rate.focus() }, 50);
 			return false;
 		}
 		if (npRate == "np_markRate" && rate.val() >= 100)
 		{
-			alert('<?php echo $langs->trans("markRateShouldBeLesserThan100"); ?>');
+			alert('<?php echo dol_escape_js($langs->trans("markRateShouldBeLesserThan100")); ?>');
 			e.stopPropagation();
 			setTimeout(function () { rate.focus() }, 50);
 			return false;
@@ -284,12 +272,14 @@ if (! empty($usemargins) && $user->rights->margins->creer)
 					np_price = ((buying_price.val().replace(',','.') / (1 - rate.val().replace(',','.') / 100)) / (1 - remise.val().replace(',','.') / 100));
 			}
 		}
-		$("input[name='price_ht']:first").val(formatFloat(np_price));
+		$("input[name='price_ht']:first").val(roundFloat(np_price));
 
 		return true;
 	}
 
-	function roundFloat(num) {
+	// TODO This works for french numbers only
+	function roundFloat(num)
+	{
 		var main_max_dec_shown = <?php echo $conf->global->MAIN_MAX_DECIMALS_SHOWN; ?>;
 		var main_rounding = <?php echo min($conf->global->MAIN_MAX_DECIMALS_UNIT,$conf->global->MAIN_MAX_DECIMALS_TOT); ?>;
 
@@ -310,10 +300,6 @@ if (! empty($usemargins) && $user->rights->margins->creer)
 	    }
 	  	//amount = parseFloat(amount) + (1 / Math.pow(100, rounding));  // to avoid floating-point errors
 		return parseFloat(amount).toFixed(rounding);
-	}
-
-	function formatFloat(num) {
-		return roundFloat(num).replace('.', ',');
 	}
 
 	</script>

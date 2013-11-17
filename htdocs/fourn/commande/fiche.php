@@ -181,160 +181,195 @@ else if ($action == 'addline' && $user->rights->fournisseur->commande->creer)
     $langs->load('errors');
     $error = 0;
 
-    if (GETPOST('pu') < 0 && GETPOST('qty') < 0)
+	// Set if we used free entry or predefined product
+	if (GETPOST('addline_libre'))
+	{
+		$predef='';
+		$idprod=0;
+		$product_desc=(GETPOST('dp_desc')?GETPOST('dp_desc'):'');
+		$price_ht = GETPOST('price_ht');
+		$tva_tx=(GETPOST('tva_tx')?GETPOST('tva_tx'):0);
+	}
+	if (GETPOST('addline_predefined'))
+	{
+		$predef=(($conf->global->MAIN_FEATURES_LEVEL < 2) ? '_predef' : '');
+		$idprod=GETPOST('idprod', 'int');
+		$product_desc = (GETPOST('product_desc')?GETPOST('product_desc'):(GETPOST('np_desc')?GETPOST('np_desc'):''));
+		$price_ht = '';
+		$tva_tx = '';
+	}
+	$qty = GETPOST('qty'.$predef);
+	$remise_percent=GETPOST('remise_percent'.$predef);
+
+    if (GETPOST('addline_libre') && GETPOST('pu') < 0 && $qty < 0)
     {
         setEventMessage($langs->trans('ErrorBothFieldCantBeNegative', $langs->transnoentitiesnoconv('UnitPrice'), $langs->transnoentitiesnoconv('Qty')), 'errors');
         $error++;
     }
-    if (! GETPOST('idprodfournprice') && GETPOST('type') < 0)
+    if (GETPOST('addline_libre') && ! GETPOST('idprodfournprice') && GETPOST('type') < 0)
     {
         setEventMessage($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Type')), 'errors');
         $error++;
     }
-    if (! GETPOST('idprodfournprice') && (! GETPOST('pu') || GETPOST('pu')=='')) // Unit price can be 0 but not ''
+    if (! GETPOST('addline_predefined') && (! GETPOST('pu') || GETPOST('pu')=='')) // Unit price can be 0 but not ''
     {
         setEventMessage($langs->trans($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('UnitPrice'))), 'errors');
         $error++;
     }
-    if (! GETPOST('idprodfournprice') && ! GETPOST('np_desc') && ! GETPOST('dp_desc'))
+    if (! GETPOST('addline_predefined')  && ! GETPOST('np_desc') && ! GETPOST('dp_desc'))
     {
         setEventMessage($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Description')), 'errors');
         $error++;
     }
-    if (! GETPOST('idprodfournprice') && (! GETPOST('qty') || GETPOST('qty') == '')
-    || GETPOST('idprodfournprice') && (! GETPOST('pqty') || GETPOST('pqty') == ''))
+    if ((! GETPOST('addline_predefined')  && (! GETPOST('qty') || GETPOST('qty') == ''))
+    || (GETPOST('addline_predefined') && (! GETPOST('qty_predef') || GETPOST('qty_predef') == '')))
     {
         setEventMessage($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Qty')), 'errors');
         $error++;
     }
 
-    if (! $error && ((GETPOST('qty') || GETPOST('pqty')) && ((GETPOST('pu') && (GETPOST('np_desc') || GETPOST('dp_desc'))) || GETPOST('idprodfournprice'))))
+    // Ecrase $pu par celui	du produit
+    // Ecrase $desc	par	celui du produit
+    // Ecrase $txtva  par celui du produit
+    if (GETPOST('addline_predefined') || GETPOST('idprodfournprice'))	// With combolist idprodfournprice is > 0 or -1. With autocomplete, idprodfournprice is > 0 or ''
     {
-        // Ecrase $pu par celui	du produit
-        // Ecrase $desc	par	celui du produit
-        // Ecrase $txtva  par celui du produit
-        if (GETPOST('idprodfournprice'))	// >0 or -1
-        {
-            $qty = GETPOST('qty') ? GETPOST('qty') : GETPOST('pqty');
+    	$idprod=0;
+    	$productsupplier = new ProductFournisseur($db);
 
-            $productsupplier = new ProductFournisseur($db);
-            $idprod=$productsupplier->get_buyprice($_POST['idprodfournprice'], $qty);    // Just to see if a price exists for the quantity. Not used to found vat
+    	if (GETPOST('idprodfournprice') == '')
+    	{
+    		$idprod=-1;
+    	}
+    	if (GETPOST('idprodfournprice') > 0)
+    	{
+    		$idprod=$productsupplier->get_buyprice(GETPOST('idprodfournprice'), $qty);    // Just to see if a price exists for the quantity. Not used to found vat
+    	}
 
-            if ($idprod > 0)
-            {
-                $res=$productsupplier->fetch($idprod);
+    	if ($idprod > 0)
+    	{
+    		$res=$productsupplier->fetch($idprod);
 
-                // cas special pour lequel on a les meme reference que le fournisseur
-                // $label = '['.$nv_prod->ref.'] - '. $nv_prod->libelle;
-                $label = $productsupplier->libelle;
+    		$label = $productsupplier->libelle;
 
-                $desc = $productsupplier->description;
-                $desc.= $productsupplier->description && $_POST['np_desc'] ? "\n" : "";
-                $desc.= $_POST['np_desc'];
+    		$desc = $productsupplier->description;
+    		if (trim($product_desc) != trim($desc)) $desc = dol_concatdesc($desc, $product_desc);
 
-                $remise_percent = GETPOST('remise_percent') ? GETPOST('remise_percent') : GETPOST('p_remise_percent');
+    		$tva_tx	= get_default_tva($object->thirdparty, $mysoc, $productsupplier->id, GETPOST('idprodfournprice'));
+    		$type = $productsupplier->type;
 
-                $tva_tx	= get_default_tva($object->thirdparty, $mysoc, $productsupplier->id, GETPOST('idprodfournprice'));
-                $type = $productsupplier->type;
+    		// Local Taxes
+    		$localtax1_tx= get_localtax($tva_tx, 1,$mysoc,$object->thirdparty);
+    		$localtax2_tx= get_localtax($tva_tx, 2,$mysoc,$object->thirdparty);
 
-                // Local Taxes
-                $localtax1_tx= get_localtax($tva_tx, 1,$mysoc,$object->thirdparty);
-                $localtax2_tx= get_localtax($tva_tx, 2,$mysoc,$object->thirdparty);
+    		$result=$object->addline(
+    			$desc,
+    			$productsupplier->fourn_pu,
+    			$qty,
+    			$tva_tx,
+    			$localtax1_tx,
+    			$localtax2_tx,
+    			$productsupplier->id,
+    			GETPOST('idprodfournprice'),
+    			$productsupplier->fourn_ref,
+    			$remise_percent,
+    			'HT',
+    			$type
+    		);
+    	}
+    	if ($idprod == 0)
+    	{
+    		// Product not selected
+    		$error++;
+    		$langs->load("errors");
+    		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("ProductOrService")), 'errors');
+    	}
+    	if ($idprod == -1)
+    	{
+    		// Quantity too low
+    		$error++;
+    		$langs->load("errors");
+    		setEventMessage($langs->trans("ErrorQtyTooLowForThisSupplier"), 'errors');
+    	}
+    }
+    else
+	{
+    	$type=$_POST["type"];
+    	$desc=$_POST['dp_desc'];
+    	$tva_tx = price2num($_POST['tva_tx']);
 
-                $result=$object->addline(
-                    $desc,
-                    $pu, // FIXME $pu is not defined
-                    $qty,
-                    $tva_tx,
-                    $localtax1_tx,
-                    $localtax2_tx,
-                    $productsupplier->id,
-                    GETPOST('idprodfournprice'),
-                    $productsupplier->fourn_ref,
-                    $remise_percent,
-                    'HT',
-                    $type
-                );
-            }
-            if ($idprod == -1)
-            {
-                // Quantity too low
-                setEventMessage($langs->trans("ErrorQtyTooLowForThisSupplier"), 'errors');
-            }
-        }
-        else
-        {
-            $type=$_POST["type"];
-            $desc=$_POST['dp_desc'];
-            $tva_tx = price2num($_POST['tva_tx']);
+    	// Local Taxes
+    	$localtax1_tx= get_localtax($tva_tx, 1,$mysoc,$object->thirdparty);
+    	$localtax2_tx= get_localtax($tva_tx, 2,$mysoc,$object->thirdparty);
 
-            // Local Taxes
-            $localtax1_tx= get_localtax($tva_tx, 1,$mysoc,$object->thirdparty);
-            $localtax2_tx= get_localtax($tva_tx, 2,$mysoc,$object->thirdparty);
+    	if (! $product_desc)
+    	{
+    		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Label")), 'errors');
+    	}
+    	else
+    	{
+    		if (!empty($_POST['pu']))
+    		{
+    			$price_base_type = 'HT';
+    			$ht = price2num($_POST['pu']);
+    			$result=$object->addline($desc, $ht, $qty, $tva_tx, $localtax1_tx, $localtax2_tx, 0, 0, '', $remise_percent, $price_base_type, 0, $type);
+    		}
+    		else
+    		{
+    			$ttc = price2num($_POST['amountttc']);
+    			$ht = $ttc / (1 + ($tauxtva / 100));
+    			$price_base_type = 'HT';
+    			$result=$object->addline($desc, $ht, $qty, $tva_tx, $localtax1_tx, $localtax2_tx, 0, 0, '', $remise_percent, $price_base_type, $ttc, $type);
+    		}
+    	}
+    }
 
-            if (! $_POST['dp_desc'])
-            {
-            	setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Label")), 'errors');
-            }
-            else
-            {
-                if (!empty($_POST['pu']))
-                {
-                    $price_base_type = 'HT';
-                    $ht = price2num($_POST['pu']);
-                    $result=$object->addline($desc, $ht, $_POST['qty'], $tva_tx, $localtax1_tx, $localtax2_tx, 0, 0, '', $_POST['remise_percent'], $price_base_type, 0, $type);
-                }
-                else
-                {
-                    $ttc = price2num($_POST['amountttc']);
-                    $ht = $ttc / (1 + ($tauxtva / 100));
-                    $price_base_type = 'HT';
-                    $result=$object->addline($desc, $ht, $_POST['qty'], $tva_tx, $localtax1_tx, $localtax2_tx, 0, 0, '', $_POST['remise_percent'], $price_base_type, $ttc, $type);
-                }
-            }
-        }
+    //print "xx".$tva_tx; exit;
+    if (! $error && $result > 0)
+    {
+    	$ret=$object->fetch($object->id);    // Reload to get new records
 
-        //print "xx".$tva_tx; exit;
-        if ($result > 0)
-        {
-            $ret=$object->fetch($object->id);    // Reload to get new records
+    	if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
+    	{
+    		// Define output language
+    		$outputlangs = $langs;
+    		$newlang=GETPOST('lang_id','alpha');
+    		if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->client->default_lang;
+    		if (! empty($newlang))
+    		{
+    			$outputlangs = new Translate("",$conf);
+    			$outputlangs->setDefaultLang($newlang);
+    		}
 
-        	if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
-            {
-            	// Define output language
-            	$outputlangs = $langs;
-                $newlang=GETPOST('lang_id','alpha');
-                if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->client->default_lang;
-            	if (! empty($newlang))
-            	{
-            		$outputlangs = new Translate("",$conf);
-            		$outputlangs->setDefaultLang($newlang);
-            	}
+    		supplier_order_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+    	}
 
-                supplier_order_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
-            }
-            unset($_POST['qty']);
-            unset($_POST['type']);
-            unset($_POST['idprodfournprice']);
-            unset($_POST['remmise_percent']);
-            unset($_POST['dp_desc']);
-            unset($_POST['np_desc']);
-            unset($_POST['pu']);
-            unset($_POST['tva_tx']);
-            unset($localtax1_tx);
-            unset($localtax2_tx);
-        }
-        else
-        {
-            setEventMessage($object->error, 'errors');
-        }
+    	unset($_POST['qty']);
+    	unset($_POST['type']);
+    	unset($_POST['remise_percent']);
+    	unset($_POST['dp_desc']);
+    	unset($_POST['pu']);
+    	unset($_POST['tva_tx']);
+    	unset($_POST['label']);
+    	unset($localtax1_tx);
+    	unset($localtax2_tx);
+
+    	unset($_POST['idprodfournprice']);
+    	unset($_POST['qty_predef']);
+    	unset($_POST['remise_percent_predef']);
+    	unset($_POST['fournprice_predef']);
+    	unset($_POST['buying_price_predef']);
+    	unset($_POST['np_desc']);
+    }
+    else
+	{
+    	setEventMessage($object->error, 'errors');
     }
 }
 
 /*
  *	Mise a jour	d'une ligne	dans la	commande
  */
-else if ($action == 'updateligne' && $user->rights->fournisseur->commande->creer &&	$_POST['save'] == $langs->trans('Save'))
+else if ($action == 'update_line' && $user->rights->fournisseur->commande->creer &&	$_POST['save'] == $langs->trans('Save'))
 {
     if ($_POST["elrowid"])
     {
@@ -630,7 +665,7 @@ else if ($action == 'builddoc' && $user->rights->fournisseur->commande->creer)	/
 
 	// Save last template used to generate document
 	if (GETPOST('model')) $object->setDocModel($user, GETPOST('model','alpha'));
-	
+
     $outputlangs = $langs;
     if (GETPOST('lang_id'))
     {
@@ -973,7 +1008,7 @@ if ($action=="create")
 		$societe=new Societe($db);
 		$societe->fetch($socid);
 	}
-	
+
 	$cond_reglement_id 	= $societe->cond_reglement_supplier_id;
 	$mode_reglement_id 	= $societe->mode_reglement_supplier_id;
 
@@ -1005,7 +1040,7 @@ if ($action=="create")
 	print '</tr>';
 
 	print '</td></tr>';
-	
+
 	// Payment term
 	print '<tr><td class="nowrap">'.$langs->trans('PaymentConditionsShort').'</td><td colspan="2">';
 	$form->select_conditions_paiements(isset($_POST['cond_reglement_id'])?$_POST['cond_reglement_id']:$cond_reglement_id,'cond_reglement_id');
@@ -1061,7 +1096,7 @@ elseif (! empty($object->id))
 	if ($action	== 'delete')
 	{
 		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('DeleteOrder'), $langs->trans('ConfirmDeleteOrder'), 'confirm_delete', '', 0, 2);
-		
+
 	}
 
 	// Clone confirmation
@@ -1073,7 +1108,7 @@ elseif (! empty($object->id))
 		);
 		// Paiement incomplet. On demande si motif = escompte ou autre
 		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id,$langs->trans('CloneOrder'),$langs->trans('ConfirmCloneOrder',$object->ref),'confirm_clone',$formquestion,'yes',1);
-		
+
 	}
 
 	/*
@@ -1097,7 +1132,7 @@ elseif (! empty($object->id))
 		}
 
 		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ValidateOrder'), $text, 'confirm_valid', '', 0, 1);
-		
+
 	}
 
 	/*
@@ -1120,7 +1155,7 @@ elseif (! empty($object->id))
 		}
 
 		print $form->formconfirm($_SERVER['PHP_SELF']."?id=".$object->id,$langs->trans("ApproveThisOrder"),$langs->trans("ConfirmApproveThisOrder",$object->ref),"confirm_approve", $formquestion, 1, 1, 240);
-		
+
 	}
 
 	/*
@@ -1129,7 +1164,7 @@ elseif (! empty($object->id))
 	if ($action	== 'refuse')
 	{
 		print $form->formconfirm($_SERVER['PHP_SELF']."?id=$object->id",$langs->trans("DenyingThisOrder"),$langs->trans("ConfirmDenyingThisOrder",$object->ref),"confirm_refuse", '', 0, 1);
-		
+
 	}
 
 	/*
@@ -1138,7 +1173,7 @@ elseif (! empty($object->id))
 	if ($action	== 'cancel')
 	{
 		print $form->formconfirm($_SERVER['PHP_SELF']."?id=$object->id",$langs->trans("Cancel"),$langs->trans("ConfirmCancelThisOrder",$object->ref),"confirm_cancel", '', 0, 1);
-		
+
 	}
 
 	/*
@@ -1148,7 +1183,7 @@ elseif (! empty($object->id))
 	{
 		$date_com = dol_mktime(0,0,0,$_POST["remonth"],$_POST["reday"],$_POST["reyear"]);
 		print $form->formconfirm($_SERVER['PHP_SELF']."?id=".$object->id."&datecommande=".$date_com."&methode=".$_POST["methodecommande"]."&comment=".urlencode($_POST["comment"]), $langs->trans("MakeOrder"),$langs->trans("ConfirmMakeOrder",dol_print_date($date_com,'day')),"confirm_commande",'',0,2);
-		
+
 	}
 
 	/*
@@ -1157,7 +1192,7 @@ elseif (! empty($object->id))
 	if ($action == 'delete_product_line')
 	{
 		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&lineid='.$_GET["lineid"], $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteproductline','',0,2);
-		
+
 	}
 
 	/*
@@ -1381,8 +1416,20 @@ elseif (! empty($object->id))
 
 	/*
 	 * Lines
-	*/
-	print '<table class="noborder" width="100%">';
+	 */
+
+
+	print '	<form name="addproduct" id="addproduct" action="'.$_SERVER["PHP_SELF"].'?etat=1&id='.$object->id.(($action != 'edit_line')?'#add':'#line_'.GETPOST('lineid')).'" method="POST">
+	<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">
+	<input type="hidden" name="action" value="'.(($action != 'edit_line')?'addline':'update_line').'">
+	<input type="hidden" name="mode" value="">
+	<input type="hidden" name="id" value="'.$object->id.'">
+    <input type="hidden" name="facid" value="'.$object->id.'">
+    <input type="hidden" name="socid" value="'.$societe->id.'">
+	';
+
+
+	print '<table id="tablelines" class="noborder noshadow" width="100%">';
 
 	$num = count($object->lines);
 	$i = 0;	$total = 0;
@@ -1422,8 +1469,8 @@ elseif (! empty($object->id))
 			$type=1;
 		}
 
-		// Ligne en mode visu
-		if ($action != 'editline' || $_GET['rowid'] != $line->id)
+		// Edit line
+		if ($action != 'edit_line' || $_GET['rowid'] != $line->id)
 		{
 			print '<tr '.$bc[$var].'>';
 
@@ -1478,7 +1525,7 @@ elseif (! empty($object->id))
 			print '<td align="right" class="nowrap">'.price($line->total_ht).'</td>';
 			if ($object->statut == 0	&& $user->rights->fournisseur->commande->creer)
 			{
-				print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=editline&amp;rowid='.$line->id.'#'.$line->id.'">';
+				print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=edit_line&amp;rowid='.$line->id.'#'.$line->id.'">';
 				print img_edit();
 				print '</a></td>';
 
@@ -1495,16 +1542,14 @@ elseif (! empty($object->id))
 		}
 
 		// Ligne en mode update
-		if ($action	== 'editline' && $user->rights->fournisseur->commande->creer && ($_GET["rowid"] == $line->id))
+		if ($action	== 'edit_line' && $user->rights->fournisseur->commande->creer && ($_GET["rowid"] == $line->id))
 		{
 			print "\n";
-			print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;etat=1&amp;ligne_id='.$line->id.'" method="post">';
-			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-			print '<input type="hidden" name="action" value="updateligne">';
-			print '<input type="hidden" name="id" value="'.$object->id.'">';
-			print '<input type="hidden" name="elrowid" value="'.$_GET['rowid'].'">';
 			print '<tr '.$bc[$var].'>';
 			print '<td>';
+
+			print '<input type="hidden" name="elrowid" value="'.$_GET['rowid'].'">';
+
 			print '<a name="'.$line->id.'"></a>'; // ancre pour retourner sur la ligne
 			if ((! empty($conf->product->enabled) || ! empty($conf->service->enabled)) && $line->fk_product > 0)
 			{
@@ -1546,7 +1591,6 @@ elseif (! empty($object->id))
 			print '<td align="center" colspan="4"><input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
 			print '<br><input type="submit" class="button" name="cancel" value="'.$langs->trans('Cancel').'"></td>';
 			print '</tr>' .	"\n";
-			print "</form>\n";
 		}
 		$i++;
 	}
@@ -1554,7 +1598,7 @@ elseif (! empty($object->id))
 	/*
 	 * Form to add new line
 	 */
-	if ($object->statut == 0 && $user->rights->fournisseur->commande->creer && $action <> 'editline')
+	if ($object->statut == 0 && $user->rights->fournisseur->commande->creer && $action <> 'edit_line')
 	{
 
 		print '<tr class="liste_titre">';
@@ -1571,19 +1615,6 @@ elseif (! empty($object->id))
 		// TODO Use the predefinedproductline_create.tpl.php file
 
 		// Add free products/services form
-		print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'#add" method="post">';
-		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-		print '<input type="hidden"	name="action" value="addline">';
-		print '<input type="hidden"	name="id" value="'.$object->id.'">';
-
-		print '<script type="text/javascript">
-            	jQuery(document).ready(function() {
-            		jQuery(\'#idprodfournprice\').change(function() {
-            			if (jQuery(\'#idprodfournprice\').val() > 0) jQuery(\'#np_desc\').focus();
-            		});
-            	});
-            </script>';
-
 		$var=true;
 		print '<tr '.$bc[$var].'>';
 		print '<td>';
@@ -1611,14 +1642,20 @@ elseif (! empty($object->id))
 		print '<td align="right"><input type="text" name="pu" size="5" value="'.GETPOST('pu').'"></td>';
 		print '<td align="right"><input type="text" name="qty" value="'.(GETPOST('qty')?GETPOST('qty'):'1').'" size="2"></td>';
 		print '<td align="right" class="nowrap"><input type="text" name="remise_percent" size="1" value="'.(GETPOST('remise_percent')?GETPOST('remise_percent'):$object->thirdparty->remise_percent).'"><span class="hideonsmartphone">%</span></td>';
-		print '<td align="center" colspan="4"><input type="submit" class="button" value="'.$langs->trans('Add').'"></td>';
+		print '<td align="center" colspan="4"><input type="submit" class="button" value="'.$langs->trans('Add').'" name="addline_libre"></td>';
 		print '</tr>';
-
-		print '</form>';
 
 		// Ajout de produits/services predefinis
 		if (! empty($conf->product->enabled) || ! empty($conf->service->enabled))
 		{
+			print '<script type="text/javascript">
+            	jQuery(document).ready(function() {
+            		jQuery(\'#idprodfournprice\').change(function() {
+            			if (jQuery(\'#idprodfournprice\').val() > 0) jQuery(\'#np_desc\').focus();
+            		});
+            	});
+            </script>';
+
 			print '<tr class="liste_titre">';
 			print '<td colspan="3">';
 			print $langs->trans("AddNewLine").' - ';
@@ -1636,21 +1673,16 @@ elseif (! empty($object->id))
 			print '<td colspan="4">&nbsp;</td>';
 			print '</tr>';
 
-			print '<form id="addpredefinedproduct" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'#add" method="post">';
-			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-			print '<input type="hidden" name="action" value="addline">';
-			print '<input type="hidden" name="id" value="'.$object->id.'">';
-
 			$var=!$var;
 			print '<tr '.$bc[$var].'>';
 			print '<td colspan="3">';
 
 			$ajaxoptions=array(
-					'update' => array('pqty' => 'qty', 'p_remise_percent' => 'discount'),
+					'update' => array('qty_predef' => 'qty_predef', 'remise_percent_predef' => 'remise_percent_predef'),
 					'option_disabled' => 'addPredefinedProductButton',
 					'error' => $langs->trans("NoPriceDefinedForThisSupplier")
 			);
-			$form->select_produits_fournisseurs($object->fourn_id, '', 'idprodfournprice', '', '', $ajaxoptions);
+			$form->select_produits_fournisseurs($object->fourn_id, GETPOST('idprodfournprice'), 'idprodfournprice', '', '', $ajaxoptions);
 
 			if (empty($conf->global->PRODUIT_USE_SEARCH_TO_SELECT)) print '<br>';
 
@@ -1666,16 +1698,17 @@ elseif (! empty($object->id))
 			$doleditor->Create();
 
 			print '</td>';
-			print '<td align="right"><input type="text" size="2" id="pqty" name="pqty" value="'.(GETPOST('pqty')?GETPOST('pqty'):'1').'"></td>';
-			print '<td align="right" class="nowrap"><input type="text" size="1" id="p_remise_percent" name="p_remise_percent" value="'.(GETPOST('p_remise_percent')?GETPOST('p_remise_percent'):$object->thirdparty->remise_percent).'"><span class="hideonsmartphone">%</span></td>';
-			print '<td align="center" colspan="4"><input type="submit" id="addPredefinedProductButton" class="button" value="'.$langs->trans('Add').'"></td>';
+			print '<td align="right"><input type="text" size="2" id="qty_predef" name="qty_predef" value="'.(GETPOST('qty_predef')?GETPOST('qty_predef'):'1').'"></td>';
+			print '<td align="right" class="nowrap"><input type="text" size="1" id="remise_percent_predef" name="remise_percent_predef" value="'.(GETPOST('remise_percent_predef')?GETPOST('remise_percent_predef'):$object->thirdparty->remise_percent).'"><span class="hideonsmartphone">%</span></td>';
+			print '<td align="center" colspan="4"><input type="submit" id="addPredefinedProductButton" class="button" value="'.$langs->trans('Add').'" name="addline_predefined"></td>';
 			print '</tr>';
-
-			print '</form>';
 		}
 	}
 	print '</table>';
-	print '</div>';
+
+	print '</form>';
+
+	dol_fiche_end();
 
 
 	if ($action != 'presend')
@@ -1683,7 +1716,7 @@ elseif (! empty($object->id))
 		/**
 		 * Boutons actions
 		 */
-		if ($user->societe_id == 0 && $action != 'editline' && $action != 'delete')
+		if ($user->societe_id == 0 && $action != 'edit_line' && $action != 'delete')
 		{
 			print '<div	 class="tabsAction">';
 
@@ -1801,9 +1834,9 @@ elseif (! empty($object->id))
 		 * Linked object block
 		 */
 		$somethingshown=$object->showLinkedObjectBlock();
-		
+
 		print '</div><div class="fichehalfright"><div class="ficheaddleft">';
-                
+
 
         // List of actions on element
         include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
