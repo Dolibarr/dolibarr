@@ -37,6 +37,7 @@ create table llx_societe_rib
   proprio        varchar(60),
   owner_address  varchar(255),
   default_rib    smallint NOT NULL DEFAULT 0,
+  clos           smallint NOT NULL DEFAULT 0,
   import_key     varchar(14)    -- import key
 
 
