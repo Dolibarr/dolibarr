@@ -1051,7 +1051,7 @@ class FormFile
         global $bc;
         global $sortfield, $sortorder;
 
-        require_once DOL_DOCUMENT_ROOT . '/link/class/link.class.php';
+        require_once DOL_DOCUMENT_ROOT . '/core/class/link.class.php';
         $link = new Link($this->db);
         $links = array();
         if ($sortfield == "name") {
@@ -1066,9 +1066,9 @@ class FormFile
 
         // Show list of associated links
         print_titre($langs->trans("LinkedFiles"));
-        
+
         print '<form action="' . $_SERVER['PHP_SELF'] . '" method="POST">';
-        
+
         print '<table width="100%" class="liste">';
         print '<tr class="liste_titre">';
         print_liste_field_titre(
@@ -1113,12 +1113,12 @@ class FormFile
         if ($nboflinks > 0) include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 
         $var = true;
-        foreach ($links as $link) 
+        foreach ($links as $link)
         {
             $var =! $var;
             print '<tr ' . $bc[$var] . '>';
             //edit mode
-            if ($action == 'update' && $selected === $link->id) 
+            if ($action == 'update' && $selected === $link->id)
             {
                 print '<td>';
                 print '<input type="hidden" name="id" value="' . $object->id . '">';
@@ -1157,7 +1157,7 @@ class FormFile
             }
             print "</tr>\n";
         }
-        if ($nboflinks == 0) 
+        if ($nboflinks == 0)
         {
             print '<tr ' . $bc[$var] . '><td colspan="4">';
             print $langs->trans("NoLinkFound");
@@ -1166,7 +1166,7 @@ class FormFile
         print "</table>";
 
         print '</form>';
-        
+
         return $nboflinks;
     }
 
