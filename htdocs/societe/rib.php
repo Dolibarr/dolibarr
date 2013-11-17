@@ -95,7 +95,7 @@ if ($_POST["action"] == 'add' && ! $_POST["cancel"])
     $account->bank            = $_POST["bank"];
     $account->label           = $_POST["label"];
     $account->courant         = $_POST["courant"];
-    $account->clos            = $_POST["clos"];
+    $account->clos            = 0;
     $account->code_banque     = $_POST["code_banque"];
     $account->code_guichet    = $_POST["code_guichet"];
     $account->number          = $_POST["number"];
@@ -130,6 +130,36 @@ if ($_GET['action'] == 'setasdefault')
         exit;
     } else {
         $message=$db->lasterror;
+    }
+}
+
+if ($_GET['action'] == 'changestate')
+{
+    $account = new CompanyBankAccount($db);
+    if (GETPOST('newstate'))
+        $ns = 1;
+    else
+        $ns = 0;
+    if ($account->fetch(GETPOST('ribid')))
+    {
+        $account->clos = $ns;
+        $account->default_rib = 0;
+        $result = $account->update($user);
+        var_dump($account);
+        if ($result)
+        {
+            $url = DOL_URL_ROOT.'/societe/rib.php?socid='.$soc->id;
+            header('Location: '.$url);
+            exit;
+        }
+        else
+        {
+            $message = $account->error;
+        }
+    }
+    else
+    {
+        $message = $account->error;
     }
 }
 
@@ -223,6 +253,8 @@ if ($_GET["socid"] && $_GET["action"] != 'edit' && $_GET["action"] != "create")
 		print '<div class="warning">'.$langs->trans("RIBControlError").'</div>';
 	}
 
+    // All RIB
+
     print "<br />";
 
     print_titre($langs->trans("AllRIB"));
@@ -237,24 +269,43 @@ if ($_GET["socid"] && $_GET["action"] != 'edit' && $_GET["action"] != "create")
         print_liste_field_titre($langs->trans("Bank"));
         print_liste_field_titre($langs->trans("RIB"));
         print_liste_field_titre($langs->trans("DefaultRIB"));
-        print '<td width="40"></td>';
+        print '<td width="100"></td>';
         print '</tr>';
 
         foreach ($rib_list as $rib) {
+            if ($rib->clos)
+                $class = ' class="disabled_rib"';
+            else
+                $class = '';
             print "<tr $bc[$var]>";
-            print '<td>'.$rib->label.'</td>';
-            print '<td>'.$rib->bank.'</td>';
-            print '<td>'.$rib->getRibLabel(false).'</td>';
-            print '<td align="center" width="70">';
-            if (!$rib->default_rib) {
-                print '<a href="'.DOL_URL_ROOT.'/societe/rib.php?socid='.$soc->id.'&ribid='.$rib->id.'&action=setasdefault">';
-                print img_picto($langs->trans("Disabled"),'switch_off');
-                print '</a>';
-            } else {
-                print img_picto($langs->trans("Enabled"),'switch_on');
+            print '<td'.$class.'>'.$rib->label.'</td>';
+            print '<td'.$class.'>'.$rib->bank.'</td>';
+            print '<td'.$class.'>'.$rib->getRibLabel(false).'</td>';
+            print '<td align="center" width="100">';
+            if (!$rib->clos) {
+                if (!$rib->default_rib) {
+                    print '<a href="'.DOL_URL_ROOT.'/societe/rib.php?socid='.$soc->id.'&ribid='.$rib->id.'&action=setasdefault">';
+                    print img_picto($langs->trans("RibNotDefault"),'switch_off');
+                    print '</a>';
+                } else {
+                    print img_picto($langs->trans("RibDefault"),'switch_on');
+                }
             }
             print '</td>';
             print '<td align="right">';
+            // State
+            if ($rib->clos) {
+                print $langs->trans("Disabled").'&nbsp;';
+                print '<a href="'.DOL_URL_ROOT.'/societe/rib.php?socid='.$soc->id.'&ribid='.$rib->id.'&action=changestate">';
+                print img_picto($langs->trans("Disabled"),'statut8');
+                print '</a>';
+            } else {
+                print $langs->trans("Enabled").'&nbsp;';
+                print '<a href="'.DOL_URL_ROOT.'/societe/rib.php?socid='.$soc->id.'&ribid='.$rib->id.'&action=changestate&newstate=1">';
+                print img_picto($langs->trans("Enabled"),'statut4');
+                print '</a>';
+            }
+            // Set as default
             print '<a href="'.DOL_URL_ROOT.'/societe/rib.php?socid='.$soc->id.'&id='.$rib->id.'&action=edit">';
             print img_picto($langs->trans("Modify"),'edit');
             print '</a>';

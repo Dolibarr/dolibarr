@@ -75,15 +75,28 @@ class CompanyBankAccount extends Account
      */
     function create()
     {
+        $sql1 = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe_rib WHERE fk_soc = ".$this->socid;
+        $result = $this->db->query($sql1);
+
+        if ($result)
+        {
+            if (!$this->db->num_rows($result))
+                $this->default_rib = 1;
+        }
+        else
+        {
+            print $this->db->error();
+            return 0;
+        }
+
         $now=dol_now();
 
-        $sql = "INSERT INTO ".MAIN_DB_PREFIX."societe_rib (fk_soc, datec) values ($this->socid, '".$this->db->idate($now)."')";
-        $resql=$this->db->query($sql);
+        $sql2 = "INSERT INTO ".MAIN_DB_PREFIX."societe_rib (fk_soc, datec) values ($this->socid, '".$this->db->idate($now)."')";
+        $resql=$this->db->query($sql2);
         if ($resql)
         {
             if ($this->db->affected_rows($resql))
             {
-                $this->default_rib = 1;
                 $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."societe_rib");
                 return 1;
             }
@@ -121,7 +134,7 @@ class CompanyBankAccount extends Account
 //        }
 
         if (!$this->id) {
-            $this->create();
+            if (!$this->create()) return 0;
         }
 
         $sql = "UPDATE ".MAIN_DB_PREFIX."societe_rib SET ";
@@ -136,6 +149,7 @@ class CompanyBankAccount extends Account
         $sql .= ",proprio = '".$this->db->escape($this->proprio)."'";
         $sql .= ",owner_address = '".$this->db->escape($this->owner_address)."'";
         $sql .= ",default_rib = ".$this->default_rib;
+        $sql .= ",clos = ".$this->clos;
         if (trim($this->label) != '')
             $sql .= ",label = '".$this->db->escape($this->label)."'";
         else
@@ -165,7 +179,7 @@ class CompanyBankAccount extends Account
     {
         if (empty($id) && empty($socid)) return -1;
 
-        $sql = "SELECT rowid, fk_soc, bank, number, code_banque, code_guichet, cle_rib, bic, iban_prefix as iban, domiciliation, proprio, owner_address, default_rib, label";
+        $sql = "SELECT rowid, fk_soc, bank, number, code_banque, code_guichet, cle_rib, bic, iban_prefix as iban, domiciliation, proprio, owner_address, default_rib, label, clos";
         $sql.= " FROM ".MAIN_DB_PREFIX."societe_rib";
         if ($id)    $sql.= " WHERE rowid = ".$id;
         if ($socid) $sql.= " WHERE fk_soc  = ".$socid." AND default_rib = 1";
@@ -192,6 +206,7 @@ class CompanyBankAccount extends Account
                 $this->owner_address   = $obj->owner_address;
                 $this->label           = $obj->label;
                 $this->default_rib     = $obj->default_rib;
+                $this->clos            = $obj->clos;
             }
             $this->db->free($resql);
 
@@ -272,6 +287,35 @@ class CompanyBankAccount extends Account
                 return 0;
             }
         } else {
+            return 0;
+        }
+    }
+
+    function delete($id)
+    {
+        global $conf;
+
+        $deletable = (empty($conf->global->SOCIETE_RIB_DELETE)?false:true);
+
+        if (!$id && $deletable) {
+            return 0;
+        }
+
+        $sql = "DELETE FROM ".MAIN_DB_PREFIX."societe_rib";
+        $sql.= " WHERE rowid = ".$id;
+
+        $this->db->begin();
+
+        $result = $this->db->query($sql);
+
+        if ($result)
+        {
+            $this->db->commit();
+            return 1;
+        }
+        else
+        {
+            dol_print_error($this->db);
             return 0;
         }
     }
