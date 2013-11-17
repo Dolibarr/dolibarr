@@ -4,6 +4,7 @@
  * Copyright (C) 2007-2011 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2010-2011 Herve Prot           <herve.prot@symeos.com>
  * Copyright (C) 2011      Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2013      Peter Fontaine       <contact@peterfontaine.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -2510,7 +2511,15 @@ ul.ulmenu {
 	background-image: linear-gradient( #ddd,#d1d1d1 ) !important;
 }
 
+/* ====================================================== */
+/* RIB                                                    */
+/* ====================================================== */
+td.disabled_rib
+{
+text-decoration: line-through;
+}
 
 <?php
 if (is_object($db)) $db->close();
 ?>
+
