@@ -315,21 +315,21 @@ class CompanyBankAccount extends Account
     /**
      * Delete a RIB
      *
-     * @param   int     $rid    RIB Id
+     * @param   int     $rib    RIB Id
      * @return  int             0 if KO, 1 if OK
      */
-    function delete($id)
+    function delete($rib)
     {
         global $conf;
 
         $deletable = (empty($conf->global->SOCIETE_RIB_DELETE)?false:true);
 
-        if (!$id || !$deletable) {
+        if (!$rib || !$deletable) {
             return 0;
         }
 
         $sql = "DELETE FROM ".MAIN_DB_PREFIX."societe_rib";
-        $sql.= " WHERE rowid = ".$id;
+        $sql.= " WHERE rowid = ".$rib;
 
         dol_syslog(get_class($this).'::delete sql='.$sql);
 
