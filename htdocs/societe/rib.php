@@ -53,7 +53,7 @@ if ($_POST["action"] == 'update' && ! $_POST["cancel"])
 	// Modification
 	$account = new CompanyBankAccount($db);
 
-    $account->fetch($_POST["id"]);
+    $account->fetch($_POST["ribid"]);
 
 	$account->socid           = $soc->id;
 
@@ -79,7 +79,7 @@ if ($_POST["action"] == 'update' && ! $_POST["cancel"])
 	}
 	else
 	{
-		$url=DOL_URL_ROOT.'/societe/rib.php?socid='.$soc->id;
+		$url=$_SERVER['PHP_SELF'].'?socid='.$soc->id;
         header('Location: '.$url);
         exit;
 	}
@@ -114,7 +114,7 @@ if ($_POST["action"] == 'add' && ! $_POST["cancel"])
     }
     else
     {
-        $url=DOL_URL_ROOT.'/societe/rib.php?socid='.$soc->id;
+        $url=$_SERVER['PHP_SELF'].'?socid='.$soc->id;
         header('Location: '.$url);
         exit;
     }
@@ -125,7 +125,7 @@ if ($_GET['action'] == 'setasdefault')
     $account = new CompanyBankAccount($db);
     $res = $account->setAsDefault($_GET['ribid']);
     if ($res) {
-        $url=DOL_URL_ROOT.'/societe/rib.php?socid='.$soc->id;
+        $url=$_SERVER['PHP_SELF'].'?socid='.$soc->id;
         header('Location: '.$url);
         exit;
     } else {
@@ -148,7 +148,7 @@ if ($_GET['action'] == 'changestate')
         var_dump($account);
         if ($result)
         {
-            $url = DOL_URL_ROOT.'/societe/rib.php?socid='.$soc->id;
+            $url = $_SERVER['PHP_SELF'].'?socid='.$soc->id;
             header('Location: '.$url);
             exit;
         }
@@ -312,6 +312,7 @@ if ($_GET["socid"] && $_GET["action"] != 'edit' && $_GET["action"] != "create")
             print '<td'.$class.'><a href="'.$_SERVER['PHP_SELF'].'?socid='.$soc->id.'&ribid='.$rib->id.'">'.$rib->bank.'</a></td>';
             print '<td'.$class.'><a href="'.$_SERVER['PHP_SELF'].'?socid='.$soc->id.'&ribid='.$rib->id.'">'.$rib->getRibLabel(false).'</a></td>';
             print '<td align="center" width="100">';
+            // Set as default
             if (!$rib->clos) {
                 if (!$rib->default_rib) {
                     print '<a href="'.DOL_URL_ROOT.'/societe/rib.php?socid='.$soc->id.'&ribid='.$rib->id.'&action=setasdefault">';
@@ -326,17 +327,16 @@ if ($_GET["socid"] && $_GET["action"] != 'edit' && $_GET["action"] != "create")
             // State
             if ($rib->clos) {
                 print $langs->trans("Disabled").'&nbsp;';
-                print '<a href="'.DOL_URL_ROOT.'/societe/rib.php?socid='.$soc->id.'&ribid='.$rib->id.'&action=changestate">';
+                print '<a href="'.$_SERVER['PHP_SELF'].'?socid='.$soc->id.'&ribid='.$rib->id.'&action=changestate">';
                 print img_picto($langs->trans("Disabled"),'statut8');
                 print '</a>';
             } else {
                 print $langs->trans("Enabled").'&nbsp;';
-                print '<a href="'.DOL_URL_ROOT.'/societe/rib.php?socid='.$soc->id.'&ribid='.$rib->id.'&action=changestate&newstate=1">';
+                print '<a href="'.$_SERVER['PHP_SELF'].'?socid='.$soc->id.'&ribid='.$rib->id.'&action=changestate&newstate=1">';
                 print img_picto($langs->trans("Enabled"),'statut4');
                 print '</a>';
             }
-            // Set as default
-            print '<a href="'.DOL_URL_ROOT.'/societe/rib.php?socid='.$soc->id.'&id='.$rib->id.'&action=edit">';
+            print '<a href="'.$_SERVER['PHP_SELF'].'?socid='.$soc->id.'&ribid='.$rib->id.'&action=edit">';
             print img_picto($langs->trans("Modify"),'edit');
             print '</a>';
             print '</td>';
@@ -370,7 +370,7 @@ if ($_GET["socid"] && $_GET["action"] == 'edit' && $user->rights->societe->creer
     print '<form action="rib.php?socid='.$soc->id.'" method="post">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<input type="hidden" name="action" value="update">';
-    print '<input type="hidden" name="id" value="'.$_GET["id"].'">';
+    print '<input type="hidden" name="ribid" value="'.$_GET["ribid"].'">';
     print '<input type="hidden" name="clos" value="'.$account->clos.'">';
 
     print '<table class="border" width="100%">';
@@ -539,7 +539,7 @@ if ($_GET["socid"] && $_GET["action"] != 'edit' && $_GET["action"] != 'create')
 		print '<a class="butAction" href="rib.php?socid='.$soc->id.'&amp;action=create">'.$langs->trans("Add").'</a>';
 	}
 
-    if (!empty($conf->global->SOCIETE_RIB_DELETE) && !$account->default_rib && $account->id)
+    if (!empty($conf->global->SOCIETE_RIB_DELETE) && $account->id)
     {
         if ($conf->use_javascript_ajax && empty($conf->dol_use_jmobile))
             print '<span id="action-delete" class="butActionDelete">'.$langs->trans('Delete').'</span>';
