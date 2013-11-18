@@ -27,6 +27,7 @@ global $conf,$user,$langs,$db;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
+require_once dirname(__FILE__).'/../../htdocs/core/lib/admin.lib.php';
 require_once dirname(__FILE__).'/../../htdocs/societe/class/companybankaccount.class.php';
 
 if (empty($user->id))
@@ -230,6 +231,56 @@ class CompanyBankAccountTest extends PHPUnit_Framework_TestCase
         print __METHOD__." id=".$localobject->id." result=".$result."\n";
         $this->assertLessThan($result, 0);
         return $localobject->id;
+    }
+
+    /**
+     * testCompanyBankAccountDeleteDisabled
+     *
+     * @param   int     $id         Bank Account Id
+     * @return  CompanyBankAccount  Bank Account Object
+     * @depends testCompanyBankAccountCreate
+     */
+    public function testCompanyBankAccountDeleteDisabled($id)
+    {
+        global $conf,$user,$langs,$db;
+        $conf=$this->savconf;
+        $user=$this->savuser;
+        $langs=$this->savlangs;
+        $db=$this->savdb;
+
+        dolibarr_set_const($db,'SOCIETE_RIB_DELETE','0','chaine');
+
+        $localobject = new CompanyBankAccount($db);
+        $result = $localobject->delete($id);
+
+        print __METHOD__." id=".$id." result=".$result."\n";
+        $this->assertEquals($result, 0);
+        return $id;
+    }
+
+/**
+* testCompanyBankAccountDeleteEnabled
+*
+* @param   int     $id         Bank Account Id
+* @return  CompanyBankAccount  Bank Account Object
+* @depends testCompanyBankAccountCreate
+*/
+    public function testCompanyBankAccountDeleteEnabled($id)
+    {
+        global $conf,$user,$langs,$db;
+        $conf=$this->savconf;
+        $user=$this->savuser;
+        $langs=$this->savlangs;
+        $db=$this->savdb;
+
+        dolibarr_set_const($db,'SOCIETE_RIB_DELETE','1','chaine');
+
+        $localobject = new CompanyBankAccount($db);
+        $result = $localobject->delete($id);
+
+        print __METHOD__." id=".$id." result=".$result."\n";
+        $this->assertLessThan($result, 0);
+        return $id;
     }
 
 }

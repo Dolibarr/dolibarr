@@ -154,3 +154,7 @@ DefaultRIB=RIB par défaut
 AllRIB=Tous les RIB
 LabelRIB=Nom du RIB
 NoBANRecord=Aucun RIB enregistré
+CompanyBankAccountNumberDeletable=Les RIB peuvent être supprimés
+DeleteARib=Supprimer un RIB
+ConfirmDeleteRib=Voulez-vous vraiment supprimer le RIB <b>%s</b>
+MakeDefault=Utiliser ce RIB par défaut

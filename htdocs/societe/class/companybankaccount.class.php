@@ -76,6 +76,7 @@ class CompanyBankAccount extends Account
     function create()
     {
         $sql1 = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe_rib WHERE fk_soc = ".$this->socid;
+        dol_syslog(get_class($this).'::create sql='.$sql1);
         $result = $this->db->query($sql1);
 
         if ($result)
@@ -92,6 +93,7 @@ class CompanyBankAccount extends Account
         $now=dol_now();
 
         $sql2 = "INSERT INTO ".MAIN_DB_PREFIX."societe_rib (fk_soc, datec) values ($this->socid, '".$this->db->idate($now)."')";
+        dol_syslog(get_class($this).'::create sql='.$sql2);
         $resql=$this->db->query($sql2);
         if ($resql)
         {
@@ -156,6 +158,8 @@ class CompanyBankAccount extends Account
             $sql .= ",label = NULL";
         $sql .= " WHERE rowid = ".$this->id;
 
+        dol_syslog(get_class($this).'::update sql='.$sql);
+
         $result = $this->db->query($sql);
         if ($result)
         {
@@ -184,6 +188,8 @@ class CompanyBankAccount extends Account
         if ($id)    $sql.= " WHERE rowid = ".$id;
         if ($socid) $sql.= " WHERE fk_soc  = ".$socid." AND default_rib = 1";
 
+        dol_syslog(get_class($this).'::fetch sql='.$sql);
+
         $resql = $this->db->query($sql);
         if ($resql)
         {
@@ -207,10 +213,17 @@ class CompanyBankAccount extends Account
                 $this->label           = $obj->label;
                 $this->default_rib     = $obj->default_rib;
                 $this->clos            = $obj->clos;
-            }
-            $this->db->free($resql);
 
-            return 1;
+                $this->db->free($resql);
+
+                return 1;
+            }
+            else
+            {
+                $this->db->free($resql);
+
+                return -1;
+            }
         }
         else
         {
@@ -299,19 +312,27 @@ class CompanyBankAccount extends Account
     	}
     }
 
+    /**
+     * Delete a RIB
+     *
+     * @param   int     $rid    RIB Id
+     * @return  int             0 if KO, 1 if OK
+     */
     function delete($id)
     {
         global $conf;
 
         $deletable = (empty($conf->global->SOCIETE_RIB_DELETE)?false:true);
 
-        if (!$id && $deletable) {
+        if (!$id || !$deletable) {
             return 0;
         }
 
         $sql = "DELETE FROM ".MAIN_DB_PREFIX."societe_rib";
         $sql.= " WHERE rowid = ".$id;
+
         dol_syslog(get_class($this).'::delete sql='.$sql);
+
         $this->db->begin();
 
         $result = $this->db->query($sql);

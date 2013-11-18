@@ -5,6 +5,7 @@
 -- Copyright (C) 2004      Guillaume Delecourt  <guillaume.delecourt@opensides.be>
 -- Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
 -- Copyright (C) 2007 	   Patrick Raguin       <patrick.raguin@gmail.com>
+-- Copyright (C) 2013      Peter Fontaine       <contact@peterfontaine.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -82,3 +83,8 @@ insert into llx_const (name, value, type, note, visible) values ('MAIN_DELAY_TRA
 --
 insert into llx_const (name, value, type, note, visible) values ('MAIN_FIX_FOR_BUGGED_MTA','1','chaine','Set constant to fix email ending from PHP with some linux ike system',1);
 insert into llx_const (name, value, type, note, visible) values ('MAILING_EMAIL_FROM','dolibarr@domain.com','chaine','EMail emmetteur pour les envois d emailings',0);
+
+--
+-- Delete RIB
+--
+insert into llx_const (name, value, type, note, visible) values ('SOCIETE_RIB_DELETE','1','chaine','Enable remove bank account number',1);
