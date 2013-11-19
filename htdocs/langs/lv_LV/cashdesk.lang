@@ -1,15 +1,15 @@
 # Language file - Source file is en_US - cashdesk
-CashDeskMenu=Tirdzniecības vietā
-CashDesk=Tirdzniecības vietā
-CashDesks=Punktu pārdošanas
+CashDeskMenu=Tirdzniecības vieta
+CashDesk=Tirdzniecības vieta
+CashDesks=Tirdzniecības vietas
 CashDeskBank=Bankas konts
-CashDeskBankCash=Bankas konts (naudas)
+CashDeskBankCash=Bankas konts (skaidra nauda)
 CashDeskBankCB=Bankas konts (karte)
-CashDeskBankCheque=Bankas konts (pārbaude)
+CashDeskBankCheque=Bankas konts (čeks)
 CashDeskWarehouse=Noliktava
 CashdeskShowServices=Pārdošanas pakalpojumi
 CashDeskProducts=Produkti
-CashDeskStock=Krājums
+CashDeskStock=Krājumi
 CashDeskOn=uz
 CashDeskThirdParty=Trešās puses
 CashdeskDashboard=Tirdzniecības vietu piekļuvi

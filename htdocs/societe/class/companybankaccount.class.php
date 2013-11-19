@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2004	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2010	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2012	Regis Houssin			<regis.houssin@capnetworks.com>
- * Copyright (C) 2013   Peter Fontaine          <contact@peterfontaine.fr>
+/* Copyright (C) 2004		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+ * Copyright (C) 2010-2013	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2012		Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2013   	Peter Fontaine          <contact@peterfontaine.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@ require_once DOL_DOCUMENT_ROOT .'/compta/bank/class/account.class.php';
 
 
 /**
- * 		\brief	Class to manage bank accounts description of third parties
+ * 	Class to manage bank accounts description of third parties
  */
 class CompanyBankAccount extends Account
 {
@@ -232,48 +232,56 @@ class CompanyBankAccount extends Account
     /**
      * Set RIB as Default
      *
-     * @param   int     $id     RIB id
+     * @param   int     $rib    RIB id
      * @return  int             0 if KO, 1 if OK
      */
-    function setAsDefault($id)
+    function setAsDefault($rib=0)
     {
-        if ($id) {
-            $sql1 = "SELECT fk_soc FROM ".MAIN_DB_PREFIX."societe_rib";
-            $sql1.= " WHERE rowid = ".$id;
+    	$sql1 = "SELECT rowid as id, fk_soc  FROM ".MAIN_DB_PREFIX."societe_rib";
+    	$sql1.= " WHERE rowid = ".($rib?$rib:$this->id);
 
-            $result1 = $this->db->query($sql1);
-            if ($result1) {
-                if ($this->db->num_rows($result1) == 0) {
-                    return 0;
-                } else {
-                    $obj = $this->db->fetch_object($result1);
-                    $sql2 = "UPDATE ".MAIN_DB_PREFIX."societe_rib SET default_rib = 0 ";
-                    $sql2.= "WHERE fk_soc = ".$obj->fk_soc;
+    	dol_syslog(get_class($this).'::setAsDefault sql='.$sql1);
+    	$result1 = $this->db->query($sql1);
+    	if ($result1)
+    	{
+    		if ($this->db->num_rows($result1) == 0)
+    		{
+    			return 0;
+    		}
+    		else
+    		{
+    			$obj = $this->db->fetch_object($result1);
 
-                    $sql3 = "UPDATE ".MAIN_DB_PREFIX."societe_rib SET default_rib = 1 ";
-                    $sql3.= "WHERE rowid = ".$id;
+    			$this->db->begin();
 
-                    $this->db->begin();
+    			$sql2 = "UPDATE ".MAIN_DB_PREFIX."societe_rib SET default_rib = 0 ";
+    			$sql2.= "WHERE fk_soc = ".$obj->fk_soc;
+    			dol_syslog(get_class($this).'::setAsDefault sql='.$sql2);
+    			$result2 = $this->db->query($sql2);
 
-                    $result2 = $this->db->query($sql2);
-                    $result3 = $this->db->query($sql3);
+    			$sql3 = "UPDATE ".MAIN_DB_PREFIX."societe_rib SET default_rib = 1 ";
+    			$sql3.= "WHERE rowid = ".$obj->id;
+    			dol_syslog(get_class($this).'::setAsDefault sql='.$sql3);
+    			$result3 = $this->db->query($sql3);
 
-                    if (!$result2 || !$result3) {
-                        dol_print_error($this->db);
-                        $this->db->rollback();
-                        return 0;
-                    } else {
-                        $this->db->commit();
-                        return 1;
-                    }
-                }
-            } else {
-                dol_print_error($this->db);
-                return 0;
-            }
-        } else {
-            return 0;
-        }
+    			if (!$result2 || !$result3)
+    			{
+    				dol_print_error($this->db);
+    				$this->db->rollback();
+    				return -1;
+    			}
+    			else
+    			{
+    				$this->db->commit();
+    				return 1;
+    			}
+    		}
+    	}
+    	else
+    	{
+    		dol_print_error($this->db);
+    		return -1;
+    	}
     }
 }
 

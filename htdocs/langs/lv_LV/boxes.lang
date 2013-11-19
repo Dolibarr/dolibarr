@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - boxes
 BoxLastRssInfos=RSS informācija
-BoxLastProducts=Pēdējās %s produkti / pakalpojumi
+BoxLastProducts=Pēdējie %s produkti / pakalpojumi
 BoxProductsAlertStock=Produkti pārdošanā brīdinājumu
 BoxLastProductsInContract=Pēdējās %s līgumi produktu / pakalpojumu
 BoxLastSupplierBills=Pagājušā piegādātāja rēķinus
@@ -26,7 +26,7 @@ BoxTitleLastBooks=Pēdējās %s ierakstītas grāmatas
 BoxTitleNbOfCustomers=Klientu skaits
 BoxTitleLastRssInfos=Pēdējo reizi %s ziņas no %s
 BoxTitleLastProducts=Pēdējās %s modificēta produktu / pakalpojumu
-BoxTitleProductsAlertStock=Produkti pārdošanā brīdinājumu
+BoxTitleProductsAlertStock=Produktu un krājumu brīdinājumi
 BoxTitleLastCustomerOrders=Pēdējās %s modificēts klientu pasūtījumus
 BoxTitleLastSuppliers=Pēdējās %s reģistrēti piegādātāji
 BoxTitleLastCustomers=Pēdējās %s ierakstītas klientiem
