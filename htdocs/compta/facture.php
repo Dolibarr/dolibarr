@@ -1156,7 +1156,7 @@ else if (($action == 'addline' || $action == 'addline_predef') && $user->rights-
 		setEventMessage($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Type')), 'errors');
 		$error++;
 	}
-	if ((empty($idprod) || GETPOST('usenewaddlineform')) && (!($price_ht >= 0) || $price_ht == ''))	// Unit price can be 0 but not ''
+	if ((empty($idprod) || GETPOST('usenewaddlineform')) && $price_ht == '')	// Unit price can be 0 but not ''
 	{
 		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("UnitPriceHT")), 'errors');
 		$error++;
@@ -1172,7 +1172,7 @@ else if (($action == 'addline' || $action == 'addline_predef') && $user->rights-
 		$error++;
 	}
 
-	if (! $error && (GETPOST('qty') >= 0) && (! empty($product_desc) || ! empty($idprod)))
+	if (! $error && (! empty($product_desc) || ! empty($idprod)))
 	{
 		$ret=$object->fetch($id);
 		if ($ret < 0)
