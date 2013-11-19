@@ -263,7 +263,7 @@ print '<br>';
 
 
 /*
- * Edition des variables globales non rattachées à un theme specifique
+ * Editing global variables not related to a specific theme
  */
 $constantes=array(
 		'ADHERENT_AUTOREGISTER_NOTIF_MAIL_SUBJECT',

@@ -120,7 +120,7 @@ if ($action=='add')
 	$object->unitfrequency=GETPOST('unitfrequency','int');
 	$object->frequency=$object->unitfrequency * GETPOST('nbfrequency','int');
 
-	//Add cron task
+	// Add cron task
 	$result = $object->create($user);
 
 	// test du Resultat de la requete
@@ -154,7 +154,7 @@ if ($action=='update')
 	$object->unitfrequency=GETPOST('unitfrequency','int');
 	$object->frequency=$object->unitfrequency * GETPOST('nbfrequency','int');
 
-	//Add cron task
+	// Add cron task
 	$result = $object->update($user);
 
 	// test du Resultat de la requete
@@ -172,7 +172,7 @@ if ($action=='activate')
 {
 	$object->status=1;
 
-	//Add cron task
+	// Add cron task
 	$result = $object->update($user);
 
 	// test du Resultat de la requete
@@ -189,7 +189,8 @@ if ($action=='activate')
 if ($action=='inactive')
 {
 	$object->status=0;
-	//Add cron task
+
+	// Add cron task
 	$result = $object->update($user);
 
 	// test du Resultat de la requete
@@ -250,13 +251,13 @@ if ($conf->use_javascript_ajax)
 if ($action == 'delete')
 {
 	print $form->formconfirm($_SERVER['PHP_SELF']."?id=".$object->id,$langs->trans("CronDelete"),$langs->trans("CronConfirmDelete"),"confirm_delete",'','',1);
-	
+
 	$action='';
 }
 
 if ($action == 'execute'){
 	print $form->formconfirm($_SERVER['PHP_SELF']."?id=".$object->id,$langs->trans("CronExecute"),$langs->trans("CronConfirmExecute"),"confirm_execute",'','',1);
-	
+
 	$action='';
 }
 
