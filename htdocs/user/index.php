@@ -102,7 +102,7 @@ if ($result)
     $num = $db->num_rows($result);
     $i = 0;
 
-    print '<form method="GET" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";
+    print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";
     
     $param="search_user=$search_user&amp;sall=$sall";
     print '<table class="noborder" width="100%">';
