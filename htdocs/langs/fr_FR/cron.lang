@@ -25,7 +25,6 @@ FileToLaunchCronJobs=Commande pour lancer les travaux programmés actifs
 CronExplainHowToRunUnix=Sur un environnement Unix vous pouvez utiliser 'crontab' pour exécuter une commande toute les minutes
 CronExplainHowToRunWin=Sur un environement Microsoft(tm) Windows vous pouvez utiliser le planificateur de tâche pour lancer une commande toute les minutes
 
-
 #
 # Menu
 #

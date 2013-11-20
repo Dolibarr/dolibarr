@@ -653,6 +653,12 @@ else if (($action == 'addline' || $action == 'addline_predef') && $user->rights-
 		$price_ht = '';
 		$tva_tx = '';
 	}
+    if (GETPOST('usenewaddlineform')) {
+        $idprod=GETPOST('idprod', 'int');
+        $product_desc = (GETPOST('product_desc')?GETPOST('product_desc'):(GETPOST('np_desc')?GETPOST('np_desc'):(GETPOST('dp_desc')?GETPOST('dp_desc'):'')));
+        $price_ht = GETPOST('price_ht');
+        $tva_tx=(GETPOST('tva_tx')?GETPOST('tva_tx'):0);
+    }
 	$qty = GETPOST('qty'.$predef);
 	$remise_percent=GETPOST('remise_percent'.$predef);
 
