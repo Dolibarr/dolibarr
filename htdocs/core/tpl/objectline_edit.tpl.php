@@ -28,15 +28,8 @@
 ?>
 
 <!-- BEGIN PHP TEMPLATE objectline_edit.tpl.php -->
-<form id="editproduct" action="<?php echo $_SERVER["PHP_SELF"].'?id='.$this->id.'#'.$line->id; ?>" method="POST">
-<input type="hidden" name="token" value="<?php  echo $_SESSION['newtoken']; ?>">
-<input type="hidden" name="action" value="updateligne">
-<input type="hidden" name="usenewupdatelineform" value="1" />
-<input type="hidden" name="id" value="<?php echo $this->id; ?>">
-<input type="hidden" name="lineid" value="<?php echo $line->id; ?>">
-<input type="hidden" id="product_type" name="type" value="<?php echo $line->product_type; ?>">
-<input type="hidden" id="product_id" name="productid" value="<?php echo (! empty($line->fk_product)?$line->fk_product:0); ?>" />
-<?php 
+
+<?php
 if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
 	$coldisplay=2;
 } else {
@@ -45,7 +38,11 @@ if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
  ?>
 <tr <?php echo $bc[$var]; ?>>
 	<td<?php echo (! empty($conf->global->MAIN_VIEW_LINE_NUMBER) ? ' colspan="2"' : ''); ?>>
-	<div id="<?php echo $line->id; ?>"></div>
+	<div id="line_<?php echo $line->id; ?>"></div>
+
+	<input type="hidden" name="lineid" value="<?php echo $line->id; ?>">
+	<input type="hidden" id="product_type" name="type" value="<?php echo $line->product_type; ?>">
+	<input type="hidden" id="product_id" name="productid" value="<?php echo (! empty($line->fk_product)?$line->fk_product:0); ?>" />
 
 	<?php
 	if ($conf->global->MAIN_FEATURES_LEVEL > 1)
@@ -187,12 +184,15 @@ if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
 </tr>
 <?php } ?>
 
-</form>
 
 <script type="text/javascript">
-$(document).ready(function() {
 
-<?php if ($conf->global->MAIN_FEATURES_LEVEL > 1) { ?>
+<?php
+if ($conf->global->MAIN_FEATURES_LEVEL > 1)		// TODO A virer
+{
+?>
+	jQuery(document).ready(function() {
+
 
 	if ($('#product_type').val() == 0) {
 		$('#service_duration_area').hide();
@@ -290,7 +290,9 @@ $(document).ready(function() {
 		}
 	});
 
-	function update_price(input, output) {
+	// update_price
+	function update_price(input, output)
+	{
 		$.post('<?php echo DOL_URL_ROOT; ?>/core/ajax/price.php', {
 			'amount': $('#' + input).val(),
 			'output': output,
@@ -368,10 +370,19 @@ $(document).ready(function() {
 	});
 	<?php } ?>
 
-<?php } ?>
+	});
 
-	<?php if (! empty($conf->margin->enabled)) { ?>
-	$.post('<?php echo DOL_URL_ROOT; ?>/fourn/ajax/getSupplierPrices.php', {'idprod': <?php echo $line->fk_product?$line->fk_product:0; ?>}, function(data) {
+<?php } // End MAIN_LEVEL_FEATURES > 1 ?>
+
+
+
+<?php
+if (! empty($conf->margin->enabled))
+{
+?>
+	jQuery(document).ready(function()
+	{
+		$.post('<?php echo DOL_URL_ROOT; ?>/fourn/ajax/getSupplierPrices.php', {'idprod': <?php echo $line->fk_product?$line->fk_product:0; ?>}, function(data) {
 		if (data && data.length > 0) {
 			var options = '';
 			var trouve=false;
@@ -405,99 +416,101 @@ $(document).ready(function() {
 			$("#fournprice").hide();
 			$('#buying_price').show();
 		}
-	}, 'json');
-	<?php } ?>
-});
-	var npRate = null;
-<?php
-			if (! empty($conf->global->DISPLAY_MARGIN_RATES)) { ?>
-				npRate = "marginRate";
-			<?php }
-			elseif (! empty($conf->global->DISPLAY_MARK_RATES)) { ?>
-				npRate = "markRate";
-			<?php }
-?>
+		}, 'json');
 
-$("form#editproduct").submit(function(e) {
-	if (npRate) return checkEditLine(e, npRate);
-	else return true;
-});
-if (npRate == 'marginRate') {
-	$("input[name='marginRate']:first").blur(function(e) {
-		return checkEditLine(e, npRate);
-	});
-}
-else {
-	if (npRate == 'markRate') {
-		$("input[name='markRate']:first").blur(function(e) {
-			return checkEditLine(e, npRate);
-		});
-	}
-}
-
-function checkEditLine(e, npRate)
-{
-	var buying_price = $("input[name='buying_price']:first");
-	var remise = $("input[name='remise_percent']:first");
-
-	var rate = $("input[name='"+npRate+"']:first");
-	if (rate.val() == '')
-		return true;
-	if (! $.isNumeric(rate.val().replace(',','.')))
-	{
-		alert('<?php echo $langs->trans("rateMustBeNumeric"); ?>');
-		e.stopPropagation();
-		setTimeout(function () { rate.focus() }, 50);
-		return false;
-	}
-	if (npRate == "markRate" && rate.val() >= 100)
-	{
-		alert('<?php echo $langs->trans("markRateShouldBeLesserThan100"); ?>');
-		e.stopPropagation();
-		setTimeout(function () { rate.focus() }, 50);
-		return false;
-	}
-
-	var price = 0;
-	if (remise.val().replace(',','.') != 100)
-	{
-		if (npRate == "marginRate")
-			price = ((buying_price.val().replace(',','.') * (1 + rate.val().replace(',','.') / 100)) / (1 - remise.val().replace(',','.') / 100));
-		else {
-			if (npRate == "markRate")
-				price = ((buying_price.val().replace(',','.') / (1 - rate.val().replace(',','.') / 100)) / (1 - remise.val().replace(',','.') / 100));
+		<?php
+		if (! empty($conf->global->DISPLAY_MARGIN_RATES))
+		{
+		?>
+			$('#savelinebutton').click(function (e) {
+				return checkEditLine(e, "marginRate");
+			});
+			$("input[name='np_marginRate']:first").blur(function(e) {
+				return checkEditLine(e, "marginRate");
+			});
+		<?php
 		}
+		if (! empty($conf->global->DISPLAY_MARK_RATES))
+		{
+		?>
+			$('#savelinebutton').click(function (e) {
+				return checkEditLine(e, "markRate");
+			});
+			$("input[name='np_markRate']:first").blur(function(e) {
+				return checkEditLine(e, "markRate");
+			});
+		<?php
+		}
+	?>
+	});
+
+
+	// TODO This works for french numbers only
+	function checkEditLine(e, npRate)
+	{
+		var buying_price = $("input[name='buying_price']:first");
+		var remise = $("input[name='remise_percent']:first");
+
+		var rate = $("input[name='"+npRate+"']:first");
+		if (rate.val() == '')
+			return true;
+		if (! $.isNumeric(rate.val().replace(',','.')))
+		{
+			alert('<?php echo $langs->trans("rateMustBeNumeric"); ?>');
+			e.stopPropagation();
+			setTimeout(function () { rate.focus() }, 50);
+			return false;
+		}
+		if (npRate == "markRate" && rate.val() >= 100)
+		{
+			alert('<?php echo $langs->trans("markRateShouldBeLesserThan100"); ?>');
+			e.stopPropagation();
+			setTimeout(function () { rate.focus() }, 50);
+			return false;
+		}
+
+		var price = 0;
+		if (remise.val().replace(',','.') != 100)
+		{
+			if (npRate == "marginRate")
+				price = ((buying_price.val().replace(',','.') * (1 + rate.val().replace(',','.') / 100)) / (1 - remise.val().replace(',','.') / 100));
+			else {
+				if (npRate == "markRate")
+					price = ((buying_price.val().replace(',','.') / (1 - rate.val().replace(',','.') / 100)) / (1 - remise.val().replace(',','.') / 100));
+			}
+		}
+		$("input[name='price_ht']:first").val(roundFloat(price));
+
+		return true;
 	}
-	$("input[name='price_ht']:first").val(formatFloat(price));
 
-	return true;
-}
-function roundFloat(num) {
-	var main_max_dec_shown = <?php echo $conf->global->MAIN_MAX_DECIMALS_SHOWN; ?>;
-	var main_rounding = <?php echo min($conf->global->MAIN_MAX_DECIMALS_UNIT,$conf->global->MAIN_MAX_DECIMALS_TOT); ?>;
+	// TODO This works for french numbers only
+	function roundFloat(num) {
+		var main_max_dec_shown = <?php echo $conf->global->MAIN_MAX_DECIMALS_SHOWN; ?>;
+		var main_rounding = <?php echo min($conf->global->MAIN_MAX_DECIMALS_UNIT,$conf->global->MAIN_MAX_DECIMALS_TOT); ?>;
 
-    var amount = num.toString().replace(',','.');	// should be useless
-	var nbdec = 0;
-	var rounding = main_rounding;
-	var pos = amount.indexOf('.');
-	var decpart = '';
-	if (pos >= 0)
-	    decpart = amount.substr(pos+1).replace('/0+$/i','');	// Supprime les 0 de fin de partie decimale
-	nbdec = decpart.length;
-	if (nbdec > rounding)
-	    rounding = nbdec;
-    // Si on depasse max
-    if (rounding > main_max_dec_shown)
-    {
-        rounding = main_max_dec_shown;
-    }
-  	//amount = parseFloat(amount) + (1 / Math.pow(100, rounding));  // to avoid floating-point errors
-	return parseFloat(amount).toFixed(rounding);
-}
+	    var amount = num.toString().replace(',','.');	// should be useless
+		var nbdec = 0;
+		var rounding = main_rounding;
+		var pos = amount.indexOf('.');
+		var decpart = '';
+		if (pos >= 0)
+		    decpart = amount.substr(pos+1).replace('/0+$/i','');	// Supprime les 0 de fin de partie decimale
+		nbdec = decpart.length;
+		if (nbdec > rounding)
+		    rounding = nbdec;
+	    // Si on depasse max
+	    if (rounding > main_max_dec_shown)
+	    {
+	        rounding = main_max_dec_shown;
+	    }
+	  	//amount = parseFloat(amount) + (1 / Math.pow(100, rounding));  // to avoid floating-point errors
+		return parseFloat(amount).toFixed(rounding);
+	}
 
-function formatFloat(num) {
-	return roundFloat(num).replace('.', ',');
+<?php
 }
+?>
 
 </script>
 <!-- END PHP TEMPLATE objectline_edit.tpl.php -->

@@ -131,9 +131,9 @@ class CompanyBankAccountTest extends PHPUnit_Framework_TestCase
     	$localobject->initAsSpecimen();
     	$result=$localobject->create($user);
 
+    	print __METHOD__." result=".$result." id=".$localobject->id."\n";
     	$this->assertLessThan($result, 0);
-    	print __METHOD__." result=".$result."\n";
-    	return $result;
+    	return $localobject->id;
     }
 
     /**
@@ -155,9 +155,8 @@ class CompanyBankAccountTest extends PHPUnit_Framework_TestCase
 
 		$localobject=new CompanyBankAccount($this->savdb);
     	$result=$localobject->fetch($id);
-
-    	$this->assertLessThan($result, 0);
     	print __METHOD__." id=".$id." result=".$result."\n";
+    	$this->assertLessThan($result, 0);
     	return $localobject;
     }
 
@@ -178,7 +177,6 @@ class CompanyBankAccountTest extends PHPUnit_Framework_TestCase
         $db=$this->savdb;
 
         $result=$localobject->setAsDefault($localobject->id);
-
         print __METHOD__." id=".$localobject->id." result=".$result."\n";
         $this->assertLessThan($result, 0);
         return $localobject;

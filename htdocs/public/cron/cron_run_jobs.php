@@ -92,7 +92,7 @@ else
 		exit;
 	}
 }
-$id = GETPOST('id','int');
+$id = GETPOST('id','alpha');	// We accept non numeric id. We will filter later.
 
 
 // create a jobs object

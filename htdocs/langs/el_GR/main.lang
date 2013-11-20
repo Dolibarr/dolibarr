@@ -155,7 +155,7 @@ Valid=Έγκυρο
 Approve=Έγκριση
 ReOpen=Εκ νέου άνοιγμα
 Upload=Αποστολή Αρχείου
-# ToLink=Link
+ToLink=Σύνδεσμος
 Select=Επιλογή
 Choose=Επιλογή
 ChooseLangage=Παρακαλούμε επιλέξτε την γλώσσα σας
@@ -659,8 +659,8 @@ from=από
 toward=προς
 Access=Πρόσβαση
 HelpCopyToClipboard=Χρησιμοποιήστε το Ctrl + C για να αντιγράψετε στο πρόχειρο
-# SaveUploadedFileWithMask=Save file on server with name "<strong>%s</strong>" (otherwise "%s")
-# OriginFileName=Nom d'origine
+SaveUploadedFileWithMask=Αποθηκεύστε το αρχείο στον server με το όνομα "<strong>%s</strong>" (αλλιώς "%s")
+OriginFileName=Αρχική Ονομασία
 
 # Week day
 Monday=Δευτέρα

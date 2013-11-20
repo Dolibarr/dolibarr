@@ -84,7 +84,9 @@ ALTER TABLE llx_propaldet_extrafields ADD INDEX idx_propaldet_extrafields (fk_ob
 DROP table llx_adherent_options;
 DROP table llx_adherent_options_label;
 
-ALTER TABLE llx_user ADD accountancy_code VARCHAR( 24 ) NULL;
+ALTER TABLE llx_user ADD accountancy_code VARCHAR(24) NULL;
+ALTER TABLE llx_c_chargesociales ADD accountancy_code varchar(24) DEFAULT NULL;
+
 
 DELETE FROM llx_boxes where box_id IN (SELECT rowid FROM llx_boxes_def where file='box_activity.php' AND note IS NULL);
 DELETE FROM llx_boxes_def where file='box_activity.php' AND note IS NULL;

@@ -1011,12 +1011,12 @@ function dol_add_file_process($upload_dir, $allowoverwrite=0, $donotupdatesessio
 			// Define $destpath (path to file including filename) and $destfile (only filename)
 			$destpath=$upload_dir . "/" . $_FILES[$varfiles]['name'];
 			$destfile=$_FILES[$varfiles]['name'];
-			if ($savingdocmask) 
+			if ($savingdocmask)
 			{
 				$destpath=$upload_dir . "/" . preg_replace('/__file__/',$_FILES[$varfiles]['name'],$savingdocmask);
 				$destfile=preg_replace('/__file__/',$_FILES[$varfiles]['name'],$savingdocmask);
-			} 
-			
+			}
+
 			$resupload = dol_move_uploaded_file($_FILES[$varfiles]['tmp_name'], $destpath, $allowoverwrite, 0, $_FILES[$varfiles]['error'], 0, $varfiles);
 			if (is_numeric($resupload) && $resupload > 0)
 			{
@@ -1058,7 +1058,7 @@ function dol_add_file_process($upload_dir, $allowoverwrite=0, $donotupdatesessio
 		}
 	} elseif ($link) {
 		if (dol_mkdir($upload_dir) >= 0) {
-			require_once DOL_DOCUMENT_ROOT . '/link/class/link.class.php';
+			require_once DOL_DOCUMENT_ROOT . '/core/class/link.class.php';
 			$linkObject = new Link($db);
 			$linkObject->entity = $conf->entity;
 			$linkObject->url = $link;

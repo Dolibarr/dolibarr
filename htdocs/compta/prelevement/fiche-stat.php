@@ -44,7 +44,7 @@ $page = GETPOST('page','int');
  * View
  */
 
-llxHeader('',$langs->trans("WithdrawalReceipt"));
+llxHeader('',$langs->trans("WithdrawalReceipts"));
 
 if ($prev_id)
 {
@@ -53,7 +53,7 @@ if ($prev_id)
 	if ($bon->fetch($prev_id) == 0)
 	{
 		$head = prelevement_prepare_head($bon);
-		dol_fiche_head($head, 'statistics', $langs->trans("WithdrawalReceipt"), '', 'payment');
+		dol_fiche_head($head, 'statistics', $langs->trans("WithdrawalReceipts"), '', 'payment');
 
 		print '<table class="border" width="100%">';
 
