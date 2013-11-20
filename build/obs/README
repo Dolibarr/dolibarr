@@ -38,6 +38,8 @@ OBS:QualityCategory Testing
 
 # Move project into official directory
 - Enter a bug to ask to be a maintener of a category or to add a new one.
-For example: https://bugzilla.novell.com/show_bug.cgi?id=848083
+For example: https://bugzilla.novell.com/show_bug.cgi?id=848083 to be a maintener of category
+https://build.opensuse.org/project/show/Application:ERP
 - Once done, go into project, category, subproject and enter a subproject for your application.
+Fo example: Dolibarr
 - Then go onto project into your home and ask a publish to the category/you project your created. 
