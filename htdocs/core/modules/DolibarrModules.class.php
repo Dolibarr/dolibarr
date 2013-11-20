@@ -562,7 +562,7 @@ abstract class DolibarrModules
                             if (! $resql) $err++;
 
                         }
-                        if (! $err && ! preg_match('/newboxdefonly/',$options))
+                        if (! $err && ! preg_match('/newboxdefonly/',$option))
                         {
                             $lastid=$this->db->last_insert_id(MAIN_DB_PREFIX."boxes_def","rowid");
 
