@@ -20,6 +20,7 @@
 
 DELETE FROM llx_menu where module='holiday';
 
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,localtax1,localtax1_type,note,active) values (143, 14,'5','0','9.975','1','TPS and TVQ rate',1);
 
 -- Fix bad migration of 3.4 that make this text instead of varchar(50)
 alter table llx_don      MODIFY COLUMN town varchar(50);
