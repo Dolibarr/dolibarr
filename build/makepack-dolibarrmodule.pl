@@ -2,13 +2,15 @@
 #----------------------------------------------------------------------------
 # \file         build/makepack-dolibarrmodule.pl
 # \brief        Package builder (tgz, zip, rpm, deb, exe)
-# \author       (c)2005-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+# \author       (c)2005-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
 #----------------------------------------------------------------------------
 
 use Cwd;
+$OWNER="ldestailleur";
+$GROUP="ldestailleur";
 
 
-@LISTETARGET=("TGZ");   # Possible packages
+@LISTETARGET=("ZIP");   # Possible packages
 %REQUIREMENTTARGET=(    # Tool requirement for each package
 "TGZ"=>"tar",
 "ZIP"=>"7z"
@@ -272,7 +274,6 @@ foreach my $PROJECT (@PROJECTLIST) {
 		    $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/conf/conf*sav*`;
 		    $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/custom`;
 	        $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/custom2`;
-	        $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/theme/bureau2crea`;
 		    $ret=`rm -fr $BUILDROOT/$PROJECT/test`;
 		    $ret=`rm -fr $BUILDROOT/$PROJECT/Thumbs.db $BUILDROOT/$PROJECT/*/Thumbs.db $BUILDROOT/$PROJECT/*/*/Thumbs.db $BUILDROOT/$PROJECT/*/*/*/Thumbs.db $BUILDROOT/$PROJECT/*/*/*/*/Thumbs.db`;
 		    $ret=`rm -fr $BUILDROOT/$PROJECT/CVS* $BUILDROOT/$PROJECT/*/CVS* $BUILDROOT/$PROJECT/*/*/CVS* $BUILDROOT/$PROJECT/*/*/*/CVS* $BUILDROOT/$PROJECT/*/*/*/*/CVS* $BUILDROOT/$PROJECT/*/*/*/*/*/CVS*`;
@@ -323,6 +324,7 @@ foreach my $PROJECT (@PROJECTLIST) {
 	
 	            print "Move $FILENAMEZIP.zip to $NEWDESTI/$FILENAMEZIP.zip\n";
 	            $ret=`mv "$BUILDROOT/$FILENAMEZIP.zip" "$NEWDESTI/$FILENAMEZIP.zip"`;
+	            $ret=`chown $OWNER.$GROUP "$NEWDESTI/$FILENAMEZIP.zip"`;
 	    		next;
 	    	}
 	    
