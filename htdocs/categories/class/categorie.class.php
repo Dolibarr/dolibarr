@@ -386,7 +386,7 @@ class Categorie
 	 * 	Link an object to the category
 	 *
 	 *	@param		Object	$obj	Object to link to category
-	 * 	@param		string	$type	Type of category (member, supplier, product, customer, contact)
+	 * 	@param		string	$type	Type of category ('member', 'customer', 'supplier', 'product', 'contact')
 	 * 	@return		int				1 : OK, -1 : erreur SQL, -2 : id not defined, -3 : Already linked
 	 */
 	function add_type($obj,$type)
@@ -397,11 +397,14 @@ class Categorie
 
 		if ($this->id == -1) return -2;
 
-		if ($type == 'company')     $type='societe';
-		if ($type == 'fournisseur') $type='societe';
+		// For backward compatibility
+		if ($type == 'company')  $type='societe';
+		if ($type == 'customer') $type='societe';
+		if ($type == 'supplier') $type='fournisseur';
 
 		$column_name=$type;
         if ($type=='contact') $column_name='socpeople';
+        if ($type=='fournisseur') $column_name='societe';
 
 		$sql  = "INSERT INTO ".MAIN_DB_PREFIX."categorie_".$type." (fk_categorie, fk_".$column_name.")";
 		$sql .= " VALUES (".$this->id.", ".$obj->id.")";
@@ -479,7 +482,7 @@ class Categorie
 	 * Delete object from category
 	 *
 	 * @param 	Object	$obj	Object
-	 * @param	string	$type	Type
+	 * @param	string	$type	Type of category ('member', 'customer', 'supplier', 'product', 'contact')
 	 * @return 	int				1 if OK, -1 if KO
 	 */
 	function del_type($obj,$type)
@@ -488,12 +491,15 @@ class Categorie
 
 		$error=0;
 
-		if ($type == 'company')     $type='societe';
-		if ($type == 'fournisseur') $type='societe';
+		// For backward compatibility
+		if ($type == 'company')  $type='societe';
+		if ($type == 'customer') $type='societe';
+		if ($type == 'supplier') $type='fournisseur';
 
 		$column_name=$type;
         if ($type=='contact') $column_name='socpeople';
-
+        if ($type=='fournisseur') $column_name='societe';
+        
 		$sql  = "DELETE FROM ".MAIN_DB_PREFIX."categorie_".$type;
 		$sql .= " WHERE fk_categorie = ".$this->id;
 		$sql .= " AND   fk_".$column_name."   = ".$obj->id;
