@@ -423,40 +423,45 @@ $(document).ready(function() {
 	});
 
 	function update_price(input, output) {
-		$.post('<?php echo DOL_URL_ROOT; ?>/core/ajax/price.php', {
-			'amount': $('#' + input).val(),
-			'output': output,
-			'tva_tx': $('#tva_tx').val()
-		},
-		function(data) {
-			var addline=false;
-			if (typeof data[output] != 'undefined') {
-				// Hide price_ttc if no vat
-				//if ($('#tva_tx').val() > 0 || ($('#tva_tx').val() == 0 && output == 'price_ht')) {
-					$('#' + output).val(data[output]);
-				//}
-				if ($('#idprod').val() == 0 && $('#select_type').val() >= 0) {
-					if (typeof CKEDITOR == 'object' && typeof CKEDITOR.instances != 'undefined' && CKEDITOR.instances['product_desc'] != 'undefined') {
-						var content = CKEDITOR.instances['product_desc'].getData();
-					} else {
-						var content = $('#product_desc').val();
-					}
-					if (content.length > 0) {
-						addline=true;
-					}
-				} else {
-					addline=true;
-				}
-			} else {
-				$('#' + input).val('');
-				$('#' + output).val('');
-			}
-			if (addline) {
-				$('#addlinebutton').removeAttr('disabled');
-			} else {
-				$('#addlinebutton').attr('disabled','disabled');
-			}
-		}, 'json');
+        $.ajax({
+            type: 'POST',
+            url: '<?php echo DOL_URL_ROOT; ?>/core/ajax/price.php',
+            data: {
+                'amount': $('#' + input).val(),
+                'output': output,
+                'tva_tx': $('#tva_tx').val()
+            },
+            success: function(data) {
+                var addline=false;
+                if (typeof data[output] != 'undefined') {
+                    // Hide price_ttc if no vat
+                    //if ($('#tva_tx').val() > 0 || ($('#tva_tx').val() == 0 && output == 'price_ht')) {
+                        $('#' + output).val(data[output]);
+                    //}
+                    if ($('#idprod').val() == 0 && $('#select_type').val() >= 0) {
+                        if (typeof CKEDITOR == 'object' && typeof CKEDITOR.instances != 'undefined' && CKEDITOR.instances['product_desc'] != 'undefined') {
+                            var content = CKEDITOR.instances['product_desc'].getData();
+                        } else {
+                            var content = $('#product_desc').val();
+                        }
+                        if (content.length > 0) {
+                            addline=true;
+                        }
+                    } else {
+                        addline=true;
+                    }
+                } else {
+                    $('#' + input).val('');
+                    $('#' + output).val('');
+                }
+                if (addline) {
+                    $('#addlinebutton').removeAttr('disabled');
+                } else {
+                    $('#addlinebutton').attr('disabled','disabled');
+                }
+            },
+            dataType: 'json',
+            async: false});
 	}
 
 	function getVATRates(action, htmlname, idprod) {
