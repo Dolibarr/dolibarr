@@ -3859,7 +3859,7 @@ else if ($id > 0 || ! empty($ref))
 	{
 		/*
 		 * Affiche formulaire mail
-		*/
+		 */
 
 		// By default if $action=='presend'
 		$titreform='SendBillByMail';
