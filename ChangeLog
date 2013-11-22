@@ -5,6 +5,7 @@ English Dolibarr ChangeLog
 ***** ChangeLog for 3.6 compared to 3.5.* *****
 For users:
 - New: Add list of orders products in tab "consumption" on thirdparties.
+- New: Add graph stats for suppliers orders in tab "stats" on products.
 
 
 ***** ChangeLog for 3.5 compared to 3.4.* *****
