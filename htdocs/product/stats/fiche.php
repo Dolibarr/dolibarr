@@ -3,6 +3,7 @@
  * Copyright (c) 2004-2013	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2005		Eric Seigne				<eric.seigne@ryxeo.com>
+ * Copyright (C) 2013		Juanjo Menent			<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -142,6 +143,9 @@ if (! empty($id) || ! empty($ref))
 		'invoices'         =>array('modulepart'=>'productstats_invoices',
 		'file' => $object->id.'/invoices12m.png',
 		'label' => ($mode=='byunit'?$langs->transnoentitiesnoconv("NumberOfUnitsCustomerInvoices"):$langs->transnoentitiesnoconv("NumberOfCustomerInvoices"))),
+		'orderssuppliers'=>array('modulepart'=>'productstats_orderssuppliers',
+		'file' => $object->id.'/orderssuppliers12m.png',
+		'label' => ($mode=='byunit'?$langs->transnoentitiesnoconv("NumberOfUnitsSupplierOrders"):$langs->transnoentitiesnoconv("NumberOfSupplierOrders"))),
 		'invoicessuppliers'=>array('modulepart'=>'productstats_invoicessuppliers',
 		'file' => $object->id.'/invoicessuppliers12m.png',
 		'label' => ($mode=='byunit'?$langs->transnoentitiesnoconv("NumberOfUnitsSupplierInvoices"):$langs->transnoentitiesnoconv("NumberOfSupplierInvoices"))),
@@ -165,6 +169,7 @@ if (! empty($id) || ! empty($ref))
 					if ($key == 'orders')            $graph_data = $object->get_nb_order($socid,$mode);
 					if ($key == 'invoices')          $graph_data = $object->get_nb_vente($socid,$mode);
 					if ($key == 'invoicessuppliers') $graph_data = $object->get_nb_achat($socid,$mode);
+					if ($key == 'orderssuppliers')   $graph_data = $object->get_nb_ordersupplier($socid,$mode);
 
 					if (is_array($graph_data))
 					{
@@ -204,6 +209,7 @@ if (! empty($id) || ! empty($ref))
 			if ($graphfiles == 'order' && ! $user->rights->commande->lire) continue;
 			if ($graphfiles == 'invoices' && ! $user->rights->facture->lire) continue;
 			if ($graphfiles == 'invoices_suppliers' && ! $user->rights->fournisseur->facture->lire) continue;
+			if ($graphfiles == 'orders_suppliers' && ! $user->rights->fournisseur->commande->lire) continue;
 
 
 			if ($i % 2 == 0)
