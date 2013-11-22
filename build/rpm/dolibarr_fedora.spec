@@ -330,5 +330,5 @@ fi
 
 # version x.y.z-0.1.a for alpha, x.y.z-0.2.b for beta, x.y.z-0.3 for release
 %changelog
-* Wed Nov 6 2013 Laurent Destailleur 3.5.0-0.2.b
+* Wed Nov 6 2013 Laurent Destailleur 3.6.0-0.12.b
 - Initial version (#723326)
