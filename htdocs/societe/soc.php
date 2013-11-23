@@ -4,10 +4,9 @@
  * Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2008	     Patrick Raguin       <patrick.raguin@auguria.net>
+ * Copyright (C) 2008      Patrick Raguin       <patrick.raguin@auguria.net>
  * Copyright (C) 2010-2013 Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2011-2013 Alexandre Spangaro   <alexandre.spangaro@gmail.com> 
- *  
+ * Copyright (C) 2011-2013 Alexandre Spangaro   <alexandre.spangaro@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -280,7 +279,7 @@ if (empty($reshook))
                         }
                     }
 
-                    // Gestion du logo de la société
+                    // Logo/Photo save
                     $dir     = $conf->societe->multidir_output[$conf->entity]."/".$object->id."/logos/";
                     $file_OK = is_uploaded_file($_FILES['photo']['tmp_name']);
                     if ($file_OK)
@@ -311,6 +310,19 @@ if (empty($reshook))
                             }
                         }
                     }
+                    else
+	              {
+						switch($_FILES['photo']['error'])
+						{
+						    case 1: //uploaded file exceeds the upload_max_filesize directive in php.ini
+						    case 2: //uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the html form
+						      $errors[] = "ErrorFileSizeTooLarge";
+						      break;
+	      					case 3: //uploaded file was only partially uploaded
+						      $errors[] = "ErrorFilePartiallyUploaded";
+						      break;
+						}
+	                }
                     // Gestion du logo de la société
                 }
                 else
@@ -354,7 +366,7 @@ if (empty($reshook))
                     $error = $object->error; $errors = $object->errors;
                 }
 
-                // Gestion du logo de la société
+                // Logo/Photo save
                 $dir     = $conf->societe->multidir_output[$object->entity]."/".$object->id."/logos";
                 $file_OK = is_uploaded_file($_FILES['photo']['tmp_name']);
                 if ($file_OK)
@@ -393,9 +405,22 @@ if (empty($reshook))
                         }
                     }
                     else
-                    {
+					{
                         $errors[] = "ErrorBadImageFormat";
                     }
+                }
+                else
+              {
+					switch($_FILES['photo']['error'])
+					{
+					    case 1: //uploaded file exceeds the upload_max_filesize directive in php.ini
+					    case 2: //uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the html form
+					      $errors[] = "ErrorFileSizeTooLarge";
+					      break;
+      					case 3: //uploaded file was only partially uploaded
+					      $errors[] = "ErrorFilePartiallyUploaded";
+					      break;
+					}
                 }
                 // Gestion du logo de la société
 
@@ -855,7 +880,7 @@ else
         {
             print '<tr><td>'.$langs->trans('Skype').'</td><td colspan="3"><input type="text" name="skype" size="32" value="'.$object->skype.'"></td></tr>';
         }
-        
+
         // Phone / Fax
         print '<tr><td>'.$langs->trans('Phone').'</td><td><input type="text" name="phone" value="'.$object->phone.'"></td>';
         print '<td>'.$langs->trans('Fax').'</td><td><input type="text" name="fax" value="'.$object->fax.'"></td></tr>';
@@ -1273,13 +1298,13 @@ else
             // EMail / Web
             print '<tr><td>'.$langs->trans('EMail').(! empty($conf->global->SOCIETE_MAIL_REQUIRED)?'*':'').'</td><td colspan="3"><input type="text" name="email" size="32" value="'.$object->email.'"></td></tr>';
             print '<tr><td>'.$langs->trans('Web').'</td><td colspan="3"><input type="text" name="url" size="32" value="'.$object->url.'"></td></tr>';
-            
+
             // Skype
             if (! empty($conf->skype->enabled))
             {
                 print '<tr><td>'.$langs->trans('Skype').'</td><td colspan="3"><input type="text" name="skype" size="32" value="'.$object->skype.'"></td></tr>';
             }
-            
+
             // Phone / Fax
             print '<tr><td>'.$langs->trans('Phone').'</td><td><input type="text" name="phone" value="'.$object->phone.'"></td>';
             print '<td>'.$langs->trans('Fax').'</td><td><input type="text" name="fax" value="'.$object->fax.'"></td></tr>';
@@ -1587,7 +1612,7 @@ else
         print '<tr><td>'.$langs->trans('Web').'</td><td colspan="3">';
         print dol_print_url($object->url);
         print '</td></tr>';
-        
+
         // Skype
         if (! empty($conf->skype->enabled))
         {
