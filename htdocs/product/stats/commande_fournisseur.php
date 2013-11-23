@@ -25,7 +25,7 @@
 
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
+require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
 $langs->load("orders");
@@ -136,8 +136,8 @@ if ($id > 0 || ! empty($ref))
 			print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"c.fk_statut","","&amp;id=".$product->id,'align="right"',$sortfield,$sortorder);
 			print "</tr>\n";
 
-			$commandestatic=new Commande($db);
-
+			$commandestatic=new CommandeFournisseur($db);
+			
 			if ($num > 0)
 			{
 				$var=True;
@@ -145,17 +145,19 @@ if ($id > 0 || ! empty($ref))
 				{
 					$objp = $db->fetch_object($result);
 					$var=!$var;
+					
+					$commandestatic->id=$objp->commandeid;
+					$commandestatic->ref=$objp->ref;
+					$commandestatic->statut=$objp->statut;
 
 					print "<tr $bc[$var]>";
-					print '<td><a href="'.DOL_URL_ROOT.'/fourn/commande/fiche.php?id='.$objp->commandeid.'">'.img_object($langs->trans("ShowOrder"),"order").' ';
-					print $objp->ref;
-					print "</a></td>\n";
+					print '<td>'.$commandestatic->getNomUrl(1)."</td>\n";
 					print '<td><a href="'.DOL_URL_ROOT.'/fourn/fiche.php?socid='.$objp->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dol_trunc($objp->nom,44).'</a></td>';
 					print "<td>".$objp->code_client."</td>\n";
 					print "<td align=\"center\">";
 					print dol_print_date($db->jdate($objp->date_commande))."</td>";
 					print "<td align=\"right\">".price($objp->total_ht)."</td>\n";
-					print '<td align="right">'.$commandestatic->LibStatut($objp->statut,$objp->facture,5).'</td>';
+					print '<td align="right">'.$commandestatic->getLibStatut(4).'</td>';
 					print "</tr>\n";
 					$i++;
 				}
