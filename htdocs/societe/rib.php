@@ -53,7 +53,7 @@ if ($_POST["action"] == 'update' && ! $_POST["cancel"])
 	// Modification
 	$account = new CompanyBankAccount($db);
 
-    $account->fetch($_POST["id"]);
+    $account->fetch($_POST["ribid"]);
 
 	$account->socid           = $soc->id;
 
@@ -79,7 +79,7 @@ if ($_POST["action"] == 'update' && ! $_POST["cancel"])
 	}
 	else
 	{
-		$url=DOL_URL_ROOT.'/societe/rib.php?socid='.$soc->id;
+		$url=$_SERVER['PHP_SELF'].'?socid='.$soc->id;
         header('Location: '.$url);
         exit;
 	}
@@ -95,7 +95,7 @@ if ($_POST["action"] == 'add' && ! $_POST["cancel"])
     $account->bank            = $_POST["bank"];
     $account->label           = $_POST["label"];
     $account->courant         = $_POST["courant"];
-    $account->clos            = $_POST["clos"];
+    $account->clos            = 0;
     $account->code_banque     = $_POST["code_banque"];
     $account->code_guichet    = $_POST["code_guichet"];
     $account->number          = $_POST["number"];
@@ -114,7 +114,7 @@ if ($_POST["action"] == 'add' && ! $_POST["cancel"])
     }
     else
     {
-        $url=DOL_URL_ROOT.'/societe/rib.php?socid='.$soc->id;
+        $url=$_SERVER['PHP_SELF'].'?socid='.$soc->id;
         header('Location: '.$url);
         exit;
     }
@@ -125,11 +125,65 @@ if ($_GET['action'] == 'setasdefault')
     $account = new CompanyBankAccount($db);
     $res = $account->setAsDefault($_GET['ribid']);
     if ($res) {
-        $url=DOL_URL_ROOT.'/societe/rib.php?socid='.$soc->id;
+        $url=$_SERVER['PHP_SELF'].'?socid='.$soc->id;
         header('Location: '.$url);
         exit;
     } else {
         $message=$db->lasterror;
+    }
+}
+
+if ($_GET['action'] == 'changestate')
+{
+    $account = new CompanyBankAccount($db);
+    if (GETPOST('newstate'))
+        $ns = 1;
+    else
+        $ns = 0;
+    if ($account->fetch(GETPOST('ribid')))
+    {
+        $account->clos = $ns;
+        $account->default_rib = 0;
+        $result = $account->update($user);
+        var_dump($account);
+        if ($result)
+        {
+            $url = $_SERVER['PHP_SELF'].'?socid='.$soc->id;
+            header('Location: '.$url);
+            exit;
+        }
+        else
+        {
+            $message = $account->error;
+        }
+    }
+    else
+    {
+        $message = $account->error;
+    }
+}
+
+if ($_GET['action'] == 'confirm_delete' && $_GET['confirm'] == 'yes')
+{
+    $account = new CompanyBankAccount($db);
+    if ($account->fetch(GETPOST('ribid')))
+    {
+        $result = $account->delete(GETPOST('ribid'));
+
+        if ($result)
+        {
+            $url = $_SERVER['PHP_SELF']."?socid=".$soc->id;
+            header('Location: '.$url);
+            exit;
+        }
+        else
+        {
+            $message = $account->error;
+        }
+    }
+    else
+    {
+        $message = $account->error;
     }
 }
 
@@ -144,10 +198,10 @@ $head=societe_prepare_head2($soc);
 dol_fiche_head($head, 'rib', $langs->trans("ThirdParty"),0,'company');
 
 $account = new CompanyBankAccount($db);
-if (!$_GET['id'])
+if (!$_GET['ribid'])
     $account->fetch(0,$soc->id);
 else
-    $account->fetch($_GET['id']);
+    $account->fetch($_GET['ribid']);
 if (empty($account->socid)) $account->socid=$soc->id;
 
 
@@ -160,6 +214,12 @@ if (empty($account->socid)) $account->socid=$soc->id;
 
 if ($_GET["socid"] && $_GET["action"] != 'edit' && $_GET["action"] != "create")
 {
+    $form = new Form($db);
+    // Confirm delete third party
+    if ($action == 'delete' || ($conf->use_javascript_ajax && empty($conf->dol_use_jmobile)))
+    {
+        print $form->formconfirm($_SERVER["PHP_SELF"]."?socid=".$soc->id."&ribid=".$_GET['ribid'],$langs->trans("DeleteARib"),$langs->trans("ConfirmDeleteRib", $account->getRibLabel()),"confirm_delete",'',0,"action-delete");
+    }
     print_titre($langs->trans("DefaultRIB"));
 	print '<table class="border" width="100%">';
 
@@ -223,6 +283,8 @@ if ($_GET["socid"] && $_GET["action"] != 'edit' && $_GET["action"] != "create")
 		print '<div class="warning">'.$langs->trans("RIBControlError").'</div>';
 	}
 
+    // All RIB
+
     print "<br />";
 
     print_titre($langs->trans("AllRIB"));
@@ -237,25 +299,44 @@ if ($_GET["socid"] && $_GET["action"] != 'edit' && $_GET["action"] != "create")
         print_liste_field_titre($langs->trans("Bank"));
         print_liste_field_titre($langs->trans("RIB"));
         print_liste_field_titre($langs->trans("DefaultRIB"));
-        print '<td width="40"></td>';
+        print '<td width="100"></td>';
         print '</tr>';
 
         foreach ($rib_list as $rib) {
+            if ($rib->clos)
+                $class = ' class="disabled_rib"';
+            else
+                $class = '';
             print "<tr $bc[$var]>";
-            print '<td>'.$rib->label.'</td>';
-            print '<td>'.$rib->bank.'</td>';
-            print '<td>'.$rib->getRibLabel(false).'</td>';
-            print '<td align="center" width="70">';
-            if (!$rib->default_rib) {
-                print '<a href="'.DOL_URL_ROOT.'/societe/rib.php?socid='.$soc->id.'&ribid='.$rib->id.'&action=setasdefault">';
-                print img_picto($langs->trans("Disabled"),'switch_off');
-                print '</a>';
-            } else {
-                print img_picto($langs->trans("Enabled"),'switch_on');
+            print '<td'.$class.'><a href="'.$_SERVER['PHP_SELF'].'?socid='.$soc->id.'&ribid='.$rib->id.'">'.$rib->label.'</a></td>';
+            print '<td'.$class.'><a href="'.$_SERVER['PHP_SELF'].'?socid='.$soc->id.'&ribid='.$rib->id.'">'.$rib->bank.'</a></td>';
+            print '<td'.$class.'><a href="'.$_SERVER['PHP_SELF'].'?socid='.$soc->id.'&ribid='.$rib->id.'">'.$rib->getRibLabel(false).'</a></td>';
+            print '<td align="center" width="100">';
+            // Set as default
+            if (!$rib->clos) {
+                if (!$rib->default_rib) {
+                    print '<a href="'.DOL_URL_ROOT.'/societe/rib.php?socid='.$soc->id.'&ribid='.$rib->id.'&action=setasdefault">';
+                    print img_picto('MakeDefault','switch_off');
+                    print '</a>';
+                } else {
+                    print img_picto($langs->trans("DefaultRIB"),'switch_on');
+                }
             }
             print '</td>';
             print '<td align="right">';
-            print '<a href="'.DOL_URL_ROOT.'/societe/rib.php?socid='.$soc->id.'&id='.$rib->id.'&action=edit">';
+            // State
+            if ($rib->clos) {
+                print $langs->trans("Disabled").'&nbsp;';
+                print '<a href="'.$_SERVER['PHP_SELF'].'?socid='.$soc->id.'&ribid='.$rib->id.'&action=changestate">';
+                print img_picto($langs->trans("Disabled"),'statut8');
+                print '</a>';
+            } else {
+                print $langs->trans("Enabled").'&nbsp;';
+                print '<a href="'.$_SERVER['PHP_SELF'].'?socid='.$soc->id.'&ribid='.$rib->id.'&action=changestate&newstate=1">';
+                print img_picto($langs->trans("Enabled"),'statut4');
+                print '</a>';
+            }
+            print '<a href="'.$_SERVER['PHP_SELF'].'?socid='.$soc->id.'&ribid='.$rib->id.'&action=edit">';
             print img_picto($langs->trans("Modify"),'edit');
             print '</a>';
             print '</td>';
@@ -289,7 +370,8 @@ if ($_GET["socid"] && $_GET["action"] == 'edit' && $user->rights->societe->creer
     print '<form action="rib.php?socid='.$soc->id.'" method="post">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<input type="hidden" name="action" value="update">';
-    print '<input type="hidden" name="id" value="'.$_GET["id"].'">';
+    print '<input type="hidden" name="ribid" value="'.$_GET["ribid"].'">';
+    print '<input type="hidden" name="clos" value="'.$account->clos.'">';
 
     print '<table class="border" width="100%">';
 
@@ -456,6 +538,14 @@ if ($_GET["socid"] && $_GET["action"] != 'edit' && $_GET["action"] != 'create')
 	{
 		print '<a class="butAction" href="rib.php?socid='.$soc->id.'&amp;action=create">'.$langs->trans("Add").'</a>';
 	}
+
+    if (!empty($conf->global->SOCIETE_RIB_DELETE) && $account->id)
+    {
+        if ($conf->use_javascript_ajax && empty($conf->dol_use_jmobile))
+            print '<span id="action-delete" class="butActionDelete">'.$langs->trans('Delete').'</span>';
+        else
+            print '<a class="butActionDelete" href="rib.php?socid='.$soc->id.'&amp;action=delete&amp;ribid='.$account->id.'">'.$langs->trans("Delete")."</a>";
+    }
 
 	print '</div>';
 }

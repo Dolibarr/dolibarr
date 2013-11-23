@@ -363,4 +363,7 @@ ALTER TABLE llx_adherent ADD skype VARCHAR(255) AFTER email;
 
 -- multi-rib
 ALTER TABLE llx_societe_rib ADD default_rib smallint NOT NULL DEFAULT 0 AFTER owner_address;
+ALTER TABLE llx_societe_rib ADD clos smallint NOT NULL DEFAULT 0 AFTER default_rib;
 UPDATE llx_societe_rib SET default_rib = 1;
+INSERT INTO llx_const (name, value, type, note, visible) VALUES ('SOCIETE_RIB_DELETE','1','chaine','Enable remove bank account number',1);
+

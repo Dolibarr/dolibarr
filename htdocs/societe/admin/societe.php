@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2011-2012 Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2013      Peter Fontaine       <contact@peterfontaine.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -276,6 +277,23 @@ if ($action == 'sethideinactivethirdparty')
 		dol_print_error($db);
 	}
 }
+
+// Set company bank account number deletable
+if ($action == 'setribdeletable')
+    {
+        $value = GETPOST('value', 'int');
+
+        if (dolibarr_set_const($db, "SOCIETE_RIB_DELETE", $value, 'chaine', 0,'',$conf->entity) > 0)
+        {
+            header("Location: ".$_SERVER["PHP_SELF"]);
+            exit;
+        }
+    else
+    {
+        dol_print_error($db);
+    }
+}
+
 
 /*
  * 	View
@@ -703,6 +721,24 @@ print '<tr class="liste_titre">';
 print "<td>".$langs->trans("Parameters")."</td>\n";
 print '<td align="right" width="60">'.$langs->trans("Value").'</td>'."\n";
 print '<td width="80">&nbsp;</td></tr>'."\n";
+
+// Possibilité de suppression des RIB
+$var=!$var;
+print "<tr ".$bc[$var].">";
+print '<td width="80%">'.$langs->trans("CompanyBankAccountNumberDeletable")."</td>";
+if (!empty($conf->global->SOCIETE_RIB_DELETE))
+{
+    print '<td align="center" colspan="2"><a href="'.$_SERVER['PHP_SELF'].'?action=setribdeletable&value=0">';
+    print img_picto($langs->trans("Activated"),'switch_on');
+    print '</a></td>';
+}
+else
+{
+    print '<td align="center" colspan="2"><a href="'.$_SERVER['PHP_SELF'].'?action=setribdeletable&value=1">';
+    print img_picto($langs->trans("Disabled"),'switch_off');
+    print '</a></td>';
+}
+print "</tr>";
 
 // Utilisation formulaire Ajax sur choix societe
 $var=!$var;

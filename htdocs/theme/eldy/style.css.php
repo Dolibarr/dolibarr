@@ -4,6 +4,7 @@
  * Copyright (C) 2007-2012	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2011		Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2012		Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2013       Peter Fontaine          <contact@peterfontaine.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -2864,6 +2865,14 @@ ul.ulmenu {
 	white-space: nowrap;
 }
 <?php } ?>
+
+/* ====================================================== */
+/* RIB                                                    */
+/* ====================================================== */
+td.disabled_rib
+{
+text-decoration: line-through;
+}
 
 <?php
 if (is_object($db)) $db->close();

@@ -154,3 +154,7 @@ DefaultRIB=Default BAN
 AllRIB=All BAN
 LabelRIB=BAN Label
 NoBANRecord=No BAN record
+CompanyBankAccountNumberDeletable=Bank Account Numbers can be removed
+DeleteARib=Delete a BAN
+ConfirmDeleteRib=Do you really want remove <b>%s</b>
+MakeDefault=Make this BAN default
