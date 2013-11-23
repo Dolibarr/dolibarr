@@ -1979,14 +1979,14 @@ div.ok {
 }
 
 div.warning {
-  color: #504020;
+  color: #302020;
   padding: 0.3em 0.3em 0.3em 0.3em;
   margin: 0.5em 0em 0.5em 0em;
   border: 1px solid #e0d0b0;
   -moz-border-radius:6px;
   -webkit-border-radius: 6px;
   border-radius: 6px;
-  background: #FFEF9A;
+  background: #EFDF9A;
   text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
 }
 
