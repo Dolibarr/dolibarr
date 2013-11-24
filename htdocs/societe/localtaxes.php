@@ -47,17 +47,14 @@ $parameters=array('id'=>$socid);
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 $error=$hookmanager->error; $errors=array_merge($errors, (array) $hookmanager->errors);
 
+
 /*
  *	View
  */
 
 $contactstatic = new Contact($db);
-
 $form = new Form($db);
 
-/*
- * Fiche categorie de client et/ou fournisseur
- */
 if ($socid)
 {
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
@@ -140,43 +137,45 @@ if ($socid)
 	print '<tr><td>'.$langs->trans('Phone').'</td><td>'.dol_print_phone($soc->phone,$soc->country_code,0,$soc->id,'AC_TEL').'</td>';
 	print '<td>'.$langs->trans('Fax').'</td><td>'.dol_print_phone($soc->fax,$soc->country_code,0,$soc->id,'AC_FAX').'</td></tr>';
 
-	
-	if($mysoc->localtax1_assuj=="1" && $mysoc->localtax2_assuj=="1")
-		{
-			print '<tr><td class="nowrap">'.$langs->transcountry('LocalTax1IsUsed',$mysoc->country_code).'</td><td colspan="3">';
-			print yn($soc->localtax1_assuj);
-			print '</td></tr>';
-			print '<tr><td class="nowrap">'.$langs->transcountry('LocalTax2IsUsed',$mysoc->country_code).'</td><td colspan="3">';
-			print yn($soc->localtax2_assuj);
-			print '</td></tr>';
-		}
-		elseif($mysoc->localtax1_assuj=="1")
-		{
-			print '<tr><td>'.$langs->transcountry('LocalTax1IsUsed',$mysoc->country_code).'</td><td colspan="3">';
-			print yn($soc->localtax1_assuj);
-			print '</td></tr>';
-		}
-		elseif($mysoc->localtax2_assuj=="1")
-		{
-			print '<tr><td>'.$langs->transcountry('LocalTax2IsUsed',$mysoc->country_code).'</td><td colspan="3">';
-			print yn($soc->localtax2_assuj);
-			print '</td></tr>';
-		}
-	
-	
+
+	if ($mysoc->localtax1_assuj=="1" && $mysoc->localtax2_assuj=="1")
+	{
+		print '<tr><td class="nowrap">'.$langs->transcountry('LocalTax1IsUsed',$mysoc->country_code).'</td><td colspan="3">';
+		print yn($soc->localtax1_assuj);
+		print '</td></tr>';
+		print '<tr><td class="nowrap">'.$langs->transcountry('LocalTax2IsUsed',$mysoc->country_code).'</td><td colspan="3">';
+		print yn($soc->localtax2_assuj);
+		print '</td></tr>';
+	}
+	elseif($mysoc->localtax1_assuj=="1")
+	{
+		print '<tr><td>'.$langs->transcountry('LocalTax1IsUsed',$mysoc->country_code).'</td><td colspan="3">';
+		print yn($soc->localtax1_assuj);
+		print '</td></tr>';
+	}
+	elseif($mysoc->localtax2_assuj=="1")
+	{
+		print '<tr><td>'.$langs->transcountry('LocalTax2IsUsed',$mysoc->country_code).'</td><td colspan="3">';
+		print yn($soc->localtax2_assuj);
+		print '</td></tr>';
+	}
+
 	print '</table>';
 
-	print '</div>';
-	
-	
-	// TODO: Improve and move to tpl
-    
+	dol_fiche_end();
+
+
+	print '<form action="'.$_SERVER["PHP_SELF"].'?socid='.$soc->id.'" method="post">';
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="action" value="updatetva">';
+	print '<input type="hidden" name="vatid" value="'.$vatid.'">';
+
 	// Localtaxes
-	
+
 	print '<table id="tablelines" class="noborder" width="100%">';
-	
+
 	print '<tr class="liste_titre nodrag nodrop">';
-	
+
 	// Description
 	print '<td>'.$langs->trans('Description').'</td>';
 
@@ -195,8 +194,8 @@ if ($socid)
 		print '<td width="10" class="nowrap"></td>'; // No width to allow autodim
 
 	print "</tr>\n";
-	
-	
+
+
 	$sql  = "SELECT DISTINCT t.rowid, t.note, t.taux, t.localtax1, t.localtax2, t.recuperableonly";
 	$sql.= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_pays as p";
 	$sql.= " WHERE t.fk_pays = p.rowid";
@@ -215,21 +214,16 @@ if ($socid)
 			{
 				$var=!$var;
 
-				
+
 				$obj = $db->fetch_object($resql);
-				
+
 				if ($action == 'edit' && $obj->rowid==$vatid && $user->rights->societe->creer)
 				{
-					print '<form action="'.$_SERVER["PHP_SELF"].'?socid='.$soc->id.'" method="post">';
-					print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-					print '<input type="hidden" name="action" value="updatetva">';
-					print '<input type="hidden" name="vatid" value="'.$vatid.'">';
-					
 					print '<tr '.$bc[$var].'>';
-					
+
 					print '<td>'.$obj->note.'</td>';
 					print '<td align="right">'.$obj->taux.'</td>';
-					
+
 					if ($mysoc->localtax1_assuj=="1" && $soc->localtax1_assuj)
 						print '<td align="right"><input size="4" type="text" class="flat" name="localtax1" value="'.$obj->localtax1.'"></td>';
 					if ($mysoc->localtax2_assuj=="1" && $soc->localtax2_assuj)
@@ -238,27 +232,33 @@ if ($socid)
 					print '<td align="right"><input type="submit" class="button" name="save" value="'.$langs->trans('Save').'">';
 					print '<br><input type="submit" class="button" name="cancel" value="'.$langs->trans('Cancel').'"></td>';
 					print '</tr>';
-					print '</form>';
 				}
-				else 
+				else
 				{
 					print '<tr '.$bc[$var].'>';
-					
+
 					print '<td>'.$obj->note.'</td>';
 					print '<td align="right">'.$obj->taux.'</td>';
 					if ($mysoc->localtax1_assuj=="1" && $soc->localtax1_assuj)
 						print '<td align="right">'.$obj->localtax1.'</td>';
 					if ($mysoc->localtax2_assuj=="1" && $soc->localtax2_assuj)
 						print '<td align="right">'.$obj->localtax2.'</td>';
+					print '<td align="right">';
 					if ($user->rights->societe->creer)
-						print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=edit&socid='.$soc->id.'&vatid='.$obj->rowid.'">'.img_edit().'</a></td>';
+					{
+						// TODO Comment this because the action to save is not supported
+						//print '<a href="'.$_SERVER["PHP_SELF"].'?action=edit&socid='.$soc->id.'&vatid='.$obj->rowid.'">'.img_edit().'</a>';
+					}
+					print '</td>';
 					print "</tr>\n";
 				}
-				
-				
 			}
 		}
 	}
+
+	print '</table>';
+
+	print '</form>';
 }
 
 

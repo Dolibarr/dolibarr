@@ -999,6 +999,9 @@ class Contrat extends CommonObject
 				$pu=$pu_ttc;
 			}
 
+			// Check parameters
+			if (empty($remise_percent)) $remise_percent=0;
+
 			// Calcul du total TTC et de la TVA pour la ligne a partir de
 			// qty, pu, remise_percent et txtva
 			// TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker

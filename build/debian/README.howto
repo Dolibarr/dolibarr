@@ -39,7 +39,13 @@ END
 
 
 # To use Alioth.debian.org
-* Create a login
+* Create an account login
+* Update your ~/.ssh/config file to add:
+Host svn.debian.org git.debian.org bzr.debian.org hg.debian.org darcs.debian.org arch.debian.org
+	User eldy-guest
+	IdentityFile ~/.ssh/id_rsa
+* Check login on page https://alioth.debian.org/users/login
+Ex: https://alioth.debian.org/users/eldy-guest
 * Setup your ssh as described into page: http://wiki.debian.org/Alioth/SSH
 * Ask to be included into project collab-maint: http://alioth.debian.org/projects/collab-maint/
 
@@ -192,8 +198,7 @@ To update dolibarr debian package
 * You can git clone debian git repo
 > git clone git.debian.org:/git/collab-maint/dolibarr.git [dolibarr-debian]
 or better
-> mkdir gitdebian
-> cd gitdebian
+> cd ~; mkdir git-debian; cd git-debian
 > gbp-clone git.debian.org:/git/collab-maint/dolibarr.git
 
 * You can then create a PHP project from Eclipse called dolibarr-debian

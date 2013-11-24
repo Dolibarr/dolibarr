@@ -355,9 +355,9 @@ class Propal extends CommonObject
             // qty, pu, remise_percent et txtva
             // TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
             // la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
-            
+
             $localtaxes_type=getLocalTaxesFromRate($txtva,0,$mysoc);
-            
+
             $tabprice=calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type, '', $localtaxes_type);
             $total_ht  = $tabprice[0];
             $total_tva = $tabprice[1];
@@ -510,9 +510,9 @@ class Propal extends CommonObject
             // qty, pu, remise_percent et txtva
             // TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
             // la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
-            
+
             $localtaxes_type=getLocalTaxesFromRate($txtva,0,$mysoc);
-            
+
             $tabprice=calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type,'', $localtaxes_type);
             $total_ht  = $tabprice[0];
             $total_tva = $tabprice[1];
@@ -551,7 +551,7 @@ class Propal extends CommonObject
             $this->line->localtax1_tx		= $txlocaltax1;
             $this->line->localtax2_tx		= $txlocaltax2;
 			$this->line->localtax1_type		= $localtaxes_type[0];
-			$this->line->localtax2_type		= $localtaxes_type[2];	
+			$this->line->localtax2_type		= $localtaxes_type[2];
             $this->line->remise_percent		= $remise_percent;
             $this->line->subprice			= $pu;
             $this->line->info_bits			= $info_bits;
@@ -1318,7 +1318,7 @@ class Propal extends CommonObject
                     }
                     // Fin appel triggers
                 }
-                
+
             	if (! $error)
 				{
 					// Rename directory if dir was a temporary ref
@@ -1333,17 +1333,17 @@ class Propal extends CommonObject
 						if (file_exists($dirsource))
 						{
 							dol_syslog(get_class($this)."::validate rename dir ".$dirsource." into ".$dirdest);
-	
+
 							if (@rename($dirsource, $dirdest))
 							{
-	
+
 								dol_syslog("Rename ok");
 								// Deleting old PDF in new rep
 								dol_delete_file($conf->propal->dir_output.'/'.$snumfa.'/'.$facref.'*.*');
 							}
 						}
 					}
-				
+
                     $this->brouillon=0;
                     $this->statut = 1;
                     $this->user_valid_id=$user->id;
@@ -1710,7 +1710,7 @@ class Propal extends CommonObject
         {
             if ($statut == 2)
             {
-                // Classe la société rattachée comme client
+                // The connected company is classified as a client
                 $soc=new Societe($this->db);
                 $soc->id = $this->socid;
                 $result=$soc->set_as_client();

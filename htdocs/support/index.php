@@ -103,6 +103,7 @@ print "\n";
 
 print '</div><div class="inline-block">';
 
+/*
 
 // Official support
 print '<table class="login" width="100%">';
@@ -136,9 +137,9 @@ print '</td>';
 print '</tr>';
 print '</table>'."\n";
 print "\n";
+
 print '</div><div class="inline-block">';
 
-/*
 
 // Online support
 print '<table class="login" width="100%">';

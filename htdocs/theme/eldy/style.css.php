@@ -1750,7 +1750,6 @@ div.liste_titre, tr.liste_titre, tr.liste_titre_sel, form.liste_titre, form.list
     color: #<?php echo $colortexttitle; ?>;
     font-family: <?php print $fontlist ?>;
     border-bottom: 1px solid #FDFFFF;
-    white-space: <?php echo $dol_optimize_smallscreen?'normal':'nowrap'; ?>;
     text-align: <?php echo $left; ?>;
 }
 tr.liste_titre th, th.liste_titre, tr.liste_titre td, td.liste_titre, form.liste_titre div, div.liste_titre
@@ -1758,7 +1757,6 @@ tr.liste_titre th, th.liste_titre, tr.liste_titre td, td.liste_titre, form.liste
     font-family: <?php print $fontlist ?>;
     font-weight: bold;
     border-bottom: 1px solid #FDFFFF;
-    white-space: <?php echo $dol_optimize_smallscreen?'normal':'nowrap'; ?>;
 	text-shadow: 1px 0px 1px #<?php echo $colorshadowtitle; ?>;
     vertical-align: middle;
 }
@@ -1774,7 +1772,6 @@ tr.liste_titre_sel th, th.liste_titre_sel, tr.liste_titre_sel td, td.liste_titre
     font-family: <?php print $fontlist ?>;
     font-weight: normal;
     border-bottom: 1px solid #FDFFFF;
-    white-space: <?php echo $dol_optimize_smallscreen?'normal':'nowrap'; ?>;
     text-decoration: underline;
 	text-shadow: 1px 0px 1px #<?php echo $colorshadowtitle; ?>;
 }
@@ -1979,14 +1976,14 @@ div.ok {
 }
 
 div.warning {
-  color: #504020;
+  color: #302020;
   padding: 0.3em 0.3em 0.3em 0.3em;
   margin: 0.5em 0em 0.5em 0em;
   border: 1px solid #e0d0b0;
   -moz-border-radius:6px;
   -webkit-border-radius: 6px;
   border-radius: 6px;
-  background: #FFEF9A;
+  background: #EFDF9A;
   text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
 }
 

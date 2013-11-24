@@ -40,6 +40,7 @@ class Contact extends CommonObject
 	protected $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
 	var $id;
+    var $ref_ext;
 	var $civilite_id;  // In fact we store civility_code
     var $lastname;
 	var $firstname;
@@ -64,9 +65,13 @@ class Contact extends CommonObject
 	var $code;
 	var $email;
   var $skype;
+    var $jabberid;
 	var $phone_pro;
 	var $phone_perso;
 	var $phone_mobile;
+    var $fax;
+
+    var $priv;
 
 	var $birthday;
 	var $default_lang;
@@ -119,6 +124,7 @@ class Contact extends CommonObject
         if (! empty($conf->global->MAIN_FIRST_TO_UPPER)) $this->firstname=ucwords($this->firstname);
         if (! $this->socid) $this->socid = 0;
 		if (! $this->priv) $this->priv = 0;
+		if (empty($this->statut)) $this->statut = 0;
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."socpeople (";
 		$sql.= " datec";

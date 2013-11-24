@@ -258,7 +258,7 @@ class DateLibTest extends PHPUnit_Framework_TestCase
     	// Check %a and %b format for en_US
     	$result=dol_print_date(0,'%a %b',true,$outputlangs);
     	print __METHOD__." result=".$result."\n";
-    	$this->assertEquals('Thu jan',$result);
+    	$this->assertEquals('Thu Jan',$result);
 
     	return $result;
     }

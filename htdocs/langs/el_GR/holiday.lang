@@ -87,7 +87,7 @@ FirstDayOfHoliday=Πρώτη μέρα άδειας
 LastDayOfHoliday=Τελευταία μέρα άδειας
 HolidaysMonthlyUpdate=Μηνιαία ενημέρωση
 ManualUpdate=Χειροκίνητη ενημέρωση
-# HolidaysCancelation=Holidays cancelation
+HolidaysCancelation=Ακύρωση αδειών
 
 ## Configuration du Module ##
 ConfCP=Διαμόρφωση τις ενότητας αδειών

@@ -467,7 +467,7 @@ if ($object->fetch($id))
     {
         print '<br>';
         // List of contacts
-        show_contacts($conf,$langs,$db,$object,$_SERVER["PHP_SELF"].'?id='.$object->id);
+        show_contacts($conf,$langs,$db,$object,$_SERVER["PHP_SELF"].'?socid='.$object->id);
     }
 
     // Addresses list

@@ -121,8 +121,8 @@ class Form
      * @param	string	$value			Value to show/edit
      * @param	object	$object			Object
      * @param	boolean	$perm			Permission to allow button to edit parameter
-     * @param	string	$typeofdata		Type of data ('string' by default, 'email', 'numeric:99', 'text' or 'textarea:rows:cols', 'day' or 'datepicker', 'ckeditor:dolibarr_zzz:width:height:savemethod:toolbarstartexpanded:rows:cols', 'select:xxx'...)
-     * @param	string	$editvalue		When in edit mode, use this value as $value instead of value
+     * @param	string	$typeofdata		Type of data ('string' by default, 'amount', 'email', 'numeric:99', 'text' or 'textarea:rows:cols', 'day' or 'datepicker', 'ckeditor:dolibarr_zzz:width:height:savemethod:toolbarstartexpanded:rows:cols', 'select:xxx'...)
+     * @param	string	$editvalue		When in edit mode, use this value as $value instead of value (for example, you can provide here a formated price instead of value)
      * @param	object	$extObject		External object
      * @param	string	$success		Success message
      * @param	string	$moreparam		More param to add on a href URL
@@ -133,6 +133,9 @@ class Form
         global $conf,$langs,$db;
 
         $ret='';
+
+        // Check parameters
+        if (empty($typeofdata)) return 'ErrorBadParameter';
 
         // When option to edit inline is activated
         if (! empty($conf->global->MAIN_USE_JQUERY_JEDITABLE) && ! preg_match('/^select;|datehourpicker/',$typeofdata)) // FIXME add jquery timepicker
@@ -150,7 +153,7 @@ class Form
                 $ret.='<input type="hidden" name="id" value="'.$object->id.'">';
                 $ret.='<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
                 $ret.='<tr><td>';
-                if (preg_match('/^(string|email|numeric)/',$typeofdata))
+                if (preg_match('/^(string|email|numeric|amount)/',$typeofdata))
                 {
                     $tmp=explode(':',$typeofdata);
                     $ret.='<input type="text" id="'.$htmlname.'" name="'.$htmlname.'" value="'.($editvalue?$editvalue:$value).'"'.($tmp[1]?' size="'.$tmp[1].'"':'').'>';
@@ -191,8 +194,9 @@ class Form
                 $ret.='</form>'."\n";
             }
             else
-            {
+			{
                 if ($typeofdata == 'email')   $ret.=dol_print_email($value,0,0,0,0,1);
+                elseif ($typeofdata == 'amount')   $ret.=($value != '' ? price($value,'',$langs) : '');
                 elseif (preg_match('/^text/',$typeofdata) || preg_match('/^note/',$typeofdata))  $ret.=dol_htmlentitiesbr($value);
                 elseif ($typeofdata == 'day' || $typeofdata == 'datepicker') $ret.=dol_print_date($value,'day');
                 elseif ($typeofdata == 'datehourpicker') $ret.=dol_print_date($value,'dayhour');

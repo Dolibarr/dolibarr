@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2013 Juanjo Menent		   <jmenent@2byte.es>
+/* Copyright (C) 2011-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2013      Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -196,13 +196,14 @@ print '</tr>';
 
 print '</table>';
 
-dol_fiche_end();
-
-print '<center>';
+print '<br><center>';
 print '<input type="submit" class="button" name="button" value="'.$langs->trans("Modify").'">';
 print '</center>';
 
-print '</form><br>';
+print '</form>';
+
+dol_fiche_end();
+
 
 $db->close();
 

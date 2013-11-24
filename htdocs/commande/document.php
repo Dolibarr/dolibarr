@@ -22,7 +22,7 @@
 /**
  *	\file       htdocs/commande/document.php
  *	\ingroup    order
- *	\brief      Documents setup page attached to an order
+ *	\brief      Management page of documents attached to an order
  */
 
 require '../main.inc.php';

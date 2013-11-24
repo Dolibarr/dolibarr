@@ -887,7 +887,7 @@ class ActionComm extends CommonObject
             $sql.= " AND a.entity = ".$conf->entity;
             foreach ($filters as $key => $value)
             {
-                if ($key == 'notolderthan') $sql.=" AND a.datep >= '".$this->db->idate($now-($value*24*60*60))."'";
+                if ($key == 'notolderthan' && $value != '') $sql.=" AND a.datep >= '".$this->db->idate($now-($value*24*60*60))."'";
                 if ($key == 'year')         $sql.=" AND a.datep BETWEEN '".$this->db->idate(dol_get_first_day($value,1))."' AND '".$this->db->idate(dol_get_last_day($value,12))."'";
                 if ($key == 'id')           $sql.=" AND a.id=".(is_numeric($value)?$value:0);
                 if ($key == 'idfrom')       $sql.=" AND a.id >= ".(is_numeric($value)?$value:0);

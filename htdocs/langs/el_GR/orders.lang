@@ -147,7 +147,7 @@ AddDeliveryCostLine=Add a delivery cost line indicating the weight of the order
 # Documents models
 PDFEinsteinDescription=Ολοκληρωμένο πρότυπο παραγγελίας (λογότυπο...)
 PDFEdisonDescription=Απλό πρότυπο παραγγελίας
-# PDFProformaDescription=A complete proforma invoice (logo…)
+PDFProformaDescription=Ένα πλήρες προτιμολόγιο (λογότυπο ...)
 # Orders modes
 OrderByMail=Ταχυδρομείο
 OrderByFax=Φαξ

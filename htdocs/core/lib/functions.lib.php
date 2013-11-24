@@ -1212,7 +1212,7 @@ function dol_print_skype($skype,$cid=0,$socid=0,$addlink=0,$max=64)
     $newskype.='<img src="../theme/'.$conf->theme.'/img/object_skype.png" border="0">&nbsp;';
 		$newskype.=dol_trunc($skype,$max);
 		$newskype.='</a>';
-		
+
 		if (($cid || $socid) && ! empty($conf->agenda->enabled) && $user->rights->agenda->myactions->create)
 		{
 			$type='AC_SKYPE'; $link='';
@@ -2358,7 +2358,7 @@ function dol_print_error_email($prefixcode)
  *	@param	string	$field       Field to use for new sorting
  *	@param	string	$begin       ("" by defaut)
  *	@param	string	$moreparam   Add more parameters on sort url links ("" by default)
- *	@param  string	$td          Options of attribute td ("" by defaut)
+ *	@param  string	$td          Options of attribute td ("" by defaut, example: 'align="center"')
  *	@param  string	$sortfield   Current field used to sort
  *	@param  string	$sortorder   Current sort order
  *	@return	void
@@ -2372,7 +2372,7 @@ function print_liste_field_titre($name, $file="", $field="", $begin="", $morepar
  *	Get title line of an array
  *
  *	@param	string	$name        Label of field
- *	@param	int		$thead		 0=To use with standard table forat, 1=To use inside <thead><tr>, 2=To use with <div> 
+ *	@param	int		$thead		 0=To use with standard table forat, 1=To use inside <thead><tr>, 2=To use with <div>
  *	@param	string	$file        Url used when we click on sort picto
  *	@param	string	$field       Field to use for new sorting. Empty if this field is not sortable.
  *	@param	string	$begin       ("" by defaut)
@@ -2392,11 +2392,11 @@ function getTitleFieldOfList($name, $thead=0, $file="", $field="", $begin="", $m
 
 	$tag='th';
 	if ($thead==2) $tag='div';
-	
+
 	// If field is used as sort criteria we use a specific class
 	// Example if (sortfield,field)=("nom","xxx.nom") or (sortfield,field)=("nom","nom")
-	if ($field && ($sortfield == $field || $sortfield == preg_replace("/^[^\.]+\./","",$field))) $out.= '<'.$tag.' class="liste_titre_sel" '. $moreattrib.'>';
-	else $out.= '<'.$tag.' class="liste_titre" '. $moreattrib.'>';
+	if ($field && ($sortfield == $field || $sortfield == preg_replace("/^[^\.]+\./","",$field))) $out.= '<'.$tag.' class="liste_titre_sel'.($field?' nowrap':'').'" '. $moreattrib.'>';
+	else $out.= '<'.$tag.' class="liste_titre'.($field?' nowrap':'').'" '. $moreattrib.'>';
 
 	if (! empty($conf->dol_optimize_smallscreen) && empty($thead) && $field)    // If this is a sort field
 	{
@@ -2449,7 +2449,7 @@ function getTitleFieldOfList($name, $thead=0, $file="", $field="", $begin="", $m
 }
 
 /**
- *	Show a title (deprecated. use print_fiche_titre instrad)
+ *	Show a title (deprecated. use print_fiche_titre instead)
  *
  *	@param	string	$title			Title to show
  *	@return	string					Title to show
@@ -2462,16 +2462,16 @@ function print_titre($title)
 /**
  *	Show a title with picto
  *
- *	@param	string	$titre				Title to show
+ *	@param	string	$title				Title to show
  *	@param	string	$mesg				Added message to show on right
  *	@param	string	$picto				Icon to use before title (should be a 32x32 transparent png file)
  *	@param	int		$pictoisfullpath	1=Icon name is a full absolute url of image
  * 	@param	int		$id					To force an id on html objects
  * 	@return	void
  */
-function print_fiche_titre($titre, $mesg='', $picto='title.png', $pictoisfullpath=0, $id='')
+function print_fiche_titre($title, $mesg='', $picto='title.png', $pictoisfullpath=0, $id='')
 {
-	print load_fiche_titre($titre, $mesg, $picto, $pictoisfullpath, $id);
+	print load_fiche_titre($title, $mesg, $picto, $pictoisfullpath, $id);
 }
 
 /**
@@ -3004,7 +3004,7 @@ function get_product_vat_for_country($idprod, $thirdparty_seller, $idprodfournpr
 			$sql.= " WHERE t.active=1 AND t.fk_pays = p.rowid AND p.code='".$thirdparty_seller->country_code."'";
 			$sql.= " ORDER BY t.taux DESC, t.recuperableonly ASC";
 			$sql.= $db->plimit(1);
-	
+
 			$resql=$db->query($sql);
 			if ($resql)
 			{
