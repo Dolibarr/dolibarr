@@ -876,7 +876,7 @@ else
         print '<tr><td>'.$langs->trans('Web').'</td><td colspan="3"><input type="text" name="url" size="32" value="'.$object->url.'"></td></tr>';
 
         // Skype
-        if (! empty($conf->skype->enabled))
+        if (! empty($conf->skype->enabled) && $user->rights->skype->view)
         {
             print '<tr><td>'.$langs->trans('Skype').'</td><td colspan="3"><input type="text" name="skype" size="32" value="'.$object->skype.'"></td></tr>';
         }
@@ -1300,7 +1300,7 @@ else
             print '<tr><td>'.$langs->trans('Web').'</td><td colspan="3"><input type="text" name="url" size="32" value="'.$object->url.'"></td></tr>';
 
             // Skype
-            if (! empty($conf->skype->enabled))
+            if (! empty($conf->skype->enabled) && $user->rights->skype->view)
             {
                 print '<tr><td>'.$langs->trans('Skype').'</td><td colspan="3"><input type="text" name="skype" size="32" value="'.$object->skype.'"></td></tr>';
             }
@@ -1592,12 +1592,12 @@ else
 
         // Country
         print '<tr><td>'.$langs->trans("Country").'</td><td colspan="'.(2+(($showlogo || $showbarcode)?0:1)).'" class="nowrap">';
-		if ($object->country_code)
-		{
-        	$img=picto_from_langcode($object->country_code);
-        	if ($object->isInEEC()) print $form->textwithpicto(($img?$img.' ':'').$object->country,$langs->trans("CountryIsInEEC"),1,0);
-        	else print ($img?$img.' ':'').$object->country;
-		}
+    		if ($object->country_code)
+    		{
+            	$img=picto_from_langcode($object->country_code);
+            	if ($object->isInEEC()) print $form->textwithpicto(($img?$img.' ':'').$object->country,$langs->trans("CountryIsInEEC"),1,0);
+            	else print ($img?$img.' ':'').$object->country;
+    		}
         print '</td></tr>';
 
         // State
@@ -1614,7 +1614,7 @@ else
         print '</td></tr>';
 
         // Skype
-        if (! empty($conf->skype->enabled))
+        if (! empty($conf->skype->enabled) && $user->rights->skype->view)
         {
             print '<tr><td>'.$langs->trans('Skype').'</td><td colspan="3">';
             print dol_print_skype($object->skype,0,$object->id,'AC_SKYPE');
