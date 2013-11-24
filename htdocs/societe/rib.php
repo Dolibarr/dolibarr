@@ -31,11 +31,12 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/companybankaccount.class.php';
 
 $langs->load("companies");
+$langs->load("commercial");
 $langs->load("banks");
 $langs->load("bills");
 
 // Security check
-$socid = isset($_GET["socid"])?$_GET["socid"]:'';
+$socid = GETPOST("socid");
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'societe','','');
 
@@ -43,17 +44,21 @@ $soc = new Societe($db);
 $soc->id = $_GET["socid"];
 $soc->fetch($_GET["socid"]);
 
+$id=GETPOST("id","int");
+$ribid=GETPOST("ribid","int");
+$action=GETPOST("action");
+
 
 /*
  *	Actions
  */
 
-if ($_POST["action"] == 'update' && ! $_POST["cancel"])
+if ($action == 'update' && ! $_POST["cancel"])
 {
 	// Modification
 	$account = new CompanyBankAccount($db);
 
-    $account->fetch($_POST["id"]);
+    $account->fetch($id);
 
 	$account->socid           = $soc->id;
 
@@ -85,7 +90,7 @@ if ($_POST["action"] == 'update' && ! $_POST["cancel"])
 	}
 }
 
-if ($_POST["action"] == 'add' && ! $_POST["cancel"])
+if ($action == 'add' && ! $_POST["cancel"])
 {
     // Ajout
     $account = new CompanyBankAccount($db);
@@ -106,7 +111,7 @@ if ($_POST["action"] == 'add' && ! $_POST["cancel"])
     $account->proprio         = $_POST["proprio"];
     $account->owner_address   = $_POST["owner_address"];
 
-    $result = $account->update($user);
+    $result = $account->update($user);	// TODO Use create and include update into create method
     if (! $result)
     {
         $message=$account->error;
@@ -120,10 +125,10 @@ if ($_POST["action"] == 'add' && ! $_POST["cancel"])
     }
 }
 
-if ($_GET['action'] == 'setasdefault')
+if ($action == 'setasdefault')
 {
     $account = new CompanyBankAccount($db);
-    $res = $account->setAsDefault($_GET['ribid']);
+    $res = $account->setAsDefault(GETPOST('ribid','int'));
     if ($res) {
         $url=DOL_URL_ROOT.'/societe/rib.php?socid='.$soc->id;
         header('Location: '.$url);
@@ -133,9 +138,34 @@ if ($_GET['action'] == 'setasdefault')
     }
 }
 
+if ($action == 'confirm_delete' && $_GET['confirm'] == 'yes')
+{
+	$account = new CompanyBankAccount($db);
+	if ($account->fetch($ribid?$ribid:$id))
+	{
+		$result = $account->delete($user);
+		if ($result > 0)
+		{
+			$url = $_SERVER['PHP_SELF']."?socid=".$soc->id;
+			header('Location: '.$url);
+			exit;
+		}
+		else
+		{
+			$message = $account->error;
+		}
+	}
+	else
+	{
+         $message = $account->error;
+    }
+}
+
 /*
  *	View
  */
+
+$form = new Form($db);
 
 llxHeader();
 
@@ -144,10 +174,10 @@ $head=societe_prepare_head2($soc);
 dol_fiche_head($head, 'rib', $langs->trans("ThirdParty"),0,'company');
 
 $account = new CompanyBankAccount($db);
-if (!$_GET['id'])
+if (! $id)
     $account->fetch(0,$soc->id);
 else
-    $account->fetch($_GET['id']);
+    $account->fetch($id);
 if (empty($account->socid)) $account->socid=$soc->id;
 
 
@@ -158,10 +188,17 @@ if (empty($account->socid)) $account->socid=$soc->id;
 /*                                                                            */
 /* ************************************************************************** */
 
-if ($_GET["socid"] && $_GET["action"] != 'edit' && $_GET["action"] != "create")
+if ($socid && $action != 'edit' && $action != "create")
 {
+    // Confirm delete third party
+    if ($action == 'delete')
+    {
+        print $form->formconfirm($_SERVER["PHP_SELF"]."?socid=".$soc->id."&ribid=".($ribid?$ribid:$id), $langs->trans("DeleteARib"), $langs->trans("ConfirmDeleteRib", $account->getRibLabel()), "confirm_delete", '', 0, 1);
+    }
+
     print_titre($langs->trans("DefaultRIB"));
-	print '<table class="border" width="100%">';
+
+    print '<table class="border" width="100%">';
 
     print '<tr><td>'.$langs->trans("LabelRIB").'</td>';
     print '<td colspan="4">'.$account->label.'</td></tr>';
@@ -236,11 +273,12 @@ if ($_GET["socid"] && $_GET["action"] != 'edit' && $_GET["action"] != "create")
         print_liste_field_titre($langs->trans("LabelRIB"));
         print_liste_field_titre($langs->trans("Bank"));
         print_liste_field_titre($langs->trans("RIB"));
-        print_liste_field_titre($langs->trans("DefaultRIB"));
+        print_liste_field_titre($langs->trans("DefaultRIB"), '', '', '', '', 'align="center"');
         print '<td width="40"></td>';
         print '</tr>';
 
-        foreach ($rib_list as $rib) {
+        foreach ($rib_list as $rib)
+        {
             print "<tr $bc[$var]>";
             print '<td>'.$rib->label.'</td>';
             print '<td>'.$rib->bank.'</td>';
@@ -248,16 +286,26 @@ if ($_GET["socid"] && $_GET["action"] != 'edit' && $_GET["action"] != "create")
             print '<td align="center" width="70">';
             if (!$rib->default_rib) {
                 print '<a href="'.DOL_URL_ROOT.'/societe/rib.php?socid='.$soc->id.'&ribid='.$rib->id.'&action=setasdefault">';
-                print img_picto($langs->trans("Disabled"),'switch_off');
+                print img_picto($langs->trans("Disabled"),'off');
                 print '</a>';
             } else {
-                print img_picto($langs->trans("Enabled"),'switch_on');
+                print img_picto($langs->trans("Enabled"),'on');
             }
             print '</td>';
             print '<td align="right">';
-            print '<a href="'.DOL_URL_ROOT.'/societe/rib.php?socid='.$soc->id.'&id='.$rib->id.'&action=edit">';
-            print img_picto($langs->trans("Modify"),'edit');
-            print '</a>';
+            if ($user->rights->societe->creer)
+            {
+            	print '<a href="'.DOL_URL_ROOT.'/societe/rib.php?socid='.$soc->id.'&id='.$rib->id.'&action=edit">';
+            	print img_picto($langs->trans("Modify"),'edit');
+            	print '</a>';
+
+           		print '&nbsp;';
+
+           		print '<a href="'.DOL_URL_ROOT.'/societe/rib.php?socid='.$soc->id.'&id='.$rib->id.'&action=delete">';
+           		print img_picto($langs->trans("Delete"),'delete');
+           		print '</a>';
+            }
+
             print '</td>';
             print '</tr>';
             $var = !$var;
