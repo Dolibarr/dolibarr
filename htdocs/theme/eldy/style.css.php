@@ -109,7 +109,7 @@ $colorbacklinepair1='255,255,255';    // line pair
 $colorbacklinepair2='255,255,255';    // line pair
 $colorbacklinepairhover=(230+round(($isred+$isgreen+$isblue)/9)).','.(230+round(($isred+$isgreen+$isblue)/9)).','.(230+round(($isred+$isgreen+$isblue)/9));
 //$colorbackbody='#ffffff url('.$img_head.') 0 0 no-repeat;';
-$colorbackbody='#ffffff';
+$colorbackbody='#fcfcfc';
 $colortext='40,40,40';
 $fontsize=empty($conf->dol_optimize_smallscreen)?'12':'14';
 $fontsizesmaller=empty($conf->dol_optimize_smallscreen)?'11':'14';
@@ -128,7 +128,7 @@ if (empty($conf->global->THEME_ELDY_ENABLE_PERSONALIZED))
     $conf->global->THEME_ELDY_BACKTABCARD1='234,234,234';
     $conf->global->THEME_ELDY_BACKTABACTIVE='234,234,234';
     //$conf->global->THEME_ELDY_BACKBODY='#ffffff url('.$img_head.') 0 0 no-repeat;';
-    $conf->global->THEME_ELDY_BACKBODY='#ffffff;';
+    $conf->global->THEME_ELDY_BACKBODY='#fcfcfc;';
     $conf->global->THEME_ELDY_LINEIMPAIR1='242,242,242';
     $conf->global->THEME_ELDY_LINEIMPAIR2='248,248,248';
     $conf->global->THEME_ELDY_LINEIMPAIRHOVER='238,246,252';
