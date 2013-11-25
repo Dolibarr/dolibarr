@@ -30,6 +30,7 @@ Profit=Profit
 Balance=Balance
 Debit=Debit
 Credit=Credit
+Piece=Voucher
 Withdrawal=Withdrawal
 Withdrawals=Withdrawals
 AmountHTVATRealReceived=Net collected
