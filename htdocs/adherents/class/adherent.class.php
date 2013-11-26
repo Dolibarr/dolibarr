@@ -1344,7 +1344,7 @@ class Adherent extends CommonObject
 
         $sql = "UPDATE ".MAIN_DB_PREFIX."adherent SET";
         $sql.= " statut = 1";
-        $sql.= ", datevalid = ".$this->db->idate($now);
+        $sql.= ", datevalid = '".$this->db->idate($now)."'";
         $sql.= ", fk_user_valid=".$user->id;
         $sql.= " WHERE rowid = ".$this->id;
 
