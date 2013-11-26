@@ -3,6 +3,7 @@
  * Copyright (C) 2007-2011	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2009-2012	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2011		Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2013 		Philippe Grand      	<philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -60,7 +61,6 @@ $offset = $limit * $page ;
 $dir=$conf->banque->dir_output.'/bordereau/';
 $filterdate=dol_mktime(0, 0, 0, GETPOST('fdmonth'), GETPOST('fdday'), GETPOST('fdyear'));
 $filteraccountid=GETPOST('accountid');
-//var_dump($_POST);
 
 $object = new RemiseCheque($db);
 
@@ -80,12 +80,12 @@ if ($action == 'setdate' && $user->rights->banque->cheque)
         $result=$object->set_date($user,$date);
         if ($result < 0)
         {
-            $mesg='<div class="error">'.$object->error.'</div>';
+			setEventMessage($object->error, 'errors');
         }
     }
     else
     {
-        $mesg='<div class="error">'.$object->error.'</div>';
+        setEventMessage($object->error, 'errors');
     }
 }
 
@@ -103,12 +103,12 @@ if ($action == 'setrefext' && $user->rights->banque->cheque)
         $result=$object->setValueFrom('ref_ext', $ref_ext);
         if ($result < 0)
         {
-            $mesg='<div class="error">'.$object->error.'</div>';
+            setEventMessage($object->error, 'errors');
         }
     }
     else
     {
-        $mesg='<div class="error">'.$object->error.'</div>';
+        setEventMessage($object->error, 'errors');
     }
 }
 
@@ -140,12 +140,12 @@ if ($action == 'create' && $_POST["accountid"] > 0 && $user->rights->banque->che
 		}
 		else
 		{
-			$mesg='<div class="error">'.$object->error.'</div>';
+			setEventMessage($object->error, 'errors');
 		}
 	}
 	else
 	{
-        $mesg=$langs->trans("ErrorSelectAtLeastOne");
+		setEventMessage($langs->trans("ErrorSelectAtLeastOne"));
 	    $action='new';
 	}
 }
@@ -161,7 +161,7 @@ if ($action == 'remove' && $id > 0 && $_GET["lineid"] > 0 && $user->rights->banq
 	}
 	else
 	{
-		$mesg='<div class="error">'.$object->error.'</div>';
+		setEventMessage($object->error, 'errors');
 	}
 }
 
@@ -176,7 +176,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->banque->c
 	}
 	else
 	{
-		$mesg='<div class="error">'.$paiement->error.'</div>';
+		setEventMessage($paiement->error, 'errors');
 	}
 }
 
@@ -203,7 +203,7 @@ if ($action == 'confirm_valide' && $confirm == 'yes' && $user->rights->banque->c
 	}
 	else
 	{
-		$mesg='<div class="error">'.$paiement->error.'</div>';
+		setEventMessage($paiement->error, 'errors');
 	}
 }
 
@@ -582,7 +582,7 @@ else
 
 		$param="&amp;id=".$object->id;
 		print '<tr class="liste_titre">';
-		print_liste_field_titre($langs->trans("Cheque"),'','','','','width="30"');
+		print_liste_field_titre($langs->trans("Cheques"),'','','','','width="30"');
 		print_liste_field_titre($langs->trans("DateChequeReceived"),$_SERVER["PHP_SELF"],"b.dateo,b.rowid", "",$param,'align="center"',$sortfield,$sortorder);
 		print_liste_field_titre($langs->trans("Numero"),$_SERVER["PHP_SELF"],"b.num_chq", "",$param,'align="center"',$sortfield,$sortorder);
 		print_liste_field_titre($langs->trans("CheckTransmitter"),$_SERVER["PHP_SELF"],"b.emetteur", "",$param,"",$sortfield,$sortorder);
