@@ -37,4 +37,4 @@ AddSupplierOrder=Crea ordine fornitore
 AddSupplierInvoice=Crea fattura fornitore
 ListOfSupplierProductForSupplier=Elenco prodotti e prezzi per il fornitore <b>%s</b>
 NoneOrBatchFileNeverRan=Nessuno batch file o <b>%s</b> non eseguito di recente
-# SentToSuppliers=Sent to suppliers
+SentToSuppliers=Inviato ai fornitori

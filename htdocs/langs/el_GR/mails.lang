@@ -78,7 +78,7 @@ YourMailUnsubcribeOK=The email <b>%s</b>  is correctly unsubcribe from mailing l
 MailtoEMail=Hyper σύνδεσμο σε email
 ActivateCheckRead=Επιτρέπετε τη χρήση του "Unsubcribe" σύνδεσμου
 # ActivateCheckReadKey=Key use to encrypt URL use for "Read Receipt" and "Unsubcribe" feature
-# EMailSentToNRecipients=EMail sent to %s recipients.
+EMailSentToNRecipients=EMail αποστέλλονται στους παραλήπτες %s.
 
 # Libelle des modules de liste de destinataires mailing
 MailingModuleDescContactCompanies=Επαφές για όλα τα στοιχεία (πελάτης, προοπτική, προμηθευτής, ...)
@@ -89,12 +89,12 @@ MailingModuleDescEmailsFromFile=EMails from a text file (email;name;surname;comm
 MailingModuleDescContactsCategories=Στοιχεία με emails (ανά κατηγορία)
 # MailingModuleDescDolibarrContractsLinesExpired=Third parties with expired contract's lines
 MailingModuleDescContactsByCompanyCategory=Επαφές των τρίτων (από τρίτη κατηγορία μέρη)
-# MailingModuleDescContactsByCategory=Contacts/addresses of third parties by category
+MailingModuleDescContactsByCategory=Επαφές/διευθύνσεις Πέλ./Προμ. κατά κατηγορία
 MailingModuleDescMembersCategories=Τα ιδρυτικά μέλη (ανά κατηγορία)
 MailingModuleDescContactsByFunction=Επαφές των τρίτων (από τη θέση / λειτουργία)
 
 
-# LineInFile=Line %s in file
+LineInFile=Σειρά %s στο αρχείο
 # RecipientSelectionModules=Defined requests for recipient's selection
 MailSelectedRecipients=Επιλεγμένοι αποδέκτες
 MailingArea=Emailings περιοχή
@@ -117,7 +117,7 @@ ToAddRecipientsChooseHere=Προσθέστε παραλήπτες επιλέγο
 IdRecord=ID record
 DeliveryReceipt=Απόδειξη παράδοσης
 # YouCanUseCommaSeparatorForSeveralRecipients=You can use the <b>comma</b> separator to specify several recipients.
-# TagCheckMail=Track mail opening
+TagCheckMail=Παρακολούθηση άνοιγμα της αλληλογραφίας
 TagUnsubscribe=link διαγραφής
 TagSignature=Υπογραφή αποστολής χρήστη
 TagMailtoEmail=Email του παραλήπτη
@@ -125,8 +125,8 @@ TagMailtoEmail=Email του παραλήπτη
 # Module Notifications
 Notifications=Notifications
 # NoNotificationsWillBeSent=No email notifications are planned for this event and company
-# ANotificationsWillBeSent=1 notification will be sent by email
+ANotificationsWillBeSent=1 ειδοποίηση θα σταλεί μέσω e-mail
 # SomeNotificationsWillBeSent=%s notifications will be sent by email
-# AddNewNotification=Activate a new email notification request
-# ListOfActiveNotifications=List all active email notification requests
-# ListOfNotificationsDone=List all email notifications sent
+AddNewNotification=Ενεργοποιήστε μια νέα αίτηση ειδοποίησης με email
+ListOfActiveNotifications=Λίστα όλων των ενεργών αιτήσεων ειδοποίησης με email
+ListOfNotificationsDone=Λίστα όλων των ειδοποιήσεων ηλεκτρονικού ταχυδρομείου που αποστέλλονται
