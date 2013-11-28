@@ -86,7 +86,7 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 		print '</td></tr>';
 		
 		include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
-		$formactions = new FormActions ( $db );
+		$formactions=new FormActions($db);
 		print '<tr>';
 		print '<td class="nowrap">';
 		print $langs->trans("Type");
@@ -115,13 +115,13 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 	
 	// Buttons
 	print '<td align="center" valign="middle" class="nowrap">';
-	print img_picto ( $langs->trans ( "ViewCal" ), 'object_calendar', 'class="hideonsmartphone"' ) . ' <input type="submit" class="button" style="min-width:120px" name="viewcal" value="' . $langs->trans ( "ViewCal" ) . '">';
+	print img_picto($langs->trans("ViewCal"), 'object_calendar', 'class="hideonsmartphone"') . ' <input type="submit" class="button" style="min-width:120px" name="viewcal" value="' . $langs->trans("ViewCal") . '">';
 	print '<br>';
-	print img_picto ( $langs->trans ( "ViewWeek" ), 'object_calendarweek', 'class="hideonsmartphone"' ) . ' <input type="submit" class="button" style="min-width:120px" name="viewweek" value="' . $langs->trans ( "ViewWeek" ) . '">';
+	print img_picto($langs->trans("ViewWeek"), 'object_calendarweek', 'class="hideonsmartphone"') . ' <input type="submit" class="button" style="min-width:120px" name="viewweek" value="' . $langs->trans("ViewWeek") . '">';
 	print '<br>';
-	print img_picto ( $langs->trans ( "ViewDay" ), 'object_calendarday', 'class="hideonsmartphone"' ) . ' <input type="submit" class="button" style="min-width:120px" name="viewday" value="' . $langs->trans ( "ViewDay" ) . '">';
+	print img_picto($langs->trans("ViewDay"), 'object_calendarday', 'class="hideonsmartphone"') . ' <input type="submit" class="button" style="min-width:120px" name="viewday" value="' . $langs->trans("ViewDay") . '">';
 	print '<br>';
-	print img_picto ( $langs->trans ( "ViewList" ), 'object_list', 'class="hideonsmartphone"' ) . ' <input type="submit" class="button" style="min-width:120px" name="viewlist" value="' . $langs->trans ( "ViewList" ) . '">';
+	print img_picto($langs->trans("ViewList"), 'object_list', 'class="hideonsmartphone"') . ' <input type="submit" class="button" style="min-width:120px" name="viewlist" value="' . $langs->trans("ViewList") . '">';
 	print '</td>';
 	
 	// Legend
@@ -140,10 +140,10 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 		{
 			if (count($showextcals) > 0)
 			{
-				print '<tr><td><input type="checkbox" id="check_mytasks" name="check_mytasks" checked="true" disabled="disabled"> ' . $langs->trans ( "LocalAgenda" ) . '</td></tr>';
+				print '<tr><td><input type="checkbox" id="check_mytasks" name="check_mytasks" checked="true" disabled="disabled"> ' . $langs->trans("LocalAgenda") . '</td></tr>';
 				foreach ($showextcals as $val)
 				{
-					$htmlname = dol_string_nospecial ( $val ['name'] );
+					$htmlname = dol_string_nospecial($val['name']);
 					print '<script type="text/javascript">' . "\n";
 					print 'jQuery(document).ready(function () {' . "\n";
 					print 'jQuery("#check_' . $htmlname . '").click(function() { jQuery(".family_' . $htmlname . '").toggle(); });' . "\n";
@@ -153,7 +153,7 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 				}
 			}
 		}
-		print '<tr><td><input type="checkbox" id="check_birthday" name="check_birthday checked="false"> ' . $langs->trans ( "AgendaShowBirthdayEvents" ) . '</td></tr>';
+		print '<tr><td><input type="checkbox" id="check_birthday" name="check_birthday checked="false"> ' . $langs->trans("AgendaShowBirthdayEvents") . '</td></tr>';
 		print '</table>';
 		print '</td>';
 	}
