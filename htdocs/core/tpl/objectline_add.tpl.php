@@ -153,9 +153,9 @@ if (! empty($conf->margin->enabled)) {
 <?php
 	// Editor wysiwyg
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-    $nbrows=ROWS_2;
-    if (! empty($conf->global->MAIN_INPUT_DESC_HEIGHT)) $nbrows=$conf->global->MAIN_INPUT_DESC_HEIGHT;
-    $enable=(isset($conf->global->FCKEDITOR_ENABLE_DETAILS)?$conf->global->FCKEDITOR_ENABLE_DETAILS:0);
+	$nbrows=ROWS_2;
+	if (! empty($conf->global->MAIN_INPUT_DESC_HEIGHT)) $nbrows=$conf->global->MAIN_INPUT_DESC_HEIGHT;
+	$enable=(isset($conf->global->FCKEDITOR_ENABLE_DETAILS)?$conf->global->FCKEDITOR_ENABLE_DETAILS:0);
 	$doleditor=new DolEditor('product_desc', GETPOST('product_desc'), '', 150, 'dolibarr_details', '', false, true, $enable, $nbrows, 70);
 	$doleditor->Create();
 	?>
@@ -278,11 +278,11 @@ $(document).ready(function() {
 			}, 'json');
 			<?php } ?>
 
-	    } else {
+		} else {
 
-	    	$('#price_ttc').val('');
+			$('#price_ttc').val('');
 
-	    	// For compatibility with combobox
+			// For compatibility with combobox
 			<?php if (empty($conf->global->PRODUIT_USE_SEARCH_TO_SELECT)) { ?>
 			$('#select_type').val('').removeAttr('disabled').trigger('change');
 			$('#product_ref').val('');
@@ -419,45 +419,45 @@ $(document).ready(function() {
 	});
 
 	function update_price(input, output) {
-        $.ajax({
-            type: 'POST',
-            url: '<?php echo DOL_URL_ROOT; ?>/core/ajax/price.php',
-            data: {
-                'amount': $('#' + input).val(),
-                'output': output,
-                'tva_tx': $('#tva_tx').val()
-            },
-            success: function(data) {
-                var addline=false;
-                if (typeof data[output] != 'undefined') {
-                    // Hide price_ttc if no vat
-                    //if ($('#tva_tx').val() > 0 || ($('#tva_tx').val() == 0 && output == 'price_ht')) {
-                        $('#' + output).val(data[output]);
-                    //}
-                    if ($('#idprod').val() == 0 && $('#select_type').val() >= 0) {
-                        if (typeof CKEDITOR == 'object' && typeof CKEDITOR.instances != 'undefined' && CKEDITOR.instances['product_desc'] != 'undefined') {
-                            var content = CKEDITOR.instances['product_desc'].getData();
-                        } else {
-                            var content = $('#product_desc').val();
-                        }
-                        if (content.length > 0) {
-                            addline=true;
-                        }
-                    } else {
-                        addline=true;
-                    }
-                } else {
-                    $('#' + input).val('');
-                    $('#' + output).val('');
-                }
-                if (addline) {
-                    $('#addlinebutton').removeAttr('disabled');
-                } else {
-                    $('#addlinebutton').attr('disabled','disabled');
-                }
-            },
-            dataType: 'json',
-            async: false});
+		$.ajax({
+			type: 'POST',
+			url: '<?php echo DOL_URL_ROOT; ?>/core/ajax/price.php',
+			data: {
+				'amount': $('#' + input).val(),
+				'output': output,
+				'tva_tx': $('#tva_tx').val()
+			},
+			success: function(data) {
+				var addline=false;
+				if (typeof data[output] != 'undefined') {
+					// Hide price_ttc if no vat
+					//if ($('#tva_tx').val() > 0 || ($('#tva_tx').val() == 0 && output == 'price_ht')) {
+						$('#' + output).val(data[output]);
+					//}
+					if ($('#idprod').val() == 0 && $('#select_type').val() >= 0) {
+						if (typeof CKEDITOR == 'object' && typeof CKEDITOR.instances != 'undefined' && CKEDITOR.instances['product_desc'] != 'undefined') {
+							var content = CKEDITOR.instances['product_desc'].getData();
+						} else {
+							var content = $('#product_desc').val();
+						}
+						if (content.length > 0) {
+							addline=true;
+						}
+					} else {
+						addline=true;
+					}
+				} else {
+					$('#' + input).val('');
+					$('#' + output).val('');
+				}
+				if (addline) {
+					$('#addlinebutton').removeAttr('disabled');
+				} else {
+					$('#addlinebutton').attr('disabled','disabled');
+				}
+			},
+			dataType: 'json',
+			async: false});
 	}
 
 	function getVATRates(action, htmlname, idprod) {
@@ -527,7 +527,7 @@ $("#idprod").change(function() {
 	$("#fournprice").empty();
 	$("#buying_price").show();
 	if ($(this).val() > 0)
-    {
+	{
 		$.post('<?php echo DOL_URL_ROOT; ?>/fourn/ajax/getSupplierPrices.php', {'idprod': $(this).val()}, function(data) {
 			if (data && data.length > 0) {
 				var options = '';
@@ -558,8 +558,8 @@ $("#idprod").change(function() {
 			}
 		},
 		'json');
-    } else {
-    	$("#fournprice").hide();
+	} else {
+		$("#fournprice").hide();
 		$('#buying_price').val('');
     }
 });
