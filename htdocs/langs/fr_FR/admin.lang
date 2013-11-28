@@ -299,6 +299,7 @@ ServerNotAvailableOnIPOrPort=Serveur non disponible à l'adresse <b>%s</b> sur l
 DoTestServerAvailability=Tester disponibilité serveur
 DoTestSend=Tester envoi
 DoTestSendHTML=Tester envoi HTML
+ErrorCantUseRazIfNoYearInMask=Erreur, ne peut utiliser l'option @ pour remettre à zéro en début d'année si la séquence {yy} ou {yyyy} n'est pas dans le masque.
 ErrorCantUseRazInStartedYearIfNoYearMonthInMask=Erreur, ne peut utiliser l'option @ si la séquence {yy}{mm} ou {yyyy}{mm} n'est pas dans le masque.
 UMask=Masque des nouveaux fichiers sous Unix/Linux/BSD/Mac.
 UMaskExplanation=Ce paramètre permet de définir les droits des fichiers créés sur le serveur par Dolibarr (lors d'envois par exemple).<br>Ce doit être la valeur octale (par exemple 0666 signifie lecture/écriture pour tous).<br>Ce paramètre n'a aucun effet sur un serveur Windows.
