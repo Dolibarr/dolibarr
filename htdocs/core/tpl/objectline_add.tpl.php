@@ -242,7 +242,6 @@ $(document).ready(function() {
 	$('#service_duration_area').hide();
 
 	$('#idprod').change(function() {
-
 		if ($(this).val() > 0) {
 
 			// Update vat rate combobox
@@ -260,11 +259,11 @@ $(document).ready(function() {
 				if (typeof data != 'undefined') {
 					$('#product_ref').val(data.ref);
 					$('#product_label').val(data.label);
+					$('#origin_tva_tx_cache').val(data.tva_tx);
 					$('#price_base_type').val(data.pricebasetype).trigger('change');
 					$('#price_ht').val(data.price_ht).trigger('change');
 					$('#origin_price_ht_cache').val(data.price_ht);
 					//$('#origin_price_ttc_cache').val(data.price_ttc);
-					$('#origin_tva_tx_cache').val(data.tva_tx);
 					$('#select_type').val(data.type).attr('disabled','disabled').trigger('change');
 					//$('#price_base_type_area').show();
 					$('#qty').val(data.qty);
@@ -282,9 +281,6 @@ $(document).ready(function() {
 	    } else {
 
 	    	$('#price_ttc').val('');
-
-	    	// Restore vat rate combobox
-	    	getVATRates('getSellerVATRates', 'tva_tx');
 
 	    	// For compatibility with combobox
 			<?php if (empty($conf->global->PRODUIT_USE_SEARCH_TO_SELECT)) { ?>
@@ -466,16 +462,23 @@ $(document).ready(function() {
 
 	function getVATRates(action, htmlname, idprod) {
 		var productid = (idprod?idprod:0);
-		$.post('<?php echo DOL_URL_ROOT; ?>/core/ajax/vatrates.php', {
-			'action': action,
-			'id': <?php echo $buyer->id; ?>,
-			'productid': productid,
-			'htmlname': htmlname },
-		function(data) {
-			if (typeof data != 'undefined' && data.error == null) {
-				$("#" + htmlname).html(data.value).trigger('change');
-			}
-		}, 'json');
+		$.ajax({
+			type: "POST",
+			url: '<?php echo DOL_URL_ROOT;?>/core/ajax/vatrates.php',
+			data: {
+				'action': action,
+				'id': <?php echo $buyer->id; ?>,
+				'productid': productid,
+				'htmlname': htmlname
+			},
+			success: function(data){
+				if (typeof data != 'undefined' && data.error == null) {
+					$("#" + htmlname).html(data.value).trigger('change');
+				}
+			},
+			dataType: "json",
+			async: false
+		});
 	}
 
 	// Check if decription is not empty for free line
