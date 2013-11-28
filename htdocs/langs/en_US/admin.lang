@@ -1008,6 +1008,8 @@ XDebugInstalled=XDebug est chargé.
 XCacheInstalled=XCache is loaded.
 AddRefInList=Display customer/supplier ref into list (select list or combobox) and most of hyperlink
 FieldEdition=Edition of field %s
+FixTZ=TimeZone fix
+FillThisOnlyIfRequired=Example: +2 (fill only if timezone offset problems are experienced)
 ##### Module password generation
 PasswordGenerationStandard=Return a password generated according to internal Dolibarr algorithm: 8 characters containing shared numbers and characters in lowercase.
 PasswordGenerationNone=Do not suggest any generated password. Password must be type in manually.
