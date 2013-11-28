@@ -146,11 +146,7 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption='', $minLengt
     						}
     						// Update an input
     						if (ui.item.update) {
-    							// clear old data before update
-    							$.each(ui.item.update, function(key, value) {
-    								$("#" + key).val("");
-    							});
-    							// update fields
+    							// loop on each "update" fields
     							$.each(ui.item.update, function(key, value) {
     								$("#" + key).val(value).trigger("change");
     							});
