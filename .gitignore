@@ -16,4 +16,8 @@ doxygen_warnings.log
 .idea
 *.iml
 Thumbs.db
-
+# Vagrant generated files
+.vagrant
+/index.html
+/phpmyadmin
+/xhprof
