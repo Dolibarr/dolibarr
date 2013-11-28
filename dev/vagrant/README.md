@@ -48,4 +48,12 @@ Somewhat bleeding edge vagrant box for develop branch related work.
 - OS: Debian Wheezy 7.2
 - Webserver: Apache 2.2
 - PHP: mod_php 5.5
-- Database : MySQL 5.5
+- Database: MySQL 5.5
+    - Root user: root
+    - Root password: root
+    - Database name: dolibarr
+    - Database user: user
+    - Database password: user
+- Debugger: XDebug
+- Profiler: Xhprof
+- phpMyAdmin: <http://192.168.42.101/phpmyadmin>
