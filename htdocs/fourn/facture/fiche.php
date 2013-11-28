@@ -2116,9 +2116,9 @@ else
                 print '<td colspan="4">';
 
                 $ajaxoptions=array(
-                		'update' => array('qty_predef' => 'qty_predef', 'remise_percent_predef' => 'remise_percent_predef'),
-                		'disabled' => 'addPredefinedProductButton',
-                		'error' => $langs->trans("NoPriceDefinedForThisSupplier")
+						'update' => array('qty_predef'=>'qty','remise_percent_predef' => 'discount'),	// html id tag will be edited with which ajax json response key
+                		'disabled' => 'addPredefinedProductButton',	// html id to disable once select is done
+                		'error' => $langs->trans("NoPriceDefinedForThisSupplier") // translation of an error saved into var 'error'
                 );
                 $form->select_produits_fournisseurs($object->socid, GETPOST('idprodfournprice'), 'idprodfournprice', '', '', $ajaxoptions);
 
