@@ -1226,9 +1226,9 @@ elseif (! empty($object->id))
 
 	// Ref supplier
 	print '<tr><td>';
-	print $form->editfieldkey("RefSupplier",'ref_supplier',$langs->trans($object->ref_supplier),$object,$user->rights->fournisseur->commande->creer);
+	print $form->editfieldkey("RefSupplier",'ref_supplier',$object->ref_supplier,$object,$user->rights->fournisseur->commande->creer);
 	print '</td><td colspan="2">';
-	print $form->editfieldval("RefSupplier",'ref_supplier',$langs->trans($object->ref_supplier),$object,$user->rights->fournisseur->commande->creer);
+	print $form->editfieldval("RefSupplier",'ref_supplier',$object->ref_supplier,$object,$user->rights->fournisseur->commande->creer);
 	print '</td></tr>';
 
 	// Fournisseur
@@ -1678,9 +1678,9 @@ elseif (! empty($object->id))
 			print '<td colspan="3">';
 
 			$ajaxoptions=array(
-					'update' => array('qty_predef' => 'qty_predef', 'remise_percent_predef' => 'remise_percent_predef'),
-					'option_disabled' => 'addPredefinedProductButton',
-					'error' => $langs->trans("NoPriceDefinedForThisSupplier")
+					'update' => array('qty_predef'=>'qty','remise_percent_predef' => 'discount'),	// html id tag will be edited with which ajax json response key
+					'option_disabled' => 'addPredefinedProductButton',	// html id to disable once select is done
+					'error' => $langs->trans("NoPriceDefinedForThisSupplier") // translation of an error saved into var 'error'
 			);
 			$form->select_produits_fournisseurs($object->fourn_id, GETPOST('idprodfournprice'), 'idprodfournprice', '', '', $ajaxoptions);
 

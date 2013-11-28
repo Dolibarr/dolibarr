@@ -222,7 +222,7 @@ $sql.= " FROM ".MAIN_DB_PREFIX."tva as f";
 $sql.= " WHERE f.entity = ".$conf->entity;
 $sql.= " AND f.datev >= '".$db->idate(dol_get_first_day($y,1,false))."'";
 $sql.= " AND f.datev <= '".$db->idate(dol_get_last_day($y,12,false))."'";
-$sql.= " GROUP BY dm ASC";
+$sql.= " GROUP BY dm  ORDER BY dm ASC";
 
 pt($db, $sql,$langs->trans("Year")." $y");
 

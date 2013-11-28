@@ -61,7 +61,9 @@ if (! empty($conf->accounting->enabled)) $result=restrictedArea($user,'accountin
  * View
  */
 
-llxHeader('',$langs->trans("PurchasesJournal"),'');
+$morequery='&date_startyear='.$date_startyear.'&date_startmonth='.$date_startmonth.'&date_startday='.$date_startday.'&date_endyear='.$date_endyear.'&date_endmonth='.$date_endmonth.'&date_endday='.$date_endday;
+
+llxHeader('',$langs->trans("PurchasesJournal"),'','',0,0,'','',$morequery);
 
 $form=new Form($db);
 

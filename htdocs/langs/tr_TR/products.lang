@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - products
 ProductRef=Ürün ref.
 ProductLabel=Ürün etiketi
-ProductServiceCard=Ürünler/Hizmetler kartı
+ProductServiceCard=Ürün/Hizmet kartı
 Products=Ürünler
 Services=Hizmetler
 Product=Ürün
@@ -151,13 +151,13 @@ NoPriceDefinedForThisSupplier=Bu tedarikçi/ürün için fiyat/miktar tanımlanm
 NoSupplierPriceDefinedForThisProduct=Bu ürün için tedarikçi fiyatı/miktarı tanımlanmamış
 RecordedProducts=Ürünler kaydedildi
 RecordedServices=Hizmetler kaydedildi
-RecordedProductsAndServices=Ürünler/hizmetler kaydedildi
+RecordedProductsAndServices=Ürün/hizmet kaydedildi
 GenerateThumb=Kararlama (thumb) oluştur
 ProductCanvasAbility=Özel “kanvas” eklentileri kullan
 ServiceNb=Hizmet sayısı #%s
-ListProductServiceByPopularity=Popülerliğe göre ürün / hizmet listesi
-ListProductByPopularity=Tutularlığına göre ürünler/hizmetler Listesi
-ListServiceByPopularity=Tutulan hizmetler listesi
+ListProductServiceByPopularity=Popülerliğine göre ürün/hizmet listesi
+ListProductByPopularity=Popülerliğine göre ürünler/hizmetler Listesi
+ListServiceByPopularity=Popülerliğine göre hizmetler listesi
 Finished=Üretilen ürünler
 RowMaterial=İlk malzeme
 CloneProduct=Ürün veya hizmet klonla

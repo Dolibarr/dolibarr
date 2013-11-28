@@ -195,7 +195,7 @@ class Form
             }
             else
 			{
-                if ($typeofdata == 'email')   $ret.=dol_print_email($value,0,0,0,0,1);
+				if ($typeofdata == 'email')   $ret.=dol_print_email($value,0,0,0,0,1);
                 elseif ($typeofdata == 'amount')   $ret.=($value != '' ? price($value,'',$langs) : '');
                 elseif (preg_match('/^text/',$typeofdata) || preg_match('/^note/',$typeofdata))  $ret.=dol_htmlentitiesbr($value);
                 elseif ($typeofdata == 'day' || $typeofdata == 'datepicker') $ret.=dol_print_date($value,'day');
