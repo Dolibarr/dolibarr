@@ -32,7 +32,7 @@ Edit the [hosts](https://fr.wikipedia.org/wiki/Hosts) file on the machine you ru
 
 Example syntax:
 
-    192.168.42.101  dolibarr.dev
+    192.168.42.101  dev.dolibarr.org
 
 Once this is done, you will be able to access your VM's service at <http://dolibarr.dev>
 
@@ -44,7 +44,7 @@ Available boxes
 Somewhat bleeding edge vagrant box for develop branch related work.
 
 - IP: 192.168.42.101
-- Vhost: dolibarr.dev
+- Vhost: dev.dolibarr.org
 - OS: Debian Wheezy 7.2
 - Webserver: Apache 2.2
 - PHP: mod_php 5.5

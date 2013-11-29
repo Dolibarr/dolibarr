@@ -58,7 +58,7 @@ apache:
         - rewrite
     vhosts:
         vkJFW364QjeN:
-            servername: dolibarr.dev
+            servername: dev.dolibarr.org
             docroot: /var/www/htdocs
             port: '80'
             setenv:
