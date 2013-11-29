@@ -3,6 +3,7 @@
  * Copyright (C) 2006-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2007-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2011      Juanjo Menent	    <jmenent@2byte.es>
+ * Copyright (C) 2013 	   Philippe Grand      	<philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -131,6 +132,16 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 				$langs->load("errors");
 				$examplecust=$langs->trans($examplecust);
 			}
+			if($examplecust=="ErrorCantUseRazIfNoYearInMask")
+			{
+				$langs->load("errors");
+				$examplecust=$langs->trans($examplecust);
+			}
+			if($examplecust=="ErrorCantUseRazInStartedYearIfNoYearMonthInMask")
+			{
+				$langs->load("errors");
+				$examplecust=$langs->trans($examplecust);
+			}
 		}
 		if ($type == 1 || $type == -1)
 		{
@@ -140,6 +151,16 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 				$examplesup = $langs->trans('NotConfigured');
 			}
 			if($examplesup=="ErrorBadMask")
+			{
+				$langs->load("errors");
+				$examplesup=$langs->trans($examplesup);
+			}
+			if($examplesup=="ErrorCantUseRazIfNoYearInMask")
+			{
+				$langs->load("errors");
+				$examplesup=$langs->trans($examplesup);
+			}
+			if($examplesup=="ErrorCantUseRazInStartedYearIfNoYearMonthInMask")
 			{
 				$langs->load("errors");
 				$examplesup=$langs->trans($examplesup);
