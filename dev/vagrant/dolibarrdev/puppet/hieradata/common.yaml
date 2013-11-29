@@ -117,5 +117,5 @@ mysql:
             host: localhost
             user: user
             password: user
-            sql_file: /var/www/dev/initdata/mysqldump_dolibarr_latest.sql
+            sql_file: /var/www/dev/initdata/mysqldump_dolibarr_3.5.0.sql
 
