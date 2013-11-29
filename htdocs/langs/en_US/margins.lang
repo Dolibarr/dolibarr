@@ -48,5 +48,5 @@ BuyingCost=Cost price
 UnitCharges=Unit charges
 Charges=Charges
 
-AgentContactType=Contact type used for commissioning
-AgentContactTypeDetails=Défine what contact type (linked on invoices) will be associated with commercial agents
+AgentContactType=Commercial agent contact type
+AgentContactTypeDetails=Défine what contact type (linked on invoices) will be used for margin report by commercial agents

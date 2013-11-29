@@ -43,126 +43,116 @@
  * @param	string	$actioncode		Preselected value of actioncode for filter on type
  * @return	void
  */
-function print_actions_filter($form,$canedit,$status,$year,$month,$day,$showbirthday,$filtera,$filtert,$filterd,$pid,$socid,$showextcals=array(),$actioncode='')
-{
-	global $conf,$user,$langs,$db;
+function print_actions_filter($form, $canedit, $status, $year, $month, $day, $showbirthday, $filtera, $filtert, $filterd, $pid, $socid, $showextcals = array(), $actioncode = '') {
 
+	global $conf, $user, $langs, $db;
+	
 	// Filters
-	if ($canedit || ! empty($conf->projet->enabled))
-	{
-		print '<form name="listactionsfilter" class="listactionsfilter" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-		print '<input type="hidden" name="status" value="'.$status.'">';
-		print '<input type="hidden" name="year" value="'.$year.'">';
-		print '<input type="hidden" name="month" value="'.$month.'">';
-		print '<input type="hidden" name="day" value="'.$day.'">';
-		print '<input type="hidden" name="showbirthday" value="'.$showbirthday.'">';
-		print '<table class="nobordernopadding" width="100%">';
-		if ($canedit || ! empty($conf->projet->enabled))
-		{
-			print '<tr><td class="nowrap">';
-
-			print '<table class="nobordernopadding">';
-
-			if ($canedit)
-			{
-				print '<tr>';
-				print '<td class="nowrap">';
-				print $langs->trans("ActionsAskedBy");
-				print ' &nbsp;</td><td class="nowrap">';
-				print $form->select_dolusers($filtera,'userasked',1,'',!$canedit);
-				print '</td>';
-				print '</tr>';
-
-				print '<tr>';
-				print '<td class="nowrap">';
-				print $langs->trans("or").' '.$langs->trans("ActionsToDoBy");
-				print ' &nbsp;</td><td class="nowrap">';
-				print $form->select_dolusers($filtert,'usertodo',1,'',!$canedit);
-				print '</td></tr>';
-
-				print '<tr>';
-				print '<td class="nowrap">';
-				print $langs->trans("or").' '.$langs->trans("ActionsDoneBy");
-				print ' &nbsp;</td><td class="nowrap">';
-				print $form->select_dolusers($filterd,'userdone',1,'',!$canedit);
-				print '</td></tr>';
-
-				include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
-				$formactions=new FormActions($db);
-				print '<tr>';
-				print '<td class="nowrap">';
-				print $langs->trans("Type");
-				print ' &nbsp;</td><td class="nowrap">';
-
-				print $formactions->select_type_actions($actioncode, "actioncode", '', (empty($conf->global->AGENDA_USE_EVENT_TYPE)?1:0));
-
-				print '</td></tr>';
-			}
-
-			if (! empty($conf->projet->enabled) && $user->rights->projet->lire)
-			{
-				print '<tr>';
-				print '<td class="nowrap">';
-				print $langs->trans("Project").' &nbsp; ';
-				print '</td><td class="nowrap">';
-				select_projects($socid?$socid:-1, $pid, 'projectid', 64);
-				print '</td></tr>';
-			}
-
-			print '</table>';
-			print '</td>';
-
-			// Buttons
-			print '<td align="center" valign="middle" class="nowrap">';
-			print img_picto($langs->trans("ViewCal"),'object_calendar','class="hideonsmartphone"').' <input type="submit" class="button" style="min-width:120px" name="viewcal" value="'.$langs->trans("ViewCal").'">';
-			print '<br>';
-			print img_picto($langs->trans("ViewWeek"),'object_calendarweek','class="hideonsmartphone"').' <input type="submit" class="button" style="min-width:120px" name="viewweek" value="'.$langs->trans("ViewWeek").'">';
-			print '<br>';
-            print img_picto($langs->trans("ViewDay"),'object_calendarday','class="hideonsmartphone"').' <input type="submit" class="button" style="min-width:120px" name="viewday" value="'.$langs->trans("ViewDay").'">';
-			print '<br>';
-			print img_picto($langs->trans("ViewList"),'object_list','class="hideonsmartphone"').' <input type="submit" class="button" style="min-width:120px" name="viewlist" value="'.$langs->trans("ViewList").'">';
-			print '</td>';
-
-			// Legend
-			if ($conf->use_javascript_ajax && is_array($showextcals))
-			{
-    			print '<td align="center" valign="middle" class="nowrap">';
-                print '<script type="text/javascript">'."\n";
-                print 'jQuery(document).ready(function () {'."\n";
-                print 'jQuery("#check_mytasks").click(function() { jQuery(".family_mytasks").toggle(); jQuery(".family_other").toggle(); });'."\n";
-                print 'jQuery("#check_birthday").click(function() { jQuery(".family_birthday").toggle(); });'."\n";
-                print 'jQuery(".family_birthday").toggle();'."\n";
-                print '});'."\n";
-                print '</script>'."\n";
-                print '<table>';
-                if (! empty($conf->global->MAIN_JS_SWITCH_AGENDA))
-                {
-                    if (count($showextcals) > 0)
-                    {
-                        print '<tr><td><input type="checkbox" id="check_mytasks" name="check_mytasks" checked="true" disabled="disabled"> '.$langs->trans("LocalAgenda").'</td></tr>';
-                        foreach($showextcals as $val)
-                        {
-                            $htmlname=dol_string_nospecial($val['name']);
-                            print '<script type="text/javascript">'."\n";
-                            print 'jQuery(document).ready(function () {'."\n";
-                            print 'jQuery("#check_'.$htmlname.'").click(function() { jQuery(".family_'.$htmlname.'").toggle(); });'."\n";
-                            print '});'."\n";
-                            print '</script>'."\n";
-                            print '<tr><td><input type="checkbox" id="check_'.$htmlname.'" name="check_'.$htmlname.'" checked="true"> '.$val['name'].'</td></tr>';
-                        }
-                    }
-                }
-                print '<tr><td><input type="checkbox" id="check_birthday" name="check_birthday checked="false"> '.$langs->trans("AgendaShowBirthdayEvents").'</td></tr>';
-                print '</table>';
-                print '</td>';
-			}
-
-			print '</tr>';
-		}
-		print '</table>';
-		print '</form>';
+	print '<form name="listactionsfilter" class="listactionsfilter" action="' . $_SERVER ["PHP_SELF"] . '" method="POST">';
+	print '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
+	print '<input type="hidden" name="status" value="' . $status . '">';
+	print '<input type="hidden" name="year" value="' . $year . '">';
+	print '<input type="hidden" name="month" value="' . $month . '">';
+	print '<input type="hidden" name="day" value="' . $day . '">';
+	print '<input type="hidden" name="showbirthday" value="' . $showbirthday . '">';
+	print '<table class="nobordernopadding" width="100%">';
+	
+	print '<tr><td class="nowrap">';
+	
+	print '<table class="nobordernopadding">';
+	
+	if ($canedit) {
+		print '<tr>';
+		print '<td class="nowrap">';
+		print $langs->trans ( "ActionsAskedBy" );
+		print ' &nbsp;</td><td class="nowrap">';
+		print $form->select_dolusers ( $filtera, 'userasked', 1, '', ! $canedit );
+		print '</td>';
+		print '</tr>';
+		
+		print '<tr>';
+		print '<td class="nowrap">';
+		print $langs->trans ( "or" ) . ' ' . $langs->trans ( "ActionsToDoBy" );
+		print ' &nbsp;</td><td class="nowrap">';
+		print $form->select_dolusers ( $filtert, 'usertodo', 1, '', ! $canedit );
+		print '</td></tr>';
+		
+		print '<tr>';
+		print '<td class="nowrap">';
+		print $langs->trans ( "or" ) . ' ' . $langs->trans ( "ActionsDoneBy" );
+		print ' &nbsp;</td><td class="nowrap">';
+		print $form->select_dolusers ( $filterd, 'userdone', 1, '', ! $canedit );
+		print '</td></tr>';
+		
+		include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
+		$formactions = new FormActions ( $db );
+		print '<tr>';
+		print '<td class="nowrap">';
+		print $langs->trans ( "Type" );
+		print ' &nbsp;</td><td class="nowrap">';
+		
+		print $formactions->select_type_actions ( $actioncode, "actioncode", '', (empty ( $conf->global->AGENDA_USE_EVENT_TYPE ) ? 1 : 0) );
+		
+		print '</td></tr>';
 	}
+	
+	if (! empty ( $conf->projet->enabled ) && $user->rights->projet->lire) {
+		print '<tr>';
+		print '<td class="nowrap">';
+		print $langs->trans ( "Project" ) . ' &nbsp; ';
+		print '</td><td class="nowrap">';
+		select_projects ( $socid ? $socid : - 1, $pid, 'projectid', 64 );
+		print '</td></tr>';
+	}
+	
+	print '</table>';
+	print '</td>';
+	
+	// Buttons
+	print '<td align="center" valign="middle" class="nowrap">';
+	print img_picto ( $langs->trans ( "ViewCal" ), 'object_calendar', 'class="hideonsmartphone"' ) . ' <input type="submit" class="button" style="min-width:120px" name="viewcal" value="' . $langs->trans ( "ViewCal" ) . '">';
+	print '<br>';
+	print img_picto ( $langs->trans ( "ViewWeek" ), 'object_calendarweek', 'class="hideonsmartphone"' ) . ' <input type="submit" class="button" style="min-width:120px" name="viewweek" value="' . $langs->trans ( "ViewWeek" ) . '">';
+	print '<br>';
+	print img_picto ( $langs->trans ( "ViewDay" ), 'object_calendarday', 'class="hideonsmartphone"' ) . ' <input type="submit" class="button" style="min-width:120px" name="viewday" value="' . $langs->trans ( "ViewDay" ) . '">';
+	print '<br>';
+	print img_picto ( $langs->trans ( "ViewList" ), 'object_list', 'class="hideonsmartphone"' ) . ' <input type="submit" class="button" style="min-width:120px" name="viewlist" value="' . $langs->trans ( "ViewList" ) . '">';
+	print '</td>';
+	
+	// Legend
+	if ($conf->use_javascript_ajax && is_array ( $showextcals )) {
+		print '<td align="center" valign="middle" class="nowrap">';
+		print '<script type="text/javascript">' . "\n";
+		print 'jQuery(document).ready(function () {' . "\n";
+		print 'jQuery("#check_mytasks").click(function() { jQuery(".family_mytasks").toggle(); jQuery(".family_other").toggle(); });' . "\n";
+		print 'jQuery("#check_birthday").click(function() { jQuery(".family_birthday").toggle(); });' . "\n";
+		print 'jQuery(".family_birthday").toggle();' . "\n";
+		print '});' . "\n";
+		print '</script>' . "\n";
+		print '<table>';
+		if (! empty ( $conf->global->MAIN_JS_SWITCH_AGENDA )) {
+			if (count ( $showextcals ) > 0) {
+				print '<tr><td><input type="checkbox" id="check_mytasks" name="check_mytasks" checked="true" disabled="disabled"> ' . $langs->trans ( "LocalAgenda" ) . '</td></tr>';
+				foreach ( $showextcals as $val ) {
+					$htmlname = dol_string_nospecial ( $val ['name'] );
+					print '<script type="text/javascript">' . "\n";
+					print 'jQuery(document).ready(function () {' . "\n";
+					print 'jQuery("#check_' . $htmlname . '").click(function() { jQuery(".family_' . $htmlname . '").toggle(); });' . "\n";
+					print '});' . "\n";
+					print '</script>' . "\n";
+					print '<tr><td><input type="checkbox" id="check_' . $htmlname . '" name="check_' . $htmlname . '" checked="true"> ' . $val ['name'] . '</td></tr>';
+				}
+			}
+		}
+		print '<tr><td><input type="checkbox" id="check_birthday" name="check_birthday checked="false"> ' . $langs->trans ( "AgendaShowBirthdayEvents" ) . '</td></tr>';
+		print '</table>';
+		print '</td>';
+	}
+	
+	print '</tr>';
+	
+	print '</table>';
+	print '</form>';
 }
 
 

@@ -483,11 +483,12 @@ if ($nboftargetok) {
             $newbuild =~ s/(dev|alpha)/0.1.a/gi;			# dev
             $newbuild =~ s/beta/0.2.beta1/gi;				# beta
             $newbuild =~ s/rc./0.3.rc1/gi;					# rc
-            if ($newbuild !~ /-/) { $newbuild.='-3'; }		# finale
+            if ($newbuild !~ /-/) { $newbuild.='-0.3'; }	# finale
             #$newbuild =~ s/(dev|alpha)/0/gi;				# dev
             #$newbuild =~ s/beta/1/gi;						# beta
             #$newbuild =~ s/rc./2/gi;						# rc
             #if ($newbuild !~ /-/) { $newbuild.='-3'; }		# finale
+            #print "newbuild=".$newbuild."\n";exit;
             $REL1 = $newbuild; $REL1 =~ s/-.*$//gi;
             if ($RPMSUBVERSION eq 'auto') { $RPMSUBVERSION = $newbuild; $RPMSUBVERSION =~ s/^.*-//gi; }
             print "Version is $MAJOR.$MINOR.$REL1-$RPMSUBVERSION\n";
