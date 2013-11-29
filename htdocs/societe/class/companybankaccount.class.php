@@ -77,13 +77,23 @@ class CompanyBankAccount extends Account
     {
         $now=dol_now();
 
-        $sql = "INSERT INTO ".MAIN_DB_PREFIX."societe_rib (fk_soc, datec) values ($this->socid, '".$this->db->idate($now)."')";
+        // Correct default_rib to be sure to have always one default
+		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe_rib where fk_soc = ".$this->socid." AND default_rib = 1";
+   		$result = $this->db->query($sql);
+        if ($result)
+        {
+        	$numrows=$this->db->num_rows($result);
+            if ($this->default_rib && $numrows > 0) $this->default_rib = 0;
+            if (empty($this->default_rib) && $numrows == 0) $this->default_rib = 1;
+        }
+
+        $sql = "INSERT INTO ".MAIN_DB_PREFIX."societe_rib (fk_soc, datec)";
+        $sql.= " VALUES (".$this->socid.", '".$this->db->idate($now)."')";
         $resql=$this->db->query($sql);
         if ($resql)
         {
             if ($this->db->affected_rows($resql))
             {
-                $this->default_rib = 1;
                 $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."societe_rib");
                 return 1;
             }
@@ -120,7 +130,7 @@ class CompanyBankAccount extends Account
 //            return 0;
 //        }
 
-        if (!$this->id) {
+        if (! $this->id) {
             $this->create();
         }
 
@@ -199,6 +209,30 @@ class CompanyBankAccount extends Account
         }
         else
         {
+            dol_print_error($this->db);
+            return -1;
+        }
+    }
+
+    /**
+     *  Delete a rib from database
+     *
+     *	@param	User	$user	User deleting
+     *  @return int         	<0 if KO, >0 if OK
+     */
+    function delete($user)
+    {
+        global $conf;
+
+        $sql = "DELETE FROM ".MAIN_DB_PREFIX."societe_rib";
+        $sql.= " WHERE rowid  = ".$this->id;
+
+        dol_syslog(get_class($this)."::delete sql=".$sql);
+        $result = $this->db->query($sql);
+        if ($result) {
+            return 1;
+        }
+        else {
             dol_print_error($this->db);
             return -1;
         }

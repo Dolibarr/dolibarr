@@ -1190,11 +1190,11 @@ function dol_print_email($email,$cid=0,$socid=0,$addlink=0,$max=64,$showinvalid=
  * Show Skype link
  *
  * @param	string		$skype			Skype to show (only skype, without 'Name of recipient' before)
- * @param int 			$cid 			Id of contact if known
+ * @param int 			$cid 			  Id of contact if known
  * @param int 			$socid 			Id of third party if known
  * @param int 			$addlink		0=no link to create action
- * @param	int			  $max			Max number of characters to show
- * @return	string						HTML Link
+ * @param	int			  $max			  Max number of characters to show
+ * @return	string						  HTML Link
  */
 function dol_print_skype($skype,$cid=0,$socid=0,$addlink=0,$max=64)
 {
@@ -1208,9 +1208,12 @@ function dol_print_skype($skype,$cid=0,$socid=0,$addlink=0,$max=64)
 	{
 		$newskype='<a href="skype:';
 		$newskype.=dol_trunc($skype,$max);
-		$newskype.='" alt="'.$langs->trans("Call").'&nbsp;'.$skype.'" title="'.$langs->trans("Call").'&nbsp;'.$skype.'">';
-    $newskype.='<img src="../theme/'.$conf->theme.'/img/object_skype.png" border="0">&nbsp;';
+		$newskype.='?call" alt="'.$langs->trans("Call").'&nbsp;'.$skype.'" title="'.$langs->trans("Call").'&nbsp;'.$skype.'">';
+    $newskype.='<img src="../theme/common/skype_callbutton.png" border="0">&nbsp;';
+		$newskype.='</a>&nbsp;<a href="skype:';
 		$newskype.=dol_trunc($skype,$max);
+		$newskype.='?chat" alt="'.$langs->trans("Chat").'&nbsp;'.$skype.'" title="'.$langs->trans("Chat").'&nbsp;'.$skype.'">';
+    $newskype.='<img src="../theme/common/skype_chatbutton.png" border="0">&nbsp;';
 		$newskype.='</a>';
 
 		if (($cid || $socid) && ! empty($conf->agenda->enabled) && $user->rights->agenda->myactions->create)
@@ -2358,7 +2361,7 @@ function dol_print_error_email($prefixcode)
  *	@param	string	$field       Field to use for new sorting
  *	@param	string	$begin       ("" by defaut)
  *	@param	string	$moreparam   Add more parameters on sort url links ("" by default)
- *	@param  string	$td          Options of attribute td ("" by defaut)
+ *	@param  string	$td          Options of attribute td ("" by defaut, example: 'align="center"')
  *	@param  string	$sortfield   Current field used to sort
  *	@param  string	$sortorder   Current sort order
  *	@return	void
@@ -2395,8 +2398,8 @@ function getTitleFieldOfList($name, $thead=0, $file="", $field="", $begin="", $m
 
 	// If field is used as sort criteria we use a specific class
 	// Example if (sortfield,field)=("nom","xxx.nom") or (sortfield,field)=("nom","nom")
-	if ($field && ($sortfield == $field || $sortfield == preg_replace("/^[^\.]+\./","",$field))) $out.= '<'.$tag.' class="liste_titre_sel" '. $moreattrib.'>';
-	else $out.= '<'.$tag.' class="liste_titre" '. $moreattrib.'>';
+	if ($field && ($sortfield == $field || $sortfield == preg_replace("/^[^\.]+\./","",$field))) $out.= '<'.$tag.' class="liste_titre_sel'.($field?' nowrap':'').'" '. $moreattrib.'>';
+	else $out.= '<'.$tag.' class="liste_titre'.($field?' nowrap':'').'" '. $moreattrib.'>';
 
 	if (! empty($conf->dol_optimize_smallscreen) && empty($thead) && $field)    // If this is a sort field
 	{

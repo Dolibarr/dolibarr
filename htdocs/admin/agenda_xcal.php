@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2008-2012 	Laurent Destailleur <eldy@users.sourceforge.net>
+/* Copyright (C) 2008-2013 	Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2012-2013	Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2012		Regis Houssin		<regis.houssin@capnetworks.com>
  *
@@ -48,8 +48,9 @@ if ($actionsave)
     $i+=dolibarr_set_const($db,'MAIN_AGENDA_XCAL_EXPORTKEY',trim(GETPOST('MAIN_AGENDA_XCAL_EXPORTKEY','alpha')),'chaine',0,'',$conf->entity);
     $i+=dolibarr_set_const($db,'MAIN_AGENDA_EXPORT_PAST_DELAY',trim(GETPOST('MAIN_AGENDA_EXPORT_PAST_DELAY','alpha')),'chaine',0,'',$conf->entity);
     $i+=dolibarr_set_const($db,'MAIN_AGENDA_EXPORT_CACHE',trim(GETPOST('MAIN_AGENDA_EXPORT_CACHE','alpha')),'chaine',0,'',$conf->entity);
-
-    if ($i >= 3)
+    $i+=dolibarr_set_const($db,'AGENDA_EXPORT_FIX_TZ',trim(GETPOST('AGENDA_EXPORT_FIX_TZ','alpha')),'chaine',0,'',$conf->entity);
+    
+    if ($i >= 4)
     {
         $db->commit();
         setEventMessage($langs->trans("SetupSaved"));
@@ -113,6 +114,24 @@ print "<tr class=\"impair\">";
 print "<td>".$langs->trans("UseACacheDelay")."</td>";
 print "<td><input type=\"text\" class=\"flat\" name=\"MAIN_AGENDA_EXPORT_CACHE\" value=\"". (GETPOST('MAIN_AGENDA_EXPORT_CACHE','alpha')?GETPOST('MAIN_AGENDA_EXPORT_CACHE','alpha'):$conf->global->MAIN_AGENDA_EXPORT_CACHE) . "\" size=\"10\"></td>";
 print "<td>&nbsp;</td>";
+print "</tr>";
+
+print '</table>';
+
+print '<br>';
+
+print "<table class=\"noborder\" width=\"100%\">";
+
+print "<tr class=\"liste_titre\">";
+print '<td width="25%">'.$langs->trans("Parameter")."</td>";
+print "<td>".$langs->trans("Value")."</td>";
+print "</tr>";
+print "<tr ".$bc[$var].">";
+print '<td class="fieldrequired">'.$langs->trans("FixTZ")."</td>";
+print "<td>";
+print '<input class="flat" type="text" size="4" name="AGENDA_EXPORT_FIX_TZ" value="'.$conf->global->AGENDA_EXPORT_FIX_TZ.'">';
+print ' &nbsp; '.$langs->trans("FillThisOnlyIfRequired");
+print "</td>";
 print "</tr>";
 
 print '</table>';

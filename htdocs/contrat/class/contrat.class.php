@@ -2089,7 +2089,7 @@ class ContratLigne
 		$sql.= " total_localtax1='".$this->total_localtax1."',";
 		$sql.= " total_localtax2='".$this->total_localtax2."',";
 		$sql.= " total_ttc='".$this->total_ttc."',";
-		$sql.= " fk_product_fournisseur_price='".$this->fk_fournprice."',";
+		$sql.= " fk_product_fournisseur_price=".(!empty($this->fk_fournprice)?$this->fk_fournprice:"NULL").",";
 		$sql.= " buy_price_ht='".price2num($this->pa_ht)."',";
 		$sql.= " info_bits='".$this->info_bits."',";
 		$sql.= " fk_user_author=".($this->fk_user_author >= 0?$this->fk_user_author:"NULL").",";

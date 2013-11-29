@@ -526,7 +526,7 @@ else
             print '<tr><td>'.$langs->trans("IM").'</td><td colspan="3"><input name="jabberid" type="text" size="50" maxlength="80" value="'.(isset($_POST["jabberid"])?$_POST["jabberid"]:$object->jabberid).'"></td></tr>';
 
             // Skype
-            if (! empty($conf->skype->enabled))
+            if (! empty($conf->skype->enabled) && $user->rights->skype->view)
             {   
                 print '<tr><td>'.$langs->trans("Skype").'</td><td colspan="3"><input name="skype" type="text" size="50" maxlength="80" value="'.(isset($_POST["skype"])?$_POST["skype"]:$object->skype).'"></td></tr>';
             }
@@ -733,7 +733,7 @@ else
             print '</tr>';
             
             // Skype
-            if (! empty($conf->skype->enabled))
+            if (! empty($conf->skype->enabled) && $user->rights->skype->view)
             {
                 print '<tr><td>'.$langs->trans("Skype").'</td><td><input name="skype" type="text" size="40" maxlength="80" value="'.(isset($_POST["skype"])?$_POST["skype"]:$object->skype).'"></td></tr>';
             }
@@ -952,7 +952,7 @@ else
         print '</tr>';
         
         // Skype
-        if (!empty($conf->skype->enabled))
+        if (! empty($conf->skype->enabled) && $user->rights->skype->view)
         {
             print '<tr><td>'.$langs->trans("Skype").'</td><td colspan="3">'.dol_print_skype($object->skype,0,$object->fk_soc,1).'</td></tr>';
         }

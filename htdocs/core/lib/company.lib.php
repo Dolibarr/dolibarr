@@ -1,12 +1,13 @@
 <?php
 /* Copyright (C) 2006-2011	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2006		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2007		Patrick Raguin			<patrick.raguin@gmail.com>
- * Copyright (C) 2010-2012	Regis Houssin			<regis.houssin@capnetworks.com>
- * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
- * Copyright (C) 2013       Juanjo Menent		  	<jmenent@2byte.es>
+ * Copyright (C) 2006		    Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+ * Copyright (C) 2007		    Patrick Raguin			  <patrick.raguin@gmail.com>
+ * Copyright (C) 2010-2012	Regis Houssin			    <regis.houssin@capnetworks.com>
+ * Copyright (C) 2013       Florian Henry		  	  <florian.henry@open-concept.pro>
+ * Copyright (C) 2013       Juanjo Menent		  	  <jmenent@2byte.es>
  * Copyright (C) 2013       Christophe Battarel		<contact@altairis.fr>
- *  *
+ * Copyright (C) 2013       Alexandre Spangaro    <alexandre.spangaro@gmail.com> 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
@@ -576,7 +577,7 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
     print_liste_field_titre($langs->trans("PhoneMobile"),$_SERVER["PHP_SELF"],"p.phone_mobile","",$param,'',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Fax"),$_SERVER["PHP_SELF"],"p.fax","",$param,'',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("EMail"),$_SERVER["PHP_SELF"],"p.email","",$param,'',$sortfield,$sortorder);
-    if (! empty($conf->skype->enabled)) 
+    if (! empty($conf->skype->enabled) && $user->rights->skype->view) 
     { 
       $colspan++;
       print '<td>'.$langs->trans("Skype").'</td>';
@@ -608,8 +609,8 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
     
     print '<td>&nbsp;</td>';
     
-     print '<td>&nbsp;</td>';
-    if (! empty($conf->skype->enabled)) 
+    print '<td>&nbsp;</td>';
+    if (! empty($conf->skype->enabled) && $user->rights->skype->view) 
     { 
       $colspan++;
       print '<td>&nbsp;</td>';
@@ -681,7 +682,7 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
             print '<td>';
             print dol_print_email($obj->email,$obj->rowid,$object->id,'AC_EMAIL');
             print '</td>';
-            if (! empty($conf->skype->enabled)) 
+            if (! empty($conf->skype->enabled) && $user->rights->skype->view) 
             {
                 print '<td>';
                 print dol_print_skype($obj->skype,$obj->rowid,$object->id,'AC_SKYPE');

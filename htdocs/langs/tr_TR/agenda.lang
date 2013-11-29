@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - agenda
-# IdAgenda=ID event
+IdAgenda=Kimlik etkinliği
 Actions=Eylemler
 ActionsArea=Eylem alanı (Olaylar ve görevler)
 Agenda= Gündem
@@ -68,10 +68,10 @@ AgendaUrlOptions5=Çıktıyı kullanıcı<b>%s</b> tarafından yapılan etkinlik
 AgendaShowBirthdayEvents=Kişilerin doğum günlerini göster
 AgendaHideBirthdayEvents=Kişilerin doğum günlerini gizle
 Busy=Meşgul
-# ExportDataset_event1=List of agenda events
+ExportDataset_event1=Gündem etkinlikleri listesi
 
 # External Sites ical
-ExportCal=Dışaaktarım takvimi
+ExportCal=Takvim ver
 ExtSites=Dış takvimleri içeaktar
 ExtSitesEnableThisTool=Dış takvimleri gündemde göster
 ExtSitesNbOfAgenda=Takvimlerin sayısı

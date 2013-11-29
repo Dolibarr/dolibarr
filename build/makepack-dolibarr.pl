@@ -17,8 +17,8 @@ use Cwd;
 
 $PROJECT="dolibarr";
 $MAJOR="3";
-$MINOR="5";
-$BUILD="0-beta";		# Mettre x pour release, x-dev pour dev, x-beta pour beta, x-rc pour release candidate
+$MINOR="6";
+$BUILD="0-dev";		# Mettre x pour release, x-dev pour dev, x-beta pour beta, x-rc pour release candidate
 $RPMSUBVERSION="auto";	# auto use value found into BUILD
 
 @LISTETARGET=("TGZ","ZIP","RPM_GENERIC","RPM_FEDORA","RPM_MANDRIVA","RPM_OPENSUSE","DEB","APS","EXEDOLIWAMP","SNAPSHOT");   # Possible packages
@@ -495,11 +495,12 @@ if ($nboftargetok) {
             $newbuild =~ s/(dev|alpha)/0.1.a/gi;			# dev
             $newbuild =~ s/beta/0.2.beta1/gi;				# beta
             $newbuild =~ s/rc./0.3.rc1/gi;					# rc
-            if ($newbuild !~ /-/) { $newbuild.='-3'; }		# finale
+            if ($newbuild !~ /-/) { $newbuild.='-0.3'; }	# finale
             #$newbuild =~ s/(dev|alpha)/0/gi;				# dev
             #$newbuild =~ s/beta/1/gi;						# beta
             #$newbuild =~ s/rc./2/gi;						# rc
             #if ($newbuild !~ /-/) { $newbuild.='-3'; }		# finale
+            #print "newbuild=".$newbuild."\n";exit;
             $REL1 = $newbuild; $REL1 =~ s/-.*$//gi;
             if ($RPMSUBVERSION eq 'auto') { $RPMSUBVERSION = $newbuild; $RPMSUBVERSION =~ s/^.*-//gi; }
             print "Version is $MAJOR.$MINOR.$REL1-$RPMSUBVERSION\n";

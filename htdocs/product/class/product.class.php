@@ -4,7 +4,7 @@
  * Copyright (C) 2005-2013 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  * Copyright (C) 2007-2011 Jean Heimburger      <jean@tiaris.info>
- * Copyright (C) 2010-2011 Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2010-2013 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2013	   Cedric GROSS	        <c.gross@kreiz-it.fr>
  * Copyright (C) 2013      Marcos García        <marcosgdf@gmail.com>
  *
@@ -1827,6 +1827,33 @@ class Product extends CommonObject
 		$sql.= " GROUP BY date_format(c.date_commande,'%Y%m')";
 		$sql.= " ORDER BY date_format(c.date_commande,'%Y%m') DESC";
 
+		return $this->_get_stats($sql,$mode);
+	}
+	
+	/**
+	 *  Return nb of units or orders in which product is included
+	 *
+	 *  @param  	int		$socid      Limit count on a particular third party id
+	 *  @param		string	$mode		'byunit'=number of unit, 'bynumber'=nb of entities
+	 * 	@return   	array       		<0 if KO, result[month]=array(valuex,valuey) where month is 0 to 11
+	 */
+	function get_nb_ordersupplier($socid,$mode)
+	{
+		global $conf, $user;
+	
+		$sql = "SELECT sum(d.qty), date_format(c.date_commande, '%Y%m')";
+		if ($mode == 'bynumber') $sql.= ", count(DISTINCT c.rowid)";
+		$sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseurdet as d, ".MAIN_DB_PREFIX."commande_fournisseur as c, ".MAIN_DB_PREFIX."societe as s";
+		if (!$user->rights->fournisseur->lire && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+		$sql.= " WHERE c.rowid = d.fk_commande";
+		$sql.= " AND d.fk_product =".$this->id;
+		$sql.= " AND c.fk_soc = s.rowid";
+		$sql.= " AND c.entity = ".$conf->entity;
+		if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND c.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
+		if ($socid > 0)	$sql.= " AND c.fk_soc = ".$socid;
+		$sql.= " GROUP BY date_format(c.date_commande,'%Y%m')";
+		$sql.= " ORDER BY date_format(c.date_commande,'%Y%m') DESC";
+	
 		return $this->_get_stats($sql,$mode);
 	}
 

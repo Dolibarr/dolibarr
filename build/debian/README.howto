@@ -155,8 +155,9 @@ from origin/upstream and origin/pristine.
 Note: If there was errors solved manually, you may need to make a git commit
 
 * Add an entry into debian/changelog
-> dch -v x.y.z-1 "My comment" will add entry.
-For example: dch -v x.y.z-1 "New upstream release." for a new version
+> dch -v x.y.z-dsfg-1 "My comment" will add entry.
+For example: dch -v x.y.z-dsfg-1 "New upstream release." for a new version
+Then modify changelog to replace "unstable" with "UNRELEASED".
 
 Warning: Date must have format reported by "date -R"
 Warning: Name and email must match value into debian/control file (Entry added here is used by next step).
@@ -165,13 +166,17 @@ Warning: Name and email must match value into debian/control file (Entry added h
 > rm -fr ../build-area
 > git-buildpackage -us -uc
 
-Note: You can use git-buildpackage -us -uc --git-ignore-new if you want to test build with uncommited file
+Note: You can use git-buildpackage -us -uc --git-ignore-new  if you want to test build with uncommited file
+Note: You can use git-buildpackage -us -uc -d                if you want to test build when dependencies does not match 
 Note: Package is built into directory ../build-area
 
 * If package .deb is ok:
 Note: If there was errors managed manually, you may need to make a git commit but do not use option "amend" previous commit
-> git-buildpackage --git-tag-only --git-retag
 > git push --all ou git push origin --all
+
+* If ok, you can tag.
+> Edit debian/changelog to replace "UNRELEASED" into "unstable", then push
+> git-buildpackage --git-tag-only --git-retag
 > git push --tags
 
 * Compilation is then done by a debian developer and sent
@@ -187,7 +192,17 @@ http://packages.qa.debian.org/t/tcpdf.html
 
 ##### Update but tracker system
 To set status of a bug to pending
-> bts tag 728235 +pending
+> bts tag 999999 +pending
+
+or replay to email 999999@bugs.debian.org + submitter of bug
+With a message starting with: 
+Control: tag -1 +pending
+and then a text like:
+Thanks. Fixed into git.
+
+or replay to email control@bugs.debian.org
+With only message 
+tag 729538 +pending
 
 
 
@@ -227,15 +242,19 @@ Warning: Name and email must match value into debian/control file (Entry added h
 > rm -fr ../build-area
 > git-buildpackage -us -uc
 
-Note: You can use git-buildpackage -us -uc --git-ignore-new if you want to test build with uncommited file
+Note: You can use git-buildpackage -us -uc --git-ignore-new  if you want to test build with uncommited file
+Note: You can use git-buildpackage -us -uc -d                if you want to test build when dependencies does not match 
 Note: Package is built into directory ../build-area
 
 * Test package (see dedicated chapter to test it with debian unstable env)
 
 * If package .deb is ok:
 Note: If there was errors managed manually, you may need to make a git commit but do not use option "amend" previous commit
-> git-buildpackage --git-tag-only --git-retag
 > git push --all ou git push origin --all
+
+* If ok, you can tag.
+> Edit debian/changelog to replace "UNRELEASED" into "unstable", then push
+> git-buildpackage --git-tag-only --git-retag
 > git push --tags
 
 * Compilation is then done by a debian developer and sent

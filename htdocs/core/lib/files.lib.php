@@ -531,13 +531,24 @@ function dol_move($srcfile, $destfile, $newmask=0, $overwriteifexists=1)
     $result=false;
 
     dol_syslog("files.lib.php::dol_move srcfile=".$srcfile." destfile=".$destfile." newmask=".$newmask." overwritifexists=".$overwriteifexists);
-    if ($overwriteifexists || ! dol_is_file($destfile))
+    $destexists=dol_is_file($destfile);
+    if ($overwriteifexists || ! $destexists)
     {
         $newpathofsrcfile=dol_osencode($srcfile);
         $newpathofdestfile=dol_osencode($destfile);
 
         $result=@rename($newpathofsrcfile, $newpathofdestfile); // To see errors, remove @
-        if (! $result) dol_syslog("files.lib.php::dol_move failed", LOG_WARNING);
+        if (! $result) 
+        {
+        	if ($destexists) 
+        	{
+        		dol_syslog("files.lib.php::dol_move failed. We try to delete first and move after.", LOG_WARNING);
+        		// We force delete and try again. Rename function sometimes fails to replace dest file with some windows NTFS partitions.
+        		dol_delete_file($destfile);	
+        		$result=@rename($newpathofsrcfile, $newpathofdestfile); // To see errors, remove @
+        	}
+        	else dol_syslog("files.lib.php::dol_move failed", LOG_WARNING);
+        }
         if (empty($newmask) && ! empty($conf->global->MAIN_UMASK)) $newmask=$conf->global->MAIN_UMASK;
         @chmod($newpathofsrcfile, octdec($newmask));
     }
