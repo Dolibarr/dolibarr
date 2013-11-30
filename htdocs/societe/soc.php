@@ -52,6 +52,7 @@ $action		= (GETPOST('action') ? GETPOST('action') : 'view');
 $confirm	= GETPOST('confirm');
 $socid		= GETPOST('socid','int');
 if ($user->societe_id) $socid=$user->societe_id;
+if (empty($socid) && $action = 'view') $action='create';
 
 $object = new Societe($db);
 $extrafields = new ExtraFields($db);
@@ -736,9 +737,10 @@ else
                      });';
             print '</script>'."\n";
 
-            print "<br>\n";
             print '<div id="selectthirdpartytype">';
-            print $langs->trans("ThirdPartyType").': &nbsp; ';
+            print '<div class="hideonsmartphone float">';
+            print $langs->trans("ThirdPartyType").': &nbsp; &nbsp; ';
+            print '</div>';
             print '<input type="radio" id="radiocompany" class="flat" name="private" value="0"'.($private?'':' checked="checked"');
             print '> '.$langs->trans("Company/Fundation");
             print ' &nbsp; &nbsp; ';
@@ -774,7 +776,7 @@ else
             print '</tr>';
         }
         else
-        {
+		{
             print '<tr><td><span span id="TypeName" class="fieldrequired">'.$langs->trans('ThirdPartyName').'</span></td><td'.(empty($conf->global->SOCIETE_USEPREFIX)?' colspan="3"':'').'><input type="text" size="30" maxlength="60" name="nom" value="'.$object->name.'"></td>';
             if (! empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
             {
@@ -793,7 +795,7 @@ else
         }
 
         // Prospect/Customer
-        print '<tr><td width="25%"><span class="fieldrequired">'.$langs->trans('ProspectCustomer').'</span></td><td width="25%"><select class="flat" name="client">';
+        print '<tr><td width="25%"><span class="fieldrequired">'.$langs->trans('ProspectCustomer').'</span></td><td width="25%" class="maxwidthonsmartphone"><select class="flat" name="client">';
         $selected=isset($_POST['client'])?GETPOST('client'):$object->client;
         if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS)) print '<option value="2"'.($selected==2?' selected="selected"':'').'>'.$langs->trans('Prospect').'</option>';
         if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) print '<option value="3"'.($selected==3?' selected="selected"':'').'>'.$langs->trans('ProspectCustomer').'</option>';
@@ -857,7 +859,7 @@ else
         print '</td></tr>';
 
         // Country
-        print '<tr><td width="25%">'.$langs->trans('Country').'</td><td colspan="3">';
+        print '<tr><td width="25%">'.$langs->trans('Country').'</td><td colspan="3" class="maxwidthonsmartphone">';
         print $form->select_country((GETPOST('country_id')!=''?GETPOST('country_id'):$object->country_id),'country_id');
         if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
         print '</td></tr>';
@@ -865,7 +867,7 @@ else
         // State
         if (empty($conf->global->SOCIETE_DISABLE_STATE))
         {
-            print '<tr><td>'.$langs->trans('State').'</td><td colspan="3">';
+            print '<tr><td>'.$langs->trans('State').'</td><td colspan="3" class="maxwidthonsmartphone">';
             if ($object->country_id) print $formcompany->select_state($object->state_id,$object->country_code,'state_id');
             else print $countrynotdefined;
             print '</td></tr>';
@@ -956,7 +958,7 @@ else
 
         // Legal Form
         print '<tr><td>'.$langs->trans('JuridicalStatus').'</td>';
-        print '<td colspan="3">';
+        print '<td colspan="3" class="maxwidthonsmartphone">';
         if ($object->country_id)
         {
             $formcompany->select_forme_juridique($object->forme_juridique_code,$object->country_code);
@@ -1003,7 +1005,7 @@ else
         }
         if (! empty($conf->global->MAIN_MULTILANGS))
         {
-            print '<tr><td>'.$langs->trans("DefaultLang").'</td><td colspan="3">'."\n";
+            print '<tr><td>'.$langs->trans("DefaultLang").'</td><td colspan="3" class="maxwidthonsmartphone">'."\n";
             print $formadmin->select_language(($object->default_lang?$object->default_lang:$conf->global->MAIN_LANG_DEFAULT),'default_lang',0,0,1);
             print '</td>';
             print '</tr>';
@@ -1014,7 +1016,7 @@ else
             // Assign a Name
             print '<tr>';
             print '<td>'.$langs->trans("AllocateCommercial").'</td>';
-            print '<td colspan="3">';
+            print '<td colspan="3" class="maxwidthonsmartphone">';
             $form->select_users((! empty($object->commercial_id)?$object->commercial_id:$user->id),'commercial_id',1); // Add current user by default
             print '</td></tr>';
         }

@@ -242,6 +242,7 @@ div.inline-block
 <?php if (! empty($dol_optimize_smallscreen)) { ?>
 .hideonsmartphone { display: none; }
 .noenlargeonsmartphone { width : 50px !important; display: inline !important; }
+.maxwidthonsmartphone { max-width: 100px; }
 <?php } ?>
 .linkobject { cursor: pointer; }
 
