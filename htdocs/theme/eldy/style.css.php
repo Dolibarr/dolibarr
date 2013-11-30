@@ -222,7 +222,7 @@ if (! empty($conf->dol_optimize_smallscreen)) $fontsize=11;
 
 
 body {
-<?php if (GETPOST("optioncss") == 'print' || ! empty($conf->dol_optimize_smallscreen)) {  ?>
+<?php if (GETPOST("optioncss") == 'print') {  ?>
 	background-color: #FFFFFF;
 <?php } else { ?>
 	background: <?php print $colorbackbody; ?>;
@@ -254,10 +254,8 @@ input, input.flat, textarea, textarea.flat, form.flat select, select.flat {
 	font-family: <?php print $fontlist ?>;
 	background: #FDFDFD;
     border: 1px solid #C0C0C0;
-    <?php if (empty($dol_use_jmobile)) { ?>
     /*padding: 1px 1px 1px 1px; */
     margin: 0px 0px 0px 0px;
-    <?php } ?>
 }
 
 input, textarea, select {
@@ -265,7 +263,7 @@ input, textarea, select {
 	border:solid 1px rgba(0,0,0,.3);
 	border-top:solid 1px rgba(0,0,0,.3);
 	border-bottom:solid 1px rgba(0,0,0,.2);
-	box-shadow: 1px 1px 2px rgba(0,0,0,.2) inset;
+	/* box-shadow: 1px 1px 1px rgba(0,0,0,.2) inset;*/
 	padding:2px;
 	margin-left:1px;
 	margin-bottom:1px;
@@ -411,6 +409,7 @@ th .button {
 <?php if (! empty($dol_optimize_smallscreen)) { ?>
 .hideonsmartphone { display: none; }
 .noenlargeonsmartphone { width : 50px !important; display: inline !important; }
+.maxwidthonsmartphone { max-width: 100px; }
 <?php } ?>
 .linkobject { cursor: pointer; }
 
@@ -2060,6 +2059,7 @@ div.titre {
 	color: rgb(<?php print $colortext; ?>);
 	text-decoration: none;
 	text-shadow: 1px 1px 2px #FFFFFF;
+	<?php print (empty($conf->dol_optimize_smallscreen)?'':'margin-top: 4px;'); ?>
 }
 
 #dolpaymenttable { width: 600px; font-size: 13px; }
@@ -2756,10 +2756,6 @@ a.tab span.ui-btn-inner
 	padding: 0;
 }
 
-.ui-body-c {
-	border: 1px solid #CCC;
-	text-shadow: none;
-}
 .ui-link {
 	color: rgb(<?php print $colortext; ?>) !important;
 }
@@ -2834,8 +2830,14 @@ ul.ulmenu {
     color: #<?php echo $colortexttitle; ?> !important;
 	text-shadow: 1px 0px 1px #<?php echo $colorshadowtitle; ?>;
 }
-.ui-body-c, .ui-btn-up-c, .ui-btn-hover-c {
-	border: none !important;
+
+.ui-body-c {
+	border: 1px solid #ccc;
+	text-shadow: none;
+}
+.ui-btn-up-c, .ui-btn-hover-c {
+	border: 1px solid #ccc;
+	text-shadow: none;
 }
 .ui-btn-up-c .vsmenudisabled {
 	color: #<?php echo $colorshadowtitle; ?> !important;

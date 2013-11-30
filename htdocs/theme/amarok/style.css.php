@@ -361,6 +361,7 @@ center .error { padding:8px !important; padding-left:26px !important; padding-ri
 <?php if (! empty($dol_optimize_smallscreen)) { ?>
 .hideonsmartphone { display: none; }
 .noenlargeonsmartphone { width : 50px !important; display: inline !important; }
+.maxwidthonsmartphone { max-width: 100px; }
 <?php } ?>
 .linkobject { cursor:pointer; }
 
