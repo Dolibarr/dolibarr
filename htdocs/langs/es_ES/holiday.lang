@@ -88,6 +88,8 @@ LastDayOfHoliday=Último día libre
 HolidaysMonthlyUpdate=Actualización mensual
 ManualUpdate=Actualización manual
 HolidaysCancelation=Anulación vacaciones
+Morning=Mañana
+Afternoon=Tarde
 
 ## Configuration du Module ##
 ConfCP=Configuración del módulo Vacaciones
