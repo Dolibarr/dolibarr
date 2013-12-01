@@ -20,6 +20,10 @@
 
 DELETE FROM llx_menu where module='holiday';
 
+ALTER TABLE llx_c_type_contact MODIFY COLUMN code varchar(32) NOT NULL;
+UPDATE llx_c_type_contact set code = 'PROJECTCONTRIBUTOR' where code = 'CONTRIBUTOR' and element = 'project';
+UPDATE llx_c_type_contact set code = 'TASKCONTRIBUTOR' where code = 'CONTRIBUTOR' and element = 'project_task';
+
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,localtax1,localtax1_type,note,active) values (143, 14,'5','0','9.975','1','TPS and TVQ rate',1);
 
 -- Fix bad migration of 3.4 that make this text instead of varchar(50)
