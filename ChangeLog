@@ -46,7 +46,6 @@ Fix: there was no escaping on filter fields in supplier product list
 Fix: bugs on margin reports and better margin calculation on credit notes
 Qual: Add travis-ci integration
 
-
 ***** ChangeLog for 3.4 compared to 3.3.* *****
 For users:
 - New: Can use ODS templates as document templates.
