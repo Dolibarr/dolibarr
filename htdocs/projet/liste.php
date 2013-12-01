@@ -100,10 +100,11 @@ if ($search_societe)
 $sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit($conf->liste_limit+1, $offset);
 
-$var=true;
+dol_syslog("list allowed project sql=".$sql);
 $resql = $db->query($sql);
 if ($resql)
 {
+	$var=true;
 	$num = $db->num_rows($resql);
 	$i = 0;
 
