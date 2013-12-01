@@ -201,7 +201,10 @@ if ($action == 'confirm_deletesection' && GETPOST('confirm') == 'yes')
 // Refresh directory view
 if ($action == 'refreshmanual')
 {
-    clearstatcache();
+    $ecmdirtmp = new EcmDirectory($db);
+
+	// This part of code is same than into file ecm/ajax/ecmdatabase.php TODO Remove duplicate
+	clearstatcache();
 
     $diroutputslash=str_replace('\\','/',$conf->ecm->dir_output);
     $diroutputslash.='/';
@@ -264,7 +267,7 @@ if ($action == 'refreshmanual')
                     //break;  // We found parent, we can stop the while loop
                 }
                 else
-                {
+				{
                     dol_syslog("No");
                     //print "No<br>\n";
                 }
@@ -277,7 +280,6 @@ if ($action == 'refreshmanual')
 
             if ($fk_parent >= 0)
             {
-                $ecmdirtmp=new EcmDirectory($db);
                 $ecmdirtmp->ref                = 'NOTUSEDYET';
                 $ecmdirtmp->label              = dol_basename($dirdesc['fullname']);
                 $ecmdirtmp->description        = '';
@@ -309,6 +311,19 @@ if ($action == 'refreshmanual')
                 //print $txt."<br>\n";
             }
         }
+    }
+
+    // Loop now on each sql tree to check if dir exists
+    foreach($sqltree as $dirdesc)    // Loop on each sqltree to check dir is on disk
+    {
+    	$dirtotest=$conf->ecm->dir_output.'/'.$dirdesc['fullrelativename'];
+		if (! dol_is_dir($dirtotest))
+		{
+			$mesg.=$dirtotest." not found onto disk. We delete from database dir with id=".$dirdesc['id']."<br>\n";
+			$ecmdirtmp->id=$dirdesc['id'];
+			$ecmdirtmp->delete($user,'databaseonly');
+			//exit;
+		}
     }
 
     $sql="UPDATE ".MAIN_DB_PREFIX."ecm_directories set cachenbofdoc = -1 WHERE cachenbofdoc < 0";	// If pb into cahce counting, we set to value -1 = "unknown"
