@@ -59,6 +59,14 @@ $DIR||='.'; $DIR =~ s/([^\/\\])[\\\/]+$/$1/;
 
 $SOURCE="$DIR/..";
 $DESTI="$SOURCE/build";
+if (! $ENV{"DESTIBETARC"} || ! $ENV{"DESTISTABLE"})
+{
+    print "Error: Missing environment variables.\n";
+	print "You must define the environment variable DESTIBETARC and DESTISTABLE to point to the\ndirectories where you want to save the generated packages.\n";
+	print "$PROG.$Extension aborted.\n";
+    sleep 2;
+	exit 1;
+}
 
 # Detect OS type
 # --------------
@@ -66,7 +74,7 @@ if ("$^O" =~ /linux/i || (-d "/etc" && -d "/var" && "$^O" !~ /cygwin/i)) { $OS='
 elsif (-d "/etc" && -d "/Users") { $OS='macosx'; $CR=''; }
 elsif ("$^O" =~ /cygwin/i || "$^O" =~ /win32/i) { $OS='windows'; $CR="\r"; }
 if (! $OS) {
-    print "$PROG.$Extension was not able to detect your OS.\n";
+    print "Error: Can't detect your OS.\n";
 	print "Can't continue.\n";
 	print "$PROG.$Extension aborted.\n";
     sleep 2;
@@ -105,8 +113,8 @@ for (0..@ARGV-1) {
     	$FILENAMESNAPSHOT.="-".$PREFIX; 
     }
 }
-if ($ENV{"DESTIBETARC"} && $BUILD =~ /[a-z]/i)    { $DESTI = $ENV{"DESTIBETARC"}; }		# Force output dir if env DESTI is defined
-if ($ENV{"DESTISTABLE"}  && $BUILD =~ /^[0-9]+$/) { $DESTI = $ENV{"DESTISTABLE"}; }	# Force output dir if env DESTI is defined
+if ($ENV{"DESTIBETARC"} && $BUILD =~ /[a-z]/i)   { $DESTI = $ENV{"DESTIBETARC"}; }	# Force output dir if env DESTI is defined
+if ($ENV{"DESTISTABLE"} && $BUILD =~ /^[0-9]+$/) { $DESTI = $ENV{"DESTISTABLE"}; }	# Force output dir if env DESTI is defined
 
 
 print "Makepack version $VERSION\n";
