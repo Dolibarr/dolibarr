@@ -105,16 +105,17 @@ if ($sttc)
 }
 if ($sall)
 {
-	$sql.= " AND (cf.ref LIKE '%".$db->escape($sall)."%' OR cf.note LIKE '%".$db->escape($sall)."%')";
+	$sql.= " AND (cf.ref LIKE '%".$db->escape($sall)."%' OR cf.note_private LIKE '%".$db->escape($sall)."%' OR cf.note_public LIKE '%".$db->escape($sall)."%')";
 }
 if ($socid) $sql.= " AND s.rowid = ".$socid;
 
 if (GETPOST('statut'))
 {
-	$sql .= " AND fk_statut =".GETPOST('statut');
+	$sql .= " AND fk_statut =".GETPOST('statut','int');
 }
 
-$sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit+1, $offset);
+$sql.= " ORDER BY $sortfield $sortorder ";
+$sql.= $db->plimit($conf->liste_limit+1, $offset);
 
 $resql = $db->query($sql);
 if ($resql)
