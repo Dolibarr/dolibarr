@@ -930,6 +930,7 @@ function pdf_getlinedesc($object,$i,$outputlangs,$hideref=0,$hidedesc=0,$issuppl
 			} else {
 				$desctest=$desc;
 			}
+			//Test with htmlenties for update and no htmlentities for creation
 			if (! empty($prodser->multilangs[$outputlangs->defaultlang]["description"]) && 
 					((strpos($desctest,$prodser->description)!==false) ||
 					(strpos($desc,$prodser->description)!==false)))  {
