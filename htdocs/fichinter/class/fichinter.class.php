@@ -368,6 +368,7 @@ class Fichinter extends CommonObject
 	function setValid($user)
 	{
 		global $langs, $conf;
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 		$error=0;
 
@@ -390,7 +391,7 @@ class Fichinter extends CommonObject
 			$sql = "UPDATE ".MAIN_DB_PREFIX."fichinter";
 			$sql.= " SET fk_statut = 1";
 			$sql.= ", ref = '".$num."'";
-			$sql.= ", date_valid = ".$this->db->idate($now);
+			$sql.= ", date_valid = '".$this->db->idate($now)."'";
 			$sql.= ", fk_user_valid = ".$user->id;
 			$sql.= " WHERE rowid = ".$this->id;
 			$sql.= " AND entity = ".$conf->entity;
@@ -398,7 +399,52 @@ class Fichinter extends CommonObject
 
 			dol_syslog(get_class($this)."::setValid sql=".$sql);
 			$resql=$this->db->query($sql);
-			if ($resql)
+			if (! $resql)
+			{
+				dol_syslog(get_class($this)."::setValid Echec update - 10 - sql=".$sql, LOG_ERR);
+				dol_print_error($this->db);
+				$error++;
+			}
+
+			if (! $error)
+			{
+				$this->oldref = '';
+
+				// Rename directory if dir was a temporary ref
+				if (preg_match('/^[\(]?PROV/i', $this->ref))
+				{
+					// Rename of object directory ($this->ref = old ref, $num = new ref)
+					// to  not lose the linked files
+					$oldref = dol_sanitizeFileName($this->ref);
+					$snum = dol_sanitizeFileName($num);
+					$dirsource = $conf->ficheinter->dir_output.'/'.$oldref;
+					$dirdest = $conf->ficheinter->dir_output.'/'.$snum;
+					if (file_exists($dirsource))
+					{
+						dol_syslog(get_class($this)."::validate rename dir ".$dirsource." into ".$dirdest);
+
+						if (@rename($dirsource, $dirdest))
+						{
+							$this->oldref = $oldref;
+
+							dol_syslog("Rename ok");
+							// Suppression ancien fichier PDF dans nouveau rep
+							dol_delete_file($conf->ficheinter->dir_output.'/'.$snum.'/'.$oldref.'*.*');
+						}
+					}
+				}
+			}
+
+			// Set new ref and define current statut
+			if (! $error)
+			{
+				$this->ref = $num;
+				$this->statut=1;
+				$this->brouillon=0;
+				$this->date_validation=$now;
+			}
+
+			if (! $error)
 			{
 				// Appel des triggers
 				include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
@@ -408,24 +454,16 @@ class Fichinter extends CommonObject
 					$error++; $this->errors=$interface->errors;
 				}
 				// Fin appel triggers
+			}
 
-				if (! $error)
-				{
-					$this->db->commit();
-					return 1;
-				}
-				else
-				{
-					$this->db->rollback();
-					$this->error=join(',',$this->errors);
-					dol_syslog(get_class($this)."::setValid ".$this->error,LOG_ERR);
-					return -1;
-				}
+			if (! $error)
+			{
+				$this->db->commit();
+				return 1;
 			}
 			else
 			{
 				$this->db->rollback();
-				$this->error=$this->db->lasterror();
 				dol_syslog(get_class($this)."::setValid ".$this->error,LOG_ERR);
 				return -1;
 			}
