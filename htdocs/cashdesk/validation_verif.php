@@ -212,7 +212,7 @@ switch ($action)
 			$resultcreate=$invoice->create($user,0,dol_stringtotime($obj_facturation->paiementLe()));
 			if ($resultcreate > 0)
 			{
-				$resultvalid=$invoice->validate($user,$obj_facturation->numInvoice());
+				$resultvalid=$invoice->validate($user, $obj_facturation->numInvoice(), (isset($_SESSION["CASHDESK_ID_WAREHOUSE"])?$_SESSION["CASHDESK_ID_WAREHOUSE"]:0));
 			}
 			else
 			{
