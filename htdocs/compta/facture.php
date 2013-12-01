@@ -1479,7 +1479,8 @@ elseif ($action == 'updateligne' && $user->rights->facture->creer && $_POST['sav
 
 		$label = ((GETPOST('update_label') && GETPOST('product_label')) ? GETPOST('product_label'):'');
 
-		if ($price_min && (price2num($pu_ht)*(1-price2num(GETPOST('remise_percent'))/100) < price2num($price_min)))
+		// Check price is not lower than minimum (check is done only for standard or replacement invoices)
+		if (($object->type == 0 || $object->type == 1) && $price_min && (price2num($pu_ht)*(1-price2num(GETPOST('remise_percent'))/100) < price2num($price_min)))
 		{
 			setEventMessage($langs->trans("CantBeLessThanMinPrice", price(price2num($price_min,'MU'),0,$langs,0,0,-1,$conf->currency)), 'errors');
 			$error++;
@@ -3873,7 +3874,7 @@ else if ($id > 0 || ! empty($ref))
 			$modelmail='facture_relance';
 			$action='relance';
 		}
-		else $action='send';	
+		else $action='send';
 
 		$ref = dol_sanitizeFileName($object->ref);
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
