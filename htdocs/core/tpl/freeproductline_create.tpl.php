@@ -129,10 +129,10 @@ else {
 		if ($user->rights->margins->creer)
 		{
 			if (! empty($conf->global->DISPLAY_MARGIN_RATES)) {
-				echo '<td align="right"><input type="text" size="2" name="np_marginRate" value="'.(isset($_POST["np_marginRate"])?$_POST["np_marginRate"]:'').'">%</td>';
+				echo '<td align="right" class="nowrap"><input type="text" size="2" name="np_marginRate" value="'.(isset($_POST["np_marginRate"])?$_POST["np_marginRate"]:'').'"><span class="hideonsmartphone">%</span></td>';
 			}
 			if (! empty($conf->global->DISPLAY_MARK_RATES)) {
-				echo '<td align="right"><input type="text" size="2" name="np_markRate" value="'.(isset($_POST["np_markRate"])?$_POST["np_markRate"]:'').'">%</td>';
+				echo '<td align="right" class="nowrap"><input type="text" size="2" name="np_markRate" value="'.(isset($_POST["np_markRate"])?$_POST["np_markRate"]:'').'"><span class="hideonsmartphone">%</span></td>';
 			}
 		}
 		else

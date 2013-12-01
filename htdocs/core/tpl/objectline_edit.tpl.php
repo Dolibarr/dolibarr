@@ -140,9 +140,9 @@ if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
 				    $margin_rate = (isset($_POST["marginRate"])?$_POST["marginRate"]:(($line->pa_ht == 0)?'':price($line->marge_tx)));
 				    // if credit note, dont allow to modify margin
 					if ($line->subprice < 0)
-						echo '<td align="right">'.$margin_rate.'%</td>';
+						echo '<td align="right" class="nowrap">'.$margin_rate.'<span class="hideonsmartphone">%</span></td>';
 					else
-						echo '<td align="right"><input type="text" size="2" name="marginRate" value="'.$margin_rate.'">%</td>';
+						echo '<td align="right" class="nowrap"><input type="text" size="2" name="marginRate" value="'.$margin_rate.'"><span class="hideonsmartphone">%</span></td>';
 					$coldisplay++;
 				  }
 				elseif (! empty($conf->global->DISPLAY_MARK_RATES))
@@ -150,9 +150,9 @@ if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
 				    $mark_rate = (isset($_POST["markRate"])?$_POST["markRate"]:price($line->marque_tx));
 				    // if credit note, dont allow to modify margin
 					if ($line->subprice < 0)
-						echo '<td align="right">'.$mark_rate.'%</td>';
+						echo '<td align="right" class="nowrap">'.$mark_rate.'<span class="hideonsmartphone">%</span></td>';
 					else
-						echo '<td align="right"><input type="text" size="2" name="markRate" value="'.$mark_rate.'">%</td>';
+						echo '<td align="right" class="nowrap"><input type="text" size="2" name="markRate" value="'.$mark_rate.'"><span class="hideonsmartphone">%</span></td>';
 					$coldisplay++;
 				  }
 			  }
