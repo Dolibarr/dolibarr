@@ -923,7 +923,19 @@ function pdf_getlinedesc($object,$i,$outputlangs,$hideref=0,$hidedesc=0,$issuppl
 		if (! empty($conf->global->MAIN_MULTILANGS) && ($outputlangs->defaultlang != $langs->defaultlang))
 		{
 			if (! empty($prodser->multilangs[$outputlangs->defaultlang]["label"]) && $label == $prodser->label)     $label=$prodser->multilangs[$outputlangs->defaultlang]["label"];
-			if (! empty($prodser->multilangs[$outputlangs->defaultlang]["description"]) && strpos($desc,$prodser->description)!==false) $desc=$prodser->multilangs[$outputlangs->defaultlang]["description"];
+			
+			//Manage HTML entities description test
+			if ($conf->global->FCKEDITOR_ENABLE_PRODUCTDESC) {
+				$desctest=dol_htmlentities($desc, ENT_COMPAT | ENT_HTML401);
+			} else {
+				$desctest=$desc;
+			}
+			if (! empty($prodser->multilangs[$outputlangs->defaultlang]["description"]) && 
+					((strpos($desctest,$prodser->description)!==false) ||
+					(strpos($desc,$prodser->description)!==false)))  {
+				$desc=$prodser->multilangs[$outputlangs->defaultlang]["description"];
+			}
+			
 			if (! empty($prodser->multilangs[$outputlangs->defaultlang]["note"]) && $note == $prodser->note)        $note=$prodser->multilangs[$outputlangs->defaultlang]["note"];
 		}
 	}
