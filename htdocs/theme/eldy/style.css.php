@@ -2690,6 +2690,10 @@ div.dolEventError h1, div.dolEventError h2 {
 .sorting_desc_disabled { background: url('<?php echo dol_buildpath('/theme/'.$theme.'/img/sort_desc_disabled',1); ?>') no-repeat center right; }
 
 
+/* For jquery plugin combobox */
+.ui-corner-all { white-space: nowrap; }
+
+
 /* ============================================================================== */
 /*  JMobile                                                                       */
 /* ============================================================================== */
