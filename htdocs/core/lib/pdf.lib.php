@@ -925,18 +925,14 @@ function pdf_getlinedesc($object,$i,$outputlangs,$hideref=0,$hidedesc=0,$issuppl
 			if (! empty($prodser->multilangs[$outputlangs->defaultlang]["label"]) && $label == $prodser->label)     $label=$prodser->multilangs[$outputlangs->defaultlang]["label"];
 			
 			//Manage HTML entities description test
+			//Cause $prodser->description is store with htmlentities but $desc no
 			if ($conf->global->FCKEDITOR_ENABLE_PRODUCTDESC) {
-				$desctest=dol_htmlentities($desc, ENT_COMPAT | ENT_HTML401);
+				$testDescNeedTranslated=(strpos(dol_html_entity_decode($desc,ENT_QUOTES | ENT_HTML401),dol_html_entity_decode($prodser->description,ENT_QUOTES | ENT_HTML401))!==false);
 			} else {
-				$desctest=$desc;
-			}
-			//Test with htmlenties for update and no htmlentities for creation
-			if (! empty($prodser->multilangs[$outputlangs->defaultlang]["description"]) && 
-					((strpos($desctest,$prodser->description)!==false) ||
-					(strpos($desc,$prodser->description)!==false)))  {
-				$desc=$prodser->multilangs[$outputlangs->defaultlang]["description"];
+				$testDescNeedTranslated=true;
 			}
 			
+			if (! empty($prodser->multilangs[$outputlangs->defaultlang]["description"]) && 	($testDescNeedTranslated || (strpos($desc,$prodser->description)!==false)))  $desc=$prodser->multilangs[$outputlangs->defaultlang]["description"];
 			if (! empty($prodser->multilangs[$outputlangs->defaultlang]["note"]) && $note == $prodser->note)        $note=$prodser->multilangs[$outputlangs->defaultlang]["note"];
 		}
 	}
