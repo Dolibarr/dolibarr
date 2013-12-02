@@ -2691,7 +2691,8 @@ div.dolEventError h1, div.dolEventError h2 {
 
 
 /* For jquery plugin combobox */
-.ui-corner-all { white-space: nowrap; }
+/* Disable this. It breaks wrapping of boxes
+.ui-corner-all { white-space: nowrap; } */
 
 
 /* ============================================================================== */
