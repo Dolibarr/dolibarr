@@ -59,6 +59,8 @@ class Contact extends CommonObject
 	var $country_code;			// Code of country
 	var $country;				// Label of country
 
+    var $poste;                 // Position
+
 	var $socid;					// fk_soc
 	var $statut;				// 0=inactif, 1=actif
 
