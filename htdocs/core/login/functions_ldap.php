@@ -41,6 +41,7 @@ function check_user_password_ldap($usertotest,$passwordtotest,$entitytotest)
 	global $dolibarr_main_auth_ldap_admin_login,$dolibarr_main_auth_ldap_admin_pass;
 	global $dolibarr_main_auth_ldap_filter;
 	global $dolibarr_main_auth_ldap_debug;
+	global $mc;
 
 	if (! function_exists("ldap_connect"))
 	{
@@ -168,6 +169,9 @@ function check_user_password_ldap($usertotest,$passwordtotest,$entitytotest)
 					{
 						dol_syslog("functions_ldap::check_user_password_ldap Sync user found id=".$user->id);
 						// On verifie si le login a change et on met a jour les attributs dolibarr
+						$ret=$mc->checkRight($user->id, $entitytotest);
+						if ($ret < 0) $login=false; // provoque l'echec de l'identification
+						
 						if ($user->login != $ldap->login && $ldap->login)
 						{
 							$user->login = $ldap->login;
