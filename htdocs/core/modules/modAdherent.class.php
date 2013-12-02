@@ -84,9 +84,9 @@ class modAdherent extends DolibarrModules
         $this->const[26] = array("ADHERENT_CARD_FOOTER_TEXT","chaine","Association AZERTY","Texte imprimé sur le bas de la carte adhérent");
         $this->const[27] = array("ADHERENT_CARD_TEXT","texte","%FULLNAME%\r\nID: %ID%\r\n%EMAIL%\r\n%ADDRESS%\r\n%ZIP% %TOWN%\r\n%COUNTRY%","Text to print on member cards");
         $this->const[28] = array("ADHERENT_MAILMAN_ADMINPW","chaine","","Mot de passe Admin des liste mailman");
-        $this->const[31] = array("ADHERENT_BANK_USE_AUTO","yesno","","Insertion automatique des cotisations dans le compte banquaire");
-        $this->const[32] = array("ADHERENT_BANK_ACCOUNT","chaine","","ID du Compte banquaire utilise");
-        $this->const[33] = array("ADHERENT_BANK_CATEGORIE","chaine","","ID de la catégorie banquaire des cotisations");
+        $this->const[31] = array("ADHERENT_BANK_USE_AUTO","yesno","","Insertion automatique des cotisations dans le compte bancaire");
+        $this->const[32] = array("ADHERENT_BANK_ACCOUNT","chaine","","ID du Compte bancaire utilise");
+        $this->const[33] = array("ADHERENT_BANK_CATEGORIE","chaine","","ID de la catégorie bancaire des cotisations");
         $this->const[34] = array("ADHERENT_ETIQUETTE_TYPE","chaine","L7163","Type of address sheets");
         $this->const[35] = array("ADHERENT_ETIQUETTE_TEXT",'texte',"%FULLNAME%\n%ADDRESS%\n%ZIP% %TOWN%\n%COUNTRY%","Text to print on member address sheets");
 
