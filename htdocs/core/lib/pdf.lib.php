@@ -932,7 +932,7 @@ function pdf_getlinedesc($object,$i,$outputlangs,$hideref=0,$hidedesc=0,$issuppl
 				$testDescNeedTranslated=true;
 			}
 			
-			if (! empty($prodser->multilangs[$outputlangs->defaultlang]["description"]) && 	($testDescNeedTranslated || (strpos($desc,$prodser->description)!==false)))  $desc=$prodser->multilangs[$outputlangs->defaultlang]["description"];
+			if (! empty($prodser->multilangs[$outputlangs->defaultlang]["description"]) && ($testDescNeedTranslated || (strpos($desc,$prodser->description)!==false)))  $desc=$prodser->multilangs[$outputlangs->defaultlang]["description"];
 			if (! empty($prodser->multilangs[$outputlangs->defaultlang]["note"]) && $note == $prodser->note)        $note=$prodser->multilangs[$outputlangs->defaultlang]["note"];
 		}
 	}
