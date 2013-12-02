@@ -932,6 +932,7 @@ function pdf_getlinedesc($object,$i,$outputlangs,$hideref=0,$hidedesc=0,$issuppl
 				if (!empty($desc) && !empty($prodser->description)) {
 					$testHTMLDescNeedTranslated=(strpos(dol_html_entity_decode($desc,ENT_QUOTES | ENT_HTML401),dol_html_entity_decode($prodser->description,ENT_QUOTES | ENT_HTML401))!==false);
 				}
+				$testDescNeedTranslated=false;
 			} else {
 				if (!empty($desc) && !empty($prodser->description)) {
 					$testDescNeedTranslated = (strpos($desc,$prodser->description)!==false);
@@ -939,7 +940,7 @@ function pdf_getlinedesc($object,$i,$outputlangs,$hideref=0,$hidedesc=0,$issuppl
 					$testDescNeedTranslated=false;
 				}
 			}
-			
+
 			if (! empty($prodser->multilangs[$outputlangs->defaultlang]["description"]) && ($testHTMLDescNeedTranslated || $testDescNeedTranslated))  $desc=$prodser->multilangs[$outputlangs->defaultlang]["description"];
 			if (! empty($prodser->multilangs[$outputlangs->defaultlang]["note"]) && $note == $prodser->note)        $note=$prodser->multilangs[$outputlangs->defaultlang]["note"];
 		}
