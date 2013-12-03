@@ -29,9 +29,10 @@ require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 $langs->load("other");
+$langs->load("compta");
 
-$year=$_GET["year"];
-if ($year == 0 )
+$year=GETPOST("year","int");
+if ($year == 0)
 {
     $year_current = strftime("%Y",time());
     $year_start = $year_current;
@@ -51,7 +52,14 @@ $modetax = $conf->global->TAX_MODE;
 if (isset($_GET["modetax"])) $modetax=$_GET["modetax"];
 
 
-
+/**
+ * pt
+ *
+ * @param 	DoliDB	$db		Database handler
+ * @param 	string	$sql	SQL Request
+ * @param 	date		$date	Date
+ * @return	void
+ */
 function pt ($db, $sql, $date)
 {
     global $conf, $bc,$langs;
