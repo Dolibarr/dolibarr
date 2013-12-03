@@ -2853,14 +2853,6 @@ ul.ulmenu {
 	background-image: -o-linear-gradient( #ddd,#d1d1d1 ) !important;
 	background-image: linear-gradient( #ddd,#d1d1d1 ) !important;
 }
-.lilevel1:hover, .lilevel2:hover, .lilevel3:hover, .lilevel4:hover {
-	background-image: -webkit-gradient(linear,left top,left bottom,from( #ccc ),to( #c1c1c1 )) !important;
-	background-image: -webkit-linear-gradient( #ccc,#c1c1c1 ) !important;
-	background-image: -moz-linear-gradient( #ccc,#c1c1c1 ) !important;
-	background-image: -ms-linear-gradient( #ccc,#c1c1c1 ) !important;
-	background-image: -o-linear-gradient( #ccc,#c1c1c1 ) !important;
-	background-image: linear-gradient( #ccc,#c1c1c1 ) !important;
-}
 <?php if ($dol_use_jmobile) { ?>
 .overflowwithjm200
 {
