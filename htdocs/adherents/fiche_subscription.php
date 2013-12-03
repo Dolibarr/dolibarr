@@ -66,7 +66,7 @@ if ($user->rights->adherent->cotisation->creer && $_REQUEST["action"] == 'update
 			// If transaction consolidated
 			if ($accountline->rappro)
 			{
-				$errmsg=$langs->trans("SubscriptionLinkedToConciliatedTransaction");
+				$errmsg=$errmsg=setEventMessage($langs->trans("SubscriptionLinkedToConciliatedTransaction"),'errors');
 			}
 			else
 			{
