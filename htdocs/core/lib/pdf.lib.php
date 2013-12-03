@@ -926,22 +926,14 @@ function pdf_getlinedesc($object,$i,$outputlangs,$hideref=0,$hidedesc=0,$issuppl
 			
 			//Manage HTML entities description test
 			//Cause $prodser->description is store with htmlentities but $desc no
-			$testHTMLDescNeedTranslated=true;
-			$testDescNeedTranslated=true;
-			if ($conf->global->FCKEDITOR_ENABLE_PRODUCTDESC) {
-				if (!empty($desc) && !empty($prodser->description)) {
-					$testHTMLDescNeedTranslated=(strpos(dol_html_entity_decode($desc,ENT_QUOTES | ENT_HTML401),dol_html_entity_decode($prodser->description,ENT_QUOTES | ENT_HTML401))!==false);
-				}
-				$testDescNeedTranslated=false;
+			$needdesctranslation=false;
+			if (!empty($desc) && dol_textishtml($desc) && !empty($prodser->description) && dol_textishtml($prodser->description)) {
+				$needdesctranslation=(strpos(dol_html_entity_decode($desc,ENT_QUOTES | ENT_HTML401),dol_html_entity_decode($prodser->description,ENT_QUOTES | ENT_HTML401))!==false);
 			} else {
-				if (!empty($desc) && !empty($prodser->description)) {
-					$testDescNeedTranslated = (strpos($desc,$prodser->description)!==false);
-				} else {
-					$testDescNeedTranslated=false;
-				}
+				$needdesctranslation=($desc == $prodser->description);
 			}
 
-			if (! empty($prodser->multilangs[$outputlangs->defaultlang]["description"]) && ($testHTMLDescNeedTranslated || $testDescNeedTranslated))  $desc=$prodser->multilangs[$outputlangs->defaultlang]["description"];
+			if (! empty($prodser->multilangs[$outputlangs->defaultlang]["description"]) && ($needdesctranslation))  $desc=$prodser->multilangs[$outputlangs->defaultlang]["description"];
 			if (! empty($prodser->multilangs[$outputlangs->defaultlang]["note"]) && $note == $prodser->note)        $note=$prodser->multilangs[$outputlangs->defaultlang]["note"];
 		}
 	}
