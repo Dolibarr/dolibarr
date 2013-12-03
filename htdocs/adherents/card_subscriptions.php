@@ -123,7 +123,7 @@ if ($action == 'setuserid' && ($user->rights->user->self->creer || $user->rights
         if ($_POST["userid"] != $user->id && $_POST["userid"] != $object->user_id)
         {
             $error++;
-            $mesg='<div class="error">'.$langs->trans("ErrorUserPermissionAllowsToLinksToItselfOnly").'</div>';
+            setEventMessage($langs->trans("ErrorUserPermissionAllowsToLinksToItselfOnly"),'errors');
         }
     }
 
@@ -159,7 +159,7 @@ if ($action == 'setsocid')
                     $thirdparty=new Societe($db);
                     $thirdparty->fetch(GETPOST('socid','int'));
                     $error++;
-                    $mesg='<div class="error">'.$langs->trans("ErrorMemberIsAlreadyLinkedToThisThirdParty",$othermember->getFullName($langs),$othermember->login,$thirdparty->name).'</div>';
+                    setEventMessage($langs->trans("ErrorSubscriberIsAlreadyLinkedToThisThirdParty",$othermember->getFullName($langs),$othermember->login,$thirdparty->name),'errors');
                 }
             }
 
@@ -347,7 +347,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'cotisation' && ! $
                     if (empty($invoice->cond_reglement_id))
                     {
                         $error++;
-                        $errmsg='ErrorNoPaymentTermRECEPFound';
+                        $errmsg=setEventMessage($langs->trans("ErrorNoPaymentTermRECEPFound"),'errors');
                     }
                 }
                 $invoice->socid=$object->fk_soc;
