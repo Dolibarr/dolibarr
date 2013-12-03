@@ -51,10 +51,9 @@ print_fiche_titre($langs->trans("MembersArea"));
 
 $var=True;
 
-$Adherents=array();
-$AdherentsAValider=array();
+$MemberToValidate=array();
 $MemberUpToDate=array();
-$AdherentsResilies=array();
+$MembersResiliated=array();
 
 $AdherentType=array();
 
