@@ -106,7 +106,7 @@ if ($action == 'add' && $user->rights->adherent->configurer)
 		}
 		else
 		{
-			$mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentities("Label"));
+			setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Label")),'errors');
 			$action = 'create';
 		}
 	}

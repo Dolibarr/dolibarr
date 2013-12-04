@@ -128,7 +128,7 @@ if ($action == 'setuserid' && ($user->rights->user->self->creer || $user->rights
 		if ($userid != $user->id && $userid != $object->user_id)
 		{
 			$error++;
-			$mesg='<div class="error">'.$langs->trans("ErrorUserPermissionAllowsToLinksToItselfOnly").'</div>';
+			setEventMessage($langs->trans("ErrorUserPermissionAllowsToLinksToItselfOnly"),'errors');
 		}
 	}
 
@@ -164,7 +164,7 @@ if ($action == 'setsocid')
 					$thirdparty=new Societe($db);
 					$thirdparty->fetch($socid);
 					$error++;
-					$errmsg='<div class="error">'.$langs->trans("ErrorMemberIsAlreadyLinkedToThisThirdParty",$othermember->getFullName($langs),$othermember->login,$thirdparty->name).'</div>';
+					$errmsg=setEventMessage($langs->trans("ErrorMemberIsAlreadyLinkedToThisThirdParty",$othermember->getFullName($langs),$othermember->login,$thirdparty->name),'errors');
 				}
 			}
 
