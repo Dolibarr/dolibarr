@@ -49,7 +49,7 @@ $constnote=GETPOST('constnote','alpha');
  * Actions
  */
 
-if ($action == 'add' || GETPOST('add'))
+if ($action == 'add' || (GETPOST('add') && $action != 'update'))
 {
 	$error=0;
 
