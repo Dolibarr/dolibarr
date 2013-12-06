@@ -1283,7 +1283,6 @@ tr.box_titre td.boxclose {
 tr.liste_titre td, tr.liste_titre th, form.liste_titre div {
 	padding:2px;
 	padding-left:2px !important;
-	white-space:nowrap;
 	text-shadow:1px 1px 1px #ffffff;
 }
 

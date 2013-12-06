@@ -1391,7 +1391,6 @@ div.liste_titre, tr.liste_titre, form.liste_titre
     color: #FFFFFF;
     font-family: <?php print $fontlist ?>;
     /* border-bottom: 1px solid #FDFFFF; */
-    white-space: nowrap;
     text-align: <?php echo $left; ?>;
 }
 th.liste_titre, td.liste_titre
