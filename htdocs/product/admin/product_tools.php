@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2012	Regis Houssin	<regis.houssin@capnetworks.com>
+/* Copyright (C) 2012	Regis Houssin       <regis.houssin@capnetworks.com>
+ * Copyright (C) 2013   Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +29,7 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
 
 $langs->load("admin");
 $langs->load("products");
@@ -41,6 +43,7 @@ $newvatrate=GETPOST('newvatrate');
 //$price_base_type=GETPOST('price_base_type');
 
 $objectstatic = new Product($db);
+$objectstatic2 = new ProductFournisseur($db);
 
 
 /*
@@ -60,104 +63,176 @@ if ($action == 'convert')
 
 	if (! $error)
 	{
+		$country_id=$mysoc->country_id;	// TODO Allow to choose country into form
+
+		$nbrecordsmodified=0;
+
 		$db->begin();
 
-		$sql = 'SELECT rowid';
-		$sql.= ' FROM '.MAIN_DB_PREFIX.'product';
-		$sql.= ' WHERE entity IN ('.getEntity('product',1).')';
-		$sql.= " AND tva_tx = '".$db->escape($oldvatrate)."'";
-		//$sql.= ' AND price_base_type = "'..'"';
-		//print $sql;
+		// If country to edit is my country, so we change customer prices
+		if ($country_id == $mysoc->country_id)
+		{
+			$sql = 'SELECT rowid';
+			$sql.= ' FROM '.MAIN_DB_PREFIX.'product';
+			$sql.= ' WHERE entity IN ('.getEntity('product',1).')';
+			$sql.= " AND tva_tx = '".$db->escape($oldvatrate)."'";
 
+			$resql=$db->query($sql);
+			if ($resql)
+			{
+				$num = $db->num_rows($resql);
+
+				$i = 0;
+				while ($i < $num)
+				{
+					$obj = $db->fetch_object($resql);
+
+					$ret=$objectstatic->fetch($obj->rowid);
+					if ($ret > 0)
+					{
+						$ret=0; $retm=0; $updatelevel1=false;
+
+						// Update multiprice
+						$listofmulti=array_reverse($objectstatic->multiprices, true);	// To finish with level 1
+						foreach ($listofmulti as $level => $multiprices)
+						{
+							$price_base_type = $objectstatic->multiprices_base_type[$level];	// Get price_base_type of product/service to keep the same for update
+							if (empty($price_base_type)) continue;	// Discard not defined price levels
+
+							if ($price_base_type == 'TTC')
+							{
+								$newprice=price2num($objectstatic->multiprices_ttc[$level],'MU');    // Second param must be MU (we want a unit price so 'MU'. If unit price was on 4 decimal, we must keep 4 decimals)
+								$newminprice=$objectstatic->multiprices_min_ttc[$level];
+							}
+							else
+							{
+								$newprice=price2num($objectstatic->multiprices[$level],'MU');    // Second param must be MU (we want a unit price so 'MU'. If unit price was on 4 decimal, we must keep 4 decimals)
+								$newminprice=$objectstatic->multiprices_min[$level];
+							}
+							if ($newminprice > $newprice) $newminprice=$newprice;
+							$newvat=str_replace('*','',$newvatrate);
+							$newnpr=$objectstatic->multiprices_recuperableonly[$level];
+							$newlevel=$level;
+
+							//print "$objectstatic->id $newprice, $price_base_type, $newvat, $newminprice, $newlevel, $newnpr<br>\n";
+							$retm=$objectstatic->updatePrice($objectstatic->id, $newprice, $price_base_type, $user, $newvat, $newminprice, $newlevel, $newnpr);
+							if ($retm < 0)
+							{
+								$error++;
+								break;
+							}
+
+							if ($newlevel == 1) $updatelevel1=true;
+						}
+
+						// Update single price
+						$price_base_type = $objectstatic->price_base_type;	// Get price_base_type of product/service to keep the same for update
+						if ($price_base_type == 'TTC')
+						{
+							$newprice=price2num($objectstatic->price_ttc,'MU');    // Second param must be MU (we want a unit price so 'MU'. If unit price was on 4 decimal, we must keep 4 decimals)
+							$newminprice=$objectstatic->price_min_ttc;
+						}
+						else
+						{
+							$newprice=price2num($objectstatic->price,'MU');    // Second param must be MU (we want a unit price so 'MU'. If unit price was on 4 decimal, we must keep 4 decimals)
+							$newminprice=$objectstatic->price_min;
+						}
+						if ($newminprice > $newprice) $newminprice=$newprice;
+						$newvat=str_replace('*','',$newvatrate);
+						$newnpr=$objectstatic->recuperableonly;
+						$newlevel=0;
+						if (! empty($price_base_type) && ! $updatelevel1)
+						{
+							//print "$objectstatic->id $newprice, $price_base_type, $newvat, $newminprice, $newlevel, $newnpr<br>\n";
+							$ret=$objectstatic->updatePrice($objectstatic->id,$newprice, $price_base_type, $user, $newvat, $newminprice, $newlevel, $newnpr);
+						}
+
+						if ($ret < 0 || $retm < 0) $error++;
+						else $nbrecordsmodified++;
+					}
+
+					$i++;
+				}
+			}
+			else dol_print_error($db);
+		}
+
+		$fourn = new Fournisseur($db);
+
+		// Change supplier prices
+		$sql = 'SELECT pfp.rowid, pfp.fk_soc, pfp.price as price, pfp.quantity as qty, pfp.fk_availability, pfp.ref_fourn';
+		$sql.= ' FROM '.MAIN_DB_PREFIX.'product_fournisseur_price as pfp, '.MAIN_DB_PREFIX.'societe as s';
+		$sql.= ' WHERE pfp.fk_soc = s.rowid AND pfp.entity IN ('.getEntity('product',1).')';
+		$sql.= " AND tva_tx = '".$db->escape($oldvatrate)."'";
+		$sql.= " AND s.fk_pays = '".$country_id."'";
+		//print $sql;
 		$resql=$db->query($sql);
 		if ($resql)
 		{
 			$num = $db->num_rows($resql);
 
-			$i = 0; $nbrecordsmodified=0;
+			$i = 0;
 			while ($i < $num)
 			{
 				$obj = $db->fetch_object($resql);
 
-				$ret=$objectstatic->fetch($obj->rowid);
+				$ret=$objectstatic2->fetch_product_fournisseur_price($obj->rowid);
 				if ($ret > 0)
 				{
 					$ret=0; $retm=0; $updatelevel1=false;
 
-					// Update multiprice
-					$listofmulti=array_reverse($objectstatic->multiprices, true);	// To finish with level 1
-					foreach ($listofmulti as $level => $multiprices)
-					{
-						$price_base_type = $objectstatic->multiprices_base_type[$level];	// Get price_base_type of product/service to keep the same for update
-						if (empty($price_base_type)) continue;	// Discard not defined price levels
-
-						if ($price_base_type == 'TTC')
-						{
-							$newprice=price2num($objectstatic->multiprices_ttc[$level],'MU');    // Second param must be MU (we want a unit price so 'MU'. If unit price was on 4 decimal, we must keep 4 decimals)
-							$newminprice=$objectstatic->multiprices_min_ttc[$level];
-						}
-						else
-						{
-							$newprice=price2num($objectstatic->multiprices[$level],'MU');    // Second param must be MU (we want a unit price so 'MU'. If unit price was on 4 decimal, we must keep 4 decimals)
-							$newminprice=$objectstatic->multiprices_min[$level];
-						}
-						if ($newminprice > $newprice) $newminprice=$newprice;
-						$newvat=str_replace('*','',$newvatrate);
-						$newnpr=$objectstatic->multiprices_recuperableonly[$level];
-						$newlevel=$level;
-
-						//print "$objectstatic->id $newprice, $price_base_type, $newvat, $newminprice, $newlevel, $newnpr<br>\n";
-						$retm=$objectstatic->updatePrice($objectstatic->id, $newprice, $price_base_type, $user, $newvat, $newminprice, $newlevel, $newnpr);
-						if ($retm < 0)
-						{
-							$error++;
-							break;
-						}
-
-						if ($newlevel == 1) $updatelevel1=true;
-					}
-
-					// Update single price
-					$price_base_type = $objectstatic->price_base_type;	// Get price_base_type of product/service to keep the same for update
-					if ($price_base_type == 'TTC')
-					{
-						$newprice=price2num($objectstatic->price_ttc,'MU');    // Second param must be MU (we want a unit price so 'MU'. If unit price was on 4 decimal, we must keep 4 decimals)
-						$newminprice=$objectstatic->price_min_ttc;
-					}
-					else
-					{
-						$newprice=price2num($objectstatic->price,'MU');    // Second param must be MU (we want a unit price so 'MU'. If unit price was on 4 decimal, we must keep 4 decimals)
-						$newminprice=$objectstatic->price_min;
-					}
-					if ($newminprice > $newprice) $newminprice=$newprice;
+					$price_base_type='HT';
+					//$price_base_type = $objectstatic2->price_base_type;	// Get price_base_type of product/service to keep the same for update
+					//if ($price_base_type == 'TTC')
+					//{
+					//	$newprice=price2num($objectstatic2->price_ttc,'MU');    // Second param must be MU (we want a unit price so 'MU'. If unit price was on 4 decimal, we must keep 4 decimals)
+					//	$newminprice=$objectstatic2->price_min_ttc;
+					//}
+					//else
+					//{
+						$newprice=price2num($obj->price,'MU');    // Second param must be MU (we want a unit price so 'MU'. If unit price was on 4 decimal, we must keep 4 decimals)
+						//$newminprice=$objectstatic2->fourn_price_min;
+					//}
+					//if ($newminprice > $newprice) $newminprice=$newprice;
 					$newvat=str_replace('*','',$newvatrate);
-					$newnpr=$objectstatic->recuperableonly;
+					//$newnpr=$objectstatic2->recuperableonly;
 					$newlevel=0;
 					if (! empty($price_base_type) && ! $updatelevel1)
 					{
-						//print "$objectstatic->id $newprice, $price_base_type, $newvat, $newminprice, $newlevel, $newnpr<br>\n";
-						$ret=$objectstatic->updatePrice($objectstatic->id,$newprice, $price_base_type, $user, $newvat, $newminprice, $newlevel, $newnpr);
+						//print "$objectstatic2->id $newprice, $price_base_type, $newvat, $newminprice, $newlevel, $newnpr<br>\n";
+						$fourn->id=$obj->fk_soc;
+						$ret=$objectstatic2->update_buyprice($obj->qty, $newprice, $user, $price_base_type, $fourn, $obj->fk_availability, $obj->ref_fourn, $newvat);
 					}
 
 					if ($ret < 0 || $retm < 0) $error++;
 					else $nbrecordsmodified++;
 				}
-
 				$i++;
 			}
-
-			if (! $error)
-			{
-				if ($nbrecordsmodified > 0) setEventMessage($langs->trans("RecordsModified",$nbrecordsmodified));
-				else setEventMessage($langs->trans("NoRecordFound"),'warnings');
-				$db->commit();
-			}
-			else
-			{
-				setEventMessage($langs->trans("Error"),'errors');
-				$db->rollback();
-			}
 		}
+		else dol_print_error($db);
+
+
+		if (! $error)
+		{
+			$db->commit();
+		}
+		else
+		{
+			$db->rollback();
+		}
+
+		// Output result
+		if (! $error)
+		{
+			if ($nbrecordsmodified > 0) setEventMessage($langs->trans("RecordsModified",$nbrecordsmodified));
+			else setEventMessage($langs->trans("NoRecordFound"),'warnings');
+		}
+		else
+		{
+			setEventMessage($langs->trans("Error"),'errors');
+		}
+
 	}
 }
 
