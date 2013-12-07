@@ -109,16 +109,17 @@ if ($sttc)
 }
 if ($sall)
 {
-	$sql .= natural_search(array('cf.ref', 'cf.note_public'), $sall);
+	$sql .= natural_search(array('cf.ref', 'cf.note_public', 'cf.note_private'), $sall);
 }
 if ($socid) $sql.= " AND s.rowid = ".$socid;
 
 if (GETPOST('statut'))
 {
-	$sql .= " AND fk_statut =".GETPOST('statut');
+	$sql .= " AND fk_statut =".GETPOST('statut','int');
 }
 
-$sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit+1, $offset);
+$sql.= " ORDER BY $sortfield $sortorder ";
+$sql.= $db->plimit($conf->liste_limit+1, $offset);
 
 $resql = $db->query($sql);
 if ($resql)

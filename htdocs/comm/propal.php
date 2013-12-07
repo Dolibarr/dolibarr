@@ -978,7 +978,7 @@ else if ($action == 'updateligne' && $user->rights->propal->creer && GETPOST('sa
 			$error++;
 		}
 	}
-
+	
 	if (! $error)
 	{
 		$result = $object->updateline(
