@@ -974,6 +974,20 @@ class Propal extends CommonObject
         // Create clone
         $result=$this->create($user);
         if ($result < 0) $error++;
+		else
+		{
+			// copy internal contacts
+            if ($this->copy_linked_contact($objFrom, 'internal') < 0)
+				$error++;
+
+			// copy external contacts if same company
+			elseif ($objFrom->socid == $this->socid)
+			{
+                if ($this->copy_linked_contact($objFrom, 'external') < 0)
+					$error++;
+			}
+
+		}
 
         if (! $error)
         {
