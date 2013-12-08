@@ -361,6 +361,7 @@ center .error { padding:8px !important; padding-left:26px !important; padding-ri
 <?php if (! empty($dol_optimize_smallscreen)) { ?>
 .hideonsmartphone { display: none; }
 .noenlargeonsmartphone { width : 50px !important; display: inline !important; }
+.maxwidthonsmartphone { max-width: 100px; }
 <?php } ?>
 .linkobject { cursor:pointer; }
 
@@ -1159,14 +1160,14 @@ table.notopnoleftnoright {
 	margin:0px;
 }
 
-table.border, table.dataTable, .table-border, .table-border-col, .table-key-border-col, .table-val-border-col  {
+table.border, table.dataTable, .table-border, .table-border-col, .table-key-border-col, .table-val-border-col, div.border {
 	border:1px solid #dddddd;
 	border-collapse:collapse;
 	padding:1px 0px;
 	padding-left:2px;
 }
 
-table.border td {
+table.border td, div.border div div.tagtd {
 	padding:1px 0px;
 	border:1px solid #dddddd;
 	border-collapse:collapse;
@@ -2226,9 +2227,12 @@ ul.ulmenu {
 .ui-mobile fieldset {
 	border-bottom: none !important;
 }
+.ui-body-c, .ui-btn-up-c, .ui-btn-hover-c {
+	border: none !important;
+}
 
 /* Style for first level menu with jmobile */
-.ui-bar-b {
+.ui-bar-b, .lilevel0  {
     background: rgb(<?php echo $colorbacktitle1; ?>);
     background-repeat: repeat-x;
 	<?php if ($usecss3) { ?>
@@ -2257,15 +2261,6 @@ ul.ulmenu {
 	background-image: -o-linear-gradient( #eee,#e1e1e1 ) !important;
 	background-image: linear-gradient( #eee,#e1e1e1 ) !important;
 }
-.lilevel1:hover, .lilevel2:hover, .lilevel3:hover, .lilevel4:hover {
-	background-image: -webkit-gradient(linear,left top,left bottom,from( #ddd ),to( #d1d1d1 )) !important;
-	background-image: -webkit-linear-gradient( #ddd,#d1d1d1 ) !important;
-	background-image: -moz-linear-gradient( #ddd,#d1d1d1 ) !important;
-	background-image: -ms-linear-gradient( #ddd,#d1d1d1 ) !important;
-	background-image: -o-linear-gradient( #ddd,#d1d1d1 ) !important;
-	background-image: linear-gradient( #ddd,#d1d1d1 ) !important;
-}
-
 
 
 <?php

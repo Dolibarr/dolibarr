@@ -177,13 +177,13 @@ while ($i < $nbofbank)
 	if ($conf->global->BANK_SHOW_ORDER_OPTION == $i)
 	{
 		print '<td align="center">';
-		print img_picto($langs->trans("Activated"),'switch_on');
+		print img_picto($langs->trans("Activated"),'on');
 		print '</td>';
 	}
 	else
 	{
 		print '<td align="center"><a href="'.$_SERVER['PHP_SELF'].'?action=setbankorder&amp;value='.$i.'">';
-		print img_picto($langs->trans("Disabled"),'switch_off');
+		print img_picto($langs->trans("Disabled"),'off');
 		print '</a></td>';
 	}
 	print '<td>&nbsp;</td>';

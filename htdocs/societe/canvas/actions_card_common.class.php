@@ -618,7 +618,7 @@ abstract class ActionsCardCommon
                 }
                 else
                 {
-                    $this->tpl['linked_member'] = $langs->trans("UserNotLinkedToMember");
+                    $this->tpl['linked_member'] = $langs->trans("ThirdpartyNotLinkedToMember");
                 }
             }
 

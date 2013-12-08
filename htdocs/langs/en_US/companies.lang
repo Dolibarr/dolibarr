@@ -66,6 +66,9 @@ Country=Country
 CountryCode=Country code
 CountryId=Country id
 Phone=Phone
+Skype=Skype
+Call=Call
+Chat=Chat
 PhonePro=Prof. phone
 PhonePerso=Pers. phone
 PhoneMobile=Mobile
@@ -396,7 +399,9 @@ InActivity=Open
 ActivityCeased=Closed
 ActivityStateFilter=Activity status
 ProductsIntoElements=List of products into
+CurrentOutstandingBill=Current outstanding bill
 OutstandingBill=Max. for outstanding bill
+OutstandingBillReached=Reached max. for outstanding bill
 # Monkey
 MonkeyNumRefModelDesc=Return numero with format %syymm-nnnn for customer code and %syymm-nnnn for supplier code where yy is year, mm is month and nnnn is a sequence with no break and no return to 0.
 # Leopard

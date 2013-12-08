@@ -611,6 +611,7 @@ class ActionComm extends CommonObject
         $resql=$this->db->query($sql);
         if ($resql)
         {
+            // This assignment in condition is not a bug. It allows walking the results.
             while ($obj=$this->db->fetch_object($resql))
             {
                 $this->nbtodo++;
@@ -823,7 +824,8 @@ class ActionComm extends CommonObject
 
         require_once (DOL_DOCUMENT_ROOT ."/core/lib/xcal.lib.php");
         require_once (DOL_DOCUMENT_ROOT ."/core/lib/date.lib.php");
-
+        require_once (DOL_DOCUMENT_ROOT ."/core/lib/files.lib.php");
+        
         dol_syslog(get_class($this)."::build_exportfile Build export file format=".$format.", type=".$type.", cachedelay=".$cachedelay.", filename=".$filename.", filters size=".count($filters), LOG_DEBUG);
 
         // Check parameters
@@ -886,7 +888,7 @@ class ActionComm extends CommonObject
             $sql.= " AND a.entity = ".$conf->entity;
             foreach ($filters as $key => $value)
             {
-                if ($key == 'notolderthan') $sql.=" AND a.datep >= '".$this->db->idate($now-($value*24*60*60))."'";
+                if ($key == 'notolderthan' && $value != '') $sql.=" AND a.datep >= '".$this->db->idate($now-($value*24*60*60))."'";
                 if ($key == 'year')         $sql.=" AND a.datep BETWEEN '".$this->db->idate(dol_get_first_day($value,1))."' AND '".$this->db->idate(dol_get_last_day($value,12))."'";
                 if ($key == 'id')           $sql.=" AND a.id=".(is_numeric($value)?$value:0);
                 if ($key == 'idfrom')       $sql.=" AND a.id >= ".(is_numeric($value)?$value:0);
@@ -933,6 +935,7 @@ class ActionComm extends CommonObject
             if ($resql)
             {
                 // Note: Output of sql request is encoded in $conf->file->character_set_client
+                // This assignment in condition is not a bug. It allows walking the results.
                 while ($obj=$this->db->fetch_object($resql))
                 {
                     $qualified=true;
@@ -941,8 +944,8 @@ class ActionComm extends CommonObject
                     $event=array();
                     $event['uid']='dolibarragenda-'.$this->db->database_name.'-'.$obj->id."@".$_SERVER["SERVER_NAME"];
                     $event['type']=$type;
-                    $datestart=$this->db->jdate($obj->datep);
-                    $dateend=$this->db->jdate($obj->datep2);
+                    $datestart=$this->db->jdate($obj->datep)-(empty($conf->global->AGENDA_EXPORT_FIX_TZ)?0:($conf->global->AGENDA_EXPORT_FIX_TZ*3600));
+                    $dateend=$this->db->jdate($obj->datep2)-(empty($conf->global->AGENDA_EXPORT_FIX_TZ)?0:($conf->global->AGENDA_EXPORT_FIX_TZ*3600));
                     $duration=$obj->durationp;
                     $event['summary']=$obj->label.($obj->socname?" (".$obj->socname.")":"");
                     $event['desc']=$obj->note;
@@ -961,8 +964,8 @@ class ActionComm extends CommonObject
 					//$urlwithroot=DOL_MAIN_URL_ROOT;						// This is to use same domain name than current
                     $url=$urlwithroot.'/comm/action/fiche.php?id='.$obj->id;
                     $event['url']=$url;
-                    $event['created']=$this->db->jdate($obj->datec);
-                    $event['modified']=$this->db->jdate($obj->datem);
+                    $event['created']=$this->db->jdate($obj->datec)-(empty($conf->global->AGENDA_EXPORT_FIX_TZ)?0:($conf->global->AGENDA_EXPORT_FIX_TZ*3600));
+                    $event['modified']=$this->db->jdate($obj->datem)-(empty($conf->global->AGENDA_EXPORT_FIX_TZ)?0:($conf->global->AGENDA_EXPORT_FIX_TZ*3600));
 
                     if ($qualified && $datestart)
                     {
@@ -1009,10 +1012,11 @@ class ActionComm extends CommonObject
 
             if ($result >= 0)
             {
-                if (rename($outputfiletmp,$outputfile)) $result=1;
+                if (dol_move($outputfiletmp,$outputfile,0,1)) $result=1;
                 else
                 {
-                    dol_syslog(get_class($this)."::build_exportfile failed to rename ".$outputfiletmp." to ".$outputfile, LOG_ERR);
+                	$this->error='Failed to rename '.$outputfiletmp.' into '.$outputfile;
+                    dol_syslog(get_class($this)."::build_exportfile ".$this->error, LOG_ERR);
                     dol_delete_file($outputfiletmp,0,1);
                     $result=-1;
                 }

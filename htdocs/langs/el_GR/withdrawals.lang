@@ -92,5 +92,5 @@ InfoTransMessage=Η διαρκής %s ώστε έχει μεταδίδει στ�
 InfoTransData=Ποσό: %s <br> Metode: %s <br> Ημερομηνία: %s
 InfoFoot=Αυτό είναι ένα αυτοματοποιημένο μήνυμα που αποστέλλεται από Dolibarr
 InfoRejectSubject=Μόνιμη προκειμένου αρνήθηκε
-# InfoRejectMessage=Hello,<br><br>the standing order of invoice %s related to the company %s, with an amount of %s has been refused by the bank.<br><br>--<br>%s
+InfoRejectMessage=Γεια σας, <br><br> η πάγια εντολή του τιμολογίου %s που σχετίζεται με την εταιρία %s, με το ποσό των %s έχει απορριφθεί από την τράπεζα. <br><br> -- <br>%s
 ModeWarning=Επιλογή για την πραγματική κατάσταση, δεν είχε καθοριστεί, σταματάμε μετά από αυτή την προσομοίωση

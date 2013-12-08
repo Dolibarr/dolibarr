@@ -71,7 +71,7 @@ print_fiche_titre($langs->trans("InterventionsSetup"),$linkback,'setup');
 
 $head=fichinter_admin_prepare_head();
 
-dol_fiche_head($head, 'attributes', $langs->trans("Ficheinter"), 0, 'fichinter');
+dol_fiche_head($head, 'attributes', $langs->trans("Interventions"), 0, 'intervention');
 
 
 print $langs->trans("DefineHereComplementaryAttributes",$textobject).'<br>'."\n";

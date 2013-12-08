@@ -36,7 +36,7 @@ ErrorCanNotReadDir=Αποτυχία ανάγνωσης φακέλου %s
 ErrorConstantNotDefined=Parameter %s not defined
 ErrorUnknown=Άγνωστο Λάθος
 ErrorSQL=Σφάλμα SQL
-ErrorLogoFileNotFound=ΤΟ λογότυπο  '%s' δεν βρέθηκε
+ErrorLogoFileNotFound=Το λογότυπο  '%s' δεν βρέθηκε
 ErrorGoToGlobalSetup=Πηγαίνετε στο 'Εταιρία/Οργανισμός' Ρυθμίσεις για να το διορθώσετε
 ErrorGoToModuleSetup=Πηγαίνετε στις ρυθμίσεις του αρθρώματος για να το διορθώσετε.
 ErrorFailedToSendMail=Αποτυχία αποστολής mail (αποστολέας=%s, παραλήπτης=%s)
@@ -155,6 +155,7 @@ Valid=Έγκυρο
 Approve=Έγκριση
 ReOpen=Εκ νέου άνοιγμα
 Upload=Αποστολή Αρχείου
+ToLink=Σύνδεσμος
 Select=Επιλογή
 Choose=Επιλογή
 ChooseLangage=Παρακαλούμε επιλέξτε την γλώσσα σας
@@ -658,6 +659,8 @@ from=από
 toward=προς
 Access=Πρόσβαση
 HelpCopyToClipboard=Χρησιμοποιήστε το Ctrl + C για να αντιγράψετε στο πρόχειρο
+SaveUploadedFileWithMask=Αποθηκεύστε το αρχείο στον server με το όνομα "<strong>%s</strong>" (αλλιώς "%s")
+OriginFileName=Αρχική Ονομασία
 
 # Week day
 Monday=Δευτέρα

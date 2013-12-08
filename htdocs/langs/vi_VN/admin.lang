@@ -49,7 +49,7 @@ ErrorReservedTypeSystemSystemAuto=Giá trị 'hệ thống' và 'hệ thống t�
 ErrorCodeCantContainZero=Mã lệnh không thể chứa giá trị 0
 DisableJavascript=Vô hiệu hóa JavaScript và tính năng Ajax
 ConfirmAjax=Sử dụng popups xác định từ Ajax
-UseSearchToSelectCompany=Sử dụng các trường tự động bổ sung để chọn các liên kết với các nhà phát triển thứ ba (thay vì danh sách chọn).<br><br>Đồng thời nếu bạn có một số lượng lớn các nhà phát triển thứ ba (>100 000), bạn có thể tăng tốc độ bằng việc thiết lập hằng số SOCIETE_DONOTSEARCH_ANYWHERE thành 1 trong Thiết lập->Khác. Việc tìm kiếm sẽ được giới hạn với những chuỗi bắt đầu.
+# UseSearchToSelectCompany=Use autocompletion fields to choose third parties (instead of using a list box).<br><br>Also if you have a large number of third parties (> 100 000), you can increase speed by setting constant COMPANY_DONOTSEARCH_ANYWHERE to 1 in Setup->Other. Search will then be limited to start of string.
 ActivityStateToSelectCompany= Thêm tùy chọn bộ lọc để ẩn/hiện các nhà phát triển thứ ba hiện đang hoạt động hoặc đã bị xóa
 UseSearchToSelectContact=Sử dụng trường tự hoàn tất để chọn liên lạc (thay vì sử dụng danh sách chọn).<br><br>Đồng thời nếu bạn có nhiều các phần tiện ích từ bên thứ ba (> 100 000), bạn có thể tắng tốc độ bằng cách thiết lập hằng số CONTACT_DONOTSEARCH_ANYWHERE lên 1 trong Cài đặt->Khác. Tìm kiếm sau đó sẽ giới hạn phần bắt đầu của chuỗi.
 SearchFilter=Tùy chọn bộ lọc tìm kiếm
@@ -368,7 +368,7 @@ ModuleFamilyBase=Hệ thống
 # ExtrafieldParamHelpselect=Parameters list have to be like key,value<br><br> for exemple : <br>1,value1<br>2,value2<br>3,value3<br>...<br><br>In order to have the list depending on another :<br>1,value1|parent_list_code:parent_key<br>2,value2|parent_list_code:parent_key
 # ExtrafieldParamHelpcheckbox=Parameters list have to be like key,value<br><br> for exemple : <br>1,value1<br>2,value2<br>3,value3<br>...
 # ExtrafieldParamHelpradio=Parameters list have to be like key,value<br><br> for exemple : <br>1,value1<br>2,value2<br>3,value3<br>...
-# ExtrafieldParamHelpsellist=Parameters list have come from table<br><br> for exemple : <br>c_typent:libelle:id<br><br>In order to have the list depending on another :<br>c_typent:libelle:id:parent_list_code|parent_column
+# ExtrafieldParamHelpsellist=Parameters list have come from table<br><br> for exemple : <br>c_typent:libelle:id::filter<br><br>In order to have the list depending on another :<br>c_typent:libelle:id:parent_list_code|parent_column:filter <br> filter can be a simple test (eg active=1) to display only active value <br> if you want to filter on extrafields use syntaxt  extra.fieldcode=... (where field code is the code of extrafield)
 # LibraryToBuildPDF=Library used to build PDF
 # WarningUsingFPDF=Warning: Your <b>conf.php</b> contains directive <b>dolibarr_pdf_force_fpdf=1</b>. This means you use the FPDF library to generate PDF files. This library is old and does not support a lot of features (Unicode, image transparency, cyrillic, arab and asiatic languages, ...), so you may experience errors during PDF generation.<br>To solve this and have a full support of PDF generation, please download <a href="http://www.tcpdf.org/" target="_blank">TCPDF library</a>, then comment or remove the line <b>$dolibarr_pdf_force_fpdf=1</b>, and add instead <b>$dolibarr_lib_TCPDF_PATH='path_to_TCPDF_dir'</b>
 # LocalTaxDesc=Some countries apply 2 or 3 taxes on each invoice line. If this is the case, choose type for second and third tax and its rate. Possible type are:<br>1 : local tax apply on products and services without vat (vat is not applied on local tax)<br>2 : local tax apply on products and services before vat (vat is calculated on amount + localtax)<br>3 : local tax apply on products without vat (vat is not applied on local tax)<br>4 : local tax apply on products before vat (vat is calculated on amount + localtax)<br>5 : local tax apply on services without vat (vat is not applied on local tax)<br>6 : local tax apply on services before vat (vat is calculated on amount + localtax)
@@ -379,6 +379,7 @@ ModuleFamilyBase=Hệ thống
 # KeepEmptyToUseDefault=Keep empty to use default value
 # DefaultLink=Default link
 # ValueOverwrittenByUserSetup=Warning, this value may be overwritten by user specific setup (each user can set his own clicktodial url)
+# ExternalModule=External module - Installed into directory %s
 
 # Modules
 # Module0Name=Users & groups
@@ -486,6 +487,8 @@ Module400Name=Các dự án
 # Module2800Desc=FTP Client
 # Module2900Name= GeoIPMaxmind
 # Module2900Desc= GeoIP Maxmind conversions capabilities
+# Module3100Name= Skype
+# Module3100Desc= Add a Skype button into card of adherents / third parties / contacts
 # Module5000Name=Multi-company
 # Module5000Desc=Allows you to manage multiple companies
 # Module6000Name=Workflow
@@ -971,6 +974,8 @@ PhpModules=Module
 # ExtraFieldsContacts=Complementary attributes (contact/address)
 # ExtraFieldsMember=Complementary attributes (member)
 # ExtraFieldsMemberType=Complementary attributes (member type)
+# ExtraFieldsCustomerOrders=Complementary attributes (orders)
+# ExtraFieldsCustomerInvoices=Complementary attributes (invoices)
 # ExtraFieldsSupplierOrders=Complementary attributes (orders)
 # ExtraFieldsSupplierInvoices=Complementary attributes (invoices)
 # ExtraFieldsProject=Complementary attributes (projects)
@@ -1002,6 +1007,7 @@ PhpModules=Module
 # XDebugInstalled=XDebug est chargé.
 # XCacheInstalled=XCache is loaded.
 # AddRefInList=Display customer/supplier ref into list (select list or combobox) and most of hyperlink
+# FieldEdition=Edition of field %s
 ##### Module password generation
 # PasswordGenerationStandard=Return a password generated according to internal Dolibarr algorithm: 8 characters containing shared numbers and characters in lowercase.
 # PasswordGenerationNone=Do not suggest any generated password. Password must be type in manually.

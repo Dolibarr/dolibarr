@@ -66,6 +66,8 @@ Country=Ülkesi
 CountryCode=Ülke kodu
 CountryId=Ülke kimliği
 Phone=Telefonu
+Skype=Skype
+Call=Ara
 PhonePro=İş Telefonu
 PhonePerso=Kişi. telefonu
 PhoneMobile=Mobil
@@ -396,7 +398,7 @@ InActivity=Açık
 ActivityCeased=Kapalı
 ActivityStateFilter=Etkinlik durumu
 ProductsIntoElements=Girecek ürünler listesi
-# OutstandingBill=Outstanding Bill
+OutstandingBill=Ödenmemiş fatura için ençok tutar
 # Monkey
 MonkeyNumRefModelDesc=Sayı biçimini müşteri için %syymm-nnn, tedarikçi için %syymm-nnn gösterir, yy yıl, mm ay ve nnnn ise 0 olmayan bir dizidir
 # Leopard

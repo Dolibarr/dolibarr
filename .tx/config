@@ -1,5 +1,6 @@
 [main]
 host = https://www.transifex.com
+lang_map = uz: uz_UZ
 
 [dolibarr.admin]
 file_filter = htdocs/langs/<lang>/admin.lang

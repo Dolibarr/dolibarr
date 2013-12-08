@@ -410,6 +410,6 @@ PDFCrabeDescription=发票模型Crabe。一个完整的发票模式（支援增�
 PDFOursinDescription=发票模型乌尔桑
 # NumRef Modules
 TerreNumRefModelDesc1=返回号码格式%s yy mm-NNNN标准和更换发票%s yy mm-NNNN信贷票据以及%s yy mm-NNNN其中yy是年，mm是月和nnnn是一个没有空格不为0的序列，
-# MarsNumRefModelDesc1=Return numero with format %syymm-nnnn for standard invoices, %syymm-nnnn for replacement invoices, %syymm-nnnn for credit notes and %syymm-nnnn for credit notes where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
+MarsNumRefModelDesc1=返回数字序号格式 %s yymm-nnnn 用于标准发票，, %s yymm-nnnn 用于置换专用发票, %s yymm-nnnn 用于普通票据, %s yymm-nnnn 用于信用票据，其中 yy 是年, mm 是月  nnnn是一个不为0的没空格的序列号。
 
 TerreNumRefModelError=美元的法案syymm起已经存在，而不是与此序列模型兼容。删除或重新命名它激活该模块。

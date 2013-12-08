@@ -146,7 +146,9 @@ if ($action == 'create')
 /* ************************************************************************** */
 if ($action == 'edit' && ! empty($attrname))
 {
-    print "<br>";
+	$langs->load("members");
+	
+	print "<br>";
     print_titre($langs->trans("FieldEdition", $attrname));
 
     require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_edit.tpl.php';

@@ -116,5 +116,5 @@ DontDowngradeSuperAdmin=Nur ein SuperAdmin kann einen SuperAdmin downgraden
 HierarchicalResponsible=In der Hierarchie verantwortlich
 HierarchicView=Hierarchische Ansicht
 UseTypeFieldToChange=Nutzen sie das Feld "Typ" zum ändern
-# OpenIDURL=OpenID URL
-# LoginUsingOpenID=Login using OpenID
+OpenIDURL=OpenID URL
+# LoginUsingOpenID=Use OpenID to login

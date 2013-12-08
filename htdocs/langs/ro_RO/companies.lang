@@ -66,6 +66,8 @@ Country=Ţară
 CountryCode=Cod ţară
 CountryId=ID Ţara
 Phone=Telefon
+# Skype=Skype
+# Call=Call
 PhonePro=Telefon Prof.
 PhonePerso=Telefon Pers.
 PhoneMobile=Telefon Mobil
@@ -396,7 +398,7 @@ InActivity=Deschis
 ActivityCeased=Închis
 ActivityStateFilter=Statut Activitate
 ProductsIntoElements=Lista produselor in
-# OutstandingBill=Outstanding Bill
+# OutstandingBill=Max. for outstanding bill
 # Monkey
 MonkeyNumRefModelDesc=Retrimite numărulcu formatul %syymm-nnnn pentru codul de client și %syymm-nnnn pentru codul de furnizor unde YY este anul, mm  este luna și nnnn este o secvență continuă și fără să revină la 0.
 # Leopard

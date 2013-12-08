@@ -183,7 +183,7 @@ class InterfaceMailmanSpipsynchro
             // Add user into some linked tools (mailman, spip, etc...)
 			if (($object->oldcopy->email != $object->email) || ($object->oldcopy->typeid != $object->typeid))	// TODO Do del/add also if type change
 			{
-				if ($object->oldcopy->email != $object->email)    // If email has changed we delete mailman subscription for old email
+				if (is_object($object->oldcopy) && ($object->oldcopy->email != $object->email))    // If email has changed we delete mailman subscription for old email
 				{
 					if ($object->oldcopy->del_to_abo() < 0)
 					{

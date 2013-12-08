@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -216,7 +216,7 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 
 			$i = 0;
 			$tot_ttc = 0;
-			while ($i < $num && $i < 20)
+			while ($i < $num)
 			{
 				$obj = $db->fetch_object($resql);
 				print '<tr '.$bc[$var].'><td class="nowrap">';
@@ -285,7 +285,7 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture-
 
 			$i = 0;
 			$tot_ttc = 0;
-			while ($i < $num && $i < 20)
+			while ($i < $num)
 			{
 				$obj = $db->fetch_object($resql);
 				print '<tr '.$bc[$var].'><td class="nowrap">';

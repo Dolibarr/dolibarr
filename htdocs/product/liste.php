@@ -7,6 +7,7 @@
  * Copyright (C) 2013      Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2013      Jean Heimburger   	<jean@tiaris.info>
  * Copyright (C) 2013      Cédric Salvador      <csalvador@gpcsolutions.fr>
+ * Copyright (C) 2013      Florian Henry      <florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -175,8 +176,8 @@ else
 		}
 		$sql .= natural_search($params, $snom);
 	}
-    if (isset($tosell) && dol_strlen($tosell) > 0) $sql.= " AND p.tosell = ".$db->escape($tosell);
-    if (isset($tobuy) && dol_strlen($tobuy) > 0)   $sql.= " AND p.tobuy = ".$db->escape($tobuy);
+    if (isset($tosell) && dol_strlen($tosell) > 0  && $tosell!=-1) $sql.= " AND p.tosell = ".$db->escape($tosell);
+    if (isset($tobuy) && dol_strlen($tobuy) > 0  && $tobuy!=-1)   $sql.= " AND p.tobuy = ".$db->escape($tobuy);
     if (dol_strlen($canvas) > 0)                    $sql.= " AND p.canvas = '".$db->escape($canvas)."'";
     if ($catid > 0)    $sql.= " AND cp.fk_categorie = ".$catid;
     if ($catid == -2)  $sql.= " AND cp.fk_categorie IS NULL";
@@ -270,6 +271,13 @@ else
 
     		// Filter on categories
     	 	$moreforfilter='';
+    	 	$colspan=6;
+    	 	if (! empty($conf->barcode->enabled)) $colspan++;
+    	 	if (! empty($conf->service->enabled) && $type != 0) $colspan++;
+    	 	if (empty($conf->global->PRODUIT_MULTIPRICES)) $colspan++;
+    	 	if ($user->rights->fournisseur->lire) $colspan++;
+    	 	if (! empty($conf->stock->enabled) && $user->rights->stock->lire && $type != 1) $colspan+=2;
+    	 	
     		if (! empty($conf->categorie->enabled))
     		{
     		 	$moreforfilter.=$langs->trans('Categories'). ': ';
@@ -279,26 +287,25 @@ else
     	 	if ($moreforfilter)
     		{
     			print '<tr class="liste_titre">';
-    			print '<td class="liste_titre" colspan="9">';
+    			print '<td class="liste_titre" colspan="'.$colspan.'">';
     		    print $moreforfilter;
     		    print '</td></tr>';
     		}
 
     		// Lignes des titres
-    		print "<tr class=\"liste_titre\">";
+    		print '<tr class="liste_titre">';
     		print_liste_field_titre($langs->trans("Ref"), $_SERVER["PHP_SELF"], "p.ref",$param,"","",$sortfield,$sortorder);
     		print_liste_field_titre($langs->trans("Label"), $_SERVER["PHP_SELF"], "p.label",$param,"","",$sortfield,$sortorder);
     		if (! empty($conf->barcode->enabled)) print_liste_field_titre($langs->trans("BarCode"), $_SERVER["PHP_SELF"], "p.barcode",$param,'','',$sortfield,$sortorder);
     		print_liste_field_titre($langs->trans("DateModification"), $_SERVER["PHP_SELF"], "p.tms",$param,"",'align="center"',$sortfield,$sortorder);
     		if (! empty($conf->service->enabled) && $type != 0) print_liste_field_titre($langs->trans("Duration"), $_SERVER["PHP_SELF"], "p.duration",$param,"",'align="center"',$sortfield,$sortorder);
     		if (empty($conf->global->PRODUIT_MULTIPRICES)) print_liste_field_titre($langs->trans("SellingPrice"), $_SERVER["PHP_SELF"], "p.price",$param,"",'align="right"',$sortfield,$sortorder);
-    		if ($user->rights->produit->creer) {
-    			print '<td class="liste_titre" align="right">'.$langs->trans("BuyingPriceMinShort").'</td>';
-    		}
+    		if ($user->rights->fournisseur->lire) print '<td class="liste_titre" align="right">'.$langs->trans("BuyingPriceMinShort").'</td>';
     		if (! empty($conf->stock->enabled) && $user->rights->stock->lire && $type != 1) print '<td class="liste_titre" align="right">'.$langs->trans("DesiredStock").'</td>';
     		if (! empty($conf->stock->enabled) && $user->rights->stock->lire && $type != 1) print '<td class="liste_titre" align="right">'.$langs->trans("PhysicalStock").'</td>';
-    		print_liste_field_titre($langs->trans("Sell"), $_SERVER["PHP_SELF"], "p.tosell",$param,"",'align="right"',$sortfield,$sortorder);
-            print_liste_field_titre($langs->trans("Buy"), $_SERVER["PHP_SELF"], "p.tobuy",$param,"",'align="right"',$sortfield,$sortorder);
+    		print_liste_field_titre($langs->trans("Sell"), $_SERVER["PHP_SELF"], "p.tosell",$param,"",'align="center"',$sortfield,$sortorder);
+            print_liste_field_titre($langs->trans("Buy"), $_SERVER["PHP_SELF"], "p.tobuy",$param,"",'align="center"',$sortfield,$sortorder);
+            print '<td width="1%">&nbsp;</td>';
     		print "</tr>\n";
 
     		// Lignes des champs de filtre
@@ -336,7 +343,7 @@ else
             }
 
     		// Minimum buying Price
-    		if ($user->rights->produit->creer) {
+    		if ($user->rights->fournisseur->lire) {
     			print '<td class="liste_titre">';
     			print '&nbsp;';
     			print '</td>';
@@ -354,8 +361,12 @@ else
     			print '</td>';
     		}
 
-    		print '<td class="liste_titre">';
-            print '&nbsp;';
+    		print '<td align="center">';  		
+            print $form->selectarray('tosell', array('0'=>$langs->trans('ProductStatusNotOnSellShort'),'1'=>$langs->trans('ProductStatusOnSellShort')),$tosell,1);
+            print '</td >';
+            
+            print '<td align="center">';
+            print $form->selectarray('tobuy', array('0'=>$langs->trans('ProductStatusNotOnBuyShort'),'1'=>$langs->trans('ProductStatusOnBuyShort')),$tobuy,1);
             print '</td>';
 
     		print '<td class="liste_titre" align="right">';
@@ -475,11 +486,13 @@ else
     			}
 
     			// Status (to buy)
-    			print '<td align="right" class="nowrap">'.$product_static->LibStatut($objp->tosell,5,0).'</td>';
+    			print '<td align="center" class="nowrap">'.$product_static->LibStatut($objp->tosell,5,0).'</td>';
 
                 // Status (to sell)
-                print '<td align="right" class="nowrap">'.$product_static->LibStatut($objp->tobuy,5,1).'</td>';
+                print '<td align="center" class="nowrap">'.$product_static->LibStatut($objp->tobuy,5,1).'</td>';
 
+                print '<td>&nbsp;</td>';
+                
                 print "</tr>\n";
     			$i++;
     		}

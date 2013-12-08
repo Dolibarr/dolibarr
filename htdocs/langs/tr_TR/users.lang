@@ -116,5 +116,5 @@ DontDowngradeSuperAdmin=Yalnızca bir SuperAdmin, bir SuperAdmin’inin derecesi
 HierarchicalResponsible=Sorumlu sıradüzeni
 HierarchicView=Sıradüzeni görünümü
 UseTypeFieldToChange=Değiştirmek için Alan türünü kullan
-# OpenIDURL=OpenID URL
-# LoginUsingOpenID=Login using OpenID
+OpenIDURL=OpenID URL
+LoginUsingOpenID=Giriş için OpenID kullan

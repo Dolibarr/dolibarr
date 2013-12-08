@@ -9,6 +9,7 @@
  * Copyright (C) 2008      Raphael Bertrand (Resultic)       <raphael.bertrand@resultic.fr>
  * Copyright (C) 2010-2011 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2013      Cédric Salvador      <csalvador@gpcsolutions.fr>
+ * Copyright (C) 2013      Alexandre Spangaro   <alexandre.spangaro@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,7 +45,7 @@ if (! function_exists('json_encode'))
  *
  * @param	string 	$class		Class name
  * @param 	string 	$member		Name of property
- * @return 	string				Return value of static property.
+ * @return 	mixed				Return value of static property
  */
 function getStaticMember($class, $member)
 {
@@ -573,7 +574,7 @@ function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename='
  *	@param  string	$title      		Title
  *	@param  int		$notab				0=Add tab header, 1=no tab header
  * 	@param	string	$picto				Add a picto on tab title
- *	@param	int		$pictoisfullpath	If 1, image path is a full path. If you set this to 1, you can use url returned by dol_build_path('/mymodyle/img/myimg.png',1) for $picto.
+ *	@param	int		$pictoisfullpath	If 1, image path is a full path. If you set this to 1, you can use url returned by dol_buildpath('/mymodyle/img/myimg.png',1) for $picto.
  * 	@return	void
  */
 function dol_fiche_head($links=array(), $active='0', $title='', $notab=0, $picto='', $pictoisfullpath=0)
@@ -589,7 +590,7 @@ function dol_fiche_head($links=array(), $active='0', $title='', $notab=0, $picto
  *	@param  string	$title      		Title
  *	@param  int		$notab				0=Add tab header, 1=no tab header
  * 	@param	string	$picto				Add a picto on tab title
- *	@param	int		$pictoisfullpath	If 1, image path is a full path. If you set this to 1, you can use url returned by dol_build_path('/mymodyle/img/myimg.png',1) for $picto.
+ *	@param	int		$pictoisfullpath	If 1, image path is a full path. If you set this to 1, you can use url returned by dol_buildpath('/mymodyle/img/myimg.png',1) for $picto.
  * 	@return	void
  */
 function dol_get_fiche_head($links=array(), $active='0', $title='', $notab=0, $picto='', $pictoisfullpath=0)
@@ -775,7 +776,7 @@ function dol_strftime($fmt, $ts=false, $is_gmt=false)
  *	Output date in a string format according to outputlangs (or langs if not defined).
  * 	Return charset is always UTF-8, except if encodetoouput is defined. In this case charset is output charset
  *
- *	@param	timestamp	$time        	GM Timestamps date
+ *	@param	int			$time			GM Timestamps date
  *	@param	string		$format      	Output date format
  *										"%d %b %Y",
  *										"%d/%m/%Y %H:%M",
@@ -931,7 +932,7 @@ function dol_print_date($time,$format='',$tzoutput='tzserver',$outputlangs='',$e
  *  WARNING: This function always use PHP server timezone to return locale informations.
  *  Usage must be avoid.
  *
- *	@param	timestamp	$timestamp      Timestamp
+ *	@param	int			$timestamp      Timestamp
  *	@param	boolean		$fast           Fast mode
  *	@return	array						Array of informations
  *										If no fast mode:
@@ -988,7 +989,7 @@ function dol_getdate($timestamp,$fast=false)
  *	@param	int			$year			Year
  *	@param	int			$gm				1=Input informations are GMT values, otherwise local to server TZ
  *	@param	int			$check			0=No check on parameters (Can use day 32, etc...)
- *	@return	timestamp					Date as a timestamp, '' if error
+ *	@return	int					Date as a timestamp, '' if error
  * 	@see 								dol_print_date, dol_stringtotime, dol_getdate
  */
 function dol_mktime($hour,$minute,$second,$month,$day,$year,$gm=false,$check=1)
@@ -1047,7 +1048,7 @@ function dol_mktime($hour,$minute,$second,$month,$day,$year,$gm=false,$check=1)
  * 								'tzserver' => we add the PHP server timezone
  *  							'tzref' => we add the company timezone
  * 								'tzuser' => we add the user timezone
- *	@return timestamp   $date	Timestamp
+ *	@return int   $date	Timestamp
  */
 function dol_now($mode='gmt')
 {
@@ -1183,6 +1184,51 @@ function dol_print_email($email,$cid=0,$socid=0,$addlink=0,$max=64,$showinvalid=
 		}
 	}
 	return $newemail;
+}
+
+/**
+ * Show Skype link
+ *
+ * @param	string		$skype			Skype to show (only skype, without 'Name of recipient' before)
+ * @param int 			$cid 			  Id of contact if known
+ * @param int 			$socid 			Id of third party if known
+ * @param int 			$addlink		0=no link to create action
+ * @param	int			  $max			  Max number of characters to show
+ * @return	string						  HTML Link
+ */
+function dol_print_skype($skype,$cid=0,$socid=0,$addlink=0,$max=64)
+{
+	global $conf,$user,$langs;
+
+	$newskype=$skype;
+
+	if (empty($skype)) return '&nbsp;';
+
+	if (! empty($addlink))
+	{
+		$newskype='<a href="skype:';
+		$newskype.=dol_trunc($skype,$max);
+		$newskype.='?call" alt="'.$langs->trans("Call").'&nbsp;'.$skype.'" title="'.$langs->trans("Call").'&nbsp;'.$skype.'">';
+    $newskype.='<img src="../theme/common/skype_callbutton.png" border="0">&nbsp;';
+		$newskype.='</a>&nbsp;<a href="skype:';
+		$newskype.=dol_trunc($skype,$max);
+		$newskype.='?chat" alt="'.$langs->trans("Chat").'&nbsp;'.$skype.'" title="'.$langs->trans("Chat").'&nbsp;'.$skype.'">';
+    $newskype.='<img src="../theme/common/skype_chatbutton.png" border="0">&nbsp;';
+		$newskype.='</a>';
+
+		if (($cid || $socid) && ! empty($conf->agenda->enabled) && $user->rights->agenda->myactions->create)
+		{
+			$type='AC_SKYPE'; $link='';
+			if (! empty($conf->global->AGENDA_ADDACTIONFORSKYPE)) $link='<a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&amp;backtopage=1&amp;actioncode='.$type.'&amp;contactid='.$cid.'&amp;socid='.$socid.'">'.img_object($langs->trans("AddAction"),"calendar").'</a>';
+			$newskype='<table class="nobordernopadding"><tr><td>'.$newskype.' </td><td>&nbsp;'.$link.'</td></tr></table>';
+		}
+	}
+	else
+	{
+		$langs->load("errors");
+		$newskype.=img_warning($langs->trans("ErrorBadSkype",$skype));
+	}
+	return $newskype;
 }
 
 /**
@@ -2315,7 +2361,7 @@ function dol_print_error_email($prefixcode)
  *	@param	string	$field       Field to use for new sorting
  *	@param	string	$begin       ("" by defaut)
  *	@param	string	$moreparam   Add more parameters on sort url links ("" by default)
- *	@param  string	$td          Options of attribute td ("" by defaut)
+ *	@param  string	$td          Options of attribute td ("" by defaut, example: 'align="center"')
  *	@param  string	$sortfield   Current field used to sort
  *	@param  string	$sortorder   Current sort order
  *	@return	void
@@ -2329,7 +2375,7 @@ function print_liste_field_titre($name, $file="", $field="", $begin="", $morepar
  *	Get title line of an array
  *
  *	@param	string	$name        Label of field
- *	@param	int		$thead		 0=To use with standard table forat, 1=To use inside <thead><tr>, 2=To use with <div> 
+ *	@param	int		$thead		 0=To use with standard table forat, 1=To use inside <thead><tr>, 2=To use with <div>
  *	@param	string	$file        Url used when we click on sort picto
  *	@param	string	$field       Field to use for new sorting. Empty if this field is not sortable.
  *	@param	string	$begin       ("" by defaut)
@@ -2349,11 +2395,11 @@ function getTitleFieldOfList($name, $thead=0, $file="", $field="", $begin="", $m
 
 	$tag='th';
 	if ($thead==2) $tag='div';
-	
+
 	// If field is used as sort criteria we use a specific class
 	// Example if (sortfield,field)=("nom","xxx.nom") or (sortfield,field)=("nom","nom")
-	if ($field && ($sortfield == $field || $sortfield == preg_replace("/^[^\.]+\./","",$field))) $out.= '<'.$tag.' class="liste_titre_sel" '. $moreattrib.'>';
-	else $out.= '<'.$tag.' class="liste_titre" '. $moreattrib.'>';
+	if ($field && ($sortfield == $field || $sortfield == preg_replace("/^[^\.]+\./","",$field))) $out.= '<'.$tag.' class="liste_titre_sel'.($field?' nowrap':'').'" '. $moreattrib.'>';
+	else $out.= '<'.$tag.' class="liste_titre'.($field?' nowrap':'').'" '. $moreattrib.'>';
 
 	if (! empty($conf->dol_optimize_smallscreen) && empty($thead) && $field)    // If this is a sort field
 	{
@@ -2406,7 +2452,7 @@ function getTitleFieldOfList($name, $thead=0, $file="", $field="", $begin="", $m
 }
 
 /**
- *	Show a title (deprecated. use print_fiche_titre instrad)
+ *	Show a title (deprecated. use print_fiche_titre instead)
  *
  *	@param	string	$title			Title to show
  *	@return	string					Title to show
@@ -2419,16 +2465,16 @@ function print_titre($title)
 /**
  *	Show a title with picto
  *
- *	@param	string	$titre				Title to show
+ *	@param	string	$title				Title to show
  *	@param	string	$mesg				Added message to show on right
  *	@param	string	$picto				Icon to use before title (should be a 32x32 transparent png file)
  *	@param	int		$pictoisfullpath	1=Icon name is a full absolute url of image
  * 	@param	int		$id					To force an id on html objects
  * 	@return	void
  */
-function print_fiche_titre($titre, $mesg='', $picto='title.png', $pictoisfullpath=0, $id='')
+function print_fiche_titre($title, $mesg='', $picto='title.png', $pictoisfullpath=0, $id='')
 {
-	print load_fiche_titre($titre, $mesg, $picto, $pictoisfullpath, $id);
+	print load_fiche_titre($title, $mesg, $picto, $pictoisfullpath, $id);
 }
 
 /**
@@ -2877,7 +2923,7 @@ function get_localtax($tva, $local, $thirdparty_buyer="", $thirdparty_seller="")
  *  Instead this function must be called when adding a line to get (array of localtax and type) and
  *  provide it to the function calcul_price_total.
  *
- *  @param		real	$vatrate			VAT Rate
+ *  @param		float	$vatrate			VAT Rate
  *  @param		int		$local              Number of localtax (1 or 2, or 0 to return 1 & 2)
  *  @param		int		$thirdparty         Company object
  *  @return		array    	  				array(localtax_type1(1-6 / 0 if not found), rate of localtax1, ...)
@@ -2961,7 +3007,7 @@ function get_product_vat_for_country($idprod, $thirdparty_seller, $idprodfournpr
 			$sql.= " WHERE t.active=1 AND t.fk_pays = p.rowid AND p.code='".$thirdparty_seller->country_code."'";
 			$sql.= " ORDER BY t.taux DESC, t.recuperableonly ASC";
 			$sql.= $db->plimit(1);
-	
+
 			$resql=$db->query($sql);
 			if ($resql)
 			{

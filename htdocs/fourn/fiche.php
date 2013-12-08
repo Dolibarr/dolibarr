@@ -99,8 +99,6 @@ if ($object->fetch($id))
 
 
 	print '<div class="fichecenter"><div class="fichehalfleft">';
-	//print '<table width="100%" class="notopnoleftnoright">';
-	//print '<tr><td valign="top" width="50%" class="notopnoleft">';
 
 	print '<table width="100%" class="border">';
 	print '<tr><td width="30%">'.$langs->trans("ThirdPartyName").'</td><td width="70%" colspan="3">';
@@ -263,7 +261,7 @@ if ($object->fetch($id))
         }
         else
         {
-            print $langs->trans("UserNotLinkedToMember");
+            print $langs->trans("ThirdpartyNotLinkedToMember");
         }
         print '</td>';
         print "</tr>\n";
@@ -273,7 +271,6 @@ if ($object->fetch($id))
 
 
 	print '</div><div class="fichehalfright"><div class="ficheaddleft">';
-	//print '</td><td valign="top" width="50%" class="notopnoleftnoright">';
 
 
 	$var=true;
@@ -428,8 +425,6 @@ if ($object->fetch($id))
 
 	print '</div></div></div>';
 	print '<div style="clear:both"></div>';
-	//print '</td></tr>';
-	//print '</table>' . "\n";
 
 	dol_fiche_end();
 
@@ -472,7 +467,7 @@ if ($object->fetch($id))
     {
         print '<br>';
         // List of contacts
-        show_contacts($conf,$langs,$db,$object,$_SERVER["PHP_SELF"].'?id='.$object->id);
+        show_contacts($conf,$langs,$db,$object,$_SERVER["PHP_SELF"].'?socid='.$object->id);
     }
 
     // Addresses list

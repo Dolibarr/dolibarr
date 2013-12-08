@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2009	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005		Marc Barilley / Ocebo	<marc@ocebo.com>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2013		Cédric Salvador			<csalvador@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +22,7 @@
 /**
  *       \file       htdocs/fourn/facture/document.php
  *       \ingroup    facture, fournisseur
- *       \brief      Page de gestion des documents attachees a une facture fournisseur
+ *       \brief      Page de gestion des documents attaches a une facture fournisseur
  */
 
 require '../../main.inc.php';
@@ -71,28 +72,7 @@ if ($object->fetch($id, $ref))
  * Actions
  */
 
-// Envoi fichier
-if (GETPOST('sendit') && ! empty($conf->global->MAIN_UPLOAD_DOC))
-{
-    if ($object->id > 0) {
-    	dol_add_file_process($upload_dir, 0, 1, 'userfile');
-    }
-}
-
-// Delete
-else if ($action == 'confirm_deletefile' && $confirm == 'yes')
-{
-	if ($object->id > 0)
-	{
-		$langs->load("other");
-		$file = $upload_dir . '/' . GETPOST('urlfile');	// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
-		$ret=dol_delete_file($file,0,0,0,$object);
-		if ($ret) setEventMessage($langs->trans("FileWasRemoved", GETPOST('urlfile')));
-		else setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), 'errors');
-		header('Location: '.$_SERVER["PHP_SELF"].'?id='.$id);
-		exit;
-	}
-}
+include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_pre_headers.tpl.php';
 
 
 /*
@@ -197,16 +177,10 @@ if ($object->id > 0)
 	print '</table>';
 	print '</div>';
 
-	// Affiche formulaire upload
-	$formfile=new FormFile($db);
-	$formfile->form_attach_new_file($_SERVER['PHP_SELF'].'?facid='.$object->id,'',0,0,$user->rights->fournisseur->facture->creer, 50, $object);
-
-
-	// List of document
-	$param='&facid='.$object->id;
-	$ref=dol_sanitizeFileName($object->ref);
-	$formfile->list_of_documents($filearray,$object,'facture_fournisseur',$param,0,get_exdir($object->id,2,0).$ref.'/');
-
+	$modulepart = 'facture_fournisseur';
+	$permission = $user->rights->fournisseur->facture->creer;
+	$param = '&facid=' . $object->id;
+	include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_post_headers.tpl.php';
 }
 else
 {

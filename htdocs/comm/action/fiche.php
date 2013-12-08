@@ -167,7 +167,8 @@ if ($action == 'add_action')
 	$actioncomm->datep = $datep;
 	$actioncomm->datef = $datef;
 	$actioncomm->percentage = $percentage;
-	$actioncomm->duree=((GETPOST('dureehour') * 60) + GETPOST('dureemin')) * 60;
+	$actioncomm->duree=((float) (GETPOST('dureehour') * 60) + (float) GETPOST('dureemin')) * 
+60;
 
 	$usertodo=new User($db);
 	if ($_POST["affectedto"] > 0)
@@ -518,7 +519,7 @@ if ($action == 'create')
 		if (GETPOST("afaire") == 1) $percent=0;
 		else if (GETPOST("afaire") == 2) $percent=100;
 	}
-	print $htmlactions->form_select_status_action('formaction',$percent,1,'complete');
+	$htmlactions->form_select_status_action('formaction',$percent,1,'complete');
 	print '</td></tr>';
 
     // Location
@@ -774,7 +775,7 @@ if ($id > 0)
 		// Status
 		print '<tr><td class="nowrap">'.$langs->trans("Status").' / '.$langs->trans("Percentage").'</td><td colspan="3">';
 		$percent=GETPOST("percentage")?GETPOST("percentage"):$act->percentage;
-		print $htmlactions->form_select_status_action('formaction',$percent,1);
+		$htmlactions->form_select_status_action('formaction',$percent,1);
 		print '</td></tr>';
 
         // Location

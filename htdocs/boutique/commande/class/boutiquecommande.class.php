@@ -27,8 +27,7 @@ include_once DOL_DOCUMENT_ROOT.'/boutique/commande/class/boutiquecommande.class.
 
 
 /**
- *	\class      BoutiqueCommande
- *	\brief      Classe permettant la gestion des commandes OSC
+ *	Class to manage orders OSC
  */
 class BoutiqueCommande
 {

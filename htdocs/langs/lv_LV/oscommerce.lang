@@ -1,0 +1,8 @@
+# Dolibarr language file - Source file is en_US - oscommerce
+OSCommerce=OS Commerce
+OSCommerceSetup=OS Commerce moduļa konfigurēšana
+OSCommerceSetupSaved=OS Commerce uzstādīšanas konfigurācija saglabāta
+OSCommerceServer=OS Commerce servera nosaukums / ip adrese
+OSCommerceDatabaseName=OS Commerce datubāzes nosaukums
+OSCommercePrefix=OS Commerce tabulas prefikss
+OSCommerceUser=OS Commerce datu bāzes pieteikšanās vārds

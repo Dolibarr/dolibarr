@@ -116,7 +116,7 @@ function build_calfile($format,$title,$desc,$events_array,$outputfile)
                 LOCATION:
                 SEQUENCE:0
                 STATUS:CONFIRMED
-                SUMMARY:Tache 1 heure
+                SUMMARY:Tâche 1 heure
                 TRANSP:OPAQUE
                 END:VEVENT
 
@@ -132,7 +132,7 @@ function build_calfile($format,$title,$desc,$events_array,$outputfile)
                 LOCATION:
                 SEQUENCE:0
                 STATUS:CONFIRMED
-                SUMMARY:Tache 1 jour
+                SUMMARY:Tâche 1 jour
                 TRANSP:TRANSPARENT
                 END:VEVENT
                 */
@@ -484,7 +484,7 @@ function quotedPrintEncode($str,$forcal=0)
 	{
 		$newpara = '';
 
-		$strlength=dol_strlen($line);
+		$strlength=strlen($line);	// Do not use dol_strlen here, we need number of bytes
 		for ($j = 0; $j <= ($strlength - 1); $j++)
 		{
 			$char = substr($line, $j, 1);
@@ -493,7 +493,7 @@ function quotedPrintEncode($str,$forcal=0)
 			if ( $ascii < 32 || $ascii == 61 || $ascii > 126 )
 			$char = '=' . strtoupper(sprintf("%02X", $ascii));
 
-			if ((dol_strlen($newpara) + dol_strlen($char)) >= 76 )
+			if ((strlen($newpara) + strlen($char)) >= 76 )	// Do not use dol_strlen here, we need number of bytes
 			{
 				$out .= $newpara . '=' . "\r\n";	// CRLF
 				if ($forcal) $out .= " ";		// + Space for cal

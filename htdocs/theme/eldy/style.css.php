@@ -109,7 +109,7 @@ $colorbacklinepair1='255,255,255';    // line pair
 $colorbacklinepair2='255,255,255';    // line pair
 $colorbacklinepairhover=(230+round(($isred+$isgreen+$isblue)/9)).','.(230+round(($isred+$isgreen+$isblue)/9)).','.(230+round(($isred+$isgreen+$isblue)/9));
 //$colorbackbody='#ffffff url('.$img_head.') 0 0 no-repeat;';
-$colorbackbody='#ffffff';
+$colorbackbody='#fcfcfc';
 $colortext='40,40,40';
 $fontsize=empty($conf->dol_optimize_smallscreen)?'12':'14';
 $fontsizesmaller=empty($conf->dol_optimize_smallscreen)?'11':'14';
@@ -128,7 +128,7 @@ if (empty($conf->global->THEME_ELDY_ENABLE_PERSONALIZED))
     $conf->global->THEME_ELDY_BACKTABCARD1='234,234,234';
     $conf->global->THEME_ELDY_BACKTABACTIVE='234,234,234';
     //$conf->global->THEME_ELDY_BACKBODY='#ffffff url('.$img_head.') 0 0 no-repeat;';
-    $conf->global->THEME_ELDY_BACKBODY='#ffffff;';
+    $conf->global->THEME_ELDY_BACKBODY='#fcfcfc;';
     $conf->global->THEME_ELDY_LINEIMPAIR1='242,242,242';
     $conf->global->THEME_ELDY_LINEIMPAIR2='248,248,248';
     $conf->global->THEME_ELDY_LINEIMPAIRHOVER='238,246,252';
@@ -222,7 +222,7 @@ if (! empty($conf->dol_optimize_smallscreen)) $fontsize=11;
 
 
 body {
-<?php if (GETPOST("optioncss") == 'print' || ! empty($conf->dol_optimize_smallscreen)) {  ?>
+<?php if (GETPOST("optioncss") == 'print') {  ?>
 	background-color: #FFFFFF;
 <?php } else { ?>
 	background: <?php print $colorbackbody; ?>;
@@ -254,10 +254,8 @@ input, input.flat, textarea, textarea.flat, form.flat select, select.flat {
 	font-family: <?php print $fontlist ?>;
 	background: #FDFDFD;
     border: 1px solid #C0C0C0;
-    <?php if (empty($dol_use_jmobile)) { ?>
     /*padding: 1px 1px 1px 1px; */
     margin: 0px 0px 0px 0px;
-    <?php } ?>
 }
 
 input, textarea, select {
@@ -265,7 +263,7 @@ input, textarea, select {
 	border:solid 1px rgba(0,0,0,.3);
 	border-top:solid 1px rgba(0,0,0,.3);
 	border-bottom:solid 1px rgba(0,0,0,.2);
-	box-shadow: 1px 1px 2px rgba(0,0,0,.2) inset;
+	/* box-shadow: 1px 1px 1px rgba(0,0,0,.2) inset;*/
 	padding:2px;
 	margin-left:1px;
 	margin-bottom:1px;
@@ -411,6 +409,7 @@ th .button {
 <?php if (! empty($dol_optimize_smallscreen)) { ?>
 .hideonsmartphone { display: none; }
 .noenlargeonsmartphone { width : 50px !important; display: inline !important; }
+.maxwidthonsmartphone { max-width: 100px; }
 <?php } ?>
 .linkobject { cursor: pointer; }
 
@@ -614,7 +613,7 @@ li.tmenu, li.tmenusel {
 li.tmenusel, li.tmenu:hover {
     background-image: -o-linear-gradient(bottom, rgba(250,250,250,0.3) 0%, rgba(0,0,0,0.3) 100%) !important;
     background-image: -moz-linear-gradient(bottom, rgba(250,250,250,0.3) 0%, rgba(0,0,0,0.3) 100%) !important;
-    background-image: -webkit-linear-gradient(bottom, rgba(250,250,250,0.3) 0%, rgba(0,0,0,0.3) 100%) !important;
+    background-image: -webkit-linear-gradient(bottom, rgba(0,0,0,0.3) 0%, rgba(250,250,250,0) 100%) !important;
     background-image: -ms-linear-gradient(bottom, rgba(250,250,250,0.3) 0%, rgba(0,0,0,0.3) 100%) !important;
     background-image: linear-gradient(bottom, rgba(250,250,250,0.3) 0%, rgba(0,0,0,0.3) 100%) !important;
 	background: rgb(<?php echo $colorbackhmenu1 ?>);
@@ -1140,6 +1139,7 @@ td.photo {
     box-shadow: 2px 2px 4px #DDD;
 
     padding: 0 4px 0 4px !important;
+    min-height: 32px;
 }
 
 
@@ -1605,19 +1605,19 @@ span.butAction, span.butActionDelete {
 }
 
 
-table.border, table.dataTable, .table-border, .table-border-col, .table-key-border-col, .table-val-border-col {
+table.border, table.dataTable, .table-border, .table-border-col, .table-key-border-col, .table-val-border-col, div.border {
 	border: 1px solid #D0D0D0;
 	border-collapse: collapse;
 	padding: 1px 2px 1px 3px;			/* t r b l */
 }
 
-table.border td {
+table.border td, div.border div div.tagtd {
 	padding: 1px 2px 1px 2px;
 	border: 1px solid #D0D0D0;
 	border-collapse: collapse;
 }
 
-td.border {
+td.border, div.tagtable div div.border {
 	border-top: 1px solid #000000;
 	border-right: 1px solid #000000;
 	border-bottom: 1px solid #000000;
@@ -1749,7 +1749,6 @@ div.liste_titre, tr.liste_titre, tr.liste_titre_sel, form.liste_titre, form.list
     color: #<?php echo $colortexttitle; ?>;
     font-family: <?php print $fontlist ?>;
     border-bottom: 1px solid #FDFFFF;
-    white-space: <?php echo $dol_optimize_smallscreen?'normal':'nowrap'; ?>;
     text-align: <?php echo $left; ?>;
 }
 tr.liste_titre th, th.liste_titre, tr.liste_titre td, td.liste_titre, form.liste_titre div, div.liste_titre
@@ -1757,7 +1756,6 @@ tr.liste_titre th, th.liste_titre, tr.liste_titre td, td.liste_titre, form.liste
     font-family: <?php print $fontlist ?>;
     font-weight: bold;
     border-bottom: 1px solid #FDFFFF;
-    white-space: <?php echo $dol_optimize_smallscreen?'normal':'nowrap'; ?>;
 	text-shadow: 1px 0px 1px #<?php echo $colorshadowtitle; ?>;
     vertical-align: middle;
 }
@@ -1773,7 +1771,6 @@ tr.liste_titre_sel th, th.liste_titre_sel, tr.liste_titre_sel td, td.liste_titre
     font-family: <?php print $fontlist ?>;
     font-weight: normal;
     border-bottom: 1px solid #FDFFFF;
-    white-space: <?php echo $dol_optimize_smallscreen?'normal':'nowrap'; ?>;
     text-decoration: underline;
 	text-shadow: 1px 0px 1px #<?php echo $colorshadowtitle; ?>;
 }
@@ -1978,14 +1975,14 @@ div.ok {
 }
 
 div.warning {
-  color: #504020;
+  color: #302020;
   padding: 0.3em 0.3em 0.3em 0.3em;
   margin: 0.5em 0em 0.5em 0em;
   border: 1px solid #e0d0b0;
   -moz-border-radius:6px;
   -webkit-border-radius: 6px;
   border-radius: 6px;
-  background: #FFEF9A;
+  background: #EFDF9A;
   text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
 }
 
@@ -2062,6 +2059,7 @@ div.titre {
 	color: rgb(<?php print $colortext; ?>);
 	text-decoration: none;
 	text-shadow: 1px 1px 2px #FFFFFF;
+	<?php print (empty($conf->dol_optimize_smallscreen)?'':'margin-top: 4px;'); ?>
 }
 
 #dolpaymenttable { width: 600px; font-size: 13px; }
@@ -2692,6 +2690,11 @@ div.dolEventError h1, div.dolEventError h2 {
 .sorting_desc_disabled { background: url('<?php echo dol_buildpath('/theme/'.$theme.'/img/sort_desc_disabled',1); ?>') no-repeat center right; }
 
 
+/* For jquery plugin combobox */
+/* Disable this. It breaks wrapping of boxes
+.ui-corner-all { white-space: nowrap; } */
+
+
 /* ============================================================================== */
 /*  JMobile                                                                       */
 /* ============================================================================== */
@@ -2753,10 +2756,6 @@ a.tab span.ui-btn-inner
 	padding: 0;
 }
 
-.ui-body-c {
-	border: 1px solid #CCC;
-	text-shadow: none;
-}
 .ui-link {
 	color: rgb(<?php print $colortext; ?>) !important;
 }
@@ -2831,6 +2830,15 @@ ul.ulmenu {
     color: #<?php echo $colortexttitle; ?> !important;
 	text-shadow: 1px 0px 1px #<?php echo $colorshadowtitle; ?>;
 }
+
+.ui-body-c {
+	border: 1px solid #ccc;
+	text-shadow: none;
+}
+.ui-btn-up-c, .ui-btn-hover-c {
+	border: 1px solid #ccc;
+	text-shadow: none;
+}
 .ui-btn-up-c .vsmenudisabled {
 	color: #<?php echo $colorshadowtitle; ?> !important;
 	text-shadow: none !important;
@@ -2840,14 +2848,6 @@ ul.ulmenu {
 	text-shadow: 1px 0px 1px #<?php echo $colorshadowtitle; ?>;
 }
 .lilevel1 {
-	background-image: -webkit-gradient(linear,left top,left bottom,from( #eee ),to( #e1e1e1 )) !important;
-	background-image: -webkit-linear-gradient( #eee,#e1e1e1 ) !important;
-	background-image: -moz-linear-gradient( #eee,#e1e1e1 ) !important;
-	background-image: -ms-linear-gradient( #eee,#e1e1e1 ) !important;
-	background-image: -o-linear-gradient( #eee,#e1e1e1 ) !important;
-	background-image: linear-gradient( #eee,#e1e1e1 ) !important;
-}
-.lilevel1:hover, .lilevel2:hover, .lilevel3:hover, .lilevel4:hover {
 	background-image: -webkit-gradient(linear,left top,left bottom,from( #ddd ),to( #d1d1d1 )) !important;
 	background-image: -webkit-linear-gradient( #ddd,#d1d1d1 ) !important;
 	background-image: -moz-linear-gradient( #ddd,#d1d1d1 ) !important;
@@ -2855,7 +2855,14 @@ ul.ulmenu {
 	background-image: -o-linear-gradient( #ddd,#d1d1d1 ) !important;
 	background-image: linear-gradient( #ddd,#d1d1d1 ) !important;
 }
-
+<?php if ($dol_use_jmobile) { ?>
+.overflowwithjm200
+{
+	max-width: 200px;
+	overflow: hidden;
+	white-space: nowrap;
+}
+<?php } ?>
 
 <?php
 if (is_object($db)) $db->close();

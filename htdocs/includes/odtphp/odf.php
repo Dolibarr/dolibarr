@@ -129,33 +129,6 @@ class Odf
 	}
 
 	/**
-	 * Assing a template variable
-	 *
-	 * @param string $key name of the variable within the template
-	 * @param string $value replacement value
-	 * @param bool $encode if true, special XML characters are encoded
-	 * @throws OdfException
-	 * @return odf
-	 */
-	public function setVarsHeadFooter($key, $value, $encode = true, $charset = 'ISO-8859')
-	{
-		$tag = $this->config['DELIMITER_LEFT'] . $key . $this->config['DELIMITER_RIGHT'];
-		// TODO Warning string may be:
-		// <text:span text:style-name="T13">{</text:span><text:span text:style-name="T12">aaa</text:span><text:span text:style-name="T13">}</text:span>
-		// instead of {aaa} so we should enhance this function.
-		//print $key.'-'.$value.'-'.strpos($this->contentXml, $this->config['DELIMITER_LEFT'] . $key . $this->config['DELIMITER_RIGHT']).'<br>';
-		if (strpos($this->stylesXml, $tag) === false && strpos($this->stylesXml , $tag) === false) {
-			//if (strpos($this->contentXml, '">'. $key . '</text;span>') === false) {
-			throw new OdfException("var $key not found in the document");
-			//}
-		}
-		$value = $encode ? htmlspecialchars($value) : $value;
-		$value = ($charset == 'ISO-8859') ? utf8_encode($value) : $value;
-		$this->vars[$tag] = str_replace("\n", "<text:line-break/>", $value);
-		return $this;
-	}
-
-	/**
 	 * Evaluating php codes inside the ODT and output the buffer (print, echo) inplace of the code
 	 *
 	 */

@@ -155,6 +155,7 @@ Valid=Valider
 Approve=Approuver
 ReOpen=Réouvrir
 Upload=Envoyer fichier
+ToLink=Lier
 Select=Sélectionner
 Choose=Choisir
 ChooseLangage=Choisissez votre langue
@@ -658,6 +659,9 @@ from=de
 toward=vers
 Access=Accès
 HelpCopyToClipboard=Utilisez Ctrl+C pour copier dans le presse-papier
+SaveUploadedFileWithMask=Sauver le fichier sur le serveur sous le nom "<strong>%s</strong>" (sinon "%s")
+OriginFileName=nom du fichier source
+SetDemandReason=Définir l'origine
 
 # Week day
 Monday=Lundi

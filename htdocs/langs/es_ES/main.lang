@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - main
-CHARSET=UTF-8
 DIRECTION=ltr
 # Note for chinese:
 # msungstdlight or cid0ct are for traditionnal chinese (traditionnal does not render with ubuntu pdf reader)
@@ -83,8 +82,8 @@ LastConnexion=Última conexión
 PreviousConnexion=Conexión anterior
 ConnectedOnMultiCompany=Conexión a la entidad
 ConnectedSince=Conectado desde
-AuthenticationMode=Modo autentificación
-RequestedUrl=Url solicitada
+AuthenticationMode=Modo de autentificación
+RequestedUrl=URL solicitada
 DatabaseTypeManager=Tipo de gestor de base de datos
 RequestLastAccess=Petición último acceso a la base de datos
 RequestLastAccessInError=Petición último acceso a la base de datos erróneo
@@ -156,6 +155,7 @@ Valid=Validar
 Approve=Aprobar
 ReOpen=Reabrir
 Upload=Enviar archivo
+ToLink=Enlace
 Select=Seleccionar
 Choose=Elegir
 ChooseLangage=Elegir su idioma
@@ -657,6 +657,10 @@ HomeDashboard=Resumen
 Deductible=Deducible
 from=de
 toward=hacia
+Access=Acceso
+HelpCopyToClipboard=Use Ctrl+C para copiar al portapapeles
+SaveUploadedFileWithMask=Guardar el archivo con el nombre "<strong>%s</strong>" (sino "%s")
+OriginFileName=Nombre del archivo origen
 
 # Week day
 Monday=Lunes

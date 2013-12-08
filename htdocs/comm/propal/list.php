@@ -141,8 +141,8 @@ if (! $sortorder) $sortorder='DESC';
 $limit = $conf->liste_limit;
 
 
-$sql = 'SELECT s.rowid, s.nom, s.town, s.client, ';
-$sql.= 'p.rowid as propalid, p.note_private, p.total_ht, p.ref, p.ref_client, p.fk_statut, p.fk_user_author, p.datep as dp, p.fin_validite as dfv,';
+$sql = 'SELECT s.rowid, s.nom, s.town, s.client, s.code_client,';
+$sql.= ' p.rowid as propalid, p.note_private, p.total_ht, p.ref, p.ref_client, p.fk_statut, p.fk_user_author, p.datep as dp, p.fin_validite as dfv,';
 if (! $user->rights->societe->client->voir && ! $socid) $sql .= " sc.fk_soc, sc.fk_user,";
 $sql.= ' u.login';
 $sql.= ' FROM '.MAIN_DB_PREFIX.'societe as s, '.MAIN_DB_PREFIX.'propal as p';
@@ -182,11 +182,7 @@ if ($search_montant_ht)
 	$sql.= " AND p.total_ht='".$db->escape(price2num(trim($search_montant_ht)))."'";
 }
 if ($sall) {
-    /*$scrit = explode(' ', $sall);
-    foreach ($scrit as $crit) {
-        $sql.= " AND (s.nom LIKE '%".$db->escape($crit)."%' OR p.note LIKE '%".$db->escape($crit)."%' OR pd.description LIKE '%".$db->escape($crit)."%')";
-    }*/
-    $sql .= natural_search(array('s.nom', 'p.note_private', 'pd.description'), $sall);
+    $sql .= natural_search(array('s.nom', 'p.note_private', 'p.note_public', 'pd.description'), $sall);
 }
 if ($socid) $sql.= ' AND s.rowid = '.$socid;
 if ($viewstatut <> '')
@@ -368,6 +364,7 @@ if ($result)
 		$companystatic->id=$objp->rowid;
 		$companystatic->nom=$objp->nom;
 		$companystatic->client=$objp->client;
+		$companystatic->code_client=$objp->code_client;
 		print '<td>';
 		print $companystatic->getNomUrl(1,'customer');
 		print '</td>';

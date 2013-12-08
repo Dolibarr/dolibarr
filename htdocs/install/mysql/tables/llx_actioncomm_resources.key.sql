@@ -1,5 +1,6 @@
 -- ============================================================================
--- Copyright (C) 2013 Juanjo Menent        <regis.houssin@capnetworks.com>
+-- Copyright (C) 2013	Laurent Destailleur	<eldy@users.sourceforge.net>
+-- Copyright (C) 2013	Florian Henry		<florian.henry@open-concept.pro>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -14,13 +15,11 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program. If not, see <http://www.gnu.org/licenses/>.
 --
--- ===========================================================================
+-- ============================================================================
 
-create table llx_soc_localtaxes
-(
-  rowid					integer AUTO_INCREMENT PRIMARY KEY,
-  fk_soc				integer,
-  fk_tva				integer,
-  localtax1_tx			double(6,3)  DEFAULT 0,    		 -- localtax1 rate
-  localtax2_tx			double(6,3)  DEFAULT 0,    		 -- localtax2 rate		
- )ENGINE=innodb;
+
+ALTER TABLE llx_actioncomm_resources ADD UNIQUE INDEX idx_actioncomm_resources_idx1 (fk_actioncomm, element_type, fk_element);
+ALTER TABLE llx_actioncomm_resources ADD INDEX idx_actioncomm_resources_fk_element (fk_element);
+
+-- Pas de contraite sur fk_source et fk_target car pointe sur differentes tables
+	

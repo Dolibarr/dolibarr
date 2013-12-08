@@ -227,7 +227,7 @@ if ($resql)
 										$error++;
 									}
 
-					    //Update status communication of contact prospect
+					    			//Update status communication of contact prospect
 									$sqlx = "UPDATE ".MAIN_DB_PREFIX."societe SET fk_stcomm=2 WHERE rowid IN (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."socpeople AS sc INNER JOIN ".MAIN_DB_PREFIX."mailing_cibles AS mc ON mc.rowid=".$obj2->rowid." AND mc.source_type = 'contact' AND mc.source_id = sc.rowid)";
 									dol_syslog("fiche.php: set prospect contact status sql=".$sql, LOG_DEBUG);
 

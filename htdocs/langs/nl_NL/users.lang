@@ -117,4 +117,4 @@ DontDowngradeSuperAdmin=Alleen een superadmin kan downgrade een superadmin
 # HierarchicView=Hierarchical view
 # UseTypeFieldToChange=Use field Type to change
 # OpenIDURL=OpenID URL
-# LoginUsingOpenID=Login using OpenID
+# LoginUsingOpenID=Use OpenID to login

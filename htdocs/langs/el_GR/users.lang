@@ -116,5 +116,5 @@ DontDowngradeSuperAdmin=Μόνο μια superadmin μπορεί να προβε�
 HierarchicalResponsible=Ιεραρχική ευθύνη
 HierarchicView=Ιεραρχική προβολή
 UseTypeFieldToChange=Χρησιμοποιήστε είδος πεδίου για να αλλάξετε
-# OpenIDURL=OpenID URL
-# LoginUsingOpenID=Login using OpenID
+OpenIDURL=OpenID URL
+LoginUsingOpenID=Χρησιμοποιήστε το OpenID για να συνδεθείτε

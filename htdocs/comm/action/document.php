@@ -4,6 +4,7 @@
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
  * Copyright (C) 2005-2012 Regis Houssin         <regis.houssin@capnetworks.com>
  * Copyright (C) 2005      Simon TOSSER          <simon@kornog-computing.com>
+ * Copyright (C) 2013      Cédric Salvador       <csalvador@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,8 +41,9 @@ $langs->load("commercial");
 $langs->load("other");
 $langs->load("bills");
 
-$objectid = GETPOST('id','int');
-$action=GETPOST('action','alpha');
+$objectid = GETPOST('id', 'int');
+$action=GETPOST('action', 'alpha');
+$confirm = GETPOST('confirm', 'alpha');
 
 // Security check
 $socid = GETPOST('socid','int');
@@ -79,26 +81,9 @@ if (! $sortfield) $sortfield="name";
 
 
 /*
- * Action envoie fichier
+ * Actions
  */
-if (GETPOST('sendit') && ! empty($conf->global->MAIN_UPLOAD_DOC))
-{
-	$upload_dir = $conf->agenda->dir_output.'/'.dol_sanitizeFileName($objectid);
-	dol_add_file_process($upload_dir,0,1,'userfile');
-}
-
-/*
- * Efface fichier
- */
-if ($action == 'delete')
-{
-	$upload_dir = $conf->agenda->dir_output.'/'.dol_sanitizeFileName($objectid);
-	$file = $upload_dir . '/' . $_GET['urlfile'];	// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
-	$ret=dol_delete_file($file,0,0,0,$act);
-	if ($ret) setEventMessage($langs->trans("FileWasRemoved", GETPOST('urlfile')));
-	else setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), 'errors');
-	$action='';
-}
+include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_pre_headers.tpl.php';
 
 
 /*
@@ -268,15 +253,10 @@ if ($act->id > 0)
 
 	print '</div>';
 
-
-	// Affiche formulaire upload
-	$formfile=new FormFile($db);
-	$formfile->form_attach_new_file(DOL_URL_ROOT.'/comm/action/document.php?id='.$act->id,'',0,0,($user->rights->agenda->myactions->create||$user->rights->agenda->allactions->create),50,$act);
-
-
-	// List of document
-	$param='&id='.$act->id;
-	$formfile->list_of_documents($filearray,$act,'actions',$param,0,'',$user->rights->agenda->myactions->create);
+	$modulepart = 'actions';
+	$permission = $user->rights->agenda->myactions->create||$user->rights->agenda->allactions->create;
+	$param = '&id=' . $act->id;
+	include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_post_headers.tpl.php';
 }
 else
 {

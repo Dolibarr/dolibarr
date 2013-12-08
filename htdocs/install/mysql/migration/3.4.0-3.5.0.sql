@@ -20,6 +20,20 @@
 
 DELETE FROM llx_menu where module='holiday';
 
+ALTER TABLE llx_c_type_contact MODIFY COLUMN code varchar(32) NOT NULL;
+UPDATE llx_c_type_contact set code = 'PROJECTCONTRIBUTOR' where code = 'CONTRIBUTOR' and element = 'project';
+UPDATE llx_c_type_contact set code = 'TASKCONTRIBUTOR' where code = 'CONTRIBUTOR' and element = 'project_task';
+
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,localtax1,localtax1_type,note,active) values (143, 14,'5','0','9.975','1','TPS and TVQ rate',1);
+
+-- Fix bad migration of 3.4 that make this text instead of varchar(50)
+alter table llx_don      MODIFY COLUMN town varchar(50);
+alter table llx_adherent MODIFY COLUMN town varchar(50);
+alter table llx_entrepot MODIFY COLUMN town varchar(50);
+alter table llx_societe  MODIFY COLUMN town varchar(50);
+alter table llx_societe_address MODIFY COLUMN town varchar(50);
+
+
 ALTER TABLE llx_projet_task ADD COLUMN planned_workload	real DEFAULT 0 NOT NULL AFTER duration_effective;
 
 ALTER TABLE llx_socpeople ADD COLUMN statut tinyint DEFAULT 1 NOT NULL AFTER import_key;
@@ -74,7 +88,9 @@ ALTER TABLE llx_propaldet_extrafields ADD INDEX idx_propaldet_extrafields (fk_ob
 DROP table llx_adherent_options;
 DROP table llx_adherent_options_label;
 
-ALTER TABLE llx_user ADD accountancy_code VARCHAR( 24 ) NULL;
+ALTER TABLE llx_user ADD accountancy_code VARCHAR(24) NULL;
+ALTER TABLE llx_c_chargesociales ADD accountancy_code varchar(24) DEFAULT NULL;
+
 
 DELETE FROM llx_boxes where box_id IN (SELECT rowid FROM llx_boxes_def where file='box_activity.php' AND note IS NULL);
 DELETE FROM llx_boxes_def where file='box_activity.php' AND note IS NULL;
@@ -88,6 +104,17 @@ create table llx_categorie_contact
   fk_categorie  integer NOT NULL,
   fk_socpeople  integer NOT NULL,
   import_key    varchar(14)
+)ENGINE=innodb;
+
+create table llx_links
+(
+  rowid             INTEGER AUTO_INCREMENT PRIMARY KEY,
+  entity            INTEGER DEFAULT 1 NOT NULL,     -- multi company id
+  datea             DATETIME NOT NULL,              -- date start
+  url               VARCHAR(255) NOT NULL,          -- link url
+  label             VARCHAR(255) NOT NULL,          -- link label
+  objecttype        VARCHAR(255) NOT NULL,          -- object type in Dolibarr
+  objectid          INTEGER NOT NULL
 )ENGINE=innodb;
 
 
@@ -316,3 +343,28 @@ create table llx_contrat_extrafields
 -- add outstanding bill
 ALTER TABLE llx_societe ADD outstanding_limit double(24,8) DEFAULT NULL AFTER mode_reglement_supplier;
 
+UPDATE llx_const SET name='COMPANY_DONOTSEARCH_ANYWHERE' WHERE name='SOCIETE_DONOTSEARCH_ANYWHERE';
+
+--Task 172
+create table llx_actioncomm_resources
+(
+  rowid           	integer AUTO_INCREMENT PRIMARY KEY,  
+  fk_actioncomm		integer NOT NULL,
+  element_type		varchar(50) NOT NULL,
+  fk_element		integer NOT NULL,
+  answer_status		varchar(50) NULL,
+  mandatory		smallint,
+  transparent		smallint
+) ENGINE=innodb;
+ALTER TABLE llx_actioncomm_resources ADD UNIQUE INDEX idx_actioncomm_resources_idx1 (fk_actioncomm, element_type, fk_element);
+ALTER TABLE llx_actioncomm_resources ADD INDEX idx_actioncomm_resources_fk_element (fk_element);
+
+-- Task 157
+ALTER TABLE llx_user ADD skype VARCHAR(255) AFTER job;
+ALTER TABLE llx_socpeople ADD skype VARCHAR(255) AFTER jabberid;
+ALTER TABLE llx_societe ADD skype VARCHAR(255) AFTER email;
+ALTER TABLE llx_adherent ADD skype VARCHAR(255) AFTER email;
+
+-- multi-rib
+ALTER TABLE llx_societe_rib ADD default_rib smallint NOT NULL DEFAULT 0 AFTER owner_address;
+UPDATE llx_societe_rib SET default_rib = 1;

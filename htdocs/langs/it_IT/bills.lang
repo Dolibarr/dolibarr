@@ -410,6 +410,6 @@ PDFCrabeDescription=Modello di fattura Crabe. (Modello raccomandatoi)
 PDFOursinDescription=Modello di fattura oursin.
 # NumRef Modules
 TerreNumRefModelDesc1=Restituisce un numero nel formato %syymm-nnnn per le fatture, %syymm-nnnn per le note di credito e %syymm-nnnn per i versamenti, dove yy è l'anno, mm è il mese e nnnn è una sequenza progressiva, senza salti e che non si azzera.
-# MarsNumRefModelDesc1=Return numero with format %syymm-nnnn for standard invoices, %syymm-nnnn for replacement invoices, %syymm-nnnn for credit notes and %syymm-nnnn for credit notes where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
+MarsNumRefModelDesc1=Retituisce un numero nel formato %syymm-nnnn per le fatture standard, %syymm-nnnn per le fatture sostitutive, %syymm-nnnn %syymm-nnnn per le note di credito dove yy è l'anno, mm è il mese e nnnn è una sequenza progressiva che non si azzera.
 
 TerreNumRefModelError=Un altro modello di numerazione con sequenza $ syymm è già esistente e non è compatibile con questo modello. Rimuovere o rinominare per attivare questo modulo.

@@ -178,7 +178,7 @@ function dol_print_file($langs,$filename,$searchalt=0)
  *	Show informations on an object
  *  TODO Move this into html.formother
  *
- *	@param	Object	$object			Objet to show
+ *	@param	object	$object			Objet to show
  *	@return	void
  */
 function dol_print_object_info($object)
@@ -205,13 +205,15 @@ function dol_print_object_info($object)
         print $langs->trans("CreatedBy").': ';
         if (is_object($object->user_creation))
         {
-            print $object->user_creation->getNomUrl(1);
+        	if ($object->user_creation->id) print $object->user_creation->getNomUrl(1);
+        	else print $langs->trans("Unknown");
         }
         else
         {
             $userstatic=new User($db);
             $userstatic->fetch($object->user_creation);
-            print $userstatic->getNomUrl(1);
+            if ($userstatic->id) print $userstatic->getNomUrl(1);
+        	else print $langs->trans("Unknown");
         }
         print '<br>';
     }
@@ -230,13 +232,15 @@ function dol_print_object_info($object)
         print $langs->trans("ModifiedBy").': ';
         if (is_object($object->user_modification))
         {
-            print $object->user_modification->getNomUrl(1);
+        	if ($object->user_modification->id) print $object->user_modification->getNomUrl(1);
+        	else print $langs->trans("Unknown");
         }
         else
         {
             $userstatic=new User($db);
             $userstatic->fetch($object->user_modification);
-            print $userstatic->getNomUrl(1);
+            if ($userstatic->id) print $userstatic->getNomUrl(1);
+        	else print $langs->trans("Unknown");
         }
         print '<br>';
     }
@@ -255,13 +259,15 @@ function dol_print_object_info($object)
         print $langs->trans("ValidatedBy").': ';
         if (is_object($object->user_validation))
         {
-            print $object->user_validation->getNomUrl(1);
+            if ($object->user_validation->id) print $object->user_validation->getNomUrl(1);
+        	else print $langs->trans("Unknown");
         }
         else
         {
             $userstatic=new User($db);
             $userstatic->fetch($object->user_validation);
-            print $userstatic->getNomUrl(1);
+			if ($userstatic->id) print $userstatic->getNomUrl(1);
+        	else print $langs->trans("Unknown");
         }
         print '<br>';
     }
@@ -280,13 +286,15 @@ function dol_print_object_info($object)
         print $langs->trans("ApprovedBy").': ';
         if (is_object($object->user_approve))
         {
-            print $object->user_approve->getNomUrl(1);
+            if ($object->user_approve->id) print $object->user_approve->getNomUrl(1);
+        	else print $langs->trans("Unknown");
         }
         else
         {
             $userstatic=new User($db);
             $userstatic->fetch($object->user_approve);
-            print $userstatic->getNomUrl(1);
+			if ($userstatic->id) print $userstatic->getNomUrl(1);
+        	else print $langs->trans("Unknown");
         }
         print '<br>';
     }
@@ -305,13 +313,15 @@ function dol_print_object_info($object)
         print $langs->trans("ClosedBy").': ';
         if (is_object($object->user_cloture))
         {
-            print $object->user_cloture->getNomUrl(1);
+			if ($object->user_cloture->id) print $object->user_cloture->getNomUrl(1);
+        	else print $langs->trans("Unknown");
         }
         else
         {
             $userstatic=new User($db);
             $userstatic->fetch($object->user_cloture);
-            print $userstatic->getNomUrl(1);
+			if ($userstatic->id) print $userstatic->getNomUrl(1);
+        	else print $langs->trans("Unknown");
         }
         print '<br>';
     }
@@ -330,13 +340,15 @@ function dol_print_object_info($object)
         print $langs->trans("ConciliatedBy").': ';
         if (is_object($object->user_rappro))
         {
-            print $object->user_rappro->getNomUrl(1);
+			if ($object->user_rappro->id) print $object->user_rappro->getNomUrl(1);
+        	else print $langs->trans("Unknown");
         }
         else
         {
             $userstatic=new User($db);
             $userstatic->fetch($object->user_rappro);
-            print $userstatic->getNomUrl(1);
+			if ($userstatic->id) print $userstatic->getNomUrl(1);
+        	else print $langs->trans("Unknown");
         }
         print '<br>';
     }
@@ -430,7 +442,7 @@ function isValidUrl($url,$http=0,$pass=0,$port=0,$path=0,$query=0,$anchor=0)
  *	Clean an url string
  *
  *	@param	string	$url		Url
- *	@param  string	$http		1: keep http://, 0: remove also http://
+ *	@param  string	$http		1 = keep both http:// and https://, 0: remove http:// but not https://
  *	@return string				Cleaned url
  */
 function clean_url($url,$http=1)
@@ -617,7 +629,7 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
     if ($maskraz > 0)    // A reset is required
     {
     	if ($maskraz == 99) {
-			$maskraz = date('m');
+			$maskraz = date('m', $date);
 			$resetEveryMonth = true;
 		}
         if ($maskraz > 12) return 'ErrorBadMaskBadRazMonth';
