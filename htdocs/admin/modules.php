@@ -136,44 +136,57 @@ foreach ($modulesdir as $dir)
 		            try
 		            {
 		                $res=include_once $dir.$file;
-		                $objMod = new $modName($db);
-						$modNameLoaded[$modName]=$dir;
+		                if (class_exists($modName))
+						{
+							try {
+				                $objMod = new $modName($db);
+								$modNameLoaded[$modName]=$dir;
 
-    		            if ($objMod->numero > 0)
-    		            {
-    		                $j = $objMod->numero;
-    		            }
-    		            else
-    		            {
-    		                $j = 1000 + $i;
-    		            }
+    		    		        if ($objMod->numero > 0)
+    		            		{
+    		         		       $j = $objMod->numero;
+    		            		}
+    		            		else
+    		            		{
+    		                		$j = 1000 + $i;
+    		            		}
 
-    					$modulequalified=1;
+    							$modulequalified=1;
 
-    					// We discard modules according to features level (PS: if module is activated we always show it)
-    					$const_name = 'MAIN_MODULE_'.strtoupper(preg_replace('/^mod/i','',get_class($objMod)));
-    					if ($objMod->version == 'development'  && (empty($conf->global->$const_name) && ($conf->global->MAIN_FEATURES_LEVEL < 2))) $modulequalified=0;
-    					if ($objMod->version == 'experimental' && (empty($conf->global->$const_name) && ($conf->global->MAIN_FEATURES_LEVEL < 1))) $modulequalified=0;
-						// We discard modules according to property disabled
-    					if (isset($objMod->hidden) && $objMod->hidden) $modulequalified=false;
-
-    					// Define array $categ with categ with at least one qualified module
-    					if ($modulequalified)
-    					{
-    						$modules[$i] = $objMod;
-    			            $filename[$i]= $modName;
-    			            $orders[$i]  = $objMod->family."_".$j;   // Sort by family, then by module number
-    						$dirmod[$i]  = $dir;
-    			            // Set categ[$i]
-    						$special     = isset($specialtostring[$objMod->special])?$specialtostring[$objMod->special]:'unknown';
-    			            if ($objMod->version == 'development' || $objMod->version == 'experimental') $special='expdev';
-    						if (isset($categ[$special])) $categ[$special]++;					// Array of all different modules categories
-    			            else $categ[$special]=1;
-    						$j++;
-    			            $i++;
-    					}
-    					else dol_syslog("Module ".get_class($objMod)." not qualified");
-		            }
+		    					// We discard modules according to features level (PS: if module is activated we always show it)
+		    					$const_name = 'MAIN_MODULE_'.strtoupper(preg_replace('/^mod/i','',get_class($objMod)));
+		    					if ($objMod->version == 'development'  && (empty($conf->global->$const_name) && ($conf->global->MAIN_FEATURES_LEVEL < 2))) $modulequalified=0;
+		    					if ($objMod->version == 'experimental' && (empty($conf->global->$const_name) && ($conf->global->MAIN_FEATURES_LEVEL < 1))) $modulequalified=0;
+								// We discard modules according to property disabled
+		    					if (isset($objMod->hidden) && $objMod->hidden) $modulequalified=false;
+		
+		    					// Define array $categ with categ with at least one qualified module
+		    					if ($modulequalified)
+		    					{
+		    						$modules[$i] = $objMod;
+		    			            $filename[$i]= $modName;
+		    			            $orders[$i]  = $objMod->family."_".$j;   // Sort by family, then by module number
+		    						$dirmod[$i]  = $dir;
+		    			            // Set categ[$i]
+		    						$special     = isset($specialtostring[$objMod->special])?$specialtostring[$objMod->special]:'unknown';
+		    			            if ($objMod->version == 'development' || $objMod->version == 'experimental') $special='expdev';
+		    						if (isset($categ[$special])) $categ[$special]++;					// Array of all different modules categories
+		    			            else $categ[$special]=1;
+		    						$j++;
+		    			            $i++;
+		    					}
+		    					else dol_syslog("Module ".get_class($objMod)." not qualified");
+							}
+		            		catch(Exception $e)
+		            		{
+		            		     dol_syslog("Failed to load ".$dir.$file." ".$e->getMessage(), LOG_ERR);
+		            		}
+						}
+		            	else
+						{
+							print "Warning bad descriptor file : ".$dir.$file." (Class ".$modName." not found into file)<br>";
+						}
+					}
 		            catch(Exception $e)
 		            {
 		                 dol_syslog("Failed to load ".$dir.$file." ".$e->getMessage(), LOG_ERR);
