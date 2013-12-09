@@ -109,3 +109,4 @@ NbOfProductAfterPeriod=Ποσότητα του προϊόντος %s σε από
 MassStockMovement=Μαζική κίνηση αποθεμάτων
 # SelectProductInAndOutWareHouse=Select a product, a quantity, a source warehouse and a target warehouse, then click "%s". Once this is done for all required movements, click onto "%s".
 RecordMovement=Η εγγραφή μεταφέρθηκε
+# ReceivingForSameOrder=Receivings for this order

@@ -25,3 +25,4 @@ LinkToGoldMember=Możesz połączyć jedno z trenera wybranej przez Dolibarr dla
 PossibleLanguages=Obsługiwane języki
 MakeADonation=Pomoc Dolibarr projektu, dokonać wpłaty
 # SubscribeToFoundation=Help Dolibarr project, subscribe to the foundation
+# SeeOfficalSupport=For official Dolibarr support in your language: <br><b><a href="%s" target="_blank">%s</a></b>

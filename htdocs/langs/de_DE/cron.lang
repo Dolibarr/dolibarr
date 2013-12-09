@@ -18,8 +18,8 @@ Permission23104 = Führe geplante Aufgabe aus
 # Admin
 #
 CronSetup= Jobverwaltungs-Konfiguration
-URLToLaunchCronJobs=URL zum Starten von Cronjobs
-OrToLaunchASpecificJob=Oder zum Starten von speziellen Jobs
+# URLToLaunchCronJobs=URL to check and launch cron jobs if required
+# OrToLaunchASpecificJob=Or to check and launch a specific job
 KeyForCronAccess=Sicherheitsschlüssel für URL zum Starten von Cronjobs
 FileToLaunchCronJobs=Kommandozeile zum Starten von Cronjobs
 CronExplainHowToRunUnix=In Unix-Umgebungen sollte man crontab benutzen um die Kommandozeile jede Minute auszuführen
@@ -32,6 +32,7 @@ CronExplainHowToRunWin=In Microsoft(tm) Windows kannst Du die Aufgabenplanung be
 CronJobs=Geplante Jobs
 CronListActive= Liste der aktiven Jobs
 CronListInactive= Liste der deaktivierten Jobs
+CronListActive= Liste der aktiven Jobs
 
 
 #
@@ -42,7 +43,7 @@ CronLastOutput=Ausgabe der letzten Ausführung
 CronLastResult=Letzter Resultatcode
 CronListOfCronJobs=Liste der geplanten Jobs
 CronCommand=Befehl
-CronList= Jobliste
+# CronList=Jobs list
 CronDelete= Lösche Cronjobs
 CronConfirmDelete= Möchten Sie diesen Cronjob wirklich löschen?
 CronExecute=Starte Job
@@ -93,7 +94,7 @@ CronClassFile=Klassen (filenames.class.php)
 # CronObjectHelp=The object name to load. <BR> For exemple to fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value of class file name is <i>Product</i>
 # CronMethodHelp=The object method to launch. <BR> For exemple to fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value of method is  is <i>fecth</i>
 # CronArgsHelp=The method arguments. <BR> For exemple to fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value of paramters can be <i>0, ProductRef</i>
-CronCommandHelp=Die auszuführende System-Kommandozeile 
+CronCommandHelp=Die auszuführende System-Kommandozeile
 
 #
 # Info

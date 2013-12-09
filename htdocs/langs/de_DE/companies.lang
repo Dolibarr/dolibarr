@@ -66,8 +66,9 @@ Country=Land
 CountryCode=Ländercode
 CountryId=Länder-ID
 Phone=Telefon
-# Skype=Skype
-# Call=Call
+Skype=Skype
+Call=Anruf
+# Chat=Chat
 PhonePro=Telefon berufl.
 PhonePerso=Telefon privat
 PhoneMobile=Mobiltelefon
@@ -398,7 +399,9 @@ InActivity=Aktiv
 ActivityCeased=Inaktiv
 ActivityStateFilter=Status
 ProductsIntoElements=Liste von Produkten in
-# OutstandingBill=Max. for outstanding bill
+# CurrentOutstandingBill=Current outstanding bill
+OutstandingBill=Max. für ausstehende Rechnung
+# OutstandingBillReached=Reached max. for outstanding bill
 # Monkey
 MonkeyNumRefModelDesc=Zurück NUMERO mit Format %syymm-nnnn für den Kunden-Code und syymm%-nnnn für die Lieferanten-Code ist, wenn JJ Jahr, MM Monat und nnnn ist eine Folge ohne Pause und kein Zurück mehr gibt, auf 0 gesetzt.
 # Leopard

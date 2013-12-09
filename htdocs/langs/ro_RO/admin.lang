@@ -49,7 +49,7 @@ ErrorReservedTypeSystemSystemAuto=Valorile 'system' și 'systemauto' pentru  tip
 ErrorCodeCantContainZero=Codul nu poate conţine valoarea 0
 DisableJavascript=Dezactivează funcţiile  JavaScript si Ajax
 ConfirmAjax=Utilizaţi pop-up de confirmare  Ajax
-# UseSearchToSelectCompany=Use autocompletion fields to choose third parties (instead of using a list box).<br><br>Also if you have a large number of third parties (> 100 000), you can increase speed by setting constant COMPANY_DONOTSEARCH_ANYWHERE to 1 in Setup->Other. Search will then be limited to start of string.
+UseSearchToSelectCompany=Utilizați autocompletarea  câmpurilor pentru alegerea terţilor (în loc de a folosi o casetă listă). <br><br> De asemenea, dacă aveți un număr mare de terţi (> 100 000), puteți crește viteza prin setarea constantei COMPANY_DONOTSEARCH_ANYWHERE la 1 la Setup->Altele. Căutarea va fi limitată la începutul șirului.
 ActivityStateToSelectCompany= Adaugă o opţiune de filtru pentru a afişa / ascunde thirdparties, care sunt în prezent în activitate sau le-a încetat
 UseSearchToSelectContact=Utilizați un câmp cu autocompletare pentru a selecta un contact (în loc de lista derulantă). <br> Rețineți că, dacă aveți un număr mare de contacte (> 100 000), puteți îmbunătăți performanța prin setarea constantei CONTACT_DONOTSEARCH_ANYWHERE  la 1 în Setări-> Diverse. Căutarea se va limita la începutul șirului.
 SearchFilter=Opţiuni filtre de căutare
@@ -188,7 +188,7 @@ IgnoreDuplicateRecords=Ignora erorile de înregistrări duplicat (INSERT IGNORE)
 Yes=Da
 No=Nu
 AutoDetectLang=Autodetect (browser limbă)
-FeatureDisabledInDemo=Funcşionalitate dezactivată în demo
+FeatureDisabledInDemo=Funcţonalitate dezactivată în demo
 Rights=Permisiuni
 BoxesDesc=Căsuţele sunt arii de ecran care arată unele informaţii pe unele pagini. Aveţi posibilitatea să alegeţi afişarea sau nu a căsuţelor, prin selectarea  pagini ţintă şi faceţi clic pe "Activaţi", sau făcând clic pe un coş de gunoi  pentru al dezactiva.
 OnlyActiveElementsAreShown=Numai elementele din <a href="%s"> module activate </a> sunt afişate.
@@ -228,7 +228,7 @@ OfficialWebSiteFr=Site-ul web oficial francofon
 OfficialWiki=Dolibarr Wiki
 OfficialDemo=Dolibarr demo online
 OfficialMarketPlace=Oficial loc pe piaţă pentru modulelor externe / addons
-OfficialWebHostingService=Serviciu  Oficial de hosting  web (Cloud hosting)
+# OfficialWebHostingService=Official web hosting services (Cloud hosting)
 ForDocumentationSeeWiki=Pentru utilizator sau developer documentaţia (doc, FAQs ...), <br> aruncăm o privire la Dolibarr Wiki: <br> <a href="%s" target="_blank"><b> %s</b></a>
 ForAnswersSeeForum=Pentru orice alte întrebări / ajutor, se poate utiliza Dolibarr forum: <br> <a href="%s" target="_blank"><b> %s</b></a>
 HelpCenterDesc1=Această zonă vă poate ajuta să obţineţi un suport de Ajutor de servicii pe Dolibarr.
@@ -299,6 +299,7 @@ ServerNotAvailableOnIPOrPort=Serverul nu este disponibil la <b>adresa %s</b> pe 
 DoTestServerAvailability=Test server de conectivitate
 DoTestSend=Test de trimitere
 DoTestSendHTML=Test trimiterea HTML
+# ErrorCantUseRazIfNoYearInMask=Error, can't use option @ to reset counter each year if sequence {yy} or {yyyy} is not in mask.
 ErrorCantUseRazInStartedYearIfNoYearMonthInMask=Eroare, nu poate utilizator @ opţiune dacă secvenţa (aa) (mm) sau (AAAA) (mm) nu este în masca.
 UMask=UMask parametru pentru noi imagini pe Unix / Linux / BSD sistem de fişiere.
 UMaskExplanation=Acest parametru permite să se definească permissions stabilit, în mod implicit pe fişierele create de Dolibarr pe server (în timpul de încărcare, de exemplu). <br> Acesta trebuie să fie de octal valoare (de exemplu, 0666 înseamnă citi şi scrie pentru toată lumea). <br> Ce paramtre ne sert pas sous un serveur Windows.
@@ -368,7 +369,7 @@ ExtrafieldRadio=Radio buton
 ExtrafieldParamHelpselect=Lista de parametri trebuie să fie ca cheie, valoare <br><br> pentru exemplul: <br> 1, valoare1 <br> 2, valoare2 <br> 3, value3 <br> ... <br><br> Pentru a avea listă în funcție de o alta:<br>1,value1|parent_list_code:parent_key<br>2,value2|parent_list_code:parent_key
 ExtrafieldParamHelpcheckbox=Lista de parametri trebuie să fie de tip  cheie, valoare <br><br> pentru exemplul: <br> 1, valoare1 <br> 2, valoare2 <br> 3, value3 <br> ...
 ExtrafieldParamHelpradio=Lista de parametri trebuie să fie de tip  cheie, valoare <br><br> pentru exemplul: <br> 1, valoare1 <br> 2, valoare2 <br> 3, value3 <br> ...
-# ExtrafieldParamHelpsellist=Parameters list have come from table<br><br> for exemple : <br>c_typent:libelle:id::filter<br><br>In order to have the list depending on another :<br>c_typent:libelle:id:parent_list_code|parent_column:filter <br> filter can be a simple test (eg active=1) to display only active value <br> if you want to filter on extrafields use syntaxt  extra.fieldcode=... (where field code is the code of extrafield)
+ExtrafieldParamHelpsellist=Lista de parametri a venit de la tabelul <br><br> de exemplu: <br>c_typent:libelle:id::filter<br><br>Pentru a avea lista în funcție de alta: <br>c_typent:libelle:id:parent_list_code|parent_column:filter <br> filtru poate fi un test simplu (de exemplu, activ = 1), pentru a afișa doar valoare activă <br> dacă doriți să filtrați pe extracâmpuri folosi sintaxa  extra.fieldcode=... (unde codul de câmp este codul de extracâmp)
 LibraryToBuildPDF=Librairie utilizată la construirea PDF ului
 WarningUsingFPDF=Atenție: <b>conf.php</b> contine Directiva <b>dolibarr_pdf_force_fpdf = 1.</b> Acest lucru înseamnă că utilizați biblioteca FPDF pentru a genera fișiere PDF. Această bibliotecă este vechi și nu suportă o mulțime de caracteristici (Unicode, transparența imagine, cu litere chirilice, limbi arabe și asiatice, ...), astfel încât este posibil să apară erori în timpul generație PDF. <br> Pentru a rezolva acest lucru și au un suport complet de generare PDF, vă rugăm să descărcați <a href="http://www.tcpdf.org/" target="_blank">biblioteca TCPDF</a> , atunci comentariu sau elimina linia <b>$ dolibarr_pdf_force_fpdf = 1,</b> și se adaugă în schimb <b>$ dolibarr_lib_TCPDF_PATH = &#39;path_to_TCPDF_dir&#39;</b>
 LocalTaxDesc=Unele țări aplică 2 sau 3 impozitele la fiecare linie de factura. Dacă este cazul, alege tipul de al doilea și al treilea de taxă și ratele lor. Tipuri posibile sunt: <br> 1: Taxa hoteliera se aplică pe produse și servicii, fără TVA (TVA nu este aplicată la taxa locala) <br> 2: taxa locala aplica pe produse și servicii fără TVA (TVA-ul este calculat la suma + localtax) <br> 3: Taxa locală se aplică la produsele fara TVA (TVA nu se aplică la taxa locala) <br> 4: Taxa locală se aplică la produsele fără TVA (TVA-ul este calculat la suma + localtax) <br> 5: Taxa locală  se aplică pe servicii fara TVA (TVA nu este aplicată la taxa locala) <br> 6: TTaxa locală  se aplică pe servicii fără TVA (TVA-ul este calculat la suma + localtax)
@@ -379,7 +380,7 @@ LinkToTest=Link accesibil generat pentru utilizatorul <strong>% s</strong> (face
 KeepEmptyToUseDefault=Lasă gol pentru utilizarea valorii implicite
 DefaultLink=Link implicit
 ValueOverwrittenByUserSetup=Atenție, această valoare poate fi suprascrisă de setările specifice utilizatorului (fiecare utilizator poate seta propriul url clicktodial)
-# ExternalModule=External module - Installed into directory %s
+ExternalModule=Modul extern - instalat în directorul %s
 
 # Modules
 Module0Name=Utilizatori & grupuri
@@ -487,8 +488,8 @@ Module2700Desc= Folosiţi serviciul online Gravatar (www.gravatar.com) pentru a 
 Module2800Desc=FTP Client
 Module2900Name= GeoIPMaxmind
 Module2900Desc= GeoIP conversii Maxmind capacităţile
-# Module3100Name= Skype
-# Module3100Desc= Add a Skype button into card of adherents / third parties / contacts
+Module3100Name= Skype
+Module3100Desc= Adăugați un buton Skype în fişa de aderent / terț / contact
 Module5000Name=Multi-societate
 Module5000Desc=Vă permite să administraţi mai multe companii
 Module6000Name=Flux de lucru
@@ -974,8 +975,8 @@ ExtraFieldsThirdParties=Atribute complementare ( terţi)
 ExtraFieldsContacts=Atribute complementare (contact/addresă )
 ExtraFieldsMember=Atribute complementare (membri)
 ExtraFieldsMemberType=Atribute complementare (tip membri)
-# ExtraFieldsCustomerOrders=Complementary attributes (orders)
-# ExtraFieldsCustomerInvoices=Complementary attributes (invoices)
+ExtraFieldsCustomerOrders=Atribute complementare (Comenzi)
+ExtraFieldsCustomerInvoices=Atribute complementare (facturi)
 ExtraFieldsSupplierOrders=Atribute complementare (comenzi)
 ExtraFieldsSupplierInvoices=Atribute complementare (facturi)
 ExtraFieldsProject=Atribute complementare (proiecte)
@@ -1007,7 +1008,9 @@ BrowserIsKO=Folosiţi  browser-ul % s. Acest browser-ul pare a fi o alegere proa
 XDebugInstalled=XDebug este încărcată.
 XCacheInstalled=XCache este încărcată.
 AddRefInList=Afişează referinţele clienţilor şi furnizorilor într-o listă ( selectează lista sau casutele ) si in plus a  linkurilor.
-# FieldEdition=Edition of field %s
+FieldEdition=Editarea  campului %s
+# FixTZ=TimeZone fix
+# FillThisOnlyIfRequired=Example: +2 (fill only if timezone offset problems are experienced)
 ##### Module password generation
 PasswordGenerationStandard=Întoarceţi-vă o parolă generate în funcţie de interne Dolibarr algoritmul: 8 caractere care conţin numere în comun şi în caractere minuscule.
 PasswordGenerationNone=Nu sugerează orice generate parola. Parola trebuie să fie de tip în manual.

@@ -228,7 +228,7 @@ OfficialWebSiteFr=Prantsuse ametlik kodulehekülg
 OfficialWiki=Dolibarr dokumentatsioon Wiki
 OfficialDemo=Dolibarr online demo
 OfficialMarketPlace=Official turule välise modules / lisad
-# OfficialWebHostingService=Official web hosting service (Cloud hosting)
+# OfficialWebHostingService=Official web hosting services (Cloud hosting)
 ForDocumentationSeeWiki=Sest kasutaja või arendaja dokumentatsioon (doc, KKK ...) <br> heita pilk Dolibarr Wiki: <br> <a href="%s" target="_blank"><b>%s</b></a>
 ForAnswersSeeForum=Mis tahes muid küsimusi / abi, mida saab kasutada Dolibarr foorumis: <br> <a href="%s" target="_blank"><b>%s</b></a>
 HelpCenterDesc1=See valdkond aitab teil saada tugiteenused teenuse Dolibarr.
@@ -299,6 +299,7 @@ ServerNotAvailableOnIPOrPort=Server ei ole kättesaadav aadressil <b>%s</b> sada
 DoTestServerAvailability=Test server-ühendust
 DoTestSend=Testi saatmine
 DoTestSendHTML=Testi saates HTML
+# ErrorCantUseRazIfNoYearInMask=Error, can't use option @ to reset counter each year if sequence {yy} or {yyyy} is not in mask.
 ErrorCantUseRazInStartedYearIfNoYearMonthInMask=Viga, ei saa kasutada võimalust @ kui jada {yy} {mm} või {yyyy} {mm} ei mask.
 UMask=Umask parameetri uute failid Unix / Linux / BSD failisüsteemi.
 UMaskExplanation=See parameeter võimaldab teil määrata õigused vaikimisi faile loodud Dolibarr serverisse (ajal laadida näiteks). <br> See peab olema kaheksand väärtus (nt 0666 tähendab lugeda ja kirjutada kõigile). <br> See parameeter on kasutu Windows server.
@@ -1008,6 +1009,8 @@ SendmailOptionMayHurtBuggedMTA=Feature saata kirju, kasutades meetodit &quot;PHP
 # XCacheInstalled=XCache is loaded.
 # AddRefInList=Display customer/supplier ref into list (select list or combobox) and most of hyperlink
 # FieldEdition=Edition of field %s
+# FixTZ=TimeZone fix
+# FillThisOnlyIfRequired=Example: +2 (fill only if timezone offset problems are experienced)
 ##### Module password generation
 PasswordGenerationStandard=Tagasi genereeritud vastavalt sisemine Dolibarr algoritm: 8 tähemärki sisaldab jagatud numbreid ja tähti väiketähtedega.
 PasswordGenerationNone=Ei viita genereeritud parool. Parool peab olema kirjuta käsitsi.

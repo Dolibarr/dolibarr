@@ -228,7 +228,7 @@ OfficialWebSite=International officielle hjemmeside
 OfficialWiki=Dolibarr Wiki
 OfficialDemo=Dolibarr online demo
 OfficialMarketPlace=Officielle markedsplads for eksterne moduler / addons
-# OfficialWebHostingService=Official web hosting service (Cloud hosting)
+# OfficialWebHostingService=Official web hosting services (Cloud hosting)
 ForDocumentationSeeWiki=For brugerens eller bygherren dokumentation (doc, FAQs ...), <br> tage et kig på Dolibarr Wiki: <br> <a href="%s" target="_blank"><b> %s</b></a>
 ForAnswersSeeForum=For alle andre spørgsmål / hjælpe, kan du bruge Dolibarr forum: <br> <a href="%s" target="_blank"><b> %s</b></a>
 HelpCenterDesc1=Dette område kan hjælpe dig med at få et Hjælp støtte tjeneste på Dolibarr.
@@ -299,6 +299,7 @@ ServerNotAvailableOnIPOrPort=Serveren er ikke tilgængelig på <b>adressen %s po
 DoTestServerAvailability=Test server-forbindelse
 DoTestSend=Test afsendelse
 DoTestSendHTML=Test sende HTML
+# ErrorCantUseRazIfNoYearInMask=Error, can't use option @ to reset counter each year if sequence {yy} or {yyyy} is not in mask.
 ErrorCantUseRazInStartedYearIfNoYearMonthInMask=Fejl, kan ikke brugeren mulighed @ hvis SEQUENCE (yy) (mm) eller (ÅÅÅÅ) (mm) ikke er i masken.
 UMask=UMask parameter for nye filer på Unix / Linux / BSD-filsystemet.
 UMaskExplanation=Denne parameter giver dig mulighed for at definere tilladelser indstillet som standard på filer, der er oprettet ved Dolibarr på serveren (under upload for eksempel). <br> Det må være oktal værdi (for eksempel 0666 betyder, læse og skrive for alle). <br> Ce paramtre ne Sert Pas sous un serveur Windows.
@@ -1008,6 +1009,8 @@ SendmailOptionMayHurtBuggedMTA=Feature til at sende mails ved hjælp af metoden 
 # XCacheInstalled=XCache is loaded.
 # AddRefInList=Display customer/supplier ref into list (select list or combobox) and most of hyperlink
 # FieldEdition=Edition of field %s
+# FixTZ=TimeZone fix
+# FillThisOnlyIfRequired=Example: +2 (fill only if timezone offset problems are experienced)
 ##### Module password generation
 PasswordGenerationStandard=Returnere en adgangskode, der genereres i henhold til interne Dolibarr algoritme: 8 tegn indeholder delt tal og tegn med små bogstaver.
 PasswordGenerationNone=Ikke tyder på nogen genereret adgangskode. Password skal indtaste manuelt.

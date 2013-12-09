@@ -25,3 +25,4 @@ LinkToGoldMember=Voit soittaa yksi valmentaja valittua on Dolibarr for your lang
 PossibleLanguages=Tuetut kielet
 MakeADonation=Ohje Dolibarr hanke, tee lahjoitus
 # SubscribeToFoundation=Help Dolibarr project, subscribe to the foundation
+# SeeOfficalSupport=For official Dolibarr support in your language: <br><b><a href="%s" target="_blank">%s</a></b>

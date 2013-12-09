@@ -228,7 +228,7 @@ OfficialWebSiteFr=Francuski oficjalnej strony www
 OfficialWiki=Dolibarr Wiki
 OfficialDemo=Dolibarr online demo
 OfficialMarketPlace=Dziennik rynku zewnętrznych modułów / addons
-# OfficialWebHostingService=Official web hosting service (Cloud hosting)
+# OfficialWebHostingService=Official web hosting services (Cloud hosting)
 ForDocumentationSeeWiki=Dla użytkownika lub dewelopera dokumentacji (Doc, FAQ ...), <br> zajrzyj do Dolibarr Wiki: <br> <a href="%s" target="_blank"><b> %s</b></a>
 ForAnswersSeeForum=Na wszelkie inne pytania / pomoc, można skorzystać z Dolibarr forum: <br> <a href="%s" target="_blank"><b> %s</b></a>
 HelpCenterDesc1=Obszar ten może pomóc uzyskać wsparcie na usługi Dolibarr.
@@ -299,6 +299,7 @@ ServerNotAvailableOnIPOrPort=Serwer nie jest dostępna pod <b>adresem %s</b> na 
 DoTestServerAvailability=Test serwera łączność
 DoTestSend=Test wysyłanie
 DoTestSendHTML=Test wysyłania HTML
+# ErrorCantUseRazIfNoYearInMask=Error, can't use option @ to reset counter each year if sequence {yy} or {yyyy} is not in mask.
 ErrorCantUseRazInStartedYearIfNoYearMonthInMask=Błąd, nie można użytkownika, jeśli opcja @ sekwencji rr () () lub (mm rrrr mm) () nie jest w maskę.
 UMask=Umask parametr dla nowych plików w Unix / Linux / BSD systemu plików.
 UMaskExplanation=Ten parametr pozwala określić uprawnienia ustawione domyślnie na pliki stworzone przez Dolibarr na serwerze (na przykład podczas przesyłania). <br> To musi być wartość ósemkowa (na przykład, 0666 oznacza odczytu i zapisu dla wszystkich). <br> Paramtre Ce ne sert pas sous un serveur Windows.
@@ -1008,6 +1009,8 @@ SendmailOptionMayHurtBuggedMTA=Funkcja wysyłania wiadomości za pomocą metody 
 # XCacheInstalled=XCache is loaded.
 # AddRefInList=Display customer/supplier ref into list (select list or combobox) and most of hyperlink
 # FieldEdition=Edition of field %s
+# FixTZ=TimeZone fix
+# FillThisOnlyIfRequired=Example: +2 (fill only if timezone offset problems are experienced)
 ##### Module password generation
 PasswordGenerationStandard=Wróć hasło generowane zgodnie z wewnętrznym Dolibarr algorytmu: 8 znaków zawierających cyfry i znaki udostępniony w małe.
 PasswordGenerationNone=Nie zgłosił żadnych wygenerowane hasło. Hasło należy wpisać ręcznie.

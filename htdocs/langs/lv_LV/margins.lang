@@ -47,5 +47,5 @@ BuyingCost=Pašizmaksa
 UnitCharges=Vienības izmaksas
 Charges=Maksas
 
-AgentContactType=Kontaktpersona veids, ko izmanto ekspluatācijā
-AgentContactTypeDetails=Noteikt, ko kontakta tips (saistīts ar rēķinu) tiks saistīti ar tirdzniecības pārstāvjiem
+# AgentContactType=Commercial agent contact type
+# AgentContactTypeDetails=Défine what contact type (linked on invoices) will be used for margin report by commercial agents
