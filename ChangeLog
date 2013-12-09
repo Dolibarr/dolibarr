@@ -20,6 +20,7 @@ Fix: [ bug #1161 ] Search on product label
 Fix: [ bug #1075 ] POS module doesn't decrement stock of products in delayed payment mode.
 Fix: [ bug #1171 ] Documents lost in interventions after validating
 Fix: fix unsubscribe URL into mailing when sending manually (not by script)
+Fix: [ bug #1182 ] ODT company_country tag is htmlencoded
 
 ***** ChangeLog for 3.4.1 compared to 3.4.0 *****
 Fix: Display buying price on line edit when no supplier price is defined
