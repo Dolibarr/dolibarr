@@ -68,6 +68,7 @@ CountryId=Identifiant pays
 Phone=Téléphone
 Skype=Skype
 Call=Appeler
+# Chat=Chat
 PhonePro=Tél pro.
 PhonePerso=Tél perso.
 PhoneMobile=Tél portable
@@ -398,9 +399,9 @@ InActivity=En activité
 ActivityCeased=Clos
 ActivityStateFilter=Statut d'activité
 ProductsIntoElements=Liste des produits dans les %s
-CurrentOutstandingBill=Montant encours
+# CurrentOutstandingBill=Current outstanding bill
 OutstandingBill=Montant max. en attente
-OutstandingBillReached=Montant max. endetté
+# OutstandingBillReached=Reached max. for outstanding bill
 # Monkey
 MonkeyNumRefModelDesc=Renvoie le numéro sous la forme %syymm-nnnn pour les codes clients et %syymm-nnnn pour les codes fournisseurs où yy est l'année, mm le mois et nnnn un compteur séquentiel sans rupture et sans remise à 0.
 # Leopard

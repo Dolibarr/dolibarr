@@ -109,3 +109,4 @@ NbOfProductAfterPeriod=Daudzums produktu %s krājumā pēc izvēlētā perioda (
 MassStockMovement=Masu krājumu kustība
 SelectProductInAndOutWareHouse=Izvēlieties produktu, daudzumu, avota noliktavu un mērķa noliktavu, tad noklikšķiniet uz &quot;%s&quot;. Kad tas ir izdarīts visām nepieciešamajām kustībām, noklikšķiniet uz &quot;%s&quot;.
 RecordMovement=Ierakstīt transfert
+# ReceivingForSameOrder=Receivings for this order

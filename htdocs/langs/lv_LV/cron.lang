@@ -18,8 +18,8 @@ Permission23104 = Izpildīt Plānotais uzdevumu
 # Admin
 #
 CronSetup= Plānotais darbu vadības iestatīšana
-URLToLaunchCronJobs=URL uzsākt cron darbavietas
-OrToLaunchASpecificJob=Vai uzsākt konkrētu darbu
+# URLToLaunchCronJobs=URL to check and launch cron jobs if required
+# OrToLaunchASpecificJob=Or to check and launch a specific job
 KeyForCronAccess=Drošības atslēga URL uzsākt cron darbavietas
 FileToLaunchCronJobs=Komandrindas uzsākt cron darbavietas
 CronExplainHowToRunUnix=Par Unix vidē, jums vajadzētu izmantot crontab palaist komandrindas viena otras minūtes
@@ -32,6 +32,7 @@ CronExplainHowToRunWin=Microsoft (tm), Windows environement jūs varat izmantot 
 CronJobs=Plānotais darba vietas
 CronListActive= Saraksts aktīvo darbu
 CronListInactive= Saraksts ar invaliditāti darba vietas
+CronListActive= Saraksts aktīvo darbu
 
 
 #
@@ -42,7 +43,7 @@ CronLastOutput=Pēdējo reizi palaist izejas
 CronLastResult=Pēdējais rezultāts kods
 CronListOfCronJobs=Saraksts ar plānoto darbu
 CronCommand=Komanda
-CronList= Darba saraksts
+# CronList=Jobs list
 CronDelete= Dzēst cron darbavietas
 CronConfirmDelete= Vai tiešām vēlaties dzēst šo cron darbu?
 CronExecute=Uzsākt darbu
