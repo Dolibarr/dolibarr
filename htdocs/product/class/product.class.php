@@ -1347,7 +1347,8 @@ class Product extends CommonObject
 					}
 				}
 
-				$res=$this->load_stock();
+				// We should not load stock at each fetch
+				//$res=$this->load_stock();
 
 				return $res;
 			}
