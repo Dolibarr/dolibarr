@@ -700,6 +700,8 @@ else if (($action == 'addline' || $action == 'addline_predef') && $user->rights-
 		$price_min=0;
 		$price_base_type = (GETPOST('price_base_type', 'alpha')?GETPOST('price_base_type', 'alpha'):'HT');
 
+		$db->begin();
+		
 		// Ecrase $pu par celui du produit
 		// Ecrase $desc par celui du produit
 		// Ecrase $txtva par celui du produit
@@ -858,6 +860,8 @@ else if (($action == 'addline' || $action == 'addline_predef') && $user->rights-
 
 			if ($result > 0)
 			{
+				$db->commit();
+				
 				if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
 				{
 					// Define output language
@@ -898,6 +902,8 @@ else if (($action == 'addline' || $action == 'addline_predef') && $user->rights-
 			}
 			else
 			{
+				$db->rollback();
+				
 				setEventMessage($object->error, 'errors');
 			}
 		}
@@ -981,6 +987,8 @@ else if ($action == 'updateligne' && $user->rights->propal->creer && GETPOST('sa
 	
 	if (! $error)
 	{
+		$db->begin();
+		
 		$result = $object->updateline(
 			GETPOST('lineid'),
 			$pu_ht,
@@ -1006,6 +1014,8 @@ else if ($action == 'updateligne' && $user->rights->propal->creer && GETPOST('sa
 
 		if ($result >= 0)
 		{
+			$db->commit();
+			
 			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
 			{
 				// Define output language
@@ -1035,6 +1045,8 @@ else if ($action == 'updateligne' && $user->rights->propal->creer && GETPOST('sa
 		}
 		else
 		{
+			$db->rollback();
+			
 			setEventMessage($object->error, 'errors');
 		}
 	}
