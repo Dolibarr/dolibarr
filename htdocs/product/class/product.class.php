@@ -1224,6 +1224,7 @@ class Product extends CommonObject
 
 				$this->db->free($resql);
 
+
 				// multilangs
 				if (! empty($conf->global->MAIN_MULTILANGS)) $this->getMultiLangs();
 
@@ -1347,10 +1348,11 @@ class Product extends CommonObject
 					}
 				}
 
-				// We should not load stock at each fetch
+				// We should not load stock at each fetch. If someone need stock, he must call load_stock after fetch.
 				//$res=$this->load_stock();
-
-				return $res;
+				//return $res;
+				
+				return 1;
 			}
 			else
 			{
