@@ -24,6 +24,7 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/bookmarks/class/bookmark.class.php';
 
+$langs->load("bookmarks");
 
 // Security check
 if (! $user->rights->bookmark->lire) {
