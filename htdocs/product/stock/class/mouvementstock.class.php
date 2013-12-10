@@ -81,7 +81,8 @@ class MouvementStock
 			dol_print_error('',"Failed to fetch product");
 			return -1;
 		}
-
+		$product->load_stock();
+		
 		// Define if we must make the stock change (If product type is a service or if stock is used also for services)
 		$movestock=0;
 		if ($product->type != 1 || ! empty($conf->global->STOCK_SUPPORTS_SERVICES)) $movestock=1;
