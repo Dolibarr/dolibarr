@@ -7,6 +7,13 @@ For users:
 - New: Add list of orders products in tab "consumption" on thirdparties.
 - New: Add graph stats for suppliers orders in tab "stats" on products.
 
+For translators:
+- Update language files.
+
+For developers:
+- New: Add path file of trigger into admin trigger list page.
+
+
 
 ***** ChangeLog for 3.5 compared to 3.4.* *****
 For users:

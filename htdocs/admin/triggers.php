@@ -68,7 +68,12 @@ foreach ($triggers as $trigger)
 	print '<td valign="top" width="14" align="center">'.$trigger['picto'].'</td>';
 	print '<td valign="top">'.$trigger['file'].'</td>';
 	print '<td valign="top" align="center">'.$trigger['status'].'</td>';
-	print '<td valign="top">'.$form->textwithpicto('', $trigger['info']).'</td>';
+	print '<td valign="top">';
+	$text=$trigger['info'];
+	$text.="<br>\n<strong>".$langs->trans("File")."</strong>:<br>\n".$trigger['relpath'];
+	//$text.="\n".$langs->trans("ExternalModule",$trigger['isocreorexternal']);
+	print $form->textwithpicto('', $text);
+	print '</td>';
 	print '</tr>';
 }
 
