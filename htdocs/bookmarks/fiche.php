@@ -28,6 +28,11 @@ require_once DOL_DOCUMENT_ROOT.'/bookmarks/class/bookmark.class.php';
 
 $langs->load("other");
 
+// Security check
+if (! $user->rights->bookmark->lire) {
+    restrictedArea($user, 'bookmarks');
+}
+
 $id=GETPOST("id");
 $action=GETPOST("action","alpha");
 $title=GETPOST("title","alpha");
