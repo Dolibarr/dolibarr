@@ -228,7 +228,7 @@ OfficialWebSiteFr=法國官方網站
 OfficialWiki=Dolibarr維基
 OfficialDemo=Dolibarr在線演示
 OfficialMarketPlace=官方/插件外部模組市場
-# OfficialWebHostingService=Official web hosting service (Cloud hosting)
+# OfficialWebHostingService=Official web hosting services (Cloud hosting)
 ForDocumentationSeeWiki=對於用戶或開發人員的文件（文檔，常見問題...), <br>看一看在Dolibarr維基看看： <br> <a href="%s" target="_blank"><b>%s的</b></a>
 ForAnswersSeeForum=對於任何其他問題/幫助，您可以使用Dolibarr論壇： <br> <a href="%s" target="_blank"><b>%s的</b></a>
 HelpCenterDesc1=這方面可以幫助你獲得一個Dolibarr幫助支持服務。
@@ -299,6 +299,7 @@ ServerNotAvailableOnIPOrPort=服務器而不是<b>%</b>可在地址<b>的</b>港
 DoTestServerAvailability=測試服務器連接
 DoTestSend=發送測試
 DoTestSendHTML=測試發送HTML
+# ErrorCantUseRazIfNoYearInMask=Error, can't use option @ to reset counter each year if sequence {yy} or {yyyy} is not in mask.
 ErrorCantUseRazInStartedYearIfNoYearMonthInMask=錯誤，不能使用選項@如果序列（yy）（）或（西元年毫米）（毫米）是不是面具。
 UMask=umask的參數在Unix / Linux / BSD的文件系統的新文件。
 UMaskExplanation=此參數允許您定義，例如上載期間就Dolibarr服務器上創建文件的預設設置權限（）。 <br>它必須是八進制值（例如，0666就是為大家閲讀和書寫）。 <br>這個參數是沒有用的基於Windows的服務器。
@@ -1008,6 +1009,8 @@ SendmailOptionMayHurtBuggedMTA=功能使用方法“PHP的mail直接”發送電
 # XCacheInstalled=XCache is loaded.
 # AddRefInList=Display customer/supplier ref into list (select list or combobox) and most of hyperlink
 # FieldEdition=Edition of field %s
+# FixTZ=TimeZone fix
+# FillThisOnlyIfRequired=Example: +2 (fill only if timezone offset problems are experienced)
 ##### Module password generation
 PasswordGenerationStandard=返回一個密碼生成算法根據內部Dolibarr：8個字元，包含共享小寫數字和字元。
 PasswordGenerationNone=不要提出任何生成的密碼。密碼必須手動鍵入。

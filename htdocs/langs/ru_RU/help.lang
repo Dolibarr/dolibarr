@@ -25,3 +25,4 @@ LinkToGoldMember=Вы можете позвонить одному из отоб
 PossibleLanguages=Поддерживаемые языки
 MakeADonation=Помогите проекту Dolibarr, сделайте пожертвование
 # SubscribeToFoundation=Help Dolibarr project, subscribe to the foundation
+# SeeOfficalSupport=For official Dolibarr support in your language: <br><b><a href="%s" target="_blank">%s</a></b>

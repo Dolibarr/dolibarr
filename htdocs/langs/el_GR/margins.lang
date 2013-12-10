@@ -47,5 +47,5 @@ BuyingCost=Τιμή κόστους
 UnitCharges=Χρεώσεων
 Charges=Επιβαρύνσεις
 
-AgentContactType=Τύπος επικοινωνίας που χρησιμοποιείται για την ανάθεση
-AgentContactTypeDetails=Ορίστε τι είδους επικοινωνία (που συνδέεται στα τιμολόγια) θα συνδέεται με τους εμπορικούς αντιπροσώπους
+# AgentContactType=Commercial agent contact type
+# AgentContactTypeDetails=Défine what contact type (linked on invoices) will be used for margin report by commercial agents

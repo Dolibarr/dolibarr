@@ -25,3 +25,4 @@ LinkToGoldMember=あなたは彼のウィジェット（ステータスおよび
 PossibleLanguages=サポートされる言語
 MakeADonation=Dolibarrプロジェクトを支援、寄付をする
 # SubscribeToFoundation=Help Dolibarr project, subscribe to the foundation
+# SeeOfficalSupport=For official Dolibarr support in your language: <br><b><a href="%s" target="_blank">%s</a></b>
