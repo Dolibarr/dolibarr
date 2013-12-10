@@ -265,6 +265,12 @@ class Interfaces
             $modName = $modules[$key];
             if (empty($modName)) continue;
 
+            if (! class_exists($modName))
+            {
+				print 'Error: A trigger file was found but its class "'.$modName.'" was not found.'."<br>\n";
+            	continue;
+            }
+            
             $objMod = new $modName($this->db);
 
             // Define disabledbyname and disabledbymodule
