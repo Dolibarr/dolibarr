@@ -939,6 +939,9 @@ class Propal extends CommonObject
                 $this->fk_delivery_address	= '';
             }
 
+			// reset ref_client only if different company
+			$this->ref_client	= '';
+
             // TODO Change product price if multi-prices
         }
         else
@@ -961,7 +964,6 @@ class Propal extends CommonObject
         $this->date			= $now;
         $this->datep		= $now;    // deprecated
         $this->fin_validite	= $this->date + ($this->duree_validite * 24 * 3600);
-        $this->ref_client	= '';
 
         // Set ref
         require_once DOL_DOCUMENT_ROOT ."/core/modules/propale/".$conf->global->PROPALE_ADDON.'.php';
@@ -972,6 +974,20 @@ class Propal extends CommonObject
         // Create clone
         $result=$this->create($user);
         if ($result < 0) $error++;
+		else
+		{
+			// copy internal contacts
+            if ($this->copy_linked_contact($objFrom, 'internal') < 0)
+				$error++;
+
+			// copy external contacts if same company
+			elseif ($objFrom->socid == $this->socid)
+			{
+                if ($this->copy_linked_contact($objFrom, 'external') < 0)
+					$error++;
+			}
+
+		}
 
         if (! $error)
         {

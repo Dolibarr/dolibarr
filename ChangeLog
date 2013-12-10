@@ -6,7 +6,9 @@ English Dolibarr ChangeLog
 For users:
 - New: Add list of orders products in tab "consumption" on thirdparties.
 - New: Add graph stats for suppliers orders in tab "stats" on products.
-
+- New: Copy customer reference when cloning propal on same customer
+- New: Copy internal contact information when cloning propal
+- New: Copy external contact information when cloning propal on same customer
 
 ***** ChangeLog for 3.5 compared to 3.4.* *****
 For users:
