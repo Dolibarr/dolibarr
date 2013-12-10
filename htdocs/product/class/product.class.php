@@ -1151,7 +1151,7 @@ class Product extends CommonObject
 		$sql.= " accountancy_code_buy, accountancy_code_sell, stock, pmp,";
 		$sql.= " datec, tms, import_key, entity, desiredstock";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product";
-		if ($id) $sql.= " WHERE rowid = '".$id."'";
+		if ($id) $sql.= " WHERE rowid = ".$this->db->escape($id);
 		else
 		{
 			$sql.= " WHERE entity IN (".getEntity($this->element, 1).")";
