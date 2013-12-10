@@ -333,8 +333,11 @@ function getProductOrService($authentication,$id='',$ref='',$ref_ext='')
         {
             $product=new Product($db);
             $result=$product->fetch($id,$ref,$ref_ext);
+            
             if ($result > 0)
             {
+            	$product->load_stock();
+            	
             	$dir = (!empty($conf->product->dir_output)?$conf->product->dir_output:$conf->service->dir_output);
             	$pdir = get_exdir($product->id,2) . $product->id ."/photos/";
             	$dir = $dir . '/'. $pdir;
