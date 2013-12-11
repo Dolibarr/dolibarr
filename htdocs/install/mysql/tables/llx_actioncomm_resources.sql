@@ -1,5 +1,6 @@
 -- ============================================================================
--- Copyright (C) 2013 Juanjo Menent        <jmenent@2byte.es>
+-- Copyright (C) 2013	Laurent Destailleur	<eldy@users.sourceforge.net>
+-- Copyright (C) 2013	Florian Henry		<florian.henry@open-concept.pro>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -15,8 +16,17 @@
 -- along with this program. If not, see <http://www.gnu.org/licenses/>.
 --
 -- ============================================================================
+-- Table used for relations between elements of different types:
+-- invoice-propal, propal-order, etc...
+-- ============================================================================
 
-
-ALTER TABLE llx_soc_localtax ADD UNIQUE INDEX uk_soc_localtax_tax (fk_soc, fk_tax);
-
-ALTER TABLE llx_propal ADD INDEX idx_soc_localtax_fk_soc (fk_soc);
+create table llx_actioncomm_resources
+(
+  rowid           	integer AUTO_INCREMENT PRIMARY KEY,  
+  fk_actioncomm		integer NOT NULL,
+  element_type		varchar(50) NOT NULL,
+  fk_element		integer NOT NULL,
+  answer_status		varchar(50) NULL,
+  mandatory		smallint,
+  transparent		smallint
+) ENGINE=innodb;

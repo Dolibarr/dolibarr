@@ -1,28 +1,28 @@
 <?php
 /* Copyright (C) 2005		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2006-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
-* Copyright (C) 2010-2012	Regis Houssin			<regis.houssin@capnetworks.com>
-* Copyright (C) 2011		Juanjo Menent			<jmenent@2byte.es>
-*
-* This program is free software; you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation; either version 3 of the License, or
-* (at your option) any later version.
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with this program. If not, see <http://www.gnu.org/licenses/>.
-*/
+ * Copyright (C) 2006-2013	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2010-2012	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2011		Juanjo Menent			<jmenent@2byte.es>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 
 /**
  *	\file       htdocs/projet/tasks/time.php
  *	\ingroup    project
  *	\brief      Page to add new time spent on a task
-*/
+ */
 
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
@@ -210,8 +210,10 @@ if ($id > 0 || ! empty($ref))
 			print $form->showrefnav($projectstatic,'project_ref','',1,'ref','ref','',$param.'&withproject=1');
 			print '</td></tr>';
 
+			// Label
 			print '<tr><td>'.$langs->trans("Label").'</td><td>'.$projectstatic->title.'</td></tr>';
 
+			// Thirdparty
 			print '<tr><td>'.$langs->trans("Company").'</td><td>';
 			if (! empty($projectstatic->societe->id)) print $projectstatic->societe->getNomUrl(1);
 			else print '&nbsp;';
@@ -265,8 +267,8 @@ if ($id > 0 || ! empty($ref))
 		// Label
 		print '<tr><td>'.$langs->trans("Label").'</td><td colspan="3">'.$object->label.'</td></tr>';
 
-		// planned workload 
-		print '<tr><td>'.$langs->trans("PlannedWorkload").'</td><td colspan="3">'.convertSecondToTime($object->planned_workload,'all').'</td></tr>';
+		// Planned workload
+		print '<tr><td>'.$langs->trans("PlannedWorkload").'</td><td colspan="3">'.convertSecondToTime($object->planned_workload,'allhourmin').'</td></tr>';
 
 		// Project
 		if (empty($withproject))
@@ -443,7 +445,7 @@ if ($id > 0 || ! empty($ref))
 			}
 			else
 			{
-				print convertSecondToTime($task_time->task_duration,'all');
+				print convertSecondToTime($task_time->task_duration,'allhourmin');
 			}
 			print '</td>';
 
@@ -474,7 +476,7 @@ if ($id > 0 || ! empty($ref))
 			$total += $task_time->task_duration;
 		}
 		print '<tr class="liste_total"><td colspan="3" class="liste_total">'.$langs->trans("Total").'</td>';
-		print '<td align="right" class="nowrap liste_total">'.convertSecondToTime($total).'</td><td>&nbsp;</td>';
+		print '<td align="right" class="nowrap liste_total">'.convertSecondToTime($total,'allhourmin').'</td><td>&nbsp;</td>';
 		print '</tr>';
 
 		print "</table>";

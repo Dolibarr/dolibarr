@@ -1,6 +1,6 @@
 # Dolibarr language file - fr_CH - main
 SeparatorDecimal=,
-SeparatorThousand= 
+SeparatorThousand=None
 FormatDateShort=%d-%m-%Y
 FormatDateShortInput=%d-%m-%Y
 FormatDateShortJava=dd-MM-yyyy

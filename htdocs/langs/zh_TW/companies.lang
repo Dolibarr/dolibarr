@@ -66,6 +66,9 @@ Country=國家
 CountryCode=國家代碼
 CountryId=國家編號
 Phone=電話
+# Skype=Skype
+# Call=Call
+# Chat=Chat
 PhonePro=公司電話號碼
 PhonePerso=個人電話號碼
 PhoneMobile=手機號碼
@@ -396,7 +399,9 @@ InActivity=打開
 ActivityCeased=關閉
 ActivityStateFilter=活動狀態
 # ProductsIntoElements=List of products into
-# OutstandingBill=Outstanding Bill
+# CurrentOutstandingBill=Current outstanding bill
+# OutstandingBill=Max. for outstanding bill
+# OutstandingBillReached=Reached max. for outstanding bill
 # Monkey
 MonkeyNumRefModelDesc=用以下固定的方式回傳編號:<br> %syymm-nnnn 為客戶編號生成格式。<br> %syymm-nnnn 為供應商編號生成格式。<br>   yy 是年、mm是月、nnnn是一個不為0的序號。
 # Leopard

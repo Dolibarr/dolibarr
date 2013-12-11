@@ -1,13 +1,13 @@
 # Dolibarr language file - Source file is en_US - main
 DIRECTION=rtl
-# Note for chinese:
-# msungstdlight or cid0ct are for traditionnal chinese (traditionnal does not render with ubuntu pdf reader)
-# stsongstdlight or cid0cs are for simplified chinese
-# To read chinese pdf with linux: sudo apt-get install poppler-data
+# Note for Chinese:
+# msungstdlight or cid0ct are for traditional Chinese (traditional does not render with Ubuntu pdf reader)
+# stsongstdlight or cid0cs are for simplified Chinese
+# To read Chinese pdf with Linux: sudo apt-get install poppler-data
 FONTFORPDF=DejaVuSans
 FONTSIZEFORPDF=9
-SeparatorDecimal=,
-SeparatorThousand=بلا
+# SeparatorDecimal=.
+# SeparatorThousand=,
 FormatDateShort=%d/%m/%Y
 FormatDateShortInput=%d/%m/%Y
 FormatDateShortJava=dd/MM/yyyy
@@ -155,6 +155,7 @@ Valid=صحيح
 Approve=تایید کردن
 ReOpen=دوباره باز کردن
 Upload=بارگذاری(آپلود)
+# ToLink=Link
 Select=انتخاب
 Choose=انتخاب
 ChooseLangage=انتخاب زبا
@@ -446,30 +447,30 @@ December=كانون الأول / ديسمبر
 # OctoberMin=Oct
 # NovemberMin=Nov
 # DecemberMin=Dec
-Month01=كانون الثاني / يناير
-Month02=فبراير
-Month03=مارس
-Month04=نيسان / أبريل
-Month05=ربما
-Month06=يونيو
-Month07=يوليو
-Month08=آب / أغسطس
-Month09=سبتمبر
-Month10=أكتوبر
-Month11=تشرين الثاني / نوفمبر
-Month12=كانون الأول / ديسمبر
-MonthShort01=يناير
-MonthShort02=فبراير
-MonthShort03=مارس
-MonthShort04=أبريل
-MonthShort05=ربما
-MonthShort06=يونيو
-MonthShort07=يوليو
-MonthShort08=أغسطس
-MonthShort09=سبتمبر
-MonthShort10=أكتوبر
-MonthShort11=نوفمبر
-MonthShort12=ديسمبر
+# Month01=January
+# Month02=February
+# Month03=March
+# Month04=April
+# Month05=May
+# Month06=June
+# Month07=July
+# Month08=August
+# Month09=September
+# Month10=October
+# Month11=November
+# Month12=December
+# MonthShort01=Jan
+# MonthShort02=Feb
+# MonthShort03=Mar
+# MonthShort04=Apr
+# MonthShort05=May
+# MonthShort06=Jun
+# MonthShort07=Jul
+# MonthShort08=Aug
+# MonthShort09=Sep
+# MonthShort10=Oct
+# MonthShort11=Nov
+# MonthShort12=Dec
 AttachedFiles=الملفات والوثائق المرفقة
 FileTransferComplete=تم تحميل الملف بنجاح
 DateFormatYYYYMM=سنة ملم
@@ -631,7 +632,7 @@ Prefix=بادئة
 # NewAttribute=New attribute
 # AttributeCode=Attribute code
 # OptionalFieldsSetup=Extra attributes setup
-# URLPhoto=Url of photo/logo
+# URLPhoto=URL of photo/logo
 # SetLinkToThirdParty=Link to another third party
 CreateDraft=إنشاء مشروع
 # ClickToEdit=Click to edit
@@ -641,7 +642,7 @@ CreateDraft=إنشاء مشروع
 # ByDate=By date
 # ByMonthYear=By month/year
 # ByYear=By year
-# ByMonth=by month
+# ByMonth=By month
 # ByDay=By day
 # BySalesRepresentative=By sales representative
 # LinkedToSpecificUsers=Linked to a particular user contact
@@ -658,6 +659,9 @@ CreateDraft=إنشاء مشروع
 # toward=toward
 # Access=Access
 # HelpCopyToClipboard=Use Ctrl+C to copy to clipboard
+# SaveUploadedFileWithMask=Save file on server with name "<strong>%s</strong>" (otherwise "%s")
+# OriginFileName=Original filename
+# SetDemandReason=Set source
 
 # Week day
 # Monday=Monday

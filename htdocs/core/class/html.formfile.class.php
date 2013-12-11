@@ -2,6 +2,8 @@
 /* Copyright (c) 2008-2013 Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2010-2012 Regis Houssin		<regis.houssin@capnetworks.com>
  * Copyright (c) 2010      Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (c) 2013      Charles-Fr BENKE		<charles.fr@benke.fr>
+ * Copyright (C) 2013      Cédric Salvador      <csalvador@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -58,23 +60,30 @@ class FormFile
      * 	@param	int		$perm			Value of permission to allow upload
      *  @param  int		$size           Length of input file area
      *  @param	Object	$object			Object to use (when attachment is done on an element)
-     *  @param	string	$options		Options
-     *  @param	boolean	$useajax		Use ajax if enabled
+     *  @param	string	$options		Add an option column
+     *  @param	boolean	$useajax		Use fileupload ajax (0=never, 1=if enabled, 2=always whatever is option). 2 should never be used.
+     *  @param	string	$savingdocmask	Mask to use to define output filename. For example 'XXXXX-__YYYYMMDD__-__file__'
+     *  @param	string	$linkfiles		1=Also add form to link files, 0=Do not show form to link files
+     *  @param	string	$htmlname		Name and id of HTML form
      * 	@return	int						<0 if KO, >0 if OK
      */
-    function form_attach_new_file($url, $title='', $addcancel=0, $sectionid=0, $perm=1, $size=50, $object='', $options='', $useajax=true)
+    function form_attach_new_file($url, $title='', $addcancel=0, $sectionid=0, $perm=1, $size=50, $object='', $options='', $useajax=1, $savingdocmask='', $linkfiles=1, $htmlname='formuserfile')
     {
         global $conf,$langs, $hookmanager;
         $hookmanager->initHooks(array('formfile'));
 
         if (! empty($conf->browser->phone)) return 0;
 
-		if (! empty($conf->global->MAIN_USE_JQUERY_FILEUPLOAD) && $useajax)
+		if ((! empty($conf->global->MAIN_USE_JQUERY_FILEUPLOAD) && $useajax) || ($useajax==2))
         {
-            return $this->_formAjaxFileUpload($object);
+        	// TODO: Cheeck this works with 2 forms on same page
+        	// TODO: Cheeck this works with GED module, otherwise, force useajax to 0
+        	// TODO: This does not support option savingdocmask
+        	// TODO: This break feature to upload links too
+        	return $this->_formAjaxFileUpload($object);
         }
         else
-        {
+       {
             $maxlength=$size;
 
             $out = "\n\n<!-- Start form attach new file -->\n";
@@ -82,9 +91,9 @@ class FormFile
             if (empty($title)) $title=$langs->trans("AttachANewFile");
             if ($title != 'none') print_titre($title);
 
-            $out .= '<form name="formuserfile" action="'.$url.'" enctype="multipart/form-data" method="POST">';
-            $out .= '<input type="hidden" id="formuserfile_section_dir" name="section_dir" value="">';
-            $out .= '<input type="hidden" id="formuserfile_section_id"  name="section_id" value="'.$sectionid.'">';
+            $out .= '<form name="'.$htmlname.'" id="'.$htmlname.'" action="'.$url.'" enctype="multipart/form-data" method="POST">';
+            $out .= '<input type="hidden" id="'.$htmlname.'_section_dir" name="section_dir" value="">';
+            $out .= '<input type="hidden" id="'.$htmlname.'_section_id"  name="section_id" value="'.$sectionid.'">';
             $out .= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
             $out .= '<table width="100%" class="nobordernopadding">';
@@ -133,18 +142,62 @@ class FormFile
                 $out .= ' ('.$langs->trans("UploadDisabled").')';
             }
             $out .= "</td></tr>";
+
+            if ($savingdocmask)
+            {
+            	$out .= '<tr>';
+   	            if (! empty($options)) $out .= '<td>'.$options.'</td>';
+	            $out .= '<td valign="middle" class="nowrap">';
+				$out .= '<input type="checkbox" checked="checked" name="savingdocmask" value="'.dol_escape_js($savingdocmask).'"> '.$langs->trans("SaveUploadedFileWithMask", preg_replace('/__file__/',$langs->transnoentitiesnoconv("OriginFileName"),$savingdocmask), $langs->transnoentitiesnoconv("OriginFileName"));
+            	$out .= '</td>';
+            	$out .= '</tr>';
+            }
+
             $out .= "</table>";
 
             $out .= '</form>';
             if (empty($sectionid)) $out .= '<br>';
 
-            $out .= "\n<!-- End form attach new file -->\n\n";
-            $parameters = array('socid'=>(isset($GLOBALS['socid'])?$GLOBALS['socid']:''),'id'=>(isset($GLOBALS['id'])?$GLOBALS['id']:''), 'url'=>$url, 'perm'=>$perm);
-            $res = $hookmanager->executeHooks('formattachOptions',$parameters,$object);
+            $out .= "\n<!-- End form attach new file -->\n";
+
+            if ($linkfiles)
+            {
+	            $out .= "\n<!-- Start form attach new link -->\n";
+	            $langs->load('link');
+	            $title = $langs->trans("LinkANewFile");
+	            $out .= load_fiche_titre($title, null, null);
+	            $out .= '<form name="'.$htmlname.'_link" id="'.$htmlname.'_link" action="'.$url.'" method="POST">';
+	            $out .= '<input type="hidden" id="'.$htmlname.'_link_section_dir" name="link_section_dir" value="">';
+	            $out .= '<input type="hidden" id="'.$htmlname.'_link_section_id"  name="link_section_id" value="'.$sectionid.'">';
+	            $out .= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+
+	            $out .= '<table width="100%" class="nobordernopadding">';
+	            $out .= '<tr>';
+	            $out .= '<td valign="middle" class="nowrap">';
+	            $out .= $langs->trans("Link") . ': ';
+	            $out .= '<input type="text" name="link" size="'.$maxlength.'" id="link">';
+	            $out .= ' &nbsp; ' . $langs->trans("Label") . ': ';
+	            $out .= '<input type="text" name="label" id="label">';
+	            $out .= '<input type="hidden" name="objecttype" value="' . $object->element . '">';
+	            $out .= '<input type="hidden" name="objectid" value="' . $object->id . '">';
+	            $out .= '<input type="submit" class="button" name="linkit" value="'.$langs->trans("ToLink").'"';
+	            $out .= (empty($conf->global->MAIN_UPLOAD_DOC) || empty($perm)?' disabled="disabled"':'');
+	            $out .= '>';
+	            $out .= '</td></tr>';
+	            $out .= '</table>';
+
+	            $out .= '</form><br>';
+	            $parameters = array('socid'=>(isset($GLOBALS['socid'])?$GLOBALS['socid']:''),'id'=>(isset($GLOBALS['id'])?$GLOBALS['id']:''), 'url'=>$url, 'perm'=>$perm);
+	            $res = $hookmanager->executeHooks('formattachOptions',$parameters,$object);
+
+	            $out .= "\n<!-- End form attach new file -->\n";
+            }
+
             if (empty($res))
             {
             	print $out;
             }
+
             print $hookmanager->resPrint;
 
             return 1;
@@ -647,12 +700,13 @@ class FormFile
      * 	@param	 int	$permtodelete		Permission to delete
      * 	@param	 int	$useinecm			Change output for use in ecm module
      * 	@param	 string	$textifempty		Text to show if filearray is empty ('NoFileFound' if not defined)
-     *  @param  int		$maxlength          Maximum length of file name shown
+     *  @param   int	$maxlength          Maximum length of file name shown
      *  @param	 string	$title				Title before list
      *  @param	 string $url				Full url to use for click links ('' = autodetect)
+	 *  @param	 int	$showrelpart		0=Show only filename (default), 1=Show first level 1 dir
      * 	@return	 int						<0 if KO, nb of files shown if OK
      */
-	function list_of_documents($filearray,$object,$modulepart,$param='',$forcedownload=0,$relativepath='',$permtodelete=1,$useinecm=0,$textifempty='',$maxlength=0,$title='',$url='')
+	function list_of_documents($filearray,$object,$modulepart,$param='',$forcedownload=0,$relativepath='',$permtodelete=1,$useinecm=0,$textifempty='',$maxlength=0,$title='',$url='', $showrelpart=0)
 	{
 		global $user, $conf, $langs, $hookmanager;
 		global $bc;
@@ -717,8 +771,18 @@ class FormFile
 					print '<a data-ajax="false" href="'.DOL_URL_ROOT.'/document.php?modulepart='.$modulepart;
 					if ($forcedownload) print '&attachment=1';
 					if (! empty($object->entity)) print '&entity='.$object->entity;
-					print '&file='.urlencode($relativepath.$file['name']).'">';
+					$filepath=$relativepath.$file['name'];
+					/* Restore old code: When file is at level 2+, full relative path (and not only level1) must be into url
+					if ($file['level1name'] <> $object->id)
+						$filepath=$object->id.'/'.$file['level1name'].'/'.$file['name'];
+					else
+						$filepath=$object->id.'/'.$file['name'];
+					*/
+					print '&file='.urlencode($filepath);
+					print '">';
+
 					print img_mime($file['name'],$file['name'].' ('.dol_print_size($file['size'],0,0).')').' ';
+					if ($showrelpart == 1) print $relativepath;
 					print dol_trunc($file['name'],$maxlength,'middle');
 					print '</a>';
 					print "</td>\n";
@@ -737,8 +801,17 @@ class FormFile
 					// Delete or view link
 					// ($param must start with &)
 					print '<td align="right">';
-					if ($useinecm)     print '<a href="'.DOL_URL_ROOT.'/ecm/docfile.php?urlfile='.urlencode($file['name']).$param.'" class="editfilelink" rel="'.urlencode($file['name']).$param.'">'.img_view().'</a> &nbsp; ';
-					if ($permtodelete) print '<a href="'.(($useinecm && ! empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE_JS))?'#':$url.'?action=delete&urlfile='.urlencode($file['name']).$param).'" class="deletefilelink" rel="'.urlencode($file['name']).$param.'">'.img_delete().'</a>';
+					if ($useinecm)     print '<a href="'.DOL_URL_ROOT.'/ecm/docfile.php?urlfile='.urlencode($file['name']).$param.'" class="editfilelink" rel="'.urlencode($file['name']).'">'.img_view().'</a> &nbsp; ';
+					if ($permtodelete)
+					{
+						/*
+						if ($file['level1name'] <> $object->id)
+							$filepath=$file['level1name'].'/'.$file['name'];
+						else
+							$filepath=$file['name'];
+						*/
+						print '<a href="'.(($useinecm && ! empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE_JS))?'#':$url.'?action=delete&urlfile='.urlencode($filepath).$param).'" class="deletefilelink" rel="'.$filepath.'">'.img_delete().'</a>';
+					}
 					else print '&nbsp;';
 					print "</td>";
 					print "</tr>\n";
@@ -761,7 +834,7 @@ class FormFile
     /**
      *	Show list of documents in a directory
      *
-     *  @param	 string	$upload_dir         Directory that was scanned
+     *  @param	string	$upload_dir         Directory that was scanned
      *  @param  array	$filearray          Array of files loaded by dol_dir_list function before calling this function
      *  @param  string	$modulepart         Value for modulepart used by download wrapper
      *  @param  string	$param              Parameters on sort links
@@ -771,7 +844,7 @@ class FormFile
      *  @param  int		$useinecm           Change output for use in ecm module
      *  @param  int		$textifempty        Text to show if filearray is empty
      *  @param  int		$maxlength          Maximum length of file name shown
-     *  @param	 string $url				Full url to use for click links ('' = autodetect)
+     *  @param	string $url				Full url to use for click links ('' = autodetect)
      *  @return int                 		<0 if KO, nb of files shown if OK
      */
     function list_of_autoecmfiles($upload_dir,$filearray,$modulepart,$param,$forcedownload=0,$relativepath='',$permtodelete=1,$useinecm=0,$textifempty='',$maxlength=0,$url='')
@@ -961,6 +1034,140 @@ class FormFile
         // Include template
         include DOL_DOCUMENT_ROOT.'/core/tpl/ajax/fileupload_view.tpl.php';
 
+    }
+
+    /**
+     * Show array with linked files
+     *
+     * @param 	Object		$object			Object
+     * @param 	int			$permtodelete	Deletion is allowed
+     * @param 	string		$action			Action
+     * @param 	string		$selected		???
+     * @return 	int							Number of links
+     */
+    public function listOfLinks($object, $permtodelete=1, $action=null, $selected=null)
+    {
+        global $user, $conf, $langs, $user;
+        global $bc;
+        global $sortfield, $sortorder;
+
+        require_once DOL_DOCUMENT_ROOT . '/core/class/link.class.php';
+        $link = new Link($this->db);
+        $links = array();
+        if ($sortfield == "name") {
+            $sortfield = "label";
+        } elseif ($sortfield == "date") {
+            $sortfield = "datea";
+        } else {
+            $sortfield = null;
+        }
+        $res = $link->fetchAll($links, $object->element, $object->id, $sortfield, $sortorder);
+        $param = (isset($object->id)?'&id=' . $object->id : '');
+
+        // Show list of associated links
+        print_titre($langs->trans("LinkedFiles"));
+
+        print '<form action="' . $_SERVER['PHP_SELF'] . '" method="POST">';
+
+        print '<table width="100%" class="liste">';
+        print '<tr class="liste_titre">';
+        print_liste_field_titre(
+            $langs->trans("Documents2"),
+            $_SERVER['PHP_SELF'],
+            "name",
+            "",
+            $param,
+            'align="left"',
+            $sortfield,
+            $sortorder
+        );
+        print_liste_field_titre(
+            "",
+            "",
+            "",
+            "",
+            "",
+            'align="right"'
+        );
+        print_liste_field_titre(
+            $langs->trans("Date"),
+            $_SERVER['PHP_SELF'],
+            "date",
+            "",
+            $param,
+            'align="center"',
+            $sortfield,
+            $sortorder
+        );
+        print_liste_field_titre(
+            '',
+            $_SERVER['PHP_SELF'],
+            "",
+            "",
+            $param,
+            'align="center"'
+        );
+        print_liste_field_titre('','','');
+        print '</tr>';
+        $nboflinks = count($links);
+        if ($nboflinks > 0) include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
+
+        $var = true;
+        foreach ($links as $link)
+        {
+            $var =! $var;
+            print '<tr ' . $bc[$var] . '>';
+            //edit mode
+            if ($action == 'update' && $selected === $link->id)
+            {
+                print '<td>';
+                print '<input type="hidden" name="id" value="' . $object->id . '">';
+                print '<input type="hidden" name="linkid" value="' . $link->id . '">';
+                print '<input type="hidden" name="action" value="confirm_updateline">';
+                print $langs->trans('Link') . ': <input type="text" name="link" size="50" value="' . $link->url . '">';
+                print '</td>';
+                print '<td align="right">';
+                print $langs->trans('Label') . ': <input type="text" name="label" value="' . $link->label . '">';
+                print '</td>';
+                print '<td align="center">' . dol_print_date(dol_now(), "dayhour", "tzuser") . '</td>';
+                print '<td align="right"></td>';
+                print '<td align="right" colspan="2"><input type="submit" name="save" class="button" value="' . $langs->trans('Save') . '">';
+                print '<input type="submit" name="cancel" class="button" value="' . $langs->trans('Cancel') . '">';
+                print '</td>';
+            }
+            else {
+                print '<td>';
+                print '<a data-ajax="false" href="'. $link->url . '" target="_blank">';
+                print $link->label;
+                print '</a>';
+                print "</td>\n";
+                print '<td align="right"></td>';
+                print '<td align="center">' . dol_print_date($link->datea, "dayhour", "tzuser") . '</td>';
+                print '<td align="center"></td>';
+                print '<td align="right" colspan="2">';
+                print '<a href="' . $_SERVER['PHP_SELF'] . '?action=update&linkid=' . $link->id
+                        . '&id=' . $object->id . '" class="editfilelink" >' . img_edit().'</a>';
+                if ($permtodelete) {
+                    print ' &nbsp; <a href="'. $_SERVER['PHP_SELF'] .'?action=delete&linkid=' . $link->id
+                            . '&id=' . $object->id . '" class="deletefilelink" >' . img_delete() . '</a>';
+                } else {
+                    print '&nbsp;';
+                }
+                print "</td>";
+            }
+            print "</tr>\n";
+        }
+        if ($nboflinks == 0)
+        {
+            print '<tr ' . $bc[$var] . '><td colspan="4">';
+            print $langs->trans("NoLinkFound");
+            print '</td></tr>';
+        }
+        print "</table>";
+
+        print '</form>';
+
+        return $nboflinks;
     }
 
 }

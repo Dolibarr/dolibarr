@@ -105,6 +105,11 @@ $url='http://wiki.dolibarr.org/index.php/Subscribe';
 if (preg_match('/^fr_/i',$langs->getDefaultLang())) $url='http://wiki.dolibarr.org/index.php/Adh%C3%A9rer';
 if (preg_match('/^es_/i',$langs->getDefaultLang())) $url='http://wiki.dolibarr.org/index.php/Subscribirse';
 print '<li><a href="'.$url.'" target="_blank">'.$langs->trans("SubscribeToFoundation").'</a></li>';
+
+print '<li><a href="http://facebook.com/dolibarr" target="_blank">FaceBook</a></li>';
+print '<li><a href="http://twitter.com/dolibarr" target="_blank">Twitter</a></li>';
+print '<li><a href="http://plus.google.com/+DolibarrOrg" target="_blank">Google Plus page</a></li>';
+
 print '</ul>';
 
 

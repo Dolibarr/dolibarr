@@ -49,7 +49,7 @@ ErrorReservedTypeSystemSystemAuto=I valori 'system' e 'systemauto' sono riservat
 ErrorCodeCantContainZero=Il codice non può contenere il valore 0
 DisableJavascript=Disabilita JavaScript e funzioni Ajax
 ConfirmAjax=Utilizzare popup di conferma Ajax
-UseSearchToSelectCompany=Utilizzare un sistema di ricerca a inserimento progressivo per scegliere una società invece di una lista di selezione (ricerca Ajax invece di una combo select)
+# UseSearchToSelectCompany=Use autocompletion fields to choose third parties (instead of using a list box).<br><br>Also if you have a large number of third parties (> 100 000), you can increase speed by setting constant COMPANY_DONOTSEARCH_ANYWHERE to 1 in Setup->Other. Search will then be limited to start of string.
 ActivityStateToSelectCompany= Aggiungere un filtro per visualizzare/nascondere i terzi attualmente in attività o meno
 # UseSearchToSelectContact=Use autocompletion fields to choose contact (instead of using a list box).<br><br>Also if you have a large number of third parties (> 100 000), you can increase speed by setting constant CONTACT_DONOTSEARCH_ANYWHERE to 1 in Setup->Other. Search will then be limited to start of string.
 SearchFilter=Filtri per la ricerca
@@ -228,7 +228,7 @@ OfficialWebSiteFr=Sito ufficiale francese
 OfficialWiki=Dolibarr Wiki
 OfficialDemo=Dolibarr demo online
 OfficialMarketPlace=Market ufficiale per moduli esterni e addon
-OfficialWebHostingService=Servizio di hosting ufficiale (Cloud hosting)
+# OfficialWebHostingService=Official web hosting services (Cloud hosting)
 ForDocumentationSeeWiki=La documentazione per utenti e sviluppatori e le FAQ sono disponibili sul wiki di Dolibarr: <br/>Dai un'occhiata a <a href="%s" target="_blank"><b> %s</b></a>
 ForAnswersSeeForum=Per qualsiasi altro problema/domanda, si può utilizzare il forum di Dolibarr: <br> <a href="%s" target="_blank"><b>%s</b></a>
 HelpCenterDesc1=In quest'area puoi cercare un servizio di supporto su Dolibarr.
@@ -299,6 +299,7 @@ ServerNotAvailableOnIPOrPort=Il server non è disponibile all'indirizzo <b> %s <
 DoTestServerAvailability=Test di connettività del server
 DoTestSend=Invia test
 DoTestSendHTML=Prova inviando HTML
+# ErrorCantUseRazIfNoYearInMask=Error, can't use option @ to reset counter each year if sequence {yy} or {yyyy} is not in mask.
 ErrorCantUseRazInStartedYearIfNoYearMonthInMask=Errore, non si può usare l'opzione @ se non c'è una sequenza {yy}{mm} o {yyyy}{mm} nello schema.
 UMask=Parametro umask per i nuovi file su Unix/Linux/BSD.
 UMaskExplanation=Questo parametro consente di definire i permessi impostati di default per i file creati da Dolibarr sul server (per esempio durante il caricamento).<br/>Il valore deve essere ottale (per esempio, 0.666 indica il permesso di lettura e scrittura per tutti).<br/>Questo parametro non si usa sui server Windows.
@@ -368,7 +369,7 @@ ExtrafieldSeparator=Separatore
 # ExtrafieldParamHelpselect=Parameters list have to be like key,value<br><br> for exemple : <br>1,value1<br>2,value2<br>3,value3<br>...<br><br>In order to have the list depending on another :<br>1,value1|parent_list_code:parent_key<br>2,value2|parent_list_code:parent_key
 ExtrafieldParamHelpcheckbox=La lista dei parametri deve contenere chiave univoca e valore.<br><br>Per esempio:<br>1, valore1<br>2, valore2<br>3, valore3<br>...
 # ExtrafieldParamHelpradio=Parameters list have to be like key,value<br><br> for exemple : <br>1,value1<br>2,value2<br>3,value3<br>...
-# ExtrafieldParamHelpsellist=Parameters list have come from table<br><br> for exemple : <br>c_typent:libelle:id<br><br>In order to have the list depending on another :<br>c_typent:libelle:id:parent_list_code|parent_column
+# ExtrafieldParamHelpsellist=Parameters list have come from table<br><br> for exemple : <br>c_typent:libelle:id::filter<br><br>In order to have the list depending on another :<br>c_typent:libelle:id:parent_list_code|parent_column:filter <br> filter can be a simple test (eg active=1) to display only active value <br> if you want to filter on extrafields use syntaxt  extra.fieldcode=... (where field code is the code of extrafield)
 # LibraryToBuildPDF=Library used to build PDF
 # WarningUsingFPDF=Warning: Your <b>conf.php</b> contains directive <b>dolibarr_pdf_force_fpdf=1</b>. This means you use the FPDF library to generate PDF files. This library is old and does not support a lot of features (Unicode, image transparency, cyrillic, arab and asiatic languages, ...), so you may experience errors during PDF generation.<br>To solve this and have a full support of PDF generation, please download <a href="http://www.tcpdf.org/" target="_blank">TCPDF library</a>, then comment or remove the line <b>$dolibarr_pdf_force_fpdf=1</b>, and add instead <b>$dolibarr_lib_TCPDF_PATH='path_to_TCPDF_dir'</b>
 # LocalTaxDesc=Some countries apply 2 or 3 taxes on each invoice line. If this is the case, choose type for second and third tax and its rate. Possible type are:<br>1 : local tax apply on products and services without vat (vat is not applied on local tax)<br>2 : local tax apply on products and services before vat (vat is calculated on amount + localtax)<br>3 : local tax apply on products without vat (vat is not applied on local tax)<br>4 : local tax apply on products before vat (vat is calculated on amount + localtax)<br>5 : local tax apply on services without vat (vat is not applied on local tax)<br>6 : local tax apply on services before vat (vat is calculated on amount + localtax)
@@ -379,6 +380,7 @@ SMS=SMS
 # KeepEmptyToUseDefault=Keep empty to use default value
 # DefaultLink=Default link
 # ValueOverwrittenByUserSetup=Warning, this value may be overwritten by user specific setup (each user can set his own clicktodial url)
+# ExternalModule=External module - Installed into directory %s
 
 # Modules
 Module0Name=Utenti e gruppi
@@ -486,6 +488,8 @@ Module2700Desc= Usa il servizio online Gravatar (www.gravatar.com) per mostrare 
 Module2800Desc=Client FTP
 Module2900Name= GeoIPMaxmind
 Module2900Desc= Localizzazione degli accessi tramite GeoIP Maxmind
+# Module3100Name= Skype
+# Module3100Desc= Add a Skype button into card of adherents / third parties / contacts
 Module5000Name=Multiazienda
 Module5000Desc=Permette la gestione di diverse aziende
 # Module6000Name=Workflow
@@ -971,6 +975,8 @@ ExtraFields=Campi extra
 # ExtraFieldsContacts=Complementary attributes (contact/address)
 # ExtraFieldsMember=Complementary attributes (member)
 # ExtraFieldsMemberType=Complementary attributes (member type)
+# ExtraFieldsCustomerOrders=Complementary attributes (orders)
+# ExtraFieldsCustomerInvoices=Complementary attributes (invoices)
 # ExtraFieldsSupplierOrders=Complementary attributes (orders)
 # ExtraFieldsSupplierInvoices=Complementary attributes (invoices)
 # ExtraFieldsProject=Complementary attributes (projects)
@@ -1002,6 +1008,9 @@ YouMustEnableOneModule=Devi abilitare almeno un modulo
 # XDebugInstalled=XDebug est chargé.
 # XCacheInstalled=XCache is loaded.
 # AddRefInList=Display customer/supplier ref into list (select list or combobox) and most of hyperlink
+# FieldEdition=Edition of field %s
+# FixTZ=TimeZone fix
+# FillThisOnlyIfRequired=Example: +2 (fill only if timezone offset problems are experienced)
 ##### Module password generation
 PasswordGenerationStandard=Genera una password in base all'algoritmo interno di  Dolibarr: 8 caratteri comprensivi di numeri e lettere minuscole.
 PasswordGenerationNone=Non suggerire eventuali password generate. La password deve essere di tipo manuale.

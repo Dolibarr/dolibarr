@@ -41,9 +41,9 @@ if ("$^O" =~ /linux/i || (-d "/etc" && -d "/var" && "$^O" !~ /cygwin/i)) { $OS='
 elsif (-d "/etc" && -d "/Users") { $OS='macosx'; $CR=''; }
 elsif ("$^O" =~ /cygwin/i || "$^O" =~ /win32/i) { $OS='windows'; $CR="\r"; }
 if (! $OS) {
-    print "makepack-dolbarrtheme.pl was not able to detect your OS.\n";
+    print "$PROG.$Extension was not able to detect your OS.\n";
 	print "Can't continue.\n";
-	print "makepack-dolibarrtheme.pl aborted.\n";
+	print "$PROG.$Extension aborted.\n";
     sleep 2;
 	exit 1;
 }

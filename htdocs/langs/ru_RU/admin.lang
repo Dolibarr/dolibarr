@@ -49,7 +49,7 @@ DictionnarySetup=Словарь установки
 # ErrorCodeCantContainZero=Code can't contain value 0
 DisableJavascript=Отключить JavaScript и Ajax функции
 ConfirmAjax=Использование Ajax Подтверждение всплывающих окон
-UseSearchToSelectCompany=Используйте поисковую форму выбрать компанию (вместо использования списка)
+# UseSearchToSelectCompany=Use autocompletion fields to choose third parties (instead of using a list box).<br><br>Also if you have a large number of third parties (> 100 000), you can increase speed by setting constant COMPANY_DONOTSEARCH_ANYWHERE to 1 in Setup->Other. Search will then be limited to start of string.
 ActivityStateToSelectCompany= Добавить фильтр опция показать / скрыть thirdparties которые в настоящее время в деятельности или перестало его
 # UseSearchToSelectContact=Use autocompletion fields to choose contact (instead of using a list box).<br><br>Also if you have a large number of third parties (> 100 000), you can increase speed by setting constant CONTACT_DONOTSEARCH_ANYWHERE to 1 in Setup->Other. Search will then be limited to start of string.
 SearchFilter=Фильтры поиска вариантов
@@ -228,7 +228,7 @@ OfficialWebSiteFr=Французский официальный веб-сайт
 OfficialWiki=Dolibarr Wiki
 OfficialDemo=Dolibarr Online Demo
 OfficialMarketPlace=Официальный рынке внешних модулей / Оборудование
-# OfficialWebHostingService=Official web hosting service (Cloud hosting)
+# OfficialWebHostingService=Official web hosting services (Cloud hosting)
 ForDocumentationSeeWiki=Для пользователя или разработчика документации (Doc, ...), FAQs <br> посмотрите на Dolibarr Wiki: <br> <a href="%s" target="_blank"><b> %s</b></a>
 ForAnswersSeeForum=Для любых других вопросов / помощь, вы можете использовать Dolibarr форум: <br> <a href="%s" target="_blank"><b> %s</b></a>
 HelpCenterDesc1=Эта область может помочь вам получить справки службу поддержки по Dolibarr.
@@ -299,6 +299,7 @@ ServerNotAvailableOnIPOrPort=Сервер не доступен по <b>адре
 DoTestServerAvailability=Тест сервера подключаемости
 DoTestSend=Тест отправки
 DoTestSendHTML=Тест отправки HTML
+# ErrorCantUseRazIfNoYearInMask=Error, can't use option @ to reset counter each year if sequence {yy} or {yyyy} is not in mask.
 ErrorCantUseRazInStartedYearIfNoYearMonthInMask=Ошибка, не могут пользователя опция @ если последовательность (ГГ) () или мм гггг () () мм не в маске.
 UMask=UMask параметр для новых файлов на Unix / Linux / BSD файловых систем.
 UMaskExplanation=Этот параметр позволяет определить набор разрешений по умолчанию для файлов, созданных Dolibarr на сервере (при загрузке, например). <br> Она должна быть восьмеричное значение (например, 0666 означает, читать и писать по каждому). <br> Ce paramtre NE Серта Pas SOUS ООН serveur Windows.
@@ -368,7 +369,7 @@ ExtrafieldPrice = Цена
 # ExtrafieldParamHelpselect=Parameters list have to be like key,value<br><br> for exemple : <br>1,value1<br>2,value2<br>3,value3<br>...<br><br>In order to have the list depending on another :<br>1,value1|parent_list_code:parent_key<br>2,value2|parent_list_code:parent_key
 # ExtrafieldParamHelpcheckbox=Parameters list have to be like key,value<br><br> for exemple : <br>1,value1<br>2,value2<br>3,value3<br>...
 # ExtrafieldParamHelpradio=Parameters list have to be like key,value<br><br> for exemple : <br>1,value1<br>2,value2<br>3,value3<br>...
-# ExtrafieldParamHelpsellist=Parameters list have come from table<br><br> for exemple : <br>c_typent:libelle:id<br><br>In order to have the list depending on another :<br>c_typent:libelle:id:parent_list_code|parent_column
+# ExtrafieldParamHelpsellist=Parameters list have come from table<br><br> for exemple : <br>c_typent:libelle:id::filter<br><br>In order to have the list depending on another :<br>c_typent:libelle:id:parent_list_code|parent_column:filter <br> filter can be a simple test (eg active=1) to display only active value <br> if you want to filter on extrafields use syntaxt  extra.fieldcode=... (where field code is the code of extrafield)
 # LibraryToBuildPDF=Library used to build PDF
 # WarningUsingFPDF=Warning: Your <b>conf.php</b> contains directive <b>dolibarr_pdf_force_fpdf=1</b>. This means you use the FPDF library to generate PDF files. This library is old and does not support a lot of features (Unicode, image transparency, cyrillic, arab and asiatic languages, ...), so you may experience errors during PDF generation.<br>To solve this and have a full support of PDF generation, please download <a href="http://www.tcpdf.org/" target="_blank">TCPDF library</a>, then comment or remove the line <b>$dolibarr_pdf_force_fpdf=1</b>, and add instead <b>$dolibarr_lib_TCPDF_PATH='path_to_TCPDF_dir'</b>
 # LocalTaxDesc=Some countries apply 2 or 3 taxes on each invoice line. If this is the case, choose type for second and third tax and its rate. Possible type are:<br>1 : local tax apply on products and services without vat (vat is not applied on local tax)<br>2 : local tax apply on products and services before vat (vat is calculated on amount + localtax)<br>3 : local tax apply on products without vat (vat is not applied on local tax)<br>4 : local tax apply on products before vat (vat is calculated on amount + localtax)<br>5 : local tax apply on services without vat (vat is not applied on local tax)<br>6 : local tax apply on services before vat (vat is calculated on amount + localtax)
@@ -379,6 +380,7 @@ ExtrafieldPrice = Цена
 # KeepEmptyToUseDefault=Keep empty to use default value
 # DefaultLink=Default link
 # ValueOverwrittenByUserSetup=Warning, this value may be overwritten by user specific setup (each user can set his own clicktodial url)
+# ExternalModule=External module - Installed into directory %s
 
 # Modules
 Module0Name=И группами пользователей
@@ -486,6 +488,8 @@ Module2700Desc= Использование онлайн Gravatar службы (w
 # Module2800Desc=FTP Client
 Module2900Name= GeoIPMaxmind
 Module2900Desc= GeoIP MaxMind возможности преобразования
+# Module3100Name= Skype
+# Module3100Desc= Add a Skype button into card of adherents / third parties / contacts
 Module5000Name=Multi-компании
 Module5000Desc=Позволяет управлять несколькими компаниями
 # Module6000Name=Workflow
@@ -971,6 +975,8 @@ ExtraFields=Дополнительные атрибуты
 # ExtraFieldsContacts=Complementary attributes (contact/address)
 # ExtraFieldsMember=Complementary attributes (member)
 # ExtraFieldsMemberType=Complementary attributes (member type)
+# ExtraFieldsCustomerOrders=Complementary attributes (orders)
+# ExtraFieldsCustomerInvoices=Complementary attributes (invoices)
 # ExtraFieldsSupplierOrders=Complementary attributes (orders)
 # ExtraFieldsSupplierInvoices=Complementary attributes (invoices)
 # ExtraFieldsProject=Complementary attributes (projects)
@@ -1002,6 +1008,9 @@ SendmailOptionMayHurtBuggedMTA=Функция отправить почту с �
 # XDebugInstalled=XDebug est chargé.
 # XCacheInstalled=XCache is loaded.
 # AddRefInList=Display customer/supplier ref into list (select list or combobox) and most of hyperlink
+# FieldEdition=Edition of field %s
+# FixTZ=TimeZone fix
+# FillThisOnlyIfRequired=Example: +2 (fill only if timezone offset problems are experienced)
 ##### Module password generation
 PasswordGenerationStandard=Возврат пароля, полученных в соответствии с внутренними Dolibarr алгоритма: 8 символов, содержащих общие цифры и символы в нижнем регистре.
 PasswordGenerationNone=Не предлагать любые сгенерированного пароля. Пароль необходимо ввести вручную.

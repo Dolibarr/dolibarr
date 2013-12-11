@@ -64,7 +64,9 @@ if (! empty($conf->accounting->enabled)) $result=restrictedArea($user,'accountin
 
 $form=new Form($db);
 
-llxHeader('',$langs->trans("SellsJournal"),'');
+$morequery='&date_startyear='.$date_startyear.'&date_startmonth='.$date_startmonth.'&date_startday='.$date_startday.'&date_endyear='.$date_endyear.'&date_endmonth='.$date_endmonth.'&date_endday='.$date_endday;
+
+llxHeader('',$langs->trans("SellsJournal"),'','',0,0,'','',$morequery);
 
 
 $year_current = strftime("%Y",dol_now());
@@ -115,6 +117,9 @@ else $sql.= " AND f.type IN (0,1,2,3)";
 $sql.= " AND fd.product_type IN (0,1)";
 if ($date_start && $date_end) $sql .= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
 $sql.= " ORDER BY f.rowid";
+
+// TODO Find a better trick to avoid problem with some mysql installations
+if (in_array($db->type, array('mysql', 'mysqli'))) $db->query('SET SQL_BIG_SELECTS=1');
 
 dol_syslog("sql=".$sql);
 $result = $db->query($sql);

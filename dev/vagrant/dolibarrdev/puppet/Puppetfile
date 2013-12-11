@@ -1,0 +1,13 @@
+forge "http://forge.puppetlabs.com"
+mod 'stdlib', :git => 'git://github.com/puphpet/puppetlabs-stdlib.git'
+mod 'concat', :git => 'git://github.com/puphpet/puppetlabs-concat.git'
+mod 'apt', :git => 'git://github.com/puphpet/puppetlabs-apt.git'
+mod 'yum', :git => 'git://github.com/puphpet/puppet-yum.git'
+mod 'vcsrepo', :git => 'git://github.com/puphpet/puppetlabs-vcsrepo.git'
+mod 'ntp', :git => 'git://github.com/puphpet/puppetlabs-ntp.git'
+mod 'iptables', :git => 'git://github.com/puphpet/puppet-iptables.git'
+mod 'apache', :git => 'git://github.com/puphpet/puppetlabs-apache.git'
+mod 'php', :git => 'git://github.com/puphpet/puppet-php.git'
+mod 'composer', :git => 'git://github.com/puphpet/puppet-composer.git'
+mod 'puphpet', :git => 'git://github.com/puphpet/puppet-puphpet.git'
+mod 'mysql', :git => 'git://github.com/puphpet/puppetlabs-mysql.git'

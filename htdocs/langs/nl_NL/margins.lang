@@ -1,51 +1,51 @@
 # Dolibarr language file - Source file is en_US - marges
 
-# Margin=Margin
-# Margins=Margins
-# TotalMargin=Total Margin
-# MarginOnProducts=Margin / Products
-# MarginOnServices=Margin / Services
-# MarginRate=Margin rate
-# MarkRate=Mark rate
-# DisplayMarginRates=Display margin rates
-# DisplayMarkRates=Display mark rates
-# InputPrice=Input price
+Margin=Marge
+Margins=Marges
+TotalMargin=Marge Totaal
+MarginOnProducts=Marge / Training
+MarginOnServices=Marge / Dienst
+MarginRate=Marge verhouding
+MarkRate=Markerings verhouding
+DisplayMarginRates=Toon Marge Verhouding
+DisplayMarkRates=Toon Markeringsverhouding
+InputPrice=Voer Prijs in
 
-# margin=Profit margins management
-# margesSetup=Profit margins management setup
+margin=Winst marge management
+margesSetup=Winst marge management setup
 
-# MarginDetails=Margin details
+MarginDetails=Marge details
 
-# ProductMargins=Product margins
-# CustomerMargins=Customer margins
-# AgentMargins=Agent margins
+ProductMargins=Product marge
+CustomerMargins=Klant marges
+AgentMargins=Acc. Manager marges
 
-ProductService=Product of Dienst
-# AllProducts=All products and services
-# ChooseProduct/Service=Choose product or service
-# CommercialAgent=Commercial agent
+ProductService=Trainning of Dienst
+AllProducts=Alle Trainingen en Diensten
+ChooseProduct/Service=Kies Training of Dienst
+CommercialAgent=Commerciel Agent
 
-StartDate=Begindatum
-EndDate=Einddatum
+StartDate=Start datum
+EndDate=Eind datum
 Launch=Start
 
-# ForceBuyingPriceIfNull=Force buying price if null
-# ForceBuyingPriceIfNullDetails=if "ON", margin will be zero on line (buying price = selling price), otherwise ("OFF"), marge will be equal to selling price (buying price = 0)
-# MARGIN_METHODE_FOR_DISCOUNT=Margin method for global discounts
-# UseDiscountAsProduct=As a product
-# UseDiscountAsService=As a service
-# UseDiscountOnTotal=On subtotal
-# MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Defines if a global discount is treated as a product, a service, or only on subtotal for margin calculation.
+ForceBuyingPriceIfNull=Forceer een inkoopprijs indien null
+ForceBuyingPriceIfNullDetails=indien "ON", marge wodt nul   (inkoopprijs = verkoopprijs), anders("OFF"), marge is gelijk verkoopprijs (inkoopprijs = 0)
+MARGIN_METHODE_FOR_DISCOUNT=Marge methode voor globale discounts
+UseDiscountAsProduct=Als een training
+UseDiscountAsService=Als een dienst
+UseDiscountOnTotal=Op subtotaal
+MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Definieert als een globale discount wordt behandelt als een training, een dienst, of alleen een subtotaal voor marge berekening.
 
-# MARGIN_TYPE=Margin type
-# MargeBrute=Raw margin
-# MargeNette=Net margin
-# MARGIN_TYPE_DETAILS=Raw margin : Selling price - Buying price<br/>Net margin : Selling price - Cost price
+MARGIN_TYPE=Marge type
+MargeBrute=Groffe marge
+MargeNette=Netto marge
+MARGIN_TYPE_DETAILS=Groffe marge : Verkoopprijs - Inkoopprijs<br/>Netto marge : Verkoopprijs - Kostprijs
 
-# CostPrice=Cost price
-# BuyingCost=Cost price
-# UnitCharges=Unit charges
-# Charges=Charges
+CostPrice=Kostprijs
+BuyingCost=Kostprijs
+UnitCharges=Unit toeslag
+Charges=Toeslag
 
-# AgentContactType=Contact type used for commissioning
-# AgentContactTypeDetails=Défine what contact type (linked on invoices) will be associated with commercial agents
+# AgentContactType=Commercial agent contact type
+# AgentContactTypeDetails=Défine what contact type (linked on invoices) will be used for margin report by commercial agents

@@ -1,13 +1,13 @@
 # Dolibarr language file - Source file is en_US - main
 DIRECTION=ltr
-# Note for chinese:
-# msungstdlight or cid0ct are for traditionnal chinese (traditionnal does not render with ubuntu pdf reader)
-# stsongstdlight or cid0cs are for simplified chinese
-# To read chinese pdf with linux: sudo apt-get install poppler-data
+# Note for Chinese:
+# msungstdlight or cid0ct are for traditional Chinese (traditional does not render with Ubuntu pdf reader)
+# stsongstdlight or cid0cs are for simplified Chinese
+# To read Chinese pdf with Linux: sudo apt-get install poppler-data
 FONTFORPDF=cid0jp
 FONTSIZEFORPDF=9
-SeparatorDecimal=、
-SeparatorThousand=なし
+# SeparatorDecimal=.
+# SeparatorThousand=,
 FormatDateShort=%m/%d/%Y
 FormatDateShortInput=%m/%d/%Y
 FormatDateShortJava=MM/dd/yyyy
@@ -155,6 +155,7 @@ Valid=有効な
 Approve=承認する
 ReOpen=再オープン
 Upload=ファイルを送信する
+# ToLink=Link
 Select=選択する
 Choose=選択する
 ChooseLangage=あなたの言語を選択してください
@@ -446,30 +447,30 @@ SeptemberMin=9月
 OctoberMin=10月
 NovemberMin=11月
 DecemberMin=12月
-Month01=1月
-Month02=2月
-Month03=3月
-Month04=4月
-Month05=可能性
-Month06=6月
-Month07=7月
-Month08=8月
-Month09=9月
-Month10=10月
-Month11=11月
-Month12=12月
-MonthShort01=1月
-MonthShort02=2月
-MonthShort03=マー
-MonthShort04=4月
-MonthShort05=可能性
-MonthShort06=6月
-MonthShort07=7月
-MonthShort08=8月
-MonthShort09=9月
-MonthShort10=10月
-MonthShort11=11月
-MonthShort12=12月
+# Month01=January
+# Month02=February
+# Month03=March
+# Month04=April
+# Month05=May
+# Month06=June
+# Month07=July
+# Month08=August
+# Month09=September
+# Month10=October
+# Month11=November
+# Month12=December
+# MonthShort01=Jan
+# MonthShort02=Feb
+# MonthShort03=Mar
+# MonthShort04=Apr
+# MonthShort05=May
+# MonthShort06=Jun
+# MonthShort07=Jul
+# MonthShort08=Aug
+# MonthShort09=Sep
+# MonthShort10=Oct
+# MonthShort11=Nov
+# MonthShort12=Dec
 AttachedFiles=添付ファイルとドキュメント
 FileTransferComplete=ファイルがアップロードされたsuccessfuly
 DateFormatYYYYMM=YYYY-MM
@@ -631,7 +632,7 @@ IM=インスタントメッセージ
 NewAttribute=新しい属性
 AttributeCode=属性コード
 OptionalFieldsSetup=余分な属性の設定
-URLPhoto=写真/ロゴのURL
+# URLPhoto=URL of photo/logo
 SetLinkToThirdParty=別の第三者へのリンク
 CreateDraft=ドラフトを作成します。
 ClickToEdit=クリックして編集
@@ -641,7 +642,7 @@ ByTown=町によって
 ByDate=日付順
 ByMonthYear=月/年
 ByYear=年度別
-ByMonth=月別
+# ByMonth=By month
 ByDay=日ごとに
 BySalesRepresentative=営業担当者によって
 # LinkedToSpecificUsers=Linked to a particular user contact
@@ -658,6 +659,9 @@ BySalesRepresentative=営業担当者によって
 # toward=toward
 # Access=Access
 # HelpCopyToClipboard=Use Ctrl+C to copy to clipboard
+# SaveUploadedFileWithMask=Save file on server with name "<strong>%s</strong>" (otherwise "%s")
+# OriginFileName=Original filename
+# SetDemandReason=Set source
 
 # Week day
 Monday=月曜日

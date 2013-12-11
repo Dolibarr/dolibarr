@@ -210,7 +210,8 @@ class DoliDBPgsql extends DoliDB
 
     			// tinyint type conversion
     			$line=preg_replace('/tinyint\(?[0-9]*\)?/','smallint',$line);
-
+    			$line=preg_replace('/tinyint/i','smallint',$line);
+    			
     			// nuke unsigned
     			$line=preg_replace('/(int\w+|smallint)\s+unsigned/i','\\1',$line);
 
@@ -875,7 +876,7 @@ class DoliDBPgsql extends DoliDB
 			42701=> 'DB_ERROR_COLUMN_ALREADY_EXISTS',
 			'42710' => 'DB_ERROR_KEY_NAME_ALREADY_EXISTS',
 			'23505' => 'DB_ERROR_RECORD_ALREADY_EXISTS',
-			'42704' => 'DB_ERROR_NO_INDEX_TO_DROP',
+			'42704' => 'DB_ERROR_NO_INDEX_TO_DROP',		// May also be Type xxx does not exists
 			'42601' => 'DB_ERROR_SYNTAX',
 			'42P16' => 'DB_ERROR_PRIMARY_KEY_ALREADY_EXISTS',
 			1075 => 'DB_ERROR_CANT_DROP_PRIMARY_KEY',

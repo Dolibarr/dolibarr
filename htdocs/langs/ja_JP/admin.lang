@@ -49,7 +49,7 @@ DictionnarySetup=辞書のセットアップ
 # ErrorCodeCantContainZero=Code can't contain value 0
 DisableJavascript=JavaScriptとAjaxの機能を無効にする
 ConfirmAjax=Ajaxの確認のポップアップを使用して、
-UseSearchToSelectCompany=第三者が（代わりにリストボックスを使用）を選択するオートコンプリートフィールドを使用します。 <br><br>あなたがサードパーティの多数（&gt; 100,000）を持っている場合にも、セットアップ - &gt;その他1に定数SOCIETE_DONOTSEARCH_ANYWHEREを設定することにより、速度を上げることができます。検索は、文字列の先頭に制限されます。
+# UseSearchToSelectCompany=Use autocompletion fields to choose third parties (instead of using a list box).<br><br>Also if you have a large number of third parties (> 100 000), you can increase speed by setting constant COMPANY_DONOTSEARCH_ANYWHERE to 1 in Setup->Other. Search will then be limited to start of string.
 ActivityStateToSelectCompany= 活動に現在thirdparties表示/非表示切り替えフィルタオプションを追加したり、それを停止している
 # UseSearchToSelectContact=Use autocompletion fields to choose contact (instead of using a list box).<br><br>Also if you have a large number of third parties (> 100 000), you can increase speed by setting constant CONTACT_DONOTSEARCH_ANYWHERE to 1 in Setup->Other. Search will then be limited to start of string.
 SearchFilter=検索フィルタのオプション
@@ -228,7 +228,7 @@ OfficialWebSiteFr=フランスの公式ウェブサイト
 OfficialWiki=WikiのDolibarrドキュメント
 OfficialDemo=Dolibarrオンラインデモ
 OfficialMarketPlace=外部モジュール/アドオンの公式市場の場所
-# OfficialWebHostingService=Official web hosting service (Cloud hosting)
+# OfficialWebHostingService=Official web hosting services (Cloud hosting)
 ForDocumentationSeeWiki=ユーザーまたは開発者のドキュメント（DOC、よくある質問（FAQ）...）のために、 <br> Dolibarr Wikiで見てみましょう。 <br> <a href="%s" target="_blank"><b>%s</b></a>
 ForAnswersSeeForum=他の質問/ヘルプについては、Dolibarrフォーラムを使用することができます。 <br> <a href="%s" target="_blank"><b>%s</b></a>
 HelpCenterDesc1=この領域には、Dolibarrのヘルプサポートサービスを取得することができます。
@@ -299,6 +299,7 @@ ServerNotAvailableOnIPOrPort=サーバーはポート<b>%s</b>上のアドレス
 DoTestServerAvailability=テストサーバーへの接続
 DoTestSend=送信テスト
 DoTestSendHTML=HTMLを送信するテスト
+# ErrorCantUseRazIfNoYearInMask=Error, can't use option @ to reset counter each year if sequence {yy} or {yyyy} is not in mask.
 ErrorCantUseRazInStartedYearIfNoYearMonthInMask=エラー、シーケンス場合は、@オプションを使用することはできません{YY} {ミリメートル}または{探す} {mmは}マスクではありません。
 UMask=のUnix / Linux / BSDのファイルシステム上に新しいファイルのumaskパラメータ。
 UMaskExplanation=このパラメータは、（たとえば、アップロード中に）、サーバー上でDolibarrによって作成されたファイルは、デフォルトで設定されているアクセス許可を定義することができます。 <br>それは、8進値（例えば、0666の手段みんなのための読み取りおよび書き込み）である必要があります。 <br>このパラメータは、Windowsサーバー上では役に立ちません。
@@ -368,7 +369,7 @@ ExtrafieldPrice = 価格
 # ExtrafieldParamHelpselect=Parameters list have to be like key,value<br><br> for exemple : <br>1,value1<br>2,value2<br>3,value3<br>...<br><br>In order to have the list depending on another :<br>1,value1|parent_list_code:parent_key<br>2,value2|parent_list_code:parent_key
 # ExtrafieldParamHelpcheckbox=Parameters list have to be like key,value<br><br> for exemple : <br>1,value1<br>2,value2<br>3,value3<br>...
 # ExtrafieldParamHelpradio=Parameters list have to be like key,value<br><br> for exemple : <br>1,value1<br>2,value2<br>3,value3<br>...
-# ExtrafieldParamHelpsellist=Parameters list have come from table<br><br> for exemple : <br>c_typent:libelle:id<br><br>In order to have the list depending on another :<br>c_typent:libelle:id:parent_list_code|parent_column
+# ExtrafieldParamHelpsellist=Parameters list have come from table<br><br> for exemple : <br>c_typent:libelle:id::filter<br><br>In order to have the list depending on another :<br>c_typent:libelle:id:parent_list_code|parent_column:filter <br> filter can be a simple test (eg active=1) to display only active value <br> if you want to filter on extrafields use syntaxt  extra.fieldcode=... (where field code is the code of extrafield)
 # LibraryToBuildPDF=Library used to build PDF
 # WarningUsingFPDF=Warning: Your <b>conf.php</b> contains directive <b>dolibarr_pdf_force_fpdf=1</b>. This means you use the FPDF library to generate PDF files. This library is old and does not support a lot of features (Unicode, image transparency, cyrillic, arab and asiatic languages, ...), so you may experience errors during PDF generation.<br>To solve this and have a full support of PDF generation, please download <a href="http://www.tcpdf.org/" target="_blank">TCPDF library</a>, then comment or remove the line <b>$dolibarr_pdf_force_fpdf=1</b>, and add instead <b>$dolibarr_lib_TCPDF_PATH='path_to_TCPDF_dir'</b>
 # LocalTaxDesc=Some countries apply 2 or 3 taxes on each invoice line. If this is the case, choose type for second and third tax and its rate. Possible type are:<br>1 : local tax apply on products and services without vat (vat is not applied on local tax)<br>2 : local tax apply on products and services before vat (vat is calculated on amount + localtax)<br>3 : local tax apply on products without vat (vat is not applied on local tax)<br>4 : local tax apply on products before vat (vat is calculated on amount + localtax)<br>5 : local tax apply on services without vat (vat is not applied on local tax)<br>6 : local tax apply on services before vat (vat is calculated on amount + localtax)
@@ -379,6 +380,7 @@ ExtrafieldPrice = 価格
 # KeepEmptyToUseDefault=Keep empty to use default value
 # DefaultLink=Default link
 # ValueOverwrittenByUserSetup=Warning, this value may be overwritten by user specific setup (each user can set his own clicktodial url)
+# ExternalModule=External module - Installed into directory %s
 
 # Modules
 Module0Name=ユーザーとグループ
@@ -486,6 +488,8 @@ Module2700Desc= ユーザー/メンバーの写真を（それらのメールに
 # Module2800Desc=FTP Client
 Module2900Name= GeoIPMaxmind
 Module2900Desc= のGeoIP Maxmindの変換機能
+# Module3100Name= Skype
+# Module3100Desc= Add a Skype button into card of adherents / third parties / contacts
 Module5000Name=マルチ会社
 Module5000Desc=あなたが複数の企業を管理することができます
 # Module6000Name=Workflow
@@ -971,6 +975,8 @@ ExtraFields=補完的な属性
 # ExtraFieldsContacts=Complementary attributes (contact/address)
 # ExtraFieldsMember=Complementary attributes (member)
 # ExtraFieldsMemberType=Complementary attributes (member type)
+# ExtraFieldsCustomerOrders=Complementary attributes (orders)
+# ExtraFieldsCustomerInvoices=Complementary attributes (invoices)
 # ExtraFieldsSupplierOrders=Complementary attributes (orders)
 # ExtraFieldsSupplierInvoices=Complementary attributes (invoices)
 # ExtraFieldsProject=Complementary attributes (projects)
@@ -1002,6 +1008,9 @@ SendmailOptionMayHurtBuggedMTA=&quot;PHPのメール直接&quot;メソッドを�
 # XDebugInstalled=XDebug est chargé.
 # XCacheInstalled=XCache is loaded.
 # AddRefInList=Display customer/supplier ref into list (select list or combobox) and most of hyperlink
+# FieldEdition=Edition of field %s
+# FixTZ=TimeZone fix
+# FillThisOnlyIfRequired=Example: +2 (fill only if timezone offset problems are experienced)
 ##### Module password generation
 PasswordGenerationStandard=小文字で共有数字と文字を含む8文字：内部Dolibarrアルゴリズムに従って生成されたパスワードを返します。
 PasswordGenerationNone=すべての生成されたパスワードを示唆するものではない。パスワードは、手動でタイプする必要があります。

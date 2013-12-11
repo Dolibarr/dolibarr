@@ -26,10 +26,8 @@
 
 
 /**
- *       \class      LignePrelevement
- *       \brief      Classe permettant la gestion des prelevements
+ *	Class to manage withdrawals
  */
-
 class LignePrelevement
 {
 	var $id;

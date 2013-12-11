@@ -66,6 +66,9 @@ Country=Ország
 CountryCode=Az ország hívószáma
 CountryId=Ország id
 Phone=Telefon
+# Skype=Skype
+# Call=Call
+# Chat=Chat
 PhonePro=Prof. telefon
 PhonePerso=Szem. telefon
 PhoneMobile=Mozgó
@@ -396,7 +399,9 @@ InActivity=Nyitva
 ActivityCeased=Zárva
 ActivityStateFilter=Gazdasági aktivitás
 # ProductsIntoElements=List of products into
-# OutstandingBill=Outstanding Bill
+# CurrentOutstandingBill=Current outstanding bill
+# OutstandingBill=Max. for outstanding bill
+# OutstandingBillReached=Reached max. for outstanding bill
 # Monkey
 MonkeyNumRefModelDesc=Vissza a numero formátumban %syymm-nnnn kódot, és az ügyfelek %syymm-nnnn kódot, ahol a szállító yy év, hónap és mm nnnn sorozata szünet nélkül, és nincs visszaút 0-ra.
 # Leopard

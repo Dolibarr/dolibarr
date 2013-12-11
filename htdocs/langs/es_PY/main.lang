@@ -1,2 +1,4 @@
 Dolibarr language file - es_PY - main
 DIRECTION=ltr
+SeparatorDecimal=,
+SeparatorThousand=None

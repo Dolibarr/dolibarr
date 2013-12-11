@@ -1,10 +1,10 @@
 <?php
 /* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2013 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  * Copyright (C) 2007-2011 Jean Heimburger      <jean@tiaris.info>
- * Copyright (C) 2010-2011 Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2010-2013 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2013	   Cedric GROSS	        <c.gross@kreiz-it.fr>
  * Copyright (C) 2013      Marcos García        <marcosgdf@gmail.com>
  *
@@ -457,7 +457,7 @@ class Product extends CommonObject
 		if (empty($this->localtax2_tx))			$this->localtax2_tx = 0;
 		if (empty($this->status))				$this->status = 0;
 		if (empty($this->status_buy))			$this->status_buy = 0;
-		
+
         if (empty($this->country_id))           $this->country_id = 0;
 
 		$this->accountancy_code_buy = trim($this->accountancy_code_buy);
@@ -588,15 +588,25 @@ class Product extends CommonObject
 	/**
 	 *  Delete a product from database (if not used)
 	 *
-	 *	@param      int		$id         Product id
+	 *	@param      int		$id         Product id (usage of this is deprecated, delete should be called without parameters on a fetched object)
 	 * 	@return		int					< 0 if KO, 0 = Not possible, > 0 if OK
 	 */
-	function delete($id)
+	function delete($id=0)
 	{
 		global $conf,$user,$langs;
 
 		$error=0;
 
+		// Clean parameters
+		if (empty($id)) $id=$this->id;
+		else $this->fetch($id);
+
+		// Check parameters
+		if (empty($id))
+		{
+			$this->error = "Object must be fetched before calling delete";
+			return -1;
+		}
 		if (($this->type == 0 && empty($user->rights->produit->supprimer)) || ($this->type == 1 && empty($user->rights->service->supprimer)))
 		{
 			$this->error = "ErrorForbidden";
@@ -904,7 +914,7 @@ class Product extends CommonObject
 	function get_buyprice($prodfournprice,$qty,$product_id=0,$fourn_ref=0)
 	{
 		$result = 0;
-		
+
 		// We do select by searching with qty and prodfournprice
 		$sql = "SELECT pfp.rowid, pfp.price as price, pfp.quantity as quantity,";
 		$sql.= " pfp.fk_product, pfp.ref_fourn, pfp.fk_soc, pfp.tva_tx";
@@ -1001,6 +1011,11 @@ class Product extends CommonObject
 
 		// Check parameters
 		if ($newvat == '') $newvat=$this->tva_tx;
+		if (! empty($newminprice) && ($newminprice > $newprice))
+		{
+			$this->error='ErrorPricCanBeLowerThanMinPrice';
+			return -1;
+		}
 
 		if ($newprice!='' || $newprice==0)
 		{
@@ -1136,7 +1151,7 @@ class Product extends CommonObject
 		$sql.= " accountancy_code_buy, accountancy_code_sell, stock, pmp,";
 		$sql.= " datec, tms, import_key, entity, desiredstock";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product";
-		if ($id) $sql.= " WHERE rowid = '".$id."'";
+		if ($id) $sql.= " WHERE rowid = ".$this->db->escape($id);
 		else
 		{
 			$sql.= " WHERE entity IN (".getEntity($this->element, 1).")";
@@ -1208,6 +1223,7 @@ class Product extends CommonObject
 				$this->entity					= $obj->entity;
 
 				$this->db->free($resql);
+
 
 				// multilangs
 				if (! empty($conf->global->MAIN_MULTILANGS)) $this->getMultiLangs();
@@ -1332,9 +1348,11 @@ class Product extends CommonObject
 					}
 				}
 
-				$res=$this->load_stock();
-
-				return $res;
+				// We should not load stock at each fetch. If someone need stock, he must call load_stock after fetch.
+				//$res=$this->load_stock();
+				//return $res;
+				
+				return 1;
 			}
 			else
 			{
@@ -1814,6 +1832,33 @@ class Product extends CommonObject
 
 		return $this->_get_stats($sql,$mode);
 	}
+	
+	/**
+	 *  Return nb of units or orders in which product is included
+	 *
+	 *  @param  	int		$socid      Limit count on a particular third party id
+	 *  @param		string	$mode		'byunit'=number of unit, 'bynumber'=nb of entities
+	 * 	@return   	array       		<0 if KO, result[month]=array(valuex,valuey) where month is 0 to 11
+	 */
+	function get_nb_ordersupplier($socid,$mode)
+	{
+		global $conf, $user;
+	
+		$sql = "SELECT sum(d.qty), date_format(c.date_commande, '%Y%m')";
+		if ($mode == 'bynumber') $sql.= ", count(DISTINCT c.rowid)";
+		$sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseurdet as d, ".MAIN_DB_PREFIX."commande_fournisseur as c, ".MAIN_DB_PREFIX."societe as s";
+		if (!$user->rights->fournisseur->lire && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+		$sql.= " WHERE c.rowid = d.fk_commande";
+		$sql.= " AND d.fk_product =".$this->id;
+		$sql.= " AND c.fk_soc = s.rowid";
+		$sql.= " AND c.entity = ".$conf->entity;
+		if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND c.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
+		if ($socid > 0)	$sql.= " AND c.fk_soc = ".$socid;
+		$sql.= " GROUP BY date_format(c.date_commande,'%Y%m')";
+		$sql.= " ORDER BY date_format(c.date_commande,'%Y%m') DESC";
+	
+		return $this->_get_stats($sql,$mode);
+	}
 
 	/**
 	 *  Lie un produit associe au produit/service
@@ -2179,9 +2224,9 @@ class Product extends CommonObject
 
 		$product = new Product($this->db);
 		//var_dump($prod);
-		foreach($prod as $id_product => $desc_pere)	// nom_pere is 0 or id of sub_product
+		foreach($prod as $id_product => $desc_pere)	// $id_product is 0 (there is no mode sub_product) or an id of a sub_product
 		{
-			if (is_array($desc_pere))	// If this parent desc is an array, this is an array of childs
+			if (is_array($desc_pere))	// If desc_pere is an array, this means it's a child
 			{
 				$id=(! empty($desc_pere[0]) ? $desc_pere[0] :'');
 				$nb=(! empty($desc_pere[1]) ? $desc_pere[1] :'');
@@ -2190,20 +2235,23 @@ class Product extends CommonObject
 				if ($multiply < 1) $multiply=1;
 
 				//print "XXX We add id=".$id." - label=".$label." - nb=".$nb." - multiply=".$multiply." fullpath=".$compl_path.$label."\n";
-				$this->fetch($id);
-				$this->load_stock();
+				$this->fetch($id);		// Load product
+				$this->load_stock();	// Load stock
 				$this->res[]= array(
 					'id'=>$id,					// Id product
+					'ref'=>$this->ref,			// Ref product
 					'nb'=>$nb,					// Nb of units that compose parent product
 					'nb_total'=>$nb*$multiply,	// Nb of units for all nb of product
-					'stock'=>$this->stock_warehouse[1]->real,	// Stock
+					'stock'=>$this->stock_reel,	// Stock
 					'stock_alert'=>$this->seuil_stock_alerte,	// Stock alert
-					'fullpath' => $compl_path.$label,			// Label
+					'label'=>$label,
+					'fullpath'=>$compl_path.$label,			// Label
 					'type'=>$type,				// Nb of units that compose parent product
-					'desiredstock' => $this->desiredstock
+					'desiredstock'=>$this->desiredstock,
+					'level'=>$level
 				);
 
-				// Recursive call if child is an array
+				// Recursive call if there is childs to child
 				if (is_array($desc_pere['childs']))
 				{
 					//print 'YYY We go down for '.$desc_pere[3]." -> \n";

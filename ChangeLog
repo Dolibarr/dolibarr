@@ -2,13 +2,26 @@
 English Dolibarr ChangeLog
 --------------------------------------------------------------
 
+***** ChangeLog for 3.6 compared to 3.5.* *****
+For users:
+- New: Add list of orders products in tab "consumption" on thirdparties.
+- New: Add graph stats for suppliers orders in tab "stats" on products.
+
+For translators:
+- Update language files.
+
+For developers:
+- New: Add path file of trigger into admin trigger list page.
+
+
+
 ***** ChangeLog for 3.5 compared to 3.4.* *****
 For users:
 - New: Add hidden option BANK_DISABLE_DIRECT_INPUT.
 - New: More options to select status of users into select user list.
 - New: [ task #862 ] Add ODT on shipments.
 - New: [ task #149 ] Add # of notes and attachments in tabs.
-- New: Can edit customer ref at eny time.
+- New: Can edit customer ref at any time.
 - New: [ task #877 ] Reorganize menus.
 - New: [ task #858 ] Holiday module: note on manual holiday assignation.
 - New: [ task #892 ] Add hidden option in thirdparty customer/supplier module to hide non active
@@ -18,10 +31,10 @@ For users:
 - New: Add script export-bank-receipts.php
 - New: Add option "filter=bank" onto script rebuild_merge_pdf.php to merge PDF that
   has one payment on a specific bank account.*
-- New: [ task #901 ] Add Extrafeild on Fiche Inter.
+- New: [ task #901 ] Add Extrafield on Fiche Inter.
 - New: Show process id in all command line scripts.
 - New: Module mailman can subscribe/unsubscribe to ML according to categories or type of member.
-- New: Add object_hour and object_date_rfc as substitution tag for opendocument generation.
+- New: Add object_hour and object_date_rfc as substitution tag for open document generation.
 - New: Add options to send an email when paypal or paybox payment is done.
 - New: Clone product/service composition.
 - New: [ task #926 ] Add extrafield feature on order lines.
@@ -31,21 +44,19 @@ For users:
 - New: Add a cron module to define scheduled jobs.
 - New: Add new graphical boxes (customer and supplier invoices and orders per month).
 - New: [ task #286 ] Enhance rounding function of prices to allow round of sum instead of sum of rounding.
-- New: Can add an event automatically when a projet is create. 
+- New: Can add an event automatically when a project is create. 
 - New: Add option MAIN_GENERATE_DOCUMENT_WITH_PICTURE.
 - New: Add option excludethirdparties and onlythirdparties into merge pdf scripts.
 - New: [ task #925 ] Add ODT document generation for Tasks in project module.
 - New: [ task #924 ] Add numbering rule on task.
 - New: [ task #165 ] Add import/export of multiprices.
 - New: Add Maghreb regions and departments.
-- New: A more responsive desgin for statistic box of home page.
-- Qual: Implement same rule for return value of all command line scripts (0 when success, <>0 if error).
+- New: A more responsive design for statistic box of home page.
 - New: [ task #1005 ] Adapting to Spanish legislation bill numbering
 - New: [ task #1011 ] Now supplier order and invoice deal with payment terms and mode.
-- New: [ task #1014 ] Add option to recursivly add parent category.
+- New: [ task #1014 ] Add option to recursively add parent category.
 - New: [ task #1016 ] Can define a specific numbering for deposits.
 - New: [ task #918 ] Stock replenishment.
-- Fix: [ bug #992 ] Proforma invoices don't have a separated numeric count.
 - New : Add pdf link into supplier invoice list and supplier order list.
 - New : Genrate auto the PDF for supplier invoice.
 - New : Add category into filter webservice thirdparty method getListOfThirdParties.
@@ -60,16 +71,26 @@ For users:
 - New: Add hidden option MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS.
 - New: Can send an email from thirdparty card.
 - New: Can cancel holidays that were previously validated.
-- Fix: [bug #1022] correct margin calculation for credit notes.
-- New: Can choose contact on event (action com) creation, and filtred by thirdparty.
+- New: Can choose contact on event (action com) creation, and filtered by thirdparty.
 - New: Add hidden option MAIN_FORCE_DEFAULT_STATE_ID.
 - New: Add page to make mass stock movement.
 - New: Add field oustanding limit into thirdparty properties.
+- New: Can enter a vat payment of zero.
+- New: Add path to installed dir of external modules + Name and web of module provider.
+- New: Add option to use a specific mask for uploaded filename.
+- New: Can attach external links to objects as we can attach files.
+- Qual: Implement same rule for return value of all command line scripts (0 when success, <>0 if error).
+- Fix: [ bug #992 ] Proforma invoices don't have a separated numeric count.
+- Fix: [ bug #1022 ] correct margin calculation for credit notes.
+- Fix: Better management of using ajax for upload form (to solve problem when enabling ajax jquery multifile upload in some cases).
+
+New experimental module:
+- New: [ task #157 ] Add a Skype button (adherents / third parties / contacts)
 
 For translators:
-- Qual: Normalized sort order of all languages files with english reference files.
-- New: Add language code files for South Africa, France new caledonia.
-- New: Translate the email to change password.
+- Qual: Normalized sort order of all languages files with English reference files.
+- New: Add language code files for South Africa, France new Caledonia, Vietnam.
+- New: Translate string for email to change password.
 
 For developers:
 - New: DolGraph can build graph with three lines.
@@ -85,17 +106,17 @@ For developers:
   MAIN_MOTD_SETUPPAGE, MAIN_MOTD_SETUPPAGE, MAIN_HOME now accept "|langfile" into translation
   key to use a specific language file.
 - New: Make some changes to allow usage of several alternative $dolibarr_main_url_root variables.
-  Fix also several bugs with old code. 
 - Qual: All nowrap properties are now using CSS class nowrap.
-- Qual: Move hardcoded code of module mailmanspip into trigger.
-- New: Into POST forms, if you can add a parameter DOL_AUTOSET_COOKIE with a vlue that is list name,
+- Qual: Move hard coded code of module mailmanspip into trigger.
+- New: Into POST forms, if you can add a parameter DOL_AUTOSET_COOKIE with a value that is list name,
   separated by a coma, of other POST parameters, Dolibarr will automatically save this parameters
   into user cookies.
 - New: Add hook addHomeSetup.
 - New: Add trigger CATEGORY_LINK and CATEGORY_UNLINK.
 - New: A trigger can return an array of error strings instead of one error string.
-- New: Add method to use a dictionnary as a combo box.
+- New: Add method to use a dictionary as a combo box.
 - New: Add update method for web service product.
+- Fix also several bugs with old code. 
 
 WARNING: Following change may create regression for some external modules, but was necessary to make
 Dolibarr better:
@@ -109,17 +130,29 @@ be replaced by a "return 0";
 Goal is to fix old compatibility code that does not match hook specifications: 
  http://wiki.dolibarr.org/index.php/Hooks_system   
 
-2) If you implemented hook printTopRightMenu, check that output does not include '<td>' tags anymore.
+2) If you implemented hook printTopRightMenu, check that output does not include '<td>' tags any more.
 All content added must be tagged by a '<div>' with css class="login_block_elem"
 
 3) Some methods object->addline used a first parameter that was object->id, some not. Of course
-this was not a good pratice, since object->id is already known, there is no need to provide id as 
+this was not a good practice, since object->id is already known, there is no need to provide id as 
 parameter. All methods addline in this case were modified to remove this parameter. 
 
 4) Method ->classer_facturee() is deprecated. It must be replace with ->classifyBilled().
 
 5) Property ->tel on objects is now ->phone
+
  
+***** ChangeLog for 3.4.2 compared to 3.4.1 *****
+Fix: field's problem into company's page (RIB)
+Fix: Document cerfa doesn't contained firstname & lastname from donator
+Fix: Bad rounding on margin calculations and display.
+Fix: Option drop table into backup was broken.
+Fix: [ bug #1105 ] Searching Boxes other search option
+Fix: wrong buy price update
+Fix: [ bug #1142 ] Set paiement on invoice (PGSql)
+Fix: [ bug #1145 ] Agenda button list type do not display
+Fix: [ bug #1148 ] Product consomation : supplier order bad status
+Fix: [ bug #1159 ] Commercial search "other" give p.note do not exists
 
 ***** ChangeLog for 3.4.1 compared to 3.4.0 *****
 Fix: Display buying price on line edit when no supplier price is defined
@@ -128,18 +161,18 @@ Fix: Reordering supplier products in list by supplier or supplier ref was crashi
 Fix: [ bug #1029 ] Tulip numbering mask
 Fix: Supplier invoice and supplier order are not displayed into object link into agenda event card
 Fix: [ bug #1033 ] SUPPLIER REF disappeared
-Fix: update extrafield do not display immediatly after update
+Fix: update extrafield do not display immediately after update
 Fix: Fix bug with canvas thirdparty
 Fix: [ bug #1037 ] Consumption> Supplier invoices related
 Fix: User group name do not display in card (view or edit mode)
-Fix: Link "Show all supplier invoice" on suplier card not working 
+Fix: Link "Show all supplier invoice" on supplier card not working 
 Fix: [ bug #1039 ] Pre-defined invoices conversion
 Fix: If only service module is activated, it's impossible to delete service
 Fix: [ bug #1043 ] Bad interventions ref numbering
 Fix: Mailing module : if an email is already in destinaires list all other email from selector was not inserted
 Fix: Localtaxes balance not showing
 Fix: Intervention box links to contracts id
-Fix: Compatiblity with multicompany module
+Fix: Compatibility with multicompany module
 Fix: Edit propal line was losing product supplier price id
 Fix: Delete linked element to supplier invoice when deleted 
 Fix: [ bug #1061 ] Bad info shipped products

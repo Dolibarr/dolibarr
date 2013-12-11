@@ -16,7 +16,7 @@ DateCreateCP=Oluşturma tarihi
 DraftCP=Taslak
 ToReviewCP=Onay bekliyor
 ApprovedCP=Onaylandı
-CancelCP=Şptal edildi
+CancelCP=İptal edildi
 RefuseCP=Reddedildi
 ValidatorCP=Onaylayan
 ListeCP=Tatil listesi
@@ -87,7 +87,7 @@ FirstDayOfHoliday=Tatilin ilk günü
 LastDayOfHoliday=Tatilin son günü
 HolidaysMonthlyUpdate=Aylık güncelleme
 ManualUpdate=Elle güncelleme
-# HolidaysCancelation=Holidays cancelation
+HolidaysCancelation=Tatil iptali
 
 ## Configuration du Module ##
 ConfCP=Tatil modülünün yapılandırılması

@@ -1,11 +1,11 @@
 # Dolibarr language file - Source file is en_US - marges
 
-# Margin=Margin
-# Margins=Margins
-# TotalMargin=Total Margin
-# MarginOnProducts=Margin / Products
-# MarginOnServices=Margin / Services
-# MarginRate=Margin rate
+Margin=Margem
+Margins=Margens
+TotalMargin=Margem total
+MarginOnProducts=Margem / Produtos
+MarginOnServices=Margem / Serviços
+MarginRate=Taxa de margem
 # MarkRate=Mark rate
 # DisplayMarginRates=Display margin rates
 # DisplayMarkRates=Display mark rates
@@ -32,20 +32,20 @@ Launch=Iniciar
 # ForceBuyingPriceIfNull=Force buying price if null
 # ForceBuyingPriceIfNullDetails=if "ON", margin will be zero on line (buying price = selling price), otherwise ("OFF"), marge will be equal to selling price (buying price = 0)
 # MARGIN_METHODE_FOR_DISCOUNT=Margin method for global discounts
-# UseDiscountAsProduct=As a product
-# UseDiscountAsService=As a service
-# UseDiscountOnTotal=On subtotal
-# MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Defines if a global discount is treated as a product, a service, or only on subtotal for margin calculation.
+UseDiscountAsProduct=Como um produto
+UseDiscountAsService=Como um serviço
+UseDiscountOnTotal=No subtotal
+MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Define se um desconto global é tratado como um produto, um serviço, ou apenas no subtotal para cálculo de margem
 
 # MARGIN_TYPE=Margin type
 # MargeBrute=Raw margin
 # MargeNette=Net margin
 # MARGIN_TYPE_DETAILS=Raw margin : Selling price - Buying price<br/>Net margin : Selling price - Cost price
 
-# CostPrice=Cost price
-# BuyingCost=Cost price
+CostPrice=Preço de custo
+BuyingCost=Preço de custo
 # UnitCharges=Unit charges
-# Charges=Charges
+Charges=Custos
 
-# AgentContactType=Contact type used for commissioning
-# AgentContactTypeDetails=Défine what contact type (linked on invoices) will be associated with commercial agents
+# AgentContactType=Commercial agent contact type
+# AgentContactTypeDetails=Défine what contact type (linked on invoices) will be used for margin report by commercial agents

@@ -66,6 +66,9 @@ Country=Land
 CountryCode=Landcode
 CountryId=Land-ID
 Phone=Telefoonnummer
+# Skype=Skype
+# Call=Call
+# Chat=Chat
 PhonePro=Telefoonnummer zakelijk
 PhonePerso=Telefoonnummer privé
 PhoneMobile=Telefoonnummer mobiel
@@ -396,7 +399,9 @@ InActivity=Open
 ActivityCeased=Gesloten
 ActivityStateFilter=Activiteitsstatus
 # ProductsIntoElements=List of products into
-# OutstandingBill=Outstanding Bill
+# CurrentOutstandingBill=Current outstanding bill
+# OutstandingBill=Max. for outstanding bill
+# OutstandingBillReached=Reached max. for outstanding bill
 # Monkey
 MonkeyNumRefModelDesc=Geeft een nummer als %syymm-nnnn voor afnemerscodes en %sjjmm-nnnn voor leverancierscodes waar jj het jaar is, mm de maand en nnnn een opeenvolgend nummer vanaf 0.
 # Leopard

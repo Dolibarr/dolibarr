@@ -383,13 +383,13 @@ PaymentInvoiceRef=Pagament factura %s
 ValidateInvoice=Validar factura
 Cash=Efectiu
 Reported=Ajornat
-DisabledBecausePayments=No disponible ja que hi ha pagaments
-CantRemovePaymentWithOneInvoicePaid=Eliminació impossible quan hi ha almenys una factura classificada com a pagada.
+# DisabledBecausePayments=Not possible since there are some payments
+# CantRemovePaymentWithOneInvoicePaid=Can't remove payment since there is at least one invoice classified paid
 ExpectedToPay=Esperant el pagament
-PayedByThisPayment=Pagada per aquest pagament
-ClosePaidInvoicesAutomatically=Classificar com "Pagades" les factures i facures rectificatives completament pagades.
-ClosePaidCreditNotesAutomatically=Classificar automàticament com "Pagats" els abonaments completament reemborsats
-AllCompletelyPayedInvoiceWillBeClosed=Totes les factures amb una resta a pagar 0 seran automàticament tancades a l'estat "Pagada".
+# PayedByThisPayment=Paid by this payment
+# ClosePaidInvoicesAutomatically=Classify "Paid" all standard or replacement invoices entirely paid.
+# ClosePaidCreditNotesAutomatically=Classify "Paid" all credit notes entirely paid back.
+# AllCompletelyPayedInvoiceWillBeClosed=All invoice with no remain to pay will be automatically closed to status "Paid".
 ToMakePayment=Pagar
 ToMakePaymentBack=Reemborsar
 ListOfYourUnpaidInvoices=Llistat de factures impagades
@@ -405,11 +405,11 @@ TypeContact_invoice_supplier_external_BILLING=Contacte proveïdor facturació
 TypeContact_invoice_supplier_external_SHIPPING=Contacte proveïdor entregues
 TypeContact_invoice_supplier_external_SERVICE=Contacte proveïdor serveis
 # crabe PDF Model
-PDFCrabeDescription=Model de factura complet (model recomanat per defecte)
+# PDFCrabeDescription=Invoice PDF template Crabe. A complete invoice template (recommended Template)
 # oursin PDF Model
-PDFOursinDescription=Model de factura complet (model alternatiu)
+# PDFOursinDescription=Invoice PDF template Oursin. A complete invoice template (alternative Template)
 # NumRef Modules
-# TerreNumRefModelDesc1=Return numero with format %syymm-nnnn for standard and replacement invoices, %syymm-nnnn for credit notes and %syymm-nnnn for deposits where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
-# MarsNumRefModelDesc1=Return numero with format %syymm-nnnn for standard invoices, %syymm-nnnn for replacement invoices, %syymm-nnnn for credit notes and %syymm-nnnn for credit notes where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
+# TerreNumRefModelDesc1=Return number with format %syymm-nnnn for standard invoices and %syymm-nnnn for credit notes where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
+# MarsNumRefModelDesc1=Return number with format %syymm-nnnn for standard invoices, %syymm-nnnn for replacement invoices, %syymm-nnnn for credit notes and %syymm-nnnn for credit notes where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
 
 TerreNumRefModelError=Ja hi ha una factura amb $syymm i no és compatible amb aquest model de seqüència. Elimineu o renómbrela per poder activar aquest mòdul

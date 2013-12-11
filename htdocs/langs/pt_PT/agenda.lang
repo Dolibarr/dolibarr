@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - agenda
-# IdAgenda=ID event
+IdAgenda=ID do evento
 Actions=Acções
 ActionsArea=Área de Acções
 Agenda= Agenda
@@ -10,7 +10,7 @@ LocalAgenda=Calendário local
 AffectedTo= Afecta o
 DoneBy= Realizado por
 Events= Eventos
-# EventsNb=Number of events
+EventsNb=Número de eventos
 MyEvents=Meus eventos
 OtherEvents=Outros eventos
 ListOfActions=Lista de Eventos
@@ -18,30 +18,30 @@ Location=Localização
 EventOnFullDay=Evento para todo o dia
 SearchAnAction= Procurar uma Acção
 MenuToDoActions= Acções a fazer
-# MenuDoneActions= All terminated events
-# MenuToDoMyActions= My incomplete events
-# MenuDoneMyActions= My terminated events
+MenuDoneActions= Todos os eventos terminados
+MenuToDoMyActions= Os meus eventos incompletos
+MenuDoneMyActions= Os meus eventos terminados
 ListOfEvents= Lista de Eventos
-# ActionsAskedBy=Events reported by
-# ActionsToDoBy=Events assigned to
-# ActionsDoneBy=Events done by
+ActionsAskedBy=Os meus eventos reportados
+ActionsToDoBy=Eventos atribuídos a
+ActionsDoneBy=Eventos realizados por
 AllMyActions= Todas as minhas acções
 AllActions= Todas as Acções
 ViewList=Ver Lista
 ViewCal=Ver Calendário
 ViewDay=Modo de exibição Dia
 ViewWeek=Vista da semana
-# ViewWithPredefinedFilters= View with predefined filters
-# AutoActions= Automatic filling
+ViewWithPredefinedFilters= Ver com filtros predefinidos
+AutoActions= Preenchimento automático
 # AgendaAutoActionDesc= Define here events for which you want Dolibarr to create automatically an event in agenda. If nothing is checked (by default), only manual actions will be included in agenda.
 # AgendaSetupOtherDesc= This page provides options to allow export of your Dolibarr events into an external calendar (thunderbird, google calendar, ...)
 AgendaExtSitesDesc=Esta página permite declarar as fontes externas de calendários para ver os seus eventos na agenda do Dolibarr.
-# ActionsEvents= Events for which Dolibarr will create an action in agenda automatically
+ActionsEvents= Eventos em que o Dolibarr criará uma acção em agenda automáticamente
 PropalValidatedInDolibarr= Proposta Validada
 InvoiceValidatedInDolibarr= Factura Validada
 InvoiceBackToDraftInDolibarr=Factura %s voltou ao estado de rascunho
-# InvoiceDeleteDolibarr=Invoice %s deleted
-# OrderValidatedInDolibarr= Order %s validated
+InvoiceDeleteDolibarr=Fatura %s apagada
+OrderValidatedInDolibarr= Encomenda %s validada
 OrderApprovedInDolibarr=Encomenda %s aprovada
 OrderBackToDraftInDolibarr=Encomenda %s voltou ao estado de rascunho
 OrderCanceledInDolibarr=Encomenda %s cancelada
@@ -67,7 +67,7 @@ AgendaUrlOptions4=<b>logint=%s</b> para restringir a produção para as acções
 AgendaUrlOptions5=<b>logind=%s</b> para restringir a produção para acções feitas pelo utilizador <b>%s</b>.
 AgendaShowBirthdayEvents=Mostrar Aniversários dos Contactos
 AgendaHideBirthdayEvents=Esconder Aniversários dos Contactos
-# Busy=Busy
+Busy=Ocupado
 # ExportDataset_event1=List of agenda events
 
 # External Sites ical

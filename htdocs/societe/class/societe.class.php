@@ -8,6 +8,8 @@
  * Copyright (C) 2008      Patrick Raguin       <patrick.raguin@auguria.net>
  * Copyright (C) 2010-2011 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2013      Florian Henry		  	<florian.henry@open-concept.pro>
+ * Copyright (C) 2013      Alexandre Spangaro 	<alexandre.spangaro@gmail.com>
+ * Copyright (C) 2013      Peter Fontaine       <contact@peterfontaine.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -68,6 +70,7 @@ class Societe extends CommonObject
     var $phone;
     var $fax;
     var $email;
+    var $skype;
     var $url;
 
 	//! barcode
@@ -410,6 +413,7 @@ class Societe extends CommonObject
         $this->fax			= preg_replace("/\s/","",$this->fax);
         $this->fax			= preg_replace("/\./","",$this->fax);
         $this->email		= trim($this->email);
+        $this->skype		= trim($this->skype);
         $this->url			= $this->url?clean_url($this->url,0):'';
         $this->idprof1		= trim($this->idprof1);
         $this->idprof2		= trim($this->idprof2);
@@ -508,6 +512,7 @@ class Societe extends CommonObject
             $sql .= ",phone = ".(! empty($this->phone)?"'".$this->db->escape($this->phone)."'":"null");
             $sql .= ",fax = ".(! empty($this->fax)?"'".$this->db->escape($this->fax)."'":"null");
             $sql .= ",email = ".(! empty($this->email)?"'".$this->db->escape($this->email)."'":"null");
+            $sql .= ",skype = ".(! empty($this->skype)?"'".$this->db->escape($this->skype)."'":"null");
             $sql .= ",url = ".(! empty($this->url)?"'".$this->db->escape($this->url)."'":"null");
 
             $sql .= ",siren   = '". $this->db->escape($this->idprof1) ."'";
@@ -590,6 +595,7 @@ class Societe extends CommonObject
 		            		//$lmember->lastname=$this->lastname?$this->lastname:$lmember->lastname;		// We keep firstname and lastname of member unchanged
 		            		$lmember->address=$this->address;
 		            		$lmember->email=$this->email;
+                    $lmember->skype=$this->skype;
 		            		$lmember->phone=$this->phone;
 
 		            		$result=$lmember->update($user,0,1,1,1);	// Use nosync to 1 to avoid cyclic updates
@@ -699,7 +705,7 @@ class Societe extends CommonObject
         $sql .= ', s.status';
         $sql .= ', s.price_level';
         $sql .= ', s.tms as date_update';
-        $sql .= ', s.phone, s.fax, s.email, s.url, s.zip, s.town, s.note_private, s.note_public, s.client, s.fournisseur';
+        $sql .= ', s.phone, s.fax, s.email, s.skype, s.url, s.zip, s.town, s.note_private, s.note_public, s.client, s.fournisseur';
         $sql .= ', s.siren as idprof1, s.siret as idprof2, s.ape as idprof3, s.idprof4, s.idprof5, s.idprof6';
         $sql .= ', s.capital, s.tva_intra';
         $sql .= ', s.fk_typent as typent_id';
@@ -777,6 +783,7 @@ class Societe extends CommonObject
                 $this->statut_commercial = $libelle;    // libelle statut commercial
 
                 $this->email = $obj->email;
+                $this->skype = $obj->skype;
                 $this->url = $obj->url;
                 $this->phone = $obj->phone;
                 $this->fax = $obj->fax;
@@ -1432,7 +1439,7 @@ class Societe extends CommonObject
 
         $name=$this->name?$this->name:$this->nom;
 
-		if ($conf->global->SOCIETE_ADD_REF_IN_LIST) {
+		if ($conf->global->SOCIETE_ADD_REF_IN_LIST && (!empty($withpicto))) {
 			if (($this->client) && (! empty ( $this->code_client ))) {
 				$code = $this->code_client . ' - ';
 			}
@@ -1518,22 +1525,22 @@ class Societe extends CommonObject
         }
         if ($mode == 2)
         {
-            if ($statut==0) return img_picto($langs->trans("ActivityCeased"),'statut6').' '.$langs->trans("ActivityCeased");
+            if ($statut==0) return img_picto($langs->trans("ActivityCeased"),'statut5').' '.$langs->trans("ActivityCeased");
             if ($statut==1) return img_picto($langs->trans("InActivity"),'statut4').' '.$langs->trans("InActivity");
         }
         if ($mode == 3)
         {
-            if ($statut==0) return img_picto($langs->trans("ActivityCeased"),'statut6');
+            if ($statut==0) return img_picto($langs->trans("ActivityCeased"),'statut5');
             if ($statut==1) return img_picto($langs->trans("InActivity"),'statut4');
         }
         if ($mode == 4)
         {
-            if ($statut==0) return img_picto($langs->trans("ActivityCeased"),'statut6').' '.$langs->trans("ActivityCeased");
+            if ($statut==0) return img_picto($langs->trans("ActivityCeased"),'statut5').' '.$langs->trans("ActivityCeased");
             if ($statut==1) return img_picto($langs->trans("InActivity"),'statut4').' '.$langs->trans("InActivity");
         }
         if ($mode == 5)
         {
-            if ($statut==0) return $langs->trans("ActivityCeased").' '.img_picto($langs->trans("ActivityCeased"),'statut6');
+            if ($statut==0) return $langs->trans("ActivityCeased").' '.img_picto($langs->trans("ActivityCeased"),'statut5');
             if ($statut==1) return $langs->trans("InActivity").' '.img_picto($langs->trans("InActivity"),'statut4');
         }
     }
@@ -1745,6 +1752,34 @@ class Societe extends CommonObject
         $bac = new CompanyBankAccount($this->db);
         $bac->fetch(0,$this->id);
         return $bac->getRibLabel();
+    }
+
+    /**
+     * Return Array of RIB
+     *
+     * @return     array|int        0 if KO, Array of CompanyBanckAccount if OK
+     */
+    function get_all_rib()
+    {
+        require_once DOL_DOCUMENT_ROOT . '/societe/class/companybankaccount.class.php';
+        $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe_rib WHERE fk_soc = ".$this->id;
+        $result = $this->db->query($sql);
+        if (!$result) {
+            $this->error++;
+            $this->errors[] = $this->db->lasterror;
+            return 0;
+        } else {
+            $num_rows = $this->db->num_rows($result);
+            $rib_array = array();
+            if ($num_rows) {
+                while ($obj = $this->db->fetch_object($result)) {
+                    $rib = new CompanyBankAccount($this->db);
+                    $rib->fetch($obj->rowid);
+                    $rib_array[] = $rib;
+                }
+            }
+            return $rib_array;
+        }
     }
 
     /**
@@ -2409,6 +2444,7 @@ class Societe extends CommonObject
         $this->country_id=$member->country_id;
         $this->phone=$member->phone;       // Prof phone
         $this->email=$member->email;
+        $this->skype=$member->skype;
 
         $this->client = 1;				// A member is a customer by default
         $this->code_client = -1;
@@ -2516,8 +2552,8 @@ class Societe extends CommonObject
     	$this->tva_assuj=((isset($conf->global->FACTURE_TVAOPTION) && $conf->global->FACTURE_TVAOPTION=='franchise')?0:1);
 
     	// Define if company use local taxes
-    	$this->localtax1_assuj=((isset($conf->global->FACTURE_LOCAL_TAX1_OPTION) && $conf->global->FACTURE_LOCAL_TAX1_OPTION=='localtax1on')?1:0);
-    	$this->localtax2_assuj=((isset($conf->global->FACTURE_LOCAL_TAX2_OPTION) && $conf->global->FACTURE_LOCAL_TAX2_OPTION=='localtax2on')?1:0);
+    	$this->localtax1_assuj=((isset($conf->global->FACTURE_LOCAL_TAX1_OPTION) && ($conf->global->FACTURE_LOCAL_TAX1_OPTION=='1' || $conf->global->FACTURE_LOCAL_TAX1_OPTION=='localtax1on'))?1:0);
+    	$this->localtax2_assuj=((isset($conf->global->FACTURE_LOCAL_TAX2_OPTION) && ($conf->global->FACTURE_LOCAL_TAX2_OPTION=='1' || $conf->global->FACTURE_LOCAL_TAX2_OPTION=='localtax2on'))?1:0);
     }
 
     /**
@@ -2548,6 +2584,7 @@ class Societe extends CommonObject
         $this->country_id=1;
         $this->country_code='FR';
         $this->email='specimen@specimen.com';
+        $this->skype='tom.hanson';
         $this->url='http://www.specimen.com';
 
         $this->phone='0909090901';
@@ -2776,43 +2813,46 @@ class Societe extends CommonObject
 	 *  @param  User	$user		User making change
 	 *	@return	int					<0 if KO, >0 if OK
 	 */
-	function set_outstanding($user)
+	function set_OutstandingBill ($user)
 	{
 		if ($this->id)
 		{
 			$this->db->begin();
 
 			$now=dol_now();
-			
+
+			// Clean parameters
 			$outstanding = price2num($this->outstanding_limit);
-			
-			// Positionne l'encours de facturaiton
+
+			// Set outstanding amount
 			$sql = "UPDATE ".MAIN_DB_PREFIX."societe SET ";
-			$sql.= " outstanding_limit=".$outstanding;
+			$sql.= " outstanding_limit= ".($outstanding!=''?$outstanding:'null');
 			$sql.= " WHERE rowid = ".$this->id;
 
 			dol_syslog(get_class($this)."::set_outstanding sql=".$sql);
 			$resql=$this->db->query($sql);
-			if (! $resql)
+			if ($resql)
+			{
+				$this->db->commit();
+				return 1;
+			}
+			else
 			{
 				$this->db->rollback();
-				$this->error=$this->db->error();
+				$this->error=$this->db->lasterror();
 				return -1;
 			}
-
-			$this->db->commit();
-			return 1;
 		}
 	}
 
     /**
-     *  return amount of bill not paid
+     *  Return amount of bill not paid
      *
-     *  @return		boolean			Yes or no
+     *  @return		int				Amount in debt for thirdparty
      */
     function get_OutstandingBill()
     {
-		/* Accurate value of remain to pay is to sum remaintopay for each invoice 
+		/* Accurate value of remain to pay is to sum remaintopay for each invoice
 		$paiement = $invoice->getSommePaiement();
 		$creditnotes=$invoice->getSumCreditNotesUsed();
 		$deposits=$invoice->getSumDepositsUsed();
@@ -2820,7 +2860,7 @@ class Societe extends CommonObject
 		$remaintopay=price2num($invoice->total_ttc - $paiement - $creditnotes - $deposits,'MT');
 		*/
 		$sql  = "SELECT sum(total) as amount FROM ".MAIN_DB_PREFIX."facture as f";
-		$sql .= " WHERE fk_soc = ". $this->id; 
+		$sql .= " WHERE fk_soc = ". $this->id;
 		$sql .= " AND paye = 0";
 		$sql .= " AND fk_statut <> 0";
 
@@ -2836,9 +2876,9 @@ class Societe extends CommonObject
 	}
 
 	/**
-	 *    Return label of status customer is prospect/customer
+	 * Return label of status customer is prospect/customer
 	 *
-	 *    @return   string        		Libelle
+	 * @return   string        	Label
 	 */
 	function getLibCustProspStatut()
 	{

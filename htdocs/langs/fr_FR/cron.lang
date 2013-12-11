@@ -18,8 +18,8 @@ Permission23104 = Lancer un travail planifié
 # Admin
 #
 CronSetup= Page de configuration du module - Gestion des travaux planifiées
-URLToLaunchCronJobs=URL pour lancer les travaux planifiés actifs
-OrToLaunchASpecificJob=Ou pour lancer un travail planifié spécifique
+# URLToLaunchCronJobs=URL to check and launch cron jobs if required
+# OrToLaunchASpecificJob=Or to check and launch a specific job
 KeyForCronAccess=Clé de sécurité pour l'URL de lancement des travaux planifiés
 FileToLaunchCronJobs=Commande pour lancer les travaux planifiés actifs
 CronExplainHowToRunUnix=Sur un environnement Unix vous pouvez utiliser 'crontab' pour exécuter une commande toute les minutes
@@ -32,6 +32,7 @@ CronExplainHowToRunWin=Sur un environement Microsoft(tm) Windows vous pouvez uti
 CronJobs=Travaux planifiés
 CronListActive= Liste des travaux actifs
 CronListInactive= Liste des travaux inactifs
+CronListActive= Liste des travaux actifs
 
 
 #
@@ -42,7 +43,7 @@ CronLastOutput=Sortie du dernier lancement
 CronLastResult=Dernier code de retour
 CronListOfCronJobs=Liste des travaux planifiés
 CronCommand=Commande
-CronList= Liste des travaux
+# CronList=Jobs list
 CronDelete= Supprimer les travaux cron
 CronConfirmDelete= Êtes-vous sûr de vouloir supprimer ces travaux cron ?
 CronExecute=Lancer cette tâche
@@ -68,7 +69,7 @@ CronPriority=Priorité
 CronLabel=Description
 CronNbRun=Nb. exec.
 CronEach=Tous les
-JobFinished=Tache lancée et terminée
+JobFinished=Tâche lancée et terminée
 
 #
 #Page card

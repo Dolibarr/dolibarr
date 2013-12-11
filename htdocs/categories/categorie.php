@@ -118,7 +118,8 @@ if (empty($reshook))
 		}
 		if ($type==1 && $user->rights->societe->creer)
 		{
-			$object = new Societe($db);
+			require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
+			$object = new Fournisseur($db);
 			$result = $object->fetch($objectid);
 			$elementtype = 'fournisseur';
 		}
@@ -152,7 +153,7 @@ if (empty($reshook))
 			setEventMessage($cat->errors,'errors');
 		}
 	}
-
+	
 	// Add object into a category
 	if ($parent > 0)
 	{
@@ -165,7 +166,8 @@ if (empty($reshook))
 		}
 		if ($type==1 && $user->rights->societe->creer)
 		{
-			$object = new Societe($db);
+			require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
+			$object = new Fournisseur($db);
 			$result = $object->fetch($objectid);
 			$elementtype = 'fournisseur';
 		}
@@ -319,11 +321,11 @@ if ($socid)
 
 	dol_fiche_end();
 
-	if ($soc->client) formCategory($db,$soc,2,$socid);
+	if ($soc->client) formCategory($db,$soc,2,$socid,$user->rights->societe->creer);
 
 	if ($soc->client && $soc->fournisseur) print '<br><br>';
 
-	if ($soc->fournisseur) formCategory($db,$soc,1,$socid);
+	if ($soc->fournisseur) formCategory($db,$soc,1,$socid,$user->rights->societe->creer);
 }
 else if ($id || $ref)
 {
@@ -377,7 +379,7 @@ else if ($id || $ref)
 
 		dol_fiche_end();
 
-		formCategory($db,$product,0);
+		formCategory($db,$product,0,($user->rights->produit->creer || $user->rights->service->creer));
 	}
 
 	if ($type == 3)
@@ -456,7 +458,7 @@ else if ($id || $ref)
 
 		dol_fiche_end();
 
-		formCategory($db,$member,3);
+		formCategory($db,$member,3,0,$user->rights->adherent->creer);
 	}
 	if ($type == 4)
 	{
@@ -602,7 +604,7 @@ else if ($id || $ref)
 
 		dol_fiche_end();
 
-		formCategory($db,$object,4);
+		formCategory($db,$object,4,$user->rights->societe->creer);
 	}
 }
 
@@ -610,13 +612,14 @@ else if ($id || $ref)
 /**
  * 	Function to output a form to add object into a category
  *
- * 	@param		DoliDb		$db			Database handler
- * 	@param		Object		$object		Object we want to see categories it can be classified into
- * 	@param		int			$typeid		Type of category (0, 1, 2, 3)
- *  @param		int			$socid		Id thirdparty
+ * 	@param		DoliDb		$db					Database handler
+ * 	@param		Object		$object				Object we want to see categories it can be classified into
+ * 	@param		int			$typeid				Type of category (0, 1, 2, 3)
+ *  @param		int			$socid				Id thirdparty
+ *  @param		string		$showclassifyform	1=Add form to 'Classify', 0=Do not show form to 'Classify'
  *  @return		int			0
  */
-function formCategory($db,$object,$typeid,$socid=0)
+function formCategory($db,$object,$typeid,$socid=0,$showclassifyform=1)
 {
 	global $user,$langs,$form,$bc;
 
@@ -626,33 +629,37 @@ function formCategory($db,$object,$typeid,$socid=0)
 	if ($typeid == 3) $title = $langs->trans("MembersCategoriesShort");
 	if ($typeid == 4) $title = $langs->trans("ContactCategoriesShort");
 
-	// Form to add record into a category
 	print '<br>';
 	print_fiche_titre($title,'','');
-	print '<form method="post" action="'.DOL_URL_ROOT.'/categories/categorie.php">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-	print '<input type="hidden" name="typeid" value="'.$typeid.'">';
-	print '<input type="hidden" name="type" value="'.$typeid.'">';
-	print '<input type="hidden" name="id" value="'.$object->id.'">';
-	print '<table class="noborder" width="100%">';
-	print '<tr class="liste_titre"><td width="40%">';
-	print $langs->trans("ClassifyInCategory").' &nbsp;';
-	print $form->select_all_categories($typeid,'auto');
-	print '</td><td>';
-	print '<input type="submit" class="button" value="'.$langs->trans("Classify").'"></td>';
-	if ($user->rights->categorie->creer)
+	
+	// Form to add record into a category
+	if ($showclassifyform)
 	{
-		print '<td align="right">';
-		print '<a href="'.DOL_URL_ROOT.'/categories/fiche.php?action=create&amp;origin='.$object->id.'&type='.$typeid.'&urlfrom='.urlencode($_SERVER["PHP_SELF"].'?'.(($typeid==1||$typeid==2)?'socid':'id').'='.$object->id.'&type='.$typeid).'">';
-		print $langs->trans("CreateCat").' ';
-		print img_picto($langs->trans("Create"),'filenew');
-		print "</a>";
-		print '</td>';
+		print '<form method="post" action="'.DOL_URL_ROOT.'/categories/categorie.php">';
+		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		print '<input type="hidden" name="typeid" value="'.$typeid.'">';
+		print '<input type="hidden" name="type" value="'.$typeid.'">';
+		print '<input type="hidden" name="id" value="'.$object->id.'">';
+		print '<table class="noborder" width="100%">';
+		print '<tr class="liste_titre"><td width="40%">';
+		print $langs->trans("ClassifyInCategory").' &nbsp;';
+		print $form->select_all_categories($typeid,'auto');
+		print '</td><td>';
+		print '<input type="submit" class="button" value="'.$langs->trans("Classify").'"></td>';
+		if ($user->rights->categorie->creer)
+		{
+			print '<td align="right">';
+			print '<a href="'.DOL_URL_ROOT.'/categories/fiche.php?action=create&amp;origin='.$object->id.'&type='.$typeid.'&urlfrom='.urlencode($_SERVER["PHP_SELF"].'?'.(($typeid==1||$typeid==2)?'socid':'id').'='.$object->id.'&type='.$typeid).'">';
+			print $langs->trans("CreateCat").' ';
+			print img_picto($langs->trans("Create"),'filenew');
+			print "</a>";
+			print '</td>';
+		}
+		print '</tr>';
+		print '</table>';
+		print '</form>';
+		print '<br>';
 	}
-	print '</tr>';
-	print '</table>';
-	print '</form>';
-	print '<br/>';
 
 
 	$c = new Categorie($db);

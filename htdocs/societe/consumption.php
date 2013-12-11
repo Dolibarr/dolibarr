@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2012-2013 Philippe Berthet     <berthet@systune.be>
  * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2013	   Juanjo Menent		<jmenent@2byte.es>
  *
  * Version V1.1 Initial version of Philippe Berthet
  * Version V2   Change to be compatible with 3.4 and enhanced to be more generic
@@ -30,6 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 
@@ -173,7 +175,15 @@ $thirdTypeSelect='customer';
 }
 if ($type_element == 'order')
 {
-	// TODO
+	$documentstatic=new Commande($db);
+	$sql_select = 'SELECT f.rowid as doc_id, f.ref as doc_number, "1" as doc_type, f.date_commande as datePrint, ';
+	$tables_from = MAIN_DB_PREFIX."commande as f,".MAIN_DB_PREFIX."commandedet as d";
+	$where = " WHERE f.fk_soc = s.rowid AND s.rowid = ".$socid;
+	$where.= " AND d.fk_commande = f.rowid";
+	$where.= " AND f.entity = ".$conf->entity;
+	$datePrint = 'f.date_creation';
+	$doc_number='f.ref';
+	$thirdTypeSelect='customer';
 
 }
 if ($type_element == 'supplier_order')

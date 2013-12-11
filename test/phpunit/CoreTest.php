@@ -26,7 +26,7 @@
 global $conf,$user,$langs,$db;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 require_once 'PHPUnit/Autoload.php';
-require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
+//require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 
 if (! defined('NOREQUIREUSER'))  define('NOREQUIREUSER','1');
 if (! defined('NOREQUIREDB'))    define('NOREQUIREDB','1');
@@ -69,7 +69,7 @@ class CoreTest extends PHPUnit_Framework_TestCase
 		$this->savlangs=$langs;
 		$this->savdb=$db;
 
-		print __METHOD__." db->type=".$db->type." user->id=".$user->id;
+		//print __METHOD__." db->type=".$db->type." user->id=".$user->id;
 		//print " - db ".$db->db;
 		print "\n";
 	}
@@ -135,78 +135,94 @@ class CoreTest extends PHPUnit_Framework_TestCase
 		global $dolibarr_main_db_type;
 		global $dolibarr_main_db_prefix;
 
+		$testtodo=3;
+
 		// Case 1:
-		// Test for subdir dolibarr (that point to htdocs) in root directory /var/www
+		// Test for subdir dolibarrnew (that point to htdocs) in root directory /var/www
 		// URL: http://localhost/dolibarrnew/admin/system/phpinfo.php
-    	$_SERVER["HTTPS"]='';
-        $_SERVER["SERVER_NAME"]='localhost';
-        $_SERVER["SERVER_PORT"]='80';
-        $_SERVER["DOCUMENT_ROOT"]='/var/www';
-		$_SERVER["SCRIPT_NAME"]='/dolibarrnew/admin/system/phpinfo.php';
-		$expectedresult='/dolibarrnew';
+		// To prepare this test:
+	    // - Create link from htdocs to /var/www/dolibarrnew
+		// - Put into conf.php $dolibarr_main_document_root='/var/www/dolibarrnew';
+		if ($testtodo == 1)
+		{
+	    	$_SERVER["HTTPS"]='';
+	        $_SERVER["SERVER_NAME"]='localhost';
+	        $_SERVER["SERVER_PORT"]='80';
+	        $_SERVER["DOCUMENT_ROOT"]='/var/www';
+			$_SERVER["SCRIPT_NAME"]='/dolibarrnew/admin/system/phpinfo.php';
+			$expectedresult='/dolibarrnew';
+		}
 
 		// Case 2:
 		// Test for subdir aaa (that point to dolibarr) in root directory /var/www
 		// URL: http://localhost/aaa/htdocs/admin/system/phpinfo.php
-        $_SERVER["HTTPS"]='';
-        $_SERVER["SERVER_NAME"]='localhost';
-        $_SERVER["SERVER_PORT"]='80';
-        $_SERVER["DOCUMENT_ROOT"]='/var/www';
-		$_SERVER["SCRIPT_NAME"]='/aaa/htdocs/admin/system/phpinfo.php';
-		$expectedresult='/aaa/htdocs';
+		// To prepare this test:
+	    // - Create link from dolibarr to /var/www/aaa
+		// - Put into conf.php $dolibarr_main_document_root='/var/www/aaa/htdocs';
+		if ($testtodo == 2)
+		{
+			$_SERVER["HTTPS"]='';
+	        $_SERVER["SERVER_NAME"]='localhost';
+	        $_SERVER["SERVER_PORT"]='80';
+	        $_SERVER["DOCUMENT_ROOT"]='/var/www';
+			$_SERVER["SCRIPT_NAME"]='/aaa/htdocs/admin/system/phpinfo.php';
+			$expectedresult='/aaa/htdocs';
+		}
 
 		// Case 3:
 		// Test for virtual host localhostdolibarrnew that point to htdocs directory with
 		// a direct document root
 		// URL: http://localhostdolibarrnew/admin/system/phpinfo.php
-        $_SERVER["HTTPS"]='';
-        $_SERVER["SERVER_NAME"]='localhostdolibarrnew';
-        $_SERVER["SERVER_PORT"]='80';
-        $_SERVER["DOCUMENT_ROOT"]='/home/ldestail/workspace/dolibarr/htdocs';
-		$_SERVER["SCRIPT_NAME"]='/admin/system/phpinfo.php';
-		$expectedresult='';
+		// To prepare this test:
+	    // - Create virtual host localhostdolibarrnew that point to /home/ldestailleur/git/dolibarr/htdocs
+		// - Put into conf.php $dolibarr_main_document_root='/home/ldestailleur/git/dolibarr/htdocs';
+		if ($testtodo == 3)
+		{
+			$_SERVER["HTTPS"]='';
+	        $_SERVER["SERVER_NAME"]='localhostdolibarrnew';
+	        $_SERVER["SERVER_PORT"]='80';
+	        $_SERVER["DOCUMENT_ROOT"]='/home/ldestailleur/git/dolibarr/htdocs';
+			$_SERVER["SCRIPT_NAME"]='/admin/system/phpinfo.php';
+			$expectedresult='';
+		}
 
 		// Case 4:
 		// Test for virtual host localhostdolibarrnew that point to htdocs directory with
 		// a symbolic link
 		// URL: http://localhostdolibarrnew/admin/system/phpinfo.php
-        $_SERVER["HTTPS"]='';
-        $_SERVER["SERVER_NAME"]='localhostdolibarrnew';
-        $_SERVER["SERVER_PORT"]='80';
-        $_SERVER["DOCUMENT_ROOT"]='/var/www/dolibarr';	// This is a link that point to /home/ldestail/workspace/dolibarr/htdocs
-		$_SERVER["SCRIPT_NAME"]='/admin/system/phpinfo.php';
-		$expectedresult='';
+		if ($testtodo == 4)
+		{
+			$_SERVER["HTTPS"]='';
+	        $_SERVER["SERVER_NAME"]='localhostdolibarrnew';
+	        $_SERVER["SERVER_PORT"]='80';
+	        $_SERVER["DOCUMENT_ROOT"]='/var/www/dolibarr';	// This is a link that point to /home/ldestail/workspace/dolibarr/htdocs
+			$_SERVER["SCRIPT_NAME"]='/admin/system/phpinfo.php';
+			$expectedresult='';
+		}
 
 		// Case 5:
-		// Test for alias /dolibarralias
+		// Test for alias /dolibarralias, Test when using nginx, Test when using lighttpd
 		// URL: http://localhost/dolibarralias/admin/system/phpinfo.php
-        $_SERVER["HTTPS"]='';
-        $_SERVER["SERVER_NAME"]='localhost';
-        $_SERVER["SERVER_PORT"]='80';
-        $_SERVER["DOCUMENT_ROOT"]='/var/www';
-		$_SERVER["SCRIPT_NAME"]='/dolibarralias/admin/system/phpinfo.php';
-		$expectedresult='/dolibarralias';
-		// Put this into conf.php because autodetect will fails in this case
-		//$dolibarr_main_url_root='http://localhost/dolibarralias';
-
-		// Case 6:
-		// Test when using nginx
-		// URL: https://localhost/dolibarr/admin/system/phpinfo.php
-		$_SERVER["HTTPS"]='';
-        $_SERVER["SERVER_NAME"]='localhost';
-        $_SERVER["SERVER_PORT"]='80';
-		$_SERVER["DOCUMENT_ROOT"]='/var/www/dolibarr/htdocs';
-		$_SERVER["SCRIPT_NAME"]='/dolibarr/admin/system/phpinfo.php';
-		$expectedresult='/dolibarr';
-		// Put this into conf.php because autodetect will fails in this case
-		//$dolibarr_main_url_root='http://localhost/dolibarr';
+		// To prepare this test:
+	    // - Copy content of dolibarr project into /var/www/dolibarr
+		// - Put into conf.php $dolibarr_main_document_root='/var/www/dolibarr/htdocs';
+		// - Put into conf.php $dolibarr_main_url_root='http://localhost/dolibarralias';  (because autodetect will fails in this case)
+		if ($testtodo == 5)
+		{
+			$_SERVER["HTTPS"]='';
+	        $_SERVER["SERVER_NAME"]='localhost';
+	        $_SERVER["SERVER_PORT"]='80';
+	        $_SERVER["DOCUMENT_ROOT"]='/var/www';
+			$_SERVER["SCRIPT_NAME"]='/dolibarralias/admin/system/phpinfo.php';
+			$expectedresult='/dolibarralias';
+		}
 
 		// Force to rerun filefunc.inc.php
 		include dirname(__FILE__).'/../../htdocs/filefunc.inc.php';
 
 		print __METHOD__." DOL_MAIN_URL_ROOT=".DOL_MAIN_URL_ROOT."\n";
 		print __METHOD__." DOL_URL_ROOT=".DOL_URL_ROOT."\n";
-//		$this->assertEquals(DOL_URL_ROOT,$expectedresult);
+		$this->assertEquals(DOL_URL_ROOT,$expectedresult);
 
 		return true;
     }
@@ -214,7 +230,7 @@ class CoreTest extends PHPUnit_Framework_TestCase
 
     /**
      * testSqlAndScriptInject
-     * 
+     *
      * @return	void
      */
     public function testSqlAndScriptInject()
@@ -230,10 +246,10 @@ class CoreTest extends PHPUnit_Framework_TestCase
 		global $dolibarr_main_db_port;
 		global $dolibarr_main_db_type;
 		global $dolibarr_main_db_prefix;
-		
-				
+
+
 		// This is code copied from main.inc.php
-		
+
 		/**
 		 * Security: SQL Injection and XSS Injection (scripts) protection (Filters on GET, POST, PHP_SELF).
 		 *
@@ -272,12 +288,12 @@ class CoreTest extends PHPUnit_Framework_TestCase
 		    if ($type == 2) $sql_inj += preg_match('/[\s;"]/', $val);	// PHP_SELF is an url and must match url syntax
 		    return $sql_inj;
 		}
-		
+
     	//type=2 key=0 value=/DIR WITH SPACE/htdocs/admin/index.php?mainmenu=home&leftmenu=setup&username=weservices
     	$_SERVER["PHP_SELF"]='/DIR WITH SPACE/htdocs/admin/index.php?mainmenu=home&leftmenu=setup&username=weservices';
     	$result=test_sql_and_script_inject($_SERVER["PHP_SELF"],2);
 		$expectedresult=1;
-		
+
 		$this->assertEquals($result,$expectedresult);
     }
 }

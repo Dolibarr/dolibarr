@@ -29,7 +29,7 @@ print top_htmlhead('',$langs->trans('Login').' '.$title);
 ?>
 <!-- BEGIN PHP TEMPLATE PASSWORDFORGOTTEN.TPL.PHP -->
 
-<body class="body">
+<body class="bodylogin">
 
 <!-- Javascript code on logon page only to detect user tz, dst_observed, dst_first, dst_second -->
 <script type="text/javascript">
@@ -117,7 +117,7 @@ if (! empty($hookmanager->resArray['options'])) {
 	if (! empty($conf->dol_no_mouse_hover)) $moreparam.=(strpos($moreparam,'?')===false?'?':'&').'dol_no_mouse_hover='.$conf->dol_no_mouse_hover;
 	if (! empty($conf->dol_use_jmobile))    $moreparam.=(strpos($moreparam,'?')===false?'?':'&').'dol_use_jmobile='.$conf->dol_use_jmobile;
 
-	print '<a style="color: #888888; font-size: 10px" href="'.$dol_url_root.'/index.php'.$moreparam.'">('.$langs->trans('BackToLoginPage').')</a>';
+	print '<a class="alogin" href="'.$dol_url_root.'/index.php'.$moreparam.'">('.$langs->trans('BackToLoginPage').')</a>';
 	?>
 </div>
 

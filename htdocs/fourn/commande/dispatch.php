@@ -81,6 +81,8 @@ if ($_POST["action"] ==	'dispatch' && $user->rights->fournisseur->commande->rece
 			else
 			{
 				dol_syslog('No dispatch for line '.$key.' as no warehouse choosed');
+				$text = $langs->transnoentities('Warehouse').', '.$langs->transnoentities('Line').'' .($reg[1]-1);
+				setEventMessage($langs->trans('ErrorFieldRequired',$text), 'errors');
 			}
 		}
 	}
@@ -190,8 +192,8 @@ if ($id > 0 || ! empty($ref))
 
 		print "</table>";
 
-		if ($mesg) print $mesg;
-		else print '<br>';
+		//if ($mesg) print $mesg;
+		print '<br>';
 
 
 		$disabled=1;
@@ -271,41 +273,47 @@ if ($id > 0 || ! empty($ref))
 					}
 					else
 					{
-						$nbproduct++;
-
 						$remaintodispatch=($objp->qty - $products_dispatched[$objp->fk_product]);	// Calculation of dispatched
 						if ($remaintodispatch < 0) $remaintodispatch=0;
-
-						$var=!$var;
-						print "<tr ".$bc[$var].">";
-						print '<td>';
-						print '<a href="'.DOL_URL_ROOT.'/product/fournisseurs.php?id='.$objp->fk_product.'">'.img_object($langs->trans("ShowProduct"),'product').' '.$objp->ref.'</a>';
-						print ' - '.$objp->label;
-						// To show detail cref and description value, we must make calculation by cref
-						//print ($objp->cref?' ('.$objp->cref.')':'');
-						//if ($objp->description) print '<br>'.nl2br($objp->description);
-						print '<input name="product_'.$i.'" type="hidden" value="'.$objp->fk_product.'">';
-						print '<input name="pu_'.$i.'" type="hidden" value="'.$objp->subprice.'">';
-						print "</td>\n";
-
-						print '<td align="right">'.$objp->qty.'</td>';
-						print '<td align="right">'.$products_dispatched[$objp->fk_product].'</td>';
-
-						// Dispatch
-						print '<td align="right"><input name="qty_'.$i.'" type="text" size="8" value="'.($remaintodispatch).'"></td>';
-
-						// Warehouse
-						print '<td align="right">';
-						if (count($listwarehouses))
+						if ($remaintodispatch)
 						{
-							print $form->selectarray("entrepot_".$i, $listwarehouses, '', $disabled, 0, 0, '', 0, 0, $disabled);
+							$nbproduct++;
+					
+							$var=!$var;
+							print "<tr ".$bc[$var].">";
+							print '<td>';
+							print '<a href="'.DOL_URL_ROOT.'/product/fournisseurs.php?id='.$objp->fk_product.'">'.img_object($langs->trans("ShowProduct"),'product').' '.$objp->ref.'</a>';
+							print ' - '.$objp->label;
+							// To show detail cref and description value, we must make calculation by cref
+							//print ($objp->cref?' ('.$objp->cref.')':'');
+							//if ($objp->description) print '<br>'.nl2br($objp->description);
+							print '<input name="product_'.$i.'" type="hidden" value="'.$objp->fk_product.'">';
+							print '<input name="pu_'.$i.'" type="hidden" value="'.$objp->subprice.'">';
+							print "</td>\n";
+
+							print '<td align="right">'.$objp->qty.'</td>';
+							print '<td align="right">'.$products_dispatched[$objp->fk_product].'</td>';
+
+							// Dispatch
+							print '<td align="right"><input name="qty_'.$i.'" type="text" size="8" value="'.($remaintodispatch).'"></td>';
+
+							// Warehouse
+							print '<td align="right">';
+							if (count($listwarehouses)>1)
+							{
+								print $form->selectarray("entrepot_".$i, $listwarehouses, '', 1, 0, 0, '', 0, 0, $disabled);
+							}
+							elseif  (count($listwarehouses)==1)
+							{
+								print $form->selectarray("entrepot_".$i, $listwarehouses, '', 0, 0, 0, '', 0, 0, $disabled);
+							}
+							else
+							{
+								print $langs->trans("NoWarehouseDefined");
+							}
+							print "</td>\n";
+							print "</tr>\n";
 						}
-						else
-						{
-							print $langs->trans("NoWarehouseDefined");
-						}
-						print "</td>\n";
-						print "</tr>\n";
 					}
 					$i++;
 				}
@@ -338,6 +346,8 @@ if ($id > 0 || ! empty($ref))
 
 			print '</form>';
 		}
+		
+		dol_fiche_end();
 
 		// List of already dispatching
 		$sql = "SELECT p.ref, p.label,";
@@ -359,7 +369,9 @@ if ($id > 0 || ! empty($ref))
 			if ($num > 0)
 			{
 				print "<br/>\n";
-
+				
+				print_titre($langs->trans("ReceivingForSameOrder"));
+				
 				print '<table class="noborder" width="100%">';
 
 				print '<tr class="liste_titre">';
@@ -398,19 +410,6 @@ if ($id > 0 || ! empty($ref))
 		else
 		{
 			dol_print_error($db);
-		}
-
-		dol_fiche_end();
-
-
-		/**
-		 * Boutons actions
-		 */
-		if ($user->societe_id == 0 && $commande->statut	< 3	&& ($_GET["action"]	<> 'valid' || $_GET['action'] == 'builddoc'))
-		{
-			//print '<div	class="tabsAction">';
-
-			//print "</div>";
 		}
 	}
 	else

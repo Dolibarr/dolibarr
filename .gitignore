@@ -15,3 +15,9 @@ htdocs/custom/concatpdf
 htdocs/repair_business.php
 .idea
 *.iml
+Thumbs.db
+# Vagrant generated files
+.vagrant
+/index.html
+/phpmyadmin
+/xhprof

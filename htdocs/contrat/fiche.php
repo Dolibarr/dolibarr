@@ -158,9 +158,9 @@ if (GETPOST('remonth') && GETPOST('reday') && GETPOST('reyear'))
     $datecontrat = dol_mktime(GETPOST('rehour'), GETPOST('remin'), 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear'));
 }
 
+// Add contract
 if ($action == 'add' && $user->rights->contrat->creer)
 {
-
 	// Check
 	if (empty($datecontrat))
 	{
@@ -339,9 +339,36 @@ else if ($action == 'classin' && $user->rights->contrat->creer)
     $object->setProject(GETPOST('projectid'));
 }
 
+// Add a new line
 else if ($action == 'addline' && $user->rights->contrat->creer)
 {
-    if (! GETPOST('qty'))
+	// Set if we used free entry or predefined product
+	if (GETPOST('addline_libre'))
+	{
+		$predef='';
+		$idprod=0;
+		$product_desc=(GETPOST('dp_desc')?GETPOST('dp_desc'):'');
+		$price_ht = GETPOST('price_ht');
+		$tva_tx=(GETPOST('tva_tx')?GETPOST('tva_tx'):0);
+	}
+	if (GETPOST('addline_predefined'))
+	{
+		$predef=(($conf->global->MAIN_FEATURES_LEVEL < 2) ? '_predef' : '');
+		$idprod=GETPOST('idprod', 'int');
+		$product_desc = (GETPOST('product_desc')?GETPOST('product_desc'):(GETPOST('np_desc')?GETPOST('np_desc'):''));
+		$price_ht = '';
+		$tva_tx = '';
+	}
+    if (GETPOST('usenewaddlineform')) {
+        $idprod=GETPOST('idprod', 'int');
+        $product_desc = (GETPOST('product_desc')?GETPOST('product_desc'):(GETPOST('np_desc')?GETPOST('np_desc'):(GETPOST('dp_desc')?GETPOST('dp_desc'):'')));
+        $price_ht = GETPOST('price_ht');
+        $tva_tx=(GETPOST('tva_tx')?GETPOST('tva_tx'):0);
+    }
+	$qty = GETPOST('qty'.$predef);
+	$remise_percent=GETPOST('remise_percent'.$predef);
+
+    if ($qty == '')
     {
     	setEventMessage($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Qty")),'errors');
     	$error++;
@@ -362,41 +389,19 @@ else if ($action == 'addline' && $user->rights->contrat->creer)
         }
         $ret=$object->fetch_thirdparty();
 
-        $date_start='';
-        $date_end='';
-        // Si ajout champ produit libre
-        if (GETPOST('mode') == 'libre')
-        {
-            if (GETPOST('date_start_slmonth') && GETPOST('date_start_slday') && GETPOST('date_start_slyear'))
-            {
-                $date_start=dol_mktime(GETPOST('date_start_slhour'), GETPOST('date_start_slmin'), 0, GETPOST('date_start_slmonth'), GETPOST('date_start_slday'), GETPOST('date_start_slyear'));
-            }
-            if (GETPOST('date_end_slmonth') && GETPOST('date_end_slday') && GETPOST('date_end_slyear'))
-            {
-                $date_end=dol_mktime(GETPOST('date_end_slhour'), GETPOST('date_end_slmin'), 0, GETPOST('date_end_slmonth'), GETPOST('date_end_slday'), GETPOST('date_end_slyear'));
-            }
-        }
-        // Si ajout champ produit predefini
-        if (GETPOST('mode') == 'predefined')
-        {
-            if (GETPOST('date_startmonth') && GETPOST('date_startday') && GETPOST('date_startyear'))
-            {
-                $date_start=dol_mktime(GETPOST('date_starthour'), GETPOST('date_startmin'), 0, GETPOST('date_startmonth'), GETPOST('date_startday'), GETPOST('date_startyear'));
-            }
-            if (GETPOST('date_endmonth') && GETPOST('date_endday') && GETPOST('date_endyear'))
-            {
-                $date_end=dol_mktime(GETPOST('date_endhour'), GETPOST('date_endmin'), 0, GETPOST('date_endmonth'), GETPOST('date_endday'), GETPOST('date_endyear'));
-            }
-        }
+		// Clean parameters
+		$date_start=dol_mktime(GETPOST('date_start'.$predef.'hour'), GETPOST('date_start'.$predef.'min'), GETPOST('date_start'.$predef.'sec'), GETPOST('date_start'.$predef.'month'), GETPOST('date_start'.$predef.'day'), GETPOST('date_start'.$predef.'year'));
+		$date_end=dol_mktime(GETPOST('date_end'.$predef.'hour'), GETPOST('date_end'.$predef.'min'), GETPOST('date_end'.$predef.'sec'), GETPOST('date_end'.$predef.'month'), GETPOST('date_end'.$predef.'day'), GETPOST('date_end'.$predef.'year'));
+		$price_base_type = (GETPOST('price_base_type', 'alpha')?GETPOST('price_base_type', 'alpha'):'HT');
 
         // Ecrase $pu par celui du produit
         // Ecrase $desc par celui du produit
         // Ecrase $txtva par celui du produit
         // Ecrase $base_price_type par celui du produit
-        if (GETPOST('idprod'))
+        if ($idprod > 0)
         {
             $prod = new Product($db);
-            $prod->fetch(GETPOST('idprod'));
+            $prod->fetch($idprod);
 
             $tva_tx = get_default_tva($mysoc,$object->thirdparty,$prod->id);
             $tva_npr = get_default_npr($mysoc,$object->thirdparty,$prod->id);
@@ -426,22 +431,21 @@ else if ($action == 'addline' && $user->rights->contrat->creer)
                     $pu_ht = price2num($pu_ttc / (1 + ($tva_tx/100)), 'MU');
                 }
                 else
-                {
+              {
                     $pu_ttc = price2num($pu_ht * (1 + ($tva_tx/100)), 'MU');
                 }
             }
 
-           	$desc = $prod->description;
-           	$desc.= $prod->description && GETPOST('np_desc') ? "\n" : "";
-           	$desc.= GETPOST('np_desc');
+           	$desc=$prod->description;
+           	$desc=dol_concatdesc($desc,$product_desc);
         }
         else
-        {
+		{
             $pu_ht=GETPOST('price_ht');
             $price_base_type = 'HT';
             $tva_tx=GETPOST('tva_tx')?str_replace('*','',GETPOST('tva_tx')):0;		// tva_tx field may be disabled, so we use vat rate 0
             $tva_npr=preg_match('/\*/',GETPOST('tva_tx'))?1:0;
-            $desc=GETPOST('dp_desc');
+            $desc=$product_desc;
         }
 
         $localtax1_tx=get_localtax($tva_tx,1,$object->societe);
@@ -457,23 +461,23 @@ else if ($action == 'addline' && $user->rights->contrat->creer)
         $info_bits=0;
         if ($tva_npr) $info_bits |= 0x01;
 
-        if($price_min && (price2num($pu_ht)*(1-price2num(GETPOST('remise_percent'))/100) < price2num($price_min)))
+        if($price_min && (price2num($pu_ht)*(1-price2num($remise_percent)/100) < price2num($price_min)))
         {
             $object->error = $langs->trans("CantBeLessThanMinPrice",price(price2num($price_min,'MU'),0,$langs,0,0,-1,$conf->currency));
             $result = -1 ;
         }
         else
-        {
+		{
             // Insert line
             $result = $object->addline(
                 $desc,
                 $pu_ht,
-                GETPOST('qty'),
+                $qty,
                 $tva_tx,
                 $localtax1_tx,
                 $localtax2_tx,
-                GETPOST('idprod'),
-                GETPOST('remise_percent'),
+                $idprod,
+                $remise_percent,
                 $date_start,
                 $date_end,
                 $price_base_type,
@@ -506,7 +510,6 @@ else if ($action == 'addline' && $user->rights->contrat->creer)
 
 			unset($_POST['qty']);
 			unset($_POST['type']);
-			unset($_POST['idprod']);
 			unset($_POST['remise_percent']);
 			unset($_POST['price_ht']);
 			unset($_POST['price_ttc']);
@@ -516,6 +519,16 @@ else if ($action == 'addline' && $user->rights->contrat->creer)
 			unset($_POST['product_desc']);
 			unset($_POST['fournprice']);
 			unset($_POST['buying_price']);
+			unset($_POST['dp_desc']);
+
+			unset($_POST['idprod']);
+			unset($_POST['qty_predef']);
+			unset($_POST['remise_percent_predef']);
+			unset($_POST['fournprice_predef']);
+			unset($_POST['buying_price_predef']);
+			unset($_POST['np_marginRate_predef']);
+			unset($_POST['np_markRate_predef']);
+			unset($_POST['np_desc']);
         }
         else
         {
@@ -948,7 +961,7 @@ else
         if ($action == 'delete')
         {
             print $form->formconfirm($_SERVER['PHP_SELF']."?id=".$object->id,$langs->trans("DeleteAContract"),$langs->trans("ConfirmDeleteAContract"),"confirm_delete",'',0,1);
-            
+
         }
 
         /*
@@ -969,7 +982,7 @@ else
         	$text=$langs->trans('ConfirmValidateContract',$numref);
 
             print $form->formconfirm($_SERVER['PHP_SELF']."?id=".$object->id,$langs->trans("ValidateAContract"),$text,"confirm_valid",'',0,1);
-            
+
         }
 
         /*
@@ -978,7 +991,7 @@ else
         if ($action == 'close')
         {
             print $form->formconfirm($_SERVER['PHP_SELF']."?id=".$object->id,$langs->trans("CloseAContract"),$langs->trans("ConfirmCloseContract"),"confirm_close",'',0,1);
-            
+
         }
 
         /*
@@ -1306,6 +1319,7 @@ else
             }
 
             print "</table>";
+
             print "</form>\n";
 
 
@@ -1472,6 +1486,7 @@ else
                  * Desactiver la ligne de contrat
                  */
                 print '<form name="closeline" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;ligne='.$object->lines[$cursorline-1]->id.'&amp;action=closeline" method="post">';
+
                 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
                 print '<table class="noborder" width="100%">';
@@ -1525,13 +1540,22 @@ else
         }
         //print '</table>';
 
+
 		// Form to add new line
         if ($user->rights->contrat->creer && ($object->statut >= 0))
         {
         	$dateSelector=1;
 
-            print '<br>';
-            print '<table id="tablelines" class="noborder" width="100%">';	// Array with (n*2)+1 lines
+			print "\n";
+			print '	<form name="addproduct" id="addproduct" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.(($action != 'editline')?'#add':'#line_'.GETPOST('lineid')).'" method="POST">
+			<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">
+			<input type="hidden" name="action" value="'.(($action != 'editline')?'addline':'updateligne').'">
+			<input type="hidden" name="mode" value="">
+			<input type="hidden" name="id" value="'.$object->id.'">
+			';
+
+			print '<br>';
+            print '<table id="tablelines" class="noborder noshadow" width="100%">';	// Array with (n*2)+1 lines
 
             // Trick to not show product entries
             $savproductenabled=$conf->product->enabled;
@@ -1567,13 +1591,12 @@ else
         	// Restore correct setup
         	$conf->product->enabled = $savproductenabled;
 
-            print '</form>';
-
             print '</table>';
+
+            print '</form>';
         }
 
-
-        print '</div>';
+		dol_fiche_end();
 
 
         /*
@@ -1642,11 +1665,13 @@ llxFooter();
 
 $db->close();
 ?>
+
 <?php
-if ($conf->margin->enabled) {
+if ($conf->margin->enabled && $action == 'editline')
+{
 ?>
+
 <script type="text/javascript">
-<?php if ($action == 'editline') { ?>
 $(document).ready(function() {
   var idprod = $("input[name='idprod']").val();
   var fournprice = $("input[name='fournprice']").val();
@@ -1695,6 +1720,8 @@ $(document).ready(function() {
       $('#buying_price').show();
     }
 });
-<?php } ?>
 </script>
-<?php } ?>
+
+<?php
+}
+?>

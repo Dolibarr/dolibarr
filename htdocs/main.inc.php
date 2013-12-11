@@ -1467,8 +1467,9 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 	    // Link to print main content area
 	    if (empty($conf->global->MAIN_PRINT_DISABLELINK) && empty($conf->browser->phone))
 	    {
-	        $qs=$_SERVER["QUERY_STRING"].($_SERVER["QUERY_STRING"]?'&':'').$morequerystring;
-	        $text ='<a href="'.$_SERVER["PHP_SELF"].'?'.$qs.($qs?'&amp;':'').'optioncss=print" target="_blank">';
+	        $qs=$_SERVER["QUERY_STRING"];
+	        $qs.=(($qs && $morequerystring)?'&':'').$morequerystring;
+	        $text ='<a href="'.$_SERVER["PHP_SELF"].'?'.$qs.($qs?'&':'').'optioncss=print" target="_blank">';
 	        $text.= img_picto('', 'printer.png', 'class="printer"');
 	        $text.='</a>';
 	        $toprightmenu.=$form->textwithtooltip('',$langs->trans("PrintContentArea"),2,1,$text,'login_block_elem',2);
@@ -1611,8 +1612,13 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
 	        print "<!-- End Bookmarks -->\n";
 	    }
 
-	    //Dolibarr version
+		//Dolibarr version
 	    $doliurl='http://www.dolibarr.org';
+	    
+	    //local communities
+	    if (preg_match('/fr/i',$langs->defaultlang)) $doliurl='http://www.dolibarr.fr';
+		if (preg_match('/es/i',$langs->defaultlang)) $doliurl='http://www.dolibarr.es';
+	    
 	    $appli='Dolibarr';
 	    if (! empty($conf->global->MAIN_APPLICATION_TITLE)) {
 	    	$appli=$conf->global->MAIN_APPLICATION_TITLE; $doliurl='';

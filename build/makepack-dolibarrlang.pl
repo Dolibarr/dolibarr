@@ -45,9 +45,9 @@ elsif ( "$^O" =~ /cygwin/i || "$^O" =~ /win32/i ) {
 	$CR = "\r";
 }
 if ( !$OS ) {
-	print "makepack-dolbarrlang.pl was not able to detect your OS.\n";
+	print "$PROG.$Extension was not able to detect your OS.\n";
 	print "Can't continue.\n";
-	print "makepack-dolibarrlang.pl aborted.\n";
+	print "$PROG.$Extension aborted.\n";
 	sleep 2;
 	exit 1;
 }

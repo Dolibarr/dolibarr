@@ -155,24 +155,20 @@ class MailingTargets    // This can't be abstract as it is used for some method
         	if (! empty($targetarray['email'])) // avoid empty email address
         	{
         		$sql = "INSERT INTO ".MAIN_DB_PREFIX."mailing_cibles";
-        		$sql .= " (fk_mailing,";
-        		$sql .= " fk_contact,";
-        		$sql .= " lastname, firstname, email, other, source_url, source_id,";
-        		if (! empty($conf->global->MAILING_EMAIL_UNSUBSCRIBE)) {
-        			$sql .= " tag,";
-        		}
+        		$sql.= " (fk_mailing,";
+        		$sql.= " fk_contact,";
+        		$sql.= " lastname, firstname, email, other, source_url, source_id,";
+       			$sql.= " tag,";
         		$sql.= " source_type)";
-        		$sql .= " VALUES (".$mailing_id.",";
-        		$sql .= (empty($targetarray['fk_contact']) ? '0' : "'".$targetarray['fk_contact']."'") .",";
-        		$sql .= "'".$this->db->escape($targetarray['lastname'])."',";
-        		$sql .= "'".$this->db->escape($targetarray['firstname'])."',";
-        		$sql .= "'".$this->db->escape($targetarray['email'])."',";
-        		$sql .= "'".$this->db->escape($targetarray['other'])."',";
-        		$sql .= "'".$this->db->escape($targetarray['source_url'])."',";
-        		$sql .= (empty($targetarray['source_id']) ? 'null' : "'".$this->db->escape($targetarray['source_id'])."'").",";
-        		if (! empty($conf->global->MAILING_EMAIL_UNSUBSCRIBE)) {
-        			$sql .= "'".$this->db->escape(md5($targetarray['email'].';'.$targetarray['name'].';'.$mailing_id.';'.$conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY))."',";
-        		}
+        		$sql.= " VALUES (".$mailing_id.",";
+        		$sql.= (empty($targetarray['fk_contact']) ? '0' : "'".$targetarray['fk_contact']."'") .",";
+        		$sql.= "'".$this->db->escape($targetarray['lastname'])."',";
+        		$sql.= "'".$this->db->escape($targetarray['firstname'])."',";
+        		$sql.= "'".$this->db->escape($targetarray['email'])."',";
+        		$sql.= "'".$this->db->escape($targetarray['other'])."',";
+        		$sql.= "'".$this->db->escape($targetarray['source_url'])."',";
+        		$sql.= (empty($targetarray['source_id']) ? 'null' : "'".$this->db->escape($targetarray['source_id'])."'").",";
+       			$sql .= "'".$this->db->escape(dol_hash($targetarray['email'].';'.$targetarray['name'].';'.$mailing_id.';'.$conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY))."',";
         		$sql .= "'".$this->db->escape($targetarray['source_type'])."')";
         		$result=$this->db->query($sql);
         		if ($result)

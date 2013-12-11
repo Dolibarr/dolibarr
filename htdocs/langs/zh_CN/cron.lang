@@ -18,8 +18,8 @@ Permission23104 = 执行计划任务
 # Admin
 #
 # CronSetup= Scheduled job management setup
-# URLToLaunchCronJobs=URL to launch cron jobs
-# OrToLaunchASpecificJob=Or to launch a specific job
+# URLToLaunchCronJobs=URL to check and launch cron jobs if required
+# OrToLaunchASpecificJob=Or to check and launch a specific job
 # KeyForCronAccess=Security key for URL to launch cron jobs
 # FileToLaunchCronJobs=Command line to launch cron jobs
 # CronExplainHowToRunUnix=On Unix environment you should use crontab to run Command line each minutes
@@ -32,6 +32,7 @@ Permission23104 = 执行计划任务
 # CronJobs=Scheduled jobs
 # CronListActive= List of active jobs
 # CronListInactive= List of disabled jobs
+# CronListActive= List of active jobs
 
 
 #
@@ -42,7 +43,7 @@ Permission23104 = 执行计划任务
 # CronLastResult=Last result code
 # CronListOfCronJobs=List of scheduled jobs
 # CronCommand=Command
-# CronList= Job list
+# CronList=Jobs list
 # CronDelete= Delete cron jobs
 # CronConfirmDelete= Are you sure you want to delete this cron job ?
 # CronExecute=Launch job
@@ -98,14 +99,14 @@ CronStatusInactiveBtn=禁用
 #
 # Info
 #
-# CronInfoPage=Information
+CronInfoPage=信息
 
 
 #
 # Common
 #
-# CronType=Task type
-# CronType_method=Call method of a Dolibarr Class
+CronType=任务类型
+CronType_method=一个Dolibarr类的调用方法
 # CronType_command=Shell command
 CronMenu=Cron
 # CronCannotLoadClass=Cannot load class %s or object %s

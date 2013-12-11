@@ -1,0 +1,113 @@
+# Dolibarr language file - Source file is en_US - cron
+#
+# About page
+#
+About = O
+CronAbout = O Cron
+CronAboutPage = Cron o stránce
+
+#
+# Right
+#
+Permission23101 = Přečtěte si naplánovaná úloha
+Permission23102 = Vytvořit / aktualizovat naplánovanou úlohu
+Permission23103 = Odstranit naplánovaná úloha
+Permission23104 = Provést naplánované úlohy,
+
+#
+# Admin
+#
+CronSetup= Naplánované úlohy správy Nastavení
+URLToLaunchCronJobs=URL spustit cron
+OrToLaunchASpecificJob=Nebo, že zahájí zvláštní práci
+KeyForCronAccess=Bezpečnostní klíč pro URL spustit cron
+FileToLaunchCronJobs=Příkazový řádek spustit cron
+CronExplainHowToRunUnix=V oblasti životního prostředí Unix, měli byste použít crontab spustit příkazový řádek pokaždé, minut
+CronExplainHowToRunWin=Na Microsoft (tm) Windows environement můžete použít naplánovaná úloha nástroje spustit příkazový řádek pokaždé, minut
+
+
+#
+# Menu
+#
+CronJobs=Naplánované úlohy
+CronListActive= Seznam aktivních úloh
+CronListInactive= Seznam postižených míst
+
+
+#
+# Page list
+#
+CronDateLastRun=Poslední běh
+CronLastOutput=Poslední běh výstup
+CronLastResult=Poslední kód výsledku
+CronListOfCronJobs=Seznam naplánovaných úloh
+CronCommand=Příkaz
+CronList= Seznam úloh
+CronDelete= Odstranit cron
+CronConfirmDelete= Jste si jisti, že chcete smazat tento cron?
+CronExecute=Zahájení práce
+CronConfirmExecute= Opravdu chcete provést tuto práci nyní
+CronInfo= Práce umožňují provádět úlohy, které byly plánované
+CronWaitingJobs=Wainting pracovních míst
+CronTask=Práce
+CronNone= Nikdo
+CronDtStart=Datum zahájení
+CronDtEnd=Datum ukončení
+CronDtNextLaunch=Další provedení
+CronDtLastLaunch=Poslední poprava
+CronFrequency=Frekvenční
+CronClass=Classe
+CronMethod=Metoda
+CronModule=Modul
+CronAction=Akce
+CronStatus=Postavení
+CronStatusActive=Povoleno
+CronStatusInactive=Invalidní
+CronNoJobs=Žádní registrovaní práce
+CronPriority=Priorita
+CronLabel=Popis
+CronNbRun=Nb. zahájit
+CronEach=Každý
+JobFinished=Práce zahájena a dokončena
+
+#
+#Page card
+#
+CronAdd= Přidat pracovních míst
+CronHourStart= Začněte hodinu a datum úkolu
+CronEvery= A úkol provést každý
+CronObject= Instance / objekt vytvořit
+CronArgs=Parametry
+CronSaveSucess=Uložit úspěšně
+CronNote=Komentář
+CronFieldMandatory=Pole je povinné %s
+CronErrEndDateStartDt=Datum ukončení nemůže být před datem zahájení
+CronStatusActiveBtn=Umožnit
+CronStatusInactiveBtn=Zakázat
+CronTaskInactive=Tato úloha je zakázán
+CronDtLastResult=Poslední výsledek Datum
+CronId=Id
+CronClassFile=Třídy (filename.class.php)
+CronModuleHelp=Název adresáře modulu Dolibarr (také pracovat s externím modulem Dolibarr). <BR> Např načíst metody objektu výrobku Dolibarr / htdocs / <u>produktu</u> / třída / product.class.php, hodnota modulu je <i>produkt</i>
+CronClassFileHelp=Název souboru načíst. <BR> Např načíst metody objektu výrobku Dolibarr / htdocs / produktu / třída / <u>product.class.php,</u> hodnota název třídy souboru je <i>product.class.php</i>
+CronObjectHelp=Název objektu načíst. <BR> Např načíst metody objektu výrobku Dolibarr / htdocs / produktu / třída / product.class.php, hodnota název třídy souboru je <i>výrobek</i>
+CronMethodHelp=Objekt způsob startu. <BR> Např načíst metody objektu výrobku Dolibarr / htdocs / produktu / třída / product.class.php, hodnota metody je <i>fecth</i>
+CronArgsHelp=Metoda argumenty. <BR> Např načíst metody objektu výrobku Dolibarr / htdocs / produktu / třída / product.class.php, může být hodnota paramters být <i>0, ProductRef</i>
+CronCommandHelp=Systém příkazového řádku spustit.
+
+#
+# Info
+#
+CronInfoPage=Informace
+
+
+#
+# Common
+#
+CronType=Typ úlohy
+CronType_method=Volání metody třídy Dolibarr
+CronType_command=Shell příkaz
+CronMenu=Cron
+CronCannotLoadClass=Nelze načíst třídu nebo objekt %s %s
+
+UseMenuModuleToolsToAddCronJobs=Jděte do menu &quot;Home - Moduly nářadí - Seznam úloh&quot; vidět a upravovat naplánované úlohy.

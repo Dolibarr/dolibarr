@@ -1,13 +1,13 @@
 # Dolibarr language file - Source file is en_US - main
 DIRECTION=ltr
-# Note for chinese:
-# msungstdlight or cid0ct are for traditionnal chinese (traditionnal does not render with ubuntu pdf reader)
-# stsongstdlight or cid0cs are for simplified chinese
-# To read chinese pdf with linux: sudo apt-get install poppler-data
+# Note for Chinese:
+# msungstdlight or cid0ct are for traditional Chinese (traditional does not render with Ubuntu pdf reader)
+# stsongstdlight or cid0cs are for simplified Chinese
+# To read Chinese pdf with Linux: sudo apt-get install poppler-data
 FONTFORPDF=helvetica
 FONTSIZEFORPDF=10
-SeparatorDecimal=,
-SeparatorThousand=Nincs
+# SeparatorDecimal=.
+# SeparatorThousand=,
 FormatDateShort=%d/%m/%Y
 FormatDateShortInput=%d/%m/%Y
 FormatDateShortJava=dd/MM/yyyy
@@ -155,6 +155,7 @@ Valid=Hiteles
 Approve=Jóváhagy
 ReOpen=Újra megnyit
 Upload=Fájl küldése
+# ToLink=Link
 Select=Kiválaszt
 Choose=Kiválaszt
 ChooseLangage=Válassza ki a nyelvét
@@ -446,30 +447,30 @@ SeptemberMin=Szeptember
 OctoberMin=Október
 NovemberMin=November
 DecemberMin=December
-Month01=január
-Month02=február
-Month03=március
-Month04=április
-Month05=május
-Month06=június
-Month07=júlis
-Month08=augusztus
-Month09=sueptember
-Month10=október
-Month11=november
-Month12=december
-MonthShort01=jan
-MonthShort02=feb
-MonthShort03=mar
-MonthShort04=apr
-MonthShort05=may
-MonthShort06=jun
-MonthShort07=jul
-MonthShort08=aug
-MonthShort09=sep
-MonthShort10=okt
-MonthShort11=nov
-MonthShort12=dec
+# Month01=January
+# Month02=February
+# Month03=March
+# Month04=April
+# Month05=May
+# Month06=June
+# Month07=July
+# Month08=August
+# Month09=September
+# Month10=October
+# Month11=November
+# Month12=December
+# MonthShort01=Jan
+# MonthShort02=Feb
+# MonthShort03=Mar
+# MonthShort04=Apr
+# MonthShort05=May
+# MonthShort06=Jun
+# MonthShort07=Jul
+# MonthShort08=Aug
+# MonthShort09=Sep
+# MonthShort10=Oct
+# MonthShort11=Nov
+# MonthShort12=Dec
 AttachedFiles=Csatolt fájlok és dokumonetumok
 FileTransferComplete=A fájl sikeresen föl lett töltve
 DateFormatYYYYMM=YYYY-MM
@@ -631,7 +632,7 @@ IM=Azonnali üzenetküldés
 NewAttribute=Új attribútum
 AttributeCode=Attribútum kód
 OptionalFieldsSetup=Extra tulajdonságok beállítása
-URLPhoto=Url fotó / logo
+# URLPhoto=URL of photo/logo
 SetLinkToThirdParty=Link egy másik harmadik fél
 CreateDraft=Tervezet készítése
 ClickToEdit=Kattintson a szerkeszteni
@@ -641,7 +642,7 @@ ByTown=A város
 ByDate=Dátum szerint
 ByMonthYear=Az év / hónap
 ByYear=Az év
-ByMonth=Havi
+# ByMonth=By month
 ByDay=Nappal
 BySalesRepresentative=Az értékesítési képviselő
 # LinkedToSpecificUsers=Linked to a particular user contact
@@ -658,6 +659,9 @@ BySalesRepresentative=Az értékesítési képviselő
 # toward=toward
 # Access=Access
 # HelpCopyToClipboard=Use Ctrl+C to copy to clipboard
+# SaveUploadedFileWithMask=Save file on server with name "<strong>%s</strong>" (otherwise "%s")
+# OriginFileName=Original filename
+# SetDemandReason=Set source
 
 # Week day
 Monday=Hétfő

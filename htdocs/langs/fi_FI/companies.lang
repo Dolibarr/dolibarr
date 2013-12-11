@@ -66,6 +66,9 @@ Country=Maa
 CountryCode=Maakoodi
 CountryId=Maa tunnus
 Phone=Puhelin
+# Skype=Skype
+# Call=Call
+# Chat=Chat
 PhonePro=Prof puhelin
 PhonePerso=Pers. puhelin
 PhoneMobile=Mobile
@@ -396,7 +399,9 @@ InActivity=Avoinna
 ActivityCeased=Kiinni
 ActivityStateFilter=Työllisyystilanne
 # ProductsIntoElements=List of products into
-# OutstandingBill=Outstanding Bill
+# CurrentOutstandingBill=Current outstanding bill
+# OutstandingBill=Max. for outstanding bill
+# OutstandingBillReached=Reached max. for outstanding bill
 # Monkey
 MonkeyNumRefModelDesc=Paluu numero on muodossa %syymm-nnnn asiakkaan koodi ja %syymm-nnnn luovuttajalle koodi jos VV on vuosi, mm kuukausi ja nnnn on sarja ilman taukoa eikä palata 0.
 # Leopard

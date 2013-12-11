@@ -1,7 +1,7 @@
 Dolibarr language file - es_PR - main
 DIRECTION=ltr
 SeparatorDecimal=,
-SeparatorThousand=
+SeparatorThousand=None
 AmountVAT=Importe IVU
 TotalVAT=Total IVU
 IncludedVAT=IVU incluido

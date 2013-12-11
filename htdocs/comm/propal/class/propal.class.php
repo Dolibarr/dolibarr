@@ -296,7 +296,7 @@ class Propal extends CommonObject
      *		@param    	int			$fk_product      	Id du produit/service predefini
      * 		@param    	double		$remise_percent  	Pourcentage de remise de la ligne
      * 		@param    	string		$price_base_type	HT or TTC
-     * 		@param    	dobule		$pu_ttc             Prix unitaire TTC
+     * 		@param    	double		$pu_ttc             Prix unitaire TTC
      * 		@param    	int			$info_bits			Bits de type de lignes
      *      @param      int			$type               Type of line (product, service)
      *      @param      int			$rang               Position of line
@@ -305,8 +305,8 @@ class Propal extends CommonObject
      *      @param		int			$fk_fournprice		Id supplier price
      *      @param		int			$pa_ht				Buying price without tax
      *      @param		string		$label				???
-     *		@param      timestamp	$date_start       	Start date of the line
-     *		@param      timestamp	$date_end         	End date of the line
+     *		@param      int			$date_start       	Start date of the line
+     *		@param      int			$date_end         	End date of the line
      *      @param		array		$array_option		extrafields array
      *    	@return    	int         	    			>0 if OK, <0 if KO
      *
@@ -355,9 +355,9 @@ class Propal extends CommonObject
             // qty, pu, remise_percent et txtva
             // TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
             // la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
-            
+
             $localtaxes_type=getLocalTaxesFromRate($txtva,0,$mysoc);
-            
+
             $tabprice=calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type, '', $localtaxes_type);
             $total_ht  = $tabprice[0];
             $total_tva = $tabprice[1];
@@ -479,8 +479,8 @@ class Propal extends CommonObject
      *  @param		int			$pa_ht				Price (without tax) of product when it was bought
      *  @param		string		$label				???
      *  @param		int			$type				0/1=Product/service
-     *	@param      timestamp	$date_start       	Start date of the line
-     *	@param      timestamp	$date_end         	End date of the line
+     *	@param      int			$date_start       	Start date of the line
+     *	@param      int			$date_end         	End date of the line
 	 *  @param		array		$array_option		extrafields array
      *  @return     int     		        		0 if OK, <0 if KO
      */
@@ -510,9 +510,9 @@ class Propal extends CommonObject
             // qty, pu, remise_percent et txtva
             // TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
             // la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
-            
+
             $localtaxes_type=getLocalTaxesFromRate($txtva,0,$mysoc);
-            
+
             $tabprice=calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type,'', $localtaxes_type);
             $total_ht  = $tabprice[0];
             $total_tva = $tabprice[1];
@@ -551,7 +551,7 @@ class Propal extends CommonObject
             $this->line->localtax1_tx		= $txlocaltax1;
             $this->line->localtax2_tx		= $txlocaltax2;
 			$this->line->localtax1_type		= $localtaxes_type[0];
-			$this->line->localtax2_type		= $localtaxes_type[2];	
+			$this->line->localtax2_type		= $localtaxes_type[2];
             $this->line->remise_percent		= $remise_percent;
             $this->line->subprice			= $pu;
             $this->line->info_bits			= $info_bits;
@@ -1318,7 +1318,7 @@ class Propal extends CommonObject
                     }
                     // Fin appel triggers
                 }
-                
+
             	if (! $error)
 				{
 					// Rename directory if dir was a temporary ref
@@ -1333,17 +1333,17 @@ class Propal extends CommonObject
 						if (file_exists($dirsource))
 						{
 							dol_syslog(get_class($this)."::validate rename dir ".$dirsource." into ".$dirdest);
-	
+
 							if (@rename($dirsource, $dirdest))
 							{
-	
+
 								dol_syslog("Rename ok");
 								// Deleting old PDF in new rep
 								dol_delete_file($conf->propal->dir_output.'/'.$snumfa.'/'.$facref.'*.*');
 							}
 						}
 					}
-				
+
                     $this->brouillon=0;
                     $this->statut = 1;
                     $this->user_valid_id=$user->id;
@@ -1370,7 +1370,7 @@ class Propal extends CommonObject
      *  Define proposal date
      *
      *  @param  User		$user      		Object user that modify
-     *  @param  timestamp	$date			Date
+     *  @param  int			$date			Date
      *  @return	int         				<0 if KO, >0 if OK
      */
     function set_date($user, $date)
@@ -1407,7 +1407,7 @@ class Propal extends CommonObject
      *	Define end validity date
      *
      *	@param		User		$user        		Object user that modify
-     *	@param      timestamp	$date_fin_validite	End of validity date
+     *	@param      int			$date_fin_validite	End of validity date
      *	@return     int         					<0 if KO, >0 if OK
      */
     function set_echeance($user, $date_fin_validite)
@@ -1434,7 +1434,7 @@ class Propal extends CommonObject
      *	Set delivery date
      *
      *	@param      User 		$user        		Object user that modify
-     *	@param      timestamp	$date_livraison     Delivery date
+     *	@param      int			$date_livraison     Delivery date
      *	@return     int         					<0 if ko, >0 if ok
      */
     function set_date_livraison($user, $date_livraison)
@@ -1625,7 +1625,7 @@ class Propal extends CommonObject
      *
      *	@param      User	$user		Object user that close
      *	@param      int		$statut		Statut
-     *	@param      text	$note		Comment
+     *	@param      string	$note		Comment
      *  @param		int		$notrigger	1=Does not execute triggers, 0= execuete triggers
      *	@return     int         		<0 if KO, >0 if OK
      */
@@ -1688,7 +1688,7 @@ class Propal extends CommonObject
      *
      *	@param      User	$user		Object user that close
      *	@param      int		$statut		Statut
-     *	@param      text	$note		Comment
+     *	@param      string	$note		Comment
      *	@return     int         		<0 if KO, >0 if OK
      */
     function cloture($user, $statut, $note)
@@ -1710,7 +1710,7 @@ class Propal extends CommonObject
         {
             if ($statut == 2)
             {
-                // Classe la societe rattachee comme client
+                // The connected company is classified as a client
                 $soc=new Societe($this->db);
                 $soc->id = $this->socid;
                 $result=$soc->set_as_client();
@@ -2368,6 +2368,7 @@ class Propal extends CommonObject
             if ($mode == 'opened') $delay_warning=$conf->propal->cloture->warning_delay;
             if ($mode == 'signed') $delay_warning=$conf->propal->facturation->warning_delay;
 
+            // This assignment in condition is not a bug. It allows walking the results.
             while ($obj=$this->db->fetch_object($resql))
             {
                 $this->nbtodo++;
@@ -2506,6 +2507,7 @@ class Propal extends CommonObject
         $resql=$this->db->query($sql);
         if ($resql)
         {
+            // This assignment in condition is not a bug. It allows walking the results.
             while ($obj=$this->db->fetch_object($resql))
             {
                 $this->nb["proposals"]=$obj->nb;

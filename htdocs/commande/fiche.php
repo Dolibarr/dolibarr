@@ -323,7 +323,7 @@ else if ($action == 'add' && $user->rights->commande->creer)
 								$lines[$i]->fetch_optionals($lines[$i]->rowid);
 								$array_option=$lines[$i]->array_options;
 							}
-							
+
 							$result = $object->addline(
 								$desc,
 								$lines[$i]->subprice,
@@ -564,18 +564,37 @@ else if ($action == 'setnote_private' && $user->rights->commande->creer)
 	if ($result < 0) dol_print_error($db,$object->error);
 }
 
-/*
- *  Ajout d'une ligne produit dans la commande
-*/
+// Add a new line
 else if ($action == 'addline' && $user->rights->commande->creer)
 {
 	$langs->load('errors');
 	$error = false;
 
-	$idprod=GETPOST('idprod', 'int');
-	$product_desc = (GETPOST('product_desc')?GETPOST('product_desc'):(GETPOST('np_desc')?GETPOST('np_desc'):(GETPOST('dp_desc')?GETPOST('dp_desc'):'')));
-	$price_ht = GETPOST('price_ht');
-	$tva_tx = (GETPOST('tva_tx')?GETPOST('tva_tx'):0);
+	// Set if we used free entry or predefined product
+	if (GETPOST('addline_libre'))
+	{
+		$predef='';
+		$idprod=0;
+		$product_desc=(GETPOST('dp_desc')?GETPOST('dp_desc'):'');
+		$price_ht = GETPOST('price_ht');
+		$tva_tx=(GETPOST('tva_tx')?GETPOST('tva_tx'):0);
+	}
+	if (GETPOST('addline_predefined'))
+	{
+		$predef=(($conf->global->MAIN_FEATURES_LEVEL < 2) ? '_predef' : '');
+		$idprod=GETPOST('idprod', 'int');
+		$product_desc = (GETPOST('product_desc')?GETPOST('product_desc'):(GETPOST('np_desc')?GETPOST('np_desc'):''));
+		$price_ht = '';
+		$tva_tx = '';
+	}
+    if (GETPOST('usenewaddlineform')) {
+        $idprod=GETPOST('idprod', 'int');
+        $product_desc = (GETPOST('product_desc')?GETPOST('product_desc'):(GETPOST('np_desc')?GETPOST('np_desc'):(GETPOST('dp_desc')?GETPOST('dp_desc'):'')));
+        $price_ht = GETPOST('price_ht');
+        $tva_tx=(GETPOST('tva_tx')?GETPOST('tva_tx'):0);
+    }
+	$qty = GETPOST('qty'.$predef);
+	$remise_percent=GETPOST('remise_percent'.$predef);
 
 	//Extrafields
 	$extrafieldsline = new ExtraFields($db);
@@ -591,7 +610,7 @@ else if ($action == 'addline' && $user->rights->commande->creer)
 		}
 	}
 
-	if ((empty($idprod) || GETPOST('usenewaddlineform')) && ($price_ht < 0) && (GETPOST('qty') < 0))
+	if ((empty($idprod) || GETPOST('usenewaddlineform')) && ($price_ht < 0) && ($qty < 0))
 	{
 		setEventMessage($langs->trans('ErrorBothFieldCantBeNegative', $langs->transnoentitiesnoconv('UnitPriceHT'), $langs->transnoentitiesnoconv('Qty')), 'errors');
 		$error = true;
@@ -606,7 +625,7 @@ else if ($action == 'addline' && $user->rights->commande->creer)
 		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("UnitPriceHT")), 'errors');
 		$error++;
 	}
-	if (! GETPOST('qty') && GETPOST('qty') == '')
+	if ($qty == '')
 	{
 		setEventMessage($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Qty')), 'errors');
 		$error = true;
@@ -617,10 +636,9 @@ else if ($action == 'addline' && $user->rights->commande->creer)
 		$error = true;
 	}
 
-	if (! $error && (GETPOST('qty') >= 0) && (! empty($product_desc) || ! empty($idprod)))
+	if (! $error && ($qty >= 0) && (! empty($product_desc) || ! empty($idprod)))
 	{
 		// Clean parameters
-		$predef=((! empty($idprod) && $conf->global->MAIN_FEATURES_LEVEL < 2) ? '_predef' : '');
 		$date_start=dol_mktime(0, 0, 0, GETPOST('date_start'.$predef.'month'), GETPOST('date_start'.$predef.'day'), GETPOST('date_start'.$predef.'year'));
 		$date_end=dol_mktime(0, 0, 0, GETPOST('date_end'.$predef.'month'), GETPOST('date_end'.$predef.'day'), GETPOST('date_end'.$predef.'year'));
 		$price_base_type = (GETPOST('price_base_type', 'alpha')?GETPOST('price_base_type', 'alpha'):'HT');
@@ -737,8 +755,8 @@ else if ($action == 'addline' && $user->rights->commande->creer)
 		}
 
 		// Margin
-		$fournprice=(GETPOST('fournprice')?GETPOST('fournprice'):'');
-		$buyingprice=(GETPOST('buying_price')?GETPOST('buying_price'):'');
+		$fournprice=(GETPOST('fournprice'.$predef)?GETPOST('fournprice'.$predef):'');
+		$buyingprice=(GETPOST('buying_price'.$predef)?GETPOST('buying_price'.$predef):'');
 
 		// Local Taxes
 		$localtax1_tx= get_localtax($tva_tx, 1, $object->client);
@@ -749,7 +767,7 @@ else if ($action == 'addline' && $user->rights->commande->creer)
 		$info_bits=0;
 		if ($tva_npr) $info_bits |= 0x01;
 
-		if (! empty($price_min) && (price2num($pu_ht)*(1-price2num(GETPOST('remise_percent'))/100) < price2num($price_min)))
+		if (! empty($price_min) && (price2num($pu_ht)*(1-price2num($remise_percent)/100) < price2num($price_min)))
 		{
 			$mesg = $langs->trans("CantBeLessThanMinPrice",price(price2num($price_min,'MU'),0,$langs,0,0,-1,$conf->currency));
 			setEventMessage($mesg, 'errors');
@@ -760,12 +778,12 @@ else if ($action == 'addline' && $user->rights->commande->creer)
 			$result = $object->addline(
 				$desc,
 				$pu_ht,
-				GETPOST('qty'),
+				$qty,
 				$tva_tx,
 				$localtax1_tx,
 				$localtax2_tx,
 				$idprod,
-				GETPOST('remise_percent'),
+				$remise_percent,
 				$info_bits,
 				0,
 				$price_base_type,
@@ -803,7 +821,6 @@ else if ($action == 'addline' && $user->rights->commande->creer)
 
 				unset($_POST['qty']);
 				unset($_POST['type']);
-				unset($_POST['idprod']);
 				unset($_POST['remise_percent']);
 				unset($_POST['price_ht']);
 				unset($_POST['price_ttc']);
@@ -815,10 +832,16 @@ else if ($action == 'addline' && $user->rights->commande->creer)
 				unset($_POST['buying_price']);
 				unset($_POST['np_marginRate']);
 				unset($_POST['np_markRate']);
-
-				// old method
-				unset($_POST['np_desc']);
 				unset($_POST['dp_desc']);
+
+				unset($_POST['idprod']);
+				unset($_POST['qty_predef']);
+				unset($_POST['remise_percent_predef']);
+				unset($_POST['fournprice_predef']);
+				unset($_POST['buying_price_predef']);
+				unset($_POST['np_marginRate_predef']);
+				unset($_POST['np_markRate_predef']);
+				unset($_POST['np_desc']);
 			}
 			else
 			{
@@ -1179,12 +1202,11 @@ else if ($action == 'update_extras')
 {
 	// Fill array 'array_options' with data from update form
 	$extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
-	$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
+	$ret = $extrafields->setOptionalsFromPost($extralabels,$object,GETPOST('attribute'));
+	if($ret < 0) $error++;
 
-	if($ret < 0)
-		$error++;
-
-	if(!$error) {
+	if (! $error)
+	{
 		// Actions on extra fields (by external module or standard code)
 		// FIXME le hook fait double emploi avec le trigger !!
 		$hookmanager->initHooks(array('orderdao'));
@@ -1192,22 +1214,16 @@ else if ($action == 'update_extras')
 		$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 		if (empty($reshook))
 		{
-			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+			$result=$object->insertExtraFields();
+			if ($result < 0)
 			{
-				$result=$object->insertExtraFields();
-				if ($result < 0)
-				{
-					$error++;
-				}
+				$error++;
 			}
 		}
 		else if ($reshook < 0) $error++;
 	}
-	else
-	{
-		$action = 'edit_extras';
-	}
 
+	if ($error) $action = 'edit_extras';
 }
 
 /*
@@ -1456,7 +1472,7 @@ if (! $error && ! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB) && $user->righ
 
 /*
  *	View
-*/
+ */
 
 llxHeader('',$langs->trans('Order'),'EN:Customers_Orders|FR:Commandes_Clients|ES:Pedidos de clientes');
 
@@ -1467,9 +1483,9 @@ $formorder = new FormOrder($db);
 
 /*********************************************************************
  *
-* Mode creation
-*
-*********************************************************************/
+ * Mode creation
+ *
+ *********************************************************************/
 if ($action == 'create' && $user->rights->commande->creer)
 {
 	print_fiche_titre($langs->trans('CreateOrder'));
@@ -1513,7 +1529,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 			$objectsrc->fetch($originid);
 			if (empty($objectsrc->lines) && method_exists($objectsrc,'fetch_lines'))  $objectsrc->fetch_lines();
 			$objectsrc->fetch_thirdparty();
-			
+
 			//Replicate extrafields
 			$objectsrc->fetch_optionals($originid);
 			$object->array_options=$objectsrc->array_options;
@@ -2208,20 +2224,12 @@ else
 			print '</tr>';
 		}
 
-		// Other attributes
+	    // Other attributes (TODO Move this into an include)
 		$res=$object->fetch_optionals($object->id,$extralabels);
 		$parameters=array('colspan' => ' colspan="3"');
 		$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
 		if (empty($reshook) && ! empty($extrafields->attribute_label))
 		{
-			if ($action == 'edit_extras')
-			{
-				print '<form enctype="multipart/form-data" action="'.$_SERVER["PHP_SELF"].'" method="post" name="formsoc">';
-				print '<input type="hidden" name="action" value="update_extras">';
-				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-				print '<input type="hidden" name="id" value="'.$object->id.'">';
-			}
-
 			foreach($extrafields->attribute_label as $key=>$label)
 			{
 				if ($action == 'edit_extras') {
@@ -2244,33 +2252,25 @@ else
 						$value = isset($_POST["options_".$key])?dol_mktime($_POST["options_".$key."hour"], $_POST["options_".$key."min"], 0, $_POST["options_".$key."month"], $_POST["options_".$key."day"], $_POST["options_".$key."year"]):$db->jdate($object->array_options['options_'.$key]);
 					}
 
-					if ($action == 'edit_extras' && $user->rights->commande->creer)
+					if ($action == 'edit_extras' && $user->rights->commande->creer && GETPOST('attribute') == $key)
 					{
+						print '<form enctype="multipart/form-data" action="'.$_SERVER["PHP_SELF"].'" method="post" name="formsoc">';
+						print '<input type="hidden" name="action" value="update_extras">';
+						print '<input type="hidden" name="attribute" value="'.$key.'">';
+						print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+						print '<input type="hidden" name="id" value="'.$object->id.'">';
+
 						print $extrafields->showInputField($key,$value);
+
+						print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
+						print '</form>';
 					}
 					else
 					{
 						print $extrafields->showOutputField($key,$value);
+						if ($object->statut == 0 && $user->rights->commande->creer) print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=edit_extras&attribute='.$key.'">'.img_picto('','edit').' '.$langs->trans('Modify').'</a>';
 					}
 					print '</td></tr>'."\n";
-				}
-			}
-
-			if(count($extrafields->attribute_label) > 0) {
-
-				if ($action == 'edit_extras' && $user->rights->commande->creer)
-				{
-					print '<tr><td></td><td colspan="5">';
-					print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
-					print '</form>';
-					print '</td></tr>';
-
-				}
-				else {
-					if ($object->statut == 0 && $user->rights->commande->creer)
-					{
-						print '<tr><td></td><td><a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=edit_extras">'.img_picto('','edit').' '.$langs->trans('Modify').'</a></td></tr>';
-					}
 				}
 			}
 		}
@@ -2334,25 +2334,34 @@ else
 
 		/*
 		 * Lines
-		*/
+		 */
 		$result = $object->getLinesArray();
 
-		$numlines = count($object->lines);
+
+		print '	<form name="addproduct" id="addproduct" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.(($action != 'editline')?'#add':'#line_'.GETPOST('lineid')).'" method="POST">
+		<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">
+		<input type="hidden" name="action" value="'.(($action != 'editline')?'addline':'updateligne').'">
+		<input type="hidden" name="mode" value="">
+		<input type="hidden" name="id" value="'.$object->id.'">
+		';
+
 
 		if (! empty($conf->use_javascript_ajax) && $object->statut == 0)
 		{
 			include DOL_DOCUMENT_ROOT.'/core/tpl/ajaxrow.tpl.php';
 		}
 
-		print '<table id="tablelines" class="noborder" width="100%">';
+		print '<table id="tablelines" class="noborder noshadow" width="100%">';
 
 		// Show object lines
 		if (! empty($object->lines))
 			$ret=$object->printObjectLines($action,$mysoc,$soc,$lineid,1);
 
+		$numlines = count($object->lines);
+
 		/*
 		 * Form to add new line
-		*/
+		 */
 		if ($object->statut == 0 && $user->rights->commande->creer)
 		{
 			if ($action != 'editline')
@@ -2382,7 +2391,10 @@ else
 			}
 		}
 		print '</table>';
-		print '</div>';
+
+		print "</form>\n";
+
+		dol_fiche_end();
 
 
 		/*

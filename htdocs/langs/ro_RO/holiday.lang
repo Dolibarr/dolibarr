@@ -87,7 +87,7 @@ FirstDayOfHoliday=Prima zi a concediului
 LastDayOfHoliday=Ultima zi a concediului
 HolidaysMonthlyUpdate=Actualizare lunară
 ManualUpdate=Actualizare manuală
-# HolidaysCancelation=Holidays cancelation
+HolidaysCancelation=Anulare vacanţe
 
 ## Configuration du Module ##
 ConfCP=Configurarea modulului concedii

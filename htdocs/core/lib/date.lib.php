@@ -166,10 +166,10 @@ function getParentCompanyTimeZoneInt($refgmtdate='now')
 /**
  *  Add a delay to a date
  *
- *  @param      timestamp	$time               Date timestamp (or string with format YYYY-MM-DD)
+ *  @param      int			$time               Date timestamp (or string with format YYYY-MM-DD)
  *  @param      int			$duration_value     Value of delay to add
  *  @param      int			$duration_unit      Unit of added delay (d, m, y, w)
- *  @return     timestamp      			        New timestamp
+ *  @return     int      			        New timestamp
  */
 function dol_time_plus_duree($time,$duration_value,$duration_unit)
 {
@@ -202,25 +202,25 @@ function convertTime2Seconds($iHours=0,$iMinutes=0,$iSeconds=0)
 /**	  	Return, in clear text, value of a number of seconds in days, hours and minutes
  *
  *    	@param      int		$iSecond		Number of seconds
- *    	@param      string	$format		    Output format (all: complete display, hour: displays only hours, min: displays only minutes, sec: displays only seconds, month: display month only, year: displays only year);
+ *    	@param      string	$format		    Output format (all: total delay days hour:min like "2 days 12:30"", allhourmin: total delay hours:min like "60:30", allhour: total delay hours without min/sec like "60:30", fullhour: total delay hour decimal like "60.5" for 60:30, hour: only hours part "12", min: only minutes part "30", sec: only seconds part, month: only month part, year: only year part);
  *      @param      int		$lengthOfDay    Length of day (default 86400 seconds for 1 day, 28800 for 8 hour)
  *      @param      int		$lengthOfWeek   Length of week (default 7)
  *    	@return     sTime		 		 	Formated text of duration
  * 	                                		Example: 0 return 00:00, 3600 return 1:00, 86400 return 1d, 90000 return 1 Day 01:00
  */
-function convertSecondToTime($iSecond,$format='all',$lengthOfDay=86400,$lengthOfWeek=7)
+function convertSecondToTime($iSecond, $format='all', $lengthOfDay=86400, $lengthOfWeek=7)
 {
 	global $langs;
 
 	if (empty($lengthOfDay))  $lengthOfDay = 86400;         // 1 day = 24 hours
     if (empty($lengthOfWeek)) $lengthOfWeek = 7;            // 1 week = 7 days
 
-	if ($format == 'all')
+	if ($format == 'all' || $format == 'allhour' || $format == 'allhourmin')
 	{
 		if ($iSecond === 0) return '0';	// This is to avoid having 0 return a 12:00 AM for en_US
 
         $sTime='';
-		$sDay=0;
+        $sDay=0;
         $sWeek='';
 
 		if ($iSecond >= $lengthOfDay)
@@ -246,13 +246,6 @@ function convertSecondToTime($iSecond,$format='all',$lengthOfDay=86400,$lengthOf
                     if ($sWeek >= 2) $weekTranslate = $langs->trans("DurationWeeks");
                     $sTime.=$sWeek.' '.$weekTranslate.' ';
                 }
-/*                if ($sDay>0)
-                {
-                    $dayTranslate = $langs->trans("Day");
-                    if ($sDay > 1) $dayTranslate = $langs->trans("Days");
-                    $sTime.=$sDay.' '.$dayTranslate.' ';
-                }
-*/
             }
 		}
 		if ($sDay>0)
@@ -262,13 +255,23 @@ function convertSecondToTime($iSecond,$format='all',$lengthOfDay=86400,$lengthOf
 			$sTime.=$sDay.' '.$dayTranslate.' ';
 		}
 
-//		if ($sDay) $sTime.=$sDay.' '.$dayTranslate.' ';
-		if ($iSecond || empty($sDay))
+		if ($format == 'all')
 		{
-			$sTime.= dol_print_date($iSecond,'hourduration',true);
+			if ($iSecond || empty($sDay))
+			{
+				$sTime.= dol_print_date($iSecond,'hourduration',true);
+			}
+		}
+		if ($format == 'allhourmin')
+		{
+			return sprintf("%02d",($sWeek*$lengthOfWeek*24 + $sDay*24 + (int) floor($iSecond/3600))).':'.sprintf("%02d",((int) floor(($iSecond % 3600)/60)));
+		}
+		if ($format == 'allhour')
+		{
+			return sprintf("%02d",($sWeek*$lengthOfWeek*24 + $sDay*24 + (int) floor($iSecond/3600)));
 		}
 	}
-	else if ($format == 'hour')
+	else if ($format == 'hour')	// only hour part
 	{
 		$sTime=dol_print_date($iSecond,'%H',true);
 	}
@@ -282,19 +285,19 @@ function convertSecondToTime($iSecond,$format='all',$lengthOfDay=86400,$lengthOf
 		}
 		$sTime=$iSecond;
 	}
-	else if ($format == 'min')
+	else if ($format == 'min')	// only min part
 	{
 		$sTime=dol_print_date($iSecond,'%M',true);
 	}
-    else if ($format == 'sec')
+    else if ($format == 'sec')	// only sec part
     {
         $sTime=dol_print_date($iSecond,'%S',true);
     }
-    else if ($format == 'month')
+    else if ($format == 'month')	// only month part
     {
         $sTime=dol_print_date($iSecond,'%m',true);
     }
-    else if ($format == 'year')
+    else if ($format == 'year')	// only year part
     {
         $sTime=dol_print_date($iSecond,'%Y',true);
     }
@@ -314,7 +317,7 @@ function convertSecondToTime($iSecond,$format='all',$lengthOfDay=86400,$lengthOf
  *		                		DD/MM/YY HH:MM:SS or DD/MM/YYYY HH:MM:SS (this format should not be used anymore)
  *  @param	int		$gm         1 =Input date is GM date,
  *                              0 =Input date is local date using PHP server timezone
- *  @return	date				Date
+ *  @return	int					Date as a timestamp
  *		                		19700101020000 -> 7200 with gm=1
  *
  *  @see    dol_print_date, dol_mktime, dol_getdate
@@ -340,7 +343,7 @@ function dol_stringtotime($string, $gm=1)
     else if (
     	   preg_match('/^([0-9]{4})-([0-9]{2})-([0-9]{2})T([0-9]{2}):([0-9]{2}):([0-9]{2})Z$/i',$string,$reg)	// Convert date with format RFC3339
 		|| preg_match('/^([0-9]{4})-([0-9]{2})-([0-9]{2}) ([0-9]{2}):([0-9]{2}):([0-9]{2})$/i',$string,$reg)	// Convert date with format YYYY-MM-DD HH:MM:SS
-   		|| preg_match('/^([0-9]{4})([0-9]{2})([0-9]{2})T([0-9]{2})([0-9]{2})([0-9]{2})Z$/i',$string,$reg)		// Convert date with format YYYYMMDDTHHMMSSZ 		
+   		|| preg_match('/^([0-9]{4})([0-9]{2})([0-9]{2})T([0-9]{2})([0-9]{2})([0-9]{2})Z$/i',$string,$reg)		// Convert date with format YYYYMMDDTHHMMSSZ
     )
     {
         $syear = $reg[1];

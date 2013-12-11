@@ -66,6 +66,9 @@ Country=Χώρα
 CountryCode=Country code
 CountryId=Κωδικός Χώρα
 Phone=Τηλέφωνο
+Skype=Skype
+Call=Κλήση
+# Chat=Chat
 PhonePro=Επαγγ. τηλέφωνο
 PhonePerso=Προσωπ. τηλέφωνο
 PhoneMobile=Κιν. τηλέφωνο
@@ -396,7 +399,9 @@ InActivity=Ανοιχτό
 ActivityCeased=Κλειστό
 ActivityStateFilter=Το καθεστώς της δραστηριότητας
 ProductsIntoElements=Κατάλογος των προϊόντων σε
-OutstandingBill=Εξαιρετική Bill
+# CurrentOutstandingBill=Current outstanding bill
+OutstandingBill=Μέγιστο. για εκκρεμείς λογαριασμό
+# OutstandingBillReached=Reached max. for outstanding bill
 # Monkey
 MonkeyNumRefModelDesc=Return numero with format %syymm-nnnn for customer code and %syymm-nnnn for supplier code where yy is year, mm is month and nnnn is a sequence with no break and no return to 0.
 # Leopard

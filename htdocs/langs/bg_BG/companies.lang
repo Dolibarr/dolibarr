@@ -66,6 +66,9 @@ Country=Страна
 CountryCode=Код на държавата
 CountryId=Държава ID
 Phone=Телефон
+# Skype=Skype
+# Call=Call
+# Chat=Chat
 PhonePro=Проф. телефон
 PhonePerso=Pers. телефон
 PhoneMobile=Подвижен
@@ -396,7 +399,9 @@ InActivity=Отворен
 ActivityCeased=Затворен
 ActivityStateFilter=Състоянието на дейността
 # ProductsIntoElements=List of products into
-# OutstandingBill=Outstanding Bill
+# CurrentOutstandingBill=Current outstanding bill
+# OutstandingBill=Max. for outstanding bill
+# OutstandingBillReached=Reached max. for outstanding bill
 # Monkey
 MonkeyNumRefModelDesc=Връщане Numero с формат %syymm-NNNN за клиента код и %syymm-NNNN за доставчика код, където YY е годината, mm е месец и NNNN е последователност, без почивка и няма връщане назад до 0.
 # Leopard

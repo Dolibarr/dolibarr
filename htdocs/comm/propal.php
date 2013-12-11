@@ -100,7 +100,7 @@ $hookmanager->initHooks(array('propalcard'));
 
 /*
  * Actions
-*/
+ */
 
 $parameters=array('socid'=>$socid);
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
@@ -131,7 +131,7 @@ if ($action == 'confirm_clone' && $confirm == 'yes')
 	}
 }
 
-// Suppression de la propale
+// Delete proposal
 else if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->propal->supprimer)
 {
 	$result=$object->delete($user);
@@ -436,9 +436,7 @@ else if ($action == 'setstatut' && $user->rights->propal->cloturer && ! GETPOST(
 	}
 }
 
-/*
- * Add file in email form
-*/
+// Add file in email form
 if (GETPOST('addfile'))
 {
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -451,9 +449,7 @@ if (GETPOST('addfile'))
 	$action='presend';
 }
 
-/*
- * Remove file in email form
-*/
+// Remove file in email form
 if (GETPOST('removedfile'))
 {
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -469,7 +465,7 @@ if (GETPOST('removedfile'))
 
 /*
  * Send mail
-*/
+ */
 if ($action == 'send' && ! GETPOST('addfile') && ! GETPOST('removedfile') && ! GETPOST('cancel'))
 {
 	$langs->load('mails');
@@ -637,14 +633,34 @@ else if ($action == "setabsolutediscount" && $user->rights->propal->creer)
 	}
 }
 
-//Ajout d'une ligne produit dans la propale
-else if ($action == "addline" && $user->rights->propal->creer)
+// Add line
+else if (($action == 'addline' || $action == 'addline_predef') && $user->rights->propal->creer)
 {
-	$idprod=GETPOST('idprod', 'int');
-	$product_desc = (GETPOST('product_desc')?GETPOST('product_desc'):(GETPOST('np_desc')?GETPOST('np_desc'):(GETPOST('dp_desc')?GETPOST('dp_desc'):'')));
-	$price_ht = GETPOST('price_ht');
-	$tva_tx = (GETPOST('tva_tx')?GETPOST('tva_tx'):0);
-	$predef=((! empty($idprod) && $conf->global->MAIN_FEATURES_LEVEL < 2) ? '_predef' : '');
+	// Set if we used free entry or predefined product
+	if (GETPOST('addline_libre'))
+	{
+		$predef='';
+		$idprod=0;
+		$product_desc=(GETPOST('dp_desc')?GETPOST('dp_desc'):'');
+		$price_ht = GETPOST('price_ht');
+		$tva_tx=(GETPOST('tva_tx')?GETPOST('tva_tx'):0);
+	}
+	if (GETPOST('addline_predefined'))
+	{
+		$predef=(($conf->global->MAIN_FEATURES_LEVEL < 2) ? '_predef' : '');
+		$idprod=GETPOST('idprod', 'int');
+		$product_desc = (GETPOST('product_desc')?GETPOST('product_desc'):(GETPOST('np_desc')?GETPOST('np_desc'):''));
+		$price_ht = '';
+		$tva_tx = '';
+	}
+    if (GETPOST('usenewaddlineform')) {
+        $idprod=GETPOST('idprod', 'int');
+        $product_desc = (GETPOST('product_desc')?GETPOST('product_desc'):(GETPOST('np_desc')?GETPOST('np_desc'):(GETPOST('dp_desc')?GETPOST('dp_desc'):'')));
+        $price_ht = GETPOST('price_ht');
+        $tva_tx=(GETPOST('tva_tx')?GETPOST('tva_tx'):0);
+    }
+	$qty = GETPOST('qty'.$predef);
+	$remise_percent=GETPOST('remise_percent'.$predef);
 
 	//Extrafields
 	$extrafieldsline = new ExtraFields($db);
@@ -677,13 +693,15 @@ else if ($action == "addline" && $user->rights->propal->creer)
 		$error++;
 	}
 
-	if (! $error && (GETPOST('qty') >= 0) && (! empty($product_desc) || ! empty($idprod)))
+	if (! $error && ($qty >= 0) && (! empty($product_desc) || ! empty($idprod)))
 	{
 		$pu_ht=0;
 		$pu_ttc=0;
 		$price_min=0;
 		$price_base_type = (GETPOST('price_base_type', 'alpha')?GETPOST('price_base_type', 'alpha'):'HT');
 
+		$db->begin();
+		
 		// Ecrase $pu par celui du produit
 		// Ecrase $desc par celui du produit
 		// Ecrase $txtva par celui du produit
@@ -795,8 +813,8 @@ else if ($action == "addline" && $user->rights->propal->creer)
 		}
 
 		// Margin
-		$fournprice=(GETPOST('fournprice')?GETPOST('fournprice'):'');
-		$buyingprice=(GETPOST('buying_price')?GETPOST('buying_price'):'');
+		$fournprice=(GETPOST('fournprice'.$predef)?GETPOST('fournprice'.$predef):'');
+		$buyingprice=(GETPOST('buying_price'.$predef)?GETPOST('buying_price'.$predef):'');
 
 		$date_start=dol_mktime(0, 0, 0, GETPOST('date_start'.$predef.'month'), GETPOST('date_start'.$predef.'day'), GETPOST('date_start'.$predef.'year'));
 		$date_end=dol_mktime(0, 0, 0, GETPOST('date_end'.$predef.'month'), GETPOST('date_end'.$predef.'day'), GETPOST('date_end'.$predef.'year'));
@@ -808,7 +826,7 @@ else if ($action == "addline" && $user->rights->propal->creer)
 		$info_bits=0;
 		if ($tva_npr) $info_bits |= 0x01;
 
-		if (! empty($price_min) && (price2num($pu_ht)*(1-price2num(GETPOST('remise_percent'))/100) < price2num($price_min)))
+		if (! empty($price_min) && (price2num($pu_ht)*(1-price2num($remise_percent)/100) < price2num($price_min)))
 		{
 			$mesg = $langs->trans("CantBeLessThanMinPrice",price(price2num($price_min,'MU'),0,$langs,0,0,-1,$conf->currency));
 			setEventMessage($mesg, 'errors');
@@ -819,12 +837,12 @@ else if ($action == "addline" && $user->rights->propal->creer)
 			$result=$object->addline(
 				$desc,
 				$pu_ht,
-				GETPOST('qty'),
+				$qty,
 				$tva_tx,
 				$localtax1_tx,
 				$localtax2_tx,
 				$idprod,
-				GETPOST('remise_percent'),
+				$remise_percent,
 				$price_base_type,
 				$pu_ttc,
 				$info_bits,
@@ -842,6 +860,8 @@ else if ($action == "addline" && $user->rights->propal->creer)
 
 			if ($result > 0)
 			{
+				$db->commit();
+				
 				if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
 				{
 					// Define output language
@@ -858,7 +878,6 @@ else if ($action == "addline" && $user->rights->propal->creer)
 
 				unset($_POST['qty']);
 				unset($_POST['type']);
-				unset($_POST['idprod']);
 				unset($_POST['remise_percent']);
 				unset($_POST['price_ht']);
 				unset($_POST['price_ttc']);
@@ -870,13 +889,21 @@ else if ($action == "addline" && $user->rights->propal->creer)
 				unset($_POST['buying_price']);
 				unset($_POST['np_marginRate']);
 				unset($_POST['np_markRate']);
-
-				// old method
-				unset($_POST['np_desc']);
 				unset($_POST['dp_desc']);
+
+				unset($_POST['idprod']);
+				unset($_POST['qty_predef']);
+				unset($_POST['remise_percent_predef']);
+				unset($_POST['fournprice_predef']);
+				unset($_POST['buying_price_predef']);
+				unset($_POST['np_marginRate_predef']);
+				unset($_POST['np_markRate_predef']);
+				unset($_POST['np_desc']);
 			}
 			else
 			{
+				$db->rollback();
+				
 				setEventMessage($object->error, 'errors');
 			}
 		}
@@ -960,6 +987,8 @@ else if ($action == 'updateligne' && $user->rights->propal->creer && GETPOST('sa
 
 	if (! $error)
 	{
+		$db->begin();
+		
 		$result = $object->updateline(
 			GETPOST('lineid'),
 			$pu_ht,
@@ -985,6 +1014,8 @@ else if ($action == 'updateligne' && $user->rights->propal->creer && GETPOST('sa
 
 		if ($result >= 0)
 		{
+			$db->commit();
+			
 			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
 			{
 				// Define output language
@@ -1014,6 +1045,8 @@ else if ($action == 'updateligne' && $user->rights->propal->creer && GETPOST('sa
 		}
 		else
 		{
+			$db->rollback();
+			
 			setEventMessage($object->error, 'errors');
 		}
 	}
@@ -1163,14 +1196,11 @@ else if ($action == 'update_extras')
 {
 	// Fill array 'array_options' with data from update form
 	$extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
-	$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
+	$ret = $extrafields->setOptionalsFromPost($extralabels,$object,GETPOST('attribute'));
+	if($ret < 0) $error++;
 
-	if($ret < 0) {
-		$error++;
-		$action = 'edit_extras';
-	}
-
-	if(!$error) {
+	if (! $error)
+	{
 		// Actions on extra fields (by external module or standard code)
 		// FIXME le hook fait double emploi avec le trigger !!
 		$hookmanager->initHooks(array('propaldao'));
@@ -1178,17 +1208,16 @@ else if ($action == 'update_extras')
 		$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 		if (empty($reshook))
 		{
-			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+			$result=$object->insertExtraFields();
+			if ($result < 0)
 			{
-				$result=$object->insertExtraFields();
-				if ($result < 0)
-				{
-					$error++;
-				}
+				$error++;
 			}
 		}
 		else if ($reshook < 0) $error++;
 	}
+
+	if ($error) $action = 'edit_extras';
 }
 
 if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB) && $user->rights->propal->creer)
@@ -1254,7 +1283,7 @@ if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB) && $user->rights->propal->
 
 /*
  * View
-*/
+ */
 
 llxHeader('',$langs->trans('Proposal'),'EN:Commercial_Proposals|FR:Proposition_commerciale|ES:Presupuestos');
 
@@ -1422,7 +1451,7 @@ if ($action == 'create')
 
 	/*
 	 * Combobox pour la fonction de copie
-	*/
+ 	 */
 
 	if (empty($conf->global->PROPAL_CLONE_ON_CREATE_PAGE))
 	{
@@ -1521,7 +1550,7 @@ else
 {
 	/*
 	 * Show object in view mode
-	*/
+	 */
 
 	$soc = new Societe($db);
 	$soc->fetch($object->socid);
@@ -1615,13 +1644,12 @@ else
 	print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref', '');
 	print '</td></tr>';
 
-	// Ref client
+	// Ref customer
 	print '<tr><td>';
 	print '<table class="nobordernopadding" width="100%"><tr><td class="nowrap">';
 	print $langs->trans('RefCustomer').'</td>';
-	print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=refclient&amp;id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('RefCustomer')).'</a></td>';
-	print '</td>';
 	if ($action != 'refclient' && ! empty($object->brouillon)) print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=refclient&amp;id='.$object->id.'">'.img_edit($langs->trans('Modify')).'</a></td>';
+	print '</td>';
 	print '</tr></table>';
 	print '</td><td colspan="5">';
 	if ($user->rights->propal->creer && $action == 'refclient')
@@ -1639,6 +1667,7 @@ else
 	}
 	print '</td>';
 	print '</tr>';
+
 	// Company
 	print '<tr><td>'.$langs->trans('Company').'</td><td colspan="5">'.$soc->getNomUrl(1).'</td>';
 	print '</tr>';
@@ -1897,20 +1926,12 @@ else
 		print '</tr>';
 	}
 
-	// Other attributes
+    // Other attributes (TODO Move this into an include)
 	$res=$object->fetch_optionals($object->id,$extralabels);
 	$parameters=array('colspan' => ' colspan="3"');
 	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
 	if (empty($reshook) && ! empty($extrafields->attribute_label))
 	{
-		if ($action == 'edit_extras')
-		{
-			print '<form enctype="multipart/form-data" action="'.$_SERVER["PHP_SELF"].'" method="post" name="formsoc">';
-			print '<input type="hidden" name="action" value="update_extras">';
-			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-			print '<input type="hidden" name="id" value="'.$object->id.'">';
-		}
-
 		foreach($extrafields->attribute_label as $key=>$label)
 		{
 			if ($action == 'edit_extras') {
@@ -1933,33 +1954,26 @@ else
 					$value = isset($_POST["options_".$key])?dol_mktime($_POST["options_".$key."hour"], $_POST["options_".$key."min"], 0, $_POST["options_".$key."month"], $_POST["options_".$key."day"], $_POST["options_".$key."year"]):$db->jdate($object->array_options['options_'.$key]);
 				}
 
-				if ($action == 'edit_extras' && $user->rights->propal->creer)
+				if ($action == 'edit_extras' && $user->rights->propal->creer && GETPOST('attribute') == $key)
 				{
+					print '<form enctype="multipart/form-data" action="'.$_SERVER["PHP_SELF"].'" method="post" name="formsoc">';
+					print '<input type="hidden" name="action" value="update_extras">';
+					print '<input type="hidden" name="attribute" value="'.$key.'">';
+					print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+					print '<input type="hidden" name="id" value="'.$object->id.'">';
+
 					print $extrafields->showInputField($key,$value);
+
+					print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
+
+					print '</form>';
 				}
 				else
 				{
 					print $extrafields->showOutputField($key,$value);
+					if ($object->statut == 0 && $user->rights->propal->creer) print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=edit_extras&attribute='.$key.'">'.img_picto('','edit').' '.$langs->trans('Modify').'</a>';
 				}
 				print '</td></tr>'."\n";
-			}
-		}
-
-		if(count($extrafields->attribute_label) > 0) {
-
-			if ($action == 'edit_extras' && $user->rights->propal->creer)
-			{
-				print '<tr><td></td><td colspan="5">';
-				print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
-				print '</form>';
-				print '</td></tr>';
-
-			}
-			else {
-				if ($object->statut == 0 && $user->rights->propal->creer)
-				{
-					print '<tr><td></td><td><a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=edit_extras">'.img_picto('','edit').' '.$langs->trans('Modify').'</a></td></tr>';
-				}
 			}
 		}
 	}
@@ -2024,17 +2038,27 @@ else
 
 	/*
 	 * Lines
-	*/
+	 */
+
+	// Show object lines
+	$result = $object->getLinesArray();
+
+
+	print '	<form name="addproduct" id="addproduct" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.(($action != 'editline')?'#add':'#line_'.GETPOST('lineid')).'" method="POST">
+	<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">
+	<input type="hidden" name="action" value="'.(($action != 'editline')?'addline':'updateligne').'">
+	<input type="hidden" name="mode" value="">
+	<input type="hidden" name="id" value="'.$object->id.'">
+	';
+
 
 	if (! empty($conf->use_javascript_ajax) && $object->statut == 0)
 	{
 		include DOL_DOCUMENT_ROOT.'/core/tpl/ajaxrow.tpl.php';
 	}
 
-	print '<table id="tablelines" class="noborder" width="100%">';
+	print '<table id="tablelines" class="noborder noshadow" width="100%">';
 
-	// Show object lines
-	$result = $object->getLinesArray();
 	if (! empty($object->lines))
 		$ret=$object->printObjectLines($action,$mysoc,$soc,$lineid,1);
 
@@ -2070,14 +2094,15 @@ else
 
 	print '</table>';
 
-	print '</div>';
-	print "\n";
+	print "</form>\n";
+
+	dol_fiche_end();
 
 	if ($action == 'statut')
 	{
 		/*
 		 * Formulaire cloture (signe ou non)
-		*/
+		 */
 		$form_close = '<form action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
 		$form_close.= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		$form_close.= '<table class="border" width="100%">';
@@ -2105,7 +2130,7 @@ else
 
 	/*
 	 * Boutons Actions
-	*/
+	 */
 	if ($action != 'presend')
 	{
 		print '<div class="tabsAction">';
@@ -2216,7 +2241,7 @@ else
 
 		/*
 		 * Documents generes
-		*/
+		 */
 		$filename=dol_sanitizeFileName($object->ref);
 		$filedir=$conf->propal->dir_output . "/" . dol_sanitizeFileName($object->ref);
 		$urlsource=$_SERVER["PHP_SELF"]."?id=".$object->id;

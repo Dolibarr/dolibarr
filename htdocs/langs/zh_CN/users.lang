@@ -117,4 +117,4 @@ HierarchicalResponsible=责任分级
 HierarchicView=分层视图
 UseTypeFieldToChange=改变用户字段类型
 # OpenIDURL=OpenID URL
-# LoginUsingOpenID=Login using OpenID
+# LoginUsingOpenID=Use OpenID to login

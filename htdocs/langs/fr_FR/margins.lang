@@ -47,5 +47,5 @@ BuyingCost=Coût de revient
 UnitCharges=Charge unitaire
 Charges=Charges
 
-AgentContactType=Type de contact commissionné
-AgentContactTypeDetails=Permet de définir le type de contact associé aux factures qui sera associé aux agents commerciaux
+# AgentContactType=Commercial agent contact type
+# AgentContactTypeDetails=Défine what contact type (linked on invoices) will be used for margin report by commercial agents

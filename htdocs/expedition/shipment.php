@@ -495,6 +495,7 @@ if ($id > 0 || ! empty($ref))
 				{
 					$product = new Product($db);
 					$product->fetch($objp->fk_product);
+					$product->load_stock();
 				}
 
 				if ($objp->fk_product > 0 && $type == 0 && ! empty($conf->stock->enabled))

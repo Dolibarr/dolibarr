@@ -121,8 +121,8 @@ class Form
      * @param	string	$value			Value to show/edit
      * @param	object	$object			Object
      * @param	boolean	$perm			Permission to allow button to edit parameter
-     * @param	string	$typeofdata		Type of data ('string' by default, 'email', 'numeric:99', 'text' or 'textarea:rows:cols', 'day' or 'datepicker', 'ckeditor:dolibarr_zzz:width:height:savemethod:toolbarstartexpanded:rows:cols', 'select:xxx'...)
-     * @param	string	$editvalue		When in edit mode, use this value as $value instead of value
+     * @param	string	$typeofdata		Type of data ('string' by default, 'amount', 'email', 'numeric:99', 'text' or 'textarea:rows:cols', 'day' or 'datepicker', 'ckeditor:dolibarr_zzz:width:height:savemethod:toolbarstartexpanded:rows:cols', 'select:xxx'...)
+     * @param	string	$editvalue		When in edit mode, use this value as $value instead of value (for example, you can provide here a formated price instead of value)
      * @param	object	$extObject		External object
      * @param	string	$success		Success message
      * @param	string	$moreparam		More param to add on a href URL
@@ -133,6 +133,9 @@ class Form
         global $conf,$langs,$db;
 
         $ret='';
+
+        // Check parameters
+        if (empty($typeofdata)) return 'ErrorBadParameter';
 
         // When option to edit inline is activated
         if (! empty($conf->global->MAIN_USE_JQUERY_JEDITABLE) && ! preg_match('/^select;|datehourpicker/',$typeofdata)) // FIXME add jquery timepicker
@@ -150,7 +153,7 @@ class Form
                 $ret.='<input type="hidden" name="id" value="'.$object->id.'">';
                 $ret.='<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
                 $ret.='<tr><td>';
-                if (preg_match('/^(string|email|numeric)/',$typeofdata))
+                if (preg_match('/^(string|email|numeric|amount)/',$typeofdata))
                 {
                     $tmp=explode(':',$typeofdata);
                     $ret.='<input type="text" id="'.$htmlname.'" name="'.$htmlname.'" value="'.($editvalue?$editvalue:$value).'"'.($tmp[1]?' size="'.$tmp[1].'"':'').'>';
@@ -191,8 +194,9 @@ class Form
                 $ret.='</form>'."\n";
             }
             else
-            {
-                if ($typeofdata == 'email')   $ret.=dol_print_email($value,0,0,0,0,1);
+			{
+				if ($typeofdata == 'email')   $ret.=dol_print_email($value,0,0,0,0,1);
+                elseif ($typeofdata == 'amount')   $ret.=($value != '' ? price($value,'',$langs) : '');
                 elseif (preg_match('/^text/',$typeofdata) || preg_match('/^note/',$typeofdata))  $ret.=dol_htmlentitiesbr($value);
                 elseif ($typeofdata == 'day' || $typeofdata == 'datepicker') $ret.=dol_print_date($value,'day');
                 elseif ($typeofdata == 'datehourpicker') $ret.=dol_print_date($value,'dayhour');
@@ -800,7 +804,7 @@ class Form
                 while ($i < $num)
                 {
                     $obj = $this->db->fetch_object($resql);
-
+                    $label='';
                     if ($conf->global->SOCIETE_ADD_REF_IN_LIST) {
                     	if (($obj->client) && (!empty($obj->code_client))) {
                     		$label = $obj->code_client. ' - ';
@@ -975,6 +979,7 @@ class Form
         }
         $sql.= " WHERE sp.entity IN (".getEntity('societe', 1).")";
         if ($socid > 0) $sql.= " AND sp.fk_soc=".$socid;
+        if (! empty($conf->global->CONTACT_HIDE_INACTIVE_IN_COMBOBOX)) $sql.= " AND sp.statut<>0 ";
         $sql.= " ORDER BY sp.lastname ASC";
 
         dol_syslog(get_class($this)."::select_contacts sql=".$sql);
@@ -1141,6 +1146,7 @@ class Form
         if (! empty($user->societe_id)) $sql.= " AND u.fk_societe = ".$user->societe_id;
         if (is_array($exclude) && $excludeUsers) $sql.= " AND u.rowid NOT IN ('".$excludeUsers."')";
         if (is_array($include) && $includeUsers) $sql.= " AND u.rowid IN ('".$includeUsers."')";
+        if (! empty($conf->global->USER_HIDE_INACTIVE_IN_COMBOBOX)) $sql.= " AND u.statut<>0 ";
         $sql.= " ORDER BY u.lastname ASC";
 
         dol_syslog(get_class($this)."::select_dolusers sql=".$sql);
@@ -2499,7 +2505,7 @@ class Form
      *     @param 	string		$action      	   	Action
      *	   @param  	array		$formquestion	   	An array with complementary inputs to add into forms: array(array('label'=> ,'type'=> , ))
      * 	   @param  	string		$selectedchoice  	"" or "no" or "yes"
-     * 	   @param  	int			$useajax		   	0=No, 1 or 'xxx'=Yes, 2=Yes but submit page with &confirm=no if choice is No, 'xxx'=preoutput confirm box with div id=dialog-confirm-xxx
+     * 	   @param  	int			$useajax		   	0=No, 1=Yes, 2=Yes but submit page with &confirm=no if choice is No, 'xxx'=Yes and preoutput confirm box with div id=dialog-confirm-xxx
      *     @param  	int			$height          	Force height of box
      *     @param	int			$width				Force width of bow
      *     @return 	string      	    			HTML ajax code if a confirm ajax popup is required, Pure HTML code if it's an html form
@@ -2588,10 +2594,12 @@ class Form
         }
 
 		// JQUI method dialog is broken with jmobile, we use standard HTML.
-		// Note: When using dol_use_jmobile, you must also check code for button use a GET url with action=xxx and output the confirm code only when action=xxx
+		// Note: When using dol_use_jmobile or no js, you must also check code for button use a GET url with action=xxx and check that you also output the confirm code when action=xxx
+		// See page product/fiche.php for example
         if (! empty($conf->dol_use_jmobile)) $useajax=0;
+		if (empty($conf->use_javascript_ajax)) $useajax=0;
 
-        if ($useajax && $conf->use_javascript_ajax)
+        if ($useajax)
         {
             $autoOpen=true;
             $dialogconfirm='dialog-confirm';
@@ -3657,25 +3665,26 @@ class Form
      *	@param	string	$prefix   	prefix
      *	@param  int		$iSecond  	Default preselected duration (number of seconds)
      * 	@param	int		$disabled	Disable the combo box
-     * 	@param	string	$typehour	if select then hour in select if text input in text
+     * 	@param	string	$typehour	if 'select' then input hour and input min is a combo, if 'text' input hour is in text and input min is a combo
      *  @return	void
      */
-    function select_duration($prefix,$iSecond='',$disabled=0,$typehour='select')
+    function select_duration($prefix, $iSecond='', $disabled=0, $typehour='select')
     {
     	global $langs;
 
+    	$hourSelected=0; $minSelected=0;
         if ($iSecond)
         {
             require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
-            $hourSelected = convertSecondToTime($iSecond,'hour');
+            $hourSelected = convertSecondToTime($iSecond,'allhour');
             $minSelected = convertSecondToTime($iSecond,'min');
         }
 
         if ($typehour=='select')
         {
 	        print '<select class="flat" name="'.$prefix.'hour"'.($disabled?' disabled="disabled"':'').'>';
-	        for ($hour = 0; $hour < 24; $hour++)
+	        for ($hour = 0; $hour < 25; $hour++)	// For a duration, we allow 24 hours
 	        {
 	            print '<option value="'.$hour.'"';
 	            if ($hourSelected == $hour)
@@ -3688,8 +3697,7 @@ class Form
         }
         elseif ($typehour=='text')
         {
-        	$fullhours=convertSecondToTime($iSecond,'fullhour');
-        	print '<input type="text" size="3" name="'.$prefix.'hour" class="flat" value="'.$fullhours.'">';
+        	print '<input type="text" size="3" name="'.$prefix.'hour" class="flat" value="'.((int) $hourSelected).'">';
         }
         print $langs->trans('Hours'). "&nbsp;";
         print '<select class="flat" name="'.$prefix.'min"'.($disabled?' disabled="disabled"':'').'>';
@@ -3717,9 +3725,10 @@ class Form
      *	@param  int		$translate		Translate and encode value
      * 	@param	int		$maxlen			Length maximum for labels
      * 	@param	int		$disabled		Html select box is disabled
+     *  @param	int		$sort			'ASC' or 'DESC' =Sort on label, '' or 'NONE'=Do not sort
      * 	@return	string					HTML select string
      */
-    function selectarray($htmlname, $array, $id='', $show_empty=0, $key_in_label=0, $value_as_key=0, $option='', $translate=0, $maxlen=0, $disabled=0)
+    function selectarray($htmlname, $array, $id='', $show_empty=0, $key_in_label=0, $value_as_key=0, $option='', $translate=0, $maxlen=0, $disabled=0, $sort='')
     {
         global $langs;
 
@@ -3734,28 +3743,30 @@ class Form
 
         if (is_array($array))
         {
+        	// Translate
+        	if ($translate)
+        	{
+	        	foreach($array as $key => $value) $array[$key]=$langs->trans($value);
+        	}
+
+        	// Sort
+			if ($sort == 'ASC') asort($array);
+			elseif ($sort == 'DESC') arsort($array);
+
             foreach($array as $key => $value)
             {
                 $out.='<option value="'.$key.'"';
-                // Si il faut pre-selectionner une valeur
-                if ($id != '' && $id == $key)
-                {
-                    $out.=' selected="selected"';
-                }
-
+                if ($id != '' && $id == $key) $out.=' selected="selected"';		// To preselect a value
                 $out.='>';
 
-                $newval=($translate?$langs->trans(ucfirst($value)):$value);
                 if ($key_in_label)
                 {
-                    $selectOptionValue = dol_htmlentitiesbr($key.' - '.($maxlen?dol_trunc($newval,$maxlen):$newval));
+                    $selectOptionValue = dol_htmlentitiesbr($key.' - '.($maxlen?dol_trunc($value,$maxlen):$value));
                 }
                 else
                 {
-                    $selectOptionValue = dol_htmlentitiesbr($maxlen?dol_trunc($newval,$maxlen):$newval);
-                    if ($value == '' || $value == '-') {
-                        $selectOptionValue='&nbsp;';
-                    }
+                    $selectOptionValue = dol_htmlentitiesbr($maxlen?dol_trunc($value,$maxlen):$value);
+                    if ($value == '' || $value == '-') $selectOptionValue='&nbsp;';
                 }
                 $out.=$selectOptionValue;
                 $out.="</option>\n";
@@ -3935,7 +3946,7 @@ class Form
      *    Return a HTML area with the reference of object and a navigation bar for a business object
      *    To add a particular filter on select, you must set $object->next_prev_filter to SQL criteria.
      *
-     *    @param	Object	$object			Object to show
+     *    @param	object	$object			Object to show
      *    @param   string	$paramid   		Name of parameter to use to name the id into the URL link
      *    @param   string	$morehtml  		More html content to output just before the nav bar
      *    @param	int		$shownav	  	Show Condition (navigation is shown if value is 1)

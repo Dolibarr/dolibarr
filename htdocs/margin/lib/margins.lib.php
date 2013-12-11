@@ -90,15 +90,23 @@ function marges_prepare_head()
  * @param 	float	$localtax2_tx		Vat rate special 2
  * @param 	int		$fk_pa				???
  * @param 	float	$paht				Buying price without tax
+ * @param	int		$type				Type of line (product or service)
+ * @param	Societe	$seller				Object of seller
+ * @param	array	$localtaxes_array	Array of localtaxes
  * @return	array						Array of margin info
+ * 
+ * FIXME This function is called too frequently without type, seller and without localtaxes_array defined. This make vat rate detection wrong.
  */
-function getMarginInfos($pvht, $remise_percent, $tva_tx, $localtax1_tx, $localtax2_tx, $fk_pa, $paht)
+function getMarginInfos($pvht, $remise_percent, $tva_tx, $localtax1_tx, $localtax2_tx, $fk_pa, $paht, $type=0, $seller='', $localtaxes_array='')
 {
-	global $db, $conf;
+	global $db, $conf, $mysoc;
 
 	$marge_tx_ret='';
 	$marque_tx_ret='';
 
+	if (empty($seller) || ! is_object($seller)) $seller=$mysoc;
+	if (empty($localtaxes_array) || ! is_array($localtaxes_array)) $localtaxes_array=array();
+	
 	if($fk_pa > 0) {
 		require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
 		$product = new ProductFournisseur($db);
@@ -115,7 +123,7 @@ function getMarginInfos($pvht, $remise_percent, $tva_tx, $localtax1_tx, $localta
 
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 	// calcul pu_ht remisés
-	$tabprice=calcul_price_total(1, $pvht, $remise_percent, $tva_tx, $localtax1_tx, $localtax2_tx, 0, 'HT', 0, 0);	// FIXME Parameter type is missing, i put 0 to avoid blocking error
+	$tabprice=calcul_price_total(1, $pvht, $remise_percent, $tva_tx, $localtax1_tx, $localtax2_tx, 0, 'HT', 0, $type, $seller, $localtaxes_array);
 	$pu_ht_remise = $tabprice[0];
 	// calcul marge
 	if ($pu_ht_remise < 0)
@@ -125,10 +133,10 @@ function getMarginInfos($pvht, $remise_percent, $tva_tx, $localtax1_tx, $localta
 
 	// calcul taux marge
 	if ($paht_ret != 0)
-		$marge_tx_ret = round((100 * $marge) / $paht_ret, 3);
+		$marge_tx_ret = (100 * $marge) / $paht_ret;
 	// calcul taux marque
 	if ($pu_ht_remise != 0)
-		$marque_tx_ret = round((100 * $marge) / $pu_ht_remise, 3);
+		$marque_tx_ret = (100 * $marge) / $pu_ht_remise;
 
 	return array($paht_ret, $marge_tx_ret, $marque_tx_ret);
 }

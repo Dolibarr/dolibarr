@@ -1,13 +1,13 @@
 # Dolibarr language file - Source file is en_US - main
 DIRECTION=ltr
-# Note for chinese:
-# msungstdlight or cid0ct are for traditionnal chinese (traditionnal does not render with ubuntu pdf reader)
-# stsongstdlight or cid0cs are for simplified chinese
-# To read chinese pdf with linux: sudo apt-get install poppler-data
+# Note for Chinese:
+# msungstdlight or cid0ct are for traditional Chinese (traditional does not render with Ubuntu pdf reader)
+# stsongstdlight or cid0cs are for simplified Chinese
+# To read Chinese pdf with Linux: sudo apt-get install poppler-data
 FONTFORPDF=helvetica
 FONTSIZEFORPDF=10
-SeparatorDecimal=None
-SeparatorThousand=Nessuno
+# SeparatorDecimal=.
+# SeparatorThousand=,
 FormatDateShort=%d/%m/%Y
 FormatDateShortInput=%d/%m/%Y
 FormatDateShortJava=dd/MM/yyyy
@@ -155,6 +155,7 @@ Valid=Convalida
 Approve=Approva
 ReOpen=Riapri
 Upload=Invia file
+ToLink=Link
 Select=Seleziona
 Choose=Scegli
 ChooseLangage=Scegli la lingua
@@ -387,7 +388,7 @@ OtherInformations=Altre informazioni
 Quantity=Quantità
 Qty=Qtà
 ChangedBy=Cambiato da
-# ReCalculate=Recalculate
+ReCalculate=Ricalcola
 ResultOk=Successo
 ResultKo=Fallimento
 Reporting=Reportistica
@@ -446,30 +447,30 @@ SeptemberMin=Set
 OctoberMin=Ott
 NovemberMin=Nov
 DecemberMin=Dic
-Month01=gennaio
-Month02=febbraio
-Month03=marzo
-Month04=aprile
-Month05=maggio
-Month06=giugno
-Month07=luglio
-Month08=agosto
-Month09=settembre
-Month10=ottobre
-Month11=novembre
-Month12=dicembre
-MonthShort01=gen
-MonthShort02=feb
-MonthShort03=mar
-MonthShort04=apr
-MonthShort05=mag
-MonthShort06=giu
-MonthShort07=lug
-MonthShort08=ago
-MonthShort09=set
-MonthShort10=ott
-MonthShort11=nov
-MonthShort12=dic
+# Month01=January
+# Month02=February
+# Month03=March
+# Month04=April
+# Month05=May
+# Month06=June
+# Month07=July
+# Month08=August
+# Month09=September
+# Month10=October
+# Month11=November
+# Month12=December
+# MonthShort01=Jan
+# MonthShort02=Feb
+# MonthShort03=Mar
+# MonthShort04=Apr
+# MonthShort05=May
+# MonthShort06=Jun
+# MonthShort07=Jul
+# MonthShort08=Aug
+# MonthShort09=Sep
+# MonthShort10=Oct
+# MonthShort11=Nov
+# MonthShort12=Dec
 AttachedFiles=File e documenti allegati
 FileTransferComplete=Upload concluso con successo
 DateFormatYYYYMM=AAAA-MM
@@ -631,7 +632,7 @@ IM=Messaggistica istantanea
 NewAttribute=Nuovo attributo
 AttributeCode=Codice attributo
 OptionalFieldsSetup=Impostazione attributi extra
-URLPhoto=URL foto/logo
+# URLPhoto=URL of photo/logo
 SetLinkToThirdParty=Collega ad altro soggetto terzo
 CreateDraft=Crea bozza
 ClickToEdit=Clicca per modificare
@@ -641,7 +642,7 @@ ByTown=Per città
 ByDate=Per data
 ByMonthYear=Per mese/anno
 ByYear=Per anno
-ByMonth=Per mese
+# ByMonth=By month
 ByDay=Per giorno
 BySalesRepresentative=Per venditore
 LinkedToSpecificUsers=Con collegamento ad un utente specifico
@@ -656,8 +657,11 @@ HomeDashboard=Sommario principale
 Deductible=Deducibile
 from=da
 toward=verso
-# Access=Access
-# HelpCopyToClipboard=Use Ctrl+C to copy to clipboard
+Access=Accesso
+HelpCopyToClipboard=Usa Ctrl+C per copiare negli appunti
+SaveUploadedFileWithMask=Salva il file sul server con il nome "<strong>%s</strong>" (oppure "%s")
+# OriginFileName=Original filename
+# SetDemandReason=Set source
 
 # Week day
 Monday=Lunedì
