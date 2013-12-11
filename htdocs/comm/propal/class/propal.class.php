@@ -2056,7 +2056,7 @@ class Propal extends CommonObject
                     {
                         // We remove directory
                         $ref = dol_sanitizeFileName($this->ref);
-                        if ($conf->propal->dir_output)
+                        if ($conf->propal->dir_output && !empty($this->ref))
                         {
                             $dir = $conf->propal->dir_output . "/" . $ref ;
                             $file = $dir . "/" . $ref . ".pdf";

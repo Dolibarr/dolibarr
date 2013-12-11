@@ -1323,7 +1323,7 @@ class Facture extends CommonInvoice
 				{
 					// On efface le repertoire de pdf provisoire
 					$ref = dol_sanitizeFileName($this->ref);
-					if ($conf->facture->dir_output)
+					if ($conf->facture->dir_output && !empty($this->ref))
 					{
 						$dir = $conf->facture->dir_output . "/" . $ref;
 						$file = $conf->facture->dir_output . "/" . $ref . "/" . $ref . ".pdf";
