@@ -29,12 +29,10 @@
 define("NOLOGIN",1);		// This means this output page does not require to be logged.
 define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
 
-// For MultiCompany module
-$entity=(! empty($_GET['entity']) ? (int) $_GET['entity'] : (! empty($_POST['entity']) ? (int) $_POST['entity'] : 1));
-if (is_int($entity))
-{
-	define("DOLENTITY", $entity);
-}
+// For MultiCompany module. This should be useless. Because entity must be retreive from object ref and not from url.
+$entity=GETPOST('entity')?GETPOST('entity','int'):1;
+if (is_int($entity)) define("DOLENTITY", $entity);
+
 
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/paypal/lib/paypal.lib.php';

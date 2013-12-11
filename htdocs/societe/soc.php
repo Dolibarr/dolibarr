@@ -52,7 +52,7 @@ $action		= (GETPOST('action') ? GETPOST('action') : 'view');
 $confirm	= GETPOST('confirm');
 $socid		= GETPOST('socid','int');
 if ($user->societe_id) $socid=$user->societe_id;
-if (empty($socid) && $action = 'view') $action='create';
+if (empty($socid) && $action == 'view') $action='create';
 
 $object = new Societe($db);
 $extrafields = new ExtraFields($db);

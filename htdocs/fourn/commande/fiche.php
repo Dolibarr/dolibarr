@@ -369,7 +369,7 @@ else if ($action == 'addline' && $user->rights->fournisseur->commande->creer)
 /*
  *	Mise a jour	d'une ligne	dans la	commande
  */
-else if ($action == 'update_line' && $user->rights->fournisseur->commande->creer &&	$_POST['save'] == $langs->trans('Save'))
+else if ($action == 'update_line' && $user->rights->fournisseur->commande->creer &&	! GETPOST('cancel'))
 {
     if ($_POST["elrowid"])
     {

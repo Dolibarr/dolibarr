@@ -1727,8 +1727,6 @@ table.liste td {
 .tagtable, .table-border { display: table; }
 .tagtr, .table-border-row  { display: table-row; }
 .tagtd, .table-border-col, .table-key-border-col, .table-val-border-col { display: table-cell; }
-.tagtable form, .tagtable div { display: table-row; }
-.tagtable form div, .tagtable div div { display: table-cell; }
 
 tr.liste_titre, tr.liste_titre_sel, form.liste_titre, form.liste_titre_sel, table.dataTable.tr
 {
@@ -1758,6 +1756,9 @@ tr.liste_titre th, th.liste_titre, tr.liste_titre td, td.liste_titre, form.liste
     border-bottom: 1px solid #FDFFFF;
 	text-shadow: 1px 0px 1px #<?php echo $colorshadowtitle; ?>;
     vertical-align: middle;
+}
+tr.liste_titre th a, th.liste_titre a, tr.liste_titre td a, td.liste_titre a, form.liste_titre div a, div.liste_titre a {
+	text-shadow: none !important;
 }
 .liste_titre td a {
 	text-shadow: none !important;
@@ -2854,14 +2855,6 @@ ul.ulmenu {
 	background-image: -ms-linear-gradient( #ddd,#d1d1d1 ) !important;
 	background-image: -o-linear-gradient( #ddd,#d1d1d1 ) !important;
 	background-image: linear-gradient( #ddd,#d1d1d1 ) !important;
-}
-.lilevel1:hover, .lilevel2:hover, .lilevel3:hover, .lilevel4:hover {
-	background-image: -webkit-gradient(linear,left top,left bottom,from( #ccc ),to( #c1c1c1 )) !important;
-	background-image: -webkit-linear-gradient( #ccc,#c1c1c1 ) !important;
-	background-image: -moz-linear-gradient( #ccc,#c1c1c1 ) !important;
-	background-image: -ms-linear-gradient( #ccc,#c1c1c1 ) !important;
-	background-image: -o-linear-gradient( #ccc,#c1c1c1 ) !important;
-	background-image: linear-gradient( #ccc,#c1c1c1 ) !important;
 }
 <?php if ($dol_use_jmobile) { ?>
 .overflowwithjm200

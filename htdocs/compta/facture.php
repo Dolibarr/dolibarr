@@ -1422,7 +1422,7 @@ else if (($action == 'addline' || $action == 'addline_predef') && $user->rights-
 	}
 }
 
-elseif ($action == 'updateligne' && $user->rights->facture->creer && $_POST['save'] == $langs->trans('Save'))
+elseif ($action == 'updateligne' && $user->rights->facture->creer && ! GETPOST('cancel'))
 {
 	if (! $object->fetch($id) > 0) dol_print_error($db);
 	$object->fetch_thirdparty();

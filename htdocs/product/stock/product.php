@@ -207,9 +207,9 @@ $formproduct=new FormProduct($db);
 if ($id > 0 || $ref)
 {
 	$product = new Product($db);
-	if ($ref) $result = $product->fetch('',$ref);
-	if ($id > 0) $result = $product->fetch($id);
-
+	$result = $product->fetch($id,$ref);
+	$product->load_stock();
+	
 	$help_url='EN:Module_Stocks_En|FR:Module_Stock|ES:M&oacute;dulo_Stocks';
 	llxHeader("",$langs->trans("CardProduct".$product->type),$help_url);
 

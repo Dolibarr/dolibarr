@@ -1316,9 +1316,9 @@ function fieldList($fieldlist,$obj='',$tabname='')
 			$size='';
 			if ($fieldlist[$field]=='libelle') $size='size="32" ';
 			if ($fieldlist[$field]=='tracking') $size='size="92" ';
-			if ($fieldlist[$field]=='accountancy_code') $size='size="15" ';
-			if ($fieldlist[$field]=='accountancy_code_sell') $size='size="15" ';
-			if ($fieldlist[$field]=='accountancy_code_buy') $size='size="15" ';
+			if ($fieldlist[$field]=='accountancy_code') $size='size="10" ';
+			if ($fieldlist[$field]=='accountancy_code_sell') $size='size="10" ';
+			if ($fieldlist[$field]=='accountancy_code_buy') $size='size="10" ';
 			print '<input type="text" '.$size.' class="flat" value="'.(isset($obj->$fieldlist[$field])?$obj->$fieldlist[$field]:'').'" name="'.$fieldlist[$field].'">';
 			print '</td>';
 		}

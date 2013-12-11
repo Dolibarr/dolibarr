@@ -1151,7 +1151,7 @@ class Product extends CommonObject
 		$sql.= " accountancy_code_buy, accountancy_code_sell, stock, pmp,";
 		$sql.= " datec, tms, import_key, entity, desiredstock";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product";
-		if ($id) $sql.= " WHERE rowid = '".$id."'";
+		if ($id) $sql.= " WHERE rowid = ".$this->db->escape($id);
 		else
 		{
 			$sql.= " WHERE entity IN (".getEntity($this->element, 1).")";
@@ -1223,6 +1223,7 @@ class Product extends CommonObject
 				$this->entity					= $obj->entity;
 
 				$this->db->free($resql);
+
 
 				// multilangs
 				if (! empty($conf->global->MAIN_MULTILANGS)) $this->getMultiLangs();
@@ -1347,9 +1348,11 @@ class Product extends CommonObject
 					}
 				}
 
-				$res=$this->load_stock();
-
-				return $res;
+				// We should not load stock at each fetch. If someone need stock, he must call load_stock after fetch.
+				//$res=$this->load_stock();
+				//return $res;
+				
+				return 1;
 			}
 			else
 			{

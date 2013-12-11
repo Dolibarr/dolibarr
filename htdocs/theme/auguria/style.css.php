@@ -1364,8 +1364,6 @@ table.liste td {
 .tagtable, .table-border { display: table; }
 .tagtr, .table-border-row  { display: table-row; }
 .tagtd, .table-border-col, .table-key-border-col, .table-val-border-col { display: table-cell; }
-.tagtable form, .tagtable div { display: table-row; }
-.tagtable form div, .tagtable div div { display: table-cell; }
 
 tr.liste_titre, tr.liste_titre_sel, form.liste_titre, form.liste_titre_sel
 {
@@ -1393,7 +1391,6 @@ div.liste_titre, tr.liste_titre, form.liste_titre
     color: #FFFFFF;
     font-family: <?php print $fontlist ?>;
     /* border-bottom: 1px solid #FDFFFF; */
-    white-space: nowrap;
     text-align: <?php echo $left; ?>;
 }
 th.liste_titre, td.liste_titre
@@ -2434,15 +2431,6 @@ ul.ulmenu {
 	background-image: -o-linear-gradient( #eee,#e1e1e1 ) !important;
 	background-image: linear-gradient( #eee,#e1e1e1 ) !important;
 }
-.lilevel1:hover, .lilevel2:hover, .lilevel3:hover, .lilevel4:hover {
-	background-image: -webkit-gradient(linear,left top,left bottom,from( #ddd ),to( #d1d1d1 )) !important;
-	background-image: -webkit-linear-gradient( #ddd,#d1d1d1 ) !important;
-	background-image: -moz-linear-gradient( #ddd,#d1d1d1 ) !important;
-	background-image: -ms-linear-gradient( #ddd,#d1d1d1 ) !important;
-	background-image: -o-linear-gradient( #ddd,#d1d1d1 ) !important;
-	background-image: linear-gradient( #ddd,#d1d1d1 ) !important;
-}
-
 
 <?php
 if (is_object($db)) $db->close();
