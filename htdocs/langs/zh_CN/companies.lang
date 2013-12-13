@@ -68,7 +68,6 @@ CountryId=国家编号
 Phone=电话
 # Skype=Skype
 # Call=Call
-# Chat=Chat
 PhonePro=教授电话
 PhonePerso=Pers的。电话
 PhoneMobile=移动
@@ -399,9 +398,7 @@ InActivity=打开
 ActivityCeased=关闭
 ActivityStateFilter=活动状态
 ProductsIntoElements=购入产品列表
-# CurrentOutstandingBill=Current outstanding bill
 # OutstandingBill=Max. for outstanding bill
-# OutstandingBillReached=Reached max. for outstanding bill
 # Monkey
 MonkeyNumRefModelDesc=返回格式%syymm为客户代码以及%syymm -○○○○供应商代码其中YY是年numero，MM是月，nnnn是一个没有休息，没有为0返回序列。
 # Leopard

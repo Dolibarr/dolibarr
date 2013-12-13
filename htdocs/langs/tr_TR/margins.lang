@@ -47,5 +47,5 @@ BuyingCost=Maliyet fiyatı
 UnitCharges=Birim masrafları
 Charges=Masraflar
 
-AgentContactType=Ticari temsilci ilgili tipi
-AgentContactTypeDetails=Ticari temsilciler tarafından oran raporları ile ilişkilendirilecek kişi türünü (faturalarla bağlantılı) tanımlayın
+AgentContactType=Komisyonlandırmada kullanılan kişi tipi
+AgentContactTypeDetails=Ticari temsilci ile ilişkilendirilecek kişi türünü (faturalarla bağlantılı) tanımlayın

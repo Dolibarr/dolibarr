@@ -147,7 +147,7 @@ AddDeliveryCostLine=Adaugă o linie cost livrare indicând greutatea comenzii
 # Documents models
 PDFEinsteinDescription=Un model complet pentru (logo. ..)
 PDFEdisonDescription=Un simplu pentru model
-PDFProformaDescription=De completat factura proformă (logo-ul ...)
+# PDFProformaDescription=A complete proforma invoice (logo…)
 # Orders modes
 OrderByMail=Poştă
 OrderByFax=Fax

@@ -228,7 +228,7 @@ OfficialWebSiteFr=Френски официален уеб сайт
 OfficialWiki=Dolibarr документация на Wiki
 OfficialDemo=Dolibarr онлайн демо
 OfficialMarketPlace=Официален пазара за външни модули / Addons
-# OfficialWebHostingService=Official web hosting services (Cloud hosting)
+OfficialWebHostingService=Официален уеб хостинг услуга (Cloud хостинг)
 ForDocumentationSeeWiki=За потребител или разработчик документация (Doc, често задавани въпроси ...), <br> да погледнем в Dolibarr Wiki: <br> <a href="%s" target="_blank"><b>%s</b></a>
 ForAnswersSeeForum=За всякакви други въпроси / Помощ, можете да използвате форума Dolibarr: <br> <a href="%s" target="_blank"><b>%s</b></a>
 HelpCenterDesc1=Тази област може да ви помогне да получите Помощ подкрепа на Dolibarr.
@@ -299,7 +299,6 @@ ServerNotAvailableOnIPOrPort=Сървърът не е достъпен на ад
 DoTestServerAvailability=Свързаност тестовия сървър
 DoTestSend=Тествайте изпращане
 DoTestSendHTML=Тествайте изпращане на HTML
-# ErrorCantUseRazIfNoYearInMask=Error, can't use option @ to reset counter each year if sequence {yy} or {yyyy} is not in mask.
 ErrorCantUseRazInStartedYearIfNoYearMonthInMask=Грешка, не могат да използват @ опция, ако последователност {гг} {mm} или {гггг} {mm} не е маска.
 UMask=Umask параметър за нови файлове в Unix / Linux / BSD файловата система.
 UMaskExplanation=Този параметър ви позволи да се определят правата, определени по подразбиране на файлове, създадени от Dolibarr на сървъра (по време на качването например). <br> Тя трябва да бъде осмична стойност (например, 0666 средства четат и пишат за всеки). <br> Този параметър е безполезно на предприятието на сървъра на Windows.
@@ -1009,8 +1008,6 @@ YouMustEnableOneModule=Трябва да даде възможност на на
 # XCacheInstalled=XCache is loaded.
 # AddRefInList=Display customer/supplier ref into list (select list or combobox) and most of hyperlink
 # FieldEdition=Edition of field %s
-# FixTZ=TimeZone fix
-# FillThisOnlyIfRequired=Example: +2 (fill only if timezone offset problems are experienced)
 ##### Module password generation
 PasswordGenerationStandard=Върнете парола, генерирана в съответствие с вътрешен алгоритъм Dolibarr: 8 символа, съдържащи общи цифри и символи с малки.
 PasswordGenerationNone=Не предлагаме някакви генерирана парола. Паролата трябва да въведете ръчно.

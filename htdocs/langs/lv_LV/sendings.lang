@@ -1,13 +1,13 @@
 # Dolibarr language file - Source file is en_US - sendings
 RefSending=Ref. sūtījums
-Sending=Sūtījums
-Sendings=Sūtījumi
+Sending=Sūtījumu
+Sendings=Sūtījumiem
 Shipment=Sūtījumu
-Shipments=Sūtījumi
+Shipments=Sūtījumiem
 Receivings=Receivings
 SendingsArea=Sūtījumi platība
 ListOfSendings=Saraksts sūtījumiem
-SendingMethod=Sūtīšanas metode
+SendingMethod=Kuģniecības metode
 SendingReceipt=Piegāde saņemšana
 LastSendings=Pēdējās %s sūtījumiem
 SearchASending=Meklēt sūtījumu

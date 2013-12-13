@@ -109,4 +109,3 @@ SelectProductWithNotNullQty=至少选择一个数量非空的产品和供应商
 # MassStockMovement=Mass stock movement
 # SelectProductInAndOutWareHouse=Select a product, a quantity, a source warehouse and a target warehouse, then click "%s". Once this is done for all required movements, click onto "%s".
 # RecordMovement=Record transfert
-# ReceivingForSameOrder=Receivings for this order

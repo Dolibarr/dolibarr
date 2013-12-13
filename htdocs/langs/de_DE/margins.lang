@@ -21,8 +21,8 @@
 # AgentMargins=Agent margins
 
 ProductService=Produkt oder Service
-AllProducts=Alle Produkte und Services
-ChooseProduct/Service=Produkt oder Service wählen
+# AllProducts=All products and services
+# ChooseProduct/Service=Choose product or service
 # CommercialAgent=Commercial agent
 
 StartDate=Vertragsbeginn
@@ -32,8 +32,8 @@ Launch=Start
 # ForceBuyingPriceIfNull=Force buying price if null
 # ForceBuyingPriceIfNullDetails=if "ON", margin will be zero on line (buying price = selling price), otherwise ("OFF"), marge will be equal to selling price (buying price = 0)
 # MARGIN_METHODE_FOR_DISCOUNT=Margin method for global discounts
-UseDiscountAsProduct=Als Produkt
-UseDiscountAsService=Als Service
+# UseDiscountAsProduct=As a product
+# UseDiscountAsService=As a service
 # UseDiscountOnTotal=On subtotal
 # MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Defines if a global discount is treated as a product, a service, or only on subtotal for margin calculation.
 
@@ -47,5 +47,5 @@ UseDiscountAsService=Als Service
 # UnitCharges=Unit charges
 # Charges=Charges
 
-# AgentContactType=Commercial agent contact type
-# AgentContactTypeDetails=Défine what contact type (linked on invoices) will be used for margin report by commercial agents
+# AgentContactType=Contact type used for commissioning
+# AgentContactTypeDetails=Défine what contact type (linked on invoices) will be associated with commercial agents

@@ -228,7 +228,7 @@ OfficialWebSiteFr=lloc web oficial francòfon
 OfficialWiki=Wiki Dolibarr
 OfficialDemo=Demo en línia Dolibarr
 OfficialMarketPlace=Lloc oficial de mòduls complementaris i extensions
-# OfficialWebHostingService=Official web hosting services (Cloud hosting)
+OfficialWebHostingService=Servei oficial d'allotjament (SaaS)
 ForDocumentationSeeWiki=Per a la documentació d'usuari, desenvolupador o Preguntes Freqüents (FAQ), consulteu el wiki Dolibarr: <br><b><a href="%s" target="_blank">%s</a></b>
 ForAnswersSeeForum=Per altres qüestions o realitzar les seves pròpies consultes, pot utilitzar el fòrum Dolibarr: <br><b><a href="%s" target="_blank">%s</a></b>
 HelpCenterDesc1=Aquesta aplicació, independent de Dolibarr, us permet ajudar a obtenir un servei de suport de Dolibarr.
@@ -299,7 +299,6 @@ ServerNotAvailableOnIPOrPort=Servidor no disponible en l'adreça <b>%s</b> al po
 DoTestServerAvailability=Provar la connexió amb el servidor
 DoTestSend=Provar enviament
 DoTestSendHTML=Probar enviament HTML
-# ErrorCantUseRazIfNoYearInMask=Error, can't use option @ to reset counter each year if sequence {yy} or {yyyy} is not in mask.
 ErrorCantUseRazInStartedYearIfNoYearMonthInMask=Error, no es pot usar opció @ si la seqüència (yy) (mm) o (yyyy) (mm) no es troba a la màscara.
 UMask=Paràmetre UMask de nous fitxers en Unix/Linux/BSD.
 UMaskExplanation=Aquest paràmetre determina els drets dels arxius creats en el servidor Dolibarr (durant la pujada, per exemple).<br>Aquest ha de ser el valor octal (per exemple, 0666 significa lectura/escriptura per a tots).<br>Aquest paràmetre no té cap efecte sobre un servidor Windows.
@@ -1009,8 +1008,6 @@ XDebugInstalled=XDebug està carregat.
 XCacheInstalled=XCache cau està carregat.
 # AddRefInList=Display customer/supplier ref into list (select list or combobox) and most of hyperlink
 # FieldEdition=Edition of field %s
-# FixTZ=TimeZone fix
-# FillThisOnlyIfRequired=Example: +2 (fill only if timezone offset problems are experienced)
 ##### Module password generation
 PasswordGenerationStandard=Retorna una contrasenya generada per l'algoritme intern Dolibarr: 8 caràcters, números i caràcters en minúscules barrejades.
 PasswordGenerationNone=No ofereix contrasenyes. La contrasenya s'introdueix manualment.

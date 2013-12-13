@@ -47,5 +47,5 @@ Launch=Byrja
 # UnitCharges=Unit charges
 # Charges=Charges
 
-# AgentContactType=Commercial agent contact type
-# AgentContactTypeDetails=Défine what contact type (linked on invoices) will be used for margin report by commercial agents
+# AgentContactType=Contact type used for commissioning
+# AgentContactTypeDetails=Défine what contact type (linked on invoices) will be associated with commercial agents

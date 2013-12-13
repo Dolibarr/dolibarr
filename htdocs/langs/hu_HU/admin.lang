@@ -228,7 +228,7 @@ OfficialWebSiteFr=Francia hivatalos honlapján
 OfficialWiki=Dolibarr dokumentáció Wiki
 OfficialDemo=Dolibarr online demo
 OfficialMarketPlace=Hivatalos piac külső modulok / addons
-# OfficialWebHostingService=Official web hosting services (Cloud hosting)
+# OfficialWebHostingService=Official web hosting service (Cloud hosting)
 ForDocumentationSeeWiki=A felhasználó vagy fejlesztői dokumentáció (doc, GYIK ...), <br> vessünk egy pillantást a Dolibarr Wiki: <br> <a href="%s" target="_blank"><b>%s</b></a>
 ForAnswersSeeForum=Ha bármilyen további kérdése / help, akkor használja a fórumot Dolibarr: <br> <a href="%s" target="_blank"><b>%s</b></a>
 HelpCenterDesc1=Ez a terület is segít, hogy a Help támogató szolgáltatás Dolibarr.
@@ -299,7 +299,6 @@ ServerNotAvailableOnIPOrPort=A kiszolgáló nem elérhető címen <b>%s %s</b> p
 DoTestServerAvailability=Teszt szerver kapcsolat
 DoTestSend=Tesztelje küldése
 DoTestSendHTML=Tesztelje küldök HTML
-# ErrorCantUseRazIfNoYearInMask=Error, can't use option @ to reset counter each year if sequence {yy} or {yyyy} is not in mask.
 ErrorCantUseRazInStartedYearIfNoYearMonthInMask=Hiba, nem tudja használni, ha az opció @ {sorozat} {nn mm ÉÉÉÉ} vagy {} {} mm nincs maszk.
 UMask=Umask paramétert az új fájlok a Unix / Linux / BSD fájlrendszer.
 UMaskExplanation=Ez a paraméter lehetővé teszi, hogy meghatározza jogosultságok beállítása alapértelmezés szerint létrehozott fájlok Dolibarr a szerver (feltöltés közben például). <br> Ennek kell lennie az oktális érték (például 0666 segítségével írni és olvasni mindenki számára). <br> Ez a paraméter haszontalan egy Windows szerverre.
@@ -1009,8 +1008,6 @@ SendmailOptionMayHurtBuggedMTA=Feature mailt küldeni módszerrel &quot;PHP mail
 # XCacheInstalled=XCache is loaded.
 # AddRefInList=Display customer/supplier ref into list (select list or combobox) and most of hyperlink
 # FieldEdition=Edition of field %s
-# FixTZ=TimeZone fix
-# FillThisOnlyIfRequired=Example: +2 (fill only if timezone offset problems are experienced)
 ##### Module password generation
 PasswordGenerationStandard=Vissza a jelszót generált szerint Belső Dolibarr algoritmus: 8 karakter tartalmazó közös számokat és karaktereket kisbetűvel.
 PasswordGenerationNone=Nem utalnak semmilyen generált jelszót. Jelszót kell kézzel írja be.

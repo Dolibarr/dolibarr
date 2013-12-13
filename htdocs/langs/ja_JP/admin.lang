@@ -228,7 +228,7 @@ OfficialWebSiteFr=フランスの公式ウェブサイト
 OfficialWiki=WikiのDolibarrドキュメント
 OfficialDemo=Dolibarrオンラインデモ
 OfficialMarketPlace=外部モジュール/アドオンの公式市場の場所
-# OfficialWebHostingService=Official web hosting services (Cloud hosting)
+# OfficialWebHostingService=Official web hosting service (Cloud hosting)
 ForDocumentationSeeWiki=ユーザーまたは開発者のドキュメント（DOC、よくある質問（FAQ）...）のために、 <br> Dolibarr Wikiで見てみましょう。 <br> <a href="%s" target="_blank"><b>%s</b></a>
 ForAnswersSeeForum=他の質問/ヘルプについては、Dolibarrフォーラムを使用することができます。 <br> <a href="%s" target="_blank"><b>%s</b></a>
 HelpCenterDesc1=この領域には、Dolibarrのヘルプサポートサービスを取得することができます。
@@ -299,7 +299,6 @@ ServerNotAvailableOnIPOrPort=サーバーはポート<b>%s</b>上のアドレス
 DoTestServerAvailability=テストサーバーへの接続
 DoTestSend=送信テスト
 DoTestSendHTML=HTMLを送信するテスト
-# ErrorCantUseRazIfNoYearInMask=Error, can't use option @ to reset counter each year if sequence {yy} or {yyyy} is not in mask.
 ErrorCantUseRazInStartedYearIfNoYearMonthInMask=エラー、シーケンス場合は、@オプションを使用することはできません{YY} {ミリメートル}または{探す} {mmは}マスクではありません。
 UMask=のUnix / Linux / BSDのファイルシステム上に新しいファイルのumaskパラメータ。
 UMaskExplanation=このパラメータは、（たとえば、アップロード中に）、サーバー上でDolibarrによって作成されたファイルは、デフォルトで設定されているアクセス許可を定義することができます。 <br>それは、8進値（例えば、0666の手段みんなのための読み取りおよび書き込み）である必要があります。 <br>このパラメータは、Windowsサーバー上では役に立ちません。
@@ -1009,8 +1008,6 @@ SendmailOptionMayHurtBuggedMTA=&quot;PHPのメール直接&quot;メソッドを�
 # XCacheInstalled=XCache is loaded.
 # AddRefInList=Display customer/supplier ref into list (select list or combobox) and most of hyperlink
 # FieldEdition=Edition of field %s
-# FixTZ=TimeZone fix
-# FillThisOnlyIfRequired=Example: +2 (fill only if timezone offset problems are experienced)
 ##### Module password generation
 PasswordGenerationStandard=小文字で共有数字と文字を含む8文字：内部Dolibarrアルゴリズムに従って生成されたパスワードを返します。
 PasswordGenerationNone=すべての生成されたパスワードを示唆するものではない。パスワードは、手動でタイプする必要があります。

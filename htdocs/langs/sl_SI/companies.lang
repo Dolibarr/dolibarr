@@ -68,7 +68,6 @@ CountryId=Država id
 Phone=Telefon
 # Skype=Skype
 # Call=Call
-# Chat=Chat
 PhonePro=Službeni telefon
 PhonePerso=Osebni telefon
 PhoneMobile=Mobilni telefon
@@ -399,9 +398,7 @@ InActivity=Aktiven
 ActivityCeased=Neaktiven
 ActivityStateFilter=Status aktivnosti
 # ProductsIntoElements=List of products into
-# CurrentOutstandingBill=Current outstanding bill
 # OutstandingBill=Max. for outstanding bill
-# OutstandingBillReached=Reached max. for outstanding bill
 # Monkey
 MonkeyNumRefModelDesc=Predlaga kodo kupca v formatu %syymm-nnnn in kodo dobavitelja v formatu %syymm-nnnn kjer je yy leto, mm mesec in nnnn zaporedna številka brez presledka, večja od 0.
 # Leopard

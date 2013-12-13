@@ -38,7 +38,7 @@ ConfirmCloseService=Möchten Sie dieses Service wirklich mit Datum <b>%s</b> sch
 ValidateAContract=Einen Vertrag freigeben
 ActivateService=Service aktivieren
 ConfirmActivateService=Möchten Sie diesen Service wirklich mit Datum <b>%s</b> aktivieren?
-RefContract=Vertrags-Referenz
+# RefContract=Contract reference
 DateContract=Vertragsdatum
 DateServiceActivate=Service-Aktivierungsdatum
 DateServiceUnactivate=Service-Deaktivierungsdatum
@@ -85,9 +85,9 @@ PaymentRenewContractId=Erneuere Vertragsposition (Nummer %s)
 ExpiredSince=Abgelaufen seit
 RelatedContracts=Verknüpfte Verträge
 NoExpiredServices=Keine abgelaufen aktiven Dienste
-ListOfServicesToExpireWithDuration=Liste der Leistungen die in %s Tagen ablaufen
-ListOfServicesToExpireWithDurationNeg=Liste der Services die seit mehr als %s Tagen abgelaufen sind
-ListOfServicesToExpire=Liste der Services die ablaufen
+# ListOfServicesToExpireWithDuration=List of Services to expire in %s days
+# ListOfServicesToExpireWithDurationNeg=List of Services expired from more than %s days
+# ListOfServicesToExpire=List of Services to expire
 # NoteListOfYourExpiredServices=This list contains only services of contracts for third parties you are linked to as a sale representative.
 
 ##### Types de contacts #####

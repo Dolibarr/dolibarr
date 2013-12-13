@@ -2,113 +2,112 @@
 #
 # About page
 #
-About = Mooduli kohta
-CronAbout = Cron mooduli kohta
-CronAboutPage = Croni info kohta
+About = Umbes
+# CronAbout = About Cron
+# CronAboutPage = Cron about page
 
 #
 # Right
 #
-Permission23101 = Loe plaanitud tegevus
-Permission23102 = Loo/uuenda plaanitud tegevust
-Permission23103 = Kustuta plaanitud tegevus
-Permission23104 = Käivita plaanitud tegevus
+# Permission23101 = Read Scheduled task
+# Permission23102 = Create/update Scheduled task
+# Permission23103 = Delete Scheduled task
+# Permission23104 = Execute Scheduled task
 
 #
 # Admin
 #
-CronSetup= Plaanitavata programmide haldamise seadistamine
-# URLToLaunchCronJobs=URL to check and launch cron jobs if required
-# OrToLaunchASpecificJob=Or to check and launch a specific job
-KeyForCronAccess=Croni käivitatavate programmide URLile ligipääsu turvavõti
-FileToLaunchCronJobs=Käsurea käsk cron programmide käivitamiseks
-CronExplainHowToRunUnix=Unix keskonnas on soovitatav kasutada crontabi käsurealt käivitatavate käskude jooksutamiseks
-CronExplainHowToRunWin=Microsoft(tm) Windows keskkonnas võib kasutada Toiminguajasti tööriista kindlate intervallide tagant käivitavate tegevuste plaanimiseks.
+# CronSetup= Scheduled job management setup
+# URLToLaunchCronJobs=URL to launch cron jobs
+# OrToLaunchASpecificJob=Or to launch a specific job
+# KeyForCronAccess=Security key for URL to launch cron jobs
+# FileToLaunchCronJobs=Command line to launch cron jobs
+# CronExplainHowToRunUnix=On Unix environment you should use crontab to run Command line each minutes
+# CronExplainHowToRunWin=On Microsoft(tm) Windows environement you can use Scheduled task tools to run Command line each minutes
 
 
 #
 # Menu
 #
-CronJobs=Plaanitud käivitused
-CronListActive= Aktiivsete programmide loend
-CronListInactive= Välja lülitatud tööde loend
-CronListActive= Aktiivsete programmide loend
+# CronJobs=Scheduled jobs
+# CronListActive= List of active jobs
+# CronListInactive= List of disabled jobs
 
 
 #
 # Page list
 #
-CronDateLastRun=Viimane käivitus
-CronLastOutput=Viimase käivituse väljund
-CronLastResult=Viimane vastuse kood
-CronListOfCronJobs=Käivitatavate programmide loend
-CronCommand=Käsk
-# CronList=Jobs list
-CronDelete= Kustuta programme
-CronConfirmDelete= Kas oled kindel, et soovid selle käivituse kustutada?
-CronExecute=Käivita tegevus
-CronConfirmExecute= Kas oled kindel, et soovid seda programmi praegu käivitada
-CronInfo= Programmid, mis lubavad käivitada planeeritud tegevusi
-CronWaitingJobs=Ootel programmid
-CronTask=Tegevus
+# CronDateLastRun=Last run
+# CronLastOutput=Last run output
+# CronLastResult=Last result code
+# CronListOfCronJobs=List of scheduled jobs
+# CronCommand=Command
+# CronList= Job list
+# CronDelete= Delete cron jobs
+# CronConfirmDelete= Are you sure you want to delete this cron job ?
+# CronExecute=Launch job
+# CronConfirmExecute= Are you sure to execute this job now
+# CronInfo= Jobs allow to execute task that have been planned
+# CronWaitingJobs=Wainting jobs
+# CronTask=Job
 CronNone= Mitte ükski
 CronDtStart=Alguskuupäev
 CronDtEnd=Lõppkuupäev
-CronDtNextLaunch=Järgmine käivitus
-CronDtLastLaunch=Viimane käivitus
-CronFrequency=Sagedus
-CronClass=Klass
+# CronDtNextLaunch=Next execution
+# CronDtLastLaunch=Last execution
+# CronFrequency=Frequancy
+# CronClass=Classe
 CronMethod=Meetod
 CronModule=Moodul
-CronAction=Tegevus
+# CronAction=Action
 CronStatus=Staatus
-CronStatusActive=Sisse lülitatud
-CronStatusInactive=Välja lülitatud
-CronNoJobs=Pole ühtki registreeritud programm
+CronStatusActive=Lubatud
+CronStatusInactive=Puudega inimestele
+# CronNoJobs=No jobs registered
 CronPriority=Prioriteet
 CronLabel=Kirjeldus
-CronNbRun=Käivituste arv
-CronEach=Iga
-JobFinished=Tegevus käivitatud ja lõpetatud
+# CronNbRun=Nb. launch
+# CronEach=Every
+# JobFinished=Job launched and finished
 
 #
 #Page card
 #
-CronAdd= Lisa programme
-CronHourStart= Tegevuse algusaeg ja -kuupäev
-CronEvery= Ja käivita iga tegevus
-CronObject= Instants/objekt, mis luuakse
+# CronAdd= Add jobs
+# CronHourStart= Start Hour and date of task
+# CronEvery= And execute task each
+# CronObject= Instance/Object to create
 CronArgs=Parameetrid
-CronSaveSucess=Salvestamine õnnestus
+# CronSaveSucess=Save succesfully
 CronNote=Kommentaar
-CronFieldMandatory=Välja %s täitmine on nõutud
-CronErrEndDateStartDt=Lõppkuupäev ei saa olla alguskuupäevast varasem
-CronStatusActiveBtn=Lülita sisse
-CronStatusInactiveBtn=Lülita välja
-CronTaskInactive=See tegevus on välja lülitatud
-CronDtLastResult=Viimase vastuse kuupäev
-CronId=ID
-CronClassFile=Klassid (filename.class.php)
-CronModuleHelp=Dolibarri moodulite kausta nimi (töötab ka välise Dolibarro mooduliga). <br> Näiteks Dolibarri Product objekti kasutamisel /htdocs/<u>product</u>/class/product.class.php on mooduli väärtuseks <i>product</i>.
-CronClassFileHelp=Laetava faili nimi. <BR> Näiteks Dolibarri Product objekti /htdocs/product/class/<u>product.class.php</u> meetodi kasutamisel on selle väärtuseks <i>product.class.php</i>.
-CronObjectHelp=Laetava objekti nimi. <BR> Näiteks Dolibarri Product objekti /htdocs/product/class/product.class.php kasutamisel on selle väärtuseks <i>Product</i>.
-CronMethodHelp=Kasutatava objekti korral käivitatav meetod. <BR> Näiteks Dolibarr Product objekti /htdocs/product/class/product.class.php meetodi fetch kasutamisel on meetodi väärtuseks <i>fetch</i>
-CronArgsHelp=Meetodile antavad argumendid. <BR> Näiteks Dolibarri Product objekti /htdocs/product/class/product.class.php meetodi fetch kasutamisel võivad parameetrite väärtusteks olla <i>0, ProductRef</i>.
-CronCommandHelp=Käivitatav süsteemi käsk.
+# CronFieldMandatory=Fields %s is mandatory
+# CronErrEndDateStartDt=End date cannot be before start date
+# CronStatusActiveBtn=Enable
+CronStatusInactiveBtn=Keela
+# CronTaskInactive=This job is disabled
+# CronDtLastResult=Last result date
+# CronId=Id
+# CronClassFile=Classes (filename.class.php)
+# CronModuleHelp=Name of Dolibarr module directory (also work with external Dolibarr module). <BR> For exemple to fetch method of Dolibarr Product object /htdocs/<u>product</u>/class/product.class.php, the value of module is <i>product</i>
+# CronClassFileHelp=The file name to load. <BR> For exemple to fetch method of Dolibarr Product object /htdocs/product/class/<u>product.class.php</u>, the value of class file name is <i>product.class.php</i>
+# CronObjectHelp=The object name to load. <BR> For exemple to fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value of class file name is <i>Product</i>
+# CronMethodHelp=The object method to launch. <BR> For exemple to fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value of method is  is <i>fecth</i>
+# CronArgsHelp=The method arguments. <BR> For exemple to fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value of paramters can be <i>0, ProductRef</i>
+# CronCommandHelp=The system command line to execute.
 
 #
 # Info
 #
-CronInfoPage=Informatsioon
+# CronInfoPage=Information
 
 
 #
 # Common
 #
-CronType=Tegevuse tüüp
-CronType_method=Dolibarri klassi väljakutsutav meetod
-CronType_command=Käsurea käsk
-CronMenu=Cro
-CronCannotLoadClass=Klassi %s või objekti %s laadimine ebaõnnestus
+# CronType=Task type
+# CronType_method=Call method of a Dolibarr Class
+# CronType_command=Shell command
+# CronMenu=Cron
+# CronCannotLoadClass=Cannot load class %s or object %s
 
-UseMenuModuleToolsToAddCronJobs=Mine menüüsse "Kodu - Moodulite tööriistad - Tegevuste nimekiri" planeeritud tegevuste vaatamiseks ja muutmiseks.
+# UseMenuModuleToolsToAddCronJobs=Go into menu "Home - Modules tools - Job list" to see and edit scheduled jobs.

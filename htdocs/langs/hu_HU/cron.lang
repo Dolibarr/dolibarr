@@ -18,8 +18,8 @@ About = Róla
 # Admin
 #
 # CronSetup= Scheduled job management setup
-# URLToLaunchCronJobs=URL to check and launch cron jobs if required
-# OrToLaunchASpecificJob=Or to check and launch a specific job
+# URLToLaunchCronJobs=URL to launch cron jobs
+# OrToLaunchASpecificJob=Or to launch a specific job
 # KeyForCronAccess=Security key for URL to launch cron jobs
 # FileToLaunchCronJobs=Command line to launch cron jobs
 # CronExplainHowToRunUnix=On Unix environment you should use crontab to run Command line each minutes
@@ -32,7 +32,6 @@ About = Róla
 # CronJobs=Scheduled jobs
 # CronListActive= List of active jobs
 # CronListInactive= List of disabled jobs
-# CronListActive= List of active jobs
 
 
 #
@@ -43,7 +42,7 @@ About = Róla
 # CronLastResult=Last result code
 # CronListOfCronJobs=List of scheduled jobs
 # CronCommand=Command
-# CronList=Jobs list
+# CronList= Job list
 # CronDelete= Delete cron jobs
 # CronConfirmDelete= Are you sure you want to delete this cron job ?
 # CronExecute=Launch job

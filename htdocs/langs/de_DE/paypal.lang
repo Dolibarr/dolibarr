@@ -18,5 +18,5 @@ PAYPAL_IPN_MAIL_ADDRESS=E-Mail Adresse für sofortige Benachrichtigung der Zahlu
 PredefinedMailContentLink=Sie können unten auf den sicheren Link klicken, um Ihre Zahlung mit PayPal \n\n %s \n\n zu tätigen
 YouAreCurrentlyInSandboxMode=Sie befinden sich im &quot;Sandbox&quot;-Modus
 NewPaypalPaymentReceived=Neue PayPal-Zahlung erhalten
-NewPaypalPaymentFailed=Neue Paypal-Zahlung probiert, aber fehlgeschlagen
+# NewPaypalPaymentFailed=New Paypal payment tried but failed
 PAYPAL_PAYONLINE_SENDEMAIL=Status-Email nach einer Zahlung (erfolgreich oder nicht)

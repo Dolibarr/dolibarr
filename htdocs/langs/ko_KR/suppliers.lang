@@ -12,8 +12,6 @@
 # BuyingPrice=Buying price
 # BuyingPriceMin=Minimum buying price
 # BuyingPriceMinShort=Min buying price
-# TotalBuyingPriceMin=Total of subproducts buying prices
-# SomeSubProductHaveNoPrices=Some sub-products have no price defined
 # AddSupplierPrice=Add supplier price
 # ChangeSupplierPrice=Change supplier price
 # ErrorQtyTooLowForThisSupplier=Quantity too low for this supplier or no price defined on this product for this supplier

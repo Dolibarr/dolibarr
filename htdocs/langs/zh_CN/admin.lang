@@ -228,7 +228,7 @@ OfficialWebSiteFr=法国官方网站
 OfficialWiki=Dolibarr Wiki 上的文档
 OfficialDemo=Dolibarr在线演示
 OfficialMarketPlace=官方市场提供外部模块/扩展
-# OfficialWebHostingService=Official web hosting services (Cloud hosting)
+OfficialWebHostingService=官方网页托管服务(云托管)
 ForDocumentationSeeWiki=用户或开发人员用文档(文档，常见问题…)，<br>参见 Dolibarr 百科：<br><b><a href="%s" target="_blank">%s</a></b>
 ForAnswersSeeForum=您有任何其他问题/帮助，可以到 Dolibarr 论坛： <br> <b><a href="%s" target="_blank">%s</a></b>
 HelpCenterDesc1=此处可以帮助你获得 Dolibarr 帮助支持服务。
@@ -299,7 +299,6 @@ ServerNotAvailableOnIPOrPort=服务器地址: <b>%s:</b><b>%s</b> 不可用
 DoTestServerAvailability=测试服务器连通性
 DoTestSend=测试发送
 DoTestSendHTML=测试发送 HTML
-# ErrorCantUseRazIfNoYearInMask=Error, can't use option @ to reset counter each year if sequence {yy} or {yyyy} is not in mask.
 ErrorCantUseRazInStartedYearIfNoYearMonthInMask=错误，格式掩码中标记 @ 必须与{yy}{mm}或{yyyy}{mm}同时使用。
 UMask=Unix/Linux/BSD 文件系统下新文件的 umask 参数。
 UMaskExplanation=定义服务器上 Dolibarr 创建文件的默认权限(例如上传的文件)。<br>它必须是八进制值(例如，0666就表示人人可读可写)。 <br>此参数对Windows服务器无效。
@@ -1009,8 +1008,6 @@ XDebugInstalled=XDebug已经加载。
 XCacheInstalled=XCache已经加载。
 AddRefInList=显示客户/供应商参考列表(选择列表或组合框)和大部分超级链接
 # FieldEdition=Edition of field %s
-# FixTZ=TimeZone fix
-# FillThisOnlyIfRequired=Example: +2 (fill only if timezone offset problems are experienced)
 ##### Module password generation
 PasswordGenerationStandard=返回一个根据 Dolibarr 内部算法生成的密码：8个字符，包含小写数字和字母。
 PasswordGenerationNone=不使用自动生成的密码。用户必须手动输入密码。

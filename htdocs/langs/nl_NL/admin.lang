@@ -228,7 +228,7 @@ OfficialWebSiteFr=Officiële Franse website
 OfficialWiki=Documentatie op de Wiki pagina's van Dolibarr
 OfficialDemo=Online demonstratie van Dolibarr
 OfficialMarketPlace=Officiële markt voor externe modules / addons
-# OfficialWebHostingService=Official web hosting services (Cloud hosting)
+# OfficialWebHostingService=Official web hosting service (Cloud hosting)
 ForDocumentationSeeWiki=Documentatie voor gebruikers of ontwikkelaars kunt u inzien door <br>te kijken op de Dolibarr Wiki-pagina's:<br><b><a href="%s" target="_blank">%s</a></b>
 ForAnswersSeeForum=Voor alle andere vragen / hulp, kunt u gebruik maken van het Dolibarr forum:<br><b><a href="%s" target="_blank">%s</a></b>
 HelpCenterDesc1=Dit scherm kan u helpen om ondersteuning voor Dolibarr te krijgen.
@@ -299,7 +299,6 @@ ServerNotAvailableOnIPOrPort=Server is niet beschikbaar op het IP-adres <b>%s</b
 DoTestServerAvailability=Test server verbinding
 DoTestSend=Test verzenden
 DoTestSendHTML=Test het verzenden van HTML
-# ErrorCantUseRazIfNoYearInMask=Error, can't use option @ to reset counter each year if sequence {yy} or {yyyy} is not in mask.
 ErrorCantUseRazInStartedYearIfNoYearMonthInMask=Fout, kan optie @ niet gebruiken wanneer de volgorde {jj}{mm} of {jjjj}{mm} niet is opgenomen in het masker.
 UMask=Umask parameter voor nieuwe bestanden op een Unix- / Linux- / BSD-bestandssysteem.
 UMaskExplanation=Deze parameter laat u de rechten bepalen welke standaard zijn ingesteld voor de bestanden aangemaakt door Dolibarr op de server (tijdens het uploaden, bijvoorbeeld).<br>Het moet de octale waarde zijn (bijvoorbeeld, 0666 betekent lezen en schrijven voor iedereen).<br>Deze parameter wordt NIET op een windows-server gebruikt
@@ -1009,8 +1008,6 @@ SendmailOptionMayHurtBuggedMTA=Feature om e-mails met behulp van methode &quot;P
 # XCacheInstalled=XCache is loaded.
 # AddRefInList=Display customer/supplier ref into list (select list or combobox) and most of hyperlink
 # FieldEdition=Edition of field %s
-# FixTZ=TimeZone fix
-# FillThisOnlyIfRequired=Example: +2 (fill only if timezone offset problems are experienced)
 ##### Module password generation
 PasswordGenerationStandard=Geeft een wachtwoord terug dat gegenereerd is volgens het interne Dolibarr algoritme: 8 karakters met gedeelde nummers en tekens in kleine letters.
 PasswordGenerationNone=Doe geen wachtwoordsuggesties. Wachtwoord moet handmatig worden ingevoerd.

@@ -383,13 +383,13 @@ PaymentInvoiceRef=Pago factura %s
 ValidateInvoice=Validar factura
 Cash=Efectivo
 Reported=Aplazado
-# DisabledBecausePayments=Not possible since there are some payments
-# CantRemovePaymentWithOneInvoicePaid=Can't remove payment since there is at least one invoice classified paid
+DisabledBecausePayments=No disponible ya que existen pagos
+CantRemovePaymentWithOneInvoicePaid=Eliminación imposible cuando existe al menos una factura clasificada como pagada.
 ExpectedToPay=Esperando el pago
-# PayedByThisPayment=Paid by this payment
-# ClosePaidInvoicesAutomatically=Classify "Paid" all standard or replacement invoices entirely paid.
-# ClosePaidCreditNotesAutomatically=Classify "Paid" all credit notes entirely paid back.
-# AllCompletelyPayedInvoiceWillBeClosed=All invoice with no remain to pay will be automatically closed to status "Paid".
+PayedByThisPayment=Pagada por este pago
+ClosePaidInvoicesAutomatically=Clasificar como "Pagadas" las facturas y facturas rectificativas completamente pagadas.
+ClosePaidCreditNotesAutomatically=Clasificar automáticamente como "Pagados" los abonos completamente reembolsados
+AllCompletelyPayedInvoiceWillBeClosed=Todas las facturas con un resto a pagar 0 serán automáticamente cerradas al estado "Pagada".
 ToMakePayment=Pagar
 ToMakePaymentBack=Reembolsar
 ListOfYourUnpaidInvoices=Listado de facturas impagadas
@@ -405,11 +405,11 @@ TypeContact_invoice_supplier_external_BILLING=Contacto proveedor facturación
 TypeContact_invoice_supplier_external_SHIPPING=Contacto proveedor entregas
 TypeContact_invoice_supplier_external_SERVICE=Contacto proveedor servicios
 # crabe PDF Model
-# PDFCrabeDescription=Invoice PDF template Crabe. A complete invoice template (recommended Template)
+PDFCrabeDescription=Modelo de factura completo (modelo recomendado por defecto)
 # oursin PDF Model
-# PDFOursinDescription=Invoice PDF template Oursin. A complete invoice template (alternative Template)
+PDFOursinDescription=Modelo de factura completo (modelo alternativo)
 # NumRef Modules
-# TerreNumRefModelDesc1=Return number with format %syymm-nnnn for standard invoices and %syymm-nnnn for credit notes where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
-# MarsNumRefModelDesc1=Return number with format %syymm-nnnn for standard invoices, %syymm-nnnn for replacement invoices, %syymm-nnnn for credit notes and %syymm-nnnn for credit notes where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
+TerreNumRefModelDesc1=Devuelve el número bajo el formato %syymm-nnnn para las facturas, %syymm-nnnn para las facturas rectificativas y %syymm-nnnn para los abonos donde yy es el año, mm. el mes y nnnn un contador secuencial sin ruptura y sin permanencia a 0
+MarsNumRefModelDesc1=Devuelve el número bajo el formato %syymm-nnnn para las facturas, %syymm-nnnn para las facturas rectificativas, %syymm-nnnn para nota de crédito y %syymm-nnnn para los abonos donde yy es el año, mm. el mes y nnnn un contador secuencial sin ruptura y sin permanencia a 0
 
 TerreNumRefModelError=Ya existe una factura con $syymm y no es compatible con este modelo de secuencia. Elimínela o renómbrela para poder activar este módulo

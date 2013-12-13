@@ -228,7 +228,7 @@ OfficialWebSiteFr=Franska opinber vefur staður
 OfficialWiki=Dolibarr Wiki
 OfficialDemo=Dolibarr netinu kynningu
 OfficialMarketPlace=Opinber markaði fyrir ytri modules / addons
-# OfficialWebHostingService=Official web hosting services (Cloud hosting)
+# OfficialWebHostingService=Official web hosting service (Cloud hosting)
 ForDocumentationSeeWiki=Notandanafn eða skjölum verktaki '(Doc, FAQs ...), <br> kíkið á Dolibarr Wiki: <br> <a href="%s" target="_blank"><b> %s </b></a>
 ForAnswersSeeForum=Fyrir einhverjar aðrar spurningar / hjálp, getur þú notað Dolibarr spjall: <br> <a href="%s" target="_blank"><b> %s </b></a>
 HelpCenterDesc1=Þetta svæði getur hjálpað þér að fá stuðning Hjálp þjónusta á Dolibarr.
@@ -299,7 +299,6 @@ ServerNotAvailableOnIPOrPort=Þjónninn er ekki í boði <b>á%</b> heimilisfang
 DoTestServerAvailability=Próf miðlara Tenging við
 DoTestSend=Próf eru send
 DoTestSendHTML=Próf senda HTML
-# ErrorCantUseRazIfNoYearInMask=Error, can't use option @ to reset counter each year if sequence {yy} or {yyyy} is not in mask.
 ErrorCantUseRazInStartedYearIfNoYearMonthInMask=Villa, get ekki notað valkost @ ef röð (YY) (mm) eða (áááá) (mm) er ekki í maska.
 UMask=UMask breytu fyrir nýja skrá á Unix / Linux / BSD skrá kerfi.
 UMaskExplanation=Þessi stika gerir þér kleift að tilgreina heimildir sjálfgefið á skrá skapa við Dolibarr á miðlara (á senda til dæmis). <br> Það hlýtur að vera octal gildi (til dæmis, 0666 þýðir að lesa og skrifa fyrir alla). <br> Þessi stika er gagnslaus á Gluggakista framreiðslumaður.
@@ -1009,8 +1008,6 @@ SendmailOptionMayHurtBuggedMTA=Lögun að senda póst með aðferð &quot;PHP p�
 # XCacheInstalled=XCache is loaded.
 # AddRefInList=Display customer/supplier ref into list (select list or combobox) and most of hyperlink
 # FieldEdition=Edition of field %s
-# FixTZ=TimeZone fix
-# FillThisOnlyIfRequired=Example: +2 (fill only if timezone offset problems are experienced)
 ##### Module password generation
 PasswordGenerationStandard=Return lykilorð mynda samkvæmt innri Dolibarr reiknirit: 8 stafir sem innihalda hluti tölur og bókstafi í lágstafir.
 PasswordGenerationNone=Ekki benda allir mynda lykilorð. Lykilorð verður að vera gerð í höndunum.

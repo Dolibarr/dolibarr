@@ -384,9 +384,9 @@ ValidateInvoice=Fatura doğrula
 Cash=Nakit
 Reported=Gecikmiş
 DisabledBecausePayments=Bazı ödemeler olduğundan dolayı mümkün değil
-CantRemovePaymentWithOneInvoicePaid=En az bir fatura ödenmiş olarak sınıflandırıldığı için ödemeyi silemezsiniz
+CantRemovePaymentWithOneInvoicePaid=En az bir fatura ödenmiş olarak sınıflandırıldığı  için ödemeyi silemezsiniz
 ExpectedToPay=Beklenen ödeme
-PayedByThisPayment=Bu ödeme ile ödenmiş
+PayedByThisPayment=Bu ödeme ile ödenmiştir
 ClosePaidInvoicesAutomatically=Tamamı ödenmiş bütün standart ve değiştirilmiş faturaları "Ödendi" olarak sınıflandır.
 ClosePaidCreditNotesAutomatically=Tamamı ödenmiş alacak dekontlarını "Ödendi" olarak sınıflandır.
 AllCompletelyPayedInvoiceWillBeClosed=Bakiyesi kalmayan bütün faturalar otomatikmen kapatılarak "Ödendi" durumuna getirilecektir.
@@ -407,9 +407,9 @@ TypeContact_invoice_supplier_external_SERVICE=Tedarikçi hizmet ilgilisi
 # crabe PDF Model
 PDFCrabeDescription=Fatura PDF şablonu Crabe. Tam fatura şablonu  (Önerilen şablon)
 # oursin PDF Model
-PDFOursinDescription=Fatura PDF şablonu Oursin. Tam fatura şablonu  (alternatif şablon)
+PDFOursinDescription=Fatura şablonu oursin
 # NumRef Modules
-TerreNumRefModelDesc1=Standart faturalar için numarayı  %syymm-nnnn biçiminde ve alacak dekontları için %syymm-nnnn biçiminde göster, yy yıl, mm ay ve nnnn boşluksuz ve 0 olmayan bir dizidir.
-MarsNumRefModelDesc1=Belge numarasını, standart faturalar için %syymm-nnnn, değiştirilen faturalar için %syymm-nnnn, alacak dekontları için %syymm-nnnn ve nakit avans faturaları için %syymm-nnnn biçiminde verir. Burada yy yıl, mm ay ve nnnn boşluksuz ve 0 olmayan bir dizidir
+TerreNumRefModelDesc1=Belge numarasını, standart faturalar ve değiştirilen faturalar için %syymm-nnnn, alacak dekontları için %syymm-nnnn ve nakit avans faturaları için %syymm-nnnn biçiminde verir, burada yy yıl, mm ay ve nnnn boşluksuz ve 0 olmayan bir dizidir.
+MarsNumRefModelDesc1=Belge numarasını, standart faturalar için %syymm-nnnn, değiştirilen faturalar için %syymm-nnnn, alacak dekontları için %syymm-nnnn ve nakit avans faturaları için %syymm-nnnn biçiminde verir, burada yy yıl, mm ay ve nnnn boşluksuz ve 0 olmayan bir dizidir.
 
 TerreNumRefModelError=$syymm ile başlayan bir fatura hali hazırda vardır ve bu sıra dizisi için uygun değildir. Bu modülü etkinleştirmek için onu kaldırın ya da adını değiştirin.
