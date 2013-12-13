@@ -777,7 +777,7 @@ function dol_strftime($fmt, $ts=false, $is_gmt=false)
  * 	Return charset is always UTF-8, except if encodetoouput is defined. In this case charset is output charset
  *
  *	@param	int			$time			GM Timestamps date
- *	@param	string		$format      	Output date format
+ *	@param	string		$format      	Output date format (tag of strftime function)
  *										"%d %b %Y",
  *										"%d/%m/%Y %H:%M",
  *										"%d/%m/%Y %H:%M:%S",
