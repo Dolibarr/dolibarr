@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2002	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2006-2009	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2013	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2012		Regis Houssin			<regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -137,10 +137,10 @@ if ($PAYPALTOKEN)
 		$from=$conf->global->MAILING_EMAIL_FROM;
 		require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 		$mailfile = new CMailFile(
-			'['.$conf->global->MAIN_APPLICATION_TITLE.'] '.$langs->trans("NewPaypalPaymentReceived"),
+			'['.$conf->global->MAIN_APPLICATION_TITLE.'] '.$langs->transnoentitiesnoconv("NewPaypalPaymentReceived"),
 			$sendto,
 			$from,
-			$langs->trans("NewPaypalPaymentReceived")."\ntag=".$fulltag."\ntoken=".$token." paymentType=".$paymentType." currencycodeType=".$currencyCodeType." payerId=".$payerID." ipaddress=".$ipaddress." FinalPaymentAmt=".$FinalPaymentAmt
+			$langs->transnoentitiesnoconv("NewPaypalPaymentReceived")."\ntag=".$fulltag."\ntoken=".$token." paymentType=".$paymentType." currencycodeType=".$currencyCodeType." payerId=".$payerID." ipaddress=".$ipaddress." FinalPaymentAmt=".$FinalPaymentAmt
 		);
 
 		$result=$mailfile->sendfile();
