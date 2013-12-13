@@ -3,7 +3,7 @@
  * Copyright (C) 2003 Laurent Passebecq
  * Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2002-2003 Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2006-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,7 +55,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/format_cards.lib.php';
 
 
 /**
- *	Classe afin d'editer au format PDF des cartes de visite au format Avery ou personnalise
+ *	Class to generate stick sheet with format Avery or other personalised
  */
 class pdf_standard
 {
@@ -113,16 +113,18 @@ class pdf_standard
 
 
 	/**
-	 * On imprime une etiquette
+	 * Output a sticker on page at position _COUNTX
+	 * - %LOGO% is replace with company logo
+	 * - %PHOTO% is replace with photo provided as parameter
 	 *
 	 * @param    PDF	    &$pdf		    PDF
-	 * @param    string     $textleft       Textleft
+	 * @param    string     $textleft       Text left
 	 * @param    string     $header         Header
 	 * @param    string     $footer         Footer
 	 * @param    Translate  $outputlangs    Output langs
 	 * @param    string     $textright      Text right
 	 * @param    int        $idmember       Id member
-	 * @param    string     $photo    		Photo member
+	 * @param    string     $photo    		Photo (path to image file used as replacement for key %PHOTOS% into left, right header or footer text)
 	 * @return   void
 	 */
 	function Add_PDF_card(&$pdf,$textleft,$header,$footer,$outputlangs,$textright='',$idmember=0,$photo='')
@@ -411,7 +413,7 @@ class pdf_standard
 	 *	@param	array		$arrayofrecords		Array of record informations (array('textleft'=>,'textheader'=>, ...'id'=>,'photo'=>)
 	 *	@param	Translate	$outputlangs		Lang object for output language
      *  @param	string		$srctemplatepath	Full path of source filename for generator using a template file
-     *  @param	string		$mode				Tell if doc module is called for 'member, ...
+     *  @param	string		$mode				Tell if doc module is called for 'member', ...
 	 *	@return	int     						1=OK, 0=KO
 	 */
 	function write_file($arrayofrecords,$outputlangs,$srctemplatepath,$mode='member')
@@ -431,9 +433,9 @@ class pdf_standard
 		$outputlangs->load("main");
 		$outputlangs->load("dict");
 		$outputlangs->load("companies");
-		$outputlangs->load("members");
 		$outputlangs->load("admin");
-
+		$outputlangs->load("members");
+		
 		if (empty($mode) || $mode == 'member')
 		{
 	        $title=$outputlangs->transnoentities('MembersCards');
