@@ -50,7 +50,15 @@ $(document).ready(function() {
 	);
 
 	$('#refreshbutton').click( function() {
-		ecmBuildDatabase();
+		$.pleaseBePatient("<?php echo $langs->trans('PleaseBePatient'); ?>");
+		$.getJSON( "<?php echo DOL_URL_ROOT . '/ecm/ajax/ecmdatabase.php'; ?>", {
+			action: "build",
+			element: "ecm"
+		},
+		function(response) {
+			$.unblockUI();
+			location.href="<?php echo $_SERVER['PHP_SELF']; ?>";
+		});
 	});
 });
 
@@ -77,18 +85,6 @@ function loadandshowpreview(filedirname,section)
 		$('#ecmfileview').append(data);
 	});
 }
-
-ecmBuildDatabase = function() {
-	$.pleaseBePatient("<?php echo $langs->trans('PleaseBePatient'); ?>");
-	$.getJSON( "<?php echo DOL_URL_ROOT . '/ecm/ajax/ecmdatabase.php'; ?>", {
-		action: "build",
-		element: "ecm"
-	},
-	function(response) {
-		$.unblockUI();
-		location.href="<?php echo $_SERVER['PHP_SELF']; ?>";
-	});
-};
 
 </script>
 <!-- END PHP TEMPLATE ecm/tpl/builddatabase.tpl.php -->

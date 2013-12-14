@@ -984,7 +984,7 @@ else if ($action == 'updateligne' && $user->rights->propal->creer && GETPOST('sa
 			$error++;
 		}
 	}
-
+	
 	if (! $error)
 	{
 		$db->begin();

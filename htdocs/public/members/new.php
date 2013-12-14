@@ -247,7 +247,7 @@ if ($action == 'add')
         $adh->morphy      = $_POST["morphy"];
         $adh->birth       = $birthday;
 
-        
+
         // Fill array 'array_options' with data from add form
         $extralabels=$extrafields->fetch_name_optionals_label($adh->table_element);
         $ret = $extrafields->setOptionalsFromPost($extralabels,$adh);
@@ -521,7 +521,7 @@ print '</tr>'."\n";
 // Add specific fields used by Dolibarr foundation for example
 if (! empty($conf->global->MEMBER_NEWFORM_DOLIBARRTURNOVER))
 {
-    $arraybudget=array('50'=>'<= 100 000','100'=>'<= 200 000','200'=>'<= 500 000','400'=>'<= 1 500 000','750'=>'<= 3 000 000','1500'=>'<= 5 000 000','2000'=>'5 000 000+');
+    $arraybudget=array('50'=>'<= 100 000','100'=>'<= 200 000','200'=>'<= 500 000','300'=>'<= 1 500 000','600'=>'<= 3 000 000','1000'=>'<= 5 000 000','2000'=>'5 000 000+');
     print '<tr id="trbudget" class="trcompany"><td>'.$langs->trans("TurnoverOrBudget").' <FONT COLOR="red">*</FONT></td><td>';
     print $form->selectarray('budget', $arraybudget, GETPOST('budget'), 1);
     print ' € or $';

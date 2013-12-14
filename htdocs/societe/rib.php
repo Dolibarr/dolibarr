@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2013      Peter Fontaine       <contact@peterfontaine.fr>
  *
@@ -317,13 +317,16 @@ if ($socid && $action != 'edit' && $action != "create")
 
     $rib_list = $soc->get_all_rib();
     $var = false;
-    if (is_array($rib_list)) {
+    if (is_array($rib_list))
+    {
         print '<table class="liste" width="100%">';
 
         print '<tr class="liste_titre">';
         print_liste_field_titre($langs->trans("LabelRIB"));
         print_liste_field_titre($langs->trans("Bank"));
         print_liste_field_titre($langs->trans("RIB"));
+        print_liste_field_titre($langs->trans("IBAN"));
+        print_liste_field_titre($langs->trans("BIC"));
         print_liste_field_titre($langs->trans("DefaultRIB"), '', '', '', '', 'align="center"');
         print '<td width="40"></td>';
         print '</tr>';
@@ -331,9 +334,17 @@ if ($socid && $action != 'edit' && $action != "create")
         foreach ($rib_list as $rib)
         {
             print "<tr $bc[$var]>";
+            // Label
             print '<td>'.$rib->label.'</td>';
+            // Bank name
             print '<td>'.$rib->bank.'</td>';
+            // Account number
             print '<td>'.$rib->getRibLabel(false).'</td>';
+            // IBAN
+            print '<td>'.$rib->iban.'</td>';
+            // BIC
+            print '<td>'.$rib->bic.'</td>';
+            // Default
             print '<td align="center" width="70">';
             if (!$rib->default_rib) {
                 print '<a href="'.DOL_URL_ROOT.'/societe/rib.php?socid='.$soc->id.'&ribid='.$rib->id.'&action=setasdefault">';
@@ -343,6 +354,8 @@ if ($socid && $action != 'edit' && $action != "create")
                 print img_picto($langs->trans("Enabled"),'on');
             }
             print '</td>';
+
+            // Edit/Delete
             print '<td align="right">';
             if ($user->rights->societe->creer)
             {

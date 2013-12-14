@@ -6,7 +6,7 @@
  * Copyright (C) 2007      Franky Van Liedekerke       <franky.van.liedekerker@telenet.be>
  * Copyright (C) 2008      Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
  * Copyright (C) 2013      Florian Henry		  	       <florian.henry@open-concept.pro>
- * Copyright (C) 2013      Alexandre Spangaro 	       <alexandre.spangaro@gmail.com> 
+ * Copyright (C) 2013      Alexandre Spangaro 	       <alexandre.spangaro@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -58,6 +58,8 @@ class Contact extends CommonObject
 	var $country_id;			// Id of country
 	var $country_code;			// Code of country
 	var $country;				// Label of country
+
+    var $poste;                 // Position
 
 	var $socid;					// fk_soc
 	var $statut;				// 0=inactif, 1=actif
@@ -949,37 +951,35 @@ class Contact extends CommonObject
 
 		if ($mode == 0)
 		{
-			if ($statut==0) return $langs->trans('Disabled');
-			elseif ($statut==1) return $langs->trans('Enabled');
+			if ($statut==0 || $statut==5) return $langs->trans('Disabled');
+			elseif ($statut==1 || $statut==4) return $langs->trans('Enabled');
 		}
 		elseif ($mode == 1)
 		{
-			if ($statut==0) return $langs->trans('Disabled');
-			elseif ($statut==1) return $langs->trans('Enabled');
+			if ($statut==0 || $statut==5) return $langs->trans('Disabled');
+			elseif ($statut==1 || $statut==4) return $langs->trans('Enabled');
 		}
 		elseif ($mode == 2)
 		{
-			if ($statut==0) return img_picto($langs->trans('Disabled'),'statut5').' '.$langs->trans('Disabled');
-			elseif ($statut==1) return img_picto($langs->trans('Enabled'),'statut4').' '.$langs->trans('Enabled');
+			if ($statut==0 || $statut==5) return img_picto($langs->trans('Disabled'),'statut5').' '.$langs->trans('Disabled');
+			elseif ($statut==1 || $statut==4) return img_picto($langs->trans('Enabled'),'statut4').' '.$langs->trans('Enabled');
 
 		}
 		elseif ($mode == 3)
 		{
-			if ($statut==0) return img_picto($langs->trans('Disabled'),'statut5');
-			elseif ($statut==1) return img_picto($langs->trans('Enabled'),'statut4');
-		
+			if ($statut==0 || $statut==5) return img_picto($langs->trans('Disabled'),'statut5');
+			elseif ($statut==1 || $statut==4) return img_picto($langs->trans('Enabled'),'statut4');
 		}
 		elseif ($mode == 4)
 		{
 			if ($statut==0) return img_picto($langs->trans('Disabled'),'statut5').' '.$langs->trans('StatusContactDraft');
-			elseif ($statut==1) return img_picto($langs->trans('Enabled'),'statut4').' '.$langs->trans('Enabled');
+			elseif ($statut==1 || $statut==4) return img_picto($langs->trans('Enabled'),'statut4').' '.$langs->trans('Enabled');
 		}
 		elseif ($mode == 5)
 		{
-			if ($statut==0) return '<span class="hideonsmartphone">'.$langs->trans('Disabled').' </span>'.img_picto($langs->trans('Disabled'),'statut5');
-			elseif ($statut==1) return '<span class="hideonsmartphone">'.$langs->trans('Enabled').' </span>'.img_picto($langs->trans('Enabled'),'statut4');
+			if ($statut==0 || $statut==5) return '<span class="hideonsmartphone">'.$langs->trans('Disabled').' </span>'.img_picto($langs->trans('Disabled'),'statut5');
+			elseif ($statut==1 || $statut==4) return '<span class="hideonsmartphone">'.$langs->trans('Enabled').' </span>'.img_picto($langs->trans('Enabled'),'statut4');
 		}
-
 	}
 
 
