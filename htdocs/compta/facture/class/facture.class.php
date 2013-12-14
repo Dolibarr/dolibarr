@@ -2908,7 +2908,7 @@ class Facture extends CommonInvoice
                     $sql .= ' (fk_facture, amount, date_demande, fk_user_demande, code_banque, code_guichet, number, cle_rib)';
                     $sql .= ' VALUES ('.$this->id;
                     $sql .= ",'".price2num($resteapayer)."'";
-                    $sql .= ",'".$this->db->idate($now)."',";
+                    $sql .= ",'".$this->db->idate($now)."'";
                     $sql .= ",".$user->id;
                     $sql .= ",'".$bac->code_banque."'";
                     $sql .= ",'".$bac->code_guichet."'";
