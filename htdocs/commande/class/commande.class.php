@@ -655,7 +655,7 @@ class Commande extends CommonOrder
         $sql.= ", ".($this->date_livraison?"'".$this->db->idate($this->date_livraison)."'":"null");
         $sql.= ", ".($this->fk_delivery_address>0?$this->fk_delivery_address:'NULL');
         $sql.= ", ".($this->remise_absolue>0?$this->remise_absolue:'NULL');
-        $sql.= ", '".$this->remise_percent."'";
+        $sql.= ", ".($this->remise_percent>0?$this->remise_percent:0);
         $sql.= ", ".$conf->entity;
         $sql.= ")";
 
