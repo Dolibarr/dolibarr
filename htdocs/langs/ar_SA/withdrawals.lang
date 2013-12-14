@@ -82,7 +82,7 @@ IfInvoiceNeedOnWithdrawPaymentWontBeClosed=ومع ذلك، إذا فاتورة �
 DoStandingOrdersBeforePayments=هذه علامات تسمح لك لطلب لاستصدار أمر دائم. مرة واحدة وسيتم الانتهاء من ذلك، يمكنك كتابة دفع لإغلاق الفاتورة.
 # WithdrawalFile=Withdrawal file
 # SetToStatusSent=Set to status "File Sent"
-# ThisWillAlsoAddPaymentOnInvoice=This will also create payments onto invoices and will classify them to paid
+# ThisWillAlsoAddPaymentOnInvoice=This will also apply payments to invoices and will classify them as "Paid"
 
 ### Notifications
 InfoCreditSubject=دفع %s النظام الدائمة من قبل البنك

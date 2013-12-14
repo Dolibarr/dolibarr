@@ -388,7 +388,7 @@ CantRemovePaymentWithOneInvoicePaid=Não é possível remover o pagamento desde 
 ExpectedToPay=Pagamento esperado
 PayedByThisPayment=Pago por esse pagamento
 ClosePaidInvoicesAutomatically=Classificar &quot;Pago&quot; padrão tudo ou facturas de substituição inteiramente pagas.
-# ClosePaidCreditNotesAutomatically=Classify "Payed" all credit notes entirely paid back.
+# ClosePaidCreditNotesAutomatically=Classify "Paid" all credit notes entirely paid back.
 AllCompletelyPayedInvoiceWillBeClosed=Tudo sem nota fiscal continuam a pagar será automaticamente fechada ao status de &quot;payed&quot;.
 # ToMakePayment=Pay
 # ToMakePaymentBack=Pay back
@@ -409,7 +409,7 @@ PDFCrabeDescription=Modelo de factura completo (IVA,  método de pago a mostrar,
 # oursin PDF Model
 PDFOursinDescription=Modelo de factura completo (IVA, métodos de pago, entregas, nome do projecto, referencias de orçamento, logotipo...)
 # NumRef Modules
-# TerreNumRefModelDesc1=Return numero with format %syymm-nnnn for standard and replacement invoices, %syymm-nnnn for credit notes and %syymm-nnnn for deposits where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
-# MarsNumRefModelDesc1=Return numero with format %syymm-nnnn for standard invoices, %syymm-nnnn for replacement invoices, %syymm-nnnn for credit notes and %syymm-nnnn for credit notes where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
+# TerreNumRefModelDesc1=Return number with format %syymm-nnnn for standard invoices and %syymm-nnnn for credit notes where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
+# MarsNumRefModelDesc1=Return number with format %syymm-nnnn for standard invoices, %syymm-nnnn for replacement invoices, %syymm-nnnn for credit notes and %syymm-nnnn for credit notes where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
 
 TerreNumRefModelError=Uma conta a começar com $syymm já existe e não é compatível com este modelo de sequencia. Remove-o ou renomeia para activar este modulo

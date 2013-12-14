@@ -68,6 +68,7 @@ CountryId=Id país
 Phone=Teléfono
 Skype=Skype
 Call=Llamar
+# Chat=Chat
 PhonePro=Teléf. trabajo
 PhonePerso=Teléf. particular
 PhoneMobile=Móvil
@@ -398,6 +399,7 @@ InActivity=Activo
 ActivityCeased=Cerrado
 ActivityStateFilter=Estado de actividad
 ProductsIntoElements=Listado de productos en %s
+# CurrentOutstandingBill=Current outstanding bill
 OutstandingBill=Importe máximo para facturas pendientes
 OutstandingBillReached=Importe máximo alcanzado
 # Monkey

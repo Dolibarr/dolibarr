@@ -388,7 +388,7 @@ CantRemovePaymentWithOneInvoicePaid=Verwijder onmogelijk wanneer er minstens een
 ExpectedToPay=Verwachte betaling
 PayedByThisPayment=Betaald door deze betaling
 ClosePaidInvoicesAutomatically=Classificeren &quot;Betaalde&quot; alle standaard of vervanging facturen entirely betaald.
-# ClosePaidCreditNotesAutomatically=Classify "Payed" all credit notes entirely paid back.
+# ClosePaidCreditNotesAutomatically=Classify "Paid" all credit notes entirely paid back.
 AllCompletelyPayedInvoiceWillBeClosed=Alle factuur zonder te blijven om te betalen zal automatisch worden gesloten om status &quot;Betaald&quot;.
 # ToMakePayment=Pay
 # ToMakePaymentBack=Pay back
@@ -409,7 +409,7 @@ PDFCrabeDescription=Model van complete factuur (Beheert de mogelijkheid van de B
 # oursin PDF Model
 PDFOursinDescription=Model van complete factuur sjabloon (basis, beheert de mogelijkheid van heffing van de BTW belasting, de kortingen, de projectnaam, de referenties, logo, etc)
 # NumRef Modules
-# TerreNumRefModelDesc1=Return numero with format %syymm-nnnn for standard and replacement invoices, %syymm-nnnn for credit notes and %syymm-nnnn for deposits where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
-# MarsNumRefModelDesc1=Return numero with format %syymm-nnnn for standard invoices, %syymm-nnnn for replacement invoices, %syymm-nnnn for credit notes and %syymm-nnnn for credit notes where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
+# TerreNumRefModelDesc1=Return number with format %syymm-nnnn for standard invoices and %syymm-nnnn for credit notes where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
+# MarsNumRefModelDesc1=Return number with format %syymm-nnnn for standard invoices, %syymm-nnnn for replacement invoices, %syymm-nnnn for credit notes and %syymm-nnnn for credit notes where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
 
 TerreNumRefModelError=Een wetsvoorstel te beginnen met $ syymm bestaat al en is niet compatibel met dit model van de reeks. Verwijderen of hernoemen naar deze module te activeren.

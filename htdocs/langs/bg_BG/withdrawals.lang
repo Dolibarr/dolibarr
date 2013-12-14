@@ -82,7 +82,7 @@ IfInvoiceNeedOnWithdrawPaymentWontBeClosed=Въпреки това, ако фа�
 DoStandingOrdersBeforePayments=Това разделите ви позволява да изисквате за постоянно нареждане. След като той ще бъде завършен, можете да въведете плащането, за да затворите фактура.
 # WithdrawalFile=Withdrawal file
 # SetToStatusSent=Set to status "File Sent"
-# ThisWillAlsoAddPaymentOnInvoice=This will also create payments onto invoices and will classify them to paid
+# ThisWillAlsoAddPaymentOnInvoice=This will also apply payments to invoices and will classify them as "Paid"
 
 ### Notifications
 InfoCreditSubject=Плащане на постоянно нареждане %s от банката

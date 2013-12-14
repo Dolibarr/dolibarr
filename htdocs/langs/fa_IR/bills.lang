@@ -387,9 +387,9 @@ DisabledBecausePayments=غير ممكن لأن هناك بعض المدفوعا�
 CantRemovePaymentWithOneInvoicePaid=تصنيف لا يمكن إزالة الدفع لأنه ليس هناك على الأقل على الفاتورة سيولي
 ExpectedToPay=من المتوقع الدفع
 PayedByThisPayment=سيولي هذا الدفع
-# ClosePaidInvoicesAutomatically=Classify "Payed" all standard or replacement invoices entirely payed.
-# ClosePaidCreditNotesAutomatically=Classify "Payed" all credit notes entirely paid back.
-# AllCompletelyPayedInvoiceWillBeClosed=All invoice with no remain to pay will be automatically closed to status "Payed".
+# ClosePaidInvoicesAutomatically=Classify "Paid" all standard or replacement invoices entirely paid.
+# ClosePaidCreditNotesAutomatically=Classify "Paid" all credit notes entirely paid back.
+# AllCompletelyPayedInvoiceWillBeClosed=All invoice with no remain to pay will be automatically closed to status "Paid".
 # ToMakePayment=Pay
 # ToMakePaymentBack=Pay back
 # ListOfYourUnpaidInvoices=List of unpaid invoices
@@ -409,7 +409,7 @@ PDFCrabeDescription=نموذج فاتورة Crabe. نموذج الفاتورة �
 # oursin PDF Model
 PDFOursinDescription=نموذج فاتورة oursin
 # NumRef Modules
-# TerreNumRefModelDesc1=Return numero with format %syymm-nnnn for standard and replacement invoices, %syymm-nnnn for credit notes and %syymm-nnnn for deposits where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
-# MarsNumRefModelDesc1=Return numero with format %syymm-nnnn for standard invoices, %syymm-nnnn for replacement invoices, %syymm-nnnn for credit notes and %syymm-nnnn for credit notes where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
+# TerreNumRefModelDesc1=Return number with format %syymm-nnnn for standard invoices and %syymm-nnnn for credit notes where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
+# MarsNumRefModelDesc1=Return number with format %syymm-nnnn for standard invoices, %syymm-nnnn for replacement invoices, %syymm-nnnn for credit notes and %syymm-nnnn for credit notes where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
 
 TerreNumRefModelError=وهناك مشروع قانون بدءا من دولار ويوجد بالفعل syymm لا تتفق مع هذا النموذج من التسلسل. إزالة أو تغيير تسميتها لتصبح لتفعيل هذه الوحدة.

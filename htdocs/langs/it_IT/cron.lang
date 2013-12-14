@@ -32,6 +32,7 @@ CronExplainHowToRunWin=In ambienti Microsoft(tm) Windows dovresti usare Operazio
 CronJobs=Azioni pianificate
 CronListActive= Lista dei job attivi
 CronListInactive= Lista dei job disabilitati
+CronListActive= Lista dei job attivi
 
 
 #
@@ -42,7 +43,7 @@ CronLastOutput=Output dell'ultimo avvio
 CronLastResult=Codice del risultato dell'ultima esecuzione
 CronListOfCronJobs=Lista dei job programmati
 CronCommand=Comando
-CronList= Lista dei job
+CronList=Lista dei job
 CronDelete= Cancella job di cron
 CronConfirmDelete= Vuoi davvero cancellare questa azione pianificata?
 CronExecute=Esegui azione

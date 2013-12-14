@@ -82,7 +82,7 @@ IfInvoiceNeedOnWithdrawPaymentWontBeClosed=Однако, если счет-фа�
 DoStandingOrdersBeforePayments=Это вкладок позволяет запросить за постоянного платежного поручения. Как только она будет закончена, вы можете ввести оплату, чтобы закрыть счета.
 # WithdrawalFile=Withdrawal file
 # SetToStatusSent=Set to status "File Sent"
-# ThisWillAlsoAddPaymentOnInvoice=This will also create payments onto invoices and will classify them to paid
+# ThisWillAlsoAddPaymentOnInvoice=This will also apply payments to invoices and will classify them as "Paid"
 
 ### Notifications
 InfoCreditSubject=Оплата постоянных %s порядке банк
