@@ -407,7 +407,7 @@ class Propal extends CommonObject
             $this->line->date_start=$date_start;
             $this->line->date_end=$date_end;
 
-            
+
 			// infos marge
 			$this->line->fk_fournprice = $fk_fournprice;
 			$this->line->pa_ht = $pa_ht;
@@ -1320,17 +1320,17 @@ class Propal extends CommonObject
 						if (file_exists($dirsource))
 						{
 							dol_syslog(get_class($this)."::validate rename dir ".$dirsource." into ".$dirdest);
-	
+
 							if (@rename($dirsource, $dirdest))
 							{
-	
+
 								dol_syslog("Rename ok");
 								// Deleting old PDF in new rep
 								dol_delete_file($conf->propal->dir_output.'/'.$snumfa.'/'.$facref.'*.*');
 							}
 						}
 					}
-					
+
                     $this->brouillon=0;
                     $this->statut = 1;
                     $this->user_valid_id=$user->id;
@@ -2943,7 +2943,8 @@ class PropaleLigne
         if (empty($this->total_localtax2)) $this->total_localtax2=0;
         if (empty($this->marque_tx)) $this->marque_tx=0;
         if (empty($this->marge_tx)) $this->marge_tx=0;
-        if (empty($this->remise)) $this->remise=0;
+        if (empty($this->price)) $this->price=0;	// TODO A virer
+        if (empty($this->remise)) $this->remise=0;	// TODO A virer
         if (empty($this->remise_percent)) $this->remise_percent=0;
         if (empty($this->info_bits)) $this->info_bits=0;
         if (empty($this->special_code)) $this->special_code=0;
