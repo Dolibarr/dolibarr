@@ -128,6 +128,10 @@ parameter. All methods addline in this case were modified to remove this paramet
 
 5) Property ->tel on objects is now ->phone
 
+6) Trigger LINEPROPAL_MODIFY is renamed into LINEPROPAL_UPDATE and
+   Trigger CONTRACT_LINE_DELETE rnamed into LINECONTRACT_DELETE to match naming rules.
+
+
 
 ***** ChangeLog for 3.4.2 compared to 3.4.1 *****
 Fix: field's problem into company's page (RIB)

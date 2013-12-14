@@ -251,7 +251,7 @@ class Fichinter extends CommonObject
 			// Appel des triggers
 			include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
 			$interface=new Interfaces($this->db);
-			$result=$interface->run_triggers('FICHINTER_UPDATE',$this,$user,$langs,$conf);
+			$result=$interface->run_triggers('FICHINTER_MODIFY',$this,$user,$langs,$conf);
 			if ($result < 0) {
 				$error++; $this->errors=$interface->errors;
 			}
@@ -1148,7 +1148,7 @@ class FichinterLigne
 					// Appel des triggers
 					include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
 					$interface=new Interfaces($this->db);
-					$resulttrigger=$interface->run_triggers('FICHINTERDET_CREATE',$this,$user,$langs,$conf);
+					$resulttrigger=$interface->run_triggers('LINEFICHINTER_CREATE',$this,$user,$langs,$conf);
 					if ($resulttrigger < 0) {
 						$error++; $this->errors=$interface->errors;
 					}
@@ -1210,7 +1210,7 @@ class FichinterLigne
 					// Appel des triggers
 					include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
 					$interface=new Interfaces($this->db);
-					$resulttrigger=$interface->run_triggers('FICHINTERDET_UPDATE',$this,$user,$langs,$conf);
+					$resulttrigger=$interface->run_triggers('LINEFICHINTER_UPDATE',$this,$user,$langs,$conf);
 					if ($resulttrigger < 0) {
 						$error++; $this->errors=$interface->errors;
 					}
@@ -1324,7 +1324,7 @@ class FichinterLigne
 						// Appel des triggers
 						include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
 						$interface=new Interfaces($this->db);
-						$resulttrigger=$interface->run_triggers('FICHINTERDET_DELETE',$this,$user,$langs,$conf);
+						$resulttrigger=$interface->run_triggers('LINEFICHINTER_DELETE',$this,$user,$langs,$conf);
 						if ($resulttrigger < 0) {
 							$error++; $this->errors=$interface->errors;
 						}
