@@ -267,11 +267,11 @@ if ($id > 0)
 	// Fax
 	print '<td>'.$langs->trans('Fax').'</td><td style="min-width: 25%;">'.dol_print_phone($object->fax,$object->country_code,0,$object->id,'AC_FAX').'</td></tr>';
 
-  // Skype
-  if (! empty($conf->skype->enabled) && $user->rights->skype->view)
-  {
-	   print '<td>'.$langs->trans('Skype').'</td><td colspan="3">'.dol_print_skype($object->skype,0,$object->id,'AC_SKYPE').'</td></tr>';
-  }
+	// Skype
+  	if (! empty($conf->skype->enabled))
+  	{
+		print '<td>'.$langs->trans('Skype').'</td><td colspan="3">'.dol_print_skype($object->skype,0,$object->id,'AC_SKYPE').'</td></tr>';
+  	}
 
 	// Assujeti a TVA ou pas
 	print '<tr>';

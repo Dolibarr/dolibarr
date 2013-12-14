@@ -878,7 +878,7 @@ else
         print '<tr><td>'.$langs->trans('Web').'</td><td colspan="3"><input type="text" name="url" size="32" value="'.$object->url.'"></td></tr>';
 
         // Skype
-        if (! empty($conf->skype->enabled) && $user->rights->skype->view)
+        if (! empty($conf->skype->enabled))
         {
             print '<tr><td>'.$langs->trans('Skype').'</td><td colspan="3"><input type="text" name="skype" size="32" value="'.$object->skype.'"></td></tr>';
         }
@@ -1302,7 +1302,7 @@ else
             print '<tr><td>'.$langs->trans('Web').'</td><td colspan="3"><input type="text" name="url" size="32" value="'.$object->url.'"></td></tr>';
 
             // Skype
-            if (! empty($conf->skype->enabled) && $user->rights->skype->view)
+            if (! empty($conf->skype->enabled))
             {
                 print '<tr><td>'.$langs->trans('Skype').'</td><td colspan="3"><input type="text" name="skype" size="32" value="'.$object->skype.'"></td></tr>';
             }
@@ -1616,7 +1616,7 @@ else
         print '</td></tr>';
 
         // Skype
-        if (! empty($conf->skype->enabled) && $user->rights->skype->view)
+        if (! empty($conf->skype->enabled))
         {
             print '<tr><td>'.$langs->trans('Skype').'</td><td colspan="3">';
             print dol_print_skype($object->skype,0,$object->id,'AC_SKYPE');
@@ -1737,7 +1737,7 @@ else
 
         // Capital
         print '<tr><td>'.$langs->trans('Capital').'</td><td colspan="3">';
-        if ($object->capital) print $object->capital.' '.$langs->trans("Currency".$conf->currency);
+        if ($object->capital) print price($object->capital,'',$langs,0,-1,-1, $conf->currency);
         else print '&nbsp;';
         print '</td></tr>';
 

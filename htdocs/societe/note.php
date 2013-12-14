@@ -33,7 +33,7 @@ $action = GETPOST('action');
 $langs->load("companies");
 
 // Security check
-$id = GETPOST('id','int');
+$id = GETPOST('id')?GETPOST('id','int'):GETPOST('socid','int');
 if ($user->societe_id) $id=$user->societe_id;
 $result = restrictedArea($user, 'societe', $id, '&societe');
 

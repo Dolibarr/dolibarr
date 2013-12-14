@@ -2908,19 +2908,21 @@ class Facture extends CommonInvoice
                     $sql .= ' (fk_facture, amount, date_demande, fk_user_demande, code_banque, code_guichet, number, cle_rib)';
                     $sql .= ' VALUES ('.$this->id;
                     $sql .= ",'".price2num($resteapayer)."'";
-                    $sql .= ",'".$this->db->idate($now)."',";
+                    $sql .= ",'".$this->db->idate($now)."'";
                     $sql .= ",".$user->id;
                     $sql .= ",'".$bac->code_banque."'";
                     $sql .= ",'".$bac->code_guichet."'";
                     $sql .= ",'".$bac->number."'";
                     $sql .= ",'".$bac->cle_rib."')";
-                    if ( $this->db->query($sql))
+
+                    dol_syslog(get_class($this)."::demande_prelevement sql=".$sql);
+                    if ($this->db->query($sql))
                     {
                         return 1;
                     }
                     else
-                    {
-                        $this->error=$this->db->error();
+                  {
+                        $this->error=$this->db->lasterror();
                         dol_syslog(get_class($this).'::demandeprelevement Erreur');
                         return -1;
                     }
