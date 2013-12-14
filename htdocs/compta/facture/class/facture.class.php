@@ -2914,13 +2914,15 @@ class Facture extends CommonInvoice
                     $sql .= ",'".$bac->code_guichet."'";
                     $sql .= ",'".$bac->number."'";
                     $sql .= ",'".$bac->cle_rib."')";
-                    if ( $this->db->query($sql))
+
+                    dol_syslog(get_class($this)."::demande_prelevement sql=".$sql);
+                    if ($this->db->query($sql))
                     {
                         return 1;
                     }
                     else
-                    {
-                        $this->error=$this->db->error();
+                  {
+                        $this->error=$this->db->lasterror();
                         dol_syslog(get_class($this).'::demandeprelevement Erreur');
                         return -1;
                     }
