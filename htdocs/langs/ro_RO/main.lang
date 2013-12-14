@@ -1,9 +1,9 @@
 # Dolibarr language file - Source file is en_US - main
 DIRECTION=ltr
-# Note for chinese:
-# msungstdlight or cid0ct are for traditionnal chinese (traditionnal does not render with ubuntu pdf reader)
-# stsongstdlight or cid0cs are for simplified chinese
-# To read chinese pdf with linux: sudo apt-get install poppler-data
+# Note for Chinese:
+# msungstdlight or cid0ct are for traditional Chinese (traditional does not render with Ubuntu pdf reader)
+# stsongstdlight or cid0cs are for simplified Chinese
+# To read Chinese pdf with Linux: sudo apt-get install poppler-data
 FONTFORPDF=helvetica
 FONTSIZEFORPDF=10
 SeparatorDecimal=,
@@ -155,7 +155,7 @@ Valid=Validează
 Approve=Aprobaţi
 ReOpen=Redeaschide
 Upload=Trimite fişier
-# ToLink=Link
+ToLink=Link
 Select=Selectaţi
 Choose=Alege
 ChooseLangage=Vă rugăm să alegeţi limba dvs
@@ -388,7 +388,7 @@ OtherInformations=Alte informatii
 Quantity=Cantitate
 Qty=Cant
 ChangedBy=Modificat de
-# ReCalculate=Recalculate
+ReCalculate=Recalculează
 ResultOk=Succes
 ResultKo=Eşec
 Reporting=Raportare
@@ -632,18 +632,18 @@ IM=Mesagerie instant
 NewAttribute=Atribut nou
 AttributeCode=Cod Atribut
 OptionalFieldsSetup=Setări  atribute suplimentare
-URLPhoto=Url către foto / logo
+URLPhoto=Url către foto/logo
 SetLinkToThirdParty=Link către un alt terţ
 CreateDraft=Creareză ciornă
 ClickToEdit=Clic pentru a edita
-ObjectDeleted=Obiect  %s şters
-ByCountry=Pe  ţară
-ByTown=Pe  oraş
+ObjectDeleted=Obiect %s şters
+ByCountry=Pe ţară
+ByTown=Pe oraş
 ByDate=Pe dată
 ByMonthYear=Pe luna / an
 ByYear=Pe ani
-ByMonth=pe  luni
-ByDay=pe  zi
+ByMonth=Pe luni
+ByDay=Pe zi
 BySalesRepresentative=Pe  reprezentant de vânzări
 LinkedToSpecificUsers=Link către un contact utilizator particular
 DeleteAFile=Şterge  fişier
@@ -657,10 +657,11 @@ HomeDashboard=Home
 Deductible=Deductibile
 from=de la
 toward=spre
-# Access=Access
-# HelpCopyToClipboard=Use Ctrl+C to copy to clipboard
-# SaveUploadedFileWithMask=Save file on server with name "<strong>%s</strong>" (otherwise "%s")
-# OriginFileName=Nom d'origine
+Access=Acces
+HelpCopyToClipboard=Utilizați Ctrl + C pentru a copia în clipboard
+SaveUploadedFileWithMask=Salvați fișierul pe server cu numele "<strong>%s</strong>" (altfel"%s")
+# OriginFileName=Original filename
+# SetDemandReason=Set source
 
 # Week day
 Monday=Luni

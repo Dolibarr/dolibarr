@@ -18,8 +18,8 @@ Permission23104 = Εκτέλεση Προγραμματισμένης εργασ
 # Admin
 #
 CronSetup= Προγραμματισμένη ρύθμιση διαχείρισης των εργασιών
-URLToLaunchCronJobs=URL για να ξεκινήσει εργασίες το cron
-OrToLaunchASpecificJob=Για να ξεκινήσει μια συγκεκριμένη εργασία
+# URLToLaunchCronJobs=URL to check and launch cron jobs if required
+# OrToLaunchASpecificJob=Or to check and launch a specific job
 KeyForCronAccess=Κλειδί ασφαλείας για το URL για να ξεκινήσει η εργασία cron
 FileToLaunchCronJobs=Γραμμής εντολών για να ξεκινήσει τις εργασίες
 CronExplainHowToRunUnix=Σχετικά με το περιβάλλον Unix θα πρέπει να χρησιμοποιήσετε crontab να τρέχει γραμμή εντολών κάθε λίγα λεπτά
@@ -32,6 +32,7 @@ CronExplainHowToRunWin=Στο Microsoft (tm) των Windows environement, μπο
 CronJobs=Προγραμματισμένες εργασίες
 CronListActive= Κατάλογος των ενεργών εργασιών
 CronListInactive= Λίστα με τις απενεργοποιημένες εργασίες
+CronListActive= Κατάλογος των ενεργών εργασιών
 
 
 #
@@ -42,7 +43,7 @@ CronLastOutput=Τελευταία εκτέλεση εξόδου
 CronLastResult=Τελευταίος κωδικός αποτελέσματος
 CronListOfCronJobs=Κατάλογος προγραμματισμένων εργασιών
 CronCommand=Εντολή
-CronList= Κατάλογος εργασιών
+# CronList=Jobs list
 CronDelete= Διαγραφή εργασιών cron
 CronConfirmDelete= Είστε σίγουροι ότι θέλετε να διαγράψετε αυτή την περιοδική εργασία;
 CronExecute=Έναρξη εργασίας

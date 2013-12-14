@@ -1,9 +1,9 @@
 # Dolibarr language file - Source file is en_US - main
 DIRECTION=ltr
-# Note for chinese:
-# msungstdlight or cid0ct are for traditionnal chinese (traditionnal does not render with ubuntu pdf reader)
-# stsongstdlight or cid0cs are for simplified chinese
-# To read chinese pdf with linux: sudo apt-get install poppler-data
+# Note for Chinese:
+# msungstdlight or cid0ct are for traditional Chinese (traditional does not render with Ubuntu pdf reader)
+# stsongstdlight or cid0cs are for simplified Chinese
+# To read Chinese pdf with Linux: sudo apt-get install poppler-data
 FONTFORPDF=DejaVuSans
 FONTSIZEFORPDF=10
 SeparatorDecimal=.
@@ -632,7 +632,7 @@ IM=Άμεσων μηνυμάτων
 NewAttribute=Νέο χαρακτηριστικό
 AttributeCode=Κωδικός Ιδιότητα
 OptionalFieldsSetup=Extra setup χαρακτηριστικά
-URLPhoto=URL της φωτογραφίας / λογότυπο
+# URLPhoto=URL of photo/logo
 SetLinkToThirdParty=Σύνδεση με άλλο τρίτο μέρος
 CreateDraft=Δημιουργία σχεδίου
 ClickToEdit=Κάντε κλικ για να επεξεργαστείτε
@@ -642,7 +642,7 @@ ByTown=Με την πόλη
 ByDate=Με ημερομηνία
 ByMonthYear=Με μήνας / έτος
 ByYear=Με χρόνια
-ByMonth=ανά μήνα
+# ByMonth=By month
 ByDay=Μέχρι την ημέρα
 BySalesRepresentative=Με τον αντιπρόσωπο πωλήσεων
 LinkedToSpecificUsers=Συνδέεται με μια συγκεκριμένη επαφή χρήστη
@@ -661,6 +661,7 @@ Access=Πρόσβαση
 HelpCopyToClipboard=Χρησιμοποιήστε το Ctrl + C για να αντιγράψετε στο πρόχειρο
 SaveUploadedFileWithMask=Αποθηκεύστε το αρχείο στον server με το όνομα "<strong>%s</strong>" (αλλιώς "%s")
 OriginFileName=Αρχική Ονομασία
+# SetDemandReason=Set source
 
 # Week day
 Monday=Δευτέρα
