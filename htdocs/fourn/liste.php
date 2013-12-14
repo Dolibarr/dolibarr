@@ -86,7 +86,7 @@ $sql.= ", ".MAIN_DB_PREFIX."c_stcomm as st";
 if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql.= " WHERE s.fk_stcomm = st.id AND s.fournisseur = 1";
 $sql.= " AND s.entity IN (".getEntity('societe', 1).")";
-if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc";
 if ($socid) $sql .= " AND s.rowid = ".$socid;
 if ($socname)
 {
@@ -114,6 +114,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 $sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit($conf->liste_limit+1, $offset);
 
+dol_syslog('fourn/liste.php: sql='.$sql,LOG_DEBUG);
 $resql = $db->query($sql);
 if ($resql)
 {
