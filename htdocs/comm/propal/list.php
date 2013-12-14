@@ -24,8 +24,8 @@
  */
 
 /**
- *	\file       	htdocs/comm/propal.php
- *	\ingroup    	propale
+ *	\file       	htdocs/comm/propal/list.php
+ *	\ingroup    	propal
  *	\brief      	Page of commercial proposals card and list
  */
 

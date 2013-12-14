@@ -20,6 +20,12 @@
  * We set here login choices into session.
  */
 
+/**
+ *	\file       htdocs/cashdesk/index_verif.php
+ *	\ingroup    cashdesk
+ *	\brief      index_verif.php
+ */
+
 include '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/cashdesk/include/environnement.php';
 require_once DOL_DOCUMENT_ROOT.'/cashdesk/class/Auth.class.php';
