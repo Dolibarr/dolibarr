@@ -97,7 +97,7 @@ if ($object->id)
 	if ($action == 'delete')
 	{
 		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&file='.$_GET["file"], $langs->trans('DeletePicture'), $langs->trans('ConfirmDeletePicture'), 'confirm_delete', '', 0, 1);
-		
+
 	}
 
 	print($mesg);
@@ -162,7 +162,7 @@ if ($object->id)
 	{
 		// Affiche formulaire upload
 		$formfile=new FormFile($db);
-		$formfile->form_attach_new_file($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans("AddPhoto"), 1, 0, 1, 50, $object, '', false); // FIXME Regis: disabled for the moment
+		$formfile->form_attach_new_file($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans("AddPhoto"), 1, 0, 1, 50, $object, '', false); // ajax=false for the moment. true may not work.
 	}
 
 	// Affiche photos
