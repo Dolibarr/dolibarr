@@ -143,47 +143,32 @@ else
     {
         // For natural search
         $scrit = explode(' ', $sall);
-		// multilang
-		if ($conf->global->MAIN_MULTILANGS) // si l'option est active
-	    {
-			foreach ($scrit as $crit) {
-		        $sql.= " AND (p.ref LIKE '%".$db->escape($crit)."%' OR p.label LIKE '%".$db->escape($crit)."%' OR p.description LIKE '%".$db->escape($crit)."%' OR p.note LIKE '%".$db->escape($crit)."%'  OR pl.description LIKE '%".$db->escape($sall)."%' OR pl.note LIKE '%".$db->escape($sall)."%'";
-		        if (! empty($conf->barcode->enabled))
-		        {
-		        	//If the barcode looks like an EAN13 format and the last digit is included in it,
-					//then whe look for the 12-digit too
-					//As the twelve-digit string will also hit the 13-digit code, we only look for this one
-					//Some code written by "hipnosapo" forum user in http://www.dolibarr.es/index.php/foro/7-bugs-versiones-estables/3891-ean13-buscador-codigo-barras-13-digitos#3891
-		        	if (strlen($crit) == 13) {
-						$crit_12digit = substr($crit, 0, 12);
-						$sql .=  "OR p.barcode LIKE '%".$db->escape($crit_12digit)."%'";
-					} else {
-						$sql.= " OR p.barcode LIKE '%".$db->escape($crit)."%'";
-					}
-		        }
-		        $sql.= ')';
-		    }
-		}
-		else
-		{
-		    foreach ($scrit as $crit) {
-		        $sql.= " AND (p.ref LIKE '%".$db->escape($crit)."%' OR p.label LIKE '%".$db->escape($crit)."%' OR p.description LIKE '%".$db->escape($crit)."%' OR p.note LIKE '%".$db->escape($crit)."%'";
-		        if (! empty($conf->barcode->enabled))
-		        {
-		        	//If the barcode looks like an EAN13 format and the last digit is included in it,
-					//then whe look for the 12-digit too
-					//As the twelve-digit string will also hit the 13-digit code, we only look for this one
-					//Some code written by "hipnosapo" forum user in http://www.dolibarr.es/index.php/foro/7-bugs-versiones-estables/3891-ean13-buscador-codigo-barras-13-digitos#3891
-		        	if (strlen($crit) == 13) {
-						$crit_12digit = substr($crit, 0, 12);
-						$sql .=  "OR p.barcode LIKE '%".$db->escape($crit_12digit)."%'";
-					} else {
-						$sql.= " OR p.barcode LIKE '%".$db->escape($crit)."%'";
-					}
-		        }
-		        $sql.= ')';
-		    }
-		}
+		
+		foreach ($scrit as $crit) {
+
+			$sql.= " AND (p.ref LIKE '%".$db->escape($crit)."%' OR p.label LIKE '%".$db->escape($crit)."%' OR p.description LIKE '%".$db->escape($crit)."%' OR p.note LIKE '%".$db->escape($crit)."%'";
+
+			// multilang
+			if ($conf->global->MAIN_MULTILANGS) {
+				$sql .= " OR pl.description LIKE '%".$db->escape($sall)."%' OR pl.note LIKE '%".$db->escape($sall)."%'";
+			}
+	        
+	        if (! empty($conf->barcode->enabled))
+	        {
+	        	//If the barcode looks like an EAN13 format and the last digit is included in it,
+				//then whe look for the 12-digit too
+				//As the twelve-digit string will also hit the 13-digit code, we only look for this one
+				//Some code written by "hipnosapo" forum user in http://www.dolibarr.es/index.php/foro/7-bugs-versiones-estables/3891-ean13-buscador-codigo-barras-13-digitos#3891
+	        	if (strlen($crit) == 13) {
+					$crit_barcode = substr($crit, 0, 12);
+				} else {
+					$crit_barcode = $crit;
+				}
+
+				$sql .= " OR p.barcode LIKE '%".$db->escape($crit_barcode)."%'";
+	        }
+	        $sql.= ')';
+	    }
     }
     // if the type is not 1, we show all products (type = 0,2,3)
     if (dol_strlen($type))
