@@ -33,6 +33,7 @@
 <input type="hidden" name="usenewupdatelineform" value="1" />
 <input type="hidden" name="id" value="<?php echo $this->id; ?>">
 <input type="hidden" name="lineid" value="<?php echo $line->id; ?>">
+<input type="hidden" name="special_code" value="<?php echo $line->special_code; ?>">
 <input type="hidden" id="product_type" name="type" value="<?php echo $line->product_type; ?>">
 <input type="hidden" id="product_id" name="productid" value="<?php echo (! empty($line->fk_product)?$line->fk_product:0); ?>" />
 
