@@ -2457,7 +2457,7 @@ class Commande extends CommonOrder
 
         	// On efface le repertoire de pdf provisoire
         	$comref = dol_sanitizeFileName($this->ref);
-        	if ($conf->commande->dir_output)
+        	if ($conf->commande->dir_output && !empty($this->ref))
         	{
         		$dir = $conf->commande->dir_output . "/" . $comref ;
         		$file = $conf->commande->dir_output . "/" . $comref . "/" . $comref . ".pdf";
