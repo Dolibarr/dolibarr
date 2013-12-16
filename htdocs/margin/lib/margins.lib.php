@@ -83,14 +83,14 @@ function marges_prepare_head()
 /**
  * Return an array with margins information of a line
  *
- * @param 	float 	$pvht					Selling price without tax
- * @param 	float	$remise_percent_ligne	Discount percent on line
- * @param 	float	$tva_tx					Vat rate
- * @param 	float	$localtax1_tx			Vat rate special 1
- * @param 	float	$localtax2_tx			Vat rate special 2
- * @param 	int		$fk_pa					Id of buying price (prefer set this to 0 and provide $paht instead. With id, buying price may have change)
- * @param 	float	$paht					Buying price without tax
- * @return	array							Array of margin info
+ * @param 	float 	$pvht				Selling price without tax
+ * @param 	float	$remise_percent		Discount percent on line
+ * @param 	float	$tva_tx				Vat rate (not used)
+ * @param 	float	$localtax1_tx		Vat rate special 1 (not used)
+ * @param 	float	$localtax2_tx		Vat rate special 2 (not used)
+ * @param 	int		$fk_pa				Id of buying price (prefer set this to 0 and provide $paht instead. With id, buying price may have change)
+ * @param 	float	$paht				Buying price without tax
+ * @return	array						Array of margin info
  */
 function getMarginInfos($pvht, $remise_percent, $tva_tx, $localtax1_tx, $localtax2_tx, $fk_pa, $paht)
 {
