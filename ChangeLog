@@ -12,6 +12,7 @@ For translators:
 
 For developers:
 - New: Add path file of trigger into admin trigger list page.
+- New: More phpunit tests.
 
 
 
