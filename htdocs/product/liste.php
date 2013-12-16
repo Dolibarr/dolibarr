@@ -6,6 +6,7 @@
  * Copyright (C) 2013      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2013      Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2013      Jean Heimburger   	<jean@tiaris.info>
+ * Copyright (C) 2013		Adolfo segura 		<adolfo.segura@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -158,7 +159,6 @@ else
 	        	//If the barcode looks like an EAN13 format and the last digit is included in it,
 				//then whe look for the 12-digit too
 				//As the twelve-digit string will also hit the 13-digit code, we only look for this one
-				//Some code written by "hipnosapo" forum user in http://www.dolibarr.es/index.php/foro/7-bugs-versiones-estables/3891-ean13-buscador-codigo-barras-13-digitos#3891
 	        	if (strlen($crit) == 13) {
 					$crit_barcode = substr($crit, 0, 12);
 				} else {
