@@ -3,6 +3,7 @@
  * Copyright (C) 2008-2011 Laurent Destailleur   <eldy@uers.sourceforge.net>
  * Copyright (C) 2011 Juanjo Menent			  	 <jmenent@2byte.es>
  * Copyright (C) 2013 Marcos García					<marcosgdf@gmail.com>
+ * Copyright (C) 2013 Adolfo Segura 				<adolfo.segura@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,7 +46,6 @@ if ( GETPOST('filtre') ) {
 		//If the barcode looks like an EAN13 format and the last digit is included in it,
 		//then whe look for the 12-digit too
 		//As the twelve-digit string will also hit the 13-digit code, we only look for this one
-		//Some code written by "hipnosapo" forum user in http://www.dolibarr.es/index.php/foro/7-bugs-versiones-estables/3891-ean13-buscador-codigo-barras-13-digitos#3891
 		if (strlen($filtre) == 13) {
 			$crit_12digit = substr($filtre, 0, 12);
 			$sql .= " OR p.barcode LIKE '%".$db->escape($crit_12digit)."%')";
