@@ -398,6 +398,7 @@ InActivity=Activo
 ActivityCeased=Cerrado
 ActivityStateFilter=Estado de actividad
 ProductsIntoElements=Listado de productos en %s
+CurrentOutstandingBill=Importe pendiente
 OutstandingBill=Importe máximo para facturas pendientes
 OutstandingBillReached=Importe máximo alcanzado
 # Monkey
