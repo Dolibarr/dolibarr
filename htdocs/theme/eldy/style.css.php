@@ -412,6 +412,9 @@ th .button {
 .maxwidthonsmartphone { max-width: 100px; }
 <?php } ?>
 .linkobject { cursor: pointer; }
+<?php if (GETPOST("optioncss") == 'print') { ?>
+.hideonprint { display: none; }
+<?php } ?>
 
 
 /* ============================================================================== */
@@ -1443,7 +1446,7 @@ a.tab:link, a.tab:visited, a.tab:hover, a.tab#active {
 	background-image: none !important;
 }
 
-a.tab#active {
+.tabactive {
 <?php if ($usecss3) { ?>
 /*    border-bottom: 1px solid rgb(<?php echo $colorbacktabactive; ?>) !important; */
 	background: rgba(<?php echo $colorbacktabcard2; ?>, 0.5)  url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/nav-overlay3.png',1); ?>) 50% 0 repeat-x;

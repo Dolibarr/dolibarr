@@ -363,6 +363,9 @@ center .error { padding:8px !important; padding-left:26px !important; padding-ri
 .maxwidthonsmartphone { max-width: 100px; }
 <?php } ?>
 .linkobject { cursor:pointer; }
+<?php if (GETPOST("optioncss") == 'print') { ?>
+.hideonprint { display: none !important; }
+<?php } ?>
 
 
 /* ============================================================================== */
@@ -988,11 +991,11 @@ a.tab {
 	-webkit-border-top-right-radius:6px;
 }
 
-a.tab#active {
+.tabactive {
 	color:#232323;
 	font-weight:bold;
-	background-color:#ffffff;
-	<?php echo $dol_use_jmobile?'':'border-bottom:solid 1px #ffffff;'; ?>
+	background-color:#ffffff !important;
+	<?php echo $dol_use_jmobile?'':'border-bottom:solid 1px #ffffff !important;'; ?>
 }
 
 a.tab:hover {color:#333333;}

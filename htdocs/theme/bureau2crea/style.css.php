@@ -270,6 +270,10 @@ div.inline-block
 .maxwidthonsmartphone { max-width: 100px; }
 <?php } ?>
 .linkobject { cursor: pointer; }
+<?php if (GETPOST("optioncss") == 'print') { ?>
+.hideonprint { display: none !important; }
+<?php } ?>
+
 
 /* ============================================================================== */
 /* Styles for dragging lines                                                      */
@@ -1127,8 +1131,8 @@ div.tabs a.tab {
     padding: 0px 10px 0px 10px;
 }
 
-div.tabs a.tab#active {
-    background-color: #FFF;
+div.tabs a.tab:active, .tabactive {
+    background-color: #888 !important;
     color: #D45416;
     border-bottom: 0px;
     background-image: none;

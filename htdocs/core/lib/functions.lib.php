@@ -622,7 +622,9 @@ function dol_get_fiche_head($links=array(), $active='0', $title='', $notab=0, $p
 	// Show tabs
 	for ($i = 0 ; $i <= $maxkey ; $i++)
 	{
-		$out.='<div class="inline-block tabsElem">';
+		$isactive=(is_numeric($active) && $i == $active) || (! is_numeric($active) && $active == $links[$i][2]);
+
+		$out.='<div class="inline-block tabsElem'.((! $isactive && ! empty($conf->global->MAIN_HIDE_INACTIVETAB_ON_PRINT))?' hideonprint':'').'">';
 		if (isset($links[$i][2]) && $links[$i][2] == 'image')
 		{
 			if (!empty($links[$i][0]))
@@ -637,10 +639,9 @@ function dol_get_fiche_head($links=array(), $active='0', $title='', $notab=0, $p
 		else if (! empty($links[$i][1]))
 		{
 			//print "x $i $active ".$links[$i][2]." z";
-			if ((is_numeric($active) && $i == $active)
-			|| (! is_numeric($active) && $active == $links[$i][2]))
+			if ($isactive)
 			{
-				$out.='<a data-role="button" id="active" class="tab inline-block" href="'.$links[$i][0].'">'.$links[$i][1].'</a>'."\n";
+				$out.='<a data-role="button"'.(! empty($links[$i][2])?' id="'.$links[$i][2].'"':'').' class="tabactive tab inline-block" href="'.$links[$i][0].'">'.$links[$i][1].'</a>'."\n";
 			}
 			else
 			{

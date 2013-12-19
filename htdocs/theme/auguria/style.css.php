@@ -246,6 +246,10 @@ div.inline-block
 .maxwidthonsmartphone { max-width: 100px; }
 <?php } ?>
 .linkobject { cursor: pointer; }
+<?php if (GETPOST("optioncss") == 'print') { ?>
+.hideonprint { display: none !important; }
+<?php } ?>
+
 
 /* ============================================================================== */
 /* Styles for dragging lines                                                      */
@@ -1082,8 +1086,8 @@ a.tab:visited {
     border-<?php print $left; ?>: 1px solid #D8D8D8;
     border-top: 1px solid #D8D8D8;
 }
-a.tab#active {
-    background: white;
+div.tabs a.tab:active, .tabactive {
+    background: white !important;
     border-bottom: #dee7ec 1px solid;
 	font-family: <?php print $fontlist ?>;
     color: #436976;

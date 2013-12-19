@@ -245,6 +245,10 @@ div.inline-block
 .maxwidthonsmartphone { max-width: 100px; }
 <?php } ?>
 .linkobject { cursor: pointer; }
+<?php if (GETPOST("optioncss") == 'print') { ?>
+.hideonprint { display: none !important; }
+<?php } ?>
+
 
 /* ============================================================================== */
 /* Styles for dragging lines                                                      */
@@ -1225,8 +1229,8 @@ background: linear-gradient(top, #fceabb 0%,#fccd4d 50%,#FFA820 87%,#fbdf93 100%
 }
 
 
-div.tabs a.tab#active {
-    color: #FFF;
+div.tabs a.tab:active, .tabactive {
+    color: #FFF !important;
     padding: 0px 6px 0px 6px;
     -moz-border-radius-topleft:8px;
     -moz-border-radius-topright:8px;
