@@ -664,6 +664,7 @@ HelpCopyToClipboard=Use Ctrl+C para copiar al portapapeles
 SaveUploadedFileWithMask=Guardar el archivo con el nombre "<strong>%s</strong>" (sino "%s")
 OriginFileName=Nombre del archivo origen
 SetDemandReason=Definir el origen
+ViewPrivateNote=Ver notas
 # Week day
 Monday=Lunes
 Tuesday=Martes
