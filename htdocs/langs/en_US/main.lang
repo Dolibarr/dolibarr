@@ -311,6 +311,7 @@ SubTotal=Subtotal
 TotalHTShort=Total (net)
 TotalTTCShort=Total (inc. tax)
 TotalHT=Total (net of tax)
+TotalHTforthispage=Total (net of tax) for this page
 TotalTTC=Total (inc. tax)
 TotalTTCToYourCredit=Total (inc. tax) to your credit
 TotalVAT=Total tax

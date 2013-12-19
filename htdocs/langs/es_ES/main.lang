@@ -311,6 +311,7 @@ SubTotal=Subtotal
 TotalHTShort=Importe
 TotalTTCShort=Total
 TotalHT=Base imponible
+TotalHTforthispage=Total base imponible para esta página
 TotalTTC=Total
 TotalTTCToYourCredit=Total a crédito
 TotalVAT=Total IVA
