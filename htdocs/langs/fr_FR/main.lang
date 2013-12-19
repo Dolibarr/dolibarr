@@ -664,6 +664,7 @@ HelpCopyToClipboard=Utilisez Ctrl+C pour copier dans le presse-papier
 SaveUploadedFileWithMask=Sauver le fichier sur le serveur sous le nom "<strong>%s</strong>" (sinon "%s")
 OriginFileName=nom du fichier source
 SetDemandReason=Définir l'origine
+ViewPrivateNote=Voir notes
 
 # Week day
 Monday=Lundi
