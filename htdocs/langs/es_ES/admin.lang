@@ -299,6 +299,7 @@ ServerNotAvailableOnIPOrPort=Servidor no disponible en la dirección <b>%s</b> e
 DoTestServerAvailability=Probar conectividad con el servidor
 DoTestSend=Probar envío
 DoTestSendHTML=Probar envío HTML
+ErrorCantUseRazIfNoYearInMask=Error, no se puede usar la opción @ para reiniciar el contador anualmente si no se encuentra en la máscara la secuencia {yy} o {yyyy}
 ErrorCantUseRazInStartedYearIfNoYearMonthInMask=Error, no se puede usar la opción @ si la secuencia {yy}{mm} o {yyyy}{mm} no se encuentra en la máscara.
 UMask=Parámetro UMask de nuevos archivos en Unix/Linux/BSD.
 UMaskExplanation=Este parámetro determina los derechos de los archivos creados en el servidor Dolibarr (durante la subida, por ejemplo).<br>Este debe ser el valor octal (por ejemplo, 0666 significa lectura / escritura para todos).<br>Este parámetro no tiene ningún efecto sobre un servidor Windows.
@@ -380,7 +381,6 @@ KeepEmptyToUseDefault=Deje este campo vacío para usar el valor por defecto
 DefaultLink=Enlace por defecto
 ValueOverwrittenByUserSetup=Atención: Este valor puede ser sobreescrito por un valor específico de la configuración del usuario (cada usuario puede tener su propia url clicktodial)
 ExternalModule=Módulo externo - Instalado en el directorio %s
-
 # Modules
 Module0Name=Usuarios y grupos
 Module0Desc=Gestión de usuarios y grupos
@@ -1008,6 +1008,8 @@ XDebugInstalled=XDebug está cargado.
 XCacheInstalled=XCache está cargado
 AddRefInList=Mostrar el código de cliente/proveedor en los listados (lista desplegable o autoselección) en la mayoría de enlaces
 FieldEdition=Edición del campo %s
+FixTZ=Ajueste TimeZone
+FillThisOnlyIfRequired=Ejemplo: +2 (Rellene únicamente si se experimentan problemas de offset de zona horaria)
 ##### Module password generation
 PasswordGenerationStandard=Devuelve una contraseña generada por el algoritmo interno Dolibarr: 8 caracteres, números y caracteres en minúsculas mezcladas.
 PasswordGenerationNone=No ofrece contraseñas. La contraseña se introduce manualmente.
@@ -1270,7 +1272,6 @@ FilesOfTypeNotCompressed=Archivos de tipo %s no son comprimidos por el servidor 
 CacheByServer=Caché mediante el servidor
 CacheByClient=Caché mediante el navegador
 CompressionOfResources=Compresión de las respuestas HTTP
-TestNotPossibleWithCurrentBrowsers=La detección automática no es posible con el navegador actual
 ##### Products #####
 ProductSetup=Configuración del módulo Productos
 ServiceSetup=Configuración del módulo Servicios

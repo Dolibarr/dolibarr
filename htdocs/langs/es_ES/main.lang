@@ -257,6 +257,8 @@ Seconds=Segundos
 Today=Hoy
 Yesterday=Ayer
 Tomorrow=Mañana
+Morning=Mañana
+Afternoon=Tarde
 Quadri=Trimestre
 MonthOfDay=Mes del día
 HourShort=H
@@ -661,7 +663,7 @@ Access=Acceso
 HelpCopyToClipboard=Use Ctrl+C para copiar al portapapeles
 SaveUploadedFileWithMask=Guardar el archivo con el nombre "<strong>%s</strong>" (sino "%s")
 OriginFileName=Nombre del archivo origen
-
+SetDemandReason=Definir el origen
 # Week day
 Monday=Lunes
 Tuesday=Martes
