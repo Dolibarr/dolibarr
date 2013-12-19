@@ -701,38 +701,37 @@ elseif ($action == 'update_extras')
 	// Fill array 'array_options' with data from add form
 	$extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
 	$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
-	
-	if($ret < 0)
-		$error++;
-	
-	if(!$error) {
-	
+
+	if($ret < 0) $error++;
+
+	if (!$error)
+	{
 		// Actions on extra fields (by external module or standard code)
 		// FIXME le hook fait double emploi avec le trigger !!
 		$hookmanager->initHooks(array('supplierorderdao'));
 		$parameters=array('id'=>$object->id);
-		
+
 		$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$object,$action); // Note that $action and $object may have been modified by some hooks
-		
+
 		if (empty($reshook))
 		{
 			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
 			{
-			
+
 				$result=$object->insertExtraFields();
-				
+
 				if ($result < 0)
 				{
 					$error++;
 				}
-			
+
 			}
 		}
 		else if ($reshook < 0) $error++;
 	}
 	else
 	{
-	$action = 'edit_extras';
+		$action = 'edit_extras';
 	}
 }
 
@@ -1119,12 +1118,12 @@ if ($action=="create")
 	// Other options
     $parameters=array();
     $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action); // Note that $action and $object may have been modified by hook
-	
+
 	if (empty($reshook) && ! empty($extrafields->attribute_label))
     {
 		print $object->showOptionals($extrafields,'edit');
     }
-	
+
 	// Bouton "Create Draft"
     print "</table>\n";
 
@@ -1141,9 +1140,9 @@ elseif (! empty($object->id))
 
 	$title=$langs->trans("SupplierOrder");
 	dol_fiche_head($head, 'card', $title, 0, 'order');
-	
+
 	$res=$object->fetch_optionals($object->id,$extralabels);
-	
+
 	/*
 	 * Confirmation de la suppression de la commande
 	 */
@@ -1408,7 +1407,6 @@ elseif (! empty($object->id))
 	// Other attributes
 	$parameters=array('socid'=>$socid, 'colspan' => ' colspan="3"');
 	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
-
 	if (empty($reshook) && ! empty($extrafields->attribute_label))
 	{
 		if ($action == 'edit_extras')
@@ -1418,7 +1416,7 @@ elseif (! empty($object->id))
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<input type="hidden" name="id" value="'.$object->id.'">';
 		}
-		
+
 		foreach($extrafields->attribute_label as $key=>$label)
 		{
 			if ($action == 'edit_extras') {
@@ -1426,7 +1424,7 @@ elseif (! empty($object->id))
 			} else {
 				$value=$object->array_options["options_".$key];
 			}
-			
+
 			if ($extrafields->attribute_type[$key] == 'separate')
 			{
 				print $extrafields->showSeparator($key);
@@ -1441,7 +1439,7 @@ elseif (! empty($object->id))
 				{
 					$value = isset($_POST["options_".$key])?dol_mktime($_POST["options_".$key."hour"], $_POST["options_".$key."min"], 0, $_POST["options_".$key."month"], $_POST["options_".$key."day"], $_POST["options_".$key."year"]):$db->jdate($object->array_options['options_'.$key]);
 				}
-				
+
 				if ($action == 'edit_extras' && $user->rights->fournisseur->commande->creer)
 				{
 		  			print $extrafields->showInputField($key,$value);
@@ -1450,12 +1448,13 @@ elseif (! empty($object->id))
 				{
 		  			print $extrafields->showOutputField($key,$value);
 				}
-				
+
 				print '</td></tr>'."\n";
 		  	}
 		}
 
-		if(count($extrafields->attribute_label) > 0) {
+		if(count($extrafields->attribute_label) > 0)
+		{
 			if ($action == 'edit_extras' && $user->rights->fournisseur->commande->creer)
 			{
 				print '<tr><td></td><td colspan="5">';
@@ -1463,7 +1462,8 @@ elseif (! empty($object->id))
 				print '</form>';
 				print '</td></tr>';
 			}
-			else {
+			else
+			{
 				if ($object->statut == 0 && $user->rights->fournisseur->commande->creer)
 				{
 					print '<tr><td></td><td><a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=edit_extras">'.img_picto('','edit').' '.$langs->trans('Modify').'</a></td></tr>';
@@ -1471,7 +1471,7 @@ elseif (! empty($object->id))
 			}
 		}
 	}
-	
+
 	// Ligne de	3 colonnes
 	print '<tr><td>'.$langs->trans("AmountHT").'</td>';
 	print '<td align="right"><b>'.price($object->total_ht).'</b></td>';

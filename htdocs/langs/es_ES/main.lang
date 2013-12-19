@@ -666,7 +666,6 @@ SaveUploadedFileWithMask=Guardar el archivo con el nombre "<strong>%s</strong>" 
 OriginFileName=Nombre del archivo origen
 SetDemandReason=Definir origen
 ViewPrivateNote=Ver notas
-
 # Week day
 Monday=Lunes
 Tuesday=Martes

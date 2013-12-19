@@ -1010,7 +1010,6 @@ AddRefInList=Mostrar el código de cliente/proveedor en los listados (lista desp
 FieldEdition=Edición del campo %s
 FixTZ=Ajueste TimeZone
 FillThisOnlyIfRequired=Ejemplo: +2 (Rellene únicamente si se experimentan problemas de offset de zona horaria)
-
 ##### Module password generation
 PasswordGenerationStandard=Devuelve una contraseña generada por el algoritmo interno Dolibarr: 8 caracteres, números y caracteres en minúsculas mezcladas.
 PasswordGenerationNone=No ofrece contraseñas. La contraseña se introduce manualmente.
