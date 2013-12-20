@@ -443,6 +443,7 @@ function createThirdParty($authentication,$thirdparty)
         $newobject->tva_intra=$thirdparty['vat_number'];
 
         $newobject->canvas=$thirdparty['canvas'];
+        $newobject->particulier=$thirdparty['individual'];
         
         //Retreive all extrafield for thirdsparty
         // fetch optionals attributes and labels
@@ -457,6 +458,11 @@ function createThirdParty($authentication,$thirdparty)
         $db->begin();
 
         $result=$newobject->create($fuser);
+        if ($newobject->particulier && $result > 0) {
+            $newobject->firstname = $thirdparty['firstname'];
+            $newobject->name_bis = $thirdparty['ref'];
+            $result = $newobject->create_individual($fuser);
+        }
         if ($result <= 0)
         {
             $error++;
