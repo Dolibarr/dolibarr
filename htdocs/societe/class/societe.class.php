@@ -994,6 +994,8 @@ class Societe extends CommonObject
 
         require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
+        $entity=isset($this->entity)?$this->entity:$conf->entity;
+        
         dol_syslog(get_class($this)."::delete", LOG_DEBUG);
         $error = 0;
 
@@ -1122,12 +1124,15 @@ class Societe extends CommonObject
                 $this->db->commit();
 
                 // Delete directory
-                $docdir = $conf->societe->multidir_output[$this->entity] . "/" . $id;
-                if (file_exists($docdir))
+                if (! empty($conf->societe->multidir_output[$entity]))
                 {
-                    dol_delete_dir_recursive($docdir);
+                	$docdir = $conf->societe->multidir_output[$entity] . "/" . $id;
+                	if (dol_is_dir($docdir))
+                	{
+                    	dol_delete_dir_recursive($docdir);
+                	}
                 }
-
+                
                 return 1;
             }
             else
