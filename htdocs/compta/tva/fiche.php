@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2013 Regis Houssin        <regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -31,7 +31,7 @@ $langs->load("compta");
 $langs->load("banks");
 $langs->load("bills");
 
-$id=GETPOST("id");
+$id=GETPOST("id",'int');
 $action=GETPOST('action');
 
 $mesg = '';
@@ -89,7 +89,7 @@ if ($action == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
 
 if ($action == 'delete')
 {
-    $result=$tva->fetch($_GET['id']);
+    $result=$tva->fetch($id);
 
 	if ($tva->rappro == 0)
 	{
@@ -102,10 +102,10 @@ if ($action == 'delete')
 			{
 				$accountline=new AccountLine($db);
 				$result=$accountline->fetch($tva->fk_bank);
-				$result=$accountline->delete($user);
+				if ($result > 0) $result=$accountline->delete($user);	// $result may be 0 if not found (when bank entry was deleted manually and fk_bank point to nothing)
 			}
 
-			if ($result > 0)
+			if ($result >= 0)
 			{
 				$db->commit();
 				header("Location: ".DOL_URL_ROOT.'/compta/tva/reglement.php');

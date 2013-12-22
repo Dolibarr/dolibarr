@@ -1339,7 +1339,7 @@ class Commande extends CommonOrder
                 $this->lines				= array();
 
                 if ($this->statut == 0) $this->brouillon = 1;
-                
+
                 // Retreive all extrafield for invoice
                 // fetch optionals attributes and labels
                 if(!class_exists('Extrafields'))
@@ -2420,7 +2420,7 @@ class Commande extends CommonOrder
         	// Delete linked contacts
         	$res = $this->delete_linked_contact();
         	if ($res < 0) $error++;
-        	
+
         	// Remove extrafields
         	if ((! $error) && (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED))) // For avoid conflicts if trigger used
         	{
@@ -2458,8 +2458,8 @@ class Commande extends CommonOrder
         			}
         		}
         	}
-        	
-        	
+
+
         }
 
         if (! $error)
@@ -3055,6 +3055,7 @@ class OrderLine
             $this->fk_product       = $objp->fk_product;
             $this->product_type     = $objp->product_type;
             $this->info_bits        = $objp->info_bits;
+			$this->special_code		= $objp->special_code;
             $this->total_ht         = $objp->total_ht;
             $this->total_tva        = $objp->total_tva;
             $this->total_localtax1  = $objp->total_localtax1;

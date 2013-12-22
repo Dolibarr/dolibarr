@@ -56,6 +56,8 @@ $search_compta=GETPOST("search_compta");
 $search_sale  = GETPOST("search_sale");
 $search_categ = GETPOST("search_categ",'int');
 $catid        = GETPOST("catid",'int');
+// If the internal user must only see his customers, force searching by him
+if (!$user->rights->societe->client->voir && !$socid) $search_sale = $user->id;
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('customerlist'));
@@ -98,17 +100,15 @@ llxHeader('',$langs->trans("ThirdParty"),$help_url);
 
 $sql = "SELECT s.rowid, s.nom as name, s.client, s.zip, s.town, st.libelle as stcomm, s.prefix_comm, s.code_client, s.code_compta, s.status as status,";
 $sql.= " s.datec, s.datea, s.canvas";
-// We'll need these fields in order to filter by sale (including the case where the user can only see his prospects)
-if ($search_sale) $sql .= ", sc.fk_soc, sc.fk_user";
+if ((!$user->rights->societe->client->voir && !$socid) || $search_sale) $sql .= ", sc.fk_soc, sc.fk_user"; // We need these fields in order to filter by sale (including the case where the user can only see his prospects)
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 if (! empty($search_categ) || ! empty($catid)) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_societe as cs ON s.rowid = cs.fk_societe"; // We need this table joined to the select in order to filter by categ
+if ((!$user->rights->societe->client->voir && !$socid) || $search_sale) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc"; // We need this table joined to the select in order to filter by sale
 $sql.= ", ".MAIN_DB_PREFIX."c_stcomm as st";
-// We'll need this table joined to the select in order to filter by sale
-if ($search_sale || !$user->rights->societe->client->voir) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql.= " WHERE s.fk_stcomm = st.id";
 $sql.= " AND s.client IN (1, 3)";
 $sql.= ' AND s.entity IN ('.getEntity('societe', 1).')';
-if (!$user->rights->societe->client->voir && ! $socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+if ((!$user->rights->societe->client->voir && !$socid) || $search_sale) $sql.= " AND s.rowid = sc.fk_soc";
 if ($socid) $sql.= " AND s.rowid = ".$socid;
 if ($search_sale) $sql.= " AND s.rowid = sc.fk_soc";		// Join for the needed table to filter by sale
 if ($catid > 0)          $sql.= " AND cs.fk_categorie = ".$catid;
@@ -137,8 +137,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 $sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit($conf->liste_limit +1, $offset);
 
-dol_syslog('comm:list.php: sql='.$sql,LOG_DEBUG);
-
+dol_syslog('comm/list.php: sql='.$sql,LOG_DEBUG);
 $result = $db->query($sql);
 if ($result)
 {

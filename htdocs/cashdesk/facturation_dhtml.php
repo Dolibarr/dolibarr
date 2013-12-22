@@ -17,8 +17,9 @@
  */
 
 /**
- * This page is called each time we press a key in the code
- * search form to show product combo list.
+ *	\file       htdocs/cashdesk/facturation_dhtml.php
+ *	\ingroup    cashdesk
+ *	\brief      This page is called each time we press a key in the code search form to show product combo list.
  */
 
 

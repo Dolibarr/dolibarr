@@ -24,8 +24,8 @@
  */
 
 /**
- *	\file       	htdocs/comm/propal.php
- *	\ingroup    	propale
+ *	\file       	htdocs/comm/propal/list.php
+ *	\ingroup    	propal
  *	\brief      	Page of commercial proposals card and list
  */
 
@@ -167,7 +167,7 @@ if ($search_montant_ht)
 {
 	$sql.= " AND p.total_ht='".$db->escape(price2num(trim($search_montant_ht)))."'";
 }
-if ($sall) $sql.= " AND (s.nom LIKE '%".$db->escape($sall)."%' OR p.note LIKE '%".$db->escape($sall)."%' OR pd.description LIKE '%".$db->escape($sall)."%')";
+if ($sall) $sql.= " AND (s.nom LIKE '%".$db->escape($sall)."%' OR p.note_private LIKE '%".$db->escape($sall)."%' OR p.note_public LIKE '%".$db->escape($sall)."%' OR pd.description LIKE '%".$db->escape($sall)."%')";
 if ($socid) $sql.= ' AND s.rowid = '.$socid;
 if ($viewstatut <> '')
 {

@@ -15,6 +15,12 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ *	\file       htdocs/cashdesk/validation.php
+ *	\ingroup    cashdesk
+ *	\brief      validation.php
+ */
+
 // Affichage des templates
 require ('tpl/validation1.tpl.php');
 

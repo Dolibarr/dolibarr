@@ -17,6 +17,12 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ *	\file       htdocs/cashdesk/validation_verif.php
+ *	\ingroup    cashdesk
+ *	\brief      validation_verif.php
+ */
+
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/cashdesk/include/environnement.php';
 require_once DOL_DOCUMENT_ROOT.'/cashdesk/class/Facturation.class.php';
@@ -212,7 +218,7 @@ switch ($action)
 			$resultcreate=$invoice->create($user,0,dol_stringtotime($obj_facturation->paiementLe()));
 			if ($resultcreate > 0)
 			{
-				$resultvalid=$invoice->validate($user,$obj_facturation->numInvoice());
+				$resultvalid=$invoice->validate($user, $obj_facturation->numInvoice(), (isset($_SESSION["CASHDESK_ID_WAREHOUSE"])?$_SESSION["CASHDESK_ID_WAREHOUSE"]:0));
 			}
 			else
 			{

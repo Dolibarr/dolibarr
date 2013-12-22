@@ -786,7 +786,7 @@ else if ($action == "addline" && $user->rights->propal->creer)
 
 		$info_bits=0;
 		if ($tva_npr) $info_bits |= 0x01;
-
+		
 		if (! empty($price_min) && (price2num($pu_ht)*(1-price2num(GETPOST('remise_percent'))/100) < price2num($price_min)))
 		{
 			$mesg = $langs->trans("CantBeLessThanMinPrice",price2num($price_min,'MU').$langs->getCurrencySymbol($conf->currency));
@@ -920,7 +920,7 @@ else if ($action == 'updateligne' && $user->rights->propal->creer && GETPOST('sa
 			$error++;
 		}
 	}
-
+	
 	if (! $error)
 	{
 		$result = $object->updateline(

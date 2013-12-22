@@ -143,7 +143,7 @@ class EcmDirectory // extends CommonObject
 				$dir=$conf->ecm->dir_output.'/'.$this->getRelativePath();
 				$result=dol_mkdir($dir);
 				if ($result < 0) { $error++; $this->error="ErrorFailedToCreateDir"; }
-				
+
 				// Appel des triggers
 				include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
 				$interface=new Interfaces($this->db);
@@ -317,21 +317,23 @@ class EcmDirectory // extends CommonObject
 
 
 	/**
-	 * 	Delete object on database and on disk
+	 * 	Delete object on database and/or on disk
 	 *
 	 *	@param	User	$user		User that delete
+	 *  @param	int		$mode		'all'=delete all, 'databaseonly'=only database entry, 'fileonly' (not implemented)
 	 *	@return	int					<0 if KO, >0 if OK
 	 */
-	function delete($user)
+	function delete($user, $mode='all')
 	{
 		global $conf, $langs;
         require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 		$error=0;
+		$result=0;
 
-		$relativepath=$this->getRelativePath(1);	// Ex: dir1/dir2/dir3
+		if ($mode != 'databaseonly') $relativepath=$this->getRelativePath(1);	// Ex: dir1/dir2/dir3
 
-		dol_syslog(get_class($this)."::delete remove directory ".$relativepath);
+		dol_syslog(get_class($this)."::delete remove directory id=".$this->id." mode=".$mode.(($mode == 'databaseonly')?'':' relativepath='.$relativepath));
 
 		$this->db->begin();
 
@@ -348,8 +350,11 @@ class EcmDirectory // extends CommonObject
 			return -2;
 		}
 
-		$file = $conf->ecm->dir_output . "/" . $relativepath;
-		$result=@dol_delete_dir($file);
+		if ($mode != 'databaseonly')
+		{
+			$file = $conf->ecm->dir_output . "/" . $relativepath;
+			$result=@dol_delete_dir($file);
+		}
 
 		if ($result || ! @is_dir(dol_osencode($file)))
 		{

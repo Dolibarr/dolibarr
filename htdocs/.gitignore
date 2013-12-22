@@ -1,9 +1,11 @@
 /test.php
 /custom*
-/bootstrap
-/multicompany
-/ovh
-/numberingpack
-/google
-/skincoloreditor
+/extensions*
+/nltechno*
+/bootstrap*
+/google*
+/multicompany*
+/numberingpack*
+/ovh*
 /pos
+/ultimatepdf*

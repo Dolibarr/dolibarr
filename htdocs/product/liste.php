@@ -2,10 +2,11 @@
 /* Copyright (C) 2001-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2012      Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2012-2013 Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2013      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2013      Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2013      Jean Heimburger   	<jean@tiaris.info>
+ * Copyright (C) 2013		Adolfo segura 		<adolfo.segura@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -143,29 +144,31 @@ else
     {
         // For natural search
         $scrit = explode(' ', $sall);
-		// multilang
-		if ($conf->global->MAIN_MULTILANGS) // si l'option est active
-	    {
-			foreach ($scrit as $crit) {
-		        $sql.= " AND (p.ref LIKE '%".$db->escape($crit)."%' OR p.label LIKE '%".$db->escape($crit)."%' OR p.description LIKE '%".$db->escape($crit)."%' OR p.note LIKE '%".$db->escape($crit)."%'  OR pl.description LIKE '%".$db->escape($sall)."%' OR pl.note LIKE '%".$db->escape($sall)."%'";
-		        if (! empty($conf->barcode->enabled))
-		        {
-		            $sql.= " OR p.barcode LIKE '%".$db->escape($crit)."%'";
-		        }
-		        $sql.= ')';
-		    }
-		}
-		else
-		{
-		    foreach ($scrit as $crit) {
-		        $sql.= " AND (p.ref LIKE '%".$db->escape($crit)."%' OR p.label LIKE '%".$db->escape($crit)."%' OR p.description LIKE '%".$db->escape($crit)."%' OR p.note LIKE '%".$db->escape($crit)."%'";
-		        if (! empty($conf->barcode->enabled))
-		        {
-		            $sql.= " OR p.barcode LIKE '%".$db->escape($crit)."%'";
-		        }
-		        $sql.= ')';
-		    }
-		}
+		
+		foreach ($scrit as $crit) {
+
+			$sql.= " AND (p.ref LIKE '%".$db->escape($crit)."%' OR p.label LIKE '%".$db->escape($crit)."%' OR p.description LIKE '%".$db->escape($crit)."%' OR p.note LIKE '%".$db->escape($crit)."%'";
+
+			// multilang
+			if ($conf->global->MAIN_MULTILANGS) {
+				$sql .= " OR pl.description LIKE '%".$db->escape($sall)."%' OR pl.note LIKE '%".$db->escape($sall)."%'";
+			}
+	        
+	        if (! empty($conf->barcode->enabled))
+	        {
+	        	//If the barcode looks like an EAN13 format and the last digit is included in it,
+				//then whe look for the 12-digit too
+				//As the twelve-digit string will also hit the 13-digit code, we only look for this one
+	        	if (strlen($crit) == 13) {
+					$crit_barcode = substr($crit, 0, 12);
+				} else {
+					$crit_barcode = $crit;
+				}
+
+				$sql .= " OR p.barcode LIKE '%".$db->escape($crit_barcode)."%'";
+	        }
+	        $sql.= ')';
+	    }
     }
     // if the type is not 1, we show all products (type = 0,2,3)
     if (dol_strlen($type))
@@ -174,7 +177,19 @@ else
     	else $sql.= " AND p.fk_product_type <> '1'";
     }
     if ($sref)     $sql.= " AND p.ref LIKE '%".$sref."%'";
-    if ($sbarcode) $sql.= " AND p.barcode LIKE '%".$sbarcode."%'";
+    if ($sbarcode) {
+
+		//If the barcode looks like an EAN13 format and the last digit is included in it,
+		//then whe look for the 12-digit too
+		//As the twelve-digit string will also hit the 13-digit code, we only look for this one
+		if (strlen($sbarcode) == 13) {
+			$sbarcode_12digit = substr($sbarcode, 0, 12);
+			$sql .=  "AND p.barcode LIKE '%".$sbarcode_12digit."%'";
+		} else {
+			$sql.= " AND p.barcode LIKE '%".$sbarcode."%'";
+		}
+        
+    }
     if ($snom)
 	{
 		// multilang

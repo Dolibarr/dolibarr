@@ -2,6 +2,8 @@
 /* Copyright (C) 2007-2008 Jeremie Ollivier <jeremie.o@laposte.net>
  * Copyright (C) 2008-2011 Laurent Destailleur   <eldy@uers.sourceforge.net>
  * Copyright (C) 2011 Juanjo Menent			  	 <jmenent@2byte.es>
+ * Copyright (C) 2013 Marcos García					<marcosgdf@gmail.com>
+ * Copyright (C) 2013 Adolfo Segura 				<adolfo.segura@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,7 +39,20 @@ if ( GETPOST('filtre') ) {
 	$sql.= " AND p.tosell = 1";
 	if(!$conf->global->CASHDESK_SERVICES) $sql.= " AND p.fk_product_type = 0";
 	$sql.= " AND (p.ref LIKE '%".$db->escape(GETPOST('filtre'))."%' OR p.label LIKE '%".$db->escape(GETPOST('filtre'))."%'";
-	if (! empty($conf->barcode->enabled)) $sql.= " OR p.barcode LIKE '%".$db->escape(GETPOST('filtre'))."%')";
+	if (! empty($conf->barcode->enabled)) {
+
+		$filtre = GETPOST('filtre');
+
+		//If the barcode looks like an EAN13 format and the last digit is included in it,
+		//then whe look for the 12-digit too
+		//As the twelve-digit string will also hit the 13-digit code, we only look for this one
+		if (strlen($filtre) == 13) {
+			$crit_12digit = substr($filtre, 0, 12);
+			$sql .= " OR p.barcode LIKE '%".$db->escape($crit_12digit)."%')";
+		} else {
+			$sql.= " OR p.barcode LIKE '%".$db->escape($filtre)."%')";
+		}
+	}
 	else $sql.= ")";
 	$sql.= " ORDER BY label";
 

@@ -20,7 +20,7 @@
 
 /**
  *       \file       htdocs/comm/propal/document.php
- *       \ingroup    propale
+ *       \ingroup    propal
  *       \brief      Management page of documents attached to a business proposal
  */
 
