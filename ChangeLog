@@ -71,6 +71,7 @@ For users:
 - Fix: [ bug #1022 ] correct margin calculation for credit notes.
 - Fix: Better management of using ajax for upload form (to solve problem when enabling ajax jquery multifile upload in some cases).
 - Fix: Lost stats filters into year selection.
+- Fix: Some config data are shared between suppliers orders and suppliers invoices
 
 New experimental module:
 - New: [ task #157 ] Add a Skype button (adherents / third parties / contacts)
