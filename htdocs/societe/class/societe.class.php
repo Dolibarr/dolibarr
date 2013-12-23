@@ -297,6 +297,25 @@ class Societe extends CommonObject
         }
     }
 
+    function create_individual($user) {
+        require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+        $contact=new Contact($this->db);
+
+        $contact->name              = $this->name_bis;
+        $contact->firstname         = $this->firstname;
+        $contact->socid             = $this->id;	// fk_soc
+        $contact->statut            = 1;
+        $contact->priv              = 0;
+        $result = $contact->create($user);
+        if ($result < 0) {
+            $this->error = $contact->error;
+            $this->errors = $contact->errors;
+            dol_syslog("Societe::create_individual ERROR:" . $this->error, LOG_ERR);
+        }
+
+        return $result;
+    }
+
     /**
      *    Check properties of third party are ok (like name, third party codes, ...)
      *

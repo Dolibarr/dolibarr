@@ -224,7 +224,7 @@ function getDocument($authentication, $modulepart, $file, $refname='')
 		if (empty($refname)) $refname=basename(dirname($original_file)."/");
 
 		// Security check
-		$check_access = dol_check_secure_access_document($modulepart,$original_file,$conf->entity,$refname,$fuser);
+		$check_access = dol_check_secure_access_document($modulepart,$original_file,$conf->entity,$fuser,$refname);
 		$accessallowed              = $check_access['accessallowed'];
 		$sqlprotectagainstexternals = $check_access['sqlprotectagainstexternals'];
 		$original_file              = $check_access['original_file'];
