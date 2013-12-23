@@ -795,7 +795,6 @@ class BonPrelevement extends CommonObject
         {
             require_once DOL_DOCUMENT_ROOT . '/societe/class/companybankaccount.class.php';
             $soc = new Societe($this->db);
-            $bac = new CompanyBankAccount($this->db);
 
         	// Check RIB
             $i = 0;
@@ -810,6 +809,7 @@ class BonPrelevement extends CommonObject
                     {
                         if ($soc->fetch($fact->socid) >= 0)
                         {
+                        	$bac = new CompanyBankAccount($this->db);
                         	$bac->fetch(0,$soc->id);
                             if ($bac->verif() >= 1)
                             {
