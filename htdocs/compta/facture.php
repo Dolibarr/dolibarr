@@ -900,7 +900,7 @@ else if ($action == 'add' && $user->rights->facture->creer)
 								$numlines=count($lines);
 								for ($i=0; $i<$numlines; $i++)
 								{
-									$totalamount += $lines[$i]->subprice;
+									$totalamount += $lines[$i]->total_ht;
 								}
 
 								if ($totalamount!=0) 
