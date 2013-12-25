@@ -2886,7 +2886,9 @@ class Societe extends CommonObject
 		$sql  = "SELECT sum(total) as amount FROM ".MAIN_DB_PREFIX."facture as f";
 		$sql .= " WHERE fk_soc = ". $this->id;
 		$sql .= " AND paye = 0";
-		$sql .= " AND fk_statut <> 0";
+		$sql .= " AND fk_statut <> 0";	// Not a draft
+		//$sql .= " AND (fk_statut <> 3 OR close_code <> 'abandon')";		// Not abandonned for undefined reason
+		$sql .= " AND fk_statut <> 3";		// Not abandonned
 
 		dol_syslog("get_OutstandingBill sql=".$sql);
 		$resql=$this->db->query($sql);
