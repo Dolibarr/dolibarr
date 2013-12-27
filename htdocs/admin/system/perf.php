@@ -89,7 +89,7 @@ $test1=function_exists('xcache_info');
 if ($test1)
 {
 	print img_picto('','tick.png').' '.$langs->trans("XCacheInstalled");
-	print ' '.$langs->trans("MoreInformation").' <a href="'.DOL_URL_ROOT.'/admin/xcache.php'.'">Xcache admin page</a>';
+	print ' '.$langs->trans("MoreInformation").' <a href="'.DOL_URL_ROOT.'/admin/system/xcache.php'.'">Xcache admin page</a>';
 }
 else
 {
