@@ -1118,6 +1118,9 @@ WatermarkOnDraftInterventionCards=Watermark on intervention card documents (none
 ##### Contracts #####
 ContractsSetup=Contracts module setup
 ContractsNumberingModules=Contracts numbering modules
+TemplatePDFContracts=Contracts documents models
+FreeLegalTextOnContracts=Free text on contracts
+WatermarkOnDraftContractCards=Watermark on draft contracts (none if empty)
 ##### Members #####
 MembersSetup=Members module setup
 MemberMainOptions=Main options
