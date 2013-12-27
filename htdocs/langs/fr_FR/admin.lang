@@ -1158,6 +1158,9 @@ WatermarkOnDraftInterventionCards=Filigrane sur les brouillons des fiches d'inte
 ##### Contracts #####
 ContractsSetup=Configuration du module contrats
 ContractsNumberingModules=Modèles de numérotation des contrats
+TemplatePDFContracts=Modèles de document des contrats
+FreeLegalTextOnContracts=Mention complémentaire sur les contrats
+WatermarkOnDraftContractCards=Filigrane sur les brouillons de contrats (aucun si vide)
 ##### Members #####
 MembersSetup=Configuration du module Adhérents
 MemberMainOptions=Options principales

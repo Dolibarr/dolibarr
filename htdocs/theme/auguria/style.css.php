@@ -1040,7 +1040,7 @@ div.tabsAction {
 
 a.tabTitle {
     background: <? echo empty($dol_use_jmobile)?'#5088A9':'auto'; ?>;
-    color: white;
+    color: #888;
 	font-family: <?php print $fontlist ?>;
     font-weight: normal;
     padding: 0px 6px;
