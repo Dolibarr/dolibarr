@@ -117,7 +117,9 @@ Pour lister les env chroot
 Puis pour se connecter et préparer l'environnement 
 > schroot -c name_of_chroot
 > vi /usr/sbin/policy-rc.d     and replace return code 101 (not allowed) into 0 (ok)
-> apt-get install links mysql-client
+> apt-get install links mysql-client lintian pkg-php-tools
+If you get error syntax error: unknown group 'Debian-exim' in statoverride file,
+edit file /var/lib/dpkg/statoverride
 
 Pour tester un package
 > cp *.deb /srv/chroot/unstable/tmp
