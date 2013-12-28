@@ -15,6 +15,7 @@ For translators:
 For developers:
 - New: Add path file of trigger into admin trigger list page.
 - New: More phpunit tests.
+- New: Payments and supplier payment pages tabs can now be extended from modules.
 
 
 
