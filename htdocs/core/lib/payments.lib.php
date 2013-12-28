@@ -60,7 +60,7 @@ function payment_prepare_head(Paiement $object) {
  * @param Paiement $object
  * @return array
  */
-function payment_supplier_prepare_head($object) {
+function payment_supplier_prepare_head(Paiement $object) {
 	
 	global $langs, $conf;
 	
