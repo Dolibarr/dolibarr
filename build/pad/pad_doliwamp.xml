@@ -17,15 +17,15 @@
 		<Contact_Info>
 			<Author_First_Name>NLTechno</Author_First_Name>
 			<Author_Last_Name>NLTechno</Author_Last_Name>
-			<Author_Email>dolibarr@nltechno.com</Author_Email>
+			<Author_Email>contact@nltechno.com</Author_Email>
 			<Contact_First_Name>NLTechno</Contact_First_Name>
 			<Contact_Last_Name>NLTechno</Contact_Last_Name>
-			<Contact_Email>dolibarr@nltechno.com</Contact_Email>
+			<Contact_Email>contact@nltechno.com</Contact_Email>
 		</Contact_Info>
 		<Support_Info>
-			<Sales_Email>dolibarr@nltechno.com</Sales_Email>
-			<Support_Email>dolibarr@nltechno.com</Support_Email>
-			<General_Email>dolibarr@nltechno.com</General_Email>
+			<Sales_Email>support@nltechno.com</Sales_Email>
+			<Support_Email>support@nltechno.com</Support_Email>
+			<General_Email>support@nltechno.com</General_Email>
 			<Sales_Phone />
 			<Support_Phone />
 			<General_Phone />
@@ -34,10 +34,10 @@
 	</Company_Info>
 	<Program_Info>
 		<Program_Name>DoliWamp</Program_Name>
-		<Program_Version>3.4</Program_Version>
-		<Program_Release_Month>07</Program_Release_Month>
-		<Program_Release_Day>07</Program_Release_Day>
-		<Program_Release_Year>2013</Program_Release_Year>
+		<Program_Version>3.5</Program_Version>
+		<Program_Release_Month>01</Program_Release_Month>
+		<Program_Release_Day>01</Program_Release_Day>
+		<Program_Release_Year>2014</Program_Release_Year>
 		<Program_Cost_Dollars />
 		<Program_Cost_Other_Code />
 		<Program_Cost_Other />
