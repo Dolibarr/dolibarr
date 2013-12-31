@@ -388,7 +388,7 @@ CantRemovePaymentWithOneInvoicePaid=تصنيف لا يمكن إزالة الدف
 ExpectedToPay=من المتوقع الدفع
 PayedByThisPayment=سيولي هذا الدفع
 ClosePaidInvoicesAutomatically=تصنيف &quot;سيولي&quot; كل معيار أو الفواتير استبدال سيولي entirely.
-# ClosePaidCreditNotesAutomatically=Classify "Payed" all credit notes entirely paid back.
+# ClosePaidCreditNotesAutomatically=Classify "Paid" all credit notes entirely paid back.
 AllCompletelyPayedInvoiceWillBeClosed=كل فاتورة مع عدم وجود لا تزال لدفع ستغلق تلقائيا إلى &quot;فياض&quot; الوضع.
 # ToMakePayment=Pay
 # ToMakePaymentBack=Pay back
@@ -409,7 +409,7 @@ PDFCrabeDescription=نموذج فاتورة Crabe. نموذج الفاتورة �
 # oursin PDF Model
 PDFOursinDescription=نموذج فاتورة oursin
 # NumRef Modules
-# TerreNumRefModelDesc1=Return numero with format %syymm-nnnn for standard and replacement invoices, %syymm-nnnn for credit notes and %syymm-nnnn for deposits where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
-# MarsNumRefModelDesc1=Return numero with format %syymm-nnnn for standard invoices, %syymm-nnnn for replacement invoices, %syymm-nnnn for credit notes and %syymm-nnnn for credit notes where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
+# TerreNumRefModelDesc1=Return number with format %syymm-nnnn for standard invoices and %syymm-nnnn for credit notes where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
+# MarsNumRefModelDesc1=Return number with format %syymm-nnnn for standard invoices, %syymm-nnnn for replacement invoices, %syymm-nnnn for credit notes and %syymm-nnnn for credit notes where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
 
 TerreNumRefModelError=وهناك مشروع قانون بدءا من دولار ويوجد بالفعل syymm لا تتفق مع هذا النموذج من التسلسل. إزالة أو تغيير تسميتها لتصبح لتفعيل هذه الوحدة.

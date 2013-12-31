@@ -82,7 +82,7 @@ IfInvoiceNeedOnWithdrawPaymentWontBeClosed=然而，如果發票已至少有一�
 DoStandingOrdersBeforePayments=這個標簽允許你為一個固定的訂單要求。一旦完成，你可以鍵入付款，收發票。
 # WithdrawalFile=Withdrawal file
 # SetToStatusSent=Set to status "File Sent"
-# ThisWillAlsoAddPaymentOnInvoice=This will also create payments onto invoices and will classify them to paid
+# ThisWillAlsoAddPaymentOnInvoice=This will also apply payments to invoices and will classify them as "Paid"
 
 ### Notifications
 InfoCreditSubject=由銀行支付的長期訂單%s

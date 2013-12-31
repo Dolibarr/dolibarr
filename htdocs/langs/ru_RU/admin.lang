@@ -228,7 +228,7 @@ OfficialWebSiteFr=Французский официальный веб-сайт
 OfficialWiki=Dolibarr Wiki
 OfficialDemo=Dolibarr Online Demo
 OfficialMarketPlace=Официальный рынке внешних модулей / Оборудование
-# OfficialWebHostingService=Official web hosting service (Cloud hosting)
+# OfficialWebHostingService=Official web hosting services (Cloud hosting)
 ForDocumentationSeeWiki=Для пользователя или разработчика документации (Doc, ...), FAQs <br> посмотрите на Dolibarr Wiki: <br> <a href="%s" target="_blank"><b> %s</b></a>
 ForAnswersSeeForum=Для любых других вопросов / помощь, вы можете использовать Dolibarr форум: <br> <a href="%s" target="_blank"><b> %s</b></a>
 HelpCenterDesc1=Эта область может помочь вам получить справки службу поддержки по Dolibarr.
@@ -299,6 +299,7 @@ ServerNotAvailableOnIPOrPort=Сервер не доступен по <b>адре
 DoTestServerAvailability=Тест сервера подключаемости
 DoTestSend=Тест отправки
 DoTestSendHTML=Тест отправки HTML
+# ErrorCantUseRazIfNoYearInMask=Error, can't use option @ to reset counter each year if sequence {yy} or {yyyy} is not in mask.
 ErrorCantUseRazInStartedYearIfNoYearMonthInMask=Ошибка, не могут пользователя опция @ если последовательность (ГГ) () или мм гггг () () мм не в маске.
 UMask=UMask параметр для новых файлов на Unix / Linux / BSD файловых систем.
 UMaskExplanation=Этот параметр позволяет определить набор разрешений по умолчанию для файлов, созданных Dolibarr на сервере (при загрузке, например). <br> Она должна быть восьмеричное значение (например, 0666 означает, читать и писать по каждому). <br> Ce paramtre NE Серта Pas SOUS ООН serveur Windows.
@@ -1008,6 +1009,8 @@ SendmailOptionMayHurtBuggedMTA=Функция отправить почту с �
 # XCacheInstalled=XCache is loaded.
 # AddRefInList=Display customer/supplier ref into list (select list or combobox) and most of hyperlink
 # FieldEdition=Edition of field %s
+# FixTZ=TimeZone fix
+# FillThisOnlyIfRequired=Example: +2 (fill only if timezone offset problems are experienced)
 ##### Module password generation
 PasswordGenerationStandard=Возврат пароля, полученных в соответствии с внутренними Dolibarr алгоритма: 8 символов, содержащих общие цифры и символы в нижнем регистре.
 PasswordGenerationNone=Не предлагать любые сгенерированного пароля. Пароль необходимо ввести вручную.

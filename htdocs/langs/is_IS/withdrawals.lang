@@ -82,7 +82,7 @@ IfInvoiceNeedOnWithdrawPaymentWontBeClosed=Hins vegar, ef reikningur hefur að m
 DoStandingOrdersBeforePayments=Þetta tabs leyfa þér að biðja fyrir standandi röð. Þegar það verður lokið, getur þú slegið greiðslu til loka reikning.
 # WithdrawalFile=Withdrawal file
 # SetToStatusSent=Set to status "File Sent"
-# ThisWillAlsoAddPaymentOnInvoice=This will also create payments onto invoices and will classify them to paid
+# ThisWillAlsoAddPaymentOnInvoice=This will also apply payments to invoices and will classify them as "Paid"
 
 ### Notifications
 InfoCreditSubject=Greiðsla standa röð %s af bankanum

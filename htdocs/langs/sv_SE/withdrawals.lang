@@ -82,7 +82,7 @@ IfInvoiceNeedOnWithdrawPaymentWontBeClosed=Om faktura har minst ett uttag betaln
 DoStandingOrdersBeforePayments=Detta flikar gör att du kan begära en stående order. När det kommer att vara färdig, kan du skriva betalningen för att stänga fakturan.
 # WithdrawalFile=Withdrawal file
 # SetToStatusSent=Set to status "File Sent"
-# ThisWillAlsoAddPaymentOnInvoice=This will also create payments onto invoices and will classify them to paid
+# ThisWillAlsoAddPaymentOnInvoice=This will also apply payments to invoices and will classify them as "Paid"
 
 ### Notifications
 InfoCreditSubject=Betalning av %s stående order av banken

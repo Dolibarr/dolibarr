@@ -109,3 +109,4 @@ NbOfProductAfterPeriod=Množstvo produktov %s na sklade po zvolené obdobie (&gt
 MassStockMovement=Mass pohyb zásob
 SelectProductInAndOutWareHouse=Vyberte si produkt, množstvo, zdrojový sklad a cieľový sklad, potom kliknite na &quot;%s&quot;. Akonáhle sa tak stane pre všetky požadované pohyby, kliknite na &quot;%s&quot;.
 RecordMovement=Záznam transfert
+# ReceivingForSameOrder=Receivings for this order

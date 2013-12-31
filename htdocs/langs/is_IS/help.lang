@@ -25,3 +25,4 @@ LinkToGoldMember=Þú getur hringt í einn þjálfara preselected eftir Dolibarr
 PossibleLanguages=Styður tungumálum
 MakeADonation=Hjálp Dolibarr verkefni, gera a framlag
 # SubscribeToFoundation=Help Dolibarr project, subscribe to the foundation
+# SeeOfficalSupport=For official Dolibarr support in your language: <br><b><a href="%s" target="_blank">%s</a></b>

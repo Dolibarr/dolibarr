@@ -388,7 +388,7 @@ CantRemovePaymentWithOneInvoicePaid=Kan ikke fjerne betaling, da der er mindst p
 ExpectedToPay=Forventet betaling
 PayedByThisPayment=Betales af denne betaling
 ClosePaidInvoicesAutomatically=Klassificere &quot;betales&quot; hele standarden eller udskiftning af fakturaer entirely betales.
-# ClosePaidCreditNotesAutomatically=Classify "Payed" all credit notes entirely paid back.
+# ClosePaidCreditNotesAutomatically=Classify "Paid" all credit notes entirely paid back.
 AllCompletelyPayedInvoiceWillBeClosed=Alle faktura uden mangler at betale, vil automatisk blive lukket for status &quot;betales&quot;.
 # ToMakePayment=Pay
 # ToMakePaymentBack=Pay back
@@ -409,7 +409,7 @@ PDFCrabeDescription=Faktura model Crabe. En fuldstændig faktura model (Support 
 # oursin PDF Model
 PDFOursinDescription=Faktura model oursin
 # NumRef Modules
-# TerreNumRefModelDesc1=Return numero with format %syymm-nnnn for standard and replacement invoices, %syymm-nnnn for credit notes and %syymm-nnnn for deposits where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
-# MarsNumRefModelDesc1=Return numero with format %syymm-nnnn for standard invoices, %syymm-nnnn for replacement invoices, %syymm-nnnn for credit notes and %syymm-nnnn for credit notes where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
+# TerreNumRefModelDesc1=Return number with format %syymm-nnnn for standard invoices and %syymm-nnnn for credit notes where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
+# MarsNumRefModelDesc1=Return number with format %syymm-nnnn for standard invoices, %syymm-nnnn for replacement invoices, %syymm-nnnn for credit notes and %syymm-nnnn for credit notes where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
 
 TerreNumRefModelError=Et lovforslag, der begynder med $ syymm allerede eksisterer og er ikke kompatible med denne model af sekvensinformation. Fjern den eller omdøbe den til at aktivere dette modul.

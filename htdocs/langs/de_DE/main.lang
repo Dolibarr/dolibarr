@@ -1,9 +1,9 @@
 # Dolibarr language file - Source file is en_US - main
 DIRECTION=ltr
-# Note for chinese:
-# msungstdlight or cid0ct are for traditionnal chinese (traditionnal does not render with ubuntu pdf reader)
-# stsongstdlight or cid0cs are for simplified chinese
-# To read chinese pdf with linux: sudo apt-get install poppler-data
+# Note for Chinese:
+# msungstdlight or cid0ct are for traditional Chinese (traditional does not render with Ubuntu pdf reader)
+# stsongstdlight or cid0cs are for simplified Chinese
+# To read Chinese pdf with Linux: sudo apt-get install poppler-data
 FONTFORPDF=helvetica
 FONTSIZEFORPDF=10
 SeparatorDecimal=.
@@ -155,7 +155,7 @@ Valid=Gültig
 Approve=Genehmigen
 ReOpen=Wiedereröffnen
 Upload=Datei laden
-# ToLink=Link
+ToLink=Link
 Select=Wählen Sie
 Choose=Wählen
 ChooseLangage=Bitte wählen Sie Ihre Sprache
@@ -642,7 +642,7 @@ ByTown=Nach Ort
 ByDate=Nach Datum
 ByMonthYear=Von Monat / Jahr
 ByYear=Bis zum Jahresende
-ByMonth=nach Monat
+ByMonth=Nach Monat
 ByDay=Bei Tag
 BySalesRepresentative=Durch Vertriebsmitarbeiter
 LinkedToSpecificUsers=Mit Kontakt verknüpft
@@ -659,8 +659,9 @@ from=von
 toward=zu
 Access=Zugriff
 HelpCopyToClipboard=Benutze Ctrl+C für Kopie in Zwischenablage
-# SaveUploadedFileWithMask=Save file on server with name "<strong>%s</strong>" (otherwise "%s")
-# OriginFileName=Nom d'origine
+SaveUploadedFileWithMask=Datei auf dem Server speichern mit dem Namen "<strong>%s</strong>" (oder "%s")
+# OriginFileName=Original filename
+# SetDemandReason=Set source
 
 # Week day
 Monday=Montag

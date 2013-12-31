@@ -82,7 +82,7 @@ IfInvoiceNeedOnWithdrawPaymentWontBeClosed=Vendar, če ima račun najmanj eno ne
 DoStandingOrdersBeforePayments=Ti zavihki omogočajo zahtevo za trajnik. Ko je končano, lahko vnesete plačilo in zaprete račun.
 # WithdrawalFile=Withdrawal file
 # SetToStatusSent=Set to status "File Sent"
-# ThisWillAlsoAddPaymentOnInvoice=This will also create payments onto invoices and will classify them to paid
+# ThisWillAlsoAddPaymentOnInvoice=This will also apply payments to invoices and will classify them as "Paid"
 
 ### Notifications
 InfoCreditSubject=Plačilo odprtega naročila %s s strani banke

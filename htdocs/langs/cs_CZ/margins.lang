@@ -47,5 +47,5 @@ BuyingCost=Velkoobchodní cena
 UnitCharges=Jednotkové náklady
 Charges=Poplatky
 
-AgentContactType=Typ kontaktu použít pro uvedení do provozu
-AgentContactTypeDetails=Definovat, co typ kontaktu (svázána faktur) bude spojena s obchodními zástupci
+# AgentContactType=Commercial agent contact type
+# AgentContactTypeDetails=Défine what contact type (linked on invoices) will be used for margin report by commercial agents

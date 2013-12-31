@@ -1,9 +1,9 @@
 # Dolibarr language file - Source file is en_US - main
 DIRECTION=ltr
-# Note for chinese:
-# msungstdlight or cid0ct are for traditionnal chinese (traditionnal does not render with ubuntu pdf reader)
-# stsongstdlight or cid0cs are for simplified chinese
-# To read chinese pdf with linux: sudo apt-get install poppler-data
+# Note for Chinese:
+# msungstdlight or cid0ct are for traditional Chinese (traditional does not render with Ubuntu pdf reader)
+# stsongstdlight or cid0cs are for simplified Chinese
+# To read Chinese pdf with Linux: sudo apt-get install poppler-data
 FONTFORPDF=DejaVuSans
 FONTSIZEFORPDF=8
 SeparatorDecimal=,
@@ -447,30 +447,30 @@ SeptemberMin=Eyl
 OctoberMin=Eki
 NovemberMin=Kas
 DecemberMin=Ara
-Month01=ocak
-Month02=şubat
-Month03=mart
-Month04=nisan
-Month05=mayıs
-Month06=haziran
-Month07=temmuz
-Month08=ağustos
-Month09=eylül
-Month10=ekim
-Month11=kasım
-Month12=aralık
-MonthShort01=oca
-MonthShort02=şub
-MonthShort03=mar
-MonthShort04=nis
-MonthShort05=may
-MonthShort06=haz
-MonthShort07=tem
-MonthShort08=ağu
-MonthShort09=eyl
-MonthShort10=eki
-MonthShort11=kas
-MonthShort12=ara
+Month01=Ocak
+Month02=Şubat
+Month03=Mart
+Month04=Nisan
+Month05=Mayıs
+Month06=Haziran
+Month07=Temmuz
+Month08=Ağustos
+Month09=Eylül
+Month10=Ekim
+Month11=Kasım
+Month12=Aralık
+MonthShort01=Oca
+MonthShort02=Şub
+MonthShort03=Mar
+MonthShort04=Nis
+MonthShort05=May
+MonthShort06=Haz
+MonthShort07=Tem
+MonthShort08=Ağu
+MonthShort09=Eyl
+MonthShort10=Eki
+MonthShort11=Kas
+MonthShort12=Ara
 AttachedFiles=Ekli dosya ve belgeler
 FileTransferComplete=Dosya başarıyla gönderildi
 DateFormatYYYYMM=YYYY-AA
@@ -632,7 +632,7 @@ IM=Anlık mesajlaşma
 NewAttribute=Yeni bir öznitelik
 AttributeCode=Öznitelik kodu
 OptionalFieldsSetup=Ekstra öznitelik ayarları
-URLPhoto=Fotoğrafın/logonun url si
+URLPhoto=Fotoğraf/logo İnternet adresi
 SetLinkToThirdParty=Başka bir üçüncü parti bağlantısı
 CreateDraft=Taslak oluştur
 ClickToEdit=Düzenlemek için tıklayın
@@ -660,7 +660,8 @@ toward=yönünde
 Access=Erişim
 HelpCopyToClipboard=Panoya kopyalamak için Crtl+C
 SaveUploadedFileWithMask=Dosyayı sunucuya "<strong>%s</strong>" (aksi durumda "%s") adıyla kaydedin
-OriginFileName=Orijinal adı
+OriginFileName=Özgün dosya adı
+SetDemandReason=Kaynağı ayarlayın
 
 # Week day
 Monday=Pazartesi

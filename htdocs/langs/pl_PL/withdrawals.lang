@@ -82,7 +82,7 @@ IfInvoiceNeedOnWithdrawPaymentWontBeClosed=Jeśli jednak faktura nie co najmniej
 DoStandingOrdersBeforePayments=Te karty pozwala z prośbą o zlecenia stałego. Gdy będzie gotowy, możesz wpisać płatność zamknąć faktury.
 # WithdrawalFile=Withdrawal file
 # SetToStatusSent=Set to status "File Sent"
-# ThisWillAlsoAddPaymentOnInvoice=This will also create payments onto invoices and will classify them to paid
+# ThisWillAlsoAddPaymentOnInvoice=This will also apply payments to invoices and will classify them as "Paid"
 
 ### Notifications
 InfoCreditSubject=Płatność z %s zamówienia stojących przez bank

@@ -26,7 +26,7 @@ NoDiscardedFields=Nav avota failā lauki tiek atmesti
 Dataset=Datu kopa
 ChooseFieldsOrdersAndTitle=Izvēlieties laukus kārtībā ...
 FieldsOrder=Lauki, lai
-FieldsTitle=Lauki virsraksts
+FieldsTitle=Lauku nosaukums
 FieldOrder=Lauku kārtība
 FieldTitle=Lauka nosaukums
 ChooseExportFormat=Izvēlieties eksporta formātu
@@ -55,7 +55,7 @@ LineQty=Daudzums līnijas
 LineTotalHT=Summa bez nodokļiem līnijas
 LineTotalTTC=Summa ar nodokļiem līniju
 LineTotalVAT=PVN summu, par līnijas
-TypeOfLineServiceOrProduct=Tips (0 = produkts, 1 = pakalpojums)
+TypeOfLineServiceOrProduct=Veids (0=produkts, 1=pakalpojums)
 FileWithDataToImport=Fails ar datiem, lai importētu
 FileToImport=Avota failu, lai importētu
 FileMustHaveOneOfFollowingFormat=Failu, lai importētu ir jābūt vienam no šāda formāta

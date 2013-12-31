@@ -228,7 +228,7 @@ OfficialWebSiteFr=الفرنسية الموقع الرسمي
 OfficialWiki=Dolibarr يكي
 OfficialDemo=Dolibarr الانترنت التجريبي
 OfficialMarketPlace=المسؤول عن وحدات السوق الخارجية / أدونس
-# OfficialWebHostingService=Official web hosting service (Cloud hosting)
+# OfficialWebHostingService=Official web hosting services (Cloud hosting)
 ForDocumentationSeeWiki=For user's or developer's documentation (Doc, FAQs...),<br>take a look at the Dolibarr Wiki:<br><b><a href="%s" target=للمستخدم أو للتطوير وثائق (مستدات ،...)، أسئلة وأجوبة <br> إلقاء نظرة على ويكي Dolibarr : <br> <a href="%s" target="_blank"><b>ق ٪</b></a>
 ForAnswersSeeForum=For any other questions/help, you can use the Dolibarr forum:<br><b><a href="%s" target=عن أي أسئلة أخرى / مساعدة ، يمكنك استخدام Dolibarr المنتدى : <br> <a href="%s" target="_blank"><b>ق ٪</b></a>
 HelpCenterDesc1=هذا المجال يمكن أن تساعدك في الحصول على مساعدة لتقديم خدمات الدعم على Dolibarr.
@@ -299,6 +299,7 @@ ServerNotAvailableOnIPOrPort=الخدمة غير متاحة في التصدي <b
 DoTestServerAvailability=اختبار خدمة التوصيل
 DoTestSend=ارسال الاختبار
 DoTestSendHTML=اختبار ارسال هتمل
+# ErrorCantUseRazIfNoYearInMask=Error, can't use option @ to reset counter each year if sequence {yy} or {yyyy} is not in mask.
 ErrorCantUseRazInStartedYearIfNoYearMonthInMask=خطأ ، لا يمكن للمستخدم الخيار في حال تسلسل @ (ذ ذ م م)) ((سنة أو ملم)) (لا تخفي.
 UMask=معلمة جديدة UMask صورة يونيكس / لينكس / بي إس دي نظام الملفات.
 UMaskExplanation=تسمح لك هذه المعلمة لتحديد الاذونات التي حددها تقصير من الملفات التي أنشأتها Dolibarr على الخادم (خلال تحميلها على سبيل المثال). <br> يجب أن يكون ثمانية القيمة (على سبيل المثال ، 0666 وسائل القراءة والكتابة للجميع). <br> م شمال شرق paramètre سرت sous الامم المتحدة لتقييم الأداء ويندوز serveur.
@@ -1008,6 +1009,8 @@ SendmailOptionMayHurtBuggedMTA=وميزة لإرسال رسائل باستخدا
 # XCacheInstalled=XCache is loaded.
 # AddRefInList=Display customer/supplier ref into list (select list or combobox) and most of hyperlink
 # FieldEdition=Edition of field %s
+# FixTZ=TimeZone fix
+# FillThisOnlyIfRequired=Example: +2 (fill only if timezone offset problems are experienced)
 ##### Module password generation
 PasswordGenerationStandard=عودة كلمة سر ولدت الداخلية وفقا لخوارزمية Dolibarr : 8 أحرف مشتركة تتضمن الأرقام والحروف في حرف صغير.
 PasswordGenerationNone=لا توحي بأي كلمة المرور المتولدة. يجب أن تكون كلمة السر في نوع يدويا.

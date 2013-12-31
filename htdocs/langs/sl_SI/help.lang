@@ -25,3 +25,4 @@ LinkToGoldMember=Lahko pokličete enega of inštruktorjev, ki jih je Dolibarr iz
 PossibleLanguages=Podprti jeziki
 MakeADonation=Pomagajte projektu Dolibarr z vašo donacijo
 # SubscribeToFoundation=Help Dolibarr project, subscribe to the foundation
+# SeeOfficalSupport=For official Dolibarr support in your language: <br><b><a href="%s" target="_blank">%s</a></b>

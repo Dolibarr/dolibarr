@@ -82,7 +82,7 @@ IfInvoiceNeedOnWithdrawPaymentWontBeClosed=Azonban, ha számlát legalább egy f
 DoStandingOrdersBeforePayments=Ez a lap lehetővé teszi, hogy kérje a fennálló rendelés. Amint kész lesz, akkor írja be a fizetési zárja be a számlát.
 # WithdrawalFile=Withdrawal file
 # SetToStatusSent=Set to status "File Sent"
-# ThisWillAlsoAddPaymentOnInvoice=This will also create payments onto invoices and will classify them to paid
+# ThisWillAlsoAddPaymentOnInvoice=This will also apply payments to invoices and will classify them as "Paid"
 
 ### Notifications
 InfoCreditSubject=Kifizetése érdekében állt a bank által %s

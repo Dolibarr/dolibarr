@@ -228,7 +228,7 @@ OfficialWebSiteFr=Ranskan virallisella web-sivut
 OfficialWiki=Dolibarr Wiki
 OfficialDemo=Dolibarr online-demo
 OfficialMarketPlace=Virallinen markkinoilla ulkoisten moduulien / lisät
-# OfficialWebHostingService=Official web hosting service (Cloud hosting)
+# OfficialWebHostingService=Official web hosting services (Cloud hosting)
 ForDocumentationSeeWiki=Käyttäjälle tai kehittäjän dokumentaatio (doc, FAQs ...), <br> katsoa, että Dolibarr Wiki: <br> <a href="%s" target="_blank"><b> %s</b></a>
 ForAnswersSeeForum=Muita kysymyksiä / apua, voit käyttää Dolibarr foorumilla: <br> <a href="%s" target="_blank"><b> %s</b></a>
 HelpCenterDesc1=Tämä alue voi auttaa sinua saamaan tukea palvelua Dolibarr.
@@ -299,6 +299,7 @@ ServerNotAvailableOnIPOrPort=Palvelin ei ole käytettävissä <b>osoitteessa %s 
 DoTestServerAvailability=Test-palvelin-yhteydet
 DoTestSend=Test lähettäminen
 DoTestSendHTML=Test lähettämällä HTML
+# ErrorCantUseRazIfNoYearInMask=Error, can't use option @ to reset counter each year if sequence {yy} or {yyyy} is not in mask.
 ErrorCantUseRazInStartedYearIfNoYearMonthInMask=Virhe ei voi käyttäjä vaihtoehto @ jos SEQUENCE (yy) (mm) tai (vvvv) (mm) ei mask.
 UMask=UMask parametri uusia tiedostoja Unix / Linux / BSD-tiedostojärjestelmää.
 UMaskExplanation=Tämän parametrin avulla voit määrittää käyttöoikeudet asettaa oletuksena tiedostoja luotu Dolibarr palvelimelle (aikana ladata esimerkiksi). <br> Se on oktaali-arvo (esim. 0666 tarkoittaa, lukea ja kirjoittaa kaikki). <br> Ce paramtre ne Sert pas sous un serveur Windows.
@@ -1008,6 +1009,8 @@ SendmailOptionMayHurtBuggedMTA=Ominaisuus lähettää sähköpostiviestejä käy
 # XCacheInstalled=XCache is loaded.
 # AddRefInList=Display customer/supplier ref into list (select list or combobox) and most of hyperlink
 # FieldEdition=Edition of field %s
+# FixTZ=TimeZone fix
+# FillThisOnlyIfRequired=Example: +2 (fill only if timezone offset problems are experienced)
 ##### Module password generation
 PasswordGenerationStandard=Palauta salasana luodaan mukaan sisäinen Dolibarr algoritmi: 8 merkkiä sisältävät jaettua numerot ja merkit pieniä.
 PasswordGenerationNone=Älä osoita syntyy salasana. Salasanan on oltava kirjoita käsin.
