@@ -25,4 +25,4 @@ LinkToGoldMember=Aveţi posibilitatea să apelaţi unul dintre antrenor preselec
 PossibleLanguages=Sprijinită de limbi
 MakeADonation=Ajută  proiectul Dolibarr, faceţi o donaţie
 SubscribeToFoundation=Ajută proiectul Dolibarr, subscrie la fundație
-# SeeOfficalSupport=For official Dolibarr support in your language: <br><b><a href="%s" target="_blank">%s</a></b>
+SeeOfficalSupport=Pentru suport oficial Dolibarr în limba dvs:  <br><b><a href="%s" target="_blank">%s</a></b>

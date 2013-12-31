@@ -79,7 +79,7 @@ if (empty($reshook))
 		'disablemodules'=>'barcode,boutique,cashdesk,commande,commercial,compta,comptabilite,contrat,expedition,externalsite,facture,ficheinter,fournisseur,mailmanspip,margin,prelevement,product,projet,propal,propale,service,societe,stock,tax',
 		'icon'=>DOL_URL_ROOT.'/public/demo/dolibarr_screenshot6.png')
 	);
-	
+
 	// Visible
 	$alwayscheckedmodules=array('barcode','bookmark','externalrss','fckeditor','geoipmaxmind','gravatar','memcached','syslog','user','webservices');  // Technical module we always want
 	$alwaysuncheckedmodules=array('paybox','paypal','google','scanner','workflow');  // Module we never want
@@ -256,25 +256,25 @@ padding: 6px;
 font: 12px arial,verdana,helvetica;
 font-weight: normal;
 color: #444444 !important;
- 
+
 margin: 8px 0px 8px 2px;
- 
+
 border-left: 1px solid #DDD;
 border-right: 1px solid #DDD;
 border-bottom: 1px solid #EEE;
 border-radius: 8px;
 -moz-border-radius: 8px;
- 
+
 -moz-box-shadow: 4px 4px 4px #EEE;
 -webkit-box-shadow: 4px 4px 4px #EEE;
 box-shadow: 4px 4px 4px #EEE;
- 
+
 background-image: linear-gradient(bottom, rgb(246,248,250) 15%, rgb(235,235,238) 100%);
 background-image: -o-linear-gradient(bottom, rgb(246,248,250) 15%, rgb(235,235,238) 100%);
 background-image: -moz-linear-gradient(bottom, rgb(246,248,250) 15%, rgb(235,235,238) 100%);
 background-image: -webkit-linear-gradient(bottom, rgb(246,248,250) 15%, rgb(235,235,238) 100%);
 background-image: -ms-linear-gradient(bottom, rgb(246,248,250) 15%, rgb(235,235,238) 100%);
- 
+
 }
 </style>
 
@@ -308,7 +308,7 @@ llxHeaderVierge($langs->trans("DolibarrDemo"), $head);
 
 print "\n";
 
-print '<table style="font-size:14px;" summary="List of Dolibarr demos">';
+print '<table style="font-size:14px;" summary="Main table for Dolibarr demos">';
 
 print '<tr><td>';
 print '<center><img src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.png" alt="Dolibarr logo"></center><br>';
@@ -319,9 +319,9 @@ print '<br>';
 print '<font color="#555577"><b>'.$langs->trans("ChooseYourDemoProfil").'</b></font>';
 
 print '</td></tr>';
-print '<tr><td width="50%">';
+print '<tr><td>';
 
-print '<table style="font-size:14px;" width="100%" summary="List of Dolibarr demos">'."\n";
+//print '<table width="100%" summary="List of Dolibarr demos" class="notopnoleft">'."\n";
 $i=0;
 foreach ($demoprofiles as $profilearray)
 {
@@ -339,8 +339,8 @@ foreach ($demoprofiles as $profilearray)
 		if (! empty($profilearray['url'])) $urlwithmod=$profilearray['url'];
 
 		//if ($i % $NBOFCOLS == 0) print '<tr>';
-		print '<tr>';
-		print '<td>'."\n";
+		//print '<tr>';
+		//print '<td>'."\n";
 
 		print '<form method="POST" name="form'.$profilearray['key'].'" action="'.$_SERVER["PHP_SELF"].'">'."\n";
 		print '<input type="hidden" name="action" value="gotodemo">'."\n";
@@ -352,6 +352,7 @@ foreach ($demoprofiles as $profilearray)
         print '<input type="hidden" name="dol_optimize_smallscreen" value="'.$conf->dol_optimize_smallscreen.'">'."\n";
         print '<input type="hidden" name="dol_no_mouse_hover" value="'.$conf->dol_no_mouse_hover.'">'."\n";
         print '<input type="hidden" name="dol_use_jmobile" value="'.$conf->dol_use_jmobile.'">'."\n";
+
         print '<table summary="Dolibarr online demonstration for profile '.$profilearray['label'].'" style="font-size:14px;" width="100%" class="CTable CTableRow'.($i%2==0?'1':'0').'">'."\n";
 		// Title
         print '<tr>';
@@ -366,7 +367,8 @@ foreach ($demoprofiles as $profilearray)
     		print $langs->trans("ThisIsListOfModules").'<br>';
     		print '<table width="100%">';
     		$listofdisabledmodules=explode(',',$profilearray['disablemodules']);
-    		$j=0;$nbcolsmod=4;
+    		$j=0;
+    		$nbcolsmod=empty($conf->dol_optimize_smallscreen)?4:3;
     		foreach($modules as $val) // Loop on qualified (enabled) modules
     		{
     		    $modulekeyname=strtolower($val->name);
@@ -402,15 +404,16 @@ foreach ($demoprofiles as $profilearray)
 
 		    print '<tr id="tr2'.$profilearray['key'].'" class="moduleline"><td colspan="'.$nbcolsmod.'" align="center"><input type="submit" value=" &nbsp; &nbsp; '.$langs->trans("Start").' &nbsp; &nbsp; " class="button"></td></tr>';
         }
-		print '</table></form>'."\n";
+		print '</table>';
+		print '</form>'."\n";
 
-		print '</td>';
+		//print '</td>';
 		//if ($i % $NBOFCOLS == ($NBOFCOLS-1)) print '</tr>'."\n";
-		print '</tr>'."\n";
+		//print '</tr>'."\n";
 		$i++;
 	}
 }
-print '</table>';
+//print '</table>';
 
 print '</td>';
 print '</tr>';
@@ -423,21 +426,29 @@ print '</td></tr>';
 
 print '</table>';
 
+// TODO Replace this with a hook
 // Google Adsense (need Google module)
-if (! empty($conf->global->MAIN_GOOGLE_AD_CLIENT) && ! empty($conf->global->MAIN_GOOGLE_AD_SLOT))
+if (! empty($conf->google->enabled) && ! empty($conf->global->MAIN_GOOGLE_AD_CLIENT) && ! empty($conf->global->MAIN_GOOGLE_AD_SLOT))
 {
-	print '<div align="center">'."\n";
-	print '<script type="text/javascript"><!--'."\n";
-	print 'google_ad_client = "'.$conf->global->MAIN_GOOGLE_AD_CLIENT.'";'."\n";
-	print 'google_ad_slot = "'.$conf->global->MAIN_GOOGLE_AD_SLOT.'";'."\n";
-	print 'google_ad_width = '.$conf->global->MAIN_GOOGLE_AD_WIDTH.';'."\n";
-	print 'google_ad_height = '.$conf->global->MAIN_GOOGLE_AD_HEIGHT.';'."\n";
-	print '//-->'."\n";
-	print '</script>'."\n";
-	print '<script type="text/javascript"'."\n";
-	print 'src="http://pagead2.googlesyndication.com/pagead/show_ads.js">'."\n";
-	print '</script>'."\n";
-	print '</div>'."\n";
+	if (empty($conf->dol_use_jmobile))
+	{
+		print '<div align="center">'."\n";
+		print '<script type="text/javascript"><!--'."\n";
+		print 'google_ad_client = "'.$conf->global->MAIN_GOOGLE_AD_CLIENT.'";'."\n";
+		print 'google_ad_slot = "'.$conf->global->MAIN_GOOGLE_AD_SLOT.'";'."\n";
+		print 'google_ad_width = '.$conf->global->MAIN_GOOGLE_AD_WIDTH.';'."\n";
+		print 'google_ad_height = '.$conf->global->MAIN_GOOGLE_AD_HEIGHT.';'."\n";
+		print '//-->'."\n";
+		print '</script>'."\n";
+		print '<script type="text/javascript"'."\n";
+		print 'src="http://pagead2.googlesyndication.com/pagead/show_ads.js">'."\n";
+		print '</script>'."\n";
+		print '</div>'."\n";
+	}
+	else
+	{
+		print '<!-- google js addvert tag disabled with jmobile -->'."\n";
+	}
 }
 
 llxFooterVierge();
@@ -457,9 +468,9 @@ function llxHeaderVierge($title, $head = "")
     global $user, $conf, $langs;
 
     top_httphead();
-    
+
     top_htmlhead($head,$title);
-    
+
     print '<body style="margin: 20px;">'."\n";
 }
 

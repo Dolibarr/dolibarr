@@ -4385,20 +4385,23 @@ function printCommonFooter($zone='private')
 	if (! empty($conf->global->MAIN_HTML_FOOTER)) print $conf->global->MAIN_HTML_FOOTER."\n";
 
 	// Google Analytics (need Google module)
-	if (! empty($conf->global->MAIN_GOOGLE_AN_ID))
+	if (! empty($conf->google->enabled) && ! empty($conf->global->MAIN_GOOGLE_AN_ID))
 	{
-		print "\n";
-		print '<script type="text/javascript">'."\n";
-		print '  var _gaq = _gaq || [];'."\n";
-		print '  _gaq.push([\'_setAccount\', \''.$conf->global->MAIN_GOOGLE_AN_ID.'\']);'."\n";
-		print '  _gaq.push([\'_trackPageview\']);'."\n";
-		print ''."\n";
-		print '  (function() {'."\n";
-		print '    var ga = document.createElement(\'script\'); ga.type = \'text/javascript\'; ga.async = true;'."\n";
-		print '    ga.src = (\'https:\' == document.location.protocol ? \'https://ssl\' : \'http://www\') + \'.google-analytics.com/ga.js\';'."\n";
-		print '    var s = document.getElementsByTagName(\'script\')[0]; s.parentNode.insertBefore(ga, s);'."\n";
-		print '  })();'."\n";
-		print '</script>'."\n";
+		if (empty($conf->dol_use_jmobile))
+		{
+			print "\n";
+			print '<script type="text/javascript">'."\n";
+			print '  var _gaq = _gaq || [];'."\n";
+			print '  _gaq.push([\'_setAccount\', \''.$conf->global->MAIN_GOOGLE_AN_ID.'\']);'."\n";
+			print '  _gaq.push([\'_trackPageview\']);'."\n";
+			print ''."\n";
+			print '  (function() {'."\n";
+			print '    var ga = document.createElement(\'script\'); ga.type = \'text/javascript\'; ga.async = true;'."\n";
+			print '    ga.src = (\'https:\' == document.location.protocol ? \'https://ssl\' : \'http://www\') + \'.google-analytics.com/ga.js\';'."\n";
+			print '    var s = document.getElementsByTagName(\'script\')[0]; s.parentNode.insertBefore(ga, s);'."\n";
+			print '  })();'."\n";
+			print '</script>'."\n";
+		}
 	}
 
 	// End of tuning

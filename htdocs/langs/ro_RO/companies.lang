@@ -68,7 +68,7 @@ CountryId=ID Ţara
 Phone=Telefon
 Skype=Skype
 Call=Apel
-# Chat=Chat
+Chat=Chat
 PhonePro=Telefon Prof.
 PhonePerso=Telefon Pers.
 PhoneMobile=Telefon Mobil
@@ -399,9 +399,9 @@ InActivity=Deschis
 ActivityCeased=Închis
 ActivityStateFilter=Statut Activitate
 ProductsIntoElements=Lista produselor in
-# CurrentOutstandingBill=Current outstanding bill
+CurrentOutstandingBill=Facturi in suspensie curente
 OutstandingBill=Max. pentru facturi in suspensie
-# OutstandingBillReached=Reached max. for outstanding bill
+OutstandingBillReached=Max. atins pentru facturi in suspensie
 # Monkey
 MonkeyNumRefModelDesc=Retrimite numărulcu formatul %syymm-nnnn pentru codul de client și %syymm-nnnn pentru codul de furnizor unde YY este anul, mm  este luna și nnnn este o secvență continuă și fără să revină la 0.
 # Leopard

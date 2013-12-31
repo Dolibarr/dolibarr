@@ -68,7 +68,7 @@ CountryId=Riigi ID
 Phone=Telefon
 Skype=Skype
 Call=Helista
-# Chat=Chat
+Chat=Vestle
 PhonePro=Ametitelefo
 PhonePerso=Isiklik telefon
 PhoneMobile=Mobiiltelefon
@@ -399,9 +399,9 @@ InActivity=Avatud
 ActivityCeased=Suletud
 ActivityStateFilter=Aktiivsuse staatus
 ProductsIntoElements=Seotud toodete nimekiri
-# CurrentOutstandingBill=Current outstanding bill
+CurrentOutstandingBill=Hetkel maksmata summa
 OutstandingBill=Suurim võimalik maksmata arve
-# OutstandingBillReached=Reached max. for outstanding bill
+OutstandingBillReached=Jõudis maksmata summa maksimumini
 # Monkey
 MonkeyNumRefModelDesc=Tagasta arv formaadiga %syymm-nnnn kliendikoodi jaoks ja %syymm-nnnn hankija koodi jaoks, kus yy on aasta, mm on kuu ja nnnn on katkestuseta jada, mille väärtus pole kunagi 0.
 # Leopard

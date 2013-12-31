@@ -660,8 +660,8 @@ toward=spre
 Access=Acces
 HelpCopyToClipboard=Utilizați Ctrl + C pentru a copia în clipboard
 SaveUploadedFileWithMask=Salvați fișierul pe server cu numele "<strong>%s</strong>" (altfel"%s")
-# OriginFileName=Original filename
-# SetDemandReason=Set source
+OriginFileName=Nume fişier original
+SetDemandReason=Setează sursa
 
 # Week day
 Monday=Luni

@@ -18,8 +18,8 @@ Permission23104 = Execută sarcină programată
 # Admin
 #
 CronSetup= Setare Managementul joburilor programate
-# URLToLaunchCronJobs=URL to check and launch cron jobs if required
-# OrToLaunchASpecificJob=Or to check and launch a specific job
+URLToLaunchCronJobs=URL-ul pentru a verifica și a lansa joburi cron, dacă este necesar
+OrToLaunchASpecificJob=Sau pentru a verifica și  a lansa un anumit job
 KeyForCronAccess=Cheie de securitate pentru URL de lansare a joburilor cron
 FileToLaunchCronJobs=Linie de comandă pentru lansare joburi cron
 CronExplainHowToRunUnix=Pe mediul Unix veţi  utiliza instrumentul crontab pentru a rula linia de comanda la fiecare minut
@@ -43,7 +43,7 @@ CronLastOutput=Ieşirea ultimei rulări
 CronLastResult=Codul ultimului rezultat
 CronListOfCronJobs=Lista joburilor programate
 CronCommand=Comandă
-# CronList=Jobs list
+CronList=Lista joburi
 CronDelete= Sterge joburi cron
 CronConfirmDelete= Sunteţi sigur ca doriţi ştergerea acestui job cron ?
 CronExecute=Lansează job

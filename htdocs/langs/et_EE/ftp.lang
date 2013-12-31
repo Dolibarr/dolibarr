@@ -1,12 +1,12 @@
 # Dolibarr language file - Source file is en_US - ftp
-FTPClientSetup=FTP Client moodul setup
-NewFTPClient=Uus FTP ühendus setup
-FTPArea=FTP Area
-FTPAreaDesc=See ekraan näitab teile sisu FTP server vaade
-SetupOfFTPClientModuleNotComplete=Setup FTP klient moodul tundub ole täielik
+FTPClientSetup=FTP kliendi mooduli seadistamine
+NewFTPClient=Uue FTP ühenduse seadistamine
+FTPArea=FTP ala
+FTPAreaDesc=See ekraan näitab FTP serveri vaate sisu
+SetupOfFTPClientModuleNotComplete=FTP kliendi mooduli seadistus ei paista olevat täielik
 FTPFeatureNotSupportedByYourPHP=Sinu PHP ei toeta FTP funktsioone
-FailedToConnectToFTPServer=Ei õnnestunud ühendust FTP server (server %s, sadama %s)
-FailedToConnectToFTPServerWithCredentials=Suutnud sisse logida FTP serverisse määratletud login / parool
-FTPFailedToRemoveFile=Suutnud eemaldada fail <b>%s.</b>
-FTPFailedToRemoveDir=Suutnud eemaldada kataloog <b>%s</b> (kontrolli õigusi ja et kataloog on tühi).
-# FTPPassiveMode=Passive mode
+FailedToConnectToFTPServer=FTP serveriga ühenduse loomine ebaõnnestus (server %s, port %s)
+FailedToConnectToFTPServerWithCredentials=Määratletud kasutajanime/parooliga FTP serverisse sisse logimine ebaõnnestus
+FTPFailedToRemoveFile=Faili <b>%s</b> kustutamine ebaõnnestus.
+FTPFailedToRemoveDir=Kausta <b>%s</b> kustutamine ebaõnnestus (kontrolli õigusi ja seda, et kataloog on tühi).
+FTPPassiveMode=Passiivne režiim

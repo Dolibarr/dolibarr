@@ -228,7 +228,7 @@ OfficialWebSiteFr=Site-ul web oficial francofon
 OfficialWiki=Dolibarr Wiki
 OfficialDemo=Dolibarr demo online
 OfficialMarketPlace=Oficial loc pe piaţă pentru modulelor externe / addons
-# OfficialWebHostingService=Official web hosting services (Cloud hosting)
+OfficialWebHostingService=Servicii oficiale de web hosting (Cloud hosting)
 ForDocumentationSeeWiki=Pentru utilizator sau developer documentaţia (doc, FAQs ...), <br> aruncăm o privire la Dolibarr Wiki: <br> <a href="%s" target="_blank"><b> %s</b></a>
 ForAnswersSeeForum=Pentru orice alte întrebări / ajutor, se poate utiliza Dolibarr forum: <br> <a href="%s" target="_blank"><b> %s</b></a>
 HelpCenterDesc1=Această zonă vă poate ajuta să obţineţi un suport de Ajutor de servicii pe Dolibarr.
@@ -299,7 +299,7 @@ ServerNotAvailableOnIPOrPort=Serverul nu este disponibil la <b>adresa %s</b> pe 
 DoTestServerAvailability=Test server de conectivitate
 DoTestSend=Test de trimitere
 DoTestSendHTML=Test trimiterea HTML
-# ErrorCantUseRazIfNoYearInMask=Error, can't use option @ to reset counter each year if sequence {yy} or {yyyy} is not in mask.
+ErrorCantUseRazIfNoYearInMask=Eroare, nu se poate folosi opțiunea  @ resetează contor la fiecare an, dacă secvența {yy} sau  {yyyy} nu este în mască.
 ErrorCantUseRazInStartedYearIfNoYearMonthInMask=Eroare, nu poate utilizator @ opţiune dacă secvenţa (aa) (mm) sau (AAAA) (mm) nu este în masca.
 UMask=UMask parametru pentru noi imagini pe Unix / Linux / BSD sistem de fişiere.
 UMaskExplanation=Acest parametru permite să se definească permissions stabilit, în mod implicit pe fişierele create de Dolibarr pe server (în timpul de încărcare, de exemplu). <br> Acesta trebuie să fie de octal valoare (de exemplu, 0666 înseamnă citi şi scrie pentru toată lumea). <br> Ce paramtre ne sert pas sous un serveur Windows.
@@ -1009,8 +1009,8 @@ XDebugInstalled=XDebug este încărcată.
 XCacheInstalled=XCache este încărcată.
 AddRefInList=Afişează referinţele clienţilor şi furnizorilor într-o listă ( selectează lista sau casutele ) si in plus a  linkurilor.
 FieldEdition=Editarea  campului %s
-# FixTZ=TimeZone fix
-# FillThisOnlyIfRequired=Example: +2 (fill only if timezone offset problems are experienced)
+FixTZ=Fixează TimeZone
+FillThisOnlyIfRequired=Exemplu: +2 (completați numai dacă problemele decalajjului fusului orar sunt cunoscute)
 ##### Module password generation
 PasswordGenerationStandard=Întoarceţi-vă o parolă generate în funcţie de interne Dolibarr algoritmul: 8 caractere care conţin numere în comun şi în caractere minuscule.
 PasswordGenerationNone=Nu sugerează orice generate parola. Parola trebuie să fie de tip în manual.

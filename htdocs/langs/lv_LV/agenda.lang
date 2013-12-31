@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - agenda
-IdAgenda=ID notikums
+IdAgenda=Notikuma ID
 Actions=Notikumi
-ActionsArea=Pasākumi platība (darbības un uzdevumi)
+ActionsArea=Pasākumi sadaļa (notikumi un uzdevumi)
 Agenda= Darba kārtība
 Agendas= Darba kārtības
 Calendar= Kalendārs
@@ -23,9 +23,9 @@ MenuToDoMyActions= Mani nepabeigtie notikumi
 MenuDoneMyActions= Mani izbeigta notikumi
 ListOfEvents= Dolibarr notikumu saraksts
 ActionsAskedBy=Notikumi ziņoja
-ActionsToDoBy=Pasākumi piešķirtie
+ActionsToDoBy=Pasākums piešķirts
 ActionsDoneBy=Pasākumi, ko veikušas
-AllMyActions= Visas manas notikumi / uzdevumi
+AllMyActions= Visi mani notikumi/uzdevumi
 AllActions= Visi notikumi/uzdevumi
 ViewList=Saraksta skats
 ViewCal=Mēneša skats
@@ -38,19 +38,19 @@ AgendaSetupOtherDesc= Šī lapa sniedz iespējas, lai ļautu eksportēt savu Dol
 AgendaExtSitesDesc=Šī lapa ļauj atzīt ārējos avotus kalendārus, lai redzētu savus notikumus uz Dolibarr kārtībā.
 ActionsEvents= Pasākumi, par kuriem Dolibarr radīs prasību kārtībā automātiski
 PropalValidatedInDolibarr= Priekšlikums %s apstiprināts
-InvoiceValidatedInDolibarr= Rēķina %s apstiprināts
-InvoiceBackToDraftInDolibarr=Rēķina %s doties atpakaļ uz projekta statusa
+InvoiceValidatedInDolibarr= Rēķins %s apstiprināts
+InvoiceBackToDraftInDolibarr=Rēķins %s doties atpakaļ uz melnrakstu
 InvoiceDeleteDolibarr=Rēķins %s dzēsts
 OrderValidatedInDolibarr= Pasūtījums %s pārbaudīts
 OrderApprovedInDolibarr=Pasūtījums %s apstiprināts
-OrderBackToDraftInDolibarr=Pasūtīt %s doties atpakaļ uz projekta statusa
-OrderCanceledInDolibarr=Pasūtīt %s atcelts
+OrderBackToDraftInDolibarr=Pasūtījums %s doties atpakaļ uz melnrakstu
+OrderCanceledInDolibarr=Pasūtījums %s atcelts
 InterventionValidatedInDolibarr=Intervences %s apstiprināts
-ProposalSentByEMail=Komerciālie priekšlikums %s nosūtīta pa pastu
-OrderSentByEMail=Klientu pasūtījumu %s nosūtīta pa pastu
-InvoiceSentByEMail=Klientu rēķinu %s nosūtīta pa pastu
-SupplierOrderSentByEMail=Piegādātājs pasūtījuma %s nosūtīta pa pastu
-SupplierInvoiceSentByEMail=Piegādātāju rēķinu %s nosūtīta pa pastu
+ProposalSentByEMail=Komerciālais priedāvājums %s nosūtīts pa e-pastu
+OrderSentByEMail=Klienta pasūtījums %s nosūtīts pa e-pastu
+InvoiceSentByEMail=Klienta rēķins %s nosūtīts pa e-pastu
+SupplierOrderSentByEMail=Piegādātāja pasūtījums %s nosūtīts pa e-pastu
+SupplierInvoiceSentByEMail=Piegādātāja rēķins %s nosūtīts pa e-pastu
 ShippingSentByEMail=Piegāde %s nosūtīta pa pastu
 InterventionSentByEMail=Intervences %s nosūtīta pa pastu
 NewCompanyToDolibarr= Trešā puses izveidota
@@ -61,19 +61,19 @@ DateActionDoneEnd= Reālais beigu datums
 DateActionStart= Sākuma datums
 DateActionEnd= Beigu datums
 AgendaUrlOptions1=Jūs varat pievienot arī šādus parametrus, lai filtrētu produkciju:
-AgendaUrlOptions2=<b>login = %s</b> ierobežot izejas uz darbībām, ko rada, piešķirto vai izdarīt lietotāju <b>%s.</b>
+AgendaUrlOptions2=<b>login=%s</b> ierobežot izejas uz darbībām, ko rada, piešķirto vai izdarīt lietotāju <b>%s.</b>
 AgendaUrlOptions3=<b>Logina = %s</b> ierobežot izejas uz darbībām, ko rada lietotāju <b>%s.</b>
 AgendaUrlOptions4=<b>logint = %s</b> ierobežot izejas darbībām piešķirto lietotāja <b>%s.</b>
 AgendaUrlOptions5=<b>logind = %s</b> ierobežot izejas uz darbībām, ko veic lietotājs <b>%s.</b>
 AgendaShowBirthdayEvents=Rādīt kontaktu dzimšanas dienas
 AgendaHideBirthdayEvents=Slēpt kontaktu dzimšanas dienas
 Busy=Aizņemts
-ExportDataset_event1=Saraksts kārtības pasākumu
+ExportDataset_event1=Notikumu saraksts
 
 # External Sites ical
-ExportCal=Eksporta kalendārs
-ExtSites=Importēt ārējus kalendārus
-ExtSitesEnableThisTool=Rādīt ārējo kalendārus programmā
+ExportCal=Eksportēt kalendāru
+ExtSites=Importēt ārējos kalendārus
+ExtSitesEnableThisTool=Rādīt ārējos kalendārus programmā
 ExtSitesNbOfAgenda=Kalendāru skaits
 AgendaExtNb=Kalendārs nb %s
 ExtSiteUrlAgenda=URL, lai piekļūtu. ICal failu

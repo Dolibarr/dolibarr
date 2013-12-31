@@ -6,13 +6,13 @@ TotalMargin=Συνολικό Περιθώριο
 MarginOnProducts=Περιθώριο / Προϊόντα
 MarginOnServices=Περιθώριο / Υπηρεσίες
 MarginRate=Τιμή Περιθωρίου
-MarkRate=Σημειώστε Τιμή
-DisplayMarginRates=Εμφάνιση τιμές περιθωρίου
+MarkRate=Σημειώστε ποσοστό
+DisplayMarginRates=Εμφάνιση ποσοστό κέρδους
 DisplayMarkRates=Εμφάνιση σημειωμένες τιμές
 InputPrice=Εισαγωγή τιμής
 
-margin=Κέρδη διαχείρισης περιθωρίων
-margesSetup=Τα περιθώρια κέρδους ρύθμιση διαχείρισης
+margin=Διαχείριση των ποσοστών κέρδους
+margesSetup=Ρύθμιση της διαχείρισης ποσοστών κέρδους
 
 MarginDetails=Λεπτομέρειες Περιθωρίων
 
@@ -26,12 +26,12 @@ ChooseProduct/Service=Επιλέξτε προϊόν ή υπηρεσία
 CommercialAgent=Εμπορικός αντιπρόσωπος
 
 StartDate=Ημερ. έναρξης
-EndDate=Ημερ. τέλους
+EndDate=Ημερ. λήξης
 Launch=Έναρξη
 
-ForceBuyingPriceIfNull=Υποχρεωτική τιμής αγοράς, αν η τιμή είναι μηδενική
-ForceBuyingPriceIfNullDetails=Αν ειναι "ON", το περιθώριο θα είναι μηδενικό στη γραμμή (τιμή αγοράς = τιμή πώλησης), αν ειναι ("OFF"), θα είναι ίση με την τιμή πώλησης (τιμή αγοράς = 0)
-MARGIN_METHODE_FOR_DISCOUNT=Μέθοδος περιθωρίου για της γενικές εκπτώσεις
+ForceBuyingPriceIfNull=Υποχρεωτική τιμή αγοράς, αν η τιμή είναι μηδενική
+ForceBuyingPriceIfNullDetails=Αν είναι "ON", το περιθώριο θα είναι μηδενικό στη γραμμή (τιμή αγοράς = τιμή πώλησης), αν ειναι ("OFF"), θα είναι ίση με την τιμή πώλησης (τιμή αγοράς = 0)
+MARGIN_METHODE_FOR_DISCOUNT=Μέθοδος ποσοστού για της γενικές εκπτώσεις
 UseDiscountAsProduct=Ως προϊόν
 UseDiscountAsService=Ως υπηρεσία
 UseDiscountOnTotal=Στο υποσύνολο
@@ -47,5 +47,5 @@ BuyingCost=Τιμή κόστους
 UnitCharges=Χρεώσεων
 Charges=Επιβαρύνσεις
 
-# AgentContactType=Commercial agent contact type
-# AgentContactTypeDetails=Défine what contact type (linked on invoices) will be used for margin report by commercial agents
+AgentContactType=Εμπορικός αντιπρόσωπος τύπο επαφής
+AgentContactTypeDetails=Ορίστε ποιο τύπο επαφής (που συνδέεται στα τιμολόγια) θα χρησιμοποιηθεί για την αναφορά του περιθωρίου των εμπορικών αντιπροσώπων
