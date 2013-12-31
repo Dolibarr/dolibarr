@@ -2,6 +2,13 @@
 English Dolibarr ChangeLog
 --------------------------------------------------------------
 
+***** ChangeLog for 3.3.5 compared to 3.3.4 *****
+
+- Fix: jcrop file to match debian rules
+- Fix: Add missing country UK.
+- Fix: Minor fix into package.
+- Fix: Add missing label on project field.
+
 ***** ChangeLog for 3.3.4 compared to 3.3.3 *****
 
 - Fix: [ bug #1001 ] Social Contribution : State not correct
