@@ -20,12 +20,12 @@ AppName=DoliWamp
 AppVerName=DoliWamp-3.4.2
 ; DoliWamp-x.x x or DoliWamp-x.x.x-alpha or DoliWamp-x.x.x-beta or DoliWamp-x.x.x-rc or DoliWamp-x.x.x
 OutputBaseFilename=DoliWamp-3.4.2
-; Define full path from wich all relative path are defined
+; ----- End of change
+;OutputManifestFile=build\doliwampbuild.log
+; Define full path from which all relative path are defined
 ; You must modify this to put here your dolibarr root directory
 ;SourceDir=Z:\home\ldestailleur\git\dolibarrxxx
 SourceDir=..\..\..
-; ----- End of change
-;OutputManifestFile=build\doliwampbuild.log
 AppId=doliwamp
 AppPublisher=NLTechno
 AppPublisherURL=http://www.nltechno.com
@@ -51,7 +51,6 @@ CreateUninstallRegKey=yes
 OutputDir=build
 ShowLanguageDialog=auto
 ShowUndisplayableLanguages=no
-;LanguageDetectionMethod=none
 LanguageDetectionMethod=uilanguage
 ;SignedUninstaller=yes
 
@@ -134,6 +133,7 @@ Source: "COPYRIGHT"; DestDir: "{app}"; Flags: ignoreversion;
 [Icons]
 Name: "{group}\Dolibarr ERP-CRM"; Filename: "{app}\rundoliwamp.bat"; WorkingDir: "{app}"; IconFilename: {app}\www\dolibarr\doc\images\dolibarr.ico
 Name: "{group}\Tools\Help center"; Filename: "{app}\rundolihelp.bat"; WorkingDir: "{app}"; IconFilename: {app}\www\dolibarr\doc\images\dolihelp.ico
+Name: "{group}\Tools\Host your ERP-CRM in the Cloud"; Filename: "http://wiki.dolibarr.org/index.php/Cloud_Solutions"; WorkingDir: "{app}"; IconFilename: {app}\www\dolibarr\doc\images\dolihelp.ico
 Name: "{group}\Tools\Start DoliWamp server"; Filename: "{app}\startdoliwamp.bat"; WorkingDir: "{app}"; IconFilename: {app}\www\dolibarr\doc\images\doliwampon.ico
 Name: "{group}\Tools\Stop DoliWamp server"; Filename: "{app}\stopdoliwamp.bat"; WorkingDir: "{app}"; IconFilename: {app}\www\dolibarr\doc\images\doliwampoff.ico
 Name: "{group}\Tools\Admin DoliWamp server"; Filename: "{app}\rundoliadmin.bat"; WorkingDir: "{app}"; IconFilename: {app}\www\dolibarr\doc\images\doliadmin.ico
@@ -1017,6 +1017,3 @@ Type: filesandordirs; Name: "{app}\www\dolibarr"
 
 [UninstallRun]
 Filename: "{app}\uninstall_services.bat"; Flags: runhidden
-
-
-
