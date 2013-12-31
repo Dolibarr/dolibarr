@@ -23,7 +23,7 @@ $RPMSUBVERSION="auto";	# auto use value found into BUILD
 "RPM_FEDORA"=>"rpmbuild",
 "RPM_MANDRIVA"=>"rpmbuild",
 "RPM_OPENSUSE"=>"rpmbuild",
-"DEB"=>"dpkg",
+"DEB"=>"dpkg dpatch",
 "APS"=>"zip",
 "EXEDOLIWAMP"=>"ISCC.exe"
 );
@@ -217,7 +217,7 @@ foreach my $target (keys %CHOOSEDTARGET) {
             last;
         } else {
             # Pas erreur ou erreur autre que programme absent
-            print " Found ".$REQUIREMENTTARGET{$target}."\n";
+            print " Found ".$req."\n";
         }
     }
 }
