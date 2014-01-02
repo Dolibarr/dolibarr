@@ -22,8 +22,8 @@
  * Returns an array with the tabs for the "Payment" section
  * It loads tabs from modules looking for the entity payment
  *  
- * @param Paiement $object
- * @return array
+ * @param Paiement $object Current payment object
+ * @return array Tabs for the payment section
  */
 function payment_prepare_head(Paiement $object) {
 	
@@ -57,8 +57,8 @@ function payment_prepare_head(Paiement $object) {
  * Returns an array with the tabs for the "Supplier payment" section
  * It loads tabs from modules looking for the entity payment_supplier
  *  
- * @param Paiement $object
- * @return array
+ * @param Paiement $object Current payment object
+ * @return array Tabs for the payment section
  */
 function payment_supplier_prepare_head(Paiement $object) {
 	
