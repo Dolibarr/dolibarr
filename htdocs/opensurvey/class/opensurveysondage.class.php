@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2013 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2014 Marcos García			<marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -229,7 +230,13 @@ class Opensurveysondage extends CommonObject
 				$this->date_m = $this->db->jdate($obj->tls);
 				$ret=1;
             }
-            else $ret=0;
+            else
+            {
+            	$sondage = ($id ? 'id='.$id : 'sondageid='.$numsurvey);
+                $this->error='Fetch no poll found for '.$sondage;
+                dol_syslog($this->error, LOG_ERR);
+                $ret = 0;
+            }
 
             $this->db->free($resql);
         }
