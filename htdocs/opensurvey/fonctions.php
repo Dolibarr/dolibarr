@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2013 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2014 Marcos García			<marcosgdf@gmail.com>
  *
 * This program is free software; you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -21,7 +22,40 @@
  *	\brief      Functions for module
  */
 
+/**
+ * Returns an array with the tabs for the "Opensurvey poll" section
+ * It loads tabs from modules looking for the entity Opensurveyso
+ * 
+ * @param Opensurveysondage $object Current viewing poll
+ * @return array Tabs for the opensurvey section
+ */
+function opensurvey_prepare_head(Opensurveysondage $object) {
+	
+	global $langs, $conf;
+	
+	$h = 0;
+	$head = array();
 
+	$head[0][0] = 'adminstuds.php?id='.$object->id_sondage_admin;
+	$head[0][1] = $langs->trans("Card");
+	$head[0][2] = 'general';
+	$h++;
+	
+	$head[1][0] = 'adminstuds_preview.php?id='.$object->id_sondage_admin;
+	$head[1][1] = $langs->trans("SurveyResults").'/'.$langs->trans("Preview");
+	$head[1][2] = 'preview';
+	$h++;
+
+    // Show more tabs from modules
+    // Entries must be declared in modules descriptor with line
+    // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
+    // $this->tabs = array('entity:-tabname);   												to remove a tab
+    complete_head_from_modules($conf,$langs,$object,$head,$h,'opensurveypoll');
+
+	complete_head_from_modules($conf,$langs,$object,$head,$h,'opensurveypoll', 'remove');
+
+	return $head;
+}
 
 /**
  * Show header for new member

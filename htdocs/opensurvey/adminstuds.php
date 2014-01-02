@@ -173,17 +173,7 @@ $toutsujet=str_replace("°","'",$toutsujet);
 print '<form name="updatesurvey" action="'.$_SERVER["PHP_SELF"].'?id='.$numsondageadmin.'" method="POST">'."\n";
 print '<input type="hidden" name="action" value="update">';
 
-$head = array();
-
-$head[0][0] = '';
-$head[0][1] = $langs->trans("Card");
-$head[0][2] = 'general';
-$h++;
-
-$head[1][0] = 'adminstuds_preview.php?sondage='.$object->id_sondage_admin;
-$head[1][1] = $langs->trans("SurveyResults").'/'.$langs->trans("Preview");
-$head[1][2] = 'preview';
-$h++;
+$head = opensurvey_prepare_head($object);
 
 print dol_get_fiche_head($head,'general',$langs->trans("Survey"),0,dol_buildpath('/opensurvey/img/object_opensurvey.png',1),1);
 

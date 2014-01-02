@@ -134,6 +134,7 @@ class modMyModule extends DolibarrModules
 		// 'payment'		  to add a tab in payment view
 		// 'payment_supplier' to add a tab in supplier payment view
 		// 'categories_x'	  to add a tab in category view (replace 'x' by type of category (0=product, 1=supplier, 2=customer, 3=member)
+		// 'opensurveypoll'	  to add a tab in opensurvey poll view
         $this->tabs = array();
 
         // Dictionnaries

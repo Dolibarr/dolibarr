@@ -406,17 +406,7 @@ $toutsujet=str_replace("°","'",$toutsujet);
 
 print '<form name="formulaire4" action="#" method="POST" onkeypress="javascript:process_keypress(event)">'."\n";
 
-$head = array();
-
-$head[0][0] = 'adminstuds.php?sondage='.$object->id_sondage_admin;
-$head[0][1] = $langs->trans("Card");
-$head[0][2] = 'general';
-$h++;
-
-$head[1][0] = 'adminstuds_preview.php?sondage='.$object->id_sondage_admin;
-$head[1][1] = $langs->trans("SurveyResults").'/'.$langs->trans("Preview");
-$head[1][2] = 'preview';
-$h++;
+$head = opensurvey_prepare_head($object);
 
 print dol_get_fiche_head($head,'preview',$langs->trans("Survey"),0,dol_buildpath('/opensurvey/img/object_opensurvey.png',1),1);
 
