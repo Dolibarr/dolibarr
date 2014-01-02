@@ -59,7 +59,7 @@ if ($OS =~ /windows/) {
 if (! $TEMP || ! -d $TEMP) {
     print "Error: A temporary directory can not be find.\n";
     print "Check that TEMP or TMP environment variable is set correctly.\n";
-	print "makepack-dolibarrmodule.pl aborted.\n";
+	print "$PROG.$Extension aborted.\n";
     sleep 2;
     exit 2;
 } 
