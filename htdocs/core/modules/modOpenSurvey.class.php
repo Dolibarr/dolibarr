@@ -74,9 +74,6 @@ class modOpenSurvey extends DolibarrModules
 		//$this->dirs[0] = DOL_DATA_ROOT.'/mymodule;
 		//$this->dirs[1] = DOL_DATA_ROOT.'/mymodule/temp;
 
-		// Config pages. Put here list of php page names stored in admin directory used to setup module
-		$this->config_page_url = array("index.php@opensurvey");
-
 		// Dependencies
 		$this->depends = array();		// List of modules id that must be enabled if this module is enabled
 		$this->requiredby = array();	// List of modules id to disable if this one is disabled
