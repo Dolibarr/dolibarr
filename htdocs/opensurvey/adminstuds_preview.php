@@ -382,8 +382,7 @@ $form=new Form($db);
 $result=$object->fetch(0,$numsondage);
 if ($result <= 0)
 {
-	print $langs->trans("ErrorRecordNotFound");
-	llxFooter();
+	dol_print_error($db,$object->error);
 	exit;
 }
 
