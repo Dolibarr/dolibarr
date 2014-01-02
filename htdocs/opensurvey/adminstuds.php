@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2013 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2014 Marcos García			<marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,18 +36,10 @@ if (!$user->admin) accessforbidden();
 // Initialisation des variables
 $action=GETPOST('action');
 $numsondage = $numsondageadmin = '';
-if (GETPOST('sondage'))
-{
-	if (strlen(GETPOST('sondage')) == 24)	// recuperation du numero de sondage admin (24 car.) dans l'URL
-	{
-		$numsondageadmin=GETPOST("sondage",'alpha');
-		$numsondage=substr($numsondageadmin, 0, 16);
-	}
-	else
-	{
-		$numsondageadmin='';
-		$numsondage=GETPOST("sondage",'alpha');
-	}
+
+if (GETPOST('id')) {
+	$numsondageadmin = GETPOST('id', 'alpha');
+	$numsondage = substr($numsondageadmin, 0, 16);
 }
 
 $object=new Opensurveysondage($db);
@@ -128,7 +121,7 @@ if (GETPOST('ajoutcomment'))
 		$comment_user = GETPOST('commentuser');
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."opensurvey_comments (id_sondage, comment, usercomment)";
-		$sql.= " VALUES ('".$db->escape($numsondage)."','".$db->escape($comment)."','".$db->escape($comment_user)."')";
+		$sql.= " VALUES ('".$db->escape($object->id_sondage)."','".$db->escape($comment)."','".$db->escape($comment_user)."')";
 		$resql = $db->query($sql);
 		dol_syslog("sql=".$sql);
 		if (! $resql)
@@ -153,7 +146,7 @@ if ($idcomment)
 
 $form=new Form($db);
 
-$result=$object->fetch(0,$numsondage);
+$result=$object->fetch(0, $numsondageadmin);
 if ($result <= 0)
 {
 	dol_print_error($db,$object->error);
@@ -177,7 +170,7 @@ $toutsujet=str_replace("@","<br>",$toutsujet);
 $toutsujet=str_replace("°","'",$toutsujet);
 
 
-print '<form name="updatesurvey" action="'.$_SERVER["PHP_SELF"].'?sondage='.$numsondageadmin.'" method="POST">'."\n";
+print '<form name="updatesurvey" action="'.$_SERVER["PHP_SELF"].'?id='.$numsondageadmin.'" method="POST">'."\n";
 print '<input type="hidden" name="action" value="update">';
 
 $head = array();
@@ -271,7 +264,7 @@ $urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($
 $urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
 //$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
 
-$url=$urlwithouturlroot.dol_buildpath('/opensurvey/public/studs.php',1).'?sondage='.$numsondage;
+$url=$urlwithouturlroot.dol_buildpath('/opensurvey/public/studs.php',1).'?sondage='.$object->id_sondage;
 $urllink='<a href="'.$url.'" target="_blank">'.$url.'</a>';
 print $urllink;
 
@@ -289,15 +282,15 @@ dol_fiche_end();
  */
 print '<div class="tabsAction">';
 
-if ($action != 'edit') print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&sondage=' . $numsondageadmin . '">'.$langs->trans("Modify") . '</a>';
+if ($action != 'edit') print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&id=' . $numsondageadmin . '">'.$langs->trans("Modify") . '</a>';
 
-if ($action != 'edit') print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?suppressionsondage=1&sondage='.$numsondageadmin.'&amp;action=delete">'.$langs->trans('Delete').'</a>';
+if ($action != 'edit') print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?suppressionsondage=1&id='.$numsondageadmin.'&amp;action=delete">'.$langs->trans('Delete').'</a>';
 
 print '</div>';
 
 if ($action == 'delete')
 {
-	print $form->formconfirm($_SERVER["PHP_SELF"].'?&sondage='.$numsondageadmin, $langs->trans("RemovePoll"), $langs->trans("ConfirmRemovalOfPoll",$id), 'delete_confirm', '', '', 1);
+	print $form->formconfirm($_SERVER["PHP_SELF"].'?&id='.$numsondageadmin, $langs->trans("RemovePoll"), $langs->trans("ConfirmRemovalOfPoll",$id), 'delete_confirm', '', '', 1);
 }
 
 
@@ -312,7 +305,6 @@ print_fiche_titre($langs->trans("CommentsOfVoters"),'','');
 // Comment list
 $sql = 'SELECT id_comment, usercomment, comment';
 $sql.= ' FROM '.MAIN_DB_PREFIX.'opensurvey_comments';
-$sql.= " WHERE id_sondage='".$db->escape($numsondage)."'";
 $sql.= " ORDER BY id_comment";
 $resql = $db->query($sql);
 $num_rows=$db->num_rows($resql);
@@ -322,7 +314,7 @@ if ($num_rows > 0)
 	while ( $i < $num_rows)
 	{
 		$obj=$db->fetch_object($resql);
-		print '<a href="'.dol_buildpath('/opensurvey/adminstuds.php',1).'?deletecomment='.$obj->id_comment.'&sondage='.$numsondageadmin.'"> '.img_picto('', 'delete.png').'</a> ';
+		print '<a href="'.dol_buildpath('/opensurvey/adminstuds.php',1).'?deletecomment='.$obj->id_comment.'&id='.$numsondageadmin.'"> '.img_picto('', 'delete.png').'</a> ';
 		print $obj->usercomment.' : '.dol_nl2br($obj->comment)." <br>";
 		$i++;
 	}

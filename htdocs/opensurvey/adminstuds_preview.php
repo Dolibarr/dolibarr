@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2013      Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2014 Marcos García				<marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,7 +36,7 @@ if (!$user->admin) accessforbidden();
 
 // Init vars
 $action=GETPOST('action');
-$numsondageadmin=GETPOST("sondage");
+$numsondageadmin=GETPOST("id");
 $numsondage=substr($numsondageadmin, 0, 16);
 
 $object=new Opensurveysondage($db);
@@ -471,7 +472,7 @@ if (GETPOST('ajoutsujet'))
 {
 	//on recupere les données et les sujets du sondage
 	print '<form name="formulaire" action="'.$_SERVER["PHP_SELF"].'" method="POST">'."\n";
-	print '<input type="hidden" name="sondage" value="'.$numsondageadmin.'">';
+	print '<input type="hidden" name="id" value="'.$numsondageadmin.'">';
 	print '<input type="hidden" name="backtourl" value="'.GETPOST('backtourl').'">';
 
 	print '<div class="center">'."\n";
@@ -586,7 +587,7 @@ print '</div>'."\n";
 $nbcolonnes=substr_count($object->sujet,',')+1;
 
 print '<form name="formulaire" action="'.$_SERVER["PHP_SELF"].'" method="POST">'."\n";
-print '<input type="hidden" name="sondage" value="'.$numsondageadmin.'">';
+print '<input type="hidden" name="id" value="'.$numsondageadmin.'">';
 
 print '<div class="cadre"> '."\n";
 print '<br>'."\n";
@@ -643,7 +644,7 @@ if ($object->format=="D"||$object->format=="D+")
 		}
 	}
 
-	print '<td class="annee"><a href="'.$_SERVER["PHP_SELF"].'?ajoutsujet=1&sondage='.$object->id_sondage_admin.'">'.$langs->trans("Add").'</a></td>'."\n";
+	print '<td class="annee"><a href="'.$_SERVER["PHP_SELF"].'?ajoutsujet=1&id='.$object->id_sondage_admin.'">'.$langs->trans("Add").'</a></td>'."\n";
 	print '</tr>'."\n";
 	print '<tr>'."\n";
 	print '<td></td>'."\n";
@@ -669,7 +670,7 @@ if ($object->format=="D"||$object->format=="D+")
 		}
 	}
 
-	print '<td class="mois"><a href="'.$_SERVER["PHP_SELF"].'?ajoutsujet=1&sondage='.$object->id_sondage_admin.'">'.$langs->trans("Add").'</a></td>'."\n";
+	print '<td class="mois"><a href="'.$_SERVER["PHP_SELF"].'?ajoutsujet=1&id='.$object->id_sondage_admin.'">'.$langs->trans("Add").'</a></td>'."\n";
 	print '</tr>'."\n";
 	print '<tr>'."\n";
 	print '<td></td>'."\n";
@@ -693,7 +694,7 @@ if ($object->format=="D"||$object->format=="D+")
 		}
 	}
 
-	print '<td class="jour"><a href="'.$_SERVER["PHP_SELF"].'?ajoutsujet=1&sondage='.$object->id_sondage_admin.'">'.$langs->trans("Add").'</a></td>'."\n";
+	print '<td class="jour"><a href="'.$_SERVER["PHP_SELF"].'?ajoutsujet=1&id='.$object->id_sondage_admin.'">'.$langs->trans("Add").'</a></td>'."\n";
 	print '</tr>'."\n";
 
 	//affichage des horaires
@@ -711,7 +712,7 @@ if ($object->format=="D"||$object->format=="D+")
 			}
 		}
 
-		print '<td class="heure"><a href="'.$_SERVER["PHP_SELF"].'?ajoutsujet=1&sondage='.$object->id_sondage_admin.'">'.$langs->trans("Add").'</a></td>'."\n";
+		print '<td class="heure"><a href="'.$_SERVER["PHP_SELF"].'?ajoutsujet=1&id='.$object->id_sondage_admin.'">'.$langs->trans("Add").'</a></td>'."\n";
 		print '</tr>'."\n";
 	}
 }
@@ -728,7 +729,7 @@ else
 		print '<td class="sujet">'.$tmp[0].'</td>'."\n";
 	}
 
-	print '<td class="sujet"><a href="'.$_SERVER["PHP_SELF"].'?sondage='.$numsondageadmin.'&ajoutsujet=1&backtourl='.urlencode($_SERVER["PHP_SELF"].'?sondage='.$numsondageadmin).'">'.img_picto('',dol_buildpath('/opensurvey/img/add-16.png',1),'',1).'</a></td>'."\n";
+	print '<td class="sujet"><a href="'.$_SERVER["PHP_SELF"].'?id='.$numsondageadmin.'&ajoutsujet=1&backtourl='.urlencode($_SERVER["PHP_SELF"]).'">'.img_picto('',dol_buildpath('/opensurvey/img/add-16.png',1),'',1).'</a></td>'."\n";
 	print '</tr>'."\n";
 }
 
