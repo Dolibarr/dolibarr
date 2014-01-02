@@ -122,7 +122,7 @@ class pdf_standardlabel
 	 * @param    string     $footer         Footer
 	 * @param    Translate  $outputlangs    Output langs
 	 * @param    string     $textright      Text right
-	 * @param    string     $photo    		Photo (path to image file used as replacement for key %PHOTOS% into left, right header or footer text)
+	 * @param    string     $photo    		Photo (full path to image file used as replacement for key %PHOTOS% into left, right, header or footer text)
 	 * @return   void
 	 */
 	function Add_PDF_card(&$pdf,$textleft,$header,$footer,$outputlangs,$textright='',$photo='')
@@ -185,8 +185,8 @@ class pdf_standardlabel
 		// Center
 		if ($textright=='')	// Only a left part
 		{
-			if ($textleft == '%LOGO%' && $logo) $this->Image($logo,$_PosX+2,$_PosY+3+$this->_Line_Height,20);
-			else if ($textleft == '%PHOTO%' && $photo) $this->Image($photo,$_PosX+2,$_PosY+3+$this->_Line_Height,20);
+			if ($textleft == '%LOGO%' && $logo) $pdf->Image($logo,$_PosX+2,$_PosY+3+$this->_Line_Height,20);
+			else if ($textleft == '%PHOTO%' && $photo) $pdf->Image($photo,$_PosX+2,$_PosY+3+$this->_Line_Height,20);
 			else
 			{
 				$pdf->SetXY($_PosX+3, $_PosY+3+$this->_Line_Height);
@@ -219,8 +219,8 @@ class pdf_standardlabel
 		}
 		else	// Only a right part
 		{
-			if ($textright == '%LOGO%' && $logo) $this->Image($logo,$_PosX+$this->_Width-21,$_PosY+1,20);
-			else if ($textright == '%PHOTO%' && $photo) $this->Image($photo,$_PosX+$this->_Width-21,$_PosY+1,20);
+			if ($textright == '%LOGO%' && $logo) $pdf->Image($logo,$_PosX+$this->_Width-21,$_PosY+1,20);
+			else if ($textright == '%PHOTO%' && $photo) $pdf->Image($photo,$_PosX+$this->_Width-21,$_PosY+1,20);
 			else
 			{
 				$pdf->SetXY($_PosX+2, $_PosY+3+$this->_Line_Height);
@@ -397,7 +397,7 @@ class pdf_standardlabel
     /**
      *  Function to build PDF on disk, then output on HTTP strem.
      *
-     *  @param	array		$arrayofrecords  	Array of record informations (array('textleft'=>,'textheader'=>, ...'id'=>,'photo'=>)
+     *  @param	array		$arrayofrecords  	Array of record informations (array('textleft'=>,'textheader'=>, ..., 'id'=>,'photo'=>)
      *  @param  Translate	$outputlangs     	Lang object for output language
      *  @param	string		$srctemplatepath	Full path of source filename for generator using a template file
 	 *	@param	string		$outputdir			Output directory for pdf file
@@ -476,7 +476,7 @@ class pdf_standardlabel
         foreach($arrayofrecords as $val)
         {
             // imprime le texte specifique sur la carte
-            $this->Add_PDF_card($pdf,$val['textleft'],$val['textheader'],$val['textfooter'],$langs,$val['textright'],$val['id'],$val['photo']);
+            $this->Add_PDF_card($pdf,$val['textleft'],$val['textheader'],$val['textfooter'],$langs,$val['textright'],$val['photo']);
         }
 
         //$pdf->SetXY(10, 295);

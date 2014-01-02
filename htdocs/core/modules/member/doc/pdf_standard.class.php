@@ -197,8 +197,8 @@ class pdf_standard
 		// Center
 		if ($textright=='')	// Only a left part
 		{
-			if ($textleft == '%LOGO%' && $logo) $this->Image($logo,$_PosX+2,$_PosY+3+$this->_Line_Height,20);
-			else if ($textleft == '%PHOTO%' && $photo) $this->Image($photo,$_PosX+2,$_PosY+3+$this->_Line_Height,20);
+			if ($textleft == '%LOGO%' && $logo) $pdf->Image($logo,$_PosX+2,$_PosY+3+$this->_Line_Height,20);
+			else if ($textleft == '%PHOTO%' && $photo) $pdf->Image($photo,$_PosX+2,$_PosY+3+$this->_Line_Height,20);
 			else
 			{
 				$pdf->SetXY($_PosX+3, $_PosY+3+$this->_Line_Height);
@@ -232,8 +232,8 @@ class pdf_standard
 		}
 		else	// Only a right part
 		{
-			if ($textright == '%LOGO%' && $logo) $this->Image($logo,$_PosX+$this->_Width-21,$_PosY+1,20);
-			else if ($textright == '%PHOTO%' && $photo) $this->Image($photo,$_PosX+$this->_Width-21,$_PosY+1,20);
+			if ($textright == '%LOGO%' && $logo) $pdf->Image($logo,$_PosX+$this->_Width-21,$_PosY+1,20);
+			else if ($textright == '%PHOTO%' && $photo) $pdf->Image($photo,$_PosX+$this->_Width-21,$_PosY+1,20);
 			else
 			{
 				$pdf->SetXY($_PosX+2, $_PosY+3+$this->_Line_Height);
@@ -435,7 +435,7 @@ class pdf_standard
 		$outputlangs->load("companies");
 		$outputlangs->load("admin");
 		$outputlangs->load("members");
-		
+
 		if (empty($mode) || $mode == 'member')
 		{
 	        $title=$outputlangs->transnoentities('MembersCards');
