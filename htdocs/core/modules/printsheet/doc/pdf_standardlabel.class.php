@@ -399,7 +399,7 @@ class pdf_standardlabel
 	 *	@param	string		$outputdir			Output directory
      *  @return int             				1=OK, 0=KO
      */
-    function write_file($arrayofmembers,$outputlangs,$srctemplatepath,$outputdir='')
+    function write_file($arrayofrecords,$outputlangs,$srctemplatepath,$outputdir='')
     {
         global $user,$conf,$langs,$mysoc,$_Avery_Labels;
 
@@ -467,7 +467,7 @@ class pdf_standardlabel
 
 
         // Add each record
-        foreach($arrayofmembers as $val)
+        foreach($arrayofrecords as $val)
         {
             // imprime le texte specifique sur la carte
             $this->Add_PDF_card($pdf,$val['textleft'],$val['textheader'],$val['textfooter'],$langs,$val['textright'],$val['photo']);
