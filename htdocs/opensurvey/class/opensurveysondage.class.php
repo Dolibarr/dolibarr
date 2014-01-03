@@ -179,7 +179,6 @@ class Opensurveysondage extends CommonObject
     	global $langs;
 
     	$sql = "SELECT";
-		//$sql.= " t.rowid,";
 		$sql.= " t.id_sondage,";
 		$sql.= " t.commentaires,";
 		$sql.= " t.mail_admin,";
@@ -193,8 +192,7 @@ class Opensurveysondage extends CommonObject
 		$sql.= " t.sujet,";
 		$sql.= " t.tms";
         $sql.= " FROM ".MAIN_DB_PREFIX."opensurvey_sondage as t";
-        if ($id > 0) $sql.= " WHERE t.rowid = ".$this->db->escape($id);
-        else $sql.= " WHERE t.id_sondage = '".$this->db->escape($numsurvey)."'";
+        $sql.= " WHERE t.id_sondage = '".$this->db->escape($numsurvey)."'";
 
     	dol_syslog(get_class($this)."::fetch sql=".$sql, LOG_DEBUG);
         $resql=$this->db->query($sql);
@@ -203,8 +201,6 @@ class Opensurveysondage extends CommonObject
             if ($this->db->num_rows($resql))
             {
                 $obj = $this->db->fetch_object($resql);
-
-                //$this->id  = $obj->rowid;
 
 				$this->id_sondage = $obj->id_sondage;
 				$this->commentaires = $obj->commentaires;
@@ -283,7 +279,6 @@ class Opensurveysondage extends CommonObject
 		$sql.= " canedit=".$this->db->escape($this->canedit).",";
 		$sql.= " allow_comments=".$this->db->escape($this->allow_comments);
 		
-        //$sql.= " WHERE rowid=".$this->id;
 		$sql.= " WHERE id_sondage='".$this->db->escape($this->id_sondage)."'";
 
 		$this->db->begin();
