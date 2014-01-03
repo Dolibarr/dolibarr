@@ -86,7 +86,7 @@ if (GETPOST('reset')) {
 
 if (! isset($_SESSION['nom']) && ! isset($_SESSION['adresse']) && ! isset($_SESSION['commentaires']) && ! isset($_SESSION['mail']))
 {
-	dol_print_error('',"You haven't filled the first section of the poll creation");
+	dol_print_error('', $langs->trans('ErrorOpenSurveyFillFirstSection'));
 	exit;
 }
 
@@ -542,7 +542,7 @@ if (issetAndNoEmpty('totalchoixjour', $_SESSION) && (!issetAndNoEmpty('choixheur
 		}
 
 		if ($affichageerreurfindeligne) {
-			print '<td><b><font color=#FF0000>'. _("Bad format!") .'</font></b></td>'."\n";
+			print '<td><b><font color=#FF0000>'. $langs->trans("ErrorBadFormat") .'</font></b></td>'."\n";
 		}
 
 		print '</tr>'."\n";
@@ -560,7 +560,7 @@ if (issetAndNoEmpty('totalchoixjour', $_SESSION) && (!issetAndNoEmpty('choixheur
 
 	//si un seul jour et aucunes horaires choisies, : message d'erreur
 	if ((GETPOST('choixheures') || GETPOST('choixheures_x')) && (count($_SESSION["totalchoixjour"])=="1" && $_POST["horaires0"][0]=="" && $_POST["horaires0"][1]=="" && $_POST["horaires0"][2]=="" && $_POST["horaires0"][3]=="" && $_POST["horaires0"][4]=="")) {
-		print '<table><tr><td colspan=3><font color=#FF0000>'. _("Enter more choices for the voters") .'</font><br></td></tr></table>'."\n";
+		print '<table><tr><td colspan=3><font color=#FF0000>'. $langs->trans("MoreChoices") .'</font><br></td></tr></table>'."\n";
 		$erreur=true;
 	}
 }
@@ -574,14 +574,14 @@ if (!$erreur  && (GETPOST('choixheures') || GETPOST('choixheures_x'))) {
 	print '<br><div class="presentationdatefin">'. $langs->trans("PollWillExpire",2) .'</td></tr><tr><td><br>'. $langs->trans("RemovalDate") .' : <b> '.$date_fin.'</b><br>'."\n";
 	print '</div>'."\n";
 	print '<div class="presentationdatefin">'."\n";
-	print '<font color="#FF0000">'. _("Once you have confirmed the creation of your poll, you will be automatically redirected on the page of your poll. <br>Then, you will receive quickly an email contening the link to your poll for sending it to the voters.") .'</font>'."\n";
+	print '<font color="#FF0000">'. $langs->trans("AfterCreationInfo") .'</font>'."\n";
 	print'</div>'."\n";
 	// print'<p class=affichageexport>'."\n";
 	// print 'Pour finir la cr&eacute;ation du sondage, cliquez sur le bouton <img src="images/add-16.png" alt="ajout"> ci-dessous'."\n";
 	// print '</p>'."\n";
 	print '<table>'."\n";
 	print '<tr><td>'. $langs->trans("BackToHoursSetup") .'</td><td></td><td><input type="image" name="retourhoraires" src="images/back-32.png"></td></tr>'."\n";
-	print'<tr><td>'. $langs->trans("CreatePoll") .'</td><td></td><td><input type="image" name="confirmation" value="Valider la cr&eacute;ation" src="images/add.png"></td></tr>'."\n";
+	print'<tr><td>'. $langs->trans("CreatePoll") .'</td><td></td><td><input type="image" name="confirmation" value="'.$langs->trans('CreatePoll').'" src="images/add.png"></td></tr>'."\n";
 	print '</table>'."\n";
 }
 

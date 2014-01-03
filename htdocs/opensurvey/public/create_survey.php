@@ -147,7 +147,8 @@ if (!$_SESSION["adresse"] && (GETPOST('creation_sondage_date') || GETPOST('creat
   print "<td><font color=\"#FF0000\">" .$langs->trans("FieldMandatory")  . " </font></td>"."\n";
 } elseif ($erreur_adresse && (GETPOST('creation_sondage_date') || GETPOST('creation_sondage_autre') || GETPOST('creation_sondage_date_x') || GETPOST('creation_sondage_autre_x')))
 {
-  print "<td><font color=\"#FF0000\">" . _("The address is not correct! (You should enter a valid email address in order to receive the link to your poll)") . "</font></td>"."\n";
+	$langs->load('errors');
+  print "<td><font color=\"#FF0000\">" . $langs->trans("ErrorBadEMail", $adresse) . "</font></td>"."\n";
 }
 
 print '</tr>'."\n";
@@ -180,11 +181,11 @@ if (GETPOST('choix_sondage'))
 else
 {
 	//affichage des boutons pour choisir sondage date ou autre
-	print '<br><table >'."\n";
-	print '<tr><td>'. _("Schedule an event") .'</td><td></td> '."\n";
-	print '<td><input type="image" name="creation_sondage_date" value="Trouver une date" src="images/calendar-32.png"></td></tr>'."\n";
-	print '<tr><td>'. _("Make a choice") .'</td><td></td> '."\n";
-	print '<td><input type="image" name="creation_sondage_autre" value="'. _('Make a poll') . '" src="images/chart-32.png"></td></tr>'."\n";
+	print '<br><table>'."\n";
+	print '<tr><td>'. $langs->trans("CreateSurveyDate") .'</td><td></td> '."\n";
+	print '<td><input type="image" name="creation_sondage_date" value="'.$langs->trans('CreateSurveyDate').'" src="images/calendar-32.png"></td></tr>'."\n";
+	print '<tr><td>'. $langs->trans("CreateSurveyStandard") .'</td><td></td> '."\n";
+	print '<td><input type="image" name="creation_sondage_autre" value="'.$langs->trans('CreateSurveyStandard').'" src="images/chart-32.png"></td></tr>'."\n";
 	print '</table>'."\n";
 }
 print '<br><br><br>'."\n";

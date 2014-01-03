@@ -125,7 +125,7 @@ llxHeaderSurvey($langs->trans("OpenSurvey"), "", 0, 0, $arrayofjs, $arrayofcss);
 
 if (empty($_SESSION['titre']) || empty($_SESSION['nom']) || empty($_SESSION['adresse']))
 {
-	dol_print_error('',"You haven't filled the first section of the poll creation");
+	dol_print_error('', $langs->trans('ErrorOpenSurveyFillFirstSection'));
 	llxFooterSurvey();
 	exit;
 }
@@ -179,25 +179,25 @@ for ($i=0;$i<$_SESSION["nbrecases"];$i++)
 
 //message d'erreur si aucun champ renseigné
 if ($testremplissage != "ok" && (isset($_POST["fin_sondage_autre"]) || isset($_POST["fin_sondage_autre_x"]))) {
-	print "<br><font color=\"#FF0000\">" . $langs->trans("Enter at least one choice") . "</font><br><br>"."\n";
+	print "<br><font color=\"#FF0000\">" . $langs->trans("ErrorOpenSurveyOneChoice") . "</font><br><br>"."\n";
 	$erreur = true;
 }
 
 //message d'erreur si mauvaise date
 if ($testdate === false) {
-	print "<br><font color=\"#FF0000\">" . _("Date must be have the format DD/MM/YYYY") . "</font><br><br>"."\n";
+	print "<br><font color=\"#FF0000\">" . $langs->trans("ErrorOpenSurveyDateFormat") . "</font><br><br>"."\n";
 }
 
 if ($erreur_injection) {
-	print "<font color=#FF0000>" . _("Characters \" < and > are not permitted") . "</font><br><br>\n";
+	print "<font color=#FF0000>" . $langs->trans("ErrorOpenSurveyInvalidChars") . "</font><br><br>\n";
 }
 
 if ((isset($_POST["fin_sondage_autre"]) || isset($_POST["fin_sondage_autre_x"])) && !$erreur && !$erreur_injection) {
 	//demande de la date de fin du sondage
 	print '<br>'."\n";
 	print '<div class=presentationdatefin>'."\n";
-	print '<br>'. _("Your poll will be automatically removed after 6 months.<br> You can fix another removal date for it.") .'<br><br>'."\n";
-	print _("Removal date (optional)") .' : <input type="text" name="champdatefin" value="'.$date_selected.'" size="10" maxlength="10"> '. _("(DD/MM/YYYY)") ."\n";
+	print '<br>'. $langs->trans("InfoExpiration") .'<br><br>'."\n";
+	print $langs->trans("RemovalDate") .' : <input type="text" name="champdatefin" value="'.$date_selected.'" size="10" maxlength="10"> DD/MM/YYYY';
 	print '</div>'."\n";
 	print '<div class=presentationdatefin>'."\n";
 	print '<font color=#FF0000>'. $langs->trans("InfoAfterCreate") .'</font>'."\n";
