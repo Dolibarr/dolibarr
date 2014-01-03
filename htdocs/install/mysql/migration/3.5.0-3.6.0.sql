@@ -18,3 +18,4 @@
 -- -- VMYSQL4.1 DELETE FROM llx_usergroup_user      WHERE fk_usergroup NOT IN (SELECT rowid from llx_usergroup);
 
 ALTER TABLE llx_bookmark ADD COLUMN entity integer DEFAULT 1 NOT NULL;
+ALTER TABLE  `llx_opensurvey_sondage` ADD  `allow_comments` TINYINT( 1 ) UNSIGNED NOT NULL DEFAULT 1 AFTER  `canedit` ;

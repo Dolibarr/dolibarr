@@ -74,6 +74,12 @@ if (GETPOST("creation_sondage_date") || GETPOST("creation_sondage_autre") || GET
 	} else {
 		$_SESSION["mailsonde"] = false;
 	}
+	
+	if (GETPOST('allow_comments') == 'on') {
+		$_SESSION['allow_comments'] = true;
+	} else {
+		$_SESSION['allow_comments'] = false;
+	}
 
 	if (! isValidEmail($adresse)) $erreur_adresse = true;
 
@@ -171,6 +177,10 @@ print '<input type="checkbox" name="canedit" '.$cocheplus.'> '. $langs->trans("V
 if ($_SESSION["mailsonde"]) $cochemail="checked";
 
 print '<input type="checkbox" name="mailsonde" '.$cochemail.'> '. $langs->trans("ToReceiveEMailForEachVote") .'<br>'."\n";
+
+if ($_SESSION['allow_comments']) $allow_comments = "checked";
+
+print '<input type="checkbox" name="allow_comments" '.$allow_comments.'> '.$langs->trans('CanComment').'<br />'."\n";
 
 if (GETPOST('choix_sondage'))
 {

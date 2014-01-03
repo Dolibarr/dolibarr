@@ -27,6 +27,7 @@ CREATE TABLE llx_opensurvey_sondage (
        mailsonde varchar(2) DEFAULT '0',
        survey_link_visible integer DEFAULT 1,
 	   canedit integer DEFAULT 0,
+       allow_comments TINYINT(1) unsigned NOT NULL DEFAULT 1,
        origin VARCHAR(64),
        tms TIMESTAMP,
 	   sujet TEXT

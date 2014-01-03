@@ -89,6 +89,7 @@ if ($action == 'update')
 		$object->date_fin = $expiredate;
 		$object->survey_link_visible = GETPOST('survey_link_visible')=='on'?1:0;
 		$object->canedit = GETPOST('canedit')=='on'?1:0;
+		$object->allow_comments = GETPOST('cancomment') == 'on' ? true : false;
 
 		$res=$object->update($user);
 		if ($res < 0)
@@ -231,6 +232,15 @@ if ($action == 'edit')
 else print yn($object->canedit);
 print '</td></tr>';
 
+// Users can comment
+print '<tr><td>'.$langs->trans('CanComment').'</td><td colspan="2">';
+if ($action == 'edit')
+{
+	print '<input type="checkbox" name="cancomment" size="40"'.($object->allow_comments?' checked="true"':'').'">';
+}
+else print yn($object->allow_comments);
+print '</td></tr>';
+
 // Expire date
 print '<tr><td>'.$langs->trans('ExpireDate').'</td><td colspan="2">';
 if ($action == 'edit') print $form->select_date($expiredate?$expiredate:$object->date_fin,'expire');
@@ -301,12 +311,14 @@ else
 print '<br>';
 
 // Add comment
-print $langs->trans("AddACommentForPoll") . '<br>';
-print '<textarea name="comment" rows="2" cols="80"></textarea><br>'."\n";
-print $langs->trans("Name") .': <input type="text" name="commentuser" value="'.$user->getFullName($langs).'"><br>'."\n";
-print '<input type="submit" class="button" name="ajoutcomment" value="'.dol_escape_htmltag($langs->trans("AddComment")).'"><br>'."\n";
-if (isset($erreur_commentaire_vide) && $erreur_commentaire_vide=="yes") {
-	print "<font color=#FF0000>" . $langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Name")) . "</font>";
+if ($object->allow_comments) {
+	print $langs->trans("AddACommentForPoll") . '<br>';
+	print '<textarea name="comment" rows="2" cols="80"></textarea><br>'."\n";
+	print $langs->trans("Name") .': <input type="text" name="commentuser" value="'.$user->getFullName($langs).'"><br>'."\n";
+	print '<input type="submit" class="button" name="ajoutcomment" value="'.dol_escape_htmltag($langs->trans("AddComment")).'"><br>'."\n";
+	if (isset($erreur_commentaire_vide) && $erreur_commentaire_vide=="yes") {
+		print "<font color=#FF0000>" . $langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Name")) . "</font>";
+	}
 }
 
 print '</form>';

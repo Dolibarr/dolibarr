@@ -701,15 +701,17 @@ if ($comments)
 }
 
 // Form to add comment
-print '<div class="addcomment">' .$langs->trans("AddACommentForPoll") . "<br>\n";
+if ($object->allow_comments) {
+	print '<div class="addcomment">' .$langs->trans("AddACommentForPoll") . "<br>\n";
 
-print '<textarea name="comment" rows="2" cols="60"></textarea><br>'."\n";
-print $langs->trans("Name") .' : ';
-print '<input type="text" name="commentuser" maxlength="64" /> &nbsp; '."\n";
-print '<input type="submit" class="button" name="ajoutcomment" value="'.dol_escape_htmltag($langs->trans("AddComment")).'"><br>'."\n";
-print '</form>'."\n";
+	print '<textarea name="comment" rows="2" cols="60"></textarea><br>'."\n";
+	print $langs->trans("Name") .' : ';
+	print '<input type="text" name="commentuser" maxlength="64" /> &nbsp; '."\n";
+	print '<input type="submit" class="button" name="ajoutcomment" value="'.dol_escape_htmltag($langs->trans("AddComment")).'"><br>'."\n";
+	print '</form>'."\n";
 
-print '</div>'."\n";	// div add comment
+	print '</div>'."\n";	// div add comment
+}
 
 print '<br><br>';
 

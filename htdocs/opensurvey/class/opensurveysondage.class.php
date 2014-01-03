@@ -54,8 +54,11 @@ class Opensurveysondage extends CommonObject
 	var $survey_link_visible;
 	var $canedit;
 
-
-
+	/**
+	 * Allow comments on this poll
+	 * @var bool
+	 */
+	public $allow_comments;
 
     /**
      *  Constructor
@@ -196,6 +199,7 @@ class Opensurveysondage extends CommonObject
 		$sql.= " t.mailsonde,";
 		$sql.= " t.survey_link_visible,";
 		$sql.= " t.canedit,";
+		$sql.= " t.allow_comments,";
 		$sql.= " t.sujet,";
 		$sql.= " t.tms";
         $sql.= " FROM ".MAIN_DB_PREFIX."opensurvey_sondage as t";
@@ -225,6 +229,7 @@ class Opensurveysondage extends CommonObject
 				$this->mailsonde = $obj->mailsonde;
 				$this->survey_link_visible = $obj->survey_link_visible;
 				$this->canedit = $obj->canedit;
+				$this->allow_comments = $obj->allow_comments;
 				$this->sujet = $obj->sujet;
 
 				$this->date_m = $this->db->jdate($obj->tls);
@@ -274,8 +279,8 @@ class Opensurveysondage extends CommonObject
 		if (isset($this->format)) $this->format=trim($this->format);
 		if (isset($this->mailsonde)) $this->mailsonde=trim($this->mailsonde);
 		if (isset($this->survey_link_visible)) $this->survey_link_visible=trim($this->survey_link_visible);
-		if (isset($this->canedit)) $this->canedit=trim($this->canedit);
-
+		$this->canedit = $this->canedit ? 1 : 0;
+		$this->allow_comments = $this->allow_comments ? 1 : 0;
 
 		// Check parameters
 		// Put here code to add a control on parameters values
@@ -293,8 +298,9 @@ class Opensurveysondage extends CommonObject
 		$sql.= " format=".(isset($this->format)?"'".$this->db->escape($this->format)."'":"null").",";
 		$sql.= " mailsonde=".(isset($this->mailsonde)?$this->db->escape($this->mailsonde):"null").",";
 		$sql.= " survey_link_visible=".(isset($this->survey_link_visible)?$this->db->escape($this->survey_link_visible):"null").",";
-		$sql.= " canedit=".(isset($this->canedit)?$this->db->escape($this->canedit):"null")."";
-
+		$sql.= " canedit=".$this->db->escape($this->canedit).",";
+		$sql.= " allow_comments=".$this->db->escape($this->allow_comments);
+		
         //$sql.= " WHERE rowid=".$this->id;
 		$sql.= " WHERE id_sondage_admin='".$this->db->escape($this->id_sondage_admin)."'";
 

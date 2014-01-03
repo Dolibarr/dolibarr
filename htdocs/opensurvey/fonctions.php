@@ -255,13 +255,14 @@ function ajouter_sondage($origin)
 		$date_fin = time()+15552000;
 	}
 	$canedit=empty($_SESSION['formatcanedit'])?'0':'1';
+	$allow_comments = empty($_SESSION['allow_comments']) ? 0 : 1;
 
 	// Insert survey
 	$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'opensurvey_sondage';
-	$sql.= '(id_sondage, commentaires, mail_admin, nom_admin, titre, id_sondage_admin, date_fin, format, mailsonde, canedit, origin, sujet)';
+	$sql.= '(id_sondage, commentaires, mail_admin, nom_admin, titre, id_sondage_admin, date_fin, format, mailsonde, canedit, allow_comments, origin, sujet)';
 	$sql.= " VALUES ('".$db->escape($sondage)."', '".$db->escape($_SESSION['commentaires'])."', '".$db->escape($_SESSION['adresse'])."', '".$db->escape($_SESSION['nom'])."',";
 	$sql.= " '".$db->escape($_SESSION['titre'])."', '".$sondage_admin."', '".$db->idate($date_fin)."', '".$_SESSION['formatsondage']."', '".$db->escape($_SESSION['mailsonde'])."',";
-	$sql.= " '".$canedit."', '".$db->escape($origin)."',";
+	$sql.= " '".$canedit."', '".$allow_comments."', '".$db->escape($origin)."',";
 	$sql.= " '".$db->escape($_SESSION['toutchoix'])."'";
 	$sql.= ")";
 	dol_syslog($sql);
@@ -288,6 +289,7 @@ function ajouter_sondage($origin)
 	unset($_SESSION["commentaires"]);
 	unset($_SESSION["canedit"]);
 	unset($_SESSION["mailsonde"]);
+	unset($_SESSION['allow_comments']);
 
 	header("Location: ".$urlback);
 	exit();
