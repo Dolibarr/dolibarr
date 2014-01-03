@@ -449,7 +449,7 @@ print '</form>'."\n";
 
 print '<div class="tabsAction">';
 
-print '<a class="butAction" href="public/exportcsv.php?sondage=' . $numsondage . '">'.$langs->trans("ExportSpreadsheet") .' (.CSV)' . '</a>';
+print '<a class="butAction" href="exportcsv.php?id=' . $numsondage . '">'.$langs->trans("ExportSpreadsheet") .' (.CSV)' . '</a>';
 
 print '</div>';
 

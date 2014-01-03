@@ -16,33 +16,23 @@
  */
 
 /**
- *	\file       htdocs/opensurvey/public/exportcsv.php
+ *	\file       htdocs/opensurvey/exportcsv.php
  *	\ingroup    opensurvey
  *	\brief      Page to list surveys
  */
 
 
-define("NOLOGIN",1);		// This means this output page does not require to be logged.
-define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
-require_once('../../main.inc.php');
+require_once('../main.inc.php');
 require_once(DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/opensurvey/class/opensurveysondage.class.php");
 
 $action=GETPOST('action');
 $numsondage = $numsondageadmin = '';
-if (GETPOST('sondage'))
+if (GETPOST('id'))
 {
-	if (strlen(GETPOST('sondage')) == 24)	// recuperation du numero de sondage admin (24 car.) dans l'URL
-	{
-		$numsondageadmin=GETPOST("sondage",'alpha');
-		$numsondage=substr($numsondageadmin, 0, 16);
-	}
-	else
-	{
-		$numsondageadmin='';
-		$numsondage=GETPOST("sondage",'alpha');
-	}
+	$numsondageadmin=GETPOST("id",'alpha');
+	$numsondage=substr($numsondageadmin, 0, 16);
 }
 
 $object=new Opensurveysondage($db);
