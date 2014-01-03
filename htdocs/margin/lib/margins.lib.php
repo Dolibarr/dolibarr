@@ -81,14 +81,14 @@ function marges_prepare_head()
 }
 
 /**
- * getMarginInfos
+ * Return an array with margins information of a line
  *
- * @param 	float 	$pvht				Buying price with tax
- * @param 	float	$remise_percent		Discount percent
- * @param 	float	$tva_tx				Vat rate
- * @param 	float	$localtax1_tx		Vat rate special 1
- * @param 	float	$localtax2_tx		Vat rate special 2
- * @param 	int		$fk_pa				???
+ * @param 	float 	$pvht				Selling price without tax
+ * @param 	float	$remise_percent		Discount percent on line
+ * @param 	float	$tva_tx				Vat rate (not used)
+ * @param 	float	$localtax1_tx		Vat rate special 1 (not used)
+ * @param 	float	$localtax2_tx		Vat rate special 2 (not used)
+ * @param 	int		$fk_pa				Id of buying price (prefer set this to 0 and provide $paht instead. With id, buying price may have change)
  * @param 	float	$paht				Buying price without tax
  * @return	array						Array of margin info
  */
@@ -99,24 +99,31 @@ function getMarginInfos($pvht, $remise_percent, $tva_tx, $localtax1_tx, $localta
 	$marge_tx_ret='';
 	$marque_tx_ret='';
 
-	if($fk_pa > 0) {
+	if ($fk_pa > 0) {
 		require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
 		$product = new ProductFournisseur($db);
-		if ($product->fetch_product_fournisseur_price($fk_pa)) {
+		if ($product->fetch_product_fournisseur_price($fk_pa)) 
+		{
 			$paht_ret = $product->fourn_unitprice * (1 - $product->fourn_remise_percent / 100);
 			if ($conf->global->MARGIN_TYPE == "2" && $product->fourn_unitcharges > 0)
 				$paht_ret += $product->fourn_unitcharges;
 		}
 		else
+		{
 			$paht_ret = $paht;
+		}
 	}
-	else
+	else 
+	{
 		$paht_ret	= $paht;
+	}
+	
+	// Calculate selling unit price including line discount
+	// We don't use calculate_price, because this function is dedicated to calculation of total with accuracy of total. We need an accuracy of a unit price.
+	// Also we must not apply rounding on non decimal rule defined by option MAIN_ROUNDING_RULE_TOT
+	$pu_ht_remise = $pvht * (1 - ($remise_percent / 100));
+	$pu_ht_remise = price2num($pu_ht_remise, 'MU');
 
-	require_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
-	// calcul pu_ht remisés
-	$tabprice=calcul_price_total(1, $pvht, $remise_percent, $tva_tx, $localtax1_tx, $localtax2_tx, 0, 'HT', 0, 0);	// FIXME Parameter type is missing, i put 0 to avoid blocking error
-	$pu_ht_remise = $tabprice[0];
 	// calcul marge
 	if ($pu_ht_remise < 0)
 		$marge = -1 * (abs($pu_ht_remise) - $paht_ret);

@@ -247,7 +247,6 @@ input.flat {
     border:solid 1px rgba(0,0,0,.3);
     border-top:solid 1px rgba(0,0,0,.4);
     border-bottom:solid 1px rgba(0,0,0,.2);
-    box-shadow:1px 1px 2px rgba(0,0,0,.2) inset;
 }
 
 input:disabled {background:#b6b6b6;}
@@ -361,8 +360,12 @@ center .error { padding:8px !important; padding-left:26px !important; padding-ri
 <?php if (! empty($dol_optimize_smallscreen)) { ?>
 .hideonsmartphone { display: none; }
 .noenlargeonsmartphone { width : 50px !important; display: inline !important; }
+.maxwidthonsmartphone { max-width: 100px; }
 <?php } ?>
 .linkobject { cursor:pointer; }
+<?php if (GETPOST("optioncss") == 'print') { ?>
+.hideonprint { display: none !important; }
+<?php } ?>
 
 
 /* ============================================================================== */
@@ -988,11 +991,11 @@ a.tab {
 	-webkit-border-top-right-radius:6px;
 }
 
-a.tab#active {
+.tabactive {
 	color:#232323;
 	font-weight:bold;
-	background-color:#ffffff;
-	<?php echo $dol_use_jmobile?'':'border-bottom:solid 1px #ffffff;'; ?>
+	background-color:#ffffff !important;
+	<?php echo $dol_use_jmobile?'':'border-bottom:solid 1px #ffffff !important;'; ?>
 }
 
 a.tab:hover {color:#333333;}
@@ -1252,8 +1255,6 @@ table.liste td {padding:1px 2px 1px 0px;}
 .tagtable, .table-border { display: table; }
 .tagtr, .table-border-row  { display: table-row; }
 .tagtd, .table-border-col, .table-key-border-col, .table-val-border-col { display: table-cell; }
-.tagtable form, .tagtable div { display: table-row; }
-.tagtable form div, .tagtable div div { display: table-cell; }
 
 tr.liste_titre, tr.liste_titre_sel, form.liste_titre, form.liste_titre_sel
 {
@@ -1284,7 +1285,6 @@ tr.box_titre td.boxclose {
 tr.liste_titre td, tr.liste_titre th, form.liste_titre div {
 	padding:2px;
 	padding-left:2px !important;
-	white-space:nowrap;
 	text-shadow:1px 1px 1px #ffffff;
 }
 
@@ -2231,7 +2231,7 @@ ul.ulmenu {
 }
 
 /* Style for first level menu with jmobile */
-.ui-bar-b {
+.ui-bar-b, .lilevel0  {
     background: rgb(<?php echo $colorbacktitle1; ?>);
     background-repeat: repeat-x;
 	<?php if ($usecss3) { ?>
@@ -2260,15 +2260,6 @@ ul.ulmenu {
 	background-image: -o-linear-gradient( #eee,#e1e1e1 ) !important;
 	background-image: linear-gradient( #eee,#e1e1e1 ) !important;
 }
-.lilevel1:hover, .lilevel2:hover, .lilevel3:hover, .lilevel4:hover {
-	background-image: -webkit-gradient(linear,left top,left bottom,from( #ddd ),to( #d1d1d1 )) !important;
-	background-image: -webkit-linear-gradient( #ddd,#d1d1d1 ) !important;
-	background-image: -moz-linear-gradient( #ddd,#d1d1d1 ) !important;
-	background-image: -ms-linear-gradient( #ddd,#d1d1d1 ) !important;
-	background-image: -o-linear-gradient( #ddd,#d1d1d1 ) !important;
-	background-image: linear-gradient( #ddd,#d1d1d1 ) !important;
-}
-
 
 
 <?php

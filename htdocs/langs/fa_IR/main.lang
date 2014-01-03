@@ -1,9 +1,9 @@
 # Dolibarr language file - Source file is en_US - main
 DIRECTION=rtl
-# Note for chinese:
-# msungstdlight or cid0ct are for traditionnal chinese (traditionnal does not render with ubuntu pdf reader)
-# stsongstdlight or cid0cs are for simplified chinese
-# To read chinese pdf with linux: sudo apt-get install poppler-data
+# Note for Chinese:
+# msungstdlight or cid0ct are for traditional Chinese (traditional does not render with Ubuntu pdf reader)
+# stsongstdlight or cid0cs are for simplified Chinese
+# To read Chinese pdf with Linux: sudo apt-get install poppler-data
 FONTFORPDF=DejaVuSans
 FONTSIZEFORPDF=9
 SeparatorDecimal=/
@@ -632,7 +632,7 @@ Prefix=بادئة
 # NewAttribute=New attribute
 # AttributeCode=Attribute code
 # OptionalFieldsSetup=Extra attributes setup
-# URLPhoto=Url of photo/logo
+# URLPhoto=URL of photo/logo
 # SetLinkToThirdParty=Link to another third party
 CreateDraft=إنشاء مشروع
 # ClickToEdit=Click to edit
@@ -642,7 +642,7 @@ CreateDraft=إنشاء مشروع
 # ByDate=By date
 # ByMonthYear=By month/year
 # ByYear=By year
-# ByMonth=by month
+# ByMonth=By month
 # ByDay=By day
 # BySalesRepresentative=By sales representative
 # LinkedToSpecificUsers=Linked to a particular user contact
@@ -660,7 +660,8 @@ CreateDraft=إنشاء مشروع
 # Access=Access
 # HelpCopyToClipboard=Use Ctrl+C to copy to clipboard
 # SaveUploadedFileWithMask=Save file on server with name "<strong>%s</strong>" (otherwise "%s")
-# OriginFileName=Nom d'origine
+# OriginFileName=Original filename
+# SetDemandReason=Set source
 
 # Week day
 # Monday=Monday

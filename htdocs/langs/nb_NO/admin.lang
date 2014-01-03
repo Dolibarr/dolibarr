@@ -228,7 +228,7 @@ OfficialWebSiteFr=Fransk offisielt nettsted
 OfficialWiki=Dolibarr Wiki
 OfficialDemo=Dolibarr online demonstrasjon
 OfficialMarketPlace=Offisiell markedsplass for eksterne moduler / addons
-# OfficialWebHostingService=Official web hosting service (Cloud hosting)
+# OfficialWebHostingService=Official web hosting services (Cloud hosting)
 ForDocumentationSeeWiki=For brukeren eller utviklerens dokumentasjon (Doc, FAQs ...), <br> ta en titt på Dolibarr Wiki: <br> <a href="%s" target="_blank"><b>%s</b></a>
 ForAnswersSeeForum=For andre spørsmål / hjelp, kan du bruke Dolibarr forumet: <br> <a href="%s" target="_blank"><b>%s</b></a>
 HelpCenterDesc1=Dette området kan hjelpe deg å få en Help support tjeneste på Dolibarr.
@@ -299,6 +299,7 @@ ServerNotAvailableOnIPOrPort=Serveren er ikke tilgjengelig på adressen  <b>%s</
 DoTestServerAvailability=Test servertilkobling
 DoTestSend=Testsending
 DoTestSendHTML=Testsending HTML
+# ErrorCantUseRazIfNoYearInMask=Error, can't use option @ to reset counter each year if sequence {yy} or {yyyy} is not in mask.
 ErrorCantUseRazInStartedYearIfNoYearMonthInMask=Feil: Kan ikke bruke valget @ hvis ikke sekvensen {yy}{mm} eller {yyyy}{mm} er i malen.
 UMask=UMaskparameter for nye filer på Unix/Linux/BSD filsystemer.
 UMaskExplanation=Denne instillingen lar deg angi filtillatelser som settes på filer opprettet på Dolibarrseveren (for eksempel ved opplastning).<br>Dette må være en oktal verdi (for eksempel 0666 betyr lese og skrive for alle).<br>Denne innstillingen bruke ikke på Windowsbaserte servere.
@@ -1008,6 +1009,8 @@ SendmailOptionMayHurtBuggedMTA=Funksjon for å sende post ved hjelp av metoden &
 # XCacheInstalled=XCache is loaded.
 # AddRefInList=Display customer/supplier ref into list (select list or combobox) and most of hyperlink
 # FieldEdition=Edition of field %s
+# FixTZ=TimeZone fix
+# FillThisOnlyIfRequired=Example: +2 (fill only if timezone offset problems are experienced)
 ##### Module password generation
 PasswordGenerationStandard=Gir et automatisk laget passord med 8 tegn (bokstaver og tall) i små bokstaver.
 PasswordGenerationNone=Ikke forslå noe passord. Passord må angis manuelt.

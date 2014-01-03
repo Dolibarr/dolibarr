@@ -82,7 +82,7 @@ IfInvoiceNeedOnWithdrawPaymentWontBeClosed=Kuitenkin, jos lasku on ainakin yksi 
 DoStandingOrdersBeforePayments=Tällä välilehtien avulla voit pyytää ja kestotilauksena. Kun se on valmis, voit kirjoittaa maksun sulkea laskun.
 # WithdrawalFile=Withdrawal file
 # SetToStatusSent=Set to status "File Sent"
-# ThisWillAlsoAddPaymentOnInvoice=This will also create payments onto invoices and will classify them to paid
+# ThisWillAlsoAddPaymentOnInvoice=This will also apply payments to invoices and will classify them as "Paid"
 
 ### Notifications
 InfoCreditSubject=Maksaminen kestotilaus %s pankin

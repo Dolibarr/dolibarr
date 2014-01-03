@@ -32,6 +32,7 @@ CronExplainHowToRunWin=En un entorno de Microsoft(tm) Windows puedes usar el pro
 CronJobs=Tareas programadas
 CronListActive= Tareas Activas
 CronListInactive= Tareas Inactivas
+CronListActive= Tareas Activas
 
 
 #
@@ -42,7 +43,7 @@ CronLastOutput=Res. ult. ejec.
 CronLastResult=Últ. cód. res.
 CronListOfCronJobs=Lista de tareas programadas
 CronCommand=Comando
-CronList= Lista de tareas Cron
+CronList=Lista de tareas Cron
 CronDelete= Borrar tareas Cron
 CronConfirmDelete= ¿Está seguro de querer eliminar estas tareas?
 CronExecute=Ejecutar Tarea

@@ -62,7 +62,7 @@
  *						12=amount tax2 for pu_ht,
  *						13=not used???,
  *						14=amount tax1 for total_ht_without_discount,
- *						15=amount tax1 for total_ht_without_discount]
+ *						15=amount tax2 for total_ht_without_discount]
  */
 function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocaltax1_rate, $uselocaltax2_rate, $remise_percent_global, $price_base_type, $info_bits, $type, $seller = '',$localtaxes_array='')
 {

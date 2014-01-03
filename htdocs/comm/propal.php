@@ -700,6 +700,8 @@ else if (($action == 'addline' || $action == 'addline_predef') && $user->rights-
 		$price_min=0;
 		$price_base_type = (GETPOST('price_base_type', 'alpha')?GETPOST('price_base_type', 'alpha'):'HT');
 
+		$db->begin();
+
 		// Ecrase $pu par celui du produit
 		// Ecrase $desc par celui du produit
 		// Ecrase $txtva par celui du produit
@@ -858,6 +860,8 @@ else if (($action == 'addline' || $action == 'addline_predef') && $user->rights-
 
 			if ($result > 0)
 			{
+				$db->commit();
+
 				if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
 				{
 					// Define output language
@@ -898,6 +902,8 @@ else if (($action == 'addline' || $action == 'addline_predef') && $user->rights-
 			}
 			else
 			{
+				$db->rollback();
+
 				setEventMessage($object->error, 'errors');
 			}
 		}
@@ -981,6 +987,8 @@ else if ($action == 'updateligne' && $user->rights->propal->creer && GETPOST('sa
 
 	if (! $error)
 	{
+		$db->begin();
+
 		$result = $object->updateline(
 			GETPOST('lineid'),
 			$pu_ht,
@@ -1006,6 +1014,8 @@ else if ($action == 'updateligne' && $user->rights->propal->creer && GETPOST('sa
 
 		if ($result >= 0)
 		{
+			$db->commit();
+
 			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
 			{
 				// Define output language
@@ -1035,6 +1045,8 @@ else if ($action == 'updateligne' && $user->rights->propal->creer && GETPOST('sa
 		}
 		else
 		{
+			$db->rollback();
+
 			setEventMessage($object->error, 'errors');
 		}
 	}
@@ -1968,8 +1980,8 @@ else
 
 	// Amount HT
 	print '<tr><td height="10" width="25%">'.$langs->trans('AmountHT').'</td>';
-	print '<td align="right" class="nowrap"><b>'.price($object->total_ht).'</b></td>';
-	print '<td>'.$langs->trans("Currency".$conf->currency).'</td>';
+	print '<td align="right" class="nowrap"><b>'.price($object->total_ht,'',$langs,0,-1,-1,$conf->currency).'</b></td>';
+	print '<td></td>';
 
 	// Margin Infos
 	if (! empty($conf->margin->enabled)) {
@@ -1981,28 +1993,28 @@ else
 
 	// Amount VAT
 	print '<tr><td height="10">'.$langs->trans('AmountVAT').'</td>';
-	print '<td align="right" class="nowrap">'.price($object->total_tva).'</td>';
-	print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
+	print '<td align="right" class="nowrap">'.price($object->total_tva,'',$langs,0,-1,-1,$conf->currency).'</td>';
+	print '<td></td></tr>';
 
 	// Amount Local Taxes
 	if ($mysoc->localtax1_assuj=="1") //Localtax1
 	{
 		print '<tr><td height="10">'.$langs->transcountry("AmountLT1",$mysoc->country_code).'</td>';
-		print '<td align="right" class="nowrap">'.price($object->total_localtax1).'</td>';
-		print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
+		print '<td align="right" class="nowrap">'.price($object->total_localtax1,'',$langs,0,-1,-1,$conf->currency).'</td>';
+		print '<td></td></tr>';
 	}
 	if ($mysoc->localtax2_assuj=="1") //Localtax2
 	{
 		print '<tr><td height="10">'.$langs->transcountry("AmountLT2",$mysoc->country_code).'</td>';
-		print '<td align="right" class="nowrap">'.price($object->total_localtax2).'</td>';
-		print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
+		print '<td align="right" class="nowrap">'.price($object->total_localtax2,'',$langs,0,-1,-1,$conf->currency).'</td>';
+		print '<td></td></tr>';
 	}
 
 
 	// Amount TTC
 	print '<tr><td height="10">'.$langs->trans('AmountTTC').'</td>';
-	print '<td align="right" class="nowrap">'.price($object->total_ttc).'</td>';
-	print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
+	print '<td align="right" class="nowrap">'.price($object->total_ttc,'',$langs,0,-1,-1,$conf->currency).'</td>';
+	print '<td></td></tr>';
 
 	// Statut
 	print '<tr><td height="10">'.$langs->trans('Status').'</td><td align="left" colspan="2">'.$object->getLibStatut(4).'</td></tr>';

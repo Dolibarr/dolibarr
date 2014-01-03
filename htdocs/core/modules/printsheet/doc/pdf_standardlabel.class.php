@@ -3,7 +3,7 @@
  * Copyright (C) 2003 Laurent Passebecq
  * Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2002-2003 Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2006-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,7 +55,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/format_cards.lib.php';
 
 
 /**
- *	Classe afin d'editer au format PDF des pages d'etiquette adresse au format Avery ou personnalise
+ *	Class to generate stick sheet with format Avery or other personalised
  */
 class pdf_standardlabel
 {
@@ -112,17 +112,20 @@ class pdf_standardlabel
 	}
 
 	/**
-	 * On imprime une etiquette
+	 * Output a sticker on page at position _COUNTX
+	 * - %LOGO% is replace with company logo
+	 * - %PHOTO% is replace with photo provided as parameter
 	 *
 	 * @param    PDF	    &$pdf		    PDF
-	 * @param    string     $textleft       Textleft
+	 * @param    string     $textleft       Text left
 	 * @param    string     $header         Header
 	 * @param    string     $footer         Footer
 	 * @param    Translate  $outputlangs    Output langs
 	 * @param    string     $textright      Text right
+	 * @param    string     $photo    		Photo (full path to image file used as replacement for key %PHOTOS% into left, right, header or footer text)
 	 * @return   void
 	 */
-	function Add_PDF_card(&$pdf,$textleft,$header,$footer,$outputlangs,$textright='')
+	function Add_PDF_card(&$pdf,$textleft,$header,$footer,$outputlangs,$textright='',$photo='')
 	{
 		global $mysoc,$conf,$langs;
 
@@ -148,8 +151,6 @@ class pdf_standardlabel
 				$logo=$conf->mycompany->dir_output.'/logos/'.$mysoc->logo;
 			}
 		}
-		// Define photo
-		$photo='';
 
 		// Define background image
 		$backgroundimage='';
@@ -181,11 +182,11 @@ class pdf_standardlabel
 			$pdf->Cell($this->_Width, $this->_Line_Height, $outputlangs->convToOutputCharset($header),0,1,'C');
 		}
 
-		// Middle
+		// Center
 		if ($textright=='')	// Only a left part
 		{
-			if ($textleft == '%LOGO%' && $logo) $this->Image($logo,$_PosX+2,$_PosY+3+$this->_Line_Height,20);
-			else if ($textleft == '%PHOTO%' && $photo) $this->Image($photo,$_PosX+2,$_PosY+3+$this->_Line_Height,20);
+			if ($textleft == '%LOGO%' && $logo) $pdf->Image($logo,$_PosX+2,$_PosY+3+$this->_Line_Height,20);
+			else if ($textleft == '%PHOTO%' && $photo) $pdf->Image($photo,$_PosX+2,$_PosY+3+$this->_Line_Height,20);
 			else
 			{
 				$pdf->SetXY($_PosX+3, $_PosY+3+$this->_Line_Height);
@@ -218,8 +219,8 @@ class pdf_standardlabel
 		}
 		else	// Only a right part
 		{
-			if ($textright == '%LOGO%' && $logo) $this->Image($logo,$_PosX+$this->_Width-21,$_PosY+1,20);
-			else if ($textright == '%PHOTO%' && $photo) $this->Image($photo,$_PosX+$this->_Width-21,$_PosY+1,20);
+			if ($textright == '%LOGO%' && $logo) $pdf->Image($logo,$_PosX+$this->_Width-21,$_PosY+1,20);
+			else if ($textright == '%PHOTO%' && $photo) $pdf->Image($photo,$_PosX+$this->_Width-21,$_PosY+1,20);
 			else
 			{
 				$pdf->SetXY($_PosX+2, $_PosY+3+$this->_Line_Height);
@@ -341,7 +342,8 @@ class pdf_standardlabel
 	 * @param string    $dest   to
 	 * @return float    value   value after conversion
 	 */
-	function _Convert_Metric ($value, $src, $dest) {
+	function _Convert_Metric ($value, $src, $dest)
+	{
 		if ($src != $dest) {
 			$tab['in'] = 39.37008;
 			$tab['mm'] = 1000;
@@ -357,7 +359,8 @@ class pdf_standardlabel
 	 * @param  int    $pt    Point
 	 * @return int           Height chars
 	 */
-	function _Get_Height_Chars($pt) {
+	function _Get_Height_Chars($pt)
+	{
 		// Tableau de concordance entre la hauteur des caracteres et de l'espacement entre les lignes
 		$_Table_Hauteur_Chars = array(6=>2, 7=>2.5, 8=>3, 9=>3.5, 10=>4, 11=>6, 12=>7, 13=>8, 14=>9, 15=>10);
 		if (in_array($pt, array_keys($_Table_Hauteur_Chars))) {
@@ -394,13 +397,13 @@ class pdf_standardlabel
     /**
      *  Function to build PDF on disk, then output on HTTP strem.
      *
-     *  @param	array		$arrayofmembers  	Array of members informations
+     *  @param	array		$arrayofrecords  	Array of record informations (array('textleft'=>,'textheader'=>, ..., 'id'=>,'photo'=>)
      *  @param  Translate	$outputlangs     	Lang object for output language
      *  @param	string		$srctemplatepath	Full path of source filename for generator using a template file
-	 *	@param	string		$outputdir			Output directory
+	 *	@param	string		$outputdir			Output directory for pdf file
      *  @return int             				1=OK, 0=KO
      */
-    function write_file($arrayofmembers,$outputlangs,$srctemplatepath,$outputdir='')
+    function write_file($arrayofrecords,$outputlangs,$srctemplatepath,$outputdir='')
     {
         global $user,$conf,$langs,$mysoc,$_Avery_Labels;
 
@@ -417,8 +420,10 @@ class pdf_standardlabel
         $outputlangs->load("main");
         $outputlangs->load("dict");
         $outputlangs->load("companies");
-        $outputlangs->load("members");
         $outputlangs->load("admin");
+
+        $title=$outputlangs->transnoentities('Labels');
+        $keywords=$title." ".$outputlangs->convToOutputCharset($mysoc->name);
 
         $dir = (empty($outputdir)?$conf->adherent->dir_temp:$outputdir);
         $filename='tmp_address_sheet.pdf';
@@ -442,11 +447,11 @@ class pdf_standardlabel
         }
         $pdf->SetFont(pdf_getPDFFont($outputlangs));
 
-        $pdf->SetTitle($outputlangs->transnoentities('MembersLabels'));
-        $pdf->SetSubject($outputlangs->transnoentities("MembersLabels"));
+        $pdf->SetTitle($title);
+        $pdf->SetSubject($title);
         $pdf->SetCreator("Dolibarr ".DOL_VERSION);
         $pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
-        $pdf->SetKeyWords($outputlangs->transnoentities('MembersLabels')." ".$outputlangs->transnoentities("Foundation")." ".$outputlangs->convToOutputCharset($mysoc->name));
+        $pdf->SetKeyWords($keywords);
         if (! empty($conf->global->MAIN_DISABLE_PDF_COMPRESSION)) $pdf->SetCompression(false);
 
         $pdf->SetMargins(0,0);
@@ -468,10 +473,10 @@ class pdf_standardlabel
 
 
         // Add each record
-        foreach($arrayofmembers as $val)
+        foreach($arrayofrecords as $val)
         {
             // imprime le texte specifique sur la carte
-            $this->Add_PDF_card($pdf,$val['textleft'],$val['textheader'],$val['textfooter'],$langs,$val['textright'],$val['id'],$val['photo']);
+            $this->Add_PDF_card($pdf,$val['textleft'],$val['textheader'],$val['textfooter'],$langs,$val['textright'],$val['photo']);
         }
 
         //$pdf->SetXY(10, 295);

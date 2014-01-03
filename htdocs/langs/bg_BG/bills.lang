@@ -388,7 +388,7 @@ CantRemovePaymentWithOneInvoicePaid=Не може да се премахне п�
 ExpectedToPay=Очаквано плащане
 PayedByThisPayment=Плаща от това плащане
 ClosePaidInvoicesAutomatically=Класифицира &quot;ЗАПЛАЩАТ&quot; стандартно или заместващи фактури entirely ЗАПЛАЩАТ.
-# ClosePaidCreditNotesAutomatically=Classify "Payed" all credit notes entirely paid back.
+# ClosePaidCreditNotesAutomatically=Classify "Paid" all credit notes entirely paid back.
 AllCompletelyPayedInvoiceWillBeClosed=Всички фактура не остават да плати, ще бъде затворено автоматично статус &quot;Платени&quot;.
 # ToMakePayment=Pay
 # ToMakePaymentBack=Pay back
@@ -409,7 +409,7 @@ PDFCrabeDescription=Фактура PDF Crabe шаблон. Пълна шабло
 # oursin PDF Model
 PDFOursinDescription=Фактура PDF Oursin шаблон. Пълна шаблон фактура (Шаблон алтернатива)
 # NumRef Modules
-# TerreNumRefModelDesc1=Return numero with format %syymm-nnnn for standard and replacement invoices, %syymm-nnnn for credit notes and %syymm-nnnn for deposits where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
-# MarsNumRefModelDesc1=Return numero with format %syymm-nnnn for standard invoices, %syymm-nnnn for replacement invoices, %syymm-nnnn for credit notes and %syymm-nnnn for credit notes where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
+# TerreNumRefModelDesc1=Return number with format %syymm-nnnn for standard invoices and %syymm-nnnn for credit notes where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
+# MarsNumRefModelDesc1=Return number with format %syymm-nnnn for standard invoices, %syymm-nnnn for replacement invoices, %syymm-nnnn for credit notes and %syymm-nnnn for credit notes where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
 
 TerreNumRefModelError=Законопроект, който започва с $ syymm вече съществува и не е съвместим с този модел на последователност. Извадете го или го преименувайте да се активира този модул.

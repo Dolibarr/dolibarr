@@ -211,7 +211,6 @@ if ($object->id > 0)
 		}
 		print ')';
 	}
-	// FIXME $facidnext not defined
 	/*
 	if ($facidnext > 0)
 	{

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -61,30 +61,6 @@ if ($user->societe_id > 0)
 /*
  * Actions
  */
-
-if ($action == 'add_bookmark')
-{
-	$now=dol_now();
-
-	$sql = "DELETE FROM ".MAIN_DB_PREFIX."bookmark WHERE fk_soc = ".$socid." AND fk_user=".$user->id;
-	if (! $db->query($sql) )
-	{
-		dol_print_error($db);
-	}
-	$sql = "INSERT INTO ".MAIN_DB_PREFIX."bookmark (fk_soc, dateb, fk_user) VALUES (".$socid.", ".$db->idate($now).",".$user->id.");";
-	if (! $db->query($sql) )
-	{
-		dol_print_error($db);
-	}
-}
-
-if ($action == 'del_bookmark' && ! empty($bid))
-{
-	$sql = "DELETE FROM ".MAIN_DB_PREFIX."bookmark WHERE rowid=".$db->escape($bid);
-	$result = $db->query($sql);
-}
-
-
 
 
 /*
@@ -216,7 +192,7 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 
 			$i = 0;
 			$tot_ttc = 0;
-			while ($i < $num && $i < 20)
+			while ($i < $num)
 			{
 				$obj = $db->fetch_object($resql);
 				print '<tr '.$bc[$var].'><td class="nowrap">';
@@ -285,7 +261,7 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture-
 
 			$i = 0;
 			$tot_ttc = 0;
-			while ($i < $num && $i < 20)
+			while ($i < $num)
 			{
 				$obj = $db->fetch_object($resql);
 				print '<tr '.$bc[$var].'><td class="nowrap">';

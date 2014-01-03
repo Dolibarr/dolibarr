@@ -25,3 +25,4 @@ LinkToGoldMember=Hívhatja az egyik előre kiválasztott az ön nyelvén (%s) tu
 PossibleLanguages=Támogatott nyelvek
 MakeADonation=Segítse a Dolibarr projektet, adományozzon
 # SubscribeToFoundation=Help Dolibarr project, subscribe to the foundation
+# SeeOfficalSupport=For official Dolibarr support in your language: <br><b><a href="%s" target="_blank">%s</a></b>

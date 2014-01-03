@@ -82,7 +82,7 @@ IfInvoiceNeedOnWithdrawPaymentWontBeClosed=請求書は、まだ少なくとも�
 DoStandingOrdersBeforePayments=このタブでは、立っている順序のために要求することができます。それが終了されますしたら、請求書を閉じるには、支払を入力することができます。
 # WithdrawalFile=Withdrawal file
 # SetToStatusSent=Set to status "File Sent"
-# ThisWillAlsoAddPaymentOnInvoice=This will also create payments onto invoices and will classify them to paid
+# ThisWillAlsoAddPaymentOnInvoice=This will also apply payments to invoices and will classify them as "Paid"
 
 ### Notifications
 InfoCreditSubject=銀行によって立っている順序%sの支払い

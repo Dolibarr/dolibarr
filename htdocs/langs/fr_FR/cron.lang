@@ -25,13 +25,14 @@ FileToLaunchCronJobs=Commande pour lancer les travaux programmés actifs
 CronExplainHowToRunUnix=Sur un environnement Unix vous pouvez utiliser 'crontab' pour exécuter une commande toute les minutes
 CronExplainHowToRunWin=Sur un environement Microsoft(tm) Windows vous pouvez utiliser le planificateur de tâche pour lancer une commande toute les minutes
 
+
 #
 # Menu
 #
 CronJobs=Travaux programmés
 CronListActive= Liste des travaux actifs
 CronListInactive= Liste des travaux inactifs
-CronListActive= Liste des travaux programmés
+CronListActive= Liste des travaux actifs
 
 
 #
@@ -43,14 +44,14 @@ CronLastResult=Dernier code de retour
 CronListOfCronJobs=Liste des travaux planifiés
 CronCommand=Commande
 CronList=Liste des travaux
-CronDelete=Supprimer les travaux cron
-CronConfirmDelete=Êtes-vous sûr de vouloir supprimer ces travaux cron ?
+CronDelete= Supprimer les travaux cron
+CronConfirmDelete= Êtes-vous sûr de vouloir supprimer ces travaux cron ?
 CronExecute=Lancer cette tâche
-CronConfirmExecute=Êtes-vous sûr de vouloir lancer ce travail maintenant?
-CronInfo=Les travaux planifiés permettent d'exécuter des tâches à intervales réguliers
+CronConfirmExecute= Êtes-vous sûr de vouloir lancer ce travail maintenant?
+CronInfo= Les travaux planifiés permettent d'exécuter des tâches à intervales réguliers
 CronWaitingJobs=Travaux en attente
 CronTask=Tâche
-CronNone=Aucun(e)
+CronNone= Aucun(e)
 CronDtStart=Date de début
 CronDtEnd=Date de fin
 CronDtNextLaunch=Prochaine exécution

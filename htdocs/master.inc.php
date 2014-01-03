@@ -78,9 +78,14 @@ if (! empty($dolibarr_main_document_root_alt))
 	{
 		if (preg_match('/^http(s)?:/',$value))
 		{
-			print 'Error: values for <b>$dolibarr_main_url_root_alt</b> into <b>conf.php</b> file must contains relative path added to $dolibarr_main_url_root to get alternative URLs.<br>'."\n";
-			print "Found: \"".$value."\"<br>\n";
-			print "Should found something like following examples:<br>\n";
+			// TODO: Make this a warning rather than an error since the correct value can be derived in most cases
+			$correct_value = str_replace($dolibarr_main_url_root, '', $value);
+			print '<b>Error:</b><br>'."\n";
+			print 'Wrong <b>$dolibarr_main_url_root_alt</b> value in <b>conf.php</b> file.<br>'."\n";
+			print 'We now use a relative path to $dolibarr_main_url_root to build alternate URLs.<br>'."\n";
+			print 'Value found: '.$value.'<br>'."\n";
+			print 'Should be replaced by: '.$correct_value.'<br>'."\n";
+			print "Or something like following examples:<br>\n";
 			print "\"/extensions\"<br>\n";
 			print "\"/extensions1,/extensions2,...\"<br>\n";
 			print "\"/../extensions\"<br>\n";

@@ -2,8 +2,8 @@
 Foundation=Dernek
 Version=Sürüm
 VersionProgram=Program sürümü
-VersionLastInstall=İlk kurulum sürümü
-VersionLastUpgrade=Son yükseltme sürümü
+VersionLastInstall=İlk kurulan sürüm
+VersionLastUpgrade=Yükseltilen son sürüm
 VersionExperimental=Deneysel
 VersionDevelopment=Geliştirme
 VersionUnknown=Bilinmeyen
@@ -228,7 +228,7 @@ OfficialWebSiteFr=Fransızca resmi web sitesi
 OfficialWiki=Wiki'de Dolibarr belgeleri
 OfficialDemo=Dolibarr çevrimiçi demo
 OfficialMarketPlace=Dış modüller/eklentiler için resmi Pazar yeri
-OfficialWebHostingService=Resmi web barındırma hizmeti (Bulut barındırma)
+OfficialWebHostingService=Resmi web barındırma hizmetleri (Bulut barındırma)
 ForDocumentationSeeWiki=Kullanıcıların ve geliştiricilerin belgeleri (Doc, FAQs…), <br>Dolibarr Wiki ye bir göz atın:<br><b><a href="%s" target="_blank">%s</a></b>
 ForAnswersSeeForum=Herhangi bir başka soru/yardım için Dolibarr forumunu kullanabilirsiniz:<br><b><a href="%s" target="_blank">%s</a></b>
 HelpCenterDesc1=Bu alan Dolibarr’dan Yardım destek hizmeti almanıza olanak sağlar.
@@ -299,6 +299,7 @@ ServerNotAvailableOnIPOrPort=Sunucu <b>%s</b> portundaki <b>%s</b> adresinde yok
 DoTestServerAvailability=Test sunucusu bağlanabilirliği
 DoTestSend=Test gönderimi
 DoTestSendHTML=HTML Test gönderimi
+ErrorCantUseRazIfNoYearInMask=Hata, {yy} ya da {yyyy} dizisi maske olarak tanımlanmamışsa @ seçeneği kullanılamaz.
 ErrorCantUseRazInStartedYearIfNoYearMonthInMask=Hata, eğer {yy}{mm} ya da {yyyy}{mm} dizisi maske olarak tanımlanmamışsa @ seçeneği kullanılamaz.
 UMask=Unix/Linux/BSD dosya sisteminde yeni dosyalar için Umask parametresi.
 UMaskExplanation=Bu parametre Dolibarr tarafından sunucuda oluşturulan dosyaların izinlerini varsayılan olarak tanımlamanıza (örneğin yükleme sırasında) izin verir.<br>Bu sekizli değer olmalıdır (örneğin, 0666 herkes için okuma ve yazma anlamına gelir).<br>Bu parametre Windows sunucusunda kullanılmaz.
@@ -1008,6 +1009,8 @@ XDebugInstalled=XDebug yükleniyor.
 XCacheInstalled=XDebug yüklüdür.
 AddRefInList=Listede müşteri/tedarikçi ref (liste ya da combobox seç) ve köprülerin çoğunu göster
 FieldEdition=%s Alanının düzenlenmesi
+FixTZ=Saat Dilimi Farkı
+FillThisOnlyIfRequired=Örnek: +2 (saat dilimi farkını yalnız zaman farkı sorunları yaşıyorsanız kullanın)
 ##### Module password generation
 PasswordGenerationStandard=Dolibarr iç algoritmasına göre bir şifre girin: 8 karakterli sayı ve küçük harf içeren.
 PasswordGenerationNone=Herhangi oluşturulan bir şifre önermeyin. Şifreyi elle girmelisiniz.

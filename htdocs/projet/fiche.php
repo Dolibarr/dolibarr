@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -195,6 +195,9 @@ if ($action == 'update' && ! $_POST["cancel"] && $user->rights->projet->creer)
         //$_GET["id"]=$_POST["id"]; // On retourne sur la fiche projet
         $mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("Label")).'</div>';
     }
+
+    $db->begin();
+
     if (! $error)
     {
         $object->oldcopy = dol_clone($object);
@@ -242,11 +245,15 @@ if ($action == 'update' && ! $_POST["cancel"] && $user->rights->projet->creer)
 
     if ($error)
     {
+		$db->rollback();
     	$action='edit';
     }
     else
 	{
-    	$object->societe->fetch(GETPOST('socid','int'));
+    	$db->commit();
+
+		if (GETPOST('socid','int') > 0) $object->societe->fetch(GETPOST('socid','int'));
+		else unset($object->societe);
     }
 }
 
@@ -529,7 +536,7 @@ else
         print '<td><input size="30" name="title" value="'.$object->title.'"></td></tr>';
 
         // Customer
-        print '<tr><td>'.$langs->trans("Company").'</td><td>';
+        print '<tr><td>'.$langs->trans("Thirdparty").'</td><td>';
         $text=$form->select_company($object->societe->id,'socid','',1,1);
         $texthelp=$langs->trans("IfNeedToUseOhterObjectKeepEmpty");
         print $form->textwithtooltip($text.' '.img_help(),$texthelp,1);
@@ -600,7 +607,7 @@ else
         print '<tr><td>'.$langs->trans("Label").'</td><td>'.$object->title.'</td></tr>';
 
         // Third party
-        print '<tr><td>'.$langs->trans("Company").'</td><td>';
+        print '<tr><td>'.$langs->trans("Thirdparty").'</td><td>';
         if ($object->societe->id > 0) print $object->societe->getNomUrl(1);
         else print'&nbsp;';
         print '</td></tr>';

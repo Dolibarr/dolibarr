@@ -222,7 +222,7 @@ if (! empty($conf->dol_optimize_smallscreen)) $fontsize=11;
 
 
 body {
-<?php if (GETPOST("optioncss") == 'print' || ! empty($conf->dol_optimize_smallscreen)) {  ?>
+<?php if (GETPOST("optioncss") == 'print') {  ?>
 	background-color: #FFFFFF;
 <?php } else { ?>
 	background: <?php print $colorbackbody; ?>;
@@ -254,10 +254,8 @@ input, input.flat, textarea, textarea.flat, form.flat select, select.flat {
 	font-family: <?php print $fontlist ?>;
 	background: #FDFDFD;
     border: 1px solid #C0C0C0;
-    <?php if (empty($dol_use_jmobile)) { ?>
     /*padding: 1px 1px 1px 1px; */
     margin: 0px 0px 0px 0px;
-    <?php } ?>
 }
 
 input, textarea, select {
@@ -265,7 +263,7 @@ input, textarea, select {
 	border:solid 1px rgba(0,0,0,.3);
 	border-top:solid 1px rgba(0,0,0,.3);
 	border-bottom:solid 1px rgba(0,0,0,.2);
-	box-shadow: 1px 1px 2px rgba(0,0,0,.2) inset;
+	/* box-shadow: 1px 1px 1px rgba(0,0,0,.2) inset;*/
 	padding:2px;
 	margin-left:1px;
 	margin-bottom:1px;
@@ -411,8 +409,12 @@ th .button {
 <?php if (! empty($dol_optimize_smallscreen)) { ?>
 .hideonsmartphone { display: none; }
 .noenlargeonsmartphone { width : 50px !important; display: inline !important; }
+.maxwidthonsmartphone { max-width: 100px; }
 <?php } ?>
 .linkobject { cursor: pointer; }
+<?php if (GETPOST("optioncss") == 'print') { ?>
+.hideonprint { display: none; }
+<?php } ?>
 
 
 /* ============================================================================== */
@@ -1444,7 +1446,7 @@ a.tab:link, a.tab:visited, a.tab:hover, a.tab#active {
 	background-image: none !important;
 }
 
-a.tab#active {
+.tabactive {
 <?php if ($usecss3) { ?>
 /*    border-bottom: 1px solid rgb(<?php echo $colorbacktabactive; ?>) !important; */
 	background: rgba(<?php echo $colorbacktabcard2; ?>, 0.5)  url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/nav-overlay3.png',1); ?>) 50% 0 repeat-x;
@@ -1728,8 +1730,6 @@ table.liste td {
 .tagtable, .table-border { display: table; }
 .tagtr, .table-border-row  { display: table-row; }
 .tagtd, .table-border-col, .table-key-border-col, .table-val-border-col { display: table-cell; }
-.tagtable form, .tagtable div { display: table-row; }
-.tagtable form div, .tagtable div div { display: table-cell; }
 
 tr.liste_titre, tr.liste_titre_sel, form.liste_titre, form.liste_titre_sel, table.dataTable.tr
 {
@@ -1759,6 +1759,9 @@ tr.liste_titre th, th.liste_titre, tr.liste_titre td, td.liste_titre, form.liste
     border-bottom: 1px solid #FDFFFF;
 	text-shadow: 1px 0px 1px #<?php echo $colorshadowtitle; ?>;
     vertical-align: middle;
+}
+tr.liste_titre th a, th.liste_titre a, tr.liste_titre td a, td.liste_titre a, form.liste_titre div a, div.liste_titre a {
+	text-shadow: none !important;
 }
 .liste_titre td a {
 	text-shadow: none !important;
@@ -2060,6 +2063,7 @@ div.titre {
 	color: rgb(<?php print $colortext; ?>);
 	text-decoration: none;
 	text-shadow: 1px 1px 2px #FFFFFF;
+	<?php print (empty($conf->dol_optimize_smallscreen)?'':'margin-top: 4px;'); ?>
 }
 
 #dolpaymenttable { width: 600px; font-size: 13px; }
@@ -2690,6 +2694,11 @@ div.dolEventError h1, div.dolEventError h2 {
 .sorting_desc_disabled { background: url('<?php echo dol_buildpath('/theme/'.$theme.'/img/sort_desc_disabled',1); ?>') no-repeat center right; }
 
 
+/* For jquery plugin combobox */
+/* Disable this. It breaks wrapping of boxes
+.ui-corner-all { white-space: nowrap; } */
+
+
 /* ============================================================================== */
 /*  JMobile                                                                       */
 /* ============================================================================== */
@@ -2751,10 +2760,6 @@ a.tab span.ui-btn-inner
 	padding: 0;
 }
 
-.ui-body-c {
-	border: 1px solid #CCC;
-	text-shadow: none;
-}
 .ui-link {
 	color: rgb(<?php print $colortext; ?>) !important;
 }
@@ -2829,8 +2834,14 @@ ul.ulmenu {
     color: #<?php echo $colortexttitle; ?> !important;
 	text-shadow: 1px 0px 1px #<?php echo $colorshadowtitle; ?>;
 }
-.ui-body-c, .ui-btn-up-c, .ui-btn-hover-c {
-	border: none !important;
+
+.ui-body-c {
+	border: 1px solid #ccc;
+	text-shadow: none;
+}
+.ui-btn-up-c, .ui-btn-hover-c {
+	border: 1px solid #ccc;
+	text-shadow: none;
 }
 .ui-btn-up-c .vsmenudisabled {
 	color: #<?php echo $colorshadowtitle; ?> !important;
@@ -2847,14 +2858,6 @@ ul.ulmenu {
 	background-image: -ms-linear-gradient( #ddd,#d1d1d1 ) !important;
 	background-image: -o-linear-gradient( #ddd,#d1d1d1 ) !important;
 	background-image: linear-gradient( #ddd,#d1d1d1 ) !important;
-}
-.lilevel1:hover, .lilevel2:hover, .lilevel3:hover, .lilevel4:hover {
-	background-image: -webkit-gradient(linear,left top,left bottom,from( #ccc ),to( #c1c1c1 )) !important;
-	background-image: -webkit-linear-gradient( #ccc,#c1c1c1 ) !important;
-	background-image: -moz-linear-gradient( #ccc,#c1c1c1 ) !important;
-	background-image: -ms-linear-gradient( #ccc,#c1c1c1 ) !important;
-	background-image: -o-linear-gradient( #ccc,#c1c1c1 ) !important;
-	background-image: linear-gradient( #ccc,#c1c1c1 ) !important;
 }
 <?php if ($dol_use_jmobile) { ?>
 .overflowwithjm200

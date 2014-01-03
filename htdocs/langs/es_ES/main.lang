@@ -1,9 +1,9 @@
 # Dolibarr language file - Source file is en_US - main
 DIRECTION=ltr
-# Note for chinese:
-# msungstdlight or cid0ct are for traditionnal chinese (traditionnal does not render with ubuntu pdf reader)
-# stsongstdlight or cid0cs are for simplified chinese
-# To read chinese pdf with linux: sudo apt-get install poppler-data
+# Note for Chinese:
+# msungstdlight or cid0ct are for traditional Chinese (traditional does not render with Ubuntu pdf reader)
+# stsongstdlight or cid0cs are for simplified Chinese
+# To read Chinese pdf with Linux: sudo apt-get install poppler-data
 FONTFORPDF=helvetica
 FONTSIZEFORPDF=10
 SeparatorDecimal=,
@@ -257,6 +257,8 @@ Seconds=Segundos
 Today=Hoy
 Yesterday=Ayer
 Tomorrow=Mañana
+Morning=Mañana
+Afternoon=Tarde
 Quadri=Trimestre
 MonthOfDay=Mes del día
 HourShort=H
@@ -309,6 +311,7 @@ SubTotal=Subtotal
 TotalHTShort=Importe
 TotalTTCShort=Total
 TotalHT=Base imponible
+TotalHTforthispage=Total base imponible para esta página
 TotalTTC=Total
 TotalTTCToYourCredit=Total a crédito
 TotalVAT=Total IVA
@@ -661,7 +664,8 @@ Access=Acceso
 HelpCopyToClipboard=Use Ctrl+C para copiar al portapapeles
 SaveUploadedFileWithMask=Guardar el archivo con el nombre "<strong>%s</strong>" (sino "%s")
 OriginFileName=Nombre del archivo origen
-
+SetDemandReason=Definir origen
+ViewPrivateNote=Ver notas
 # Week day
 Monday=Lunes
 Tuesday=Martes

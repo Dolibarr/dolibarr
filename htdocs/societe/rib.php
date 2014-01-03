@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2013      Peter Fontaine       <contact@peterfontaine.fr>
  *
@@ -92,37 +92,55 @@ if ($action == 'update' && ! $_POST["cancel"])
 
 if ($action == 'add' && ! $_POST["cancel"])
 {
-    // Ajout
-    $account = new CompanyBankAccount($db);
+	$error=0;
 
-    $account->socid           = $soc->id;
+	if (! GETPOST('label'))
+	{
+		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv('Label')),'errors');
+		$action='create';
+		$error++;
+	}
+	if (! GETPOST('bank'))
+	{
+		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv('BankName')),'errors');
+		$action='create';
+		$error++;
+	}
 
-    $account->bank            = $_POST["bank"];
-    $account->label           = $_POST["label"];
-    $account->courant         = $_POST["courant"];
-    $account->clos            = $_POST["clos"];
-    $account->code_banque     = $_POST["code_banque"];
-    $account->code_guichet    = $_POST["code_guichet"];
-    $account->number          = $_POST["number"];
-    $account->cle_rib         = $_POST["cle_rib"];
-    $account->bic             = $_POST["bic"];
-    $account->iban_prefix     = $_POST["iban_prefix"];
-    $account->domiciliation   = $_POST["domiciliation"];
-    $account->proprio         = $_POST["proprio"];
-    $account->owner_address   = $_POST["owner_address"];
+	if (! $error)
+	{
+	    // Ajout
+	    $account = new CompanyBankAccount($db);
 
-    $result = $account->update($user);	// TODO Use create and include update into create method
-    if (! $result)
-    {
-        $message=$account->error;
-        $_GET["action"]='create';     // Force chargement page création
-    }
-    else
-    {
-        $url=DOL_URL_ROOT.'/societe/rib.php?socid='.$soc->id;
-        header('Location: '.$url);
-        exit;
-    }
+	    $account->socid           = $soc->id;
+
+	    $account->bank            = $_POST["bank"];
+	    $account->label           = $_POST["label"];
+	    $account->courant         = $_POST["courant"];
+	    $account->clos            = $_POST["clos"];
+	    $account->code_banque     = $_POST["code_banque"];
+	    $account->code_guichet    = $_POST["code_guichet"];
+	    $account->number          = $_POST["number"];
+	    $account->cle_rib         = $_POST["cle_rib"];
+	    $account->bic             = $_POST["bic"];
+	    $account->iban_prefix     = $_POST["iban_prefix"];
+	    $account->domiciliation   = $_POST["domiciliation"];
+	    $account->proprio         = $_POST["proprio"];
+	    $account->owner_address   = $_POST["owner_address"];
+
+	    $result = $account->update($user);	// TODO Use create and include update into create method
+	    if (! $result)
+	    {
+	        $message=$account->error;
+	        $_GET["action"]='create';     // Force chargement page création
+	    }
+	    else
+	    {
+	        $url=DOL_URL_ROOT.'/societe/rib.php?socid='.$soc->id;
+	        header('Location: '.$url);
+	        exit;
+	    }
+	}
 }
 
 if ($action == 'setasdefault')
@@ -203,35 +221,68 @@ if ($socid && $action != 'edit' && $action != "create")
     print '<tr><td>'.$langs->trans("LabelRIB").'</td>';
     print '<td colspan="4">'.$account->label.'</td></tr>';
 
-	print '<tr><td valign="top" width="35%">'.$langs->trans("Bank").'</td>';
+	print '<tr><td valign="top" width="35%">'.$langs->trans("BankName").'</td>';
 	print '<td colspan="4">'.$account->bank.'</td></tr>';
 
-	if ($account->useDetailedBBAN() == 1)
+	// Show fields of bank account
+	$fieldlists='BankCode DeskCode AccountNumber BankAccountNumberKey';
+	if (! empty($conf->global->BANK_SHOW_ORDER_OPTION))
 	{
-		print '<tr><td>'.$langs->trans("BankCode").'</td>';
-		print '<td colspan="3">'.$account->code_banque.'</td>';
-		print '</tr>';
-
-		print '<tr><td>'.$langs->trans("DeskCode").'</td>';
-		print '<td colspan="3">'.$account->code_guichet.'</td>';
-		print '</tr>';
+		if (is_numeric($conf->global->BANK_SHOW_ORDER_OPTION))
+		{
+			if ($conf->global->BANK_SHOW_ORDER_OPTION == '1') $fieldlists='BankCode DeskCode BankAccountNumberKey AccountNumber';
+		}
+		else $fieldlists=$conf->global->BANK_SHOW_ORDER_OPTION;
 	}
-    if ($account->useDetailedBBAN() == 2)
-    {
-        print '<tr><td>'.$langs->trans("BankCode").'</td>';
-        print '<td colspan="3">'.$account->code_banque.'</td>';
-        print '</tr>';
-    }
+	$fieldlistsarray=explode(' ',$fieldlists);
 
-	print '<tr><td>'.$langs->trans("BankAccountNumber").'</td>';
-	print '<td colspan="3">'.$account->number.'</td>';
-	print '</tr>';
-
-	if ($account->useDetailedBBAN() == 1)
+	foreach($fieldlistsarray as $val)
 	{
-		print '<tr><td>'.$langs->trans("BankAccountNumberKey").'</td>';
-		print '<td colspan="3">'.$account->cle_rib.'</td>';
-		print '</tr>';
+		if ($val == 'BankCode')
+		{
+			if ($account->useDetailedBBAN() == 1)
+			{
+				print '<tr><td>'.$langs->trans("BankCode").'</td>';
+				print '<td colspan="3">'.$account->code_banque.'</td>';
+				print '</tr>';
+			}
+		}
+		if ($val == 'DeskCode')
+		{
+			if ($account->useDetailedBBAN() == 1)
+			{
+				print '<tr><td>'.$langs->trans("DeskCode").'</td>';
+				print '<td colspan="3">'.$account->code_guichet.'</td>';
+				print '</tr>';
+			}
+		}
+
+		if ($val == 'BankCode')
+		{
+			if ($account->useDetailedBBAN() == 2)
+	        {
+	            print '<tr><td>'.$langs->trans("BankCode").'</td>';
+	            print '<td colspan="3">'.$account->code_banque.'</td>';
+	            print '</tr>';
+	        }
+		}
+
+		if ($val == 'AccountNumber')
+		{
+			print '<tr><td>'.$langs->trans("BankAccountNumber").'</td>';
+			print '<td colspan="3">'.$account->number.'</td>';
+			print '</tr>';
+		}
+
+		if ($val == 'BankAccountNumberKey')
+		{
+			if ($account->useDetailedBBAN() == 1)
+			{
+				print '<tr><td>'.$langs->trans("BankAccountNumberKey").'</td>';
+				print '<td colspan="3">'.$account->cle_rib.'</td>';
+				print '</tr>';
+			}
+		}
 	}
 
 	print '<tr><td valign="top">'.$langs->trans("IBAN").'</td>';
@@ -255,7 +306,7 @@ if ($socid && $action != 'edit' && $action != "create")
 	print '</table>';
 
 	// Check BBAN
-	if (! checkBanForAccount($account))
+	if ($account->label && ! checkBanForAccount($account))
 	{
 		print '<div class="warning">'.$langs->trans("RIBControlError").'</div>';
 	}
@@ -266,13 +317,16 @@ if ($socid && $action != 'edit' && $action != "create")
 
     $rib_list = $soc->get_all_rib();
     $var = false;
-    if (is_array($rib_list)) {
+    if (is_array($rib_list))
+    {
         print '<table class="liste" width="100%">';
 
         print '<tr class="liste_titre">';
         print_liste_field_titre($langs->trans("LabelRIB"));
         print_liste_field_titre($langs->trans("Bank"));
         print_liste_field_titre($langs->trans("RIB"));
+        print_liste_field_titre($langs->trans("IBAN"));
+        print_liste_field_titre($langs->trans("BIC"));
         print_liste_field_titre($langs->trans("DefaultRIB"), '', '', '', '', 'align="center"');
         print '<td width="40"></td>';
         print '</tr>';
@@ -280,9 +334,17 @@ if ($socid && $action != 'edit' && $action != "create")
         foreach ($rib_list as $rib)
         {
             print "<tr $bc[$var]>";
+            // Label
             print '<td>'.$rib->label.'</td>';
+            // Bank name
             print '<td>'.$rib->bank.'</td>';
+            // Account number
             print '<td>'.$rib->getRibLabel(false).'</td>';
+            // IBAN
+            print '<td>'.$rib->iban.'</td>';
+            // BIC
+            print '<td>'.$rib->bic.'</td>';
+            // Default
             print '<td align="center" width="70">';
             if (!$rib->default_rib) {
                 print '<a href="'.DOL_URL_ROOT.'/societe/rib.php?socid='.$soc->id.'&ribid='.$rib->id.'&action=setasdefault">';
@@ -292,6 +354,8 @@ if ($socid && $action != 'edit' && $action != "create")
                 print img_picto($langs->trans("Enabled"),'on');
             }
             print '</td>';
+
+            // Edit/Delete
             print '<td align="right">';
             if ($user->rights->societe->creer)
             {
@@ -327,11 +391,8 @@ if ($socid && $action != 'edit' && $action != "create")
 /*                                                                            */
 /* ************************************************************************** */
 
-if ($_GET["socid"] && $_GET["action"] == 'edit' && $user->rights->societe->creer)
+if ($socid && $action == 'edit' && $user->rights->societe->creer)
 {
-
-    $form = new Form($db);
-
     dol_htmloutput_mesg($message);
 
     print '<form action="rib.php?socid='.$soc->id.'" method="post">';
@@ -341,40 +402,73 @@ if ($_GET["socid"] && $_GET["action"] == 'edit' && $user->rights->societe->creer
 
     print '<table class="border" width="100%">';
 
-    print '<tr><td valign="top" width="35%">'.$langs->trans("LabelRIB").'</td>';
+    print '<tr><td valign="top" width="35%" class="fieldrequired">'.$langs->trans("LabelRIB").'</td>';
     print '<td colspan="4"><input size="30" type="text" name="label" value="'.$account->label.'"></td></tr>';
 
-    print '<tr><td>'.$langs->trans("Bank").'</td>';
+    print '<tr><td class="fieldrequired">'.$langs->trans("BankName").'</td>';
     print '<td><input size="30" type="text" name="bank" value="'.$account->bank.'"></td></tr>';
 
-    // BBAN
-    if ($account->useDetailedBBAN() == 1)
-    {
-        print '<tr><td>'.$langs->trans("BankCode").'</td>';
-        print '<td><input size="8" type="text" class="flat" name="code_banque" value="'.$account->code_banque.'"></td>';
-        print '</tr>';
+	// Show fields of bank account
+	$fieldlists='BankCode DeskCode AccountNumber BankAccountNumberKey';
+	if (! empty($conf->global->BANK_SHOW_ORDER_OPTION))
+	{
+		if (is_numeric($conf->global->BANK_SHOW_ORDER_OPTION))
+		{
+			if ($conf->global->BANK_SHOW_ORDER_OPTION == '1') $fieldlists='BankCode DeskCode BankAccountNumberKey AccountNumber';
+		}
+		else $fieldlists=$conf->global->BANK_SHOW_ORDER_OPTION;
+	}
+	$fieldlistsarray=explode(' ',$fieldlists);
 
-        print '<tr><td>'.$langs->trans("DeskCode").'</td>';
-        print '<td><input size="8" type="text" class="flat" name="code_guichet" value="'.$account->code_guichet.'"></td>';
-        print '</tr>';
-    }
-    if ($account->useDetailedBBAN() == 2)
-    {
-        print '<tr><td>'.$langs->trans("BankCode").'</td>';
-        print '<td><input size="8" type="text" class="flat" name="code_banque" value="'.$account->code_banque.'"></td>';
-        print '</tr>';
-    }
+	foreach($fieldlistsarray as $val)
+	{
+		if ($val == 'BankCode')
+		{
+			if ($account->useDetailedBBAN()  == 1)
+			{
+				print '<tr><td>'.$langs->trans("BankCode").'</td>';
+				print '<td><input size="8" type="text" class="flat" name="code_banque" value="'.$account->code_banque.'"></td>';
+				print '</tr>';
+			}
+		}
 
-    print '<td>'.$langs->trans("BankAccountNumber").'</td>';
-    print '<td><input size="15" type="text" class="flat" name="number" value="'.$account->number.'"></td>';
-    print '</tr>';
+		if ($val == 'DeskCode')
+		{
+			if ($account->useDetailedBBAN()  == 1)
+			{
+				print '<tr><td>'.$langs->trans("DeskCode").'</td>';
+				print '<td><input size="8" type="text" class="flat" name="code_guichet" value="'.$account->code_guichet.'"></td>';
+				print '</tr>';
+			}
+		}
 
-    if ($account->useDetailedBBAN() == 1)
-    {
-        print '<td>'.$langs->trans("BankAccountNumberKey").'</td>';
-        print '<td><input size="3" type="text" class="flat" name="cle_rib" value="'.$account->cle_rib.'"></td>';
-        print '</tr>';
-    }
+		if ($val == 'BankCode')
+		{
+			if ($account->useDetailedBBAN()  == 2)
+	        {
+	            print '<tr><td>'.$langs->trans("BankCode").'</td>';
+	            print '<td><input size="8" type="text" class="flat" name="code_banque" value="'.$account->code_banque.'"></td>';
+	            print '</tr>';
+	        }
+		}
+
+		if ($val == 'AccountNumber')
+		{
+			print '<td>'.$langs->trans("BankAccountNumber").'</td>';
+			print '<td><input size="18" type="text" class="flat" name="number" value="'.$account->number.'"></td>';
+			print '</tr>';
+		}
+
+		if ($val == 'BankAccountNumberKey')
+		{
+			if ($account->useDetailedBBAN() == 1)
+			{
+				print '<td>'.$langs->trans("BankAccountNumberKey").'</td>';
+				print '<td><input size="3" type="text" class="flat" name="cle_rib" value="'.$account->cle_rib.'"></td>';
+				print '</tr>';
+			}
+		}
+	}
 
     // IBAN
     print '<tr><td valign="top">'.$langs->trans("IBAN").'</td>';
@@ -413,11 +507,8 @@ if ($_GET["socid"] && $_GET["action"] == 'edit' && $user->rights->societe->creer
 /*                                                                            */
 /* ************************************************************************** */
 
-if ($_GET["socid"] && $_GET["action"] == 'create' && $user->rights->societe->creer)
+if ($socid && $action == 'create' && $user->rights->societe->creer)
 {
-
-    $form = new Form($db);
-
     dol_htmloutput_mesg($message);
 
     print '<form action="rib.php?socid='.$soc->id.'" method="post">';
@@ -426,58 +517,60 @@ if ($_GET["socid"] && $_GET["action"] == 'create' && $user->rights->societe->cre
     print '<table class="border" width="100%">';
 
 
-    print '<tr><td valign="top" width="35%">'.$langs->trans("LabelRIB").'</td>';
-    print '<td colspan="4"><input size="30" type="text" name="label"></td></tr>';
+    print '<tr><td valign="top" width="35%" class="fieldrequired">'.$langs->trans("LabelRIB").'</td>';
+    print '<td colspan="4"><input size="30" type="text" name="label" value="'.GETPOST('label').'"></td></tr>';
 
-    print '<tr><td>'.$langs->trans("Bank").'</td>';
-    print '<td><input size="30" type="text" name="bank"></td></tr>';
+    print '<tr><td class="fieldrequired">'.$langs->trans("Bank").'</td>';
+    print '<td><input size="30" type="text" name="bank" value="'.GETPOST('bank').'"></td></tr>';
 
     // BBAN
     if ($account->useDetailedBBAN() == 1)
     {
         print '<tr><td>'.$langs->trans("BankCode").'</td>';
-        print '<td><input size="8" type="text" class="flat" name="code_banque"></td>';
+        print '<td><input size="8" type="text" class="flat" name="code_banque" value="'.GETPOST('code_banque').'"></td>';
         print '</tr>';
 
         print '<tr><td>'.$langs->trans("DeskCode").'</td>';
-        print '<td><input size="8" type="text" class="flat" name="code_guichet"></td>';
+        print '<td><input size="8" type="text" class="flat" name="code_guichet" value="'.GETPOST('code_guichet').'"></td>';
         print '</tr>';
     }
     if ($account->useDetailedBBAN() == 2)
     {
         print '<tr><td>'.$langs->trans("BankCode").'</td>';
-        print '<td><input size="8" type="text" class="flat" name="code_banque"></td>';
+        print '<td><input size="8" type="text" class="flat" name="code_banque" value="'.GETPOST('code_banque').'"></td>';
         print '</tr>';
     }
 
     print '<td>'.$langs->trans("BankAccountNumber").'</td>';
-    print '<td><input size="15" type="text" class="flat" name="number"></td>';
+    print '<td><input size="15" type="text" class="flat" name="number" value="'.GETPOST('number').'"></td>';
     print '</tr>';
 
     if ($account->useDetailedBBAN() == 1)
     {
         print '<td>'.$langs->trans("BankAccountNumberKey").'</td>';
-        print '<td><input size="3" type="text" class="flat" name="cle_rib"></td>';
+        print '<td><input size="3" type="text" class="flat" name="cle_rib" value="'.GETPOST('value').'"></td>';
         print '</tr>';
     }
 
     // IBAN
     print '<tr><td valign="top">'.$langs->trans("IBAN").'</td>';
-    print '<td colspan="4"><input size="30" type="text" name="iban_prefix"></td></tr>';
+    print '<td colspan="4"><input size="30" type="text" name="iban_prefix" value="'.GETPOST('iban_prefix').'"></td></tr>';
 
     print '<tr><td valign="top">'.$langs->trans("BIC").'</td>';
-    print '<td colspan="4"><input size="12" type="text" name="bic"></td></tr>';
+    print '<td colspan="4"><input size="12" type="text" name="bic" value="'.GETPOST('bic').'"></td></tr>';
 
     print '<tr><td valign="top">'.$langs->trans("BankAccountDomiciliation").'</td><td colspan="4">';
-    print "<textarea name=\"domiciliation\" rows=\"4\" cols=\"40\">";
+    print '<textarea name="domiciliation" rows="4" cols="40">';
+    print GETPOST('domiciliation');
     print "</textarea></td></tr>";
 
     print '<tr><td valign="top">'.$langs->trans("BankAccountOwner").'</td>';
-    print '<td colspan="4"><input size="30" type="text" name="proprio"></td></tr>';
+    print '<td colspan="4"><input size="30" type="text" name="proprio" value="'.GETPOST('proprio').'"></td></tr>';
     print "</td></tr>\n";
 
     print '<tr><td valign="top">'.$langs->trans("BankAccountOwnerAddress").'</td><td colspan="4">';
-    print "<textarea name=\"owner_address\" rows=\"4\" cols=\"40\">";
+    print '<textarea name="owner_address" rows="4" cols="40">';
+    print GETPOST('owner_address');
     print "</textarea></td></tr>";
 
     print '</table><br>';
@@ -493,7 +586,7 @@ if ($_GET["socid"] && $_GET["action"] == 'create' && $user->rights->societe->cre
 dol_fiche_end();
 
 
-if ($_GET["socid"] && $_GET["action"] != 'edit' && $_GET["action"] != 'create')
+if ($socid && $action != 'edit' && $action != 'create')
 {
 	/*
 	 * Barre d'actions
@@ -509,8 +602,7 @@ if ($_GET["socid"] && $_GET["action"] != 'edit' && $_GET["action"] != 'create')
 }
 
 
-$db->close();
-
-
 llxFooter();
+
+$db->close();
 ?>

@@ -25,3 +25,4 @@ LinkToGoldMember=Du kan ringe til en af de coach forudvalgt ved Dolibarr for dit
 PossibleLanguages=Understøttede sprog
 MakeADonation=Hjælp Dolibarr projekt, en donation
 # SubscribeToFoundation=Help Dolibarr project, subscribe to the foundation
+# SeeOfficalSupport=For official Dolibarr support in your language: <br><b><a href="%s" target="_blank">%s</a></b>

@@ -1,9 +1,9 @@
 # Dolibarr language file - Source file is en_US - main
 # DIRECTION=ltr
-# Note for chinese:
-# msungstdlight or cid0ct are for traditionnal chinese (traditionnal does not render with ubuntu pdf reader)
-# stsongstdlight or cid0cs are for simplified chinese
-# To read chinese pdf with linux: sudo apt-get install poppler-data
+# Note for Chinese:
+# msungstdlight or cid0ct are for traditional Chinese (traditional does not render with Ubuntu pdf reader)
+# stsongstdlight or cid0cs are for simplified Chinese
+# To read Chinese pdf with Linux: sudo apt-get install poppler-data
 FONTFORPDF=helvetica
 # FONTSIZEFORPDF=10
 SeparatorDecimal=.
@@ -447,30 +447,30 @@ NoneF=None
 # OctoberMin=Oct
 # NovemberMin=Nov
 # DecemberMin=Dec
-# Month01=january
-# Month02=february
-# Month03=march
-# Month04=april
-# Month05=may
-# Month06=june
-# Month07=july
-# Month08=august
-# Month09=september
-# Month10=october
-# Month11=november
-# Month12=december
-# MonthShort01=jan
-# MonthShort02=feb
-# MonthShort03=mar
-# MonthShort04=apr
-# MonthShort05=may
-# MonthShort06=jun
-# MonthShort07=jul
-# MonthShort08=aug
-# MonthShort09=sep
-# MonthShort10=oct
-# MonthShort11=nov
-# MonthShort12=dec
+# Month01=January
+# Month02=February
+# Month03=March
+# Month04=April
+# Month05=May
+# Month06=June
+# Month07=July
+# Month08=August
+# Month09=September
+# Month10=October
+# Month11=November
+# Month12=December
+# MonthShort01=Jan
+# MonthShort02=Feb
+# MonthShort03=Mar
+# MonthShort04=Apr
+# MonthShort05=May
+# MonthShort06=Jun
+# MonthShort07=Jul
+# MonthShort08=Aug
+# MonthShort09=Sep
+# MonthShort10=Oct
+# MonthShort11=Nov
+# MonthShort12=Dec
 # AttachedFiles=Attached files and documents
 # FileTransferComplete=File was uploaded successfuly
 # DateFormatYYYYMM=YYYY-MM
@@ -632,7 +632,7 @@ MenuMembers=משתמשים
 # NewAttribute=New attribute
 # AttributeCode=Attribute code
 # OptionalFieldsSetup=Extra attributes setup
-# URLPhoto=Url of photo/logo
+# URLPhoto=URL of photo/logo
 # SetLinkToThirdParty=Link to another third party
 # CreateDraft=Create draft
 # ClickToEdit=Click to edit
@@ -642,7 +642,7 @@ MenuMembers=משתמשים
 # ByDate=By date
 # ByMonthYear=By month/year
 # ByYear=By year
-# ByMonth=by month
+# ByMonth=By month
 # ByDay=By day
 # BySalesRepresentative=By sales representative
 # LinkedToSpecificUsers=Linked to a particular user contact
@@ -660,7 +660,8 @@ MenuMembers=משתמשים
 # Access=Access
 # HelpCopyToClipboard=Use Ctrl+C to copy to clipboard
 # SaveUploadedFileWithMask=Save file on server with name "<strong>%s</strong>" (otherwise "%s")
-# OriginFileName=Nom d'origine
+# OriginFileName=Original filename
+# SetDemandReason=Set source
 
 # Week day
 # Monday=Monday

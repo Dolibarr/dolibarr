@@ -25,3 +25,4 @@ TypeSupportCommercial=מסחרי
 # PossibleLanguages=Supported languages
 # MakeADonation=Help Dolibarr project, make a donation
 # SubscribeToFoundation=Help Dolibarr project, subscribe to the foundation
+# SeeOfficalSupport=For official Dolibarr support in your language: <br><b><a href="%s" target="_blank">%s</a></b>

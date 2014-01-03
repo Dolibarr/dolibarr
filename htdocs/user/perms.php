@@ -76,7 +76,7 @@ if ($action == 'addrights' && $caneditperms)
 {
     $edituser = new User($db);
 	$edituser->fetch($id);
-    //$edituser->addrights($rights, $module, '', $entity); // FIXME unused for the moment
+    //$edituser->addrights($rights, $module, '', $entity); // TODO unused for the moment
     $edituser->addrights($rights, $module);
 
 	// Si on a touche a ses propres droits, on recharge
@@ -92,7 +92,7 @@ if ($action == 'delrights' && $caneditperms)
 {
     $edituser = new User($db);
 	$edituser->fetch($id);
-    //$edituser->delrights($rights, $module, '', $entity); // FIXME unused for the moment
+    //$edituser->delrights($rights, $module, '', $entity); // TODO unused for the moment
     $edituser->delrights($rights, $module);
 
 	// Si on a touche a ses propres droits, on recharge
@@ -177,13 +177,16 @@ $sql = "SELECT r.id, r.libelle, r.module";
 $sql.= " FROM ".MAIN_DB_PREFIX."rights_def as r,";
 $sql.= " ".MAIN_DB_PREFIX."user_rights as ur";
 $sql.= " WHERE ur.fk_id = r.id";
-if (! empty($conf->multicompany->enabled)) {
+if (! empty($conf->multicompany->enabled))
+{
 	if (1==2 && ! empty($conf->multicompany->transverse_mode)) {
-		$sql.= " AND r.entity = ".(GETPOST('entity','int')?GETPOST('entity','int'):$conf->entity); // FIXME unused for the moment
+		$sql.= " AND r.entity = ".(GETPOST('entity','int')?GETPOST('entity','int'):$conf->entity); // TODO unused for the moment
 	} else {
 		$sql.= " AND r.entity = ".(! empty($fuser->entity) ? $fuser->entity : $conf->entity);
 	}
-} else {
+}
+else
+{
 	$sql.= " AND r.entity = ".$conf->entity;
 }
 $sql.= " AND ur.fk_user = ".$fuser->id;

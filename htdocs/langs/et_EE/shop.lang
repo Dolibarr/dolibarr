@@ -1,10 +1,10 @@
 # Dolibarr language file - Source file is en_US - shop
 Shop=Pood
-ShopWeb=Web Shop
-LastOrders=Viimased korraldused
+ShopWeb=Veebipood
+LastOrders=Viimased tellimused
 OnStandBy=Ootel
-TreatmentInProgress=Ravi pooleli
+TreatmentInProgress=Töötlemine pooleli
 LastCustomers=Viimased kliendid
-OSCommerceShop=OsCommerce pood
+OSCommerceShop=OsCommercei pood
 OSCommerce=OsCommerce
-AddProd=Müüa online
+AddProd=Müü veebis

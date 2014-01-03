@@ -43,6 +43,7 @@ if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
 	<input type="hidden" name="lineid" value="<?php echo $line->id; ?>">
 	<input type="hidden" id="product_type" name="type" value="<?php echo $line->product_type; ?>">
 	<input type="hidden" id="product_id" name="productid" value="<?php echo (! empty($line->fk_product)?$line->fk_product:0); ?>" />
+	<input type="hidden" id="special_code" name="special_code" value="<?php echo $line->special_code; ?>">
 
 	<?php
 	if ($conf->global->MAIN_FEATURES_LEVEL > 1)
@@ -140,9 +141,9 @@ if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
 				    $margin_rate = (isset($_POST["marginRate"])?$_POST["marginRate"]:(($line->pa_ht == 0)?'':price($line->marge_tx)));
 				    // if credit note, dont allow to modify margin
 					if ($line->subprice < 0)
-						echo '<td align="right">'.$margin_rate.'%</td>';
+						echo '<td align="right" class="nowrap">'.$margin_rate.'<span class="hideonsmartphone">%</span></td>';
 					else
-						echo '<td align="right"><input type="text" size="2" name="marginRate" value="'.$margin_rate.'">%</td>';
+						echo '<td align="right" class="nowrap"><input type="text" size="2" name="marginRate" value="'.$margin_rate.'"><span class="hideonsmartphone">%</span></td>';
 					$coldisplay++;
 				  }
 				elseif (! empty($conf->global->DISPLAY_MARK_RATES))
@@ -150,9 +151,9 @@ if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
 				    $mark_rate = (isset($_POST["markRate"])?$_POST["markRate"]:price($line->marque_tx));
 				    // if credit note, dont allow to modify margin
 					if ($line->subprice < 0)
-						echo '<td align="right">'.$mark_rate.'%</td>';
+						echo '<td align="right" class="nowrap">'.$mark_rate.'<span class="hideonsmartphone">%</span></td>';
 					else
-						echo '<td align="right"><input type="text" size="2" name="markRate" value="'.$mark_rate.'">%</td>';
+						echo '<td align="right" class="nowrap"><input type="text" size="2" name="markRate" value="'.$mark_rate.'"><span class="hideonsmartphone">%</span></td>';
 					$coldisplay++;
 				  }
 			  }

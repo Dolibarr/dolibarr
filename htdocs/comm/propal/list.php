@@ -25,8 +25,8 @@
  */
 
 /**
- *	\file       	htdocs/comm/propal.php
- *	\ingroup    	propale
+ *	\file       	htdocs/comm/propal/list.php
+ *	\ingroup    	propal
  *	\brief      	Page of commercial proposals card and list
  */
 
@@ -182,11 +182,7 @@ if ($search_montant_ht)
 	$sql.= " AND p.total_ht='".$db->escape(price2num(trim($search_montant_ht)))."'";
 }
 if ($sall) {
-    /*$scrit = explode(' ', $sall);
-    foreach ($scrit as $crit) {
-        $sql.= " AND (s.nom LIKE '%".$db->escape($crit)."%' OR p.note LIKE '%".$db->escape($crit)."%' OR pd.description LIKE '%".$db->escape($crit)."%')";
-    }*/
-    $sql .= natural_search(array('s.nom', 'p.note_private', 'pd.description'), $sall);
+    $sql .= natural_search(array('s.nom', 'p.note_private', 'p.note_public', 'pd.description'), $sall);
 }
 if ($socid) $sql.= ' AND s.rowid = '.$socid;
 if ($viewstatut <> '')
@@ -426,14 +422,14 @@ if ($result)
 			{
 				if($num<$limit){
 					$var=!$var;
-					print '<tr class="liste_total"><td align="left">'.$langs->trans("Total HT").'</td>';
+					print '<tr class="liste_total"><td align="left">'.$langs->trans("TotalHT").'</td>';
 					print '<td colspan="6" align="right"">'.price($total).'<td colspan="3"</td>';
 					print '</tr>';
 				}
 				else
 				{
 					$var=!$var;
-					print '<tr class="liste_total"><td align="left">'.$langs->trans("Total HT for this page").'</td>';
+					print '<tr class="liste_total"><td align="left">'.$langs->trans("TotalHTforthispage").'</td>';
 					print '<td colspan="6" align="right"">'.price($total).'<td colspan="3"</td>';
 					print '</tr>';
 				}

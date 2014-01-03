@@ -77,10 +77,12 @@ if ($action == "set")
 
     if (! $error)
 	{
+		$db->commit();
 		setEventMessage($langs->trans("SetupSaved"));
 	}
 	else
 	{
+		$db->rollback();
 		setEventMessage($langs->trans("Error"),'errors');
 	}
 }

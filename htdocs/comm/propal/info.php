@@ -19,7 +19,7 @@
 
 /**
  *      \file       htdocs/comm/propal/info.php
- *      \ingroup    propale
+ *      \ingroup    propal
  *      \brief      Page d'affichage des infos d'une proposition commerciale
  */
 

@@ -110,12 +110,6 @@ SelectElement=Séléctionnez l'élément
 AddElement=Link to element
 # Documents models
 DocumentModelBaleine=Modèle de rapport de projet complet (logo...)
-<<<<<<< HEAD
 PlannedWorkload = Charge de travail prévue
 WorkloadOccupation= Pourcentage affectation
 ProjectReferers=Objets associés
-=======
-SelectElement=Eléments associables au projet :
-AddElement=Associer
-ProjectReferers=Objets associés
->>>>>>> refs/remotes/origin/3.4

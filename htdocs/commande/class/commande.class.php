@@ -655,7 +655,7 @@ class Commande extends CommonOrder
         $sql.= ", ".($this->date_livraison?"'".$this->db->idate($this->date_livraison)."'":"null");
         $sql.= ", ".($this->fk_delivery_address>0?$this->fk_delivery_address:'NULL');
         $sql.= ", ".($this->remise_absolue>0?$this->remise_absolue:'NULL');
-        $sql.= ", '".$this->remise_percent."'";
+        $sql.= ", ".($this->remise_percent>0?$this->remise_percent:0);
         $sql.= ", ".$conf->entity;
         $sql.= ")";
 
@@ -2457,7 +2457,7 @@ class Commande extends CommonOrder
 
         	// On efface le repertoire de pdf provisoire
         	$comref = dol_sanitizeFileName($this->ref);
-        	if ($conf->commande->dir_output)
+        	if ($conf->commande->dir_output && !empty($this->ref))
         	{
         		$dir = $conf->commande->dir_output . "/" . $comref ;
         		$file = $conf->commande->dir_output . "/" . $comref . "/" . $comref . ".pdf";
@@ -3085,6 +3085,7 @@ class OrderLine extends CommonOrderLine
             $this->fk_product       = $objp->fk_product;
             $this->product_type     = $objp->product_type;
             $this->info_bits        = $objp->info_bits;
+			$this->special_code		= $objp->special_code;
             $this->total_ht         = $objp->total_ht;
             $this->total_tva        = $objp->total_tva;
             $this->total_localtax1  = $objp->total_localtax1;

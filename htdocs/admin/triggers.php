@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -68,7 +68,12 @@ foreach ($triggers as $trigger)
 	print '<td valign="top" width="14" align="center">'.$trigger['picto'].'</td>';
 	print '<td valign="top">'.$trigger['file'].'</td>';
 	print '<td valign="top" align="center">'.$trigger['status'].'</td>';
-	print '<td valign="top">'.$form->textwithpicto('', $trigger['info']).'</td>';
+	print '<td valign="top">';
+	$text=$trigger['info'];
+	$text.="<br>\n<strong>".$langs->trans("File")."</strong>:<br>\n".$trigger['relpath'];
+	//$text.="\n".$langs->trans("ExternalModule",$trigger['isocreorexternal']);
+	print $form->textwithpicto('', $text);
+	print '</td>';
 	print '</tr>';
 }
 

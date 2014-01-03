@@ -257,6 +257,8 @@ Seconds=Seconds
 Today=Today
 Yesterday=Yesterday
 Tomorrow=Tomorrow
+Morning=Morning
+Afternoon=Afternoon
 Quadri=Quadri
 MonthOfDay=Month of the day
 HourShort=H
@@ -309,6 +311,7 @@ SubTotal=Subtotal
 TotalHTShort=Total (net)
 TotalTTCShort=Total (inc. tax)
 TotalHT=Total (net of tax)
+TotalHTforthispage=Total (net of tax) for this page
 TotalTTC=Total (inc. tax)
 TotalTTCToYourCredit=Total (inc. tax) to your credit
 TotalVAT=Total tax
@@ -662,7 +665,7 @@ HelpCopyToClipboard=Use Ctrl+C to copy to clipboard
 SaveUploadedFileWithMask=Save file on server with name "<strong>%s</strong>" (otherwise "%s")
 OriginFileName=Original filename
 SetDemandReason=Set source
-
+ViewPrivateNote=View notes
 # Week day
 Monday=Monday
 Tuesday=Tuesday
