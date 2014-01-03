@@ -88,6 +88,7 @@ if ($action == 'update')
 		$object->date_fin = $expiredate;
 		$object->canedit = GETPOST('canedit')=='on'?1:0;
 		$object->allow_comments = GETPOST('cancomment') == 'on' ? true : false;
+		$object->allow_spy = GETPOST('canseeothersvote') == 'on' ? true : false;
 
 		$res=$object->update($user);
 		if ($res < 0)
@@ -176,7 +177,7 @@ $linkback = '<a href="'.dol_buildpath('/opensurvey/list.php',1).'">'.$langs->tra
 // Ref
 print '<tr><td width="18%">'.$langs->trans('Ref').'</td>';
 print '<td colspan="3">';
-print $form->showrefnav($object, 'sondage', $linkback, 1, 'id_sondage', 'id_sondage');
+print $form->showrefnav($object, 'id', $linkback, 1, 'id_sondage', 'id_sondage');
 print '</td>';
 print '</tr>';
 
@@ -237,6 +238,15 @@ if ($action == 'edit')
 	print '<input type="checkbox" name="cancomment" size="40"'.($object->allow_comments?' checked="true"':'').'">';
 }
 else print yn($object->allow_comments);
+print '</td></tr>';
+
+// Users can see others vote
+print '<tr><td>'.$langs->trans('CanSeeOthersVote').'</td><td colspan="2">';
+if ($action == 'edit')
+{
+	print '<input type="checkbox" name="canseeothersvote" size="40"'.($object->allow_spy?' checked="true"':'').'">';
+}
+else print yn($object->allow_spy);
 print '</td></tr>';
 
 // Expire date

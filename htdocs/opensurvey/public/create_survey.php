@@ -80,6 +80,12 @@ if (GETPOST("creation_sondage_date") || GETPOST("creation_sondage_autre") || GET
 	} else {
 		$_SESSION['allow_comments'] = false;
 	}
+	
+	if (GETPOST('allow_spy') == 'on') {
+		$_SESSION['allow_spy'] = true;
+	} else {
+		$_SESSION['allow_spy'] = false;
+	}
 
 	if (! isValidEmail($adresse)) $erreur_adresse = true;
 
@@ -181,6 +187,10 @@ print '<input type="checkbox" name="mailsonde" '.$cochemail.'> '. $langs->trans(
 if ($_SESSION['allow_comments']) $allow_comments = "checked";
 
 print '<input type="checkbox" name="allow_comments" '.$allow_comments.'> '.$langs->trans('CanComment').'<br />'."\n";
+
+if ($_SESSION['allow_spy']) $allow_spy = "checked";
+
+print '<input type="checkbox" name="allow_spy" '.$allow_spy.'> '.$langs->trans('CanSeeOthersVote').'<br />'."\n";
 
 if (GETPOST('choix_sondage'))
 {

@@ -57,6 +57,12 @@ class Opensurveysondage extends CommonObject
 	 * @var bool
 	 */
 	public $allow_comments;
+	
+	/**
+	 * Allow users see others vote
+	 * @var bool
+	 */
+	public $allow_spy;
 
     /**
      *  Constructor
@@ -121,7 +127,7 @@ class Opensurveysondage extends CommonObject
 		$sql.= " ".(! isset($this->format)?'NULL':"'".$this->db->escape($this->format)."'").",";
 		$sql.= " ".(! isset($this->mailsonde)?'NULL':"'".$this->db->escape($this->mailsonde)."'").",";
 		$sql.= " ".(! isset($this->canedit)?'NULL':"'".$this->db->escape($this->canedit)."'")."";
-
+		
 		$sql.= ")";
 
 		$this->db->begin();
@@ -189,6 +195,7 @@ class Opensurveysondage extends CommonObject
 		$sql.= " t.mailsonde,";
 		$sql.= " t.canedit,";
 		$sql.= " t.allow_comments,";
+		$sql.= " t.allow_spy,";
 		$sql.= " t.sujet,";
 		$sql.= " t.tms";
         $sql.= " FROM ".MAIN_DB_PREFIX."opensurvey_sondage as t";
@@ -212,6 +219,7 @@ class Opensurveysondage extends CommonObject
 				$this->mailsonde = $obj->mailsonde;
 				$this->canedit = $obj->canedit;
 				$this->allow_comments = $obj->allow_comments;
+				$this->allow_spy = $obj->allow_spy;
 				$this->sujet = $obj->sujet;
 
 				$this->date_m = $this->db->jdate($obj->tls);
@@ -261,6 +269,7 @@ class Opensurveysondage extends CommonObject
 		if (isset($this->mailsonde)) $this->mailsonde=trim($this->mailsonde);
 		$this->canedit = $this->canedit ? 1 : 0;
 		$this->allow_comments = $this->allow_comments ? 1 : 0;
+		$this->allow_spy = $this->allow_spy ? 1 : 0;
 
 		// Check parameters
 		// Put here code to add a control on parameters values
@@ -277,7 +286,8 @@ class Opensurveysondage extends CommonObject
 		$sql.= " format=".(isset($this->format)?"'".$this->db->escape($this->format)."'":"null").",";
 		$sql.= " mailsonde=".(isset($this->mailsonde)?$this->db->escape($this->mailsonde):"null").",";
 		$sql.= " canedit=".$this->db->escape($this->canedit).",";
-		$sql.= " allow_comments=".$this->db->escape($this->allow_comments);
+		$sql.= " allow_comments=".$this->db->escape($this->allow_comments).",";
+		$sql.= " allow_spy=".$this->db->escape($this->allow_spy);
 		
 		$sql.= " WHERE id_sondage='".$this->db->escape($this->id_sondage)."'";
 

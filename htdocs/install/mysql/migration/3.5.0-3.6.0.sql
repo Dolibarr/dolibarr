@@ -18,7 +18,8 @@
 -- -- VMYSQL4.1 DELETE FROM llx_usergroup_user      WHERE fk_usergroup NOT IN (SELECT rowid from llx_usergroup);
 
 ALTER TABLE llx_bookmark ADD COLUMN entity integer DEFAULT 1 NOT NULL;
-ALTER TABLE  `llx_opensurvey_sondage` ADD  `allow_comments` TINYINT( 1 ) UNSIGNED NOT NULL DEFAULT 1 AFTER  `canedit` ;
-ALTER TABLE  `llx_opensurvey_sondage` DROP  `survey_link_visible` ;
+ALTER TABLE  `llx_opensurvey_sondage` ADD COLUMN `allow_comments` TINYINT( 1 ) UNSIGNED NOT NULL DEFAULT 1 AFTER  `canedit` ;
+ALTER TABLE  `llx_opensurvey_sondage` DROP COLUMN `survey_link_visible` ;
 ALTER TABLE  `llx_opensurvey_sondage` DROP INDEX  `idx_id_sondage_admin` ;
-ALTER TABLE  `llx_opensurvey_sondage` DROP  `id_sondage_admin` ;
+ALTER TABLE  `llx_opensurvey_sondage` DROP COLUMN `id_sondage_admin` ;
+ALTER TABLE  `llx_opensurvey_sondage` ADD COLUMN `allow_spy` TINYINT( 1 ) UNSIGNED NOT NULL AFTER  `allow_comments` ;
