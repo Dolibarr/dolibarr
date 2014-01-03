@@ -85,7 +85,6 @@ class Opensurveysondage extends CommonObject
      */
     function create($user, $notrigger=0)
     {
-    	global $conf, $langs;
 		$error=0;
 
 		// Clean parameters
@@ -182,8 +181,6 @@ class Opensurveysondage extends CommonObject
      */
     function fetch($id,$numsurvey='')
     {
-    	global $langs;
-
     	$sql = "SELECT";
 		$sql.= " t.id_sondage,";
 		$sql.= " t.commentaires,";
@@ -430,60 +427,6 @@ class Opensurveysondage extends CommonObject
 
 		return $this->lines;
 	}
-
-	/**
-	 *	Load an object from its id and create a new one in database
-	 *
-	 *	@param	int		$fromid     Id of object to clone
-	 * 	@return	int					New id of clone
-	 */
-	function createFromClone($fromid)
-	{
-		global $user,$langs;
-
-		$error=0;
-
-		$object=new Opensurveysondage($this->db);
-
-		$this->db->begin();
-
-		// Load source object
-		$object->fetch($fromid);
-		$object->id=0;
-		$object->statut=0;
-
-		// Clear fields
-		// ...
-
-		// Create clone
-		$result=$object->create($user);
-
-		// Other options
-		if ($result < 0)
-		{
-			$this->error=$object->error;
-			$error++;
-		}
-
-		if (! $error)
-		{
-
-
-		}
-
-		// End
-		if (! $error)
-		{
-			$this->db->commit();
-			return $object->id;
-		}
-		else
-		{
-			$this->db->rollback();
-			return -1;
-		}
-	}
-
 
 	/**
 	 *	Initialise object with example values
