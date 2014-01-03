@@ -15,5 +15,4 @@
 -- along with this program. If not, see <http://www.gnu.org/licenses/>.
 -- ============================================================================
 
-ALTER TABLE llx_opensurvey_sondage ADD INDEX idx_id_sondage_admin (id_sondage_admin);
 ALTER TABLE llx_opensurvey_sondage ADD INDEX idx_date_fin (date_fin);

@@ -36,12 +36,12 @@ function opensurvey_prepare_head(Opensurveysondage $object) {
 	$h = 0;
 	$head = array();
 
-	$head[0][0] = 'adminstuds.php?id='.$object->id_sondage_admin;
+	$head[0][0] = 'adminstuds.php?id='.$object->id_sondage;
 	$head[0][1] = $langs->trans("Card");
 	$head[0][2] = 'general';
 	$h++;
 	
-	$head[1][0] = 'adminstuds_preview.php?id='.$object->id_sondage_admin;
+	$head[1][0] = 'adminstuds_preview.php?id='.$object->id_sondage;
 	$head[1][1] = $langs->trans("SurveyResults").'/'.$langs->trans("Preview");
 	$head[1][2] = 'preview';
 	$h++;
@@ -232,7 +232,6 @@ function ajouter_sondage($origin)
 	global $conf, $db;
 
 	$sondage=dol_survey_random(16);
-	$sondage_admin=$sondage.dol_survey_random(8);
 
 	if ($_SESSION["formatsondage"]=="A"||$_SESSION["formatsondage"]=="A+") {
 		//extraction de la date de fin choisie
@@ -259,16 +258,16 @@ function ajouter_sondage($origin)
 
 	// Insert survey
 	$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'opensurvey_sondage';
-	$sql.= '(id_sondage, commentaires, mail_admin, nom_admin, titre, id_sondage_admin, date_fin, format, mailsonde, canedit, allow_comments, origin, sujet)';
+	$sql.= '(id_sondage, commentaires, mail_admin, nom_admin, titre, date_fin, format, mailsonde, canedit, allow_comments, origin, sujet)';
 	$sql.= " VALUES ('".$db->escape($sondage)."', '".$db->escape($_SESSION['commentaires'])."', '".$db->escape($_SESSION['adresse'])."', '".$db->escape($_SESSION['nom'])."',";
-	$sql.= " '".$db->escape($_SESSION['titre'])."', '".$sondage_admin."', '".$db->idate($date_fin)."', '".$_SESSION['formatsondage']."', '".$db->escape($_SESSION['mailsonde'])."',";
+	$sql.= " '".$db->escape($_SESSION['titre'])."', '".$db->idate($date_fin)."', '".$_SESSION['formatsondage']."', '".$db->escape($_SESSION['mailsonde'])."',";
 	$sql.= " '".$canedit."', '".$allow_comments."', '".$db->escape($origin)."',";
 	$sql.= " '".$db->escape($_SESSION['toutchoix'])."'";
 	$sql.= ")";
 	dol_syslog($sql);
 	$resql=$db->query($sql);
 
-	if ($origin == 'dolibarr') $urlback=dol_buildpath('/opensurvey/adminstuds_preview.php',1).'?id='.$sondage_admin;
+	if ($origin == 'dolibarr') $urlback=dol_buildpath('/opensurvey/adminstuds_preview.php',1).'?id='.$sondage;
 	else
 	{
 		// Define $urlwithroot

@@ -29,11 +29,10 @@ require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/opensurvey/class/opensurveysondage.class.php");
 
 $action=GETPOST('action');
-$numsondage = $numsondageadmin = '';
+$numsondage = '';
 if (GETPOST('id'))
 {
-	$numsondageadmin=GETPOST("id",'alpha');
-	$numsondage=substr($numsondageadmin, 0, 16);
+	$numsondage=GETPOST("id",'alpha');
 }
 
 $object=new Opensurveysondage($db);

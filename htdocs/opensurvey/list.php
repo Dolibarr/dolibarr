@@ -28,7 +28,7 @@ require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 
 $action=GETPOST('action');
 $id=GETPOST('id');
-$numsondage=substr($id, 0, 16);
+$numsondage= $id;
 
 if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="p.titre";
@@ -49,7 +49,7 @@ if ($action == 'delete_confirm')
 
 	$object=new Opensurveysondage($db);
 	
-	$result=$object->delete($user,'',$numsondageadmin);
+	$result=$object->delete($user,'',$numsondage);
 	
 	$db->commit();
 }
@@ -80,7 +80,7 @@ if ($action == 'delete')
 print '<table class="liste">'."\n";
 print '<tr class="liste_titre"><td>'. $langs->trans("Ref").'</td><td>'. $langs->trans("Title") .'</td><td>'. $langs->trans("Type") .'</td><td>'. $langs->trans("Author") .'</td><td align="center">'. $langs->trans("ExpireDate") .'</td><td align="center">'. $langs->trans("NbOfVoters") .'</td><td colspan=2>&nbsp;</td>'."\n";
 
-$sql = "SELECT id_sondage, id_sondage_admin, mail_admin, format, origin, date_fin, titre, nom_admin";
+$sql = "SELECT id_sondage, mail_admin, format, origin, date_fin, titre, nom_admin";
 $sql.= " FROM ".MAIN_DB_PREFIX."opensurvey_sondage as p";
 // Count total nb of records
 $nbtotalofrecords = 0;
@@ -114,7 +114,7 @@ while ($i < min($num,$limit))
 	$var=!$var;
 	print '<tr '.$bc[$var].'>';
 	print '<td>';
-	print '<a href="'.dol_buildpath('/opensurvey/adminstuds.php',1).'?id='.$obj->id_sondage_admin.'">'.img_picto('','object_opensurvey').' '.$obj->id_sondage.'</a>';
+	print '<a href="'.dol_buildpath('/opensurvey/adminstuds.php',1).'?id='.$obj->id_sondage.'">'.img_picto('','object_opensurvey').' '.$obj->id_sondage.'</a>';
 	print '</td><td>'.$obj->titre.'</td><td>';
 	$type=($obj->format=='A' || $obj->format=='A+')?'classic':'date';
 	print img_picto('',dol_buildpath('/opensurvey/img/'.($type == 'classic'?'chart-32.png':'calendar-32.png'),1),'width="16"',1);
@@ -126,7 +126,7 @@ while ($i < min($num,$limit))
 	print '</td>';
 
 	print'<td align="center">'.$nbuser.'</td>'."\n";
-	print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?id='.$obj->id_sondage_admin.'&action=delete">'.img_picto('', 'delete.png').'</a></td>'."\n";
+	print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?id='.$obj->id_sondage.'&action=delete">'.img_picto('', 'delete.png').'</a></td>'."\n";
 
 	print '</tr>'."\n";
 	$i++;

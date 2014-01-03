@@ -35,16 +35,15 @@ if (!$user->admin) accessforbidden();
 
 // Initialisation des variables
 $action=GETPOST('action');
-$numsondage = $numsondageadmin = '';
+$numsondage = '';
 
 if (GETPOST('id')) {
-	$numsondageadmin = GETPOST('id', 'alpha');
-	$numsondage = substr($numsondageadmin, 0, 16);
+	$numsondage = GETPOST('id', 'alpha');
 }
 
 $object=new Opensurveysondage($db);
 
-$result=$object->fetch(0, $numsondageadmin);
+$result=$object->fetch(0, $numsondage);
 if ($result <= 0)
 {
 	dol_print_error($db,$object->error);
@@ -63,7 +62,7 @@ $expiredate=dol_mktime(0, 0, 0, GETPOST('expiremonth'), GETPOST('expireday'), GE
 // Delete
 if ($action == 'delete_confirm')
 {
-	$result=$object->delete($user,'',$numsondageadmin);
+	$result=$object->delete($user,'',$numsondage);
 
 	header('Location: '.dol_buildpath('/opensurvey/list.php',1));
 	exit();
@@ -87,7 +86,6 @@ if ($action == 'update')
 		$object->commentaires = GETPOST('nouveauxcommentaires');
 		$object->mail_admin = GETPOST('nouvelleadresse');
 		$object->date_fin = $expiredate;
-		$object->survey_link_visible = GETPOST('survey_link_visible')=='on'?1:0;
 		$object->canedit = GETPOST('canedit')=='on'?1:0;
 		$object->allow_comments = GETPOST('cancomment') == 'on' ? true : false;
 
@@ -163,7 +161,7 @@ $toutsujet=str_replace("@","<br>",$toutsujet);
 $toutsujet=str_replace("°","'",$toutsujet);
 
 
-print '<form name="updatesurvey" action="'.$_SERVER["PHP_SELF"].'?id='.$numsondageadmin.'" method="POST">'."\n";
+print '<form name="updatesurvey" action="'.$_SERVER["PHP_SELF"].'?id='.$numsondage.'" method="POST">'."\n";
 print '<input type="hidden" name="action" value="update">';
 
 $head = opensurvey_prepare_head($object);
@@ -178,7 +176,7 @@ $linkback = '<a href="'.dol_buildpath('/opensurvey/list.php',1).'">'.$langs->tra
 // Ref
 print '<tr><td width="18%">'.$langs->trans('Ref').'</td>';
 print '<td colspan="3">';
-print $form->showrefnav($object, 'sondage', $linkback, 1, 'id_sondage_admin', 'id_sondage_admin');
+print $form->showrefnav($object, 'sondage', $linkback, 1, 'id_sondage', 'id_sondage');
 print '</td>';
 print '</tr>';
 
@@ -274,15 +272,15 @@ dol_fiche_end();
  */
 print '<div class="tabsAction">';
 
-if ($action != 'edit') print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&id=' . $numsondageadmin . '">'.$langs->trans("Modify") . '</a>';
+if ($action != 'edit') print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&id=' . $numsondage . '">'.$langs->trans("Modify") . '</a>';
 
-if ($action != 'edit') print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?suppressionsondage=1&id='.$numsondageadmin.'&amp;action=delete">'.$langs->trans('Delete').'</a>';
+if ($action != 'edit') print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?suppressionsondage=1&id='.$numsondage.'&amp;action=delete">'.$langs->trans('Delete').'</a>';
 
 print '</div>';
 
 if ($action == 'delete')
 {
-	print $form->formconfirm($_SERVER["PHP_SELF"].'?&id='.$numsondageadmin, $langs->trans("RemovePoll"), $langs->trans("ConfirmRemovalOfPoll",$id), 'delete_confirm', '', '', 1);
+	print $form->formconfirm($_SERVER["PHP_SELF"].'?&id='.$numsondage, $langs->trans("RemovePoll"), $langs->trans("ConfirmRemovalOfPoll",$id), 'delete_confirm', '', '', 1);
 }
 
 
@@ -299,7 +297,7 @@ $comments = $object->getComments();
 
 if ($comments) {
 	foreach ($comments as $comment) {
-		print '<a href="'.dol_buildpath('/opensurvey/adminstuds.php',1).'?deletecomment='.$comment->id_comment.'&id='.$numsondageadmin.'"> '.img_picto('', 'delete.png').'</a> ';
+		print '<a href="'.dol_buildpath('/opensurvey/adminstuds.php',1).'?deletecomment='.$comment->id_comment.'&id='.$numsondage.'"> '.img_picto('', 'delete.png').'</a> ';
 		print $comment->usercomment.': '.dol_nl2br($comment->comment)." <br>";
 	}
 }

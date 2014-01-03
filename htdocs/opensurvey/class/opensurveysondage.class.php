@@ -47,11 +47,9 @@ class Opensurveysondage extends CommonObject
 	var $mail_admin;
 	var $nom_admin;
 	var $titre;
-	var $id_sondage_admin;
 	var $date_fin='';
 	var $format;
 	var $mailsonde;
-	var $survey_link_visible;
 	var $canedit;
 
 	/**
@@ -91,10 +89,8 @@ class Opensurveysondage extends CommonObject
 		if (isset($this->mail_admin)) $this->mail_admin=trim($this->mail_admin);
 		if (isset($this->nom_admin)) $this->nom_admin=trim($this->nom_admin);
 		if (isset($this->titre)) $this->titre=trim($this->titre);
-		if (isset($this->id_sondage_admin)) $this->id_sondage_admin=trim($this->id_sondage_admin);
 		if (isset($this->format)) $this->format=trim($this->format);
 		if (isset($this->mailsonde)) $this->mailsonde=trim($this->mailsonde);
-		if (isset($this->survey_link_visible)) $this->survey_link_visible=trim($this->survey_link_visible);
 		if (isset($this->canedit)) $this->canedit=trim($this->canedit);
 
 
@@ -110,11 +106,9 @@ class Opensurveysondage extends CommonObject
 		$sql.= "mail_admin,";
 		$sql.= "nom_admin,";
 		$sql.= "titre,";
-		$sql.= "id_sondage_admin,";
 		$sql.= "date_fin,";
 		$sql.= "format,";
 		$sql.= "mailsonde,";
-		$sql.= "survey_link_visible,";
 		$sql.= "canedit";
         $sql.= ") VALUES (";
 
@@ -123,11 +117,9 @@ class Opensurveysondage extends CommonObject
 		$sql.= " ".(! isset($this->mail_admin)?'NULL':"'".$this->db->escape($this->mail_admin)."'").",";
 		$sql.= " ".(! isset($this->nom_admin)?'NULL':"'".$this->db->escape($this->nom_admin)."'").",";
 		$sql.= " ".(! isset($this->titre)?'NULL':"'".$this->db->escape($this->titre)."'").",";
-		$sql.= " ".(! isset($this->id_sondage_admin)?'NULL':"'".$this->db->escape($this->id_sondage_admin)."'").",";
 		$sql.= " ".(! isset($this->date_fin) || dol_strlen($this->date_fin)==0?'NULL':$this->db->idate($this->date_fin)).",";
 		$sql.= " ".(! isset($this->format)?'NULL':"'".$this->db->escape($this->format)."'").",";
 		$sql.= " ".(! isset($this->mailsonde)?'NULL':"'".$this->db->escape($this->mailsonde)."'").",";
-		$sql.= " ".(! isset($this->survey_link_visible)?'NULL':"'".$this->db->escape($this->survey_link_visible)."'").",";
 		$sql.= " ".(! isset($this->canedit)?'NULL':"'".$this->db->escape($this->canedit)."'")."";
 
 		$sql.= ")";
@@ -193,19 +185,16 @@ class Opensurveysondage extends CommonObject
 		$sql.= " t.mail_admin,";
 		$sql.= " t.nom_admin,";
 		$sql.= " t.titre,";
-		$sql.= " t.id_sondage_admin,";
 		$sql.= " t.date_fin,";
 		$sql.= " t.format,";
 		$sql.= " t.mailsonde,";
-		$sql.= " t.survey_link_visible,";
 		$sql.= " t.canedit,";
 		$sql.= " t.allow_comments,";
 		$sql.= " t.sujet,";
 		$sql.= " t.tms";
         $sql.= " FROM ".MAIN_DB_PREFIX."opensurvey_sondage as t";
         if ($id > 0) $sql.= " WHERE t.rowid = ".$this->db->escape($id);
-        else if (strlen($numsurvey) == 16) $sql.= " WHERE t.id_sondage = '".$this->db->escape($numsurvey)."'";
-        else $sql.= " WHERE t.id_sondage_admin = '".$this->db->escape($numsurvey)."'";
+        else $sql.= " WHERE t.id_sondage = '".$this->db->escape($numsurvey)."'";
 
     	dol_syslog(get_class($this)."::fetch sql=".$sql, LOG_DEBUG);
         $resql=$this->db->query($sql);
@@ -216,18 +205,15 @@ class Opensurveysondage extends CommonObject
                 $obj = $this->db->fetch_object($resql);
 
                 //$this->id  = $obj->rowid;
-				$this->ref = $obj->id_sondage_admin;
 
 				$this->id_sondage = $obj->id_sondage;
 				$this->commentaires = $obj->commentaires;
 				$this->mail_admin = $obj->mail_admin;
 				$this->nom_admin = $obj->nom_admin;
 				$this->titre = $obj->titre;
-				$this->id_sondage_admin = $obj->id_sondage_admin;
 				$this->date_fin = $this->db->jdate($obj->date_fin);
 				$this->format = $obj->format;
 				$this->mailsonde = $obj->mailsonde;
-				$this->survey_link_visible = $obj->survey_link_visible;
 				$this->canedit = $obj->canedit;
 				$this->allow_comments = $obj->allow_comments;
 				$this->sujet = $obj->sujet;
@@ -275,10 +261,8 @@ class Opensurveysondage extends CommonObject
 		if (isset($this->mail_admin)) $this->mail_admin=trim($this->mail_admin);
 		if (isset($this->nom_admin)) $this->nom_admin=trim($this->nom_admin);
 		if (isset($this->titre)) $this->titre=trim($this->titre);
-		if (isset($this->id_sondage_admin)) $this->id_sondage_admin=trim($this->id_sondage_admin);
 		if (isset($this->format)) $this->format=trim($this->format);
 		if (isset($this->mailsonde)) $this->mailsonde=trim($this->mailsonde);
-		if (isset($this->survey_link_visible)) $this->survey_link_visible=trim($this->survey_link_visible);
 		$this->canedit = $this->canedit ? 1 : 0;
 		$this->allow_comments = $this->allow_comments ? 1 : 0;
 
@@ -293,16 +277,14 @@ class Opensurveysondage extends CommonObject
 		$sql.= " mail_admin=".(isset($this->mail_admin)?"'".$this->db->escape($this->mail_admin)."'":"null").",";
 		$sql.= " nom_admin=".(isset($this->nom_admin)?"'".$this->db->escape($this->nom_admin)."'":"null").",";
 		$sql.= " titre=".(isset($this->titre)?"'".$this->db->escape($this->titre)."'":"null").",";
-		$sql.= " id_sondage_admin=".(isset($this->id_sondage_admin)?"'".$this->db->escape($this->id_sondage_admin)."'":"null").",";
 		$sql.= " date_fin=".(dol_strlen($this->date_fin)!=0 ? "'".$this->db->idate($this->date_fin)."'" : 'null').",";
 		$sql.= " format=".(isset($this->format)?"'".$this->db->escape($this->format)."'":"null").",";
 		$sql.= " mailsonde=".(isset($this->mailsonde)?$this->db->escape($this->mailsonde):"null").",";
-		$sql.= " survey_link_visible=".(isset($this->survey_link_visible)?$this->db->escape($this->survey_link_visible):"null").",";
 		$sql.= " canedit=".$this->db->escape($this->canedit).",";
 		$sql.= " allow_comments=".$this->db->escape($this->allow_comments);
 		
         //$sql.= " WHERE rowid=".$this->id;
-		$sql.= " WHERE id_sondage_admin='".$this->db->escape($this->id_sondage_admin)."'";
+		$sql.= " WHERE id_sondage='".$this->db->escape($this->id_sondage)."'";
 
 		$this->db->begin();
 
@@ -350,15 +332,13 @@ class Opensurveysondage extends CommonObject
 	 *
      *	@param  User	$user        		User that deletes
      *  @param  int		$notrigger	 		0=launch triggers after, 1=disable triggers
-     *  @param	string	$numsondageadmin	Num sondage admin to delete
+     *  @param	string	$numsondage			Num sondage admin to delete
 	 *  @return	int					 		<0 if KO, >0 if OK
 	 */
-	function delete($user, $notrigger, $numsondageadmin)
+	function delete($user, $notrigger, $numsondage)
 	{
 		global $conf, $langs;
 		$error=0;
-
-		$numsondage=substr($numsondageadmin, 0, 16);
 
 		$this->db->begin();
 
@@ -389,7 +369,7 @@ class Opensurveysondage extends CommonObject
 			$resql=$this->db->query($sql);
 
     		$sql = "DELETE FROM ".MAIN_DB_PREFIX."opensurvey_sondage";
-    		$sql.= " WHERE id_sondage_admin = '".$this->db->escape($numsondageadmin)."'";
+    		$sql.= " WHERE id_sondage = '".$this->db->escape($numsondage)."'";
 
     		dol_syslog(get_class($this)."::delete sql=".$sql);
     		$resql = $this->db->query($sql);
@@ -515,11 +495,9 @@ class Opensurveysondage extends CommonObject
 		$this->mail_admin='';
 		$this->nom_admin='';
 		$this->titre='';
-		$this->id_sondage_admin='';
 		$this->date_fin='';
 		$this->format='';
 		$this->mailsonde='';
-		$this->survey_link_visible='';
 		$this->canedit=0;
 	}
 

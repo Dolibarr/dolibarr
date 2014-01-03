@@ -17,7 +17,6 @@
 
 CREATE TABLE llx_opensurvey_sondage (
        id_sondage VARCHAR(16) PRIMARY KEY,
-       id_sondage_admin VARCHAR(24),
        commentaires text,
        mail_admin VARCHAR(128),
        nom_admin VARCHAR(64),
@@ -25,7 +24,6 @@ CREATE TABLE llx_opensurvey_sondage (
        date_fin DATETIME,
        format VARCHAR(2),
        mailsonde varchar(2) DEFAULT '0',
-       survey_link_visible integer DEFAULT 1,
 	   canedit integer DEFAULT 0,
        allow_comments TINYINT(1) unsigned NOT NULL DEFAULT 1,
        origin VARCHAR(64),
