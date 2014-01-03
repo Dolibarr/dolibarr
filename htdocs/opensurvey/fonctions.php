@@ -195,7 +195,7 @@ function issetAndNoEmpty($name, $tableau = null)
 function getUrlSondage($id, $admin = false)
 {
 	if ($admin === true) {
-		$url = get_server_name().'adminstuds_preview.php?sondage='.$id;
+		$url = get_server_name().'adminstuds_preview.php?id='.$id;
 	} else {
 		$url = get_server_name().'/public/studs.php?sondage='.$id;
 	}
@@ -267,7 +267,7 @@ function ajouter_sondage($origin)
 	dol_syslog($sql);
 	$resql=$db->query($sql);
 
-	if ($origin == 'dolibarr') $urlback=dol_buildpath('/opensurvey/adminstuds_preview.php',1).'?sondage='.$sondage_admin;
+	if ($origin == 'dolibarr') $urlback=dol_buildpath('/opensurvey/adminstuds_preview.php',1).'?id='.$sondage_admin;
 	else
 	{
 		// Define $urlwithroot
