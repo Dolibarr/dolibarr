@@ -44,6 +44,13 @@ if (GETPOST('id')) {
 
 $object=new Opensurveysondage($db);
 
+$result=$object->fetch(0, $numsondageadmin);
+if ($result <= 0)
+{
+	dol_print_error($db,$object->error);
+	exit;
+}
+
 $expiredate=dol_mktime(0, 0, 0, GETPOST('expiremonth'), GETPOST('expireday'), GETPOST('expireyear'));
 
 
@@ -72,12 +79,6 @@ if ($action == 'update')
 		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Title")),'errors');
 		$error++;
 		$action = 'edit';
-	}
-
-	if (! $error)
-	{
-		$res=$object->fetch(0,$numsondageadmin);
-		if ($res < 0) dol_print_error($db,$object->error);
 	}
 
 	if (! $error)
@@ -120,10 +121,8 @@ if (GETPOST('ajoutcomment'))
 		$comment = GETPOST("comment");
 		$comment_user = GETPOST('commentuser');
 
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."opensurvey_comments (id_sondage, comment, usercomment)";
-		$sql.= " VALUES ('".$db->escape($object->id_sondage)."','".$db->escape($comment)."','".$db->escape($comment_user)."')";
-		$resql = $db->query($sql);
-		dol_syslog("sql=".$sql);
+		$resql = $object->addComment($comment, $comment_user);
+		
 		if (! $resql)
 		{
 			$err |= COMMENT_INSERT_FAILED;
@@ -145,13 +144,6 @@ if ($idcomment)
  */
 
 $form=new Form($db);
-
-$result=$object->fetch(0, $numsondageadmin);
-if ($result <= 0)
-{
-	dol_print_error($db,$object->error);
-	exit;
-}
 
 $arrayofjs=array();
 $arrayofcss=array('/opensurvey/css/style.css');

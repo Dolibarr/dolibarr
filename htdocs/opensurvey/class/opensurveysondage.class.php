@@ -542,5 +542,26 @@ class Opensurveysondage extends CommonObject
 		
 		return $comments;
 	}
+	
+	/**
+	 * Adds a comment to the poll
+	 * 
+	 * @param string $comment Comment content
+	 * @param string $comment_user Comment author
+	 * @return boolean False in case of the query fails, true if it was successful
+	 */
+	public function addComment($comment, $comment_user) {
+		
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."opensurvey_comments (id_sondage, comment, usercomment)";
+		$sql.= " VALUES ('".$this->db->escape($this->id_sondage)."','".$this->db->escape($comment)."','".$this->db->escape($comment_user)."')";
+		$resql = $this->db->query($sql);
+		dol_syslog("sql=".$sql);
+		
+		if (!$resql) {
+			return false;
+		}
+		
+		return true;
+	}
 }
 ?>

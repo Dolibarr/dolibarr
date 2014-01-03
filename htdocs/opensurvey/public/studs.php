@@ -84,10 +84,8 @@ if (GETPOST('ajoutcomment'))
 		$comment = GETPOST("comment");
 		$comment_user = GETPOST('commentuser');
 
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."opensurvey_comments (id_sondage, comment, usercomment)";
-		$sql.= " VALUES ('".$db->escape($numsondage)."','".$db->escape($comment)."','".$db->escape($comment_user)."')";
-		$resql = $db->query($sql);
-		dol_syslog("sql=".$sql);
+		$resql = $object->addComment($comment, $comment_user);
+		
 		if (! $resql) dol_print_error($db);
 	}
 }
@@ -227,15 +225,6 @@ if ($idcomment)
  */
 
 $form=new Form($db);
-$object=new OpenSurveySondage($db);
-
-$result=$object->fetch(0,$numsondage);
-if ($result <= 0)
-{
-	print $langs->trans("ErrorRecordNotFound");
-	llxFooterSurvey();
-	exit;
-}
 
 $arrayofjs=array();
 $arrayofcss=array('/opensurvey/css/style.css');
