@@ -295,6 +295,7 @@ print_fiche_titre($langs->trans("CommentsOfVoters"),'','');
 // Comment list
 $sql = 'SELECT id_comment, usercomment, comment';
 $sql.= ' FROM '.MAIN_DB_PREFIX.'opensurvey_comments';
+$sql.= " WHERE id_sondage='".$db->escape($numsondage)."'";
 $sql.= " ORDER BY id_comment";
 $resql = $db->query($sql);
 $num_rows=$db->num_rows($resql);
