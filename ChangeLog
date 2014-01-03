@@ -4,55 +4,59 @@ English Dolibarr ChangeLog
 
 
 ***** ChangeLog for 3.4.2 compared to 3.4.1 *****
-Fix: field's problem into company's page (RIB)
-Fix: Document cerfa doesn't contained firstname & lastname from donator
+Fix: field's problem into company's page (RIB).
+Fix: Document cerfa doesn't contained firstname & lastname from donator.
 Fix: Bad rounding on margin calculations and display.
 Fix: Option drop table into backup was broken.
-Fix: [ bug #1105 ] Searching Boxes other search option
-Fix: wrong buy price update
-Fix: [ bug #1142 ] Set paiement on invoice (PGSql)
-Fix: [ bug #1145 ] Agenda button list type do not display
-Fix: [ bug #1148 ] Product consomation : supplier order bad status
-Fix: [ bug #1159 ] Commercial search "other" give p.note do not exists
-Fix: [ bug #1174 ] Product translated description not good into PDF
-Fix: [ bug #1163 ] SQL Error when searching for supplier orders
-Fix: [ bug #1162 ] Translaction for morning and afternoon
-Fix: [ bug #1161 ] Search on product label
+Fix: [ bug #1105 ] Searching Boxes other search option.
+Fix: wrong buy price update.
+Fix: [ bug #1142 ] Set paiement on invoice (PGSql).
+Fix: [ bug #1145 ] Agenda button list type do not display.
+Fix: [ bug #1148 ] Product consomation : supplier order bad status.
+Fix: [ bug #1159 ] Commercial search "other" give p.note do not exists.
+Fix: [ bug #1174 ] Product translated description not good into PDF.
+Fix: [ bug #1163 ] SQL Error when searching for supplier orders.
+Fix: [ bug #1162 ] Translaction for morning and afternoon.
+Fix: [ bug #1161 ] Search on product label.
 Fix: [ bug #1075 ] POS module doesn't decrement stock of products in delayed payment mode.
-Fix: [ bug #1171 ] Documents lost in interventions after validating
-Fix: fix unsubscribe URL into mailing when sending manually (not by script)
-Fix: [ bug #1182 ] ODT company_country tag is htmlencoded
-Fix: [ bug #1196 ] Product barcode search does not expect 13th digit on EAN13 type
-Fix: [ bug #1202 ] Wrong amount in deposit % invoice from proposal
+Fix: [ bug #1171 ] Documents lost in interventions after validating.
+Fix: fix unsubscribe URL into mailing when sending manually (not by script).
+Fix: [ bug #1182 ] ODT company_country tag is htmlencoded.
+Fix: [ bug #1196 ] Product barcode search does not expect 13th digit on EAN13 type.
+Fix: [ bug #1202 ] Wrong amount in deposit % invoice from proposal.
+Fix: Removed analytics tags into doc page.
+Fix: Call Image on this instead of pdf.
+Fix: Missing parameter for photo.
+Fix: Bad SQL request for turnover report.
 
 ***** ChangeLog for 3.4.1 compared to 3.4.0 *****
-Fix: Display buying price on line edit when no supplier price is defined
-Fix: Retrieving of margin info when invoice created automatically from order
-Fix: Reordering supplier products in list by supplier or supplier ref was crashing
-Fix: [ bug #1029 ] Tulip numbering mask
-Fix: Supplier invoice and supplier order are not displayed into object link into agenda event card
-Fix: [ bug #1033 ] SUPPLIER REF disappeared
-Fix: update extrafield do not display immediatly after update
-Fix: Fix bug with canvas thirdparty
-Fix: [ bug #1037 ] Consumption> Supplier invoices related
-Fix: User group name do not display in card (view or edit mode)
-Fix: Link "Show all supplier invoice" on suplier card not working 
-Fix: [ bug #1039 ] Pre-defined invoices conversion
-Fix: If only service module is activated, it's impossible to delete service
-Fix: [ bug #1043 ] Bad interventions ref numbering
-Fix: Mailing module : if an email is already in destinaires list all other email from selector was not inserted
-Fix: Localtaxes balance not showing
-Fix: Intervention box links to contracts id
-Fix: Compatiblity with multicompany module
-Fix: Edit propal line was losing product supplier price id
-Fix: Delete linked element to supplier invoice when deleted 
-Fix: [ bug #1061 ] Bad info shipped products
-Fix: [ bug #1062 ] Documents lost in propals and contracts validating
-Fix: Supplier price displayed on document lines and margin infos didnt take discount
-Fix: sorting on qty did not work in supplier product list
-Fix: there was no escaping on filter fields in supplier product list
-Fix: bugs on margin reports and better margin calculation on credit notes
-Qual: Add travis-ci integration
+Fix: Display buying price on line edit when no supplier price is defined.
+Fix: Retrieving of margin info when invoice created automatically from order.
+Fix: Reordering supplier products in list by supplier or supplier ref was crashing.
+Fix: [ bug #1029 ] Tulip numbering mask.
+Fix: Supplier invoice and supplier order are not displayed into object link into agenda event card.
+Fix: [ bug #1033 ] SUPPLIER REF disappeared.
+Fix: update extrafield do not display immediatly after update.
+Fix: Fix bug with canvas thirdparty.
+Fix: [ bug #1037 ] Consumption> Supplier invoices related.
+Fix: User group name do not display in card (view or edit mode).
+Fix: Link "Show all supplier invoice" on suplier card not working. 
+Fix: [ bug #1039 ] Pre-defined invoices conversion.
+Fix: If only service module is activated, it's impossible to delete service.
+Fix: [ bug #1043 ] Bad interventions ref numbering.
+Fix: Mailing module : if an email is already in destinaires list all other email from selector was not inserted.
+Fix: Localtaxes balance not showing.
+Fix: Intervention box links to contracts id.
+Fix: Compatiblity with multicompany module.
+Fix: Edit propal line was losing product supplier price id.
+Fix: Delete linked element to supplier invoice when deleted.
+Fix: [ bug #1061 ] Bad info shipped products.
+Fix: [ bug #1062 ] Documents lost in propals and contracts validating.
+Fix: Supplier price displayed on document lines and margin infos didnt take discount.
+Fix: sorting on qty did not work in supplier product list.
+Fix: there was no escaping on filter fields in supplier product list.
+Fix: bugs on margin reports and better margin calculation on credit notes.
+Qual: Add travis-ci integration.
 
 ***** ChangeLog for 3.4 compared to 3.3.* *****
 For users:
