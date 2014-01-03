@@ -293,21 +293,12 @@ print '<form name="formulaire5" action="#" method="POST">'."\n";
 print_fiche_titre($langs->trans("CommentsOfVoters"),'','');
 
 // Comment list
-$sql = 'SELECT id_comment, usercomment, comment';
-$sql.= ' FROM '.MAIN_DB_PREFIX.'opensurvey_comments';
-$sql.= " WHERE id_sondage='".$db->escape($numsondage)."'";
-$sql.= " ORDER BY id_comment";
-$resql = $db->query($sql);
-$num_rows=$db->num_rows($resql);
-if ($num_rows > 0)
-{
-	$i = 0;
-	while ( $i < $num_rows)
-	{
-		$obj=$db->fetch_object($resql);
-		print '<a href="'.dol_buildpath('/opensurvey/adminstuds.php',1).'?deletecomment='.$obj->id_comment.'&id='.$numsondageadmin.'"> '.img_picto('', 'delete.png').'</a> ';
-		print $obj->usercomment.' : '.dol_nl2br($obj->comment)." <br>";
-		$i++;
+$comments = $object->getComments();
+
+if ($comments) {
+	foreach ($comments as $comment) {
+		print '<a href="'.dol_buildpath('/opensurvey/adminstuds.php',1).'?deletecomment='.$comment->id_comment.'&id='.$numsondageadmin.'"> '.img_picto('', 'delete.png').'</a> ';
+		print $comment->usercomment.': '.dol_nl2br($comment->comment)." <br>";
 	}
 }
 else
@@ -320,7 +311,7 @@ print '<br>';
 // Add comment
 print $langs->trans("AddACommentForPoll") . '<br>';
 print '<textarea name="comment" rows="2" cols="80"></textarea><br>'."\n";
-print $langs->trans("Name") .' : <input type=text name="commentuser"><br>'."\n";
+print $langs->trans("Name") .': <input type="text" name="commentuser" value="'.$user->getFullName($langs).'"><br>'."\n";
 print '<input type="submit" class="button" name="ajoutcomment" value="'.dol_escape_htmltag($langs->trans("AddComment")).'"><br>'."\n";
 if (isset($erreur_commentaire_vide) && $erreur_commentaire_vide=="yes") {
 	print "<font color=#FF0000>" . $langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Name")) . "</font>";

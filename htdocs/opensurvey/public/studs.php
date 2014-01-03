@@ -697,23 +697,16 @@ print '<br>';
 
 
 // Comment list
-$sql = 'SELECT id_comment, usercomment, comment';
-$sql.= ' FROM '.MAIN_DB_PREFIX.'opensurvey_comments';
-$sql.= " WHERE id_sondage='".$db->escape($numsondage)."'";
-$sql.= " ORDER BY id_comment";
-$resql = $db->query($sql);
-$num_rows=$db->num_rows($resql);
-if ($num_rows > 0)
+$comments = $object->getComments();
+
+if ($comments)
 {
-	$i = 0;
 	print "<br><b>" . $langs->trans("CommentsOfVoters") . " :</b><br>\n";
-	while ( $i < $num_rows)
-	{
-		$obj=$db->fetch_object($resql);
+	
+	foreach ($comments as $obj) {
 		print '<div class="comment"><span class="usercomment">';
 		if (in_array($obj->usercomment, $listofvoters)) print '<a href="'.$_SERVER["PHP_SELF"].'?deletecomment='.$obj->id_comment.'&sondage='.$numsondage.'"> '.img_picto('', 'delete.png').'</a> ';
 		print $obj->usercomment.' :</span> <span class="comment">'.dol_nl2br($obj->comment)."</span></div>";
-		$i++;
 	}
 }
 

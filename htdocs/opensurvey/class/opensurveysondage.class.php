@@ -517,5 +517,30 @@ class Opensurveysondage extends CommonObject
 		$this->canedit=0;
 	}
 
+	/**
+	 * Returns all comments for the current opensurvey poll
+	 * 
+	 * @return Object[]
+	 */
+	public function getComments() {
+		
+		$sql = 'SELECT id_comment, usercomment, comment';
+		$sql.= ' FROM '.MAIN_DB_PREFIX.'opensurvey_comments';
+		$sql.= " WHERE id_sondage='".$this->db->escape($this->id_sondage)."'";
+		$sql.= " ORDER BY id_comment";
+		$resql = $this->db->query($sql);
+		
+		$num_rows=$this->db->num_rows($resql);
+		
+		$comments = array();
+		
+		if ($num_rows > 0) {
+			while ($obj = $this->db->fetch_object($resql)) {
+				$comments[] = $obj;
+			}
+		}
+		
+		return $comments;
+	}
 }
 ?>
