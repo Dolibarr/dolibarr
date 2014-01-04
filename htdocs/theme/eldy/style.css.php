@@ -509,8 +509,8 @@ div#tmenu_tooltip {
 <?php if (GETPOST("optioncss") == 'print') {  ?>
 	display:none;
 <?php } else { ?>
-	height: <?php print ($heightmenu2+1); ?>px;
-	padding-right: 100px;
+	/*height: <?php print ($heightmenu2+1); ?>px;
+	padding-right: 100px;*/
 	background: <?php echo $colorbackvmenu; ?>;
 	box-shadow: 0 0 6px rgba(0, 0, 0, .4) !important;
     <?php if ($usecss3) { ?>
