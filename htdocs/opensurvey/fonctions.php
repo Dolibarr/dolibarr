@@ -298,6 +298,10 @@ function ajouter_sondage($origin)
 	unset($_SESSION["mailsonde"]);
 	unset($_SESSION['allow_comments']);
 	unset($_SESSION['allow_spy']);
+	unset($_SESSION['toutchoix']);
+	unset($_SESSION['caneditsondage']);
+	unset($_SESSION['totalchoixjour']);
+	unset($_SESSION['champdatefin']);
 
 	header("Location: ".$urlback);
 	exit();
