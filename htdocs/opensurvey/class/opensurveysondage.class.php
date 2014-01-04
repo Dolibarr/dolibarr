@@ -91,19 +91,7 @@ class Opensurveysondage extends CommonObject
 		$error=0;
 
 		// Clean parameters
-
-		$this->id_sondage = trim($this->id_sondage);
-		$this->commentaires = trim($this->commentaires);
-		$this->mail_admin = trim($this->mail_admin);
-		$this->nom_admin = trim($this->nom_admin);
-		$this->titre = trim($this->titre);
-		$this->format = trim($this->format);
-		$this->mailsonde = ($this->mailsonde ? 1 : 0);
-		$this->canedit = ($this->canedit ? 1 : 0);
-		$this->allow_comments = ($this->allow_comments ? 1 : 0);
-		$this->allow_spy = ($this->allow_spy ? 1 : 0);
-		$this->origin = trim($this->origin);
-		$this->sujet = trim($this->sujet);
+		$this->cleanParameters();
 
 		// Check parameters
 		// Put here code to add control on parameters values
@@ -267,17 +255,7 @@ class Opensurveysondage extends CommonObject
 		$error=0;
 
 		// Clean parameters
-
-		if (isset($this->id_sondage)) $this->id_sondage=trim($this->id_sondage);
-		if (isset($this->commentaires)) $this->commentaires=trim($this->commentaires);
-		if (isset($this->mail_admin)) $this->mail_admin=trim($this->mail_admin);
-		if (isset($this->nom_admin)) $this->nom_admin=trim($this->nom_admin);
-		if (isset($this->titre)) $this->titre=trim($this->titre);
-		if (isset($this->format)) $this->format=trim($this->format);
-		if (isset($this->mailsonde)) $this->mailsonde=trim($this->mailsonde);
-		$this->canedit = $this->canedit ? 1 : 0;
-		$this->allow_comments = $this->allow_comments ? 1 : 0;
-		$this->allow_spy = $this->allow_spy ? 1 : 0;
+		$this->cleanParameters();
 
 		// Check parameters
 		// Put here code to add a control on parameters values
@@ -505,6 +483,22 @@ class Opensurveysondage extends CommonObject
 		}
 		
 		return true;
+	}
+	
+	private function cleanParameters() {
+		
+		$this->id_sondage = trim($this->id_sondage);
+		$this->commentaires = trim($this->commentaires);
+		$this->mail_admin = trim($this->mail_admin);
+		$this->nom_admin = trim($this->nom_admin);
+		$this->titre = trim($this->titre);
+		$this->format = trim($this->format);
+		$this->mailsonde = ($this->mailsonde ? 1 : 0);
+		$this->canedit = ($this->canedit ? 1 : 0);
+		$this->allow_comments = ($this->allow_comments ? 1 : 0);
+		$this->allow_spy = ($this->allow_spy ? 1 : 0);
+		$this->origin = trim($this->origin);
+		$this->sujet = trim($this->sujet);
 	}
 }
 ?>
