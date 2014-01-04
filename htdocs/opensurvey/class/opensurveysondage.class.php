@@ -485,6 +485,9 @@ class Opensurveysondage extends CommonObject
 		return true;
 	}
 	
+	/**
+	 * Cleans all the class variables before doing an update or an insert
+	 */
 	private function cleanParameters() {
 		
 		$this->id_sondage = trim($this->id_sondage);
