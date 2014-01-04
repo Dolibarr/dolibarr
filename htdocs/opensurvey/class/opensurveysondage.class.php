@@ -51,6 +51,9 @@ class Opensurveysondage extends CommonObject
 	var $format;
 	var $mailsonde;
 	var $canedit;
+	
+	public $origin;
+	public $sujet;
 
 	/**
 	 * Allow comments on this poll
@@ -89,16 +92,18 @@ class Opensurveysondage extends CommonObject
 
 		// Clean parameters
 
-		if (isset($this->id_sondage)) $this->id_sondage=trim($this->id_sondage);
-		if (isset($this->commentaires)) $this->commentaires=trim($this->commentaires);
-		if (isset($this->mail_admin)) $this->mail_admin=trim($this->mail_admin);
-		if (isset($this->nom_admin)) $this->nom_admin=trim($this->nom_admin);
-		if (isset($this->titre)) $this->titre=trim($this->titre);
-		if (isset($this->format)) $this->format=trim($this->format);
-		if (isset($this->mailsonde)) $this->mailsonde=trim($this->mailsonde);
-		if (isset($this->canedit)) $this->canedit=trim($this->canedit);
-
-
+		$this->id_sondage = trim($this->id_sondage);
+		$this->commentaires = trim($this->commentaires);
+		$this->mail_admin = trim($this->mail_admin);
+		$this->nom_admin = trim($this->nom_admin);
+		$this->titre = trim($this->titre);
+		$this->format = trim($this->format);
+		$this->mailsonde = ($this->mailsonde ? 1 : 0);
+		$this->canedit = ($this->canedit ? 1 : 0);
+		$this->allow_comments = ($this->allow_comments ? 1 : 0);
+		$this->allow_spy = ($this->allow_spy ? 1 : 0);
+		$this->origin = trim($this->origin);
+		$this->sujet = trim($this->sujet);
 
 		// Check parameters
 		// Put here code to add control on parameters values
@@ -114,21 +119,29 @@ class Opensurveysondage extends CommonObject
 		$sql.= "date_fin,";
 		$sql.= "format,";
 		$sql.= "mailsonde,";
-		$sql.= "canedit";
+		$sql.= "canedit,";
+		$sql.= "allow_comments,";
+		$sql.= "allow_spy,";
+		$sql.= "origin,";
+		$sql.= "sujet";
         $sql.= ") VALUES (";
 
-		$sql.= " ".(! isset($this->id_sondage)?'NULL':"'".$this->db->escape($this->id_sondage)."'").",";
-		$sql.= " ".(! isset($this->commentaires)?'NULL':"'".$this->db->escape($this->commentaires)."'").",";
-		$sql.= " ".(! isset($this->mail_admin)?'NULL':"'".$this->db->escape($this->mail_admin)."'").",";
-		$sql.= " ".(! isset($this->nom_admin)?'NULL':"'".$this->db->escape($this->nom_admin)."'").",";
-		$sql.= " ".(! isset($this->titre)?'NULL':"'".$this->db->escape($this->titre)."'").",";
-		$sql.= " ".(! isset($this->date_fin) || dol_strlen($this->date_fin)==0?'NULL':$this->db->idate($this->date_fin)).",";
-		$sql.= " ".(! isset($this->format)?'NULL':"'".$this->db->escape($this->format)."'").",";
-		$sql.= " ".(! isset($this->mailsonde)?'NULL':"'".$this->db->escape($this->mailsonde)."'").",";
-		$sql.= " ".(! isset($this->canedit)?'NULL':"'".$this->db->escape($this->canedit)."'")."";
+		$sql.= "'".$this->db->escape($this->id_sondage)."',";
+		$sql.= " ".(empty($this->commentaires)?'NULL':"'".$this->db->escape($this->commentaires)."'").",";
+		$sql.= " ".(empty($this->mail_admin)?'NULL':"'".$this->db->escape($this->mail_admin)."'").",";
+		$sql.= " '".$this->db->escape($this->nom_admin)."',";
+		$sql.= " '".$this->db->escape($this->titre)."',";
+		$sql.= " '".$this->db->idate($this->date_fin)."',";
+		$sql.= " '".$this->db->escape($this->format)."',";
+		$sql.= " ".$this->db->escape($this->mailsonde).",";
+		$sql.= " ".$this->db->escape($this->canedit).",";
+		$sql.= " ".$this->db->escape($this->allow_comments).",";
+		$sql.= " ".$this->db->escape($this->allow_spy).",";
+		$sql.= " '".$this->db->escape($this->origin)."',";
+		$sql.= " '".$this->db->escape($this->sujet)."'";
 		
 		$sql.= ")";
-
+		
 		$this->db->begin();
 
 	   	dol_syslog(get_class($this)."::create sql=".$sql, LOG_DEBUG);
@@ -137,8 +150,6 @@ class Opensurveysondage extends CommonObject
 
 		if (! $error)
         {
-            $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."opensurvey_sondage");
-
 			if (! $notrigger)
 			{
 	            // Uncomment this and change MYOBJECT to your own tag if you

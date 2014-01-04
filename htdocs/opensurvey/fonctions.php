@@ -230,6 +230,8 @@ function dol_survey_random($car)
 function ajouter_sondage($origin)
 {
 	global $db;
+	
+	require_once DOL_DOCUMENT_ROOT.'/opensurvey/class/opensurveysondage.class.php';
 
 	$sondage=dol_survey_random(16);
 
@@ -253,20 +255,27 @@ function ajouter_sondage($origin)
 	if (is_numeric($date_fin) === false) {
 		$date_fin = time()+15552000;
 	}
-	$canedit=empty($_SESSION['formatcanedit'])?'0':'1';
+	$canedit=empty($_SESSION['caneditsondage']) ? 0 : 1;
 	$allow_comments = empty($_SESSION['allow_comments']) ? 0 : 1;
 	$allow_spy = empty($_SESSION['allow_spy']) ? 0 : 1;
 	
 	// Insert survey
-	$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'opensurvey_sondage';
-	$sql.= '(id_sondage, commentaires, mail_admin, nom_admin, titre, date_fin, format, mailsonde, canedit, allow_comments, allow_spy, origin, sujet)';
-	$sql.= " VALUES ('".$db->escape($sondage)."', '".$db->escape($_SESSION['commentaires'])."', '".$db->escape($_SESSION['adresse'])."', '".$db->escape($_SESSION['nom'])."',";
-	$sql.= " '".$db->escape($_SESSION['titre'])."', '".$db->idate($date_fin)."', '".$_SESSION['formatsondage']."', '".$db->escape($_SESSION['mailsonde'])."',";
-	$sql.= " '".$canedit."', '".$allow_comments."', '".$allow_spy."', '".$db->escape($origin)."',";
-	$sql.= " '".$db->escape($_SESSION['toutchoix'])."'";
-	$sql.= ")";
-	dol_syslog($sql);
-	$resql=$db->query($sql);
+	$opensurveysondage = new Opensurveysondage($db);
+	$opensurveysondage->id_sondage = $sondage;
+	$opensurveysondage->commentaires = $_SESSION['commentaires'];
+	$opensurveysondage->mail_admin = $_SESSION['adresse'];
+	$opensurveysondage->nom_admin = $_SESSION['nom'];
+	$opensurveysondage->titre = $_SESSION['titre'];
+	$opensurveysondage->date_fin = $date_fin;
+	$opensurveysondage->format = $_SESSION['formatsondage'];
+	$opensurveysondage->mailsonde = $_SESSION['mailsonde'];
+	$opensurveysondage->canedit = $canedit;
+	$opensurveysondage->allow_comments = $allow_comments;
+	$opensurveysondage->allow_spy = $allow_spy;
+	$opensurveysondage->origin = $origin;
+	$opensurveysondage->sujet = $_SESSION['toutchoix'];
+	
+	$opensurveysondage->create(null);
 
 	if ($origin == 'dolibarr') $urlback=dol_buildpath('/opensurvey/adminstuds_preview.php',1).'?id='.$sondage;
 	else
@@ -279,8 +288,6 @@ function ajouter_sondage($origin)
 		$url=$urlwithouturlroot.dol_buildpath('/opensurvey/public/studs.php',1).'?sondage='.$sondage;
 
 		$urlback=$url;
-
-		//var_dump($urlback);exit;
 	}
 
 	unset($_SESSION["titre"]);
