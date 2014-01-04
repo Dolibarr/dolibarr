@@ -389,7 +389,7 @@ if ($object->allow_spy) {
 		print '<tr>'."\n";
 
 		// ligne d'un usager pré-authentifié
-		$mod_ok = ($object->canedit || (! empty($nombase) && in_array($nombase, $listofvoters)));
+		$mod_ok = (! empty($nombase) && in_array($nombase, $listofvoters));
 
 		// Name
 		$nombase=str_replace("°","'",$obj->nom);

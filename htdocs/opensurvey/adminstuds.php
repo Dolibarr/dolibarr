@@ -86,7 +86,6 @@ if ($action == 'update')
 		$object->commentaires = GETPOST('nouveauxcommentaires');
 		$object->mail_admin = GETPOST('nouvelleadresse');
 		$object->date_fin = $expiredate;
-		$object->canedit = GETPOST('canedit')=='on'?1:0;
 		$object->allow_comments = GETPOST('cancomment') == 'on' ? true : false;
 		$object->allow_spy = GETPOST('canseeothersvote') == 'on' ? true : false;
 		$object->mailsonde = GETPOST('mailsonde') == 'on' ? true : false;
@@ -230,15 +229,6 @@ if ($action == 'edit')
 	print '<input type="checkbox" name="mailsonde" size="40"'.($object->mailsonde?' checked="true"':'').'">';
 }
 else print yn($object->mailsonde);
-print '</td></tr>';
-
-// Can edit other votes
-print '<tr><td>'.$langs->trans('CanEditVotes').'</td><td colspan="2">';
-if ($action == 'edit')
-{
-	print '<input type="checkbox" name="canedit" size="40"'.($object->canedit?' checked="true"':'').'">';
-}
-else print yn($object->canedit);
 print '</td></tr>';
 
 // Users can comment

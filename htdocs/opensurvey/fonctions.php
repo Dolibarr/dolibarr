@@ -255,7 +255,6 @@ function ajouter_sondage($origin)
 	if (is_numeric($date_fin) === false) {
 		$date_fin = time()+15552000;
 	}
-	$canedit=empty($_SESSION['caneditsondage']) ? 0 : 1;
 	$allow_comments = empty($_SESSION['allow_comments']) ? 0 : 1;
 	$allow_spy = empty($_SESSION['allow_spy']) ? 0 : 1;
 	
@@ -269,7 +268,6 @@ function ajouter_sondage($origin)
 	$opensurveysondage->date_fin = $date_fin;
 	$opensurveysondage->format = $_SESSION['formatsondage'];
 	$opensurveysondage->mailsonde = $_SESSION['mailsonde'];
-	$opensurveysondage->canedit = $canedit;
 	$opensurveysondage->allow_comments = $allow_comments;
 	$opensurveysondage->allow_spy = $allow_spy;
 	$opensurveysondage->origin = $origin;
@@ -294,12 +292,10 @@ function ajouter_sondage($origin)
 	unset($_SESSION["nom"]);
 	unset($_SESSION["adresse"]);
 	unset($_SESSION["commentaires"]);
-	unset($_SESSION["canedit"]);
 	unset($_SESSION["mailsonde"]);
 	unset($_SESSION['allow_comments']);
 	unset($_SESSION['allow_spy']);
 	unset($_SESSION['toutchoix']);
-	unset($_SESSION['caneditsondage']);
 	unset($_SESSION['totalchoixjour']);
 	unset($_SESSION['champdatefin']);
 

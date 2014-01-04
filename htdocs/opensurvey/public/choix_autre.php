@@ -102,7 +102,6 @@ if (isset($_POST["confirmecreation"]) || isset($_POST["confirmecreation_x"]))
 	{
 		//format du sondage AUTRE
 		$_SESSION["formatsondage"]="A";
-		$_SESSION["caneditsondage"]=$_SESSION["canedit"];
 
 		// Add into database
 		ajouter_sondage($origin);

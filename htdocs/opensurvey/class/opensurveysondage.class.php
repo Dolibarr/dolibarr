@@ -50,7 +50,6 @@ class Opensurveysondage extends CommonObject
 	var $date_fin='';
 	var $format;
 	var $mailsonde;
-	var $canedit;
 	
 	public $origin;
 	public $sujet;
@@ -107,7 +106,6 @@ class Opensurveysondage extends CommonObject
 		$sql.= "date_fin,";
 		$sql.= "format,";
 		$sql.= "mailsonde,";
-		$sql.= "canedit,";
 		$sql.= "allow_comments,";
 		$sql.= "allow_spy,";
 		$sql.= "origin,";
@@ -122,7 +120,6 @@ class Opensurveysondage extends CommonObject
 		$sql.= " '".$this->db->idate($this->date_fin)."',";
 		$sql.= " '".$this->db->escape($this->format)."',";
 		$sql.= " ".$this->db->escape($this->mailsonde).",";
-		$sql.= " ".$this->db->escape($this->canedit).",";
 		$sql.= " ".$this->db->escape($this->allow_comments).",";
 		$sql.= " ".$this->db->escape($this->allow_spy).",";
 		$sql.= " '".$this->db->escape($this->origin)."',";
@@ -189,7 +186,6 @@ class Opensurveysondage extends CommonObject
 		$sql.= " t.date_fin,";
 		$sql.= " t.format,";
 		$sql.= " t.mailsonde,";
-		$sql.= " t.canedit,";
 		$sql.= " t.allow_comments,";
 		$sql.= " t.allow_spy,";
 		$sql.= " t.sujet,";
@@ -213,7 +209,6 @@ class Opensurveysondage extends CommonObject
 				$this->date_fin = $this->db->jdate($obj->date_fin);
 				$this->format = $obj->format;
 				$this->mailsonde = $obj->mailsonde;
-				$this->canedit = $obj->canedit;
 				$this->allow_comments = $obj->allow_comments;
 				$this->allow_spy = $obj->allow_spy;
 				$this->sujet = $obj->sujet;
@@ -271,7 +266,6 @@ class Opensurveysondage extends CommonObject
 		$sql.= " date_fin=".(dol_strlen($this->date_fin)!=0 ? "'".$this->db->idate($this->date_fin)."'" : 'null').",";
 		$sql.= " format=".(isset($this->format)?"'".$this->db->escape($this->format)."'":"null").",";
 		$sql.= " mailsonde=".(isset($this->mailsonde)?$this->db->escape($this->mailsonde):"null").",";
-		$sql.= " canedit=".$this->db->escape($this->canedit).",";
 		$sql.= " allow_comments=".$this->db->escape($this->allow_comments).",";
 		$sql.= " allow_spy=".$this->db->escape($this->allow_spy);
 		
@@ -435,7 +429,6 @@ class Opensurveysondage extends CommonObject
 		$this->date_fin='';
 		$this->format='';
 		$this->mailsonde='';
-		$this->canedit=0;
 	}
 
 	/**
@@ -497,7 +490,6 @@ class Opensurveysondage extends CommonObject
 		$this->titre = trim($this->titre);
 		$this->format = trim($this->format);
 		$this->mailsonde = ($this->mailsonde ? 1 : 0);
-		$this->canedit = ($this->canedit ? 1 : 0);
 		$this->allow_comments = ($this->allow_comments ? 1 : 0);
 		$this->allow_spy = ($this->allow_spy ? 1 : 0);
 		$this->origin = trim($this->origin);
