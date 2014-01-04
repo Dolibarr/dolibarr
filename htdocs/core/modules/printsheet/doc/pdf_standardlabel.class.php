@@ -51,6 +51,7 @@
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/format_cards.lib.php';
 
 
@@ -114,20 +115,24 @@ class pdf_standardlabel
 	/**
 	 * On imprime une etiquette
 	 *
-	 * @param    PDF	    &$pdf		    PDF
-	 * @param    string     $textleft       Textleft
-	 * @param    string     $header         Header
-	 * @param    string     $footer         Footer
-	 * @param    Translate  $outputlangs    Output langs
-	 * @param    string     $textright      Text right
-	 * @param    string     $photo    		Photo (full path to image file used as replacement for key %PHOTOS% into left, right, header or footer text)
-	 * @return   void
+	 * @param   PDF	    	&$pdf		    PDF
+	 * @param   string		$textleft       Text left
+	 * @param   string     	$header         Header
+	 * @param   string     	$footer         Footer
+	 * @param   Translate  	$outputlangs    Output langs
+	 * @param   string     	$textright      Text right
+	 * @param   string     	$photo    		Photo (full path to image file used as replacement for key %PHOTOS% into left, right, header or footer text)
+	 * @return  void
 	 */
 	function Add_PDF_card(&$pdf,$textleft,$header,$footer,$outputlangs,$textright='',$photo='')
 	{
 		global $mysoc,$conf,$langs;
+		global $forceimgscalewidth,$forceimgscaleheight;
 
-		// We are in a new page, then we must add a page
+	 	$imgscalewidth=(empty($forceimgscalewidth)?0.3:$forceimgscalewidth);	// Scale of image for width (1=Full width of sticker)
+	 	$imgscaleheight=(empty($forceimgscalewidth)?0.5:$forceimgscalewidth);	// Scale of image for height (1=Full height of sticker)
+
+	 	// We are in a new page, then we must add a page
 		if (($this->_COUNTX ==0) and ($this->_COUNTY==0) and (!$this->_First==1)) {
 			$pdf->AddPage();
 		}
@@ -180,14 +185,31 @@ class pdf_standardlabel
 			$pdf->Cell($this->_Width, $this->_Line_Height, $outputlangs->convToOutputCharset($header),0,1,'C');
 		}
 
-		// Middle
+
+		$xleft=2; $ytop=2+(empty($header)?0:1+$this->_Line_Height);
+		$maxwidthtouse=round(($this->_Width - 2*$xleft)*$imgscalewidth); $maxheighttouse=round(($this->_Height - 2*$ytop)*$imgscaleheight);
+		$defaultratio=($maxwidthtouse/$maxheighttouse);
+
+		// Define widthtouse and heighttouse
+		$widthtouse=$maxwidthtouse; $heighttouse=0;		// old value for image
+		$tmp=dol_getImageSize($photo, false);
+		if ($tmp['height'])
+		{
+			$imgratio=$tmp['width']/$tmp['height'];
+			if ($imgratio >= $defaultratio) { $widthtouse = $maxwidthtouse; $heighttouse = round($widthtouse / $imgratio); }
+			else { $heightouse = $maxheighttouse; $widthtouse = round($heightouse * $imgratio); }
+		}
+		//var_dump($this->_Width.'x'.$this->_Height.' with border and scale '.$imgscale.' => max '.$maxwidthtouse.'x'.$maxheighttouse.' => We use '.$widthtouse.'x'.$heighttouse);exit;
+
+		// Center
 		if ($textright=='')	// Only a left part
 		{
-			if ($textleft == '%LOGO%' && $logo) $pdf->Image($logo,$_PosX+2,$_PosY+3+$this->_Line_Height,20);
-			else if ($textleft == '%PHOTO%' && $photo) $pdf->Image($photo,$_PosX+2,$_PosY+3+$this->_Line_Height,20);
+			// Output left area
+			if ($textleft == '%LOGO%' && $logo) $pdf->Image($logo,$_PosX+$xleft,$_PosY+$ytop,$widthtouse,$heighttouse);
+			else if ($textleft == '%PHOTO%' && $photo) $pdf->Image($photo,$_PosX+$xleft,$_PosY+$ytop,$widthtouse,$heighttouse);
 			else
 			{
-				$pdf->SetXY($_PosX+3, $_PosY+3+$this->_Line_Height);
+				$pdf->SetXY($_PosX+$xleft, $_PosY+$ytop);
 				$pdf->MultiCell($this->_Width, $this->_Line_Height, $outputlangs->convToOutputCharset($textleft),0,'L');
 			}
 		}
@@ -195,34 +217,35 @@ class pdf_standardlabel
 		{
 			if ($textleft == '%LOGO%' || $textleft == '%PHOTO%')
 			{
-				if ($textleft == '%LOGO%' && $logo) $pdf->Image($logo,$_PosX+2,$_PosY+3+$this->_Line_Height,20);
-				else if ($textleft == '%PHOTO%' && $photo) $pdf->Image($photo,$_PosX+2,$_PosY+3+$this->_Line_Height,20);
-				$pdf->SetXY($_PosX+21, $_PosY+3+$this->_Line_Height);
-				$pdf->MultiCell($this->_Width-22, $this->_Line_Height, $outputlangs->convToOutputCharset($textright),0,'R');
+				if ($textleft == '%LOGO%' && $logo) $pdf->Image($logo,$_PosX+$xleft,$_PosY+$ytop,$widthtouse,$heighttouse);
+				else if ($textleft == '%PHOTO%' && $photo) $pdf->Image($photo,$_PosX+$xleft,$_PosY+$ytop,$widthtouse,$heighttouse);
+				$pdf->SetXY($_PosX+$xleft+$widthtouse+1, $_PosY+$ytop);
+				$pdf->MultiCell($this->_Width-$xleft-$xleft-$widthtouse-1, $this->_Line_Height, $outputlangs->convToOutputCharset($textright),0,'R');
 			}
 			else if ($textright == '%LOGO%' || $textright == '%PHOTO%')
 			{
-				if ($textright == '%LOGO%' && $logo) $pdf->Image($logo,$_PosX+$this->_Width-21,$_PosY+3+$this->_Line_Height,20);
-				else if ($textright == '%PHOTO%' && $photo) $pdf->Image($photo,$_PosX+$this->_Width-21,$_PosY+3+$this->_Line_Height,20);
-				$pdf->SetXY($_PosX+2, $_PosY+3+$this->_Line_Height);
-				$pdf->MultiCell($this->_Width-22, $this->_Line_Height, $outputlangs->convToOutputCharset($textleft),0,'L');
+				if ($textright == '%LOGO%' && $logo) $pdf->Image($logo,$_PosX+$this->_Width-$widthtouse-$xleft,$_PosY+$ytop,$widthtouse,$heighttouse);
+				else if ($textright == '%PHOTO%' && $photo) $pdf->Image($photo,$_PosX+$this->_Width-$widthtouse-$xleft,$_PosY+$ytop,$widthtouse,$heighttouse);
+				$pdf->SetXY($_PosX+$xleft, $_PosY+$ytop);
+				$pdf->MultiCell($this->_Width-$widthtouse-$xleft-$xleft-1, $this->_Line_Height, $outputlangs->convToOutputCharset($textleft),0,'L');
 			}
-			else
+			else	// text on halft left and text on half right
 			{
-				$pdf->SetXY($_PosX+2, $_PosY+3+$this->_Line_Height);
+				$pdf->SetXY($_PosX+$xleft, $_PosY+$ytop);
 				$pdf->MultiCell(round($this->_Width/2), $this->_Line_Height, $outputlangs->convToOutputCharset($textleft),0,'L');
-				$pdf->SetXY($_PosX+round($this->_Width/2), $_PosY+3+$this->_Line_Height);
+				$pdf->SetXY($_PosX+round($this->_Width/2), $_PosY+$ytop);
 				$pdf->MultiCell(round($this->_Width/2)-2, $this->_Line_Height, $outputlangs->convToOutputCharset($textright),0,'R');
 			}
 		}
 		else	// Only a right part
 		{
-			if ($textright == '%LOGO%' && $logo) $pdf->Image($logo,$_PosX+$this->_Width-21,$_PosY+1,20);
-			else if ($textright == '%PHOTO%' && $photo) $pdf->Image($photo,$_PosX+$this->_Width-21,$_PosY+1,20);
+			// Output right area
+			if ($textright == '%LOGO%' && $logo) $pdf->Image($logo,$_PosX+$this->_Width-$widthtouse-$xleft,$_PosY+$ytop,$widthtouse,$heighttouse);
+			else if ($textright == '%PHOTO%' && $photo) $pdf->Image($photo,$_PosX+$this->_Width-$widthtouse-$xleft,$_PosY+$ytop,$widthtouse,$heighttouse);
 			else
 			{
-				$pdf->SetXY($_PosX+2, $_PosY+3+$this->_Line_Height);
-				$pdf->MultiCell($this->_Width, $this->_Line_Height, $outputlangs->convToOutputCharset($textright),0,'R');
+				$pdf->SetXY($_PosX+$xleft, $_PosY+$ytop);
+				$pdf->MultiCell($this->_Width-$xleft, $this->_Line_Height, $outputlangs->convToOutputCharset($textright),0,'R');
 			}
 		}
 

@@ -77,7 +77,7 @@ $_Avery_Labels = array (
 					    'width'=>101.6,
 					    'height'=>50.8,
 					    'font-size'=>8),
-			      '5164'=>array('name'=>'5164 (Letter)',
+			     /* Bugged '5164'=>array('name'=>'5164 (Letter)',
 					    'paper-size'=>'letter',
 					    'metric'=>'in',
 					    'marginLeft'=>0.148,
@@ -88,7 +88,7 @@ $_Avery_Labels = array (
 					    'SpaceY'=>0,
 					    'width'=>4.0,
 					    'height'=>3.33,
-					    'font-size'=>12),
+					    'font-size'=>12), */
 			      '8600'=>array('name'=>'8600 (Letter)',
 					    'paper-size'=>'letter',
 					    'metric'=>'mm',
