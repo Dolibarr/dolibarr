@@ -89,6 +89,7 @@ if ($action == 'update')
 		$object->canedit = GETPOST('canedit')=='on'?1:0;
 		$object->allow_comments = GETPOST('cancomment') == 'on' ? true : false;
 		$object->allow_spy = GETPOST('canseeothersvote') == 'on' ? true : false;
+		$object->mailsonde = GETPOST('mailsonde') == 'on' ? true : false;
 
 		$res=$object->update($user);
 		if ($res < 0)
@@ -220,6 +221,15 @@ if ($action == 'edit')
 	print '<input type="text" name="nouvelleadresse" size="40" value="'.$object->mail_admin.'">';
 }
 else print dol_print_email($object->mail_admin);
+print '</td></tr>';
+
+// Receive an email with each vote
+print '<tr><td>'.$langs->trans('ToReceiveEMailForEachVote').'</td><td colspan="2">';
+if ($action == 'edit')
+{
+	print '<input type="checkbox" name="mailsonde" size="40"'.($object->mailsonde?' checked="true"':'').'">';
+}
+else print yn($object->mailsonde);
 print '</td></tr>';
 
 // Can edit other votes
