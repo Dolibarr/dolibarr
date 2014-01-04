@@ -593,9 +593,11 @@ abstract class CommonObject
 
 
     /**
-     *		Load data for barcode
+     *	Load data for barcode into properties ->barcode_type*
+     *	Properties ->barcode_type is used to find others.
+     *  If not defined, ->element must be defined to know default barcode type.
      *
-     *		@return		int			<0 if KO, >=0 if OK
+     *	@return		int			<0 if KO, >=0 if OK
      */
     function fetch_barcode()
     {
@@ -2094,7 +2096,7 @@ abstract class CommonObject
                 }
 
                 $this->db->free($resql);
-                
+
                 if ($numrows) return $numrows;
                 else return 0;
             }
@@ -2150,7 +2152,7 @@ abstract class CommonObject
 		$error=0;
 
 		if (! empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) return 0;	// For avoid conflicts if trigger used
-		
+
         if (! empty($this->array_options))
         {
             // Check parameters
