@@ -480,6 +480,8 @@ class Opensurveysondage extends CommonObject
 	
 	/**
 	 * Cleans all the class variables before doing an update or an insert
+	 * 
+	 * @return void
 	 */
 	private function cleanParameters() {
 		
