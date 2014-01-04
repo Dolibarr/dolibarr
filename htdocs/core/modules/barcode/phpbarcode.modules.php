@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Regis Houssin        <regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -20,15 +20,15 @@
 /**
  *	\file       htdocs/core/modules/barcode/phpbarcode.modules.php
  *	\ingroup    barcode
- *	\brief      Fichier contenant la classe du modele de generation code barre phpbarcode
+ *	\brief      File with class to generate barcode images using php barcode generator
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/modules/barcode/modules_barcode.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/barcode.lib.php';    // This is to include def like $genbarcode_loc and $font_loc
 
 
-/**		\class      modPhpbarcode
- *		\brief      Classe du modele de numerotation de generation code barre phpbarcode
+/**
+ *	Class to generate barcode images using php barcode generator
  */
 class modPhpbarcode extends ModeleBarCode
 {
@@ -77,7 +77,7 @@ class modPhpbarcode extends ModeleBarCode
 
 
 	/**
-	 *	Return true if encodinf is supported
+	 *	Return true if encoding is supported
 	 *
 	 *	@param	string	$encoding		Encoding norm
 	 *	@return	int						>0 if supported, 0 if not
@@ -108,9 +108,10 @@ class modPhpbarcode extends ModeleBarCode
 	 *	@param	string   	$code			Value to encode
 	 *	@param  string	 	$encoding		Mode of encoding
 	 *	@param  string	 	$readable		Code can be read
+	 *	@param	string		$scale			Scale
 	 *	@return	int							<0 if KO, >0 if OK
      */
-	function buildBarCode($code,$encoding,$readable='Y')
+	function buildBarCode($code,$encoding,$readable='Y',$scale=1)
 	{
 		global $_GET,$_SERVER;
 		global $conf;
@@ -121,7 +122,7 @@ class modPhpbarcode extends ModeleBarCode
 		if ($encoding == 'EAN8' || $encoding == 'EAN13') $encoding = 'EAN';
 		if ($encoding == 'C39' || $encoding == 'C128')   $encoding = substr($encoding,1);
 
-		$scale=1; $mode='png';
+		$mode='png';
 
 		$_GET["code"]=$code;
 		$_GET["encoding"]=$encoding;
@@ -147,9 +148,10 @@ class modPhpbarcode extends ModeleBarCode
 	 *	@param	string   	$code			Value to encode
 	 *	@param	string   	$encoding		Mode of encoding
 	 *	@param  string	 	$readable		Code can be read
+	 *	@param	string		$scale			Scale
 	 *	@return	int							<0 if KO, >0 if OK
 	 */
-	function writeBarCode($code,$encoding,$readable='Y')
+	function writeBarCode($code,$encoding,$readable='Y',$scale=1)
 	{
 		global $conf,$filebarcode;
 
@@ -159,7 +161,7 @@ class modPhpbarcode extends ModeleBarCode
 
 		$filebarcode=$file;	// global var to be used in barcode_outimage called by barcode_print in buildBarCode
 
-		$result=$this->buildBarCode($code,$encoding,$readable);
+		$result=$this->buildBarCode($code,$encoding,$readable,$scale);
 
 		return $result;
 	}
