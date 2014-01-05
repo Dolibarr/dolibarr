@@ -45,6 +45,8 @@ $offset = $limit * $page;
 
 if ($action == 'delete_confirm')
 {
+	require_once DOL_DOCUMENT_ROOT.'/opensurvey/class/opensurveysondage.class.php';
+	
 	$db->begin();
 
 	$object=new Opensurveysondage($db);
