@@ -17,7 +17,7 @@
  */
 
 /**
- *	\file       htdocs/opensurvey/public/create_survey.php
+ *	\file       htdocs/opensurvey/wizard/create_survey.php
  *	\ingroup    opensurvey
  *	\brief      Page to create a new survey
  */
@@ -133,7 +133,7 @@ llxHeader('', $langs->trans("OpenSurvey"), '', "", 0, 0, $arrayofjs, $arrayofcss
 print_fiche_titre($langs->trans("CreatePoll").' (1 / 2)');
 
 //debut du formulaire
-print '<form name="formulaire" action="create_survey.php" method="POST">'."\n";
+print '<form name="formulaire" action="" method="POST">'."\n";
 
 //Affichage des différents champs textes a remplir
 print '<table class="border" width="100%">'."\n";
@@ -217,9 +217,9 @@ else
 	//affichage des boutons pour choisir sondage date ou autre
 	print '<br><table>'."\n";
 	print '<tr><td>'. $langs->trans("CreateSurveyDate") .'</td><td></td> '."\n";
-	print '<td><input type="image" name="creation_sondage_date" value="'.$langs->trans('CreateSurveyDate').'" src="images/calendar-32.png"></td></tr>'."\n";
+	print '<td><input type="image" name="creation_sondage_date" value="'.$langs->trans('CreateSurveyDate').'" src="../img/calendar-32.png"></td></tr>'."\n";
 	print '<tr><td>'. $langs->trans("CreateSurveyStandard") .'</td><td></td> '."\n";
-	print '<td><input type="image" name="creation_sondage_autre" value="'.$langs->trans('CreateSurveyStandard').'" src="images/chart-32.png"></td></tr>'."\n";
+	print '<td><input type="image" name="creation_sondage_autre" value="'.$langs->trans('CreateSurveyStandard').'" src="../img/chart-32.png"></td></tr>'."\n";
 	print '</table>'."\n";
 }
 print '<br><br><br>'."\n";

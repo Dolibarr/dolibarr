@@ -17,7 +17,7 @@
  */
 
 /**
- *	\file       htdocs/opensurvey/public/choix_date.php
+ *	\file       htdocs/opensurvey/wizard/choix_date.php
  *	\ingroup    opensurvey
  *	\brief      Page to create a new survey (date selection)
  */
@@ -320,7 +320,7 @@ else
 
 
 //Debut du formulaire et bandeaux de tete
-print '<form name="formulaire" action="choix_date.php" method="POST">'."\n";
+print '<form name="formulaire" action="" method="POST">'."\n";
 
 print_fiche_titre($langs->trans("CreatePoll").' (2 / 2)');
 
@@ -332,11 +332,11 @@ print '</div>'."\n";
 //debut du tableau qui affiche le calendrier
 print '<center><div class="corps">'."\n";
 print '<table align=center>'."\n";
-print '<tr><td><input type="image" name="anneeavant" value="<<" src="images/rewind.png"></td><td><input type="image" name="moisavant" value="<" src="images/previous.png"></td>';
+print '<tr><td><input type="image" name="anneeavant" value="<<" src="../img/rewind.png"></td><td><input type="image" name="moisavant" value="<" src="../img/previous.png"></td>';
 print '<td width="150px" align="center"> '.$motmois.' '.$_SESSION["annee"].'<br>';
 print '<input type="image" name="retourmois" alt="'.dol_escape_htmltag($langs->trans("BackToCurrentMonth")).'" title="'.dol_escape_htmltag($langs->trans("BackToCurrentMonth")).'" value="" src="'.img_picto('', 'refresh','',0,1).'">';
-print '</td><td><input type="image" name="moisapres" value=">" src="images/next.png"></td>';
-print '<td><input type="image" name="anneeapres" value=">>" src="images/fforward.png"></td><td></td><td></td><td></td><td></td><td></td><td>';
+print '</td><td><input type="image" name="moisapres" value=">" src="../img/next.png"></td>';
+print '<td><input type="image" name="anneeapres" value=">>" src="../img/fforward.png"></td><td></td><td></td><td></td><td></td><td></td><td>';
 print '</td></tr>'."\n";
 print '</table>'."\n";
 print '<table>'."\n";
@@ -503,7 +503,7 @@ if (issetAndNoEmpty('totalchoixjour', $_SESSION) || $erreur)
 	}
 
 	if ($_SESSION["nbrecaseshoraires"] < 10) {
-		print '<td classe="somme"><input type="image" name="ajoutcases" src="images/add-16.png"></td>'."\n";
+		print '<td classe="somme"><input type="image" name="ajoutcases" src="../img/add-16.png"></td>'."\n";
 	}
 
 	print '</tr>'."\n";
