@@ -481,6 +481,9 @@ if (GETPOST('ajoutsujet'))
 	}
 	else
 	{
+		require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+		
+		$formother=new FormOther($db);
 		//ajout d'une date avec creneau horaire
 		//print _("You can add a new scheduling date to your poll.<br> If you just want to add a new hour to an existant date, put the same date and choose a new hour.") .'<br><br> '."\n";
 		print $langs->trans("AddADate") .' :<br><br>'."\n";
@@ -491,22 +494,12 @@ if (GETPOST('ajoutsujet'))
 		}
 		print '</SELECT>'."\n";
 
-		print '<select name="nouveaumois"> '."\n";
-		print '<OPTION VALUE="vide"></OPTION>'."\n";
-		for($i = 1; $i < 13; $i++) {
-			print '<OPTION VALUE="'.$i.'">'.strftime('%B', mktime(0, 0, 0, $i)).'</OPTION>'."\n";
-		}
-		print '</SELECT>'."\n";
+		print $formother->select_month('', 'nouveaumois', 1);
+		
+		print '&nbsp;';
+		
+		print $formother->select_year('', 'nouvelleannee', 1, 0, 5, 0, 1);
 
-
-		print '<select name="nouvelleannee"> '."\n";
-		print '<OPTION VALUE="vide"></OPTION>'."\n";
-		$maxyear=date("Y")+5;
-		for ($i = date("Y"); $i < $maxyear; $i++) 
-		{
-			print '<OPTION VALUE="'.$i.'">'.$i.'</OPTION>'."\n";
-		}
-		print '</SELECT>'."\n";
 		print '<br><br>'. $langs->trans("AddStartHour") .' : <br><br>'."\n";
 		print '<select name="nouvelleheuredebut"> '."\n";
 		print '<OPTION VALUE="vide"></OPTION>'."\n";
