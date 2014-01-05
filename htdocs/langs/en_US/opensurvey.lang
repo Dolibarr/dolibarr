@@ -14,7 +14,6 @@ OpenSurveyYourEMail=Your email address
 ToReceiveEMailForEachVote=To receive an email for each vote
 TypeDate=Type date
 TypeClassic=Type standard
-FieldMandatory=Field mandatory
 OpenSurveyStep2=Select your dates amoung the free days (green). The selected days are in blue. You can unselect a day previously selected by clicking again on it
 RemoveAllDays=Remove all days
 CopyHoursOfFirstDay=Copy hours of first day

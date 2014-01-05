@@ -142,7 +142,7 @@ print '<table class="border" width="100%">'."\n";
 print '<tr><td class="fieldrequired">'. $langs->trans("PollTitle") .'</td><td><input type="text" name="titre" size="40" maxlength="80" value="'.$_SESSION["titre"].'"></td>'."\n";
 if (! $_SESSION["titre"] && (GETPOST('creation_sondage_date') || GETPOST('creation_sondage_autre')))
 {
-	setEventMessage($langs->trans("FieldMandatory"), 'errors');
+	setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("PollTitle")), 'errors');
 }
 
 print '</tr>'."\n";
@@ -154,7 +154,7 @@ print '<input type="text" name="nom" size="40" maxlength="40" value="'.$_SESSION
 
 if (! $_SESSION["nom"] && (GETPOST('creation_sondage_date') || GETPOST('creation_sondage_autre')))
 {
-	setEventMessage($langs->trans("FieldMandatory"), 'errors');
+	setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("OpenSurveyYourName")), 'errors');
 }
 
 print '</tr>'."\n";
@@ -164,7 +164,7 @@ print '<input type="text" name="adresse" size="40" maxlength="64" value="'.$_SES
 
 if (!$_SESSION["adresse"] && (GETPOST('creation_sondage_date') || GETPOST('creation_sondage_autre')))
 {
-	setEventMessage($langs->trans("FieldMandatory"), 'errors');
+	setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("OpenSurveyYourEMail")), 'errors');
 } elseif ($erreur_adresse && (GETPOST('creation_sondage_date') || GETPOST('creation_sondage_autre')))
 {
 	$langs->load('errors');
