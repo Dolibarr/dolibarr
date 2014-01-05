@@ -37,6 +37,7 @@ ErrorBadParameters=Bad parameters
 ErrorBadValueForParameter=Wrong value '%s' for parameter incorrect '%s'
 ErrorBadImageFormat=Image file has not a supported format
 ErrorBadDateFormat=Value '%s' has wrong date format
+ErrorWrongDate=Date is not correct!
 ErrorFailedToWriteInDir=Failed to write in directory %s
 ErrorFoundBadEmailInFile=Found incorrect email syntax for %s lines in file (example line %s with email=%s)
 ErrorUserCannotBeDelete=User can not be deleted. May be it is associated on Dolibarr entities.
@@ -63,7 +64,7 @@ ErrorNoValueForRadioType=Please fill value for radio list
 ErrorBadFormatValueList=The list value cannot have more than one come : <u>%s</u>, but need at least one: llave,valores
 ErrorFieldCanNotContainSpecialCharacters=Field <b>%s</b> must not contains special characters.
 ErrorNoAccountancyModuleLoaded=No accountancy module activated
-ErrorExportDuplicateProfil=This profil name already exists for this export set.
+ErrorExportDuplicateProfil=This profile name already exists for this export set.
 ErrorLDAPSetupNotComplete=Dolibarr-LDAP matching is not complete.
 ErrorLDAPMakeManualTest=A .ldif file has been generated in directory %s. Try to load it manually from command line to have more information on errors.
 ErrorCantSaveADoneUserWithZeroPercentage=Can't save an action with "statut not started" if field "done by" is also filled.

@@ -503,7 +503,6 @@ if (GETPOST('ajoutsujet'))
 		
 		$formother=new FormOther($db);
 		//ajout d'une date avec creneau horaire
-		//print _("You can add a new scheduling date to your poll.<br> If you just want to add a new hour to an existant date, put the same date and choose a new hour.") .'<br><br> '."\n";
 		print $langs->trans("AddADate") .' :<br><br>'."\n";
 		print '<select name="nouveaujour"> '."\n";
 		print '<OPTION VALUE="vide"></OPTION>'."\n";
@@ -1008,27 +1007,15 @@ if ($nbofcheckbox >= 2)
 
 // S'il a oublié de remplir un nom
 if ((isset($_POST["boutonp"]) || isset($_POST["boutonp_x"])) && $_POST["nom"] == "") {
-	print '<tr>'."\n";
-	print "<td colspan=10><font color=#FF0000>" . _("Enter a name !") . "</font>\n";
-	print '</tr>'."\n";
+	setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Name")), 'errors');
 }
 
 if (isset($erreur_prenom) && $erreur_prenom) {
-	print '<tr>'."\n";
-	print "<td colspan=10><font color=#FF0000>" . _("The name you've chosen already exist in this poll!") . "</font></td>\n";
-	print '</tr>'."\n";
-}
-
-if (isset($erreur_injection) && $erreur_injection) {
-	print '<tr>'."\n";
-	print "<td colspan=10><font color=#FF0000>" . _("Characters \"  '  < et > are not permitted") . "</font></td>\n";
-	print '</tr>'."\n";
+	setEventMessage($langs->trans('VoteNameAlreadyExists'), 'errors');
 }
 
 if (isset($erreur_ajout_date) && $erreur_ajout_date) {
-	print '<tr>'."\n";
-	print "<td colspan=10><font color=#FF0000>" . _("The date is not correct !") . "</font></td>\n";
-	print '</tr>'."\n";
+	setEventMessage($langs->trans("ErrorWrongDate"), 'errors');
 }
 
 //fin du tableau
