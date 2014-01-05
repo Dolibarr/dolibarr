@@ -48,6 +48,9 @@ $offset = $limit * $page;
 
 if ($action == 'delete_confirm')
 {
+	// Security check
+	if (!$user->rights->opensurvey->write) accessforbidden();
+	
 	require_once DOL_DOCUMENT_ROOT.'/opensurvey/class/opensurveysondage.class.php';
 	
 	$db->begin();
@@ -131,7 +134,13 @@ while ($i < min($num,$limit))
 	print '</td>';
 
 	print'<td align="center">'.$nbuser.'</td>'."\n";
-	print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?id='.$obj->id_sondage.'&action=delete">'.img_picto('', 'delete.png').'</a></td>'."\n";
+	print '<td align="right">';
+	
+	if ($user->rights->opensurvey->write) {
+		print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$obj->id_sondage.'&action=delete">'.img_picto('', 'delete.png').'</a>';
+	}
+	
+	print '</td>'."\n";
 
 	print '</tr>'."\n";
 	$i++;
