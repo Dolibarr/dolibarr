@@ -27,11 +27,6 @@ require_once(DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/opensurvey/fonctions.php");
 
-$erreur = false;
-$testdate = true;
-$date_selected = '';
-
-
 /*
  * Action
  */
@@ -71,36 +66,26 @@ if (isset($_POST["confirmecreation"]) || isset($_POST["confirmecreation_x"]))
 	$toutchoix=substr("$toutchoix",1);
 	$_SESSION["toutchoix"]=$toutchoix;
 
-	if (GETPOST('champdatefin'))
+	//test de remplissage des cases
+	$testremplissage = '';
+	for ($i=0;$i<$_SESSION["nbrecases"];$i++)
 	{
-		$registredate=explode("/",$_POST["champdatefin"]);
-		if (is_array($registredate) === false || count($registredate) !== 3) {
-			$testdate = false;
-			$date_selected = $_POST["champdatefin"];
-		} else {
-			$time = mktime(0,0,0,$registredate[1],$registredate[0],$registredate[2]);
-			if ($time === false || date('d/m/Y', $time) !== $_POST["champdatefin"]) {
-				$testdate = false;
-				$date_selected = $_POST["champdatefin"];
-			} else {
-				if (mktime(0,0,0,$registredate[1],$registredate[0],$registredate[2]) > time() + 250000) {
-					$_SESSION["champdatefin"]=mktime(0,0,0,$registredate[1],$registredate[0],$registredate[2]);
-				}
-			}
+		if (isset($_POST["choix"][$i]))
+		{
+			$testremplissage="ok";
 		}
-	} else {
-		$_SESSION["champdatefin"]=time()+15552000;
 	}
 
-	if ($testdate === true)
-	{
+	//message d'erreur si aucun champ renseigné
+	if ($testremplissage != "ok") {
+		setEventMessage($langs->trans("ErrorOpenSurveyOneChoice"), 'errors');
+	} else {
+	
 		//format du sondage AUTRE
 		$_SESSION["formatsondage"]="A";
 
 		// Add into database
 		ajouter_sondage();
-	} else {
-		$_POST["fin_sondage_autre"] = 'ok';
 	}
 }
 
@@ -157,42 +142,8 @@ print '</tr></table>'."\n";
 print'<br>'."\n";
 
 print '<table><tr>'."\n";
-print '<td></td><td><input type="submit" class="button" name="fin_sondage_autre" value="'.dol_escape_htmltag($langs->trans("NextStep")).'" src="images/next-32.png"></td>'."\n";
+print '<td></td><td><input type="submit" class="button" name="confirmecreation" value="'.dol_escape_htmltag($langs->trans("CreatePoll")).'" src="images/next-32.png"></td>'."\n";
 print '</tr></table>'."\n";
-
-//test de remplissage des cases
-$testremplissage = '';
-for ($i=0;$i<$_SESSION["nbrecases"];$i++)
-{
-	if (isset($_POST["choix"][$i]))
-	{
-		$testremplissage="ok";
-	}
-}
-
-//message d'erreur si aucun champ renseigné
-if ($testremplissage != "ok" && (isset($_POST["fin_sondage_autre"]) || isset($_POST["fin_sondage_autre_x"]))) {
-	print "<br><font color=\"#FF0000\">" . $langs->trans("ErrorOpenSurveyOneChoice") . "</font><br><br>"."\n";
-	$erreur = true;
-}
-
-//message d'erreur si mauvaise date
-if ($testdate === false) {
-	print "<br><font color=\"#FF0000\">" . $langs->trans("ErrorOpenSurveyDateFormat") . "</font><br><br>"."\n";
-}
-
-if ((isset($_POST["fin_sondage_autre"]) || isset($_POST["fin_sondage_autre_x"])) && !$erreur) {
-	//demande de la date de fin du sondage
-	print '<br>'."\n";
-	print '<div class=presentationdatefin>'."\n";
-	print '<br>'. $langs->trans("InfoExpiration") .'<br><br>'."\n";
-	print $langs->trans("RemovalDate") .' : <input type="text" name="champdatefin" value="'.$date_selected.'" size="10" maxlength="10"> DD/MM/YYYY';
-	print '</div>'."\n";
-	print '<br>'."\n";
-	print '<table>'."\n";
-	print '<tr><td>'. $langs->trans("CreatePoll") .'</td><td><input type="image" name="confirmecreation" src="images/add.png"></td></tr>'."\n";
-	print '</table>'."\n";
-}
 
 //fin du formulaire et bandeau de pied
 print '</form>'."\n";

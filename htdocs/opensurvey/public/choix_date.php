@@ -27,19 +27,115 @@ require_once(DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/opensurvey/fonctions.php");
 
+//le format du sondage est DATE
+$_SESSION["formatsondage"] = "D";
+
+//traitement de l'entrée des heures dans les cases texte
+$erreur = false;
 
 /*
  * Actions
  */
 
 // Insert survey
-if (GETPOST('confirmation') || GETPOST('confirmation_x'))
+if (GETPOST('confirmation'))
 {
-	if (is_array($_SESSION['totalchoixjour']))
+
+	//On sauvegarde les heures deja entrées
+	if (issetAndNoEmpty('totalchoixjour', $_SESSION) === true && issetAndNoEmpty('nbrecaseshoraires', $_SESSION) === true) 
 	{
 		$nbofchoice=count($_SESSION["totalchoixjour"]);
-		for ($i = 0; $i < $nbofchoice; $i++) 
-		{
+		
+		for ($i = 0; $i < $nbofchoice; $i++) {
+			//affichage des 5 cases horaires
+			for ($j = 0; $j < $_SESSION["nbrecaseshoraires"]; $j++) {
+				
+				$_SESSION["horaires$i"][$j] = $_POST["horaires$i"][$j];
+
+				$case = $j + 1;
+
+				if (isset($_POST['horaires'.$i]) === false || isset($_POST['horaires'.$i][$j]) === false) {
+					$errheure[$i][$j]=true;
+					$erreur=true;
+					continue;
+				}
+
+				//si c'est un creneau type 8:00-11:00
+				if (preg_match("/(\d{1,2}:\d{2})-(\d{1,2}:\d{2})/", $_POST["horaires$i"][$j], $creneaux)) {
+					//on recupere les deux parties du preg_match qu'on redécoupe autour des ":"
+					$debutcreneau=explode(":", $creneaux[1]);
+					$fincreneau=explode(":", $creneaux[2]);
+
+					//comparaison des heures de fin et de debut
+					//si correctes, on entre les données dans la variables de session
+					if ($debutcreneau[0] < 24 && $fincreneau[0] < 24 && $debutcreneau[1] < 60 && $fincreneau[1] < 60 && ($debutcreneau[0] < $fincreneau[0] || ($debutcreneau[0] == $fincreneau[0] && $debutcreneau[1] < $fincreneau[1]))) {
+						$_SESSION["horaires$i"][$j] = $creneaux[1].'-'.$creneaux[2];
+					} else { //sinon message d'erreur et nettoyage de la case
+						$errheure[$i][$j]=true;
+						$erreur=true;
+					}
+				} elseif (preg_match(";^(\d{1,2}h\d{0,2})-(\d{1,2}h\d{0,2})$;i", $_POST["horaires$i"][$j], $creneaux)) { //si c'est un creneau type 8h00-11h00
+					//on recupere les deux parties du preg_match qu'on redécoupe autour des "H"
+					$debutcreneau=preg_split("/h/i", $creneaux[1]);
+					$fincreneau=preg_split("/h/i", $creneaux[2]);
+
+					//comparaison des heures de fin et de debut
+					//si correctes, on entre les données dans la variables de session
+					if ($debutcreneau[0] < 24 && $fincreneau[0] < 24 && $debutcreneau[1] < 60 && $fincreneau[1] < 60 && ($debutcreneau[0] < $fincreneau[0] || ($debutcreneau[0] == $fincreneau[0] && $debutcreneau[1] < $fincreneau[1]))) {
+						$_SESSION["horaires$i"][$j] = $creneaux[1].'-'.$creneaux[2];
+					} else { //sinon message d'erreur et nettoyage de la case
+						$errheure[$i][$j]=true;
+						$erreur=true;
+					}
+				} elseif (preg_match(";^(\d{1,2}):(\d{2})$;", $_POST["horaires$i"][$j], $heures)) { //si c'est une heure simple type 8:00
+					//si valeures correctes, on entre les données dans la variables de session
+					if ($heures[1] < 24 && $heures[2] < 60) {
+						$_SESSION["horaires$i"][$j] = $heures[0];
+					} else { //sinon message d'erreur et nettoyage de la case
+						$errheure[$i][$j]=true;
+						$erreur=true;
+					}
+				} elseif (preg_match(";^(\d{1,2})h(\d{0,2})$;i", $_POST["horaires$i"][$j], $heures)) { //si c'est une heure encore plus simple type 8h
+					//si valeures correctes, on entre les données dans la variables de session
+					if ($heures[1] < 24 && $heures[2] < 60) {
+						$_SESSION["horaires$i"][$j] = $heures[0];
+					} else { //sinon message d'erreur et nettoyage de la case
+						$errheure[$i][$j]=true;
+						$erreur=true;
+					}
+				} elseif (preg_match(";^(\d{1,2})-(\d{1,2})$;", $_POST["horaires$i"][$j], $heures)) { //si c'est un creneau simple type 8-11
+					//si valeures correctes, on entre les données dans la variables de session
+					if ($heures[1] < $heures[2] && $heures[1] < 24 && $heures[2] < 24) {
+						$_SESSION["horaires$i"][$j] = $heures[0];
+					} else { //sinon message d'erreur et nettoyage de la case
+						$errheure[$i][$j]=true;
+						$erreur=true;
+					}
+				} elseif (preg_match(";^(\d{1,2})h-(\d{1,2})h$;", $_POST["horaires$i"][$j], $heures)) { //si c'est un creneau H type 8h-11h
+					//si valeures correctes, on entre les données dans la variables de session
+					if ($heures[1] < $heures[2] && $heures[1] < 24 && $heures[2] < 24) {
+						$_SESSION["horaires$i"][$j] = $heures[0];
+					} else { //sinon message d'erreur et nettoyage de la case
+						$errheure[$i][$j]=true;
+						$erreur=true;
+					}
+				} elseif ($_POST["horaires$i"][$j]=="") { //Si la case est vide
+					unset($_SESSION["horaires$i"][$j]);
+				} else { //pour tout autre format, message d'erreur
+					$errheure[$i][$j]=true;
+					$erreur=true;
+				}
+				
+				if (issetAndNoEmpty('horaires'.$i, $_SESSION) === false || issetAndNoEmpty($j, $_SESSION['horaires'.$i]) === false) {
+					if (issetAndNoEmpty('horaires'.$i, $_SESSION) === true) {
+						$_SESSION["horaires$i"][$j] = '';
+					} else {
+						$_SESSION["horaires$i"] = array();
+						$_SESSION["horaires$i"][$j] = '';
+					}
+				}
+			}
+			
 			if ($_SESSION["horaires$i"][0] == "" && $_SESSION["horaires$i"][1] == "" && $_SESSION["horaires$i"][2] == "" && $_SESSION["horaires$i"][3] == "" && $_SESSION["horaires$i"][4] == "") {
 				$choixdate.=",";
 				$choixdate .= $_SESSION["totalchoixjour"][$i];
@@ -55,11 +151,22 @@ if (GETPOST('confirmation') || GETPOST('confirmation_x'))
 				}
 			}
 		}
+		
+		if (isset($errheure)) {
+			setEventMessage($langs->trans("ErrorBadFormat"), 'errors');
+		}
 	}
-	else dol_print_error('','array not defined');
 
-	$_SESSION["toutchoix"]=substr("$choixdate",1);
-	ajouter_sondage();
+	//If just one day and no other time options, error message
+	if (count($_SESSION["totalchoixjour"])=="1" && $_POST["horaires0"][0]=="" && $_POST["horaires0"][1]=="" && $_POST["horaires0"][2]=="" && $_POST["horaires0"][3]=="" && $_POST["horaires0"][4]=="") {
+		setEventMessage($langs->trans("MoreChoices"), 'errors');
+		$erreur=true;
+	}
+	
+	if (!$erreur) {
+		$_SESSION["toutchoix"]=substr("$choixdate",1);
+		ajouter_sondage();
+	}
 }
 
 // Reset days
@@ -96,7 +203,7 @@ if (! isset($_SESSION["nbrecaseshoraires"]))
 {
 	$_SESSION["nbrecaseshoraires"]=5;
 }
-elseif ((GETPOST('ajoutcases') || GETPOST('ajoutcases_x')) && $_SESSION["nbrecaseshoraires"] == 5)
+elseif (GETPOST('ajoutcases') && $_SESSION["nbrecaseshoraires"] == 5)
 {
 	$_SESSION["nbrecaseshoraires"]=10;
 }
@@ -112,14 +219,14 @@ if (! isset($_SESSION['mois'])) $_SESSION['mois']= date('n');
 if (! isset($_SESSION['annee'])) $_SESSION['annee']= date('Y');
 
 //mise a jour des valeurs de session si bouton retour a aujourd'hui
-if ((!issetAndNoEmpty('anneeavant_x') && !issetAndNoEmpty('anneeapres_x') && !issetAndNoEmpty('moisavant_x') && !issetAndNoEmpty('moisapres_x') && !issetAndNoEmpty('choixjourajout')) && !issetAndNoEmpty('choixjourretrait') || (issetAndNoEmpty('retourmois') || issetAndNoEmpty('retourmois_x'))){
+if ((!issetAndNoEmpty('choixjourajout')) && !issetAndNoEmpty('choixjourretrait') || issetAndNoEmpty('retourmois')){
 	$_SESSION["jour"]=date("j");
 	$_SESSION["mois"]=date("n");
 	$_SESSION["annee"]=date("Y");
 }
 
 //mise a jour des valeurs de session si mois avant
-if (issetAndNoEmpty('moisavant') || issetAndNoEmpty('moisavant_x')) {
+if (issetAndNoEmpty('moisavant')) {
 	if ($_SESSION["mois"] == 1) {
 		$_SESSION["mois"]   = 12;
 		$_SESSION["annee"]  = $_SESSION["annee"]-1;
@@ -141,7 +248,7 @@ if (issetAndNoEmpty('moisavant') || issetAndNoEmpty('moisavant_x')) {
 }
 
 //mise a jour des valeurs de session si mois apres
-if (issetAndNoEmpty('moisapres') || issetAndNoEmpty('moisapres_x')) {
+if (issetAndNoEmpty('moisapres')) {
 	if ($_SESSION["mois"] == 12) {
 		$_SESSION["mois"] = 1;
 		$_SESSION["annee"] += 1;
@@ -164,7 +271,7 @@ if (issetAndNoEmpty('moisapres') || issetAndNoEmpty('moisapres_x')) {
 }
 
 //mise a jour des valeurs de session si annee avant
-if (issetAndNoEmpty('anneeavant') || issetAndNoEmpty('anneeavant_x')) {
+if (issetAndNoEmpty('anneeavant')) {
 	$_SESSION["annee"] -= 1;
 
 	//On sauvegarde les heures deja entrées
@@ -181,7 +288,7 @@ if (issetAndNoEmpty('anneeavant') || issetAndNoEmpty('anneeavant_x')) {
 }
 
 //mise a jour des valeurs de session si annee apres
-if (issetAndNoEmpty('anneeapres') || issetAndNoEmpty('anneeapres_x')) {
+if (issetAndNoEmpty('anneeapres')) {
 	$_SESSION["annee"] += 1;
 
 	//On sauvegarde les heures deja entrées
@@ -200,9 +307,6 @@ if (issetAndNoEmpty('anneeapres') || issetAndNoEmpty('anneeapres_x')) {
 //valeurs du nombre de jour dans le mois et du premier jour du mois
 $nbrejourmois = date("t", mktime(0, 0, 0, $_SESSION["mois"], 1, $_SESSION["annee"]));
 $premierjourmois = date("N", mktime(0, 0, 0, $_SESSION["mois"], 1, $_SESSION["annee"])) - 1;
-
-//le format du sondage est DATE
-$_SESSION["formatsondage"] = "D";
 
 //traduction de la valeur du mois
 if (is_integer($_SESSION["mois"]) && $_SESSION["mois"] > 0 && $_SESSION["mois"] < 13)
@@ -380,113 +484,10 @@ print '</tr>'."\n";
 print '</table>'."\n";
 print '</div></center>'."\n";
 
-//traitement de l'entrée des heures dans les cases texte
-$errheure = $erreur = false;
-if (issetAndNoEmpty('choixheures') || issetAndNoEmpty('choixheures_x')) {
-	//On sauvegarde les heures deja entrées
-	if (issetAndNoEmpty('totalchoixjour', $_SESSION) === true && issetAndNoEmpty('nbrecaseshoraires', $_SESSION) === true) 
-	{
-		$nbofchoice=count($_SESSION["totalchoixjour"]);
-		for ($i = 0; $i < $nbofchoice; $i++) {
-			//affichage des 5 cases horaires
-			for ($j = 0; $j < $_SESSION["nbrecaseshoraires"]; $j++) {
-				$_SESSION["horaires$i"][$j] = $_POST["horaires$i"][$j];
-			}
-		}
-	}
-
-	//affichage des horaires
-	if (issetAndNoEmpty('totalchoixjour', $_SESSION) === true && issetAndNoEmpty('nbrecaseshoraires', $_SESSION) === true) 
-	{
-		$nbofchoice=count($_SESSION["totalchoixjour"]);
-		for ($i = 0; $i < $nbofchoice; $i++) {
-			//affichage des 5 cases horaires
-			for ($j = 0; $j < $_SESSION["nbrecaseshoraires"]; $j++) {
-				$case = $j + 1;
-
-				if (isset($_POST['horaires'.$i]) === false || isset($_POST['horaires'.$i][$j]) === false) {
-					$errheure[$i][$j]=true;
-					$erreur=true;
-					$_SESSION["horaires$i"][$j]=$_POST["horaires$i"][$j];
-					continue;
-				}
-
-				//si c'est un creneau type 8:00-11:00
-				if (preg_match("/(\d{1,2}:\d{2})-(\d{1,2}:\d{2})/", $_POST["horaires$i"][$j], $creneaux)) {
-					//on recupere les deux parties du preg_match qu'on redécoupe autour des ":"
-					$debutcreneau=explode(":", $creneaux[1]);
-					$fincreneau=explode(":", $creneaux[2]);
-
-					//comparaison des heures de fin et de debut
-					//si correctes, on entre les données dans la variables de session
-					if ($debutcreneau[0] < 24 && $fincreneau[0] < 24 && $debutcreneau[1] < 60 && $fincreneau[1] < 60 && ($debutcreneau[0] < $fincreneau[0] || ($debutcreneau[0] == $fincreneau[0] && $debutcreneau[1] < $fincreneau[1]))) {
-						$_SESSION["horaires$i"][$j] = $creneaux[1].'-'.$creneaux[2];
-					} else { //sinon message d'erreur et nettoyage de la case
-						$errheure[$i][$j]=true;
-						$erreur=true;
-					}
-				} elseif (preg_match(";^(\d{1,2}h\d{0,2})-(\d{1,2}h\d{0,2})$;i", $_POST["horaires$i"][$j], $creneaux)) { //si c'est un creneau type 8h00-11h00
-					//on recupere les deux parties du preg_match qu'on redécoupe autour des "H"
-					$debutcreneau=preg_split("/h/i", $creneaux[1]);
-					$fincreneau=preg_split("/h/i", $creneaux[2]);
-
-					//comparaison des heures de fin et de debut
-					//si correctes, on entre les données dans la variables de session
-					if ($debutcreneau[0] < 24 && $fincreneau[0] < 24 && $debutcreneau[1] < 60 && $fincreneau[1] < 60 && ($debutcreneau[0] < $fincreneau[0] || ($debutcreneau[0] == $fincreneau[0] && $debutcreneau[1] < $fincreneau[1]))) {
-						$_SESSION["horaires$i"][$j] = $creneaux[1].'-'.$creneaux[2];
-					} else { //sinon message d'erreur et nettoyage de la case
-						$errheure[$i][$j]=true;
-						$erreur=true;
-					}
-				} elseif (preg_match(";^(\d{1,2}):(\d{2})$;", $_POST["horaires$i"][$j], $heures)) { //si c'est une heure simple type 8:00
-					//si valeures correctes, on entre les données dans la variables de session
-					if ($heures[1] < 24 && $heures[2] < 60) {
-						$_SESSION["horaires$i"][$j] = $heures[0];
-					} else { //sinon message d'erreur et nettoyage de la case
-						$errheure[$i][$j]=true;
-						$erreur=true;
-					}
-				} elseif (preg_match(";^(\d{1,2})h(\d{0,2})$;i", $_POST["horaires$i"][$j], $heures)) { //si c'est une heure encore plus simple type 8h
-					//si valeures correctes, on entre les données dans la variables de session
-					if ($heures[1] < 24 && $heures[2] < 60) {
-						$_SESSION["horaires$i"][$j] = $heures[0];
-					} else { //sinon message d'erreur et nettoyage de la case
-						$errheure[$i][$j]=true;
-						$erreur=true;
-					}
-				} elseif (preg_match(";^(\d{1,2})-(\d{1,2})$;", $_POST["horaires$i"][$j], $heures)) { //si c'est un creneau simple type 8-11
-					//si valeures correctes, on entre les données dans la variables de session
-					if ($heures[1] < $heures[2] && $heures[1] < 24 && $heures[2] < 24) {
-						$_SESSION["horaires$i"][$j] = $heures[0];
-					} else { //sinon message d'erreur et nettoyage de la case
-						$errheure[$i][$j]=true;
-						$erreur=true;
-					}
-				} elseif (preg_match(";^(\d{1,2})h-(\d{1,2})h$;", $_POST["horaires$i"][$j], $heures)) { //si c'est un creneau H type 8h-11h
-					//si valeures correctes, on entre les données dans la variables de session
-					if ($heures[1] < $heures[2] && $heures[1] < 24 && $heures[2] < 24) {
-						$_SESSION["horaires$i"][$j] = $heures[0];
-					} else { //sinon message d'erreur et nettoyage de la case
-						$errheure[$i][$j]=true;
-						$erreur=true;
-					}
-				} elseif ($_POST["horaires$i"][$j]=="") { //Si la case est vide
-					unset($_SESSION["horaires$i"][$j]);
-				} else { //pour tout autre format, message d'erreur
-					//$errheure[$i][$j]=true;
-					//$erreur=true;
-					$_SESSION["horaires$i"][$j] = $_POST["horaires$i"][$j];
-				}
-			}
-		}
-	}
-}
-
 print '<div class="bodydate"><center>'."\n";
 
 // affichage de tous les jours choisis
-if (issetAndNoEmpty('totalchoixjour', $_SESSION) && (!issetAndNoEmpty('choixheures_x') || $erreur))
-//if (1==1 || GETPOST($_SESSION['totalchoixjour']) && (! GETPOST('choixheures_x') || $erreur))
+if (issetAndNoEmpty('totalchoixjour', $_SESSION) || $erreur)
 {
 	//affichage des jours
 	print '<br>'."\n";
@@ -509,37 +510,22 @@ if (issetAndNoEmpty('totalchoixjour', $_SESSION) && (!issetAndNoEmpty('choixheur
 
 	//affichage de la liste des jours choisis
 	$nbofchoice=count($_SESSION["totalchoixjour"]);
+	
 	for ($i=0; $i<$nbofchoice; $i++)
 	{
 		print '<tr>'."\n";
 		print '<td>'.dol_print_date($_SESSION["totalchoixjour"][$i], 'daytext').' ('.dol_print_date($_SESSION["totalchoixjour"][$i], '%A').')</td>';
-
-		$affichageerreurfindeligne=false;
 
 		//affichage des cases d'horaires
 		for ($j=0;$j<$_SESSION["nbrecaseshoraires"];$j++) {
 			//si on voit une erreur, le fond de la case est rouge
 			if (isset($errheure[$i][$j]) && $errheure[$i][$j]) {
 				print '<td><input type=text size="10" maxlength="11" name=horaires'.$i.'[] value="'.$_SESSION["horaires$i"][$j].'" style="background-color:#FF6666;"></td>'."\n";
-				$affichageerreurfindeligne=true;
 			} else { //sinon la case est vide normalement
-				if (issetAndNoEmpty('horaires'.$i, $_SESSION) === false || issetAndNoEmpty($j, $_SESSION['horaires'.$i]) === false) {
-					if (issetAndNoEmpty('horaires'.$i, $_SESSION) === true) {
-						$_SESSION["horaires$i"][$j] = '';
-					} else {
-						$_SESSION["horaires$i"] = array();
-						$_SESSION["horaires$i"][$j] = '';
-					}
-				}
-
+				
 				print '<td><input type=text size="10" maxlength="11" name=horaires'.$i.'[] value="'.$_SESSION["horaires$i"][$j].'"></td>'."\n";
 			}
 		}
-
-		if ($affichageerreurfindeligne) {
-			print '<td><b><font color=#FF0000>'. $langs->trans("ErrorBadFormat") .'</font></b></td>'."\n";
-		}
-
 		print '</tr>'."\n";
 	}
 
@@ -550,27 +536,7 @@ if (issetAndNoEmpty('totalchoixjour', $_SESSION) && (!issetAndNoEmpty('choixheur
 	print '<tr>'."\n";
 	print '<td><input type="submit" class="button" name="reset" value="'. dol_escape_htmltag($langs->trans("RemoveAllDays")) .'"></td><td><input type="submit" class="button" name="reporterhoraires" value="'. dol_escape_htmltag($langs->trans("CopyHoursOfFirstDay")) .'"></td><td><input type="submit" class="button" name="resethoraires" value="'. dol_escape_htmltag($langs->trans("RemoveAllHours")) .'"></td></tr>'."\n";
 	print'<tr><td colspan="3"><br><br></td></tr>'."\n";
-	print '<tr><td colspan="3" align="center"><input type="submit" class="button" name="choixheures" value="'. $langs->trans("NextStep"). '"></td></tr>'."\n";
-	print '</table>'."\n";
-
-	//si un seul jour et aucunes horaires choisies, : message d'erreur
-	if ((GETPOST('choixheures') || GETPOST('choixheures_x')) && (count($_SESSION["totalchoixjour"])=="1" && $_POST["horaires0"][0]=="" && $_POST["horaires0"][1]=="" && $_POST["horaires0"][2]=="" && $_POST["horaires0"][3]=="" && $_POST["horaires0"][4]=="")) {
-		print '<table><tr><td colspan=3><font color=#FF0000>'. $langs->trans("MoreChoices") .'</font><br></td></tr></table>'."\n";
-		$erreur=true;
-	}
-}
-
-//s'il n'y a pas d'erreur et que le bouton de creation est activé, on demande confirmation
-if (!$erreur  && (GETPOST('choixheures') || GETPOST('choixheures_x'))) {
-	$taille_tableau=count($_SESSION["totalchoixjour"])-1;
-	$jour_arret = $_SESSION["totalchoixjour"][$taille_tableau]+200000;
-	$date_fin=dol_print_date($jour_arret, 'dayhourtext');
-
-	print '<br><div class="presentationdatefin">'. $langs->trans("PollWillExpire",2) .'</td></tr><tr><td><br>'. $langs->trans("RemovalDate") .' : <b> '.$date_fin.'</b><br>'."\n";
-	print '</div>'."\n";
-	print '<table>'."\n";
-	print '<tr><td>'. $langs->trans("BackToHoursSetup") .'</td><td></td><td><input type="image" name="retourhoraires" src="images/back-32.png"></td></tr>'."\n";
-	print'<tr><td>'. $langs->trans("CreatePoll") .'</td><td></td><td><input type="image" name="confirmation" value="'.$langs->trans('CreatePoll').'" src="images/add.png"></td></tr>'."\n";
+	print '<tr><td colspan="3" align="center"><input type="submit" class="button" name="confirmation" value="'. $langs->trans("NextStep"). '"></td></tr>'."\n";
 	print '</table>'."\n";
 }
 

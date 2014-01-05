@@ -220,7 +220,7 @@ function dol_survey_random($car)
  *
  * @return	void
  */
-function ajouter_sondage($origin)
+function ajouter_sondage()
 {
 	global $db;
 	
@@ -228,26 +228,6 @@ function ajouter_sondage($origin)
 
 	$sondage=dol_survey_random(16);
 
-	if ($_SESSION["formatsondage"]=="A"||$_SESSION["formatsondage"]=="A+") {
-		//extraction de la date de fin choisie
-		if ($_SESSION["champdatefin"]) {
-			if ($_SESSION["champdatefin"]>time()+250000) {
-				$date_fin=$_SESSION["champdatefin"];
-			}
-		} else {
-			$date_fin=time()+15552000;
-		}
-	}
-
-	if ($_SESSION["formatsondage"]=="D"||$_SESSION["formatsondage"]=="D+") {
-		//Calcul de la date de fin du sondage
-		$taille_tableau=count($_SESSION["totalchoixjour"])-1;
-		$date_fin=$_SESSION["totalchoixjour"][$taille_tableau]+200000;
-	}
-
-	if (is_numeric($date_fin) === false) {
-		$date_fin = time()+15552000;
-	}
 	$allow_comments = empty($_SESSION['allow_comments']) ? 0 : 1;
 	$allow_spy = empty($_SESSION['allow_spy']) ? 0 : 1;
 	
@@ -258,7 +238,7 @@ function ajouter_sondage($origin)
 	$opensurveysondage->mail_admin = $_SESSION['adresse'];
 	$opensurveysondage->nom_admin = $_SESSION['nom'];
 	$opensurveysondage->titre = $_SESSION['titre'];
-	$opensurveysondage->date_fin = $date_fin;
+	$opensurveysondage->date_fin = $_SESSION['champdatefin'];
 	$opensurveysondage->format = $_SESSION['formatsondage'];
 	$opensurveysondage->mailsonde = $_SESSION['mailsonde'];
 	$opensurveysondage->allow_comments = $allow_comments;

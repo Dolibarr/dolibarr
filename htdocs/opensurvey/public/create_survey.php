@@ -78,10 +78,32 @@ if (GETPOST("creation_sondage_date") || GETPOST("creation_sondage_autre") || GET
 	} else {
 		$_SESSION['allow_spy'] = false;
 	}
+	
+	$testdate = false;
+	
+	if (GETPOST('champdatefin'))
+	{
+		$registredate=explode("/",$_POST["champdatefin"]);
+		if (is_array($registredate) && count($registredate) === 3) {
+			$time = mktime(0,0,0,$registredate[1],$registredate[0],$registredate[2]);
+			
+			if ($time !== false && date('d/m/Y', $time) === $_POST["champdatefin"]) {
+				//Expire date is not before today
+				if ($time - dol_now() > 0) {
+					$testdate = true;
+					$_SESSION['champdatefin'] = $time;
+				}
+			}
+		}
+	}
+	
+	if (!$testdate) {
+		setEventMessage($langs->trans('ErrorOpenSurveyDateFormat'), 'errors');
+	}
 
 	if (! isValidEmail($adresse)) $erreur_adresse = true;
 
-	if ($titre && $nom && $adresse && !$erreur_adresse)
+	if ($titre && $nom && $adresse && !$erreur_adresse && $testdate)
 	{
 		if (! empty($creation_sondage_date))
 		{
@@ -104,6 +126,8 @@ if (GETPOST("creation_sondage_date") || GETPOST("creation_sondage_autre") || GET
  * View
  */
 
+$form = new Form($db);
+
 $arrayofjs=array();
 $arrayofcss=array('/opensurvey/css/style.css');
 llxHeader('', $langs->trans("OpenSurvey"), "", 0, 0, $arrayofjs, $arrayofcss);
@@ -122,7 +146,7 @@ print '<table class="border" width="100%">'."\n";
 print '<tr><td class="fieldrequired">'. $langs->trans("PollTitle") .'</td><td><input type="text" name="titre" size="40" maxlength="80" value="'.$_SESSION["titre"].'"></td>'."\n";
 if (! $_SESSION["titre"] && (GETPOST('creation_sondage_date') || GETPOST('creation_sondage_autre') || GETPOST('creation_sondage_date_x') || GETPOST('creation_sondage_autre_x')))
 {
-	print "<td><font color=\"#FF0000\">" . $langs->trans("FieldMandatory") . "</font></td>"."\n";
+	setEventMessage($langs->trans("FieldMandatory"), 'errors');
 }
 
 print '</tr>'."\n";
@@ -134,7 +158,7 @@ print '<input type="text" name="nom" size="40" maxlength="40" value="'.$_SESSION
 
 if (! $_SESSION["nom"] && (GETPOST('creation_sondage_date') || GETPOST('creation_sondage_autre') || GETPOST('creation_sondage_date_x') || GETPOST('creation_sondage_autre_x')))
 {
-	print "<td><font color=\"#FF0000\">" . $langs->trans("FieldMandatory")  . "</font></td>"."\n";
+	setEventMessage($langs->trans("FieldMandatory"), 'errors');
 }
 
 print '</tr>'."\n";
@@ -144,12 +168,23 @@ print '<input type="text" name="adresse" size="40" maxlength="64" value="'.$_SES
 
 if (!$_SESSION["adresse"] && (GETPOST('creation_sondage_date') || GETPOST('creation_sondage_autre') || GETPOST('creation_sondage_date_x') || GETPOST('creation_sondage_autre_x')))
 {
-  print "<td><font color=\"#FF0000\">" .$langs->trans("FieldMandatory")  . " </font></td>"."\n";
+	setEventMessage($langs->trans("FieldMandatory"), 'errors');
 } elseif ($erreur_adresse && (GETPOST('creation_sondage_date') || GETPOST('creation_sondage_autre') || GETPOST('creation_sondage_date_x') || GETPOST('creation_sondage_autre_x')))
 {
 	$langs->load('errors');
-  print "<td><font color=\"#FF0000\">" . $langs->trans("ErrorBadEMail", $adresse) . "</font></td>"."\n";
+	setEventMessage($langs->trans("ErrorBadEMail", $adresse), 'errors');
 }
+
+print '<tr><td class="fieldrequired">'.  $langs->trans("ExpireDate")  .'</td><td>';
+
+if (!GETPOST('champdatefin')) {
+	//172800 = 48 hours
+	$champdatefin = time() + 172800;
+} else {
+	$champdatefin = -1;
+}
+
+print $form->select_date($champdatefin,'champdatefin','','','',"add",1,1);
 
 print '</tr>'."\n";
 print '</table>'."\n";
