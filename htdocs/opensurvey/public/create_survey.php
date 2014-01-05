@@ -184,7 +184,7 @@ if (!GETPOST('champdatefin')) {
 	$champdatefin = -1;
 }
 
-print $form->select_date($champdatefin,'champdatefin','','','',"add",1,1);
+print $form->select_date($champdatefin,'champdatefin','','','',"add",1,0);
 
 print '</tr>'."\n";
 print '</table>'."\n";
