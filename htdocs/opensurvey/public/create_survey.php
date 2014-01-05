@@ -128,14 +128,12 @@ $form = new Form($db);
 
 $arrayofjs=array();
 $arrayofcss=array('/opensurvey/css/style.css');
-llxHeader('', $langs->trans("OpenSurvey"), "", 0, 0, $arrayofjs, $arrayofcss);
+llxHeader('', $langs->trans("OpenSurvey"), '', "", 0, 0, $arrayofjs, $arrayofcss);
 
 print_fiche_titre($langs->trans("CreatePoll").' (1 / 2)');
 
 //debut du formulaire
-print '<form name="formulaire" action="create_survey.php" method="POST" onkeypress="javascript:process_keypress(event)">'."\n";
-
-print '<div class=corps>'."\n";
+print '<form name="formulaire" action="create_survey.php" method="POST">'."\n";
 
 //Affichage des différents champs textes a remplir
 print '<table class="border" width="100%">'."\n";
@@ -225,7 +223,6 @@ else
 	print '</table>'."\n";
 }
 print '<br><br><br>'."\n";
-print '</div>'."\n";
 print '</form>'."\n";
 
 llxFooter();

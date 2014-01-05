@@ -256,7 +256,7 @@ if ($object->commentaires)
 
 print '</div>'."\n";
 
-print '<form name="formulaire" action="studs.php?sondage='.$numsondage.'"'.'#bas" method="POST" onkeypress="javascript:process_keypress(event)">'."\n";
+print '<form name="formulaire" action="studs.php?sondage='.$numsondage.'"'.'#bas" method="POST">'."\n";
 print '<input type="hidden" name="sondage" value="' . $numsondage . '"/>';
 
 print '<div class="cadre"> '."\n";

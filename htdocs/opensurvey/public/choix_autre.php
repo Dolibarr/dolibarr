@@ -113,12 +113,14 @@ if (empty($_SESSION['titre']) || empty($_SESSION['nom']) || empty($_SESSION['adr
 //partie creation du sondage dans la base SQL
 //On prépare les données pour les inserer dans la base
 
-print '<form name="formulaire" action="#bas" method="POST" onkeypress="javascript:process_keypress(event)">'."\n";
+print '<form name="formulaire" action="#bas" method="POST">'."\n";
 
 print_fiche_titre($langs->trans("CreatePoll").' (2 / 2)');
 
-print '<div class=corps>'."\n";
+
 print '<br>'. $langs->trans("PollOnChoice") .'<br><br>'."\n";
+
+print '<div class=corps>'."\n";
 print '<table>'."\n";
 
 //affichage des cases texte de formulaire

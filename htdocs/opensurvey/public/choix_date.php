@@ -320,7 +320,7 @@ else
 
 
 //Debut du formulaire et bandeaux de tete
-print '<form name="formulaire" action="choix_date.php" method="POST" onkeypress="javascript:process_keypress(event)">'."\n";
+print '<form name="formulaire" action="choix_date.php" method="POST">'."\n";
 
 print_fiche_titre($langs->trans("CreatePoll").' (2 / 2)');
 

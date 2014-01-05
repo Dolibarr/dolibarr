@@ -418,7 +418,7 @@ $toutsujet=str_replace("@","<br>",$toutsujet);
 $toutsujet=str_replace("°","'",$toutsujet);
 
 
-print '<form name="formulaire4" action="#" method="POST" onkeypress="javascript:process_keypress(event)">'."\n";
+print '<form name="formulaire4" action="#" method="POST">'."\n";
 
 $head = opensurvey_prepare_head($object);
 

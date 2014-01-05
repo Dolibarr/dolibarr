@@ -37,7 +37,9 @@ $langs->load("opensurvey");
 
 $arrayofjs=array();
 $arrayofcss=array('/opensurvey/css/style.css');
-llxHeader('', $langs->trans("OpenSurvey"), "", 0, 0, $arrayofjs, $arrayofcss);
+llxHeader('', $langs->trans("OpenSurvey"), '', "", 0, 0, $arrayofjs, $arrayofcss);
+
+print_fiche_titre($langs->trans("CreatePoll"));
 
 print '<center>
 <form name="formulaire" action="create_survey.php" method="POST">';
