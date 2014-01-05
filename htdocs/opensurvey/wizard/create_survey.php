@@ -27,8 +27,10 @@ require_once(DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/opensurvey/fonctions.php");
 
-$langs->load("opensurvey");
+// Security check
+if (!$user->rights->opensurvey->write) accessforbidden ();
 
+$langs->load("opensurvey");
 
 // On teste toutes les variables pour supprimer l'ensemble des warnings PHP
 // On transforme en entites html les données afin éviter les failles XSS

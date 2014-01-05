@@ -27,6 +27,9 @@ require_once(DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/opensurvey/fonctions.php");
 
+// Security check
+if (!$user->rights->opensurvey->write) accessforbidden ();
+
 /*
  * Action
  */
