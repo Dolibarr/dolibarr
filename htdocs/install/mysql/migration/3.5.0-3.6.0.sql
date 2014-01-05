@@ -24,3 +24,4 @@ ALTER TABLE  `llx_opensurvey_sondage` DROP INDEX  `idx_id_sondage_admin` ;
 ALTER TABLE  `llx_opensurvey_sondage` DROP COLUMN `id_sondage_admin` ;
 ALTER TABLE  `llx_opensurvey_sondage` DROP COLUMN `canedit` ;
 ALTER TABLE  `llx_opensurvey_sondage` ADD COLUMN `allow_spy` TINYINT( 1 ) UNSIGNED NOT NULL AFTER  `allow_comments` ;
+ALTER TABLE  `llx_opensurvey_sondage` DROP  `origin` ;

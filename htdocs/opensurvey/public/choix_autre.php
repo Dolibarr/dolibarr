@@ -22,8 +22,6 @@
  *	\brief      Page to create a new survey (choice selection)
  */
 
-define("NOLOGIN",1);		// This means this output page does not require to be logged.
-define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
 require_once('../../main.inc.php');
 require_once(DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
@@ -32,9 +30,6 @@ require_once(DOL_DOCUMENT_ROOT."/opensurvey/fonctions.php");
 $erreur = false;
 $testdate = true;
 $date_selected = '';
-
-$origin=GETPOST('origin','alpha');
-
 
 
 /*
@@ -103,7 +98,7 @@ if (isset($_POST["confirmecreation"]) || isset($_POST["confirmecreation_x"]))
 		$_SESSION["formatsondage"]="A";
 
 		// Add into database
-		ajouter_sondage($origin);
+		ajouter_sondage();
 	} else {
 		$_POST["fin_sondage_autre"] = 'ok';
 	}
@@ -120,7 +115,7 @@ $form=new Form($db);
 
 $arrayofjs=array();
 $arrayofcss=array('/opensurvey/css/style.css');
-llxHeaderSurvey($langs->trans("OpenSurvey"), "", 0, 0, $arrayofjs, $arrayofcss);
+llxHeader('', $langs->trans("OpenSurvey"), "", '', 0, 0, $arrayofjs, $arrayofcss);
 
 if (empty($_SESSION['titre']) || empty($_SESSION['nom']) || empty($_SESSION['adresse']))
 {
@@ -134,9 +129,8 @@ if (empty($_SESSION['titre']) || empty($_SESSION['nom']) || empty($_SESSION['adr
 //On prépare les données pour les inserer dans la base
 
 print '<form name="formulaire" action="#bas" method="POST" onkeypress="javascript:process_keypress(event)">'."\n";
-print '<input type="hidden" name="origin" value="'.dol_escape_htmltag($origin).'">';
 
-print '<div class="bandeautitre">'. $langs->trans("CreatePoll")." (2 / 2)" .'</div>'."\n";
+print_fiche_titre($langs->trans("CreatePoll").' (2 / 2)');
 
 print '<div class=corps>'."\n";
 print '<br>'. $langs->trans("PollOnChoice") .'<br><br>'."\n";
@@ -211,7 +205,7 @@ print '<a name=bas></a>'."\n";
 print '<br><br><br>'."\n";
 print '</div>'."\n";
 
-llxFooterSurvey();
+llxFooter();
 
 $db->close();
 ?>

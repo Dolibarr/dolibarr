@@ -51,7 +51,6 @@ class Opensurveysondage extends CommonObject
 	var $format;
 	var $mailsonde;
 	
-	public $origin;
 	public $sujet;
 
 	/**
@@ -108,7 +107,6 @@ class Opensurveysondage extends CommonObject
 		$sql.= "mailsonde,";
 		$sql.= "allow_comments,";
 		$sql.= "allow_spy,";
-		$sql.= "origin,";
 		$sql.= "sujet";
         $sql.= ") VALUES (";
 
@@ -122,7 +120,6 @@ class Opensurveysondage extends CommonObject
 		$sql.= " ".$this->db->escape($this->mailsonde).",";
 		$sql.= " ".$this->db->escape($this->allow_comments).",";
 		$sql.= " ".$this->db->escape($this->allow_spy).",";
-		$sql.= " '".$this->db->escape($this->origin)."',";
 		$sql.= " '".$this->db->escape($this->sujet)."'";
 		
 		$sql.= ")";
@@ -497,7 +494,6 @@ class Opensurveysondage extends CommonObject
 		$this->mailsonde = ($this->mailsonde ? 1 : 0);
 		$this->allow_comments = ($this->allow_comments ? 1 : 0);
 		$this->allow_spy = ($this->allow_spy ? 1 : 0);
-		$this->origin = trim($this->origin);
 		$this->sujet = trim($this->sujet);
 	}
 }

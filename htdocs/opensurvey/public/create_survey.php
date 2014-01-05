@@ -22,8 +22,6 @@
  *	\brief      Page to create a new survey
  */
 
-define("NOLOGIN",1);		// This means this output page does not require to be logged.
-define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
 require_once('../../main.inc.php');
 require_once(DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
@@ -108,21 +106,18 @@ if (GETPOST("creation_sondage_date") || GETPOST("creation_sondage_autre") || GET
 
 $arrayofjs=array();
 $arrayofcss=array('/opensurvey/css/style.css');
-llxHeaderSurvey($langs->trans("OpenSurvey"), "", 0, 0, $arrayofjs, $arrayofcss);
+llxHeader('', $langs->trans("OpenSurvey"), "", 0, 0, $arrayofjs, $arrayofcss);
 
-
-print '<div class="bandeautitre">'. $langs->trans("CreatePoll").' (1 / 2)' .'</div>'."\n";
-
+print_fiche_titre($langs->trans("CreatePoll").' (1 / 2)');
 
 //debut du formulaire
 print '<form name="formulaire" action="create_survey.php" method="POST" onkeypress="javascript:process_keypress(event)">'."\n";
 print '<input type="hidden" name="origin" value="'.dol_escape_htmltag($origin).'">';
 
 print '<div class=corps>'."\n";
-print '<br>'. $langs->trans("YouAreInPollCreateArea") .'<br><br>'."\n";
 
 //Affichage des différents champs textes a remplir
-print '<table>'."\n";
+print '<table class="border" width="100%">'."\n";
 
 print '<tr><td class="fieldrequired">'. $langs->trans("PollTitle") .'</td><td><input type="text" name="titre" size="40" maxlength="80" value="'.$_SESSION["titre"].'"></td>'."\n";
 if (! $_SESSION["titre"] && (GETPOST('creation_sondage_date') || GETPOST('creation_sondage_autre') || GETPOST('creation_sondage_date_x') || GETPOST('creation_sondage_autre_x')))
@@ -201,7 +196,7 @@ print '<br><br><br>'."\n";
 print '</div>'."\n";
 print '</form>'."\n";
 
-llxFooterSurvey();
+llxFooter();
 
 $db->close();
 ?>

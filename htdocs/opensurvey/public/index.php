@@ -22,11 +22,7 @@
 //if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC','1');
 //if (! defined('NOREQUIRETRAN'))  define('NOREQUIRETRAN','1');
 if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL','1');
-if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU','1'); // If there is no menu to show
-if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML','1'); // If we don't need to load the html.form.class.php
 if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');
-define("NOLOGIN",1);		// This means this output page does not require to be logged.
-define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
 require_once('../../main.inc.php');
 require_once(DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
@@ -43,7 +39,7 @@ $langs->load("opensurvey");
 
 $arrayofjs=array();
 $arrayofcss=array('/opensurvey/css/style.css');
-llxHeaderSurvey($langs->trans("OpenSurvey"), "", 0, 0, $arrayofjs, $arrayofcss);
+llxHeader('', $langs->trans("OpenSurvey"), "", 0, 0, $arrayofjs, $arrayofcss);
 
 print '<center>
 <form name="formulaire" action="create_survey.php" method="POST">
@@ -56,7 +52,7 @@ print '<p>'.$langs->trans("OrganizeYourMeetingEasily").'</p>
 </div>
 </form></center>';
 
-llxFooterSurvey();
+llxFooter();
 
 $db->close();
 ?>

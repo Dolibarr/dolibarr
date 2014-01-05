@@ -218,7 +218,6 @@ function dol_survey_random($car)
 /**
  * Add a poll
  *
- * @param	string	$origin		Origin of poll creation
  * @return	void
  */
 function ajouter_sondage($origin)
@@ -264,23 +263,9 @@ function ajouter_sondage($origin)
 	$opensurveysondage->mailsonde = $_SESSION['mailsonde'];
 	$opensurveysondage->allow_comments = $allow_comments;
 	$opensurveysondage->allow_spy = $allow_spy;
-	$opensurveysondage->origin = $origin;
 	$opensurveysondage->sujet = $_SESSION['toutchoix'];
 	
 	$opensurveysondage->create(null);
-
-	if ($origin == 'dolibarr') $urlback=dol_buildpath('/opensurvey/results.php',1).'?id='.$sondage;
-	else
-	{
-		// Define $urlwithroot
-		$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
-		$urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
-		//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
-
-		$url=$urlwithouturlroot.dol_buildpath('/opensurvey/public/studs.php',1).'?sondage='.$sondage;
-
-		$urlback=$url;
-	}
 
 	unset($_SESSION["titre"]);
 	unset($_SESSION["nom"]);
@@ -292,6 +277,8 @@ function ajouter_sondage($origin)
 	unset($_SESSION['toutchoix']);
 	unset($_SESSION['totalchoixjour']);
 	unset($_SESSION['champdatefin']);
+	
+	$urlback=dol_buildpath('/opensurvey/card.php',1).'?id='.$sondage;
 
 	header("Location: ".$urlback);
 	exit();
