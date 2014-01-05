@@ -110,17 +110,18 @@ See ChangeLog file found into package.
 ### Miscellaneous:
 
 - Multi-user, with several permissions levels for each feature.
-- Serveral menu managers (can be used by internal users, as a back-office, with a particular menu, or by external users, as a front-office, with another menu and permissions).
 - Very user friendly and easy to use.
-- Optional WYSIWYG forms, optional Ajax forms.
-- Several skins.
-- Code is highly customizable (a lot of use of modules and submodules).
-- Works with Mysql 4.1 or higher, or PostgreSql 8.14 or higher.
-- Works with PHP 5.2.1 or higher.
-- An easy to understand and maintain code (PHP with no heavy frameworks).
-- A trigger architecture to allow you to make Dolibarr business events run PHP code to update your own information system.
-- "NPR VAT Rate" (French particularity for managing VAT in DOM-TOM called "Non Perçue Récupérable").
-
+- Highly customizable: Enable only modules you need, user personalized fields, choose your skin, several menu managers (can be used by internal users as a back-office with a particular menu, or by external users as a front-office with another one).
+- Works with PHP 5.2.1, MySql 4.1 or PostgreSQL 8.1.
+- Compatible with all Cloud solutions that match MySql, PHP or PotgreSQL prerequisites.
+- An easy to understand, maintain and code interfaces with your own system information (PHP with no heavy frameworks, trigger and hook architecture).
+- Support countries specific features:
+   Spanish Tax RE and ISPF.
+   French NPR VAT rate (VAT called "Non Perçue Récupérable" for DOM-TOM).
+   Canadian double taxes (federal/province) and other countries using cumulative VAT.
+   Tunisian tax stamp.  
+   Compatible with European directives (2006/112/CE ... 2010/45/UE) (http://europa.eu/legislation_summaries/taxation/l31057_en.htm)
+   ...
 
 
 ## WHAT DOLIBARR CAN'T DO YET (TODO LIST)
