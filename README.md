@@ -76,36 +76,37 @@ See ChangeLog file found into package.
 
 ### Main modules/features:
 
-- Customers, Prospects or Suppliers directory
-- Products and services catalog
-- Bank accounts management
-- Orders management
-- Commercial proposals management
-- Contracts management
-- Invoices management
-- Payments management
-- Standing orders management
-- Stock management
-- Shipping management
+- Customers, Prospects or Suppliers directory.
+- Products and services catalog.
+- Bank accounts management.
+- Orders management.
+- Commercial proposals management.
+- Contracts management.
+- Invoices management.
+- Payments management.
+- Standing orders management.
+- Stock management.
+- Shipping management.
 - PDF or ODT generation for invoice, proposals, orders...
-- Agenda with ical,vcal export for third tools integration
-- EDM (Electronic Document Management)
-- Foundations members management
-- Employee's holidays management
-- Mass Emailing
-- Realize surveys
-- Point of Sale
+- Agenda with ical,vcal export for third tools integration.
+- EDM (Electronic Document Management).
+- Foundations members management.
+- Employee's holidays management.
+- Mass Emailing.
+- Realize surveys.
+- Point of Sale.
 
 ### Other modules:
 
-- Bookmarks management
-- Donations management
-- Reporting
-- Data export/import
-- LDAP connectivity
-- Third parties or products categories 
-- ClickToDial integration
-- RSS integration
+- Bookmarks management.
+- Donations management.
+- Reporting.
+- Data export/import.
+- Third parties or products categories. 
+- LDAP connectivity.
+- ClickToDial integration.
+- RSS integration.
+- Can be extended with a lot of other external modules available onto DoliStore.com.
 
 ### Miscellaneous:
 
@@ -113,7 +114,7 @@ See ChangeLog file found into package.
 - Very user friendly and easy to use.
 - Highly customizable: Enable only modules you need, user personalized fields, choose your skin, several menu managers (can be used by internal users as a back-office with a particular menu, or by external users as a front-office with another one).
 - Works with PHP 5.2.1, MySql 4.1 or PostgreSQL 8.1.
-- Compatible with all Cloud solutions that match MySql, PHP or PotgreSQL prerequisites.
+- Compatible with all Cloud solutions that match MySql, PHP or PostgreSQL prerequisites.
 - An easy to understand, maintain and code interfaces with your own system information (PHP with no heavy frameworks, trigger and hook architecture).
 - Support countries specific features:
    Spanish Tax RE and ISPF.
@@ -128,10 +129,10 @@ See ChangeLog file found into package.
 
 This is features that Dolibarr does not support completely yet:
 
-- No double party accountancy (only bank management).
+- No double party accountancy (only bank and treasury management).
 - Dolibarr manage one currency at once (mono-currency).
-- Dolibarr manage one master company/foundation (mono-company). If you want to manage several companies or foundations, you must install several time the software (on same server or not). Another solution is to extend Dolibarr with the addon Module MultiCompany that allows to manage several companies in one Dolibarr instance (one database but with a logical isolation of datas).
-- Dolibarr does not contains Payroll module.
+- Dolibarr manage one master activity (mono-company). If you want to manage several companies or foundations, you must install several time the software (on same server or not). Another solution is to extend Dolibarr with the addon Module MultiCompany that allows to manage several companies in one Dolibarr instance (one database but with a logical isolation of datas).
 - Tasks on module project can't have dependencies between each other.
+- Dolibarr does not contains Payroll module.
 - Dolibarr does not include any Webmail.
 - Dolibarr can't do coffee (not yet).
