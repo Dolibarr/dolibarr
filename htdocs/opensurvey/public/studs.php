@@ -45,6 +45,9 @@ if ($result <= 0) dol_print_error('','Failed to get survey id '.$numsondage);
 
 $nblignes=count($object->fetch_lines());
 
+//If the survey has not yet finished, then it can be modified
+$canbemodified = ($object->date_fin > dol_now());
+
 
 /*
  * Actions
@@ -57,6 +60,8 @@ $listofvoters=explode(',',$_SESSION["savevoter"]);
 // Add comment
 if (GETPOST('ajoutcomment'))
 {
+	if (!$canbemodified) accessforbidden();
+	
 	$error=0;
 
 	if (! GETPOST('comment'))
@@ -82,8 +87,10 @@ if (GETPOST('ajoutcomment'))
 }
 
 // Add vote
-if (isset($_POST["boutonp"]) || isset($_POST["boutonp_x"]))
+if (isset($_POST["boutonp"]))
 {
+	if (!$canbemodified) accessforbidden();
+	
 	//Si le nom est bien entré
 	if (GETPOST('nom'))
 	{
@@ -190,6 +197,8 @@ if ($testmodifier)
 			$nouveauchoix.="0";
 		}
 	}
+	
+	if (!$canbemodified) accessforbidden();
 
 	$idtomodify=$_POST["idtomodify".$modifier];
 	$sql = 'UPDATE '.MAIN_DB_PREFIX."opensurvey_user_studs";
@@ -205,6 +214,8 @@ if ($testmodifier)
 $idcomment=GETPOST('deletecomment','int');
 if ($idcomment)
 {
+	if (!$canbemodified) accessforbidden();
+	
 	$resql = $object->deleteComment($idcomment);
 }
 
@@ -250,6 +261,16 @@ if ($object->commentaires)
 }
 
 print '</div>'."\n";
+
+//The survey has expired, users can't vote or do any action
+if (!$canbemodified) {
+	
+	print '<div style="text-align: center"><p>'.$langs->trans('SurveyExpiredInfo').'</p></div>';
+	llxFooterSurvey();
+
+	$db->close();
+	die;
+}
 
 print '<form name="formulaire" action="studs.php?sondage='.$numsondage.'"'.'#bas" method="POST">'."\n";
 print '<input type="hidden" name="sondage" value="' . $numsondage . '"/>';

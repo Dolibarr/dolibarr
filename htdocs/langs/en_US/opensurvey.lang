@@ -66,3 +66,4 @@ ErrorOpenSurveyOneChoice=Enter at least one choice
 ErrorOpenSurveyDateFormat=Date must be have the format DD/MM/YYYY
 ErrorInsertingComment=There was an error while inserting your comment
 MoreChoices=Enter more choices for the voters
+SurveyExpiredInfo=The voting time of this poll has expired.
