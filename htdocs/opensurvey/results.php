@@ -17,7 +17,7 @@
  */
 
 /**
- *	\file       htdocs/opensurvey/adminstuds_preview.php
+ *	\file       htdocs/opensurvey/results.php
  *	\ingroup    opensurvey
  *	\brief      Page to preview votes of a survey
  */

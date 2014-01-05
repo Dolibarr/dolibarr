@@ -17,7 +17,7 @@
  */
 
 /**
- *	\file       htdocs/opensurvey/adminstuds.php
+ *	\file       htdocs/opensurvey/card.php
  *	\ingroup    opensurvey
  *	\brief      Page to edit survey
  */
@@ -327,7 +327,7 @@ $comments = $object->getComments();
 if ($comments) {
 	foreach ($comments as $comment) {
 		if ($user->rights->opensurvey->write) {
-			print '<a href="'.dol_buildpath('/opensurvey/adminstuds.php',1).'?deletecomment='.$comment->id_comment.'&id='.$numsondage.'"> '.img_picto('', 'delete.png').'</a> ';
+			print '<a href="'.dol_buildpath('/opensurvey/card.php',1).'?deletecomment='.$comment->id_comment.'&id='.$numsondage.'"> '.img_picto('', 'delete.png').'</a> ';
 		}
 		
 		print htmlentities($comment->usercomment).': '.dol_nl2br(htmlentities($comment->comment))." <br>";

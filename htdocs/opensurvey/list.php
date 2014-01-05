@@ -122,7 +122,7 @@ while ($i < min($num,$limit))
 	$var=!$var;
 	print '<tr '.$bc[$var].'>';
 	print '<td>';
-	print '<a href="'.dol_buildpath('/opensurvey/adminstuds.php',1).'?id='.$obj->id_sondage.'">'.img_picto('','object_opensurvey').' '.$obj->id_sondage.'</a>';
+	print '<a href="'.dol_buildpath('/opensurvey/card.php',1).'?id='.$obj->id_sondage.'">'.img_picto('','object_opensurvey').' '.$obj->id_sondage.'</a>';
 	print '</td><td>'.htmlentities($obj->titre).'</td><td>';
 	$type=($obj->format=='A' || $obj->format=='A+')?'classic':'date';
 	print img_picto('',dol_buildpath('/opensurvey/img/'.($type == 'classic'?'chart-32.png':'calendar-32.png'),1),'width="16"',1);

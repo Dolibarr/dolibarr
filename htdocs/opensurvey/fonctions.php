@@ -36,12 +36,12 @@ function opensurvey_prepare_head(Opensurveysondage $object) {
 	$h = 0;
 	$head = array();
 
-	$head[0][0] = 'adminstuds.php?id='.$object->id_sondage;
+	$head[0][0] = 'card.php?id='.$object->id_sondage;
 	$head[0][1] = $langs->trans("Card");
 	$head[0][2] = 'general';
 	$h++;
 	
-	$head[1][0] = 'adminstuds_preview.php?id='.$object->id_sondage;
+	$head[1][0] = 'results.php?id='.$object->id_sondage;
 	$head[1][1] = $langs->trans("SurveyResults");
 	$head[1][2] = 'preview';
 	$h++;
@@ -195,7 +195,7 @@ function issetAndNoEmpty($name, $tableau = null)
 function getUrlSondage($id, $admin = false)
 {
 	if ($admin === true) {
-		$url = get_server_name().'adminstuds_preview.php?id='.$id;
+		$url = get_server_name().'results.php?id='.$id;
 	} else {
 		$url = get_server_name().'/public/studs.php?sondage='.$id;
 	}
@@ -275,7 +275,7 @@ function ajouter_sondage($origin)
 	
 	$opensurveysondage->create(null);
 
-	if ($origin == 'dolibarr') $urlback=dol_buildpath('/opensurvey/adminstuds_preview.php',1).'?id='.$sondage;
+	if ($origin == 'dolibarr') $urlback=dol_buildpath('/opensurvey/results.php',1).'?id='.$sondage;
 	else
 	{
 		// Define $urlwithroot
