@@ -361,43 +361,112 @@ else
 
 
 // Loop on each answer
-if ($object->allow_spy) {
-	$sumfor = array();
-	$sumagainst = array();
-	$compteur = 0;
-	$sql ="SELECT id_users, nom, id_sondage, reponses";
-	$sql.=" FROM ".MAIN_DB_PREFIX."opensurvey_user_studs";
-	$sql.=" WHERE id_sondage = '".$db->escape($numsondage)."'";
-	dol_syslog('sql='.$sql);
-	$resql=$db->query($sql);
-	if (! $resql)
-	{
-		dol_print_error($db);
-		exit;
+$sumfor = array();
+$sumagainst = array();
+$compteur = 0;
+$sql ="SELECT id_users, nom, id_sondage, reponses";
+$sql.=" FROM ".MAIN_DB_PREFIX."opensurvey_user_studs";
+$sql.=" WHERE id_sondage = '".$db->escape($numsondage)."'";
+dol_syslog('sql='.$sql);
+$resql=$db->query($sql);
+if (! $resql)
+{
+	dol_print_error($db);
+	exit;
+}
+$num=$db->num_rows($resql);
+while ($compteur < $num)
+{
+	$obj=$db->fetch_object($resql);
+
+	$ensemblereponses = $obj->reponses;
+
+	// ligne d'un usager pré-authentifié
+	$mod_ok = (in_array($obj->nom, $listofvoters));
+
+	if (!$mod_ok && !$object->allow_spy) {
+		$compteur++;
+		continue;
 	}
-	$num=$db->num_rows($resql);
-	while ($compteur < $num)
+
+	print '<tr>'."\n";
+
+	// Name
+	print '<td class="nom">'.htmlentities($obj->nom).'</td>'."\n";
+
+	// si la ligne n'est pas a changer, on affiche les données
+	if (! $testligneamodifier)
 	{
-		$obj=$db->fetch_object($resql);
+		for ($i = 0; $i < $nbcolonnes; $i++)
+		{
+			$car = substr($ensemblereponses, $i, 1);
+			//print 'xx'.$i."-".$car.'-'.$listofanswers[$i]['format'].'zz';
 
-		$ensemblereponses = $obj->reponses;
-
-		print '<tr>'."\n";
-
-		// ligne d'un usager pré-authentifié
-		$mod_ok = (! empty($nombase) && in_array($nombase, $listofvoters));
-
-		// Name
-		print '<td class="nom">'.htmlentities($obj->nom).'</td>'."\n";
-
-		// si la ligne n'est pas a changer, on affiche les données
-		if (! $testligneamodifier)
+			if (empty($listofanswers[$i]['format']) || ! in_array($listofanswers[$i]['format'],array('yesno','foragainst')))
+			{
+				if (((string) $car) == "1") print '<td class="ok">OK</td>'."\n";
+				else print '<td class="non">KO</td>'."\n";
+				// Total
+				if (! isset($sumfor[$i])) $sumfor[$i] = 0;
+				if (((string) $car) == "1") $sumfor[$i]++;
+			}
+			if (! empty($listofanswers[$i]['format']) && $listofanswers[$i]['format'] == 'yesno')
+			{
+				if (((string) $car) == "1") print '<td class="ok">'.$langs->trans("Yes").'</td>'."\n";
+				else if (((string) $car) == "0") print '<td class="non">'.$langs->trans("No").'</td>'."\n";
+				else print '<td class="vide">&nbsp;</td>'."\n";
+				// Total
+				if (! isset($sumfor[$i])) $sumfor[$i] = 0;
+				if (! isset($sumagainst[$i])) $sumagainst[$i] = 0;
+				if (((string) $car) == "1") $sumfor[$i]++;
+				if (((string) $car) == "0") $sumagainst[$i]++;
+			}
+			if (! empty($listofanswers[$i]['format']) && $listofanswers[$i]['format'] == 'foragainst')
+			{
+				if (((string) $car) == "1") print '<td class="ok">'.$langs->trans("For").'</td>'."\n";
+				else if (((string) $car) == "0") print '<td class="non">'.$langs->trans("Against").'</td>'."\n";
+				else print '<td class="vide">&nbsp;</td>'."\n";
+				// Total
+				if (! isset($sumfor[$i])) $sumfor[$i] = 0;
+				if (! isset($sumagainst[$i])) $sumagainst[$i] = 0;
+				if (((string) $car) == "1") $sumfor[$i]++;
+				if (((string) $car) == "0") $sumagainst[$i]++;
+			}
+		}
+	}
+	else
+	{
+		//sinon on remplace les choix de l'utilisateur par une ligne de checkbox pour recuperer de nouvelles valeurs
+		if ($compteur == $ligneamodifier)
 		{
 			for ($i = 0; $i < $nbcolonnes; $i++)
 			{
 				$car = substr($ensemblereponses, $i, 1);
-				//print 'xx'.$i."-".$car.'-'.$listofanswers[$i]['format'].'zz';
-
+				print '<td class="vide">';
+				if (empty($listofanswers[$i]['format']) || ! in_array($listofanswers[$i]['format'],array('yesno','foragainst')))
+				{
+					print '<input type="checkbox" name="choix'.$i.'" value="1" ';
+					if ($car == '1') print 'checked="checked"';
+					print '>';
+				}
+				if (! empty($listofanswers[$i]['format']) && $listofanswers[$i]['format'] == 'yesno')
+				{
+					$arraychoice=array('2'=>'&nbsp;','0'=>$langs->trans("No"),'1'=>$langs->trans("Yes"));
+					print $form->selectarray("choix".$i, $arraychoice, $car);
+				}
+				if (! empty($listofanswers[$i]['format']) && $listofanswers[$i]['format'] == 'foragainst')
+				{
+					$arraychoice=array('2'=>'&nbsp;','0'=>$langs->trans("Against"),'1'=>$langs->trans("For"));
+					print $form->selectarray("choix".$i, $arraychoice, $car);
+				}
+				print '</td>'."\n";
+			}
+		}
+		else
+		{
+			for ($i = 0; $i < $nbcolonnes; $i++)
+			{
+				$car = substr($ensemblereponses, $i, 1);
 				if (empty($listofanswers[$i]['format']) || ! in_array($listofanswers[$i]['format'],array('yesno','foragainst')))
 				{
 					if (((string) $car) == "1") print '<td class="ok">OK</td>'."\n";
@@ -408,8 +477,8 @@ if ($object->allow_spy) {
 				}
 				if (! empty($listofanswers[$i]['format']) && $listofanswers[$i]['format'] == 'yesno')
 				{
-					if (((string) $car) == "1") print '<td class="ok">'.$langs->trans("Yes").'</td>'."\n";
-					else if (((string) $car) == "0") print '<td class="non">'.$langs->trans("No").'</td>'."\n";
+					if (((string) $car) == "1") print '<td class="ok">'.$langs->trans("For").'</td>'."\n";
+					else if (((string) $car) == "0") print '<td class="non">'.$langs->trans("Against").'</td>'."\n";
 					else print '<td class="vide">&nbsp;</td>'."\n";
 					// Total
 					if (! isset($sumfor[$i])) $sumfor[$i] = 0;
@@ -430,97 +499,31 @@ if ($object->allow_spy) {
 				}
 			}
 		}
-		else
-		{
-			//sinon on remplace les choix de l'utilisateur par une ligne de checkbox pour recuperer de nouvelles valeurs
-			if ($compteur == $ligneamodifier)
-			{
-				for ($i = 0; $i < $nbcolonnes; $i++)
-				{
-					$car = substr($ensemblereponses, $i, 1);
-					print '<td class="vide">';
-					if (empty($listofanswers[$i]['format']) || ! in_array($listofanswers[$i]['format'],array('yesno','foragainst')))
-					{
-						print '<input type="checkbox" name="choix'.$i.'" value="1" ';
-						if ($car == '1') print 'checked="checked"';
-						print '>';
-					}
-					if (! empty($listofanswers[$i]['format']) && $listofanswers[$i]['format'] == 'yesno')
-					{
-						$arraychoice=array('2'=>'&nbsp;','0'=>$langs->trans("No"),'1'=>$langs->trans("Yes"));
-						print $form->selectarray("choix".$i, $arraychoice, $car);
-					}
-					if (! empty($listofanswers[$i]['format']) && $listofanswers[$i]['format'] == 'foragainst')
-					{
-						$arraychoice=array('2'=>'&nbsp;','0'=>$langs->trans("Against"),'1'=>$langs->trans("For"));
-						print $form->selectarray("choix".$i, $arraychoice, $car);
-					}
-					print '</td>'."\n";
-				}
-			}
-			else
-			{
-				for ($i = 0; $i < $nbcolonnes; $i++)
-				{
-					$car = substr($ensemblereponses, $i, 1);
-					if (empty($listofanswers[$i]['format']) || ! in_array($listofanswers[$i]['format'],array('yesno','foragainst')))
-					{
-						if (((string) $car) == "1") print '<td class="ok">OK</td>'."\n";
-						else print '<td class="non">KO</td>'."\n";
-						// Total
-						if (! isset($sumfor[$i])) $sumfor[$i] = 0;
-						if (((string) $car) == "1") $sumfor[$i]++;
-					}
-					if (! empty($listofanswers[$i]['format']) && $listofanswers[$i]['format'] == 'yesno')
-					{
-						if (((string) $car) == "1") print '<td class="ok">'.$langs->trans("For").'</td>'."\n";
-						else if (((string) $car) == "0") print '<td class="non">'.$langs->trans("Against").'</td>'."\n";
-						else print '<td class="vide">&nbsp;</td>'."\n";
-						// Total
-						if (! isset($sumfor[$i])) $sumfor[$i] = 0;
-						if (! isset($sumagainst[$i])) $sumagainst[$i] = 0;
-						if (((string) $car) == "1") $sumfor[$i]++;
-						if (((string) $car) == "0") $sumagainst[$i]++;
-					}
-					if (! empty($listofanswers[$i]['format']) && $listofanswers[$i]['format'] == 'foragainst')
-					{
-						if (((string) $car) == "1") print '<td class="ok">'.$langs->trans("For").'</td>'."\n";
-						else if (((string) $car) == "0") print '<td class="non">'.$langs->trans("Against").'</td>'."\n";
-						else print '<td class="vide">&nbsp;</td>'."\n";
-						// Total
-						if (! isset($sumfor[$i])) $sumfor[$i] = 0;
-						if (! isset($sumagainst[$i])) $sumagainst[$i] = 0;
-						if (((string) $car) == "1") $sumfor[$i]++;
-						if (((string) $car) == "0") $sumagainst[$i]++;
-					}
-				}
-			}
-		}
-
-		// Button edit at end of line
-		if ($compteur != $ligneamodifier && $mod_ok)
-		{
-			print '<td class="casevide"><input type="submit" class="button" name="modifierligne'.$compteur.'" value="'.dol_escape_htmltag($langs->trans("Edit")).'"></td>'."\n";
-		}
-
-		//demande de confirmation pour modification de ligne
-		for ($i=0; $i<$nblignes; $i++)
-		{
-			if (isset($_POST["modifierligne".$i]))
-			{
-				if ($compteur == $i)
-				{
-					print '<td class="casevide">';
-					print '<input type="hidden" name="idtomodify'.$compteur.'" value="'.$obj->id_users.'">';
-					print '<input type="submit" class="button" name="validermodifier'.$compteur.'" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
-					print '</td>'."\n";
-				}
-			}
-		}
-
-		$compteur++;
-		print '</tr>'."\n";
 	}
+
+	// Button edit at end of line
+	if ($compteur != $ligneamodifier && $mod_ok)
+	{
+		print '<td class="casevide"><input type="submit" class="button" name="modifierligne'.$compteur.'" value="'.dol_escape_htmltag($langs->trans("Edit")).'"></td>'."\n";
+	}
+
+	//demande de confirmation pour modification de ligne
+	for ($i=0; $i<$nblignes; $i++)
+	{
+		if (isset($_POST["modifierligne".$i]))
+		{
+			if ($compteur == $i)
+			{
+				print '<td class="casevide">';
+				print '<input type="hidden" name="idtomodify'.$compteur.'" value="'.$obj->id_users.'">';
+				print '<input type="submit" class="button" name="validermodifier'.$compteur.'" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
+				print '</td>'."\n";
+			}
+		}
+	}
+
+	$compteur++;
+	print '</tr>'."\n";
 }
 
 // Add line to add new record
