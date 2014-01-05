@@ -47,11 +47,8 @@ llxHeaderSurvey($langs->trans("OpenSurvey"), "", 0, 0, $arrayofjs, $arrayofcss);
 
 print '<center>
 <form name="formulaire" action="create_survey.php" method="POST">
-<input type="hidden" name="origin" value="'.dol_escape_htmltag($origin).'">
-<div id="interface-header" style="">
-<p id="application-description" class="pp-gris-fonce2">'.$langs->trans("OpenSurveyDesc").' '.$langs->trans("OpenSurveyNoRegistration").'</p>
-</div><br>';
-print $langs->trans("OrganizeYourMeetingEasily").'
+<input type="hidden" name="origin" value="'.dol_escape_htmltag($origin).'">';
+print '<p>'.$langs->trans("OrganizeYourMeetingEasily").'</p>
 <div class="corps">
 <br>
 <div class="index_date"><div><img class="opacity" src="images/date.png" onclick="document.formulaire.date.click()"></div><button id="date" name="choix_sondage" value="date" type="submit" class="button orange bigrounded"><img src="images/calendar-32.png" alt="'.dol_escape_htmltag($langs->trans("CreateSurveyDate")).'"><strong>&nbsp;'.dol_escape_htmltag($langs->trans("CreateSurveyDate")).'</strong></button></div>
