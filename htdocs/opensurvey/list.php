@@ -117,11 +117,11 @@ while ($i < min($num,$limit))
 	print '<tr '.$bc[$var].'>';
 	print '<td>';
 	print '<a href="'.dol_buildpath('/opensurvey/adminstuds.php',1).'?id='.$obj->id_sondage.'">'.img_picto('','object_opensurvey').' '.$obj->id_sondage.'</a>';
-	print '</td><td>'.$obj->titre.'</td><td>';
+	print '</td><td>'.htmlentities($obj->titre).'</td><td>';
 	$type=($obj->format=='A' || $obj->format=='A+')?'classic':'date';
 	print img_picto('',dol_buildpath('/opensurvey/img/'.($type == 'classic'?'chart-32.png':'calendar-32.png'),1),'width="16"',1);
 	print ' '.$langs->trans($type=='classic'?"TypeClassic":"TypeDate");
-	print '</td><td>'.$obj->nom_admin.'</td>';
+	print '</td><td>'.htmlentities($obj->nom_admin).'</td>';
 
 	print '<td align="center">'.dol_print_date($db->jdate($obj->date_fin),'day');
 	if ($db->jdate($obj->date_fin) < time()) { print ' '.img_warning(); }

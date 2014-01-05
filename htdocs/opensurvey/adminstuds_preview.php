@@ -708,7 +708,7 @@ else
 	for ($i = 0; isset($toutsujet[$i]); $i++)
 	{
 		$tmp=explode('@',$toutsujet[$i]);
-		print '<td class="sujet">'.$tmp[0].'</td>'."\n";
+		print '<td class="sujet">'.htmlentities($tmp[0]).'</td>'."\n";
 	}
 
 	print '<td class="sujet"><a href="'.$_SERVER["PHP_SELF"].'?id='.$numsondage.'&ajoutsujet=1&backtourl='.urlencode($_SERVER["PHP_SELF"]).'">'.img_picto('',dol_buildpath('/opensurvey/img/add-16.png',1),'',1).'</a></td>'."\n";
