@@ -494,7 +494,7 @@ if (issetAndNoEmpty('totalchoixjour', $_SESSION) || $erreur)
 {
 	//affichage des jours
 	print '<br>'."\n";
-	print '<strong>'. $langs->trans("SelectedDays") .' :</strong>'."<br>\n";
+	print '<strong>'. $langs->trans("SelectedDays") .':</strong>'."<br>\n";
 	print $langs->trans("SelectDayDesc")."<br>\n";
 	print '<table>'."\n";
 	print '<tr>'."\n";

@@ -684,12 +684,12 @@ $comments = $object->getComments();
 
 if ($comments)
 {
-	print "<br><b>" . $langs->trans("CommentsOfVoters") . " :</b><br>\n";
+	print "<br><b>" . $langs->trans("CommentsOfVoters") . ":</b><br>\n";
 	
 	foreach ($comments as $obj) {
 		print '<div class="comment"><span class="usercomment">';
 		if (in_array($obj->usercomment, $listofvoters)) print '<a href="'.$_SERVER["PHP_SELF"].'?deletecomment='.$obj->id_comment.'&sondage='.$numsondage.'"> '.img_picto('', 'delete.png').'</a> ';
-		print dol_htmlentities($obj->usercomment).' :</span> <span class="comment">'.dol_nl2br(dol_htmlentities($obj->comment))."</span></div>";
+		print dol_htmlentities($obj->usercomment).':</span> <span class="comment">'.dol_nl2br(dol_htmlentities($obj->comment))."</span></div>";
 	}
 }
 
@@ -698,7 +698,7 @@ if ($object->allow_comments) {
 	print '<div class="addcomment">' .$langs->trans("AddACommentForPoll") . "<br>\n";
 
 	print '<textarea name="comment" rows="2" cols="60"></textarea><br>'."\n";
-	print $langs->trans("Name") .' : ';
+	print $langs->trans("Name") .': ';
 	print '<input type="text" name="commentuser" maxlength="64" /> &nbsp; '."\n";
 	print '<input type="submit" class="button" name="ajoutcomment" value="'.dol_escape_htmltag($langs->trans("AddComment")).'"><br>'."\n";
 	print '</form>'."\n";

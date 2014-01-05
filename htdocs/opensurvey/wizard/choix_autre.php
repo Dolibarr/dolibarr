@@ -132,7 +132,7 @@ for ($i = 0; $i < $_SESSION["nbrecases"]; $i++) {
 	if (isset($_SESSION["choix$i"]) === false) {
 		$_SESSION["choix$i"] = '';
 	}
-	print '<tr><td>'. $langs->trans("TitleChoice") .' '.$j.' : </td><td><input type="text" name="choix[]" size="40" maxlength="40" value="'.dol_escape_htmltag($_SESSION["choix$i"]).'" id="choix'.$i.'">';
+	print '<tr><td>'. $langs->trans("TitleChoice") .' '.$j.': </td><td><input type="text" name="choix[]" size="40" maxlength="40" value="'.dol_escape_htmltag($_SESSION["choix$i"]).'" id="choix'.$i.'">';
 	$tmparray=array('checkbox'=>$langs->trans("CheckBox"),'yesno'=>$langs->trans("YesNoList"),'foragainst'=>$langs->trans("PourContreList"));
 	print ' &nbsp; '.$langs->trans("Type").' '.$form->selectarray("typecolonne[]", $tmparray, $_SESSION["typecolonne$i"]);
 	print '</td></tr>'."\n";

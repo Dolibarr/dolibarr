@@ -484,7 +484,7 @@ if (GETPOST('ajoutsujet'))
 	// Add new column
 	if ($object->format=="A"||$object->format=="A+")
 	{
-		print $langs->trans("AddNewColumn") .' :<br><br>';
+		print $langs->trans("AddNewColumn") .':<br><br>';
 		print $langs->trans("Title").' <input type="text" name="nouvellecolonne" size="40"><br>';
 		$tmparray=array('checkbox'=>$langs->trans("CheckBox"),'yesno'=>$langs->trans("YesNoList"),'foragainst'=>$langs->trans("PourContreList"));
 		print $langs->trans("Type").' '.$form->selectarray("typecolonne", $tmparray, GETPOST('typecolonne')).'<br><br>';
@@ -499,7 +499,7 @@ if (GETPOST('ajoutsujet'))
 		
 		$formother=new FormOther($db);
 		//ajout d'une date avec creneau horaire
-		print $langs->trans("AddADate") .' :<br><br>'."\n";
+		print $langs->trans("AddADate") .':<br><br>'."\n";
 		print '<select name="nouveaujour"> '."\n";
 		print '<OPTION VALUE="vide"></OPTION>'."\n";
 		for ($i=1;$i<32;$i++){
@@ -513,7 +513,7 @@ if (GETPOST('ajoutsujet'))
 		
 		print $formother->select_year('', 'nouvelleannee', 1, 0, 5, 0, 1);
 
-		print '<br><br>'. $langs->trans("AddStartHour") .' : <br><br>'."\n";
+		print '<br><br>'. $langs->trans("AddStartHour") .': <br><br>'."\n";
 		print '<select name="nouvelleheuredebut"> '."\n";
 		print '<OPTION VALUE="vide"></OPTION>'."\n";
 		for ($i = 0; $i < 24; $i++) {
@@ -527,7 +527,7 @@ if (GETPOST('ajoutsujet'))
 		print '<OPTION VALUE="30">30</OPTION>'."\n";
 		print '<OPTION VALUE="45">45</OPTION>'."\n";
 		print '</SELECT>'."\n";
-		print '<br><br>'. $langs->trans("AddEndHour") .' : <br><br>'."\n";
+		print '<br><br>'. $langs->trans("AddEndHour") .': <br><br>'."\n";
 		print '<select name="nouvelleheurefin"> '."\n";
 		print '<OPTION VALUE="vide"></OPTION>'."\n";
 		for ($i = 0; $i < 24; $i++) {
@@ -1034,9 +1034,9 @@ if ($nbofcheckbox >= 2)
 	print '<p class="affichageresultats">'."\n";
 
 	if (isset($meilleurecolonne) && $compteursujet == "1") {
-		print "<img src=\"".dol_buildpath('/opensurvey/img/medaille.png',1)."\"> " . $langs->trans('TheBestChoice') . " : <b>".$meilleursujet." </b>" . $langs->trans("with") . " <b>$meilleurecolonne </b>" . $vote_str . ".\n";
+		print "<img src=\"".dol_buildpath('/opensurvey/img/medaille.png',1)."\"> " . $langs->trans('TheBestChoice') . ": <b>".$meilleursujet." </b>" . $langs->trans("with") . " <b>$meilleurecolonne </b>" . $vote_str . ".\n";
 	} elseif (isset($meilleurecolonne)) {
-		print "<img src=\"".dol_buildpath('/opensurvey/img/medaille.png',1)."\"> " . $langs->trans('TheBestChoices') . " : <b>".$meilleursujet." </b>" . $langs->trans("with") . " <b>$meilleurecolonne </b>" . $vote_str . ".\n";
+		print "<img src=\"".dol_buildpath('/opensurvey/img/medaille.png',1)."\"> " . $langs->trans('TheBestChoices') . ": <b>".$meilleursujet." </b>" . $langs->trans("with") . " <b>$meilleurecolonne </b>" . $vote_str . ".\n";
 	}
 	print '<br></p><br>'."\n";
 }
