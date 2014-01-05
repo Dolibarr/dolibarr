@@ -202,6 +202,9 @@ class Opensurveysondage extends CommonObject
                 $obj = $this->db->fetch_object($resql);
 
 				$this->id_sondage = $obj->id_sondage;
+				//For compatibility
+				$this->ref = $this->id_sondage;
+				
 				$this->commentaires = $obj->commentaires;
 				$this->mail_admin = $obj->mail_admin;
 				$this->nom_admin = $obj->nom_admin;
