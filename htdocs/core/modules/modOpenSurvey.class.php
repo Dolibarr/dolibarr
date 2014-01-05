@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2013 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2014 Marcos García			<marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -107,8 +108,7 @@ class modOpenSurvey extends DolibarrModules
 		$this->rights[$r][1] = 'Read surveys';	// Permission label
 		$this->rights[$r][2] = 'r'; 					// Permission by default for new user (0/1)
 		$this->rights[$r][3] = 0; 					// Permission by default for new user (0/1)
-		$this->rights[$r][4] = 'survey';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
-		$this->rights[$r][5] = 'read';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+		$this->rights[$r][4] = 'read';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 		$r++;
 
 		// Add here list of permission defined by an id, a label, a boolean and two constant strings.
@@ -117,8 +117,7 @@ class modOpenSurvey extends DolibarrModules
 		$this->rights[$r][1] = 'Create/modify surveys';	// Permission label
 		$this->rights[$r][2] = 'w'; 					// Permission by default for new user (0/1)
 		$this->rights[$r][3] = 0; 					// Permission by default for new user (0/1)
-		$this->rights[$r][4] = 'survey';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
-		$this->rights[$r][5] = 'write';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+		$this->rights[$r][4] = 'write';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 		$r++;
 
 
@@ -134,7 +133,7 @@ class modOpenSurvey extends DolibarrModules
 								'langs'=>'opensurvey',
 								'position'=>200,
                 				'enabled'=>'$conf->opensurvey->enabled',         // Define condition to show or hide menu entry. Use '$conf->NewsSubmitter->enabled' if entry must be visible if module is enabled.
-								'perms'=>'$user->rights->opensurvey->survey->read',
+								'perms'=>'$user->rights->opensurvey->read',
 								'target'=>'',
 								'user'=>0);
 		$r++;

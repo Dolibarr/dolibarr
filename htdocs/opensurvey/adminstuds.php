@@ -30,8 +30,7 @@ require_once(DOL_DOCUMENT_ROOT."/opensurvey/fonctions.php");
 
 
 // Security check
-if (!$user->admin) accessforbidden();
-
+if (!$user->rights->opensurvey->read) accessforbidden();
 
 // Initialisation des variables
 $action=GETPOST('action');
@@ -62,6 +61,9 @@ $expiredate=dol_mktime(0, 0, 0, GETPOST('expiremonth'), GETPOST('expireday'), GE
 // Delete
 if ($action == 'delete_confirm')
 {
+	// Security check
+	if (!$user->rights->opensurvey->write) accessforbidden();
+	
 	$result=$object->delete($user,'',$numsondage);
 
 	header('Location: '.dol_buildpath('/opensurvey/list.php',1));
@@ -71,6 +73,9 @@ if ($action == 'delete_confirm')
 // Update
 if ($action == 'update')
 {
+	// Security check
+	if (!$user->rights->opensurvey->write) accessforbidden();
+
 	$error=0;
 
 	if (! GETPOST('nouveautitre'))
@@ -134,8 +139,17 @@ if (GETPOST('ajoutcomment'))
 $idcomment=GETPOST('deletecomment','int');
 if ($idcomment)
 {
+	// Security check
+	if (!$user->rights->opensurvey->write) accessforbidden();
+	
 	$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'opensurvey_comments WHERE id_comment = '.$idcomment;
 	$resql = $db->query($sql);
+}
+
+if ($action == 'edit') {
+	
+	// Security check
+	if (!$user->rights->opensurvey->write) accessforbidden();
 }
 
 
@@ -282,9 +296,14 @@ dol_fiche_end();
  */
 print '<div class="tabsAction">';
 
-if ($action != 'edit') print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&id=' . $numsondage . '">'.$langs->trans("Modify") . '</a>';
+if ($action != 'edit' && $user->rights->opensurvey->write) {
+	
+	//Modify button
+	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&id=' . $numsondage . '">'.$langs->trans("Modify") . '</a>';
 
-if ($action != 'edit') print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?suppressionsondage=1&id='.$numsondage.'&amp;action=delete">'.$langs->trans('Delete').'</a>';
+	//Delete button
+	print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?suppressionsondage=1&id='.$numsondage.'&amp;action=delete">'.$langs->trans('Delete').'</a>';
+}
 
 print '</div>';
 
@@ -307,7 +326,10 @@ $comments = $object->getComments();
 
 if ($comments) {
 	foreach ($comments as $comment) {
-		print '<a href="'.dol_buildpath('/opensurvey/adminstuds.php',1).'?deletecomment='.$comment->id_comment.'&id='.$numsondage.'"> '.img_picto('', 'delete.png').'</a> ';
+		if ($user->rights->opensurvey->write) {
+			print '<a href="'.dol_buildpath('/opensurvey/adminstuds.php',1).'?deletecomment='.$comment->id_comment.'&id='.$numsondage.'"> '.img_picto('', 'delete.png').'</a> ';
+		}
+		
 		print htmlentities($comment->usercomment).': '.dol_nl2br(htmlentities($comment->comment))." <br>";
 	}
 }

@@ -31,7 +31,7 @@ require_once(DOL_DOCUMENT_ROOT."/opensurvey/fonctions.php");
 
 
 // Security check
-if (!$user->admin) accessforbidden();
+if (!$user->rights->opensurvey->read) accessforbidden();
 
 
 // Init vars
@@ -119,7 +119,10 @@ for ($i=0; $i<$nblignes; $i++)
 }
 if ($testmodifier)
 {
-	//var_dump($_POST);exit;
+
+	// Security check
+	if (!$user->rights->opensurvey->write) accessforbidden();
+	
 	$nouveauchoix = '';
 	for ($i = 0; $i < $nbcolonnes; $i++)
 	{
@@ -150,6 +153,9 @@ if ($testmodifier)
 // Add column (not for date)
 if (GETPOST("ajoutercolonne") && GETPOST('nouvellecolonne') && ($object->format == "A" || $object->format == "A+"))
 {
+	// Security check
+	if (!$user->rights->opensurvey->write) accessforbidden();
+	
 	$nouveauxsujets=$object->sujet;
 
 	//on rajoute la valeur a la fin de tous les sujets deja entrés
@@ -168,6 +174,9 @@ if (GETPOST("ajoutercolonne") && GETPOST('nouvellecolonne') && ($object->format 
 // Add column (with format date)
 if (isset($_POST["ajoutercolonne"]) && ($object->format == "D" || $object->format == "D+"))
 {
+	// Security check
+	if (!$user->rights->opensurvey->write) accessforbidden();
+	
 	$nouveauxsujets=$object->sujet;
 
 	if (isset($_POST["nouveaujour"]) && $_POST["nouveaujour"] != "vide" &&
@@ -268,6 +277,9 @@ for ($i = 0; $i < $nblignes; $i++)
 {
 	if (isset($_POST["effaceligne$i"]) || isset($_POST['effaceligne'.$i.'_x']))
 	{
+		// Security check
+		if (!$user->rights->opensurvey->write) accessforbidden();
+	
 		$compteur=0;
 
 		// Loop on each answer
@@ -300,6 +312,9 @@ for ($i = 0; $i < $nbcolonnes; $i++)
 {
 	if ((isset($_POST["effacecolonne$i"]) || isset($_POST['effacecolonne'.$i.'_x'])) && $nbcolonnes > 1)
 	{
+		// Security check
+		if (!$user->rights->opensurvey->write) accessforbidden();
+	
 		$db->begin();
 
 		$toutsujet = explode(",",$object->sujet);
@@ -459,6 +474,9 @@ showlogo();
 // Add form to add a field
 if (GETPOST('ajoutsujet'))
 {
+	// Security check
+	if (!$user->rights->opensurvey->write) accessforbidden();
+		
 	//on recupere les données et les sujets du sondage
 	print '<form name="formulaire" action="'.$_SERVER["PHP_SELF"].'" method="POST">'."\n";
 	print '<input type="hidden" name="id" value="'.$numsondage.'">';
@@ -542,8 +560,9 @@ if (GETPOST('ajoutsujet'))
 	exit;
 }
 
-
-print $langs->trans("PollAdminDesc",img_picto('','cancel.png@opensurvey'),img_picto('','add-16.png@opensurvey')).'<br><br>';
+if ($user->rights->opensurvey->write) {
+	print $langs->trans("PollAdminDesc",img_picto('','cancel.png@opensurvey'),img_picto('','add-16.png@opensurvey')).'<br><br>';
+}
 
 print '<div class="corps"> '."\n";
 
@@ -586,8 +605,11 @@ print '<td></td>'."\n";
 print '<td></td>'."\n";
 
 //boucle pour l'affichage des boutons de suppression de colonne
-for ($i = 0; isset($toutsujet[$i]); $i++) {
-	print '<td class=somme><input type="image" name="effacecolonne'.$i.'" value="Effacer la colonne" src="'.dol_buildpath('/opensurvey/img/cancel.png',1).'"></td>'."\n";
+if ($user->rights->opensurvey->write) {
+	for ($i = 0; isset($toutsujet[$i]); $i++) {
+
+		print '<td class=somme><input type="image" name="effacecolonne'.$i.'" src="'.dol_buildpath('/opensurvey/img/cancel.png',1).'"></td>'."\n";
+	}
 }
 
 print '</tr>'."\n";
@@ -626,7 +648,11 @@ if ($object->format=="D"||$object->format=="D+")
 		}
 	}
 
-	print '<td class="annee"><a href="'.$_SERVER["PHP_SELF"].'?ajoutsujet=1&id='.$object->id_sondage.'">'.$langs->trans("Add").'</a></td>'."\n";
+	if ($user->rights->opensurvey->write) {
+		print '<td class="annee">';
+		print '<a href="'.$_SERVER["PHP_SELF"].'?ajoutsujet=1&id='.$object->id_sondage.'">'.$langs->trans("Add").'</a></td>'."\n";
+	}
+	
 	print '</tr>'."\n";
 	print '<tr>'."\n";
 	print '<td></td>'."\n";
@@ -652,7 +678,10 @@ if ($object->format=="D"||$object->format=="D+")
 		}
 	}
 
-	print '<td class="mois"><a href="'.$_SERVER["PHP_SELF"].'?ajoutsujet=1&id='.$object->id_sondage.'">'.$langs->trans("Add").'</a></td>'."\n";
+	if ($user->rights->opensurvey->write) {
+		print '<td class="mois"><a href="'.$_SERVER["PHP_SELF"].'?ajoutsujet=1&id='.$object->id_sondage.'">'.$langs->trans("Add").'</a></td>'."\n";
+	}
+	
 	print '</tr>'."\n";
 	print '<tr>'."\n";
 	print '<td></td>'."\n";
@@ -676,7 +705,9 @@ if ($object->format=="D"||$object->format=="D+")
 		}
 	}
 
-	print '<td class="jour"><a href="'.$_SERVER["PHP_SELF"].'?ajoutsujet=1&id='.$object->id_sondage.'">'.$langs->trans("Add").'</a></td>'."\n";
+	if ($user->rights->opensurvey->write) {
+		print '<td class="jour"><a href="'.$_SERVER["PHP_SELF"].'?ajoutsujet=1&id='.$object->id_sondage.'">'.$langs->trans("Add").'</a></td>'."\n";
+	}
 	print '</tr>'."\n";
 
 	//affichage des horaires
@@ -694,7 +725,10 @@ if ($object->format=="D"||$object->format=="D+")
 			}
 		}
 
-		print '<td class="heure"><a href="'.$_SERVER["PHP_SELF"].'?ajoutsujet=1&id='.$object->id_sondage.'">'.$langs->trans("Add").'</a></td>'."\n";
+		if ($user->rights->opensurvey->write) {
+			print '<td class="heure"><a href="'.$_SERVER["PHP_SELF"].'?ajoutsujet=1&id='.$object->id_sondage.'">'.$langs->trans("Add").'</a></td>'."\n";
+		}
+		
 		print '</tr>'."\n";
 	}
 }
@@ -737,11 +771,14 @@ while ($compteur < $num)
 
 	$ensemblereponses = $obj->reponses;
 
-	print '<tr>'."\n";
-	print '<td><input type="image" name="effaceligne'.$compteur.'" value="Effacer" src="'.dol_buildpath('/opensurvey/img/cancel.png',1).'"></td>'."\n";
-
+	print '<tr><td>'."\n";
+	
+	if ($user->rights->opensurvey->write) {
+		print '<input type="image" name="effaceligne'.$compteur.'" src="'.dol_buildpath('/opensurvey/img/cancel.png',1).'">'."\n";
+	}
+	
 	// Name
-	print '<td class="nom">'.htmlentities($obj->nom).'</td>'."\n";
+	print '</td><td class="nom">'.htmlentities($obj->nom).'</td>'."\n";
 
 	// si la ligne n'est pas a changer, on affiche les données
 	if (! $testligneamodifier)
@@ -851,7 +888,7 @@ while ($compteur < $num)
 	}
 
 	// Button edit at end of line
-	if ($compteur != $ligneamodifier)
+	if ($compteur != $ligneamodifier && ($user->rights->opensurvey->write))
 	{
 		print '<td class="casevide"><input type="submit" class="button" name="modifierligne'.$compteur.'" value="'.dol_escape_htmltag($langs->trans("Edit")).'"></td>'."\n";
 	}

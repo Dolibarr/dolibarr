@@ -26,6 +26,9 @@ require_once('../main.inc.php');
 require_once(DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 
+// Security check
+if (!$user->rights->opensurvey->read) accessforbidden();
+
 $action=GETPOST('action');
 $id=GETPOST('id');
 $numsondage= $id;
