@@ -28,8 +28,6 @@ require_once(DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/opensurvey/fonctions.php");
 
-$origin=GETPOST('origin','alpha');
-
 $langs->load("opensurvey");
 
 
@@ -42,8 +40,7 @@ $arrayofcss=array('/opensurvey/css/style.css');
 llxHeader('', $langs->trans("OpenSurvey"), "", 0, 0, $arrayofjs, $arrayofcss);
 
 print '<center>
-<form name="formulaire" action="create_survey.php" method="POST">
-<input type="hidden" name="origin" value="'.dol_escape_htmltag($origin).'">';
+<form name="formulaire" action="create_survey.php" method="POST">';
 print '<p>'.$langs->trans("OrganizeYourMeetingEasily").'</p>
 <div class="corps">
 <br>

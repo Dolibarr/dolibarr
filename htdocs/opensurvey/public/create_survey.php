@@ -29,8 +29,6 @@ require_once(DOL_DOCUMENT_ROOT."/opensurvey/fonctions.php");
 
 $langs->load("opensurvey");
 
-$origin=GETPOST('origin','alpha');
-
 
 // On teste toutes les variables pour supprimer l'ensemble des warnings PHP
 // On transforme en entites html les données afin éviter les failles XSS
@@ -107,13 +105,13 @@ if (GETPOST("creation_sondage_date") || GETPOST("creation_sondage_autre"))
 	{
 		if (! empty($creation_sondage_date))
 		{
-			header("Location: choix_date.php".($origin?'?origin='.$origin:''));
+			header("Location: choix_date.php");
 			exit();
 		}
 
 		if (! empty($creation_sondage_autre))
 		{
-			header("Location: choix_autre.php".($origin?'?origin='.$origin:''));
+			header("Location: choix_autre.php");
 			exit();
 		}
 	}
@@ -136,7 +134,6 @@ print_fiche_titre($langs->trans("CreatePoll").' (1 / 2)');
 
 //debut du formulaire
 print '<form name="formulaire" action="create_survey.php" method="POST" onkeypress="javascript:process_keypress(event)">'."\n";
-print '<input type="hidden" name="origin" value="'.dol_escape_htmltag($origin).'">';
 
 print '<div class=corps>'."\n";
 
