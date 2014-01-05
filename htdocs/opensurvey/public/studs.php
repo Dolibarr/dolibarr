@@ -242,13 +242,9 @@ print '<div class="corps"> '."\n";
 $titre=str_replace("\\","",$object->titre);
 print '<strong>'.htmlentities($titre).'</strong><br>'."\n";
 
-//affichage du nom de l'auteur du sondage
-print $langs->trans("InitiatorOfPoll") .' : '.htmlentities($object->nom_admin).'<br>'."\n";
-
 //affichage des commentaires du sondage
 if ($object->commentaires)
 {
-	print '<br>'.$langs->trans("Description") .' :<br>'."\n";
 	$commentaires=dol_nl2br(htmlentities($object->commentaires));
 	print $commentaires;
 	print '<br>'."\n";
