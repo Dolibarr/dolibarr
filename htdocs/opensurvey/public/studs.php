@@ -146,7 +146,7 @@ if (isset($_POST["boutonp"]) || isset($_POST["boutonp_x"]))
 	}
 	else
 	{
-		$err |= NAME_EMPTY;
+		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Name")), 'errors');
 	}
 }
 
