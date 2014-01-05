@@ -65,4 +65,5 @@ BackToCurrentMonth=Back to current month
 ErrorOpenSurveyFillFirstSection=You haven't filled the first section of the poll creation
 ErrorOpenSurveyOneChoice=Enter at least one choice
 ErrorOpenSurveyDateFormat=Date must be have the format DD/MM/YYYY
+ErrorInsertingComment=There was an error while inserting your comment
 MoreChoices=Enter more choices for the voters

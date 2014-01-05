@@ -130,7 +130,7 @@ if (GETPOST('ajoutcomment'))
 		
 		if (! $resql)
 		{
-			$err |= COMMENT_INSERT_FAILED;
+			setEventMessage($langs->trans('ErrorInsertingComment'), 'errors');
 		}
 	}
 }

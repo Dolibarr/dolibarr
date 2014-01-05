@@ -144,24 +144,6 @@ function get_server_name()
 	return $url;
 }
 
-
-/**
- * is_error
- *
- * @param unknown_type $cerr error number
- * @return 	boolean				Error key found or not
- */
-function is_error($cerr)
-{
-	global $err;
-	if ( $err == 0 ) {
-		return false;
-	}
-
-	return (($err & $cerr) != 0 );
-}
-
-
 /**
  * Fonction vérifiant l'existance et la valeur non vide d'une clé d'un tableau
  *
@@ -263,19 +245,5 @@ function ajouter_sondage()
 	header("Location: ".$urlback);
 	exit();
 }
-
-
-
-define('COMMENT_EMPTY',         0x0000000001);
-define('COMMENT_USER_EMPTY',    0x0000000010);
-define('COMMENT_INSERT_FAILED', 0x0000000100);
-define('NAME_EMPTY',            0x0000001000);
-define('NAME_TAKEN',            0x0000010000);
-define('NO_POLL',               0x0000100000);
-define('NO_POLL_ID',            0x0001000000);
-define('INVALID_EMAIL',         0x0010000000);
-define('TITLE_EMPTY',           0x0100000000);
-define('INVALID_DATE',          0x1000000000);
-$err = 0;
 
 ?>

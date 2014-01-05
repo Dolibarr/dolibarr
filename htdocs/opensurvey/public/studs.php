@@ -546,7 +546,7 @@ if ($ligneamodifier < 0 && (! isset($_SESSION['nom'])))
 		if (empty($listofanswers[$i]['format']) || ! in_array($listofanswers[$i]['format'],array('yesno','foragainst')))
 		{
 			print '<input type="checkbox" name="choix'.$i.'" value="1"';
-			if (isset($_POST['choix'.$i]) && $_POST['choix'.$i] == '1' && is_error(NAME_EMPTY) )
+			if (isset($_POST['choix'.$i]) && $_POST['choix'.$i] == '1')
 			{
 				print ' checked="checked"';
 			}
