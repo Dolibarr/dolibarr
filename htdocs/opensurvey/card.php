@@ -142,8 +142,7 @@ if ($idcomment)
 	// Security check
 	if (!$user->rights->opensurvey->write) accessforbidden();
 	
-	$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'opensurvey_comments WHERE id_comment = '.$idcomment;
-	$resql = $db->query($sql);
+	$resql = $object->deleteComment($idcomment);
 }
 
 if ($action == 'edit') {

@@ -205,8 +205,7 @@ if ($testmodifier)
 $idcomment=GETPOST('deletecomment','int');
 if ($idcomment)
 {
-	$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'opensurvey_comments WHERE id_comment = '.$idcomment;
-	$resql = $db->query($sql);
+	$resql = $object->deleteComment($idcomment);
 }
 
 

@@ -479,6 +479,23 @@ class Opensurveysondage extends CommonObject
 	}
 	
 	/**
+	 * Deletes a comment of the poll
+	 * 
+	 * @param int $id_comment Id of the comment
+	 * @return boolean False in case of the query fails, true if it was successful
+	 */
+	public function deleteComment($id_comment) {
+		$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'opensurvey_comments WHERE id_comment = '.$id_comment.' AND id_sondage = '.$this->id_sondage;
+		$resql = $this->db->query($sql);
+		
+		if (!$resql) {
+			return false;
+		}
+		
+		return true;
+	}
+	
+	/**
 	 * Cleans all the class variables before doing an update or an insert
 	 * 
 	 * @return void
