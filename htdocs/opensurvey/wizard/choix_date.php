@@ -28,7 +28,7 @@ require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/opensurvey/fonctions.php");
 
 // Security check
-if (!$user->rights->opensurvey->write) accessforbidden ();
+if (!$user->rights->opensurvey->write) accessforbidden();
 
 //le format du sondage est DATE
 $_SESSION["formatsondage"] = "D";
