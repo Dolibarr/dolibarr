@@ -80,7 +80,7 @@ if (isset($_POST["confirmecreation"]))
 	}
 
 	//message d'erreur si aucun champ renseigné
-	if ($testremplissage != "ok") {
+	if ($testremplissage != "ok" || (!$toutchoix)) {
 		setEventMessage($langs->trans("ErrorOpenSurveyOneChoice"), 'errors');
 	} else {
 	
