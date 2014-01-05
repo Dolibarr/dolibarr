@@ -139,12 +139,12 @@ print '</table>'."\n";
 
 //ajout de cases supplementaires
 print '<table><tr>'."\n";
-print '<td>'. $langs->trans("5MoreChoices") .'</td><td><input type="image" name="ajoutcases" value="Retour" src="../img/add-16.png"></td>'."\n";
+print '<td>'. $langs->trans("5MoreChoices") .'</td><td><input type="image" name="ajoutcases" src="../img/add-16.png"></td>'."\n";
 print '</tr></table>'."\n";
 print'<br>'."\n";
 
 print '<table><tr>'."\n";
-print '<td></td><td><input type="submit" class="button" name="confirmecreation" value="'.dol_escape_htmltag($langs->trans("CreatePoll")).'" src="../img/next-32.png"></td>'."\n";
+print '<td></td><td><input type="submit" class="button" name="confirmecreation" value="'.dol_escape_htmltag($langs->trans("CreatePoll")).'"></td>'."\n";
 print '</tr></table>'."\n";
 
 //fin du formulaire et bandeau de pied
