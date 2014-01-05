@@ -95,7 +95,7 @@ while ($i < min($num,$limit))
 	print '<td>';
 	print '<a href="'.dol_buildpath('/opensurvey/card.php',1).'?id='.$obj->id_sondage.'">'.img_picto('','object_opensurvey').' '.$obj->id_sondage.'</a>';
 	print '</td><td>'.dol_htmlentities($obj->titre).'</td><td>';
-	$type=($obj->format=='A' || $obj->format=='A+')?'classic':'date';
+	$type=($obj->format=='A')?'classic':'date';
 	print img_picto('',dol_buildpath('/opensurvey/img/'.($type == 'classic'?'chart-32.png':'calendar-32.png'),1),'width="16"',1);
 	print ' '.$langs->trans($type=='classic'?"TypeClassic":"TypeDate");
 	print '</td><td>'.dol_htmlentities($obj->nom_admin).'</td>';

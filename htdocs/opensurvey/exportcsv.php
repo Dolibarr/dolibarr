@@ -59,7 +59,7 @@ $toutsujet=explode(",",$object->sujet);
 $input.=$langs->trans("Name").";";
 for ($i=0;$toutsujet[$i];$i++)
 {
-	if ($object->format=="D"||$object->format=="D+")
+	if ($object->format=="D")
 	{
 		$input.=''.dol_print_date($toutsujet[$i],'dayhour').';';
 	} else {

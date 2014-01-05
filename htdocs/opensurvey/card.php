@@ -196,7 +196,7 @@ print '</td>';
 print '</tr>';
 
 // Type
-$type=($object->format=="A"||$object->format=="A+")?'classic':'date';
+$type=($object->format=="A")?'classic':'date';
 print '<tr><td>'.$langs->trans("Type").'</td><td colspan="2">';
 print img_picto('',dol_buildpath('/opensurvey/img/'.($type == 'classic'?'chart-32.png':'calendar-32.png'),1),'width="16"',1);
 print ' '.$langs->trans($type=='classic'?"TypeClassic":"TypeDate").'</td></tr>';

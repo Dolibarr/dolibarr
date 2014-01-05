@@ -157,7 +157,7 @@ if ($testmodifier)
 }
 
 // Add column (not for date)
-if (GETPOST("ajoutercolonne") && GETPOST('nouvellecolonne') && ($object->format == "A" || $object->format == "A+"))
+if (GETPOST("ajoutercolonne") && GETPOST('nouvellecolonne') && ($object->format == "A"))
 {
 	// Security check
 	if (!$user->rights->opensurvey->write) accessforbidden();
@@ -178,7 +178,7 @@ if (GETPOST("ajoutercolonne") && GETPOST('nouvellecolonne') && ($object->format 
 }
 
 // Add column (with format date)
-if (isset($_POST["ajoutercolonne"]) && ($object->format == "D" || $object->format == "D+"))
+if (isset($_POST["ajoutercolonne"]) && ($object->format == "D"))
 {
 	// Security check
 	if (!$user->rights->opensurvey->write) accessforbidden();
@@ -443,7 +443,7 @@ print '</td>';
 print '</tr>';
 
 // Type
-$type=($object->format=="A"||$object->format=="A+")?'classic':'date';
+$type=($object->format=="A")?'classic':'date';
 print '<tr><td>'.$langs->trans("Type").'</td><td colspan="2">';
 print img_picto('',dol_buildpath('/opensurvey/img/'.($type == 'classic'?'chart-32.png':'calendar-32.png'),1),'width="16"',1);
 print ' '.$langs->trans($type=='classic'?"TypeClassic":"TypeDate").'</td></tr>';
@@ -487,7 +487,7 @@ if (GETPOST('ajoutsujet'))
 	print "<br><br>"."\n";
 
 	// Add new column
-	if ($object->format=="A"||$object->format=="A+")
+	if ($object->format=="A")
 	{
 		print $langs->trans("AddNewColumn") .':<br><br>';
 		print $langs->trans("Title").' <input type="text" name="nouvellecolonne" size="40"><br>';
@@ -593,7 +593,7 @@ print '</tr>'."\n";
 
 
 // Show choice titles
-if ($object->format=="D"||$object->format=="D+")
+if ($object->format=="D")
 {
 	//affichage des sujets du sondage
 	print '<tr>'."\n";
@@ -1009,7 +1009,7 @@ for ($i = 0; $i < $nbcolonnes; $i++) {
 	if (isset($sumfor[$i]) === true && isset($meilleurecolonne) === true && $sumfor[$i] == $meilleurecolonne) {
 		$meilleursujet.=", ";
 
-		if ($object->format == "D" || $object->format == "D+") {
+		if ($object->format == "D") {
 			$meilleursujetexport = $toutsujet[$i];
 
 			if (strpos($toutsujet[$i], '@') !== false) {

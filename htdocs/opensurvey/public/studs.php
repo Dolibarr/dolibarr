@@ -262,7 +262,7 @@ print '<br><br>'."\n";
 print '<table class="resultats">'."\n";
 
 // Show choice titles
-if ($object->format=="D"||$object->format=="D+")
+if ($object->format=="D")
 {
 	//affichage des sujets du sondage
 	print '<tr>'."\n";
@@ -637,7 +637,7 @@ $meilleursujet = '';
 for ($i = 0; $i < $nbcolonnes; $i++) {
 	if (isset($sumfor[$i]) && isset($meilleurecolonne) && $sumfor[$i] == $meilleurecolonne) {
 		$meilleursujet.=", ";
-		if ($object->format=="D"||$object->format=="D+") {
+		if ($object->format=="D") {
 			$meilleursujetexport = $toutsujet[$i];
 
 			if (strpos($toutsujet[$i], '@') !== false) {
