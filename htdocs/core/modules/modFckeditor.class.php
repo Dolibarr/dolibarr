@@ -62,6 +62,8 @@ class modFckeditor extends DolibarrModules
 		$this->config_page_url = array("fckeditor.php");
 
 		// Dependances
+		global $dolibarr_js_CKEDITOR;
+		$this->hidden = ($dolibarr_js_CKEDITOR == 'disabled'?1:0);	// A condition to disable module (used for native debian packages)
 		$this->depends = array();
 		$this->requiredby = array();
 
