@@ -134,14 +134,11 @@ class Opensurveysondage extends CommonObject
         {
 			if (! $notrigger)
 			{
-	            // Uncomment this and change MYOBJECT to your own tag if you
-	            // want this action calls a trigger.
-
 	            //// Call triggers
-	            //include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-	            //$interface=new Interfaces($this->db);
-	            //$result=$interface->run_triggers('MYOBJECT_CREATE',$this,$user,$langs,$conf);
-	            //if ($result < 0) { $error++; $this->errors=$interface->errors; }
+	            include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
+	            $interface=new Interfaces($this->db);
+	            $result=$interface->run_triggers('OPENSURVEY_CREATE',$this,$user,$langs,$conf);
+	            if ($result < 0) { $error++; $this->errors=$interface->errors; }
 	            //// End call triggers
 			}
         }
@@ -331,14 +328,11 @@ class Opensurveysondage extends CommonObject
 		{
 			if (! $notrigger)
 			{
-				// Uncomment this and change MYOBJECT to your own tag if you
-		        // want this action calls a trigger.
-
 		        //// Call triggers
-		        //include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-		        //$interface=new Interfaces($this->db);
-		        //$result=$interface->run_triggers('MYOBJECT_DELETE',$this,$user,$langs,$conf);
-		        //if ($result < 0) { $error++; $this->errors=$interface->errors; }
+		        include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
+		        $interface=new Interfaces($this->db);
+		        $result=$interface->run_triggers('OPENSURVEY_DELETE',$this,$user,$langs,$conf);
+		        if ($result < 0) { $error++; $this->errors=$interface->errors; }
 		        //// End call triggers
 			}
 		}
