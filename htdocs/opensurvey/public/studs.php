@@ -651,7 +651,7 @@ for ($i = 0; $i < $nbcolonnes; $i++) {
 		else
 		{
 			$tmps=explode('@',$toutsujet[$i]);
-			$meilleursujet .= $tmps[0];
+			$meilleursujet .= htmlentities($tmps[0]);
 		}
 
 		$compteursujet++;
@@ -669,9 +669,9 @@ if ($nbofcheckbox >= 2)
 	print '<p class="affichageresultats">'."\n";
 
 	if (isset($meilleurecolonne) && $compteursujet == "1") {
-		print '<img src="'.dol_buildpath('/opensurvey/img/medaille.png',1).'"> ' . $langs->trans('TheBestChoice') . ": <b>".htmlentities($meilleursujet)."</b> " . $langs->trans('with') . " <b>$meilleurecolonne </b>" . $vote_str . ".\n";
+		print '<img src="'.dol_buildpath('/opensurvey/img/medaille.png',1).'"> ' . $langs->trans('TheBestChoice') . ": <b>".$meilleursujet."</b> " . $langs->trans('with') . " <b>$meilleurecolonne </b>" . $vote_str . ".\n";
 	} elseif (isset($meilleurecolonne)) {
-		print '<img src="'.dol_buildpath('/opensurvey/img/medaille.png',1).'"> ' . $langs->trans('TheBestChoices')  . ": <b>".htmlentities($meilleursujet)."</b> " . $langs->trans('with') . "  <b>$meilleurecolonne </b>" . $vote_str . ".\n";
+		print '<img src="'.dol_buildpath('/opensurvey/img/medaille.png',1).'"> ' . $langs->trans('TheBestChoices')  . ": <b>".$meilleursujet."</b> " . $langs->trans('with') . "  <b>$meilleurecolonne </b>" . $vote_str . ".\n";
 	}
 
 	print '</p><br>'."\n";
