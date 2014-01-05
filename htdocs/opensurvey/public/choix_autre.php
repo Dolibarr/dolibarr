@@ -188,9 +188,6 @@ if ((isset($_POST["fin_sondage_autre"]) || isset($_POST["fin_sondage_autre_x"]))
 	print '<br>'. $langs->trans("InfoExpiration") .'<br><br>'."\n";
 	print $langs->trans("RemovalDate") .' : <input type="text" name="champdatefin" value="'.$date_selected.'" size="10" maxlength="10"> DD/MM/YYYY';
 	print '</div>'."\n";
-	print '<div class=presentationdatefin>'."\n";
-	print '<font color=#FF0000>'. $langs->trans("InfoAfterCreate") .'</font>'."\n";
-	print '</div>'."\n";
 	print '<br>'."\n";
 	print '<table>'."\n";
 	print '<tr><td>'. $langs->trans("CreatePoll") .'</td><td><input type="image" name="confirmecreation" src="images/add.png"></td></tr>'."\n";

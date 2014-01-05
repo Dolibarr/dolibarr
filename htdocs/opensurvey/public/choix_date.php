@@ -568,12 +568,6 @@ if (!$erreur  && (GETPOST('choixheures') || GETPOST('choixheures_x'))) {
 
 	print '<br><div class="presentationdatefin">'. $langs->trans("PollWillExpire",2) .'</td></tr><tr><td><br>'. $langs->trans("RemovalDate") .' : <b> '.$date_fin.'</b><br>'."\n";
 	print '</div>'."\n";
-	print '<div class="presentationdatefin">'."\n";
-	print '<font color="#FF0000">'. $langs->trans("AfterCreationInfo") .'</font>'."\n";
-	print'</div>'."\n";
-	// print'<p class=affichageexport>'."\n";
-	// print 'Pour finir la cr&eacute;ation du sondage, cliquez sur le bouton <img src="images/add-16.png" alt="ajout"> ci-dessous'."\n";
-	// print '</p>'."\n";
 	print '<table>'."\n";
 	print '<tr><td>'. $langs->trans("BackToHoursSetup") .'</td><td></td><td><input type="image" name="retourhoraires" src="images/back-32.png"></td></tr>'."\n";
 	print'<tr><td>'. $langs->trans("CreatePoll") .'</td><td></td><td><input type="image" name="confirmation" value="'.$langs->trans('CreatePoll').'" src="images/add.png"></td></tr>'."\n";
