@@ -475,8 +475,7 @@ if (GETPOST('ajoutsujet'))
 	if (!$user->rights->opensurvey->write) accessforbidden();
 		
 	//on recupere les données et les sujets du sondage
-	print '<form name="formulaire" action="'.$_SERVER["PHP_SELF"].'" method="POST">'."\n";
-	print '<input type="hidden" name="id" value="'.$numsondage.'">';
+	print '<form name="formulaire" action="" method="POST">'."\n";
 	print '<input type="hidden" name="backtourl" value="'.GETPOST('backtourl').'">';
 
 	print '<div class="center">'."\n";
@@ -562,8 +561,7 @@ if ($user->rights->opensurvey->write) {
 
 $nbcolonnes=substr_count($object->sujet,',')+1;
 
-print '<form name="formulaire" action="'.$_SERVER["PHP_SELF"].'" method="POST">'."\n";
-print '<input type="hidden" name="id" value="'.$numsondage.'">';
+print '<form name="formulaire" action="" method="POST">'."\n";
 
 print '<div class="cadre"> '."\n";
 
