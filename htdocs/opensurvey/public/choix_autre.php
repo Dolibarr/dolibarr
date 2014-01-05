@@ -42,7 +42,6 @@ $origin=GETPOST('origin','alpha');
  */
 
 // Set session vars
-$erreur_injection = false;
 if (isset($_SESSION["nbrecases"])) {
 	for ($i = 0; $i < $_SESSION["nbrecases"]; $i++) {
 		if (isset($_POST["choix"][$i])) {
@@ -188,11 +187,7 @@ if ($testdate === false) {
 	print "<br><font color=\"#FF0000\">" . $langs->trans("ErrorOpenSurveyDateFormat") . "</font><br><br>"."\n";
 }
 
-if ($erreur_injection) {
-	print "<font color=#FF0000>" . $langs->trans("ErrorOpenSurveyInvalidChars") . "</font><br><br>\n";
-}
-
-if ((isset($_POST["fin_sondage_autre"]) || isset($_POST["fin_sondage_autre_x"])) && !$erreur && !$erreur_injection) {
+if ((isset($_POST["fin_sondage_autre"]) || isset($_POST["fin_sondage_autre_x"])) && !$erreur) {
 	//demande de la date de fin du sondage
 	print '<br>'."\n";
 	print '<div class=presentationdatefin>'."\n";

@@ -73,6 +73,5 @@ PublicLinkToCreateSurvey=Public link to allow everybody to create a survey
 ErrorOpenSurveyFillFirstSection=You haven't filled the first section of the poll creation
 ErrorOpenSurveyOneChoice=Enter at least one choice
 ErrorOpenSurveyDateFormat=Date must be have the format DD/MM/YYYY
-ErrorOpenSurveyInvalidChars=Characters \" < and > are not permitted
 MoreChoices=Enter more choices for the voters
 AfterCreationInfo=Once you have confirmed the creation of your poll, you will be automatically redirected on the page of your poll. <br>Then, you will receive quickly an email contening the link to your poll for sending it to the voters.

@@ -51,9 +51,6 @@ foreach ($session_var as $var)
 
 // On initialise également les autres variables
 $erreur_adresse = false;
-$erreur_injection_titre = false;
-$erreur_injection_nom = false;
-$erreur_injection_commentaires = false;
 $cocheplus = '';
 $cochemail = '';
 
@@ -86,9 +83,7 @@ if (GETPOST("creation_sondage_date") || GETPOST("creation_sondage_autre") || GET
 
 	if (! isValidEmail($adresse)) $erreur_adresse = true;
 
-	//var_dump($titre.' - '.$nom.' - '.$adresse.' - '.!$erreur_adresse.' - '.! $erreur_injection_titre.' - '.! $erreur_injection_commentaires.' - '.! $erreur_injection_nom.' - '.$creation_sondage_date.' - '.$creation_sondage_autre); exit;
-
-	if ($titre && $nom && $adresse && !$erreur_adresse && ! $erreur_injection_titre && ! $erreur_injection_commentaires && ! $erreur_injection_nom)
+	if ($titre && $nom && $adresse && !$erreur_adresse)
 	{
 		if (! empty($creation_sondage_date))
 		{
