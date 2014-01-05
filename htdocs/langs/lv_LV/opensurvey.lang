@@ -11,7 +11,6 @@ CreatePoll=Izveidot aptauju
 PollTitle=Aptauja virsraksts
 OpenSurveyYourName=Jūsu vārds
 OpenSurveyYourEMail=Jūsu e-pasta adrese
-VotersCanModify=Vēlētāji var mainīt balsojumu par citiem
 ToReceiveEMailForEachVote=Lai saņemtu e-pastu par katru balsojumu
 TypeDate=Tipa datums
 TypeClassic=Tipa standarts

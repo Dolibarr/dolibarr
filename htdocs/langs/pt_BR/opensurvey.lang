@@ -11,7 +11,6 @@ CreatePoll=Criar uma enquete
 PollTitle=Titulo enquete
 OpenSurveyYourName=Seu nome
 OpenSurveyYourEMail=Seu endereço e-mail
-VotersCanModify=Votantes podem modificar voto de outros
 ToReceiveEMailForEachVote=Para receber um e-mail por cada voto
 TypeDate=Tipo data
 TypeClassic=Tipo estandard

@@ -11,7 +11,6 @@ CreatePoll=Crea sondaggio
 PollTitle=Titolo del sondaggio
 OpenSurveyYourName=Il tuo nome
 OpenSurveyYourEMail=Il tuo indirizzo email
-VotersCanModify=I votanti possono modificare il voto degli altri
 ToReceiveEMailForEachVote=Per ricevere un'email per ogni voto
 TypeDate=Digita data
 TypeClassic=Tipo standard

@@ -11,7 +11,6 @@ CreatePoll=Loo küsitlus
 PollTitle=Küsitluse pealkiri
 OpenSurveyYourName=Sinu nimi
 OpenSurveyYourEMail=Sinu e-posti aadress
-VotersCanModify=Hääletajad saavad teiste hääli muuta
 ToReceiveEMailForEachVote=Iga hääle kohta saadetakse e-kiri
 TypeDate=Liik: kuupäev
 TypeClassic=Liik: standardne
