@@ -88,7 +88,7 @@ if ($action == 'delete')
 print '<table class="liste">'."\n";
 print '<tr class="liste_titre"><td>'. $langs->trans("Ref").'</td><td>'. $langs->trans("Title") .'</td><td>'. $langs->trans("Type") .'</td><td>'. $langs->trans("Author") .'</td><td align="center">'. $langs->trans("ExpireDate") .'</td><td align="center">'. $langs->trans("NbOfVoters") .'</td><td colspan=2>&nbsp;</td>'."\n";
 
-$sql = "SELECT id_sondage, mail_admin, format, origin, date_fin, titre, nom_admin";
+$sql = "SELECT id_sondage, mail_admin, format, date_fin, titre, nom_admin";
 $sql.= " FROM ".MAIN_DB_PREFIX."opensurvey_sondage as p";
 // Count total nb of records
 $nbtotalofrecords = 0;
