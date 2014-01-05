@@ -175,6 +175,9 @@ if (GETPOST("ajoutercolonne") && GETPOST('nouvellecolonne') && ($object->format 
 	dol_syslog("sql=".$sql);
 	$resql = $db->query($sql);
 	if (! $resql) dol_print_error($db);
+	else {
+		header('Location: results.php?id='.$object->id_sondage);
+	}
 }
 
 // Add column (with format date)
@@ -267,6 +270,9 @@ if (isset($_POST["ajoutercolonne"]) && ($object->format == "D"))
 				dol_syslog("sql=".$sql);
 				$resql = $db->query($sql);
 				if (! $resql) dol_print_error($db);
+				else {
+					header('Location: results.php?id='.$object->id_sondage);
+				}
 			}
 		}
 
