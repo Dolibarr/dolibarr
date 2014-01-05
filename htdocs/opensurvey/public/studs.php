@@ -240,12 +240,12 @@ print '<div class="corps"> '."\n";
 
 //affichage du titre du sondage
 $titre=str_replace("\\","",$object->titre);
-print '<strong>'.htmlentities($titre).'</strong><br>'."\n";
+print '<strong>'.dol_htmlentities($titre).'</strong><br>'."\n";
 
 //affichage des commentaires du sondage
 if ($object->commentaires)
 {
-	$commentaires=dol_nl2br(htmlentities($object->commentaires));
+	$commentaires=dol_nl2br(dol_htmlentities($object->commentaires));
 	print $commentaires;
 	print '<br>'."\n";
 }
@@ -335,7 +335,7 @@ if ($object->format=="D"||$object->format=="D+")
 		for ($i=0; isset($toutsujet[$i]); $i++) {
 			$heures=explode('@',$toutsujet[$i]);
 			if (isset($heures[1])) {
-				print '<td class="heure">'.htmlentities($heures[1]).'</td>'."\n";
+				print '<td class="heure">'.dol_htmlentities($heures[1]).'</td>'."\n";
 			} else {
 				print '<td class="heure"></td>'."\n";
 			}
@@ -392,7 +392,7 @@ while ($compteur < $num)
 	print '<tr>'."\n";
 
 	// Name
-	print '<td class="nom">'.htmlentities($obj->nom).'</td>'."\n";
+	print '<td class="nom">'.dol_htmlentities($obj->nom).'</td>'."\n";
 
 	// si la ligne n'est pas a changer, on affiche les données
 	if (! $testligneamodifier)
@@ -650,7 +650,7 @@ for ($i = 0; $i < $nbcolonnes; $i++) {
 		else
 		{
 			$tmps=explode('@',$toutsujet[$i]);
-			$meilleursujet .= htmlentities($tmps[0]);
+			$meilleursujet .= dol_htmlentities($tmps[0]);
 		}
 
 		$compteursujet++;
@@ -689,7 +689,7 @@ if ($comments)
 	foreach ($comments as $obj) {
 		print '<div class="comment"><span class="usercomment">';
 		if (in_array($obj->usercomment, $listofvoters)) print '<a href="'.$_SERVER["PHP_SELF"].'?deletecomment='.$obj->id_comment.'&sondage='.$numsondage.'"> '.img_picto('', 'delete.png').'</a> ';
-		print htmlentities($obj->usercomment).' :</span> <span class="comment">'.dol_nl2br(htmlentities($obj->comment))."</span></div>";
+		print dol_htmlentities($obj->usercomment).' :</span> <span class="comment">'.dol_nl2br(dol_htmlentities($obj->comment))."</span></div>";
 	}
 }
 

@@ -207,24 +207,24 @@ $adresseadmin=$object->mail_admin;
 print $langs->trans("Title") .'</td><td colspan="2">';
 if ($action == 'edit')
 {
-	print '<input type="text" name="nouveautitre" size="40" value="'.dol_escape_htmltag(htmlentities($object->titre)).'">';
+	print '<input type="text" name="nouveautitre" size="40" value="'.dol_escape_htmltag(dol_htmlentities($object->titre)).'">';
 }
-else print htmlentities($object->titre);
+else print dol_htmlentities($object->titre);
 print '</td></tr>';
 
 // Auteur
 print '<tr><td>';
 print $langs->trans("Author") .'</td><td colspan="2">';
-print htmlentities($object->nom_admin);
+print dol_htmlentities($object->nom_admin);
 print '</td></tr>';
 
 // Description
 print '<tr><td>'.$langs->trans("Description") .'</td><td colspan="2">';
 if ($action == 'edit')
 {
-	print '<textarea name="nouveauxcommentaires" rows="7" cols="80">'.  htmlentities($object->commentaires).'</textarea>'."\n";
+	print '<textarea name="nouveauxcommentaires" rows="7" cols="80">'.  dol_htmlentities($object->commentaires).'</textarea>'."\n";
 }
-else print dol_nl2br(htmlentities($object->commentaires));
+else print dol_nl2br(dol_htmlentities($object->commentaires));
 print '</td></tr>';
 
 // EMail
@@ -330,7 +330,7 @@ if ($comments) {
 			print '<a href="'.dol_buildpath('/opensurvey/card.php',1).'?deletecomment='.$comment->id_comment.'&id='.$numsondage.'"> '.img_picto('', 'delete.png').'</a> ';
 		}
 		
-		print htmlentities($comment->usercomment).': '.dol_nl2br(htmlentities($comment->comment))." <br>";
+		print dol_htmlentities($comment->usercomment).': '.dol_nl2br(dol_htmlentities($comment->comment))." <br>";
 	}
 }
 else
