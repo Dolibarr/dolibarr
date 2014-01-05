@@ -556,16 +556,16 @@ print '<div class="corps"> '."\n";
 
 //affichage du titre du sondage
 $titre=str_replace("\\","",$object->titre);
-print '<strong>'.$titre.'</strong><br>'."\n";
+print '<strong>'.htmlentities($titre).'</strong><br>'."\n";
 
 //affichage du nom de l'auteur du sondage
-print $langs->trans("InitiatorOfPoll") .' : '.$object->nom_admin.'<br>'."\n";
+print $langs->trans("InitiatorOfPoll") .' : '.htmlentities($object->nom_admin).'<br>'."\n";
 
 //affichage des commentaires du sondage
 if ($object->commentaires)
 {
 	print '<br>'.$langs->trans("Description") .' :<br>'."\n";
-	$commentaires=dol_nl2br($object->commentaires);
+	$commentaires=dol_nl2br(htmlentities($object->commentaires));
 	print $commentaires;
 	print '<br>'."\n";
 }
@@ -695,7 +695,7 @@ if ($object->format=="D"||$object->format=="D+")
 		for ($i = 0; isset($toutsujet[$i]); $i++) {
 			$heures=explode('@', $toutsujet[$i]);
 			if (isset($heures[1])) {
-				print '<td class="heure">'.$heures[1].'</td>'."\n";
+				print '<td class="heure">'.htmlentities($heures[1]).'</td>'."\n";
 			} else {
 				print '<td class="heure"></td>'."\n";
 			}
@@ -748,8 +748,7 @@ while ($compteur < $num)
 	print '<td><input type="image" name="effaceligne'.$compteur.'" value="Effacer" src="'.dol_buildpath('/opensurvey/img/cancel.png',1).'"></td>'."\n";
 
 	// Name
-	$nombase=str_replace("°","'",$obj->nom);
-	print '<td class="nom">'.$nombase.'</td>'."\n";
+	print '<td class="nom">'.htmlentities($obj->nom).'</td>'."\n";
 
 	// si la ligne n'est pas a changer, on affiche les données
 	if (! $testligneamodifier)
@@ -1045,9 +1044,9 @@ if ($nbofcheckbox >= 2)
 	print '<p class="affichageresultats">'."\n";
 
 	if (isset($meilleurecolonne) && $compteursujet == "1") {
-		print "<img src=\"".dol_buildpath('/opensurvey/img/medaille.png',1)."\"> " . $langs->trans('TheBestChoice') . " : <b>$meilleursujet </b>" . $langs->trans("with") . " <b>$meilleurecolonne </b>" . $vote_str . ".\n";
+		print "<img src=\"".dol_buildpath('/opensurvey/img/medaille.png',1)."\"> " . $langs->trans('TheBestChoice') . " : <b>".htmlentities($meilleursujet)." </b>" . $langs->trans("with") . " <b>$meilleurecolonne </b>" . $vote_str . ".\n";
 	} elseif (isset($meilleurecolonne)) {
-		print "<img src=\"".dol_buildpath('/opensurvey/img/medaille.png',1)."\"> " . $langs->trans('TheBestChoices') . " : <b>$meilleursujet </b>" . $langs->trans("with") . " <b>$meilleurecolonne </b>" . $vote_str . ".\n";
+		print "<img src=\"".dol_buildpath('/opensurvey/img/medaille.png',1)."\"> " . $langs->trans('TheBestChoices') . " : <b>".htmlentities($meilleursujet)." </b>" . $langs->trans("with") . " <b>$meilleurecolonne </b>" . $vote_str . ".\n";
 	}
 	print '<br></p><br>'."\n";
 }

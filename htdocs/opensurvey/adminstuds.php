@@ -193,24 +193,24 @@ $adresseadmin=$object->mail_admin;
 print $langs->trans("Title") .'</td><td colspan="2">';
 if ($action == 'edit')
 {
-	print '<input type="text" name="nouveautitre" size="40" value="'.dol_escape_htmltag($object->titre).'">';
+	print '<input type="text" name="nouveautitre" size="40" value="'.dol_escape_htmltag(htmlentities($object->titre)).'">';
 }
-else print $object->titre;
+else print htmlentities($object->titre);
 print '</td></tr>';
 
 // Auteur
 print '<tr><td>';
 print $langs->trans("Author") .'</td><td colspan="2">';
-print $object->nom_admin;
+print htmlentities($object->nom_admin);
 print '</td></tr>';
 
 // Description
 print '<tr><td>'.$langs->trans("Description") .'</td><td colspan="2">';
 if ($action == 'edit')
 {
-	print '<textarea name="nouveauxcommentaires" rows="7" cols="80">'.$object->commentaires.'</textarea>'."\n";
+	print '<textarea name="nouveauxcommentaires" rows="7" cols="80">'.  htmlentities($object->commentaires).'</textarea>'."\n";
 }
-else print dol_nl2br($object->commentaires);
+else print dol_nl2br(htmlentities($object->commentaires));
 print '</td></tr>';
 
 // EMail
@@ -308,7 +308,7 @@ $comments = $object->getComments();
 if ($comments) {
 	foreach ($comments as $comment) {
 		print '<a href="'.dol_buildpath('/opensurvey/adminstuds.php',1).'?deletecomment='.$comment->id_comment.'&id='.$numsondage.'"> '.img_picto('', 'delete.png').'</a> ';
-		print $comment->usercomment.': '.dol_nl2br($comment->comment)." <br>";
+		print htmlentities($comment->usercomment).': '.dol_nl2br(htmlentities($comment->comment))." <br>";
 	}
 }
 else
