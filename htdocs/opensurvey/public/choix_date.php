@@ -536,7 +536,7 @@ if (issetAndNoEmpty('totalchoixjour', $_SESSION) || $erreur)
 	print '<tr>'."\n";
 	print '<td><input type="submit" class="button" name="reset" value="'. dol_escape_htmltag($langs->trans("RemoveAllDays")) .'"></td><td><input type="submit" class="button" name="reporterhoraires" value="'. dol_escape_htmltag($langs->trans("CopyHoursOfFirstDay")) .'"></td><td><input type="submit" class="button" name="resethoraires" value="'. dol_escape_htmltag($langs->trans("RemoveAllHours")) .'"></td></tr>'."\n";
 	print'<tr><td colspan="3"><br><br></td></tr>'."\n";
-	print '<tr><td colspan="3" align="center"><input type="submit" class="button" name="confirmation" value="'. $langs->trans("NextStep"). '"></td></tr>'."\n";
+	print '<tr><td colspan="3" align="center"><input type="submit" class="button" name="confirmation" value="'. $langs->trans("CreatePoll"). '"></td></tr>'."\n";
 	print '</table>'."\n";
 }
 

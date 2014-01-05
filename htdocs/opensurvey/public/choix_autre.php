@@ -45,12 +45,12 @@ if (isset($_SESSION["nbrecases"])) {
 	$_SESSION["nbrecases"]=5;
 }
 
-if (isset($_POST["ajoutcases"]) || isset($_POST["ajoutcases_x"])) {
+if (isset($_POST["ajoutcases"])) {
 	$_SESSION["nbrecases"]=$_SESSION["nbrecases"]+5;
 }
 
 // Create survey into database
-if (isset($_POST["confirmecreation"]) || isset($_POST["confirmecreation_x"]))
+if (isset($_POST["confirmecreation"]))
 {
 	//recuperation des données de champs textes
 	$toutchoix = '';
