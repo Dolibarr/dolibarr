@@ -260,19 +260,8 @@ if (isset($_POST["ajoutercolonne"]) && ($object->format == "D"))
 			dol_syslog("sql=".$sql);
 			$resql = $db->query($sql);
 			if (! $resql) dol_print_error($db);
-
-			if ($nouvelledate > strtotime($object->date_fin))
-			{
-				$date_fin=$nouvelledate+200000;
-				$sql = 'UPDATE '.MAIN_DB_PREFIX.'opensurvey_sondage';
-				$sql.= " SET date_fin = '".$db->escape($date_fin)."'";
-				$sql.= " WHERE id_sondage = '".$db->escape($numsondage)."'";
-				dol_syslog("sql=".$sql);
-				$resql = $db->query($sql);
-				if (! $resql) dol_print_error($db);
-				else {
-					header('Location: results.php?id='.$object->id_sondage);
-				}
+			else {
+				header('Location: results.php?id='.$object->id_sondage);
 			}
 		}
 
