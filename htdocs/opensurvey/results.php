@@ -52,7 +52,7 @@ $nblignes=count($object->fetch_lines());
 $nbcolonnes = substr_count($object->sujet, ',') + 1;
 
 // Add vote
-if (isset($_POST["boutonp"]) || isset($_POST["boutonp_x"]))
+if (isset($_POST["boutonp"]))
 {
 	if (GETPOST('nom'))
 	{
@@ -275,7 +275,7 @@ if (isset($_POST["ajoutercolonne"]) && ($object->format == "D" || $object->forma
 // Delete line
 for ($i = 0; $i < $nblignes; $i++)
 {
-	if (isset($_POST["effaceligne$i"]) || isset($_POST['effaceligne'.$i.'_x']))
+	if (isset($_POST["effaceligne$i"]))
 	{
 		// Security check
 		if (!$user->rights->opensurvey->write) accessforbidden();
@@ -310,7 +310,7 @@ for ($i = 0; $i < $nblignes; $i++)
 // Delete column
 for ($i = 0; $i < $nbcolonnes; $i++)
 {
-	if ((isset($_POST["effacecolonne$i"]) || isset($_POST['effacecolonne'.$i.'_x'])) && $nbcolonnes > 1)
+	if (isset($_POST["effacecolonne$i"]) && $nbcolonnes > 1)
 	{
 		// Security check
 		if (!$user->rights->opensurvey->write) accessforbidden();
@@ -979,7 +979,7 @@ if ($nbofcheckbox >= 2)
 }
 
 // S'il a oublié de remplir un nom
-if ((isset($_POST["boutonp"]) || isset($_POST["boutonp_x"])) && $_POST["nom"] == "") {
+if (isset($_POST["boutonp"]) && $_POST["nom"] == "") {
 	setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Name")), 'errors');
 }
 
