@@ -43,28 +43,6 @@ $offset = $limit * $page;
 
 
 /*
- * Actions
- */
-
-if ($action == 'delete_confirm')
-{
-	// Security check
-	if (!$user->rights->opensurvey->write) accessforbidden();
-	
-	require_once DOL_DOCUMENT_ROOT.'/opensurvey/class/opensurveysondage.class.php';
-	
-	$db->begin();
-
-	$object=new Opensurveysondage($db);
-	
-	$result=$object->delete($user,'',$numsondage);
-	
-	$db->commit();
-}
-
-
-
-/*
  * View
  */
 
@@ -77,16 +55,9 @@ print '<div class=corps>'."\n";
 
 print_fiche_titre($langs->trans("OpenSurveyArea"));
 
-
-if ($action == 'delete')
-{
-	print $form->formconfirm($_SERVER["PHP_SELF"].'?&id='.$id, $langs->trans("RemovePoll"), $langs->trans("ConfirmRemovalOfPoll",$id), 'delete_confirm', '', '', 1);
-}
-
-
 // tableau qui affiche tous les sondages de la base
 print '<table class="liste">'."\n";
-print '<tr class="liste_titre"><td>'. $langs->trans("Ref").'</td><td>'. $langs->trans("Title") .'</td><td>'. $langs->trans("Type") .'</td><td>'. $langs->trans("Author") .'</td><td align="center">'. $langs->trans("ExpireDate") .'</td><td align="center">'. $langs->trans("NbOfVoters") .'</td><td colspan=2>&nbsp;</td>'."\n";
+print '<tr class="liste_titre"><td>'. $langs->trans("Ref").'</td><td>'. $langs->trans("Title") .'</td><td>'. $langs->trans("Type") .'</td><td>'. $langs->trans("Author") .'</td><td align="center">'. $langs->trans("ExpireDate") .'</td><td align="center">'. $langs->trans("NbOfVoters") .'</td>'."\n";
 
 $sql = "SELECT id_sondage, mail_admin, format, date_fin, titre, nom_admin";
 $sql.= " FROM ".MAIN_DB_PREFIX."opensurvey_sondage as p";
@@ -134,13 +105,6 @@ while ($i < min($num,$limit))
 	print '</td>';
 
 	print'<td align="center">'.$nbuser.'</td>'."\n";
-	print '<td align="right">';
-	
-	if ($user->rights->opensurvey->write) {
-		print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$obj->id_sondage.'&action=delete">'.img_picto('', 'delete.png').'</a>';
-	}
-	
-	print '</td>'."\n";
 
 	print '</tr>'."\n";
 	$i++;
