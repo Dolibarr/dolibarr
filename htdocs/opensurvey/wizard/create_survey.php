@@ -60,8 +60,7 @@ if (GETPOST("creation_sondage_date") || GETPOST("creation_sondage_autre"))
 	$_SESSION["adresse"] = $adresse;
 	$_SESSION["commentaires"] = $commentaires;
 
-	unset($_SESSION["mailsonde"]);
-	if ($mailsonde !== null) {
+	if (GETPOST('mailsonde') == 'on') {
 		$_SESSION["mailsonde"] = true;
 	} else {
 		$_SESSION["mailsonde"] = false;
