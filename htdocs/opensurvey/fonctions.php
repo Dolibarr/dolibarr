@@ -42,7 +42,7 @@ function opensurvey_prepare_head(Opensurveysondage $object) {
 	$h++;
 	
 	$head[1][0] = 'adminstuds_preview.php?id='.$object->id_sondage;
-	$head[1][1] = $langs->trans("SurveyResults").'/'.$langs->trans("Preview");
+	$head[1][1] = $langs->trans("SurveyResults");
 	$head[1][2] = 'preview';
 	$h++;
 

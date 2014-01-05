@@ -468,9 +468,6 @@ print '<a class="butAction" href="exportcsv.php?id=' . $numsondage . '">'.$langs
 print '</div>';
 
 
-showlogo();
-
-
 // Add form to add a field
 if (GETPOST('ajoutsujet'))
 {
@@ -563,34 +560,12 @@ if ($user->rights->opensurvey->write) {
 	print $langs->trans("PollAdminDesc",img_picto('','cancel.png@opensurvey'),img_picto('','add-16.png@opensurvey')).'<br><br>';
 }
 
-print '<div class="corps"> '."\n";
-
-//affichage du titre du sondage
-$titre=str_replace("\\","",$object->titre);
-print '<strong>'.htmlentities($titre).'</strong><br>'."\n";
-
-//affichage du nom de l'auteur du sondage
-print $langs->trans("InitiatorOfPoll") .' : '.htmlentities($object->nom_admin).'<br>'."\n";
-
-//affichage des commentaires du sondage
-if ($object->commentaires)
-{
-	print '<br>'.$langs->trans("Description") .' :<br>'."\n";
-	$commentaires=dol_nl2br(htmlentities($object->commentaires));
-	print $commentaires;
-	print '<br>'."\n";
-}
-
-print '</div>'."\n";
-
-
 $nbcolonnes=substr_count($object->sujet,',')+1;
 
 print '<form name="formulaire" action="'.$_SERVER["PHP_SELF"].'" method="POST">'."\n";
 print '<input type="hidden" name="id" value="'.$numsondage.'">';
 
 print '<div class="cadre"> '."\n";
-print '<br>'."\n";
 
 // Start to show survey result
 print '<table class="resultats">'."\n";
