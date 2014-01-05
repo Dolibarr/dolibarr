@@ -49,6 +49,12 @@ $nblignes=count($object->fetch_lines());
  * Actions
  */
 
+//Return to the results
+if (GETPOST('retoursondage')) {
+	header('Location: results.php?id='.$_GET['id']);
+	die;
+}
+
 $nbcolonnes = substr_count($object->sujet, ',') + 1;
 
 // Add vote
@@ -466,7 +472,6 @@ print '<div class="tabsAction">';
 print '<a class="butAction" href="exportcsv.php?id=' . $numsondage . '">'.$langs->trans("ExportSpreadsheet") .' (.CSV)' . '</a>';
 
 print '</div>';
-
 
 // Add form to add a field
 if (GETPOST('ajoutsujet'))
