@@ -24,5 +24,6 @@ ALTER TABLE  `llx_opensurvey_sondage` DROP INDEX  `idx_id_sondage_admin` ;
 ALTER TABLE  `llx_opensurvey_sondage` DROP COLUMN `id_sondage_admin` ;
 ALTER TABLE  `llx_opensurvey_sondage` DROP COLUMN `canedit` ;
 ALTER TABLE  `llx_opensurvey_sondage` ADD COLUMN `allow_spy` TINYINT( 1 ) UNSIGNED NOT NULL AFTER  `allow_comments` ;
-ALTER TABLE  `llx_opensurvey_sondage` DROP  `origin` ;
-ALTER TABLE  `llx_opensurvey_sondage` ADD  `fk_user_creat` INT( 11 ) UNSIGNED NOT NULL AFTER  `nom_admin` ;
+ALTER TABLE  `llx_opensurvey_sondage` DROP COLUMN `origin` ;
+ALTER TABLE  `llx_opensurvey_sondage` ADD COLUMN `fk_user_creat` INT( 11 ) UNSIGNED NOT NULL AFTER  `nom_admin` ;
+ALTER TABLE  `llx_opensurvey_sondage` CHANGE COLUMN `mailsonde`  `mailsonde` TINYINT( 1 ) UNSIGNED NOT NULL DEFAULT  '0';

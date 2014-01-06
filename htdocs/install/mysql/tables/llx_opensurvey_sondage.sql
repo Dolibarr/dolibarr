@@ -24,7 +24,7 @@ CREATE TABLE llx_opensurvey_sondage (
        titre TEXT,
        date_fin DATETIME,
        format VARCHAR(2),
-       mailsonde varchar(2) DEFAULT '0',
+       mailsonde TINYINT( 1 ) UNSIGNED NOT NULL DEFAULT '0',
        allow_comments TINYINT(1) unsigned NOT NULL DEFAULT 1,
 	   allow_spy TINYINT(1) unsigned NOT NULL DEFAULT 1,
        tms TIMESTAMP,
