@@ -257,6 +257,22 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 					}
 				}
 			}
+			else
+			{
+				// Caller did not ask to filter on tasks of a specific user (this probably means he want also tasks of all users, into public project
+				// or into all other projects if user has permission to).
+				if (empty($user->rights->project->all->lire))
+				{
+					// User is not allowed on this project and project is not public, so we hide line
+					if (! in_array($lines[$i]->fk_project, $projectsArrayId))
+					{
+						// TODO 
+						// If user is assigned to a task into a private project user has no permission on, we must use showlinegray=1 (to show task without showing project)
+						// if user is not assigned to any task into tree, we must use showline=0
+						$showline=0;
+					}
+				}
+			}
 
 			if ($showline)
 			{
@@ -367,7 +383,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 				if (! $showlineingray) $inc++;
 
 				$level++;
-				if ($lines[$i]->id) projectLinesa($inc, $lines[$i]->id, $lines, $level, $var, $showproject, $taskrole, $projectsListId);
+				if ($lines[$i]->id) projectLinesa($inc, $lines[$i]->id, $lines, $level, $var, $showproject, $taskrole, $projectsListId, 0, $showalsopublicproj);
 				$level--;
 				$total += $lines[$i]->duration;
 			}
