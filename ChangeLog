@@ -155,6 +155,7 @@ backport commit 384e3812eb73a15adafb472cacfb93397a54459b to fix W3C/edit contrac
 
 
 ***** ChangeLog for 3.3.5 compared to 3.3.4 *****
+- Fix: Change to make debian package ok despite removal of ckeditor.
 - Fix: jcrop file to match debian rules
 - Fix: Add missing country UK.
 - Fix: Minor fix into package.

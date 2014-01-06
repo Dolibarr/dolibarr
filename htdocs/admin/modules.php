@@ -152,7 +152,8 @@ foreach ($modulesdir as $dir)
     					$const_name = 'MAIN_MODULE_'.strtoupper(preg_replace('/^mod/i','',get_class($objMod)));
     					if ($objMod->version == 'development'  && (empty($conf->global->$const_name) && ($conf->global->MAIN_FEATURES_LEVEL < 2))) $modulequalified=0;
     					if ($objMod->version == 'experimental' && (empty($conf->global->$const_name) && ($conf->global->MAIN_FEATURES_LEVEL < 1))) $modulequalified=0;
-						//if ($mode == 'expdev' && ($objMod->version != 'experimental' && $objMod->version != 'development')) $modulequalified=0;
+						// We discard modules according to property disabled
+    					if (! empty($objMod->hidden)) $modulequalified=false;
 
     					// Define array $categ with categ with at least one qualified module
     					if ($modulequalified)
