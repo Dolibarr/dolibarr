@@ -156,6 +156,11 @@ if ($action == 'edit') {
  * View
  */
 
+if ($object->fk_user_creat) {
+	$userstatic = new User($db);
+	$userstatic->fetch($object->fk_user_creat);
+}
+
 $form=new Form($db);
 
 $arrayofjs=array();
@@ -215,9 +220,6 @@ print '</td></tr>';
 print '<tr><td>';
 print $langs->trans("Author") .'</td><td colspan="2">';
 if ($object->fk_user_creat) {
-	$userstatic = new User($db);
-	$userstatic->fetch($object->fk_user_creat);
-
 	print $userstatic->getLoginUrl(1);
 } else {
 	print dol_htmlentities($object->nom_admin);
@@ -251,7 +253,16 @@ if ($action == 'edit')
 {
 	print '<input type="checkbox" name="mailsonde" size="40"'.($object->mailsonde?' checked="true"':'').'">';
 }
-else print yn($object->mailsonde);
+else {
+	print yn($object->mailsonde);
+	
+	//If option is active and linked user does not have an email, we show a warning
+	if ($object->fk_user_creat && $object->mailsonde) {
+		if (!$userstatic->email) {
+			print ' '.img_warning($langs->trans('NoEMail'));
+		}
+	}
+}
 print '</td></tr>';
 
 // Users can comment
