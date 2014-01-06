@@ -655,52 +655,54 @@ if ($object->allow_spy) {
 print '</table>'."\n";
 print '</div>'."\n";
 
-$toutsujet=explode(",",$object->sujet);
-$toutsujet=str_replace("°","'",$toutsujet);
+if ($object->allow_spy) {
+	$toutsujet=explode(",",$object->sujet);
+	$toutsujet=str_replace("°","'",$toutsujet);
 
-$compteursujet=0;
-$meilleursujet = '';
+	$compteursujet=0;
+	$meilleursujet = '';
 
-for ($i = 0; $i < $nbcolonnes; $i++) {
-	if (isset($sumfor[$i]) && isset($meilleurecolonne) && $sumfor[$i] == $meilleurecolonne) {
-		$meilleursujet.=", ";
-		if ($object->format=="D") {
-			$meilleursujetexport = $toutsujet[$i];
+	for ($i = 0; $i < $nbcolonnes; $i++) {
+		if (isset($sumfor[$i]) && isset($meilleurecolonne) && $sumfor[$i] == $meilleurecolonne) {
+			$meilleursujet.=", ";
+			if ($object->format=="D") {
+				$meilleursujetexport = $toutsujet[$i];
 
-			if (strpos($toutsujet[$i], '@') !== false) {
-				$toutsujetdate = explode("@", $toutsujet[$i]);
-				$meilleursujet .= dol_print_date($toutsujetdate[0],'daytext'). ' ('.dol_print_date($toutsujetdate[0],'%A').')' . ' - ' . $toutsujetdate[1];
-			} else {
-				$meilleursujet .= dol_print_date($toutsujet[$i],'daytext'). ' ('.dol_print_date($toutsujet[$i],'%A').')';
+				if (strpos($toutsujet[$i], '@') !== false) {
+					$toutsujetdate = explode("@", $toutsujet[$i]);
+					$meilleursujet .= dol_print_date($toutsujetdate[0],'daytext'). ' ('.dol_print_date($toutsujetdate[0],'%A').')' . ' - ' . $toutsujetdate[1];
+				} else {
+					$meilleursujet .= dol_print_date($toutsujet[$i],'daytext'). ' ('.dol_print_date($toutsujet[$i],'%A').')';
+				}
 			}
+			else
+			{
+				$tmps=explode('@',$toutsujet[$i]);
+				$meilleursujet .= dol_htmlentities($tmps[0]);
+			}
+
+			$compteursujet++;
 		}
-		else
-		{
-			$tmps=explode('@',$toutsujet[$i]);
-			$meilleursujet .= dol_htmlentities($tmps[0]);
-		}
-
-		$compteursujet++;
-	}
-}
-
-$meilleursujet=substr("$meilleursujet", 1);
-$meilleursujet = str_replace("°", "'", $meilleursujet);
-
-
-// Show best choice
-if ($nbofcheckbox >= 2)
-{
-	$vote_str = $langs->trans('votes');
-	print '<p class="affichageresultats">'."\n";
-
-	if (isset($meilleurecolonne) && $compteursujet == "1") {
-		print '<img src="'.dol_buildpath('/opensurvey/img/medaille.png',1).'"> ' . $langs->trans('TheBestChoice') . ": <b>".$meilleursujet."</b> " . $langs->trans('with') . " <b>$meilleurecolonne </b>" . $vote_str . ".\n";
-	} elseif (isset($meilleurecolonne)) {
-		print '<img src="'.dol_buildpath('/opensurvey/img/medaille.png',1).'"> ' . $langs->trans('TheBestChoices')  . ": <b>".$meilleursujet."</b> " . $langs->trans('with') . "  <b>$meilleurecolonne </b>" . $vote_str . ".\n";
 	}
 
-	print '</p><br>'."\n";
+	$meilleursujet=substr("$meilleursujet", 1);
+	$meilleursujet = str_replace("°", "'", $meilleursujet);
+
+
+	// Show best choice
+	if ($nbofcheckbox >= 2)
+	{
+		$vote_str = $langs->trans('votes');
+		print '<p class="affichageresultats">'."\n";
+
+		if (isset($meilleurecolonne) && $compteursujet == "1") {
+			print '<img src="'.dol_buildpath('/opensurvey/img/medaille.png',1).'"> ' . $langs->trans('TheBestChoice') . ": <b>".$meilleursujet."</b> " . $langs->trans('with') . " <b>$meilleurecolonne </b>" . $vote_str . ".\n";
+		} elseif (isset($meilleurecolonne)) {
+			print '<img src="'.dol_buildpath('/opensurvey/img/medaille.png',1).'"> ' . $langs->trans('TheBestChoices')  . ": <b>".$meilleursujet."</b> " . $langs->trans('with') . "  <b>$meilleurecolonne </b>" . $vote_str . ".\n";
+		}
+
+		print '</p><br>'."\n";
+	}
 }
 
 print '<br>';
