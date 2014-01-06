@@ -250,9 +250,12 @@ if ($id > 0)
 
 	// Country
 	print '<tr><td>'.$langs->trans("Country").'</td><td colspan="3">';
-	$img=picto_from_langcode($object->country_code);
-	if ($object->isInEEC()) print $form->textwithpicto(($img?$img.' ':'').$object->country,$langs->trans("CountryIsInEEC"),1,0);
-	else print ($img?$img.' ':'').$object->country;
+	if (! empty($object->country_code))
+	{
+		$img=picto_from_langcode($object->country_code);
+		if ($object->isInEEC()) print $form->textwithpicto(($img?$img.' ':'').$object->country,$langs->trans("CountryIsInEEC"),1,0);
+		else print ($img?$img.' ':'').$object->country;
+	}
 	print '</td></tr>';
 
 	// EMail

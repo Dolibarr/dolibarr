@@ -1281,7 +1281,7 @@ class Project extends CommonObject
 	}
 
 	/**
-	 * Clean task not linked to a parent
+	 * Clean tasks not linked to an existing parent
 	 *
 	 * @return	int				Nb of records deleted
 	 */
@@ -1292,7 +1292,7 @@ class Project extends CommonObject
 		// There is orphelins. We clean that
 		$listofid=array();
 
-		// Get list of id in array listofid
+		// Get list of all id in array listofid
 		$sql='SELECT rowid FROM '.MAIN_DB_PREFIX.'projet_task';
 		$resql = $this->db->query($sql);
 		if ($resql)
@@ -1313,19 +1313,24 @@ class Project extends CommonObject
 
 		if (count($listofid))
 		{
-			// Removed orphelins records
-			print 'Some orphelins were found and restored to be parents so records are visible again: ';
-			print join(',',$listofid);
+			print 'Code asked to check and clean orphelins.';
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."projet_task";
 			$sql.= " SET fk_task_parent = 0";
-			$sql.= " WHERE fk_task_parent NOT IN (".join(',',$listofid).")";
+			$sql.= " WHERE fk_task_parent NOT IN (".join(',',$listofid).")";	// So we update only records linked to a non existing parent
 
 			$resql = $this->db->query($sql);
 			if ($resql)
 			{
 				$nb=$this->db->affected_rows($sql);
 
+				if ($nb > 0)
+				{
+					// Removed orphelins records
+					print 'Some orphelins were found and modified to be parent so records are visible again: ';
+					print join(',',$listofid);
+				}
+				
 				return $nb;
 			}
 			else
