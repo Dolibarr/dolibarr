@@ -27,3 +27,6 @@ ALTER TABLE  `llx_opensurvey_sondage` ADD COLUMN `allow_spy` TINYINT( 1 ) UNSIGN
 ALTER TABLE  `llx_opensurvey_sondage` DROP COLUMN `origin` ;
 ALTER TABLE  `llx_opensurvey_sondage` ADD COLUMN `fk_user_creat` INT( 11 ) UNSIGNED NOT NULL AFTER  `nom_admin` ;
 ALTER TABLE  `llx_opensurvey_sondage` CHANGE COLUMN `mailsonde`  `mailsonde` TINYINT( 1 ) UNSIGNED NOT NULL DEFAULT  '0';
+ALTER TABLE  `llx_opensurvey_sondage` CHANGE COLUMN `titre`  `titre` TEXT CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL;
+ALTER TABLE  `llx_opensurvey_sondage` CHANGE COLUMN `date_fin`  `date_fin` DATETIME NOT NULL;
+ALTER TABLE  `llx_opensurvey_sondage` CHANGE COLUMN `format`  `format` VARCHAR( 2 ) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL;
