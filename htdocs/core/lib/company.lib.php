@@ -567,7 +567,7 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
     if ($search_status != '') $param.='&amp;search_status='.$search_status;
     if ($search_name != '') $param.='&amp;search_name='.urlencode($search_name);
 
-    $colspan=8;
+    $colspan=9;
     print '<tr class="liste_titre">';
     print_liste_field_titre($langs->trans("Name"),$_SERVER["PHP_SELF"],"p.lastname","",$param,'',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Poste"),$_SERVER["PHP_SELF"],"p.poste","",$param,'',$sortfield,$sortorder);
@@ -581,17 +581,16 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
       print '<td>'.$langs->trans("Skype").'</td>';
     }
     print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"p.statut","",$param,'',$sortfield,$sortorder);
+    // Copy to clipboard
     print "<td>&nbsp;</td>";
+    // Add to agenda
     if (! empty($conf->agenda->enabled) && $user->rights->agenda->myactions->create)
     {
     	$colspan++;
         print '<td>&nbsp;</td>';
     }
-    if ($user->rights->societe->contact->creer)
-    {
-    	$colspan++;
-        print '<td>&nbsp;</td>';
-    }
+    // Edit
+    print '<td>&nbsp;</td>';
     print "</tr>";
 
 
@@ -613,19 +612,23 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
       $colspan++;
       print '<td>&nbsp;</td>';
     }
+
     // Status
     print '<td class="liste_titre maxwidthonsmartphone">';
     print $form->selectarray('search_status', array('0'=>$langs->trans('ActivityCeased'),'1'=>$langs->trans('InActivity')),$search_status);
     print '</td>';
 
+    // Copy to clipboard
     print "<td>&nbsp;</td>";
+    
+    // Add to agenda
     if (! empty($conf->agenda->enabled) && $user->rights->agenda->myactions->create)
     {
     	$colspan++;
         print '<td>&nbsp;</td>';
     }
 
-
+	// Edit
     print '<td class="liste_titre" align="right">';
     print '<input type="image" class="liste_titre" name="button_search" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
     print '</td>';
@@ -688,9 +691,10 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
                 print '</td>';
             }
 
+            // Status
 			print '<td>'.$contactstatic->getLibStatut(5).'</td>';
 
-			// copy in clipboard
+			// Copy to clipboard
 			$coords = '';
 			if (!empty($object->name))
 				$coords .= addslashes($object->name)."<br />";
@@ -721,10 +725,12 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
 				if (!empty($object->country))
 					$coords .= "<br />".addslashes($object->country);
 			}
+			
             print '<td align="center"><a href="#" onclick="return copyToClipboard(\''.$coords.'\');">';
             print img_picto($langs->trans("Address"), 'object_address.png');
             print '</a></td>';
 
+            // Add to agenda
             if (! empty($conf->agenda->enabled) && $user->rights->agenda->myactions->create)
             {
                 print '<td align="center">';
@@ -738,8 +744,8 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
                 print img_object($langs->trans("Event"),"action");
                 print '</a></td>';
             }
-
-
+			
+            // Edit
             if ($user->rights->societe->contact->creer)
             {
                 print '<td align="right">';
@@ -747,7 +753,7 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
                 print img_edit();
                 print '</a></td>';
             }
-
+            else print '<td>&nbsp;</td>';
 
             print "</tr>\n";
             $i++;
