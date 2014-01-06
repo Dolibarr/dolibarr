@@ -255,28 +255,10 @@ if (empty($reshook))
                     if ($object->particulier)
                     {
                         dol_syslog("This thirdparty is a personal people",LOG_DEBUG);
-                        $contact=new Contact($db);
-
-     					          $contact->civilite_id		= $object->civilite_id;
-                        $contact->name				= $object->name_bis;
-                        $contact->firstname			= $object->firstname;
-                        $contact->address			= $object->address;
-                        $contact->zip				= $object->zip;
-                        $contact->town				= $object->town;
-                        $contact->state_id      	= $object->state_id;
-                        $contact->country_id		= $object->country_id;
-                        $contact->socid				= $object->id;	// fk_soc
-                        $contact->statut			= 1;
-                        $contact->email				= $object->email;
-						            $contact->skype       = $object->skype;
-                        $contact->phone_pro			= $object->phone;
-						            $contact->fax				= $object->fax;
-                        $contact->priv				= 0;
-
-                        $result=$contact->create($user);
+                        $result=$object->create_individual($user);
                         if (! $result >= 0)
                         {
-                            $error=$contact->error; $errors=$contact->errors;
+                            $error=$object->error; $errors=$object->errors;
                         }
                     }
 
@@ -878,7 +860,7 @@ else
         print '<tr><td>'.$langs->trans('Web').'</td><td colspan="3"><input type="text" name="url" size="32" value="'.$object->url.'"></td></tr>';
 
         // Skype
-        if (! empty($conf->skype->enabled) && $user->rights->skype->view)
+        if (! empty($conf->skype->enabled))
         {
             print '<tr><td>'.$langs->trans('Skype').'</td><td colspan="3"><input type="text" name="skype" size="32" value="'.$object->skype.'"></td></tr>';
         }
@@ -1302,7 +1284,7 @@ else
             print '<tr><td>'.$langs->trans('Web').'</td><td colspan="3"><input type="text" name="url" size="32" value="'.$object->url.'"></td></tr>';
 
             // Skype
-            if (! empty($conf->skype->enabled) && $user->rights->skype->view)
+            if (! empty($conf->skype->enabled))
             {
                 print '<tr><td>'.$langs->trans('Skype').'</td><td colspan="3"><input type="text" name="skype" size="32" value="'.$object->skype.'"></td></tr>';
             }
@@ -1594,12 +1576,12 @@ else
 
         // Country
         print '<tr><td>'.$langs->trans("Country").'</td><td colspan="'.(2+(($showlogo || $showbarcode)?0:1)).'" class="nowrap">';
-    		if ($object->country_code)
-    		{
-            	$img=picto_from_langcode($object->country_code);
-            	if ($object->isInEEC()) print $form->textwithpicto(($img?$img.' ':'').$object->country,$langs->trans("CountryIsInEEC"),1,0);
-            	else print ($img?$img.' ':'').$object->country;
-    		}
+    	if (! empty($object->country_code))
+    	{
+           	$img=picto_from_langcode($object->country_code);
+           	if ($object->isInEEC()) print $form->textwithpicto(($img?$img.' ':'').$object->country,$langs->trans("CountryIsInEEC"),1,0);
+           	else print ($img?$img.' ':'').$object->country;
+    	}
         print '</td></tr>';
 
         // State
@@ -1616,7 +1598,7 @@ else
         print '</td></tr>';
 
         // Skype
-        if (! empty($conf->skype->enabled) && $user->rights->skype->view)
+        if (! empty($conf->skype->enabled))
         {
             print '<tr><td>'.$langs->trans('Skype').'</td><td colspan="3">';
             print dol_print_skype($object->skype,0,$object->id,'AC_SKYPE');
@@ -1737,7 +1719,7 @@ else
 
         // Capital
         print '<tr><td>'.$langs->trans('Capital').'</td><td colspan="3">';
-        if ($object->capital) print $object->capital.' '.$langs->trans("Currency".$conf->currency);
+        if ($object->capital) print price($object->capital,'',$langs,0,-1,-1, $conf->currency);
         else print '&nbsp;';
         print '</td></tr>';
 

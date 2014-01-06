@@ -25,4 +25,4 @@ LinkToGoldMember=Jūs varat zvanīt vienu no autobusa izraudzītās Dolibarr jū
 PossibleLanguages=Atbalstītās valodas
 MakeADonation=Palīdzība Dolibarr projektam, ziedot
 SubscribeToFoundation=Palīdzi Dolibarr projektam, piesakies fondam
-# SeeOfficalSupport=For official Dolibarr support in your language: <br><b><a href="%s" target="_blank">%s</a></b>
+SeeOfficalSupport=Oficiālaiā Dolibarr palīdzība jūsu valodā: <br><b><a href="%s" target="_blank">%s</a></b>

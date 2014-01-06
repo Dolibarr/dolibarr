@@ -2,12 +2,13 @@
 /* Copyright (C) 2001-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2012      Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2012-2013 Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2013      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2013      Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2013      Jean Heimburger   	<jean@tiaris.info>
  * Copyright (C) 2013      Cédric Salvador      <csalvador@gpcsolutions.fr>
- * Copyright (C) 2013      Florian Henry      <florian.henry@open-concept.pro>
+ * Copyright (C) 2013      Florian Henry        <florian.henry@open-concept.pro>
+ * Copyright (C) 2013      Adolfo segura        <adolfo.segura@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -136,13 +137,14 @@ else
     $sql.= ' FROM '.MAIN_DB_PREFIX.'product as p';
     if (! empty($search_categ) || ! empty($catid)) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_product as cp ON p.rowid = cp.fk_product"; // We'll need this table joined to the select in order to filter by categ
    	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as pfp ON p.rowid = pfp.fk_product";
-// multilang
+	// multilang
 	if ($conf->global->MAIN_MULTILANGS) // si l'option est active
 	{
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_lang as pl ON pl.fk_product = p.rowid AND pl.lang = '".$langs->getDefaultLang() ."'";
 	}
 	$sql.= ' WHERE p.entity IN ('.getEntity('product', 1).')';
-	if ($sall) {
+	if ($sall)
+	{
 		// For natural search
 		$params = array('p.ref', 'p.label', 'p.description', 'p.note');
 		// multilang
@@ -162,10 +164,8 @@ else
     	if ($type == 1) $sql.= " AND p.fk_product_type = '1'";
     	else $sql.= " AND p.fk_product_type <> '1'";
     }
-	if ($sref) {
-		$sql .= natural_search('p.ref', $sref);
-	}
-    if ($sbarcode) $sql.= " AND p.barcode LIKE '%".$sbarcode."%'";
+	if ($sref)     $sql .= natural_search('p.ref', $sref);
+    if ($sbarcode) $sql .= natural_search('p.barcode', $sbarcode);
     if ($snom)
 	{
 		$params = array('p.label');

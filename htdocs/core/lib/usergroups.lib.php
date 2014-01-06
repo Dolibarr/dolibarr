@@ -288,7 +288,7 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
     $var=!$var;
     print '<tr '.$bc[$var].'><td colspan="'.$colspan.'">';
 
-    print '<table class="nobordernopadding" width="100%">';
+    print '<table class="nobordernopadding" width="100%"><tr><td><div align="center">';
 
     $i=0;
     foreach($dirthemes as $dir)
@@ -310,22 +310,15 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
     					// Disable not stable themes
     					//if ($conf->global->MAIN_FEATURES_LEVEL < 1 && preg_match('/bureau2crea/i',$subdir)) continue;
 
-    					if ($i % $thumbsbyrow == 0)
-    					{
-    						print '<tr '.$bc[$var].'>';
-    					}
-
-    					print '<td align="center">';
+    					print '<div class="inline-block" style="margin-top: 10px; margin-bottom: 10px; margin-right: 20px; margin-left: 20px;">';
     					$file=$dirtheme."/".$subdir."/thumb.png";
     					$url=$urltheme."/".$subdir."/thumb.png";
     					if (! file_exists($file)) $url=$urltheme."/common/nophoto.jpg";
-    					print '<table><tr><td>';
     					print '<a href="'.$_SERVER["PHP_SELF"].($edit?'?action=edit&theme=':'?theme=').$subdir.(GETPOST("optioncss")?'&optioncss='.GETPOST("optioncss",'alpha',1):'').($fuser?'&id='.$fuser->id:'').'" style="font-weight: normal;" alt="'.$langs->trans("Preview").'">';
     					if ($subdir == $conf->global->MAIN_THEME) $title=$langs->trans("ThemeCurrentlyActive");
     					else $title=$langs->trans("ShowPreview");
-    					print '<img src="'.$url.'" border="0" width="80" height="60" alt="'.$title.'" title="'.$title.'">';
-    					print '</a>';
-    					print '</td></tr><tr><td align="center">';
+    					print '<img src="'.$url.'" border="0" width="80" height="60" alt="'.$title.'" title="'.$title.'" style="margin-bottom: 5px;">';
+    					print '</a><br>';
     					if ($subdir == $selected_theme)
     					{
     						print '<input '.($edit?'':'disabled').' type="radio" '.$bc[$var].' style="border: 0px;" checked name="main_theme" value="'.$subdir.'"> <b>'.$subdir.'</b>';
@@ -334,27 +327,16 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
     					{
     						print '<input '.($edit?'':'disabled').' type="radio" '.$bc[$var].' style="border: 0px;" name="main_theme" value="'.$subdir.'"> '.$subdir;
     					}
-    					print '</td></tr></table></td>';
+						print '</div>';
 
     					$i++;
-
-    					if ($i % $thumbsbyrow == 0) print '</tr>';
     				}
     			}
     		}
     	}
     }
 
-    if ($i % $thumbsbyrow != 0)
-    {
-        while ($i % $thumbsbyrow != 0)
-        {
-            print '<td>&nbsp;</td>';
-            $i++;
-        }
-        print '</tr>';
-    }
-    print '</table>';
+    print '</div></td></tr></table>';
 
     print '</td></tr>';
     print '</table>';

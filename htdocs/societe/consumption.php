@@ -224,6 +224,7 @@ if ($month > 0) {
 	$sql.= " AND ".$datePrint." BETWEEN '".$db->idate($start)."' AND '".$db->idate($end)."'";
 }
 if ($sref) $sql.= " AND ".$doc_number." LIKE '%".$sref."%'";
+if ($sprod_fulldescr) $sql.= " AND (d.description LIKE '%".$sprod_fulldescr."%' OR p.label LIKE '%".$sprod_fulldescr."%')";
 $sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit($limit + 1, $offset);
 
@@ -231,7 +232,7 @@ $sql.= $db->plimit($limit + 1, $offset);
 // Define type of elements
 $typeElementString = $form->selectarray("type_element",$elementTypeArray,GETPOST('type_element'));
 $button = '<input type="submit" class="button" name="button_third" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
-$param="&amp;sref=".$sref."&amp;month=".$month."&amp;year=".$year."&amp;sprod_fulldescr=".$sprod_fulldescr."&amp;socid=".$socid;
+$param="&amp;sref=".$sref."&amp;month=".$month."&amp;year=".$year."&amp;sprod_fulldescr=".$sprod_fulldescr."&amp;socid=".$socid."&amp;type_element=".$type_element;
 
 print_barre_liste($langs->trans('ProductsIntoElements', $typeElementString.' '.$button), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder,'',$num, '', '');
 
@@ -259,7 +260,7 @@ print $formother->select_month($month?$month:-1,'month',1);
 $formother->select_year($year?$year:-1,'year',1, 20, 1);
 print '</td>';
 print '<td class="liste_titre" align="left">';
-print '<input class="flat" type="text" name="sprod_fulldescr" size="15" value="'.$sprod_fulldescr.'">';
+print '<input class="flat" type="text" name="sprod_fulldescr" size="15" value="'.dol_escape_htmltag($sprod_fulldescr).'">';
 print '</td>';
 print '<td class="liste_titre" align="right">';
 print '<input type="image" class="liste_titre" name="button_search" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';

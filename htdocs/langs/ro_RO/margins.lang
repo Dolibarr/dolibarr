@@ -47,5 +47,5 @@ BuyingCost=Preţ de cost
 UnitCharges=Cheluieli unitare
 Charges=Cheltuieli
 
-# AgentContactType=Commercial agent contact type
-# AgentContactTypeDetails=Défine what contact type (linked on invoices) will be used for margin report by commercial agents
+AgentContactType=Tip contact agent comercial 
+AgentContactTypeDetails=Defineşte ce tip de contact ( legat pe factură) va fi utilizat pentru raportul marjei pe agenţi comerciali

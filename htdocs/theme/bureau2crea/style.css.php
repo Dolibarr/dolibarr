@@ -270,6 +270,10 @@ div.inline-block
 .maxwidthonsmartphone { max-width: 100px; }
 <?php } ?>
 .linkobject { cursor: pointer; }
+<?php if (GETPOST("optioncss") == 'print') { ?>
+.hideonprint { display: none !important; }
+<?php } ?>
+
 
 /* ============================================================================== */
 /* Styles for dragging lines                                                      */
@@ -627,7 +631,7 @@ div.login a:hover {
 .login_block_elem {
 	float: right;
 	vertical-align: top;
-	padding: 0px 0px 0px 4px !important;
+	padding: 8px 0px 0px 4px !important;
 }
 
 .alogin, .alogin:hover {
@@ -640,7 +644,7 @@ div.login a:hover {
 }
 
 img.login, img.printer, img.entity {
-	padding: <?php echo ($conf->dol_optimize_smallscreen?'0':'8')?>px 0px 0px 0px;
+	padding: 0px 0px 0px 0px;
 	margin: 0px 0px 0px 8px;
 	text-decoration: none;
 	color: white;
@@ -1127,8 +1131,8 @@ div.tabs a.tab {
     padding: 0px 10px 0px 10px;
 }
 
-div.tabs a.tab#active {
-    background-color: #FFF;
+div.tabs a.tab:active, .tabactive {
+    background-color: #888 !important;
     color: #D45416;
     border-bottom: 0px;
     background-image: none;
@@ -1472,8 +1476,6 @@ table.noborder {
 .tagtable, .table-border { display: table; }
 .tagtr, .table-border-row  { display: table-row; }
 .tagtd, .table-border-col, .table-key-border-col, .table-val-border-col { display: table-cell; }
-.tagtable form, .tagtable div { display: table-row; }
-.tagtable form div, .tagtable div div { display: table-cell; }
 
 tr.liste_titre, form.liste_titre {
     height: 25px;

@@ -126,7 +126,7 @@ ErrorDateMustBeBeforeToday=The date can not be greater than today
 ErrorPaymentModeDefinedToWithoutSetup=A payment mode was set to type %s but setup of module Invoice was not completed to define information to show for this payment mode.
 ErrorPHPNeedModule=Σφάλμα, η PHP σας πρέπει να έχει το module <b>%s</ b> εγκατεστημένο για να χρησιμοποιήσετε αυτήν τη δυνατότητα.
 ErrorOpenIDSetupNotComplete=Μπορείτε να ρυθμίσετε το Dolibarr αρχείο config να επιτρέψει OpenID ταυτότητα, αλλά το URL OpenID υπηρεσίας δεν ορίζεται σε συνεχή %s
-# ErrorWarehouseMustDiffers=Source and target warehouses must differs
+ErrorWarehouseMustDiffers=Η πηγή και ο στόχος των αποθηκών πρέπει να είναι διαφορετικός.
 
 # Warnings
 WarningMandatorySetupNotComplete=Mandatory setup parameters are not yet defined

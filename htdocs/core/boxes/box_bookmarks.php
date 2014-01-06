@@ -47,7 +47,7 @@ class box_bookmarks extends ModeleBoxes
 	 */
 	function loadBox($max=5)
 	{
-		global $user, $langs, $db;
+		global $user, $langs, $db, $conf;
 		$langs->load("boxes");
 
 		$this->max=$max;
@@ -70,6 +70,7 @@ class box_bookmarks extends ModeleBoxes
 			$sql = "SELECT b.title, b.url, b.target, b.favicon";
 			$sql.= " FROM ".MAIN_DB_PREFIX."bookmark as b";
 			$sql.= " WHERE fk_user = ".$user->id;
+            $sql.= " AND b.entity = ".$conf->entity;
 			$sql.= $db->order("position","ASC");
 			$sql.= $db->plimit($max, 0);
 

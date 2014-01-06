@@ -220,7 +220,7 @@ class Export
 
 			if ($i > 0) $sql.=', ';
 			else $i++;
-			
+
 			if (strpos($key, ' as ')===false) {
 				$newfield=$key.' as '.str_replace(array('.', '-'),'_',$key);
 			} else {
@@ -327,7 +327,7 @@ class Export
 	 */
 	function conditionDate($Field, $Value, $Sens)
 	{
-		// FIXME date_format is forbidden, not performant and no portable. Use instead BETWEEN
+		// TODO date_format is forbidden, not performant and not portable. Use instead BETWEEN
 		if (strlen($Value)==4) $Condition=" date_format(".$Field.",'%Y') ".$Sens." ".$Value;
 		elseif (strlen($Value)==6) $Condition=" date_format(".$Field.",'%Y%m') ".$Sens." '".$Value."'";
 		else  $Condition=" date_format(".$Field.",'%Y%m%d') ".$Sens." ".$Value;

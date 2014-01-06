@@ -446,7 +446,7 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
     }
     // Other checks
     if ($tabname[$id] == MAIN_DB_PREFIX."c_actioncomm" && isset($_POST["type"]) && in_array($_POST["type"],array('system','systemauto'))) {
-        $ok=0;        
+        $ok=0;
         setEventMessage($langs->transnoentities('ErrorReservedTypeSystemSystemAuto'),'errors');
     }
     if (isset($_POST["code"]))
@@ -456,8 +456,7 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
         	$ok=0;
     		setEventMessage($langs->transnoentities('ErrorCodeCantContainZero'),'errors');
         }
-        // FIXME regresion if code with not in numeric base
-        /*if (!is_numeric($_POST['code']))
+        /*if (!is_numeric($_POST['code']))	// disabled, code may not be in numeric base
     	{
 	    	$ok = 0;
 	    	$msg .= $langs->transnoentities('ErrorFieldFormat', $langs->transnoentities('Code')).'<br />';
@@ -1100,7 +1099,7 @@ if ($id)
                     	if (($obj->code == '0' || $obj->code == '' || preg_match('/unknown/i',$obj->code))) $iserasable = 0;
                     	else if ($obj->code == 'RECEP') $iserasable = 0;
                     	else if ($obj->code == 'EF0') $iserasable = 0;
-                    } 
+                    }
 
                     if (isset($obj->type) && in_array($obj->type, array('system', 'systemauto'))) $iserasable=0;
 
@@ -1316,9 +1315,9 @@ function fieldList($fieldlist,$obj='',$tabname='')
 			$size='';
 			if ($fieldlist[$field]=='libelle') $size='size="32" ';
 			if ($fieldlist[$field]=='tracking') $size='size="92" ';
-			if ($fieldlist[$field]=='accountancy_code') $size='size="15" ';
-			if ($fieldlist[$field]=='accountancy_code_sell') $size='size="15" ';
-			if ($fieldlist[$field]=='accountancy_code_buy') $size='size="15" ';
+			if ($fieldlist[$field]=='accountancy_code') $size='size="10" ';
+			if ($fieldlist[$field]=='accountancy_code_sell') $size='size="10" ';
+			if ($fieldlist[$field]=='accountancy_code_buy') $size='size="10" ';
 			print '<input type="text" '.$size.' class="flat" value="'.(isset($obj->$fieldlist[$field])?$obj->$fieldlist[$field]:'').'" name="'.$fieldlist[$field].'">';
 			print '</td>';
 		}

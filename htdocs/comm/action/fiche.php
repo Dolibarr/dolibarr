@@ -167,7 +167,7 @@ if ($action == 'add_action')
 	$actioncomm->datep = $datep;
 	$actioncomm->datef = $datef;
 	$actioncomm->percentage = $percentage;
-	$actioncomm->duree=((float) (GETPOST('dureehour') * 60) + (float) GETPOST('dureemin')) * 
+	$actioncomm->duree=((float) (GETPOST('dureehour') * 60) + (float) GETPOST('dureemin')) *
 60;
 
 	$usertodo=new User($db);
@@ -193,7 +193,7 @@ if ($action == 'add_action')
 	}
 
 	// Special for module webcal and phenix
-	// FIXME external modules
+	// TODO external modules
 	if (! empty($conf->webcalendar->enabled) && GETPOST('add_webcal') == 'on') $actioncomm->use_webcal=1;
 	if (! empty($conf->phenix->enabled) && GETPOST('add_phenix') == 'on') $actioncomm->use_phenix=1;
 
@@ -484,7 +484,7 @@ if ($action == 'create')
 
     // Full day
     print '<tr><td class="fieldrequired">'.$langs->trans("EventOnFullDay").'</td><td><input type="checkbox" id="fullday" name="fullday" '.(GETPOST('fullday')?' checked="checked"':'').'></td></tr>';
-	
+
 	// Date start
 	$datep=$actioncomm->datep;
 	if (GETPOST('datep','int',1)) $datep=dol_stringtotime(GETPOST('datep','int',1),0);
@@ -565,7 +565,7 @@ if ($action == 'create')
 	}
 	else
 	{
-		
+
 		$events=array();
 		$events[]=array('method' => 'getContacts', 'url' => dol_buildpath('/core/ajax/contacts.php',1), 'htmlname' => 'contactid', 'params' => array('add-customer-contact' => 'disabled'));
 		//For external user force the company to user company
@@ -581,7 +581,7 @@ if ($action == 'create')
 	print '<tr><td class="nowrap">'.$langs->trans("ActionOnContact").'</td><td>';
 	$form->select_contacts(GETPOST('socid','int'),GETPOST('contactid'),'contactid',1);
 	print '</td></tr>';
-	
+
 
 	// Project
 	if (! empty($conf->projet->enabled))
@@ -623,7 +623,7 @@ if ($action == 'create')
     $doleditor=new DolEditor('note',(GETPOST('note')?GETPOST('note'):$actioncomm->note),'',240,'dolibarr_notes','In',true,true,$conf->fckeditor->enabled,ROWS_7,90);
     $doleditor->Create();
     print '</td></tr>';
-    
+
 
     // Other attributes
     $parameters=array();

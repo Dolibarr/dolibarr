@@ -412,6 +412,9 @@ th .button {
 .maxwidthonsmartphone { max-width: 100px; }
 <?php } ?>
 .linkobject { cursor: pointer; }
+<?php if (GETPOST("optioncss") == 'print') { ?>
+.hideonprint { display: none; }
+<?php } ?>
 
 
 /* ============================================================================== */
@@ -1443,7 +1446,7 @@ a.tab:link, a.tab:visited, a.tab:hover, a.tab#active {
 	background-image: none !important;
 }
 
-a.tab#active {
+.tabactive {
 <?php if ($usecss3) { ?>
 /*    border-bottom: 1px solid rgb(<?php echo $colorbacktabactive; ?>) !important; */
 	background: rgba(<?php echo $colorbacktabcard2; ?>, 0.5)  url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/nav-overlay3.png',1); ?>) 50% 0 repeat-x;
@@ -1727,8 +1730,6 @@ table.liste td {
 .tagtable, .table-border { display: table; }
 .tagtr, .table-border-row  { display: table-row; }
 .tagtd, .table-border-col, .table-key-border-col, .table-val-border-col { display: table-cell; }
-.tagtable form, .tagtable div { display: table-row; }
-.tagtable form div, .tagtable div div { display: table-cell; }
 
 tr.liste_titre, tr.liste_titre_sel, form.liste_titre, form.liste_titre_sel, table.dataTable.tr
 {
@@ -1758,6 +1759,9 @@ tr.liste_titre th, th.liste_titre, tr.liste_titre td, td.liste_titre, form.liste
     border-bottom: 1px solid #FDFFFF;
 	text-shadow: 1px 0px 1px #<?php echo $colorshadowtitle; ?>;
     vertical-align: middle;
+}
+tr.liste_titre th a, th.liste_titre a, tr.liste_titre td a, td.liste_titre a, form.liste_titre div a, div.liste_titre a {
+	text-shadow: none !important;
 }
 .liste_titre td a {
 	text-shadow: none !important;

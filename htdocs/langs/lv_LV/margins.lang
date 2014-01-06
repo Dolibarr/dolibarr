@@ -27,7 +27,7 @@ CommercialAgent=Tirdzniecības pārstāvis
 
 StartDate=Sākuma datums
 EndDate=Beigu datums
-Launch=Sākums
+Launch=Sākt
 
 ForceBuyingPriceIfNull=Force iepirkuma cena, ja null
 ForceBuyingPriceIfNullDetails=ja &quot;ON&quot;, starpība būs nulle tiešsaistē (pirkšanas cena = pārdošanas cenu), pretējā gadījumā (&quot;OFF&quot;), Marge būs vienāda ar pārdošanas cenu (pirkšanas cena = 0)

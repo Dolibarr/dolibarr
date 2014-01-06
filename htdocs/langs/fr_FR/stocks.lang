@@ -109,4 +109,4 @@ NbOfProductAfterPeriod=Quantité du produit <b>%s</b> en stock après la périod
 MassStockMovement=Mouvement de stock en masse
 SelectProductInAndOutWareHouse=Sélectionner un produit, une quantité à transférer, un entrepôt source et destination et cliquer sur "%s". Une fois tous les mouvements choisis, cliquer sur "%s".
 RecordMovement=Enregistrer transferts
-# ReceivingForSameOrder=Receivings for this order
+ReceivingForSameOrder=Réceptions pour cette commande

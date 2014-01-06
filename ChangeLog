@@ -6,12 +6,17 @@ English Dolibarr ChangeLog
 For users:
 - New: Add list of orders products in tab "consumption" on thirdparties.
 - New: Add graph stats for suppliers orders in tab "stats" on products.
+- New: Add option MAIN_HIDE_INACTIVETAB_ON_PRINT to hide inactive tabs when you
+  use the "print" view on screen.
+- New: Add menu entry to barcode genration page.
 
 For translators:
 - Update language files.
 
 For developers:
 - New: Add path file of trigger into admin trigger list page.
+- New: More phpunit tests.
+- New: Payments and supplier payment pages tabs can now be extended from modules.
 
 
 
@@ -83,6 +88,8 @@ For users:
 - Fix: [ bug #992 ] Proforma invoices don't have a separated numeric count.
 - Fix: [ bug #1022 ] correct margin calculation for credit notes.
 - Fix: Better management of using ajax for upload form (to solve problem when enabling ajax jquery multifile upload in some cases).
+- Fix: Lost stats filters into year selection.
+- Fix: Some config data are shared between suppliers orders and suppliers invoices
 
 New experimental module:
 - New: [ task #157 ] Add a Skype button (adherents / third parties / contacts)
@@ -141,7 +148,11 @@ parameter. All methods addline in this case were modified to remove this paramet
 
 5) Property ->tel on objects is now ->phone
 
- 
+6) Trigger LINEPROPAL_MODIFY is renamed into LINEPROPAL_UPDATE and
+   Trigger CONTRACT_LINE_DELETE rnamed into LINECONTRACT_DELETE to match naming rules.
+
+
+
 ***** ChangeLog for 3.4.2 compared to 3.4.1 *****
 Fix: field's problem into company's page (RIB)
 Fix: Document cerfa doesn't contained firstname & lastname from donator
@@ -153,6 +164,16 @@ Fix: [ bug #1142 ] Set paiement on invoice (PGSql)
 Fix: [ bug #1145 ] Agenda button list type do not display
 Fix: [ bug #1148 ] Product consomation : supplier order bad status
 Fix: [ bug #1159 ] Commercial search "other" give p.note do not exists
+Fix: [ bug #1174 ] Product translated description not good into PDF
+Fix: [ bug #1163 ] SQL Error when searching for supplier orders
+Fix: [ bug #1162 ] Translaction for morning and afternoon
+Fix: [ bug #1161 ] Search on product label
+Fix: [ bug #1075 ] POS module doesn't decrement stock of products in delayed payment mode.
+Fix: [ bug #1171 ] Documents lost in interventions after validating
+Fix: fix unsubscribe URL into mailing when sending manually (not by script)
+Fix: [ bug #1182 ] ODT company_country tag is htmlencoded
+Fix: [ bug #1196 ] Product barcode search does not expect 13th digit on EAN13 type
+Fix: [ bug #1202 ] Wrong amount in deposit % invoice from proposal
 
 ***** ChangeLog for 3.4.1 compared to 3.4.0 *****
 Fix: Display buying price on line edit when no supplier price is defined
@@ -182,7 +203,6 @@ Fix: sorting on qty did not work in supplier product list
 Fix: there was no escaping on filter fields in supplier product list
 Fix: bugs on margin reports and better margin calculation on credit notes
 Qual: Add travis-ci integration
-
 
 ***** ChangeLog for 3.4 compared to 3.3.* *****
 For users:
@@ -279,6 +299,12 @@ backport commit 53672dff75f4fdaeeed037ff9d15f860968022ca to fix confirm with jmo
 backport commit 384e3812eb73a15adafb472cacfb93397a54459b to fix W3C/edit contract
  
 
+
+***** ChangeLog for 3.3.5 compared to 3.3.4 *****
+- Fix: jcrop file to match debian rules
+- Fix: Add missing country UK.
+- Fix: Minor fix into package.
+- Fix: Add missing label on project field.
 
 ***** ChangeLog for 3.3.4 compared to 3.3.3 *****
 - Fix: [ bug #1001 ] Social Contribution : State not correct
@@ -450,7 +476,6 @@ Dolibarr license has also been updated from GPLv2+ to GPLv3+.
 
 
 ***** ChangeLog for 3.2.3 compared to 3.2.2 *****
-
 - Fix: Some permission into agenda module.
 - Fix: Generation of PDF was not using correct font for some languages.
 - Fix some translations.
@@ -604,7 +629,6 @@ WARNING: To reduce technic debt, all functions dolibarr_xxx were renamed int dol
 
 
 ***** ChangeLog for 3.1.3 compared to 3.1.2 *****
-
 Fix: PgSQL - property must be set if success
 Fix: Provide a solution for backup when mysqldump is not available
 Fix: Bug #460 - Wrong entity assignment when creating a warehouse
@@ -613,7 +637,6 @@ Fix: bug #405 - Late icon always displayed on comm/propal.php
 
 
 ***** ChangeLog for 3.1.2 compared to 3.1.1 *****
-
 - Fix: Can clone a proposal
 - Fix: Add member ID in substitution method
 - Fix: Duplicate end tag and missing form parts
@@ -626,7 +649,6 @@ Fix: bug #405 - Late icon always displayed on comm/propal.php
 
 
 ***** ChangeLog for 3.1.1 compared to 3.1.0 *****
-
 - New: Add option FACTURE_DEPOSITS_ARE_JUST_PAYMENTS. With this option added, 
        credit notes are not removed from total amount of invoice but are just 
        payments used to reducs remain to pay.
@@ -748,7 +770,6 @@ For translators:
 
 
 ***** ChangeLog for 3.0 compared to 2.9.* *****
-
 For users:
 - New: Can edit date of cheque receipts.
 - New: Add Sales journal and Purchase journal report.
@@ -844,7 +865,6 @@ For developers:
 
 
 ***** ChangeLog for 2.9 compared to 2.8.* *****
-
 For users:
 - New: POS module allow to choose which warehouse to use.
 - New: Support "Department/State" field on company setup, contact, 
@@ -962,7 +982,6 @@ For users:
 
 
 ***** ChangeLog for 2.8 compared to 2.7.* *****
-
 For users:
 - New: Support note on trips module
 - New: Can link contacts to projects
@@ -1013,7 +1032,6 @@ For developers:
 
 
 ***** ChangeLog for 2.7.1 compared to 2.7 *****
-
 For users:
 - Fix: Bad decimal management for it_IT and fr_BE languages.
 - Fix: A third party created from a member is created as a 
@@ -1026,7 +1044,6 @@ For users:
 
 
 ***** ChangeLog for 2.7 compared to 2.6.* *****
-
 For users:
 - New: Add a print icon to show a page to print without menus.
 - New: Can add a free text on bank cheque receipts.
@@ -1125,7 +1142,6 @@ For developers:
 
 
 ***** ChangeLog for 2.6 compared to 2.5.* *****
-
 For users:
 - New: Add filter on status in emailing selector for Dolibarr users.
 - New: Can add bookmarks on all pages.
@@ -1208,7 +1224,6 @@ For developers:
 
 
 ***** ChangeLog for 2.5 compared to 2.4.* *****
-
 For users:
 - Sessions timeout can be configured to overwrite PHP setup.
 - Can filter on date in services list.
@@ -1272,7 +1287,6 @@ For developers:
    
 
 ***** ChangeLog for 2.4 compared to 2.2.* *****
-
 For users:
 - Add a calendar module (module agenda) with ical/vcal/rss export.
 - Look enhancement in graphics (thanks artichow).
@@ -1327,7 +1341,6 @@ For developers:
 
 
 ***** ChangeLog for 2.2 compared to 2.1.* *****
-
 - Add more statistics on main page.
 - Add option to add message on login page.
 - Management of categories for third parties.
@@ -1361,7 +1374,6 @@ For developers:
 
 
 ***** ChangeLog for 2.1 compared to 2.0.* *****
-
 - Added a better installer.
 - Support user and groups permissions.
 - Translation in english and support for several languages.
@@ -1426,12 +1438,10 @@ For developers:
 
 
 ***** ChangeLog for 2.0.1 compared to 2.0 *****
-
 Minor bug fixes
 
 
 
 ***** ChangeLog for 2.0 compared to 1.0.* *****
-
 ChangeLog file size is so important, that it is not included inside Dolibarr
 package. You can find it at www.dolibarr.org

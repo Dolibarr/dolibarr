@@ -1,27 +1,27 @@
 # Dolibarr language file - Source file is en_US - main
-# DIRECTION=ltr
+DIRECTION=ltr
 # Note for Chinese:
 # msungstdlight or cid0ct are for traditional Chinese (traditional does not render with Ubuntu pdf reader)
 # stsongstdlight or cid0cs are for simplified Chinese
 # To read Chinese pdf with Linux: sudo apt-get install poppler-data
-# FONTFORPDF=helvetica
-# FONTSIZEFORPDF=10
-# SeparatorDecimal=.
-# SeparatorThousand=,
-# FormatDateShort=%m/%d/%Y
-# FormatDateShortInput=%m/%d/%Y
-# FormatDateShortJava=MM/dd/yyyy
-# FormatDateShortJavaInput=MM/dd/yyyy
-# FormatDateShortJQuery=mm/dd/yy
-# FormatDateShortJQueryInput=mm/dd/yy
-# FormatHourShort=%I:%M %p
-# FormatHourShortDuration=%H:%M
-# FormatDateTextShort=%b %d, %Y
-# FormatDateText=%B %d, %Y
-# FormatDateHourShort=%m/%d/%Y %I:%M %p
-# FormatDateHourSecShort=%m/%d/%Y %I:%M:%S %p
-# FormatDateHourTextShort=%b %d, %Y, %I:%M %p
-# FormatDateHourText=%B %d, %Y, %I:%M %p
+FONTFORPDF=DejaVuSans
+FONTSIZEFORPDF=10
+SeparatorDecimal=.
+SeparatorThousand=None
+FormatDateShort=%m/%d/%Y
+FormatDateShortInput=%m/%d/%Y
+FormatDateShortJava=MM/dd/yyyy
+FormatDateShortJavaInput=MM/dd/yyyy
+FormatDateShortJQuery=mm/dd/yy
+FormatDateShortJQueryInput=mm/dd/yy
+FormatHourShort=%I:%M %p
+FormatHourShortDuration=%H:%M
+FormatDateTextShort=%b %d, %Y
+FormatDateText=%B %d, %Y
+FormatDateHourShort=%m/%d/%Y %I:%M %p
+FormatDateHourSecShort=%m/%d/%Y %I:%M:%S %p
+FormatDateHourTextShort=%b %d, %Y, %I:%M %p
+FormatDateHourText=%B %d, %Y, %I:%M %p
 DatabaseConnection=Liên kết dữ liệu
 NoTranslation=Chưa được dịch
 # NoRecordFound=No record found

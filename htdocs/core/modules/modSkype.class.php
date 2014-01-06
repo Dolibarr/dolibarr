@@ -83,18 +83,6 @@ class modSkype extends DolibarrModules
         //------
         $this->boxes = array();
 
-    		// Permissions
-        //------------
-    		$this->rights = array();		// Permission array used by this module
-    		$this->rights_class = 'skype';
-    		$r=0;
-    
-    		$this->rights[$r][0] = 3101;
-    		$this->rights[$r][1] = 'View skype link';
-    		$this->rights[$r][3] = 1;
-    		$this->rights[$r][4] = 'view';
-    		$r++;
-
         // Main menu entries
         //------------------
         $this->menu = array();

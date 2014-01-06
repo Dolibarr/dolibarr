@@ -73,8 +73,6 @@ elseif ($type== 'sellist')
 	$param_chain = $paramlist[0];
 }
 ?>
-<!-- Position -->
-<tr><td class="fieldrequired"><?php echo $langs->trans("Position"); ?></td><td class="valeur"><input type="text" name="pos" size="5" value="<?php  echo $extrafields->attribute_pos[$attrname];  ?>"></td></tr>
 <!-- Label -->
 <tr><td class="fieldrequired"><?php echo $langs->trans("Label"); ?></td><td class="valeur"><input type="text" name="label" size="40" value="<?php echo $extrafields->attribute_label[$attrname]; ?>"></td></tr>
 <!-- Code -->
@@ -84,6 +82,10 @@ elseif ($type== 'sellist')
 <?php print $type2label[$type]; ?>
 <input type="hidden" name="type" id="type" value="<?php print $type; ?>">
 </td></tr>
+<!-- Size -->
+<tr><td class="fieldrequired"><?php echo $langs->trans("Size"); ?></td><td><input id="size" type="text" name="size" size="5" value="<?php echo $size; ?>"></td></tr>
+<!-- Position -->
+<tr><td><?php echo $langs->trans("Position"); ?></td><td class="valeur"><input type="text" name="pos" size="5" value="<?php  echo $extrafields->attribute_pos[$attrname];  ?>"></td></tr>
 <!--  Value (for select list / radio) -->
 <?php
 if(($type == 'select') || ($type == 'sellist') || ($type == 'checkbox') ||(($type == 'radio')))
@@ -104,8 +106,6 @@ if(($type == 'select') || ($type == 'sellist') || ($type == 'checkbox') ||(($typ
 <?php
 }
 ?>
-<!-- Size -->
-<tr><td class="fieldrequired"><?php echo $langs->trans("Size"); ?></td><td><input id="size" type="text" name="size" size="5" value="<?php echo $size; ?>"></td></tr>
 <!-- Unique -->
 <tr><td><?php echo $langs->trans("Unique"); ?></td><td class="valeur"><input id="unique" type="checkbox" name="unique" <?php echo ($unique?' checked="true"':''); ?>></td></tr>
 <!-- Required -->

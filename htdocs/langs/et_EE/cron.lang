@@ -18,8 +18,8 @@ Permission23104 = Käivita plaanitud tegevus
 # Admin
 #
 CronSetup= Plaanitavata programmide haldamise seadistamine
-# URLToLaunchCronJobs=URL to check and launch cron jobs if required
-# OrToLaunchASpecificJob=Or to check and launch a specific job
+URLToLaunchCronJobs=Croni poolt kontrollitavate ja käivitatavate programmide jaoks vajalik URL
+OrToLaunchASpecificJob=Või mõne kindla programmi kontrollimiseks ja käivitamiseks
 KeyForCronAccess=Croni käivitatavate programmide URLile ligipääsu turvavõti
 FileToLaunchCronJobs=Käsurea käsk cron programmide käivitamiseks
 CronExplainHowToRunUnix=Unix keskonnas on soovitatav kasutada crontabi käsurealt käivitatavate käskude jooksutamiseks
@@ -30,9 +30,9 @@ CronExplainHowToRunWin=Microsoft(tm) Windows keskkonnas võib kasutada Toimingua
 # Menu
 #
 CronJobs=Plaanitud käivitused
-CronListActive= Aktiivsete programmide loend
-CronListInactive= Välja lülitatud tööde loend
-CronListActive= Aktiivsete programmide loend
+CronListActive= Sisse lülitatud tööde nimekiri
+CronListInactive= Välja lülitatud tööde nimekiri
+CronListActive= Sisse lülitatud tööde nimekiri
 
 
 #
@@ -41,9 +41,9 @@ CronListActive= Aktiivsete programmide loend
 CronDateLastRun=Viimane käivitus
 CronLastOutput=Viimase käivituse väljund
 CronLastResult=Viimane vastuse kood
-CronListOfCronJobs=Käivitatavate programmide loend
+CronListOfCronJobs=Käivitatavate tööde nimekiri
 CronCommand=Käsk
-# CronList=Jobs list
+CronList=Programmide nimekiri
 CronDelete= Kustuta programme
 CronConfirmDelete= Kas oled kindel, et soovid selle käivituse kustutada?
 CronExecute=Käivita tegevus

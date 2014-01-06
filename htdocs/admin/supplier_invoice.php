@@ -458,10 +458,10 @@ print "</tr>\n";
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print '<input type="hidden" name="action" value="set_SUPPLIER_ORDER_FREE_TEXT">';
+print '<input type="hidden" name="action" value="set_SUPPLIER_INVOICE_FREE_TEXT">';
 print '<tr '.$bc[$var].'><td colspan="2">';
 print $langs->trans("FreeLegalTextOnInvoices").' ('.$langs->trans("AddCRIfTooLong").')<br>';
-print '<textarea name="SUPPLIER_ORDER_FREE_TEXT" class="flat" cols="120">'.$conf->global->SUPPLIER_ORDER_FREE_TEXT.'</textarea>';
+print '<textarea name="SUPPLIER_INVOICE_FREE_TEXT" class="flat" cols="120">'.$conf->global->SUPPLIER_INVOICE_FREE_TEXT.'</textarea>';
 print '</td><td align="right">';
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 print "</td></tr>\n";

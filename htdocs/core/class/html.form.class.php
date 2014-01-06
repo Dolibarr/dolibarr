@@ -138,7 +138,7 @@ class Form
         if (empty($typeofdata)) return 'ErrorBadParameter';
 
         // When option to edit inline is activated
-        if (! empty($conf->global->MAIN_USE_JQUERY_JEDITABLE) && ! preg_match('/^select;|datehourpicker/',$typeofdata)) // FIXME add jquery timepicker
+        if (! empty($conf->global->MAIN_USE_JQUERY_JEDITABLE) && ! preg_match('/^select;|datehourpicker/',$typeofdata)) // TODO add jquery timepicker
         {
             $ret.=$this->editInPlace($object, $value, $htmlname, $perm, $typeofdata, $editvalue, $extObject, $success);
         }

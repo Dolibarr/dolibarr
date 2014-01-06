@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - companies
-ErrorCompanyNameAlreadyExists=%s Име на фирмата, която вече съществува. Избери друг.
-ErrorPrefixAlreadyExists=Префикс %s вече съществува. Избери друг.
-ErrorSetACountryFirst=Задайте страната на първо място
+ErrorCompanyNameAlreadyExists=Името на фирмата %s вече съществува. Изберете друго.
+ErrorPrefixAlreadyExists=Префикса %s вече съществува. Изберете друг.
+ErrorSetACountryFirst=Първо задайте страната
 SelectThirdParty=Изберете трета страна
 DeleteThirdParty=Изтриване на трета страна
 ConfirmDeleteCompany=Сигурен ли сте, че искате да изтриете тази фирма и всички наследени информация?

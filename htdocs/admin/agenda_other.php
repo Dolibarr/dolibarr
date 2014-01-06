@@ -18,7 +18,7 @@
  */
 
 /**
- *	    \file       htdocs/admin/agenda.php
+ *	    \file       htdocs/admin/agenda_other.php
  *      \ingroup    agenda
  *      \brief      Autocreate actions for agenda module setup page
  */

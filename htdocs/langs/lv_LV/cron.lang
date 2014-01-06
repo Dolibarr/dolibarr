@@ -9,10 +9,10 @@ CronAboutPage = Cron par lapu
 #
 # Right
 #
-Permission23101 = Lasīt Plānotais uzdevumu
-Permission23102 = Izveidot / atjaunināt Plānotais uzdevumu
-Permission23103 = Dzēst Plānotais uzdevumu
-Permission23104 = Izpildīt Plānotais uzdevumu
+Permission23101 = Lasīt plānoto uzdevumu
+Permission23102 = Izveidot/atjaunināt plānoto uzdevumu
+Permission23103 = Dzēst plānoto uzdevumu
+Permission23104 = Izpildīt plānoto uzdevumu
 
 #
 # Admin
@@ -43,7 +43,7 @@ CronLastOutput=Pēdējo reizi palaist izejas
 CronLastResult=Pēdējais rezultāts kods
 CronListOfCronJobs=Saraksts ar plānoto darbu
 CronCommand=Komanda
-# CronList=Jobs list
+CronList=Darbu saraksts
 CronDelete= Dzēst cron darbavietas
 CronConfirmDelete= Vai tiešām vēlaties dzēst šo cron darbu?
 CronExecute=Uzsākt darbu
@@ -51,12 +51,12 @@ CronConfirmExecute= Vai esat pārliecināts, ka, lai izpildītu šo darbu tagad
 CronInfo= Darbs ļauj izpildīt uzdevumu, kas ir plānots
 CronWaitingJobs=Wainting darbavietas
 CronTask=Darbs
-CronNone= Neviens
+CronNone= Nav
 CronDtStart=Sākuma datums
 CronDtEnd=Beigu datums
-CronDtNextLaunch=Nākamais izpilde
+CronDtNextLaunch=Nākošā izpilde
 CronDtLastLaunch=Pēdējā izpilde
-CronFrequency=Frequancy
+CronFrequency=Biežums
 CronClass=Classe
 CronMethod=Metode
 CronModule=Modulis
@@ -68,7 +68,7 @@ CronNoJobs=Nav reģistrētas darbavietas
 CronPriority=Prioritāte
 CronLabel=Apraksts
 CronNbRun=Nb. sākt
-CronEach=Ik
+CronEach=Katru
 JobFinished=Darba uzsākta un pabeigta
 
 #
@@ -79,14 +79,14 @@ CronHourStart= Starta laiks un uzdevuma datumu
 CronEvery= Un izpildīt uzdevumu katrā
 CronObject= Instances / Object, lai radītu
 CronArgs=Parametri
-CronSaveSucess=Saglabāt veiksmīgi
+CronSaveSucess=Veiksmīgi saglabāts
 CronNote=Komentēt
 CronFieldMandatory=Lauki %s ir obligāta
 CronErrEndDateStartDt=Beigu datums nevar būt pirms sākuma datuma
 CronStatusActiveBtn=Dot iespēju
 CronStatusInactiveBtn=Atslēgt
 CronTaskInactive=Šis darbs ir atslēgts
-CronDtLastResult=Pēdējais rezultāts datums
+CronDtLastResult=Pēdējo rezultātu datums
 CronId=Id
 CronClassFile=Klases (filename.class.php)
 CronModuleHelp=Nosaukums Dolibarr moduļa direktoriju (arī strādāt ar ārējo Dolibarr moduli). <BR> Par exemple atnest metodi Dolibarr Produkta objekts / htdocs / <u>produktu</u> / klase / product.class.php, moduļa vērtība ir <i>produkts</i>

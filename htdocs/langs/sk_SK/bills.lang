@@ -383,13 +383,13 @@ PaymentInvoiceRef=%s faktúru
 ValidateInvoice=Overiť faktúru
 Cash=Hotovosť
 Reported=Oneskorený
-DisabledBecausePayments=Nie je možné, pretože tam je nejaké platby
-CantRemovePaymentWithOneInvoicePaid=Nemožno odstrániť platbu, pretože existuje aspoň jedna faktúra klasifikovaný platí
+# DisabledBecausePayments=Not possible since there are some payments
+# CantRemovePaymentWithOneInvoicePaid=Can't remove payment since there is at least one invoice classified paid
 ExpectedToPay=Predpokladaný platba
-PayedByThisPayment=Platí od tejto platby
-ClosePaidInvoicesAutomatically=Klasifikovať &quot;platí&quot; všetky štandardné alebo náhradné faktúry zaplatenej v úplne.
-ClosePaidCreditNotesAutomatically=Klasifikovať &quot;platí&quot; všetci dobropisov úplne splatené.
-AllCompletelyPayedInvoiceWillBeClosed=Všetky faktúry bez zostanú platiť budú automaticky uzavreté na status &quot;platí&quot;.
+# PayedByThisPayment=Paid by this payment
+# ClosePaidInvoicesAutomatically=Classify "Paid" all standard or replacement invoices entirely paid.
+# ClosePaidCreditNotesAutomatically=Classify "Paid" all credit notes entirely paid back.
+# AllCompletelyPayedInvoiceWillBeClosed=All invoice with no remain to pay will be automatically closed to status "Paid".
 ToMakePayment=Zaplatiť
 ToMakePaymentBack=Oplatiť
 ListOfYourUnpaidInvoices=Zoznam nezaplatených faktúr
@@ -405,11 +405,11 @@ TypeContact_invoice_supplier_external_BILLING=Dodávateľ faktúru kontakt
 TypeContact_invoice_supplier_external_SHIPPING=Dodávateľ doprava kontakt
 TypeContact_invoice_supplier_external_SERVICE=Dodávateľ služby kontakt
 # crabe PDF Model
-PDFCrabeDescription=Faktúra PDF šablóny Crabe. Kompletné faktúry šablónu (šablóna odporúčané)
+# PDFCrabeDescription=Invoice PDF template Crabe. A complete invoice template (recommended Template)
 # oursin PDF Model
-PDFOursinDescription=Faktúra PDF šablóny Oursin. Kompletné faktúry šablónu (šablóna alternatíva)
+# PDFOursinDescription=Invoice PDF template Oursin. A complete invoice template (alternative Template)
 # NumRef Modules
-TerreNumRefModelDesc1=Späť numero vo formáte %syymm-nnnn pre štandardné a výmena faktúr, %syymm-NNNN pre dobropisy a %syymm-NNNN za vklady, kde yy je rok, MM je mesiac a nnnn je sekvencia bez prerušenia a bez vráti na 0.
-MarsNumRefModelDesc1=Späť numero vo formáte %syymm-nnnn štandardných faktúr, %syymm-nnnn pre náhradné faktúr, %syymm-NNNN pre dobropisov a %syymm-NNNN pre dobropisy, kde yy je rok, MM je mesiac a nnnn je sekvencia bez prerušenia a bez návratu na 0
+# TerreNumRefModelDesc1=Return number with format %syymm-nnnn for standard invoices and %syymm-nnnn for credit notes where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
+# MarsNumRefModelDesc1=Return number with format %syymm-nnnn for standard invoices, %syymm-nnnn for replacement invoices, %syymm-nnnn for credit notes and %syymm-nnnn for credit notes where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
 
 TerreNumRefModelError=Bill počnúc $ syymm už existuje a nie je kompatibilný s týmto modelom sekvencie. Vyberte ju a premenujte ho na aktiváciu tohto modulu.

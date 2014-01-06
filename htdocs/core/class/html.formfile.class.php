@@ -762,7 +762,10 @@ class FormFile
 				{
 					// Define relative path used to store the file
 					if (empty($relativepath))
+					{
 						$relativepath=(! empty($object->ref)?dol_sanitizeFileName($object->ref):'').'/';
+						if ($object->element == 'invoice_supplier') $relativepath=get_exdir($object->id,2).$relativepath;
+					}
 
 					$var=!$var;
 					print '<tr '.$bc[$var].'>';

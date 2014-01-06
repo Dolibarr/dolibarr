@@ -43,6 +43,7 @@ if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
 	<input type="hidden" name="lineid" value="<?php echo $line->id; ?>">
 	<input type="hidden" id="product_type" name="type" value="<?php echo $line->product_type; ?>">
 	<input type="hidden" id="product_id" name="productid" value="<?php echo (! empty($line->fk_product)?$line->fk_product:0); ?>" />
+	<input type="hidden" id="special_code" name="special_code" value="<?php echo $line->special_code; ?>">
 
 	<?php
 	if ($conf->global->MAIN_FEATURES_LEVEL > 1)

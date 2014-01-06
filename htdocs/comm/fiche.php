@@ -250,9 +250,12 @@ if ($id > 0)
 
 	// Country
 	print '<tr><td>'.$langs->trans("Country").'</td><td colspan="3">';
-	$img=picto_from_langcode($object->country_code);
-	if ($object->isInEEC()) print $form->textwithpicto(($img?$img.' ':'').$object->country,$langs->trans("CountryIsInEEC"),1,0);
-	else print ($img?$img.' ':'').$object->country;
+	if (! empty($object->country_code))
+	{
+		$img=picto_from_langcode($object->country_code);
+		if ($object->isInEEC()) print $form->textwithpicto(($img?$img.' ':'').$object->country,$langs->trans("CountryIsInEEC"),1,0);
+		else print ($img?$img.' ':'').$object->country;
+	}
 	print '</td></tr>';
 
 	// EMail
@@ -267,11 +270,11 @@ if ($id > 0)
 	// Fax
 	print '<td>'.$langs->trans('Fax').'</td><td style="min-width: 25%;">'.dol_print_phone($object->fax,$object->country_code,0,$object->id,'AC_FAX').'</td></tr>';
 
-  // Skype
-  if (! empty($conf->skype->enabled) && $user->rights->skype->view)
-  {
-	   print '<td>'.$langs->trans('Skype').'</td><td colspan="3">'.dol_print_skype($object->skype,0,$object->id,'AC_SKYPE').'</td></tr>';
-  }
+	// Skype
+  	if (! empty($conf->skype->enabled))
+  	{
+		print '<td>'.$langs->trans('Skype').'</td><td colspan="3">'.dol_print_skype($object->skype,0,$object->id,'AC_SKYPE').'</td></tr>';
+  	}
 
 	// Assujeti a TVA ou pas
 	print '<tr>';

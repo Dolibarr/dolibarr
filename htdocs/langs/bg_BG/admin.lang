@@ -228,7 +228,7 @@ OfficialWebSiteFr=Френски официален уеб сайт
 OfficialWiki=Dolibarr документация на Wiki
 OfficialDemo=Dolibarr онлайн демо
 OfficialMarketPlace=Официален пазара за външни модули / Addons
-# OfficialWebHostingService=Official web hosting services (Cloud hosting)
+OfficialWebHostingService=Официален уеб хостинг услуга (Cloud хостинг)
 ForDocumentationSeeWiki=За потребител или разработчик документация (Doc, често задавани въпроси ...), <br> да погледнем в Dolibarr Wiki: <br> <a href="%s" target="_blank"><b>%s</b></a>
 ForAnswersSeeForum=За всякакви други въпроси / Помощ, можете да използвате форума Dolibarr: <br> <a href="%s" target="_blank"><b>%s</b></a>
 HelpCenterDesc1=Тази област може да ви помогне да получите Помощ подкрепа на Dolibarr.

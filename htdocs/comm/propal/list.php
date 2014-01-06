@@ -25,8 +25,8 @@
  */
 
 /**
- *	\file       	htdocs/comm/propal.php
- *	\ingroup    	propale
+ *	\file       	htdocs/comm/propal/list.php
+ *	\ingroup    	propal
  *	\brief      	Page of commercial proposals card and list
  */
 
@@ -422,14 +422,14 @@ if ($result)
 			{
 				if($num<$limit){
 					$var=!$var;
-					print '<tr class="liste_total"><td align="left">'.$langs->trans("Total HT").'</td>';
+					print '<tr class="liste_total"><td align="left">'.$langs->trans("TotalHT").'</td>';
 					print '<td colspan="6" align="right"">'.price($total).'<td colspan="3"</td>';
 					print '</tr>';
 				}
 				else
 				{
 					$var=!$var;
-					print '<tr class="liste_total"><td align="left">'.$langs->trans("Total HT for this page").'</td>';
+					print '<tr class="liste_total"><td align="left">'.$langs->trans("TotalHTforthispage").'</td>';
 					print '<td colspan="6" align="right"">'.price($total).'<td colspan="3"</td>';
 					print '</tr>';
 				}

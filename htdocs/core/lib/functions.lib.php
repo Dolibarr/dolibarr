@@ -622,7 +622,9 @@ function dol_get_fiche_head($links=array(), $active='0', $title='', $notab=0, $p
 	// Show tabs
 	for ($i = 0 ; $i <= $maxkey ; $i++)
 	{
-		$out.='<div class="inline-block tabsElem">';
+		$isactive=(is_numeric($active) && $i == $active) || (! is_numeric($active) && $active == $links[$i][2]);
+
+		$out.='<div class="inline-block tabsElem'.((! $isactive && ! empty($conf->global->MAIN_HIDE_INACTIVETAB_ON_PRINT))?' hideonprint':'').'">';
 		if (isset($links[$i][2]) && $links[$i][2] == 'image')
 		{
 			if (!empty($links[$i][0]))
@@ -637,10 +639,9 @@ function dol_get_fiche_head($links=array(), $active='0', $title='', $notab=0, $p
 		else if (! empty($links[$i][1]))
 		{
 			//print "x $i $active ".$links[$i][2]." z";
-			if ((is_numeric($active) && $i == $active)
-			|| (! is_numeric($active) && $active == $links[$i][2]))
+			if ($isactive)
 			{
-				$out.='<a data-role="button" id="active" class="tab inline-block" href="'.$links[$i][0].'">'.$links[$i][1].'</a>'."\n";
+				$out.='<a data-role="button"'.(! empty($links[$i][2])?' id="'.$links[$i][2].'"':'').' class="tabactive tab inline-block" href="'.$links[$i][0].'">'.$links[$i][1].'</a>'."\n";
 			}
 			else
 			{
@@ -777,7 +778,7 @@ function dol_strftime($fmt, $ts=false, $is_gmt=false)
  * 	Return charset is always UTF-8, except if encodetoouput is defined. In this case charset is output charset
  *
  *	@param	int			$time			GM Timestamps date
- *	@param	string		$format      	Output date format
+ *	@param	string		$format      	Output date format (tag of strftime function)
  *										"%d %b %Y",
  *										"%d/%m/%Y %H:%M",
  *										"%d/%m/%Y %H:%M:%S",
@@ -4384,20 +4385,23 @@ function printCommonFooter($zone='private')
 	if (! empty($conf->global->MAIN_HTML_FOOTER)) print $conf->global->MAIN_HTML_FOOTER."\n";
 
 	// Google Analytics (need Google module)
-	if (! empty($conf->global->MAIN_GOOGLE_AN_ID))
+	if (! empty($conf->google->enabled) && ! empty($conf->global->MAIN_GOOGLE_AN_ID))
 	{
-		print "\n";
-		print '<script type="text/javascript">'."\n";
-		print '  var _gaq = _gaq || [];'."\n";
-		print '  _gaq.push([\'_setAccount\', \''.$conf->global->MAIN_GOOGLE_AN_ID.'\']);'."\n";
-		print '  _gaq.push([\'_trackPageview\']);'."\n";
-		print ''."\n";
-		print '  (function() {'."\n";
-		print '    var ga = document.createElement(\'script\'); ga.type = \'text/javascript\'; ga.async = true;'."\n";
-		print '    ga.src = (\'https:\' == document.location.protocol ? \'https://ssl\' : \'http://www\') + \'.google-analytics.com/ga.js\';'."\n";
-		print '    var s = document.getElementsByTagName(\'script\')[0]; s.parentNode.insertBefore(ga, s);'."\n";
-		print '  })();'."\n";
-		print '</script>'."\n";
+		if (empty($conf->dol_use_jmobile))
+		{
+			print "\n";
+			print '<script type="text/javascript">'."\n";
+			print '  var _gaq = _gaq || [];'."\n";
+			print '  _gaq.push([\'_setAccount\', \''.$conf->global->MAIN_GOOGLE_AN_ID.'\']);'."\n";
+			print '  _gaq.push([\'_trackPageview\']);'."\n";
+			print ''."\n";
+			print '  (function() {'."\n";
+			print '    var ga = document.createElement(\'script\'); ga.type = \'text/javascript\'; ga.async = true;'."\n";
+			print '    ga.src = (\'https:\' == document.location.protocol ? \'https://ssl\' : \'http://www\') + \'.google-analytics.com/ga.js\';'."\n";
+			print '    var s = document.getElementsByTagName(\'script\')[0]; s.parentNode.insertBefore(ga, s);'."\n";
+			print '  })();'."\n";
+			print '</script>'."\n";
+		}
 	}
 
 	// End of tuning

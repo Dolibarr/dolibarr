@@ -228,7 +228,7 @@ OfficialWebSiteFr=法国官方网站
 OfficialWiki=Dolibarr Wiki 上的文档
 OfficialDemo=Dolibarr在线演示
 OfficialMarketPlace=官方市场提供外部模块/扩展
-# OfficialWebHostingService=Official web hosting services (Cloud hosting)
+OfficialWebHostingService=官方网页托管服务(云托管)
 ForDocumentationSeeWiki=用户或开发人员用文档(文档，常见问题…)，<br>参见 Dolibarr 百科：<br><b><a href="%s" target="_blank">%s</a></b>
 ForAnswersSeeForum=您有任何其他问题/帮助，可以到 Dolibarr 论坛： <br> <b><a href="%s" target="_blank">%s</a></b>
 HelpCenterDesc1=此处可以帮助你获得 Dolibarr 帮助支持服务。

@@ -383,13 +383,13 @@ PaymentInvoiceRef=支払いの請求書%s
 ValidateInvoice=請求書を検証する
 Cash=現金
 Reported=遅延
-# DisabledBecausePayments=Not possible since there are some payments
-# CantRemovePaymentWithOneInvoicePaid=Can't remove payment since there is at least one invoice classified paid
+DisabledBecausePayments=いくつかの支払いがあるのでできませ​​ん
+CantRemovePaymentWithOneInvoicePaid=支払った分類少なくとも一つの請求書があるので支払いを削除することはできません
 ExpectedToPay=予想される支払い
-# PayedByThisPayment=Paid by this payment
-# ClosePaidInvoicesAutomatically=Classify "Paid" all standard or replacement invoices entirely paid.
+PayedByThisPayment=この支払によって支払った
+ClosePaidInvoicesAutomatically=&quot;支払った&quot;すべての標準またはentirely支払った交換用の請求書を分類します。
 # ClosePaidCreditNotesAutomatically=Classify "Paid" all credit notes entirely paid back.
-# AllCompletelyPayedInvoiceWillBeClosed=All invoice with no remain to pay will be automatically closed to status "Paid".
+AllCompletelyPayedInvoiceWillBeClosed=を持たないすべての請求書は自動的にステータスが &quot;支払った&quot;に閉鎖され支払うことに残っています。
 # ToMakePayment=Pay
 # ToMakePaymentBack=Pay back
 # ListOfYourUnpaidInvoices=List of unpaid invoices
@@ -405,9 +405,9 @@ TypeContact_invoice_supplier_external_BILLING=サプライヤの請求書の連�
 TypeContact_invoice_supplier_external_SHIPPING=サプライヤの出荷の連絡先
 TypeContact_invoice_supplier_external_SERVICE=サプライヤサービスの連絡先
 # crabe PDF Model
-# PDFCrabeDescription=Invoice PDF template Crabe. A complete invoice template (recommended Template)
+PDFCrabeDescription=請求書PDFテンプレートのカニ。完全な請求書テンプレート（テンプレートをおすすめ）
 # oursin PDF Model
-# PDFOursinDescription=Invoice PDF template Oursin. A complete invoice template (alternative Template)
+PDFOursinDescription=請求書PDFテンプレートOursin。完全な請求書テンプレート（テンプレートの代替）
 # NumRef Modules
 # TerreNumRefModelDesc1=Return number with format %syymm-nnnn for standard invoices and %syymm-nnnn for credit notes where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
 # MarsNumRefModelDesc1=Return number with format %syymm-nnnn for standard invoices, %syymm-nnnn for replacement invoices, %syymm-nnnn for credit notes and %syymm-nnnn for credit notes where yy is year, mm is month and nnnn is a sequence with no break and no return to 0

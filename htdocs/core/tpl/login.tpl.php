@@ -206,8 +206,10 @@ if (isset($conf->file->main_authentication) && preg_match('/openid/',$conf->file
 ?>
 
 <?php
-if (! empty($conf->global->MAIN_GOOGLE_AD_CLIENT) && ! empty($conf->global->MAIN_GOOGLE_AD_SLOT))
+if (! empty($conf->google->enabled) && ! empty($conf->global->MAIN_GOOGLE_AD_CLIENT) && ! empty($conf->global->MAIN_GOOGLE_AD_SLOT))
 {
+	if (empty($conf->dol_use_jmobile))
+	{
 ?>
 	<div align="center"><br>
 		<script type="text/javascript"><!--
@@ -222,6 +224,7 @@ if (! empty($conf->global->MAIN_GOOGLE_AD_CLIENT) && ! empty($conf->global->MAIN
 		</script>
 	</div>
 <?php
+	}
 }
 ?>
 

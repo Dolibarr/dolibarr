@@ -292,14 +292,14 @@ if ($action == 'edit' || $action == 'updateedit')
 
     // Country
     $var=!$var;
-    print '<tr '.$bc[$var].'><td class="fieldrequired">'.$langs->trans("Country").'</td><td>';
+    print '<tr '.$bc[$var].'><td class="fieldrequired">'.$langs->trans("Country").'</td><td class="maxwidthonsmartphone">';
     //if (empty($country_selected)) $country_selected=substr($langs->defaultlang,-2);    // Par defaut, pays de la localisation
     print $form->select_country($mysoc->country_id,'country_id');
     if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
     print '</td></tr>'."\n";
 
     $var=!$var;
-    print '<tr '.$bc[$var].'><td>'.$langs->trans("State").'</td><td>';
+    print '<tr '.$bc[$var].'><td>'.$langs->trans("State").'</td><td class="maxwidthonsmartphone">';
     $formcompany->select_departement($conf->global->MAIN_INFO_SOCIETE_STATE,$mysoc->country_code,'state_id');
     print '</td></tr>'."\n";
 

@@ -18,8 +18,8 @@ Permission23104 = Executar les tasques programades
 # Admin
 #
 CronSetup= Pàgina de configuració del mòdul - Gestió de tasques planificades
-# URLToLaunchCronJobs=URL to check and launch cron jobs if required
-# OrToLaunchASpecificJob=Or to check and launch a specific job
+URLToLaunchCronJobs=URL per llançar les tasques automàtiques
+OrToLaunchASpecificJob=O per llançar una tasca específica
 KeyForCronAccess=Codi de seguretat per a la URL de llançament de tasques automàtiques
 FileToLaunchCronJobs=Ordre per llançar les tasques automàtiques
 CronExplainHowToRunUnix=En un entorn Unix pot parametritzar crontab per executar aquesta comanda cada minut
@@ -43,7 +43,7 @@ CronLastOutput=Última sortida
 CronLastResult=Últim codi tornat
 CronListOfCronJobs=Llista de tasques programades
 CronCommand=Comando
-# CronList=Jobs list
+CronList=Llistat de tasques planificades
 CronDelete= Eliminar la tasca planificada
 CronConfirmDelete= Està segur que voleu eliminar aquesta tasca planificada?
 CronExecute=Executar aquesta tasca

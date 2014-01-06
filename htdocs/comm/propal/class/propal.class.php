@@ -2056,7 +2056,7 @@ class Propal extends CommonObject
                     {
                         // We remove directory
                         $ref = dol_sanitizeFileName($this->ref);
-                        if ($conf->propal->dir_output)
+                        if ($conf->propal->dir_output && !empty($this->ref))
                         {
                             $dir = $conf->propal->dir_output . "/" . $ref ;
                             $file = $dir . "/" . $ref . ".pdf";
@@ -3038,7 +3038,8 @@ class PropaleLigne  extends CommonObject
 		if (empty($this->localtax2_type)) $this->localtax2_type=0;
         if (empty($this->marque_tx)) $this->marque_tx=0;
         if (empty($this->marge_tx)) $this->marge_tx=0;
-        if (empty($this->remise)) $this->remise=0;
+        if (empty($this->price)) $this->price=0;	// TODO A virer
+        if (empty($this->remise)) $this->remise=0;	// TODO A virer
         if (empty($this->remise_percent)) $this->remise_percent=0;
         if (empty($this->info_bits)) $this->info_bits=0;
         if (empty($this->special_code)) $this->special_code=0;

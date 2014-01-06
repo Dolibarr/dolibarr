@@ -26,5 +26,6 @@ create table llx_bookmark
   target      varchar(16),
   title       varchar(64),
   favicon     varchar(24),
-  position    integer DEFAULT 0
+  position    integer DEFAULT 0,
+  entity      integer DEFAULT 1 NOT NULL -- multicompany ID
 )ENGINE=innodb;

@@ -383,13 +383,13 @@ PaymentInvoiceRef=دفع فاتورة ٪ ق
 ValidateInvoice=تحقق من صحة الفواتير
 Cash=نقد
 Reported=تأخر
-# DisabledBecausePayments=Not possible since there are some payments
-# CantRemovePaymentWithOneInvoicePaid=Can't remove payment since there is at least one invoice classified paid
+DisabledBecausePayments=غير ممكن لأن هناك بعض المدفوعات
+CantRemovePaymentWithOneInvoicePaid=تصنيف لا يمكن إزالة الدفع لأنه ليس هناك على الأقل على الفاتورة سيولي
 ExpectedToPay=من المتوقع الدفع
-# PayedByThisPayment=Paid by this payment
-# ClosePaidInvoicesAutomatically=Classify "Paid" all standard or replacement invoices entirely paid.
+PayedByThisPayment=سيولي هذا الدفع
+ClosePaidInvoicesAutomatically=تصنيف &quot;سيولي&quot; كل معيار أو الفواتير استبدال سيولي entirely.
 # ClosePaidCreditNotesAutomatically=Classify "Paid" all credit notes entirely paid back.
-# AllCompletelyPayedInvoiceWillBeClosed=All invoice with no remain to pay will be automatically closed to status "Paid".
+AllCompletelyPayedInvoiceWillBeClosed=كل فاتورة مع عدم وجود لا تزال لدفع ستغلق تلقائيا إلى &quot;فياض&quot; الوضع.
 # ToMakePayment=Pay
 # ToMakePaymentBack=Pay back
 # ListOfYourUnpaidInvoices=List of unpaid invoices
@@ -405,9 +405,9 @@ TypeContact_invoice_supplier_external_BILLING=المورد فاتورة الات
 TypeContact_invoice_supplier_external_SHIPPING=المورد الشحن الاتصال
 TypeContact_invoice_supplier_external_SERVICE=المورد خدمة الاتصال
 # crabe PDF Model
-# PDFCrabeDescription=Invoice PDF template Crabe. A complete invoice template (recommended Template)
+PDFCrabeDescription=نموذج فاتورة Crabe. نموذج الفاتورة كاملة (دعم الخيار الضريبة على القيمة المضافة ، والخصومات ، وشروط الدفع ، والشعار ، الخ..)
 # oursin PDF Model
-# PDFOursinDescription=Invoice PDF template Oursin. A complete invoice template (alternative Template)
+PDFOursinDescription=نموذج فاتورة oursin
 # NumRef Modules
 # TerreNumRefModelDesc1=Return number with format %syymm-nnnn for standard invoices and %syymm-nnnn for credit notes where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
 # MarsNumRefModelDesc1=Return number with format %syymm-nnnn for standard invoices, %syymm-nnnn for replacement invoices, %syymm-nnnn for credit notes and %syymm-nnnn for credit notes where yy is year, mm is month and nnnn is a sequence with no break and no return to 0

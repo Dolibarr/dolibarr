@@ -116,5 +116,5 @@ DontDowngradeSuperAdmin=Numai un superadmin poate declasa un superadmin
 HierarchicalResponsible=Responsabil ierarhic
 HierarchicView=Vedere ierarhică
 UseTypeFieldToChange=Foloseşte câmpul Tip pentru schimbare
-OpenIDURL=URL OpenID 
+OpenIDURL=URL OpenID
 LoginUsingOpenID=Utilizați OpenID pentru login

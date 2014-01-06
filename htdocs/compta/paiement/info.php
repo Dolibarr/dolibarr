@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2013		Marcos García		<marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,6 +26,7 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 
 $langs->load("bills");
 $langs->load("companies");
@@ -40,20 +42,9 @@ $paiement = new Paiement($db);
 $paiement->fetch($_GET["id"], $user);
 $paiement->info($_GET["id"]);
 
+$head = payment_prepare_head($paiement);
 
-$h=0;
-
-$head[$h][0] = DOL_URL_ROOT.'/compta/paiement/fiche.php?id='.$_GET["id"];
-$head[$h][1] = $langs->trans("Card");
-$h++;
-
-$head[$h][0] = DOL_URL_ROOT.'/compta/paiement/info.php?id='.$_GET["id"];
-$head[$h][1] = $langs->trans("Info");
-$hselected = $h;
-$h++;
-
-
-dol_fiche_head($head, $hselected, $langs->trans("PaymentCustomerInvoice"), 0, 'payment');
+dol_fiche_head($head, 'info', $langs->trans("PaymentCustomerInvoice"), 0, 'payment');
 
 print '<table class="border" width="100%">';
 

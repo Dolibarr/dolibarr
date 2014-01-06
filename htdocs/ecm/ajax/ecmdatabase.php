@@ -51,7 +51,9 @@ if (isset($action) && ! empty($action))
 		require DOL_DOCUMENT_ROOT . '/ecm/class/ecmdirectory.class.php';
 
 		$ecmdirstatic = new EcmDirectory($db);
+		$ecmdirtmp = new EcmDirectory($db);
 
+		// This part of code is same than into file index.php for action refreshmanual TODO Remove duplicate
 		clearstatcache();
 
 		$diroutputslash=str_replace('\\', '/', $conf->$element->dir_output);
@@ -129,7 +131,6 @@ if (isset($action) && ! empty($action))
 
 				if ($fk_parent >= 0)
 				{
-					$ecmdirtmp=new EcmDirectory($db);
 					$ecmdirtmp->ref                = 'NOTUSEDYET';
 					$ecmdirtmp->label              = dol_basename($dirdesc['fullname']);
 					$ecmdirtmp->description        = '';
@@ -163,7 +164,21 @@ if (isset($action) && ! empty($action))
 			}
 		}
 
+	    // Loop now on each sql tree to check if dir exists
+	    foreach($sqltree as $dirdesc)    // Loop on each sqltree to check dir is on disk
+	    {
+	    	$dirtotest=$conf->$element->dir_output.'/'.$dirdesc['fullrelativename'];
+			if (! dol_is_dir($dirtotest))
+			{
+				$mesg.=$dirtotest." not found onto disk. We delete from database dir with id=".$dirdesc['id']."<br>\n";
+				$ecmdirtmp->id=$dirdesc['id'];
+				$ecmdirtmp->delete($user,'databaseonly');
+				//exit;
+			}
+	    }
+
 		$sql="UPDATE ".MAIN_DB_PREFIX."ecm_directories set cachenbofdoc = -1 WHERE cachenbofdoc < 0"; // If pb into cahce counting, we set to value -1 = "unknown"
+		dol_syslog("sql = ".$sql);
 		$db->query($sql);
 	}
 }

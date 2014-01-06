@@ -246,6 +246,10 @@ div.inline-block
 .maxwidthonsmartphone { max-width: 100px; }
 <?php } ?>
 .linkobject { cursor: pointer; }
+<?php if (GETPOST("optioncss") == 'print') { ?>
+.hideonprint { display: none !important; }
+<?php } ?>
+
 
 /* ============================================================================== */
 /* Styles for dragging lines                                                      */
@@ -593,7 +597,7 @@ div.login a:hover {
 .login_block_elem {
 	float: right;
 	vertical-align: top;
-	padding: 0px 0px 0px 4px !important;
+	padding: 8px 0px 0px 4px !important;
 }
 
 .alogin, .alogin:hover {
@@ -606,8 +610,7 @@ div.login a:hover {
 }
 
 img.login, img.printer, img.entity {
-	padding: <?php echo ($conf->dol_optimize_smallscreen?'0':'8')?>px 0px 0px 0px;
-	margin: 0px 0px 0px 8px;
+	padding: 0px 0px 0px 0px;
 	text-decoration: none;
 	color: white;
 	font-weight: bold;
@@ -1040,7 +1043,7 @@ div.tabsAction {
 
 a.tabTitle {
     background: <? echo empty($dol_use_jmobile)?'#5088A9':'auto'; ?>;
-    color: white;
+    color: #888;
 	font-family: <?php print $fontlist ?>;
     font-weight: normal;
     padding: 0px 6px;
@@ -1082,8 +1085,8 @@ a.tab:visited {
     border-<?php print $left; ?>: 1px solid #D8D8D8;
     border-top: 1px solid #D8D8D8;
 }
-a.tab#active {
-    background: white;
+div.tabs a.tab:active, .tabactive {
+    background: white !important;
     border-bottom: #dee7ec 1px solid;
 	font-family: <?php print $fontlist ?>;
     color: #436976;
@@ -1364,8 +1367,6 @@ table.liste td {
 .tagtable, .table-border { display: table; }
 .tagtr, .table-border-row  { display: table-row; }
 .tagtd, .table-border-col, .table-key-border-col, .table-val-border-col { display: table-cell; }
-.tagtable form, .tagtable div { display: table-row; }
-.tagtable form div, .tagtable div div { display: table-cell; }
 
 tr.liste_titre, tr.liste_titre_sel, form.liste_titre, form.liste_titre_sel
 {
@@ -1393,7 +1394,6 @@ div.liste_titre, tr.liste_titre, form.liste_titre
     color: #FFFFFF;
     font-family: <?php print $fontlist ?>;
     /* border-bottom: 1px solid #FDFFFF; */
-    white-space: nowrap;
     text-align: <?php echo $left; ?>;
 }
 th.liste_titre, td.liste_titre

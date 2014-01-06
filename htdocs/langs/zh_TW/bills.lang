@@ -383,13 +383,13 @@ PaymentInvoiceRef=%s的付款發票
 ValidateInvoice=驗證發票
 Cash=現金
 Reported=延遲
-# DisabledBecausePayments=Not possible since there are some payments
-# CantRemovePaymentWithOneInvoicePaid=Can't remove payment since there is at least one invoice classified paid
+DisabledBecausePayments=不可能的，因為有一些付款
+CantRemovePaymentWithOneInvoicePaid=無法刪除，因為至少有付款發票分類所許
 ExpectedToPay=預期付款
-# PayedByThisPayment=Paid by this payment
-# ClosePaidInvoicesAutomatically=Classify "Paid" all standard or replacement invoices entirely paid.
+PayedByThisPayment=氟離子選擇電極通過此付款
+ClosePaidInvoicesAutomatically=分類“支付最高”的所有entirely支付最高標準或更換發票。
 # ClosePaidCreditNotesAutomatically=Classify "Paid" all credit notes entirely paid back.
-# AllCompletelyPayedInvoiceWillBeClosed=All invoice with no remain to pay will be automatically closed to status "Paid".
+AllCompletelyPayedInvoiceWillBeClosed=所有發票仍然沒有支付將被自動關閉狀態“支付最高”。
 # ToMakePayment=Pay
 # ToMakePaymentBack=Pay back
 # ListOfYourUnpaidInvoices=List of unpaid invoices
@@ -405,9 +405,9 @@ TypeContact_invoice_supplier_external_BILLING=供應商利用發票(invoice)方�
 TypeContact_invoice_supplier_external_SHIPPING=供應商利用貨運方式
 # TypeContact_invoice_supplier_external_SERVICE=Supplier service contact
 # crabe PDF Model
-# PDFCrabeDescription=Invoice PDF template Crabe. A complete invoice template (recommended Template)
+PDFCrabeDescription=一個完整的PDF發票(invoice)文件範本（支援營業稅選項，折扣，付款條件..）
 # oursin PDF Model
-# PDFOursinDescription=Invoice PDF template Oursin. A complete invoice template (alternative Template)
+PDFOursinDescription=一個完整的PDF發票(invoice)文件範本
 # NumRef Modules
 # TerreNumRefModelDesc1=Return number with format %syymm-nnnn for standard invoices and %syymm-nnnn for credit notes where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
 # MarsNumRefModelDesc1=Return number with format %syymm-nnnn for standard invoices, %syymm-nnnn for replacement invoices, %syymm-nnnn for credit notes and %syymm-nnnn for credit notes where yy is year, mm is month and nnnn is a sequence with no break and no return to 0

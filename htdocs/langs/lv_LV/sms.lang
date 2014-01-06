@@ -47,7 +47,7 @@ NbOfSms=Nbre no fona numuru
 ThisIsATestMessage=Šī ir testa ziņa
 SendSms=Sūtīt SMS
 SmsInfoCharRemain=Nb atlikušo rakstzīmju
-SmsInfoNumero= (Formāts starptautiskā ti: 33899701761)
+SmsInfoNumero= (Formāts starptautiskais t.i.: 37128701761)
 DelayBeforeSending=Kavēšanās pirms nosūtīšanas (minūtēs)
 SmsNoPossibleRecipientFound=Nav mērķa pieejams. Pārbaudiet iestatījumus jūsu SMS pakalpojumu sniedzēja.
 

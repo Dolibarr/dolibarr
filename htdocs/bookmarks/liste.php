@@ -24,6 +24,12 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/bookmarks/class/bookmark.class.php';
 
+$langs->load("bookmarks");
+
+// Security check
+if (! $user->rights->bookmark->lire) {
+    restrictedArea($user, 'bookmarks');
+}
 
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
@@ -73,6 +79,7 @@ $sql = "SELECT b.fk_soc as rowid, b.dateb, b.rowid as bid, b.fk_user, b.url, b.t
 $sql.= " u.login, u.lastname, u.firstname";
 $sql.= " FROM ".MAIN_DB_PREFIX."bookmark as b LEFT JOIN ".MAIN_DB_PREFIX."user as u ON b.fk_user=u.rowid";
 $sql.= " WHERE 1=1";
+$sql.= " AND b.entity = ".$conf->entity;
 if (! $user->admin) $sql.= " AND (b.fk_user = ".$user->id." OR b.fk_user is NULL OR b.fk_user = 0)";
 $sql.= $db->order($sortfield.", position",$sortorder);
 $sql.= $db->plimit($limit, $offset);

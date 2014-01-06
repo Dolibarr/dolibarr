@@ -21,7 +21,7 @@
 
 /**
  *	\file       htdocs/comm/propal/note.php
- *	\ingroup    propale
+ *	\ingroup    propal
  *	\brief      Fiche d'information sur une proposition commerciale
  */
 

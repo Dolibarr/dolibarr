@@ -228,7 +228,7 @@ OfficialWebSiteFr=Francúzsky oficiálne internetové stránky
 OfficialWiki=Dolibarr dokumentácie na Wiki
 OfficialDemo=Dolibarr on-line demo
 OfficialMarketPlace=Oficiálny trh pre externé moduly / addons
-OfficialWebHostingService=Oficiálny web hostingové služby (Cloud hosting)
+# OfficialWebHostingService=Official web hosting services (Cloud hosting)
 ForDocumentationSeeWiki=Pre používateľov alebo vývojárov dokumentácie (doc, FAQs ...) <br> pozrite sa na Dolibarr Wiki: <br> <a href="%s" target="_blank"><b>%s</b></a>
 ForAnswersSeeForum=V prípade akýchkoľvek ďalších otázok / help, môžete použiť fórum Dolibarr: <br> <a href="%s" target="_blank"><b>%s</b></a>
 HelpCenterDesc1=Táto oblasť vám môže pomôcť získať pomocníka služby podpory na Dolibarr.
@@ -299,6 +299,7 @@ ServerNotAvailableOnIPOrPort=Server nie je k dispozícii na adrese <b>%s</b> na 
 DoTestServerAvailability=Skúška s pripojením k serveru
 DoTestSend=Otestujte odoslanie
 DoTestSendHTML=Otestujte odosielanie HTML
+# ErrorCantUseRazIfNoYearInMask=Error, can't use option @ to reset counter each year if sequence {yy} or {yyyy} is not in mask.
 ErrorCantUseRazInStartedYearIfNoYearMonthInMask=Chyba, nemožno použiť voľbu @ li postupnosť {yy} {mm} alebo {yyyy} {mm} nie je v maske.
 UMask=Umask parameter pre nové súbory na Unix / Linux / BSD / Mac systému súborov.
 UMaskExplanation=Tento parameter umožňuje definovať oprávnenia v predvolenom nastavení na súbory vytvorené Dolibarr na serveri (počas nahrávania napríklad). <br> To musí byť osmičková hodnota (napr. 0666 znamená čítať a písať pre všetkých). <br> Tento parameter je k ničomu, na serveri Windows.
@@ -1008,6 +1009,8 @@ XDebugInstalled=Xdebug est poplatok.
 XCacheInstalled=XCache načítaný.
 AddRefInList=Displej zákazníka / dodávateľa ref do zoznamu (vyberte zoznam alebo ComboBox) a väčšina z hypertextového odkazu
 FieldEdition=Vydanie poľných %s
+# FixTZ=TimeZone fix
+# FillThisOnlyIfRequired=Example: +2 (fill only if timezone offset problems are experienced)
 ##### Module password generation
 PasswordGenerationStandard=Späť heslo generované podľa interného algoritmu Dolibarr: 8 znakov obsahujúci zdieľanej čísla a znaky malými písmenami.
 PasswordGenerationNone=Nenaznačujú žiadne vygenerované heslo. Heslo musí byť v prevedení ručne.

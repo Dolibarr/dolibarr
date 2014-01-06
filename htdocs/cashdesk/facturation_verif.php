@@ -16,6 +16,12 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ *	\file       htdocs/cashdesk/facturation_verif.php
+ *	\ingroup    cashdesk
+ *	\brief      facturation_verif.php
+ */
+
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/cashdesk/include/environnement.php';
 require_once DOL_DOCUMENT_ROOT.'/cashdesk/class/Facturation.class.php';

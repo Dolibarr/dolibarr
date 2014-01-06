@@ -109,4 +109,4 @@ NbOfProductAfterPeriod=Cantitatea de produs %s în stoc după perioada selectat�
 MassStockMovement=Transfer stoc în masă
 SelectProductInAndOutWareHouse=Selectați un produs, o cantitate, un depozit sursă și un depozit țintă, apoi faceți clic pe"%s". Odată făcut acest lucru pentru toate transferurile cerute, faceți clic pe "%s".
 RecordMovement=Înregistrare transfer
-# ReceivingForSameOrder=Receivings for this order
+ReceivingForSameOrder=Recepţii pentru această comandă

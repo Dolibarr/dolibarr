@@ -131,6 +131,8 @@ class modMyModule extends DolibarrModules
 		// 'user'             to add a tab in user view
 		// 'group'            to add a tab in group view
 		// 'contact'          to add a tab in contact view
+		// 'payment'		  to add a tab in payment view
+		// 'payment_supplier' to add a tab in supplier payment view
 		// 'categories_x'	  to add a tab in category view (replace 'x' by type of category (0=product, 1=supplier, 2=customer, 3=member)
         $this->tabs = array();
 

@@ -379,7 +379,7 @@ else if ($id || $ref)
 
 		dol_fiche_end();
 
-		formCategory($db,$product,0,($user->rights->produit->creer || $user->rights->service->creer));
+		formCategory($db,$product,0,$socid,($user->rights->produit->creer || $user->rights->service->creer));
 	}
 
 	if ($type == 3)
@@ -604,7 +604,7 @@ else if ($id || $ref)
 
 		dol_fiche_end();
 
-		formCategory($db,$object,4,$user->rights->societe->creer);
+		formCategory($db,$object,4,$socid, $user->rights->societe->creer);
 	}
 }
 

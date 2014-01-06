@@ -18,8 +18,8 @@ Permission23104 = Provést naplánované úlohy,
 # Admin
 #
 CronSetup= Naplánované úlohy správy Nastavení
-URLToLaunchCronJobs=URL spustit cron
-OrToLaunchASpecificJob=Nebo, že zahájí zvláštní práci
+# URLToLaunchCronJobs=URL to check and launch cron jobs if required
+# OrToLaunchASpecificJob=Or to check and launch a specific job
 KeyForCronAccess=Bezpečnostní klíč pro URL spustit cron
 FileToLaunchCronJobs=Příkazový řádek spustit cron
 CronExplainHowToRunUnix=V oblasti životního prostředí Unix, měli byste použít crontab spustit příkazový řádek pokaždé, minut
@@ -32,6 +32,7 @@ CronExplainHowToRunWin=Na Microsoft (tm) Windows environement můžete použít 
 CronJobs=Naplánované úlohy
 CronListActive= Seznam aktivních úloh
 CronListInactive= Seznam postižených míst
+CronListActive= Seznam aktivních úloh
 
 
 #
@@ -42,7 +43,7 @@ CronLastOutput=Poslední běh výstup
 CronLastResult=Poslední kód výsledku
 CronListOfCronJobs=Seznam naplánovaných úloh
 CronCommand=Příkaz
-CronList= Seznam úloh
+# CronList=Jobs list
 CronDelete= Odstranit cron
 CronConfirmDelete= Jste si jisti, že chcete smazat tento cron?
 CronExecute=Zahájení práce

@@ -383,13 +383,13 @@ PaymentInvoiceRef=Betaling faktura %s
 ValidateInvoice=Valider faktura
 Cash=Kontanter
 Reported=Forsinket
-# DisabledBecausePayments=Not possible since there are some payments
-# CantRemovePaymentWithOneInvoicePaid=Can't remove payment since there is at least one invoice classified paid
+DisabledBecausePayments=Ikke mulig siden det er noen betalinger
+CantRemovePaymentWithOneInvoicePaid=Kan ikke fjerne betalingen siden det er i alle fall på faktura klassifisert utbetales
 ExpectedToPay=Forventet utbetaling
-# PayedByThisPayment=Paid by this payment
-# ClosePaidInvoicesAutomatically=Classify "Paid" all standard or replacement invoices entirely paid.
+PayedByThisPayment=Betales av denne betalingen
+ClosePaidInvoicesAutomatically=Klassifisere &quot;betalt&quot; alle standard eller utskifting fakturaer entirely utbetales.
 # ClosePaidCreditNotesAutomatically=Classify "Paid" all credit notes entirely paid back.
-# AllCompletelyPayedInvoiceWillBeClosed=All invoice with no remain to pay will be automatically closed to status "Paid".
+AllCompletelyPayedInvoiceWillBeClosed=Alle faktura uten gjenstår å betale vil bli automatisk stengt for status &quot;betales&quot;.
 # ToMakePayment=Pay
 # ToMakePaymentBack=Pay back
 # ListOfYourUnpaidInvoices=List of unpaid invoices
@@ -405,9 +405,9 @@ TypeContact_invoice_supplier_external_BILLING=Leverandørfaktura kontakt
 TypeContact_invoice_supplier_external_SHIPPING=Leverandør shipping kontakt
 TypeContact_invoice_supplier_external_SERVICE=Leverandør service kontakt
 # crabe PDF Model
-# PDFCrabeDescription=Invoice PDF template Crabe. A complete invoice template (recommended Template)
+PDFCrabeDescription=Fakturamal Crabe. En komplett mal (Støtter MVA, rabatter, betalingsbetingelser, logo, osv...)
 # oursin PDF Model
-# PDFOursinDescription=Invoice PDF template Oursin. A complete invoice template (alternative Template)
+PDFOursinDescription=Fakturamal oursin
 # NumRef Modules
 # TerreNumRefModelDesc1=Return number with format %syymm-nnnn for standard invoices and %syymm-nnnn for credit notes where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
 # MarsNumRefModelDesc1=Return number with format %syymm-nnnn for standard invoices, %syymm-nnnn for replacement invoices, %syymm-nnnn for credit notes and %syymm-nnnn for credit notes where yy is year, mm is month and nnnn is a sequence with no break and no return to 0

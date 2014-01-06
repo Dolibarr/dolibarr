@@ -228,7 +228,7 @@ OfficialWebSiteFr=French official web site
 OfficialWiki=Dolibarr documentation on Wiki
 OfficialDemo=Dolibarr online demo
 OfficialMarketPlace=Official market place for external modules/addons
-# OfficialWebHostingService=Official web hosting services (Cloud hosting)
+OfficialWebHostingService=Επίσημη υπηρεσίες web hosting (Cloud hosting)
 ForDocumentationSeeWiki=For user or developer documentation (Doc, FAQs...),<br>take a look at the Dolibarr Wiki:<br><b><a href="%s" target="_blank">%s</a></b>
 ForAnswersSeeForum=For any other questions/help, you can use the Dolibarr forum:<br><b><a href="%s" target="_blank">%s</a></b>
 HelpCenterDesc1=This area can help you to get a Help support service on Dolibarr.
@@ -299,7 +299,7 @@ ServerNotAvailableOnIPOrPort=Server is not available at address <b>%s</b> on por
 DoTestServerAvailability=Έλεγχος διασύνδεσης server
 DoTestSend=Δοκιμή Αποστολής
 DoTestSendHTML=Test sending HTML
-# ErrorCantUseRazIfNoYearInMask=Error, can't use option @ to reset counter each year if sequence {yy} or {yyyy} is not in mask.
+ErrorCantUseRazIfNoYearInMask=Σφάλμα, δεν μπορείτε να χρησιμοποιήσετε την επιλογή @ για να μηδενίσετε το μετρητή για κάθε έτος, εάν η ακολουθία {yy} ή {yyyy} δεν είναι μάσκα.
 ErrorCantUseRazInStartedYearIfNoYearMonthInMask=Error, can't use option @ if sequence {yy}{mm} or {yyyy}{mm} is not in mask.
 UMask=UMask parameter for new files on Unix/Linux/BSD/Mac file system.
 UMaskExplanation=This parameter allow you to define permissions set by default on files created by Dolibarr on server (during upload for example).<br>It must be the octal value (for example, 0666 means read and write for everyone).<br>This parameter is useless on a Windows server.
@@ -1009,8 +1009,8 @@ XDebugInstalled=Xdebug είναι φορτωμένο.
 XCacheInstalled=XCache είναι φορτωμένο.
 AddRefInList=Οθόνη πελάτη / προμηθευτή ref στη λίστα (επιλέξτε λίστα ή combobox) και τα περισσότερα από hyperlink
 FieldEdition=Έκδοση στο πεδίο %s
-# FixTZ=TimeZone fix
-# FillThisOnlyIfRequired=Example: +2 (fill only if timezone offset problems are experienced)
+FixTZ=TimeZone fix
+FillThisOnlyIfRequired=Παράδειγμα: +2 (συμπληρώστε μόνο αν ζώνη ώρας αντισταθμίσουν τα προβλήματα για προβλήματα που προέκυψαν)
 ##### Module password generation
 PasswordGenerationStandard=Return a password generated according to internal Dolibarr algorithm: 8 characters containing shared numbers and characters in lowercase.
 PasswordGenerationNone=Do not suggest any generated password. Password must be type in manually.

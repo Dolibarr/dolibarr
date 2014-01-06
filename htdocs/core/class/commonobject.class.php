@@ -593,9 +593,11 @@ abstract class CommonObject
 
 
     /**
-     *		Load data for barcode
+     *	Load data for barcode into properties ->barcode_type*
+     *	Properties ->barcode_type is used to find others.
+     *  If not defined, ->element must be defined to know default barcode type.
      *
-     *		@return		int			<0 if KO, >=0 if OK
+     *	@return		int			<0 if KO, >=0 if OK
      */
     function fetch_barcode()
     {
@@ -2049,7 +2051,7 @@ abstract class CommonObject
      *
      *  @param	int		$rowid			Id of line
      *  @param  array	$optionsArray   Array resulting of call of extrafields->fetch_name_optionals_label()
-     *  @return	void
+     *  @return	int						<0 if error, 0 if no optionals to find nor found, 1 if a line is found and optionnal loaded
      */
     function fetch_optionals($rowid,$optionsArray='')
     {
@@ -2077,7 +2079,8 @@ abstract class CommonObject
             $resql=$this->db->query($sql);
             if ($resql)
             {
-                if ($this->db->num_rows($resql))
+            	$numrows=$this->db->num_rows($resql);
+                if ($numrows)
                 {
                     $tab = $this->db->fetch_array($resql);
 
@@ -2093,12 +2096,17 @@ abstract class CommonObject
                 }
 
                 $this->db->free($resql);
+
+                if ($numrows) return $numrows;
+                else return 0;
             }
             else
             {
                 dol_print_error($this->db);
+                return -1;
             }
         }
+        return 0;
     }
 
     /**
@@ -2144,7 +2152,7 @@ abstract class CommonObject
 		$error=0;
 
 		if (! empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) return 0;	// For avoid conflicts if trigger used
-		
+
         if (! empty($this->array_options))
         {
             // Check parameters

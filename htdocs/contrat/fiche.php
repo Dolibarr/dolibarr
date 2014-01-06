@@ -1088,7 +1088,6 @@ else
         }
 
 
-        $servicepos=(GETPOST('servicepos')?GETPOST('servicepos'):1); // FIXME : not used ?
         $colorb='666666';
 
         $arrayothercontracts=$object->getListOfContracts('others');

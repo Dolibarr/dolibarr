@@ -18,8 +18,8 @@ Permission23104 = Esegui compito programmato
 # Admin
 #
 CronSetup= Impostazione delle azioni pianificate
-# URLToLaunchCronJobs=URL to check and launch cron jobs if required
-# OrToLaunchASpecificJob=Or to check and launch a specific job
+URLToLaunchCronJobs=URL che lancia i job di cron
+OrToLaunchASpecificJob=O per lanciare un job specifico
 KeyForCronAccess=Chiave di sicurezza per l'URL che lancia i job di cron
 FileToLaunchCronJobs=Comando per lanciare i job di cron
 CronExplainHowToRunUnix=In ambienti Unix dovresti usare crontab per lanciare il comando ogni minuto
@@ -43,7 +43,7 @@ CronLastOutput=Output dell'ultimo avvio
 CronLastResult=Codice del risultato dell'ultima esecuzione
 CronListOfCronJobs=Lista dei job programmati
 CronCommand=Comando
-# CronList=Jobs list
+CronList=Lista dei job
 CronDelete= Cancella job di cron
 CronConfirmDelete= Vuoi davvero cancellare questa azione pianificata?
 CronExecute=Esegui azione

@@ -25,3 +25,4 @@ LinkToGoldMember=Môžete zavolať jednu z predvolených trénera o Dolibarr pre
 PossibleLanguages=Podporované jazyky
 MakeADonation=Nápoveda Dolibarr projekt, aby sa darcovstvo
 SubscribeToFoundation=Nápoveda Dolibarr projekt, prihláste sa do základu
+# SeeOfficalSupport=For official Dolibarr support in your language: <br><b><a href="%s" target="_blank">%s</a></b>

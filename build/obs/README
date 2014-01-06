@@ -11,6 +11,7 @@ a package onto OBS
 #----------------------------------
 https://build.opensuse.org
 
+Packaging rules: http://en.opensuse.org/Portal:Packaging
 
 Add attributes:
 OBS:Screenshots         URL of screenshot

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2006-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -70,10 +70,10 @@ if (! empty($conf->global->PAYBOX_PAYONLINE_SENDEMAIL))
 	$from=$conf->global->MAILING_EMAIL_FROM;
 	require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 	$mailfile = new CMailFile(
-		'['.$conf->global->MAIN_APPLICATION_TITLE.'] '.$langs->trans("NewPayboxPaymentFailed"),
+		'['.$conf->global->MAIN_APPLICATION_TITLE.'] '.$langs->transnoentitiesnoconv("NewPayboxPaymentFailed"),
 		$sendto,
 		$from,
-		$langs->trans("NewPayboxPaymentFailed")."\n".$fulltag
+		$langs->transnoentitiesnoconv("NewPayboxPaymentFailed")."\n".$fulltag
 	);
 
 	$result=$mailfile->sendfile();

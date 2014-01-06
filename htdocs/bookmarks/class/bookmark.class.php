@@ -57,10 +57,13 @@ class Bookmark
      */
     function fetch($id)
     {
+        global $conf;
+
         $sql = "SELECT rowid, fk_user, dateb as datec, url, target,";
         $sql.= " title, position, favicon";
         $sql.= " FROM ".MAIN_DB_PREFIX."bookmark";
         $sql.= " WHERE rowid = ".$id;
+        $sql.= " AND entity = ".$conf->entity;
 
 		dol_syslog("Bookmark::fetch sql=".$sql, LOG_DEBUG);
         $resql  = $this->db->query($sql);
@@ -96,6 +99,8 @@ class Bookmark
      */
     function create()
     {
+        global $conf;
+
     	// Clean parameters
     	$this->url=trim($this->url);
     	$this->title=trim($this->title);
@@ -106,13 +111,15 @@ class Bookmark
     	$this->db->begin();
 
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."bookmark (fk_user,dateb,url,target";
-        $sql.= " ,title,favicon,position";
+        $sql.= ",title,favicon,position";
+        $sql.= ",entity";
         if ($this->fk_soc) $sql.=",fk_soc";
         $sql.= ") VALUES (";
         $sql.= ($this->fk_user > 0?"'".$this->fk_user."'":"0").",";
         $sql.= " ".$this->db->idate($now).",";
         $sql.= " '".$this->url."', '".$this->target."',";
         $sql.= " '".$this->db->escape($this->title)."', '".$this->favicon."', '".$this->position."'";
+        $sql.= ", '".$conf->entity."'";
         if ($this->fk_soc) $sql.=",".$this->fk_soc;
         $sql.= ")";
 

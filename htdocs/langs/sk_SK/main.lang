@@ -1,9 +1,9 @@
 # Dolibarr language file - Source file is en_US - main
 DIRECTION=l
-# Note for chinese:
-# msungstdlight or cid0ct are for traditionnal chinese (traditionnal does not render with ubuntu pdf reader)
-# stsongstdlight or cid0cs are for simplified chinese
-# To read chinese pdf with linux: sudo apt-get install poppler-data
+# Note for Chinese:
+# msungstdlight or cid0ct are for traditional Chinese (traditional does not render with Ubuntu pdf reader)
+# stsongstdlight or cid0cs are for simplified Chinese
+# To read Chinese pdf with Linux: sudo apt-get install poppler-data
 FONTFORPDF=helvetica
 FONTSIZEFORPDF=10
 SeparatorDecimal=,
@@ -632,7 +632,7 @@ IM=Instant messaging
 NewAttribute=Nový atribút
 AttributeCode=Atribút kód
 OptionalFieldsSetup=Extra nastavenia atribútov
-URLPhoto=Url fotografií / logom
+# URLPhoto=URL of photo/logo
 SetLinkToThirdParty=Odkaz na inej tretej osobe
 CreateDraft=Vytvorte návrh
 ClickToEdit=Kliknutím možno upraviť
@@ -642,7 +642,7 @@ ByTown=Do mesta
 ByDate=Podľa dátumu
 ByMonthYear=Tým mesiac / rok
 ByYear=Do roku
-ByMonth=Tento mesiac
+# ByMonth=By month
 ByDay=Vo dne
 BySalesRepresentative=Do obchodného zástupcu
 LinkedToSpecificUsers=V súvislosti s konkrétnym kontakte s užívateľom
@@ -660,7 +660,8 @@ toward=k
 Access=Prístup
 HelpCopyToClipboard=Použite Ctrl + C skopírujte do schránky
 SaveUploadedFileWithMask=Uloženie súboru na serveri s názvom <strong>&quot;%s&quot;</strong> (inak &quot;%s&quot;)
-OriginFileName=Nom d'origine
+# OriginFileName=Original filename
+# SetDemandReason=Set source
 
 # Week day
 Monday=Pondelok

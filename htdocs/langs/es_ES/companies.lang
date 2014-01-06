@@ -399,9 +399,9 @@ InActivity=Activo
 ActivityCeased=Cerrado
 ActivityStateFilter=Estado de actividad
 ProductsIntoElements=Listado de productos en %s
-# CurrentOutstandingBill=Current outstanding bill
-OutstandingBill=Importe máximo para facturas pendientes
-# OutstandingBillReached=Reached max. for outstanding bill
+CurrentOutstandingBill=Riesgo alcanzado
+OutstandingBill=Riesgo máximo
+OutstandingBillReached=Riesgo máximo alcanzado
 # Monkey
 MonkeyNumRefModelDesc=Devuelve un número bajo el formato %syymm-nnnn para los códigos de clientes y %syymm-nnnn para los códigos de los proveedores, donde yy es el año, mm el mes y nnnn un contador secuencial sin ruptura y sin volver a 0.
 # Leopard

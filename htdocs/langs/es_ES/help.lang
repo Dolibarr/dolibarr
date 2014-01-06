@@ -25,4 +25,4 @@ LinkToGoldMember=En caso contrario, puede llamar inmediatamente a uno de los asi
 PossibleLanguages=Idiomas disponibles
 MakeADonation=Ayude al proyecto Dolibarr, haga una donación
 SubscribeToFoundation=Ayude al proyecto Dolibarr, adhiérase a la asociación Dolibarr
-# SeeOfficalSupport=For official Dolibarr support in your language: <br><b><a href="%s" target="_blank">%s</a></b>
+SeeOfficalSupport=Para obtener soporte oficial Dolibarr en su idioma: <br><b><a href="%s" target="_blank">%s</a></b>

@@ -6,8 +6,8 @@
 # To read Chinese pdf with Linux: sudo apt-get install poppler-data
 FONTFORPDF=helvetica
 # FONTSIZEFORPDF=10
-# SeparatorDecimal=.
-# SeparatorThousand=,
+SeparatorDecimal=.
+SeparatorThousand=None
 # FormatDateShort=%m/%d/%Y
 # FormatDateShortInput=%m/%d/%Y
 # FormatDateShortJava=MM/dd/yyyy

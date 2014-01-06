@@ -15,6 +15,12 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ *	\file       htdocs/cashdesk/validation_ticket.php
+ *	\ingroup    cashdesk
+ *	\brief      validation_ticket.php
+ */
+
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/cashdesk/include/environnement.php';
 require_once DOL_DOCUMENT_ROOT.'/cashdesk/class/Facturation.class.php';

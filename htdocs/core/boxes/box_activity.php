@@ -56,7 +56,7 @@ class box_activity extends ModeleBoxes
 		// FIXME: Use a cache to save data because this slow down too much main home page. This box slow down too seriously software.
 		// FIXME: Removed number_format (not compatible with all languages)
 		// FIXME: Pb into some status
-		$this->enabled=$conf->global->MAIN_FEATURES_LEVEL;	// Not enabled by default due to bugs (see previous FIXME)
+		$this->enabled=$conf->global->MAIN_FEATURES_LEVEL;	// Not enabled by default due to bugs (see previous comments)
 	}
 
 	/**

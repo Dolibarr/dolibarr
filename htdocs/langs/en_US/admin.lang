@@ -505,7 +505,7 @@ Module50200Desc= Module to offer an online payment page by credit card with Payp
 Module54000Name=PrintIPP
 Module54000Desc=Print via Cups IPP Printer.
 Module55000Name=Open Survey
-Module55000Desc=Module to integrate a survey (like Doodle, Studs, Rdvz, ...)
+Module55000Desc=Module to make online surveys (like Doodle, Studs, Rdvz, ...)
 Module59000Name=Margins
 Module59000Desc=Module to manage margins
 Module60000Name=Commissions
@@ -1118,6 +1118,9 @@ WatermarkOnDraftInterventionCards=Watermark on intervention card documents (none
 ##### Contracts #####
 ContractsSetup=Contracts module setup
 ContractsNumberingModules=Contracts numbering modules
+TemplatePDFContracts=Contracts documents models
+FreeLegalTextOnContracts=Free text on contracts
+WatermarkOnDraftContractCards=Watermark on draft contracts (none if empty)
 ##### Members #####
 MembersSetup=Members module setup
 MemberMainOptions=Main options

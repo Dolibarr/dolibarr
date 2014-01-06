@@ -383,13 +383,13 @@ PaymentInvoiceRef=Оплата счета-фактуры %s
 ValidateInvoice=Подтвердить счет-фактуру
 Cash=Наличные
 Reported=Задержан
-# DisabledBecausePayments=Not possible since there are some payments
-# CantRemovePaymentWithOneInvoicePaid=Can't remove payment since there is at least one invoice classified paid
+DisabledBecausePayments=Невозможно, поскольку есть некоторые платежи
+CantRemovePaymentWithOneInvoicePaid=Не удается удалить оплаты поскольку есть по крайней мере один счет-фактура классифицированный как 'оплачен'
 ExpectedToPay=Ожидаемые платежи
-# PayedByThisPayment=Paid by this payment
-# ClosePaidInvoicesAutomatically=Classify "Paid" all standard or replacement invoices entirely paid.
+PayedByThisPayment=Оплачен этим платежом
+ClosePaidInvoicesAutomatically=Классифицировать как 'Оплачен' все полностью оплаченные счета-фактуры.
 # ClosePaidCreditNotesAutomatically=Classify "Paid" all credit notes entirely paid back.
-# AllCompletelyPayedInvoiceWillBeClosed=All invoice with no remain to pay will be automatically closed to status "Paid".
+AllCompletelyPayedInvoiceWillBeClosed=Все счета, без остатка к оплате будут автоматически закрыты со статусом "Оплачен".
 # ToMakePayment=Pay
 # ToMakePaymentBack=Pay back
 # ListOfYourUnpaidInvoices=List of unpaid invoices
@@ -405,9 +405,9 @@ TypeContact_invoice_supplier_external_BILLING=обратитесь в отдел
 TypeContact_invoice_supplier_external_SHIPPING=обратитесь в службу доставки Поставщика
 TypeContact_invoice_supplier_external_SERVICE=обратитесь в клиентскую службу Поставщика
 # crabe PDF Model
-# PDFCrabeDescription=Invoice PDF template Crabe. A complete invoice template (recommended Template)
+PDFCrabeDescription=Шаблон Счета-фактуры Crabe. Полный шаблон (вспомогательные опции НДС, скидки, условия платежей, логотип и т.д. ..)
 # oursin PDF Model
-# PDFOursinDescription=Invoice PDF template Oursin. A complete invoice template (alternative Template)
+PDFOursinDescription=Шаблон Счета-фактуры Oursin. Полный шаблон (альтернативный)
 # NumRef Modules
 # TerreNumRefModelDesc1=Return number with format %syymm-nnnn for standard invoices and %syymm-nnnn for credit notes where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
 # MarsNumRefModelDesc1=Return number with format %syymm-nnnn for standard invoices, %syymm-nnnn for replacement invoices, %syymm-nnnn for credit notes and %syymm-nnnn for credit notes where yy is year, mm is month and nnnn is a sequence with no break and no return to 0

@@ -68,6 +68,7 @@ CountryId=Krajina id
 Phone=Telefón
 Skype=Skype
 Call=Volanie
+# Chat=Chat
 PhonePro=Prof telefón
 PhonePerso=Os. telefón
 PhoneMobile=Mobilné
@@ -398,7 +399,9 @@ InActivity=Otvorené
 ActivityCeased=Zatvorené
 ActivityStateFilter=Ekonomické postavenie
 ProductsIntoElements=Zoznam výrobkov do
+# CurrentOutstandingBill=Current outstanding bill
 OutstandingBill=Max. za vynikajúce účet
+# OutstandingBillReached=Reached max. for outstanding bill
 # Monkey
 MonkeyNumRefModelDesc=Späť numero vo formáte %syymm-nnnn pre zákazníka kódu a %syymm-NNNN s dodávateľmi kódu, kde yy je rok, MM je mesiac a nnnn je sekvencia bez prerušenia a bez návratu na 0.
 # Leopard

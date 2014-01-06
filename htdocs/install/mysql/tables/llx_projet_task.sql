@@ -20,6 +20,7 @@
 create table llx_projet_task
 (
   rowid					integer AUTO_INCREMENT PRIMARY KEY,
+  ref 					varchar(50),
   fk_projet				integer NOT NULL,
   fk_task_parent		integer DEFAULT 0 NOT NULL,
   datec					datetime,						-- date creation

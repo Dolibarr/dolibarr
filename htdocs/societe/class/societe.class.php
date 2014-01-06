@@ -297,6 +297,25 @@ class Societe extends CommonObject
         }
     }
 
+    function create_individual($user) {
+        require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+        $contact=new Contact($this->db);
+
+        $contact->name              = $this->name_bis;
+        $contact->firstname         = $this->firstname;
+        $contact->socid             = $this->id;	// fk_soc
+        $contact->statut            = 1;
+        $contact->priv              = 0;
+        $result = $contact->create($user);
+        if ($result < 0) {
+            $this->error = $contact->error;
+            $this->errors = $contact->errors;
+            dol_syslog("Societe::create_individual ERROR:" . $this->error, LOG_ERR);
+        }
+
+        return $result;
+    }
+
     /**
      *    Check properties of third party are ok (like name, third party codes, ...)
      *
@@ -771,7 +790,7 @@ class Societe extends CommonObject
 
                 $this->country_id   = $obj->country_id;
                 $this->country_code = $obj->country_id?$obj->country_code:'';
-                $this->country 		= $obj->country_id?($langs->trans('Country'.$obj->country_code)!='Country'.$obj->country_code?$langs->trans('Country'.$obj->country_code):$obj->country):'';
+                $this->country 		= $obj->country_id?($langs->trans('Country'.$obj->country_code)!='Country'.$obj->country_code?$langs->transnoentities('Country'.$obj->country_code):$obj->country):'';
 
                 $this->state_id     = $obj->fk_departement;
                 $this->state_code   = $obj->state_code;
@@ -994,6 +1013,8 @@ class Societe extends CommonObject
 
         require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
+        $entity=isset($this->entity)?$this->entity:$conf->entity;
+        
         dol_syslog(get_class($this)."::delete", LOG_DEBUG);
         $error = 0;
 
@@ -1122,12 +1143,15 @@ class Societe extends CommonObject
                 $this->db->commit();
 
                 // Delete directory
-                $docdir = $conf->societe->multidir_output[$this->entity] . "/" . $id;
-                if (file_exists($docdir))
+                if (! empty($conf->societe->multidir_output[$entity]))
                 {
-                    dol_delete_dir_recursive($docdir);
+                	$docdir = $conf->societe->multidir_output[$entity] . "/" . $id;
+                	if (dol_is_dir($docdir))
+                	{
+                    	dol_delete_dir_recursive($docdir);
+                	}
                 }
-
+                
                 return 1;
             }
             else
@@ -1751,7 +1775,7 @@ class Societe extends CommonObject
         require_once DOL_DOCUMENT_ROOT . '/societe/class/companybankaccount.class.php';
         $bac = new CompanyBankAccount($this->db);
         $bac->fetch(0,$this->id);
-        return $bac->getRibLabel();
+        return $bac->getRibLabel(true);
     }
 
     /**
@@ -2862,7 +2886,9 @@ class Societe extends CommonObject
 		$sql  = "SELECT sum(total) as amount FROM ".MAIN_DB_PREFIX."facture as f";
 		$sql .= " WHERE fk_soc = ". $this->id;
 		$sql .= " AND paye = 0";
-		$sql .= " AND fk_statut <> 0";
+		$sql .= " AND fk_statut <> 0";	// Not a draft
+		//$sql .= " AND (fk_statut <> 3 OR close_code <> 'abandon')";		// Not abandonned for undefined reason
+		$sql .= " AND fk_statut <> 3";		// Not abandonned
 
 		dol_syslog("get_OutstandingBill sql=".$sql);
 		$resql=$this->db->query($sql);

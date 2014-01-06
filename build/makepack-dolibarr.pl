@@ -31,7 +31,7 @@ $RPMSUBVERSION="auto";	# auto use value found into BUILD
 "RPM_FEDORA"=>"rpmbuild",
 "RPM_MANDRIVA"=>"rpmbuild",
 "RPM_OPENSUSE"=>"rpmbuild",
-"DEB"=>"dpkg",
+"DEB"=>"dpkg dpatch",
 "APS"=>"zip",
 "EXEDOLIWAMP"=>"ISCC.exe"
 );
@@ -71,6 +71,15 @@ if (! $ENV{"DESTIBETARC"} || ! $ENV{"DESTISTABLE"})
 {
     print "Error: Missing environment variables.\n";
 	print "You must define the environment variable DESTIBETARC and DESTISTABLE to point to the\ndirectories where you want to save the generated packages.\n";
+	print "Example: DESTIBETARC='/media/HDDATA1_LD/Mes Sites/Web/Dolibarr/dolibarr.org/files/lastbuild'\n";
+	print "Example: DESTISTABLE='/media/HDDATA1_LD/Mes Sites/Web/Dolibarr/dolibarr.org/files/stable'\n";
+	print "$PROG.$Extension aborted.\n";
+    sleep 2;
+	exit 1;
+}
+if (! -d $ENV{"DESTIBETARC"} || ! -d $ENV{"DESTISTABLE"})
+{
+    print "Error: Directory of environment variable DESTIBETARC or DESTISTABLE does not exist.\n";
 	print "$PROG.$Extension aborted.\n";
     sleep 2;
 	exit 1;
@@ -216,7 +225,7 @@ foreach my $target (keys %CHOOSEDTARGET) {
             last;
         } else {
             # Pas erreur ou erreur autre que programme absent
-            print " Found ".$REQUIREMENTTARGET{$target}."\n";
+            print " Found ".$req."\n";
         }
     }
 }
@@ -346,6 +355,7 @@ if ($nboftargetok) {
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/bootstrap*`;
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/custom*`;
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/multicompany*`;
+	    $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/nltechno*`;
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/pos*`;
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/test`;
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/Thumbs.db $BUILDROOT/$PROJECT/*/Thumbs.db $BUILDROOT/$PROJECT/*/*/Thumbs.db $BUILDROOT/$PROJECT/*/*/*/Thumbs.db $BUILDROOT/$PROJECT/*/*/*/*/Thumbs.db`;
@@ -404,6 +414,7 @@ if ($nboftargetok) {
     	if ($target eq 'TGZ') 
     	{
     		$NEWDESTI=$DESTI;
+    		mkdir($DESTI.'/standard');
 			if (-d $DESTI.'/standard') { $NEWDESTI=$DESTI.'/standard'; } 
 
     		print "Remove target $FILENAMETGZ.tgz...\n";
@@ -430,6 +441,7 @@ if ($nboftargetok) {
     	if ($target eq 'XZ') 
     	{
     		$NEWDESTI=$DESTI;
+    		mkdir($DESTI.'/standard');
 			if (-d $DESTI.'/standard') { $NEWDESTI=$DESTI.'/standard'; } 
 
     		print "Remove target $FILENAMEXZ.xz...\n";
@@ -460,6 +472,7 @@ if ($nboftargetok) {
     	if ($target eq 'ZIP') 
     	{
     		$NEWDESTI=$DESTI;
+    		mkdir($DESTI.'/standard');
 			if (-d $DESTI.'/standard') { $NEWDESTI=$DESTI.'/standard'; } 
 
     		print "Remove target $FILENAMEZIP.zip...\n";
@@ -494,6 +507,7 @@ if ($nboftargetok) {
     		if ($target =~ /FEDO/i) { $subdir="package_rpm_redhat-fedora"; }
     		if ($target =~ /MAND/i) { $subdir="package_rpm_mandriva"; }
     		if ($target =~ /OPEN/i) { $subdir="package_rpm_opensuse"; }
+    		mkdir($DESTI.'/'.$subdir);
 			if (-d $DESTI.'/'.$subdir) { $NEWDESTI=$DESTI.'/'.$subdir; } 
 
     		$ARCH='noarch';
@@ -590,6 +604,7 @@ if ($nboftargetok) {
     	if ($target eq 'DEB') 
     	{
     		$NEWDESTI=$DESTI;
+    		mkdir($DESTI.'/package_debian-ubuntu');
 			if (-d $DESTI.'/package_debian-ubuntu') { $NEWDESTI=$DESTI.'/package_debian-ubuntu'; } 
 
             $olddir=getcwd();
@@ -750,6 +765,7 @@ if ($nboftargetok) {
     	if ($target eq 'APS') 
     	{
 			$NEWDESTI=$DESTI;
+    		mkdir($DESTI.'/package_aps');
 			if (-d $DESTI.'/package_aps') { $NEWDESTI=$DESTI.'/package_aps'; } 
 			
             $newbuild = $BUILD;
@@ -834,6 +850,7 @@ if ($nboftargetok) {
     	if ($target eq 'EXEDOLIWAMP')
     	{
     		$NEWDESTI=$DESTI;
+    		mkdir($DESTI.'/package_windows');
 			if (-d $DESTI.'/package_windows') { $NEWDESTI=$DESTI.'/package_windows'; } 
     		
      		print "Remove target $FILENAMEEXEDOLIWAMP.exe...\n";

@@ -285,7 +285,7 @@ if ($action == 'update' && ! $_POST["cancel"] && $user->rights->adherent->creer)
 		$object->phone_perso = trim($_POST["phone_perso"]);
 		$object->phone_mobile= trim($_POST["phone_mobile"]);
 		$object->email       = trim($_POST["email"]);
-    $object->skype       = trim($_POST["skype"]);
+		$object->skype       = trim($_POST["skype"]);
 		$object->birth       = $birthdate;
 
 		$object->typeid      = $_POST["typeid"];
@@ -428,7 +428,7 @@ if ($action == 'add' && $user->rights->adherent->creer)
 	$phone=$_POST["phone"];
 	$phone_perso=$_POST["phone_perso"];
 	$phone_mobile=$_POST["phone_mobile"];
-  $skype=$_POST["member_skype"];
+	$skype=$_POST["member_skype"];
 	$email=$_POST["member_email"];
 	$login=$_POST["member_login"];
 	$pass=$_POST["password"];
@@ -453,7 +453,7 @@ if ($action == 'add' && $user->rights->adherent->creer)
 	$object->phone       = $phone;
 	$object->phone_perso = $phone_perso;
 	$object->phone_mobile= $phone_mobile;
-  $object->skype       = $skype;
+	$object->skype       = $skype;
 	$object->email       = $email;
 	$object->login       = $login;
 	$object->pass        = $pass;
@@ -861,11 +861,11 @@ else
 		// Tel mobile
 		print '<tr><td>'.$langs->trans("PhoneMobile").'</td><td><input type="text" name="phone_mobile" size="20" value="'.(GETPOST('phone_mobile','alpha')?GETPOST('phone_mobile','alpha'):$object->phone_mobile).'"></td></tr>';
 
-    // Skype
-    if (! empty($conf->skype->enabled) && $user->rights->skype->view)
-    {
-		    print '<tr><td>'.$langs->trans("Skype").'</td><td><input type="text" name="member_skype" size="40" value="'.(GETPOST('member_skype','alpha')?GETPOST('member_skype','alpha'):$object->skype).'"></td></tr>';
-    }
+	    // Skype
+	    if (! empty($conf->skype->enabled))
+	    {
+			print '<tr><td>'.$langs->trans("Skype").'</td><td><input type="text" name="member_skype" size="40" value="'.(GETPOST('member_skype','alpha')?GETPOST('member_skype','alpha'):$object->skype).'"></td></tr>';
+	    }
 
 		// Birthday
 		print "<tr><td>".$langs->trans("Birthday")."</td><td>\n";
@@ -1103,11 +1103,11 @@ else
 		// Tel mobile
 		print '<tr><td>'.$langs->trans("PhoneMobile").'</td><td><input type="text" name="phone_mobile" size="20" value="'.(isset($_POST["phone_mobile"])?$_POST["phone_mobile"]:$object->phone_mobile).'"></td></tr>';
 
-    // Skype
-    if (! empty($conf->skype->enabled) && $user->rights->skype->view)
-    {
-		    print '<tr><td>'.$langs->trans("Skype").'</td><td><input type="text" name="skype" size="40" value="'.(isset($_POST["skype"])?$_POST["skype"]:$object->skype).'"></td></tr>';
-    }
+	    // Skype
+	    if (! empty($conf->skype->enabled))
+	    {
+			    print '<tr><td>'.$langs->trans("Skype").'</td><td><input type="text" name="skype" size="40" value="'.(isset($_POST["skype"])?$_POST["skype"]:$object->skype).'"></td></tr>';
+	    }
 
 		// Birthday
 		print "<tr><td>".$langs->trans("Birthday")."</td><td>\n";
@@ -1328,7 +1328,7 @@ else
 
 		/*
 		 * Confirm add in spip
-		*/
+		 */
 		if ($action == 'add_spip')
 		{
 			print $form->formconfirm("fiche.php?rowid=".$rowid, $langs->trans('AddIntoSpip'), $langs->trans('AddIntoSpipConfirmation'), 'confirm_add_spip');
@@ -1336,7 +1336,7 @@ else
 
 		/*
 		 * Confirm removed from spip
-		*/
+		 */
 		if ($action == 'del_spip')
 		{
 			print $form->formconfirm("fiche.php?rowid=$rowid", $langs->trans('DeleteIntoSpip'), $langs->trans('DeleteIntoSpipConfirmation'), 'confirm_del_spip');
@@ -1345,6 +1345,7 @@ else
 		$rowspan=17;
 		if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED)) $rowspan++;
 		if (! empty($conf->societe->enabled)) $rowspan++;
+		if (! empty($conf->skype->enabled)) $rowspan++;
 
 		print '<table class="border" width="100%">';
 
@@ -1427,12 +1428,12 @@ else
 		// Tel mobile
 		print '<tr><td>'.$langs->trans("PhoneMobile").'</td><td class="valeur">'.dol_print_phone($object->phone_mobile,$object->country_code,0,$object->fk_soc,1).'</td></tr>';
 
-    // Skype
-    if (! empty($conf->skype->enabled) && $user->rights->skype->view)
-    {
-      print '<tr><td>'.$langs->trans("Skype").'</td><td class="valeur">'.dol_print_skype($object->skype,0,$object->fk_soc,1).'</td></tr>';
-    }
-    
+    	// Skype
+		if (! empty($conf->skype->enabled))
+		{
+			print '<tr><td>'.$langs->trans("Skype").'</td><td class="valeur">'.dol_print_skype($object->skype,0,$object->fk_soc,1).'</td></tr>';
+		}
+
 		// Birthday
 		print '<tr><td>'.$langs->trans("Birthday").'</td><td class="valeur">'.dol_print_date($object->birth,'day').'</td></tr>';
 

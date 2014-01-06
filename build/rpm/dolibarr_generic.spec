@@ -239,6 +239,7 @@ done >>%{name}.lang
 %_datadir/dolibarr/htdocs/adherents
 %_datadir/dolibarr/htdocs/admin
 %_datadir/dolibarr/htdocs/asterisk
+%_datadir/dolibarr/htdocs/barcode
 %_datadir/dolibarr/htdocs/bookmarks
 %_datadir/dolibarr/htdocs/boutique
 %_datadir/dolibarr/htdocs/cashdesk
@@ -558,5 +559,5 @@ fi
 
 # version x.y.z-0.1.a for alpha, x.y.z-0.2.b for beta, x.y.z-0.3 for release
 %changelog
-* Wed Nov 6 2013 Laurent Destailleur 3.6.0-0.1.b
+* Mon Dec 30 2013 Laurent Destailleur 3.6.0-0.2.b
 - Initial version (#723326)

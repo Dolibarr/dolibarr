@@ -18,8 +18,8 @@ Permission23104 = Ejecutar tarea programada
 # Admin
 #
 CronSetup= Configuracion
-# URLToLaunchCronJobs=URL to check and launch cron jobs if required
-# OrToLaunchASpecificJob=Or to check and launch a specific job
+URLToLaunchCronJobs=URL para ejecutar tareas Cron
+OrToLaunchASpecificJob=O para ejecutar una tarea en concreto
 KeyForCronAccess=clave para la URL para ejecutar tareas Cron
 FileToLaunchCronJobs=Comando para ejecutar tareas Cron
 CronExplainHowToRunUnix=En entorno Unix debes usar crontab para ejecutar el comando cada varios minutos
@@ -43,7 +43,7 @@ CronLastOutput=Res. ult. ejec.
 CronLastResult=Últ. cód. res.
 CronListOfCronJobs=Lista de tareas programadas
 CronCommand=Comando
-# CronList=Jobs list
+CronList=Lista de tareas Cron
 CronDelete= Borrar tareas Cron
 CronConfirmDelete= ¿Está seguro de querer eliminar estas tareas?
 CronExecute=Ejecutar Tarea

@@ -383,13 +383,13 @@ PaymentInvoiceRef=%s的付款发票
 ValidateInvoice=验证发票
 Cash=现金
 Reported=延迟
-# DisabledBecausePayments=Not possible since there are some payments
-# CantRemovePaymentWithOneInvoicePaid=Can't remove payment since there is at least one invoice classified paid
+DisabledBecausePayments=不可能的，因为有一些付款
+CantRemovePaymentWithOneInvoicePaid=无法删除，因为至少有付款发票分类所许
 ExpectedToPay=预期付款
-# PayedByThisPayment=Paid by this payment
-# ClosePaidInvoicesAutomatically=Classify "Paid" all standard or replacement invoices entirely paid.
-# ClosePaidCreditNotesAutomatically=Classify "Paid" all credit notes entirely paid back.
-# AllCompletelyPayedInvoiceWillBeClosed=All invoice with no remain to pay will be automatically closed to status "Paid".
+PayedByThisPayment=氟离子选择电极通过此付款
+ClosePaidInvoicesAutomatically=分类“支付最高”的所有entirely支付最高标准或更换发票。
+ClosePaidCreditNotesAutomatically=分类“付费”的所有信贷注意到完全支付。
+AllCompletelyPayedInvoiceWillBeClosed=所有发票仍然没有支付将被自动关闭状态“支付最高”。
 ToMakePayment=支付
 ToMakePaymentBack=回报
 ListOfYourUnpaidInvoices=未付发票清单
@@ -405,11 +405,11 @@ TypeContact_invoice_supplier_external_BILLING=供应商发票接触
 TypeContact_invoice_supplier_external_SHIPPING=航运供应商联系
 TypeContact_invoice_supplier_external_SERVICE=服务供应商联系
 # crabe PDF Model
-# PDFCrabeDescription=Invoice PDF template Crabe. A complete invoice template (recommended Template)
+PDFCrabeDescription=发票模型Crabe。一个完整的发票模式（支援增值税选项，折扣，付款条件，标识等..）
 # oursin PDF Model
-# PDFOursinDescription=Invoice PDF template Oursin. A complete invoice template (alternative Template)
+PDFOursinDescription=发票模型乌尔桑
 # NumRef Modules
-# TerreNumRefModelDesc1=Return number with format %syymm-nnnn for standard invoices and %syymm-nnnn for credit notes where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
-# MarsNumRefModelDesc1=Return number with format %syymm-nnnn for standard invoices, %syymm-nnnn for replacement invoices, %syymm-nnnn for credit notes and %syymm-nnnn for credit notes where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
+TerreNumRefModelDesc1=返回号码格式%s yy mm-NNNN标准和更换发票%s yy mm-NNNN信贷票据以及%s yy mm-NNNN其中yy是年，mm是月和nnnn是一个没有空格不为0的序列，
+MarsNumRefModelDesc1=返回数字序号格式 %s yymm-nnnn 用于标准发票，, %s yymm-nnnn 用于置换专用发票, %s yymm-nnnn 用于普通票据, %s yymm-nnnn 用于信用票据，其中 yy 是年, mm 是月  nnnn是一个不为0的没空格的序列号。
 
 TerreNumRefModelError=美元的法案syymm起已经存在，而不是与此序列模型兼容。删除或重新命名它激活该模块。

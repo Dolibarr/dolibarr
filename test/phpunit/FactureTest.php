@@ -243,6 +243,10 @@ class FactureTest extends PHPUnit_Framework_TestCase
         print __METHOD__." localobject->date_creation=".$localobject->date_creation."\n";
         $this->assertNotEquals($localobject->date_creation, '');
 
+        $result=$localobject->demande_prelevement($user);
+        print __METHOD__." result=".$result."\n";
+       	$this->assertLessThan($result, 0);
+
         return $localobject->id;
     }
 

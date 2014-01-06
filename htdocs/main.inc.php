@@ -102,7 +102,7 @@ function test_sql_and_script_inject($val, $type)
     }
     // For XSS Injection done by adding javascript closing html tags like with onmousemove, etc... (closing a src or href tag with not cleaned param)
     if ($type == 1) $sql_inj += preg_match('/"/i', $val);		// We refused " in GET parameters value
-    if ($type == 2) $sql_inj += preg_match('/[;"]/', $val);		// PHP_SELF is a file system path. It can contains spaces. 
+    if ($type == 2) $sql_inj += preg_match('/[;"]/', $val);		// PHP_SELF is a file system path. It can contains spaces.
     return $sql_inj;
 }
 
@@ -1173,7 +1173,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
             {
             	// We must force not using ajax because cache of jquery does not load js of other pages.
             	// This also increase seriously speed onto mobile device where complex js code is very slow and memory very low.
-            	if (empty($conf->dol_use_jmobile) || $conf->dol_use_jmobile != 2)
+            	if (empty($conf->dol_use_jmobile) || ($conf->dol_use_jmobile != 2 && $conf->dol_use_jmobile != 3))
             	{
             		print '<script type="text/javascript">
 	            		$(document).bind("mobileinit", function(){
@@ -1188,7 +1188,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
            				});
             			</script>';
             	}
-            	print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/mobile/jquery.mobile-latest.min.js"></script>'."\n";
+            	if (empty($conf->dol_use_jmobile) || $conf->dol_use_jmobile != 3) print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/mobile/jquery.mobile-latest.min.js"></script>'."\n";
             }
         }
 
@@ -1614,11 +1614,11 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
 
 		//Dolibarr version
 	    $doliurl='http://www.dolibarr.org';
-	    
+
 	    //local communities
 	    if (preg_match('/fr/i',$langs->defaultlang)) $doliurl='http://www.dolibarr.fr';
 		if (preg_match('/es/i',$langs->defaultlang)) $doliurl='http://www.dolibarr.es';
-	    
+
 	    $appli='Dolibarr';
 	    if (! empty($conf->global->MAIN_APPLICATION_TITLE)) {
 	    	$appli=$conf->global->MAIN_APPLICATION_TITLE; $doliurl='';

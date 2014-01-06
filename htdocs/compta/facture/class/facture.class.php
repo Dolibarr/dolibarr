@@ -1323,7 +1323,7 @@ class Facture extends CommonInvoice
 				{
 					// On efface le repertoire de pdf provisoire
 					$ref = dol_sanitizeFileName($this->ref);
-					if ($conf->facture->dir_output)
+					if ($conf->facture->dir_output && !empty($this->ref))
 					{
 						$dir = $conf->facture->dir_output . "/" . $ref;
 						$file = $conf->facture->dir_output . "/" . $ref . "/" . $ref . ".pdf";
@@ -2908,19 +2908,21 @@ class Facture extends CommonInvoice
                     $sql .= ' (fk_facture, amount, date_demande, fk_user_demande, code_banque, code_guichet, number, cle_rib)';
                     $sql .= ' VALUES ('.$this->id;
                     $sql .= ",'".price2num($resteapayer)."'";
-                    $sql .= ",'".$this->db->idate($now)."',";
+                    $sql .= ",'".$this->db->idate($now)."'";
                     $sql .= ",".$user->id;
                     $sql .= ",'".$bac->code_banque."'";
                     $sql .= ",'".$bac->code_guichet."'";
                     $sql .= ",'".$bac->number."'";
                     $sql .= ",'".$bac->cle_rib."')";
-                    if ( $this->db->query($sql))
+
+                    dol_syslog(get_class($this)."::demande_prelevement sql=".$sql);
+                    if ($this->db->query($sql))
                     {
                         return 1;
                     }
                     else
-                    {
-                        $this->error=$this->db->error();
+                  {
+                        $this->error=$this->db->lasterror();
                         dol_syslog(get_class($this).'::demandeprelevement Erreur');
                         return -1;
                     }
@@ -3394,7 +3396,7 @@ class FactureLigne  extends CommonInvoiceLine
 		$sql = 'SELECT fd.rowid, fd.fk_facture, fd.fk_parent_line, fd.fk_product, fd.product_type, fd.label as custom_label, fd.description, fd.price, fd.qty, fd.tva_tx,';
 		$sql.= ' fd.localtax1_tx, fd. localtax2_tx, fd.remise, fd.remise_percent, fd.fk_remise_except, fd.subprice,';
 		$sql.= ' fd.date_start as date_start, fd.date_end as date_end, fd.fk_product_fournisseur_price as fk_fournprice, fd.buy_price_ht as pa_ht,';
-		$sql.= ' fd.info_bits, fd.total_ht, fd.total_tva, fd.total_ttc, fd.total_localtax1, fd.total_localtax2, fd.rang,';
+		$sql.= ' fd.info_bits, fd.special_code, fd.total_ht, fd.total_tva, fd.total_ttc, fd.total_localtax1, fd.total_localtax2, fd.rang,';
 		$sql.= ' fd.fk_code_ventilation,';
 		$sql.= ' p.ref as product_ref, p.label as product_libelle, p.description as product_desc';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'facturedet as fd';
@@ -3423,6 +3425,7 @@ class FactureLigne  extends CommonInvoiceLine
 			$this->date_start			= $this->db->jdate($objp->date_start);
 			$this->date_end				= $this->db->jdate($objp->date_end);
 			$this->info_bits			= $objp->info_bits;
+			$this->special_code			= $objp->special_code;
 			$this->total_ht				= $objp->total_ht;
 			$this->total_tva			= $objp->total_tva;
 			$this->total_localtax1		= $objp->total_localtax1;

@@ -61,7 +61,7 @@ class DoliDBPgsql extends DoliDB
 	var $lastqueryerror;
 	var $lasterror;
 	var $lasterrno;
-	
+
 	var $unescapeslashquot=0;              // By default we do not force the unescape of \'. This is used only to process sql with mysql escaped data.
 	var $standard_conforming_strings=1;    // Database has option standard_conforming_strings to on
 
@@ -211,7 +211,7 @@ class DoliDBPgsql extends DoliDB
     			// tinyint type conversion
     			$line=preg_replace('/tinyint\(?[0-9]*\)?/','smallint',$line);
     			$line=preg_replace('/tinyint/i','smallint',$line);
-    			
+
     			// nuke unsigned
     			$line=preg_replace('/(int\w+|smallint)\s+unsigned/i','\\1',$line);
 
@@ -234,13 +234,13 @@ class DoliDBPgsql extends DoliDB
     			$line=preg_replace('/^float/i','numeric',$line);
     			$line=preg_replace('/(\s*)float/i','\\1numeric',$line);
 
-    			//Check tms timestamp field case (in Mysql this field is defautled to now and 
+    			//Check tms timestamp field case (in Mysql this field is defautled to now and
     			// on update defaulted by now
     			$line=preg_replace('/(\s*)tms(\s*)timestamp/i','\\1tms timestamp without time zone DEFAULT now() NOT NULL',$line);
-    			
+
     			// nuke ON UPDATE CURRENT_TIMESTAMP
     			$line=preg_replace('/(\s*)on(\s*)update(\s*)CURRENT_TIMESTAMP/i','\\1',$line);
-    			
+
     			// unique index(field1,field2)
     			if (preg_match('/unique index\s*\((\w+\s*,\s*\w+)\)/i',$line))
     			{
@@ -468,7 +468,7 @@ class DoliDBPgsql extends DoliDB
 	{
 		return '';
 	}
-		
+
     /**
      *  Close database connexion
      *
@@ -1254,7 +1254,7 @@ class DoliDBPgsql extends DoliDB
 			$sql.="(".$field_desc['value'].")";
 		}
 
-		// FIXME May not work with pgsql. May need to run a second request. If it works, just remove the FIXME tag
+		// TODO May not work with pgsql. May need to run a second request. If it works, just remove the comment
 		if ($field_desc['null'] == 'not null' || $field_desc['null'] == 'NOT NULL') $sql.=" NOT NULL";
 
 		dol_syslog($sql,LOG_DEBUG);

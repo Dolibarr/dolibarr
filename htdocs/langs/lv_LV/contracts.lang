@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - contracts
-ContractsArea=Līgumi platība
+ContractsArea=Līgumu sadaļa
 ListOfContracts=Līgumu sarakstu
 LastContracts=Pēdējās %s modificēts līgumus
 AllContracts=Visi līgumi
@@ -15,7 +15,7 @@ ServiceStatusRunning=Ekspluatācijas
 ServiceStatusNotLate=Skriešana, nav beidzies
 ServiceStatusNotLateShort=Nav beidzies
 ServiceStatusLate=Skriešana, beidzās
-ServiceStatusLateShort=Beidzās
+ServiceStatusLateShort=Beidzies
 ServiceStatusClosed=Slēgts
 ServicesLegend=Pakalpojumi leģenda
 Contracts=Līgumi
@@ -72,7 +72,7 @@ CloseService=Aizvērt pakalpojumu
 ServicesNomberShort=%s pakalpojums (-i)
 RunningServices=Running pakalpojumi
 BoardRunningServices=Beidzās darbojas pakalpojumi
-ServiceStatus=Statuss pakalpojuma
+ServiceStatus=Pakalpojuma statuss
 DraftContracts=Vekseļi līgumi
 CloseRefusedBecauseOneServiceActive=Līgumu nevar tikt slēgts kā tur ir vismaz viens atvērts pakalpojums uz to
 CloseAllContracts=Aizveriet visus līguma līnijas

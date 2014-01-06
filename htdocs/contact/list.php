@@ -5,7 +5,7 @@
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2013      Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2013      Cédric Salvador      <csalvador@gpcsolutions.fr>
- * Copyright (C) 2013      Alexandre Spangaro   <alexandre.spangaro@gmail.com> 
+ * Copyright (C) 2013      Alexandre Spangaro   <alexandre.spangaro@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -274,7 +274,7 @@ if ($result)
     	print $moreforfilter;
     	print '</div>';
     }
-    
+
     if ($sall)
     {
         print $langs->trans("Filter")." (".$langs->trans("Lastname").", ".$langs->trans("Firstname")." ".$langs->trans("or")." ".$langs->trans("EMail")."): ".$sall;
@@ -292,7 +292,7 @@ if ($result)
     print_liste_field_titre($langs->trans("PhoneMobile"),$_SERVER["PHP_SELF"],"p.phone_mob", $begin, $param, '', $sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Fax"),$_SERVER["PHP_SELF"],"p.fax", $begin, $param, '', $sortfield,$sortorder);
     print_liste_field_titre($langs->trans("EMail"),$_SERVER["PHP_SELF"],"p.email", $begin, $param, '', $sortfield,$sortorder);
-    if (! empty($conf->skype->enabled) && $user->rights->skype->view) { print_liste_field_titre($langs->trans("Skype"),$_SERVER["PHP_SELF"],"p.skype", $begin, $param, '', $sortfield,$sortorder); }
+    if (! empty($conf->skype->enabled)) { print_liste_field_titre($langs->trans("Skype"),$_SERVER["PHP_SELF"],"p.skype", $begin, $param, '', $sortfield,$sortorder); }
     print_liste_field_titre($langs->trans("DateModificationShort"),$_SERVER["PHP_SELF"],"p.tms", $begin, $param, 'align="center"', $sortfield,$sortorder);
     print_liste_field_titre($langs->trans("ContactVisibility"),$_SERVER["PHP_SELF"],"p.priv", $begin, $param, 'align="center"', $sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"p.statut", $begin, $param, 'align="center"', $sortfield,$sortorder);
@@ -328,12 +328,12 @@ if ($result)
     print '<td class="liste_titre">';
     print '<input class="flat" type="text" name="search_email" size="8" value="'.$search_email.'">';
     print '</td>';
-    if (! empty($conf->skype->enabled) && $user->rights->skype->view)
+    if (! empty($conf->skype->enabled))
     {
         print '<td class="liste_titre">';
         print '<input class="flat" type="text" name="search_skype" size="8" value="'.$search_skype.'">';
         print '</td>';
-    }    
+    }
 	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre" align="center">';
 	$selectarray=array('0'=>$langs->trans("ContactPublic"),'1'=>$langs->trans("ContactPrivate"));
@@ -353,7 +353,7 @@ if ($result)
     while ($i < min($num,$limit))
     {
         $obj = $db->fetch_object($result);
-    
+
 		$var=!$var;
         print "<tr ".$bc[$var].">";
 
@@ -397,14 +397,14 @@ if ($result)
         // EMail
         print '<td>'.dol_print_email($obj->email,$obj->cidp,$obj->socid,'AC_EMAIL',18).'</td>';
         // Skype
-        if (! empty($conf->skype->enabled) && $user->rights->skype->view) { print '<td>'.dol_print_skype($obj->skype,$obj->cidp,$obj->socid,'AC_SKYPE',18).'</td>'; }
-        
+        if (! empty($conf->skype->enabled)) { print '<td>'.dol_print_skype($obj->skype,$obj->cidp,$obj->socid,'AC_SKYPE',18).'</td>'; }
+
 		// Date
 		print '<td align="center">'.dol_print_date($db->jdate($obj->tms),"day").'</td>';
 
 		// Private/Public
 		print '<td align="center">'.$contactstatic->LibPubPriv($obj->priv).'</td>';
-		
+
 		// Status
 		print '<td align="center">'.$contactstatic->getLibStatut(3).'</td>';
 

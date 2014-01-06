@@ -47,5 +47,5 @@ BuyingCost=Prezzo di costo
 UnitCharges=Carico unitario
 Charges=Carichi
 
-# AgentContactType=Commercial agent contact type
-# AgentContactTypeDetails=Défine what contact type (linked on invoices) will be used for margin report by commercial agents
+AgentContactType=Tipo di contatto per i mandati di vendita
+AgentContactTypeDetails=Definisci che tipo di contatto (connesso alle fatture) associare agli agenti commerciali
