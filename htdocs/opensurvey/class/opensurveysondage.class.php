@@ -140,6 +140,8 @@ class Opensurveysondage extends CommonObject
         {
 			if (! $notrigger)
 			{
+				global $langs, $conf;
+				
 	            //// Call triggers
 	            include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
 	            $interface=new Interfaces($this->db);
