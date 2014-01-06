@@ -4,6 +4,7 @@
 -- Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@capnetworks.com>
 -- Copyright (C) 2010      juanjo Menent        <jmenent@2byte.es>
 -- Copyright (C) 2013      Cédric Salvador      <csalvador@gpcsolutions.fr>
+-- Copyright (C) 2014      Cédric GROSS         <c.gross@kreiz-it.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -72,5 +73,6 @@ create table llx_product
   finished					tinyint      DEFAULT NULL,
   hidden					tinyint      DEFAULT 0,			-- Need permission see also hidden products
   import_key				varchar(14),					-- Import key
-  desiredstock              integer      DEFAULT 0
+  desiredstock              integer      DEFAULT 0,
+  todluo					tinyint      DEFAULT 0 NOT NULL
 )ENGINE=innodb;

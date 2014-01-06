@@ -1,0 +1,15 @@
+# ProductDLUO language file - en_US - ProductDLUO
+CHARSET= UTF-8
+DLUO= Sell-by/Eat-by
+ProductStatusOnEatBy= Manage
+ProductStatusNotOnEatBy= Do not manage
+DLC= eat-by
+lDLUO= sell-by
+printLOT= Batch: %s
+printDLC= eat-by date: %s
+printDLUO= sell-by date: %s
+printQty= Qty: %d
+lot_number= Batch number
+atleast1dlcfield= eat-by date or sell-by date or Batch number
+DetailLotNumber= Batch number detail
+detailformat= ED:%s SD: %s BATCH: %s (Qty : %d)

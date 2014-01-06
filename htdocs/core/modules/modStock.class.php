@@ -66,7 +66,7 @@ class modStock extends DolibarrModules
 
 		// Dependencies
 		$this->depends = array("modProduct");
-		$this->requiredby = array();
+		$this->requiredby = array("modProductDluo");
 		$this->langfiles = array("stocks");
 
 		// Constants

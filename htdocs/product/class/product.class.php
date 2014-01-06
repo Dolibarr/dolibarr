@@ -5,7 +5,7 @@
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  * Copyright (C) 2007-2011 Jean Heimburger      <jean@tiaris.info>
  * Copyright (C) 2010-2013 Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2013	   Cedric GROSS	        <c.gross@kreiz-it.fr>
+ * Copyright (C) 2013-2014 Cedric GROSS	        <c.gross@kreiz-it.fr>
  * Copyright (C) 2013      Marcos García        <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -28,6 +28,7 @@
  *	\brief      File of class to manage predefined products or services
  */
 require_once DOL_DOCUMENT_ROOT .'/core/class/commonobject.class.php';
+require_once DOL_DOCUMENT_ROOT.'/product/class/productdluo.class.php';
 
 
 /**
@@ -95,6 +96,8 @@ class Product extends CommonObject
 	var $status_buy;
 	// Statut indique si le produit est un produit fini '1' ou une matiere premiere '0'
 	var $finished;
+	// We must manage sell-by date and so on '1':yes '0':no
+	var $status_dluo;
 
 	var $customcode;       // Customs code
     var $country_id;       // Country origin id
@@ -168,6 +171,7 @@ class Product extends CommonObject
 		$this->seuil_stock_alerte = 0;
 		$this->desiredstock = 0;
 		$this->canvas = '';
+		$this->status_dluo=0;
 	}
 
 	/**
@@ -322,6 +326,7 @@ class Product extends CommonObject
 				$sql.= ", tosell";
 				$sql.= ", canvas";
 				$sql.= ", finished";
+				$sql.= ", todluo";
 				$sql.= ") VALUES (";
 				$sql.= $this->db->idate($now);
 				$sql.= ", ".$conf->entity;
@@ -339,6 +344,7 @@ class Product extends CommonObject
 				$sql.= ", ".$this->status_buy;
 				$sql.= ", '".$this->canvas."'";
 				$sql.= ", ".((empty($this->finished) || $this->finished < 0)?'null':$this->finished);
+				$sql.= ", ".((empty($this->status_dluo) || $this->status_dluo < 0)? '0':$this->status_dluo);
 				$sql.= ")";
 
 				dol_syslog(get_class($this)."::Create sql=".$sql);
@@ -474,6 +480,7 @@ class Product extends CommonObject
 
 		$sql.= ", tosell = " . $this->status;
 		$sql.= ", tobuy = " . $this->status_buy;
+		$sql.= ", todluo = " . ((empty($this->status_dluo) || $this->status_dluo < 0) ? '0' : $this->status_dluo);
 		$sql.= ", finished = " . ((empty($this->finished) || $this->finished < 0) ? "null" : $this->finished);
 		$sql.= ", weight = " . ($this->weight!='' ? "'".$this->weight."'" : 'null');
 		$sql.= ", weight_units = " . ($this->weight_units!='' ? "'".$this->weight_units."'": 'null');
@@ -1149,7 +1156,7 @@ class Product extends CommonObject
 		$sql.= " tobuy, fk_product_type, duration, seuil_stock_alerte, canvas,";
 		$sql.= " weight, weight_units, length, length_units, surface, surface_units, volume, volume_units, barcode, fk_barcode_type, finished,";
 		$sql.= " accountancy_code_buy, accountancy_code_sell, stock, pmp,";
-		$sql.= " datec, tms, import_key, entity, desiredstock";
+		$sql.= " datec, tms, import_key, entity, desiredstock, todluo";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product";
 		if ($id) $sql.= " WHERE rowid = ".$this->db->escape($id);
 		else
@@ -1177,6 +1184,7 @@ class Product extends CommonObject
 				$this->type						= $obj->fk_product_type;
 				$this->status					= $obj->tosell;
 				$this->status_buy				= $obj->tobuy;
+				$this->status_dluo				= $obj->todluo;
 
 	            $this->customcode				= $obj->customcode;
 	            $this->country_id				= $obj->fk_country;
@@ -2510,10 +2518,17 @@ class Product extends CommonObject
 	 */
 	function getLibStatut($mode=0, $type=0)
 	{
-		if($type==0)
+		switch ($type) 
+		{
+		case 0:
 			return $this->LibStatut($this->status,$mode,$type);
-		else
+		case 1:
 			return $this->LibStatut($this->status_buy,$mode,$type);
+		case 2:
+			return $this->LibStatut($this->status_dluo,$mode,$type);
+		default:
+			return $this->LibStatut($this->status_buy,$mode,$type);
+		}
 	}
 
 	/**
@@ -2521,13 +2536,22 @@ class Product extends CommonObject
 	 *
 	 *	@param      int		$status     Statut
 	 *	@param      int		$mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
-	 *	@param      int		$type       0=Status "to sell", 1=Status "to buy"
+	 *	@param      int		$type       0=Status "to sell", 1=Status "to buy", 2=Status "DLUO"
 	 *	@return     string      		Label of status
 	 */
 	function LibStatut($status,$mode=0,$type=0)
 	{
 		global $langs;
 		$langs->load('products');
+		if (! empty($conf->productdluo->enabled)) $langs->load("productdluo");
+
+		if ($type == 2) {
+			if ($status == 1) {
+				return $langs->trans('ProductStatusOnEatBy');
+			} else {
+				return $langs->trans('ProductStatusNotOnEatBy');
+			}
+		}
 
 		if ($mode == 0)
 		{
@@ -2627,7 +2651,7 @@ class Product extends CommonObject
 	{
 		$this->stock_reel = 0;
 
-		$sql = "SELECT ps.reel, ps.fk_entrepot, ps.pmp";
+		$sql = "SELECT ps.reel, ps.fk_entrepot, ps.pmp, ps.rowid";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product_stock as ps";
 		$sql.= ", ".MAIN_DB_PREFIX."entrepot as w";
 		$sql.= " WHERE w.entity IN (".getEntity('warehouse', 1).")";
@@ -2648,6 +2672,7 @@ class Product extends CommonObject
 					$this->stock_warehouse[$row->fk_entrepot] = new stdClass();
 					$this->stock_warehouse[$row->fk_entrepot]->real = $row->reel;
 					$this->stock_warehouse[$row->fk_entrepot]->pmp = $row->pmp;
+					if ($this->hasdluo()) $this->stock_warehouse[$row->fk_entrepot]->detail_dluo=Productdluo::findAll($this->db,$row->rowid,1);
 					$this->stock_reel+=$row->reel;
 					$i++;
 				}
@@ -3086,6 +3111,16 @@ class Product extends CommonObject
 	}
 
     /**
+     * Return if object has a sell-by date or eat-by date
+     *
+     * @return  boolean     True if it's has
+     */
+	function hasdluo()
+	{
+		return ($this->status_dluo == 1 ? true : false);
+	}
+
+    /**
      *  Initialise an instance with random values.
      *  Used to build previews or test instances.
      *	id must be 0 if object instance is a specimen.
@@ -3107,8 +3142,50 @@ class Product extends CommonObject
         $this->country_id=1;
         $this->tosell=1;
         $this->tobuy=1;
+        $this->status_dluo=0;
         $this->type=0;
         $this->note='This is a comment (private)';
     }
+	/**
+	 *  Adjust stock in a warehouse for product with eat-by date
+	 *
+	 *  @param  	User	$user           user asking change
+	 *  @param  	int		$id_entrepot    id of warehouse
+	 *  @param  	double	$nbpiece        nb of units
+	 *  @param  	int		$movement       0 = add, 1 = remove
+	 * 	@param		string	$label			Label of stock movement
+	 * 	@param		double	$price			Price to use for stock eval
+	 * 	@param		date	$dlc			eat-by date
+	 * 	@param		date	$dluo			sell-by date
+	 * 	@param		string	$lot			Lot number
+	 * 	@return     int     				<0 if KO, >0 if OK
+	 */
+	function correct_stock_dlc($user, $id_entrepot, $nbpiece, $movement, $label='', $price=0, $dlc='', $dluo='',$lot='')
+	{
+		if ($id_entrepot)
+		{
+			$this->db->begin();
+
+			require_once DOL_DOCUMENT_ROOT .'/product/stock/class/mouvementstock.class.php';
+
+			$op[0] = "+".trim($nbpiece);
+			$op[1] = "-".trim($nbpiece);
+
+			$movementstock=new MouvementStock($this->db);
+			$result=$movementstock->_create($user,$this->id,$id_entrepot,$op[$movement],$movement,$price,$label,'',$dlc,$dluo,$lot);
+
+			if ($result >= 0)
+			{
+				$this->db->commit();
+				return 1;
+			}
+			else
+			{
+				dol_print_error($this->db);
+				$this->db->rollback();
+				return -1;
+			}
+		}
+	}
 }
 ?>

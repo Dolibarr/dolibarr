@@ -39,6 +39,7 @@ if (! empty($conf->product->enabled) || ! empty($conf->service->enabled))  requi
 if (! empty($conf->propal->enabled))   require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 if (! empty($conf->commande->enabled)) require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 if (! empty($conf->stock->enabled))    require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
+if (! empty($conf->productdluo->enabled)) require_once DOL_DOCUMENT_ROOT.'/product/class/productdluo.class.php';
 
 $langs->load("sendings");
 $langs->load("companies");
@@ -48,6 +49,7 @@ $langs->load('orders');
 $langs->load('stocks');
 $langs->load('other');
 $langs->load('propal');
+if (! empty($conf->productdluo->enabled)) $langs->load('productdluo');
 
 $origin		= GETPOST('origin','alpha')?GETPOST('origin','alpha'):'expedition';   // Example: commande, propal
 $origin_id 	= GETPOST('id','int')?GETPOST('id','int'):'';
@@ -126,7 +128,28 @@ if ($action == 'add')
     for ($i = 0; $i < $num; $i++)
     {
         $qty = "qtyl".$i;
+		if (empty($conf->productdluo->enabled)) {
         if (GETPOST($qty,'int') > 0) $totalqty+=GETPOST($qty,'int');
+		} else {
+			$j=0;
+			$sub_qty=array();
+			$qty .= '_'.$j;
+			$subtotalqty=0;
+			$idl="idl".$i;
+			while (isset($_POST[$qty])) {
+				$dluo="dluol".$i."_".$j;
+				$sub_qty[$j]['q']=GETPOST($qty,'int');
+				$sub_qty[$j]['id_dluo']=GETPOST($dluo,'int');
+				$subtotalqty+=$sub_qty[$j]['q'];
+				$j++;
+				$qty = "qtyl".$i.'_'.$j;
+				
+			}
+			$dluo_line[$i]['detail']=$sub_qty;
+			$dluo_line[$i]['qty']=$subtotalqty;
+			$dluo_line[$i]['ix_l']=GETPOST($idl,'int');
+			$totalqty+=$subtotalqty;
+		}
     }
 
     if ($totalqty > 0)
@@ -135,6 +158,7 @@ if ($action == 'add')
         for ($i = 0; $i < $num; $i++)
         {
             $qty = "qtyl".$i;
+			if (empty($conf->productdluo->enabled)) {
             if (GETPOST($qty,'int') > 0)
             {
                 $ent = "entl".$i;
@@ -149,6 +173,14 @@ if ($action == 'add')
                     $error++;
                 }
             }
+			} else {
+				$ret=$object->addline_dluo($dluo_line[$i]);
+				if ($ret < 0)
+				{
+					$mesg='<div class="error">'.$object->error.'</div>';
+					$error++;
+				}
+			}
         }
 
         if (! $error)
@@ -711,12 +743,18 @@ if ($action == 'create')
                 print '<td align="center">'.$langs->trans("QtyOrdered").'</td>';
                 print '<td align="center">'.$langs->trans("QtyShipped").'</td>';
                 print '<td align="center">'.$langs->trans("QtyToShip");
+				if (empty($conf->productdluo->enabled)) {
                 print ' <br>(<a href="#" id="autofill">'.$langs->trans("Fill").'</a>';
                 print ' / <a href="#" id="autoreset">'.$langs->trans("Reset").'</a>)';
+				}
                 print '</td>';
                 if (! empty($conf->stock->enabled))
                 {
+					if (empty($conf->productdluo->enabled)) {
                     print '<td align="left">'.$langs->trans("Warehouse").' / '.$langs->trans("Stock").'</td>';
+					} else {
+						print '<td align="left">'.$langs->trans("Warehouse").' / '.$langs->trans("DLC").' / '.$langs->trans("Stock").'</td>';
+					}
                 }
                 print "</tr>\n";
             }
@@ -812,6 +850,7 @@ if ($action == 'create')
                     if (($line->product_type == 1 && empty($conf->global->STOCK_SUPPORTS_SERVICES)) || $defaultqty < 0) $defaultqty=0;
                 }
 
+				if (empty($conf->productdluo->enabled) ||  ! $product->hasdluo()) {
                 // Quantity to send
                 print '<td align="center">';
                 if ($line->product_type == 0 || ! empty($conf->global->STOCK_SUPPORTS_SERVICES))
@@ -873,6 +912,29 @@ if ($action == 'create')
                         }
                     }
                 }
+				} else {
+					print '<td></td><td></td></tr>';
+					$subj=0;
+					print '<input name="idl'.$indiceAsked.'" type="hidden" value="'.$line->id.'">';
+					foreach ($product->stock_warehouse[GETPOST('entrepot_id','int')]->detail_dluo as $ddluo) {
+						//var_dump($ddluo);
+						$substock=$ddluo->qty +0 ;
+						print '<tr><td colspan="3" ></td><td align="center">';
+						print '<input name="qtyl'.$indiceAsked.'_'.$subj.'" id="qtyl'.$indiceAsked.'_'.$subj.'" type="text" size="4" value="'.min($defaultqty,$substock).'">';
+						print '</td>';
+						
+						print '<td align="left">';
+						print '<input name="dluol'.$indiceAsked.'_'.$subj.'" type="hidden" value="'.$ddluo->id.'">';
+						print 'C:'.dol_print_date($ddluo->dlc,'day').' O:'.dol_print_date($ddluo->dluo,'day').' Lot:'.$ddluo->lot;
+						print ' Stock: '.$ddluo->qty.'</td></tr>';
+						if ($defaultqty<=0) {
+							$defaultqty=0;
+						} else {
+							$defaultqty -=min($defaultqty,$substock);
+						}
+						$subj++;
+					}
+				}
 
                 $indiceAsked++;
             }
@@ -1208,6 +1270,11 @@ else if ($id || $ref)
 			print '<td align="left">'.$langs->trans("WarehouseSource").'</td>';
 		}
 
+		if (! empty($conf->productdluo->enabled))
+		{
+			print '<td align="left">'.$langs->trans("DLUO").'</td>';
+		}
+
 		print "</tr>\n";
 
 		$var=false;
@@ -1315,6 +1382,16 @@ else if ($id || $ref)
 				print '</td>';
 			}
 
+			// eat-by date
+			if ((! empty($conf->productdluo->enabled))  && isset($lines[$i]->detail_dluo) ) {
+				print '<td align="center">';
+				$detail = '';
+				foreach ($lines[$i]->detail_dluo as $ddluo) {
+					$detail.= $langs->trans("detailformat",dol_print_date($ddluo->dlc,"day"),dol_print_date($ddluo->dluo,"day"),$ddluo->lot,$ddluo->dluo_qty).'<br/>';
+				}
+				print $form->textwithtooltip($langs->trans("DetailLotNumber"),$detail);
+				print '</td>';
+			}
 			print "</tr>";
 
 			$var=!$var;

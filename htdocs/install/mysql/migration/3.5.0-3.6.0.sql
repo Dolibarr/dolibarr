@@ -18,3 +18,27 @@
 -- -- VMYSQL4.1 DELETE FROM llx_usergroup_user      WHERE fk_usergroup NOT IN (SELECT rowid from llx_usergroup);
 
 ALTER TABLE llx_bookmark ADD COLUMN entity integer DEFAULT 1 NOT NULL;
+ALTER TABLE llx_product ADD COLUMN todluo tinyint DEFAULT 0 NOT NULL;
+
+CREATE TABLE IF NOT EXISTS `llx_product_dluo` (
+  `rowid` int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `tms` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `fk_product_stock` int(11) NOT NULL,
+  `dluo` datetime DEFAULT NULL,
+  `dlc` datetime DEFAULT NULL,
+  `lot` varchar(30) DEFAULT NULL,
+  `qty` double NOT NULL DEFAULT '0',
+  `import_key` varchar(14) DEFAULT NULL,
+  KEY `ix_fk_product_stock` (`fk_product_stock`)
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS `llx_expeditiondet_dluo` (
+  `rowid` int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `fk_expeditiondet` int(11) NOT NULL,
+  `dlc` date DEFAULT NULL,
+  `dluo` date DEFAULT NULL,
+  `lot` varchar(30) DEFAULT NULL,
+  `qty` double NOT NULL DEFAULT '0',
+  `fk_origin_stock` int(11) NOT NULL,
+  KEY `ix_fk_expeditiondet` (`fk_expeditiondet`)
+) ENGINE=InnoDB;

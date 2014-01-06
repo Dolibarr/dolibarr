@@ -64,7 +64,7 @@ class modProduct extends DolibarrModules
 
 		// Dependencies
 		$this->depends = array();
-		$this->requiredby = array("modStock","modBarcode");
+		$this->requiredby = array("modStock","modBarcode","modProductDluo");
 
 		// Config pages
 		$this->config_page_url = array("product.php@product");
