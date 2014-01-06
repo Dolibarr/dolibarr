@@ -59,8 +59,9 @@ print_fiche_titre($langs->trans("OpenSurveyArea"));
 print '<table class="liste">'."\n";
 print '<tr class="liste_titre"><td>'. $langs->trans("Ref").'</td><td>'. $langs->trans("Title") .'</td><td>'. $langs->trans("Type") .'</td><td>'. $langs->trans("Author") .'</td><td align="center">'. $langs->trans("ExpireDate") .'</td><td align="center">'. $langs->trans("NbOfVoters") .'</td>'."\n";
 
-$sql = "SELECT id_sondage, mail_admin, format, date_fin, titre, nom_admin";
+$sql = "SELECT id_sondage, fk_user_creat, u.login, format, date_fin, titre, nom_admin";
 $sql.= " FROM ".MAIN_DB_PREFIX."opensurvey_sondage as p";
+$sql.= " LEFT OUTER JOIN ".MAIN_DB_PREFIX."user u ON u.rowid = p.fk_user_creat";
 // Count total nb of records
 $nbtotalofrecords = 0;
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
@@ -98,7 +99,20 @@ while ($i < min($num,$limit))
 	$type=($obj->format=='A')?'classic':'date';
 	print img_picto('',dol_buildpath('/opensurvey/img/'.($type == 'classic'?'chart-32.png':'calendar-32.png'),1),'width="16"',1);
 	print ' '.$langs->trans($type=='classic'?"TypeClassic":"TypeDate");
-	print '</td><td>'.dol_htmlentities($obj->nom_admin).'</td>';
+	print '</td><td>';
+	
+	// Author
+	if ($obj->fk_user_creat) {
+		$userstatic = new User($db);
+		$userstatic->id = $obj->fk_user_creat;
+		$userstatic->login = $obj->login;
+		
+		print $userstatic->getLoginUrl(1);
+	} else {
+		print dol_htmlentities($obj->nom_admin);
+	}
+	
+	print '</td>';
 
 	print '<td align="center">'.dol_print_date($db->jdate($obj->date_fin),'day');
 	if ($db->jdate($obj->date_fin) < time()) { print ' '.img_warning(); }

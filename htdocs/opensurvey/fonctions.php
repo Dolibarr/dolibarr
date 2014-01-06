@@ -204,7 +204,7 @@ function dol_survey_random($car)
  */
 function ajouter_sondage()
 {
-	global $db;
+	global $db, $user;
 	
 	require_once DOL_DOCUMENT_ROOT.'/opensurvey/class/opensurveysondage.class.php';
 
@@ -227,7 +227,11 @@ function ajouter_sondage()
 	$opensurveysondage->allow_spy = $allow_spy;
 	$opensurveysondage->sujet = $_SESSION['toutchoix'];
 	
-	$opensurveysondage->create(null);
+	$res = $opensurveysondage->create($user);
+	
+	if ($res < 0) {
+		dol_print_error($db);
+	}
 
 	unset($_SESSION["titre"]);
 	unset($_SESSION["nom"]);

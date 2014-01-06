@@ -211,10 +211,17 @@ if ($action == 'edit')
 else print dol_htmlentities($object->titre);
 print '</td></tr>';
 
-// Auteur
+// Author
 print '<tr><td>';
 print $langs->trans("Author") .'</td><td colspan="2">';
-print dol_htmlentities($object->nom_admin);
+if ($object->fk_user_creat) {
+	$userstatic = new User($db);
+	$userstatic->fetch($object->fk_user_creat);
+
+	print $userstatic->getLoginUrl(1);
+} else {
+	print dol_htmlentities($object->nom_admin);
+}
 print '</td></tr>';
 
 // Description
@@ -227,13 +234,16 @@ else print dol_nl2br(dol_htmlentities($object->commentaires));
 print '</td></tr>';
 
 // EMail
-print '<tr><td>'.$langs->trans("EMail") .'</td><td colspan="2">';
-if ($action == 'edit')
-{
-	print '<input type="text" name="nouvelleadresse" size="40" value="'.$object->mail_admin.'">';
+//If linked user, then emails are going to be sent to users' email
+if (!$object->fk_user_creat) {
+	print '<tr><td>'.$langs->trans("EMail") .'</td><td colspan="2">';
+	if ($action == 'edit')
+	{
+		print '<input type="text" name="nouvelleadresse" size="40" value="'.$object->mail_admin.'">';
+	}
+	else print dol_print_email($object->mail_admin);
+	print '</td></tr>';
 }
-else print dol_print_email($object->mail_admin);
-print '</td></tr>';
 
 // Receive an email with each vote
 print '<tr><td>'.$langs->trans('ToReceiveEMailForEachVote').'</td><td colspan="2">';

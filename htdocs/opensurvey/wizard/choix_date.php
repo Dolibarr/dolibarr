@@ -191,7 +191,7 @@ if (GETPOST('reset')) {
  * View
  */
 
-if (! isset($_SESSION['nom']) && ! isset($_SESSION['adresse']) && ! isset($_SESSION['commentaires']) && ! isset($_SESSION['mail']))
+if (! isset($_SESSION['commentaires']) && ! isset($_SESSION['mail']))
 {
 	dol_print_error('', $langs->trans('ErrorOpenSurveyFillFirstSection'));
 	exit;

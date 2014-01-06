@@ -25,3 +25,4 @@ ALTER TABLE  `llx_opensurvey_sondage` DROP COLUMN `id_sondage_admin` ;
 ALTER TABLE  `llx_opensurvey_sondage` DROP COLUMN `canedit` ;
 ALTER TABLE  `llx_opensurvey_sondage` ADD COLUMN `allow_spy` TINYINT( 1 ) UNSIGNED NOT NULL AFTER  `allow_comments` ;
 ALTER TABLE  `llx_opensurvey_sondage` DROP  `origin` ;
+ALTER TABLE  `llx_opensurvey_sondage` ADD  `fk_user_creat` INT( 11 ) UNSIGNED NOT NULL AFTER  `nom_admin` ;

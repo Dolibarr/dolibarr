@@ -34,21 +34,20 @@ $langs->load("opensurvey");
 
 // On teste toutes les variables pour supprimer l'ensemble des warnings PHP
 // On transforme en entites html les données afin éviter les failles XSS
-$post_var = array('titre', 'nom', 'adresse', 'commentaires', 'mailsonde', 'creation_sondage_date', 'creation_sondage_autre');
+$post_var = array('titre', 'commentaires', 'mailsonde', 'creation_sondage_date', 'creation_sondage_autre');
 foreach ($post_var as $var)
 {
 	$$var = GETPOST($var);
 }
 
 // On initialise egalement la session car sinon bonjour les warning :-)
-$session_var = array('titre', 'nom', 'adresse', 'commentaires', 'mailsonde');
+$session_var = array('titre', 'commentaires', 'mailsonde');
 foreach ($session_var as $var)
 {
 	if (isset($_SESSION[$var])) $_SESSION[$var] = null;
 }
 
 // On initialise également les autres variables
-$erreur_adresse = false;
 $cocheplus = '';
 $cochemail = '';
 
@@ -56,8 +55,6 @@ $cochemail = '';
 if (GETPOST("creation_sondage_date") || GETPOST("creation_sondage_autre"))
 {
 	$_SESSION["titre"] = $titre;
-	$_SESSION["nom"] = $nom;
-	$_SESSION["adresse"] = $adresse;
 	$_SESSION["commentaires"] = $commentaires;
 
 	if (GETPOST('mailsonde') == 'on') {
@@ -100,9 +97,7 @@ if (GETPOST("creation_sondage_date") || GETPOST("creation_sondage_autre"))
 		setEventMessage($langs->trans('ErrorOpenSurveyDateFormat'), 'errors');
 	}
 
-	if (! isValidEmail($adresse)) $erreur_adresse = true;
-
-	if ($titre && $nom && $adresse && !$erreur_adresse && $testdate)
+	if ($titre && $testdate)
 	{
 		if (! empty($creation_sondage_date))
 		{
@@ -148,28 +143,6 @@ if (! $_SESSION["titre"] && (GETPOST('creation_sondage_date') || GETPOST('creati
 print '</tr>'."\n";
 print '<tr><td>'. $langs->trans("Description") .'</td><td><textarea name="commentaires" rows="7" cols="40">'.$_SESSION["commentaires"].'</textarea></td>'."\n";
 print '</tr>'."\n";
-print '<tr><td class="fieldrequired">'. $langs->trans("OpenSurveyYourName") .'</td><td>';
-
-print '<input type="text" name="nom" size="40" maxlength="40" value="'.$_SESSION["nom"].'"></td>'."\n";
-
-if (! $_SESSION["nom"] && (GETPOST('creation_sondage_date') || GETPOST('creation_sondage_autre')))
-{
-	setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("OpenSurveyYourName")), 'errors');
-}
-
-print '</tr>'."\n";
-print '<tr><td class="fieldrequired">'.  $langs->trans("OpenSurveyYourEMail")  .'</td><td>';
-
-print '<input type="text" name="adresse" size="40" maxlength="64" value="'.$_SESSION["adresse"].'"></td>'."\n";
-
-if (!$_SESSION["adresse"] && (GETPOST('creation_sondage_date') || GETPOST('creation_sondage_autre')))
-{
-	setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("OpenSurveyYourEMail")), 'errors');
-} elseif ($erreur_adresse && (GETPOST('creation_sondage_date') || GETPOST('creation_sondage_autre')))
-{
-	$langs->load('errors');
-	setEventMessage($langs->trans("ErrorBadEMail", $adresse), 'errors');
-}
 
 print '<tr><td class="fieldrequired">'.  $langs->trans("ExpireDate")  .'</td><td>';
 

@@ -44,8 +44,16 @@ class Opensurveysondage extends CommonObject
 
 	var $id_sondage;
 	var $commentaires;
+	
 	var $mail_admin;
 	var $nom_admin;
+	
+	/**
+	 * Id of user author of the poll
+	 * @var int
+	 */
+	public $fk_user_creat;
+	
 	var $titre;
 	var $date_fin='';
 	var $format;
@@ -99,8 +107,7 @@ class Opensurveysondage extends CommonObject
 
 		$sql.= "id_sondage,";
 		$sql.= "commentaires,";
-		$sql.= "mail_admin,";
-		$sql.= "nom_admin,";
+		$sql.= "fk_user_creat,";
 		$sql.= "titre,";
 		$sql.= "date_fin,";
 		$sql.= "format,";
@@ -112,8 +119,7 @@ class Opensurveysondage extends CommonObject
 
 		$sql.= "'".$this->db->escape($this->id_sondage)."',";
 		$sql.= " ".(empty($this->commentaires)?'NULL':"'".$this->db->escape($this->commentaires)."'").",";
-		$sql.= " ".(empty($this->mail_admin)?'NULL':"'".$this->db->escape($this->mail_admin)."'").",";
-		$sql.= " '".$this->db->escape($this->nom_admin)."',";
+		$sql.= " ".$user->id.",";
 		$sql.= " '".$this->db->escape($this->titre)."',";
 		$sql.= " '".$this->db->idate($this->date_fin)."',";
 		$sql.= " '".$this->db->escape($this->format)."',";
@@ -142,7 +148,7 @@ class Opensurveysondage extends CommonObject
 	            //// End call triggers
 			}
         }
-
+		
         // Commit or rollback
         if ($error)
 		{
@@ -176,6 +182,7 @@ class Opensurveysondage extends CommonObject
 		$sql.= " t.commentaires,";
 		$sql.= " t.mail_admin,";
 		$sql.= " t.nom_admin,";
+		$sql.= " t.fk_user_creat,";
 		$sql.= " t.titre,";
 		$sql.= " t.date_fin,";
 		$sql.= " t.format,";
@@ -209,6 +216,7 @@ class Opensurveysondage extends CommonObject
 				$this->allow_comments = $obj->allow_comments;
 				$this->allow_spy = $obj->allow_spy;
 				$this->sujet = $obj->sujet;
+				$this->fk_user_creat = $obj->fk_user_creat;
 
 				$this->date_m = $this->db->jdate($obj->tls);
 				$ret=1;

@@ -20,6 +20,7 @@ CREATE TABLE llx_opensurvey_sondage (
        commentaires text,
        mail_admin VARCHAR(128),
        nom_admin VARCHAR(64),
+	   fk_user_creat INT(11) UNSIGNED NOT NULL,
        titre TEXT,
        date_fin DATETIME,
        format VARCHAR(2),

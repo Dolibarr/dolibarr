@@ -133,18 +133,25 @@ if (isset($_POST["boutonp"]))
 				$_SESSION["savevoter"]=$nom.','.(empty($_SESSION["savevoter"])?'':$_SESSION["savevoter"]);	// Save voter
 				$listofvoters=explode(',',$_SESSION["savevoter"]);
 
-				if (! empty($object->mailsonde))
+				if ($object->mailsonde)
 				{
-					include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-					$cmailfile=new CMailFile("[".MAIN_APPLICATION_TITLE."] ".$langs->trans("Poll").': '.$object->titre, $object->mail_admin, $conf->global->MAIN_MAIL_EMAIL_FROM, $nom." has filled a line.\nYou can find your poll at the link:\n".getUrlSondage($numsondage));
-					$result=$cmailfile->sendfile();
-					if ($result)
-					{
-
+					if ($object->fk_user_creat) {
+						$userstatic = new User($db);
+						$userstatic->fetch($object->fk_user_creat);
+						
+						$email = $userstatic->email;
+					} else {
+						$email = $object->mail_admin;
 					}
-					else
-					{
-
+					
+					//Linked user may not have an email set
+					if ($email) {
+						include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
+						
+						$body = $langs->trans('EmailSomeoneVoted', $nom, getUrlSondage($numsondage, true));
+						
+						$cmailfile=new CMailFile("[".MAIN_APPLICATION_TITLE."] ".$langs->trans("Poll").': '.$object->titre, $email, $conf->global->MAIN_MAIL_EMAIL_FROM, $body);
+						$result=$cmailfile->sendfile();
 					}
 				}
 			}
@@ -727,21 +734,6 @@ if ($object->allow_comments) {
 }
 
 print '<br><br>';
-
-/*
-// Define $urlwithroot
-$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
-$urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
-//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
-
-$message='';
-$url=$urlwithouturlroot.dol_buildpath('/opensurvey/public/studs.php',1).'?sondage='.$numsondage;
-$urlvcal='<a href="'.$url.'" target="_blank">'.$url.'</a>';
-$message.=img_picto('','object_globe.png').' '.$langs->trans("UrlForSurvey").': '.$urlvcal;
-
-print '<center>'.$message.'</center>';
-*/
-
 
 print '<a name="bas"></a>'."\n";
 
