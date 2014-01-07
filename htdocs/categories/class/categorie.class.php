@@ -528,13 +528,13 @@ class Categorie
 	}
 
 	/**
-	 * 	Return list of contents of a category
+	 * 	Return list of id of elements having this category
 	 *
 	 * 	@param	string	$field				Field name for select in table. Full field name will be fk_field.
 	 * 	@param	string	$classname			PHP Class of object to store entity
 	 * 	@param	string	$category_table		Table name for select in table. Full table name will be PREFIX_categorie_table.
 	 *	@param	string	$object_table		Table name for select in table. Full table name will be PREFIX_table.
-	 *	@return	void
+	 *	@return	mixed						-1 if KO, array of instance of object if OK
 	 */
 	function get_type($field,$classname,$category_table='',$object_table='')
 	{
