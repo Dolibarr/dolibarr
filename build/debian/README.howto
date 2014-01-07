@@ -120,8 +120,11 @@ Puis pour se connecter et préparer l'environnement
 > apt-get install links mysql-client
 
 Pour tester un package
-> cp *.deb /srv/chroot/unstable/tmp
+> cp ../build-area/* /srv/chroot/unstable/tmp
 > sudo schroot -c name_of_chroot
+> cd /tmp
+> lintian --pedantic -E -I dolibarr*.deb
+> lintian --pedantic -E -I dolibarr*.dsc
 > dpkg -i dolibarr*.deb
 > apt-get install -f
 
