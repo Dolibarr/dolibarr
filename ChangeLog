@@ -17,7 +17,8 @@ For developers:
 - New: Add path file of trigger into admin trigger list page.
 - New: More phpunit tests.
 - New: Payments and supplier payment pages tabs can now be extended from modules.
-
+- New: Add option 'az' into GETPOST function to check parameters conatins 
+       only a to z characters.
 
 
 ***** ChangeLog for 3.5 compared to 3.4.* *****
