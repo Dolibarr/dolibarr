@@ -509,7 +509,7 @@ class Productdluo extends CommonObject
 		$sql.= " WHERE fk_product_stock=".$fk_product_stock;
 		
 		if ($with_qty) $sql.= " AND qty<>0";
-    	dol_syslog(get_class($this)."::fetch sql=".$sql, LOG_DEBUG);
+    	dol_syslog("ProductDluo::findAll sql=".$sql, LOG_DEBUG);
         $resql=$db->query($sql);
         if ($resql)
         {

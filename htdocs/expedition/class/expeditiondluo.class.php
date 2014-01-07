@@ -151,7 +151,7 @@ class ExpeditionLigneDluo extends CommonObject
 		$sql.= " FROM ".MAIN_DB_PREFIX."expeditiondet_dluo ";
 		$sql.= " WHERE fk_expeditiondet=".(int)$id_line_expdet;
 
-    	dol_syslog(get_class($this)."::fetch sql=".$sql, LOG_DEBUG);
+    	dol_syslog("ExpeditionDluo::FetchAll sql=".$sql, LOG_DEBUG);
         $resql=$db->query($sql);
         if ($resql)
         {
