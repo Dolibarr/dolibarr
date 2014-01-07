@@ -184,7 +184,7 @@ if ($PAYPALTOKEN)
             $NOTE=urldecode($resArray["NOTE"]);
 
             print $langs->trans("YourPaymentHasBeenRecorded")."<br>\n";
-            print $langs->trans("ThisIsTransactionId",$TRANSACTIONID)."<br>\n";
+            print $langs->trans("ThisIsTransactionId",$TRANSACTIONID)."<br><br>\n";
             if (! empty($conf->global->PAYPAL_MESSAGE_OK)) print $conf->global->PAYPAL_MESSAGE_OK;
 
             // Appel des triggers

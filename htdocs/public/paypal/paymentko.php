@@ -101,7 +101,7 @@ llxHeaderPaypal($langs->trans("PaymentForm"));
 // Show ko message
 print '<span id="dolpaymentspan"></span>'."\n";
 print '<div id="dolpaymentdiv" align="center">'."\n";
-print $langs->trans("YourPaymentHasNotBeenRecorded")."<br>";
+print $langs->trans("YourPaymentHasNotBeenRecorded")."<br><br>";
 
 $PAYPALTOKEN=GETPOST('TOKEN');
 if (empty($PAYPALTOKEN)) $PAYPALTOKEN=GETPOST('token');

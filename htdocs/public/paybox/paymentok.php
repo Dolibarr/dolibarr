@@ -124,7 +124,7 @@ if (! empty($conf->global->PAYBOX_PAYONLINE_SENDEMAIL))
 }
 
 
-print $langs->trans("YourPaymentHasBeenRecorded")."<br>\n";
+print $langs->trans("YourPaymentHasBeenRecorded")."<br><br>\n";
 
 if (! empty($conf->global->PAYBOX_MESSAGE_OK)) print $conf->global->PAYBOX_MESSAGE_OK;
 

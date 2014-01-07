@@ -101,7 +101,7 @@ llxHeaderPayBox($langs->trans("PaymentForm"));
 print '<span id="dolpaymentspan"></span>'."\n";
 print '<div id="dolpaymentdiv" align="center">'."\n";
 
-print $langs->trans("YourPaymentHasNotBeenRecorded")."<br>\n";
+print $langs->trans("YourPaymentHasNotBeenRecorded")."<br><br>\n";
 
 if (! empty($conf->global->PAYBOX_MESSAGE_KO)) print $conf->global->PAYBOX_MESSAGE_KO;
 
