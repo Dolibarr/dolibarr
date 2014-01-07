@@ -3,6 +3,9 @@ English Dolibarr ChangeLog
 --------------------------------------------------------------
 
 
+***** ChangeLog for 3.4.3 compared to 3.4.2 *****
+Fix: Bad get of localtaxes into contracts add lines
+
 ***** ChangeLog for 3.4.2 compared to 3.4.1 *****
 Fix: field's problem into company's page (RIB).
 Fix: Document cerfa doesn't contained firstname & lastname from donator.
