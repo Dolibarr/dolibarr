@@ -375,7 +375,7 @@ if ($id > 0 || ! empty($ref))
 			print '<tr>';
 			print '<td colspan="2">'.$langs->trans("TotalBuyingPriceMin").': ';
 			if ($atleastonenotdefined) print $langs->trans("Unknown").' ('.$langs->trans("SomeSubProductHaveNoPrices").')';
-			print '</td>'; 
+			print '</td>';
 			print '<td align="right">'.($atleastonenotdefined?'':price($total,'','',0,0,-1,$conf->currency)).'</td>';
 			if (! empty($conf->stock->enabled)) print '<td class="liste_total" align="right">&nbsp;</td>';
 			print '</tr>';
@@ -436,7 +436,7 @@ if ($id > 0 || ! empty($ref))
 			if (! empty($conf->categorie->enabled))
 			{
 				print '<tr><td>'.$langs->trans("CategoryFilter").' &nbsp; </td>';
-				print '<td class="overflowwithjm200">'.$form->select_all_categories(0, $parent).'</td></tr>';
+				print '<td class="maxwidthonsmartphone">'.$form->select_all_categories(0, $parent).'</td></tr>';
 			}
 			print '</table>';
 			print '</form>';

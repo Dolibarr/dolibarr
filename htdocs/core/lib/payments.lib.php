@@ -18,7 +18,14 @@
  * or see http://www.gnu.org/
  */
 
-function payment_prepare_head($object) {
+/**
+ * Returns an array with the tabs for the "Payment" section
+ * It loads tabs from modules looking for the entity payment
+ *  
+ * @param Paiement $object Current payment object
+ * @return array Tabs for the payment section
+ */
+function payment_prepare_head(Paiement $object) {
 	
 	global $langs, $conf;
 	
@@ -46,7 +53,14 @@ function payment_prepare_head($object) {
 	return $head;
 }
 
-function payment_supplier_prepare_head($object) {
+/**
+ * Returns an array with the tabs for the "Supplier payment" section
+ * It loads tabs from modules looking for the entity payment_supplier
+ *  
+ * @param Paiement $object Current payment object
+ * @return array Tabs for the payment section
+ */
+function payment_supplier_prepare_head(Paiement $object) {
 	
 	global $langs, $conf;
 	

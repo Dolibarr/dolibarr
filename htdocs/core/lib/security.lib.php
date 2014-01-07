@@ -341,7 +341,7 @@ function restrictedArea($user, $features, $objectid=0, $dbtablename='', $feature
                     $sql.= " AND dbt.entity IN (".getEntity($sharedelement, 1).")";
                 }
             }
-            else if (in_array($feature,$checksoc))
+            else if (in_array($feature,$checksoc))	// We check feature = checksoc
             {
                 // If external user: Check permission for external users
                 if ($user->societe_id > 0)
@@ -450,7 +450,7 @@ function restrictedArea($user, $features, $objectid=0, $dbtablename='', $feature
                 }
             }
 
-            //print $sql."<br>";
+            //print "sql=".$sql."<br>";
             if ($sql)
             {
                 $resql=$db->query($sql);

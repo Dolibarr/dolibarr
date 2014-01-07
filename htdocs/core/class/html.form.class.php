@@ -2525,6 +2525,19 @@ class Form
 
         if (is_array($formquestion) && ! empty($formquestion))
         {
+        	// First add hidden fields and value
+        	foreach ($formquestion as $key => $input)
+            {
+                if (is_array($input) && ! empty($input))
+                {
+                	if ($input['type'] == 'hidden')
+                    {
+                        $more.='<input type="hidden" id="'.$input['name'].'" name="'.$input['name'].'" value="'.dol_escape_htmltag($input['value']).'">'."\n";
+                    }
+                }
+            }
+
+        	// Now add questions
             $more.='<table class="paddingrightonly" width="100%">'."\n";
             $more.='<tr><td colspan="3" valign="top">'.(! empty($formquestion['text'])?$formquestion['text']:'').'</td></tr>'."\n";
             foreach ($formquestion as $key => $input)
@@ -2583,10 +2596,6 @@ class Form
                         if (! empty($input['label'])) $more.=$input['label'].'</td><td valign="top" colspan="2" align="left">';
                         $more.=$input['value'];
                         $more.='</td></tr>'."\n";
-                    }
-                    else if ($input['type'] == 'hidden')
-                    {
-                        $more.='<input type="hidden" id="'.$input['name'].'" name="'.$input['name'].'" value="'.$input['value'].'">';
                     }
                 }
             }

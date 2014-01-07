@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2012-2013 Philippe Berthet     <berthet@systune.be>
- * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2013	   Juanjo Menent		<jmenent@2byte.es>
  *
  * Version V1.1 Initial version of Philippe Berthet
@@ -30,10 +30,7 @@ require("../main.inc.php");
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
-require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 
 // Security check
 $socid = GETPOST('socid','int');
@@ -104,10 +101,6 @@ if (empty($socid))
 $head = societe_prepare_head($object);
 dol_fiche_head($head, 'consumption', $langs->trans("ThirdParty"),0,'company');
 
-print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print '<input type="hidden" name="socid" value="'.$socid.'">';
-
 print '<table class="border" width="100%">';
 print '<tr><td width="25%">'.$langs->trans('ThirdPartyName').'</td>';
 print '<td colspan="3">';
@@ -160,47 +153,61 @@ dol_fiche_end();
 print '<br>';
 
 
+print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="socid" value="'.$socid.'">'."\n";
+
+
 $sql_select='';
 if ($type_element == 'invoice')
-{ // Customer : show products from invoices
-$documentstatic=new Facture($db);
-$sql_select = 'SELECT f.rowid as doc_id, f.facnumber as doc_number, f.type as doc_type, f.datef as datePrint, ';
-$tables_from = MAIN_DB_PREFIX."facture as f,".MAIN_DB_PREFIX."facturedet as d";
-$where = " WHERE f.fk_soc = s.rowid AND s.rowid = ".$socid;
-$where.= " AND d.fk_facture = f.rowid";
-$where.= " AND f.entity = ".$conf->entity;
-$datePrint = 'f.datef';
-$doc_number='f.facnumber';
-$thirdTypeSelect='customer';
+{ 	// Customer : show products from invoices
+	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+	$documentstatic=new Facture($db);
+	$sql_select = 'SELECT f.rowid as doc_id, f.facnumber as doc_number, f.type as doc_type, f.datef as datePrint, ';
+	$tables_from = MAIN_DB_PREFIX."facture as f,".MAIN_DB_PREFIX."facturedet as d";
+	$where = " WHERE f.fk_soc = s.rowid AND s.rowid = ".$socid;
+	$where.= " AND d.fk_facture = f.rowid";
+	$where.= " AND f.entity = ".$conf->entity;
+	$datePrint = 'f.datef';
+	$doc_number='f.facnumber';
+	$thirdTypeSelect='customer';
 }
 if ($type_element == 'order')
 {
+	require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 	$documentstatic=new Commande($db);
-	$sql_select = 'SELECT f.rowid as doc_id, f.ref as doc_number, "1" as doc_type, f.date_commande as datePrint, ';
-	$tables_from = MAIN_DB_PREFIX."commande as f,".MAIN_DB_PREFIX."commandedet as d";
-	$where = " WHERE f.fk_soc = s.rowid AND s.rowid = ".$socid;
-	$where.= " AND d.fk_commande = f.rowid";
-	$where.= " AND f.entity = ".$conf->entity;
-	$datePrint = 'f.date_creation';
-	$doc_number='f.ref';
+	$sql_select = 'SELECT c.rowid as doc_id, c.ref as doc_number, "1" as doc_type, c.date_commande as datePrint, ';
+	$tables_from = MAIN_DB_PREFIX."commande as c,".MAIN_DB_PREFIX."commandedet as d";
+	$where = " WHERE c.fk_soc = s.rowid AND s.rowid = ".$socid;
+	$where.= " AND d.fk_commande = c.rowid";
+	$where.= " AND c.entity = ".$conf->entity;
+	$datePrint = 'c.datef';
+	$doc_number='c.ref';
 	$thirdTypeSelect='customer';
-
-}
-if ($type_element == 'supplier_order')
-{ // Supplier : Show products from orders.
-$documentstatic=new CommandeFournisseur($db);
-$sql_select = 'SELECT c.rowid as doc_id, c.ref as doc_number, "1" as doc_type, c.date_valid as datePrint, ';
-$tables_from = MAIN_DB_PREFIX."commande_fournisseur as c,".MAIN_DB_PREFIX."commande_fournisseurdet as d";
-$where = " WHERE c.fk_soc = s.rowid AND s.rowid = ".$socid;
-$where.= " AND d.fk_commande = c.rowid";
-$datePrint = 'c.date_creation';
-$doc_number='c.ref';
-$thirdTypeSelect='supplier';
 }
 if ($type_element == 'supplier_invoice')
-{
-	// TODO
-
+{ 	// Supplier : Show products from invoices.
+	require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
+	$documentstatic=new FactureFournisseur($db);
+	$sql_select = 'SELECT f.rowid as doc_id, f.ref as doc_number, "1" as doc_type, f.datef as datePrint, ';
+	$tables_from = MAIN_DB_PREFIX."facture_fourn as f,".MAIN_DB_PREFIX."facture_fourn_det as d";
+	$where = " WHERE f.fk_soc = s.rowid AND s.rowid = ".$socid;
+	$where.= " AND d.fk_facture_fourn = f.rowid";
+	$datePrint = 'f.datef';
+	$doc_number='f.ref';
+	$thirdTypeSelect='supplier';
+}
+if ($type_element == 'supplier_order')
+{ 	// Supplier : Show products from orders.
+	require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
+	$documentstatic=new CommandeFournisseur($db);
+	$sql_select = 'SELECT c.rowid as doc_id, c.ref as doc_number, "1" as doc_type, c.date_valid as datePrint, ';
+	$tables_from = MAIN_DB_PREFIX."commande_fournisseur as c,".MAIN_DB_PREFIX."commande_fournisseurdet as d";
+	$where = " WHERE c.fk_soc = s.rowid AND s.rowid = ".$socid;
+	$where.= " AND d.fk_commande = c.rowid";
+	$datePrint = 'c.date_valid';
+	$doc_number='c.ref';
+	$thirdTypeSelect='supplier';
 }
 
 $sql = $sql_select;

@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C)    2013    Cédric Salvador    <csalvador@gpcsolutions.fr>
+/* Copyright (C)    2013    Cédric Salvador     <csalvador@gpcsolutions.fr>
+ * Copyright (C)    2013    Laurent Destailleur	<eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,12 +17,13 @@
  * or see http://www.gnu.org/
  */
 
+$langs->load("link");
 
 /*
  * Confirm suppression
  */
 
-if ($action == 'delete') 
+if ($action == 'delete')
 {
 	$ret = $form->form_confirm(
 			$_SERVER["PHP_SELF"] . '?id=' . $object->id . '&urlfile=' . urlencode(GETPOST("urlfile")) . '&linkid=' . GETPOST('linkid', 'int'),

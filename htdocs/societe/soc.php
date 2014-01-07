@@ -1576,12 +1576,12 @@ else
 
         // Country
         print '<tr><td>'.$langs->trans("Country").'</td><td colspan="'.(2+(($showlogo || $showbarcode)?0:1)).'" class="nowrap">';
-    		if ($object->country_code)
-    		{
-            	$img=picto_from_langcode($object->country_code);
-            	if ($object->isInEEC()) print $form->textwithpicto(($img?$img.' ':'').$object->country,$langs->trans("CountryIsInEEC"),1,0);
-            	else print ($img?$img.' ':'').$object->country;
-    		}
+    	if (! empty($object->country_code))
+    	{
+           	$img=picto_from_langcode($object->country_code);
+           	if ($object->isInEEC()) print $form->textwithpicto(($img?$img.' ':'').$object->country,$langs->trans("CountryIsInEEC"),1,0);
+           	else print ($img?$img.' ':'').$object->country;
+    	}
         print '</td></tr>';
 
         // State
@@ -1826,7 +1826,7 @@ else
         else
 		{
         	$langs->load("mails");
-       		print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NoEmailDefined")).'">'.$langs->trans('SendMail').'</a></div>';
+       		print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NoEmail")).'">'.$langs->trans('SendMail').'</a></div>';
         }
 
         if ($user->rights->societe->creer)
