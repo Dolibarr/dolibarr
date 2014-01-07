@@ -198,12 +198,12 @@ function GETPOST($paramname,$check='',$method=0)
 			if (preg_match('/"/',$out)) $out='';
 			else if (preg_match('/\.\.\//',$out)) $out='';
 		}
-		elseif ($check == 'az')
+		elseif ($check == 'aZ')
 		{
 			$out=trim($out);
 			// '"' is dangerous because param in url can close the href= or src= and add javascript functions.
 			// '../' is dangerous because it allows dir transversals
-			if (preg_match('/[^a-z]+/',$out)) $out='';
+			if (preg_match('/[^a-z]+/i',$out)) $out='';
 		}
 		elseif ($check == 'array')
 		{
