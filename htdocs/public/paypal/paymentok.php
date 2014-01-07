@@ -170,7 +170,6 @@ if ($PAYPALTOKEN)
         	// Send an email
 			if (! empty($conf->global->PAYPAL_PAYONLINE_SENDEMAIL))
 			{
-				//$sendto=$conf->global->MEMBER_PAYONLINE_SENDEMAIL;
 				$sendto=$conf->global->PAYPAL_PAYONLINE_SENDEMAIL;
 				$from=$conf->global->MAILING_EMAIL_FROM;
 				require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
@@ -211,7 +210,6 @@ if ($PAYPALTOKEN)
            	// Send an email
 			if (! empty($conf->global->PAYPAL_PAYONLINE_SENDEMAIL))
 			{
-				//$sendto=$conf->global->MEMBER_PAYONLINE_SENDEMAIL;
 				$sendto=$conf->global->PAYPAL_PAYONLINE_SENDEMAIL;
 				$from=$conf->global->MAILING_EMAIL_FROM;
 				require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
