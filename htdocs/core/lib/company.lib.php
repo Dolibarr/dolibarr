@@ -557,17 +557,16 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
     $title = (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("ContactsForCompany") : $langs->trans("ContactsAddressesForCompany"));
     print_fiche_titre($title,$buttoncreate,'');
 
-    print "\n".'<table class="noborder" width="100%">'."\n";
-
-
-    $param="socid=".$object->id;
-    if ($search_status != '') $param.='&amp;search_status='.$search_status;
-    if ($search_name != '') $param.='&amp;search_name='.urlencode($search_name);
-
     print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'" name="formfilter">';
     print '<input type="hidden" name="socid" value="'.$object->id.'">';
     print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
     print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
+
+    print "\n".'<table class="noborder" width="100%">'."\n";
+
+    $param="socid=".$object->id;
+    if ($search_status != '') $param.='&amp;search_status='.$search_status;
+    if ($search_name != '') $param.='&amp;search_name='.urlencode($search_name);
 
     $colspan=9;
     print '<tr class="liste_titre">';
@@ -579,14 +578,14 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
     print_liste_field_titre($langs->trans("EMail"),$_SERVER["PHP_SELF"],"p.email","",$param,'',$sortfield,$sortorder);
     if (! empty($conf->skype->enabled))
     {
-    	$colspan++;
-    	print '<td>'.$langs->trans("Skype").'</td>';
+		$colspan++;
+		print '<td>'.$langs->trans("Skype").'</td>';
     }
     print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"p.statut","",$param,'',$sortfield,$sortorder);
     // Copy to clipboard
     print "<td>&nbsp;</td>";
     // Add to agenda
-    if (! empty($conf->agenda->enabled) && $user->rights->agenda->myactions->create)
+    if (! empty($conf->agenda->enabled) && ! empty($user->rights->agenda->myactions->create))
     {
     	$colspan++;
         print '<td>&nbsp;</td>';
@@ -602,7 +601,7 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
     print '</td>';
 
     print '<td>&nbsp;</td>';
-     print '<td>&nbsp;</td>';
+    print '<td>&nbsp;</td>';
 
     print '<td>&nbsp;</td>';
 
@@ -611,12 +610,12 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
     print '<td>&nbsp;</td>';
     if (! empty($conf->skype->enabled))
     {
-    	$colspan++;
-    	print '<td>&nbsp;</td>';
+		$colspan++;
+		print '<td>&nbsp;</td>';
     }
-    
+
     // Status
-    print '<td class="liste_titre">';
+    print '<td class="liste_titre maxwidthonsmartphone">';
     print $form->selectarray('search_status', array('0'=>$langs->trans('ActivityCeased'),'1'=>$langs->trans('InActivity')),$search_status);
     print '</td>';
 
@@ -768,6 +767,8 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
         print "</tr>\n";
     }
     print "\n</table>\n";
+
+    print '</form>'."\n";
 
     print "<br>\n";
 ?>
