@@ -365,6 +365,8 @@ if($object->type == 2)
 			$var=true;
 			foreach ($socs as $key => $soc)
 			{
+				if ($user->societe_id > 0 && $soc->id != $user->societe_id)	continue; 	// External user always see only themself
+
 				$i++;
 				$var=!$var;
 				print "\t<tr ".$bc[$var].">\n";
