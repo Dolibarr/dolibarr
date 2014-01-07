@@ -8,6 +8,7 @@ For users:
 - New: Add graph stats for suppliers orders in tab "stats" on products.
 - New: Add option MAIN_HIDE_INACTIVETAB_ON_PRINT to hide inactive tabs when you
   use the "print" view on screen.
+- New: Add menu entry to barcode genration page.
 
 For translators:
 - Update language files.
