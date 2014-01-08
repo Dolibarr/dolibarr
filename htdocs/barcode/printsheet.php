@@ -29,6 +29,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/printsheet/modules_labels.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/genericobject.class.php';
 
 $langs->load("admin");
+$langs->load("members");
 $langs->load("errors");
 
 // Choix de l'annee d'impression ou annee courante.
