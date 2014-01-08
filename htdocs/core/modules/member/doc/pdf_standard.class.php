@@ -114,7 +114,9 @@ class pdf_standard
 
 
 	/**
-	 * On imprime une etiquette
+	 * Output a sticker on page at position _COUNTX, _COUNTY (_COUNTX and _COUNTY start from 0)
+	 * - %LOGO% is replace with company logo
+	 * - %PHOTO% is replace with photo provided as parameter
 	 *
 	 * @param    PDF	    &$pdf		    PDF
 	 * @param    string     $textleft       Textleft
@@ -184,25 +186,27 @@ class pdf_standard
 			$pdf->image($backgroundimage,$_PosX,$_PosY,$this->_Width,$this->_Height);
 		}
 
+		$xleft=2; $ytop=2;
+
 		// Top
 		if ($header!='')
 		{
 			if ($this->code == "CARD")
 			{
 				$pdf->SetDrawColor(128,128,128);
-				$pdf->Line($_PosX, $_PosY+$this->_Line_Height+1, $_PosX+$this->_Width, $_PosY+$this->_Line_Height+1);
+				$pdf->Line($_PosX, $_PosY+$this->_Line_Height+1, $_PosX+$this->_Width, $_PosY+$this->_Line_Height+1); // Only 1 mm and not ytop for top text
 				$pdf->SetDrawColor(0,0,0);
 			}
-			$pdf->SetXY($_PosX, $_PosY+1);
-			$pdf->Cell($this->_Width, $this->_Line_Height, $outputlangs->convToOutputCharset($header),0,1,'C');
+			$pdf->SetXY($_PosX+$xleft, $_PosY+1); // Only 1 mm and not ytop for top text
+			$pdf->Cell($this->_Width-2*$xleft, $this->_Line_Height, $outputlangs->convToOutputCharset($header),0,1,'C');
 		}
 
 
-		$xleft=2; $ytop=2+(empty($header)?0:1+$this->_Line_Height);
-		$maxwidthtouse=round(($this->_Width - 2*$xleft)*$imgscalewidth); $maxheighttouse=round(($this->_Height - 2*$ytop)*$imgscaleheight);
-		$defaultratio=($maxwidthtouse/$maxheighttouse);
+		$ytop+=(empty($header)?0:(1+$this->_Line_Height));
 
 		// Define widthtouse and heighttouse
+		$maxwidthtouse=round(($this->_Width - 2*$xleft)*$imgscalewidth); $maxheighttouse=round(($this->_Height - 2*$ytop)*$imgscaleheight);
+		$defaultratio=($maxwidthtouse/$maxheighttouse);
 		$widthtouse=$maxwidthtouse; $heighttouse=0;		// old value for image
 		$tmp=dol_getImageSize($photo, false);
 		if ($tmp['height'])
