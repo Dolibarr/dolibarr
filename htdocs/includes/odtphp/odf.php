@@ -478,7 +478,8 @@ IMG;
 				header('Content-Disposition: attachment; filename="'.$name.'.pdf"');
 				readfile("$name.pdf");
 			}
-			unlink("$name.odt");
+			if (!empty($conf->global->MAIN_ODT_AS_PDF_DEL_SOURCE))
+				unlink("$name.odt");
 		} else {
 			dol_syslog(get_class($this).'::exportAsAttachedPDF $ret_val='.$retval, LOG_DEBUG);
 			dol_syslog(get_class($this).'::exportAsAttachedPDF $output_arr='.var_export($output_arr,true), LOG_DEBUG);
