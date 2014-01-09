@@ -972,11 +972,11 @@ class ExtraFields
 				{
 					foreach ($fields_label as $field_toshow)
 					{
-						$translabel=$langs->trans($obj->$InfoFieldList[1]);
-						if ($translabel!=$obj->$InfoFieldList[1]) {
-							$value=dol_trunc($translabel,18).' ';
+						$translabel=$langs->trans($field_toshow);
+						if ($translabel!=$field_toshow) {
+							$value.=dol_trunc($translabel,18).' ';
 						}else {
-							$value=$obj->$InfoFieldList[1].' ';
+							$value.=$obj->$field_toshow.' ';
 						}
 					}
 				}
