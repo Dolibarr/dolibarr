@@ -122,7 +122,7 @@ class Form
      * @param	object	$object			Object
      * @param	boolean	$perm			Permission to allow button to edit parameter
      * @param	string	$typeofdata		Type of data ('string' by default, 'amount', 'email', 'numeric:99', 'text' or 'textarea:rows:cols', 'day' or 'datepicker', 'ckeditor:dolibarr_zzz:width:height:savemethod:toolbarstartexpanded:rows:cols', 'select:xxx'...)
-     * @param	string	$editvalue		When in edit mode, use this value as $value instead of value (for example, you can provide here a formated price instead of value)
+     * @param	string	$editvalue		When in edit mode, use this value as $value instead of value (for example, you can provide here a formated price instead of value). Use '' to use same than $value
      * @param	object	$extObject		External object
      * @param	string	$success		Success message
      * @param	string	$moreparam		More param to add on a href URL
@@ -189,7 +189,14 @@ class Form
                     $ret.=$doleditor->Create(1);
                 }
                 $ret.='</td>';
-                if ($typeofdata != 'day' && $typeofdata != 'datepicker' && $typeofdata != 'datehourpicker') $ret.='<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
+                if ($typeofdata != 'day' && $typeofdata != 'datepicker' && $typeofdata != 'datehourpicker')
+                {
+                	$ret.='<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+                	// TODO Add a button Cancel
+                	//$ret.='<br><br>'."\n";
+                	//$ret.='<input type="submit" class="button" value="'.$langs->trans("Cancel").'">';
+                	$ret.='</td>';
+                }
                 $ret.='</tr></table>'."\n";
                 $ret.='</form>'."\n";
             }
