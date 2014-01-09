@@ -946,6 +946,7 @@ function pdf_getlinedesc($object,$i,$outputlangs,$hideref=0,$hidedesc=0,$issuppl
 	$desc=(! empty($object->lines[$i]->desc)?$object->lines[$i]->desc:(! empty($object->lines[$i]->description)?$object->lines[$i]->description:''));
 	$ref_supplier=(! empty($object->lines[$i]->ref_supplier)?$object->lines[$i]->ref_supplier:(! empty($object->lines[$i]->ref_fourn)?$object->lines[$i]->ref_fourn:''));    // TODO Not yet saved for supplier invoices, only supplier orders
 	$note=(! empty($object->lines[$i]->note)?$object->lines[$i]->note:'');
+	$ddluo=(! empty($object->lines[$i]->detail_dluo)?$object->lines[$i]->detail_dluo:false);
 
 	if ($issupplierline) $prodser = new ProductFournisseur($db);
 	else $prodser = new Product($db);
@@ -1077,6 +1078,21 @@ function pdf_getlinedesc($object,$i,$outputlangs,$hideref=0,$hidedesc=0,$issuppl
 		//print '>'.$outputlangs->charset_output.','.$period;
 		$libelleproduitservice.="__N__".$period;
 		//print $libelleproduitservice;
+	}
+
+	if ($ddluo) 
+	{
+		$format='day';
+		//$libelleproduitservice.="__N__";
+		foreach ($ddluo as $detail)
+		{
+			$dte=array();
+			if ($detail->dlc) $dte[]=$outputlangs->transnoentitiesnoconv('printDLC',dol_print_date($detail->dlc, $format, false, $outputlangs));
+			if ($detail->dluo) $dte[]=$outputlangs->transnoentitiesnoconv('printDLUO',dol_print_date($detail->dluo, $format, false, $outputlangs));
+			if ($detail->lot) $dte[]=$outputlangs->transnoentitiesnoconv('printLOT',$detail->lot);
+			$dte[]=$outputlangs->transnoentitiesnoconv('printQty',$detail->dluo_qty);
+			$libelleproduitservice.= "__N__  ".implode($dte,"-");
+		}
 	}
 
 	// Now we convert \n into br

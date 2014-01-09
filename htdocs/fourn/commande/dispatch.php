@@ -4,6 +4,7 @@
  * Copyright (C) 2005      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2014      Cédric Gross         <c.gross@kreiz-it.fr>
  *
  * This	program	is free	software; you can redistribute it and/or modify
  * it under the	terms of the GNU General Public	License	as published by
@@ -40,9 +41,10 @@ $langs->load('bills');
 $langs->load('deliveries');
 $langs->load('products');
 $langs->load('stocks');
+if (! empty($conf->productdluo->enabled)) $langs->load('productdluo');
 
 // Security check
-$id = isset($_GET["id"])?$_GET["id"]:'';
+$id = isset($_GET["id"])?GETPOST("id",'int'):'';
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'fournisseur', $id, '', 'commande');
 
@@ -53,7 +55,7 @@ if (empty($conf->stock->enabled))
 
 // Recuperation	de l'id	de projet
 $projectid =	0;
-if ($_GET["projectid"]) $projectid = $_GET["projectid"];
+if ($_GET["projectid"]) $projectid = GETPOST("projectid",'int');
 
 $mesg='';
 
@@ -64,7 +66,7 @@ $mesg='';
 if ($_POST["action"] ==	'dispatch' && $user->rights->fournisseur->commande->receptionner)
 {
 	$commande = new CommandeFournisseur($db);
-	$commande->fetch($_GET["id"]);
+	$commande->fetch($id);
 
 	foreach($_POST as $key => $value)
 	{
@@ -74,9 +76,9 @@ if ($_POST["action"] ==	'dispatch' && $user->rights->fournisseur->commande->rece
 			$qty = "qty_".$reg[1];
 			$ent = "entrepot_".$reg[1];
 			$pu = "pu_".$reg[1];
-			if ($_POST[$ent] > 0)
+			if (GETPOST($ent,'int') > 0)
 			{
-				$result = $commande->DispatchProduct($user, $_POST[$prod], $_POST[$qty], $_POST[$ent], $_POST[$pu], $_POST["comment"]);
+				$result = $commande->DispatchProduct($user, GETPOST($prod,'int'),GETPOST($qty), GETPOST($ent,'int'), GETPOST($pu), GETPOST("comment"));
 			}
 			else
 			{
@@ -84,7 +86,33 @@ if ($_POST["action"] ==	'dispatch' && $user->rights->fournisseur->commande->rece
 				$text = $langs->transnoentities('Warehouse').', '.$langs->transnoentities('Line').'' .($reg[1]-1);
 				setEventMessage($langs->trans('ErrorFieldRequired',$text), 'errors');
 			}
+		} else if (preg_match('/^product_([0-9]+)_([0-9]+)$/i', $key, $reg)) {
+			//eat-by date dispatch
+			$prod = "product_".$reg[1]."_".$reg[2];
+			$qty = "qty_".$reg[1]."_".$reg[2];
+			$ent = "entrepot_".$reg[1]."_".$reg[2];
+			$pu = "pu_".$reg[1]."_".$reg[2];
+			$lot = "lot_number_".$reg[1]."_".$reg[2];
+			$dDLUO = dol_mktime(12, 0 , 0, $_POST['dluo_'.$reg[1]."_".$reg[2].'month'], $_POST['dluo_'.$reg[1]."_".$reg[2].'day'], $_POST['dluo_'.$reg[1]."_".$reg[2].'year']);
+			$dDLC = dol_mktime(12, 0 , 0, $_POST['dlc_'.$reg[1]."_".$reg[2].'month'], $_POST['dlc_'.$reg[1]."_".$reg[2].'day'], $_POST['dlc_'.$reg[1]."_".$reg[2].'year']);
+
+			if (! (GETPOST($ent,'int') > 0))
+			{
+				dol_syslog('No dispatch for line '.$key.' as no warehouse choosed');
+				$text = $langs->transnoentities('Warehouse').', '.$langs->transnoentities('Line').'' .($reg[1]-1);
+				setEventMessage($langs->trans('ErrorFieldRequired',$text), 'errors');
+			}
+			if (!((GETPOST($qty) > 0 ) && ( $_POST[$lot]  or $dDLUO or $dDLC) ))
+			{
+				dol_syslog('No dispatch for line '.$key.' as qty is not set or eat-by date are not set');
+				$text = $langs->transnoentities('atleast1dlcfield').', '.$langs->transnoentities('Line').'' .($reg[1]-1);
+				setEventMessage($langs->trans('ErrorFieldRequired',$text), 'errors');
+			} else {
+				$result = $commande->DispatchProduct($user, GETPOST($prod,'int'),GETPOST($qty), GETPOST($ent,'int'), GETPOST($pu), GETPOST("comment"),$dDLC,$dDLUO,GETPOST($lot));
 		}
+
+		}
+
 	}
 
 	if (! $notrigger)
@@ -102,7 +130,7 @@ if ($_POST["action"] ==	'dispatch' && $user->rights->fournisseur->commande->rece
 
 	if ($result > 0)
 	{
-		header("Location: dispatch.php?id=".$_GET["id"]);
+		header("Location: dispatch.php?id=".$id);
 		exit;
 	}
 	else
@@ -116,7 +144,12 @@ if ($_POST["action"] ==	'dispatch' && $user->rights->fournisseur->commande->rece
  * View
  */
 
-llxHeader('',$langs->trans("OrderCard"),"CommandeFournisseur");
+ if (!empty($conf->productdluo->enabled)) {
+	llxHeader('',$langs->trans("OrderCard"),"CommandeFournisseur",'',0,0,array('/core/js/lib_rare.js'));
+
+ } else {
+	llxHeader('',$langs->trans("OrderCard"),"CommandeFournisseur");
+}
 
 $form =	new Form($db);
 $warehouse_static = new Entrepot($db);
@@ -233,7 +266,7 @@ if ($id > 0 || ! empty($ref))
 			}
 
 			$sql = "SELECT l.fk_product, l.subprice, SUM(l.qty) as qty,";
-			$sql.= " p.ref, p.label";
+			$sql.= " p.ref, p.label,  p.todluo";
 			$sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseurdet as l";
 			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON l.fk_product=p.rowid";
 			$sql.= " WHERE l.fk_commande = ".$commande->id;
@@ -249,13 +282,23 @@ if ($id > 0 || ! empty($ref))
 				if ($num)
 				{
 					print '<tr class="liste_titre">';
-					print '<td>'.$langs->trans("Description").'</td>';
+					print '<td colspan="4" width="40%">'.$langs->trans("Description").'</td>';
 
 					print '<td align="right">'.$langs->trans("QtyOrdered").'</td>';
 					print '<td align="right">'.$langs->trans("QtyDispatched").'</td>';
 					print '<td align="right">'.$langs->trans("QtyDelivered").'</td>';
 					print '<td align="right">'.$langs->trans("Warehouse").'</td>';
 					print "</tr>\n";
+					if (!empty($conf->productdluo->enabled)) {
+						print '<tr class="liste_titre">';
+						print '<td width="5%">&nbsp;</td>';
+						print '<td>'.$langs->trans("DLC").'</td>';
+						print '<td>'.$langs->trans("lDLUO").'</td>';
+						print '<td>'.$langs->trans("lot_number").'</td>';
+						print '<td colspan="4" width="50%">&nbsp;</td>';
+						print "</tr>\n";
+					}
+
 				}
 
 				$nbfreeproduct=0;
@@ -281,31 +324,48 @@ if ($id > 0 || ! empty($ref))
 					
 							$var=!$var;
 							print "<tr ".$bc[$var].">";
-							print '<td>';
+							print '<td colspan="4">';
 							print '<a href="'.DOL_URL_ROOT.'/product/fournisseurs.php?id='.$objp->fk_product.'">'.img_object($langs->trans("ShowProduct"),'product').' '.$objp->ref.'</a>';
 							print ' - '.$objp->label;
 							// To show detail cref and description value, we must make calculation by cref
 							//print ($objp->cref?' ('.$objp->cref.')':'');
 							//if ($objp->description) print '<br>'.nl2br($objp->description);
-							print '<input name="product_'.$i.'" type="hidden" value="'.$objp->fk_product.'">';
-							print '<input name="pu_'.$i.'" type="hidden" value="'.$objp->subprice.'">';
+							if ((empty($conf->productdluo->enabled)) || $objp->todluo==0) {
+								$suffix='_'.$i;
+							} else {
+								$suffix='_0_'.$i;
+							}
 							print "</td>\n";
 
 							print '<td align="right">'.$objp->qty.'</td>';
 							print '<td align="right">'.$products_dispatched[$objp->fk_product].'</td>';
 
+							if ( !(empty($conf->productdluo->enabled)) && $objp->todluo==1) {
+								print '<td colspan="2" align="center">'.img_picto_common($langs->trans('Adddispatchdluo'),'treemenu/plustop2.gif','onClick="AddLineDLUO('.$i.')"').'</td>';
+								print '</tr>';
+								print '<tr '.$bc[$var].' name="dluo'.$suffix.'"><td width="5%">';
+								print '<input name="product'.$suffix.'" type="hidden" value="'.$objp->fk_product.'">';
+								print '<input name="pu'.$suffix.'" type="hidden" value="'.$objp->subprice.'"></td><td>';
+								$form->select_date('','dlc'.$suffix,'','',1,"");
+								print '</td><td>';
+								$form->select_date('','dluo'.$suffix,'','',1,"");
+								print '</td><td>';
+								print '<input type="text" name="lot_number'.$suffix.'" size="40" value="">';
+								print '</td>';
+								print '<td colspan="2">&nbsp</td>';
+							}
 							// Dispatch
-							print '<td align="right"><input name="qty_'.$i.'" type="text" size="8" value="'.($remaintodispatch).'"></td>';
+							print '<td align="right"><input name="qty'.$suffix.'" type="text" size="8" value="'.($remaintodispatch).'"></td>';
 
 							// Warehouse
 							print '<td align="right">';
 							if (count($listwarehouses)>1)
 							{
-								print $form->selectarray("entrepot_".$i, $listwarehouses, '', 1, 0, 0, '', 0, 0, $disabled);
+								print $form->selectarray("entrepot".$suffix, $listwarehouses, '', 1, 0, 0, '', 0, 0, $disabled);
 							}
 							elseif  (count($listwarehouses)==1)
 							{
-								print $form->selectarray("entrepot_".$i, $listwarehouses, '', 0, 0, 0, '', 0, 0, $disabled);
+								print $form->selectarray("entrepot".$suffix, $listwarehouses, '', 0, 0, 0, '', 0, 0, $disabled);
 							}
 							else
 							{

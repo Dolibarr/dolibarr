@@ -31,6 +31,7 @@
 
 include_once DOL_DOCUMENT_ROOT.'/core/class/commonorder.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+if (! empty($conf->productdluo->enabled)) require_once DOL_DOCUMENT_ROOT.'/product/class/productdluo.class.php';
 
 
 /**
@@ -1310,9 +1311,12 @@ class CommandeFournisseur extends CommonOrder
      * @param 	int			$entrepot	Id of warehouse to add product
      * @param 	double		$price		Price for PMP value calculation
      * @param	string		$comment	Comment for stock movement
+	 * @param	date		$dlc		eat-by date
+	 * @param	date		$dluo		sell-by date
+	 * @param	string		$lot		Lot number
      * @return 	int						<0 if KO, >0 if OK
      */
-    function DispatchProduct($user, $product, $qty, $entrepot, $price=0, $comment='')
+    function DispatchProduct($user, $product, $qty, $entrepot, $price=0, $comment='',$dlc='',$dluo='',$lot='')
     {
         global $conf;
         $error = 0;
@@ -1364,7 +1368,7 @@ class CommandeFournisseur extends CommonOrder
                 $mouv = new MouvementStock($this->db);
                 if ($product > 0)
                 {
-                    $result=$mouv->reception($user, $product, $entrepot, $qty, $price, $comment);
+                    $result=$mouv->reception($user, $product, $entrepot, $qty, $price, $comment,$dlc,$dluo,$lot);
                     if ($result < 0)
                     {
                         $this->error=$mouv->error;

@@ -1,4 +1,5 @@
 // Copyright (C) 2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+// Copyright (C) 2014 Cédric GROSS	<c.gross@kreiz-it.fr>
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -28,4 +29,18 @@ function fetchTimezone() {
         tzHour = Math.floor(Math.abs(tzRaw) / 60),
         tzMin = Math.abs(tzRaw) % 60;
     return ((tzRaw >= 0) ? "-" : "") + ((tzHour < 10) ? "0" : "") + tzHour + ":" + ((tzMin < 10) ? "0" : "") + tzMin;
+}
+
+function AddLineDLUO(index) {
+	var nme = 'dluo_0_'+index;
+	$row=$("tr[name='"+nme+"']").clone(true);
+	$row.find("input[name^='qty']").val('');
+	var trs = $("tr[name^='dluo_'][name$='_"+index+"']");
+	var newrow=$row.html().replace(/_0_/g,"_"+(trs.length)+"_");
+	$row.html(newrow);
+	//clear value
+	$row.find("input[name^='qty']").val('');
+	//change name of row
+	$row.attr('name','dluo_'+trs.length+'_'+index);
+	$("tr[name^='dluo_'][name$='_"+index+"']:last").after($row);
 }

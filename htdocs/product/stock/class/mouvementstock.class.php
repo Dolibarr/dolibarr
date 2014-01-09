@@ -2,6 +2,7 @@
 /* Copyright (C) 2003-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2011      Jean Heimburger      <jean@tiaris.info>
+ * Copyright (C) 2014	   Cedric GROSS	        <c.gross@kreiz-it.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,9 +56,12 @@ class MouvementStock
 	 *	@param		int		$price			Unit price HT of product, used to calculate average weighted price (PMP in french). If 0, average weighted price is not changed.
 	 *	@param		string	$label			Label of stock movement
 	 *	@param		string	$datem			Force date of movement
+	 *	@param		date	$dlc			eat-by date
+	 *	@param		date	$dluo			sell-by date
+	 *	@param		string	$lot			Lot number
 	 *	@return		int						<0 if KO, 0 if fk_product is null, >0 if OK
 	 */
-	function _create($user, $fk_product, $entrepot_id, $qty, $type, $price=0, $label='', $datem='')
+	function _create($user, $fk_product, $entrepot_id, $qty, $type, $price=0, $label='', $datem='',$dlc='',$dluo='',$lot='',$skip_dluo=false)
 	{
 		global $conf, $langs;
 
@@ -132,6 +136,7 @@ class MouvementStock
 						$num = 1;
 						$oldqtywarehouse = $obj->reel;
 						$oldpmpwarehouse = $obj->pmp;
+						$fk_product_stock = $obj->rowid;
 					}
 					$this->db->free($resql);
 				}
@@ -193,7 +198,17 @@ class MouvementStock
 					$this->error=$this->db->lasterror();
 					dol_syslog(get_class($this)."::_create ".$this->error, LOG_ERR);
 					$error = -3;
+				} else if(empty($fk_product_stock)){
+					$fk_product_stock = $this->db->last_insert_id(MAIN_DB_PREFIX."product_stock");
 				}
+
+				}
+
+			// Update detail stock for sell-by date
+			if (($product->hasdluo()) && (! $error) && (! $skip_dluo)){
+				$param_dluo=array('fk_product_stock' =>$fk_product_stock, 'dlc'=>$dlc,'dluo'=>$dluo,'lotnumber'=>$lot);
+				$result=$this->_create_dluo($param_dluo,$qty);
+				if ($result<0) $error++;
 			}
 
 			if (! $error)
@@ -314,9 +329,21 @@ class MouvementStock
 	 */
 	function livraison($user, $fk_product, $entrepot_id, $qty, $price=0, $label='', $datem='')
 	{
-		return $this->_create($user, $fk_product, $entrepot_id, (0 - $qty), 2, $price, $label, $datem);
+		return $this->_create($user, $fk_product, $entrepot_id, (0 - $qty), 2, $price, $label, $datem,'','','',true);
 	}
 
+	/**
+	 *	Decrease stock for eat-by date record
+	 *
+	 * 	@param		int		$id_stock_dluo		Id product_dluo
+	 * 	@param		int		$qty			Quantity
+	 * 	@return		int						<0 if KO, >0 if OK
+	 */
+	function livraison_dluo($id_stock_dluo, $qty)
+	{
+		$ret=$this->_create_dluo($id_stock_dluo, (0 - $qty));
+		return $ret;
+	}
 
 	/**
 	 *	Increase stock for product and subproducts
@@ -327,11 +354,14 @@ class MouvementStock
 	 * 	@param		int		$qty			Quantity
 	 * 	@param		int		$price			Price
 	 * 	@param		string	$label			Label of stock movement
+	 *	@param		date	$dlc			eat-by date
+	 *	@param		date	$dluo			sell-by date
+	 *	@param		string	$lot			Lot number
 	 *	@return		int						<0 if KO, >0 if OK
 	 */
-	function reception($user, $fk_product, $entrepot_id, $qty, $price=0, $label='')
+	function reception($user, $fk_product, $entrepot_id, $qty, $price=0, $label='',$dlc='',$dluo='',$lot='')
 	{
-		return $this->_create($user, $fk_product, $entrepot_id, $qty, 3, $price, $label);
+		return $this->_create($user, $fk_product, $entrepot_id, $qty, 3, $price, $label,'',$dlc,$dluo,$lot);
 	}
 
 
@@ -383,6 +413,50 @@ class MouvementStock
 			dol_print_error($this->db);
 			return -1;
 		}
+	}
+
+	function _create_dluo($dluo,$qty ) {
+		$pdluo=New productdluo($this->db);
+		if (is_numeric($dluo)) {
+			$result=$pdluo->fetch($dluo);
+		} else if (is_array($dluo)) {
+			if (isset($dluo['fk_product_stock'])) {
+				$vfk_product_stock=$dluo['fk_product_stock'];
+				$vdlc = $dluo['dlc'];
+				$vdluo = $dluo['dluo'];
+				$vlotnumber = $dluo['lotnumber'];
+				$result = $pdluo->find($vfk_product_stock,$vdlc,$vdluo,$vlotnumber);
+			} else {
+				dol_syslog(get_class($this)."::_create_dluo array param dluo must contain at least key fk_product_stock".$error, LOG_ERR);
+				$result = -1;
+			}
+		} else {
+			dol_syslog(get_class($this)."::_create_dluo error invalid param dluo".$error, LOG_ERR);
+			$result =  -1;
+		}
+
+		//eat-by date record found so we update it
+		if ($result>0) {
+			if ($pdluo->id >0) {
+				$pdluo->qty +=$qty;
+				if ($pdluo->qty == 0) {
+					$result=$pdluo->delete(0,1);
+				} else {
+					$result=$pdluo->update(0,1);
+				}
+			} else {
+				$pdluo->fk_product_stock=$vfk_product_stock;
+				$pdluo->qty = $qty;
+				$pdluo->dlc = $vdlc;
+				$pdluo->dluo = $vdluo;
+				$pdluo->lot = $vlotnumber;
+				$result=$pdluo->create(0,1);
+			}
+			return $result;
+		} else {
+			return -1;
+		}
+
 	}
 	
 }

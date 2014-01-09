@@ -8,6 +8,7 @@
  * Copyright (C) 2010-2011 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2013      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2013      Cédric Salvador      <csalvador@gpcsolutions.fr>
+ * Copyright (C) 2014      Cédric Gross         <c.gross@kreiz-it.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,6 +45,7 @@ $langs->load("products");
 $langs->load("other");
 if (! empty($conf->stock->enabled)) $langs->load("stocks");
 if (! empty($conf->facture->enabled)) $langs->load("bills");
+if (! empty($conf->productdluo->enabled)) $langs->load("productdluo");
 
 $mesg=''; $error=0; $errors=array(); $_error=0;
 
@@ -181,6 +183,7 @@ if (empty($reshook))
             $object->type               	= $type;
             $object->status             	= GETPOST('statut');
             $object->status_buy           	= GETPOST('statut_buy');
+			$object->status_dluo           	= GETPOST('status_dluo');
             $object->description        	= dol_htmlcleanlastbr(GETPOST('desc'));
             $object->note               	= dol_htmlcleanlastbr(GETPOST('note'));
             $object->customcode            = GETPOST('customcode');
@@ -257,6 +260,7 @@ if (empty($reshook))
                 $object->country_id         = GETPOST('country_id');
                 $object->status             = GETPOST('statut');
                 $object->status_buy         = GETPOST('statut_buy');
+                $object->status_dluo        = GETPOST('status_dluo');
                 $object->seuil_stock_alerte = GETPOST('seuil_stock_alerte');
                 $object->desiredstock       = GETPOST('desiredstock');
                 $object->duration_value     = GETPOST('duration_value');
@@ -720,6 +724,14 @@ else
         print $form->selectarray('statut_buy',$statutarray,GETPOST('statut_buy"'));
         print '</td></tr>';
 
+        // eat-by date
+		if ($conf->productdluo->enabled) {
+			print '<tr><td class="fieldrequired">'.$langs->trans("Status").' ('.$langs->trans("DLUO").')</td><td>';
+			$statutarray=array('0' => $langs->trans("ProductStatusNotOnEatBy"), '1' => $langs->trans("ProductStatusOnEatBy"));
+			print $form->selectarray('status_dluo',$statutarray,GETPOST('status_dluo"'));
+			print '</td></tr>';
+		}
+
         // Stock min level
         if ($type != 1 && ! empty($conf->stock->enabled))
         {
@@ -917,6 +929,14 @@ else
             }
             print '</select>';
             print '</td></tr>';
+
+			// eat-by date
+			if ($conf->productdluo->enabled) {
+				print '<tr><td class="fieldrequired">'.$langs->trans("Status").' ('.$langs->trans("DLUO").')</td><td colspan="2">';
+				$statutarray=array('0' => $langs->trans("ProductStatusNotOnEatBy"), '1' => $langs->trans("ProductStatusOnEatBy"));
+				print $form->selectarray('status_dluo',$statutarray,$object->status_dluo);
+				print '</td></tr>';
+			}
 
             // Description (used in invoice, propal...)
             print '<tr><td valign="top">'.$langs->trans("Description").'</td><td colspan="2">';
@@ -1145,6 +1165,13 @@ else
             print '<tr><td>'.$langs->trans("Status").' ('.$langs->trans("Buy").')</td><td colspan="2">';
             print $object->getLibStatut(2,1);
             print '</td></tr>';
+
+			// eat-by date
+			if ($conf->productdluo->enabled) {
+				print '<tr><td>'.$langs->trans("Status").' ('.$langs->trans("DLUO").')</td><td colspan="2">';
+				print $object->getLibStatut(2,2);
+				print '</td></tr>';
+			}
 
             // Description
             print '<tr><td valign="top">'.$langs->trans("Description").'</td><td colspan="2">'.(dol_textishtml($object->description)?$object->description:dol_nl2br($object->description,1,true)).'</td></tr>';
