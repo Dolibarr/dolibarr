@@ -4,6 +4,7 @@ English Dolibarr ChangeLog
 
 
 ***** ChangeLog for 3.4.3 compared to 3.4.2 *****
+Fix: Warning into bank conciliation feature.
 Fix: Bad get of localtaxes into contracts add lines.
 Fix: Add a limit into list to avoid browser to hang when database is too large.
 

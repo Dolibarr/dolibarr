@@ -1159,7 +1159,7 @@ class AccountLine extends CommonObject
         $this->db->begin();
 
         // Delete urls
-        $result=$this->delete_urls();
+        $result=$this->delete_urls($user);
         if ($result < 0)
         {
             $nbko++;
