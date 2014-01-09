@@ -629,13 +629,13 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
     if ($maskraz > 0)    // A reset is required
     {
     	if ($maskraz == 99) {
-			$maskraz = date('m');
+			$maskraz = date('m', $date);
 			$resetEveryMonth = true;
 		}
         if ($maskraz > 12) return 'ErrorBadMaskBadRazMonth';
 
         // Define posy, posm and reg
-        if ($maskraz > 1)	// if reset is not first month, we need month and year into mask
+        if ($maskraz > 1 || $resetEveryMonth)	// if reset is not first month, we need month and year into mask
         {
             if (preg_match('/^(.*)\{(y+)\}\{(m+)\}/i',$maskwithonlyymcode,$reg)) { $posy=2; $posm=3; }
             elseif (preg_match('/^(.*)\{(m+)\}\{(y+)\}/i',$maskwithonlyymcode,$reg)) { $posy=3; $posm=2; }
