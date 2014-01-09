@@ -333,7 +333,7 @@ class MouvementStock
 	}
 
 	/**
-	 *	Decrease stock for dluo record
+	 *	Decrease stock for eat-by date record
 	 *
 	 * 	@param		int		$id_stock_dluo		Id product_dluo
 	 * 	@param		int		$qty			Quantity
@@ -354,11 +354,14 @@ class MouvementStock
 	 * 	@param		int		$qty			Quantity
 	 * 	@param		int		$price			Price
 	 * 	@param		string	$label			Label of stock movement
+	 *	@param		date	$dlc			eat-by date
+	 *	@param		date	$dluo			sell-by date
+	 *	@param		string	$lot			Lot number
 	 *	@return		int						<0 if KO, >0 if OK
 	 */
-	function reception($user, $fk_product, $entrepot_id, $qty, $price=0, $label='')
+	function reception($user, $fk_product, $entrepot_id, $qty, $price=0, $label='',$dlc='',$dluo='',$lot='')
 	{
-		return $this->_create($user, $fk_product, $entrepot_id, $qty, 3, $price, $label);
+		return $this->_create($user, $fk_product, $entrepot_id, $qty, 3, $price, $label,'',$dlc,$dluo,$lot);
 	}
 
 

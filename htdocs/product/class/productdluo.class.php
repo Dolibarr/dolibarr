@@ -449,7 +449,7 @@ class Productdluo extends CommonObject
 		$sql.= " WHERE fk_product_stock=".$fk_product_stock;
         if (! empty($dlc)) array_push($where," dlc = '".$this->db->idate($dlc)."'");
 		if (! empty($dluo)) array_push($where," dluo = '".$this->db->idate($dluo)."'");
-		if (! empty($lot_number)) array_push($where," lot = '".$this->db->escape($lot_number)."'");
+		if (! empty($lot_number)) $sql.= " AND lot = '".$this->db->escape($lot_number)."'";
 
 		if (! empty($where)) $sql.= " AND (".implode(" OR ",$where).")";
 		

@@ -13,3 +13,4 @@ lot_number= Numéro de lot
 atleast1dlcfield= DLC ou DLUO ou Numéro de lot
 DetailLotNumber= Détails des lots
 detailformat= C:%s UO: %s LOT: %s (Qté : %d)
+Adddispatchdluo= Ajouter une ligne de dispatch DLUO
