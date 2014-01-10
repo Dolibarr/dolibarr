@@ -3469,6 +3469,7 @@ function dol_nl2br($stringtoencode,$nl2brmode=0,$forxml=false)
  *	@param	string	$stringtoencode		String to encode
  *	@param	int		$nl2brmode			0=Adding br before \n, 1=Replacing \n by br (for use with FPDF writeHTMLCell function for example)
  *  @param  string	$pagecodefrom       Pagecode stringtoencode is encoded
+ *  @param	int		$removelasteolbr	1=Remove last br or lasts \n (default), 0=Do nothing
  *  @return	string						String encoded
  */
 function dol_htmlentitiesbr($stringtoencode,$nl2brmode=0,$pagecodefrom='UTF-8',$removelasteolbr=1)
