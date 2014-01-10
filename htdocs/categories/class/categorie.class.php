@@ -582,7 +582,7 @@ class Categorie
 	 * @param int    $object_id         id of the object to search
 	 * @return int   nb                 number of occurrences
 	 */
-	function object_exists($field, $category_table, $object_id)
+	function is_in_cat($field, $category_table, $object_id)
 	{
 		$sql = "SELECT COUNT(*) as nb FROM " . MAIN_DB_PREFIX . "categorie_" . $category_table;
 		$sql .= " WHERE fk_categorie = " . $this->id . " AND fk_" . $field . " = " . $object_id;
