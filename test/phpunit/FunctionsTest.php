@@ -192,15 +192,30 @@ class FunctionsTest extends PHPUnit_Framework_TestCase
      */
     public function testDolHtmlCleanLastBr()
     {
+        $input="A string\n";
+        $after=dol_htmlcleanlastbr($input);
+        $this->assertEquals("A string",$after);
+
+        $input="A string first\nA string second\n";
+        $after=dol_htmlcleanlastbr($input);
+        $this->assertEquals("A string first\nA string second",$after);
+
+        $input="A string\n\n\n";
+        $after=dol_htmlcleanlastbr($input);
+        $this->assertEquals("A string",$after);
+
         $input="A string<br>";
         $after=dol_htmlcleanlastbr($input);
         $this->assertEquals("A string",$after);
+
         $input="A string first<br>\nA string second<br>";
         $after=dol_htmlcleanlastbr($input);
         $this->assertEquals("A string first<br>\nA string second",$after);
+
         $input="A string\n<br type=\"_moz\" />\n";
         $after=dol_htmlcleanlastbr($input);
         $this->assertEquals("A string",$after);
+
         $input="A string\n<br><br />\n\n";
         $after=dol_htmlcleanlastbr($input);
         $this->assertEquals("A string",$after);
@@ -215,21 +230,43 @@ class FunctionsTest extends PHPUnit_Framework_TestCase
      */
     public function testDolHtmlEntitiesBr()
     {
-        $input="A string\nwith a é, &, < and >.";   // Text not already HTML
+    	// Text not already HTML
+
+    	$input="A string\nwith a é, &, < and >.";
         $after=dol_htmlentitiesbr($input,0);    // Add <br> before \n
         $this->assertEquals("A string<br>\nwith a &eacute;, &amp;, &lt; and &gt;.",$after);
 
-        $input="A string\nwith a é, &, < and >.";   // Text not already HTML
+        $input="A string\nwith a é, &, < and >.";
         $after=dol_htmlentitiesbr($input,1);    // Replace \n with <br>
         $this->assertEquals("A string<br>with a &eacute;, &amp;, &lt; and &gt;.",$after);
 
-        $input="A string<br>\nwith a é, &, < and >.";   // Text already HTML, so &,<,> should not be converted
+        $input="A string\nwith a é, &, < and >.\n\n";	// With some \n at end that should be cleaned
+        $after=dol_htmlentitiesbr($input,0);    // Add <br> before \n
+        $this->assertEquals("A string<br>\nwith a &eacute;, &amp;, &lt; and &gt;.",$after);
+
+        $input="A string\nwith a é, &, < and >.\n\n";	// With some \n at end that should be cleaned
+        $after=dol_htmlentitiesbr($input,1);    // Replace \n with <br>
+        $this->assertEquals("A string<br>with a &eacute;, &amp;, &lt; and &gt;.",$after);
+
+        // Text already HTML, so &,<,> should not be converted
+
+        $input="A string<br>\nwith a é, &, < and >.";
         $after=dol_htmlentitiesbr($input);
         $this->assertEquals("A string<br>\nwith a &eacute;, &, < and >.",$after);
 
-        $input="<li>\nA string with a é, &, < and >.</li>\nAnother string";   // Text already HTML, so &,<,> should not be converted
+        $input="<li>\nA string with a é, &, < and >.</li>\nAnother string";
         $after=dol_htmlentitiesbr($input);
         $this->assertEquals("<li>\nA string with a &eacute;, &, < and >.</li>\nAnother string",$after);
+
+        $input="A string<br>\nwith a é, &, < and >.<br>";	// With some <br> at end that should be cleaned
+        $after=dol_htmlentitiesbr($input);
+        $this->assertEquals("A string<br>\nwith a &eacute;, &, < and >.",$after);
+
+        $input="<li>\nA string with a é, &, < and >.</li>\nAnother string<br>";	// With some <br> at end that should be cleaned
+        $after=dol_htmlentitiesbr($input);
+        $this->assertEquals("<li>\nA string with a &eacute;, &, < and >.</li>\nAnother string",$after);
+
+        // TODO Add test with param $removelasteolbr = 0
 
         return true;
     }
