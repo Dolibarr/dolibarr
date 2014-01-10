@@ -670,7 +670,14 @@ class ExtraFields
 		}
 		elseif ($type == 'select')
 		{
-			$out='<select class="flat" name="options_'.$key.'">';
+			$out = '';
+			if ($conf->use_javascript_ajax && $conf->global->COMPANY_USE_SEARCH_TO_SELECT && ! $forcecombo)
+			{
+				//$minLength = (is_numeric($conf->global->COMPANY_USE_SEARCH_TO_SELECT)?$conf->global->COMPANY_USE_SEARCH_TO_SELECT:2);
+				$out.= ajax_combobox('options_'.$key, $event, $conf->global->COMPANY_USE_SEARCH_TO_SELECT);
+			}
+
+			$out.='<select class="flat" name="options_'.$key.'" id="options_'.$key.'">';
 			foreach ($param['options'] as $key=>$val )
 			{
 				list($val, $parent) = explode('|', $val);
@@ -683,7 +690,14 @@ class ExtraFields
 		}
 		elseif ($type == 'sellist')
 		{
-			$out='<select class="flat" name="options_'.$key.'">';
+			$out = '';
+			if ($conf->use_javascript_ajax && $conf->global->COMPANY_USE_SEARCH_TO_SELECT && ! $forcecombo)
+			{
+				//$minLength = (is_numeric($conf->global->COMPANY_USE_SEARCH_TO_SELECT)?$conf->global->COMPANY_USE_SEARCH_TO_SELECT:2);
+				$out.= ajax_combobox('options_'.$key, $event, $conf->global->COMPANY_USE_SEARCH_TO_SELECT);
+			}
+
+			$out.='<select class="flat" name="options_'.$key.'" id="options_'.$key.'">';
 			if (is_array($param['options']))
 			{
 				$param_list=array_keys($param['options']);
@@ -753,6 +767,7 @@ class ExtraFields
 						$fields_label = explode('|',$InfoFieldList[1]);
 						if(is_array($fields_label))
 						{
+							$notrans = true;
 							foreach ($fields_label as $field_toshow)
 							{
 								$labeltoshow.= $obj->$field_toshow.' ';
@@ -778,12 +793,15 @@ class ExtraFields
 						}
 						else
 						{
-							$translabel=$langs->trans($obj->$InfoFieldList[1]);
-							if ($translabel!=$obj->$InfoFieldList[1]) {
-								$labeltoshow=dol_trunc($translabel,18);
-							}
-							else {
-								$labeltoshow=dol_trunc($obj->$InfoFieldList[1],18);
+							if(!$notrans)
+							{
+								$translabel=$langs->trans($obj->$InfoFieldList[1]);
+								if ($translabel!=$obj->$InfoFieldList[1]) {
+									$labeltoshow=dol_trunc($translabel,18);
+								}
+								else {
+									$labeltoshow=dol_trunc($obj->$InfoFieldList[1],18);
+								}
 							}
 							if (empty($labeltoshow)) $labeltoshow='(not defined)';
 							if ($value==$obj->rowid)
@@ -954,11 +972,11 @@ class ExtraFields
 				{
 					foreach ($fields_label as $field_toshow)
 					{
-						$translabel=$langs->trans($obj->$InfoFieldList[1]);
-						if ($translabel!=$obj->$InfoFieldList[1]) {
-							$value=dol_trunc($translabel,18).' ';
+						$translabel=$langs->trans($field_toshow);
+						if ($translabel!=$field_toshow) {
+							$value.=dol_trunc($translabel,18).' ';
 						}else {
-							$value=$obj->$InfoFieldList[1].' ';
+							$value.=$obj->$field_toshow.' ';
 						}
 					}
 				}
