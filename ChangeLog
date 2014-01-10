@@ -7,8 +7,11 @@ For users:
 - New: Add list of orders products in tab "consumption" on thirdparties.
 - New: Add graph stats for suppliers orders in tab "stats" on products.
 - New: Add option MAIN_HIDE_INACTIVETAB_ON_PRINT to hide inactive tabs when you
-  use the "print" view on screen.
+       use the "print" view on screen.
 - New: Add menu entry to barcode genration page.
+- New: Start to work on option MAIN_AUTO_TIMESTAMP_IN_NOTES to
+       automatically add timestamp and user line into comment. Remain to do:
+       Add button "cancel" into note edition mode.
 
 For translators:
 - Update language files.

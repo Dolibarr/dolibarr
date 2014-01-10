@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2012 Regis Houssin <regis.houssin@capnetworks.com>
- * Copyright (C) 2013      Florian Henry		  	<florian.henry@open-concept.pro>
+/* Copyright (C) 2012 Regis Houssin       <regis.houssin@capnetworks.com>
+ * Copyright (C) 2013 Florian Henry	      <florian.henry@open-concept.pro>
+ * Copyright (C) 2014 Laurent Destailleur <eldy@destailleur.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,6 +24,24 @@ $note_private = 'note_private';
 $colwidth=(isset($colwidth)?$colwidth:25);
 $permission=(isset($permission)?$permission:(isset($user->rights->$module->creer)?$user->rights->$module->creer:0));    // If already defined by caller page
 $moreparam=(isset($moreparam)?$moreparam:'');
+$value_public=$object->note_public;
+$value_private=$object->note_private;
+if (! empty($conf->global->MAIN_AUTO_TIMESTAMP_IN_NOTES))
+{
+	$stringtoadd=dol_print_date(dol_now(), 'dayhour').' '.$user->getFullName($langs).' --';
+	if (GETPOST('action') == 'edit'.$note_public)
+	{
+		$value_public=dol_concatdesc($value_public, ($value_public?"\n":"")."-- ".$stringtoadd);
+		if (dol_textishtml($value_public)) $value_public.="<br>\n";
+		else $value_public.="\n";
+	}
+	if (GETPOST('action') == 'edit'.$note_private)
+	{
+		$value_private=dol_concatdesc($value_private, ($value_private?"\n":"")."-- ".$stringtoadd);
+		if (dol_textishtml($value_private)) $value_private.="<br>\n";
+		else $value_private.="\n";
+	}
+}
 
 // Special cases
 if ($module == 'propal')                { $permission=$user->rights->propale->creer;}
@@ -43,13 +62,13 @@ else $typeofdata='textarea:12:100';
 <!-- BEGIN PHP TEMPLATE NOTES -->
 <div class="border table-border centpercent">
 	<div class="table-border-row">
-		<div class="table-key-border-col"<?php echo ' style="width: '.$colwidth.'%"'; ?>><?php echo $form->editfieldkey("NotePublic", $note_public, $object->note_public, $object, $permission, $typeofdata, $moreparam); ?></div>
-		<div class="table-val-border-col"><?php echo $form->editfieldval("NotePublic", $note_public, $object->note_public, $object, $permission, $typeofdata, '', null, null, $moreparam); ?></div>
+		<div class="table-key-border-col"<?php echo ' style="width: '.$colwidth.'%"'; ?>><?php echo $form->editfieldkey("NotePublic", $note_public, $value_public, $object, $permission, $typeofdata, $moreparam); ?></div>
+		<div class="table-val-border-col"><?php echo $form->editfieldval("NotePublic", $note_public, $value_public, $object, $permission, $typeofdata, '', null, null, $moreparam); ?></div>
 	</div>
 <?php if (! $user->societe_id) { ?>
 	<div class="table-border-row">
-		<div class="table-key-border-col"<?php echo ' style="width: '.$colwidth.'%"'; ?>><?php echo $form->editfieldkey("NotePrivate", $note_private, $object->note_private, $object, $permission, $typeofdata, $moreparam); ?></div>
-		<div class="table-val-border-col"><?php echo $form->editfieldval("NotePrivate", $note_private, $object->note_private, $object, $permission, $typeofdata, '', null, null, $moreparam); ?></div>
+		<div class="table-key-border-col"<?php echo ' style="width: '.$colwidth.'%"'; ?>><?php echo $form->editfieldkey("NotePrivate", $note_private, $value_private, $object, $permission, $typeofdata, $moreparam); ?></div>
+		<div class="table-val-border-col"><?php echo $form->editfieldval("NotePrivate", $note_private, $value_private, $object, $permission, $typeofdata, '', null, null, $moreparam); ?></div>
 	</div>
 <?php } ?>
 </div>
