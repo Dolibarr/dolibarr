@@ -191,10 +191,9 @@ class Form
                 $ret.='</td>';
                 if ($typeofdata != 'day' && $typeofdata != 'datepicker' && $typeofdata != 'datehourpicker')
                 {
-                	$ret.='<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'">';
-                	// TODO Add a button Cancel
-                	//$ret.='<br><br>'."\n";
-                	//$ret.='<input type="submit" class="button" value="'.$langs->trans("Cancel").'">';
+                	$ret.='<td align="left"><input type="submit" class="button" name="modify" value="'.$langs->trans("Modify").'">';
+                	$ret.='<br><br>'."\n";
+                	$ret.='<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
                 	$ret.='</td>';
                 }
                 $ret.='</tr></table>'."\n";

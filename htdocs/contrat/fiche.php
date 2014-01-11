@@ -66,10 +66,14 @@ $hookmanager->initHooks(array('contractcard'));
 
 $object = new Contrat($db);
 
+$permissionnote=$user->rights->contrat->creer;	// Used by the include of actions_setnotes.inc.php
+
 
 /*
  * Actions
  */
+
+include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php';	// Must be include, not includ_once
 
 if ($action == 'confirm_active' && $confirm == 'yes' && $user->rights->contrat->activer)
 {
@@ -667,18 +671,6 @@ else if ($action == 'confirm_move' && $confirm == 'yes' && $user->rights->contra
 	{
 		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("RefNewContract")).'</div>';
 	}
-}
-
-else if ($action == 'setnote_public' && $user->rights->contrat->creer)
-{
-	$result=$object->update_note(dol_html_entity_decode(GETPOST('note_public'), ENT_QUOTES),'_public');
-	if ($result < 0) dol_print_error($db,$object->error);
-}
-
-else if ($action == 'setnote_private' && $user->rights->contrat->creer)
-{
-	$result=$object->update_note(dol_html_entity_decode(GETPOST('note_private'), ENT_QUOTES),'_private');
-	if ($result < 0) dol_print_error($db,$object->error);
 }
 
 if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB) && $user->rights->contrat->creer)
