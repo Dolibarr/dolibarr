@@ -333,11 +333,11 @@ function getProductOrService($authentication,$id='',$ref='',$ref_ext='')
         {
             $product=new Product($db);
             $result=$product->fetch($id,$ref,$ref_ext);
-            
+
             if ($result > 0)
             {
             	$product->load_stock();
-            	
+
             	$dir = (!empty($conf->product->dir_output)?$conf->product->dir_output:$conf->service->dir_output);
             	$pdir = get_exdir($product->id,2) . $product->id ."/photos/";
             	$dir = $dir . '/'. $pdir;
@@ -552,7 +552,7 @@ function updateProductOrService($authentication,$product)
 
         $newobject=new Product($db);
         $newobject->fetch($product['id']);
-        
+
         if (isset($product['ref']))     $newobject->ref=$product['ref'];
         if (isset($product['ref_ext'])) $newobject->ref_ext=$product['ref_ext'];
         $newobject->type=$product['type'];
@@ -741,7 +741,7 @@ function getProductsForCategory($authentication,$id)
 				$sql .= " ORDER BY fk_".$field." ASC" ;
 
 
-				dol_syslog("GetProductsForCategory::get_type sql=".$sql);
+				dol_syslog("getProductsForCategory get id of product into category sql=".$sql);
 				$res  = $db->query($sql);
 				if ($res)
 				{
