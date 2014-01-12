@@ -680,8 +680,8 @@ if (! defined('NOLOGIN'))
     if (isset($user->conf->MAIN_SIZE_LISTE_LIMIT))	$conf->liste_limit = $user->conf->MAIN_SIZE_LISTE_LIMIT;		// Can be 0
     if (isset($user->conf->PRODUIT_LIMIT_SIZE))	$conf->product->limit_size = $user->conf->PRODUIT_LIMIT_SIZE;	// Can be 0
 
-    // Replace conf->css by personalized value
-    if (isset($user->conf->MAIN_THEME) && $user->conf->MAIN_THEME)
+    // Replace conf->css by personalized value if theme not forced
+    if (empty($conf->global->MAIN_FORCETHEME) && ! empty($user->conf->MAIN_THEME))
     {
         $conf->theme=$user->conf->MAIN_THEME;
         $conf->css  = "/theme/".$conf->theme."/style.css.php";
