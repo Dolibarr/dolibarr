@@ -557,7 +557,13 @@ function listOfSessions()
     global $conf;
 
     $arrayofSessions = array();
-    $sessPath = ini_get("session.save_path").'/';
+    // session.save_path can be returned empty so we set a default location and work from there
+    $sessPath = '/tmp';
+    $iniPath = ini_get("session.save_path");
+    if ($iniPath) {
+        $sessPath = $iniPath;
+    }
+    $sessPath .= '/'; // We need the trailing slash
     dol_syslog('admin.lib:listOfSessions sessPath='.$sessPath);
 
     $dh = @opendir(dol_osencode($sessPath));
