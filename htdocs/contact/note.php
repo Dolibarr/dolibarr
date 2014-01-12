@@ -41,26 +41,15 @@ $result = restrictedArea($user, 'societe', $id, '&societe');
 $object = new Contact($db);
 if ($id > 0) $object->fetch($id);
 
+$permissionnote=$user->rights->societe->creer;	// Used by the include of actions_setnotes.inc.php
+
+
 /*
  * Actions
  */
 
-/******************************************************************************/
-/*                     Actions                                                */
-/******************************************************************************/
-if ($action == 'setnote_public' && $user->rights->societe->creer)
-{
-	$object->fetch($id);
-	$result=$object->update_note(dol_html_entity_decode(GETPOST('note_public'), ENT_QUOTES),'_public');
-	if ($result < 0) setEventMessage($object->error,'errors');
-}
+include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php';	// Must be include, not includ_once
 
-else if ($action == 'setnote_private' && $user->rights->societe->creer)
-{
-	$object->fetch($id);
-	$result=$object->update_note(dol_html_entity_decode(GETPOST('note_private'), ENT_QUOTES),'_private');
-	if ($result < 0) setEventMessage($object->error,'errors');
-}
 
 /*
  *	View
@@ -91,16 +80,16 @@ if ($id > 0)
     print '<table class="border" width="100%">';
 
     $linkback = '<a href="'.DOL_URL_ROOT.'/contact/list.php">'.$langs->trans("BackToList").'</a>';
-    
+
     // Ref
     print '<tr><td width="20%">'.$langs->trans("Ref").'</td><td colspan="3">';
     print $form->showrefnav($object, 'id', $linkback);
     print '</td></tr>';
-    
+
     // Name
     print '<tr><td width="20%">'.$langs->trans("Lastname").' / '.$langs->trans("Label").'</td><td width="30%">'.$object->lastname.'</td>';
     print '<td width="20%">'.$langs->trans("Firstname").'</td><td width="30%">'.$object->firstname.'</td></tr>';
-    
+
     // Company
     if (empty($conf->global->SOCIETE_DISABLE_CONTACTS))
     {
@@ -108,10 +97,10 @@ if ($id > 0)
     	{
     		$objsoc = new Societe($db);
     		$objsoc->fetch($object->socid);
-    
+
     		print '<tr><td>'.$langs->trans("Company").'</td><td colspan="3">'.$objsoc->getNomUrl(1).'</td></tr>';
     	}
-    
+
     	else
     	{
     		print '<tr><td>'.$langs->trans("Company").'</td><td colspan="3">';
@@ -119,20 +108,20 @@ if ($id > 0)
     		print '</td></tr>';
     	}
     }
-    
+
     // Civility
     print '<tr><td>'.$langs->trans("UserTitle").'</td><td colspan="3">';
     print $object->getCivilityLabel();
     print '</td></tr>';
-    
+
     // Date To Birth
     print '<tr>';
     if (! empty($object->birthday))
     {
     	include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-    
+
     	print '<td>'.$langs->trans("DateToBirth").'</td><td colspan="3">'.dol_print_date($object->birthday,"day");
-    
+
     	print ' &nbsp; ';
     	//var_dump($birthdatearray);
     	$ageyear=convertSecondToTime($now-$object->birthday,'year')-1970;
@@ -140,8 +129,8 @@ if ($id > 0)
     	if ($ageyear >= 2) print '('.$ageyear.' '.$langs->trans("DurationYears").')';
     	else if ($agemonth >= 2) print '('.$agemonth.' '.$langs->trans("DurationMonths").')';
     	else print '('.$agemonth.' '.$langs->trans("DurationMonth").')';
-    
-    
+
+
     	print ' &nbsp; - &nbsp; ';
     	if ($object->birthday_alert) print $langs->trans("BirthdayAlertOn");
     	else print $langs->trans("BirthdayAlertOff");
@@ -152,7 +141,7 @@ if ($id > 0)
     	print '<td>'.$langs->trans("DateToBirth").'</td><td colspan="3">'.$langs->trans("Unknown")."</td>";
     }
     print "</tr>";
-    
+
     print "</table>";
 
     print '<br>';

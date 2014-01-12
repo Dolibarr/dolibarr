@@ -40,26 +40,15 @@ $result = restrictedArea($user, 'societe', $id, '&societe');
 $object = new Societe($db);
 if ($id > 0) $object->fetch($id);
 
+$permissionnote=$user->rights->societe->creer;	// Used by the include of actions_setnotes.inc.php
+
+
 /*
  * Actions
  */
 
-/******************************************************************************/
-/*                     Actions                                                */
-/******************************************************************************/
-if ($action == 'setnote_public' && $user->rights->societe->creer)
-{
-	$object->fetch($id);
-	$result=$object->update_note(dol_html_entity_decode(GETPOST('note_public'), ENT_QUOTES),'_public');
-	if ($result < 0) setEventMessage($object->error,'errors');
-}
+include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php';	// Must be include, not includ_once
 
-else if ($action == 'setnote_private' && $user->rights->societe->creer)
-{
-	$object->fetch($id);
-	$result=$object->update_note(dol_html_entity_decode(GETPOST('note_private'), ENT_QUOTES),'_private');
-	if ($result < 0) setEventMessage($object->error,'errors');
-}
 
 /*
  *	View
