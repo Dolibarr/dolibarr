@@ -25,7 +25,8 @@ require_once('../main.inc.php');
 require_once(DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 
-
+// Security check
+if (!$user->rights->opensurvey->read) accessforbidden();
 
 /*
  * View
@@ -48,21 +49,6 @@ else dol_print_error($db,'');
 print_fiche_titre($langs->trans("OpenSurveyArea"));
 
 echo $langs->trans("NoSurveysInDatabase",$nbsondages).'<br><br>'."\n";
-
-
-// Link
-print img_picto('','object_globe.png').' '.$langs->trans("PublicLinkToCreateSurvey").':<br>';
-
-// Define $urlwithroot
-$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
-$urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
-//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
-
-$url=$urlwithouturlroot.dol_buildpath('/opensurvey/public/index.php',1);
-$urllink='<a href="'.$url.'" target="_blank">'.$url.'</a>';
-print $urllink;
-
-
 
 llxFooter();
 

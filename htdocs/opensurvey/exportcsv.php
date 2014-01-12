@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2013      Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2014 Marcos García				<marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,33 +17,22 @@
  */
 
 /**
- *	\file       htdocs/opensurvey/public/exportcsv.php
+ *	\file       htdocs/opensurvey/exportcsv.php
  *	\ingroup    opensurvey
  *	\brief      Page to list surveys
  */
 
 
-define("NOLOGIN",1);		// This means this output page does not require to be logged.
-define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
-require_once('../../main.inc.php');
+require_once('../main.inc.php');
 require_once(DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/opensurvey/class/opensurveysondage.class.php");
 
 $action=GETPOST('action');
-$numsondage = $numsondageadmin = '';
-if (GETPOST('sondage'))
+$numsondage = '';
+if (GETPOST('id'))
 {
-	if (strlen(GETPOST('sondage')) == 24)	// recuperation du numero de sondage admin (24 car.) dans l'URL
-	{
-		$numsondageadmin=GETPOST("sondage",'alpha');
-		$numsondage=substr($numsondageadmin, 0, 16);
-	}
-	else
-	{
-		$numsondageadmin='';
-		$numsondage=GETPOST("sondage",'alpha');
-	}
+	$numsondage=GETPOST("id",'alpha');
 }
 
 $object=new Opensurveysondage($db);
@@ -69,7 +59,7 @@ $toutsujet=explode(",",$object->sujet);
 $input.=$langs->trans("Name").";";
 for ($i=0;$toutsujet[$i];$i++)
 {
-	if ($object->format=="D"||$object->format=="D+")
+	if ($object->format=="D")
 	{
 		$input.=''.dol_print_date($toutsujet[$i],'dayhour').';';
 	} else {
