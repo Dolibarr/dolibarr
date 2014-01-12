@@ -306,6 +306,12 @@ class Societe extends CommonObject
         $contact->socid             = $this->id;	// fk_soc
         $contact->statut            = 1;
         $contact->priv              = 0;
+        $contact->country_id        = $this->country_id;
+        $contact->address           = $this->address;
+        $contact->email             = $this->email;
+        $contact->zip               = $this->zip;
+        $contact->town              = $this->town;
+        $contact->phone_pro         = $this->phone;
         $result = $contact->create($user);
         if ($result < 0) {
             $this->error = $contact->error;

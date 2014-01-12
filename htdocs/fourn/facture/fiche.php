@@ -50,9 +50,11 @@ if (!empty($conf->projet->enabled)) {
 
 
 $langs->load('bills');
+$langs->load('compta');
 $langs->load('suppliers');
 $langs->load('companies');
 $langs->load('products');
+$langs->load('banks');
 
 $mesg='';
 $errors=array();
