@@ -4330,28 +4330,35 @@ function complete_head_from_modules($conf,$langs,$object,&$head,&$h,$type,$mode=
 					if (verifCond($values[4]))
 					{
 						if ($values[3]) $langs->load($values[3]);
+						if (preg_match('/SUBSTITUTION_([^_]+)/i',$values[2],$reg))
+						{
+							$substitutionarray=array();
+							complete_substitutions_array($substitutionarray,$langs,$object);
+							$label=make_substitutions($reg[1], $substitutionarray);
+						}
+						else $label=$langs->trans($values[2]);
+
 						$head[$h][0] = dol_buildpath(preg_replace('/__ID__/i', ((is_object($object) && ! empty($object->id))?$object->id:''), $values[5]), 1);
-						$head[$h][1] = $langs->trans($values[2]);
+						$head[$h][1] = $label;
 						$head[$h][2] = str_replace('+','',$values[1]);
 						$h++;
 					}
 				}
-				else if (count($values) == 5)       // new declaration
+				else if (count($values) == 5)       // deprecated
 				{
 					if ($values[0] != $type) continue;
 					if ($values[3]) $langs->load($values[3]);
+					if (preg_match('/SUBSTITUTION_([^_]+)/i',$values[2],$reg))
+					{
+						$substitutionarray=array();
+						complete_substitutions_array($substitutionarray,$langs,$object);
+						$label=make_substitutions($reg[1], $substitutionarray);
+					}
+					else $label=$langs->trans($values[2]);
+
 					$head[$h][0] = dol_buildpath(preg_replace('/__ID__/i', ((is_object($object) && ! empty($object->id))?$object->id:''), $values[4]), 1);
-					$head[$h][1] = $langs->trans($values[2]);
+					$head[$h][1] = $label;
 					$head[$h][2] = str_replace('+','',$values[1]);
-					$h++;
-				}
-				else if (count($values) == 4)   // old declaration, for backward compatibility
-				{
-					if ($values[0] != $type) continue;
-					if ($values[2]) $langs->load($values[2]);
-					$head[$h][0] = dol_buildpath(preg_replace('/__ID__/i', ((is_object($object) && ! empty($object->id))?$object->id:''), $values[3]), 1);
-					$head[$h][1] = $langs->trans($values[1]);
-					$head[$h][2] = 'tab'.$values[1];
 					$h++;
 				}
 			}

@@ -23,6 +23,12 @@ For developers:
 - New: Add option 'aZ' into GETPOST function to check parameters contains 
        only a to z or A to Z characters.
 
+WARNING: Following change may create regression for some external modules, but was necessary to make
+Dolibarr better:
+
+- The deprecated way (with 4 parameters) to declare a new tab into a module descriptor file has been
+removed. You must now use the 6 parameters way. See file modMyModule.class.php for example. 
+
 
 ***** ChangeLog for 3.5 compared to 3.4.* *****
 For users:
