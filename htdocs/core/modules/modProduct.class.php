@@ -140,12 +140,15 @@ class modProduct extends DolibarrModules
 		$this->export_fields_array[$r]=array('p.rowid'=>"Id",'p.ref'=>"Ref",'p.label'=>"Label",'p.description'=>"Description",'p.accountancy_code_sell'=>"ProductAccountancySellCode",'p.accountancy_code_buy'=>"ProductAccountancyBuyCode",'p.note'=>"Note",'p.length'=>"Length",'p.surface'=>"Surface",'p.volume'=>"Volume",'p.weight'=>"Weight",'p.customcode'=>'CustomCode','p.price_base_type'=>"PriceBase",'p.price'=>"UnitPriceHT",'p.price_ttc'=>"UnitPriceTTC",'p.tva_tx'=>'VATRate','p.tosell'=>"OnSell",'p.tobuy'=>"OnBuy",'p.datec'=>'DateCreation','p.tms'=>'DateModification');
 		if (! empty($conf->stock->enabled)) $this->export_fields_array[$r]=array_merge($this->export_fields_array[$r],array('p.stock'=>'Stock','p.pmp'=>'PMPValue'));
 		if (! empty($conf->barcode->enabled)) $this->export_fields_array[$r]=array_merge($this->export_fields_array[$r],array('p.barcode'=>'BarCode'));
+		if (! empty($conf->productdluo->enabled)) $this->export_fields_array[$r]=array_merge($this->export_fields_array[$r],array('p.todluo'=>'OnDLUO'));
 		$this->export_TypeFields_array[$r]=array('p.ref'=>"Text",'p.label'=>"Text",'p.description'=>"Text",'p.accountancy_code_sell'=>"Text",'p.accountancy_code_buy'=>"Text",'p.note'=>"Text",'p.length'=>"Number",'p.surface'=>"Number",'p.volume'=>"Number",'p.weight'=>"Number",'p.customcode'=>'Text','p.price_base_type'=>"Text",'p.price'=>"Number",'p.price_ttc'=>"Number",'p.tva_tx'=>'Number','p.tosell'=>"Boolean",'p.tobuy'=>"Boolean",'p.datec'=>'Date','p.tms'=>'Date');
 		if (! empty($conf->stock->enabled)) $this->export_TypeFields_array[$r]=array_merge($this->export_TypeFields_array[$r],array('p.pmp'=>'Number'));
 		if (! empty($conf->barcode->enabled)) $this->export_TypeFields_array[$r]=array_merge($this->export_TypeFields_array[$r],array('p.barcode'=>'Text'));
+		if (! empty($conf->productdluo->enabled)) $this->export_TypeFields_array[$r]=array_merge($this->export_TypeFields_array[$r],array('p.todluo'=>'Boolean'));
 		$this->export_entities_array[$r]=array('p.rowid'=>"product",'p.ref'=>"product",'p.label'=>"product",'p.description'=>"product",'p.accountancy_code_sell'=>'product','p.note'=>"product",'p.length'=>"product",'p.surface'=>"product",'p.volume'=>"product",'p.weight'=>"product",'p.customcode'=>'product','p.price_base_type'=>"product",'p.price'=>"product",'p.price_ttc'=>"product",'p.tva_tx'=>"product",'p.tosell'=>"product",'p.tobuy'=>"product",'p.datec'=>"product",'p.tms'=>"product");
 		if (! empty($conf->stock->enabled)) $this->export_entities_array[$r]=array_merge($this->export_entities_array[$r],array('p.stock'=>'product','p.pmp'=>'product'));
 		if (! empty($conf->barcode->enabled)) $this->export_entities_array[$r]=array_merge($this->export_entities_array[$r],array('p.barcode'=>'product'));
+		if (! empty($conf->productdluo->enabled)) $this->export_entities_array[$r]=array_merge($this->export_entities_array[$r],array('p.todluo'=>'product'));
 		// Add extra fields
 		$sql="SELECT name, label, type FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'product'";
 		$resql=$this->db->query($sql);

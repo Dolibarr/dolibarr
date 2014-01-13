@@ -353,6 +353,9 @@ if ($id > 0 || ! empty($ref))
 								print '<input type="text" name="lot_number'.$suffix.'" size="40" value="">';
 								print '</td>';
 								print '<td colspan="2">&nbsp</td>';
+							} else {
+								print '<input name="product'.$suffix.'" type="hidden" value="'.$objp->fk_product.'">';
+								print '<input name="pu'.$suffix.'" type="hidden" value="'.$objp->subprice.'">';
 							}
 							// Dispatch
 							print '<td align="right"><input name="qty'.$suffix.'" type="text" size="8" value="'.($remaintodispatch).'"></td>';

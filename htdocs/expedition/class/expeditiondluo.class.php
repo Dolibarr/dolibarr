@@ -157,6 +157,7 @@ class ExpeditionLigneDluo extends CommonObject
         {
 			$num=$db->num_rows($resql);
             $i=0;
+			$ret=array();
 			while ($i<$num) {
 				$tmp=new ExpeditionLigneDluo($db);
 

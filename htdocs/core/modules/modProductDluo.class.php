@@ -99,7 +99,6 @@ class modProductDluo extends DolibarrModules
 		$r=0;
 
 		// Exports
-		$r=1;
 
 	}
 

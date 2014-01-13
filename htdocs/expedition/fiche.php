@@ -129,26 +129,31 @@ if ($action == 'add')
     {
         $qty = "qtyl".$i;
 		if (empty($conf->productdluo->enabled)) {
-        if (GETPOST($qty,'int') > 0) $totalqty+=GETPOST($qty,'int');
+			if (GETPOST($qty,'int') > 0) $totalqty+=GETPOST($qty,'int');
 		} else {
 			$j=0;
 			$sub_qty=array();
 			$qty .= '_'.$j;
 			$subtotalqty=0;
 			$idl="idl".$i;
-			while (isset($_POST[$qty])) {
-				$dluo="dluol".$i."_".$j;
-				$sub_qty[$j]['q']=GETPOST($qty,'int');
-				$sub_qty[$j]['id_dluo']=GETPOST($dluo,'int');
-				$subtotalqty+=$sub_qty[$j]['q'];
-				$j++;
-				$qty = "qtyl".$i.'_'.$j;
-				
+			$hasdluo[$i]=(bool)GETPOST('hasdluo'.$i,'int');
+			if ($hasdluo[$i]) {
+				while (isset($_POST[$qty])) {
+					$dluo="dluol".$i."_".$j;
+					$sub_qty[$j]['q']=GETPOST($qty,'int');
+					$sub_qty[$j]['id_dluo']=GETPOST($dluo,'int');
+					$subtotalqty+=$sub_qty[$j]['q'];
+					$j++;
+					$qty = "qtyl".$i.'_'.$j;
+					
+				}
+				$dluo_line[$i]['detail']=$sub_qty;
+				$dluo_line[$i]['qty']=$subtotalqty;
+				$dluo_line[$i]['ix_l']=GETPOST($idl,'int');
+				$totalqty+=$subtotalqty;
+			} else if (GETPOST("qtyl".$i,'int') > 0){
+				$totalqty+=GETPOST("qtyl".$i,'int');
 			}
-			$dluo_line[$i]['detail']=$sub_qty;
-			$dluo_line[$i]['qty']=$subtotalqty;
-			$dluo_line[$i]['ix_l']=GETPOST($idl,'int');
-			$totalqty+=$subtotalqty;
 		}
     }
 
@@ -158,22 +163,22 @@ if ($action == 'add')
         for ($i = 0; $i < $num; $i++)
         {
             $qty = "qtyl".$i;
-			if (empty($conf->productdluo->enabled)) {
-            if (GETPOST($qty,'int') > 0)
-            {
-                $ent = "entl".$i;
-                $idl = "idl".$i;
-                $entrepot_id = is_numeric(GETPOST($ent,'int'))?GETPOST($ent,'int'):GETPOST('entrepot_id','int');
-				if ($entrepot_id < 0) $entrepot_id='';
+			if (empty($conf->productdluo->enabled) || !$hasdluo[$i]) {
+				if (GETPOST($qty,'int') > 0)
+				{
+					$ent = "entl".$i;
+					$idl = "idl".$i;
+					$entrepot_id = is_numeric(GETPOST($ent,'int'))?GETPOST($ent,'int'):GETPOST('entrepot_id','int');
+					if ($entrepot_id < 0) $entrepot_id='';
 
-                $ret=$object->addline($entrepot_id,GETPOST($idl,'int'),GETPOST($qty,'int'));
-                if ($ret < 0)
-                {
-                    $mesg='<div class="error">'.$object->error.'</div>';
-                    $error++;
-                }
-            }
-			} else {
+					$ret=$object->addline($entrepot_id,GETPOST($idl,'int'),GETPOST($qty,'int'));
+					if ($ret < 0)
+					{
+						$mesg='<div class="error">'.$object->error.'</div>';
+						$error++;
+					}
+				}
+			} else if ($dluo_line[$i]['qty']>0){
 				$ret=$object->addline_dluo($dluo_line[$i]);
 				if ($ret < 0)
 				{
@@ -850,92 +855,99 @@ if ($action == 'create')
                     if (($line->product_type == 1 && empty($conf->global->STOCK_SUPPORTS_SERVICES)) || $defaultqty < 0) $defaultqty=0;
                 }
 
-				if (empty($conf->productdluo->enabled) ||  ! $product->hasdluo()) {
-                // Quantity to send
-                print '<td align="center">';
-                if ($line->product_type == 0 || ! empty($conf->global->STOCK_SUPPORTS_SERVICES))
-                {
-                    print '<input name="idl'.$indiceAsked.'" type="hidden" value="'.$line->id.'">';
-                    print '<input name="qtyl'.$indiceAsked.'" id="qtyl'.$indiceAsked.'" type="text" size="4" value="'.$defaultqty.'">';
-                }
-                else print $langs->trans("NA");
-                print '</td>';
-
-                // Stock
-                if (! empty($conf->stock->enabled))
-                {
-                    print '<td align="left">';
-                    if ($line->product_type == 0 || ! empty($conf->global->STOCK_SUPPORTS_SERVICES))
-                    {
-                        // Show warehouse combo list
-                    	$ent = "entl".$indiceAsked;
-                    	$idl = "idl".$indiceAsked;
-                    	$tmpentrepot_id = is_numeric(GETPOST($ent,'int'))?GETPOST($ent,'int'):GETPOST('entrepot_id','int');
-                        print $formproduct->selectWarehouses($tmpentrepot_id,'entl'.$indiceAsked,'',1,0,$line->fk_product);
-                    	if ($tmpentrepot_id > 0 && $tmpentrepot_id == GETPOST('entrepot_id','int'))
-                        {
-                            //print $stock.' '.$quantityToBeDelivered;
-                            if ($stock < $quantityToBeDelivered)
-                            {
-                                print ' '.img_warning($langs->trans("StockTooLow"));	// Stock too low for entrepot_id but we may have change warehouse
-                            }
-                        }
-                    }
-                    else
-                    {
-                        print $langs->trans("Service");
-                    }
-                    print '</td>';
-                }
-
-                print "</tr>\n";
-
-                // Show subproducts of product
-                if (! empty($conf->global->PRODUIT_SOUSPRODUITS) && $line->fk_product > 0)
-                {
-                    $product->get_sousproduits_arbo();
-                    $prods_arbo = $product->get_arbo_each_prod($qtyProdCom);
-                    if(count($prods_arbo) > 0)
-                    {
-                        foreach($prods_arbo as $key => $value)
-                        {
-                            //print $value[0];
-                            $img='';
-                            if ($value['stock'] < $value['stock_alert'])
-                            {
-                                $img=img_warning($langs->trans("StockTooLow"));
-                            }
-                            print "<tr ".$bc[$var]."><td>&nbsp; &nbsp; &nbsp; ->
-                                <a href=\"".DOL_URL_ROOT."/product/fiche.php?id=".$value['id']."\">".$value['fullpath']."
-                                </a> (".$value['nb'].")</td><td align=\"center\"> ".$value['nb_total']."</td><td>&nbsp</td><td>&nbsp</td>
-                                <td align=\"center\">".$value['stock']." ".$img."</td></tr>";
-                        }
-                    }
-                }
+				if ($quantityToBeDelivered<=0) {
+					print '<td colspan="2" align="center">'.$langs->trans("LineSolded").'</td></tr>';
 				} else {
-					print '<td></td><td></td></tr>';
-					$subj=0;
-					print '<input name="idl'.$indiceAsked.'" type="hidden" value="'.$line->id.'">';
-					foreach ($product->stock_warehouse[GETPOST('entrepot_id','int')]->detail_dluo as $ddluo) {
-						//var_dump($ddluo);
-						$substock=$ddluo->qty +0 ;
-						print '<tr><td colspan="3" ></td><td align="center">';
-						print '<input name="qtyl'.$indiceAsked.'_'.$subj.'" id="qtyl'.$indiceAsked.'_'.$subj.'" type="text" size="4" value="'.min($defaultqty,$substock).'">';
-						print '</td>';
-						
-						print '<td align="left">';
-						print '<input name="dluol'.$indiceAsked.'_'.$subj.'" type="hidden" value="'.$ddluo->id.'">';
-						print 'C:'.dol_print_date($ddluo->dlc,'day').' O:'.dol_print_date($ddluo->dluo,'day').' Lot:'.$ddluo->lot;
-						print ' Stock: '.$ddluo->qty.'</td></tr>';
-						if ($defaultqty<=0) {
-							$defaultqty=0;
-						} else {
-							$defaultqty -=min($defaultqty,$substock);
+					if (empty($conf->productdluo->enabled) ||  ! $product->hasdluo()) {
+						// Quantity to send
+						print '<td align="center">';
+						if ($line->product_type == 0 || ! empty($conf->global->STOCK_SUPPORTS_SERVICES))
+						{
+							print '<input name="idl'.$indiceAsked.'" type="hidden" value="'.$line->id.'">';
+							print '<input name="qtyl'.$indiceAsked.'" id="qtyl'.$indiceAsked.'" type="text" size="4" value="'.$defaultqty.'">';
 						}
-						$subj++;
+						if (!empty($conf->productdluo->enabled)) {
+							print '<input name="hasdluo'.$indiceAsked.'" type="hidden" value="0">';
+						}
+						else print $langs->trans("NA");
+						print '</td>';
+
+						// Stock
+						if (! empty($conf->stock->enabled))
+						{
+							print '<td align="left">';
+							if ($line->product_type == 0 || ! empty($conf->global->STOCK_SUPPORTS_SERVICES))
+							{
+								// Show warehouse combo list
+								$ent = "entl".$indiceAsked;
+								$idl = "idl".$indiceAsked;
+								$tmpentrepot_id = is_numeric(GETPOST($ent,'int'))?GETPOST($ent,'int'):GETPOST('entrepot_id','int');
+								print $formproduct->selectWarehouses($tmpentrepot_id,'entl'.$indiceAsked,'',1,0,$line->fk_product);
+								if ($tmpentrepot_id > 0 && $tmpentrepot_id == GETPOST('entrepot_id','int'))
+								{
+									//print $stock.' '.$quantityToBeDelivered;
+									if ($stock < $quantityToBeDelivered)
+									{
+										print ' '.img_warning($langs->trans("StockTooLow"));	// Stock too low for entrepot_id but we may have change warehouse
+									}
+								}
+							}
+							else
+							{
+								print $langs->trans("Service");
+							}
+							print '</td>';
+						}
+
+						print "</tr>\n";
+
+						// Show subproducts of product
+						if (! empty($conf->global->PRODUIT_SOUSPRODUITS) && $line->fk_product > 0)
+						{
+							$product->get_sousproduits_arbo();
+							$prods_arbo = $product->get_arbo_each_prod($qtyProdCom);
+							if(count($prods_arbo) > 0)
+							{
+								foreach($prods_arbo as $key => $value)
+								{
+									//print $value[0];
+									$img='';
+									if ($value['stock'] < $value['stock_alert'])
+									{
+										$img=img_warning($langs->trans("StockTooLow"));
+									}
+									print "<tr ".$bc[$var]."><td>&nbsp; &nbsp; &nbsp; ->
+										<a href=\"".DOL_URL_ROOT."/product/fiche.php?id=".$value['id']."\">".$value['fullpath']."
+										</a> (".$value['nb'].")</td><td align=\"center\"> ".$value['nb_total']."</td><td>&nbsp</td><td>&nbsp</td>
+										<td align=\"center\">".$value['stock']." ".$img."</td></tr>";
+								}
+							}
+						}
+					} else {
+						print '<td></td><td></td></tr>';
+						$subj=0;
+						print '<input name="hasdluo'.$indiceAsked.'" type="hidden" value="1">';
+						print '<input name="idl'.$indiceAsked.'" type="hidden" value="'.$line->id.'">';
+						foreach ($product->stock_warehouse[GETPOST('entrepot_id','int')]->detail_dluo as $ddluo) {
+							//var_dump($ddluo);
+							$substock=$ddluo->qty +0 ;
+							print '<tr><td colspan="3" ></td><td align="center">';
+							print '<input name="qtyl'.$indiceAsked.'_'.$subj.'" id="qtyl'.$indiceAsked.'_'.$subj.'" type="text" size="4" value="'.min($defaultqty,$substock).'">';
+							print '</td>';
+							
+							print '<td align="left">';
+							print '<input name="dluol'.$indiceAsked.'_'.$subj.'" type="hidden" value="'.$ddluo->id.'">';
+							print 'C:'.dol_print_date($ddluo->dlc,'day').' O:'.dol_print_date($ddluo->dluo,'day').' Lot:'.$ddluo->lot;
+							print ' Stock: '.$ddluo->qty.'</td></tr>';
+							if ($defaultqty<=0) {
+								$defaultqty=0;
+							} else {
+								$defaultqty -=min($defaultqty,$substock);
+							}
+							$subj++;
+						}
 					}
 				}
-
                 $indiceAsked++;
             }
 
@@ -1383,13 +1395,17 @@ else if ($id || $ref)
 			}
 
 			// eat-by date
-			if ((! empty($conf->productdluo->enabled))  && isset($lines[$i]->detail_dluo) ) {
+			if (! empty($conf->productdluo->enabled) ) {
 				print '<td align="center">';
-				$detail = '';
-				foreach ($lines[$i]->detail_dluo as $ddluo) {
-					$detail.= $langs->trans("detailformat",dol_print_date($ddluo->dlc,"day"),dol_print_date($ddluo->dluo,"day"),$ddluo->lot,$ddluo->dluo_qty).'<br/>';
+				if (count($lines[$i]->detail_dluo)>0) {
+					$detail = '';
+					foreach ($lines[$i]->detail_dluo as $ddluo) {
+						$detail.= $langs->trans("detailformat",dol_print_date($ddluo->dlc,"day"),dol_print_date($ddluo->dluo,"day"),$ddluo->lot,$ddluo->dluo_qty).'<br/>';
+					}
+					print $form->textwithtooltip($langs->trans("DetailLotNumber"),$detail);
+				} else {
+					print '&nbsp';
 				}
-				print $form->textwithtooltip($langs->trans("DetailLotNumber"),$detail);
 				print '</td>';
 			}
 			print "</tr>";

@@ -587,9 +587,13 @@ class Expedition extends CommonObject
 					
 					if (! empty($conf->productdluo->enabled)) {
 						$details=ExpeditionLigneDluo::FetchAll($this->db,$obj->rowid);
-						foreach ($details as $ddluo) {
-							$result=$mouvS->livraison_dluo($ddluo->fk_origin_stock,$ddluo->dluo_qty);
-							if ($result < 0) { $error++; $this->errors[]=$mouvS->$error; break 2; }
+						if (! is_array($details)) {
+							$error++; $this->errors[]=$this->db->last_error();
+						} else {
+							foreach ($details as $ddluo) {
+								$result=$mouvS->livraison_dluo($ddluo->fk_origin_stock,$ddluo->dluo_qty);
+								if ($result < 0) { $error++; $this->errors[]=$mouvS->$error; break 2; }
+							}
 						}
 					}
 				}
@@ -733,6 +737,7 @@ class Expedition extends CommonObject
 			$line = new ExpeditionLigne($this->db);
 			$tab=array();
 			foreach ($ddluo['detail'] as $key=>$value) {
+				if ($value['q']<=0) continue;
 				$linedluo = new ExpeditionLigneDluo($this->db);
 				$ret=$linedluo->fetchFromStock($value['id_dluo']);
 				if ($ret<0) {

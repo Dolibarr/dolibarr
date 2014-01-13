@@ -33,6 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 $langs->load("exports");
 $langs->load("users");
+if (!empty($conf->productdluo->enabled)) $langs->load("productdluo");
 
 // Everybody should be able to go on this page
 //if (! $user->admin)
@@ -53,14 +54,15 @@ $entitytoicon = array(
     'payment'      => 'payment',
 	'tax'          => 'generic',
     'tax_type'     => 'generic',
-    'stock'        => 'generic',
+    'stock'        => 'stock',
     'other'        => 'generic',
 	'account'      => 'account',
 	'product'      => 'product',
     'warehouse'    => 'stock',
 	'category'     => 'category',
 	'shipment'     => 'sending',
-    'shipment_line'=> 'sending'
+    'shipment_line'=> 'sending',
+	'dluo'         => 'product'
 );
 
 // Translation code
@@ -91,7 +93,8 @@ $entitytolang = array(
 	'other'        => 'Other',
     'trip'         => 'TripsAndExpenses',
     'shipment'     => 'Shipments',
-    'shipment_line'=> 'ShipmentLine'
+    'shipment_line'=> 'ShipmentLine',
+	'dluo'         => 'OnDLUO'
 );
 
 $array_selected=isset($_SESSION["export_selected_fields"])?$_SESSION["export_selected_fields"]:array();

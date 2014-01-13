@@ -1,6 +1,7 @@
 # ProductDLUO language file - fr_FR - ProductDLUO
 CHARSET= UTF-8
 DLUO= DLC/DLUO
+OnDLUO= Gestion des DLC/Lots
 ProductStatusOnEatBy= Gérer
 ProductStatusNotOnEatBy= Ne pas gérer
 DLC= DLC
