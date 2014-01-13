@@ -573,22 +573,43 @@ class Categorie
 
 	/**
 	 * check for the presence of an object in a category
-	 * @param string $field             table field
-	 * @param string $category_table    category table name
+	 * @param string $type              object type
 	 * @param int    $object_id         id of the object to search
 	 * @return int   nb                 number of occurrences
 	 */
-	function is_in_cat($field, $category_table, $object_id)
+	function containsObject($type, $object_id)
 	{
+		$field = ''; $classname = ''; $category_table = ''; $object_table = '';
+		if ($type == 'product') {
+			$field = 'product';
+		}
+		if ($type == 'customer') {
+			$field = 'societe';
+		}
+		if ($type == 'supplier') {
+			$field = 'societe';
+			$category_table = 'fournisseur';
+		}
+		if ($type == 'member') {
+			$field = 'member';
+			$category_table = '';
+		}
+		if ($type == 'contact') {
+			$field = 'socpeople';
+			$category_table = 'contact';
+		}
+		if (empty($category_table)) {
+			$category_table = $field;
+		}
 		$sql = "SELECT COUNT(*) as nb FROM " . MAIN_DB_PREFIX . "categorie_" . $category_table;
 		$sql .= " WHERE fk_categorie = " . $this->id . " AND fk_" . $field . " = " . $object_id;
-		dol_syslog(get_class($this)."::product_exists sql=".$sql);
+		dol_syslog(get_class($this)."::containsObject sql=".$sql);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			return $this->db->fetch_object($resql)->nb;
 		} else {
 			$this->error=$this->db->error().' sql='.$sql;
-			dol_syslog(get_class($this)."::get_type ".$this->error, LOG_ERR);
+			dol_syslog(get_class($this)."::containsObject ".$this->error, LOG_ERR);
 			return -1;
 		}
 	}
