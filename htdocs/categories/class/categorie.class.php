@@ -571,6 +571,27 @@ class Categorie
 		}
 	}
 
+	/**
+	 * check for the presence of an object in a category
+	 * @param string $field             table field
+	 * @param string $category_table    category table name
+	 * @param int    $object_id         id of the object to search
+	 * @return int   nb                 number of occurrences
+	 */
+	function is_in_cat($field, $category_table, $object_id)
+	{
+		$sql = "SELECT COUNT(*) as nb FROM " . MAIN_DB_PREFIX . "categorie_" . $category_table;
+		$sql .= " WHERE fk_categorie = " . $this->id . " AND fk_" . $field . " = " . $object_id;
+		dol_syslog(get_class($this)."::product_exists sql=".$sql);
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			return $this->db->fetch_object($resql)->nb;
+		} else {
+			$this->error=$this->db->error().' sql='.$sql;
+			dol_syslog(get_class($this)."::get_type ".$this->error, LOG_ERR);
+			return -1;
+		}
+	}
 
 	/**
 	 * Return childs of a category
