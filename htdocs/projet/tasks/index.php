@@ -116,7 +116,7 @@ print '</td>';
 print '<td class="liste_titre" colspan="7">';
 print '&nbsp;';
 print '</td>';
-print '<td class="liste_titre" align="right"><input class="liste_titre" type="image" name="button_search" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'"></td>';
+print '<td class="liste_titre" align="right"><input class="liste_titre" type="image" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'"></td>';
 print "</tr>\n";
 
 // Show all lines in taskarray (recursive function to go down on tree)

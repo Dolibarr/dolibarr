@@ -422,7 +422,7 @@ if ($id > 0 || ! empty($ref))
 	print '<td align="right"><input type="text" class="flat" name="req_debit" value="'.$req_debit.'" size="4"></td>';
 	print '<td align="right"><input type="text" class="flat" name="req_credit" value="'.$req_credit.'" size="4"></td>';
 	print '<td align="center">&nbsp;</td>';
-	print '<td align="center" width="40"><input type="image" class="liste_titre" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'"></td>';
+	print '<td align="center" width="40"><input type="image" class="liste_titre" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'"></td>';
 	print "</tr>\n";
 
 
