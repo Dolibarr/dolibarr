@@ -3,8 +3,8 @@
  * Copyright (C) 2004-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2006		Andre Cianfarani		<acianfa@free.fr>
- * Copyright (C) 2010-2012	Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2013       Christophe Battarel   <christophe.battarel@altairis.fr>
+ * Copyright (C) 2010-2013	Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2013       Christophe Battarel     <christophe.battarel@altairis.fr>
  * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -444,8 +444,8 @@ else if ($action == 'addline' && $user->rights->contrat->creer)
             $desc=GETPOST('dp_desc');
         }
 
-        $localtax1_tx=get_localtax($tva_tx,1,$object->societe);
-        $localtax2_tx=get_localtax($tva_tx,2,$object->societe);
+        $localtax1_tx=get_localtax($tva_tx,1,$object->thirdparty);
+        $localtax2_tx=get_localtax($tva_tx,2,$object->thirdparty);
 
 		// ajout prix achat
 		$fk_fournprice = $_POST['fournprice'];

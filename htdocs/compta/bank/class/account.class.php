@@ -1159,7 +1159,7 @@ class AccountLine extends CommonObject
         $this->db->begin();
 
         // Delete urls
-        $result=$this->delete_urls();
+        $result=$this->delete_urls($user);
         if ($result < 0)
         {
             $nbko++;
@@ -1296,7 +1296,7 @@ class AccountLine extends CommonObject
                 // No error check. Can fail if category already affected
             }
 
-            $bankline->rappro=1;
+            $this->rappro=1;
 
             $this->db->commit();
             return 1;

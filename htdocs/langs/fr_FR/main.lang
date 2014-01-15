@@ -657,6 +657,7 @@ from=de
 toward=vers
 Access=Accès
 SetDemandReason=Définir l'origine
+XMoreLines=%s ligne(s) non affichée(s)
 
 # Week day
 Monday=Lundi

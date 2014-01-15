@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2011 Laurent Destailleur   <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2013 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin         <regis.houssin@capnetworks.com>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
  * Copyright (C) 2013      Antoine Iauch         <aiauch@gpcsolutions.fr>
@@ -177,18 +177,15 @@ report_header($nom,$nomlink,$period,$periodlink,$description,$builddate,$exportl
 $catotal=0;
 if ($modecompta == 'CREANCES-DETTES') {
 	$sql = "SELECT DISTINCT s.rowid as socid, s.nom as name,";
-	$sql.= " sum(DISTINCT f.total) as amount, sum(DISTINCT f.total_ttc) as amount_ttc";
-	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
-	$sql.= " JOIN ".MAIN_DB_PREFIX."facture as f";
-	if ($selected_cat === -2) {
+	$sql.= " sum(f.total) as amount, sum(f.total_ttc) as amount_ttc";
+	$sql.= " FROM ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."societe as s";
+	if ($selected_cat === -2)	// Without any category 
+	{
 	    $sql.= " LEFT OUTER JOIN ".MAIN_DB_PREFIX."categorie_societe as cs ON s.rowid = cs.fk_societe";
 	}
-	if ($selected_cat && $selected_cat !== -2) {
-	    $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie as c ON c.rowid = ".$selected_cat;
-	    if ($subcat) {
-		$sql.=" OR c.fk_parent = " . $selected_cat;
-	    }
-	     $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_societe as cs ON cs.fk_categorie = c.rowid";
+	else if ($selected_cat) 	// Into a specific category
+	{
+	    $sql.= ", ".MAIN_DB_PREFIX."categorie as c, ".MAIN_DB_PREFIX."categorie_societe as cs";
 	}
 	$sql.= " WHERE f.fk_statut in (1,2)";
 	if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
@@ -200,27 +197,49 @@ if ($modecompta == 'CREANCES-DETTES') {
 	if ($date_start && $date_end) {
 	    $sql.= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
 	}
-	if ($selected_cat === -2) {
+	if ($selected_cat === -2)	// Without any category  
+	{
 	    $sql.=" AND cs.fk_societe is null";
 	}
-	if ($selected_cat && $selected_cat !== -2) {
-	    $sql.= " AND cs.fk_societe = s.rowid";
+	else if ($selected_cat) {	// Into a specific category
+	    $sql.= " AND (c.rowid = ".$selected_cat;
+	    if ($subcat) $sql.=" OR c.fk_parent = " . $selected_cat;
+	    $sql.= ")";
+		$sql.= " AND cs.fk_categorie = c.rowid AND cs.fk_societe = s.rowid";
 	}
-    } else {
+} else {
 	/*
 	 * Liste des paiements (les anciens paiements ne sont pas vus par cette requete car, sur les
 	 * vieilles versions, ils n'etaient pas lies via paiement_facture. On les ajoute plus loin)
 	 */
 	$sql = "SELECT s.rowid as socid, s.nom as name, sum(pf.amount) as amount_ttc";
-	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
-	$sql.= ", ".MAIN_DB_PREFIX."facture as f";
+	$sql.= " FROM ".MAIN_DB_PREFIX."facture as f";
 	$sql.= ", ".MAIN_DB_PREFIX."paiement_facture as pf";
 	$sql.= ", ".MAIN_DB_PREFIX."paiement as p";
-	$sql .= " WHERE p.rowid = pf.fk_paiement";
+	$sql.= ", ".MAIN_DB_PREFIX."societe as s";
+	if ($selected_cat === -2)	// Without any category 
+	{
+	    $sql.= " LEFT OUTER JOIN ".MAIN_DB_PREFIX."categorie_societe as cs ON s.rowid = cs.fk_societe";
+	}
+	else if ($selected_cat) 	// Into a specific category
+	{
+	    $sql.= ", ".MAIN_DB_PREFIX."categorie as c, ".MAIN_DB_PREFIX."categorie_societe as cs";
+	}
+	$sql.= " WHERE p.rowid = pf.fk_paiement";
 	$sql.= " AND pf.fk_facture = f.rowid";
 	$sql.= " AND f.fk_soc = s.rowid";
 	if ($date_start && $date_end) {
 	    $sql.= " AND p.datep >= '".$db->idate($date_start)."' AND p.datep <= '".$db->idate($date_end)."'";
+	}
+	if ($selected_cat === -2)	// Without any category  
+	{
+	    $sql.=" AND cs.fk_societe is null";
+	}
+	else if ($selected_cat) {	// Into a specific category
+	    $sql.= " AND (c.rowid = ".$selected_cat;
+	    if ($subcat) $sql.=" OR c.fk_parent = " . $selected_cat;
+	    $sql.= ")";
+		$sql.= " AND cs.fk_categorie = c.rowid AND cs.fk_societe = s.rowid";
 	}
 }
 $sql.= " AND f.entity = ".$conf->entity;
@@ -228,6 +247,7 @@ if ($socid) $sql.= " AND f.fk_soc = ".$socid;
 $sql.= " GROUP BY s.rowid, s.nom";
 $sql.= " ORDER BY s.rowid";
 
+dol_syslog("casoc sql=".$sql);
 $result = $db->query($sql);
 if ($result) {
 	$num = $db->num_rows($result);
@@ -248,7 +268,7 @@ if ($result) {
 
 // On ajoute les paiements anciennes version, non lies par paiement_facture
 if ($modecompta != 'CREANCES-DETTES') {
-	$sql = "SELECT '0' as socid, 'Autres' as name, sum(DISTINCT p.amount) as amount_ttc";
+	$sql = "SELECT '0' as socid, 'Autres' as name, sum(p.amount) as amount_ttc";
 	$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
 	$sql.= ", ".MAIN_DB_PREFIX."bank_account as ba";
 	$sql.= ", ".MAIN_DB_PREFIX."paiement as p";

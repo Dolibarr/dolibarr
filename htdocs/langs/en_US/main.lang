@@ -659,6 +659,7 @@ from=from
 toward=toward
 Access=Access
 SetDemandReason=Set source
+XMoreLines=%s line(s) hidden
 
 # Week day
 Monday=Monday

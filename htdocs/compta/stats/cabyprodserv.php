@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2013      Antoine Iauch        <aiauch@gpcsolutions.fr>
+/* Copyright (C) 2013 Antoine Iauch        <aiauch@gpcsolutions.fr>
+ * Copyright (C) 2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -171,23 +172,21 @@ report_header($nom,$nomlink,$period,$periodlink,$description,$builddate,$exportl
 // SQL request
 $catotal=0;
 
-if ($modecompta == 'CREANCES-DETTES') {
+if ($modecompta == 'CREANCES-DETTES') 
+{
     $sql = "SELECT DISTINCT p.rowid as rowid, p.ref as ref, p.label as label,";
-    $sql.= " sum(DISTINCT l.total_ht) as amount, sum(DISTINCT l.total_ttc) as amount_ttc";
-    $sql.= " FROM ".MAIN_DB_PREFIX."product as p";
-    $sql.= " JOIN ".MAIN_DB_PREFIX."facturedet as l";
-    $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."facture as f ON l.fk_facture = f.rowid";
-    if ($selected_cat === -2) {
-	$sql.=" LEFT OUTER JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON p.rowid = cp.fk_product";
-    }
-    if ($selected_cat && $selected_cat !== -2) {
-	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie as c ON c.rowid = " . $selected_cat;
-	if ($subcat) {
-	    $sql.=" OR c.fk_parent = " . $selected_cat;
+    $sql.= " sum(l.total_ht) as amount, sum(l.total_ttc) as amount_ttc";
+    $sql.= " FROM ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."facturedet as l, ".MAIN_DB_PREFIX."product as p";
+	if ($selected_cat === -2)	// Without any category 
+	{
+	    $sql.= " LEFT OUTER JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON p.rowid = cp.fk_product";
 	}
-	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON cp.fk_categorie = c.rowid";
-    }
+	else if ($selected_cat) 	// Into a specific category
+	{
+	    $sql.= ", ".MAIN_DB_PREFIX."categorie as c, ".MAIN_DB_PREFIX."categorie_product as cp";
+	}
     $sql.= " WHERE l.fk_product = p.rowid";
+	$sql.= " AND l.fk_facture = f.rowid";
     $sql.= " AND f.fk_statut in (1,2)";
     if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
 	$sql.= " AND f.type IN (0,1,2)";
@@ -197,16 +196,21 @@ if ($modecompta == 'CREANCES-DETTES') {
     if ($date_start && $date_end) {
 	$sql.= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
     }
-    if ($selected_cat === -2) {
-	$sql.=" AND cp.fk_product is null";
-    }
-    if ($selected_cat && $selected_cat !== -2) {
-	$sql.= " AND cp.fk_product = p.rowid";
-    }
+	if ($selected_cat === -2)	// Without any category  
+	{
+	    $sql.=" AND cp.fk_product is null";
+	}
+	else if ($selected_cat) {	// Into a specific category
+	    $sql.= " AND (c.rowid = ".$selected_cat;
+	    if ($subcat) $sql.=" OR c.fk_parent = " . $selected_cat;
+	    $sql.= ")";
+		$sql.= " AND cp.fk_categorie = c.rowid AND cp.fk_product = p.rowid";
+	}
     $sql.= " AND f.entity = ".$conf->entity;
-    $sql.= " GROUP BY p.rowid ";
-    $sql.= "ORDER BY p.ref ";
+    $sql.= " GROUP BY p.rowid";
+    $sql.= " ORDER BY p.ref";
 
+    dol_syslog("cabyprodserv sql=".$sql);
     $result = $db->query($sql);
     if ($result) {
 	$num = $db->num_rows($result);
@@ -381,7 +385,10 @@ if ($modecompta == 'CREANCES-DETTES') {
     print '</form>';
 } else {
     // $modecompta != 'CREANCES-DETTES'
-    // TODO: better message
+    // TODO: better message, for example:
+    // "Calculation of part of each product for accountancy in this mode is not possible. When a partial payment (for example 5 euros) is done on an
+    // invoice with 2 product (product A for 10 euros and product B for 20 euros), what is part of paiment for product A and part of paiment for product B ?
+    // Because there is no way to know this, this report is not relevant.  
     print '<div class="warning">' . $langs->trans("WarningNotRelevant") . '</div>';
 }
 
