@@ -16,11 +16,11 @@
  */
 
 /**
- * 	\defgroup   Skype   Module Skype
+ * 	\defgroup   Skype   Module skype
  *  \brief      Add a skype button.
  *  \file       htdocs/core/modules/modSkype.class.php
  *  \ingroup    Skype
- *  \brief      Description and activation file for module Skype
+ *  \brief      Description and activation file for module skype
  */
 include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 
