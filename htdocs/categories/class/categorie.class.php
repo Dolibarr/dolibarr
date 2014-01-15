@@ -499,7 +499,7 @@ class Categorie
 		$column_name=$type;
         if ($type=='contact') $column_name='socpeople';
         if ($type=='fournisseur') $column_name='societe';
-        
+
 		$sql  = "DELETE FROM ".MAIN_DB_PREFIX."categorie_".$type;
 		$sql .= " WHERE fk_categorie = ".$this->id;
 		$sql .= " AND   fk_".$column_name."   = ".$obj->id;
@@ -573,9 +573,10 @@ class Categorie
 
 	/**
 	 * check for the presence of an object in a category
-	 * @param string $type              object type
-	 * @param int    $object_id         id of the object to search
-	 * @return int   nb                 number of occurrences
+	 *
+	 * @param	string	$type				Type of category ('member', 'customer', 'supplier', 'product', 'contact')
+	 * @param 	int    	$object_id			id of the object to search
+	 * @return 	int   						number of occurrences
 	 */
 	function containsObject($type, $object_id)
 	{
