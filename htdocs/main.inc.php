@@ -1423,11 +1423,20 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 	    if (! empty($_SESSION["disablemodules"])) $loginhtmltext.='<br><b>'.$langs->trans("DisabledModules").'</b>: <br>'.join(', ',explode(',',$_SESSION["disablemodules"]));
 
 	    $appli='Dolibarr';
-	    if (! empty($conf->global->MAIN_APPLICATION_TITLE)) $appli=$conf->global->MAIN_APPLICATION_TITLE;
+	    if (! empty($conf->global->MAIN_APPLICATION_TITLE))
+	    {
+	    	$appli=$conf->global->MAIN_APPLICATION_TITLE;
+	    	if (preg_match('/\d\.\d/', $appli))
+	    	{
+				if (! preg_match('/'.preg_quote(DOL_VERSION).'/', $appli)) $appli.=" (".DOL_VERSION.")";	// If new title contains a version that is different than core
+	    	}
+	    	else $appli.=" ".DOL_VERSION;
+	    }
+	    else $appli.=" ".DOL_VERSION;
 
 	    // Link info
 	    $logouttext='';
-	    $logouthtmltext=$appli.' '.DOL_VERSION.'<br>';
+	    $logouthtmltext=$appli.'<br>';
 	    $logouthtmltext.=$langs->trans("Logout").'<br>';
 	    //$logouthtmltext.="<br>";
 	    if ($_SESSION["dol_authmode"] != 'forceuser' && $_SESSION["dol_authmode"] != 'http')
@@ -1621,10 +1630,16 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
 		if (preg_match('/es/i',$langs->defaultlang)) $doliurl='http://www.dolibarr.es';
 
 	    $appli='Dolibarr';
-	    if (! empty($conf->global->MAIN_APPLICATION_TITLE)) {
+	    if (! empty($conf->global->MAIN_APPLICATION_TITLE))
+	    {
 	    	$appli=$conf->global->MAIN_APPLICATION_TITLE; $doliurl='';
+	    	if (preg_match('/\d\.\d/', $appli))
+	    	{
+				if (! preg_match('/'.preg_quote(DOL_VERSION).'/', $appli)) $appli.=" (".DOL_VERSION.")";	// If new title contains a version that is different than core
+	    	}
+	    	else $appli.=" ".DOL_VERSION;
 	    }
-	    $appli.=" ".DOL_VERSION;
+	    else $appli.=" ".DOL_VERSION;
 	    print '<div id="blockvmenuhelp" class="blockvmenuhelp">';
 	    if ($doliurl) print '<a class="help" target="_blank" href="'.$doliurl.'">';
 	    print $appli;
