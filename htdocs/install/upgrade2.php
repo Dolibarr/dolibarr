@@ -16,6 +16,14 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ *
+ * Upgrade scripts can be ran from command line with syntax:
+ *
+ * cd htdocs/install
+ * php upgrade.php 3.4.0 3.5.0
+ * php upgrade2.php 3.4.0 3.5.0
+ *
+ * Return code is 0 if OK, >0 if error
  */
 
 /**
