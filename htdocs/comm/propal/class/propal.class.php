@@ -8,7 +8,7 @@
  * Copyright (C) 2008      Raphael Bertrand			<raphael.bertrand@resultic.fr>
  * Copyright (C) 2010-2013 Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2010-2011 Philippe Grand			<philippe.grand@atoo-net.com>
- * Copyright (C) 2012      Christophe Battarel  	<christophe.battarel@altairis.fr>
+ * Copyright (C) 2012-214  Christophe Battarel  	<christophe.battarel@altairis.fr>
  * Copyright (C) 2013      Florian Henry		  	<florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -972,6 +972,19 @@ class Propal extends CommonObject
         // Create clone
         $result=$this->create($user);
         if ($result < 0) $error++;
+        else
+        {
+			// copy internal contacts
+    		if ($this->copy_linked_contact($objFrom, 'internal') < 0)
+            	$error++;
+
+            // copy external contacts if same company
+            elseif ($objFrom->socid == $this->socid)
+            {
+		        if ($this->copy_linked_contact($objFrom, 'external') < 0)
+					$error++;
+            }
+        }
 
         if (! $error)
         {
