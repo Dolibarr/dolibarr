@@ -33,12 +33,14 @@ print top_htmlhead('',$titleofloginpage,0,0,$arrayofjs);
 
 <body class="body bodylogin">
 
+<?php if (empty($conf->dol_use_jmobile)) { ?>
 <script type="text/javascript">
 $(document).ready(function () {
 	// Set focus on correct field
 	<?php if ($focus_element) { ?>$('#<?php echo $focus_element; ?>').focus(); <?php } ?>		// Warning to use this only on visible element
 });
 </script>
+<?php } ?>
 
 <center>
 
