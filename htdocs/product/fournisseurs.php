@@ -72,6 +72,10 @@ if (! $sortorder) $sortorder="ASC";
 /*
  * Actions
  */
+ 
+$parameters=array('socid'=>$socid, 'id_prod'=>$id);
+$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+$error=$hookmanager->error; $errors=array_merge($errors, (array) $hookmanager->errors);
 
 if ($action == 'remove_pf')
 {
@@ -384,6 +388,12 @@ if ($id || $ref)
 					print '<td><input class="flat" name="charges" size="8" value="'.(GETPOST('charges')?price(GETPOST('charges')):(isset($product->fourn_charges)?price($product->fourn_charges):'')).'">';
 	        		print '</td>';
 					print '</tr>';
+				}
+				
+				if (is_object($hookmanager))
+				{
+					$parameters=array('id_fourn'=>$id_fourn,'prod_id'=>$product->id);
+				    $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);
 				}
 
 				print '</table>';
