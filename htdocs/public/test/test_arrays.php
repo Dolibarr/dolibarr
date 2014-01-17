@@ -4,7 +4,7 @@ define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
 
 require '../../main.inc.php';
 
-if (empty($conf->global->MAIN_FEATURES_LEVEL))
+if (!empty($conf->global->MAIN_FEATURES_LEVEL))
 {
 	print "Page available onto dev environment only";
 	exit;

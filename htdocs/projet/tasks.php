@@ -79,7 +79,7 @@ $userAccess=0;
 
 /*
  * Actions
-*/
+ */
 
 if ($action == 'createtask' && $user->rights->projet->creer)
 {
@@ -396,8 +396,7 @@ else
 	print '</td></tr></table>';
 
 	// Get list of tasks in tasksarray and taskarrayfiltered
-	// We need all tasks (even not limited to a user because a task to user
-	// can have a parent that is not affected to him).
+	// We need all tasks (even not limited to a user because a task to user can have a parent that is not affected to him).
 	$tasksarray=$taskstatic->getTasksArray(0, 0, $object->id, $socid, 0);
 	// We load also tasks limited to a particular user
 	$tasksrole=($mode=='mine' ? $taskstatic->getUserRolesForProjectsOrTasks(0,$user,$object->id,0) : '');
@@ -426,7 +425,7 @@ else
 	{
 		// Show all lines in taskarray (recursive function to go down on tree)
 		$j=0;
-		$nboftaskshown=projectLinesa($j, 0, $tasksarray, $level, true, 0, $tasksrole, '', 1);
+		$nboftaskshown=projectLinesa($j, 0, $tasksarray, $level, true, 0, $tasksrole, $id, 1);
 	}
 	else
 	{
@@ -437,13 +436,16 @@ else
 
 	// Test if database is clean. If not we clean it.
 	//print 'mode='.$_REQUEST["mode"].' $nboftaskshown='.$nboftaskshown.' count($tasksarray)='.count($tasksarray).' count($tasksrole)='.count($tasksrole).'<br>';
-	if ($mode=='mine')
+	if (! empty($user->rights->projet->all->lire))	// We make test to clean only if user has permission to see all (test may report false positive otherwise)
 	{
-		if ($nboftaskshown < count($tasksrole)) $object->clean_orphelins();
-	}
-	else
-	{
-		if ($nboftaskshown < count($tasksarray)) $object->clean_orphelins();
+		if ($mode=='mine')
+		{
+			if ($nboftaskshown < count($tasksrole)) $object->clean_orphelins();
+		}
+		else
+		{
+			if ($nboftaskshown < count($tasksarray)) $object->clean_orphelins();
+		}
 	}
 }
 

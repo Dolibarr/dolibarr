@@ -172,7 +172,7 @@ function dol_shutdown()
  *  Return value of a param into GET or POST supervariable
  *
  *  @param	string	$paramname   Name of parameter to found
- *  @param	string	$check	     Type of check (''=no check,  'int'=check it's numeric, 'alpha'=check it's alpha only, 'array'=check it's array)
+ *  @param	string	$check	     Type of check (''=no check,  'int'=check it's numeric, 'alpha'=check it's text and sign, 'az'=check it's a-z only, 'array'=check it's array)
  *  @param	int		$method	     Type of method (0 = get then post, 1 = only get, 2 = only post, 3 = post then get, 4 = post then get then cookie)
  *  @return string      		 Value found, or '' if check fails
  */
@@ -197,6 +197,13 @@ function GETPOST($paramname,$check='',$method=0)
 			// '../' is dangerous because it allows dir transversals
 			if (preg_match('/"/',$out)) $out='';
 			else if (preg_match('/\.\.\//',$out)) $out='';
+		}
+		elseif ($check == 'aZ')
+		{
+			$out=trim($out);
+			// '"' is dangerous because param in url can close the href= or src= and add javascript functions.
+			// '../' is dangerous because it allows dir transversals
+			if (preg_match('/[^a-z]+/i',$out)) $out='';
 		}
 		elseif ($check == 'array')
 		{
@@ -2399,8 +2406,8 @@ function getTitleFieldOfList($name, $thead=0, $file="", $field="", $begin="", $m
 
 	// If field is used as sort criteria we use a specific class
 	// Example if (sortfield,field)=("nom","xxx.nom") or (sortfield,field)=("nom","nom")
-	if ($field && ($sortfield == $field || $sortfield == preg_replace("/^[^\.]+\./","",$field))) $out.= '<'.$tag.' class="liste_titre_sel'.($field?' nowrap':'').'" '. $moreattrib.'>';
-	else $out.= '<'.$tag.' class="liste_titre'.($field?' nowrap':'').'" '. $moreattrib.'>';
+	if ($field && ($sortfield == $field || $sortfield == preg_replace("/^[^\.]+\./","",$field))) $out.= '<'.$tag.' class="liste_titre_sel" '. $moreattrib.'>';
+	else $out.= '<'.$tag.' class="liste_titre" '. $moreattrib.'>';
 
 	if (! empty($conf->dol_optimize_smallscreen) && empty($thead) && $field)    // If this is a sort field
 	{
@@ -2428,7 +2435,7 @@ function getTitleFieldOfList($name, $thead=0, $file="", $field="", $begin="", $m
 		if (! preg_match('/^&/',$options)) $options='&'.$options;
 
 		//print "&nbsp;";
-		$out.= '<img width="2" src="'.DOL_URL_ROOT.'/theme/common/transparent.png" alt="">';
+		$out.= '<img width="2" src="'.DOL_URL_ROOT.'/theme/common/transparent.png" alt=""><span class="nowrap">';
 
 		if (! $sortorder || $field != $sortfield)
 		{
@@ -2446,6 +2453,8 @@ function getTitleFieldOfList($name, $thead=0, $file="", $field="", $begin="", $m
 				$out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=desc&begin='.$begin.$options.'">'.img_up("Z-A",0).'</a>';
 			}
 		}
+
+		$out.= '</span>';
 	}
 	$out.='</'.$tag.'>';
 
@@ -3452,25 +3461,26 @@ function dol_nl2br($stringtoencode,$nl2brmode=0,$forxml=false)
  *	This function is called to encode a string into a HTML string but differs from htmlentities because
  * 	all entities but &,<,> are converted. This permits to encode special chars to entities with no double
  *  encoding for already encoded HTML strings.
- * 	This function also remove last CR/BR.
+ * 	This function also remove last EOL or BR if $removelasteolbr=1 (default).
  *  For PDF usage, you can show text by 2 ways:
  *              - writeHTMLCell -> param must be encoded into HTML.
  *              - MultiCell -> param must not be encoded into HTML.
  *              Because writeHTMLCell convert also \n into <br>, if function
- *              is used to build PDF, nl2brmode must be 1
+ *              is used to build PDF, nl2brmode must be 1.
  *
  *	@param	string	$stringtoencode		String to encode
  *	@param	int		$nl2brmode			0=Adding br before \n, 1=Replacing \n by br (for use with FPDF writeHTMLCell function for example)
  *  @param  string	$pagecodefrom       Pagecode stringtoencode is encoded
+ *  @param	int		$removelasteolbr	1=Remove last br or lasts \n (default), 0=Do nothing
  *  @return	string						String encoded
  */
-function dol_htmlentitiesbr($stringtoencode,$nl2brmode=0,$pagecodefrom='UTF-8')
+function dol_htmlentitiesbr($stringtoencode,$nl2brmode=0,$pagecodefrom='UTF-8',$removelasteolbr=1)
 {
+	$newstring=$stringtoencode;
 	if (dol_textishtml($stringtoencode))
 	{
-		$newstring=$stringtoencode;
 		$newstring=preg_replace('/<br(\s[\sa-zA-Z_="]*)?\/?>/i','<br>',$newstring);	// Replace "<br type="_moz" />" by "<br>". It's same and avoid pb with FPDF.
-		$newstring=preg_replace('/<br>$/i','',$newstring);	// Remove last <br>
+		if ($removelasteolbr) $newstring=preg_replace('/<br>$/i','',$newstring);	// Remove last <br> (remove only last one)
 		$newstring=strtr($newstring,array('&'=>'__and__','<'=>'__lt__','>'=>'__gt__','"'=>'__dquot__'));
 		$newstring=dol_htmlentities($newstring,ENT_COMPAT,$pagecodefrom);	// Make entity encoding
 		$newstring=strtr($newstring,array('__and__'=>'&','__lt__'=>'<','__gt__'=>'>','__dquot__'=>'"'));
@@ -3478,7 +3488,8 @@ function dol_htmlentitiesbr($stringtoencode,$nl2brmode=0,$pagecodefrom='UTF-8')
 	}
 	else
 	{
-		$newstring=dol_nl2br(dol_htmlentities($stringtoencode,ENT_COMPAT,$pagecodefrom),$nl2brmode);
+		if ($removelasteolbr) $newstring=preg_replace('/(\r\n|\r|\n)$/i','',$newstring);	// Remove last \n (may remove several)
+		$newstring=dol_nl2br(dol_htmlentities($newstring,ENT_COMPAT,$pagecodefrom),$nl2brmode);
 	}
 	// Other substitutions that htmlentities does not do
 	//$newstring=str_replace(chr(128),'&euro;',$newstring);	// 128 = 0x80. Not in html entity table.     // Seems useles with TCPDF. Make bug with UTF8 languages
@@ -4321,28 +4332,35 @@ function complete_head_from_modules($conf,$langs,$object,&$head,&$h,$type,$mode=
 					if (verifCond($values[4]))
 					{
 						if ($values[3]) $langs->load($values[3]);
+						if (preg_match('/SUBSTITUTION_([^_]+)/i',$values[2],$reg))
+						{
+							$substitutionarray=array();
+							complete_substitutions_array($substitutionarray,$langs,$object);
+							$label=make_substitutions($reg[1], $substitutionarray);
+						}
+						else $label=$langs->trans($values[2]);
+
 						$head[$h][0] = dol_buildpath(preg_replace('/__ID__/i', ((is_object($object) && ! empty($object->id))?$object->id:''), $values[5]), 1);
-						$head[$h][1] = $langs->trans($values[2]);
+						$head[$h][1] = $label;
 						$head[$h][2] = str_replace('+','',$values[1]);
 						$h++;
 					}
 				}
-				else if (count($values) == 5)       // new declaration
+				else if (count($values) == 5)       // deprecated
 				{
 					if ($values[0] != $type) continue;
 					if ($values[3]) $langs->load($values[3]);
+					if (preg_match('/SUBSTITUTION_([^_]+)/i',$values[2],$reg))
+					{
+						$substitutionarray=array();
+						complete_substitutions_array($substitutionarray,$langs,$object);
+						$label=make_substitutions($reg[1], $substitutionarray);
+					}
+					else $label=$langs->trans($values[2]);
+
 					$head[$h][0] = dol_buildpath(preg_replace('/__ID__/i', ((is_object($object) && ! empty($object->id))?$object->id:''), $values[4]), 1);
-					$head[$h][1] = $langs->trans($values[2]);
+					$head[$h][1] = $label;
 					$head[$h][2] = str_replace('+','',$values[1]);
-					$h++;
-				}
-				else if (count($values) == 4)   // old declaration, for backward compatibility
-				{
-					if ($values[0] != $type) continue;
-					if ($values[2]) $langs->load($values[2]);
-					$head[$h][0] = dol_buildpath(preg_replace('/__ID__/i', ((is_object($object) && ! empty($object->id))?$object->id:''), $values[3]), 1);
-					$head[$h][1] = $langs->trans($values[1]);
-					$head[$h][2] = 'tab'.$values[1];
 					$h++;
 				}
 			}

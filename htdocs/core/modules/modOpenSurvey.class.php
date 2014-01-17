@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2013 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2014 Marcos García			<marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,11 +17,8 @@
  */
 
 /**
- * 		\defgroup   opensurvey     Module OpenSurvey
+ * 		\defgroup   opensurvey     Module opensurvey
  *      \brief      Module to OpenSurvey integration.
- */
-
-/**
  *      \file       htdocs/core/modules/modOpenSurvey.class.php
  *      \ingroup    opensurvey
  *      \brief      Description and activation file for module OpenSurvey
@@ -74,9 +72,6 @@ class modOpenSurvey extends DolibarrModules
 		//$this->dirs[0] = DOL_DATA_ROOT.'/mymodule;
 		//$this->dirs[1] = DOL_DATA_ROOT.'/mymodule/temp;
 
-		// Config pages. Put here list of php page names stored in admin directory used to setup module
-		$this->config_page_url = array("index.php@opensurvey");
-
 		// Dependencies
 		$this->depends = array();		// List of modules id that must be enabled if this module is enabled
 		$this->requiredby = array();	// List of modules id to disable if this one is disabled
@@ -110,8 +105,7 @@ class modOpenSurvey extends DolibarrModules
 		$this->rights[$r][1] = 'Read surveys';	// Permission label
 		$this->rights[$r][2] = 'r'; 					// Permission by default for new user (0/1)
 		$this->rights[$r][3] = 0; 					// Permission by default for new user (0/1)
-		$this->rights[$r][4] = 'survey';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
-		$this->rights[$r][5] = 'read';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+		$this->rights[$r][4] = 'read';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 		$r++;
 
 		// Add here list of permission defined by an id, a label, a boolean and two constant strings.
@@ -120,8 +114,7 @@ class modOpenSurvey extends DolibarrModules
 		$this->rights[$r][1] = 'Create/modify surveys';	// Permission label
 		$this->rights[$r][2] = 'w'; 					// Permission by default for new user (0/1)
 		$this->rights[$r][3] = 0; 					// Permission by default for new user (0/1)
-		$this->rights[$r][4] = 'survey';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
-		$this->rights[$r][5] = 'write';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+		$this->rights[$r][4] = 'write';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 		$r++;
 
 
@@ -137,7 +130,7 @@ class modOpenSurvey extends DolibarrModules
 								'langs'=>'opensurvey',
 								'position'=>200,
                 				'enabled'=>'$conf->opensurvey->enabled',         // Define condition to show or hide menu entry. Use '$conf->NewsSubmitter->enabled' if entry must be visible if module is enabled.
-								'perms'=>'$user->rights->opensurvey->survey->read',
+								'perms'=>'$user->rights->opensurvey->read',
 								'target'=>'',
 								'user'=>0);
 		$r++;
@@ -161,12 +154,12 @@ class modOpenSurvey extends DolibarrModules
 								'titre'=>'NewSurvey',
 								'mainmenu'=>'opensurvey',
 								'leftmenu'=>'opensurvey_new',
-								'url'=>'/opensurvey/public/index.php?origin=dolibarr',
+								'url'=>'/opensurvey/wizard/index.php',
 								'langs'=>'opensurvey',
 								'position'=>210,
                 				'enabled'=>'$conf->opensurvey->enabled',         // Define condition to show or hide menu entry. Use '$conf->NewsSubmitter->enabled' if entry must be visible if module is enabled.
-								'perms'=>'',
-								'target'=>'_blank',
+								'perms'=>'$user->rights->opensurvey->write',
+								'target'=>'',
 								'user'=>0);
 		$r++;
 

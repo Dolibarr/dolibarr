@@ -85,7 +85,7 @@ class box_comptes extends ModeleBoxes
 			$sql.= " FROM ".MAIN_DB_PREFIX."bank_account";
 			$sql.= " WHERE entity = ".$conf->entity;
 			$sql.= " AND clos = 0";
-			$sql.= " AND courant = 1";
+			//$sql.= " AND courant = 1";
 			$sql.= " ORDER BY label";
 			$sql.= $db->plimit($max, 0);
 

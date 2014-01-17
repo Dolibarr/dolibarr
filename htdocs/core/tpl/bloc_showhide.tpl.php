@@ -28,13 +28,13 @@ if (isset($object->extraparams[$blocname]['showhide'])) $hide = (empty($object->
 $(document).ready(function() {
 	$("#hide-<?php echo $blocname ?>").click(function(){
 		setShowHide(0);
-		$("#<?php echo $blocname ?>_bloc").hide("blind", {direction: "vertical"}, 800).removeClass("nohideobject");
+		$("#<?php echo $blocname ?>_bloc").hide("blind", {direction: "vertical"}, 300).removeClass("nohideobject");
 		$(this).hide();
 		$("#show-<?php echo $blocname ?>").show();
 	});
 	$("#show-<?php echo $blocname ?>").click(function(){
 		setShowHide(1);
-		$("#<?php echo $blocname ?>_bloc").show("blind", {direction: "vertical"}, 800).addClass("nohideobject");
+		$("#<?php echo $blocname ?>_bloc").show("blind", {direction: "vertical"}, 300).addClass("nohideobject");
 		$(this).hide();
 		$("#hide-<?php echo $blocname ?>").show();
 	});
@@ -43,7 +43,7 @@ $(document).ready(function() {
 		var element		= '<?php echo $object->element; ?>';
 		var htmlelement	= '<?php echo $blocname ?>';
 		var type		= 'showhide';
-		
+
 		$.get("<?php echo dol_buildpath('/core/ajax/extraparams.php', 1); ?>?id="+id+"&element="+element+"&htmlelement="+htmlelement+"&type="+type+"&value="+status);
 	}
 });

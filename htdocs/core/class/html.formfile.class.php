@@ -813,7 +813,12 @@ class FormFile
 						else
 							$filepath=$file['name'];
 						*/
-						print '<a href="'.(($useinecm && ! empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE_JS))?'#':$url.'?action=delete&urlfile='.urlencode($filepath).$param).'" class="deletefilelink" rel="'.$filepath.'">'.img_delete().'</a>';
+						$useajax=1;
+						if (! empty($conf->dol_use_jmobile)) $useajax=0;
+						if (empty($conf->use_javascript_ajax)) $useajax=0;
+						if (! empty($conf->global->MAIN_ECM_DISABLE_JS)) $useajax=0;
+
+						print '<a href="'.(($useinecm && $useajax)?'#':$url.'?action=delete&urlfile='.urlencode($filepath).$param).'" class="deletefilelink" rel="'.$filepath.'">'.img_delete().'</a>';
 					}
 					else print '&nbsp;';
 					print "</td>";

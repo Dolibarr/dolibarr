@@ -27,8 +27,7 @@
 require_once DOL_DOCUMENT_ROOT .'/core/class/commonobject.class.php';
 
 /**
- *      \class      Deplacement
- *      \brief      Class to manage trips and working credit notes
+ *		Class to manage trips and working credit notes
  */
 class Deplacement extends CommonObject
 {
@@ -64,6 +63,9 @@ class Deplacement extends CommonObject
 	function __construct($db)
 	{
 		$this->db = $db;
+
+        $this->statuts_short = array(0 => 'Draft', 1 => 'Validated', 2 => 'Closed');
+        $this->statuts = array(0 => 'Draft', 1 => 'Validated', 2 => 'Closed');
 
 		return 1;
 	}
@@ -327,7 +329,6 @@ class Deplacement extends CommonObject
 		}
 		if ($mode == 4)
 		{
-			//if ($statut==0 && ! empty($this->statuts_short[$statut])) return img_picto($langs->trans($this->statuts_short[$statut]),'statut0').' '.$langs->trans($this->statuts[$statut]);
 			if ($statut==0 && ! empty($this->statuts_short[$statut])) return img_picto($langs->trans($this->statuts_short[$statut]),'statut0').' '.$langs->trans($this->statuts[$statut]);
 			if ($statut==1 && ! empty($this->statuts_short[$statut])) return img_picto($langs->trans($this->statuts_short[$statut]),'statut4').' '.$langs->trans($this->statuts[$statut]);
 		}

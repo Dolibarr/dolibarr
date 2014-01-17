@@ -47,25 +47,14 @@ $socid=0;
 if ($user->societe_id > 0) $socid=$user->societe_id;
 $result = restrictedArea($user, 'projet', $id);
 
+$permissionnote=$user->rights->projet->creer;	// Used by the include of actions_setnotes.inc.php
 
 
-/******************************************************************************/
-/*                     Actions                                                */
-/******************************************************************************/
+/*
+ * Actions
+ */
 
-if ($action == 'setnote_public' && $user->rights->projet->creer)
-{
-	$object->fetch($id);
-	$result=$object->update_note(dol_html_entity_decode(GETPOST('note_public'), ENT_QUOTES),'_public');
-	if ($result < 0) dol_print_error($db,$object->error);
-}
-
-if ($action == 'setnote_private' && $user->rights->projet->creer)
-{
-	$object->fetch($id);
-	$result=$object->update_note(dol_html_entity_decode(GETPOST('note_private'), ENT_QUOTES), '_private');
-	if ($result < 0) dol_print_error($db,$object->error);
-}
+include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php';	// Must be include, not includ_once
 
 
 /*

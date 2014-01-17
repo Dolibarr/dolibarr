@@ -207,7 +207,7 @@ function project_admin_prepare_head()
  * @param 	string		$var				Color
  * @param 	int			$showproject		Show project columns
  * @param	int			&$taskrole			Array of roles of user for each tasks
- * @param	int			$projectsListId		List of id of project allowed to user (separated with comma)
+ * @param	int			$projectsListId		List of id of project allowed to user (string separated with comma)
  * @param	int			$addordertick		Add a tick to move task
  * @return	void
  */
@@ -254,6 +254,22 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 					else
 					{
 						$showline=0;			// No reason to show line
+					}
+				}
+			}
+			else
+			{
+				// Caller did not ask to filter on tasks of a specific user (this probably means he want also tasks of all users, into public project
+				// or into all other projects if user has permission to).
+				if (empty($user->rights->projet->all->lire))
+				{
+					// User is not allowed on this project and project is not public, so we hide line
+					if (! in_array($lines[$i]->fk_project, $projectsArrayId))
+					{
+						// Note that having a user assigned to a task into a project user has no permission on, should not be possible
+						// because assignement on task can be done only on contact of project.
+						// If assignement was done and after, was removed from contact of project, then we can hide the line. 
+						$showline=0;	 
 					}
 				}
 			}
@@ -367,7 +383,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 				if (! $showlineingray) $inc++;
 
 				$level++;
-				if ($lines[$i]->id) projectLinesa($inc, $lines[$i]->id, $lines, $level, $var, $showproject, $taskrole, $projectsListId);
+				if ($lines[$i]->id) projectLinesa($inc, $lines[$i]->id, $lines, $level, $var, $showproject, $taskrole, $projectsListId, 0, $showalsopublicproj);
 				$level--;
 				$total += $lines[$i]->duration;
 			}

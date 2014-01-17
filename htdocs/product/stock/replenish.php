@@ -176,7 +176,7 @@ $sql = 'SELECT p.rowid, p.ref, p.label, p.price,';
 $sql.= ' p.price_ttc, p.price_base_type,p.fk_product_type,';
 $sql.= ' p.tms as datem, p.duration, p.tobuy, p.seuil_stock_alerte,';
 $sql.= ' p.desiredstock,';
-$sql.= ' SUM('.$db->ifsql("s.reel IS NULL", "s.reel", "0").') as stock_physique';
+$sql.= ' SUM('.$db->ifsql("s.reel IS NULL", "0", "s.reel").') as stock_physique';
 $sql.= ' FROM ' . MAIN_DB_PREFIX . 'product as p';
 $sql.= ' LEFT JOIN ' . MAIN_DB_PREFIX . 'product_stock as s';
 $sql.= ' ON p.rowid = s.fk_product';
@@ -219,7 +219,7 @@ $sql.= ' HAVING p.desiredstock > SUM('.$db->ifsql("s.reel IS NULL", "0", "s.reel
 $sql.= ' AND p.desiredstock > 0';
 if ($salert == 'on')	// Option to see when stock is lower than alert
 {
-    $sql .= ' AND SUM('.$db->ifsql("s.reel IS NULL", "s.reel", "0").') < p.seuil_stock_alerte AND p.seuil_stock_alerte is not NULL';
+    $sql .= ' AND SUM('.$db->ifsql("s.reel IS NULL", "0", "s.reel").') < p.seuil_stock_alerte AND p.seuil_stock_alerte is not NULL';
     $alertchecked = 'checked="checked"';
 }
 $sql.= $db->order($sortfield,$sortorder);

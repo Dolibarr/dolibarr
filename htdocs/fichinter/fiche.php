@@ -88,11 +88,14 @@ if ($id > 0 || ! empty($ref))
 	if ($ret < 0) dol_print_error('',$object->error);
 }
 
+$permissionnote=$user->rights->ficheinter->creer;	// Used by the include of actions_setnotes.inc.php
 
 
 /*
  * Actions
  */
+
+include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php';	// Must be include, not includ_once
 
 if ($action == 'confirm_validate' && $confirm == 'yes' && $user->rights->ficheinter->creer)
 {
@@ -397,16 +400,6 @@ else if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->fich
 else if ($action == 'setdescription' && $user->rights->ficheinter->creer)
 {
 	$result=$object->set_description($user,GETPOST('description'));
-	if ($result < 0) dol_print_error($db,$object->error);
-}
-else if ($action == 'setnote_public' && $user->rights->ficheinter->creer)
-{
-	$result=$object->update_note(dol_html_entity_decode(GETPOST('note_public'), ENT_QUOTES),'_public');
-	if ($result < 0) dol_print_error($db,$object->error);
-}
-else if ($action == 'setnote_private' && $user->rights->ficheinter->creer)
-{
-	$result=$object->update_note(dol_html_entity_decode(GETPOST('note_private'), ENT_QUOTES), '_private');
 	if ($result < 0) dol_print_error($db,$object->error);
 }
 
@@ -781,7 +774,7 @@ else if ($action == 'update_extras')
 	$extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
 	$ret = $extrafields->setOptionalsFromPost($extralabels,$object,GETPOST('attribute'));
 	if ($ret < 0) $error++;
-	
+
 	if (! $error)
 	{
 		// Actions on extra fields (by external module or standard code)
@@ -799,7 +792,7 @@ else if ($action == 'update_extras')
 		}
 		else if ($reshook < 0) $error++;
 	}
-	
+
 	if ($error) $action = 'edit_extras';
 }
 
@@ -973,7 +966,7 @@ if ($action == 'create')
 		if (! empty($conf->projet->enabled))
 		{
 			$formproject=new FormProjets($db);
-			
+
 			$langs->load("project");
 
             print '<tr><td valign="top">'.$langs->trans("Project").'</td><td>';
@@ -1103,7 +1096,7 @@ else if ($id > 0 || ! empty($ref))
 	if ($action == 'delete')
 	{
 		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('DeleteIntervention'), $langs->trans('ConfirmDeleteIntervention'), 'confirm_delete','',0,1);
-		
+
 	}
 
 	// Confirmation validation
@@ -1127,21 +1120,21 @@ else if ($id > 0 || ! empty($ref))
 		$text=$langs->trans('ConfirmValidateIntervention',$numref);
 
 		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ValidateIntervention'), $text, 'confirm_validate','',0,1);
-		
+
 	}
 
 	// Confirmation de la validation de la fiche d'intervention
 	if ($action == 'modify')
 	{
 		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ModifyIntervention'), $langs->trans('ConfirmModifyIntervention'), 'confirm_modify','',0,1);
-		
+
 	}
 
 	// Confirmation de la suppression d'une ligne d'intervention
 	if ($action == 'ask_deleteline')
 	{
 		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&line_id='.GETPOST('line_id','int'), $langs->trans('DeleteInterventionLine'), $langs->trans('ConfirmDeleteInterventionLine'), 'confirm_deleteline','',0,1);
-		
+
 	}
 
 	print '<table class="border" width="100%">';
@@ -1286,9 +1279,9 @@ else if ($id > 0 || ! empty($ref))
 					print '<input type="hidden" name="attribute" value="'.$key.'">';
 					print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 					print '<input type="hidden" name="id" value="'.$object->id.'">';
-					
+
 					print $extrafields->showInputField($key,$value);
-					
+
 					print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
 					print '</form>';
 				}

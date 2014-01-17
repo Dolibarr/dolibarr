@@ -51,10 +51,15 @@ $object = new Deplacement($db);
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('tripsandexpensescard'));
 
+$permissionnote=$user->rights->deplacement->creer;	// Used by the include of actions_setnotes.inc.php
+
 
 /*
  * Actions
-*/
+ */
+
+include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php';	// Must be include, not includ_once
+
 if ($action == 'validate' && $user->rights->deplacement->creer)
 {
     $object->fetch($id);
@@ -231,23 +236,11 @@ else if ($action == 'setkm' && $user->rights->deplacement->creer)
     $result=$object->setValueFrom('km',GETPOST('km','int'));
     if ($result < 0) dol_print_error($db, $object->error);
 }
-else if ($action == 'setnote_public' && $user->rights->deplacement->creer)
-{
-    $object->fetch($id);
-    $result=$object->update_note(dol_html_entity_decode(GETPOST('note_public'), ENT_QUOTES),'_public');
-    if ($result < 0) dol_print_error($db, $object->error);
-}
-else if ($action == 'setnote_private' && $user->rights->deplacement->creer)
-{
-    $object->fetch($id);
-    $result=$object->update_note(dol_html_entity_decode(GETPOST('note_private'), ENT_QUOTES),'_private');
-    if ($result < 0) dol_print_error($db, $object->error);
-}
 
 
 /*
  * View
-*/
+ */
 
 llxHeader();
 
@@ -301,7 +294,7 @@ if ($action == 'create')
     print '<tr>';
     print '<td class="border" valign="top">'.$langs->trans('NotePublic').'</td>';
     print '<td valign="top" colspan="2">';
-    
+
     $doleditor = new DolEditor('note_public', GETPOST('note_public', 'alpha'), 600, 200, 'dolibarr_notes', 'In', false, true, true, ROWS_8, 100);
     print $doleditor->Create(1);
 
@@ -313,7 +306,7 @@ if ($action == 'create')
         print '<tr>';
         print '<td class="border" valign="top">'.$langs->trans('NotePrivate').'</td>';
         print '<td valign="top" colspan="2">';
-        
+
         $doleditor = new DolEditor('note_private', GETPOST('note_private', 'alpha'), 600, 200, 'dolibarr_notes', 'In', false, true, true, ROWS_8, 100);
         print $doleditor->Create(1);
 
@@ -400,7 +393,7 @@ else if ($id)
 
             $doleditor = new DolEditor('note_public', $object->note_public, 600, 200, 'dolibarr_notes', 'In', false, true, true, ROWS_8, '100');
             print $doleditor->Create(1);
-            
+
             print "</td></tr>";
 
             // Private note
@@ -437,7 +430,7 @@ else if ($id)
             if ($action == 'delete')
             {
                 print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$id,$langs->trans("DeleteTrip"),$langs->trans("ConfirmDeleteTrip"),"confirm_delete");
-                
+
             }
 
             $soc = new Societe($db);

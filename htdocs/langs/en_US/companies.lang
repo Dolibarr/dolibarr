@@ -82,6 +82,7 @@ DefaultLang=Language by default
 VATIsUsed=VAT is used
 VATIsNotUsed=VAT is not used
 CopyAddressFromSoc=Fill address with thirdparty address
+NoEmailDefined=There is no email defined
 ##### Local Taxes #####
 LocalTax1IsUsedES= RE is used
 LocalTax1IsNotUsedES= RE is not used

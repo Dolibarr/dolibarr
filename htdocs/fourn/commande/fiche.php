@@ -98,9 +98,15 @@ else if (! empty($socid) && $socid > 0)
 	if ($ret < 0) dol_print_error($db,$object->error);
 }
 
+$permissionnote=$user->rights->fournisseur->commande->creer;	// Used by the include of actions_setnotes.inc.php
+
+
 /*
  * Actions
  */
+
+include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php';	// Must be include, not includ_once
+
 if ($action == 'setref_supplier' && $user->rights->fournisseur->commande->creer)
 {
     $result=$object->setValueFrom('ref_supplier',GETPOST('ref_supplier','alpha'));
@@ -137,21 +143,9 @@ else if ($action ==	'classin' && $user->rights->fournisseur->commande->creer)
     $object->setProject($projectid);
 }
 
-else if ($action ==	'setremisepercent' && $user->rights->fournisseur->commande->creer)
+else if ($action == 'setremisepercent' && $user->rights->fournisseur->commande->creer)
 {
     $result = $object->set_remise($user, $_POST['remise_percent']);
-}
-
-else if ($action == 'setnote_public' && $user->rights->fournisseur->commande->creer)
-{
-	$result=$object->update_note(dol_html_entity_decode(GETPOST('note_public'), ENT_QUOTES),'_public');
-	if ($result < 0) dol_print_error($db,$object->error);
-}
-
-else if ($action == 'setnote_private' && $user->rights->fournisseur->commande->creer)
-{
-	$result=$object->update_note(dol_html_entity_decode(GETPOST('note_private'), ENT_QUOTES),'_private');
-	if ($result < 0) dol_print_error($db,$object->error);
 }
 
 else if ($action == 'reopen' && $user->rights->fournisseur->commande->approuver)

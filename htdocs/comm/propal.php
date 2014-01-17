@@ -96,6 +96,7 @@ if ($id > 0 || ! empty($ref))
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('propalcard'));
 
+$permissionnote=$user->rights->propale->creer;	// Used by the include of actions_setnotes.inc.php
 
 
 /*
@@ -104,6 +105,9 @@ $hookmanager->initHooks(array('propalcard'));
 
 $parameters=array('socid'=>$socid);
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+
+include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php';	// Must be include, not includ_once
+
 
 // Action clone object
 if ($action == 'confirm_clone' && $confirm == 'yes')
@@ -230,18 +234,6 @@ else if ($action == 'setdate_livraison' && $user->rights->propal->creer)
 else if ($action == 'set_ref_client' && $user->rights->propal->creer)
 {
 	$object->set_ref_client($user, $_POST['ref_client']);
-}
-
-else if ($action == 'setnote_public' && $user->rights->propal->creer)
-{
-	$result=$object->update_note(dol_html_entity_decode(GETPOST('note_public'), ENT_QUOTES),'_public');
-	if ($result < 0) dol_print_error($db,$object->error);
-}
-
-else if ($action == 'setnote_private' && $user->rights->propal->creer)
-{
-	$result=$object->update_note(dol_html_entity_decode(GETPOST('note_private'), ENT_QUOTES),'_private');
-	if ($result < 0) dol_print_error($db,$object->error);
 }
 
 // Create proposal
