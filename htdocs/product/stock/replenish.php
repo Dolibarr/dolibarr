@@ -412,10 +412,8 @@ print '<td class="liste_titre">&nbsp;</td>'.
 	'<td class="liste_titre" align="right">&nbsp;</td>'.
 	'<td class="liste_titre">&nbsp;</td>'.
 	'<td class="liste_titre" align="right">'.
-	'<input type="image" class="liste_titre" name="button_search"'.
-	'src="' . DOL_URL_ROOT . '/theme/' . $conf->theme . '/img/search.png" alt="' . $langs->trans("Search") . '">'.
-	'<input type="image" class="liste_titre" name="button_removefilter"
-	src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/searchclear.png" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">'.
+	'<input class="liste_titre" name="button_search" type="image" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">'.
+	'<input type="image" class="liste_titre" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" name="button_removefilter" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">'.
 	'</td>'.
 	'</tr>';
 

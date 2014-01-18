@@ -33,12 +33,14 @@ print top_htmlhead('',$titleofloginpage,0,0,$arrayofjs);
 
 <body class="body bodylogin">
 
+<?php if (empty($conf->dol_use_jmobile)) { ?>
 <script type="text/javascript">
 $(document).ready(function () {
 	// Set focus on correct field
 	<?php if ($focus_element) { ?>$('#<?php echo $focus_element; ?>').focus(); <?php } ?>		// Warning to use this only on visible element
 });
 </script>
+<?php } ?>
 
 <center>
 
@@ -205,7 +207,38 @@ if (isset($conf->file->main_authentication) && preg_match('/openid/',$conf->file
 }
 ?>
 
+<!-- authentication mode = <?php echo $main_authentication ?> -->
+<!-- cookie name used for this session = <?php echo $session_name ?> -->
+<!-- urlfrom in this session = <?php echo $_SESSION["urlfrom"] ?> -->
+
+<!-- Common footer is not used for login page, this is same than footer but inside login tpl -->
+
+<?php if (! empty($conf->global->MAIN_HTML_FOOTER)) print $conf->global->MAIN_HTML_FOOTER; ?>
+
 <?php
+// Google Analytics (need Google module)
+if (! empty($conf->google->enabled) && ! empty($conf->global->MAIN_GOOGLE_AN_ID))
+{
+	if (empty($conf->dol_use_jmobile))
+	{
+		print "\n";
+		print '<script type="text/javascript">'."\n";
+		print '  var _gaq = _gaq || [];'."\n";
+		print '  _gaq.push([\'_setAccount\', \''.$conf->global->MAIN_GOOGLE_AN_ID.'\']);'."\n";
+		print '  _gaq.push([\'_trackPageview\']);'."\n";
+		print ''."\n";
+		print '  (function() {'."\n";
+		print '    var ga = document.createElement(\'script\'); ga.type = \'text/javascript\'; ga.async = true;'."\n";
+		print '    ga.src = (\'https:\' == document.location.protocol ? \'https://ssl\' : \'http://www\') + \'.google-analytics.com/ga.js\';'."\n";
+		print '    var s = document.getElementsByTagName(\'script\')[0]; s.parentNode.insertBefore(ga, s);'."\n";
+		print '  })();'."\n";
+		print '</script>'."\n";
+	}
+}
+?>
+
+<?php
+// Google Adsense
 if (! empty($conf->google->enabled) && ! empty($conf->global->MAIN_GOOGLE_AD_CLIENT) && ! empty($conf->global->MAIN_GOOGLE_AD_SLOT))
 {
 	if (empty($conf->dol_use_jmobile))
@@ -227,12 +260,6 @@ if (! empty($conf->google->enabled) && ! empty($conf->global->MAIN_GOOGLE_AD_CLI
 	}
 }
 ?>
-
-<!-- authentication mode = <?php echo $main_authentication ?> -->
-<!-- cookie name used for this session = <?php echo $session_name ?> -->
-<!-- urlfrom in this session = <?php echo $_SESSION["urlfrom"] ?> -->
-
-<?php if (! empty($conf->global->MAIN_HTML_FOOTER)) print $conf->global->MAIN_HTML_FOOTER; ?>
 
 </center>	<!-- end of center -->
 
