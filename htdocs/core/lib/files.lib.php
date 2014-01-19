@@ -538,13 +538,13 @@ function dol_move($srcfile, $destfile, $newmask=0, $overwriteifexists=1)
         $newpathofdestfile=dol_osencode($destfile);
 
         $result=@rename($newpathofsrcfile, $newpathofdestfile); // To see errors, remove @
-        if (! $result) 
+        if (! $result)
         {
-        	if ($destexists) 
+        	if ($destexists)
         	{
         		dol_syslog("files.lib.php::dol_move failed. We try to delete first and move after.", LOG_WARNING);
         		// We force delete and try again. Rename function sometimes fails to replace dest file with some windows NTFS partitions.
-        		dol_delete_file($destfile);	
+        		dol_delete_file($destfile);
         		$result=@rename($newpathofsrcfile, $newpathofdestfile); // To see errors, remove @
         	}
         	else dol_syslog("files.lib.php::dol_move failed", LOG_WARNING);
@@ -725,6 +725,8 @@ function dol_delete_file($file,$disableglob=0,$nophperrors=0,$nohook=0,$object=n
 
 	$langs->load("other");
 	$langs->load("errors");
+
+	dol_syslog("dol_delete_file file=".$file." disableglob=".$disableglob." nophperrors=".$nophperrors." nohook=".$nohook);
 
 	if (empty($nohook))
 	{
@@ -1301,7 +1303,7 @@ function dol_check_secure_access_document($modulepart,$original_file,$entity,$fu
 
 	if (empty($modulepart)) return 'ErrorBadParameter';
 	if (empty($entity)) $entity=0;
-	dol_syslog('modulepart='.$modulepart.' original_file= '.$original_file);
+	dol_syslog('modulepart='.$modulepart.' original_file='.$original_file);
 	// We define $accessallowed and $sqlprotectagainstexternals
 	$accessallowed=0;
 	$sqlprotectagainstexternals='';
