@@ -2,6 +2,7 @@
 English Dolibarr ChangeLog
 --------------------------------------------------------------
 
+
 ***** ChangeLog for 3.5 compared to 3.4.* *****
 For users:
 - New: Add hidden option BANK_DISABLE_DIRECT_INPUT.

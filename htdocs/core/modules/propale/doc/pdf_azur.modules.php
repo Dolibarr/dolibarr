@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2008      Raphael Bertrand     <raphael.bertrand@resultic.fr>
  * Copyright (C) 2010-2013 Juanjo Menent	    <jmenent@2byte.es>
@@ -153,7 +153,7 @@ class pdf_azur extends ModelePDFPropales
 		$outputlangs->load("products");
 
 		$nblignes = count($object->lines);
-		
+
 		// Loop on each lines to detect if there is at least one image to show
 		$realpatharray=array();
 		if (! empty($conf->global->MAIN_GENERATE_PROPOSALS_WITH_PICTURE))
@@ -161,7 +161,7 @@ class pdf_azur extends ModelePDFPropales
 			for ($i = 0 ; $i < $nblignes ; $i++)
 			{
 				if (empty($object->lines[$i]->fk_product)) continue;
-				
+
 				$objphoto = new Product($this->db);
 				$objphoto->fetch($object->lines[$i]->fk_product);
 
@@ -185,7 +185,7 @@ class pdf_azur extends ModelePDFPropales
 		if ($conf->propal->dir_output)
 		{
 			$object->fetch_thirdparty();
-			
+
 			// $deja_regle = 0;
 
 			// Definition of $dir and $file
@@ -270,12 +270,24 @@ class pdf_azur extends ModelePDFPropales
 				$tab_height_newpage = 150;
 
 				// Affiche notes
-				if (! empty($object->note_public))
+				$notetoshow=empty($object->note_public)?'':$object->note_public;
+				if (! empty($conf->global->MAIN_ADD_SALE_REP_SIGNATURE_IN_NOTE))
+				{
+					// Get first sale rep
+					if (is_object($object->thirdparty))
+					{
+						$salereparray=$object->thirdparty->getSalesRepresentatives($user);
+						$salerepobj=new User($this->db);
+						$salerepobj->fetch($salereparray[0]['id']);
+						if (! empty($salerepobj->signature)) $notetoshow=dol_concatdesc($notetoshow, $salerepobj->signature);
+					}
+				}
+				if ($notetoshow)
 				{
 					$tab_top = 88;
 
 					$pdf->SetFont('','', $default_font_size - 1);
-					$pdf->writeHTMLCell(190, 3, $this->posxdesc-1, $tab_top, dol_htmlentitiesbr($object->note_public), 0, 1);
+					$pdf->writeHTMLCell(190, 3, $this->posxdesc-1, $tab_top, dol_htmlentitiesbr($notetoshow), 0, 1);
 					$nexY = $pdf->GetY();
 					$height_note=$nexY-$tab_top;
 
