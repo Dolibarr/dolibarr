@@ -9,8 +9,8 @@ For users:
 - New: Add option MAIN_HIDE_INACTIVETAB_ON_PRINT to hide inactive tabs when you
        use the "print" view on screen.
 - New: Add menu entry to barcode genration page.
-- New: Add option MAIN_AUTO_TIMESTAMP_IN_NOTES to automatically add timestamp
-       and user line into editionf field when editing a note.
+- New: Add option MAIN_AUTO_TIMESTAMP_IN_PUBLIC_NOTES and MAIN_AUTO_TIMESTAMP_IN_PRIVATE_NOTES
+       to automatically add timestamp and user line into editionf field when editing a note.
 - New: Add button cancel into edition of notes.
 - New: Improved Opensurvey module and added options to disable comments and disable
        public votes

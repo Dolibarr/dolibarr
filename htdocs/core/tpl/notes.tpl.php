@@ -26,7 +26,7 @@ $permission=(isset($permission)?$permission:(isset($user->rights->$module->creer
 $moreparam=(isset($moreparam)?$moreparam:'');
 $value_public=$object->note_public;
 $value_private=$object->note_private;
-if (! empty($conf->global->MAIN_AUTO_TIMESTAMP_IN_NOTES))
+if (! empty($conf->global->MAIN_AUTO_TIMESTAMP_IN_PUBLIC_NOTES))
 {
 	$stringtoadd=dol_print_date(dol_now(), 'dayhour').' '.$user->getFullName($langs).' --';
 	if (GETPOST('action') == 'edit'.$note_public)
@@ -35,6 +35,10 @@ if (! empty($conf->global->MAIN_AUTO_TIMESTAMP_IN_NOTES))
 		if (dol_textishtml($value_public)) $value_public.="<br>\n";
 		else $value_public.="\n";
 	}
+}
+if (! empty($conf->global->MAIN_AUTO_TIMESTAMP_IN_PRIVATE_NOTES))
+{
+	$stringtoadd=dol_print_date(dol_now(), 'dayhour').' '.$user->getFullName($langs).' --';
 	if (GETPOST('action') == 'edit'.$note_private)
 	{
 		$value_private=dol_concatdesc($value_private, ($value_private?"\n":"")."-- ".$stringtoadd);
