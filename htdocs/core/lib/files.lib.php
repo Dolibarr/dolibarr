@@ -726,6 +726,8 @@ function dol_delete_file($file,$disableglob=0,$nophperrors=0,$nohook=0,$object=n
 	$langs->load("other");
 	$langs->load("errors");
 
+	dol_syslog("dol_delete_file file=".$file." disableglob=".$disableglob." nophperrors=".$nophperrors." nohook=".$nohook);
+
 	if (empty($nohook))
 	{
 		$hookmanager->initHooks(array('fileslib'));
