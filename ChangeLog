@@ -15,6 +15,7 @@ For users:
 - New: Improved Opensurvey module and added options to disable comments and disable
        public votes
 - New: The box "balance of bank accounts" show all opened accounts.
+- New: Add option MAIN_ADD_SALE_REP_SIGNATURE_IN_NOTE.
 
 For translators:
 - Update language files.
