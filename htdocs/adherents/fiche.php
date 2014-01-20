@@ -583,7 +583,7 @@ if ($user->rights->adherent->creer && $action == 'confirm_valid' && $confirm == 
 	if ($result >= 0 && ! count($object->errors))
 	{
 		// Send confirmation Email (selon param du type adherent sinon generique)
-		if ($object->email && ! empty($_POST["send_mail"]))
+		if ($object->email && GEPOST("send_mail"))
 		{
 			$result=$object->send_an_email($adht->getMailOnValid(),$conf->global->ADHERENT_MAIL_VALID_SUBJECT,array(),array(),array(),"","",0,2);
 			if ($result < 0)
@@ -622,7 +622,7 @@ if ($user->rights->adherent->supprimer && $action == 'confirm_resign')
 
 		if ($result >= 0 && ! count($object->errors))
 		{
-			if ($object->email && $_POST["send_mail"])
+			if ($object->email && GETPOST("send_mail"))
 			{
 				$result=$object->send_an_email($adht->getMailOnResiliate(),$conf->global->ADHERENT_MAIL_RESIL_SUBJECT,array(),array(),array(),"","",0,-1);
 			}
