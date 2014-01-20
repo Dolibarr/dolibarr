@@ -490,12 +490,57 @@ class NumberingModulesTest extends PHPUnit_Framework_TestCase
 
     	$localobject=new Facture($this->savdb);
     	$localobject->initAsSpecimen();
-    	$localobject->date=dol_mktime(12, 0, 0, 12, 1, 1971);	// we use different discal year but same year
+    	$localobject->date=dol_mktime(12, 0, 0, 12, 1, 1971);	// we use different fiscal year but same year
     	$numbering=new mod_facture_mercure();
     	$result=$numbering->getNextValue($mysoc, $localobject);
     	print __METHOD__." result=".$result."\n";
     	$this->assertEquals('197212-0001', $result);	// counter must be reset to 1
 
+    	// Now we try with a reset every month (@99)
+    	$conf->global->SOCIETE_FISCAL_MONTH_START=6;
+    	$conf->global->FACTURE_MERCURE_MASK_CREDIT='{yyyy}{mm}-{0000@99}';
+    	$conf->global->FACTURE_MERCURE_MASK_INVOICE='{yyyy}{mm}-{0000@99}';
+    	
+    	$localobject=new Facture($this->savdb);
+    	$localobject->initAsSpecimen();
+    	$localobject->date=dol_mktime(12, 0, 0, 1, 1, 1980);	// we use year 1980 to be sure to not have existing invoice for this year
+    	$numbering=new mod_facture_mercure();
+    	$result=$numbering->getNextValue($mysoc, $localobject);
+    	$result2=$localobject->create($user,1);
+    	$result3=$localobject->validate($user, $result);
+    	print __METHOD__." result=".$result."\n";
+    	$this->assertEquals('198001-0001', $result);	// counter must start to 1
+    	
+    	$localobject=new Facture($this->savdb);
+    	$localobject->initAsSpecimen();
+    	$localobject->date=dol_mktime(12, 0, 0, 1, 1, 1980);	// we use year 1980 to be sure to not have existing invoice for this year
+    	$numbering=new mod_facture_mercure();
+    	$result=$numbering->getNextValue($mysoc, $localobject);
+    	$result2=$localobject->create($user,1);
+    	$result3=$localobject->validate($user, $result);
+    	print __METHOD__." result=".$result."\n";
+    	$this->assertEquals('198001-0002', $result);	// counter must start to 2
+    	
+    	$localobject=new Facture($this->savdb);
+    	$localobject->initAsSpecimen();
+    	$localobject->date=dol_mktime(12, 0, 0, 2, 1, 1980);	// we use year 1980 to be sure to not have existing invoice for this year
+    	$numbering=new mod_facture_mercure();
+    	$result=$numbering->getNextValue($mysoc, $localobject);
+    	$result2=$localobject->create($user,1);
+    	$result3=$localobject->validate($user, $result);
+    	print __METHOD__." result=".$result."\n";
+    	$this->assertEquals('198002-0001', $result);	// counter must start to 1
+    	
+    	$localobject=new Facture($this->savdb);
+    	$localobject->initAsSpecimen();
+    	$localobject->date=dol_mktime(12, 0, 0, 1, 1, 1981);	// we use year 1981 to be sure to not have existing invoice for this year
+    	$numbering=new mod_facture_mercure();
+    	$result=$numbering->getNextValue($mysoc, $localobject);
+    	$result2=$localobject->create($user,1);
+    	$result3=$localobject->validate($user, $result);
+    	print __METHOD__." result=".$result."\n";
+    	$this->assertEquals('198101-0001', $result);	// counter must start to 1
+      	
     	return $result;
     }
 
