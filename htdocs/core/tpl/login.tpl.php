@@ -25,7 +25,7 @@ if (GETPOST('dol_optimize_smallscreen')) $conf->dol_optimize_smallscreen=1;
 if (GETPOST('dol_no_mouse_hover')) $conf->dol_no_mouse_hover=1;
 if (GETPOST('dol_use_jmobile')) $conf->dol_use_jmobile=1;
 
-$arrayofjs=array('/core/js/dst.js');					// Javascript code on logon page only to detect user tz, dst_observed, dst_first, dst_second
+$arrayofjs=array('/core/js/dst.js'.(empty($conf->dol_use_jmobile)?'':'?version='.urlencode(DOL_VERSION)));					// Javascript code on logon page only to detect user tz, dst_observed, dst_first, dst_second
 $titleofloginpage=$langs->trans('Login').' '.$title;	// title is defined by dol_loginfunction in security2.lib.php
 print top_htmlhead('',$titleofloginpage,0,0,$arrayofjs);
 ?>
@@ -33,12 +33,14 @@ print top_htmlhead('',$titleofloginpage,0,0,$arrayofjs);
 
 <body class="body bodylogin">
 
+<?php if (empty($conf->dol_use_jmobile)) { ?>
 <script type="text/javascript">
 $(document).ready(function () {
 	// Set focus on correct field
 	<?php if ($focus_element) { ?>$('#<?php echo $focus_element; ?>').focus(); <?php } ?>		// Warning to use this only on visible element
 });
 </script>
+<?php } ?>
 
 <center>
 
