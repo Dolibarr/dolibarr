@@ -17,11 +17,8 @@
  */
 
 /**
- * 		\defgroup   opensurvey     Module OpenSurvey
+ * 		\defgroup   opensurvey     Module opensurvey
  *      \brief      Module to OpenSurvey integration.
- */
-
-/**
  *      \file       htdocs/core/modules/modOpenSurvey.class.php
  *      \ingroup    opensurvey
  *      \brief      Description and activation file for module OpenSurvey

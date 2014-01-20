@@ -71,6 +71,11 @@ $object->substitutionarray=array(
 	'__UNSUBSCRIBE__' => 'TagUnsubscribe'
 	//,'__PERSONALIZED__' => 'Personalized'	// Hidden because not used yet
 );
+if (! empty($conf->paypal->enabled) && ! empty($conf->global->PAYPAL_SECURITY_TOKEN))
+{
+	$object->substitutionarray['__SECUREKEYPAYPAL__']='SecureKeyPaypal';
+	if (! empty($conf->global->PAYPAL_SECURITY_TOKEN_UNIQUE)) $object->substitutionarray['__SECUREKEYPAYPAL_MEMBER__']='SecureKeyPaypalUniquePerMember';
+}
 
 $object->substitutionarrayfortest=array(
     '__ID__' => 'TESTIdRecord',
@@ -86,7 +91,7 @@ $object->substitutionarrayfortest=array(
 	'__SIGNATURE__' => (($user->signature && empty($conf->global->MAIN_MAIL_DO_NOT_USE_SIGN))?$user->signature:''),
     '__CHECK_READ__' => 'TagCheckMail',
 	'__UNSUBSCRIBE__' => 'TagUnsubscribe'
-//,'__PERSONALIZED__' => 'TESTPersonalized'	// Not used yet
+	//,'__PERSONALIZED__' => 'TESTPersonalized'	// Not used yet
 );
 
 
@@ -222,7 +227,12 @@ if ($action == 'sendallconfirmed' && $confirm == 'yes')
 							'__OTHER4__' => $other4,
 							'__OTHER5__' => $other5
 					);
-
+					if (! empty($conf->paypal->enabled) && ! empty($conf->global->PAYPAL_SECURITY_TOKEN))
+					{
+						$substitutionarray['__SECUREKEYPAYPAL__']=dol_hash($conf->global->PAYPAL_SECURITY_TOKEN, 2);
+						if (empty($conf->global->PAYPAL_SECURITY_TOKEN_UNIQUE)) $substitutionarray['__SECUREKEYPAYPAL_MEMBER__']=dol_hash($conf->global->PAYPAL_SECURITY_TOKEN, 2);
+						else $substitutionarray['__SECUREKEYPAYPAL_MEMBER__']=dol_hash($conf->global->PAYPAL_SECURITY_TOKEN . 'membersubscription' . $obj->source_id, 2);
+					}
 					$substitutionisok=true;
                     complete_substitutions_array($substitutionarray, $langs);
 					$newsubject=make_substitutions($subject,$substitutionarray);
@@ -1080,7 +1090,7 @@ else
 				{
 					$out.= '<div id="attachfile_'.$key.'">';
 					$out.= img_mime($listofpaths[$key]['name']).' '.$listofpaths[$key]['name'];
-					$out.= ' <input type="image" style="border: 0px;" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/delete.png" value="'.($key+1).'" class="removedfile" id="removedfile_'.$key.'" name="removedfile_'.$key.'" />';
+					$out.= ' <input type="image" style="border: 0px;" src="'.img_picto($langs->trans("Search"),'delete.png','','',1).'" value="'.($key+1).'" class="removedfile" id="removedfile_'.$key.'" name="removedfile_'.$key.'" />';
 					$out.= '<br></div>';
 				}
 			}
