@@ -53,3 +53,9 @@ window.location.href=pRef
 JCROP:
 ------
 * Remove analytics tag into file index.html
+
+
+JQUERYFILETREE:
+---------------
+* Remove directory htdocs/includes/jquery/plugins/jqueryFileTree/connectors
+
