@@ -47,10 +47,48 @@ $mesg='';
 
 $action=GETPOST('action');
 
+$producttmp=new Product($db);
+$thirdpartytmp=new Societe($db);
+
 
 /*
  * Actions
  */
+
+if (GETPOST('submitproduct') && GETPOST('submitproduct'))
+{
+	$action='';	// We reset because we dont want to build doc
+	if (GETPOST('productid') > 0)
+	{
+		$producttmp->fetch(GETPOST('productid'));
+		$forbarcode=$producttmp->barcode;
+		$fk_barcode_type=$thirdpartytmp->barcode_type_code;
+	
+		if (empty($fk_barcode_type) && ! empty($conf->global->PRODUIT_DEFAULT_BARCODE_TYPE)) $fk_barcode_type = $conf->global->PRODUIT_DEFAULT_BARCODE_TYPE;
+		
+		if (empty($forbarcode) || empty($fk_barcode_type))
+		{
+			setEventMessage($langs->trans("DefinitionOfBarCodeForProductNotComplete",$producttmp->getNomUrl()), 'warnings');	
+		}
+	}
+}
+if (GETPOST('submitthirdparty') && GETPOST('submitthirdparty'))
+{
+	$action='';	// We reset because we dont want to build doc
+	if (GETPOST('socid') > 0)
+	{
+		$thirdpartytmp->fetch(GETPOST('socid'));
+		$forbarcode=$thirdpartytmp->barcode;
+		$fk_barcode_type=$thirdpartytmp->barcode_type_code;
+	
+		if (empty($fk_barcode_type) && ! empty($conf->global->GENBARCODE_BARCODETYPE_THIRDPARTY)) $fk_barcode_type = $conf->global->GENBARCODE_BARCODETYPE_THIRDPARTY;
+		
+		if (empty($forbarcode) || empty($fk_barcode_type))
+		{
+			setEventMessage($langs->trans("DefinitionOfBarCodeForProductNotComplete",$thirdpartytmp->getNomUrl()), 'warnings');	
+		}
+	}
+}
 
 if ($action == 'builddoc')
 {
@@ -150,8 +188,8 @@ if ($action == 'builddoc')
 		// For labels
 		if ($mode == 'label')
 		{
-			if (empty($conf->global->ADHERENT_ETIQUETTE_TEXT)) $conf->global->ADHERENT_ETIQUETTE_TEXT="%PHOTO%";
-			$textleft=make_substitutions($conf->global->ADHERENT_ETIQUETTE_TEXT, $substitutionarray);
+			$txtforsticker="%PHOTO%";
+			$textleft=make_substitutions($txtforsticker, $substitutionarray);
 			$textheader='';
 			$textfooter='';
 			$textright='';
@@ -253,19 +291,94 @@ print '</div>';
 
 print '<br>';
 
+
+// Add javascript to make choice dynamic
+print '<script type="text/javascript" language="javascript">
+jQuery(document).ready(function() {
+	function init_selectors()
+	{
+		if (jQuery("#fillmanually:checked").val() == "fillmanually")
+		{
+			jQuery("#submitproduct").attr(\'disabled\',\'disabled\');
+			jQuery("#submitthirdparty").attr(\'disabled\',\'disabled\');
+			jQuery("#search_productid").attr(\'disabled\',\'disabled\');
+			jQuery("#socid").attr(\'disabled\',\'disabled\');
+			jQuery(".showforproductselector").hide();
+			jQuery(".showforthirdpartyselector").hide();
+		}
+		if (jQuery("#fillfromproduct:checked").val() == "fillfromproduct")
+		{
+			jQuery("#submitproduct").removeAttr(\'disabled\');
+			jQuery("#submitthirdparty").attr(\'disabled\',\'disabled\');
+			jQuery("#search_productid").removeAttr(\'disabled\');
+			jQuery("#socid").attr(\'disabled\',\'disabled\');
+			jQuery(".showforproductselector").show();
+			jQuery(".showforthirdpartyselector").hide();
+		}
+		if (jQuery("#fillfromthirdparty:checked").val() == "fillfromthirdparty")
+		{
+			jQuery("#submitproduct").attr(\'disabled\',\'disabled\');
+			jQuery("#submitthirdparty").removeAttr(\'disabled\');
+			jQuery("#search_productid").attr(\'disabled\',\'disabled\');
+			jQuery("#socid").removeAttr(\'disabled\');
+			jQuery(".showforproductselector").hide();
+			jQuery(".showforthirdpartyselector").show();
+		}
+	}
+	init_selectors();
+	jQuery(".radiobarcodeselect").click(function() {
+		init_selectors();
+	});
+	
+	function init_gendoc_button()
+	{
+		if (jQuery("#select_fk_barcode_type").val() > 0 && jQuery("#forbarcode").val())
+		{
+			jQuery("#submitformbarcodegen").removeAttr(\'disabled\');
+		}
+		else
+		{
+			jQuery("#submitformbarcodegen").attr(\'disabled\',\'disabled\');
+		}
+	}
+	init_gendoc_button();
+	jQuery("#select_fk_barcode_type").change(function() {
+		init_gendoc_button();
+	});
+	jQuery("#forbarcode").keyup(function() {
+		init_gendoc_button()
+	});
+});
+</script>';
+
 // Checkbox to select from free text
-print '<input id="fillmanually" type="checkbox" checked="checked"> '.$langs->trans("FillBarCodeTypeAndValueManually").' &nbsp; ';
+print '<input id="fillmanually" type="radio" '.((! GETPOST("selectorforbarcode") || GETPOST("selectorforbarcode")=='fillmanually')?'checked="checked" ':'').'name="selectorforbarcode" value="fillmanually" class="radiobarcodeselect"> '.$langs->trans("FillBarCodeTypeAndValueManually").' &nbsp; ';
 print '<br>';
 
-/*
-print '<input id="fillfromproduct" type="checkbox" checked="checked" disabled="true"> '.$langs->trans("FillBarCodeTypeAndValueFromProduct").' &nbsp; ';
+print '<input id="fillfromproduct" type="radio" '.((GETPOST("selectorforbarcode")=='fillfromproduct')?'checked="checked" ':'').'name="selectorforbarcode" value="fillfromproduct" class="radiobarcodeselect"> '.$langs->trans("FillBarCodeTypeAndValueFromProduct").' &nbsp; ';
+print '<br>';
+print '<div class="showforproductselector">';
 print $form->select_produits(GETPOST('productid'), 'productid', '');
+print ' &nbsp; <input type="submit" id="submitproduct" name="submitproduct" class="button" value="'.(dol_escape_htmltag($langs->trans("GetBarCode"))).'">';
+print '</div>';
+
+print '<input id="fillfromthirdparty" type="radio" '.((GETPOST("selectorforbarcode")=='fillfromthirdparty')?'checked="checked" ':'').'name="selectorforbarcode" value="fillfromthirdparty" class="radiobarcodeselect"> '.$langs->trans("FillBarCodeTypeAndValueFromThirdParty").' &nbsp; ';
+print '<br>';
+print '<div class="showforthirdpartyselector">';
+print $form->select_company(GETPOST('socid'), 'socid', '', 1);
+print ' &nbsp; <input type="submit" id="submitthirdparty" name="submitthirdparty" class="button showforthirdpartyselector" value="'.(dol_escape_htmltag($langs->trans("GetBarCode"))).'">';
+print '</div>';
+
 print '<br>';
 
-print '<input id="fillfromthirdparty" type="checkbox" checked="checked" disabled="true"> '.$langs->trans("FillBarCodeTypeAndValueFromThirdParty").' &nbsp; ';
-print $form->select_company(GETPOST('socid'), 'socid', '', 1);
-print '<br>';
-*/
+if ($producttmp->id > 0)
+{
+	print $langs->trans("BarCodeDataForProduct",$producttmp->getNomUrl(1)).'<br>';
+}
+if ($thirdpartytmp->id > 0)
+{
+	print $langs->trans("BarCodeDataForThirdparty",$thirdpartytmp->getNomUrl(1)).'<br>';
+}
 
 print '<div class="tagtable">';
 
@@ -284,7 +397,7 @@ print '	<div class="tagtr">';
 print '	<div class="tagtd" style="overflow: hidden; white-space: nowrap; max-width: 300px;">';
 print $langs->trans("BarcodeValue").' &nbsp; ';
 print '</div><div class="tagtd" style="overflow: hidden; white-space: nowrap; max-width: 300px;">';
-print '<input size="16" type="text" name="forbarcode" value="'.GETPOST('forbarcode').'">';
+print '<input size="16" type="text" name="forbarcode" id="forbarcode" value="'.$forbarcode.'">';
 print '</div></div>';
 
 /*
@@ -294,7 +407,9 @@ print '<textarea cols="40" type="text" name="barcodestickersmask" value="'.GETPO
 print '<br>';
 */
 
-print '<br><input class="button" type="submit" value="'.$langs->trans("BuildPageToPrint").'">';
+print '</div>';
+
+print '<br><input class="button" type="submit" id="submitformbarcodegen" '.((GETPOST("selectorforbarcode") && GETPOST("selectorforbarcode"))?'':'disabled="checked" ').'value="'.$langs->trans("BuildPageToPrint").'">';
 
 print '</form>';
 print '<br>';
