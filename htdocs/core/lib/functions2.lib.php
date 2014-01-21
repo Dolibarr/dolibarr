@@ -534,10 +534,10 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
     // but we should use local year and month of user
 
     // For debugging
-    include_once(DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php');
-    $mask='FA{yy}{mm}-{0000@99}';
+    //include_once(DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php');
+    //$mask='FA{yy}{mm}-{0000@99}';
     //$date=dol_mktime(12, 0, 0, 1, 1, 1900);
-    $date=dol_stringtotime('20130101');
+    //$date=dol_stringtotime('20130101');
 
     // Extract value for mask counter, mask raz and mask offset
     if (! preg_match('/\{(0+)([@\+][0-9\-\+\=]+)?([@\+][0-9\-\+\=]+)?\}/i',$mask,$reg)) return 'ErrorBadMask';
