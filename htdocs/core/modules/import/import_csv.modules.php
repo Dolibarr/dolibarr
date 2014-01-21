@@ -443,7 +443,7 @@ class ImportCsv extends ModeleImports
                                 }
                                 elseif ($objimport->array_import_convertvalue[0][$val]['rule']=='getcustomercodeifnull')
                                 {
-                                    if (empty($newval) || $newval='auto')
+                                    if (empty($newval) || $newval=='auto')
                                     {
                                         $this->thirpartyobject->get_codeclient(0,0);
                                         $newval=$this->thirpartyobject->code_client;
@@ -452,7 +452,7 @@ class ImportCsv extends ModeleImports
                                 }
                                 elseif ($objimport->array_import_convertvalue[0][$val]['rule']=='getsuppliercodeifnull')
                                 {
-                                    if (empty($newval) || $newval='auto')
+                                    if (empty($newval) || $newval=='auto')
                                     {
                                         $newval=$this->thirpartyobject->get_codefournisseur(0,1);
                                         $newval=$this->thirpartyobject->code_fournisseur;
@@ -461,7 +461,7 @@ class ImportCsv extends ModeleImports
                                 }
                                 elseif ($objimport->array_import_convertvalue[0][$val]['rule']=='getcustomeraccountancycodeifnull')
                                 {
-                                    if (empty($newval) || $newval='auto')
+                                    if (empty($newval) || $newval=='auto')
                                     {
                                         $this->thirpartyobject->get_codecompta('customer');
                                         $newval=$this->thirpartyobject->code_compta;
@@ -470,7 +470,7 @@ class ImportCsv extends ModeleImports
                                 }
                                 elseif ($objimport->array_import_convertvalue[0][$val]['rule']=='getsupplieraccountancycodeifnull')
                                 {
-                                    if (empty($newval) || $newval='auto')
+                                    if (empty($newval) || $newval=='auto')
                                     {
                                         $this->thirpartyobject->get_codecompta('supplier');
                                         $newval=$this->thirpartyobject->code_compta_fournisseur;
