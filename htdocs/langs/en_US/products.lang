@@ -209,8 +209,12 @@ PageToGenerateBarCodeSheets=With this tool, you can print sheets of bar code sti
 NumberOfStickers=Number of stickers to print on page
 PrintsheetForOneBarCode=Print several stickers for one barcode
 BuildPageToPrint=Generate page to print
-FillBarCodeTypeAndValueManually=Fill barcode type and value manually
-FillBarCodeTypeAndValueFromProduct=Fill barcode type and value from a product
-FillBarCodeTypeAndValueFromThirdParty=Fill barcode type and value from a thirdparty
+FillBarCodeTypeAndValueManually=Fill barcode type and value manually.
+FillBarCodeTypeAndValueFromProduct=Fill barcode type and value from barcode of a product.
+FillBarCodeTypeAndValueFromThirdParty=Fill barcode type and value from barcode of a thirdparty.
+DefinitionOfBarCodeForProductNotComplete=Definition of type or value of bar code not complete for product %s.
+DefinitionOfBarCodeForThirdpartyNotComplete=Definition of type or value of bar code non complete for thirdparty %s.
+BarCodeDataForProduct=Barcode information of product %s :
+BarCodeDataForThirdparty=Barcode information of thirdparty %s :
 BarcodeStickersMask=xxx
  
