@@ -5,7 +5,7 @@
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2011      Philippe Grand       <philippe.grand@atoo-net.com>
+ * Copyright (C) 2011-2014 Philippe Grand       <philippe.grand@atoo-net.com>
  * Copyright (C) 2008      Matteli
  * Copyright (C) 2011-2013 Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2012      Christophe Battarel   <christophe.battarel@altairis.fr>
@@ -138,7 +138,7 @@ function analyse_sql_and_script(&$var, $type)
 }
 
 
-// Check consitency of NOREQUIREXXX DEFINES
+// Check consistency of NOREQUIREXXX DEFINES
 if ((defined('NOREQUIREDB') || defined('NOREQUIRETRAN')) && ! defined('NOREQUIREMENU')) dol_print_error('','If define NOREQUIREDB or NOREQUIRETRAN are set, you must also set NOREQUIREMENU or not use them');
 
 // Sanity check on URL
@@ -162,7 +162,7 @@ if (! empty($_SERVER['DOCUMENT_ROOT'])) set_include_path($_SERVER['DOCUMENT_ROOT
 // Include the conf.php and functions.lib.php
 require_once 'filefunc.inc.php';
 
-// If there is a POST parameter to tell to save automatically some POST params into a cookies, we do it
+// If there is a POST parameter to tell to save automatically some POST parameters into a cookies, we do it
 if (! empty($_POST["DOL_AUTOSET_COOKIE"]))
 {
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/json.lib.php';
@@ -261,7 +261,7 @@ if (! empty($conf->file->main_force_https))
 }
 
 
-// Chargement des includes complementaires de presentation
+// Loading of additional presentation includes 
 if (! defined('NOREQUIREHTML')) require_once DOL_DOCUMENT_ROOT .'/core/class/html.form.class.php';	    // Need 660ko memory (800ko in 2.2)
 if (! defined('NOREQUIREAJAX') && $conf->use_javascript_ajax) require_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';	// Need 22ko memory
 
@@ -292,7 +292,7 @@ if ((! empty($conf->global->MAIN_VERSION_LAST_UPGRADE) && ($conf->global->MAIN_V
 // Creation of a token against CSRF vulnerabilities
 if (! defined('NOTOKENRENEWAL'))
 {
-    $token = dol_hash(uniqid(mt_rand(),TRUE)); // Genere un hash d'un nombre aleatoire
+    $token = dol_hash(uniqid(mt_rand(),TRUE)); // Generates a hash of a random number
     // roulement des jetons car cree a chaque appel
     if (isset($_SESSION['newtoken'])) $_SESSION['token'] = $_SESSION['newtoken'];
     $_SESSION['newtoken'] = $token;
@@ -396,7 +396,7 @@ if (! defined('NOLOGIN'))
             $sessionkey = 'dol_antispam_value';
             $ok=(array_key_exists($sessionkey, $_SESSION) === TRUE && (strtolower($_SESSION[$sessionkey]) == strtolower($_POST['code'])));
 
-            // Verifie code
+            // Check code
             if (! $ok)
             {
                 dol_syslog('Bad value for code, connexion refused');
@@ -407,14 +407,14 @@ if (! defined('NOLOGIN'))
                 $_SESSION["dol_loginmesg"]=$langs->trans("ErrorBadValueForCode");
                 $test=false;
 
-                // Appel des triggers
+                // Call of triggers
                 include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
                 $interface=new Interfaces($db);
                 $result=$interface->run_triggers('USER_LOGIN_FAILED',$user,$user,$langs,$conf,GETPOST('entity','int'));
                 if ($result < 0) {
                     $error++;
                 }
-                // Fin appel triggers
+                // End Call of triggers
             }
         }
 
@@ -468,14 +468,14 @@ if (! defined('NOLOGIN'))
                 $user->trigger_mesg=$langs->trans("ErrorBadLoginPassword").' - login='.GETPOST("username","alpha",2);
                 $_SESSION["dol_loginmesg"]=$langs->trans("ErrorBadLoginPassword");
 
-                // Appel des triggers
+                // Call of triggers
                 include_once DOL_DOCUMENT_ROOT.'/core/class/interfaces.class.php';
                 $interface=new Interfaces($db);
                 $result=$interface->run_triggers('USER_LOGIN_FAILED',$user,$user,$langs,$conf,GETPOST("username","alpha",2));
                 if ($result < 0) {
                     $error++;
                 }
-                // Fin appel triggers
+                // End Call of triggers
             }
         }
 
