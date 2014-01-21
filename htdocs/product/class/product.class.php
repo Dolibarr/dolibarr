@@ -712,7 +712,7 @@ class Product extends CommonObject
 		}
 		else
 		{
-			$this->error = "ErrorRecordHasChildren";
+			$this->error = "ErrorRecordIsUsedCantDelete";
 			return 0;
 		}
 	}
