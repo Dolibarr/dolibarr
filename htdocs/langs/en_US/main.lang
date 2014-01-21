@@ -666,6 +666,8 @@ SaveUploadedFileWithMask=Save file on server with name "<strong>%s</strong>" (ot
 OriginFileName=Original filename
 SetDemandReason=Set source
 ViewPrivateNote=View notes
+XMoreLines=%s line(s) hidden
+
 # Week day
 Monday=Monday
 Tuesday=Tuesday
