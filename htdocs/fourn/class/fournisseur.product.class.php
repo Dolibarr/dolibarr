@@ -199,9 +199,7 @@ class ProductFournisseur extends Product
 			dol_syslog(get_class($this).'::update_buyprice sql='.$sql);
 			$resql = $this->db->query($sql);
 			if ($resql)
-			{
-				$this->db->commit();
-				
+			{	
 				// Appel des triggers
 				include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
 				$interface=new Interfaces($this->db);
@@ -211,7 +209,16 @@ class ProductFournisseur extends Product
 					$error++; $this->errors=$interface->errors;
 				}
 				
-				return 0;
+				if (empty($error))
+				{
+					$this->db->commit();
+					return 0;
+				}
+				else
+				{
+					$this->db->rollback();
+					return 1;
+				}
 			}
 			else
 			{
