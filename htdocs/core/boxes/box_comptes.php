@@ -2,6 +2,7 @@
 /* Copyright (C) 2005      Christophe
  * Copyright (C) 2005-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2013	   Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -122,7 +123,7 @@ class box_comptes extends ModeleBoxes
 					);
 
 					$this->info_box_contents[$i][3] = array('td' => 'align="right"',
-					'text' => price($solde, 1, $langs, 0, -1, 0, $objp->currency_code)
+					'text' => price($solde, 0, $langs, 0, 0, -1, $objp->currency_code)
 					);
 
 					$listofcurrencies[$objp->currency_code]=1;
