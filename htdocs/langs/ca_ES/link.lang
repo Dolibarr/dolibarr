@@ -1,0 +1,9 @@
+CHARSET=UTF-8
+LinkANewFile=Enllaçar un nou arxiu/document
+LinkedFiles=Arxius i documents enllaçats
+NoLinkFound=No hi ha enllaços associats
+LinkComplete=L'arxiu s'ha enllaçat correctament
+ErrorFileNotLinked=L'arxiu no ha pogut ser enllaçat
+LinkRemoved=Ha estat eliminat l'enllaç %s
+ErrorFailedToDeleteLink=Impossible eliminar l'enllaç '<b>%s</b>'
+ErrorFailedToUpdateLink=Impossible modificar l'enllaç '<b>%s</b>'
