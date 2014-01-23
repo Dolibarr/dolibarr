@@ -1007,12 +1007,15 @@ class User extends CommonObject
 
 		$this->db->begin();
 
-		// Cree et positionne $this->id
+		// Create and set $this->id
 		$result=$this->create($user);
 		if ($result > 0)
 		{
-			$result=$this->setPassword($user,$this->pass);
-			if ($member->fk_soc) {
+			$newpass=$this->setPassword($user,$this->pass);
+			if (is_numeric($newpass) && $newpass < 0) $result=-2;
+			
+			if ($result > 0 && $member->fk_soc)	// If member is linked to a thirdparty
+			{
 				$sql = "UPDATE ".MAIN_DB_PREFIX."user";
 				$sql.= " SET fk_societe=".$member->fk_soc;
 				$sql.= " WHERE rowid=".$this->id;
@@ -1026,7 +1029,7 @@ class User extends CommonObject
 				}
 				else
 				{
-					$this->error=$this->db->error();
+					$this->error=$this->db->lasterror();
 					dol_syslog(get_class($this)."::create_from_member - 1 - ".$this->error, LOG_ERR);
 
 					$this->db->rollback();
@@ -1034,13 +1037,19 @@ class User extends CommonObject
 				}
 			}
 		}
+
+		if ($result > 0)
+		{
+			$this->db->commit();
+			return $this->id;
+		}
 		else
 		{
 			// $this->error deja positionne
 			dol_syslog(get_class($this)."::create_from_member - 2 - ".$this->error, LOG_ERR);
 
 			$this->db->rollback();
-			return $result;
+			return -2;
 		}
 	}
 
