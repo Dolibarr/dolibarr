@@ -5,6 +5,7 @@
  * Copyright (C) 2005      Simon TOSSER         <simon@kornog-computing.com>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2013      Cédric Salvador      <csalvador.gpcsolutions.fr>
+ * Copyright (C) 2013      Juanjo Menent	    <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,8 +42,8 @@ $action=GETPOST("action");
 $cancel=GETPOST('cancel');
 
 // Security check
-$id = GETPOST('id')?GETPOST('id'):GETPOST('ref');
-$ref = GETPOST('ref');
+$id=GETPOST('id', 'int');
+$ref=GETPOST('ref', 'alpha');
 $stocklimit = GETPOST('stocklimit');
 $desiredstock = GETPOST('desiredstock');
 $cancel = GETPOST('cancel');
