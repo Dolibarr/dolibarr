@@ -1285,49 +1285,54 @@ if (($action == 'clone' && (empty($conf->use_javascript_ajax) || ! empty($conf->
 
 print "\n".'<div class="tabsAction">'."\n";
 
-if ($action == '' || $action == 'view')
+$parameters=array();
+$reshook=$hookmanager->executeHooks('addMoreActionsButtons',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+if (empty($reshook))
 {
-    if ($user->rights->produit->creer || $user->rights->service->creer)
-    {
-        if (! isset($object->no_button_edit) || $object->no_button_edit <> 1) print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&amp;id='.$object->id.'">'.$langs->trans("Modify").'</a></div>';
-
-        if (! isset($object->no_button_copy) || $object->no_button_copy <> 1)
-        {
-            if (! empty($conf->use_javascript_ajax) && empty($conf->dol_use_jmobile))
-            {
-                print '<div class="inline-block divButAction"><span id="action-clone" class="butAction">'.$langs->trans('ToClone').'</span></div>'."\n";
-            }
-            else
-			{
-                print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=clone&amp;id='.$object->id.'">'.$langs->trans("ToClone").'</a></div>';
-            }
-        }
-    }
-    $object_is_used = $object->isObjectUsed($object->id);
-
-    if (($object->type == 0 && $user->rights->produit->supprimer)
-    || ($object->type == 1 && $user->rights->service->supprimer))
-    {
-        if (empty($object_is_used) && (! isset($object->no_button_delete) || $object->no_button_delete <> 1))
-        {
-            if (! empty($conf->use_javascript_ajax) && empty($conf->dol_use_jmobile))
-            {
-                print '<div class="inline-block divButAction"><span id="action-delete" class="butActionDelete">'.$langs->trans('Delete').'</span></div>'."\n";
-            }
-            else
-			{
-                print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&amp;id='.$object->id.'">'.$langs->trans("Delete").'</a></div>';
-            }
-        }
-        else
-		{
-            print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.$langs->trans("ProductIsUsed").'">'.$langs->trans("Delete").'</a></div>';
-        }
-    }
-    else
+	if ($action == '' || $action == 'view')
 	{
-        print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans("Delete").'</a></div>';
-    }
+	    if ($user->rights->produit->creer || $user->rights->service->creer)
+	    {
+	        if (! isset($object->no_button_edit) || $object->no_button_edit <> 1) print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&amp;id='.$object->id.'">'.$langs->trans("Modify").'</a></div>';
+	
+	        if (! isset($object->no_button_copy) || $object->no_button_copy <> 1)
+	        {
+	            if (! empty($conf->use_javascript_ajax) && empty($conf->dol_use_jmobile))
+	            {
+	                print '<div class="inline-block divButAction"><span id="action-clone" class="butAction">'.$langs->trans('ToClone').'</span></div>'."\n";
+	            }
+	            else
+				{
+	                print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=clone&amp;id='.$object->id.'">'.$langs->trans("ToClone").'</a></div>';
+	            }
+	        }
+	    }
+	    $object_is_used = $object->isObjectUsed($object->id);
+	
+	    if (($object->type == 0 && $user->rights->produit->supprimer)
+	    || ($object->type == 1 && $user->rights->service->supprimer))
+	    {
+	        if (empty($object_is_used) && (! isset($object->no_button_delete) || $object->no_button_delete <> 1))
+	        {
+	            if (! empty($conf->use_javascript_ajax) && empty($conf->dol_use_jmobile))
+	            {
+	                print '<div class="inline-block divButAction"><span id="action-delete" class="butActionDelete">'.$langs->trans('Delete').'</span></div>'."\n";
+	            }
+	            else
+				{
+	                print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&amp;id='.$object->id.'">'.$langs->trans("Delete").'</a></div>';
+	            }
+	        }
+	        else
+			{
+	            print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.$langs->trans("ProductIsUsed").'">'.$langs->trans("Delete").'</a></div>';
+	        }
+	    }
+	    else
+		{
+	        print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans("Delete").'</a></div>';
+	    }
+	}
 }
 
 print "\n</div><br>\n";

@@ -1818,34 +1818,39 @@ else
          */
         print '<div class="tabsAction">'."\n";
 
-        if (! empty($object->email))
-        {
-        	$langs->load("mails");
-        	print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?socid='.$object->id.'&amp;action=presend&amp;mode=init">'.$langs->trans('SendMail').'</a></div>';
-        }
-        else
+		$parameters=array();
+		$reshook=$hookmanager->executeHooks('addMoreActionsButtons',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+		if (empty($reshook))
 		{
-        	$langs->load("mails");
-       		print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NoEmail")).'">'.$langs->trans('SendMail').'</a></div>';
-        }
-
-        if ($user->rights->societe->creer)
-        {
-            print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&amp;action=edit">'.$langs->trans("Modify").'</a></div>'."\n";
-        }
-
-        if ($user->rights->societe->supprimer)
-        {
-            if ($conf->use_javascript_ajax && empty($conf->dol_use_jmobile))	// We can(t use preloaded confirm form with jmobile
-            {
-                print '<div class="inline-block divButAction"><span id="action-delete" class="butActionDelete">'.$langs->trans('Delete').'</span></div>'."\n";
-            }
-            else
+	        if (! empty($object->email))
+	        {
+	        	$langs->load("mails");
+	        	print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?socid='.$object->id.'&amp;action=presend&amp;mode=init">'.$langs->trans('SendMail').'</a></div>';
+	        }
+	        else
 			{
-                print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&amp;action=delete">'.$langs->trans('Delete').'</a></div>'."\n";
-            }
-        }
-
+	        	$langs->load("mails");
+	       		print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NoEmail")).'">'.$langs->trans('SendMail').'</a></div>';
+	        }
+	
+	        if ($user->rights->societe->creer)
+	        {
+	            print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&amp;action=edit">'.$langs->trans("Modify").'</a></div>'."\n";
+	        }
+	
+	        if ($user->rights->societe->supprimer)
+	        {
+	            if ($conf->use_javascript_ajax && empty($conf->dol_use_jmobile))	// We can(t use preloaded confirm form with jmobile
+	            {
+	                print '<div class="inline-block divButAction"><span id="action-delete" class="butActionDelete">'.$langs->trans('Delete').'</span></div>'."\n";
+	            }
+	            else
+				{
+	                print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&amp;action=delete">'.$langs->trans('Delete').'</a></div>'."\n";
+	            }
+	        }
+		}
+		
         print '</div>'."\n";
 
 

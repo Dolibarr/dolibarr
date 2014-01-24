@@ -134,6 +134,7 @@ class HookManager
         if (in_array(
         	$method,
         	array(
+        		'addMoreActionsButtons',
 		        'addStatisticLine',
 		        'doActions',
 		        'formObjectOptions',
@@ -164,7 +165,7 @@ class HookManager
                 	// test to avoid to run twice a hook, when a module implements several active contexts
                     if (in_array($module,$modulealreadyexecuted)) continue;
                     $modulealreadyexecuted[$module]=$module;
-                    // Hooks that return int (doActions, formObjectOptions, pdf_writelinedesc, paymentsupplierinvoices)
+                    // Hooks that must return int (hooks with type 'addreplace')
                     if ($hooktype == 'addreplace')
                     {
                     	$resaction += $actionclassinstance->$method($parameters, $object, $action, $this); // $object and $action can be changed by method ($object->id during creation for example or $action to go back to other action for example)

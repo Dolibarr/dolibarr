@@ -3547,12 +3547,14 @@ else if ($id > 0 || ! empty($ref))
 
 	// Boutons actions
 
-	if ($action != 'prerelance' && $action != 'presend')
+	if ($action != 'prerelance' && $action != 'presend' && $action != 'valid' && $action != 'editline')
 	{
-		if ($user->societe_id == 0 && $action <> 'valid' && $action <> 'editline')
-		{
-			print '<div class="tabsAction">';
+		print '<div class="tabsAction">';
 
+		$parameters=array();
+		$reshook=$hookmanager->executeHooks('addMoreActionsButtons',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+		if (empty($reshook))
+		{
 			// Editer une facture deja validee, sans paiement effectue et pas exporte en compta
 			if ($object->statut == 1)
 			{
@@ -3580,7 +3582,7 @@ else if ($id > 0 || ! empty($ref))
 			}
 
 			// Reopen a standard paid invoice
-			if (($object->type == 0 || $object->type == 1) && ($object->statut == 2 || $object->statut == 3))				// A paid invoice (partially or completely)
+			if (($object->type == 0 || $object->type == 1) && ($object->statut == 2 || $object->statut == 3) && $user->rights->facture->creer)				// A paid invoice (partially or completely)
 			{
 				if (! $objectidnext && $object->close_code != 'replaced')	// Not replaced by another invoice
 				{

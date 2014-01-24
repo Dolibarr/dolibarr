@@ -47,6 +47,8 @@ $mesg = '';
 // Security check
 $result=restrictedArea($user,'stock');
 
+// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+$hookmanager->initHooks(array('warehousecard'));
 
 
 /*
@@ -336,19 +338,24 @@ else
 
 			print "<div class=\"tabsAction\">\n";
 
-			if ($action == '')
+			$parameters=array();
+			$reshook=$hookmanager->executeHooks('addMoreActionsButtons',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+			if (empty($reshook))
 			{
-				if ($user->rights->stock->creer)
-				print "<a class=\"butAction\" href=\"fiche.php?action=edit&id=".$object->id."\">".$langs->trans("Modify")."</a>";
-				else
-				print "<a class=\"butActionRefused\" href=\"#\">".$langs->trans("Modify")."</a>";
-
-				if ($user->rights->stock->supprimer)
-				print "<a class=\"butActionDelete\" href=\"fiche.php?action=delete&id=".$object->id."\">".$langs->trans("Delete")."</a>";
-				else
-				print "<a class=\"butActionRefused\" href=\"#\">".$langs->trans("Delete")."</a>";
+				if (empty($action))
+				{
+					if ($user->rights->stock->creer)
+						print "<a class=\"butAction\" href=\"fiche.php?action=edit&id=".$object->id."\">".$langs->trans("Modify")."</a>";
+					else
+						print "<a class=\"butActionRefused\" href=\"#\">".$langs->trans("Modify")."</a>";
+	
+					if ($user->rights->stock->supprimer)
+						print "<a class=\"butActionDelete\" href=\"fiche.php?action=delete&id=".$object->id."\">".$langs->trans("Delete")."</a>";
+					else
+						print "<a class=\"butActionRefused\" href=\"#\">".$langs->trans("Delete")."</a>";
+				}
 			}
-
+			
 			print "</div>";
 
 

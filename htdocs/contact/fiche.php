@@ -1026,11 +1026,13 @@ else
         print "</div>";
 
         // Barre d'actions
-        if (! $user->societe_id)
-        {
-            print '<div class="tabsAction">';
+        print '<div class="tabsAction">';
 
-            if ($user->rights->societe->contact->creer)
+		$parameters=array();
+		$reshook=$hookmanager->executeHooks('addMoreActionsButtons',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+		if (empty($reshook))
+		{
+        	if ($user->rights->societe->contact->creer)
             {
                 print '<a class="butAction" href="fiche.php?id='.$object->id.'&amp;action=edit">'.$langs->trans('Modify').'</a>';
             }
@@ -1054,10 +1056,10 @@ else
             {
                 print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?action=disable&amp;id='.$object->id.'">'.$langs->trans("DisableUser").'</a>';
             }
-
-            print "</div><br>";
         }
-
+        
+        print "</div><br>";
+        
         print load_fiche_titre($langs->trans("TasksHistoryForThisContact"),'','');
 
         print show_actions_todo($conf,$langs,$db,$objsoc,$object);

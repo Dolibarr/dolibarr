@@ -8,7 +8,7 @@ For users:
 - New: Add graph stats for suppliers orders in tab "stats" on products.
 - New: Add option MAIN_HIDE_INACTIVETAB_ON_PRINT to hide inactive tabs when you
        use the "print" view on screen.
-- New: Add menu entry to barcode genration page.
+- New: Add a menu entry to a barcode generation page.
 - New: Add option MAIN_AUTO_TIMESTAMP_IN_PUBLIC_NOTES and MAIN_AUTO_TIMESTAMP_IN_PRIVATE_NOTES
        to automatically add timestamp and user line into editionf field when editing a note.
 - New: Add button cancel into edition of notes.
@@ -27,7 +27,9 @@ For developers:
 - New: Add option 'aZ' into GETPOST function to check parameters contains 
        only a to z or A to Z characters.
 - New: Opensurvey polls tab cards can now be extended from external modules.
-- New: Triggers OPENSURVEY_CREATE, OPENSURVEY_DELETE
+- New: Triggers OPENSURVEY_CREATE, OPENSURVEY_DELETE added.
+- New: Add new hook function addMoreActionsButtons to allow a module to add/replace
+       action buttons into an element.
 
 WARNING: Following change may create regression for some external modules, but was necessary to make
 Dolibarr better:

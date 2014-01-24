@@ -2392,12 +2392,14 @@ else
 		/*
 		 * Boutons actions
 		*/
-		if ($action != 'presend')
+		if ($action != 'presend' && $action != 'editline')
 		{
-			if ($user->societe_id == 0 && $action <> 'editline')
-			{
-				print '<div class="tabsAction">';
+			print '<div class="tabsAction">';
 
+			$parameters=array();
+			$reshook=$hookmanager->executeHooks('addMoreActionsButtons',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+			if (empty($reshook))
+			{
 				// Valid
 				if ($object->statut == 0 && $object->total_ttc >= 0 && $numlines > 0 && $user->rights->commande->valider)
 				{
@@ -2470,7 +2472,7 @@ else
 				}
 
 				// Reopen a closed order
-				if ($object->statut == 3)
+				if ($object->statut == 3 && $user->rights->commande->creer)
 				{
 					print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=reopen">'.$langs->trans('ReOpen').'</a></div>';
 				}
@@ -2519,9 +2521,8 @@ else
 						print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.$langs->trans("ShippingExist").'">'.$langs->trans("Delete").'</a></div>';
 					}
 				}
-
-				print '</div>';
 			}
+			print '</div>';
 		}
 		print '<br>';
 
