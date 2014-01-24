@@ -135,7 +135,7 @@ if ($sall)
 }
 if ($viewstatut <> '')
 {
-	if ($viewstatut < 4 && $viewstatut > -3)
+	if ($viewstatut < 4 && $viewstatut > -1)
 	{
 		if ($viewstatut == 1 && empty($conf->expedition->enabled)) $sql.= ' AND c.fk_statut IN (1,2)';	// If module expedition disabled, we include order with status 'sending in process' into 'validated'
 		else $sql.= ' AND c.fk_statut = '.$viewstatut; // brouillon, validee, en cours, annulee
@@ -151,7 +151,12 @@ if ($viewstatut <> '')
 	if ($viewstatut == -2)	// To process
 	{
 		//$sql.= ' AND c.fk_statut IN (1,2,3) AND c.facture = 0';
-		$sql.= " AND ((c.fk_statut IN (1,2)) OR (c.fk_statut = 3 AND c.facture = 0))";    // If status is 2 and facture=1, it must be selected
+		$sql.= " AND ((c.fk_statut IN (1,2)) ";
+		if (! empty($conf->facture->enabled)) {
+			$sql .=" OR (c.fk_statut = 3 AND c.facture = 0))";
+		} else {
+			$sql .=")"; // If invoice module is not on final status for customer order is 3
+		}
 	}
 	if ($viewstatut == -3)	// To bill
 	{

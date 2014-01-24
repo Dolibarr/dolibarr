@@ -307,7 +307,12 @@ if (! empty($conf->commande->enabled) && $user->rights->commande->lire)
     $board->load_board($user);
     $board->warning_delay=$conf->commande->client->warning_delay/60/60/24;
     $board->label=$langs->trans("OrdersToProcess");
-    $board->url=DOL_URL_ROOT.'/commande/liste.php?viewstatut=-3';
+	if (! empty($conf->facture->enabled)) {
+		$vwstat=-3;
+	} else {
+		$vwstat=-2;
+	}
+    $board->url=DOL_URL_ROOT.'/commande/liste.php?viewstatut='.$vwstat;
     $board->img=img_object($langs->trans("Orders"),"order");
     $rowspan++;
     $dashboardlines[]=$board;
