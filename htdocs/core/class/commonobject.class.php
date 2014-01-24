@@ -239,6 +239,30 @@ abstract class CommonObject
     }
 
     /**
+     *    Copy contact from one element to current
+     *
+     *    @param        int                $rowid                        source element
+     *    @param        int                $rowid                   contact source (internal / external)
+     *    @return   int                                                >0 if OK, <0 if KO
+     */
+    function copy_linked_contact($objFrom, $source='internal')
+    {
+        global $user,$langs,$conf;
+
+        $contacts = $objFrom->liste_contact(-1, $source);
+        foreach($contacts as $contact)
+        {
+            if ($this->add_contact($contact['id'], $contact['fk_c_type_contact'], $contact['source']) < 0)
+            {
+                $this->error=$this->db->lasterror();
+                dol_syslog(get_class($this)."::copy_contact error=".$this->error, LOG_ERR);
+                return -1;
+            }
+        }
+        return 1;
+    }
+
+    /**
      *      Update a link to contact line
      *
      *      @param	int		$rowid              Id of line contact-element
@@ -355,7 +379,7 @@ abstract class CommonObject
 
         $tab=array();
 
-        $sql = "SELECT ec.rowid, ec.statut, ec.fk_socpeople as id";    // This field contains id of llx_socpeople or id of llx_user
+        $sql = "SELECT ec.rowid, ec.statut, ec.fk_socpeople as id, ec.fk_c_type_contact";    // This field contains id of llx_socpeople or id of llx_user
         if ($source == 'internal') $sql.=", '-1' as socid";
         if ($source == 'external' || $source == 'thirdparty') $sql.=", t.fk_soc as socid";
         $sql.= ", t.civilite as civility, t.lastname as lastname, t.firstname, t.email";
@@ -390,7 +414,7 @@ abstract class CommonObject
                     $tab[$i]=array('source'=>$obj->source,'socid'=>$obj->socid,'id'=>$obj->id,
 					               'nom'=>$obj->lastname,      // For backward compatibility
 					               'civility'=>$obj->civility, 'lastname'=>$obj->lastname, 'firstname'=>$obj->firstname, 'email'=>$obj->email,
-					               'rowid'=>$obj->rowid,'code'=>$obj->code,'libelle'=>$libelle_type,'status'=>$obj->statut);
+					               'rowid'=>$obj->rowid,'code'=>$obj->code,'libelle'=>$libelle_type,'status'=>$obj->statut, 'fk_c_type_contact' => $obj->fk_c_type_contact);
                 }
                 else
                 {
