@@ -241,9 +241,9 @@ abstract class CommonObject
     /**
      *    Copy contact from one element to current
      *
-     *    @param        int                $rowid                        source element
-     *    @param        int                $rowid                   contact source (internal / external)
-     *    @return   int                                                >0 if OK, <0 if KO
+     *    @param    int     $objFrom			Source element
+     *    @param    int		$source             Nature of contact ('internal' or 'external')
+     *    @return   int                         >0 if OK, <0 if KO
      */
     function copy_linked_contact($objFrom, $source='internal')
     {
