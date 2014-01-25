@@ -244,14 +244,14 @@ elseif ($action == 'setdate_lim_reglement' && $user->rights->fournisseur->factur
 }
 
 // Delete payment
-elseif ($action == 'deletepaiement')
+elseif ($action == 'deletepaiement' && $user->rights->fournisseur->facture->creer)
 {
     $object->fetch($id);
-    if ($object->statut == 1 && $object->paye == 0 && $user->societe_id == 0)
+    if ($object->statut == 1 && $object->paye == 0)
     {
-        $paiementfourn = new PaiementFourn($db);
-        $paiementfourn->fetch(GETPOST('paiement_id'));
-        $result=$paiementfourn->delete();
+    	$paiementfourn = new PaiementFourn($db);
+        $result=$paiementfourn->fetch(GETPOST('paiement_id'));
+        if ($result > 0) $result=$paiementfourn->delete(); // If fetch ok and found
         if ($result < 0) $mesg='<div class="error">'.$paiementfourn->error.'</div>';
     }
 }
@@ -1622,7 +1622,7 @@ else
                         $bankaccountstatic->ref=$objp->ref;
                         $bankaccountstatic->label=$objp->ref;
                         print '<td align="right">';
-                        print $bankaccountstatic->getNomUrl(1,'transactions');
+                        if ($objp->baid > 0) print $bankaccountstatic->getNomUrl(1,'transactions');
                         print '</td>';
                     }
                     print '<td align="right">'.price($objp->amount).'</td>';
