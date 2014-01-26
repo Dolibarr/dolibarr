@@ -28,6 +28,7 @@ EndBankBalance=年末余额
 CurrentBalance=当前余额
 FutureBalance=未来的平衡
 ShowAllTimeBalance=显示余额开始
+# AllTime=From start
 Reconciliation=和解
 RIB=银行帐号
 IBAN=IBAN号码

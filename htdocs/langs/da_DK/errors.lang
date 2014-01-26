@@ -37,6 +37,7 @@ ErrorBadParameters=Bad parametre
 ErrorBadValueForParameter=Forkert værdi &quot;%s&quot; for parameter forkerte &quot;%s forb.
 ErrorBadImageFormat=Billede fil har ikke et understøttet format
 ErrorBadDateFormat=Værdi '%s' har forkert datoformat
+# ErrorWrongDate=Date is not correct!
 ErrorFailedToWriteInDir=Det lykkedes ikke at skrive i mappen %s
 ErrorFoundBadEmailInFile=Found incorrect email syntax for %s lines in file (example line %s with email=Fundet forkerte e-mail-syntaks for %s linjer i filen (f.eks line %s med email= %s)
 ErrorUserCannotBeDelete=Bruger kan ikke slettes. Kan det er knyttet til den Dolibarr enheder.
@@ -63,13 +64,14 @@ ErrorSizeTooLongForVarcharType=Størrelse for lang tid for streng type (%s tegn 
 # ErrorBadFormatValueList=The list value cannot have more than one come : <u>%s</u>, but need at least one: llave,valores
 ErrorFieldCanNotContainSpecialCharacters=<b>Felt %s</b> må ikke indeholder specialtegn.
 ErrorNoAccountancyModuleLoaded=Nr. regnskabspool modul aktiveret
-ErrorExportDuplicateProfil=Denne profil navn eksisterer allerede for denne eksport sæt.
+# ErrorExportDuplicateProfil=This profile name already exists for this export set.
 ErrorLDAPSetupNotComplete=Dolibarr-LDAP matchende er ikke komplet.
 ErrorLDAPMakeManualTest=A. LDIF-fil er blevet genereret i mappen %s. Prøv at indlæse den manuelt fra kommandolinjen for at få flere informationer om fejl.
 ErrorCantSaveADoneUserWithZeroPercentage=Kan ikke gemme en aktion med "vedtægt ikke startes", hvis feltet "udført af" er også fyldt.
 ErrorRefAlreadyExists=Ref bruges til oprettelse eksisterer allerede.
 ErrorPleaseTypeBankTransactionReportName=Please type bank modtagelsen navn, hvor transaktionen er rapporteret (Format ÅÅÅÅMM eller ÅÅÅÅMMDD)
 ErrorRecordHasChildren=Det lykkedes ikke at slette poster, da det har nogle Childs.
+# ErrorRecordIsUsedCantDelete=Can't delete record. It is already used or included into other object.
 ErrorModuleRequireJavascript=Javascript skal ikke være deaktiveret for at have denne funktion virker. For at aktivere / deaktivere Javascript, gå til menu Home-> Setup-> Display.
 ErrorPasswordsMustMatch=Begge har skrevet passwords skal matche hinanden
 ErrorContactEMail=En teknisk fejl opstod. Kontakt venligst administrator til at følge e-mail <b>%s</b> da give fejlkoder <b>%s</b> i din besked, eller endnu bedre ved at tilføje en skærm kopi af denne side.
@@ -127,6 +129,7 @@ ErrorNoActivatedBarcode=Ingen stregkode aktiveret typen
 # ErrorPHPNeedModule=Error, your PHP must have module <b>%s</b> installed to use this feature.
 # ErrorOpenIDSetupNotComplete=You setup Dolibarr config file to allow OpenID authentication, but URL of OpenID service is not defined into constant %s
 # ErrorWarehouseMustDiffers=Source and target warehouses must differs
+# ErrorBadFormat=Bad format!
 
 # Warnings
 # WarningMandatorySetupNotComplete=Mandatory setup parameters are not yet defined

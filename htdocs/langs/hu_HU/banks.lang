@@ -28,6 +28,7 @@ EndBankBalance=Vége egyensúly
 CurrentBalance=Aktuális egyenleg
 FutureBalance=Jövő egyensúly
 ShowAllTimeBalance=Mutasd egyensúly elejétől
+# AllTime=From start
 Reconciliation=Egyeztetés
 RIB=Bankszámla száma
 IBAN=IBAN szám

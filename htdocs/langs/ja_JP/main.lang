@@ -257,6 +257,8 @@ Seconds=秒
 Today=今日は
 Yesterday=昨日
 Tomorrow=明日
+# Morning=Morning
+# Afternoon=Afternoon
 Quadri=までに4
 MonthOfDay=その日の月
 HourShort=H
@@ -309,6 +311,7 @@ SubTotal=小計
 TotalHTShort=合計（純額）
 TotalTTCShort=合計（税込）
 TotalHT=（税引後）の合計
+# TotalHTforthispage=Total (net of tax) for this page
 TotalTTC=合計（税込）
 TotalTTCToYourCredit=あなたのクレジットの合計（税込）
 TotalVAT=合計税
@@ -662,6 +665,8 @@ BySalesRepresentative=営業担当者によって
 # SaveUploadedFileWithMask=Save file on server with name "<strong>%s</strong>" (otherwise "%s")
 # OriginFileName=Original filename
 # SetDemandReason=Set source
+# ViewPrivateNote=View notes
+# XMoreLines=%s line(s) hidden
 
 # Week day
 Monday=月曜日

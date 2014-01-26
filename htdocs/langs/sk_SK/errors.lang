@@ -37,6 +37,7 @@ ErrorBadParameters=Bad parametre
 ErrorBadValueForParameter=Chybná hodnota &quot;%s&quot; pre nastavenie parametrov nesprávnych &quot;%s&quot;
 ErrorBadImageFormat=Obrazový súbor nemá podporovaný formát
 ErrorBadDateFormat=Hodnota &quot;%s&quot; má nesprávny formát dátumu
+# ErrorWrongDate=Date is not correct!
 ErrorFailedToWriteInDir=Nepodarilo sa zapísať do adresára %s
 ErrorFoundBadEmailInFile=Našiel nesprávne email syntaxe %s riadkov v súbore (%s príklad súlade s emailom = %s)
 ErrorUserCannotBeDelete=Užívateľ nemôže byť odstránený. Môže byť, že je spojená s entitami Dolibarr.
@@ -63,13 +64,14 @@ ErrorNoValueForRadioType=Prosím vyplňte hodnotu pre rozhlasové zoznamu
 ErrorBadFormatValueList=Zoznam Hodnota nemôže mať viac ako jeden príde: <u>%s,</u> ale potrebujete aspoň jeden: Llave, Valores
 ErrorFieldCanNotContainSpecialCharacters=Terénne <b>%s</b> nesmie obsahuje špeciálne znaky.
 ErrorNoAccountancyModuleLoaded=Nie účtovníctva modul aktivovaný
-ErrorExportDuplicateProfil=Tento profil Meno už existuje pre tento export súboru.
+# ErrorExportDuplicateProfil=This profile name already exists for this export set.
 ErrorLDAPSetupNotComplete=Dolibarr-LDAP zhoda nie je úplná.
 ErrorLDAPMakeManualTest=. LDIF súbor bol vytvorený v adresári %s. Skúste načítať ručne z príkazového riadku získať viac informácií o chybách.
 ErrorCantSaveADoneUserWithZeroPercentage=Nemožno uložiť akciu s &quot;Štatút nezačal&quot;, ak pole &quot;vykonáva&quot; je tiež vyplnená.
 ErrorRefAlreadyExists=Ref používa pre tvorbu už existuje.
 ErrorPleaseTypeBankTransactionReportName=Prosím zadajte bankový potvrdenky jmeno, kde sa transakcia hlásené (Formát RRRRMM alebo RRRRMMDD)
 ErrorRecordHasChildren=Nepodarilo sa zmazať záznamy, pretože to má nejaký Childs.
+# ErrorRecordIsUsedCantDelete=Can't delete record. It is already used or included into other object.
 ErrorModuleRequireJavascript=Javascript musí byť vypnutá, že táto funkcia pracovať. Ak chcete povoliť / zakázať Javascript, prejdite do ponuky Home-&gt; Nastavenie-&gt; Zobrazenie.
 ErrorPasswordsMustMatch=Obaja napísaný hesla sa musia zhodovať sa navzájom
 ErrorContactEMail=Technické chybe. Prosím, obráťte sa na správcu, aby e-mailovú <b>%s</b> en poskytovať <b>%s</b> kód chyby v správe, alebo ešte lepšie pridaním obrazovky kópiu tejto stránky.
@@ -127,6 +129,7 @@ ErrorPaymentModeDefinedToWithoutSetup=Platobný režim bol nastavený na typ %s 
 ErrorPHPNeedModule=Chyba, musí mať PHP modul <b>%s</b> nainštalovať túto funkciu používať.
 ErrorOpenIDSetupNotComplete=Môžete nastavenie Dolibarr konfiguračný súbor, aby OpenID overovania, ale URL OpenID služby nie je definovaný do stálych %s
 ErrorWarehouseMustDiffers=Zdrojovej a cieľovej sklady musia sa líši
+# ErrorBadFormat=Bad format!
 
 # Warnings
 WarningMandatorySetupNotComplete=Povinné parametre sú doteraz stanovené

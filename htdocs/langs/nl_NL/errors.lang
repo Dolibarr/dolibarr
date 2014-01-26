@@ -37,6 +37,7 @@ ErrorBadParameters=Verkeerde parameters
 ErrorBadValueForParameter=Verkeerde waarde %s voor parameter incorrect %s
 ErrorBadImageFormat=Image-bestand heeft niet een ondersteund formaat
 ErrorBadDateFormat=Waarde %s heeft verkeerde datum formaat
+# ErrorWrongDate=Date is not correct!
 ErrorFailedToWriteInDir=Schrijven in de map %s mislukt
 ErrorFoundBadEmailInFile=Onjuist e-mail syntax gevonden voor %s regels in het bestand (bijvoorbeeld regel %s met email=%s)
 ErrorUserCannotBeDelete=Gebruiker kan niet worden verwijderd. Misschien is het gekoppeld aan Dolibarr entiteiten.
@@ -63,13 +64,14 @@ ErrorSizeTooLongForVarcharType=Grootte te lang voor string type (%s tekens maxim
 # ErrorBadFormatValueList=The list value cannot have more than one come : <u>%s</u>, but need at least one: llave,valores
 ErrorFieldCanNotContainSpecialCharacters=Veld <b>%s</b> mag geen speciale tekens bevat.
 ErrorNoAccountancyModuleLoaded=Geen boekhoudingsmodule geactiveerd
-ErrorExportDuplicateProfil=Deze profielnaam bestaat al voor deze exportgroep.
+# ErrorExportDuplicateProfil=This profile name already exists for this export set.
 ErrorLDAPSetupNotComplete=De Dolibarr-LDAP installatie is niet compleet.
 ErrorLDAPMakeManualTest=Een .ldif bestand is gegenereerd in de map %s. Probeer het handmatig te laden vanuit een opdrachtregel om meer informatie over fouten te verkrijgen.
 ErrorCantSaveADoneUserWithZeroPercentage=Kan een actie met de status "Nog niet gestart" niet opslaan als het veld "door" niet ook gevuld is.
 ErrorRefAlreadyExists=De referentie gebruikt voor het maken bestaat al
 ErrorPleaseTypeBankTransactionReportName=Vul a.u.b. de naam in van een bankafschrift waarop de transactie wordt gemeld (Formaat YYYYMM of JJJJMMDD)
 ErrorRecordHasChildren=Verwijderen van tabelregels mislukt, omdat er nog onderliggende tabelregels zijn.
+# ErrorRecordIsUsedCantDelete=Can't delete record. It is already used or included into other object.
 ErrorModuleRequireJavascript=Javascript dient niet uitgeschakeld te zijn voor deze functionaliteit. Om Javascript aan of uit te zetten gaat u naar het menu Home->instellingen->Scherm
 ErrorPasswordsMustMatch=De twee ingevoerde wachtwoorden komen niet overeen.
 ErrorContactEMail=Er is een technische fout opgetreden. Neemt u alstublieft contact op met de beheerder via het e-mailadres <b>%s</b> en vermeld de volgende foutcode <b>%s</b> in uw bericht, of nog beter voeg een schermafbeelding van de pagina toe.
@@ -127,6 +129,7 @@ ErrorNoActivatedBarcode=Geen geactiveerde barcode soort
 # ErrorPHPNeedModule=Error, your PHP must have module <b>%s</b> installed to use this feature.
 # ErrorOpenIDSetupNotComplete=You setup Dolibarr config file to allow OpenID authentication, but URL of OpenID service is not defined into constant %s
 # ErrorWarehouseMustDiffers=Source and target warehouses must differs
+# ErrorBadFormat=Bad format!
 
 # Warnings
 # WarningMandatorySetupNotComplete=Mandatory setup parameters are not yet defined

@@ -83,14 +83,14 @@ EMailSentToNRecipients=E-kiri saadetud %s aadressile.
 # Libelle des modules de liste de destinataires mailing
 MailingModuleDescContactCompanies=Kõigi kolmandate isikute (klient, huviline, hankija jne) kontaktid/aadressid
 MailingModuleDescDolibarrUsers=Dolibarri kasutajad
-MailingModuleDescFundationMembers=E-posti aadressidega sihtasutuse liikmed
+MailingModuleDescFundationMembers=Ühenduse liikmed, kellel on e-posti aadress
 MailingModuleDescEmailsFromFile=E-posti aadressid tekstifailist (e-post;perenimi;eesnimi;muu)
 MailingModuleDescEmailsFromUser=Kasutaja sisestatud e-posti aadressid (e-post;perenimi;eesnimi;muu)
 MailingModuleDescContactsCategories=Kolmandad isikud (kategooriate järgi)
 MailingModuleDescDolibarrContractsLinesExpired=Aegunud lepingu ridadega kolmandad isikud
 MailingModuleDescContactsByCompanyCategory=Kolmandate isikute kontaktid/aadressid (kolmandate isikute kategooriate järgi)
 MailingModuleDescContactsByCategory=Kolmandate isikute kontaktid/aadressid kategooria järgi
-MailingModuleDescMembersCategories=Sihtasutuse liikmed (kategooriate järgi)
+MailingModuleDescMembersCategories=Ühenduse liikmed (kategooriate kaupa)
 MailingModuleDescContactsByFunction=Kolmandate isikute kontaktid/aadressid (ameti/funktsiooni järgi)
 
 

@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - users
-UserCard=Карта
-ContactCard=Карта
-GroupCard=Карта
+UserCard=Карта на потребител
+ContactCard=Карта на контакт
+GroupCard=Карта на група
 NoContactCard=Няма карта сред контакти
 Permission=Разрешение
 Permissions=Разрешения

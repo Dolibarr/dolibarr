@@ -505,7 +505,7 @@ Module50200Desc= Modul de a oferi o pagina de plata online prin card de credit c
 Module54000Name=Print lP IPrinter
 Module54000Desc=Printează  prin serviciul Cups cu ajutorul  imprimantei IPP
 Module55000Name=Chestionar Deschis
-Module55000Desc=Modul de integrat un sondaj (vezi Doodle, Studs, Rdvz, ...)
+# Module55000Desc=Module to make online surveys (like Doodle, Studs, Rdvz, ...)
 Module59000Name=Marje
 Module59000Desc=Modul management marje
 Module60000Name=Comisioane
@@ -724,6 +724,8 @@ Permission50202=Tranzacţiilor de import
 Permission54001=Printare
 Permission55001=Citeşte sondaje
 Permission55002=Cereare/modificare sondaje
+# Permission59001=Read commercial margins
+# Permission59002=Define commercial margins
 DictionnaryCompanyType=Compania tipurile
 DictionnaryCompanyJuridicalType=Juridica tipuri de companie
 DictionnaryProspectLevel=Prospect potenţial nivel
@@ -1011,6 +1013,7 @@ AddRefInList=Afişează referinţele clienţilor şi furnizorilor într-o listă
 FieldEdition=Editarea  campului %s
 FixTZ=Fixează TimeZone
 FillThisOnlyIfRequired=Exemplu: +2 (completați numai dacă problemele decalajjului fusului orar sunt cunoscute)
+# GetBarCode=Get barcode
 ##### Module password generation
 PasswordGenerationStandard=Întoarceţi-vă o parolă generate în funcţie de interne Dolibarr algoritmul: 8 caractere care conţin numere în comun şi în caractere minuscule.
 PasswordGenerationNone=Nu sugerează orice generate parola. Parola trebuie să fie de tip în manual.
@@ -1116,6 +1119,9 @@ WatermarkOnDraftInterventionCards=Filigranul pe documentele fişelor de interven
 ##### Contracts #####
 ContractsSetup=Contracte de modul de configurare
 ContractsNumberingModules=Contracte de numerotare module
+# TemplatePDFContracts=Contracts documents models
+# FreeLegalTextOnContracts=Free text on contracts
+# WatermarkOnDraftContractCards=Watermark on draft contracts (none if empty)
 ##### Members #####
 MembersSetup=Membrii modul de configurare
 MemberMainOptions=Principalele opţiuni

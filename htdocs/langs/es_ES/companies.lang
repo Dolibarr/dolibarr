@@ -82,6 +82,7 @@ DefaultLang=Idioma por defecto
 VATIsUsed=Sujeto a IVA
 VATIsNotUsed=No sujeto a IVA
 CopyAddressFromSoc=Copiar dirección de la empresa
+# NoEmailDefined=There is no email defined
 ##### Local Taxes #####
 LocalTax1IsUsedES= Sujeto a RE
 LocalTax1IsNotUsedES= No sujeto a RE
@@ -362,10 +363,10 @@ ExportCardToFormat=Exportar ficha a formato
 ContactNotLinkedToCompany=Contacto no vinculado a un tercero
 DolibarrLogin=Login usuario
 NoDolibarrAccess=Sin acceso de usuario
-ExportDataset_company_1=Terceros (empresas/instituciones) y atributos
+# ExportDataset_company_1=Third parties (Companies/foundations/physical people) and properties
 ExportDataset_company_2=Contactos de terceros y atributos
-ImportDataset_company_1=Terceros (empresas/instituciones) y atributos
-ImportDataset_company_2=Contactos (terceros o libres) y atributos
+# ImportDataset_company_1=Third parties (Companies/foundations/physical people) and properties
+# ImportDataset_company_2=Contacts/Addresses (of thirdparties or not) and attributes
 ImportDataset_company_3=Cuentas bancarias
 PriceLevel=Nivel de precios
 DeliveriesAddress=Dirección(es) de envío
@@ -399,9 +400,9 @@ InActivity=Activo
 ActivityCeased=Cerrado
 ActivityStateFilter=Estado de actividad
 ProductsIntoElements=Listado de productos en %s
-CurrentOutstandingBill=Riesgo alcanzado
-OutstandingBill=Riesgo máximo
-OutstandingBillReached=Riesgo máximo alcanzado
+# CurrentOutstandingBill=Current outstanding bill
+OutstandingBill=Importe máximo para facturas pendientes
+OutstandingBillReached=Importe máximo alcanzado
 # Monkey
 MonkeyNumRefModelDesc=Devuelve un número bajo el formato %syymm-nnnn para los códigos de clientes y %syymm-nnnn para los códigos de los proveedores, donde yy es el año, mm el mes y nnnn un contador secuencial sin ruptura y sin volver a 0.
 # Leopard

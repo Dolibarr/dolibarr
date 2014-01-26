@@ -257,6 +257,8 @@ Seconds=Δευτερόλεπτα
 Today=Σήμερα
 Yesterday=Χθές
 Tomorrow=Αύριο
+# Morning=Morning
+# Afternoon=Afternoon
 Quadri=Quadri
 MonthOfDay=Month Of Day
 HourShort=Ω
@@ -309,6 +311,7 @@ SubTotal=Υποσύνολο
 TotalHTShort=Σύνολο (χ. Φ.Π.Α.)
 TotalTTCShort=Σύνολο (με Φ.Π.Α.)
 TotalHT=Σύνολο (χ. Φ.Π.Α.)
+# TotalHTforthispage=Total (net of tax) for this page
 TotalTTC=Σύνολο (με Φ.Π.Α.)
 TotalTTCToYourCredit=Total (inc. tax) to your credit
 TotalVAT=Συνολικός Φ.Π.Α.
@@ -662,6 +665,8 @@ HelpCopyToClipboard=Χρησιμοποιήστε το Ctrl + C για να αν�
 SaveUploadedFileWithMask=Αποθηκεύστε το αρχείο στον server με το όνομα "<strong>%s</strong>" (αλλιώς "%s")
 OriginFileName=Αρχική Ονομασία
 SetDemandReason=Ρυθμίστε την πηγή
+# ViewPrivateNote=View notes
+# XMoreLines=%s line(s) hidden
 
 # Week day
 Monday=Δευτέρα

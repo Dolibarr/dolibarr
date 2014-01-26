@@ -257,6 +257,8 @@ Seconds=Sekunden
 Today=Heute
 Yesterday=Gestern
 Tomorrow=Morgen
+# Morning=Morning
+# Afternoon=Afternoon
 Quadri=vierfach
 MonthOfDay=Tag des Monats
 HourShort=H
@@ -309,6 +311,7 @@ SubTotal=Zwischensumme
 TotalHTShort=Nettosumme
 TotalTTCShort=Gesamtbetrag (inkl. MwSt.)
 TotalHT=Gesamtpreis
+# TotalHTforthispage=Total (net of tax) for this page
 TotalTTC=Bruttosumme
 TotalTTCToYourCredit=Bruttosumme
 TotalVAT=MwSt.
@@ -662,6 +665,8 @@ HelpCopyToClipboard=Benutze Ctrl+C für Kopie in Zwischenablage
 SaveUploadedFileWithMask=Datei auf dem Server speichern mit dem Namen "<strong>%s</strong>" (oder "%s")
 # OriginFileName=Original filename
 # SetDemandReason=Set source
+# ViewPrivateNote=View notes
+# XMoreLines=%s line(s) hidden
 
 # Week day
 Monday=Montag

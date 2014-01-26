@@ -37,6 +37,7 @@ ErrorBadParameters=Ugyldige parametere
 ErrorBadValueForParameter=Feil verdi &quot;%s 'for parameter feil' Choice %s 'Choice
 ErrorBadImageFormat=Bildet filen har ikke et støttet format
 ErrorBadDateFormat=Verdien '%s' har feil dato format
+# ErrorWrongDate=Date is not correct!
 ErrorFailedToWriteInDir=Kan ike skrive til mappen %s
 ErrorFoundBadEmailInFile=Feil e-postsyntax for %s linjer i filen (for eksempel linje %s med e-post=%s)
 ErrorUserCannotBeDelete=Brukeren kan ikke slettes. Det kan være at den er knyttet til elementer i Dolibarr.
@@ -63,13 +64,14 @@ ErrorSizeTooLongForVarcharType=Størrelse for lang for streng type (%s tegn maks
 # ErrorBadFormatValueList=The list value cannot have more than one come : <u>%s</u>, but need at least one: llave,valores
 ErrorFieldCanNotContainSpecialCharacters=Feltet <b>%s</b> kan ikke inneholde spesialtegn.
 ErrorNoAccountancyModuleLoaded=Ingen regnskapsmodul aktivert
-ErrorExportDuplicateProfil=Det er allerede lagret en eksportprofil med dette navnet.
+# ErrorExportDuplicateProfil=This profile name already exists for this export set.
 ErrorLDAPSetupNotComplete=Dolibarr-LDAP oppsett er ikke komplett.
 ErrorLDAPMakeManualTest=En .ldif fil er opprettet i mappen %s. Prøv å lese den manuelt for å se mer informasjon om feil.
 ErrorCantSaveADoneUserWithZeroPercentage=Kan ikke lagre en handling med "ikke statut startet" hvis feltet "gjort av" er også fylt.
 ErrorRefAlreadyExists=Ref brukes til oppretting finnes allerede.
 ErrorPleaseTypeBankTransactionReportName=Vennligst skriv kvittering fra bank navnet der hvor transaksjonen er rapportert (Format ÅÅÅÅMM eller ÅÅÅÅMMDD)
 ErrorRecordHasChildren=Kunne ikke slette poster siden den har noen Childs.
+# ErrorRecordIsUsedCantDelete=Can't delete record. It is already used or included into other object.
 ErrorModuleRequireJavascript=Javascript må ikke deaktiveres å ha denne funksjonen fungerer. For å aktivere / deaktivere Javascript, gå til menyen Home-> Setup-> Display.
 ErrorPasswordsMustMatch=Begge har skrevet passord må samsvare med hverandre
 ErrorContactEMail=En teknisk feil oppsto. Vennligst kontakt administrator for å følge e <b>%s</b> no gi feilmeldingsnumrene <b>%s</b> i meldingen, eller enda bedre ved å legge til en skjerm kopi av denne siden.
@@ -127,6 +129,7 @@ ErrorNoActivatedBarcode=Ingen strekkodetype aktivert
 # ErrorPHPNeedModule=Error, your PHP must have module <b>%s</b> installed to use this feature.
 # ErrorOpenIDSetupNotComplete=You setup Dolibarr config file to allow OpenID authentication, but URL of OpenID service is not defined into constant %s
 # ErrorWarehouseMustDiffers=Source and target warehouses must differs
+# ErrorBadFormat=Bad format!
 
 # Warnings
 # WarningMandatorySetupNotComplete=Mandatory setup parameters are not yet defined

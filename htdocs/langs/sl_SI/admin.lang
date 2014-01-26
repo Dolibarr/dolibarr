@@ -505,7 +505,7 @@ Module50200Desc= Modul za omogočanje strani za spletno plačevanje s kreditno k
 # Module54000Name=PrintIPP
 # Module54000Desc=Print via Cups IPP Printer.
 # Module55000Name=Open Survey
-# Module55000Desc=Module to integrate a survey (like Doodle, Studs, Rdvz, ...)
+# Module55000Desc=Module to make online surveys (like Doodle, Studs, Rdvz, ...)
 # Module59000Name=Margins
 # Module59000Desc=Module to manage margins
 # Module60000Name=Commissions
@@ -724,6 +724,8 @@ Permission50202=Uvoz prenosov
 # Permission54001=Print
 # Permission55001=Read surveys
 # Permission55002=Create/modify surveys
+# Permission59001=Read commercial margins
+# Permission59002=Define commercial margins
 DictionnaryCompanyType=Tipi podjetij
 DictionnaryCompanyJuridicalType=Pravna oblika podjetja
 DictionnaryProspectLevel=Nivo potenciala možne stranke
@@ -1011,6 +1013,7 @@ SendmailOptionMayHurtBuggedMTA=Funkcija za pošiljanje pošte z uporabo metode &
 # FieldEdition=Edition of field %s
 # FixTZ=TimeZone fix
 # FillThisOnlyIfRequired=Example: +2 (fill only if timezone offset problems are experienced)
+# GetBarCode=Get barcode
 ##### Module password generation
 PasswordGenerationStandard=Predlaga geslo, generirano glede na interni Dolibarr algoritem: 8 mest, ki vsebujejo različne številke in male črke.
 PasswordGenerationNone=Ne predlaga nobenega generiranega gesla. Geslo je potrebno vnesti ročno.
@@ -1116,6 +1119,9 @@ TemplatePDFInterventions=Modeli obrazcev intervencijskih kartic
 ##### Contracts #####
 ContractsSetup=Nastavitev modula za pogodbe
 ContractsNumberingModules=Moduli za številčenje pogodb
+# TemplatePDFContracts=Contracts documents models
+# FreeLegalTextOnContracts=Free text on contracts
+# WatermarkOnDraftContractCards=Watermark on draft contracts (none if empty)
 ##### Members #####
 MembersSetup=Nastavitve modula članov
 MemberMainOptions=Glavne opcije

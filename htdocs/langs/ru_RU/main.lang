@@ -257,6 +257,8 @@ Seconds=Секунд
 Today=Сегодня
 Yesterday=Вчера
 Tomorrow=Завтра
+# Morning=Morning
+# Afternoon=Afternoon
 Quadri=Квадри
 MonthOfDay=Месяц дня
 HourShort=ч
@@ -309,6 +311,7 @@ SubTotal=Итого
 TotalHTShort=Всего (без налога)
 TotalTTCShort=Всего (вкл-я налог)
 TotalHT=Всего (без налога)
+# TotalHTforthispage=Total (net of tax) for this page
 TotalTTC=Всего (вкл-я налог)
 TotalTTCToYourCredit=Всего (вкл-я налог) с Вашей кредитной
 TotalVAT=Всего НДС
@@ -662,6 +665,8 @@ BySalesRepresentative=По торговым представителем
 # SaveUploadedFileWithMask=Save file on server with name "<strong>%s</strong>" (otherwise "%s")
 # OriginFileName=Original filename
 # SetDemandReason=Set source
+# ViewPrivateNote=View notes
+# XMoreLines=%s line(s) hidden
 
 # Week day
 Monday=Понедельник

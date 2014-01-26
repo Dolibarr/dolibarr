@@ -37,6 +37,7 @@ ErrorBadParameters=Parâmetros incorrectos
 ErrorBadValueForParameter=&quot;%s&quot; valor incorreto para parâmetro incorreto dos %s dos
 ErrorBadImageFormat=Arquivo de imagem não tem um formato suportado
 ErrorBadDateFormat=&quot;%s&quot; Valor tem formato de data errado
+# ErrorWrongDate=Date is not correct!
 ErrorFailedToWriteInDir=Impossivel escrever na pasta %s
 ErrorFoundBadEmailInFile=Encontrada sintaxis incorrecta em email em %s linhas em Ficheiro (Exemplo linha %s com email=%s)
 ErrorUserCannotBeDelete=O utilizador não pode ser eliminado. Quizá esé asociado a elementos de Dolibarr.
@@ -63,13 +64,14 @@ ErrorSizeTooLongForVarcharType=Tamanho demasiado longo para o tipo string (%s m�
 # ErrorBadFormatValueList=The list value cannot have more than one come : <u>%s</u>, but need at least one: llave,valores
 ErrorFieldCanNotContainSpecialCharacters=O campo <b>%s</b> não deve conter carácteres especiais
 ErrorNoAccountancyModuleLoaded=Módulo de Contabilidade não activado
-ErrorExportDuplicateProfil=O Nome do perfil já existe para este lote de exportação
+# ErrorExportDuplicateProfil=This profile name already exists for this export set.
 ErrorLDAPSetupNotComplete=A configuração Dolibarr-LDAP é incompleta.
 ErrorLDAPMakeManualTest=Foi criado um Ficheiro .ldif na pasta %s. Trate de gerir manualmente este Ficheiro desde a linha de comandos para Obter mais detalhes acerca do erro.
 ErrorCantSaveADoneUserWithZeroPercentage=Você não pode mudar uma ação de estado, se um usuário começou a realizante ação.
 ErrorRefAlreadyExists=A referencia utilizada para a criação já existe
 ErrorPleaseTypeBankTransactionReportName=Introduzca o Nome do registo bancario sobre a qual o escrito está constatado (formato AAAAMM ó AAAMMJJ)
 ErrorRecordHasChildren=Não se pode eliminar o registo porque tem filhos.
+# ErrorRecordIsUsedCantDelete=Can't delete record. It is already used or included into other object.
 ErrorModuleRequireJavascript=Javascript não deve ser desativado para que este recurso de trabalho. Para ativar / desativar o JavaScript, vá ao menu Home -> Configuração -> Mostrar.
 ErrorPasswordsMustMatch=Ambas as senhas digitadas devem corresponder entre si
 ErrorContactEMail=Um erro técnico ocorreu. Por favor, contacte o administrador para seguir <b>%s</b> e-mail em fornecer os <b>%s</b> código de erro na sua mensagem, ou melhor ainda pela adição de uma cópia de tela da página.
@@ -127,6 +129,7 @@ ErrorNoActivatedBarcode=Nenhum tipo de código de barras ativado
 # ErrorPHPNeedModule=Error, your PHP must have module <b>%s</b> installed to use this feature.
 # ErrorOpenIDSetupNotComplete=You setup Dolibarr config file to allow OpenID authentication, but URL of OpenID service is not defined into constant %s
 # ErrorWarehouseMustDiffers=Source and target warehouses must differs
+# ErrorBadFormat=Bad format!
 
 # Warnings
 # WarningMandatorySetupNotComplete=Mandatory setup parameters are not yet defined

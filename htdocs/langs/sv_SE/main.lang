@@ -257,6 +257,8 @@ Seconds=Sekunder
 Today=I dag
 Yesterday=I går
 Tomorrow=I morgon
+# Morning=Morning
+# Afternoon=Afternoon
 Quadri=Quadri
 MonthOfDay=Månad efter det
 HourShort=H
@@ -309,6 +311,7 @@ SubTotal=Delsumma
 TotalHTShort=Totalt (netto)
 TotalTTCShort=Summa (inkl. moms)
 TotalHT=Total (netto efter skatt)
+# TotalHTforthispage=Total (net of tax) for this page
 TotalTTC=Summa (inkl. moms)
 TotalTTCToYourCredit=Totalt (inkl. moms) till din kredit
 TotalVAT=Total moms
@@ -662,6 +665,8 @@ BySalesRepresentative=Genom säljare
 # SaveUploadedFileWithMask=Save file on server with name "<strong>%s</strong>" (otherwise "%s")
 # OriginFileName=Original filename
 # SetDemandReason=Set source
+# ViewPrivateNote=View notes
+# XMoreLines=%s line(s) hidden
 
 # Week day
 Monday=Måndag

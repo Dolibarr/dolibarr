@@ -28,6 +28,7 @@ EndBankBalance=Solde final
 CurrentBalance=Solde actuel
 FutureBalance=Solde futur
 ShowAllTimeBalance=Afficher solde depuis début
+AllTime=Depuis le début
 Reconciliation=Rapprochement
 RIB=Numéro compte
 IBAN=Identifiant IBAN

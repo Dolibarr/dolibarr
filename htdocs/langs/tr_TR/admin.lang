@@ -505,7 +505,7 @@ Module50200Desc= Kredi kartı ya da Paypal ile ödeme sağlayan çevrimiçi öde
 Module54000Name=IPP Yazdır
 Module54000Desc=Cup'a IPP Yazıcıyla yazdır.
 Module55000Name=Açık Araştırma
-Module55000Desc=Bir araştırmaya entegre olmak için modül (Doodle, Studs, Rdvz, ...)
+# Module55000Desc=Module to make online surveys (like Doodle, Studs, Rdvz, ...)
 Module59000Name=Oranlar
 Module59000Desc=Oran yönetimi modülü
 Module60000Name=Komisyonlar
@@ -724,6 +724,8 @@ Permission50202=İçeaktarma işlemleri
 Permission54001=Yazdır
 Permission55001=Araştırma oku
 Permission55002=Araştırma oluştur/düzenle
+# Permission59001=Read commercial margins
+# Permission59002=Define commercial margins
 DictionnaryCompanyType=Firma türleri
 DictionnaryCompanyJuridicalType=Firma yasal türleri
 DictionnaryProspectLevel=Aday seviyeleri
@@ -1011,6 +1013,7 @@ AddRefInList=Listede müşteri/tedarikçi ref (liste ya da combobox seç) ve kö
 FieldEdition=%s Alanının düzenlenmesi
 FixTZ=Saat Dilimi Farkı
 FillThisOnlyIfRequired=Örnek: +2 (saat dilimi farkını yalnız zaman farkı sorunları yaşıyorsanız kullanın)
+# GetBarCode=Get barcode
 ##### Module password generation
 PasswordGenerationStandard=Dolibarr iç algoritmasına göre bir şifre girin: 8 karakterli sayı ve küçük harf içeren.
 PasswordGenerationNone=Herhangi oluşturulan bir şifre önermeyin. Şifreyi elle girmelisiniz.
@@ -1116,6 +1119,9 @@ WatermarkOnDraftInterventionCards=Taslak müdahale kartı belgelerinde filigran 
 ##### Contracts #####
 ContractsSetup=Sözleşme modülü kurulumu
 ContractsNumberingModules=Sözleşme numaralandırma modülleri
+# TemplatePDFContracts=Contracts documents models
+# FreeLegalTextOnContracts=Free text on contracts
+# WatermarkOnDraftContractCards=Watermark on draft contracts (none if empty)
 ##### Members #####
 MembersSetup=Üye modülü kurulumu
 MemberMainOptions=Ana seçenekler

@@ -257,6 +257,8 @@ Seconds=Másodpercek
 Today=Ma
 Yesterday=Tegnap
 Tomorrow=Holnap
+# Morning=Morning
+# Afternoon=Afternoon
 Quadri=Quadri
 MonthOfDay=Nap hónapja
 HourShort=Ó
@@ -309,6 +311,7 @@ SubTotal=Részösszeg
 TotalHTShort=Végösszeg (nettó)
 TotalTTCShort=Végösszeg (bruttó)
 TotalHT=Végösszeg (nettó)
+# TotalHTforthispage=Total (net of tax) for this page
 TotalTTC=Végösszeg (bruttó)
 TotalTTCToYourCredit=Total (inc. tax) to your credit
 TotalVAT=ÁFA összesen
@@ -662,6 +665,8 @@ BySalesRepresentative=Az értékesítési képviselő
 # SaveUploadedFileWithMask=Save file on server with name "<strong>%s</strong>" (otherwise "%s")
 # OriginFileName=Original filename
 # SetDemandReason=Set source
+# ViewPrivateNote=View notes
+# XMoreLines=%s line(s) hidden
 
 # Week day
 Monday=Hétfő

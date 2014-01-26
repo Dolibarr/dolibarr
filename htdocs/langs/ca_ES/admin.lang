@@ -505,7 +505,7 @@ Module50200Desc= Mòdul per a proporcionar un pagament en línia amb targeta de 
 # Module54000Name=PrintIPP
 # Module54000Desc=Print via Cups IPP Printer.
 # Module55000Name=Open Survey
-# Module55000Desc=Module to integrate a survey (like Doodle, Studs, Rdvz, ...)
+# Module55000Desc=Module to make online surveys (like Doodle, Studs, Rdvz, ...)
 Module59000Name=Márgenes
 Module59000Desc=Mòdul per gestionar els marges de benefici
 Module60000Name=Comissions
@@ -724,6 +724,8 @@ Permission50202=Importar les transaccions
 # Permission54001=Print
 # Permission55001=Read surveys
 # Permission55002=Create/modify surveys
+# Permission59001=Read commercial margins
+# Permission59002=Define commercial margins
 DictionnaryCompanyType=Tipus d'empresa
 DictionnaryCompanyJuridicalType=Formes jurídiques
 DictionnaryProspectLevel=Perspectiva nivell client potencial
@@ -1011,6 +1013,7 @@ XCacheInstalled=XCache cau està carregat.
 # FieldEdition=Edition of field %s
 # FixTZ=TimeZone fix
 # FillThisOnlyIfRequired=Example: +2 (fill only if timezone offset problems are experienced)
+# GetBarCode=Get barcode
 ##### Module password generation
 PasswordGenerationStandard=Retorna una contrasenya generada per l'algoritme intern Dolibarr: 8 caràcters, números i caràcters en minúscules barrejades.
 PasswordGenerationNone=No ofereix contrasenyes. La contrasenya s'introdueix manualment.
@@ -1116,6 +1119,9 @@ WatermarkOnDraftInterventionCards=Marca d'aigua en fitxes d'intervenció (en cas
 ##### Contracts #####
 ContractsSetup=Configuració del mòdul contractes
 ContractsNumberingModules=Mòduls de numeració dels contratos
+# TemplatePDFContracts=Contracts documents models
+# FreeLegalTextOnContracts=Free text on contracts
+# WatermarkOnDraftContractCards=Watermark on draft contracts (none if empty)
 ##### Members #####
 MembersSetup=Configuració del mòdulo Associacions
 MemberMainOptions=Opcions principals

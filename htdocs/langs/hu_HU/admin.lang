@@ -505,7 +505,7 @@ Module50200Desc= Modult kínál online fizetési oldalra hitelkártya Paypal
 # Module54000Name=PrintIPP
 # Module54000Desc=Print via Cups IPP Printer.
 # Module55000Name=Open Survey
-# Module55000Desc=Module to integrate a survey (like Doodle, Studs, Rdvz, ...)
+# Module55000Desc=Module to make online surveys (like Doodle, Studs, Rdvz, ...)
 # Module59000Name=Margins
 # Module59000Desc=Module to manage margins
 # Module60000Name=Commissions
@@ -724,6 +724,8 @@ Permission50202=Import ügyletek
 # Permission54001=Print
 # Permission55001=Read surveys
 # Permission55002=Create/modify surveys
+# Permission59001=Read commercial margins
+# Permission59002=Define commercial margins
 DictionnaryCompanyType=Cég típusok
 DictionnaryCompanyJuridicalType=Jogi féle cég
 DictionnaryProspectLevel=Prospect potenciális szintjétől
@@ -1011,6 +1013,7 @@ SendmailOptionMayHurtBuggedMTA=Feature mailt küldeni módszerrel &quot;PHP mail
 # FieldEdition=Edition of field %s
 # FixTZ=TimeZone fix
 # FillThisOnlyIfRequired=Example: +2 (fill only if timezone offset problems are experienced)
+# GetBarCode=Get barcode
 ##### Module password generation
 PasswordGenerationStandard=Vissza a jelszót generált szerint Belső Dolibarr algoritmus: 8 karakter tartalmazó közös számokat és karaktereket kisbetűvel.
 PasswordGenerationNone=Nem utalnak semmilyen generált jelszót. Jelszót kell kézzel írja be.
@@ -1116,6 +1119,9 @@ TemplatePDFInterventions=Beavatkozás kártya dokumentumok modellek
 ##### Contracts #####
 ContractsSetup=Szerződések modul beállítása
 ContractsNumberingModules=Szerződések számozási modulok
+# TemplatePDFContracts=Contracts documents models
+# FreeLegalTextOnContracts=Free text on contracts
+# WatermarkOnDraftContractCards=Watermark on draft contracts (none if empty)
 ##### Members #####
 MembersSetup=Tagok modul beállítása
 MemberMainOptions=Fő opciók

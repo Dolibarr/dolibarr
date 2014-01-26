@@ -257,6 +257,8 @@ Seconds=Sekunder
 Today=I dag
 Yesterday=I går
 Tomorrow=I morgen
+# Morning=Morning
+# Afternoon=Afternoon
 Quadri=Quadri
 MonthOfDay=Måned fra den dato
 HourShort=H
@@ -309,6 +311,7 @@ SubTotal=Tilsammen
 TotalHTShort=I alt (netto)
 TotalTTCShort=I alt (inkl. moms)
 TotalHT=Total (efter skat)
+# TotalHTforthispage=Total (net of tax) for this page
 TotalTTC=I alt (inkl. moms)
 TotalTTCToYourCredit=I alt (inkl. moms) til dit kredit
 TotalVAT=Total moms
@@ -662,6 +665,8 @@ BySalesRepresentative=Ved salgsrepræsentant
 # SaveUploadedFileWithMask=Save file on server with name "<strong>%s</strong>" (otherwise "%s")
 # OriginFileName=Original filename
 # SetDemandReason=Set source
+# ViewPrivateNote=View notes
+# XMoreLines=%s line(s) hidden
 
 # Week day
 Monday=Mandag

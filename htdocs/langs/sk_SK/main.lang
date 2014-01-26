@@ -257,6 +257,8 @@ Seconds=Sekundy
 Today=Dnes
 Yesterday=Včera
 Tomorrow=Zajtra
+# Morning=Morning
+# Afternoon=Afternoon
 Quadri=Quadri
 MonthOfDay=Mesiaca odo dňa
 HourShort=H
@@ -309,6 +311,7 @@ SubTotal=Medzisúčet
 TotalHTShort=Celkom (bez DPH)
 TotalTTCShort=Celkom (s DPH)
 TotalHT=Celkom (bez dane)
+# TotalHTforthispage=Total (net of tax) for this page
 TotalTTC=Celkom (s DPH)
 TotalTTCToYourCredit=Celkom (s DPH) na Váš účet
 TotalVAT=Daň celkom
@@ -662,6 +665,8 @@ HelpCopyToClipboard=Použite Ctrl + C skopírujte do schránky
 SaveUploadedFileWithMask=Uloženie súboru na serveri s názvom <strong>&quot;%s&quot;</strong> (inak &quot;%s&quot;)
 # OriginFileName=Original filename
 # SetDemandReason=Set source
+# ViewPrivateNote=View notes
+# XMoreLines=%s line(s) hidden
 
 # Week day
 Monday=Pondelok

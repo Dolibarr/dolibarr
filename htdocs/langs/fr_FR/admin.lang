@@ -505,7 +505,7 @@ Module50200Desc= Module permettant d'offrir en ligne une page de paiement par ca
 Module54000Name=PrintIPP
 Module54000Desc=Impression via Cups IPP Printer.
 Module55000Name=Open Survey
-Module55000Desc=Module pour réaliser des sondages en ligne (comme Doodle, Studs, Rdvz, ...)
+Module55000Desc=Module pour intégrer un sondage (comme Doodle, Studs, Rdvz, ...)
 Module59000Name=Marges
 Module59000Desc=Module pour gérer les marges
 Module60000Name=Commissions
@@ -724,6 +724,8 @@ Permission50202=Importer les transactions
 Permission54001=Imprimer
 Permission55001=Lire les sondages
 Permission55002=Créer/modifier les sondages
+Permission59001=Consulter les propositions commerciales
+Permission59002=Saisir les marges commerciales
 DictionnaryCompanyType=Types de sociétés
 DictionnaryCompanyJuridicalType=Formes juridiques
 DictionnaryProspectLevel=Niveau de potentiel des prospects
@@ -1117,7 +1119,7 @@ WatermarkOnDraftInterventionCards=Filigrane sur les brouillons des fiches d'inte
 ##### Contracts #####
 ContractsSetup=Configuration du module contrats
 ContractsNumberingModules=Modèles de numérotation des contrats
-TemplatePDFContracts=Modèles de document des contrats
+TemplatePDFContracts=Modèles de document de contrats
 FreeLegalTextOnContracts=Mention complémentaire sur les contrats
 WatermarkOnDraftContractCards=Filigrane sur les brouillons de contrats (aucun si vide)
 ##### Members #####

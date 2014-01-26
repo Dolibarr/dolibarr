@@ -110,3 +110,4 @@ SelectWarehouseForStockIncrease=Escolha depósito a ser usado para aumentar stoc
 # SelectProductInAndOutWareHouse=Select a product, a quantity, a source warehouse and a target warehouse, then click "%s". Once this is done for all required movements, click onto "%s".
 # RecordMovement=Record transfert
 # ReceivingForSameOrder=Receivings for this order
+# StockMovementRecorded=Stock movements recorded

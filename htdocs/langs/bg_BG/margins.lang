@@ -21,8 +21,8 @@ Margins=Полета
 # AgentMargins=Agent margins
 
 ProductService=Продукт или услуга
-# AllProducts=All products and services
-# ChooseProduct/Service=Choose product or service
+AllProducts=Всички продукти и услуги
+ChooseProduct/Service=Изберете продукт или услуга
 # CommercialAgent=Commercial agent
 
 StartDate=Начална дата

@@ -28,6 +28,7 @@ EndBankBalance=Sold Final
 CurrentBalance=Sold Curent
 FutureBalance=Sold Viitor
 ShowAllTimeBalance=Arată soldul de început
+# AllTime=From start
 Reconciliation=Reconciliere
 RIB=Număr Cont Bancă
 IBAN=Cod IBAN

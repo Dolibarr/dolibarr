@@ -1,4 +1,5 @@
 # Dolibarr language file - Source file is en_US - languages
+
 Language_ar_AR=Árabe
 Language_ar_SA=Árabe
 Language_bg_BG=Búlgaro
@@ -52,7 +53,7 @@ Language_sl_SI=Esloveno
 Language_sv_SV=Sueco
 Language_sv_SE=Sueco
 Language_sk_SK=Eslovaco
-Language_uz_UZ=Uzbeco
+# Language_uz_UZ=Uzbek
 Language_vi_VN=Vietnamita
 Language_zh_CN=Chino
 Language_zh_TW=Chino (Tradicional)

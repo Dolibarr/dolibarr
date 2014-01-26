@@ -505,7 +505,7 @@ Module50200Desc= وحدة لتقديم على صفحة الدفع عبر الإ�
 # Module54000Name=PrintIPP
 # Module54000Desc=Print via Cups IPP Printer.
 # Module55000Name=Open Survey
-# Module55000Desc=Module to integrate a survey (like Doodle, Studs, Rdvz, ...)
+# Module55000Desc=Module to make online surveys (like Doodle, Studs, Rdvz, ...)
 # Module59000Name=Margins
 # Module59000Desc=Module to manage margins
 # Module60000Name=Commissions
@@ -724,6 +724,8 @@ Permission50202=استيراد المعاملات
 # Permission54001=Print
 # Permission55001=Read surveys
 # Permission55002=Create/modify surveys
+# Permission59001=Read commercial margins
+# Permission59002=Define commercial margins
 DictionnaryCompanyType=أنواع الشركة
 DictionnaryCompanyJuridicalType=أنواع القانوني للشركة
 DictionnaryProspectLevel=آفاق محتملة المستوى
@@ -1011,6 +1013,7 @@ SendmailOptionMayHurtBuggedMTA=وميزة لإرسال رسائل باستخدا
 # FieldEdition=Edition of field %s
 # FixTZ=TimeZone fix
 # FillThisOnlyIfRequired=Example: +2 (fill only if timezone offset problems are experienced)
+# GetBarCode=Get barcode
 ##### Module password generation
 PasswordGenerationStandard=عودة كلمة سر ولدت الداخلية وفقا لخوارزمية Dolibarr : 8 أحرف مشتركة تتضمن الأرقام والحروف في حرف صغير.
 PasswordGenerationNone=لا توحي بأي كلمة المرور المتولدة. يجب أن تكون كلمة السر في نوع يدويا.
@@ -1116,6 +1119,9 @@ TemplatePDFInterventions=تدخل بطاقة نماذج الوثائق
 ##### Contracts #####
 ContractsSetup=عقود وحدة الإعداد
 ContractsNumberingModules=عقود ترقيم الوحدات
+# TemplatePDFContracts=Contracts documents models
+# FreeLegalTextOnContracts=Free text on contracts
+# WatermarkOnDraftContractCards=Watermark on draft contracts (none if empty)
 ##### Members #####
 MembersSetup=أعضاء وحدة الإعداد
 MemberMainOptions=الخيارات الرئيسية

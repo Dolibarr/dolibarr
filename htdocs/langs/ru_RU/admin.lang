@@ -505,7 +505,7 @@ Module50200Desc= Модуль предлагает онлайн страницу
 # Module54000Name=PrintIPP
 # Module54000Desc=Print via Cups IPP Printer.
 # Module55000Name=Open Survey
-# Module55000Desc=Module to integrate a survey (like Doodle, Studs, Rdvz, ...)
+# Module55000Desc=Module to make online surveys (like Doodle, Studs, Rdvz, ...)
 # Module59000Name=Margins
 # Module59000Desc=Module to manage margins
 # Module60000Name=Commissions
@@ -724,6 +724,8 @@ Permission50202=Импортных операций
 # Permission54001=Print
 # Permission55001=Read surveys
 # Permission55002=Create/modify surveys
+# Permission59001=Read commercial margins
+# Permission59002=Define commercial margins
 DictionnaryCompanyType=Компания типов
 DictionnaryCompanyJuridicalType=Юридическая рода компании
 DictionnaryProspectLevel=Проспект потенциального уровня
@@ -1011,6 +1013,7 @@ SendmailOptionMayHurtBuggedMTA=Функция отправить почту с �
 # FieldEdition=Edition of field %s
 # FixTZ=TimeZone fix
 # FillThisOnlyIfRequired=Example: +2 (fill only if timezone offset problems are experienced)
+# GetBarCode=Get barcode
 ##### Module password generation
 PasswordGenerationStandard=Возврат пароля, полученных в соответствии с внутренними Dolibarr алгоритма: 8 символов, содержащих общие цифры и символы в нижнем регистре.
 PasswordGenerationNone=Не предлагать любые сгенерированного пароля. Пароль необходимо ввести вручную.
@@ -1116,6 +1119,9 @@ TemplatePDFInterventions=Вмешательство карту документ�
 ##### Contracts #####
 ContractsSetup=Контракты модуль установки
 ContractsNumberingModules=Контракты нумерации модулей
+# TemplatePDFContracts=Contracts documents models
+# FreeLegalTextOnContracts=Free text on contracts
+# WatermarkOnDraftContractCards=Watermark on draft contracts (none if empty)
 ##### Members #####
 MembersSetup=Члены модуль настройки
 MemberMainOptions=Основные варианты

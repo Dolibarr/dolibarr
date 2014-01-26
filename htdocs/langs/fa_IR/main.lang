@@ -257,6 +257,8 @@ Seconds=ثانية
 Today=اليوم
 Yesterday=أمس
 Tomorrow=غدا
+# Morning=Morning
+# Afternoon=Afternoon
 Quadri=قادري
 MonthOfDay=خلال شهر من اليوم
 HourShort=حاء
@@ -309,6 +311,7 @@ SubTotal=المجموع الفرعي
 TotalHTShort=المجموع (الصافي)
 TotalTTCShort=المجموع (شركة الضريبية)
 TotalHT=المجموع (الصافي للضريبة)
+# TotalHTforthispage=Total (net of tax) for this page
 TotalTTC=المجموع (شركة الضريبية)
 TotalTTCToYourCredit=المجموع (شركة الضريبية) الائتمان الخاصة بك
 TotalVAT=مجموع الضريبة على القيمة المضافة
@@ -662,6 +665,8 @@ CreateDraft=إنشاء مشروع
 # SaveUploadedFileWithMask=Save file on server with name "<strong>%s</strong>" (otherwise "%s")
 # OriginFileName=Original filename
 # SetDemandReason=Set source
+# ViewPrivateNote=View notes
+# XMoreLines=%s line(s) hidden
 
 # Week day
 # Monday=Monday

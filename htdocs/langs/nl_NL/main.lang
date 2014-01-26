@@ -257,6 +257,8 @@ Seconds=Seconden
 Today=Vandaag
 Yesterday=Gisteren
 Tomorrow=Morgen
+# Morning=Morning
+# Afternoon=Afternoon
 Quadri=Trimester
 MonthOfDay=Maand van de dag
 HourShort=U
@@ -309,6 +311,7 @@ SubTotal=Subtotaal
 TotalHTShort=Totaal excl. BTW
 TotalTTCShort=Totaal incl. BTW
 TotalHT=Totaal excl. BTW
+# TotalHTforthispage=Total (net of tax) for this page
 TotalTTC=Totaal (incl. BTW)
 TotalTTCToYourCredit=Totaal (incl. BTW) op uw krediet
 TotalVAT=Totaal BTW
@@ -662,6 +665,8 @@ BySalesRepresentative=Door vertegenwoordiger
 # SaveUploadedFileWithMask=Save file on server with name "<strong>%s</strong>" (otherwise "%s")
 # OriginFileName=Original filename
 # SetDemandReason=Set source
+# ViewPrivateNote=View notes
+# XMoreLines=%s line(s) hidden
 
 # Week day
 Monday=Maandag

@@ -37,6 +37,7 @@ ErrorBadParameters=Λάθος παράμετρος
 ErrorBadValueForParameter=%s Λάθος τιμή για την παράμετρο λάθος %s
 ErrorBadImageFormat=Το αρχείο εικόνας δεν έχει μια μορφή που υποστηρίζεται
 ErrorBadDateFormat=«%s« Αξία έχει λάθος μορφή ημερομηνίας
+# ErrorWrongDate=Date is not correct!
 ErrorFailedToWriteInDir=Αποτυχία εγγραφής στο %s κατάλογο
 ErrorFoundBadEmailInFile=Βρέθηκαν εσφαλμένη σύνταξη e-mail για %s γραμμές στο αρχείο (%s γραμμή παράδειγμα με e-mail = %s)
 ErrorUserCannotBeDelete=Ο χρήστης μπορεί να διαγραφεί. Μπορεί να συνδέεται με Dolibarr οντότητες.
@@ -63,13 +64,14 @@ ErrorNoValueForRadioType=Please fill value for radio list
 ErrorBadFormatValueList=The list value cannot have more than one come : <u>%s</u>, but need at least one: llave,valores
 ErrorFieldCanNotContainSpecialCharacters=<b>%s</b> πεδίου δεν πρέπει να περιέχει ειδικούς χαρακτήρες.
 ErrorNoAccountancyModuleLoaded=Δεν λογιστική μονάδα ενεργοποιηθεί
-ErrorExportDuplicateProfil=Αυτό το όνομα προφίλ υπάρχει ήδη για αυτό το σύνολο των εξαγωγών.
+# ErrorExportDuplicateProfil=This profile name already exists for this export set.
 ErrorLDAPSetupNotComplete=Dolibarr-LDAP αντιστοίχιση δεν είναι πλήρης.
 ErrorLDAPMakeManualTest=Ένα αρχείο. Ldif έχει δημιουργηθεί σε %s κατάλογο. Προσπαθήστε να το φορτώσετε χειροκίνητα από την γραμμή εντολών για να έχουν περισσότερες πληροφορίες σχετικά με τα σφάλματα.
 ErrorCantSaveADoneUserWithZeroPercentage=Δεν μπορεί να σώσει μια ενέργεια με &quot;δεν statut ξεκίνησε&quot; αν πεδίο &quot;γίνεται από&quot; είναι επίσης γεμάτη.
 ErrorRefAlreadyExists=Κωδικός που χρησιμοποιείται για τη δημιουργία ήδη υπάρχει.
 ErrorPleaseTypeBankTransactionReportName=Πληκτρολογείστε όνομα απόδειξη της τράπεζας όπου συναλλαγής αναφέρεται (Format YYYYMM ή ΕΕΕΕΜΜΗΗ)
 ErrorRecordHasChildren=Απέτυχε η διαγραφή εγγραφών, δεδομένου ότι έχει κάποια παιδιού.
+# ErrorRecordIsUsedCantDelete=Can't delete record. It is already used or included into other object.
 ErrorModuleRequireJavascript=Η Javascript πρέπει να είναι άτομα με ειδικές ανάγκες να μην έχουν αυτή τη δυνατότητα εργασίας. Για να ενεργοποιήσετε / απενεργοποιήσετε το Javascript, πηγαίνετε στο μενού Home-> Setup-> Εμφάνιση.
 ErrorPasswordsMustMatch=Και οι δύο πληκτρολογήσει τους κωδικούς πρόσβασης πρέπει να ταιριάζουν μεταξύ τους
 ErrorContactEMail=Ένα τεχνικό σφάλμα. Παρακαλούμε, επικοινωνήστε με τον διαχειριστή για μετά <b>%s</b> email en παρέχουν την <b>%s</b> κωδικό σφάλματος στο μήνυμά σας, ή ακόμα καλύτερα με την προσθήκη ενός αντιγράφου της οθόνης αυτής της σελίδας.
@@ -127,6 +129,7 @@ ErrorPaymentModeDefinedToWithoutSetup=A payment mode was set to type %s but setu
 ErrorPHPNeedModule=Σφάλμα, η PHP σας πρέπει να έχει το module <b>%s</ b> εγκατεστημένο για να χρησιμοποιήσετε αυτήν τη δυνατότητα.
 ErrorOpenIDSetupNotComplete=Μπορείτε να ρυθμίσετε το Dolibarr αρχείο config να επιτρέψει OpenID ταυτότητα, αλλά το URL OpenID υπηρεσίας δεν ορίζεται σε συνεχή %s
 ErrorWarehouseMustDiffers=Η πηγή και ο στόχος των αποθηκών πρέπει να είναι διαφορετικός.
+# ErrorBadFormat=Bad format!
 
 # Warnings
 WarningMandatorySetupNotComplete=Mandatory setup parameters are not yet defined

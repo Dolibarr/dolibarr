@@ -37,6 +37,7 @@ ErrorBadParameters=パラメータが不正で
 ErrorBadValueForParameter=パラメータが正しくない &quot;%s&quot;のために間違った値 &quot;%s&quot;
 ErrorBadImageFormat=イメージファイルはサポートされている形式を持っていないと
 ErrorBadDateFormat=値 '%s'に間違った日付の形式になっています
+# ErrorWrongDate=Date is not correct!
 ErrorFailedToWriteInDir=ディレクトリ%sの書き込みに失敗しました
 ErrorFoundBadEmailInFile=ファイル内の%s線の発見誤った電子メールのシンタックス（電子メール= %sを使用したサンプルライン%s）
 ErrorUserCannotBeDelete=ユーザーを削除することはできません。それはDolibarrエンティティに関連付けられているかもしれません。
@@ -63,13 +64,14 @@ ErrorSizeTooLongForVarcharType=文字列型（%s文字最大）長すぎるサ�
 # ErrorBadFormatValueList=The list value cannot have more than one come : <u>%s</u>, but need at least one: llave,valores
 ErrorFieldCanNotContainSpecialCharacters=フィールド<b>%sは、</b>特殊文字が含まれてはいけません。
 ErrorNoAccountancyModuleLoaded=全く会計モジュールが活性化しない
-ErrorExportDuplicateProfil=このプロファイリングの名前は、このエクスポート·セットにすでに存在しています。
+# ErrorExportDuplicateProfil=This profile name already exists for this export set.
 ErrorLDAPSetupNotComplete=Dolibarr-LDAPのマッチングは完全ではありません。
 ErrorLDAPMakeManualTest=。ldifファイルは、ディレクトリ%sで生成されました。エラーの詳細情報を持つようにコマンドラインから手動でそれをロードしようとする。
 ErrorCantSaveADoneUserWithZeroPercentage=&quot;で行われた&quot;フィールドも満たされている場合は、 &quot;statutが起動していない&quot;とアクションを保存することはできません。
 ErrorRefAlreadyExists=作成に使用refは、すでに存在しています。
 ErrorPleaseTypeBankTransactionReportName=トランザクションが報告されている銀行の領収書の名前を入力してください（フォーマットYYYYMMまたはYYYYMMDD）
 ErrorRecordHasChildren=それはいくつかのチャイルズを持っているので、レコードの削除に失敗しました。
+# ErrorRecordIsUsedCantDelete=Can't delete record. It is already used or included into other object.
 ErrorModuleRequireJavascript=Javascriptがこの機能が動作しているために無効にすることはできません。 Javascriptを有効/無効にするには、メニューHome  - &gt;セットアップ - &gt;ディスプレイに移動します。
 ErrorPasswordsMustMatch=両方入力したパスワードは、互いに一致している必要があります
 ErrorContactEMail=技術的なエラーが発生しました。 、次の電子メール<b>%s</b>に管理者に連絡してenはエラーコードメッセージで<b>%s、</b>またはこのページの画面コピーを追加することにより、さらに優れたを提供してください。
@@ -127,6 +129,7 @@ ErrorNoActivatedBarcode=活性化バーコード·タイプません
 # ErrorPHPNeedModule=Error, your PHP must have module <b>%s</b> installed to use this feature.
 # ErrorOpenIDSetupNotComplete=You setup Dolibarr config file to allow OpenID authentication, but URL of OpenID service is not defined into constant %s
 # ErrorWarehouseMustDiffers=Source and target warehouses must differs
+# ErrorBadFormat=Bad format!
 
 # Warnings
 # WarningMandatorySetupNotComplete=Mandatory setup parameters are not yet defined

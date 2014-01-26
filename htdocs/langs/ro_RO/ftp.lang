@@ -1,12 +1,12 @@
 # Dolibarr language file - Source file is en_US - ftp
-FTPClientSetup=Un client FTP modul de configurare
-NewFTPClient=Noua conexiune FTP setup
-FTPArea=Spaţiul FTP
-FTPAreaDesc=Acest ecran vă arate conţinutul în vederea server FTP
-SetupOfFTPClientModuleNotComplete=Setup de modul client FTP pare a fi nu este completă
-FTPFeatureNotSupportedByYourPHP=PHP nu are suport pentru funcţii FTP
-FailedToConnectToFTPServer=Nu a reuşit să se conecteze la serverul FTP (%s server, %s port)
-FailedToConnectToFTPServerWithCredentials=Nu a reuşit să login la serverul FTP cu login definite / parolă
-FTPFailedToRemoveFile=Nu reuşeau să îndepărteze <b>%s</b> fişier.
-FTPFailedToRemoveDir=Nu am putut şterge directorul <b>%s</b> (verificaţi permisiunile şi că directorul este gol).
+FTPClientSetup=Configurarea modulului client FTP
+NewFTPClient=Creează o nouă conexiune FTP
+FTPArea=Aria FTP
+FTPAreaDesc=Acest ecran afișează conţinutul unui server FTP
+SetupOfFTPClientModuleNotComplete=Configurarea clientului FTP pare incompletă
+FTPFeatureNotSupportedByYourPHP=Versiunea PHP a dvs. nu are suport pentru funcţii FTP
+FailedToConnectToFTPServer=Conectarea la serverul FTP a eșuat (server: %s, port: %s)
+FailedToConnectToFTPServerWithCredentials=Autentificarea la serverul FTP a eșuat folosind utilizatorul / parola definite
+FTPFailedToRemoveFile=Fișierul <b>%s</b> nu poate fi șters.
+FTPFailedToRemoveDir=Directorul <b>%s</b> nu poate fi șters (Verificaţi permisiunile şi faptul că directorul este gol).
 FTPPassiveMode=Mod pasiv

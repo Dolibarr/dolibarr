@@ -505,7 +505,7 @@ Module50200Desc= Ενότητα για να προσφέρει μια σε απ�
 Module54000Name=PrintIPP
 Module54000Desc=Εκτύπωση μέσω Cups IPP εκτυπωτή.
 Module55000Name=Άνοιγμα Έρευνας
-Module55000Desc=Πρόσθετο για την ενσωμάτωση μιας έρευνας (όπως  Doodle, Studs, Rdvz,  ...)
+# Module55000Desc=Module to make online surveys (like Doodle, Studs, Rdvz, ...)
 Module59000Name=Margins
 Module59000Desc=Module to manage margins
 Module60000Name=Commissions
@@ -724,6 +724,8 @@ Permission50202=Πράξεις εισαγωγής
 Permission54001=Εκτύπωση
 Permission55001=Διαβάστε τις έρευνες
 Permission55002=Δημιουργία/τροποποίηση ερευνών
+# Permission59001=Read commercial margins
+# Permission59002=Define commercial margins
 DictionnaryCompanyType=Company types
 DictionnaryCompanyJuridicalType=Juridical kinds of company
 DictionnaryProspectLevel=Prospect potential level
@@ -1011,6 +1013,7 @@ AddRefInList=Οθόνη πελάτη / προμηθευτή ref στη λίστ�
 FieldEdition=Έκδοση στο πεδίο %s
 FixTZ=TimeZone fix
 FillThisOnlyIfRequired=Παράδειγμα: +2 (συμπληρώστε μόνο αν ζώνη ώρας αντισταθμίσουν τα προβλήματα για προβλήματα που προέκυψαν)
+# GetBarCode=Get barcode
 ##### Module password generation
 PasswordGenerationStandard=Return a password generated according to internal Dolibarr algorithm: 8 characters containing shared numbers and characters in lowercase.
 PasswordGenerationNone=Do not suggest any generated password. Password must be type in manually.
@@ -1116,6 +1119,9 @@ WatermarkOnDraftInterventionCards=Watermark on intervention card documents (none
 ##### Contracts #####
 ContractsSetup=Συμβάσεις εγκατάσταση μονάδας
 ContractsNumberingModules=Συμβάσεις αρίθμησης ενοτήτων
+# TemplatePDFContracts=Contracts documents models
+# FreeLegalTextOnContracts=Free text on contracts
+# WatermarkOnDraftContractCards=Watermark on draft contracts (none if empty)
 ##### Members #####
 MembersSetup=Members module setup
 MemberMainOptions=Main options

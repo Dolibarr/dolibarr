@@ -28,6 +28,7 @@ EndBankBalance=Avsluta balans
 CurrentBalance=Aktuellt saldo
 FutureBalance=Framtida balans
 ShowAllTimeBalance=Visa balans från start
+# AllTime=From start
 Reconciliation=Avstämning
 RIB=Bankkontonummer
 IBAN=IBAN-nummer

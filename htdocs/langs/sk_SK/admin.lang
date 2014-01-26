@@ -505,7 +505,7 @@ Module50200Desc= Modul ponúknuť on-line platby kreditnou kartou stránku s Pay
 Module54000Name=PrintIPP
 Module54000Desc=Tlač cez poháre tlačiarne IPP.
 Module55000Name=Otvoriť Prieskum
-Module55000Desc=Modul pre integráciu prieskumu (ako Doodle, patentky, Rdvz, ...)
+# Module55000Desc=Module to make online surveys (like Doodle, Studs, Rdvz, ...)
 Module59000Name=Okraje
 Module59000Desc=Modul pre správu marže
 Module60000Name=Provízie
@@ -724,6 +724,8 @@ Permission50202=Importné operácie
 Permission54001=Vytlačiť
 Permission55001=Prečítajte si prieskumy
 Permission55002=Vytvoriť / upraviť prieskumy
+# Permission59001=Read commercial margins
+# Permission59002=Define commercial margins
 DictionnaryCompanyType=Spoločnosť typy
 DictionnaryCompanyJuridicalType=Právnické druhy spoločnosti
 DictionnaryProspectLevel=Prospect potenciálna miera
@@ -1011,6 +1013,7 @@ AddRefInList=Displej zákazníka / dodávateľa ref do zoznamu (vyberte zoznam a
 FieldEdition=Vydanie poľných %s
 # FixTZ=TimeZone fix
 # FillThisOnlyIfRequired=Example: +2 (fill only if timezone offset problems are experienced)
+# GetBarCode=Get barcode
 ##### Module password generation
 PasswordGenerationStandard=Späť heslo generované podľa interného algoritmu Dolibarr: 8 znakov obsahujúci zdieľanej čísla a znaky malými písmenami.
 PasswordGenerationNone=Nenaznačujú žiadne vygenerované heslo. Heslo musí byť v prevedení ručne.
@@ -1116,6 +1119,9 @@ WatermarkOnDraftInterventionCards=Vodoznak na dokumentoch intervenčných karty 
 ##### Contracts #####
 ContractsSetup=Zákazky modul nastavenia
 ContractsNumberingModules=Zákazky číslovanie moduly
+# TemplatePDFContracts=Contracts documents models
+# FreeLegalTextOnContracts=Free text on contracts
+# WatermarkOnDraftContractCards=Watermark on draft contracts (none if empty)
 ##### Members #####
 MembersSetup=Členovia modul nastavenia
 MemberMainOptions=Hlavné voľby

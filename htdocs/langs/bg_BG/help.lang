@@ -1,20 +1,20 @@
 # Dolibarr language file - Source file is en_US - help
-CommunitySupport=Форум / Wiki подкрепа
-EMailSupport=Имейли подкрепа
+CommunitySupport=Форум/Wiki поддръжка
+EMailSupport=Поддръжка по e-mail
 RemoteControlSupport=Онлайн в реално време / дистанционна поддръжка
 OtherSupport=Друга поддръжка
-ToSeeListOfAvailableRessources=За да се свържете / виж наличните ресурси:
+ToSeeListOfAvailableRessources=За да се свържете/вижте наличните ресурси:
 ClickHere=Кликнете тук,
 HelpCenter=Помощен център
-DolibarrHelpCenter=Dolibarr помощ и център за поддръжка
+DolibarrHelpCenter=Dolibarr център за помощ и поддръжка
 ToGoBackToDolibarr=В противен случай, щракнете <a href="%s">тук, за да използвате Dolibarr</a>
 TypeOfSupport=Източник на подкрепа
-TypeSupportCommunauty=Общността (безплатно)
+TypeSupportCommunauty=Общност (безплатно)
 TypeSupportCommercial=Търговски
 TypeOfHelp=Тип
-NeedHelpCenter=Нуждаете се от помощ или подкрепа?
+NeedHelpCenter=Нуждаете се от помощ или поддръжка?
 Efficiency=Ефективност
-TypeHelpOnly=Помощ само
+TypeHelpOnly=Само помощ
 TypeHelpDev=Помощ + развитие
 TypeHelpDevForm=Помощ + развитие + Формиране
 ToGetHelpGoOnSparkAngels1=Някои компании могат да осигурят бързо (по някое време незабавно) и по-ефективни онлайн поддръжка чрез поемането на контрола на вашия компютър. Такива помощници може да се намери на уеб сайта на <b>%s:</b>
@@ -23,6 +23,6 @@ ToGetHelpGoOnSparkAngels2=Понякога, няма фирма, на разпо
 BackToHelpCenter=В противен случай, натиснете тук, за да отиде <a href="%s">да помогне на центъра начална страница</a> .
 LinkToGoldMember=Можете да се обадите на треньора, предварително подбрани от Dolibarr за вашия език (%s), като щракнете върху му Widget (статус и максимална цена се актуализира автоматично):
 PossibleLanguages=Поддържани езици
-MakeADonation=Помощ Dolibarr проекта, направете дарение
-SubscribeToFoundation=Да Помощ Dolibarr проект, за да се абонирате към фундамента
+MakeADonation=Помогнете на проекта Dolibarr, направете дарение
+SubscribeToFoundation=Помогнете на проекта Dolibarr, като се присъедините към фондацията
 # SeeOfficalSupport=For official Dolibarr support in your language: <br><b><a href="%s" target="_blank">%s</a></b>

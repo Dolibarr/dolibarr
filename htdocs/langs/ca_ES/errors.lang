@@ -37,6 +37,7 @@ ErrorBadParameters=Paràmetres incorrectes
 ErrorBadValueForParameter=Valor '%s' incorrecte per al paràmetre '%s'
 ErrorBadImageFormat=La imatge no té un format reconegut
 ErrorBadDateFormat=El valor '%s' té un format de data no reconegut
+# ErrorWrongDate=Date is not correct!
 ErrorFailedToWriteInDir=No es pot escriure a la carpeta %s
 ErrorFoundBadEmailInFile=Trobada sintaxi incorrecta en email a %s línies en fitxer (exemple linia %s amb email=%s)
 ErrorUserCannotBeDelete=L'usuari no pot ser eliminat. Potser estigui associat a elements de Dolibarr.
@@ -63,13 +64,14 @@ ErrorNoValueForRadioType=Els valors de la llista han de ser indicats
 ErrorBadFormatValueList=Els valors de la llista no peudo contenir més d'una coma: <u>%s </u>, però necessita una: clau, valors
 ErrorFieldCanNotContainSpecialCharacters=El camp <b>%s</b> no ha de contenir caràcters especials
 ErrorNoAccountancyModuleLoaded=Mòdul de comptabilitat no activat
-ErrorExportDuplicateProfil=El nom del perfil ja existeix per a aquest lot d'exportació
+# ErrorExportDuplicateProfil=This profile name already exists for this export set.
 ErrorLDAPSetupNotComplete=La configuració Dolibarr-LDAP és incompleta.
 ErrorLDAPMakeManualTest=S'ha creat un arxiu .ldif a la carpeta %s. Tracti de carregar manualment aquest arxiu des de la línia de comandes per obtenir més informació sobre l'error.
 ErrorCantSaveADoneUserWithZeroPercentage=No es pot canviar una acció al estat no començada si teniu un usuari realitzant de l'acció.
 ErrorRefAlreadyExists=La referència utilitzada per a la creació ja existeix
 ErrorPleaseTypeBankTransactionReportName=Introduïu el nom del registre bancari sobre el qual l'escrit està constatat (format AAAAMM o AAAMMJJ)
 ErrorRecordHasChildren=No es pot esborrar el registre perquè té registrses fills.
+# ErrorRecordIsUsedCantDelete=Can't delete record. It is already used or included into other object.
 ErrorModuleRequireJavascript=Javascript ha d'estar activat per a que aquesta opció pugui utilitzar-se. Per activar/desactivar JavaScript, aneu al menú Inici->Configuració->Entorn.
 ErrorPasswordsMustMatch=Les 2 contrasenyes indicades s'han de correspondre
 ErrorContactEMail=S'ha produït un error tècnic. Contacti amb l'administrador al e-mail <b>%s</b>, indicant el codi d'error <b>%s</b> en el seu missatge, o pot també adjuntar una còpia de pantalla d'aquesta pàgina.
@@ -127,6 +129,7 @@ ErrorPaymentModeDefinedToWithoutSetup=S'ha establert la forma de pagament al tip
 # ErrorPHPNeedModule=Error, your PHP must have module <b>%s</b> installed to use this feature.
 # ErrorOpenIDSetupNotComplete=You setup Dolibarr config file to allow OpenID authentication, but URL of OpenID service is not defined into constant %s
 # ErrorWarehouseMustDiffers=Source and target warehouses must differs
+# ErrorBadFormat=Bad format!
 
 # Warnings
 WarningMandatorySetupNotComplete=Els paràmetres obligatoris de configuració no estan encara definits

@@ -28,6 +28,7 @@ EndBankBalance=Eindbalans
 CurrentBalance=Huidig saldo
 FutureBalance=Toekomstig saldo
 ShowAllTimeBalance=Toon saldo sinds begin
+# AllTime=From start
 Reconciliation=Overeenstemming
 RIB=Bankrekeningnummer
 IBAN=IBAN-nummer

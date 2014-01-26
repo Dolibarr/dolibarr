@@ -37,6 +37,7 @@ ErrorBadParameters=Hibás paraméterek
 ErrorBadValueForParameter=Rossz érték &quot;%s&quot; helytelen paraméter &quot;%s&quot;
 ErrorBadImageFormat=Kép fájl formátuma nem támogatott
 ErrorBadDateFormat=Érték &quot;%s&quot; rossz a dátum formátumát
+# ErrorWrongDate=Date is not correct!
 ErrorFailedToWriteInDir=Nem sikerült írni a könyvtárban %s
 ErrorFoundBadEmailInFile=Talált rossz e-mail szintaxisa %s sorok fájlt (például az e-mail vonal %s %s =)
 ErrorUserCannotBeDelete=A felhasználó nem törölhető. Lehet, hogy ez jár a Dolibarr szervezetek.
@@ -63,13 +64,14 @@ ErrorSizeTooLongForVarcharType=Méret túl hosszú a string típusú (%s karakte
 # ErrorBadFormatValueList=The list value cannot have more than one come : <u>%s</u>, but need at least one: llave,valores
 ErrorFieldCanNotContainSpecialCharacters=<b>%s</b> mező nem tartalmaz speciális karaktereket.
 ErrorNoAccountancyModuleLoaded=Nem számviteli modul aktiválódik
-ErrorExportDuplicateProfil=Ez a profil név már létezik ez a kivitel készlet.
+# ErrorExportDuplicateProfil=This profile name already exists for this export set.
 ErrorLDAPSetupNotComplete=Dolibarr LDAP-egyezés nem teljes.
 ErrorLDAPMakeManualTest=Egy. LDIF fájlt keletkezett %s könyvtárban. Próbálja meg kézzel betölteni a parancssorból, hogy több információt hibákat.
 ErrorCantSaveADoneUserWithZeroPercentage=Nem lehet menteni akciót &quot;az alapszabály nem kezdődött el&quot;, ha a területen &quot;történik&quot; is ki van töltve.
 ErrorRefAlreadyExists=Ref használt létrehozására már létezik.
 ErrorPleaseTypeBankTransactionReportName=Kérjük, írja banki átvételi ügylet neve, ahol a jelentések (Format ÉÉÉÉHH vagy ÉÉÉÉHHNN)
 ErrorRecordHasChildren=Nem sikerült törölni rekordokat, mert van néhány gyermek.
+# ErrorRecordIsUsedCantDelete=Can't delete record. It is already used or included into other object.
 ErrorModuleRequireJavascript=Javascript nem szabad tiltani, hogy ez a funkció működik. Annak engedélyezése / tiltása Javascript, menj a menü Home-> Beállítások-> Kijelző.
 ErrorPasswordsMustMatch=Mindkét típusú jelszavakat kell egyeznie egymással
 ErrorContactEMail=Egy technikai hiba történt. Kérjük, lépjen kapcsolatba a következő e-mail rendszergazda <b>%s</b> en biztosítja a hibakódot <b>%s</b> be az üzenetet, vagy még jobb hozzáadásával képernyő ezen oldal másolatát.
@@ -127,6 +129,7 @@ ErrorNoActivatedBarcode=Nem vonalkód típus aktivált
 # ErrorPHPNeedModule=Error, your PHP must have module <b>%s</b> installed to use this feature.
 # ErrorOpenIDSetupNotComplete=You setup Dolibarr config file to allow OpenID authentication, but URL of OpenID service is not defined into constant %s
 # ErrorWarehouseMustDiffers=Source and target warehouses must differs
+# ErrorBadFormat=Bad format!
 
 # Warnings
 # WarningMandatorySetupNotComplete=Mandatory setup parameters are not yet defined

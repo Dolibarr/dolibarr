@@ -28,6 +28,7 @@ EndBankBalance=Endbestand
 CurrentBalance=Aktueller Kontostand
 FutureBalance=Zukünftiger Kontostand
 ShowAllTimeBalance=Zeige Kontostand seit Eröffnung
+# AllTime=From start
 Reconciliation=Zahlungsabgleich
 RIB=Kontonummer
 IBAN=IBAN

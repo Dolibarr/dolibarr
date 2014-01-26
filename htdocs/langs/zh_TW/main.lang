@@ -257,6 +257,8 @@ Seconds=秒
 Today=今日
 Yesterday=昨天
 Tomorrow=明天
+# Morning=Morning
+# Afternoon=Afternoon
 Quadri=誇德裏
 MonthOfDay=本月的一天
 HourShort=Ĥ
@@ -309,6 +311,7 @@ SubTotal=小計
 TotalHTShort=共計（凈額）
 TotalTTCShort=共有（包括稅）
 TotalHT=共計（不含稅）
+# TotalHTforthispage=Total (net of tax) for this page
 TotalTTC=共計（含稅）
 TotalTTCToYourCredit=共有（包括稅），以你的信用
 TotalVAT=總計營業稅金額
@@ -662,6 +665,8 @@ BySalesRepresentative=按業務代表
 # SaveUploadedFileWithMask=Save file on server with name "<strong>%s</strong>" (otherwise "%s")
 # OriginFileName=Original filename
 # SetDemandReason=Set source
+# ViewPrivateNote=View notes
+# XMoreLines=%s line(s) hidden
 
 # Week day
 Monday=星期一
