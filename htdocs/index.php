@@ -52,7 +52,11 @@ if (!isset($conf->global->MAIN_INFO_SOCIETE_NOM) || empty($conf->global->MAIN_IN
  * View
  */
 
-llxHeader('',$langs->trans("HomeArea"));
+// Title
+$title=$langs->trans("HomeArea").' - Dolibarr '.DOL_VERSION;
+if (! empty($conf->global->MAIN_APPLICATION_TITLE)) $title=$langs->trans("HomeArea").' - '.$conf->global->MAIN_APPLICATION_TITLE;
+
+llxHeader('',$title);
 
 print_fiche_titre($langs->trans("HomeArea"));
 
@@ -238,20 +242,15 @@ if (empty($user->societe_id))
 
 	            $var=!$var;
 	            if ($langfile[$key]) $langs->load($langfile[$key]);
-	            $title=$langs->trans($titres[$key]);
-	            /*print '<tr '.$bc[$var].'><td width="16">'.img_object($title,$icons[$key]).'</td>';
-	            print '<td>'.$title.'</td>';
-	            print '<td align="right"><a href="'.$links[$key].'">'.$board->nb[$val].'</a></td>';
-	            print '</tr>';
-	            */
+	            $text=$langs->trans($titres[$key]);
 	            print '<div class="boxstats">';
 	            print '<a href="'.$links[$key].'" class="nobold nounderline">';
-	            print img_object($title,$icons[$key]).' '.$title.'<br>';
+	            print img_object($text,$icons[$key]).' '.$text.'<br>';
 	            print '</a>';
 	            print '<a href="'.$links[$key].'">';
 	            print $board->nb[$val];
-	            print '</div>';
 	            print '</a>';
+	            print '</div>';
 	        }
 	    }
     }
