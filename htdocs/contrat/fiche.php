@@ -245,8 +245,8 @@ if ($action == 'add' && $user->rights->contrat->creer)
 	                for ($i=0;$i<$num;$i++)
 	                {
 	                    $product_type=($lines[$i]->product_type?$lines[$i]->product_type:0);
-
-						if ($product_type == 1) { //only services
+	                    
+						if ($product_type == 1) { //only services	// TODO Exclude also deee
 							// service prédéfini
 							if ($lines[$i]->fk_product > 0)
 							{
@@ -290,8 +290,8 @@ if ($action == 'add' && $user->rights->contrat->creer)
 				                $lines[$i]->localtax2_tx,
 				                $lines[$i]->fk_product,
 				                $lines[$i]->remise_percent,
-				                $date_start =0,
-				                $date_end =0,
+				                $lines[$i]->date_start,
+				                $lines[$i]->date_end,
 				                'HT',
 				                0,
 				                $lines[$i]->info_bits,
@@ -307,7 +307,6 @@ if ($action == 'add' && $user->rights->contrat->creer)
 
 						}
 	                }
-
 	            }
 	            else
 	            {
