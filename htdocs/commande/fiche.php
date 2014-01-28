@@ -2477,6 +2477,17 @@ else
 					print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=reopen">'.$langs->trans('ReOpen').'</a></div>';
 				}
 
+				// Create contract
+				if ($conf->contrat->enabled && ($object->statut == 1 || $object->statut == 2))
+				{
+					$langs->load("contracts");
+	
+					if ($user->rights->contrat->creer)
+					{
+						print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/contrat/fiche.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid.'">'.$langs->trans('AddContract').'</a></div>';
+					}
+				}
+	
 				// Create bill and Classify billed
 				// Note: Even if module invoice is not enabled, we should be able to use button "Classified billed" 
 				if ($object->statut > 0  && ! $object->billed)

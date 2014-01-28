@@ -2168,7 +2168,7 @@ else
 				}
 	
 				// Create an order
-				if (! empty($conf->commande->enabled) && $object->statut == 2 && $user->societe_id == 0)
+				if (! empty($conf->commande->enabled) && $object->statut == 2)
 				{
 					if ($user->rights->commande->creer)
 					{
@@ -2177,7 +2177,7 @@ else
 				}
 	
 				// Create contract
-				if ($conf->contrat->enabled && $object->statut == 2 && $user->societe_id == 0)
+				if ($conf->contrat->enabled && $object->statut == 2)
 				{
 					$langs->load("contracts");
 	
@@ -2188,7 +2188,7 @@ else
 				}
 	
 				// Create an invoice and classify billed
-				if ($object->statut == 2 && $user->societe_id == 0)
+				if ($object->statut == 2)
 				{
 					if (! empty($conf->facture->enabled) && $user->rights->facture->creer)
 					{
