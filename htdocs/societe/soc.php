@@ -794,7 +794,6 @@ else
         $s=$modCodeClient->getToolTip($langs,$object,0);
         print $form->textwithpicto('',$s,1);
         print '</td></tr></table>';
-
         print '</td></tr>';
 
         if (! empty($conf->fournisseur->enabled) && ! empty($user->rights->fournisseur->lire))

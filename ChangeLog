@@ -4,6 +4,7 @@ English Dolibarr ChangeLog
 
 ***** ChangeLog for 3.6 compared to 3.5.* *****
 For users:
+- New: Can input barcode during product creation step.
 - New: Can create contract from an order.
 - New: Add list of orders products in tab "consumption" on thirdparties.
 - New: Add graph stats for suppliers orders in tab "stats" on products.

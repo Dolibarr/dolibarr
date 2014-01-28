@@ -181,10 +181,14 @@ if (empty($reshook))
             $object->type               	= $type;
             $object->status             	= GETPOST('statut');
             $object->status_buy           	= GETPOST('statut_buy');
+            
+            $object->barcode_type           = GETPOST('fk_barcode_type');
+            $object->barcode		        = GETPOST('barcode');
+            
             $object->description        	= dol_htmlcleanlastbr(GETPOST('desc'));
             $object->note               	= dol_htmlcleanlastbr(GETPOST('note'));
-            $object->customcode            = GETPOST('customcode');
-            $object->country_id            = GETPOST('country_id');
+            $object->customcode             = GETPOST('customcode');
+            $object->country_id             = GETPOST('country_id');
             $object->duration_value     	= GETPOST('duration_value');
             $object->duration_unit      	= GETPOST('duration_unit');
             $object->seuil_stock_alerte 	= GETPOST('seuil_stock_alerte')?GETPOST('seuil_stock_alerte'):0;
@@ -698,7 +702,7 @@ else
         $tmpcode='';
 		if (! empty($modCodeProduct->code_auto))
 			$tmpcode=$modCodeProduct->getNextValue($object,$type);
-        print '<td class="fieldrequired" width="20%">'.$langs->trans("Ref").'</td><td><input name="ref" size="40" maxlength="128" value="'.dol_escape_htmltag(GETPOST('ref')?GETPOST('ref'):$tmpcode).'">';
+        print '<td class="fieldrequired" width="20%">'.$langs->trans("Ref").'</td><td colspan="3"><input name="ref" size="20" maxlength="128" value="'.dol_escape_htmltag(GETPOST('ref')?GETPOST('ref'):$tmpcode).'">';
         if ($_error)
         {
             print $langs->trans("RefAlreadyExists");
@@ -706,28 +710,59 @@ else
         print '</td></tr>';
 
         // Label
-        print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td><input name="libelle" size="40" maxlength="255" value="'.dol_escape_htmltag(GETPOST('libelle')).'"></td></tr>';
+        print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td colspan="3"><input name="libelle" size="40" maxlength="255" value="'.dol_escape_htmltag(GETPOST('libelle')).'"></td></tr>';
 
         // On sell
-        print '<tr><td class="fieldrequired">'.$langs->trans("Status").' ('.$langs->trans("Sell").')</td><td>';
+        print '<tr><td class="fieldrequired">'.$langs->trans("Status").' ('.$langs->trans("Sell").')</td><td colspan="3">';
         $statutarray=array('1' => $langs->trans("OnSell"), '0' => $langs->trans("NotOnSell"));
         print $form->selectarray('statut',$statutarray,GETPOST('statut'));
         print '</td></tr>';
 
         // To buy
-        print '<tr><td class="fieldrequired">'.$langs->trans("Status").' ('.$langs->trans("Buy").')</td><td>';
+        print '<tr><td class="fieldrequired">'.$langs->trans("Status").' ('.$langs->trans("Buy").')</td><td colspan="3">';
         $statutarray=array('1' => $langs->trans("ProductStatusOnBuy"), '0' => $langs->trans("ProductStatusNotOnBuy"));
         print $form->selectarray('statut_buy',$statutarray,GETPOST('statut_buy"'));
         print '</td></tr>';
+
+        $showbarcode=(! empty($conf->barcode->enabled) && $user->rights->barcode->lire);
+        	
+        if ($showbarcode)
+        {
+	        print '<tr><td>'.$langs->trans('BarcodeType').'</td><td>';
+	        if (isset($_POST['fk_barcode_type']))
+	        {
+	         	$fk_barcode_type=GETPOST('fk_barcode_type');
+	        }
+	        else
+	        {
+	        	if (empty($fk_barcode_type) && ! empty($conf->global->PRODUIT_DEFAULT_BARCODE_TYPE)) $fk_barcode_type = $conf->global->PRODUIT_DEFAULT_BARCODE_TYPE;
+	        }
+	        require_once DOL_DOCUMENT_ROOT.'/core/class/html.formbarcode.class.php';
+            $formbarcode = new FormBarCode($db);
+	        print $formbarcode->select_barcode_type($fk_barcode_type, 'fk_barcode_type', 1);
+	        print '</td><td>'.$langs->trans("BarcodeValue").'</td><td>';
+	        $tmpcode=isset($_POST['barcode'])?GETPOST('barcode'):$object->barcode;
+	        //if (empty($tmpcode) $tmpcode=$modBarCodeProduct->getNextValue($object,0);
+	        print '<input size="40" type="text" name="barcode" value="'.$tmpcode.'">';
+	        print '</td></tr>';
+        }
+                    
+        // Description (used in invoice, propal...)
+        print '<tr><td valign="top">'.$langs->trans("Description").'</td><td colspan="3">';
+
+        $doleditor = new DolEditor('desc', GETPOST('desc'), '', 160, 'dolibarr_notes', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, 4, 90);
+        $doleditor->Create();
+
+        print "</td></tr>";
 
         // Stock min level
         if ($type != 1 && ! empty($conf->stock->enabled))
         {
             print '<tr><td>'.$langs->trans("StockLimit").'</td><td>';
             print '<input name="seuil_stock_alerte" size="4" value="'.GETPOST('seuil_stock_alerte').'">';
-            print '</td></tr>';
+            print '</td>';
             // Stock desired level
-            print '<tr><td>'.$langs->trans("DesiredStock").'</td><td>';
+            print '<td>'.$langs->trans("DesiredStock").'</td><td>';
             print '<input name="desiredstock" size="4" value="'.GETPOST('desiredstock').'">';
             print '</td></tr>';
         }
@@ -737,18 +772,10 @@ else
             print '<input name="desiredstock" type="hidden" value="0">';
         }
 
-        // Description (used in invoice, propal...)
-        print '<tr><td valign="top">'.$langs->trans("Description").'</td><td>';
-
-        $doleditor = new DolEditor('desc', GETPOST('desc'), '', 160, 'dolibarr_notes', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, 4, 90);
-        $doleditor->Create();
-
-        print "</td></tr>";
-
         // Nature
         if ($type != 1)
         {
-            print '<tr><td>'.$langs->trans("Nature").'</td><td>';
+            print '<tr><td>'.$langs->trans("Nature").'</td><td colspan="3">';
             $statutarray=array('1' => $langs->trans("Finished"), '0' => $langs->trans("RowMaterial"));
             print $form->selectarray('finished',$statutarray,GETPOST('finished'),1);
             print '</td></tr>';
@@ -757,7 +784,7 @@ else
         // Duration
         if ($type == 1)
         {
-            print '<tr><td>'.$langs->trans("Duration").'</td><td><input name="duration_value" size="6" maxlength="5" value="'.GETPOST('duration_value').'"> &nbsp;';
+            print '<tr><td>'.$langs->trans("Duration").'</td><td colspan="3"><input name="duration_value" size="6" maxlength="5" value="'.GETPOST('duration_value').'"> &nbsp;';
             print '<input name="duration_unit" type="radio" value="h">'.$langs->trans("Hour").'&nbsp;';
             print '<input name="duration_unit" type="radio" value="d">'.$langs->trans("Day").'&nbsp;';
             print '<input name="duration_unit" type="radio" value="w">'.$langs->trans("Week").'&nbsp;';
@@ -769,38 +796,37 @@ else
         if ($type != 1)	// Le poids et le volume ne concerne que les produits et pas les services
         {
             // Weight
-            print '<tr><td>'.$langs->trans("Weight").'</td><td>';
+            print '<tr><td>'.$langs->trans("Weight").'</td><td colspan="3">';
             print '<input name="weight" size="4" value="'.GETPOST('weight').'">';
             print $formproduct->select_measuring_units("weight_units","weight");
             print '</td></tr>';
             // Length
-            print '<tr><td>'.$langs->trans("Length").'</td><td>';
+            print '<tr><td>'.$langs->trans("Length").'</td><td colspan="3">';
             print '<input name="size" size="4" value="'.GETPOST('size').'">';
             print $formproduct->select_measuring_units("size_units","size");
             print '</td></tr>';
             // Surface
-            print '<tr><td>'.$langs->trans("Surface").'</td><td>';
+            print '<tr><td>'.$langs->trans("Surface").'</td><td colspan="3">';
             print '<input name="surface" size="4" value="'.GETPOST('surface').'">';
             print $formproduct->select_measuring_units("surface_units","surface");
             print '</td></tr>';
             // Volume
-            print '<tr><td>'.$langs->trans("Volume").'</td><td>';
+            print '<tr><td>'.$langs->trans("Volume").'</td><td colspan="3">';
             print '<input name="volume" size="4" value="'.GETPOST('volume').'">';
             print $formproduct->select_measuring_units("volume_units","volume");
             print '</td></tr>';
         }
 
         // Customs code
-        print '<tr><td>'.$langs->trans("CustomCode").'</td><td><input name="customcode" size="10" value="'.GETPOST('customcode').'"></td></tr>';
-
+        print '<tr><td>'.$langs->trans("CustomCode").'</td><td><input name="customcode" size="10" value="'.GETPOST('customcode').'"></td>';
         // Origin country
-        print '<tr><td>'.$langs->trans("CountryOrigin").'</td><td>';
+        print '<td>'.$langs->trans("CountryOrigin").'</td><td>';
         print $form->select_country(GETPOST('country_id','int'),'country_id');
         if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
         print '</td></tr>';
 
         // Other attributes
-        $parameters=array('colspan' => ' colspan="2"');
+        $parameters=array('colspan' => ' colspan="3"');
         $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
         if (empty($reshook) && ! empty($extrafields->attribute_label))
         {
@@ -808,10 +834,10 @@ else
         }
 
         // Note (private, no output on invoices, propales...)
-        print '<tr><td valign="top">'.$langs->trans("NoteNotVisibleOnBill").'</td><td>';
+        print '<tr><td valign="top">'.$langs->trans("NoteNotVisibleOnBill").'</td><td colspan="3">';
 
         // We use dolibarr_details as type of DolEditor here, because we must not accept images as description is included into PDF and not accepted by TCPDF.
-        $doleditor = new DolEditor('note', GETPOST('note'), '', 180, 'dolibarr_details', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, 8, 70);
+        $doleditor = new DolEditor('note', GETPOST('note'), '', 140, 'dolibarr_details', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, 8, 70);
         $doleditor->Create();
 
         print "</td></tr>";
@@ -881,13 +907,13 @@ else
             print '<table class="border allwidth">';
 
             // Ref
-            print '<tr><td width="15%" class="fieldrequired">'.$langs->trans("Ref").'</td><td colspan="2"><input name="ref" size="40" maxlength="128" value="'.$object->ref.'"></td></tr>';
+            print '<tr><td width="15%" class="fieldrequired">'.$langs->trans("Ref").'</td><td colspan="3"><input name="ref" size="20" maxlength="128" value="'.$object->ref.'"></td></tr>';
 
             // Label
-            print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td colspan="2"><input name="libelle" size="40" maxlength="255" value="'.$object->libelle.'"></td></tr>';
+            print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td colspan="3"><input name="libelle" size="40" maxlength="255" value="'.$object->libelle.'"></td></tr>';
 
             // Status
-            print '<tr><td class="fieldrequired">'.$langs->trans("Status").' ('.$langs->trans("Sell").')</td><td colspan="2">';
+            print '<tr><td class="fieldrequired">'.$langs->trans("Status").' ('.$langs->trans("Sell").')</td><td colspan="3">';
             print '<select class="flat" name="statut">';
             if ($object->status)
             {
@@ -903,7 +929,7 @@ else
             print '</td></tr>';
 
             // To Buy
-            print '<tr><td class="fieldrequired">'.$langs->trans("Status").' ('.$langs->trans("Buy").')</td><td colspan="2">';
+            print '<tr><td class="fieldrequired">'.$langs->trans("Status").' ('.$langs->trans("Buy").')</td><td colspan="3">';
             print '<select class="flat" name="statut_buy">';
             if ($object->status_buy)
             {
@@ -919,31 +945,23 @@ else
             print '</td></tr>';
 
             // Description (used in invoice, propal...)
-            print '<tr><td valign="top">'.$langs->trans("Description").'</td><td colspan="2">';
+            print '<tr><td valign="top">'.$langs->trans("Description").'</td><td colspan="3">';
 
 	        // We use dolibarr_details as type of DolEditor here, because we must not accept images as description is included into PDF and not accepted by TCPDF.
-            $doleditor = new DolEditor('desc', $object->description, '', 160, 'dolibarr_details', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, 4, 90);
+            $doleditor = new DolEditor('desc', $object->description, '', 160, 'dolibarr_details', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, 4, 80);
             $doleditor->Create();
 
             print "</td></tr>";
             print "\n";
 
-            // Nature
-            if($object->type!=1)
-            {
-                print '<tr><td>'.$langs->trans("Nature").'</td><td colspan="2">';
-                $statutarray=array('-1'=>'&nbsp;', '1' => $langs->trans("Finished"), '0' => $langs->trans("RowMaterial"));
-                print $form->selectarray('finished',$statutarray,$object->finished);
-                print '</td></tr>';
-            }
-
+            // Stock
             if ($object->isproduct() && ! empty($conf->stock->enabled))
             {
-                print "<tr>".'<td>'.$langs->trans("StockLimit").'</td><td colspan="2">';
+                print "<tr>".'<td>'.$langs->trans("StockLimit").'</td><td>';
                 print '<input name="seuil_stock_alerte" size="4" value="'.$object->seuil_stock_alerte.'">';
-                print '</td></tr>';
+                print '</td>';
 
-                print "<tr>".'<td>'.$langs->trans("DesiredStock").'</td><td colspan="2">';
+                print '<td>'.$langs->trans("DesiredStock").'</td><td>';
                 print '<input name="desiredstock" size="4" value="'.$object->desiredstock.'">';
                 print '</td></tr>';
             }
@@ -953,10 +971,19 @@ else
                 print '<input name="desiredstock" type="hidden" value="'.$object->desiredstock.'">';
             }
 
+            // Nature
+            if($object->type!=1)
+            {
+                print '<tr><td>'.$langs->trans("Nature").'</td><td colspan="3">';
+                $statutarray=array('-1'=>'&nbsp;', '1' => $langs->trans("Finished"), '0' => $langs->trans("RowMaterial"));
+                print $form->selectarray('finished',$statutarray,$object->finished);
+                print '</td></tr>';
+            }
+
             if ($object->isservice())
             {
                 // Duration
-                print '<tr><td>'.$langs->trans("Duration").'</td><td colspan="2"><input name="duration_value" size="3" maxlength="5" value="'.$object->duration_value.'">';
+                print '<tr><td>'.$langs->trans("Duration").'</td><td colspan="3"><input name="duration_value" size="3" maxlength="5" value="'.$object->duration_value.'">';
                 print '&nbsp; ';
                 print '<input name="duration_unit" type="radio" value="h"'.($object->duration_unit=='h'?' checked':'').'>'.$langs->trans("Hour");
                 print '&nbsp; ';
@@ -973,32 +1000,31 @@ else
             else
             {
                 // Weight
-                print '<tr><td>'.$langs->trans("Weight").'</td><td colspan="2">';
+                print '<tr><td>'.$langs->trans("Weight").'</td><td colspan="3">';
                 print '<input name="weight" size="5" value="'.$object->weight.'"> ';
                 print $formproduct->select_measuring_units("weight_units", "weight", $object->weight_units);
                 print '</td></tr>';
                 // Length
-                print '<tr><td>'.$langs->trans("Length").'</td><td colspan="2">';
+                print '<tr><td>'.$langs->trans("Length").'</td><td colspan="3">';
                 print '<input name="size" size="5" value="'.$object->length.'"> ';
                 print $formproduct->select_measuring_units("size_units", "size", $object->length_units);
                 print '</td></tr>';
                 // Surface
-                print '<tr><td>'.$langs->trans("Surface").'</td><td colspan="2">';
+                print '<tr><td>'.$langs->trans("Surface").'</td><td colspan="3">';
                 print '<input name="surface" size="5" value="'.$object->surface.'"> ';
                 print $formproduct->select_measuring_units("surface_units", "surface", $object->surface_units);
                 print '</td></tr>';
                 // Volume
-                print '<tr><td>'.$langs->trans("Volume").'</td><td colspan="2">';
+                print '<tr><td>'.$langs->trans("Volume").'</td><td colspan="3">';
                 print '<input name="volume" size="5" value="'.$object->volume.'"> ';
                 print $formproduct->select_measuring_units("volume_units", "volume", $object->volume_units);
                 print '</td></tr>';
             }
 
             // Customs code
-            print '<tr><td>'.$langs->trans("CustomCode").'</td><td colspan="2"><input name="customcode" size="10" value="'.$object->customcode.'"></td></tr>';
-
+            print '<tr><td>'.$langs->trans("CustomCode").'</td><td><input name="customcode" size="10" value="'.$object->customcode.'"></td>';
             // Origin country
-            print '<tr><td>'.$langs->trans("CountryOrigin").'</td><td colspan="2">';
+            print '<td>'.$langs->trans("CountryOrigin").'</td><td>';
             print $form->select_country($object->country_id,'country_id');
             if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
             print '</td></tr>';
@@ -1012,9 +1038,9 @@ else
             }
 
             // Note
-            print '<tr><td valign="top">'.$langs->trans("NoteNotVisibleOnBill").'</td><td colspan="2">';
+            print '<tr><td valign="top">'.$langs->trans("NoteNotVisibleOnBill").'</td><td colspan="3">';
 
-            $doleditor = new DolEditor('note', $object->note, '', 200, 'dolibarr_notes', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, 8, 70);
+            $doleditor = new DolEditor('note', $object->note, '', 140, 'dolibarr_notes', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, 4, 80);
             $doleditor->Create();
 
             print "</td></tr>";

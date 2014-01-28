@@ -361,7 +361,6 @@ class Product extends CommonObject
 							if ($this->update($id, $user, true, 'add') <= 0)
 							{
 							    $error++;
-					            $this->error='ErrorFailedToUpdateRecord';
 							}
 						}
 						else
@@ -472,6 +471,9 @@ class Product extends CommonObject
 		$sql.= ", localtax1_tx = " . $this->localtax1_tx;
 		$sql.= ", localtax2_tx = " . $this->localtax2_tx;
 
+		$sql.= ", barcode = ". (empty($this->barcode)?"null":"'".$this->db->escape($this->barcode)."'");
+		$sql.= ", fk_barcode_type = ". (empty($this->barcode_type)?"null":$this->db->escape($this->barcode_type));
+		
 		$sql.= ", tosell = " . $this->status;
 		$sql.= ", tobuy = " . $this->status_buy;
 		$sql.= ", finished = " . ((empty($this->finished) || $this->finished < 0) ? "null" : $this->finished);
