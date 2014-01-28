@@ -20,13 +20,13 @@ CREATE TABLE llx_opensurvey_sondage (
        commentaires text,
        mail_admin VARCHAR(128),
        nom_admin VARCHAR(64),
-	   fk_user_creat INT(11) UNSIGNED NOT NULL,
+	   fk_user_creat integer NOT NULL,
        titre TEXT NOT NULL,
        date_fin DATETIME NOT NULL,
        format VARCHAR(2) NOT NULL,
-       mailsonde TINYINT( 1 ) UNSIGNED NOT NULL DEFAULT '0',
-       allow_comments TINYINT(1) unsigned NOT NULL DEFAULT 1,
-	   allow_spy TINYINT(1) unsigned NOT NULL DEFAULT 1,
+       mailsonde tinyint NOT NULL DEFAULT 0,
+       allow_comments tinyint NOT NULL DEFAULT 1,
+	   allow_spy tinyint NOT NULL DEFAULT 1,
        tms TIMESTAMP,
 	   sujet TEXT
 ) ENGINE=InnoDB;
