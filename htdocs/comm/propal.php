@@ -8,7 +8,7 @@
  * Copyright (C) 2010-2013 Juanjo Menent         <jmenent@2byte.es>
  * Copyright (C) 2010-2011 Philippe Grand        <philippe.grand@atoo-net.com>
  * Copyright (C) 2012-2013 Christophe Battarel   <christophe.battarel@altairis.fr>
- * Copyright (C) 2013      Florian Henry		 <florian.henry@open-concept.pro>
+ * Copyright (C) 2013      Florian Henry	 <florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -2036,20 +2036,19 @@ else
 	$result = $object->getLinesArray();
 
 
-	print '	<form name="addproduct" id="addproduct" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.(($action != 'editline')?'#add':'#line_'.GETPOST('lineid')).'" method="POST">
-	<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">
-	<input type="hidden" name="action" value="'.(($action != 'editline')?'addline':'updateligne').'">
-	<input type="hidden" name="mode" value="">
-	<input type="hidden" name="id" value="'.$object->id.'">
-	';
-
-
 	if (! empty($conf->use_javascript_ajax) && $object->statut == 0)
 	{
 		include DOL_DOCUMENT_ROOT.'/core/tpl/ajaxrow.tpl.php';
 	}
 
 	print '<table id="tablelines" class="noborder noshadow" width="100%">';
+	
+	print '	<form name="addproduct" id="addproduct" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.(($action != 'editline')?'#add':'#line_'.GETPOST('lineid')).'" method="POST">
+	<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">
+	<input type="hidden" name="action" value="'.(($action != 'editline')?'addline':'updateligne').'">
+	<input type="hidden" name="mode" value="">
+	<input type="hidden" name="id" value="'.$object->id.'">
+	';
 
 	if (! empty($object->lines))
 		$ret=$object->printObjectLines($action,$mysoc,$soc,$lineid,1);
@@ -2084,10 +2083,18 @@ else
 		}
 	}
 
-	print '</table>';
-
 	print "</form>\n";
-
+	if ($object->statut == 0 && $user->rights->propal->creer)
+	{
+		if ($action != 'editline')
+		{
+			$parameters=array();
+			$var=!$var;
+			$reshook=$hookmanager->executeHooks('formAddObjectLine',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+		}
+	}
+	print '</table>';
+	
 	dol_fiche_end();
 
 	if ($action == 'statut')
