@@ -3630,7 +3630,7 @@ class FactureLigne  extends CommonInvoiceLine
 	 *	@param		int		$notrigger	Disable triggers
 	 *	@return		int					<0 if KO, >0 if OK
 	 */
-	function update($user='',$notrigger=0)
+	function update($notrigger=0)
 	{
 		global $user,$langs,$conf;
 
