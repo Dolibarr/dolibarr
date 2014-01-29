@@ -586,11 +586,10 @@ if ($action == 'create')
 	// Project
 	if (! empty($conf->projet->enabled))
 	{
-
 		$formproject=new FormProjets($db);
 
 		// Projet associe
-		$langs->load("project");
+		$langs->load("projects");
 
 		print '<tr><td valign="top">'.$langs->trans("Project").'</td><td>';
 
@@ -626,7 +625,7 @@ if ($action == 'create')
 
 
     // Other attributes
-    $parameters=array();
+    $parameters=array('id'=>$actioncomm->id);
     $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$actioncomm,$action);    // Note that $action and $object may have been modified by hook
 
 
@@ -861,7 +860,7 @@ if ($id > 0)
         print '</td></tr>';
 
         // Other attributes
-        $parameters=array('colspan' => ' colspan="3"', 'colspanvalue' => '3');
+        $parameters=array('colspan'=>' colspan="3"', 'colspanvalue'=>'3', 'id'=>$act->id);
         $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$act,$action);    // Note that $action and $object may have been modified by hook
 		if (empty($reshook) && ! empty($extrafields->attribute_label))
 		{
@@ -1043,7 +1042,7 @@ if ($id > 0)
 		print '</td></tr>';
 
         // Other attributes
-		$parameters=array('colspan' => ' colspan="3"', 'colspanvalue' => '3');
+		$parameters=array('colspan'=>' colspan="3"', 'colspanvalue'=>'3', 'id'=>$act->id);
         $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$act,$action);    // Note that $action and $object may have been modified by hook
 
 		print '</table>';
