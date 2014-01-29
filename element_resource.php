@@ -184,12 +184,12 @@ else
 
 			if ( $mode == 'add' && $resource_obj == $resource_type)
 			{
-				//print '/'.$element_prop['module'].'/core/tpl/resource_'.$element_prop['element'].'_'.$mode.'.tpl.php';
+				//print '/'.$element_prop['module'].'/core/tpl/resource_'.$element_prop['element'].'_'.$mode.'.tpl.php'.'<BR>';
 
-				$path = '';
+				$path = $element_prop['module'];
 				if(strpos($element_prop['module'],'@'))
 					$path .= '/'.$element_prop['module'];
-
+				
 				// If we have a specific template we use it
 				if(file_exists(dol_buildpath($path.'/core/tpl/resource_'.$element_prop['element'].'_'.$mode.'.tpl.php')))
 				{
