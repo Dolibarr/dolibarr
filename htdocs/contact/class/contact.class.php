@@ -7,6 +7,7 @@
  * Copyright (C) 2008      Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
  * Copyright (C) 2013      Florian Henry		  	       <florian.henry@open-concept.pro>
  * Copyright (C) 2013      Alexandre Spangaro 	       <alexandre.spangaro@gmail.com>
+ * Copyright (C) 2013      Juanjo Menent	 	       <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -126,7 +127,7 @@ class Contact extends CommonObject
         if (! empty($conf->global->MAIN_FIRST_TO_UPPER)) $this->firstname=ucwords($this->firstname);
         if (! $this->socid) $this->socid = 0;
 		if (! $this->priv) $this->priv = 0;
-		if (empty($this->statut)) $this->statut = 0;
+		if (empty($this->statut)) $this->statut = 1; //Defult status to Actif
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."socpeople (";
 		$sql.= " datec";
