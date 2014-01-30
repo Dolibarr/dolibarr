@@ -208,6 +208,22 @@ if (! empty($conf->margin->enabled)) {
 	}
 	?>
 	<td align="center" valign="middle" colspan="<?php echo $colspan; ?>"><input type="submit" class="button"  id="addlinebutton" name="addline" value="<?php echo $langs->trans('Add'); ?>"></td>
+<?php
+	if (!empty($extrafieldsline)) {
+	if ($this->table_element_line=='commandedet') {
+		$newline = new OrderLine($this->db);
+	}
+	elseif ($this->table_element_line=='propaldet') {
+		$newline = new PropaleLigne($this->db);
+	}
+	elseif ($this->table_element_line=='facturedet') {
+		$newline = new FactureLigne($this->db);
+	}
+	if (is_object($newline)) {
+		print $newline->showOptionals($extrafieldsline,'edit',array('style'=>$bcnd[$var],'colspan'=>$coldisplay+8));
+	}
+}
+?>
 </tr>
 
 
