@@ -66,6 +66,14 @@ $entity=GETPOST('entity')?GETPOST('entity','int'):$conf->entity;
 // Security check
 if (empty($modulepart)) accessforbidden('Bad value for parameter modulepart');
 
+$socid=0;
+if ($user->societe_id > 0) $socid = $user->societe_id;
+
+// For some module part, dir may be privates
+if (in_array($modulepart,array('facture_paiement','unpaid')))
+{
+	if (! $user->rights->societe->client->voir || $socid) $original_file='private/'.$user->id.'/'.$original_file;	// If user has no permission to see all, output dir is specific to user
+}
 
 /*
  * Action
