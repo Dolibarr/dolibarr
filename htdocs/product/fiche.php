@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
@@ -683,16 +683,32 @@ else
         {
             $module = substr($module, 0, dol_strlen($module)-4);
         }
-        dol_include_once('/core/modules/product/'.$module.'.php');
-        $modCodeProduct = new $module;
+        $result=dol_include_once('/core/modules/product/'.$module.'.php');
+        if ($result > 0)
+        {
+        	$modCodeProduct = new $module();
+        }
 
+		// Load object modBarCodeProduct
+		if (! empty($conf->global->PRODUIT_DEFAULT_BARCODE_TYPE))
+		{
+			$module='mod_barcode_'.strtolower($conf->global->PRODUIT_DEFAULT_BARCODE_TYPE);
+        	$result=dol_include_once('/core/modules/barcode/doc/'.$module.'.php');
+        	if ($result > 0)
+        	{
+				$modBarCodeProduct =new $module();
+        	}
+		}
+		
         print '<form action="fiche.php" method="post">';
         print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
         print '<input type="hidden" name="action" value="add">';
         print '<input type="hidden" name="type" value="'.$type.'">'."\n";
 		if (! empty($modCodeProduct->code_auto))
 			print '<input type="hidden" name="code_auto" value="1">';
-
+		if (! empty($modBarCodeProduct->code_auto))
+			print '<input type="hidden" name="barcode_auto" value="1">';
+		
         if ($type==1) $title=$langs->trans("NewService");
         else $title=$langs->trans("NewProduct");
         print_fiche_titre($title);
@@ -700,8 +716,7 @@ else
         print '<table class="border" width="100%">';
         print '<tr>';
         $tmpcode='';
-		if (! empty($modCodeProduct->code_auto))
-			$tmpcode=$modCodeProduct->getNextValue($object,$type);
+		if (! empty($modCodeProduct->code_auto)) $tmpcode=$modCodeProduct->getNextValue($object,$type);
         print '<td class="fieldrequired" width="20%">'.$langs->trans("Ref").'</td><td colspan="3"><input name="ref" size="20" maxlength="128" value="'.dol_escape_htmltag(GETPOST('ref')?GETPOST('ref'):$tmpcode).'">';
         if ($_error)
         {
@@ -742,7 +757,7 @@ else
 	        print $formbarcode->select_barcode_type($fk_barcode_type, 'fk_barcode_type', 1);
 	        print '</td><td>'.$langs->trans("BarcodeValue").'</td><td>';
 	        $tmpcode=isset($_POST['barcode'])?GETPOST('barcode'):$object->barcode;
-	        //if (empty($tmpcode) $tmpcode=$modBarCodeProduct->getNextValue($object,0);
+	        if (! empty($modBarCodeProduct->code_auto)) $tmpcode=$modBarCodeProduct->getNextValue($object,$type);
 	        print '<input size="40" type="text" name="barcode" value="'.$tmpcode.'">';
 	        print '</td></tr>';
         }

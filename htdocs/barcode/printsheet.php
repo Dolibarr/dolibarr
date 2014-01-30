@@ -129,7 +129,7 @@ if ($action == 'builddoc')
 		dol_mkdir($diroutput);
 
 		// Generate barcode
-	    $dirbarcode=array_merge(array("/core/modules/barcode/"),$conf->modules_parts['barcode']);
+	    $dirbarcode=array_merge(array("/core/modules/barcode/doc/"),$conf->modules_parts['barcode']);
 
 	    foreach($dirbarcode as $reldir)
 	    {
