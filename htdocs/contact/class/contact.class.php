@@ -67,7 +67,7 @@ class Contact extends CommonObject
 
 	var $code;
 	var $email;
-  var $skype;
+	var $skype;
     var $jabberid;
 	var $phone_pro;
 	var $phone_perso;
@@ -103,6 +103,7 @@ class Contact extends CommonObject
 	function __construct($db)
 	{
 		$this->db = $db;
+		$this->statut = 1;	// By default, status is enabled
 	}
 
 	/**
@@ -125,9 +126,9 @@ class Contact extends CommonObject
         $this->firstname=trim($this->firstname);
         if (! empty($conf->global->MAIN_FIRST_TO_UPPER)) $this->lastname=ucwords($this->lastname);
         if (! empty($conf->global->MAIN_FIRST_TO_UPPER)) $this->firstname=ucwords($this->firstname);
-        if (! $this->socid) $this->socid = 0;
-		if (! $this->priv) $this->priv = 0;
-		if (empty($this->statut)) $this->statut = 1; //Defult status to Actif
+        if (empty($this->socid)) $this->socid = 0;
+		if (empty($this->priv)) $this->priv = 0;
+		if (empty($this->statut)) $this->statut = 0; // This is to convert '' into '0' to avoid bad sql request
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."socpeople (";
 		$sql.= " datec";
@@ -237,7 +238,7 @@ class Contact extends CommonObject
 		$this->phone_perso=trim($this->phone_perso);
 		$this->phone_mobile=trim($this->phone_mobile);
 		$this->jabberid=trim($this->jabberid);
-    $this->skype=trim($this->skype);
+		$this->skype=trim($this->skype);
 		$this->fax=trim($this->fax);
 		$this->zip=(empty($this->zip)?'':$this->zip);
 		$this->town=(empty($this->town)?'':$this->town);
@@ -261,7 +262,7 @@ class Contact extends CommonObject
 		$sql .= ", poste='".$this->db->escape($this->poste)."'";
 		$sql .= ", fax='".$this->db->escape($this->fax)."'";
 		$sql .= ", email='".$this->db->escape($this->email)."'";
-    $sql .= ", skype='".$this->db->escape($this->skype)."'";
+		$sql .= ", skype='".$this->db->escape($this->skype)."'";
 		$sql .= ", note_private = ".(isset($this->note_private)?"'".$this->db->escape($this->note_private)."'":"null");
 		$sql .= ", note_public = ".(isset($this->note_public)?"'".$this->db->escape($this->note_public)."'":"null");
 		$sql .= ", phone = ".(isset($this->phone_pro)?"'".$this->db->escape($this->phone_pro)."'":"null");
@@ -1099,8 +1100,6 @@ class Contact extends CommonObject
 			return 1;
 		}
 	}
-
-
 
 }
 ?>
