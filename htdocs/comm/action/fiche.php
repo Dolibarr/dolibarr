@@ -583,11 +583,10 @@ if ($action == 'create')
 	// Project
 	if (! empty($conf->projet->enabled))
 	{
-
 		$formproject=new FormProjets($db);
 
 		// Projet associe
-		$langs->load("project");
+		$langs->load("projects");
 
 		print '<tr><td valign="top">'.$langs->trans("Project").'</td><td>';
 
