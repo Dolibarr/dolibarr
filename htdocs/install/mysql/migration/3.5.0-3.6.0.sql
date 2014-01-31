@@ -1,7 +1,7 @@
 --
 -- Be carefull to requests order.
 -- This file must be loaded by calling /install/index.php page
--- when current version is 3.5.0 or higher. 
+-- when current version is 3.5.0 or higher.
 --
 -- To rename a table:       ALTER TABLE llx_table RENAME TO llx_table_new;
 -- To add a column:         ALTER TABLE llx_table ADD COLUMN newcol varchar(60) NOT NULL DEFAULT '0' AFTER existingcol;
@@ -32,10 +32,9 @@ ALTER TABLE  llx_opensurvey_sondage CHANGE COLUMN titre titre TEXT NOT NULL;
 ALTER TABLE  llx_opensurvey_sondage CHANGE COLUMN date_fin date_fin DATETIME NOT NULL;
 ALTER TABLE  llx_opensurvey_sondage CHANGE COLUMN format format VARCHAR(2) NOT NULL;
 
-ALTER TABLE llx_facture_rec.sql MODIFY COLUMN usenewprice INTEGER DEFAULT 0;
+ALTER TABLE llx_facture_rec CHANGE COLUMN usenewprice usenewprice INTEGER DEFAULT 0;
 
 -- Uniformize index name to match http://wiki.dolibarr.org/index.php/Language_and_development_rules#SQL_rules
 ALTER TABLE llx_c_type_contact DROP index idx_c_type_contact_uk;
 ALTER TABLE llx_c_type_contact ADD UNIQUE INDEX uk_c_type_contact_id (element, source, code);
 ALTER TABLE llx_c_tva ADD UNIQUE INDEX uk_c_tva_id (fk_pays, taux, recuperableonly);
-
