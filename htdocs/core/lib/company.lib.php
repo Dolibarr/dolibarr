@@ -128,7 +128,7 @@ function societe_prepare_head($object)
         // Attached files
         require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
         $upload_dir = $conf->societe->dir_output . "/" . $object->id;
-        $nbFiles = count(dol_dir_list($upload_dir));
+        $nbFiles = count(dol_dir_list($upload_dir,'files'));
         $head[$h][0] = DOL_URL_ROOT.'/societe/document.php?socid='.$object->id;
         $head[$h][1] = $langs->trans("Documents");
 		if($nbFiles > 0) $head[$h][1].= ' ('.$nbFiles.')';
@@ -621,7 +621,7 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
 
     // Copy to clipboard
     print "<td>&nbsp;</td>";
-    
+
     // Add to agenda
     if (! empty($conf->agenda->enabled) && $user->rights->agenda->myactions->create)
     {
@@ -726,7 +726,7 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
 				if (!empty($object->country))
 					$coords .= "<br />".addslashes($object->country);
 			}
-			
+
             print '<td align="center"><a href="#" onclick="return copyToClipboard(\''.$coords.'\');">';
             print img_picto($langs->trans("Address"), 'object_address.png');
             print '</a></td>';
@@ -745,7 +745,7 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
                 print img_object($langs->trans("Event"),"action");
                 print '</a></td>';
             }
-			
+
             // Edit
             if ($user->rights->societe->contact->creer)
             {

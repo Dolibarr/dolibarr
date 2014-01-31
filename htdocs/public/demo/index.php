@@ -308,7 +308,7 @@ llxHeaderVierge($langs->trans("DolibarrDemo"), $head);
 
 print "\n";
 
-print '<table style="font-size:14px;" summary="Main table for Dolibarr demos">';
+print '<table style="font-size:14px;" class="centpercent" summary="Main table for Dolibarr demos">';
 
 print '<tr><td>';
 print '<center><img src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.png" alt="Dolibarr logo"></center><br>';
