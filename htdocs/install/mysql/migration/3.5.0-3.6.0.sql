@@ -33,3 +33,9 @@ ALTER TABLE  llx_opensurvey_sondage CHANGE COLUMN date_fin date_fin DATETIME NOT
 ALTER TABLE  llx_opensurvey_sondage CHANGE COLUMN format format VARCHAR(2) NOT NULL;
 
 ALTER TABLE llx_facture_rec.sql MODIFY COLUMN usenewprice INTEGER DEFAULT 0;
+
+-- Uniformize index name to match http://wiki.dolibarr.org/index.php/Language_and_development_rules#SQL_rules
+ALTER TABLE llx_c_type_contact DROP index idx_c_type_contact_uk;
+ALTER TABLE llx_c_type_contact ADD UNIQUE INDEX uk_c_type_contact_id (element, source, code);
+ALTER TABLE llx_c_tva ADD UNIQUE INDEX uk_c_tva_id (fk_pays, taux, recuperableonly);
+
