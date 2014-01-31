@@ -81,14 +81,15 @@ class mod_barcode_standard extends ModeleNumRefBarCode
 		$texte.= '<input type="hidden" name="param1" value="BARCODE_STANDARD_MASK">';
 		$texte.= '<table class="nobordernopadding" width="100%">';
 
-		$tooltip=$langs->trans("GenericMaskCodes",$langs->transnoentities("Product"),$langs->transnoentities("Product"));
+		$tooltip=$langs->trans("GenericMaskCodes",$langs->transnoentities("BarCode"),$langs->transnoentities("BarCode"));
 		$tooltip.=$langs->trans("GenericMaskCodes3");
 		$tooltip.=$langs->trans("GenericMaskCodes4c");
 		$tooltip.=$langs->trans("GenericMaskCodes5");
 
 		// Mask parameter
-		$texte.= '<tr><td>'.$langs->trans("Mask").' ('.$langs->trans("BarCodeModel").'):</td>';
-		$texte.= '<td align="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="value1" value="'.(! empty($conf->global->PRODUCT_ELEPHANT_MASK_PRODUCT)?$conf->global->PRODUCT_ELEPHANT_MASK_PRODUCT:'').'"'.$disabled.'>',$tooltip,1,1).'</td>';
+		//$texte.= '<tr><td>'.$langs->trans("Mask").' ('.$langs->trans("BarCodeModel").'):</td>';
+		$texte.= '<tr><td>'.$langs->trans("Mask").':</td>';
+		$texte.= '<td align="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="value1" value="'.(! empty($conf->global->BARCODE_STANDARD_MASK)?$conf->global->BARCODE_STANDARD_MASK:'').'"'.$disabled.'>',$tooltip,1,1).'</td>';
 		$texte.= '<td align="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"'.$disabled.'></td>';
 		$texte.= '</tr>';
 
@@ -102,43 +103,24 @@ class mod_barcode_standard extends ModeleNumRefBarCode
 	/**
 	 * Return an example of result returned by getNextValue
 	 *
-	 * @param	Translate	$langs		Object langs
+	 * @param	Translate	$langs			Object langs
 	 * @param	product		$objproduct		Object product
-	 * @param	int			$type		Type of third party (1:customer, 2:supplier, -1:autodetect)
-	 * @return	string					Return string example
+	 * @return	string						Return string example
 	 */
-	function getExample($langs,$objproduct=0,$type=-1)
+	function getExample($langs,$objproduct=0)
 	{
-		if ($type == 0 || $type == -1)
+		$examplebarcode = $this->getNextValue($objproduct,0);
+		if (! $examplebarcode)
 		{
-			$exampleproduct = $this->getNextValue($objproduct,0);
-			if (! $exampleproduct)
-			{
-				$exampleproduct = $langs->trans('NotConfigured');
-			}
-			if($exampleproduct=="ErrorBadMask")
-			{
-				$langs->load("errors");
-				$exampleproduct=$langs->trans($exampleproduct);
-			}
+			$examplebarcode = $langs->trans('NotConfigured');
 		}
-		if ($type == 1 || $type == -1)
+		if($examplebarcode=="ErrorBadMask")
 		{
-			$exampleservice = $this->getNextValue($objproduct,1);
-			if (! $exampleservice)
-			{
-				$exampleservice = $langs->trans('NotConfigured');
-			}
-			if($exampleservice=="ErrorBadMask")
-			{
-				$langs->load("errors");
-				$exampleservice=$langs->trans($exampleservice);
-			}
+			$langs->load("errors");
+			$examplebarcode=$langs->trans($examplebarcode);
 		}
 
-		if ($type == 0) return $exampleproduct;
-		if ($type == 1) return $exampleservice;
-		return $exampleproduct.'<br>'.$exampleservice;
+		return $examplebarcode;
 	}
 
 	/**
@@ -175,7 +157,7 @@ class mod_barcode_standard extends ModeleNumRefBarCode
 		return  $numFinal;
 	}
 
-
+    
 	/**
 	 *   Check if mask/numbering use prefix
 	 *

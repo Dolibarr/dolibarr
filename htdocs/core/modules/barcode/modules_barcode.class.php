@@ -52,8 +52,125 @@ abstract class ModeleNumRefBarCode
 {
 	var $error='';
 
+    /**     Renvoi la description par defaut du modele de numerotation
+     *
+     *		@param	Translate	$langs		Object langs
+     *      @return string      			Texte descripif
+     */
+    function info($langs)
+    {
+        $langs->load("bills");
+        return $langs->trans("NoDescription");
+    }
+	
+    /**     Renvoi nom module
+     *
+     *		@param	Translate	$langs		Object langs
+     *      @return string      			Nom du module
+     */
+    function getNom($langs)
+    {
+        return $this->nom;
+    }
+	
+    /**     Renvoi un exemple de numerotation
+     *
+     *		@param	Translate	$langs		Object langs
+     *      @return string      			Example
+     */
+    function getExample($langs)
+    {
+        $langs->load("bills");
+        return $langs->trans("NoExample");
+    }
 
+    /**
+     *  Return next value available
+     *
+     *	@param	Societe		$objsoc		Object thirdparty
+     *	@param	int			$type		Type
+     *  @return string      			Value
+     */
+    function getNextValue($objsoc=0,$type=-1)
+    {
+        global $langs;
+        return $langs->trans("Function_getNextValue_InModuleNotWorking");
+    }
+	
+	/**     Return version of module
+     *
+     *      @return     string      Version
+     */
+    function getVersion()
+    {
+        global $langs;
+        $langs->load("admin");
 
+        if ($this->version == 'development') return $langs->trans("VersionDevelopment");
+        if ($this->version == 'experimental') return $langs->trans("VersionExperimental");
+        if ($this->version == 'dolibarr') return DOL_VERSION;
+        return $langs->trans("NotAvailable");
+    }
+	
+    /**
+     *      Return description of module parameters
+     *
+     *      @param	Translate	$langs      Output language
+     *		@param	Societe		$soc		Third party object
+     *		@param	int			$type		-1=Nothing, 0=Product, 1=Service
+     *		@return	string					HTML translated description
+     */
+    function getToolTip($langs,$soc,$type)
+    {
+        global $conf;
+
+        $langs->load("admin");
+
+        $s='';
+        $s.=$langs->trans("Name").': <b>'.$this->nom.'</b><br>';
+        $s.=$langs->trans("Version").': <b>'.$this->getVersion().'</b><br>';
+        if ($type != -1) $s.=$langs->trans("ValidityControledByModule").': <b>'.$this->getNom($langs).'</b><br>';
+        $s.='<br>';
+        $s.='<u>'.$langs->trans("ThisIsModuleRules").':</u><br>';
+        if ($type == 0)
+        {
+            $s.=$langs->trans("RequiredIfProduct").': ';
+            if (! empty($conf->global->MAIN_BARCODE_CODE_ALWAYS_REQUIRED) && ! empty($this->code_null)) $s.='<strike>';
+            $s.=yn(!$this->code_null,1,2);
+            if (! empty($conf->global->MAIN_BARCODE_CODE_ALWAYS_REQUIRED) && ! empty($this->code_null)) $s.='</strike> '.yn(1,1,2).' ('.$langs->trans("ForcedToByAModule",$langs->transnoentities("yes")).')';
+            $s.='<br>';
+        }
+        if ($type == 1)
+        {
+            $s.=$langs->trans("RequiredIfService").': ';
+            if (! empty($conf->global->MAIN_BARCODE_CODE_ALWAYS_REQUIRED) && ! empty($this->code_null)) $s.='<strike>';
+            $s.=yn(!$this->code_null,1,2);
+            if (! empty($conf->global->MAIN_BARCODE_CODE_ALWAYS_REQUIRED) && ! empty($this->code_null)) $s.='</strike> '.yn(1,1,2).' ('.$langs->trans("ForcedToByAModule",$langs->transnoentities("yes")).')';
+            $s.='<br>';
+        }
+        if ($type == -1)
+        {
+            $s.=$langs->trans("Required").': ';
+            if (! empty($conf->global->MAIN_BARCODE_CODE_ALWAYS_REQUIRED) && ! empty($this->code_null)) $s.='<strike>';
+            $s.=yn(!$this->code_null,1,2);
+            if (! empty($conf->global->MAIN_BARCODE_CODE_ALWAYS_REQUIRED) && ! empty($this->code_null)) $s.='</strike> '.yn(1,1,2).' ('.$langs->trans("ForcedToByAModule",$langs->transnoentities("yes")).')';
+            $s.='<br>';
+        }
+        /*$s.=$langs->trans("CanBeModifiedIfOk").': ';
+        $s.=yn($this->code_modifiable,1,2);
+        $s.='<br>';
+        $s.=$langs->trans("CanBeModifiedIfKo").': '.yn($this->code_modifiable_invalide,1,2).'<br>';
+        */
+        $s.=$langs->trans("AutomaticCode").': '.yn($this->code_auto,1,2).'<br>';
+        $s.='<br>';
+
+        $nextval=$this->getNextValue($soc,0);
+        if (empty($nextval)) $nextval=$langs->trans("Undefined");
+        $s.=$langs->trans("NextValue").': <b>'.$nextval.'</b><br>';
+
+        return $s;
+    }
+    
 }
 
 ?>
