@@ -566,7 +566,7 @@ class Form
             print '>'.$langs->trans("Service");
 
             print '</select>';
-            //if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
+            //if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
         }
         if (! $forceall && empty($conf->product->enabled) && ! empty($conf->service->enabled))
         {
@@ -656,7 +656,7 @@ class Form
         }
 
         print '</select>';
-        if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
+        if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
     }
 
 
@@ -2096,7 +2096,7 @@ class Form
             print '</option>';
         }
         print '</select>';
-        if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
+        if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
     }
 
     /**
@@ -2176,7 +2176,7 @@ class Form
             print '</option>';
         }
         print '</select>';
-        if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
+        if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
     }
 
     /**
@@ -2252,7 +2252,7 @@ class Form
             print '</option>';
         }
         print '</select>';
-        if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
+        if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
     }
 
 
@@ -2307,7 +2307,7 @@ class Form
             print '</option>';
         }
         print '</select>';
-        if ($user->admin && ! $noadmininfo) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
+        if ($user->admin && ! $noadmininfo) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
     }
 
 
@@ -3230,7 +3230,7 @@ class Form
         	$out.= '</option>';
         }
         $out.= '</select>';
-        if ($user->admin) $out.= info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
+        if ($user->admin) $out.= info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
         return $out;
     }
 

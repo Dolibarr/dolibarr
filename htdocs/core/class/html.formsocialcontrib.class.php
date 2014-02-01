@@ -99,7 +99,7 @@ class FormSocialContrib
                     $i++;
                 }
                 print '</select>';
-                if ($user->admin && $help) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
+                if ($user->admin && $help) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
             }
             else
             {
