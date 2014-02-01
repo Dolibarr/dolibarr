@@ -155,7 +155,7 @@ if ($id > 0 || ! empty($ref))
 
 		// Third party
 		print "<tr><td>".$langs->trans("Supplier")."</td>";
-		print '<td colspan="3">'.$object->client->getNomUrl(1,'compta').'</td></tr>';
+		print '<td colspan="3">'.$object->thirdparty->getNomUrl(1,'supplier').'</td></tr>';
 		print "</table>";
 
 		print '</div>';
