@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,15 +32,15 @@ if (! $user->rights->facture->lire) accessforbidden();
 
 $action=GETPOST('action');
 
-$dir = $conf->facture->dir_output.'/payments';
-
 $socid=0;
 if ($user->societe_id > 0)
 {
     $action = '';
     $socid = $user->societe_id;
-    $dir = $conf->facture->dir_output.'/payments/private/'.$user->id;
 }
+
+$dir = $conf->facture->dir_output.'/payments';
+if (! $user->rights->societe->client->voir || $socid) $dir.='/private/'.$user->id;	// If user has no permission to see all, output dir is specific to user
 
 $year = $_GET["year"];
 if (! $year) { $year=date("Y"); }

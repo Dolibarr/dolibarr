@@ -289,8 +289,8 @@ if (! isset($_SERVER['WINDIR']))
 	print '</form>';
 }
 
-// Module produits
-if (! empty($conf->societe->enabled))
+// Module products
+if (! empty($conf->product->enabled))
 {
 	$var=!$var;
 	print "<form method=\"post\" action=\"".$_SERVER["PHP_SELF"]."\">";
@@ -307,8 +307,8 @@ if (! empty($conf->societe->enabled))
 	print '</form>';
 }
 
-// Module produits
-if (! empty($conf->product->enabled))
+// Module thirdparty
+if (! empty($conf->societe->enabled))
 {
 	$var=!$var;
 	print "<form method=\"post\" action=\"".$_SERVER["PHP_SELF"]."\">";

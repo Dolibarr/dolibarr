@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2006-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -93,6 +93,9 @@ class pdf_paiement
 
 		global $user,$langs,$conf;
 
+		$socid=0;
+		if ($user->societe_id) $socid=$user->societe_id;
+		
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
 		if (! empty($conf->global->MAIN_USE_FPDF)) $outputlangs->charset_output='ISO-8859-1';
@@ -136,11 +139,21 @@ class pdf_paiement
 		$sql.= ", pf.amount as pf_amount ";
 		$sql.= ", p.rowid as prowid";
 		$sql.= " FROM ".MAIN_DB_PREFIX."paiement as p, ".MAIN_DB_PREFIX."facture as f,";
-		$sql.= " ".MAIN_DB_PREFIX."c_paiement as c, ".MAIN_DB_PREFIX."paiement_facture as pf";
-		$sql.= " WHERE pf.fk_facture = f.rowid AND pf.fk_paiement = p.rowid";
+		$sql.= " ".MAIN_DB_PREFIX."c_paiement as c, ".MAIN_DB_PREFIX."paiement_facture as pf,";
+		$sql.= " ".MAIN_DB_PREFIX."societe as s";
+		if (! $user->rights->societe->client->voir && ! $socid) 
+		{
+			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+		}
+		$sql.= " WHERE f.fk_soc = s.rowid AND pf.fk_facture = f.rowid AND pf.fk_paiement = p.rowid";
 		$sql.= " AND f.entity = ".$conf->entity;
 		$sql.= " AND p.fk_paiement = c.id ";
 		$sql.= " AND p.datep BETWEEN '".$this->db->idate(dol_get_first_day($year,$month))."' AND '".$this->db->idate(dol_get_last_day($year,$month))."'";
+		if (! $user->rights->societe->client->voir && ! $socid) 
+		{
+			$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+		}
+		if (! empty($socid)) $sql .= " AND s.rowid = ".$socid;
 		$sql.= " ORDER BY p.datep ASC, pf.fk_paiement ASC";
 
 		dol_syslog(get_class($this)."::write_file sql=".$sql);
