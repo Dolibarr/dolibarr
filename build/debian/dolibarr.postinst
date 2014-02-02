@@ -41,11 +41,6 @@ enable_install_upgrade_wizard() {
 }
 
 apache_install() {
-	# Apache 2 setup
-	if which a2enmod >/dev/null 2>&1 ;then
-		a2enmod alias
-	fi
-
 	webserver=$1
 	if which a2enconf >/dev/null 2>&1 ;then
 		# a2enconf exists for ubuntu only
@@ -92,6 +87,12 @@ case "$1" in
 		else
 			echo This is not a first install
 		fi
+
+		# Apache 2 setup
+		if which a2enmod >/dev/null 2>&1 ;then
+			a2enmod alias
+		fi
+		
 		apache_install
 		lighttpd_install
 		
