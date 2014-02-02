@@ -37,6 +37,7 @@
 
 // Change this following line to use the correct relative path (../, ../../, etc)
 $res=0;
+if (! $res && file_exists("../main.inc.php")) $res=@include '../main.inc.php';
 if (! $res && file_exists("../../main.inc.php")) $res=@include '../../main.inc.php';					// to work if your module directory is into dolibarr root htdocs directory
 if (! $res && file_exists("../../../main.inc.php")) $res=@include '../../../main.inc.php';			// to work if your module directory is into a subdir of root htdocs directory
 
