@@ -13,6 +13,11 @@ set -e
 #          <conflicting-package> <version>
 # for details, see /usr/share/doc/packaging-manual/
 
+if [ -e /usr/share/apache2/apache2-maintscript-helper ] ; then
+	# Needs to be run outside of functions to have access to parameters
+	. /usr/share/apache2/apache2-maintscript-helper
+fi
+
 setup_empty_conf() {
 	echo Create empty file $config		
     mkdir -p /etc/dolibarr
@@ -36,21 +41,29 @@ enable_install_upgrade_wizard() {
 }
 
 apache_install() {
+	# Apache 2 setup
+	if which a2enmod >/dev/null 2>&1 ;then
+		a2enmod alias
+	fi
+
 	webserver=$1
-	if [ -d /etc/$webserver/conf.d ] && [ ! -e /etc/$webserver/conf.d/dolibarr.conf ]; then
-		echo "Add link for Apache config file"
-		ln -s /etc/$webserver/conf-available/dolibarr.conf /etc/$webserver/conf.d/dolibarr.conf
+	if which a2enconf >/dev/null 2>&1 ;then
+		# a2enconf exists for ubuntu only
+		a2enconf dolibarr
+	else 
+		if [ -d /etc/$webserver/conf.d ] && [ ! -e /etc/$webserver/conf.d/dolibarr.conf ]; then
+			echo "Add link for Apache config file"
+			ln -s /etc/$webserver/conf-available/dolibarr.conf /etc/$webserver/conf.d/dolibarr.conf
+		fi
 	fi
 }
 
 lighttpd_install() {
-	if [ ! -f /etc/lighttpd/conf-available/50-dolibarr.conf ] ; then
-		if which lighty-enable-mod >/dev/null 2>&1 ; then
-			echo "Enable lighttpd link for dolibarr config file"
-			lighty-enable-mod dolibarr fastcgi-php
-		else
-			echo "Lighttpd not installed, skipping"
-		fi
+	if which lighty-enable-mod >/dev/null 2>&1 ; then
+		echo "Enable lighttpd link for dolibarr config file"
+		lighty-enable-mod dolibarr fastcgi-php
+	else
+		echo "Lighttpd not installed, skipping"
 	fi
 }
 
