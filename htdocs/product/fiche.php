@@ -8,6 +8,7 @@
  * Copyright (C) 2010-2011 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2013      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2013      Cédric Salvador      <csalvador@gpcsolutions.fr>
+ * Copyright (C) 2011-2014 Alexandre Spangaro   <alexandre.spangaro@gmail.com> 
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -158,9 +159,9 @@ if (empty($reshook))
 
         if (! $error)
         {
-            $object->ref                = $ref;
-            $object->libelle            = GETPOST('libelle');
-            $object->price_base_type    = GETPOST('price_base_type');
+            $object->ref                   = $ref;
+            $object->libelle               = GETPOST('libelle');
+            $object->price_base_type       = GETPOST('price_base_type');
 
             if ($object->price_base_type == 'TTC')
             	$object->price_ttc = GETPOST('price');
@@ -171,39 +172,41 @@ if (empty($reshook))
             else
             	$object->price_min = GETPOST('price_min');
 
-            $object->tva_tx             = str_replace('*','',GETPOST('tva_tx'));
-            $object->tva_npr            = preg_match('/\*/',GETPOST('tva_tx'))?1:0;
+            $object->tva_tx                = str_replace('*','',GETPOST('tva_tx'));
+            $object->tva_npr               = preg_match('/\*/',GETPOST('tva_tx'))?1:0;
 
             // local taxes.
-            $object->localtax1_tx 			= get_localtax($object->tva_tx,1);
-            $object->localtax2_tx 			= get_localtax($object->tva_tx,2);
+            $object->localtax1_tx 			   = get_localtax($object->tva_tx,1);
+            $object->localtax2_tx 			   = get_localtax($object->tva_tx,2);
 
-            $object->type               	= $type;
-            $object->status             	= GETPOST('statut');
-            $object->status_buy           	= GETPOST('statut_buy');
+            $object->type               	 = $type;
+            $object->status             	 = GETPOST('statut');
+            $object->status_buy            = GETPOST('statut_buy');
             
-            $object->barcode_type           = GETPOST('fk_barcode_type');
-            $object->barcode		        = GETPOST('barcode');
+            $object->barcode_type          = GETPOST('fk_barcode_type');
+            $object->barcode		           = GETPOST('barcode');
             
-            $object->description        	= dol_htmlcleanlastbr(GETPOST('desc'));
-            $object->note               	= dol_htmlcleanlastbr(GETPOST('note'));
-            $object->customcode             = GETPOST('customcode');
-            $object->country_id             = GETPOST('country_id');
-            $object->duration_value     	= GETPOST('duration_value');
-            $object->duration_unit      	= GETPOST('duration_unit');
-            $object->seuil_stock_alerte 	= GETPOST('seuil_stock_alerte')?GETPOST('seuil_stock_alerte'):0;
-            $object->desiredstock           = GETPOST('desiredstock')?GETPOST('desiredstock'):0;
-            $object->canvas             	= GETPOST('canvas');
-            $object->weight             	= GETPOST('weight');
-            $object->weight_units       	= GETPOST('weight_units');
-            $object->length             	= GETPOST('size');
-            $object->length_units       	= GETPOST('size_units');
-            $object->surface            	= GETPOST('surface');
-            $object->surface_units      	= GETPOST('surface_units');
-            $object->volume             	= GETPOST('volume');
-            $object->volume_units       	= GETPOST('volume_units');
-            $object->finished           	= GETPOST('finished');
-            $object->hidden             	= GETPOST('hidden')=='yes'?1:0;
+            $object->description        	 = dol_htmlcleanlastbr(GETPOST('desc'));
+            $object->note               	 = dol_htmlcleanlastbr(GETPOST('note'));
+            $object->customcode            = GETPOST('customcode');
+            $object->country_id            = GETPOST('country_id');
+            $object->duration_value     	 = GETPOST('duration_value');
+            $object->duration_unit      	 = GETPOST('duration_unit');
+            $object->seuil_stock_alerte 	 = GETPOST('seuil_stock_alerte')?GETPOST('seuil_stock_alerte'):0;
+            $object->desiredstock          = GETPOST('desiredstock')?GETPOST('desiredstock'):0;
+            $object->canvas             	 = GETPOST('canvas');
+            $object->weight             	 = GETPOST('weight');
+            $object->weight_units       	 = GETPOST('weight_units');
+            $object->length             	 = GETPOST('size');
+            $object->length_units       	 = GETPOST('size_units');
+            $object->surface            	 = GETPOST('surface');
+            $object->surface_units      	 = GETPOST('surface_units');
+            $object->volume             	 = GETPOST('volume');
+            $object->volume_units       	 = GETPOST('volume_units');
+            $object->finished           	 = GETPOST('finished');
+            $object->hidden             	 = GETPOST('hidden')=='yes'?1:0;
+            $object->accountancy_code_sell = GETPOST('accountancy_code_sell');
+            $object->accountancy_code_buy  = GETPOST('accountancy_code_buy');
 
             // MultiPrix
             if (! empty($conf->global->PRODUIT_MULTIPRICES))
@@ -253,29 +256,31 @@ if (empty($reshook))
             {
             	$object->oldcopy=dol_clone($object);
 
-                $object->ref                = $ref;
-                $object->libelle            = GETPOST('libelle');
-                $object->description        = dol_htmlcleanlastbr(GETPOST('desc'));
-                $object->note               = dol_htmlcleanlastbr(GETPOST('note'));
-                $object->customcode         = GETPOST('customcode');
-                $object->country_id         = GETPOST('country_id');
-                $object->status             = GETPOST('statut');
-                $object->status_buy         = GETPOST('statut_buy');
-                $object->seuil_stock_alerte = GETPOST('seuil_stock_alerte');
-                $object->desiredstock       = GETPOST('desiredstock');
-                $object->duration_value     = GETPOST('duration_value');
-                $object->duration_unit      = GETPOST('duration_unit');
-                $object->canvas             = GETPOST('canvas');
-                $object->weight             = GETPOST('weight');
-                $object->weight_units       = GETPOST('weight_units');
-                $object->length             = GETPOST('size');
-                $object->length_units       = GETPOST('size_units');
-                $object->surface            = GETPOST('surface');
-                $object->surface_units      = GETPOST('surface_units');
-                $object->volume             = GETPOST('volume');
-                $object->volume_units       = GETPOST('volume_units');
-                $object->finished           = GETPOST('finished');
-                $object->hidden             = GETPOST('hidden')=='yes'?1:0;
+                $object->ref                    = $ref;
+                $object->libelle                = GETPOST('libelle');
+                $object->description            = dol_htmlcleanlastbr(GETPOST('desc'));
+                $object->note                   = dol_htmlcleanlastbr(GETPOST('note'));
+                $object->customcode             = GETPOST('customcode');
+                $object->country_id             = GETPOST('country_id');
+                $object->status                 = GETPOST('statut');
+                $object->status_buy             = GETPOST('statut_buy');
+                $object->seuil_stock_alerte     = GETPOST('seuil_stock_alerte');
+                $object->desiredstock           = GETPOST('desiredstock');
+                $object->duration_value         = GETPOST('duration_value');
+                $object->duration_unit          = GETPOST('duration_unit');
+                $object->canvas                 = GETPOST('canvas');
+                $object->weight                 = GETPOST('weight');
+                $object->weight_units           = GETPOST('weight_units');
+                $object->length                 = GETPOST('size');
+                $object->length_units           = GETPOST('size_units');
+                $object->surface                = GETPOST('surface');
+                $object->surface_units          = GETPOST('surface_units');
+                $object->volume                 = GETPOST('volume');
+                $object->volume_units           = GETPOST('volume_units');
+                $object->finished               = GETPOST('finished');
+                $object->hidden                 = GETPOST('hidden')=='yes'?1:0;
+                $object->accountancy_code_sell  = GETPOST('accountancy_code_sell');
+                $object->accountancy_code_buy   = GETPOST('accountancy_code_buy');
 
                 // Fill array 'array_options' with data from add form
         		$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
@@ -889,6 +894,29 @@ else
 
             print '<br>';
         }
+        
+        if (empty($conf->accounting->enabled) && empty($conf->comptabilite->enabled) && empty($conf->accountingexpert->enabled))
+        {
+            // Don't show accounting field when accounting id disabled.
+        }
+        else
+        {
+            print '<table class="border" width="100%">';
+
+            // Accountancy_code_sell
+            print '<tr><td>'.$langs->trans("ProductAccountancySellCode").'</td>';
+            print '<td><input name="accountancy_code_sell" size="16" value="'.$object->accountancy_code_sell.'">';
+            print '</td></tr>';
+
+            // Accountancy_code_buy
+            print '<tr><td width="20%">'.$langs->trans("ProductAccountancyBuyCode").'</td>';
+            print '<td><input name="accountancy_code_buy" size="16" value="'.$object->accountancy_code_buy.'">';
+            print '</td></tr>';
+
+            print '</table>';
+
+            print '<br>';
+        }
 
         print '<center><input type="submit" class="button" value="'.$langs->trans("Create").'"></center>';
 
@@ -922,7 +950,7 @@ else
             print '<table class="border allwidth">';
 
             // Ref
-            print '<tr><td width="15%" class="fieldrequired">'.$langs->trans("Ref").'</td><td colspan="3"><input name="ref" size="20" maxlength="128" value="'.$object->ref.'"></td></tr>';
+            print '<tr><td width="20%" class="fieldrequired">'.$langs->trans("Ref").'</td><td colspan="3"><input name="ref" size="20" maxlength="128" value="'.$object->ref.'"></td></tr>';
 
             // Label
             print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td colspan="3"><input name="libelle" size="40" maxlength="255" value="'.$object->libelle.'"></td></tr>';
@@ -1062,7 +1090,30 @@ else
             print '</table>';
 
             print '<br>';
-
+            
+            if (empty($conf->accounting->enabled) && empty($conf->comptabilite->enabled) && empty($conf->accountingexpert->enabled))
+            {
+                // Don't show accounting field when accounting id disabled.
+            }
+            else
+            {
+                print '<table class="border" width="100%">';
+    
+                // Accountancy_code_sell
+                print '<tr><td>'.$langs->trans("ProductAccountancySellCode").'</td>';
+                print '<td><input name="accountancy_code_sell" size="16" value="'.$object->accountancy_code_sell.'">';
+                print '</td></tr>';
+    
+                // Accountancy_code_buy
+                print '<tr><td width="20%">'.$langs->trans("ProductAccountancyBuyCode").'</td>';
+                print '<td><input name="accountancy_code_buy" size="16" value="'.$object->accountancy_code_buy.'">';
+                print '</td></tr>';
+    
+                print '</table>';
+    
+                print '<br>';
+            }
+            
             print '<center><input type="submit" class="button" value="'.$langs->trans("Save").'"> &nbsp; &nbsp; ';
             print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></center>';
 
@@ -1167,15 +1218,22 @@ else
                 print '</td></tr>'."\n";
             }
 
-            // Accountancy sell code
-            print '<tr><td>'.$form->editfieldkey("ProductAccountancySellCode",'accountancy_code_sell',$object->accountancy_code_sell,$object,$user->rights->produit->creer||$user->rights->service->creer,'string').'</td><td colspan="2">';
-            print $form->editfieldval("ProductAccountancySellCode",'accountancy_code_sell',$object->accountancy_code_sell,$object,$user->rights->produit->creer||$user->rights->service->creer,'string');
-            print '</td></tr>';
-
-            // Accountancy buy code
-            print '<tr><td>'.$form->editfieldkey("ProductAccountancyBuyCode",'accountancy_code_buy',$object->accountancy_code_buy,$object,$user->rights->produit->creer||$user->rights->service->creer,'string').'</td><td colspan="2">';
-            print $form->editfieldval("ProductAccountancyBuyCode",'accountancy_code_buy',$object->accountancy_code_buy,$object,$user->rights->produit->creer||$user->rights->service->creer,'string');
-            print '</td></tr>';
+            if (empty($conf->accounting->enabled) && empty($conf->comptabilite->enabled) && empty($conf->accountingexpert->enabled))
+            {
+                // Don't show accounting field when accounting id disabled.
+            }
+            else
+            { 
+                // Accountancy sell code
+                print '<tr><td>'.$form->editfieldkey("ProductAccountancySellCode",'accountancy_code_sell',$object->accountancy_code_sell,$object,$user->rights->produit->creer||$user->rights->service->creer,'string').'</td><td colspan="2">';
+                print $form->editfieldval("ProductAccountancySellCode",'accountancy_code_sell',$object->accountancy_code_sell,$object,$user->rights->produit->creer||$user->rights->service->creer,'string');
+                print '</td></tr>';
+    
+                // Accountancy buy code
+                print '<tr><td>'.$form->editfieldkey("ProductAccountancyBuyCode",'accountancy_code_buy',$object->accountancy_code_buy,$object,$user->rights->produit->creer||$user->rights->service->creer,'string').'</td><td colspan="2">';
+                print $form->editfieldval("ProductAccountancyBuyCode",'accountancy_code_buy',$object->accountancy_code_buy,$object,$user->rights->produit->creer||$user->rights->service->creer,'string');
+                print '</td></tr>';
+            }
 
             // Status (to sell)
             print '<tr><td>'.$langs->trans("Status").' ('.$langs->trans("Sell").')</td><td colspan="2">';

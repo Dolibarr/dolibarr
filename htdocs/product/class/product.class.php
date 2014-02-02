@@ -5,8 +5,9 @@
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  * Copyright (C) 2007-2011 Jean Heimburger      <jean@tiaris.info>
  * Copyright (C) 2010-2013 Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2013	   Cedric GROSS	        <c.gross@kreiz-it.fr>
+ * Copyright (C) 2013	     Cedric GROSS	        <c.gross@kreiz-it.fr>
  * Copyright (C) 2013      Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2011-2014 Alexandre Spangaro   <alexandre.spangaro@gmail.com> 
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -255,6 +256,9 @@ class Product extends CommonObject
 			$price_min_ht = price2num($this->price_min,'MU');
 			$price_min_ttc = price2num($this->price_min * (1 + ($this->tva_tx / 100)),'MU');
 		}
+    
+    $this->accountancy_code_buy = trim($this->accountancy_code_buy);
+		$this->accountancy_code_sell= trim($this->accountancy_code_sell);
 
 		// Check parameters
 		if (empty($this->libelle))
@@ -320,6 +324,8 @@ class Product extends CommonObject
 				$sql.= ", price_base_type";
 				$sql.= ", tobuy";
 				$sql.= ", tosell";
+        $sql.= ", accountancy_code_buy";
+		    $sql.= ", accountancy_code_sell";
 				$sql.= ", canvas";
 				$sql.= ", finished";
 				$sql.= ") VALUES (";
@@ -337,6 +343,8 @@ class Product extends CommonObject
 				$sql.= ", '".$this->price_base_type."'";
 				$sql.= ", ".$this->status;
 				$sql.= ", ".$this->status_buy;
+        $sql.= ", '".$this->accountancy_code_buy."'";
+		    $sql.= ", '".$this->accountancy_code_sell."'";
 				$sql.= ", '".$this->canvas."'";
 				$sql.= ", ".((empty($this->finished) || $this->finished < 0)?'null':$this->finished);
 				$sql.= ")";
