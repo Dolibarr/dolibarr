@@ -667,7 +667,7 @@ class Form
 
 
     /**
-     *  Return list of company for customer in Ajax if Ajax activated or go to select_thirparty_list
+     *  Return HTML code to select a company.
      *
      *  @param		int			$selected				Preselected products
      *  @param		string		$htmlname				Name of HTML seletc field (must be unique in page)
@@ -675,11 +675,13 @@ class Form
      *  @param		int			$limit					Limit on number of returned lines
      *  @param		array		$ajaxoptions			Options for ajax_autocompleter
      * 	@param		int			$forcecombo				Force to use combo box
-     *  @return		void
+     *  @return		string								Return select box for thirdparty.
      */
     function select_thirdparty($selected='', $htmlname='productid', $filter='', $limit=20, $ajaxoptions=array(), $forcecombo=0)
     {
     	global $langs,$conf;
+
+    	$out='';
 
     	/* TODO Use ajax autocompletion (not finished)
     	if (! empty($conf->use_javascript_ajax) && ! empty($conf->global->COMPANY_USE_SEARCH_TO_SELECT) && ! $forcecombo)
@@ -711,8 +713,10 @@ class Form
     	}
     	else
     	{*/
-    		print $this->select_thirdparty_list($selected,$htmlname,$filter,1,0,$forcecombo,array(),'',0,$limit);
+    		$out.=$this->select_thirdparty_list($selected,$htmlname,$filter,1,0,$forcecombo,array(),'',0,$limit);
     	//}
+
+    	return $out;
     }
 
     /**
