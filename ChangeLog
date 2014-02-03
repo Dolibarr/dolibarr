@@ -18,6 +18,7 @@ For users:
        public votes
 - New: The box "balance of bank accounts" show all opened accounts.
 - New: Add option MAIN_ADD_SALE_REP_SIGNATURE_IN_NOTE.
+- New: Add warning if supplier payment is higher that due amount.
 
 TODO
 - New: Predefined product and free product use same form.

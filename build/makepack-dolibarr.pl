@@ -46,7 +46,7 @@ $FILENAMETGZ="$PROJECT-$MAJOR.$MINOR.$BUILD";
 $FILENAMEZIP="$PROJECT-$MAJOR.$MINOR.$BUILD";
 $FILENAMEXZ="$PROJECT-$MAJOR.$MINOR.$BUILD";
 $FILENAMERPM="$PROJECT-$MAJOR.$MINOR.$BUILD-$RPMSUBVERSION";
-$FILENAMEDEB="${PROJECT}_${MAJOR}.${MINOR}.${BUILD}";
+$FILENAMEDEB="see later";
 $FILENAMEAPS="$PROJECT-$MAJOR.$MINOR.$BUILD.app";
 $FILENAMEEXEDOLIWAMP="DoliWamp-$MAJOR.$MINOR.$BUILD";
 if (-d "/usr/src/redhat")   { $RPMDIR="/usr/src/redhat"; } # redhat
@@ -365,6 +365,8 @@ if ($nboftargetok) {
         $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/includes/jquery/plugins/jqueryFileTree/connectors/jqueryFileTree.pl`;    # Avoid errors into rpmlint
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/jquery/plugins/template`;  # Package not valid for most linux distributions (errors reported into compile.js). Package should be embed by modules to avoid problems.
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/phpmailer`;                # Package not valid for most linux distributions (errors reported into file LICENSE). Package should be embed by modules to avoid problems.
+        $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/ckeditor/_source`;		# Keep this removal in case we embed libraries
+        $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/ckeditor/adapters`;	# Keep this removal in case we embed libraries
    	    
 	    $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/includes/jquery/plugins/multiselect/MIT-LICENSE.txt`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/nusoap/lib/Mail`;
@@ -613,15 +615,17 @@ if ($nboftargetok) {
             $newbuild =~ s/(dev|alpha)/1/gi;                # dev
             $newbuild =~ s/beta/2/gi;                       # beta
             $newbuild =~ s/rc./3/gi;                        # rc
-            if ($newbuild !~ /-/) { $newbuild.='-4'; }      # finale
-            # now newbuild is 0-1 or 0-4 for example
+            if ($newbuild !~ /-/) { $newbuild.='-3'; }      # finale is same than rc
+            # now newbuild is 0-1 or 0-3 for example
             print "Version is $MAJOR.$MINOR.$newbuild\n";
             $build = $newbuild;
             $build =~ s/-.*$//g;
 			# now build is 0 for example
 			# $build .= '+nmu1';
 			# now build is 0+nmu1 for example
-			
+
+			$FILENAMEDEB="${PROJECT}_${MAJOR}.${MINOR}.${newbuild}";
+
     		print "Remove target ${FILENAMEDEB}_all.deb...\n";
     		unlink("$NEWDESTI/${FILENAMEDEB}_all.deb");
     		print "Remove target ${FILENAMEDEB}.dsc...\n";
@@ -676,12 +680,14 @@ if ($nboftargetok) {
             $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/build/rpm`;
             $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/build/zip`;
             # We remove embedded libraries or fonts (this is also inside rules file, target clean)
-	   	    $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/htdocs/includes/ckeditor`;
-			$ret=`rm -fr $BUILDROOT/$PROJECT.tmp/htdocs/includes/fonts`,
-	   	    $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/htdocs/includes/geoip`;
-	   	    $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/htdocs/includes/nusoap`;
-            $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/htdocs/includes/odtphp/zip/pclzip`;
-
+	   	    #$ret=`rm -fr $BUILDROOT/$PROJECT.tmp/htdocs/includes/ckeditor`;
+			#$ret=`rm -fr $BUILDROOT/$PROJECT.tmp/htdocs/includes/fonts`,
+	   	    #$ret=`rm -fr $BUILDROOT/$PROJECT.tmp/htdocs/includes/geoip`;
+	   	    #$ret=`rm -fr $BUILDROOT/$PROJECT.tmp/htdocs/includes/nusoap`;
+            #$ret=`rm -fr $BUILDROOT/$PROJECT.tmp/htdocs/includes/odtphp/zip/pclzip`;
+            # Rename upstream changelog to match debian rules
+			$ret=`mv $BUILDROOT/$PROJECT.tmp/ChangeLog $BUILDROOT/$PROJECT.tmp/changelog`;
+			
             # Prepare source package (init debian dir)
             print "Create directory $BUILDROOT/$PROJECT.tmp/debian\n";
             $ret=`mkdir "$BUILDROOT/$PROJECT.tmp/debian"`;
@@ -752,6 +758,8 @@ if ($nboftargetok) {
             print $ret."\n";
 
             chdir("$olddir");
+    		
+    		print "You can check package with lintian --pedantic -E -I \"$NEWDESTI/${FILENAMEDEB}_all.deb\"\n";
     		
     		# Move to final dir
             print "Move *_all.deb to $NEWDESTI\n";

@@ -68,33 +68,36 @@ if ($action == 'setcodecompta')
 	}
 }
 
-if ($action == 'COMPANY_USE_SEARCH_TO_SELECT')
+if ($action == 'updateoptions')
 {
-	$companysearch = GETPOST('activate_COMPANY_USE_SEARCH_TO_SELECT','alpha');
-	$res = dolibarr_set_const($db, "COMPANY_USE_SEARCH_TO_SELECT", $companysearch,'chaine',0,'',$conf->entity);
-	if (! $res > 0) $error++;
-	if (! $error)
-    {
-        $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
-    }
-    else
-    {
-        $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
-	}
-}
-
-if ($action == 'CONTACT_USE_SEARCH_TO_SELECT')
-{
-	$contactsearch = GETPOST('activate_CONTACT_USE_SEARCH_TO_SELECT','alpha');
-	$res = dolibarr_set_const($db, "CONTACT_USE_SEARCH_TO_SELECT", $contactsearch,'chaine',0,'',$conf->entity);
-	if (! $res > 0) $error++;
-	if (! $error)
+	if (GETPOST('COMPANY_USE_SEARCH_TO_SELECT'))
 	{
-		$mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
+		$companysearch = GETPOST('activate_COMPANY_USE_SEARCH_TO_SELECT','alpha');
+		$res = dolibarr_set_const($db, "COMPANY_USE_SEARCH_TO_SELECT", $companysearch,'chaine',0,'',$conf->entity);
+		if (! $res > 0) $error++;
+		if (! $error)
+	    {
+	        $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
+	    }
+	    else
+	    {
+	        $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
+		}
 	}
-	else
+	
+	if (GETPOST('CONTACT_USE_SEARCH_TO_SELECT'))
 	{
-		$mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
+		$contactsearch = GETPOST('activate_CONTACT_USE_SEARCH_TO_SELECT','alpha');
+		$res = dolibarr_set_const($db, "CONTACT_USE_SEARCH_TO_SELECT", $contactsearch,'chaine',0,'',$conf->entity);
+		if (! $res > 0) $error++;
+		if (! $error)
+		{
+			$mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
+		}
+		else
+		{
+			$mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
+		}
 	}
 }
 
@@ -698,6 +701,11 @@ print_titre($langs->trans("Other"));
 // Autres options
 $form=new Form($db);
 $var=true;
+
+print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="action" value="updateoptions">';
+
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print "<td>".$langs->trans("Parameters")."</td>\n";
@@ -706,9 +714,6 @@ print '<td width="80">&nbsp;</td></tr>'."\n";
 
 // Utilisation formulaire Ajax sur choix societe
 $var=!$var;
-print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print '<input type="hidden" name="action" value="COMPANY_USE_SEARCH_TO_SELECT">';
 print "<tr ".$bc[$var].">";
 print '<td width="80%">'.$langs->trans("UseSearchToSelectCompany").'</td>';
 if (! $conf->use_javascript_ajax)
@@ -727,34 +732,12 @@ else
 	);
 	print $form->selectarray("activate_COMPANY_USE_SEARCH_TO_SELECT",$arrval,$conf->global->COMPANY_USE_SEARCH_TO_SELECT);
 	print '</td><td align="right">';
-	print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+	print '<input type="submit" class="button" name="COMPANY_USE_SEARCH_TO_SELECT" value="'.$langs->trans("Modify").'">';
 	print "</td>";
 }
 print '</tr>';
-print '</form>';
 
 $var=!$var;
-print "<tr ".$bc[$var].">";
-print '<td width="80%">'.$langs->trans("AddRefInList").'</td>';
-if (!empty($conf->global->SOCIETE_ADD_REF_IN_LIST))
-{
-	print '<td align="center" colspan="2"><a href="'.$_SERVER['PHP_SELF'].'?action=setaddrefinlist&value=0">';
-	print img_picto($langs->trans("Activated"),'switch_on');
-	print '</a></td>';
-}
-else
-{
-	print '<td align="center" colspan="2"><a href="'.$_SERVER['PHP_SELF'].'?action=setaddrefinlist&value=1">';
-	print img_picto($langs->trans("Disabled"),'switch_off');
-	print '</a></td>';
-}
-print '</tr>';
-
-
-$var=!$var;
-print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print '<input type="hidden" name="action" value="CONTACT_USE_SEARCH_TO_SELECT">';
 print "<tr ".$bc[$var].">";
 print '<td width="80%">'.$langs->trans("UseSearchToSelectContact").'</td>';
 if (! $conf->use_javascript_ajax)
@@ -773,10 +756,29 @@ else
 	);
 	print $form->selectarray("activate_CONTACT_USE_SEARCH_TO_SELECT",$arrval,$conf->global->CONTACT_USE_SEARCH_TO_SELECT);
 	print '</td><td align="right">';
-	print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+	print '<input type="submit" class="button" name="CONTACT_USE_SEARCH_TO_SELECT" value="'.$langs->trans("Modify").'">';
 	print "</td>";
 }
 print '</tr>';
+
+
+$var=!$var;
+print "<tr ".$bc[$var].">";
+print '<td width="80%">'.$langs->trans("AddRefInList").'</td>';
+if (!empty($conf->global->SOCIETE_ADD_REF_IN_LIST))
+{
+	print '<td align="center" colspan="2"><a href="'.$_SERVER['PHP_SELF'].'?action=setaddrefinlist&value=0">';
+	print img_picto($langs->trans("Activated"),'switch_on');
+	print '</a></td>';
+}
+else
+{
+	print '<td align="center" colspan="2"><a href="'.$_SERVER['PHP_SELF'].'?action=setaddrefinlist&value=1">';
+	print img_picto($langs->trans("Disabled"),'switch_off');
+	print '</a></td>';
+}
+print '</tr>';
+
 
 /*
 // COMPANY_USE_SEARCH_TO_SELECT
@@ -800,6 +802,7 @@ print '</tr>';
 
 print '</table>';
 
+print '</form>';
 
 
 dol_fiche_end();
