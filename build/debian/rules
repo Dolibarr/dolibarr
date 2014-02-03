@@ -90,32 +90,33 @@ clean:
 	rm -fr build/rpm
 	rm -fr build/zip
 	
-	# clean from all embedded libraries (we use package dependencies instead)
-	rm -fr htdocs/includes/adodbtime
-	rm -fr htdocs/includes/ckeditor
+	# clean from all PHP embedded libraries (we use package dependencies instead)
+#	rm -fr htdocs/includes/adodbtime
 #	rm -fr htdocs/includes/fpdfi
-	rm -fr htdocs/includes/fonts
-	rm -fr htdocs/includes/geoip
-	rm -fr htdocs/includes/nusoap
-	rm -fr htdocs/includes/odtphp/zip/pclzip
-	rm -fr htdocs/includes/phpmailer
-	rm -fr htdocs/includes/jquery/css
-	rm -fr htdocs/includes/jquery/js
-	rm -fr htdocs/includes/jquery/plugins/flot
-	rm -fr htdocs/includes/jquery/plugins/jstree
-	rm -fr htdocs/includes/jquery/plugins/lightbox
+#	rm -fr htdocs/includes/geoip
+#	rm -fr htdocs/includes/nusoap
+#	rm -fr htdocs/includes/odtphp/zip/pclzip
+	# clean from all JS-CSS embedded libraries (we use package dependencies instead)
+#	rm -fr htdocs/includes/ckeditor
+#	rm -fr htdocs/includes/jquery/js
+#	rm -fr htdocs/includes/jquery/css
+#	rm -fr htdocs/includes/jquery/plugins/flot
+	# clean from all embedded fonts (we use package dependencies instead)
+#	rm -fr htdocs/includes/fonts
+
+	# clean from useless files
 	rm -fr htdocs/includes/jquery/plugins/multiselect
 	rm -fr htdocs/includes/phpexcel/PHPExcel/Shared/PDF
 	rm -fr htdocs/includes/phpexcel/PHPExcel/Shared/PCLZip
 	rm -fr htdocs/includes/tcpdf/fonts/dejavu-fonts-ttf-2.33
 	rm -fr htdocs/includes/tcpdf/fonts/freefont-20100919
 	rm -fr htdocs/includes/tcpdf/fonts/utils
-
 	# clean from files to avoid warning of missing dependencies
 	rm -fr htdocs/includes/jquery/plugins/jqueryFileTree/connectors/jqueryFileTree.py
 
-	# Licence files are included into copyright file.
-	rm -fr htdocs/includes/phpexcel/license.txt
+	# Licence files are already included into copyright file.
+	rm -f  htdocs/includes/jquery/plugins/flot/LICENSE.txt
+	rm -f  htdocs/includes/phpexcel/license.txt
 	rm -f  htdocs/includes/tcpdf/LICENSE.TXT
 
 	dh $@

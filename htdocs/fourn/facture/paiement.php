@@ -162,9 +162,9 @@ if ($action == 'add_paiement')
 if ($action == 'confirm_paiement' && $confirm == 'yes')
 {
     $error=0;
-	
+
     $datepaye = dol_mktime(12, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear'));
-    
+
     if (! $error)
     {
         $db->begin();
