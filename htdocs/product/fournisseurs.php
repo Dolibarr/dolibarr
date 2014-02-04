@@ -60,6 +60,11 @@ $result=restrictedArea($user,'produit|service&fournisseur',$fieldvalue,'product&
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('pricesuppliercard'));
+$product = new ProductFournisseur($db);
+$product->fetch($id);
+
+$reshook=$hookmanager->executeHooks('doActions',$parameters,$product,$action);    // Note that $action and $object may have been modified by some hooks
+$error=$hookmanager->error; $errors=$hookmanager->errors;
 
 
 $sortfield = GETPOST("sortfield",'alpha');
