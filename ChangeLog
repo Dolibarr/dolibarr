@@ -41,13 +41,15 @@ For developers:
 - New: Add new hook function addMoreActionsButtons to allow a module to add/replace
        action buttons into an element.
 - New: Normalize code for barcode generation to match other modules.
+- New: Uniformize code for contacts forms.
 
 WARNING: Following change may create regression for some external modules, but was necessary to make
 Dolibarr better:
 
 - The deprecated way (with 4 parameters) to declare a new tab into a module descriptor file has been
 removed. You must now use the 6 parameters way. See file modMyModule.class.php for example. 
-- 
+- Remove the javascrit function ac_delay() that is not used anymore by core code.
+
 
 ***** ChangeLog for 3.5 compared to 3.4.* *****
 For users:

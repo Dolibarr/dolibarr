@@ -60,8 +60,8 @@ $object = new ActionComm($db);
  * Actions
  */
 
-// Add new nouveau contact
-if ($action == 'addcontact')
+// Add new contact
+if ($action == 'addcontact' && $user->rights->action->creer)
 {
 	$result = $object->fetch($id);
 
@@ -233,189 +233,20 @@ if ($id > 0 || ! empty($ref))
         // Location
         print '<tr><td>'.$langs->trans("Location").'</td><td colspan="2">'.$object->location.'</td></tr>';
 
-
         print '</table>';
 
-		print '</div>';
-		/*
-		 * Lignes de contacts
-		 */
-		print '<br><table class="noborder" width="100%">';
-
-		/*
-		 * Ajouter une ligne de contact
-		 * Non affiche en mode modification de ligne
-		 */
-		if ($action != 'editline')
+   		dol_fiche_end();
+   		
+   		print '<br>';
+   		
+		// Contacts lines (modules that overwrite templates must declare this into descriptor)
+		$dirtpls=array_merge($conf->modules_parts['tpl'],array('/core/tpl'));
+		foreach($dirtpls as $reldir)
 		{
-			print '<tr class="liste_titre">';
-			print '<td>'.$langs->trans("Source").'</td>';
-			print '<td>'.$langs->trans("Company").'</td>';
-			print '<td>'.$langs->trans("Contacts").'</td>';
-			print '<td>'.$langs->trans("ContactType").'</td>';
-			print '<td colspan="3">&nbsp;</td>';
-			print "</tr>\n";
-
-			$var = false;
-
-			print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$id.'" method="POST">';
-			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-			print '<input type="hidden" name="action" value="addcontact">';
-			print '<input type="hidden" name="source" value="internal">';
-			print '<input type="hidden" name="id" value="'.$id.'">';
-
-			// Ligne ajout pour contact interne
-			print "<tr ".$bc[$var].">";
-
-			print '<td class="nowrap">';
-			print img_object('','user').' '.$langs->trans("Users");
-			print '</td>';
-
-			print '<td colspan="1">';
-			print $conf->global->MAIN_INFO_SOCIETE_NOM;
-			print '</td>';
-
-			print '<td colspan="1">';
-			// On recupere les id des users deja selectionnes
-			$form->select_users($user->id,'contactid',0);
-			print '</td>';
-			print '<td>';
-			$formcompany->selectTypeContact($object, '', 'type','internal','rowid');
-			print '</td>';
-			print '<td align="right" colspan="3" ><input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
-			print '</tr>';
-
-			print '</form>';
-
-			print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$id.'" method="POST">';
-			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-			print '<input type="hidden" name="action" value="addcontact">';
-			print '<input type="hidden" name="source" value="external">';
-			print '<input type="hidden" name="id" value="'.$id.'">';
-
-			// Line to add external contact. Only if project is linked to a third party.
-			if ($object->socid)
-			{
-				$var=!$var;
-				print "<tr $bc[$var]>";
-
-				print '<td class="nowrap">';
-				print img_object('','contact').' '.$langs->trans("ThirdPartyContacts");
-				print '</td>';
-
-				print '<td colspan="1">';
-				$selectedCompany = isset($_GET["newcompany"])?$_GET["newcompany"]:$object->socid;
-				$selectedCompany = $formcompany->selectCompaniesForNewContact($object, 'id', $selectedCompany, 'newcompany');
-				print '</td>';
-
-				print '<td colspan="1">';
-				$nbofcontacts=$form->select_contacts($selectedCompany,'','contactid');
-				if ($nbofcontacts == 0) print $langs->trans("NoContactDefinedForThirdParty");
-				print '</td>';
-				print '<td>';
-				$formcompany->selectTypeContact($object,'','type','external','rowid');
-				print '</td>';
-				print '<td align="right" colspan="3" ><input type="submit" class="button" value="'.$langs->trans("Add").'"';
-				if (! $nbofcontacts) print ' disabled="true"';
-				print '></td>';
-				print '</tr>';
-			}
-
-			print "</form>";
-
-			print '<tr><td colspan="6">&nbsp;</td></tr>';
+		    $res=@include dol_buildpath($reldir.'/contacts.tpl.php');
+		    if ($res) break;
 		}
 
-		// Liste des contacts lies
-		print '<tr class="liste_titre">';
-		print '<td>'.$langs->trans("Source").'</td>';
-		print '<td>'.$langs->trans("Company").'</td>';
-		print '<td>'.$langs->trans("Contacts").'</td>';
-		print '<td>'.$langs->trans("ContactType").'</td>';
-		print '<td align="center">'.$langs->trans("Status").'</td>';
-		print '<td colspan="2">&nbsp;</td>';
-		print "</tr>\n";
-
-		$companystatic = new Societe($db);
-		$var = true;
-
-		foreach(array('internal','external') as $source)
-		{
-			$tab = $object->liste_contact(-1,$source);
-			$num=count($tab);
-
-			$i = 0;
-			while ($i < $num)
-			{
-				$var = !$var;
-
-				print '<tr '.$bc[$var].' valign="top">';
-
-				// Source
-				print '<td align="left">';
-				if ($tab[$i]['source']=='internal') print $langs->trans("User");
-				if ($tab[$i]['source']=='external') print $langs->trans("ThirdPartyContact");
-				print '</td>';
-
-				// Societe
-				print '<td align="left">';
-				if ($tab[$i]['socid'] > 0)
-				{
-					$companystatic->fetch($tab[$i]['socid']);
-					print $companystatic->getNomUrl(1);
-				}
-				if ($tab[$i]['socid'] < 0)
-				{
-					print $conf->global->MAIN_INFO_SOCIETE_NOM;
-				}
-				if (! $tab[$i]['socid'])
-				{
-					print '&nbsp;';
-				}
-				print '</td>';
-
-				// Contact
-				print '<td>';
-				if ($tab[$i]['source']=='internal')
-				{
-					print '<a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$tab[$i]['id'].'">';
-					print img_object($langs->trans("ShowUser"),"user").' '.$tab[$i]['nom'].'</a>';
-				}
-				if ($tab[$i]['source']=='external')
-				{
-					print '<a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$tab[$i]['id'].'">';
-					print img_object($langs->trans("ShowContact"),"contact").' '.$tab[$i]['nom'].'</a>';
-				}
-				print '</td>';
-
-				// Type de contact
-				print '<td>'.$tab[$i]['libelle'].'</td>';
-
-				// Statut
-				print '<td align="center">';
-				// Activation desativation du contact
-				if ($object->statut >= 0 ) print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=swapstatut&amp;line='.$tab[$i]['rowid'].'">';
-				print $contactstatic->LibStatut($tab[$i]['status'],3);
-				if ($object->statut >= 0 ) print '</a>';
-				print '</td>';
-
-				// Icon update et delete
-				print '<td align="center" nowrap>';
-				/*if ($user->rights->business->write && $userAccess)
-				{*/
-					print '&nbsp;';
-					print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=deleteline&amp;line='.$tab[$i]['rowid'].'">';
-					print img_delete();
-					print '</a>';
-				//}
-				print '</td>';
-
-				print "</tr>\n";
-
-				$i ++;
-			}
-		}
-		print "</table>";
 	}
 	else
 	{
