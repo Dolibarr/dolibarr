@@ -1408,6 +1408,16 @@ class CommandeFournisseur extends CommonOrder
             dol_syslog(get_class($this)."::deleteline sql=".$sql);
             if ($resql)
             {
+            	// Appel des triggers
+				include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
+				$result = 0;
+				$interface=new Interfaces($this->db);
+				$result = $interface->run_triggers('LINEORDER_SUPPLIER_DELETE',$this,$user,$langs,$conf);
+				if ($result < 0) {
+					$error++; $this->errors=$interface->errors;
+				}
+				// Fin appel triggers
+				
                 $result=$this->update_price();
                 return 0;
             }
