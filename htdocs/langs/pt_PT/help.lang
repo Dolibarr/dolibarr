@@ -1,4 +1,9 @@
-# Dolibarr language file - Source file is en_US - help
+# Dolibarr language file - pt_PT - help
+CHARSET=UTF-8
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 21:10:10).
+// Reference language: en_US
 CommunitySupport=Fórum / Wiki apoio
 EMailSupport=Emails apoio
 RemoteControlSupport=On-line em tempo real / suporte remoto
@@ -24,5 +29,5 @@ BackToHelpCenter=Caso contrário, clique aqui para ir <a href="%s">de volta ao c
 LinkToGoldMember=Você pode chamar um assistente selecionado pelo Dolibarr para o seu idioma ( %s) clicando em seu Widget (status e preço máximo são atualizadas automaticamente):
 PossibleLanguages=Línguas de apoio
 MakeADonation=Ajuda Dolibarr projecto, faça uma doação
-SubscribeToFoundation=Ajude o  projeto Dolibarr, inscreva-se na fundação
-# SeeOfficalSupport=For official Dolibarr support in your language: <br><b><a href="%s" target="_blank">%s</a></b>
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:10:10).
+
