@@ -283,7 +283,7 @@ if ($id > 0 || ! empty($ref))
 			print '<input type="hidden" name="action" value="addcontact">';
 			print '<input type="hidden" name="source" value="internal">';
 			print '<input type="hidden" name="id" value="'.$id.'">';
-			print '<input type="hidden" name="withproject" value="'.$withproject.'">';
+			if ($withproject) print '<input type="hidden" name="withproject" value="'.$withproject.'">';
 
 			// Ligne ajout pour contact interne
 			print "<tr ".$bc[$var].">";
@@ -299,7 +299,7 @@ if ($id > 0 || ! empty($ref))
 			print '<td colspan="1">';
 			// On recupere les id des users deja selectionnes
 			$contactsofproject=$projectstatic->getListContactId('internal');
-			$form->select_users($user->id,'contactid',0,'',0,'',$contactsofproject);
+			$form->select_users($user->id,'userid',0,'',0,'',$contactsofproject);
 			print '</td>';
 			print '<td>';
 			$formcompany->selectTypeContact($object, '', 'type','internal','rowid');
@@ -317,6 +317,7 @@ if ($id > 0 || ! empty($ref))
 				print '<input type="hidden" name="action" value="addcontact">';
 				print '<input type="hidden" name="source" value="external">';
 				print '<input type="hidden" name="id" value="'.$object->id.'">';
+				if ($withproject) print '<input type="hidden" name="withproject" value="'.$withproject.'">';
 
 				$var=!$var;
 				print "<tr ".$bc[$var].">";

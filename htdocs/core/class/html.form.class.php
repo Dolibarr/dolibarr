@@ -711,7 +711,7 @@ class Form
     	}
     	else
     	{*/
-    		print $this->select_thirdparty_list($selected,$htmlname,$filter,1,0,$forcecombo,array(),'',0,$limit);
+    		return $this->select_thirdparty_list($selected,$htmlname,$filter,1,0,$forcecombo,array(),'',0,$limit);
     	//}
     }
 
@@ -3741,15 +3741,16 @@ class Form
      * 	@param	int		$maxlen			Length maximum for labels
      * 	@param	int		$disabled		Html select box is disabled
      *  @param	int		$sort			'ASC' or 'DESC' =Sort on label, '' or 'NONE'=Do not sort
+     *  @param	string	$morecss		Add more class to css styles
      * 	@return	string					HTML select string
      */
-    function selectarray($htmlname, $array, $id='', $show_empty=0, $key_in_label=0, $value_as_key=0, $option='', $translate=0, $maxlen=0, $disabled=0, $sort='')
+    function selectarray($htmlname, $array, $id='', $show_empty=0, $key_in_label=0, $value_as_key=0, $option='', $translate=0, $maxlen=0, $disabled=0, $sort='', $morecss='')
     {
         global $langs;
 
         if ($value_as_key) $array=array_combine($array, $array);
 
-        $out='<select id="'.$htmlname.'" '.($disabled?'disabled="disabled" ':'').'class="flat" name="'.$htmlname.'" '.($option != ''?$option:'').'>';
+        $out='<select id="'.$htmlname.'" '.($disabled?'disabled="disabled" ':'').'class="flat'.($morecss?' '.$morecss:'').'" name="'.$htmlname.'" '.($option != ''?$option:'').'>';
 
         if ($show_empty)
         {

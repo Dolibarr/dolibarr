@@ -34,6 +34,9 @@ elseif ($module == 'fichinter')			{ $permission=$user->rights->ficheinter->creer
 elseif ($module == 'invoice_supplier')	{ $permission=$user->rights->fournisseur->facture->creer; }
 elseif ($module == 'order_supplier')	{ $permission=$user->rights->fournisseur->commande->creer; }
 elseif ($module == 'project')			{ $permission=$user->rights->projet->creer; }
+elseif ($module == 'action')			{ $permission=$user->rights->agenda->myactions->create; }
+elseif ($module == 'shipping')			{ $permission=$user->rights->expedition->creer; }
+elseif ($module == 'project_task')		{ $permission=$user->rights->projet->creer; }
 elseif (! isset($permission))			{ $permission=$user->rights->$module->creer; } // If already defined by caller page
 
 $formcompany= new FormCompany($db);
