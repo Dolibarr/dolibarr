@@ -1,13 +1,4 @@
-/*
- * Language code: pt_PT
- * Automatic generated via autotranslator.php tool
- * Generation date 2012-02-29 15:45:52
- */
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 15:45:52).
-// Reference language: en_US -> pt_PT
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - externalsite
 ExternalSiteSetup=Link Setup para site externo
 ExternalSiteURL=URL do site externo
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 15:47:43).
+# ExternalSiteModuleNotComplete=Module ExternalSite was not configured properly.

@@ -1,5 +1,4 @@
-# Dolibarr language file - pt_PT - exports
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - exports
 ExportsArea=Área de Exportação
 ImportArea=Área de Importação
 NewExport=Nova Exportação
@@ -7,20 +6,33 @@ NewImport=Nova Importação
 ExportableDatas=Conjunto de dados exportáveis
 ImportableDatas=Conjunto de dados importáveis
 SelectExportDataSet=Escolha um conjunto predefinido de dados que deseje exportar...
+SelectImportDataSet=Escolha de dados que pretende importar ...
 SelectExportFields=Escolha os campos que devem exportar-se, ou escolha um perfil de exportação predefinido
+SelectImportFields=Escolha os campos que deseja importar, ou escolha um perfil predefinido importação
+NotImportedFields=Os campos não importados
 SaveExportModel=Guardar este perfil de exportação assim pode reutiliza-lo posteriormente...
+SaveImportModel=Guarde este perfil de importação, se pretender reutilizá-la mais tarde ...
 ExportModelName=Nome do perfil de exportação
 ExportModelSaved=Perfil de exportação guardado com o nome de <b>%s</b>.
 ExportableFields=Campos Exportáveis
 ExportedFields=Campos a Exportar
+ImportModelName=Importar nome do perfil
+ImportModelSaved=Importar perfil guardado em <b>nome %s.</b>
+ImportableFields=Importável campos
+ImportedFields=Campos importados
 DatasetToExport=Conjunto de dados a exportar
+DatasetToImport=Selecção de dados para importar
+NoDiscardedFields=Nenhum campo no arquivo de origem foi descartado
 Dataset=Conjunto de Dados
 ChooseFieldsOrdersAndTitle=Escolha a ordem dos campos...
 FieldsOrder=Ordem dos Campos
 FieldsTitle=Título Campos
+FieldOrder=Ordem do Campo
+FieldTitle=Campo título
 ChooseExportFormat=Escolha o formato de exportação
 NowClickToGenerateToBuildExportFile=Agora, faça click em "Gerar" para gerar o ficheiro exportação...
 AvailableFormats=Formatos Disponíveis
+LibraryShort=Biblioteca
 LibraryUsed=Livraria Utilizada
 LibraryVersion=Versão
 Step=Passo
@@ -34,19 +46,6 @@ FormatedExportDesc3=Uma vez seleccionados os dados, é possível escolher o form
 Sheet=Folha
 NoImportableData=Não existe tipo de dados importável (não existe nenhum módulo com definições de dados importável activado)
 FileSuccessfullyBuilt=Ficheiro de exportação gerado
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 21:10:10).
-// Reference language: en_US
-SelectImportDataSet=Escolha de dados que pretende importar ...
-SelectImportFields=Escolha os campos que deseja importar, ou escolha um perfil predefinido importação
-SaveImportModel=Guarde este perfil de importação, se pretender reutilizá-la mais tarde ...
-ImportModelName=Importar nome do perfil
-ImportModelSaved=Importar perfil guardado em <b>nome %s.</b>
-ImportableFields=Importável campos
-ImportedFields=Campos importados
-DatasetToImport=Selecção de dados para importar
-LibraryShort=Biblioteca
 SQLUsedForExport=Pedido de SQL usada para construir exportação arquivo
 LineId=Id da linha
 LineDescription=Descrição da linha
@@ -60,21 +59,12 @@ TypeOfLineServiceOrProduct=Tipo de linha (0= produto, serviço de 1=)
 FileWithDataToImport=Arquivo com os dados de importação
 FileToImport=Fonte ficheiro a importar
 FileMustHaveOneOfFollowingFormat=Arquivo a ser importado deve ter um dos seguintes formatos
-ChooseFileToImport=Escolha ficheiro a importar, em seguida, clique em picto %s ...
-FieldsInSourceFile=Os campos em arquivo fonte
-FieldsInTargetDatabase=Alvo Dolibarr em campos de dados
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:10:10).
-
-
-// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
-// Reference language: en_US -> pt_PT
-NotImportedFields=Os campos não importados
-NoDiscardedFields=Nenhum campo no arquivo de origem foi descartado
-FieldOrder=Ordem do Campo
-FieldTitle=Campo título
 DownloadEmptyExample=Download exemplo de fonte de arquivo vazio
 ChooseFormatOfFileToImport=Escolha o formato de arquivo para usar como formato de arquivo de importação clicando no %s picto para seleccioná-lo ...
+ChooseFileToImport=Escolha ficheiro a importar, em seguida, clique em picto %s ...
 SourceFileFormat=Formato de arquivo de origem
+FieldsInSourceFile=Os campos em arquivo fonte
+# FieldsInTargetDatabase=Target fields in Dolibarr database (bold=mandatory)
 Field=Campo
 NoFields=Nenhum campo
 MoveField=Mover %s campo número da coluna
@@ -105,25 +95,36 @@ TooMuchErrors=Há ainda outra fonte <b>%s</b> linhas com erros, mas a produção
 TooMuchWarnings=Há ainda outra fonte <b>%s</b> linhas com os avisos, mas a produção tem sido limitada.
 EmptyLine=linha em branco (serão descartadas)
 CorrectErrorBeforeRunningImport=Primeiro, você deve corrigir todos os erros antes de executar a importação definitiva.
+FileWasImported=O arquivo foi importado com <b>%s</b> número.
 YouCanUseImportIdToFindRecord=Você pode encontrar todos os registros importados em seu banco de dados de filtragem de <b>import_key</b> campo <b>= &quot;%s&quot;.</b>
 NbOfLinesOK=Número de linhas sem erros e sem avisos: <b>%s.</b>
 NbOfLinesImported=Número de linhas de importados com sucesso: <b>%s.</b>
 DataComeFromNoWhere=Valor para inserir vem do nada no arquivo fonte.
 DataComeFromFileFieldNb=Valor para inserir o número vem <b>%s</b> campo no arquivo fonte.
 DataComeFromIdFoundFromRef=Valor que vem de série <b>%s</b> campo de arquivo de origem será usado para encontrar id do objecto pai para usar <b>(%s</b> objecto Assim, o que tem a ref. Partir do arquivo fonte deve existir em Dolibarr).
+DataComeFromIdFoundFromCodeId=O código que vem <b>%s</b> campo de número de arquivo de origem será usado para encontrar ID do objecto pai para usar (Assim, o código de arquivo de origem deve existir em <b>%s</b> dictionnary). Note que se você souber id, você também pode usá-lo em arquivo de origem em vez de código. Importação deve funcionar em ambos os casos.
 DataIsInsertedInto=Dados provenientes de arquivo de origem será inserido no seguinte campo:
 DataIDSourceIsInsertedInto=A identificação do objecto pai encontrado usando os dados no arquivo de origem, será inserido no campo seguinte:
+DataCodeIDSourceIsInsertedInto=O ID da linha foi encontrado o pai a partir do código, será inserido no campo seguinte:
 SourceRequired=Valor dos dados é obrigatória
 SourceExample=Exemplo de valores de dados possíveis
-CSVFormatDesc=<b>Comma Separated Value</b> formato de arquivo (. Csv). <br> Este é um formato de arquivo texto onde os campos são separados por separador [%s]. Se o separador é encontrado dentro de um conteúdo do campo, o campo é arredondado por volta de carácter [%s]. Caractere de escape para fugir personagem redonda é [%s].
-// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:53:34).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 15:45:52).
-// Reference language: en_US -> pt_PT
-FileWasImported=O arquivo foi importado com <b>%s</b> número.
-DataComeFromIdFoundFromCodeId=O código que vem <b>%s</b> campo de número de arquivo de origem será usado para encontrar ID do objecto pai para usar (Assim, o código de arquivo de origem deve existir em <b>%s</b> dictionnary). Note que se você souber id, você também pode usá-lo em arquivo de origem em vez de código. Importação deve funcionar em ambos os casos.
-DataCodeIDSourceIsInsertedInto=O ID da linha foi encontrado o pai a partir do código, será inserido no campo seguinte:
 ExampleAnyRefFoundIntoElement=Qualquer ref encontrado para <b>%s</b> elemento
 ExampleAnyCodeOrIdFoundIntoDictionnary=Qualquer código (ou id) encontrado em <b>%s</b> dictionnary
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 15:46:40).
+CSVFormatDesc=<b>Comma Separated Value</b> formato de arquivo (. Csv). <br> Este é um formato de arquivo texto onde os campos são separados por separador [%s]. Se o separador é encontrado dentro de um conteúdo do campo, o campo é arredondado por volta de carácter [%s]. Caractere de escape para fugir personagem redonda é [%s].
+# Excel95FormatDesc=<b>Excel</b> file format (.xls)<br>This is native Excel 95 format (BIFF5).
+# Excel2007FormatDesc=<b>Excel</b> file format (.xlsx)<br>This is native Excel 2007 format (SpreadsheetML).
+# TsvFormatDesc=<b>Tab Separated Value</b> file format (.tsv)<br>This is a text file format where fields are separated by a tabulator [tab].
+# ExportFieldAutomaticallyAdded=Field <b>%s</b> was automatically added. It will avoid you to have similar lines to be treated as duplicate records (with this field added, all lines will own their own id and will differ).
+# CsvOptions=Csv Options
+# Separator=Separator
+# Enclosure=Enclosure
+# SuppliersProducts=Suppliers Products
+BankCode=Código banco
+DeskCode=Código sucursal
+BankAccountNumber=Número de conta
+BankAccountNumberKey=Dígito Control
+## filters
+# SelectFilterFields=If you want to filter on some values, just input values here.
+# FilterableFields=Champs Filtrables
+# FilteredFields=Filtered fields
+# FilteredFieldsValues=Value for filter

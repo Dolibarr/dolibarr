@@ -1,11 +1,12 @@
-# Dolibarr language file - pt_PT - donations
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - donations
 Donation=Doação
-Donationss=Doações
+Donations=Donativos
+# DonationRef=Donation ref.
 Donor=Dador
 Donors=Dadores
 AddDonation=Adicionar Doação
 NewDonation=Nova Doação
+# ShowDonation=Show donation
 DonationPromise=Promessa de Doação
 PromisesNotValid=Promessas Não Validadas
 PromisesValid=Promessas Validadas
@@ -20,25 +21,12 @@ DonationStatusPaid=Doação Paga
 DonationStatusPromiseNotValidatedShort=Não Validada
 DonationStatusPromiseValidatedShort=Validada
 DonationStatusPaidShort=Paga
-ValidPromise=Validar Promessa
+ValidPromess=Validar promessa
+# DonationReceipt=Donation receipt
 BuildDonationReceipt=Criar Recibo
 DonationsModels=Modelo de documento de recepção de Doação
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 21:10:10).
-// Reference language: en_US
-Donations=Donativos
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:10:10).
-
-
-// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
-// Reference language: en_US -> pt_PT
-ValidPromess=Validar promessa
-// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:40:14).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 15:45:52).
-// Reference language: en_US -> pt_PT
 LastModifiedDonations=%s Última modificação doações
 SearchADonation=Procure uma doação
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 15:48:28).
+# DonationRecipient=Donation recipient
+# ThankYou=Thank You
+# IConfirmDonationReception=The recipient declare reception, as a donation, of the following amount

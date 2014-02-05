@@ -1,8 +1,9 @@
-# Dolibarr language file - pt_PT - sendings
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - sendings
 RefSending=Ref. de Envio
 Sending=Envio
 Sendings=Envios
+Shipment=Envio
+Shipments=Envios
 Receivings=Recepções
 SendingsArea=Área de Envios
 ListOfSendings=Lista de Envios
@@ -12,6 +13,7 @@ LastSendings=Os %s Últimos Envios
 SearchASending=Procurar Envio
 StatisticsOfSendings=Estatísticas de Envios
 NbOfSendings=Número de Envios
+# NumberOfShipmentsByMonth=Number of shipments by month
 SendingCard=Ficha de Envio
 NewSending=Novo Envio
 CreateASending=Criar um Envio
@@ -27,10 +29,14 @@ DateSendingShort=Data de Expedição
 SendingsForSameOrder=Expedições deste Pedido
 SendingsAndReceivingForSameOrder=Envios e Recepções deste pedido
 SendingsToValidate=Envios a Confirmar
+StatusSendingCanceled=Cancelado
 StatusSendingDraft=Rascunho
 StatusSendingValidated=Validado (produtos a enviar ou enviados)
+StatusSendingProcessed=Processado
+StatusSendingCanceledShort=Cancelado
 StatusSendingDraftShort=Rascunho
 StatusSendingValidatedShort=Validado
+StatusSendingProcessedShort=Processado
 SendingSheet=Ficha de envio
 Carriers=Distribuidores
 Carrier=Distribuidor
@@ -42,37 +48,29 @@ ConfirmCancelSending=Tem a certeza que pretende anular esta expedição?
 GenericTransport=Transporte Genérico
 Enlevement=Pick-up por o Cliente
 DocumentModelSimple=Modelo Simples
-WarningNoQtyLeftToSend=Atenção, não existe qualquer produto à espera de ser enviado.
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 21:10:10).
-// Reference language: en_US
-StatsOnShipmentsOnlyValidated=Estatísticas sobre as transferências validadas realizadas
-SendingMethodCATCH=Capturas por cliente
-SendingMethodTRANS=Transportador
-SendingMethodCOLSUI=Colissimo
-DocumentModelSirocco=Modelo de documento simples de recibos de entrega
-DocumentModelTyphon=Modelo de documento mais completo para a entrega recibos (logo. ..)
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:10:10).
-
-
-
-// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
-// Reference language: en_US -> pt_PT
-Shipments=Envios
-StatusSendingCanceled=Cancelado
-StatusSendingCanceledShort=Cancelado
 DocumentModelMerou=Mérou modelo A5
+WarningNoQtyLeftToSend=Atenção, não existe qualquer produto à espera de ser enviado.
+# StatsOnShipmentsOnlyValidated=Statistics conducted on shipments only validated. Date used is date of validation of shipment (planed delivery date is not always known).
 DateDeliveryPlanned=Data de entrega planeada
 DateReceived=Data da entrega recebida
-// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:37:28).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 15:45:52).
-// Reference language: en_US -> pt_PT
 SendShippingByEMail=Efectuar envio por e-mail
 SendShippingRef=Enviar %s embarque
 ActionsOnShipping=Eventos em embarque
 LinkToTrackYourPackage=Link para acompanhar o seu pacote
 ShipmentCreationIsDoneFromOrder=A criação de uma nova remessa é efectuada a partir da encomenda.
+# RelatedShippings=Related shippings
+# ShipmentLine=Shipment line
+# CarrierList=List of transporters
+
+# Sending methods
+SendingMethodCATCH=Capturas por cliente
+SendingMethodTRANS=Transportador
+SendingMethodCOLSUI=Colissimo
+
+# ModelDocument
+DocumentModelSirocco=Modelo de documento simples de recibos de entrega
+DocumentModelTyphon=Modelo de documento mais completo para a entrega recibos (logo. ..)
+
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=EXPEDITION_ADDON_NUMBER constante não definida
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 15:48:53).
+# SumOfProductVolumes=Sum of product volumes
+# SumOfProductWeights=Sum of product weights

@@ -1,5 +1,4 @@
-# Dolibarr language file - pt_PT - users
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - users
 UserCard=Ficha de Utilizador
 ContactCard=Ficha de Contacto
 GroupCard=Ficha de Grupo
@@ -42,6 +41,9 @@ LoginNotDefined=O Utilizador não está definido
 NameNotDefined=O Nome não está definido
 ListOfUsers=Lista de Utilizadores
 Administrator=Administrador
+SuperAdministrator=Super Administrador
+SuperAdministratorDesc=Administrador com todos os direitos
+AdministratorDesc=Entidade administrador
 DefaultRights=Permissões por Defeito
 DefaultRightsDesc=Defina aqui as permissões por defeito: as permissões que se atribuirão automaticamente a um novo utilizador no momento de a sua criação.
 DolibarrUsers=Utilizadores
@@ -68,6 +70,10 @@ ListOfGroupsForUser=Lista de grupos deste utilizador
 UsersToAdd=Utilizador a Adicionar a este grupo
 GroupsToAdd=Grupos a Adicionar a este utilizador
 NoLogin=Sem Utilizador
+LinkToCompanyContact=Link para terceiros / contact
+LinkedToDolibarrMember=Link para membro
+LinkedToDolibarrUser=Link para o utilizador do Dolibarr
+LinkedToDolibarrThirdParty=Link para Dolibarr terceiro
 CreateDolibarrLogin=Criar uma Conta
 CreateDolibarrThirdParty=Criar um Terceiro
 LoginAccountDisable=A conta está desactivada, indique um novo nome de utilizador para a activar.
@@ -83,10 +89,14 @@ Reactivate=Reactivar
 CreateInternalUserDesc=Esta janela permite criar um utilizador interno da sua Empresa/Instituição. Para criar um utilizador externo (cliente, fornecedor...) use o botão ' Criar Utilizador' que se encontra na ficha de contacto do terceiro em questão.
 InternalExternalDesc=Um utilizador <b>interno</b> é um utilizador que pertenece à sua Empresa/Instituição.<br>Um utilizador <b>externo</b> é um utilizador cliente, fornecedor ou outro.<br><br>Nos 2 casos, as permissões de utilizadores definem os direitos de acesso, mas o utilizador externo pode além disso ter  um gestor de menus diferente do utilizador interno (ver Inicio - configuração - visualização)
 PermissionInheritedFromAGroup=A permissão dá-se já que o herda de um grupo ao qual pertenece o utilizador.
+Inherited=Herdado
+UserWillBeInternalUser=Usuário será criado um usuário interno (porque não ligada a um determinado partido terceiros)
+UserWillBeExternalUser=Usuário será criado um usuário externo (porque ligado a um terceiro determinado)
 IdPhoneCaller=ID chamador (telefone)
 UserLogged=Utilizador %s Conectado
+UserLogoff=Terminar sessão de %s
 NewUserCreated=Utilizador %s  Criado
-NewUserPassword=Palavra-Passe alterada para %s 
+NewUserPassword=Palavra-Passe alterada para %s
 EventUserModified=Utilizador %s Modificado
 UserDisabled=Utilizador %s Desactivado
 UserEnabled=Utilizador %s Activado
@@ -99,39 +109,12 @@ ConfirmCreateLogin=Tem a certeza que deseja criar uma conta para este membro?
 ConfirmCreateThirdParty=Tem a certeza que deseja criar um terceiro para este membro?
 LoginToCreate=Login a Criar
 NameToCreate=Nome do Terceiro a Criar
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 21:10:10).
-// Reference language: en_US
-SuperAdministrator=Super Administrador
-SuperAdministratorDesc=Administrador com todos os direitos
-LinkToCompanyContact=Link para terceiros / contact
-LinkedToDolibarrMember=Link para membro
-LinkedToDolibarrUser=Link para o utilizador do Dolibarr
-LinkedToDolibarrThirdParty=Link para Dolibarr terceiro
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:10:10).
-
-
-
-// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
-// Reference language: en_US -> pt_PT
-Inherited=Herdado
 YourRole=Seus papéis
 YourQuotaOfUsersIsReached=A sua quota de utilizadores foi atingida!
-// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:35:34).
-
-
-// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
-// Reference language: en_US -> pt_PT
-AdministratorDesc=Entidade administrador
-UserWillBeInternalUser=Usuário será criado um usuário interno (porque não ligada a um determinado partido terceiros)
-UserWillBeExternalUser=Usuário será criado um usuário externo (porque ligado a um terceiro determinado)
-// STOP - Lines generated via autotranslator.php tool (2011-10-10 12:49:10).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 15:45:52).
-// Reference language: en_US -> pt_PT
-UserLogoff=Terminar sessão de %s
 NbOfUsers=N º de utilizadores
 DontDowngradeSuperAdmin=Apenas um superadmin pode desclassificar um superadmin
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 15:46:08).
+HierarchicalResponsible=Responsabilidade Hierárquica
+HierarchicView=Vista Hierárquica
+UseTypeFieldToChange=Use Tipo de Campo para mudar
+# OpenIDURL=OpenID URL
+# LoginUsingOpenID=Use OpenID to login

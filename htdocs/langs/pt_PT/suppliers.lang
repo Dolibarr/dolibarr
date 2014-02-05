@@ -1,5 +1,4 @@
-# Dolibarr language file - pt_PT - suppliers
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - suppliers
 Suppliers=Fornecedores
 Supplier=Fornecedor
 AddSupplier=Adicionar Fornecedor
@@ -11,17 +10,24 @@ ListOfSuppliers=Lista de Fornecedores
 ShowSupplier=Mostrar Fornecedor
 OrderDate=Data Pedido
 BuyingPrice=Preço de Compra
+BuyingPriceMin=Preço de compra mínimo
+BuyingPriceMinShort=Preço de compra Min
+# TotalBuyingPriceMin=Total of subproducts buying prices
+# SomeSubProductHaveNoPrices=Some sub-products have no price defined
 AddSupplierPrice=Adicionar Preço de Fornecedor
 ChangeSupplierPrice=Modificar Preço de Fornecedor
 ErrorQtyTooLowForThisSupplier=Quantidade insuficiente para este fornecedor
 ErrorSupplierCountryIsNotDefined=O país deste fornecedor não está definido, corrija na sua ficha
 ProductHasAlreadyReferenceInThisSupplier=Este producto já tem uma referencia neste fornecedor
+ReferenceSupplierIsAlreadyAssociatedWithAProduct=Este fornecedor de referência já está associado com uma referência: %s
 NoRecordedSuppliers=Sem Fornecedores Registados
 SupplierPayment=Pagamento a Fornecedor
 SuppliersArea=Área Fornecedores
 RefSupplierShort=Ref. Fornecedor
+Availability=Disponibilidade
 ExportDataset_fournisseur_1=Facturas de Fornecedores e Linhas de Factura
 ExportDataset_fournisseur_2=Facturas Fornecedores e Pagamentos
+ExportDataset_fournisseur_3=Pedidos a fornecedores e linhas de pedido
 ApproveThisOrder=Aprovar este Pedido
 ConfirmApproveThisOrder=Está seguro de querer aprovar este pedido?
 DenyingThisOrder=Negar este Pedido
@@ -32,23 +38,5 @@ AddCustomerInvoice=Criar Factura para o Cliente
 AddSupplierOrder=Criar Pedido a Fornecedor
 AddSupplierInvoice=Criar Factura do Fornecedor
 ListOfSupplierProductForSupplier=Lista de produtos e preços do fornecedor <b>%s</b>
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 21:10:10).
-// Reference language: en_US
 NoneOrBatchFileNeverRan=Nenhum lote <b>ou %s</b> não executou recentemente
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:10:10).
-
-
-// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
-// Reference language: en_US -> pt_PT
-ReferenceSupplierIsAlreadyAssociatedWithAProduct=Este fornecedor de referência já está associado com uma referência: %s
-// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:42:33).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 15:45:52).
-// Reference language: en_US -> pt_PT
-BuyingPriceMin=Preço de compra mínimo
-BuyingPriceMinShort=Preço de compra Min
-Availability=Disponibilidade
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 15:46:38).
+# SentToSuppliers=Sent to suppliers

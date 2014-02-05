@@ -1,14 +1,45 @@
-# Dolibarr language file - pt_PT - other 
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - other
 SecurityCode=Código segurança
 Calendar=Calendario
 AddTrip=Criar deslocação
 Tools=Utilidades
+ToolsDesc=Esta área é dedicada a ferramentas de grupo não disponíveis em diversos outros itens do menu. <br><br> Essas ferramentas podem ser alcançadas a partir do menu lateral.
 Birthday=Aniversario
 BirthdayDate=Data Aniversario
 DateToBirth=Data de Nascimento
+BirthdayAlertOn= Alerta de aniversário activo
+BirthdayAlertOff= Alerta aniversário inativo
 Notify_FICHINTER_VALIDATE=Validação Ficha Intervenção
+Notify_FICHINTER_SENTBYMAIL=Intervenções enviadas por correio
 Notify_BILL_VALIDATE=Validação factura
+Notify_BILL_UNVALIDATE=Fatura do cliente não validada
+Notify_ORDER_SUPPLIER_APPROVE=Fornecedor fim aprovado
+Notify_ORDER_SUPPLIER_REFUSE=Fornecedor fim recusado
+Notify_ORDER_VALIDATE=Pedido do cliente validado
+Notify_PROPAL_VALIDATE=Proposta do cliente validada
+Notify_WITHDRAW_TRANSMIT=Retirada de transmissão
+Notify_WITHDRAW_CREDIT=Retirada de crédito
+Notify_WITHDRAW_EMIT=Realizar a retirada
+Notify_ORDER_SENTBYMAIL=Pedido do cliente enviado pelo correio
+Notify_COMPANY_CREATE=Terceiro criado
+Notify_PROPAL_SENTBYMAIL=Proposta comercial enviada por correio
+Notify_ORDER_SENTBYMAIL=Pedido do cliente enviado pelo correio
+Notify_BILL_PAYED=Fatura de Cliente paga
+Notify_BILL_CANCEL=Fatura do cliente cancelada
+Notify_BILL_SENTBYMAIL=Fatura do cliente enviada pelo correio
+Notify_ORDER_SUPPLIER_VALIDATE=Para fornecedor validado
+Notify_ORDER_SUPPLIER_SENTBYMAIL=Para fornecedor enviada por correio
+Notify_BILL_SUPPLIER_VALIDATE=Fatura do fornecedor validado
+Notify_BILL_SUPPLIER_PAYED=Fatura do fornecedor paga
+Notify_BILL_SUPPLIER_SENTBYMAIL=Fatura do fornecedor enviada por correio
+Notify_CONTRACT_VALIDATE=Contrato validado
+Notify_FICHEINTER_VALIDATE=Intervenção validado
+Notify_SHIPPING_VALIDATE=Transporte validado
+Notify_SHIPPING_SENTBYMAIL=Envio por correio
+Notify_MEMBER_VALIDATE=Membro validado
+Notify_MEMBER_SUBSCRIPTION=Membro subscrito
+Notify_MEMBER_RESILIATE=Membro anulado
+Notify_MEMBER_DELETE=Membro excluído
 NbOfAttachedFiles=Número Ficheiros/Documentos anexos
 TotalSizeOfAttachedFiles=Tamanho Total dos Ficheiros/Documentos anexos
 MaxSize=Tamanho Máximo
@@ -16,10 +47,16 @@ AttachANewFile=Adicionar Novo Ficheiro/documento
 LinkedObject=Objecto adjudicado
 Miscellaneous=Diversos
 NbOfActiveNotifications=Número Notificações
+PredefinedMailTest=Este é um email de teste. \\ NO duas linhas são separadas por um enter.
+PredefinedMailTestHtml=Este é um email de <b>teste</b> (o teste de palavra deve ser em negrito). <br> As duas linhas são separadas por um enter.
 PredefinedMailContentSendInvoice=__CONTACTCIVNAME__ \n\n Juntamos a factura __FACREF__\n\n__PERSONALIZED__Cordialmente\n\n__SIGNATURE__
 PredefinedMailContentSendInvoiceReminder=__CONTACTCIVNAME__ \n\n Damos conhecimento que a factura __FACREF__ parece não estar paga. Segue em anexo, para que possa rever.\n\n__PERSONALIZED__Cordialmente\n\n__SIGNATURE__
 PredefinedMailContentSendProposal=__CONTACTCIVNAME__ \n\n Juntamos o orçamento __PROPREF__\n\n__PERSONALIZED__Cordialmente\n\n__SIGNATURE__
 PredefinedMailContentSendOrder=__CONTACTCIVNAME__ \n\n Juntamos  o pedido __ORDERREF__\n\n__PERSONALIZED__Cordialmente\n\n__SIGNATURE__
+PredefinedMailContentSendSupplierOrder=__CONTACTCIVNAME__ \n\nVocê vai encontrar aqui o nosso fim __ORDERREF__ \n\n__PERSONALIZED__Sincerely \n\n__SIGNATURE__
+PredefinedMailContentSendSupplierInvoice=__CONTACTCIVNAME__ \n\nVocê vai encontrar aqui a factura __FACREF__ \n\n__PERSONALIZED__ Sinceramente \n\n__SIGNATURE__
+PredefinedMailContentSendShipping=__CONTACTCIVNAME__ \n\nVocê vai encontrar aqui o transporte __SHIPPINGREF__ \n\n__PERSONALIZED__Sincerely \n\n__SIGNATURE__
+PredefinedMailContentSendFichInter=__CONTACTCIVNAME__ \n\nVocê vai encontrar aqui a intervenção __FICHINTERREF__ \n\n__PERSONALIZED__Sincerely \n\n__SIGNATURE__
 DemoDesc=Dolibarr não é um ERP monolítico, mas está composto de módulos funcionais simples e opcionais. uma demonstração que inclua todos estes módulos não tem sentido, já que nunca mais todos Os módulos são utilizados. De todas maneiras existem disponiveis muitos perfis de demonstração
 ChooseYourDemoProfil=Quer ver o perfil de demonstração que melhor corresponda e a sua Actividade...
 DemoFundation=Gestão de Membros de uma associação
@@ -43,24 +80,51 @@ FeatureDevelopment=Funcionalidade em Desenvolvimento. Não é estavel nesta vers
 FeaturesSupported=Funcionalidades suportadas
 Width=Largura
 Height=Altura
-Weight=Peso
 Depth=Fundo
+Top=Topo
+Bottom=Fundo
+Left=À esquerda
+Right=Direito
+CalculatedWeight=Peso calculado
+CalculatedVolume=Volume calculado
+Weight=Peso
 TotalWeight=Peso total
 WeightUnitton=Toneladas
 WeightUnitkg=kg
 WeightUnitg=g
 WeightUnitmg=mg
+WeightUnitpound=libra
+Length=Comprimento
+LengthUnitm=m
+LengthUnitdm=dm
+LengthUnitcm=centímetros
+LengthUnitmm=milímetro
+Surface=Área
+SurfaceUnitm2=m2
+SurfaceUnitdm2=dm2
+SurfaceUnitcm2=cm2
+SurfaceUnitmm2=mm2
+SurfaceUnitfoot2=ft2
+SurfaceUnitinch2=in2
 Volume=Volume
 TotalVolume=Volume total
 VolumeUnitm3=m3
 VolumeUnitdm3=dm3
 VolumeUnitcm3=cm3
 VolumeUnitmm3=mm3
+VolumeUnitfoot3=ft3
+VolumeUnitinch3=in3
+VolumeUnitounce=onça
+VolumeUnitlitre=litro
+VolumeUnitgallon=galão
 Size=Tamanho
 SizeUnitm=m
 SizeUnitdm=dm
 SizeUnitcm=cm
 SizeUnitmm=mm
+SizeUnitinch=polegada
+SizeUnitfoot=pé
+SizeUnitpoint=ponto
 BugTracker=Incidencias
 SendNewPasswordDesc=Este formulario permite enviar uma Nova palavra-passe. Enviará para o e-mail do utilizador<br>a modificação da palavra-passe não será efectiva até que o usario faça click no link de confirmação incluido neste e-mail.<br>Supervise o seu correio.
 BackToLoginPage=Voltar e a página de ligação
@@ -74,39 +138,51 @@ StatsByNumberOfEntities=Estatísticas em número de identidadees referentes
 NumberOfProposals=Número de Orçamentos nos últimos 12 meses
 NumberOfCustomerOrders=Número de pedidos de clientes nos últimos 12 meses
 NumberOfCustomerInvoices=Número de facturas a clientes nos últimos 12 meses
+# NumberOfSupplierOrders=Number of supplier orders on last 12 month
 NumberOfSupplierInvoices=Número de facturas de Fornecedores nos últimos 12 meses
 NumberOfUnitsProposals=Número de unidades nos Orçamentos nos últimos 12 meses
 NumberOfUnitsCustomerOrders=Número de unidades nos pedidos de clientes nos últimos 12 meses
 NumberOfUnitsCustomerInvoices=Número de unidades em facturas a clientes nos últimos 12 meses
+# NumberOfUnitsSupplierOrders=Number of units on supplier orders on last 12 month
 NumberOfUnitsSupplierInvoices=Número de unidades em facturas de Fornecedores nos últimos 12 meses
+EMailTextInterventionValidated=Intervenção %s validados
+EMailTextInvoiceValidated=Factura %s validados
+EMailTextProposalValidated=O %s proposta foi validada.
+EMailTextOrderValidated=O %s pedido foi validado.
 EMailTextOrderApproved=Pedido %s Aprovado
 EMailTextOrderApprovedBy=Pedido %s Aprovado por %s
 EMailTextOrderRefused=Pedido %s Reprovado
 EMailTextOrderRefusedBy=Pedido %s Reprovado por %s
-Bookmark=Painel
-Bookmarks=Paineis
-NewBookmark=Nova Favorito
-ShowBookmark=Mostrar Favoritos
-BookmarkThisPage=Adicionar esta página a as suas favoritos
-OpenANewWindow=Abrir uma Nova janela
-ReplaceWindow=Substituir a janela actual
-BookmarkTargetNewWindowShort=Nova janela
-BookmarkTargetReplaceWindowShort=janela actual
-BookmarkTitle=Título do Favorito
-UrlOrLink=URL
-BehaviourOnClick=comportamento ao fazer click na URL
-CreateBookmark=Criar Painel
-SetHereATitleForLink=Indicar aqui um título do Favorito
-UseAnExternalHttpLinkOrRelativeDolibarrLink=Indicar um URL externo para o URL Dolibarr relativo
-ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=escolher sim deve abrir a página numa Nova janela ou na actual
-BookmarksManagement=Gestão de Paineis
-ListOfBookmarks=Lista de Paineis
-##### Webcal #####=
-LoginWebcal=Login Webcalendar
-ErrorWebcalLoginNotDefined=o login Webcalendar associado e ao seu utilizador Dolibarr <b>%s</b> não está definido
-##### Phenix #####=
-ErrorPhenixLoginNotDefined=o login Phenix associado e a sua conta Dolibarrr <b>%s</b>  não está definido
-##### Calendar common #####=
+EMailTextExpeditionValidated=O envio %s foi validado.
+ImportedWithSet=Importação conjunto de dados
+DolibarrNotification=Notificação automática
+ResizeDesc=Digite a nova largura <b>ou</b> altura nova. Razão será mantida durante o redimensionamento ...
+NewLength=Nova largura
+NewHeight=Nova altura
+NewSizeAfterCropping=Novo tamanho após a corte
+DefineNewAreaToPick=Definir nova área na imagem para escolher (clique na imagem à esquerda, em seguida, arraste até chegar ao canto oposto)
+CurrentInformationOnImage=Esta ferramenta foi projetada para ajudá-lo a redimensionar ou recortar uma imagem. Esta é informação sobre a imagem editada atual
+ImageEditor=editor de imagem
+YouReceiveMailBecauseOfNotification=Você recebe essa mensagem porque seu e-mail foi adicionado à lista de metas a serem informados de eventos particulares no software %s %s de.
+YouReceiveMailBecauseOfNotification2=Este evento é o seguinte:
+ThisIsListOfModules=Esta é uma lista de módulos pré-selecionados por este perfil demo (apenas os módulos mais comuns são visíveis nesta demo). Editá-la para ter uma demonstração mais personalizada e clique em &quot;Start&quot;.
+ClickHere=Clique aqui
+UseAdvancedPerms=Use as permissões avançadas de alguns módulos
+FileFormat=Formato de arquivo
+SelectAColor=Escolha uma cor
+AddFiles=Adicionar arquivos
+StartUpload=Iniciar upload
+CancelUpload=Cancelar upload
+FileIsTooBig=Arquivos muito grandes
+PleaseBePatient=Por favor, aguarde...
+# RequestToResetPasswordReceived=A request to change your Dolibarr password has been received
+# NewKeyIs=This is your new keys to login
+# NewKeyWillBe=Your new key to login to software will be
+# ClickHereToGoTo=Click here to go to %s
+# YouMustClickToChange=You must however first click on the following link to validate this password change
+# ForgetIfNothing=If you didn't request this change, just forget this email. Your credentials are kept safe.
+
+##### Calendar common #####
 AddCalendarEntry=Adicionar entrada ao calendario
 NewCompanyToDolibarr=Empresa %s inserida em Dolibarr
 ContractValidatedInDolibarr=Contrato %s validado em Dolibarr
@@ -125,7 +201,10 @@ MemberValidatedInDolibarr=Membro %s validado em Dolibarr
 MemberResiliatedInDolibarr=Membro %s dado de baixa em Dolibarr
 MemberDeletedInDolibarr=Membro %s eliminado de Dolibarr
 MemberSubscriptionAddedInDolibarr=Subscrição do membro % adicionada em Dolibarr
-##### Export #####=
+ShipmentValidatedInDolibarr=%s embarque validado em Dolibarr
+# ShipmentDeletedInDolibarr=Shipment %s deleted from Dolibarr
+##### Export #####
+Export=Exportação
 ExportsArea=Área de Exportações
 AvailableFormats=Formatos disponiveis
 LibraryUsed=Livraria utilizada
@@ -134,113 +213,5 @@ ExportableDatas=Dados exportaveis
 NoExportableData=Não existem dados exportaveis (sem módulos com dados exportaveis , o necessitam de permissões)
 ToExport=Exportar
 NewExport=Nova Exportação
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 21:10:10).
-// Reference language: en_US
-BirthdayAlertOn=Alerta de aniversário activo
-BirthdayAlertOff=Alerta aniversário inativo
-Notify_ORDER_SUPPLIER_APPROVE=Fornecedor fim aprovado
-Notify_ORDER_SUPPLIER_REFUSE=Fornecedor fim recusado
-EMailTextInterventionValidated=Intervenção %s validados
-EMailTextInvoiceValidated=Factura %s validados
-ImportedWithSet=Importação conjunto de dados
-DolibarrNotification=Notificação automática
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:10:10).
-
-
-// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
-// Reference language: en_US -> pt_PT
-PredefinedMailContentSendSupplierOrder=__CONTACTCIVNAME__ \n\nVocê vai encontrar aqui o nosso fim __ORDERREF__ \n\n__PERSONALIZED__Sincerely \n\n__SIGNATURE__
-WeightUnitpound=libra
-VolumeUnitounce=onça
-VolumeUnitlitre=litro
-VolumeUnitgallon=galão
-SizeUnitinch=polegada
-SizeUnitfoot=pé
-ImageEditor=editor de imagem
-// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:57:08).
-
-
-// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
-// Reference language: en_US -> pt_PT
-ToolsDesc=Esta área é dedicada a ferramentas de grupo não disponíveis em diversos outros itens do menu. <br><br> Essas ferramentas podem ser alcançadas a partir do menu lateral.
-Notify_WITHDRAW_TRANSMIT=Retirada de transmissão
-Notify_WITHDRAW_CREDIT=Retirada de crédito
-Notify_BILL_CANCEL=Fatura do cliente cancelada
-Notify_BILL_SENTBYMAIL=Fatura do cliente enviada pelo correio
-Notify_ORDER_SUPPLIER_VALIDATE=Para fornecedor validado
-Notify_ORDER_SUPPLIER_SENTBYMAIL=Para fornecedor enviada por correio
-Notify_BILL_SUPPLIER_VALIDATE=Fatura do fornecedor validado
-Notify_BILL_SUPPLIER_PAYED=Fatura do fornecedor paga
-Notify_BILL_SUPPLIER_SENTBYMAIL=Fatura do fornecedor enviada por correio
-Notify_CONTRACT_VALIDATE=Contrato validado
-Notify_FICHEINTER_VALIDATE=Intervenção validado
-Notify_SHIPPING_VALIDATE=Transporte validado
-PredefinedMailContentSendShipping=__CONTACTCIVNAME__ \n\nVocê vai encontrar aqui o transporte __SHIPPINGREF__ \n\n__PERSONALIZED__Sincerely \n\n__SIGNATURE__
-PredefinedMailContentSendFichInter=__CONTACTCIVNAME__ \n\nVocê vai encontrar aqui a intervenção __FICHINTERREF__ \n\n__PERSONALIZED__Sincerely \n\n__SIGNATURE__
-Top=Topo
-Bottom=Fundo
-Left=À esquerda
-Right=Direito
-ThisIsListOfModules=Esta é uma lista de módulos pré-selecionados por este perfil demo (apenas os módulos mais comuns são visíveis nesta demo). Editá-la para ter uma demonstração mais personalizada e clique em &quot;Start&quot;.
-ClickHere=Clique aqui
-UseAdvancedPerms=Use as permissões avançadas de alguns módulos
-FileFormat=Formato de arquivo
-Export=Exportação
-// STOP - Lines generated via autotranslator.php tool (2011-10-10 04:30:00).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 15:35:53).
-// Reference language: en_US -> pt_PT
-Notify_WITHDRAW_EMIT=Realizar a retirada
-Notify_ORDER_SENTBYMAIL=Pedido do cliente enviado pelo correio
-Notify_COMPANY_CREATE=Terceiro criado
-Notify_PROPAL_SENTBYMAIL=Proposta comercial enviada por correio
-Notify_ORDER_SENTBYMAIL=Envío de pedido por e-mail
-Notify_BILL_PAYED=Fatura de Cliente paga 
-Notify_SHIPPING_SENTBYMAIL=Envio por correio
-Notify_MEMBER_VALIDATE=Membro validado
-Notify_MEMBER_SUBSCRIPTION=Membro subscrito
-Notify_MEMBER_RESILIATE=Membro anulado
-Notify_MEMBER_DELETE=Membro excluído
-PredefinedMailContentSendSupplierInvoice=__CONTACTCIVNAME__ \n\nVocê vai encontrar aqui a factura __FACREF__ \n\n__PERSONALIZED__ Sinceramente \n\n__SIGNATURE__
-SelectAColor=Escolha uma cor
-AddFiles=Adicionar arquivos
-StartUpload=Iniciar upload
-CancelUpload=Cancelar upload
-FileIsTooBig=Arquivos muito grandes
-ShipmentValidatedInDolibarr=%s embarque validado em Dolibarr
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 15:36:15).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 15:42:20).
-// Reference language: en_US -> pt_PT
-Notify_ORDER_VALIDATE=Pedido do cliente validado
-Notify_PROPAL_VALIDATE=Proposta do cliente validada
-PredefinedMailTest=Este é um email de teste. \ NO duas linhas são separadas por um enter.
-PredefinedMailTestHtml=Este é um email de <b>teste</b> (o teste de palavra deve ser em negrito). <br> As duas linhas são separadas por um enter.
-CalculatedWeight=Peso calculado
-CalculatedVolume=Volume calculado
-Length=Comprimento
-LengthUnitm=m
-LengthUnitdm=dm
-LengthUnitcm=centímetros
-LengthUnitmm=milímetro
-Surface=Área
-SurfaceUnitm2=m2
-SurfaceUnitdm2=dm2
-SurfaceUnitcm2=cm2
-SurfaceUnitmm2=mm2
-EMailTextProposalValidated=O %s proposta foi validada.
-EMailTextOrderValidated=O %s pedido foi validado.
-ResizeDesc=Digite a nova largura <b>ou</b> altura nova. Razão será mantida durante o redimensionamento ...
-NewLength=Nova largura
-NewHeight=Nova altura
-NewSizeAfterCropping=Novo tamanho após a corte
-DefineNewAreaToPick=Definir nova área na imagem para escolher (clique na imagem à esquerda, em seguida, arraste até chegar ao canto oposto)
-CurrentInformationOnImage=Esta ferramenta foi projetada para ajudá-lo a redimensionar ou recortar uma imagem. Esta é informação sobre a imagem editada atual
-YouReceiveMailBecauseOfNotification=Você recebe essa mensagem porque seu e-mail foi adicionado à lista de metas a serem informados de eventos particulares no software %s %s de.
-YouReceiveMailBecauseOfNotification2=Este evento é o seguinte:
+##### External sites #####
 ExternalSites=Sites externos
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 15:42:55).

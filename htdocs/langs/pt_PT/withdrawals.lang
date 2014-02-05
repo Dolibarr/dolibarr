@@ -1,10 +1,11 @@
-# Dolibarr language file - pt_PT - withdrawals
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - withdrawals
 StandingOrdersArea=Área de Débitos Directos
 CustomersStandingOrdersArea=Área de Débitos Directos de Clientes
 StandingOrders=Débitos Directos
 StandingOrder=Débitos Directos
 NewStandingOrder=Novo Débito Directo
+StandingOrderToProcess=Para processar
+StandingOrderProcessed=Processado
 Withdrawals=Levantamentos
 Withdrawal=Levantamento
 WithdrawalsReceipts=Ordens de Levantamento
@@ -18,6 +19,7 @@ RequestStandingOrderTreated=Pedidos de Débitos Directos Processados
 CustomersStandingOrders=Débitos Directos de Clientes
 CustomerStandingOrder=Débito Directo de Cliente
 NbOfInvoiceToWithdraw=Nº de Facturas Pendentes de Levantamento
+NbOfInvoiceToWithdrawWithInfo=N º de factura para levantamento, de clientes com informações sobre a conta bancária definida
 InvoiceWaitingWithdraw=Facturas em Espera de Levantamento
 AmountToWithdraw=Quantidade a Levantar
 WithdrawsRefused=Débitos Directos Rejeitados
@@ -33,17 +35,12 @@ ThirdPartyDeskCode=Código da Escritório do Terceiro
 NoInvoiceCouldBeWithdrawed=Não há factura de débito directo com sucesso. Verifique se a factura da empresa tem um válido IBAN.
 ClassCredited=Classificar creditados
 ClassCreditedConfirm=Está seguro de querer classificar este débito directo como realizado sobre a sua conta bancaria?
-
-
-// START - Lines generated via autotranslator.php tool (2010-09-04 02:09:13).
-// Reference language: en_US -> pt_PT
-StandingOrderToProcess=Para processar
-StandingOrderProcessed=Processado
 TransData=Data de Envio
 TransMetod=Método de transmissão
 Send=Enviar
 Lines=Linhas
 StandingOrderReject=Emitir uma rejeição
+InvoiceRefused=Factura Cliente, rejeitada
 WithdrawalRefused=Levantamento rejeitado
 WithdrawalRefusedConfirm=Tem certeza que quer entrar com uma rejeição de levantamento para a sociedade
 RefusedData=Data de rejeição
@@ -54,6 +51,7 @@ InvoiceRefused=Factura Cliente, rejeitada
 Status=Estado
 StatusUnknown=Desconhecido
 StatusWaiting=Espera
+StatusTrans=Transmitido
 StatusCredited=Creditado
 StatusRefused=Rejeitado
 StatusMotif0=Indefinido
@@ -73,22 +71,20 @@ NotifyTransmision=levantamento Envio
 NotifyEmision=levantamento de emissão
 NotifyCredit=levantamento de crédito
 NumeroNationalEmetter=Número Nacional de Transmissor
-// STOP - Lines generated via autotranslator.php tool (2010-09-04 02:23:13).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 15:45:52).
-// Reference language: en_US -> pt_PT
-NbOfInvoiceToWithdrawWithInfo=N º de factura para levantamento, de clientes com informações sobre a conta bancária definida
-StatusTrans=Transmitido
 PleaseSelectCustomerBankBANToWithdraw=Selecione informações sobre conta bancária do cliente para retirar
 WithBankUsingRIB=Para contas bancárias usando RIB
 WithBankUsingBANBIC=Para contas bancárias usando IBAN / BIC / SWIFT
 BankToReceiveWithdraw=Conta bancária para receber levantamento
 CreditDate=Crédito em
-WithdrawalFileNotCapable=Não foi possível gerar ficheiro de recibo do levantamento 
+WithdrawalFileNotCapable=Não foi possível gerar ficheiro de recibo do levantamento
 ShowWithdraw=Mostrar levantamento
 IfInvoiceNeedOnWithdrawPaymentWontBeClosed=No entanto, se não tiver factura, pelo menos, um pagamento levantamento ainda processado, que não irá ser definido como pago para permitir o levantamento antes de administrar.
 DoStandingOrdersBeforePayments=Estas abas permitem a você pedir uma ordem permanente. Uma vez que ele será terminado, você pode digitar o pagamento para fechar a fatura.
+WithdrawalFile=arquivo retirado
+SetToStatusSent=Definir o estado como "arquivo enviado"
+ThisWillAlsoAddPaymentOnInvoice=Isso também irá criar pagamentos em facturas e classificá-los para pagar
+
+### Notifications
 InfoCreditSubject=Pagamento de %s ordem permanente pelo banco
 InfoCreditMessage=O %s ordem permanente foi pago pelo banco <br> Dados de pagamento: %s
 InfoTransSubject=Transmissão de %s ordem permanente para o banco
@@ -96,6 +92,5 @@ InfoTransMessage=O %s ordem permanente foi transmitido para o banco por %s %s. <
 InfoTransData=Valor: %s <br> Metode: %s <br> Data: %s
 InfoFoot=Esta é uma mensagem enviada pelo automatizado Dolibarr
 InfoRejectSubject=Ordem permanente recusou
-InfoRejectMessage=Olá, <br><br> a ordem de standig %s faturas relacionadas aos %s empresa, com um montante de %s foi recusado pelo banco. <br><br> - <br> $%
+# InfoRejectMessage=Hello,<br><br>the standing order of invoice %s related to the company %s, with an amount of %s has been refused by the bank.<br><br>--<br>%s
 ModeWarning=Opção para o modo real não foi definido, nós paramos depois desta simulação
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 15:46:23).

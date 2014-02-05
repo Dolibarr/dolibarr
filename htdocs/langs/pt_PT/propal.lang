@@ -1,13 +1,14 @@
-# Dolibarr language file - pt_PT - propal
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - propal
 Proposals=Orçamentos
 Proposal=Orçamento
+ProposalShort=Proposta
 ProposalsDraft=Orçamentos Rascunho
 ProposalDraft=Orçamento Rascunho
 ProposalsOpened=Orçamentos Abertos
 Prop=Orçamentos
 CommercialProposal=Orçamento
 CommercialProposals=Orçamentos
+ProposalCard=Cartão de Proposta
 NewProp=Novo Orçamento
 NewProposal=Novo Orçamento
 NewPropal=Novo Orçamento
@@ -20,6 +21,7 @@ ConfirmDeleteProp=Está seguro de querer eliminar este orçamento?
 ConfirmValidateProp=Está seguro de querer Confirmar este orçamento?
 LastPropals=Os %s Ultimos Orçamentos
 LastClosedProposals=Os Ultimos Orçamentos Encerrados
+LastModifiedProposals=Última %s propostas alteradas
 AllPropals=Todos Os Orçamentos
 LastProposals=Ultimos Orçamentos
 SearchAProposal=Procurar um Orçamento
@@ -31,7 +33,7 @@ ShowPropal=Ver Orçamento
 PropalsDraft=Rascunho
 PropalsOpened=Abertos
 PropalsNotBilled=Não Facturados
-PropalStatusDraft=Rascunho (A Confirmar)
+PropalStatusDraft=Rascunho (a Confirmar)
 PropalStatusValidated=Validado (Orçamento Aberto)
 PropalStatusOpened=Validado (Orçamento Aberto)
 PropalStatusClosed=Encerrado
@@ -57,56 +59,44 @@ FileNotUploaded=Não foi Carregado o Ficheiro
 FileUploaded=O Ficheiro foi carregado correctamente
 AssociatedDocuments=Documentos Associados ao Orçamento :
 ErrorCantOpenDir=Impossivel Abrir a Pasta
+DatePropal=Data da proposta
 DateEndPropal=Válido até
 DateEndPropalShort=Data Fim
 ValidityDuration=Duração da Validade
 CloseAs=Fechar Estatuto
 ClassifyBilled=Classificar Facturado
 BuildBill=Criar Factura
-RelatedBill=Factura Associada
-RelatedBills=Facturas associadas
 ErrorPropalNotFound=Orçamento %s Inexistente
 Estimate=Orçamento:
 EstimateShort=Orç.
 OtherPropals=Outros Orçamentos
+# AddToDraftProposals=Add to draft proposal
+# NoDraftProposals=No draft proposals
 CopyPropalFrom=Criar orçamento por Cópia de um existente
 CreateEmptyPropal=Criar orçamento desde a Lista de produtos predefinidos
 DefaultProposalDurationValidity=Prazo de validade por defeito (em días)
 UseCustomerContactAsPropalRecipientIfExist=Utilizar morada contacto de seguimiento de cliente definido em vez da morada do Terceiro como destinatario dos Orçamentos
 ClonePropal=Copiar Proposta Comercial
 ConfirmClonePropal=Tem a certeza que deseja copiar a proposta comercial <b>%s</b>?
-DocModelAzurDescription=Modelo de orçamento completo (logo...)
-DocModelJauneDescription=Modelo de Orçamento Jaune
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 21:10:10).
-// Reference language: en_US
-ProposalShort=Proposta
-LastModifiedProposals=Última %s propostas alteradas
-DatePropal=Data da proposta
+ConfirmReOpenProp=Tem certeza que deseja abrir para trás as <b>%s</b> proposta comercial?
 ProposalsAndProposalsLines=Proposta comercial e linhas
 ProposalLine=Proposta linha
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:10:10).
-
-
-// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
-// Reference language: en_US -> pt_PT
-TypeContact_propal_internal_SALESREPFOLL=Representante proposta seguimento
-TypeContact_propal_external_BILLING=contacto na factura do Cliente
-TypeContact_propal_external_CUSTOMER=Atendimento ao cliente seguinte proposta-up
-// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:42:27).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 15:45:52).
-// Reference language: en_US -> pt_PT
-ProposalCard=Cartão de Proposta
-ConfirmReOpenProp=Tem certeza que deseja abrir para trás as <b>%s</b> proposta comercial?
 AvailabilityPeriod=Disponibilidade atraso
 SetAvailability=Definir atraso disponibilidade
 AfterOrder=após a ordem
+##### Availability #####
 AvailabilityTypeAV_NOW=Imediato
 AvailabilityTypeAV_1W=1 semana
 AvailabilityTypeAV_2W=2 semanas
 AvailabilityTypeAV_3W=3 semanas
 AvailabilityTypeAV_1M=1 mês
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 15:48:32).
+##### Types de contacts #####
+TypeContact_propal_internal_SALESREPFOLL=Representante proposta seguimento
+TypeContact_propal_external_BILLING=contacto na factura do Cliente
+TypeContact_propal_external_CUSTOMER=Atendimento ao cliente seguinte proposta-up
+# Document models
+DocModelAzurDescription=Modelo de orçamento completo (logo...)
+DocModelJauneDescription=Modelo de Orçamento Jaune
+DefaultModelPropalCreate=Criação do modelo padrão
+DefaultModelPropalToBill=Modelo padrão ao fechar uma proposta de negócio (a facturar)
+DefaultModelPropalClosed=Modelo padrão ao fechar uma proposta de negócio (não faturada)

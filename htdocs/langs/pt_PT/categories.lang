@@ -1,5 +1,4 @@
-# Dolibarr language file - pt_PT - categories
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - categories
 Category=Categoria
 Categories=Categorias
 Rubrique=Categoria
@@ -16,6 +15,8 @@ ProductsCategoriesArea=Área Categorias de Produtos e Serviços
 SuppliersCategoriesArea=Área Categorias Fornecedores
 CustomersCategoriesArea=Área Categorias Clientes
 ThirdPartyCategoriesArea=Área Categorias de Terceiros
+MembersCategoriesArea=Os membros da zona categorias
+# ContactsCategoriesArea=Contacts categories area
 MainCats=Categorias Principais
 SubCats=Sub-Categorias
 CatStatistics=Estatísticas
@@ -48,11 +49,16 @@ ProductIsInCategories=Este produto/serviço encontra-se nas seguintes categorias
 SupplierIsInCategories=Este fornecedor encontra-se nas seguintes categorias
 CompanyIsInCustomersCategories=Esta empresa encontra-se nas seguintes categorias
 CompanyIsInSuppliersCategories=Esta empresa encontra-se nas seguintes categorias de Fornecedores
+MemberIsInCategories=Este membro possui a seguinte membros categorias
+# ContactIsInCategories=This contact owns to following contacts categories
 ProductHasNoCategory=Este produto/serviço não se encontra em nenhuma categoria em particular
 SupplierHasNoCategory=Este fornecedor não se encontra em Nenhuma categoria em particular
 CompanyHasNoCategory=Esta empresa não se encontra em nenhuma categoria em particular
+MemberHasNoCategory=Este membro não está em nenhuma categoria
+# ContactHasNoCategory=This contact is not in any categories
 ClassifyInCategory=Esta categoria não contem clientes
 NoneCategory=Nenhuma
+# NotCategorized=Without category
 CategoryExistsAtSameLevel=Esta categoria já existe na mesma localização
 ReturnInProduct=Voltar à ficha produto/serviço
 ReturnInSupplier=Voltar à ficha fornecedor
@@ -69,35 +75,33 @@ NoCategoriesDefined=Nenhuma Categoria Definida
 SuppliersCategoryShort=Categoria Fornecedores
 CustomersCategoryShort=Categoria Clientes
 ProductsCategoryShort=Categoria Produtos
+MembersCategoryShort=Membros da categoria
 SuppliersCategoriesShort=Categorias Fornecedores
 CustomersCategoriesShort=Categorias Clientes
 CustomersProspectsCategoriesShort=Cat. Clientes/Potenciais
 ProductsCategoriesShort=Categorias Produtos
+MembersCategoriesShort=categorias de membros
+# ContactCategoriesShort=Contacts categories
 ThisCategoryHasNoProduct=Esta categoria não contem nenhum produto.
 ThisCategoryHasNoSupplier=Esta categoria não contem a nenhum fornecedor.
 ThisCategoryHasNoCustomer=Esta categoria não contem a nenhum cliente.
+ThisCategoryHasNoMember=Esta categoria não contém nenhum membro.
+# ThisCategoryHasNoContact=This category does not contain any contact.
 AssignedToCustomer=Atribuir a um cliente
 AssignedToTheCustomer=Atribuido a um cliente
 InternalCategory=Categoria Interna
 CategoryContents=Conteúdo da Categoria
 CategId=Id Categoria
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 21:10:10).
-// Reference language: en_US
 CatSupList=Lista de fornecedores categorias
 CatCusList=Lista de clientes / perspectiva categorias
 CatProdList=Lista dos produtos categorias
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:10:10).
-
-
-// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
-// Reference language: en_US -> pt_PT
-MembersCategoriesArea=Os membros da zona categorias
-MemberIsInCategories=Este membro possui a seguinte membros categorias
-MemberHasNoCategory=Este membro não está em nenhuma categoria
-MembersCategoryShort=Membros da categoria
-MembersCategoriesShort=categorias de membros
-ThisCategoryHasNoMember=Esta categoria não contém nenhum membro.
 CatMemberList=Categorias Lista de membros
-// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:35:16).
+# CatContactList=List of contact categories and contact
+# CatSupLinks=Links between suppliers and categories
+# CatCusLinks=Links between customers/prospects and categories
+# CatProdLinks=Links between products/services and categories
+# CatMemberLinks=Links between members and categories
+# CatProdLinks=Links between products/services and categories
+# CatCusLinks=Links between customers/prospects and categories
+# CatSupLinks=Links between suppliers and categories
+# DeleteFromCat=Remove from category

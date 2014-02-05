@@ -1,12 +1,14 @@
-# Dolibarr language file - pt_PT - orders
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - orders
 OrdersArea=Area de Pedidos de clientes
 SuppliersOrdersArea=Área de Pedidos a Fornecedores
 OrderCard=Ficha Pedido
+# OrderId=Order Id
 Order=Pedido
 Orders=Pedidos
+OrderLine=Ordem linha
 OrderFollow=Seguimento
 OrderDate=Data Pedido
+OrderToProcess=Para iniciar o processo
 NewOrder=Novo Pedido
 ToOrder=Realizar Pedido
 MakeOrder=Realizar Pedido
@@ -21,12 +23,16 @@ OrdersToValid=Pedidos a Confirmar
 OrdersToBill=Pedidos por Facturar
 OrdersInProcess=Pedidos em Processo
 OrdersToProcess=Pedidos a Processar
+SuppliersOrdersToProcess=Ordens do Fornecedor para processar
 StatusOrderCanceledShort=Anulado
 StatusOrderDraftShort=Rascunho
 StatusOrderValidatedShort=Validado
+StatusOrderSentShort=No processo
+# StatusOrderSent=Shipment in process
 StatusOrderOnProcessShort=Em curso
 StatusOrderProcessedShort=Processado
 StatusOrderToBillShort=A Facturar
+StatusOrderToBill2Short=A facturar
 StatusOrderApprovedShort=Aprovado
 StatusOrderRefusedShort=Reprovado
 StatusOrderToProcessShort=A Processar
@@ -38,30 +44,34 @@ StatusOrderValidated=Validado
 StatusOrderOnProcess=Em processo
 StatusOrderProcessed=Processado
 StatusOrderToBill=A Facturar
+StatusOrderToBill2=A facturar
 StatusOrderApproved=Aprovado
 StatusOrderRefused=Reprovado
 StatusOrderReceivedPartially=Recebido Parcialmente
 StatusOrderReceivedAll=Recebido
+ShippingExist=Um existe um envio
 DraftOrWaitingApproved=Rascunho aprovado mas ainda não aprovado
 DraftOrWaitingShipped=Rascunho o validado mas ainda não expedido
 MenuOrdersToBill=Pedidos por Facturar
+# MenuOrdersToBill2=Orders to bill
 SearchOrder=Procurar um Pedido
-Sending=Envío
-Sendings=Envíos
 ShipProduct=Enviar Produto
 Discount=Desconto
 CreateOrder=Criar Pedido
 RefuseOrder=Rejeitar o Pedido
 ApproveOrder=Aceitar o Pedido
 ValidateOrder=Confirmar o Pedido
+UnvalidateOrder=Pedido inválido
 DeleteOrder=Eliminar o pedido
 CancelOrder=Anular o Pedido
 AddOrder=Criar Pedido
 AddToMyOrders=Adicionar os meus Pedidos
 AddToOtherOrders=Adicionar a outros pedidos
+# AddToDraftOrders=Add to draft order
 ShowOrder=Mostrar Pedido
 NoOpenedOrders=Nenhum pedido em aberto
 NoOtherOpenedOrders=Nenhum outro pedido aberto
+# NoDraftOrders=No draft orders
 OtherOrders=Outros Pedidos
 LastOrders=Os %s últimos pedidos
 LastModifiedOrders=Os %s últimos pedidos modificados
@@ -71,16 +81,18 @@ NbOfOrders=Número de Pedidos
 OrdersStatistics=Estatísticas de pedidos
 OrdersStatisticsSuppliers=Estatísticas de Pedidos a Fornecedores
 NumberOfOrdersByMonth=Número de Pedidos por Mês
-AmountOfOrdersByMonthHT=Valor total de pedidos por mês (sem IVA)
+# AmountOfOrdersByMonthHT=Amount of orders by month (net of tax)
 ListOfOrders=Lista de Pedidos
 CloseOrder=Fechar Pedido
 ConfirmCloseOrder=Tem certeza de que deseja fechar este pedido? Quando um pedido é fechado, ela só pode ser cobrado.
-ConfirmCloseOrderIfSending=Tem certeza de que deseja fechar este pedido? 
+ConfirmCloseOrderIfSending=Tem certeza de que deseja fechar este pedido?
 ConfirmDeleteOrder=Está seguro de querer eliminar este pedido?
 ConfirmValidateOrder=Está seguro de querer Confirmar este pedido sobre a referencia <b>%s</b> ?
+ConfirmUnvalidateOrder=Tem certeza de que deseja restaurar <b>%s</b> pedido ao estado projecto?
 ConfirmCancelOrder=Está seguro de querer anular este pedido?
 ConfirmMakeOrder=Está seguro de querer confirmar este pedido em data de<b>%s</b> ?
 GenerateBill=Facturar
+# ClassifyShipped=Classify delivered
 ClassifyBilled=Classificar "Facturado"
 ComptaCard=Ficha Contabilidade
 DraftOrders=Rascunhos de Pedidos
@@ -88,7 +100,7 @@ RelatedOrders=Pedidos Anexos
 OnProcessOrders=Pedidos em Processo
 RefOrder=Ref. Pedido
 RefCustomerOrder=Ref. Pedido Cliente
-CustomerOrder=Pedido de cliente
+CustomerOrder=Pedido do Cliente
 RefCustomerOrderShort=Ref. Ped. Cliente
 SendOrderByMail=Enviar pedido por e-mail
 ActionsOnOrder=Acções sobre o pedido
@@ -99,37 +111,10 @@ UseCustomerContactAsOrderRecipientIfExist=Utilizar morada do contacto do cliente
 RunningOrders=Pedidos em Curso
 UserWithApproveOrderGrant=Utilizadores autorizados a aprovar os pedidos.
 PaymentOrderRef=Pagamento de Pedido %s
-Error_COMMANDE_SUPPLIER_ADDON_NotDefined=Constante COMMANDE_SUPPLIER_ADDON não definida
-Error_COMMANDE_ADDON_NotDefined=Constante COMMANDE_ADDON não definida
-Error_FailedToLoad_COMMANDE_SUPPLIER_ADDON_File=Erro na carga do Ficheiro módulo '%s'
-Error_FailedToLoad_COMMANDE_ADDON_File=Erro na carga de ficheiro módulo '%s'
-# Sources
-OrderSource0=Orçamento Proposto
-OrderSource1=Internet
-OrderSource2=Campanha por correio
-OrderSource3=Campanha telefónica
-OrderSource4=Campanha por fax
-OrderSource5=Comercial
-OrderSource6=Revistas
-QtyOrdered=Quant. Pedida
-AddDeliveryCostLine=Adicionar uma linha de despesas de portes indicando o peso do pedido
-# einstein PDF Model
-PDFEinsteinDescription=Modelo de orçamento completo (logo...)
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 21:10:10).
-// Reference language: en_US
-OrderLine=Ordem linha
 CloneOrder=Copiar pedido
 ConfirmCloneOrder=Tem certeza de que deseja copiar este <b>fim %s?</b>
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:10:10).
-
-
-
-// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
-// Reference language: en_US -> pt_PT
-OrderToProcess=Para iniciar o processo
 DispatchSupplierOrder=Para receber %s fornecedor
+##### Types de contacts #####
 TypeContact_commande_internal_SALESREPFOLL=Representante ordem do cliente seguimento
 TypeContact_commande_internal_SHIPPING=Representante transporte seguimento
 TypeContact_commande_external_BILLING=Contacto na factura do Cliente
@@ -140,20 +125,42 @@ TypeContact_order_supplier_internal_SHIPPING=Representante transporte seguimento
 TypeContact_order_supplier_external_BILLING=Fornecedor Contactar com factura
 TypeContact_order_supplier_external_SHIPPING=Fornecedor Contactar com transporte
 TypeContact_order_supplier_external_CUSTOMER=Fornecedor Contactar com a seguinte ordem-up
+
+Error_COMMANDE_SUPPLIER_ADDON_NotDefined=Constante COMMANDE_SUPPLIER_ADDON não definida
+Error_COMMANDE_ADDON_NotDefined=Constante COMMANDE_ADDON não definida
+Error_FailedToLoad_COMMANDE_SUPPLIER_ADDON_File=Erro na carga do Ficheiro módulo '%s'
+Error_FailedToLoad_COMMANDE_ADDON_File=Erro na carga de ficheiro módulo '%s'
+# Error_OrderNotChecked=No orders to invoice selected
+
+
+# Sources
+OrderSource0=Orçamento Proposto
+OrderSource1=Internet
+OrderSource2=Campanha por correio
+OrderSource3=Campanha telefónica
+OrderSource4=Campanha por fax
+OrderSource5=Comercial
+OrderSource6=Revistas
+QtyOrdered=Quant. Pedida
+AddDeliveryCostLine=Adicionar uma linha de despesas de portes indicando o peso do pedido
+
+# Documents models
+PDFEinsteinDescription=Modelo de orçamento completo (logo...)
 PDFEdisonDescription=Um modelo simples ordem
-// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:34:22).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 15:45:52).
-// Reference language: en_US -> pt_PT
-SuppliersOrdersToProcess=Ordens do Fornecedor para processar
-StatusOrderSentShort=No processo
-ShippingExist=Um existe um envio
-UnvalidateOrder=Pedido inválido
-ConfirmUnvalidateOrder=Tem certeza de que deseja restaurar <b>%s</b> pedido ao estado projecto?
+# PDFProformaDescription=A complete proforma invoice (logo…)
+# Orders modes
 OrderByMail=Correio
 OrderByFax=Fax
 OrderByEMail=EMail
 OrderByWWW=On-line
 OrderByPhone=Telefone
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 15:46:10).
+
+# CreateInvoiceForThisCustomer=Bill orders
+# NoOrdersToInvoice=No orders billable
+# CloseProcessedOrdersAutomatically=Classify "Processed" all selected orders.
+# MenuOrdersToBill2=Orders to bill
+# OrderCreation=Order creation
+# Ordered=Ordered
+# OrderCreated=Your orders have been created
+# OrderFail=An error happened during your orders creation
+# CreateOrders=Create orders

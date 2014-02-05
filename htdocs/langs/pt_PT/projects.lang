@@ -1,5 +1,4 @@
-# Dolibarr language file - pt_PT - projects
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - projects
 Project=Projeto
 Projects=Projetos
 SharedProject=Todos
@@ -46,6 +45,8 @@ MyActivities=Minhas Tarefas/Actividades
 MyProjects=Meus Projetos
 DurationEffective=Duração Efetiva
 Progress=Progresso
+# ProgressDeclared=Declared progress
+# ProgressCalculated=Calculated progress
 Time=Tempo
 ListProposalsAssociatedProject=Lista de Orçamentos Associados ao Projeto
 ListOrdersAssociatedProject=Lista de Encomendas Associadas ao Projeto
@@ -85,6 +86,17 @@ TaskIsNotAffectedToYou=Tarefa não atribuida a si
 ErrorTimeSpentIsEmpty=Tempo dispensado está vazio
 ThisWillAlsoRemoveTasks=Esta ação também vai excluir todas as tarefas do projeto (<b>%s</b> tarefas no momento) e todas as entradas de tempo dispensadas.
 IfNeedToUseOhterObjectKeepEmpty=Caso alguns objetos (fatura, encomenda, ...), pertencentes a um terceiro, deve estar vinculado ao projeto para criar, manter este vazio para ter o projeto sendo multi-terceiros.
+CloneProject=Clonar projeto
+CloneTasks=Clonar tarefas
+CloneContacts=Clonar contactos
+CloneNotes=Clonar notas
+# CloneProjectFiles=Clone project joined files
+# CloneTaskFiles=Clone task(s) joined files (if task(s) cloned)
+ConfirmCloneProject=Tem a certeza para clonar este projeto?
+# ProjectReportDate=Change task date according project start date
+# ErrorShiftTaskDate=Impossible to shift task date according to new project start date
+ProjectsAndTasksLines=Projetos e tarefas
+ProjectCreatedInDolibarr=Projeto %s criado
 ##### Types de contacts #####
 TypeContact_project_internal_PROJECTLEADER=Líder do projeto
 TypeContact_project_external_PROJECTLEADER=Líder do projeto
@@ -94,5 +106,10 @@ TypeContact_project_task_internal_TASKEXECUTIVE=Tarefa executiva
 TypeContact_project_task_external_TASKEXECUTIVE=Tarefa executiva
 TypeContact_project_task_internal_CONTRIBUTOR=Contribuinte
 TypeContact_project_task_external_CONTRIBUTOR=Contribuinte
+# SelectElement=Select element
+# AddElement=Link to element
 # Documents models
 DocumentModelBaleine=modelo de um projeto completo do relatório (logo. ..)
+# PlannedWorkload = Planned workload
+# WorkloadOccupation= Workload affectation
+# ProjectReferers=Refering objects
