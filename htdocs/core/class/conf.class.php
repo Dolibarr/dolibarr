@@ -345,7 +345,12 @@ class Conf
 		$this->use_javascript_ajax=1;
 		if (isset($this->global->MAIN_DISABLE_JAVASCRIPT)) $this->use_javascript_ajax=! $this->global->MAIN_DISABLE_JAVASCRIPT;
 		// If no javascript_ajax, Ajax features are disabled.
-		if (! $this->use_javascript_ajax) $this->global->PRODUIT_USE_SEARCH_TO_SELECT=0;
+		if (empty($this->use_javascript_ajax))
+		{
+			unset($this->global->PRODUIT_USE_SEARCH_TO_SELECT);
+			unset($this->global->COMPANY_USE_SEARCH_TO_SELECT);
+			unset($this->global->CONTACT_USE_SEARCH_TO_SELECT);
+		}
 
 		// conf->currency
 		if (empty($this->global->MAIN_MONNAIE)) $this->global->MAIN_MONNAIE='EUR';
