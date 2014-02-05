@@ -842,7 +842,7 @@ else
         // Origin country
         print '<td>'.$langs->trans("CountryOrigin").'</td><td>';
         print $form->select_country(GETPOST('country_id','int'),'country_id');
-        if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
+        if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
         print '</td></tr>';
 
         // Other attributes
@@ -1069,7 +1069,7 @@ else
             // Origin country
             print '<td>'.$langs->trans("CountryOrigin").'</td><td>';
             print $form->select_country($object->country_id,'country_id');
-            if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
+            if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
             print '</td></tr>';
 
             // Other attributes

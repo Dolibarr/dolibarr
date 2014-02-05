@@ -57,7 +57,7 @@ $entitytolang=array(		// Translation code
 	'order'=>'Order','order_line'=>'OrderLine',
 	'intervention'=>'Intervention' ,'inter_line'=>'InterLine',
 	'member'=>'Member','member_type'=>'MemberType','subscription'=>'Subscription',
-	'tax'=>'SocialContribution','tax_type'=>'DictionnarySocialContributions',
+	'tax'=>'SocialContribution','tax_type'=>'DictionarySocialContributions',
 	'account'=>'BankTransactions',
 	'payment'=>'Payment',
 	'product'=>'Product','stock'=>'Stock','warehouse'=>'Warehouse',
@@ -890,7 +890,7 @@ if ($step == 4 && $datatoimport)
 		else
 		{
 		    if ($objimport->array_import_convertvalue[0][$code]['rule']=='fetchidfromref')    $htmltext.=$langs->trans("SourceExample").': <b>'.$langs->transnoentitiesnoconv("ExampleAnyRefFoundIntoElement",$entitylang).($example?' ('.$langs->transnoentitiesnoconv("Example").': '.$example.')':'').'</b><br>';
-		    if ($objimport->array_import_convertvalue[0][$code]['rule']=='fetchidfromcodeid') $htmltext.=$langs->trans("SourceExample").': <b>'.$langs->trans("ExampleAnyCodeOrIdFoundIntoDictionnary",$langs->transnoentitiesnoconv($objimport->array_import_convertvalue[0][$code]['dict'])).($example?' ('.$langs->transnoentitiesnoconv("Example").': '.$example.')':'').'</b><br>';
+		    if ($objimport->array_import_convertvalue[0][$code]['rule']=='fetchidfromcodeid') $htmltext.=$langs->trans("SourceExample").': <b>'.$langs->trans("ExampleAnyCodeOrIdFoundIntoDictionary",$langs->transnoentitiesnoconv($objimport->array_import_convertvalue[0][$code]['dict'])).($example?' ('.$langs->transnoentitiesnoconv("Example").': '.$example.')':'').'</b><br>';
 		}
 		$htmltext.='<br>';
 		// Target field info

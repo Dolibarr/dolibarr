@@ -102,31 +102,31 @@ $tabname[25]= MAIN_DB_PREFIX."c_revenuestamp";
 
 // Dictionary labels
 $tablib=array();
-$tablib[1] = "DictionnaryCompanyJuridicalType";
-$tablib[2] = "DictionnaryCanton";
-$tablib[3] = "DictionnaryRegion";
-$tablib[4] = "DictionnaryCountry";
-$tablib[5] = "DictionnaryCivility";
-$tablib[6] = "DictionnaryActions";
-$tablib[7] = "DictionnarySocialContributions";
-$tablib[8] = "DictionnaryCompanyType";
-$tablib[9] = "DictionnaryCurrency";
-$tablib[10]= "DictionnaryVAT";
-$tablib[11]= "DictionnaryTypeContact";
-$tablib[12]= "DictionnaryPaymentConditions";
-$tablib[13]= "DictionnaryPaymentModes";
-$tablib[14]= "DictionnaryEcotaxe";
-$tablib[15]= "DictionnaryPaperFormat";
-$tablib[16]= "DictionnaryProspectLevel";
-$tablib[17]= "DictionnaryFees";
-$tablib[18]= "DictionnarySendingMethods";
-$tablib[19]= "DictionnaryStaff";
-$tablib[20]= "DictionnaryOrderMethods";
-$tablib[21]= "DictionnaryAvailability";
-$tablib[22]= "DictionnarySource";
-$tablib[23]= "DictionnaryAccountancyplan";
-$tablib[24]= "DictionnaryAccountancysystem";
-$tablib[25]= "DictionnaryRevenueStamp";
+$tablib[1] = "DictionaryCompanyJuridicalType";
+$tablib[2] = "DictionaryCanton";
+$tablib[3] = "DictionaryRegion";
+$tablib[4] = "DictionaryCountry";
+$tablib[5] = "DictionaryCivility";
+$tablib[6] = "DictionaryActions";
+$tablib[7] = "DictionarySocialContributions";
+$tablib[8] = "DictionaryCompanyType";
+$tablib[9] = "DictionaryCurrency";
+$tablib[10]= "DictionaryVAT";
+$tablib[11]= "DictionaryTypeContact";
+$tablib[12]= "DictionaryPaymentConditions";
+$tablib[13]= "DictionaryPaymentModes";
+$tablib[14]= "DictionaryEcotaxe";
+$tablib[15]= "DictionaryPaperFormat";
+$tablib[16]= "DictionaryProspectLevel";
+$tablib[17]= "DictionaryFees";
+$tablib[18]= "DictionarySendingMethods";
+$tablib[19]= "DictionaryStaff";
+$tablib[20]= "DictionaryOrderMethods";
+$tablib[21]= "DictionaryAvailability";
+$tablib[22]= "DictionarySource";
+$tablib[23]= "DictionaryAccountancyplan";
+$tablib[24]= "DictionaryAccountancysystem";
+$tablib[25]= "DictionaryRevenueStamp";
 
 // Requete pour extraction des donnees des dictionnaires
 $tabsql=array();
@@ -655,18 +655,18 @@ $formadmin=new FormAdmin($db);
 
 llxHeader();
 
-$titre=$langs->trans("DictionnarySetup");
+$titre=$langs->trans("DictionarySetup");
 $linkback='';
 if ($id)
 {
     $titre.=' - '.$langs->trans($tablib[$id]);
-    $linkback='<a href="'.$_SERVER['PHP_SELF'].'">'.$langs->trans("BackToDictionnaryList").'</a>';
+    $linkback='<a href="'.$_SERVER['PHP_SELF'].'">'.$langs->trans("BackToDictionaryList").'</a>';
 }
 print_fiche_titre($titre,$linkback,'setup');
 
 if (empty($id))
 {
-    print $langs->trans("DictionnaryDesc");
+    print $langs->trans("DictionaryDesc");
     print " ".$langs->trans("OnlyActiveElementsAreShown")."<br>\n";
 }
 print "<br>\n";
@@ -1148,7 +1148,7 @@ else
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre">';
     //print '<td>'.$langs->trans("Module").'</td>';
-    print '<td colspan="2">'.$langs->trans("Dictionnary").'</td>';
+    print '<td colspan="2">'.$langs->trans("Dictionary").'</td>';
     print '<td>'.$langs->trans("Table").'</td>';
     print '</tr>';
 
@@ -1181,7 +1181,7 @@ else
             print '<td>';
             /*if (empty($tabcond[$i]))
              {
-             print info_admin($langs->trans("DictionnaryDisabledSinceNoModuleNeedIt"),1);
+             print info_admin($langs->trans("DictionaryDisabledSinceNoModuleNeedIt"),1);
              }*/
             print '</td>';
             print '<td>'.$tabname[$i].'</td></tr>';
