@@ -130,6 +130,7 @@ ErrorPHPNeedModule=Viga: selle võimaluse kasutamiseks peab PHPs olema võimalda
 ErrorOpenIDSetupNotComplete=Dolibarri seadistusfail lubab OpenIDga autentimist, ent konstandis %s ei ole OpenID teenuse URL määratletud
 ErrorWarehouseMustDiffers=Lähteladu ja sihtladu peavad olema erinevad
 # ErrorBadFormat=Bad format!
+# ErrorPaymentDateLowerThanInvoiceDate=Payment date (%s) cant' be before invoice date (%s) for invoice %s.
 
 # Warnings
 WarningMandatorySetupNotComplete=Kohustuslikud seadistusparameetrid on määratlemata

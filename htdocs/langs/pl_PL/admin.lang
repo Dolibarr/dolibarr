@@ -1325,6 +1325,7 @@ BarcodeDescC39=Kod kreskowy typu C39
 BarcodeDescC128=Kod kreskowy typu C128
 GenbarcodeLocation=Kod kreskowy generowania narzędzie wiersza polecenia (używanego przez phpbarcode silników dla niektórych typów kodów kreskowych)
 # BarcodeInternalEngine=Internal engine
+# BarCodeNumberManager=Manager to auto define barcode numbers
 ##### Prelevements #####
 WithdrawalsSetup=Wycofanie konfiguracji modułu
 ##### ExternalRSS #####
@@ -1366,17 +1367,6 @@ OSCommerceErrorConnectOkButWrongDatabase=Połączenie udało, ale baza danych ni
 OSCommerceTestOk=Połączenie do serwera ' %s' w bazie danych " %s" z użytkownika' %s' powiodło się.
 OSCommerceTestKo1=Połączenie do serwera ' %s' sukces, ale baza danych' %s' nie mógł zostać osiągnięty.
 OSCommerceTestKo2=Połączenie do serwera ' %s' z użytkownika' %s' nie powiodło się.
-##### Mantis #####
-MantisSetup=Mantis link konfiguracji
-MantisURL=Adres URL Mantis dostępu
-MantisServer=Serwerze bazy danych Mantis
-MantisDatabaseName=Nazwa bazy danych
-MantisUser=Użytkownicy mają dostęp do bazy danych
-MantisSetupSaved=Mantis konfiguracji zapisany pomyślnie.
-MantisTestOk=Połączenie do serwera ' %s' w bazie danych " %s" z użytkownika' %s' powiodło się.
-MantisTestKo1=Połączenie do serwera ' %s' sukces, ale baza danych' %s' nie mógł zostać osiągnięty.
-MantisTestKo2=Połączenie do serwera ' %s' z użytkownika' %s' nie powiodło się.
-MantisErrorConnectOkButWrongDatabase=Połączenie udało, ale baza danych nie patrzy się Mantis bazy danych.
 ##### Stock #####
 StockSetup=Konfiguracja modułu zapasów
 UserWarehouse=Wykorzystanie zasobów osobowych

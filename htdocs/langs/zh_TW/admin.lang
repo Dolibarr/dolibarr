@@ -1325,6 +1325,7 @@ BarcodeDescC39=Code 39 條碼
 BarcodeDescC128=Code 128 條碼
 GenbarcodeLocation=條碼生成命令行工具（由phpbarcode引擎用於某些類型的條形碼）
 # BarcodeInternalEngine=Internal engine
+# BarCodeNumberManager=Manager to auto define barcode numbers
 ##### Prelevements #####
 WithdrawalsSetup=提款模組設置
 ##### ExternalRSS #####
@@ -1366,17 +1367,6 @@ OSCommerceErrorConnectOkButWrongDatabase=數據庫連接成功，但並不指望
 OSCommerceTestOk=連接到服務器'%s'於資料庫'用戶'%s'的%s'的成功。
 OSCommerceTestKo1=連接到服務器'%s'的成功，但是數據庫'%s'的無法達成。
 OSCommerceTestKo2=連接到服務器'%s的與用戶'%s'的失敗。
-##### Mantis #####
-MantisSetup=螳螂連結設置
-MantisURL=URL訪問的螳螂
-MantisServer=螳螂數據庫服務器託管
-MantisDatabaseName=數據庫名稱
-MantisUser=用戶訪問數據庫
-MantisSetupSaved=螳螂設置保存成功。
-MantisTestOk=連接到服務器'%s'於資料庫'用戶'%s'的%s'的成功。
-MantisTestKo1=連接到服務器'%s'的成功，但是數據庫'%s'的無法達成。
-MantisTestKo2=連接到服務器'%s的與用戶'%s'的失敗。
-MantisErrorConnectOkButWrongDatabase=連接成功了，但是數據庫不看是螳螂數據庫。
 ##### Stock #####
 StockSetup=庫存模組設置
 UserWarehouse=使用用戶的個人股票

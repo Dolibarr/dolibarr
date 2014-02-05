@@ -204,7 +204,7 @@
 # Quarter2=2nd. Quarter
 # Quarter3=3rd. Quarter
 # Quarter4=4th. Quarter
-# BarCodePrintsheet=Imprimer code barre
+# BarCodePrintsheet=Print bar code
 # PageToGenerateBarCodeSheets=With this tool, you can print sheets of bar code stickers. Choose format of your sticker page, type of barcode and value of barcode, then click on button <b>%s</b>.
 # NumberOfStickers=Number of stickers to print on page
 # PrintsheetForOneBarCode=Print several stickers for one barcode

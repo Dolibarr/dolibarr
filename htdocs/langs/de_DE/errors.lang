@@ -130,6 +130,7 @@ ErrorPHPNeedModule=Fehler, Ihr PHP muss das Modul <b>%s</b> installiert haben um
 ErrorOpenIDSetupNotComplete=Sie haben im Dolibarr Konfigurationsfile eingestellt, dass die Anmeldung mit OpenID möglich ist, aber die URL zum OpenID Service ist noch nicht in %s definiert.
 # ErrorWarehouseMustDiffers=Source and target warehouses must differs
 # ErrorBadFormat=Bad format!
+# ErrorPaymentDateLowerThanInvoiceDate=Payment date (%s) cant' be before invoice date (%s) for invoice %s.
 
 # Warnings
 WarningMandatorySetupNotComplete=Zwingend notwendige Parameter sind noch nicht definiert

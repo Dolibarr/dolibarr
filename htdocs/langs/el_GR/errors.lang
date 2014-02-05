@@ -130,6 +130,7 @@ ErrorPHPNeedModule=Σφάλμα, η PHP σας πρέπει να έχει το m
 ErrorOpenIDSetupNotComplete=Μπορείτε να ρυθμίσετε το Dolibarr αρχείο config να επιτρέψει OpenID ταυτότητα, αλλά το URL OpenID υπηρεσίας δεν ορίζεται σε συνεχή %s
 ErrorWarehouseMustDiffers=Η πηγή και ο στόχος των αποθηκών πρέπει να είναι διαφορετικός.
 # ErrorBadFormat=Bad format!
+# ErrorPaymentDateLowerThanInvoiceDate=Payment date (%s) cant' be before invoice date (%s) for invoice %s.
 
 # Warnings
 WarningMandatorySetupNotComplete=Mandatory setup parameters are not yet defined

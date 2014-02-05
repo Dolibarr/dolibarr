@@ -1325,6 +1325,7 @@ BarcodeDescC39=Штрих-код типа C39
 BarcodeDescC128=Штрих-код типа C128
 GenbarcodeLocation=Штрих-код поколения утилиту командной строки (используется phpbarcode двигателя для некоторых типов штрих-кодов)
 # BarcodeInternalEngine=Internal engine
+# BarCodeNumberManager=Manager to auto define barcode numbers
 ##### Prelevements #####
 WithdrawalsSetup=Снятие модуля настройки
 ##### ExternalRSS #####
@@ -1366,17 +1367,6 @@ OSCommerceErrorConnectOkButWrongDatabase=Подключение удалось, 
 OSCommerceTestOk=Соединение с сервером ' %s' на базе ' %s' пользователя ' %s' успешно.
 OSCommerceTestKo1=Соединение с сервером ' %s' успешными, но база данных ' %s' не может быть достигнута.
 OSCommerceTestKo2=Соединение с сервером ' %s' пользователя ' %s' провалилась.
-##### Mantis #####
-MantisSetup=Mantis ссылке Настройка
-MantisURL=URL для доступа Mantis
-MantisServer=Сервер хостинга Mantis данных
-MantisDatabaseName=Название базы данных
-MantisUser=Пользователя для доступа к базе данных
-MantisSetupSaved=Mantis настройки успешно сохранены.
-MantisTestOk=Соединение с сервером ' %s' на базе ' %s' пользователя ' %s' успешно.
-MantisTestKo1=Соединение с сервером ' %s' успешными, но база данных ' %s' не может быть достигнута.
-MantisTestKo2=Соединение с сервером ' %s' пользователя ' %s' провалилась.
-MantisErrorConnectOkButWrongDatabase=Подключение баз данных удалось, но не выглядит как Mantis данных.
 ##### Stock #####
 StockSetup=Конфигурация модуля запас
 UserWarehouse=Использование персональных пользователей запасов

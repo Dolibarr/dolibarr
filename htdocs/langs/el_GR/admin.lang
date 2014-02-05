@@ -505,7 +505,7 @@ Module50200Desc= Ενότητα για να προσφέρει μια σε απ�
 Module54000Name=PrintIPP
 Module54000Desc=Εκτύπωση μέσω Cups IPP εκτυπωτή.
 Module55000Name=Άνοιγμα Έρευνας
-# Module55000Desc=Module to make online surveys (like Doodle, Studs, Rdvz, ...)
+Module55000Desc=Module για online έρευνες (όπωςDoodle, Studs, Rdvz, ...)
 Module59000Name=Margins
 Module59000Desc=Module to manage margins
 Module60000Name=Commissions
@@ -724,8 +724,8 @@ Permission50202=Πράξεις εισαγωγής
 Permission54001=Εκτύπωση
 Permission55001=Διαβάστε τις έρευνες
 Permission55002=Δημιουργία/τροποποίηση ερευνών
-# Permission59001=Read commercial margins
-# Permission59002=Define commercial margins
+Permission59001=Δείτε τα εμπορικά περιθώρια
+Permission59002=Ορίστε τα εμπορικά περιθώρια
 DictionnaryCompanyType=Company types
 DictionnaryCompanyJuridicalType=Juridical kinds of company
 DictionnaryProspectLevel=Prospect potential level
@@ -1013,7 +1013,7 @@ AddRefInList=Οθόνη πελάτη / προμηθευτή ref στη λίστ�
 FieldEdition=Έκδοση στο πεδίο %s
 FixTZ=TimeZone fix
 FillThisOnlyIfRequired=Παράδειγμα: +2 (συμπληρώστε μόνο αν ζώνη ώρας αντισταθμίσουν τα προβλήματα για προβλήματα που προέκυψαν)
-# GetBarCode=Get barcode
+GetBarCode=Πάρτε barcode
 ##### Module password generation
 PasswordGenerationStandard=Return a password generated according to internal Dolibarr algorithm: 8 characters containing shared numbers and characters in lowercase.
 PasswordGenerationNone=Do not suggest any generated password. Password must be type in manually.
@@ -1119,9 +1119,9 @@ WatermarkOnDraftInterventionCards=Watermark on intervention card documents (none
 ##### Contracts #####
 ContractsSetup=Συμβάσεις εγκατάσταση μονάδας
 ContractsNumberingModules=Συμβάσεις αρίθμησης ενοτήτων
-# TemplatePDFContracts=Contracts documents models
-# FreeLegalTextOnContracts=Free text on contracts
-# WatermarkOnDraftContractCards=Watermark on draft contracts (none if empty)
+TemplatePDFContracts=Συμβάσεις μοντέλα εγγράφων
+FreeLegalTextOnContracts=Ελεύθερο κείμενο για τις συμβάσεις
+WatermarkOnDraftContractCards=Υδατογράφημα σε σχέδια συμβάσεων (κανένα αν είναι άδειο)
 ##### Members #####
 MembersSetup=Members module setup
 MemberMainOptions=Main options
@@ -1325,6 +1325,7 @@ BarcodeDescC39=Barcode of type C39
 BarcodeDescC128=Barcode of type C128
 GenbarcodeLocation=Bar code generation command line tool (used by internal engine for some bar code types)
 BarcodeInternalEngine=Internal engine
+# BarCodeNumberManager=Manager to auto define barcode numbers
 ##### Prelevements #####
 WithdrawalsSetup=Withdrawal module setup
 ##### ExternalRSS #####
@@ -1366,17 +1367,6 @@ OSCommerceErrorConnectOkButWrongDatabase=Connection succeeded but database doesn
 OSCommerceTestOk=Connection to server '%s' on database '%s' with user '%s' successfull.
 OSCommerceTestKo1=Connection to server '%s' succeed but database '%s' could not be reached.
 OSCommerceTestKo2=Connection to server '%s' with user '%s' failed.
-##### Mantis #####
-MantisSetup=Mantis link setup
-MantisURL=URL for Mantis access
-MantisServer=Server hosting Mantis database
-MantisDatabaseName=Database name
-MantisUser=User to access database
-MantisSetupSaved=Mantis setup saved successfully.
-MantisTestOk=Connection to server '%s' on database '%s' with user '%s' successfull.
-MantisTestKo1=Connection to server '%s' succeed but database '%s' could not be reached.
-MantisTestKo2=Connection to server '%s' with user '%s' failed.
-MantisErrorConnectOkButWrongDatabase=Connection succeeded but database doesn't look to be a Mantis database.
 ##### Stock #####
 StockSetup=Configuration module stock
 UserWarehouse=Use user personal stocks

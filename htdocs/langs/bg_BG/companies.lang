@@ -82,7 +82,7 @@ DefaultLang=Език по подразбиране
 VATIsUsed=ДДС се използва
 VATIsNotUsed=ДДС не се използва
 # CopyAddressFromSoc=Fill address with thirdparty address
-# NoEmailDefined=There is no email defined
+NoEmailDefined=Не е въведен имейл
 ##### Local Taxes #####
 LocalTax1IsUsedES= RE се използва
 LocalTax1IsNotUsedES= RE не се използва

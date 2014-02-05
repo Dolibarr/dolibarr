@@ -130,6 +130,7 @@ ErrorPHPNeedModule=Kļūda, jūsu PHP ir jābūt moduli <b>%s</b> uzstādītas, 
 ErrorOpenIDSetupNotComplete=Jūs uzstādīšana Dolibarr config failu, lai ļautu OpenID autentifikācijas, bet OpenID pakalpojuma URL nav definēts spēkā salīdzināmajās %s
 ErrorWarehouseMustDiffers=Avota un mērķa noliktavas jābūt atšķiras
 # ErrorBadFormat=Bad format!
+# ErrorPaymentDateLowerThanInvoiceDate=Payment date (%s) cant' be before invoice date (%s) for invoice %s.
 
 # Warnings
 WarningMandatorySetupNotComplete=Obligātie uzstādīšanas parametri vēl nav definētas

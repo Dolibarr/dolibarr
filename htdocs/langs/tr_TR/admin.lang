@@ -505,7 +505,7 @@ Module50200Desc= Kredi kartı ya da Paypal ile ödeme sağlayan çevrimiçi öde
 Module54000Name=IPP Yazdır
 Module54000Desc=Cup'a IPP Yazıcıyla yazdır.
 Module55000Name=Açık Araştırma
-# Module55000Desc=Module to make online surveys (like Doodle, Studs, Rdvz, ...)
+Module55000Desc=Çevrimiçi araştırma yapmak için modül (Doodle, Studs, Rdvz gibi ....)
 Module59000Name=Oranlar
 Module59000Desc=Oran yönetimi modülü
 Module60000Name=Komisyonlar
@@ -724,8 +724,8 @@ Permission50202=İçeaktarma işlemleri
 Permission54001=Yazdır
 Permission55001=Araştırma oku
 Permission55002=Araştırma oluştur/düzenle
-# Permission59001=Read commercial margins
-# Permission59002=Define commercial margins
+Permission59001=Ticari oran oku
+Permission59002=Ticari oran tanımla
 DictionnaryCompanyType=Firma türleri
 DictionnaryCompanyJuridicalType=Firma yasal türleri
 DictionnaryProspectLevel=Aday seviyeleri
@@ -1013,7 +1013,7 @@ AddRefInList=Listede müşteri/tedarikçi ref (liste ya da combobox seç) ve kö
 FieldEdition=%s Alanının düzenlenmesi
 FixTZ=Saat Dilimi Farkı
 FillThisOnlyIfRequired=Örnek: +2 (saat dilimi farkını yalnız zaman farkı sorunları yaşıyorsanız kullanın)
-# GetBarCode=Get barcode
+GetBarCode=Barkovizyon al
 ##### Module password generation
 PasswordGenerationStandard=Dolibarr iç algoritmasına göre bir şifre girin: 8 karakterli sayı ve küçük harf içeren.
 PasswordGenerationNone=Herhangi oluşturulan bir şifre önermeyin. Şifreyi elle girmelisiniz.
@@ -1119,9 +1119,9 @@ WatermarkOnDraftInterventionCards=Taslak müdahale kartı belgelerinde filigran 
 ##### Contracts #####
 ContractsSetup=Sözleşme modülü kurulumu
 ContractsNumberingModules=Sözleşme numaralandırma modülleri
-# TemplatePDFContracts=Contracts documents models
-# FreeLegalTextOnContracts=Free text on contracts
-# WatermarkOnDraftContractCards=Watermark on draft contracts (none if empty)
+TemplatePDFContracts=Sözleşme belge modelleri
+FreeLegalTextOnContracts=Sözleşmeler üzerinde serbest metin
+WatermarkOnDraftContractCards=Taslak sözleşmeler üzerinde filigran (boşsa yok)
 ##### Members #####
 MembersSetup=Üye modülü kurulumu
 MemberMainOptions=Ana seçenekler
@@ -1325,6 +1325,7 @@ BarcodeDescC39=Barkod türü C39
 BarcodeDescC128=Barkod türü C128
 GenbarcodeLocation=Bar kod oluşturma komut satırı aracı (phpbarcode motoru tarafından bazı barkod tipleri için kullanılır)
 BarcodeInternalEngine=İç motor
+# BarCodeNumberManager=Manager to auto define barcode numbers
 ##### Prelevements #####
 WithdrawalsSetup=Çekme modülü kurulumu
 ##### ExternalRSS #####
@@ -1366,17 +1367,6 @@ OSCommerceErrorConnectOkButWrongDatabase=Bağlantı başarılı ama veritabanı 
 OSCommerceTestOk='%s' Sunucusuna '%s' veritabanında kullanıcı '% s' ile bağlantı başarılı.
 OSCommerceTestKo1='%s' Sunucusuna bağlantı başarılı ancak veritabanı '% s' e ulaşılamadı.
 OSCommerceTestKo2=’%s’ Sunucusuna ‘%s’ kullanıcısı ile bağlantı başarısız oldu.
-##### Mantis #####
-MantisSetup=Mantis bağlantısı ayarları
-MantisURL=URL Mantis erişimi
-MantisServer=Sunucu barındırma Mantis veritabanı
-MantisDatabaseName=Veritabanı ismi
-MantisUser=Veritabanına erişecek kullanıcı
-MantisSetupSaved=Mantis kurulumu başarıyla kaydedildi.
-MantisTestOk='%s' sunucusuna '%s' veritabanında kullanıcı '% s' ile bağlantı başarılı.
-MantisTestKo1='%s' Sunucusuna bağlantı başarılı ancak veritabanı '% s' e ulaşılamadı.
-MantisTestKo2=’%s’ Sunucusuna ‘%s’ kullanıcısı ile bağlantı başarısız oldu.
-MantisErrorConnectOkButWrongDatabase=Bağlantı başarılı ama veritabanı Mantis veritabanı olarak görünmüyor.
 ##### Stock #####
 StockSetup=Yapılandırma modülü stoğu
 UserWarehouse=Kullanıcı personel stoğu kullan

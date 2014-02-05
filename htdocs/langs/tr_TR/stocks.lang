@@ -110,4 +110,4 @@ MassStockMovement=Toplu stok hareketi
 SelectProductInAndOutWareHouse=Bir ürün, bir miktar, bir kaynak depo ve bir hedef depo seçin, sonra "%s" e tıklayın. Bütün gerekli hareketler için bu işlem yapıldığında "%s" e tıklayın.
 RecordMovement=Kayıt aktarımı
 ReceivingForSameOrder=Bu sipariş için alımlar
-# StockMovementRecorded=Stock movements recorded
+StockMovementRecorded=Stok hareketleri kaydedildi

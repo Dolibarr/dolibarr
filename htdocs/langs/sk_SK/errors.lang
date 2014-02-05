@@ -130,6 +130,7 @@ ErrorPHPNeedModule=Chyba, musí mať PHP modul <b>%s</b> nainštalovať túto fu
 ErrorOpenIDSetupNotComplete=Môžete nastavenie Dolibarr konfiguračný súbor, aby OpenID overovania, ale URL OpenID služby nie je definovaný do stálych %s
 ErrorWarehouseMustDiffers=Zdrojovej a cieľovej sklady musia sa líši
 # ErrorBadFormat=Bad format!
+# ErrorPaymentDateLowerThanInvoiceDate=Payment date (%s) cant' be before invoice date (%s) for invoice %s.
 
 # Warnings
 WarningMandatorySetupNotComplete=Povinné parametre sú doteraz stanovené

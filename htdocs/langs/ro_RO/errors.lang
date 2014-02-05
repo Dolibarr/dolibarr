@@ -130,6 +130,7 @@ ErrorPHPNeedModule=Eroare, PHP trebuie să aibă modul <b>%s</b> instalat pentru
 ErrorOpenIDSetupNotComplete=Trebuie setat fișier de configurare Dolibarr pentru a permite autentificarea OpenID, dar URL-ul serviciului OpenID nu este definit în constanta %s
 ErrorWarehouseMustDiffers=Depozitul sursă și țintă trebuie să difere
 # ErrorBadFormat=Bad format!
+# ErrorPaymentDateLowerThanInvoiceDate=Payment date (%s) cant' be before invoice date (%s) for invoice %s.
 
 # Warnings
 WarningMandatorySetupNotComplete=Parametri de setare obligatorii nu sunt încă definiţi

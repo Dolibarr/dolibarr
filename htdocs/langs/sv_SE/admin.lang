@@ -1325,6 +1325,7 @@ BarcodeDescC39=Streckkod av typen C39
 BarcodeDescC128=Barcode av typ C128
 GenbarcodeLocation=Bar kodgenerering kommandoradsverktyg (som används av phpbarcode motor för vissa typer streckkod)
 # BarcodeInternalEngine=Internal engine
+# BarCodeNumberManager=Manager to auto define barcode numbers
 ##### Prelevements #####
 WithdrawalsSetup=Återkallelse modul setup
 ##### ExternalRSS #####
@@ -1366,17 +1367,6 @@ OSCommerceErrorConnectOkButWrongDatabase=Anslutning lyckats men databasen ser in
 OSCommerceTestOk=Anslutning till servern &quot;%s&quot; på databas %s &quot;med användare&quot; %s framgångsrika.
 OSCommerceTestKo1=Anslutning till servern &quot;%s&quot; lyckas, men databas %s &quot;kunde inte nås.
 OSCommerceTestKo2=Anslutning till servern &quot;%s&quot; med användare &quot;%s&quot; misslyckades.
-##### Mantis #####
-MantisSetup=Mantis länk setup
-MantisURL=URL för Mantis tillgång
-MantisServer=Server-hosting Mantis databas
-MantisDatabaseName=Databas namn
-MantisUser=Användaren tillgång till databasen
-MantisSetupSaved=Mantis setup sparats.
-MantisTestOk=Anslutning till servern &quot;%s&quot; på databas %s &quot;med användare&quot; %s framgångsrika.
-MantisTestKo1=Anslutning till servern &quot;%s&quot; lyckas, men databas %s &quot;kunde inte nås.
-MantisTestKo2=Anslutning till servern &quot;%s&quot; med användare &quot;%s&quot; misslyckades.
-MantisErrorConnectOkButWrongDatabase=Anslutning lyckats men databasen inte ser ut att vara en Mantis databas.
 ##### Stock #####
 StockSetup=Inställningsmodul lager
 UserWarehouse=Använd användarens personliga lager

@@ -1325,6 +1325,7 @@ BarcodeDescC39=Barcode vom Typ C39
 BarcodeDescC128=Barcode vom Typ C128
 GenbarcodeLocation=Kommandozeilen-Tool zur Barcode-Generierung (von phpbarcode-Engine verwendet)
 # BarcodeInternalEngine=Internal engine
+# BarCodeNumberManager=Manager to auto define barcode numbers
 ##### Prelevements #####
 WithdrawalsSetup=Abbuchungseinstellungen
 ##### ExternalRSS #####
@@ -1366,17 +1367,6 @@ OSCommerceErrorConnectOkButWrongDatabase=Datenbank-Verbindung erfolgreich, es sc
 OSCommerceTestOk=Verbindung zum Server '%s' für Datenbank '%s' mit Benutzer '%s' erfolgreich.
 OSCommerceTestKo1=Verbindung zum Server '%s' erfolgreich, aber Datenbank '%s' konnte nicht erreicht werden.
 OSCommerceTestKo2=Verbindung zum Server '%s' mit dem Benutzer '%s' fehlgeschlagen.
-##### Mantis #####
-MantisSetup=Mantis-Einstellungen
-MantisURL=URL für Mantis Zugang
-MantisServer=Hostserver der Mantis-Datenbank
-MantisDatabaseName=Datenbankname
-MantisUser=Datenbankbenutzer
-MantisSetupSaved=Mantis-Einstellungen erfolgreich gespeichert.
-MantisTestOk=Verbindung zum Server '%s' für Datenbank  '%s' mit Benutzer '%s' erfolgreich.
-MantisTestKo1=Verbindung zum Server '%s' erfolgreich, aber Datenbank '%s' konnte nicht erreicht werden.
-MantisTestKo2=Verbindung zum Server '%s' mit Benutzer '%s' fehlgeschlagen.
-MantisErrorConnectOkButWrongDatabase=Verbindung zur Datenbank erfolgreich, es scheint sich jedoch nicht um eine Mantis-Datenbank zu handeln.
 ##### Stock #####
 StockSetup=Lagermoduleinstellungen
 UserWarehouse=Persönliche Benutzerlagerstände verwenden

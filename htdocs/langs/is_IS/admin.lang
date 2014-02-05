@@ -1325,6 +1325,7 @@ BarcodeDescC39=Strikamerki á C39 tegund
 BarcodeDescC128=Strikamerki af gerðinni C128
 GenbarcodeLocation=Strikamerki kynslóð stjórn lína tól (notað af phpbarcode vél fyrir sumir merkjamál barnum tegund)
 # BarcodeInternalEngine=Internal engine
+# BarCodeNumberManager=Manager to auto define barcode numbers
 ##### Prelevements #####
 WithdrawalsSetup=Uppsögn mát skipulag
 ##### ExternalRSS #####
@@ -1366,17 +1367,6 @@ OSCommerceErrorConnectOkButWrongDatabase=Tengsl tekist en gagnasafn lítur ekki 
 OSCommerceTestOk=árangursrík Tenging við miðlara ' %s ' á gagnagrunni ' %s ' sem notanda ' %s '.
 OSCommerceTestKo1=Tenging við miðlara ' %s ' ná árangri en% gagnagrunni 's' ekki næst.
 OSCommerceTestKo2=Tenging við miðlara ' %s ' sem notanda ' %s ' mistókst.
-##### Mantis #####
-MantisSetup=Mantis tengilinn skipulag
-MantisURL=Vefslóð Mantis aðgang
-MantisServer=Server hýsingu Mantis gagnasafn
-MantisDatabaseName=Gagnasafn nafn
-MantisUser=Notandi aðgang gagnasafn
-MantisSetupSaved=Mantis skipulag vistuð án vandkvæða.
-MantisTestOk=árangursrík Tenging við miðlara ' %s ' á gagnagrunni ' %s ' sem notanda ' %s '.
-MantisTestKo1=Tenging við miðlara ' %s ' ná árangri en% gagnagrunni 's' ekki næst.
-MantisTestKo2=Tenging við miðlara ' %s ' sem notanda ' %s ' mistókst.
-MantisErrorConnectOkButWrongDatabase=Tengsl tekist en gagnasafn lítur ekki vera Mantis gagnagrunninum.
 ##### Stock #####
 StockSetup=Stillingareining lager
 UserWarehouse=Nota notanda persónulega hlutabréf

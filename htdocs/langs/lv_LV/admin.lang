@@ -1325,6 +1325,7 @@ BarcodeDescC39=Svītrkoda veids C39
 BarcodeDescC128=Svītrkoda veids C128
 GenbarcodeLocation=Svītru kods paaudzes komandrindas rīks (ko izmanto iekšējo dzinēju dažiem svītrkodu veidiem)
 BarcodeInternalEngine=Iekšējais dzinējs
+# BarCodeNumberManager=Manager to auto define barcode numbers
 ##### Prelevements #####
 WithdrawalsSetup=Izstāšanās modulis uzstādīšana
 ##### ExternalRSS #####
@@ -1366,17 +1367,6 @@ OSCommerceErrorConnectOkButWrongDatabase=Savienojums izdevās, bet datu bāzē n
 OSCommerceTestOk=Savienojums ar serveri &quot;%s&quot; par datu bāzē &quot;%s&quot; ar lietotāja %s &quot;sekmīgi pabeigta.
 OSCommerceTestKo1=Savienojums ar serveri &quot;%s&quot; izdoties, bet datubāze &quot;%s&quot; nevar sasniegt.
 OSCommerceTestKo2=Savienojums ar serveri &quot;%s&quot; ar lietotāja &quot;%s&quot; neizdevās.
-##### Mantis #####
-MantisSetup=Mantis saite iestatīšana
-MantisURL=URL Mantis piekļuvi
-MantisServer=Servera hosting Mantis datu bāzes
-MantisDatabaseName=Datubāzes nosaukums
-MantisUser=Lietotājas, lai piekļūtu datubāzei
-MantisSetupSaved=Mantis uzstādīšana ir veiksmīgi saglabāta.
-MantisTestOk=Savienojums ar serveri &quot;%s&quot; par datu bāzē &quot;%s&quot; ar lietotāja %s &quot;sekmīgi pabeigta.
-MantisTestKo1=Savienojums ar serveri &quot;%s&quot; izdoties, bet datubāze &quot;%s&quot; nevar sasniegt.
-MantisTestKo2=Savienojums ar serveri &quot;%s&quot; ar lietotāja &quot;%s&quot; neizdevās.
-MantisErrorConnectOkButWrongDatabase=Savienojums izdevās, bet datu bāzē neizskatās būt Mantis datubāzi.
 ##### Stock #####
 StockSetup=Konfigurācijas modulis akciju
 UserWarehouse=Izmantojiet lietotāja personīgos krājumus

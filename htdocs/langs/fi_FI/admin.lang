@@ -1325,6 +1325,7 @@ BarcodeDescC39=Viivakoodi tyypin C39
 BarcodeDescC128=Viivakoodi tyypin C128
 GenbarcodeLocation=Viivakoodi sukupolven komentoriviksi työkalu (käyttää phpbarcode moottorin joidenkin viivakoodi tyypit)
 # BarcodeInternalEngine=Internal engine
+# BarCodeNumberManager=Manager to auto define barcode numbers
 ##### Prelevements #####
 WithdrawalsSetup=Purku-moduulin asetukset
 ##### ExternalRSS #####
@@ -1366,17 +1367,6 @@ OSCommerceErrorConnectOkButWrongDatabase=Yhteys onnistunut mutta tietokanta ei n
 OSCommerceTestOk=Yhteys palvelimeen ' %s' on tietokanta' %s' kanssa käyttäjä ' %s' onnistunut.
 OSCommerceTestKo1=Yhteys palvelimeen ' %s' onnistua mutta tietokanta' %s' ei tavoitettu.
 OSCommerceTestKo2=Yhteys palvelimeen ' %s' kanssa käyttäjä' %s' failed.
-##### Mantis #####
-MantisSetup=Mantis linkki setup
-MantisURL=URL-osoite Mantis pääsy
-MantisServer=Server hosting Mantis tietokanta
-MantisDatabaseName=Tietokannan nimi
-MantisUser=Käyttäjän yhteys tietokantaan
-MantisSetupSaved=Mantis-asetukset on tallennettu.
-MantisTestOk=Yhteys palvelimeen ' %s' on tietokanta' %s' kanssa käyttäjä ' %s' onnistunut.
-MantisTestKo1=Yhteys palvelimeen ' %s' onnistua mutta tietokanta' %s' ei tavoitettu.
-MantisTestKo2=Yhteys palvelimeen ' %s' kanssa käyttäjä' %s' failed.
-MantisErrorConnectOkButWrongDatabase=Yhteys onnistunut mutta tietokanta ei näytä olevan Mantis-tietokantaan.
 ##### Stock #####
 StockSetup=Kokoonpano moduuli varastossa
 UserWarehouse=Käytä käyttäjän henkilökohtaisia varastot
