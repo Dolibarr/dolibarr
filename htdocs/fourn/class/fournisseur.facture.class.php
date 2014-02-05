@@ -1258,6 +1258,18 @@ class FactureFournisseur extends CommonInvoice
 
         $error=0;
     	$this->db->begin();
+		
+		if (! $error && ! $notrigger)
+        {
+	    	// Appel des triggers
+	    	include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+	    	$interface=new Interfaces($this->db);
+	    	$result=$interface->run_triggers('LINEBILL_SUPPLIER_DELETE',$this,$user,$langs,$conf);
+	    	if ($result < 0) {
+	    		$error++; $this->errors=$interface->errors;
+	    	}
+        	// Fin appel triggers
+        }
 
     	if (! $error)
     	{
@@ -1273,19 +1285,6 @@ class FactureFournisseur extends CommonInvoice
 	        	dol_syslog(get_class($this)."::delete ".$this->error, LOG_ERR);
 	        }
     	}
-		
-		if (! $error && ! $notrigger)
-        {
-	    	// Appel des triggers
-	    	include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
-	    	$interface=new Interfaces($this->db);
-	    	$result=$interface->run_triggers('LINEBILL_SUPPLIER_DELETE',$this,$user,$langs,$conf);
-	    	if ($result < 0) {
-	    		$error++; $this->errors=$interface->errors;
-	    	}
-        	// Fin appel triggers
-        }
-		
 
     	if (! $error)
     	{
