@@ -115,9 +115,9 @@ class box_graph_product_distribution extends ModeleBoxes
 		if ($showpropalnb)  $nbofgraph++;
 		if ($showordernb)   $nbofgraph++;
 
-		$paramtitle=$langs->trans("Products").'/'.$langs->trans("Services");
-		if (empty($conf->produit->enabled)) $paramtitle=$langs->trans("Services");
-		if (empty($conf->service->enabled)) $paramtitle=$langs->trans("Products");
+		$paramtitle=$langs->transnoentitiesnoconv("Products").'/'.$langs->transnoentitiesnoconv("Services");
+		if (empty($conf->produit->enabled)) $paramtitle=$langs->transnoentitiesnoconv("Services");
+		if (empty($conf->service->enabled)) $paramtitle=$langs->transnoentitiesnoconv("Products");
 
 		$socid=empty($user->societe_id)?0:$user->societe_id;
 		$userid=0;	// No filter on user creation
