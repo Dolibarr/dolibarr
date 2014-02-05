@@ -8,6 +8,7 @@ Starter documentation
 3) What's new in this version
 4) What Dolibarr can do
 5) What Dolibarr can't do yet, todo list
+6) Follow Dolibarr on Social Networks
 
 
 I - DOLIBARR INSTALL
@@ -117,7 +118,7 @@ Miscellaneous:
 - Several skins.
 - Code is highly customizable (a lot of use of modules and submodules).
 - Works with Mysql 4.1 or higher, or PostgreSql 8.14 or higher.
-- Works with PHP 5.0 or higher.
+- Works with PHP 5.2 or higher.
 - An easy to understand and maintain code (PHP with no heavy frameworks).
 - A trigger architecture to allow you to make Dolibarr business events run
   PHP code to update your own information system.
@@ -135,4 +136,12 @@ This is features that Dolibarr does not support completely yet:
 - Dolibarr does not contains Payroll module.
 - Tasks on module project can't have dependencies between each other.
 - Dolibarr does not include any Webmail.
-- Dolibarr can't do coffee (not yet). 
+- Dolibarr can't do coffee (not yet).
+
+
+VI - SOCIAL NETWORKS
+--------------------
+Follow Dolibarr project on
+Facebook: <https://www.facebook.com/dolibarr>
+Google+: <https://plus.google.com/+DolibarrOrg>
+Twitter: <http://www.twitter.com/dolibarr>
