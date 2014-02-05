@@ -277,7 +277,7 @@ if ($action == 'create')
 	}
 	else if (empty($selectedcode)) $selectedcode=$mysoc->country_code;
 	print $form->select_country($selectedcode,'account_country_id');
-	if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
+	if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
 	print '</td></tr>';
 
 	// State
@@ -550,7 +550,7 @@ else
 		if (isset($_POST["account_country_id"])) $selectedcode=$_POST["account_country_id"];
 		else if (empty($selectedcode)) $selectedcode=$mysoc->country_code;
 		print $form->select_country($selectedcode,'account_country_id');
-		if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
+		if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
 		print '</td></tr>';
 
 		// State
