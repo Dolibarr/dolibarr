@@ -199,7 +199,7 @@ if ($action == 'create')
 	// Country
 	print '<tr><td width="25%">'.$langs->trans('Country').'</td><td colspan="3">';
 	print $form->select_country($object->country_id?$object->country_id:$mysoc->country_code,'country_id');
-	if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
+	if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
 	print '</td></tr>';
 
 	print '<tr><td>'.$langs->trans("Status").'</td><td colspan="3">';
@@ -527,7 +527,7 @@ else
 			// Country
 			print '<tr><td width="25%">'.$langs->trans('Country').'</td><td colspan="3">';
 			print $form->select_country($object->country_id?$object->country_id:$mysoc->country_code,'country_id');
-			if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
+			if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
 			print '</td></tr>';
 
 			print '<tr><td width="20%">'.$langs->trans("Status").'</td><td colspan="3">';

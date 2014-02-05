@@ -1088,7 +1088,7 @@ class FormOther
      *  Return a HTML select list of bank accounts
      *
      *  @param  string	$htmlname          	Name of select zone
-     *  @param	string	$dictionnarytable	Dictionnary table
+     *  @param	string	$dictionnarytable	Dictionary table
      *  @param	string	$keyfield			Field for key
      *  @param	string	$labelfield			Label field
      *  @param	string	$selected			Selected value
@@ -1138,7 +1138,7 @@ class FormOther
             }
             else
 			{
-                print $langs->trans("DictionnaryEmpty");
+                print $langs->trans("DictionaryEmpty");
             }
         }
         else {
