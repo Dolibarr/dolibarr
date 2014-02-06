@@ -705,7 +705,7 @@ class Form
     	}
     	else
     	{*/
-    		print $this->select_thirdparty_list($selected,$htmlname,$filter,1,0,$forcecombo,array(),'',0,$limit);
+    		return $this->select_thirdparty_list($selected,$htmlname,$filter,1,0,$forcecombo,array(),'',0,$limit);
     	//}
     }
 

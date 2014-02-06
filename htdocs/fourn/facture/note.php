@@ -101,7 +101,7 @@ if ($object->id > 0)
 	print "</tr>\n";
 
 	// Company
-	print '<tr><td>'.$langs->trans('Supplier').'</td><td colspan="3">'.$object->thirdparty->getNomUrl(1).'</td></tr>';
+	print '<tr><td>'.$langs->trans('Supplier').'</td><td colspan="3">'.$object->thirdparty->getNomUrl(1,'supplier').'</td></tr>';
 
 	// Type
 	print '<tr><td>'.$langs->trans('Type').'</td><td colspan="4">';

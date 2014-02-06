@@ -96,7 +96,7 @@ if ($action == 'add_paiement')
     {
         // Si module bank actif, un compte est obligatoire lors de la saisie
         // d'un paiement
-        if (! $_POST['accountid'])
+        if ($_POST['accountid'] <= 0)
         {
         	setEventMessage($langs->trans('ErrorFieldRequired',$langs->transnoentities('AccountToCredit')), 'errors');
             $error++;
@@ -298,13 +298,16 @@ if ($action == 'create' || $action == 'add_paiement')
 	                        $objp = $db->fetch_object($resql);
 	                        $var=!$var;
 	                        print '<tr '.$bc[$var].'>';
-	                        print '<td><a href="fiche.php?facid='.$objp->facid.'">'.img_object($langs->trans('ShowBill'),'bill').' '.$objp->ref;
-	                        print '</a></td>';
+	                        print '<td>';
+	                        $invoicesupplierstatic->ref=$objp->ref;
+	                        $invoicesupplierstatic->id=$objp->facid;
+	                        print $invoicesupplierstatic->getNomUrl(1);
+	                        print '</td>';
 	                        print '<td>'.$objp->ref_supplier.'</td>';
 	                        if ($objp->df > 0 )
 	                        {
 	                            print '<td align="center">';
-	                            print dol_print_date($db->jdate($objp->df)).'</td>';
+	                            print dol_print_date($db->jdate($objp->df), 'day').'</td>';
 	                        }
 	                        else
 	                        {

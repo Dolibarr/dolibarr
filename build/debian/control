@@ -1,40 +1,47 @@
 Source: dolibarr
-Maintainer: Laurent Destailleur (eldy) <eldy@users.sourceforge.net>
-Uploaders: Laurent Destailleur (eldy) <eldy@users.sourceforge.net>
-Standards-Version: 3.9.2
 Section: web
 Priority: optional
+Maintainer: Laurent Destailleur (eldy) <eldy@users.sourceforge.net>
+Uploaders: Laurent Destailleur (eldy) <eldy@users.sourceforge.net>
+Standards-Version: 3.9.4
 Homepage: http://www.dolibarr.org
-Build-Depends: debhelper (>= 7), po-debconf, dpatch
+Build-Depends: debhelper (>= 9), po-debconf, dpatch
 Comments: This package need at least debian 7 or ubuntu 13.04 or any distribution based on this version
  
 Package: dolibarr
+Architecture: all
 Depends: libapache2-mod-php5 | libapache2-mod-php5filter | php5-cgi | php5-fpm | php5,
-    php5-mysql | php5-mysqli, 
-    php5-cli, php5-curl, php5-gd, php5-ldap, php-pear, php-mail-mime, php5-geoip,
-	libphp-adodb,
-    libnusoap-php,
-    libphp-pclzip,
-    libfpdi-php, libfpdf-tpl-php, php-fpdf,
-    libjs-jquery, libjs-jquery-ui, libjs-flot, ckeditor,
-    ttf-dejavu-core,
+    php5-cli, 
+# Required PHP extensions
+    php5-mysql | php5-mysqli, php5-curl, php5-gd, php5-ldap, php5-geoip,
+# Required PHP libraries
+    php-pear, php-mail-mime, 
+#    libfpdi-php, libfpdf-tpl-php, php-fpdf,
+#    libphp-adodb,
+#    libnusoap-php,
+#    libphp-pclzip,
+# Required javascript libraries
+#    libjs-jquery, libjs-jquery-ui, libjs-flot, ckeditor,
+# Misc dependencies
+#    fonts-dejavu-core | ttf-dejavu-core,
     xdg-utils,
     mysql-server,
     ${misc:Depends},
     ${perl:Depends}
-Recommends: apache2 | lighttpd | httpd, mysql-client
+Recommends: mysql-client, apache2 | lighttpd | httpd
 Suggests: www-browser
-Architecture: all
 Description: Web based software to manage a small company or foundation
  Dolibarr ERP & CRM is an easy to use open source/free software for small 
  and medium companies, foundations or freelances. It includes different 
  features for Enterprise Resource Planning (ERP) and Customer Relationship
  Management (CRM) but also for different other activities.
+ .
  It's a web software you can install as a standalone program or on any web
  hosting provider to use it from anywhere with any web browser.
  .
- Dolibarr was designed to be easy to use. Only features you need are 
- visible, depending on which module were activated.
+ Dolibarr was designed to be easy to use. Only the features that you need are 
+ visible, depending on which modules were activated.
+ .
  Most common used modules are:
  .
  Customers, Suppliers or Prospects directory,
