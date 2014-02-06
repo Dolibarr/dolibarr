@@ -257,7 +257,7 @@ class DoliDBMysql extends DoliDB
 	{
 		return explode('.',$this->getVersion());
 	}
-	
+
 	/**
 	 *	Return version of database client driver
 	 *
@@ -267,7 +267,7 @@ class DoliDBMysql extends DoliDB
 	{
 		return mysqli_get_client_info();
 	}
-	
+
 
     /**
      *  Close database connexion
@@ -503,37 +503,6 @@ class DoliDBMysql extends DoliDB
 		if ($limit < 0) $limit=$conf->liste_limit;
 		if ($offset > 0) return " LIMIT $offset,$limit ";
 		else return " LIMIT $limit ";
-	}
-
-
-	/**
-	 * Define sort criteria of request
-	 *
-	 * @param	string	$sortfield  List of sort fields
-	 * @param	string	$sortorder  Sort order
-	 * @return	string      		String to provide syntax of a sort sql string
-	 * TODO	Mutualized this into a mother class
-	 */
-	function order($sortfield=0,$sortorder=0)
-	{
-		if ($sortfield)
-		{
-			$return='';
-			$fields=explode(',',$sortfield);
-			foreach($fields as $val)
-			{
-				if (! $return) $return.=' ORDER BY ';
-				else $return.=',';
-
-				$return.=preg_replace('/[^0-9a-z_\.]/i','',$val);
-                if ($sortorder) $return.=' '.preg_replace('/[^0-9a-z]/i','',$sortorder);
-			}
-			return $return;
-		}
-		else
-		{
-			return '';
-		}
 	}
 
 
