@@ -1021,7 +1021,7 @@ class Societe extends CommonObject
         require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
         $entity=isset($this->entity)?$this->entity:$conf->entity;
-        
+
         dol_syslog(get_class($this)."::delete", LOG_DEBUG);
         $error = 0;
 
@@ -1031,28 +1031,41 @@ class Societe extends CommonObject
 		{
             $this->db->begin();
 
-            require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
-            $static_cat = new Categorie($this->db);
-            $toute_categs = array();
-
-            // Fill $toute_categs array with an array of (type => array of ("Categorie" instance))
-            if ($this->client || $this->prospect)
+		    if (! $error)
             {
-                $toute_categs ['societe'] = $static_cat->containing($this->id,2);
-            }
-            if ($this->fournisseur)
-            {
-                $toute_categs ['fournisseur'] = $static_cat->containing($this->id,1);
+                // Appel des triggers
+                include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
+                $interface=new Interfaces($this->db);
+                $result=$interface->run_triggers('COMPANY_DELETE',$this,$user,$langs,$conf);
+                if ($result < 0) { $error++; $this->errors=$interface->errors; }
+                // Fin appel triggers
             }
 
-            // Remove each "Categorie"
-            foreach ($toute_categs as $type => $categs_type)
-            {
-                foreach ($categs_type as $cat)
-                {
-                    $cat->del_type($this, $type);
-                }
-            }
+			if (! $error)
+			{
+	            require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+	            $static_cat = new Categorie($this->db);
+	            $toute_categs = array();
+
+	            // Fill $toute_categs array with an array of (type => array of ("Categorie" instance))
+	            if ($this->client || $this->prospect)
+	            {
+	                $toute_categs ['societe'] = $static_cat->containing($this->id,2);
+	            }
+	            if ($this->fournisseur)
+	            {
+	                $toute_categs ['fournisseur'] = $static_cat->containing($this->id,1);
+	            }
+
+	            // Remove each "Categorie"
+	            foreach ($toute_categs as $type => $categs_type)
+	            {
+	                foreach ($categs_type as $cat)
+	                {
+	                    $cat->del_type($this, $type);
+	                }
+	            }
+			}
 
             // Remove contacts
             if (! $error)
@@ -1096,20 +1109,6 @@ class Societe extends CommonObject
                 }
             }
 
-            if (! $error)
-            {
-            	// Additionnal action by hooks
-            	// FIXME on a déjà un trigger, pourquoi rajouter un hook !!
-                $hookmanager->initHooks(array('thirdpartydao'));
-                $parameters=array(); $action='delete';
-                $reshook=$hookmanager->executeHooks('deleteThirdparty',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
-                if (! empty($hookmanager->error))
-                {
-                    $error++;
-                    $this->error=$hookmanager->error;
-                }
-            }
-
             // Removed extrafields
             if ((! $error) && (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED))) // For avoid conflicts if trigger used
             {
@@ -1137,16 +1136,6 @@ class Societe extends CommonObject
 
             if (! $error)
             {
-                // Appel des triggers
-                include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-                $interface=new Interfaces($this->db);
-                $result=$interface->run_triggers('COMPANY_DELETE',$this,$user,$langs,$conf);
-                if ($result < 0) { $error++; $this->errors=$interface->errors; }
-                // Fin appel triggers
-            }
-
-            if (! $error)
-            {
                 $this->db->commit();
 
                 // Delete directory
@@ -1158,7 +1147,7 @@ class Societe extends CommonObject
                     	dol_delete_dir_recursive($docdir);
                 	}
                 }
-                
+
                 return 1;
             }
             else
