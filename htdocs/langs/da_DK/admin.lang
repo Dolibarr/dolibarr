@@ -1325,6 +1325,7 @@ BarcodeDescC39=Barcode af type C39
 BarcodeDescC128=Barcode af type C128
 GenbarcodeLocation=Stregkode generation kommando linje værktøj (der benyttes af phpbarcode motor for nogle stregkode typer)
 # BarcodeInternalEngine=Internal engine
+# BarCodeNumberManager=Manager to auto define barcode numbers
 ##### Prelevements #####
 WithdrawalsSetup=Tilbagetrækning modul opsætning
 ##### ExternalRSS #####
@@ -1366,17 +1367,6 @@ OSCommerceErrorConnectOkButWrongDatabase=Forbindelsesstyring lykkedes, men datab
 OSCommerceTestOk=Forbindelse til server ' %s' på database' %s' med brugeren ' %s' succes.
 OSCommerceTestKo1=Forbindelse til server ' %s' lykkes men database' %s' kunne ikke være nået.
 OSCommerceTestKo2=Forbindelse til server ' %s' med brugeren' %s' mislykkedes.
-##### Mantis #####
-MantisSetup=Mantis link setup
-MantisURL=URL for Mantis adgang
-MantisServer=Server hosting Mantis database
-MantisDatabaseName=Database navn
-MantisUser=Brugeren at få adgang til databasen
-MantisSetupSaved=Mantis opsætning gemt.
-MantisTestOk=Forbindelse til server ' %s' på database' %s' med brugeren ' %s' succes.
-MantisTestKo1=Forbindelse til server ' %s' lykkes men database' %s' kunne ikke være nået.
-MantisTestKo2=Forbindelse til server ' %s' med brugeren' %s' mislykkedes.
-MantisErrorConnectOkButWrongDatabase=Forbindelsesstyring lykkedes, men databasen ikke ser sig at være en Mantis database.
 ##### Stock #####
 StockSetup=Konfiguration modul lager
 UserWarehouse=Brug brugerens personlige bestande

@@ -130,6 +130,7 @@ ErrorPaymentModeDefinedToWithoutSetup=S'ha establert la forma de pagament al tip
 # ErrorOpenIDSetupNotComplete=You setup Dolibarr config file to allow OpenID authentication, but URL of OpenID service is not defined into constant %s
 # ErrorWarehouseMustDiffers=Source and target warehouses must differs
 # ErrorBadFormat=Bad format!
+# ErrorPaymentDateLowerThanInvoiceDate=Payment date (%s) cant' be before invoice date (%s) for invoice %s.
 
 # Warnings
 WarningMandatorySetupNotComplete=Els paràmetres obligatoris de configuració no estan encara definits

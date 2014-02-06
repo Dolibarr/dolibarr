@@ -1325,6 +1325,7 @@ BarcodeDescC39=Črtna koda tipa C39
 BarcodeDescC128=Črtna koda tipa C128
 GenbarcodeLocation=Orodje za generiranje črtne kode preko komandne vrstice (uporablja ga 'phpbarcode engine' za nekatere tipe črtnih kod)
 # BarcodeInternalEngine=Internal engine
+# BarCodeNumberManager=Manager to auto define barcode numbers
 ##### Prelevements #####
 WithdrawalsSetup=Nastavitev modula za dvige
 ##### ExternalRSS #####
@@ -1366,17 +1367,6 @@ OSCommerceErrorConnectOkButWrongDatabase=Povezava je uspela, vendar baza podatko
 OSCommerceTestOk=Povezava s strežnikom '%s' na bazo podatkov '%s' uporabnika '%s' je bila uspešna.
 OSCommerceTestKo1=Povezava s strežnikom '%s' je bila uspešna, vendar baza podatkov '%s' ni dosegljiva.
 OSCommerceTestKo2=Povezava s strežnikom '%s' uporabnika '%s' ni uspela.
-##### Mantis #####
-MantisSetup=Nastavitev linka Mantis
-MantisURL=URL za dostop do Mantis-a
-MantisServer=Strežnik, ki gosti Mantis bazo podatkov
-MantisDatabaseName=Ime baze podatkov
-MantisUser=Uporabnik za dostop do baze podatkov
-MantisSetupSaved=Mantis nastavitev uspešno shranjena.
-MantisTestOk=Povezava s strežnikom '%s' na bazo podatkov '%s' uporabnika '%s' je bila uspešna.
-MantisTestKo1=Povezava s strežnikom '%s' je bila uspešna, vendar baza podatkov '%s' ni dosegljiva.
-MantisTestKo2=Povezava s strežnikom '%s' uporabnika '%s' ni uspela.
-MantisErrorConnectOkButWrongDatabase=Povezava je uspela, vendar baza podatkov ne izgleda kot Mantis baza podatkov.
 ##### Stock #####
 StockSetup=Konfiguracija modula zaloge
 UserWarehouse=Uporabi uporabnikove prilagojene zaloge

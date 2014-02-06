@@ -1325,6 +1325,7 @@ BarcodeDescC39=タイプC39のバーコード
 BarcodeDescC128=タイプC128のバーコード
 GenbarcodeLocation=バーコードを生成するコマンドラインツール（一部のバーコードタイプのphpbarcodeエンジンで使用されます）
 # BarcodeInternalEngine=Internal engine
+# BarCodeNumberManager=Manager to auto define barcode numbers
 ##### Prelevements #####
 WithdrawalsSetup=撤退モジュールのセットアップ
 ##### ExternalRSS #####
@@ -1366,17 +1367,6 @@ OSCommerceErrorConnectOkButWrongDatabase=接続に成功しましたが、デー
 OSCommerceTestOk=ユーザー '%s'成功したデータベース &quot;%s&quot;のサーバ &quot;%s&quot;への接続を確立します。
 OSCommerceTestKo1=サーバー '%s'への接続が成功しますが、データベース '%s'は到達できませんでした。
 OSCommerceTestKo2=ユーザー '%s'でサーバー '%s'への接続に失敗しました。
-##### Mantis #####
-MantisSetup=カマキリリンクのセットアップ
-MantisURL=カマキリのアクセス用のURL
-MantisServer=サーバホスティングMantisデータベース
-MantisDatabaseName=データベース名
-MantisUser=データベースにアクセスするユーザー
-MantisSetupSaved=カマキリのセットアップは正常に保存されます。
-MantisTestOk=ユーザー '%s'成功したデータベース &quot;%s&quot;のサーバ &quot;%s&quot;への接続を確立します。
-MantisTestKo1=サーバー '%s'への接続が成功しますが、データベース '%s'は到達できませんでした。
-MantisTestKo2=ユーザー '%s'でサーバー '%s'への接続に失敗しました。
-MantisErrorConnectOkButWrongDatabase=接続に成功しましたが、データベースは、Mantisのデータベースには見えない。
 ##### Stock #####
 StockSetup=コンフィギュレーションモジュールの株式
 UserWarehouse=ユーザー個人の株式を使用

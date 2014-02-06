@@ -1325,6 +1325,7 @@ BarcodeDescC39=Codice a barre di tipo C39
 BarcodeDescC128=Codice a barre di tipo C128
 GenbarcodeLocation=Programma a riga di comando per generare i codici a barre (utilizzato dal modulo phpbarcode per alcuni tipi di codici a barre)
 # BarcodeInternalEngine=Internal engine
+# BarCodeNumberManager=Manager to auto define barcode numbers
 ##### Prelevements #####
 WithdrawalsSetup=Modulo impostazione prelievi
 ##### ExternalRSS #####
@@ -1366,17 +1367,6 @@ OSCommerceErrorConnectOkButWrongDatabase=la connessione al server riuscita, ma i
 OSCommerceTestOk=Connessione al server ' %s' sul database' %s' con l'utente ' %s' riuscita.
 OSCommerceTestKo1=Connessione al server ' %s' riuscita, ma il database' %s' non è raggiungibile.
 OSCommerceTestKo2=Connessione al server ' %s' con l'utente' %s' fallita.
-##### Mantis #####
-MantisSetup=Impostazioni modulo collegamento Mantis
-MantisURL=URL per l'accesso Mantis
-MantisServer=Server del database Mantis
-MantisDatabaseName=Nome del database Mantis
-MantisUser=Utente per l'accesso al database
-MantisSetupSaved=Impostazioni Mantis salvate con successo.
-MantisTestOk=Connessione al server ' %s' sul database' %s' con l'utente ' %s' riuscita.
-MantisTestKo1=Connessione al server ' %s' riuscita, ma il database' %s' non è raggiungibile.
-MantisTestKo2=Connessione al server ' %s' con l'utente' %s' fallita.
-MantisErrorConnectOkButWrongDatabase=Connessione al server riuscita, ma il database Mantis è errato.
 ##### Stock #####
 StockSetup=Impostazioni del modulo magazzino
 UserWarehouse=Attiva magazzino personale per utente

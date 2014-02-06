@@ -1325,6 +1325,7 @@ LocalTax2IsNotUsedExample=
 # BarcodeDescC128=Barcode of type C128
 # GenbarcodeLocation=Bar code generation command line tool (used by internal engine for some bar code types)
 # BarcodeInternalEngine=Internal engine
+# BarCodeNumberManager=Manager to auto define barcode numbers
 ##### Prelevements #####
 # WithdrawalsSetup=Withdrawal module setup
 ##### ExternalRSS #####
@@ -1366,17 +1367,6 @@ LocalTax2IsNotUsedExample=
 # OSCommerceTestOk=Connection to server '%s' on database '%s' with user '%s' successfull.
 # OSCommerceTestKo1=Connection to server '%s' succeed but database '%s' could not be reached.
 # OSCommerceTestKo2=Connection to server '%s' with user '%s' failed.
-##### Mantis #####
-# MantisSetup=Mantis link setup
-# MantisURL=URL for Mantis access
-# MantisServer=Server hosting Mantis database
-# MantisDatabaseName=Database name
-# MantisUser=User to access database
-# MantisSetupSaved=Mantis setup saved successfully.
-# MantisTestOk=Connection to server '%s' on database '%s' with user '%s' successfull.
-# MantisTestKo1=Connection to server '%s' succeed but database '%s' could not be reached.
-# MantisTestKo2=Connection to server '%s' with user '%s' failed.
-# MantisErrorConnectOkButWrongDatabase=Connection succeeded but database doesn't look to be a Mantis database.
 ##### Stock #####
 # StockSetup=Configuration module stock
 # UserWarehouse=Use user personal stocks

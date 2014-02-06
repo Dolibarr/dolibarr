@@ -673,7 +673,6 @@ class ExtraFields
 			$out = '';
 			if ($conf->use_javascript_ajax && $conf->global->COMPANY_USE_SEARCH_TO_SELECT && ! $forcecombo)
 			{
-				//$minLength = (is_numeric($conf->global->COMPANY_USE_SEARCH_TO_SELECT)?$conf->global->COMPANY_USE_SEARCH_TO_SELECT:2);
 				$out.= ajax_combobox('options_'.$key, $event, $conf->global->COMPANY_USE_SEARCH_TO_SELECT);
 			}
 
@@ -693,7 +692,6 @@ class ExtraFields
 			$out = '';
 			if ($conf->use_javascript_ajax && $conf->global->COMPANY_USE_SEARCH_TO_SELECT && ! $forcecombo)
 			{
-				//$minLength = (is_numeric($conf->global->COMPANY_USE_SEARCH_TO_SELECT)?$conf->global->COMPANY_USE_SEARCH_TO_SELECT:2);
 				$out.= ajax_combobox('options_'.$key, $event, $conf->global->COMPANY_USE_SEARCH_TO_SELECT);
 			}
 
@@ -959,18 +957,18 @@ class ExtraFields
 			}
 			$sql.= " WHERE ".$selectkey."='".$this->db->escape($value)."'";
 			//$sql.= ' AND entity = '.$conf->entity;
-			
+
 			dol_syslog(get_class($this).':showOutputField:$type=sellist sql='.$sql);
 			$resql = $this->db->query($sql);
 			if ($resql)
 			{
 				$value='';	// value was used, so now we reste it to use it to build final output
-				
+
 				$obj = $this->db->fetch_object($resql);
 
 				// Several field into label (eq table:code|libelle:rowid)
 				$fields_label = explode('|',$InfoFieldList[1]);
-				
+
 				if(is_array($fields_label))
 				{
 					foreach ($fields_label as $field_toshow)

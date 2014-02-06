@@ -15,7 +15,7 @@ Dolibarr is released under the terms of the GNU General Public License as publis
 
 If you have no technical knowledge, and you are looking for an autoinstaller to install Dolibarr ERP/CRM in few clicks, you must download DoliWamp (the all-in-one package of Dolibarr for Windows), DoliDeb (the all-in-one package of Dolibarr for Debian or Ubuntu) or DoliRpm (the all-in-one package of Dolibarr for Fedora, Redhat, Opensuse, Mandriva or Mageia).
 
-You can download this at: [Official website] (http://www.dolibarr.org/downloads/)
+You can download this at: [Official website] (<http://www.dolibarr.org/downloads/>)
 
 If you already have installed a Web server and a Mysql database, you can install the standard version like this:
 
@@ -136,3 +136,15 @@ This is features that Dolibarr does not support completely yet:
 - Dolibarr does not contains Payroll module.
 - Dolibarr does not include any Webmail.
 - Dolibarr can't do coffee (not yet).
+
+
+## SOCIAL NETWORKS
+
+Follow Dolibarr project on
+
+Facebook: <https://www.facebook.com/dolibarr>
+
+Google+: <https://plus.google.com/+DolibarrOrg>
+
+Twitter: <http://www.twitter.com/dolibarr>
+

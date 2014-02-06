@@ -1325,6 +1325,7 @@ BarcodeDescC39=Code 39 条码
 BarcodeDescC128=Code 128 条码
 GenbarcodeLocation=条形码生成用的命令行工具 (内部引擎用来生成某些类型的条码)
 BarcodeInternalEngine=内部引擎
+# BarCodeNumberManager=Manager to auto define barcode numbers
 ##### Prelevements #####
 WithdrawalsSetup=提款模块设置
 ##### ExternalRSS #####
@@ -1366,17 +1367,6 @@ OSCommerceErrorConnectOkButWrongDatabase=数据库连接成功，似乎并非 os
 OSCommerceTestOk=成功连接到服务器'%s'的数据库'%s'上，身份用户 '%s'。
 OSCommerceTestKo1=服务器'%s'连接成功，但无法打开数据库'%s'。
 OSCommerceTestKo2=以用户身份'%s'连接至服务器'%s' 失败。
-##### Mantis #####
-MantisSetup=Mantis 连接设置
-MantisURL=Mantis 访问链接
-MantisServer=Mantis 数据库托管服务器
-MantisDatabaseName=数据库名称
-MantisUser=访问数据库的用户名
-MantisSetupSaved=螳螂设置保存成功。
-MantisTestOk=成功连接到服务器'%s'的数据库'%s'上，身份用户 '%s'。
-MantisTestKo1=服务器'%s'连接成功，但无法打开数据库'%s'。
-MantisTestKo2=以用户身份'%s'连接至服务器'%s' 失败。
-MantisErrorConnectOkButWrongDatabase=连接成功了，但是数据库不看是 Mantis 数据库。
 ##### Stock #####
 StockSetup=库存模块设置
 UserWarehouse=*启用用户自定义库存

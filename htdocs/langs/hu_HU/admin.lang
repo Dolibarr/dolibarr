@@ -1325,6 +1325,7 @@ BarcodeDescC39=Vonalkód típusú C39
 BarcodeDescC128=Vonalkód típusú C128
 GenbarcodeLocation=Vonalkód generáló parancssori eszköz (phpbarcode motor használja egyes vonalkód típusokhoz)
 # BarcodeInternalEngine=Internal engine
+# BarCodeNumberManager=Manager to auto define barcode numbers
 ##### Prelevements #####
 WithdrawalsSetup=Felmondás modul beállítás
 ##### ExternalRSS #####
@@ -1366,17 +1367,6 @@ OSCommerceErrorConnectOkButWrongDatabase=Connection sikerült, de az adatbázisb
 OSCommerceTestOk=Csatlakozás a szerverhez &quot;%s&quot; az adatbázis &quot;%s&quot; felhasználói &quot;%s&quot; sikeres.
 OSCommerceTestKo1=Csatlakozás a szerverhez &quot;%s&quot; sikerül, de adatbázis &quot;%s&quot; nem lehet elérni.
 OSCommerceTestKo2=Csatlakozás a szerverhez &quot;%s&quot; felhasználói &quot;%s&quot; sikerült.
-##### Mantis #####
-MantisSetup=Mantis kapcsolat beállítása
-MantisURL=URL hozzáférés Mantis
-MantisServer=Szerver hoszting Mantis adatbázis
-MantisDatabaseName=Az adatbázis neve
-MantisUser=Felhasználó adatbázishoz való hozzáférés
-MantisSetupSaved=Mantis telepítés sikeresen elmentve.
-MantisTestOk=Csatlakozás a szerverhez &quot;%s&quot; az adatbázis &quot;%s&quot; felhasználói &quot;%s&quot; sikeres.
-MantisTestKo1=Csatlakozás a szerverhez &quot;%s&quot; sikerül, de adatbázis &quot;%s&quot; nem lehet elérni.
-MantisTestKo2=Csatlakozás a szerverhez &quot;%s&quot; felhasználói &quot;%s&quot; sikerült.
-MantisErrorConnectOkButWrongDatabase=Connection sikerült, de az adatbázisban nem úgy néz ki, hogy egy Mantis adatbázisban.
 ##### Stock #####
 StockSetup=Konfigurációs modul készlet
 UserWarehouse=Használja a felhasználó személyi állomány

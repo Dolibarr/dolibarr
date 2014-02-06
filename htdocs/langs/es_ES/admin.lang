@@ -1325,6 +1325,7 @@ BarcodeDescC39=Códigos de barras tipo C39
 BarcodeDescC128=Códigos de barras tipo C128
 GenbarcodeLocation=Herramienta de generación de códigos de barras en líneas de pedidos (utilizado por el motor phpbar para determinados tipos de códigos de barras)
 BarcodeInternalEngine=Motor interno
+# BarCodeNumberManager=Manager to auto define barcode numbers
 ##### Prelevements #####
 WithdrawalsSetup=Configuración del módulo domiciliaciones
 ##### ExternalRSS #####
@@ -1366,17 +1367,6 @@ OSCommerceErrorConnectOkButWrongDatabase=La conexión se ha establecido, pero la
 OSCommerceTestOk=La conexión al servidor '%s' sobre la base '%s' por el usuario '%s' es correcta.
 OSCommerceTestKo1=La conexión al servidor '%s' sobre la base '%s' por el usuario '%s' no se pudo efectuar.
 OSCommerceTestKo2=La conexión al servidor '%s' por el usuario '%s' ha fallado.
-##### Mantis #####
-MantisSetup=Configuración del enlace con el sistema de seguimiento Mantis
-MantisURL=Dirección (URL) de acceso a Mantis
-MantisServer=Servidor de la base de datos Mantis
-MantisDatabaseName=Nombre de la base de datos Mantis
-MantisUser=Identificador de acceso a la base
-MantisSetupSaved=Los identificadores Mantis se han guardado correctamente
-MantisTestOk=La conexión al servidor '%s' sobre la base de datos  '%s' por el usuario '%s' es correcta.
-MantisTestKo1=La conexión al servidor '%s' es correcta pero la base de datos' %s ' no pudo comprobarse.
-MantisTestKo2=La conexión al servidor '%s' por el usuario '%s' a fallado.
-MantisErrorConnectOkButWrongDatabase=La conexión es correcta pero la base de datos no parece ser una base de datos Mantis.
 ##### Stock #####
 StockSetup=Configuración del módulo Stocks
 UserWarehouse=Utilizar los stocks personales de usuarios

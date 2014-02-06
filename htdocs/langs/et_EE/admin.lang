@@ -1325,6 +1325,7 @@ BarcodeDescC39=C39 tüüpi vöötkood
 BarcodeDescC128=C128 tüüpi vöötkood
 GenbarcodeLocation=Käsurea tööriist vöötkoodi genereerimiseks (sisemine mootor kasutab seda mõnda tüüpi vöötkoodide loomiseks)
 BarcodeInternalEngine=Sisemine mootor
+# BarCodeNumberManager=Manager to auto define barcode numbers
 ##### Prelevements #####
 WithdrawalsSetup=Väljamaksete mooduli seadistami
 ##### ExternalRSS #####
@@ -1366,17 +1367,6 @@ OSCommerceErrorConnectOkButWrongDatabase=Ühendumine õnnestus, aga andmebaas ei
 OSCommerceTestOk=Ühendumine serveri '%s' andmebaasiga '%s' kasutajga '%s' õnnestus.
 OSCommerceTestKo1=Ühendumine serveriga '%s' õnnestus, kuid andmebaasi '%s' ei õnnestunud kätte saada.
 OSCommerceTestKo2=Ühendumine serveriga '%s' kasutajaga '%s' ebaõnnestus.
-##### Mantis #####
-MantisSetup=Mantise lingi seadistamine
-MantisURL=Mantisele juurdepääsu URL
-MantisServer=Mantise andmebaasiserver
-MantisDatabaseName=Andmebaasi nimi
-MantisUser=Andmebaasi kasutaja
-MantisSetupSaved=Mantise seadistus salvestati edukalt.
-MantisTestOk=Ühendus serveri '%s' andmebaasiga '%s' kasutajaga '%s' õnnestus.
-MantisTestKo1=Ühendus serveriga '%s' õnnestus, kuid andmebaasi '%s' ei õnnestunud kätte saada.
-MantisTestKo2=Ühendus serveriga '%s' kasutajaga '%s' ebaõnnestus.
-MantisErrorConnectOkButWrongDatabase=Ühendus õnnestus, aga andmebaasi ei tundu olevat Mantise andmebaas.
 ##### Stock #####
 StockSetup=Laojääkide mooduli seadistamine
 UserWarehouse=Kasuta kasutaja isiklikke varusid

@@ -1325,6 +1325,7 @@ BarcodeDescC39=Codis de barra tipus C39
 BarcodeDescC128=Codis de barra tipus C128
 GenbarcodeLocation=Eina generació codi de barra en línia de comanda (utilitzat pel motor phpbar per a determinats tipus de codis barra)
 BarcodeInternalEngine=Motor intern
+# BarCodeNumberManager=Manager to auto define barcode numbers
 ##### Prelevements #####
 WithdrawalsSetup=Configuració del mòdul domiciliacions
 ##### ExternalRSS #####
@@ -1366,17 +1367,6 @@ OSCommerceErrorConnectOkButWrongDatabase=La connexió s'ha establert, però la b
 OSCommerceTestOk=La connexió al servidor '%s' sobre la base '%s' per l'usuari '%s' és correcta.
 OSCommerceTestKo1=La connexió al servidor '%s' sobre la base '%s' per l'usuari '%s' no s'ha pogut fer.
 OSCommerceTestKo2=La connexió al servidor '%s'  per l'usuari '%s' ha fallat.
-##### Mantis #####
-MantisSetup=Configuració de l'enllaç amb el sistema de seguiment Mantis
-MantisURL=Adreça (URL) d'accés a Mantis
-MantisServer=Servidor de la base de dades Mantis
-MantisDatabaseName=Nom de la base de dades Mantis
-MantisUser=Identificador d'accés a la base
-MantisSetupSaved=Els identificadors Mantis s'han desat correctament
-MantisTestOk=La connexió al servidor '%s' sobre la base '%s' per l'usuari '%s' és correcta.
-MantisTestKo1=La connexió al servidor '%s' sobre la base '%s' per l'usuari '%s' no s'ha pogut fer.
-MantisTestKo2=La connexió al servidor '%s'  per l'usuari '%s' ha fallat.
-MantisErrorConnectOkButWrongDatabase=La connexió és correcta però la base de dades no sembla ser una base de dades Mantis.
 ##### Stock #####
 StockSetup=Configuració del mòdul Stock
 UserWarehouse=Utilitzar els stocks personals d'usuaris

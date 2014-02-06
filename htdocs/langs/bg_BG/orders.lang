@@ -151,7 +151,7 @@ PDFEdisonDescription=Прост модел за
 # Orders modes
 OrderByMail=Поща
 OrderByFax=Факс
-OrderByEMail=EMail
+OrderByEMail=Имейл
 OrderByWWW=Online
 OrderByPhone=Телефон
 

@@ -1325,6 +1325,7 @@ BarcodeDescC39=Čárový kód typu C39
 BarcodeDescC128=Čárový kód typu C128
 GenbarcodeLocation=Bar generování kódu nástroj pro příkazovou řádku (používaný motorem s vnitřním u některých typů čárových kódů)
 BarcodeInternalEngine=Vnitřní motor
+# BarCodeNumberManager=Manager to auto define barcode numbers
 ##### Prelevements #####
 WithdrawalsSetup=Odstoupení modul nastavení
 ##### ExternalRSS #####
@@ -1366,17 +1367,6 @@ OSCommerceErrorConnectOkButWrongDatabase=Připojení úspěšné, ale databáze 
 OSCommerceTestOk=Připojení k serveru &quot;%s&quot; na databázi &quot;%s&quot; s úspěšní uživatel &quot;%s.
 OSCommerceTestKo1=Připojení k &quot;%s&quot; serveru úspěšná, ale databáze &quot;%s&quot; by nebylo možno dosáhnout.
 OSCommerceTestKo2=Připojení k serveru &quot;%s&quot; s uživatelem &quot;%s 'se nezdařilo.
-##### Mantis #####
-MantisSetup=Mantis LINK
-MantisURL=URL pro přístup Mantis
-MantisServer=Server hosting Mantis databáze
-MantisDatabaseName=Název databáze
-MantisUser=Uživatel přístup k databázi
-MantisSetupSaved=Mantis nastavení bylo úspěšně uloženo.
-MantisTestOk=Připojení k serveru &quot;%s&quot; na databázi &quot;%s&quot; s úspěšní uživatel &quot;%s.
-MantisTestKo1=Připojení k &quot;%s&quot; serveru úspěšná, ale databáze &quot;%s&quot; by nebylo možno dosáhnout.
-MantisTestKo2=Připojení k serveru &quot;%s&quot; s uživatelem &quot;%s 'se nezdařilo.
-MantisErrorConnectOkButWrongDatabase=Připojení úspěšné, ale databáze nevypadá být Mantis databáze.
 ##### Stock #####
 StockSetup=Konfigurace modulu sklad
 UserWarehouse=Používejte osobní uživatelské zásoby

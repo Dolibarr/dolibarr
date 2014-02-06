@@ -1325,6 +1325,7 @@ BarcodeDescC39=Coduri de bare de tip C39
 BarcodeDescC128=Coduri de bare de tip C128
 GenbarcodeLocation=Coduri de bare generaţie în linie de comandă (utilizat de către phpbarcode motor pentru anumite tipuri de coduri de bare)
 BarcodeInternalEngine=Motor intern
+# BarCodeNumberManager=Manager to auto define barcode numbers
 ##### Prelevements #####
 WithdrawalsSetup=Retragere de modul de configurare
 ##### ExternalRSS #####
@@ -1366,17 +1367,6 @@ OSCommerceErrorConnectOkButWrongDatabase=Conexiunii la baza de date a reusit, da
 OSCommerceTestOk=Conectarea la server ' %s' pe bază de date " %s" cu utilizatorul " %s" de succes.
 OSCommerceTestKo1=Conectarea la server ' %s' reuseste, dar baza de date " %s" nu a putut fi atins.
 OSCommerceTestKo2=Conectarea la server ' %s' cu utilizatorul " %s" nu a reuşit.
-##### Mantis #####
-MantisSetup=Mantis link-ul de instalare
-MantisURL=URL-ul pentru Mantis acces
-MantisServer=Server de baze de date hosting Mantis
-MantisDatabaseName=Baza de date nume
-MantisUser=De utilizator pentru a accesa baza de date
-MantisSetupSaved=Mantis setup salvate cu succes.
-MantisTestOk=Conectarea la server ' %s' pe bază de date " %s" cu utilizatorul " %s" de succes.
-MantisTestKo1=Conectarea la server ' %s' reuseste, dar baza de date " %s" nu a putut fi atins.
-MantisTestKo2=Conectarea la server ' %s' cu utilizatorul " %s" nu a reuşit.
-MantisErrorConnectOkButWrongDatabase=Conexiunii la baza de date a reusit, dar nu arata a fi o bază de date Mantis.
 ##### Stock #####
 StockSetup=Configurarea modulului stoc
 UserWarehouse=Utilizaţi utilizator personal stocuri
