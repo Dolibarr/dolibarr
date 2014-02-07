@@ -1,8 +1,9 @@
 -- =============================================================================
 -- Copyright (C) 2000-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 -- Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
--- Copyright (C) 2012	   Juanjo Menent        <jmenent@2byte.es>
+-- Copyright (C) 2012	     Juanjo Menent        <jmenent@2byte.es>
 -- Copyright (C) 2013      Peter Fontaine       <contact@peterfontaine.fr>
+-- Copyright (C) 2011-2014 Alexandre Spangaro   <alexandre.spangaro@gmail.com>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
