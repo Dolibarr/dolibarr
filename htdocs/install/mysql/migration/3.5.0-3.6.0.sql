@@ -1,7 +1,7 @@
 --
 -- Be carefull to requests order.
 -- This file must be loaded by calling /install/index.php page
--- when current version is 3.5.0 or higher.
+-- when current version is 3.6.0 or higher.
 --
 -- To rename a table:       ALTER TABLE llx_table RENAME TO llx_table_new;
 -- To add a column:         ALTER TABLE llx_table ADD COLUMN newcol varchar(60) NOT NULL DEFAULT '0' AFTER existingcol;
@@ -1004,3 +1004,6 @@ INSERT INTO llx_accountingaccount (fk_pcg_version, pcg_type, pcg_subtype, accoun
 INSERT INTO llx_accountingaccount (fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUE ('PCMN-BASE', 'HBILAN', 'XXXXXX', '075', '07', 'Créanciers de biens et valeurs détenus pour compte de tiers ou à leurs risques et profits', '1');
 INSERT INTO llx_accountingaccount (fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUE ('PCMN-BASE', 'HBILAN', 'XXXXXX', '09', '0', 'Droits et engagements divers', '1');
 */
+
+-- ISO 9362 http://fr.wikipedia.org/wiki/ISO_9362
+alter table llx_societe_rib      MODIFY COLUMN bic varchar(11);
