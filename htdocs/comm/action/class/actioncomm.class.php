@@ -893,6 +893,7 @@ class ActionComm extends CommonObject
                 if ($key == 'id')           $sql.=" AND a.id=".(is_numeric($value)?$value:0);
                 if ($key == 'idfrom')       $sql.=" AND a.id >= ".(is_numeric($value)?$value:0);
                 if ($key == 'idto')         $sql.=" AND a.id <= ".(is_numeric($value)?$value:0);
+                if ($key == 'project')      $sql.=" AND a.fk_project=".(is_numeric($value)?$value:0);
                 if ($key == 'login')
                 {
                     $login=$value;
