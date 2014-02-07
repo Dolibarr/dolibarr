@@ -505,7 +505,7 @@ Module50200Desc= Módulo para proporcionar un pago en línea con tarjeta de cré
 Module54000Name=PrintIPP
 Module54000Desc=Imprimir vía impresora Cups IPP.
 Module55000Name=Open Survey
-# Module55000Desc=Module to make online surveys (like Doodle, Studs, Rdvz, ...)
+Module55000Desc=Módulo para hacer encuestas en línea (como Doodle, Pasadores, Rdvz, etc.)
 Module59000Name=Márgenes
 Module59000Desc=Módulo para gestionar los márgenes de beneficio
 Module60000Name=Comisiones
@@ -724,8 +724,8 @@ Permission50202=Importar las transacciones
 Permission54001=Imprimir
 Permission55001=Leer encuestas
 Permission55002=Crear/modificar encuestas
-# Permission59001=Read commercial margins
-# Permission59002=Define commercial margins
+Permission59001=Leer márgenes comerciales
+Permission59002=Definir márgenes comerciales
 DictionnaryCompanyType=Tipos de empresa
 DictionnaryCompanyJuridicalType=Formas jurídicas
 DictionnaryProspectLevel=Perspectiva nivel cliente potencial
@@ -1011,9 +1011,9 @@ XDebugInstalled=XDebug está cargado.
 XCacheInstalled=XCache está cargado
 AddRefInList=Mostrar el código de cliente/proveedor en los listados (lista desplegable o autoselección) en la mayoría de enlaces
 FieldEdition=Edición del campo %s
-# FixTZ=TimeZone fix
-# FillThisOnlyIfRequired=Example: +2 (fill only if timezone offset problems are experienced)
-# GetBarCode=Get barcode
+FixTZ=Corrección del TimeZone
+FillThisOnlyIfRequired=Ejemplo: +2 (Complete sólo si se registra una desviación del tiempo en la exportación)
+GetBarCode=Obtener código de barras
 ##### Module password generation
 PasswordGenerationStandard=Devuelve una contraseña generada por el algoritmo interno Dolibarr: 8 caracteres, números y caracteres en minúsculas mezcladas.
 PasswordGenerationNone=No ofrece contraseñas. La contraseña se introduce manualmente.
@@ -1119,9 +1119,9 @@ WatermarkOnDraftInterventionCards=Marca de agua en fichas de intervención (en c
 ##### Contracts #####
 ContractsSetup=Configuración del módulo contratos
 ContractsNumberingModules=Módulos de numeración de los contratos
-# TemplatePDFContracts=Contracts documents models
-# FreeLegalTextOnContracts=Free text on contracts
-# WatermarkOnDraftContractCards=Watermark on draft contracts (none if empty)
+TemplatePDFContracts=Modelos de documento de contratos
+FreeLegalTextOnContracts=Texto libre en contratos
+WatermarkOnDraftContractCards=Marca de agua en contratos (nada si está vacía)
 ##### Members #####
 MembersSetup=Configuración del módulo Asociaciones
 MemberMainOptions=Opciones principales
@@ -1325,7 +1325,7 @@ BarcodeDescC39=Códigos de barras tipo C39
 BarcodeDescC128=Códigos de barras tipo C128
 GenbarcodeLocation=Herramienta de generación de códigos de barras en líneas de pedidos (utilizado por el motor phpbar para determinados tipos de códigos de barras)
 BarcodeInternalEngine=Motor interno
-# BarCodeNumberManager=Manager to auto define barcode numbers
+BarCodeNumberManager=Gestor para auto definir números de código de barras 
 ##### Prelevements #####
 WithdrawalsSetup=Configuración del módulo domiciliaciones
 ##### ExternalRSS #####
