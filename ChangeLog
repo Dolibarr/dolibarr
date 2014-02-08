@@ -15,7 +15,11 @@ Fix: Link to paypal was invalid into email text.
 Fix: ref and date of supplier invoice.
 Fix: Check on bank account.
 Fix: Problem with file upload and download.
-
+Fix: Page load not ending when large number of thirdparies. We 
+     added option MAIN_DISABLE_AJAX_COMBOX to disable javascript
+     combo feature that is root cause of problem.
+Fix: [ bug #1231 ] PDF always generated in interventions
+     
 ***** ChangeLog for 3.5 compared to 3.4.* *****
 For users:
 - New: Add hidden option BANK_DISABLE_DIRECT_INPUT.
