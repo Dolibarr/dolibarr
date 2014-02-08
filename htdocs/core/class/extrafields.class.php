@@ -516,7 +516,7 @@ class ExtraFields
 	/**
 	 * 	Load array this->attribute_label
 	 *
-	 * 	@param	string		$elementtype		Type of element
+	 * 	@param	string		$elementtype		Type of element ('adherent', 'commande', societe', 'facture', 'propal', 'product', ...)
 	 * 	@param	boolean		$forceload			Force load of extra fields whatever is option MAIN_EXTRAFIELDS_DISABLED
 	 * 	@return	array							Array of attributes for all extra fields
 	 */
@@ -941,18 +941,18 @@ class ExtraFields
 			}
 			$sql.= " WHERE ".$selectkey."='".$this->db->escape($value)."'";
 			//$sql.= ' AND entity = '.$conf->entity;
-			
+
 			dol_syslog(get_class($this).':showOutputField:$type=sellist sql='.$sql);
 			$resql = $this->db->query($sql);
 			if ($resql)
 			{
 				$value='';	// value was used, so now we reste it to use it to build final output
-				
+
 				$obj = $this->db->fetch_object($resql);
 
 				// Several field into label (eq table:code|libelle:rowid)
 				$fields_label = explode('|',$InfoFieldList[1]);
-				
+
 				if(is_array($fields_label))
 				{
 					foreach ($fields_label as $field_toshow)
