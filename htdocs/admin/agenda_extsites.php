@@ -67,7 +67,7 @@ if ($actionsave)
 		$color=trim(GETPOST('agenda_ext_color'.$i,'alpha'));
 		if ($color=='-1') $color='';
 
-		if (! empty($src) && ! preg_match('/^(http\s*|ftp\s*):/', $src))
+		if (! empty($src) && ! dol_is_url($src))
 		{
 			setEventMessage($langs->trans("ErrorParamMustBeAnUrl"),'errors');
 			$error++;
