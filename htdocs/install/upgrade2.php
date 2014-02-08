@@ -1459,7 +1459,7 @@ function migrate_price_propal($db,$langs,$conf)
 }
 
 /**
- * Mise a jour des totaux lignes de propal
+ * Update total of contract lines
  *
  * @param	DoliDB		$db		Database handler
  * @param	Translate	$langs	Object langs
@@ -1469,6 +1469,10 @@ function migrate_price_propal($db,$langs,$conf)
 function migrate_price_contrat($db,$langs,$conf)
 {
     $db->begin();
+
+   	$tmpmysoc=new Societe($db);
+	$tmpmysoc->setMysoc($conf);
+    if (empty($tmpmysoc->country_id)) $tmpmysoc->country_id=0;	// Ti not have this set to '' or will make sql syntax error.
 
     print '<tr><td colspan="4">';
 
@@ -1506,7 +1510,7 @@ function migrate_price_contrat($db,$langs,$conf)
                 //$contratligne->fetch($rowid); Non requis car le update_total ne met a jour que chp redefinis
                 $contratligne->rowid=$rowid;
 
-                $result=calcul_price_total($qty,$pu,$remise_percent,$txtva,0,0,0,'HT',$info_bits,0);
+                $result=calcul_price_total($qty,$pu,$remise_percent,$txtva,0,0,0,'HT',$info_bits,0,$tmpmysoc);
                 $total_ht  = $result[0];
                 $total_tva = $result[1];
                 $total_ttc = $result[2];
