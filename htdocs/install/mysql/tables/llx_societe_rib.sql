@@ -1,8 +1,9 @@
 -- =============================================================================
 -- Copyright (C) 2000-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 -- Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
--- Copyright (C) 2012	   Juanjo Menent        <jmenent@2byte.es>
+-- Copyright (C) 2012	     Juanjo Menent        <jmenent@2byte.es>
 -- Copyright (C) 2013      Peter Fontaine       <contact@peterfontaine.fr>
+-- Copyright (C) 2011-2014 Alexandre Spangaro   <alexandre.spangaro@gmail.com>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -31,8 +32,8 @@ create table llx_societe_rib
   code_guichet   varchar(6),    -- desk code
   number         varchar(255),  -- account number
   cle_rib        varchar(5),    -- key of bank account
-  bic            varchar(20),
-  iban_prefix    varchar(34),	-- 34 according to ISO 13616
+  bic            varchar(11),   -- 11 according to ISO 9362
+  iban_prefix    varchar(34),	  -- 34 according to ISO 13616
   domiciliation  varchar(255),
   proprio        varchar(60),
   owner_address  varchar(255),

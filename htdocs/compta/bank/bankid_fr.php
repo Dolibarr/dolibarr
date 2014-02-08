@@ -423,10 +423,10 @@ if ($_GET["id"] && $action == 'edit' && $user->rights->banque->configurer)
 
 		// IBAN
 		print '<tr><td valign="top">'.$langs->trans($ibankey).'</td>';
-		print '<td colspan="3"><input size="26" type="text" class="flat" name="iban_prefix" value="'.$account->iban_prefix.'"></td></tr>';
+		print '<td colspan="3"><input size="34" maxlength="34" type="text" class="flat" name="iban_prefix" value="'.$account->iban_prefix.'"></td></tr>';
 
 		print '<tr><td valign="top">'.$langs->trans($bickey).'</td>';
-		print '<td colspan="3"><input size="12" maxlength="11" type="text" class="flat" name="bic" value="'.$account->bic.'"></td></tr>';
+		print '<td colspan="3"><input size="11" maxlength="11" type="text" class="flat" name="bic" value="'.$account->bic.'"></td></tr>';
 
 		print '<tr><td valign="top">'.$langs->trans("BankAccountDomiciliation").'</td><td colspan="3">';
 		print "<textarea class=\"flat\" name=\"domiciliation\" rows=\"2\" cols=\"40\">";
