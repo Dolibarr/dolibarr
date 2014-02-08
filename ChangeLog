@@ -2,6 +2,20 @@
 English Dolibarr ChangeLog
 --------------------------------------------------------------
 
+
+***** ChangeLog for 3.5.1 compared to 3.5.0 *****
+Fix: Bug of import of agenda when using https link
+Fix: Field nature not saved correctly
+Fix: Substituion of extra field was ko for order
+Fix: Bad translation of date format for pt_BR.
+Fix: priority field of agenda record is smallint.
+Fix: Missing loading of lang in some pages.
+Fix: Write note in invoice when using pos module.
+Fix: Link to paypal was invalid into email text.
+Fix: ref and date of supplier invoice.
+Fix: Check on bank account.
+Fix: Problem with file upload and download.
+
 ***** ChangeLog for 3.5 compared to 3.4.* *****
 For users:
 - New: Add hidden option BANK_DISABLE_DIRECT_INPUT.
