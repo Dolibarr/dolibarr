@@ -110,4 +110,4 @@ MassStockMovement=Movimientos de stock en masa
 SelectProductInAndOutWareHouse=Selecccione un producto, una cantidad, un almacén origen y un almacén destino, seguidamente haga clic "%s". Una vez seleccionados todos los movimientos, haga clic en "%s".
 RecordMovement=Registrar transferencias
 ReceivingForSameOrder=Recepciones de este pedido
-# StockMovementRecorded=Stock movements recorded
+StockMovementRecorded=Movimiento de stock registrado
