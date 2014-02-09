@@ -683,16 +683,16 @@ class BonPrelevement extends CommonObject
         $sql = "SELECT count(f.rowid)";
         $sql.= " FROM ".MAIN_DB_PREFIX."facture as f";
         $sql.= ", ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
-        if ($banque == 1 || $agence == 1) $sql.=", ".MAIN_DB_PREFIX."societe_rib as sr";
+        if ($banque || $agence) $sql.=", ".MAIN_DB_PREFIX."societe_rib as sr";
         $sql.= " WHERE f.fk_statut = 1";
         $sql.= " AND f.entity = ".$conf->entity;
         $sql.= " AND f.rowid = pfd.fk_facture";
         $sql.= " AND f.paye = 0";
         $sql.= " AND pfd.traite = 0";
         $sql.= " AND f.total_ttc > 0";
-        if ($banque == 1 || $agence == 1) $sql.= " AND f.fk_soc = sr.rowid";
-        if ($banque == 1) $sql.= " AND sr.code_banque = '".$conf->global->PRELEVEMENT_CODE_BANQUE."'";
-        if ($agence == 1) $sql.= " AND sr.code_guichet = '".$conf->global->PRELEVEMENT_CODE_GUICHET."'";
+        if ($banque || $agence) $sql.= " AND f.fk_soc = sr.rowid";
+        if ($banque) $sql.= " AND sr.code_banque = '".$conf->global->PRELEVEMENT_CODE_BANQUE."'";
+        if ($agence) $sql.= " AND sr.code_guichet = '".$conf->global->PRELEVEMENT_CODE_GUICHET."'";
 
         $resql = $this->db->query($sql);
 
@@ -716,8 +716,8 @@ class BonPrelevement extends CommonObject
     /**
      *	Create a withdraw
      *
-     *	@param 	int		$banque		code of bank
-     *	@param	int		$agence		code of bank office (guichet)
+     *	@param 	int		$banque		code of bank (to withdraw a specific bankof a specific customer. By default '')
+     *	@param	int		$agence		code of bank office (guichet) (to withdraw a specific bankof a specific customer. By default '')
      *	@param	string	$mode		real=do action, simu=test only
      *	@return	int					<0 if KO, nbre of invoice withdrawed if OK
      */
@@ -755,17 +755,17 @@ class BonPrelevement extends CommonObject
             $sql.= " FROM ".MAIN_DB_PREFIX."facture as f";
             $sql.= ", ".MAIN_DB_PREFIX."societe as s";
             $sql.= ", ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
-            if ($banque == 1 || $agence ==1) $sql.= ", ".MAIN_DB_PREFIX."societe_rib as sr";
+            if ($banque || $agence) $sql.= ", ".MAIN_DB_PREFIX."societe_rib as sr";
             $sql.= " WHERE f.rowid = pfd.fk_facture";
             $sql.= " AND f.entity = ".$conf->entity;
             $sql.= " AND s.rowid = f.fk_soc";
-            if ($banque == 1 || $agence ==1) $sql.= " AND s.rowid = sr.fk_soc";
+            if ($banque || $agence) $sql.= " AND s.rowid = sr.fk_soc";
             $sql.= " AND f.fk_statut = 1";
             $sql.= " AND f.paye = 0";
             $sql.= " AND pfd.traite = 0";
             $sql.= " AND f.total_ttc > 0";
-            if ($banque == 1) $sql.= " AND sr.code_banque = '".$conf->global->PRELEVEMENT_CODE_BANQUE."'";
-            if ($agence == 1) $sql.= " AND sr.code_guichet = '".$conf->global->PRELEVEMENT_CODE_GUICHET."'";
+            if ($banque) $sql.= " AND sr.code_banque = '".$conf->global->PRELEVEMENT_CODE_BANQUE."'";
+            if ($agence) $sql.= " AND sr.code_guichet = '".$conf->global->PRELEVEMENT_CODE_GUICHET."'";
 
             dol_syslog(get_class($this)."::Create sql=".$sql, LOG_DEBUG);
             $resql = $this->db->query($sql);
@@ -777,7 +777,7 @@ class BonPrelevement extends CommonObject
                 while ($i < $num)
                 {
                     $row = $this->db->fetch_row($resql);
-                    $factures[$i] = $row;
+                    $factures[$i] = $row;	// All fields
                     $i++;
                 }
                 $this->db->free($resql);
@@ -802,10 +802,10 @@ class BonPrelevement extends CommonObject
 
             if (count($factures) > 0)
             {
-                foreach ($factures as $fac)
+                foreach ($factures as $key => $fac)
                 {
                     $fact = new Facture($this->db);
-                    if ($fact->fetch($fac[0]) >= 0)
+                    if ($fact->fetch($fac[0]) >= 0)		// Field 0 of $fac is rowid of invoice
                     {
                         if ($soc->fetch($fact->socid) >= 0)
                         {
@@ -820,8 +820,8 @@ class BonPrelevement extends CommonObject
                             }
                             else
 							{
-                                dol_syslog("Error on third party bank number RIB/IBAN ".$fact->socid." ".$soc->nom, LOG_ERR);
-                                $facture_errors[$fac[0]]="Error on third party bank number RIB/IBAN ".$fact->socid." ".$soc->nom;
+								dol_syslog("Error on default bank number RIB/IBAN for thirdparty reported by verif() ".$fact->socid." ".$soc->nom, LOG_ERR);
+                                $facture_errors[$fac[0]]="Error on default bank number RIB/IBAN for thirdparty reported by function verif() ".$fact->socid." ".$soc->nom;
                             }
                         }
                         else

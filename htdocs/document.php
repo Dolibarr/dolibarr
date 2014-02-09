@@ -168,7 +168,7 @@ if (! file_exists($original_file_osencoded))
 	exit;
 }
 
-// Les drois sont ok et fichier trouve, on l'envoie
+// Permissions are ok and file found, so we return it
 
 header('Content-Description: File Transfer');
 if ($encoding)   header('Content-Encoding: '.$encoding);

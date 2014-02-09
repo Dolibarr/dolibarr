@@ -16,6 +16,7 @@
  * or see http://www.gnu.org/
  */
 
+// Variable $upload_dir must be defined when entering here
 
 // Send file/link
 if (GETPOST('sendit') && ! empty($conf->global->MAIN_UPLOAD_DOC)) {

@@ -260,7 +260,7 @@ abstract class CommonDocGenerator
 	    	$array_key.'_total_localtax2'=>price2num($object->total_localtax2),
     		$array_key.'_total_ttc'=>price2num($object->total_ttc),
 	    	$array_key.'_total_discount_ht' => price2num($object->getTotalDiscount()),
-    			
+
 	    	$array_key.'_vatrate'=>vatrate($object->tva),
 	    	$array_key.'_note_private'=>$object->note,
 	    	$array_key.'_note'=>$object->note_public,
@@ -314,7 +314,7 @@ abstract class CommonDocGenerator
     	'line_date_end'=>$line->date_end
     	);
     }
-	
+
     /**
      * Define array with couple substitution key => substitution value
      *

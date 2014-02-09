@@ -80,6 +80,12 @@ class box_graph_invoices_supplier_permonth extends ModeleBoxes
 				'target'=>'none'	// Set '' to get target="_blank"
 		);
 
+		$dir=''; 	// We don't need a path because image file will not be saved into disk
+		$prefix='';
+		$socid=0;
+		if ($user->societe_id) $socid=$user->societe_id;
+		if (! $user->rights->societe->client->voir || $socid) $prefix.='private-'.$user->id.'-';	// If user has no permission to see all, output dir is specific to user
+		
 		if ($user->rights->fournisseur->facture->lire)
 		{
 			$param_year='DOLUSERCOOKIE_box_'.$this->boxcode.'_year';
@@ -118,7 +124,7 @@ class box_graph_invoices_supplier_permonth extends ModeleBoxes
 			{
 				$data1 = $stats->getNbByMonthWithPrevYear($endyear,$startyear,(GETPOST('action')==$refreshaction?-1:(3600*24)));
 
-				$filenamenb = $dir."/invoicessuppliernbinyear-".$year.".png";
+				$filenamenb = $dir."/".$prefix."invoicessuppliernbinyear-".$year.".png";
 				if ($mode == 'customer') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=billstats&amp;file=invoicesnbinyear-'.$year.'.png';
 				if ($mode == 'supplier') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=billstatssupplier&amp;file=invoicessuppliernbinyear-'.$year.'.png';
 
@@ -156,7 +162,7 @@ class box_graph_invoices_supplier_permonth extends ModeleBoxes
 			{
 				$data2 = $stats->getAmountByMonthWithPrevYear($endyear,$startyear,(GETPOST('action')==$refreshaction?-1:(3600*24)));
 
-				$filenamenb = $dir."/invoicessupplieramountinyear-".$year.".png";
+				$filenamenb = $dir."/".$prefix."invoicessupplieramountinyear-".$year.".png";
 				if ($mode == 'customer') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=billstats&amp;file=invoicesamountinyear-'.$year.'.png';
 				if ($mode == 'supplier') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=billstatssupplier&amp;file=invoicessupplieramountinyear-'.$year.'.png';
 
