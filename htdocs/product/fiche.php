@@ -178,11 +178,16 @@ if (empty($reshook))
             $object->localtax1_tx 			= get_localtax($object->tva_tx,1);
             $object->localtax2_tx 			= get_localtax($object->tva_tx,2);
 
-            $object->type               	= $type;
-            $object->status             	= GETPOST('statut');
-            $object->status_buy           	= GETPOST('statut_buy');
-            $object->description        	= dol_htmlcleanlastbr(GETPOST('desc'));
-            $object->note               	= dol_htmlcleanlastbr(GETPOST('note'));
+            $object->type               	 = $type;
+            $object->status             	 = GETPOST('statut');
+            $object->status_buy            = GETPOST('statut_buy');
+
+            $object->barcode_type          = GETPOST('fk_barcode_type');
+            $object->barcode		           = GETPOST('barcode');
+
+            $object->description        	 = dol_htmlcleanlastbr(GETPOST('desc'));
+            $object->note               	 = dol_htmlcleanlastbr(GETPOST('note'));
+
             $object->customcode            = GETPOST('customcode');
             $object->country_id            = GETPOST('country_id');
             $object->duration_value     	= GETPOST('duration_value');
@@ -637,8 +642,8 @@ if (GETPOST("cancel") == $langs->trans("Cancel"))
  */
 
 $helpurl='';
-if (GETPOST("type") == '0') $helpurl='EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
-if (GETPOST("type") == '1')	$helpurl='EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
+if (GETPOST("type") == '0' || ($object->type == '0')) $helpurl='EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
+if (GETPOST("type") == '1' || ($object->type == '1')) $helpurl='EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
 
 if (isset($_GET['type'])) $title = $langs->trans('CardProduct'.GETPOST('type'));
 else $title = $langs->trans('ProductServiceCard');
@@ -686,10 +691,10 @@ else
         }
 
 		// Load object modBarCodeProduct
-		if (! empty($conf->global->PRODUIT_DEFAULT_BARCODE_TYPE))
+		if (! empty($conf->barcode->enabled) && ! empty($conf->global->BARCODE_PRODUCT_ADDON_NUM))
 		{
-			$module='mod_barcode_'.strtolower($conf->global->PRODUIT_DEFAULT_BARCODE_TYPE);
-        	$result=dol_include_once('/core/modules/barcode/doc/'.$module.'.php');
+			$module=strtolower($conf->global->BARCODE_PRODUCT_ADDON_NUM);
+        	$result=dol_include_once('/core/modules/barcode/'.$module.'.php');
         	if ($result > 0)
         	{
 				$modBarCodeProduct =new $module();
