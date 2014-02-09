@@ -1,8 +1,5 @@
 <?php
-/* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@capnetworks.com>
+/* Copyright (C) 2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,16 +17,15 @@
  */
 
 /**
- *   \file       htdocs/core/modules/barcode/modules_barcode.php
+ *   \file       htdocs/core/modules/barcode/modules_barcode.class.php
  *   \ingroup    barcode
- *   \brief      Fichier contenant la classe mere de generation des codes barres
+ *   \brief      File with parent classes for barcode document modules and numbering modules
  */
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 
 
 /**
- *  \class      ModeleBarCode
- *	\brief      Classe mere des modeles de code barre
+ *	Parent class for barcode document modules
  */
 abstract class ModeleBarCode
 {
@@ -45,6 +41,18 @@ abstract class ModeleBarCode
 	{
 		return true;
 	}
+
+}
+
+
+/**
+ *	Parent class for barcode numbering modules
+ */
+abstract class ModeleNumRefBarCode
+{
+	var $error='';
+
+
 
 }
 

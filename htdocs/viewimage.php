@@ -139,7 +139,7 @@ if ($modulepart == 'barcode')
         exit;
     }
 
-    $dirbarcode=array_merge(array("/core/modules/barcode/"),$conf->modules_parts['barcode']);
+    $dirbarcode=array_merge(array("/core/modules/barcode/doc/"),$conf->modules_parts['barcode']);
 
     $result=0;
 

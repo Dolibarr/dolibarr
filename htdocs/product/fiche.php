@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
@@ -679,8 +679,22 @@ else
         {
             $module = substr($module, 0, dol_strlen($module)-4);
         }
-        dol_include_once('/core/modules/product/'.$module.'.php');
-        $modCodeProduct = new $module;
+        $result=dol_include_once('/core/modules/product/'.$module.'.php');
+        if ($result > 0)
+        {
+        	$modCodeProduct = new $module();
+        }
+
+		// Load object modBarCodeProduct
+		if (! empty($conf->global->PRODUIT_DEFAULT_BARCODE_TYPE))
+		{
+			$module='mod_barcode_'.strtolower($conf->global->PRODUIT_DEFAULT_BARCODE_TYPE);
+        	$result=dol_include_once('/core/modules/barcode/doc/'.$module.'.php');
+        	if ($result > 0)
+        	{
+				$modBarCodeProduct =new $module();
+        	}
+		}
 
         print '<form action="fiche.php" method="post">';
         print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -688,6 +702,8 @@ else
         print '<input type="hidden" name="type" value="'.$type.'">'."\n";
 		if (! empty($modCodeProduct->code_auto))
 			print '<input type="hidden" name="code_auto" value="1">';
+		if (! empty($modBarCodeProduct->code_auto))
+			print '<input type="hidden" name="barcode_auto" value="1">';
 
         if ($type==1) $title=$langs->trans("NewService");
         else $title=$langs->trans("NewProduct");
@@ -696,9 +712,8 @@ else
         print '<table class="border" width="100%">';
         print '<tr>';
         $tmpcode='';
-		if (! empty($modCodeProduct->code_auto))
-			$tmpcode=$modCodeProduct->getNextValue($object,$type);
-        print '<td class="fieldrequired" width="20%">'.$langs->trans("Ref").'</td><td><input name="ref" size="40" maxlength="128" value="'.dol_escape_htmltag(GETPOST('ref')?GETPOST('ref'):$tmpcode).'">';
+		if (! empty($modCodeProduct->code_auto)) $tmpcode=$modCodeProduct->getNextValue($object,$type);
+        print '<td class="fieldrequired" width="20%">'.$langs->trans("Ref").'</td><td colspan="3"><input name="ref" size="20" maxlength="128" value="'.dol_escape_htmltag(GETPOST('ref')?GETPOST('ref'):$tmpcode).'">';
         if ($_error)
         {
             print $langs->trans("RefAlreadyExists");
@@ -719,6 +734,37 @@ else
         $statutarray=array('1' => $langs->trans("ProductStatusOnBuy"), '0' => $langs->trans("ProductStatusNotOnBuy"));
         print $form->selectarray('statut_buy',$statutarray,GETPOST('statut_buy"'));
         print '</td></tr>';
+
+        $showbarcode=(! empty($conf->barcode->enabled) && $user->rights->barcode->lire);
+
+        if ($showbarcode)
+        {
+	        print '<tr><td>'.$langs->trans('BarcodeType').'</td><td>';
+	        if (isset($_POST['fk_barcode_type']))
+	        {
+	         	$fk_barcode_type=GETPOST('fk_barcode_type');
+	        }
+	        else
+	        {
+	        	if (empty($fk_barcode_type) && ! empty($conf->global->PRODUIT_DEFAULT_BARCODE_TYPE)) $fk_barcode_type = $conf->global->PRODUIT_DEFAULT_BARCODE_TYPE;
+	        }
+	        require_once DOL_DOCUMENT_ROOT.'/core/class/html.formbarcode.class.php';
+            $formbarcode = new FormBarCode($db);
+	        print $formbarcode->select_barcode_type($fk_barcode_type, 'fk_barcode_type', 1);
+	        print '</td><td>'.$langs->trans("BarcodeValue").'</td><td>';
+	        $tmpcode=isset($_POST['barcode'])?GETPOST('barcode'):$object->barcode;
+	        if (! empty($modBarCodeProduct->code_auto)) $tmpcode=$modBarCodeProduct->getNextValue($object,$type);
+	        print '<input size="40" type="text" name="barcode" value="'.$tmpcode.'">';
+	        print '</td></tr>';
+        }
+
+        // Description (used in invoice, propal...)
+        print '<tr><td valign="top">'.$langs->trans("Description").'</td><td colspan="3">';
+
+        $doleditor = new DolEditor('desc', GETPOST('desc'), '', 160, 'dolibarr_notes', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, 4, 90);
+        $doleditor->Create();
+
+        print "</td></tr>";
 
         // Stock min level
         if ($type != 1 && ! empty($conf->stock->enabled))

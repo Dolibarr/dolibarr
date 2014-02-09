@@ -108,7 +108,7 @@ clearstatcache();
 
 
 // Scan list of all barcode included provided by external modules
-$dirbarcode=array_merge(array("/core/modules/barcode/"), $conf->modules_parts['barcode']);
+$dirbarcode=array_merge(array("/core/modules/barcode/doc/"), $conf->modules_parts['barcode']);
 
 foreach($dirbarcode as $reldir)
 {
