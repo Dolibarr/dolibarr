@@ -579,7 +579,8 @@ else
             if ($res) break;
         }
         $modCodeClient = new $module;
-        $module=$conf->global->SOCIETE_CODECLIENT_ADDON;
+        // Load object modCodeFournisseur
+        $module=(! empty($conf->global->SOCIETE_CODECLIENT_ADDON)?$conf->global->SOCIETE_CODECLIENT_ADDON:'mod_codeclient_leopard');
         if (substr($module, 0, 15) == 'mod_codeclient_' && substr($module, -3) == 'php')
         {
             $module = substr($module, 0, dol_strlen($module)-4);
@@ -1831,12 +1832,12 @@ else
 	        	$langs->load("mails");
 	       		print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NoEmail")).'">'.$langs->trans('SendMail').'</a></div>';
 	        }
-	
+
 	        if ($user->rights->societe->creer)
 	        {
 	            print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&amp;action=edit">'.$langs->trans("Modify").'</a></div>'."\n";
 	        }
-	
+
 	        if ($user->rights->societe->supprimer)
 	        {
 	            if ($conf->use_javascript_ajax && empty($conf->dol_use_jmobile))	// We can(t use preloaded confirm form with jmobile
@@ -1849,7 +1850,7 @@ else
 	            }
 	        }
 		}
-		
+
         print '</div>'."\n";
 
 

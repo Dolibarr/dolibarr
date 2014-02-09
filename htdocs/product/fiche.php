@@ -8,7 +8,7 @@
  * Copyright (C) 2010-2011 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2013      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2013      Cédric Salvador      <csalvador@gpcsolutions.fr>
- * Copyright (C) 2011-2014 Alexandre Spangaro   <alexandre.spangaro@gmail.com> 
+ * Copyright (C) 2011-2014 Alexandre Spangaro   <alexandre.spangaro@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -182,10 +182,10 @@ if (empty($reshook))
             $object->type               	 = $type;
             $object->status             	 = GETPOST('statut');
             $object->status_buy            = GETPOST('statut_buy');
-            
+
             $object->barcode_type          = GETPOST('fk_barcode_type');
             $object->barcode		           = GETPOST('barcode');
-            
+
             $object->description        	 = dol_htmlcleanlastbr(GETPOST('desc'));
             $object->note               	 = dol_htmlcleanlastbr(GETPOST('note'));
             $object->customcode            = GETPOST('customcode');
@@ -646,8 +646,8 @@ if (GETPOST("cancel") == $langs->trans("Cancel"))
  */
 
 $helpurl='';
-if (GETPOST("type") == '0') $helpurl='EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
-if (GETPOST("type") == '1')	$helpurl='EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
+if (GETPOST("type") == '0' || ($object->type == '0')) $helpurl='EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
+if (GETPOST("type") == '1' || ($object->type == '1')) $helpurl='EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
 
 if (isset($_GET['type'])) $title = $langs->trans('CardProduct'.GETPOST('type'));
 else $title = $langs->trans('ProductServiceCard');
@@ -695,16 +695,16 @@ else
         }
 
 		// Load object modBarCodeProduct
-		if (! empty($conf->global->PRODUIT_DEFAULT_BARCODE_TYPE))
+		if (! empty($conf->barcode->enabled) && ! empty($conf->global->BARCODE_PRODUCT_ADDON_NUM))
 		{
-			$module='mod_barcode_'.strtolower($conf->global->PRODUIT_DEFAULT_BARCODE_TYPE);
-        	$result=dol_include_once('/core/modules/barcode/doc/'.$module.'.php');
+			$module=strtolower($conf->global->BARCODE_PRODUCT_ADDON_NUM);
+        	$result=dol_include_once('/core/modules/barcode/'.$module.'.php');
         	if ($result > 0)
         	{
 				$modBarCodeProduct =new $module();
         	}
 		}
-		
+
         print '<form action="fiche.php" method="post">';
         print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
         print '<input type="hidden" name="action" value="add">';
@@ -713,7 +713,7 @@ else
 			print '<input type="hidden" name="code_auto" value="1">';
 		if (! empty($modBarCodeProduct->code_auto))
 			print '<input type="hidden" name="barcode_auto" value="1">';
-		
+
         if ($type==1) $title=$langs->trans("NewService");
         else $title=$langs->trans("NewProduct");
         print_fiche_titre($title);
@@ -745,7 +745,7 @@ else
         print '</td></tr>';
 
         $showbarcode=(! empty($conf->barcode->enabled) && $user->rights->barcode->lire);
-        	
+
         if ($showbarcode)
         {
 	        print '<tr><td>'.$langs->trans('BarcodeType').'</td><td>';
@@ -766,7 +766,7 @@ else
 	        print '<input size="40" type="text" name="barcode" value="'.$tmpcode.'">';
 	        print '</td></tr>';
         }
-                    
+
         // Description (used in invoice, propal...)
         print '<tr><td valign="top">'.$langs->trans("Description").'</td><td colspan="3">';
 
@@ -894,7 +894,7 @@ else
 
             print '<br>';
         }
-        
+
         if (empty($conf->accounting->enabled) && empty($conf->comptabilite->enabled) && empty($conf->accountingexpert->enabled))
         {
             // Don't show accounting field when accounting id disabled.
@@ -1090,7 +1090,7 @@ else
             print '</table>';
 
             print '<br>';
-            
+
             if (empty($conf->accounting->enabled) && empty($conf->comptabilite->enabled) && empty($conf->accountingexpert->enabled))
             {
                 // Don't show accounting field when accounting id disabled.
@@ -1098,22 +1098,22 @@ else
             else
             {
                 print '<table class="border" width="100%">';
-    
+
                 // Accountancy_code_sell
                 print '<tr><td>'.$langs->trans("ProductAccountancySellCode").'</td>';
                 print '<td><input name="accountancy_code_sell" size="16" value="'.$object->accountancy_code_sell.'">';
                 print '</td></tr>';
-    
+
                 // Accountancy_code_buy
                 print '<tr><td width="20%">'.$langs->trans("ProductAccountancyBuyCode").'</td>';
                 print '<td><input name="accountancy_code_buy" size="16" value="'.$object->accountancy_code_buy.'">';
                 print '</td></tr>';
-    
+
                 print '</table>';
-    
+
                 print '<br>';
             }
-            
+
             print '<center><input type="submit" class="button" value="'.$langs->trans("Save").'"> &nbsp; &nbsp; ';
             print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></center>';
 
@@ -1223,12 +1223,12 @@ else
                 // Don't show accounting field when accounting id disabled.
             }
             else
-            { 
+            {
                 // Accountancy sell code
                 print '<tr><td>'.$form->editfieldkey("ProductAccountancySellCode",'accountancy_code_sell',$object->accountancy_code_sell,$object,$user->rights->produit->creer||$user->rights->service->creer,'string').'</td><td colspan="2">';
                 print $form->editfieldval("ProductAccountancySellCode",'accountancy_code_sell',$object->accountancy_code_sell,$object,$user->rights->produit->creer||$user->rights->service->creer,'string');
                 print '</td></tr>';
-    
+
                 // Accountancy buy code
                 print '<tr><td>'.$form->editfieldkey("ProductAccountancyBuyCode",'accountancy_code_buy',$object->accountancy_code_buy,$object,$user->rights->produit->creer||$user->rights->service->creer,'string').'</td><td colspan="2">';
                 print $form->editfieldval("ProductAccountancyBuyCode",'accountancy_code_buy',$object->accountancy_code_buy,$object,$user->rights->produit->creer||$user->rights->service->creer,'string');
@@ -1393,7 +1393,7 @@ if (empty($reshook))
 	    if ($user->rights->produit->creer || $user->rights->service->creer)
 	    {
 	        if (! isset($object->no_button_edit) || $object->no_button_edit <> 1) print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&amp;id='.$object->id.'">'.$langs->trans("Modify").'</a></div>';
-	
+
 	        if (! isset($object->no_button_copy) || $object->no_button_copy <> 1)
 	        {
 	            if (! empty($conf->use_javascript_ajax) && empty($conf->dol_use_jmobile))
@@ -1407,7 +1407,7 @@ if (empty($reshook))
 	        }
 	    }
 	    $object_is_used = $object->isObjectUsed($object->id);
-	
+
 	    if (($object->type == 0 && $user->rights->produit->supprimer)
 	    || ($object->type == 1 && $user->rights->service->supprimer))
 	    {

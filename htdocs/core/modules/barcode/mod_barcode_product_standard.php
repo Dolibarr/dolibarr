@@ -20,7 +20,7 @@
  */
 
 /**
- *       \file       htdocs/core/modules/product/mod_barcode_standard.php
+ *       \file       htdocs/core/modules/product/mod_barcode_product_standard.php
  *       \ingroup    barcode
  *       \brief      File of class to manage barcode numbering with standard rule
  */
@@ -31,7 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/barcode/modules_barcode.class.php'
 /**
  *	Class to manage barcode with standard rule
  */
-class mod_barcode_standard extends ModeleNumRefBarCode
+class mod_barcode_product_standard extends ModeleNumRefBarCode
 {
 	var $nom='Standard';				// Nom du modele
 	var $code_modifiable;				// Code modifiable
@@ -78,7 +78,7 @@ class mod_barcode_standard extends ModeleNumRefBarCode
 		$texte.= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 		$texte.= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		$texte.= '<input type="hidden" name="action" value="setModuleOptions">';
-		$texte.= '<input type="hidden" name="param1" value="BARCODE_STANDARD_MASK">';
+		$texte.= '<input type="hidden" name="param1" value="BARCODE_STANDARD_PRODUCT_MASK">';
 		$texte.= '<table class="nobordernopadding" width="100%">';
 
 		$tooltip=$langs->trans("GenericMaskCodes",$langs->transnoentities("BarCode"),$langs->transnoentities("BarCode"));
@@ -89,7 +89,7 @@ class mod_barcode_standard extends ModeleNumRefBarCode
 		// Mask parameter
 		//$texte.= '<tr><td>'.$langs->trans("Mask").' ('.$langs->trans("BarCodeModel").'):</td>';
 		$texte.= '<tr><td>'.$langs->trans("Mask").':</td>';
-		$texte.= '<td align="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="value1" value="'.(! empty($conf->global->BARCODE_STANDARD_MASK)?$conf->global->BARCODE_STANDARD_MASK:'').'"'.$disabled.'>',$tooltip,1,1).'</td>';
+		$texte.= '<td align="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="value1" value="'.(! empty($conf->global->BARCODE_STANDARD_PRODUCT_MASK)?$conf->global->BARCODE_STANDARD_PRODUCT_MASK:'').'"'.$disabled.'>',$tooltip,1,1).'</td>';
 		$texte.= '<td align="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"'.$disabled.'></td>';
 		$texte.= '</tr>';
 
@@ -137,10 +137,10 @@ class mod_barcode_standard extends ModeleNumRefBarCode
 		require_once DOL_DOCUMENT_ROOT .'/core/lib/functions2.lib.php';
 
 		// TODO
-		
+
 		// Get Mask value
 		$mask = '';
-		if (! empty($conf->global->BARCODE_STANDARD_MASK)) $mask = $conf->global->BARCODE_STANDARD_MASK;
+		if (! empty($conf->global->BARCODE_STANDARD_PRODUCT_MASK)) $mask = $conf->global->BARCODE_STANDARD_PRODUCT_MASK;
 
 		if (empty($mask))
 		{
@@ -157,35 +157,19 @@ class mod_barcode_standard extends ModeleNumRefBarCode
 		return  $numFinal;
 	}
 
-    
-	/**
-	 *   Check if mask/numbering use prefix
-	 *
-	 *   @return	int			0 or 1
-	 */
-	function verif_prefixIsUsed()
-	{
-		global $conf;
-
-		$mask = $conf->global->BARCODE_STANDARD_MASK;
-		if (preg_match('/\{pre\}/i',$mask)) return 1;
-
-		return 0;
-	}
-
 
 	/**
 	 * 	Check validity of code according to its rules
 	 *
-	 *	@param	DoliDB		$db		Database handler
-	 *	@param	string		&$code	Code to check/correct
+	 *	@param	DoliDB		$db			Database handler
+	 *	@param	string		&$code		Code to check/correct
 	 *	@param	Product		$product	Object product
-	 *  @param  int		  	$type   0 = customer/prospect , 1 = supplier
-	 *  @return int					0 if OK
-	 * 								-1 ErrorBadCustomerCodeSyntax
-	 * 								-2 ErrorCustomerCodeRequired
-	 * 								-3 ErrorCustomerCodeAlreadyUsed
-	 * 								-4 ErrorPrefixRequired
+	 *  @param  int		  	$type   	0 = customer/prospect , 1 = supplier
+	 *  @return int						0 if OK
+	 * 									-1 ErrorBadCustomerCodeSyntax
+	 * 									-2 ErrorCustomerCodeRequired
+	 * 									-3 ErrorCustomerCodeAlreadyUsed
+	 * 									-4 ErrorPrefixRequired
 	 */
 	function verif($db, &$code, $product, $type)
 	{
@@ -196,20 +180,18 @@ class mod_barcode_standard extends ModeleNumRefBarCode
 		$result=0;
 		$code = strtoupper(trim($code));
 
-		if (empty($code) && $this->code_null && empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED))
+		if (empty($code) && $this->code_null && empty($conf->global->BARCODE_STANDARD_PRODUCT_MASK))
 		{
 			$result=0;
 		}
-		else if (empty($code) && (! $this->code_null || ! empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED)) )
+		else if (empty($code) && (! $this->code_null || ! empty($conf->global->BARCODE_STANDARD_PRODUCT_MASK)) )
 		{
 			$result=-2;
 		}
 		else
 		{
 			// Get Mask value
-			$mask = '';
-			if ($type==0) $mask = empty($conf->global->PRODUCT_ELEPHANT_MASK_PRODUCT)?'':$conf->global->PRODUCT_ELEPHANT_MASK_PRODUCT;
-			if ($type==1) $mask = empty($conf->global->PRODUCT_ELEPHANT_MASK_SSERVICE)?'':$conf->global->PRODUCT_ELEPHANT_MASK_SERVICE;
+			$mask = empty($conf->global->BARCODE_STANDARD_PRODUCT_MASK)?'':$conf->global->BARCODE_STANDARD_PRODUCT_MASK;
 			if (! $mask)
 			{
 				$this->error='NotConfigured';
@@ -219,17 +201,17 @@ class mod_barcode_standard extends ModeleNumRefBarCode
 			$result=check_value($mask,$code);
 		}
 
-		dol_syslog("mod_codeclient_elephant::verif type=".$type." result=".$result);
+		dol_syslog(get_class($this)."::verif type=".$type." result=".$result);
 		return $result;
 	}
 
 
 	/**
-	 *		Renvoi si un code est pris ou non (par autre tiers)
+	 *		Return if a code is used (by other element)
 	 *
 	 *		@param	DoliDB		$db			Handler acces base
 	 *		@param	string		$code		Code a verifier
-	 *		@param	Product		$product		Objet product
+	 *		@param	Product		$product	Objet product
 	 *		@return	int						0 if available, <0 if KO
 	 */
 	function verif_dispo($db, $code, $product)
