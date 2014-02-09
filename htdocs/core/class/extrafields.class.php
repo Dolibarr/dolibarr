@@ -516,7 +516,7 @@ class ExtraFields
 	/**
 	 * 	Load array this->attribute_label
 	 *
-	 * 	@param	string		$elementtype		Type of element
+	 * 	@param	string		$elementtype		Type of element ('adherent', 'commande', societe', 'facture', 'propal', 'product', ...)
 	 * 	@param	boolean		$forceload			Force load of extra fields whatever is option MAIN_EXTRAFIELDS_DISABLED
 	 * 	@return	array							Array of attributes for all extra fields
 	 */

@@ -142,6 +142,8 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 		'object_note_private'=>$object->note,
 		'object_note'=>$object->note_public,
 		// Payments
+		'object_already_payed_locale'=>price($alreadypayed, 0, $outputlangs),
+		'object_remain_to_pay_locale'=>price($object->total_ttc - $sumpayed, 0, $outputlangs),
 		'object_already_payed'=>$alreadypayed,
 		'object_remain_to_pay'=>price2num($object->total_ttc - $sumpayed)
 		);

@@ -765,6 +765,7 @@ class FormFile
 					{
 						$relativepath=(! empty($object->ref)?dol_sanitizeFileName($object->ref):'').'/';
 						if ($object->element == 'invoice_supplier') $relativepath=get_exdir($object->id,2).$relativepath;
+						if ($object->element == 'member') $relativepath=get_exdir($object->id,2).$relativepath;
 					}
 
 					$var=!$var;
