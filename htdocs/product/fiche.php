@@ -895,12 +895,12 @@ else
             print '<br>';
         }
 
-        if (empty($conf->accounting->enabled) && empty($conf->comptabilite->enabled) && empty($conf->accountingexpert->enabled))
+        /*if (empty($conf->accounting->enabled) && empty($conf->comptabilite->enabled) && empty($conf->accountingexpert->enabled))
         {
             // Don't show accounting field when accounting id disabled.
         }
         else
-        {
+        {*/
             print '<table class="border" width="100%">';
 
             // Accountancy_code_sell
@@ -916,7 +916,7 @@ else
             print '</table>';
 
             print '<br>';
-        }
+        //}
 
         print '<center><input type="submit" class="button" value="'.$langs->trans("Create").'"></center>';
 
@@ -1091,12 +1091,12 @@ else
 
             print '<br>';
 
-            if (empty($conf->accounting->enabled) && empty($conf->comptabilite->enabled) && empty($conf->accountingexpert->enabled))
+            /*if (empty($conf->accounting->enabled) && empty($conf->comptabilite->enabled) && empty($conf->accountingexpert->enabled))
             {
                 // Don't show accounting field when accounting id disabled.
             }
             else
-            {
+            {*/
                 print '<table class="border" width="100%">';
 
                 // Accountancy_code_sell
@@ -1112,7 +1112,7 @@ else
                 print '</table>';
 
                 print '<br>';
-            }
+            //}
 
             print '<center><input type="submit" class="button" value="'.$langs->trans("Save").'"> &nbsp; &nbsp; ';
             print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></center>';
@@ -1218,12 +1218,12 @@ else
                 print '</td></tr>'."\n";
             }
 
-            if (empty($conf->accounting->enabled) && empty($conf->comptabilite->enabled) && empty($conf->accountingexpert->enabled))
+            /*if (empty($conf->accounting->enabled) && empty($conf->comptabilite->enabled) && empty($conf->accountingexpert->enabled))
             {
                 // Don't show accounting field when accounting id disabled.
             }
             else
-            {
+            {*/
                 // Accountancy sell code
                 print '<tr><td>'.$form->editfieldkey("ProductAccountancySellCode",'accountancy_code_sell',$object->accountancy_code_sell,$object,$user->rights->produit->creer||$user->rights->service->creer,'string').'</td><td colspan="2">';
                 print $form->editfieldval("ProductAccountancySellCode",'accountancy_code_sell',$object->accountancy_code_sell,$object,$user->rights->produit->creer||$user->rights->service->creer,'string');
@@ -1233,7 +1233,7 @@ else
                 print '<tr><td>'.$form->editfieldkey("ProductAccountancyBuyCode",'accountancy_code_buy',$object->accountancy_code_buy,$object,$user->rights->produit->creer||$user->rights->service->creer,'string').'</td><td colspan="2">';
                 print $form->editfieldval("ProductAccountancyBuyCode",'accountancy_code_buy',$object->accountancy_code_buy,$object,$user->rights->produit->creer||$user->rights->service->creer,'string');
                 print '</td></tr>';
-            }
+            //}
 
             // Status (to sell)
             print '<tr><td>'.$langs->trans("Status").' ('.$langs->trans("Sell").')</td><td colspan="2">';
