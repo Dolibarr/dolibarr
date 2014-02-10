@@ -87,7 +87,7 @@ class Holiday extends CommonObject
 	    $this->updateSoldeCP();
 
 	    // Vérifie le nombre d'utilisateur et mets à jour si besoin
-	    $this->verifNbUsers($this->countActiveUsers(),$this->getConfCP('nbUser'));
+	    $this->verifNbUsers($this->countActiveUsersWithoutCP(),$this->getConfCP('nbUser'));
 	    return 1;
     }
 
@@ -1229,7 +1229,23 @@ class Holiday extends CommonObject
 
         $sql = "SELECT count(u.rowid) as compteur";
         $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
-        $sql.= " WHERE statut > '0'";
+		$sql.= " WHERE u.statut > '0'";
+
+        $result = $this->db->query($sql);
+        $objet = $this->db->fetch_object($result);
+        return $objet->compteur;
+
+    }
+    /**
+     *	Compte le nombre d'utilisateur actifs dans Dolibarr sans CP
+     *
+     *  @return     int      retourne le nombre d'utilisateur
+     */
+    function countActiveUsersWithoutCP() {
+
+        $sql = "SELECT count(u.rowid) as compteur";
+        $sql.= " FROM ".MAIN_DB_PREFIX."user as u LEFT OUTER JOIN ".MAIN_DB_PREFIX."holiday_users hu ON (hu.fk_user=u.rowid)";
+		$sql.= " WHERE u.statut > 0 AND hu.fk_user IS NULL ";
 
         $result = $this->db->query($sql);
         $objet = $this->db->fetch_object($result);
@@ -1244,13 +1260,13 @@ class Holiday extends CommonObject
      *  @param    int	$userCP    		nombre d'utilisateur actifs dans le module congés payés
      *  @return   void
      */
-    function verifNbUsers($userDolibarr,$userCP) {
+    function verifNbUsers($userDolibarrWithoutCP,$userCP) {
 
     	if (empty($userCP)) $userCP=0;
     	dol_syslog(get_class($this).'::verifNbUsers userDolibarr='.$userDolibarr.' userCP='.$userCP);
 
-        // Si il y a plus d'utilisateur Dolibarr que dans le module CP
-        if ($userDolibarr > $userCP)
+        // On vérifie les users Dolibarr sans CP
+        if ($userDolibarrWithoutCP > 0)
         {
             $this->updateConfCP('nbUser',$userDolibarr);
 
@@ -1311,7 +1327,7 @@ class Holiday extends CommonObject
 
                     $obj = $this->db->fetch_object($resql);
 
-                    // On ajoute l'utilisateur
+                    // On supprime l'utilisateur
                     $this->deleteCPuser($obj->fk_user);
 
                     $i++;
