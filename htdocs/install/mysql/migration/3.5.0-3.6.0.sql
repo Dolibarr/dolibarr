@@ -19,18 +19,20 @@
 
 ALTER TABLE llx_bookmark ADD COLUMN entity integer DEFAULT 1 NOT NULL;
 
-ALTER TABLE  llx_opensurvey_sondage ADD COLUMN allow_comments tinyint NOT NULL DEFAULT 1 AFTER canedit;
--- ALTER TABLE  llx_opensurvey_sondage DROP COLUMN survey_link_visible;
--- ALTER TABLE  llx_opensurvey_sondage DROP INDEX idx_id_sondage_admin;
--- ALTER TABLE  llx_opensurvey_sondage DROP COLUMN id_sondage_admin;
--- ALTER TABLE  llx_opensurvey_sondage DROP COLUMN canedit;
-ALTER TABLE  llx_opensurvey_sondage ADD COLUMN allow_spy tinyint NOT NULL DEFAULT 1 AFTER allow_comments;
--- ALTER TABLE  llx_opensurvey_sondage DROP COLUMN origin;
-ALTER TABLE  llx_opensurvey_sondage ADD COLUMN fk_user_creat integer NOT NULL AFTER nom_admin;
-ALTER TABLE  llx_opensurvey_sondage CHANGE COLUMN mailsonde mailsonde tinyint NOT NULL DEFAULT 0;
-ALTER TABLE  llx_opensurvey_sondage CHANGE COLUMN titre titre TEXT NOT NULL;
-ALTER TABLE  llx_opensurvey_sondage CHANGE COLUMN date_fin date_fin DATETIME NOT NULL;
-ALTER TABLE  llx_opensurvey_sondage CHANGE COLUMN format format VARCHAR(2) NOT NULL;
+ALTER TABLE llx_bookmark MODIFY COLUMN url varchar(255) NOT NULL;
+
+ALTER TABLE llx_opensurvey_sondage ADD COLUMN allow_comments tinyint NOT NULL DEFAULT 1 AFTER canedit;
+-- ALTER TABLE llx_opensurvey_sondage DROP COLUMN survey_link_visible;
+-- ALTER TABLE llx_opensurvey_sondage DROP INDEX idx_id_sondage_admin;
+-- ALTER TABLE llx_opensurvey_sondage DROP COLUMN id_sondage_admin;
+-- ALTER TABLE llx_opensurvey_sondage DROP COLUMN canedit;
+ALTER TABLE llx_opensurvey_sondage ADD COLUMN allow_spy tinyint NOT NULL DEFAULT 1 AFTER allow_comments;
+-- ALTER TABLE llx_opensurvey_sondage DROP COLUMN origin;
+ALTER TABLE llx_opensurvey_sondage ADD COLUMN fk_user_creat integer NOT NULL AFTER nom_admin;
+ALTER TABLE llx_opensurvey_sondage CHANGE COLUMN mailsonde mailsonde tinyint NOT NULL DEFAULT 0;
+ALTER TABLE llx_opensurvey_sondage CHANGE COLUMN titre titre TEXT NOT NULL;
+ALTER TABLE llx_opensurvey_sondage CHANGE COLUMN date_fin date_fin DATETIME NOT NULL;
+ALTER TABLE llx_opensurvey_sondage CHANGE COLUMN format format VARCHAR(2) NOT NULL;
 
 ALTER TABLE llx_facture_rec CHANGE COLUMN usenewprice usenewprice INTEGER DEFAULT 0;
 
