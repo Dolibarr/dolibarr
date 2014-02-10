@@ -49,6 +49,8 @@ Dolibarr better:
 - The deprecated way (with 4 parameters) to declare a new tab into a module descriptor file has been
 removed. You must now use the 6 parameters way. See file modMyModule.class.php for example. 
 - Remove the javascrit function ac_delay() that is not used anymore by core code.
+- Properties dictionnaries into module descriptor files has been renamed into dictionaries.
+
 
 
 ***** ChangeLog for 3.5.1 compared to 3.5.0 *****
@@ -824,7 +826,7 @@ For developers:
 - New: Support a backtopage parameter on contact creation page.
 - New: Add id on div to show logo.
 - New: Install wizard can activate a module at end of install.
-- New: Dictionnary setup works with very large external dictionnaries (Add 
+- New: Dictionary setup works with very large external dictionnaries (Add 
        page navigation).
 - New: Add api to draw graphics with javascript (using Jquery Flot).
 - New: Can add user login into menu urls added by modules.

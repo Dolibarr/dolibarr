@@ -43,8 +43,8 @@ SecuritySetup=الإعداد الأمني
 ErrorModuleRequirePHPVersion=خطأ ، هذا النموذج يتطلب نسخة بي إتش بي %s أو أعلى
 ErrorModuleRequireDolibarrVersion=خطأ ، هذا النموذج يتطلب نسخة دوليبار %s أو أعلى
 ErrorDecimalLargerThanAreForbidden=خطأ, برنامج دوليبار <b>%s</b> الحالي لا يدعم دقة أعلى من الحالية
-DictionnarySetup=إعداد القاموس
-Dictionnary=القواميس
+DictionarySetup=إعداد القاموس
+Dictionary=القواميس
 ErrorReservedTypeSystemSystemAuto=القيمة 'system' و 'systemauto' لهذا النوع محفوظ. يمكنك إستخدام 'user' كقيمة لإضافة السجل الخاص بك
 ErrorCodeCantContainZero=لا يمكن إستخدام القيمة 0 لهذا الكود
 DisableJavascript=تعطيل عمليات الجافا و الأجاكس
@@ -726,34 +726,34 @@ Permission50202=استيراد المعاملات
 # Permission55002=Create/modify surveys
 # Permission59001=Read commercial margins
 # Permission59002=Define commercial margins
-DictionnaryCompanyType=أنواع الشركة
-DictionnaryCompanyJuridicalType=أنواع القانوني للشركة
-DictionnaryProspectLevel=آفاق محتملة المستوى
-DictionnaryCanton=الدولة / الكانتونات
-DictionnaryRegion=المناطق
-DictionnaryCountry=البلدان
-DictionnaryCurrency=العملات
-DictionnaryCivility=عنوان الكياسة
-DictionnaryActions=الإجراءات القائمة
-DictionnarySocialContributions=أنواع المساهمات الاجتماعية
-DictionnaryVAT=معدلات ضريبة القيمة المضافة
-# DictionnaryRevenueStamp=Amount of revenue stamps
-DictionnaryPaymentConditions=شروط الدفع
-DictionnaryPaymentModes=طرق الدفع
-DictionnaryTypeContact=أنواع الاتصال
-DictionnaryEcotaxe=الضرائب الإيكولوجية (WEEE)
-DictionnaryPaperFormat=الصيغة الورقية
-DictionnaryFees=نوع من الرسوم
-DictionnarySendingMethods=طرق الإرسال
-DictionnaryStaff=العاملين
-DictionnaryAvailability=تأخير تسليم
-DictionnaryOrderMethods=ترتيب طرق
-DictionnarySource=الأصل من مقترحات / أوامر
-# DictionnaryAccountancyplan=Chart of accounts
-# DictionnaryAccountancysystem=Models for chart of accounts
+DictionaryCompanyType=أنواع الشركة
+DictionaryCompanyJuridicalType=أنواع القانوني للشركة
+DictionaryProspectLevel=آفاق محتملة المستوى
+DictionaryCanton=الدولة / الكانتونات
+DictionaryRegion=المناطق
+DictionaryCountry=البلدان
+DictionaryCurrency=العملات
+DictionaryCivility=عنوان الكياسة
+DictionaryActions=الإجراءات القائمة
+DictionarySocialContributions=أنواع المساهمات الاجتماعية
+DictionaryVAT=معدلات ضريبة القيمة المضافة
+# DictionaryRevenueStamp=Amount of revenue stamps
+DictionaryPaymentConditions=شروط الدفع
+DictionaryPaymentModes=طرق الدفع
+DictionaryTypeContact=أنواع الاتصال
+DictionaryEcotaxe=الضرائب الإيكولوجية (WEEE)
+DictionaryPaperFormat=الصيغة الورقية
+DictionaryFees=نوع من الرسوم
+DictionarySendingMethods=طرق الإرسال
+DictionaryStaff=العاملين
+DictionaryAvailability=تأخير تسليم
+DictionaryOrderMethods=ترتيب طرق
+DictionarySource=الأصل من مقترحات / أوامر
+# DictionaryAccountancyplan=Chart of accounts
+# DictionaryAccountancysystem=Models for chart of accounts
 SetupSaved=الإعداد المحفوظة
 BackToModuleList=العودة إلى قائمة الوحدات
-BackToDictionnaryList=العودة إلى قائمة معاجم
+BackToDictionaryList=العودة إلى قائمة معاجم
 VATReceivedOnly=سعر خاص لا تحمل
 VATManagement=إدارة الضريبة على القيمة المضافة
 VATIsUsedDesc=معدل ضريبة القيمة المضافة بشكل افتراضي عند إنشاء الآفاق ، والفواتير ، وما يتبع أوامر النشطة القياسية للمادة : <br> إذا كان البائع هو تعرض لضريبة القيمة المضافة ، وضريبة القيمة المضافة بعد ذلك تلقائيا= 0. نهاية المادة. <br> إذا كان (بيع وشراء= بلد في البلد) ، فإن ضريبة القيمة المضافة بشكل افتراضي= ضريبة القيمة المضافة من بيع المنتج في البلد. نهاية المادة. <br> إذا كان البائع والمشتري في الجماعة الأوروبية ، وبيعت البضاعة الجديدة بعد أن وسائل النقل (السيارات ، والسفن ، والطائرات) ، الافتراضي= 0 ضريبة القيمة المضافة (ضريبة القيمة المضافة وينبغي أن تدفع من قبل المشتري في customoffice بلاده وليس على البائع . نهاية المادة. <br> إذا كان البائع والمشتري في الجماعة الأوروبية والسلع التي تباع عن طريق وسائل أخرى جديدة بدلا من وسائل النقل ، فإن ضريبة القيمة المضافة بشكل افتراضي= ضريبة القيمة المضافة للمنتجات المباعة. نهاية المادة. <br> وإلا فإن ضريبة القيمة المضافة المقترحة الافتراضي= 1. نهاية المادة.
@@ -921,7 +921,7 @@ TriggerDisabledAsModuleDisabled=يتسبب في تعطيل هذه الصورة �
 TriggerAlwaysActive=يطلق في هذا الملف هي حركة دائمة ، وتفعيل ما هي وحدات Dolibarr.
 TriggerActiveAsModuleActive=يطلق في هذا الملف كما ينشط حدة تمكين <b>٪ ق.</b>
 GeneratedPasswordDesc=هنا تعريف القاعدة التي تريد استخدامه لكلمة السر اذا كنت أسأل لصناعة السيارات ولدت كلمة السر
-DictionnaryDesc=تعرف هنا إشارة datas. يمكنك استكمال مسبقا مع قيمة لك.
+DictionaryDesc=تعرف هنا إشارة datas. يمكنك استكمال مسبقا مع قيمة لك.
 ConstDesc=تسمح لك هذه الصفحة لتحرير جميع البارامترات الأخرى غير المتوفرة في الصفحات السابقة. فهي محفوظة لمعايير متقدمة للمطورين أو troubleshouting.
 OnceSetupFinishedCreateUsers=تحذير فأنت Dolibarr مدير المستخدم. مدير المستخدمين تستخدم لإعداد Dolibarr. لالمعتاد استخدام Dolibarr ، يوصى باستخدام غير مستخدم مدير خلق مجموعات من المستخدمين & القائمة.
 MiscellaneousDesc=هنا تعريف جميع البارامترات الأخرى ذات الصلة بالأمن.
@@ -1425,7 +1425,7 @@ AccountancyCode=قانون المحاسبة
 AgendaSetup=جدول الأعمال وحدة الإعداد
 PasswordTogetVCalExport=مفتاح ربط تصدير تأذن
 PastDelayVCalExport=لا تصدر الحدث الأكبر من
-# AGENDA_USE_EVENT_TYPE=Use events types (managed into Configuration->Dictionnary->llx_c_actioncomm)
+# AGENDA_USE_EVENT_TYPE=Use events types (managed into Configuration->Dictionary->llx_c_actioncomm)
 ##### ClickToDial #####
 ClickToDialDesc=هذا النموذج يسمح لإضافة رمز بعد رقم هاتف Dolibarr الاتصالات. وهناك اضغط على هذه الأيقونة ، سوف يطلب من أحد serveur معينة مع تحديد عنوان لكم أدناه. ويمكن استخدام هذه الكلمة لدعوة من مركز نظام Dolibarr التي يمكن الاتصال على رقم الهاتف هذا المسبار النظام على سبيل المثال.
 ##### Point Of Sales (CashDesk) #####

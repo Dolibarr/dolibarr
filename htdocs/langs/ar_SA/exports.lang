@@ -109,7 +109,7 @@ DataCodeIDSourceIsInsertedInto=معرف خط الأم وجدت من رمز، س�
 SourceRequired=بيانات قيمة إلزامية
 SourceExample=مثال على قيمة البيانات ممكن
 ExampleAnyRefFoundIntoElement=أي المرجع تم العثور عليها ل <b>%s</b> العنصر
-ExampleAnyCodeOrIdFoundIntoDictionnary=أي رمز (أو الهوية) وجدت في <b>%s</b> dictionnary
+ExampleAnyCodeOrIdFoundIntoDictionary=أي رمز (أو الهوية) وجدت في <b>%s</b> dictionnary
 CSVFormatDesc=<b>فاصلة فصل</b> ملف <b>القيمة</b> تنسيق (csv.). <br> هذا هو شكل ملف نصي ، حيث يتم فصل الحقول بواسطة فاصل [%s]. إذا تم العثور على فاصل داخل محتوى الحقل ، يتم تقريب الجولة الميدانية التي قام بها حرف] %s [. الهروب حرف وحرف الهروب جولة هو [%s].
 # Excel95FormatDesc=<b>Excel</b> file format (.xls)<br>This is native Excel 95 format (BIFF5).
 # Excel2007FormatDesc=<b>Excel</b> file format (.xlsx)<br>This is native Excel 2007 format (SpreadsheetML).
