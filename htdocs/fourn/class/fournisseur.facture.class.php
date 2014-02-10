@@ -1258,8 +1258,8 @@ class FactureFournisseur extends CommonInvoice
 
         $error=0;
     	$this->db->begin();
-
-        if (! $error && ! $notrigger)
+		
+		if (! $error && ! $notrigger)
         {
 	    	// Appel des triggers
 	    	include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
