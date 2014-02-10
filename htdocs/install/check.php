@@ -394,7 +394,7 @@ else
 		foreach ($migrationscript as $migarray)
 		{
 			$count++;
-            $version=preg_split('/[\.-]/',DOL_VERSION);
+            $version=DOL_VERSION;
 			$versionfrom=$migarray['from'];
             $versionto=$migarray['to'];
             $versionarray=preg_split('/[\.-]/',$version);
@@ -404,7 +404,7 @@ else
             $newversionfrom=preg_replace('/(\.[0-9]+)$/i','.*',$versionfrom);
             $newversionto=preg_replace('/(\.[0-9]+)$/i','.*',$versionto);
             $newversionfrombis='';
-            if (versioncompare($dolibarrversiontoarray,$version) < -2)	// From x.y.z -> x.y.z+1
+            if (versioncompare($dolibarrversiontoarray,$versionarray) < -2)	// From x.y.z -> x.y.z+1
             {
             	$newversionfrombis=' '.$langs->trans("or").' '.$versionto;
             }
@@ -418,7 +418,7 @@ else
 				{
 					// Now we check if this is the first qualified choice
 					if ($allowupgrade && empty($foundrecommandedchoice) &&
-						(versioncompare($dolibarrversiontoarray,$dolibarrlastupgradeversionarray) > 0 || versioncompare($dolibarrversiontoarray,$version) < -2)
+						(versioncompare($dolibarrversiontoarray,$dolibarrlastupgradeversionarray) > 0 || versioncompare($dolibarrversiontoarray,$versionarray) < -2)
 						)
 					{
 						print '<br>';
