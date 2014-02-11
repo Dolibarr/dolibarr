@@ -1941,7 +1941,7 @@ else
             }
             else // Affichage simple de la ligne
             {
-                print '<tr '.$bc[$var].'>';
+                print '<tr id="row-'.$object->lines[$i]->rowid.'" '.$bc[$var].'>';
 
                 // Show product and description
                 print '<td>';
@@ -1996,7 +1996,13 @@ else
                 print '<td align="right" class="nowrap">'.price($object->lines[$i]->total_ht).'</td>';
 
                 print '<td align="right" class="nowrap">'.price($object->lines[$i]->total_ttc).'</td>';
-
+				
+				if (is_object($hookmanager))
+				{
+					$parameters=array('line'=>$object->lines[$i],'num'=>$num,'i'=>$i);
+					$reshook=$hookmanager->executeHooks('printObjectLine',$parameters,$object,$action);
+				}
+				
                 print '<td align="center" width="16">';
                 if ($object->statut == 0) print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=edit_line&amp;etat=0&amp;lineid='.$object->lines[$i]->rowid.'">'.img_edit().'</a>';
                 else print '&nbsp;';

@@ -7,7 +7,7 @@
  * Copyright (C) 2010-2013 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2013	     Cedric GROSS	        <c.gross@kreiz-it.fr>
  * Copyright (C) 2013      Marcos García        <marcosgdf@gmail.com>
- * Copyright (C) 2011-2014 Alexandre Spangaro   <alexandre.spangaro@gmail.com> 
+ * Copyright (C) 2011-2014 Alexandre Spangaro   <alexandre.spangaro@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -117,7 +117,7 @@ class Product extends CommonObject
 	//! barcode
 	var $barcode;               // value
 	var $barcode_type;          // id
-	var $barcode_type_code;     // code (loaded by fetch_barcode)
+	var $barcode_type_code;     // code (loaded by fetch_barcode). Example ean, isbn...
 	var $barcode_type_label;    // label (loaded by fetch_barcode)
 	var $barcode_type_coder;    // coder (loaded by fetch_barcode)
 
@@ -256,8 +256,8 @@ class Product extends CommonObject
 			$price_min_ht = price2num($this->price_min,'MU');
 			$price_min_ttc = price2num($this->price_min * (1 + ($this->tva_tx / 100)),'MU');
 		}
-    
-    $this->accountancy_code_buy = trim($this->accountancy_code_buy);
+
+    	$this->accountancy_code_buy = trim($this->accountancy_code_buy);
 		$this->accountancy_code_sell= trim($this->accountancy_code_sell);
 
 		// Check parameters
@@ -297,6 +297,9 @@ class Product extends CommonObject
 
 		$this->db->begin();
 
+        // For automatic creation during create action (not used by Dolibarr GUI, can be used by scripts)
+        if ($this->barcode == -1)  $this->get_barcode($this,$this->barcode_type_code);
+
 		$sql = "SELECT count(*) as nb";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product";
 		$sql.= " WHERE entity IN (".getEntity('product', 1).")";
@@ -324,12 +327,12 @@ class Product extends CommonObject
 				$sql.= ", price_base_type";
 				$sql.= ", tobuy";
 				$sql.= ", tosell";
-        $sql.= ", accountancy_code_buy";
-		    $sql.= ", accountancy_code_sell";
+				$sql.= ", accountancy_code_buy";
+				$sql.= ", accountancy_code_sell";
 				$sql.= ", canvas";
 				$sql.= ", finished";
 				$sql.= ") VALUES (";
-				$sql.= $this->db->idate($now);
+				$sql.= "'".$this->db->idate($now)."'";
 				$sql.= ", ".$conf->entity;
 				$sql.= ", '".$this->db->escape($this->ref)."'";
 				$sql.= ", ".(! empty($this->ref_ext)?"'".$this->db->escape($this->ref_ext)."'":"null");
@@ -343,10 +346,10 @@ class Product extends CommonObject
 				$sql.= ", '".$this->price_base_type."'";
 				$sql.= ", ".$this->status;
 				$sql.= ", ".$this->status_buy;
-        $sql.= ", '".$this->accountancy_code_buy."'";
-		    $sql.= ", '".$this->accountancy_code_sell."'";
+				$sql.= ", '".$this->accountancy_code_buy."'";
+				$sql.= ", '".$this->accountancy_code_sell."'";
 				$sql.= ", '".$this->canvas."'";
-				$sql.= ", ".((empty($this->finished) || $this->finished < 0)?'null':$this->finished);
+				$sql.= ", ".((! isset($this->finished) || $this->finished < 0)?'null':$this->finished);
 				$sql.= ")";
 
 				dol_syslog(get_class($this)."::Create sql=".$sql);
@@ -467,6 +470,12 @@ class Product extends CommonObject
 
         if (empty($this->country_id))           $this->country_id = 0;
 
+        //Gencod
+        $this->barcode=trim($this->barcode);
+
+        // For automatic creation
+        if ($this->barcode == -1) $this->get_barcode($this,$this->barcode_type_code);
+
 		$this->accountancy_code_buy = trim($this->accountancy_code_buy);
 		$this->accountancy_code_sell= trim($this->accountancy_code_sell);
 
@@ -481,10 +490,10 @@ class Product extends CommonObject
 
 		$sql.= ", barcode = ". (empty($this->barcode)?"null":"'".$this->db->escape($this->barcode)."'");
 		$sql.= ", fk_barcode_type = ". (empty($this->barcode_type)?"null":$this->db->escape($this->barcode_type));
-		
+
 		$sql.= ", tosell = " . $this->status;
 		$sql.= ", tobuy = " . $this->status_buy;
-		$sql.= ", finished = " . ((empty($this->finished) || $this->finished < 0) ? "null" : $this->finished);
+		$sql.= ", finished = " . ((! isset($this->finished) || $this->finished < 0) ? "null" : $this->finished);
 		$sql.= ", weight = " . ($this->weight!='' ? "'".$this->weight."'" : 'null');
 		$sql.= ", weight_units = " . ($this->weight_units!='' ? "'".$this->weight_units."'": 'null');
 		$sql.= ", length = " . ($this->length!='' ? "'".$this->length."'" : 'null');
@@ -1361,7 +1370,7 @@ class Product extends CommonObject
 				// We should not load stock at each fetch. If someone need stock, he must call load_stock after fetch.
 				//$res=$this->load_stock();
 				//return $res;
-				
+
 				return 1;
 			}
 			else
@@ -1842,7 +1851,7 @@ class Product extends CommonObject
 
 		return $this->_get_stats($sql,$mode);
 	}
-	
+
 	/**
 	 *  Return nb of units or orders in which product is included
 	 *
@@ -1853,7 +1862,7 @@ class Product extends CommonObject
 	function get_nb_ordersupplier($socid,$mode)
 	{
 		global $conf, $user;
-	
+
 		$sql = "SELECT sum(d.qty), date_format(c.date_commande, '%Y%m')";
 		if ($mode == 'bynumber') $sql.= ", count(DISTINCT c.rowid)";
 		$sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseurdet as d, ".MAIN_DB_PREFIX."commande_fournisseur as c, ".MAIN_DB_PREFIX."societe as s";
@@ -1866,7 +1875,7 @@ class Product extends CommonObject
 		if ($socid > 0)	$sql.= " AND c.fk_soc = ".$socid;
 		$sql.= " GROUP BY date_format(c.date_commande,'%Y%m')";
 		$sql.= " ORDER BY date_format(c.date_commande,'%Y%m') DESC";
-	
+
 		return $this->_get_stats($sql,$mode);
 	}
 
@@ -3094,6 +3103,34 @@ class Product extends CommonObject
 	{
 		return ($this->type == 1 ? true : false);
 	}
+
+    /**
+     *  Attribut un code barre a partir du module de controle des codes.
+     *  Return value is stored into this->barcode
+     *
+     *	@param	Product		$object		Object product or service
+     *	@param	int			$type		Barcode type (ean, isbn, ...)
+     *  @return void
+     */
+    function get_barcode($object,$type='')
+    {
+        global $conf;
+        if (! empty($conf->global->BARCODE_PRODUCT_ADDON_NUM))
+        {
+            $dirsociete=array_merge(array('/core/modules/barcode/'),$conf->modules_parts['barcode']);
+            foreach ($dirsociete as $dirroot)
+            {
+                $res=dol_include_once($dirroot.$conf->global->BARCODE_PRODUCT_ADDON_NUM.'.php');
+                if ($res) break;
+            }
+            $var = $conf->global->BARCODE_PRODUCT_ADDON_NUM;
+            $mod = new $var;
+
+            $this->barcode = $mod->getNextValue($object,$type);
+
+            dol_syslog(get_class($this)."::get_barcode barcode=".$this->barcode." module=".$var);
+        }
+    }
 
     /**
      *  Initialise an instance with random values.

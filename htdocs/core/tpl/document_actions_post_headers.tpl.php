@@ -42,7 +42,7 @@ $formfile=new FormFile($db);
 
 // Show upload form (document and links)
 $formfile->form_attach_new_file(
-    $_SERVER["PHP_SELF"].'?id='.$object->id,
+    $_SERVER["PHP_SELF"].'?id='.$object->id.(empty($withproject)?'':'&withproject=1'),
     '',
     0,
     0,

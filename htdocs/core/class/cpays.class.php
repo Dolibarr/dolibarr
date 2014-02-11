@@ -18,8 +18,7 @@
 /**
  *      \file       htdocs/core/class/cpays.class.php
  *      \ingroup    core
- *      \brief      This file is a CRUD class file (Create/Read/Update/Delete) for c_pays dictionnary
- *					Initialy built by build_class_from_table on 2012-01-17 22:03
+ *      \brief      This file is a CRUD class file (Create/Read/Update/Delete) for c_pays dictionary
  */
 
 // Put here all includes required by your class file
@@ -29,8 +28,7 @@
 
 
 /**
- *      \class      Cpays
- *      \brief      Class to manage dictionnary Countries (used by imports)
+ * 	Class to manage dictionary Countries (used by imports)
  */
 class Cpays // extends CommonObject
 {

@@ -579,7 +579,8 @@ else
             if ($res) break;
         }
         $modCodeClient = new $module;
-        $module=$conf->global->SOCIETE_CODECLIENT_ADDON;
+        // Load object modCodeFournisseur
+        $module=(! empty($conf->global->SOCIETE_CODECLIENT_ADDON)?$conf->global->SOCIETE_CODECLIENT_ADDON:'mod_codeclient_leopard');
         if (substr($module, 0, 15) == 'mod_codeclient_' && substr($module, -3) == 'php')
         {
             $module = substr($module, 0, dol_strlen($module)-4);
@@ -842,7 +843,7 @@ else
         // Country
         print '<tr><td width="25%">'.$langs->trans('Country').'</td><td colspan="3" class="maxwidthonsmartphone">';
         print $form->select_country((GETPOST('country_id')!=''?GETPOST('country_id'):$object->country_id),'country_id');
-        if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
+        if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
         print '</td></tr>';
 
         // State
@@ -930,11 +931,11 @@ else
         // Type - Size
         print '<tr><td>'.$langs->trans("ThirdPartyType").'</td><td>'."\n";
         print $form->selectarray("typent_id", $formcompany->typent_array(0), $object->typent_id, 0, 0, 0, '', 0, 0, 0, (empty($conf->global->SOCIETE_SORT_ON_TYPEENT)?'ASC':$conf->global->SOCIETE_SORT_ON_TYPEENT));
-        if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
+        if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
         print '</td>';
         print '<td>'.$langs->trans("Staff").'</td><td>';
         print $form->selectarray("effectif_id", $formcompany->effectif_array(0), $object->effectif_id);
-        if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
+        if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
         print '</td></tr>';
 
         // Legal Form
@@ -1267,7 +1268,7 @@ else
             // Country
             print '<tr><td>'.$langs->trans('Country').'</td><td colspan="3">';
             print $form->select_country((GETPOST('country_id')!=''?GETPOST('country_id'):$object->country_id),'country_id');
-            if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
+            if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
             print '</td></tr>';
 
             // State
@@ -1387,11 +1388,11 @@ else
             // Type - Size
             print '<tr><td>'.$langs->trans("ThirdPartyType").'</td><td>';
             print $form->selectarray("typent_id",$formcompany->typent_array(0), $object->typent_id, 0, 0, 0, '', 0, 0, 0, (empty($conf->global->SOCIETE_SORT_ON_TYPEENT)?'ASC':$conf->global->SOCIETE_SORT_ON_TYPEENT));
-            if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
+            if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
             print '</td>';
             print '<td>'.$langs->trans("Staff").'</td><td>';
             print $form->selectarray("effectif_id",$formcompany->effectif_array(0), $object->effectif_id);
-            if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
+            if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
             print '</td></tr>';
 
             print '<tr><td>'.$langs->trans('JuridicalStatus').'</td><td colspan="3">';
@@ -1831,12 +1832,12 @@ else
 	        	$langs->load("mails");
 	       		print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NoEmail")).'">'.$langs->trans('SendMail').'</a></div>';
 	        }
-	
+
 	        if ($user->rights->societe->creer)
 	        {
 	            print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&amp;action=edit">'.$langs->trans("Modify").'</a></div>'."\n";
 	        }
-	
+
 	        if ($user->rights->societe->supprimer)
 	        {
 	            if ($conf->use_javascript_ajax && empty($conf->dol_use_jmobile))	// We can(t use preloaded confirm form with jmobile
@@ -1849,7 +1850,7 @@ else
 	            }
 	        }
 		}
-		
+
         print '</div>'."\n";
 
 

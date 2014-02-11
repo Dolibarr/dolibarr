@@ -566,12 +566,12 @@ class FormMail
         			if ($this->param["models"]=='order_send')
         			{
         				$url=getPaypalPaymentUrl(0,'order',$this->substit['__ORDERREF__']);
-        				$this->substit['__PERSONALIZED__']=$langs->transnoentitiesnoconv("PredefinedMailContentLink",$url);
+        				$this->substit['__PERSONALIZED__']=str_replace('\n',"\n",$langs->transnoentitiesnoconv("PredefinedMailContentLink",$url));
         			}
         			if ($this->param["models"]=='facture_send')
         			{
         				$url=getPaypalPaymentUrl(0,'invoice',$this->substit['__FACREF__']);
-        				$this->substit['__PERSONALIZED__']=$langs->transnoentitiesnoconv("PredefinedMailContentLink",$url);
+        				$this->substit['__PERSONALIZED__']=str_replace('\n',"\n",$langs->transnoentitiesnoconv("PredefinedMailContentLink",$url));
         			}
         		}
 

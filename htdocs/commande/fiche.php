@@ -2174,10 +2174,10 @@ else
 		{
 			$form->form_demand_reason($_SERVER['PHP_SELF'].'?id='.$object->id,$object->demand_reason_id,'none');
 		}
-		// Removed because using dictionnary is an admin feature, not a user feature. Ther is already the "star" to show info to admin users.
+		// Removed because using dictionary is an admin feature, not a user feature. Ther is already the "star" to show info to admin users.
 		// This is to avoid too heavy screens and have an uniform look and feel for all screens.
 		//print '</td><td>';
-		//print '<a href="'.DOL_URL_ROOT.'/admin/dict.php?id=22&origin=order&originid='.$object->id.'">'.$langs->trans("DictionnarySource").'</a>';
+		//print '<a href="'.DOL_URL_ROOT.'/admin/dict.php?id=22&origin=order&originid='.$object->id.'">'.$langs->trans("DictionarySource").'</a>';
 		print '</td></tr>';
 
 		// Project
@@ -2481,15 +2481,15 @@ else
 				if ($conf->contrat->enabled && ($object->statut == 1 || $object->statut == 2))
 				{
 					$langs->load("contracts");
-	
+
 					if ($user->rights->contrat->creer)
 					{
 						print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/contrat/fiche.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid.'">'.$langs->trans('AddContract').'</a></div>';
 					}
 				}
-	
+
 				// Create bill and Classify billed
-				// Note: Even if module invoice is not enabled, we should be able to use button "Classified billed" 
+				// Note: Even if module invoice is not enabled, we should be able to use button "Classified billed"
 				if ($object->statut > 0  && ! $object->billed)
 				{
 					if (! empty($conf->facture->enabled) && $user->rights->facture->creer && empty($conf->global->WORKFLOW_DISABLE_CREATE_INVOICE_FROM_ORDER))

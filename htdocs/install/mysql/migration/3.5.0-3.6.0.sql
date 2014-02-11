@@ -19,18 +19,20 @@
 
 ALTER TABLE llx_bookmark ADD COLUMN entity integer DEFAULT 1 NOT NULL;
 
-ALTER TABLE  llx_opensurvey_sondage ADD COLUMN allow_comments tinyint NOT NULL DEFAULT 1 AFTER canedit;
--- ALTER TABLE  llx_opensurvey_sondage DROP COLUMN survey_link_visible;
--- ALTER TABLE  llx_opensurvey_sondage DROP INDEX idx_id_sondage_admin;
--- ALTER TABLE  llx_opensurvey_sondage DROP COLUMN id_sondage_admin;
--- ALTER TABLE  llx_opensurvey_sondage DROP COLUMN canedit;
-ALTER TABLE  llx_opensurvey_sondage ADD COLUMN allow_spy tinyint NOT NULL DEFAULT 1 AFTER allow_comments;
--- ALTER TABLE  llx_opensurvey_sondage DROP COLUMN origin;
-ALTER TABLE  llx_opensurvey_sondage ADD COLUMN fk_user_creat integer NOT NULL AFTER nom_admin;
-ALTER TABLE  llx_opensurvey_sondage CHANGE COLUMN mailsonde mailsonde tinyint NOT NULL DEFAULT 0;
-ALTER TABLE  llx_opensurvey_sondage CHANGE COLUMN titre titre TEXT NOT NULL;
-ALTER TABLE  llx_opensurvey_sondage CHANGE COLUMN date_fin date_fin DATETIME NOT NULL;
-ALTER TABLE  llx_opensurvey_sondage CHANGE COLUMN format format VARCHAR(2) NOT NULL;
+ALTER TABLE llx_bookmark MODIFY COLUMN url varchar(255) NOT NULL;
+
+ALTER TABLE llx_opensurvey_sondage ADD COLUMN allow_comments tinyint NOT NULL DEFAULT 1 AFTER canedit;
+-- ALTER TABLE llx_opensurvey_sondage DROP COLUMN survey_link_visible;
+-- ALTER TABLE llx_opensurvey_sondage DROP INDEX idx_id_sondage_admin;
+-- ALTER TABLE llx_opensurvey_sondage DROP COLUMN id_sondage_admin;
+-- ALTER TABLE llx_opensurvey_sondage DROP COLUMN canedit;
+ALTER TABLE llx_opensurvey_sondage ADD COLUMN allow_spy tinyint NOT NULL DEFAULT 1 AFTER allow_comments;
+-- ALTER TABLE llx_opensurvey_sondage DROP COLUMN origin;
+ALTER TABLE llx_opensurvey_sondage ADD COLUMN fk_user_creat integer NOT NULL AFTER nom_admin;
+ALTER TABLE llx_opensurvey_sondage CHANGE COLUMN mailsonde mailsonde tinyint NOT NULL DEFAULT 0;
+ALTER TABLE llx_opensurvey_sondage CHANGE COLUMN titre titre TEXT NOT NULL;
+ALTER TABLE llx_opensurvey_sondage CHANGE COLUMN date_fin date_fin DATETIME NOT NULL;
+ALTER TABLE llx_opensurvey_sondage CHANGE COLUMN format format VARCHAR(2) NOT NULL;
 
 ALTER TABLE llx_facture_rec CHANGE COLUMN usenewprice usenewprice INTEGER DEFAULT 0;
 
@@ -954,56 +956,4 @@ INSERT INTO llx_accountingaccount (fk_pcg_version, pcg_type, pcg_subtype, accoun
 INSERT INTO llx_accountingaccount (fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUE ('PCMN-BASE', 'PROD', 'XXXXXX', '792', '79', 'Prélèvement sur les réserves', '1');
 INSERT INTO llx_accountingaccount (fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUE ('PCMN-BASE', 'PROD', 'XXXXXX', '793', '79', 'Perte à reporter', '1');
 INSERT INTO llx_accountingaccount (fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUE ('PCMN-BASE', 'PROD', 'XXXXXX', '794', '79', 'Intervention d''associés (ou du propriétaire) dans la perte', '1');
-/*
-INSERT INTO llx_accountingaccount (fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUE ('PCMN-BASE', 'HBILAN', 'XXXXXX', '00', '0', 'Garanties constituées par des tiers pour le compte de l''entreprise', '1');
-INSERT INTO llx_accountingaccount (fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUE ('PCMN-BASE', 'HBILAN', 'XXXXXX', '00', '0', 'Créanciers, bénéficiaires de garanties de tiers', '1');
-INSERT INTO llx_accountingaccount (fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUE ('PCMN-BASE', 'HBILAN', 'XXXXXX', '01', '0', 'Tiers constituants de garanties pour compte de l''entreprise', '1');
-INSERT INTO llx_accountingaccount (fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUE ('PCMN-BASE', 'HBILAN', 'XXXXXX', '01', '0', 'Garanties constituées pour compte de tiers', '1');
-INSERT INTO llx_accountingaccount (fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUE ('PCMN-BASE', 'HBILAN', 'XXXXXX', '010', '01', 'Débiteurs pour engagements sur effets', '1');
-INSERT INTO llx_accountingaccount (fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUE ('PCMN-BASE', 'HBILAN', 'XXXXXX', '011', '01', 'Créanciers d''engagements sur effets', '1');
-INSERT INTO llx_accountingaccount (fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUE ('PCMN-BASE', 'HBILAN', 'XXXXXX', '0110', '011', 'Effets cédés par l''entreprise sous endos', '1');
-INSERT INTO llx_accountingaccount (fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUE ('PCMN-BASE', 'HBILAN', 'XXXXXX', '0111', '011', 'Autres engagements sur effets en circulation', '1');
-INSERT INTO llx_accountingaccount (fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUE ('PCMN-BASE', 'HBILAN', 'XXXXXX', '012', '01', 'Débiteurs pour autres garanties personnelles', '1');
-INSERT INTO llx_accountingaccount (fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUE ('PCMN-BASE', 'HBILAN', 'XXXXXX', '013', '01', 'Créanciers d''autres garanties personnelles', '1');
-INSERT INTO llx_accountingaccount (fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUE ('PCMN-BASE', 'HBILAN', 'XXXXXX', '02', '0', 'Garanties réelles constituées sur avoirs propres', '1');
-INSERT INTO llx_accountingaccount (fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUE ('PCMN-BASE', 'HBILAN', 'XXXXXX', '020', '02', 'Créanciers de l''entreprise, bénéficiaires de garanties réelles', '1');
-INSERT INTO llx_accountingaccount (fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUE ('PCMN-BASE', 'HBILAN', 'XXXXXX', '021', '02', 'Garanties réelles constituées pour compte propre', '1');
-INSERT INTO llx_accountingaccount (fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUE ('PCMN-BASE', 'HBILAN', 'XXXXXX', '022', '02', 'Créanciers de tiers, bénéficiaires de garanties réelles', '1');
-INSERT INTO llx_accountingaccount (fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUE ('PCMN-BASE', 'HBILAN', 'XXXXXX', '023', '02', 'Garanties réelles constituées pour compte de tiers', '1');
-INSERT INTO llx_accountingaccount (fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUE ('PCMN-BASE', 'HBILAN', 'XXXXXX', '03', '0', 'Garanties reçues', '1');
-INSERT INTO llx_accountingaccount (fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUE ('PCMN-BASE', 'HBILAN', 'XXXXXX', '030', '03', 'Dépôts statutaires', '1');
-INSERT INTO llx_accountingaccount (fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUE ('PCMN-BASE', 'HBILAN', 'XXXXXX', '031', '03', 'Déposants statutaires', '1');
-INSERT INTO llx_accountingaccount (fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUE ('PCMN-BASE', 'HBILAN', 'XXXXXX', '032', '03', 'Garanties reçues', '1');
-INSERT INTO llx_accountingaccount (fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUE ('PCMN-BASE', 'HBILAN', 'XXXXXX', '033', '03', 'Constituants de garanties', '1');
-INSERT INTO llx_accountingaccount (fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUE ('PCMN-BASE', 'HBILAN', 'XXXXXX', '04', '0', 'Biens te valeurs détenus pat des tiers en leur nom mais aux risques et profits de l''entreprise', '1');
-INSERT INTO llx_accountingaccount (fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUE ('PCMN-BASE', 'HBILAN', 'XXXXXX', '040', '04', 'Tiers, détenteurs en leur nom mais aux risques et profits de l''entreprise de biens et de valeurs', '1');
-INSERT INTO llx_accountingaccount (fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUE ('PCMN-BASE', 'HBILAN', 'XXXXXX', '041', '04', 'Biens et valeurs détenus par des tiers en leur nom mais aux risques et profits de l''entreprise', '1');
-INSERT INTO llx_accountingaccount (fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUE ('PCMN-BASE', 'HBILAN', 'XXXXXX', '05', '0', 'Engagements d''acquisition et de cession d''immobilisation', '1');
-INSERT INTO llx_accountingaccount (fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUE ('PCMN-BASE', 'HBILAN', 'XXXXXX', '050', '05', 'Engagements d''acquisition', '1');
-INSERT INTO llx_accountingaccount (fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUE ('PCMN-BASE', 'HBILAN', 'XXXXXX', '051', '05', 'Créanciers d''engagements d''acquisition', '1');
-INSERT INTO llx_accountingaccount (fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUE ('PCMN-BASE', 'HBILAN', 'XXXXXX', '052', '05', 'Débiteurs pour engagements de cession', '1');
-INSERT INTO llx_accountingaccount (fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUE ('PCMN-BASE', 'HBILAN', 'XXXXXX', '053', '05', 'Engagements de cession', '1');
-INSERT INTO llx_accountingaccount (fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUE ('PCMN-BASE', 'HBILAN', 'XXXXXX', '06', '0', 'Marchés à terme', '1');
-INSERT INTO llx_accountingaccount (fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUE ('PCMN-BASE', 'HBILAN', 'XXXXXX', '060', '06', 'Marchandises achetées à terme - à recevoir', '1');
-INSERT INTO llx_accountingaccount (fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUE ('PCMN-BASE', 'HBILAN', 'XXXXXX', '061', '06', 'Créanciers pour marchandises achetées à terme', '1');
-INSERT INTO llx_accountingaccount (fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUE ('PCMN-BASE', 'HBILAN', 'XXXXXX', '062', '06', 'Débiteurs pour marchandises vendues à terme - à livrer', '1');
-INSERT INTO llx_accountingaccount (fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUE ('PCMN-BASE', 'HBILAN', 'XXXXXX', '063', '06', 'Marchandises vendues à terme - à livrer', '1');
-INSERT INTO llx_accountingaccount (fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUE ('PCMN-BASE', 'HBILAN', 'XXXXXX', '064', '06', 'Devises achetées à terme - à recevoir', '1');
-INSERT INTO llx_accountingaccount (fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUE ('PCMN-BASE', 'HBILAN', 'XXXXXX', '065', '06', 'Créanciers pour devises achetées à terme', '1');
-INSERT INTO llx_accountingaccount (fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUE ('PCMN-BASE', 'HBILAN', 'XXXXXX', '066', '06', 'Débiteurs pour devises vendues à terme', '1');
-INSERT INTO llx_accountingaccount (fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUE ('PCMN-BASE', 'HBILAN', 'XXXXXX', '067', '06', 'Devises vendues à terme - à livrer', '1');
-INSERT INTO llx_accountingaccount (fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUE ('PCMN-BASE', 'HBILAN', 'XXXXXX', '07', '0', 'Biens et valeurs de tiers détenus pat l''entreprise', '1');
-INSERT INTO llx_accountingaccount (fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUE ('PCMN-BASE', 'HBILAN', 'XXXXXX', '070', '07', 'Droits d''usage à long terme', '1');
-INSERT INTO llx_accountingaccount (fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUE ('PCMN-BASE', 'HBILAN', 'XXXXXX', '0700', '070', 'Sur terrains et constructions', '1');
-INSERT INTO llx_accountingaccount (fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUE ('PCMN-BASE', 'HBILAN', 'XXXXXX', '0701', '070', 'Sur installations, machines et outillage', '1');
-INSERT INTO llx_accountingaccount (fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUE ('PCMN-BASE', 'HBILAN', 'XXXXXX', '0702', '070', 'Sur mobilier et matériel roulant', '1');
-INSERT INTO llx_accountingaccount (fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUE ('PCMN-BASE', 'HBILAN', 'XXXXXX', '071', '07', 'Créanciers de loyers et redevances', '1');
-INSERT INTO llx_accountingaccount (fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUE ('PCMN-BASE', 'HBILAN', 'XXXXXX', '072', '07', 'Biens et valeurs de tiers reçus en dépôt, en consignation ou à façon', '1');
-INSERT INTO llx_accountingaccount (fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUE ('PCMN-BASE', 'HBILAN', 'XXXXXX', '073', '07', 'Commettants et déposants de biens et valeurs', '1');
-INSERT INTO llx_accountingaccount (fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUE ('PCMN-BASE', 'HBILAN', 'XXXXXX', '074', '07', 'Biens et valeurs détenus pour compte ou aux risques et profits de tiers', '1');
-INSERT INTO llx_accountingaccount (fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUE ('PCMN-BASE', 'HBILAN', 'XXXXXX', '075', '07', 'Créanciers de biens et valeurs détenus pour compte de tiers ou à leurs risques et profits', '1');
-INSERT INTO llx_accountingaccount (fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUE ('PCMN-BASE', 'HBILAN', 'XXXXXX', '09', '0', 'Droits et engagements divers', '1');
-*/
 
--- ISO 9362 http://fr.wikipedia.org/wiki/ISO_9362
-alter table llx_societe_rib      MODIFY COLUMN bic varchar(11);

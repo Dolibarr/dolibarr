@@ -24,9 +24,7 @@
 
 
 /**
- *      \class      PaymentTerm
- *      \brief      Class to manage payment terms records in dictionnary
- *		\remarks	Initialy built by build_class_from_table on 2010-09-06 00:33
+ *	Class to manage payment terms records in dictionary
  */
 class PaymentTerm // extends CommonObject
 {

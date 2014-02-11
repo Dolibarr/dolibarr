@@ -18,14 +18,12 @@
 /**
  *      \file       htdocs/core/class/ctypent.class.php
  *      \ingroup    core
- *      \brief      This file is CRUD class file (Create/Read/Update/Delete) for c_typent dictionnary
- *					Initialy built by build_class_from_table on 2012-01-17 16:24
+ *      \brief      This file is CRUD class file (Create/Read/Update/Delete) for c_typent dictionary
  */
 
 
 /**
- *      \class      Ctypent
- *      \brief      Class of dictionnary type of thirdparty (used by imports)
+ *	Class of dictionary type of thirdparty (used by imports)
  */
 class Ctypent // extends CommonObject
 {

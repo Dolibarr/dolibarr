@@ -81,8 +81,8 @@ class modOpenSurvey extends DolibarrModules
 		// Constants
 		$this->const = array();			// List of parameters
 
-		// Dictionnaries
-        $this->dictionnaries=array();
+		// Dictionaries
+        $this->dictionaries=array();
 
 		// Boxes
 		$this->boxes = array();			// List of boxes

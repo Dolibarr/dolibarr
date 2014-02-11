@@ -522,6 +522,12 @@ if ($id || $ref)
 							print $productfourn->fourn_unitcharges?price($productfourn->fourn_unitcharges) : ($productfourn->fourn_qty?price($productfourn->fourn_charges/$productfourn->fourn_qty):"&nbsp;");
 							print '</td>';
 						}
+						
+						if (is_object($hookmanager))
+						{
+							$parameters=array('id_pfp'=>$productfourn->product_fourn_price_id,'id_fourn'=>$id_fourn,'prod_id'=>$product->id);
+						    $reshook=$hookmanager->executeHooks('printObjectLine',$parameters,$object,$action);
+						}
 
 						// Modify-Remove
 						print '<td align="center">';

@@ -1088,24 +1088,24 @@ class FormOther
      *  Return a HTML select list of bank accounts
      *
      *  @param  string	$htmlname          	Name of select zone
-     *  @param	string	$dictionnarytable	Dictionnary table
+     *  @param	string	$dictionarytable	Dictionary table
      *  @param	string	$keyfield			Field for key
      *  @param	string	$labelfield			Label field
      *  @param	string	$selected			Selected value
      *  @param  int		$useempty          	1=Add an empty value in list, 2=Add an empty value in list only if there is more than 2 entries.
      * 	@return	void
      */
-    function select_dictionnary($htmlname,$dictionnarytable,$keyfield='code',$labelfield='label',$selected='',$useempty=0)
+    function select_dictionary($htmlname,$dictionarytable,$keyfield='code',$labelfield='label',$selected='',$useempty=0)
     {
         global $langs, $conf;
 
         $langs->load("admin");
 
         $sql = "SELECT rowid, ".$keyfield.", ".$labelfield;
-        $sql.= " FROM ".MAIN_DB_PREFIX.$dictionnarytable;
+        $sql.= " FROM ".MAIN_DB_PREFIX.$dictionarytable;
         $sql.= " ORDER BY ".$labelfield;
 
-        dol_syslog(get_class($this)."::select_dictionnary sql=".$sql);
+        dol_syslog(get_class($this)."::select_dictionary sql=".$sql);
         $result = $this->db->query($sql);
         if ($result)
         {
@@ -1113,7 +1113,7 @@ class FormOther
             $i = 0;
             if ($num)
             {
-                print '<select id="select'.$htmlname.'" class="flat selectdictionnary" name="'.$htmlname.'"'.($moreattrib?' '.$moreattrib:'').'>';
+                print '<select id="select'.$htmlname.'" class="flat selectdictionary" name="'.$htmlname.'"'.($moreattrib?' '.$moreattrib:'').'>';
                 if ($useempty == 1 || ($useempty == 2 && $num > 1))
                 {
                     print '<option value="-1">&nbsp;</option>';
@@ -1138,7 +1138,7 @@ class FormOther
             }
             else
 			{
-                print $langs->trans("DictionnaryEmpty");
+                print $langs->trans("DictionaryEmpty");
             }
         }
         else {

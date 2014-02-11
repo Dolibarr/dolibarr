@@ -1010,21 +1010,14 @@ class Contact extends CommonObject
 	{
 		global $user,$langs;
 
-		// Charge tableau des id de societe socids
-		$socids = array();
-		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe LIMIT 10";
+		// Get first id of existing company and save it into $socid
+		$socid = 0;
+		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe ORDER BY rowid LIMIT 1";
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
-			$num_socs = $this->db->num_rows($resql);
-			$i = 0;
-			while ($i < $num_socs)
-			{
-				$i++;
-
-				$row = $this->db->fetch_row($resql);
-				$socids[$i] = $row[0];
-			}
+			$obj = $this->db->fetch_object($resql);
+			if ($obj) $socid=$obj->rowid;
 		}
 
 		// Initialise parameters
@@ -1039,7 +1032,7 @@ class Contact extends CommonObject
 		$this->country_code = 'FR';
 		$this->country = 'France';
 		$this->email = 'specimen@specimen.com';
-    $this->skype = 'tom.hanson';
+    	$this->skype = 'tom.hanson';
 
 		$this->phone_pro = '0909090901';
 		$this->phone_perso = '0909090902';
@@ -1049,8 +1042,7 @@ class Contact extends CommonObject
 		$this->note_public='This is a comment (public)';
 		$this->note_private='This is a comment (private)';
 
-		$socid = rand(1, $num_socs);
-		$this->socid = $socids[$socid];
+		$this->socid = $socid;
 		$this->statut=1;
 	}
 

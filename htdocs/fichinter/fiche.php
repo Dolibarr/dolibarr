@@ -112,7 +112,8 @@ if ($action == 'confirm_validate' && $confirm == 'yes' && $user->rights->fichein
 			$outputlangs = new Translate("",$conf);
 			$outputlangs->setDefaultLang($newlang);
 		}
-		$result=fichinter_create($db, $object, GETPOST('model','alpha'), $outputlangs);
+		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) $result=fichinter_create($db, $object, GETPOST('model','alpha'), $outputlangs);
+
 		header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
 		exit;
 	}
@@ -137,7 +138,8 @@ else if ($action == 'confirm_modify' && $confirm == 'yes' && $user->rights->fich
 			$outputlangs = new Translate("",$conf);
 			$outputlangs->setDefaultLang($newlang);
 		}
-		$result=fichinter_create($db, $object, (!GETPOST('model','alpha'))?$object->model:GETPOST('model','apha'), $outputlangs);
+		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) $result=fichinter_create($db, $object, (!GETPOST('model','alpha'))?$object->model:GETPOST('model','apha'), $outputlangs);
+
 		header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
 		exit;
 	}
@@ -452,7 +454,7 @@ else if ($action == "addline" && $user->rights->ficheinter->creer)
 		{
 			$db->commit();
 
-			fichinter_create($db, $object, $object->modelpdf, $outputlangs);
+			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) fichinter_create($db, $object, $object->modelpdf, $outputlangs);
 			header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
 			exit;
 		}
@@ -522,7 +524,7 @@ else if ($action == 'updateline' && $user->rights->ficheinter->creer && GETPOST(
 		$outputlangs = new Translate("",$conf);
 		$outputlangs->setDefaultLang($newlang);
 	}
-	fichinter_create($db, $object, $object->modelpdf, $outputlangs);
+	if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) fichinter_create($db, $object, $object->modelpdf, $outputlangs);
 
 	header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
 	exit;
@@ -557,7 +559,7 @@ else if ($action == 'confirm_deleteline' && $confirm == 'yes' && $user->rights->
 		$outputlangs = new Translate("",$conf);
 		$outputlangs->setDefaultLang($newlang);
 	}
-	fichinter_create($db, $object, $object->modelpdf, $outputlangs);
+	if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) fichinter_create($db, $object, $object->modelpdf, $outputlangs);
 }
 
 /*
@@ -578,7 +580,8 @@ else if ($action == 'up' && $user->rights->ficheinter->creer)
 		$outputlangs = new Translate("",$conf);
 		$outputlangs->setDefaultLang($newlang);
 	}
-	fichinter_create($db, $object, $object->modelpdf, $outputlangs);
+	if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) fichinter_create($db, $object, $object->modelpdf, $outputlangs);
+
 	header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.'#'.GETPOST('line_id','int'));
 	exit;
 }
@@ -597,7 +600,8 @@ else if ($action == 'down' && $user->rights->ficheinter->creer)
 		$outputlangs = new Translate("",$conf);
 		$outputlangs->setDefaultLang($newlang);
 	}
-	fichinter_create($db, $object, $object->modelpdf, $outputlangs);
+	if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) fichinter_create($db, $object, $object->modelpdf, $outputlangs);
+
 	header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.'#'.GETPOST('line_id','int'));
 	exit;
 }
