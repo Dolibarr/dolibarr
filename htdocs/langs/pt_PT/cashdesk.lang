@@ -36,4 +36,4 @@ BankToPay=Conta corrente
 ShowCompany=Mostrar empresa
 ShowStock=Mostrar armazém
 DeleteArticle=Clique para remover este artigo
-# FilterRefOrLabelOrBC=Search (Ref/Label)
+FilterRefOrLabelOrBC=Procurar (Ref/Etiqueta)

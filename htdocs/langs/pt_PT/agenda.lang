@@ -33,8 +33,8 @@ ViewDay=Modo de exibição Dia
 ViewWeek=Vista da semana
 ViewWithPredefinedFilters= Ver com filtros predefinidos
 AutoActions= Preenchimento automático
-# AgendaAutoActionDesc= Define here events for which you want Dolibarr to create automatically an event in agenda. If nothing is checked (by default), only manual actions will be included in agenda.
-# AgendaSetupOtherDesc= This page provides options to allow export of your Dolibarr events into an external calendar (thunderbird, google calendar, ...)
+AgendaAutoActionDesc= Defina aqui os eventos para os quais deseja que o Dolibarr crie automaticamente um evento na agenda. Se não for seleccionada nenhuma opção (por omissão), apenas as acções manuais serão incluídas na agenda
+AgendaSetupOtherDesc= Esta página fornece opções para permitir a exportação dos seus eventos no Dolibarr para um calendário externo (Thunderbird, calendário Google, ...)
 AgendaExtSitesDesc=Esta página permite declarar as fontes externas de calendários para ver os seus eventos na agenda do Dolibarr.
 ActionsEvents= Eventos em que o Dolibarr criará uma acção em agenda automáticamente
 PropalValidatedInDolibarr= Proposta Validada
@@ -68,7 +68,7 @@ AgendaUrlOptions5=<b>logind=%s</b> para restringir a produção para acções fe
 AgendaShowBirthdayEvents=Mostrar Aniversários dos Contactos
 AgendaHideBirthdayEvents=Esconder Aniversários dos Contactos
 Busy=Ocupado
-# ExportDataset_event1=List of agenda events
+ExportDataset_event1=Lista de eventos da agenda
 
 # External Sites ical
 ExportCal=Exportar calendário

@@ -176,9 +176,9 @@ CancelUpload=Cancelar upload
 FileIsTooBig=Arquivos muito grandes
 PleaseBePatient=Por favor, aguarde...
 # RequestToResetPasswordReceived=A request to change your Dolibarr password has been received
-# NewKeyIs=This is your new keys to login
+NewKeyIs=Estas são as suas novas credenciais para efectuar login
 # NewKeyWillBe=Your new key to login to software will be
-# ClickHereToGoTo=Click here to go to %s
+ClickHereToGoTo=Clique aqui para ir para %s
 # YouMustClickToChange=You must however first click on the following link to validate this password change
 # ForgetIfNothing=If you didn't request this change, just forget this email. Your credentials are kept safe.
 
@@ -202,7 +202,7 @@ MemberResiliatedInDolibarr=Membro %s dado de baixa em Dolibarr
 MemberDeletedInDolibarr=Membro %s eliminado de Dolibarr
 MemberSubscriptionAddedInDolibarr=Subscrição do membro % adicionada em Dolibarr
 ShipmentValidatedInDolibarr=%s embarque validado em Dolibarr
-# ShipmentDeletedInDolibarr=Shipment %s deleted from Dolibarr
+ShipmentDeletedInDolibarr=Envio %s eliminado do Dolibarr
 ##### Export #####
 Export=Exportação
 ExportsArea=Área de Exportações

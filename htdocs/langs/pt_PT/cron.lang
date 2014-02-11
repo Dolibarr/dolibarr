@@ -10,14 +10,14 @@ About = Acerca de
 # Right
 #
 # Permission23101 = Read Scheduled task
-# Permission23102 = Create/update Scheduled task
-# Permission23103 = Delete Scheduled task
-# Permission23104 = Execute Scheduled task
+Permission23102 = Criar/Alterar tarefa agendada
+Permission23103 = Eliminar tarefa agendada
+Permission23104 = Executar tarefa agendada
 
 #
 # Admin
 #
-# CronSetup= Scheduled job management setup
+CronSetup= Configuração da gestão de tarefas agendadas
 # URLToLaunchCronJobs=URL to check and launch cron jobs if required
 # OrToLaunchASpecificJob=Or to check and launch a specific job
 # KeyForCronAccess=Security key for URL to launch cron jobs
@@ -29,65 +29,65 @@ About = Acerca de
 #
 # Menu
 #
-# CronJobs=Scheduled jobs
-# CronListActive= List of active jobs
-# CronListInactive= List of disabled jobs
-# CronListActive= List of active jobs
+CronJobs=Tarefas agendadas
+CronListActive= Lista de trabalhos ativos
+CronListInactive= Lista de trabalhos inativos
+CronListActive= Lista de trabalhos ativos
 
 
 #
 # Page list
 #
-# CronDateLastRun=Last run
-# CronLastOutput=Last run output
+CronDateLastRun=Última execução
+CronLastOutput=Resultado da última execução
 # CronLastResult=Last result code
-# CronListOfCronJobs=List of scheduled jobs
-# CronCommand=Command
-# CronList=Jobs list
+CronListOfCronJobs=Lista de tarefas agendadas
+CronCommand=Comando
+CronList=Lista de tarefas
 # CronDelete= Delete cron jobs
 # CronConfirmDelete= Are you sure you want to delete this cron job ?
-# CronExecute=Launch job
-# CronConfirmExecute= Are you sure to execute this job now
+CronExecute=Lançar tarefa
+CronConfirmExecute= Tem certeza que deseja executar esta tarefa agora
 # CronInfo= Jobs allow to execute task that have been planned
 # CronWaitingJobs=Wainting jobs
-# CronTask=Job
+CronTask=Tarefa
 CronNone= Nenhuma
 CronDtStart=Data de Início
 CronDtEnd=Data Fim
-# CronDtNextLaunch=Next execution
-# CronDtLastLaunch=Last execution
-# CronFrequency=Frequancy
+CronDtNextLaunch=Próximo execução
+CronDtLastLaunch=Última execução
+CronFrequency=Frequência
 # CronClass=Classe
 CronMethod=Método
 CronModule=Módulo
-# CronAction=Action
+CronAction=Ação
 CronStatus=Estado
 CronStatusActive=Activado
 CronStatusInactive=Desactivado
-# CronNoJobs=No jobs registered
+CronNoJobs=Nenhuma tarefa registada
 CronPriority=Prioridade
 CronLabel=Descrição
-# CronNbRun=Nb. launch
+CronNbRun=N.º de Execução
 # CronEach=Every
-# JobFinished=Job launched and finished
+JobFinished=Terafa lançada e concluída
 
 #
 #Page card
 #
-# CronAdd= Add jobs
-# CronHourStart= Start Hour and date of task
+CronAdd= Adicionar tarefas
+CronHourStart= Date e hora de início da tarefa
 # CronEvery= And execute task each
 # CronObject= Instance/Object to create
 CronArgs=Parâmetros
-# CronSaveSucess=Save succesfully
+CronSaveSucess=Guardado com sucesso
 CronNote=Comentário
-# CronFieldMandatory=Fields %s is mandatory
-# CronErrEndDateStartDt=End date cannot be before start date
-# CronStatusActiveBtn=Enable
+CronFieldMandatory=Os campos %s são obrigatórios
+CronErrEndDateStartDt=A data de fim não pode ser anterior à data de início
+CronStatusActiveBtn=Activar
 CronStatusInactiveBtn=Desactivar
-# CronTaskInactive=This job is disabled
+CronTaskInactive=Esta tarefa está desactivada
 # CronDtLastResult=Last result date
-# CronId=Id
+CronId=Id
 # CronClassFile=Classes (filename.class.php)
 # CronModuleHelp=Name of Dolibarr module directory (also work with external Dolibarr module). <BR> For exemple to fetch method of Dolibarr Product object /htdocs/<u>product</u>/class/product.class.php, the value of module is <i>product</i>
 # CronClassFileHelp=The file name to load. <BR> For exemple to fetch method of Dolibarr Product object /htdocs/product/class/<u>product.class.php</u>, the value of class file name is <i>product.class.php</i>
@@ -105,10 +105,10 @@ CronInfoPage=Informação
 #
 # Common
 #
-# CronType=Task type
+CronType=Tipo de tarefa
 # CronType_method=Call method of a Dolibarr Class
 # CronType_command=Shell command
 # CronMenu=Cron
 # CronCannotLoadClass=Cannot load class %s or object %s
 
-# UseMenuModuleToolsToAddCronJobs=Go into menu "Home - Modules tools - Job list" to see and edit scheduled jobs.
+UseMenuModuleToolsToAddCronJobs=Aceda a "Home - Ferramentas dos Módulos" para visualizar e editar as tarefas agendadas.

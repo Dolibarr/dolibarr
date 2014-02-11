@@ -1,10 +1,10 @@
 # Dolibarr language file - Source file is en_US - shop
-# Shop=Shop
-# ShopWeb=Web Shop
-# LastOrders=Last orders
-# OnStandBy=On standby
-# TreatmentInProgress=Treatment in progress
-# LastCustomers=Last customers
-# OSCommerceShop=OSCommerce shop
-# OSCommerce=OSCommerce
-# AddProd=Sell online
+Shop=Prodavnica
+ShopWeb=Web Shop
+LastOrders=Zadnje narudžbe
+OnStandBy=Na stanju pripravnosti
+TreatmentInProgress=Postupak u toku
+LastCustomers=Zadnji kupci
+OSCommerceShop=OSCommerce shop
+OSCommerce=OSCommerce
+AddProd=Prodaj online

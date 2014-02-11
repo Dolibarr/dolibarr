@@ -287,7 +287,7 @@ CurrentVersion=Versión actual de Dolibarr
 CallUpdatePage=Llamar a la página de actualización de la estructura y datos de la base de datos %s.
 LastStableVersion=Última versión estable disponible
 GenericMaskCodes=Puede introducir cualquier máscara numérica. En esta máscara, puede utilizar las siguientes etiquetas:<br><b>{000000} </b> corresponde a un número que se incrementa en cada uno de %s. Introduzca tantos ceros como longitud desee mostrar. El contador se completará a partir de ceros por la izquierda con el fin de tener tantos ceros como la máscara. <br> <b> {000000+000}</ b> Igual que el anterior, con una compensación correspondiente al número a la derecha del signo + se aplica a partir del primer %s. <br> <b> {000000@x}</b> igual que el anterior, pero el contador se restablece a cero cuando se llega a x meses (x entre 1 y 12). Si esta opción se utiliza y x es de 2 o superior, entonces la secuencia {yy}{mm} o {yyyy}{mm} también es necesaria. <br> <b> {dd} </b> días (01 a 31). <br><b> {mm}</b> mes (01 a 12). <br><b>{yy}</b>, <b>{yyyy}</b> ou <b>{y}</b> año en 2, 4 ó 1 cifra.<br>
-GenericMaskCodes2=<b>{cccc}</b> el código de cliente en n caracteres<br><b>{cccc000}</b> el código de cliente en n caracteres es seguido por un contador propio al cliente sin offset, completado con ceros hasta completar la máscara, y volviendo a cero al mismo tiempo que el contador global.<br><b>{tttt}</b>El código del tipo de la empresa en n caracteres (ver diccionarios-tipos de empresas).<br>
+# GenericMaskCodes2=<b>{cccc}</b> the client code<br><b>{cccc000}</b> the client code on n characters is followed by a client's ref counter without offset and zeroized with the global counter.<br><b>{tttt}</b> The code of company type on n characters (see dictionary-company types).<br>
 GenericMaskCodes3=Cualquier otro carácter en la máscara se quedará sin cambios. <br>No se permiten espacios <br>
 GenericMaskCodes4a=<u>Ejemplo en la 99 ª %s del tercero La Empresa realizada el 31/03/2007: </u><br>
 GenericMaskCodes4b=<u>Ejemplo sobre un tercero creado el 31/03/2007:</u><br>
@@ -1014,6 +1014,7 @@ FieldEdition=Edición del campo %s
 FixTZ=Corrección del TimeZone
 FillThisOnlyIfRequired=Ejemplo: +2 (Complete sólo si se registra una desviación del tiempo en la exportación)
 GetBarCode=Obtener código de barras
+EmptyNumRefModelDesc=Código de cliente/proveedor libre sin verificación. Puede ser modificado en cualquier momento.
 ##### Module password generation
 PasswordGenerationStandard=Devuelve una contraseña generada por el algoritmo interno Dolibarr: 8 caracteres, números y caracteres en minúsculas mezcladas.
 PasswordGenerationNone=No ofrece contraseñas. La contraseña se introduce manualmente.
@@ -1040,8 +1041,8 @@ DocumentModelOdt=Generación desde los documentos OpenDocument (Archivo .ODT Ope
 WatermarkOnDraft=Marca de agua en los documentos borrador
 CompanyIdProfChecker=Reglas sobre los ID profesionales
 MustBeUnique=¿Debe ser único?
-MustBeMandatory=¿Debe ser obligatorio para crear terceros?
-MustBeInvoiceMandatory=¿Debe ser obligatorio para validar facturas?
+MustBeMandatory=¿Obligatorio para crear terceros?
+MustBeInvoiceMandatory=¿Obligatorio para validar facturas?
 Miscellaneous=Miscelánea
 ##### Webcal setup #####
 WebCalSetup=Configuración de enlace con el calendario Webcalendar

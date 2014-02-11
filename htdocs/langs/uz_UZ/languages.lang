@@ -3,6 +3,7 @@
 # Language_ar_AR=Arabic
 # Language_ar_SA=Arabic
 # Language_bg_BG=Bulgarian
+# Language_bs_BA=Bosnian
 # Language_ca_ES=Catalan
 # Language_cs_CZ=Czech
 # Language_da_DA=Danish
@@ -25,6 +26,7 @@
 # Language_es_PE=Spanish (Peru)
 # Language_es_PR=Spanish (Puerto Rico)
 # Language_et_EE=Estonian
+# Language_eu_ES=Basque
 # Language_fa_IR=Persian
 # Language_fi_FI=Fins
 # Language_fr_BE=French (Belgium)
@@ -33,12 +35,15 @@
 # Language_fr_FR=French
 # Language_fr_NC=French (New Caledonia)
 # Language_he_IL=Hebrew
+# Language_hr_HR=Croatian
 # Language_hu_HU=Hungarian
 # Language_is_IS=Icelandic
 # Language_it_IT=Italian
 # Language_ja_JP=Japanese
 # Language_ko_KR=Korean
+# Language_lt_LT=Lithuanian
 # Language_lv_LV=Latvian
+# Language_mk_MK=Macedonian
 # Language_nb_NO=Norwegian (Bokmål)
 # Language_nl_BE=Dutch (Belgium)
 # Language_nl_NL=Dutch (Netherlands)
@@ -53,6 +58,8 @@
 # Language_sv_SV=Swedish
 # Language_sv_SE=Swedish
 # Language_sk_SK=Slovakian
+# Language_th_TH=Thai
+# Language_uk_UA=Ukrainian
 # Language_uz_UZ=Uzbek
 # Language_vi_VN=Vietnamese
 # Language_zh_CN=Chinese

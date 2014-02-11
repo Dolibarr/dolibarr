@@ -13,7 +13,7 @@ LastSendings=Os %s Últimos Envios
 SearchASending=Procurar Envio
 StatisticsOfSendings=Estatísticas de Envios
 NbOfSendings=Número de Envios
-# NumberOfShipmentsByMonth=Number of shipments by month
+NumberOfShipmentsByMonth=Número de envios por mês
 SendingCard=Ficha de Envio
 NewSending=Novo Envio
 CreateASending=Criar um Envio
@@ -58,9 +58,9 @@ SendShippingRef=Enviar %s embarque
 ActionsOnShipping=Eventos em embarque
 LinkToTrackYourPackage=Link para acompanhar o seu pacote
 ShipmentCreationIsDoneFromOrder=A criação de uma nova remessa é efectuada a partir da encomenda.
-# RelatedShippings=Related shippings
+RelatedShippings=Envios relacionados
 # ShipmentLine=Shipment line
-# CarrierList=List of transporters
+CarrierList=Lista de transportadores
 
 # Sending methods
 SendingMethodCATCH=Capturas por cliente
@@ -72,5 +72,5 @@ DocumentModelSirocco=Modelo de documento simples de recibos de entrega
 DocumentModelTyphon=Modelo de documento mais completo para a entrega recibos (logo. ..)
 
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=EXPEDITION_ADDON_NUMBER constante não definida
-# SumOfProductVolumes=Sum of product volumes
-# SumOfProductWeights=Sum of product weights
+SumOfProductVolumes=Soma dos volumes dos produtos
+SumOfProductWeights=Soma dos pesos dos produtos

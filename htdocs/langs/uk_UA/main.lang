@@ -4,7 +4,6 @@ DIRECTION=ltr
 # msungstdlight or cid0ct are for traditional Chinese (traditional does not render with Ubuntu pdf reader)
 # stsongstdlight or cid0cs are for simplified Chinese
 # To read Chinese pdf with Linux: sudo apt-get install poppler-data
-DIRECTION=ltr
 FONTFORPDF=freemono
 FONTSIZEFORPDF=8
 SeparatorDecimal=,
@@ -573,7 +572,7 @@ SeparatorThousand=None
 # TotalMan=Total
 # NeverReceived=Never received
 # Canceled=Canceled
-# YouCanChangeValuesForThisListFromDictionnarySetup=You can change values for this list from menu setup - dictionnary
+# YouCanChangeValuesForThisListFromDictionarySetup=You can change values for this list from menu setup - dictionnary
 # Color=Color
 # Documents=Linked files
 # DocumentsNb=Linked files (%s)
