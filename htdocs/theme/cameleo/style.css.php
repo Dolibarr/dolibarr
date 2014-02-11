@@ -1261,7 +1261,7 @@ div.tabBar {
     padding-left: 4px;
     padding-right: 4px;
     padding-bottom: 4px;
-    margin: 6px 0px 6px 0px;
+    margin: 6px 0px 20px 0px;
     -moz-border-radius:8px;
     border-radius:8px;
     border-right: 1px solid #555555;
@@ -1748,11 +1748,8 @@ div.titre {
 	font-family: <?php print $fontlist ?>;
 	font-weight: normal;
 	color: #842F00;
-    font-size: 20px;
+    font-size: 16px;
 	text-decoration: none;
-	<?php if (empty($dol_use_jmobile)) { ?>
-	margin-left: 12px;
-	<?php } ?>
 }
 
 #dolpaymenttable { width: 600px; font-size: 13px; }
