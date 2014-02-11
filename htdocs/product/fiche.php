@@ -756,7 +756,7 @@ else
 	        require_once DOL_DOCUMENT_ROOT.'/core/class/html.formbarcode.class.php';
             $formbarcode = new FormBarCode($db);
 	        print $formbarcode->select_barcode_type($fk_barcode_type, 'fk_barcode_type', 1);
-	        print '</td><td>'.$langs->trans("BarcodeValue").'</td><td>';
+	        print '</td></tr><tr><td>'.$langs->trans("BarcodeValue").'</td><td>';
 	        $tmpcode=isset($_POST['barcode'])?GETPOST('barcode'):$object->barcode;
 	        if (! empty($modBarCodeProduct->code_auto)) $tmpcode=$modBarCodeProduct->getNextValue($object,$type);
 	        print '<input size="40" type="text" name="barcode" value="'.$tmpcode.'">';
@@ -851,7 +851,7 @@ else
         print '</td></tr>';
 
         // Other attributes
-        $parameters=array('colspan' => ' colspan="2"');
+        $parameters=array();
         $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
         if (empty($reshook) && ! empty($extrafields->attribute_label))
         {
