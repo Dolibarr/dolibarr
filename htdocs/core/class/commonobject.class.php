@@ -2144,7 +2144,7 @@ abstract class CommonObject
 		$error=0;
 
 		if (! empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) return 0;	// For avoid conflicts if trigger used
-		
+
         if (! empty($this->array_options))
         {
             // Check parameters
@@ -2303,7 +2303,7 @@ abstract class CommonObject
 						$label = '<span class="fieldrequired">'.$label.'</span>';
 
 					$out .= '<td>'.$label.'</td>';
-					$out .='<td colspan="'.$colspan.'">';
+					$out .='<td'.($colspan?' colspan="'.$colspan.'"':'').'>';
 
 					switch($mode) {
 					case "view":
