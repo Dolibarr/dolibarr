@@ -78,7 +78,7 @@ if (! empty($project_ref) && ! empty($withproject))
 	}
 }
 
-$permission=($user->rights->projet->creer || $user->rights->projet->all->creer);
+$permissionnote=($user->rights->projet->creer || $user->rights->projet->all->creer);
 
 
 /*
