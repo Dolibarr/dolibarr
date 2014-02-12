@@ -145,7 +145,7 @@ $tabsql[12]= "SELECT c.rowid as rowid, code, sortorder, c.libelle, c.libelle_fac
 $tabsql[13]= "SELECT id      as rowid, code, c.libelle, type, active FROM ".MAIN_DB_PREFIX."c_paiement AS c";
 $tabsql[14]= "SELECT e.rowid as rowid, e.code as code, e.libelle, e.price, e.organization, e.fk_pays as country_id, p.code as country_code, p.libelle as country, e.active FROM ".MAIN_DB_PREFIX."c_ecotaxe AS e, ".MAIN_DB_PREFIX."c_pays as p WHERE e.fk_pays=p.rowid and p.active=1";
 $tabsql[15]= "SELECT rowid   as rowid, code, label as libelle, width, height, unit, active FROM ".MAIN_DB_PREFIX."c_paper_format";
-$tabsql[16]= "SELECT code, label as libelle, active FROM ".MAIN_DB_PREFIX."c_prospectlevel";
+$tabsql[16]= "SELECT code, label as libelle, sortorder, active FROM ".MAIN_DB_PREFIX."c_prospectlevel";
 $tabsql[17]= "SELECT id      as rowid, code, libelle, active FROM ".MAIN_DB_PREFIX."c_type_fees";
 $tabsql[18]= "SELECT rowid   as rowid, code, libelle, tracking, active FROM ".MAIN_DB_PREFIX."c_shipment_mode";
 $tabsql[19]= "SELECT id      as rowid, code, libelle, active FROM ".MAIN_DB_PREFIX."c_effectif";
@@ -201,7 +201,7 @@ $tabfield[12]= "code,libelle,libelle_facture,nbjour,fdm,decalage";
 $tabfield[13]= "code,libelle,type";
 $tabfield[14]= "code,libelle,price,organization,country_id,country";
 $tabfield[15]= "code,libelle,width,height,unit";
-$tabfield[16]= "code,libelle";
+$tabfield[16]= "code,libelle,sortorder";
 $tabfield[17]= "code,libelle";
 $tabfield[18]= "code,libelle,tracking";
 $tabfield[19]= "code,libelle";
@@ -229,7 +229,7 @@ $tabfieldvalue[12]= "code,libelle,libelle_facture,nbjour,fdm,decalage";
 $tabfieldvalue[13]= "code,libelle,type";
 $tabfieldvalue[14]= "code,libelle,price,organization,country";
 $tabfieldvalue[15]= "code,libelle,width,height,unit";
-$tabfieldvalue[16]= "code,libelle";
+$tabfieldvalue[16]= "code,libelle,sortorder";
 $tabfieldvalue[17]= "code,libelle";
 $tabfieldvalue[18]= "code,libelle,tracking";
 $tabfieldvalue[19]= "code,libelle";
@@ -257,7 +257,7 @@ $tabfieldinsert[12]= "code,libelle,libelle_facture,nbjour,fdm,decalage";
 $tabfieldinsert[13]= "code,libelle,type";
 $tabfieldinsert[14]= "code,libelle,price,organization,fk_pays";
 $tabfieldinsert[15]= "code,label,width,height,unit";
-$tabfieldinsert[16]= "code,label";
+$tabfieldinsert[16]= "code,label,sortorder";
 $tabfieldinsert[17]= "code,libelle";
 $tabfieldinsert[18]= "code,libelle,tracking";
 $tabfieldinsert[19]= "code,libelle";
@@ -441,6 +441,7 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
             if ($fieldnamekey == 'position') $fieldnamekey = 'Position';
             if ($fieldnamekey == 'unicode') $fieldnamekey = 'Unicode';
             if ($fieldnamekey == 'deductible') $fieldnamekey = 'Deductible';
+            if ($fieldnamekey == 'sortorder') $fieldnamekey = 'SortOrder';
 
             $msg.=$langs->transnoentities("ErrorFieldRequired", $langs->transnoentities($fieldnamekey)).'<br>';
         }
@@ -773,6 +774,7 @@ if ($id)
             if ($fieldlist[$field]=='account_parent')  { $valuetoshow=$langs->trans("Accountparent"); }
             if ($fieldlist[$field]=='pcg_type')        { $valuetoshow=$langs->trans("Pcg_type"); }
             if ($fieldlist[$field]=='pcg_subtype')     { $valuetoshow=$langs->trans("Pcg_subtype"); }
+            if ($fieldlist[$field]=='sortorder')       { $valuetoshow=$langs->trans("SortOrder"); }
             if ($valuetoshow != '')
             {
                 print '<td align="'.$align.'">';
@@ -887,10 +889,11 @@ if ($id)
                 if ($fieldlist[$field]=='accountancy_code'){ $valuetoshow=$langs->trans("AccountancyCode"); }
                 if ($fieldlist[$field]=='accountancy_code_sell'){ $valuetoshow=$langs->trans("AccountancyCodeSell"); $sortable=0; }
                 if ($fieldlist[$field]=='accountancy_code_buy'){ $valuetoshow=$langs->trans("AccountancyCodeBuy"); $sortable=0; }
-				        if ($fieldlist[$field]=='fk_pcg_version')  { $valuetoshow=$langs->trans("Pcg_version"); }
+				if ($fieldlist[$field]=='fk_pcg_version')  { $valuetoshow=$langs->trans("Pcg_version"); }
                 if ($fieldlist[$field]=='account_parent')  { $valuetoshow=$langs->trans("Accountsparent"); }
                 if ($fieldlist[$field]=='pcg_type')        { $valuetoshow=$langs->trans("Pcg_type"); }
                 if ($fieldlist[$field]=='pcg_subtype')     { $valuetoshow=$langs->trans("Pcg_subtype"); }
+                if ($fieldlist[$field]=='sortorder')       { $valuetoshow=$langs->trans("SortOrder"); }
                 // Affiche nom du champ
                 if ($showfield)
                 {
@@ -1105,7 +1108,7 @@ if ($id)
                     	if (($obj->code == '0' || $obj->code == '' || preg_match('/unknown/i',$obj->code))) $iserasable = 0;
                     	else if ($obj->code == 'RECEP') $iserasable = 0;
                     	else if ($obj->code == 'EF0') $iserasable = 0;
-                    } 
+                    }
 
                     if (isset($obj->type) && in_array($obj->type, array('system', 'systemauto'))) $iserasable=0;
 
