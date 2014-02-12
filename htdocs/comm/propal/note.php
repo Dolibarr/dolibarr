@@ -49,7 +49,7 @@ $object = new Propal($db);
 /*                     Actions                                                */
 /******************************************************************************/
 
-$permission=$user->rights->propale->creer;	// Used by the include of actions_setnotes.inc.php
+$permissionnote=$user->rights->propale->creer;	// Used by the include of actions_setnotes.inc.php
 
 include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php';	// Must be include, not includ_once
 
