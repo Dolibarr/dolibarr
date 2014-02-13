@@ -30,6 +30,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 $langs->load("other");
 $langs->load("compta");
+$langs->load("banks");
+$langs->load("bills");
 
 $year=GETPOST("year","int");
 if ($year == 0)

@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2011	Dimitri Mouillard	<dmouillard@teclib.com>
- * Copyright (C) 2012	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2012	Regis Houssin		<regis.houssin@capnetworks.com>
- * Copyright (C) 2013   Florian Henry		  	<florian.henry@open-concept.pro>
+/* Copyright (C) 2011	   Dimitri Mouillard	<dmouillard@teclib.com>
+ * Copyright (C) 2012-2014 Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2012	   Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2013      Florian Henry        <florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -87,7 +87,7 @@ class Holiday extends CommonObject
 	    $this->updateSoldeCP();
 
 	    // Vérifie le nombre d'utilisateur et mets à jour si besoin
-	    $this->verifNbUsers($this->countActiveUsers(),$this->getConfCP('nbUser'));
+	    $this->verifNbUsers($this->countActiveUsersWithoutCP(),$this->getConfCP('nbUser'));
 	    return 1;
     }
 
@@ -923,13 +923,13 @@ class Holiday extends CommonObject
 
                 dol_syslog(get_class($this).'::updateSoldeCP sql='.$sql2);
                 $result= $this->db->query($sql2);
-                
+
 	            if ($result) return 1;
     	        else return -1;
             }
-            
+
             return 0;
-        } 
+        }
         else
         {
             // Mise à jour pour un utilisateur
@@ -942,7 +942,7 @@ class Holiday extends CommonObject
 
 			dol_syslog(get_class($this).'::updateSoldeCP sql='.$sql);
             $result = $this->db->query($sql);
-            
+
             if ($result) return 1;
             else return -1;
         }
@@ -1061,7 +1061,7 @@ class Holiday extends CommonObject
 
                 $sql = "SELECT u.rowid";
                 $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
-                $sql.= " WHERE statut > '0'";
+                $sql.= " WHERE statut > 0";
 
                 dol_syslog(get_class($this)."::fetchUsers sql=".$sql, LOG_DEBUG);
                 $resql=$this->db->query($sql);
@@ -1143,7 +1143,7 @@ class Holiday extends CommonObject
 
                 $sql = "SELECT u.rowid, u.lastname, u.firstname";
                 $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
-                $sql.= " WHERE statut > '0'";
+                $sql.= " WHERE statut > 0";
 
                 dol_syslog(get_class($this)."::fetchUsers sql=".$sql, LOG_DEBUG);
                 $resql=$this->db->query($sql);
@@ -1229,7 +1229,23 @@ class Holiday extends CommonObject
 
         $sql = "SELECT count(u.rowid) as compteur";
         $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
-        $sql.= " WHERE statut > '0'";
+		$sql.= " WHERE u.statut > 0";
+
+        $result = $this->db->query($sql);
+        $objet = $this->db->fetch_object($result);
+        return $objet->compteur;
+
+    }
+    /**
+     *	Compte le nombre d'utilisateur actifs dans Dolibarr sans CP
+     *
+     *  @return     int      retourne le nombre d'utilisateur
+     */
+    function countActiveUsersWithoutCP() {
+
+        $sql = "SELECT count(u.rowid) as compteur";
+        $sql.= " FROM ".MAIN_DB_PREFIX."user as u LEFT OUTER JOIN ".MAIN_DB_PREFIX."holiday_users hu ON (hu.fk_user=u.rowid)";
+		$sql.= " WHERE u.statut > 0 AND hu.fk_user IS NULL ";
 
         $result = $this->db->query($sql);
         $objet = $this->db->fetch_object($result);
@@ -1240,17 +1256,17 @@ class Holiday extends CommonObject
     /**
      *  Compare le nombre d'utilisateur actif de Dolibarr à celui des utilisateurs des congés payés
      *
-     *  @param    int	$userDolibarr	nombre d'utilisateur actifs dans Dolibarr
-     *  @param    int	$userCP    		nombre d'utilisateur actifs dans le module congés payés
+     *  @param    int	$userDolibarrWithoutCP	Number of active users in Dolibarr without holidays
+     *  @param    int	$userCP    				Number of active users into table of holidays
      *  @return   void
      */
-    function verifNbUsers($userDolibarr,$userCP) {
+    function verifNbUsers($userDolibarrWithoutCP,$userCP) {
 
     	if (empty($userCP)) $userCP=0;
     	dol_syslog(get_class($this).'::verifNbUsers userDolibarr='.$userDolibarr.' userCP='.$userCP);
 
-        // Si il y a plus d'utilisateur Dolibarr que dans le module CP
-        if ($userDolibarr > $userCP)
+        // On vérifie les users Dolibarr sans CP
+        if ($userDolibarrWithoutCP > 0)
         {
             $this->updateConfCP('nbUser',$userDolibarr);
 
@@ -1311,7 +1327,7 @@ class Holiday extends CommonObject
 
                     $obj = $this->db->fetch_object($resql);
 
-                    // On ajoute l'utilisateur
+                    // On supprime l'utilisateur
                     $this->deleteCPuser($obj->fk_user);
 
                     $i++;
@@ -1654,7 +1670,7 @@ class Holiday extends CommonObject
         $sql.= " cpl.new_solde";
 
         $sql.= " FROM ".MAIN_DB_PREFIX."holiday_logs as cpl";
-        $sql.= " WHERE cpl.rowid > '0'"; // Hack pour la recherche sur le tableau
+        $sql.= " WHERE cpl.rowid > 0"; // To avoid error with other search and criteria
 
         // Filtrage de séléction
         if(!empty($filter)) {
