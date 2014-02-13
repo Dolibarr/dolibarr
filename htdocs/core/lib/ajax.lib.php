@@ -366,7 +366,8 @@ function ajax_combobox($htmlname, $events=array(), $minLengthToAutocomplete=0)
 						$("select#" + htmlname).html(response.value);
 					});
 		}
-	});';
+	
+	});'."\n";
     $msg.= "</script>\n";
 
     return $msg;
