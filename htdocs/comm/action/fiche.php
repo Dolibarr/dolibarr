@@ -261,8 +261,8 @@ if ($action == 'add_action')
 		{
 			$db->rollback();
 			$langs->load("errors");
-			$error=$langs->trans($actioncomm->error);
-			setEventMessage($error,'errors');
+			if (! empty($actioncomm->error)) setEventMessage($langs->trans($actioncomm->error), 'errors');
+			if (count($actioncomm->errors)) setEventMessage($actioncomm->errors, 'errors');
 			$action = 'create';
 		}
 	}
