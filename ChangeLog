@@ -22,6 +22,8 @@ Fix: Page load not ending when large number of thirdparies. We
      combo feature that is root cause of problem.
 Fix: [ bug #1231 ] PDF always generated in interventions
 Fix: Be sure there is no duplicate default rib.
+Fix: user right on Holiday for month report nor working
+Fix: Project task numbering rule do not work cause of missing entity column into project_task
 
 ***** ChangeLog for 3.5 compared to 3.4.* *****
 For users:
