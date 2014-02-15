@@ -4,6 +4,8 @@ English Dolibarr ChangeLog
 
 
 ***** ChangeLog for 3.5.1 compared to 3.5.0 *****
+Fix: Do not report trigger errors twice.
+Fix: Error when creating event was not reported.
 Fix: Bug of import of agenda when using https link
 Fix: Field nature not saved correctly
 Fix: Substituion of extra field was ko for order
