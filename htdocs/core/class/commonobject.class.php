@@ -2236,13 +2236,14 @@ abstract class CommonObject
    /**
      * Function to show lines of extrafields with output datas
      *
-     * @param	object	$extrafields	extrafield Object
+     * @param	object	$extrafields	Extrafield Object
      * @param	string	$mode			Show output (view) or input (edit) for extrafield
-	 * @param	array	$params			optionnal parameters
+	 * @param	array	$params			Optionnal parameters
+	 * @param	string	$keyprefix		Prefix string to add into name and id of field (can be used to avoid duplicate names)
      *
      * @return string
      */
-    function showOptionals($extrafields,$mode='view',$params=0)
+    function showOptionals($extrafields, $mode='view', $params=0, $keyprefix='')
     {
 		global $_POST;
 
@@ -2310,7 +2311,7 @@ abstract class CommonObject
 						$out .= $extrafields->showOutputField($key,$value);
 						break;
 					case "edit":
-						$out .= $extrafields->showInputField($key,$value);
+						$out .= $extrafields->showInputField($key,$value,'',$keyprefix);
 						break;
 					}
 
