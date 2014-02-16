@@ -25,6 +25,7 @@ Fix: Be sure there is no duplicate default rib.
 Fix: Enable extrafields for customer order, proposal and invoice lines. This feature
      was developed for 3.5 but was disabled (hidden) because of a bug not possible to
      fix enough quickly for 3.5.0 release. 
+Fix: user right on Holiday for month report nor working.
 
 ***** ChangeLog for 3.5 compared to 3.4.* *****
 For users:
