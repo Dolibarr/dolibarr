@@ -2,7 +2,7 @@
 Accountancy=Księgowość
 AccountancyCard=Księgowość karty
 Treasury=Skarbiec
-MenuFinancial=Finansowego
+MenuFinancial=Finanse
 # TaxModuleSetupToModifyRules=Go to <a href="%s">Taxes module setup</a> to modify rules for calculation
 OptionMode=Opcja dla księgowych
 OptionModeTrue=Opcja Input-Output
@@ -11,7 +11,7 @@ OptionModeTrueDesc=W tym kontekście, obrót jest obliczana na płatności (data
 OptionModeVirtualDesc=W tym kontekście, obrót jest obliczana na fakturach (data zatwierdzenia). Gdy te faktury są należne, czy zostały zapłacone, czy nie są one wymienione w obrocie wyjście.
 FeatureIsSupportedInInOutModeOnly=Funkcja dostępna tylko w KREDYTÓW-DŁUGI rachunkowych trybu (patrz Rachunkowych moduł konfiguracji)
 VATReportBuildWithOptionDefinedInModule=Kwoty wyświetlane tutaj są obliczane na zasadach określonych przez organy podatkowe moduł konfiguracji.
-Param=Instalator
+Param=Konfiguracja
 RemainingAmountPayment=Płatność pozostałej kwoty:
 AmountToBeCharged=Łączna kwota do zapłaty:
 AccountsGeneral=Konta

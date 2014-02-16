@@ -410,7 +410,7 @@ TypeContact_invoice_supplier_external_SERVICE=Contact service furnizor
 # crabe PDF Model
 PDFCrabeDescription=Şablon PDF Factura Crabe . Un șablon factură complet (format recomandat)
 # oursin PDF Model
-PDFOursinDescription= Şablon PDF Factura Oursin. Un șablon factură complet ( format alternativ)
+PDFOursinDescription=Şablon PDF Factura Oursin. Un șablon factură complet ( format alternativ)
 # NumRef Modules
 # TerreNumRefModelDesc1=Return number with format %syymm-nnnn for standard invoices and %syymm-nnnn for credit notes where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
 MarsNumRefModelDesc1=Retrimiteţi numărul sub forma %syymm-nnnn pentru facturile standard , %syymm-nnnn pentru facturile de înlocuire, %syymm-nnnn pentru credit note şi %syymm-nnnn  pentru credit note  unde  yy este anul, mm este luna şi nnnn este o secvenţă continuă şi nu revine la 0

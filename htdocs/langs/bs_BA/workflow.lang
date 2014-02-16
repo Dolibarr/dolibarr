@@ -1,11 +1,11 @@
 # Dolibarr language file - Source file is en_US - admin
-# WorkflowSetup=Workflow module setup
-# WorkflowDesc=This module is designed to modify the behaviour of automatic actions into application. By default, workflow is opened (you make thing in order you want). You can enabled automatic actions that you are interesting in.
-# ThereIsNoWorkflowToModify=There is no workflow you can modify for module you have activated.
-# descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Create a customer order automatically after a commercial proposal is signed
-# descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Create a customer invoice automatically after a commercial proposal is signed
-# descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Create a customer invoice automatically after a contract is validated
-# descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Create a customer invoice automatically after a customer order is closed
-# descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Classify linked source proposal to billed when customer order is set to paid
-# descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Classify linked source customer order(s) to billed when customer invoice is set to paid
-# descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Classify linked source customer order(s) to billed when customer invoice is validated
+WorkflowSetup=Postavke workflow modula
+WorkflowDesc=Ovaj modul je dizajniran za mijenjanje ponašanja automatskih akcija u aplikaciji. Po defaultu, workflow je otvoren (sami pravite redoslijed). Možete omogućiti automatske akcije za koje ste zainteresovani.
+ThereIsNoWorkflowToModify=Nema workflow-a koji možete mijenjati za modul koji ste aktivirali.
+descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Kreiraj narudžbu za kupca automatski nakon potpisivanja trgovačkog prijedloga
+descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Kreiraj fakturu kupca automatski nakon potpisivanja trgovačkog prijedloga
+descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Kreiraj fakturu kupca automatski nakon potvrđivanja ugovora
+descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Kreiraj fakturu za kupca automatski nakon zatvaranja narudžbe kupca
+descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Označiti povezani izvorni prijedlog kao naplaćen odmah nakon plaćanja narudžbe za kupca
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Označiti povezanu izvornu narudžbu(e) kao plaćene kada je faktura za kupca postavljena kao plaćena.
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Označiti povezanu izvornu narudžbu(e) kao plaćene kada je faktura za kupca postavljena kao potvrđena.

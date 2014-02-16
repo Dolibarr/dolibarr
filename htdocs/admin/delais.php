@@ -107,7 +107,7 @@ if ($action == 'update')
     	{
     		foreach($delays as $delay)
     		{
-    			if (GETPOST($delay['code']))
+    			if (GETPOST($delay['code']) != '')
     			{
     				dolibarr_set_const($db, $delay['code'], GETPOST($delay['code']), 'chaine', 0, '', $conf->entity);
     			}

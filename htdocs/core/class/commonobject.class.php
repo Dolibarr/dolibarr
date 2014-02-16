@@ -2335,7 +2335,7 @@ abstract class CommonObject
 						$label = '<span class="fieldrequired">'.$label.'</span>';
 
 					$out .= '<td>'.$label.'</td>';
-					$out .='<td colspan="'.$colspan.'">';
+					$out .='<td'.($colspan?' colspan="'.$colspan.'"':'').'>';
 
 					switch($mode) {
 					case "view":

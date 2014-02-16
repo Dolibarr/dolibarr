@@ -110,4 +110,4 @@ MassStockMovement=Μαζική κίνηση αποθεμάτων
 SelectProductInAndOutWareHouse=Επιλέξτε ένα προϊόν, ποσότητα, μια αποθήκη πηγή και μια αποθήκη στόχο, στη συνέχεια, κάντε κλικ στο "%s". Μόλις γίνει αυτό για όλες τις απαιτούμενες κινήσεις, κάντε κλικ στο "%s".
 RecordMovement=Η εγγραφή μεταφέρθηκε
 ReceivingForSameOrder=Λήψη για αυτή τη σειρά
-# StockMovementRecorded=Stock movements recorded
+StockMovementRecorded=Οι κινήσεις των αποθεμάτων καταγράφονται

@@ -143,6 +143,8 @@ abstract class CommonDocGenerator
         	$object->state=getState($object->state_code,0);
         }
 
+	$object->load_ban();
+
         $array_thirdparty = array(
             'company_name'=>$object->name,
             'company_email'=>$object->email,
@@ -171,7 +173,9 @@ abstract class CommonDocGenerator
             'company_idprof5'=>$object->idprof5,
             'company_idprof6'=>$object->idprof6,
             'company_note_public'=>$object->note_public,
-            'company_note_private'=>$object->note_private
+            'company_note_private'=>$object->note_private,
+            'company_iban'=>$object->bank_account->iban,
+            'company_bic'=>$object->bank_account->bic
         );
 
         // Retrieve extrafields
