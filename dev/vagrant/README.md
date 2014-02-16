@@ -28,13 +28,13 @@ That's all you need to do. It will build a brand new VirtalBox machine for you w
 ### Name resolution
 For easy access to the VM you need to setup name resolution to the machines IP.
 
-Edit the [hosts](https://fr.wikipedia.org/wiki/Hosts) file on the machine you run Vagrant on to map the virtual machine's IP to it's Vhost name.
+Edit the hosts file on the machine you run Vagrant on to map the virtual machine's IP to it's Vhost name.
 
 Example syntax:
 
     192.168.42.101  dev.dolibarr.org
 
-Once this is done, you will be able to access your VM's service at <http://dolibarr.dev>
+Once this is done, you will be able to access your VM's service at <http://dev.dolibarr.org>
 
 Available boxes
 ---------------
