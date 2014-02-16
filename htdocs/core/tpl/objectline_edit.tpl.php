@@ -471,11 +471,12 @@ if (! empty($conf->margin->enabled))
 		}
 
 		var price = 0;
-		if (remise.val().replace(',','.') != 100)
+		remisejs=price2numjs(remise.val());
+
+		if (remisejs != 100)
 		{
 			bpjs=price2numjs(buying_price.val());
 			ratejs=price2numjs(rate.val());
-			remisejs=price2numjs(remise.val());
 
 			if (npRate == "marginRate")
 				price = ((bpjs * (1 + ratejs / 100)) / (1 - remisejs / 100));
