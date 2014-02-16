@@ -2036,24 +2036,25 @@ else
 	$result = $object->getLinesArray();
 
 
-	print '	<form name="addproduct" id="addproduct" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.(($action != 'editline')?'#add':'#line_'.GETPOST('lineid')).'" method="POST">
-	<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">
-	<input type="hidden" name="action" value="'.(($action != 'editline')?'addline':'updateligne').'">
-	<input type="hidden" name="mode" value="">
-	<input type="hidden" name="id" value="'.$object->id.'">
-	';
+
 
 
 	if (! empty($conf->use_javascript_ajax) && $object->statut == 0)
 	{
 		include DOL_DOCUMENT_ROOT.'/core/tpl/ajaxrow.tpl.php';
 	}
-
+	print '	<form name="addproduct" id="addproduct" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.(($action != 'editline')?'#add':'#line_'.GETPOST('lineid')).'" method="POST">
+	<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">
+	<input type="hidden" name="action" value="'.(($action != 'editline')?'addline':'updateligne').'">
+	<input type="hidden" name="mode" value="">
+	<input type="hidden" name="id" value="'.$object->id.'">
+	';
 	print '<table id="tablelines" class="noborder noshadow" width="100%">';
 
 	if (! empty($object->lines))
 		$ret=$object->printObjectLines($action,$mysoc,$soc,$lineid,1);
-
+	print '</table>';
+	print "</form>\n";
 	// Form to add new line
 	if ($object->statut == 0 && $user->rights->propal->creer)
 	{
@@ -2063,30 +2064,71 @@ else
 
 			if ($conf->global->MAIN_FEATURES_LEVEL > 1)
 			{
+	print '	<form name="addproduct" id="addproduct" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.(($action != 'editline')?'#add':'#line_'.GETPOST('lineid')).'" method="POST">
+	<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">
+	<input type="hidden" name="action" value="'.(($action != 'editline')?'addline':'updateligne').'">
+	<input type="hidden" name="mode" value="">
+	<input type="hidden" name="id" value="'.$object->id.'">
+	';
+	print '<table id="tablelines" class="noborder noshadow" width="100%">';
+
 				// Add free or predefined products/services
 				$object->formAddObjectLine(1,$mysoc,$soc);
+
+	print '</table>';
+	print "</form>\n";
+
 			}
 			else
 			{
+	print '	<form name="addproduct" id="addproduct" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.(($action != 'editline')?'#add':'#line_'.GETPOST('lineid')).'" method="POST">
+	<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">
+	<input type="hidden" name="action" value="'.(($action != 'editline')?'addline':'updateligne').'">
+	<input type="hidden" name="mode" value="">
+	<input type="hidden" name="id" value="'.$object->id.'">
+	';
+	print '<table id="tablelines" class="noborder noshadow" width="100%">';
+
 				// Add free products/services
 				$object->formAddFreeProduct(1,$mysoc,$soc);
+
+	print '</table>';
+	print "</form>\n";
 
 				// Add predefined products/services
 				if (! empty($conf->product->enabled) || ! empty($conf->service->enabled))
 				{
+	print '	<form name="addproduct" id="addproduct" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.(($action != 'editline')?'#add':'#line_'.GETPOST('lineid')).'" method="POST">
+	<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">
+	<input type="hidden" name="action" value="'.(($action != 'editline')?'addline':'updateligne').'">
+	<input type="hidden" name="mode" value="">
+	<input type="hidden" name="id" value="'.$object->id.'">
+	';
+	print '<table id="tablelines" class="noborder noshadow" width="100%">';
+
 					$var=!$var;
 					$object->formAddPredefinedProduct(1,$mysoc,$soc);
+	print '</table>';
+	print "</form>\n";
+
 				}
 			}
+	print '	<form name="addproduct" id="addproduct" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.(($action != 'editline')?'#add':'#line_'.GETPOST('lineid')).'" method="POST">
+	<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">
+	<input type="hidden" name="action" value="'.(($action != 'editline')?'addline':'updateligne').'">
+	<input type="hidden" name="mode" value="">
+	<input type="hidden" name="id" value="'.$object->id.'">
+	';
+	print '<table id="tablelines" class="noborder noshadow" width="100%">';
 
 			$parameters=array();
 			$reshook=$hookmanager->executeHooks('formAddObjectLine',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+	print '</table>';
+	print "</form>\n";
+
 		}
 	}
 
-	print '</table>';
-
-	print "</form>\n";
 
 	dol_fiche_end();
 
