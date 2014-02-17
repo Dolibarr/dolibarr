@@ -1147,13 +1147,13 @@ else if (($action == 'addline' || $action == 'addline_predef') && $user->rights-
 	//Extrafields
 	$extrafieldsline = new ExtraFields($db);
 	$extralabelsline =$extrafieldsline->fetch_name_optionals_label($object->table_element_line);
-	$array_option = $extrafieldsline->getOptionalsFromPost($extralabelsline);
+	$array_option = $extrafieldsline->getOptionalsFromPost($extralabelsline,$predef);
 	//Unset extrafield
 	if (is_array($extralabelsline))
 	{
 		// Get extra fields
 		foreach ($extralabelsline as $key => $value) {
-			unset($_POST["options_".$key]);
+			unset($_POST["options_".$key.$predef]);
 		}
 	}
 

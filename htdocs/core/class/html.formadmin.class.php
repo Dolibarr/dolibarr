@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2007      Patrick Raguin 		<patrick.raguin@gmail.com>
  *
@@ -146,7 +146,7 @@ class FormAdmin
     	                        if (preg_match('/eldy_(backoffice|frontoffice)\.php$/i',$file)) continue;		// We exclude all menu manager files
     	                        if (preg_match('/auguria_(backoffice|frontoffice)\.php$/i',$file)) continue;	// We exclude all menu manager files
     	                        if (preg_match('/smartphone_(backoffice|frontoffice)\.php$/i',$file)) continue;	// We exclude all menu manager files
-    	                        
+
     	                        $filelib=preg_replace('/\.php$/i','',$file);
     	        				$prefix='';
     	        				// 0=Recommanded, 1=Experimental, 2=Developpement, 3=Other
@@ -324,7 +324,7 @@ class FormAdmin
 	 *
 	 *    	@param      string	$selected       Paper format pre-selected
 	 *    	@param      string	$htmlname       Name of HTML select field
-	 * 		@param		string	$filter			Key to filter
+	 * 		@param		string	$filter			Value to filter on code
 	 * 		@param		int		$showempty		Add empty value
 	 * 		@return		string					Return HTML output
 	 */
@@ -332,8 +332,12 @@ class FormAdmin
 	{
 		global $langs;
 
-		$sql="SELECT code, label, width, height, unit FROM ".MAIN_DB_PREFIX."c_paper_format where active=1";
-        if ($filter) $sql.=" WHERE code LIKE '%".$filter."%'";
+		$langs->load("dict");
+
+		$sql = "SELECT code, label, width, height, unit";
+		$sql.= " FROM ".MAIN_DB_PREFIX."c_paper_format";
+		$sql.= " WHERE active=1";
+        if ($filter) $sql.=" AND code LIKE '%".$this->db->escape($filter)."%'";
 
         $resql=$this->db->query($sql);
         if ($resql)
@@ -350,7 +354,11 @@ class FormAdmin
                 $i++;
             }
         }
-        else dol_print_error($this->db);
+        else
+		{
+			dol_print_error($this->db);
+			return '';
+		}
 		$out='';
 
 		$out.= '<select class="flat" id="'.$htmlname.'" name="'.$htmlname.'">';
