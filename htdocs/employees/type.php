@@ -1,0 +1,600 @@
+<?php
+/* Copyright (C) 2001-2002  Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2003       Jean-Louis Bergamo   <jlb@j1b.org>
+ * Copyright (C) 2004-2011  Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012  Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2013	      Florian Henry        <florian.henry@open-concept.pro>
+ * Copyright (C) 2011-2014  Alexandre Spangaro   <alexandre.spangaro@gmail.com>  
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
+/**
+ *      \file       htdocs/employees/type.php
+ *      \ingroup    employee
+ *		  \brief      Employee's type setup
+ */
+
+require '../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/employees/class/employee.class.php';
+require_once DOL_DOCUMENT_ROOT.'/employees/class/employee_type.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+
+$langs->load("employees");
+
+$rowid		= GETPOST('rowid','int');
+$action		= GETPOST('action','alpha');
+
+$search_lastname	= GETPOST('search_lastname','alpha');
+$search_login		= GETPOST('search_login','alpha');
+$type				= GETPOST('type','alpha');
+$status				= GETPOST('status','alpha');
+
+$sortfield	= GETPOST('sortfield','alpha');
+$sortorder	= GETPOST('sortorder','alpha');
+$page		= GETPOST('page','int');
+if ($page == -1) { $page = 0 ; }
+$offset = $conf->liste_limit * $page ;
+$pageprev = $page - 1;
+$pagenext = $page + 1;
+if (! $sortorder) {  $sortorder="DESC"; }
+if (! $sortfield) {  $sortfield="d.lastname"; }
+
+// Security check
+$result=restrictedArea($user,'employee',$rowid,'employee_type');
+
+$extrafields = new ExtraFields($db);
+
+// fetch optionals attributes and labels
+$extralabels=$extrafields->fetch_name_optionals_label('employee_type');
+
+if (GETPOST('button_removefilter'))
+{
+    $search_lastname="";
+    $search_login="";
+    $type="";
+    $sall="";
+}
+
+
+// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+$hookmanager->initHooks(array('Employeetypecard'));
+
+/*
+ *	Actions
+ */
+if ($action == 'add' && $user->rights->employee->configurer)
+{
+	if ($_POST["button"] != $langs->trans("Cancel"))
+	{
+		$empt = new EmployeeType($db);
+
+		$empt->label       = trim($_POST["label"]);
+		$empt->note        = trim($_POST["note"]);
+		
+		// Fill array 'array_options' with data from add form
+		$ret = $extrafields->setOptionalsFromPost($extralabels,$empt);
+
+		if ($empt->label)
+		{
+			$id=$empt->create($user->id);
+			if ($id > 0)
+			{
+				header("Location: ".$_SERVER["PHP_SELF"]);
+				exit;
+			}
+			else
+			{
+				$mesg=$empt->error;
+				$action = 'create';
+			}
+		}
+		else
+		{
+			$mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentities("Label"));
+			$action = 'create';
+		}
+	}
+}
+
+if ($action == 'update' && $user->rights->employee->configurer)
+{
+	if ($_POST["button"] != $langs->trans("Cancel"))
+	{
+		$empt = new EmployeeType($db);
+		$empt->id          = $_POST["rowid"];
+		$empt->label       = trim($_POST["label"]);
+		$empt->note        = trim($_POST["note"]);
+		
+		// Fill array 'array_options' with data from add form
+		$ret = $extrafields->setOptionalsFromPost($extralabels,$empt);
+
+		$empt->update($user->id);
+
+		header("Location: ".$_SERVER["PHP_SELF"]."?rowid=".$_POST["rowid"]);
+		exit;
+	}
+}
+
+if ($action == 'delete' && $user->rights->employee->configurer)
+{
+	$empt = new EmployeeType($db);
+	$empt->delete($rowid);
+	header("Location: ".$_SERVER["PHP_SELF"]);
+	exit;
+}
+
+if ($action == 'note' && $user->rights->employee->configurer)
+{
+	$don = new Don($db);
+	$don->fetch($rowid);
+	$don->update_note(dol_html_entity_decode(GETPOST('note'), ENT_QUOTES));
+}
+
+
+/*
+ * View
+ */
+
+llxHeader('',$langs->trans("EmployeesTypeSetup"),'EN:Module_Employees|FR:Module_Salariés|ES:M&oacute;dulo_Asalariados');
+
+$form=new Form($db);
+
+
+// Liste of Employees type
+
+if (! $rowid && $action != 'create' && $action != 'edit')
+{
+
+	print_fiche_titre($langs->trans("EmployeesTypes"));
+
+
+	$sql = "SELECT d.rowid, d.label";
+	$sql.= " FROM ".MAIN_DB_PREFIX."employee_type as d";
+	$sql.= " WHERE d.entity IN (".getEntity().")";
+
+	$result = $db->query($sql);
+	if ($result)
+	{
+		$num = $db->num_rows($result);
+		$i = 0;
+
+		print '<table class="noborder" width="100%">';
+
+		print '<tr class="liste_titre">';
+		print '<td>'.$langs->trans("Ref").'</td>';
+		print '<td>'.$langs->trans("Label").'</td>';
+		print '<td>&nbsp;</td>';
+		print "</tr>\n";
+
+		$var=True;
+		while ($i < $num)
+		{
+			$objp = $db->fetch_object($result);
+			$var=!$var;
+			print "<tr ".$bc[$var].">";
+			print '<td><a href="'.$_SERVER["PHP_SELF"].'?rowid='.$objp->rowid.'">'.img_object($langs->trans("ShowType"),'group').' '.$objp->rowid.'</a></td>';
+			print '<td>'.$objp->label.'</td>';
+		  print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=edit&rowid='.$objp->rowid.'">'.img_edit().'</a></td>';
+			print "</tr>";
+			$i++;
+		}
+		print "</table>";
+	}
+	else
+	{
+		dol_print_error($db);
+	}
+
+
+	/*
+	 * Barre d'actions
+	 *
+	 */
+	print '<div class="tabsAction">';
+
+	// New type
+	if ($user->rights->employee->configurer)
+	{
+		print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=create">'.$langs->trans("NewType").'</a></div>';
+	}
+
+	print "</div>";
+
+}
+
+
+/* ************************************************************************** */
+/*                                                                            */
+/* Creation d'un type employee                                                */
+/*                                                                            */
+/* ************************************************************************** */
+if ($action == 'create')
+{
+	$empt = new EmployeeType($db);
+
+	print_fiche_titre($langs->trans("NewEmployeeType"));
+
+	if ($mesg) print '<div class="error">'.$mesg.'</div>';
+
+	print '<form action="'.$_SERVER['PHP_SELF'].'" method="POST">';
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<table class="border" width="100%">';
+
+	print '<input type="hidden" name="action" value="add">';
+
+	print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td><input type="text" name="label" size="40"></td></tr>';
+
+	print '<tr><td valign="top">'.$langs->trans("Description").'</td><td>';
+	print '<textarea name="note" wrap="soft" cols="90" rows="5"></textarea></td></tr>';
+
+	// Other attributes
+	$parameters=array();
+	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$act,$action);    // Note that $action and $object may have been modified by hook
+	if (empty($reshook) && ! empty($extrafields->attribute_label))
+	{
+		print $empt->showOptionals($extrafields,'edit');
+	}
+	print "</table>\n";
+
+	print '<br>';
+	print '<center><input type="submit" name="button" class="button" value="'.$langs->trans("Add").'"> &nbsp; &nbsp; ';
+	print '<input type="submit" name="button" class="button" value="'.$langs->trans("Cancel").'"></center>';
+
+	print "</form>\n";
+}
+
+/* ************************************************************************** */
+/*                                                                            */
+/* Edition de la fiche                                                        */
+/*                                                                            */
+/* ************************************************************************** */
+if ($rowid > 0)
+{
+	if ($action != 'edit')
+	{
+		$empt = new EmployeeType($db);
+		$empt->fetch($rowid);
+		$empt->fetch_optionals($rowid,$extralabels);
+
+		$h=0;
+
+		$head[$h][0] = $_SERVER["PHP_SELF"].'?rowid='.$empt->id;
+		$head[$h][1] = $langs->trans("Card");
+		$head[$h][2] = 'card';
+		$h++;
+
+		dol_fiche_head($head, 'card', $langs->trans("EmployeeType"), 0, 'group');
+
+
+		print '<table class="border" width="100%">';
+
+		$linkback = '<a href="'.DOL_URL_ROOT.'/employees/type.php">'.$langs->trans("BackToList").'</a>';
+
+		// Ref
+		print '<tr><td width="15%">'.$langs->trans("Ref").'</td>';
+		print '<td>';
+		print $form->showrefnav($empt, 'rowid', $linkback);
+		print '</td></tr>';
+
+		// Label
+		print '<tr><td width="15%">'.$langs->trans("Label").'</td><td>'.$empt->label.'</td></tr>';
+
+		print '<tr><td valign="top">'.$langs->trans("Description").'</td><td>';
+		print nl2br($empt->note)."</td></tr>";
+
+		// Other attributes
+		$parameters=array();
+		$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$act,$action);    // Note that $action and $object may have been modified by hook
+		if (empty($reshook) && ! empty($extrafields->attribute_label))
+		{
+			// View extrafields
+			print $empt->showOptionals($extrafields);
+		}
+
+		print '</table>';
+		print '</div>';
+
+		/*
+		 * Barre d'actions
+		 *
+		 */
+		print '<div class="tabsAction">';
+
+		// Edit
+		if ($user->rights->employee->configurer)
+		{
+			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=edit&amp;rowid='.$empt->id.'">'.$langs->trans("Modify").'</a></div>';
+		}
+
+		// Add
+		print '<div class="inline-block divButAction"><a class="butAction" href="fiche.php?action=create&typeid='.$empt->id.'">'.$langs->trans("AddEmployee").'</a></div>';
+
+		// Delete
+		if ($user->rights->employee->configurer)
+		{
+			print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?action=delete&rowid='.$empt->id.'">'.$langs->trans("DeleteType").'</a></div>';
+		}
+
+		print "</div>";
+
+
+		// Show list of Employees (nearly same code than in page liste.php)
+
+		$employeetypestatic=new EmployeeType($db);
+
+		$now=dol_now();
+
+		$sql = "SELECT d.rowid, d.login, d.firstname, d.lastname, ";
+		$sql.= " d.email, d.fk_employee_type as type_id, d.statut,";
+		$sql.= " t.label as type";
+		$sql.= " FROM ".MAIN_DB_PREFIX."employee as d, ".MAIN_DB_PREFIX."employee_type as t";
+		$sql.= " WHERE d.fk_employee_type = t.rowid ";
+		$sql.= " AND d.entity IN (".getEntity().")";
+		$sql.= " AND t.rowid = ".$empt->id;
+		if ($sall)
+		{
+		    $sql.= " AND (d.firstname LIKE '%".$sall."%' OR d.lastname LIKE '%".$sall."%'";
+		    $sql.= " OR d.email LIKE '%".$sall."%' OR d.login LIKE '%".$sall."%' OR d.address LIKE '%".$sall."%'";
+		    $sql.= " OR d.town LIKE '%".$sall."%' OR d.note LIKE '%".$sall."%')";
+		}
+		if ($status != '')
+		{
+		    $sql.= " AND d.statut IN (".$status.")";     // Peut valoir un nombre ou liste de nombre separes par virgules
+		}
+		if ($action == 'search')
+		{
+		  if (isset($_POST['search']) && $_POST['search'] != '')
+		  {
+		    $sql.= " AND (d.firstname LIKE '%".$_POST['search']."%' OR d.lastname LIKE '%".$_POST['search']."%')";
+		  }
+		}
+		if (! empty($search_lastname))
+		{
+			$sql.= " AND (d.firstname LIKE '%".$search_lastname."%' OR d.lastname LIKE '%".$search_lastname."%')";
+		}
+		if (! empty($search_login))
+		{
+		    $sql.= " AND d.login LIKE '%".$search_login."%'";
+		}
+		if (! empty($search_email))
+		{
+		    $sql.= " AND d.email LIKE '%".$search_email."%'";
+		}
+		// Count total nb of records
+		$nbtotalofrecords = 0;
+		if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
+		{
+			$resql = $db->query($sql);
+		    if ($resql) $nbtotalofrecords = $db->num_rows($result);
+		    else dol_print_error($db);
+		}
+		// Add order and limit
+		$sql.= " ".$db->order($sortfield,$sortorder);
+		$sql.= " ".$db->plimit($conf->liste_limit+1, $offset);
+
+		$resql = $db->query($sql);
+		if ($resql)
+		{
+		    $num = $db->num_rows($resql);
+		    $i = 0;
+
+		    $titre=$langs->trans("EmployeesList");
+		    if ($status != '')
+		    {
+		        if ($status == '-1,1')								{ $titre=$langs->trans("EmployeesListQualified"); }
+		        else if ($status == '-1')							{ $titre=$langs->trans("EmployeesListToValid"); }
+		        else if ($status == '1' && ! $filter)				{ $titre=$langs->trans("EmployeesListValid"); }
+		        else if ($status == '1' && $filter=='uptodate')		{ $titre=$langs->trans("EmployeesListUpToDate"); }
+		        else if ($status == '1' && $filter=='outofdate')	{ $titre=$langs->trans("EmployeesListNotUpToDate"); }
+		        else if ($status == '0')							{ $titre=$langs->trans("EmployeesListResiliated"); }
+		    }
+		    elseif ($action == 'search')
+		    {
+		        $titre=$langs->trans("EmployeesListQualified");
+		    }
+
+		    if ($type > 0)
+		    {
+				$Employeetype=new EmployeeType($db);
+		        $result=$Employeetype->fetch($type);
+				$titre.=" (".$Employeetype->label.")";
+		    }
+
+		    $param="&rowid=".$rowid;
+		    if (! empty($status))			$param.="&status=".$status;
+		    if (! empty($search_lastname))	$param.="&search_lastname=".$search_lastname;
+		    if (! empty($search_firstname))	$param.="&search_firstname=".$search_firstname;
+		    if (! empty($search_login))		$param.="&search_login=".$search_login;
+		    if (! empty($search_email))		$param.="&search_email=".$search_email;
+		    if (! empty($filter))			$param.="&filter=".$filter;
+
+		    if ($sall)
+		    {
+		        print $langs->trans("Filter")." (".$langs->trans("Lastname").", ".$langs->trans("Firstname").", ".$langs->trans("EMail").", ".$langs->trans("Address")." ".$langs->trans("or")." ".$langs->trans("Town")."): ".$sall;
+		    }
+
+		    print '<br>';
+            print_barre_liste('',$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords);
+		    print '<table class="noborder" width="100%">';
+
+		    print '<tr class="liste_titre">';
+		    print_liste_field_titre($langs->trans("Name")." / ".$langs->trans("Company"),$_SERVER["PHP_SELF"],"d.lastname",$param,"","",$sortfield,$sortorder);
+		    print_liste_field_titre($langs->trans("Login"),$_SERVER["PHP_SELF"],"d.login",$param,"","",$sortfield,$sortorder);
+		    print_liste_field_titre($langs->trans("Person"),$_SERVER["PHP_SELF"],"d.morphy",$param,"","",$sortfield,$sortorder);
+		    print_liste_field_titre($langs->trans("EMail"),$_SERVER["PHP_SELF"],"d.email",$param,"","",$sortfield,$sortorder);
+		    print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"d.statut,d.datefin",$param,"","",$sortfield,$sortorder);
+		    print_liste_field_titre($langs->trans("Action"),$_SERVER["PHP_SELF"],"",$param,"",'width="60" align="center"',$sortfield,$sortorder);
+		    print "</tr>\n";
+
+			// Lignes des champs de filtre
+			print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">';
+			print '<input class="flat" type="hidden" name="rowid" value="'.$rowid.'" size="12"></td>';
+
+			print '<tr class="liste_titre">';
+
+			print '<td class="liste_titre" align="left">';
+			print '<input class="flat" type="text" name="search_lastname" value="'.$search_lastname.'" size="12"></td>';
+
+			print '<td class="liste_titre" align="left">';
+			print '<input class="flat" type="text" name="search_login" value="'.$search_login.'" size="7"></td>';
+
+			print '<td class="liste_titre">&nbsp;</td>';
+
+			print '<td class="liste_titre" align="left">';
+			print '<input class="flat" type="text" name="search_email" value="'.$search_email.'" size="12"></td>';
+
+		  print '<td align="right" colspan="2" class="liste_titre">';
+			print '<input type="image" class="liste_titre" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" name="button_search" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+		    print '&nbsp; ';
+		    print '<input type="image" class="liste_titre" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/searchclear.png" name="button_removefilter" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
+			print '</td>';
+
+			print "</tr>\n";
+			print '</form>';
+
+		    $var=True;
+		    while ($i < $num && $i < $conf->liste_limit)
+		    {
+		        $objp = $db->fetch_object($resql);
+
+		        $emp=new Employee($db);
+		        $emp->lastname=$objp->lastname;
+		        $emp->firstname=$objp->firstname;
+
+		        // Lastname
+		        $var=!$var;
+		        print '<tr '.$bc[$var].'>';
+		        if ($objp->societe != '')
+		        {
+		            print '<td><a href="fiche.php?rowid='.$objp->rowid.'">'.img_object($langs->trans("ShowEmployee"),"user").' '.$emp->getFullName($langs,0,-1,20).' / '.dol_trunc($objp->societe,12).'</a></td>'."\n";
+		        }
+		        else
+		        {
+		            print '<td><a href="fiche.php?rowid='.$objp->rowid.'">'.img_object($langs->trans("ShowEmployee"),"user").' '.$emp->getFullName($langs,0,-1,32).'</a></td>'."\n";
+		        }
+
+		        // Login
+		        print "<td>".$objp->login."</td>\n";
+
+		        // Type
+		        /*print '<td class="nowrap">';
+		        $employeetypestatic->id=$objp->type_id;
+		        $employeetypestatic->label=$objp->type;
+		        print $employeetypestatic->getNomUrl(1,12);
+		        print '</td>';
+				*/
+
+		        // Sex
+		        print "<td>".$emp->getsexlib($objp->sex)."</td>\n";
+
+		        // EMail
+		        print "<td>".dol_print_email($objp->email,0,0,1)."</td>\n";
+
+		        // Statut
+		        print '<td class="nowrap">';
+		        print $emp->LibStatut($objp->statut,2);
+		        print "</td>";
+
+		        // Actions
+		        print '<td align="center">';
+				if ($user->rights->employee->creer)
+				{
+					print '<a href="fiche.php?rowid='.$objp->rowid.'&action=edit&return=liste.php">'.img_edit().'</a>';
+				}
+				print '&nbsp;';
+				if ($user->rights->employee->supprimer)
+				{
+					print '<a href="fiche.php?rowid='.$objp->rowid.'&action=resign&return=liste.php">'.img_picto($langs->trans("Resiliate"),'disable.png').'</a>';
+		        }
+				print "</td>";
+
+		        print "</tr>\n";
+		        $i++;
+		    }
+
+		    print "</table>\n";
+
+			if ($num > $conf->liste_limit)
+			{
+			    print_barre_liste('',$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords,'');
+			}
+		}
+		else
+		{
+		    dol_print_error($db);
+		}
+
+	}
+
+	if ($action == 'edit')
+	{
+		$empt = new EmployeeType($db);
+		$empt->id = $rowid;
+		$empt->fetch($rowid);
+		$empt->fetch_optionals($rowid,$extralabels);
+
+		$h=0;
+
+		$head[$h][0] = $_SERVER["PHP_SELF"].'?rowid='.$empt->id;
+		$head[$h][1] = $langs->trans("Card");
+		$head[$h][2] = 'card';
+		$h++;
+
+		dol_fiche_head($head, 'card', $langs->trans("EmployeeType"), 0, 'group');
+
+		print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?rowid='.$rowid.'">';
+		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		print '<input type="hidden" name="rowid" value="'.$rowid.'">';
+		print '<input type="hidden" name="action" value="update">';
+		print '<table class="border" width="100%">';
+
+		print '<tr><td width="15%">'.$langs->trans("Ref").'</td><td>'.$empt->id.'</td></tr>';
+
+		print '<tr><td>'.$langs->trans("Label").'</td><td><input type="text" name="label" size="40" value="'.$empt->label.'"></td></tr>';
+
+		print '<tr><td valign="top">'.$langs->trans("Description").'</td><td>';
+		print '<textarea name="note" wrap="soft" cols="90" rows="5">'.$empt->note.'</textarea></td></tr>';
+
+		// Other attributes
+		$parameters=array();
+		$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$act,$action);    // Note that $action and $object may have been modified by hook
+
+		print '</table>';
+
+		//Extra field
+		if (empty($reshook) && ! empty($extrafields->attribute_label))
+		{
+			print '<br><br><table class="border" width="100%">';
+			foreach($extrafields->attribute_label as $key=>$label)
+			{
+				$value=(isset($_POST["options_".$key])?$_POST["options_".$key]:(isset($empt->array_options['options_'.$key])?$empt->array_options['options_'.$key]:''));
+				print '<tr><td width="30%">'.$label.'</td><td>';
+				print $extrafields->showInputField($key,$value);
+				print "</td></tr>\n";
+			}
+			print '</table><br><br>';
+		}
+
+		print '<center><input type="submit" class="button" value="'.$langs->trans("Save").'"> &nbsp; &nbsp;';
+		print '<input type="submit" name="button" class="button" value="'.$langs->trans("Cancel").'"></center>';
+
+		print "</form>";
+	}
+}
+
+$db->close();
+
+llxFooter();
+?>

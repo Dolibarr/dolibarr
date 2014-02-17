@@ -13,7 +13,8 @@
  * Copyright (C) 2010      Philippe Grand        <philippe.grand@atoo-net.com>
  * Copyright (C) 2011      Herve Prot            <herve.prot@symeos.com>
  * Copyright (C) 2012      Marcos García         <marcosgdf@gmail.com>
- * Copyright (C) 2013      Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2013      Raphaël Doursenaud    <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2011-2014 Alexandre Spangaro    <alexandre.spangaro@gmail.com> 
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -4079,6 +4080,13 @@ class Form
         else if ($modulepart=='memberphoto')
         {
             $dir=$conf->adherent->dir_output;
+            if ($object->photo) $file=get_exdir($id, 2).'photos/'.$object->photo;
+            if (! empty($conf->global->MAIN_OLD_IMAGE_LINKS)) $altfile=$object->id.".jpg";	// For backward compatibility
+            $email=$object->email;
+        }    
+        else if ($modulepart=='employeephoto')
+        {
+            $dir=$conf->employee->dir_output;
             if ($object->photo) $file=get_exdir($id, 2).'photos/'.$object->photo;
             if (! empty($conf->global->MAIN_OLD_IMAGE_LINKS)) $altfile=$object->id.".jpg";	// For backward compatibility
             $email=$object->email;

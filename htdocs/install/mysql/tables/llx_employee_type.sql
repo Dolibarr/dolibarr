@@ -30,6 +30,5 @@ create table llx_employee_type
   tms              timestamp,
   statut           smallint NOT NULL DEFAULT 0,
   label            varchar(50) NOT NULL,
-  note             text,
-  email_valid      text -- email envoye a la validation
+  note             text
 )ENGINE=innodb;

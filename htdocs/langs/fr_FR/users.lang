@@ -72,6 +72,7 @@ GroupsToAdd=Groupes à ajouter pour cet utilisateur
 NoLogin=Pas de connexion
 LinkToCompanyContact=Lien tiers / contact
 LinkedToDolibarrMember=Lien adhérent
+LinkedToDolibarrEmployee=Lien salarié
 LinkedToDolibarrUser=Lien utilisateur Dolibarr
 LinkedToDolibarrThirdParty=Lien tiers Dolibarr
 CreateDolibarrLogin=Créer un compte utilisateur

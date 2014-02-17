@@ -32,14 +32,13 @@ create table llx_employee
   ref_ext          varchar(128),                -- reference into an external system (not used by dolibarr)
   ref_int			     varchar(128),				-- reference into an internal system (used by dolibarr)
  
-  civilite         varchar(6),
+  civility         varchar(6),
   lastname         varchar(50),
   firstname        varchar(50),
   login            varchar(50),          -- login
   pass             varchar(50),          -- password
-  fk_adherent_type integer NOT NULL,
+  fk_employee_type integer NOT NULL,
   sex              varchar(3) NOT NULL, -- mal : male / fem : female
-  societe          varchar(50),
   fk_user          integer NULL,		-- Link to user linked to employee
   address          text,
   zip              varchar(30),
@@ -48,7 +47,7 @@ create table llx_employee
   country          integer,
   email            varchar(255),
   skype            varchar(255),
-  phone            varchar(30),
+  phone_pro        varchar(30),
   phone_perso      varchar(30),
   phone_mobile     varchar(30),
   birth            date,             -- birthday

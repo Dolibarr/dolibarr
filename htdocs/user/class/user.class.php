@@ -8,7 +8,7 @@
  * Copyright (C) 2005      Lionel Cousteix      <etm_ltd@tiscali.co.uk>
  * Copyright (C) 2011      Herve Prot           <herve.prot@symeos.com>
  * Copyright (C) 2013      Philippe Grand       <philippe.grand@atoo-net.com>
- * Copyright (C) 2013      Alexandre Spangaro   <alexandre.spangaro@gmail.com> 
+ * Copyright (C) 2011-2014 Alexandre Spangaro   <alexandre.spangaro@gmail.com> 
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -76,6 +76,7 @@ class User extends CommonObject
 	var $contact_id;
 
 	var $fk_member;
+  var $fk_employee;
 	var $fk_user;
 
 	var $clicktodial_url;
@@ -145,7 +146,7 @@ class User extends CommonObject
 		$sql = "SELECT u.rowid, u.lastname, u.firstname, u.email, u.job, u.skype, u.signature, u.office_phone, u.office_fax, u.user_mobile,";
 		$sql.= " u.admin, u.login, u.note,";
 		$sql.= " u.pass, u.pass_crypted, u.pass_temp,";
-		$sql.= " u.fk_societe, u.fk_socpeople, u.fk_member, u.fk_user, u.ldap_sid,";
+		$sql.= " u.fk_societe, u.fk_socpeople, u.fk_member, u.fk_employee, u.fk_user, u.ldap_sid,";
 		$sql.= " u.statut, u.lang, u.entity,";
 		$sql.= " u.datec as datec,";
 		$sql.= " u.tms as datem,";
@@ -225,6 +226,7 @@ class User extends CommonObject
 				$this->societe_id           = $obj->fk_societe;
 				$this->contact_id           = $obj->fk_socpeople;
 				$this->fk_member            = $obj->fk_member;
+        $this->fk_employee            = $obj->fk_employee;
 				$this->fk_user        		= $obj->fk_user;
 
 				// Retreive all extrafield for thirdparty
@@ -1052,6 +1054,77 @@ class User extends CommonObject
 			return -2;
 		}
 	}
+  
+  	/**
+	 *  Create a user into database from an employee object
+	 *
+	 *  @param	Employee	$employee	Object employee source
+	 * 	@param	string		$login		Login to force
+	 *  @return int						<0 if KO, if OK, return id of created account
+	 */
+	function create_from_employee($employee,$login='')
+	{
+		global $conf,$user,$langs;
+
+		// Positionne parametres
+		$this->admin = 0;
+		$this->lastname     = $employee->lastname;
+		$this->firstname    = $employee->firstname;
+		$this->email        = $employee->email;
+		$this->fk_employee  = $employee->id;
+		$this->pass         = $employee->pass;
+		$this->address      = $employee->address;
+		$this->zip          = $employee->zip;
+		$this->town         = $employee->town;
+		$this->state_id     = $employee->state_id;
+		$this->country_id   = $employee->country_id;
+
+		if (empty($login)) $login=strtolower(substr($employee->firstname, 0, 4)) . strtolower(substr($employee->lastname, 0, 4));
+		$this->login = $login;
+
+		$this->db->begin();
+
+		// Create and set $this->id
+		$result=$this->create($user);
+		if ($result > 0)
+		{
+			$newpass=$this->setPassword($user,$this->pass);
+			if (is_numeric($newpass) && $newpass < 0) $result=-2;
+			
+			if ($result > 0)
+			{
+				dol_syslog(get_class($this)."::create_from_employee sql=".$sql, LOG_DEBUG);
+				$resql=$this->db->query($sql);
+				if ($resql)
+				{
+					$this->db->commit();
+					return $this->id;
+				}
+				else
+				{
+					$this->error=$this->db->lasterror();
+					dol_syslog(get_class($this)."::create_from_employee - 1 - ".$this->error, LOG_ERR);
+
+					$this->db->rollback();
+					return -1;
+				}
+			}
+		}
+
+		if ($result > 0)
+		{
+			$this->db->commit();
+			return $this->id;
+		}
+		else
+		{
+			// $this->error deja positionne
+			dol_syslog(get_class($this)."::create_from_employee - 2 - ".$this->error, LOG_ERR);
+
+			$this->db->rollback();
+			return -2;
+		}
+	}
 
 	/**
 	 *    Affectation des permissions par defaut
@@ -1245,6 +1318,65 @@ class User extends CommonObject
 					}
 				}
 			}
+      
+      // If user is linked to an employee, remove old link to this employee
+			if ($this->fk_employee > 0)
+			{
+				$sql = "UPDATE ".MAIN_DB_PREFIX."user SET fk_employee = NULL where fk_employee = ".$this->fk_employee;
+				dol_syslog(get_class($this)."::update sql=".$sql, LOG_DEBUG);
+				$resql = $this->db->query($sql);
+				if (! $resql) { $this->error=$this->db->error(); $this->db->rollback(); return -5; }
+			}
+			// Set link to user
+			$sql = "UPDATE ".MAIN_DB_PREFIX."user SET fk_employee =".($this->fk_employee>0?$this->fk_employee:'null')." where rowid = ".$this->id;
+			dol_syslog(get_class($this)."::update sql=".$sql, LOG_DEBUG);
+			$resql = $this->db->query($sql);
+			if (! $resql) { $this->error=$this->db->error(); $this->db->rollback(); return -5; }
+
+			if ($nbrowsaffected)	// If something has changed in data
+			{
+				// if ($this->fk_employee > 0 && ! $nosyncemployee)
+				if ($this->fk_employee > 0)
+				{
+					require_once DOL_DOCUMENT_ROOT.'/employees/class/employee.class.php';
+
+					// This user is linked with a employee, so we also update employees informations
+					// if this is an update.
+					$emp=new Employee($this->db);
+					$result=$emp->fetch($this->fk_employee);
+
+					if ($result >= 0)
+					{
+						$emp->firstname=$this->firstname;
+						$emp->lastname=$this->lastname;
+						$emp->login=$this->login;
+						$emp->pass=$this->pass;
+						
+						$adh->email=$this->email;
+						$emp->skype=$this->skype;
+						$emp->phone_pro=$this->office_phone;
+						$emp->phone_mobile=$this->user_mobile;
+
+						$emp->note=$this->note;
+
+						$emp->user_id=$this->id;
+						$emp->user_login=$this->login;
+
+						$result=$emp->update($user,0,1);
+						if ($result < 0)
+						{
+							$this->error=$luser->error;
+							dol_syslog(get_class($this)."::update ".$this->error,LOG_ERR);
+							$error++;
+						}
+					}
+					else
+					{
+						$this->error=$emp->error;
+						$error++;
+					}
+				}
+			}
 
 			// Actions on extra fields (by external module or standard code)
 			$hookmanager->initHooks(array('userdao'));
@@ -1406,6 +1538,33 @@ class User extends CommonObject
 						else
 						{
 							$this->error=$adh->error;
+							$error++;
+						}
+					}
+          
+          //if ($this->fk_employee && ! $nosyncmember)
+          if ($this->fk_employee)
+					{
+						require_once DOL_DOCUMENT_ROOT.'/employees/class/employee.class.php';
+
+						// This user is linked with an employee, so we also update employees informations
+						// if this is an update.
+						$emp=new Employee($this->db);
+						$result=$emp->fetch($this->fk_employee);
+
+						if ($result >= 0)
+						{
+							$result=$emp->setPassword($user,$this->pass,0,1);	// Cryptage non gere dans module adherent
+							if ($result < 0)
+							{
+								$this->error=$emp->error;
+								dol_syslog(get_class($this)."::setPassword ".$this->error,LOG_ERR);
+								$error++;
+							}
+						}
+						else
+						{
+							$this->error=$emp->error;
 							$error++;
 						}
 					}

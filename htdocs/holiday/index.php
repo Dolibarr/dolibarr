@@ -31,7 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php';
 require_once DOL_DOCUMENT_ROOT.'/holiday/common.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/employee.lib.php';
 
 $langs->load('users');
 $langs->load('holidays');
@@ -203,10 +203,10 @@ $formother = new FormOther($db);
 
 if ($id > 0)
 {
-	$head = user_prepare_head($fuser);
+	$head = employee_prepare_head($fuser);
 
 	$title = $langs->trans("User");
-	dol_fiche_head($head, 'paidholidays', $title, 0, 'user');
+	dol_fiche_head($head, 'paidholidays', $title, 0, 'employee');
 
 	print '<table class="border" width="100%">';
 
