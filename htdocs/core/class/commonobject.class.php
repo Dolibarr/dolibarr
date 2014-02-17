@@ -2894,13 +2894,13 @@ abstract class CommonObject
 				$product_static->ref=$line->ref;
 				$text=$product_static->getNomUrl(1);
 
-				// Define output language (TODO Does this works ?)
+				// Define output language and label
 				if (! empty($conf->global->MAIN_MULTILANGS))
 				{
-					if (! is_object($this->client))
+					if (! is_object($this->thirdparty))
 					{
-						// TODO Remove this
-						$this->fetch_thirdparty();	// The fetch_thirdparty should be done before calling $object->printObjectLines, not into function called for each line
+						dol_print_error('','Error: Method printObjectLine was called on an object and object->fetch_thirdparty was not done before');
+						return;
 					}
 
 					$prod = new Product($this->db);
@@ -2909,7 +2909,7 @@ abstract class CommonObject
 					$outputlangs = $langs;
 					$newlang='';
 					if (empty($newlang) && GETPOST('lang_id')) $newlang=GETPOST('lang_id');
-					if (! empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE) && empty($newlang)) $newlang=$this->client->default_lang;		// For language to language of customer
+					if (! empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE) && empty($newlang)) $newlang=$this->thirdparty->default_lang;		// For language to language of customer
 					if (! empty($newlang))
 					{
 						$outputlangs = new Translate("",$conf);
