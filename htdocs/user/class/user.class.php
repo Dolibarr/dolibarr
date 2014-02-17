@@ -76,7 +76,7 @@ class User extends CommonObject
 	var $contact_id;
 
 	var $fk_member;
-  var $fk_employee;
+  	var $fk_employee;
 	var $fk_user;
 
 	var $clicktodial_url;
@@ -206,7 +206,7 @@ class User extends CommonObject
 				$this->office_fax   = $obj->office_fax;
 				$this->user_mobile  = $obj->user_mobile;
 				$this->email		= $obj->email;
-        $this->skype		= $obj->skype;
+        		$this->skype		= $obj->skype;
 				$this->job			= $obj->job;
 				$this->signature	= $obj->signature;
 				$this->admin		= $obj->admin;
@@ -226,7 +226,7 @@ class User extends CommonObject
 				$this->societe_id           = $obj->fk_societe;
 				$this->contact_id           = $obj->fk_socpeople;
 				$this->fk_member            = $obj->fk_member;
-        $this->fk_employee            = $obj->fk_employee;
+        		$this->fk_employee            = $obj->fk_employee;
 				$this->fk_user        		= $obj->fk_user;
 
 				// Retreive all extrafield for thirdparty
@@ -490,6 +490,7 @@ class User extends CommonObject
 	 *  Clear all permissions array of user
 	 *
 	 *  @return	void
+	 *  @see	getrights
 	 */
 	function clearrights()
 	{
@@ -505,6 +506,7 @@ class User extends CommonObject
 	 *
 	 *	@param  string	$moduletag    Limit permission for a particular module ('' by default means load all permissions)
 	 *	@return	void
+	 *  @see	clearrights
 	 */
 	function getrights($moduletag='')
 	{
@@ -1015,7 +1017,7 @@ class User extends CommonObject
 		{
 			$newpass=$this->setPassword($user,$this->pass);
 			if (is_numeric($newpass) && $newpass < 0) $result=-2;
-			
+
 			if ($result > 0 && $member->fk_soc)	// If member is linked to a thirdparty
 			{
 				$sql = "UPDATE ".MAIN_DB_PREFIX."user";
@@ -1352,7 +1354,7 @@ class User extends CommonObject
 						$emp->login=$this->login;
 						$emp->pass=$this->pass;
 						
-						$adh->email=$this->email;
+						$emp->email=$this->email;
 						$emp->skype=$this->skype;
 						$emp->phone_pro=$this->office_phone;
 						$emp->phone_mobile=$this->user_mobile;

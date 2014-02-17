@@ -126,13 +126,20 @@ else {
 			<input type="text" size="5" name="buying_price" class="flat" value="<?php echo (isset($_POST["buying_price"])?$_POST["buying_price"]:''); ?>">
 		</td>
 		<?php
+		$colspan++;
+		$coldisplay++;
+
 		if ($user->rights->margins->creer)
 		{
 			if (! empty($conf->global->DISPLAY_MARGIN_RATES)) {
 				echo '<td align="right" class="nowrap"><input type="text" size="2" name="np_marginRate" value="'.(isset($_POST["np_marginRate"])?$_POST["np_marginRate"]:'').'"><span class="hideonsmartphone">%</span></td>';
+				$colspan++;
+				$coldisplay++;
 			}
 			if (! empty($conf->global->DISPLAY_MARK_RATES)) {
 				echo '<td align="right" class="nowrap"><input type="text" size="2" name="np_markRate" value="'.(isset($_POST["np_markRate"])?$_POST["np_markRate"]:'').'"><span class="hideonsmartphone">%</span></td>';
+				$colspan++;
+				$coldisplay++;
 			}
 		}
 		else
@@ -164,7 +171,7 @@ else {
 			$newline = new FactureLigne($this->db);
 		}
 		if (is_object($newline)) {
-			print $newline->showOptionals($extrafieldsline,'edit',array('style'=>$bcnd[$var],'colspan'=>$coldisplay+8));
+			print $newline->showOptionals($extrafieldsline, 'edit', array('style'=>$bcnd[$var], 'colspan'=>$coldisplay+8));
 		}
 	}
 		?>

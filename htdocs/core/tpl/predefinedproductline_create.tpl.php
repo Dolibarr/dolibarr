@@ -134,13 +134,20 @@ else {
 			<input type="text" size="5" id="buying_price_predef" name="buying_price_predef" class="flat" value="<?php echo (isset($_POST["buying_price_predef"])?$_POST["buying_price_predef"]:''); ?>">
 		</td>
 		<?php
+		$colspan++;
+		$coldisplay++;
+
 		if ($user->rights->margins->creer)
 		{
 			if (! empty($conf->global->DISPLAY_MARGIN_RATES)) {
 				echo '<td align="right"><input type="text" size="2" name="np_marginRate_predef" value="'.(isset($_POST["np_marginRate_predef"])?$_POST["np_marginRate_predef"]:'').'">%</td>';
+				$colspan++;
+				$coldisplay++;
 			}
 			if (! empty($conf->global->DISPLAY_MARK_RATES)) {
 				echo '<td align="right"><input type="text" size="2" name="np_markRate_predef" value="'.(isset($_POST["np_markRate_predef"])?$_POST["np_markRate_predef"]:'').'">%</td>';
+				$colspan++;
+				$coldisplay++;
 			}
 		}
 		else
@@ -172,7 +179,7 @@ else {
 			$newline = new FactureLigne($this->db);
 		}
 		if (is_object($newline)) {
-			print $newline->showOptionals($extrafieldsline,'edit',array('style'=>$bcnd[$var],'colspan'=>$coldisplay+5));
+			print $newline->showOptionals($extrafieldsline, 'edit', array('style'=>$bcnd[$var],'colspan'=>$coldisplay+5), '_predef');
 		}
 	}
 	?>
