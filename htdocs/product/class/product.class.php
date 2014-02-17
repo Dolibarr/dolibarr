@@ -349,7 +349,7 @@ class Product extends CommonObject
 				$sql.= ", '".$this->accountancy_code_buy."'";
 				$sql.= ", '".$this->accountancy_code_sell."'";
 				$sql.= ", '".$this->canvas."'";
-				$sql.= ", ".((! isset($this->finished) || $this->finished < 0)?'null':$this->finished);
+				$sql.= ", ".((! isset($this->finished) || $this->finished < 0 || $this->finished == '') ? 'null' : $this->finished);
 				$sql.= ")";
 
 				dol_syslog(get_class($this)."::Create sql=".$sql);
