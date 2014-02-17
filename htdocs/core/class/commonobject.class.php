@@ -2895,16 +2895,21 @@ abstract class CommonObject
 				$text=$product_static->getNomUrl(1);
 
 				// Define output language (TODO Does this works ?)
-				if (! empty($conf->global->MAIN_MULTILANGS) && ! empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE))
+				if (! empty($conf->global->MAIN_MULTILANGS))
 				{
-					$this->fetch_thirdparty();
+					if (! is_object($this->client))
+					{
+						// TODO Remove this
+						$this->fetch_thirdparty();	// The fetch_thirdparty should be done before calling $object->printObjectLines, not into function called for each line
+					}
+
 					$prod = new Product($this->db);
 					$prod->fetch($line->fk_product);
 
 					$outputlangs = $langs;
 					$newlang='';
 					if (empty($newlang) && GETPOST('lang_id')) $newlang=GETPOST('lang_id');
-					if (empty($newlang)) $newlang=$this->client->default_lang;
+					if (! empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE) && empty($newlang)) $newlang=$this->client->default_lang;		// For language to language of customer
 					if (! empty($newlang))
 					{
 						$outputlangs = new Translate("",$conf);
