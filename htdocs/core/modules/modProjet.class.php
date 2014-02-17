@@ -87,12 +87,12 @@ class modProjet extends DolibarrModules
 		$this->const[$r][4] = 0;
 		$r++;
 
-		$r++;
 		$this->const[$r][0] = "PROJECT_ADDON_PDF_ODT_PATH";
 		$this->const[$r][1] = "chaine";
 		$this->const[$r][2] = "DOL_DATA_ROOT/doctemplates/projects";
 		$this->const[$r][3] = "";
 		$this->const[$r][4] = 0;
+		$r++;
 		
 		$this->const[$r][0] = "PROJECT_TASK_ADDON_PDF";
 		$this->const[$r][1] = "chaine";
@@ -108,7 +108,6 @@ class modProjet extends DolibarrModules
 		$this->const[$r][4] = 0;
 		$r++;
 		
-		$r++;
 		$this->const[$r][0] = "PROJECT_TASK_ADDON_PDF_ODT_PATH";
 		$this->const[$r][1] = "chaine";
 		$this->const[$r][2] = "DOL_DATA_ROOT/doctemplates/tasks";
