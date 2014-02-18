@@ -539,11 +539,13 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 				}
 
 				// Modules system tools
-				if (! empty($conf->product->enabled) || ! empty($conf->service->enabled) || ! empty($conf->global->MAIN_MENU_ENABLE_MODULETOOLS))
+				if (! empty($conf->product->enabled) || ! empty($conf->service->enabled) || ! empty($conf->barcode->enabled)		// TODO We should enabled module system tools entry without hardcoded test on some modules
+					|| ! empty($conf->global->MAIN_MENU_ENABLE_MODULETOOLS))	// Some external modules may need to force to have this entry on.
 				{
 					if (empty($user->societe_id))
 					{
 						$newmenu->add("/admin/tools/index.php?mainmenu=home&amp;leftmenu=modulesadmintools", $langs->trans("ModulesSystemTools"), 0, 1, '', $mainmenu, 'modulesadmintools');
+						// Special case: This entry can't be embedded into modules because we need it for both module service and products and we don't want duplicate lines.
 						if ((empty($leftmenu) || $leftmenu=="modulesadmintools") && $user->admin)
 						{
 							$langs->load("products");

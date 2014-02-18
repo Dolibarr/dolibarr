@@ -114,6 +114,22 @@ class modService extends DolibarrModules
         $r++;
 
 
+		/* We can't enable this here because it must be enabled in both product and service module and this create duplicate insert
+		$r=0;
+		$this->menu[$r]=array(	'fk_menu'=>'fk_mainmenu=home,fk_leftmenu=modulesadmintools',		    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+								'type'=>'left',			                // This is a Left menu entry
+								'titre'=>'ProductVatMassChange',
+								'url'=>'/product/admin/product_tools.php?mainmenu=home&leftmenu=modulesadmintools',
+								'langs'=>'admin',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+								'position'=>300,
+								'enabled'=>'$conf->product->enabled && $leftmenu=="modulesadmintools"',   // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
+								'perms'=>'1',			                // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
+								'target'=>'',
+								'user'=>0);				                // 0=Menu for internal users, 1=external users, 2=both
+		$r++;
+		*/
+
+
 		// Exports
 		//--------
 		$r=0;

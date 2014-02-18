@@ -110,11 +110,11 @@ class MenuManager
 
     	// Modules system tools
     	// TODO Find a way to add parent menu only if child menu exists. For the moment, no other method than hard coded methods.
-    	if (! empty($conf->product->enabled) || ! empty($conf->service->enabled) || ! empty($conf->global->MAIN_MENU_ENABLE_MODULETOOLS))
+    	if (! empty($conf->product->enabled) || ! empty($conf->service->enabled) || ! empty($conf->barcode->enabled)		// TODO We should enabled module system tools entry without hardcoded test on some modules
+    		|| ! empty($conf->global->MAIN_MENU_ENABLE_MODULETOOLS))
     	{
     		if (empty($user->societe_id))
     		{
-    		    //$newmenu->add("/admin/tools/index.php?mainmenu=home&leftmenu=modulesadmintools", $langs->trans("ModulesSystemTools"), 0, 1, '', 'home', 'modulesadmintools');
     			if ($leftmenu=="modulesadmintools" && $user->admin)
     			{
     				$langs->load("products");
@@ -131,9 +131,27 @@ class MenuManager
 			    			'type'=>'left',
 			    			'position'=>20
 			    	);
-			    	array_unshift($tabMenu,$array_menu_product);
-    				//$newmenu->add("/product/admin/product_tools.php?mainmenu=home&leftmenu=modulesadmintools", $langs->trans("ProductVatMassChange"), 1, $user->admin);
+			    	array_unshift($tabMenu,$array_menu_product);	// add at beginning of array
     			}
+    		    if ($leftmenu=="modulesadmintools" && $user->admin)
+    			{
+    				$langs->load("admin");
+    				$array_menu_product=array(
+			    			'url'=>"/barcode/codeinit.php?mainmenu=home&leftmenu=modulesadmintools",
+			    			'titre'=>$langs->trans("MassBarcodeInit"),
+			    			'enabled'=>($user->admin?true:false),
+			    			'perms'=>($user->admin?true:false),
+			    			'fk_mainmenu'=>'home',
+			    			'fk_leftmenu'=>'modulesadmintools',
+			    			'fk_menu'=>-1,
+			    			'mainmenu'=>'home',
+			    			'leftmenu'=>'modulesadmintools_massbarcode',
+			    			'type'=>'left',
+			    			'position'=>21
+			    	);
+			    	array_unshift($tabMenu,$array_menu_product);	// add at beginning of array
+    			}
+    			// Main menu title
     			$array_menu_product=array(
 		    		'url'=>"/admin/tools/index.php?mainmenu=home&leftmenu=modulesadmintools",
 		    		'titre'=>$langs->trans("ModulesSystemTools"),
@@ -146,7 +164,7 @@ class MenuManager
 		    		'type'=>'left',
 		    		'position'=>20
 				);
-    			array_unshift($tabMenu,$array_menu_product);
+    			array_unshift($tabMenu,$array_menu_product);	// add at beginning of array
     		}
     	}
 
