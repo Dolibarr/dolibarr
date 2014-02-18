@@ -1337,6 +1337,7 @@ else if ($id > 0 || ! empty($ref))
 	$sql.= ' ft.date as date_intervention';
 	$sql.= ' FROM '.MAIN_DB_PREFIX.'fichinterdet as ft';
 	$sql.= ' WHERE ft.fk_fichinter = '.$object->id;
+	$sql.= ' AND ft.duree is not null ';
 	$sql.= ' ORDER BY ft.rang ASC, ft.rowid';
 
 	$resql = $db->query($sql);
