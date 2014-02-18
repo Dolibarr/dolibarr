@@ -226,7 +226,7 @@ if ($action == 'add_action')
 
 		// On cree l'action
 		$idaction=$object->add($user);
-		
+
 		if ($idaction > 0)
 		{
 			if (! $object->error)
@@ -261,8 +261,10 @@ if ($action == 'add_action')
 		{
 			$db->rollback();
 			$langs->load("errors");
+
 			if (! empty($object->error)) setEventMessage($langs->trans($object->error), 'errors');
 			if (count($object->errors)) setEventMessage($object->errors, 'errors');
+
 			$action = 'create';
 		}
 	}

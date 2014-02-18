@@ -403,7 +403,13 @@ class FunctionsTest extends PHPUnit_Framework_TestCase
     {
         $input="x&<b>#</b>,\"'";    // " will be converted into '
         $result=dol_escape_js($input);
-        $this->assertEquals("x&<b>#<\/b>,\'\'",$result);
+        $this->assertEquals("x&<b>#</b>,\'\'",$result,"Test mode=0");
+
+        $result=dol_escape_js($input,1);
+        $this->assertEquals("x&<b>#</b>,\"\'",$result,"Test mode=1");
+
+        $result=dol_escape_js($input,2);
+        $this->assertEquals("x&<b>#</b>,\\\"'",$result,"Test mode=2");
     }
 
 

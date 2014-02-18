@@ -171,6 +171,12 @@ class AllTests
         require_once dirname(__FILE__).'/ModulesTest.php';  // At end because it's the longer
         $suite->addTestSuite('ModulesTest');
 
+
+        // GUI
+        require_once dirname(__FILE__).'/FormAdminTest.php';
+		$suite->addTestSuite('FormAdminTest');
+
+
         return $suite;
     }
 }

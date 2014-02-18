@@ -170,6 +170,19 @@ if ($action == 'order' && isset($_POST['valid']))
  * View
  */
 
+$virtualdiffersfromphysical=0;
+if (! empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT)
+	|| ! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER)
+	) $virtualdiffersfromphysical=1;		// According to increase/decrease stock options, virtual and physical stock may differs.
+
+$usevirtualstock=-1;
+if ($virtualdiffersfromphysical)
+{
+	$usevirtualstock=($conf->global->STOCK_USE_VIRTUAL_STOCK?1:0);
+	if (GETPOST('mode')=='virtual') $usevirtualstock=1;
+	if (GETPOST('mode')=='physical') $usevirtualstock=0;
+}
+
 $title = $langs->trans('Status');
 
 $sql = 'SELECT p.rowid, p.ref, p.label, p.price,';
@@ -251,7 +264,20 @@ $head[1][2] = 'replenishorders';
 
 dol_fiche_head($head, 'replenish', $langs->trans('Replenishment'), 0, 'stock');
 
-print $langs->trans("ReplenishmentStatusDesc").'<br><br>';
+print $langs->trans("ReplenishmentStatusDesc").'<br>'."\n";
+if ($usevirtualstock == 1)
+{
+	print $langs->trans("CurentSelectionMode").': ';
+	print $langs->trans("CurentlyUsingVirtualStock").' - ';
+	print '<a href="'.$_SERVER["PHP_SELF"].'?mode=physical">'.$langs->trans("UsePhysicalStock").'</a><br>';
+}
+if ($usevirtualstock == 0)
+{
+	print $langs->trans("CurentSelectionMode").': ';
+	print $langs->trans("CurentlyUsingPhysicalStock").' - ';
+	print '<a href="'.$_SERVER["PHP_SELF"].'?mode=virtual">'.$langs->trans("UseVirtualStock").'</a><br>';
+}
+print '<br>'."\n";
 
 if ($sref || $snom || $sall || $salert || GETPOST('search', 'alpha')) {
 	$filters = '&sref=' . $sref . '&snom=' . $snom;
@@ -344,14 +370,11 @@ print_liste_field_titre(
 	$sortfield,
 	$sortorder
 );
-if ($conf->global->USE_VIRTUAL_STOCK)
-{
-	$stocklabel = $langs->trans('VirtualStock');
-}
-else
-{
-	$stocklabel = $langs->trans('PhysicalStock');
-}
+
+$stocklabel = $langs->trans('Stock');
+if ($usevirtualstock == 1) $stocklabel = $langs->trans('VirtualStock');
+if ($usevirtualstock == 0) $stocklabel = $langs->trans('PhysicalStock');
+
 print_liste_field_titre(
 	$stocklabel,
 	$_SERVER["PHP_SELF"],
@@ -449,9 +472,9 @@ while ($i < min($num, $limit))
 		$prod->type = $objp->fk_product_type;
 		$ordered = ordered($prod->id);
 
-		if ($conf->global->USE_VIRTUAL_STOCK)
+		if ($usevirtualstock)
 		{
-			//compute virtual stock
+			// If option to increase/decrease is not on an object validation, virtual stock may differs from physical stock.
 			$prod->fetch($prod->id);
 			$result=$prod->load_stats_commande(0, '1,2');
 			if ($result < 0) {

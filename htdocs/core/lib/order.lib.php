@@ -138,13 +138,10 @@ function order_admin_prepare_head($object)
 	$head[$h][2] = 'attributes';
 	$h++;
 
-    if ($conf->global->MAIN_FEATURES_LEVEL >= 2)	// FIXME This feature will works when form for predefined and free product will be merged, otherwise there is duplicate fields with same name
-    {
 	$head[$h][0] = DOL_URL_ROOT.'/admin/orderdet_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFieldsLines");
 	$head[$h][2] = 'attributeslines';
 	$h++;
-    }
 
 	complete_head_from_modules($conf,$langs,$object,$head,$h,'order_admin','remove');
 
