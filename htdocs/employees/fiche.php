@@ -142,41 +142,6 @@ if ($action == 'setuserid' && ($user->rights->user->self->creer || $user->rights
 	}
 }
 
-if ($action == 'setsocid')
-{
-	$error=0;
-	if (! $error)
-	{
-		if ($socid != $object->fk_soc)	// If link differs from currently in database
-		{
-			$sql ="SELECT rowid FROM ".MAIN_DB_PREFIX."employee";
-			$sql.=" WHERE fk_soc = '".$socid."'";
-			$sql.=" AND entity = ".$conf->entity;
-			$resql = $db->query($sql);
-			if ($resql)
-			{
-				$obj = $db->fetch_object($resql);
-				if ($obj && $obj->rowid > 0)
-				{
-					$otheremployee=new employee($db);
-					$otheremployee->fetch($obj->rowid);
-					$thirdparty=new Societe($db);
-					$thirdparty->fetch($socid);
-					$error++;
-					$errmsg='<div class="error">'.$langs->trans("ErrorEmployeeIsAlreadyLinkedToThisThirdParty",$otheremployee->getFullName($langs),$otheremployee->login,$thirdparty->name).'</div>';
-				}
-			}
-
-			if (! $error)
-			{
-				$result=$object->setThirdPartyId($socid);
-				if ($result < 0) dol_print_error($object->db,$object->error);
-				$action='';
-			}
-		}
-	}
-}
-
 // Create user from a employee
 if ($action == 'confirm_create_user' && $confirm == 'yes' && $user->rights->user->user->creer)
 {
@@ -225,7 +190,7 @@ if ($action == 'update' && ! $_POST["cancel"] && $user->rights->employee->creer)
 	}
 	$lastname=$_POST["lastname"];
 	$firstname=$_POST["firstname"];
-	$sex=$sex=$_POST["sex"];;
+	$sex=$_POST["sex"];
 	if (empty($lastname)) {
 		$error++;
 		$langs->load("errors");
@@ -382,11 +347,6 @@ if ($action == 'add' && $user->rights->employee->creer)
 	{
 		$birthdate=dol_mktime(12, 0, 0, $_POST["birthmonth"], $_POST["birthday"], $_POST["birthyear"]);
 	}
-	$datecotisation='';
-	if (isset($_POST["reday"]) && isset($_POST["remonth"]) && isset($_POST["reyear"]))
-	{
-		$datecotisation=dol_mktime(12, 0, 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
-	}
 
 	$typeid=$_POST["typeid"];
 	$civility_id=$_POST["civility_id"];
@@ -411,7 +371,6 @@ if ($action == 'add' && $user->rights->employee->creer)
 	$public=$_POST["public"];
 
 	$userid=$_POST["userid"];
-	$socid=$_POST["socid"];
 
 	$object->civility_id = $civility_id;
 	$object->firstname   = $firstname;
@@ -440,13 +399,7 @@ if ($action == 'add' && $user->rights->employee->creer)
 	// Fill array 'array_options' with data from add form
 	$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
 
-  // Check parameters
-	if (empty($sex) || $sex == "-1") {
-		$error++;
-		$errmsg .= $langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Nature"))."<br>\n";
-	}
-  
-	// Test si le login existe deja
+  // Test si le login existe deja
 	if (empty($conf->global->EMPLOYEE_LOGIN_NOT_REQUIRED))
 	{
 		if (empty($login)) {
@@ -1239,7 +1192,7 @@ else
 			print $form->formconfirm("fiche.php?rowid=$rowid", $langs->trans('DeleteIntoSpip'), $langs->trans('DeleteIntoSpipConfirmation'), 'confirm_del_spip');
 		}
 
-		$rowspan=18;
+		$rowspan=19;
 		if (empty($conf->global->EMPLOYEE_LOGIN_NOT_REQUIRED)) $rowspan++;
 		if (! empty($conf->skype->enabled)) $rowspan++;
 

@@ -209,9 +209,9 @@ function print_eldy_menu($db,$atarget,$type_user,&$tabMenu,&$menu,$noout=0)
 		$idsel='hrm';
 
 		if (empty($noout)) print_start_menu_entry($idsel,$classname,$showmode);
-		if (empty($noout)) print_text_menu_entry($langs->trans("HRM"), $showmode, DOL_URL_ROOT.'/holiday/index.php?mainmenu=hrm&amp;leftmenu=', $id, $idsel, $classname, $atarget);
+		if (empty($noout)) print_text_menu_entry($langs->trans("HRM"), $showmode, DOL_URL_ROOT.'/employees/index.php?mainmenu=hrm&amp;leftmenu=', $id, $idsel, $classname, $atarget);
 		if (empty($noout)) print_end_menu_entry($showmode);
-		$menu->add('/holiday/index.php?mainmenu=holiday&amp;leftmenu=', $langs->trans("HRM"), 0, $showmode, $atarget, "hrm", '');
+		$menu->add('/employees/index.php?mainmenu=holiday&amp;leftmenu=', $langs->trans("HRM"), 0, $showmode, $atarget, "hrm", '');
 	}
 
 
@@ -1081,6 +1081,39 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 		*/
 		if ($mainmenu == 'hrm')
 		{
+      if (! empty($conf->employee->enabled))
+			{
+				$langs->load("employees");
+				
+				$newmenu->add("/employees/index.php?leftmenu=hrm&amp;mainmenu=hrm",$langs->trans("Employees"),0,$user->rights->employee->lire, '', $mainmenu, 'employees');
+				$newmenu->add("/employees/fiche.php?leftmenu=hrm&amp;action=create",$langs->trans("NewEmployee"),1,$user->rights->employee->creer);
+				$newmenu->add("/employees/liste.php?leftmenu=hrm",$langs->trans("List"),1,$user->rights->employee->lire);
+				$newmenu->add("/employees/liste.php?leftmenu=hrm&amp;statut=-1",$langs->trans("MenuEmployeesToValidate"),2,$user->rights->employee->lire);
+				$newmenu->add("/employees/liste.php?leftmenu=hrm&amp;statut=1",$langs->trans("MenuEmployeesValidated"),2,$user->rights->employee->lire);
+				$newmenu->add("/employees/liste.php?leftmenu=hrm&amp;statut=1&amp;filter=uptodate",$langs->trans("MenuEmployeesUpToDate"),2,$user->rights->employee->lire);
+				$newmenu->add("/employees/liste.php?leftmenu=hrm&amp;statut=1&amp;filter=outofdate",$langs->trans("MenuEmployeesNotUpToDate"),2,$user->rights->employee->lire);
+				$newmenu->add("/employees/liste.php?leftmenu=hrm&amp;statut=0",$langs->trans("MenuEmployeesResiliated"),2,$user->rights->employee->lire);
+				$newmenu->add("/employees/stats/geo.php?leftmenu=hrm&mode=employeebycountry",$langs->trans("MenuEmployeesStats"),1,$user->rights->employee->lire);
+
+				if (! empty($conf->categorie->enabled))
+				{
+					$langs->load("categories");
+					$newmenu->add("/categories/index.php?leftmenu=cat&amp;type=3", $langs->trans("Categories"), 0, $user->rights->categorie->lire, '', $mainmenu, 'cat');
+					$newmenu->add("/categories/fiche.php?action=create&amp;type=3", $langs->trans("NewCategory"), 1, $user->rights->categorie->creer);
+					//if (empty($leftmenu) || $leftmenu=="cat") $newmenu->add("/categories/liste.php", $langs->trans("List"), 1, $user->rights->categorie->lire);
+				}
+
+				$newmenu->add("/employees/index.php?leftmenu=export&amp;mainmenu=hrm",$langs->trans("Exports"),0,$user->rights->employee->export, '', $mainmenu, 'export');
+				if (! empty($conf->export->enabled) && (empty($leftmenu) || $leftmenu=="export")) $newmenu->add("/exports/index.php?leftmenu=export",$langs->trans("Datas"),1,$user->rights->employee->export);
+				if (empty($leftmenu) || $leftmenu=="export") $newmenu->add("/employees/htpasswd.php?leftmenu=export",$langs->trans("Filehtpasswd"),1,$user->rights->employee->export);
+				if (empty($leftmenu) || $leftmenu=="export") $newmenu->add("/employees/cartes/carte.php?leftmenu=export",$langs->trans("EmployeesCards"),1,$user->rights->employee->export);
+
+				// Type
+				$newmenu->add("/employees/type.php?leftmenu=setup&amp;mainmenu=hrm",$langs->trans("EmployeesTypes"),0,$user->rights->employee->configurer, '', $mainmenu, 'setup');
+				$newmenu->add("/employees/type.php?leftmenu=setup&amp;mainmenu=hrm&amp;action=create",$langs->trans("New"),1,$user->rights->employee->configurer);
+				$newmenu->add("/employees/type.php?leftmenu=setup&amp;mainmenu=hrm",$langs->trans("List"),1,$user->rights->employee->configurer);
+			}
+      
 			if (! empty($conf->holiday->enabled))
 			{
 				$langs->load("holiday");
