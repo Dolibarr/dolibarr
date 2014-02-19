@@ -571,14 +571,15 @@ class ExtraFields
 
 
 	/**
-	 *  Return HTML string to put an input field into a page
+	 * Return HTML string to put an input field into a page
 	 *
-	 *  @param	string	$key             Key of attribute
-	 *  @param  string	$value           Value to show (for date type it must be in timestamp format)
-	 *  @param  string	$moreparam       To add more parametes on html input tag
-	 *  @return	void
+	 * @param	string	$key            Key of attribute
+	 * @param	string	$value          Value to show (for date type it must be in timestamp format)
+	 * @param	string	$moreparam      To add more parametes on html input tag
+	 * @param	string	$keyprefix		Prefix string to add into name and id of field (can be used to avoid duplicate names)
+	 * @return	void
 	 */
-	function showInputField($key,$value,$moreparam='')
+	function showInputField($key,$value,$moreparam='',$keyprefix='')
 	{
 		global $conf,$langs;
 
@@ -620,23 +621,23 @@ class ExtraFields
 			if(!$required && $value == '')
 				$value = '-1';
 
-			$out = $formstat->select_date($value, 'options_'.$key, $showtime, $showtime, $required, '', 1, 1, 1, 0, 1);
-			//$out='<input type="text" name="options_'.$key.'" size="'.$showsize.'" maxlength="'.$newsize.'" value="'.$value.'"'.($moreparam?$moreparam:'').'>';
+			$out = $formstat->select_date($value, 'options_'.$key.$keyprefix, $showtime, $showtime, $required, '', 1, 1, 1, 0, 1);
+			// TODO Missing to add $moreparam
 		}
 		elseif (in_array($type,array('int')))
 		{
 			$tmp=explode(',',$size);
 			$newsize=$tmp[0];
-			$out='<input type="text" class="flat" name="options_'.$key.'" size="'.$showsize.'" maxlength="'.$newsize.'" value="'.$value.'"'.($moreparam?$moreparam:'').'>';
+			$out='<input type="text" class="flat" name="options_'.$key.$keyprefix.'" size="'.$showsize.'" maxlength="'.$newsize.'" value="'.$value.'"'.($moreparam?$moreparam:'').'>';
 		}
 		elseif ($type == 'varchar')
 		{
-			$out='<input type="text" class="flat" name="options_'.$key.'" size="'.$showsize.'" maxlength="'.$size.'" value="'.$value.'"'.($moreparam?$moreparam:'').'>';
+			$out='<input type="text" class="flat" name="options_'.$key.$keyprefix.'" size="'.$showsize.'" maxlength="'.$size.'" value="'.$value.'"'.($moreparam?$moreparam:'').'>';
 		}
 		elseif ($type == 'text')
 		{
 			require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-			$doleditor=new DolEditor('options_'.$key,$value,'',200,'dolibarr_notes','In',false,false,! empty($conf->fckeditor->enabled) && $conf->global->FCKEDITOR_ENABLE_SOCIETE,5,100);
+			$doleditor=new DolEditor('options_'.$key.$keyprefix,$value,'',200,'dolibarr_notes','In',false,false,! empty($conf->fckeditor->enabled) && $conf->global->FCKEDITOR_ENABLE_SOCIETE,5,100);
 			$out=$doleditor->Create(1);
 		}
 		elseif ($type == 'boolean')
@@ -647,30 +648,30 @@ class ExtraFields
 			} else {
 				$checked=' value="1" ';
 			}
-			$out='<input type="checkbox" class="flat" name="options_'.$key.'" '.$checked.' '.($moreparam?$moreparam:'').'>';
+			$out='<input type="checkbox" class="flat" name="options_'.$key.$keyprefix.'" '.$checked.' '.($moreparam?$moreparam:'').'>';
 		}
 		elseif ($type == 'mail')
 		{
-			$out='<input type="text" class="flat" name="options_'.$key.'" size="32" value="'.$value.'">';
+			$out='<input type="text" class="flat" name="options_'.$key.$keyprefix.'" size="32" value="'.$value.'" '.($moreparam?$moreparam:'').'>';
 		}
 		elseif ($type == 'phone')
 		{
-			$out='<input type="text" class="flat" name="options_'.$key.'"  size="20" value="'.$value.'">';
+			$out='<input type="text" class="flat" name="options_'.$key.$keyprefix.'"  size="20" value="'.$value.'" '.($moreparam?$moreparam:'').'>';
 		}
 		elseif ($type == 'price')
 		{
-			$out='<input type="text" class="flat" name="options_'.$key.'"  size="6" value="'.price($value).'"> '.$langs->getCurrencySymbol($conf->currency);
+			$out='<input type="text" class="flat" name="options_'.$key.$keyprefix.'"  size="6" value="'.price($value).'" '.($moreparam?$moreparam:'').'> '.$langs->getCurrencySymbol($conf->currency);
 		}
 		elseif ($type == 'double')
 		{
 			if (!empty($value)) {
 				$value=price($value);
 			}
-			$out='<input type="text" class="flat" name="options_'.$key.'"  size="6" value="'.$value.'"> ';
+			$out='<input type="text" class="flat" name="options_'.$key.$keyprefix.'"  size="6" value="'.$value.'" '.($moreparam?$moreparam:'').'> ';
 		}
 		elseif ($type == 'select')
 		{
-			$out='<select class="flat" name="options_'.$key.'">';
+			$out='<select class="flat" name="options_'.$key.$keyprefix.'" '.($moreparam?$moreparam:'').'>';
 			foreach ($param['options'] as $key=>$val )
 			{
 				list($val, $parent) = explode('|', $val);
@@ -683,7 +684,7 @@ class ExtraFields
 		}
 		elseif ($type == 'sellist')
 		{
-			$out='<select class="flat" name="options_'.$key.'">';
+			$out='<select class="flat" name="options_'.$key.$keyprefix.'" '.($moreparam?$moreparam:'').'>';
 			if (is_array($param['options']))
 			{
 				$param_list=array_keys($param['options']);
@@ -820,7 +821,7 @@ class ExtraFields
 			foreach ($param['options'] as $keyopt=>$val )
 			{
 
-				$out.='<input class="flat" type="checkbox" name="options_'.$key.'[]"';
+				$out.='<input class="flat" type="checkbox" name="options_'.$key.$keyprefix.'[]" '.($moreparam?$moreparam:'');
 				$out.=' value="'.$keyopt.'"';
 
 				if ((is_array($value_arr)) && in_array($keyopt,$value_arr)) {
@@ -837,7 +838,7 @@ class ExtraFields
 			$out='';
 			foreach ($param['options'] as $keyopt=>$val )
 			{
-				$out.='<input class="flat" type="radio" name="options_'.$key.'"';
+				$out.='<input class="flat" type="radio" name="options_'.$key.$keyprefix.'" '.($moreparam?$moreparam:'');
 				$out.=' value="'.$keyopt.'"';
 				$out.= ($value==$keyopt?'checked="checked"':'');
 				$out.='/>'.$val.'<br>';
@@ -1085,9 +1086,10 @@ class ExtraFields
 	 * return array_options array for object by extrafields value (using for data send by forms)
 	 *
 	 * @param   array	$extralabels    $array of extrafields
+	 * @param	string	$keyprefix		Prefix string to add into name and id of field (can be used to avoid duplicate names)
 	 * @return	int						1 if array_options set / 0 if no value
 	 */
-	function getOptionalsFromPost($extralabels)
+	function getOptionalsFromPost($extralabels,$keyprefix='')
 	{
 		global $_POST;
 
@@ -1102,23 +1104,24 @@ class ExtraFields
 				if (in_array($key_type,array('date','datetime')))
 				{
 					// Clean parameters
-					$value_key=dol_mktime($_POST["options_".$key."hour"], $_POST["options_".$key."min"], 0, $_POST["options_".$key."month"], $_POST["options_".$key."day"], $_POST["options_".$key."year"]);
+					$value_key=dol_mktime($_POST["options_".$key.$keyprefix."hour"], $_POST["options_".$key.$keyprefix."min"], 0, $_POST["options_".$key.$keyprefix."month"], $_POST["options_".$key.$keyprefix."day"], $_POST["options_".$key.$keyprefix."year"]);
 				}
 				else if (in_array($key_type,array('checkbox')))
 				{
-					$value_arr=GETPOST("options_".$key);
+					$value_arr=GETPOST("options_".$key.$keyprefix);
 					$value_key=implode($value_arr,',');
 				}
 				else if (in_array($key_type,array('price','double')))
 				{
-					$value_arr=GETPOST("options_".$key);
+					$value_arr=GETPOST("options_".$key.$keyprefix);
 					$value_key=price2num($value_arr);
 				}
 				else
 				{
-					$value_key=GETPOST("options_".$key);
+					$value_key=GETPOST("options_".$key.$keyprefix);
 				}
-				$array_options["options_".$key]=$value_key;
+
+				$array_options["options_".$key]=$value_key;	// No keyprefix here. keyprefix is used only for read.
 			}
 
 			return $array_options;

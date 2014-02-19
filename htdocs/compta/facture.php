@@ -1135,7 +1135,7 @@ else if (($action == 'addline' || $action == 'addline_predef') && $user->rights-
 		$price_ht = '';
 		$tva_tx = '';
 	}
-    if (GETPOST('usenewaddlineform')) {
+    if (GETPOST('usenewaddlineform')) {	// TODO Remove this
         $idprod=GETPOST('idprod', 'int');
         $product_desc = (GETPOST('product_desc')?GETPOST('product_desc'):(GETPOST('np_desc')?GETPOST('np_desc'):(GETPOST('dp_desc')?GETPOST('dp_desc'):'')));
         $price_ht = GETPOST('price_ht');
@@ -1147,13 +1147,13 @@ else if (($action == 'addline' || $action == 'addline_predef') && $user->rights-
 	//Extrafields
 	$extrafieldsline = new ExtraFields($db);
 	$extralabelsline =$extrafieldsline->fetch_name_optionals_label($object->table_element_line);
-	$array_option = $extrafieldsline->getOptionalsFromPost($extralabelsline);
+	$array_option = $extrafieldsline->getOptionalsFromPost($extralabelsline,$predef);
 	//Unset extrafield
 	if (is_array($extralabelsline))
 	{
 		// Get extra fields
 		foreach ($extralabelsline as $key => $value) {
-			unset($_POST["options_".$key]);
+			unset($_POST["options_".$key.$predef]);
 		}
 	}
 
@@ -1314,8 +1314,8 @@ else if (($action == 'addline' || $action == 'addline_predef') && $user->rights-
 		}
 
 		// Margin
-		$fournprice=(GETPOST('fournprice'.$predef)?GETPOST('fournprice'.$predef):'');
-		$buyingprice=(GETPOST('buying_price'.$predef)?GETPOST('buying_price'.$predef):'');
+		$fournprice=price2num(GETPOST('fournprice'.$predef)?GETPOST('fournprice'.$predef):'');
+		$buyingprice=price2num(GETPOST('buying_price'.$predef)?GETPOST('buying_price'.$predef):'');
 
 		// Local Taxes
 		$localtax1_tx= get_localtax($tva_tx, 1, $object->client);
@@ -1436,8 +1436,8 @@ elseif ($action == 'updateligne' && $user->rights->facture->creer && ! GETPOST('
 	$localtax2_rate=get_localtax($vat_rate,2,$object->client);
 
 	// Add buying price
-	$fournprice=(GETPOST('fournprice')?GETPOST('fournprice'):'');
-	$buyingprice=(GETPOST('buying_price')?GETPOST('buying_price'):'');
+	$fournprice=price2num(GETPOST('fournprice')?GETPOST('fournprice'):'');
+	$buyingprice=price2num(GETPOST('buying_price')?GETPOST('buying_price'):'');
 
 	//Extrafields
 	$extrafieldsline = new ExtraFields($db);

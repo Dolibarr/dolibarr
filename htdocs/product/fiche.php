@@ -851,11 +851,11 @@ else
         print '</td></tr>';
 
         // Other attributes
-        $parameters=array();
+        $parameters=array('colspan' => 0);
         $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
         if (empty($reshook) && ! empty($extrafields->attribute_label))
         {
-        	print $object->showOptionals($extrafields,'edit');
+        	print $object->showOptionals($extrafields,'edit',$parameters);
         }
 
         // Note (private, no output on invoices, propales...)
