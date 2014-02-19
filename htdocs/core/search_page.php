@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2005-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2013  Laurent Destailleur   <eldy@users.sourceforge.net>
+ * Copyright (C) 2011-2014  Alexandre Spangaro    <alexandre.spangaro@gmail.com>
  *
  * This file is a modified version of datepicker.php from phpBSM to fix some
  * bugs, to add new features and to dramatically increase speed.
@@ -93,6 +94,13 @@ if (((! empty($conf->product->enabled) && $user->rights->produit->lire) || (! em
 {
 	$langs->load("products");
 	$searchform.=printSearchForm(DOL_URL_ROOT.'/fourn/product/liste.php', DOL_URL_ROOT.'/fourn/product/liste.php', img_object('','product').' '.$langs->trans("SupplierRef"), 'products', 'srefsupplier');
+	$nbofsearch++;
+}
+
+if (! empty($conf->employee->enabled) && ! empty($conf->global->MAIN_SEARCHFORM_EMPLOYEE) && $user->rights->employee->lire)
+{
+	$langs->load("employees");
+	$searchform.=printSearchForm(DOL_URL_ROOT.'/employees/liste.php', DOL_URL_ROOT.'/employees/liste.php', img_object('','user').' '.$langs->trans("Employees"), 'employee', 'sall');
 	$nbofsearch++;
 }
 

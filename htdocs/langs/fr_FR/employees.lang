@@ -175,3 +175,30 @@ NewEmployeeForm=Nouveau formulaire salarié
 ByProperties=Par caractéristiques
 EmployeesStatisticsByProperties=Statistiques des salariés par caractéristiques
 EmployeesByNature=salariés par nature
+
+# Contract
+ContractTitle=Contrat de travail
+MenuListContract=Liste des contrats
+ListContract=Liste des contrats de travail
+MenuAddContract=Ajouter un contrat
+AddContract=Ajouter un contrat de travail
+DeleteContract=Supprimer le contrat de travail
+ConfirmDelete=Confirmer la suppression de ce contrat de travail ?
+EmContractCard=Fiche contrat
+
+Typecontract=Type de contrat
+CDI=Contrat à durée indéterminée
+CDD=Contrat à durée déterminée
+CA=Contrat d'apprentissage
+CP=Contrat de professionnalisation
+
+DateSignEmployee=Signature salarié
+DateSignManagement=Signature direction
+DateDPAE=Déclaration préalable à l'embauche
+DateMedicalExam=Visite médicale
+
+SendContract=Valider le contrat
+
+ErrorCantDeleteContract=Erreur, vous n'avez pas le droit de supprimer ce contrat de travail.
+NoDateStart=Pas de date de début du contrat renseigné
+NoUser=Pas de salarié renseigné

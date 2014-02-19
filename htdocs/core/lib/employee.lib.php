@@ -39,7 +39,13 @@ function employee_prepare_head($object)
 	$head[$h][1] = $langs->trans("EmployeeCard");
 	$head[$h][2] = 'general';
 	$h++;
-
+  
+  // Show contract tab
+	    $head[$h][0] = DOL_URL_ROOT."/employees/emcontract/index.php?id=".$object->id;
+	    $head[$h][1] = $langs->trans('Contract');
+	    $head[$h][2] = 'contract';
+	    $h++;
+	
 	// Show agenda tab
 	if (! empty($conf->agenda->enabled))
 	{

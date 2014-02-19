@@ -1,7 +1,8 @@
 <?php
 /* Copyright (C) 2001-2005	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012	Regis Houssin			    <regis.houssin@capnetworks.com> 
+ * Copyright (C) 2011-2014  Alexandre Spangaro    <alexandre.spangaro@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,6 +37,7 @@ $langs->load("other");
 $langs->load("companies");
 $langs->load("products");
 $langs->load("members");
+$langs->load("employees");
 
 if (! $user->admin) accessforbidden();
 
@@ -45,10 +47,10 @@ $action = GETPOST('action');
 if (! defined("MAIN_MOTD")) define("MAIN_MOTD","");
 
 // List of supported permanent search area
-$searchform=array("MAIN_SEARCHFORM_SOCIETE", "MAIN_SEARCHFORM_CONTACT", "MAIN_SEARCHFORM_PRODUITSERVICE", "MAIN_SEARCHFORM_PRODUITSERVICE_SUPPLIER", "MAIN_SEARCHFORM_ADHERENT");
-$searchformconst=array($conf->global->MAIN_SEARCHFORM_SOCIETE,$conf->global->MAIN_SEARCHFORM_CONTACT,$conf->global->MAIN_SEARCHFORM_PRODUITSERVICE,$conf->global->MAIN_SEARCHFORM_PRODUITSERVICE_SUPPLIER,$conf->global->MAIN_SEARCHFORM_ADHERENT);
-$searchformtitle=array($langs->trans("Companies"),$langs->trans("Contacts"),$langs->trans("ProductsAndServices"),$langs->trans("ProductsAndServices").' ('.$langs->trans("SupplierRef").')',$langs->trans("Members"));
-$searchformmodule=array('Module1Name','Module1Name','Module50Name','Module50Name','Module310Name');
+$searchform=array("MAIN_SEARCHFORM_SOCIETE", "MAIN_SEARCHFORM_CONTACT", "MAIN_SEARCHFORM_PRODUITSERVICE", "MAIN_SEARCHFORM_PRODUITSERVICE_SUPPLIER", "MAIN_SEARCHFORM_EMPLOYEE", "MAIN_SEARCHFORM_ADHERENT");
+$searchformconst=array($conf->global->MAIN_SEARCHFORM_SOCIETE,$conf->global->MAIN_SEARCHFORM_CONTACT,$conf->global->MAIN_SEARCHFORM_PRODUITSERVICE,$conf->global->MAIN_SEARCHFORM_PRODUITSERVICE_SUPPLIER,$conf->global->MAIN_SEARCHFORM_EMPLOYEE,$conf->global->MAIN_SEARCHFORM_ADHERENT);
+$searchformtitle=array($langs->trans("Companies"),$langs->trans("Contacts"),$langs->trans("ProductsAndServices"),$langs->trans("ProductsAndServices").' ('.$langs->trans("SupplierRef").')',$langs->trans("Employees"),$langs->trans("Members"));
+$searchformmodule=array('Module1Name','Module1Name','Module50Name','Module50Name','Module21000Name','Module310Name');
 
 
 if ($action == 'update')
@@ -68,7 +70,8 @@ if ($action == 'update')
 	dolibarr_set_const($db, "MAIN_SEARCHFORM_SOCIETE", $_POST["MAIN_SEARCHFORM_SOCIETE"],'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_SEARCHFORM_PRODUITSERVICE",$_POST["MAIN_SEARCHFORM_PRODUITSERVICE"],'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_SEARCHFORM_PRODUITSERVICE_SUPPLIER",$_POST["MAIN_SEARCHFORM_PRODUITSERVICE_SUPPLIER"],'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_SEARCHFORM_ADHERENT",$_POST["MAIN_SEARCHFORM_ADHERENT"],'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_SEARCHFORM_EMPLOYEE",$_POST["MAIN_SEARCHFORM_EMPLOYEE"],'chaine',0,'',$conf->entity);
+  dolibarr_set_const($db, "MAIN_SEARCHFORM_ADHERENT",$_POST["MAIN_SEARCHFORM_ADHERENT"],'chaine',0,'',$conf->entity);
 
 	dolibarr_set_const($db, "MAIN_HELPCENTER_DISABLELINK", $_POST["MAIN_HELPCENTER_DISABLELINK"],'chaine',0,'',0);	// Param for all entities
 	dolibarr_set_const($db, "MAIN_MOTD",                   dol_htmlcleanlastbr($_POST["main_motd"]),'chaine',0,'',$conf->entity);
