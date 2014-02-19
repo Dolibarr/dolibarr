@@ -190,15 +190,29 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 		}
 		else
 		{
-			// Get Mask value
-			$mask = empty($conf->global->BARCODE_STANDARD_PRODUCT_MASK)?'':$conf->global->BARCODE_STANDARD_PRODUCT_MASK;
-			if (! $mask)
+			if ($this->verif_syntax($code) >= 0)
 			{
-				$this->error='NotConfigured';
-				return '';
+				$is_dispo = $this->verif_dispo($db, $code, $product);
+				if ($is_dispo <> 0)
+				{
+					$result=-3;
+				}
+				else
+				{
+					$result=0;
+				}
 			}
-
-			$result=check_value($mask,$code);
+			else
+			{
+				if (dol_strlen($code) == 0)
+				{
+					$result=-2;
+				}
+				else
+				{
+					$result=-1;
+				}
+			}
 		}
 
 		dol_syslog(get_class($this)."::verif type=".$type." result=".$result);
@@ -216,8 +230,8 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 	 */
 	function verif_dispo($db, $code, $product)
 	{
-		$sql = "SELECT ref FROM ".MAIN_DB_PREFIX."product";
-		$sql.= " WHERE ref = '".$code."'";
+		$sql = "SELECT barcode FROM ".MAIN_DB_PREFIX."product";
+		$sql.= " WHERE barcode = '".$code."'";
 		if ($product->id > 0) $sql.= " AND rowid <> ".$product->id;
 
 		$resql=$db->query($sql);
@@ -237,6 +251,31 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 			return -2;
 		}
 
+	}
+
+	/**
+	 *	Renvoi si un code respecte la syntaxe
+	 *
+	 *	@param	string		$code		Code a verifier
+	 *	@return	int						0 if OK, <0 if KO
+	 */
+	function verif_syntax($code)
+	{
+		global $conf;
+
+		$res = 0;
+
+		// Get Mask value
+		$mask = empty($conf->global->BARCODE_STANDARD_PRODUCT_MASK)?'':$conf->global->BARCODE_STANDARD_PRODUCT_MASK;
+		if (! $mask)
+		{
+			$this->error='NotConfigured';
+			return '';
+		}
+
+		$result=check_value($mask,$code);
+
+		return $result;
 	}
 
 }

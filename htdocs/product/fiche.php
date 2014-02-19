@@ -117,10 +117,25 @@ if (empty($reshook))
     // Barcode value
     if ($action ==	'setbarcode' && $user->rights->barcode->creer)
     {
-    	//Todo: ajout verification de la validite du code barre en fonction du type
-    	$result = $object->setValueFrom('barcode', GETPOST('barcode'));
-    	header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
-    	exit;
+    	$result=$object->check_barcode(GETPOST('barcode'));
+
+		if ($result >= 0)
+		{
+	    	$result = $object->setValueFrom('barcode', GETPOST('barcode'));
+	    	header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+	    	exit;
+		}
+		else
+		{
+			$langs->load("errors");
+        	if ($result == -1) $errors[] = 'ErrorBadBarCodeSyntax';
+        	else if ($result == -2) $errors[] = 'ErrorBarCodeRequired';
+        	else if ($result == -3) $errors[] = 'ErrorBarCodeAlreadyUsed';
+        	else $errors[] = 'FailedToValidateBarCode';
+
+			$error++;
+			setEventMessage($errors,'errors');
+		}
     }
 
     if ($action == 'setaccountancy_code_buy')
@@ -236,8 +251,9 @@ if (empty($reshook))
                 exit;
             }
             else
-            {
-            	setEventMessage($langs->trans($object->error), 'errors');
+			{
+            	if (count($object->errors)) setEventMessage($object->errors, 'errors');
+				else setEventMessage($langs->trans($object->error), 'errors');
                 $action = "create";
             }
         }
@@ -279,7 +295,11 @@ if (empty($reshook))
                 $object->volume_units           = GETPOST('volume_units');
                 $object->finished               = GETPOST('finished');
                 $object->hidden                 = GETPOST('hidden')=='yes'?1:0;
-                $object->accountancy_code_sell  = GETPOST('accountancy_code_sell');
+
+	            $object->barcode_type           = GETPOST('fk_barcode_type');
+    	        $object->barcode		        = GETPOST('barcode');
+
+            	$object->accountancy_code_sell  = GETPOST('accountancy_code_sell');
                 $object->accountancy_code_buy   = GETPOST('accountancy_code_buy');
 
                 // Fill array 'array_options' with data from add form
@@ -292,14 +312,16 @@ if (empty($reshook))
                         $action = 'view';
                     }
                     else
-                    {
-                    	setEventMessage($langs->trans($object->error), 'errors');
+					{
+						if (count($object->errors)) setEventMessage($object->errors, 'errors');
+                    	else setEventMessage($langs->trans($object->error), 'errors');
                         $action = 'edit';
                     }
                 }
                 else
-                {
-                	setEventMessage($langs->trans("ErrorProductBadRefOrLabel"), 'errors');
+				{
+					if (count($object->errors)) setEventMessage($object->errors, 'errors');
+                	else setEventMessage($langs->trans("ErrorProductBadRefOrLabel"), 'errors');
                     $action = 'edit';
                 }
             }
@@ -762,8 +784,8 @@ else
 	        print $formbarcode->select_barcode_type($fk_barcode_type, 'fk_barcode_type', 1);
 	        print '</td><td>'.$langs->trans("BarcodeValue").'</td><td>';
 	        $tmpcode=isset($_POST['barcode'])?GETPOST('barcode'):$object->barcode;
-	        if (! empty($modBarCodeProduct->code_auto)) $tmpcode=$modBarCodeProduct->getNextValue($object,$type);
-	        print '<input size="40" type="text" name="barcode" value="'.$tmpcode.'">';
+	        if (empty($tmpcode) && ! empty($modBarCodeProduct->code_auto)) $tmpcode=$modBarCodeProduct->getNextValue($object,$type);
+	        print '<input size="40" type="text" name="barcode" value="'.dol_escape_htmltag($tmpcode).'">';
 	        print '</td></tr>';
         }
 
@@ -871,7 +893,7 @@ else
             // We must set them on prices tab.
         }
         else
-        {
+		{
             print '<table class="border" width="100%">';
 
             // PRIX
@@ -955,7 +977,7 @@ else
             // Label
             print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td colspan="3"><input name="libelle" size="40" maxlength="255" value="'.$object->libelle.'"></td></tr>';
 
-            // Status
+            // Status To sell
             print '<tr><td class="fieldrequired">'.$langs->trans("Status").' ('.$langs->trans("Sell").')</td><td colspan="3">';
             print '<select class="flat" name="statut">';
             if ($object->status)
@@ -971,7 +993,7 @@ else
             print '</select>';
             print '</td></tr>';
 
-            // To Buy
+            // Status To Buy
             print '<tr><td class="fieldrequired">'.$langs->trans("Status").' ('.$langs->trans("Buy").')</td><td colspan="3">';
             print '<select class="flat" name="statut_buy">';
             if ($object->status_buy)
@@ -986,6 +1008,30 @@ else
             }
             print '</select>';
             print '</td></tr>';
+
+            // Barcode
+            $showbarcode=(! empty($conf->barcode->enabled) && $user->rights->barcode->lire);
+
+	        if ($showbarcode)
+	        {
+		        print '<tr><td>'.$langs->trans('BarcodeType').'</td><td>';
+		        if (isset($_POST['fk_barcode_type']))
+		        {
+		         	$fk_barcode_type=GETPOST('fk_barcode_type');
+		        }
+		        else
+		        {
+		        	if (empty($fk_barcode_type) && ! empty($conf->global->PRODUIT_DEFAULT_BARCODE_TYPE)) $fk_barcode_type = $conf->global->PRODUIT_DEFAULT_BARCODE_TYPE;
+		        }
+		        require_once DOL_DOCUMENT_ROOT.'/core/class/html.formbarcode.class.php';
+	            $formbarcode = new FormBarCode($db);
+		        print $formbarcode->select_barcode_type($fk_barcode_type, 'fk_barcode_type', 1);
+		        print '</td><td>'.$langs->trans("BarcodeValue").'</td><td>';
+		        $tmpcode=isset($_POST['barcode'])?GETPOST('barcode'):$object->barcode;
+		        if (empty($tmpcode) && ! empty($modBarCodeProduct->code_auto)) $tmpcode=$modBarCodeProduct->getNextValue($object,$type);
+		        print '<input size="40" type="text" name="barcode" value="'.dol_escape_htmltag($tmpcode).'">';
+		        print '</td></tr>';
+	        }
 
             // Description (used in invoice, propal...)
             print '<tr><td valign="top">'.$langs->trans("Description").'</td><td colspan="3">';
@@ -1100,7 +1146,7 @@ else
                 print '<table class="border" width="100%">';
 
                 // Accountancy_code_sell
-                print '<tr><td>'.$langs->trans("ProductAccountancySellCode").'</td>';
+                print '<tr><td width="20%">'.$langs->trans("ProductAccountancySellCode").'</td>';
                 print '<td><input name="accountancy_code_sell" size="16" value="'.$object->accountancy_code_sell.'">';
                 print '</td></tr>';
 
@@ -1121,7 +1167,7 @@ else
         }
         // Fiche en mode visu
         else
-        {
+		{
             $head=product_prepare_head($object, $user);
             $titre=$langs->trans("CardProduct".$object->type);
             $picto=($object->type==1?'service':'product');
