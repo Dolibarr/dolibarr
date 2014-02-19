@@ -438,7 +438,7 @@ function dol_string_nospecial($str,$newstr='_',$badchars='')
  *  Returns text escaped for inclusion into javascript code
  *
  *  @param      string		$stringtoescape		String to escape
- *  @param		string		$mode				0=Escape also ' and " into ', 1=Escape ' but not " for usage into 'string', 2=Escape " but not ' for usage into "string"
+ *  @param		string		$mode				0=Escape also ' and " into ', 1=Escape ' but not " for usage into 'string', 2=Escape " but not ' for usage into "string", 3=Escape ' and " with \
  *  @return     string     		 				Escaped string. Both ' and " are escaped into ' if they are escaped.
  */
 function dol_escape_js($stringtoescape, $mode=0)
@@ -449,6 +449,7 @@ function dol_escape_js($stringtoescape, $mode=0)
 	if (empty($mode)) { $substitjs["'"]="\\'"; $substitjs['"']="\\'"; }
 	else if ($mode == 1) $substitjs["'"]="\\'";
 	else if ($mode == 2) { $substitjs['"']='\\"'; }
+	else if ($mode == 3) { $substitjs["'"]="\\'"; $substitjs['"']="\\\""; }
 	return strtr($stringtoescape, $substitjs);
 }
 
