@@ -1634,13 +1634,13 @@ elseif (! empty($object->id))
 			}
 
 			print '<td align="right" class="nowrap">'.price($line->total_ht).'</td>';
-			
+
 			if (is_object($hookmanager))
 			{
 				$parameters=array('line'=>$line,'num'=>$num,'i'=>$i);
 				$reshook=$hookmanager->executeHooks('printObjectLine',$parameters,$object,$action);
 			}
-			
+
 			if ($object->statut == 0	&& $user->rights->fournisseur->commande->creer)
 			{
 				print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=edit_line&amp;rowid='.$line->id.'#'.$line->id.'">';
@@ -2132,7 +2132,7 @@ elseif (! empty($object->id))
 		}
 
 		// Show form
-		$formmail->show_form();
+		print $formmail->get_form();
 
 		print '<br>';
 	}

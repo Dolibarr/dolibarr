@@ -2676,7 +2676,7 @@ else
 			}
 
 			// Show form
-			$formmail->show_form();
+			print $formmail->get_form();
 
 			print '<br>';
 		}
