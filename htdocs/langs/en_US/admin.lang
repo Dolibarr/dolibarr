@@ -379,6 +379,12 @@ KeepEmptyToUseDefault=Keep empty to use default value
 DefaultLink=Default link
 ValueOverwrittenByUserSetup=Warning, this value may be overwritten by user specific setup (each user can set his own clicktodial url)
 ExternalModule=External module - Installed into directory %s
+BarcodeInitForThirdparties=Mass barcode init for thirdparties
+BarcodeInitForProductsOrServices=Mass barcode init for products or services
+CurrentlyNWithoutBarCode=Currently, you have <strong>%s</strong> records on <strong>%s</strong> %s without barcode defined.
+InitEmptyBarCode=Init the %s barcode
+NoBarcodeNumberingTemplateDefined=No numbering barcode template enabled into barcode module setup.
+NoRecordWithoutBarcodeDefined=No record with no barcode value defined.
 
 # Modules
 Module0Name=Users & groups

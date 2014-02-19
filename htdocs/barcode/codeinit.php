@@ -46,16 +46,109 @@ $action=GETPOST('action');
 $producttmp=new Product($db);
 $thirdpartytmp=new Societe($db);
 
+$modBarCodeProduct='';
+
 
 /*
  * Actions
  */
 
-if ($action == 'init')
+// Define barcode template for products
+if (! empty($conf->global->BARCODE_PRODUCT_ADDON_NUM))
 {
+	$dirbarcodenum=array_merge(array('/core/modules/barcode/'),$conf->modules_parts['barcode']);
+
+	foreach ($dirbarcodenum as $dirroot)
+	{
+		$dir = dol_buildpath($dirroot,0);
+
+		$handle = @opendir($dir);
+	    if (is_resource($handle))
+	    {
+	    	while (($file = readdir($handle))!==false)
+	    	{
+	    		if (preg_match('/^mod_barcode_product_.*php$/', $file))
+	    		{
+	    			$file = substr($file, 0, dol_strlen($file)-4);
+
+	    		    try {
+	        			dol_include_once($dirroot.$file.'.php');
+	    			}
+	    			catch(Exception $e)
+	    			{
+	    			    dol_syslog($e->getMessage(), LOG_ERR);
+	    			}
+
+	    			$modBarCodeProduct = new $file();
+	    			break;
+	    		}
+	    	}
+	    	closedir($handle);
+	    }
+	}
+}
+
+if ($action == 'initbarcodeproducts')
+{
+	if (! is_object($modBarCodeProduct))
+	{
+		$error++;
+		setEventMessage($langs->trans("NoBarcodeNumberingTemplateDefined"),'errors');
+	}
+
+	if (! $error)
+	{
+		$productstatic=new Product($db);
+
+		$db->begin();
+
+		$sql="SELECT rowid, ref, fk_product_type FROM ".MAIN_DB_PREFIX."product where barcode IS NULL or barcode = ''";
+		$resql=$db->query($sql);
+		if ($resql)
+		{
+			$num=$db->num_rows($resql);
+
+			$i=0; $nbok=$nbtry=0;
+			while ($i < $num)
+			{
+				$obj=$db->fetch_object($resql);
+				if ($obj)
+				{
+					$productstatic->id=$obj->rowid;
+					$productstatic->ref=$obj->ref;
+					$productstatic->type=$obj->fk_product_type;
+					$nextvalue=$modBarCodeProduct->getNextValue($productstatic,'');
+
+					print 'Set value '.$nextvalue.' to product '.$productstatic->id." ".$productstatic->ref." ".$productstatic->type."<br>\n";
+					$result=$productstatic->setValueFrom('barcode', $nextvalue);
+
+					$nbtry++;
+					if ($result > 0) $nbok++;
+				}
+
+				$i++;
+			}
+		}
+		else
+		{
+			$error++;
+			dol_print_error($db);
+		}
+
+		if (! $error)
+		{
+			setEventMessage($langs->trans("RecordsModified",$nbok),'mesgs');
+
+			//$db->rollback();
+			$db->commit();
+		}
+		else
+		{
+			$db->rollback();
+		}
+	}
+
 	$action='';
-
-
 }
 
 
@@ -63,6 +156,9 @@ if ($action == 'init')
 /*
  * View
  */
+
+if (!$user->admin) accessforbidden();
+if (empty($conf->barcode->enabled)) accessforbidden();
 
 $form=new Form($db);
 
@@ -81,9 +177,101 @@ dol_htmloutput_errors($mesg);
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 print '<input type="hidden" name="mode" value="label">';
-print '<input type="hidden" name="action" value="builddoc">';
+print '<input type="hidden" name="action" value="initbarcodeproducts">';
 
-print '<br><input class="button" type="submit" id="submitformbarcodegen" '.((GETPOST("selectorforbarcode") && GETPOST("selectorforbarcode"))?'':'disabled="checked" ').'value="'.$langs->trans("InitEmptyBarCode").'">';
+print '<br>';
+
+// For thirdparty
+if ($conf->societe->enabled)
+{
+	$nbno=$nbtotal=0;
+
+	print_fiche_titre($langs->trans("BarcodeInitForThirdparties"),'','').'<br>'."\n";
+	$sql="SELECT count(rowid) as nb FROM ".MAIN_DB_PREFIX."societe where barcode IS NULL or barcode = ''";
+	$resql=$db->query($sql);
+	if ($resql)
+	{
+		$obj=$db->fetch_object($resql);
+		$nbno=$obj->nb;
+	}
+	else dol_print_error($db);
+
+	$sql="SELECT count(rowid) as nb FROM ".MAIN_DB_PREFIX."societe";
+	$resql=$db->query($sql);
+	if ($resql)
+	{
+		$obj=$db->fetch_object($resql);
+		$nbtotal=$obj->nb;
+	}
+	else dol_print_error($db);
+
+	print $langs->trans("CurrentlyNWithoutBarCode", $nbno, $nbtotal, $langs->transnoentitiesnoconv("Thirdparties")).'<br>'."\n";
+
+	print '<br><input class="button" type="submit" id="submitformbarcodethirdpartygen" '.((GETPOST("selectorforbarcode") && GETPOST("selectorforbarcode"))?'':'disabled="checked" ').'value="'.$langs->trans("InitEmptyBarCode",$nbno).'"';
+	print ' title="'.dol_escape_htmltag($langs->trans("FeatureNotYetAvailable")).'" disabled="disabled"';
+	print '>';
+	print '<br><br><br>';
+}
+
+
+// For products
+if ($conf->product->enabled || $conf->product->service)
+{
+	$nbno=$nbtotal=0;
+
+	print_fiche_titre($langs->trans("BarcodeInitForProductsOrServices"),'','').'<br>'."\n";
+	$sql="SELECT count(rowid) as nb, fk_product_type FROM ".MAIN_DB_PREFIX."product where barcode IS NULL or barcode = '' GROUP BY fk_product_type";
+	$resql=$db->query($sql);
+	if ($resql)
+	{
+		$num=$db->num_rows($resql);
+
+		$i=0;
+		while($i < $num)
+		{
+			$obj=$db->fetch_object($resql);
+			$nbno+=$obj->nb;
+
+			$i++;
+		}
+	}
+	else dol_print_error($db);
+
+	$sql="SELECT count(rowid) as nb FROM ".MAIN_DB_PREFIX."product";
+	$resql=$db->query($sql);
+	if ($resql)
+	{
+		$obj=$db->fetch_object($resql);
+		$nbtotal=$obj->nb;
+	}
+	else dol_print_error($db);
+
+	print $langs->trans("CurrentlyNWithoutBarCode", $nbno, $nbtotal, $langs->transnoentitiesnoconv("ProductsOrServices")).'<br>'."\n";
+
+	if (is_object($modBarCodeProduct))
+	{
+		print $langs->trans("BarCodeNumberManager").": ";
+		$objproduct=new Product($db);
+		print '<b>'.$modBarCodeProduct->nom.'</b> - '.$langs->trans("NextValue").': <b>'.$modBarCodeProduct->getNextValue($objproduct).'</b><br>';
+		$disabled=0;
+	}
+	else
+	{
+		$disabled=1;
+		$titleno=$langs->trans("NoBarcodeNumberingTemplateDefined");
+		print '<font class="warning">'.$langs->trans("NoBarcodeNumberingTemplateDefined").'</font><br>';
+	}
+	if (empty($nbno))
+	{
+		$disabled=1;
+		$titleno=$langs->trans("NoRecordWithoutBarcodeDefined");
+		print '<font class="ok">'.$langs->trans("NoRecordWithoutBarcodeDefined").'</font><br>';
+	}
+
+	print '<br><input class="button" type="submit" id="submitformbarcodeproductgen" value="'.$langs->trans("InitEmptyBarCode",$nbno).'"'.($disabled?' disabled="disabled" title="'.dol_escape_htmltag($titleno).'"':'').'>';
+	print '<br><br><br>';
+}
+
 
 print '</form>';
 print '<br>';

@@ -16,11 +16,12 @@ For users:
        to automatically add timestamp and user line into editionf field when editing a note.
 - New: Add button cancel into edition of notes.
 - New: Improved Opensurvey module and added options to disable comments and disable
-       public votes
+       public votes.
 - New: The box "balance of bank accounts" show all opened accounts.
 - New: Add option MAIN_ADD_SALE_REP_SIGNATURE_IN_NOTE.
 - New: Add warning if supplier payment is higher that due amount.
-- New increase length of url into bookmark module.
+- New: Increase length of url into bookmark module.
+- New: Add an admin page to make a mass init of barcode values for all products. 
 
 TODO
 - New: Predefined product and free product use same form.
