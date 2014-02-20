@@ -35,7 +35,7 @@ $month=dol_print_date($now,'%m');
 $day=dol_print_date($now,'%d');
 $forbarcode=GETPOST('forbarcode');
 $fk_barcode_type=GETPOST('fk_barcode_type');
-$submitformbarcodeproductgenall=GETPOST('submitformbarcodeproductgenall');
+$eraseallbarcode=GETPOST('eraseallbarcode');
 
 $mesg='';
 
@@ -45,6 +45,8 @@ $producttmp=new Product($db);
 $thirdpartytmp=new Societe($db);
 
 $modBarCodeProduct='';
+
+$maxperinit=1000;
 
 
 /*
@@ -100,54 +102,71 @@ if ($action == 'initbarcodeproducts')
 
 		$db->begin();
 
-		if (! empty($submitformbarcodeproductgenall))
+		$nbok=0;
+		if (! empty($eraseallbarcode))
 		{
 			$sql ="UPDATE ".MAIN_DB_PREFIX."product";
 			$sql.=" SET barcode = NULL";
 			$resql=$db->query($sql);
-			if (! $resql) dol_print_error($db);
-		}
-
-		$sql ="SELECT rowid, ref, fk_product_type";
-		$sql.=" FROM ".MAIN_DB_PREFIX."product";
-		$sql.=" WHERE barcode IS NULL or barcode = ''";
-		$sql.=" ORDER BY datec ASC";
-		$resql=$db->query($sql);
-		if ($resql)
-		{
-			$num=$db->num_rows($resql);
-
-			$i=0; $nbok=$nbtry=0;
-			while ($i < $num)
+			if ($resql)
 			{
-				$obj=$db->fetch_object($resql);
-				if ($obj)
-				{
-					$productstatic->id=$obj->rowid;
-					$productstatic->ref=$obj->ref;
-					$productstatic->type=$obj->fk_product_type;
-					$nextvalue=$modBarCodeProduct->getNextValue($productstatic,'');
-
-					//print 'Set value '.$nextvalue.' to product '.$productstatic->id." ".$productstatic->ref." ".$productstatic->type."<br>\n";
-					$result=$productstatic->setValueFrom('barcode', $nextvalue);
-
-					$nbtry++;
-					if ($result > 0) $nbok++;
-				}
-
-				$i++;
+				setEventMessage($langs->trans("AllBarcodeReset"),'mesgs');
+			}
+			else
+			{
+				$error++;
+				dol_print_error($db);
 			}
 		}
 		else
 		{
-			$error++;
-			dol_print_error($db);
+			$sql ="SELECT rowid, ref, fk_product_type";
+			$sql.=" FROM ".MAIN_DB_PREFIX."product";
+			$sql.=" WHERE barcode IS NULL or barcode = ''";
+			$sql.=$db->order("datec","ASC");
+			$sql.=$db->plimit($maxperinit);
+
+			dol_syslog("codeinit sql=".$sql, LOG_DEBUG);
+			$resql=$db->query($sql);
+			if ($resql)
+			{
+				$num=$db->num_rows($resql);
+
+				$i=0; $nbok=$nbtry=0;
+				while ($i < min($num,$maxperinit))
+				{
+					$obj=$db->fetch_object($resql);
+					if ($obj)
+					{
+						$productstatic->id=$obj->rowid;
+						$productstatic->ref=$obj->ref;
+						$productstatic->type=$obj->fk_product_type;
+						$nextvalue=$modBarCodeProduct->getNextValue($productstatic,'');
+
+						//print 'Set value '.$nextvalue.' to product '.$productstatic->id." ".$productstatic->ref." ".$productstatic->type."<br>\n";
+						$result=$productstatic->setValueFrom('barcode', $nextvalue);
+
+						$nbtry++;
+						if ($result > 0) $nbok++;
+					}
+
+					$i++;
+				}
+			}
+			else
+			{
+				$error++;
+				dol_print_error($db);
+			}
+
+			if (! $error)
+			{
+				setEventMessage($langs->trans("RecordsModified",$nbok),'mesgs');
+			}
 		}
 
 		if (! $error)
 		{
-			setEventMessage($langs->trans("RecordsModified",$nbok),'mesgs');
-
 			//$db->rollback();
 			$db->commit();
 		}
@@ -229,7 +248,7 @@ if ($conf->product->enabled || $conf->product->service)
 	$nbno=$nbtotal=0;
 
 	print_fiche_titre($langs->trans("BarcodeInitForProductsOrServices"),'','').'<br>'."\n";
-	$sql="SELECT count(rowid) as nb, fk_product_type";
+	$sql ="SELECT count(rowid) as nb, fk_product_type";
 	$sql.=" FROM ".MAIN_DB_PREFIX."product";
 	$sql.=" WHERE barcode IS NULL OR barcode = ''";
 	$sql.=" GROUP BY fk_product_type";
@@ -284,9 +303,10 @@ if ($conf->product->enabled || $conf->product->service)
 	print '<br>';
 	//print '<input type="checkbox" id="erasealreadyset" name="erasealreadyset"> '.$langs->trans("ResetBarcodeForAllRecords").'<br>';
 	$moretags1=(($disabled||$disabled1)?' disabled="disabled" title="'.dol_escape_htmltag($titleno).'"':'');
-	print '<input class="button" type="submit" name="submitformbarcodeproductgen" id="submitformbarcodeproductgen" value="'.$langs->trans("InitEmptyBarCode",$nbno).'"'.$moretags1.'>';
-	$moretags2=(($disabled || ! $nbtotal)?' disabled="disabled"':'');
-	print '<input class="button" type="submit" name="submitformbarcodeproductgenall" id="submitformbarcodeproductgenall" value="'.$langs->trans("EraseAndResetBarCode",$nbtotal).'"'.$moretags2.'>';
+	print '<input class="button" type="submit" name="submitformbarcodeproductgen" id="submitformbarcodeproductgen" value="'.$langs->trans("InitEmptyBarCode",min($maxperinit,$nbno)).'"'.$moretags1.'>';
+	$moretags2=(($nbno == $nbtotal)?' disabled="disabled"':'');
+	print ' &nbsp; ';
+	print '<input class="button" type="submit" name="eraseallbarcode" id="eraseallbarcode" value="'.$langs->trans("EraseAllCurrentBarCode").'"'.$moretags2.'>';
 	print '<br><br><br>';
 }
 
