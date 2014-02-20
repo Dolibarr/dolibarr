@@ -753,6 +753,7 @@ DictionaryOrderMethods=Méthodes de commandes
 DictionarySource=Origines des propales/commandes
 DictionaryAccountancyplan=Plan comptable
 DictionaryAccountancysystem=Modèles de plan comptable
+DictionaryEmploymentContract=Types de contrat de travail
 SetupSaved=Configuration sauvegardée
 BackToModuleList=Retour liste des modules
 BackToDictionaryList=Retour liste des dictionnaires
