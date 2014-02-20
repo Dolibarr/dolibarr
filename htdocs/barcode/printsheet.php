@@ -63,12 +63,12 @@ if (GETPOST('submitproduct') && GETPOST('submitproduct'))
 		$producttmp->fetch(GETPOST('productid'));
 		$forbarcode=$producttmp->barcode;
 		$fk_barcode_type=$thirdpartytmp->barcode_type_code;
-	
+
 		if (empty($fk_barcode_type) && ! empty($conf->global->PRODUIT_DEFAULT_BARCODE_TYPE)) $fk_barcode_type = $conf->global->PRODUIT_DEFAULT_BARCODE_TYPE;
-		
+
 		if (empty($forbarcode) || empty($fk_barcode_type))
 		{
-			setEventMessage($langs->trans("DefinitionOfBarCodeForProductNotComplete",$producttmp->getNomUrl()), 'warnings');	
+			setEventMessage($langs->trans("DefinitionOfBarCodeForProductNotComplete",$producttmp->getNomUrl()), 'warnings');
 		}
 	}
 }
@@ -80,12 +80,12 @@ if (GETPOST('submitthirdparty') && GETPOST('submitthirdparty'))
 		$thirdpartytmp->fetch(GETPOST('socid'));
 		$forbarcode=$thirdpartytmp->barcode;
 		$fk_barcode_type=$thirdpartytmp->barcode_type_code;
-	
+
 		if (empty($fk_barcode_type) && ! empty($conf->global->GENBARCODE_BARCODETYPE_THIRDPARTY)) $fk_barcode_type = $conf->global->GENBARCODE_BARCODETYPE_THIRDPARTY;
-		
+
 		if (empty($forbarcode) || empty($fk_barcode_type))
 		{
-			setEventMessage($langs->trans("DefinitionOfBarCodeForProductNotComplete",$thirdpartytmp->getNomUrl()), 'warnings');	
+			setEventMessage($langs->trans("DefinitionOfBarCodeForProductNotComplete",$thirdpartytmp->getNomUrl()), 'warnings');
 		}
 	}
 }
@@ -243,6 +243,8 @@ if ($action == 'builddoc')
  * View
  */
 
+if (empty($conf->barcode->enabled)) accessforbidden();
+
 $form=new Form($db);
 
 llxHeader('',$langs->trans("BarCodePrintsheet"));
@@ -329,7 +331,7 @@ jQuery(document).ready(function() {
 	jQuery(".radiobarcodeselect").click(function() {
 		init_selectors();
 	});
-	
+
 	function init_gendoc_button()
 	{
 		if (jQuery("#select_fk_barcode_type").val() > 0 && jQuery("#forbarcode").val())

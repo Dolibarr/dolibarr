@@ -3914,8 +3914,8 @@ else if ($id > 0 || ! empty($ref))
 		{
 			$liste[$key]=$value;
 		}
-		$formmail->withto=GETPOST('sendto')?GETPOST('sendto'):$liste;
-		$formmail->withtocc=$liste;
+		$formmail->withto=GETPOST('sendto')?GETPOST('sendto'):$liste;	// List suggested for send to
+		$formmail->withtocc=$liste;	// List suggested for CC
 		$formmail->withtoccc=$conf->global->MAIN_EMAIL_USECCC;
 		if(empty($object->ref_client))
 		{
@@ -3972,7 +3972,7 @@ else if ($id > 0 || ! empty($ref))
 			$formmail->add_attached_files($file,basename($file),dol_mimetype($file));
 		}
 
-		$formmail->show_form();
+		print $formmail->get_form();
 
 		print '<br>';
 	}

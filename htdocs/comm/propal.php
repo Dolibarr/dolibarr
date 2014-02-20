@@ -2149,14 +2149,14 @@ else
 				{
 					print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=modif">'.$langs->trans('Modify').'</a></div>';
 				}
-	
+
 				// ReOpen
 				if (($object->statut == 2 || $object->statut == 3) && $user->rights->propal->cloturer)
 				{
 					print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=reopen'.(empty($conf->global->MAIN_JUMP_TAG)?'':'#reopen').'"';
 					print '>'.$langs->trans('ReOpen').'</a></div>';
 				}
-	
+
 				// Send
 				if ($object->statut == 1 || $object->statut == 2)
 				{
@@ -2166,7 +2166,7 @@ else
 					}
 					else print '<div class="inline-block divButAction"><a class="butActionRefused" href="#">'.$langs->trans('SendByMail').'</a></div>';
 				}
-	
+
 				// Create an order
 				if (! empty($conf->commande->enabled) && $object->statut == 2)
 				{
@@ -2175,18 +2175,18 @@ else
 						print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/commande/fiche.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid.'">'.$langs->trans("AddOrder").'</a></div>';
 					}
 				}
-	
+
 				// Create contract
 				if ($conf->contrat->enabled && $object->statut == 2)
 				{
 					$langs->load("contracts");
-	
+
 					if ($user->rights->contrat->creer)
 					{
 						print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/contrat/fiche.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid.'">'.$langs->trans('AddContract').'</a></div>';
 					}
 				}
-	
+
 				// Create an invoice and classify billed
 				if ($object->statut == 2)
 				{
@@ -2194,37 +2194,37 @@ else
 					{
 						print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid.'">'.$langs->trans("AddBill").'</a></div>';
 					}
-	
+
 					$arraypropal=$object->getInvoiceArrayList();
 					if (is_array($arraypropal) && count($arraypropal) > 0)
 					{
 						print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=classifybilled&amp;socid='.$object->socid.'">'.$langs->trans("ClassifyBilled").'</a></div>';
 					}
 				}
-	
+
 				// Close
 				if ($object->statut == 1 && $user->rights->propal->cloturer)
 				{
 					print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=statut'.(empty($conf->global->MAIN_JUMP_TAG)?'':'#close').'"';
 					print '>'.$langs->trans('Close').'</a></div>';
 				}
-	
+
 				// Clone
 				if ($user->rights->propal->creer)
 				{
 					print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;socid='.$object->socid.'&amp;action=clone&amp;object='.$object->element.'">'.$langs->trans("ToClone").'</a></div>';
 				}
-	
+
 				// Delete
 				if ($user->rights->propal->supprimer)
 				{
 					print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete"';
 					print '>'.$langs->trans('Delete').'</a></div>';
 				}
-	
+
 			}
 		}
-		
+
 		print '</div>';
 	}
 	print "<br>\n";
@@ -2374,7 +2374,7 @@ else
 			$formmail->add_attached_files($file,basename($file),dol_mimetype($file));
 		}
 
-		$formmail->show_form();
+		print $formmail->get_form();
 
 		print '<br>';
 	}

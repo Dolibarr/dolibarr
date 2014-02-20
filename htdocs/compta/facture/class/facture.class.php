@@ -90,7 +90,7 @@ class Facture extends CommonInvoice
 	var $close_code;
 	//! Commentaire si mis a paye sans paiement complet
 	var $close_note;
-	//! 1 if invoice paid COMPLETELY, 0 otherwise (do not use it anymore, use statut and close_code
+	//! 1 if invoice paid COMPLETELY, 0 otherwise (do not use it anymore, use statut and close_code)
 	var $paye;
 	//! id of source invoice if replacement invoice or credit note
 	var $fk_facture_source;
