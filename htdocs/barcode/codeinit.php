@@ -35,9 +35,7 @@ $month=dol_print_date($now,'%m');
 $day=dol_print_date($now,'%d');
 $forbarcode=GETPOST('forbarcode');
 $fk_barcode_type=GETPOST('fk_barcode_type');
-$mode=GETPOST('mode');
-$modellabel=GETPOST("modellabel");	// Doc template to use
-$numberofsticker=GETPOST('numberofsticker','int');
+$submitformbarcodeproductgenall=GETPOST('submitformbarcodeproductgenall');
 
 $mesg='';
 
@@ -102,7 +100,18 @@ if ($action == 'initbarcodeproducts')
 
 		$db->begin();
 
-		$sql="SELECT rowid, ref, fk_product_type FROM ".MAIN_DB_PREFIX."product where barcode IS NULL or barcode = ''";
+		if (! empty($submitformbarcodeproductgenall))
+		{
+			$sql ="UPDATE ".MAIN_DB_PREFIX."product";
+			$sql.=" SET barcode = NULL";
+			$resql=$db->query($sql);
+			if (! $resql) dol_print_error($db);
+		}
+
+		$sql ="SELECT rowid, ref, fk_product_type";
+		$sql.=" FROM ".MAIN_DB_PREFIX."product";
+		$sql.=" WHERE barcode IS NULL or barcode = ''";
+		$sql.=" ORDER BY datec ASC";
 		$resql=$db->query($sql);
 		if ($resql)
 		{
@@ -119,7 +128,7 @@ if ($action == 'initbarcodeproducts')
 					$productstatic->type=$obj->fk_product_type;
 					$nextvalue=$modBarCodeProduct->getNextValue($productstatic,'');
 
-					print 'Set value '.$nextvalue.' to product '.$productstatic->id." ".$productstatic->ref." ".$productstatic->type."<br>\n";
+					//print 'Set value '.$nextvalue.' to product '.$productstatic->id." ".$productstatic->ref." ".$productstatic->type."<br>\n";
 					$result=$productstatic->setValueFrom('barcode', $nextvalue);
 
 					$nbtry++;
@@ -220,7 +229,11 @@ if ($conf->product->enabled || $conf->product->service)
 	$nbno=$nbtotal=0;
 
 	print_fiche_titre($langs->trans("BarcodeInitForProductsOrServices"),'','').'<br>'."\n";
-	$sql="SELECT count(rowid) as nb, fk_product_type FROM ".MAIN_DB_PREFIX."product where barcode IS NULL or barcode = '' GROUP BY fk_product_type";
+	$sql="SELECT count(rowid) as nb, fk_product_type";
+	$sql.=" FROM ".MAIN_DB_PREFIX."product";
+	$sql.=" WHERE barcode IS NULL OR barcode = ''";
+	$sql.=" GROUP BY fk_product_type";
+	$sql.=" ORDER BY datec";
 	$resql=$db->query($sql);
 	if ($resql)
 	{
@@ -263,12 +276,17 @@ if ($conf->product->enabled || $conf->product->service)
 	}
 	if (empty($nbno))
 	{
-		$disabled=1;
+		$disabled1=1;
 		$titleno=$langs->trans("NoRecordWithoutBarcodeDefined");
 		print '<font class="ok">'.$langs->trans("NoRecordWithoutBarcodeDefined").'</font><br>';
 	}
 
-	print '<br><input class="button" type="submit" id="submitformbarcodeproductgen" value="'.$langs->trans("InitEmptyBarCode",$nbno).'"'.($disabled?' disabled="disabled" title="'.dol_escape_htmltag($titleno).'"':'').'>';
+	print '<br>';
+	//print '<input type="checkbox" id="erasealreadyset" name="erasealreadyset"> '.$langs->trans("ResetBarcodeForAllRecords").'<br>';
+	$moretags1=(($disabled||$disabled1)?' disabled="disabled" title="'.dol_escape_htmltag($titleno).'"':'');
+	print '<input class="button" type="submit" name="submitformbarcodeproductgen" id="submitformbarcodeproductgen" value="'.$langs->trans("InitEmptyBarCode",$nbno).'"'.$moretags1.'>';
+	$moretags2=(($disabled || ! $nbtotal)?' disabled="disabled"':'');
+	print '<input class="button" type="submit" name="submitformbarcodeproductgenall" id="submitformbarcodeproductgenall" value="'.$langs->trans("EraseAndResetBarCode",$nbtotal).'"'.$moretags2.'>';
 	print '<br><br><br>';
 }
 
