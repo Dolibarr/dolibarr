@@ -33,16 +33,17 @@ if (! $res) die("Include of main fails");
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
+// require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 require_once DOL_DOCUMENT_ROOT.'/employees/emcontract/class/emcontract.class.php';
+require_once DOL_DOCUMENT_ROOT.'/employees/class/employee.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/employee.lib.php';
 
 $langs->load('users');
 $langs->load('employee');
 
-// Protection if external user
-if ($user->societe_id > 0) accessforbidden();
+// Security check
+$result=restrictedArea($user,'employee',$id);
 
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
@@ -82,7 +83,7 @@ $search_type_contract = GETPOST('search_type_contract');
 
 $emcontract = new Emcontract($db);
 $emcontractstatic=new Emcontract($db);
-$fuser = new User($db);
+$emp = new Employee($db);
 
 // Parameters
 $max_year = 5;
@@ -166,9 +167,9 @@ $user_id = $user->id;
 if ($id > 0)
 {
 	// Charge utilisateur edite
-	$fuser->fetch($id);
-	$fuser->getrights();
-	$user_id = $fuser->id;
+	$emp->fetch($id);
+	//$emp->getrights();
+	$user_id = $emp->rowid;
 }
 
 // Récupération des contrats de l'utilisateur ou de tous les users
@@ -200,45 +201,68 @@ $form = new Form($db);
 $formother = new FormOther($db);
 $em = new Emcontract($db);
 
+print '<form method="get" action="'.$_SERVER["PHP_SELF"].'">'."\n";
+
 if ($id > 0)
 {
-	$head = user_prepare_head($fuser);
+	$head = employee_prepare_head($emp);
 
-	$title = $langs->trans("User");
-	dol_fiche_head($head, 'emcontract', $title, 0, 'user');
+	$title = $langs->trans("Employee");
+	dol_fiche_head($head, 'contract', $title, 0, 'user');
 
 	print '<table class="border" width="100%">';
+
+  $linkback = '<a href="'.DOL_URL_ROOT.'/employees/liste.php">'.$langs->trans("BackToList").'</a>';
 
 	// Ref
 	print '<tr><td width="25%" valign="top">'.$langs->trans("Ref").'</td>';
 	print '<td colspan="2">';
-	print $form->showrefnav($fuser,'id','',$user->rights->user->user->lire || $user->admin);
+	print $form->showrefnav($emp, 'id', $linkback);
 	print '</td>';
 	print '</tr>';
+  
+  // Civility
+	print '<tr><td>'.$langs->trans("UserTitle").'</td><td class="valeur">'.$emp->getCivilityLabel().'&nbsp;</td></tr>';
 
 	// LastName
 	print '<tr><td width="25%" valign="top">'.$langs->trans("LastName").'</td>';
-	print '<td colspan="2">'.$fuser->lastname.'</td>';
+	print '<td colspan="2">'.$emp->lastname.'</td>';
 	print "</tr>\n";
 
 	// FirstName
 	print '<tr><td width="25%" valign="top">'.$langs->trans("FirstName").'</td>';
-	print '<td colspan="2">'.$fuser->firstname.'</td>';
+	print '<td colspan="2">'.$emp->firstname.'</td>';
 	print "</tr>\n";
+  
+  // Status
+	print '<tr><td>'.$langs->trans("Status").'</td><td class="valeur">'.$emp->getLibStatut(4).'</td></tr>';
 
-	print '</table><br>';
+	print '</table>';
+  
+  /*
+   * Actions
+   */
+   
+   if($user->rights->employee->creer)
+   {
+      print '</div>';
+      print '<div style="float: right; margin-top: 8px;">';
+      print '<a href="./fiche.php?action=add" class="butAction">'.$langs->trans('AddContract').'</a>';
+      print '</div>';
+      print '<br><br><br>';
+   }
 }
 else
 {
 	print_barre_liste($langs->trans("ListContract"), $page, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, "", $num);
 }
+print '</table>';
 
-print '<form method="get" action="'.$_SERVER["PHP_SELF"].'">'."\n";
 print '<table class="noborder" width="100%;">';
 print '<tr class="liste_titre">';
 print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"em.rowid","",'','',$sortfield,$sortorder);
 //print_liste_field_titre($langs->trans("DateCreate"),$_SERVER["PHP_SELF"],"em.datec","",'','align="center"',$sortfield,$sortorder);
-print_liste_field_titre($langs->trans("Employee"),$_SERVER["PHP_SELF"],"em.fk_user","",'','',$sortfield,$sortorder);
+print_liste_field_titre($langs->trans("Employee"),$_SERVER["PHP_SELF"],"em.fk_employee",'','',$sortfield,$sortorder);
 print_liste_field_titre($langs->trans("Typecontract"),$_SERVER["PHP_SELF"],"em.type_contract","",'','',$sortfield,$sortorder);
 print_liste_field_titre($langs->trans("DateStart"),$_SERVER["PHP_SELF"],"em.date_start_contract","",'','align="center"',$sortfield,$sortorder);
 print_liste_field_titre($langs->trans("DateEnd"),$_SERVER["PHP_SELF"],"em.date_end_contract","",'','align="center"',$sortfield,$sortorder);
@@ -301,7 +325,7 @@ if (! empty($emcontract->emcontract))
 		$var=!$var;
 
 		// Utilisateur
-		$userstatic->id=$infos_em['fk_user'];
+		$userstatic->id=$infos_em['fk_employee'];
 		$userstatic->lastname=$infos_em['user_lastname'];
 		$userstatic->firstname=$infos_em['user_firstname'];
 
@@ -326,16 +350,23 @@ if (! empty($emcontract->emcontract))
 // Si il n'y a pas d'enregistrement suite à une recherche
 // xxx
 
+if (empty ($id))
+{
+  /*
+   * Actions
+   */
+   
+   if($user->rights->employee->creer)
+   {
+      print '</div>';
+      print '<div style="float: right; margin-top: 8px;">';
+      print '<a href="./fiche.php?action=add" class="butAction">'.$langs->trans('AddContract').'</a>';
+      print '</div>';
+   }
+}
+   
 print '</table>';
 print '</form>';
-
-if($user->rights->employee->creer)
-{
-	print '<br>';
-	print '<div style="float: right; margin-top: 8px;">';
-	print '<a href="./fiche.php?action=add" class="butAction">'.$langs->trans('AddContract').'</a>';
-	print '</div>';
-}
 
 llxFooter();
 

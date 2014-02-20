@@ -52,7 +52,7 @@ class modEmployee extends DolibarrModules
 		    // Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		    $this->name = preg_replace('/^mod/i','',get_class($this));
         $this->description = "Gestion des salariés de l'entreprise";
-        $this->version = 'experimental';                        // 'experimental' or 'dolibarr' or version
+        $this->version = 'development';                        // 'experimental' or 'dolibarr' or version
         $this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
         $this->special = 0;
         $this->picto='user';

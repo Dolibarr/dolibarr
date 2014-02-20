@@ -48,7 +48,7 @@ EmployeeTypeId=Id type salarié
 EmployeeTypeLabel=Libellé du type de salarié
 EmployeesTypes=Types de salariés
 EmployeesAttributes=Attributs salariés
-SearchAEmployee=Rechercher un membre
+SearchAnEmployee=Rechercher un salarié
 EmployeeStatusDraft=Brouillon (à valider)
 EmployeeStatusDraftShort=Brouillon
 EmployeeStatusActive=Validé (attente cotisation)
@@ -145,12 +145,8 @@ GlobalConfigUsedIfNotDefined=Le texte défini dans la configuration du module sa
 MayBeOverwrited=Cette valeur peut être écrasée par le texte défini au niveau du type de salarié
 ShowTypeCard=Voir type '%s'
 HTPasswordExport=Génération fichier htpassword
-NoThirdPartyAssociatedToEmployee=Pas de tiers associé à cet salarié
+NoUserAssociatedToEmployee=Pas d'utilisateur associé à ce salarié
 MoreActions=Action complémentaire à l'enregistrement
-MoreActionsOnSubscription=Action complémentaire proposée par défaut à l'enregistrement de l'adhésion
-MoreActionBankDirect=Création transaction sur compte bancaire ou caisse directement
-MoreActionBankViaInvoice=Création facture avec paiement sur compte bancaire ou caisse
-MoreActionInvoiceOnly=Création facture sans paiement
 LinkToGeneratedPages=Génération de cartes de visites ou planches d'adresses
 LinkToGeneratedPagesDesc=Cet écran vous permet de générer des planches de cartes de visite ou d'étiquettes d'adresses pour chaque salarié ou pour un salarié en particulier.
 DocForAllEmployeesCards=Génération de cartes pour tous les salariés
@@ -178,13 +174,13 @@ EmployeesByNature=salariés par nature
 
 # Contract
 ContractTitle=Contrat de travail
+Contract=Contrat
 MenuListContract=Liste des contrats
 ListContract=Liste des contrats de travail
 MenuAddContract=Ajouter un contrat
 AddContract=Ajouter un contrat de travail
 DeleteContract=Supprimer le contrat de travail
 ConfirmDelete=Confirmer la suppression de ce contrat de travail ?
-EmContractCard=Fiche contrat
 
 Typecontract=Type de contrat
 CDI=Contrat à durée indéterminée
@@ -202,3 +198,6 @@ SendContract=Valider le contrat
 ErrorCantDeleteContract=Erreur, vous n'avez pas le droit de supprimer ce contrat de travail.
 NoDateStart=Pas de date de début du contrat renseigné
 NoUser=Pas de salarié renseigné
+
+# Agenda
+ActionsOnEmployee=Événements vis à vis de ce salarié

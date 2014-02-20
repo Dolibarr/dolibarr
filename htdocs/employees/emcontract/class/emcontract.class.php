@@ -86,7 +86,7 @@ class Emcontract extends CommonObject
         $now=dol_now();
 
         // Check parameters
-        if (empty($this->fk_user) || ! is_numeric($this->fk_user) || $this->fk_user < 0) { $this->error="ErrorBadParameter"; return -1; }
+        if (empty($this->fk_employee) || ! is_numeric($this->fk_employee) || $this->fk_employee < 0) { $this->error="ErrorBadParameter"; return -1; }
         
         // Insert request
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."emcontract(";
@@ -243,12 +243,12 @@ class Emcontract extends CommonObject
         $sql.= " em.date_start_contract,";
         $sql.= " em.date_end_contract,";
         
-		    $sql.= " uu.lastname as user_lastname,";
-        $sql.= " uu.firstname as user_firstname";
+		    $sql.= " e.lastname as lastname,";
+        $sql.= " e.firstname as firstname";
 
-        $sql.= " FROM ".MAIN_DB_PREFIX."emcontract as em, ".MAIN_DB_PREFIX."user as uu";
-    		$sql.= " WHERE em.fk_user = uu.rowid"; // Hack pour la recherche sur le tableau
-        $sql.= " AND em.fk_user = '".$user_id."'";
+        $sql.= " FROM ".MAIN_DB_PREFIX."emcontract as em, ".MAIN_DB_PREFIX."employee as e";
+    		$sql.= " WHERE em.fk_employee = e.rowid"; // Hack pour la recherche sur le tableau
+        $sql.= " AND e.rowid = '".$user_id."'";
 
         // Filtre de séléction
         if(!empty($filter)) {
@@ -293,8 +293,8 @@ class Emcontract extends CommonObject
                 $tab_result[$i]['date_start_contract'] = $this->db->jdate($obj->date_start_contract);
                 $tab_result[$i]['date_end_contract'] = $this->db->jdate($obj->date_end_contract);
 
-                $tab_result[$i]['user_firstname'] = $obj->user_firstname;
-                $tab_result[$i]['user_lastname'] = $obj->user_lastname;
+                $tab_result[$i]['firstname'] = $obj->firstname;
+                $tab_result[$i]['lastname'] = $obj->lastname;
 
                 $i++;
             }
@@ -337,11 +337,11 @@ class Emcontract extends CommonObject
         $sql.= " em.date_start_contract,";
         $sql.= " em.date_end_contract,";
 
-        $sql.= " uu.lastname as user_lastname,";
-        $sql.= " uu.firstname as user_firstname";
+        $sql.= " e.lastname as lastname,";
+        $sql.= " e.firstname as firstname";
 
-        $sql.= " FROM ".MAIN_DB_PREFIX."emcontract as em, ".MAIN_DB_PREFIX."user as uu";
-        $sql.= " WHERE em.fk_user = uu.rowid";
+        $sql.= " FROM ".MAIN_DB_PREFIX."emcontract as em, ".MAIN_DB_PREFIX."employee as e";
+        $sql.= " WHERE em.fk_user = e.rowid";
 
         // Filtrage de séléction
         if(!empty($filter)) {
@@ -386,8 +386,8 @@ class Emcontract extends CommonObject
                 $tab_result[$i]['date_start_contract'] = $this->db->jdate($obj->date_start_contract);
                 $tab_result[$i]['date_end_contract'] = $this->db->jdate($obj->date_end_contract);
                 
-                $tab_result[$i]['user_firstname'] = $obj->user_firstname;
-                $tab_result[$i]['user_lastname'] = $obj->user_lastname;
+                $tab_result[$i]['firstname'] = $obj->firstname;
+                $tab_result[$i]['lastname'] = $obj->lastname;
 
                 $i++;
             }
@@ -567,10 +567,8 @@ class Emcontract extends CommonObject
 
     	$result='';
 
-    	$lien = '<a href="'.DOL_URL_ROOT.'/employee/contract/fiche.php?id='.$this->id.'">';
+    	$lien = '<a href="'.DOL_URL_ROOT.'/employees/emcontract/fiche.php?id='.$this->id.'">';
     	$lienfin='</a>';
-
-    	$picto='emcontract@emcontract';
 
     	$label=$langs->trans("Show").': '.$this->ref;
 

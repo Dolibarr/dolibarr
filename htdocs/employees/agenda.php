@@ -123,8 +123,6 @@ if ($object->id > 0)
 
     print '</div>';
 
-    print '<br>';
-
     print load_fiche_titre($langs->trans("ActionsOnEmployee"),'','');
 
     // List of todo actions

@@ -28,7 +28,6 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/employees/class/employee.class.php';
 require_once DOL_DOCUMENT_ROOT.'/employees/class/employee_type.class.php';
-require_once DOL_DOCUMENT_ROOT.'/employees/class/cotisation.class.php';
 
 $langs->load("companies");
 $langs->load("employees");
@@ -45,7 +44,6 @@ llxHeader('',$langs->trans("Employees"),'EN:Module_Employees|FR:Module_Salariés
 
 $staticemployee=new Employee($db);
 $statictype=new EmployeeType($db);
-$subscriptionstatic=new Cotisation($db);
 
 print_fiche_titre($langs->trans("EmployeesArea"));
 
@@ -131,7 +129,7 @@ print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="search">';
 print '<table class="noborder nohover" width="100%">';
 print '<tr class="liste_titre">';
-print '<td colspan="3">'.$langs->trans("SearchAEmployee").'</td>';
+print '<td colspan="3">'.$langs->trans("SearchAnEmployee").'</td>';
 print "</tr>\n";
 $var=false;
 print "<tr ".$bc[$var].">";
