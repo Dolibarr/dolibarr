@@ -94,36 +94,25 @@ if ($catid) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON cp.f
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as ppf ON p.rowid = ppf.fk_product";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON ppf.fk_soc = s.rowid";
 $sql.= " WHERE p.entity IN (".getEntity('product', 1).")";
-if (GETPOST('mode', 'alpha') == 'search')
-{
-	$sql .= natural_search(array('p.ref', 'p.label'), GETPOST('mode', 'alpha'));
-}
-else
-{
-	if (GETPOST('type'))
-	{
-		$sql .= " AND p.fk_product_type = " . GETPOST('type','int');
-	}
-	if ($sref)
-	{
-		$sql .= natural_search('p.ref', $sref);
-	}
-	if ($sRefSupplier)
-	{
-		$sql .= natural_search('ppf.ref_fourn', $sRefSupplier);
-	}
-	if ($snom)
-	{
-		$sql .= natural_search('p.label', $snom);
-	}
-	if($catid)
-	{
-		$sql .= " AND cp.fk_categorie = ".$catid;
-	}
-}
 if ($sRefSupplier)
 {
 	$sql .= natural_search('ppf.ref_fourn', $sRefSupplier);
+}
+if (GETPOST('type'))
+{
+	$sql .= " AND p.fk_product_type = " . GETPOST('type','int');
+}
+if ($sref)
+{
+	$sql .= natural_search('p.ref', $sref);
+}
+if ($snom)
+{
+	$sql .= natural_search('p.label', $snom);
+}
+if($catid)
+{
+	$sql .= " AND cp.fk_categorie = ".$catid;
 }
 if ($fourn_id > 0)
 {
@@ -132,9 +121,7 @@ if ($fourn_id > 0)
 $sql .= " ORDER BY ".$sortfield." ".$sortorder;
 $sql .= $db->plimit($limit + 1, $offset);
 
-
-dol_syslog("fourn/product/liste: sql=".$sql);
-
+dol_syslog("fourn/product/liste.php: sql=".$sql);
 $resql = $db->query($sql);
 if ($resql)
 {
@@ -142,10 +129,10 @@ if ($resql)
 
 	$i = 0;
 
-	if ($num == 1 && ( isset($_POST["sall"]) || $snom || $sref ) )
+	if ($num == 1 && (GETPOST("mode") == 'search'))
 	{
 		$objp = $db->fetch_object($resql);
-		header("Location: fiche.php?id=".$objp->rowid);
+		header("Location: ".DOL_URL_ROOT."/product/fiche.php?id=".$objp->rowid);
 		exit;
 	}
 
@@ -155,8 +142,8 @@ if ($resql)
 	llxHeader("","",$texte);
 
 
-	$param="&tobuy=$tobuy&sref=$sref&snom=$snom&fourn_id=$fourn_id".(isset($type)?"&amp;type=$type":"");
-	print_barre_liste($texte, $page, "liste.php", $param, $sortfield, $sortorder,'',$num);
+	$param="&tobuy=".$tobuy."&sref=".$sref."&snom=".$snom."&fourn_id=".$fourn_id.(isset($type)?"&amp;type=".$type:"").(empty($sRefSupplier)?"":"&amp;srefsupplier=".$sRefSupplier);
+	print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder,'',$num);
 
 
 	if (isset($catid))
@@ -168,27 +155,27 @@ if ($resql)
 		print "</div><br>";
 	}
 
-
-	print '<table class="liste" width="100%">';
-
-	// Lignes des titres
-	print "<tr class=\"liste_titre\">";
-	print_liste_field_titre($langs->trans("Ref"),"liste.php", "p.ref",$param,"","",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("RefSupplierShort"),"liste.php", "ppf.ref_fourn",$param,"","",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Label"),"liste.php", "p.label",$param,"","",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Supplier"),"liste.php", "ppf.fk_soc",$param,"","",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("BuyingPrice"),"liste.php", "ppf.price",$param,"",'align="right"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("QtyMin"),"liste.php", "ppf.quantity",$param,"",'align="right"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("UnitPrice"),"liste.php", "ppf.unitprice",$param,"",'align="right"',$sortfield,$sortorder);
-	print "</tr>\n";
-
-	// Lignes des champs de filtre
-	print '<form action="liste.php" method="post">';
+	print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	if ($fourn_id > 0) print '<input type="hidden" name="fourn_id" value="'.$fourn_id.'">';
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 	print '<input type="hidden" name="type" value="'.$type.'">';
+
+	print '<table class="liste" width="100%">';
+
+	// Lignes des titres
+	print "<tr class=\"liste_titre\">";
+	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"], "p.ref",$param,"","",$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("RefSupplierShort"),$_SERVER["PHP_SELF"], "ppf.ref_fourn",$param,"","",$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Label"),$_SERVER["PHP_SELF"], "p.label",$param,"","",$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Supplier"),$_SERVER["PHP_SELF"], "ppf.fk_soc",$param,"","",$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("BuyingPrice"),$_SERVER["PHP_SELF"], "ppf.price",$param,"",'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("QtyMin"),$_SERVER["PHP_SELF"], "ppf.quantity",$param,"",'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("UnitPrice"),$_SERVER["PHP_SELF"], "ppf.unitprice",$param,"",'align="right"',$sortfield,$sortorder);
+	print "</tr>\n";
+
+	// Lignes des champs de filtre
 	print '<tr class="liste_titre">';
 	print '<td class="liste_titre">';
 	print '<input class="flat" type="text" name="sref" value="'.$sref.'" size="12">';
@@ -205,7 +192,6 @@ if ($resql)
 	print '<input type="image" class="liste_titre" value="button_removefilter" name="button_removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
 	print '</td>';
 	print '</tr>';
-	print '</form>';
 
 	$oldid = '';
 	$var=True;
@@ -245,7 +231,7 @@ if ($resql)
 
 	print "</table>";
 
-
+	print '</form>';
 }
 else
 {

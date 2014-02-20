@@ -2144,7 +2144,7 @@ abstract class CommonObject
 		$error=0;
 
 		if (! empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) return 0;	// For avoid conflicts if trigger used
-		
+
         if (! empty($this->array_options))
         {
             // Check parameters
@@ -2236,13 +2236,14 @@ abstract class CommonObject
    /**
      * Function to show lines of extrafields with output datas
      *
-     * @param	object	$extrafields	extrafield Object
+     * @param	object	$extrafields	Extrafield Object
      * @param	string	$mode			Show output (view) or input (edit) for extrafield
-	 * @param	array	$params			optionnal parameters
+	 * @param	array	$params			Optionnal parameters
+	 * @param	string	$keyprefix		Prefix string to add into name and id of field (can be used to avoid duplicate names)
      *
      * @return string
      */
-    function showOptionals($extrafields,$mode='view',$params=0)
+    function showOptionals($extrafields, $mode='view', $params=0, $keyprefix='')
     {
 		global $_POST;
 
@@ -2303,14 +2304,14 @@ abstract class CommonObject
 						$label = '<span class="fieldrequired">'.$label.'</span>';
 
 					$out .= '<td>'.$label.'</td>';
-					$out .='<td colspan="'.$colspan.'">';
+					$out .='<td'.($colspan?' colspan="'.$colspan.'"':'').'>';
 
 					switch($mode) {
 					case "view":
 						$out .= $extrafields->showOutputField($key,$value);
 						break;
 					case "edit":
-						$out .= $extrafields->showInputField($key,$value);
+						$out .= $extrafields->showInputField($key,$value,'',$keyprefix);
 						break;
 					}
 
@@ -2862,16 +2863,21 @@ abstract class CommonObject
 				$text=$product_static->getNomUrl(1);
 
 				// Define output language (TODO Does this works ?)
-				if (! empty($conf->global->MAIN_MULTILANGS) && ! empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE))
+				if (! empty($conf->global->MAIN_MULTILANGS))
 				{
-					$this->fetch_thirdparty();
+					if (! is_object($this->client))
+					{
+						// TODO Remove this
+						$this->fetch_thirdparty();	// The fetch_thirdparty should be done before calling $object->printObjectLines, not into function called for each line
+					}
+
 					$prod = new Product($this->db);
 					$prod->fetch($line->fk_product);
 
 					$outputlangs = $langs;
 					$newlang='';
 					if (empty($newlang) && GETPOST('lang_id')) $newlang=GETPOST('lang_id');
-					if (empty($newlang)) $newlang=$this->client->default_lang;
+					if (! empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE) && empty($newlang)) $newlang=$this->client->default_lang;		// For language to language of customer
 					if (! empty($newlang))
 					{
 						$outputlangs = new Translate("",$conf);

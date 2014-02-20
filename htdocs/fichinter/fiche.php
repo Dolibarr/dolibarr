@@ -1322,9 +1322,24 @@ else if ($id > 0 || ! empty($ref))
 		include DOL_DOCUMENT_ROOT.'/core/tpl/bloc_showhide.tpl.php';
 	}
 
+
+
+	print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" name="addinter" method="post">';
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="id" value="'.$object->id.'">';
+	if ($action == 'editline')
+	{
+		print '<input type="hidden" name="action" value="updateline">';
+		print '<input type="hidden" name="line_id" value="'.GETPOST('line_id','int').'">';
+	}
+	else
+	{
+		print '<input type="hidden" name="action" value="addline">';
+	}
+
 	/*
 	 * Lignes d'intervention
-	*/
+	 */
 	$sql = 'SELECT ft.rowid, ft.description, ft.fk_fichinter, ft.duree, ft.rang,';
 	$sql.= ' ft.date as date_intervention';
 	$sql.= ' FROM '.MAIN_DB_PREFIX.'fichinterdet as ft';
@@ -1412,11 +1427,6 @@ else if ($id > 0 || ! empty($ref))
 			// Ligne en mode update
 			if ($object->statut == 0 && $action == 'editline' && $user->rights->ficheinter->creer && GETPOST('line_id','int') == $objp->rowid)
 			{
-				print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'#'.$objp->rowid.'" method="post">';
-				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-				print '<input type="hidden" name="action" value="updateline">';
-				print '<input type="hidden" name="id" value="'.$object->id.'">';
-				print '<input type="hidden" name="line_id" value="'.GETPOST('line_id','int').'">';
 				print '<tr '.$bc[$var].'>';
 				print '<td>';
 				print '<a name="'.$objp->rowid.'"></a>'; // ancre pour retourner sur la ligne
@@ -1440,8 +1450,6 @@ else if ($id > 0 || ! empty($ref))
 				print '<td align="center" colspan="5" valign="center"><input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
 				print '<br><input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></td>';
 				print '</tr>' . "\n";
-
-				print "</form>\n";
 			}
 
 			$i++;
@@ -1465,12 +1473,6 @@ else if ($id > 0 || ! empty($ref))
 
 			print '<td colspan="4">&nbsp;</td>';
 			print "</tr>\n";
-
-			// Ajout ligne d'intervention
-			print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'#add" name="addinter" method="post">';
-			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-			print '<input type="hidden" name="id" value="'.$object->id.'">';
-			print '<input type="hidden" name="action" value="addline">';
 
 			$var=false;
 
@@ -1499,8 +1501,6 @@ else if ($id > 0 || ! empty($ref))
 			print '<td align="center" valign="middle" colspan="4"><input type="submit" class="button" value="'.$langs->trans('Add').'" name="addline"></td>';
 			print '</tr>';
 
-			print '</form>';
-
 			if (! $num) print '</table>';
 		}
 
@@ -1510,6 +1510,8 @@ else if ($id > 0 || ! empty($ref))
 	{
 		dol_print_error($db);
 	}
+
+	print '</form>'."\n";
 
 	print '</div>';
 	print "\n";

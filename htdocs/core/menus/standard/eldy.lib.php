@@ -1090,7 +1090,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 				$newmenu->add("/holiday/fiche.php?&action=request", $langs->trans("MenuAddCP"), 1,$user->rights->holiday->write);
 				$newmenu->add("/holiday/define_holiday.php?&action=request", $langs->trans("MenuConfCP"), 1, $user->rights->holiday->define_holiday);
 				$newmenu->add("/holiday/view_log.php?&action=request", $langs->trans("MenuLogCP"), 1, $user->rights->holiday->view_log);
-				$newmenu->add("/holiday/month_report.php?&action=request", $langs->trans("MenuReportMonth"), 1, $user->rights->holiday->view_log);
+				$newmenu->add("/holiday/month_report.php?&action=request", $langs->trans("MenuReportMonth"), 1, $user->rights->holiday->month_report);
 
 			}
 		}

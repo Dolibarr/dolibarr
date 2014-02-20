@@ -4496,26 +4496,23 @@ if (! function_exists('getmypid'))
  * Natural search
  *
  * @param 	mixed 	$fields 	String or array of strings filled with the fields names in the SQL query
- * @param 	string 	$value 		The value to look for
+ * @param 	string 	$value 		The value to look for (example: "keyword1 keyword2")
  * @return 	string 	$res 		The statement to append to the SQL query
  */
 function natural_search($fields, $value)
 {
     global $db;
     $crits = explode(' ', $value);
-    $res = "";
-    if (! is_array($fields)) {
-        $fields = array($fields);
-    }
+    $res = '';
+    if (! is_array($fields)) $fields = array($fields);
+
     $end = count($fields);
     $end2 = count($crits);
     $j = 0;
     foreach ($crits as $crit) {
         $i = 0;
         foreach ($fields as $field) {
-            if ( $i > 0 && $i < $end){
-                $res .= " OR ";
-            }
+            if ( $i > 0 && $i < $end) $res .= " OR ";
             $res .= $field . " LIKE '%" . $db->escape(trim($crit)) . "%'";
             $i++;
         }

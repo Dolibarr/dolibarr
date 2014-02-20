@@ -1826,7 +1826,7 @@ else
         else
 		{
         	$langs->load("mails");
-       		print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NoEmail")).'">'.$langs->trans('SendMail').'</a></div>';
+       		print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NoEMail")).'">'.$langs->trans('SendMail').'</a></div>';
         }
 
         if ($user->rights->societe->creer)
@@ -1851,85 +1851,85 @@ else
 
 		if ($action == 'presend')
 		{
-        		/*
-				 * Affiche formulaire mail
-				 */
+			/*
+			 * Affiche formulaire mail
+			*/
 
-				// By default if $action=='presend'
-				$titreform='SendMail';
-				$topicmail='';
-				$action='send';
-				$modelmail='thirdparty';
+			// By default if $action=='presend'
+			$titreform='SendMail';
+			$topicmail='';
+			$action='send';
+			$modelmail='thirdparty';
 
-				print '<br>';
-				print_titre($langs->trans($titreform));
+			print '<br>';
+			print_titre($langs->trans($titreform));
 
-				// Cree l'objet formulaire mail
-				include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
-				$formmail = new FormMail($db);
-				$formmail->fromtype = 'user';
-				$formmail->fromid   = $user->id;
-				$formmail->fromname = $user->getFullName($langs);
-				$formmail->frommail = $user->email;
-				$formmail->withfrom=1;
-				$formmail->withtopic=1;
-				$liste=array();
-				foreach ($object->thirdparty_and_contact_email_array(1) as $key=>$value)	$liste[$key]=$value;
-				$formmail->withto=GETPOST('sendto')?GETPOST('sendto'):$liste;
-				$formmail->withtofree=0;
-				$formmail->withtocc=$liste;
-				$formmail->withtoccc=$conf->global->MAIN_EMAIL_USECCC;
-				$formmail->withfile=2;
-				$formmail->withbody=1;
-				$formmail->withdeliveryreceipt=1;
-				$formmail->withcancel=1;
-				// Tableau des substitutions
-				$formmail->substit['__SIGNATURE__']=$user->signature;
-				$formmail->substit['__PERSONALIZED__']='';
-				$formmail->substit['__CONTACTCIVNAME__']='';
+			// Cree l'objet formulaire mail
+			include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+			$formmail = new FormMail($db);
+			$formmail->fromtype = 'user';
+			$formmail->fromid   = $user->id;
+			$formmail->fromname = $user->getFullName($langs);
+			$formmail->frommail = $user->email;
+			$formmail->withfrom=1;
+			$formmail->withtopic=1;
+			$liste=array();
+			foreach ($object->thirdparty_and_contact_email_array(1) as $key=>$value) $liste[$key]=$value;
+			$formmail->withto=GETPOST('sendto')?GETPOST('sendto'):$liste;
+			$formmail->withtofree=0;
+			$formmail->withtocc=$liste;
+			$formmail->withtoccc=$conf->global->MAIN_EMAIL_USECCC;
+			$formmail->withfile=2;
+			$formmail->withbody=1;
+			$formmail->withdeliveryreceipt=1;
+			$formmail->withcancel=1;
+			// Tableau des substitutions
+			$formmail->substit['__SIGNATURE__']=$user->signature;
+			$formmail->substit['__PERSONALIZED__']='';
+			$formmail->substit['__CONTACTCIVNAME__']='';
 
-				//Find the good contact adress
-				/*
-				$custcontact='';
-				$contactarr=array();
-				$contactarr=$object->liste_contact(-1,'external');
+			//Find the good contact adress
+			/*
+			$custcontact='';
+			$contactarr=array();
+			$contactarr=$object->liste_contact(-1,'external');
 
-				if (is_array($contactarr) && count($contactarr)>0)
-				{
-					foreach($contactarr as $contact)
-					{
-						if ($contact['libelle']==$langs->trans('TypeContact_facture_external_BILLING')) {
+			if (is_array($contactarr) && count($contactarr)>0)
+			{
+			foreach($contactarr as $contact)
+			{
+			if ($contact['libelle']==$langs->trans('TypeContact_facture_external_BILLING')) {
 
-							require_once DOL_DOCUMENT_ROOT . '/contact/class/contact.class.php';
+			require_once DOL_DOCUMENT_ROOT . '/contact/class/contact.class.php';
 
-							$contactstatic=new Contact($db);
-							$contactstatic->fetch($contact['id']);
-							$custcontact=$contactstatic->getFullName($langs,1);
-						}
-					}
+			$contactstatic=new Contact($db);
+			$contactstatic->fetch($contact['id']);
+			$custcontact=$contactstatic->getFullName($langs,1);
+			}
+			}
 
-					if (!empty($custcontact)) {
-						$formmail->substit['__CONTACTCIVNAME__']=$custcontact;
-					}
-				}*/
+			if (!empty($custcontact)) {
+			$formmail->substit['__CONTACTCIVNAME__']=$custcontact;
+			}
+			}*/
 
 
-				// Tableau des parametres complementaires du post
-				$formmail->param['action']=$action;
-				$formmail->param['models']=$modelmail;
-				$formmail->param['socid']=$object->id;
-				$formmail->param['returnurl']=$_SERVER["PHP_SELF"].'?socid='.$object->id;
+			// Tableau des parametres complementaires du post
+			$formmail->param['action']=$action;
+			$formmail->param['models']=$modelmail;
+			$formmail->param['socid']=$object->id;
+			$formmail->param['returnurl']=$_SERVER["PHP_SELF"].'?socid='.$object->id;
 
-				// Init list of files
-				if (GETPOST("mode")=='init')
-				{
-					$formmail->clear_attached_files();
-					$formmail->add_attached_files($file,basename($file),dol_mimetype($file));
-				}
+			// Init list of files
+			if (GETPOST("mode")=='init')
+			{
+				$formmail->clear_attached_files();
+				$formmail->add_attached_files($file,basename($file),dol_mimetype($file));
+			}
 
-				$formmail->show_form();
+			$formmail->show_form();
 
-				print '<br>';
+			print '<br>';
 		}
 		else
 		{

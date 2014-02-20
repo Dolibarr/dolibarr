@@ -56,9 +56,9 @@ $pagenext = $page + 1;
 $startdate=$enddate='';
 
 if (!empty($_POST['startdatemonth']))
-  $startdate  = date('Y-m-d', dol_mktime(12, 0, 0, $_POST['startdatemonth'],  $_POST['startdateday'],  $_POST['startdateyear']));
+  $startdate  = dol_mktime(12, 0, 0, $_POST['startdatemonth'],  $_POST['startdateday'],  $_POST['startdateyear']);
 if (!empty($_POST['enddatemonth']))
-  $enddate  = date('Y-m-d', dol_mktime(12, 0, 0, $_POST['enddatemonth'],  $_POST['enddateday'],  $_POST['enddateyear']));
+  $enddate  = dol_mktime(12, 0, 0, $_POST['enddatemonth'],  $_POST['enddateday'],  $_POST['enddateyear']);
 
 /*
  * View
@@ -90,16 +90,16 @@ print $form->select_dolusers($agentid,'agentid',1);
 print '</td></tr>';
 
 // Start date
-print '<td>'.$langs->trans('StartDate').'</td>';
+print '<td>'.$langs->trans('StartDate').' ('.$langs->trans("DateValidation").')</td>';
 print '<td width="20%">';
 $form->select_date($startdate,'startdate','','',1,"sel",1,1);
 print '</td>';
-print '<td width="20%">'.$langs->trans('EndDate').'</td>';
+print '<td width="20%">'.$langs->trans('EndDate').' ('.$langs->trans("DateValidation").')</td>';
 print '<td width="20%">';
 $form->select_date($enddate,'enddate','','',1,"sel",1,1);
 print '</td>';
 print '<td style="text-align: center;">';
-print '<input type="submit" class="button" value="'.$langs->trans('Launch').'" />';
+print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans('Launch')).'" />';
 print '</td></tr>';
 print "</table>";
 print '</form>';
@@ -131,9 +131,9 @@ if ($agentid > 0) {
 	    $sql .= " AND sc.fk_user = ".$agentid;
 }
 if (!empty($startdate))
-  $sql.= " AND f.datef >= '".$startdate."'";
+  $sql.= " AND f.datef >= '".$db->idate($startdate)."'";
 if (!empty($enddate))
-  $sql.= " AND f.datef <= '".$enddate."'";
+  $sql.= " AND f.datef <= '".$db->idate($enddate)."'";
 $sql .= " AND d.buy_price_ht IS NOT NULL";
 if (isset($conf->global->ForceBuyingPriceIfNull) && $conf->global->ForceBuyingPriceIfNull == 1) $sql .= " AND d.buy_price_ht <> 0";
 $sql.= " GROUP BY s.rowid, s.nom, s.code_client, s.client, u.rowid, u.login, u.lastname, u.firstname";
