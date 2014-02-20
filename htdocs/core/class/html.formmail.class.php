@@ -76,7 +76,7 @@ class FormMail
      *  @param	DoliDB	$db      Database handler
      */
     function __construct($db)
-    {    	
+    {
         $this->db = $db;
 
         $this->withform=1;
@@ -503,39 +503,47 @@ class FormMail
         	{
         		$out.= '<tr>';
         		$out.= '<td width="180">'.$langs->trans("MailFile").'</td>';
+
         		$out.= '<td>';
-        		// TODO Trick to have param removedfile containing nb of image to delete. But this does not works without javascript
-        		$out.= '<input type="hidden" class="removedfilehidden" name="removedfile" value="">'."\n";
-        		$out.= '<script type="text/javascript" language="javascript">';
-        		$out.= 'jQuery(document).ready(function () {';
-        		$out.= '    jQuery(".removedfile").click(function() {';
-        		$out.= '        jQuery(".removedfilehidden").val(jQuery(this).val());';
-        		$out.= '    });';
-        		$out.= '})';
-        		$out.= '</script>'."\n";
-        		if (count($listofpaths))
+        		if (is_numeric($this->withfile))
         		{
-        			foreach($listofpaths as $key => $val)
-        			{
-        				$out.= '<div id="attachfile_'.$key.'">';
-        				$out.= img_mime($listofnames[$key]).' '.$listofnames[$key];
-        				if (! $this->withfilereadonly)
-        				{
-        					$out.= ' <input type="image" style="border: 0px;" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/delete.png" value="'.($key+1).'" class="removedfile" id="removedfile_'.$key.'" name="removedfile_'.$key.'" />';
-        					//$out.= ' <a href="'.$_SERVER["PHP_SELF"].'?removedfile='.($key+1).' id="removedfile_'.$key.'">'.img_delete($langs->trans("Delete").'</a>';
-        				}
-        				$out.= '<br></div>';
-        			}
+	        		// TODO Trick to have param removedfile containing nb of image to delete. But this does not works without javascript
+	        		$out.= '<input type="hidden" class="removedfilehidden" name="removedfile" value="">'."\n";
+	        		$out.= '<script type="text/javascript" language="javascript">';
+	        		$out.= 'jQuery(document).ready(function () {';
+	        		$out.= '    jQuery(".removedfile").click(function() {';
+	        		$out.= '        jQuery(".removedfilehidden").val(jQuery(this).val());';
+	        		$out.= '    });';
+	        		$out.= '})';
+	        		$out.= '</script>'."\n";
+	        		if (count($listofpaths))
+	        		{
+	        			foreach($listofpaths as $key => $val)
+	        			{
+	        				$out.= '<div id="attachfile_'.$key.'">';
+	        				$out.= img_mime($listofnames[$key]).' '.$listofnames[$key];
+	        				if (! $this->withfilereadonly)
+	        				{
+	        					$out.= ' <input type="image" style="border: 0px;" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/delete.png" value="'.($key+1).'" class="removedfile" id="removedfile_'.$key.'" name="removedfile_'.$key.'" />';
+	        					//$out.= ' <a href="'.$_SERVER["PHP_SELF"].'?removedfile='.($key+1).' id="removedfile_'.$key.'">'.img_delete($langs->trans("Delete").'</a>';
+	        				}
+	        				$out.= '<br></div>';
+	        			}
+	        		}
+	        		else
+	        		{
+	        			$out.= $langs->trans("NoAttachedFiles").'<br>';
+	        		}
+	        		if ($this->withfile == 2)	// Can add other files
+	        		{
+	        			$out.= '<input type="file" class="flat" id="addedfile" name="addedfile" value="'.$langs->trans("Upload").'" />';
+	        			$out.= ' ';
+	        			$out.= '<input type="submit" class="button" id="'.$addfileaction.'" name="'.$addfileaction.'" value="'.$langs->trans("MailingAddFile").'" />';
+	        		}
         		}
         		else
         		{
-        			$out.= $langs->trans("NoAttachedFiles").'<br>';
-        		}
-        		if ($this->withfile == 2)	// Can add other files
-        		{
-        			$out.= '<input type="file" class="flat" id="addedfile" name="addedfile" value="'.$langs->trans("Upload").'" />';
-        			$out.= ' ';
-        			$out.= '<input type="submit" class="button" id="'.$addfileaction.'" name="'.$addfileaction.'" value="'.$langs->trans("MailingAddFile").'" />';
+        			$out.=$this->withfile;
         		}
         		$out.= "</td></tr>\n";
         	}
@@ -554,7 +562,8 @@ class FormMail
         		elseif ($this->param["models"]=='invoice_supplier_send')	{ $defaultmessage=$langs->transnoentities("PredefinedMailContentSendSupplierInvoice"); }
         		elseif ($this->param["models"]=='shipping_send')			{ $defaultmessage=$langs->transnoentities("PredefinedMailContentSendShipping"); }
         		elseif ($this->param["models"]=='fichinter_send')			{ $defaultmessage=$langs->transnoentities("PredefinedMailContentSendFichInter"); }
-        		elseif (! is_numeric($this->withbody))                      { $defaultmessage=$this->withbody; }
+        	    elseif ($this->param["models"]=='thirdparty')				{ $defaultmessage=$langs->transnoentities("PredefinedMailContentThirdparty"); }
+        		elseif (! is_numeric($this->withbody))						{ $defaultmessage=$this->withbody; }
 
         		// Complete substitution array
         		if (! empty($conf->paypal->enabled) && ! empty($conf->global->PAYPAL_ADD_PAYMENT_URL))
@@ -576,14 +585,14 @@ class FormMail
         		}
 
 				$defaultmessage=str_replace('\n',"\n",$defaultmessage);
-				
+
 				// Deal with format differences between message and signature (text / HTML)
 				if(dol_textishtml($defaultmessage) && !dol_textishtml($this->substit['__SIGNATURE__'])) {
 					$this->substit['__SIGNATURE__'] = dol_nl2br($this->substit['__SIGNATURE__']);
 				} else if(!dol_textishtml($defaultmessage) && dol_textishtml($this->substit['__SIGNATURE__'])) {
 					$defaultmessage = dol_nl2br($defaultmessage);
 				}
-				
+
         		$defaultmessage=make_substitutions($defaultmessage,$this->substit);
         		if (isset($_POST["message"])) $defaultmessage=$_POST["message"];
 

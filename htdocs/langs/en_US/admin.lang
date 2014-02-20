@@ -345,8 +345,6 @@ SecurityTokenIsUnique=Use a unique securekey parameter for each URL
 EnterRefToBuildUrl=Enter reference for object %s
 GetSecuredUrl=Get calculated URL
 ButtonHideUnauthorized=Hide buttons for unauthorized actions instead of showing disabled buttons
-ProductVatMassChange=Mass VAT change
-ProductVatMassChangeDesc=This page can be used to modify a VAT rate defined on products or services from a value to another. Warning, this change is done on all database.
 OldVATRates=Old VAT rate
 NewVATRates=New VAT rate
 PriceBaseTypeToChange=Modify on prices with base reference value defined on
@@ -381,6 +379,12 @@ KeepEmptyToUseDefault=Keep empty to use default value
 DefaultLink=Default link
 ValueOverwrittenByUserSetup=Warning, this value may be overwritten by user specific setup (each user can set his own clicktodial url)
 ExternalModule=External module - Installed into directory %s
+BarcodeInitForThirdparties=Mass barcode init for thirdparties
+BarcodeInitForProductsOrServices=Mass barcode init for products or services
+CurrentlyNWithoutBarCode=Currently, you have <strong>%s</strong> records on <strong>%s</strong> %s without barcode defined.
+InitEmptyBarCode=Init the %s barcode
+NoBarcodeNumberingTemplateDefined=No numbering barcode template enabled into barcode module setup.
+NoRecordWithoutBarcodeDefined=No record with no barcode value defined.
 
 # Modules
 Module0Name=Users & groups

@@ -13,6 +13,10 @@ NewProduct=New product
 NewService=New service
 ProductCode=Product code
 ServiceCode=Service code
+ProductVatMassChange=Mass VAT change
+ProductVatMassChangeDesc=This page can be used to modify a VAT rate defined on products or services from a value to another. Warning, this change is done on all database.
+MassBarcodeInit=Mass barcode init
+MassBarcodeInitDesc=This page can be used to initialize a barcode on objects that does not have barcode defined. Check before that setup of module barcode is complete.
 ProductAccountancyBuyCode=Accountancy code (buy)
 ProductAccountancySellCode=Accountancy code (sell)
 ProductOrService=Product or Service
@@ -217,4 +221,4 @@ DefinitionOfBarCodeForThirdpartyNotComplete=Definition of type or value of bar c
 BarCodeDataForProduct=Barcode information of product %s :
 BarCodeDataForThirdparty=Barcode information of thirdparty %s :
 BarcodeStickersMask=xxx
- 
+

@@ -110,12 +110,12 @@ class MenuManager
 
     	// Modules system tools
     	// TODO Find a way to add parent menu only if child menu exists. For the moment, no other method than hard coded methods.
-    	if (! empty($conf->product->enabled) || ! empty($conf->service->enabled) || ! empty($conf->global->MAIN_MENU_ENABLE_MODULETOOLS))
+    	if (! empty($conf->product->enabled) || ! empty($conf->service->enabled) || ! empty($conf->barcode->enabled)		// TODO We should enabled module system tools entry without hardcoded test, but when at least one modules bringing such entries are on
+    		|| ! empty($conf->global->MAIN_MENU_ENABLE_MODULETOOLS))
     	{
     		if (empty($user->societe_id))
     		{
-    		    //$newmenu->add("/admin/tools/index.php?mainmenu=home&leftmenu=modulesadmintools", $langs->trans("ModulesSystemTools"), 0, 1, '', 'home', 'modulesadmintools');
-    			if ($leftmenu=="modulesadmintools" && $user->admin)
+    			if ((! empty($conf->product->enabled) || ! empty($conf->service->enabled)) && ($leftmenu=="modulesadmintools" && $user->admin))
     			{
     				$langs->load("products");
     				$array_menu_product=array(
@@ -131,9 +131,9 @@ class MenuManager
 			    			'type'=>'left',
 			    			'position'=>20
 			    	);
-			    	array_unshift($tabMenu,$array_menu_product);
-    				//$newmenu->add("/product/admin/product_tools.php?mainmenu=home&leftmenu=modulesadmintools", $langs->trans("ProductVatMassChange"), 1, $user->admin);
+			    	array_unshift($tabMenu,$array_menu_product);	// add at beginning of array
     			}
+    			// Main menu title
     			$array_menu_product=array(
 		    		'url'=>"/admin/tools/index.php?mainmenu=home&leftmenu=modulesadmintools",
 		    		'titre'=>$langs->trans("ModulesSystemTools"),
@@ -146,7 +146,7 @@ class MenuManager
 		    		'type'=>'left',
 		    		'position'=>20
 				);
-    			array_unshift($tabMenu,$array_menu_product);
+    			array_unshift($tabMenu,$array_menu_product);	// add at beginning of array
     		}
     	}
 

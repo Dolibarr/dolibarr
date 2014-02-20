@@ -947,7 +947,7 @@ else
 				$formmail->param["mailid"]=$object->id;
 				$formmail->param["returnurl"]=$_SERVER['PHP_SELF']."?id=".$object->id;
 
-				$formmail->show_form();
+				print $formmail->get_form();
 
 				print '<br>';
 			}

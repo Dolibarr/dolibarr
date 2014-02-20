@@ -132,7 +132,7 @@ if (! empty($_POST['removedfile']) || ! empty($_POST['removedfilehtml']))
 if (($action == 'send' || $action == 'sendhtml') && ! GETPOST('addfile') && ! GETPOST('addfilehtml') && ! GETPOST('removedfile') && ! GETPOST('cancel'))
 {
 	$error=0;
-	
+
 	$email_from='';
 	if (! empty($_POST["fromname"])) $email_from=$_POST["fromname"].' ';
 	if (! empty($_POST["frommail"])) $email_from.='<'.$_POST["frommail"].'>';
@@ -144,12 +144,12 @@ if (($action == 'send' || $action == 'sendhtml') && ! GETPOST('addfile') && ! GE
 	$subject    = $_POST['subject'];
 	$body       = $_POST['message'];
 	$deliveryreceipt= $_POST["deliveryreceipt"];
-	
+
 	//Check if we have to decode HTML
 	if (!empty($conf->global->FCKEDITOR_ENABLE_MAILING) && dol_textishtml(dol_html_entity_decode($body, ENT_COMPAT | ENT_HTML401))) {
 		$body=dol_html_entity_decode($body, ENT_COMPAT | ENT_HTML401);
 	}
-	
+
 	// Create form object
 	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 	$formmail = new FormMail($db);
@@ -693,7 +693,7 @@ else
 			$formmail->clear_attached_files();
 		}
 
-		$formmail->show_form(($action == 'testhtml'?'addfilehtml':'addfile'),($action == 'testhtml'?'removefilehtml':'removefile'));
+		print $formmail->get_form(($action == 'testhtml'?'addfilehtml':'addfile'),($action == 'testhtml'?'removefilehtml':'removefile'));
 
 		print '<br>';
 	}
