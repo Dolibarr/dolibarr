@@ -706,8 +706,14 @@ function getListOfProductsOrServices($authentication,$filterproduct)
 }
 
 
-//  return category infos and children
-function getProductsForCategory($authentication,$id,$lang='')
+/**
+ * getProductsForCategory
+ *
+ * @param	array		$authentication		Array of authentication information
+ * @param	array		$id					Category id
+ * @param	$lang		$lang				Force lang
+ * @return	array							Array result
+ */function getProductsForCategory($authentication,$id,$lang='')
 {
 	global $db,$conf,$langs;
 
