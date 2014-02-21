@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (C) 2013 Raphaël Doursenaud <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2013-2014 Raphaël Doursenaud <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,10 +21,12 @@
  * \brief Class file to manage Dolibarr database access
  */
 
+require_once DOL_DOCUMENT_ROOT .'/core/db/Database.interface.php';
+
 /**
  * Class to manage Dolibarr database access
  */
-abstract class DoliDB
+abstract class DoliDB implements Database
 {
     //! Database handler
     public $db;
@@ -92,6 +94,5 @@ abstract class DoliDB
 			return '';
 		}
 	}
-
 }
 
