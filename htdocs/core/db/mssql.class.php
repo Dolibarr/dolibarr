@@ -806,6 +806,23 @@ class DoliDBMssql extends DoliDB
 	}
 
 	/**
+	 *	List information of columns into a table.
+	 *
+	 *	@param	string	$table		Name of table
+	 *	@return	array				Tableau des informations des champs de la table
+	 */
+	function DDLInfoTable($table)
+	{
+
+		// FIXME: Dummy method
+		// TODO: Implement
+		// May help: https://stackoverflow.com/questions/600446/sql-server-how-do-you-return-the-column-names-from-a-table
+
+		$infotables=array();
+		return $infotables;
+	}
+
+	/**
 	 *	Create a table into database
 	 *
 	 *	@param	    string	$table 			Nom de la table
@@ -976,6 +993,24 @@ class DoliDBMssql extends DoliDB
 		else return 1;
 	}
 
+	/**
+	 * 	Create a user and privileges to connect to database (even if database does not exists yet)
+	 *
+	 *	@param	string	$dolibarr_main_db_host 		Ip serveur
+	 *	@param	string	$dolibarr_main_db_user 		Nom user a creer
+	 *	@param	string	$dolibarr_main_db_pass 		Mot de passe user a creer
+	 *	@param	string	$dolibarr_main_db_name		Database name where user must be granted
+	 *	@return	int									<0 if KO, >=0 if OK
+	 */
+	function DDLCreateUser($dolibarr_main_db_host,$dolibarr_main_db_user,$dolibarr_main_db_pass,$dolibarr_main_db_name)
+	{
+		// FIXME: Dummy method
+		// TODO: Implement
+		// May help: http://msdn.microsoft.com/fr-fr/library/ms173463.aspx
+
+		// Always fail for now
+		return -1;
+	}
 
     /**
      *	Return charset used to store data in database
@@ -1087,6 +1122,37 @@ class DoliDBMssql extends DoliDB
 	{
 
 	    return '';
+	}
+
+	/**
+	 *	Return value of server parameters
+	 *
+	 * 	@param	string	$filter		Filter list on a particular value
+	 * 	@return	string				Value for parameter
+	 */
+	function getServerParametersValues($filter='')
+	{
+		// FIXME: Dummy method
+		// TODO: Implement
+		// May help: SELECT SERVERPROPERTY
+
+		$result=array();
+		return $result;
+	}
+
+	/**
+	 *	Return value of server status
+	 *
+	 * 	@param	string	$filter		Filter list on a particular value
+	 * 	@return	string				Value for parameter
+	 */
+	function getServerStatusValues($filter='')
+	{
+		// FIXME: Dummy method
+		// TODO: Implement
+		// May help: http://www.experts-exchange.com/Database/MS-SQL-Server/Q_20971756.html
+
+		return '';
 	}
 }
 

@@ -1403,5 +1403,20 @@ class DoliDBPgsql extends DoliDB
 
 		return $result;
 	}
+
+	/**
+	 *	Return value of server status
+	 *
+	 * 	@param	string	$filter		Filter list on a particular value
+	 * 	@return	string				Value for parameter
+	 */
+	function getServerStatusValues($filter='')
+	{
+		// FIXME: Dummy method
+		// TODO: Implement
+		// May help: http://netpenthe.wordpress.com/2011/12/07/mysql-show-status-for-postgresql
+
+		return '';
+	}
 }
 ?>
