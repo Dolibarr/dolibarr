@@ -541,16 +541,17 @@ class DoliDBPgsql extends DoliDB
 	/**
 	 * 	Annulation d'une transaction et retour aux anciennes valeurs
 	 *
-	 * 	@return	    int         1 si annulation ok ou transaction non ouverte, 0 en cas d'erreur
+	 * 	@param	    string	$log	Add more log to default log line
+	 * 	@return	    int             1 si annulation ok ou transaction non ouverte, 0 en cas d'erreur
 	 */
-	function rollback()
+	function rollback($log='')
 	{
 		dol_syslog('',0,-1);
 		if ($this->transaction_opened<=1)
 		{
 			$ret=$this->query("ROLLBACK;");
 			$this->transaction_opened=0;
-			dol_syslog("ROLLBACK Transaction",LOG_DEBUG);
+			dol_syslog("ROLLBACK Transaction".($log?' '.$log:''),LOG_DEBUG);
 			return $ret;
 		}
 		else
