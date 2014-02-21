@@ -237,6 +237,9 @@ class DoliDBMssql extends DoliDB
 	 */
 	function getDriverInfo()
 	{
+		// FIXME: Dummy method
+		// TODO: Implement
+
 		return '';
 	}
 
@@ -1019,15 +1022,9 @@ class DoliDBMssql extends DoliDB
      */
     function getDefaultCharacterSetDatabase()
 	{
-		/*
-		 $resql=$this->query('SHOW VARIABLES LIKE \'character_set_database\'');
-		 if (!$resql)
-		 {
-		 return $this->forcecharset;
-		 }
-		 $liste=$this->fetch_array($resql);
-		 return $liste['Value'];
-		 */
+		// FIXME: Dummy method
+		// TODO: Implement
+
 		return '';
 	}
 
@@ -1038,25 +1035,10 @@ class DoliDBMssql extends DoliDB
 	 */
 	function getListOfCharacterSet()
 	{
-		/*
-		 $resql=$this->query('SHOW CHARSET');
-		 $liste = array();
-		 if ($resql)
-		 {
-			$i = 0;
-			while ($obj = $this->fetch_object($resql) )
-			{
-			$liste[$i]['charset'] = $obj->Charset;
-			$liste[$i]['description'] = $obj->Description;
-			$i++;
-			}
-			$this->free($resql);
-	  } else {
-	  return null;
-	  }
-	  return $liste;
-	  */
-		return ''; // attente debuggage
+		// FIXME: Dummy method
+		// TODO: Implement
+
+		return '';
 	}
 
 	/**
@@ -1082,24 +1064,10 @@ class DoliDBMssql extends DoliDB
 	 */
 	function getListOfCollation()
 	{
-		/*
-		 $resql=$this->query('SHOW COLLATION');
-		 $liste = array();
-		 if ($resql)
-			{
-			$i = 0;
-			while ($obj = $this->fetch_object($resql) )
-			{
-			$liste[$i]['collation'] = $obj->Collation;
-			$i++;
-			}
-			$this->free($resql);
-			} else {
-			return null;
-			}
-			return $liste;
-			*/
-		return ''; // attente debugage
+		// FIXME: Dummy method
+		// TODO: Implement
+
+		return '';
 	}
 
 	/**
@@ -1109,6 +1077,8 @@ class DoliDBMssql extends DoliDB
 	 */
 	function getPathOfDump()
 	{
+		// FIXME: Dummy method
+		// TODO: Implement
 
 	    return '';
 	}
@@ -1120,6 +1090,8 @@ class DoliDBMssql extends DoliDB
 	 */
 	function getPathOfRestore()
 	{
+		// FIXME: Dummy method
+		// TODO: Implement
 
 	    return '';
 	}
