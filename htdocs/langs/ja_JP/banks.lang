@@ -28,6 +28,7 @@ EndBankBalance=期末残高
 CurrentBalance=経常収支
 FutureBalance=将来のバランス
 ShowAllTimeBalance=最初からバランスを示す
+# AllTime=From start
 Reconciliation=和解
 RIB=銀行の口座番号
 IBAN=IBAN番号

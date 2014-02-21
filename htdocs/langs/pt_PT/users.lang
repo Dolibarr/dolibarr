@@ -116,5 +116,5 @@ DontDowngradeSuperAdmin=Apenas um superadmin pode desclassificar um superadmin
 HierarchicalResponsible=Responsabilidade Hierárquica
 HierarchicView=Vista Hierárquica
 UseTypeFieldToChange=Use Tipo de Campo para mudar
-# OpenIDURL=OpenID URL
-# LoginUsingOpenID=Use OpenID to login
+OpenIDURL=Endereço OpenID
+LoginUsingOpenID=Utilizar OpenID para autenticação

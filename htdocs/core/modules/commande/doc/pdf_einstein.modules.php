@@ -244,12 +244,24 @@ class pdf_einstein extends ModelePDFCommandes
 				$tab_height_newpage = 150;
 
 				// Affiche notes
-				if (! empty($object->note_public))
+				$notetoshow=empty($object->note_public)?'':$object->note_public;
+				if (! empty($conf->global->MAIN_ADD_SALE_REP_SIGNATURE_IN_NOTE))
+				{
+					// Get first sale rep
+					if (is_object($object->thirdparty))
+					{
+						$salereparray=$object->thirdparty->getSalesRepresentatives($user);
+						$salerepobj=new User($this->db);
+						$salerepobj->fetch($salereparray[0]['id']);
+						if (! empty($salerepobj->signature)) $notetoshow=dol_concatdesc($notetoshow, $salerepobj->signature);
+					}
+				}
+				if ($notetoshow)
 				{
 					$tab_top = 88;
 
 					$pdf->SetFont('','', $default_font_size - 1);
-					$pdf->writeHTMLCell(190, 3, $this->posxdesc-1, $tab_top, dol_htmlentitiesbr($object->note_public), 0, 1);
+					$pdf->writeHTMLCell(190, 3, $this->posxdesc-1, $tab_top, dol_htmlentitiesbr($notetoshow), 0, 1);
 					$nexY = $pdf->GetY();
 					$height_note=$nexY-$tab_top;
 

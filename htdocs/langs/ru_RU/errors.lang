@@ -37,6 +37,7 @@ ErrorBadParameters=Плохо параметры
 ErrorBadValueForParameter=Неверное значение %s для параметра неправильной %s
 ErrorBadImageFormat=Изображение файл не поддерживаемого формата
 ErrorBadDateFormat=%s Значение имеет неверный формат даты
+# ErrorWrongDate=Date is not correct!
 ErrorFailedToWriteInDir=Не удалось записать в каталог %s
 ErrorFoundBadEmailInFile=Found incorrect email syntax for %s lines in file (example line %s with email=Найдено неверный электронный синтаксис% с линии в файл (например, строка %s с электронной почтой= %s)
 ErrorUserCannotBeDelete=Пользователь не может быть удален. Может быть, это связано в Dolibarr образований.
@@ -63,13 +64,14 @@ ErrorSizeTooLongForVarcharType=Размер слишком долго для с�
 # ErrorBadFormatValueList=The list value cannot have more than one come : <u>%s</u>, but need at least one: llave,valores
 ErrorFieldCanNotContainSpecialCharacters=<b>Поле %s</b> не содержит специальных символов.
 ErrorNoAccountancyModuleLoaded=Нет бухгалтерского модуля активируется
-ErrorExportDuplicateProfil=Эта анкета именем уже существует на этом экспорт набора.
+# ErrorExportDuplicateProfil=This profile name already exists for this export set.
 ErrorLDAPSetupNotComplete=Dolibarr-LDAP соответствия не является полной.
 ErrorLDAPMakeManualTest=. LDIF файл был создан в директории %s. Попробуйте загрузить его вручную из командной строки, чтобы иметь больше информации об ошибках.
 ErrorCantSaveADoneUserWithZeroPercentage=Не удается сохранить действие с "Статут не началась", если поле "проделанной" также заполнены.
 ErrorRefAlreadyExists=Ссылки, используемые для создания, уже существует.
 ErrorPleaseTypeBankTransactionReportName=Введите название банка, где получение сделки (в формате ГГГГММ или ГГГГММДД)
 ErrorRecordHasChildren=Не удается удалить записи, поскольку он имеет некоторые хлеб.
+# ErrorRecordIsUsedCantDelete=Can't delete record. It is already used or included into other object.
 ErrorModuleRequireJavascript=Javascript не должна быть отключена, чтобы эта функция работает. Чтобы включить / отключить Javascript, перейдите в меню Главная-> Настройка-> Экран.
 ErrorPasswordsMustMatch=Оба набрали пароли должны совпадать друг с другом
 ErrorContactEMail=Техническая ошибка. Пожалуйста, обратитесь к администратору следующую электронную почту <b>%s</b> ан обеспечить <b>%s</b> код ошибки в ваше сообщение, или даже лучше, добавив экран копию этой страницы.
@@ -127,6 +129,8 @@ ErrorNoActivatedBarcode=Нет штрих-кодов типа активиров
 # ErrorPHPNeedModule=Error, your PHP must have module <b>%s</b> installed to use this feature.
 # ErrorOpenIDSetupNotComplete=You setup Dolibarr config file to allow OpenID authentication, but URL of OpenID service is not defined into constant %s
 # ErrorWarehouseMustDiffers=Source and target warehouses must differs
+# ErrorBadFormat=Bad format!
+# ErrorPaymentDateLowerThanInvoiceDate=Payment date (%s) cant' be before invoice date (%s) for invoice %s.
 
 # Warnings
 # WarningMandatorySetupNotComplete=Mandatory setup parameters are not yet defined

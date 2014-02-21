@@ -37,6 +37,7 @@
 # ErrorBadValueForParameter=Wrong value '%s' for parameter incorrect '%s'
 # ErrorBadImageFormat=Image file has not a supported format
 # ErrorBadDateFormat=Value '%s' has wrong date format
+# ErrorWrongDate=Date is not correct!
 # ErrorFailedToWriteInDir=Failed to write in directory %s
 # ErrorFoundBadEmailInFile=Found incorrect email syntax for %s lines in file (example line %s with email=%s)
 # ErrorUserCannotBeDelete=User can not be deleted. May be it is associated on Dolibarr entities.
@@ -63,13 +64,14 @@
 # ErrorBadFormatValueList=The list value cannot have more than one come : <u>%s</u>, but need at least one: llave,valores
 # ErrorFieldCanNotContainSpecialCharacters=Field <b>%s</b> must not contains special characters.
 # ErrorNoAccountancyModuleLoaded=No accountancy module activated
-# ErrorExportDuplicateProfil=This profil name already exists for this export set.
+# ErrorExportDuplicateProfil=This profile name already exists for this export set.
 # ErrorLDAPSetupNotComplete=Dolibarr-LDAP matching is not complete.
 # ErrorLDAPMakeManualTest=A .ldif file has been generated in directory %s. Try to load it manually from command line to have more information on errors.
 # ErrorCantSaveADoneUserWithZeroPercentage=Can't save an action with "statut not started" if field "done by" is also filled.
 # ErrorRefAlreadyExists=Ref used for creation already exists.
 # ErrorPleaseTypeBankTransactionReportName=Please type bank receipt name where transaction is reported (Format YYYYMM or YYYYMMDD)
 # ErrorRecordHasChildren=Failed to delete records since it has some childs.
+# ErrorRecordIsUsedCantDelete=Can't delete record. It is already used or included into other object.
 # ErrorModuleRequireJavascript=Javascript must not be disabled to have this feature working. To enable/disable Javascript, go to menu Home->Setup->Display.
 # ErrorPasswordsMustMatch=Both typed passwords must match each other
 # ErrorContactEMail=A technical error occured. Please, contact administrator to following email <b>%s</b> en provide the error code <b>%s</b> in your message, or even better by adding a screen copy of this page.
@@ -127,6 +129,8 @@
 # ErrorPHPNeedModule=Error, your PHP must have module <b>%s</b> installed to use this feature.
 # ErrorOpenIDSetupNotComplete=You setup Dolibarr config file to allow OpenID authentication, but URL of OpenID service is not defined into constant %s
 # ErrorWarehouseMustDiffers=Source and target warehouses must differs
+# ErrorBadFormat=Bad format!
+# ErrorPaymentDateLowerThanInvoiceDate=Payment date (%s) cant' be before invoice date (%s) for invoice %s.
 
 # Warnings
 # WarningMandatorySetupNotComplete=Mandatory setup parameters are not yet defined

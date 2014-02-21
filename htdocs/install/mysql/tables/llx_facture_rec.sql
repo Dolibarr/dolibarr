@@ -46,11 +46,11 @@ create table llx_facture_rec
   note_private       text,
   note_public        text,
 
-  usenewprice        integer,
+  usenewprice        integer DEFAULT 0,
   frequency          integer,
   unit_frequency     varchar(2) DEFAULT 'd',
-  date_when          datetime DEFAULT NULL,
-  date_last_gen      datetime DEFAULT NULL,
-  nb_gen_done        integer DEFAULT NULL,
-  nb_gen_max         integer DEFAULT NULL
+  date_when          datetime DEFAULT NULL,		-- date for next gen (when an invoice is generated, this field must be updated with next date)
+  date_last_gen      datetime DEFAULT NULL,		-- date for last gen (date with last successfull generation of invoice)
+  nb_gen_done        integer DEFAULT NULL,		-- nb of generation done (when an invoice is generated, this field must incremented)
+  nb_gen_max         integer DEFAULT NULL		-- maximum number of generation
 )ENGINE=innodb;

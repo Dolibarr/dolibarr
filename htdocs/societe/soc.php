@@ -118,7 +118,7 @@ if (empty($reshook))
             $object->particulier       = GETPOST("private");
 
             $object->name              = dolGetFirstLastname(GETPOST('firstname'),GETPOST('nom')?GETPOST('nom'):GETPOST('name'));
-            $object->civilite_id       = GETPOST('civilite_id');
+            $object->civility_id       = GETPOST('civilite_id');
             // Add non official properties
             $object->name_bis          = GETPOST('name')?GETPOST('name'):GETPOST('nom');
             $object->firstname         = GETPOST('firstname');
@@ -579,7 +579,8 @@ else
             if ($res) break;
         }
         $modCodeClient = new $module;
-        $module=$conf->global->SOCIETE_CODECLIENT_ADDON;
+        // Load object modCodeFournisseur
+        $module=(! empty($conf->global->SOCIETE_CODECLIENT_ADDON)?$conf->global->SOCIETE_CODECLIENT_ADDON:'mod_codeclient_leopard');
         if (substr($module, 0, 15) == 'mod_codeclient_' && substr($module, -3) == 'php')
         {
             $module = substr($module, 0, dol_strlen($module)-4);
@@ -788,13 +789,12 @@ else
         print '<td width="25%">'.$langs->trans('CustomerCode').'</td><td width="25%">';
         print '<table class="nobordernopadding"><tr><td>';
         $tmpcode=$object->code_client;
-        if ($modCodeClient->code_auto) $tmpcode=$modCodeClient->getNextValue($object,0);
-        print '<input type="text" name="code_client" size="16" value="'.$tmpcode.'" maxlength="15">';
+        if (empty($tmpcode) && ! empty($modCodeClient->code_auto)) $tmpcode=$modCodeClient->getNextValue($object,0);
+        print '<input type="text" name="code_client" size="16" value="'.dol_escape_htmltag($tmpcode).'" maxlength="15">';
         print '</td><td>';
         $s=$modCodeClient->getToolTip($langs,$object,0);
         print $form->textwithpicto('',$s,1);
         print '</td></tr></table>';
-
         print '</td></tr>';
 
         if (! empty($conf->fournisseur->enabled) && ! empty($user->rights->fournisseur->lire))
@@ -807,8 +807,8 @@ else
             print '<td>'.$langs->trans('SupplierCode').'</td><td>';
             print '<table class="nobordernopadding"><tr><td>';
             $tmpcode=$object->code_fournisseur;
-            if ($modCodeFournisseur->code_auto) $tmpcode=$modCodeFournisseur->getNextValue($object,1);
-            print '<input type="text" name="code_fournisseur" size="16" value="'.$tmpcode.'" maxlength="15">';
+            if (empty($tmpcode) && ! empty($modCodeFournisseur->code_auto)) $tmpcode=$modCodeFournisseur->getNextValue($object,1);
+            print '<input type="text" name="code_fournisseur" size="16" value="'.dol_escape_htmltag($tmpcode).'" maxlength="15">';
             print '</td><td>';
             $s=$modCodeFournisseur->getToolTip($langs,$object,1);
             print $form->textwithpicto('',$s,1);
@@ -843,7 +843,7 @@ else
         // Country
         print '<tr><td width="25%">'.$langs->trans('Country').'</td><td colspan="3" class="maxwidthonsmartphone">';
         print $form->select_country((GETPOST('country_id')!=''?GETPOST('country_id'):$object->country_id),'country_id');
-        if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
+        if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
         print '</td></tr>';
 
         // State
@@ -931,11 +931,11 @@ else
         // Type - Size
         print '<tr><td>'.$langs->trans("ThirdPartyType").'</td><td>'."\n";
         print $form->selectarray("typent_id", $formcompany->typent_array(0), $object->typent_id, 0, 0, 0, '', 0, 0, 0, (empty($conf->global->SOCIETE_SORT_ON_TYPEENT)?'ASC':$conf->global->SOCIETE_SORT_ON_TYPEENT));
-        if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
+        if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
         print '</td>';
         print '<td>'.$langs->trans("Staff").'</td><td>';
         print $form->selectarray("effectif_id", $formcompany->effectif_array(0), $object->effectif_id);
-        if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
+        if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
         print '</td></tr>';
 
         // Legal Form
@@ -1189,8 +1189,8 @@ else
             if ((!$object->code_client || $object->code_client == -1) && $modCodeClient->code_auto)
             {
                 $tmpcode=$object->code_client;
-                if (empty($tmpcode) && $modCodeClient->code_auto) $tmpcode=$modCodeClient->getNextValue($object,0);
-                print '<input type="text" name="code_client" size="16" value="'.$tmpcode.'" maxlength="15">';
+                if (empty($tmpcode) && ! empty($modCodeClient->code_auto)) $tmpcode=$modCodeClient->getNextValue($object,0);
+                print '<input type="text" name="code_client" size="16" value="'.dol_escape_htmltag($tmpcode).'" maxlength="15">';
             }
             else if ($object->codeclient_modifiable())
             {
@@ -1221,8 +1221,8 @@ else
                 if ((!$object->code_fournisseur || $object->code_fournisseur == -1) && $modCodeFournisseur->code_auto)
                 {
                     $tmpcode=$object->code_fournisseur;
-                    if (empty($tmpcode) && $modCodeFournisseur->code_auto) $tmpcode=$modCodeFournisseur->getNextValue($object,1);
-                    print '<input type="text" name="code_fournisseur" size="16" value="'.$tmpcode.'" maxlength="15">';
+                    if (empty($tmpcode) && ! empty($modCodeFournisseur->code_auto)) $tmpcode=$modCodeFournisseur->getNextValue($object,1);
+                    print '<input type="text" name="code_fournisseur" size="16" value="'.dol_escape_htmltag($tmpcode).'" maxlength="15">';
                 }
                 else if ($object->codefournisseur_modifiable())
                 {
@@ -1268,7 +1268,7 @@ else
             // Country
             print '<tr><td>'.$langs->trans('Country').'</td><td colspan="3">';
             print $form->select_country((GETPOST('country_id')!=''?GETPOST('country_id'):$object->country_id),'country_id');
-            if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
+            if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
             print '</td></tr>';
 
             // State
@@ -1388,11 +1388,11 @@ else
             // Type - Size
             print '<tr><td>'.$langs->trans("ThirdPartyType").'</td><td>';
             print $form->selectarray("typent_id",$formcompany->typent_array(0), $object->typent_id, 0, 0, 0, '', 0, 0, 0, (empty($conf->global->SOCIETE_SORT_ON_TYPEENT)?'ASC':$conf->global->SOCIETE_SORT_ON_TYPEENT));
-            if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
+            if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
             print '</td>';
             print '<td>'.$langs->trans("Staff").'</td><td>';
             print $form->selectarray("effectif_id",$formcompany->effectif_array(0), $object->effectif_id);
-            if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
+            if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
             print '</td></tr>';
 
             print '<tr><td>'.$langs->trans('JuridicalStatus').'</td><td colspan="3">';
@@ -1818,118 +1818,123 @@ else
          */
         print '<div class="tabsAction">'."\n";
 
-        if (! empty($object->email))
-        {
-        	$langs->load("mails");
-        	print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?socid='.$object->id.'&amp;action=presend&amp;mode=init">'.$langs->trans('SendMail').'</a></div>';
-        }
-        else
+		$parameters=array();
+		$reshook=$hookmanager->executeHooks('addMoreActionsButtons',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+		if (empty($reshook))
 		{
-        	$langs->load("mails");
-       		print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NoEmailDefined")).'">'.$langs->trans('SendMail').'</a></div>';
-        }
-
-        if ($user->rights->societe->creer)
-        {
-            print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&amp;action=edit">'.$langs->trans("Modify").'</a></div>'."\n";
-        }
-
-        if ($user->rights->societe->supprimer)
-        {
-            if ($conf->use_javascript_ajax && empty($conf->dol_use_jmobile))	// We can(t use preloaded confirm form with jmobile
-            {
-                print '<div class="inline-block divButAction"><span id="action-delete" class="butActionDelete">'.$langs->trans('Delete').'</span></div>'."\n";
-            }
-            else
+	        if (! empty($object->email))
+	        {
+	        	$langs->load("mails");
+	        	print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?socid='.$object->id.'&amp;action=presend&amp;mode=init">'.$langs->trans('SendMail').'</a></div>';
+	        }
+	        else
 			{
-                print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&amp;action=delete">'.$langs->trans('Delete').'</a></div>'."\n";
-            }
-        }
+	        	$langs->load("mails");
+	       		print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NoEMail")).'">'.$langs->trans('SendMail').'</a></div>';
+	        }
+
+	        if ($user->rights->societe->creer)
+	        {
+	            print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&amp;action=edit">'.$langs->trans("Modify").'</a></div>'."\n";
+	        }
+
+	        if ($user->rights->societe->supprimer)
+	        {
+	            if ($conf->use_javascript_ajax && empty($conf->dol_use_jmobile))	// We can't use preloaded confirm form with jmobile
+	            {
+	                print '<div class="inline-block divButAction"><span id="action-delete" class="butActionDelete">'.$langs->trans('Delete').'</span></div>'."\n";
+	            }
+	            else
+				{
+	                print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&amp;action=delete">'.$langs->trans('Delete').'</a></div>'."\n";
+	            }
+	        }
+		}
 
         print '</div>'."\n";
 
 
 		if ($action == 'presend')
 		{
-        		/*
-				 * Affiche formulaire mail
-				 */
+			/*
+			 * Affiche formulaire mail
+			*/
 
-				// By default if $action=='presend'
-				$titreform='SendMail';
-				$topicmail='';
-				$action='send';
-				$modelmail='thirdparty';
+			// By default if $action=='presend'
+			$titreform='SendMail';
+			$topicmail='';
+			$action='send';
+			$modelmail='thirdparty';
 
-				print '<br>';
-				print_titre($langs->trans($titreform));
+			print '<br>';
+			print_titre($langs->trans($titreform));
 
-				// Cree l'objet formulaire mail
-				include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
-				$formmail = new FormMail($db);
-				$formmail->fromtype = 'user';
-				$formmail->fromid   = $user->id;
-				$formmail->fromname = $user->getFullName($langs);
-				$formmail->frommail = $user->email;
-				$formmail->withfrom=1;
-				$formmail->withtopic=1;
-				$liste=array();
-				foreach ($object->thirdparty_and_contact_email_array(1) as $key=>$value)	$liste[$key]=$value;
-				$formmail->withto=GETPOST('sendto')?GETPOST('sendto'):$liste;
-				$formmail->withtofree=0;
-				$formmail->withtocc=$liste;
-				$formmail->withtoccc=$conf->global->MAIN_EMAIL_USECCC;
-				$formmail->withfile=2;
-				$formmail->withbody=1;
-				$formmail->withdeliveryreceipt=1;
-				$formmail->withcancel=1;
-				// Tableau des substitutions
-				$formmail->substit['__SIGNATURE__']=$user->signature;
-				$formmail->substit['__PERSONALIZED__']='';
-				$formmail->substit['__CONTACTCIVNAME__']='';
+			// Cree l'objet formulaire mail
+			include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+			$formmail = new FormMail($db);
+			$formmail->fromtype = 'user';
+			$formmail->fromid   = $user->id;
+			$formmail->fromname = $user->getFullName($langs);
+			$formmail->frommail = $user->email;
+			$formmail->withfrom=1;
+			$formmail->withtopic=1;
+			$liste=array();
+			foreach ($object->thirdparty_and_contact_email_array(1) as $key=>$value) $liste[$key]=$value;
+			$formmail->withto=GETPOST('sendto')?GETPOST('sendto'):$liste;
+			$formmail->withtofree=0;
+			$formmail->withtocc=$liste;
+			$formmail->withtoccc=$conf->global->MAIN_EMAIL_USECCC;
+			$formmail->withfile=2;
+			$formmail->withbody=1;
+			$formmail->withdeliveryreceipt=1;
+			$formmail->withcancel=1;
+			// Tableau des substitutions
+			$formmail->substit['__SIGNATURE__']=$user->signature;
+			$formmail->substit['__PERSONALIZED__']='';
+			$formmail->substit['__CONTACTCIVNAME__']='';
 
-				//Find the good contact adress
-				/*
-				$custcontact='';
-				$contactarr=array();
-				$contactarr=$object->liste_contact(-1,'external');
+			//Find the good contact adress
+			/*
+			$custcontact='';
+			$contactarr=array();
+			$contactarr=$object->liste_contact(-1,'external');
 
-				if (is_array($contactarr) && count($contactarr)>0)
-				{
-					foreach($contactarr as $contact)
-					{
-						if ($contact['libelle']==$langs->trans('TypeContact_facture_external_BILLING')) {
+			if (is_array($contactarr) && count($contactarr)>0)
+			{
+			foreach($contactarr as $contact)
+			{
+			if ($contact['libelle']==$langs->trans('TypeContact_facture_external_BILLING')) {
 
-							require_once DOL_DOCUMENT_ROOT . '/contact/class/contact.class.php';
+			require_once DOL_DOCUMENT_ROOT . '/contact/class/contact.class.php';
 
-							$contactstatic=new Contact($db);
-							$contactstatic->fetch($contact['id']);
-							$custcontact=$contactstatic->getFullName($langs,1);
-						}
-					}
+			$contactstatic=new Contact($db);
+			$contactstatic->fetch($contact['id']);
+			$custcontact=$contactstatic->getFullName($langs,1);
+			}
+			}
 
-					if (!empty($custcontact)) {
-						$formmail->substit['__CONTACTCIVNAME__']=$custcontact;
-					}
-				}*/
+			if (!empty($custcontact)) {
+			$formmail->substit['__CONTACTCIVNAME__']=$custcontact;
+			}
+			}*/
 
 
-				// Tableau des parametres complementaires du post
-				$formmail->param['action']=$action;
-				$formmail->param['models']=$modelmail;
-				$formmail->param['socid']=$object->id;
-				$formmail->param['returnurl']=$_SERVER["PHP_SELF"].'?socid='.$object->id;
+			// Tableau des parametres complementaires du post
+			$formmail->param['action']=$action;
+			$formmail->param['models']=$modelmail;
+			$formmail->param['socid']=$object->id;
+			$formmail->param['returnurl']=$_SERVER["PHP_SELF"].'?socid='.$object->id;
 
-				// Init list of files
-				if (GETPOST("mode")=='init')
-				{
-					$formmail->clear_attached_files();
-					$formmail->add_attached_files($file,basename($file),dol_mimetype($file));
-				}
+			// Init list of files
+			if (GETPOST("mode")=='init')
+			{
+				$formmail->clear_attached_files();
+				$formmail->add_attached_files($file,basename($file),dol_mimetype($file));
+			}
 
-				$formmail->show_form();
+			print $formmail->get_form();
 
-				print '<br>';
+			print '<br>';
 		}
 		else
 		{

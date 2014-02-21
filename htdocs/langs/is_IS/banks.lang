@@ -28,6 +28,7 @@ EndBankBalance=End jafnvægi
 CurrentBalance=Núverandi staða
 FutureBalance=Framundan jafnvægi
 ShowAllTimeBalance=Sýna jafnvægi frá byrjun
+# AllTime=From start
 Reconciliation=Sættir
 RIB=Bankareikningur Fjöldi
 IBAN=IBAN númer

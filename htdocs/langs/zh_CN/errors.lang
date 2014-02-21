@@ -37,6 +37,7 @@ ErrorBadParameters=错误的参数
 ErrorBadValueForParameter=错误值“参数不正确”%s %s'“
 ErrorBadImageFormat=图像文件有不支持的格式
 ErrorBadDateFormat=值“%s”有错误的日期格式
+# ErrorWrongDate=Date is not correct!
 ErrorFailedToWriteInDir=无法写在目录%s
 ErrorFoundBadEmailInFile=找到%S的语法不正确的电子邮件文件中的行（例如行%的电子邮件s =%s）的
 ErrorUserCannotBeDelete=用户不能被删除。也许它是相关联的Dolibarr实体。
@@ -63,13 +64,14 @@ ErrorNoValueForRadioType=请填写电台列表的值
 # ErrorBadFormatValueList=The list value cannot have more than one come : <u>%s</u>, but need at least one: llave,valores
 ErrorFieldCanNotContainSpecialCharacters=菲尔德<b>%s</b>必须不包含特殊字符。
 ErrorNoAccountancyModuleLoaded=没有一个会计模块激活
-ErrorExportDuplicateProfil=这型材名称已在该出口存在相当大。
+# ErrorExportDuplicateProfil=This profile name already exists for this export set.
 ErrorLDAPSetupNotComplete=Dolibarr - LDAP的匹配是不完整的。
 ErrorLDAPMakeManualTest=甲。LDIF文件已经生成在目录%s的尝试加载命令行手动有更多的错误信息。
 ErrorCantSaveADoneUserWithZeroPercentage=无法储存与行动“规约未启动”如果领域“做的”，也是填补。
 ErrorRefAlreadyExists=号的创作已经存在。
 ErrorPleaseTypeBankTransactionReportName=请输入银行收据的名字在交易报告（格式YYYYMM或采用YYYYMMDD）
 ErrorRecordHasChildren=删除记录失败，因为它有一些儿童。
+# ErrorRecordIsUsedCantDelete=Can't delete record. It is already used or included into other object.
 ErrorModuleRequireJavascript=不能禁用JavaScript必须有此功能的工作。要启用/禁用JavaScript，进入菜单首页->安装->“显示。
 ErrorPasswordsMustMatch=这两种类型的密码必须相互匹配
 ErrorContactEMail=一个技术性错误发生。请联系管理员，以下连接提供错误代码<b>%s</b>在您的邮件，甚至更好，加入了这个页面的屏幕拷贝的电子邮件<b>%s。</b>
@@ -127,6 +129,8 @@ ErrorDateMustBeBeforeToday=日期不能大于今天
 # ErrorPHPNeedModule=Error, your PHP must have module <b>%s</b> installed to use this feature.
 # ErrorOpenIDSetupNotComplete=You setup Dolibarr config file to allow OpenID authentication, but URL of OpenID service is not defined into constant %s
 # ErrorWarehouseMustDiffers=Source and target warehouses must differs
+# ErrorBadFormat=Bad format!
+# ErrorPaymentDateLowerThanInvoiceDate=Payment date (%s) cant' be before invoice date (%s) for invoice %s.
 
 # Warnings
 WarningMandatorySetupNotComplete=强制设置参数尚未定义

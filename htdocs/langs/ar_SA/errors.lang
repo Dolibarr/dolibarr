@@ -37,6 +37,7 @@ ErrorBadParameters=بارامترات سيئة
 ErrorBadValueForParameter=قيمة خاطئة &quot;%s 'ل' %s&quot; المعلمة غير صحيحة
 ErrorBadImageFormat=ملف الصورة لم تنسيق معتمد
 ErrorBadDateFormat='%s' قيمة له خاطئ تنسيق التاريخ
+# ErrorWrongDate=Date is not correct!
 ErrorFailedToWriteInDir=لم يكتب في دليل ٪ ق
 ErrorFoundBadEmailInFile=Found incorrect email syntax for %s lines in file (example line %s with email=العثور على بريد إلكتروني صحيح لتركيب خطوط ق ٪ في ملف (على سبيل المثال خط ٪ ق= ٪ مع البريد الإلكتروني)
 ErrorUserCannotBeDelete=المستخدم لا يمكن حذفها. قد يكون ذلك مرتبطا Dolibarr على الكيانات.
@@ -63,13 +64,14 @@ ErrorSizeTooLongForVarcharType=وقتا طويلا لنوع السلسلة (%s �
 # ErrorBadFormatValueList=The list value cannot have more than one come : <u>%s</u>, but need at least one: llave,valores
 ErrorFieldCanNotContainSpecialCharacters=ميدان <b>٪ ق</b> يجب ألا يحتوي على أحرف خاصة.
 ErrorNoAccountancyModuleLoaded=أي وحدة المحاسبة وتفعيل
-ErrorExportDuplicateProfil=هذا ملف الاسم بالفعل لتصدير هذه المجموعة.
+# ErrorExportDuplicateProfil=This profile name already exists for this export set.
 ErrorLDAPSetupNotComplete=Dolibarr - LDAP المطابقة وليس كاملا.
 ErrorLDAPMakeManualTest=ألف. ldif الملف قد ولدت في الدليل ٪ s. انها محاولة لتحميل يدويا من سطر في الحصول على مزيد من المعلومات عن الأخطاء.
 ErrorCantSaveADoneUserWithZeroPercentage=لا يمكن انقاذ عمل مع "المركز الخاص لم تبدأ" اذا الميدان "الذي قام به" كما شغلها.
 ErrorRefAlreadyExists=المرجع المستخدمة لإنشاء موجود بالفعل.
 ErrorPleaseTypeBankTransactionReportName=الرجاء كتابة اسم البنك استلام المعاملات ويقال فيها (شكل YYYYMM أو YYYYMMDD)
 ErrorRecordHasChildren=فشل حذف السجلات منذ نحو الطفل.
+# ErrorRecordIsUsedCantDelete=Can't delete record. It is already used or included into other object.
 ErrorModuleRequireJavascript=يجب عدم تعطيل جافا سكريبت لجعل هذا العمل الميزة. لتمكين / تعطيل جافا سكريبت ، انتقل إلى القائمة الرئيسية -> الإعداد -> العرض.
 ErrorPasswordsMustMatch=ويجب على كلا كلمات المرور المكتوبة تطابق بعضها البعض
 ErrorContactEMail=وقع خطأ فني. من فضلك، اتصل بمسؤول إلى البريد الإلكتروني بعد <b>%s</b> EN توفير <b>%s</b> رمز الخطأ في رسالتك، أو حتى أفضل من خلال إضافة نسخة شاشة من هذه الصفحة.
@@ -127,6 +129,8 @@ ErrorNoActivatedBarcode=لا يوجد نوع الباركود تفعيلها
 # ErrorPHPNeedModule=Error, your PHP must have module <b>%s</b> installed to use this feature.
 # ErrorOpenIDSetupNotComplete=You setup Dolibarr config file to allow OpenID authentication, but URL of OpenID service is not defined into constant %s
 # ErrorWarehouseMustDiffers=Source and target warehouses must differs
+# ErrorBadFormat=Bad format!
+# ErrorPaymentDateLowerThanInvoiceDate=Payment date (%s) cant' be before invoice date (%s) for invoice %s.
 
 # Warnings
 # WarningMandatorySetupNotComplete=Mandatory setup parameters are not yet defined

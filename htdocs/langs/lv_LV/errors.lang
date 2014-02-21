@@ -37,6 +37,7 @@ ErrorBadParameters=Slikts parametrs
 ErrorBadValueForParameter=Nepareizu vērtību &quot;%s&quot; parametru nepareizu &quot;%s&quot;
 ErrorBadImageFormat=Attēla fails ir nevis atbalstītā formātā
 ErrorBadDateFormat=Vērtība &quot;%s&quot; ir nepareizs datuma formātu
+# ErrorWrongDate=Date is not correct!
 ErrorFailedToWriteInDir=Neizdevās ierakstīt direktorijā %s
 ErrorFoundBadEmailInFile=Atrasts nepareiza e-pasta sintakse %s līnijām failā (piemērs line %s ar e-pasta = %s)
 ErrorUserCannotBeDelete=Lietotājs nevar izdzēst. Var būt tas ir saistīts ar Dolibarr vienībām.
@@ -63,13 +64,14 @@ ErrorNoValueForRadioType=Lūdzu, aizpildiet vērtību radio sarakstā
 ErrorBadFormatValueList=Saraksts vērtība nevar būt vairāk kā viens nāk: <u>%s,</u> bet ir nepieciešams vismaz viens: Llave, Valores
 ErrorFieldCanNotContainSpecialCharacters=Lauka <b>%s</b> nedrīkst satur speciālās rakstzīmes.
 ErrorNoAccountancyModuleLoaded=Nav grāmatvedības moduli aktivizēts
-ErrorExportDuplicateProfil=Šis profil nosaukums jau eksistē šim eksporta komplektu.
+# ErrorExportDuplicateProfil=This profile name already exists for this export set.
 ErrorLDAPSetupNotComplete=Dolibarr-LDAP saskaņošana nav pilnīga.
 ErrorLDAPMakeManualTest=. LDIF fails ir radīts direktorija %s. Mēģināt ielādēt manuāli no komandrindas, lai būtu vairāk informācijas par kļūdām.
 ErrorCantSaveADoneUserWithZeroPercentage=Nevar saglabāt prasību ar &quot;statut nav uzsākta&quot;, ja lauks &quot;izdarīt&quot;, ir arī piepildīta.
 ErrorRefAlreadyExists=Ref izmantot izveidot jau pastāv.
 ErrorPleaseTypeBankTransactionReportName=Lūdzu, tipa bankas čeku nosaukumu, ja darījums tiek ziņots (Format GGGGMM vai GGGGMMDD)
 ErrorRecordHasChildren=Neizdevās dzēst ierakstus, jo tas ir daži Childs.
+# ErrorRecordIsUsedCantDelete=Can't delete record. It is already used or included into other object.
 ErrorModuleRequireJavascript=Javascript nedrīkst tikt izslēgti, ka šī funkcija strādā. Lai aktivizētu / deaktivizētu Javascript, dodieties uz izvēlni Home-&gt; Setup-&gt; Display.
 ErrorPasswordsMustMatch=Abi drukāti paroles jāsakrīt otru
 ErrorContactEMail=Tehniska kļūda. Lūdzu, sazinieties ar administratoru, lai pēc e-pasta <b>%s</b> en sniegt kļūdas kods <b>%s</b> jūsu ziņu, vai pat labāk, pievienojot ekrāna kopiju šajā lapā.
@@ -127,6 +129,8 @@ ErrorPaymentModeDefinedToWithoutSetup=Maksājumu režīms tika noteikts rakstīt
 ErrorPHPNeedModule=Kļūda, jūsu PHP ir jābūt moduli <b>%s</b> uzstādītas, lai izmantotu šo funkciju.
 ErrorOpenIDSetupNotComplete=Jūs uzstādīšana Dolibarr config failu, lai ļautu OpenID autentifikācijas, bet OpenID pakalpojuma URL nav definēts spēkā salīdzināmajās %s
 ErrorWarehouseMustDiffers=Avota un mērķa noliktavas jābūt atšķiras
+# ErrorBadFormat=Bad format!
+# ErrorPaymentDateLowerThanInvoiceDate=Payment date (%s) cant' be before invoice date (%s) for invoice %s.
 
 # Warnings
 WarningMandatorySetupNotComplete=Obligātie uzstādīšanas parametri vēl nav definētas

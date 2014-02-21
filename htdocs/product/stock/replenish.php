@@ -170,13 +170,26 @@ if ($action == 'order' && isset($_POST['valid']))
  * View
  */
 
+$virtualdiffersfromphysical=0;
+if (! empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT)
+	|| ! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER)
+	) $virtualdiffersfromphysical=1;		// According to increase/decrease stock options, virtual and physical stock may differs.
+
+$usevirtualstock=-1;
+if ($virtualdiffersfromphysical)
+{
+	$usevirtualstock=($conf->global->STOCK_USE_VIRTUAL_STOCK?1:0);
+	if (GETPOST('mode')=='virtual') $usevirtualstock=1;
+	if (GETPOST('mode')=='physical') $usevirtualstock=0;
+}
+
 $title = $langs->trans('Status');
 
 $sql = 'SELECT p.rowid, p.ref, p.label, p.price,';
 $sql.= ' p.price_ttc, p.price_base_type,p.fk_product_type,';
 $sql.= ' p.tms as datem, p.duration, p.tobuy, p.seuil_stock_alerte,';
 $sql.= ' p.desiredstock,';
-$sql.= ' SUM('.$db->ifsql("s.reel IS NULL", "s.reel", "0").') as stock_physique';
+$sql.= ' SUM('.$db->ifsql("s.reel IS NULL", "0", "s.reel").') as stock_physique';
 $sql.= ' FROM ' . MAIN_DB_PREFIX . 'product as p';
 $sql.= ' LEFT JOIN ' . MAIN_DB_PREFIX . 'product_stock as s';
 $sql.= ' ON p.rowid = s.fk_product';
@@ -219,7 +232,7 @@ $sql.= ' HAVING p.desiredstock > SUM('.$db->ifsql("s.reel IS NULL", "0", "s.reel
 $sql.= ' AND p.desiredstock > 0';
 if ($salert == 'on')	// Option to see when stock is lower than alert
 {
-    $sql .= ' AND SUM('.$db->ifsql("s.reel IS NULL", "s.reel", "0").') < p.seuil_stock_alerte AND p.seuil_stock_alerte is not NULL';
+    $sql .= ' AND SUM('.$db->ifsql("s.reel IS NULL", "0", "s.reel").') < p.seuil_stock_alerte AND p.seuil_stock_alerte is not NULL';
     $alertchecked = 'checked="checked"';
 }
 $sql.= $db->order($sortfield,$sortorder);
@@ -251,7 +264,20 @@ $head[1][2] = 'replenishorders';
 
 dol_fiche_head($head, 'replenish', $langs->trans('Replenishment'), 0, 'stock');
 
-print $langs->trans("ReplenishmentStatusDesc").'<br><br>';
+print $langs->trans("ReplenishmentStatusDesc").'<br>'."\n";
+if ($usevirtualstock == 1)
+{
+	print $langs->trans("CurentSelectionMode").': ';
+	print $langs->trans("CurentlyUsingVirtualStock").' - ';
+	print '<a href="'.$_SERVER["PHP_SELF"].'?mode=physical">'.$langs->trans("UsePhysicalStock").'</a><br>';
+}
+if ($usevirtualstock == 0)
+{
+	print $langs->trans("CurentSelectionMode").': ';
+	print $langs->trans("CurentlyUsingPhysicalStock").' - ';
+	print '<a href="'.$_SERVER["PHP_SELF"].'?mode=virtual">'.$langs->trans("UseVirtualStock").'</a><br>';
+}
+print '<br>'."\n";
 
 if ($sref || $snom || $sall || $salert || GETPOST('search', 'alpha')) {
 	$filters = '&sref=' . $sref . '&snom=' . $snom;
@@ -344,14 +370,11 @@ print_liste_field_titre(
 	$sortfield,
 	$sortorder
 );
-if ($conf->global->USE_VIRTUAL_STOCK)
-{
-	$stocklabel = $langs->trans('VirtualStock');
-}
-else
-{
-	$stocklabel = $langs->trans('PhysicalStock');
-}
+
+$stocklabel = $langs->trans('Stock');
+if ($usevirtualstock == 1) $stocklabel = $langs->trans('VirtualStock');
+if ($usevirtualstock == 0) $stocklabel = $langs->trans('PhysicalStock');
+
 print_liste_field_titre(
 	$stocklabel,
 	$_SERVER["PHP_SELF"],
@@ -412,10 +435,8 @@ print '<td class="liste_titre">&nbsp;</td>'.
 	'<td class="liste_titre" align="right">&nbsp;</td>'.
 	'<td class="liste_titre">&nbsp;</td>'.
 	'<td class="liste_titre" align="right">'.
-	'<input type="image" class="liste_titre" name="button_search"'.
-	'src="' . DOL_URL_ROOT . '/theme/' . $conf->theme . '/img/search.png" alt="' . $langs->trans("Search") . '">'.
-	'<input type="image" class="liste_titre" name="button_removefilter"
-	src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/searchclear.png" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">'.
+	'<input class="liste_titre" name="button_search" type="image" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">'.
+	'<input type="image" class="liste_titre" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" name="button_removefilter" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">'.
 	'</td>'.
 	'</tr>';
 
@@ -451,9 +472,9 @@ while ($i < min($num, $limit))
 		$prod->type = $objp->fk_product_type;
 		$ordered = ordered($prod->id);
 
-		if ($conf->global->USE_VIRTUAL_STOCK)
+		if ($usevirtualstock)
 		{
-			//compute virtual stock
+			// If option to increase/decrease is not on an object validation, virtual stock may differs from physical stock.
 			$prod->fetch($prod->id);
 			$result=$prod->load_stats_commande(0, '1,2');
 			if ($result < 0) {

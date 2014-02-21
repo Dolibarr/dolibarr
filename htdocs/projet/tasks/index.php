@@ -80,7 +80,7 @@ else
 	else print $langs->trans("ProjectsPublicDesc").'<br><br>';
 }
 
-// Get list of project id allowed to user
+// Get list of project id allowed to user (in a string list separated by coma)
 $projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,$mine,1,$socid);
 
 // Get list of tasks in tasksarray and taskarrayfiltered
@@ -116,12 +116,12 @@ print '</td>';
 print '<td class="liste_titre" colspan="7">';
 print '&nbsp;';
 print '</td>';
-print '<td class="liste_titre" align="right"><input class="liste_titre" type="image" name="button_search" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'"></td>';
+print '<td class="liste_titre" align="right"><input class="liste_titre" type="image" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'"></td>';
 print "</tr>\n";
 
 // Show all lines in taskarray (recursive function to go down on tree)
 $j=0; $level=0;
-$nboftaskshown=projectLinesa($j, 0, $tasksarray, $level, true, 1, $tasksrole, $projectsListId);
+$nboftaskshown=projectLinesa($j, 0, $tasksarray, $level, true, 1, $tasksrole, $projectsListId, 0);
 print "</table>";
 
 print '</form>';

@@ -28,6 +28,7 @@ EndBankBalance=رصيد نهاية
 CurrentBalance=الرصيد الحالي
 FutureBalance=التوازن في المستقبل
 ShowAllTimeBalance=يظهر من البداية على التوازن
+# AllTime=From start
 Reconciliation=المصالحة
 RIB=شماره حساب بانکی
 IBAN=عدد إيبان

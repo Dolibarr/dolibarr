@@ -204,3 +204,17 @@ Quarter1=1ο. Τέταρτο
 Quarter2=2ο. Τέταρτο
 Quarter3=3η. Τέταρτο
 Quarter4=4ο. Τέταρτο
+BarCodePrintsheet=Εκτύπωση Bar code 
+PageToGenerateBarCodeSheets=Με αυτό το εργαλείο, μπορείτε να εκτυπώσετε αυτοκόλλητα barcode. Επιλέξτε τη μορφή της σελίδας σας για τα αυτοκόλλητα, το είδος του barcode και την αξία του barcode, στη συνέχεια, κάντε κλικ στο κουμπί <b>%s</b>.
+NumberOfStickers=Αριθμός αυτοκόλλητων για να εκτυπώσετε στη σελίδα
+PrintsheetForOneBarCode=Εκτυπώστε αρκετά αυτοκόλλητα για ένα barcode
+BuildPageToPrint=Δημιουργία σελίδας για εκτύπωση
+FillBarCodeTypeAndValueManually=Συμπληρώστε τον τύπο barcode και την αξία χειροκίνητα.
+FillBarCodeTypeAndValueFromProduct=Συμπληρώστε τον τύπο barcode και αξία από το barcode του προϊόντος.
+FillBarCodeTypeAndValueFromThirdParty=Συμπληρώστε τον τύπο barcode και αξία από το barcode του από άλλους κατασκευαστές.
+DefinitionOfBarCodeForProductNotComplete=Ορισμός του τύπου ή της αξίας του barcode δεν έχει ολοκληρωθεί για το προϊόν %s.
+DefinitionOfBarCodeForThirdpartyNotComplete=Ορισμός του τύπου ή της αξίας του barcode είναι μη πλήρης για άλλους κατασκευαστές %s.
+BarCodeDataForProduct=Πληροφορίες barcode του προϊόντος %s :
+BarCodeDataForThirdparty=Πληροφορίες Barcode από άλλους κατασκευαστές %s :
+BarcodeStickersMask=xxx
+

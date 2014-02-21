@@ -1,6 +1,5 @@
 -- ========================================================================
--- Copyright (C) 2005     Patrick Rouillon     <patrick.rouillon.net>
--- Copyright (C) 2005     Laurent Destailleur  <eldy@users.sourceforge.net>
+-- Copyright (C) 2014     Laurent Destailleur  <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -18,5 +17,5 @@
 -- ========================================================================
 
 
-ALTER TABLE llx_c_type_contact ADD UNIQUE INDEX idx_c_type_contact_uk (element, source, code);
+ALTER TABLE llx_c_type_contact ADD UNIQUE INDEX uk_c_type_contact_id (element, source, code);
 

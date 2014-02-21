@@ -583,7 +583,7 @@ if ($user->rights->adherent->creer && $action == 'confirm_valid' && $confirm == 
 	if ($result >= 0 && ! count($object->errors))
 	{
 		// Send confirmation Email (selon param du type adherent sinon generique)
-		if ($object->email && ! empty($_POST["send_mail"]))
+		if ($object->email && GETPOST("send_mail"))
 		{
 			$result=$object->send_an_email($adht->getMailOnValid(),$conf->global->ADHERENT_MAIL_VALID_SUBJECT,array(),array(),array(),"","",0,2);
 			if ($result < 0)
@@ -622,7 +622,7 @@ if ($user->rights->adherent->supprimer && $action == 'confirm_resign')
 
 		if ($result >= 0 && ! count($object->errors))
 		{
-			if ($object->email && $_POST["send_mail"])
+			if ($object->email && GETPOST("send_mail"))
 			{
 				$result=$object->send_an_email($adht->getMailOnResiliate(),$conf->global->ADHERENT_MAIL_RESIL_SUBJECT,array(),array(),array(),"","",0,-1);
 			}
@@ -834,7 +834,7 @@ else
 		$object->country_id=$object->country_id?$object->country_id:$mysoc->country_id;
 		print '<tr><td width="25%">'.$langs->trans('Country').'</td><td>';
 		print $form->select_country(GETPOST('country_id','alpha')?GETPOST('country_id','alpha'):$object->country_id,'country_id');
-		if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
+		if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
 		print '</td></tr>';
 
 		// State
@@ -1083,7 +1083,7 @@ else
 		//$object->country_id=$object->country_id?$object->country_id:$mysoc->country_id;    // In edit mode we don't force to company country if not defined
 		print '<tr><td width="25%">'.$langs->trans('Country').'</td><td>';
 		print $form->select_country(isset($_POST["country_id"])?$_POST["country_id"]:$object->country_id,'country_id');
-		if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
+		if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
 		print '</td></tr>';
 
 		// State
@@ -1272,10 +1272,10 @@ else
 			// Cree un tableau formulaire
 			$formquestion=array();
 			if ($object->email) $formquestion[]=array('type' => 'checkbox', 'name' => 'send_mail', 'label' => $label,  'value' => ($conf->global->ADHERENT_DEFAULT_SENDINFOBYMAIL?true:false));
-			if (! empty($conf->global->ADHERENT_USE_MAILMAN)) {
+			if (! empty($conf->mailman->enabled) && ! empty($conf->global->ADHERENT_USE_MAILMAN)) {
 				$formquestion[]=array('type'=>'other','label'=>$langs->transnoentitiesnoconv("SynchroMailManEnabled"),'value'=>'');
 			}
-			if (! empty($conf->global->ADHERENT_USE_SPIP))    {
+			if (! empty($conf->mailman->enabled) && ! empty($conf->global->ADHERENT_USE_SPIP))    {
 				$formquestion[]=array('type'=>'other','label'=>$langs->transnoentitiesnoconv("SynchroSpipEnabled"),'value'=>'');
 			}
 			print $form->formconfirm("fiche.php?rowid=".$rowid,$langs->trans("ValidateMember"),$langs->trans("ConfirmValidateMember"),"confirm_valid",$formquestion,1);

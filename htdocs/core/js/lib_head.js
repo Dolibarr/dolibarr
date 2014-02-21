@@ -899,6 +899,24 @@ function confirmConstantAction(action, url, code, input, box, entity, yesButton,
     });
 })( jQuery );
 
+
+/*
+ * Function to output a dialog bog for copy/paste
+ * 
+ * @param	string	text	Text to put into copy/paste area
+ * @param	string	text2	Text to put under the copy/paste area
+ */
+function copyToClipboard(text,text2) 
+{
+	text = text.replace(/<br>/g,"\n");
+	var newElem = "<textarea id=\"coords\" style=\"border: none; width: 90%; height: 120px;\">"+text+"</textarea><br><br>"+text2;
+	$("#dialog").html(newElem);
+	$("#dialog").dialog();
+	$("#coords").select();
+	return false;
+}
+
+
 /* 
  * Timer for delayed keyup function
  * 

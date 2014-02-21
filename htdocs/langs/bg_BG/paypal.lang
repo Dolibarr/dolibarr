@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - paypal
-PaypalSetup=PayPal модул за настройка
+PaypalSetup=Настройки на модул PayPal
 PaypalDesc=В този модул се предлагат страници, които да дават възможност за заплащане от клиентите на <a href="http://www.paypal.com" target="_blank">PayPal</a> . Това може да се използва за плащане или за плащане на даден обект Dolibarr (фактура, поръчка, ...)
 PaypalOrCBDoPayment=Плащане с кредитна карта или Paypal
 PaypalDoPayment=Плащане с Paypal

@@ -1,34 +1,34 @@
 <?php
 /* Copyright (C) 2003-2006	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2013	Laurent Destailleur		<eldy@users.sourceforge.net>
-* Copyright (C) 2005		Marc Barilley / Ocebo	<marc@ocebo.com>
-* Copyright (C) 2005-2013	Regis Houssin			<regis.houssin@capnetworks.com>
-* Copyright (C) 2006		Andre Cianfarani		<acianfa@free.fr>
-* Copyright (C) 2010-2013	Juanjo Menent			<jmenent@2byte.es>
-* Copyright (C) 2011		Philippe Grand			<philippe.grand@atoo-net.com>
-* Copyright (C) 2012-2013	Christophe Battarel		<christophe.battarel@altairis.fr>
-* Copyright (C) 2012		Marcos García			<marcosgdf@gmail.com>
-* Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
-*
-* This program is free software; you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation; either version 3 of the License, or
-* (at your option) any later version.
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-*  GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with this program. If not, see <http://www.gnu.org/licenses/>.
-*/
+ * Copyright (C) 2005		Marc Barilley / Ocebo	<marc@ocebo.com>
+ * Copyright (C) 2005-2013	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2006		Andre Cianfarani		<acianfa@free.fr>
+ * Copyright (C) 2010-2013	Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2011		Philippe Grand			<philippe.grand@atoo-net.com>
+ * Copyright (C) 2012-2013	Christophe Battarel		<christophe.battarel@altairis.fr>
+ * Copyright (C) 2012		Marcos García			<marcosgdf@gmail.com>
+ * Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 
 /**
  *	\file       htdocs/commande/fiche.php
-*	\ingroup    commande
-*	\brief      Page to show customer order
-*/
+ *	\ingroup    commande
+ *	\brief      Page to show customer order
+ */
 
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
@@ -93,13 +93,17 @@ if ($id > 0 || ! empty($ref))
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('ordercard'));
 
+$permissionnote=$user->rights->commande->creer;	// Used by the include of actions_setnotes.inc.php
 
-/******************************************************************************/
-/*                     Actions                                                */
-/******************************************************************************/
+
+/*
+ * Actions
+ */
 
 $parameters=array('socid'=>$socid);
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+
+include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php';	// Must be include, not includ_once
 
 // Action clone object
 if ($action == 'confirm_clone' && $confirm == 'yes' && $user->rights->commande->creer)
@@ -552,18 +556,6 @@ else if ($action == 'setremiseabsolue' && $user->rights->commande->creer)
 	$result = $object->set_remise_absolue($user, GETPOST('remise_absolue'));
 }
 
-else if ($action == 'setnote_public' && $user->rights->commande->creer)
-{
-	$result=$object->update_note(dol_html_entity_decode(GETPOST('note_public'), ENT_QUOTES),'_public');
-	if ($result < 0) dol_print_error($db,$object->error);
-}
-
-else if ($action == 'setnote_private' && $user->rights->commande->creer)
-{
-	$result=$object->update_note(dol_html_entity_decode(GETPOST('note_private'), ENT_QUOTES), '_private');
-	if ($result < 0) dol_print_error($db,$object->error);
-}
-
 // Add a new line
 else if ($action == 'addline' && $user->rights->commande->creer)
 {
@@ -599,7 +591,7 @@ else if ($action == 'addline' && $user->rights->commande->creer)
 	//Extrafields
 	$extrafieldsline = new ExtraFields($db);
 	$extralabelsline =$extrafieldsline->fetch_name_optionals_label($object->table_element_line);
-	$array_option = $extrafieldsline->getOptionalsFromPost($extralabelsline);
+	$array_option = $extrafieldsline->getOptionalsFromPost($extralabelsline,$predef);
 	//Unset extrafield
 	if (is_array($extralabelsline))
 	{
@@ -613,12 +605,12 @@ else if ($action == 'addline' && $user->rights->commande->creer)
 	if ((empty($idprod) || GETPOST('usenewaddlineform')) && ($price_ht < 0) && ($qty < 0))
 	{
 		setEventMessage($langs->trans('ErrorBothFieldCantBeNegative', $langs->transnoentitiesnoconv('UnitPriceHT'), $langs->transnoentitiesnoconv('Qty')), 'errors');
-		$error = true;
+		$error++;
 	}
 	if (empty($idprod) && GETPOST('type') < 0)
 	{
 		setEventMessage($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Type')), 'errors');
-		$error = true;
+		$error++;
 	}
 	if ((empty($idprod) || GETPOST('usenewaddlineform')) && (!($price_ht >= 0) || $price_ht == ''))	// Unit price can be 0 but not ''
 	{
@@ -628,12 +620,12 @@ else if ($action == 'addline' && $user->rights->commande->creer)
 	if ($qty == '')
 	{
 		setEventMessage($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Qty')), 'errors');
-		$error = true;
+		$error++;
 	}
 	if (empty($idprod) && empty($product_desc))
 	{
 		setEventMessage($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Description')), 'errors');
-		$error = true;
+		$error++;
 	}
 
 	if (! $error && ($qty >= 0) && (! empty($product_desc) || ! empty($idprod)))
@@ -2182,10 +2174,10 @@ else
 		{
 			$form->form_demand_reason($_SERVER['PHP_SELF'].'?id='.$object->id,$object->demand_reason_id,'none');
 		}
-		// Removed because using dictionnary is an admin feature, not a user feature. Ther is already the "star" to show info to admin users.
+		// Removed because using dictionary is an admin feature, not a user feature. Ther is already the "star" to show info to admin users.
 		// This is to avoid too heavy screens and have an uniform look and feel for all screens.
 		//print '</td><td>';
-		//print '<a href="'.DOL_URL_ROOT.'/admin/dict.php?id=22&origin=order&originid='.$object->id.'">'.$langs->trans("DictionnarySource").'</a>';
+		//print '<a href="'.DOL_URL_ROOT.'/admin/dict.php?id=22&origin=order&originid='.$object->id.'">'.$langs->trans("DictionarySource").'</a>';
 		print '</td></tr>';
 
 		// Project
@@ -2400,12 +2392,14 @@ else
 		/*
 		 * Boutons actions
 		*/
-		if ($action != 'presend')
+		if ($action != 'presend' && $action != 'editline')
 		{
-			if ($user->societe_id == 0 && $action <> 'editline')
-			{
-				print '<div class="tabsAction">';
+			print '<div class="tabsAction">';
 
+			$parameters=array();
+			$reshook=$hookmanager->executeHooks('addMoreActionsButtons',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+			if (empty($reshook))
+			{
 				// Valid
 				if ($object->statut == 0 && $object->total_ttc >= 0 && $numlines > 0 && $user->rights->commande->valider)
 				{
@@ -2478,20 +2472,31 @@ else
 				}
 
 				// Reopen a closed order
-				if ($object->statut == 3)
+				if ($object->statut == 3 && $user->rights->commande->creer)
 				{
 					print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=reopen">'.$langs->trans('ReOpen').'</a></div>';
 				}
 
+				// Create contract
+				if ($conf->contrat->enabled && ($object->statut == 1 || $object->statut == 2))
+				{
+					$langs->load("contracts");
+
+					if ($user->rights->contrat->creer)
+					{
+						print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/contrat/fiche.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid.'">'.$langs->trans('AddContract').'</a></div>';
+					}
+				}
 
 				// Create bill and Classify billed
-				if (! empty($conf->facture->enabled) && $object->statut > 0  && ! $object->billed)
+				// Note: Even if module invoice is not enabled, we should be able to use button "Classified billed"
+				if ($object->statut > 0  && ! $object->billed)
 				{
-					if ($user->rights->facture->creer && empty($conf->global->WORKFLOW_DISABLE_CREATE_INVOICE_FROM_ORDER))
+					if (! empty($conf->facture->enabled) && $user->rights->facture->creer && empty($conf->global->WORKFLOW_DISABLE_CREATE_INVOICE_FROM_ORDER))
 					{
 						print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid.'">'.$langs->trans("CreateBill").'</a></div>';
 					}
-					if ($user->rights->commande->creer && $object->statut > 2 && empty($conf->global->WORKFLOW_DISABLE_CLASSIFY_BILLED_FROM_ORDER) && empty($conf->global->WORsKFLOW_BILL_ON_SHIPMENT))
+					if ($user->rights->commande->creer && $object->statut > 2 && empty($conf->global->WORKFLOW_DISABLE_CLASSIFY_BILLED_FROM_ORDER) && empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))
 					{
 						print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=classifybilled">'.$langs->trans("ClassifyBilled").'</a></div>';
 					}
@@ -2527,9 +2532,8 @@ else
 						print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.$langs->trans("ShippingExist").'">'.$langs->trans("Delete").'</a></div>';
 					}
 				}
-
-				print '</div>';
 			}
+			print '</div>';
 		}
 		print '<br>';
 
@@ -2672,7 +2676,7 @@ else
 			}
 
 			// Show form
-			$formmail->show_form();
+			print $formmail->get_form();
 
 			print '<br>';
 		}

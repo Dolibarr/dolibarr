@@ -18,7 +18,7 @@
 # BoxLastContacts=Last contacts/addresses
 # BoxLastMembers=Last members
 # BoxFicheInter=Last interventions
-# BoxCurrentAccounts=Current accounts balance
+# BoxCurrentAccounts=Opened accounts balance
 # BoxSalesTurnover=Sales turnover
 # BoxTotalUnpaidCustomerBills=Total unpaid customer's invoices
 # BoxTotalUnpaidSuppliersBills=Total unpaid supplier's invoices
@@ -43,7 +43,7 @@
 # BoxTitleLastFicheInter=Last %s modified intervention
 # BoxTitleOldestUnpaidCustomerBills=Oldest %s unpaid customer's invoices
 # BoxTitleOldestUnpaidSupplierBills=Oldest %s unpaid supplier's invoices
-# BoxTitleCurrentAccounts=Current account's balances
+# BoxTitleCurrentAccounts=Opened account's balances
 # BoxTitleSalesTurnover=Sales turnover
 # BoxTitleTotalUnpaidCustomerBills=Unpaid customer's invoices
 # BoxTitleTotalUnpaidSuppliersBills=Unpaid supplier's invoices

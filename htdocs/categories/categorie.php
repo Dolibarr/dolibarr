@@ -153,7 +153,7 @@ if (empty($reshook))
 			setEventMessage($cat->errors,'errors');
 		}
 	}
-	
+
 	// Add object into a category
 	if ($parent > 0)
 	{
@@ -309,13 +309,6 @@ if ($socid)
 	// Phone
 	print '<tr><td>'.$langs->trans('Phone').'</td><td>'.dol_print_phone($soc->phone,$soc->country_code,0,$soc->id,'AC_TEL').'</td>';
 	print '<td>'.$langs->trans('Fax').'</td><td>'.dol_print_phone($soc->fax,$soc->country_code,0,$soc->id,'AC_FAX').'</td></tr>';
-
-	// Assujeti a TVA ou pas
-	print '<tr>';
-	print '<td class="nowrap">'.$langs->trans('VATIsUsed').'</td><td colspan="3">';
-	print yn($soc->tva_assuj);
-	print '</td>';
-	print '</tr>';
 
 	print '</table>';
 
@@ -631,7 +624,7 @@ function formCategory($db,$object,$typeid,$socid=0,$showclassifyform=1)
 
 	print '<br>';
 	print_fiche_titre($title,'','');
-	
+
 	// Form to add record into a category
 	if ($showclassifyform)
 	{

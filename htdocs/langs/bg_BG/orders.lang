@@ -70,12 +70,12 @@ AddToOtherOrders=Добави към други поръчки
 # AddToDraftOrders=Add to draft order
 ShowOrder=Покажи за
 NoOpenedOrders=Не са открити поръчки
-NoOtherOpenedOrders=Никой друг отвори поръчки
+NoOtherOpenedOrders=Няма други поръчки
 # NoDraftOrders=No draft orders
 OtherOrders=Други поръчки
 LastOrders=Последни поръчки %s
-LastModifiedOrders=Последно %s промяна поръчки
-LastClosedOrders=Последно %s затворен поръчки
+LastModifiedOrders=Последните %s променени поръчки
+LastClosedOrders=Последните %s затворени поръчки
 AllOrders=Всички поръчки
 NbOfOrders=Брой на поръчките
 OrdersStatistics=Поръчка статистически данни
@@ -151,7 +151,7 @@ PDFEdisonDescription=Прост модел за
 # Orders modes
 OrderByMail=Поща
 OrderByFax=Факс
-OrderByEMail=EMail
+OrderByEMail=Имейл
 OrderByWWW=Online
 OrderByPhone=Телефон
 

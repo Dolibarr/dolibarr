@@ -43,10 +43,10 @@ MailingStatusSentCompletely=Enviado Completamente
 MailingStatusError=Erro
 MailingStatusNotSent=Não Enviado
 MailSuccessfulySent=E-mail enviado correctamente (de %s a %s)
-# MailingSuccessfullyValidated=EMailing successfully validated
-# MailUnsubcribe=Unsubscribe
-# Unsuscribe=Unsubscribe
-# MailingStatusNotContact=Don't contact anymore
+MailingSuccessfullyValidated=Mailing validado com sucesso
+MailUnsubcribe=Cancelar Subscrição
+Unsuscribe=Cancelar Subscrição
+MailingStatusNotContact=Não efectuar mais contatos
 ErrorMailRecipientIsEmpty=A direcção do destinatario está vazia
 WarningNoEMailsAdded=nenhum Novo e-mail a Adicionar à lista destinatarios.
 ConfirmValidMailing=Confirma a validação do mailing?
@@ -73,12 +73,12 @@ DateLastSend=Data do último envio
 DateSending=Data de envio
 SentTo=Enviado para <b>%s</b>
 MailingStatusRead=Ler
-# CheckRead=Read Receipt
+CheckRead=Recibo de Leitura
 # YourMailUnsubcribeOK=The email <b>%s</b>  is correctly unsubcribe from mailing list
 # MailtoEMail=Hyper link to email
-# ActivateCheckRead=Allow to use the "Unsubcribe" link
+ActivateCheckRead=Permitir usar o link "Cancelar Subscrição"
 # ActivateCheckReadKey=Key use to encrypt URL use for "Read Receipt" and "Unsubcribe" feature
-# EMailSentToNRecipients=EMail sent to %s recipients.
+EMailSentToNRecipients=E-mail enviado para %s destinatários.
 
 # Libelle des modules de liste de destinataires mailing
 MailingModuleDescContactCompanies=Contactos de Terceiros (clientes potenciais, clientes, Fornecedores...)
@@ -118,9 +118,9 @@ IdRecord=ID registo
 DeliveryReceipt=Recibo de recpção
 YouCanUseCommaSeparatorForSeveralRecipients=Pode usar o carácter de separação <b>coma </b> para especificar multiplos destinatarios.
 # TagCheckMail=Track mail opening
-# TagUnsubscribe=Unsubscribe link
+TagUnsubscribe=Endereço de cancelamento de subscrição
 # TagSignature=Signature sending user
-# TagMailtoEmail=Recipient EMail
+TagMailtoEmail=E-mail do destinatário
 
 # Module Notifications
 Notifications=Notificações

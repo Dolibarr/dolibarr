@@ -311,7 +311,7 @@ SubTotal=Subtotal
 TotalHTShort=Importe
 TotalTTCShort=Total
 TotalHT=Base imponible
-TotalHTforthispage=Total base imponible para esta página
+TotalHTforthispage=Total (base imponible) de esta página
 TotalTTC=Total
 TotalTTCToYourCredit=Total a crédito
 TotalVAT=Total IVA
@@ -572,7 +572,7 @@ TotalWoman=Total
 TotalMan=Total
 NeverReceived=Nunca recibido
 Canceled=Cancelado
-YouCanChangeValuesForThisListFromDictionnarySetup=Puede cambiar estos valores en el menú configuración->diccionarios
+YouCanChangeValuesForThisListFromDictionarySetup=Puede cambiar estos valores en el menú configuración->diccionarios
 Color=Color
 Documents=Documentos
 DocumentsNb=archivos adjuntos (%s)
@@ -666,6 +666,8 @@ SaveUploadedFileWithMask=Guardar el archivo con el nombre "<strong>%s</strong>" 
 OriginFileName=Nombre del archivo origen
 SetDemandReason=Definir origen
 ViewPrivateNote=Ver notas
+XMoreLines=%s línea(s) ocultas
+
 # Week day
 Monday=Lunes
 Tuesday=Martes

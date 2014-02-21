@@ -4,8 +4,8 @@ DIRECTION=ltr
 # msungstdlight or cid0ct are for traditional Chinese (traditional does not render with Ubuntu pdf reader)
 # stsongstdlight or cid0cs are for simplified Chinese
 # To read Chinese pdf with Linux: sudo apt-get install poppler-data
-FONTFORPDF=helvetica
-FONTSIZEFORPDF=10
+FONTFORPDF=DejaVuSans
+FONTSIZEFORPDF=8
 SeparatorDecimal=,
 SeparatorThousand=None
 FormatDateShort=%Y-%m-%d
@@ -257,6 +257,8 @@ Seconds=Sekunder
 Today=I dag
 Yesterday=I går
 Tomorrow=I morgon
+# Morning=Morning
+# Afternoon=Afternoon
 Quadri=Quadri
 MonthOfDay=Månad efter det
 HourShort=H
@@ -309,6 +311,7 @@ SubTotal=Delsumma
 TotalHTShort=Totalt (netto)
 TotalTTCShort=Summa (inkl. moms)
 TotalHT=Total (netto efter skatt)
+# TotalHTforthispage=Total (net of tax) for this page
 TotalTTC=Summa (inkl. moms)
 TotalTTCToYourCredit=Totalt (inkl. moms) till din kredit
 TotalVAT=Total moms
@@ -569,7 +572,7 @@ TotalWoman=Totalt
 TotalMan=Totalt
 NeverReceived=Aldrig fick
 Canceled=Annullerad
-YouCanChangeValuesForThisListFromDictionnarySetup=Du kan ändra värden för den här listan från menyn setup - dictionnary
+# YouCanChangeValuesForThisListFromDictionarySetup=You can change values for this list from menu setup - dictionnary
 Color=Färg
 Documents=Länkade filer
 DocumentsNb=Länkade filer (%s)
@@ -662,6 +665,8 @@ BySalesRepresentative=Genom säljare
 # SaveUploadedFileWithMask=Save file on server with name "<strong>%s</strong>" (otherwise "%s")
 # OriginFileName=Original filename
 # SetDemandReason=Set source
+# ViewPrivateNote=View notes
+# XMoreLines=%s line(s) hidden
 
 # Week day
 Monday=Måndag

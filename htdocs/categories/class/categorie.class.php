@@ -499,7 +499,7 @@ class Categorie
 		$column_name=$type;
         if ($type=='contact') $column_name='socpeople';
         if ($type=='fournisseur') $column_name='societe';
-        
+
 		$sql  = "DELETE FROM ".MAIN_DB_PREFIX."categorie_".$type;
 		$sql .= " WHERE fk_categorie = ".$this->id;
 		$sql .= " AND   fk_".$column_name."   = ".$obj->id;
@@ -528,16 +528,20 @@ class Categorie
 	}
 
 	/**
-	 * 	Return list of contents of a category
+	 * 	Return list of fetched instance of elements having this category
 	 *
-	 * 	@param	string	$field				Field name for select in table. Full field name will be fk_field.
-	 * 	@param	string	$classname			PHP Class of object to store entity
-	 * 	@param	string	$category_table		Table name for select in table. Full table name will be PREFIX_categorie_table.
-	 *	@param	string	$object_table		Table name for select in table. Full table name will be PREFIX_table.
-	 *	@return	void
+ 	 * 	@param		string	$type			Type of category ('member', 'customer', 'supplier', 'product', 'contact')
+	 *	@return		mixed					-1 if KO, array of instance of object if OK
 	 */
-	function get_type($field,$classname,$category_table='',$object_table='')
+	function getObjectsInCateg($type)
 	{
+		$field=''; $classname=''; $category_table=''; $object_table='';
+		if ($type=='product')  { $field='product'; $classname='Product'; }
+		if ($type=='customer') { $field='societe'; $classname='Societe'; }
+		if ($type=='supplier') { $field='societe'; $classname='Fournisseur'; $category_table='fournisseur'; }
+		if ($type=='member')   { $field='member'; $classname='Adherent'; $category_table=''; $object_table='adherent'; }
+		if ($type=='contact')  { $field='socpeople'; $classname='Contact'; $category_table='contact'; $object_table='socpeople'; }
+
 		$objs = array();
 
 		// Clean parameters
@@ -551,7 +555,7 @@ class Categorie
 		$sql.= " AND c.fk_categorie = ".$this->id;
 		$sql.= " AND c.fk_".$field." = o.rowid";
 
-		dol_syslog(get_class($this)."::get_type sql=".$sql);
+		dol_syslog(get_class($this)."::getObjectsInCateg sql=".$sql);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -566,11 +570,54 @@ class Categorie
 		else
 		{
 			$this->error=$this->db->error().' sql='.$sql;
-			dol_syslog(get_class($this)."::get_type ".$this->error, LOG_ERR);
+			dol_syslog(get_class($this)."::getObjectsInCateg ".$this->error, LOG_ERR);
 			return -1;
 		}
 	}
 
+	/**
+	 * check for the presence of an object in a category
+	 *
+	 * @param	string	$type				Type of category ('member', 'customer', 'supplier', 'product', 'contact')
+	 * @param 	int    	$object_id			id of the object to search
+	 * @return 	int   						number of occurrences
+	 */
+	function containsObject($type, $object_id)
+	{
+		$field = ''; $classname = ''; $category_table = ''; $object_table = '';
+		if ($type == 'product') {
+			$field = 'product';
+		}
+		if ($type == 'customer') {
+			$field = 'societe';
+		}
+		if ($type == 'supplier') {
+			$field = 'societe';
+			$category_table = 'fournisseur';
+		}
+		if ($type == 'member') {
+			$field = 'member';
+			$category_table = '';
+		}
+		if ($type == 'contact') {
+			$field = 'socpeople';
+			$category_table = 'contact';
+		}
+		if (empty($category_table)) {
+			$category_table = $field;
+		}
+		$sql = "SELECT COUNT(*) as nb FROM " . MAIN_DB_PREFIX . "categorie_" . $category_table;
+		$sql .= " WHERE fk_categorie = " . $this->id . " AND fk_" . $field . " = " . $object_id;
+		dol_syslog(get_class($this)."::containsObject sql=".$sql);
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			return $this->db->fetch_object($resql)->nb;
+		} else {
+			$this->error=$this->db->error().' sql='.$sql;
+			dol_syslog(get_class($this)."::containsObject ".$this->error, LOG_ERR);
+			return -1;
+		}
+	}
 
 	/**
 	 * Return childs of a category
@@ -583,7 +630,6 @@ class Categorie
 		$sql.= " WHERE fk_parent = ".$this->id;
 
 		$res  = $this->db->query($sql);
-
 		if ($res)
 		{
 			$cats = array ();
@@ -1054,23 +1100,24 @@ class Categorie
 	}
 
 	/**
-	 * 	Return list of categories linked to element of id $id and type $typeid
+	 * 	Return list of categories (id or instances) linked to element of id $id and type $type
+	 *  Should be named getListOfCategForObject
 	 *
 	 * 	@param		int		$id			Id of element
-	 * 	@param		int		$typeid		Type of link (0 or 'product', 1 or 'supplier', 2 or 'customer', 3 or 'member', ...)
-	 * 	@param		string	$mode		'object'=Get array of categories, 'label'=Get array of category labels
+ 	 * 	@param		string	$type		Type of category ('member', 'customer', 'supplier', 'product', 'contact'). Old mode (0, 1, 2, ...) is deprecated.
+	 * 	@param		string	$mode		'object'=Get array of fetched category instances, 'label'=Get array of category labels
 	 * 	@return		mixed				Array of category objects or < 0 if KO
 	 */
-	function containing($id,$typeid,$mode='object')
+	function containing($id,$type,$mode='object')
 	{
 		$cats = array();
 
-		$table=''; $type='';
-		if ($typeid == 0 || $typeid == 'product')         { $typeid=0; $table='product'; $type='product'; }
-		else if ($typeid == 1 || $typeid == 'supplier')  { $typeid=1; $table='societe'; $type='fournisseur'; }
-		else if ($typeid == 2 || $typeid == 'customer')  { $typeid=2; $table='societe'; $type='societe'; }
-		else if ($typeid == 3 || $typeid == 'member')    { $typeid=3; $table='member';  $type='member'; }
-        else if ($typeid == 4 || $typeid == 'contact')    { $typeid=4; $table='socpeople';  $type='contact'; }
+		$typeid=-1; $table='';;
+		if ($type == '0' || $type == 'product')	     { $typeid=0; $table='product';   $type='product'; }
+		else if ($type == '1' || $type == 'supplier') { $typeid=1; $table='societe';   $type='fournisseur'; }
+		else if ($type == '2' || $type == 'customer') { $typeid=2; $table='societe';   $type='societe'; }
+		else if ($type == '3' || $type == 'member')   { $typeid=3; $table='member';    $type='member'; }
+        else if ($type == '4' || $type == 'contact')	 { $typeid=4; $table='socpeople'; $type='contact'; }
 
 		$sql = "SELECT ct.fk_categorie, c.label";
 		$sql.= " FROM ".MAIN_DB_PREFIX."categorie_".$type." as ct, ".MAIN_DB_PREFIX."categorie as c";
@@ -1110,7 +1157,7 @@ class Categorie
 	 *
 	 * 	@param		int			$id			Id
 	 * 	@param		string		$nom		Name
-	 * 	@param		string		$type		Type
+ 	 * 	@param		string		$type		Type of category ('member', 'customer', 'supplier', 'product', 'contact'). Old mode (0, 1, 2, ...) is deprecated.
 	 * 	@param		boolean		$exact		Exact string search (true/false)
 	 * 	@param		boolean		$case		Case sensitive (true/false)
 	 * 	@return		array					Array of category id
@@ -1119,9 +1166,16 @@ class Categorie
 	{
 		$cats = array();
 
+		$typeid=-1;
+		if ($type == 0 || $type == 'product')	     { $typeid=0; }
+		else if ($type == 1 || $type == 'supplier') { $typeid=1; }
+		else if ($type == 2 || $type == 'customer') { $typeid=2; }
+		else if ($type == 3 || $type == 'member')   { $typeid=3; }
+        else if ($type == 4 || $type == 'contact')	 { $typeid=4; }
+
 		// Generation requete recherche
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."categorie";
-		$sql.= " WHERE type = ".$type." ";
+		$sql.= " WHERE type = ".$typeid;
 		$sql.= " AND entity IN (".getEntity('category',1).")";
 		if ($nom)
 		{

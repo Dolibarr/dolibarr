@@ -1,0 +1,4 @@
+#HTMLDOC 1.8.27
+-t pdf14 -f "../../doc/dolibarr_en.pdf" --webpage --no-title --logoimage "../../doc/images/dolibarr_256x256.png" --linkcolor #2200c0 --linkstyle plain --size Universal --left 0.30in --right 0.30in --top 0.40in --bottom 0.30in --header ... --header1 ... --footer c/d --nup 1 --tocheader ... --tocfooter ... --portrait --color --no-pscommands --no-xrxcomments --compression=9 --jpeg=50 --fontsize 10.0 --fontspacing 1.0 --headingfont Helvetica --bodyfont Helvetica --headfootsize 9.0 --headfootfont Helvetica --charset iso-8859-1 --links --no-embedfonts --pagemode document --pagelayout single --firstpage p1 --pageeffect none --pageduration 10 --effectduration 1.0 --no-encryption --permissions all  --owner-password ""  --user-password "" --browserwidth 680 --no-strict --no-overflow
+http://wiki.dolibarr.org/index.php/Main_Page
+http://wiki.dolibarr.org/index.php/What_Dolibarr_Do

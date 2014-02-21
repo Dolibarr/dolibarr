@@ -295,7 +295,7 @@ if ($action == 'edit' || $action == 'updateedit')
     print '<tr '.$bc[$var].'><td class="fieldrequired">'.$langs->trans("Country").'</td><td class="maxwidthonsmartphone">';
     //if (empty($country_selected)) $country_selected=substr($langs->defaultlang,-2);    // Par defaut, pays de la localisation
     print $form->select_country($mysoc->country_id,'country_id');
-    if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
+    if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
     print '</td></tr>'."\n";
 
     $var=!$var;

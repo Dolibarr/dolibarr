@@ -37,6 +37,7 @@ ErrorBadParameters=Bad parametrit
 ErrorBadValueForParameter=Väärä arvo &quot;%s&quot; parametrien väärä &quot;%s&quot;
 ErrorBadImageFormat=Image-tiedosto ei ole tuettu formaatti
 ErrorBadDateFormat=Arvo &quot;%s&quot; on väärä päivämäärä muoto
+# ErrorWrongDate=Date is not correct!
 ErrorFailedToWriteInDir=Epäonnistui kirjoittaa hakemistoon %s
 ErrorFoundBadEmailInFile=Found incorrect email syntax for %s lines in file (example line %s with email=Löytyi virheellinen sähköposti syntaksi %s rivit tiedoston (esimerkiksi rivi %s email= %s)
 ErrorUserCannotBeDelete=Käyttäjä ei voi poistaa. Voi olla se liittyy annetun Dolibarr yhteisöjä.
@@ -63,13 +64,14 @@ ErrorSizeTooLongForVarcharType=Koko liian pitkä jono tyyppi (%s merkkiä maksim
 # ErrorBadFormatValueList=The list value cannot have more than one come : <u>%s</u>, but need at least one: llave,valores
 ErrorFieldCanNotContainSpecialCharacters=<b>Kenttä %s</b> ei saa sisältää erikoismerkkejä.
 ErrorNoAccountancyModuleLoaded=O kirjanpito moduuli aktivoitu
-ErrorExportDuplicateProfil=Tämä profiilin nimi on jo olemassa tämän vienti asetettu.
+# ErrorExportDuplicateProfil=This profile name already exists for this export set.
 ErrorLDAPSetupNotComplete=Dolibarr-LDAP yhteensovitus ei ole täydellinen.
 ErrorLDAPMakeManualTest=A. LDIF tiedosto on luotu hakemistoon %s. Yritä ladata se manuaalisesti komentoriviltä on enemmän tietoa virheitä.
 ErrorCantSaveADoneUserWithZeroPercentage=Ei voi tallentaa toimia "statut ole käynnistetty", jos alalla "tehtävä" on myös täytettävä.
 ErrorRefAlreadyExists=Ref käytetään luomista jo olemassa.
 ErrorPleaseTypeBankTransactionReportName=Kirjoita pankki vastaanottamisesta nimi, jos liiketoimi on raportoitu (Format VVVVKK tai VVVVKKPP)
 ErrorRecordHasChildren=Poistaminen ei onnistunut kirjaa, koska se on noin lapsen.
+# ErrorRecordIsUsedCantDelete=Can't delete record. It is already used or included into other object.
 ErrorModuleRequireJavascript=Javascript ei saa keskeytyä, on tämä ominaisuus toimii. Ottaa käyttöön / poistaa Javascript, mene menu Koti-> Asetukset-> Näyttö.
 ErrorPasswordsMustMatch=Molemmat kirjoittaa salasanat on vastattava toisiaan
 ErrorContactEMail=Tekninen virhe. Ota yhteys järjestelmänvalvojaan jälkeen sähköpostin <b>%s</b> en antaa virhekoodi <b>%s</b> viesti, tai jopa paremmin lisäämällä näytön kopion tästä sivusta.
@@ -127,6 +129,8 @@ ErrorNoActivatedBarcode=Ei viivakoodin tyyppi aktivoitu
 # ErrorPHPNeedModule=Error, your PHP must have module <b>%s</b> installed to use this feature.
 # ErrorOpenIDSetupNotComplete=You setup Dolibarr config file to allow OpenID authentication, but URL of OpenID service is not defined into constant %s
 # ErrorWarehouseMustDiffers=Source and target warehouses must differs
+# ErrorBadFormat=Bad format!
+# ErrorPaymentDateLowerThanInvoiceDate=Payment date (%s) cant' be before invoice date (%s) for invoice %s.
 
 # Warnings
 # WarningMandatorySetupNotComplete=Mandatory setup parameters are not yet defined

@@ -874,7 +874,7 @@ INSERT INTO llx_c_actioncomm (id, code, type, libelle, module, position) values 
 UPDATE llx_c_actioncomm SET libelle = 'Other (manually inserted events)' WHERE code = 'AC_OTH';
 UPDATE llx_c_actioncomm SET active = 0 WHERE code in ('AC_PROP', 'AC_COM', 'AC_FAC', 'AC_SHIP', 'AC_SUP_ORD', 'AC_SUP_INV');
 
--- Update dictionnary of table llx_c_paper_format
+-- Update dictionary of table llx_c_paper_format
 DELETE FROM llx_c_paper_format;
 
 -- Europe

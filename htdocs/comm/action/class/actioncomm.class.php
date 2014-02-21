@@ -58,7 +58,7 @@ class ActionComm extends CommonObject
     var $percentage;    // Percentage
     var $location;      // Location
 	var $transparency;	// Transparency (ical standard). Used to say if people assigned to event are busy or not by event. 0=available, 1=busy, 2=busy (refused events)
-    var $priority;      // Free text ('' By default)
+    var $priority;      // Small int (0 By default)
     var $note;          // Description
 
     var $usertodo;		// Object user that must do action
@@ -116,7 +116,7 @@ class ActionComm extends CommonObject
         $this->location=dol_trunc(trim($this->location),128);
         $this->note=dol_htmlcleanlastbr(trim($this->note));
         if (empty($this->percentage))   $this->percentage = 0;
-        if (empty($this->priority))     $this->priority = 0;
+        if (empty($this->priority) || ! is_numeric($this->priority)) $this->priority = 0;
         if (empty($this->fulldayevent)) $this->fulldayevent = 0;
         if (empty($this->punctual))     $this->punctual = 0;
         if (empty($this->transparency)) $this->transparency = 0;
@@ -143,7 +143,7 @@ class ActionComm extends CommonObject
             }
             else if ($result == 0)
             {
-                $this->error='Failed to get record with code '.$this->type_code.' from dictionnary "type of events"';
+                $this->error='Failed to get record with code '.$this->type_code.' from dictionary "type of events"';
                 return -1;
             }
             else
@@ -438,7 +438,7 @@ class ActionComm extends CommonObject
         $this->label=trim($this->label);
         $this->note=trim($this->note);
         if (empty($this->percentage))    $this->percentage = 0;
-        if (empty($this->priority))      $this->priority = 0;
+        if (empty($this->priority) || ! is_numeric($this->priority)) $this->priority = 0;
         if (empty($this->transparency))  $this->transparency = 0;
         if (empty($this->fulldayevent))  $this->fulldayevent = 0;
         if ($this->percentage > 100) $this->percentage = 100;
@@ -825,7 +825,7 @@ class ActionComm extends CommonObject
         require_once (DOL_DOCUMENT_ROOT ."/core/lib/xcal.lib.php");
         require_once (DOL_DOCUMENT_ROOT ."/core/lib/date.lib.php");
         require_once (DOL_DOCUMENT_ROOT ."/core/lib/files.lib.php");
-        
+
         dol_syslog(get_class($this)."::build_exportfile Build export file format=".$format.", type=".$type.", cachedelay=".$cachedelay.", filename=".$filename.", filters size=".count($filters), LOG_DEBUG);
 
         // Check parameters
@@ -1064,7 +1064,7 @@ class ActionComm extends CommonObject
         $this->percentage=0;
         $this->location='Location';
         $this->transparency=0;
-        $this->priority='Priority X';
+        $this->priority=1;
         $this->note = 'Note';
     }
 

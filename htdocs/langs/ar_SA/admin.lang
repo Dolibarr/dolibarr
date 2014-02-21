@@ -1,197 +1,197 @@
 # Dolibarr language file - Source file is en_US - admin
-# Foundation=Foundation
+Foundation=أساس
 Version=النسخة
 VersionProgram=نسخة البرنامج
 VersionLastInstall=تثبيت الإصدار الأولي
-VersionLastUpgrade=تحديث النسخة الأخيرة
+VersionLastUpgrade=آخر تحديث لهذه النسخة
 VersionExperimental=تجريبية
-VersionDevelopment=تطوير
-VersionUnknown=غير معروف
-VersionRecommanded=وأوصت
-SessionId=دورة الهوية
-SessionSaveHandler=معالج لحفظ دورات
-SessionSavePath=دورة التخزين المحلية
-PurgeSessions=تطهير الدورات
+VersionDevelopment=تطويرية
+VersionUnknown=غير معروفة
+VersionRecommanded=موصى بها
+SessionId=رمز المرحلة
+SessionSaveHandler=معالج لحفظ المراحل
+SessionSavePath=مرحلة التخزين المحلية
+PurgeSessions=إزالة المراحل
 # ConfirmPurgeSessions=Do you really want to purge all sessions ? This will disconnect every user (except yourself).
-NoSessionListWithThisHandler=حفظ معالج دورة تكوين في بي الخاص بك لا يسمح لسرد كافة جلسات على التوالي.
-LockNewSessions=اتصالات لوك جديد
-ConfirmLockNewSessions=هل أنت متأكد أنك تريد تقييد أي اتصال Dolibarr جديدة لنفسك. <b>ق ٪</b> سوف مستخدم فقط تكون قادرا على الاتصال بعد ذلك.
-UnlockNewSessions=إزالة اتصال قفل
-YourSession=الدورة الخاصة بك
-Sessions=شاهد الدورة
+NoSessionListWithThisHandler=معالج حفظ المرحلة المهيأ في لغة البي إتش بي لا يسمح بسرد كل المراحل التي تعمل
+LockNewSessions=قم بإقفال الإتصالات الجديدة
+ConfirmLockNewSessions=هل أنت متأكد من أنك تريد تقييد أي اتصال جديدة من دوليبار لنفسك. <b>%s</b> المستخدم الوحيد الذي سيتمكن من الإتصال بعد هذه العملية.
+UnlockNewSessions=إزالة قفل الإتصال
+YourSession=المرحلة الخاصة بك
+Sessions=مرحلة المستخدمين
 WebUserGroup=خادم الويب المستخدم / المجموعة
-NoSessionFound=الخاص بي ويبدو أن عدم السماح لقائمة جلسات العمل النشطة. دليل المستخدم لحفظ دورات <b>(ق ٪)</b> قد تكون محمية (على سبيل المثال ، من خلال أذونات نظام التشغيل أو عن طريق التوجيه open_basedir فب).
-HTMLCharset=ولدت لمحارف صفحات هتمل
-DBStoringCharset=محارف قاعدة بيانات لتخزين البيانات
-DBSortingCharset=قاعدة بيانات محارف لفرز البيانات
-WarningModuleNotActive=نميطة <b>٪ ق</b> يجب تمكين
-WarningOnlyPermissionOfActivatedModules=فقط الأذونات المتعلقة بتنشيط وحدات تظهر هنا. يمكنك تفعيل وحدات أخرى في الصفحة الرئيسية&gt; الإعداد -> نمائط الصفحة.
-DolibarrSetup=Dolibarr الإعداد
-DolibarrUser=Dolibarr المستخدم
-InternalUser=المستخدم الداخلي
+NoSessionFound=يبدو أن البي إتش بي الخاص بك لا يسمح بسرد كل المراحل النشطة. الدليل  (<b>%s</b>) المستخدم لحفظ المراحل قد يكون محمي (على سبيل المثال, محمي من قبل نظام الحماية الخاص ببرنامج التشغيل او لغة البي إتش بي.)
+HTMLCharset=الترميزات الخاصة بصفحة الإتش تي إم إل
+DBStoringCharset=الترميز الخاص بقاعدة البيانات لتخزين المعلومات
+DBSortingCharset=الترميز الخاص بقاعدة البيانات لتخزين المعلومات
+WarningModuleNotActive=يجب أن يكون النموذج <b>%s</b> مفعل
+WarningOnlyPermissionOfActivatedModules=فقط التصاريح المتعلقة بالنماذج المنشطة تظهر هنا. يمكنك تفعيل نماذج أخرى في الصفحة الرئيسية-> لإعداد ت-> صفحة النماذج
+DolibarrSetup=تركيب أو تطوير دوليبار
+DolibarrUser=مستخدم دوليبار
+InternalUser=مستخدم داخلي
 ExternalUser=مستخدم خارجي
-InternalUsers=المستعملين الداخليين
-ExternalUsers=المستخدمين الخارجيين
-GlobalSetup=الإعداد العالمية
-GUISetup=يعرض
-SetupArea=الإعداد المنطقة
-FormToTestFileUploadForm=نموذج لاختبار تحميل الملف (وفقا لبرنامج الإعداد)
-IfModuleEnabled=ملاحظة : نعم لا يكون نافذا إلا إذا وحدة تمكين ق <b>٪</b>
-RemoveLock=رفع ملف <b>ق ٪</b> وجدت لتمكين أداة التحديث.
-RestoreLock=استبدال الملف <b>٪ ق</b> مع إذن قراءة فقط على الملف لتعطيل أي استخدام أداة تحديث.
+InternalUsers=مستخدمين داخليين
+ExternalUsers=مستخدمين خارجيين
+GlobalSetup=الإعداد الكلية
+GUISetup=العرض
+SetupArea=منطقة الإعداد
+FormToTestFileUploadForm=نموذج لاختبار تحميل ملف (وفقا لبرنامج الإعداد)
+IfModuleEnabled=ملاحظة : نعم فعالة فقط في حال كان النموذج <b>%s</b> مفعل
+RemoveLock=قم بحذف الملف <b>%s</b> إذا كان موجوداً لتمكن اداة التحديث
+RestoreLock=قم بإستعادة الملف <b>%s</b> مع إذن القراءة فقط, وذلك لعرض أي استخدام خاص ب أداة التحديث
 SecuritySetup=الإعداد الأمني
-ErrorModuleRequirePHPVersion=خطأ ، وهذا يتطلب وحدة PHP نسخة ثانية أو أعلى ٪
-ErrorModuleRequireDolibarrVersion=خطأ ، وهذا يتطلب وحدة Dolibarr نسخة ثانية أو أعلى ٪
-ErrorDecimalLargerThanAreForbidden=خطأ ، وهو أعلى من الدقة <b>٪</b> ق غير مدعوم.
-DictionnarySetup=قاموس الإعداد
-# Dictionnary=Dictionaries
-# ErrorReservedTypeSystemSystemAuto=Value 'system' and 'systemauto' for type is reserved. You can use 'user' as value to add your own record
-# ErrorCodeCantContainZero=Code can't contain value 0
-DisableJavascript=جافا سكريبت تعطيل وظائف اياكس
-ConfirmAjax=اياكس تأكيد استخدام النوافذ المنبثقة
+ErrorModuleRequirePHPVersion=خطأ ، هذا النموذج يتطلب نسخة بي إتش بي %s أو أعلى
+ErrorModuleRequireDolibarrVersion=خطأ ، هذا النموذج يتطلب نسخة دوليبار %s أو أعلى
+ErrorDecimalLargerThanAreForbidden=خطأ, برنامج دوليبار <b>%s</b> الحالي لا يدعم دقة أعلى من الحالية
+# DictionarySetup=Dictionary setup
+# Dictionary=Dictionaries
+ErrorReservedTypeSystemSystemAuto=القيمة 'system' و 'systemauto' لهذا النوع محفوظ. يمكنك إستخدام 'user' كقيمة لإضافة السجل الخاص بك
+ErrorCodeCantContainZero=لا يمكن إستخدام القيمة 0 لهذا الكود
+DisableJavascript=تعطيل عمليات الجافا و الأجاكس
+ConfirmAjax=إستخدم تأكيد أجاكس المنبثق
 # UseSearchToSelectCompany=Use autocompletion fields to choose third parties (instead of using a list box).<br><br>Also if you have a large number of third parties (> 100 000), you can increase speed by setting constant COMPANY_DONOTSEARCH_ANYWHERE to 1 in Setup->Other. Search will then be limited to start of string.
-ActivityStateToSelectCompany= إضافة خيار تصفية لإظهار / إخفاء thirdparties التي هي حاليا في نشاط أو أنه لم يعد
-# UseSearchToSelectContact=Use autocompletion fields to choose contact (instead of using a list box).<br><br>Also if you have a large number of third parties (> 100 000), you can increase speed by setting constant CONTACT_DONOTSEARCH_ANYWHERE to 1 in Setup->Other. Search will then be limited to start of string.
-SearchFilter=بحث خيارات الفلاتر
-NumberOfKeyToSearch=NBR من الشخصيات لتحريك البحث: %s
-ViewFullDateActions=وتبين تواريخ الأعمال الكاملة في المجموعة الثالثة ورقة
-NotAvailableWhenAjaxDisabled=ولا تتوفر لدى المعوقين اياكس
-JavascriptDisabled=جافا سكريبت المعوقين
-UsePopupCalendar=استخدام المدخلات المنبثقة عن مواعيد
-UsePreviewTabs=معاينة استخدام علامات التبويب
-ShowPreview=وتظهر معاينة
+ActivityStateToSelectCompany= أضف فلتر كخيار لعرض/إخفاء الجهات الأخرى التي تقوم بنشاط حالياً أو توقفت عنه
+UseSearchToSelectContact=إستخدم حقل التكملة التلقائية لإختيار عنوان الإتصال (بدلاً من إستخدام القائمة المنسدلة). <br><br> أيضاً إذا كان لديك عدد كبير من العملاء الخارجيين )أكثر من 100000(, يمكنك زيادة السرعة بإختيار ثابت
+SearchFilter=فلاتر خيارات البحث
+NumberOfKeyToSearch=عدد الحروف لبدء البحث: %s
+ViewFullDateActions=أظهر التواريخ الكاملة للأحداث في الصفحة الثالثة
+NotAvailableWhenAjaxDisabled=غير متوفر عندما يكون أجاكس معطلاً
+JavascriptDisabled=الجافا سكربت معطل
+UsePopupCalendar=استخدام الصفحات المنبثقة لإدخال التواريخ
+UsePreviewTabs=إستخدم زر المعاينة
+ShowPreview=آظهر المعاينة
 PreviewNotAvailable=المعاينة غير متاحة
-ThemeCurrentlyActive=الموضوع حاليا نشاطا
-CurrentTimeZone=PHP خادم الزمن
-Space=الفضاء
-# Table=Table
-Fields=الميادين
-# Index=Index
-Mask=قناع
-NextValue=قيمة المقبل
-NextValueForInvoices=قيمة المقبل (الفواتير)
-NextValueForCreditNotes=قيمة المقبل (مذكرات الائتمان)
+ThemeCurrentlyActive=الثيم النشط حالياً
+CurrentTimeZone=حسب توقيت خادم البي إتش بي
+Space=فراغ
+Table=جدول
+Fields=حقول
+Index=الفهرس
+Mask=القناع
+NextValue=قيمة التالية
+NextValueForInvoices=القيمة التالية (الفواتير)
+NextValueForCreditNotes=القيمة التالية (ملاحظات دائن)
 # NextValueForDeposit=Next value (deposit)
 # NextValueForReplacements=Next value (replacements)
-MustBeLowerThanPHPLimit=ملاحظة : PHP الخاصة بك في حدود كل من تحميل الملفات لحجم ٪ <b>ق</b> ق ٪ ، مهما كانت قيمة هذا المعلم هو
-NoMaxSizeByPHPLimit=ملاحظة : لم يتم تحديد أي في التكوين الخاص بك PHP
+MustBeLowerThanPHPLimit=ملاحظة : البي إتش بي الخاص بك يحد من حجم الملفات المرفوعة <b>%s</b> %s, مهما كان الحجم المدخل
+NoMaxSizeByPHPLimit=ملاحظة : لم يتم وضح حد في إعدادات الـ PHP الخاص بك
 MaxSizeForUploadedFiles=الحجم الأقصى لتحميل الملفات (0 لمنع أي تحميل)
-UseCaptchaCode=استخدام رسومية المدونة على صفحة تسجيل الدخول
-UseAvToScanUploadedFiles=استخدام مضادات الفيروسات لمسح تحميل الملفات
-AntiVirusCommand= المسار الكامل لقيادة مكافحة الفيروسات
-AntiVirusCommandExample= c:\\Progra~1\\ClamWin\\bin\\clamscan.exe
-AntiVirusParam= مزيد من المعلمات على سطر الأوامر
-AntiVirusParamExample= --database="C:\\Program Files (x86)\\ClamWin\\lib"
-ComptaSetup=إعداد وحدة محاسبية
-UserSetup=المستخدمين إدارة الإعداد
-MenuSetup=القوائم إدارة الإعداد
-MenuLimits=حدود ودقة
-MenuIdParent=قائمة هوية الأم
-DetailMenuIdParent=هوية الوالد القائمة (0 لالأعلى)
-DetailPosition=رتب لتحديد عدد القائمة الموقف
-PersonalizedMenusNotSupported=الشخصية القوائم غير مدعومة
+UseCaptchaCode=إستخدم الرسوم كرمز (كابتشا) في صفحة الدخول
+UseAvToScanUploadedFiles=استخدام مضاد الفيروسات لفحص الملفات المحملة
+AntiVirusCommand= المسار الكامل لبرنامج مكافحة الفيروسات
+AntiVirusCommandExample= مثل ل ClamWin: c:\\Progra~1\\ClamWin\\bin\\clamscan.exe
+AntiVirusParam= المزيد من الصلاحيات بإستخدام command line
+AntiVirusParamExample= مثال على ClamWin:--database="C:\\Program Files (x86)\\ClamWin\\lib"
+ComptaSetup=نموذج وحدة المحاسبة
+UserSetup=إعداد مستخدم الإدارة
+MenuSetup=إعداد قائمة الإدارة
+MenuLimits=الحدود و الدقة
+MenuIdParent=رمز القائمة العليا
+DetailMenuIdParent=رمز القائمة العليا (فراغ للقائمة العليا)
+DetailPosition=رتب الرقم لتعريف موقع القائمة
+PersonalizedMenusNotSupported=القوائم الشخصية غير مدعومة
 AllMenus=الكل
-NotConfigured=عدم تهيئة
+NotConfigured=النموذج غير مهيء
 Setup=الإعداد
-Activation=تفعيل
+Activation=التفعيل
 Active=نشطة
 SetupShort=الإعداد
-OtherOptions=خيارات أخرى
-OtherSetup=الإعداد أخرى
+OtherOptions=الخيارات الأخرى
+OtherSetup=الإعدادات الأخرى
 CurrentValueSeparatorDecimal=الفاصلة العشرية
-CurrentValueSeparatorThousand=ألف فاصل
-Modules=وحدات
-ModulesCommon=الوحدات الرئيسية
-ModulesOther=وحدات أخرى
-ModulesInterfaces=بينية نمائط
+CurrentValueSeparatorThousand=ألفاصلة الألفية
+Modules=النموذج
+ModulesCommon=النماذج الرئيسية
+ModulesOther=نماذج أخرى
+ModulesInterfaces=واجهة النماذج
 ModulesSpecial=نماذج محددة للغاية
-ParameterInDolibarr=معلمة ٪ ق
-LanguageParameter=معلمة اللغة ق ٪
-LanguageBrowserParameter=معلمة ٪ ق
-LocalisationDolibarrParameters=معالم المكان
+ParameterInDolibarr=الوحدة %s
+LanguageParameter=وحدة اللغة %s
+LanguageBrowserParameter=الوحدة %s
+LocalisationDolibarrParameters=الوحدات المحلية
 ClientTZ=المنطقة الزمنية العميل (المستخدم)
 ClientHour=ساعة العميل (المستخدم)
 OSTZ=المنطقة الزمنية لنظام تشغيل الخادم
 PHPTZ=المنطقة الزمنية خادم PHP
-PHPServerOffsetWithGreenwich=PHP خادم معادلة العرض غرينتش (ثانية)
-ClientOffsetWithGreenwich=العميل / متصفح عوض عرض غرينتش (ثانية)
-DaylingSavingTime=التوقيت الصيفي (عضو)
+PHPServerOffsetWithGreenwich=عرض وزنية جرينتش لخادم لغة الـ PHP (ثانية)
+ClientOffsetWithGreenwich=عرض وزنية الجرينتش للعميل / المتصفح (ثانية)
+DaylingSavingTime=التوقيت الصيفي
 CurrentHour=PHP خادم ساعة
 CompanyTZ=المنطقة الزمنية لشركة من الشركات الرئيسية)
 CompanyHour=ساعة وشركة من الشركات الرئيسية)
-CurrentSessionTimeOut=الدورة الحالية للمرة
+CurrentSessionTimeOut=إنتها مدة التصفح الحالية
 # YouCanEditPHPTZ=To set a different PHP timezone (not required), you can try to add a file .htacces with a line like this "SetEnv TZ Europe/Paris"
 OSEnv=بيئة نظام التشغيل
-Box=المربع
-Boxes=صناديق
-MaxNbOfLinesForBoxes=الحد الأقصى لعدد من الخطوط لصناديق
-PositionByDefault=من أجل تقصير
-Position=ترتيب
-MenusDesc=القوائم المديرين تحديد المحتوى من القائمة القضبان 2 (الأفقي والرأسي بار بار).
-MenusEditorDesc=محرر القائمة تسمح لك لتحديد شخصية القيود في القوائم. استخدامها بعناية لتجنب جعل dolibarr غير مستقرة ودائمة قائمة مداخل الوصول. <br> إضافة وحدات بعض القيود في القوائم (في <b>كل</b> قائمة في معظم الحالات). إذا كنت إزالة بعض هذه القيود عن طريق الخطأ ، يمكنك ان تستعيد بها وتعطيل reenabling الوحدة.
-MenuForUsers=قائمة المستخدمين
+Box=مربع
+Boxes=مربعات
+MaxNbOfLinesForBoxes=الحد الأقصى لعدد الخطوط في المربعات
+PositionByDefault=الطلبية الإفتراضية
+Position=الطلبية
+MenusDesc=يمكن لرؤساء القوائم تعريف المحتوى لعمودين من القوائم (عمود افقي وعمود عمودي).
+MenusEditorDesc=محرر القوائم يسمح لك بتعريف مدخلات شخصية في القوائم. استخدامها بعناية لتجنب التأثير على برنامج دوليبار وجعله غير مستقر بالإضافة إلى جعل روابط القوائم غير متاحة. <br> بعض النماذج تظيف خانات في القوائم (في القائمة <b>الكل</b> في معظم الحالات). إذا أزلت بعض هذه القيود عن طريق الخطأ ، يمكنك ان تستعيدها وتعطيل وتمكين النموذج.
+MenuForUsers=قائمة للمستخدمين
 LangFile=ملف لانج
-System=نظام
+System=النظام
 SystemInfo=نظام المعلومات
 SystemTools=أدوات النظام
-SystemToolsArea=أدوات نظام المنطقة
-SystemToolsAreaDesc=هذا المجال يوفر ميزات الإدارة. استخدام القائمة لاختيار السمات التي تبحث عنها.
-# Purge=Purge
-PurgeAreaDesc=تسمح لك هذه الصفحة لحذف كل الملفات التي بنيت أو تخزينها بوسائل Dolibarr (الملفات المؤقتة ، أو كافة الملفات في الدليل <b>٪ ق).</b> استخدام هذه الميزة ليست ضرورية. ومن المقدمة للمستخدمين والتي تستضيفها Dolibarr موفر الخدمات التي لا تقدم أذونات لحذف الملفات التي أقامها خادم الويب.
-PurgeDeleteLogFile=حذف الملفات <b>والمستندات</b> المحددة <b>ل٪</b> Syslog حدة (أي عدم وجود خطر لتفقد بيانات)
-PurgeDeleteTemporaryFiles=حذف جميع الملفات المؤقتة (أي عدم وجود خطر لتفقد بيانات)
-PurgeDeleteAllFilesInDocumentsDir=حذف كل الملفات في دليل <b>٪ ق.</b> الملفات المؤقتة ، بل أيضا عناصر الملفات المرفقة (أطراف ثالثة ، والفواتير...) وتحمل في وحدة إدارة المحتوى في المؤسسة وسيتم حذفها.
-PurgeRunNow=تطهير الآن
-PurgeNothingToDelete=أي دليل أو حذف الملف.
-PurgeNDirectoriesDeleted=<b>٪ ق</b> حذف الملفات أو الدلائل.
-PurgeAuditEvents=تطهير جميع الأحداث
-ConfirmPurgeAuditEvents=هل أنت متأكد من تطهير جميع الأحداث الأمنية؟ جميع سجلات الأمن سيتم حذف أي بيانات أخرى ستزيله.
-NewBackup=احتياطية جديدة
-GenerateBackup=توليد احتياطية
-Backup=احتياطية
+SystemToolsArea=منظقة أدوات نظام
+SystemToolsAreaDesc=هذه المنقة توفر مميزات إدارية. استخدام القائمة لاختيار الخصائص التي تبحث عنها.
+Purge=أحذف
+PurgeAreaDesc=تسمح لك هذه الصفحة بحذف كل الملفات التي بنيت أو تم تخزينها بواسطة دوليبار (الملفات المؤقتة ، أو كافة الملفات في المجلد <b>%s</b>) استخدام هذه الميزة ليست ضرورية. هذه الخدمة مقدمة للمستخدمين الذين يستخدمون برنامج دوليبار على خادم لا يوف لهم صلاحيات حذف الملفات التي أنشئت من قبل خادم الويب.
+PurgeDeleteLogFile=قم بحذف ملفات السجلات <b>%s</b> المعرفة لنموذج النظام (لا يوجد خطر على المعلومات)
+PurgeDeleteTemporaryFiles=قم بحذف جميع الملفات المؤقتة (لا يوجد خطر على البيانات)
+PurgeDeleteAllFilesInDocumentsDir=حذف كل الملفات في المجلد <b>%s</b> الملفات المؤقتة ، بل أيضا ملفات استرجاع قاعدة البيانات, الملفات الملحقة بعناصر (أطراف ثالثة أو خارجية ، فواتير...) وتم تحمليها في نموذج إي سي إم, سيتم حذفها
+PurgeRunNow=إحذف الآن
+PurgeNothingToDelete=لم يتم حذف مجلد او ملف
+PurgeNDirectoriesDeleted=<b>%s</b> ملفات او مجلدات حذفت
+PurgeAuditEvents=احذف جميع الأحداث المتعلقة بالأمان
+ConfirmPurgeAuditEvents=هل أنت متأكد من حذف جميع الأحداث الأمنية؟ جميع سجلات الأمن سيتم حذفها ولن يتم حذف أي بيانات أخرى.
+NewBackup=نسخة احتياطية جديدة
+GenerateBackup=قم بإنشاء نسخة احتياطية
+Backup=نسخة احتياطية
 Restore=استعادة
-RunCommandSummary=النسخ الاحتياطي وسيتم ذلك من خلال التالي
-RunCommandSummaryToLaunch=ويمكن إطلاق النسخ الاحتياطي مع الأمر التالي
-WebServerMustHavePermissionForCommand=مركز خدمة الويب الخاص بك يجب أن يكون التصريح اللازم لتشغيل هذه الأوامر
-BackupResult=ونتيجة لالاحتياطية
-BackupFileSuccessfullyCreated=ملف النسخة الاحتياطية بنجاح المتولدة
-YouCanDownloadBackupFile=يمكن أن الملفات التي تم إنشاؤها الآن يمكن تحميلها
-NoBackupFileAvailable=أي ملفات احتياطية.
+RunCommandSummary=تم إطلاق عملية النسخة الإحتياطية بالأمر التالي
+RunCommandSummaryToLaunch=يمكن إطلاق عمل النسخة الإحتياطية بالأمر التالي
+WebServerMustHavePermissionForCommand=يجب أن يحتوي خادم الويب على صلاحيات لتشغيل مثل هذا الأمر
+BackupResult=نتيجة للنسخة الإحتياطية
+BackupFileSuccessfullyCreated=تم إنشاء ملف النسخة الاحتياطية بنجاح
+YouCanDownloadBackupFile=يمكن الآن تنزيل ملف النسخة الإحتياطية
+NoBackupFileAvailable=لا يوجد ملفات احتياطية.
 ExportMethod=طريقة التصدير
 ImportMethod=طريقة الاستيراد
-ToBuildBackupFileClickHere=To build a backup file, click <a href=بناء ملف النسخة الاحتياطية ، انقر <a href="%s">هنا.</a>
-ImportMySqlDesc=لاستيراد ملف النسخة الاحتياطية ، يجب استخدام mysql القيادة من سطر :
-ImportPostgreSqlDesc=لاستيراد ملف النسخة الاحتياطية، يجب استخدام pg_restore الأمر من سطر الأوامر:
-ImportMySqlCommand=ق ق ٪ ٪ &lt;mybackupfile.sql
+ToBuildBackupFileClickHere=لعمل نسخة إحتياطية, اضغط <a href="%s">هنا</a>.
+ImportMySqlDesc=لاستيراد ملف النسخة الاحتياطية ، يجب استخدام mysql نافذة الأوامر للدوز او اللاينكس :
+ImportPostgreSqlDesc=لاستيراد ملف النسخة الاحتياطية ، يجب استخدام pg_restore من نافذة الأوامر للدوز او اللاينكس :
+ImportMySqlCommand=%s %s < mybackupfile.sql
 ImportPostgreSqlCommand=%s %s mybackupfile.sql
-FileNameToGenerate=اسم الملف لتوليد
-# Compression=Compression
-CommandsToDisableForeignKeysForImport=القيادة تعطيل مفاتيح الخارجية على استيراد
-# CommandsToDisableForeignKeysForImportWarning=Mandatory if you want to be able to restore your sql dump later
-ExportCompatibility=التوافق تولد ملف التصدير
-MySqlExportParameters=MySQL تصدير البارامترات
-# PostgreSqlExportParameters= PostgreSQL export parameters
-UseTransactionnalMode=طريقة استخدام المعاملات
-FullPathToMysqldumpCommand=المسار الكامل لقيادة mysqldump
-FullPathToPostgreSQLdumpCommand=المسار الكامل للقيادة pg_dump
+FileNameToGenerate=اسم الملف المراد إنشائه
+Compression=ضغط الملف
+CommandsToDisableForeignKeysForImport=الأمر المستخدم لتعطيل المفتاح الخارجي في حالة الإستيراد
+CommandsToDisableForeignKeysForImportWarning=إجباري في حال اردت إسترجاع نسخة قاعدة البيانات الإحتياطية
+ExportCompatibility=توفق الملف المصدر
+MySqlExportParameters=تصدير قيم قاعدة البيانات MySql
+PostgreSqlExportParameters= تصدير قيم قاعدة البيانات PostgreSQL
+UseTransactionnalMode=إستخدم صيغة المعاملات
+FullPathToMysqldumpCommand=المسار الكامل لأوامر mysqldump
+FullPathToPostgreSQLdumpCommand=المسار الكامل لأوامر pg_dump
 ExportOptions=خيارات التصدير
-AddDropDatabase=إضافة قاعدة بيانات إسقاط القيادة
-AddDropTable=إضافة الجدول إسقاط القيادة
-# ExportStructure=Structure
-Datas=بيانات
+AddDropDatabase=أمر إضافة, حذف قاعدة بيانات
+AddDropTable=أمر إضافة حذف الجدول
+ExportStructure=البنية
+Datas=البيانات
 NameColumn=اسم الأعمدة
-ExtendedInsert=مدد أدخل
-NoLockBeforeInsert=لا أوامر قفل حول INSERT
-DelayedInsert=تأخير تدرج
-EncodeBinariesInHexa=تشفير البيانات ثنائي في ستعشري
-IgnoreDuplicateRecords=تجاهل الأخطاء في سجلات مكررة (إدراج تجاهل)
+ExtendedInsert=الإضافة الممددة
+NoLockBeforeInsert=لا يوجد أوامر قفل حول الإضافة
+DelayedInsert=إضافة متأخرة
+EncodeBinariesInHexa=ترميز البيانات الأحادية لستة عشرية
+IgnoreDuplicateRecords=تجاهل الأخطاء في السجلات المكررة (تجاهل الإدراج)
 Yes=نعم
 No=لا
-AutoDetectLang=اكتشاف (اللغة المتصفح)
-FeatureDisabledInDemo=سمة المعوقين في عرض
-Rights=أذونات
-BoxesDesc=صناديق منطقة الشاشة التي تظهر قطعة من المعلومات عن بعض الصفحات. يمكنك الاختيار بين عرض المربع أو عن طريق اختيار ليست هدفا في الصفحة والنقر على 'تفعيل' ، أو عن طريق النقر فوق مزبلة لتعطيله.
-# OnlyActiveElementsAreShown=Only elements from <a href="%s">enabled modules</a> are shown.
+AutoDetectLang=اكتشاف تلقائي (لغة المتصفح)
+FeatureDisabledInDemo=الميزة معلطة في العرض التجريبي
+Rights=الصلاحيات
+BoxesDesc=المربعات هي المناطق التي تُظهر بعض المعلومات في بعض الصفحات. يمكنك اختيار إظهار أو إخفائها بإختيار الصفحات المطلوبة و الضغط على 'تنشيط', او بالضغط على الزر الآخر لتعطيلها.
+OnlyActiveElementsAreShown=فقط العناصر من <a href="%s">النماذج المفعلة </a> سوف تظهر.
 ModulesDesc=Dolibarr تحديد الوحدات التي تم تمكين وظيفة في مجال البرمجيات. وتتطلب بعض وحدات الأذونات ، يجب ان تمنح للمستخدمين ، وبعد أن تمكن وحدة.
 ModulesInterfaceDesc=فإن التفاعل بين وحدات Dolibarr يسمح لك بإضافة السمات الخارجية تعتمد على البرمجيات والنظم والخدمات.
 ModulesSpecialDesc=وحدات خاصة أو محددة جدا ونادرا ما تستخدم وحدات.
@@ -287,7 +287,7 @@ CurrentVersion=Dolibarr النسخة الحالية
 CallUpdatePage=الذهاب إلى صفحة التحديثات وdatas هيكل قاعدة البيانات : ٪ s.
 LastStableVersion=آخر نسخة مستقرة
 GenericMaskCodes=يمكنك إدخال أي قناع الترقيم. في هذا القناع ، وبعد ويمكن استخدام العلامات : <br> <b>(000000)</b> يطابق عدد الذي سيكون على كل يزداد ٪ s. كما تدخل العديد من أصفار على النحو المنشود طول المضادة. المضاد وسيتم الانتهاء من اصفار من اليسار من أجل الحصول على أكبر عدد اصفار كما القناع. <br> <b>000000 +000) (نفس</b> السابقة ولكن يقابل المقابلة لعدد للحق من علامة + يطبق اعتبارا من أول ٪ s. <br> <b>000000 @ (س)</b> نفس السابقة ولكن المضاد هو إعادة الصفر عندما يتم التوصل إلى الشهر خ خ ما بين 1 و 12). إذا كان هذا الخيار هو المستخدمة وس 2 أو أعلى ، ثم تسلسل (ذ ذ م م)) ((سنة أو ملم)) (مطلوب أيضا. <br> <b>(ب)</b> اليوم (01 الى 31). <br> <b>() ملم</b> في الشهر (01 الى 12). <br> <b>(كذا)</b> ، <b>(سنة))</b> أو <b>(ذ</b> السنة أكثر من 2 أو 4 أو 1 الأرقام. <br>
-GenericMaskCodes2=<b>() cccc</b> العميل مدونة <br> <b>() cccc000</b> العميل قانون للحرف ن يعقب العميل المرجع مضادة دون تعويض وzeroized مع عالمية مضادة. <br>
+# GenericMaskCodes2=<b>{cccc}</b> the client code<br><b>{cccc000}</b> the client code on n characters is followed by a client's ref counter without offset and zeroized with the global counter.<br><b>{tttt}</b> The code of company type on n characters (see dictionary-company types).<br>
 GenericMaskCodes3=جميع الشخصيات الاخرى في قناع سوف تظل سليمة. <br> المساحات غير مسموح بها. <br>
 GenericMaskCodes4a=<u>ومثال على 99th ق ٪ من طرف ثالث TheCompany عمله 2007-01-31 :</u> <br>
 GenericMaskCodes4b=<u>ومثال على طرف ثالث على خلق 2007-03-01 :</u> <br>
@@ -505,7 +505,7 @@ Module50200Desc= وحدة لتقديم على صفحة الدفع عبر الإ�
 # Module54000Name=PrintIPP
 # Module54000Desc=Print via Cups IPP Printer.
 # Module55000Name=Open Survey
-# Module55000Desc=Module to integrate a survey (like Doodle, Studs, Rdvz, ...)
+# Module55000Desc=Module to make online surveys (like Doodle, Studs, Rdvz, ...)
 # Module59000Name=Margins
 # Module59000Desc=Module to manage margins
 # Module60000Name=Commissions
@@ -724,34 +724,36 @@ Permission50202=استيراد المعاملات
 # Permission54001=Print
 # Permission55001=Read surveys
 # Permission55002=Create/modify surveys
-DictionnaryCompanyType=أنواع الشركة
-DictionnaryCompanyJuridicalType=أنواع القانوني للشركة
-DictionnaryProspectLevel=آفاق محتملة المستوى
-DictionnaryCanton=الدولة / الكانتونات
-DictionnaryRegion=المناطق
-DictionnaryCountry=البلدان
-DictionnaryCurrency=العملات
-DictionnaryCivility=عنوان الكياسة
-DictionnaryActions=الإجراءات القائمة
-DictionnarySocialContributions=أنواع المساهمات الاجتماعية
-DictionnaryVAT=معدلات ضريبة القيمة المضافة
-# DictionnaryRevenueStamp=Amount of revenue stamps
-DictionnaryPaymentConditions=شروط الدفع
-DictionnaryPaymentModes=طرق الدفع
-DictionnaryTypeContact=أنواع الاتصال
-DictionnaryEcotaxe=الضرائب الإيكولوجية (WEEE)
-DictionnaryPaperFormat=الصيغة الورقية
-DictionnaryFees=نوع من الرسوم
-DictionnarySendingMethods=طرق الإرسال
-DictionnaryStaff=العاملين
-DictionnaryAvailability=تأخير تسليم
-DictionnaryOrderMethods=ترتيب طرق
-DictionnarySource=الأصل من مقترحات / أوامر
-# DictionnaryAccountancyplan=Chart of accounts
-# DictionnaryAccountancysystem=Models for chart of accounts
+# Permission59001=Read commercial margins
+# Permission59002=Define commercial margins
+# DictionaryCompanyType=Company types
+# DictionaryCompanyJuridicalType=Juridical kinds of company
+# DictionaryProspectLevel=Prospect potential level
+# DictionaryCanton=State/Cantons
+# DictionaryRegion=Regions
+# DictionaryCountry=Countries
+# DictionaryCurrency=Currencies
+# DictionaryCivility=Civility title
+# DictionaryActions=Type of agenda events
+# DictionarySocialContributions=Social contributions types
+# DictionaryVAT=VAT Rates or Sales Tax Rates
+# DictionaryRevenueStamp=Amount of revenue stamps
+# DictionaryPaymentConditions=Payment terms
+# DictionaryPaymentModes=Payment modes
+# DictionaryTypeContact=Contact/Address types
+# DictionaryEcotaxe=Ecotax (WEEE)
+# DictionaryPaperFormat=Paper formats
+# DictionaryFees=Type of fees
+# DictionarySendingMethods=Shipping methods
+# DictionaryStaff=Staff
+# DictionaryAvailability=Delivery delay
+# DictionaryOrderMethods=Ordering methods
+# DictionarySource=Origin of proposals/orders
+# DictionaryAccountancyplan=Chart of accounts
+# DictionaryAccountancysystem=Models for chart of accounts
 SetupSaved=الإعداد المحفوظة
 BackToModuleList=العودة إلى قائمة الوحدات
-BackToDictionnaryList=العودة إلى قائمة معاجم
+# BackToDictionaryList=Back to dictionaries list
 VATReceivedOnly=سعر خاص لا تحمل
 VATManagement=إدارة الضريبة على القيمة المضافة
 VATIsUsedDesc=معدل ضريبة القيمة المضافة بشكل افتراضي عند إنشاء الآفاق ، والفواتير ، وما يتبع أوامر النشطة القياسية للمادة : <br> إذا كان البائع هو تعرض لضريبة القيمة المضافة ، وضريبة القيمة المضافة بعد ذلك تلقائيا= 0. نهاية المادة. <br> إذا كان (بيع وشراء= بلد في البلد) ، فإن ضريبة القيمة المضافة بشكل افتراضي= ضريبة القيمة المضافة من بيع المنتج في البلد. نهاية المادة. <br> إذا كان البائع والمشتري في الجماعة الأوروبية ، وبيعت البضاعة الجديدة بعد أن وسائل النقل (السيارات ، والسفن ، والطائرات) ، الافتراضي= 0 ضريبة القيمة المضافة (ضريبة القيمة المضافة وينبغي أن تدفع من قبل المشتري في customoffice بلاده وليس على البائع . نهاية المادة. <br> إذا كان البائع والمشتري في الجماعة الأوروبية والسلع التي تباع عن طريق وسائل أخرى جديدة بدلا من وسائل النقل ، فإن ضريبة القيمة المضافة بشكل افتراضي= ضريبة القيمة المضافة للمنتجات المباعة. نهاية المادة. <br> وإلا فإن ضريبة القيمة المضافة المقترحة الافتراضي= 1. نهاية المادة.
@@ -919,7 +921,7 @@ TriggerDisabledAsModuleDisabled=يتسبب في تعطيل هذه الصورة �
 TriggerAlwaysActive=يطلق في هذا الملف هي حركة دائمة ، وتفعيل ما هي وحدات Dolibarr.
 TriggerActiveAsModuleActive=يطلق في هذا الملف كما ينشط حدة تمكين <b>٪ ق.</b>
 GeneratedPasswordDesc=هنا تعريف القاعدة التي تريد استخدامه لكلمة السر اذا كنت أسأل لصناعة السيارات ولدت كلمة السر
-DictionnaryDesc=تعرف هنا إشارة datas. يمكنك استكمال مسبقا مع قيمة لك.
+# DictionaryDesc=Define here all reference datas. You can complete predefined value with yours.
 ConstDesc=تسمح لك هذه الصفحة لتحرير جميع البارامترات الأخرى غير المتوفرة في الصفحات السابقة. فهي محفوظة لمعايير متقدمة للمطورين أو troubleshouting.
 OnceSetupFinishedCreateUsers=تحذير فأنت Dolibarr مدير المستخدم. مدير المستخدمين تستخدم لإعداد Dolibarr. لالمعتاد استخدام Dolibarr ، يوصى باستخدام غير مستخدم مدير خلق مجموعات من المستخدمين & القائمة.
 MiscellaneousDesc=هنا تعريف جميع البارامترات الأخرى ذات الصلة بالأمن.
@@ -1011,6 +1013,8 @@ SendmailOptionMayHurtBuggedMTA=وميزة لإرسال رسائل باستخدا
 # FieldEdition=Edition of field %s
 # FixTZ=TimeZone fix
 # FillThisOnlyIfRequired=Example: +2 (fill only if timezone offset problems are experienced)
+# GetBarCode=Get barcode
+# EmptyNumRefModelDesc=The code is free. This code can be modified at any time.
 ##### Module password generation
 PasswordGenerationStandard=عودة كلمة سر ولدت الداخلية وفقا لخوارزمية Dolibarr : 8 أحرف مشتركة تتضمن الأرقام والحروف في حرف صغير.
 PasswordGenerationNone=لا توحي بأي كلمة المرور المتولدة. يجب أن تكون كلمة السر في نوع يدويا.
@@ -1037,8 +1041,8 @@ ModelModules=وثائق قوالب
 WatermarkOnDraft=علامة مائية على مشروع الوثيقة
 CompanyIdProfChecker=المهنية معرف فريد
 MustBeUnique=يجب أن تكون فريدة من نوعها؟
-# MustBeMandatory=Must be mandatory to create thirds?
-# MustBeInvoiceMandatory=Must be mandatory to validate invoices?
+# MustBeMandatory=Mandatory to create third parties ?
+# MustBeInvoiceMandatory=Mandatory to validate invoices ?
 Miscellaneous=متفرقات
 ##### Webcal setup #####
 WebCalSetup=Webcalendar ربط الإعداد
@@ -1116,6 +1120,9 @@ TemplatePDFInterventions=تدخل بطاقة نماذج الوثائق
 ##### Contracts #####
 ContractsSetup=عقود وحدة الإعداد
 ContractsNumberingModules=عقود ترقيم الوحدات
+# TemplatePDFContracts=Contracts documents models
+# FreeLegalTextOnContracts=Free text on contracts
+# WatermarkOnDraftContractCards=Watermark on draft contracts (none if empty)
 ##### Members #####
 MembersSetup=أعضاء وحدة الإعداد
 MemberMainOptions=الخيارات الرئيسية
@@ -1319,6 +1326,7 @@ BarcodeDescC39=الباركود من نوع C39
 BarcodeDescC128=الباركود من نوع C128
 GenbarcodeLocation=باركود الجيل سطر أداة تستخدمها phpbarcode المحرك لبعض أنواع باركود)
 # BarcodeInternalEngine=Internal engine
+# BarCodeNumberManager=Manager to auto define barcode numbers
 ##### Prelevements #####
 WithdrawalsSetup=انسحاب وحدة الإعداد
 ##### ExternalRSS #####
@@ -1360,17 +1368,6 @@ OSCommerceErrorConnectOkButWrongDatabase=نجح الصدد ولكن قاعدة �
 OSCommerceTestOk=علاقة الخادم '٪ ق' على قاعدة البيانات '٪ ق' مستخدم '٪ ق' ناجحة.
 OSCommerceTestKo1=علاقة الخادم '٪ ق' تنجح ولكن قاعدة البيانات '٪ ق' لا يمكن التوصل إليها.
 OSCommerceTestKo2=علاقة الخادم '٪ ق' مستخدم '٪ ق' فشلت.
-##### Mantis #####
-MantisSetup=فرس النبي ربط الإعداد
-MantisURL=عنوان الوصول لفرس النبي
-MantisServer=فرس النبي استضافة خادم قاعدة البيانات
-MantisDatabaseName=اسم قاعدة البيانات
-MantisUser=المستخدم من الوصول إلى قاعدة البيانات
-MantisSetupSaved=فرس النبي الإعداد انقذ بنجاح.
-MantisTestOk=علاقة الخادم '٪ ق' على قاعدة البيانات '٪ ق' مستخدم '٪ ق' ناجحة.
-MantisTestKo1=علاقة الخادم '٪ ق' تنجح ولكن قاعدة البيانات '٪ ق' لا يمكن التوصل إليها.
-MantisTestKo2=علاقة الخادم '٪ ق' مستخدم '٪ ق' فشلت.
-MantisErrorConnectOkButWrongDatabase=قاعدة بيانات لكنه نجح الصدد لا يبدو أن فرس النبي قاعدة البيانات.
 ##### Stock #####
 StockSetup=تكوين وحدة المخزون
 UserWarehouse=استخدام الأرصدة الشخصية للمستخدم
@@ -1429,7 +1426,7 @@ AccountancyCode=قانون المحاسبة
 AgendaSetup=جدول الأعمال وحدة الإعداد
 PasswordTogetVCalExport=مفتاح ربط تصدير تأذن
 PastDelayVCalExport=لا تصدر الحدث الأكبر من
-# AGENDA_USE_EVENT_TYPE=Use events types (managed into Configuration->Dictionnary->llx_c_actioncomm)
+# AGENDA_USE_EVENT_TYPE=Use events types (managed into Configuration->Dictionary->llx_c_actioncomm)
 ##### ClickToDial #####
 ClickToDialDesc=هذا النموذج يسمح لإضافة رمز بعد رقم هاتف Dolibarr الاتصالات. وهناك اضغط على هذه الأيقونة ، سوف يطلب من أحد serveur معينة مع تحديد عنوان لكم أدناه. ويمكن استخدام هذه الكلمة لدعوة من مركز نظام Dolibarr التي يمكن الاتصال على رقم الهاتف هذا المسبار النظام على سبيل المثال.
 ##### Point Of Sales (CashDesk) #####

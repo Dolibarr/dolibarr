@@ -28,6 +28,7 @@ EndBankBalance=Končno stanje
 CurrentBalance=Trenutno stanje
 FutureBalance=Bodoče stanje
 ShowAllTimeBalance=Prikaži stanje od začetka
+# AllTime=From start
 Reconciliation=Usklajevanje
 RIB=Transakcijski račun
 IBAN=IBAN številka

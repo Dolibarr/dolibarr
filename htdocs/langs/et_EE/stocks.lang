@@ -110,3 +110,4 @@ MassStockMovement=Massiline lao liikumine
 SelectProductInAndOutWareHouse=Vali toode, kogus, lähteladu ja sihtladu, siis klõpsa "%s". Kui see on kõigi soovitud liikumiste jaoks tehtud, klõpsa "%s".
 RecordMovement=Registreeri ülekanne
 ReceivingForSameOrder=Selle tellimuse vastuvõtmised
+# StockMovementRecorded=Stock movements recorded

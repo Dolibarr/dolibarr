@@ -971,7 +971,6 @@ td.photo {
 /* ============================================================================== */
 
 .toolbar {
-    background-image: url(<?php echo dol_buildpath($path.'/theme/'.$conf->theme.'/img/tmenu2.png',1); ?>) !important;
     background-repeat: repeat-x !important;
     border: 1px solid #BBB !important;
 }
@@ -1262,7 +1261,7 @@ div.tabBar {
     padding-left: 4px;
     padding-right: 4px;
     padding-bottom: 4px;
-    margin: 6px 0px 6px 0px;
+    margin: 6px 0px 20px 0px;
     -moz-border-radius:8px;
     border-radius:8px;
     border-right: 1px solid #555555;
@@ -1307,7 +1306,7 @@ span.tabspan {
 
 div.divButAction { margin-bottom: 1.4em; }
 
-.butAction:link, .butAction:visited, .butAction:hover, .butAction:active, .butActionDelete, .butActionRefused, .butActionDelete:link, .butActionDelete:visited, .butActionDelete:hover, .butActionDelete:active {
+.butAction, .butAction:link, .butAction:visited, .butAction:hover, .butAction:active, .butActionDelete, .butActionRefused, .butActionDelete:link, .butActionDelete:visited, .butActionDelete:hover, .butActionDelete:active {
 	font-family: <?php print $fontlist ?>;
 	font-weight: bold;
 	/*background: url(<?php echo dol_buildpath($path.'/theme/bureau2crea/img/bg_btnBlue.jpg',1); ?>) repeat-x;*/
@@ -1749,11 +1748,8 @@ div.titre {
 	font-family: <?php print $fontlist ?>;
 	font-weight: normal;
 	color: #842F00;
-    font-size: 20px;
+    font-size: 16px;
 	text-decoration: none;
-	<?php if (empty($dol_use_jmobile)) { ?>
-	margin-left: 12px;
-	<?php } ?>
 }
 
 #dolpaymenttable { width: 600px; font-size: 13px; }

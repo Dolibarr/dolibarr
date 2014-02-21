@@ -98,9 +98,15 @@ else if (! empty($socid) && $socid > 0)
 	if ($ret < 0) dol_print_error($db,$object->error);
 }
 
+$permissionnote=$user->rights->fournisseur->commande->creer;	// Used by the include of actions_setnotes.inc.php
+
+
 /*
  * Actions
  */
+
+include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php';	// Must be include, not includ_once
+
 if ($action == 'setref_supplier' && $user->rights->fournisseur->commande->creer)
 {
     $result=$object->setValueFrom('ref_supplier',GETPOST('ref_supplier','alpha'));
@@ -137,21 +143,9 @@ else if ($action ==	'classin' && $user->rights->fournisseur->commande->creer)
     $object->setProject($projectid);
 }
 
-else if ($action ==	'setremisepercent' && $user->rights->fournisseur->commande->creer)
+else if ($action == 'setremisepercent' && $user->rights->fournisseur->commande->creer)
 {
     $result = $object->set_remise($user, $_POST['remise_percent']);
-}
-
-else if ($action == 'setnote_public' && $user->rights->fournisseur->commande->creer)
-{
-	$result=$object->update_note(dol_html_entity_decode(GETPOST('note_public'), ENT_QUOTES),'_public');
-	if ($result < 0) dol_print_error($db,$object->error);
-}
-
-else if ($action == 'setnote_private' && $user->rights->fournisseur->commande->creer)
-{
-	$result=$object->update_note(dol_html_entity_decode(GETPOST('note_private'), ENT_QUOTES),'_private');
-	if ($result < 0) dol_print_error($db,$object->error);
 }
 
 else if ($action == 'reopen' && $user->rights->fournisseur->commande->approuver)
@@ -1589,7 +1583,7 @@ elseif (! empty($object->id))
 		// Edit line
 		if ($action != 'edit_line' || $_GET['rowid'] != $line->id)
 		{
-			print '<tr '.$bc[$var].'>';
+			print '<tr id="row-'.$line->id.'" '.$bc[$var].'>';
 
 			// Show product and description
 			print '<td>';
@@ -1640,6 +1634,13 @@ elseif (! empty($object->id))
 			}
 
 			print '<td align="right" class="nowrap">'.price($line->total_ht).'</td>';
+
+			if (is_object($hookmanager))
+			{
+				$parameters=array('line'=>$line,'num'=>$num,'i'=>$i);
+				$reshook=$hookmanager->executeHooks('printObjectLine',$parameters,$object,$action);
+			}
+
 			if ($object->statut == 0	&& $user->rights->fournisseur->commande->creer)
 			{
 				print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=edit_line&amp;rowid='.$line->id.'#'.$line->id.'">';
@@ -2131,7 +2132,7 @@ elseif (! empty($object->id))
 		}
 
 		// Show form
-		$formmail->show_form();
+		print $formmail->get_form();
 
 		print '<br>';
 	}

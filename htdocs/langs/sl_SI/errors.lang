@@ -37,6 +37,7 @@ ErrorBadParameters=Napačni parametri
 ErrorBadValueForParameter=Napačna vrednost '%s' za nepravilen parameter '%s'
 ErrorBadImageFormat=Format slikovne datoteke ni podprt
 ErrorBadDateFormat=Vrednost '%s &quot;je napačen zapis datuma
+# ErrorWrongDate=Date is not correct!
 ErrorFailedToWriteInDir=Napaka pri pisanju v mapo %s
 ErrorFoundBadEmailInFile=Napačna email sintaksa v vrstici %s v datoteki (naprimer vrstica %s z emailom=%s)
 ErrorUserCannotBeDelete=Uporabnika se ne da izbrisati. Morda je povezan z drugimi Dolibarr entitetami.
@@ -63,13 +64,14 @@ ErrorSizeTooLongForVarcharType=Velikost predolgo za tip za nize (%s znakov najve
 # ErrorBadFormatValueList=The list value cannot have more than one come : <u>%s</u>, but need at least one: llave,valores
 ErrorFieldCanNotContainSpecialCharacters=Polje <b>%s</b> ne sme vsebovati posebnih znakov.
 ErrorNoAccountancyModuleLoaded=Ni aktiviran računovodski modul
-ErrorExportDuplicateProfil=To ime profila za izvoz podatkov že obstaja.
+# ErrorExportDuplicateProfil=This profile name already exists for this export set.
 ErrorLDAPSetupNotComplete=Dolibarr-LDAP združevanje ni popolno.
 ErrorLDAPMakeManualTest=Datoteka .ldif je bila ustvarjena v mapi %s. Poskusite jo naložiti ročno preko ukazne vrstice, da bi dobili več podatkov o napaki.
 ErrorCantSaveADoneUserWithZeroPercentage=Ni možno shraniti aktivnosti "statut not started" če je tudi polje "done by" izpolnjeno.
 ErrorRefAlreadyExists=Referenca, uporabljena za kreiranje, že obstaja.
 ErrorPleaseTypeBankTransactionReportName=Prosimo vnesite ime bančnega računa v poročilo o transakciji (Format YYYYMM ali YYYYMMDD)
 ErrorRecordHasChildren=Zapisa se ne da izbrisati, ker ima nekaj podrejenih.
+# ErrorRecordIsUsedCantDelete=Can't delete record. It is already used or included into other object.
 ErrorModuleRequireJavascript=Javascript ne sme biti izklopljen, če želite da ta funkcija deluje. Javascript vklopite/izklopite v meniju Domov->Nastavitve->Prikaz.
 ErrorPasswordsMustMatch=Obe vneseni gesli se morata ujemati
 ErrorContactEMail=Prišlo je do tehnične napake. Prosimo, obrnite se na administratorja na naslednji Email <b>%s</b> in mu sporočite kodo napake <b>%s</b>, Še bolje pa je, če priložite kopijo strani z napako.
@@ -127,6 +129,8 @@ ErrorNoActivatedBarcode=Noben tip črtne kode ni aktiviran
 # ErrorPHPNeedModule=Error, your PHP must have module <b>%s</b> installed to use this feature.
 # ErrorOpenIDSetupNotComplete=You setup Dolibarr config file to allow OpenID authentication, but URL of OpenID service is not defined into constant %s
 # ErrorWarehouseMustDiffers=Source and target warehouses must differs
+# ErrorBadFormat=Bad format!
+# ErrorPaymentDateLowerThanInvoiceDate=Payment date (%s) cant' be before invoice date (%s) for invoice %s.
 
 # Warnings
 # WarningMandatorySetupNotComplete=Mandatory setup parameters are not yet defined

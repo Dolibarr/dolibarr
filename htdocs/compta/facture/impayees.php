@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -37,17 +37,165 @@ $langs->load("bills");
 $id = (GETPOST('facid','int') ? GETPOST('facid','int') : GETPOST('id','int'));
 $action = GETPOST('action','alpha');
 $option = GETPOST('option');
-
-$diroutputpdf=$conf->facture->dir_output . '/unpaid/temp';
+$mode=GETPOST('mode');
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user,'facture',$id,'');
 
+$diroutputpdf=$conf->facture->dir_output . '/unpaid/temp';
+if (! $user->rights->societe->client->voir || $socid) $diroutputpdf.='/private/'.$user->id;	// If user has no permission to see all, output dir is specific to user
+
+$resultmasssend='';
+
 
 /*
  * Action
  */
+
+// Send remind email
+if ($action == 'presend' && GETPOST('cancel')) $action='';
+
+if ($action == 'presend' && GETPOST('sendmail'))
+{
+	if (!isset($user->email))
+	{
+		$error++;
+		setEventMessage("NoSenderEmailDefined");
+	}
+
+	$countToSend = count($_POST['toSend']);
+	if (empty($countToSend))
+	{
+		$error++;
+		setEventMessage("InvoiceNotChecked","warnings");
+	}
+
+	if (! $error)
+	{
+		$compteEmailEnvoi = 0;
+		$nbignored = 0;
+
+		for ($i = 0; $i < $countToSend; $i++)
+		{
+			$object = new Facture($db);
+			$result = $object->fetch($_POST['toSend'][$i]);
+
+			if ($result > 0)	// Invoice was found
+			{
+				if ($object->statut != 1) continue; // Payment done or started or canceled
+
+				// Read PDF
+				$filename=dol_sanitizeFileName($object->ref);
+				$filedir=$conf->facture->dir_output . '/' . dol_sanitizeFileName($object->ref);
+				$file = $filedir . '/' . $filename.'.pdf';			// TODO What if ODT ?
+
+				if (dol_is_file($file))
+				{
+					$object->fetch_thirdparty();
+					$sendto = $object->thirdparty->email;
+
+					if (empty($sendto)) $nbignored++;
+
+					if (dol_strlen($sendto))
+					{
+						$langs->load("commercial");
+						$from = $user->getFullName($langs) . ' <' . $user->email .'>';
+						$replyto = $from;
+						$message = $conf->global->RELANCES_MASSE_TEXTE_EMAIL;
+						$subject = $conf->global->RELANCES_MASSE_OBJET_EMAIL;
+
+						$substitutionarray=
+						make_substitutions($message, $substitutionarray);
+
+						$actiontypecode='AC_FAC';
+						$actionmsg=$langs->transnoentities('MailSentBy').' '.$from.' '.$langs->transnoentities('To').' '.$sendto.".\n";
+						if ($message)
+						{
+							$actionmsg.=$langs->transnoentities('MailTopic').": ".$subject."\n";
+							$actionmsg.=$langs->transnoentities('TextUsedInTheMessageBody').":\n";
+							$actionmsg.=$message;
+						}
+											// Create form object
+						include_once(DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php');
+						$formmail = new FormMail($db);
+						$formmail->clear_attached_files();
+						$formmail->add_attached_files($file,  $object->ref.'.pdf', 'application/pdf');
+						$attachedfiles=$formmail->get_attached_files();
+						$filepath = $attachedfiles['paths'];
+						$filename = $attachedfiles['names'];
+						$mimetype = $attachedfiles['mimes'];
+
+						// Send mail
+						require_once(DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php');
+						$mailfile = new CMailFile($subject,$sendto,$from,$message,$filepath,$mimetype,$filename,$sendtocc,'',$deliveryreceipt,-1);
+						if ($mailfile->error)
+						{
+							$resultmasssend.='<div class="error">'.$mailfile->error.'</div>';
+						}
+						else
+						{
+							$result=$mailfile->sendfile();
+							if ($result)
+							{
+								$resultmasssend.=$langs->trans('MailSuccessfulySent',$mailfile->getValidAddress($from,2),$mailfile->getValidAddress($sendto,2));		// Must not contain "
+
+								$error=0;
+
+								// Initialisation donnees
+								$object->sendtoid		= 0;
+								$object->actiontypecode	= $actiontypecode;
+								$object->actionmsg		= $actionmsg;  // Long text
+								$object->actionmsg2		= $actionmsg2; // Short text
+								$object->fk_element		= $object->id;
+								$object->elementtype	= $object->element;
+
+								// Appel des triggers
+								include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+								$interface=new Interfaces($db);
+								$result=$interface->run_triggers('BILL_SENTBYMAIL',$object,$user,$langs,$conf);
+								if ($result < 0) { $error++; $this->errors=$interface->errors; }
+								// Fin appel triggers
+
+								if ($error)
+								{
+									dol_print_error($db);
+								}
+								$compteEmailEnvoi ++;
+
+							}
+							else
+							{
+								$langs->load("other");
+								$resultmasssend.='<div class="error">';
+								if ($mailfile->error)
+								{
+									$resultmasssend.=$langs->trans('ErrorFailedToSendMail',$from,$sendto);
+									$resultmasssend.='<br>'.$mailfile->error;
+								}
+								else
+								{
+									$resultmasssend.='No mail sent. Feature is disabled by option MAIN_DISABLE_ALL_MAILS';
+								}
+								$resultmasssend.='</div>';
+							}
+						}
+					}
+				}
+				else
+				{
+					$langs->load("other");
+					print $resultmasssend='<div class="error">'.$langs->trans('ErrorCantReadFile',$file).'</div>';
+					dol_syslog('Failed to read file: '.$file);
+					break ;
+				}
+			}
+		}
+
+		setEventMessage($compteEmailEnvoi. '/'.$countToSend.' '.$langs->trans("RemindSent"));
+	}
+}
+
 
 if ($action == "builddoc" && $user->rights->facture->lire && ! GETPOST('button_search'))
 {
@@ -60,9 +208,12 @@ if ($action == "builddoc" && $user->rights->facture->lire && ! GETPOST('button_s
 		// liste les fichiers
 		$files = array();
 		$factures_bak = $factures ;
-		foreach($_POST['toGenerate'] as $basename){
-			foreach($factures as $facture){
-				if(strstr($facture["name"],$basename)){
+		foreach($_POST['toGenerate'] as $basename)
+		{
+			foreach($factures as $facture)
+			{
+				if(strstr($facture["name"],$basename))
+				{
 					$files[] = $conf->facture->dir_output.'/'.$basename.'/'.$facture["name"];
 				}
 			}
@@ -120,12 +271,12 @@ if ($action == "builddoc" && $user->rights->facture->lire && ! GETPOST('button_s
 		}
 		else
 		{
-			$mesg='<div class="error">'.$langs->trans('NoPDFAvailableForChecked').'</div>';
+			setEventMessage($langs->trans('NoPDFAvailableForChecked'),'errors');
 		}
 	}
 	else
 	{
-		$mesg='<div class="error">'.$langs->trans('InvoiceNotChecked').'</div>' ;
+		setEventMessage($langs->trans('InvoiceNotChecked'), 'warnings');
 	}
 }
 
@@ -165,6 +316,12 @@ $(document).ready(function() {
 	});
 	$("#checknone").click(function() {
 		$(".checkformerge").attr('checked', false);
+	});
+	$("#checkallsend").click(function() {
+		$(".checkforsend").attr('checked', true);
+	});
+	$("#checknonesend").click(function() {
+		$(".checkforsend").attr('checked', false);
 	});
 });
 </script>
@@ -221,7 +378,7 @@ if ($search_societe)     $sql .= " AND s.nom LIKE '%".$db->escape($search_societ
 if ($search_montant_ht)  $sql .= " AND f.total = '".$db->escape($search_montant_ht)."'";
 if ($search_montant_ttc) $sql .= " AND f.total_ttc = '".$db->escape($search_montant_ttc)."'";
 if (GETPOST('sf_ref'))   $sql .= " AND f.facnumber LIKE '%".$db->escape(GETPOST('sf_ref'))."%'";
-$sql.= " GROUP BY s.nom, s.rowid, f.facnumber, f.increment, f.total, f.tva, f.total_ttc, f.datef, f.date_lim_reglement, f.paye, f.rowid, f.fk_statut, f.type ";
+$sql.= " GROUP BY s.nom, s.rowid, f.rowid, f.facnumber, f.increment, f.total, f.tva, f.total_ttc, f.localtax1, f.localtax2, f.revenuestamp, f.datef, f.date_lim_reglement, f.paye, f.fk_statut, f.type ";
 if (! $user->rights->societe->client->voir && ! $socid) $sql .= ", sc.fk_soc, sc.fk_user ";
 $sql.= " ORDER BY ";
 $listfield=explode(',',$sortfield);
@@ -267,6 +424,7 @@ if ($resql)
 
 	print '<form id="form_generate_pdf" method="POST" action="'.$_SERVER["PHP_SELF"].'?sortfield='. $sortfield .'&sortorder='. $sortorder .'">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="mode" value="'.$mode.'">';
 	if ($late) print '<input type="hidden" name="late" value="'.dol_escape_htmltag($late).'">';
 
 	$i = 0;
@@ -282,7 +440,14 @@ if ($resql)
 	print_liste_field_titre($langs->trans("Received"),$_SERVER["PHP_SELF"],"am","",$param,'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Rest"),$_SERVER["PHP_SELF"],"am","",$param,'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"fk_statut,paye,am","",$param,'align="right"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Merge"),$_SERVER["PHP_SELF"],"","",$param,'align="center"',$sortfield,$sortorder);
+	if (empty($mode))
+	{
+		print_liste_field_titre($langs->trans("PDFMerge"),$_SERVER["PHP_SELF"],"","",$param,'align="center"',$sortfield,$sortorder);
+	}
+	else
+	{
+		print_liste_field_titre($langs->trans("Remind"),$_SERVER["PHP_SELF"],"","",$param,'align="center"',$sortfield,$sortorder);
+	}
 	print "</tr>\n";
 
 	// Lignes des champs de filtre
@@ -299,11 +464,20 @@ if ($resql)
 	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre" align="right">';
-	print '<input type="image" class="liste_titre" name="button_search" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+	print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 	print '</td>';
-	print '<td class="liste_titre" align="center">';
-	if ($conf->use_javascript_ajax) print '<a href="#" id="checkall">'.$langs->trans("All").'</a> / <a href="#" id="checknone">'.$langs->trans("None").'</a>';
-	print '</td>';
+	if (empty($mode))
+	{
+		print '<td class="liste_titre" align="center">';
+		if ($conf->use_javascript_ajax) print '<a href="#" id="checkall">'.$langs->trans("All").'</a> / <a href="#" id="checknone">'.$langs->trans("None").'</a>';
+		print '</td>';
+	}
+	else
+	{
+		print '<td class="liste_titre" align="center">';
+		if ($conf->use_javascript_ajax) print '<a href="#" id="checkallsend">'.$langs->trans("All").'</a> / <a href="#" id="checknonesend">'.$langs->trans("None").'</a>';
+		print '</td>';
+	}
 	print "</tr>\n";
 
 	if ($num > 0)
@@ -383,13 +557,23 @@ if ($resql)
 			print $facturestatic->LibStatut($objp->paye,$objp->fk_statut,5,$objp->am);
 			print '</td>';
 
-			// Checkbox
-			print '<td align="center">';
-			if (! empty($formfile->numoffiles))
-				print '<input id="cb'.$objp->facid.'" class="flat checkformerge" type="checkbox" name="toGenerate[]" value="'.$objp->facnumber.'">';
+			if (empty($mode))
+			{
+				// Checkbox to merge
+				print '<td align="center">';
+				if (! empty($formfile->numoffiles))
+					print '<input id="cb'.$objp->facid.'" class="flat checkformerge" type="checkbox" name="toGenerate[]" value="'.$objp->facnumber.'">';
+				else
+					print '&nbsp;';
+				print '</td>' ;
+			}
 			else
-				print '&nbsp;';
-			print '</td>' ;
+			{
+				// Checkbox to send remind
+				print '<td align="center">';
+				print '<input class="flat checkforsend" type="checkbox" name="toSend[]" value="'.$objp->facid.'">';
+				print '</td>' ;
+			}
 
 			print "</tr>\n";
 			$total_ht+=$objp->total_ht;
@@ -414,17 +598,85 @@ if ($resql)
 
 	print "</table>";
 
-	/*
-	 * Show list of available documents
-	 */
-	$filedir=$diroutputpdf;
-	$genallowed=$user->rights->facture->lire;
-	$delallowed=$user->rights->facture->lire;
 
-	print '<br>';
-	print '<input type="hidden" name="option" value="'.$option.'">';
-	// We disable multilang because we concat already existing pdf.
-	$formfile->show_documents('unpaid','',$filedir,$urlsource,$genallowed,$delallowed,'',1,1,0,48,1,$param,$langs->trans("PDFMerge"),$langs->trans("PDFMerge"));
+	if (empty($mode))
+	{
+		/*
+		 * Show list of available documents
+		 */
+		$filedir=$diroutputpdf;
+		$genallowed=$user->rights->facture->lire;
+		$delallowed=$user->rights->facture->lire;
+
+		print '<br>';
+		print '<input type="hidden" name="option" value="'.$option.'">';
+		// We disable multilang because we concat already existing pdf.
+		$formfile->show_documents('unpaid','',$filedir,$urlsource,$genallowed,$delallowed,'',1,1,0,48,1,$param,$langs->trans("PDFMerge"),$langs->trans("PDFMerge"));
+	}
+	else
+	{
+		$langs->load("mails");
+
+		if ($action != 'presend')
+		{
+			print '<div class="tabsAction">';
+			print '<a href="'.$_SERVER["PHP_SELF"].'?mode=sendremind&action=presend" class="butAction" name="buttonsendremind" value="'.dol_escape_htmltag($langs->trans("SendRemind")).'">'.$langs->trans("SendRemind").'</a>';
+			print '</div>';
+		}
+		else
+		{
+			include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+			$formmail = new FormMail($db);
+
+			print '<br>';
+			print_fiche_titre($langs->trans("SendRemind"),'','').'<br>';
+
+			$topicmail="MailTopicSendRemindUnpaidInvoices";
+			$modelmail="facture_relance";
+
+			// Cree l'objet formulaire mail
+			include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+			$formmail = new FormMail($db);
+			$formmail->fromtype = 'user';
+			$formmail->fromid   = $user->id;
+			$formmail->fromname = $user->getFullName($langs);
+			$formmail->frommail = $user->email;
+			$formmail->withfrom=1;
+			$liste=array();
+			$formmail->withto='';
+			$formmail->withtocc=1;
+			$formmail->withtoccc=$conf->global->MAIN_EMAIL_USECCC;
+			$formmail->withtopic=$langs->transnoentities($topicmail, '__FACREF__', '__REFCLIENT__');
+			$formmail->withfile=$langs->trans("EachInvoiceWillBeAttachedToEmail");
+			$formmail->withbody=1;
+			$formmail->withdeliveryreceipt=1;
+			$formmail->withcancel=1;
+			// Tableau des substitutions
+			//$formmail->substit['__FACREF__']='';
+			$formmail->substit['__SIGNATURE__']=$user->signature;
+			//$formmail->substit['__REFCLIENT__']='';
+			$formmail->substit['__PERSONALIZED__']='';
+			$formmail->substit['__CONTACTCIVNAME__']='';
+
+			// Tableau des parametres complementaires du post
+			$formmail->param['action']=$action;
+			$formmail->param['models']=$modelmail;
+			$formmail->param['facid']=$object->id;
+			$formmail->param['returnurl']=$_SERVER["PHP_SELF"].'?id='.$object->id;
+
+			print $formmail->get_form();
+
+
+		}
+
+		if ($resultmasssend)
+		{
+			print '<br><strong>'.$langs->trans("ResultOfMassSending").':</strong><br>'."\n";
+			print $resultmasssend;
+			print '<br>';
+		}
+	}
+
 	print '</form>';
 
 	$db->free($resql);

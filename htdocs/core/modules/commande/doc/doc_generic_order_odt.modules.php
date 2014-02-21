@@ -140,6 +140,16 @@ class doc_generic_order_odt extends ModelePDFCommandes
 			$resarray['object_total_vat_'.$line->tva_tx]+=$line->total_tva;
 		}
 
+		// Retrieve extrafields
+		if(is_array($object->array_options) && count($object->array_options))
+		{
+			require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+			$extrafields = new ExtraFields($this->db);
+			$extralabels = $extrafields->fetch_name_optionals_label('commande',true);
+			$object->fetch_optionals($object->id,$extralabels);
+
+			$resarray = $this->fill_substitutionarray_with_extrafields($object,$resarray,$extrafields,$array_key='object',$outputlangs);
+		}
 		return $resarray;
 	}
 

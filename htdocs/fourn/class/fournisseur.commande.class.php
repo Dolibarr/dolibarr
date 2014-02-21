@@ -1395,17 +1395,32 @@ class CommandeFournisseur extends CommonOrder
     /**
      * 	Delete line
      *
-     *	@param	int		$idligne	Id of line to delete
+     *	@param	int		$idline		Id of line to delete
+     *	@param	int		$notrigger	1=Disable call to triggers
      *	@return						0 if Ok, <0 ik Ko
      */
-    function deleteline($idligne)
+    function deleteline($idline, $notrigger=0)
     {
         if ($this->statut == 0)
         {
-            $sql = "DELETE FROM ".MAIN_DB_PREFIX."commande_fournisseurdet WHERE rowid = ".$idligne;
+            $sql = "DELETE FROM ".MAIN_DB_PREFIX."commande_fournisseurdet WHERE rowid = ".$idline;
             $resql=$this->db->query($sql);
 
-            dol_syslog(get_class($this)."::deleteline sql=".$sql);
+			dol_syslog(get_class($this)."::deleteline sql=".$sql);
+
+			if (!$notrigger && $resql)
+			{
+				// Appel des triggers
+				include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
+				$result = 0;
+				$interface=new Interfaces($this->db);
+				$result = $interface->run_triggers('LINEORDER_SUPPLIER_DELETE',$this,$user,$langs,$conf);
+				if ($result < 0) {
+					$error++; $this->errors=$interface->errors;
+				}
+				// Fin appel triggers
+			}
+
             if ($resql)
             {
                 $result=$this->update_price();
@@ -1418,7 +1433,7 @@ class CommandeFournisseur extends CommonOrder
             }
         }
         else
-        {
+		{
             return -1;
         }
     }

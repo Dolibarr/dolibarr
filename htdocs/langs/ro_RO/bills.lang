@@ -64,6 +64,7 @@ ConfirmConvertToReduc=Vrei sa se transforme aceasta nota de credit în absolută
 SupplierPayments=Plăţi Furnizori
 ReceivedPayments=Încasări primite
 ReceivedCustomersPayments=Încasări  Clienţi
+# PayedSuppliersPayments=Payments payed to suppliers
 ReceivedCustomersPaymentsToValid=Încasări  Clienţi  de validat
 PaymentsReportsForYear=Rapoarte Plăţi pentru %s
 PaymentsReports=Rapoarte Plăţi
@@ -76,7 +77,8 @@ PaymentConditionsShort=Termen de plată
 PaymentAmount=Sumă de plată
 ValidatePayment=Validează plata
 PaymentHigherThanReminderToPay=Plată mai mare decât restul de  plată
-HelpPaymentHigherThanReminderToPay= Atentie, valoarea plăţii la una sau mai multe facturi este mai mare decât  restul de plată. <br> Corectaţi  intrarea, altfel confirmaţi si gîndiţivă  la crearea unei note de credit pentru fiecare plata în exces.
+HelpPaymentHigherThanReminderToPay=Atentie, valoarea plăţii la una sau mai multe facturi este mai mare decât  restul de plată. <br> Corectaţi  intrarea, altfel confirmaţi si gîndiţivă  la crearea unei note de credit pentru fiecare plata în exces.
+# HelpPaymentHigherThanReminderToPaySupplier=Attention, the payment amount of one or more bills is higher than the rest to pay. <br> Edit your entry, otherwise confirm.
 ClassifyPaid=Clasează "Platită"
 ClassifyPaidPartially=Clasează "Platită Parţial"
 ClassifyCanceled=Clasează "Abandonată"
@@ -166,6 +168,7 @@ ConfirmClassifyPaidPartiallyReasonOtherDesc=Utilizaţi această opţiune dacă t
 ConfirmClassifyAbandonReasonOther=Altele
 ConfirmClassifyAbandonReasonOtherDesc=Această opţiune va fi folosită în toate celelalte cazuri. De exemplu,  dacă ai dori să creezi o factura de inlocuire a facturii.
 ConfirmCustomerPayment=Confirmaţi introducerea plăţii  de <b>%s</b> %s ?
+# ConfirmSupplierPayment=Do you confirm this payment input for <b>%s</b> %s ?
 ConfirmValidatePayment=Sunteți sigur că doriți să validaţi această plată? Nici o schimbare poate fi făcută odată ce plata este validată.
 ValidateBill=Validează factura
 UnvalidateBill=Devalidează factura
@@ -407,9 +410,8 @@ TypeContact_invoice_supplier_external_SERVICE=Contact service furnizor
 # crabe PDF Model
 PDFCrabeDescription=Şablon PDF Factura Crabe . Un șablon factură complet (format recomandat)
 # oursin PDF Model
-PDFOursinDescription= Şablon PDF Factura Oursin. Un șablon factură complet ( format alternativ)
+PDFOursinDescription=Şablon PDF Factura Oursin. Un șablon factură complet ( format alternativ)
 # NumRef Modules
 # TerreNumRefModelDesc1=Return number with format %syymm-nnnn for standard invoices and %syymm-nnnn for credit notes where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
 MarsNumRefModelDesc1=Retrimiteţi numărul sub forma %syymm-nnnn pentru facturile standard , %syymm-nnnn pentru facturile de înlocuire, %syymm-nnnn pentru credit note şi %syymm-nnnn  pentru credit note  unde  yy este anul, mm este luna şi nnnn este o secvenţă continuă şi nu revine la 0
-
 TerreNumRefModelError=O factură începând cu $syymm există deja și nu este compatibilă cu acest model de numerotaţie. Înşăturaţi-o sau redenumiți-o pentru a activa acest modul.

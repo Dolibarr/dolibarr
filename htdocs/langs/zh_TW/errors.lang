@@ -37,6 +37,7 @@ ErrorBadParameters=錯誤的參數
 ErrorBadValueForParameter=錯誤值“參數不正確”%s %s'“
 ErrorBadImageFormat=圖像文件有不支持的格式
 ErrorBadDateFormat=值“%s”有錯誤的日期格式
+# ErrorWrongDate=Date is not correct!
 ErrorFailedToWriteInDir=無法寫在目錄%s
 ErrorFoundBadEmailInFile=找到%S的語法不正確的電子郵件文件中的行（例如行%的電子郵件s =%s）的
 ErrorUserCannotBeDelete=用戶不能被刪除。也許它是相關聯的Dolibarr實體。
@@ -63,13 +64,14 @@ ErrorSizeTooLongForVarcharType=尺寸長字符串類型（%s字符最大）
 # ErrorBadFormatValueList=The list value cannot have more than one come : <u>%s</u>, but need at least one: llave,valores
 ErrorFieldCanNotContainSpecialCharacters=菲爾德<b>%s</b>必須不包含特殊字符。
 ErrorNoAccountancyModuleLoaded=沒有一個會計模塊激活
-ErrorExportDuplicateProfil=這型材名稱已在該出口存在相當大。
+# ErrorExportDuplicateProfil=This profile name already exists for this export set.
 ErrorLDAPSetupNotComplete=Dolibarr - LDAP的匹配是不完整的。
 ErrorLDAPMakeManualTest=甲。LDIF文件已經生成在目錄%s的嘗試加載命令行手動有更多的錯誤信息。
 ErrorCantSaveADoneUserWithZeroPercentage=無法儲存與行動“規約未啟動”如果領域“做的”，也是填補。
 ErrorRefAlreadyExists=號的創作已經存在。
 ErrorPleaseTypeBankTransactionReportName=請輸入銀行收據的名字在交易報告（格式YYYYMM或采用YYYYMMDD）
 ErrorRecordHasChildren=刪除記錄失敗，因為它有一些兒童。
+# ErrorRecordIsUsedCantDelete=Can't delete record. It is already used or included into other object.
 ErrorModuleRequireJavascript=不能禁用JavaScript必須有此功能的工作。要啟用/禁用JavaScript，進入菜單首頁->安裝->“顯示。
 ErrorPasswordsMustMatch=這兩種類型的密碼必須相互匹配
 ErrorContactEMail=一個技術性錯誤發生。請聯系管理員，以下連接提供錯誤代碼<b>%s</b>在您的郵件，甚至更好，加入了這個頁面的屏幕拷貝的電子郵件<b>%s。</b>
@@ -127,6 +129,8 @@ ErrorNoActivatedBarcode=沒有激活的條碼類型
 # ErrorPHPNeedModule=Error, your PHP must have module <b>%s</b> installed to use this feature.
 # ErrorOpenIDSetupNotComplete=You setup Dolibarr config file to allow OpenID authentication, but URL of OpenID service is not defined into constant %s
 # ErrorWarehouseMustDiffers=Source and target warehouses must differs
+# ErrorBadFormat=Bad format!
+# ErrorPaymentDateLowerThanInvoiceDate=Payment date (%s) cant' be before invoice date (%s) for invoice %s.
 
 # Warnings
 # WarningMandatorySetupNotComplete=Mandatory setup parameters are not yet defined

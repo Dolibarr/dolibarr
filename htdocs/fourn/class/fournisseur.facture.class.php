@@ -1258,8 +1258,8 @@ class FactureFournisseur extends CommonInvoice
 
         $error=0;
     	$this->db->begin();
-
-        if (! $error && ! $notrigger)
+		
+		if (! $error && ! $notrigger)
         {
 	    	// Appel des triggers
 	    	include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
@@ -1378,7 +1378,7 @@ class FactureFournisseur extends CommonInvoice
             while ($obj=$this->db->fetch_object($resql))
             {
                 $this->nbtodo++;
-                if ($this->db->jdate($obj->datefin) < ($now - $conf->facture->fournisseur->warning_delay)) $this->nbtodolate++;
+                if (! empty($obj->datefin) && $this->db->jdate($obj->datefin) < ($now - $conf->facture->fournisseur->warning_delay)) $this->nbtodolate++;
             }
             $this->db->free($resql);
             return 1;

@@ -8,7 +8,7 @@
  * Copyright (C) 2008      Raphael Bertrand			<raphael.bertrand@resultic.fr>
  * Copyright (C) 2010-2013 Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2010-2011 Philippe Grand			<philippe.grand@atoo-net.com>
- * Copyright (C) 2012      Christophe Battarel  	<christophe.battarel@altairis.fr>
+ * Copyright (C) 2012-214  Christophe Battarel  	<christophe.battarel@altairis.fr>
  * Copyright (C) 2013      Florian Henry		  	<florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -939,6 +939,9 @@ class Propal extends CommonObject
                 $this->fk_delivery_address	= '';
             }
 
+            // reset ref_client
+             $this->ref_client  = '';
+
             // TODO Change product price if multi-prices
         }
         else
@@ -961,7 +964,7 @@ class Propal extends CommonObject
         $this->date			= $now;
         $this->datep		= $now;    // deprecated
         $this->fin_validite	= $this->date + ($this->duree_validite * 24 * 3600);
-        $this->ref_client	= '';
+        if (empty($conf->global->MAIN_KEEP_REF_CUSTOMER_ON_CLONING)) $this->ref_client	= '';
 
         // Set ref
         require_once DOL_DOCUMENT_ROOT ."/core/modules/propale/".$conf->global->PROPALE_ADDON.'.php';
@@ -972,6 +975,19 @@ class Propal extends CommonObject
         // Create clone
         $result=$this->create($user);
         if ($result < 0) $error++;
+        else
+        {
+			// copy internal contacts
+    		if ($this->copy_linked_contact($objFrom, 'internal') < 0)
+            	$error++;
+
+            // copy external contacts if same company
+            elseif ($objFrom->socid == $this->socid)
+            {
+		        if ($this->copy_linked_contact($objFrom, 'external') < 0)
+					$error++;
+            }
+        }
 
         if (! $error)
         {
@@ -1629,7 +1645,7 @@ class Propal extends CommonObject
      *  @param		int		$notrigger	1=Does not execute triggers, 0= execuete triggers
      *	@return     int         		<0 if KO, >0 if OK
      */
-    function reopen($user, $statut, $note, $notrigger=0)
+    function reopen($user, $statut, $note='', $notrigger=0)
     {
         global $langs,$conf;
 

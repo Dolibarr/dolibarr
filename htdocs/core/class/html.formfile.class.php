@@ -765,6 +765,7 @@ class FormFile
 					{
 						$relativepath=(! empty($object->ref)?dol_sanitizeFileName($object->ref):'').'/';
 						if ($object->element == 'invoice_supplier') $relativepath=get_exdir($object->id,2).$relativepath;
+						if ($object->element == 'member') $relativepath=get_exdir($object->id,2).$relativepath;
 					}
 
 					$var=!$var;
@@ -796,7 +797,7 @@ class FormFile
 					{
 						print '<td align="center">';
 						$tmp=explode('.',$file['name']);
-						$minifile=$tmp[0].'_mini.'.$tmp[1];
+						$minifile=$tmp[0].'_mini.'.strtolower($tmp[1]);	// Thumbs are created with filename in lower case
 						if (image_format_supported($file['name']) > 0) print '<img border="0" height="'.$maxheightmini.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&file='.urlencode($relativepath.'thumbs/'.$minifile).'" title="">';
 						else print '&nbsp;';
 						print '</td>';
@@ -813,7 +814,12 @@ class FormFile
 						else
 							$filepath=$file['name'];
 						*/
-						print '<a href="'.(($useinecm && ! empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE_JS))?'#':$url.'?action=delete&urlfile='.urlencode($filepath).$param).'" class="deletefilelink" rel="'.$filepath.'">'.img_delete().'</a>';
+						$useajax=1;
+						if (! empty($conf->dol_use_jmobile)) $useajax=0;
+						if (empty($conf->use_javascript_ajax)) $useajax=0;
+						if (! empty($conf->global->MAIN_ECM_DISABLE_JS)) $useajax=0;
+
+						print '<a href="'.(($useinecm && $useajax)?'#':$url.'?action=delete&urlfile='.urlencode($filepath).$param).'" class="deletefilelink" rel="'.$filepath.'">'.img_delete().'</a>';
 					}
 					else print '&nbsp;';
 					print "</td>";

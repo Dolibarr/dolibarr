@@ -260,7 +260,17 @@ if ($id > 0 || ! empty($ref))
 		/*
 		 * Lignes de contacts
 		 */
-		print '<br><table class="noborder" width="100%">';
+		print '<br>';
+/*
+		// Contacts lines (modules that overwrite templates must declare this into descriptor)
+		$dirtpls=array_merge($conf->modules_parts['tpl'],array('/core/tpl'));
+		foreach($dirtpls as $reldir)
+		{
+		    $res=@include dol_buildpath($reldir.'/contacts.tpl.php');
+		    if ($res) break;
+		}
+*/
+		print '<table class="noborder" width="100%">';
 
 		/*
 		 * Ajouter une ligne de contact
@@ -283,7 +293,7 @@ if ($id > 0 || ! empty($ref))
 			print '<input type="hidden" name="action" value="addcontact">';
 			print '<input type="hidden" name="source" value="internal">';
 			print '<input type="hidden" name="id" value="'.$id.'">';
-			print '<input type="hidden" name="withproject" value="'.$withproject.'">';
+			if ($withproject) print '<input type="hidden" name="withproject" value="'.$withproject.'">';
 
 			// Ligne ajout pour contact interne
 			print "<tr ".$bc[$var].">";
@@ -299,7 +309,7 @@ if ($id > 0 || ! empty($ref))
 			print '<td colspan="1">';
 			// On recupere les id des users deja selectionnes
 			$contactsofproject=$projectstatic->getListContactId('internal');
-			$form->select_users($user->id,'contactid',0,'',0,'',$contactsofproject);
+			$form->select_users($user->id,'userid',0,'',0,'',$contactsofproject);
 			print '</td>';
 			print '<td>';
 			$formcompany->selectTypeContact($object, '', 'type','internal','rowid');
@@ -317,6 +327,7 @@ if ($id > 0 || ! empty($ref))
 				print '<input type="hidden" name="action" value="addcontact">';
 				print '<input type="hidden" name="source" value="external">';
 				print '<input type="hidden" name="id" value="'.$object->id.'">';
+				if ($withproject) print '<input type="hidden" name="withproject" value="'.$withproject.'">';
 
 				$var=!$var;
 				print "<tr ".$bc[$var].">";
@@ -326,20 +337,22 @@ if ($id > 0 || ! empty($ref))
 				print '</td>';
 
 				print '<td colspan="1">';
+				$events=array();
+				$events[]=array('method' => 'getContacts', 'url' => dol_buildpath('/core/ajax/contacts.php',1), 'htmlname' => 'contactid', 'params' => array('add-customer-contact' => 'disabled'));
+
 				$thirdpartyofproject=$projectstatic->getListContactId('thirdparty');
 				$selectedCompany = isset($_GET["newcompany"])?$_GET["newcompany"]:$projectstatic->societe->id;
-				$selectedCompany = $formcompany->selectCompaniesForNewContact($object, 'id', $selectedCompany, 'newcompany',$thirdpartyofproject);
+				$selectedCompany = $formcompany->selectCompaniesForNewContact($object, 'id', $selectedCompany, 'newcompany', $thirdpartyofproject, 0, $events, '&withproject='.$withproject);
 				print '</td>';
 
 				print '<td colspan="1">';
 				$contactofproject=$projectstatic->getListContactId('external');
 				$nbofcontacts=$form->select_contacts($selectedCompany,'','contactid',0,'',$contactofproject);
-				if ($nbofcontacts == 0) print $langs->trans("NoContactDefined");
 				print '</td>';
 				print '<td>';
 				$formcompany->selectTypeContact($object, '', 'type','external','rowid');
 				print '</td>';
-				print '<td align="right" colspan="3" ><input type="submit" class="button" value="'.$langs->trans("Add").'"';
+				print '<td align="right" colspan="3" ><input type="submit" class="button" id="add-customer-contact" value="'.$langs->trans("Add").'"';
 				if (! $nbofcontacts) print ' disabled="disabled"';
 				print '></td>';
 				print '</tr>';
@@ -442,6 +455,7 @@ if ($id > 0 || ! empty($ref))
 			}
 		}
 		print "</table>";
+
 	}
 	else
 	{

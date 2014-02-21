@@ -4,11 +4,31 @@ English Dolibarr ChangeLog
 
 ***** ChangeLog for 3.6 compared to 3.5.* *****
 For users:
+- New: Can input barcode during product creation step.
+- New: Add autonumbering of barcode value for products.
+- New: Can create contract from an order.
 - New: Add list of orders products in tab "consumption" on thirdparties.
 - New: Add graph stats for suppliers orders in tab "stats" on products.
 - New: Add option MAIN_HIDE_INACTIVETAB_ON_PRINT to hide inactive tabs when you
-  use the "print" view on screen.
-- New: Add menu entry to barcode genration page.
+       use the "print" view on screen.
+- New: Add a menu entry to a barcode generation page.
+- New: Add option MAIN_AUTO_TIMESTAMP_IN_PUBLIC_NOTES and MAIN_AUTO_TIMESTAMP_IN_PRIVATE_NOTES
+       to automatically add timestamp and user line into editionf field when editing a note.
+- New: Add button cancel into edition of notes.
+- New: Improved Opensurvey module and added options to disable comments and disable
+       public votes.
+- New: The box "balance of bank accounts" show all opened accounts.
+- New: Add option MAIN_ADD_SALE_REP_SIGNATURE_IN_NOTE.
+- New: Add warning if supplier payment is higher that due amount.
+- New: Increase length of url into bookmark module.
+- New: Add an admin page to make a mass init of barcode values for all products. 
+
+TODO
+- New: Predefined product and free product use same form.
+- New: [ task #926 ] Add extrafield feature on order lines.
+- New: [ task #927 ] Add extrafield feature on Proposal lines.
+- New: [ task #928 ] Add extrafield feature on invoice lines.
+
 
 For translators:
 - Update language files.
@@ -17,8 +37,52 @@ For developers:
 - New: Add path file of trigger into admin trigger list page.
 - New: More phpunit tests.
 - New: Payments and supplier payment pages tabs can now be extended from modules.
+- New: Add option 'aZ' into GETPOST function to check parameters contains 
+       only a to z or A to Z characters.
+- New: Opensurvey polls tab cards can now be extended from external modules.
+- New: Triggers OPENSURVEY_CREATE, OPENSURVEY_DELETE added.
+- New: Add new hook function addMoreActionsButtons to allow a module to add/replace
+       action buttons into an element.
+- New: Normalize code for barcode generation to match other modules.
+- New: Uniformize code for contacts forms.
+
+WARNING: Following change may create regression for some external modules, but was necessary to make
+Dolibarr better:
+
+- The deprecated way (with 4 parameters) to declare a new tab into a module descriptor file has been
+removed. You must now use the 6 parameters way. See file modMyModule.class.php for example. 
+- Remove the javascrit function ac_delay() that is not used anymore by core code.
+- Properties dictionnaries into module descriptor files has been renamed into dictionaries.
 
 
+
+***** ChangeLog for 3.5.1 compared to 3.5.0 *****
+Fix: Do not report trigger errors twice.
+Fix: Error when creating event was not reported.
+Fix: Bug of import of agenda when using https link
+Fix: Field nature not saved correctly
+Fix: Substituion of extra field was ko for order
+Fix: Bad translation of date format for pt_BR.
+Fix: priority field of agenda record is smallint.
+Fix: Missing loading of lang in some pages.
+Fix: Write note in invoice when using pos module.
+Fix: Link to paypal was invalid into email text.
+Fix: ref and date of supplier invoice.
+Fix: Check on bank account.
+Fix: Problem with file upload and download.
+Fix: Page load not ending when large number of thirdparies. We 
+     added option MAIN_DISABLE_AJAX_COMBOX to disable javascript
+     combo feature that is root cause of problem.
+Fix: [ bug #1231 ] PDF always generated in interventions
+Fix: Be sure there is no duplicate default rib.
+Fix: Enable extrafields for customer order, proposal and invoice lines. This feature
+     was developed for 3.5 but was disabled (hidden) because of a bug not possible to
+     fix enough quickly for 3.5.0 release. 
+Fix: user right on Holiday for month report nor working.
+Fix: [ bug #1250 ] "Supplier Ref. product" sidebar search box does not work
+Fix: Bad space in predefined messages. 
+Fix: Signature was not added for email sent from thirdparty page.
+Fix: Action event SHIPPING_VALIDATE is not implemented
 
 ***** ChangeLog for 3.5 compared to 3.4.* *****
 For users:
@@ -42,9 +106,6 @@ For users:
 - New: Add object_hour and object_date_rfc as substitution tag for open document generation.
 - New: Add options to send an email when paypal or paybox payment is done.
 - New: Clone product/service composition.
-- New: [ task #926 ] Add extrafield feature on order lines.
-- New: [ task #927 ] Add extrafield feature on Proposal lines.
-- New: [ task #928 ] Add extrafield feature on invoice lines.
 - New: Add option ADHERENT_LOGIN_NOT_REQUIRED.
 - New: Add a cron module to define scheduled jobs.
 - New: Add new graphical boxes (customer and supplier invoices and orders per month).
@@ -153,56 +214,75 @@ parameter. All methods addline in this case were modified to remove this paramet
 
 
 
+***** ChangeLog for 3.4.3 compared to 3.4.2 *****
+Fix: Bad get of localtaxes into contracts add lines
+
+***** ChangeLog for 3.4.3 compared to 3.4.2 *****
+Fix: Warning into bank conciliation feature.
+Fix: Bad get of localtaxes into contracts add lines.
+Fix: Add a limit into list to avoid browser to hang when database is too large.
+Fix: [ bug #1212 ] 'jqueryFileTree.php' directory traversal vulnerability
+
+***** ChangeLog for 3.4.3 compared to 3.4.2 *****
+Fix: Warning into bank conciliation feature.
+Fix: Bad get of localtaxes into contracts add lines.
+Fix: Add a limit into list to avoid browser to hang when database is too large.
+Fix: [ bug #1212 ] 'jqueryFileTree.php' directory traversal vulnerability
+
 ***** ChangeLog for 3.4.2 compared to 3.4.1 *****
-Fix: field's problem into company's page (RIB)
-Fix: Document cerfa doesn't contained firstname & lastname from donator
+Fix: field's problem into company's page (RIB).
+Fix: Document cerfa doesn't contained firstname & lastname from donator.
 Fix: Bad rounding on margin calculations and display.
 Fix: Option drop table into backup was broken.
-Fix: [ bug #1105 ] Searching Boxes other search option
-Fix: wrong buy price update
-Fix: [ bug #1142 ] Set paiement on invoice (PGSql)
-Fix: [ bug #1145 ] Agenda button list type do not display
-Fix: [ bug #1148 ] Product consomation : supplier order bad status
-Fix: [ bug #1159 ] Commercial search "other" give p.note do not exists
-Fix: [ bug #1174 ] Product translated description not good into PDF
-Fix: [ bug #1163 ] SQL Error when searching for supplier orders
-Fix: [ bug #1162 ] Translaction for morning and afternoon
-Fix: [ bug #1161 ] Search on product label
+Fix: [ bug #1105 ] Searching Boxes other search option.
+Fix: wrong buy price update.
+Fix: [ bug #1142 ] Set paiement on invoice (PGSql).
+Fix: [ bug #1145 ] Agenda button list type do not display.
+Fix: [ bug #1148 ] Product consomation : supplier order bad status.
+Fix: [ bug #1159 ] Commercial search "other" give p.note do not exists.
+Fix: [ bug #1174 ] Product translated description not good into PDF.
+Fix: [ bug #1163 ] SQL Error when searching for supplier orders.
+Fix: [ bug #1162 ] Translaction for morning and afternoon.
+Fix: [ bug #1161 ] Search on product label.
 Fix: [ bug #1075 ] POS module doesn't decrement stock of products in delayed payment mode.
-Fix: [ bug #1171 ] Documents lost in interventions after validating
-Fix: fix unsubscribe URL into mailing when sending manually (not by script)
-Fix: [ bug #1182 ] ODT company_country tag is htmlencoded
-Fix: [ bug #1196 ] Product barcode search does not expect 13th digit on EAN13 type
-Fix: [ bug #1202 ] Wrong amount in deposit % invoice from proposal
+Fix: [ bug #1171 ] Documents lost in interventions after validating.
+Fix: fix unsubscribe URL into mailing when sending manually (not by script).
+Fix: [ bug #1182 ] ODT company_country tag is htmlencoded.
+Fix: [ bug #1196 ] Product barcode search does not expect 13th digit on EAN13 type.
+Fix: [ bug #1202 ] Wrong amount in deposit % invoice from proposal.
+Fix: Removed analytics tags into doc page.
+Fix: Call Image on this instead of pdf.
+Fix: Missing parameter for photo.
+Fix: Bad SQL request for turnover report.
 
 ***** ChangeLog for 3.4.1 compared to 3.4.0 *****
-Fix: Display buying price on line edit when no supplier price is defined
-Fix: Retrieving of margin info when invoice created automatically from order
-Fix: Reordering supplier products in list by supplier or supplier ref was crashing
-Fix: [ bug #1029 ] Tulip numbering mask
-Fix: Supplier invoice and supplier order are not displayed into object link into agenda event card
-Fix: [ bug #1033 ] SUPPLIER REF disappeared
-Fix: update extrafield do not display immediately after update
-Fix: Fix bug with canvas thirdparty
-Fix: [ bug #1037 ] Consumption> Supplier invoices related
-Fix: User group name do not display in card (view or edit mode)
-Fix: Link "Show all supplier invoice" on supplier card not working 
-Fix: [ bug #1039 ] Pre-defined invoices conversion
-Fix: If only service module is activated, it's impossible to delete service
-Fix: [ bug #1043 ] Bad interventions ref numbering
-Fix: Mailing module : if an email is already in destinaires list all other email from selector was not inserted
-Fix: Localtaxes balance not showing
-Fix: Intervention box links to contracts id
-Fix: Compatibility with multicompany module
-Fix: Edit propal line was losing product supplier price id
-Fix: Delete linked element to supplier invoice when deleted 
-Fix: [ bug #1061 ] Bad info shipped products
-Fix: [ bug #1062 ] Documents lost in propals and contracts validating
-Fix: Supplier price displayed on document lines and margin infos didnt take discount
-Fix: sorting on qty did not work in supplier product list
-Fix: there was no escaping on filter fields in supplier product list
-Fix: bugs on margin reports and better margin calculation on credit notes
-Qual: Add travis-ci integration
+Fix: Display buying price on line edit when no supplier price is defined.
+Fix: Retrieving of margin info when invoice created automatically from order.
+Fix: Reordering supplier products in list by supplier or supplier ref was crashing.
+Fix: [ bug #1029 ] Tulip numbering mask.
+Fix: Supplier invoice and supplier order are not displayed into object link into agenda event card.
+Fix: [ bug #1033 ] SUPPLIER REF disappeared.
+Fix: update extrafield do not display immediatly after update.
+Fix: Fix bug with canvas thirdparty.
+Fix: [ bug #1037 ] Consumption> Supplier invoices related.
+Fix: User group name do not display in card (view or edit mode).
+Fix: Link "Show all supplier invoice" on suplier card not working. 
+Fix: [ bug #1039 ] Pre-defined invoices conversion.
+Fix: If only service module is activated, it's impossible to delete service.
+Fix: [ bug #1043 ] Bad interventions ref numbering.
+Fix: Mailing module : if an email is already in destinaires list all other email from selector was not inserted.
+Fix: Localtaxes balance not showing.
+Fix: Intervention box links to contracts id.
+Fix: Compatiblity with multicompany module.
+Fix: Edit propal line was losing product supplier price id.
+Fix: Delete linked element to supplier invoice when deleted.
+Fix: [ bug #1061 ] Bad info shipped products.
+Fix: [ bug #1062 ] Documents lost in propals and contracts validating.
+Fix: Supplier price displayed on document lines and margin infos didnt take discount.
+Fix: sorting on qty did not work in supplier product list.
+Fix: there was no escaping on filter fields in supplier product list.
+Fix: bugs on margin reports and better margin calculation on credit notes.
+Qual: Add travis-ci integration.
 
 ***** ChangeLog for 3.4 compared to 3.3.* *****
 For users:
@@ -301,6 +381,7 @@ backport commit 384e3812eb73a15adafb472cacfb93397a54459b to fix W3C/edit contrac
 
 
 ***** ChangeLog for 3.3.5 compared to 3.3.4 *****
+- Fix: Change to make debian package ok despite removal of ckeditor.
 - Fix: jcrop file to match debian rules
 - Fix: Add missing country UK.
 - Fix: Minor fix into package.
@@ -758,7 +839,7 @@ For developers:
 - New: Support a backtopage parameter on contact creation page.
 - New: Add id on div to show logo.
 - New: Install wizard can activate a module at end of install.
-- New: Dictionnary setup works with very large external dictionnaries (Add 
+- New: Dictionary setup works with very large external dictionnaries (Add 
        page navigation).
 - New: Add api to draw graphics with javascript (using Jquery Flot).
 - New: Can add user login into menu urls added by modules.

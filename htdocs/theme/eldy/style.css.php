@@ -1357,7 +1357,7 @@ div.tabs {
 /*    margin: 0px 0px 2px 6px;
     padding: 0px 6px 3px 0px; */
     text-align: <?php print $left; ?>;
-
+    margin-left: 4px !important;
 	clear:both;
 	height:100%;
 }
@@ -2761,7 +2761,7 @@ a.tab span.ui-btn-inner
 }
 
 .ui-link {
-	color: rgb(<?php print $colortext; ?>) !important;
+	color: rgb(<?php print $colortext; ?>);
 }
 .liste_titre .ui-link {
 	color: #<?php print $colortexttitle; ?> !important;
@@ -2843,9 +2843,20 @@ ul.ulmenu {
 	border: 1px solid #ccc;
 	text-shadow: none;
 }
+.ui-body-c .ui-link, .ui-body-c .ui-link:visited, .ui-body-c .ui-link:hover {
+	color: rgb(<?php print $colortext; ?>);
+}
 .ui-btn-up-c .vsmenudisabled {
 	color: #<?php echo $colorshadowtitle; ?> !important;
 	text-shadow: none !important;
+}
+.ui-controlgroup-horizontal .ui-btn.ui-first-child {
+-webkit-border-top-left-radius: 6px;
+border-top-left-radius: 6px;
+}
+.ui-controlgroup-horizontal .ui-btn.ui-last-child {
+-webkit-border-top-right-radius: 6px;
+border-top-right-radius: 6px;
 }
 .alilevel1 {
     color: #<?php echo $colortexttitle; ?> !important;
@@ -2859,14 +2870,6 @@ ul.ulmenu {
 	background-image: -o-linear-gradient( #ddd,#d1d1d1 ) !important;
 	background-image: linear-gradient( #ddd,#d1d1d1 ) !important;
 }
-<?php if ($dol_use_jmobile) { ?>
-.overflowwithjm200
-{
-	max-width: 200px;
-	overflow: hidden;
-	white-space: nowrap;
-}
-<?php } ?>
 
 <?php
 if (is_object($db)) $db->close();

@@ -43,8 +43,8 @@ SecuritySetup=تنظیمات امنیتی
 ErrorModuleRequirePHPVersion=خطا! این ماژول نیازمند پی اچ پی نسخه <b>%s</b> و ب
 ErrorModuleRequireDolibarrVersion=خطا این ماژول نیازمند دلیبار نسخه <b>%s</b> و به بالاست
 ErrorDecimalLargerThanAreForbidden=خطا دقت بیش از <b>%s</b> امکان پذیر نیست
-DictionnarySetup=تنظیمات فرهنگ لغات
-Dictionnary=دیکشنری
+# DictionarySetup=Dictionary setup
+# Dictionary=Dictionaries
 # ErrorReservedTypeSystemSystemAuto=Value 'system' and 'systemauto' for type is reserved. You can use 'user' as value to add your own record
 # ErrorCodeCantContainZero=Code can't contain value 0
 DisableJavascript=غیر فعال سازی جاوا اسکریپت
@@ -287,7 +287,7 @@ CurrentVersion=Dolibarr النسخة الحالية
 CallUpdatePage=الذهاب إلى صفحة التحديثات وdatas هيكل قاعدة البيانات : ٪ s.
 LastStableVersion=آخر نسخة مستقرة
 GenericMaskCodes=يمكنك إدخال أي قناع الترقيم. في هذا القناع ، وبعد ويمكن استخدام العلامات : <br> <b>(000000)</b> يطابق عدد الذي سيكون على كل يزداد ٪ s. كما تدخل العديد من أصفار على النحو المنشود طول المضادة. المضاد وسيتم الانتهاء من اصفار من اليسار من أجل الحصول على أكبر عدد اصفار كما القناع. <br> <b>000000 +000) (نفس</b> السابقة ولكن يقابل المقابلة لعدد للحق من علامة + يطبق اعتبارا من أول ٪ s. <br> <b>000000 @ (س)</b> نفس السابقة ولكن المضاد هو إعادة الصفر عندما يتم التوصل إلى الشهر خ خ ما بين 1 و 12). إذا كان هذا الخيار هو المستخدمة وس 2 أو أعلى ، ثم تسلسل (ذ ذ م م)) ((سنة أو ملم)) (مطلوب أيضا. <br> <b>(ب)</b> اليوم (01 الى 31). <br> <b>() ملم</b> في الشهر (01 الى 12). <br> <b>(كذا)</b> ، <b>(سنة))</b> أو <b>(ذ</b> السنة أكثر من 2 أو 4 أو 1 الأرقام. <br>
-GenericMaskCodes2=<b>() cccc</b> العميل مدونة <br> <b>() cccc000</b> العميل قانون للحرف ن يعقب العميل المرجع مضادة دون تعويض وzeroized مع عالمية مضادة. <br>
+# GenericMaskCodes2=<b>{cccc}</b> the client code<br><b>{cccc000}</b> the client code on n characters is followed by a client's ref counter without offset and zeroized with the global counter.<br><b>{tttt}</b> The code of company type on n characters (see dictionary-company types).<br>
 GenericMaskCodes3=جميع الشخصيات الاخرى في قناع سوف تظل سليمة. <br> المساحات غير مسموح بها. <br>
 GenericMaskCodes4a=<u>ومثال على 99th ق ٪ من طرف ثالث TheCompany عمله 2007-01-31 :</u> <br>
 GenericMaskCodes4b=<u>ومثال على طرف ثالث على خلق 2007-03-01 :</u> <br>
@@ -505,7 +505,7 @@ Module50100Desc=نقطة بيع وحدة
 # Module54000Name=PrintIPP
 # Module54000Desc=Print via Cups IPP Printer.
 # Module55000Name=Open Survey
-# Module55000Desc=Module to integrate a survey (like Doodle, Studs, Rdvz, ...)
+# Module55000Desc=Module to make online surveys (like Doodle, Studs, Rdvz, ...)
 # Module59000Name=Margins
 # Module59000Desc=Module to manage margins
 # Module60000Name=Commissions
@@ -724,34 +724,36 @@ Permission2515=إعداد وثائق وأدلة
 # Permission54001=Print
 # Permission55001=Read surveys
 # Permission55002=Create/modify surveys
-DictionnaryCompanyType=أنواع الشركة
-DictionnaryCompanyJuridicalType=أنواع القانوني للشركة
-DictionnaryProspectLevel=آفاق محتملة المستوى
-DictionnaryCanton=الدولة / الكانتونات
-DictionnaryRegion=المناطق
-DictionnaryCountry=البلدان
-DictionnaryCurrency=العملات
-DictionnaryCivility=عنوان الكياسة
-DictionnaryActions=الإجراءات القائمة
-DictionnarySocialContributions=أنواع المساهمات الاجتماعية
-DictionnaryVAT=معدلات ضريبة القيمة المضافة
-# DictionnaryRevenueStamp=Amount of revenue stamps
-DictionnaryPaymentConditions=شروط الدفع
-DictionnaryPaymentModes=طرق الدفع
-DictionnaryTypeContact=أنواع الاتصال
-DictionnaryEcotaxe=الضرائب الإيكولوجية (WEEE)
-DictionnaryPaperFormat=الصيغة الورقية
-DictionnaryFees=نوع من الرسوم
-DictionnarySendingMethods=طرق الإرسال
-DictionnaryStaff=العاملين
-# DictionnaryAvailability=Delivery delay
-# DictionnaryOrderMethods=Ordering methods
-# DictionnarySource=Origin of proposals/orders
-# DictionnaryAccountancyplan=Chart of accounts
-# DictionnaryAccountancysystem=Models for chart of accounts
+# Permission59001=Read commercial margins
+# Permission59002=Define commercial margins
+# DictionaryCompanyType=Company types
+# DictionaryCompanyJuridicalType=Juridical kinds of company
+# DictionaryProspectLevel=Prospect potential level
+# DictionaryCanton=State/Cantons
+# DictionaryRegion=Regions
+# DictionaryCountry=Countries
+# DictionaryCurrency=Currencies
+# DictionaryCivility=Civility title
+# DictionaryActions=Type of agenda events
+# DictionarySocialContributions=Social contributions types
+# DictionaryVAT=VAT Rates or Sales Tax Rates
+# DictionaryRevenueStamp=Amount of revenue stamps
+# DictionaryPaymentConditions=Payment terms
+# DictionaryPaymentModes=Payment modes
+# DictionaryTypeContact=Contact/Address types
+# DictionaryEcotaxe=Ecotax (WEEE)
+# DictionaryPaperFormat=Paper formats
+# DictionaryFees=Type of fees
+# DictionarySendingMethods=Shipping methods
+# DictionaryStaff=Staff
+# DictionaryAvailability=Delivery delay
+# DictionaryOrderMethods=Ordering methods
+# DictionarySource=Origin of proposals/orders
+# DictionaryAccountancyplan=Chart of accounts
+# DictionaryAccountancysystem=Models for chart of accounts
 SetupSaved=الإعداد المحفوظة
 BackToModuleList=العودة إلى قائمة الوحدات
-BackToDictionnaryList=العودة إلى قائمة معاجم
+# BackToDictionaryList=Back to dictionaries list
 VATReceivedOnly=سعر خاص لا تحمل
 VATManagement=إدارة الضريبة على القيمة المضافة
 VATIsUsedDesc=معدل ضريبة القيمة المضافة بشكل افتراضي عند إنشاء الآفاق ، والفواتير ، وما يتبع أوامر النشطة القياسية للمادة : <br> إذا كان البائع هو تعرض لضريبة القيمة المضافة ، وضريبة القيمة المضافة بعد ذلك تلقائيا= 0. نهاية المادة. <br> إذا كان (بيع وشراء= بلد في البلد) ، فإن ضريبة القيمة المضافة بشكل افتراضي= ضريبة القيمة المضافة من بيع المنتج في البلد. نهاية المادة. <br> إذا كان البائع والمشتري في الجماعة الأوروبية ، وبيعت البضاعة الجديدة بعد أن وسائل النقل (السيارات ، والسفن ، والطائرات) ، الافتراضي= 0 ضريبة القيمة المضافة (ضريبة القيمة المضافة وينبغي أن تدفع من قبل المشتري في customoffice بلاده وليس على البائع . نهاية المادة. <br> إذا كان البائع والمشتري في الجماعة الأوروبية والسلع التي تباع عن طريق وسائل أخرى جديدة بدلا من وسائل النقل ، فإن ضريبة القيمة المضافة بشكل افتراضي= ضريبة القيمة المضافة للمنتجات المباعة. نهاية المادة. <br> وإلا فإن ضريبة القيمة المضافة المقترحة الافتراضي= 1. نهاية المادة.
@@ -919,7 +921,7 @@ TriggerDisabledAsModuleDisabled=يتسبب في تعطيل هذه الصورة �
 TriggerAlwaysActive=يطلق في هذا الملف هي حركة دائمة ، وتفعيل ما هي وحدات Dolibarr.
 TriggerActiveAsModuleActive=يطلق في هذا الملف كما ينشط حدة تمكين <b>٪ ق.</b>
 GeneratedPasswordDesc=هنا تعريف القاعدة التي تريد استخدامه لكلمة السر اذا كنت أسأل لصناعة السيارات ولدت كلمة السر
-DictionnaryDesc=تعرف هنا إشارة datas. يمكنك استكمال مسبقا مع قيمة لك.
+# DictionaryDesc=Define here all reference datas. You can complete predefined value with yours.
 ConstDesc=تسمح لك هذه الصفحة لتحرير جميع البارامترات الأخرى غير المتوفرة في الصفحات السابقة. فهي محفوظة لمعايير متقدمة للمطورين أو troubleshouting.
 OnceSetupFinishedCreateUsers=تحذير فأنت Dolibarr مدير المستخدم. مدير المستخدمين تستخدم لإعداد Dolibarr. لالمعتاد استخدام Dolibarr ، يوصى باستخدام غير مستخدم مدير خلق مجموعات من المستخدمين & القائمة.
 MiscellaneousDesc=هنا تعريف جميع البارامترات الأخرى ذات الصلة بالأمن.
@@ -1011,6 +1013,8 @@ PathDirectory=دایرکتوری
 # FieldEdition=Edition of field %s
 # FixTZ=TimeZone fix
 # FillThisOnlyIfRequired=Example: +2 (fill only if timezone offset problems are experienced)
+# GetBarCode=Get barcode
+# EmptyNumRefModelDesc=The code is free. This code can be modified at any time.
 ##### Module password generation
 PasswordGenerationStandard=عودة كلمة سر ولدت الداخلية وفقا لخوارزمية Dolibarr : 8 أحرف مشتركة تتضمن الأرقام والحروف في حرف صغير.
 PasswordGenerationNone=لا توحي بأي كلمة المرور المتولدة. يجب أن تكون كلمة السر في نوع يدويا.
@@ -1037,8 +1041,8 @@ ModelModules=وثائق قوالب
 WatermarkOnDraft=علامة مائية على مشروع الوثيقة
 # CompanyIdProfChecker=Rules on Professional Ids
 # MustBeUnique=Must be unique ?
-# MustBeMandatory=Must be mandatory to create thirds?
-# MustBeInvoiceMandatory=Must be mandatory to validate invoices?
+# MustBeMandatory=Mandatory to create third parties ?
+# MustBeInvoiceMandatory=Mandatory to validate invoices ?
 Miscellaneous=متفرقات
 ##### Webcal setup #####
 WebCalSetup=Webcalendar ربط الإعداد
@@ -1116,6 +1120,9 @@ TemplatePDFInterventions=تدخل بطاقة نماذج الوثائق
 ##### Contracts #####
 # ContractsSetup=Contracts module setup
 # ContractsNumberingModules=Contracts numbering modules
+# TemplatePDFContracts=Contracts documents models
+# FreeLegalTextOnContracts=Free text on contracts
+# WatermarkOnDraftContractCards=Watermark on draft contracts (none if empty)
 ##### Members #####
 MembersSetup=أعضاء وحدة الإعداد
 MemberMainOptions=الخيارات الرئيسية
@@ -1319,6 +1326,7 @@ BarcodeDescC39=الباركود من نوع C39
 BarcodeDescC128=الباركود من نوع C128
 GenbarcodeLocation=باركود الجيل سطر أداة تستخدمها phpbarcode المحرك لبعض أنواع باركود)
 # BarcodeInternalEngine=Internal engine
+# BarCodeNumberManager=Manager to auto define barcode numbers
 ##### Prelevements #####
 WithdrawalsSetup=انسحاب وحدة الإعداد
 ##### ExternalRSS #####
@@ -1360,17 +1368,6 @@ OSCommerceErrorConnectOkButWrongDatabase=نجح الصدد ولكن قاعدة �
 OSCommerceTestOk=علاقة الخادم '٪ ق' على قاعدة البيانات '٪ ق' مستخدم '٪ ق' ناجحة.
 OSCommerceTestKo1=علاقة الخادم '٪ ق' تنجح ولكن قاعدة البيانات '٪ ق' لا يمكن التوصل إليها.
 OSCommerceTestKo2=علاقة الخادم '٪ ق' مستخدم '٪ ق' فشلت.
-##### Mantis #####
-MantisSetup=فرس النبي ربط الإعداد
-MantisURL=عنوان الوصول لفرس النبي
-MantisServer=فرس النبي استضافة خادم قاعدة البيانات
-MantisDatabaseName=اسم قاعدة البيانات
-MantisUser=المستخدم من الوصول إلى قاعدة البيانات
-MantisSetupSaved=فرس النبي الإعداد انقذ بنجاح.
-MantisTestOk=علاقة الخادم '٪ ق' على قاعدة البيانات '٪ ق' مستخدم '٪ ق' ناجحة.
-MantisTestKo1=علاقة الخادم '٪ ق' تنجح ولكن قاعدة البيانات '٪ ق' لا يمكن التوصل إليها.
-MantisTestKo2=علاقة الخادم '٪ ق' مستخدم '٪ ق' فشلت.
-MantisErrorConnectOkButWrongDatabase=قاعدة بيانات لكنه نجح الصدد لا يبدو أن فرس النبي قاعدة البيانات.
 ##### Stock #####
 StockSetup=تكوين وحدة المخزون
 UserWarehouse=استخدام الأرصدة الشخصية للمستخدم
@@ -1429,7 +1426,7 @@ YourCompanyDoesNotUseVAT=وقد تم تسجيل شركة محددة لعدم ا�
 AgendaSetup=جدول الأعمال وحدة الإعداد
 PasswordTogetVCalExport=مفتاح ربط تصدير تأذن
 PastDelayVCalExport=لا تصدر الحدث الأكبر من
-# AGENDA_USE_EVENT_TYPE=Use events types (managed into Configuration->Dictionnary->llx_c_actioncomm)
+# AGENDA_USE_EVENT_TYPE=Use events types (managed into Configuration->Dictionary->llx_c_actioncomm)
 ##### ClickToDial #####
 ClickToDialDesc=هذا النموذج يسمح لإضافة رمز بعد رقم هاتف Dolibarr الاتصالات. وهناك اضغط على هذه الأيقونة ، سوف يطلب من أحد serveur معينة مع تحديد عنوان لكم أدناه. ويمكن استخدام هذه الكلمة لدعوة من مركز نظام Dolibarr التي يمكن الاتصال على رقم الهاتف هذا المسبار النظام على سبيل المثال.
 ##### Point Of Sales (CashDesk) #####

@@ -28,6 +28,7 @@ EndBankBalance=Τελικό Υπόλοιπο
 CurrentBalance=Τρέχων Υπόλοιπο
 FutureBalance=Μελλοντικό Υπόλοιπο
 ShowAllTimeBalance=Εμφάνιση Υπολοίπου από την αρχή
+AllTime=Από την αρχή
 Reconciliation=Πραγματοποίηση Συναλλαγών
 RIB=Αριθμός Τραπ. Λογαριασμού
 IBAN=IBAN

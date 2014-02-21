@@ -5,6 +5,7 @@
  * Copyright (C) 2005      Simon TOSSER         <simon@kornog-computing.com>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2013      Cédric Salvador      <csalvador.gpcsolutions.fr>
+ * Copyright (C) 2013      Juanjo Menent	    <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,8 +42,8 @@ $action=GETPOST("action");
 $cancel=GETPOST('cancel');
 
 // Security check
-$id = GETPOST('id')?GETPOST('id'):GETPOST('ref');
-$ref = GETPOST('ref');
+$id=GETPOST('id', 'int');
+$ref=GETPOST('ref', 'alpha');
 $stocklimit = GETPOST('stocklimit');
 $desiredstock = GETPOST('desiredstock');
 $cancel = GETPOST('cancel');
@@ -209,7 +210,7 @@ if ($id > 0 || $ref)
 	$product = new Product($db);
 	$result = $product->fetch($id,$ref);
 	$product->load_stock();
-	
+
 	$help_url='EN:Module_Stocks_En|FR:Module_Stock|ES:M&oacute;dulo_Stocks';
 	llxHeader("",$langs->trans("CardProduct".$product->type),$help_url);
 
@@ -262,7 +263,7 @@ if ($id > 0 || $ref)
         print '<tr><td>'.$form->editfieldkey("StockLimit",'stocklimit',$product->seuil_stock_alerte,$product,$user->rights->produit->creer).'</td><td colspan="2">';
         print $form->editfieldval("StockLimit",'stocklimit',$product->seuil_stock_alerte,$product,$user->rights->produit->creer);
         print '</td></tr>';
-        
+
         // Desired stock
         print '<tr><td>'.$form->editfieldkey("DesiredStock",'desiredstock',$product->desiredstock,$product,$user->rights->produit->creer).'</td><td colspan="2">';
         print $form->editfieldval("DesiredStock",'desiredstock',$product->desiredstock,$product,$user->rights->produit->creer);
@@ -276,7 +277,9 @@ if ($id > 0 || $ref)
 		print '</td>';
 		print '</tr>';
 
-		// Calculating a theorical value of stock if stock increment is done on real sending
+		// Calculating a theorical value
+
+		// If stock if stock increment is done on real sending
 		if (! empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT))
 		{
 			$stock_commande_client=$stock_commande_fournisseur=0;
@@ -337,6 +340,12 @@ if ($id > 0 || $ref)
 			}
 			print '</td></tr>';
 		}
+
+		// If stock if stock increment is done on
+		// TODO Add information when stock increment is done on other option
+
+		// TODO Add also information on possible decrease stock accroding to stock decrease option
+
 
 		// Last movement
 		$sql = "SELECT max(m.datem) as datem";

@@ -156,15 +156,19 @@ class Conf
 
 					if ($value && preg_match('/^MAIN_MODULE_/',$key))
 					{
-						// If this is constant for a new tab page activated by a module.
+						// If this is constant for a new tab page activated by a module. It initializes modules_parts['tabs'].
 						if (preg_match('/^MAIN_MODULE_([0-9A-Z_]+)_TABS_/i',$key))
 						{
 							$partname = 'tabs';
 							$params=explode(':',$value,2);
 							if (! isset($this->modules_parts[$partname]) || ! is_array($this->modules_parts[$partname])) { $this->modules_parts[$partname] = array(); }
-							$this->modules_parts[$partname][$params[0]][]=$value;
+							$this->modules_parts[$partname][$params[0]][]=$value;	// $value may be a string or an array
 						}
-						// If this is constant for all generic part activated by a module
+						// If this is constant for all generic part activated by a module. It initializes
+						// modules_parts['login'], modules_parts['menus'], modules_parts['substitutions'], modules_parts['triggers'], modules_parts['tpl'],
+						// modules_parts['models'], modules_parts['theme']
+						// modules_parts['sms'],
+						// modules_parts['css'], ...
 						elseif (preg_match('/^MAIN_MODULE_([0-9A-Z_]+)_([A-Z]+)$/i',$key,$reg))
 						{
 							$modulename = strtolower($reg[1]);
@@ -176,7 +180,7 @@ class Conf
 							else if (in_array($partname,array('models','theme'))) $value = '/'.$modulename.'/';
 							else if (in_array($partname,array('sms'))) $value = $modulename;
 							else if ($value == 1) $value = '/'.$modulename.'/core/modules/'.$partname.'/';	// ex: partname = societe
-							$this->modules_parts[$partname] = array_merge($this->modules_parts[$partname], array($modulename => $value));
+							$this->modules_parts[$partname] = array_merge($this->modules_parts[$partname], array($modulename => $value));	// $value may be a string or an array
 						}
                         // If this is a module constant (must be at end)
 						elseif (preg_match('/^MAIN_MODULE_([0-9A-Z_]+)$/i',$key,$reg))
@@ -341,7 +345,12 @@ class Conf
 		$this->use_javascript_ajax=1;
 		if (isset($this->global->MAIN_DISABLE_JAVASCRIPT)) $this->use_javascript_ajax=! $this->global->MAIN_DISABLE_JAVASCRIPT;
 		// If no javascript_ajax, Ajax features are disabled.
-		if (! $this->use_javascript_ajax) $this->global->PRODUIT_USE_SEARCH_TO_SELECT=0;
+		if (empty($this->use_javascript_ajax))
+		{
+			unset($this->global->PRODUIT_USE_SEARCH_TO_SELECT);
+			unset($this->global->COMPANY_USE_SEARCH_TO_SELECT);
+			unset($this->global->CONTACT_USE_SEARCH_TO_SELECT);
+		}
 
 		// conf->currency
 		if (empty($this->global->MAIN_MONNAIE)) $this->global->MAIN_MONNAIE='EUR';
@@ -403,7 +412,7 @@ class Conf
 		$this->maxfilesize = (empty($this->global->MAIN_UPLOAD_DOC) ? 0 : $this->global->MAIN_UPLOAD_DOC * 1024);
 
 		// Define list of limited modules
-		if (! isset($this->global->MAIN_MODULES_FOR_EXTERNAL)) $this->global->MAIN_MODULES_FOR_EXTERNAL='user,facture,commande,fournisseur,contact,propal,projet,contrat,societe,ficheinter,expedition,agenda';	// '' means 'all'. Note that contact is added here as it should be a module later.
+		if (! isset($this->global->MAIN_MODULES_FOR_EXTERNAL)) $this->global->MAIN_MODULES_FOR_EXTERNAL='user,facture,categorie,commande,fournisseur,contact,propal,projet,contrat,societe,ficheinter,expedition,agenda,adherent';	// '' means 'all'. Note that contact is added here as it should be a module later.
 
 		// Timeouts
         if (empty($this->global->MAIN_USE_CONNECT_TIMEOUT)) $this->global->MAIN_USE_CONNECT_TIMEOUT=10;

@@ -28,6 +28,7 @@ EndBankBalance=Konec zůstatek
 CurrentBalance=Běžný zůstatek
 FutureBalance=Budoucí rovnováha
 ShowAllTimeBalance=Zobrazit rovnováhy od začátku
+# AllTime=From start
 Reconciliation=Smíření
 RIB=Číslo bankovního účtu
 IBAN=IBAN

@@ -312,11 +312,9 @@ $sql.= ' a.priority, a.fulldayevent, a.location,';
 $sql.= ' a.fk_soc, a.fk_contact,';
 $sql.= ' ca.code';
 $sql.= ' FROM ('.MAIN_DB_PREFIX.'c_actioncomm as ca,';
-$sql.= " ".MAIN_DB_PREFIX.'user as u,';
 $sql.= " ".MAIN_DB_PREFIX."actioncomm as a)";
 if (! $user->rights->societe->client->voir && ! $socid) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON a.fk_soc = sc.fk_soc";
 $sql.= ' WHERE a.fk_action = ca.id';
-$sql.= ' AND a.fk_user_author = u.rowid';
 $sql.= ' AND a.entity IN ('.getEntity().')';
 if ($actioncode) $sql.=" AND ca.code='".$db->escape($actioncode)."'";
 if ($pid) $sql.=" AND a.fk_project=".$db->escape($pid);
@@ -325,28 +323,28 @@ if ($user->societe_id) $sql.= ' AND a.fk_soc = '.$user->societe_id; // To limit 
 if ($action == 'show_day')
 {
     $sql.= " AND (";
-    $sql.= " (datep BETWEEN '".$db->idate(dol_mktime(0,0,0,$month,$day,$year))."'";
+    $sql.= " (a.datep BETWEEN '".$db->idate(dol_mktime(0,0,0,$month,$day,$year))."'";
     $sql.= " AND '".$db->idate(dol_mktime(23,59,59,$month,$day,$year))."')";
     $sql.= " OR ";
-    $sql.= " (datep2 BETWEEN '".$db->idate(dol_mktime(0,0,0,$month,$day,$year))."'";
+    $sql.= " (a.datep2 BETWEEN '".$db->idate(dol_mktime(0,0,0,$month,$day,$year))."'";
     $sql.= " AND '".$db->idate(dol_mktime(23,59,59,$month,$day,$year))."')";
     $sql.= " OR ";
-    $sql.= " (datep < '".$db->idate(dol_mktime(0,0,0,$month,$day,$year))."'";
-    $sql.= " AND datep2 > '".$db->idate(dol_mktime(23,59,59,$month,$day,$year))."')";
+    $sql.= " (a.datep < '".$db->idate(dol_mktime(0,0,0,$month,$day,$year))."'";
+    $sql.= " AND a.datep2 > '".$db->idate(dol_mktime(23,59,59,$month,$day,$year))."')";
     $sql.= ')';
 }
 else
 {
     // To limit array
     $sql.= " AND (";
-    $sql.= " (datep BETWEEN '".$db->idate(dol_mktime(0,0,0,$month,1,$year)-(60*60*24*7))."'";   // Start 7 days before
+    $sql.= " (a.datep BETWEEN '".$db->idate(dol_mktime(0,0,0,$month,1,$year)-(60*60*24*7))."'";   // Start 7 days before
     $sql.= " AND '".$db->idate(dol_mktime(23,59,59,$month,28,$year)+(60*60*24*10))."')";            // End 7 days after + 3 to go from 28 to 31
     $sql.= " OR ";
-    $sql.= " (datep2 BETWEEN '".$db->idate(dol_mktime(0,0,0,$month,1,$year)-(60*60*24*7))."'";
+    $sql.= " (a.datep2 BETWEEN '".$db->idate(dol_mktime(0,0,0,$month,1,$year)-(60*60*24*7))."'";
     $sql.= " AND '".$db->idate(dol_mktime(23,59,59,$month,28,$year)+(60*60*24*10))."')";
     $sql.= " OR ";
-    $sql.= " (datep < '".$db->idate(dol_mktime(0,0,0,$month,1,$year)-(60*60*24*7))."'";
-    $sql.= " AND datep2 > '".$db->idate(dol_mktime(23,59,59,$month,28,$year)+(60*60*24*10))."')";
+    $sql.= " (a.datep < '".$db->idate(dol_mktime(0,0,0,$month,1,$year)-(60*60*24*7))."'";
+    $sql.= " AND a.datep2 > '".$db->idate(dol_mktime(23,59,59,$month,28,$year)+(60*60*24*10))."')";
     $sql.= ')';
 }
 if ($type) $sql.= " AND ca.id = ".$type;
@@ -1012,7 +1010,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
                     	// Must defined rule to choose color of who to use.
                     	// event->usertodo->id will still contains user id of owner
                     	// event->userstodo will be an array in future.
-                    	// $color=$user->color; 
+                    	// $color=$user->color;
                     }
                     else if ($event->type_code == 'ICALEVENT')
                     {

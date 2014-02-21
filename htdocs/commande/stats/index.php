@@ -52,7 +52,9 @@ $startyear=$year-1;
 $endyear=$year;
 
 $langs->load('orders');
+$langs->load('companies');
 $langs->load('other');
+$langs->load('suppliers');
 
 
 /*

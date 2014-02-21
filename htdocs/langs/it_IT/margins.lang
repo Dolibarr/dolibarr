@@ -6,9 +6,9 @@ TotalMargin=Margine totale
 MarginOnProducts=Margine sui prodotti
 MarginOnServices=Margine sui servizi
 MarginRate=Tasso di margine
-# MarkRate=Mark rate
+MarkRate=Percentuale di ricarico
 DisplayMarginRates=Visualizza i tassi di margine
-# DisplayMarkRates=Display mark rates
+DisplayMarkRates=Mostra le percentuali di ricarico
 InputPrice=Prezzo di ingresso
 
 margin=Gestione margini di profitto

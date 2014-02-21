@@ -203,7 +203,7 @@ class FormCompany
 	 *    un code donnee mais dans ce cas, le champ pays differe).
 	 *    Ainsi les liens avec les departements se font sur un departement independemment de son nom.
 	 *
-	 *    @param	string	$selected        	Code state preselected (mus be state id) 
+	 *    @param	string	$selected        	Code state preselected (mus be state id)
 	 *    @param    string	$country_codeid    	Country code or id: 0=list for all countries, otherwise country code or country rowid to show
 	 *    @param    string	$htmlname			Id of department
 	 * 	  @return	string						String with HTML select
@@ -274,7 +274,7 @@ class FormCompany
 				}
 			}
 			if (! empty($htmlname)) $out.= '</select>';
-			if (! empty($htmlname) && $user->admin) $out.= info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
+			if (! empty($htmlname) && $user->admin) $out.= info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
 		}
 		else
 		{
@@ -395,7 +395,7 @@ class FormCompany
 				}
 			}
 			$out.= '</select>';
-			if ($user->admin) $out.= info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
+			if ($user->admin) $out.= info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
 		}
 		else
 		{
@@ -488,7 +488,7 @@ class FormCompany
 				}
 			}
 			$out.= '</select>';
-			if ($user->admin) $out.= info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
+			if ($user->admin) $out.= info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
 			$out.= '</div>';
 		}
 		else
@@ -501,7 +501,7 @@ class FormCompany
 
 
 	/**
-	 *    Return list of third parties
+	 *  Output list of third parties.
 	 *
 	 *  @param  object		$object         Object we try to find contacts
 	 *  @param  string		$var_id         Name of id field
@@ -509,12 +509,11 @@ class FormCompany
 	 *  @param  string		$htmlname       Name of HTML form
 	 * 	@param	array		$limitto		Disable answers that are not id in this array list
 	 *  @param	int			$forceid		This is to force another object id than object->id
-	 * 	@return int The selected third party ID
-	 * 	TODO obsolete ?
-	 * 	cette fonction doit utiliser du javascript quoi qu'il en soit !
-	 * 	autant utiliser le système combobox sans rechargement de page non ?
+     *  @param	array		$events			Event options. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
+     *  @param	string		$moreparam		String with more param to add into url when noajax search is used.
+	 * 	@return int 						The selected third party ID
 	 */
-	function selectCompaniesForNewContact($object, $var_id, $selected='', $htmlname='newcompany', $limitto='', $forceid=0)
+	function selectCompaniesForNewContact($object, $var_id, $selected='', $htmlname='newcompany', $limitto='', $forceid=0, $events=array(), $moreparam='')
 	{
 		global $conf, $langs;
 
@@ -539,6 +538,7 @@ class FormCompany
 		{
 			if ($conf->use_javascript_ajax && ! empty($conf->global->COMPANY_USE_SEARCH_TO_SELECT))
 			{
+				// Use Ajax search
 				$minLength = (is_numeric($conf->global->COMPANY_USE_SEARCH_TO_SELECT)?$conf->global->COMPANY_USE_SEARCH_TO_SELECT:2);
 
 				$socid=0;
@@ -548,18 +548,63 @@ class FormCompany
 					$socid = $obj->rowid?$obj->rowid:'';
 				}
 
-				// We call a page after a small delay when a new input has been selected
-				$javaScript = "window.location=\'".$_SERVER['PHP_SELF']."?".$var_id."=".($forceid>0?$forceid:$object->id)."&amp;".$htmlname."=\' + document.getElementById(\'".$htmlname."\').value;";
-                $htmloption = 'onChange="ac_delay(\''.$javaScript.'\',\'500\');"';                              // When we select with mouse
-				$htmloption.= 'onKeyUp="if (event.keyCode== 13) { ac_delay(\''.$javaScript.'\',\'500\'); }"';   // When we select with keyboard
+				// We recall a page after a small delay when a new input has been selected
+				$htmloption='';
+				//$javaScript = "window.location=\'".$_SERVER['PHP_SELF']."?".$var_id."=".($forceid>0?$forceid:$object->id)."&amp;".$htmlname."=\' + document.getElementById(\'".$htmlname."\').value;";
+                //$htmloption.= 'onChange="ac_delay(\''.$javaScript.'\',\'500\');"';								// When we select with mouse
+                //$htmloption.= 'onKeyUp="if (event.keyCode== 13) { ac_delay(\''.$javaScript.'\',\'500\'); }"';	// When we select with keyboard
+
+                if (count($events))	// If there is some ajax events to run once selection is done, we add code here to run events
+                {
+	                print '<script type="text/javascript">
+						jQuery(document).ready(function() {
+	                   		$("#search_'.$htmlname.'").change(function() {
+								var obj = '.json_encode($events).';
+				    			$.each(obj, function(key,values) {
+				    				if (values.method.length) {
+				    					getMethod'.$htmlname.'(values);
+				    				}
+								});
+                			});
+
+							// Function used to execute events when search_htmlname change
+							function getMethod'.$htmlname.'(obj) {
+								var id = $("#'.$htmlname.'").val();
+								var method = obj.method;
+								var url = obj.url;
+								var htmlname = obj.htmlname;
+					    		$.getJSON(url,
+									{
+										action: method,
+										id: id,
+										htmlname: htmlname
+									},
+									function(response) {
+										if (response != null)
+										{
+											$.each(obj.params, function(key,action) {
+												if (key.length) {
+													var num = response.num;
+													if (num > 0) {
+														$("#" + key).removeAttr(action);
+													} else {
+														$("#" + key).attr(action, action);
+													}
+												}
+											});
+											$("select#" + htmlname).html(response.value);
+										}
+									});
+							};
+						});
+					</script>';
+                }
 
 				print "\n".'<!-- Input text for third party with Ajax.Autocompleter (selectCompaniesForNewContact) -->'."\n";
 				print '<table class="nobordernopadding"><tr class="nobordernopadding">';
 				print '<td class="nobordernopadding">';
 				if ($obj->rowid == 0)
 				{
-					//$langs->load("companies");
-					//print '<input type="text" size="30" id="'.$htmlname.'_label" name="'.$htmlname.'" value="'.$langs->trans("SelectCompany").'" '.$htmloption.' />';
 					print '<input type="text" size="30" id="search_'.$htmlname.'" name="search_'.$htmlname.'" value="" '.$htmloption.' />';
 				}
 				else
@@ -575,8 +620,14 @@ class FormCompany
 			}
 			else
 			{
-				$javaScript = "window.location='".$_SERVER['PHP_SELF']."?".$var_id."=".($forceid>0?$forceid:$object->id)."&amp;".$htmlname."=' + form.".$htmlname.".options[form.".$htmlname.".selectedIndex].value;";
-				print '<select class="flat" id="'.$htmlname.'" name="'.$htmlname.'" onChange="'.$javaScript.'">';
+				// No Ajax search
+				print '<select class="flat" id="'.$htmlname.'" name="'.$htmlname.'"';
+				if ($conf->use_javascript_ajax)
+				{
+					$javaScript = "window.location='".$_SERVER['PHP_SELF']."?".$var_id."=".($forceid>0?$forceid:$object->id).$moreparam."&".$htmlname."=' + form.".$htmlname.".options[form.".$htmlname.".selectedIndex].value;";
+					print ' onChange="'.$javaScript.'"';
+				}
+				print '>';
 				$num = $this->db->num_rows($resql);
 				$i = 0;
 				if ($num)

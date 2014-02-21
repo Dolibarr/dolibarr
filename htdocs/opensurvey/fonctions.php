@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2013 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2014 Marcos García			<marcosgdf@gmail.com>
  *
 * This program is free software; you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -21,7 +22,40 @@
  *	\brief      Functions for module
  */
 
+/**
+ * Returns an array with the tabs for the "Opensurvey poll" section
+ * It loads tabs from modules looking for the entity Opensurveyso
+ * 
+ * @param Opensurveysondage $object Current viewing poll
+ * @return array Tabs for the opensurvey section
+ */
+function opensurvey_prepare_head(Opensurveysondage $object) {
+	
+	global $langs, $conf;
+	
+	$h = 0;
+	$head = array();
 
+	$head[0][0] = 'card.php?id='.$object->id_sondage;
+	$head[0][1] = $langs->trans("Card");
+	$head[0][2] = 'general';
+	$h++;
+	
+	$head[1][0] = 'results.php?id='.$object->id_sondage;
+	$head[1][1] = $langs->trans("SurveyResults");
+	$head[1][2] = 'preview';
+	$h++;
+
+    // Show more tabs from modules
+    // Entries must be declared in modules descriptor with line
+    // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
+    // $this->tabs = array('entity:-tabname);   												to remove a tab
+    complete_head_from_modules($conf,$langs,$object,$head,$h,'opensurveypoll');
+
+	complete_head_from_modules($conf,$langs,$object,$head,$h,'opensurveypoll', 'remove');
+
+	return $head;
+}
 
 /**
  * Show header for new member
@@ -36,8 +70,6 @@
  */
 function llxHeaderSurvey($title, $head="", $disablejs=0, $disablehead=0, $arrayofjs='', $arrayofcss='')
 {
-	global $user, $conf, $langs, $mysoc;
-
 	top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss); // Show html headers
 	print '<body id="mainbody" class="publicnewmemberform" style="margin-top: 10px;">';
 
@@ -71,28 +103,22 @@ function llxFooterSurvey()
  */
 function showlogo()
 {
-	global $user, $conf, $langs, $mysoc;
+	global $conf, $mysoc;
 
 	// Print logo
-	$urllogo=DOL_URL_ROOT.'/theme/login_logo.png';
-
-	if (! empty($mysoc->logo_small) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_small))
-	{
-		$urllogo=DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=companylogo&amp;file='.urlencode('thumbs/'.$mysoc->logo_small);
+	if ($mysoc->logo) {
+		if (file_exists($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_small)) {
+			$urllogo=DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=companylogo&amp;file=thumbs/'.urlencode($mysoc->logo_small);
+		}
 	}
-	elseif (! empty($mysoc->logo) && is_readable($conf->mycompany->dir_output.'/logos/'.$mysoc->logo))
-	{
-		$urllogo=DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=companylogo&amp;file='.urlencode($mysoc->logo);
-		$width=128;
-	}
-	elseif (is_readable(DOL_DOCUMENT_ROOT.'/theme/dolibarr_logo.png'))
+	
+	if (!$urllogo && (is_readable(DOL_DOCUMENT_ROOT.'/theme/dolibarr_logo.png')))
 	{
 		$urllogo=DOL_URL_ROOT.'/theme/dolibarr_logo.png';
 	}
-	print '<center>';
-	print '<img alt="Logo" id="logosubscribe" title="" src="'.$urllogo.'" style="max-width: 120px" /><br>';
-	print '<strong>'.$langs->trans("OpenSurvey").'</strong>';
-	print '</center><br>';
+	
+	print '<div style="text-align:center"><img alt="Logo" id="logosubscribe" title="" src="'.$urllogo.'"/></div>';
+	print '<br>';
 }
 
 
@@ -117,24 +143,6 @@ function get_server_name()
 
 	return $url;
 }
-
-
-/**
- * is_error
- *
- * @param unknown_type $cerr error number
- * @return 	boolean				Error key found or not
- */
-function is_error($cerr)
-{
-	global $err;
-	if ( $err == 0 ) {
-		return false;
-	}
-
-	return (($err & $cerr) != 0 );
-}
-
 
 /**
  * Fonction vérifiant l'existance et la valeur non vide d'une clé d'un tableau
@@ -163,7 +171,7 @@ function issetAndNoEmpty($name, $tableau = null)
 function getUrlSondage($id, $admin = false)
 {
 	if ($admin === true) {
-		$url = get_server_name().'adminstuds_preview.php?sondage='.$id;
+		$url = get_server_name().'results.php?id='.$id;
 	} else {
 		$url = get_server_name().'/public/studs.php?sondage='.$id;
 	}
@@ -192,87 +200,54 @@ function dol_survey_random($car)
 /**
  * Add a poll
  *
- * @param	string	$origin		Origin of poll creation
  * @return	void
  */
-function ajouter_sondage($origin)
+function ajouter_sondage()
 {
-	global $conf, $db;
+	global $db, $user;
+	
+	require_once DOL_DOCUMENT_ROOT.'/opensurvey/class/opensurveysondage.class.php';
 
 	$sondage=dol_survey_random(16);
-	$sondage_admin=$sondage.dol_survey_random(8);
 
-	if ($_SESSION["formatsondage"]=="A"||$_SESSION["formatsondage"]=="A+") {
-		//extraction de la date de fin choisie
-		if ($_SESSION["champdatefin"]) {
-			if ($_SESSION["champdatefin"]>time()+250000) {
-				$date_fin=$_SESSION["champdatefin"];
-			}
-		} else {
-			$date_fin=time()+15552000;
-		}
-	}
-
-	if ($_SESSION["formatsondage"]=="D"||$_SESSION["formatsondage"]=="D+") {
-		//Calcul de la date de fin du sondage
-		$taille_tableau=count($_SESSION["totalchoixjour"])-1;
-		$date_fin=$_SESSION["totalchoixjour"][$taille_tableau]+200000;
-	}
-
-	if (is_numeric($date_fin) === false) {
-		$date_fin = time()+15552000;
-	}
-	$canedit=empty($_SESSION['formatcanedit'])?'0':'1';
-
+	$allow_comments = empty($_SESSION['allow_comments']) ? 0 : 1;
+	$allow_spy = empty($_SESSION['allow_spy']) ? 0 : 1;
+	
 	// Insert survey
-	$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'opensurvey_sondage';
-	$sql.= '(id_sondage, commentaires, mail_admin, nom_admin, titre, id_sondage_admin, date_fin, format, mailsonde, canedit, origin, sujet)';
-	$sql.= " VALUES ('".$db->escape($sondage)."', '".$db->escape($_SESSION['commentaires'])."', '".$db->escape($_SESSION['adresse'])."', '".$db->escape($_SESSION['nom'])."',";
-	$sql.= " '".$db->escape($_SESSION['titre'])."', '".$sondage_admin."', '".$db->idate($date_fin)."', '".$_SESSION['formatsondage']."', '".$db->escape($_SESSION['mailsonde'])."',";
-	$sql.= " '".$canedit."', '".$db->escape($origin)."',";
-	$sql.= " '".$db->escape($_SESSION['toutchoix'])."'";
-	$sql.= ")";
-	dol_syslog($sql);
-	$resql=$db->query($sql);
-
-	if ($origin == 'dolibarr') $urlback=dol_buildpath('/opensurvey/adminstuds_preview.php',1).'?sondage='.$sondage_admin;
-	else
-	{
-		// Define $urlwithroot
-		$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
-		$urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
-		//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
-
-		$url=$urlwithouturlroot.dol_buildpath('/opensurvey/public/studs.php',1).'?sondage='.$sondage;
-
-		$urlback=$url;
-
-		//var_dump($urlback);exit;
+	$opensurveysondage = new Opensurveysondage($db);
+	$opensurveysondage->id_sondage = $sondage;
+	$opensurveysondage->commentaires = $_SESSION['commentaires'];
+	$opensurveysondage->mail_admin = $_SESSION['adresse'];
+	$opensurveysondage->nom_admin = $_SESSION['nom'];
+	$opensurveysondage->titre = $_SESSION['titre'];
+	$opensurveysondage->date_fin = $_SESSION['champdatefin'];
+	$opensurveysondage->format = $_SESSION['formatsondage'];
+	$opensurveysondage->mailsonde = $_SESSION['mailsonde'];
+	$opensurveysondage->allow_comments = $allow_comments;
+	$opensurveysondage->allow_spy = $allow_spy;
+	$opensurveysondage->sujet = $_SESSION['toutchoix'];
+	
+	$res = $opensurveysondage->create($user);
+	
+	if ($res < 0) {
+		dol_print_error($db);
 	}
 
 	unset($_SESSION["titre"]);
 	unset($_SESSION["nom"]);
 	unset($_SESSION["adresse"]);
 	unset($_SESSION["commentaires"]);
-	unset($_SESSION["canedit"]);
 	unset($_SESSION["mailsonde"]);
+	unset($_SESSION['allow_comments']);
+	unset($_SESSION['allow_spy']);
+	unset($_SESSION['toutchoix']);
+	unset($_SESSION['totalchoixjour']);
+	unset($_SESSION['champdatefin']);
+	
+	$urlback=dol_buildpath('/opensurvey/card.php',1).'?id='.$sondage;
 
 	header("Location: ".$urlback);
 	exit();
 }
-
-
-
-define('COMMENT_EMPTY',         0x0000000001);
-define('COMMENT_USER_EMPTY',    0x0000000010);
-define('COMMENT_INSERT_FAILED', 0x0000000100);
-define('NAME_EMPTY',            0x0000001000);
-define('NAME_TAKEN',            0x0000010000);
-define('NO_POLL',               0x0000100000);
-define('NO_POLL_ID',            0x0001000000);
-define('INVALID_EMAIL',         0x0010000000);
-define('TITLE_EMPTY',           0x0100000000);
-define('INVALID_DATE',          0x1000000000);
-$err = 0;
 
 ?>

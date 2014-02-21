@@ -37,6 +37,7 @@ ErrorBadParameters=Halvad parameetrid
 ErrorBadValueForParameter=Vale väärtus '%s' parameetri jaoks ebaõige '%s'
 ErrorBadImageFormat=Pildifaili vorming ei ole toetatud
 ErrorBadDateFormat=Väärtus '%s' on vales kuupäeva vormingus
+# ErrorWrongDate=Date is not correct!
 ErrorFailedToWriteInDir=Ei suutnud kirjutada kausta %s
 ErrorFoundBadEmailInFile=Failis on %s real ebaõige e-posti aadressi süntaks (näiteks on rida %s aadress=%s)
 ErrorUserCannotBeDelete=Kasutajat ei ole võimalik kustutada. Võib-olla on see mõne Dolibarri olemiga seotud
@@ -63,13 +64,14 @@ ErrorNoValueForRadioType=Palun sisesta raadionuppude väärtused
 ErrorBadFormatValueList=Nimekirja väärtus ei saa olla rohkem,  kui ühe komaga: <u>%s</u>, ent on vaja vähemalt üht: võti,väärtused
 ErrorFieldCanNotContainSpecialCharacters=Väli <b>%s</b> ei tohi sisaldada erisümboleid.
 ErrorNoAccountancyModuleLoaded=Ühtki raamatupidamise moodulit pole aktiveeritud
-ErrorExportDuplicateProfil=Selle ekspordi jaoks on juba profiili nimi olemas.
+# ErrorExportDuplicateProfil=This profile name already exists for this export set.
 ErrorLDAPSetupNotComplete=Dolibarr-LDAP sobitamine ei ole täielik.
 ErrorLDAPMakeManualTest=Kausta %s on loodud .ldif fail. Vigade kohta lisainfo saamiseks proovi selle käsitsi käsurealt laadimist.
 ErrorCantSaveADoneUserWithZeroPercentage=Ülesanne, mille staatuseks on 'Alustamata' ei saa salvestada, kui väli "Tegevuse teinud isik" on samuti täidetud.
 ErrorRefAlreadyExists=Loomiseks kasutatav viide on juba olemas.
 ErrorPleaseTypeBankTransactionReportName=Palun sisesta pangakviitungi nimi, kus antud tehing on kajastatud (YYYYMM või YYYYMMDD formaadis)
 ErrorRecordHasChildren=Kirjete kustutamine ebaõnnestus, kuna nendel on alamkirjeid.
+# ErrorRecordIsUsedCantDelete=Can't delete record. It is already used or included into other object.
 ErrorModuleRequireJavascript=Selle võimaluse töötamiseks peab JavaScript olema sisse lülitatud. JavaScripti sisse või välja lülitamiseks kasuta menüüd Kodu->Seadistamine->Kuva.
 ErrorPasswordsMustMatch=Sisestatud paroolid peavad klappima
 ErrorContactEMail=Tekkis tehniline viga. Palun võta ühendust oma administraatoriga e-posti aadressil <b>%s</b> ning lisa sõnumisse vea kood <b>%s</b> või veel parem oleks lisada sõnumisse antud lehe kuvatõmmis.
@@ -127,6 +129,8 @@ ErrorPaymentModeDefinedToWithoutSetup=Makseviis on seatud tüübile %s, kuid Arv
 ErrorPHPNeedModule=Viga: selle võimaluse kasutamiseks peab PHPs olema võimaldatud moodul <b>%s</b>.
 ErrorOpenIDSetupNotComplete=Dolibarri seadistusfail lubab OpenIDga autentimist, ent konstandis %s ei ole OpenID teenuse URL määratletud
 ErrorWarehouseMustDiffers=Lähteladu ja sihtladu peavad olema erinevad
+# ErrorBadFormat=Bad format!
+# ErrorPaymentDateLowerThanInvoiceDate=Payment date (%s) cant' be before invoice date (%s) for invoice %s.
 
 # Warnings
 WarningMandatorySetupNotComplete=Kohustuslikud seadistusparameetrid on määratlemata

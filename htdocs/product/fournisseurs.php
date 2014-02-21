@@ -60,6 +60,11 @@ $result=restrictedArea($user,'produit|service&fournisseur',$fieldvalue,'product&
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('pricesuppliercard'));
+$product = new ProductFournisseur($db);
+$product->fetch($id);
+
+$reshook=$hookmanager->executeHooks('doActions',$parameters,$product,$action);    // Note that $action and $object may have been modified by some hooks
+$error=$hookmanager->error; $errors=$hookmanager->errors;
 
 
 $sortfield = GETPOST("sortfield",'alpha');
@@ -72,6 +77,10 @@ if (! $sortorder) $sortorder="ASC";
 /*
  * Actions
  */
+ 
+$parameters=array('socid'=>$socid, 'id_prod'=>$id);
+$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+$error=$hookmanager->error; $errors=array_merge($errors, (array) $hookmanager->errors);
 
 if ($action == 'remove_pf')
 {
@@ -385,6 +394,12 @@ if ($id || $ref)
 	        		print '</td>';
 					print '</tr>';
 				}
+				
+				if (is_object($hookmanager))
+				{
+					$parameters=array('id_fourn'=>$id_fourn,'prod_id'=>$product->id);
+				    $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);
+				}
 
 				print '</table>';
 
@@ -506,6 +521,12 @@ if ($id || $ref)
 							print '<td align="right">';
 							print $productfourn->fourn_unitcharges?price($productfourn->fourn_unitcharges) : ($productfourn->fourn_qty?price($productfourn->fourn_charges/$productfourn->fourn_qty):"&nbsp;");
 							print '</td>';
+						}
+						
+						if (is_object($hookmanager))
+						{
+							$parameters=array('id_pfp'=>$productfourn->product_fourn_price_id,'id_fourn'=>$id_fourn,'prod_id'=>$product->id);
+						    $reshook=$hookmanager->executeHooks('printObjectLine',$parameters,$object,$action);
 						}
 
 						// Modify-Remove

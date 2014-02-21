@@ -4,8 +4,8 @@ DIRECTION=l
 # msungstdlight or cid0ct are for traditional Chinese (traditional does not render with Ubuntu pdf reader)
 # stsongstdlight or cid0cs are for simplified Chinese
 # To read Chinese pdf with Linux: sudo apt-get install poppler-data
-FONTFORPDF=helvetica
-FONTSIZEFORPDF=10
+FONTFORPDF=DejaVuSans
+FONTSIZEFORPDF=8
 SeparatorDecimal=,
 SeparatorThousand=None
 FormatDateShort=%m/%d/%Y
@@ -257,6 +257,8 @@ Seconds=Sekundy
 Today=Dnes
 Yesterday=Včera
 Tomorrow=Zajtra
+# Morning=Morning
+# Afternoon=Afternoon
 Quadri=Quadri
 MonthOfDay=Mesiaca odo dňa
 HourShort=H
@@ -309,6 +311,7 @@ SubTotal=Medzisúčet
 TotalHTShort=Celkom (bez DPH)
 TotalTTCShort=Celkom (s DPH)
 TotalHT=Celkom (bez dane)
+# TotalHTforthispage=Total (net of tax) for this page
 TotalTTC=Celkom (s DPH)
 TotalTTCToYourCredit=Celkom (s DPH) na Váš účet
 TotalVAT=Daň celkom
@@ -569,7 +572,7 @@ TotalWoman=Celkový
 TotalMan=Celkový
 NeverReceived=Nikdy nedostal
 Canceled=Zrušený
-YouCanChangeValuesForThisListFromDictionnarySetup=Môžete zmeniť hodnoty tohto zoznamu z menu nastavení - dictionnary
+# YouCanChangeValuesForThisListFromDictionarySetup=You can change values for this list from menu setup - dictionnary
 Color=Farba
 Documents=Pripojené súbory
 DocumentsNb=Pripojené súbory (%s)
@@ -662,6 +665,8 @@ HelpCopyToClipboard=Použite Ctrl + C skopírujte do schránky
 SaveUploadedFileWithMask=Uloženie súboru na serveri s názvom <strong>&quot;%s&quot;</strong> (inak &quot;%s&quot;)
 # OriginFileName=Original filename
 # SetDemandReason=Set source
+# ViewPrivateNote=View notes
+# XMoreLines=%s line(s) hidden
 
 # Week day
 Monday=Pondelok

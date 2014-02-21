@@ -296,7 +296,7 @@ abstract class ActionsContactCardCommon
             $this->tpl['select_country'] = $form->select_country($this->object->country_id,'country_id');
             $countrynotdefined = $langs->trans("ErrorSetACountryFirst").' ('.$langs->trans("SeeAbove").')';
 
-            if ($user->admin) $this->tpl['info_admin'] = info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
+            if ($user->admin) $this->tpl['info_admin'] = info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
 
             // State
             if ($this->object->country_id) $this->tpl['select_state'] = $formcompany->select_state($this->object->fk_departement,$this->object->country_code);

@@ -557,7 +557,13 @@ function listOfSessions()
     global $conf;
 
     $arrayofSessions = array();
-    $sessPath = ini_get("session.save_path").'/';
+    // session.save_path can be returned empty so we set a default location and work from there
+    $sessPath = '/tmp';
+    $iniPath = ini_get("session.save_path");
+    if ($iniPath) {
+        $sessPath = $iniPath;
+    }
+    $sessPath .= '/'; // We need the trailing slash
     dol_syslog('admin.lib:listOfSessions sessPath='.$sessPath);
 
     $dh = @opendir(dol_osencode($sessPath));
@@ -845,7 +851,7 @@ function unActivateModule($value, $requiredby=1)
 
 
 /**
- *  Add external modules to list of dictionnaries
+ *  Add external modules to list of dictionaries
  *
  * 	@param		array		&$taborder			Taborder
  * 	@param		array		&$tabname			Tabname
@@ -860,7 +866,7 @@ function unActivateModule($value, $requiredby=1)
  * 	@param		array		&$tabhelp			Tabhelp
  * 	@return		int			1
  */
-function complete_dictionnary_with_modules(&$taborder,&$tabname,&$tablib,&$tabsql,&$tabsqlsort,&$tabfield,&$tabfieldvalue,&$tabfieldinsert,&$tabrowid,&$tabcond,&$tabhelp)
+function complete_dictionary_with_modules(&$taborder,&$tabname,&$tablib,&$tabsql,&$tabsqlsort,&$tabfield,&$tabfieldvalue,&$tabfieldinsert,&$tabrowid,&$tabcond,&$tabhelp)
 {
     global $db, $modules, $conf, $langs;
 
@@ -954,26 +960,26 @@ function complete_dictionnary_with_modules(&$taborder,&$tabname,&$tablib,&$tabsq
                             // Complete arrays
                             //&$tabname,&$tablib,&$tabsql,&$tabsqlsort,&$tabfield,&$tabfieldvalue,&$tabfieldinsert,&$tabrowid,&$tabcond
                             //$objMod
-                            if (! empty($objMod->dictionnaries))
+                            if (! empty($objMod->dictionaries))
                             {
-                                //var_dump($objMod->dictionnaries['tabname']);
+                                //var_dump($objMod->dictionaries['tabname']);
                                 $taborder[] = 0;
-                                foreach($objMod->dictionnaries['tabname'] as $val)
+                                foreach($objMod->dictionaries['tabname'] as $val)
                                 {
                                     $taborder[] = count($tabname)+1;
                                     $tabname[] = $val;
                                 }
-                                foreach($objMod->dictionnaries['tablib'] as $val) $tablib[] = $val;
-                                foreach($objMod->dictionnaries['tabsql'] as $val) $tabsql[] = $val;
-                                foreach($objMod->dictionnaries['tabsqlsort'] as $val) $tabsqlsort[] = $val;
-                                foreach($objMod->dictionnaries['tabfield'] as $val) $tabfield[] = $val;
-                                foreach($objMod->dictionnaries['tabfieldvalue'] as $val) $tabfieldvalue[] = $val;
-                                foreach($objMod->dictionnaries['tabfieldinsert'] as $val) $tabfieldinsert[] = $val;
-                                foreach($objMod->dictionnaries['tabrowid'] as $val) $tabrowid[] = $val;
-                                foreach($objMod->dictionnaries['tabcond'] as $val) $tabcond[] = $val;
-                                if (! empty($objMod->dictionnaries['tabhelp'])) foreach($objMod->dictionnaries['tabhelp'] as $val) $tabhelp[] = $val;
-                                //foreach($objMod->dictionnaries['tabsqlsort'] as $val) $tablib[] = $val;
-                                //$tabname = array_merge ($tabname, $objMod->dictionnaries['tabname']);
+                                foreach($objMod->dictionaries['tablib'] as $val) $tablib[] = $val;
+                                foreach($objMod->dictionaries['tabsql'] as $val) $tabsql[] = $val;
+                                foreach($objMod->dictionaries['tabsqlsort'] as $val) $tabsqlsort[] = $val;
+                                foreach($objMod->dictionaries['tabfield'] as $val) $tabfield[] = $val;
+                                foreach($objMod->dictionaries['tabfieldvalue'] as $val) $tabfieldvalue[] = $val;
+                                foreach($objMod->dictionaries['tabfieldinsert'] as $val) $tabfieldinsert[] = $val;
+                                foreach($objMod->dictionaries['tabrowid'] as $val) $tabrowid[] = $val;
+                                foreach($objMod->dictionaries['tabcond'] as $val) $tabcond[] = $val;
+                                if (! empty($objMod->dictionaries['tabhelp'])) foreach($objMod->dictionaries['tabhelp'] as $val) $tabhelp[] = $val;
+                                //foreach($objMod->dictionaries['tabsqlsort'] as $val) $tablib[] = $val;
+                                //$tabname = array_merge ($tabname, $objMod->dictionaries['tabname']);
                                 //var_dump($tabcond);
                                 //exit;
                             }

@@ -1,10 +1,10 @@
 # Dolibarr language file - Source file is en_US - ldap
 DomainPassword=Κωδικός πρόσβασης για το Domain
 YouMustChangePassNextLogon=Κωδικός πρόσβασης για <b>%s</b> χρήστη στο <b>%s</b> Domain πρέπει να αλλάξει.
-UserMustChangePassNextLogon=Ο χρήστης πρέπει να αλλάξετε τον κωδικό πρόσβασης για το %s Domain
+UserMustChangePassNextLogon=Ο χρήστης πρέπει να αλλάξει τον κωδικό πρόσβασης για το %s Domain
 LdapUacf_NORMAL_ACCOUNT=Λογαριασμός χρήστη
 LdapUacf_DONT_EXPIRE_PASSWORD=Κωδικός πρόσβασης δεν λήγει ποτέ
-LdapUacf_ACCOUNTDISABLE=Ο λογαριασμός είναι απενεργοποιημένο στο Domain %s
+LdapUacf_ACCOUNTDISABLE=Ο λογαριασμός είναι απενεργοποιημένος στο Domain %s
 LDAPInformationsForThisContact=Πληροφορίες στο LDAP βάση δεδομένων για αυτήν την επαφή
 LDAPInformationsForThisUser=Πληροφορίες στη βάση δεδομένων LDAP για αυτό το χρήστη
 LDAPInformationsForThisGroup=Πληροφορίες στο LDAP βάση δεδομένων για αυτή την ομάδα
@@ -13,7 +13,7 @@ LDAPAttribute=LDAP χαρακτηριστικό
 LDAPAttributes=LDAP χαρακτηριστικά
 LDAPCard=LDAP κάρτα
 LDAPRecordNotFound=Εγγραφή δεν βρέθηκε στην βάση δεδομένων LDAP
-LDAPUsers=Οι χρήστες σε LDAP βάση δεδομένων
+LDAPUsers=Οι χρήστες στην βάση δεδομένων LDAP
 LDAPGroups=Ομάδες στην βάση δεδομένων LDAP
 LDAPFieldStatus=Κατάσταση
 LDAPFieldFirstSubscriptionDate=Πρώτη ημερομηνία εγγραφής
@@ -26,4 +26,4 @@ GroupSynchronized=Συγχρονισμένη ομάδα
 MemberSynchronized=Συγχρονισμένο μέλος
 ContactSynchronized=Επικοινωνία συγχρονισμένη
 ForceSynchronize=Δυναμικός συγχρονισμός Dolibarr -> LDAP
-ErrorFailedToReadLDAP=Αποτυχία ανάγνωσης LDAP βάση δεδομένων. Ελέγξτε LDAP εγκατάσταση μονάδας και την προσβασιμότητα της βάσης δεδομένων.
+ErrorFailedToReadLDAP=Αποτυχία ανάγνωσης LDAP βάση δεδομένων. Ελέγξτε LDAP εγκατάσταση module και την προσβασιμότητα της βάσης δεδομένων.

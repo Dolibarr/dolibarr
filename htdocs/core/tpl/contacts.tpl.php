@@ -17,6 +17,7 @@
  *
  * This template needs:
  * $object
+ * $withproject (if we are on task contact)
  */
 
 if (! class_exists('Contact')) {
@@ -34,6 +35,9 @@ elseif ($module == 'fichinter')			{ $permission=$user->rights->ficheinter->creer
 elseif ($module == 'invoice_supplier')	{ $permission=$user->rights->fournisseur->facture->creer; }
 elseif ($module == 'order_supplier')	{ $permission=$user->rights->fournisseur->commande->creer; }
 elseif ($module == 'project')			{ $permission=$user->rights->projet->creer; }
+elseif ($module == 'action')			{ $permission=$user->rights->agenda->myactions->create; }
+elseif ($module == 'shipping')			{ $permission=$user->rights->expedition->creer; }
+elseif ($module == 'project_task')		{ $permission=$user->rights->projet->creer; }
 elseif (! isset($permission))			{ $permission=$user->rights->$module->creer; } // If already defined by caller page
 
 $formcompany= new FormCompany($db);
@@ -64,6 +68,7 @@ $userstatic=new User($db);
 	<input type="hidden" name="id" value="<?php echo $object->id; ?>" />
 	<input type="hidden" name="action" value="addcontact" />
 	<input type="hidden" name="source" value="internal" />
+	<?php if ($withproject) print '<input type="hidden" name="withproject" value="'.$withproject.'">'; ?>
 		<div class="nowrap tagtd"><?php echo img_object('','user').' '.$langs->trans("Users"); ?></div>
 		<div class="tagtd"><?php echo $conf->global->MAIN_INFO_SOCIETE_NOM; ?></div>
 		<div class="tagtd maxwidthonsmartphone"><?php echo $form->select_dolusers($user->id, 'userid', 0, (! empty($userAlreadySelected)?$userAlreadySelected:null), 0, null, null, 0, 56); ?></div>
@@ -79,29 +84,24 @@ $userstatic=new User($db);
 	<input type="hidden" name="id" value="<?php echo $object->id; ?>" />
 	<input type="hidden" name="action" value="addcontact" />
 	<input type="hidden" name="source" value="external" />
+	<?php if ($withproject) print '<input type="hidden" name="withproject" value="'.$withproject.'">'; ?>
 		<div class="tagtd nowrap"><?php echo img_object('','contact').' '.$langs->trans("ThirdPartyContacts"); ?></div>
-		<?php if ($conf->use_javascript_ajax && ! empty($conf->global->COMPANY_USE_SEARCH_TO_SELECT)) { ?>
+		<?php
+		$events=array();
+		$events[]=array('method' => 'getContacts', 'url' => dol_buildpath('/core/ajax/contacts.php',1), 'htmlname' => 'contactid', 'params' => array('add-customer-contact' => 'disabled'));
+		?>
 		<div class="tagtd nowrap maxwidthonsmartphone">
-			<?php
-			$events=array();
-			$events[]=array('method' => 'getContacts', 'url' => dol_buildpath('/core/ajax/contacts.php',1), 'htmlname' => 'contactid', 'params' => array('add-customer-contact' => 'disabled'));
-			print $form->select_company($object->socid,'socid','',1,0,0,$events);
-			?>
-		</div>
-		<div class="tagtd maxwidthonsmartphone">
-			<?php $nbofcontacts=$form->select_contacts($object->socid, '', 'contactid'); ?>
-		</div>
-		<?php } else { ?>
-		<div class="tagtd maxwidthonsmartphone">
 			<?php $selectedCompany = isset($_GET["newcompany"])?$_GET["newcompany"]:$object->socid; ?>
-			<?php $selectedCompany = $formcompany->selectCompaniesForNewContact($object, 'id', $selectedCompany, 'newcompany'); ?>
+			<?php $selectedCompany = $formcompany->selectCompaniesForNewContact($object, 'id', $selectedCompany, 'newcompany', '', 0, $events); ?>
 		</div>
 		<div class="tagtd maxwidthonsmartphone">
 			<?php $nbofcontacts=$form->select_contacts($selectedCompany, '', 'contactid'); ?>
 		</div>
-		<?php } ?>
 		<div class="tagtd maxwidthonsmartphone">
-			<?php $formcompany->selectTypeContact($object, '', 'type','external'); ?>
+			<?php
+			$tmpobject=$object;
+			if ($object->element == 'shipping' && is_object($objectsrc)) $tmpobject=$objectsrc;
+			$formcompany->selectTypeContact($tmpobject, '', 'type','external'); ?>
 		</div>
 		<div class="tagtd">&nbsp;</div>
 		<div  class="tagtd" align="right">
@@ -124,7 +124,11 @@ $userstatic=new User($db);
 
 	<?php
 	foreach(array('internal','external') as $source) {
-		$tab = $object->liste_contact(-1,$source);
+
+		$tmpobject=$object;
+		if ($object->element == 'shipping' && is_object($objectsrc)) $tmpobject=$objectsrc;
+
+		$tab = $tmpobject->liste_contact(-1,$source);
 		$num=count($tab);
 
 		$i = 0;

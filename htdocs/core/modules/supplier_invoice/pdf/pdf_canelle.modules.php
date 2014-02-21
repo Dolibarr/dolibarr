@@ -166,8 +166,10 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 			else
 			{
 				$objectref = dol_sanitizeFileName($object->ref);
+				$objectrefsupplier = dol_sanitizeFileName($object->ref_supplier);
                 $dir = $conf->fournisseur->facture->dir_output.'/'.get_exdir($object->id,2).$objectref;
 				$file = $dir . "/" . $objectref . ".pdf";
+				if (! empty($conf->global->SUPPLIER_REF_IN_NAME)) $file = $dir . "/" . $objectref . ($objectrefsupplier?"_".$objectrefsupplier:"").".pdf";
 			}
 
 			if (! file_exists($dir))

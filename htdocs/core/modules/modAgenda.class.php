@@ -23,15 +23,15 @@
 
 /**
  *		\defgroup   agenda     Module agenda
- *      \brief      Module pour gerer l'agenda et actions
+ *      \brief      Module to manage agenda and events
  *      \file       htdocs/core/modules/modAgenda.class.php
  *      \ingroup    agenda
- *      \brief      Fichier de description et activation du module agenda
+ *      \brief      File of class to describe and enable/disable module Agenda
  */
 include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 
 /**
- *	Classe de description et activation du module Adherent
+ *	Class to describe and enable/disable module Agenda
  */
 class modAgenda extends DolibarrModules
 {

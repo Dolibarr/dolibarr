@@ -47,6 +47,8 @@ $mesg = '';
 // Security check
 $result=restrictedArea($user,'stock');
 
+// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+$hookmanager->initHooks(array('warehousecard'));
 
 
 /*
@@ -199,7 +201,7 @@ if ($action == 'create')
 	// Country
 	print '<tr><td width="25%">'.$langs->trans('Country').'</td><td colspan="3">';
 	print $form->select_country($object->country_id?$object->country_id:$mysoc->country_code,'country_id');
-	if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
+	if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
 	print '</td></tr>';
 
 	print '<tr><td>'.$langs->trans("Status").'</td><td colspan="3">';
@@ -336,19 +338,24 @@ else
 
 			print "<div class=\"tabsAction\">\n";
 
-			if ($action == '')
+			$parameters=array();
+			$reshook=$hookmanager->executeHooks('addMoreActionsButtons',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+			if (empty($reshook))
 			{
-				if ($user->rights->stock->creer)
-				print "<a class=\"butAction\" href=\"fiche.php?action=edit&id=".$object->id."\">".$langs->trans("Modify")."</a>";
-				else
-				print "<a class=\"butActionRefused\" href=\"#\">".$langs->trans("Modify")."</a>";
-
-				if ($user->rights->stock->supprimer)
-				print "<a class=\"butActionDelete\" href=\"fiche.php?action=delete&id=".$object->id."\">".$langs->trans("Delete")."</a>";
-				else
-				print "<a class=\"butActionRefused\" href=\"#\">".$langs->trans("Delete")."</a>";
+				if (empty($action))
+				{
+					if ($user->rights->stock->creer)
+						print "<a class=\"butAction\" href=\"fiche.php?action=edit&id=".$object->id."\">".$langs->trans("Modify")."</a>";
+					else
+						print "<a class=\"butActionRefused\" href=\"#\">".$langs->trans("Modify")."</a>";
+	
+					if ($user->rights->stock->supprimer)
+						print "<a class=\"butActionDelete\" href=\"fiche.php?action=delete&id=".$object->id."\">".$langs->trans("Delete")."</a>";
+					else
+						print "<a class=\"butActionRefused\" href=\"#\">".$langs->trans("Delete")."</a>";
+				}
 			}
-
+			
 			print "</div>";
 
 
@@ -527,7 +534,7 @@ else
 			// Country
 			print '<tr><td width="25%">'.$langs->trans('Country').'</td><td colspan="3">';
 			print $form->select_country($object->country_id?$object->country_id:$mysoc->country_code,'country_id');
-			if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
+			if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
 			print '</td></tr>';
 
 			print '<tr><td width="20%">'.$langs->trans("Status").'</td><td colspan="3">';

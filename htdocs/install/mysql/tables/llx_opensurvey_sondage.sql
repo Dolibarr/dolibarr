@@ -17,17 +17,16 @@
 
 CREATE TABLE llx_opensurvey_sondage (
        id_sondage VARCHAR(16) PRIMARY KEY,
-       id_sondage_admin VARCHAR(24),
        commentaires text,
        mail_admin VARCHAR(128),
        nom_admin VARCHAR(64),
-       titre TEXT,
-       date_fin DATETIME,
-       format VARCHAR(2),
-       mailsonde varchar(2) DEFAULT '0',
-       survey_link_visible integer DEFAULT 1,
-	   canedit integer DEFAULT 0,
-       origin VARCHAR(64),
+	   fk_user_creat integer NOT NULL,
+       titre TEXT NOT NULL,
+       date_fin DATETIME NOT NULL,
+       format VARCHAR(2) NOT NULL,
+       mailsonde tinyint NOT NULL DEFAULT 0,
+       allow_comments tinyint NOT NULL DEFAULT 1,
+	   allow_spy tinyint NOT NULL DEFAULT 1,
        tms TIMESTAMP,
 	   sujet TEXT
 ) ENGINE=InnoDB;

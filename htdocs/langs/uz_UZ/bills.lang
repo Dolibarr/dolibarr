@@ -64,6 +64,7 @@
 # SupplierPayments=Suppliers payments
 # ReceivedPayments=Received payments
 # ReceivedCustomersPayments=Payments received from customers
+# PayedSuppliersPayments=Payments payed to suppliers
 # ReceivedCustomersPaymentsToValid=Received customers payments to validate
 # PaymentsReportsForYear=Payments reports for %s
 # PaymentsReports=Payments reports
@@ -76,7 +77,8 @@
 # PaymentAmount=Payment amount
 # ValidatePayment=Validate payment
 # PaymentHigherThanReminderToPay=Payment higher than reminder to pay
-# HelpPaymentHigherThanReminderToPay= Attention, the payment amount of one or more bills is higher than the rest to pay. <br> Edit your entry, otherwise confirm and think about creating a credit note of the excess received for each overpaid invoices.
+# HelpPaymentHigherThanReminderToPay=Attention, the payment amount of one or more bills is higher than the rest to pay. <br> Edit your entry, otherwise confirm and think about creating a credit note of the excess received for each overpaid invoices.
+# HelpPaymentHigherThanReminderToPaySupplier=Attention, the payment amount of one or more bills is higher than the rest to pay. <br> Edit your entry, otherwise confirm.
 # ClassifyPaid=Classify 'Paid'
 # ClassifyPaidPartially=Classify 'Paid partially'
 # ClassifyCanceled=Classify 'Abandoned'
@@ -166,6 +168,7 @@
 # ConfirmClassifyAbandonReasonOther=Other
 # ConfirmClassifyAbandonReasonOtherDesc=This choice will be used in all other cases. For example because you plan to create a replacing invoice.
 # ConfirmCustomerPayment=Do you confirm this payment input for <b>%s</b> %s ?
+# ConfirmSupplierPayment=Do you confirm this payment input for <b>%s</b> %s ?
 # ConfirmValidatePayment=Are you sure you want to validate this payment ? No change can be made once payment is validated.
 # ValidateBill=Validate invoice
 # UnvalidateBill=Unvalidate invoice
@@ -411,5 +414,4 @@
 # NumRef Modules
 # TerreNumRefModelDesc1=Return number with format %syymm-nnnn for standard invoices and %syymm-nnnn for credit notes where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
 # MarsNumRefModelDesc1=Return number with format %syymm-nnnn for standard invoices, %syymm-nnnn for replacement invoices, %syymm-nnnn for credit notes and %syymm-nnnn for credit notes where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
-
 # TerreNumRefModelError=A bill starting with $syymm already exists and is not compatible with this model of sequence. Remove it or rename it to activate this module.

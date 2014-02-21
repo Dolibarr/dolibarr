@@ -36,4 +36,4 @@ BankToPay=Võta kontolt raha
 ShowCompany=Näita ettevõtet
 ShowStock=Näita ladu
 DeleteArticle=Klõpsa selle artikli eemaldamiseks
-FilterRefOrLabelOrBC=Otsi (viide/silt)
+FilterRefOrLabelOrBC=Otsi (viide/nimi)

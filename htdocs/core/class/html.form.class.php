@@ -122,7 +122,7 @@ class Form
      * @param	object	$object			Object
      * @param	boolean	$perm			Permission to allow button to edit parameter
      * @param	string	$typeofdata		Type of data ('string' by default, 'amount', 'email', 'numeric:99', 'text' or 'textarea:rows:cols', 'day' or 'datepicker', 'ckeditor:dolibarr_zzz:width:height:savemethod:toolbarstartexpanded:rows:cols', 'select:xxx'...)
-     * @param	string	$editvalue		When in edit mode, use this value as $value instead of value (for example, you can provide here a formated price instead of value)
+     * @param	string	$editvalue		When in edit mode, use this value as $value instead of value (for example, you can provide here a formated price instead of value). Use '' to use same than $value
      * @param	object	$extObject		External object
      * @param	string	$success		Success message
      * @param	string	$moreparam		More param to add on a href URL
@@ -189,7 +189,13 @@ class Form
                     $ret.=$doleditor->Create(1);
                 }
                 $ret.='</td>';
-                if ($typeofdata != 'day' && $typeofdata != 'datepicker' && $typeofdata != 'datehourpicker') $ret.='<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
+                if ($typeofdata != 'day' && $typeofdata != 'datepicker' && $typeofdata != 'datehourpicker')
+                {
+                	$ret.='<td align="left"><input type="submit" class="button" name="modify" value="'.$langs->trans("Modify").'">';
+                	$ret.='<br><br>'."\n";
+                	$ret.='<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+                	$ret.='</td>';
+                }
                 $ret.='</tr></table>'."\n";
                 $ret.='</form>'."\n";
             }
@@ -566,7 +572,7 @@ class Form
             print '>'.$langs->trans("Service");
 
             print '</select>';
-            //if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
+            //if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
         }
         if (! $forceall && empty($conf->product->enabled) && ! empty($conf->service->enabled))
         {
@@ -656,12 +662,12 @@ class Form
         }
 
         print '</select>';
-        if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
+        if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
     }
 
 
     /**
-     *  Return list of company for customer in Ajax if Ajax activated or go to select_thirparty_list
+     *  Return HTML code to select a company.
      *
      *  @param		int			$selected				Preselected products
      *  @param		string		$htmlname				Name of HTML seletc field (must be unique in page)
@@ -669,20 +675,22 @@ class Form
      *  @param		int			$limit					Limit on number of returned lines
      *  @param		array		$ajaxoptions			Options for ajax_autocompleter
      * 	@param		int			$forcecombo				Force to use combo box
-     *  @return		void
+     *  @return		string								Return select box for thirdparty.
      */
     function select_thirdparty($selected='', $htmlname='productid', $filter='', $limit=20, $ajaxoptions=array(), $forcecombo=0)
     {
     	global $langs,$conf;
 
-    	/* TODO Use ajax autocompletion (not finished)
+    	$out='';
+
+    	/* TODO Use ajax_autocompleter like for products (not finished)
     	if (! empty($conf->use_javascript_ajax) && ! empty($conf->global->COMPANY_USE_SEARCH_TO_SELECT) && ! $forcecombo)
     	{
     		$placeholder='';
 
     		if ($selected && empty($selected_input_value))
     		{
-    			require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+    			require_once DOL_DOCUMENT_ROOT.'/societe/ajaxcompanies.php';
     			$societe = new Societe($this->db);
     			$societe->fetch($selected);
     			$selected_input_value=$societe->ref;
@@ -705,8 +713,10 @@ class Form
     	}
     	else
     	{*/
-    		print $this->select_thirdparty_list($selected,$htmlname,$filter,1,0,$forcecombo,array(),'',0,$limit);
+    		$out.=$this->select_thirdparty_list($selected,$htmlname,$filter,1,0,$forcecombo,array(),'',0,$limit);
     	//}
+
+    	return $out;
     }
 
     /**
@@ -718,13 +728,13 @@ class Form
      *	@param	int		$showempty		Add an empty field
      * 	@param	int		$showtype		Show third party type in combolist (customer, prospect or supplier)
      * 	@param	int		$forcecombo		Force to use combo box
-     *  @param	array	$event			Event options. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
+     *  @param	array	$events			Event options. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
      * 	@return	string					HTML string with
 	 *  @deprecated						Use select_thirdparty instead
      */
-    function select_company($selected='', $htmlname='socid', $filter='', $showempty=0, $showtype=0, $forcecombo=0, $event=array())
+    function select_company($selected='', $htmlname='socid', $filter='', $showempty=0, $showtype=0, $forcecombo=0, $events=array())
     {
-		return $this->select_thirdparty_list($selected,$htmlname, $filter, $showempty, $showtype, $forcecombo, $event);
+		return $this->select_thirdparty_list($selected, $htmlname, $filter, $showempty, $showtype, $forcecombo, $events);
     }
 
     /**
@@ -736,13 +746,13 @@ class Form
      *	@param	int		$showempty		Add an empty field
      * 	@param	int		$showtype		Show third party type in combolist (customer, prospect or supplier)
      * 	@param	int		$forcecombo		Force to use combo box
-     *  @param	array	$event			Event options. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
+     *  @param	array	$events			Event options. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
      *  @param	string	$filterkey		Filter on key value
      *  @param	int		$outputmode		0=HTML select string, 1=Array
      *  @param	int		$limit			Limit number of answers
      * 	@return	string					HTML string with
      */
-    function select_thirdparty_list($selected='',$htmlname='socid',$filter='',$showempty=0, $showtype=0, $forcecombo=0, $event=array(), $filterkey='', $outputmode=0, $limit=20)
+    function select_thirdparty_list($selected='',$htmlname='socid',$filter='',$showempty=0, $showtype=0, $forcecombo=0, $events=array(), $filterkey='', $outputmode=0, $limit=20)
     {
         global $conf,$user,$langs;
 
@@ -790,8 +800,7 @@ class Form
         {
             if ($conf->use_javascript_ajax && $conf->global->COMPANY_USE_SEARCH_TO_SELECT && ! $forcecombo)
             {
-                //$minLength = (is_numeric($conf->global->COMPANY_USE_SEARCH_TO_SELECT)?$conf->global->COMPANY_USE_SEARCH_TO_SELECT:2);
-                $out.= ajax_combobox($htmlname, $event, $conf->global->COMPANY_USE_SEARCH_TO_SELECT);
+                $out.= ajax_combobox($htmlname, $events, $conf->global->COMPANY_USE_SEARCH_TO_SELECT);
             }
 
             // Construct $out and $outarray
@@ -933,13 +942,13 @@ class Form
      *	@param	string	$moreclass		Add more class to class style
      *	@param	string	$showsoc	    Add company into label
      * 	@param	int		$forcecombo		Force to use combo box
-     *  @param	array	$event			Event options. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
+     *  @param	array	$events			Event options. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
      *  @param	bool	$options_only	Return options only (for ajax treatment)
      *	@return	int						<0 if KO, Nb of contact in list if OK
      */
-    function select_contacts($socid,$selected='',$htmlname='contactid',$showempty=0,$exclude='',$limitto='',$showfunction=0, $moreclass='', $showsoc=0, $forcecombo=0, $event=array(), $options_only=false)
+    function select_contacts($socid,$selected='',$htmlname='contactid',$showempty=0,$exclude='',$limitto='',$showfunction=0, $moreclass='', $showsoc=0, $forcecombo=0, $events=array(), $options_only=false)
     {
-    	print $this->selectcontacts($socid,$selected,$htmlname,$showempty,$exclude,$limitto,$showfunction, $moreclass, $options_only, $showsoc, $forcecombo, $event);
+    	print $this->selectcontacts($socid,$selected,$htmlname,$showempty,$exclude,$limitto,$showfunction, $moreclass, $options_only, $showsoc, $forcecombo, $events);
     	return $this->num;
     }
 
@@ -957,10 +966,10 @@ class Form
      *	@param	bool	$options_only	Return options only (for ajax treatment)
      *	@param	string	$showsoc	    Add company into label
      * 	@param	int		$forcecombo		Force to use combo box
-     *  @param	array	$event			Event options. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
-     *	@return	 int						<0 if KO, Nb of contact in list if OK
+     *  @param	array	$events			Event options. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
+     *	@return	 int					<0 if KO, Nb of contact in list if OK
      */
-    function selectcontacts($socid,$selected='',$htmlname='contactid',$showempty=0,$exclude='',$limitto='',$showfunction=0, $moreclass='', $options_only=false, $showsoc=0, $forcecombo=0, $event=array())
+    function selectcontacts($socid,$selected='',$htmlname='contactid',$showempty=0,$exclude='',$limitto='',$showfunction=0, $moreclass='', $options_only=false, $showsoc=0, $forcecombo=0, $events=array())
     {
         global $conf,$langs;
 
@@ -990,7 +999,7 @@ class Form
 
             if ($conf->use_javascript_ajax && $conf->global->CONTACT_USE_SEARCH_TO_SELECT && ! $forcecombo && ! $options_only)
             {
-            	$out.= ajax_combobox($htmlname, $event, $conf->global->CONTACT_USE_SEARCH_TO_SELECT);
+            	$out.= ajax_combobox($htmlname, $events, $conf->global->CONTACT_USE_SEARCH_TO_SELECT);
             }
 
             if ($htmlname != 'none' || $options_only) $out.= '<select class="flat'.($moreclass?' '.$moreclass:'').'" id="'.$htmlname.'" name="'.$htmlname.'">';
@@ -2096,7 +2105,7 @@ class Form
             print '</option>';
         }
         print '</select>';
-        if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
+        if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
     }
 
     /**
@@ -2176,7 +2185,7 @@ class Form
             print '</option>';
         }
         print '</select>';
-        if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
+        if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
     }
 
     /**
@@ -2252,7 +2261,7 @@ class Form
             print '</option>';
         }
         print '</select>';
-        if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
+        if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
     }
 
 
@@ -2307,7 +2316,7 @@ class Form
             print '</option>';
         }
         print '</select>';
-        if ($user->admin && ! $noadmininfo) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
+        if ($user->admin && ! $noadmininfo) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
     }
 
 
@@ -2525,6 +2534,19 @@ class Form
 
         if (is_array($formquestion) && ! empty($formquestion))
         {
+        	// First add hidden fields and value
+        	foreach ($formquestion as $key => $input)
+            {
+                if (is_array($input) && ! empty($input))
+                {
+                	if ($input['type'] == 'hidden')
+                    {
+                        $more.='<input type="hidden" id="'.$input['name'].'" name="'.$input['name'].'" value="'.dol_escape_htmltag($input['value']).'">'."\n";
+                    }
+                }
+            }
+
+        	// Now add questions
             $more.='<table class="paddingrightonly" width="100%">'."\n";
             $more.='<tr><td colspan="3" valign="top">'.(! empty($formquestion['text'])?$formquestion['text']:'').'</td></tr>'."\n";
             foreach ($formquestion as $key => $input)
@@ -2583,10 +2605,6 @@ class Form
                         if (! empty($input['label'])) $more.=$input['label'].'</td><td valign="top" colspan="2" align="left">';
                         $more.=$input['value'];
                         $more.='</td></tr>'."\n";
-                    }
-                    else if ($input['type'] == 'hidden')
-                    {
-                        $more.='<input type="hidden" id="'.$input['name'].'" name="'.$input['name'].'" value="'.$input['value'].'">';
                     }
                 }
             }
@@ -3141,10 +3159,10 @@ class Form
      *	@param	int		$showempty		Add an empty field
      * 	@param	int		$showtype		Show third party type in combolist (customer, prospect or supplier)
      * 	@param	int		$forcecombo		Force to use combo box
-     *  @param	array	$event			Event options. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
+     *  @param	array	$events			Event options. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
      *  @return	void
      */
-    function form_thirdparty($page, $selected='', $htmlname='socid', $filter='',$showempty=0, $showtype=0, $forcecombo=0, $event=array())
+    function form_thirdparty($page, $selected='', $htmlname='socid', $filter='',$showempty=0, $showtype=0, $forcecombo=0, $events=array())
     {
         global $langs;
 
@@ -3155,7 +3173,7 @@ class Form
             print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
             print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
             print '<tr><td>';
-            print $this->select_company($selected, $htmlname, $filter, $showempty, $showtype, $forcecombo, $event);
+            print $this->select_company($selected, $htmlname, $filter, $showempty, $showtype, $forcecombo, $events);
             print '</td>';
             print '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
             print '</tr></table></form>';
@@ -3221,7 +3239,7 @@ class Form
         	$out.= '</option>';
         }
         $out.= '</select>';
-        if ($user->admin) $out.= info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
+        if ($user->admin) $out.= info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
         return $out;
     }
 
@@ -3726,15 +3744,16 @@ class Form
      * 	@param	int		$maxlen			Length maximum for labels
      * 	@param	int		$disabled		Html select box is disabled
      *  @param	int		$sort			'ASC' or 'DESC' =Sort on label, '' or 'NONE'=Do not sort
+     *  @param	string	$morecss		Add more class to css styles
      * 	@return	string					HTML select string
      */
-    function selectarray($htmlname, $array, $id='', $show_empty=0, $key_in_label=0, $value_as_key=0, $option='', $translate=0, $maxlen=0, $disabled=0, $sort='')
+    function selectarray($htmlname, $array, $id='', $show_empty=0, $key_in_label=0, $value_as_key=0, $option='', $translate=0, $maxlen=0, $disabled=0, $sort='', $morecss='')
     {
         global $langs;
 
         if ($value_as_key) $array=array_combine($array, $array);
 
-        $out='<select id="'.$htmlname.'" '.($disabled?'disabled="disabled" ':'').'class="flat" name="'.$htmlname.'" '.($option != ''?$option:'').'>';
+        $out='<select id="'.$htmlname.'" '.($disabled?'disabled="disabled" ':'').'class="flat'.($morecss?' '.$morecss:'').'" name="'.$htmlname.'" '.($option != ''?$option:'').'>';
 
         if ($show_empty)
         {

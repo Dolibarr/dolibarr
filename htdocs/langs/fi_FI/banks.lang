@@ -28,6 +28,7 @@ EndBankBalance=Lopussa
 CurrentBalance=Nykyinen saldo
 FutureBalance=Tulevat tasapaino
 ShowAllTimeBalance=Näytä tasapaino alusta
+# AllTime=From start
 Reconciliation=Sovinto
 RIB=Bank Account Number
 IBAN=IBAN-numero

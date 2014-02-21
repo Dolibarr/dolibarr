@@ -50,9 +50,11 @@ if (!empty($conf->projet->enabled)) {
 
 
 $langs->load('bills');
+$langs->load('compta');
 $langs->load('suppliers');
 $langs->load('companies');
 $langs->load('products');
+$langs->load('banks');
 
 $mesg='';
 $errors=array();
@@ -82,11 +84,14 @@ if ($id > 0 || ! empty($ref))
 	$ret=$object->fetch($id, $ref);
 }
 
+$permissionnote=$user->rights->fournisseur->facture->creer;	// Used by the include of actions_setnotes.inc.php
 
 
 /*
  * Actions
  */
+
+include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php';	// Must be include, not includ_once
 
 // Action clone object
 if ($action == 'confirm_clone' && $confirm == 'yes')
@@ -237,28 +242,16 @@ elseif ($action == 'setdate_lim_reglement' && $user->rights->fournisseur->factur
     $result=$object->update($user);
     if ($result < 0) dol_print_error($db,$object->error);
 }
-elseif ($action == 'setnote_public' && $user->rights->fournisseur->facture->creer)
-{
-	$object->fetch($id);
-	$result=$object->update_note(dol_html_entity_decode(GETPOST('note_public'), ENT_QUOTES),'_public');
-	if ($result < 0) dol_print_error($db,$object->error);
-}
-elseif ($action == 'setnote_private' && $user->rights->fournisseur->facture->creer)
-{
-	$object->fetch($id);
-	$result=$object->update_note(dol_html_entity_decode(GETPOST('note_private'), ENT_QUOTES),'_private');
-	if ($result < 0) dol_print_error($db,$object->error);
-}
 
 // Delete payment
-elseif ($action == 'deletepaiement')
+elseif ($action == 'deletepaiement' && $user->rights->fournisseur->facture->creer)
 {
     $object->fetch($id);
-    if ($object->statut == 1 && $object->paye == 0 && $user->societe_id == 0)
+    if ($object->statut == 1 && $object->paye == 0)
     {
-        $paiementfourn = new PaiementFourn($db);
-        $paiementfourn->fetch(GETPOST('paiement_id'));
-        $result=$paiementfourn->delete();
+    	$paiementfourn = new PaiementFourn($db);
+        $result=$paiementfourn->fetch(GETPOST('paiement_id'));
+        if ($result > 0) $result=$paiementfourn->delete(); // If fetch ok and found
         if ($result < 0) $mesg='<div class="error">'.$paiementfourn->error.'</div>';
     }
 }
@@ -1518,7 +1511,7 @@ else
         print '</td></tr>';
 
         // Third party
-        print '<tr><td>'.$langs->trans('Supplier').'</td><td colspan="4">'.$societe->getNomUrl(1);
+        print '<tr><td>'.$langs->trans('Supplier').'</td><td colspan="4">'.$societe->getNomUrl(1,'supplier');
         print ' &nbsp; (<a href="'.DOL_URL_ROOT.'/fourn/facture/list.php?socid='.$object->socid.'">'.$langs->trans('OtherBills').'</a>)</td>';
         print '</tr>';
 
@@ -1629,7 +1622,7 @@ else
                         $bankaccountstatic->ref=$objp->ref;
                         $bankaccountstatic->label=$objp->ref;
                         print '<td align="right">';
-                        print $bankaccountstatic->getNomUrl(1,'transactions');
+                        if ($objp->baid > 0) print $bankaccountstatic->getNomUrl(1,'transactions');
                         print '</td>';
                     }
                     print '<td align="right">'.price($objp->amount).'</td>';
@@ -1948,7 +1941,7 @@ else
             }
             else // Affichage simple de la ligne
             {
-                print '<tr '.$bc[$var].'>';
+                print '<tr id="row-'.$object->lines[$i]->rowid.'" '.$bc[$var].'>';
 
                 // Show product and description
                 print '<td>';
@@ -2003,6 +1996,12 @@ else
                 print '<td align="right" class="nowrap">'.price($object->lines[$i]->total_ht).'</td>';
 
                 print '<td align="right" class="nowrap">'.price($object->lines[$i]->total_ttc).'</td>';
+
+				if (is_object($hookmanager))
+				{
+					$parameters=array('line'=>$object->lines[$i],'num'=>$num,'i'=>$i);
+					$reshook=$hookmanager->executeHooks('printObjectLine',$parameters,$object,$action);
+				}
 
                 print '<td align="center" width="16">';
                 if ($object->statut == 0) print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=edit_line&amp;etat=0&amp;lineid='.$object->lines[$i]->rowid.'">'.img_edit().'</a>';
@@ -2371,7 +2370,7 @@ else
             }
 
             // Show form
-            $formmail->show_form();
+            print $formmail->get_form();
 
             print '<br>';
         }

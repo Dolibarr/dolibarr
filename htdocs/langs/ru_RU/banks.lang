@@ -28,6 +28,7 @@ EndBankBalance=Конец баланс
 CurrentBalance=Текущий баланс
 FutureBalance=Будущие баланс
 ShowAllTimeBalance=Показать баланса с начала
+# AllTime=From start
 Reconciliation=Примирение
 RIB=Bank Account Number
 IBAN=IBAN номера

@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - agenda
-# IdAgenda=ID event
+IdAgenda=ID gebeurtenis
 Actions=Acties
 ActionsArea=Actieoverzicht (Gebeurtenissen en taken)
 Agenda= Agenda
@@ -10,7 +10,7 @@ LocalAgenda=Lokale kalender
 AffectedTo= Geaffecteerden
 DoneBy= Gedaan door
 Events= Gebeurtenissen
-# EventsNb=Number of events
+EventsNb=Aantal gebeurtenissen
 MyEvents=Mijn evenementen
 OtherEvents=Andere evenementen
 ListOfActions=Gebeurtenissenlijst
@@ -40,7 +40,7 @@ ActionsEvents= Gebeurtenissen waarvoor Dolibarr automatisch een item zal maken i
 PropalValidatedInDolibarr= Voorstel %s gevalideerd
 InvoiceValidatedInDolibarr= Factuur %s gevalideerd
 InvoiceBackToDraftInDolibarr=Factuur %s ga terug naar ontwerp van de status van
-# InvoiceDeleteDolibarr=Invoice %s deleted
+InvoiceDeleteDolibarr=Factuur %s verwijderd
 OrderValidatedInDolibarr= Opdracht %s gevalideerd
 OrderApprovedInDolibarr=Bestel %s goedgekeurd
 OrderBackToDraftInDolibarr=Bestel %s terug te gaan naar ontwerp-status
@@ -67,8 +67,8 @@ AgendaUrlOptions4=<b>login=%s</b> om uitvoer van acties toegewezen aan gebruiker
 AgendaUrlOptions5=<b>login=%s</b> om uitvoer van acties gedaan door gebruiker <b>%s</b> te beperken.
 AgendaShowBirthdayEvents=Toon verjaardagen van contacten
 AgendaHideBirthdayEvents=Verberg verjaardagen van contacten
-# Busy=Busy
-# ExportDataset_event1=List of agenda events
+Busy=Bezig
+ExportDataset_event1=Lijst van agenda-gebeurtenissen
 
 # External Sites ical
 ExportCal=Export kalender

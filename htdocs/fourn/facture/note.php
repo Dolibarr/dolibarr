@@ -43,22 +43,14 @@ $result = restrictedArea($user, 'fournisseur', $id, 'facture_fourn', 'facture');
 $object = new FactureFournisseur($db);
 $object->fetch($id, $ref);
 
+$permissionnote=$user->rights->fournisseur->facture->creer;	// Used by the include of actions_setnotes.inc.php
 
 
-/******************************************************************************/
-/*                     Actions                                                */
-/******************************************************************************/
+/*
+ * Actions
+ */
 
-if ($action == 'setnote_public' && $user->rights->fournisseur->facture->creer)
-{
-	$result=$object->update_note(dol_html_entity_decode(GETPOST('note_public'), ENT_QUOTES),'_public');
-	if ($result < 0) dol_print_error($db,$object->error);
-}
-elseif ($action == 'setnote_private' && $user->rights->fournisseur->facture->creer)
-{
-	$result=$object->update_note(dol_html_entity_decode(GETPOST('note_private'), ENT_QUOTES),'_private');
-	if ($result < 0) dol_print_error($db,$object->error);
-}
+include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php';	// Must be include, not includ_once
 
 // Set label
 if ($action == 'setlabel' && $user->rights->fournisseur->facture->creer)
@@ -101,7 +93,7 @@ if ($object->id > 0)
 	print "</tr>\n";
 
 	// Company
-	print '<tr><td>'.$langs->trans('Supplier').'</td><td colspan="3">'.$object->thirdparty->getNomUrl(1).'</td></tr>';
+	print '<tr><td>'.$langs->trans('Supplier').'</td><td colspan="3">'.$object->thirdparty->getNomUrl(1,'supplier').'</td></tr>';
 
 	// Type
 	print '<tr><td>'.$langs->trans('Type').'</td><td colspan="4">';

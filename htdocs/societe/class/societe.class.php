@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2002-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2003      Brian Fraval         <brian@fraval.org>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
@@ -208,8 +208,8 @@ class Societe extends CommonObject
         $this->db->begin();
 
         // For automatic creation during create action (not used by Dolibarr GUI, can be used by scripts)
-        if ($this->code_client == -1)      $this->get_codeclient($this->prefix_comm,0);
-        if ($this->code_fournisseur == -1) $this->get_codefournisseur($this->prefix_comm,1);
+        if ($this->code_client == -1)      $this->get_codeclient($this,0);
+        if ($this->code_fournisseur == -1) $this->get_codefournisseur($this,1);
 
         // Check more parameters
         // If error, this->errors[] is filled
@@ -290,27 +290,43 @@ class Societe extends CommonObject
 
         }
         else
-        {
+       {
             $this->db->rollback();
             dol_syslog(get_class($this)."::Create fails verify ".join(',',$this->errors), LOG_WARNING);
             return -3;
         }
     }
 
-    function create_individual($user) {
+    /**
+     * Create a contact/address from thirdparty
+     *
+     * @param 	User	$user		Object user
+     * @return 	int					<0 if KO, >0 if OK
+     */
+    function create_individual($user)
+    {
         require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
         $contact=new Contact($this->db);
 
         $contact->name              = $this->name_bis;
         $contact->firstname         = $this->firstname;
+        $contact->civilite_id       = $this->civility_id;
         $contact->socid             = $this->id;	// fk_soc
         $contact->statut            = 1;
         $contact->priv              = 0;
+        $contact->country_id        = $this->country_id;
+        $contact->address           = $this->address;
+        $contact->email             = $this->email;
+        $contact->zip               = $this->zip;
+        $contact->town              = $this->town;
+        $contact->phone_pro         = $this->phone;
+
         $result = $contact->create($user);
-        if ($result < 0) {
+        if ($result < 0)
+        {
             $this->error = $contact->error;
             $this->errors = $contact->errors;
-            dol_syslog("Societe::create_individual ERROR:" . $this->error, LOG_ERR);
+            dol_syslog(get_class($this)."::create_individual ERROR:" . $this->error, LOG_ERR);
         }
 
         return $result;
@@ -318,6 +334,7 @@ class Societe extends CommonObject
 
     /**
      *    Check properties of third party are ok (like name, third party codes, ...)
+     *    Used before an add or update.
      *
      *    @return     int		0 if OK, <0 if KO
      */
@@ -335,10 +352,8 @@ class Societe extends CommonObject
             $result = -2;
         }
 
-        if ($this->client && $this->codeclient_modifiable())
+        if ($this->client)
         {
-            // On ne verifie le code client que si la societe est un client / prospect et que le code est modifiable
-            // Si il n'est pas modifiable il n'est pas mis a jour lors de l'update
             $rescode = $this->check_codeclient();
             if ($rescode <> 0)
             {
@@ -362,10 +377,8 @@ class Societe extends CommonObject
             }
         }
 
-        if ($this->fournisseur && $this->codefournisseur_modifiable())
+        if ($this->fournisseur)
         {
-            // On ne verifie le code fournisseur que si la societe est un fournisseur et que le code est modifiable
-            // Si il n'est pas modifiable il n'est pas mis a jour lors de l'update
             $rescode = $this->check_codefournisseur();
             if ($rescode <> 0)
             {
@@ -400,7 +413,7 @@ class Societe extends CommonObject
      *      @param  int		$call_trigger    			0=non, 1=oui
      *		@param	int		$allowmodcodeclient			Inclut modif code client et code compta
      *		@param	int		$allowmodcodefournisseur	Inclut modif code fournisseur et code compta fournisseur
-     *		@param	string	$action						'create' or 'update'
+     *		@param	string	$action						'add' or 'update'
      *		@param	int		$nosyncmember				Do not synchronize info of linked member
      *      @return int  			           			<0 if KO, >=0 if OK
      */
@@ -460,8 +473,8 @@ class Societe extends CommonObject
         $this->barcode=trim($this->barcode);
 
         // For automatic creation
-        if ($this->code_client == -1) $this->get_codeclient($this->prefix_comm,0);
-        if ($this->code_fournisseur == -1) $this->get_codefournisseur($this->prefix_comm,1);
+        if ($this->code_client == -1) $this->get_codeclient($this,0);
+        if ($this->code_fournisseur == -1) $this->get_codefournisseur($this,1);
 
         $this->code_compta=trim($this->code_compta);
         $this->code_compta_fournisseur=trim($this->code_compta_fournisseur);
@@ -510,7 +523,7 @@ class Societe extends CommonObject
 
         // Check name is required and codes are ok or unique.
         // If error, this->errors[] is filled
-        $result = $this->verify();
+        if ($action != 'add') $result = $this->verify();	// We don't check when update called during a create because verify was already done
 
         if ($result >= 0)
         {
@@ -567,16 +580,12 @@ class Societe extends CommonObject
 
             if ($customer)
             {
-                //$this->check_codeclient();
-
                 $sql .= ", code_client = ".(! empty($this->code_client)?"'".$this->db->escape($this->code_client)."'":"null");
                 $sql .= ", code_compta = ".(! empty($this->code_compta)?"'".$this->db->escape($this->code_compta)."'":"null");
             }
 
             if ($supplier)
             {
-                //$this->check_codefournisseur();
-
                 $sql .= ", code_fournisseur = ".(! empty($this->code_fournisseur)?"'".$this->db->escape($this->code_fournisseur)."'":"null");
                 $sql .= ", code_compta_fournisseur = ".(! empty($this->code_compta_fournisseur)?"'".$this->db->escape($this->code_compta_fournisseur)."'":"null");
             }
@@ -614,7 +623,7 @@ class Societe extends CommonObject
 		            		//$lmember->lastname=$this->lastname?$this->lastname:$lmember->lastname;		// We keep firstname and lastname of member unchanged
 		            		$lmember->address=$this->address;
 		            		$lmember->email=$this->email;
-                    $lmember->skype=$this->skype;
+                    		$lmember->skype=$this->skype;
 		            		$lmember->phone=$this->phone;
 
 		            		$result=$lmember->update($user,0,1,1,1);	// Use nosync to 1 to avoid cyclic updates
@@ -693,7 +702,7 @@ class Societe extends CommonObject
             }
         }
         else
-        {
+       {
             $this->db->rollback();
             dol_syslog(get_class($this)."::Update fails verify ".join(',',$this->errors), LOG_WARNING);
             return -3;
@@ -1014,7 +1023,7 @@ class Societe extends CommonObject
         require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
         $entity=isset($this->entity)?$this->entity:$conf->entity;
-        
+
         dol_syslog(get_class($this)."::delete", LOG_DEBUG);
         $error = 0;
 
@@ -1024,28 +1033,41 @@ class Societe extends CommonObject
 		{
             $this->db->begin();
 
-            require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
-            $static_cat = new Categorie($this->db);
-            $toute_categs = array();
-
-            // Fill $toute_categs array with an array of (type => array of ("Categorie" instance))
-            if ($this->client || $this->prospect)
+		    if (! $error)
             {
-                $toute_categs ['societe'] = $static_cat->containing($this->id,2);
-            }
-            if ($this->fournisseur)
-            {
-                $toute_categs ['fournisseur'] = $static_cat->containing($this->id,1);
+                // Appel des triggers
+                include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
+                $interface=new Interfaces($this->db);
+                $result=$interface->run_triggers('COMPANY_DELETE',$this,$user,$langs,$conf);
+                if ($result < 0) { $error++; $this->errors=$interface->errors; }
+                // Fin appel triggers
             }
 
-            // Remove each "Categorie"
-            foreach ($toute_categs as $type => $categs_type)
-            {
-                foreach ($categs_type as $cat)
-                {
-                    $cat->del_type($this, $type);
-                }
-            }
+			if (! $error)
+			{
+	            require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+	            $static_cat = new Categorie($this->db);
+	            $toute_categs = array();
+
+	            // Fill $toute_categs array with an array of (type => array of ("Categorie" instance))
+	            if ($this->client || $this->prospect)
+	            {
+	                $toute_categs ['societe'] = $static_cat->containing($this->id,2);
+	            }
+	            if ($this->fournisseur)
+	            {
+	                $toute_categs ['fournisseur'] = $static_cat->containing($this->id,1);
+	            }
+
+	            // Remove each "Categorie"
+	            foreach ($toute_categs as $type => $categs_type)
+	            {
+	                foreach ($categs_type as $cat)
+	                {
+	                    $cat->del_type($this, $type);
+	                }
+	            }
+			}
 
             // Remove contacts
             if (! $error)
@@ -1089,20 +1111,6 @@ class Societe extends CommonObject
                 }
             }
 
-            if (! $error)
-            {
-            	// Additionnal action by hooks
-            	// FIXME on a déjà un trigger, pourquoi rajouter un hook !!
-                $hookmanager->initHooks(array('thirdpartydao'));
-                $parameters=array(); $action='delete';
-                $reshook=$hookmanager->executeHooks('deleteThirdparty',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
-                if (! empty($hookmanager->error))
-                {
-                    $error++;
-                    $this->error=$hookmanager->error;
-                }
-            }
-
             // Removed extrafields
             if ((! $error) && (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED))) // For avoid conflicts if trigger used
             {
@@ -1130,16 +1138,6 @@ class Societe extends CommonObject
 
             if (! $error)
             {
-                // Appel des triggers
-                include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-                $interface=new Interfaces($this->db);
-                $result=$interface->run_triggers('COMPANY_DELETE',$this,$user,$langs,$conf);
-                if ($result < 0) { $error++; $this->errors=$interface->errors; }
-                // Fin appel triggers
-            }
-
-            if (! $error)
-            {
                 $this->db->commit();
 
                 // Delete directory
@@ -1151,7 +1149,7 @@ class Societe extends CommonObject
                     	dol_delete_dir_recursive($docdir);
                 	}
                 }
-                
+
                 return 1;
             }
             else
@@ -1819,19 +1817,20 @@ class Societe extends CommonObject
         global $conf;
         if (! empty($conf->global->SOCIETE_CODECLIENT_ADDON))
         {
+        	$module=$conf->global->SOCIETE_CODECLIENT_ADDON;
+
             $dirsociete=array_merge(array('/core/modules/societe/'),$conf->modules_parts['societe']);
             foreach ($dirsociete as $dirroot)
             {
-                $res=dol_include_once($dirroot.$conf->global->SOCIETE_CODECLIENT_ADDON.'.php');
+                $res=dol_include_once($dirroot.$module.'.php');
                 if ($res) break;
             }
-            $var = $conf->global->SOCIETE_CODECLIENT_ADDON;
-            $mod = new $var;
+            $mod = new $module();
 
             $this->code_client = $mod->getNextValue($objsoc,$type);
             $this->prefixCustomerIsRequired = $mod->prefixIsRequired;
 
-            dol_syslog(get_class($this)."::get_codeclient code_client=".$this->code_client." module=".$var);
+            dol_syslog(get_class($this)."::get_codeclient code_client=".$this->code_client." module=".$module);
         }
     }
 
@@ -1848,18 +1847,19 @@ class Societe extends CommonObject
         global $conf;
         if (! empty($conf->global->SOCIETE_CODECLIENT_ADDON))
         {
+			$module=$conf->global->SOCIETE_CODECLIENT_ADDON;
+
             $dirsociete=array_merge(array('/core/modules/societe/'),$conf->modules_parts['societe']);
             foreach ($dirsociete as $dirroot)
             {
-                $res=dol_include_once($dirroot.$conf->global->SOCIETE_CODECLIENT_ADDON.'.php');
+                $res=dol_include_once($dirroot.$module.'.php');
                 if ($res) break;
             }
-            $var = $conf->global->SOCIETE_CODECLIENT_ADDON;
-            $mod = new $var;
+            $mod = new $module();
 
             $this->code_fournisseur = $mod->getNextValue($objsoc,$type);
 
-            dol_syslog(get_class($this)."::get_codefournisseur code_fournisseur=".$this->code_fournisseur." module=".$var);
+            dol_syslog(get_class($this)."::get_codefournisseur code_fournisseur=".$this->code_fournisseur." module=".$module);
         }
     }
 
@@ -1867,25 +1867,25 @@ class Societe extends CommonObject
      *    Verifie si un code client est modifiable en fonction des parametres
      *    du module de controle des codes.
      *
-     *    @return     int		0=Non, 1=Oui
+     *    @return     int		0=No, 1=Yes
      */
     function codeclient_modifiable()
     {
         global $conf;
         if (! empty($conf->global->SOCIETE_CODECLIENT_ADDON))
         {
+        	$module=$conf->global->SOCIETE_CODECLIENT_ADDON;
+
             $dirsociete=array_merge(array('/core/modules/societe/'),$conf->modules_parts['societe']);
             foreach ($dirsociete as $dirroot)
             {
-                $res=dol_include_once($dirroot.$conf->global->SOCIETE_CODECLIENT_ADDON.'.php');
+                $res=dol_include_once($dirroot.$module.'.php');
                 if ($res) break;
             }
 
-            $var = $conf->global->SOCIETE_CODECLIENT_ADDON;
+            $mod = new $module();
 
-            $mod = new $var;
-
-            dol_syslog(get_class($this)."::codeclient_modifiable code_client=".$this->code_client." module=".$var);
+            dol_syslog(get_class($this)."::codeclient_modifiable code_client=".$this->code_client." module=".$module);
             if ($mod->code_modifiable_null && ! $this->code_client) return 1;
             if ($mod->code_modifiable_invalide && $this->check_codeclient() < 0) return 1;
             if ($mod->code_modifiable) return 1;	// A mettre en dernier
@@ -1901,25 +1901,25 @@ class Societe extends CommonObject
     /**
      *    Verifie si un code fournisseur est modifiable dans configuration du module de controle des codes
      *
-     *    @return     int		0=Non, 1=Oui
+     *    @return     int		0=No, 1=Yes
      */
     function codefournisseur_modifiable()
     {
         global $conf;
         if (! empty($conf->global->SOCIETE_CODECLIENT_ADDON))
         {
+        	$module=$conf->global->SOCIETE_CODECLIENT_ADDON;
+
             $dirsociete=array_merge(array('/core/modules/societe/'),$conf->modules_parts['societe']);
             foreach ($dirsociete as $dirroot)
             {
-                $res=dol_include_once($dirroot.$conf->global->SOCIETE_CODECLIENT_ADDON.'.php');
+                $res=dol_include_once($dirroot.$module.'.php');
                 if ($res) break;
             }
 
-            $var = $conf->global->SOCIETE_CODECLIENT_ADDON;
+            $mod = new $module();
 
-            $mod = new $var;
-
-            dol_syslog(get_class($this)."::codefournisseur_modifiable code_founisseur=".$this->code_fournisseur." module=".$var);
+            dol_syslog(get_class($this)."::codefournisseur_modifiable code_founisseur=".$this->code_fournisseur." module=".$module);
             if ($mod->code_modifiable_null && ! $this->code_fournisseur) return 1;
             if ($mod->code_modifiable_invalide && $this->check_codefournisseur() < 0) return 1;
             if ($mod->code_modifiable) return 1;	// A mettre en dernier
@@ -1933,36 +1933,36 @@ class Societe extends CommonObject
 
 
     /**
-     *    Check customer code
+     *  Check customer code
      *
-     *    @return     int		0 if OK
-     * 							-1 ErrorBadCustomerCodeSyntax
-     * 							-2 ErrorCustomerCodeRequired
-     * 							-3 ErrorCustomerCodeAlreadyUsed
-     * 							-4 ErrorPrefixRequired
+     *  @return     int				0 if OK
+     * 								-1 ErrorBadCustomerCodeSyntax
+     * 								-2 ErrorCustomerCodeRequired
+     * 								-3 ErrorCustomerCodeAlreadyUsed
+     * 								-4 ErrorPrefixRequired
      */
     function check_codeclient()
     {
         global $conf;
         if (! empty($conf->global->SOCIETE_CODECLIENT_ADDON))
         {
-            $dirsociete=array_merge(array('/core/modules/societe/'),$conf->modules_parts['societe']);
+        	$module=$conf->global->SOCIETE_CODECLIENT_ADDON;
+
+        	$dirsociete=array_merge(array('/core/modules/societe/'),$conf->modules_parts['societe']);
             foreach ($dirsociete as $dirroot)
             {
-                $res=dol_include_once($dirroot.$conf->global->SOCIETE_CODECLIENT_ADDON.'.php');
+                $res=dol_include_once($dirroot.$module.'.php');
                 if ($res) break;
             }
 
-            $var = $conf->global->SOCIETE_CODECLIENT_ADDON;
+            $mod = new $module();
 
-            $mod = new $var;
-
-            dol_syslog(get_class($this)."::check_codeclient code_client=".$this->code_client." module=".$var);
-            $result = $mod->verif($this->db, $this->code_client, $this, 0);
+           	dol_syslog(get_class($this)."::check_codeclient code_client=".$this->code_client." module=".$module);
+           	$result = $mod->verif($this->db, $this->code_client, $this, 0);
             return $result;
         }
         else
-        {
+		{
             return 0;
         }
     }
@@ -1981,23 +1981,23 @@ class Societe extends CommonObject
         global $conf;
         if (! empty($conf->global->SOCIETE_CODECLIENT_ADDON))
         {
-            $dirsociete=array_merge(array('/core/modules/societe/'),$conf->modules_parts['societe']);
+        	$module=$conf->global->SOCIETE_CODECLIENT_ADDON;
+
+        	$dirsociete=array_merge(array('/core/modules/societe/'),$conf->modules_parts['societe']);
             foreach ($dirsociete as $dirroot)
             {
-                $res=dol_include_once($dirroot.$conf->global->SOCIETE_CODECLIENT_ADDON.'.php');
+                $res=dol_include_once($dirroot.$module.'.php');
                 if ($res) break;
             }
 
-            $var = $conf->global->SOCIETE_CODECLIENT_ADDON;
+            $mod = new $module();
 
-            $mod = new $var;
-
-            dol_syslog(get_class($this)."::check_codefournisseur code_fournisseur=".$this->code_fournisseur." module=".$var);
+            dol_syslog(get_class($this)."::check_codefournisseur code_fournisseur=".$this->code_fournisseur." module=".$module);
             $result = $mod->verif($this->db, $this->code_fournisseur, $this, 1);
             return $result;
         }
         else
-        {
+		{
             return 0;
         }
     }

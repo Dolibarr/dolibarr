@@ -213,30 +213,42 @@ if ($type == 'directory')
             $textifempty = $langs->trans('NoFileFound');
         }
         else $textifempty=($showonrightsize=='featurenotyetavailable'?$langs->trans("FeatureNotYetAvailable"):$langs->trans("ECMSelectASection"));
-        
+
         $formfile->list_of_documents($filearray,'','ecm',$param,1,$relativepath,$user->rights->ecm->upload,1,$textifempty,$maxlengthname,'',$url);
     }
 }
 
-if (! empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE_JS))
+
+if ($section)
 {
-    if ($section)
-    {
-    	$param.=($param?'?':'').(preg_replace('/^&/','',$param));
+	$useajax=1;
+	if (! empty($conf->dol_use_jmobile)) $useajax=0;
+	if (empty($conf->use_javascript_ajax)) $useajax=0;
+	if (! empty($conf->global->MAIN_ECM_DISABLE_JS)) $useajax=0;
 
-        require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
-        $useglobalvars=1;
-        $form = new Form($db);
-        $formquestion=array('urlfile'=>array('type'=>'hidden','value'=>'','name'=>'urlfile'));
-        print $form->formconfirm($url,$langs->trans("DeleteFile"),$langs->trans("ConfirmDeleteFile"),'confirm_deletefile',$formquestion,"no",'deletefile');
+	$param.=($param?'?':'').(preg_replace('/^&/','',$param));
 
-        // Enable jquery handlers on new generated HTML objects
-        print '<script type="text/javascript">'."\n";
-        print 'jQuery(document).ready(function() {'."\n";
-        print 'jQuery(".deletefilelink").click(function(e) { jQuery("#urlfile").val(jQuery(this).attr("rel")); jQuery("#dialog-confirm-deletefile").dialog("open"); return false; });'."\n";
-        print '});'."\n";
-        print '</script>'."\n";
-    }
+	if ($useajax || $action == 'delete')
+	{
+		$urlfile='';
+		if ($action == 'delete') $urlfile=GETPOST('urlfile');
+
+		require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
+		$useglobalvars=1;
+		$form = new Form($db);
+		$formquestion=array('urlfile'=>array('type'=>'hidden','value'=>$urlfile,'name'=>'urlfile'));
+		print $form->formconfirm($url,$langs->trans("DeleteFile"),$langs->trans("ConfirmDeleteFile"),'confirm_deletefile',$formquestion,"no",($useajax?'deletefile':0));
+	}
+
+	if ($useajax)
+	{
+		// Enable jquery handlers on new generated HTML objects
+		print '<script type="text/javascript">'."\n";
+		print 'jQuery(document).ready(function() {'."\n";
+		print 'jQuery(".deletefilelink").click(function(e) { jQuery("#urlfile").val(jQuery(this).attr("rel")); jQuery("#dialog-confirm-deletefile").dialog("open"); return false; });'."\n";
+		print '});'."\n";
+		print '</script>'."\n";
+	}
 }
 
 // Close db if mode is not noajax

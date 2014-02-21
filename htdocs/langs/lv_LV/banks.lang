@@ -28,6 +28,7 @@ EndBankBalance=Beigu bilance
 CurrentBalance=Pašreizējā bilance
 FutureBalance=Nākotnes bilance
 ShowAllTimeBalance=Rādīt līdzsvaru no sākuma
+# AllTime=From start
 Reconciliation=Samierināšanās
 RIB=Bankas konta numurs
 IBAN=IBAN numurs

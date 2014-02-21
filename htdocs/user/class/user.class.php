@@ -8,7 +8,7 @@
  * Copyright (C) 2005      Lionel Cousteix      <etm_ltd@tiscali.co.uk>
  * Copyright (C) 2011      Herve Prot           <herve.prot@symeos.com>
  * Copyright (C) 2013      Philippe Grand       <philippe.grand@atoo-net.com>
- * Copyright (C) 2013      Alexandre Spangaro   <alexandre.spangaro@gmail.com> 
+ * Copyright (C) 2013      Alexandre Spangaro   <alexandre.spangaro@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -488,6 +488,7 @@ class User extends CommonObject
 	 *  Clear all permissions array of user
 	 *
 	 *  @return	void
+	 *  @see	getrights
 	 */
 	function clearrights()
 	{
@@ -503,6 +504,7 @@ class User extends CommonObject
 	 *
 	 *	@param  string	$moduletag    Limit permission for a particular module ('' by default means load all permissions)
 	 *	@return	void
+	 *  @see	clearrights
 	 */
 	function getrights($moduletag='')
 	{
@@ -1007,12 +1009,15 @@ class User extends CommonObject
 
 		$this->db->begin();
 
-		// Cree et positionne $this->id
+		// Create and set $this->id
 		$result=$this->create($user);
 		if ($result > 0)
 		{
-			$result=$this->setPassword($user,$this->pass);
-			if ($member->fk_soc) {
+			$newpass=$this->setPassword($user,$this->pass);
+			if (is_numeric($newpass) && $newpass < 0) $result=-2;
+
+			if ($result > 0 && $member->fk_soc)	// If member is linked to a thirdparty
+			{
 				$sql = "UPDATE ".MAIN_DB_PREFIX."user";
 				$sql.= " SET fk_societe=".$member->fk_soc;
 				$sql.= " WHERE rowid=".$this->id;
@@ -1026,7 +1031,7 @@ class User extends CommonObject
 				}
 				else
 				{
-					$this->error=$this->db->error();
+					$this->error=$this->db->lasterror();
 					dol_syslog(get_class($this)."::create_from_member - 1 - ".$this->error, LOG_ERR);
 
 					$this->db->rollback();
@@ -1034,13 +1039,19 @@ class User extends CommonObject
 				}
 			}
 		}
+
+		if ($result > 0)
+		{
+			$this->db->commit();
+			return $this->id;
+		}
 		else
 		{
 			// $this->error deja positionne
 			dol_syslog(get_class($this)."::create_from_member - 2 - ".$this->error, LOG_ERR);
 
 			$this->db->rollback();
-			return $result;
+			return -2;
 		}
 	}
 

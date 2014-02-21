@@ -100,6 +100,8 @@ if ($id > 0 || ! empty($ref))
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('invoicecard'));
 
+$permissionnote=$user->rights->facture->creer;	// Used by the include of actions_setnotes.inc.php
+
 
 /*
  * Actions
@@ -107,6 +109,8 @@ $hookmanager->initHooks(array('invoicecard'));
 
 $parameters=array('socid'=>$socid);
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+
+include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php';	// Must be include, not includ_once
 
 
 // Action clone object
@@ -365,20 +369,6 @@ else if ($action == 'set_ref_client' && $user->rights->facture->creer)
 {
 	$object->fetch($id);
 	$object->set_ref_client($_POST['ref_client']);
-}
-
-else if ($action == 'setnote_public' && $user->rights->facture->creer)
-{
-	$object->fetch($id);
-	$result=$object->update_note(dol_html_entity_decode(GETPOST('note_public'), ENT_QUOTES),'_public');
-	if ($result < 0) dol_print_error($db,$object->error);
-}
-
-else if ($action == 'setnote_private' && $user->rights->facture->creer)
-{
-	$object->fetch($id);
-	$result=$object->update_note(dol_html_entity_decode(GETPOST('note_private'), ENT_QUOTES),'_private');
-	if ($result < 0) dol_print_error($db,$object->error);
 }
 
 // Classify to validated
@@ -1145,7 +1135,7 @@ else if (($action == 'addline' || $action == 'addline_predef') && $user->rights-
 		$price_ht = '';
 		$tva_tx = '';
 	}
-    if (GETPOST('usenewaddlineform')) {
+    if (GETPOST('usenewaddlineform')) {	// TODO Remove this
         $idprod=GETPOST('idprod', 'int');
         $product_desc = (GETPOST('product_desc')?GETPOST('product_desc'):(GETPOST('np_desc')?GETPOST('np_desc'):(GETPOST('dp_desc')?GETPOST('dp_desc'):'')));
         $price_ht = GETPOST('price_ht');
@@ -1157,13 +1147,13 @@ else if (($action == 'addline' || $action == 'addline_predef') && $user->rights-
 	//Extrafields
 	$extrafieldsline = new ExtraFields($db);
 	$extralabelsline =$extrafieldsline->fetch_name_optionals_label($object->table_element_line);
-	$array_option = $extrafieldsline->getOptionalsFromPost($extralabelsline);
+	$array_option = $extrafieldsline->getOptionalsFromPost($extralabelsline,$predef);
 	//Unset extrafield
 	if (is_array($extralabelsline))
 	{
 		// Get extra fields
 		foreach ($extralabelsline as $key => $value) {
-			unset($_POST["options_".$key]);
+			unset($_POST["options_".$key.$predef]);
 		}
 	}
 
@@ -1324,8 +1314,8 @@ else if (($action == 'addline' || $action == 'addline_predef') && $user->rights-
 		}
 
 		// Margin
-		$fournprice=(GETPOST('fournprice'.$predef)?GETPOST('fournprice'.$predef):'');
-		$buyingprice=(GETPOST('buying_price'.$predef)?GETPOST('buying_price'.$predef):'');
+		$fournprice=price2num(GETPOST('fournprice'.$predef)?GETPOST('fournprice'.$predef):'');
+		$buyingprice=price2num(GETPOST('buying_price'.$predef)?GETPOST('buying_price'.$predef):'');
 
 		// Local Taxes
 		$localtax1_tx= get_localtax($tva_tx, 1, $object->client);
@@ -1446,8 +1436,8 @@ elseif ($action == 'updateligne' && $user->rights->facture->creer && ! GETPOST('
 	$localtax2_rate=get_localtax($vat_rate,2,$object->client);
 
 	// Add buying price
-	$fournprice=(GETPOST('fournprice')?GETPOST('fournprice'):'');
-	$buyingprice=(GETPOST('buying_price')?GETPOST('buying_price'):'');
+	$fournprice=price2num(GETPOST('fournprice')?GETPOST('fournprice'):'');
+	$buyingprice=price2num(GETPOST('buying_price')?GETPOST('buying_price'):'');
 
 	//Extrafields
 	$extrafieldsline = new ExtraFields($db);
@@ -2815,6 +2805,7 @@ else if ($id > 0 || ! empty($ref))
 		$formquestion=array(
 		//'text' => $langs->trans("ConfirmClone"),
 		//array('type' => 'checkbox', 'name' => 'clone_content',   'label' => $langs->trans("CloneMainAttributes"),   'value' => 1)
+		array('type' => 'other', 'name' => 'socid',   'label' => $langs->trans("SelectThirdParty"),   'value' => $form->select_company('','socid','(s.client=1 OR s.client=2 OR s.client=3)',1))
 		);
 		// Paiement incomplet. On demande si motif = escompte ou autre
 		$formconfirm=$form->formconfirm($_SERVER["PHP_SELF"].'?facid='.$object->id,$langs->trans('CloneInvoice'),$langs->trans('ConfirmCloneInvoice',$object->ref),'confirm_clone',$formquestion,'yes',1);
@@ -3556,12 +3547,14 @@ else if ($id > 0 || ! empty($ref))
 
 	// Boutons actions
 
-	if ($action != 'prerelance' && $action != 'presend')
+	if ($action != 'prerelance' && $action != 'presend' && $action != 'valid' && $action != 'editline')
 	{
-		if ($user->societe_id == 0 && $action <> 'valid' && $action <> 'editline')
-		{
-			print '<div class="tabsAction">';
+		print '<div class="tabsAction">';
 
+		$parameters=array();
+		$reshook=$hookmanager->executeHooks('addMoreActionsButtons',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+		if (empty($reshook))
+		{
 			// Editer une facture deja validee, sans paiement effectue et pas exporte en compta
 			if ($object->statut == 1)
 			{
@@ -3589,7 +3582,7 @@ else if ($id > 0 || ! empty($ref))
 			}
 
 			// Reopen a standard paid invoice
-			if (($object->type == 0 || $object->type == 1) && ($object->statut == 2 || $object->statut == 3))				// A paid invoice (partially or completely)
+			if (($object->type == 0 || $object->type == 1) && ($object->statut == 2 || $object->statut == 3) && $user->rights->facture->creer)				// A paid invoice (partially or completely)
 			{
 				if (! $objectidnext && $object->close_code != 'replaced')	// Not replaced by another invoice
 				{
@@ -3917,9 +3910,12 @@ else if ($id > 0 || ! empty($ref))
 		$formmail->frommail = $user->email;
 		$formmail->withfrom=1;
 		$liste=array();
-		foreach ($object->thirdparty->thirdparty_and_contact_email_array(1) as $key=>$value)	$liste[$key]=$value;
-		$formmail->withto=GETPOST('sendto')?GETPOST('sendto'):$liste;
-		$formmail->withtocc=$liste;
+		foreach ($object->thirdparty->thirdparty_and_contact_email_array(1) as $key=>$value)
+		{
+			$liste[$key]=$value;
+		}
+		$formmail->withto=GETPOST('sendto')?GETPOST('sendto'):$liste;	// List suggested for send to
+		$formmail->withtocc=$liste;	// List suggested for CC
 		$formmail->withtoccc=$conf->global->MAIN_EMAIL_USECCC;
 		if(empty($object->ref_client))
 		{
@@ -3976,7 +3972,7 @@ else if ($id > 0 || ! empty($ref))
 			$formmail->add_attached_files($file,basename($file),dol_mimetype($file));
 		}
 
-		$formmail->show_form();
+		print $formmail->get_form();
 
 		print '<br>';
 	}

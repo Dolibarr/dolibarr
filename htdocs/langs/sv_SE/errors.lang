@@ -37,6 +37,7 @@ ErrorBadParameters=Bad parametrar
 ErrorBadValueForParameter=Fel värde &quot;%s&quot; för parameter oriktiga &quot;%s kallad konventionen
 ErrorBadImageFormat=Bildfil har inte ett format som stöds
 ErrorBadDateFormat=Värde &quot;%s&quot; har fel datumformat
+# ErrorWrongDate=Date is not correct!
 ErrorFailedToWriteInDir=Misslyckades med att skriva i katalogen %s
 ErrorFoundBadEmailInFile=Hittade felaktig e-syntax för %s rader i filen (t.ex. linje %s med email = %s)
 ErrorUserCannotBeDelete=Användaren kan inte tas bort. Får den hör samman på Dolibarr enheter.
@@ -63,13 +64,14 @@ ErrorSizeTooLongForVarcharType=Storlek för lång för sträng typ (%s tecken ma
 # ErrorBadFormatValueList=The list value cannot have more than one come : <u>%s</u>, but need at least one: llave,valores
 ErrorFieldCanNotContainSpecialCharacters=Fält <b>%s</b> inte innehåller specialtecken.
 ErrorNoAccountancyModuleLoaded=Ingen bokföring modul aktiverad
-ErrorExportDuplicateProfil=Denna profil namn redan finns för denna export uppsättning.
+# ErrorExportDuplicateProfil=This profile name already exists for this export set.
 ErrorLDAPSetupNotComplete=Dolibarr-LDAP matchning inte är fullständig.
 ErrorLDAPMakeManualTest=A. LDIF filen har genererats i katalogen %s. Försök att läsa in den manuellt från kommandoraden för att få mer information om fel.
 ErrorCantSaveADoneUserWithZeroPercentage=Kan inte spara en åtgärd med &quot;inte Statut startade&quot; om fältet &quot;görs av&quot; är också fylld.
 ErrorRefAlreadyExists=Ref används för att skapa finns redan.
 ErrorPleaseTypeBankTransactionReportName=Skriv namn bank kvitto där transaktionen rapporteras (Format ÅÅÅÅMM eller ÅÅÅÅMMDD)
 ErrorRecordHasChildren=Misslyckades med att radera poster eftersom det har några barns.
+# ErrorRecordIsUsedCantDelete=Can't delete record. It is already used or included into other object.
 ErrorModuleRequireJavascript=Javascript måste inte avaktiveras att ha denna funktion fungerar. Aktivera / inaktivera Javascript, gå till menyn Hem-> Inställningar-> Display.
 ErrorPasswordsMustMatch=Båda skrivit lösenord måste matcha varandra
 ErrorContactEMail=Ett tekniskt fel uppstod. Vänligen kontakta administratören att följa <b>e-%s</b> en ge <b>%s</b> felkod i ditt meddelande, eller ännu bättre genom att lägga till en skärm kopia av denna sida.
@@ -127,6 +129,8 @@ ErrorNoActivatedBarcode=Ingen streckkod typ aktiveras
 # ErrorPHPNeedModule=Error, your PHP must have module <b>%s</b> installed to use this feature.
 # ErrorOpenIDSetupNotComplete=You setup Dolibarr config file to allow OpenID authentication, but URL of OpenID service is not defined into constant %s
 # ErrorWarehouseMustDiffers=Source and target warehouses must differs
+# ErrorBadFormat=Bad format!
+# ErrorPaymentDateLowerThanInvoiceDate=Payment date (%s) cant' be before invoice date (%s) for invoice %s.
 
 # Warnings
 # WarningMandatorySetupNotComplete=Mandatory setup parameters are not yet defined

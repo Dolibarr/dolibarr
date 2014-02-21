@@ -16,6 +16,7 @@
  * or see http://www.gnu.org/
  */
 
+// Variable $upload_dir must be defined when entering here
 
 // Send file/link
 if (GETPOST('sendit') && ! empty($conf->global->MAIN_UPLOAD_DOC)) {
@@ -41,12 +42,17 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes')
 {
     if ($object->id)
     {
-        $urlfile = GETPOST('urlfile', 'alpha');
-        $linkid = GETPOST('linkid', 'int');
+        $urlfile = GETPOST('urlfile', 'alpha');	// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
+        if (GETPOST('section')) $file = $upload_dir . "/" . $urlfile;	// For a delete of GED module urlfile contains full path from upload_dir
+        else															// For documents pages, upload_dir contains already path to file from module dir, so we clean path into urlfile.
+		{
+       		$urlfile=basename($urlfile);
+			$file = $upload_dir . "/" . $urlfile;
+		}
+        $linkid = GETPOST('linkid', 'int');	// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
+
         if ($urlfile)
         {
-            $file = $upload_dir . "/" . $urlfile;	// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
-
             $ret = dol_delete_file($file, 0, 0, 0, $object);
             if ($ret) {
                 setEventMessage($langs->trans("FileWasRemoved", $urlfile));

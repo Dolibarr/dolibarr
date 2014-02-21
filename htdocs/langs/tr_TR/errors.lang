@@ -37,6 +37,7 @@ ErrorBadParameters=Hatalı parametreler
 ErrorBadValueForParameter=Hatalı '%s' parametresi için yanlış '%s' değeri
 ErrorBadImageFormat=Görüntü dosyası desteklenen bir biçimde değil.
 ErrorBadDateFormat=%s değeri yanlış tarih biçiminde
+# ErrorWrongDate=Date is not correct!
 ErrorFailedToWriteInDir=%s dizinine yazılamadı
 ErrorFoundBadEmailInFile=Dosyada %s satır hatalı e-posta sözdizimi bulundu (örneğin eposta=%s teki satır %s)
 ErrorUserCannotBeDelete=Kullanıcı silinemez. Belki Dolibarr öğeleri ile ilişkili olabilir.
@@ -63,13 +64,14 @@ ErrorNoValueForRadioType=Lütfen onay düğmesi için değer girin
 ErrorBadFormatValueList=Listedeki değeri birden fazla virgül içeremez: <u>%s</u>, ama en az bir tane olması gerekir: anahtar, değer
 ErrorFieldCanNotContainSpecialCharacters=<b>%s</b> alanı özel karakterler içermemelidir.
 ErrorNoAccountancyModuleLoaded=Etkinleştirilmiş muhasebe modülü yok
-ErrorExportDuplicateProfil=Bu profil adı zaten bu dışaaktarım ayarı için var.
+# ErrorExportDuplicateProfil=This profile name already exists for this export set.
 ErrorLDAPSetupNotComplete=Dolibarr-LDAP eşleşmesi tamamlanmamış.
 ErrorLDAPMakeManualTest=A. Ldif dosyası %s dizininde oluşturuldu. Hatalar hakkında daha fazla bilgi almak için komut satırından elle yüklemeyi deneyin.
 ErrorCantSaveADoneUserWithZeroPercentage="Başlamış durumdaki" bir eylem, "yapan" alanı dolu olsa bile kaydedilemez.
 ErrorRefAlreadyExists=Oluşturulması için kullanılan referans zaten var.
 ErrorPleaseTypeBankTransactionReportName=Lütfen işlemin banka dekontunun adını yazın (Biçim YYYYAA veya YYYYAAGG)
 ErrorRecordHasChildren=Bazı alt kayıtları olduğundan kayıtlar silinemedi.
+# ErrorRecordIsUsedCantDelete=Can't delete record. It is already used or included into other object.
 ErrorModuleRequireJavascript=Bu özelliğin çalışması için Javascript engellenmiş olmamalıdır. Etkinleştirmek/engellemek için Giriş->Kurulum->Görünüm menüsüne gidin.
 ErrorPasswordsMustMatch=Her iki yazdığınız şifrenin birbiriyle eşleşmesi gerekir
 ErrorContactEMail=Teknik bir hata oluştu. Lütfen, aşağıdaki <b>%s</b> Eposta ile yöneticiye danışın, mesajınızda <b>%s</b> hata kodunu belirtin ve hatta bir ekran görünümünü de eklerseniz daha iyi olur.
@@ -127,6 +129,8 @@ ErrorPaymentModeDefinedToWithoutSetup=Bir ödeme biçimi %s türüne ayarlanmı�
 ErrorPHPNeedModule=Hata, bu özelliği kulanmak için PHP nizde <b>%s</b> modülü kurulu olmalıdır.
 ErrorOpenIDSetupNotComplete=Dolibarr yapılandırma dosyasını OpenID kimlik doğrulamaya izin verecek şekilde ayarladınız, ancak OpenID hizmetine ait URL, %s değişmezine tanımlanmamıştır
 ErrorWarehouseMustDiffers=Kaynak ve hedef depo farklı olmalıdır
+# ErrorBadFormat=Bad format!
+# ErrorPaymentDateLowerThanInvoiceDate=Payment date (%s) cant' be before invoice date (%s) for invoice %s.
 
 # Warnings
 WarningMandatorySetupNotComplete=Zorunlu kurulum parametreleri henüz tanımlanmamış

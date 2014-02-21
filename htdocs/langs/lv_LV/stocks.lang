@@ -110,3 +110,4 @@ MassStockMovement=Masveida krājumu pārvietošana
 SelectProductInAndOutWareHouse=Izvēlieties produktu, daudzumu, avota noliktavu un mērķa noliktavu, tad noklikšķiniet uz &quot;%s&quot;. Kad tas ir izdarīts visām nepieciešamajām kustībām, noklikšķiniet uz &quot;%s&quot;.
 RecordMovement=Ierakstīt transfert
 ReceivingForSameOrder=Šī pasūtījuma ienākumi
+# StockMovementRecorded=Stock movements recorded

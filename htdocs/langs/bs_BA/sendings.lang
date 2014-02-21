@@ -1,0 +1,76 @@
+# Dolibarr language file - Source file is en_US - sendings
+RefSending=Referenca pošiljke
+Sending=Pošiljka
+Sendings=Pošiljke
+Shipment=Pošiljka
+Shipments=Pošiljke
+Receivings=Primanja
+SendingsArea=Područje za pošiljke
+ListOfSendings=Lista pošiljki
+SendingMethod=Način slanja
+SendingReceipt=Priznanica o prijemu pošiljke
+LastSendings=Zadnjih %s pošiljki
+SearchASending=Traži pošiljku
+StatisticsOfSendings=Statistika za pošiljke
+NbOfSendings=Broj pošiljki
+NumberOfShipmentsByMonth=Broj pošiljki po mjesecu
+SendingCard=Kartica otpremanja
+NewSending=Nova pošiljka
+CreateASending=Kreiraj pošiljku
+CreateSending=Kreiraj pošiljku
+QtyOrdered=Naručena količina
+QtyShipped=Poslana količina
+QtyToShip=Količina za slanje
+QtyReceived=Primljena količina
+KeepToShip=Zadržati za slanje
+OtherSendingsForSameOrder=Druge pošiljke za ovu narudžbu
+DateSending=Datum slanja narudžbe
+DateSendingShort=Datum slanja narudžbe
+SendingsForSameOrder=Pošiljke za ovu narudžbu
+SendingsAndReceivingForSameOrder=Pošiljke i primanja za ovu narudžbu
+SendingsToValidate=Pošiljke za potvrditi
+StatusSendingCanceled=Otkazano
+StatusSendingDraft=Nacrt
+StatusSendingValidated=Potvrđeno (proizvodi za slanje ili već poslano)
+StatusSendingProcessed=Obrađeno
+StatusSendingCanceledShort=Otkazano
+StatusSendingDraftShort=Nacrt
+StatusSendingValidatedShort=Potvrđeno
+StatusSendingProcessedShort=Obrađeno
+SendingSheet=Lista slanja
+Carriers=Prijevoznici
+Carrier=Prijevoznik
+CarriersArea=Područje za prijevoznike
+NewCarrier=Novi prijevoznik
+ConfirmDeleteSending=Jeste li sigurni da želite obrisati ovu pošiljku?
+ConfirmValidateSending=Jeste li sigurni da želite potvrditi ovu pošiljku sa referencom <b>%s</b> ?
+ConfirmCancelSending=Jeste li sigurni da želite otkazati ovu pošiljku?
+GenericTransport=Opšti transport
+Enlevement=Preuzeto od strane kupca
+DocumentModelSimple=Jednostavni model dokumenta
+DocumentModelMerou=Model dokumenta Merou A5
+WarningNoQtyLeftToSend=Upozorenje, nema proizvoda na čekanju za slanje
+# StatsOnShipmentsOnlyValidated=Statistics conducted on shipments only validated. Date used is date of validation of shipment (planed delivery date is not always known).
+DateDeliveryPlanned=Planirani datum isporuke
+DateReceived=Datum prijema isporuke
+SendShippingByEMail=Pošalji pošiljku na e-mail
+SendShippingRef=Pošalji pošiljku %s
+ActionsOnShipping=Događaji na pošiljki
+LinkToTrackYourPackage=Link za praćenje paketa
+ShipmentCreationIsDoneFromOrder=U ovom trenutku, nova pošiljka se kreira sa kartice narudžbe
+RelatedShippings=Povezana otpremanja
+ShipmentLine=Tekst pošiljke
+CarrierList=Lista transportera
+
+# Sending methods
+# SendingMethodCATCH=Catch by customer
+# SendingMethodTRANS=Transporter
+# SendingMethodCOLSUI=Colissimo
+
+# ModelDocument
+# DocumentModelSirocco=Simple document model for delivery receipts
+# DocumentModelTyphon=More complete document model for delivery receipts (logo...)
+
+# Error_EXPEDITION_ADDON_NUMBER_NotDefined=Constant EXPEDITION_ADDON_NUMBER not defined
+SumOfProductVolumes=Suma količina proizvoda
+SumOfProductWeights=Suma težina proizvoda
