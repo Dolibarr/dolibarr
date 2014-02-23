@@ -957,3 +957,5 @@ INSERT INTO llx_accountingaccount (fk_pcg_version, pcg_type, pcg_subtype, accoun
 INSERT INTO llx_accountingaccount (fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUE ('PCMN-BASE', 'PROD', 'XXXXXX', '793', '79', 'Perte à reporter', '1');
 INSERT INTO llx_accountingaccount (fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUE ('PCMN-BASE', 'PROD', 'XXXXXX', '794', '79', 'Intervention d''associés (ou du propriétaire) dans la perte', '1');
 
+
+ALTER TABLE llx_projet_task ADD COLUMN  entity integer DEFAULT 1 NOT NULL ref;

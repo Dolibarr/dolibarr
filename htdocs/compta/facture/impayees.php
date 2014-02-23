@@ -105,8 +105,7 @@ if ($action == 'presend' && GETPOST('sendmail'))
 						$message = $conf->global->RELANCES_MASSE_TEXTE_EMAIL;
 						$subject = $conf->global->RELANCES_MASSE_OBJET_EMAIL;
 
-						$substitutionarray=
-						make_substitutions($message, $substitutionarray);
+						$substitutionarray=make_substitutions($message, $substitutionarray);
 
 						$actiontypecode='AC_FAC';
 						$actionmsg=$langs->transnoentities('MailSentBy').' '.$from.' '.$langs->transnoentities('To').' '.$sendto.".\n";
