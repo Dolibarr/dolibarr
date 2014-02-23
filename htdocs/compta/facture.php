@@ -1238,14 +1238,14 @@ else if (($action == 'addline' || $action == 'addline_predef') && $user->rights-
 				elseif (! empty ( $conf->global->PRODUIT_CUSTOMER_PRICES )) {
 					require_once DOL_DOCUMENT_ROOT . '/product/class/productcustomerprice.class.php';
 						
-					$prodcustprice = new Productcustomerprice ( $db );
+					$prodcustprice = new Productcustomerprice( $db );
 				
 					$filter = array (
 					't.fk_product' => $prod->id,
 					't.fk_soc'=> $object->client->id
 					);
 				
-					$result = $prodcustprice->fetch_all ( '', '', 0,0, $filter );
+					$result = $prodcustprice->fetch_all( '', '', 0,0, $filter );
 					if ($result)
 					{
 						if (count($prodcustprice->lines)>0)
