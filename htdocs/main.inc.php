@@ -1566,7 +1566,7 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
       if (! empty($conf->employee->enabled) && ! empty($conf->global->MAIN_SEARCHFORM_EMPLOYEE) && $user->rights->employee->lire)
 	    {
 	        $langs->load("employees");
-	        $searchform.=printSearchForm(DOL_URL_ROOT.'/employees/liste.php', DOL_URL_ROOT.'/employees/liste.php', img_object('','user').' '.$langs->trans("Employees"), 'employee', 'sall');
+	        $searchform.=printSearchForm(DOL_URL_ROOT.'/employees/liste.php', DOL_URL_ROOT.'/employees/liste.php', img_object('','group').' '.$langs->trans("Employees"), 'employee', 'sall');
 	    }
       
 	    if (! empty($conf->adherent->enabled) && ! empty($conf->global->MAIN_SEARCHFORM_ADHERENT) && $user->rights->adherent->lire)
@@ -1841,7 +1841,7 @@ if (! function_exists("llxFooter"))
 	 * @param	string	$zone		'private' (for private pages) or 'public' (for public pages)
      * @return	void
      */
-    function llxFooter($comment='',$zone='pivate')
+    function llxFooter($comment='',$zone='private')
     {
         global $conf, $langs;
 
