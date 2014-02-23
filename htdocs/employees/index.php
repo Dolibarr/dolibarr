@@ -52,8 +52,7 @@ $var=True;
 
 $Employees=array();
 $EmployeesAValider=array();
-$EmployeeUpToDate=array();
-$EmployeesResilies=array();
+$EmployeesDeactivate=array();
 
 $EmployeeType=array();
 
@@ -82,9 +81,9 @@ if ($result)
 		$emptype->label=$objp->label;
 		$EmployeeType[$objp->rowid]=$emptype;
 
-		if ($objp->statut == -1) { $EmployeeToValidate[$objp->rowid]=$objp->somme; }
-		if ($objp->statut == 1)  { $EmployeesValidated[$objp->rowid]=$objp->somme; }
-		if ($objp->statut == 0)  { $EmployeesResiliated[$objp->rowid]=$objp->somme; }
+		if ($objp->statut == 0) { $EmployeeToValidate[$objp->rowid]=$objp->somme; }
+		if ($objp->statut == 1) { $EmployeesValidated[$objp->rowid]=$objp->somme; }
+		if ($objp->statut == 2) { $EmployeesDeactivated[$objp->rowid]=$objp->somme; }
 
 		$i++;
 	}
@@ -161,7 +160,6 @@ if ($conf->use_javascript_ajax)
     $SommeA=0;
     $SommeB=0;
     $SommeC=0;
-    $SommeD=0;
     $dataval=array();
     $datalabels=array();
     $i=0;
@@ -169,26 +167,23 @@ if ($conf->use_javascript_ajax)
     {
         $datalabels[]=array($i,$emptype->getNomUrl(0,dol_size(16)));
         $dataval['draft'][]=array($i,isset($EmployeeToValidate[$key])?$EmployeeToValidate[$key]:0);
-        $dataval['notuptodate'][]=array($i,isset($EmployeesValidated[$key])?$EmployeesValidated[$key]-(isset($EmployeeUpToDate[$key])?$EmployeeUpToDate[$key]:0):0);
-        $dataval['uptodate'][]=array($i,isset($EmployeeUpToDate[$key])?$EmployeeUpToDate[$key]:0);
-        $dataval['resiliated'][]=array($i,isset($EmployeesResiliated[$key])?$EmployeesResiliated[$key]:0);
+        $dataval['validated'][]=array($i,isset($EmployeeValidated[$key])?$EmployeeValidated[$key]:0);
+        $dataval['deactivated'][]=array($i,isset($EmployeesDeactivated[$key])?$EmployeesDeactivated[$key]:0);
         $SommeA+=isset($EmployeeToValidate[$key])?$EmployeeToValidate[$key]:0;
-        $SommeB+=isset($EmployeesValidated[$key])?$EmployeesValidated[$key]-(isset($EmployeeUpToDate[$key])?$EmployeeUpToDate[$key]:0):0;
-        $SommeC+=isset($EmployeeUpToDate[$key])?$EmployeeUpToDate[$key]:0;
-        $SommeD+=isset($EmployeesResiliated[$key])?$EmployeesResiliated[$key]:0;
+        $SommeB+=isset($EmployeesValidated[$key])?$EmployeesValidated[$key]:0;
+        $SommeC+=isset($EmployeesDeactivated[$key])?$EmployeesDeactivated[$key]:0;
         $i++;
     }
 
     $dataseries=array();
-    $dataseries[]=array('label'=>$langs->trans("MenuEmployeesNotUpToDate"),'data'=>round($SommeB));
-    $dataseries[]=array('label'=>$langs->trans("MenuEmployeesUpToDate"),'data'=>round($SommeC));
-    $dataseries[]=array('label'=>$langs->trans("EmployeesStatusResiliated"),'data'=>round($SommeD));
-    $dataseries[]=array('label'=>$langs->trans("EmployeesStatusToValid"),'data'=>round($SommeA));
+    $dataseries[]=array('label'=>$langs->trans("EmployeeStatusToValidate"),'data'=>round($SommeA));
+    $dataseries[]=array('label'=>$langs->trans("EmployeeStatusDeactivated"),'data'=>round($SommeC));
+    $dataseries[]=array('label'=>$langs->trans("EmployeeStatusValidated"),'data'=>round($SommeB));
     $data=array('series'=>$dataseries);
     dol_print_graph('stats',300,180,$data,1,'pie',1);
     print '</td></tr>';
     print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td align="right">';
-    print $SommeA+$SommeB+$SommeC+$SommeD;
+    print $SommeA+$SommeB+$SommeC;
     print '</td></tr>';
     print '</table>';
 }
@@ -261,10 +256,9 @@ else
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("EmployeesTypes").'</td>';
-print '<td align=right>'.$langs->trans("EmployeesStatusToValid").'</td>';
-print '<td align=right>'.$langs->trans("MenuEmployeesNotUpToDate").'</td>';
-print '<td align=right>'.$langs->trans("MenuEmployeesUpToDate").'</td>';
-print '<td align=right>'.$langs->trans("EmployeesStatusResiliated").'</td>';
+print '<td align=right>'.$langs->trans("EmployeeStatusToValid").'</td>';
+print '<td align=right>'.$langs->trans("EmployeeUpToDate").'</td>';
+print '<td align=right>'.$langs->trans("EmployeeStatusDeactivated").'</td>';
 print "</tr>\n";
 
 foreach ($EmployeeType as $key => $emptype)
@@ -274,16 +268,14 @@ foreach ($EmployeeType as $key => $emptype)
 	print '<td>'.$emptype->getNomUrl(1, dol_size(32)).'</td>';
 	print '<td align="right">'.(isset($EmployeeToValidate[$key]) && $EmployeeToValidate[$key] > 0?$EmployeeToValidate[$key]:'').' '.$staticemployee->LibStatut(-1,$emptype->cotisation,0,3).'</td>';
 	print '<td align="right">'.(isset($EmployeesValidated[$key]) && ($EmployeesValidated[$key]-(isset($EmployeeUpToDate[$key])?$EmployeeUpToDate[$key]:0) > 0) ? $EmployeesValidated[$key]-(isset($EmployeeUpToDate[$key])?$EmployeeUpToDate[$key]:0):'').' '.$staticemployee->LibStatut(1,$emptype->cotisation,0,3).'</td>';
-	print '<td align="right">'.(isset($EmployeeUpToDate[$key]) && $EmployeeUpToDate[$key] > 0 ? $EmployeeUpToDate[$key]:'').' '.$staticemployee->LibStatut(1,$emptype->cotisation,$now,3).'</td>';
-	print '<td align="right">'.(isset($EmployeesResiliated[$key]) && $EmployeesResiliated[$key]> 0 ?$EmployeesResiliated[$key]:'').' '.$staticemployee->LibStatut(0,$emptype->cotisation,0,3).'</td>';
+  print '<td align="right">'.(isset($EmployeesDeactivated[$key]) && $EmployeesDeactivated[$key]> 0 ?$EmployeesDeactivated[$key]:'').' '.$staticemployee->LibStatut(0,0,0,3).'</td>';
 	print "</tr>\n";
 }
 print '<tr class="liste_total">';
 print '<td class="liste_total">'.$langs->trans("Total").'</td>';
-print '<td class="liste_total" align="right">'.$SommeA.' '.$staticemployee->LibStatut(-1,$emptype->cotisation,0,3).'</td>';
-print '<td class="liste_total" align="right">'.$SommeB.' '.$staticemployee->LibStatut(1,$emptype->cotisation,0,3).'</td>';
-print '<td class="liste_total" align="right">'.$SommeC.' '.$staticemployee->LibStatut(1,$emptype->cotisation,$now,3).'</td>';
-print '<td class="liste_total" align="right">'.$SommeD.' '.$staticemployee->LibStatut(0,$emptype->cotisation,0,3).'</td>';
+print '<td class="liste_total" align="right">'.$SommeA.' '.$staticemployee->LibStatut(0,0,0,3).'</td>';
+print '<td class="liste_total" align="right">'.$SommeB.' '.$staticemployee->LibStatut(1,0,0,3).'</td>';
+print '<td class="liste_total" align="right">'.$SommeC.' '.$staticemployee->LibStatut(2,0,0,3).'</td>';
 print '</tr>';
 
 print "</table>\n";

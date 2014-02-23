@@ -269,5 +269,43 @@ class EmployeeType extends CommonObject
         $result.=$lien.($maxlen?dol_trunc($this->label,$maxlen):$this->label).$lienfin;
         return $result;
     }
+    
+    /**
+     *     getMailOnValid
+     *
+     *     @return     Return mail model
+     */
+    function getMailOnValid()
+    {
+        global $conf;
+
+        if (! empty($this->mail_valid) && trim(dol_htmlentitiesbr_decode($this->mail_valid)))
+        {
+            return $this->mail_valid;
+        }
+        else
+        {
+            return $conf->global->EMPLOYEE_MAIL_VALID;
+        }
+    }
+
+    /**
+     *     getMailOnResiliate
+     *
+     *     @return     Return mail model
+     */
+    function getMailOnResiliate()
+    {
+        global $conf;
+
+        if (! empty($this->mail_resiliate) && trim(dol_htmlentitiesbr_decode($this->mail_resiliate)))  // Property not yet defined
+        {
+            return $this->mail_resiliate;
+        }
+        else
+        {
+            return $conf->global->EMPLOYEE_MAIL_RESIL;
+        }
+    }
 }
 ?>

@@ -536,20 +536,20 @@ if ($user->rights->employee->creer && $action == 'confirm_valid' && $confirm == 
 	$action='';
 }
 
-if ($user->rights->employee->supprimer && $action == 'confirm_resign')
+if ($user->rights->employee->supprimer && $action == 'confirm_deactivate')
 {
 	if ($confirm == 'yes')
 	{
 		$empt = new EmployeeType($db);
 		$empt->fetch($object->typeid);
 
-		$result=$object->resiliate($user);
+		$result=$object->deactivate($user);
 
 		if ($result >= 0 && ! count($object->errors))
 		{
 			if ($object->email && GETPOST("send_mail"))
 			{
-				$result=$object->send_an_email($empt->getMailOnResiliate(),$conf->global->EMPLOYEE_MAIL_RESIL_SUBJECT,array(),array(),array(),"","",0,-1);
+				$result=$object->send_an_email($empt->getMailOnDeactivate(),$conf->global->EMPLOYEE_MAIL_DEACTIVATE_SUBJECT,array(),array(),array(),"","",0,-1);
 			}
 			if ($result < 0)
 			{
@@ -1137,16 +1137,16 @@ else
 			print $form->formconfirm("fiche.php?rowid=".$rowid,$langs->trans("SendCardByMail"),$langs->trans("ConfirmSendCardByMail",$object->email),"confirm_sendinfo",'',0,1);
 		}
 
-		// Confirm resiliate
-		if ($action == 'resign')
+		// Confirm deactivate
+		if ($action == 'deactivate')
 		{
 			$langs->load("mails");
 
 			$empt = new EmployeeType($db);
 			$empt->fetch($object->typeid);
 
-			$subjecttosend=$object->makeSubstitution($conf->global->EMPLOYEE_MAIL_RESIL_SUBJECT);
-			$texttosend=$object->makeSubstitution($empt->getMailOnResiliate());
+			$subjecttosend=$object->makeSubstitution($conf->global->EMPLOYEE_MAIL_DEACTIVATE_SUBJECT);
+			$texttosend=$object->makeSubstitution($empt->getMailOnDeactivate());
 
 			$tmp=$langs->trans("SendAnEMailToEmployee");
 			$tmp.=' ('.$langs->trans("MailFrom").': <b>'.$conf->global->EMPLOYEE_MAIL_FROM.'</b>, ';
@@ -1165,7 +1165,7 @@ else
 			$formquestion=array();
 			if ($object->email) $formquestion[]=array('type' => 'checkbox', 'name' => 'send_mail', 'label' => $label, 'value' => (! empty($conf->global->EMPLOYEE_DEFAULT_SENDINFOBYMAIL)?'true':'false'));
 			if ($backtopage)    $formquestion[]=array('type' => 'hidden', 'name' => 'backtopage', 'value' => ($backtopage != '1' ? $backtopage : $_SERVER["HTTP_REFERER"]));
-			print $form->formconfirm("fiche.php?rowid=".$rowid,$langs->trans("ResiliateEmployee"),$langs->trans("ConfirmResiliateEmployee"),"confirm_resign",$formquestion);
+			print $form->formconfirm("fiche.php?rowid=".$rowid,$langs->trans("DeactivateEmployee"),$langs->trans("ConfirmDeactivateEmployee"),"confirm_deactivate",$formquestion);
 		}
 
 		// Confirm remove employee
@@ -1394,16 +1394,16 @@ else
 				print '<div class="inline-block divButAction"><font class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("SendCardByMail")."</font></div>";
 			}
 
-			// Resilier
+			// Deactivate
 			if ($object->statut >= 1)
 			{
 				if ($user->rights->employee->supprimer)
 				{
-					print '<div class="inline-block divButAction"><a class="butAction" href="fiche.php?rowid='.$rowid.'&action=resign">'.$langs->trans("Resiliate")."</a></div>\n";
+					print '<div class="inline-block divButAction"><a class="butAction" href="fiche.php?rowid='.$rowid.'&action=deactivate">'.$langs->trans("Deactivate")."</a></div>\n";
 				}
 				else
 				{
-					print '<div class="inline-block divButAction"><font class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("Resiliate")."</font></div>";
+					print '<div class="inline-block divButAction"><font class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("Deactivate")."</font></div>";
 				}
 			}
 

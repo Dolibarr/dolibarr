@@ -1090,11 +1090,9 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 				$newmenu->add("/employees/index.php?leftmenu=hrm&amp;mainmenu=hrm",$langs->trans("Employees"),0,$user->rights->employee->lire, '', $mainmenu, 'employees');
 				$newmenu->add("/employees/fiche.php?leftmenu=hrm&amp;action=create",$langs->trans("NewEmployee"),1,$user->rights->employee->creer);
 				$newmenu->add("/employees/liste.php?leftmenu=hrm",$langs->trans("List"),1,$user->rights->employee->lire);
-				$newmenu->add("/employees/liste.php?leftmenu=hrm&amp;statut=-1",$langs->trans("MenuEmployeesToValidate"),2,$user->rights->employee->lire);
+				$newmenu->add("/employees/liste.php?leftmenu=hrm&amp;statut=0",$langs->trans("MenuEmployeesToValidate"),2,$user->rights->employee->lire);
 				$newmenu->add("/employees/liste.php?leftmenu=hrm&amp;statut=1",$langs->trans("MenuEmployeesValidated"),2,$user->rights->employee->lire);
-				$newmenu->add("/employees/liste.php?leftmenu=hrm&amp;statut=1&amp;filter=uptodate",$langs->trans("MenuEmployeesUpToDate"),2,$user->rights->employee->lire);
-				$newmenu->add("/employees/liste.php?leftmenu=hrm&amp;statut=1&amp;filter=outofdate",$langs->trans("MenuEmployeesNotUpToDate"),2,$user->rights->employee->lire);
-				$newmenu->add("/employees/liste.php?leftmenu=hrm&amp;statut=0",$langs->trans("MenuEmployeesResiliated"),2,$user->rights->employee->lire);
+				$newmenu->add("/employees/liste.php?leftmenu=hrm&amp;statut=2",$langs->trans("MenuEmployeesDeactivated"),2,$user->rights->employee->lire);
 				$newmenu->add("/employees/stats/geo.php?leftmenu=hrm&mode=employeebycountry",$langs->trans("MenuEmployeesStats"),1,$user->rights->employee->lire);
 
 				if (! empty($conf->categorie->enabled))

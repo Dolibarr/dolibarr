@@ -72,7 +72,7 @@ class Employee extends CommonObject
     var $sex;
     var $public;
     var $note;				// Private note
-    var $statut;			// -1:brouillon, 0:resilie, >=1:valide,paye
+    var $statut;			// 0:brouillon, 1:validé, >=2:désactivé
     var $photo;
 
     var $datec;
@@ -102,7 +102,7 @@ class Employee extends CommonObject
     function __construct($db)
     {
         $this->db = $db;
-        $this->statut = -1;
+        $this->statut = 0;
         // le salarié n'est pas public par defaut
         $this->public = 0;
         // les champs optionnels sont vides
@@ -1079,10 +1079,10 @@ class Employee extends CommonObject
     {
         global $langs,$conf;
 
-		$error=0;
-		$now=dol_now();
+		    $error=0;
+		    $now=dol_now();
 
-		// Check parameters
+		    // Check parameters
         if ($this->statut == 1)
         {
             dol_syslog(get_class($this)."::validate statut of employee does not allow this", LOG_WARNING);
@@ -1107,6 +1107,55 @@ class Employee extends CommonObject
             include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
             $interface=new Interfaces($this->db);
             $result=$interface->run_triggers('EMPLOYEE_VALIDATE',$this,$user,$langs,$conf);
+            if ($result < 0) { $error++; $this->errors=$interface->errors; }
+            // Fin appel triggers
+
+            $this->db->commit();
+            return 1;
+        }
+        else
+        {
+            $this->error=$this->db->error();
+            $this->db->rollback();
+            return -1;
+        }
+    }
+    
+    /**
+     *		Fonction qui resilie un adherent
+     *
+     *		@param	User	$user		User making change
+     *		@return	int					<0 if KO, >0 if OK
+     */
+    function deactivate($user)
+    {
+        global $langs,$conf;
+
+		    $error=0;
+
+		    // Check paramaters
+        if ($this->statut >= 2)
+        {
+            dol_syslog(get_class($this)."::deactivate statut of employee does not allow this", LOG_WARNING);
+            return 0;
+        }
+
+        $this->db->begin();
+
+        $sql = "UPDATE ".MAIN_DB_PREFIX."employee SET";
+        $sql.= " statut = 2";
+        $sql.= ", fk_user_valid=".$user->id;
+        $sql.= " WHERE rowid = ".$this->id;
+
+        $result = $this->db->query($sql);
+        if ($result)
+        {
+            $this->statut=2;
+
+            // Appel des triggers
+            include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
+            $interface=new Interfaces($this->db);
+            $result=$interface->run_triggers('EMPLOYEE_DEACTIVATE',$this,$user,$langs,$conf);
             if ($result < 0) { $error++; $this->errors=$interface->errors; }
             // Fin appel triggers
 
@@ -1284,7 +1333,7 @@ class Employee extends CommonObject
     }
 
     /**
-     *  Retourne le libelle du statut d'un salarié (brouillon, valide, resilie)
+     *  Retourne le libelle du statut d'un salarié (brouillon, validé, Désactivé)
      *
      *  @param	int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
      *  @return string				Label
@@ -1309,69 +1358,39 @@ class Employee extends CommonObject
         $langs->load("employees");
         if ($mode == 0)
         {
-            if ($statut == -1) return $langs->trans("EmployeeStatusDraft");
-            if ($statut >= 1)
-            {
-                if (! $date_end_subscription)            return $langs->trans("EmployeeStatusActive");
-                elseif ($date_end_subscription < time()) return $langs->trans("EmployeeStatusActiveLate");
-                else                                     return $langs->trans("EmployeeStatusPaid");
-            }
-            if ($statut == 0)  return $langs->trans("MemberStatusResiliated");
+            if ($statut == 0) return $langs->trans("EmployeeStatusDraft");
+            if ($statut == 1) return $langs->trans("EmployeeStatutActive");
+            if ($statut >= 2) return $langs->trans("EmployeeStatusNotActive");
         }
         if ($mode == 1)
         {
-            if ($statut == -1) return $langs->trans("MemberStatusDraftShort");
-            if ($statut >= 1)
-            {
-                if (! $date_end_subscription)            return $langs->trans("MemberStatusActiveShort");
-                elseif ($date_end_subscription < time()) return $langs->trans("MemberStatusActiveLateShort");
-                else                                     return $langs->trans("MemberStatusPaidShort");
-            }
-            if ($statut == 0)  return $langs->trans("MemberStatusResiliatedShort");
+            if ($statut == 0) return $langs->trans("EmployeeStatusDraftShort");
+            if ($statut == 1) return $langs->trans("MemberStatusActiveShort");
+            if ($statut >= 2) return $langs->trans("MemberStatusNotActiveShort");
         }
         if ($mode == 2)
         {
-            if ($statut == -1) return img_picto($langs->trans('MemberStatusDraft'),'statut0').' '.$langs->trans("MemberStatusDraftShort");
-            if ($statut >= 1)
-            {
-                if (! $date_end_subscription)            return img_picto($langs->trans('MemberStatusActive'),'statut1').' '.$langs->trans("MemberStatusActiveShort");
-                elseif ($date_end_subscription < time()) return img_picto($langs->trans('MemberStatusActiveLate'),'statut3').' '.$langs->trans("MemberStatusActiveLateShort");
-                else                                     return img_picto($langs->trans('MemberStatusPaid'),'statut4').' '.$langs->trans("MemberStatusPaidShort");
-            }
-            if ($statut == 0)  return img_picto($langs->trans('MemberStatusResiliated'),'statut5').' '.$langs->trans("MemberStatusResiliatedShort");
+            if ($statut == 0) return img_picto($langs->trans('EmployeeStatusDraft'),'statut0').' '.$langs->trans("EmployeeStatusDraftShort");
+            if ($statut == 1) return img_picto($langs->trans('EmployeeStatusActive'),'statut4').' '.$langs->trans("EmployeeStatusActiveShort");
+            if ($statut >= 2) return img_picto($langs->trans('EmployeeStatusNotActive'),'statut6').' '.$langs->trans("EmployeeStatusNotActiveShort");
         }
         if ($mode == 3)
         {
-            if ($statut == -1) return img_picto($langs->trans('MemberStatusDraft'),'statut0');
-            if ($statut >= 1)
-            {
-                if (! $date_end_subscription)            return img_picto($langs->trans('MemberStatusActive'),'statut1');
-                elseif ($date_end_subscription < time()) return img_picto($langs->trans('MemberStatusActiveLate'),'statut3');
-                else                                     return img_picto($langs->trans('MemberStatusPaid'),'statut4');
-            }
-            if ($statut == 0)  return img_picto($langs->trans('MemberStatusResiliated'),'statut5');
+            if ($statut == 0) return img_picto($langs->trans('EmployeeStatusDraft'),'statut0');
+            if ($statut == 1) return img_picto($langs->trans('EmployeeStatusActive'),'statut4');
+            if ($statut >= 2) return img_picto($langs->trans('EmployeeStatusNotActive'),'statut6');
         }
         if ($mode == 4)
         {
-            if ($statut == -1) return img_picto($langs->trans('MemberStatusDraft'),'statut0').' '.$langs->trans("MemberStatusDraft");
-            if ($statut >= 1)
-            {
-                if (! $date_end_subscription)            return img_picto($langs->trans('MemberStatusActive'),'statut1').' '.$langs->trans("MemberStatusActive");
-                elseif ($date_end_subscription < time()) return img_picto($langs->trans('MemberStatusActiveLate'),'statut3').' '.$langs->trans("MemberStatusActiveLate");
-                else                                     return img_picto($langs->trans('MemberStatusPaid'),'statut4').' '.$langs->trans("MemberStatusPaid");
-            }
-            if ($statut == 0)  return img_picto($langs->trans('MemberStatusResiliated'),'statut5').' '.$langs->trans("MemberStatusResiliated");
+            if ($statut == 0) return img_picto($langs->trans('EmployeeStatusDraft'),'statut0').' '.$langs->trans("EmployeeStatusDraft");
+            if ($statut == 1) return img_picto($langs->trans('EmployeeStatusActive'),'statut4').' '.$langs->trans("EmployeeStatusActive");
+            if ($statut >= 2) return img_picto($langs->trans('EmployeeStatusNotActive'),'statut6').' '.$langs->trans("MemberStatusNotActive");
         }
         if ($mode == 5)
         {
-            if ($statut == -1) return $langs->trans("MemberStatusDraft").' '.img_picto($langs->trans('MemberStatusDraft'),'statut0');
-            if ($statut >= 1)
-            {
-                if (! $date_end_subscription)            return '<span class="hideonsmartphone">'.$langs->trans("MemberStatusActive").' </span>'.img_picto($langs->trans('MemberStatusActive'),'statut1');
-                elseif ($date_end_subscription < time()) return '<span class="hideonsmartphone">'.$langs->trans("MemberStatusActiveLate").' </span>'.img_picto($langs->trans('MemberStatusActiveLate'),'statut3');
-                else                                     return '<span class="hideonsmartphone">'.$langs->trans("MemberStatusPaid").' </span>'.img_picto($langs->trans('MemberStatusPaid'),'statut4');
-            }
-            if ($statut == 0)  return '<span class="hideonsmartphone">'.$langs->trans("MemberStatusResiliated").' </span>'.img_picto($langs->trans('MemberStatusResiliated'),'statut5');
+            if ($statut == 0) return $langs->trans("EmployeeStatusDraft").' '.img_picto($langs->trans('EmployeeStatusDraft'),'statut0');
+            if ($statut == 1) return '<span class="hideonsmartphone">'.$langs->trans("EmployeeStatusActive").' </span>'.img_picto($langs->trans('EmployeeStatusActive'),'statut4');
+            if ($statut >= 2) return '<span class="hideonsmartphone">'.$langs->trans("EmployeeStatusNotActive").' </span>'.img_picto($langs->trans('EmployeeStatusNotActive'),'statut6');
         }
     }
 
