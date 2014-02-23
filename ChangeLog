@@ -21,7 +21,8 @@ For users:
 - New: Add option MAIN_ADD_SALE_REP_SIGNATURE_IN_NOTE.
 - New: Add warning if supplier payment is higher that due amount.
 - New: Increase length of url into bookmark module.
-- New: Add an admin page to make a mass init of barcode values for all products. 
+- New: Add an admin page to make a mass init of barcode values for all products.
+- New: Automatic events for sending mails showing info about mail linked objects. 
 
 TODO
 - New: Predefined product and free product use same form.

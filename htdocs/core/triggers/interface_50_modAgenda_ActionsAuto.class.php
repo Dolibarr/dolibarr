@@ -618,6 +618,15 @@ class InterfaceActionsAuto
         if ($ok)
         {
 			$now=dol_now();
+			
+			if(isset($_SESSION['listofnames']))
+			{
+				$attachs=$_SESSION['listofnames'];
+				if($attachs && strpos($action,'SENTBYMAIL'))
+				{
+					 $object->actionmsg.="\n".$langs->transnoentities("AttachedFiles").': '.$attachs;
+				}
+			}
 
             require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
             require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
