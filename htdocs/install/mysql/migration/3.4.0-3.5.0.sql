@@ -368,3 +368,4 @@ ALTER TABLE llx_adherent ADD skype VARCHAR(255) AFTER email;
 -- multi-rib
 ALTER TABLE llx_societe_rib ADD default_rib smallint NOT NULL DEFAULT 0 AFTER owner_address;
 UPDATE llx_societe_rib SET default_rib = 1;
+ALTER TABLE llx_projet_task ADD COLUMN  entity integer DEFAULT 1 NOT NULL ref;
