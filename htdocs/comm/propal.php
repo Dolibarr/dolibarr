@@ -94,9 +94,7 @@ if ($id > 0 || ! empty($ref)) {
 }
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
-$hookmanager->initHooks(array (
-	'propalcard' 
-));
+$hookmanager->initHooks(array('propalcard'));
 
 $permissionnote = $user->rights->propale->creer; // Used by the include of actions_setnotes.inc.php
 
@@ -104,13 +102,12 @@ $permissionnote = $user->rights->propale->creer; // Used by the include of actio
  * Actions
  */
 
-$parameters = array (
-	'socid' => $socid 
-);
-$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+$parameters = array('socid' => $socid);
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some
+                                                                                   // hooks
 
 include DOL_DOCUMENT_ROOT . '/core/actions_setnotes.inc.php'; // Must be include, not includ_once
-                                                            
+                                                              
 // Action clone object
 if ($action == 'confirm_clone' && $confirm == 'yes') {
 	if (1 == 0 && ! GETPOST('clone_content') && ! GETPOST('clone_receivers')) {
@@ -574,7 +571,7 @@ else if (($action == 'addline' || $action == 'addline_predef') && $user->rights-
 	// Unset extrafield
 	if (is_array($extralabelsline)) {
 		// Get extra fields
-		foreach ( $extralabelsline as $key => $value ) {
+		foreach ($extralabelsline as $key => $value) {
 			unset($_POST ["options_" . $key]);
 		}
 	}
@@ -634,9 +631,7 @@ else if (($action == 'addline' || $action == 'addline_predef') && $user->rights-
 					
 					$prodcustprice = new Productcustomerprice($db);
 					
-					$filter = array (
-						't.fk_product' => $prod->id,'t.fk_soc' => $object->client->id 
-					);
+					$filter = array('t.fk_product' => $prod->id,'t.fk_soc' => $object->client->id);
 					
 					$result = $prodcustprice->fetch_all('', '', 0, 0, $filter);
 					if ($result) {
@@ -818,7 +813,7 @@ else if ($action == 'updateligne' && $user->rights->propal->creer && GETPOST('sa
 	// Unset extrafield
 	if (is_array($extralabelsline)) {
 		// Get extra fields
-		foreach ( $extralabelsline as $key => $value ) {
+		foreach ($extralabelsline as $key => $value) {
 			unset($_POST ["options_" . $key]);
 		}
 	}
@@ -1026,14 +1021,11 @@ else if ($action == 'down' && $user->rights->propal->creer) {
 	if (! $error) {
 		// Actions on extra fields (by external module or standard code)
 		// FIXME le hook fait double emploi avec le trigger !!
-		$hookmanager->initHooks(array (
-			'propaldao' 
-		));
-		$parameters = array (
-			'id' => $object->id 
-		);
-		$reshook = $hookmanager->executeHooks('insertExtraFields', $parameters, $object, $action); // Note that $action and $object may have been modified by
-		                                                                                      // some hooks
+		$hookmanager->initHooks(array('propaldao'));
+		$parameters = array('id' => $object->id);
+		$reshook = $hookmanager->executeHooks('insertExtraFields', $parameters, $object, $action); // Note that $action and $object may have been
+		                                                                                           // modified by
+		                                                                                           // some hooks
 		if (empty($reshook)) {
 			$result = $object->insertExtraFields();
 			if ($result < 0) {
@@ -1243,11 +1235,10 @@ if ($action == 'create') {
 	}
 	
 	// Other attributes
-	$parameters = array (
-		'colspan' => ' colspan="3"' 
-	);
-	$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by
-	                                                                                      // hook
+	$parameters = array('colspan' => ' colspan="3"');
+	$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified
+	                                                                                           // by
+	                                                                                           // hook
 	if (empty($reshook) && ! empty($extrafields->attribute_label)) {
 		print $object->showOptionals($extrafields, 'edit');
 	}
@@ -1270,7 +1261,7 @@ if ($action == 'create') {
 		print '<td><input type="radio" name="createmode" value="copy"></td>';
 		print '<td>' . $langs->trans("CopyPropalFrom") . ' </td>';
 		print '<td>';
-		$liste_propal = array ();
+		$liste_propal = array();
 		$liste_propal [0] = '';
 		
 		$sql = "SELECT p.rowid as id, p.ref, s.nom";
@@ -1285,7 +1276,7 @@ if ($action == 'create') {
 		if ($resql) {
 			$num = $db->num_rows($resql);
 			$i = 0;
-			while ( $i < $num ) {
+			while ($i < $num) {
 				$row = $db->fetch_row($resql);
 				$propalRefAndSocName = $row [1] . " - " . $row [2];
 				$liste_propal [$row [0]] = $propalRefAndSocName;
@@ -1358,14 +1349,12 @@ if ($action == 'create') {
 	// Clone confirmation
 	if ($action == 'clone') {
 		// Create an array for form
-		$formquestion = array (
-		// 'text' => $langs->trans("ConfirmClone"),
-		// array('type' => 'checkbox', 'name' => 'clone_content', 'label' => $langs->trans("CloneMainAttributes"), 'value' => 1),
-		// array('type' => 'checkbox', 'name' => 'update_prices', 'label' => $langs->trans("PuttingPricesUpToDate"), 'value' => 1),
-		array (
-			'type' => 'other','name' => 'socid','label' => $langs->trans("SelectThirdParty"),'value' => $form->select_company(GETPOST('socid', 'int'), 'socid', '(s.client=1 OR s.client=2 OR s.client=3)') 
-		) 
-		);
+		$formquestion = array(
+							// 'text' => $langs->trans("ConfirmClone"),
+							// array('type' => 'checkbox', 'name' => 'clone_content', 'label' => $langs->trans("CloneMainAttributes"), 'value' => 1),
+							// array('type' => 'checkbox', 'name' => 'update_prices', 'label' => $langs->trans("PuttingPricesUpToDate"), 'value' =>
+							// 1),
+							array('type' => 'other','name' => 'socid','label' => $langs->trans("SelectThirdParty"),'value' => $form->select_company(GETPOST('socid', 'int'), 'socid', '(s.client=1 OR s.client=2 OR s.client=3)')));
 		// Paiement incomplet. On demande si motif = escompte ou autre
 		$formconfirm = $form->formconfirm($_SERVER ["PHP_SELF"] . '?id=' . $object->id, $langs->trans('ClonePropal'), $langs->trans('ConfirmClonePropal', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
 	} 	
@@ -1414,11 +1403,10 @@ if ($action == 'create') {
 	}
 	
 	if (! $formconfirm) {
-		$parameters = array (
-			'lineid' => $lineid 
-		);
-		$formconfirm = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by
-		                                                                                    // hook
+		$parameters = array('lineid' => $lineid);
+		$formconfirm = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified
+			                                                                                         // by
+			                                                                                         // hook
 	}
 	
 	// Print form confirm
@@ -1685,13 +1673,12 @@ if ($action == 'create') {
 	
 	// Other attributes (TODO Move this into an include)
 	$res = $object->fetch_optionals($object->id, $extralabels);
-	$parameters = array (
-		'colspan' => ' colspan="3"' 
-	);
-	$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by
-	                                                                                      // hook
+	$parameters = array('colspan' => ' colspan="3"');
+	$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified
+	                                                                                           // by
+	                                                                                           // hook
 	if (empty($reshook) && ! empty($extrafields->attribute_label)) {
-		foreach ( $extrafields->attribute_label as $key => $label ) {
+		foreach ($extrafields->attribute_label as $key => $label) {
 			if ($action == 'edit_extras') {
 				$value = (isset($_POST ["options_" . $key]) ? $_POST ["options_" . $key] : $object->array_options ["options_" . $key]);
 			} else {
@@ -1705,9 +1692,7 @@ if ($action == 'create') {
 					print ' class="fieldrequired"';
 				print '>' . $label . '</td><td colspan="5">';
 				// Convert date into timestamp format
-				if (in_array($extrafields->attribute_type [$key], array (
-					'date','datetime' 
-				))) {
+				if (in_array($extrafields->attribute_type [$key], array('date','datetime'))) {
 					$value = isset($_POST ["options_" . $key]) ? dol_mktime($_POST ["options_" . $key . "hour"], $_POST ["options_" . $key . "min"], 0, $_POST ["options_" . $key . "month"], $_POST ["options_" . $key . "day"], $_POST ["options_" . $key . "year"]) : $db->jdate($object->array_options ['options_' . $key]);
 				}
 				
@@ -1829,9 +1814,10 @@ if ($action == 'create') {
 				}
 			}
 			
-			$parameters = array ();
-			$reshook = $hookmanager->executeHooks('formAddObjectLine', $parameters, $object, $action); // Note that $action and $object may have been modified
-			                                                                                      // by hook
+			$parameters = array();
+			$reshook = $hookmanager->executeHooks('formAddObjectLine', $parameters, $object, $action); // Note that $action and $object may have been
+				                                                                                           // modified
+				                                                                                           // by hook
 		}
 	}
 	
@@ -1875,9 +1861,9 @@ if ($action == 'create') {
 	if ($action != 'presend') {
 		print '<div class="tabsAction">';
 		
-		$parameters = array ();
+		$parameters = array();
 		$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been
-		                                                                                          // modified by hook
+		                                                                                               // modified by hook
 		if (empty($reshook)) {
 			if ($action != 'statut' && $action != 'editline') {
 				// Validate
@@ -1888,7 +1874,8 @@ if ($action == 'create') {
 				}
 				// Create event
 				if ($conf->agenda->enabled && ! empty($conf->global->MAIN_ADD_EVENT_ON_ELEMENT_CARD)) 				// Add hidden condition because this is not a
-				                                                                                      // "workflow" action so should appears somewhere else on
+				                                                                                      // "workflow" action so should appears somewhere
+				                                                                                      // else on
 				                                                                                      // page.
 				{
 					print '<a class="butAction" href="' . DOL_URL_ROOT . '/comm/action/fiche.php?action=create&amp;origin=' . $object->element . '&amp;originid=' . $object->id . '&amp;socid=' . $object->socid . '">' . $langs->trans("AddAction") . '</a>';
@@ -2042,8 +2029,8 @@ if ($action == 'create') {
 		$formmail->fromname = $user->getFullName($langs);
 		$formmail->frommail = $user->email;
 		$formmail->withfrom = 1;
-		$liste = array ();
-		foreach ( $object->thirdparty->thirdparty_and_contact_email_array(1) as $key => $value )
+		$liste = array();
+		foreach ($object->thirdparty->thirdparty_and_contact_email_array(1) as $key => $value)
 			$liste [$key] = $value;
 		$formmail->withto = GETPOST("sendto") ? GETPOST("sendto") : $liste;
 		$formmail->withtocc = $liste;
@@ -2067,11 +2054,11 @@ if ($action == 'create') {
 		
 		// Find the good contact adress
 		$custcontact = '';
-		$contactarr = array ();
+		$contactarr = array();
 		$contactarr = $object->liste_contact(- 1, 'external');
 		
 		if (is_array($contactarr) && count($contactarr) > 0) {
-			foreach ( $contactarr as $contact ) {
+			foreach ($contactarr as $contact) {
 				if ($contact ['libelle'] == $langs->trans('TypeContact_propal_external_CUSTOMER')) {
 					$contactstatic = new Contact($db);
 					$contactstatic->fetch($contact ['id']);
