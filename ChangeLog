@@ -23,6 +23,8 @@ For users:
 - New: Increase length of url into bookmark module.
 - New: Add an admin page to make a mass init of barcode values for all products.
 - New: Automatic events for sending mails showing info about mail linked objects. 
+- New: Price management enhancement (multiprice level, price by customer, if MAIN_FEATURES_LEVEL=2 Price by qty)
+- Fix: Project Task numbering rule customs rule works
 
 TODO
 - New: Predefined product and free product use same form.

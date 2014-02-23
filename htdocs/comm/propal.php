@@ -8,7 +8,7 @@
  * Copyright (C) 2010-2013 Juanjo Menent         <jmenent@2byte.es>
  * Copyright (C) 2010-2011 Philippe Grand        <philippe.grand@atoo-net.com>
  * Copyright (C) 2012-2013 Christophe Battarel   <christophe.battarel@altairis.fr>
- * Copyright (C) 2013      Florian Henry		 <florian.henry@open-concept.pro>
+ * Copyright (C) 2013-2014      Florian Henry		 <florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -725,6 +725,29 @@ else if (($action == 'addline' || $action == 'addline_predef') && $user->rights-
 					$pu_ttc = $prod->multiprices_ttc[$object->client->price_level];
 					$price_min = $prod->multiprices_min[$object->client->price_level];
 					$price_base_type = $prod->multiprices_base_type[$object->client->price_level];
+				}
+				elseif (! empty ( $conf->global->PRODUIT_CUSTOMER_PRICES )) {
+					require_once DOL_DOCUMENT_ROOT . '/product/class/productcustomerprice.class.php';
+						
+					$prodcustprice = new Productcustomerprice ( $db );
+				
+					$filter = array (
+					't.fk_product' => $prod->id,
+					't.fk_soc'=> $object->client->id
+					);
+				
+					$result = $prodcustprice->fetch_all ( '', '', 0,0, $filter );
+					if ($result)
+					{
+						if (count($prodcustprice->lines)>0)
+						{
+							$found=true;
+							$pu_ht=price($prodcustprice->lines[0]->price);
+							$pu_ttc=price($prodcustprice->lines[0]->price_ttc);
+							$price_base_type=$prodcustprice->lines[0]->price_base_type;
+							$prod->tva_tx=$prodcustprice->lines[0]->tva_tx;
+						}
+					}
 				}
 				else
 				{
