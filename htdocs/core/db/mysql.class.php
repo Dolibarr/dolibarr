@@ -84,6 +84,7 @@ class DoliDBMysql extends DoliDB
 	{
 		global $conf,$langs;
 
+        // Note that having "static" property for "$forcecharset" and "$forcecollate" will make error here in strict mode, so they are not static
 		if (! empty($conf->db->character_set)) $this->forcecharset=$conf->db->character_set;
 		if (! empty($conf->db->dolibarr_main_db_collation))	$this->forcecollate=$conf->db->dolibarr_main_db_collation;
 
@@ -1196,10 +1197,10 @@ class DoliDBMysql extends DoliDB
 	}
 
 	/**
-	 *	Return value of server parameters
+	 * Return value of server parameters
 	 *
-	 *  @param	string	$filter		Filter list on a particular value
-	 * 	@return	string				Value for parameter
+	 * @param	string	$filter		Filter list on a particular value
+	 * @return	array				Array of key-values (key=>value)
 	 */
 	function getServerParametersValues($filter='')
 	{
@@ -1218,17 +1219,17 @@ class DoliDBMysql extends DoliDB
 	}
 
 	/**
-	 *	Return value of server status
+	 * Return value of server status
 	 *
-	 * 	@param	string	$filter		Filter list on a particular value
-	 * 	@return	string				Value for parameter
+	 * @param	string	$filter		Filter list on a particular value
+	 * @return  array				Array of key-values (key=>value)
 	 */
 	function getServerStatusValues($filter='')
 	{
 		$result=array();
 
 		$sql='SHOW STATUS';
-		if ($filter) $sql.=" LIKE '".addslashes($filter)."'";
+		if ($filter) $sql.=" LIKE '".$this->escape($filter)."'";
 		$resql=$this->query($sql);
 		if ($resql)
 		{

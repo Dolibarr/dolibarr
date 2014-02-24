@@ -232,10 +232,18 @@ interface Database
 	function plimit($limit = 0, $offset = 0);
 
 	/**
+	 * Return value of server parameters
+	 *
+	 * @param    string	$filter		Filter list on a particular value
+	 * @return   array				Array of key-values (key=>value)
+	 */
+	function getServerParametersValues($filter = '');
+
+	/**
 	 *    Return value of server status
 	 *
-	 * @param    string $filter Filter list on a particular value
-	 * @return    string                Value for parameter
+	 * @param    string $filter 	Filter list on a particular value
+	 * @return   array				Array of key-values (key=>value)
 	 */
 	function getServerStatusValues($filter = '');
 
@@ -454,11 +462,4 @@ interface Database
 	 */
 	function select_db($database);
 
-	/**
-	 *    Return value of server parameters
-	 *
-	 * @param    string $filter Filter list on a particular value
-	 * @return    string                Value for parameter
-	 */
-	function getServerParametersValues($filter = '');
 }

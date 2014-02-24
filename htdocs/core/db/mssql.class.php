@@ -1097,10 +1097,10 @@ class DoliDBMssql extends DoliDB
 	}
 
 	/**
-	 *	Return value of server parameters
+	 * Return value of server parameters
 	 *
-	 * 	@param	string	$filter		Filter list on a particular value
-	 * 	@return	string				Value for parameter
+	 * @param	string	$filter		Filter list on a particular value
+	 * @return	array				Array of key-values (key=>value)
 	 */
 	function getServerParametersValues($filter='')
 	{
@@ -1113,10 +1113,10 @@ class DoliDBMssql extends DoliDB
 	}
 
 	/**
-	 *	Return value of server status
+	 * Return value of server status
 	 *
-	 * 	@param	string	$filter		Filter list on a particular value
-	 * 	@return	string				Value for parameter
+	 * @param	string	$filter		Filter list on a particular value
+	 * @return  array				Array of key-values (key=>value)
 	 */
 	function getServerStatusValues($filter='')
 	{
@@ -1124,7 +1124,7 @@ class DoliDBMssql extends DoliDB
 		// TODO: Implement
 		// May help: http://www.experts-exchange.com/Database/MS-SQL-Server/Q_20971756.html
 
-		return '';
+		return array();
 	}
 }
 
