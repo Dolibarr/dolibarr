@@ -31,7 +31,6 @@ require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/fichinter/modules_fichinter.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/fichinter.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-require_once DOL_DOCUMENT_ROOT . '/core/class/html.formcontract.class.php';
 
 if (! empty($conf->projet->enabled))
 {
@@ -858,7 +857,8 @@ if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB) && $user->rights->ficheint
 
 $form = new Form($db);
 $formfile = new FormFile($db);
-$formcontract = new FormContract($db);
+if ($conf->contrat->enabled)
+	$formcontract = new FormContract($db);
 
 llxHeader('',$langs->trans("Fichinter"));
 
@@ -983,7 +983,7 @@ if ($action == 'create')
             $numprojet=$formproject->select_projects($soc->id,GETPOST('projectid','int'),'projectid');
             if ($numprojet==0)
             {
-                print ' &nbsp; <a href="'.DOL_DOCUMENT_ROOT.'/projet/fiche.php?socid='.$soc->id.'&action=create">'.$langs->trans("AddProject").'</a>';
+                print ' &nbsp; <a href="'.DOL_URL_ROOT.'/projet/fiche.php?socid='.$soc->id.'&action=create">'.$langs->trans("AddProject").'</a>';
             }
             print '</td></tr>';
         }

@@ -21,6 +21,7 @@ create table llx_projet_task
 (
   rowid					integer AUTO_INCREMENT PRIMARY KEY,
   ref 					varchar(50),
+  entity				integer DEFAULT 1 NOT NULL,	-- multi company id
   fk_projet				integer NOT NULL,
   fk_task_parent		integer DEFAULT 0 NOT NULL,
   datec					datetime,						-- date creation

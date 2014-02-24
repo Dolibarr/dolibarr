@@ -220,5 +220,10 @@ DefinitionOfBarCodeForProductNotComplete=Definition of type or value of bar code
 DefinitionOfBarCodeForThirdpartyNotComplete=Definition of type or value of bar code non complete for thirdparty %s.
 BarCodeDataForProduct=Barcode information of product %s :
 BarCodeDataForThirdparty=Barcode information of thirdparty %s :
-BarcodeStickersMask=xxx
-
+ResetBarcodeForAllRecords=Define barcode value for all records (this will also reset barcode value already defined with new values)
+PriceByCustomer=Price by customer
+PriceCatalogue=Catalogue Price
+PricingRule=Pricing Rules
+AddCustomerPrice=Add price by customers
+ForceUpdateChildPriceSoc=Set same price on customer subsidiaries
+PriceByCustomerLog=Price by customer log

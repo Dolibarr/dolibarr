@@ -84,9 +84,9 @@ class DoliDBMysqli extends DoliDB
     {
         global $conf,$langs;
 
-        // TODO error in strict mode (static property for "$forcecharset" and "$forcecollate")
-        //if (! empty($conf->db->character_set)) $this->forcecharset=$conf->db->character_set;
-        //if (! empty($conf->db->dolibarr_main_db_collation)) $this->forcecollate=$conf->db->dolibarr_main_db_collation;
+        // Note that having "static" property for "$forcecharset" and "$forcecollate" will make error here in strict mode, so they are not static
+        if (! empty($conf->db->character_set)) $this->forcecharset=$conf->db->character_set;
+        if (! empty($conf->db->dolibarr_main_db_collation)) $this->forcecollate=$conf->db->dolibarr_main_db_collation;
 
         $this->database_user=$user;
 
@@ -232,6 +232,16 @@ class DoliDBMysqli extends DoliDB
         //print "Resultat fonction connect: ".$this->db;
         return $this->db;
     }
+
+	/**
+	 * Return label of manager
+	 *
+	 * @return			string      Label
+	 */
+	function getLabel()
+	{
+		return $this->label;
+	}
 
     /**
 	 *	Return version of database server
@@ -1190,10 +1200,10 @@ class DoliDBMysqli extends DoliDB
     }
 
     /**
-     *	Return value of server parameters
+     * Return value of server parameters
      *
-     * 	@param	string	$filter		Filter list on a particular value
-     * 	@return	string				Value for parameter
+     * @param	string	$filter		Filter list on a particular value
+	 * @return	array				Array of key-values (key=>value)
      */
     function getServerParametersValues($filter='')
     {
@@ -1212,17 +1222,17 @@ class DoliDBMysqli extends DoliDB
     }
 
     /**
-     *	Return value of server status
+     * Return value of server status (current indicators on memory, cache...)
      *
-     * 	@param	string	$filter		Filter list on a particular value
-     * 	@return	string				Value for parameter
+     * @param	string	$filter		Filter list on a particular value
+	 * @return  array				Array of key-values (key=>value)
      */
     function getServerStatusValues($filter='')
     {
         $result=array();
 
         $sql='SHOW STATUS';
-        if ($filter) $sql.=" LIKE '".addslashes($filter)."'";
+        if ($filter) $sql.=" LIKE '".$this->escape($filter)."'";
         $resql=$this->query($sql);
         if ($resql)
         {

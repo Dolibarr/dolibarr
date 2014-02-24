@@ -16,6 +16,9 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ *
+ * Note: Page can be call with param mode=sendremind to bring feature to send
+ * remind by emails.
  */
 
 /**
@@ -128,7 +131,7 @@ if ($action == 'presend' && GETPOST('sendmail'))
 							'__REFCLIENT__' => $object->thirdparty->name
 						);
 						
-						make_substitutions($message, $substitutionarray);
+						$message=make_substitutions($message, $substitutionarray);
 
 						$actiontypecode='AC_FAC';
 						$actionmsg=$langs->transnoentities('MailSentBy').' '.$from.' '.$langs->transnoentities('To').' '.$sendto.".\n";

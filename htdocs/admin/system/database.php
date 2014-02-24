@@ -73,7 +73,8 @@ if ($conf->db->type == 'mysql' || $conf->db->type == 'mysqli')
 }
 else if ($conf->db->type == 'pgsql')
 {
-	$sqls[0] = "select name,setting from pg_settings";
+	$sqls[0] = "select name,setting from pg_settings";	// TODO function getServerParametersValues
+	//$sqls[1] = ""; 									// TODO Use function getServerStatusValues
 	$base=2;
 }
 else if ($conf->db->type == 'mssql')
