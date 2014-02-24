@@ -389,6 +389,9 @@ class DoliDBSqlite extends DoliDB
      */
     function getDriverInfo()
     {
+	    // FIXME: Dummy method
+	    // TODO: Implement
+
     	return '';
     }
 

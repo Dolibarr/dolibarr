@@ -466,6 +466,9 @@ class DoliDBPgsql extends DoliDB
 	 */
 	function getDriverInfo()
 	{
+		// FIXME: Dummy method
+		// TODO: Implement
+
 		return '';
 	}
 
@@ -541,16 +544,17 @@ class DoliDBPgsql extends DoliDB
 	/**
 	 * 	Annulation d'une transaction et retour aux anciennes valeurs
 	 *
-	 * 	@return	    int         1 si annulation ok ou transaction non ouverte, 0 en cas d'erreur
+	 * 	@param	    string	$log	Add more log to default log line
+	 * 	@return	    int             1 si annulation ok ou transaction non ouverte, 0 en cas d'erreur
 	 */
-	function rollback()
+	function rollback($log='')
 	{
 		dol_syslog('',0,-1);
 		if ($this->transaction_opened<=1)
 		{
 			$ret=$this->query("ROLLBACK;");
 			$this->transaction_opened=0;
-			dol_syslog("ROLLBACK Transaction",LOG_DEBUG);
+			dol_syslog("ROLLBACK Transaction".($log?' '.$log:''),LOG_DEBUG);
 			return $ret;
 		}
 		else
@@ -1401,6 +1405,21 @@ class DoliDBPgsql extends DoliDB
 		}
 
 		return $result;
+	}
+
+	/**
+	 *	Return value of server status
+	 *
+	 * 	@param	string	$filter		Filter list on a particular value
+	 * 	@return	string				Value for parameter
+	 */
+	function getServerStatusValues($filter='')
+	{
+		// FIXME: Dummy method
+		// TODO: Implement
+		// May help: http://netpenthe.wordpress.com/2011/12/07/mysql-show-status-for-postgresql
+
+		return '';
 	}
 }
 ?>
