@@ -83,6 +83,9 @@ EachInvoiceWillBeAttachedToEmail=A document using default invoice document templ
 MailTopicSendRemindUnpaidInvoices=Remind of invoice %s (%s)
 SendRemind=Send remind by EMails
 RemindSent=%S remind(s) sent
+AllRecipientSelectedForRemind=All thirdparties selected and if an email is set (note that one mail per invoice will be sent)
+NoRemindSent=No remind by EMail sent
+ResultOfMassSending=Result of mass remind sending by EMail
 
 # Libelle des modules de liste de destinataires mailing
 MailingModuleDescContactCompanies=Contacts/addresses of all third parties (customer, prospect, supplier, ...)

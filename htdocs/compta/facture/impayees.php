@@ -31,7 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 
-
+$langs->load("mails");
 $langs->load("bills");
 
 $id = (GETPOST('facid','int') ? GETPOST('facid','int') : GETPOST('id','int'));
@@ -54,10 +54,16 @@ $resultmasssend='';
  */
 
 // Send remind email
-if ($action == 'presend' && GETPOST('cancel')) $action='';
+if ($action == 'presend' && GETPOST('cancel')) 
+{
+	$action='';
+	if (GETPOST('models')=='facture_relance') $mode='sendmassremind';	// If we made a cancel from submit email form, this means we must be into mode=sendmassremind
+}
 
 if ($action == 'presend' && GETPOST('sendmail'))
 {
+	if (GETPOST('models')=='facture_relance') $mode='sendmassremind';	// If we made a cancel from submit email form, this means we must be into mode=sendmassremind
+	
 	if (!isset($user->email))
 	{
 		$error++;
@@ -70,10 +76,10 @@ if ($action == 'presend' && GETPOST('sendmail'))
 		$error++;
 		setEventMessage("InvoiceNotChecked","warnings");
 	}
-
+	
 	if (! $error)
 	{
-		$compteEmailEnvoi = 0;
+		$nbsent = 0;
 		$nbignored = 0;
 
 		for ($i = 0; $i < $countToSend; $i++)
@@ -83,13 +89,19 @@ if ($action == 'presend' && GETPOST('sendmail'))
 
 			if ($result > 0)	// Invoice was found
 			{
-				if ($object->statut != 1) continue; // Payment done or started or canceled
+				if ($object->statut != 1) 
+				{
+					continue; // Payment done or started or canceled
+				}
 
-				// Read PDF
-				$filename=dol_sanitizeFileName($object->ref);
+				// Read document
+				// TODO Use future field $object->fullpathdoc to know where is stored default file
+				// TODO If not defined, use $object->modelpdf (or defaut invoice config) to know what is template to use to regenerate doc.
+				$filename=dol_sanitizeFileName($object->ref).'.pdf';
 				$filedir=$conf->facture->dir_output . '/' . dol_sanitizeFileName($object->ref);
-				$file = $filedir . '/' . $filename.'.pdf';			// TODO What if ODT ?
-
+				$file = $filedir . '/' . $filename;
+				$mime = 'application/pdf';
+				
 				if (dol_is_file($file))
 				{
 					$object->fetch_thirdparty();
@@ -102,10 +114,20 @@ if ($action == 'presend' && GETPOST('sendmail'))
 						$langs->load("commercial");
 						$from = $user->getFullName($langs) . ' <' . $user->email .'>';
 						$replyto = $from;
-						$message = $conf->global->RELANCES_MASSE_TEXTE_EMAIL;
-						$subject = $conf->global->RELANCES_MASSE_OBJET_EMAIL;
-
-						$substitutionarray=
+						$subject = GETPOST('subject');
+						$message = GETPOST('message');
+						$sendtocc = GETPOST('sentocc');
+						
+						$substitutionarray=array(
+							'__ID__' => $object->id,
+							'__EMAIL__' => $object->thirdparty->email,
+							'__CHECK_READ__' => '<img src="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php?tag='.$obj2->tag.'&securitykey='.urlencode($conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY).'" width="1" height="1" style="width:1px;height:1px" border="0"/>',
+							//'__LASTNAME__' => $obj2->lastname,
+							//'__FIRSTNAME__' => $obj2->firstname,
+							'__REF__' => $object->ref,
+							'__REFCLIENT__' => $object->thirdparty->name
+						);
+						
 						make_substitutions($message, $substitutionarray);
 
 						$actiontypecode='AC_FAC';
@@ -116,12 +138,9 @@ if ($action == 'presend' && GETPOST('sendmail'))
 							$actionmsg.=$langs->transnoentities('TextUsedInTheMessageBody').":\n";
 							$actionmsg.=$message;
 						}
-											// Create form object
-						include_once(DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php');
-						$formmail = new FormMail($db);
-						$formmail->clear_attached_files();
-						$formmail->add_attached_files($file,  $object->ref.'.pdf', 'application/pdf');
-						$attachedfiles=$formmail->get_attached_files();
+
+						// Create form object
+						$attachedfiles=array('paths'=>array($file), 'names'=>array($filename), 'mimes'=>array($mime));
 						$filepath = $attachedfiles['paths'];
 						$filename = $attachedfiles['names'];
 						$mimetype = $attachedfiles['mimes'];
@@ -135,7 +154,7 @@ if ($action == 'presend' && GETPOST('sendmail'))
 						}
 						else
 						{
-							$result=$mailfile->sendfile();
+							//$result=$mailfile->sendfile();
 							if ($result)
 							{
 								$resultmasssend.=$langs->trans('MailSuccessfulySent',$mailfile->getValidAddress($from,2),$mailfile->getValidAddress($sendto,2));		// Must not contain "
@@ -157,42 +176,53 @@ if ($action == 'presend' && GETPOST('sendmail'))
 								if ($result < 0) { $error++; $this->errors=$interface->errors; }
 								// Fin appel triggers
 
-								if ($error)
+								if (! $error)
+								{
+									$resultmasssend.=$langs->trans("MailSent").': '.$sendto."<br>\n";	
+								}
+								else
 								{
 									dol_print_error($db);
 								}
-								$compteEmailEnvoi ++;
+								$nbsent++;
 
 							}
 							else
 							{
 								$langs->load("other");
-								$resultmasssend.='<div class="error">';
 								if ($mailfile->error)
 								{
 									$resultmasssend.=$langs->trans('ErrorFailedToSendMail',$from,$sendto);
-									$resultmasssend.='<br>'.$mailfile->error;
+									$resultmasssend.='<br><div class="error">'.$mailfile->error.'</div>';
 								}
 								else
 								{
-									$resultmasssend.='No mail sent. Feature is disabled by option MAIN_DISABLE_ALL_MAILS';
+									$resultmasssend.='<div class="warning">No mail sent. Feature is disabled by option MAIN_DISABLE_ALL_MAILS</div>';
 								}
-								$resultmasssend.='</div>';
 							}
 						}
 					}
 				}
 				else
 				{
+					$nbignored++;
 					$langs->load("other");
-					print $resultmasssend='<div class="error">'.$langs->trans('ErrorCantReadFile',$file).'</div>';
+					$resultmasssend.='<div class="error">'.$langs->trans('ErrorCantReadFile',$file).'</div>';
 					dol_syslog('Failed to read file: '.$file);
 					break ;
 				}
 			}
 		}
-
-		setEventMessage($compteEmailEnvoi. '/'.$countToSend.' '.$langs->trans("RemindSent"));
+		
+		if ($nbsent) 
+		{
+			$action='';	// Do not show form post if there was at least one successfull sent
+			setEventMessage($nbsent. '/'.$countToSend.' '.$langs->trans("RemindSent"));
+		}
+		else
+		{
+			setEventMessage($langs->trans("NoRemindSent"), 'warnings');
+		}
 	}
 }
 
@@ -347,7 +377,7 @@ if (! $sortorder) $sortorder="ASC";
 
 $limit = $conf->liste_limit;
 
-$sql = "SELECT s.nom, s.rowid as socid";
+$sql = "SELECT s.nom, s.rowid as socid, s.email";
 $sql.= ", f.rowid as facid, f.facnumber, f.increment, f.total as total_ht, f.tva as total_tva, f.total_ttc, f.localtax1, f.localtax2, f.revenuestamp";
 $sql.= ", f.datef as df, f.date_lim_reglement as datelimite";
 $sql.= ", f.paye as paye, f.fk_statut, f.type";
@@ -378,7 +408,7 @@ if ($search_societe)     $sql .= " AND s.nom LIKE '%".$db->escape($search_societ
 if ($search_montant_ht)  $sql .= " AND f.total = '".$db->escape($search_montant_ht)."'";
 if ($search_montant_ttc) $sql .= " AND f.total_ttc = '".$db->escape($search_montant_ttc)."'";
 if (GETPOST('sf_ref'))   $sql .= " AND f.facnumber LIKE '%".$db->escape(GETPOST('sf_ref'))."%'";
-$sql.= " GROUP BY s.nom, s.rowid, f.rowid, f.facnumber, f.increment, f.total, f.tva, f.total_ttc, f.localtax1, f.localtax2, f.revenuestamp, f.datef, f.date_lim_reglement, f.paye, f.fk_statut, f.type ";
+$sql.= " GROUP BY s.nom, s.rowid, s.email, f.rowid, f.facnumber, f.increment, f.total, f.tva, f.total_ttc, f.localtax1, f.localtax2, f.revenuestamp, f.datef, f.date_lim_reglement, f.paye, f.fk_statut, f.type ";
 if (! $user->rights->societe->client->voir && ! $socid) $sql .= ", sc.fk_soc, sc.fk_user ";
 $sql.= " ORDER BY ";
 $listfield=explode(',',$sortfield);
@@ -422,11 +452,70 @@ if ($resql)
 
 	dol_htmloutput_mesg($mesg);
 
-	print '<form id="form_generate_pdf" method="POST" action="'.$_SERVER["PHP_SELF"].'?sortfield='. $sortfield .'&sortorder='. $sortorder .'">';
+	print '<form id="form_unpaid" method="POST" action="'.$_SERVER["PHP_SELF"].'?sortfield='. $sortfield .'&sortorder='. $sortorder .'">';
+
+	if (! empty($mode) && $action == 'presend')
+	{
+		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+		$formmail = new FormMail($db);
+
+		print '<br>';
+		print_fiche_titre($langs->trans("SendRemind"),'','').'<br>';
+
+		$topicmail="MailTopicSendRemindUnpaidInvoices";
+		$modelmail="facture_relance";
+
+		// Cree l'objet formulaire mail
+		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+		$formmail = new FormMail($db);
+		$formmail->withform=-1;
+		$formmail->fromtype = 'user';
+		$formmail->fromid   = $user->id;
+		$formmail->fromname = $user->getFullName($langs);
+		$formmail->frommail = $user->email;
+		$formmail->withfrom=1;
+		$liste=array();
+		$formmail->withto=$langs->trans("AllRecipientSelectedForRemind");
+		$formmail->withtofree=0;
+		$formmail->withtoreadonly=1;
+		$formmail->withtocc=1;
+		$formmail->withtoccc=$conf->global->MAIN_EMAIL_USECCC;
+		$formmail->withtopic=$langs->transnoentities($topicmail, '__FACREF__', '__REFCLIENT__');
+		$formmail->withfile=$langs->trans("EachInvoiceWillBeAttachedToEmail");
+		$formmail->withbody=1;
+		$formmail->withdeliveryreceipt=1;
+		$formmail->withcancel=1;
+		// Tableau des substitutions
+		//$formmail->substit['__FACREF__']='';
+		$formmail->substit['__SIGNATURE__']=$user->signature;
+		//$formmail->substit['__REFCLIENT__']='';
+		$formmail->substit['__PERSONALIZED__']='';
+		$formmail->substit['__CONTACTCIVNAME__']='';
+
+		// Tableau des parametres complementaires du post
+		$formmail->param['action']=$action;
+		$formmail->param['models']=$modelmail;
+		$formmail->param['facid']=$object->id;
+		$formmail->param['returnurl']=$_SERVER["PHP_SELF"].'?id='.$object->id;
+
+		print $formmail->get_form();
+		print '<br>'."\n";
+	}
+	
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="mode" value="'.$mode.'">';
 	if ($late) print '<input type="hidden" name="late" value="'.dol_escape_htmltag($late).'">';
 
+	if ($resultmasssend)
+	{
+		print '<br><strong>'.$langs->trans("ResultOfMassSending").':</strong><br>'."\n";
+		print $langs->trans("Selected").': '.$countToSend."\n<br>";
+		print $langs->trans("Ignored").': '.$nbignored."\n<br>";
+		print $langs->trans("Sent").': '.$nbsent."\n<br>";
+		//print $resultmasssend;
+		print '<br>';
+	}
+	
 	$i = 0;
 	print '<table class="liste" width="100%">';
 	print '<tr class="liste_titre">';
@@ -570,8 +659,9 @@ if ($resql)
 			else
 			{
 				// Checkbox to send remind
-				print '<td align="center">';
-				print '<input class="flat checkforsend" type="checkbox" name="toSend[]" value="'.$objp->facid.'">';
+				print '<td class="nowrap" align="center">';
+				if ($objp->email) print '<input class="flat checkforsend" type="checkbox" name="toSend[]" value="'.$objp->facid.'">';
+				else print img_picto($langs->trans("NoEMail"), 'warning.png');
 				print '</td>' ;
 			}
 
@@ -615,64 +705,11 @@ if ($resql)
 	}
 	else
 	{
-		$langs->load("mails");
-
 		if ($action != 'presend')
 		{
 			print '<div class="tabsAction">';
 			print '<a href="'.$_SERVER["PHP_SELF"].'?mode=sendremind&action=presend" class="butAction" name="buttonsendremind" value="'.dol_escape_htmltag($langs->trans("SendRemind")).'">'.$langs->trans("SendRemind").'</a>';
 			print '</div>';
-		}
-		else
-		{
-			include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
-			$formmail = new FormMail($db);
-
-			print '<br>';
-			print_fiche_titre($langs->trans("SendRemind"),'','').'<br>';
-
-			$topicmail="MailTopicSendRemindUnpaidInvoices";
-			$modelmail="facture_relance";
-
-			// Cree l'objet formulaire mail
-			include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
-			$formmail = new FormMail($db);
-			$formmail->fromtype = 'user';
-			$formmail->fromid   = $user->id;
-			$formmail->fromname = $user->getFullName($langs);
-			$formmail->frommail = $user->email;
-			$formmail->withfrom=1;
-			$liste=array();
-			$formmail->withto='';
-			$formmail->withtocc=1;
-			$formmail->withtoccc=$conf->global->MAIN_EMAIL_USECCC;
-			$formmail->withtopic=$langs->transnoentities($topicmail, '__FACREF__', '__REFCLIENT__');
-			$formmail->withfile=$langs->trans("EachInvoiceWillBeAttachedToEmail");
-			$formmail->withbody=1;
-			$formmail->withdeliveryreceipt=1;
-			$formmail->withcancel=1;
-			// Tableau des substitutions
-			//$formmail->substit['__FACREF__']='';
-			$formmail->substit['__SIGNATURE__']=$user->signature;
-			//$formmail->substit['__REFCLIENT__']='';
-			$formmail->substit['__PERSONALIZED__']='';
-			$formmail->substit['__CONTACTCIVNAME__']='';
-
-			// Tableau des parametres complementaires du post
-			$formmail->param['action']=$action;
-			$formmail->param['models']=$modelmail;
-			$formmail->param['facid']=$object->id;
-			$formmail->param['returnurl']=$_SERVER["PHP_SELF"].'?id='.$object->id;
-
-			print $formmail->get_form();
-
-
-		}
-
-		if ($resultmasssend)
-		{
-			print '<br><strong>'.$langs->trans("ResultOfMassSending").':</strong><br>'."\n";
-			print $resultmasssend;
 			print '<br>';
 		}
 	}
