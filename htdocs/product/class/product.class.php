@@ -1183,6 +1183,7 @@ class Product extends CommonObject
 			}
 			//print 'x'.$id.'-'.$newprice.'-'.$newpricebase.'-'.$price.'-'.$price_ttc.'-'.$price_min.'-'.$price_min_ttc;
 
+
 			//Local taxes
 			$localtax1=get_localtax($newvat,1);
 			$localtax2=get_localtax($newvat,2);

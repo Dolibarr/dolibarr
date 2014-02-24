@@ -3,7 +3,7 @@
  * Copyright (C) 2006		    Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2007		    Patrick Raguin			  <patrick.raguin@gmail.com>
  * Copyright (C) 2010-2012	Regis Houssin			    <regis.houssin@capnetworks.com>
- * Copyright (C) 2013       Florian Henry		  	  <florian.henry@open-concept.pro>
+ * Copyright (C) 2013-2014  Florian Henry		  	  <florian.henry@open-concept.pro>
  * Copyright (C) 2013       Juanjo Menent		  	  <jmenent@2byte.es>
  * Copyright (C) 2013       Christophe Battarel		<contact@altairis.fr>
  * Copyright (C) 2013       Alexandre Spangaro    <alexandre.spangaro@gmail.com>
@@ -134,6 +134,16 @@ function societe_prepare_head($object)
 		if($nbFiles > 0) $head[$h][1].= ' ('.$nbFiles.')';
         $head[$h][2] = 'document';
         $h++;
+    }
+
+    if (($object->client==1 || $object->client==2 || $object->client==3) && (! empty ( $conf->global->PRODUIT_CUSTOMER_PRICES )))
+    {
+    	$langs->load("products");
+	    // price
+	    $head[$h][0] = DOL_URL_ROOT.'/societe/price.php?socid='.$object->id;
+	    $head[$h][1] = $langs->trans("CustomerPrices");
+	    $head[$h][2] = 'price';
+	    $h++;
     }
 
     // Log

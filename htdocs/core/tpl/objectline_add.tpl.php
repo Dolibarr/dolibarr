@@ -107,7 +107,7 @@ if (! empty($conf->margin->enabled)) {
 							'select_type'
 					)
 			);
-			$form->select_produits('', 'idprod', '', $conf->product->limit_size, $buyer->price_level, 1, 2, '', 3, $ajaxoptions);
+			$form->select_produits('', 'idprod', '', $conf->product->limit_size, $buyer->price_level, 1, 2, '', 3, $ajaxoptions,$buyer->id);
 		}
 		?>
 		<span id="add_product_area" class="hideobject"> | <input type="checkbox" id="add_product_checkbox" name="add_product" value="1" />
@@ -270,6 +270,9 @@ $(document).ready(function() {
 				'id': $(this).val(),
 				'price_level': <?php echo empty($buyer->price_level)?1:$buyer->price_level; ?>,
 				'pbq': $("option:selected", this).attr('pbq')
+				<?php if (! empty ( $conf->global->PRODUIT_CUSTOMER_PRICES )) {?>
+				,'socid': <?php echo $buyer->id; ?>
+				<?php }?>
 				},
 			function(data) {
 				if (typeof data != 'undefined') {

@@ -217,4 +217,9 @@ DefinitionOfBarCodeForThirdpartyNotComplete=Définition du type ou valeure du co
 BarCodeDataForProduct=Information de code barre du produit %s :
 BarCodeDataForThirdparty=Information de code barre du tiers %s :
 BarcodeStickersMask=xxx
-
+PriceByCustomer=Prix par clients
+PriceCatalogue=Prix unique
+PricingRule=Régles de prix
+AddCustomerPrice=Ajouter un prix par client
+ForceUpdateChildPriceSoc=Mettre le même prix pour les filliales
+PriceByCustomerLog=Historique prix par client
