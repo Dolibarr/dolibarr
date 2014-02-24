@@ -198,7 +198,7 @@ class Project extends CommonObject
         if (dol_strlen(trim($this->ref)) > 0)
         {
             $sql = "UPDATE " . MAIN_DB_PREFIX . "projet SET";
-            $sql.= " ref='" . $this->ref . "'";
+            $sql.= " ref='" . $this->db->escape($this->ref) . "'";
             $sql.= ", title = '" . $this->db->escape($this->title) . "'";
             $sql.= ", description = '" . $this->db->escape($this->description) . "'";
             $sql.= ", fk_soc = " . ($this->socid > 0 ? $this->socid : "null");
