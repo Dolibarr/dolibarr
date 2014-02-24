@@ -1,7 +1,9 @@
 #!/bin/bash
 
-OS=$(/bin/bash /vagrant/shell/os-detect.sh ID)
-CODENAME=$(/bin/bash /vagrant/shell/os-detect.sh CODENAME)
+VAGRANT_CORE_FOLDER=$(cat "/.puphpet-stuff/vagrant-core-folder.txt")
+
+OS=$(/bin/bash "${VAGRANT_CORE_FOLDER}/shell/os-detect.sh" ID)
+CODENAME=$(/bin/bash "${VAGRANT_CORE_FOLDER}/shell/os-detect.sh" CODENAME)
 
 # Directory in which librarian-puppet should manage its modules directory
 PUPPET_DIR=/etc/puppet/
@@ -9,7 +11,7 @@ PUPPET_DIR=/etc/puppet/
 $(which git > /dev/null 2>&1)
 FOUND_GIT=$?
 
-if [ "$FOUND_GIT" -ne '0' ] && [ ! -f /.puphpet-stuff/librarian-puppet-installed ]; then
+if [ "${FOUND_GIT}" -ne '0' ] && [ ! -f /.puphpet-stuff/librarian-puppet-installed ]; then
     $(which apt-get > /dev/null 2>&1)
     FOUND_APT=$?
     $(which yum > /dev/null 2>&1)
@@ -27,15 +29,15 @@ if [ "$FOUND_GIT" -ne '0' ] && [ ! -f /.puphpet-stuff/librarian-puppet-installed
     echo 'Finished installing git'
 fi
 
-if [[ ! -d "$PUPPET_DIR" ]]; then
-    mkdir -p "$PUPPET_DIR"
-    echo "Created directory $PUPPET_DIR"
+if [[ ! -d "${PUPPET_DIR}" ]]; then
+    mkdir -p "${PUPPET_DIR}"
+    echo "Created directory ${PUPPET_DIR}"
 fi
 
-cp "/vagrant/puppet/Puppetfile" "$PUPPET_DIR"
+cp "${VAGRANT_CORE_FOLDER}/puppet/Puppetfile" "${PUPPET_DIR}"
 echo "Copied Puppetfile"
 
-if [ "$OS" == 'debian' ] || [ "$OS" == 'ubuntu' ]; then
+if [ "${OS}" == 'debian' ] || [ "${OS}" == 'ubuntu' ]; then
     if [[ ! -f /.puphpet-stuff/librarian-base-packages ]]; then
         echo 'Installing base packages for librarian'
         apt-get install -y build-essential ruby-dev >/dev/null
@@ -45,7 +47,7 @@ if [ "$OS" == 'debian' ] || [ "$OS" == 'ubuntu' ]; then
     fi
 fi
 
-if [ "$OS" == 'ubuntu' ]; then
+if [ "${OS}" == 'ubuntu' ]; then
     if [[ ! -f /.puphpet-stuff/librarian-libgemplugin-ruby ]]; then
         echo 'Updating libgemplugin-ruby (Ubuntu only)'
         apt-get install -y libgemplugin-ruby >/dev/null
@@ -54,7 +56,7 @@ if [ "$OS" == 'ubuntu' ]; then
         touch /.puphpet-stuff/librarian-libgemplugin-ruby
     fi
 
-    if [ "$CODENAME" == 'lucid' ] && [ ! -f /.puphpet-stuff/librarian-rubygems-update ]; then
+    if [ "${CODENAME}" == 'lucid' ] && [ ! -f /.puphpet-stuff/librarian-rubygems-update ]; then
         echo 'Updating rubygems (Ubuntu Lucid only)'
         echo 'Ignore all "conflicting chdir" errors!'
         gem install rubygems-update >/dev/null
@@ -71,12 +73,17 @@ if [[ ! -f /.puphpet-stuff/librarian-puppet-installed ]]; then
     echo 'Finished installing librarian-puppet'
 
     echo 'Running initial librarian-puppet'
-    cd "$PUPPET_DIR" && librarian-puppet install --clean >/dev/null
+    cd "${PUPPET_DIR}" && librarian-puppet install --clean >/dev/null
     echo 'Finished running initial librarian-puppet'
 
     touch /.puphpet-stuff/librarian-puppet-installed
 else
     echo 'Running update librarian-puppet'
-    cd "$PUPPET_DIR" && librarian-puppet update >/dev/null
+    cd "${PUPPET_DIR}" && librarian-puppet update >/dev/null
     echo 'Finished running update librarian-puppet'
 fi
+
+echo "Replacing puppetlabs-git module with custom"
+rm -rf /etc/puppet/modules/git
+git clone https://github.com/puphpet/puppetlabs-git.git /etc/puppet/modules/git
+echo "Finished replacing puppetlabs-git module with custom"
