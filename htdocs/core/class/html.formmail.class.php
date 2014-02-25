@@ -35,7 +35,7 @@ class FormMail
 {
     var $db;
 
-    var $withform;
+    var $withform;				// 1=Include HTML form tag and show submit button, 0=Do not include form tag and submit button, -1=Do not include form tag but include submit button
 
     var $fromname;
     var $frommail;
@@ -43,7 +43,7 @@ class FormMail
     var $replytomail;
     var $toname;
     var $tomail;
-
+	
     var $withsubstit;			// Show substitution array
     var $withfrom;
     var $withto;				// Show recipient emails
@@ -249,7 +249,7 @@ class FormMail
         	$form=new Form($this->db);
 
         	$out.= "\n<!-- Debut form mail -->\n";
-        	if ($this->withform)
+        	if ($this->withform == 1)
         	{
         		$out.= '<form method="POST" name="mailform" enctype="multipart/form-data" action="'.$this->param["returnurl"].'">'."\n";
         		$out.= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />';
@@ -619,7 +619,7 @@ class FormMail
         		$out.= "</td></tr>\n";
         	}
 
-        	if (! empty($this->withform))
+        	if ($this->withform == 1 || $this->withform == -1)
         	{
         		$out.= '<tr><td align="center" colspan="2"><center>';
         		$out.= '<input class="button" type="submit" id="sendmail" name="sendmail" value="'.$langs->trans("SendMail").'"';
@@ -639,7 +639,7 @@ class FormMail
 
         	$out.= '</table>'."\n";
 
-        	if (! empty($this->withform)) $out.= '</form>'."\n";
+        	if ($this->withform == 1) $out.= '</form>'."\n";
         	$out.= "<!-- Fin form mail -->\n";
 
         	return $out;
