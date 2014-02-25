@@ -4,6 +4,7 @@ English Dolibarr ChangeLog
 
 ***** ChangeLog for 3.6 compared to 3.5.* *****
 For users:
+- New: Add form search customer order on commercial main page.
 - New: Can input barcode during product creation step.
 - New: Add autonumbering of barcode value for products.
 - New: Can create contract from an order.
@@ -31,7 +32,6 @@ TODO
 - New: [ task #926 ] Add extrafield feature on order lines.
 - New: [ task #927 ] Add extrafield feature on Proposal lines.
 - New: [ task #928 ] Add extrafield feature on invoice lines.
-
 
 For translators:
 - Update language files.

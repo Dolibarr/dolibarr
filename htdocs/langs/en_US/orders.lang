@@ -55,6 +55,7 @@ DraftOrWaitingShipped=Draft or validated not yet shipped
 MenuOrdersToBill=Orders delivered
 MenuOrdersToBill2=Orders to bill
 SearchOrder=Search order
+SearchACustomerOrder=Search a customer order
 ShipProduct=Ship product
 Discount=Discount
 CreateOrder=Create Order
