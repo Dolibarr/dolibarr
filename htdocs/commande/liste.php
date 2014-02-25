@@ -417,8 +417,10 @@ if ($resql)
 
 	print '</table>';
 
-	print '</form>';
+	print '</form>'."\n";
 
+	print '<br>'.img_help(1,'').' '.$langs->trans("ToBillSeveralOrderSelectCustomer", $langs->transnoentitiesnoconv("CreateInvoiceForThisCustomer")).'<br>';
+	
 	$db->free($resql);
 }
 else

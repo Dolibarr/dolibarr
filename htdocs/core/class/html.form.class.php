@@ -1425,9 +1425,10 @@ class Form
      *  @param		string		$selected_input_value	Value of preselected input text (with ajax)
      *  @param		int			$hidelabel				Hide label (0=no, 1=yes, 2=show search icon (before) and placeholder, 3 search icon after)
      *  @param		array		$ajaxoptions			Options for ajax_autocompleter
+     *  @param      int		$socid     		Thridparty Id
      *  @return		void
      */
-    function select_produits($selected='', $htmlname='productid', $filtertype='', $limit=20, $price_level=0, $status=1, $finished=2, $selected_input_value='', $hidelabel=0, $ajaxoptions=array())
+    function select_produits($selected='', $htmlname='productid', $filtertype='', $limit=20, $price_level=0, $status=1, $finished=2, $selected_input_value='', $hidelabel=0, $ajaxoptions=array(),$socid=0)
     {
         global $langs,$conf;
 
@@ -1446,6 +1447,10 @@ class Form
             }
             // mode=1 means customers products
             $urloption='htmlname='.$htmlname.'&outjson=1&price_level='.$price_level.'&type='.$filtertype.'&mode=1&status='.$status.'&finished='.$finished;
+            //Price by customer
+            if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES) && !empty($socid)) {
+            	$urloption.='&socid='.$socid;
+            }
             print ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT.'/product/ajax/products.php', $urloption, $conf->global->PRODUIT_USE_SEARCH_TO_SELECT, 0, $ajaxoptions);
             if (empty($hidelabel)) print $langs->trans("RefOrLabel").' : ';
             else if ($hidelabel > 1) {
@@ -1462,7 +1467,7 @@ class Form
         }
         else
 		{
-            print $this->select_produits_list($selected,$htmlname,$filtertype,$limit,$price_level,'',$status,$finished,0);
+            print $this->select_produits_list($selected,$htmlname,$filtertype,$limit,$price_level,'',$status,$finished,0,$socid);
         }
     }
 
@@ -1478,9 +1483,10 @@ class Form
      *	@param		int		$status         -1=Return all products, 0=Products not on sell, 1=Products on sell
      *  @param      int		$finished       Filter on finished field: 2=No filter
      *  @param      int		$outputmode     0=HTML select string, 1=Array
+     *  @param      int		$socid     		Thridparty Id
      *  @return     array    				Array of keys for json
      */
-    function select_produits_list($selected='',$htmlname='productid',$filtertype='',$limit=20,$price_level=0,$filterkey='',$status=1,$finished=2,$outputmode=0)
+    function select_produits_list($selected='',$htmlname='productid',$filtertype='',$limit=20,$price_level=0,$filterkey='',$status=1,$finished=2,$outputmode=0,$socid=0)
     {
         global $langs,$conf,$user,$db;
 
@@ -1489,6 +1495,13 @@ class Form
 
         $sql = "SELECT ";
         $sql.= " p.rowid, p.label, p.ref, p.description, p.fk_product_type, p.price, p.price_ttc, p.price_base_type, p.tva_tx, p.duration, p.stock";
+
+        //Price by customer
+        if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES) && !empty($socid)) {
+        	$sql.=' ,pcp.rowid as idprodcustprice, pcp.price as custprice, pcp.price_ttc as custprice_ttc,';
+        	$sql.=' pcp.price_base_type as custprice_base_type, pcp.tva_tx as custtva_tx';
+        }
+        
         // Multilang : we add translation
         if (! empty($conf->global->MAIN_MULTILANGS))
         {
@@ -1498,15 +1511,19 @@ class Form
 		if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY))
 		{
 			$sql.= ", (SELECT pp.rowid FROM ".MAIN_DB_PREFIX."product_price as pp WHERE pp.fk_product = p.rowid";
-			if ($price_level >= 1) $sql.= " AND price_level=".$price_level;
+			if ($price_level >= 1 && !empty($conf->global->PRODUIT_MULTIPRICES)) $sql.= " AND price_level=".$price_level;
 			$sql.= " ORDER BY date_price";
 			$sql.= " DESC LIMIT 1) as price_rowid";
 			$sql.= ", (SELECT pp.price_by_qty FROM ".MAIN_DB_PREFIX."product_price as pp WHERE pp.fk_product = p.rowid";
-			if ($price_level >= 1) $sql.= " AND price_level=".$price_level;
+			if ($price_level >= 1 && !empty($conf->global->PRODUIT_MULTIPRICES)) $sql.= " AND price_level=".$price_level;
 			$sql.= " ORDER BY date_price";
 			$sql.= " DESC LIMIT 1) as price_by_qty";
 		}
         $sql.= " FROM ".MAIN_DB_PREFIX."product as p";
+        //Price by customer
+        if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES) && !empty($socid)) {
+        	$sql.=" LEFT JOIN  ".MAIN_DB_PREFIX."product_customer_price as pcp ON pcp.fk_soc=".$socid." AND pcp.fk_product=p.rowid";
+        }
         // Multilang : we add translation
         if (! empty($conf->global->MAIN_MULTILANGS))
         {
@@ -1568,7 +1585,7 @@ class Form
 				$optJson = array();
 				$objp = $this->db->fetch_object($result);
 
-				if (!empty($objp->price_by_qty) && $objp->price_by_qty == 1)
+				if (!empty($objp->price_by_qty) && $objp->price_by_qty == 1 && !empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY))
 				{ // Price by quantity will return many prices for the same product
 					$sql = "SELECT rowid, quantity, price, unitprice, remise_percent, remise";
 					$sql.= " FROM ".MAIN_DB_PREFIX."product_price_by_qty";
@@ -1684,7 +1701,7 @@ class Form
         $found=0;
 
         // Multiprice
-        if ($price_level >= 1)		// If we need a particular price level (from 1 to 6)
+        if ($price_level >= 1 && $conf->global->PRODUIT_MULTIPRICES)		// If we need a particular price level (from 1 to 6)
         {
             $sql = "SELECT price, price_ttc, price_base_type, tva_tx";
             $sql.= " FROM ".MAIN_DB_PREFIX."product_price";
@@ -1694,7 +1711,7 @@ class Form
             $sql.= " ORDER BY date_price";
             $sql.= " DESC LIMIT 1";
 
-            dol_syslog(get_class($this)."::constructProductListOption search price for level '.$price_level.' sql=".$sql);
+            dol_syslog(get_class($this).'::constructProductListOption search price for level '.$price_level.' sql='.$sql);
             $result2 = $this->db->query($sql);
             if ($result2)
             {
@@ -1725,7 +1742,7 @@ class Form
         }
 
 		// Price by quantity
-		if (!empty($objp->quantity) && $objp->quantity >= 1)
+		if (!empty($objp->quantity) && $objp->quantity >= 1 && $conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY)
 		{
 			$found = 1;
 			$outqty=$objp->quantity;
@@ -1759,6 +1776,29 @@ class Form
 		{
 			$opt.=" - ".$langs->trans("Discount")." : ".vatrate($objp->remise_percent).' %';
 			$outval.=" - ".$langs->transnoentities("Discount")." : ".vatrate($objp->remise_percent).' %';
+		}
+		
+		//Price by customer
+		if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
+			if (!empty($objp->idprodcustprice)) {
+				$found = 1;
+		
+				if ($objp->custprice_base_type == 'HT')
+				{
+					$opt.= price($objp->custprice,1).' '.$currencytext.' '.$langs->trans("HT");
+					$outval.= price($objp->custprice,1).' '.$currencytextnoent.' '.$langs->transnoentities("HT");
+				}
+				else
+				{
+					$opt.= price($objp->custprice_ttc,1).' '.$currencytext.' '.$langs->trans("TTC");
+					$outval.= price($objp->custprice_ttc,1).' '.$currencytextnoent.' '.$langs->transnoentities("TTC");
+				}
+		
+				$outprice_ht=price($objp->custprice);
+				$outprice_ttc=price($objp->custprice_ttc);
+				$outpricebasetype=$objp->custprice_base_type;
+				$outtva_tx=$objp->custtva_tx;
+			}
 		}
 
         // If level no defined or multiprice not found, we used the default price
@@ -3896,7 +3936,7 @@ class Form
      *
      *	@param	string	$htmlname       Name of html select area
      *	@param	array	$array          Array with key+value
-     *	@param	int		$id             Preselected key
+     *	@param	string	$id             Preselected key
      *	@param	int		$show_empty     1 si il faut ajouter une valeur vide dans la liste, 0 sinon
      *	@param	int		$key_in_label   1 pour afficher la key dans la valeur "[key] value"
      *	@param	int		$value_as_key   1 to use value as key

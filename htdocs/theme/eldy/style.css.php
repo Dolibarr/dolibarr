@@ -447,7 +447,7 @@ td.showDragHandle {
 	float: none;
 	vertical-align: top;
 }
-#id-<?php echo $right; ?> {
+#id-right {	/* This must stay id-right ant not be replaced with echo $right */
 	width: 100%;
 }
 
@@ -480,7 +480,7 @@ div.fichehalfright {
 	<?php if (empty($conf->dol_optimize_smallscreen))   { print "width: 50%;\n"; } ?>
 }
 div.ficheaddleft {
-	<?php if (empty($conf->dol_optimize_smallscreen))   { print "padding-left: 16px;\n"; }
+	<?php if (empty($conf->dol_optimize_smallscreen))   { print "padding-".$left.": 16px;\n"; }
 	else print "margin-top: 10px;\n"; ?>
 }
 .containercenter {
@@ -513,7 +513,7 @@ div#tmenu_tooltip {
 	display:none;
 <?php } else { ?>
 	height: <?php print ($heightmenu2+1); ?>px;
-	padding-right: 100px;
+	padding-<?php echo $right; ?>: 100px;
 	background: <?php echo $colorbackvmenu; ?>;
 	box-shadow: 0 0 6px rgba(0, 0, 0, .4) !important;
     <?php if ($usecss3) { ?>
@@ -2717,9 +2717,11 @@ a.ui-link, a.ui-link:hover, .ui-btn:hover, span.ui-btn-text:hover, span.ui-btn-i
 	min-width: .4em;
 	padding-left: 10px;
 	padding-right: 10px;
-	<?php if (empty($dol_use_jmobile) || 1==1) { ?>
+	<?php if (! empty($dol_use_jmobile)) { ?>
+	font-size: 13px;
+	<?php } else { ?>
 	font-size: <?php print $fontsize ?>px;
-    <?php } ?>
+	<?php } ?>
 	/* white-space: normal; */		/* Warning, enable this break the truncate feature */
 }
 .ui-btn-icon-right .ui-btn-inner {
@@ -2817,7 +2819,7 @@ ul.ulmenu {
 
 /* Style for first level menu with jmobile */
 .ui-bar-b, .lilevel0 {
-	border: 1px solid #456f9a;
+	border: 1px solid #5f5f7a !important;
     background: rgb(<?php echo $colorbacktitle1; ?>);
     background-repeat: repeat-x;
 	<?php if ($usecss3) { ?>

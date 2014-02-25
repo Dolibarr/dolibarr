@@ -237,6 +237,9 @@ class DoliDBMssql extends DoliDB
 	 */
 	function getDriverInfo()
 	{
+		// FIXME: Dummy method
+		// TODO: Implement
+
 		return '';
 	}
 
@@ -310,15 +313,16 @@ class DoliDBMssql extends DoliDB
 	/**
 	 * Annulation d'une transaction et retour aux anciennes valeurs
 	 *
-	 * @return	    int         1 si annulation ok ou transaction non ouverte, 0 en cas d'erreur
+	 * @param	string	$log	Add more log to default log line
+	 * @return	int             1 si annulation ok ou transaction non ouverte, 0 en cas d'erreur
 	 */
-	function rollback()
+	function rollback($log='')
 	{
 		if ($this->transaction_opened<=1)
 		{
 			$ret=$this->query("ROLLBACK TRANSACTION");
 			$this->transaction_opened=0;
-			dol_syslog("ROLLBACK Transaction",LOG_DEBUG);
+			dol_syslog("ROLLBACK Transaction".($log?' '.$log:''),LOG_DEBUG);
 			return $ret;
 		}
 		else
@@ -805,6 +809,23 @@ class DoliDBMssql extends DoliDB
 	}
 
 	/**
+	 *	List information of columns into a table.
+	 *
+	 *	@param	string	$table		Name of table
+	 *	@return	array				Tableau des informations des champs de la table
+	 */
+	function DDLInfoTable($table)
+	{
+
+		// FIXME: Dummy method
+		// TODO: Implement
+		// May help: https://stackoverflow.com/questions/600446/sql-server-how-do-you-return-the-column-names-from-a-table
+
+		$infotables=array();
+		return $infotables;
+	}
+
+	/**
 	 *	Create a table into database
 	 *
 	 *	@param	    string	$table 			Nom de la table
@@ -975,6 +996,24 @@ class DoliDBMssql extends DoliDB
 		else return 1;
 	}
 
+	/**
+	 * 	Create a user and privileges to connect to database (even if database does not exists yet)
+	 *
+	 *	@param	string	$dolibarr_main_db_host 		Ip serveur
+	 *	@param	string	$dolibarr_main_db_user 		Nom user a creer
+	 *	@param	string	$dolibarr_main_db_pass 		Mot de passe user a creer
+	 *	@param	string	$dolibarr_main_db_name		Database name where user must be granted
+	 *	@return	int									<0 if KO, >=0 if OK
+	 */
+	function DDLCreateUser($dolibarr_main_db_host,$dolibarr_main_db_user,$dolibarr_main_db_pass,$dolibarr_main_db_name)
+	{
+		// FIXME: Dummy method
+		// TODO: Implement
+		// May help: http://msdn.microsoft.com/fr-fr/library/ms173463.aspx
+
+		// Always fail for now
+		return -1;
+	}
 
     /**
      *	Return charset used to store data in database
@@ -983,15 +1022,9 @@ class DoliDBMssql extends DoliDB
      */
     function getDefaultCharacterSetDatabase()
 	{
-		/*
-		 $resql=$this->query('SHOW VARIABLES LIKE \'character_set_database\'');
-		 if (!$resql)
-		 {
-		 return $this->forcecharset;
-		 }
-		 $liste=$this->fetch_array($resql);
-		 return $liste['Value'];
-		 */
+		// FIXME: Dummy method
+		// TODO: Implement
+
 		return '';
 	}
 
@@ -1002,25 +1035,10 @@ class DoliDBMssql extends DoliDB
 	 */
 	function getListOfCharacterSet()
 	{
-		/*
-		 $resql=$this->query('SHOW CHARSET');
-		 $liste = array();
-		 if ($resql)
-		 {
-			$i = 0;
-			while ($obj = $this->fetch_object($resql) )
-			{
-			$liste[$i]['charset'] = $obj->Charset;
-			$liste[$i]['description'] = $obj->Description;
-			$i++;
-			}
-			$this->free($resql);
-	  } else {
-	  return null;
-	  }
-	  return $liste;
-	  */
-		return ''; // attente debuggage
+		// FIXME: Dummy method
+		// TODO: Implement
+
+		return '';
 	}
 
 	/**
@@ -1046,24 +1064,10 @@ class DoliDBMssql extends DoliDB
 	 */
 	function getListOfCollation()
 	{
-		/*
-		 $resql=$this->query('SHOW COLLATION');
-		 $liste = array();
-		 if ($resql)
-			{
-			$i = 0;
-			while ($obj = $this->fetch_object($resql) )
-			{
-			$liste[$i]['collation'] = $obj->Collation;
-			$i++;
-			}
-			$this->free($resql);
-			} else {
-			return null;
-			}
-			return $liste;
-			*/
-		return ''; // attente debugage
+		// FIXME: Dummy method
+		// TODO: Implement
+
+		return '';
 	}
 
 	/**
@@ -1073,6 +1077,8 @@ class DoliDBMssql extends DoliDB
 	 */
 	function getPathOfDump()
 	{
+		// FIXME: Dummy method
+		// TODO: Implement
 
 	    return '';
 	}
@@ -1084,8 +1090,41 @@ class DoliDBMssql extends DoliDB
 	 */
 	function getPathOfRestore()
 	{
+		// FIXME: Dummy method
+		// TODO: Implement
 
 	    return '';
+	}
+
+	/**
+	 * Return value of server parameters
+	 *
+	 * @param	string	$filter		Filter list on a particular value
+	 * @return	array				Array of key-values (key=>value)
+	 */
+	function getServerParametersValues($filter='')
+	{
+		// FIXME: Dummy method
+		// TODO: Implement
+		// May help: SELECT SERVERPROPERTY
+
+		$result=array();
+		return $result;
+	}
+
+	/**
+	 * Return value of server status
+	 *
+	 * @param	string	$filter		Filter list on a particular value
+	 * @return  array				Array of key-values (key=>value)
+	 */
+	function getServerStatusValues($filter='')
+	{
+		// FIXME: Dummy method
+		// TODO: Implement
+		// May help: http://www.experts-exchange.com/Database/MS-SQL-Server/Q_20971756.html
+
+		return array();
 	}
 }
 

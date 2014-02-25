@@ -84,6 +84,7 @@ class DoliDBSqlite extends DoliDB
     {
         global $conf,$langs;
 
+        // Note that having "static" property for "$forcecharset" and "$forcecollate" will make error here in strict mode, so they are not static
         if (! empty($conf->db->character_set)) $this->forcecharset=$conf->db->character_set;
         if (! empty($conf->db->dolibarr_main_db_collation)) $this->forcecollate=$conf->db->dolibarr_main_db_collation;
 
@@ -389,6 +390,9 @@ class DoliDBSqlite extends DoliDB
      */
     function getDriverInfo()
     {
+	    // FIXME: Dummy method
+	    // TODO: Implement
+
     	return '';
     }
 
@@ -1181,7 +1185,7 @@ class DoliDBSqlite extends DoliDB
     {
         $sql = "INSERT INTO user ";
         $sql.= "(Host,User,password,Select_priv,Insert_priv,Update_priv,Delete_priv,Create_priv,Drop_priv,Index_Priv,Alter_priv,Lock_tables_priv)";
-        $sql.= " VALUES ('".addslashes($dolibarr_main_db_host)."','".addslashes($dolibarr_main_db_user)."',password('".addslashes($dolibarr_main_db_pass)."')";
+        $sql.= " VALUES ('".$this->escape($dolibarr_main_db_host)."','".$this->escape($dolibarr_main_db_user)."',password('".addslashes($dolibarr_main_db_pass)."')";
         $sql.= ",'Y','Y','Y','Y','Y','Y','Y','Y','Y')";
 
         dol_syslog(get_class($this)."::DDLCreateUser", LOG_DEBUG);	// No sql to avoid password in log
@@ -1194,7 +1198,7 @@ class DoliDBSqlite extends DoliDB
 
         $sql = "INSERT INTO db ";
         $sql.= "(Host,Db,User,Select_priv,Insert_priv,Update_priv,Delete_priv,Create_priv,Drop_priv,Index_Priv,Alter_priv,Lock_tables_priv)";
-        $sql.= " VALUES ('".addslashes($dolibarr_main_db_host)."','".addslashes($dolibarr_main_db_name)."','".addslashes($dolibarr_main_db_user)."'";
+        $sql.= " VALUES ('".$this->escape($dolibarr_main_db_host)."','".$this->escape($dolibarr_main_db_name)."','".addslashes($dolibarr_main_db_user)."'";
         $sql.= ",'Y','Y','Y','Y','Y','Y','Y','Y','Y')";
 
         dol_syslog(get_class($this)."::DDLCreateUser sql=".$sql);
@@ -1305,44 +1309,42 @@ class DoliDBSqlite extends DoliDB
     }
 
 	/**
-	 *	Return value of server parameters
+	 * Return value of server parameters
 	 *
-	 *  @param	string	$filter		Filter list on a particular value
-	 * 	@return	string				Value for parameter
+	 * @param	string	$filter		Filter list on a particular value
+	 * @return	array				Array of key-values (key=>value)
 	 */
     function getServerParametersValues($filter='')
     {
         $result=array();
 
         $sql='SHOW VARIABLES';
-        if ($filter) $sql.=" LIKE '".addslashes($filter)."'";
+        if ($filter) $sql.=" LIKE '".$this->escape($filter)."'";
         $resql=$this->query($sql);
         if ($resql)
         {
-            $obj=$this->fetch_object($resql);
-            $result[$obj->Variable_name]=$obj->Value;
+            while ($obj=$this->fetch_object($resql)) $result[$obj->Variable_name]=$obj->Value;
         }
 
         return $result;
     }
 
 	/**
-	 *	Return value of server status
+	 * Return value of server status
 	 *
-	 * 	@param	string	$filter		Filter list on a particular value
-	 * 	@return	string				Value for parameter
+	 * @param	string	$filter		Filter list on a particular value
+	 * @return  array				Array of key-values (key=>value)
 	 */
     function getServerStatusValues($filter='')
     {
         $result=array();
 
         $sql='SHOW STATUS';
-        if ($filter) $sql.=" LIKE '".addslashes($filter)."'";
+        if ($filter) $sql.=" LIKE '".$this->escape($filter)."'";
         $resql=$this->query($sql);
         if ($resql)
         {
-            $obj=$this->fetch_object($resql);
-            $result[$obj->Variable_name]=$obj->Value;
+            while ($obj=$this->fetch_object($resql)) $result[$obj->Variable_name]=$obj->Value;
         }
 
         return $result;

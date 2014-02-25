@@ -85,6 +85,7 @@ class DoliDBPgsql extends DoliDB
 	{
 		global $conf,$langs;
 
+        // Note that having "static" property for "$forcecharset" and "$forcecollate" will make error here in strict mode, so they are not static
 		if (! empty($conf->db->character_set)) $this->forcecharset=$conf->db->character_set;
 		if (! empty($conf->db->dolibarr_main_db_collation))	$this->forcecollate=$conf->db->dolibarr_main_db_collation;
 
@@ -466,6 +467,9 @@ class DoliDBPgsql extends DoliDB
 	 */
 	function getDriverInfo()
 	{
+		// FIXME: Dummy method
+		// TODO: Implement
+
 		return '';
 	}
 
@@ -541,16 +545,17 @@ class DoliDBPgsql extends DoliDB
 	/**
 	 * 	Annulation d'une transaction et retour aux anciennes valeurs
 	 *
-	 * 	@return	    int         1 si annulation ok ou transaction non ouverte, 0 en cas d'erreur
+	 * 	@param	    string	$log	Add more log to default log line
+	 * 	@return	    int             1 si annulation ok ou transaction non ouverte, 0 en cas d'erreur
 	 */
-	function rollback()
+	function rollback($log='')
 	{
 		dol_syslog('',0,-1);
 		if ($this->transaction_opened<=1)
 		{
 			$ret=$this->query("ROLLBACK;");
 			$this->transaction_opened=0;
-			dol_syslog("ROLLBACK Transaction",LOG_DEBUG);
+			dol_syslog("ROLLBACK Transaction".($log?' '.$log:''),LOG_DEBUG);
 			return $ret;
 		}
 		else
@@ -1132,15 +1137,15 @@ class DoliDBPgsql extends DoliDB
 	/**
 	 * 	Create a user to connect to database
 	 *
-	 *	@param	string	$dolibarr_main_db_host 		Ip serveur
-	 *	@param	string	$dolibarr_main_db_user 		Nom user a creer
-	 *	@param	string	$dolibarr_main_db_pass 		Mot de passe user a creer
+	 *	@param	string	$dolibarr_main_db_host 		Ip server
+	 *	@param	string	$dolibarr_main_db_user 		Name of user to create
+	 *	@param	string	$dolibarr_main_db_pass 		Password of user to create
 	 *	@param	string	$dolibarr_main_db_name		Database name where user must be granted
 	 *	@return	int									<0 if KO, >=0 if OK
 	 */
 	function DDLCreateUser($dolibarr_main_db_host,$dolibarr_main_db_user,$dolibarr_main_db_pass,$dolibarr_main_db_name)
 	{
-		$sql = "create user \"".addslashes($dolibarr_main_db_user)."\" with password '".addslashes($dolibarr_main_db_pass)."'";
+		$sql = "CREATE USER '".$this->escape($dolibarr_main_db_user)."' with password '".$this->escape($dolibarr_main_db_pass)."'";
 
 		dol_syslog(get_class($this)."::DDLCreateUser", LOG_DEBUG);	// No sql to avoid password in log
 		$resql=$this->query($sql);
@@ -1382,25 +1387,46 @@ class DoliDBPgsql extends DoliDB
 	}
 
 	/**
-	 *	Return value of server parameters
+	 * Return value of server parameters
 	 *
-	 * 	@param	string	$filter		Filter list on a particular value
-	 *	@return	string				Value for parameter
+	 * @param	string	$filter		Filter list on a particular value
+	 * @return	array				Array of key-values (key=>value)
 	 */
 	function getServerParametersValues($filter='')
 	{
 		$result=array();
 
 		$resql='select name,setting from pg_settings';
-		if ($filter) $resql.=" WHERE name = '".addslashes($filter)."'";
+		if ($filter) $resql.=" WHERE name = '".$this->escape($filter)."'";
 		$resql=$this->query($resql);
 		if ($resql)
 		{
-			$obj=$this->fetch_object($resql);
-			$result[$obj->name]=$obj->setting;
+			while ($obj=$this->fetch_object($resql)) $result[$obj->name]=$obj->setting;
 		}
 
 		return $result;
+	}
+
+	/**
+	 * Return value of server status
+	 *
+	 * @param	string	$filter		Filter list on a particular value
+	 * @return  array				Array of key-values (key=>value)
+	 */
+	function getServerStatusValues($filter='')
+	{
+		/* This is to return current running requests.
+		$sql='SELECT datname,procpid,current_query FROM pg_stat_activity ORDER BY procpid';
+        if ($filter) $sql.=" LIKE '".$this->escape($filter)."'";
+        $resql=$this->query($sql);
+        if ($resql)
+        {
+            $obj=$this->fetch_object($resql);
+            $result[$obj->Variable_name]=$obj->Value;
+        }
+		*/
+
+		return array();
 	}
 }
 ?>

@@ -229,7 +229,7 @@ $styleuse='encoded';   // encoded/literal/literal wrapped
 $server->register(
     'getProductOrService',
     // Entry values
-    array('authentication'=>'tns:authentication','id'=>'xsd:string','ref'=>'xsd:string','ref_ext'=>'xsd:string'),
+    array('authentication'=>'tns:authentication','id'=>'xsd:string','ref'=>'xsd:string','ref_ext'=>'xsd:string','lang'=>'xsd:string'),
     // Exit values
     array('result'=>'tns:result','product'=>'tns:product'),
     $ns,
@@ -285,7 +285,7 @@ $server->register(
 $server->register(
 	'getProductsForCategory',
 	// Entry values
-	array('authentication'=>'tns:authentication','id'=>'xsd:string'),
+	array('authentication'=>'tns:authentication','id'=>'xsd:string','lang'=>'xsd:string'),
 	// Exit values
 	array('result'=>'tns:result','products'=>'tns:ProductsArray2'),
 	$ns,
@@ -303,9 +303,10 @@ $server->register(
  * @param	int			$id					Id of object
  * @param	string		$ref				Ref of object
  * @param	ref_ext		$ref_ext			Ref external of object
+ * @param	$lang		$lang				Force lang
  * @return	mixed
  */
-function getProductOrService($authentication,$id='',$ref='',$ref_ext='')
+function getProductOrService($authentication,$id='',$ref='',$ref_ext='',$lang='')
 {
     global $db,$conf,$langs;
 
@@ -327,6 +328,10 @@ function getProductOrService($authentication,$id='',$ref='',$ref_ext='')
 
     if (! $error)
     {
+
+    	$langcode=($lang?$lang:(empty($conf->global->MAIN_LANG_DEFAULT)?'auto':$conf->global->MAIN_LANG_DEFAULT));
+    	$langs->setDefaultLang($langcode);
+
         $fuser->getrights();
 
         if ($fuser->rights->produit->lire || $fuser->rights->service->lire)
@@ -701,8 +706,14 @@ function getListOfProductsOrServices($authentication,$filterproduct)
 }
 
 
-//  return category infos and children
-function getProductsForCategory($authentication,$id)
+/**
+ * getProductsForCategory
+ *
+ * @param	array		$authentication		Array of authentication information
+ * @param	array		$id					Category id
+ * @param	$lang		$lang				Force lang
+ * @return	array							Array result
+ */function getProductsForCategory($authentication,$id,$lang='')
 {
 	global $db,$conf,$langs;
 
@@ -726,6 +737,9 @@ function getProductsForCategory($authentication,$id)
 
 	if (! $error)
 	{
+		$langcode=($lang?$lang:(empty($conf->global->MAIN_LANG_DEFAULT)?'auto':$conf->global->MAIN_LANG_DEFAULT));
+		$langs->setDefaultLang($langcode);
+
 		$fuser->getrights();
 
 		if ($fuser->rights->produit->lire)

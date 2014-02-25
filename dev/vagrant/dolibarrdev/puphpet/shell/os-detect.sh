@@ -9,7 +9,7 @@ ID="unknown"
 CODENAME="unknown"
 RELEASE="unknown"
 
-if [ "$OS" == "Linux" ]; then
+if [ "${OS}" == "Linux" ]; then
     # detect centos
     grep "centos" /etc/issue -i -q
     if [ $? = '0' ]; then
@@ -36,12 +36,12 @@ fi
 
 declare -A info
 
-info[id]=$(echo "$ID" | tr '[A-Z]' '[a-z]')
-info[codename]=$(echo "$CODENAME" | tr '[A-Z]' '[a-z]')
-info[release]=$(echo "$RELEASE" | tr '[A-Z]' '[a-z]')
+info[id]=$(echo "${ID}" | tr '[A-Z]' '[a-z]')
+info[codename]=$(echo "${CODENAME}" | tr '[A-Z]' '[a-z]')
+info[release]=$(echo "${RELEASE}" | tr '[A-Z]' '[a-z]')
 
 if [ "$TYPE" ] ; then 
-    echo "${info[$TYPE]}"
+    echo "${info[${TYPE}]}"
 else 
     echo -e "ID\t${info[id]}"
     echo -e "CODENAME\t${info[codename]}"
