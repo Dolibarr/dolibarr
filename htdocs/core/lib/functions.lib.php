@@ -314,6 +314,7 @@ function dol_buildpath($path, $type=0)
  *	Create a clone of instance of object (new instance with same properties)
  * 	This function works for both PHP4 and PHP5
  *
+ *  @deprecated Dolibarr no longer supports PHP4, you can now use native function
  * 	@param	object	$object		Object to clone
  *	@return object				Object clone
  */
@@ -321,11 +322,6 @@ function dol_clone($object)
 {
 	dol_syslog("Functions.lib::dol_clone Clone object");
 
-	// We create dynamically a clone function, making a =
-	if (version_compare(phpversion(), '5.0') < 0 && ! function_exists('clone'))
-	{
-		eval('function clone($object){return($object);}');
-	}
 	$myclone=clone($object);
 	return $myclone;
 }
