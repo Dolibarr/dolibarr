@@ -70,7 +70,7 @@
 <!-- Label -->
 <tr><td class="fieldrequired"><?php echo $langs->trans("Label"); ?></td><td class="valeur"><input type="text" name="label" size="40" value="<?php echo GETPOST('label'); ?>"></td></tr>
 <!-- Code -->
-<tr><td class="fieldrequired"><?php echo $langs->trans("AttributeCode"); ?> (<?php echo $langs->trans("AlphaNumOnlyCharsAndNoSpace"); ?>)</td><td class="valeur"><input type="text" name="attrname" id="attrname"  size="10" value="<?php echo GETPOST('attrname'); ?>"></td></tr>
+<tr><td class="fieldrequired"><?php echo $langs->trans("AttributeCode"); ?></td><td class="valeur"><input type="text" name="attrname" id="attrname"  size="10" value="<?php echo GETPOST('attrname'); ?>"> (<?php echo $langs->trans("AlphaNumOnlyLowerCharsAndNoSpace"); ?>)</td></tr>
 <!-- Type -->
 <tr><td class="fieldrequired"><?php echo $langs->trans("Type"); ?></td><td class="valeur">
 <?php print $form->selectarray('type',$type2label,GETPOST('type')); ?>

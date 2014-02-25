@@ -117,8 +117,8 @@ if ($action == 'add')
 
 	    if (! $error)
 	    {
-    		// Type et taille non encore pris en compte => varchar(255)
-    		if (isset($_POST["attrname"]) && preg_match("/^\w[a-zA-Z0-9-_]*$/",$_POST['attrname']))
+    		// attrname must be alphabetical and lower case only 
+    		if (isset($_POST["attrname"]) && preg_match("/^[a-z0-9-_]+$/",$_POST['attrname']))
     		{
     			// Construct array for parameter (value of select list)
         		$default_value = GETPOST('default_value');
@@ -159,7 +159,7 @@ if ($action == 'add')
     		{
                 $error++;
     		    $langs->load("errors");
-    			$mesg=$langs->trans("ErrorFieldCanNotContainSpecialCharacters",$langs->transnoentities("AttributeCode"));
+    			$mesg=$langs->trans("ErrorFieldCanNotContainSpecialNorUpperCharacters",$langs->transnoentities("AttributeCode"));
     			setEventMessage($mesg,'errors');
     			$action = 'create';
     		}

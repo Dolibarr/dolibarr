@@ -62,6 +62,7 @@ ErrorNoValueForCheckBoxType=Les valeurs de la liste de case a cochées doivent �
 ErrorNoValueForRadioType=Les valeurs de la liste d'options doivent être renseignées
 ErrorBadFormatValueList=Les valeurs de la liste ne peuvent pas contenir plus d'une virgule : <b>%s</b>, mais doivent en avoir au moins une: clef,valeur
 ErrorFieldCanNotContainSpecialCharacters=Le champ <b>%s</b> ne peut contenir de caractères spéciaux.
+ErrorFieldCanNotContainSpecialNorUpperCharacters=Le champ <b>%s</b> ne peut contenir de caractères spéciaux, ni de caractères en majuscules.
 ErrorNoAccountancyModuleLoaded=Aucun module de comptabilité activé
 ErrorExportDuplicateProfil=Ce nom de profil existe déjà pour ce lot d'export.
 ErrorLDAPSetupNotComplete=Le matching Dolibarr-LDAP est incomplet.
