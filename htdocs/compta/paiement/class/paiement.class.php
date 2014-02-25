@@ -212,7 +212,7 @@ class Paiement extends CommonObject
 
                             //Invoice types that are eligible for changing status to paid
 							$affected_types = array(
-                                0,
+								0,
 								1,
 								2,
 								3
