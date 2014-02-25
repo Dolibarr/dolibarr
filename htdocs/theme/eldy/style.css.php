@@ -444,7 +444,7 @@ td.showDragHandle {
 	float: none;
 	vertical-align: top;
 }
-#id-<?php echo $right; ?> {
+#id-right {	/* This must stay id-right ant not be replaced with echo $right */
 	width: 100%;
 }
 
@@ -477,7 +477,7 @@ div.fichehalfright {
 	<?php if (empty($conf->dol_optimize_smallscreen))   { print "width: 50%;\n"; } ?>
 }
 div.ficheaddleft {
-	<?php if (empty($conf->dol_optimize_smallscreen))   { print "padding-left: 16px;\n"; }
+	<?php if (empty($conf->dol_optimize_smallscreen))   { print "padding-".$left.": 16px;\n"; }
 	else print "margin-top: 10px;\n"; ?>
 }
 .containercenter {
@@ -510,7 +510,7 @@ div#tmenu_tooltip {
 	display:none;
 <?php } else { ?>
 	height: <?php print ($heightmenu2+1); ?>px;
-	padding-right: 100px;
+	padding-<?php echo $right; ?>: 100px;
 	background: <?php echo $colorbackvmenu; ?>;
 	box-shadow: 0 0 6px rgba(0, 0, 0, .4) !important;
     <?php if ($usecss3) { ?>
