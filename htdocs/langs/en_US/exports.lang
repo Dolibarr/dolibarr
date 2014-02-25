@@ -123,6 +123,7 @@ BankCode=Bank code
 DeskCode=Desk code
 BankAccountNumber=Account number
 BankAccountNumberKey=Key
+SpecialCode=Special code
 ## filters
 SelectFilterFields=If you want to filter on some values, just input values here.
 FilterableFields=Champs Filtrables

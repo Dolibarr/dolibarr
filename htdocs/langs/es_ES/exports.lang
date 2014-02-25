@@ -123,6 +123,7 @@ BankCode=Código banco
 DeskCode=Código oficina
 BankAccountNumber=Número cuenta
 BankAccountNumberKey=Dígito Control
+SpecialCode=Código especial
 ## filters
 SelectFilterFields=Si quiere aplicar un filtro sobre algunos valores, introdúzcalos aquí.
 FilterableFields=Campos filtrables
