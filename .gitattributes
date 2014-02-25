@@ -20,7 +20,6 @@
 *.yaml text eol=lf
 
 .bash_aliases text eol=lf
-.vimrc text eol=lf
 
 # Denote all files that are truly binary and should not be modified.
 *.bmp binary

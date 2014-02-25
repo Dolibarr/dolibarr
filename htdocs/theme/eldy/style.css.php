@@ -2717,9 +2717,11 @@ a.ui-link, a.ui-link:hover, .ui-btn:hover, span.ui-btn-text:hover, span.ui-btn-i
 	min-width: .4em;
 	padding-left: 10px;
 	padding-right: 10px;
-	<?php if (empty($dol_use_jmobile) || 1==1) { ?>
+	<?php if (! empty($dol_use_jmobile)) { ?>
+	font-size: 13px;
+	<?php } else { ?>
 	font-size: <?php print $fontsize ?>px;
-    <?php } ?>
+	<?php } ?>
 	/* white-space: normal; */		/* Warning, enable this break the truncate feature */
 }
 .ui-btn-icon-right .ui-btn-inner {
@@ -2817,7 +2819,7 @@ ul.ulmenu {
 
 /* Style for first level menu with jmobile */
 .ui-bar-b, .lilevel0 {
-	border: 1px solid #456f9a;
+	border: 1px solid #5f5f7a !important;
     background: rgb(<?php echo $colorbacktitle1; ?>);
     background-repeat: repeat-x;
 	<?php if ($usecss3) { ?>
