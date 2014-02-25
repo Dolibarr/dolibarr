@@ -164,3 +164,4 @@ Ordered=Ordered
 OrderCreated=Your orders have been created
 OrderFail=An error happened during your orders creation
 CreateOrders=Create orders
+ToBillSeveralOrderSelectCustomer=To create an invoice for several orders, click first onto customer, then choose "%s".
