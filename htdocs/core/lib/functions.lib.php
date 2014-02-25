@@ -316,16 +316,12 @@ function dol_buildpath($path, $type=0)
  *
  * 	@param	object	$object		Object to clone
  *	@return object				Object clone
+ *  @deprecated Dolibarr no longer supports PHP4, you can now use native function
  */
 function dol_clone($object)
 {
 	dol_syslog("Functions.lib::dol_clone Clone object");
 
-	// We create dynamically a clone function, making a =
-	if (version_compare(phpversion(), '5.0') < 0 && ! function_exists('clone'))
-	{
-		eval('function clone($object){return($object);}');
-	}
 	$myclone=clone($object);
 	return $myclone;
 }
