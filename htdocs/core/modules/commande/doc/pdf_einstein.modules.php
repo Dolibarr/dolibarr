@@ -152,7 +152,8 @@ class pdf_einstein extends ModelePDFCommandes
 		$outputlangs->load("bills");
 		$outputlangs->load("products");
 		$outputlangs->load("orders");
-
+		$outputlangs->load("deliveries");
+		
 		if ($conf->commande->dir_output)
 		{
             $object->fetch_thirdparty();
@@ -582,6 +583,31 @@ class pdf_einstein extends ModelePDFCommandes
             $posy=$pdf->GetY()+1;
         }
 		*/
+		if (! empty($object->date_livraison))
+		{
+            $pdf->SetXY($this->marge_gauche, $posy);
+            $pdf->SetFont('','B', $default_font_size - 2);
+            $text=$outputlangs->transnoentities("DeliveryDate").':';
+            $pdf->MultiCell(80, 3, $text, 0, 'L', 0);
+            
+			$pdf->SetFont('','', $default_font_size - 2);
+			$pdf->SetXY($posxval, $posy);
+            $text=dol_print_date($object->date_livraison,'day','',$outputlangs);
+            $pdf->MultiCell(80, 3, $text, 0, 'L', 0);
+
+            $posy=$pdf->GetY()+1;
+		}
+		/* TODO
+		else if (! empty($object->availability_code))
+		{
+            $pdf->SetXY($this->marge_gauche, $posy);
+            $pdf->SetTextColor(200,0,0);
+            $pdf->SetFont('','B', $default_font_size - 2);
+            $pdf->MultiCell(80, 3, $outputlangs->transnoentities("AvailabilityPeriod").': '.,0,'L',0);
+            $pdf->SetTextColor(0,0,0);
+
+            $posy=$pdf->GetY()+1;
+		}*/
 
       	// Show payment mode
         if ($object->mode_reglement_code
