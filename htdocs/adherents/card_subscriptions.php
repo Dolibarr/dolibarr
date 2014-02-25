@@ -338,7 +338,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'cotisation' && ! $
                 }
 
                 // Create draft invoice
-                $invoice->type=0;
+                $invoice->type= Facture::TYPE_STANDARD;
                 $invoice->cond_reglement_id=$customer->cond_reglement_id;
                 if (empty($invoice->cond_reglement_id))
                 {

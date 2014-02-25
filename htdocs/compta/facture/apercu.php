@@ -107,13 +107,13 @@ if ($id > 0 || ! empty($ref))
         // Type
         print '<tr><td>'.$langs->trans('Type').'</td><td colspan="5">';
         print $object->getLibType();
-        if ($object->type == 1)
+        if ($object->type == Facture::TYPE_REPLACEMENT)
         {
             $facreplaced=new Facture($db);
             $facreplaced->fetch($object->fk_facture_source);
             print ' ('.$langs->transnoentities("ReplaceInvoice",$facreplaced->getNomUrl(1)).')';
         }
-        if ($object->type == 2)
+        if ($object->type == Facture::TYPE_CREDIT_NOTE)
         {
             $facusing=new Facture($db);
             $facusing->fetch($object->fk_facture_source);
@@ -155,7 +155,7 @@ if ($id > 0 || ! empty($ref))
         if ($absolute_discount > 0)
         {
             print '. ';
-            if ($object->statut > 0 || $object->type == 2 || $object->type == 3)
+            if ($object->statut > 0 || $object->type == Facture::TYPE_CREDIT_NOTE || $object->type == Facture::TYPE_DEPOSIT)
             {
                 if ($object->statut == 0)
                 {
@@ -164,7 +164,7 @@ if ($id > 0 || ! empty($ref))
                 }
                 else
                 {
-                    if ($object->statut < 1 || $object->type == 2 || $object->type == 3)
+                    if ($object->statut < 1 || $object->type == Facture::TYPE_CREDIT_NOTE || $object->type == Facture::TYPE_DEPOSIT)
                     {
                         $text=$langs->trans("CompanyHasAbsoluteDiscount",price($absolute_discount),$langs->transnoentities("Currency".$conf->currency));
                         print '<br>'.$text.'.<br>';
