@@ -1,7 +1,7 @@
 ---
 :backends: yaml
 :yaml:
-    :datadir: '/vagrant/puppet/hieradata'
+    :datadir: '/vagrant/puphpet'
 :hierarchy:
-    - common
+    - config
 :logger: console
