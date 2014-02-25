@@ -313,6 +313,7 @@ class Societe extends CommonObject
         $contact->zip               = $this->zip;
         $contact->town              = $this->town;
         $contact->phone_pro         = $this->phone;
+        $contact->state_id          = $this->state_id;
         $result = $contact->create($user);
         if ($result < 0) {
             $this->error = $contact->error;

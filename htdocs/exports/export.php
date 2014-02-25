@@ -91,7 +91,10 @@ $entitytolang = array(
 	'other'        => 'Other',
     'trip'         => 'TripsAndExpenses',
     'shipment'     => 'Shipments',
-    'shipment_line'=> 'ShipmentLine'
+    'shipment_line'=> 'ShipmentLine',
+    'project'      => 'Projects',
+    'projecttask'  => 'Tasks',
+    'task_time'    => 'TaskTimeSpent'
 );
 
 $array_selected=isset($_SESSION["export_selected_fields"])?$_SESSION["export_selected_fields"]:array();
