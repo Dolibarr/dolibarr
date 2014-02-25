@@ -1207,12 +1207,11 @@ class DoliDBMysql extends DoliDB
 		$result=array();
 
 		$sql='SHOW VARIABLES';
-		if ($filter) $sql.=" LIKE '".addslashes($filter)."'";
+		if ($filter) $sql.=" LIKE '".$this->escape($filter)."'";
 		$resql=$this->query($sql);
 		if ($resql)
 		{
-			$obj=$this->fetch_object($resql);
-			$result[$obj->Variable_name]=$obj->Value;
+			while ($obj=$this->fetch_object($resql)) $result[$obj->Variable_name]=$obj->Value;
 		}
 
 		return $result;
@@ -1233,8 +1232,7 @@ class DoliDBMysql extends DoliDB
 		$resql=$this->query($sql);
 		if ($resql)
 		{
-			$obj=$this->fetch_object($resql);
-			$result[$obj->Variable_name]=$obj->Value;
+			while ($obj=$this->fetch_object($resql)) $result[$obj->Variable_name]=$obj->Value;
 		}
 
 		return $result;

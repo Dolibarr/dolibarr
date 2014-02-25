@@ -1137,15 +1137,15 @@ class DoliDBPgsql extends DoliDB
 	/**
 	 * 	Create a user to connect to database
 	 *
-	 *	@param	string	$dolibarr_main_db_host 		Ip serveur
-	 *	@param	string	$dolibarr_main_db_user 		Nom user a creer
-	 *	@param	string	$dolibarr_main_db_pass 		Mot de passe user a creer
+	 *	@param	string	$dolibarr_main_db_host 		Ip server
+	 *	@param	string	$dolibarr_main_db_user 		Name of user to create
+	 *	@param	string	$dolibarr_main_db_pass 		Password of user to create
 	 *	@param	string	$dolibarr_main_db_name		Database name where user must be granted
 	 *	@return	int									<0 if KO, >=0 if OK
 	 */
 	function DDLCreateUser($dolibarr_main_db_host,$dolibarr_main_db_user,$dolibarr_main_db_pass,$dolibarr_main_db_name)
 	{
-		$sql = "create user \"".addslashes($dolibarr_main_db_user)."\" with password '".addslashes($dolibarr_main_db_pass)."'";
+		$sql = "CREATE USER '".$this->escape($dolibarr_main_db_user)."' with password '".$this->escape($dolibarr_main_db_pass)."'";
 
 		dol_syslog(get_class($this)."::DDLCreateUser", LOG_DEBUG);	// No sql to avoid password in log
 		$resql=$this->query($sql);
@@ -1401,8 +1401,7 @@ class DoliDBPgsql extends DoliDB
 		$resql=$this->query($resql);
 		if ($resql)
 		{
-			$obj=$this->fetch_object($resql);
-			$result[$obj->name]=$obj->setting;
+			while ($obj=$this->fetch_object($resql)) $result[$obj->name]=$obj->setting;
 		}
 
 		return $result;

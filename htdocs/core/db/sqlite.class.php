@@ -1185,7 +1185,7 @@ class DoliDBSqlite extends DoliDB
     {
         $sql = "INSERT INTO user ";
         $sql.= "(Host,User,password,Select_priv,Insert_priv,Update_priv,Delete_priv,Create_priv,Drop_priv,Index_Priv,Alter_priv,Lock_tables_priv)";
-        $sql.= " VALUES ('".addslashes($dolibarr_main_db_host)."','".addslashes($dolibarr_main_db_user)."',password('".addslashes($dolibarr_main_db_pass)."')";
+        $sql.= " VALUES ('".$this->escape($dolibarr_main_db_host)."','".$this->escape($dolibarr_main_db_user)."',password('".addslashes($dolibarr_main_db_pass)."')";
         $sql.= ",'Y','Y','Y','Y','Y','Y','Y','Y','Y')";
 
         dol_syslog(get_class($this)."::DDLCreateUser", LOG_DEBUG);	// No sql to avoid password in log
@@ -1198,7 +1198,7 @@ class DoliDBSqlite extends DoliDB
 
         $sql = "INSERT INTO db ";
         $sql.= "(Host,Db,User,Select_priv,Insert_priv,Update_priv,Delete_priv,Create_priv,Drop_priv,Index_Priv,Alter_priv,Lock_tables_priv)";
-        $sql.= " VALUES ('".addslashes($dolibarr_main_db_host)."','".addslashes($dolibarr_main_db_name)."','".addslashes($dolibarr_main_db_user)."'";
+        $sql.= " VALUES ('".$this->escape($dolibarr_main_db_host)."','".$this->escape($dolibarr_main_db_name)."','".addslashes($dolibarr_main_db_user)."'";
         $sql.= ",'Y','Y','Y','Y','Y','Y','Y','Y','Y')";
 
         dol_syslog(get_class($this)."::DDLCreateUser sql=".$sql);
@@ -1319,12 +1319,11 @@ class DoliDBSqlite extends DoliDB
         $result=array();
 
         $sql='SHOW VARIABLES';
-        if ($filter) $sql.=" LIKE '".addslashes($filter)."'";
+        if ($filter) $sql.=" LIKE '".$this->escape($filter)."'";
         $resql=$this->query($sql);
         if ($resql)
         {
-            $obj=$this->fetch_object($resql);
-            $result[$obj->Variable_name]=$obj->Value;
+            while ($obj=$this->fetch_object($resql)) $result[$obj->Variable_name]=$obj->Value;
         }
 
         return $result;
@@ -1345,8 +1344,7 @@ class DoliDBSqlite extends DoliDB
         $resql=$this->query($sql);
         if ($resql)
         {
-            $obj=$this->fetch_object($resql);
-            $result[$obj->Variable_name]=$obj->Value;
+            while ($obj=$this->fetch_object($resql)) $result[$obj->Variable_name]=$obj->Value;
         }
 
         return $result;
