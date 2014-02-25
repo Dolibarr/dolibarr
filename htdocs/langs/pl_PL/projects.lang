@@ -100,12 +100,12 @@ IfNeedToUseOhterObjectKeepEmpty=Jeżeli pewne obiekty (faktura, zamówienie, ...
 ##### Types de contacts #####
 TypeContact_project_internal_PROJECTLEADER=Kierownik projektu
 TypeContact_project_external_PROJECTLEADER=Kierownik projektu
-TypeContact_project_internal_CONTRIBUTOR=Współpracownik
-TypeContact_project_external_CONTRIBUTOR=Współpracownik
+TypeContact_project_internal_PROJECTCONTRIBUTOR=Współpracownik
+TypeContact_project_external_PROJECTCONTRIBUTOR=Współpracownik
 TypeContact_project_task_internal_TASKEXECUTIVE=zadań wykonawczych
 TypeContact_project_task_external_TASKEXECUTIVE=zadań wykonawczych
-TypeContact_project_task_internal_CONTRIBUTOR=Współpracownik
-TypeContact_project_task_external_CONTRIBUTOR=Współpracownik
+TypeContact_project_task_internal_TASKCONTRIBUTOR=Współpracownik
+TypeContact_project_task_external_TASKCONTRIBUTOR=Współpracownik
 # SelectElement=Select element
 # AddElement=Link to element
 # Documents models

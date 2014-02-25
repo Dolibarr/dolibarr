@@ -100,12 +100,12 @@ ErrorShiftTaskDate=Невъзможно е да се смени датата н�
 ##### Types de contacts #####
 TypeContact_project_internal_PROJECTLEADER=Ръководител на проекта
 TypeContact_project_external_PROJECTLEADER=Ръководител на проекта
-TypeContact_project_internal_CONTRIBUTOR=Сътрудник
-TypeContact_project_external_CONTRIBUTOR=Сътрудник
+TypeContact_project_internal_PROJECTCONTRIBUTOR=Сътрудник
+TypeContact_project_external_PROJECTCONTRIBUTOR=Сътрудник
 TypeContact_project_task_internal_TASKEXECUTIVE=Задача изпълнителен
 TypeContact_project_task_external_TASKEXECUTIVE=Задача изпълнителен
-TypeContact_project_task_internal_CONTRIBUTOR=Сътрудник
-TypeContact_project_task_external_CONTRIBUTOR=Сътрудник
+TypeContact_project_task_internal_TASKCONTRIBUTOR=Сътрудник
+TypeContact_project_task_external_TASKCONTRIBUTOR=Сътрудник
 # SelectElement=Select element
 # AddElement=Link to element
 # Documents models
