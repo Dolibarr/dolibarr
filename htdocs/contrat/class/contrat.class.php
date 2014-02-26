@@ -1689,7 +1689,7 @@ class Contrat extends CommonObject
 		$this->id=0;
 		$this->specimen=1;
 
-		$this->ref = 'DOLIBARR';
+		$this->ref = 'SPECIMEN';
 		$this->socid = 1;
 		$this->statut= 0;
 		$this->date_contrat = dol_now();
