@@ -983,6 +983,7 @@ ExtraFieldsProject=Complementary attributes (projects)
 ExtraFieldsProjectTask=Complementary attributes (tasks)
 ExtraFieldHasWrongValue=Attribut %s has a wrong value.
 AlphaNumOnlyCharsAndNoSpace=only alphanumericals characters without space
+AlphaNumOnlyLowerCharsAndNoSpace=only alphanumericals and lower case characters without space
 SendingMailSetup=Setup of sendings by email
 SendmailOptionNotComplete=Warning, on some Linux systems, to send email from your email, sendmail execution setup must contains option -ba (parameter mail.force_extra_parameters into your php.ini file). If some recipients never receive emails, try to edit this PHP parameter with mail.force_extra_parameters = -ba).
 PathToDocuments=Path to documents

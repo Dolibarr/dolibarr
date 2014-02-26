@@ -983,6 +983,7 @@ ExtraFieldsProject=Attributs supplémentaires (projets)
 ExtraFieldsProjectTask=Attributs supplémentaires (tâches)
 ExtraFieldHasWrongValue=L'attribut %s a une valeur incorrecte.
 AlphaNumOnlyCharsAndNoSpace=uniquement caractères alphanumériques sans espace
+AlphaNumOnlyLowerCharsAndNoSpace=uniquement caractères minuscules alphanumériques sans espace
 SendingMailSetup=Configuration de l'envoi par email
 SendmailOptionNotComplete=Attention, sur certains systèmes Linux, avec cette méthode d'envoi, pour pouvoir envoyer des emails en votre nom, la configuration d'exécution de sendmail doit contenir l'option <b>-ba</b> (paramètre <b>mail.force_extra_parameters</b> dans le fichier <b>php.ini</b>). Si certains de vos destinataires ne reçoivent pas de message, essayer de modifier ce paramètre PHP avec <b>mail.force_extra_parameters = -ba</b>.
 PathToDocuments=Chemin d'accès aux documents
