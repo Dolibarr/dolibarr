@@ -211,7 +211,7 @@ else if ($action == 'valid' && $user->rights->facture->creer) {
 	$object->fetch($id);
 	
 	// On verifie signe facture
-	if ($object->type == 2) {
+	if ($object->type == Facture::TYPE_CREDIT_NOTE) {
 		// Si avoir, le signe doit etre negatif
 		if ($object->total_ht >= 0) {
 			$mesgs [] = '<div class="error">' . $langs->trans("ErrorInvoiceAvoirMustBeNegative") . '</div>';
@@ -354,7 +354,7 @@ else if ($action == 'confirm_valid' && $confirm == 'yes' && $user->rights->factu
 	}
 	
 	// Check for warehouse
-	if ($object->type != 3 && ! empty($conf->global->STOCK_CALCULATE_ON_BILL) && $qualified_for_stock_change) {
+	if ($object->type != Facture::TYPE_DEPOSIT && ! empty($conf->global->STOCK_CALCULATE_ON_BILL) && $qualified_for_stock_change) {
 		if (! $idwarehouse || $idwarehouse == - 1) {
 			$error ++;
 			setEventMessage($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv("Warehouse")), 'errors');
@@ -401,7 +401,7 @@ else if ($action == 'confirm_modif' && ((empty($conf->global->MAIN_USE_ADVANCED_
 	}
 	
 	// Check parameters
-	if ($object->type != 3 && ! empty($conf->global->STOCK_CALCULATE_ON_BILL) && $qualified_for_stock_change) {
+	if ($object->type != Facture::TYPE_DEPOSIT && ! empty($conf->global->STOCK_CALCULATE_ON_BILL) && $qualified_for_stock_change) {
 		if (! $idwarehouse || $idwarehouse == - 1) {
 			$error ++;
 			setEventMessage($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv("Warehouse")), 'errors');
@@ -504,9 +504,9 @@ else if ($action == 'confirm_converttoreduc' && $confirm == 'yes' && $user->righ
 		
 		// Insert one discount by VAT rate category
 		$discount = new DiscountAbsolute($db);
-		if ($object->type == 2)
+		if ($object->type == Facture::TYPE_CREDIT_NOTE)
 			$discount->description = '(CREDIT_NOTE)';
-		elseif ($object->type == 3)
+		elseif ($object->type == Facture::TYPE_DEPOSIT)
 			$discount->description = '(DEPOSIT)';
 		else {
 			$this->error = "CantConvertToReducAnInvoiceOfThisType";
@@ -596,7 +596,7 @@ else if ($action == 'add' && $user->rights->facture->creer) {
 			
 			// Proprietes particulieres a facture de remplacement
 			$object->fk_facture_source = $_POST ['fac_replacement'];
-			$object->type = 1;
+			$object->type = Facture::TYPE_REPLACEMENT;
 			
 			$id = $object->createFromCurrent($user);
 			if ($id <= 0)
@@ -639,7 +639,7 @@ else if ($action == 'add' && $user->rights->facture->creer) {
 			
 			// Proprietes particulieres a facture avoir
 			$object->fk_facture_source = $_POST ['fac_avoir'];
-			$object->type = 2;
+			$object->type = Facture::TYPE_CREDIT_NOTE;
 			
 			$id = $object->create($user);
 			
@@ -1262,7 +1262,7 @@ elseif ($action == 'updateligne' && $user->rights->facture->creer && ! GETPOST('
 		$label = ((GETPOST('update_label') && GETPOST('product_label')) ? GETPOST('product_label') : '');
 		
 		// Check price is not lower than minimum (check is done only for standard or replacement invoices)
-		if (($object->type == 0 || $object->type == 1) && $price_min && (price2num($pu_ht) * (1 - price2num(GETPOST('remise_percent')) / 100) < price2num($price_min))) {
+		if (($object->type == Facture::TYPE_STANDARD || $object->type == Facture::TYPE_REPLACEMENT) && $price_min && (price2num($pu_ht) * (1 - price2num(GETPOST('remise_percent')) / 100) < price2num($price_min))) {
 			setEventMessage($langs->trans("CantBeLessThanMinPrice", price(price2num($price_min, 'MU'), 0, $langs, 0, 0, - 1, $conf->currency)), 'errors');
 			$error ++;
 		}
@@ -2282,11 +2282,11 @@ if ($action == 'create') {
 			$qualified_for_stock_change = $object->hasProductsOrServices(1);
 		}
 		
-		if ($object->type != 3 && ! empty($conf->global->STOCK_CALCULATE_ON_BILL) && $qualified_for_stock_change && $object->statut >= 1) {
+		if ($object->type != Facture::TYPE_DEPOSIT && ! empty($conf->global->STOCK_CALCULATE_ON_BILL) && $qualified_for_stock_change && $object->statut >= 1) {
 			$langs->load("stocks");
 			require_once DOL_DOCUMENT_ROOT . '/product/class/html.formproduct.class.php';
 			$formproduct = new FormProduct($db);
-			$label = $object->type == 2 ? $langs->trans("SelectWarehouseForStockDecrease") : $langs->trans("SelectWarehouseForStockIncrease");
+			$label = $object->type == Facture::TYPE_CREDIT_NOTE ? $langs->trans("SelectWarehouseForStockDecrease") : $langs->trans("SelectWarehouseForStockIncrease");
 			$formquestion = array(
 								// 'text' => $langs->trans("ConfirmClone"),
 								// array('type' => 'checkbox', 'name' => 'clone_content', 'label' => $langs->trans("CloneMainAttributes"), 'value' =>
@@ -2332,7 +2332,7 @@ if ($action == 'create') {
 			$qualified_for_stock_change = $object->hasProductsOrServices(1);
 		}
 		
-		if ($object->type != 3 && ! empty($conf->global->STOCK_CALCULATE_ON_BILL) && $qualified_for_stock_change) {
+		if ($object->type != Facture::TYPE_DEPOSIT && ! empty($conf->global->STOCK_CALCULATE_ON_BILL) && $qualified_for_stock_change) {
 			$langs->load("stocks");
 			require_once DOL_DOCUMENT_ROOT . '/product/class/html.formproduct.class.php';
 			require_once DOL_DOCUMENT_ROOT . '/product/stock/class/entrepot.class.php';
@@ -2340,10 +2340,10 @@ if ($action == 'create') {
 			$warehouse = new Entrepot($db);
 			$warehouse_array = $warehouse->list_array();
 			if (count($warehouse_array) == 1) {
-				$label = $object->type == 2 ? $langs->trans("WarehouseForStockIncrease", current($warehouse_array)) : $langs->trans("WarehouseForStockDecrease", current($warehouse_array));
+				$label = $object->type == Facture::TYPE_CREDIT_NOTE ? $langs->trans("WarehouseForStockIncrease", current($warehouse_array)) : $langs->trans("WarehouseForStockDecrease", current($warehouse_array));
 				$value = '<input type="hidden" id="idwarehouse" name="idwarehouse" value="' . key($warehouse_array) . '">';
 			} else {
-				$label = $object->type == 2 ? $langs->trans("SelectWarehouseForStockIncrease") : $langs->trans("SelectWarehouseForStockDecrease");
+				$label = $object->type == Facture::TYPE_CREDIT_NOTE ? $langs->trans("SelectWarehouseForStockIncrease") : $langs->trans("SelectWarehouseForStockDecrease");
 				$value = $formproduct->selectWarehouses(GETPOST('idwarehouse'), 'idwarehouse', '', 1);
 			}
 			$formquestion = array(
@@ -2354,11 +2354,11 @@ if ($action == 'create') {
 								// => 1),
 								array('type' => 'other','name' => 'idwarehouse','label' => $label,'value' => $value));
 		}
-		if ($object->type != 2 && $object->total_ttc < 0) 		// Can happen only if $conf->global->FACTURE_ENABLE_NEGATIVE is on
+		if ($object->type != Facture::TYPE_CREDIT_NOTE && $object->total_ttc < 0) 		// Can happen only if $conf->global->FACTURE_ENABLE_NEGATIVE is on
 		{
 			$text .= '<br>' . img_warning() . ' ' . $langs->trans("ErrorInvoiceOfThisTypeMustBePositive");
 		}
-		$formconfirm = $form->formconfirm($_SERVER ["PHP_SELF"] . '?facid=' . $object->id, $langs->trans('ValidateBill'), $text, 'confirm_valid', $formquestion, (($object->type != 2 && $object->total_ttc < 0) ? "no" : "yes"), ($conf->notification->enabled ? 0 : 2));
+		$formconfirm = $form->formconfirm($_SERVER ["PHP_SELF"] . '?facid=' . $object->id, $langs->trans('ValidateBill'), $text, 'confirm_valid', $formquestion, (($object->type != Facture::TYPE_CREDIT_NOTE && $object->total_ttc < 0) ? "no" : "yes"), ($conf->notification->enabled ? 0 : 2));
 	}
 	
 	// Confirm back to draft status
@@ -2372,7 +2372,7 @@ if ($action == 'create') {
 		} else {
 			$qualified_for_stock_change = $object->hasProductsOrServices(1);
 		}
-		if ($object->type != 3 && ! empty($conf->global->STOCK_CALCULATE_ON_BILL) && $qualified_for_stock_change) {
+		if ($object->type != Facture::TYPE_DEPOSIT && ! empty($conf->global->STOCK_CALCULATE_ON_BILL) && $qualified_for_stock_change) {
 			$langs->load("stocks");
 			require_once DOL_DOCUMENT_ROOT . '/product/class/html.formproduct.class.php';
 			require_once DOL_DOCUMENT_ROOT . '/product/stock/class/entrepot.class.php';
@@ -2380,10 +2380,10 @@ if ($action == 'create') {
 			$warehouse = new Entrepot($db);
 			$warehouse_array = $warehouse->list_array();
 			if (count($warehouse_array) == 1) {
-				$label = $object->type == 2 ? $langs->trans("WarehouseForStockDecrease", current($warehouse_array)) : $langs->trans("WarehouseForStockIncrease", current($warehouse_array));
+				$label = $object->type == Facture::TYPE_CREDIT_NOTE ? $langs->trans("WarehouseForStockDecrease", current($warehouse_array)) : $langs->trans("WarehouseForStockIncrease", current($warehouse_array));
 				$value = '<input type="hidden" id="idwarehouse" name="idwarehouse" value="' . key($warehouse_array) . '">';
 			} else {
-				$label = $object->type == 2 ? $langs->trans("SelectWarehouseForStockDecrease") : $langs->trans("SelectWarehouseForStockIncrease");
+				$label = $object->type == Facture::TYPE_CREDIT_NOTE ? $langs->trans("SelectWarehouseForStockDecrease") : $langs->trans("SelectWarehouseForStockIncrease");
 				$value = $formproduct->selectWarehouses(GETPOST('idwarehouse'), 'idwarehouse', '', 1);
 			}
 			$formquestion = array(
@@ -2563,12 +2563,12 @@ if ($action == 'create') {
 	// Type
 	print '<tr><td>' . $langs->trans('Type') . '</td><td colspan="5">';
 	print $object->getLibType();
-	if ($object->type == 1) {
+	if ($object->type == Facture::TYPE_REPLACEMENT) {
 		$facreplaced = new Facture($db);
 		$facreplaced->fetch($object->fk_facture_source);
 		print ' (' . $langs->transnoentities("ReplaceInvoice", $facreplaced->getNomUrl(1)) . ')';
 	}
-	if ($object->type == 2) {
+	if ($object->type == Facture::TYPE_CREDIT_NOTE) {
 		$facusing = new Facture($db);
 		$facusing->fetch($object->fk_facture_source);
 		print ' (' . $langs->transnoentities("CorrectInvoice", $facusing->getNomUrl(1)) . ')';
@@ -2611,12 +2611,12 @@ if ($action == 'create') {
 	
 	if ($absolute_discount > 0) {
 		print '. ';
-		if ($object->statut > 0 || $object->type == 2 || $object->type == 3) {
+		if ($object->statut > 0 || $object->type == Facture::TYPE_CREDIT_NOTE || $object->type == Facture::TYPE_DEPOSIT) {
 			if ($object->statut == 0) {
 				print $langs->trans("CompanyHasAbsoluteDiscount", price($absolute_discount), $langs->transnoentities("Currency" . $conf->currency));
 				print '. ';
 			} else {
-				if ($object->statut < 1 || $object->type == 2 || $object->type == 3) {
+				if ($object->statut < 1 || $object->type == Facture::TYPE_CREDIT_NOTE || $object->type == Facture::TYPE_DEPOSIT) {
 					$text = $langs->trans("CompanyHasAbsoluteDiscount", price($absolute_discount), $langs->transnoentities("Currency" . $conf->currency));
 					print '<br>' . $text . '.<br>';
 				} else {
@@ -2633,7 +2633,7 @@ if ($action == 'create') {
 	} else {
 		if ($absolute_creditnote > 0) 		// If not, link will be added later
 		{
-			if ($object->statut == 0 && $object->type != 2 && $object->type != 3)
+			if ($object->statut == 0 && $object->type != TYPE_CREDIT_NOTE && $object->type != TYPE_DEPOSIT)
 				print ' (' . $addabsolutediscount . ')<br>';
 			else
 				print '. ';
@@ -2642,8 +2642,8 @@ if ($action == 'create') {
 	}
 	if ($absolute_creditnote > 0) {
 		// If validated, we show link "add credit note to payment"
-		if ($object->statut != 1 || $object->type == 2 || $object->type == 3) {
-			if ($object->statut == 0 && $object->type != 3) {
+		if ($object->statut != 1 || $object->type == Facture::TYPE_CREDIT_NOTE || $object->type == Facture::TYPE_DEPOSIT) {
+			if ($object->statut == 0 && $object->type != Facture::TYPE_DEPOSIT) {
 				$text = $langs->trans("CompanyHasCreditNote", price($absolute_creditnote), $langs->transnoentities("Currency" . $conf->currency));
 				print $form->textwithpicto($text, $langs->trans("CreditNoteDepositUse"));
 			} else {
@@ -2669,7 +2669,7 @@ if ($action == 'create') {
 	}
 	if (! $absolute_discount && ! $absolute_creditnote) {
 		print $langs->trans("CompanyHasNoAbsoluteDiscount");
-		if ($object->statut == 0 && $object->type != 2 && $object->type != 3)
+		if ($object->statut == 0 && $object->type != Facture::TYPE_CREDIT_NOTE && $object->type != Facture::TYPE_DEPOSIT)
 			print ' (' . $addabsolutediscount . ')<br>';
 		else
 			print '. ';
@@ -2688,12 +2688,12 @@ if ($action == 'create') {
 	print '<table class="nobordernopadding" width="100%"><tr><td>';
 	print $langs->trans('Date');
 	print '</td>';
-	if ($object->type != 2 && $action != 'editinvoicedate' && ! empty($object->brouillon) && $user->rights->facture->creer)
+	if ($object->type != Facture::TYPE_CREDIT_NOTE && $action != 'editinvoicedate' && ! empty($object->brouillon) && $user->rights->facture->creer)
 		print '<td align="right"><a href="' . $_SERVER ["PHP_SELF"] . '?action=editinvoicedate&amp;facid=' . $object->id . '">' . img_edit($langs->trans('SetDate'), 1) . '</a></td>';
 	print '</tr></table>';
 	print '</td><td colspan="3">';
 	
-	if ($object->type != 2) {
+	if ($object->type != Facture::TYPE_CREDIT_NOTE) {
 		if ($action == 'editinvoicedate') {
 			$form->form_date($_SERVER ['PHP_SELF'] . '?facid=' . $object->id, $object->date, 'invoicedate');
 		} else {
@@ -2707,7 +2707,7 @@ if ($action == 'create') {
 	// List of payments
 	
 	$sign = 1;
-	if ($object->type == 2)
+	if ($object->type == Facture::TYPE_CREDIT_NOTE)
 		$sign = - 1;
 	
 	$nbrows = 8;
@@ -2730,7 +2730,7 @@ if ($action == 'create') {
 	
 	// List of payments already done
 	print '<tr class="liste_titre">';
-	print '<td>' . ($object->type == 2 ? $langs->trans("PaymentsBack") : $langs->trans('Payments')) . '</td>';
+	print '<td>' . ($object->type == Facture::TYPE_CREDIT_NOTE ? $langs->trans("PaymentsBack") : $langs->trans('Payments')) . '</td>';
 	print '<td>' . $langs->trans('Type') . '</td>';
 	if (! empty($conf->banque->enabled))
 		print '<td align="right">' . $langs->trans('BankAccount') . '</td>';
@@ -2790,10 +2790,10 @@ if ($action == 'create') {
 		dol_print_error($db);
 	}
 	
-	if ($object->type != 2) {
+	if ($object->type != Facture::TYPE_CREDIT_NOTE) {
 		// Total already paid
 		print '<tr><td colspan="' . $nbcols . '" align="right">';
-		if ($object->type != 3)
+		if ($object->type != Facture::TYPE_DEPOSIT)
 			print $langs->trans('AlreadyPaidNoCreditNotesNoDeposits');
 		else
 			print $langs->trans('AlreadyPaid');
@@ -2817,9 +2817,9 @@ if ($action == 'create') {
 				$obj = $db->fetch_object($resql);
 				$invoice->fetch($obj->fk_facture_source);
 				print '<tr><td colspan="' . $nbcols . '" align="right">';
-				if ($invoice->type == 2)
+				if ($invoice->type == Facture::TYPE_CREDIT_NOTE)
 					print $langs->trans("CreditNote") . ' ';
-				if ($invoice->type == 3)
+				if ($invoice->type == Facture::TYPE_DEPOSIT)
 					print $langs->trans("Deposit") . ' ';
 				print $invoice->getNomUrl(0);
 				print ' :</td>';
@@ -2828,9 +2828,9 @@ if ($action == 'create') {
 				print '<a href="' . $_SERVER ["PHP_SELF"] . '?facid=' . $object->id . '&action=unlinkdiscount&discountid=' . $obj->rowid . '">' . img_delete() . '</a>';
 				print '</td></tr>';
 				$i ++;
-				if ($invoice->type == 2)
+				if ($invoice->type == Facture::TYPE_CREDIT_NOTE)
 					$creditnoteamount += $obj->amount_ttc;
-				if ($invoice->type == 3)
+				if ($invoice->type == Facture::TYPE_DEPOSIT)
 					$depositamount += $obj->amount_ttc;
 			}
 		} else {
@@ -2922,11 +2922,11 @@ if ($action == 'create') {
 	print '<table class="nobordernopadding" width="100%"><tr><td>';
 	print $langs->trans('PaymentConditionsShort');
 	print '</td>';
-	if ($object->type != 2 && $action != 'editconditions' && ! empty($object->brouillon) && $user->rights->facture->creer)
+	if ($object->type != Facture::TYPE_CREDIT_NOTE && $action != 'editconditions' && ! empty($object->brouillon) && $user->rights->facture->creer)
 		print '<td align="right"><a href="' . $_SERVER ["PHP_SELF"] . '?action=editconditions&amp;facid=' . $object->id . '">' . img_edit($langs->trans('SetConditions'), 1) . '</a></td>';
 	print '</tr></table>';
 	print '</td><td colspan="3">';
-	if ($object->type != 2) {
+	if ($object->type != Facture::TYPE_CREDIT_NOTE) {
 		if ($action == 'editconditions') {
 			$form->form_conditions_reglement($_SERVER ['PHP_SELF'] . '?facid=' . $object->id, $object->cond_reglement_id, 'cond_reglement_id');
 		} else {
@@ -2942,11 +2942,11 @@ if ($action == 'create') {
 	print '<table class="nobordernopadding" width="100%"><tr><td>';
 	print $langs->trans('DateMaxPayment');
 	print '</td>';
-	if ($object->type != 2 && $action != 'editpaymentterm' && ! empty($object->brouillon) && $user->rights->facture->creer)
+	if ($object->type != Facture::TYPE_CREDIT_NOTE && $action != 'editpaymentterm' && ! empty($object->brouillon) && $user->rights->facture->creer)
 		print '<td align="right"><a href="' . $_SERVER ["PHP_SELF"] . '?action=editpaymentterm&amp;facid=' . $object->id . '">' . img_edit($langs->trans('SetDate'), 1) . '</a></td>';
 	print '</tr></table>';
 	print '</td><td colspan="3">';
-	if ($object->type != 2) {
+	if ($object->type != Facture::TYPE_CREDIT_NOTE) {
 		if ($action == 'editpaymentterm') {
 			$form->form_date($_SERVER ['PHP_SELF'] . '?facid=' . $object->id, $object->date_lim_reglement, 'paymentterm');
 		} else {
@@ -3188,7 +3188,7 @@ if ($action == 'create') {
 			}
 			
 			// Reopen a standard paid invoice
-			if (($object->type == 0 || $object->type == 1) && ($object->statut == 2 || $object->statut == 3) && $user->rights->facture->creer) 			// A paid
+			if (($object->type == Facture::TYPE_STANDARD || $object->type == Facture::TYPE_REPLACEMENT) && ($object->statut == Facture::TYPE_CREDIT_NOTE || $object->statut == Facture::TYPE_DEPOSIT) && $user->rights->facture->creer) 			// A paid
 			                                                                                                                                   // invoice
 			                                                                                                                                   // (partially or
 			                                                                                                                                   // completely)
@@ -3202,7 +3202,7 @@ if ($action == 'create') {
 			}
 			
 			// Validate
-			if ($object->statut == 0 && count($object->lines) > 0 && ((($object->type == 0 || $object->type == 1 || $object->type == 3 || $object->type == 4) && (! empty($conf->global->FACTURE_ENABLE_NEGATIVE) || $object->total_ttc >= 0)) || ($object->type == 2 && $object->total_ttc <= 0))) {
+			if ($object->statut == 0 && count($object->lines) > 0 && ((($object->type == Facture::TYPE_STANDARD || $object->type == Facture::TYPE_REPLACEMENT || $object->type == Facture::TYPE_DEPOSIT || $object->type == Facture::TYPE_PROFORMA) && (! empty($conf->global->FACTURE_ENABLE_NEGATIVE) || $object->total_ttc >= 0)) || ($object->type == Facture::TYPE_CREDIT_NOTE && $object->total_ttc <= 0))) {
 				if ($user->rights->facture->valider) {
 					print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER ["PHP_SELF"] . '?facid=' . $object->id . '&amp;action=valid">' . $langs->trans('Validate') . '</a></div>';
 				}
@@ -3235,7 +3235,7 @@ if ($action == 'create') {
 			}
 			
 			// Create payment
-			if ($object->type != 2 && $object->statut == 1 && $object->paye == 0 && $user->rights->facture->paiement) {
+			if ($object->type != Facture::TYPE_CREDIT_NOTE && $object->statut == 1 && $object->paye == 0 && $user->rights->facture->paiement) {
 				if ($objectidnext) {
 					print '<div class="inline-block divButAction"><span class="butActionRefused" title="' . $langs->trans("DisabledBecauseReplacedInvoice") . '">' . $langs->trans('DoPayment') . '</span></div>';
 				} else {
@@ -3248,23 +3248,23 @@ if ($action == 'create') {
 			}
 			
 			// Reverse back money or convert to reduction
-			if ($object->type == 2 || $object->type == 3) {
+			if ($object->type == Facture::TYPE_CREDIT_NOTE || $object->type == Facture::TYPE_DEPOSIT) {
 				// For credit note only
-				if ($object->type == 2 && $object->statut == 1 && $object->paye == 0 && $user->rights->facture->paiement) {
+				if ($object->type == Facture::TYPE_CREDIT_NOTE && $object->statut == 1 && $object->paye == 0 && $user->rights->facture->paiement) {
 					print '<div class="inline-block divButAction"><a class="butAction" href="paiement.php?facid=' . $object->id . '&amp;action=create">' . $langs->trans('DoPaymentBack') . '</a></div>';
 				}
 				// For credit note
-				if ($object->type == 2 && $object->statut == 1 && $object->paye == 0 && $user->rights->facture->creer && $object->getSommePaiement() == 0) {
+				if ($object->type == Facture::TYPE_CREDIT_NOTE && $object->statut == 1 && $object->paye == 0 && $user->rights->facture->creer && $object->getSommePaiement() == 0) {
 					print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER ["PHP_SELF"] . '?facid=' . $object->id . '&amp;action=converttoreduc">' . $langs->trans('ConvertToReduc') . '</a></div>';
 				}
 				// For deposit invoice
-				if ($object->type == 3 && $object->statut == 1 && $resteapayer == 0 && $user->rights->facture->creer) {
+				if ($object->type == Facture::TYPE_DEPOSIT && $object->statut == 1 && $resteapayer == 0 && $user->rights->facture->creer) {
 					print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER ["PHP_SELF"] . '?facid=' . $object->id . '&amp;action=converttoreduc">' . $langs->trans('ConvertToReduc') . '</a></div>';
 				}
 			}
 			
 			// Classify paid (if not deposit and not credit note. Such invoice are "converted")
-			if ($object->statut == 1 && $object->paye == 0 && $user->rights->facture->paiement && (($object->type != 2 && $object->type != 3 && $resteapayer <= 0) || ($object->type == 2 && $resteapayer >= 0))) {
+			if ($object->statut == 1 && $object->paye == 0 && $user->rights->facture->paiement && (($object->type != Facture::TYPE_CREDIT_NOTE && $object->type != Facture::TYPE_DEPOSIT && $resteapayer <= 0) || ($object->type == Facture::TYPE_CREDIT_NOTE && $resteapayer >= 0))) {
 				print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER ['PHP_SELF'] . '?facid=' . $object->id . '&amp;action=paid">' . $langs->trans('ClassifyPaid') . '</a></div>';
 			}
 			
@@ -3283,12 +3283,12 @@ if ($action == 'create') {
 			}
 			
 			// Clone
-			if (($object->type == 0 || $object->type == 3 || $object->type == 4) && $user->rights->facture->creer) {
+			if (($object->type == Facture::TYPE_STANDARD || $object->type == Facture::TYPE_DEPOSIT || $object->type == Facture::TYPE_PROFORMA) && $user->rights->facture->creer) {
 				print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER ['PHP_SELF'] . '?facid=' . $object->id . '&amp;action=clone&amp;object=invoice">' . $langs->trans("ToClone") . '</a></div>';
 			}
 			
 			// Clone as predefined
-			if (($object->type == 0 || $object->type == 3 || $object->type == 4) && $object->statut == 0 && $user->rights->facture->creer) {
+			if (($object->type == Facture::TYPE_STANDARD || $object->type == Facture::TYPE_DEPOSIT || $object->type == Facture::TYPE_PROFORMA) && $object->statut == 0 && $user->rights->facture->creer) {
 				if (! $objectidnext) {
 					print '<div class="inline-block divButAction"><a class="butAction" href="facture/fiche-rec.php?facid=' . $object->id . '&amp;action=create">' . $langs->trans("ChangeIntoRepeatableInvoice") . '</a></div>';
 				}
