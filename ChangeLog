@@ -55,7 +55,7 @@ Dolibarr better:
 - The deprecated way (with 4 parameters) to declare a new tab into a module descriptor file has been
 removed. You must now use the 6 parameters way. See file modMyModule.class.php for example. 
 - Remove the javascrit function ac_delay() that is not used anymore by core code.
-- Properties dictionnaries into module descriptor files has been renamed into dictionaries.
+- Properties "dictionnaries" into module descriptor files has been renamed into "dictionaries".
 
 
 
@@ -86,6 +86,8 @@ Fix: [ bug #1250 ] "Supplier Ref. product" sidebar search box does not work
 Fix: Bad space in predefined messages. 
 Fix: Signature was not added for email sent from thirdparty page.
 Fix: Action event SHIPPING_VALIDATE is not implemented
+Fix: The customer code was set to uppercase when using numbering module leopard. We
+     must keep data safe of any change.
 
 ***** ChangeLog for 3.5 compared to 3.4.* *****
 For users:

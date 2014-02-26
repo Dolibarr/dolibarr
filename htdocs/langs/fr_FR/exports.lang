@@ -123,6 +123,9 @@ BankCode=Code banque
 DeskCode=Code guichet
 BankAccountNumber=Numéro de compte
 BankAccountNumberKey=Clé RIB
+ExportStringFilter=%% permet de remplacer un ou plusieurs caractères dans la chaine
+ExportDateFilter='AAAA' 'AAAAMM' 'AAAAMMJJ': filtre sur une année/mois/jour <br>'AAAA+AAAA' 'AAAAMM+AAAAMM' 'AAAAMMJJ+AAAAMMJJ': filtre sur une plage d'année/mois/jour<br>'&gt;AAAA' '&gt;AAAAMM' '&gt;AAAAMMJJ': filtre sur les année/mois/jour suivants<br>'&gt;AAAA' '&gt;AAAAMM' '&gt;AAAAMMJJ' filtre sur les année/mois/jour précédent
+ExportNumericFilter='NNNNN' filtre sur une valeur <br>'NNNNN+NNNNN' filtre sur une plage de valeur<br>'&gt;NNNNN' filtre sur les valeurs inférieurs<br>'&gt;NNNNN' filtre sur les valeurs supérieurs
 ## filters
 SelectFilterFields=Si vous voulez filtrer sur certaines valeurs, saisissez ces valeurs.
 FilterableFields=Champs filtrables
