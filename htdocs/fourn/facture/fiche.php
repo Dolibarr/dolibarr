@@ -1518,13 +1518,13 @@ else
         // Type
         print '<tr><td>'.$langs->trans('Type').'</td><td colspan="4">';
         print $object->getLibType();
-        if ($object->type == 1)
+        if ($object->type == FactureFournisseur::TYPE_REPLACEMENT)
         {
             $facreplaced=new FactureFournisseur($db);
             $facreplaced->fetch($object->fk_facture_source);
             print ' ('.$langs->transnoentities("ReplaceInvoice",$facreplaced->getNomUrl(1)).')';
         }
-        if ($object->type == 2)
+        if ($object->type == FactureFournisseur::TYPE_CREDIT_NOTE)
         {
             $facusing=new FactureFournisseur($db);
             $facusing->fetch($object->fk_facture_source);
@@ -2166,7 +2166,7 @@ else
 			}
 
  	 		// Reopen a standard paid invoice
-            if (($object->type == 0 || $object->type == 1) && ($object->statut == 2 || $object->statut == 3))				// A paid invoice (partially or completely)
+            if (($object->type == FactureFournisseur::TYPE_STANDARD || $object->type == FactureFournisseur::TYPE_REPLACEMENT) && ($object->statut == 2 || $object->statut == 3))				// A paid invoice (partially or completely)
             {
                 if (! $facidnext && $object->close_code != 'replaced')	// Not replaced by another invoice
                 {

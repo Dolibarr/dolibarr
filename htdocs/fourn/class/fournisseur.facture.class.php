@@ -46,8 +46,8 @@ class FactureFournisseur extends CommonInvoice
     var $product_ref;
     var $ref_supplier;
     var $socid;
-    //! 0=Standard invoice, 1=Replacement invoice, 2=Credit note invoice, 3=Deposit invoice, 4=Proforma invoice
-    var $type;
+    //Check constants for types
+    var $type = self::TYPE_STANDARD;
     //! 0=draft,
     //! 1=validated
     //! 2=classified paid partially (close_code='discount_vat','badcustomer') or completely (close_code=null),
@@ -87,6 +87,30 @@ class FactureFournisseur extends CommonInvoice
 
     var $extraparams=array();
 
+    /**
+     * Standard invoice
+     */
+    const TYPE_STANDARD = 0;
+
+    /**
+     * Replacement invoice
+     */
+    const TYPE_REPLACEMENT = 1;
+
+    /**
+     * Credit note invoice
+     */
+    const TYPE_CREDIT_NOTE = 2;
+
+    /**
+     * Deposit invoice
+     */
+    const TYPE_DEPOSIT = 3;
+
+    /**
+     * Proforma invoice
+     */
+    const TYPE_PROFORMA = 4;
 
     /**
 	 *	Constructor
@@ -338,7 +362,7 @@ class FactureFournisseur extends CommonInvoice
 
                 $this->ref_supplier			= $obj->ref_supplier;
                 $this->entity				= $obj->entity;
-                $this->type					= empty($obj->type)?0:$obj->type;
+                $this->type					= empty($obj->type)? self::TYPE_STANDARD:$obj->type;
                 $this->fk_soc				= $obj->fk_soc;
                 $this->datec				= $this->db->jdate($obj->datec);
                 $this->date					= $this->db->jdate($obj->datef);
