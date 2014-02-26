@@ -543,7 +543,7 @@ class FormMail
         	// Message
         	if (! empty($this->withbody))
         	{
-        		$defaultmessage="";
+        		$defaultmessage="__SIGNATURE__";
 
         		// TODO    A partir du type, proposer liste de messages dans table llx_models
         		if     ($this->param["models"]=='facture_send')	            { $defaultmessage=$langs->transnoentities("PredefinedMailContentSendInvoice"); }
