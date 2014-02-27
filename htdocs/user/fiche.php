@@ -8,7 +8,7 @@
  * Copyright (C) 2011      Herve Prot           <herve.prot@symeos.com>
  * Copyright (C) 2012      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2013      Florian Henry        <florian.henry@open-concept.pro>
- * Copyright (C) 2013      Alexandre Spangaro   <alexandre.spangaro@gmail.com> 
+ * Copyright (C) 2013-2014 Alexandre Spangaro   <alexandre.spangaro@gmail.com> 
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,6 +38,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 if (! empty($conf->ldap->enabled)) require_once DOL_DOCUMENT_ROOT.'/core/class/ldap.class.php';
 if (! empty($conf->adherent->enabled)) require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
+if (! empty($conf->employee->enabled)) require_once DOL_DOCUMENT_ROOT.'/employees/class/employee.class.php';
 if (! empty($conf->multicompany->enabled)) dol_include_once('/multicompany/class/actions_multicompany.class.php');
 
 $id			= GETPOST('id','int');
@@ -1061,7 +1062,7 @@ else
          */
         if ($action != 'edit')
         {
-            $rowspan=16;
+            $rowspan=17;
 
             print '<table class="border" width="100%">';
 
@@ -1075,6 +1076,7 @@ else
             if (isset($conf->file->main_authentication) && preg_match('/openid/',$conf->file->main_authentication) && ! empty($conf->global->MAIN_OPENIDURL_PERUSER)) $rowspan++;
             if (! empty($conf->societe->enabled)) $rowspan++;
             if (! empty($conf->adherent->enabled)) $rowspan++;
+            if (! empty($conf->employee->enabled)) $rowspan++;
 
             // Lastname
             print '<tr><td valign="top">'.$langs->trans("Lastname").'</td>';
@@ -1293,6 +1295,27 @@ else
                 else
                 {
                     print $langs->trans("UserNotLinkedToMember");
+                }
+                print '</td>';
+                print '</tr>'."\n";
+            }
+            
+            // Module Employee
+            if (! empty($conf->employee->enabled))
+            {
+                $langs->load("employees");
+                print '<tr><td valign="top">'.$langs->trans("LinkedToDolibarrEmployee").'</td>';
+                print '<td>';
+                if ($object->fk_employee)
+                {
+                    $emp=new Employee($db);
+                    $emp->fetch($object->fk_employee);
+                    $emp->ref=$emp->getFullname($langs);	// Force to show login instead of id
+                    print $emp->getNomUrl(1);
+                }
+                else
+                {
+                    print $langs->trans("UserNotLinkedToEmployee");
                 }
                 print '</td>';
                 print '</tr>'."\n";

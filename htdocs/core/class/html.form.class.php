@@ -13,7 +13,8 @@
  * Copyright (C) 2010      Philippe Grand        <philippe.grand@atoo-net.com>
  * Copyright (C) 2011      Herve Prot            <herve.prot@symeos.com>
  * Copyright (C) 2012      Marcos García         <marcosgdf@gmail.com>
- * Copyright (C) 2013      Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2013      Raphaël Doursenaud    <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2011-2014 Alexandre Spangaro    <alexandre.spangaro@gmail.com> 
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1249,7 +1250,167 @@ class Form
 
         return $out;
     }
+    
+        /**
+     *	Return select list of employees
+     *
+     *  @param	string	$selected       Id user preselected
+     *  @param  string	$htmlname       Field name in form
+     *  @param  int		$show_empty     0=liste sans valeur nulle, 1=ajoute valeur inconnue
+     *  @param  array	$exclude        Array list of employees id to exclude
+     * 	@param	int		$disabled		If select list must be disabled
+     *  @param  array	$include        Array list of employees id to include
+     * 	@param	int		$enableonly		Array list of employees id to be enabled. All other must be disabled
+     *  @param	int		$force_entity	0 or Id of environment to force
+     * 	@return	void
+     *  @deprecated
+     */
+    function select_employees($selected='',$htmlname='empid',$show_empty=0,$exclude='',$disabled=0,$include='',$enableonly='',$force_entity=0)
+    {
+        print $this->select_dolemployees($selected,$htmlname,$show_empty,$exclude,$disabled,$include,$enableonly,$force_entity);
+    }
 
+    /**
+     *	Return select list of employees
+     *
+     *  @param	string	$selected       Employee id or employee object of employee preselected. If -1, we use id of current user.
+     *  @param  string	$htmlname       Field name in form
+     *  @param  int		$show_empty     0=liste sans valeur nulle, 1=ajoute valeur inconnue
+     *  @param  array	$exclude        Array list of employees id to exclude
+     * 	@param	int		$disabled		If select list must be disabled
+     *  @param  array	$include        Array list of employees id to include
+     * 	@param	array	$enableonly		Array list of employees id to be enabled. All other must be disabled
+     *  @param	int		$force_entity	0 or Id of environment to force
+     *  @param	int		$maxlength		Maximum length of string into list (0=no limit)
+     *  @param	int		$showstatus		0=show user status only if status is disabled, 1=always show user status into label, -1=never show user status
+     * 	@return	string					HTML select string
+     */
+    function select_dolemployees($selected='', $htmlname='empid', $show_empty=0, $exclude='', $disabled=0, $include='', $enableonly='', $force_entity=0, $maxlength=0, $showstatus=0)
+    {
+        global $conf,$user,$langs;
+
+        // If no preselected user defined, we take current user
+        if ((is_numeric($selected) && ($selected < -1 || empty($selected))) && empty($conf->global->SOCIETE_DISABLE_DEFAULT_SALESREPRESENTATIVE)) $selected=$user->fk_employee;
+
+        // Permettre l'exclusion d'utilisateurs
+        if (is_array($exclude))	$excludeEmployees = implode("','",$exclude);
+        // Permettre l'inclusion d'utilisateurs
+        if (is_array($include))	$includeEmployees = implode("','",$include);
+
+        $out='';
+
+        // On recherche les salariés
+        $sql = "SELECT DISTINCT e.rowid, e.lastname as lastname, e.firstname, e.statut, e.login, e.entity";
+        if (! empty($conf->multicompany->enabled) && $conf->entity == 1 && $user->admin && ! $user->entity)
+        {
+            $sql.= ", en.label";
+        }
+        $sql.= " FROM ".MAIN_DB_PREFIX ."employee as e";
+        if (! empty($conf->multicompany->enabled) && $conf->entity == 1 && $user->admin && ! $user->entity)
+        {
+            $sql.= " LEFT JOIN ".MAIN_DB_PREFIX ."entity as en ON en.rowid=e.entity";
+            if ($force_entity) $sql.= " WHERE e.entity IN (0,".$force_entity.")";
+            else $sql.= " WHERE e.entity IS NOT NULL";
+        }
+        else
+        {
+        }
+        if (is_array($exclude) && $excludeUsers) $sql.= " AND u.rowid NOT IN ('".$excludeUsers."')";
+        if (is_array($include) && $includeUsers) $sql.= " AND u.rowid IN ('".$includeUsers."')";
+        if (! empty($conf->global->EMPLOYEE_HIDE_INACTIVE_IN_COMBOBOX)) $sql.= " AND e.statut<>0 ";
+        $sql.= " ORDER BY e.lastname ASC";
+
+        dol_syslog(get_class($this)."::select_dolemployees sql=".$sql);
+        $resql=$this->db->query($sql);
+        if ($resql)
+        {
+            $num = $this->db->num_rows($resql);
+            $i = 0;
+            if ($num)
+            {
+                $out.= '<select class="flat" id="'.$htmlname.'" name="'.$htmlname.'"'.($disabled?' disabled="disabled"':'').'>';
+                if ($show_empty) $out.= '<option value="-1"'.((empty($selected) || $selected==-1)?' selected="selected"':'').'>&nbsp;</option>'."\n";
+
+                $employeestatic=new Employee($this->db);
+
+                while ($i < $num)
+                {
+                    $obj = $this->db->fetch_object($resql);
+
+                    $employeestatic->id=$obj->rowid;
+                    $employeestatic->lastname=$obj->lastname;
+                    $employeestatic->firstname=$obj->firstname;
+
+                    $disableline=0;
+                    if (is_array($enableonly) && count($enableonly) && ! in_array($obj->rowid,$enableonly)) $disableline=1;
+
+                    if ((is_object($selected) && $selected->id == $obj->rowid) || (! is_object($selected) && $selected == $obj->rowid))
+                    {
+                        $out.= '<option value="'.$obj->rowid.'"';
+                        if ($disableline) $out.= ' disabled="disabled"';
+                        $out.= ' selected="selected">';
+                    }
+                    else
+                    {
+                        $out.= '<option value="'.$obj->rowid.'"';
+                        if ($disableline) $out.= ' disabled="disabled"';
+                        $out.= '>';
+                    }
+
+                    $out.= $employeestatic->getFullName($langs, 0, 0, $maxlength);
+                    // Complete name with more info
+                    $moreinfo=0;
+                    if (! empty($conf->global->MAIN_SHOW_LOGIN))
+                    {
+                    	$out.= ($moreinfo?' - ':' (').$obj->login;
+                    	$moreinfo++;
+                    }
+                    if ($showstatus >= 0)
+                    {
+                    	if ($obj->statut == 1 && $showstatus == 1)
+                    	{
+                    		$out.=($moreinfo?' - ':' (').$langs->trans('Enabled');
+                    		$moreinfo++;
+                    	}
+          						if ($obj->statut == 0)
+          						{
+          							$out.=($moreinfo?' - ':' (').$langs->trans('Disabled');
+          							$moreinfo++;
+          						}
+					          }
+                    if (! empty($conf->multicompany->enabled) && empty($conf->multicompany->transverse_mode) && $conf->entity == 1 && $user->admin && ! $user->entity)
+                    {
+                        if ($obj->admin && ! $obj->entity)
+                        {
+                        	$out.=($moreinfo?' - ':' (').$langs->trans("AllEntities");
+                        	$moreinfo++;
+                        }
+                        else
+                     {
+                        	$out.=($moreinfo?' - ':' (').$obj->label;
+                        	$moreinfo++;
+                     	}
+                    }
+				            $out.=($moreinfo?')':'');
+                    $out.= '</option>';
+
+                    $i++;
+                }
+            }
+            else
+            {
+                $out.= '<select class="flat" name="'.$htmlname.'" disabled="disabled">';
+                $out.= '<option value="">'.$langs->trans("None").'</option>';
+            }
+            $out.= '</select>';
+        }
+        else
+        {
+            dol_print_error($this->db);
+        }
+
+        return $out;
+    }
 
     /**
      *  Return list of products for customer in Ajax if Ajax activated or go to select_produits_list
@@ -4120,6 +4281,13 @@ class Form
         else if ($modulepart=='memberphoto')
         {
             $dir=$conf->adherent->dir_output;
+            if ($object->photo) $file=get_exdir($id, 2).'photos/'.$object->photo;
+            if (! empty($conf->global->MAIN_OLD_IMAGE_LINKS)) $altfile=$object->id.".jpg";	// For backward compatibility
+            $email=$object->email;
+        }    
+        else if ($modulepart=='employeephoto')
+        {
+            $dir=$conf->employee->dir_output;
             if ($object->photo) $file=get_exdir($id, 2).'photos/'.$object->photo;
             if (! empty($conf->global->MAIN_OLD_IMAGE_LINKS)) $altfile=$object->id.".jpg";	// For backward compatibility
             $email=$object->email;

@@ -7,8 +7,9 @@
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2011-2014 Philippe Grand       <philippe.grand@atoo-net.com>
  * Copyright (C) 2008      Matteli
- * Copyright (C) 2011-2013 Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2012      Christophe Battarel   <christophe.battarel@altairis.fr>
+ * Copyright (C) 2011-2013 Juanjo Menent		    <jmenent@2byte.es>
+ * Copyright (C) 2012      Christophe Battarel  <christophe.battarel@altairis.fr>
+ * Copyright (C) 2011-2014  Alexandre Spangaro  <alexandre.spangaro@gmail.com> 
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1562,6 +1563,12 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
 	        $searchform.=printSearchForm(DOL_URL_ROOT.'/fourn/product/liste.php', DOL_URL_ROOT.'/fourn/product/liste.php', img_object('','product').' '.$langs->trans("SupplierRef"), 'products', 'srefsupplier');
 	    }
 
+      if (! empty($conf->employee->enabled) && ! empty($conf->global->MAIN_SEARCHFORM_EMPLOYEE) && $user->rights->employee->lire)
+	    {
+	        $langs->load("employees");
+	        $searchform.=printSearchForm(DOL_URL_ROOT.'/employees/liste.php', DOL_URL_ROOT.'/employees/liste.php', img_object('','group').' '.$langs->trans("Employees"), 'employee', 'sall');
+	    }
+      
 	    if (! empty($conf->adherent->enabled) && ! empty($conf->global->MAIN_SEARCHFORM_ADHERENT) && $user->rights->adherent->lire)
 	    {
 	        $langs->load("members");
@@ -1834,7 +1841,7 @@ if (! function_exists("llxFooter"))
 	 * @param	string	$zone		'private' (for private pages) or 'public' (for public pages)
      * @return	void
      */
-    function llxFooter($comment='',$zone='pivate')
+    function llxFooter($comment='',$zone='private')
     {
         global $conf, $langs;
 
