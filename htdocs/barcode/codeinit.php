@@ -28,7 +28,7 @@ $langs->load("admin");
 $langs->load("members");
 $langs->load("errors");
 
-// Choix de l'annee d'impression ou annee courante.
+// Choice of print year or current year.
 $now = dol_now();
 $year=dol_print_date($now,'%Y');
 $month=dol_print_date($now,'%m');
