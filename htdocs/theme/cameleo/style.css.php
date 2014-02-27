@@ -1349,7 +1349,7 @@ div.divButAction { margin-bottom: 1.4em; }
 
 .butActionRefused {
     background: #FFe7ec;
-	color: #666;
+	color: #aaa !important;
 }
 
 <?php if (! empty($conf->global->MAIN_BUTTON_HIDE_UNAUTHORIZED)) { ?>
@@ -1606,6 +1606,7 @@ tr.pair td.nohover {
     -webkit-box-shadow: 4px 4px 4px #DDD;
     box-shadow: 4px 4px 4px #DDD;
     margin-bottom: 8px !important;*/
+    background: #FFFFFF;
     border: 1px solid #AAA;
     text-align: center;
     border-radius: 5px;
