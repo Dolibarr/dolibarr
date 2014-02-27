@@ -81,7 +81,10 @@ if ($action == 'order' && isset($_POST['valid']))
     $linecount = GETPOST('linecount', 'int');
     $box = 0;
     unset($_POST['linecount']);
-    if ($linecount > 0) {
+    if ($linecount > 0) 
+    {
+    	$db->begin();
+    	
         $suppliers = array();
         for ($i = 0; $i < $linecount; $i++)
         {
@@ -154,13 +157,22 @@ if ($action == 'order' && isset($_POST['valid']))
             }
             $i++;
         }
-        if (!$fail && $id) {
+        
+        if (! $fail && $id) 
+        {
+        	$db->commit();
+        	
             setEventMessage($langs->trans('OrderCreated'), 'mesgs');
             header('Location: replenishorders.php');
             exit;
         }
+        else
+        {
+        	$db->rollback();	
+        }
     }
-    if ($box == 0) {
+    if ($box == 0) 
+    {
         setEventMessage($langs->trans('SelectProductWithNotNullQty'), 'warnings');
     }
 }
