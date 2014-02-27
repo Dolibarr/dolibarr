@@ -301,7 +301,7 @@ if ($action == 'create')
     print '</td></tr>';
 
     // Private note
-    if (! $user->societe_id)
+    if (empty($user->societe_id))
     {
         print '<tr>';
         print '<td class="border" valign="top">'.$langs->trans('NotePrivate').'</td>';
@@ -397,7 +397,7 @@ else if ($id)
             print "</td></tr>";
 
             // Private note
-            if (! $user->societe_id)
+            if (empty($user->societe_id))
             {
                 print '<tr><td valign="top">'.$langs->trans("NotePrivate").'</td>';
                 print '<td valign="top" colspan="3">';

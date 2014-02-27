@@ -882,7 +882,7 @@ if ($action == 'create')
     print $doleditor->Create(1);
 
 
-    if (! $user->societe_id)
+    if (empty($user->societe_id))
     {
         print '<tr><td>'.$langs->trans("NotePrivate").'</td><td valign="top">';
         $doleditor=new DolEditor('note_private', $note_private, '', '100', 'dolibarr_notes', 'In', 1, true, true, ROWS_3, 70);

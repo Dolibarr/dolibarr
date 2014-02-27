@@ -1487,7 +1487,7 @@ if ($action == 'create' && $user->rights->commande->creer) {
 	print '</td></tr>';
 	
 	// Note privee
-	if (! $user->societe_id) {
+	if (empty($user->societe_id)) {
 		print '<tr>';
 		print '<td class="border" valign="top">' . $langs->trans('NotePrivate') . '</td>';
 		print '<td valign="top" colspan="2">';

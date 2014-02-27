@@ -69,7 +69,7 @@ else $typeofdata='textarea:12:100';
 		<div class="table-key-border-col"<?php echo ' style="width: '.$colwidth.'%"'; ?>><?php echo $form->editfieldkey("NotePublic", $note_public, $value_public, $object, $permission, $typeofdata, $moreparam); ?></div>
 		<div class="table-val-border-col"><?php echo $form->editfieldval("NotePublic", $note_public, $value_public, $object, $permission, $typeofdata, '', null, null, $moreparam); ?></div>
 	</div>
-<?php if (! $user->societe_id) { ?>
+<?php if (empty($user->societe_id)) { ?>
 	<div class="table-border-row">
 		<div class="table-key-border-col"<?php echo ' style="width: '.$colwidth.'%"'; ?>><?php echo $form->editfieldkey("NotePrivate", $note_private, $value_private, $object, $permission, $typeofdata, $moreparam); ?></div>
 		<div class="table-val-border-col"><?php echo $form->editfieldval("NotePrivate", $note_private, $value_private, $object, $permission, $typeofdata, '', null, null, $moreparam); ?></div>
