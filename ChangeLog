@@ -32,6 +32,7 @@ Fix: Signature was not added for email sent from thirdparty page.
 Fix: Action event SHIPPING_VALIDATE is not implemented
 Fix: The customer code was set to uppercase when using numbering module leopard. We
      must keep data safe of any change.
+Fix: Loading actions extrafields fails.
 
 ***** ChangeLog for 3.5 compared to 3.4.* *****
 For users:
