@@ -68,7 +68,7 @@ class Facture extends CommonInvoice
 	var $ref_ext;
 	var $ref_int;
 	//Check constants for types
-	var $type= self::TYPE_STANDARD;
+	var $type = self::TYPE_STANDARD;
 
 	//var $amount;
 	var $remise_absolue;
