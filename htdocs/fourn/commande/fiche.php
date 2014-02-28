@@ -186,7 +186,9 @@ else if ($action == 'addline' && $user->rights->fournisseur->commande->creer)
     $error = 0;
 
 	// Set if we used free entry or predefined product
-	if (GETPOST('addline_libre'))
+	if (GETPOST('addline_libre')
+			|| (GETPOST('dp_desc') && ! GETPOST('addline_libre') && ! GETPOST('idprod', 'int')>0)	// we push enter onto qty field
+			)
 	{
 		$predef='';
 		$idprod=0;
@@ -194,7 +196,9 @@ else if ($action == 'addline' && $user->rights->fournisseur->commande->creer)
 		$price_ht = GETPOST('price_ht');
 		$tva_tx=(GETPOST('tva_tx')?GETPOST('tva_tx'):0);
 	}
-	if (GETPOST('addline_predefined'))
+	if (GETPOST('addline_predefined')
+			|| (! GETPOST('dp_desc') && ! GETPOST('addline_predefined') && GETPOST('idprod', 'int')>0)	// we push enter onto qty field
+			)			
 	{
 		$predef=(($conf->global->MAIN_FEATURES_LEVEL < 2) ? '_predef' : '');
 		$idprod=GETPOST('idprod', 'int');
