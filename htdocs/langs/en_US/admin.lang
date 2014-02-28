@@ -967,7 +967,7 @@ SimpleNumRefModelDesc=Returns the reference number with format %syymm-nnnn where
 ShowProfIdInAddress=Show professionnal id with addresses on documents
 ShowVATIntaInAddress=Hide VAT Intra num with addresses on documents
 TranslationUncomplete=Partial translation
-SomeTranslationAreUncomplete=Some languages may be partially translated or may contains errors. If you detect some, you can fix <b>.lang</b> text files into directory <b>htdocs/langs</b> and submit them on the forum at <a href="http://www.dolibarr.org/forum" target="_blank">http://www.dolibarr.org</a>. 
+SomeTranslationAreUncomplete=Some languages may be partially translated or may contains errors. If you detect some, you can fix language files registering to <a href="http://transifex.com/projects/p/dolibarr/" target="_blank">http://transifex.com/projects/p/dolibarr/</a>. 
 MenuUseLayout=Make vertical menu hidable (option javascript must not be disabled)
 MAIN_DISABLE_METEO=Disable meteo view
 TestLoginToAPI=Test login to API
