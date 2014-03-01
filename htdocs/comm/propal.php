@@ -637,7 +637,7 @@ else if ($action == "setabsolutediscount" && $user->rights->propal->creer)
 else if (($action == 'addline' || $action == 'addline_predef') && $user->rights->propal->creer)
 {
 	// Set if we used free entry or predefined product
-	if (GETPOST('addline_libre') 
+	if (GETPOST('addline_libre')
 			|| (GETPOST('dp_desc') && ! GETPOST('addline_libre') && ! GETPOST('idprod', 'int')>0)	// we push enter onto qty field
 			)
 	{
@@ -647,7 +647,7 @@ else if (($action == 'addline' || $action == 'addline_predef') && $user->rights-
 		$price_ht = GETPOST('price_ht');
 		$tva_tx=(GETPOST('tva_tx')?GETPOST('tva_tx'):0);
 	}
-	if (GETPOST('addline_predefined') 
+	if (GETPOST('addline_predefined')
 			|| (! GETPOST('dp_desc') && ! GETPOST('addline_predefined') && GETPOST('idprod', 'int')>0)	// we push enter onto qty field
 			)
 	{
@@ -953,7 +953,7 @@ else if ($action == 'updateligne' && $user->rights->propal->creer && GETPOST('sa
 	}
 
 	// Define special_code for special lines
-	$special_code=0;
+	$special_code=GETPOST('special_code');
 	if (! GETPOST('qty')) $special_code=3;
 
 	// Check minimum price
