@@ -34,8 +34,9 @@ Fix: The customer code was set to uppercase when using numbering module leopard.
      must keep data safe of any change.
 Fix: Loading actions extrafields fails.
 Fix: [ bug #1123 ] Paid deposit invoices are always shown as partially paid when fully paid
-Fix: Corrected project contact types translation
-Fix: [ bug #1206 ] PMP price is bad calculated
+Fix: Corrected project contact types translation.
+Fix: [ bug #1206 ] PMP price is bad calculated.
+Fix: [ bug #520 ] Product statistics and detailed lists are wrong.
 
 ***** ChangeLog for 3.5 compared to 3.4.* *****
 For users:
