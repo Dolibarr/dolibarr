@@ -174,8 +174,8 @@ abstract class CommonDocGenerator
             'company_idprof6'=>$object->idprof6,
             'company_note_public'=>$object->note_public,
             'company_note_private'=>$object->note_private,
-            'company_iban'=>$object->bank_account->iban,
-            'company_bic'=>$object->bank_account->bic
+            'company_default_bank_iban'=>$object->bank_account->iban,
+            'company_default_bank_bic'=>$object->bank_account->bic
         );
 
         // Retrieve extrafields
