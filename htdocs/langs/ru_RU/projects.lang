@@ -100,12 +100,12 @@ IfNeedToUseOhterObjectKeepEmpty=Если некоторые объекты (сч
 ##### Types de contacts #####
 TypeContact_project_internal_PROJECTLEADER=Руководитель проекта
 TypeContact_project_external_PROJECTLEADER=Руководитель проекта
-TypeContact_project_internal_CONTRIBUTOR=Участник
-TypeContact_project_external_CONTRIBUTOR=Участник
+TypeContact_project_internal_PROJECTCONTRIBUTOR=Участник
+TypeContact_project_external_PROJECTCONTRIBUTOR=Участник
 TypeContact_project_task_internal_TASKEXECUTIVE=Целевая исполнительной
 TypeContact_project_task_external_TASKEXECUTIVE=Целевая исполнительной
-TypeContact_project_task_internal_CONTRIBUTOR=Участник
-TypeContact_project_task_external_CONTRIBUTOR=Участник
+TypeContact_project_task_internal_TASKCONTRIBUTOR=Участник
+TypeContact_project_task_external_TASKCONTRIBUTOR=Участник
 # SelectElement=Select element
 # AddElement=Link to element
 # Documents models
