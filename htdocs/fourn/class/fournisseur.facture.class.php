@@ -883,7 +883,9 @@ class FactureFournisseur extends CommonInvoice
                     {
                         $mouvP = new MouvementStock($this->db);
                         // We increase stock for product
-                        $result=$mouvP->reception($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, $this->lines[$i]->pu_ht, $langs->trans("InvoiceValidatedInDolibarr",$num));
+                        $up_ht_disc=$this->lines[$i]->pu_ht;
+                        if (! empty($this->lines[$i]->remise_percent) && empty($conf->global->STOCK_EXCLUDE_DISCOUNT_FOR_PMP)) $up_ht_disc=price2num($up_ht_disc * (100 - $this->lines[$i]->remise_percent) / 100, 'MU');
+                        $result=$mouvP->reception($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, $up_ht_disc, $langs->trans("InvoiceValidatedInDolibarr",$num));
                         if ($result < 0) { $error++; }
                     }
                 }
