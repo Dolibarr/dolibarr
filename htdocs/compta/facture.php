@@ -900,10 +900,14 @@ else if ($action == 'add' && $user->rights->facture->creer)
 							{
 								$totalamount=0;
 								$lines = $srcobject->lines;
+
 								$numlines=count($lines);
 								for ($i=0; $i<$numlines; $i++)
 								{
-									$totalamount += $lines[$i]->total_ht;
+									$qualified=1;
+									if (empty($lines[$i]->qty)) $qualified=0;	// We discard qty=0, it is an option
+									if (! empty($lines[$i]->special_code)) $qualified=0;	// We discard special_code (frais port, ecotaxe, option, ...)
+									if ($qualified) $totalamount += $lines[$i]->total_ht;
 								}
 
 								if ($totalamount!=0)
@@ -963,7 +967,6 @@ else if ($action == 'add' && $user->rights->facture->creer)
 
 							$fk_parent_line=0;
 							$num=count($lines);
-
 							for ($i=0;$i<$num;$i++)
 							{
 								$label=(! empty($lines[$i]->label)?$lines[$i]->label:'');
