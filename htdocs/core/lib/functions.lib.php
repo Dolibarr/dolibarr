@@ -2864,7 +2864,7 @@ function get_localtax($tva, $local, $thirdparty_buyer="", $thirdparty_seller="")
 	global $db, $conf, $mysoc;
 
 	if (empty($thirdparty_seller) || ! is_object($thirdparty_seller)) $thirdparty_seller=$mysoc;
-	
+
 	dol_syslog("get_localtax tva=".$tva." local=".$local." thirdparty_buyer id=".(is_object($thirdparty_buyer)?$thirdparty_buyer->id:'')."/country_code=".(is_object($thirdparty_buyer)?$thirdparty_buyer->country_code:'')." thirdparty_seller id=".$thirdparty_seller->id."/country_code=".$thirdparty_seller->country_code." thirdparty_seller localtax1_assuj=".$thirdparty_seller->localtax1_assuj."  thirdparty_seller localtax2_assuj=".$thirdparty_seller->localtax2_assuj);
 
 	// Some test to guess with no need to make database access
@@ -3130,66 +3130,68 @@ function get_default_tva($thirdparty_seller, $thirdparty_buyer, $idprod=0, $idpr
 	if (!is_object($thirdparty_seller)) return -1;
 	if (!is_object($thirdparty_buyer)) return -1;
 
-	dol_syslog("get_default_tva: seller use vat=".$thirdparty_seller->tva_assuj.", seller country=".$thirdparty_seller->country_code.", seller in cee=".$thirdparty_seller->isInEEC().", buyer country=".$thirdparty_buyer->country_code.", buyer in cee=".$thirdparty_buyer->isInEEC().", idprod=".$idprod.", idprodfournprice=".$idprodfournprice.", SERVICE_ARE_ECOMMERCE_200238EC=".(! empty($conf->global->SERVICES_ARE_ECOMMERCE_200238EC)?$conf->global->SERVICES_ARE_ECOMMERCE_200238EC:''));
+	// Note: possible values for tva_assuj are 0/1 or franchise/reel
+	$seller_use_vat=((is_numeric($thirdparty_seller->tva_assuj) && ! $thirdparty_seller->tva_assuj) || (! is_numeric($thirdparty_seller->tva_assuj) && $thirdparty_seller->tva_assuj=='franchise'))?0:1;
+
+	$seller_country_code=$thirdparty_seller->country_code;
+	$seller_in_cee=$thirdparty_seller->isInEEC();
+
+	$buyer_country_code=$thirdparty_buyer->country_code;
+	$buyer_in_cee=$thirdparty_buyer->isInEEC();
+
+	dol_syslog("get_default_tva: seller use vat=".$seller_use_vat.", seller country=".$seller_country_code.", seller in cee=".$seller_in_cee.", buyer country=".$buyer_country_code.", buyer in cee=".$buyer_in_cee.", idprod=".$idprod.", idprodfournprice=".$idprodfournprice.", SERVICE_ARE_ECOMMERCE_200238EC=".(! empty($conf->global->SERVICES_ARE_ECOMMERCE_200238EC)?$conf->global->SERVICES_ARE_ECOMMERCE_200238EC:''));
 
 	// If services are eServices according to EU Council Directive 2002/38/EC (http://ec.europa.eu/taxation_customs/taxation/vat/traders/e-commerce/article_1610_en.htm)
 	// we use the buyer VAT.
 	if (! empty($conf->global->SERVICE_ARE_ECOMMERCE_200238EC))
 	{
-		//print "eee".$thirdparty_buyer->isACompany();exit;
-		if (! $thirdparty_seller->isInEEC() && $thirdparty_buyer->isInEEC() && ! $thirdparty_buyer->isACompany())
+		if (! $seller_in_cee && $buyer_in_cee && ! $thirdparty_buyer->isACompany())
 		{
-			//print 'VATRULE 6';
+			//print 'VATRULE 0';
 			return get_product_vat_for_country($idprod,$thirdparty_buyer,$idprodfournprice);
 		}
 	}
 
-	// Si vendeur non assujeti a TVA (tva_assuj vaut 0/1 ou franchise/reel)
-	if (is_numeric($thirdparty_seller->tva_assuj) && ! $thirdparty_seller->tva_assuj)
+	// If seller does not use VAT
+	if (! $seller_use_vat)
 	{
 		//print 'VATRULE 1';
 		return 0;
 	}
-	if (! is_numeric($thirdparty_seller->tva_assuj) && $thirdparty_seller->tva_assuj=='franchise')
-	{
-		//print 'VATRULE 2';
-		return 0;
-	}
 
-	//if (is_object($thirdparty_buyer) && ($thirdparty_seller->country_id == $thirdparty_buyer->country_id) && ($thirdparty_buyer->tva_assuj == 1 || $thirdparty_buyer->tva_assuj == 'reel'))
 	// Le test ci-dessus ne devrait pas etre necessaire. Me signaler l'exemple du cas juridique concerne si le test suivant n'est pas suffisant.
 
 	// Si le (pays vendeur = pays acheteur) alors la TVA par defaut=TVA du produit vendu. Fin de regle.
-	if (($thirdparty_seller->country_code == $thirdparty_buyer->country_code)
-	|| (in_array($thirdparty_seller->country_code,array('FR,MC')) && in_array($thirdparty_buyer->country_code,array('FR','MC')))) // Warning ->country_code not always defined
+	if (($seller_country_code == $buyer_country_code)
+	|| (in_array($seller_country_code,array('FR,MC')) && in_array($buyer_country_code,array('FR','MC')))) // Warning ->country_code not always defined
 	{
-		//print 'VATRULE 3';
+		//print 'VATRULE 2';
 		return get_product_vat_for_country($idprod,$thirdparty_seller,$idprodfournprice);
 	}
 
 	// Si (vendeur et acheteur dans Communaute europeenne) et (bien vendu = moyen de transports neuf comme auto, bateau, avion) alors TVA par defaut=0 (La TVA doit etre paye par l'acheteur au centre d'impots de son pays et non au vendeur). Fin de regle.
-	// Non gere
+	// Not supported
 
 	// Si (vendeur et acheteur dans Communaute europeenne) et (acheteur = entreprise) alors TVA par defaut=0. Fin de regle
 	// Si (vendeur et acheteur dans Communaute europeenne) et (acheteur = particulier) alors TVA par defaut=TVA du produit vendu. Fin de regle
-	if (($thirdparty_seller->isInEEC() && $thirdparty_buyer->isInEEC()))
+	if (($seller_in_cee && $buyer_in_cee))
 	{
 		$isacompany=$thirdparty_buyer->isACompany();
 		if ($isacompany)
 		{
-			//print 'VATRULE 4';
+			//print 'VATRULE 3';
 			return 0;
 		}
 		else
 		{
-			//print 'VATRULE 5';
+			//print 'VATRULE 4';
 			return get_product_vat_for_country($idprod,$thirdparty_seller,$idprodfournprice);
 		}
 	}
 
 	// Sinon la TVA proposee par defaut=0. Fin de regle.
 	// Rem: Cela signifie qu'au moins un des 2 est hors Communaute europeenne et que le pays differe
-	//print 'VATRULE 7';
+	//print 'VATRULE 5';
 	return 0;
 }
 

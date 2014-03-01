@@ -565,30 +565,30 @@ class FunctionsTest extends PHPUnit_Framework_TestCase
         $companyus->tva_assuj=1;
         $companyus->tva_intra='';
 
-        // Test RULE 1-2
+        // Test RULE 0 (FR-IT)
+        // Not tested
+
+        // Test RULE 1
         $vat=get_default_tva($companyfrnovat,$companymc,0);
         $this->assertEquals(0,$vat);
 
-        // Test RULE 3 (FR-FR)
+        // Test RULE 2 (FR-FR)
         $vat=get_default_tva($companyfr,$companyfr,0);
         $this->assertEquals(19.6,$vat);
 
-        // Test RULE 3 (FR-MC)
+        // Test RULE 2 (FR-MC)
         $vat=get_default_tva($companyfr,$companymc,0);
         $this->assertEquals(19.6,$vat);
 
-        // Test RULE 4 (FR-IT)
+        // Test RULE 3 (FR-IT)
         $vat=get_default_tva($companyfr,$companyit,0);
         $this->assertEquals(0,$vat);
 
-        // Test RULE 5 (FR-IT)
+        // Test RULE 4 (FR-IT)
         $vat=get_default_tva($companyfr,$notcompanyit,0);
         $this->assertEquals(19.6,$vat);
 
-        // Test RULE 6 (FR-IT)
-        // Not tested
-
-        // Test RULE 7 (FR-US)
+        // Test RULE 5 (FR-US)
         $vat=get_default_tva($companyfr,$companyus,0);
         $this->assertEquals(0,$vat);
     }
